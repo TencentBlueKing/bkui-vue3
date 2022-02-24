@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Backtop.tsx test 1`] = `
+"<div class=\\"target\\" style=\\"height: 100px; overflow: auto;\\">
+  <div style=\\"height: 10000px; width: 100%;\\">
+    <div class=\\"bk-backtop bk-fade-enter-from bk-fade-enter-active\\" style=\\"right: 100px; bottom: 200px; z-index: 3001;\\"><span style=\\"font-size: 14px;\\"><svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 1024 1024\\" style=\\"vertical-align: middle; fill: undefined; overflow: hidden;\\"><path d=\\"M512 368L736 592 688 640 512 464 336 640 288 592 512 368z\\" style=\\"\\"></path></svg></span></div>
+  </div>
+</div>"
+`;

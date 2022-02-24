@@ -1,0 +1,80 @@
+@import '@bkui-vue/styles/themes/themes.less';
+
+.@{bk-prefix}-checkbox {
+  display: inline-block;
+  margin-right: 30px;
+  font-size: 14px;
+  letter-spacing: normal;
+  color: #63656e;
+  cursor: pointer;
+  user-select: none;
+
+  &.is-checked {
+    .bk-checkbox-input {
+      background: @primary-color;
+      border-color: @primary-color;
+      transition: all .1s;
+
+      &::after {
+        position: absolute;
+        top: 1px;
+        left: 5px;
+        width: 4px;
+        height: 8px;
+        border: 2px solid #fff;
+        border-top: 0;
+        border-left: 0;
+        content: '';
+        transform: scaleY(1) rotate(45deg);
+        transform-origin: center;
+      }
+    }
+  }
+
+  &.is-disabled {
+    color: #c4c6cc;
+    cursor: not-allowed;
+
+    .bk-checkbox-input {
+      background: #fafbfd;
+      border-color: @disable-color;
+
+      &::after {
+        background: @disable-color;
+      }
+    }
+
+    &.is-checked {
+      .bk-checkbox-input {
+        background: @disable-color;
+      }
+    }
+  }
+
+  .bk-checkbox-input {
+    position: relative;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-right: 5px;
+    vertical-align: middle;
+    border: 1px solid #979ba5;
+    border-radius: 2px;
+    
+  }
+
+  .bk-checkbox-original {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    width: 0;
+    height: 0;
+  }
+
+  .bk-checkbox-label {
+    display: inline-block;
+    line-height: 18px;
+    vertical-align: middle;
+  }
+}

@@ -1,0 +1,221 @@
+@import '@bkui-vue/styles/themes/themes.less';
+
+@tab-color: @default-color;
+@tab-border: @disable-color;
+@tab-active: @primary-color;
+@tab-header-bg: #FAFBFD;
+@tab-white: @white-color;
+@tab-gray: @light-gray;
+@tab-disable-color: #aaa;
+//.@{bk-prefix}-tab {
+@tab-prefix: bk-tab;
+//.@{tab-prefix} {
+.bk-tab {
+  position: relative;
+  display: flex;
+  width: 100%;
+
+  &--top {
+    flex-direction: column;
+  }
+
+  &--left {
+
+  }
+
+  &--right {
+    flex-direction: row-reverse;
+  }
+
+  &--card {
+
+  }
+
+  &--border-card {
+
+  }
+
+  &--unborder-card {
+
+  }
+
+  &-header {
+    display: flex;
+    color: @tab-color;
+
+    > div {
+      display: flex;
+      margin-bottom: -1px;
+      flex-wrap: nowrap;
+
+      .@{tab-prefix}--card &, .@{tab-prefix}--border-card & {
+        border-right: 1px solid @tab-border;
+      }
+    }
+
+    &-nav {
+      .@{tab-prefix}--top & {
+        overflow-x: auto;
+        overflow-y: visible;
+      }
+
+      .@{tab-prefix}--left &, .@{tab-prefix}--right & {
+        overflow-x: visible;
+        overflow-y: auto;
+      }
+
+      .@{tab-prefix}--card &, .@{tab-prefix}--border-card & {
+        border-left: 1px solid @tab-border;
+      }
+
+      //flex: 0 1 auto;
+      &::-webkit-scrollbar {
+        display: none;
+        width: 0;
+        height: 0;
+      }
+    }
+
+    &-operation {
+      //flex: 0 0 auto;
+      .@{tab-prefix}-header-item {
+        padding: 0 12px;
+      }
+    }
+
+
+    .@{tab-prefix}--left & {
+      border-right: 1px solid @tab-border;
+    }
+
+    .@{tab-prefix}--right & {
+      border-left: 1px solid @tab-border;
+    }
+
+    .@{tab-prefix}--left &, .@{tab-prefix}--right & {
+      flex-direction: column;
+
+      > div {
+        flex-direction: column;
+      }
+    }
+
+    .@{tab-prefix}--card & {
+      border-bottom: 1px solid @tab-border;
+    }
+
+    .@{tab-prefix}--border-card & {
+      background: @tab-header-bg;
+      border: solid @tab-border;
+      border-width: 1px 1px 1px 0;
+    }
+
+    .@{tab-prefix}--unborder-card & {
+      border-bottom: 1px solid @tab-border;
+    }
+
+    &-item {
+      display: flex;
+      white-space: nowrap;
+      cursor: pointer;
+      justify-content: center;
+      align-items: center;
+      //line-height: 42px;
+
+      &:hover {
+        color: @tab-active;
+
+        .@{tab-prefix}-header-item-close {
+          display: block;
+          margin-left: 10px;
+          color: @danger-color;
+        }
+      }
+
+      .@{tab-prefix}--top & {
+        padding: 0 20px;
+        //margin: -1px 0;
+      }
+
+      .@{tab-prefix}--left &, .@{tab-prefix}--right & {
+        //margin: 0 -1px;
+        padding: 0 12px;
+      }
+
+      .@{tab-prefix}--left & {
+        text-align: right;
+      }
+
+      .@{tab-prefix}--card & {
+        border-top: 1px solid @tab-border;
+      }
+
+      .@{tab-prefix}--card &, .@{tab-prefix}--border-card & {
+        border-right: 1px solid @tab-border;
+        border-bottom: 1px solid @tab-border;
+
+        &:last-of-type {
+          border-right: none;
+        }
+      }
+
+      .@{tab-prefix}-header-operation & {
+        padding-right: 12px;
+        padding-left: 12px;
+      }
+
+      &-close {
+        display: none;
+        color: @tab-gray;
+      }
+
+    }
+
+    &--active {
+      color: @tab-active;
+
+      .@{tab-prefix}--card &, .@{tab-prefix}--border-card & {
+        border-bottom-color: @tab-white;
+      }
+
+      .@{tab-prefix}--unborder-card & {
+        border-bottom: 2px solid @tab-active;
+      }
+
+      .@{tab-prefix}--left & {
+        border-right: 2px solid @tab-active;
+      }
+
+      .@{tab-prefix}--right & {
+        border-left: 2px solid @tab-active;
+      }
+
+    }
+
+    &--disabled {
+      //color: @disable-color;
+      color: @tab-disable-color;
+      pointer-events: none;
+      cursor: not-allowed;
+    }
+  }
+
+  &-content {
+    flex: 1;
+    padding: 10px;
+
+    .@{tab-prefix}--border-card & {
+      border: solid @tab-border;
+      border-width: 0 1px 1px;
+    }
+  }
+
+  &-panel {
+    height: 100%;
+  }
+
+
+}
+
+
+

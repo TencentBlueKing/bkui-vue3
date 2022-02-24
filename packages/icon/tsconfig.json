@@ -1,0 +1,22 @@
+{
+  "ts-node": {
+    "transpileOnly": true
+  },
+  "compilerOptions": {
+    "target": "ES2019",
+    "module": "commonjs",
+    "strict": true,
+    "declaration": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "jsx": "preserve",
+    "jsxFactory": "h"
+  },
+  "include": [
+    "./src/**/*",
+    "./scripts/*/*"
+  ],
+  "exclude": [
+    "*.js"
+  ]
+}

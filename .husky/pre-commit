@@ -1,0 +1,11 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# yarn lint-staged
+
+if ! [ -x "$(command -v bkscan)" ]; then
+  echo 'bkscan is not installed.' >&2
+  exit 0
+else
+  bkscan
+fi

@@ -1,0 +1,67 @@
+@import '@bkui-vue/styles/themes/themes.less';
+
+.@{bk-prefix}-table {
+  overflow: auto;
+  .@{bk-prefix}-table-body {
+    background: @white-color;
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+
+      .cell {
+        height: var(--row-height);
+        padding: 0 15px;
+        overflow: hidden;
+        line-height: var(--row-height);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+   
+      th,
+      td {
+        min-width: 80px;
+        border-bottom: 1px solid #dfe0e5;
+      }
+
+      thead {
+        th {
+          position: sticky; 
+          top: 0; 
+          z-index: 1;
+          background-color: #fff;
+          transform: translateY(var(--translate-y));
+
+          &.active {
+            background: #f0f1f5;
+            // cursor: ;
+          }
+        }
+      }
+
+      tbody {
+        tr {
+          &:hover {
+            td {
+              background: #f5f7fa;
+            }
+          }
+        }
+      }
+    }
+  }
+  .@{bk-prefix}-table-fixed {
+    width: 100%;
+  }
+
+  colgroup {
+    col {
+      background: #fff;
+
+      &.active {
+        position: relative;
+        background: #f0f1f5;
+      }
+    }
+  }
+}

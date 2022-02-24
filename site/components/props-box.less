@@ -1,0 +1,40 @@
+.props-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  thead th,
+  tbody td {
+    height: 42px;
+    padding: 10px 16px;
+    line-height: 1;
+    text-align: left;
+  }
+
+  tbody td {
+    border-bottom: 1px solid #dcdee5;
+  }
+
+  tbody {
+    background-color: white;
+  }
+
+  .table-cell {
+    display: flex;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    align-items: center;
+
+    .cell-item {
+      display: inline-flex;
+      height: 22px;
+      padding: 0 10px;
+      margin-right: 6px;
+      background: #f0f1f5;
+      border-radius: 2px;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}

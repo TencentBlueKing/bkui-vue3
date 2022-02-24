@@ -1,0 +1,173 @@
+@import '@bkui-vue/styles/themes/themes.less';
+
+.bk-radio {
+  display: inline-block;
+  margin-right: 30px;
+  font-size: @font-size-base;
+  font-weight: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  color: @default-color;
+  white-space: nowrap;
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+
+  &:last-child {
+    margin-right: 0;
+  }
+
+  &.is-checked {
+    .bk-radio-input {
+      padding: 3px;
+      color: @primary-color;
+      background-color: @primary-color;
+      border-color: @primary-color;
+    }
+  }
+
+  &.is-disabled {
+    color: @disable-color;
+    cursor: not-allowed;
+
+    &.is-checked {
+      .bk-radio-input {
+        background-color: @disable-color;
+      }
+    }
+
+    .bk-radio-input {
+      cursor: not-allowed;
+      border-color: @disable-color;
+    }
+
+    .bk-radio-text {
+      cursor: not-allowed;
+    }
+  }
+
+  &.is-focus {
+    .bk-radio-input {
+      border-color: @primary-color;
+    }
+  }
+
+  .bk-radio-text {
+    font-size: 12px;
+    font-style: normal;
+    font-weight: normal;
+    color: @default-color;
+    vertical-align: middle;
+    cursor: pointer;
+  }
+
+  .bk-radio-input {
+    position: relative;
+    display: inline-block;
+    width: @line-height-base;
+    height: @line-height-base;
+    margin: 0 5px 0 0;
+    color: #fff;
+    vertical-align: middle;
+    cursor: pointer;
+    background-color: #fff;
+    border: @border-width-base @border-style-base @default-color;
+    border-radius: 50%;
+    outline: none;
+    visibility: visible;
+    transition: all .3s;
+    background-clip: content-box;
+    appearance: none;
+  }
+}
+
+.bk-radio-button {
+  position: relative;
+  z-index: 1;
+  display: inline-block;
+  font-size: 0;
+  font-weight: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  color: @default-color;
+  white-space: nowrap;
+  cursor: pointer;
+  outline: none;
+  opacity: 1;
+  user-select: none;
+
+  &:nth-child(n+2) {
+    margin-left: -1px;
+  }
+
+  &:first-child {
+    .bk-radio-button-text {
+      border-bottom-left-radius: @border-radius-base;
+      border-top-left-radius: @border-radius-base;
+    }
+  }
+
+  &:last-child {
+    .bk-radio-button-text {
+      border-top-right-radius: @border-radius-base;
+      border-bottom-right-radius: @border-radius-base;
+    }
+  }
+
+  &.is-checked {
+    z-index: 2;
+
+    .bk-radio-button-text {
+      color: #fff;
+      background: @primary-color;
+      border-color: @primary-color;
+    }
+  }
+
+  &.is-disabled {
+    z-index: 0;
+    color: @disable-color;
+    cursor: not-allowed;
+
+    .bk-radio-button-text {
+      cursor: not-allowed;
+      background: @disable-color;
+      border-color: @disable-color;
+    }
+  }
+
+  &.is-focus {
+    .bk-radio-button-text {
+      border-color: @primary-color;
+    }
+  }
+
+  .bk-radio-button-input {
+    position: absolute;
+    z-index: -1;
+    outline: none;
+    opacity: 0;
+  }
+
+  .bk-radio-button-text {
+    height: @component-size-base;
+    padding: 0 18px;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: normal;
+    line-height: @component-size-base;
+    color: @default-color;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    border: @border-width-base @border-style-base @default-color;
+    transition: all .3s;
+  }
+}
+
+.bk-radio-group {
+  display: inline-block;
+  font-size: 0;
+  line-height: 0;
+  letter-spacing: normal;
+}

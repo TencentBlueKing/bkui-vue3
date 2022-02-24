@@ -1,0 +1,29 @@
+.bk-rate-stars {
+  padding: 0;
+  margin: 0;
+
+  .bk-is-edit {
+    cursor: pointer;
+  }
+
+  &:after {
+    display: table;
+    clear: both;
+    content: '';
+  }
+
+  .bk-rate-star {
+    float: left;
+    margin-right: 3px;
+    enable-background: new 0 0 64 64;
+    fill: #c5c7d1;
+
+    &.bk-is-select {
+      fill: #ffb848;
+    }
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}

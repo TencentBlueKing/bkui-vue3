@@ -1,0 +1,137 @@
+@import '@bkui-vue/styles/themes/themes.less';
+
+.get-theme (@theme) {
+  color: @white-color;
+  background-color: @theme;
+  border: 2px solid @white-color;
+}
+
+.get-icon-theme (@theme) {
+  color: @theme;
+  background-color: @white-color;
+  border-color: @white-color;
+}
+
+.@{bk-prefix}-badge-main {
+  position: relative;
+  display: inline-block;
+  .@{bk-prefix}-badge {
+    position: relative;
+    display: inline-block;
+    // min-width: 18px;
+    height: 16px;
+    padding: 1px 5px;
+    font-size: 12px;
+    line-height: 16px;
+    text-align: center;
+    background-color: @white-color;
+    border-radius: 18px;
+
+    &.pinned {
+      position: absolute;
+
+      &.top-right {
+        top: 0;
+        right: 0;
+        transform: translate(50%, -50%) scale(1, 1);
+
+        &.fade-center-enter,
+        &.fade-center-leave-active {
+          opacity: 0;
+          transform: translate(50%, -50%) scale(0, 0);
+        }
+      }
+
+      &.right {
+        top: 50%;
+        right: 0%;
+        transform: translate(100%, -50%) scale(1, 1);
+
+        &.fade-center-enter,
+        &.fade-center-leave-active {
+          opacity: 0;
+          transform: translate(50%, -50%) scale(0, 0);
+        }
+      }
+
+      &.bottom-right {
+        right: 0;
+        bottom: 0;
+        transform: translate(50%, 50%) scale(1, 1);
+
+        &.fade-center-enter,
+        &.fade-center-leave-active {
+          opacity: 0;
+          transform: translate(50%, 50%) scale(0, 0);
+        }
+      }
+
+      &.top-left {
+        top: 0;
+        left: 0;
+        transform: translate(-50%, -50%) scale(1, 1);
+
+        &.fade-center-enter,
+        &.fade-center-leave-active {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0, 0);
+        }
+      }
+
+      &.bottom-left {
+        bottom: 0;
+        left: 0;
+        transform: translate(-50%, 50%) scale(1, 1);
+
+        &.fade-center-enter,
+        &.fade-center-leave-active {
+          opacity: 0;
+          transform: translate(-50%, 50%) scale(0, 0);
+        }
+      }
+    }
+
+    &.@{bk-prefix}-danger {
+      .get-theme(@danger-color);
+
+      &.is-icon {
+        .get-icon-theme(@danger-color);
+      }
+    }
+    &.@{bk-prefix}-warning {
+      .get-theme(@warning-color);
+
+      &.is-icon {
+        .get-icon-theme(@warning-color);
+      }
+    }
+    &.@{bk-prefix}-success {
+      .get-theme(@success-color);
+
+      &.is-icon {
+        .get-icon-theme(@success-color);
+      }
+    }
+    &.@{bk-prefix}-primary {
+      .get-theme(@primary-color);
+
+      &.is-icon {
+        .get-icon-theme(@primary-color);
+      }
+    }
+
+    &.dot {
+      width: 6px;
+      height: 6px;
+      min-width: 6px;
+      padding: 0;
+      border: 1px solid @white-color;
+    }
+    &.@{bk-prefix}-badge-icon {
+      display: inline-block;
+      padding: 0;
+      padding-bottom: 1px;
+      font-size: 16px;
+    }
+  }
+}

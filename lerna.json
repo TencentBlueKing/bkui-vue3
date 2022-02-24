@@ -1,0 +1,28 @@
+{
+  "packages": ["packages/*"],
+  "npmClient": "yarn",
+  "useWorkspaces": true,
+  "version": "independent",
+  "command": {
+    "publish": {
+      "ignoreChanges": ["ignored-file", "**/__test__/**", "**/*.md"],
+      "allowBranch": ["master", "staging"]
+    },
+    "version": {
+      "conventionalCommits": true,
+      "ignoreChanges": [
+        "**/*.md"
+      ],
+      "noGitTagVersion": true,
+      "noPush": true
+    },
+    
+    "bootstrap": {
+      "hoist": true,
+      "npmClientArgs": [
+        "--no-package-lock",
+        "--no-ci"
+      ]
+    }
+  }
+}

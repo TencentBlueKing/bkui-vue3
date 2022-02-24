@@ -1,0 +1,61 @@
+@import '@bkui-vue/styles/themes/themes.less';
+
+.@{bk-prefix}-message {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  display: flex;
+  min-width: 300px;
+  padding: 10px 15px;
+  font-size: 14px;
+  color: @message-color;
+  background: @message-primary-bg-color;
+  border: 1px solid @message-primary-border-color;
+  border-radius: 2px;
+  transform: translateX(-50%);
+  box-shadow: 0px 2px 4px 0px rgba(16, 37, 74, .1);
+  justify-content: space-between;
+
+  .bk-message-close {
+    padding-left: 20px;
+    margin-right: 0;
+    font-size: 18px;
+    cursor: pointer;
+  }
+}
+
+.@{bk-prefix}-message-icon {
+  display: inline-block;
+  margin-right: 10px;
+  font-size: 18px;
+  color: @primary-color;
+}
+
+.@{bk-prefix}-message-primary {
+  background: @message-primary-bg-color;
+  border: 1px solid @message-primary-border-color;
+}
+
+.@{bk-prefix}-message-warning {
+  background: @message-warning-bg-color;
+  border: 1px solid @message-warning-border-color;
+  .@{bk-prefix}-message-icon {
+    color: @warning-color;
+  }
+}
+
+.@{bk-prefix}-message-success {
+  background: @message-success-bg-color;
+  border: 1px solid @message-success-border-color;
+  .@{bk-prefix}-message-icon {
+    color: @success-color;
+  }
+}
+
+.@{bk-prefix}-message-danger {
+  background: @message-danger-bg-color;
+  border: 1px solid @message-danger-border-color;
+  .@{bk-prefix}-message-icon {
+    color: @danger-color;
+  }
+}

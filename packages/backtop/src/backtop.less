@@ -1,0 +1,18 @@
+@import '@bkui-vue/styles/themes/themes.less';
+@import '@bkui-vue/styles/mixins/animate.less';
+
+.@{bk-prefix}-backtop {
+  position: fixed;
+  display: flex;
+  width: 52px;
+  height: 52px;
+  cursor: pointer;
+  background: @fixed-navbar-background;
+  border-radius: 50%;
+  opacity: 1;
+  box-shadow: 0px 2px 6px 0px @fixed-navbar-boxshadow-color;
+  align-items: center;
+  justify-content: center;
+}
+
+.bk-fade-transtion();

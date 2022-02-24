@@ -1,0 +1,143 @@
+
+@import '@bkui-vue/styles/themes/themes.less';
+@import '@bkui-vue/styles/mixins/mixins.less';
+
+.active(@color: @primary-color) {
+  border-color: @primary-color;
+  outline: 0;
+  box-shadow: 0px 0px 3px 0px @input-shadow-color;
+}
+
+.disabled() {
+  cursor: not-allowed;
+  background-color: @input-disabled-bg;
+  opacity: 1;
+}
+
+.@{bk-prefix}-input {
+  display: flex;
+  align-items: stretch;
+  height: @input-height-base;
+  font-size: @font-size-base;
+  border: @border-width-base @border-style-base @input-border-color;
+  border-radius: @border-radius-base;
+  transition: all .3s;
+
+  &--suffix-icon {
+    padding-right: @input-horizontal-padding;
+    font-size: @input-icon-size;
+    line-height: 1;
+    color: @light-gray;
+    align-self: center;
+  }
+
+  &--large {
+    .component-size(@component-size-large, @font-size-large);
+  }
+
+  &--small {
+    .component-size(@component-size-small, @font-size-base);
+  }
+
+  &.is-focused:not(.is-readonly) {
+    .active();
+  }
+
+  &.is-disabled {
+    .disabled();
+  }
+
+  &--prefix-area,
+  &--suffix-area {
+    display: flex;
+    padding: 0 @input-horizontal-padding;
+    color: @default-color;
+    background-color: @input-block-color;
+    border-right: 1px solid @input-border-color;
+    align-items: center;
+  }
+
+  &--suffix-area {
+    border: 0;
+    border-left: 1px solid @input-border-color;
+  }
+
+  &--max-length {
+    align-self: center;
+    padding-right: @input-horizontal-padding;
+
+    span {
+      color: @input-maxlength-color;
+    }
+  }
+
+  &--text {
+    padding: 0 @input-horizontal-padding;
+    font-size: @font-size-base;
+    line-height: 1;
+    color: @input-color;
+    background-color: @input-bg;
+    background-image: none;
+    border: none;
+    outline: none;
+    box-sizing: border-box;
+    transition: all .3s;
+    flex: 1;
+
+    //Chrome
+    &[type='search']::-webkit-search-decoration,
+    &[type='search']::-webkit-search-cancel-button,
+    &[type='search']::-webkit-search-results-button,
+    &[type='search']::-webkit-search-results-decoration {
+      appearance: none;
+    }
+    // IE
+    [type=search]::-ms-clear {
+      display: none;
+      width: 0;
+      height: 0;
+    }
+
+    [type=search]::-ms-reveal {
+      display: none;
+      width: 0;
+      height: 0;
+    }
+
+    &[type='number']::-webkit-inner-spin-button,
+    &[type='number']::-webkit-outer-spin-button {
+      margin: 0;
+      appearance: none;
+    }
+
+    &::placeholder {
+      color: @light-gray;
+    }
+  }
+
+  &--number-control {
+    width: 26px;
+    height: 100%;
+    font-size: 0;
+    flex-direction: column;
+
+    span {
+      display: block;
+      height: 50%;
+      overflow: hidden;
+      color: @light-gray;
+    }
+
+    svg {
+      font-size: @input-icon-size;
+    }
+
+    span:first-child {
+      transform: rotate(180deg);
+    }
+
+    span:hover {
+      background-color: #f4f6fa;
+    }
+  }
+}

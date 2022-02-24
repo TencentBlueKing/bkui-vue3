@@ -1,0 +1,262 @@
+@import '@bkui-vue/styles/themes/themes.less';
+
+.@{bk-prefix}-select {
+  display: inline-block;
+
+  ul {
+    padding: 0;
+    margin: 0;
+    font-weight: normal;
+    list-style: none;
+  }
+
+  .bk-popover-content {
+    padding: 0;
+  }
+
+  .bk-select-icon(@fontSize: 20px, @color: #979ba5) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    font-size: @fontSize;
+    color: @color;
+  }
+
+  .input-right-icon() {
+    position: absolute;
+    top: 6px;
+    right: 4px;
+  }
+
+  .input-left-icon() {
+    position: absolute;
+    top: 6px;
+    left: 4px;
+  }
+
+  .ellipsis() {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &.is-focus {
+    .bk-select-trigger .bk-select-input {
+      border-color: @primary-color;
+      box-shadow: 0px 0px 3px 0px #a3c5fd; 
+    }
+  }
+
+  &.is-disabled {
+    .bk-select-trigger .bk-select-input {
+      cursor: not-allowed;
+      background: #fafbfd;
+      border-color: #dcdee5;
+      box-shadow: unset;
+    }
+  }
+
+  &.popover-show {
+    .bk-select-trigger .angle-up {
+      transform: rotate(0);
+    }
+  }
+
+  .bk-select-trigger {
+    position: relative;
+    cursor: pointer;
+
+    .bk-select-input {
+      height: 32px;
+      padding: 0 28px 0 10px;
+      font-size: 12px;
+      line-height: normal;
+      color: @default-color;
+      text-align: left;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: @white-color;
+      border: 1px solid @light-gray;
+      border-radius: 2px;
+      outline: none;
+      box-sizing: border-box;
+      transition: all .1s;
+      resize: none;
+  
+      &::placeholder {
+        color: @light-gray;
+      }
+    }
+
+    .bk-select-prefix {
+      .input-left-icon();
+      font-size: 14px;
+    }
+
+    .angle-up {
+      transform: rotate(180deg);
+      transition: transform .3s cubic-bezier(.4, 0, .2, 1);
+      .bk-select-icon();
+      .input-right-icon();
+    }
+
+    .clear-icon {
+      transition: all .1s;
+      .bk-select-icon(14px, #c4c6cc);
+      .input-right-icon();
+
+      &:hover {
+        color: #979ba5;
+      }
+    }
+
+    .spinner {
+      .input-right-icon();
+      .bk-select-icon(16px, #3A84FF);
+    }
+  }
+
+  .bk-select-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 56px;
+    color: #63656e;
+
+    .spinner {
+      display: flex;
+      width: 14px;
+      height: 14px;
+      margin-right: 4px;
+      font-size: 14px;
+      color: #c4c6cc;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  .bk-select-dropdown {
+    overflow: auto;
+
+    .bk-select-search {
+      position: relative;
+      padding: 0 5px;
+
+      &-icon {
+        position: absolute;
+        top: 50%;
+        left: 8px;
+        font-size: 16px;
+        color: #979ba5;
+        transform: translateY(-50%);
+        transform: translateY(-50%);
+      }
+
+      &-input {
+        width: 100%;
+        height: 32px;
+        padding: 0 10px 0 26px;
+        font-size: 12px;
+        cursor: text;
+        border: none;
+        border-bottom: 1px solid #dcdee5;
+        outline: 0;
+      }
+    }
+  }
+
+  .bk-select-extension {
+    display: flex;
+    height: 40px;
+    background-color: #fafbfd;
+    align-items: center;
+  }
+
+  .bk-select-options {
+    padding: 8px 0;
+  }
+
+  .bk-select-option {
+    position: relative;
+    height: 32px;
+    padding: 0 20px 0 12px;
+    line-height: 32px;
+    color: #63656e;
+    text-align: left;
+    cursor: pointer;
+    user-select: none;
+
+    .ellipsis();
+
+    &:hover {
+      color: #3a84ff;
+      background-color: #f5f7fa;
+    }
+
+    &.is-selected {
+      color: #3a84ff;
+
+      &.is-multiple::after {
+        position: absolute;
+        right: 12px;
+        font-size: 12px;
+        font-weight: 700;
+        content: '\2713';
+      }
+    }
+
+    &.is-disabled {
+      color: #c4c6cc;
+      cursor: not-allowed;
+      background-color: transparent;
+    }
+
+  }
+
+  .bk-option-group {
+    &-label {
+      height: 32px;
+      padding: 0 8px;
+      line-height: 32px;
+      color: #979ba5;
+      text-align: left;
+
+      &.collapsible {
+        cursor: pointer;
+      }
+    }
+
+    &.collapsible {
+      .bk-select-option {
+        padding-left: 40px;
+      }
+    }
+
+    .default-group-label {
+      display: flex;
+      user-select: none;
+      align-items: center;
+
+      &-icon {
+        display: flex;
+        width: 12px;
+        height: 12px;
+        margin-right: 8px;
+        font-size: 12px;
+        transition: all .1s;
+        align-items: center;
+        justify-content: center;
+
+        &.collapse {
+          transform: rotate(-90deg);
+        }
+      }
+    }
+
+    .bk-select-option {
+      padding-left: 24px;
+    }
+  }
+}

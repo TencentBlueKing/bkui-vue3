@@ -1,0 +1,27 @@
+@keyframes loading-scale-animate {
+  0% {
+    transform: scale(1);
+  }
+
+  100% {
+    transform: scale(.6);
+  }
+}
+
+@keyframes fade {
+  100% {
+    background-color: transparent;
+  }
+}
+
+.bk-fade-transtion {
+  .bk-fade-enter-active,
+  .bk-fade-leave-active {
+    transition: all .3s cubic-bezier(.55, 0, .1, 1);
+  }
+
+  .bk-fade-enter,
+  .bk-fade-leave-to {
+    opacity: 0;
+  }
+}

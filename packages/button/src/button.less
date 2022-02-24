@@ -1,0 +1,184 @@
+@import '@bkui-vue/styles/themes/themes.less';
+
+@btnMinWidth: 64px;
+@btnHeight: 32px;
+@btnPadding: 15px;
+@btnBorderRadius: 2px;
+
+@smallBtnMinWidth: 48px;
+@smallBtnHeight: 26px;
+@smallBtnPadding: 12px;
+
+@largeBtnMinWidth: 74px;
+@largeBtnHeight: 38px;
+@largeBtnPadding: 20px;
+
+@themeSelectors: primary, warning, success, danger;
+@sizeSelectors: small, large;
+
+.bk-button {
+  display: inline-block;
+  height: @btnHeight;
+  min-width: @btnMinWidth;
+  padding: 0 @btnPadding;
+  font-size: @font-size-medium;
+  color: @default-color;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  background-color: @white-color;
+  border: 1px solid @light-gray;
+  border-radius: @btnBorderRadius;
+  outline: none;
+  box-sizing: border-box;
+  transition: background-color ease .3s;
+  appearance: none;
+
+  
+  each(@themeSelectors, {
+    @color: '@{value}-color';
+    @hoverColor: 'button-@{value}-hover-color';
+    @activeColor: 'button-@{value}-active-color';
+    &.bk-button-@{value} {
+      background-color: @@color;
+      color: @white-color;
+      border-color: @@color;
+
+      &:hover {
+        background-color: @@hoverColor;
+        border-color: @@hoverColor;
+      }
+
+      &:active {
+        background-color: @@activeColor;
+        border-color: @@activeColor;
+      }
+
+      &.is-disabled {
+        background-color: @disable-color;
+        border-color: @disable-color;
+      }
+      &.is-outline {
+        color: @@color;
+        border-color: @@color;
+        background-color: @white-color;
+
+        &:hover {
+          background-color: @@hoverColor;
+          border-color: @@hoverColor;
+          color: @white-color;
+        }
+      }
+
+      &.is-text {
+        color: @@color;
+        background: none;
+        border: none;
+        &:hover {
+          color: @@hoverColor;
+        }
+      }
+    }
+
+    &.bk-button-hover-@{value} {
+      &:hover {
+        background-color: @@hoverColor;
+        border-color: @@hoverColor;
+        color: @white-color;
+      }
+    }
+  })
+
+  
+    each(@sizeSelectors, {
+    @sizeBtnMinWidth: '@{value}BtnMinWidth';
+    @sizeBtnHeight: '@{value}BtnHeight';
+    @sizeBtnPadding: '@{value}BtnPadding';
+    &.bk-button-@{value} {
+      min-width: @@sizeBtnMinWidth;
+      height: @@sizeBtnHeight;
+      padding: 0 @@sizeBtnPadding;
+    }
+  })
+;
+
+  &:hover {
+    border-color: @button-default-hover-border-color;
+  }
+
+  &:active {
+    color: @primary-color;
+    border-color: @primary-color;
+  }
+
+  &.is-disabled {
+    color: @disable-color;
+    cursor: auto;
+    border-color: @disable-color;
+  }
+
+  &.is-text {
+    font-size: @font-size-medium;
+    color: @default-color;
+    text-decoration: none;
+    cursor: pointer;
+    background: none;
+    border: none;
+    outline: none;
+  }}
+
+.bk-button-group {
+  display: inline-block;
+  font-size: 0;
+
+  each(@sizeSelectors, {
+    @sizeBtnMinWidth: '@{value}BtnMinWidth';
+    @sizeBtnHeight: '@{value}BtnHeight';
+    @sizeBtnPadding: '@{value}BtnPadding';
+    &.bk-button-group-@{value} {
+      .bk-button {
+        min-width: @@sizeBtnMinWidth;
+        height: @@sizeBtnHeight;
+        padding: 0 @@sizeBtnPadding;
+      }
+    }
+  })
+;
+
+  .bk-button {
+    height: @btnHeight;
+    min-width: @btnMinWidth;
+    margin: 0 0 0 -1px;
+    border-radius: 0;
+
+    &:not(.is-disabled) {
+      color: @default-color;
+      background-color: @white-color;
+      border-color: @light-gray;
+    }
+    
+    &:first-child {
+      border-radius: @btnBorderRadius 0 0 @btnBorderRadius;
+        
+    }
+
+    &:last-child {
+      border-radius: 0 @btnBorderRadius @btnBorderRadius 0;
+    }
+
+    &:only-child {
+      border-radius: @btnBorderRadius;
+    }
+
+    &:hover:not(.is-disabled),
+    &.is-selected:not(.is-disabled) {
+      position: relative;
+      z-index: 1;
+      color: @primary-color;
+      background-color: @white-color;
+      border-color: @primary-color;
+    }
+
+  }}

@@ -1,0 +1,53 @@
+@import '@bkui-vue/styles/themes/themes.less';
+
+.@{bk-prefix}-fixed-navbar {
+  position: fixed;
+  right: 10px;
+  width: 52px;
+  padding: 22px 14px;
+  background: @fixed-navbar-background;
+  border-radius: 26px;
+  opacity: 1;
+  box-shadow: 0px 2px 4px 0px @fixed-navbar-boxshadow-color;
+  box-sizing: border-box;
+
+  &.middle {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  &.bottom {
+    bottom: 10%;
+  }
+
+  &.top {
+    top: 10%;
+  }
+
+  .fixed-navbar-item {
+    display: flex;
+    color: @default-color;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    &:hover {
+      color: @primary-color;
+      cursor: pointer;
+    }
+
+    &:not(:last-of-type) {
+      margin-bottom: 25px;
+    }
+
+    .icon {
+      margin-bottom: 5px;
+      font-size: 17px;
+    }
+
+    .text {
+      font-size: 12px;
+    }
+  }
+
+}

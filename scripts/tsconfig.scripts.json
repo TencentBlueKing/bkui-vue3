@@ -1,0 +1,17 @@
+{
+  "ts-node": {
+    "transpileOnly": true
+  },
+  "compilerOptions": {
+    "target": "ES2019",
+    "outDir": "./dist",
+    "module": "commonjs",
+    "strict": true,
+    "declaration": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "lib": ["esnext", "dom"]
+  },
+  "include": ["build-component/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.js"]
+}

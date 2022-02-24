@@ -1,0 +1,100 @@
+/*
+* Tencent is pleased to support the open source community by making
+* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+*
+* Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+*
+* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+*
+* License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+*
+* ---------------------------------------------------
+* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+* the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+* THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+* IN THE SOFTWARE.
+*/
+import { defineComponent, PropType } from 'vue';
+import { IPropsTableItem } from '../typings';
+import CommonBox from './common-box';
+
+import './props-box.less';
+type ColumnKey = keyof IPropsTableItem;
+const  columnMap: Record<ColumnKey, any> = {
+  name: '参数',
+  desc: '说明',
+  type: '类型',
+  optional: '可选值',
+  default: '默认值',
+};
+export default defineComponent({
+  props: {
+    title: {
+      type: String,
+      default: '属性',
+    },
+    subtitle: {
+      type: String,
+      default: '用于多行文本的输入，输入框高度可以自动适配，或出现滚动条',
+    },
+    propsData: {
+      type: Array as PropType<IPropsTableItem[]>,
+      required: true,
+    },
+  },
+  setup() {
+    const getPropsCell = (key: keyof IPropsTableItem, item: IPropsTableItem) => {
+      let val = item[key] || '--';
+      switch (key) {
+        case 'optional':
+        case 'default':
+          val = val !== '--' && !Array.isArray(val) ? [val] : val;
+          return Array.isArray(val)
+            ?  <td key={key}>
+                <div class="table-cell">
+                  {
+                    val.length ? val.map(v => <span class="cell-item" key={v}>{v}</span>) : '--'
+                  }
+                </div>
+              </td>
+            : <td key={key}>{val}</td>;
+        default:
+          return <td key={key}>{val}</td>;
+      }
+    };
+    const getPropsRow = (item: IPropsTableItem) => <tr>
+        {
+          Object.keys(columnMap).map(key => getPropsCell(key as ColumnKey, item))
+        }
+      </tr>;
+    return {
+      getPropsRow,
+      getPropsCell,
+    };
+  },
+  render() {
+    return <CommonBox title={this.title} subtitle={this.subtitle}>
+        <table class="props-table">
+            <thead>
+              {
+                Object.values(columnMap).map(v => <th key={v}>{v}</th>)
+              }
+            </thead>
+            <tbody>
+              {
+                this.propsData.map(item => this.getPropsRow(item))
+              }
+            </tbody>
+        </table>
+    </CommonBox>;
+  },
+});

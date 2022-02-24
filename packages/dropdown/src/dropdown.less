@@ -1,0 +1,54 @@
+@import '@bkui-vue/styles/themes/themes.less';
+
+.@{bk-prefix}-dropdown {
+  display: inline-block;
+
+  .bk-dropdown-content {
+    display: none;
+    box-shadow: 0 2px 6px rgba(51,60,72,.1);
+
+    &[data-show] {
+      display: block;
+    }
+  }
+}
+
+.@{bk-prefix}-dropdown-menu {
+  min-width: 100%;
+  padding: 5px 0;
+  margin: 0;
+  background: #fff;
+  border: 1px solid  #dcdee5;
+  border-radius: 2px;
+  box-sizing: border-box;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #dde4eb;
+    border-radius: 20px;
+    box-shadow: inset 0 0 6px hsla(0,0%,80%,.3);
+  }
+}
+
+.@{bk-prefix}-dropdown-item {
+  display: block;
+  height: 32px;
+  padding: 0 16px;
+  font-size: 12px;
+  line-height: 33px;
+  color: #63656e;
+  white-space: nowrap;
+  list-style: none;
+  cursor: pointer;
+
+  &:hover {
+    color: #3a84ff;
+    background-color: #eaf3ff;
+  }
+}
+
+

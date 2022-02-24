@@ -1,0 +1,39 @@
+@import '@bkui-vue/styles/themes/themes.less';
+
+.bk-exception-wrapper {
+  position: relative;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  flex-direction: column;
+
+  .bk-exception-img {
+    display: flex;
+    width: 480px;
+    height: 240px;
+    align-items: center;
+    justify-content: center;
+
+    &.part-img {
+      width: 120px;
+      height: 100px;
+    }
+
+    .exception-image {
+      display: block;
+      height: 100%;
+      vertical-align: middle;
+      object-fit: contain;
+    }
+  }
+
+  .bk-exception-text {
+    font-size: 24px;
+    color: #63656e;
+    text-align: center;
+
+    &.part-text {
+      font-size: 14px;
+    }
+  }
+}

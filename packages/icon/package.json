@@ -1,0 +1,25 @@
+{
+  "name": "@bkui-vue/icon",
+  "version": "0.0.0",
+  "main": "src/index.tsx",
+  "license": "MIT",
+  "scripts": {
+    "build": "rimraf icons && ts-node --project=./tsconfig.json scripts/index.ts",
+    "test": "jest  --passWithNoTests",
+    "dev": "rimraf icons && TS_NODE_PROJECT=./tsconfig.json node --inspect-brk -r ts-node/register scripts/index.ts",
+    "lint": "eslint \"./src/**/*.{ts,tsx}\" --max-warnings=0"
+  },
+  "devDependencies": {
+    "ejs": "~3.1.6",
+    "rimraf": "~3.0.2",
+    "svgo": "1.3.2",
+    "svgpath": "~2.3.1",
+    "ts-node": "~10.0.0",
+    "typescript": "~4.3.2",
+    "vue": "~3.1.1",
+    "xml-js": "~1.6.11"
+  },
+  "peerDependencies": {
+    "vue": "3.2.x"
+  }
+}

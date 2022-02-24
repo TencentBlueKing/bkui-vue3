@@ -1,0 +1,37 @@
+{
+  "name": "bkui-vue",
+  "version": "0.0.1",
+  "description": "> TODO: description",
+  "homepage": "",
+  "license": "MIT",
+  "main": "dist/bkui-vue.js",
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@bkui-vue/alert": "0.0.0",
+    "@bkui-vue/backtop": "0.0.0",
+    "@bkui-vue/badge": "0.0.0",
+    "@bkui-vue/breadcrumb": "0.0.0",
+    "@bkui-vue/button": "^0.0.0",
+    "@bkui-vue/card": "0.0.0",
+    "@bkui-vue/checkbox": "^0.0.0",
+    "@bkui-vue/collapse": "0.0.0",
+    "@bkui-vue/dialog": "0.0.0",
+    "@bkui-vue/exception": "0.0.0",
+    "@bkui-vue/fixed-navbar": "0.0.0",
+    "@bkui-vue/icon": "0.0.0",
+    "@bkui-vue/input": "^0.0.0",
+    "@bkui-vue/link": "0.0.0",
+    "@bkui-vue/loading": "0.0.0",
+    "@bkui-vue/modal": "0.0.0",
+    "@bkui-vue/popover": "0.0.0",
+    "@bkui-vue/progress": "0.0.0",
+    "@bkui-vue/radio": "^0.0.0",
+    "@bkui-vue/select": "0.0.0",
+    "@bkui-vue/sideslider": "0.0.0",
+    "@bkui-vue/switcher": "0.0.0",
+    "@bkui-vue/table": "0.0.0",
+    "@bkui-vue/tag": "0.0.0"
+  }
+}

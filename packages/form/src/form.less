@@ -1,0 +1,50 @@
+.bk-form {
+  text-align: left;
+
+  .bk-form-item {
+    display: flex;
+    margin-bottom: 24px;
+  }
+
+  .bk-form-label {
+    width: 150px;
+    padding-right: 24px;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 32px;
+    color: #63656e;
+    text-align: right;
+  }
+
+  .bk-form-content {
+    position: relative;
+    line-height: 32px;
+  }
+
+  .bk-form-error {
+    position: absolute;
+    left: 0;
+    padding-top: 4px;
+    font-size: 12px;
+    line-height: 1;
+    color: #ea3636;
+    text-align: left;
+    
+  }
+
+  &--vertical {
+    .bk-form-item {
+      
+      flex-direction: column;
+    }
+
+    .bk-form-label {
+      width: auto;
+      text-align: left;
+    }
+
+    .bk-form-content {
+      text-align: left;
+    }
+  }
+}

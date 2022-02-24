@@ -1,0 +1,37 @@
+.bk-collapse-wrapper {
+  .bk-collapse-item {
+    text-align: left;
+
+    .bk-collapse-header {
+      position: relative;
+      height: 42px;
+      padding: 0 10px;
+      overflow: hidden;
+      font-size: 14px;
+      line-height: 42px;
+      color: #63656e;
+      text-overflow: ellipsis;
+      cursor: pointer;
+
+      .bk-collapse-icon {
+        position: absolute;
+        right: 10px;
+
+        svg {
+          font-size: 20px;
+        }
+      }
+    }
+
+    .bk-collapse-content {
+      display: none;
+      padding: 0 10px;
+      font-size: 13px;
+      color: #979ba5;
+
+      &.active {
+        display: block;
+      }
+    }
+  }
+}

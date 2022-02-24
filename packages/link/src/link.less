@@ -1,0 +1,74 @@
+@import '@bkui-vue/styles/themes/themes.less';
+
+.@{bk-prefix}-link {
+  font-size: @font-size-medium;
+  text-decoration: none;
+
+  &.is-disabled {
+    cursor: not-allowed;
+  }
+
+  &.has-underline {
+    text-decoration: underline;
+  }
+
+  &.default {
+    color: @default-color;
+
+    &.is-disabled {
+      color: @link-default-disabled-color;
+    }
+
+    &:hover {
+      color: @link-default-hover-color;
+    }
+  }
+
+  &.primary {
+    color: @primary-color;
+
+    &.is-disabled {
+      color: @link-primary-disabled-color;
+    }
+
+    &:hover {
+      color: @link-primary-hover-color;
+    }
+  }
+
+  &.success {
+    color: @success-color;
+
+    &.is-disabled {
+      color: @link-success-disabled-color;
+    }
+
+    &:hover {
+      color: @link-success-hover-color;
+    }
+  }
+
+  &.warning {
+    color: @warning-color;
+
+    &.is-disabled {
+      color: @link-warning-disabled-color;
+    }
+
+    &:hover {
+      color: @link-warning-hover-color;
+    }
+  }
+
+  &.danger {
+    color: @danger-color;
+
+    &:hover {
+      color: @link-danger-hover-color;
+    }
+
+    &.is-disabled {
+      color: @link-danger-disabled-color;
+    }
+  }
+}

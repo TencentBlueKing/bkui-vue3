@@ -1,0 +1,526 @@
+@import '@bkui-vue/styles/themes/themes.less';
+
+.bk-date-picker {
+  display: inline-block;
+  width: 261px;
+  line-height: normal;
+
+  &.long {
+    width: 342px;
+  }
+
+  &.medium-width {
+    width: 362px;
+  }
+
+  &.large-width {
+    width: 402px;
+  }
+}
+
+.bk-date-picker-rel {
+  position: relative;
+
+  .bk-date-picker-editor {
+    display: block;
+    width: 100%;
+    height: 32px;
+    padding: 0 10px 0 30px;
+    font-size: 12px;
+    line-height: 32px;
+    color: @default-color;
+    cursor: pointer;
+    border: 1px solid @light-gray;
+    border-radius: 2px;
+    outline: none;
+
+    &.only-bottom-border {
+      border-color: transparent transparent @light-gray transparent;
+
+      &:focus {
+        border-color: transparent transparent @primary-color transparent;
+        box-shadow: none;
+      }
+
+      &[disabled],
+      &.readonly {
+        border-color: transparent transparent @disable-color transparent;
+      }
+    }
+
+    &:focus {
+      border: 1px solid @primary-color;
+    }
+
+    &::placeholder {
+      color: @light-gray;
+    }
+
+    &[disabled] {
+      color: @light-gray;
+      cursor: not-allowed;
+      background-color: @date-picker-disabled-bg;
+      border-color: @light-gray;
+    }
+
+    &.readonly {
+      background-color: @date-picker-disabled-bg;
+      border-color: @light-gray;
+    }
+
+    &.medium-font {
+      font-size: 14px;
+    }
+
+    &.large-font {
+      font-size: 16px;
+    }
+  }
+
+  .clear-action {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    font-size: 14px;
+    color: @light-gray;
+    cursor: pointer;
+    transform: translateY(-50%);
+
+    &:hover {
+      color: @gray-color;
+    }
+  }
+
+  .icon-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    color: @light-gray;
+    cursor: pointer;
+    background-color: transparent;
+
+    &.disabled {
+      cursor: not-allowed;
+    }
+
+    i.icon-clock {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .picker-icon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 18px;
+      height: 18px;
+      transform: translate(-50%, -50%);
+    }
+  }
+}
+
+.bk-date-picker-dropdown {
+  position: absolute;
+  z-index: 900;
+  padding: 5px 0 0 0;
+  overflow: auto;
+  background-color: @date-picker-dropdown-bg;
+  border: 1px solid @disable-color;
+  border-radius: 2px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, .1);
+  box-sizing: border-box;
+}
+
+.bk-date-picker .bk-select-dropdown {
+  max-height: none;
+  padding: 0;
+  overflow: visible;
+}
+
+.bk-date-picker-footer-wrapper {
+  clear: both;
+  font-size: 14px;
+  color: #979ba5;
+  background-color: #fafbfd;
+  border-top: 1px solid #dcdee5;
+}
+
+.bk-date-picker-top-wrapper {
+  margin-top: -5px;
+  clear: both;
+  font-size: 14px;
+  color: #979ba5;
+}
+
+.bk-picker-panel-body-wrapper {
+  &.bk-picker-panel-with-sidebar {
+    padding-right: 140px;
+  }
+}
+
+.bk-picker-panel-sidebar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 140px;
+  padding: 12px 0;
+  overflow: auto;
+  font-size: 14px;
+  color: #3a84ff;
+  background-color: #fafbfd;
+  border-left: 1px solid #dcdee5;
+
+  .bk-picker-panel-shortcut {
+    /* &:nth-of-type(1) {
+          padding-top: 18px;
+      }
+      &:last-child {
+          padding-bottom: 18px;
+      } */
+    padding: 6px 21px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #e1ecff;
+    }
+  }
+}
+
+.bk-picker-panel-body {
+  float: left;
+}
+
+.bk-picker-confirm {
+  height: 42px;
+  padding: 0 20px;
+  clear: both;
+  font-size: 14px;
+  line-height: 41px;
+  text-align: right;
+  background-color: #fafbfd;
+  border-top: 1px solid #dcdee5;
+
+  a {
+    color: #979ba5;
+
+    &.confirm {
+      margin-left: 10px;
+      color: #3a84ff;
+    }
+
+    &[disabled] {
+      color: #c4c6cc;
+      cursor: not-allowed;
+    }
+  }
+
+  .bk-picker-confirm-time {
+    float: left;
+  }
+}
+
+.bk-date-picker-header {
+  height: 46px;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 46px;
+  color: #63656e;
+  text-align: center;
+  border-bottom: 1px solid #dcdee5;
+
+  .bk-date-picker-header-label {
+    cursor: pointer;
+
+    &:hover {
+      color: #3a84ff;
+    }
+  }
+
+  .up-to-now {
+    margin-left: 3px;
+    font-weight: 400;
+    cursor: pointer;
+
+    &.disabled {
+      color: #c4c6cc;
+      cursor: not-allowed;
+    }
+  }
+}
+
+
+.bk-date-picker-cells {
+  margin: 9px;
+  font-size: 12px;
+  color: #63656e;
+  white-space: normal;
+
+  span {
+    display: inline-block;
+    width: 34px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+
+    em {
+      display: inline-block;
+      width: 34px;
+      height: 32px;
+
+      font-style: normal;
+      line-height: 32px;
+
+      cursor: pointer;
+    }
+  }
+
+  .bk-date-picker-cells-header {
+    text-align: center;
+
+    span {
+      width: 28px;
+      height: 26px;
+      margin: 3px;
+      line-height: 26px;
+      color: #63656e;
+      text-align: center;
+      cursor: default;
+    }
+  }
+}
+
+.bk-date-picker-cells-cell:hover em {
+  /* background-color: #e1ecff; */
+  background-color: #f0f1f5;
+}
+
+.bk-date-picker-cells-focused em {
+  color: #3a84ff;
+  box-shadow: 0 0 0 1px #a3c5fd inset;
+}
+
+.bk-date-picker-cells-cell-prev-month em,
+.bk-date-picker-cells-cell-next-month em {
+  color: #c4c6cc;
+}
+
+.bk-date-picker-cells-cell-prev-month:hover em,
+.bk-date-picker-cells-cell-next-month:hover em {
+  background: transparent;
+}
+
+span.bk-date-picker-cells-cell-week-label,
+span.bk-date-picker-cells-cell-week-label:hover,
+span.bk-date-picker-cells-cell-disabled,
+span.bk-date-picker-cells-cell-disabled:hover {
+  color: #c4c6cc;
+  cursor: not-allowed;
+}
+
+span.bk-date-picker-cells-cell-week-label em,
+span.bk-date-picker-cells-cell-week-label:hover em,
+span.bk-date-picker-cells-cell-disabled em,
+span.bk-date-picker-cells-cell-disabled:hover em {
+  color: inherit;
+  cursor: not-allowed;
+  background: inherit;
+}
+
+span.bk-date-picker-cells-cell-disabled,
+span.bk-date-picker-cells-cell-disabled:hover {
+  background-color: #f0f1f5;
+}
+
+.bk-date-picker-cells-cell-today em {
+  position: relative;
+  color: #3a84ff;
+  box-shadow: 0 0 0 1px #a3c5fd inset;
+}
+
+.bk-date-picker-cells-cell-range {
+  position: relative;
+
+  &:before {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: block;
+    background: #e1ecff;
+    border: 0;
+    border-radius: 0;
+    content: '';
+  }
+
+  em {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+.bk-date-picker-cells-cell-selected em,
+.bk-date-picker-cells-cell-selected:hover em {
+  color: #fff;
+  background-color: #3a84ff;
+  box-shadow: 0 0 0 1px #3a84ff inset;
+}
+
+span.bk-date-picker-cells-cell-disabled.bk-date-picker-cells-cell-selected em {
+  color: #f7f7f7;
+  background: #c4c6cc;
+}
+
+.bk-date-picker-cells-cell-today.bk-date-picker-cells-cell-selected em:after {
+  background: #fff;
+}
+
+.bk-date-picker-cells-cell-today.bk-date-picker-cells-cell-selected em,
+.bk-date-picker-cells-cell-today.bk-date-picker-cells-cell-selected em:hover {
+  box-shadow: 0 0 0 1px #3a84ff inset;
+}
+
+.bk-date-picker-cells-year,
+.bk-date-picker-cells-month {
+  margin-top: 7px;
+
+  span {
+    width: 36px;
+    height: 32px;
+    margin: 10px 12px;
+    line-height: 32px;
+    text-align: center;
+    border-radius: 3px;
+
+    em {
+      width: 36px;
+      height: 32px;
+      line-height: 32px;
+      text-align: center;
+    }
+  }
+}
+
+.bk-picker-panel-icon-btn {
+  display: inline-block;
+  width: 20px;
+  height: 46px;
+  line-height: 44px;
+  color: #979ba5;
+  text-align: center;
+  cursor: pointer;
+  transition: color .2s ease-in-out;
+}
+
+.bk-picker-panel-icon-btn:hover {
+  color: #2d8cf0;
+}
+
+.bk-picker-panel-icon-btn i {
+  font-size: 20px;
+}
+
+.bk-date-picker-prev-btn {
+  float: left;
+}
+
+.bk-date-picker-prev-btn-arrow-double {
+  margin-left: 10px;
+}
+
+.bk-date-picker-prev-btn-arrow-double i:after {
+  margin-left: -8px;
+}
+
+.bk-date-picker-next-btn {
+  float: right;
+}
+
+.bk-date-picker-next-btn-arrow-double {
+  margin-right: 10px;
+}
+
+.bk-date-picker-next-btn-arrow-double i:after {
+  margin-left: -8px;
+}
+
+.bk-date-picker-with-range .bk-picker-panel-body {
+  min-width: 532px;
+}
+
+.bk-date-picker-with-range .bk-picker-panel-content {
+  float: left;
+}
+
+.bk-date-picker-with-range .bk-picker-cells-show-week-numbers {
+  min-width: 492px;
+}
+
+.bk-date-picker-transfer {
+  z-index: 1060;
+  max-height: none;
+}
+
+
+.bk-fade-down-transition-enter-from,
+.bk-fade-down-transition-leave-to {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+.bk-fade-down-transition-enter-to,
+.bk-fade-down-transition-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.bk-fade-down-transition-enter-active {
+  transition: transform .3s cubic-bezier(.23, 1, .32, 1), opacity .3s cubic-bezier(.23, 1, .32, 1);
+}
+
+.bk-fade-down-transition-leave-active {
+  transition: transform .3s cubic-bezier(.23, 1, .32, 1), opacity .3s cubic-bezier(.23, 1, .32, 1);
+}
+
+// .bk-zoom-in-top-enter-active,
+// .bk-zoom-in-top-leave-active {
+//   opacity: 1;
+//   transform: scaleY(1);
+//   transition: transform .3s cubic-bezier(.23, 1, .32, 1),opacity .3s cubic-bezier(.23, 1, .32, 1);
+//   transform-origin: center top
+// }
+
+// .bk-zoom-in-top-enter-active[data-popper-placement^=top],
+// .bk-zoom-in-top-leave-active[data-popper-placement^=top] {
+//   transform-origin: center bottom
+// }
+
+// .bk-zoom-in-top-enter-from,
+// .bk-zoom-in-top-leave-active {
+//   opacity: 0;
+//   transform: scaleY(0)
+// }
+
+
+// .bk-zoom-in-bottom-enter-active,
+// .bk-zoom-in-bottom-leave-active {
+//   opacity: 1;
+//   transform: scaleY(1);
+//   transition: transform .3s cubic-bezier(.23, 1, .32, 1), opacity .3s cubic-bezier(.23, 1, .32, 1);
+//   transform-origin: center bottom;
+// }
+
+// .bk-zoom-in-bottom-enter-from,
+// .bk-zoom-in-bottom-leave-active {
+//   opacity: 0;
+//   transform: scaleY(0)
+// }
