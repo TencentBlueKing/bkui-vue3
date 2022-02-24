@@ -40,7 +40,7 @@ yarn lint
 
 ## GIT提交规范
 
-为了规范commit-msg格式，建议使用yarn cz自动生成commit-msg, 不同的提交标记以规范化区分提交内容：
+为了规范commit-msg格式，建议使用`yarn cz`自动生成commit-msg, 不同的提交标记以规范化区分提交内容：
 ```
 
 <标记>(<组件名称>): [提交的概要注释] issue #[123]
