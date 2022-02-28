@@ -1,4 +1,4 @@
-Contributing to bkui-vue2
+Contributing to bkui-vue3
 
 我们欢迎 report Issues 或者 pull requests。 在贡献代码之前请阅读以下指引。
 
@@ -13,7 +13,7 @@ Contributing to bkui-vue2
 
 分支管理
 Pull Requests
-我们欢迎大家贡献代码来使我们的 bkui-vue2 更加强大，代码团队会监控所有的 pull request, 我们会做相应的代码检查和测试，测试通过之后我们就会接纳 PR ，但是不会立即合并到 master 分支。
+我们欢迎大家贡献代码来使我们的 bkui-vue3 更加强大，代码团队会监控所有的 pull request, 我们会做相应的代码检查和测试，测试通过之后我们就会接纳 PR ，但是不会立即合并到 master 分支。
 
 在完成一个 pr 之前请做一下确认:
 
@@ -24,4 +24,4 @@ Pull Requests
 做充分的测试。
 然后，你可以提交你的代码到 dev 或者 hotfix 分支。
 代码协议
-MIT LICENSE 为 bkui-vue2 的开源协议，你贡献的代码也会受此协议保护。
+MIT LICENSE 为 bkui-vue3 的开源协议，你贡献的代码也会受此协议保护。
