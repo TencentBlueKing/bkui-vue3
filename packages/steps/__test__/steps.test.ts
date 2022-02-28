@@ -67,6 +67,7 @@ describe('Steps.tsx', () => {
   it('test theme', async () => {
     const themes = ['primary', 'success', 'warning', 'danger'];
     const { validator } = Steps.props.theme;
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     themes.forEach(async (theme: string) => {
       const wrapper = await mount(Steps, {
         props: {
@@ -89,6 +90,7 @@ describe('Steps.tsx', () => {
   it('test steps status', async () => {
     const status = ['error', 'loading'];
     const { validator } = Steps.props.status;
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     status.forEach(async (statu: string) => {
       const wrapper = await mount(Steps, {
         props: {

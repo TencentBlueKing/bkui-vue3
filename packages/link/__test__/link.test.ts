@@ -79,6 +79,7 @@ describe('Link.tsx', () => {
   it('test link theme', async () => {
     const themes = ['default', 'primary', 'success', 'warning', 'danger'];
     const { validator } = Link.props.theme;
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     themes.forEach(async (theme: string) => {
       const wrapper = await mount(Link, {
         slots: {
