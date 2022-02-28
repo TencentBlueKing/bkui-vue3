@@ -40,6 +40,7 @@ describe('FixedNavbar.tsx', () => {
   it('test position props', async () => {
     const positions = ['middle', 'top', 'bottom'];
     const { validator } = FixedNavbar.props.position;
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     positions.forEach(async (position) => {
       const wrapper = await mount(FixedNavbar, {
         props: {
