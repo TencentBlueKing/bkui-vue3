@@ -46,3 +46,4 @@ commitlint.config.js
 index.d.ts
 !lib/**/index.d.ts
 index.html
+docs/

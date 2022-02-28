@@ -93,6 +93,7 @@ export default defineComponent({
       try {
         if (props.controllable && index !== props.curStep) {
           if (typeof props.beforeChange === 'function') {
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
             await new Promise(async (resolve, reject) => {
               const confirmed = await props.beforeChange(index);
               confirmed ? resolve(confirmed) : reject(confirmed);
