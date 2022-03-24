@@ -224,7 +224,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/badge',
     name: 'badge',
-    component: () => import('../views/badge'),
+    component: () => import('../views/badge/badge'),
     meta: {
       group: NavGroupMeta.Data,
       navName: 'Badge 标记',

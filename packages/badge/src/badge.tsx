@@ -34,7 +34,7 @@ export default defineComponent({
     /** badge theme */
     theme: PropTypes.string.def('primary'),
     /** Number to show in badge */
-    count: PropTypes.number,
+    count: PropTypes.number.def(1),
     position: PropTypes.string.def('top-right'),
     radius: PropTypes.string,
     valLength: PropTypes.number,
@@ -43,29 +43,61 @@ export default defineComponent({
     /** Whether to show red dots with no content */
     dot: PropTypes.bool.def(false),
     visible: PropTypes.bool.def(false),
+    /** 外部设置的 class name */
+    extCls: PropTypes.string,
   },
-  setup(props) {
+  emits: ['hover', 'leave'],
+  setup(props, { emit }) {
     const numberCount = computed(() => (
       (props.count as number) > (props.overflowCount as number)
         ? `${props.overflowCount}+`
         : props.count
     ));
+    const radiusStyle = computed(() => {
+      const isRadius = props.radius !== undefined && /^\d+(%|px|em|rem|vh|vw)?$/.test(props.radius);
+      const radiusValue = (isRadius && /^\d+$/.test(props.radius) && `${props.radius}px`) || props.radius;
+      return { borderRadius: radiusValue };
+    });
+    const handleHover = () => {
+      /**
+       * Hover event.
+       * @event hover
+       */
+      emit('hover');
+    };
+    const handleLeave = () => {
+      /**
+       * Leave event.
+       * @event Leave
+       */
+      emit('leave');
+    };
     return {
       numberCount,
+      handleHover,
+      handleLeave,
+      radiusStyle,
     };
   },
   render() {
+    const wrapperClasses = classes({
+      'bk-badge-main': true,
+    }, this.$props.extCls);
     const badgeClass = classes({
-      [`bk-badge pinned bk-${this.$props.theme}`]: !!this.$props.theme,
+      [`bk-badge bk-${this.$props.theme}`]: !!this.$props.theme,
+      ['pinned ']: this.$slots.default,
       ['dot']: this.$props.dot,
-      [`${this.$props.position}`]: this.$props.position,
+      [`${this.$props.position}`]: this.$slots.default,
       ['bk-badge-icon is-icon']: this.$slots.icon,
     }, '');
     const number = !this.$props.dot ? <span>{this.numberCount}</span> : '';
-    return <div class="bk-badge-main">
-      <div>{this.$slots.default?.() ?? ''}</div>
+
+    return <div class={wrapperClasses}>
+      {this.$slots.default?.() ?? ''}
       {
-        !this.$props.visible ? <span class={badgeClass}>
+        !this.$props.visible ? <span class={badgeClass} style={this.radiusStyle}
+          onMouseenter={this.handleHover}
+          onMouseleave={this.handleLeave}>
           {this.$slots.icon?.() ?? number}
         </span> : ''
       }
