@@ -14,12 +14,12 @@
     border-radius: 4px;
     box-sizing: border-box;
 
-    &[data-theme='dark'] {
+    &[data-theme^='dark'] {
       color: #fff;
       background: #26323d;
     }
 
-    &[data-theme='light'] {
+    &[data-theme^='light'] {
       color: #26323d;
       background-color: #fff;
       box-shadow: 0 0 6px 0 #dcdee5;
@@ -60,11 +60,11 @@
     }
 
     &[data-popper-placement^='left'] > .arrow {
-      right: 0;
+      right: -4px;
     }
 
     &[data-popper-placement^='right'] > .arrow {
-      left: -8px;
+      left: -4px;
     }
   }
 }

@@ -79,8 +79,10 @@ export class BKPopover {
 
   /** hide延时 */
   private delay = 50;
+
   /** 是否进入popperRefer */
   private isInnerPopper = false;
+
   /** 是否为禁用状态 */
   private disabled = false;
 
@@ -111,6 +113,14 @@ export class BKPopover {
   // for high-frequency updates.
   public update() {
     this.instance?.update();
+  }
+
+  public updateOptions(options: IOptions) {
+    this.initOptions = this.initDefaultOptions(options);
+    this.isShow = !!this.initOptions?.isShow;
+    this.trigger = this.initOptions.trigger;
+    this.disabled = this.initOptions.disabled;
+    this.setOptions(this.initOptions);
   }
 
   // Updates the options of the instance.
