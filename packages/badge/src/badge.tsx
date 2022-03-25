@@ -34,10 +34,10 @@ export default defineComponent({
     /** badge theme */
     theme: PropTypes.string.def('primary'),
     /** Number to show in badge */
-    count: PropTypes.number.def(1),
+    count: PropTypes.oneOfType([String, Number]).def(1),
     position: PropTypes.string.def('top-right'),
     radius: PropTypes.string,
-    valLength: PropTypes.number,
+    valLength: PropTypes.number.def(3),
     /** Show capped numeric value */
     overflowCount: PropTypes.number.def(99),
     /** Whether to show red dots with no content */
@@ -48,11 +48,27 @@ export default defineComponent({
   },
   emits: ['hover', 'leave'],
   setup(props, { emit }) {
-    const numberCount = computed(() => (
-      (props.count as number) > (props.overflowCount as number)
-        ? `${props.overflowCount}+`
-        : props.count
-    ));
+    const numberCount = computed(() => {
+      if (typeof props.count === 'string') {
+        let valueText = props.count;
+        valueText += '';
+        const output = [];
+        let count = 0;
+        valueText.split('').forEach((char) => {
+          if (count < Number(props.valLength)) {
+            count += /[\u4e00-\u9fa5]/.test(char) ? 2 : 1;
+            output.push(char);
+          }
+        });
+
+        return output.join('');
+      }
+      return (
+        (props.count as number) > (props.overflowCount as number)
+          ? `${props.overflowCount}+`
+          : props.count
+      );
+    });
     const radiusStyle = computed(() => {
       const isRadius = props.radius !== undefined && /^\d+(%|px|em|rem|vh|vw)?$/.test(props.radius);
       const radiusValue = (isRadius && /^\d+$/.test(props.radius) && `${props.radius}px`) || props.radius;

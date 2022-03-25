@@ -212,7 +212,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/card',
     name: 'card',
-    component: () => import('../views/card'),
+    component: () => import('../views/card/card'),
     meta: {
       group: NavGroupMeta.Feedback,
       navName: 'Card 卡片',

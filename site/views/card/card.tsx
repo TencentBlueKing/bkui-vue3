@@ -31,73 +31,73 @@ import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import { IPropsTableItem } from '../../typings';
 
-import Badge from './badge.vue';
-import BadgeDemo from './badge-demo.vue';
-import BadgeDot from './badge-dot.vue';
+import CardDemo from './card-demo.vue';
+import CardEdit from './card-edit.vue';
 const menuPropsJson: IPropsTableItem[] = [
   {
-    name: 'theme',
+    name: 'title',
     type: 'String',
-    default: 'primary',
-    desc: '组件的主题色',
-    optional: ['primary', 'info', 'warning', 'danger', 'success'],
+    default: '',
+    desc: '卡片标题',
+    optional: [],
   },
   {
-    name: 'count',
-    type: 'String | Number',
-    default: 1,
-    desc: '组件显示的值',
-    optional: [],
+    name: 'is-collapse',
+    type: 'Boolean',
+    default: 'false',
+    desc: '是否支持展开&收起 ',
+    optional: ['true', 'false'],
+  },
+  {
+    name: 'collapse-status',
+    type: 'Boolean',
+    default: 'true',
+    desc: '	展开 & 收起状态',
+    optional: ['true', 'false'],
   },
   {
     name: 'position',
     type: 'String',
-    default: 'top-right',
-    desc: '	组件相对于其兄弟组件的位置',
-    optional: ['top-right', 'bottom-right', 'bottom-left', 'top-left'],
+    default: 'left',
+    desc: '展开icon的显示位置',
+    optional: ['left', 'right'],
   },
   {
-    name: 'radius',
-    type: 'String | Number',
-    default: '18px',
-    desc: '配置自定义弧度，以实现多种形状 ',
-    optional: [],
-  },
-  {
-    name: 'valLength',
-    type: 'Number',
-    default: 3,
-    desc: '配置val字符显示长度，最大值建议英文不超过3个字母，中文不超过2个汉字 ',
-    optional: [],
-  },
-  {
-    name: 'overflowCount',
-    type: 'Number',
-    default: '18px',
-    desc: '组件显示的最大值，当 count 超过 overflowCount，显示数字 +；仅当设置了 Number 类型的 count 值时生效',
-    optional: [],
-  },
-  {
-    name: 'dot',
+    name: 'showHead',
     type: 'Boolean',
-    default: false,
-    desc: '是否仅显示小圆点；当设置 dot 为 true 时，count, icon, overflowCount 均会被忽略',
-    optional: [],
+    default: 'true',
+    desc: '是否显示头部',
+    optional: ['true', 'false'],
   },
   {
-    name: 'visible',
+    name: 'showFoot',
     type: 'Boolean',
-    default: false,
-    desc: '是否显示组件',
-    optional: [],
+    default: 'false',
+    desc: '是否显示底部',
+    optional: ['true', 'false'],
   },
   {
-    name: 'extCls',
-    type: 'String',
-    default: '',
-    desc: '配置自定义样式类名，传入的类会被加在组件最外层的 DOM `.bk-badge-main` 上',
-    optional: [],
+    name: 'isEdit',
+    type: 'Boolean',
+    default: 'false',
+    desc: '是否启用编辑标题功能',
+    optional: ['true', 'false'],
   },
+  {
+    name: 'border',
+    type: 'Boolean',
+    default: 'false',
+    desc: '是否显示边框',
+    optional: ['true', 'false'],
+  },
+  {
+    name: 'disableHeaderStyle',
+    type: 'Boolean',
+    default: 'false',
+    desc: '是否禁用Header的line-height默认样式',
+    optional: ['true', 'false'],
+  },
+
 ];
 
 export default defineComponent({
@@ -109,32 +109,24 @@ export default defineComponent({
     return (
       <div>
         <DemoTitle
-          name="Badge"
-          desc="Badge 组件， 可以出现在任意 DOM 节点角上的数字或状态标记。" />
+          name="Card"
+          desc="Card 卡片是一种容器，可以将信息聚合展示。" />
         <DemoBox
           title="基础用法"
           subtitle=""
-          desc="用默认配置初始化组件"
-          componentName="badge"
-          demoName="badge-demo">
-            <BadgeDemo/>
+          desc="通过配置footer插槽，自定义 Card 中底部内容 的展示。同理使用header插槽， 可自定义 Card 中顶部内容展示"
+          componentName="card"
+          demoName="card-demo">
+            <CardDemo />
+        </DemoBox>
+          <DemoBox
+          title="编辑标题"
+          subtitle=""
+          desc="通过配置isEdit属性为true即可开启标题功能，enter或失焦保存"
+          componentName="card"
+          demoName="card-edit">
+            <CardEdit />
           </DemoBox>
-        <DemoBox
-          title="不包裹任何元素，独立使用"
-          subtitle=""
-          desc="可在不包裹任何元素情况下，独立使用 badge"
-          componentName="badge"
-          demoName="badge">
-            <Badge />
-        </DemoBox>
-        <DemoBox
-          title="无内容红点"
-          subtitle=""
-          desc="配置参数 dot"
-          componentName="badge"
-          demoName="badge-dot">
-            <BadgeDot/>
-        </DemoBox>
         <PropsBox propsData={menuPropsJson}/>
       </div>
     );
