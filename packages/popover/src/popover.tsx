@@ -66,8 +66,8 @@ export default defineComponent({
       }
     };
 
-    watch(() => props.isShow, () => {
-      handleManualShow(true);
+    watch(() => props.isShow, (val: any) => {
+      handleManualShow(val);
     }, { immediate: true });
 
     const handleClose: any = () => {
@@ -113,7 +113,7 @@ export default defineComponent({
       isPopInstance = true;
 
       // 初次渲染默认isShow 为True时，触发
-      handleManualShow(isShow);
+      handleManualShow(isShow.value);
     };
 
     const update = () => {
