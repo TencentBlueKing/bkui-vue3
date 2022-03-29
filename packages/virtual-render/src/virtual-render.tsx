@@ -33,11 +33,12 @@ import { defineComponent, nextTick, reactive, ref, SetupContext, watch, h, resol
 import { virtualRenderProps, VirtualRenderProps } from './props';
 import virtualRender, { computedVirtualIndex } from './v-virtual-render';
 export default defineComponent({
-  name: 'bk-virtual-render',
+  name: 'VirtualRender',
   directives: {
     bkVirtualRender: virtualRender,
   },
   props: virtualRenderProps,
+  emits: ['content-scroll'],
   setup(props: VirtualRenderProps, ctx: SetupContext) {
     const { renderAs, contentAs } = props;
 
