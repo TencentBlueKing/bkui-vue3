@@ -36,7 +36,7 @@ function getMatchedIndex(
   maxCount: number,
   maxHeight: number,
   groupItemCount: number,
-  callback: (index: number, items: number[]) => 0
+  callback: (index: number, items: number[]) => 0,
 ) {
   let startIndex = 0;
   let height = 0;
@@ -94,25 +94,35 @@ function visibleRender(e, wrapper, binding) {
     handleScrollCallback,
     { scrollTop, startIndex, endIndex, groupItemCount, count },
     wrapper,
-    e
+    e,
   );
 }
 
-const throttledRender = throttle((e, wrapper, binding) => visibleRender(e, wrapper, binding), 60);
+const throttledRender = (delay = 60) => throttle((e, wrapper, binding) => visibleRender(e, wrapper, binding), delay);
+let cachedThrottle = null;
+const executeThrottledRender = (e, wrapper, binding, delay = 60) => {
+  if (!cachedThrottle) {
+    cachedThrottle = throttledRender(delay);
+  }
 
+  if (typeof cachedThrottle === 'function') {
+    cachedThrottle.call(this, e, wrapper, binding);
+  }
+};
 export default {
   mounted(el, binding) {
     const wrapper = el.parentNode;
-
+    const { throttleDelay } = binding.value;
     wrapper.addEventListener('scroll', (e: MouseEvent) => {
       // @ts-ignore:next-line
-      throttledRender(e, wrapper, binding);
+      executeThrottledRender(e, wrapper, binding, throttleDelay);
     });
   },
   updated(el, binding) {
     const wrapper = el.parentNode;
+    const { throttleDelay } = binding.value;
     // @ts-ignore:next-line
-    throttledRender(null, wrapper, binding);
+    executeThrottledRender(null, wrapper, binding, throttleDelay);
   },
   unbind(el) {
     if (el) {

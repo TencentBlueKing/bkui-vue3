@@ -87,12 +87,20 @@ export const resolveWidth = (propWidth: string | number) => resolveNumberOrStrin
  * 解析可为数字或者字符串设置的样式配置
  * @param val 配置值
  * @param defaultValue 默认值
+ * @param offset 偏移量
  * @returns 标准化px string
  */
-export const resolveNumberOrStringToPix = (val: string | number, defaultValue: string | number = '100%') => {
+export const resolveNumberOrStringToPix = (val: string | number, defaultValue: string | number = '100%', offset = null) => {
+  let target: string | number = '';
   if (/^auto|null|undefined$/ig.test(`${val}`)) {
-    return defaultValue;
+    target = defaultValue;
+  } else {
+    target = (/^\d+\.?\d+$/.test(`${val}`) ? `${val}px` : val);
   }
 
-  return (/^\d+\.?\d+$/.test(`${val}`) ? `${val}px` : val);
+  if (offset) {
+    target = `calc(${target} - ${offset})`;
+  }
+
+  return target;
 };

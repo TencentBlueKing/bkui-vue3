@@ -33,7 +33,7 @@ import { defineComponent, nextTick, reactive, ref, SetupContext, watch, h, resol
 import { virtualRenderProps, VirtualRenderProps } from './props';
 import virtualRender, { computedVirtualIndex } from './v-virtual-render';
 export default defineComponent({
-  name: 'bk-virtual-render',
+  name: 'BkVirtualRender',
   directives: {
     bkVirtualRender: virtualRender,
   },
@@ -212,6 +212,7 @@ export default defineComponent({
       lineHeight: props.lineHeight,
       handleScrollCallback,
       pagination,
+      throttleDelay: props.throttleDelay,
     };
     return () => h(
       // @ts-ignore:next-line
