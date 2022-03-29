@@ -32,17 +32,11 @@ import { terser } from 'rollup-plugin-terser';
 import jsx from 'acorn-jsx';
 import json from '@rollup/plugin-json';
 import svg from 'rollup-plugin-svg';
-// import { parse, resolve as r } from 'path';
-
 export const rollupBuildScript = async (url: string, outPath: string, globals: rollup.GlobalsOption) => {
   const extensions = ['.ts', '.js', '.tsx'];
-  // console.info(r(parse(url).dir, '../tsconfig.json'), '=====');
   const bundle = await rollup.rollup({
     input: url,
     external(id) {
-      // if (url === '/root/Workspace/tencent-git/bkui-vue3/packages/styles/src/index.ts') {
-      //   console.error('dddddddddddddddddddddddddddddd', url, id);
-      // }
       return /^vue/.test(id) || /^@bkui-vue/.test(id) || /reset\.less$/.test(id);
     },
     acornInjectPlugins: [jsx()],
@@ -50,12 +44,9 @@ export const rollupBuildScript = async (url: string, outPath: string, globals: r
       svg(),
       json(),
       typescript({
-        // tsconfig: r(parse(url).dir, '../tsconfig.json'),
-        // useTsconfigDeclarationDir: true,
         tsconfigOverride: {
           compilerOptions: {
             declaration: false,
-            // declarationDir: parse(outPath).dir,
           },
         },
       }),
@@ -85,12 +76,11 @@ export const rollupBuildScript = async (url: string, outPath: string, globals: r
     globals,
     paths(id: string) {
       if (/^@bkui-vue/.test(id)) {
-        if (id.match(/^@bkui-vue\/icon/)) {
-          return id;
-        }
+        // if (id.match(/^@bkui-vue\/icon/)) {
+        //   return id;
+        // }
         return id.replace('@bkui-vue', '..');
       }
-      // id: /root/Workspace/tencent-git/bkui-vue3/packages/styles/src/reset.less
       if (/reset\.less$/.test(id)) {
         return './reset.less';
       }
