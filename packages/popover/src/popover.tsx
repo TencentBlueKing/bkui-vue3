@@ -42,7 +42,6 @@ export default defineComponent({
     let popoverInstance = Object.create(null);
     const { width, height, theme, trigger, isShow, placement, modifiers, arrow, content } = toRefs(props);
 
-    const refIsShow = ref(false);
     const reference = ref();
     const refContent = ref();
     const compStyle = computed(() => ({
@@ -72,15 +71,10 @@ export default defineComponent({
 
     const handleClose: any = () => {
       ctx.emit('update:isShow', false);
-      nextTick(() => {
-        refIsShow.value = false;
-      });
     };
 
     const handleShown: any = () => {
-      nextTick(() => {
-        refIsShow.value = true;
-      });
+      ctx.emit('update:isShow', true);
     };
 
     const getOptions = () => ({
