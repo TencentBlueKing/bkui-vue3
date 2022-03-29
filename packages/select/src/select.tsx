@@ -287,7 +287,7 @@ export default defineComponent({
     return (
       <div class={this.selectClass} v-clickoutside={this.hidePopover}>
         <BKPopover
-          theme="light weqweqwe"
+          theme="light"
           trigger="manual"
           width={this.popperWidth}
           arrow={false}
