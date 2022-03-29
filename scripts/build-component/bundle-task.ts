@@ -88,6 +88,13 @@ export const compileFile = (url: string): ITaskItem => {
       newPath,
     };
   }
+  if (/\/icon\/icons\/[^.]+\.(js|ts|jsx|tsx)$/.test(url)) {
+    return {
+      type: 'script',
+      url,
+      newPath: url.replace(new RegExp(`${compileDirUrl}/([^/]+)/icons`), `${libDirUrl}/$1`),
+    };
+  }
   return;
 };
 
@@ -197,7 +204,7 @@ class CompileTask {
       await this.getRollupGlobals();
     }
     const spinner = ora(`building script ${url} \n`).start();
-    if (basename(url).replace(extname(url), '') === 'index') {
+    if (basename(url).replace(extname(url), '') === 'index' || /\/icon\/icons\//.test(url)) {
       rollupBuildScript(url, newPath.replace(/\.(js|ts|jsx|tsx)$/, '.js'), this.globals)
         .catch(() => spinner.fail())
         .then(() => spinner.succeed())
