@@ -42,7 +42,6 @@ export default defineComponent({
     let popoverInstance = Object.create(null);
     const { width, height, theme, trigger, isShow, placement, modifiers, arrow, content } = toRefs(props);
 
-    const refIsShow = ref(false);
     const reference = ref();
     const refContent = ref();
     const compStyle = computed(() => ({
@@ -66,21 +65,16 @@ export default defineComponent({
       }
     };
 
-    watch(() => props.isShow, () => {
-      handleManualShow(true);
+    watch(() => props.isShow, (val: any) => {
+      handleManualShow(val);
     }, { immediate: true });
 
     const handleClose: any = () => {
       ctx.emit('update:isShow', false);
-      nextTick(() => {
-        refIsShow.value = false;
-      });
     };
 
     const handleShown: any = () => {
-      nextTick(() => {
-        refIsShow.value = true;
-      });
+      ctx.emit('update:isShow', true);
     };
 
     const getOptions = () => ({
@@ -113,7 +107,7 @@ export default defineComponent({
       isPopInstance = true;
 
       // 初次渲染默认isShow 为True时，触发
-      handleManualShow(isShow);
+      handleManualShow(isShow.value);
     };
 
     const update = () => {
