@@ -24,16 +24,31 @@
  * IN THE SOFTWARE.
  */
 
-import { ExtractPropTypes } from 'vue';
+import { ExtractPropTypes, PropType } from 'vue';
 import { PropTypes, OnFirstUpdateFnType } from '@bkui-vue/shared';
+const placements = ['auto', 'auto-start', 'auto-end', 'top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end', 'right', 'right-start', 'right-end', 'left', 'left-start', 'left-end'];
 export const PopoverProps = {
   isShow: PropTypes.bool,
   width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
   height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
   content: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def(''),
-  placement: PropTypes.placement().def('top'),
+
+  /**
+   * 动画展示方式
+   */
+  transition: PropTypes.string.def('fade-in'),
+
+  /**
+   * 展示位置
+   */
+  placement: PropTypes.placement(placements).def('top'),
+
   // 'dark', 'light'
   theme: PropTypes.string.def('light'),
+
+  /**
+   * handleFirstUpdate
+   */
   handleFirstUpdate: {
     type: Function as PropType<OnFirstUpdateFnType>,
     default: () => {},
@@ -45,8 +60,10 @@ export const PopoverProps = {
    * manual： 通过isShow控制显示、隐藏
    */
   trigger: PropTypes.string.def('hover'),
+
   // 是否显示箭头
   arrow: PropTypes.bool.def(true),
+
   // popper modifiers配置
   modifiers: PropTypes.array.def([
     {
@@ -56,6 +73,18 @@ export const PopoverProps = {
       },
     },
   ]),
+
+  /**
+   * 弹出内容绑定元素
+   */
+  boundary: PropTypes.oneOfType([PropTypes.string.def('parent'), PropTypes.instanceOf(HTMLElement)]),
+
+  /**
+   * 如果设置了boundary为指定DOM，此配置项生效
+   * 是否将弹出内容固定到目标元素位置
+   * 例如：boundary = document.body, fixOnBoundary = true，则弹出内容会一直固定到body
+   */
+  fixOnBoundary: PropTypes.bool.def(false),
 };
 
 export type PopoverPropTypes = Readonly<ExtractPropTypes<typeof PopoverProps>>;

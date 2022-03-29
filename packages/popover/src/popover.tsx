@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
 */
 
-import { computed, defineComponent, toRefs, watch, onMounted, ref, onBeforeUnmount, SetupContext } from 'vue';
+import { computed, defineComponent, toRefs, watch, onMounted, ref, onBeforeUnmount, SetupContext, Transition, nextTick } from 'vue';
 import {
   IBKPopover,
   BKPopover,
@@ -34,7 +34,6 @@ import { Placement } from '@popperjs/core';
 
 import { PopoverProps, PopoverPropTypes } from './props';
 
-
 export default defineComponent({
   name: 'Popover',
   props: PopoverProps,
@@ -43,12 +42,12 @@ export default defineComponent({
     let popoverInstance = Object.create(null);
     const { width, height, theme, trigger, isShow, placement, modifiers, arrow, content } = toRefs(props);
 
+    const refIsShow = ref(false);
     const reference = ref();
     const refContent = ref();
-
     const compStyle = computed(() => ({
-      width: /^\d+$/.test(width.value) ? `${width.value}px` : width.value,
-      height: /^\d+$/.test(height.value) ? `${height.value}px` : height.value,
+      width: /^\d+$/.test(String(width.value)) ? `${width.value}px` : width.value,
+      height: /^\d+$/.test(String(height.value)) ? `${height.value}px` : height.value,
       zIndex: bkZIndexManager.getModalNextIndex(),
     }));
 
@@ -62,7 +61,7 @@ export default defineComponent({
     });
 
     const handleManualShow = (val) => {
-      if (trigger === 'manual' && isPopInstance) {
+      if (trigger.value === 'manual' && isPopInstance) {
         val ? popoverInstance.show() : popoverInstance.hide();
       }
     };
@@ -71,9 +70,18 @@ export default defineComponent({
       handleManualShow(true);
     }, { immediate: true });
 
-    // const handleClose = () => {
-    //   ctx.$emit('update:isShow', false);
-    // };
+    const handleClose: any = () => {
+      ctx.emit('update:isShow', false);
+      nextTick(() => {
+        refIsShow.value = false;
+      });
+    };
+
+    const handleShown: any = () => {
+      nextTick(() => {
+        refIsShow.value = true;
+      });
+    };
 
     const getOptions = () => ({
       theme: compTheme.value.systemThemes.join(' '),
@@ -81,13 +89,19 @@ export default defineComponent({
       trigger: trigger.value,
       modifiers: modifiers.value,
       onFirstUpdate: props.handleFirstUpdate,
+      afterShow: handleShown,
+      afterHidden: handleClose,
+      appendTo: props.boundary,
+      fixOnBoundary: props.fixOnBoundary,
     });
 
     const destroyPopInstance = () => {
       const instance = popoverInstance as IBKPopover;
-      instance.isShow && instance.hide();
-      instance.destroy();
-      popoverInstance = Object.create(null);
+      if (instance.constructor) {
+        instance.isShow && instance.hide();
+        instance.destroy();
+        popoverInstance = Object.create(null);
+      }
     };
 
     const initPopInstance = () => {
@@ -97,39 +111,53 @@ export default defineComponent({
         getOptions(),
       );
       isPopInstance = true;
+
       // 初次渲染默认isShow 为True时，触发
       handleManualShow(isShow);
     };
 
     const update = () => {
       destroyPopInstance();
-      initPopInstance();
+      nextTick(initPopInstance);
     };
 
     ctx.expose({
       update,
     });
 
-    onMounted(initPopInstance);
+    onMounted(update);
     onBeforeUnmount(destroyPopInstance);
 
-    return () => {
-      // 兼容多种样式处理规则
+    const handleAfterEnter = () => {
+      ctx.emit('after-enter');
+    };
+    const handleAfterLeave = () => {
+      ctx.emit('after-leave');
+    };
+
+    // 兼容多种样式处理规则
     // class custom-theme
-      const customThemeCls = compTheme.value.customThemes.join(' ');
-      const customTheme = compTheme.value.customThemes.reduce((out, cur) => ({ [`data-${cur}-theme`]: true, ...out }), {});
-      const contentClass = `bk-popover-content ${customThemeCls}`;
-      return (
-      <div class="bk-popover">
+    const customThemeCls = compTheme.value.customThemes.join(' ');
+    const customTheme = compTheme.value.customThemes.reduce((out, cur) => ({ [`data-${cur}-theme`]: true, ...out }), {});
+    const contentClass = `bk-popover-content ${customThemeCls}`;
+
+    return () => (
+      <div class="bk-popover" data-bk-pop-container>
         <div ref={ reference } class="bk-popover-reference">
           {ctx.slots.default?.()}
         </div>
-        <div ref={ refContent } class={contentClass} style={compStyle.value} {...customTheme}>
-          {ctx.slots.content?.() ?? content.value}
-          {arrow && <div class="arrow" data-popper-arrow></div>}
-        </div>
+        <Transition name={ props.transition }
+          onAfterEnter={ handleAfterEnter }
+          onAfterLeave={ handleAfterLeave }>
+          <div ref={ refContent }
+            class={contentClass}
+            style={compStyle.value}
+            {...customTheme}>
+            {ctx.slots.content?.() ?? content.value}
+            {arrow && <div class="arrow" data-popper-arrow></div>}
+          </div>
+        </Transition>
       </div>
-      );
-    };
+    );
   },
 });

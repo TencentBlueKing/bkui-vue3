@@ -46,10 +46,10 @@ export default defineComponent({
     // };
 
     const placements = [
-      { title: '上边', name: 'top', refDom: ref() },
-      { title: '左边', name: 'left', refDom: ref() },
-      { title: '右边', name: 'right', refDom: ref() },
-      { title: '下边', name: 'bottom', refDom: ref() },
+      { title: '上边', name: 'top', refDom: ref(), boundary: document.body },
+      { title: '左边', name: 'left', refDom: ref(), boundary: document.body, fixOnBoundary: true },
+      { title: '右边', name: 'right', refDom: ref(), boundary: null },
+      { title: '下边', name: 'bottom', refDom: ref(), boundary: null },
     ];
 
     // const handleTrigger = (type: string) => {
@@ -72,7 +72,14 @@ export default defineComponent({
       <BkButton class="mr10" theme="primary" onClick={ () => handleShow()}>IsShow（{`${isShow.value}`}）</BkButton> */}
       <div style="margin: 50px auto;">
         {
-          placements.map((item: any) => [<BkPopover ref={ item.refDom } content="提示信息" theme={theme.value} isShow={ isShow.value } trigger={ trigger.value } placement={ item.name }>
+          placements.map((item: any) => [<BkPopover ref={ item.refDom }
+          content="提示信息"
+          theme={theme.value}
+          isShow={ isShow.value }
+          trigger={ trigger.value }
+          placement={ item.name }
+          boundary={item.boundary}
+          fixOnBoundary={ !!item.fixOnBoundary }>
           <BkButton>{ item.title }</BkButton>
         </BkPopover>,
         <br/>,
