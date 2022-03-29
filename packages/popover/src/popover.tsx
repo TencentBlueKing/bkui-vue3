@@ -24,121 +24,139 @@
  * IN THE SOFTWARE.
 */
 
-import { computed, defineComponent, toRefs, PropType } from 'vue';
+import { computed, defineComponent, toRefs, watch, onMounted, ref, onBeforeUnmount, SetupContext, Transition, nextTick } from 'vue';
 import {
   IBKPopover,
   BKPopover,
-  PropTypes,
   bkZIndexManager,
-  OnFirstUpdateFnType,
 } from '@bkui-vue/shared';
 import { Placement } from '@popperjs/core';
 
+import { PopoverProps, PopoverPropTypes } from './props';
 
 export default defineComponent({
   name: 'Popover',
-  props: {
-    isShow: PropTypes.bool,
-    width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
-    height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
-    content: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def(''),
-    placement: PropTypes.placement().def('top'),
-    theme: PropTypes.theme(['dark', 'light']).def('light'),
-    handleFirstUpdate: {
-      type: Function as PropType<OnFirstUpdateFnType>,
-      default: () => {},
-    },
+  props: PopoverProps,
+  setup(props: PopoverPropTypes, ctx: SetupContext) {
+    let isPopInstance = false;
+    let popoverInstance = Object.create(null);
+    const { width, height, theme, trigger, isShow, placement, modifiers, arrow, content } = toRefs(props);
 
-    /**
-     * 触发方式
-     * 支持 click hover manual
-     * manual： 通过isShow控制显示、隐藏
-     */
-    trigger: PropTypes.string.def('hover'),
-    // 是否显示箭头
-    arrow: PropTypes.bool.def(true),
-    // popper modifiers配置
-    modifiers: PropTypes.array.def([
-      {
-        name: 'offset',
-        options: {
-          offset: [0, 8],
-        },
-      },
-    ]),
-  },
-  setup(props: any) {
-    const { width, height } = toRefs(props);
+    const refIsShow = ref(false);
+    const reference = ref();
+    const refContent = ref();
     const compStyle = computed(() => ({
-      width: /^\d+$/.test(width.value) ? `${width.value}px` : width.value,
-      height: /^\d+$/.test(height.value) ? `${height.value}px` : height.value,
+      width: /^\d+$/.test(String(width.value)) ? `${width.value}px` : width.value,
+      height: /^\d+$/.test(String(height.value)) ? `${height.value}px` : height.value,
       zIndex: bkZIndexManager.getModalNextIndex(),
     }));
 
-    return {
-      compStyle,
-    };
-  },
-  data() {
-    return {
-      popoverInstance: Object.create(null),
-      isPopInstance: false,
-    };
-  },
-
-  watch: {
-    isShow: {
-      immediate: true,
-      handler(val: boolean) {
-        this.$nextTick(() => {
-          if (this.trigger === 'manual' && this.isPopInstance) {
-            val ? this.popoverInstance.show() : this.popoverInstance.hide();
-          }
-        });
-      },
-    },
-  },
-
-  mounted() {
-    this.$nextTick(() => {
-      this.popoverInstance = new BKPopover(
-        this.$refs.reference as HTMLElement,
-        this.$refs.refContent as HTMLElement,
-        {
-          theme: this.theme,
-          placement: this.placement as Placement,
-          trigger: this.trigger,
-          modifiers: this.modifiers,
-          onFirstUpdate: this.handleFirstUpdate,
-        },
-      );
-      this.isPopInstance = true;
+    const themeList = ['dark', 'light'];
+    const compTheme = computed(() => {
+      const themes = theme.value.split(/\s+/);
+      themes.sort((a: string, b: string) => Number(themeList.includes(b)) - (Number(themeList.includes(a))));
+      const systemThemes = themes;
+      const customThemes = themes.filter((item: string) => !themeList.includes(item));
+      return { systemThemes, customThemes };
     });
-  },
 
-  beforeUnmount() {
-    const instance = this.popoverInstance as IBKPopover;
-    instance.isShow && instance.hide();
-    instance.destroy();
-    this.popoverInstance = Object.create(null);
-  },
+    const handleManualShow = (val) => {
+      if (trigger.value === 'manual' && isPopInstance) {
+        val ? popoverInstance.show() : popoverInstance.hide();
+      }
+    };
 
-  methods: {
-    handleClose() {
-      this.$emit('update:isShow', false);
-    },
-  },
+    watch(() => props.isShow, () => {
+      handleManualShow(true);
+    }, { immediate: true });
 
-  render() {
-    return (
-      <div class="bk-popover">
-        <div ref="reference" class="bk-popover-reference">
-          {this.$slots.default?.()}
+    const handleClose: any = () => {
+      ctx.emit('update:isShow', false);
+      nextTick(() => {
+        refIsShow.value = false;
+      });
+    };
+
+    const handleShown: any = () => {
+      nextTick(() => {
+        refIsShow.value = true;
+      });
+    };
+
+    const getOptions = () => ({
+      theme: compTheme.value.systemThemes.join(' '),
+      placement: placement.value as Placement,
+      trigger: trigger.value,
+      modifiers: modifiers.value,
+      onFirstUpdate: props.handleFirstUpdate,
+      afterShow: handleShown,
+      afterHidden: handleClose,
+      appendTo: props.boundary,
+      fixOnBoundary: props.fixOnBoundary,
+    });
+
+    const destroyPopInstance = () => {
+      const instance = popoverInstance as IBKPopover;
+      if (instance.constructor) {
+        instance.isShow && instance.hide();
+        instance.destroy();
+        popoverInstance = Object.create(null);
+      }
+    };
+
+    const initPopInstance = () => {
+      popoverInstance = new BKPopover(
+        reference.value as HTMLElement,
+        refContent.value as HTMLElement,
+        getOptions(),
+      );
+      isPopInstance = true;
+
+      // 初次渲染默认isShow 为True时，触发
+      handleManualShow(isShow);
+    };
+
+    const update = () => {
+      destroyPopInstance();
+      nextTick(initPopInstance);
+    };
+
+    ctx.expose({
+      update,
+    });
+
+    onMounted(update);
+    onBeforeUnmount(destroyPopInstance);
+
+    const handleAfterEnter = () => {
+      ctx.emit('after-enter');
+    };
+    const handleAfterLeave = () => {
+      ctx.emit('after-leave');
+    };
+
+    // 兼容多种样式处理规则
+    // class custom-theme
+    const customThemeCls = compTheme.value.customThemes.join(' ');
+    const customTheme = compTheme.value.customThemes.reduce((out, cur) => ({ [`data-${cur}-theme`]: true, ...out }), {});
+    const contentClass = `bk-popover-content ${customThemeCls}`;
+
+    return () => (
+      <div class="bk-popover" data-bk-pop-container>
+        <div ref={ reference } class="bk-popover-reference">
+          {ctx.slots.default?.()}
         </div>
-        <div ref="refContent" class="bk-popover-content" style={this.compStyle}>
-          {this.$slots.content?.() ?? this.content}
-          {this.arrow && <div class="arrow" data-popper-arrow></div>}
-        </div>
+        <Transition name={ props.transition }
+          onAfterEnter={ handleAfterEnter }
+          onAfterLeave={ handleAfterLeave }>
+          <div ref={ refContent }
+            class={contentClass}
+            style={compStyle.value}
+            {...customTheme}>
+            {ctx.slots.content?.() ?? content.value}
+            {arrow && <div class="arrow" data-popper-arrow></div>}
+          </div>
+        </Transition>
       </div>
     );
   },
