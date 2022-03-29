@@ -46,6 +46,10 @@ export default defineComponent({
     textInside: PropTypes.bool.def(false),
     showText: PropTypes.bool.def(true),
     color: PropTypes.string,
+    bgColor: PropTypes.string,
+    fixed: PropTypes.number
+      .validate((value: any) => value >= 0 && value <= 20)
+      .def(0),
     format: PropTypes.func.def((percent: number): string => `${percent}%`),
     titleStyle: PropTypes.object.def({
       fontSize: '16px',
@@ -69,10 +73,10 @@ export default defineComponent({
       }
       return percent;
     },
-    /** text 区域展示内容，可扩展图标类*/
+    /** text 区域展示内容*/
     renderProcessInfo() {
-      const { showText, format, percent, textInside, titleStyle } = this.$props;
-      const formatPercent = format(this.validPercent(percent));
+      const { showText, format, percent, textInside, titleStyle, fixed } = this.$props;
+      const formatPercent = format(this.validPercent(percent)?.toFixed(fixed));
 
       if ((showText || this.$slots.default) && textInside) {
         return this.$slots.default ? this.$slots.default() : <span>{ formatPercent }</span>;
@@ -81,7 +85,6 @@ export default defineComponent({
       return (
         <span
           class='progress-text'
-          title={typeof formatPercent === 'string' ? formatPercent : undefined}
           style={ typeof formatPercent === 'string' ? titleStyle : undefined }
         >
           {

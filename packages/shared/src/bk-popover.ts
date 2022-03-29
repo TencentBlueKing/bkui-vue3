@@ -34,7 +34,7 @@ import {
   State,
 } from '@popperjs/core';
 
-import { merge } from './bk-helper-core';
+import { isElement, merge } from './bk-helper-core';
 
 export type OnFirstUpdateFnType = (instance: Partial<State>) => void;
 export declare type IOptions = {
@@ -46,6 +46,15 @@ export declare type IOptions = {
   theme?: string;
   trigger?: string;
   disabled?: boolean;
+  appendTo?: string | HTMLElement;
+  afterShow?: () => {};
+  afterHidden?: () => {};
+  /**
+   * 如果设置了appendTo为指定DOM，此配置项生效
+   * 是否将弹出内容固定到目标元素位置
+   * 例如：appendTo = document.body, fixOnBoundary = true，则弹出内容会一直固定到body
+   */
+  fixOnBoundary?: Boolean
 };
 
 export declare type IBKPopover = Instance & {
@@ -75,23 +84,49 @@ export class BKPopover {
   private popperRefer?: HTMLElement | null = undefined;
 
   /** 默认初始化配置项 */
-  private initOptions: IOptions;
+  private instanceOptions: IOptions;
 
   /** hide延时 */
   private delay = 50;
+
   /** 是否进入popperRefer */
   private isInnerPopper = false;
+
   /** 是否为禁用状态 */
   private disabled = false;
 
+  /** 执行显示函数 */
+  private afterShow: void | any = null;
+
+  /** 执行隐藏函数 */
+  private afterHidden: void | any = null;
+
+  /** 弹出内容AppendTo */
+  private appendTo: string | HTMLElement = 'parent';
+
+  /** 父级容器 */
+  private container?: HTMLElement = null;
+
+  /**
+   * 如果设置了appendTo为指定DOM，此配置项生效
+   * 是否将弹出内容固定到目标元素位置
+   * 例如：appendTo = document.body, fixOnBoundary = true，则弹出内容会一直固定到body
+   */
+  private fixOnBoundary: Boolean = false;
+
   constructor(reference?: string | HTMLElement, popperRefer?: string | HTMLElement, options?: IOptions) {
-    this.initOptions = this.initDefaultOptions(options);
+    this.instanceOptions = this.initDefaultOptions(options);
     this.reference = this.resolveInputSelectorToHtmlElement(reference);
     this.popperRefer = this.resolveInputSelectorToHtmlElement(popperRefer);
     this.referenceTarget = this.getTargetReferenceElement();
-    this.isShow = !!this.initOptions?.isShow;
-    this.trigger = this.initOptions.trigger;
-    this.disabled = this.initOptions.disabled;
+    this.container = (this.popperRefer || {}).parentElement;
+    this.isShow = !!this.instanceOptions?.isShow;
+    this.trigger = this.instanceOptions.trigger;
+    this.disabled = this.instanceOptions.disabled;
+    this.appendTo = this.instanceOptions.appendTo;
+    this.afterHidden = typeof options.afterHidden === 'function' ? options.afterHidden : () => {};
+    this.afterShow = typeof options.afterShow === 'function' ? options.afterShow : () => {};
+    this.fixOnBoundary = this.instanceOptions.fixOnBoundary;
     this.initInstance();
     this.registerEvents();
 
@@ -113,6 +148,14 @@ export class BKPopover {
     this.instance?.update();
   }
 
+  public updateOptions(options: IOptions) {
+    this.instanceOptions = this.initDefaultOptions(options);
+    this.isShow = !!this.instanceOptions?.isShow;
+    this.trigger = this.instanceOptions.trigger;
+    this.disabled = this.instanceOptions.disabled;
+    this.setOptions(this.instanceOptions);
+  }
+
   // Updates the options of the instance.
   public setOptions(options: IOptions) {
     this.instance?.setOptions(options);
@@ -126,28 +169,33 @@ export class BKPopover {
   // 更新禁用状态
   public updateDisabled(disabled?: boolean) {
     this.disabled = disabled ?? !this.disabled;
-    this.disabled && this.hide(null);
+    this.disabled && this.hide();
   }
 
   /**
    * 展示Pop
-   * @param event 触发事件
+   * @param _event 触发事件
    */
-  public show(event: any) {
+  public show(_event: any) {
     if (!this.disabled) {
-      console.info(event);
       // Make the tooltip visible
       this.popperRefer?.setAttribute('data-show', '');
 
       // Enable the event listeners
       this.setOptions({
-        modifiers: [...(this.initOptions.modifiers || []), { name: 'eventListeners', enabled: true }],
+        modifiers: [...(this.instanceOptions.modifiers || []), { name: 'eventListeners', enabled: true }],
       });
 
       // Update its position
       this.update();
 
       this.isShow = true;
+
+      this.afterShow();
+
+      if (!this.fixOnBoundary) {
+        this.appendToTarget();
+      }
     }
   }
 
@@ -155,18 +203,61 @@ export class BKPopover {
    * 隐藏
    * @param event 触发事件
    */
-  public hide(event: any) {
-    console.info(event);
+  public hide() {
     // Hide the tooltip
     this.popperRefer?.removeAttribute('data-show');
 
     // Disable the event listeners
     this.setOptions({
-      modifiers: [...(this.initOptions.modifiers || []), { name: 'eventListeners', enabled: false }],
+      modifiers: [...(this.instanceOptions.modifiers || []), { name: 'eventListeners', enabled: false }],
     });
 
     this.isShow = false;
     this.isInnerPopper = false;
+    this.afterHidden();
+
+    if (!this.fixOnBoundary) {
+      this.restorePopContent();
+    }
+  }
+
+  /**
+   * 还原PopContent到初试位置
+   */
+  private restorePopContent() {
+    const target = this.getAppendToTarget();
+    if (isElement(target)
+        && (target as HTMLElement).contains(this.popperRefer)
+        && this.container
+        && !this.container.contains(this.popperRefer)) {
+      this.container.append(this.popperRefer);
+    }
+  }
+
+  /**
+   * 挂载PopContent到目标位置
+   */
+  private appendToTarget() {
+    const target = this.getAppendToTarget();
+    if (isElement(target) && (target as HTMLElement).contains(this.popperRefer)) {
+      (target as HTMLElement).append(this.popperRefer);
+    }
+  }
+
+  /**
+   * 获取目标位置元素
+   * @returns
+   */
+  private getAppendToTarget() {
+    const  { appendTo } = this;
+    let target: string | HTMLElement = appendTo;
+    if (appendTo !== 'parent') {
+      if (typeof appendTo === 'string') {
+        target = document.querySelector(appendTo) as HTMLElement;
+      }
+    }
+
+    return target;
   }
 
   /**
@@ -193,7 +284,24 @@ export class BKPopover {
       disabled: false,
     };
 
-    return merge(defaultCfg, opts || {});
+    const targetOptions = merge(defaultCfg, opts || {});
+    const sourceOnFirstUpdate = targetOptions.onFirstUpdate;
+    targetOptions.onFirstUpdate = (state: State) => {
+      if (typeof sourceOnFirstUpdate === 'function') {
+        sourceOnFirstUpdate.call(this, state);
+        this.handleFirstUpdate();
+      }
+    };
+    return targetOptions;
+  }
+
+  /**
+ * 判定是否需要将PopContent挂载到目标元素
+ */
+  private handleFirstUpdate() {
+    if (this.fixOnBoundary) {
+      this.appendToTarget();
+    }
   }
 
   /**
@@ -219,10 +327,10 @@ export class BKPopover {
         this.instance = createPopper(
           this.referenceTarget as HTMLElement,
           this.popperRefer as HTMLElement,
-          this.initOptions,
+          this.instanceOptions,
         );
 
-        this.popperRefer?.setAttribute('data-theme', this.initOptions.theme ?? 'dark');
+        this.popperRefer?.setAttribute('data-theme', this.instanceOptions.theme ?? 'dark');
       } else {
         console.error('reference or popperRefer is null, please check html element.');
       }
@@ -261,16 +369,7 @@ export class BKPopover {
    * @returns
    */
   private isElement(obj: any) {
-    try {
-      return obj instanceof HTMLElement;
-    } catch (e) {
-      return (
-        typeof obj === 'object'
-        && obj.nodeType === 1
-        && typeof obj.style === 'object'
-        && typeof obj.ownerDocument === 'object'
-      );
-    }
+    return isElement(obj);
   }
 
   private registerEvents() {
@@ -287,19 +386,19 @@ export class BKPopover {
         });
 
         hideEvents.forEach((event) => {
-          (this.referenceTarget as HTMLElement).addEventListener(event, (event) => {
+          (this.referenceTarget as HTMLElement).addEventListener(event, () => {
             this.isInnerPopper = false;
             setTimeout(() => {
-              !this.isInnerPopper && this.hide(event);
+              !this.isInnerPopper && this.hide();
             }, this.delay);
           });
         });
 
         if (this.isElement(this.popperRefer)) {
           contentEvents.forEach((event) => {
-            (this.popperRefer as HTMLElement).addEventListener(event, (evt) => {
+            (this.popperRefer as HTMLElement).addEventListener(event, () => {
               if (event === 'mouseenter') this.isInnerPopper = true;
-              if (event === 'mouseleave') this.hide(evt);
+              if (event === 'mouseleave') this.hide();
             });
           });
         }
@@ -317,7 +416,7 @@ export class BKPopover {
             this.show(event);
           } else {
             if (this.isShow && !this.isSameElement(event.target as HTMLElement, this.popperRefer)) {
-              this.hide(event);
+              this.hide();
             }
           }
         });
