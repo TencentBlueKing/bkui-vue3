@@ -39,8 +39,8 @@ export default defineComponent({
   slots: ['icon'],
   setup(props, { slots, emit }) {
     const { registerMenuInfo, unregisterMenuInfo, activeKey, handleActiveChange } = useMenuInject();
-    const { parentInfo } = useMenuPathInject();
     const instance = getCurrentInstance();
+    const { parentInfo } = useMenuPathInject();
     const key = instance.vnode.key?.toString?.() || String(instance.uid);
     const isActive = computed(() => activeKey.value === key);
     const needIcon = computed(() => props.needIcon);

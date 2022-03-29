@@ -27,6 +27,7 @@
 import { defineComponent, provide, onMounted, getCurrentInstance } from 'vue';
 import { PropTypes, classes } from '@bkui-vue/shared';
 import { IBreadcrumbProps } from './props';
+import { ArrowsLeft } from '@bkui-vue/icon';
 
 
 export default defineComponent({
@@ -35,10 +36,12 @@ export default defineComponent({
     extCls: PropTypes.string,
     separator: PropTypes.string.def('/'),
     separatorClass: PropTypes.string,
+    replace: PropTypes.bool,
+    backRouter: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).def(''),
 
   },
   setup(props, { slots }) {
-    const { proxy } = getCurrentInstance();
+    const { proxy, appContext } = getCurrentInstance();
 
     provide<IBreadcrumbProps>('breadcrumb', props);
     onMounted(() => {
@@ -49,8 +52,26 @@ export default defineComponent({
     });
     const classCtx = classes({ 'bk-breadcrumb': true }, `${props.extCls || ''}`);
 
+    const goBack = () => {
+      const { backRouter, replace } = props;
+      const { $router } = appContext.config.globalProperties;
+      if (!$router) return;
+      replace ? $router.replace(backRouter) : $router.push(backRouter);
+    };
     return () => (
       <div class={classCtx} aria-label="Breadcrumb" role="navigation">
+        {
+          !slots.prefix && props.backRouter
+            ? <div class="bk-breadcrumb-goback">
+                <ArrowsLeft onClick={goBack}></ArrowsLeft>
+              </div>
+            : ''
+        }
+        {
+          slots.prefix
+            ? <div class="bk-breadcrumb-goback">{slots.prefix()}</div>
+            : ''
+        }
         {slots.default?.()}
       </div>
     );

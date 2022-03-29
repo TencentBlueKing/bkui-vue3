@@ -25,17 +25,8 @@
 */
 
 // nav group setting
-// export enum NavGroupMeta  {
-//   Base = 'base',
-//   Layout= 'layout',
-//   Nav = 'nav',
-//   Form = 'form',
-//   Data = 'data',
-//   Feedback = 'data',
-//   Others = 'others'
-// }
-
 export enum NavGroupMeta  {
+  Start = '开始',
   Base = '基础',
   Layout= '布局',
   Nav = '导航',

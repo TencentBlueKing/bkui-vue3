@@ -34,9 +34,9 @@ const Circle = (_: any, { attrs, slots }) => {
     strokeLinecap,
     theme,
     type,
+    bgColor,
     titleStyle,
   } = attrs;
-
   const circleStrokeWidth = strokeWidth || 6;
 
   const circleSize = width || 126;
@@ -82,7 +82,7 @@ const Circle = (_: any, { attrs, slots }) => {
   /** 底色 */
   const progressCircleTrail = {
     d: path,
-    stroke: '',
+    stroke: bgColor || '#f5f5f5',
     'stroke-linecap': strokeLinecap,
     'stroke-width': circleStrokeWidth,
     'fill-opacity': '0',

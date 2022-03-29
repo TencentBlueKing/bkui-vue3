@@ -41,7 +41,6 @@ lerna.json
 tsconfig.json
 plop-template
 plopfile.js
-.changelog.config.js
 commitlint.config.js
 index.d.ts
 !lib/**/index.d.ts

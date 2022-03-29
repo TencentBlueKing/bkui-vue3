@@ -25,8 +25,8 @@
 */
 
 import { bKMaskManager } from './bk-mask-manager';
+import { random } from './utils';
 import { bkZIndexManager } from './z-index-manager';
-import { v4 as uuidv4 } from 'uuid';
 
 class BKPopIndexManager {
   /** 用来缓存弹出层实例 */
@@ -43,7 +43,7 @@ class BKPopIndexManager {
       return;
     }
     const zIndex = bkZIndexManager.getModalNextIndex();
-    const uuid = uuidv4();
+    const uuid = random(16);
     content.setAttribute(this.uuidAttrName, uuid);
     this.popInstanceList.push({ uuid, zIndex, content });
     bKMaskManager.backupActiveInstance();

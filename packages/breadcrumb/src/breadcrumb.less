@@ -4,7 +4,7 @@
 .@{bk-prefix}-breadcrumb {
   display: flex;
   font-size: 14px;
-  color: @breadcrumb-black-color;
+  color: @breadcrumb-black-color ;
   align-items: center;
 
   &::after {
@@ -21,10 +21,21 @@
     }
   }
 
+  &-goback {
+    margin-right: 12px;
+    color: @breadcrumb-primary-hover-color;
+    cursor: pointer;
+
+    svg {
+      font-size: 26px;
+    }
+  }
+
   &-item {
     &-inner {
       &.is-link,
       & a {
+        color: @breadcrumb-fn-main-color ;
         text-decoration: none;
 
         &:hover {
@@ -35,7 +46,7 @@
     }
   
     &:last-child {
-      color: @breadcrumb-fn-main-color;
+      color: @breadcrumb-black-color;
 
       .el-breadcrumb__inner,
       .el-breadcrumb__inner a {

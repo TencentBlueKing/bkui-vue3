@@ -32,6 +32,16 @@ import { NavGroupMeta } from '../typings';
  * @return {*}
  */
 const routes: RouteRecordRaw[] = [
+  {
+    path: '/start',
+    name: 'start',
+    alias: '',
+    component: () => import('../views/start/start'),
+    meta: {
+      group: NavGroupMeta.Start,
+      navName: '快速开始',
+    },
+  },
   /**
    * @description:菜单页
    */
@@ -182,7 +192,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/progress',
     name: 'progress',
-    component: () => import('../views/progress'),
+    component: () => import('../views/BkProgress/progress'),
     meta: {
       group: NavGroupMeta.Data,
       navName: 'Progress 进度条',
@@ -191,7 +201,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/switcher',
     name: 'switcher',
-    component: () => import('../views/switcher'),
+    component: () => import('../views/BkSwitcher/switcher'),
     meta: {
       group: NavGroupMeta.Form,
       navName: 'Switcher 开关',
@@ -200,7 +210,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/breadcrumb',
     name: 'breadcrumb',
-    component: () => import('../views/breadcrumb'),
+    component: () => import('../views/BkBreadcrumb/breadcrumb'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'Breadcrumb 面包屑',

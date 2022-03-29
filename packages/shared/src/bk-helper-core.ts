@@ -280,3 +280,22 @@ export function throttle(func: Function, wait: number, options?: any) {
     return result;
   };
 };
+
+
+/**
+ * 检查当前元素是否为Html元素
+ * @param obj
+ * @returns
+ */
+export function isElement(obj: any) {
+  try {
+    return obj instanceof HTMLElement;
+  } catch (e) {
+    return (
+      typeof obj === 'object'
+        && obj.nodeType === 1
+        && typeof obj.style === 'object'
+        && typeof obj.ownerDocument === 'object'
+    );
+  }
+}
