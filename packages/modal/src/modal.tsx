@@ -38,22 +38,6 @@ export default defineComponent({
       visible: false,
     };
   },
-  watch: {
-    isShow: {
-      handler(val: boolean) {
-        this.visible = val;
-      },
-    },
-    visible(val: boolean) {
-      if (val) {
-        this.$nextTick(() => {
-          bkPopIndexManager.show(this.$el);
-        });
-      } else {
-        bkPopIndexManager.hide(this.$el);
-      }
-    },
-  },
   computed: {
     dialogWidth(): String | Number {
       return /^\d+$/.test(`${this.width}`) ? `${this.width}px` : this.width;
@@ -69,6 +53,22 @@ export default defineComponent({
         height: this.dialogHeight,
         display: this.visible ? 'inherit' : 'none',
       };
+    },
+  },
+  watch: {
+    isShow: {
+      handler(val: boolean) {
+        this.visible = val;
+      },
+    },
+    visible(val: boolean) {
+      if (val) {
+        this.$nextTick(() => {
+          bkPopIndexManager.show(this.$el);
+        });
+      } else {
+        bkPopIndexManager.hide(this.$el);
+      }
     },
   },
   beforeUnmount() {

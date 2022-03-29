@@ -44,9 +44,6 @@ interface ITaskItem {
   url: string;
   newPath: string;
 }
-// console.error('compileDirUrl', compileDirUrl);
-// console.error('libDirUrl', libDirUrl);
-
 const writeFileRecursive = async (url: string, content: string) => {
   let filepath = url.replace(/\\/g, '/');
   let root = '';
