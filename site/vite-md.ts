@@ -23,15 +23,45 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import md from 'vite-plugin-md';
+import markdownItContainer from 'markdown-it-container';
+import hljs from 'highlight.js';
+import type MarkdownIt from 'markdown-it';
 
-// nav group setting
-export enum NavGroupMeta  {
-  Start = '开始',
-  Base = '基础',
-  Layout= '布局',
-  Nav = '导航',
-  Form = '表单',
-  Data = '数据',
-  Feedback = '反馈',
-  Others = '其他'
-}
+const tipsList = ['info', 'tip', 'warning', 'danger'];
+const createTips = (cls: string) =>  ({
+  render(tokens: any[], idx: number) {
+    const token = tokens[idx];
+    const title = token.info
+      .trim()
+      .slice(cls.length)
+      .trim() || '';
+    if (token.nesting === 1) {
+      if (title) {
+        return `<div class="${cls} tips-block with-title"><p class="tips-block-title">${title}</p>\n`;
+      }
+      return `<div class="${cls} tips-block">\n`;
+    }
+    return '</div>\n';
+  },
+});
+
+export default md({
+  markdownItOptions: {
+    html: true,
+    linkify: true,
+    typographer: true,
+    highlight(str: string, language: string) {
+      const lang = !language || language === 'vue' ? 'html' : language;
+      try {
+        return `<pre class="hljs"><code class="language-${lang}">${
+          hljs.highlight(str, { language: lang, ignoreIllegals: true }).value
+        }</code></pre>`;
+      } catch (__) {}
+      return `<pre class="hljs"><code>${str}</code></pre>`;
+    },
+  },
+  markdownItSetup(md: MarkdownIt) {
+    tipsList.forEach(tips => md.use(markdownItContainer, tips, createTips(tips)));
+  },
+});
