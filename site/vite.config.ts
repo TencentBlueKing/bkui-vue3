@@ -27,7 +27,7 @@
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
-
+import md from './vite-md';
 import { resolve } from 'path';
 const base = process.env.PUBLIC_PATH || '/';
 export default defineConfig({
@@ -60,7 +60,13 @@ export default defineConfig({
       },
     ],
   },
-  plugins: [vueJsx(), vue()],
+  plugins: [
+    vueJsx(),
+    vue({
+      include: [/\.vue$/, /\.md$/],
+    }),
+    md,
+  ],
   server: {
     host: '0.0.0.0',
     fs: {

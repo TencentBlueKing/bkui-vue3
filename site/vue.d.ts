@@ -23,15 +23,13 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-
-// nav group setting
-export enum NavGroupMeta  {
-  Start = '开始',
-  Base = '基础',
-  Layout= '布局',
-  Nav = '导航',
-  Form = '表单',
-  Data = '数据',
-  Feedback = '反馈',
-  Others = '其他'
+declare module '*.vue' {
+  import type { ComponentOptions, ComponentOptions } from 'vue';
+  const Component: ComponentOptions;
+  export default Component;
+}
+declare module '*.md' {
+  ;
+  const Component: ComponentOptions;
+  export default Component;
 }
