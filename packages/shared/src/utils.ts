@@ -23,15 +23,16 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-
-// nav group setting
-export enum NavGroupMeta  {
-  Start = '开始',
-  Base = '基础',
-  Layout= '布局',
-  Nav = '导航',
-  Form = '表单',
-  Data = '数据',
-  Feedback = '反馈',
-  Others = '其他'
-}
+const lowerStr = 'abcdefghijklmnopqrstuvwxyz0123456789';
+/**
+ * 生成n位长度的字符串
+ * @param {Number} n
+ * @param str,默认26位字母及数字
+ */
+export const random = (n: number, str = lowerStr) => {
+  let result = '';
+  for (let i = 0; i < n; i++) {
+    result += str[parseInt((Math.random() * str.length).toString(), 10)];
+  }
+  return result;
+};

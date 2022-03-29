@@ -24,48 +24,10 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent } from 'vue';
-
-import { BkBreadcrumb, BkBreadcrumbItem } from '@bkui-vue/breadcrumb';
-
-export default defineComponent({
-  name: 'SiteBreadcrumb',
-  setup() {
-    return {
-
-    };
-  },
-  render() {
-    return (
-      <div style="margin-top: 20px">
-        <div class="breadcrumb">
-          <div style='margin-bottom: 10px;'>
-            <BkBreadcrumb separator="|">
-              <BkBreadcrumbItem to="/home">Home</BkBreadcrumbItem>
-              <BkBreadcrumbItem>
-                slot
-              </BkBreadcrumbItem>
-            </BkBreadcrumb>
-          </div>
-          <div>
-          <div style="margin-bottom; 10px">
-            <BkBreadcrumbItem separator="/">
-              <BkBreadcrumbItem to="/home">Home</BkBreadcrumbItem>
-              <BkBreadcrumbItem to="/home">Home1</BkBreadcrumbItem>
-            </BkBreadcrumbItem>
-
-            <BkBreadcrumb separator="|" >
-              <BkBreadcrumbItem to="/switcher">
-                switcher
-              </BkBreadcrumbItem>
-              <BkBreadcrumbItem to="/progress">
-                progress
-              </BkBreadcrumbItem>
-            </BkBreadcrumb>
-          </div>
-          </div>
-        </div>
-      </div>
-    );
-  },
-});
+ module.exports = {
+  owner: 'TencentBlueKing',
+  repository: 'bkui-vue3',
+  host: 'https://github.com',
+  commit: 'commit',
+  issue: 'issue',
+};

@@ -1,3 +1,4 @@
+
 /*
 * Tencent is pleased to support the open source community by making
 * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
@@ -23,15 +24,15 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import { FunctionalComponent } from 'vue';
+import BkIcon, { IIconBaseProps } from './icon';
+const data = JSON.parse('{"type":"element","name":"svg","attributes":{"xmlns":"http://www.w3.org/2000/svg","class":"bk-icon","viewBox":"0 0 1024 1024","style":"width: 1em; height: 1em; vertical-align: middle;fill: currentColor;overflow: hidden;"},"elements":[{"type":"element","name":"path","attributes":{"d":"M416 480h320v64H416l96 96-48 48L288 512l176-176L512 384 416 480z"}}]}');
+const arrowsLeft: FunctionalComponent<IIconBaseProps> = (props, context) => {
+  const p = { ...props, ...context.attrs };
+  return <BkIcon {...p}  data={data} name="arrowsLeft"></BkIcon>;
+};
 
-// nav group setting
-export enum NavGroupMeta  {
-  Start = '开始',
-  Base = '基础',
-  Layout= '布局',
-  Nav = '导航',
-  Form = '表单',
-  Data = '数据',
-  Feedback = '反馈',
-  Others = '其他'
-}
+arrowsLeft.displayName = 'arrowsLeft';
+arrowsLeft.inheritAttrs = false;
+
+export default arrowsLeft;

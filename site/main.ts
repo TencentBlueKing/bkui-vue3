@@ -30,6 +30,7 @@ import router from './router';
 import App from './app';
 import bkuiVue from '../packages/bkui-vue/index';
 import './reset.less';
+// import 'highlight.js/styles/default.css';
 const app = createApp(App);
 app.use(bkuiVue);
 console.info(bkuiVue);

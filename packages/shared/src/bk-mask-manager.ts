@@ -24,10 +24,8 @@
  * IN THE SOFTWARE.
 */
 
+import { random } from './utils';
 import { bkZIndexManager } from './z-index-manager';
-// @ts-ignore
-import { v4 as uuidv4 } from 'uuid';
-
 export class BkMaskManager {
   /** 遮罩容器 */
   private readonly mask: HTMLElement;
@@ -152,7 +150,7 @@ export class BkMaskManager {
    */
   private getMaskAttrTag(tag: string) {
     if (/^(auto|\s+)$/i.test(tag) || tag === null || tag === undefined || tag === '') {
-      return `__bk_mask_${uuidv4()}`;
+      return `__bk_mask_${random(16)}`;
     }
 
     return tag;

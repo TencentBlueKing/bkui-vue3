@@ -73,6 +73,9 @@ export default defineComponent({
         const sizeStr = `bk-switcher-${props.size}`;
         cls[sizeStr] = true;
       }
+      if (!props.size) {
+        cls['bk-switcher-nomal'] = true;
+      }
       return cls;
     });
 
@@ -96,7 +99,6 @@ export default defineComponent({
       const trigger = () => {
         emit('update:modelValue', lastValue);
         emit('change', lastChecked);
-        console.log(lastValue);
       };
 
       let goodJob: any = true;
@@ -119,18 +121,15 @@ export default defineComponent({
 
     return () => (
       <div class={classObject.value} onClick={handleChange} tabindex="0" onKeydown={handleChange}>
-        <input type="checkbox" disabled={props.disabled} tabindex="-1"/>
           {
-            props.showText
-              ? <label class="switcher-label">
-              <span class="switcher-text on-text">{props.onText}</span>
-              <span class="switcher-text off-text">{props.offText}</span>
-            </label>
-              : ''
+            isLoading.value ? <SwitcherLoading class="bk-switcher-loading"></SwitcherLoading> : ''
           }
           {
-            isLoading.value
-              ? <SwitcherLoading class="bk-switcher-loading"></SwitcherLoading>
+            props.showText ? <span class="switcher-text">
+              {
+                isChecked.value ? props.onText : props.offText
+              }
+            </span>
               : ''
           }
       </div>

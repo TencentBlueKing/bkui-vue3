@@ -1,6 +1,6 @@
 {
   "name": "bkui-vue",
-  "version": "0.0.1-beta.14",
+  "version": "0.0.1-beta.15",
   "private": true,
   "workspaces": {
     "packages": [
@@ -66,13 +66,14 @@
     "eslint-plugin-node": "~11.1.0",
     "eslint-plugin-promise": "~5.1.0",
     "eslint-plugin-vue": "~7.15.1",
-    "highlight.js": "~11.3.1",
+    "highlight.js": "~11.5.0",
     "husky": "~7.0.1",
     "jest": "~27.0.6",
     "jest-transform-stub": "~2.0.0",
     "lerna": "~4.0.0",
     "less": "~4.1.1",
     "lint-staged": "~11.1.1",
+    "markdown-it-container": "~3.0.0",
     "normalize-wheel": "~1.0.1",
     "ora": "~5.4.1",
     "plop": "~2.7.4",
@@ -93,14 +94,14 @@
     "ttypescript": "~1.5.12",
     "typescript": "~4.3.5",
     "vite": "~2.4.4",
+    "vite-plugin-md": "~0.12.4",
     "vue": "3.2.2",
     "vue-jest": "~5.0.0-alpha.8",
     "vue-router": "~4.0.10",
     "vue-types": "~4.0.1"
   },
   "peerDependencies": {
-    "vue": "3.2.x",
-    "vue-types": "~4.0.1"
+    "vue": "3.2.x"
   },
   "main": "dist/bkui-vue.umd.js",
   "module": "dist/bkui-vue.esm.js",
@@ -121,6 +122,7 @@
   "dependencies": {
     "@popperjs/core": "~2.11.0",
     "date-fns": "~2.25.0",
-    "js-calendar": "~1.2.3"
+    "js-calendar": "~1.2.3",
+    "vue-types": "~4.0.1"
   }
 }
