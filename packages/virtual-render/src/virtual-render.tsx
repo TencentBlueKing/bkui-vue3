@@ -213,6 +213,7 @@ export default defineComponent({
       lineHeight: props.lineHeight,
       handleScrollCallback,
       pagination,
+      throttleDelay: props.throttleDelay,
     };
     return () => h(
       // @ts-ignore:next-line
