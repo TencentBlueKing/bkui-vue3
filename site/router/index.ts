@@ -32,6 +32,16 @@ import { NavGroupMeta } from '../typings';
  * @return {*}
  */
 const routes: RouteRecordRaw[] = [
+  {
+    path: '/start',
+    name: 'start',
+    alias: '',
+    component: () => import('../views/start/start'),
+    meta: {
+      group: NavGroupMeta.Start,
+      navName: '快速开始',
+    },
+  },
   /**
    * @description:菜单页
    */

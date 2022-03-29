@@ -23,15 +23,19 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import { defineComponent } from 'vue';
+import DemoTitle from '../../components/demo-title';
+import StartMd from './start.md';
+export default defineComponent({
+  render() {
+    return (
+      <div style="background: white">
+        <DemoTitle
+          name="快速上手"
+          desc="本节介绍如何在项目中结合 webpack 一起使用 @blueking/bkui-vue。"/>
+          <StartMd/>
+      </div>
+    );
+  },
+});
 
-// nav group setting
-export enum NavGroupMeta  {
-  Start = '开始',
-  Base = '基础',
-  Layout= '布局',
-  Nav = '导航',
-  Form = '表单',
-  Data = '数据',
-  Feedback = '反馈',
-  Others = '其他'
-}
