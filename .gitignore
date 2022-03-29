@@ -34,4 +34,3 @@ yarn*
 package-lock.json
 themes.variable.less
 .history
-.changelog.config.js
