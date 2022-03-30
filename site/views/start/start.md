@@ -101,5 +101,5 @@ Vue.use(bkButton)
 
 ```js
 // 单独使用图标组件使用，可以使用如下方式引入
-import Info from 'bkui-vue/icon/info'
+import Info from 'bkui-vue/lib/icon/info'
 ```
