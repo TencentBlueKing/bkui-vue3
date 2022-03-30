@@ -16,6 +16,6 @@
     "js-calendar": "~1.2.3"
   },
   "peerDependencies": {
-    "vue": "3.2.2"
+    "vue": "3.2.x"
   }
 }

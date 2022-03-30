@@ -33,7 +33,7 @@ import { defineComponent, nextTick, reactive, ref, SetupContext, watch, h, resol
 import { virtualRenderProps, VirtualRenderProps } from './props';
 import virtualRender, { computedVirtualIndex } from './v-virtual-render';
 export default defineComponent({
-  name: 'BkVirtualRender',
+  name: 'VirtualRender',
   directives: {
     bkVirtualRender: virtualRender,
   },
