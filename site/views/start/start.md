@@ -1,6 +1,3 @@
----
-BASE_LIB_NAME: blui-vue
----
 ### 引入 bkui-vue
 
 `bkui-vue` 支持两种引入方式，一种是全量引入，一种是按需引入部分组件。我们先介绍如何完整引入 `bkui-vue`。
@@ -47,9 +44,15 @@ npm i babel-plugin-import -D
     "presets": ...,
     "plugins": [
         ...
-        ["import", {
-            "baseLibName": "bkui-vue"
-        }]
+        [
+          "import", 
+          {
+            "libraryName": "bkui-vue",
+            "style": (name) => {
+              const index = name.lastIndexOf('/')
+              return `${name}${name.slice(index)}.css`;
+          }
+      ]
     ]
 }
 ```
@@ -57,16 +60,15 @@ npm i babel-plugin-import -D
 之后就可以用如下语法形式来实现按需引用了
 
 ```js
-import { bkButton } from '{{BASE_LIB_NAME}}'
-import { bkButton as cc } from '{{BASE_LIB_NAME}}'
-import { bkButton, bkDropdownMenu } from '{{BASE_LIB_NAME}}'
-import { bkButton as cc, bkDropdownMenu as dd } from '{{BASE_LIB_NAME}}'
-console.log(bkButton)
+import { Button } from 'bkui-vue'
+import { Button as cc } from 'bkui-vue'
+import { Button, Input } from 'bkui-vue'
+import { Button as cc, Input as dd } from 'bkui-vue'
+console.log(Button)
 console.log(cc)
-console.log(bkDropdownMenu)
+console.log(DropdownMenu)
 console.log(dd)
 ```
-
 ### 全局配置
 
 在引入组件库时，可以传入一个全局配置对象。该对象目前支持`zIndex` 字段。`zIndex` 设置弹框的初始 z-index（默认值：2000）。按照引入组件库的方式，具体操作如下：
@@ -74,47 +76,30 @@ console.log(dd)
 完整引入：
 
 ```js
-import Vue from 'vue'
-import bkMagicVue from '{{BASE_LIB_NAME}}'
-Vue.use(bkMagicVue, { zIndex: 3000 })
+import { createApp } from 'vue'
+import App from './App.vue'
+import bkUi from 'bkui-vue'
+
+createApp(App).use(bkUi)
 ```
 
 按需引入：
 
 ```js
 import Vue from 'vue'
-import { bkButton } from '{{BASE_LIB_NAME}}'
+import { Button } from 'bkui-vue'
 
-Vue.prototype.$BK_EL = { zIndex: 3000 }
 Vue.use(bkButton)
 ```
-
-按照以上设置，项目中弹框的初始 z-index 为 3000。
-
 ### 组件库暴露出来的一些工具方法
 
-从 `2.1.11` 版本开始，组件库开始暴露出内部一些与组件逻辑无关的、通用的方法。目前暴露出来的有四个，分别如下：
+组件库暴露出了内部一些与组件逻辑无关的、通用的方法。目前暴露出来的有1个，如下：
 
 :::info
 无论是全量引入还是按需引入组件库或者是根本没有引入组件库，都可以使用如下方式使用组件库提供的工具方法
 :::
 
 ```js
-// tippy 单独引入方式：
-import tippy from '{{BASE_LIB_NAME}}/lib/utils/tippy'
-
-// deepmerge 单独引入方式：
-import deepmerge from '{{BASE_LIB_NAME}}/lib/utils/deepmerge'
-
-// popManager 单独引入方式：
-import popManager from '{{BASE_LIB_NAME}}/lib/utils/pop-manager'
-
-// zIndexManager 单独引入方式：
-import zIndexManager from '{{BASE_LIB_NAME}}/lib/utils/z-index-manager'
-
-// pinyin 单独引入方式：
-import pinyin from '{{BASE_LIB_NAME}}/lib/utils/pinyin'
-
-// Icon 图标组件使用 svg 图标时，需要单独引入
-import '{{BASE_LIB_NAME}}/lib/utils/svg-icon'
+// 单独使用图标组件使用，可以使用如下方式引入
+import Info from 'bkui-vue/lib/icon/info'
 ```
