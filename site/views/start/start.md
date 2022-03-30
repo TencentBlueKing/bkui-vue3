@@ -88,8 +88,6 @@ createApp(App).use(bkUi)
 ```js
 import Vue from 'vue'
 import { Button } from 'bkui-vue'
-
-Vue.use(bkButton)
 ```
 ### 组件库暴露出来的一些工具方法
 
