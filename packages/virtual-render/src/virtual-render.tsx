@@ -38,6 +38,7 @@ export default defineComponent({
     bkVirtualRender: virtualRender,
   },
   props: virtualRenderProps,
+  emits: ['content-scroll'],
   setup(props: VirtualRenderProps, ctx: SetupContext) {
     const { renderAs, contentAs } = props;
 
