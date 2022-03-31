@@ -36,3 +36,187 @@ body {
     }
   }
 }
+
+.markdown-body {
+  margin: 0 200px 0 30px;
+
+  .hljs {
+    display: block;
+    padding: 15px;
+    overflow-x: auto;
+    background: #f9fafc;
+  
+    .language-html,
+    .language-css,
+    .language-javascript,
+    .language-bash,
+    .language-xml,
+    .language-js {
+      font-family: Menlo,Monaco,Consolas,Courier,monospace;
+      font-size: 12px;
+      line-height: 1.8;
+      color: #888;
+      background-color: #f9fafc;
+    }
+  
+    .hljs-addition,
+    .hljs-meta,
+    .hljs-string,
+    .hljs-symbol,
+    .hljs-template-tag,
+    .hljs-template-variable {
+      color: #756bb1
+    }
+  
+    .hljs-comment,
+    .hljs-quote {
+      color: #636363
+    }
+  
+    .hljs-bullet,
+    .hljs-link,
+    .hljs-literal,
+    .hljs-number,
+    .hljs-regexp {
+      color: #31a354
+    }
+  
+    .hljs-deletion,
+    .hljs-variable {
+      color: #88f
+    }
+  
+    .hljs-built_in,
+    .hljs-doctag,
+    .hljs-keyword,
+    .hljs-name,
+    .hljs-section,
+    .hljs-selector-class,
+    .hljs-selector-id,
+    .hljs-selector-tag,
+    .hljs-strong,
+    .hljs-tag,
+    .hljs-title,
+    .hljs-type {
+      color: #3182bd
+    }
+  
+    .hljs-emphasis {
+      font-style: italic
+    }
+  
+    .hljs-attribute {
+      color: #e6550d
+    }
+  
+    code {
+      font-family: 'Microsoft Yahei', arial;
+      background-color: #f9fafc;
+    }
+  }
+
+  a {
+    color: #3c96ff;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  h2,
+  h3,
+  h4,
+  h5 {
+    font-weight: 400;
+    color: #1f2f3d;
+
+    &:hover {
+      .header-anchor {
+        visibility: visible;
+      }
+    }
+  }
+
+  p {
+    font-size: 14px;
+    line-height: 1.5em;
+    color: #5e6d82;
+  }
+
+  h3 {
+    margin: 45px 0 15px;
+    font-size: 18px;
+  }
+
+  .tips-block {
+    position: relative;
+
+    &.with-title {
+      &:before {
+        position: absolute;
+        top: 13px;
+        left: -11px;
+        width: 19px;
+        height: 19px;
+        font-size: 14px;
+        line-height: 21px;
+        color: #fff;
+        text-align: center;
+        border-radius: 50%;
+        content: '!';
+      }
+    }
+
+    &.tip,
+    &.info,
+    &.warning,
+    &.danger {
+      padding: 1px 15px;
+      margin: 12px 0;
+      border-left: 3px solid;
+
+      .hljs {
+        padding: 0;
+        background-color: transparent;
+      }
+    }
+
+    &.tip {
+      background-color: #f3f5f7;
+      border-color: #42b983;
+
+      &:before {
+        background-color: #42b983;
+      }
+    }
+
+    &.info {
+      background-color: rgba(225, 236, 255, .5);
+      border-color: #699df4;
+
+      &:before {
+        background-color: #699df4;
+      }
+    }
+
+    &.warning {
+      color: #000;
+      background-color: rgba(255, 229, 100, .3);
+      border-color: #b19300;
+
+      &:before {
+        background-color: #b19300;
+      }
+    }
+
+    &.danger {
+      color: #000;
+      background-color: #ffe6e6;
+      border-color: #f66;
+
+      &:before {
+        background-color: #f66;
+      }
+    }
+  }
+}
+
+

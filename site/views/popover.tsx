@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent } from 'vue';
+import { defineComponent, ref, nextTick } from 'vue';
 
 import BkPopover from '@bkui-vue/popover';
 import BkButton from '@bkui-vue/button';
@@ -31,27 +31,62 @@ import BkButton from '@bkui-vue/button';
 export default defineComponent({
   name: 'SitePopover',
   setup() {
+    const isShow = ref(true);
+    const trigger = ref('hover');
+    const theme = ref('dark');
 
-  },
-  render() {
-    return (
+    const handleThemeChange = (val: string) => {
+      theme.value = val;
+      updateInstance();
+    };
+
+    // const handleShow = () => {
+    //   isShow.value = !isShow;
+    //   updateInstance();
+    // };
+
+    const placements = [
+      { title: '上边', name: 'top', refDom: ref(), boundary: document.body },
+      { title: '左边', name: 'left', refDom: ref(), boundary: document.body, fixOnBoundary: true },
+      { title: '右边', name: 'right', refDom: ref(), boundary: null },
+      { title: '下边', name: 'bottom', refDom: ref(), boundary: null },
+    ];
+
+    // const handleTrigger = (type: string) => {
+    //   trigger.value = type;
+    //   updateInstance();
+    // };
+
+    const updateInstance = () => {
+      nextTick(() => {
+        placements.forEach((item: any) => {
+          item.refDom.value.update();
+        });
+      });
+    };
+    return () => (<>
+      <BkButton class="mr10" theme="primary" onClick={ () => handleThemeChange('dark')}>theme-dark</BkButton>
+      <BkButton class="mr10" theme="warning" onClick={ () => handleThemeChange('light')}>theme-light</BkButton>
+      {/* <BkButton class="mr10" theme="success" onClick={ () => handleTrigger('manual')}>trigger-manual</BkButton>
+      <BkButton class="mr10" theme="danger" onClick={ () => handleTrigger('hover')}>trigger-hover</BkButton>
+      <BkButton class="mr10" theme="primary" onClick={ () => handleShow()}>IsShow（{`${isShow.value}`}）</BkButton> */}
       <div style="margin: 50px auto;">
-        <BkPopover content="提示信息" theme="dark" placement="top">
-          <BkButton>上边</BkButton>
-        </BkPopover>
-        <br/>
-        <BkPopover content="提示信息" theme="dark" placement="left">
-          <BkButton>左边</BkButton>
-        </BkPopover>
-        <br/>
-        <BkPopover content="提示信息" theme="dark" placement="right">
-          <BkButton>右边</BkButton>
-        </BkPopover>
-        <br/>
-        <BkPopover content="提示信息" theme="dark" placement="bottom">
-          <BkButton>下边</BkButton>
-        </BkPopover>
+        {
+          placements.map((item: any) => [<BkPopover ref={ item.refDom }
+          content="提示信息"
+          theme={theme.value}
+          isShow={ isShow.value }
+          trigger={ trigger.value }
+          placement={ item.name }
+          boundary={item.boundary}
+          fixOnBoundary={ !!item.fixOnBoundary }>
+          <BkButton>{ item.title }</BkButton>
+        </BkPopover>,
+        <br/>,
+          ])
+        }
       </div>
+      </>
     );
   },
 });

@@ -24,7 +24,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { provide, inject, Ref, InjectionKey, computed, ref } from 'vue';
+import { provide, inject, Ref, InjectionKey, computed, ref, getCurrentInstance } from 'vue';
 export interface IMenuInfo {
   key: string;
   parentKey: string;
@@ -59,7 +59,16 @@ export const useMenuPathProvider = (key: string) => {
 };
 
 export const useMenuInject = () => inject(MENU_PROVIDER_KEY);
-export const useMenuPathInject = () => inject(MENU_PROVIDER_KEY_PATH) || { parentInfo: undefined, parentKeys: ref([]) };
+export const useMenuPathInject = () => {
+  const instance = getCurrentInstance();
+  const provides = !instance.parent
+    ? instance.vnode.appContext?.provides
+    : (instance.parent as any).provides;
+  if (provides && (MENU_PROVIDER_KEY_PATH as any) in provides) {
+    return inject(MENU_PROVIDER_KEY_PATH);
+  }
+  return { parentInfo: undefined, parentKeys: ref([]) };
+};
 const trimArr = function (s: string) {
   return (s || '').split(' ').filter(item => !!item.trim());
 };

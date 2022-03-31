@@ -75,7 +75,8 @@ export default defineComponent({
     lineHeight={props.rowHeight}
     contentClassName={resolveClassName('table-body')}
     list={props.data}
-    onContentScroll={ handleScrollChanged }
+    on-content-scroll={ handleScrollChanged }
+    throttleDelay={0}
     enabled={props.virtualEnabled}>
       {
         {

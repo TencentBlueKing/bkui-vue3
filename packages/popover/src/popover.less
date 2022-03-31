@@ -5,66 +5,76 @@
     display: inline-block;
   }
 
-  .bk-popover-content {
-    display: none;
-    padding: 7px 14px;
-    font-size: 12px;
+  .fade-in-enter-active,
+  .fade-in-linear-leave-active {
+    transition: opacity 200ms linear;
+  }
+  .fade-in-enter,
+  .fade-in-leave,
+  .fade-in-leave-active {
+    opacity: 0;
+  }
+}
+
+.bk-popover-content {
+  display: none;
+  padding: 7px 14px;
+  font-size: 12px;
+  color: #fff;
+  background: #26323d;
+  border-radius: 4px;
+  box-sizing: border-box;
+
+  &[data-theme^='dark'] {
     color: #fff;
     background: #26323d;
-    border-radius: 4px;
-    box-sizing: border-box;
+  }
 
-    &[data-theme='dark'] {
-      color: #fff;
-      background: #26323d;
-    }
-
-    &[data-theme='light'] {
-      color: #26323d;
-      background-color: #fff;
-      box-shadow: 0 0 6px 0 #dcdee5;
-
-      &[data-show] {
-        box-shadow: 0 0 6px 0 #dcdee5;
-      }
-    }
+  &[data-theme^='light'] {
+    color: #26323d;
+    background-color: #fff;
+    box-shadow: 0 0 6px 0 #dcdee5;
 
     &[data-show] {
-      display: block;
+      box-shadow: 0 0 6px 0 #dcdee5;
     }
+  }
 
-    .arrow {
+  &[data-show] {
+    display: block;
+  }
+
+  .arrow {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: inherit;
+    visibility: hidden;
+
+    &::before {
       position: absolute;
       width: 8px;
       height: 8px;
       background: inherit;
-      visibility: hidden;
-
-      &::before {
-        position: absolute;
-        width: 8px;
-        height: 8px;
-        background: inherit;
-        content: '';
-        visibility: visible;
-        transform: rotate(45deg);
-      }
+      content: '';
+      visibility: visible;
+      transform: rotate(45deg);
     }
+  }
 
-    &[data-popper-placement^='top'] > .arrow {
-      bottom: -4px;
-    }
+  &[data-popper-placement^='top'] > .arrow {
+    bottom: -4px;
+  }
 
-    &[data-popper-placement^='bottom'] > .arrow {
-      top: -4px;
-    }
+  &[data-popper-placement^='bottom'] > .arrow {
+    top: -4px;
+  }
 
-    &[data-popper-placement^='left'] > .arrow {
-      right: 0;
-    }
+  &[data-popper-placement^='left'] > .arrow {
+    right: -4px;
+  }
 
-    &[data-popper-placement^='right'] > .arrow {
-      left: -8px;
-    }
+  &[data-popper-placement^='right'] > .arrow {
+    left: -4px;
   }
 }

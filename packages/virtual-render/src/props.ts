@@ -106,6 +106,12 @@ export const virtualRenderProps = {
    * 可选值： auto(根据行高和行数计算, LineHeight * List.length) number(外层给定高度，若为0，则不显示)
    */
   abosuteHeight: PropTypes.oneOfType([PropTypes.string.def('auto'), PropTypes.number]).def('auto'),
+
+  /**
+   * 滚动刷新计算间隔时间
+   * 默认60 ms
+   */
+  throttleDelay: PropTypes.number.def(60),
 };
 
 export type VirtualRenderProps = Readonly<ExtractPropTypes<typeof virtualRenderProps>>;

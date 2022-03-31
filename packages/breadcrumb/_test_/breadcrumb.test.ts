@@ -27,6 +27,7 @@
 import { mount } from '@vue/test-utils';
 import Breadcrumb, { BkBreadcrumbItem } from '../src';
 
+
 const Mount = (template: string) => mount({
   components: {
     'bk-breadcrumb': Breadcrumb,
@@ -51,6 +52,21 @@ describe('breadcrumb.tsx', () => {
     </bk-breadcrumb>
   `);
     expect(wrapper.find('input').exists()).toBe(true);
+  });
+
+  test('custom prefix slot', async () => {
+    const wrapper = Mount(`
+      <bk-breadcrumb separator="|">
+        <bk-breadcrumb-item>
+        </bk-breadcrumb-item>
+        <template #prefix>
+         <span class="custom-prefix"></span>
+       </template>
+      </bk-breadcrumb>
+    `);
+
+    expect(wrapper.find('.bk-breadcrumb-goback').exists()).toBe(true);
+    expect(wrapper.find('.custom-prefix').exists()).toBe(true);
   });
 
   test('separator', () => {
@@ -93,5 +109,23 @@ describe('breadcrumb.tsx', () => {
       },
     });
     await wrapper.find('.bk-breadcrumb-item-inner').trigger('click');
+  });
+
+  test('backRouter click', async () => {
+    const wrapper = mount(Breadcrumb, {
+      props: {
+        backRouter: { path: '/test' },
+      },
+      global: {
+        provide: {
+          breadcrumb: {},
+        },
+      },
+    });
+    console.log(wrapper.find('.bk-breadcrumb-goback'));
+    expect(wrapper.find('.bk-breadcrumb-goback').exists()).toBe(true);
+    expect(wrapper.find('svg').exists()).toBe(true);
+    await wrapper.find('.bk-breadcrumb-goback').find('span')
+      .trigger('click');
   });
 });

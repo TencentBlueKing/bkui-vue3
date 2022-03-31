@@ -223,7 +223,7 @@ export default defineComponent({
       });
 
       const maxDeep = node.__depth + 1;
-      return new Array(maxDeep ?? 0).fill('')
+      return new Array(maxDeep).fill('')
         .map((_, index: number) => index)
         .filter((depth: number) => filterNextNode(depth, node))
         .filter((depth: number) => depth > 0)

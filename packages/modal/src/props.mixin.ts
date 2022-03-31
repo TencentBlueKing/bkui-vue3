@@ -38,7 +38,7 @@ export const propsMixin = {
     default: '50%',
   },
   customClass: {
-    type: [Object, String],
+    type: [Array, String],
     default: '',
   },
   scrollable: {

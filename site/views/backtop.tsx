@@ -43,7 +43,7 @@ export default defineComponent({
         <div style="height: 300px; background: grey; margin-bottom: 15px;">444</div>
         <div style="height: 300px; background: grey; margin-bottom: 15px;">555</div>
         <div style="height: 300px; background: grey; margin-bottom: 15px;">666</div>
-        <BKBacktop></BKBacktop>
+        <BKBacktop target=".body-wrapper"></BKBacktop>
       </div>
     );
   },
