@@ -28,7 +28,7 @@ import { computed, defineComponent, nextTick, reactive, SetupContext, watch } fr
 import { classes, resolveClassName } from '@bkui-vue/shared';
 import { Column, IColumnActive, tableProps, TablePropTypes } from './props';
 import TableRender from './render';
-import { resolveActiveColumns, resolveNumberOrStringToPix } from './utils';
+import { resolveActiveColumns, resolveNumberOrStringToPix, resolvePropBorderToClassStr } from './utils';
 import VirtualRender from '@bkui-vue/virtual-render';
 
 export default defineComponent({
@@ -63,27 +63,35 @@ export default defineComponent({
     }, { deep: true });
 
     const tableRender = new TableRender(props, ctx, reactiveProp);
-    const tableClass = classes({
+
+    const tableClass = computed(() => (classes({
       [resolveClassName('table')]: true,
+    }, resolvePropBorderToClassStr(props.border))));
+
+
+    const contentClass = classes({
+      [resolveClassName('table-body')]: true,
     });
+
     const handleScrollChanged = (args: any[]) => {
       const pagination = args[1];
       reactiveProp.scrollTranslateY = pagination.translateY;
     };
+
     return () => <VirtualRender
-    className={tableClass} style={wrapperStyle.value}
-    lineHeight={props.rowHeight}
-    contentClassName={resolveClassName('table-body')}
-    list={props.data}
-    onContentScroll={ handleScrollChanged }
-    throttleDelay={0}
-    enabled={props.virtualEnabled}>
-      {
+      className={tableClass.value} style={wrapperStyle.value}
+      lineHeight={props.rowHeight}
+      contentClassName={ contentClass }
+      list={props.data}
+      onContentScroll={ handleScrollChanged }
+      throttleDelay={0}
+      enabled={props.virtualEnabled}>
         {
-          default: (scope: any) => tableRender.renderTableBodySchema(scope.data || props.data),
-          afterContent: () => <div class={ resolveClassName('table-fixed') }></div>,
+          {
+            default: (scope: any) => tableRender.renderTableBodySchema(scope.data || props.data),
+            afterContent: () => <div class={ resolveClassName('table-fixed') }></div>,
+          }
         }
-      }
     </VirtualRender>;
   },
 });
