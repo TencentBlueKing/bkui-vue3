@@ -30,7 +30,7 @@ import { Close } from '@bkui-vue/icon';
 export default defineComponent({
   name: 'SelectExample',
   setup() {
-    const selectValue = ref('');
+    const selectValue = ref('test');
     const multiSelect = ref([null]);
     const multiSelect2 = ref('test');
     const multiSelect3 = ref();
