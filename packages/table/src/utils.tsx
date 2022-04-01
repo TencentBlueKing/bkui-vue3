@@ -25,6 +25,8 @@
 */
 
 import { TablePropTypes } from './props';
+import { BORDER_OPRIONS } from './const';
+
 
 /**
  * 解析Prop值 | 可能为多种类型 & 函数返回的场景
@@ -103,4 +105,23 @@ export const resolveNumberOrStringToPix = (val: string | number, defaultValue: s
   }
 
   return target;
+};
+
+/**
+ * 格式化Border配置为标准Class
+ * @param val
+ * @returns
+ */
+export const resolvePropBorderToClassStr = (val: string | string[]) => {
+  const defaultVal = ['row'];
+  if (typeof val === 'string') {
+    defaultVal.push(val);
+  }
+
+  if (Array.isArray(val)) {
+    defaultVal.push(...val.filter((str: string) => BORDER_OPRIONS.includes(str)));
+  }
+
+  return [...new Set(defaultVal)].map((item: string) => `bordered-${item}`)
+    .join(' ');;
 };
