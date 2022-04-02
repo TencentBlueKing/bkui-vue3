@@ -32,7 +32,7 @@ import { resolveActiveColumns, resolveNumberOrStringToPix, resolvePropBorderToCl
 import VirtualRender from '@bkui-vue/virtual-render';
 
 export default defineComponent({
-  name: 'Table',
+  name: 'BkTable',
   props: tableProps,
   setup(props: TablePropTypes, ctx: SetupContext) {
     const activeCols = reactive(resolveActiveColumns(props));

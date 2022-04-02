@@ -23,57 +23,54 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-
-import { defineComponent } from 'vue';
-import DemoTitle from '../../components/demo-title';
-import DemoBox from '../../components/demo-box';
-import PropsBox from '../../components/props-box';
-import { tableProps } from '../../../packages/table/src/props';
-import { resolvePropsToDesData } from '../utils/index';
-import basic from './basic.vue';
-import bordered from './bordered.vue';
-
-export default defineComponent({
-  components: { basic, bordered },
-  render() {
-    const menuPropsJson = resolvePropsToDesData(tableProps);
-
-    const configs = [{
-      attrs: {
-        title: '基础用法',
-        subtitle: '基础用法，用于表单内容的录入',
-        desc: 'props: --',
-        componentName: 'table',
-        demoName: 'basic',
-      },
-      component: () => <basic></basic>,
-    },
-    {
-      attrs: {
-        title: '设置边框',
-        subtitle: '设置边框显示样式',
-        desc: 'props: border',
-        componentName: 'table',
-        demoName: 'bordered',
-      },
-      component: () => <bordered></bordered>,
-    }];
-
-    return (
-      <div>
-        <DemoTitle
-          name="Table"
-          desc="Table组件， 为页面和功能提供列表。"
-          link="https://www.google.com.hk/"/>
-          {
-            configs.map(cfg => <DemoBox { ...cfg.attrs }>
-                 {
-                   cfg.component()
-                 }
-              </DemoBox>)
-          }
-        <PropsBox propsData={menuPropsJson}/>
-      </div>
-    );
+export const DATA_TABLE = [
+  {
+    ip: '192.168.0.1',
+    source: 'QQ',
+    status: '创建中',
+    create_time: '2018-05-25 15:02:24',
   },
-});
+  {
+    ip: '192.168.0.2',
+    source: '微信',
+    status: '正常',
+    create_time: '2018-05-25 15:02:24',
+  },
+  {
+    ip: '192.168.0.3',
+    source: 'QQ',
+    status: '创建中',
+    create_time: '2018-05-25 15:02:24',
+  },
+  {
+    ip: '192.168.0.3',
+    source: 'QQ',
+    status: '创建中',
+    create_time: '2018-05-25 15:02:24',
+  },
+  {
+    ip: '192.168.0.3',
+    source: 'QQ',
+    status: '创建中',
+    create_time: '2018-05-25 15:02:24',
+  },
+];
+
+export const DATA_COLUMNS = [
+  {
+    label: '名称/内网IP',
+    field: 'ip',
+  },
+  {
+    label: '来源',
+    field: 'source',
+  },
+  {
+    label: '创建时间',
+    field: 'create_time',
+  },
+  {
+    label: '状态',
+    field: 'status',
+  },
+];
