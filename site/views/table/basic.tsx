@@ -28,9 +28,10 @@ import { defineComponent, reactive, ref } from 'vue';
 
 import BkTable from '@bkui-vue/table';
 import BkButton from '@bkui-vue/button';
+import { BkCheckbox, BkCheckboxGroup } from '@bkui-vue/checkbox';
 
 export default defineComponent({
-  name: 'SiteTable',
+  name: 'BasicTable',
   setup() {
     const tableData = reactive([
       {
@@ -180,6 +181,8 @@ export default defineComponent({
       isNumberRow.value = !isNumberRow.value;
     };
 
+    const checkboxGroupValue = ref(['row']);
+
     return {
       columns,
       tableData,
@@ -191,24 +194,43 @@ export default defineComponent({
       columnPick,
       randomRows,
       rowHeight,
+      checkboxGroupValue,
     };
   },
   render() {
     return (
-      <div>
-        <BkButton onClick={ this.handleRandomRowHeight }>固定行高|自定义每行行高</BkButton>
+      <div style='padding: 15px'>
+          <BkButton onClick={ this.handleRandomRowHeight }>固定行高|自定义每行行高</BkButton>
           <BkButton onClick={ this.handleRandomColumn }>单列\多列\禁用列选中（{ this.columnPick }）</BkButton>
           <BkButton onClick={ this.handleAppendRow }>追加数据|改变列</BkButton>
-        <div style='height: 300px;'>
-          <BkTable columns={ this.columns } data={ this.tableData } rowHeight={ this.rowHeight }
+          <div style='padding: 15px 0'>
+            边框设置(默认为row)
+            <BkCheckboxGroup v-model={this.checkboxGroupValue}>
+              <BkCheckbox label="none" />
+              <BkCheckbox label="row" disabled/>
+              <BkCheckbox label="col" />
+              <BkCheckbox label="outer" />
+            </BkCheckboxGroup>
+          </div>
+        <div style='height: 300px; '>
+          <BkTable columns={ this.columns }
+          data={ this.tableData }
+          rowHeight={ this.rowHeight }
           columnPick={ this.columnPick }
-          activeColumn={ this.activeColumn }></BkTable>
+          border={this.checkboxGroupValue}
+          activeColumn={ this.activeColumn }
+          ref='tableBasic'></BkTable>
         </div>
-        <div>大数据量启用虚拟渲染----<BkButton onClick={ this.handleRandomRows }>随机1000-9999行数据</BkButton>----Length: {`${this.randomRows.length}`}</div>
+        <div style='padding: 15px 0'>大数据量启用虚拟渲染----<BkButton onClick={ this.handleRandomRows }>随机1000-9999行数据</BkButton>----Length: {`${this.randomRows.length}`}</div>
         <div style='height: 500px;'>
-          <BkTable columns={ this.columns } data={ this.randomRows } rowHeight={this.rowHeight} virtualEnabled={true}
+          <BkTable columns={ this.columns }
+          data={ this.randomRows }
+          rowHeight={this.rowHeight}
+          virtualEnabled={true}
+          border={this.checkboxGroupValue}
           columnPick={ this.columnPick }
-          activeColumn={ this.activeColumn }></BkTable>
+          activeColumn={ this.activeColumn }
+          ref='tableVirtual'></BkTable>
         </div>
       </div>
     );

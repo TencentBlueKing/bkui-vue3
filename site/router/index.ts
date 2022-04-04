@@ -283,7 +283,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/table',
     name: 'table',
-    component: () => import('../views/table'),
+    component: () => import('../views/table/table'),
     meta: {
       group: NavGroupMeta.Data,
       navName: 'Table 表格',
