@@ -26,6 +26,7 @@
 
 import { ExtractPropTypes } from 'vue';
 import { PropTypes } from '@bkui-vue/shared';
+import { BORDER_OPRIONS } from './const';
 
 export const tableProps = {
   /**
@@ -84,6 +85,13 @@ export const tableProps = {
    * 当数据量很大时，启用虚拟渲染可以解决压面卡顿问题
    */
   virtualEnabled: PropTypes.bool.def(false),
+
+  /**
+   * 表格边框显示设置，可以是一个组合
+   * 生效规则: 除非单独设置 none,否则会追加每个设置
+   */
+  border: PropTypes.arrayOf(PropTypes.commonType(BORDER_OPRIONS, 'border')).def(['row']),
+
   // /**
   //  * Table Caption Config
   //  */

@@ -39,7 +39,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/start/start'),
     meta: {
       group: NavGroupMeta.Start,
-      navName: '快速开始',
+      navName: '快速上手',
     },
   },
   /**
@@ -283,7 +283,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/table',
     name: 'table',
-    component: () => import('../views/table'),
+    component: () => import('../views/table/table'),
     meta: {
       group: NavGroupMeta.Data,
       navName: 'Table 表格',
