@@ -4,7 +4,7 @@
   overflow: auto;
   border-top: 1px solid @table-border-color;
   border-bottom: 1px solid @table-border-color;
-  
+  .@{bk-prefix}-table-head,
   .@{bk-prefix}-table-body {
     background: @table-bg-color;
 
@@ -22,6 +22,7 @@
           overflow: hidden;
           line-height: var(--row-height);
           color: @table-body-font-color;
+          text-align: left;
           text-overflow: ellipsis;
           white-space: nowrap;
         }
@@ -34,11 +35,9 @@
           z-index: 1;
           color: @table-head-font-color;
           background-color: @table-head-bg-color;
-          transform: translateY(var(--translate-y));
 
           &.active {
             background: #f0f1f5;
-            // cursor: ;
           }
         }
       }
@@ -83,11 +82,14 @@
   }
 
   &.bordered-none {
-    .cell {
-      border-top: none;
-      border-right: none;
-      border-bottom: none;
-      border-left: none;
+    th,
+    td {
+      .cell {
+        border-top: none;
+        border-right: none;
+        border-bottom: none;
+        border-left: none;
+      }
     }
   }
 

@@ -24,11 +24,11 @@
  * IN THE SOFTWARE.
 */
 
-import { computed, defineComponent, nextTick, reactive, SetupContext, watch } from 'vue';
+import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, reactive, ref, SetupContext, watch } from 'vue';
 import { classes, resolveClassName } from '@bkui-vue/shared';
 import { Column, IColumnActive, tableProps, TablePropTypes } from './props';
 import TableRender from './render';
-import { resolveActiveColumns, resolveNumberOrStringToPix, resolvePropBorderToClassStr } from './utils';
+import { resolveActiveColumns, resolveNumberOrStringToPix, resolvePropBorderToClassStr, resolveColumnWidth, observerResize } from './utils';
 import VirtualRender from '@bkui-vue/virtual-render';
 
 export default defineComponent({
@@ -36,6 +36,9 @@ export default defineComponent({
   props: tableProps,
   setup(props: TablePropTypes, ctx: SetupContext) {
     const activeCols = reactive(resolveActiveColumns(props));
+    const colgroups = reactive(props.columns.map(col => ({ ...col, calcWidth: null })));
+    let observerIns = null;
+    const root = ref();
     const getActiveColumns = () => (props.columns || []).map((_column: Column, index: number) => ({
       index,
       active: activeCols.some((colIndex: number) => colIndex === index),
@@ -48,9 +51,19 @@ export default defineComponent({
 
     /** 表格外层容器样式 */
     const wrapperStyle = computed(() => ({
-      height: resolveNumberOrStringToPix(props.height),
-      minHeight: resolveNumberOrStringToPix(props.minHeight),
+      // height: resolveNumberOrStringToPix(props.height),
+      minHeight: resolveNumberOrStringToPix(props.minHeight, 'auto'),
     }));
+
+    /** 表格外层容器样式 */
+    const contentStyle = computed(() => {
+      const resolveHeight = resolveNumberOrStringToPix(props.height);
+      const resolveHeadHeight = props.showHead ? resolveNumberOrStringToPix(props.headHeight) : '0';
+      return {
+        height: `calc(${resolveHeight} - ${resolveHeadHeight} - 2px)`,
+        display: 'block',
+      };
+    });
 
     watch(() => [props.activeColumn, props.columns], () => {
       nextTick(() => {
@@ -62,12 +75,15 @@ export default defineComponent({
       });
     }, { deep: true });
 
-    const tableRender = new TableRender(props, ctx, reactiveProp);
+    const tableRender = new TableRender(props, ctx, reactiveProp, colgroups);
 
     const tableClass = computed(() => (classes({
       [resolveClassName('table')]: true,
     }, resolvePropBorderToClassStr(props.border))));
 
+    const headClass = classes({
+      [resolveClassName('table-head')]: true,
+    });
 
     const contentClass = classes({
       [resolveClassName('table-body')]: true,
@@ -78,10 +94,29 @@ export default defineComponent({
       reactiveProp.scrollTranslateY = pagination.translateY;
     };
 
-    return () => <VirtualRender
-      className={tableClass.value} style={wrapperStyle.value}
+    onMounted(() => {
+      observerIns = observerResize(root.value, () => {
+        resolveColumnWidth(root.value, colgroups, 20);
+      }, 60, true);
+
+      observerIns.start();
+    });
+
+    onBeforeUnmount(() => {
+      observerIns.stop();
+      observerIns = null;
+    });
+
+    return () => <div class={tableClass.value} style={wrapperStyle.value} ref={root}>
+      <div class={ headClass }>
+        {
+          props.showHead && tableRender.renderTableHeadSchema()
+        }
+      </div>
+    <VirtualRender
       lineHeight={props.rowHeight}
       contentClassName={ contentClass }
+      style={ contentStyle.value }
       list={props.data}
       onContentScroll={ handleScrollChanged }
       throttleDelay={0}
@@ -92,7 +127,8 @@ export default defineComponent({
             afterContent: () => <div class={ resolveClassName('table-fixed') }></div>,
           }
         }
-    </VirtualRender>;
+    </VirtualRender>
+    </div>;
   },
 });
 

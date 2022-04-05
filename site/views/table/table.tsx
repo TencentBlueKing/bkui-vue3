@@ -32,9 +32,10 @@ import { tableProps } from '../../../packages/table/src/props';
 import { resolvePropsToDesData } from '../utils/index';
 import basic from './basic.vue';
 import bordered from './bordered.vue';
+import virtualRender from './virtual-render.vue';
 
 export default defineComponent({
-  components: { basic, bordered },
+  components: { basic, bordered, virtualRender },
   render() {
     const menuPropsJson = resolvePropsToDesData(tableProps);
 
@@ -57,6 +58,16 @@ export default defineComponent({
         demoName: 'bordered',
       },
       component: () => <bordered></bordered>,
+    },
+    {
+      attrs: {
+        title: '启用虚拟滚动-渲染大数据表格',
+        subtitle: '大数据模式启用虚拟滚动',
+        desc: 'props: virtual-enabled',
+        componentName: 'table',
+        demoName: 'virtual-render',
+      },
+      component: () => <virtual-render></virtual-render>,
     }];
 
     return (
