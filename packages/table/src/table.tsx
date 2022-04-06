@@ -107,6 +107,10 @@ export default defineComponent({
       observerIns = null;
     });
 
+    ctx.expose({
+      plugins: tableRender.plugins,
+    });
+
     return () => <div class={tableClass.value} style={wrapperStyle.value} ref={root}>
       <div class={ headClass }>
         {

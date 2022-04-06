@@ -27,17 +27,20 @@ import { classes } from '@bkui-vue/shared';
 import { SetupContext } from 'vue';
 import { Column, GroupColumn, IColumnActive, IReactiveProp, TablePropTypes } from './props';
 import { resolvePropVal, resolveWidth } from './utils';
+import { TablePlugins } from './plugins/index';
 
 export default class TableRender {
   props: TablePropTypes;
   context: SetupContext;
   reactiveProp: any;
   colgroups: GroupColumn[];
+  public plugins: TablePlugins;
   constructor(props: TablePropTypes, ctx: SetupContext, reactiveProp: IReactiveProp, colgroups: GroupColumn[]) {
     this.props = props;
     this.context = ctx;
     this.reactiveProp = reactiveProp;
     this.colgroups = colgroups;
+    this.plugins = new TablePlugins(props, ctx);
   }
 
   get propActiveCols(): IColumnActive[] {

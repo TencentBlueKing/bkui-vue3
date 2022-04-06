@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
-import { defineComponent, watch, reactive, computed } from 'vue';
+import { defineComponent, watch, reactive, computed, h } from 'vue';
 import {
   getFlatdata,
   getLabel,
@@ -38,7 +38,7 @@ import VirtualRender from '@bkui-vue/virtual-render';
 export type TreePropTypes = defineTypes;
 
 export default defineComponent({
-  name: 'Tree',
+  name: 'BkTree',
   props: treeProps,
 
   setup(props: TreePropTypes) {
@@ -97,14 +97,67 @@ export default defineComponent({
       ? <FolderShapeOpen class="bk-tree-icon" />
       : <Folder class="bk-tree-icon" />);
 
+
+    /**
+     * 渲染动态设置的节点样式
+     * @param val
+     * @returns
+     */
+    const renderPrefixVal = (val: string | { node: string, className: string, text: string, style: any }) => {
+      if (typeof val === 'string') {
+        return val;
+      }
+
+      if (typeof val === 'object' && val !== null) {
+        const { node, className, text, style } = val;
+        return h(node, { class: className, style }, text);
+      }
+
+      return null;
+    };
+
     /**
      * 根据节点状态获取节点操作Icon
      * @param item
      * @returns
      */
     const getActionIcon = (item: any) => {
-      if (item.__hasChild) {
-        return isItemOpen(item) ? <DownShape /> : <RightShape />;
+      let prefixFnVal = null;
+
+      if (typeof props.prefixIcon === 'function') {
+        prefixFnVal = props.prefixIcon(item.__isRoot, item.__hasChild, isItemOpen(item), 'action', item);
+        if (prefixFnVal !== 'default') {
+          return renderPrefixVal(prefixFnVal);
+        }
+      }
+
+      if (prefixFnVal === 'default' || (typeof props.prefixIcon === 'boolean' && props.prefixIcon)) {
+        if (item.__hasChild) {
+          return isItemOpen(item) ? <DownShape /> : <RightShape />;
+        }
+      }
+
+      return null;
+    };
+
+    /**
+     * 获取节点类型Icon
+     * @param item
+     * @returns
+     */
+    const getNodePrefixIcon = (item: any) => {
+      let prefixFnVal = null;
+
+      if (typeof props.prefixIcon === 'function') {
+        prefixFnVal = props.prefixIcon(item.__isRoot, item.__hasChild, isItemOpen(item), 'node_type', item);
+
+        if (prefixFnVal !== 'default') {
+          return renderPrefixVal(prefixFnVal);
+        }
+      }
+
+      if (prefixFnVal === 'default' || (typeof props.prefixIcon === 'boolean' && props.prefixIcon)) {
+        return item.__isRoot ? getRootIcon(item) : <TextFile class="bk-tree-icon" />;
       }
 
       return null;
@@ -209,7 +262,6 @@ export default defineComponent({
       paths.push(`${nextLevel + 1}`);
       const nextNodePath = paths.join('-');
       const exist  = Object.prototype.hasOwnProperty.call(flatData.schema, nextNodePath);
-      console.log('nextNodePath', nextNodePath, node.__path, exist);
       return exist;
     };
 
@@ -239,6 +291,7 @@ export default defineComponent({
       getActionIcon,
       getRootIcon,
       getVirtualLines,
+      getNodePrefixIcon,
     };
   },
 
@@ -251,7 +304,7 @@ export default defineComponent({
       {
         [
           this.getActionIcon(item),
-          item.__isRoot ? this.getRootIcon(item) : <TextFile class="bk-tree-icon" />,
+          this.getNodePrefixIcon(item),
         ]
       }
       <span>{getLabel(item, props)}</span>
