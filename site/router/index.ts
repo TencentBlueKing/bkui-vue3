@@ -416,6 +416,15 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
+    path: '/resize-layout',
+    name: 'resizeLayout',
+    component: () => import('../views/resize-layout'),
+    meta: {
+      group: NavGroupMeta.Layout,
+      navName: 'ResizeLayout',
+    },
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: '404',
     component: () => import('../views/404'),

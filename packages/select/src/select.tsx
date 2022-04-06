@@ -172,16 +172,18 @@ export default defineComponent({
     const isRemoteSearch = computed(() => typeof remoteMethod.value === 'function');
     const searchLoading = ref(false);
     // 远程搜索
-    watchEffect(async () => {
-      if (!isRemoteSearch.value || !isPopoverShow.value || !searchKey.value) return;
-      try {
-        searchLoading.value = true;
-        await remoteMethod.value(searchKey.value);
-      } catch (e) {
-        console.error(e);
-      } finally {
-        searchLoading.value = false;
-      }
+    watchEffect(() => {
+      (async () => {
+        if (!isRemoteSearch.value || !isPopoverShow.value || !searchKey.value) return;
+        try {
+          searchLoading.value = true;
+          await remoteMethod.value(searchKey.value);
+        } catch (e) {
+          console.error(e);
+        } finally {
+          searchLoading.value = false;
+        }
+      })();
     });
     const isEmpty = computed(() => [...states.options.values()].every(option => !option.visible));
 
