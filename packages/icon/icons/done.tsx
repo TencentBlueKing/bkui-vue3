@@ -26,7 +26,7 @@
 */
 import { FunctionalComponent } from 'vue';
 import BkIcon, { IIconBaseProps } from './icon';
-const data = JSON.parse('{"type":"element","name":"svg","attributes":{"xmlns":"http://www.w3.org/2000/svg","viewBox":"0 0 1024 1024","style":"width: 1em; height: 1em; vertical-align: middle;fill: currentColor;overflow: hidden;"},"elements":[{"type":"element","name":"path","attributes":{"d":"M704 352l48 48-304 304-176-176 48-48 128 128z"}}]}');
+const data = JSON.parse('{"type":"element","name":"svg","attributes":{"xmlns":"http://www.w3.org/2000/svg","viewBox":"0 0 1024 1024","style":"width: 2em; height: 2em; vertical-align: middle;fill: currentColor;overflow: hidden;"},"elements":[{"type":"element","name":"path","attributes":{"d":"M704 352l48 48-304 304-176-176 48-48 128 128z"}}]}');
 const done: FunctionalComponent<IIconBaseProps> = (props, context) => {
   const p = { ...props, ...context.attrs };
   return <BkIcon {...p}  data={data} name="done"></BkIcon>;
