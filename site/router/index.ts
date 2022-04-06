@@ -263,6 +263,15 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
+    path: '/timeline',
+    name: 'timeline',
+    component: () => import('../views/timeline'),
+    meta: {
+      group: NavGroupMeta.Nav,
+      navName: 'Timeline 时间轴',
+    },
+  },
+  {
     path: '/animateNumber',
     name: 'animateNumber',
     component: () => import('../views/animate-number'),
