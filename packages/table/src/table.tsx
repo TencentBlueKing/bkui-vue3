@@ -24,18 +24,21 @@
  * IN THE SOFTWARE.
 */
 
-import { computed, defineComponent, nextTick, reactive, SetupContext, watch } from 'vue';
+import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, reactive, ref, SetupContext, watch } from 'vue';
 import { classes, resolveClassName } from '@bkui-vue/shared';
 import { Column, IColumnActive, tableProps, TablePropTypes } from './props';
 import TableRender from './render';
-import { resolveActiveColumns, resolveNumberOrStringToPix } from './utils';
+import { resolveActiveColumns, resolveNumberOrStringToPix, resolvePropBorderToClassStr, resolveColumnWidth, observerResize } from './utils';
 import VirtualRender from '@bkui-vue/virtual-render';
 
 export default defineComponent({
-  name: 'Table',
+  name: 'BkTable',
   props: tableProps,
   setup(props: TablePropTypes, ctx: SetupContext) {
     const activeCols = reactive(resolveActiveColumns(props));
+    const colgroups = reactive(props.columns.map(col => ({ ...col, calcWidth: null })));
+    let observerIns = null;
+    const root = ref();
     const getActiveColumns = () => (props.columns || []).map((_column: Column, index: number) => ({
       index,
       active: activeCols.some((colIndex: number) => colIndex === index),
@@ -48,9 +51,19 @@ export default defineComponent({
 
     /** 表格外层容器样式 */
     const wrapperStyle = computed(() => ({
-      height: resolveNumberOrStringToPix(props.height),
-      minHeight: resolveNumberOrStringToPix(props.minHeight),
+      // height: resolveNumberOrStringToPix(props.height),
+      minHeight: resolveNumberOrStringToPix(props.minHeight, 'auto'),
     }));
+
+    /** 表格外层容器样式 */
+    const contentStyle = computed(() => {
+      const resolveHeight = resolveNumberOrStringToPix(props.height);
+      const resolveHeadHeight = props.showHead ? resolveNumberOrStringToPix(props.headHeight) : '0';
+      return {
+        height: `calc(${resolveHeight} - ${resolveHeadHeight} - 2px)`,
+        display: 'block',
+      };
+    });
 
     watch(() => [props.activeColumn, props.columns], () => {
       nextTick(() => {
@@ -62,29 +75,64 @@ export default defineComponent({
       });
     }, { deep: true });
 
-    const tableRender = new TableRender(props, ctx, reactiveProp);
-    const tableClass = classes({
+    const tableRender = new TableRender(props, ctx, reactiveProp, colgroups);
+
+    const tableClass = computed(() => (classes({
       [resolveClassName('table')]: true,
+    }, resolvePropBorderToClassStr(props.border))));
+
+    const headClass = classes({
+      [resolveClassName('table-head')]: true,
     });
+
+    const contentClass = classes({
+      [resolveClassName('table-body')]: true,
+    });
+
     const handleScrollChanged = (args: any[]) => {
       const pagination = args[1];
       reactiveProp.scrollTranslateY = pagination.translateY;
     };
-    return () => <VirtualRender
-    className={tableClass} style={wrapperStyle.value}
-    lineHeight={props.rowHeight}
-    contentClassName={resolveClassName('table-body')}
-    list={props.data}
-    on-content-scroll={ handleScrollChanged }
-    throttleDelay={0}
-    enabled={props.virtualEnabled}>
-      {
+
+    onMounted(() => {
+      observerIns = observerResize(root.value, () => {
+        resolveColumnWidth(root.value, colgroups, 20);
+      }, 60, true);
+
+      observerIns.start();
+    });
+
+    onBeforeUnmount(() => {
+      observerIns.stop();
+      observerIns = null;
+    });
+
+    ctx.expose({
+      plugins: tableRender.plugins,
+    });
+
+    return () => <div class={tableClass.value} style={wrapperStyle.value} ref={root}>
+      <div class={ headClass }>
         {
-          default: (scope: any) => tableRender.renderTableBodySchema(scope.data || props.data),
-          afterContent: () => <div class={ resolveClassName('table-fixed') }></div>,
+          props.showHead && tableRender.renderTableHeadSchema()
         }
-      }
-    </VirtualRender>;
+      </div>
+    <VirtualRender
+      lineHeight={props.rowHeight}
+      contentClassName={ contentClass }
+      style={ contentStyle.value }
+      list={props.data}
+      onContentScroll={ handleScrollChanged }
+      throttleDelay={0}
+      enabled={props.virtualEnabled}>
+        {
+          {
+            default: (scope: any) => tableRender.renderTableBodySchema(scope.data || props.data),
+            afterContent: () => <div class={ resolveClassName('table-fixed') }></div>,
+          }
+        }
+    </VirtualRender>
+    </div>;
   },
 });
 

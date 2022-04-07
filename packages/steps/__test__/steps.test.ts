@@ -25,7 +25,7 @@
 */
 
 import { mount } from '@vue/test-utils';
-import Steps from '../src/';
+import Steps from '../src/index';
 
 const Mount = (template: string) => mount({
   components: {

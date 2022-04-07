@@ -263,6 +263,15 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
+    path: '/timeline',
+    name: 'timeline',
+    component: () => import('../views/timeline'),
+    meta: {
+      group: NavGroupMeta.Nav,
+      navName: 'Timeline 时间轴',
+    },
+  },
+  {
     path: '/animateNumber',
     name: 'animateNumber',
     component: () => import('../views/animate-number'),
@@ -283,7 +292,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/table',
     name: 'table',
-    component: () => import('../views/table'),
+    component: () => import('../views/table/table'),
     meta: {
       group: NavGroupMeta.Data,
       navName: 'Table 表格',
@@ -355,7 +364,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/tree',
     name: 'tree',
-    component: () => import('../views/tree'),
+    component: () => import('../views/tree/tree'),
     meta: {
       group: NavGroupMeta.Data,
       navName: 'Tree 树',
@@ -400,10 +409,19 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/virtual-render',
     name: 'virtualRender',
-    component: () => import('../views/virtual-render'),
+    component: () => import('../views/virtual-render/virtual-render'),
     meta: {
       group: NavGroupMeta.Others,
       navName: 'VirtualRender',
+    },
+  },
+  {
+    path: '/pagination',
+    name: 'pagination',
+    component: () => import('../views/pagination'),
+    meta: {
+      group: NavGroupMeta.Data,
+      navName: 'Pagination 分页',
     },
   },
   {
