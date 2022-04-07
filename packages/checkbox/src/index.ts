@@ -26,7 +26,9 @@
 import Component, { CheckboxProps } from './checkbox';
 import CheckboxGroup from './checkbox-group';
 import { withInstallProps } from '@bkui-vue/shared';
+
 const BkCheckbox = withInstallProps(Component, { Group: CheckboxGroup });
+
 export default BkCheckbox;
 export {
   BkCheckbox,
