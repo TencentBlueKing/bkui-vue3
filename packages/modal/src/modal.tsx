@@ -64,7 +64,12 @@ export default defineComponent({
     visible(val: boolean) {
       if (val) {
         this.$nextTick(() => {
-          bkPopIndexManager.show(this.$el);
+          const hideMaskStyle = {
+            'background-color': 'rgba(0,0,0,0)',
+          };
+
+          const appendStyle = this.showMask ? {} : hideMaskStyle;
+          bkPopIndexManager.show(this.$el, this.showMask, appendStyle);
         });
       } else {
         bkPopIndexManager.hide(this.$el);

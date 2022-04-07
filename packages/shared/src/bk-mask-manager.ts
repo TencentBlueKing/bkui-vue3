@@ -26,6 +26,21 @@
 
 import { random } from './utils';
 import { bkZIndexManager } from './z-index-manager';
+
+type BkMaskManagerConfig = {
+  multiInstance?: boolean,
+  maskAttrTag?: string,
+  parentNode?: HTMLElement | Document,
+  maskStyle?: any
+};
+
+type MaskConfigStore = {
+  zIndex: number,
+  style: any,
+  uuid?: string,
+  preUID?: string
+};
+
 export class BkMaskManager {
   /** 遮罩容器 */
   private readonly mask: HTMLElement;
@@ -40,10 +55,16 @@ export class BkMaskManager {
   private readonly uniqueMaskAttrTag: string = '';
 
   /** 设置弹出层父级组件，默认是body */
-  private parentNode: HTMLElement = document.body;
+  private parentNode: HTMLElement | Document = document.body;
 
   /** 遮罩当前显示组件实例 **/
   private activeInstance: HTMLElement | undefined = undefined;
+
+  /** 记录已在使用的z-index */
+  private zIndexStore: Map<string, MaskConfigStore> = new Map();
+
+  /** 记录最后一个UUID */
+  private lastUUID: string | null = null;
 
   /** 遮罩样式 **/
   private readonly maskStyle: any = {
@@ -62,22 +83,51 @@ export class BkMaskManager {
    * @param multiInstance 是否允许多实例
    * @param maskAttrTag 遮罩DOM唯一标志，支持自定义和 auto
    */
-  constructor(config?: any) {
+  constructor(config?: BkMaskManagerConfig) {
     const { multiInstance = false, maskAttrTag = 'auto', parentNode = document.body, maskStyle = {} } = config || {};
     this.activeInstance = undefined;
-    this.maskStyle = Object.assign({}, this.maskStyle, maskStyle);
     this.multiInstance = multiInstance;
     this.uniqueMaskAttrTag = this.getMaskAttrTag(maskAttrTag);
     this.parentNode = parentNode || document;
     this.mask = this.getMask();
     this.backupMask = this.createMask('data-bk-backup-uid');
-    this.setMaskStyle();
+    this.setMaskStyle(Object.assign({}, this.maskStyle, maskStyle));
   }
 
 
-  public show(content?: HTMLElement, zIndex?: number) {
+  /**
+   * 显示遮罩
+   * @param content 遮罩内容
+   * @param zIndex z-index
+   * @param showMask 是否显示遮罩
+   * @param appendStyle 追加样式
+   */
+  public show(content?: HTMLElement, zIndex?: number, showMask = true, appendStyle = {}, uuid: string | null = null) {
+    const uid = uuid ?? random(16);
     // @ts-ignore
     const localZIndex: number = /-?\d+/.test(`${zIndex}`) ? zIndex : bkZIndexManager.getModalNextIndex();
+    let style = Object.assign({}, this.maskStyle, appendStyle || {});
+
+    /**
+     * 如果不显示遮罩，此处遮罩继承父级
+     * 同时，如果父级弹出层有遮罩，此处不能覆盖
+     */
+    if (!showMask) {
+      if (this.lastUUID) {
+        const preStore = this.zIndexStore.get(this.lastUUID);
+        style = preStore.style;
+      }
+    }
+
+    /** 缓存当前z-index */
+    this.storeMaskInsCfg({
+      zIndex: localZIndex,
+      style: { ...style },
+      uuid: uid,
+      preUID: this.lastUUID,
+    });
+
+    this.setMaskStyle(style);
     this.mask.style.setProperty('display', 'block');
     this.mask.style.setProperty('z-index', `${localZIndex}`);
     this.backupMask.style.setProperty('z-index', `${localZIndex - 1}`);
@@ -88,11 +138,33 @@ export class BkMaskManager {
     }
   }
 
-  public hide(content?: HTMLElement) {
+  public hide(content?: HTMLElement, uuid?: string) {
+    const uid = uuid ?? this.lastUUID;
     this.mask.style.setProperty('display', 'none');
     content?.remove();
     this.activeInstance?.remove();
     this.activeInstance = undefined;
+    this.popIndexStore(uid);
+  }
+
+  public storeMaskInsCfg(config: MaskConfigStore) {
+    this.zIndexStore.set(config.uuid, config);
+    this.lastUUID = config.uuid;
+    return this.zIndexStore.get(config.uuid);
+  }
+
+  /**
+   * 移除最后一次缓存数据
+   */
+  public popIndexStore(uuid: string) {
+    if (this.zIndexStore.has(uuid)) {
+      const rmIns = this.zIndexStore.get(uuid);
+      this.lastUUID = rmIns.preUID;
+      return this.zIndexStore.delete(uuid);;
+    }
+
+    this.lastUUID = null;
+    return false;
   }
 
   public backupActiveInstance() {
@@ -137,9 +209,9 @@ export class BkMaskManager {
     return div;
   }
 
-  private setMaskStyle() {
+  private setMaskStyle(maskStyle = {}) {
     if (this.mask) {
-      Object.entries(this.maskStyle).forEach(cfg => this.mask.style.setProperty(cfg[0], cfg[1] as string));
+      Object.entries(maskStyle).forEach(cfg => this.mask.style.setProperty(cfg[0], cfg[1] as string));
     }
   }
 
@@ -162,3 +234,4 @@ export class BkMaskManager {
 }
 
 export const bKMaskManager = new BkMaskManager({});
+
