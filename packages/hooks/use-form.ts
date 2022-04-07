@@ -24,8 +24,9 @@
 * IN THE SOFTWARE.
 */
 
-import { getFormKey } from '../../hooks/use-form';
-import type { InjectionKey } from 'vue';
-import type { IFormContext } from './type';
+import { inject } from 'vue';
 
-export const formKey: InjectionKey<IFormContext> = getFormKey();
+const formKey =  Symbol('form');
+export const getFormKey = () => formKey;
+
+export default () => inject(formKey);
