@@ -22,15 +22,8 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
- */
-
-/**
- * @file virtual-render enter
- *
- * Copyright © 2012-2019 Tencent BlueKing. All Rights Reserved. 蓝鲸智云 版权所有
- */
-
-import Component from './virtual-render';
+*/
+import Component from './timeline';
 import { withInstall } from '@bkui-vue/shared';
-const BkVirtualRender = withInstall(Component);
-export default BkVirtualRender;
+const BkSteps = withInstall(Component);
+export default BkSteps;

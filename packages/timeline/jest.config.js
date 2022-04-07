@@ -22,15 +22,30 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
- */
+*/
 
-/**
- * @file virtual-render enter
- *
- * Copyright © 2012-2019 Tencent BlueKing. All Rights Reserved. 蓝鲸智云 版权所有
- */
+const baseJestConf = require('../../jest.config');
 
-import Component from './virtual-render';
-import { withInstall } from '@bkui-vue/shared';
-const BkVirtualRender = withInstall(Component);
-export default BkVirtualRender;
+module.exports = {
+  ...baseJestConf,
+  rootDir: '../../',
+  globals: {
+    'ts-jest': {
+      babelConfig: '<rootDir>/babel.config.js',
+    },
+  },
+  testRegex: 'packages/timeline/__test__/.*\\.test\\.(js|ts|tsx)$',
+  collectCoverageFrom: [
+    'packages/timeline/**/*.{jsx,vue,tsx}',
+    '!packages/*/style/index.{js,jsx,tsx}',
+    '!packages/style/*.{js,jsx}',
+    '!packages/coverage/**',
+    '!packages/*/locale/*.{js,jsx}',
+    '!packages/*/__tests__/**/type.{js,jsx,tsx}',
+    '!packages/style.ts',
+    '!**/node_modules/**',
+  ],
+  transform: {
+    '^.+\\.(ts|tsx)$': 'ts-jest',
+  },
+};
