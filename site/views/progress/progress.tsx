@@ -180,7 +180,7 @@ export default defineComponent({
             title="基础用法"
             subtitle="修改进度条主题"
             desc="percent 是 0 到 100 之间的数值，提供 4 种主题，由 theme 属性来定义，可选的主题有 primary, warning, success, danger，默认为 primary, 由 color 属性来自定义颜色值。"
-            componentName="BkProgress"
+            componentName="progress"
             demoName="base-demo">
             <BaseDemo></BaseDemo>
           </DemoBox>
@@ -189,7 +189,7 @@ export default defineComponent({
             title="大小设置"
             subtitle=""
             desc="可以使用 size 属性来配置进度条的尺寸，可接受 small large，也可配置strokeWidth线宽"
-            componentName="BkProgress"
+            componentName="progress"
             demoName="size-demo">
             <SizeDemo></SizeDemo>
           </DemoBox>
@@ -198,7 +198,7 @@ export default defineComponent({
             title="文案内显"
             subtitle=""
             desc="Progress 组件可通过 show-text 来控制文案是否显示， 通过 text-inside 属性来将进度条描述置于进度条内部, titleStyle 属性来调整百分数显示的样式 format 过滤文案展示"
-            componentName="BkProgress"
+            componentName="progress"
             demoName="text-demo">
             <TextDemo></TextDemo>
           </DemoBox>
@@ -207,7 +207,7 @@ export default defineComponent({
             title="动态值"
             subtitle=""
             desc="通过改变 percent 改变进度"
-            componentName="BkProgress"
+            componentName="progress"
             demoName="change-demo">
             <ChangeDemo></ChangeDemo>
           </DemoBox>
@@ -216,7 +216,7 @@ export default defineComponent({
             title="环形/仪表盘"
             subtitle=""
             desc="通过改变 type 修改进度条形状， line 默认线性 circle 圆形 dashboard 仪表盘"
-            componentName="BkProgress"
+            componentName="progress"
             demoName="type-demo">
             <TypeDemo></TypeDemo>
           </DemoBox>
@@ -225,7 +225,7 @@ export default defineComponent({
             title="环形/仪表盘大小颜色配置"
             subtitle=""
             desc="通过改变 color 修改进度颜色，bgColor修改背景颜色 width 修改大小 strokeWidth修改线宽"
-            componentName="BkProgress"
+            componentName="progress"
             demoName="type-size-demo">
             <TypeSizeDemo></TypeSizeDemo>
           </DemoBox>

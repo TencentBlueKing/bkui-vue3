@@ -131,7 +131,7 @@ export default defineComponent({
           title="基础用法"
           subtitle="垂直菜单，子菜单内嵌在菜单区域。"
           desc="通过设置 BkBreadcrumbItem 的 to 属性添加跳转链接。"
-          componentName="BkBreadcrumb"
+          componentName="breadcrumb"
           demoName="base-demo">
             <BaseDemo></BaseDemo>
           </DemoBox>
@@ -140,7 +140,7 @@ export default defineComponent({
           title="字符分割"
           subtitle="通过自定义 字符串 如：> | / 分割。"
           desc="通过设置 BkBreadcrumb 的 separator 属性设置分隔符，它只允许是字符串，默认为斜杠 /。"
-          componentName="BkBreadcrumb"
+          componentName="breadcrumb"
           demoName="separator-demo">
             <SeparatorDemo></SeparatorDemo>
           </DemoBox>
@@ -149,7 +149,7 @@ export default defineComponent({
           title="支持返回配置以及前置插槽"
           subtitle="增加前置插槽快速返回"
           desc="通过设置 BkBreadcrumb 的 back-router 属性（和router参数一样）添加返回跳转链接，也可以使用slot自定义返回区域的内容。"
-          componentName="BkBreadcrumb"
+          componentName="breadcrumb"
           demoName="prefix-demo">
             <PrefixDemo></PrefixDemo>
           </DemoBox>
