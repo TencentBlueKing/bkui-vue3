@@ -24,8 +24,15 @@
 * IN THE SOFTWARE.
 */
 
-import { getFormKey } from '../../hooks/use-form';
-import type { InjectionKey } from 'vue';
-import type { IFormContext } from './type';
+import type {
+  ComponentPublicInstance,
+} from 'vue';
+import type {
+  PaginationProps,
+} from './pagination';
 
-export const formKey: InjectionKey<IFormContext> = getFormKey();
+export type IPaginationInstance = ComponentPublicInstance<PaginationProps, {
+  limit: PaginationProps['limit'],
+  pageNum: number
+}>;
+

@@ -1,3 +1,4 @@
+
 /*
 * Tencent is pleased to support the open source community by making
 * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
@@ -23,9 +24,15 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import { FunctionalComponent } from 'vue';
+import BkIcon, { IIconBaseProps } from './icon';
+const data = JSON.parse('{"type":"element","name":"svg","attributes":{"xmlns":"http://www.w3.org/2000/svg","viewBox":"0 0 1024 1024","style":"width: 1em; height: 1em; vertical-align: middle;fill: currentColor;overflow: hidden;"},"elements":[{"type":"element","name":"path","attributes":{"d":"M279.36 512L561.28 789.6 469.44 880 96 512 469.44 144 561.28 234.4 279.36 512z"}},{"type":"element","name":"path","attributes":{"d":"M836.32 144L928 234.4 646.08 512 928 789.6 836.32 880 462.72 512 836.32 144z"}}]}');
+const angleDoubleLeftLine: FunctionalComponent<IIconBaseProps> = (props, context) => {
+  const p = { ...props, ...context.attrs };
+  return <BkIcon {...p}  data={data} name="angleDoubleLeftLine"></BkIcon>;
+};
 
-import { getFormKey } from '../../hooks/use-form';
-import type { InjectionKey } from 'vue';
-import type { IFormContext } from './type';
+angleDoubleLeftLine.displayName = 'angleDoubleLeftLine';
+angleDoubleLeftLine.inheritAttrs = false;
 
-export const formKey: InjectionKey<IFormContext> = getFormKey();
+export default angleDoubleLeftLine;

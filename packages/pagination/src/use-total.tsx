@@ -24,8 +24,36 @@
 * IN THE SOFTWARE.
 */
 
-import { getFormKey } from '../../hooks/use-form';
-import type { InjectionKey } from 'vue';
-import type { IFormContext } from './type';
+import { getCurrentInstance } from 'vue';
+import type {
+  ComponentInternalInstance,
+} from 'vue';
+import type {
+  PaginationProps,
+} from './pagination';
 
-export const formKey: InjectionKey<IFormContext> = getFormKey();
+export default () => ({ isFirst, isLast }) => {
+  const {
+    props,
+  } = getCurrentInstance() as ComponentInternalInstance &  { props: PaginationProps};
+
+
+  if (!props.showTotalCount) {
+    return null;
+  }
+  return (
+    <div
+      class={{
+        'bk-pagination-total': true,
+        'is-first': isFirst,
+        'is-last': isLast,
+      }}
+      {...{
+        disabled: props.disabled,
+      }}>
+      共计
+      <div class="bk-pagination-total-num">{ props.count }</div>
+      条
+    </div>
+  );
+};

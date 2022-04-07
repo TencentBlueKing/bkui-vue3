@@ -35,7 +35,7 @@ import {
 import { formKey } from './common';
 import type { IFormItemContext } from './type';
 
-const formProps = {
+export const formProps = {
   formType: PropTypes.string,
   labelWidth: PropTypes.number,
   labelPosition: PropTypes.string.def('right'),

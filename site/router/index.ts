@@ -416,6 +416,15 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
+    path: '/pagination',
+    name: 'pagination',
+    component: () => import('../views/pagination'),
+    meta: {
+      group: NavGroupMeta.Data,
+      navName: 'Pagination 分页',
+    },
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: '404',
     component: () => import('../views/404'),

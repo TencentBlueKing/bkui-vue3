@@ -23,17 +23,29 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
-import Component, { CheckboxProps } from './checkbox';
-import CheckboxGroup from './checkbox-group';
-import { withInstallProps } from '@bkui-vue/shared';
 
-const BkCheckbox = withInstallProps(Component, { Group: CheckboxGroup });
+const baseJestConf = require('../../jest.config');
 
-export default BkCheckbox;
-export {
-  BkCheckbox,
-  CheckboxGroup as BkCheckboxGroup,
-};
-export type {
-  CheckboxProps,
+module.exports = {
+  ...baseJestConf,
+  rootDir: '../../',
+  globals: {
+    'ts-jest': {
+      babelConfig: '<rootDir>/babel.config.js',
+    },
+  },
+  testRegex: 'packages/pagination/__test__/.*\\.test\\.(js|ts|tsx)$',
+  collectCoverageFrom: [
+    'packages/pagination/**/*.{jsx,vue,tsx}',
+    '!packages/*/style/index.{js,jsx,tsx}',
+    '!packages/style/*.{js,jsx}',
+    '!packages/coverage/**',
+    '!packages/*/locale/*.{js,jsx}',
+    '!packages/*/__tests__/**/type.{js,jsx,tsx}',
+    '!packages/style.ts',
+    '!**/node_modules/**',
+  ],
+  transform: {
+    '^.+\\.(ts|tsx)$': 'ts-jest',
+  },
 };

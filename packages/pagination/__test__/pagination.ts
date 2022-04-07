@@ -23,17 +23,49 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
-import Component, { CheckboxProps } from './checkbox';
-import CheckboxGroup from './checkbox-group';
-import { withInstallProps } from '@bkui-vue/shared';
 
-const BkCheckbox = withInstallProps(Component, { Group: CheckboxGroup });
+import { mount } from '@vue/test-utils';
+import Pagination from '../src';
 
-export default BkCheckbox;
-export {
-  BkCheckbox,
-  CheckboxGroup as BkCheckboxGroup,
+const components = {
+  Pagination,
 };
-export type {
-  CheckboxProps,
-};
+
+describe('Pagination', () => {
+  const count = 100;
+  const limit = 10;
+
+  it('mounted', () => {
+    const wrapper = mount({
+      components,
+      template: `<Pagination count=${count} />`,
+    });
+    expect(wrapper.classes()).toContain('bk-pagination');
+  });
+
+  it('count', () => {
+    const wrapper = mount({
+      components,
+      template: `<Pagination count=${count} />`,
+    });
+
+    expect(wrapper.find('.bk-pagination-total-num').text()).toContain(`${count}`);
+  });
+
+  it('limit', () => {
+    const wrapper = mount({
+      components,
+      template: `<Pagination count=${count} limit=${limit} />`,
+    });
+    const pageNumList = wrapper.findAll('.bk-pagination-list-item');
+    expect(pageNumList.at(pageNumList.length - 1).text()).toContain(`${Math.ceil(count / limit)}`);
+  });
+
+  it('showLimit', () => {
+    const wrapper = mount({
+      components,
+      template: `<Pagination count=${count} showLimit />`,
+    });
+    expect(wrapper.find('.bk-pagination-small-list')).toHaveLength(1);
+  });
+});
