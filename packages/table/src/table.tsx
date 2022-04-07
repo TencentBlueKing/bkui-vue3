@@ -28,7 +28,13 @@ import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, reacti
 import { classes, resolveClassName } from '@bkui-vue/shared';
 import { Column, IColumnActive, tableProps, TablePropTypes } from './props';
 import TableRender from './render';
-import { resolveActiveColumns, resolveNumberOrStringToPix, resolvePropBorderToClassStr, resolveColumnWidth, observerResize } from './utils';
+import {
+  resolveActiveColumns,
+  resolveNumberOrStringToPix,
+  resolvePropBorderToClassStr,
+  resolveColumnWidth,
+  observerResize,
+  isPercentPixOrNumber } from './utils';
 import VirtualRender from '@bkui-vue/virtual-render';
 
 export default defineComponent({
@@ -59,9 +65,12 @@ export default defineComponent({
     const contentStyle = computed(() => {
       const resolveHeight = resolveNumberOrStringToPix(props.height);
       const resolveHeadHeight = props.showHead ? resolveNumberOrStringToPix(props.headHeight) : '0';
+      const isAutoHeight = !isPercentPixOrNumber(props.height);
+
       return {
-        height: `calc(${resolveHeight} - ${resolveHeadHeight} - 2px)`,
         display: 'block',
+        ...(isAutoHeight ? { maxHeight: `calc(${resolveHeight} - ${resolveHeadHeight} - 2px)` }
+          : { height: `calc(${resolveHeight} - ${resolveHeadHeight} - 2px)` }),
       };
     });
 

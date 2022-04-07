@@ -37,7 +37,14 @@ class BKPopIndexManager {
     this.uuidAttrName = 'data-bk-pop-uuid';
   }
 
-  public show(content?: HTMLElement) {
+  /**
+   * 展示弹窗
+   * @param content 弹窗内容
+   * @param showMask 是否显示遮罩
+   * @param appendStyle 追加样式
+   * @returns
+   */
+  public show(content?: HTMLElement, showMask = true, appendStyle = {}) {
     if (!content) {
       console.warn('pop show error: content is null or undefined');
       return;
@@ -45,9 +52,9 @@ class BKPopIndexManager {
     const zIndex = bkZIndexManager.getModalNextIndex();
     const uuid = random(16);
     content.setAttribute(this.uuidAttrName, uuid);
-    this.popInstanceList.push({ uuid, zIndex, content });
-    bKMaskManager.backupActiveInstance();
-    bKMaskManager.show(content, zIndex);
+    this.popInstanceList.push({ uuid, zIndex, content, showMask, appendStyle });
+    showMask && bKMaskManager.backupActiveInstance();
+    bKMaskManager.show(content, zIndex, showMask, appendStyle, uuid);
   }
 
   /**
@@ -58,12 +65,14 @@ class BKPopIndexManager {
     if (this.popInstanceList.length) {
       if (removeLastContent) {
         const lastItem = this.popInstanceList.pop();
+        bKMaskManager.popIndexStore(lastItem.uuid);
         lastItem.remove();
       }
 
       if (this.popInstanceList.length) {
         const activeItem = this.popInstanceList.slice(-1)[0];
-        bKMaskManager.show(activeItem.content, activeItem.zIndex);
+        const { zIndex, content, showMask, appendStyle, uuid } = activeItem;
+        bKMaskManager.show(content, zIndex, showMask, appendStyle, uuid);
       } else {
         bKMaskManager.hide();
       }
@@ -82,6 +91,7 @@ class BKPopIndexManager {
       if (itemIndex >= 0) {
         this.popInstanceList[itemIndex].content.remove();
         this.popInstanceList.splice(itemIndex, 1);
+        bKMaskManager.popIndexStore(uuid);
         if (!this.popInstanceList.length) {
           bKMaskManager.hide();
         } else {
