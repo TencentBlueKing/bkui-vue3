@@ -25,21 +25,39 @@
 */
 import { classes } from '@bkui-vue/shared';
 import { SetupContext } from 'vue';
-import { Column, IColumnActive, IReactiveProp, TablePropTypes } from './props';
+import { Column, GroupColumn, IColumnActive, IReactiveProp, TablePropTypes } from './props';
 import { resolvePropVal, resolveWidth } from './utils';
+import { TablePlugins } from './plugins/index';
 
 export default class TableRender {
   props: TablePropTypes;
   context: SetupContext;
   reactiveProp: any;
-  constructor(props: TablePropTypes, ctx: SetupContext, reactiveProp: IReactiveProp) {
+  colgroups: GroupColumn[];
+  public plugins: TablePlugins;
+  constructor(props: TablePropTypes, ctx: SetupContext, reactiveProp: IReactiveProp, colgroups: GroupColumn[]) {
     this.props = props;
     this.context = ctx;
     this.reactiveProp = reactiveProp;
+    this.colgroups = colgroups;
+    this.plugins = new TablePlugins(props, ctx);
   }
 
   get propActiveCols(): IColumnActive[] {
     return this.reactiveProp.activeColumns;
+  }
+
+  /**
+   * 渲染Table Head
+   * @param activeColumns 当前选中的列
+   * @returns
+   */
+  public renderTableHeadSchema() {
+    return <table cellpadding={0} cellspacing={0}>
+        { this.renderColGroup() }
+        { this.renderHeader() }
+        {/* { this.renderTBody(rows) } */}
+      </table>;
   }
 
   /**
@@ -50,7 +68,7 @@ export default class TableRender {
   public renderTableBodySchema(rows: any[]) {
     return <table cellpadding={0} cellspacing={0}>
       { this.renderColGroup() }
-      { this.renderHeader() }
+      {/* { this.renderHeader() } */}
       { this.renderTBody(rows) }
     </table>;
   }
@@ -90,7 +108,6 @@ export default class TableRender {
   private renderHeader() {
     const rowStyle = {
       '--row-height': `${resolvePropVal(this.props, 'headHeight', ['thead'])}px`,
-      '--translate-y': `${this.reactiveProp.scrollTranslateY}px`,
     };
     // @ts-ignore:next-line
     return <thead style={rowStyle}>
@@ -124,13 +141,28 @@ export default class TableRender {
         return <tr style={rowStyle}>
         {
           this.props.columns.map((column: Column) => <td colspan={1} rowspan={1}>
-          <div class="cell">{ row[resolvePropVal(column, 'field', [column, row])] }</div>
+          <div class="cell">{ this.renderCell(row, column) }</div>
         </td>)
         }
       </tr>;
       })
     }
   </tbody>;
+  }
+
+  /**
+   * 渲染表格Cell内容
+   * @param row 当前行
+   * @param column 当前列
+   * @returns
+   */
+  private renderCell(row: any, column: Column) {
+    const cell = row[resolvePropVal(column, 'field', [column, row])];
+    if (typeof column.render === 'function') {
+      return column.render(cell);
+    }
+
+    return cell;
   }
 
   /**
@@ -151,12 +183,12 @@ export default class TableRender {
   private renderColGroup() {
     return <colgroup>
       {
-        (this.props.columns || []).map((column: Column, index: number) => {
+        (this.colgroups || []).map((column: GroupColumn, index: number) => {
           const colCls = classes({
             active: this.isColActive(index),
           });
           const colStyle = {
-            width: resolveWidth(column.width),
+            width: resolveWidth(column.calcWidth),
           };
           return <col class={ colCls } style={ colStyle }></col>;
         })

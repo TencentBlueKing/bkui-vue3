@@ -81,6 +81,11 @@ export const tableProps = {
   headHeight: PropTypes.number.def(40),
 
   /**
+   * 是否显示Head
+   */
+  showHead: PropTypes.bool.def(true),
+
+  /**
    * 是否启用虚拟渲染 & 滚动
    * 当数据量很大时，启用虚拟渲染可以解决压面卡顿问题
    */
@@ -110,6 +115,10 @@ export type Column = {
   render?: Function | string;
   width?: number | string;
 };
+
+export type GroupColumn = {
+  calcWidth?: number;
+} & Column;
 
 export type Columns = ReadonlyArray<Column>;
 export type TablePropTypes = Readonly<ExtractPropTypes<typeof tableProps>>;
