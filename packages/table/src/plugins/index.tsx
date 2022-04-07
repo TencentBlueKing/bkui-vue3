@@ -23,58 +23,11 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-
-/**
- * 前端格式转换为服务器格式
- * @param fieldName ：字段名称
- */
-export function formatPropName(fieldName: string): string {
-  let name = fieldName;
-  if (name === undefined || name === null) {
-    name = '';
+export class TablePlugins {
+  props: any = null;
+  ctx: any = null;
+  constructor(props: any, ctx: any) {
+    this.props = props;
+    this.ctx = ctx;
   }
-  function upperToServeLower(match: string) {
-    return `-${match.toLowerCase()}`;
-  }
-  return (name.startsWith('-') && name) || name.replace(/[A-Z]/g, upperToServeLower);
 }
-
-/**
- * 解析Props为说明文档
- * @param props
- * @returns
- */
-export const resolvePropsToDesData = (props: any) => {
-  const getType = (obj: any) => {
-    if (Array.isArray(obj)) {
-      return obj.map((t: any) => getType(t)).join('|');
-    }
-
-    if (typeof obj === 'function') {
-      const val = obj();
-      if (typeof val === 'object') {
-        return Array.isArray(val) ? 'array' : 'object';
-      }
-
-      return typeof val;
-    }
-  };
-
-  const getDefaultVal = (val: any) => {
-    if (typeof val === 'function') {
-      return String(val());
-    }
-
-    return '--';
-  };
-  return Object.keys(props).map((key: string) => {
-    const item = props[key];
-    return {
-      name: formatPropName(key),
-      type: getType(item.type),
-      default: getDefaultVal(item.default),
-      desc: '',
-      optional: [],
-    };
-  });
-};

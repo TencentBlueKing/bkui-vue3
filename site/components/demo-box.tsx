@@ -58,6 +58,10 @@ export default defineComponent({
       type: String,
       required: true,
     },
+    suffix: {
+      type: String,
+      default: '.vue',
+    },
   },
   setup(props) {
     const showCode = ref(false);
@@ -72,11 +76,11 @@ export default defineComponent({
       if (process.env.NODE_ENV === 'development') {
         // evalCode.value = (await import(/* @vite-ignore */
         // `../views/${props.componentName}/${props.demoName}.vue`)).default;
-        sourceCode.value = (await import(/* @vite-ignore */ `../views/${props.componentName}/${props.demoName}.vue?raw`)).default;
+        sourceCode.value = (await import(/* @vite-ignore */ `../views/${props.componentName}/${props.demoName}${props.suffix}?raw`)).default;
         // const app = createApp(evalCode.value as any);
         // app.mount(preview.value);
       } else {
-        sourceCode.value = await fetch(`../views/${props.componentName}/${props.demoName}.vue`).then(res => res.text());
+        sourceCode.value = await fetch(`../views/${props.componentName}/${props.demoName}${props.suffix}`).then(res => res.text());
       }
     });
     onMounted(() => {

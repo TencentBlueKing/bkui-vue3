@@ -23,58 +23,28 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-
-/**
- * 前端格式转换为服务器格式
- * @param fieldName ：字段名称
- */
-export function formatPropName(fieldName: string): string {
-  let name = fieldName;
-  if (name === undefined || name === null) {
-    name = '';
-  }
-  function upperToServeLower(match: string) {
-    return `-${match.toLowerCase()}`;
-  }
-  return (name.startsWith('-') && name) || name.replace(/[A-Z]/g, upperToServeLower);
-}
-
-/**
- * 解析Props为说明文档
- * @param props
- * @returns
- */
-export const resolvePropsToDesData = (props: any) => {
-  const getType = (obj: any) => {
-    if (Array.isArray(obj)) {
-      return obj.map((t: any) => getType(t)).join('|');
-    }
-
-    if (typeof obj === 'function') {
-      const val = obj();
-      if (typeof val === 'object') {
-        return Array.isArray(val) ? 'array' : 'object';
-      }
-
-      return typeof val;
-    }
-  };
-
-  const getDefaultVal = (val: any) => {
-    if (typeof val === 'function') {
-      return String(val());
-    }
-
-    return '--';
-  };
-  return Object.keys(props).map((key: string) => {
-    const item = props[key];
+import { Column } from 'table/src/props';
+import { defineComponent } from 'vue';
+import { DATA_TABLE, DATA_COLUMNS } from './options';
+export default defineComponent({
+  components: {},
+  data() {
     return {
-      name: formatPropName(key),
-      type: getType(item.type),
-      default: getDefaultVal(item.default),
-      desc: '',
-      optional: [],
+      tableData: [...DATA_TABLE],
+      columns: [...DATA_COLUMNS].map((col: Column) => ({ ...col, render: this.renderCell })),
     };
-  });
-};
+  },
+  methods: {
+    renderCell(cell: any) {
+      return <span>自定义渲染 column ：{ cell }</span>;
+    },
+  },
+  render() {
+    return  <div style="height: 300px; width: 100%;">
+      <bk-table
+        columns={ this.columns }
+        data={ this.tableData }
+      />
+    </div>;
+  },
+});
