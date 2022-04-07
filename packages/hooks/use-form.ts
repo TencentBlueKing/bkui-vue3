@@ -23,12 +23,10 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-declare module '*.vue' {
-  import type { DefineComponent } from 'vue';
-  const component: DefineComponent;
-  export default Component;
-}
-declare module '*.md' {
-  const component: DefineComponent;
-  export default Component;
-}
+
+import { inject } from 'vue';
+
+const formKey =  Symbol('form');
+export const getFormKey = () => formKey;
+
+export default () => inject(formKey);

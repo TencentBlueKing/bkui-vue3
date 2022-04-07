@@ -226,3 +226,10 @@ export const observerResize = (root: HTMLElement, callbackFn: () => void, delay 
     },
   };
 };
+
+/**
+ * 判定为数值 | px | %
+ * @param val
+ * @returns
+ */
+export const isPercentPixOrNumber = (val: string | number) => /^\d+\.?\d*(px|%)?$/.test(`${val}`);
