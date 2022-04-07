@@ -28,65 +28,42 @@ import { defineComponent } from 'vue';
 import DemoTitle from '../../components/demo-title';
 import DemoBox from '../../components/demo-box';
 import PropsBox from '../../components/props-box';
-import { tableProps } from '../../../packages/table/src/props';
+import { virtualRenderProps } from '../../../packages/virtual-render/src/props';
 import { resolvePropsToDesData } from '../utils/index';
 import basic from './basic.vue';
-import bordered from './bordered.vue';
-import virtualRender from './virtual-render.vue';
-import cellRender from './cell-render';
+import customLineHeight from './custom-line-height.vue';
 
 export default defineComponent({
-  components: { basic, bordered, virtualRender, cellRender },
+  components: { basic, customLineHeight },
   render() {
-    const menuPropsJson = resolvePropsToDesData(tableProps);
+    const propsJson = resolvePropsToDesData(virtualRenderProps);
 
     const configs = [{
       attrs: {
         title: '基础用法',
         subtitle: '基础用法，用于表单内容的录入',
         desc: 'props: --',
-        componentName: 'table',
+        componentName: 'virtual-render',
         demoName: 'basic',
       },
       component: () => <basic></basic>,
-    },
-    {
+    }, {
       attrs: {
-        title: '设置边框',
-        subtitle: '设置边框显示样式',
-        desc: 'props: border',
-        componentName: 'table',
-        demoName: 'bordered',
+        title: '自定义行高',
+        subtitle: '每行高度不一致，自定义每行高度',
+        desc: 'props: --',
+        componentName: 'virtual-render',
+        demoName: 'custom-line-height',
       },
-      component: () => <bordered></bordered>,
+      component: () => <custom-line-height></custom-line-height>,
     },
-    {
-      attrs: {
-        title: '启用虚拟滚动-渲染大数据表格',
-        subtitle: '大数据模式启用虚拟滚动',
-        desc: 'props: virtual-enabled',
-        componentName: 'table',
-        demoName: 'virtual-render',
-      },
-      component: () => <virtual-render></virtual-render>,
-    },
-    {
-      attrs: {
-        title: '自定义Column渲染',
-        subtitle: '自定义Column渲染',
-        desc: 'props: column.render',
-        componentName: 'table',
-        demoName: 'cell-render',
-        suffix: '.tsx',
-      },
-      component: () => <cell-render></cell-render>,
-    }];
+    ];
 
     return (
       <div>
         <DemoTitle
-          name="Table"
-          desc="Table组件， 为页面和功能提供列表。"
+          name="virtual-render"
+          desc="virtual-render 为页面和功能提供列表。"
           link="https://www.google.com.hk/"/>
           {
             configs.map(cfg => <DemoBox { ...cfg.attrs }>
@@ -95,7 +72,7 @@ export default defineComponent({
                  }
               </DemoBox>)
           }
-        <PropsBox propsData={menuPropsJson}/>
+        <PropsBox propsData={propsJson}/>
       </div>
     );
   },

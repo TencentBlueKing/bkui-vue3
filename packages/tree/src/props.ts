@@ -27,6 +27,16 @@
 import { ExtractPropTypes } from 'vue';
 import { PropTypes } from '@bkui-vue/shared';
 
+/**
+ * Tree Prop: prefixIcon function
+ * @param {} isRoot 是否为分跟节点
+ * @param {} hasChild 是否有孩子节点
+ * @param {} isOpen 当前节点是否展开
+ * @param {} renderType 当前渲染类型（action: 用来标识当前节点状态，展开 | 收起, node_type：节点类型，文件、文件夹）
+ * @param {} item 当前节点数据
+ */
+export type IPrefixIcon = (isRoot: boolean, hasChild: boolean, isOpen: boolean, renderType: string, item: any) => any;
+
 export const treeProps = {
   /**
    * 渲染列表
@@ -61,13 +71,22 @@ export const treeProps = {
     PropTypes.bool.def(false),
     PropTypes.func.def(undefined),
     PropTypes.string.def('1px dashed #c3cdd7'),
-  ]),
+  ]).def(false),
 
   /**
    * 是否开启虚拟滚动
    * 默认虚拟滚动是开启的，数据量大的情况下有利于性能优化，可以通过设置 virtualRender = false 关闭虚拟滚动
    */
   virtualRender: PropTypes.bool.def(false),
+
+  /**
+   * 当前节点标识图标
+   * 默认 true
+   */
+  prefixIcon: PropTypes.oneOfType([
+    PropTypes.func.def(() => {}),
+    PropTypes.bool.def(false),
+  ]).def(true),
 };
 
 export type TreePropTypes = Readonly<ExtractPropTypes<typeof treeProps>>;

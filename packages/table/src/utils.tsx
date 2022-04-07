@@ -24,8 +24,9 @@
 * IN THE SOFTWARE.
 */
 
-import { TablePropTypes } from './props';
+import { GroupColumn, TablePropTypes } from './props';
 import { BORDER_OPRIONS } from './const';
+import { throttle } from '@bkui-vue/shared';
 
 
 /**
@@ -124,4 +125,104 @@ export const resolvePropBorderToClassStr = (val: string | string[]) => {
 
   return [...new Set(defaultVal)].map((item: string) => `bordered-${item}`)
     .join(' ');;
+};
+
+/**
+ * 根据Props Column配置计算并设置列宽度
+ * @param root 当前根元素
+ * @param colgroups Columns配置
+ * @param autoWidth 自动填充宽度
+ */
+export const resolveColumnWidth = (root: HTMLElement, colgroups: GroupColumn[], autoWidth = 20) => {
+  const { width } = root.getBoundingClientRect() || {};
+
+  // 可用来平均的宽度
+  let avgWidth = width;
+
+  // 需要平均宽度的列数
+  const avgColIndexList = [];
+
+  /**
+   * 根据Props Column配置计算并设置列宽度
+   * @param col 当前Column设置
+   * @param numWidth 计算宽度
+   * @param resetAvgWidth 是否重置可用宽度
+   */
+  const resolveColNumberWidth = (col: GroupColumn, numWidth: number, resetAvgWidth = true) => {
+    Object.assign(col, { calcWidth: numWidth });
+    if (resetAvgWidth) {
+      avgWidth = avgWidth - numWidth;
+      if (avgWidth < 0) {
+        avgWidth = 0;
+      }
+    }
+  };
+
+  colgroups.forEach((col: GroupColumn, index: number) => {
+    const colWidth = String(col.width);
+    let isAutoWidthCol = true;
+    if (/^\d+\.?\d*(px)?$/.test(colWidth)) {
+      const numWidth = Number(colWidth.replace('px', ''));
+      resolveColNumberWidth(col, numWidth);
+      isAutoWidthCol = false;
+    }
+
+    if (/^\d+\.?\d*%$/.test(colWidth)) {
+      let perWidth = autoWidth;
+      if (avgWidth > 0) {
+        const percent = Number(colWidth.replace('%', ''));
+        perWidth = avgWidth * percent / 100;
+      }
+
+      resolveColNumberWidth(col, perWidth);
+      isAutoWidthCol = false;
+    }
+
+    if (isAutoWidthCol) {
+      avgColIndexList.push(index);
+    }
+  });
+
+  // 自适应宽度计算
+  if (avgColIndexList.length > 0) {
+    let autoAvgWidth = autoWidth;
+    if (avgWidth > 0) {
+      autoAvgWidth = avgWidth / avgColIndexList.length;
+      avgColIndexList.forEach(idx => resolveColNumberWidth(colgroups[idx], autoAvgWidth, false));
+    }
+  }
+};
+
+/**
+ * 监听目标元素的Resize事件
+ * @param root 目标元素
+ * @param callbackFn 执行函数
+ * @param delay 延迟执行时间，默认 60
+ * @param immediate 是否立即执行回调函数
+ * @returns "{ start: () => void, stop: () => void }"
+ */
+export const observerResize = (root: HTMLElement, callbackFn: () => void, delay = 60, immediate = false) => {
+  const callFn = throttle(() => {
+    if (typeof callbackFn === 'function') {
+      callbackFn();
+    }
+  }, delay);
+  const resizeObserver = new ResizeObserver(() => {
+    callFn();
+  });
+
+  if (immediate) {
+    if (typeof callbackFn === 'function') {
+      callbackFn();
+    }
+  }
+  return {
+    start: () => {
+      resizeObserver.observe(root);
+    },
+    stop: () => {
+      resizeObserver.disconnect();
+      resizeObserver.unobserve(root);
+    },
+  };
 };

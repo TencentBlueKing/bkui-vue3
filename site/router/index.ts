@@ -364,7 +364,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/tree',
     name: 'tree',
-    component: () => import('../views/tree'),
+    component: () => import('../views/tree/tree'),
     meta: {
       group: NavGroupMeta.Data,
       navName: 'Tree 树',
@@ -409,7 +409,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/virtual-render',
     name: 'virtualRender',
-    component: () => import('../views/virtual-render'),
+    component: () => import('../views/virtual-render/virtual-render'),
     meta: {
       group: NavGroupMeta.Others,
       navName: 'VirtualRender',
