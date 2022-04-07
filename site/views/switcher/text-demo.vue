@@ -1,8 +1,20 @@
 <template>
-    <div>
-      <bk-switcher v-model="demo1" true-value="a" false-value="b" @change="handleChange"></bk-switcher>
-      <bk-switcher v-model="demo1" show-text true-value="a" false-value="b" on-text="真值" off-text="假值"></bk-switcher>
-    </div>
+  <div>
+    <bk-switcher
+      v-model="demo1"
+      true-value="a"
+      false-value="b"
+      @change="handleChange"
+    />
+    <bk-switcher
+      v-model="demo1"
+      show-text
+      true-value="a"
+      false-value="b"
+      on-text="真值"
+      off-text="假值"
+    />
+  </div>
 </template>
 <script>
 import { defineComponent, ref } from 'vue';
@@ -15,13 +27,13 @@ export default defineComponent({
     BkSwitcher,
   },
   setup() {
-    const demo1 = ref('a')
+    const demo1 = ref('a');
     const handleChange = (value) => {
-      console.log(value)
-    }
+      console.log(value);
+    };
     return {
       demo1,
-      handleChange
+      handleChange,
     };
   },
 });
