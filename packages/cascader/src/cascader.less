@@ -1,0 +1,55 @@
+@import '@bkui-vue/styles/themes/themes.less';
+
+.@{bk-prefix}-cascader {
+  .@{bk-prefix}-cascader-panel-wrapper {
+    display: inline-flex;
+    border: 1px solid @cascader-panel-border-color;
+    border-radius: 2px;
+    box-shadow: 0px 2px 6px 0px rgba(0,0,0,.10);
+    .@{bk-prefix}-cascader-panel {
+      min-width: 160px;
+      padding: 6px 0;
+      background: @white-color;
+      border-right: 1px solid @cascader-panel-border-color;
+
+      &:last-child {
+        border-right: none;
+      }
+      .@{bk-prefix}-cascader-node {
+        position: relative;
+        padding: 0 16px;
+        line-height: 32px;
+        cursor: pointer;
+
+        &:hover {
+          color: @primary-color;
+          background: @cascader-panel-hover;
+        }
+
+        &.is-selected,
+        &.is-checked {
+          color: @primary-color;
+          background: @cascader-panel-active;
+        }
+
+        &.is-disabled {
+          color: @light-gray;
+          cursor: not-allowed;
+          background-color: @white-color;
+
+          .icon-angle-right {
+            color: @light-gray;
+          }
+        }
+
+        .icon-angle-right {
+          position: absolute;
+          top: -1px;
+          right: 5px;
+          font-size: 20px;
+          color: @gray-color;
+        }
+      }
+    }
+  }
+}

@@ -643,6 +643,15 @@ const routes: RouteRecordRaw[] = [
       navName: 'Dialog 对话框',
     },
   },
+  {
+    path: '/cascader',
+    name: 'cascader',
+    meta: {
+      group: NavGroupMeta.Others,
+      navName: 'Cascader 级联选择',
+    },
+    component: () => import('../views/cascader'),
+  },
 ];
 
 const router = createRouter({
