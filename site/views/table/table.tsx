@@ -33,9 +33,10 @@ import { resolvePropsToDesData } from '../utils/index';
 import basic from './basic.vue';
 import bordered from './bordered.vue';
 import virtualRender from './virtual-render.vue';
+import cellRender from './cell-render';
 
 export default defineComponent({
-  components: { basic, bordered, virtualRender },
+  components: { basic, bordered, virtualRender, cellRender },
   render() {
     const menuPropsJson = resolvePropsToDesData(tableProps);
 
@@ -68,6 +69,17 @@ export default defineComponent({
         demoName: 'virtual-render',
       },
       component: () => <virtual-render></virtual-render>,
+    },
+    {
+      attrs: {
+        title: '自定义Column渲染',
+        subtitle: '自定义Column渲染',
+        desc: 'props: column.render',
+        componentName: 'table',
+        demoName: 'cell-render',
+        suffix: '.tsx',
+      },
+      component: () => <cell-render></cell-render>,
     }];
 
     return (

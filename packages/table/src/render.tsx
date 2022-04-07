@@ -141,13 +141,28 @@ export default class TableRender {
         return <tr style={rowStyle}>
         {
           this.props.columns.map((column: Column) => <td colspan={1} rowspan={1}>
-          <div class="cell">{ row[resolvePropVal(column, 'field', [column, row])] }</div>
+          <div class="cell">{ this.renderCell(row, column) }</div>
         </td>)
         }
       </tr>;
       })
     }
   </tbody>;
+  }
+
+  /**
+   * 渲染表格Cell内容
+   * @param row 当前行
+   * @param column 当前列
+   * @returns
+   */
+  private renderCell(row: any, column: Column) {
+    const cell = row[resolvePropVal(column, 'field', [column, row])];
+    if (typeof column.render === 'function') {
+      return column.render(cell);
+    }
+
+    return cell;
   }
 
   /**
