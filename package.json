@@ -108,7 +108,7 @@
   "typings": "./lib/index.d.ts",
   "lint-staged": {
     "*.css": "stylelint",
-    "*.less": "stylelint --fix --syntax=less",
+    "*.less": "stylelint --fix --customSyntax=postcss-less",
     "*.{js,ts,tsx,vue}": [
       "eslint --fix",
       "git add ."
