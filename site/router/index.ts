@@ -374,7 +374,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/date-picker',
     name: 'datePicker',
-    component: () => import('../views/date-picker'),
+    component: () => import('../views/date-picker/date-picker'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'DatePicker 日期选择器',

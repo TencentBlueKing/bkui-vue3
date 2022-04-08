@@ -92,7 +92,7 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'jsdom',
   transform: {
-    '^.+\\.(vue|md)$': '<rootDir>/node_modules/vue-jest',
+    '^.+\\.(vue|md)$': '<rootDir>/node_modules/@vue/vue3-jest',
     '^.+\\.(js|jsx|tsx)$': '<rootDir>/node_modules/babel-jest',
     '^.+\\.(ts|tsx)$': '<rootDir>/node_modules/ts-jest',
     '.+\\.(css|styl|less|sass|scss|svg|png|jpg|ttf|woff|woff2)$': '<rootDir>/node_modules/jest-transform-stub',
