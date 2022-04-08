@@ -89,7 +89,7 @@ export default defineComponent({
   },
   render() {
     return <>
-      <BkCascader v-model={this.area} list={this.list} trigger="hover" />
+      <BkCascader v-model={this.area} list={this.list} check-any-level trigger="hover" />
       </>;
   },
 });

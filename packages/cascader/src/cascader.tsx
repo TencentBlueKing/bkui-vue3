@@ -27,12 +27,14 @@
 import { defineComponent, reactive } from 'vue';
 import { PropTypes } from '@bkui-vue/shared';
 import CascaderPanel from './cascader-panel';
+import BkPopover from '@bkui-vue/popover';
 import Store from './store';
 
 export default defineComponent({
   name: 'BkCascader',
   components: {
     CascaderPanel,
+    BkPopover,
   },
   props: {
     modelValue: PropTypes.array.def([]),
@@ -54,7 +56,6 @@ export default defineComponent({
     const store = reactive(new Store(props));
 
     const updateValue = (val: array<any>) => {
-      console.log(val, 'update');
       emit('update:modelValue', val);
     };
 
@@ -65,9 +66,22 @@ export default defineComponent({
   },
   render() {
     return (
-      <div class="bk-cascader">
-        <CascaderPanel store={this.store} onInput={val => this.updateValue(val)}></CascaderPanel>
-      </div>
+      <BkPopover
+        theme="light bk-cascader-popover"
+        trigger="click"
+        arrow={false}
+        boundary="body">
+          {{
+            default: () => (
+              <div>{ `${this.modelValue}test` }</div>
+            ),
+            content: () => (
+              <div class="bk-cascader">
+                <CascaderPanel store={this.store} onInput={val => this.updateValue(val)}></CascaderPanel>
+              </div>
+            ),
+          }}
+        </BkPopover>
     );
   },
 });
