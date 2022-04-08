@@ -31,6 +31,7 @@ import ClipboardJS from 'clipboard';
 import CommonBox from './common-box';
 import BkMessage from '@bkui-vue/message';
 import './demo-box.less';
+
 export default defineComponent({
   name: 'DemoBox',
   props: {
@@ -40,7 +41,7 @@ export default defineComponent({
     },
     subtitle: {
       type: String,
-      required: true,
+      default: '',
     },
     desc: {
       type: String,

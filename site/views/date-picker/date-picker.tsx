@@ -23,42 +23,59 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent } from 'vue';
-import { Share } from '@bkui-vue/icon';
-import './demo-title.less';
 
+import { defineComponent } from 'vue';
+import DemoTitle from '../../components/demo-title';
+import DemoBox from '../../components/demo-box';
+import PropsBox from '../../components/props-box';
+import { IPropsTableItem } from '../../typings';
+import BaseDemo from './base-demo.vue';
+
+const menuPropsJson: IPropsTableItem[] = [
+  {
+    name: 'activeKey',
+    type: 'String',
+    default: '',
+    desc: '选中的menu的key',
+    optional: [],
+  },
+  {
+    name: 'OpenedKeys',
+    type: 'Array',
+    default: [],
+    desc: '打开的submenu key值',
+    optional: [],
+  },
+  {
+    name: 'mode',
+    type: 'String',
+    default: 'vertical',
+    desc: '展示方式',
+    optional: ['vertical', 'horizontal'],
+  },
+  {
+    name: 'uniqueOpen',
+    type: 'Boolean',
+    default: 'true',
+    desc: '是否唯一展开一个submenu',
+    optional: [],
+  },
+];
 export default defineComponent({
-  name: 'DemoTitile',
-  props: {
-    name: {
-      type: String,
-      required: true,
-    },
-    desc: {
-      type: String,
-      default: '',
-    },
-    link: {
-      type: String,
-      default: '',
-    },
-  },
-  setup() {
-    // const { name } = useRoute();
-    return {
-      // name,
-    };
-  },
   render() {
-    return <div class="demo-title">
-      <div class="title-name">{this.name}</div>
-      <div class="title-desc">{this.desc}
-        {
-          this.link && <a class="desc-link" href={this.link}>
-            <Share/>如何使用?
-          </a>
-        }
+    return (
+      <div>
+        <DemoTitle name="DatePicker 日期选择器" desc="日期选择器" />
+          <DemoBox
+            title="基础用法"
+            subtitle="基础用法，用于表单内容的录入"
+            desc="通过 v-model 或者 value 设置初始值"
+            componentName="date-picker"
+            demoName="base-demo">
+              <BaseDemo />
+          </DemoBox>
+        <PropsBox propsData={menuPropsJson}/>
       </div>
-    </div>;
+    );
   },
 });
