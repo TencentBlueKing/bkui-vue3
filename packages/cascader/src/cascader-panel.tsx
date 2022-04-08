@@ -43,6 +43,11 @@ export default defineComponent({
     const activePath = ref([]);
     const checkValue = ref([]);
 
+    const nodeCheckHandler = (node: INode) => {
+      checkValue.value = node.config.multiple ? checkValue.value.concat(node.path) : node.path;
+      emit('input', node.path);
+    };
+
     const nodeExpandHandler = (node: INode) => {
       if (node.isDisabled) return;
       menus.list = menus.list.slice(0, node.level);
@@ -53,22 +58,19 @@ export default defineComponent({
       }
     };
 
-    const nodeCheckHandler = (node: INode) => {
-      checkValue.value = node.config.multiple ? checkValue.value.concat(node.path) : node.path;
-      emit('input', node.path);
-    };
-
     const nodeEvent = (node: INode) => {
-      const events = {};
-      if (node.config.trigger === 'click') {
-        events.onClick = nodeExpandHandler.bind(this, node);
-      } else if (node.config.trigger === 'hover') {
-        events.onMouseenter = nodeExpandHandler.bind(this, node);
-      }
-
-      if (node.isLeaf) {
-        events.onClick = nodeCheckHandler.bind(this, node);
-      }
+      const { trigger, checkAnyLevel } = node.config;
+      const events = {
+        onClick: (e: Event) => {
+          if (!node.isLeaf) e.stopPropagation();
+          trigger === 'click' && nodeExpandHandler(node);
+          checkAnyLevel && nodeCheckHandler(node);
+          node.isLeaf && nodeCheckHandler(node);
+        },
+        onMouseenter: () => {
+          trigger === 'hover' && nodeExpandHandler(node);
+        },
+      };
       return events;
     };
 
