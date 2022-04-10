@@ -34,7 +34,8 @@ import {
   resolvePropBorderToClassStr,
   resolveColumnWidth,
   observerResize,
-  isPercentPixOrNumber } from './utils';
+  isPercentPixOrNumber,
+  resolvePaginationOption } from './utils';
 import VirtualRender from '@bkui-vue/virtual-render';
 
 export default defineComponent({
@@ -43,6 +44,7 @@ export default defineComponent({
   setup(props: TablePropTypes, ctx: SetupContext) {
     const activeCols = reactive(resolveActiveColumns(props));
     const colgroups = reactive(props.columns.map(col => ({ ...col, calcWidth: null })));
+    let pagination = reactive({ count: 0, limit: 10, current: 1 });
     let observerIns = null;
     const root = ref();
     const getActiveColumns = () => (props.columns || []).map((_column: Column, index: number) => ({
@@ -74,13 +76,14 @@ export default defineComponent({
       };
     });
 
-    watch(() => [props.activeColumn, props.columns], () => {
+    watch(() => [props.activeColumn, props.columns, props.pagination], () => {
       nextTick(() => {
         reactiveProp.activeColumns = getActiveColumns();
         const cols = resolveActiveColumns(props);
         reactiveProp.activeColumns.forEach((col: IColumnActive, index: number) => {
           Object.assign(col, { active: cols.some((colIndex: number) => colIndex === index) });
         });
+        pagination = resolvePaginationOption(props.pagination, pagination);
       });
     }, { deep: true });
 
@@ -96,6 +99,10 @@ export default defineComponent({
 
     const contentClass = classes({
       [resolveClassName('table-body')]: true,
+    });
+
+    const footerClass = classes({
+      [resolveClassName('table-footer')]: true,
     });
 
     const handleScrollChanged = (args: any[]) => {
@@ -141,6 +148,11 @@ export default defineComponent({
           }
         }
     </VirtualRender>
+    <div class={ footerClass }>
+      {
+        props.pagination && tableRender.renderTableFooter(pagination)
+      }
+    </div>
     </div>;
   },
 });
