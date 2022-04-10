@@ -23,7 +23,9 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+
+import { getFormKey } from '../../hooks/use-form';
 import type { InjectionKey } from 'vue';
 import type { IFormContext } from './type';
 
-export const formKey: InjectionKey<IFormContext> = Symbol('form');
+export const formKey: InjectionKey<IFormContext> = getFormKey();

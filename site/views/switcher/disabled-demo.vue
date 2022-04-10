@@ -1,13 +1,23 @@
 <template>
   <div>
-      <div class="mb20 block">
-        <span class="mr20 f14">选中时禁用</span>
-        <bk-switcher v-model="value1" :disabled="true"></bk-switcher>
-        <bk-switcher v-model="value1" theme="primary" :disabled="true"></bk-switcher>
+    <div class="mb20 block">
+      <span class="mr20 f14">选中时禁用</span>
+      <bk-switcher
+        v-model="value1"
+        :disabled="true"
+      />
+      <bk-switcher
+        v-model="value1"
+        theme="primary"
+        :disabled="true"
+      />
     </div>
     <div class="mb20 block">
-        <span class="mr20 f14">未选中时禁用</span>
-        <bk-switcher v-model="value2" :disabled="true"></bk-switcher>
+      <span class="mr20 f14">未选中时禁用</span>
+      <bk-switcher
+        v-model="value2"
+        :disabled="true"
+      />
     </div>
   </div>
 </template>
@@ -22,11 +32,11 @@ export default defineComponent({
     BkSwitcher,
   },
   setup() {
-    const value1 = ref(true)
-    const value2 = ref(false)
+    const value1 = ref(true);
+    const value2 = ref(false);
     return {
       value1,
-      value2
+      value2,
     };
   },
 });
