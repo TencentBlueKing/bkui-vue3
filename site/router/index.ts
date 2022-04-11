@@ -372,6 +372,15 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
+    path: '/tag',
+    name: 'tag',
+    component: () => import('../views/tag/tag'),
+    meta: {
+      group: NavGroupMeta.Data,
+      navName: 'Tag 标签',
+    },
+  },
+  {
     path: '/date-picker',
     name: 'datePicker',
     component: () => import('../views/date-picker/date-picker'),
