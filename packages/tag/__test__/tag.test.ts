@@ -26,10 +26,108 @@
 
 import { mount } from '@vue/test-utils';
 import Tag from '../src';
+
 describe('Tag.tsx', () => {
-  it('test', async () => {
+  it('theme', async () => {
+    const wrapper = await mount(Tag, {
+      props: {
+        theme: 'success',
+      },
+    });
+
+    expect(wrapper.props('theme')).toEqual('success');
+    await wrapper.setProps({ theme: 'info' });
+    expect(wrapper.props('theme')).toEqual('info');
+  });
+  it('closable', async () => {
+    const wrapper = await mount(Tag, {
+      props: {
+        closable: true,
+      },
+    });
+
+    expect(wrapper.props('closable')).toBe(true);
+    expect(wrapper.html()).toMatchSnapshot();
+  });
+  it('type', async () => {
+    const type = 'filled';
+    const wrapper = await mount(Tag, {
+      props: {
+        type,
+      },
+    });
+
+    expect(wrapper.props('type')).toEqual(type);
+    expect(wrapper.classes()).toContain(`bk-tag-${type}`);
+  });
+  it('checkable', async () => {
+    const wrapper = await mount(Tag, {
+      props: {
+        checkable: true,
+      },
+    });
+
+    expect(wrapper.props('checkable')).toBe(true);
+    expect(wrapper.classes()).toContain('bk-tag-checkable');
+  });
+  it('checked', async () => {
+    const wrapper = await mount(Tag, {
+      props: {
+        checked: true,
+      },
+    });
+
+    expect(wrapper.props('checked')).toBe(true);
+    expect(wrapper.classes()).toContain('bk-tag-check');
+  });
+  it('radius', async () => {
     const wrapper = await mount(Tag);
-    // todo
-    console.log(wrapper);
+
+    expect(wrapper.attributes('style')).toContain('border-radius: 2px;');
+  });
+  it('ext-cls', async () => {
+    const wrapper = await mount({
+      components: { Tag },
+      template: '<Tag extCls="bk-tag-test" />',
+    });
+
+    expect(wrapper.find('.bk-tag-test').exists()).toBe(true);
+  });
+  it('icon slots', async () => {
+    const iconHtml = '<i class="icon-test"></i>';
+    const wrapper = await mount(Tag, {
+      slots: {
+        icon: iconHtml,
+      },
+    });
+    expect(wrapper.find('.bk-tag .bk-tag-icon').exists()).toBe(true);
+    expect(wrapper.html()).toContain(iconHtml);
+  });
+  it('close emit', async () => {
+    const wrapper = await mount(Tag, {
+      props: {
+        closable: true,
+      },
+    });
+    const closeButton = wrapper.find('.bk-tag-close');
+    closeButton.trigger('click');
+    closeButton.trigger('click');
+
+    expect(wrapper.emitted()).toHaveProperty('close');
+    expect(wrapper.emitted('close')).toHaveLength(2);
+  });
+  it('change emit', async () => {
+    const wrapper = await mount(Tag, {
+      props: {
+        checkable: true,
+        checked: false,
+      },
+    });
+    wrapper.trigger('click');
+    wrapper.trigger('click');
+
+    expect(wrapper.emitted()).toHaveProperty('change');
+    expect(wrapper.emitted('change')[0]).toEqual([true]);
+    expect(wrapper.emitted('change')).toHaveLength(2);
   });
 });

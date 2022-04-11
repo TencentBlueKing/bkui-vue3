@@ -1,0 +1,171 @@
+@import '@bkui-vue/styles/themes/themes.less';
+
+/* 边框色 */
+@borderInlineColor: #dde4eb;
+
+/* 按钮、表单边框颜色、禁用时文本颜色 */
+@newGreyColor: #c4c6cc;
+
+/* 表格头部背景色、禁用底色 */
+@newGreyColor2: #f0f1f5;
+
+/* 大面积背景色 */
+@newGreyColor3: #fafbfd;
+
+/* 重点表示、强调、链接以及带有明确指示性 */
+@newMainColor: #3a84ff;
+
+/* 正常尺寸图标 */
+@iconNormalSize: 22px;
+
+.@{bk-prefix}-transfer {
+  position: relative;
+  display: flex;
+  font-size: 14px;
+  flex-direction: row;
+  justify-content: center;
+
+  .transfer {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 30px;
+    height: 30px;
+    background: url('@bkui-vue/styles/images/transfer.png') no-repeat center center;
+    transform: translate(-50%, -50%);
+  }
+
+  .source-list,
+  .target-list {
+    height: 400px;
+    min-width: 200px;
+    overflow: hidden;
+    background-color: #fff;
+    border: 1px solid @borderInlineColor;
+    border-radius: 2px;
+    flex: 1;
+
+    .slot-header {
+      position: relative;
+      height: 43px;
+      padding: 0 20px;
+      line-height: 43px;
+      background-color: @newGreyColor3;
+      border-bottom: 1px solid @borderInlineColor;
+
+      .slot-content {
+        position: relative;
+      }
+    }
+
+    .header {
+      position: relative;
+      height: 43px;
+      padding: 0 20px;
+      line-height: 43px;
+      background-color: @newGreyColor3;
+      border-bottom: 1px solid @borderInlineColor;
+
+      span {
+        position: absolute;
+        right: 10px;
+        font-size: 12px;
+        color: @newMainColor;
+        cursor: pointer;
+
+        &.disabled {
+          color: @newGreyColor;
+          cursor: not-allowed;
+        }
+      }
+    }
+
+    .empty {
+      position: relative;
+      top: 40%;
+      width: 100%;
+      color: @newGreyColor;
+      text-align: center;
+      cursor: default;
+    }
+
+    .content {
+      position: relative;
+      max-height: calc(100% - 50px);
+      padding: 0;
+      margin: 6px 0;
+      overflow-y: auto;
+
+      &.is-search {
+        max-height: calc(100% - 86px);
+      }
+
+      li {
+        &.custom-item,
+        .item-content {
+          position: relative;
+          display: flex;
+          height: 40px;
+          padding: 0 20px;
+          line-height: 40px;
+          list-style: none;
+          cursor: pointer;
+          align-items: center;
+
+          &:hover {
+            color: @newMainColor;
+            background-color: #eef6fe;
+          }
+
+          .content-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1;
+          }
+
+          .icon-wrapper {
+            display: none;
+            flex: 22px 0 0;
+
+            &.hover {
+              display: inline-block;
+            }
+          }
+        }
+      }
+
+      &::-webkit-scrollbar {
+        width: 4px;
+        // background-color: color(transparent lightness(80%));
+      }
+
+      &::-webkit-scrollbar-thumb {
+        height: 5px;
+        background-color: #e6e9ea;
+        border-radius: 2px;
+      }
+
+      .bk-icon {
+        font-size: @iconNormalSize;
+      }
+    }
+  }
+
+  .target-list {
+    margin-left: 33px;
+  }
+
+  .transfer-search-input {
+    height: 36px;
+    line-height: 34px;
+    border: none;
+    border-bottom: 1px solid @newGreyColor2;
+    outline: none;
+
+    &.is-focused {
+      border-color: @newGreyColor2;
+      box-shadow: 0px 0px 3px 0px transparent;
+    }
+  }
+}
