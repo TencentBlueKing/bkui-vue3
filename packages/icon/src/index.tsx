@@ -37,6 +37,7 @@ export { default as AngleRight } from '../icons/angle-right';
 export { default as AngleUpFill } from '../icons/angle-up-fill';
 export { default as AngleUp } from '../icons/angle-up';
 export { default as ArrowsLeft } from '../icons/arrows-left';
+export { default as ArrowsRight } from '../icons/arrows-right';
 export { default as Circle } from '../icons/circle';
 export { default as Close } from '../icons/close';
 export { default as Code } from '../icons/code';
