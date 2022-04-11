@@ -34,9 +34,10 @@ import basic from './basic.vue';
 import virtualRender from './virtual-render.vue';
 import levelLine from './level-line.vue';
 import prefixIcon from './prefix-icon.vue';
+import async from './async.vue';
 
 export default defineComponent({
-  components: { basic, virtualRender, levelLine, prefixIcon },
+  components: { basic, virtualRender, levelLine, prefixIcon, async },
   render() {
     const propsJson = resolvePropsToDesData(treeProps);
 
@@ -79,6 +80,16 @@ export default defineComponent({
         demoName: 'prefix-icon',
       },
       component: () => <prefix-icon></prefix-icon>,
+    },
+    {
+      attrs: {
+        title: '异步加载节点数据',
+        subtitle: '异步加载节点数据',
+        desc: 'props: async',
+        componentName: 'tree',
+        demoName: 'async',
+      },
+      component: () => <async></async>,
     }];
 
     return (
