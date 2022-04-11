@@ -34,15 +34,14 @@ const DEFAULT_LEVLE_LINE = '1px dashed #c3cdd7';
  * @param arrData
  * @returns
  */
-export const getFlatdata = (props: TreePropTypes, treeData: Array<any> = undefined, cachedSchema: any = {}) => {
+export const getFlatdata = (props: TreePropTypes, treeData: Array<any> = undefined, cachedSchema: any[] = []) => {
   const { data, children } = props;
   const outputData = [];
   let order = 0;
-  const schema = {};
-  const cachedSchemaValues = Object.values(cachedSchema) || [];
+  const schema = new Map<string, any>();
 
   function isCachedTreeNodeOpened(uuid: string) {
-    return cachedSchemaValues.some((item: any) => item.uuid === uuid && item.__isOpen);
+    return (cachedSchema || []).some((item: any) => item.__uuid === uuid && item.__isOpen);
   }
 
   function flatten(array: Array<any>, depth = 0, parent = null, path = null) {
@@ -68,12 +67,13 @@ export const getFlatdata = (props: TreePropTypes, treeData: Array<any> = undefin
             __isOpen: isOpen,
             [children]: null,
           };
-          Object.assign(item, { __uuid: uuid, [children]: null });
-          Object.assign(schema, {
-            [uuid]: attrs,
-          });
+          Object.assign(item, { __uuid: uuid });
+          schema.set(uuid, attrs);
           order += 1;
-          outputData.push(item);
+          outputData.push({
+            ...item,
+            [children]: null,
+          });
           if (Object.prototype.hasOwnProperty.call(item, children)) {
             flatten(item[children] || [], depth + 1, uuid, currentPath);
           }
@@ -150,6 +150,11 @@ const getStringOrFuncStr = (item: any, props: TreePropTypes, key: string, args: 
  */
 export const getLabel = (item: any, props: TreePropTypes) => getStringOrFuncStr(item, props, 'label');
 
+
+const getSchemaVal = (schema: Map<string, any>, uuid: string) => ((schema as Map<string, any>).get(uuid) || {});
+
+const getNodeAttr = (schema: Map<string, any>, uuid: string, key: string) => (getSchemaVal(schema, uuid) || {})[key];
+
 /**
  * 根据Props获取Tree样式设置
  * @param item
@@ -173,11 +178,13 @@ export const getTreeStyle = (item: any, props: TreePropTypes) => {
  * @param props
  * @returns
  */
-export const getNodeItemStyle = (item: any, props: TreePropTypes, schema: any = {}) => {
-  const { childNodeCount = 0, isLeaf = false, lastNode = null } = schema[item.__path] || {};
-  const lastNodeCount = isLeaf ? 0 : (schema[lastNode] || { childNodeCount: 0 }).childNodeCount;
+export const getNodeItemStyle = (item: any, props: TreePropTypes, flatData: any = {}) => {
+  const { levelLineSchema, schema } = flatData;
+  const { childNodeCount = 0, isLeaf = false, lastNode = null } = levelLineSchema[item.__uuid] || {};
+  const lastNodeCount = isLeaf ? 0 : (levelLineSchema[lastNode] || { childNodeCount: 0 }).childNodeCount;
+  const depth = getNodeAttr(schema as Map<string, any>, item.__uuid, '__depth');
   return {
-    '--depth': item.__depth,
+    '--depth': depth,
     paddingLeft: 0,
     '--lines': childNodeCount - lastNodeCount,
     ...(typeof props.levelLine === 'function'
@@ -195,12 +202,16 @@ export const getNodeItemStyle = (item: any, props: TreePropTypes, schema: any = 
  * @param item
  * @returns
  */
-export const getNodeItemClass = (item: any, schema: any, props: TreePropTypes) => ({
-  'is-root': item.__isRoot,
-  'bk-tree-node': true,
-  'is-open': schema[item.__path].__isOpen,
-  'is-virtual-render': props.virtualRender,
-});
+export const getNodeItemClass = (item: any, schema: any, props: TreePropTypes) => {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  const { __isRoot, __isOpen } = getSchemaVal(schema as Map<string, any>, item.__uuid) || {};
+  return {
+    'is-root': __isRoot,
+    'bk-tree-node': true,
+    'is-open': __isOpen,
+    'is-virtual-render': props.virtualRender,
+  };
+};
 
 /**
  * 根据路径更新指定节点Child-Data

@@ -43,7 +43,7 @@ export default defineComponent({
   props: treeProps,
 
   setup(props: TreePropTypes) {
-    let formatData = getFlatdata(props);
+    const formatData = getFlatdata(props);
     /**
      * 扁平化数据
      * schema: 需要展示连线时，用于计算连线高度
@@ -58,7 +58,8 @@ export default defineComponent({
      * 监听组件配置Data改变
      */
     watch(() => [props.data], (newData) => {
-      const formatData = getFlatdata(props, newData);
+      console.log('props.data changed');
+      const formatData = getFlatdata(props, newData, schemaValues.value);
       flatData.data = formatData[0] as Array<any>;
       flatData.schema = formatData[1] as any;
       computeLevelHeight();
@@ -70,20 +71,36 @@ export default defineComponent({
       computeLevelHeight();
     });
 
+    const schemaValues = computed(() => Array.from(flatData.schema.values()));
+
+    const getSchemaVal = (key: string) => ((flatData.schema as Map<string, any>).get(key));
+
+    const getNodeAttr = (node: any, attr: string) => (getSchemaVal(node.__uuid) || {})[attr];
+
+    const setNodeAttr = (node: any, attr: string, val: any) => (flatData.schema as Map<string, any>).set(node.__uuid, {
+      ...getSchemaVal(node.__uuid),
+      [attr]: val,
+    });
+
+    const getNodePath = (node: any) => getNodeAttr(node, '__path');
+    const isRootNode = (node: any) => getNodeAttr(node, '__isRoot');
+    const isNodeOpened = (node: any) => getNodeAttr(node, '__isOpen');
+    const hasChildNode = (node: any) => getNodeAttr(node, '__hasChild');
+
     // 计算当前需要渲染的节点信息
     const renderData = computed(() => flatData.data
       .filter(item => checkNodeIsOpen(item)));
 
     // 当前渲染节点路径集合
-    const renderNodePathColl = computed(() => renderData.value.map(node => node.__path));
+    const renderNodePathColl = computed(() => renderData.value.map(node => getNodePath(node)));
 
     const isItemOpen = (item: any) => {
       if (typeof item === 'object') {
-        return (flatData.schema[item.__path] || {}).__isOpen;
+        return isNodeOpened(item);
       }
 
       if (typeof item === 'string') {
-        return (flatData.schema[item] || {}).__isOpen;
+        return (getSchemaVal(item) || {}).__isOpen;
       }
 
       return false;
@@ -126,14 +143,14 @@ export default defineComponent({
       let prefixFnVal = null;
 
       if (typeof props.prefixIcon === 'function') {
-        prefixFnVal = props.prefixIcon(item.__isRoot, item.__hasChild || item.async, isItemOpen(item), 'action', item);
+        prefixFnVal = props.prefixIcon(isRootNode(item), hasChildNode(item) || item.async, isItemOpen(item), 'action', item);
         if (prefixFnVal !== 'default') {
           return renderPrefixVal(prefixFnVal);
         }
       }
 
       if (prefixFnVal === 'default' || (typeof props.prefixIcon === 'boolean' && props.prefixIcon)) {
-        if (item.__hasChild || item.async) {
+        if (hasChildNode(item) || item.async) {
           return isItemOpen(item) ? <DownShape /> : <RightShape />;
         }
       }
@@ -150,7 +167,7 @@ export default defineComponent({
       let prefixFnVal = null;
 
       if (typeof props.prefixIcon === 'function') {
-        prefixFnVal = props.prefixIcon(item.__isRoot, item.__hasChild || item.async, isItemOpen(item), 'node_type', item);
+        prefixFnVal = props.prefixIcon(isRootNode(item), hasChildNode(item) || item.async, isItemOpen(item), 'node_type', item);
 
         if (prefixFnVal !== 'default') {
           return renderPrefixVal(prefixFnVal);
@@ -158,7 +175,7 @@ export default defineComponent({
       }
 
       if (prefixFnVal === 'default' || (typeof props.prefixIcon === 'boolean' && props.prefixIcon)) {
-        return item.__isRoot ? getRootIcon(item) : <TextFile class="bk-tree-icon" />;
+        return isRootNode(item) ? getRootIcon(item) : <TextFile class="bk-tree-icon" />;
       }
 
       return null;
@@ -172,9 +189,7 @@ export default defineComponent({
      */
     const setNodeOpened = (item: any) => {
       const newVal = !isItemOpen(item);
-      Object.assign(item, { __isOpen: newVal });
-      renderData.value.filter(node => String.prototype.startsWith.call(node.__path, item.__path))
-        .forEach(filterNode => Object.assign(flatData.schema[filterNode.__path], { __isOpen: newVal }));
+      setNodeAttr(item, '__isOpen', newVal);
       computeLevelHeight();
     };
 
@@ -185,10 +200,9 @@ export default defineComponent({
      */
     const setNodeRemoteLoad = (resp: any, item: any) => {
       if (typeof resp === 'object' && resp !== null) {
-        Object.assign(formatData[1][item.__path], { __isOpen: true });
+        setNodeAttr(item, '__isOpen', true);
         const nodeValue = Array.isArray(resp) ? resp : [resp];
-        updateTreeNode(item.__path, props.data, props.children, props.children, nodeValue);
-        formatData = getFlatdata(props, props.data, formatData[1]);
+        updateTreeNode(getNodePath(item), props.data, props.children, props.children, nodeValue);
       }
     };
 
@@ -205,14 +219,14 @@ export default defineComponent({
             .then((resp: any) => setNodeRemoteLoad(resp, item))
             .catch((err: any) => console.error('load remote data error:', err))
             .finally(() => {
-              updateTreeNode(item.__path, props.data, props.children, 'loading', false);
+              updateTreeNode(getNodePath(item), props.data, props.children, 'loading', false);
             });
         } else {
           console.error('async need to set prop: asyncLoad with function wich will return promise object');
         }
       }
 
-      if (item.__hasChild) {
+      if (hasChildNode(item)) {
         setNodeOpened(item);
       }
     };
@@ -227,10 +241,10 @@ export default defineComponent({
           let showNodeCount = renderData.value.length;
           const nodeSchema = {};
 
-          const setDefaultNodeSchema = (path: string, lastNode = null, isLeaf = false) => {
-            if (!Object.prototype.hasOwnProperty.call(nodeSchema, path)) {
+          const setDefaultNodeSchema = (uuid: string, lastNode = null, isLeaf = false) => {
+            if (!Object.prototype.hasOwnProperty.call(nodeSchema, uuid)) {
               Object.assign(nodeSchema, {
-                [path]: {
+                [uuid]: {
                   childNodeCount: 0,
                   isLastNode: false,
                   ...(lastNode !== null ? { lastNode } : {}),
@@ -242,17 +256,18 @@ export default defineComponent({
 
           for (; showNodeCount > 0; showNodeCount--) {
             const node = renderData.value[showNodeCount - 1];
-            const parentPath = getParentNodePath(node);
-            const isLeaf = !renderNodePathColl.value.includes(`${node.__path}-0`);
+            const parentId = getNodeAttr(node, '__parentId');
+            const nodepath = getNodePath(node);
+            const isLeaf = !renderNodePathColl.value.includes(`${nodepath}-0`);
 
-            setDefaultNodeSchema(node.__path, null, isLeaf);
-            setDefaultNodeSchema(parentPath, node.__path);
+            setDefaultNodeSchema(node.__uuid, null, isLeaf);
+            setDefaultNodeSchema(parentId, node.__uuid);
 
-            const parentSchema = nodeSchema[parentPath];
-            const currentNodeSchema = nodeSchema[node.__path];
+            const parentSchema = nodeSchema[parentId];
+            const currentNodeSchema = nodeSchema[node.__uuid];
             const { childNodeCount = 0 } = currentNodeSchema;
             currentNodeSchema.childNodeCount = childNodeCount + 1;
-            currentNodeSchema.isLastNode = parentSchema.lastNode === node.__path;
+            currentNodeSchema.isLastNode = parentSchema.lastNode === node.__uuid;
             parentSchema.childNodeCount += currentNodeSchema.childNodeCount;
           }
 
@@ -264,36 +279,24 @@ export default defineComponent({
     };
 
     /**
-     * 获取当前节点的父级节点Path
-     * @param node
-     * @returns
-     */
-    const getParentNodePath = (node: any) => {
-      if (node.__isRoot) {
-        return null;
-      }
-      const nodePathLen = `-${node.__index}`.length;
-      return String.prototype.substring.call(node.__path, 0, node.__path.length - nodePathLen);
-    };
-
-    /**
      * 过滤当前状态为Open的节点
      * 页面展示只会展示Open的节点
      * @param item
      * @returns
      */
-    const checkNodeIsOpen = (node: any) => node.__isRoot || isItemOpen(node) || isItemOpen(getParentNodePath(node));
+    const checkNodeIsOpen = (node: any) => isRootNode(node) || isItemOpen(node) || isItemOpen(getNodeAttr(node, '__parentId'));
 
     const filterNextNode = (depth: number, node: any) => {
-      if (node.__isRoot) {
+      if (isRootNode(node)) {
         return false;
       }
 
-      const paths = `${node.__path}`.split('-').slice(0, depth + 1);
+      const nodepath = getNodePath(node);
+      const paths = `${nodepath}`.split('-').slice(0, depth + 1);
       const currentPath = paths.join('-');
 
       // 如果是判定当前节点，则必须要有一条线
-      if (currentPath === node.__path) {
+      if (currentPath === nodepath) {
         return true;
       }
 
@@ -301,8 +304,7 @@ export default defineComponent({
       const nextLevel = parseInt(lastLevel, 10);
       paths.push(`${nextLevel + 1}`);
       const nextNodePath = paths.join('-');
-      const exist  = Object.prototype.hasOwnProperty.call(flatData.schema, nextNodePath);
-      return exist;
+      return schemaValues.value.some((val: any) => val.__path === nextNodePath);
     };
 
     const getVirtualLines = (node: any) => {
@@ -314,7 +316,7 @@ export default defineComponent({
         '--depth': dpth,
       });
 
-      const maxDeep = node.__depth + 1;
+      const maxDeep = getNodeAttr(node, '__depth') + 1;
       return new Array(maxDeep).fill('')
         .map((_, index: number) => index)
         .filter((depth: number) => filterNextNode(depth, node))
@@ -340,7 +342,7 @@ export default defineComponent({
     const props = this.$props;
     const renderTreeNode = (item: any) => <div
       class={getNodeItemClass(item, this.flatData.schema, props)}
-      style={getNodeItemStyle(item, props, this.flatData.levelLineSchema)}
+      style={getNodeItemStyle(item, props, this.flatData)}
       onClick={() => this.hanldeTreeNodeClick(item)}>
       {
         [
