@@ -39,7 +39,7 @@ import VirtualRender from '@bkui-vue/virtual-render';
 export type TreePropTypes = defineTypes;
 
 export default defineComponent({
-  name: 'BkTree',
+  name: 'Tree',
   props: treeProps,
 
   setup(props: TreePropTypes) {
@@ -75,7 +75,7 @@ export default defineComponent({
 
     const getSchemaVal = (key: string) => ((flatData.schema as Map<string, any>).get(key));
 
-    const getNodeAttr = (node: any, attr: string) => (getSchemaVal(node.__uuid) || {})[attr];
+    const getNodeAttr = (node: any, attr: string) => getSchemaVal(node.__uuid)?.[attr];
 
     const setNodeAttr = (node: any, attr: string, val: any) => (flatData.schema as Map<string, any>).set(node.__uuid, {
       ...getSchemaVal(node.__uuid),
@@ -100,7 +100,7 @@ export default defineComponent({
       }
 
       if (typeof item === 'string') {
-        return (getSchemaVal(item) || {}).__isOpen;
+        return getSchemaVal(item)?.__isOpen;
       }
 
       return false;
