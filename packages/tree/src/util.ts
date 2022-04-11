@@ -34,21 +34,26 @@ const DEFAULT_LEVLE_LINE = '1px dashed #c3cdd7';
  * @param arrData
  * @returns
  */
-export const getFlatdata = (props: TreePropTypes, treeData: Array<any> | undefined = undefined) => {
+export const getFlatdata = (props: TreePropTypes, treeData: Array<any> = undefined, cachedSchema: any = {}) => {
   const { data, children } = props;
   const outputData = [];
   let order = 0;
   const schema = {};
+  const cachedSchemaValues = Object.values(cachedSchema) || [];
+
+  function isCachedTreeNodeOpened(uuid: string) {
+    return cachedSchemaValues.some((item: any) => item.uuid === uuid && item.__isOpen);
+  }
+
   function flatten(array: Array<any>, depth = 0, parent = null, path = null) {
     for (let i = 0; i < array.length; i++) {
       const item = array[i];
       if (Array.isArray(item)) {
         flatten(item, depth, parent, path);
       } else {
-        // 复制当前对象，避免操作源数据，污染传入的Props.data
-        const copyItem = { ...item };
-        if (typeof copyItem === 'object' && copyItem !== null) {
-          const uuid = uuidv4();
+        if (typeof item === 'object' && item !== null) {
+          const uuid = item.__uuid || uuidv4();
+          const isOpen = isCachedTreeNodeOpened(uuid);
           const currentPath = path !== null ? `${path}-${i}` : `${i}`;
           const attrs = {
             __depth: depth,
@@ -60,14 +65,17 @@ export const getFlatdata = (props: TreePropTypes, treeData: Array<any> | undefin
             __path: currentPath,
             __isRoot: parent === null,
             __order: order,
+            __isOpen: isOpen,
             [children]: null,
           };
-          Object.assign(copyItem, attrs);
-          Object.assign(schema, { [currentPath]: { __isOpen: false, __showLines: 0, __isRoot: parent === null } });
+          Object.assign(item, { __uuid: uuid, [children]: null });
+          Object.assign(schema, {
+            [uuid]: attrs,
+          });
           order += 1;
-          outputData.push(copyItem);
+          outputData.push(item);
           if (Object.prototype.hasOwnProperty.call(item, children)) {
-            flatten(item[children], depth + 1, uuid, currentPath);
+            flatten(item[children] || [], depth + 1, uuid, currentPath);
           }
         }
       }
@@ -193,3 +201,21 @@ export const getNodeItemClass = (item: any, schema: any, props: TreePropTypes) =
   'is-open': schema[item.__path].__isOpen,
   'is-virtual-render': props.virtualRender,
 });
+
+/**
+ * 根据路径更新指定节点Child-Data
+ * @param path 节点路径
+ * @param treeData Tree Data
+ * @param childKey Child Key
+ * @param nodekey 节点key
+ * @param nodeValue 节点值
+ */
+export const updateTreeNode = (path: string, treeData: any[], childKey: string, nodekey: string, nodeValue: any) => {
+  const paths = path.split('-');
+  const targetNode = paths.reduce((pre: any, nodeIndex: string) => {
+    const index = Number(nodeIndex);
+    return  Array.isArray(pre) ? pre[index] : pre[childKey][index];
+  }, treeData);
+
+  Object.assign(targetNode, { [nodekey]: nodeValue });
+};

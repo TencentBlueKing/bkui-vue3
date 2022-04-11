@@ -30,8 +30,9 @@ import {
   getNodeItemStyle,
   getNodeItemClass,
   getTreeStyle,
+  updateTreeNode,
 } from './util';
-import { Folder, FolderShapeOpen, TextFile, DownShape, RightShape } from '@bkui-vue/icon/';
+import { Folder, FolderShapeOpen, TextFile, DownShape, RightShape, Spinner } from '@bkui-vue/icon/';
 import { treeProps, TreePropTypes as defineTypes } from './props';
 import VirtualRender from '@bkui-vue/virtual-render';
 
@@ -42,7 +43,7 @@ export default defineComponent({
   props: treeProps,
 
   setup(props: TreePropTypes) {
-    const formatData = getFlatdata(props);
+    let formatData = getFlatdata(props);
     /**
      * 扁平化数据
      * schema: 需要展示连线时，用于计算连线高度
@@ -125,14 +126,14 @@ export default defineComponent({
       let prefixFnVal = null;
 
       if (typeof props.prefixIcon === 'function') {
-        prefixFnVal = props.prefixIcon(item.__isRoot, item.__hasChild, isItemOpen(item), 'action', item);
+        prefixFnVal = props.prefixIcon(item.__isRoot, item.__hasChild || item.async, isItemOpen(item), 'action', item);
         if (prefixFnVal !== 'default') {
           return renderPrefixVal(prefixFnVal);
         }
       }
 
       if (prefixFnVal === 'default' || (typeof props.prefixIcon === 'boolean' && props.prefixIcon)) {
-        if (item.__hasChild) {
+        if (item.__hasChild || item.async) {
           return isItemOpen(item) ? <DownShape /> : <RightShape />;
         }
       }
@@ -149,7 +150,7 @@ export default defineComponent({
       let prefixFnVal = null;
 
       if (typeof props.prefixIcon === 'function') {
-        prefixFnVal = props.prefixIcon(item.__isRoot, item.__hasChild, isItemOpen(item), 'node_type', item);
+        prefixFnVal = props.prefixIcon(item.__isRoot, item.__hasChild || item.async, isItemOpen(item), 'node_type', item);
 
         if (prefixFnVal !== 'default') {
           return renderPrefixVal(prefixFnVal);
@@ -163,17 +164,56 @@ export default defineComponent({
       return null;
     };
 
+    const getLoadingIcon = (item: any) => (item.loading ? <Spinner></Spinner> : '');
+
+    /**
+     * 设置指定节点是否展开
+     * @param item
+     */
+    const setNodeOpened = (item: any) => {
+      const newVal = !isItemOpen(item);
+      Object.assign(item, { __isOpen: newVal });
+      renderData.value.filter(node => String.prototype.startsWith.call(node.__path, item.__path))
+        .forEach(filterNode => Object.assign(flatData.schema[filterNode.__path], { __isOpen: newVal }));
+      computeLevelHeight();
+    };
+
+    /**
+     * 处理异步加载节点数据返回结果
+     * @param resp 异步请求返回结果
+     * @param item 当前节点
+     */
+    const setNodeRemoteLoad = (resp: any, item: any) => {
+      if (typeof resp === 'object' && resp !== null) {
+        Object.assign(formatData[1][item.__path], { __isOpen: true });
+        const nodeValue = Array.isArray(resp) ? resp : [resp];
+        updateTreeNode(item.__path, props.data, props.children, props.children, nodeValue);
+        formatData = getFlatdata(props, props.data, formatData[1]);
+      }
+    };
+
     /**
      * 节点点击
      * @param item
      */
     const hanldeTreeNodeClick = (item: any) => {
+      /** 如果是异步请求加载 */
+      if (item.async) {
+        if (typeof props.asyncLoad === 'function') {
+          Object.assign(item, { loading: true });
+          props.asyncLoad(item, (resp: any) => setNodeRemoteLoad(resp, item))
+            .then((resp: any) => setNodeRemoteLoad(resp, item))
+            .catch((err: any) => console.error('load remote data error:', err))
+            .finally(() => {
+              updateTreeNode(item.__path, props.data, props.children, 'loading', false);
+            });
+        } else {
+          console.error('async need to set prop: asyncLoad with function wich will return promise object');
+        }
+      }
+
       if (item.__hasChild) {
-        const newVal = !isItemOpen(item);
-        Object.assign(item, { __isOpen: newVal });
-        renderData.value.filter(node => String.prototype.startsWith.call(node.__path, item.__path))
-          .forEach(filterNode => Object.assign(flatData.schema[filterNode.__path], { __isOpen: newVal }));
-        computeLevelHeight();
+        setNodeOpened(item);
       }
     };
 
@@ -292,6 +332,7 @@ export default defineComponent({
       getRootIcon,
       getVirtualLines,
       getNodePrefixIcon,
+      getLoadingIcon,
     };
   },
 
@@ -305,6 +346,7 @@ export default defineComponent({
         [
           this.getActionIcon(item),
           this.getNodePrefixIcon(item),
+          this.getLoadingIcon(item),
         ]
       }
       <span>{getLabel(item, props)}</span>
