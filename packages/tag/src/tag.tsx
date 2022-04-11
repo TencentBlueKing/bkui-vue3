@@ -24,14 +24,66 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent } from 'vue';
+import { defineComponent, computed } from 'vue';
+import { classes, PropTypes } from '@bkui-vue/shared';
+import { Error } from '@bkui-vue/icon';
 
 export default defineComponent({
   name: 'Tag',
-  props: {},
-  setup() {
-    return () => (
-      <div>Tag</div>
+  props: {
+    theme: PropTypes.theme(['success', 'info', 'warning', 'danger']).def(''),
+    closable: PropTypes.bool.def(false),
+    type: PropTypes.commonType(['', 'filled', 'stroke']).def(''),
+    checkable: PropTypes.bool.def(false),
+    checked: PropTypes.bool.def(false),
+    radius: PropTypes.string.def('2px'),
+    extCls: PropTypes.string.def(''),
+  },
+  emits: ['change', 'close'],
+  slots: ['icon'],
+  setup(props, { emit }) {
+    const wrapperCls = computed(() => classes({
+      'bk-tag-closable': props.closable,
+      'bk-tag-checkable': props.checkable,
+      'bk-tag-check': props.checked,
+      [`bk-tag-${props.type}`]: props.type,
+      [`bk-tag-${props.theme}`]: props.theme,
+      [props.extCls]: !!props.extCls,
+    }, 'bk-tag'));
+    const wrapperStyle = computed(() => ({
+      borderRadius: props.radius,
+    }));
+
+    const handleClose = (e: Event) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      emit('close', e);
+    };
+
+    const handleClick = (e: Event) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (props.checkable) {
+        emit('change', !props.checked);
+      }
+    };
+
+    return {
+      wrapperCls,
+      wrapperStyle,
+      handleClose,
+      handleClick,
+    };
+  },
+  render() {
+    return (
+      <div class={this.wrapperCls} style={this.wrapperStyle} onClick={this.handleClick}>
+        { this.$slots.icon ? <span class="bk-tag-icon">{this.$slots.icon()}</span> : '' }
+        <span>{ this.$slots.default?.() }</span>
+        { this.closable ? <Error class="bk-tag-close" onClick={this.handleClose} /> : '' }
+      </div>
     );
   },
 });
