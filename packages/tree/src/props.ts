@@ -87,6 +87,13 @@ export const treeProps = {
     PropTypes.func.def(() => {}),
     PropTypes.bool.def(false),
   ]).def(true),
+
+  /**
+   * 异步请求方法
+   * func<Promise>: (node: any) => ({  })
+   * 如果node设置了async = true，则会触发此方法
+   */
+  asyncLoad: PropTypes.func.def(null),
 };
 
 export type TreePropTypes = Readonly<ExtractPropTypes<typeof treeProps>>;
