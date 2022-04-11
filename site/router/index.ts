@@ -1,3 +1,4 @@
+/* eslint-disable codecc/comment-ratio */
 /*
  * Tencent is pleased to support the open source community by making
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
@@ -192,7 +193,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/progress',
     name: 'progress',
-    component: () => import('../views/BkProgress/progress'),
+    component: () => import('../views/progress/progress'),
     meta: {
       group: NavGroupMeta.Data,
       navName: 'Progress 进度条',
@@ -201,7 +202,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/switcher',
     name: 'switcher',
-    component: () => import('../views/BkSwitcher/switcher'),
+    component: () => import('../views/switcher/switcher'),
     meta: {
       group: NavGroupMeta.Form,
       navName: 'Switcher 开关',
@@ -210,7 +211,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/breadcrumb',
     name: 'breadcrumb',
-    component: () => import('../views/BkBreadcrumb/breadcrumb'),
+    component: () => import('../views/breadcrumb/breadcrumb'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'Breadcrumb 面包屑',
@@ -263,6 +264,15 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
+    path: '/timeline',
+    name: 'timeline',
+    component: () => import('../views/timeline'),
+    meta: {
+      group: NavGroupMeta.Nav,
+      navName: 'Timeline 时间轴',
+    },
+  },
+  {
     path: '/animateNumber',
     name: 'animateNumber',
     component: () => import('../views/animate-number'),
@@ -283,7 +293,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/table',
     name: 'table',
-    component: () => import('../views/table'),
+    component: () => import('../views/table/table'),
     meta: {
       group: NavGroupMeta.Data,
       navName: 'Table 表格',
@@ -355,7 +365,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/tree',
     name: 'tree',
-    component: () => import('../views/tree'),
+    component: () => import('../views/tree/tree'),
     meta: {
       group: NavGroupMeta.Data,
       navName: 'Tree 树',
@@ -364,7 +374,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/date-picker',
     name: 'datePicker',
-    component: () => import('../views/date-picker'),
+    component: () => import('../views/date-picker/date-picker'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'DatePicker 日期选择器',
@@ -409,10 +419,19 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/virtual-render',
     name: 'virtualRender',
-    component: () => import('../views/virtual-render'),
+    component: () => import('../views/virtual-render/virtual-render'),
     meta: {
       group: NavGroupMeta.Others,
       navName: 'VirtualRender',
+    },
+  },
+  {
+    path: '/pagination',
+    name: 'pagination',
+    component: () => import('../views/pagination'),
+    meta: {
+      group: NavGroupMeta.Data,
+      navName: 'Pagination 分页',
     },
   },
   {

@@ -65,3 +65,5 @@ import '@bkui-vue/tab/tab.less';
 import '@bkui-vue/process/process.less';
 import '@bkui-vue/virtual-render/virtual-render.less';
 import '@bkui-vue/transfer/transfer.less';
+import '@bkui-vue/pagination/pagination.less';
+import '@bkui-vue/timeline/timeline.less';

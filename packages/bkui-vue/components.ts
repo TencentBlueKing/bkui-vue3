@@ -57,3 +57,6 @@ export { default as Menu } from '@bkui-vue/menu';
 export { default as Navigation } from '@bkui-vue/navigation';
 export { default as DatePicker } from '@bkui-vue/date-picker';
 export { default as Transfer } from '@bkui-vue/transfer';
+export { default as Tree } from '@bkui-vue/tree';
+export { default as VirtualRender } from '@bkui-vue/virtual-render';
+export { default as Form, BkFormItem as FormItem } from '@bkui-vue/form';

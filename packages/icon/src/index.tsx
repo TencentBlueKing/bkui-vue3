@@ -23,8 +23,12 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+export { default as AngleDoubleDownLine } from '../icons/angle-double-down-line';
+export { default as AngleDoubleLeftLine } from '../icons/angle-double-left-line';
 export { default as AngleDoubleLeft } from '../icons/angle-double-left';
+export { default as AngleDoubleRightLine } from '../icons/angle-double-right-line';
 export { default as AngleDoubleRight } from '../icons/angle-double-right';
+export { default as AngleDoubleUpLine } from '../icons/angle-double-up-line';
 export { default as AngleDownFill } from '../icons/angle-down-fill';
 export { default as AngleDownLine } from '../icons/angle-down-line';
 export { default as AngleDown } from '../icons/angle-down';
@@ -43,6 +47,7 @@ export { default as Copy } from '../icons/copy';
 export { default as Done } from '../icons/done';
 export { default as DownShape } from '../icons/down-shape';
 export { default as DownSmall } from '../icons/down-small';
+export { default as Ellipsis } from '../icons/ellipsis';
 export { default as Error } from '../icons/error';
 export { default as Eye } from '../icons/eye';
 export { default as FolderOpen } from '../icons/folder-open';
@@ -54,6 +59,7 @@ export { default as HelpFill } from '../icons/help-fill';
 export { default as Help } from '../icons/help';
 export { default as InfoLine } from '../icons/info-line';
 export { default as Info } from '../icons/info';
+export { default as LeftShape } from '../icons/left-shape';
 export { default as PlayShape } from '../icons/play-shape';
 export { default as Plus } from '../icons/plus';
 export { default as RightShape } from '../icons/right-shape';
@@ -65,4 +71,5 @@ export { default as SwitcherLoading } from '../icons/switcher-loading';
 export { default as TextFile } from '../icons/text-file';
 export { default as TreeApplicationShape } from '../icons/tree-application-shape';
 export { default as Unvisible } from '../icons/unvisible';
+export { default as UpShape } from '../icons/up-shape';
 export { default as Warn } from '../icons/warn';

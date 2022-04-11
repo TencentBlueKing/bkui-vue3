@@ -2,26 +2,30 @@
 
 .@{bk-prefix}-table {
   overflow: auto;
+  border-top: 1px solid @table-border-color;
+  border-bottom: 1px solid @table-border-color;
+  .@{bk-prefix}-table-head,
   .@{bk-prefix}-table-body {
-    background: @white-color;
+    background: @table-bg-color;
 
     table {
       width: 100%;
       border-collapse: collapse;
 
-      .cell {
-        height: var(--row-height);
-        padding: 0 15px;
-        overflow: hidden;
-        line-height: var(--row-height);
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-   
       th,
       td {
         min-width: 80px;
-        border-bottom: 1px solid #dfe0e5;
+
+        .cell {
+          height: var(--row-height);
+          padding: 0 15px;
+          overflow: hidden;
+          line-height: var(--row-height);
+          color: @table-body-font-color;
+          text-align: left;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
       }
 
       thead {
@@ -29,12 +33,12 @@
           position: sticky; 
           top: 0; 
           z-index: 1;
-          background-color: #fff;
-          transform: translateY(var(--translate-y));
+          color: @table-head-font-color;
+          background-color: @table-head-bg-color;
 
-          &.active {
+          &.active,
+          &:hover {
             background: #f0f1f5;
-            // cursor: ;
           }
         }
       }
@@ -43,20 +47,60 @@
         tr {
           &:hover {
             td {
-              background: #f5f7fa;
+              background: @table-row-hover-bg-color;
             }
           }
         }
       }
     }
   }
+
+  &.bordered-row {
+    .cell { 
+      border-bottom: 1px solid @table-border-color;
+    }
+  }
+
+  &.bordered-outer {
+    border-right: 1px solid @table-border-color;
+    border-left: 1px solid @table-border-color;
+  }
+
+  &.bordered-col {
+    th,
+    td {
+      .cell { 
+        border-right: 1px solid @table-border-color;
+      }
+
+      &:last-child {
+        .cell {
+          border-right: none;
+        }
+      }
+    }
+
+  }
+
+  &.bordered-none {
+    th,
+    td {
+      .cell {
+        border-top: none;
+        border-right: none;
+        border-bottom: none;
+        border-left: none;
+      }
+    }
+  }
+
   .@{bk-prefix}-table-fixed {
     width: 100%;
   }
 
   colgroup {
     col {
-      background: #fff;
+      background: @table-bg-color;
 
       &.active {
         position: relative;

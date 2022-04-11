@@ -1,0 +1,239 @@
+@import '@bkui-vue/styles/themes/themes.less';
+
+@themeSelectors: primary, warning, success, danger;
+
+@colorSelectors: blue, red, green, yellow, gray;
+
+@blue-color: #3a84ff;
+@green-color: #2dcb56;
+@yellow-color: #ff9c01;
+@red-color: #ea3636;
+@gray-color: #63656e;
+
+* {
+  box-sizing: border-box;
+}
+
+.bk-timeline {
+  padding: 0;
+  margin: 16px 0 0;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  text-align: left;
+  list-style: none;
+
+  .bk-timeline-dot {
+    position: relative;
+    padding-bottom: 24px;
+    padding-left: 16px;
+
+    /* spacing 1px */
+    margin-top: 13px;
+    font-size: 0;
+    border-left: 1px solid #d8d8d8;
+
+    &::before {
+      position: absolute;
+      top: calc((11px + 1px) * -1);
+      left: -6px;
+      display: inline-block;
+      width: 11px;
+      height: 11px;
+      background: #fff;
+      border: 2px solid #d8d8d8;
+      border-radius: 50%;
+      content: '';
+      box-sizing: border-box;
+    }
+
+    &:last-child {
+      padding-bottom: 0;
+
+      /* 保留border使用间距保持一致 */
+      border-left: 1px solid transparent;
+    }
+
+    .bk-timeline-title {
+      display: inline-block;
+      padding-bottom: 10px;
+      margin-top: -3px;
+      font-size: 14px;
+      color: #63656e;
+      cursor: pointer;
+
+    }
+
+    .bk-timeline-content {
+      max-width: 300px;
+      font-size: 14px;
+      color: #666;
+      word-break: break-all;
+    }
+
+    .bk-timeline-icon {
+      position: absolute;
+      top: calc((15px + 1px) * -1);
+      left: -8px;
+
+      display: inline-block;
+      width: 15px;
+      height: 15px;
+      background: #fff;
+      border: 2px solid #d8d8d8;
+      border-radius: 50%;
+      box-sizing: border-box;
+
+      .bk-timeline-icon-inner {
+        display: inline-block;
+        transform: scale(1) translate(-.5px, -4px);
+
+        >:first-child {
+          font-size: 12px;
+        }
+      }
+    }
+
+    .bk-timeline-section {
+      position: relative;
+      top: calc((11px + 2px) * -1);
+    }
+
+    &.bk-timeline-large {
+      margin-top: calc(15px + 2px);
+
+      &::before {
+        top: calc((15px + 1px) * -1);
+        left: -8px;
+        width: 15px;
+        height: 15px;
+      }
+
+      > .bk-timeline-section {
+        top: calc((15px + 1px) * -1);
+      }
+    }
+
+    &.bk-timeline-item-custom-icon {
+      margin-top: calc(15px + 2px);
+
+      &::before {
+        display: none;
+      }
+
+      > .bk-timeline-section {
+        top: calc((15px + 1px) * -1);
+      }
+    }
+
+    &:first-child {
+      margin-top: 0;
+    }
+
+  }
+
+
+  each(@themeSelectors, {
+  @color: '@{value}-color';
+
+  .bk-timeline{
+    &-@{value} {
+      border-left: 1px solid @@color;
+      &::before,
+      .bk-timeline-icon {
+        color: @@color;
+        border: 2px solid @@color;
+      }
+      &.bk-timeline-filled {
+        &::before,
+        .bk-timeline-icon {
+          background: @@color;
+        }
+      }
+    }
+  } 
+})
+
+  each(@colorSelectors, {
+  @color: '@{value}-color';
+
+  .bk-timeline{
+    &-@{value} {
+      &::before,
+      .bk-timeline-icon {
+        color: @@color;
+        border: 2px solid @@color;
+      }
+      &.bk-timeline-filled {
+        &::before,
+        .bk-timeline-icon {
+          background: @@color;
+        }
+      }
+    }
+  } 
+})
+
+  &-dashed {
+    .bk-step {
+      .bk-step-title,
+      .bk-step-indicator {
+        &::after {
+          background-image: linear-gradient(to right, @light-gray 50%, transparent 0%);
+          background-position: bottom;
+          background-repeat: repeat-x;
+          background-size: 6px 1px;
+        }
+      }
+    }
+  }
+
+  &-solid {
+    .bk-step {
+      .bk-step-title,
+      .bk-step-indicator {
+        &::after {
+          background-color: @light-gray;
+        }
+      }
+    }
+  }
+
+  &-vertical {
+    height: 100%;
+    flex-direction: column;
+
+    .bk-step {
+      margin-right: 0;
+      margin-bottom: 8px;
+
+      .bk-step-title,
+      .bk-step-indicator {
+        &::after {
+          display: none;
+        }
+      }
+
+      &::after {
+        position: absolute;
+        top: 32px;
+        left: 12px;
+        width: 1px;
+        height: 100%;
+        background-image: linear-gradient(@light-gray 50%, transparent 0%);
+        background-position: right;
+        background-repeat: repeat-y;
+        background-size: 1px 6px;
+        content: '';
+      }
+
+      .bk-step-title {
+        display: flex;
+        height: 100%;
+        margin-top: 0;
+        text-align: left;
+        align-items: center;
+      }
+    }
+  }
+}
