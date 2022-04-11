@@ -56,3 +56,4 @@ export { default as Notify } from '@bkui-vue/notify';
 export { default as Menu } from '@bkui-vue/menu';
 export { default as Navigation } from '@bkui-vue/navigation';
 export { default as DatePicker } from '@bkui-vue/date-picker';
+export { default as Transfer } from '@bkui-vue/transfer';

@@ -398,6 +398,15 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
+    path: '/transfer',
+    name: 'transfer',
+    component: () => import('../views/BKTransfer/transfer'),
+    meta: {
+      group: NavGroupMeta.Feedback,
+      navName: 'Transfer 穿梭框',
+    },
+  },
+  {
     path: '/virtual-render',
     name: 'virtualRender',
     component: () => import('../views/virtual-render'),
