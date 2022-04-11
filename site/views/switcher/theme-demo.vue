@@ -1,8 +1,14 @@
 <template>
-    <div>
-      <bk-switcher v-model="demo1"></bk-switcher>
-      <bk-switcher v-model="demo1" show-text></bk-switcher>
-    </div>
+  <div>
+    <bk-switcher
+      v-model="demo1"
+      theme="success"
+    />
+    <bk-switcher
+      v-model="demo1"
+      theme="primary"
+    />
+  </div>
 </template>
 <script>
 import { defineComponent, ref } from 'vue';
@@ -15,7 +21,7 @@ export default defineComponent({
     BkSwitcher,
   },
   setup() {
-    const demo1 = ref(true)
+    const demo1 = ref(true);
     return {
       demo1,
     };

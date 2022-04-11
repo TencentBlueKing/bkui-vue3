@@ -28,7 +28,7 @@ import { SetupContext } from 'vue';
 import { Column, GroupColumn, IColumnActive, IReactiveProp, TablePropTypes } from './props';
 import { resolvePropVal, resolveWidth } from './utils';
 import { TablePlugins } from './plugins/index';
-
+import Pagination from '@bkui-vue/pagination';
 export default class TableRender {
   props: TablePropTypes;
   context: SetupContext;
@@ -71,6 +71,10 @@ export default class TableRender {
       {/* { this.renderHeader() } */}
       { this.renderTBody(rows) }
     </table>;
+  }
+
+  public renderTableFooter(options: any) {
+    return <Pagination { ...options }></Pagination>;
   }
 
   /**
@@ -138,10 +142,10 @@ export default class TableRender {
         };
 
         // @ts-ignore:next-line
-        return <tr style={rowStyle}>
+        return <tr style={rowStyle} onClick={ e => this.handleRowClick(e, row, index, rows)}>
         {
           this.props.columns.map((column: Column) => <td colspan={1} rowspan={1}>
-          <div class="cell">{ this.renderCell(row, column) }</div>
+          <div class="cell">{ this.renderCell(row, column, index, rows) }</div>
         </td>)
         }
       </tr>;
@@ -151,15 +155,26 @@ export default class TableRender {
   }
 
   /**
+   * table row click handle
+   * @param e
+   * @param row
+   * @param index
+   * @param rows
+   */
+  private handleRowClick(e: MouseEvent, row: any, index: number, rows: any) {
+    this.context.emit('row-click', e, row, index, rows, this);
+  }
+
+  /**
    * 渲染表格Cell内容
    * @param row 当前行
    * @param column 当前列
    * @returns
    */
-  private renderCell(row: any, column: Column) {
+  private renderCell(row: any, column: Column, index: number, rows: any[]) {
     const cell = row[resolvePropVal(column, 'field', [column, row])];
     if (typeof column.render === 'function') {
-      return column.render(cell);
+      return column.render(cell, row, index, rows);
     }
 
     return cell;

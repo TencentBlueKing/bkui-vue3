@@ -1,3 +1,4 @@
+/* eslint-disable codecc/comment-ratio */
 /*
  * Tencent is pleased to support the open source community by making
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
@@ -192,7 +193,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/progress',
     name: 'progress',
-    component: () => import('../views/BkProgress/progress'),
+    component: () => import('../views/progress/progress'),
     meta: {
       group: NavGroupMeta.Data,
       navName: 'Progress 进度条',
@@ -201,7 +202,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/switcher',
     name: 'switcher',
-    component: () => import('../views/BkSwitcher/switcher'),
+    component: () => import('../views/switcher/switcher'),
     meta: {
       group: NavGroupMeta.Form,
       navName: 'Switcher 开关',
@@ -210,7 +211,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/breadcrumb',
     name: 'breadcrumb',
-    component: () => import('../views/BkBreadcrumb/breadcrumb'),
+    component: () => import('../views/breadcrumb/breadcrumb'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'Breadcrumb 面包屑',
@@ -373,7 +374,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/date-picker',
     name: 'datePicker',
-    component: () => import('../views/date-picker'),
+    component: () => import('../views/date-picker/date-picker'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'DatePicker 日期选择器',

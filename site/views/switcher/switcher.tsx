@@ -151,7 +151,7 @@ export default defineComponent({
             title="基础用法"
             subtitle=""
             desc="可以通过 value / v-model 属性来定义开关状态，"
-            componentName="BkSwitcher"
+            componentName="switcher"
             demoName="base-demo">
             <BaseDemo></BaseDemo>
           </DemoBox>
@@ -160,7 +160,7 @@ export default defineComponent({
             title="尺寸"
             subtitle=""
             desc="可以通过 size 属性来定义开关的尺寸，需要更大或更小尺寸时使用 large、small 值配置，不配置即为默认尺寸。当设置 show-text 时将显示为特定尺寸同时 size 将失效。"
-            componentName="BkSwitcher"
+            componentName="switcher"
             demoName="size-demo">
             <SizeDemo></SizeDemo>
           </DemoBox>
@@ -169,7 +169,7 @@ export default defineComponent({
             title="主题"
             subtitle=""
             desc="可以通过 theme 属性来定义开关的主题"
-            componentName="BkSwitcher"
+            componentName="switcher"
             demoName="theme-demo">
             <ThemeDemo></ThemeDemo>
           </DemoBox>
@@ -178,7 +178,7 @@ export default defineComponent({
             title="禁用状态"
             subtitle="不可用状态"
             desc="可以使用 disabled 属性来定义开关是否禁用，它接受一个 Boolean 值"
-            componentName="BkSwitcher"
+            componentName="switcher"
             demoName="disabled-demo">
             <DisabledDemo></DisabledDemo>
           </DemoBox>
@@ -187,7 +187,7 @@ export default defineComponent({
             title="前置状态检测"
             subtitle=""
             desc="可以通过 pre-check 接收一个函数来做前置状态检测，返回 false状态切换失败；返回true状态切换成功；返回一个promise，resolve状态切换成功，reject状态切换失败"
-            componentName="BkSwitcher"
+            componentName="switcher"
             demoName="pre-check-demo">
             <PreCheckDemo></PreCheckDemo>
           </DemoBox>
@@ -196,7 +196,7 @@ export default defineComponent({
             title="自定义文案"
             subtitle=""
             desc="可以通过 onText/offText 来修改展示的文案"
-            componentName="BkSwitcher"
+            componentName="switcher"
             demoName="text-demo">
             <TextDemo></TextDemo>
           </DemoBox>
@@ -205,7 +205,7 @@ export default defineComponent({
             title="更多示例"
             subtitle=""
             desc=""
-            componentName="BkSwitcher"
+            componentName="switcher"
             demoName="type-demo">
             <TypeDemo></TypeDemo>
           </DemoBox>

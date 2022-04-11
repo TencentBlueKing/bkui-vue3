@@ -28,6 +28,10 @@ import { ExtractPropTypes } from 'vue';
 import { PropTypes } from '@bkui-vue/shared';
 import { BORDER_OPRIONS } from './const';
 
+const EventProps = {
+  onRowClick: Function,
+};
+
 export const tableProps = {
   /**
    * 渲染列表
@@ -96,6 +100,15 @@ export const tableProps = {
    * 生效规则: 除非单独设置 none,否则会追加每个设置
    */
   border: PropTypes.arrayOf(PropTypes.commonType(BORDER_OPRIONS, 'border')).def(['row']),
+
+  /**
+   * 分页配置
+   * 默认值为false，不启用分页
+   * 设置为 true，启用分页功能，默认值参考分页组件 Pagination
+   */
+  pagination: PropTypes.oneOfType([PropTypes.bool.def(false), PropTypes.object.def({})]).def(false),
+
+  ...EventProps,
 
   // /**
   //  * Table Caption Config

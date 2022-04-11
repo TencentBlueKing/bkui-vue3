@@ -23,12 +23,59 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-declare module '*.vue' {
-  import type { DefineComponent } from 'vue';
-  const component: DefineComponent;
-  export default Component;
-}
-declare module '*.md' {
-  const component: DefineComponent;
-  export default Component;
-}
+
+import { defineComponent } from 'vue';
+import DemoTitle from '../../components/demo-title';
+import DemoBox from '../../components/demo-box';
+import PropsBox from '../../components/props-box';
+import { IPropsTableItem } from '../../typings';
+import BaseDemo from './base-demo.vue';
+
+const menuPropsJson: IPropsTableItem[] = [
+  {
+    name: 'activeKey',
+    type: 'String',
+    default: '',
+    desc: '选中的menu的key',
+    optional: [],
+  },
+  {
+    name: 'OpenedKeys',
+    type: 'Array',
+    default: [],
+    desc: '打开的submenu key值',
+    optional: [],
+  },
+  {
+    name: 'mode',
+    type: 'String',
+    default: 'vertical',
+    desc: '展示方式',
+    optional: ['vertical', 'horizontal'],
+  },
+  {
+    name: 'uniqueOpen',
+    type: 'Boolean',
+    default: 'true',
+    desc: '是否唯一展开一个submenu',
+    optional: [],
+  },
+];
+export default defineComponent({
+  render() {
+    return (
+      <div>
+        <DemoTitle name="DatePicker 日期选择器" desc="日期选择器" />
+          <DemoBox
+            title="基础用法"
+            subtitle="基础用法，用于表单内容的录入"
+            desc="通过 v-model 或者 value 设置初始值"
+            componentName="date-picker"
+            demoName="base-demo">
+              <BaseDemo />
+          </DemoBox>
+        <PropsBox propsData={menuPropsJson}/>
+      </div>
+    );
+  },
+});
