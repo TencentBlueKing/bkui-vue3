@@ -73,7 +73,7 @@ export default defineComponent({
     const loadingWrapperCls = computed(() =>  classes({
       'bk-nested-loading': !!ctx.slots.default,
     }, 'bk-loading-wrapper'));
-
+    console.log(props.theme);
     const containerCls = computed(() =>  classes({
       [`bk-loading-size-${props.size}`]: !!props.size,
       [`bk-loading-${props.theme}`]: !!props.theme,
