@@ -100,7 +100,7 @@ export const treeProps = {
 };
 
 type AsyncOption = {
-  callback: Function,
+  callback: (item, cb) => Promise<any>,
   cache: Boolean
 };
 export type TreePropTypes = Readonly<ExtractPropTypes<typeof treeProps>>;
