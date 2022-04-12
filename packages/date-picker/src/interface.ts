@@ -26,7 +26,7 @@
 
 import type { ComputedPlacement } from '@popperjs/core';
 
-import type { DatePickerProps } from './date-picker';
+import type { DatePickerProps } from './props';
 
 // export type DatePickerPlacementType =
 //   | 'top'
