@@ -31,6 +31,18 @@ const propTypesNS = createTypes({});
 
 export type VueNode = VNodeChild | JSX.Element;
 
+// 将一个数组转化为一个有限集合 e.g. const arr = [1,2,3] as const; type UnionType = ElementType<typeof arr>;
+export type ElementType<T extends ReadonlyArray<unknown>> = T extends ReadonlyArray<infer ElementType>
+  ? ElementType : never;
+
+// 用于创建字符串列表映射至 `K: V` 的函数
+export function stringEnum<T extends string>(o: Array<T>): { [K in T]: K } {
+  return o.reduce((res, key) => {
+    res[key] = key;
+    return res;
+  }, Object.create(null));
+}
+
 export enum Size {
   Small = 'small',
   Large = 'large'
@@ -42,7 +54,6 @@ export enum Placements {
   Right = 'right',
   Bottom = 'bottom'
 }
-
 export class PropTypes extends propTypesNS {
   static size(sizes: string[] = ['small', 'default', 'large']): VueTypeDef<string> {
     return toType('Size', {

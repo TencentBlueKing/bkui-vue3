@@ -23,34 +23,51 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import { defineComponent, reactive, ref, Suspense } from 'vue';
+import BkCodeDiff, { ThemesUnionType, LanguagesUnionType } from '@bkui-vue/code-diff';
+import { OLD_STR, NEW_STR } from './demo';
+import Button from '@bkui-vue/button';
+import Input from '@bkui-vue/input';
 
-import { defineComponent } from 'vue';
-
-import { BkLoading, BkLoadingMode, BkLoadingSize } from '@bkui-vue/loading';
-import { Help } from '@bkui-vue/icon';
-
-// BkLoading.setDefaultIndicator(<span style="font-size: 14px;"><Help /></span>);
 
 export default defineComponent({
-  name: 'SiteLoading',
   setup() {
-    return {
-    };
-  },
-  render() {
-    return (
-      <div>
-        <BkLoading title="normal loading" mode={BkLoadingMode.Spin} theme="primary" />
-        <BkLoading title="small loading" mode={BkLoadingMode.Spin} size={BkLoadingSize.Small} />
-        <BkLoading title="large loading" mode={BkLoadingMode.Spin} size={BkLoadingSize.Large} />
-        <BkLoading style="font-size:40px; margin:0 10px;" title="customIndicator" indicator={Help}></BkLoading>
-        <BkLoading title="loading" loading >
-          <div style="height: 300px; width: 300px; display: flex; align-items:center; justify-content: center;">
-            content
-          </div>
-        </BkLoading>
-        <BkLoading title="small loading" size={BkLoadingSize.Small} />
-        <BkLoading title="large loading" size={BkLoadingSize.Large} />
+    const theme = ref<ThemesUnionType>('dark');
+    const state = reactive({
+      language: 'javascript',
+      diffContext: 20,
+    });
+    function handleClick() {
+      theme.value = theme.value === 'dark' ? 'light' : 'dark';
+    }
+    function handleChange(val) {
+      state.diffContext = val;
+    }
+    function handleLanChange(val) {
+      state.language = val;
+    }
+    return () => (
+      <div style="margin: 20px">
+          <Button onClick={handleClick}>Switch Theme</Button>
+          <span>
+            language:
+            <Input modelValue={state.language} onChange={handleLanChange}></Input>
+          </span>
+          <span>
+            context:
+            <Input type='number' modelValue={state.diffContext} onChange={handleChange}></Input>
+          </span>
+          <Suspense>
+            {{
+              default: () => (
+                <BkCodeDiff language={state.language as LanguagesUnionType} diffContext={state.diffContext} diffFormat='side-by-side' theme={theme.value} oldContent={OLD_STR} newContent={NEW_STR} />
+              ),
+              fallback: () => (
+                <span>loading</span>
+              ),
+            }}
+          </Suspense>
+          <BkCodeDiff diffFormat='line-by-line' language='javascript' theme='dark' oldContent={OLD_STR} newContent={NEW_STR} />
       </div>
     );
   },

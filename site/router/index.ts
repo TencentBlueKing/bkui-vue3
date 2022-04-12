@@ -542,6 +542,15 @@ const routes: RouteRecordRaw[] = [
    * @description:VirtualRender
    */
   {
+    path: '/code-diff',
+    name: 'codeDiff',
+    component: () => import('../views/CodeDiff/code-diff'),
+    meta: {
+      group: NavGroupMeta.Data,
+      navName: 'Diff 差异对比',
+    },
+  },
+  {
     path: '/virtual-render',
     name: 'virtualRender',
     component: () => import('../views/virtual-render/virtual-render'),

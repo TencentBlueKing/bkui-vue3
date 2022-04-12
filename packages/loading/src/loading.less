@@ -8,6 +8,12 @@
 @ovalGap: 20px;
 @titleMarginTop: 8px;
 
+@miniDotSize: 3px;
+@miniDotGap: 3px;
+@miniOvalWidth: 2px;
+@miniOvalHeight: 3px;
+@miniOvalGap: 8px;
+
 @smallDotSize: 6px;
 @smallDotGap: 6px;
 @smallOvalWidth: 4px;
@@ -29,15 +35,15 @@
 .loading-theme(@theme) {
   .oval,
   .dot,
-  .dot1,
-  .dot2,
-  .dot3,
-  .dot4 {
+  .dot-1,
+  .dot-2,
+  .dot-3,
+  .dot-4 {
     background-color: @theme;
   }
 }
 
-@sizeSelectors: small, large;
+@sizeSelectors: mini, small, large;
 @selectors: @danger-color, @warning-color, @success-color, @primary-color;
 @themeSelectors: {
   success: @success-color;
@@ -48,24 +54,52 @@
   default: @light-gray;
 };
 
-.bk-loading-wrapper {
+.@{bk-prefix}-loading-wrapper {
   position: static;
   display: inline-block;
   font-size: 0;
+  vertical-align: middle;
     
-  &.bk-nested-loading {
+  &.@{bk-prefix}-nested-loading {
     position: relative;
 
-    .bk-loading-indicator {
+    .@{bk-prefix}-loading-indicator {
       position: absolute;
       top: 50%;
       left: 50%;
       z-index: 4;
+      text-align: center;
       transform: translate(-50%, -50%);
     }
   }
 
-  .bk-loading-mask {
+  .dot {
+    display: inline-block;
+    width: @dotSize;
+    height: @dotSize;
+    margin-right: @dotGap;
+    border-radius: 50%;
+    transform: scale(.6);
+    animation-duration: .8s;
+    animation-iteration-count: infinite;
+    animation-name: loading-scale-animate;
+    animation-direction: normal;
+  }
+
+  .oval {
+    position: absolute;
+    width: @ovalWidth;
+    height: @ovalHeight;
+    background-color: @default-color;
+    border-radius: @ovalHeight;
+    animation-duration: 1.2s;
+    animation-iteration-count: infinite;
+    animation-name: fade;
+    transform-origin: center @ovalGap;
+    animation-direction: normal;
+  }
+
+  .@{bk-prefix}-loading-mask {
     opacity: .5;
 
     &::after {
@@ -82,16 +116,20 @@
     }
   }
 
-  .bk-loading-indicator {
-    font-size: @font-size-medium;
-
+  .@{bk-prefix}-loading-indicator {
+    text-align: center;
+    each(@themeSelectors, {
+      &.@{bk-prefix}-loading-@{key} {
+        .loading-theme(@value);
+      }
+    })
     
-    each(@selectors, {
+      each(@selectors, {
       .dot-@{index} {
         background-color: @value;
         animation-delay: .1s + (@index - 1) * .15;
         & when (@index = 4) {
-          margin-right: 0;
+          margin-right: 0px;
         }
       }
     });
@@ -102,15 +140,12 @@
       }
     });
     
-    each(@themeSelectors, {
-      &.bk-loading-@{key} {
-        .loading-theme(@value);
-      }
-    })
     
   ;
 
-    .bk-spin-indicator {
+    .@{bk-prefix}-spin-indicator {
+      display: inline-block;
+      width: 2 * @ovalGap;
       height: 2 * @ovalGap;
     }
 
@@ -121,9 +156,10 @@
     @sizedOvalHeight: '@{value}OvalHeight';
     @sizedOvalGap: '@{value}OvalGap';
   
-    &.bk-loading-size-@{value} {
-      .bk-spin-indicator  {
+    &.@{bk-prefix}-loading-size-@{value} {
+      .@{bk-prefix}-spin-indicator  {
         height: 2 * @@sizedOvalGap;
+        width: 2 * @@sizedOvalGap;
       }
       .dot {
         width: @@sizedDotSize;
@@ -139,13 +175,13 @@
         border-radius: @@sizedOvalHeight;
         transform-origin: center @@sizedOvalGap;
       }
-      .bk-loading-title {
+      .@{bk-prefix}-loading-title {
         font-size: if(@value = small, @font-size-base, @font-size-medium);
       }
     } 
   })
 
-    .bk-loading-title {
+    .@{bk-prefix}-loading-title {
       margin-top: @titleMarginTop;
       font-size: @font-size-medium;
       line-height: normal;
@@ -153,29 +189,6 @@
       text-align: center;
     }
     
-    .dot {
-      display: inline-block;
-      width: @dotSize;
-      height: @dotSize;
-      margin-right: @dotGap;
-      border-radius: 50%;
-      transform: scale(.6);
-      animation-duration: .8s;
-      animation-iteration-count: infinite;
-      animation-name: loading-scale-animate;
-      animation-direction: normal;
-    }
-
-    .oval {
-      position: absolute;
-      width: @ovalWidth;
-      height: @ovalHeight;
-      background-color: @default-color;
-      border-radius: @ovalHeight;
-      animation-duration: 1.2s;
-      animation-iteration-count: infinite;
-      animation-name: fade;
-      transform-origin: center @ovalGap;
-      animation-direction: normal;
-    }}
+    
+  }
 }
