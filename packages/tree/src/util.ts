@@ -153,7 +153,7 @@ export const getLabel = (item: any, props: TreePropTypes) => getStringOrFuncStr(
 
 const getSchemaVal = (schema: Map<string, any>, uuid: string) => ((schema as Map<string, any>).get(uuid) || {});
 
-const getNodeAttr = (schema: Map<string, any>, uuid: string, key: string) => (getSchemaVal(schema, uuid) || {})[key];
+const getNodeAttr = (schema: Map<string, any>, uuid: string, key: string) => getSchemaVal(schema, uuid)?.[key];
 
 /**
  * 根据Props获取Tree样式设置
@@ -220,13 +220,7 @@ export const getNodeItemClass = (item: any, schema: any, props: TreePropTypes) =
  * @param nodeValue 节点值
  */
 export const updateTreeNode = (path: string, treeData: any[], childKey: string, nodekey: string, nodeValue: any) => {
-  const paths = path.split('-');
-  const targetNode = paths.reduce((pre: any, nodeIndex: string) => {
-    const index = Number(nodeIndex);
-    return  Array.isArray(pre) ? pre[index] : pre[childKey][index];
-  }, treeData);
-
-  Object.assign(targetNode, { [nodekey]: nodeValue });
+  assignTreeNode(path, treeData, childKey, { [nodekey]: nodeValue });
 };
 
 /**
