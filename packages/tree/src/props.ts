@@ -93,14 +93,14 @@ export const treeProps = {
    * @param callback 请求数据回调函数，函数返回 Promise
    * @param cache 是否缓存请求结果，默认为True，只有在第一次才会发起请求，若设置为false则每次都会发起请求
    */
-  async: PropTypes.arrayOf(PropTypes.shape<AsyncOption>({
+  async: PropTypes.shape<AsyncOption>({
     callback: PropTypes.func.def(null),
-    cache: true,
-  })),
+    cache: PropTypes.bool.def(true),
+  }),
 };
 
 type AsyncOption = {
-  callback: Promise<any>,
+  callback: Function,
   cache: Boolean
 };
 export type TreePropTypes = Readonly<ExtractPropTypes<typeof treeProps>>;
