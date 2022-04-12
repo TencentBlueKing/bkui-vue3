@@ -32,5 +32,5 @@
 
 import Component from './virtual-render';
 import { withInstall } from '@bkui-vue/shared';
-const BkTree = withInstall(Component);
-export default BkTree;
+const BkVirtualRender = withInstall(Component);
+export default BkVirtualRender;

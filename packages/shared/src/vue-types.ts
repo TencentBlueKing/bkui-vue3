@@ -55,7 +55,7 @@ export enum Placements {
   Bottom = 'bottom'
 }
 export class PropTypes extends propTypesNS {
-  static size(sizes: string[] = ['small', 'large']): VueTypeDef<string> {
+  static size(sizes: string[] = ['small', 'default', 'large']): VueTypeDef<string> {
     return toType('Size', {
       type: String,
       validator: (val: string) => {
@@ -65,7 +65,7 @@ export class PropTypes extends propTypesNS {
         console.error(`invalid size, ${val}, the size must be one of 【${sizes.join(' | ')}】`);
         return false;
       },
-      default: '',
+      default: 'default',
     });
   }
 
@@ -79,7 +79,7 @@ export class PropTypes extends propTypesNS {
         console.error(`invalid theme, ${val}, the theme must be one of 【${themes.join(' | ')}】`);
         return false;
       },
-      default: '',
+      default: 'primary',
     });
   }
 
