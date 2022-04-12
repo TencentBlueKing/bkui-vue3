@@ -31,6 +31,7 @@ import {
   getNodeItemClass,
   getTreeStyle,
   updateTreeNode,
+  assignTreeNode,
 } from './util';
 import { Folder, FolderShapeOpen, TextFile, DownShape, RightShape, Spinner } from '@bkui-vue/icon/';
 import { treeProps, TreePropTypes as defineTypes } from './props';
@@ -62,13 +63,8 @@ export default defineComponent({
       const formatData = getFlatdata(props, newData, schemaValues.value);
       flatData.data = formatData[0] as Array<any>;
       flatData.schema = formatData[1] as any;
-      computeLevelHeight();
     }, {
       deep: true,
-    });
-
-    watch(() => [props.levelLine], () => {
-      computeLevelHeight();
     });
 
     const schemaValues = computed(() => Array.from(flatData.schema.values()));
@@ -90,9 +86,6 @@ export default defineComponent({
     // 计算当前需要渲染的节点信息
     const renderData = computed(() => flatData.data
       .filter(item => checkNodeIsOpen(item)));
-
-    // 当前渲染节点路径集合
-    const renderNodePathColl = computed(() => renderData.value.map(node => getNodePath(node)));
 
     const isItemOpen = (item: any) => {
       if (typeof item === 'object') {
@@ -190,7 +183,17 @@ export default defineComponent({
     const setNodeOpened = (item: any) => {
       const newVal = !isItemOpen(item);
       setNodeAttr(item, '__isOpen', newVal);
-      computeLevelHeight();
+
+      /**
+       * 在收起节点时需要重置当前节点的所有叶子节点状态为 __isOpen = false
+       * 如果是需要点击当前节点展开所有叶子节点此处也可以打开
+       */
+      if (newVal) {
+        return;
+      }
+
+      renderData.value.filter(node => String.prototype.startsWith.call(getNodePath(node), getNodePath(item)))
+        .forEach(filterNode => setNodeAttr(filterNode, '__isOpen', newVal));
     };
 
     /**
@@ -213,13 +216,17 @@ export default defineComponent({
     const hanldeTreeNodeClick = (item: any) => {
       /** 如果是异步请求加载 */
       if (item.async) {
-        if (typeof props.asyncLoad === 'function') {
+        const { callback = null, cache = true } = props.async || {};
+        if (typeof callback === 'function' && !item.cached) {
           Object.assign(item, { loading: true });
-          props.asyncLoad(item, (resp: any) => setNodeRemoteLoad(resp, item))
+          callback(item, (resp: any) => setNodeRemoteLoad(resp, item))
             .then((resp: any) => setNodeRemoteLoad(resp, item))
             .catch((err: any) => console.error('load remote data error:', err))
             .finally(() => {
-              updateTreeNode(getNodePath(item), props.data, props.children, 'loading', false);
+              assignTreeNode(getNodePath(item), props.data, props.children, {
+                loading: false,
+                ...(cache ? { cached: true } : {}),
+              });
             });
         } else {
           console.error('async need to set prop: asyncLoad with function wich will return promise object');
@@ -231,52 +238,6 @@ export default defineComponent({
       }
     };
 
-    /**
-     * 当需要显示连线时，计算每个节点范围连线高度
-     * TODO: 如果启用虚拟渲染，虚拟连线需要重新设计，此方案会存在缺陷
-     */
-    const computeLevelHeight = () => {
-      if (!!props.levelLine) {
-        setTimeout(() => {
-          let showNodeCount = renderData.value.length;
-          const nodeSchema = {};
-
-          const setDefaultNodeSchema = (uuid: string, lastNode = null, isLeaf = false) => {
-            if (!Object.prototype.hasOwnProperty.call(nodeSchema, uuid)) {
-              Object.assign(nodeSchema, {
-                [uuid]: {
-                  childNodeCount: 0,
-                  isLastNode: false,
-                  ...(lastNode !== null ? { lastNode } : {}),
-                  ...(isLeaf !== null ? { isLeaf } : {}),
-                },
-              });
-            }
-          };
-
-          for (; showNodeCount > 0; showNodeCount--) {
-            const node = renderData.value[showNodeCount - 1];
-            const parentId = getNodeAttr(node, '__parentId');
-            const nodepath = getNodePath(node);
-            const isLeaf = !renderNodePathColl.value.includes(`${nodepath}-0`);
-
-            setDefaultNodeSchema(node.__uuid, null, isLeaf);
-            setDefaultNodeSchema(parentId, node.__uuid);
-
-            const parentSchema = nodeSchema[parentId];
-            const currentNodeSchema = nodeSchema[node.__uuid];
-            const { childNodeCount = 0 } = currentNodeSchema;
-            currentNodeSchema.childNodeCount = childNodeCount + 1;
-            currentNodeSchema.isLastNode = parentSchema.lastNode === node.__uuid;
-            parentSchema.childNodeCount += currentNodeSchema.childNodeCount;
-          }
-
-          flatData.levelLineSchema = nodeSchema;
-        });
-      } else {
-        flatData.levelLineSchema = {};
-      }
-    };
 
     /**
      * 过滤当前状态为Open的节点
@@ -308,7 +269,7 @@ export default defineComponent({
     };
 
     const getVirtualLines = (node: any) => {
-      if (!props.virtualRender) {
+      if (!props.levelLine) {
         return null;
       }
 
@@ -325,7 +286,6 @@ export default defineComponent({
         .map((index: number) => <span class="node-virtual-line" style={ getNodeLineStyle(maxDeep - index) }></span>);
     };
 
-    computeLevelHeight();
     return {
       renderData,
       flatData,
@@ -361,7 +321,8 @@ export default defineComponent({
     style={getTreeStyle(null, props)}
     list={this.renderData}
     lineHeight={props.lineHeight}
-    enabled={props.virtualRender}>
+    enabled={props.virtualRender}
+    throttleDelay={0}>
     {
       {
         default: (scoped: any) => (scoped.data || []).map(renderTreeNode),

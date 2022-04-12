@@ -2,7 +2,11 @@
   <div style="height: 300px; width: 100%; overflow: auto;">
     <bk-tree
       :data="treeData"
-      :async-load="getRemoteData"
+      :async="{
+        callback: getRemoteData,
+        cache: true,
+      }"
+      :level-line="true"
       label="name"
       children="children"
     />

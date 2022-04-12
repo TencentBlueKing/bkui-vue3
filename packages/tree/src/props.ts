@@ -89,11 +89,18 @@ export const treeProps = {
   ]).def(true),
 
   /**
-   * 异步请求方法
-   * func<Promise>: (node: any) => ({  })
-   * 如果node设置了async = true，则会触发此方法
+   * 异步加载节点数据配置
+   * @param callback 请求数据回调函数，函数返回 Promise
+   * @param cache 是否缓存请求结果，默认为True，只有在第一次才会发起请求，若设置为false则每次都会发起请求
    */
-  asyncLoad: PropTypes.func.def(null),
+  async: PropTypes.arrayOf(PropTypes.shape<AsyncOption>({
+    callback: PropTypes.func.def(null),
+    cache: true,
+  })),
 };
 
+type AsyncOption = {
+  callback: Promise<any>,
+  cache: Boolean
+};
 export type TreePropTypes = Readonly<ExtractPropTypes<typeof treeProps>>;
