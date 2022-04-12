@@ -25,7 +25,7 @@
 */
 import { defineComponent, reactive, ref, Suspense } from 'vue';
 import BkCodeDiff, { ThemesUnionType, LanguagesUnionType } from '@bkui-vue/code-diff';
-import { oldStr, newStr } from './demo';
+import { OLD_STR, NEW_STR } from './demo';
 import Button from '@bkui-vue/button';
 import Input from '@bkui-vue/input';
 
@@ -60,14 +60,14 @@ export default defineComponent({
           <Suspense>
             {{
               default: () => (
-                <BkCodeDiff language={state.language as LanguagesUnionType} diffContext={state.diffContext} diffFormat='side-by-side' theme={theme.value} oldContent={oldStr} newContent={newStr} />
+                <BkCodeDiff language={state.language as LanguagesUnionType} diffContext={state.diffContext} diffFormat='side-by-side' theme={theme.value} oldContent={OLD_STR} newContent={NEW_STR} />
               ),
               fallback: () => (
                 <span>loading</span>
               ),
             }}
           </Suspense>
-          <BkCodeDiff diffFormat='line-by-line' language='javascript' theme='dark' oldContent={oldStr} newContent={newStr} />
+          <BkCodeDiff diffFormat='line-by-line' language='javascript' theme='dark' oldContent={OLD_STR} newContent={NEW_STR} />
       </div>
     );
   },

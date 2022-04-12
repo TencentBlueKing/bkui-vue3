@@ -41,7 +41,7 @@ export default defineComponent({
       console.log('handleChange', val);
     }
     function handleInput(val) {
-      console.log('hanldeInput', val);
+      console.log('handleInput', val);
     }
 
     function handleKeyup(val, e) {

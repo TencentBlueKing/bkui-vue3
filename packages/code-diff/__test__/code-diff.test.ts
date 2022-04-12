@@ -25,7 +25,7 @@
 */
 
 import { mount, shallowMount } from '@vue/test-utils';
-import { newStr, oldStr } from './diffFile';
+import { NEW_STR, OLD_STR } from './diffFile';
 import CodeDiff from '../src';
 import { LANGUAGES } from '../src/code-diff';
 
@@ -69,8 +69,8 @@ describe('CodeDiff.tsx', () => {
     it(`renders language ${l}`, (done) => {
       const wrapper = shallowMount(CodeDiff, {
         props: {
-          newContent: newStr,
-          oldContent: oldStr,
+          newContent: NEW_STR,
+          oldContent: OLD_STR,
           language: l,
         },
       });
