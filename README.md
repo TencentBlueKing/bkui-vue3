@@ -10,26 +10,31 @@
 基于蓝鲸 Magicbox 和 Vue3 的前端组件库
 
 ## Project setup
+
 ```
 yarn install
 ```
 
 ### Compiles and hot-reloads for development
+
 ```
 yarn dev
 ```
 
 ### Compiles and minifies for production
+
 ```
 yarn build
 ```
 
 ### Run your unit tests
+
 ```
 yarn test
 ```
 
 ### Lints and fixes files
+
 ```
 yarn lint
 ```
@@ -41,10 +46,9 @@ yarn lint
 * 执行命令 `yarn generate:icon`
 * 在组件中使用类似语法 `import { HelpFill } from '@bkui-vue/icon/';` 引用即可
 
-
 ## 如何开始
 
-想要贡献代码，建议请先参照已有的特性文档和开发环境构建文档。可以运行 `npm run plop` 输入组件名生成新组件模板
+想要贡献代码，建议请先参照已有的特性文档和开发环境构建文档。可以运行 `yarn cc` 输入组件名生成新组件模板
 
 ## GIT 提交规范
 
@@ -72,7 +76,7 @@ affects: bkui-vue, @bkui-vue/button, @bkui-vue/checkbox, @bkui-vue/input, @bkui-
 ISSUES CLOSED: #1
 ```
 
-### 标记说明:
+### 标记说明
 
 | 标记           | 说明                                        |
 | -------------- | ------------------------------------------- |

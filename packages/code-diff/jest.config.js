@@ -1,4 +1,4 @@
-/**
+/*
  * Tencent is pleased to support the open source community by making
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
  *
@@ -22,46 +22,30 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
- */
+*/
+
+const baseJestConf = require('../../jest.config');
 
 module.exports = {
-  extends: ['@commitlint/config-conventional'],
-  rules: {
-    'type-enum': [
-      2,
-      'always',
-      [
-        'feature',
-        'feat',
-        'bug',
-        'fix',
-        'bugfix',
-        'refactor',
-        'perf',
-        'style',
-        'test',
-        'docs',
-        'info',
-        'format',
-        'merge',
-        'depend',
-        'chore',
-        'del',
-      ],
-    ],
-    'subject-valid': [2, 'always'],
-  },
-  plugins: [
-    {
-      rules: {
-        'subject-valid'({ subject }) {
-          console.log('it is a subject', subject);
-          return [
-            /^[\s\S]+?((issue)?\s+#\d+)$/i.test(subject),
-            'commit-msg should end with (#{issueId})',
-          ];
-        },
-      },
+  ...baseJestConf,
+  rootDir: '../../',
+  globals: {
+    'ts-jest': {
+      babelConfig: '<rootDir>/babel.config.js',
     },
+  },
+  testRegex: 'packages/code-diff/__test__/.*\\.test\\.(js|ts|tsx)$',
+  collectCoverageFrom: [
+    'packages/code-diff/**/*.{jsx,vue,tsx}',
+    '!packages/*/style/index.{js,jsx,tsx}',
+    '!packages/style/*.{js,jsx}',
+    '!packages/coverage/**',
+    '!packages/*/locale/*.{js,jsx}',
+    '!packages/*/__tests__/**/type.{js,jsx,tsx}',
+    '!packages/style.ts',
+    '!**/node_modules/**',
   ],
+  transform: {
+    '^.+\\.(ts|tsx)$': 'ts-jest',
+  },
 };
