@@ -153,7 +153,7 @@ export const getLabel = (item: any, props: TreePropTypes) => getStringOrFuncStr(
 
 const getSchemaVal = (schema: Map<string, any>, uuid: string) => ((schema as Map<string, any>).get(uuid) || {});
 
-const getNodeAttr = (schema: Map<string, any>, uuid: string, key: string) => (getSchemaVal(schema, uuid) || {})[key];
+const getNodeAttr = (schema: Map<string, any>, uuid: string, key: string) => getSchemaVal(schema, uuid)?.[key];
 
 /**
  * 根据Props获取Tree样式设置
@@ -179,14 +179,11 @@ export const getTreeStyle = (item: any, props: TreePropTypes) => {
  * @returns
  */
 export const getNodeItemStyle = (item: any, props: TreePropTypes, flatData: any = {}) => {
-  const { levelLineSchema, schema } = flatData;
-  const { childNodeCount = 0, isLeaf = false, lastNode = null } = levelLineSchema[item.__uuid] || {};
-  const lastNodeCount = isLeaf ? 0 : (levelLineSchema[lastNode] || { childNodeCount: 0 }).childNodeCount;
+  const {  schema } = flatData;
   const depth = getNodeAttr(schema as Map<string, any>, item.__uuid, '__depth');
   return {
     '--depth': depth,
     paddingLeft: 0,
-    '--lines': childNodeCount - lastNodeCount,
     ...(typeof props.levelLine === 'function'
       ? {
         '--level-line': getPropsOneOfBoolValueWithDefault(props, 'levelLine', item, DEFAULT_LEVLE_LINE, null, [
@@ -210,6 +207,7 @@ export const getNodeItemClass = (item: any, schema: any, props: TreePropTypes) =
     'bk-tree-node': true,
     'is-open': __isOpen,
     'is-virtual-render': props.virtualRender,
+    'level-line': props.levelLine,
   };
 };
 
@@ -222,11 +220,22 @@ export const getNodeItemClass = (item: any, schema: any, props: TreePropTypes) =
  * @param nodeValue 节点值
  */
 export const updateTreeNode = (path: string, treeData: any[], childKey: string, nodekey: string, nodeValue: any) => {
+  assignTreeNode(path, treeData, childKey, { [nodekey]: nodeValue });
+};
+
+/**
+ * 根据路径更新指定节点Child-Data
+ * @param path 节点路径
+ * @param treeData Tree Data
+ * @param childKey Child Key
+ * @param assignVal value
+ */
+export const assignTreeNode = (path: string, treeData: any[], childKey: string, assignVal: any) => {
   const paths = path.split('-');
   const targetNode = paths.reduce((pre: any, nodeIndex: string) => {
     const index = Number(nodeIndex);
     return  Array.isArray(pre) ? pre[index] : pre[childKey][index];
   }, treeData);
 
-  Object.assign(targetNode, { [nodekey]: nodeValue });
+  Object.assign(targetNode, assignVal || {});
 };
