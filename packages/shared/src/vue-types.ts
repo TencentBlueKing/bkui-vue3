@@ -79,7 +79,6 @@ export class PropTypes extends propTypesNS {
         console.error(`invalid theme, ${val}, the theme must be one of 【${themes.join(' | ')}】`);
         return false;
       },
-      default: 'primary',
     });
   }
 
