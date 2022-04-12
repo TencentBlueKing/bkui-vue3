@@ -23,139 +23,104 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { ObjectDirective, DirectiveBinding } from 'vue';
 
-export interface IOption {
-  handler: Function; // 处理函数
-  capture: boolean; // 事件处理阶段
-  disabled: boolean; // 是否禁用
-  events: string[];// 自定义处理事件
-  detectIframe: boolean; // 检查iframe之外的点击事件
-  exclude: Node[]; // 不希望触发clickOutside的节点
-}
+import type {
+  ComponentPublicInstance,
+  DirectiveBinding,
+  ObjectDirective,
+} from 'vue';
 
-export interface IEventData {
-  el: HTMLElement;
-  event: Event;
-  handler: Function;
-  disabled: boolean;
-}
+type Nullable<T> = T | null;
+type DocumentHandler = <T extends MouseEvent>(mouseup: T, mousedown: T) => void;
+type FlushList = Map<HTMLElement, {
+  documentHandler: DocumentHandler
+  bindingFn: (...args: unknown[]) => unknown
+}[]>;
 
-export interface IEventConfig {
-  event: string;
-  target: HTMLElement | Window;
-  capture: boolean;
-  handler: (event: Event) => any;
-}
+const isElement = (e: unknown): e is Element => {
+  if (typeof Element === 'undefined') return false;
+  return e instanceof Element;
+};
 
-// value为dom节点对应事件配置信息
-const nodeMap: Map<HTMLElement, IEventConfig[]> = new Map();
+const nodeList: FlushList = new Map();
 
-// 统一转换为对象配置类型
-function parseBindingValue(value): IOption {
-  const isTouch =  'ontouchstart' in window || navigator?.maxTouchPoints > 0;
-  const defaultOption: IOption = {
-    handler() {},
-    capture: true,
-    disabled: false,
-    detectIframe: true,
-    exclude: [],
-    events: isTouch ? ['ontouchstart'] : ['click'],
+let startClick: MouseEvent;
+
+document.addEventListener('mousedown', (e: MouseEvent) => (startClick = e));
+document.addEventListener('mouseup', (e: MouseEvent) => {
+  for (const handlers of nodeList.values()) {
+    for (const { documentHandler } of handlers) {
+      documentHandler(e as MouseEvent, startClick);
+    }
+  }
+});
+
+function createDocumentHandler(el: HTMLElement, binding: DirectiveBinding): DocumentHandler {
+  let excludes: HTMLElement[] = [];
+  if (Array.isArray(binding.arg)) {
+    excludes = binding.arg;
+  } else if (isElement(binding.arg)) {
+    excludes.push(binding.arg as unknown as HTMLElement);
+  }
+  return function (mouseup, mousedown) {
+    const { popperRef } = binding.instance as ComponentPublicInstance<{
+      popperRef: Nullable<HTMLElement>
+    }>;
+    const mouseUpTarget = mouseup.target as Node;
+    const mouseDownTarget = mousedown?.target as Node;
+    const isBound = !binding || !binding.instance;
+    const isTargetExists = !mouseUpTarget || !mouseDownTarget;
+    const isContainedByEl = el.contains(mouseUpTarget) || el.contains(mouseDownTarget);
+    const isSelf = el === mouseUpTarget;
+
+    const isTargetExcluded = (excludes.length && excludes.some(item => item?.contains(mouseUpTarget)))
+      || (excludes.length && excludes.includes(mouseDownTarget as HTMLElement));
+    const isContainedByPopper = popperRef
+      && (popperRef.contains(mouseUpTarget) || popperRef.contains(mouseDownTarget));
+    if (
+      isBound || isTargetExists || isContainedByEl
+      || isSelf || isTargetExcluded || isContainedByPopper
+    ) {
+      return;
+    }
+    binding.value(mouseup, mousedown);
   };
-  if (typeof value === 'function') {
-    defaultOption.handler = value;
-    return defaultOption;
-  }
-  return Object.assign({}, defaultOption);
 }
 
-// 处理点击事件
-function onEvent(config: IEventData) {
-  const { el, event, handler, disabled } = config;
-  const path = event.composedPath?.();
-  const isClickOutside = path
-    ? path.indexOf(el) < 0
-    : !el.contains(event.target as Node);
-
-  if (!isClickOutside || !!disabled) return;
-
-  handler(event);
-}
-
-// 处理iframe之外的点击事件
-function onIframeClick(config: IEventData) {
-  const { activeElement } = document;
-  const { el, handler, disabled, event } = config;
-  if (
-    activeElement
-      && activeElement.tagName === 'IFRAME'
-      && !el.contains(activeElement) && !disabled
-  ) {
-    handler(event);
-  }
-}
-
-// 根据options获取对应的事件配置项
-function getEventConfigList(el: HTMLElement, options: IOption) {
-  const configList = options.events.map<IEventConfig>(name => ({
-    event: name,
-    target: document.documentElement,
-    capture: options.capture,
-    handler: event => onEvent({ el, event, handler: options.handler, disabled: options.disabled  }),
-  }));
-
-  if (options.detectIframe) {
-    configList.push({
-      event: 'blur',
-      target: window,
-      capture: options.capture,
-      handler: event => onIframeClick({ el, event, handler: options.handler, disabled: options.disabled }),
-    });
-  }
-
-  return configList;
-}
-
-// 初始化事件入口
-function init(el: HTMLElement, options: IOption) {
-  if (nodeMap.has(el)) {
-    destroy(el);
-  }
-
-  const configList = getEventConfigList(el, options);
-  nodeMap.set(el, configList);
-  configList.forEach((config) => {
-    const { target, event, handler, capture } = config;
-    target.addEventListener(event, handler, capture);
-  });
-}
-
-// 销毁资源
-function destroy(el: HTMLElement) {
-  const configList = nodeMap.get(el) ?? [];
-  configList.forEach((config) => {
-    const { target, event, handler, capture } = config;
-    target.removeEventListener(event, handler, capture);
-  });
-  nodeMap.delete(el);
-}
-
-const clickoutside: ObjectDirective = {
+const ClickOutside: ObjectDirective = {
   beforeMount(el: HTMLElement, binding: DirectiveBinding) {
-    const options = parseBindingValue(binding.value);
-    if (options.disabled) return;
+    if (!nodeList.has(el)) {
+      nodeList.set(el, []);
+    }
 
-    nodeMap.set(el, getEventConfigList(el, options));
+    nodeList.get(el).push({
+      documentHandler: createDocumentHandler(el, binding),
+      bindingFn: binding.value,
+    });
   },
-  updated(el, binding: DirectiveBinding) {
-    const newOptions = parseBindingValue(binding.value);
-    if (newOptions.disabled && !nodeMap.has(el)) return;
+  updated(el: HTMLElement, binding: DirectiveBinding) {
+    if (!nodeList.has(el)) {
+      nodeList.set(el, []);
+    }
 
-    init(el, newOptions);
+    const handlers = nodeList.get(el);
+    const oldHandlerIndex = handlers.findIndex(item => item.bindingFn === binding.oldValue);
+    const newHandler = {
+      documentHandler: createDocumentHandler(el, binding),
+      bindingFn: binding.value,
+    };
+
+    if (oldHandlerIndex >= 0) {
+      // replace the old handler to the new handler
+      handlers.splice(oldHandlerIndex, 1, newHandler);
+    } else {
+      handlers.push(newHandler);
+    }
   },
-  unmounted(el) {
-    destroy(el);
+  unmounted(el: HTMLElement) {
+    // remove all listeners when a component unmounted
+    nodeList.delete(el);
   },
 };
 
-export default clickoutside;
+export default ClickOutside;

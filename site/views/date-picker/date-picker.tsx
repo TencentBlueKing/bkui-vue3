@@ -29,7 +29,9 @@ import DemoTitle from '../../components/demo-title';
 import DemoBox from '../../components/demo-box';
 import PropsBox from '../../components/props-box';
 import { IPropsTableItem } from '../../typings';
+
 import BaseDemo from './base-demo.vue';
+import RangeDemo from './range-demo.vue';
 
 const menuPropsJson: IPropsTableItem[] = [
   {
@@ -61,6 +63,7 @@ const menuPropsJson: IPropsTableItem[] = [
     optional: [],
   },
 ];
+
 export default defineComponent({
   render() {
     return (
@@ -68,11 +71,17 @@ export default defineComponent({
         <DemoTitle name="DatePicker 日期选择器" desc="日期选择器" />
           <DemoBox
             title="基础用法"
-            subtitle="基础用法，用于表单内容的录入"
             desc="通过 v-model 或者 value 设置初始值"
             componentName="date-picker"
             demoName="base-demo">
               <BaseDemo />
+          </DemoBox>
+          <DemoBox
+            title="开启日期范围"
+            desc="通过设置 type 属性为 daterange 来开启时间设置"
+            componentName="date-picker"
+            demoName="range-demo">
+              <RangeDemo />
           </DemoBox>
         <PropsBox propsData={menuPropsJson}/>
       </div>
