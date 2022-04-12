@@ -26,7 +26,6 @@
 
 import {
   defineComponent,
-  PropType,
   ref,
   reactive,
   toRefs,
@@ -38,162 +37,20 @@ import {
   Teleport,
   nextTick,
 } from 'vue';
-import type { ExtractPropTypes } from 'vue';
 
 import { clickoutside } from '@bkui-vue/directives';
 
 // import VueTypes, { toType, toValidableType } from 'vue-types';
 // import { PropTypes } from '@bkui-vue/shared';
 
-import type {
-  DatePickerPlacementType,
-  PickerTypeType,
-  DatePickerShortcutsType,
-  DatePickerValueType,
-  DisableDateType,
-  DatePickerPanelType,
-  SelectionModeType,
-} from './interface';
+import type { DatePickerPanelType, SelectionModeType } from './interface';
 
 import { isAllEmptyArr, parseDate, formatDate, extractTime, datePickerKey } from './utils';
 
 import PickerDropdown from './base/picker-dropdown';
 import DatePanel from './panel/date';
 import DateRangePanel from './panel/date-range';
-
-const datePickerProps = {
-  type: {
-    type: String as PropType<PickerTypeType>,
-    default: 'date',
-    validator(value) {
-      const validList: PickerTypeType[] = ['year', 'month', 'date', 'daterange', 'datetime', 'datetimerange', 'time', 'timerange'];
-      if (validList.indexOf(value) < 0) {
-        console.error(`type property is not valid: '${value}'`);
-        return false;
-      }
-      return true;
-    },
-  },
-  // 外部设置的 popover class name
-  extPopoverCls: {
-    type: String,
-    default: '',
-  },
-  format: String,
-  readonly: {
-    type: Boolean,
-    default: false,
-  },
-  disabled: {
-    type: Boolean,
-    default: false,
-  },
-  editable: {
-    type: Boolean,
-    default: true,
-  },
-  clearable: {
-    type: Boolean,
-    default: true,
-  },
-  open: {
-    type: Boolean,
-    default: null,
-  },
-  multiple: {
-    type: Boolean,
-    default: false,
-  },
-  timePickerOptions: {
-    type: Object as PropType<Record<string, any>>,
-    default: () => ({}),
-  },
-  splitPanels: {
-    type: Boolean,
-    default: true,
-  },
-  startDate: Date,
-  placeholder: {
-    type: String,
-    default: '',
-  },
-  placement: {
-    type: String as PropType<DatePickerPlacementType>,
-    default: 'bottom-start',
-    validator: (value) => {
-      const validList: DatePickerPlacementType[] = [
-        'top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end',
-        'left', 'left-start', 'left-end', 'right', 'right-start', 'right-end',
-      ];
-      if (validList.indexOf(value) < 0) {
-        console.error(`placement property is not valid: '${value}'`);
-        return false;
-      }
-      return true;
-    },
-  },
-  transfer: {
-    type: Boolean,
-    default: false,
-  },
-  appendToBody: {
-    type: Boolean,
-    default: false,
-  },
-  shortcuts: {
-    type: Array as PropType<DatePickerShortcutsType>,
-    default: () => [],
-  },
-  shortcutClose: {
-    type: Boolean,
-    default: false,
-  },
-  modelValue: {
-    type: [Date, String, Number, Array] as PropType<DatePickerValueType | null>,
-  },
-  options: {
-    type: Object,
-    default: () => ({}),
-  },
-  // normal: 12px
-  // medium: 14px
-  // large: 16px
-  fontSize: {
-    type: String as PropType<'normal' | 'medium' | 'large'>,
-    default: 'normal',
-  },
-  // 结束时间是否允许“至今”
-  upToNow: {
-    type: Boolean,
-    default: false,
-  },
-  useShortcutText: {
-    type: Boolean,
-    default: false,
-  },
-  shortcutSelectedIndex: {
-    type: Number,
-    default: -1,
-  },
-  footerSlotCls: {
-    type: String,
-    default: '',
-  },
-  allowCrossDay: {
-    type: Boolean,
-    default: false,
-  },
-  behavior: {
-    type: String as PropType<'simplicity' | 'normal'>,
-    default: 'normal',
-    validator(v) {
-      return ['simplicity', 'normal'].indexOf(v) > -1;
-    },
-  },
-  disableDate: Function as PropType<DisableDateType>,
-} as const;
-
-export type DatePickerProps = Readonly<ExtractPropTypes<typeof datePickerProps>>;
+import { datePickerProps } from './props';
 
 export default defineComponent({
   name: 'DatePicker',
@@ -336,6 +193,7 @@ export default defineComponent({
     };
 
     watch(() => state.visible, (visible) => {
+      console.error(123);
       if (visible === false) {
         pickerDropdownRef.value?.destoryDropdown();
       }
@@ -742,7 +600,7 @@ export default defineComponent({
           onChange={this.handleInputChange}
         />
         {
-          this.clearable && this.showClose ? (
+          (this.clearable && this.showClose) ? (
             <i class="bk-icon icon-close-circle-shape clear-action" onClick={this.handleClear}></i>
           ) : ''
         }
