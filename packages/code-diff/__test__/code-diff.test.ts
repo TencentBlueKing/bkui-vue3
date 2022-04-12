@@ -1,4 +1,4 @@
-/**
+/*
  * Tencent is pleased to support the open source community by making
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
  *
@@ -22,46 +22,63 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
- */
+*/
 
-module.exports = {
-  extends: ['@commitlint/config-conventional'],
-  rules: {
-    'type-enum': [
-      2,
-      'always',
-      [
-        'feature',
-        'feat',
-        'bug',
-        'fix',
-        'bugfix',
-        'refactor',
-        'perf',
-        'style',
-        'test',
-        'docs',
-        'info',
-        'format',
-        'merge',
-        'depend',
-        'chore',
-        'del',
-      ],
-    ],
-    'subject-valid': [2, 'always'],
-  },
-  plugins: [
-    {
-      rules: {
-        'subject-valid'({ subject }) {
-          console.log('it is a subject', subject);
-          return [
-            /^[\s\S]+?((issue)?\s+#\d+)$/i.test(subject),
-            'commit-msg should end with (#{issueId})',
-          ];
-        },
+import { mount, shallowMount } from '@vue/test-utils';
+import { NEW_STR, OLD_STR } from './diffFile';
+import CodeDiff from '../src';
+import { LANGUAGES } from '../src/code-diff';
+
+
+describe('CodeDiff.tsx', () => {
+  it('test', (done) => {
+    const wrapper = mount(CodeDiff);
+    // todo
+    wrapper.vm.$nextTick(() => {
+      expect(wrapper.html()).toMatchSnapshot();
+      done();
+    });
+  });
+  it('renders dark theme', async () => {
+    const wrapper = await shallowMount(CodeDiff, {
+      props: {
+        theme: 'dark',
       },
-    },
-  ],
-};
+    });
+
+    expect(wrapper.classes('dark')).toBeTruthy();
+  });
+
+  it('renders light theme', async () => {
+    const wrapper = await shallowMount(CodeDiff, {
+    });
+    expect(wrapper.classes('dark')).toBe(false);
+  });
+
+  it('renders light theme', async () => {
+    const wrapper = await mount(CodeDiff, {
+      props: {
+        diffContext: 20,
+      },
+    });
+
+    expect(wrapper.classes('dark')).toBe(false);
+  });
+
+  LANGUAGES.forEach((l) => {
+    it(`renders language ${l}`, (done) => {
+      const wrapper = shallowMount(CodeDiff, {
+        props: {
+          newContent: NEW_STR,
+          oldContent: OLD_STR,
+          language: l,
+        },
+      });
+      setTimeout(() => {
+        console.log(`.lang-${l}`);
+        expect(wrapper.find(`.lang-${l}`).exists()).toBeTruthy();
+        done();
+      }, 0);
+    });
+  });
+});

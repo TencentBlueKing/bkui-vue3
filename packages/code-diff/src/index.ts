@@ -1,4 +1,4 @@
-/**
+/*
  * Tencent is pleased to support the open source community by making
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
  *
@@ -22,46 +22,18 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
- */
+*/
 
-module.exports = {
-  extends: ['@commitlint/config-conventional'],
-  rules: {
-    'type-enum': [
-      2,
-      'always',
-      [
-        'feature',
-        'feat',
-        'bug',
-        'fix',
-        'bugfix',
-        'refactor',
-        'perf',
-        'style',
-        'test',
-        'docs',
-        'info',
-        'format',
-        'merge',
-        'depend',
-        'chore',
-        'del',
-      ],
-    ],
-    'subject-valid': [2, 'always'],
-  },
-  plugins: [
-    {
-      rules: {
-        'subject-valid'({ subject }) {
-          console.log('it is a subject', subject);
-          return [
-            /^[\s\S]+?((issue)?\s+#\d+)$/i.test(subject),
-            'commit-msg should end with (#{issueId})',
-          ];
-        },
-      },
-    },
-  ],
+import CodeDiff, { ThemesUnion, DiffFormatType, LanguagesUnion } from './code-diff';
+import { App } from 'vue';
+import './code-diff.less';
+
+CodeDiff.install = (Vue: App) => {
+  Vue.component(CodeDiff.name, CodeDiff);
 };
+
+
+export default CodeDiff;
+export type ThemesUnionType = ThemesUnion;
+export type DiffFormatUnionType = DiffFormatType;
+export type LanguagesUnionType = LanguagesUnion;

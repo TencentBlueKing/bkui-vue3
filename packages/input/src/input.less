@@ -1,4 +1,3 @@
-
 @import '@bkui-vue/styles/themes/themes.less';
 @import '@bkui-vue/styles/mixins/mixins.less';
 
@@ -23,12 +22,28 @@
   border-radius: @border-radius-base;
   transition: all .3s;
 
+  &:hover {
+    .show-clear-only-hover {
+      display: block;
+    }
+  }
+
+  &.is-simplicity {
+    background-color: transparent;
+    border-color: transparent;
+    border-bottom-color: @input-border-color;
+  }
+
   &--suffix-icon {
     padding-right: @input-horizontal-padding;
     font-size: @input-icon-size;
     line-height: 1;
     color: @light-gray;
     align-self: center;
+
+    &.show-clear-only-hover {
+      display: none;
+    }
   }
 
   &--large {
@@ -41,6 +56,12 @@
 
   &.is-focused:not(.is-readonly) {
     .active();
+
+    &.is-simplicity {
+      border-color: transparent;
+      border-bottom-color: @primary-color;
+      box-shadow: none;
+    }
   }
 
   &.is-disabled {
@@ -92,13 +113,13 @@
       appearance: none;
     }
     // IE
-    [type=search]::-ms-clear {
+    [type='search']::-ms-clear {
       display: none;
       width: 0;
       height: 0;
     }
 
-    [type=search]::-ms-reveal {
+    [type='search']::-ms-reveal {
       display: none;
       width: 0;
       height: 0;
@@ -126,6 +147,7 @@
       height: 50%;
       overflow: hidden;
       color: @light-gray;
+      text-align: center;
     }
 
     svg {
