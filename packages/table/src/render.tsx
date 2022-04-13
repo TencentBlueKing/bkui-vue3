@@ -29,6 +29,7 @@ import { Column, GroupColumn, IColumnActive, IReactiveProp, TablePropTypes } fro
 import { resolvePropVal, resolveWidth } from './utils';
 import { TablePlugins } from './plugins/index';
 import Pagination from '@bkui-vue/pagination';
+
 export default class TableRender {
   props: TablePropTypes;
   context: SetupContext;
@@ -74,7 +75,20 @@ export default class TableRender {
   }
 
   public renderTableFooter(options: any) {
-    return <Pagination { ...options }></Pagination>;
+    return <Pagination { ...options }
+    modelValue={options.current}
+    onLimitChange={ limit => this.handlePageLimitChange(limit) }
+    onChange={ current => this.hanlePageChange(current) }></Pagination>;
+  }
+
+  private handlePageLimitChange(limit: number) {
+    Object.assign(this.props.pagination, { limit });
+    this.context.emit('page-limit-change', limit);
+  }
+
+  private hanlePageChange(current: number) {
+    Object.assign(this.props.pagination, { current, value: current });
+    this.context.emit('page-value-change', current);
   }
 
   /**
