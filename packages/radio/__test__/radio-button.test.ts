@@ -25,6 +25,7 @@
 */
 
 import { mount } from '@vue/test-utils';
+
 import RadioButton from '../src/radio-button';
 
 const components = {

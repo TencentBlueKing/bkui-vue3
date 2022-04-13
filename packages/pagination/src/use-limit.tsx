@@ -24,16 +24,17 @@
 * IN THE SOFTWARE.
 */
 
-import {
-  ref,
-  getCurrentInstance,
-  watch,
-  nextTick,
-} from 'vue';
 import BkSelect, { BkOption } from '@bkui-vue/select';
 import type {
   ComponentInternalInstance,
 } from 'vue';
+import {
+  getCurrentInstance,
+  nextTick,
+  ref,
+  watch,
+} from 'vue';
+
 import type {
   IPaginationInstance,
 } from './type';

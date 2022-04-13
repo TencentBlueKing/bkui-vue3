@@ -25,6 +25,7 @@
 */
 
 import { mount } from '@vue/test-utils';
+
 import Pagination from '../src';
 
 const components = {

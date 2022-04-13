@@ -25,7 +25,8 @@
 */
 import { Column } from 'table/src/props';
 import { defineComponent } from 'vue';
-import { DATA_TABLE, DATA_COLUMNS } from './options';
+
+import { DATA_COLUMNS, DATA_TABLE } from './options';
 export default defineComponent({
   components: {},
   data() {

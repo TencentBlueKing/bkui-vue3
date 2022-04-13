@@ -25,6 +25,7 @@
 */
 
 import { mount } from '@vue/test-utils';
+
 import DropdownItem from '../src/dropdown-item';
 
 describe('DropdownMenu.tsx', () => {

@@ -23,9 +23,9 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent, ref } from 'vue';
-import BkSelect, { BkOption, BkOptionGroup } from '@bkui-vue/select';
 import { Close } from '@bkui-vue/icon';
+import BkSelect, { BkOption, BkOptionGroup } from '@bkui-vue/select';
+import { defineComponent, ref } from 'vue';
 
 export default defineComponent({
   name: 'SelectExample',

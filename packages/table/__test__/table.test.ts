@@ -25,6 +25,7 @@
  */
 
 import { mount } from '@vue/test-utils';
+
 import BKTable from '../src/table';
 const data = [
   {

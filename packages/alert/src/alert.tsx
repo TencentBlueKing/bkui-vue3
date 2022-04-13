@@ -24,9 +24,9 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent, reactive } from 'vue';
-import { classes, PropTypes } from '@bkui-vue/shared';
 import { Help } from '@bkui-vue/icon';
+import { classes, PropTypes } from '@bkui-vue/shared';
+import { defineComponent, reactive } from 'vue';
 
 export default defineComponent({
   name: 'Alert',

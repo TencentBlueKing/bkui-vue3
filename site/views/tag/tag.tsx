@@ -25,16 +25,17 @@
 */
 
 import { defineComponent } from 'vue';
-import DemoTitle from '../../components/demo-title';
+
 import DemoBox from '../../components/demo-box';
+import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import { IPropsTableItem } from '../../typings';
 import BaseDemo from './base-demo.vue';
-import RadiusDemo from './radius-demo.vue';
-import ClosableDemo from './closable-demo.vue';
-import TypeDemo from './type-demo.vue';
 import CheckDemo from './check-demo.vue';
+import ClosableDemo from './closable-demo.vue';
 import IconDemo from './icon-demo.vue';
+import RadiusDemo from './radius-demo.vue';
+import TypeDemo from './type-demo.vue';
 
 const propsJson: IPropsTableItem[] = [
   {

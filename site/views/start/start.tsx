@@ -24,6 +24,7 @@
 * IN THE SOFTWARE.
 */
 import { defineComponent } from 'vue';
+
 import DemoTitle from '../../components/demo-title';
 import StartMd from './start.md';
 export default defineComponent({

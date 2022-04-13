@@ -24,33 +24,30 @@
 * IN THE SOFTWARE.
 */
 
+// import type { Placement } from '@popperjs/core';
+// import { bkZIndexManager, BKPopover, IBKPopover } from '@bkui-vue/shared';
+import { AngleDoubleLeft, AngleDoubleRight, AngleLeft, AngleRight } from '@bkui-vue/icon';
+import type { ExtractPropTypes } from 'vue';
 import {
-  defineComponent,
-  PropType,
-  ref,
-  reactive,
-  toRefs,
   // onMounted,
   // onBeforeUnmount,
   computed,
+  defineComponent,
+  PropType,
+  reactive,
+  ref,
+  toRefs,
   // nextTick,
 } from 'vue';
-import type { ExtractPropTypes } from 'vue';
-// import type { Placement } from '@popperjs/core';
 
-// import { bkZIndexManager, BKPopover, IBKPopover } from '@bkui-vue/shared';
-import { AngleLeft, AngleDoubleLeft, AngleRight, AngleDoubleRight } from '@bkui-vue/icon';
-
-import { iconBtnCls, siblingMonth, formatDateLabels } from '../utils';
-
+import DateTable from '../base/date-table';
 import type {
   DatePickerShortcutsType,
   DatePickerValueType,
   DisableDateType,
   SelectionModeType,
 } from '../interface';
-
-import DateTable from '../base/date-table';
+import { formatDateLabels, iconBtnCls, siblingMonth } from '../utils';
 
 const datePanelProps = {
   modelValue: {

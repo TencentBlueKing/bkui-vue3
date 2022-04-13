@@ -24,9 +24,9 @@
  * IN THE SOFTWARE.
 */
 
-import { resolve } from 'path';
 import { readFile } from 'fs/promises';
 import { render } from 'less';
+import { resolve } from 'path';
 import postcss from 'postcss';
 import postcssLess from 'postcss-less';
 

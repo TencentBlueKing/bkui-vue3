@@ -25,6 +25,7 @@
 * IN THE SOFTWARE.
 */
 import { FunctionalComponent } from 'vue';
+
 import BkIcon, { IIconBaseProps } from './icon';
 const data = JSON.parse('{"type":"element","name":"svg","attributes":{"xmlns":"http://www.w3.org/2000/svg","viewBox":"0 0 1024 1024","style":"width: 1em; height: 1em; vertical-align: middle;fill: currentColor;overflow: hidden;"},"elements":[{"type":"element","name":"path","attributes":{"d":"M512 0c-17.919999999999998 0-32 14.08-32 32s14.08 32 32 32c247.04 0 448 200.95999999999998 448 448 0 17.919999999999998 14.08 32 32 32s32-14.08 32-32c0-282.24-229.76-512-512-512z"}}]}');
 const circle: FunctionalComponent<IIconBaseProps> = (props, context) => {

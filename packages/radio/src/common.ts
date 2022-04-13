@@ -23,21 +23,22 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import {
-  ref,
-  reactive,
-  computed,
-  inject,
-  getCurrentInstance,
-} from 'vue';
+import { EMPTY_OBJ, isEmptyObj } from '@bkui-vue/shared';
 import type {
   ComponentInternalInstance,
-  Ref,
   InjectionKey,
+  Ref,
 } from 'vue';
-import { EMPTY_OBJ, isEmptyObj } from '@bkui-vue/shared';
-import type { IRadioGroupContext } from './type';
+import {
+  computed,
+  getCurrentInstance,
+  inject,
+  reactive,
+  ref,
+} from 'vue';
+
 import type { RadioProps } from './radio';
+import type { IRadioGroupContext } from './type';
 
 export const radioGroupKey: InjectionKey<IRadioGroupContext> = Symbol('RadioGroup');
 

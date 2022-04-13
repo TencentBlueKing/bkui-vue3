@@ -25,6 +25,7 @@
 */
 
 import { mount } from '@vue/test-utils';
+
 import Checkbox from '../src/';
 
 const components = {

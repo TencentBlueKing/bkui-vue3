@@ -24,9 +24,8 @@
 * IN THE SOFTWARE.
 */
 
-import { defineComponent } from 'vue';
-
 import BkDivider from '@bkui-vue/divider';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'DividerDemo',

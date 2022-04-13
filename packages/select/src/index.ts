@@ -23,10 +23,11 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
-import Component from './select';
+import { withInstallProps } from '@bkui-vue/shared';
+
 import Option from './option';
 import OptionGroup from './optionGroup';
-import { withInstallProps } from '@bkui-vue/shared';
+import Component from './select';
 const BkSelect = withInstallProps(Component, { Option, Group: OptionGroup });
 export default BkSelect;
 export {

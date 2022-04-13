@@ -24,9 +24,11 @@
  * IN THE SOFTWARE.
 */
 
-import CodeDiff, { ThemesUnion, DiffFormatType, LanguagesUnion } from './code-diff';
-import { App } from 'vue';
 import './code-diff.less';
+
+import { App } from 'vue';
+
+import CodeDiff, { DiffFormatType, LanguagesUnion, ThemesUnion } from './code-diff';
 
 CodeDiff.install = (Vue: App) => {
   Vue.component(CodeDiff.name, CodeDiff);

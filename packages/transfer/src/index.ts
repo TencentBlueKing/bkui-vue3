@@ -24,8 +24,9 @@
  * IN THE SOFTWARE.
  */
 
-import Transfer from './transfer';
 import { App } from 'vue';
+
+import Transfer from './transfer';
 
 Transfer.install = (Vue: App) => {
   Vue.component(Transfer.name, Transfer);

@@ -27,11 +27,11 @@
 import {
   createPopper,
   Instance,
-  VirtualElement,
-  Placement,
   Modifier,
+  Placement,
   PositioningStrategy,
   State,
+  VirtualElement,
 } from '@popperjs/core';
 
 import { isElement, merge } from './bk-helper-core';

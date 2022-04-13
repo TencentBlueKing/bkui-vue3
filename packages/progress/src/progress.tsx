@@ -23,10 +23,11 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import { classes, PropTypes } from '@bkui-vue/shared';
 import { defineComponent } from 'vue';
-import Line from './line';
+
 import Circle from './circle';
-import { PropTypes, classes } from '@bkui-vue/shared';
+import Line from './line';
 
 export type ValidatorFunction<T> = (value: T) => boolean;
 

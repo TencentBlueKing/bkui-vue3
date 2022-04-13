@@ -26,6 +26,7 @@
 
 import { mount } from '@vue/test-utils';
 import { h } from 'vue';
+
 import BkButton, { BkButtonGroup } from '../src';
 describe('BkButtonGroup.tsx', () => {
   it('renders slot default when passed', async () => {
