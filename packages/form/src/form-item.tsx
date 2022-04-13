@@ -44,8 +44,8 @@ import type { IFormItemRules } from './type';
 
 const formItemProps = {
   label: PropTypes.string,
-  labelWidth: PropTypes.number,
-  labelPosition: PropTypes.string,
+  labelWidth: PropTypes.oneOfType([Number, String]),
+  labelPosition: PropTypes.oneOf(['left', 'center', 'right']),
   property: PropTypes.string.def(''),
   required: PropTypes.bool.def(false),
   email: PropTypes.bool.def(false),
@@ -131,6 +131,9 @@ const getRulesFromProps = (props) => {
 };
 
 
+const isValid = (value: string | number): boolean => value !== undefined;
+
+
 export default defineComponent({
   name: 'BKFormItem',
   props: formItemProps,
@@ -146,15 +149,18 @@ export default defineComponent({
     const labelStyles = computed<object>(() => {
       const styles = {
         width: '',
+        paddingRight: '',
         textAlign: '',
       };
-      const labelWidth = props.labelWidth || (isForm && form.props.labelWidth);
-      if (labelWidth) {
+      const labelWidth = isValid(props.labelWidth) ? props.labelWidth : (isForm && form.props.labelWidth);
+      if (isValid(labelWidth)) {
         styles.width = `${labelWidth}px`;
+        styles.paddingRight = labelWidth ? '' : '0px';
       }
+
       const labelPosition = props.labelPosition || (isForm && form.props.labelPosition);
       if (labelPosition) {
-        styles['text-align'] = 'labelPosition';
+        styles['text-align'] = labelPosition;
       }
 
       return styles;
@@ -246,19 +252,31 @@ export default defineComponent({
   },
   render() {
     const itemClassees = classes({
+      'bk-form-item': true,
       'is-error': this.isError,
       'is-required': this.required,
-    }, 'bk-form-item');
+    });
 
     return (
       <div class={itemClassees}>
-        <div class="bk-form-label" style={this.labelStyles}>
-          {this.label}
+        <div
+          class="bk-form-label"
+          style={this.labelStyles}>
+            {
+            this.$slots.label
+              ? this.$slots.label()
+              : this.label
+            }
         </div>
         <div class="bk-form-content">
-          {this.$slots.default()}
+          {this.$slots.default?.()}
           {
-            this.isError && <div class="bk-form-error">{this.errorMessage}</div>
+            this.isError
+            && <div class="bk-form-error">
+              {this.$slots.error
+                ? this.$slots.error(this.errorMessage)
+                : this.errorMessage}
+              </div>
           }
         </div>
       </div>

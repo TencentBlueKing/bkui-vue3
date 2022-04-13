@@ -25,6 +25,7 @@
 */
 
 module.exports = {
+  customSyntax: 'postcss-less',
   plugins: [
     'stylelint-scss',
     'stylelint-order',

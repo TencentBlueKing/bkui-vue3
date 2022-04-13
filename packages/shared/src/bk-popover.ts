@@ -119,7 +119,7 @@ export class BKPopover {
     this.reference = this.resolveInputSelectorToHtmlElement(reference);
     this.popperRefer = this.resolveInputSelectorToHtmlElement(popperRefer);
     this.referenceTarget = this.getTargetReferenceElement();
-    this.container = (this.popperRefer || {}).parentElement;
+    this.container = this.popperRefer?.parentElement;
     this.isShow = !!this.instanceOptions?.isShow;
     this.trigger = this.instanceOptions.trigger;
     this.disabled = this.instanceOptions.disabled;

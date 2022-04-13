@@ -30,6 +30,7 @@ import {
 import { PropTypes } from '@bkui-vue/shared';
 import { Plus, Close } from '@bkui-vue/icon/';
 
+/* eslint-disable */
 
 export default defineComponent({
   name: 'TabNav',
@@ -70,6 +71,65 @@ export default defineComponent({
       type: Function,
       default: (): any => ({}),
     },
+  },
+  setup(props: Record<string, any>) {
+    const navs = computed(() => {
+      if (!Array.isArray(props.panels) || !props.panels.length) {
+        return [];
+      }
+      const list = [];
+      let hasFindActive = false;
+      props.panels.filter((item: ComponentInternalInstance, index: number) => {
+        if (!item.props) {
+          return null;
+        }
+        const {
+          name, label, closable, visible, disabled, sortable,
+        } = item.props as any;
+        if (!visible) {
+          return false;
+        }
+        if (props.active === name) {
+          hasFindActive = true;
+        }
+        const renderLabel = (label: any) => {
+          if (item.slots.label) {
+            return h(item.slots.label);
+          }
+          if ([undefined, ''].includes(label)) {
+            return `选项卡${index + 1}`;
+          }
+          if (typeof label === 'string') {
+            return label;
+          }
+          if (typeof label === 'function') {
+            return h(label);
+          }
+          return label;
+        };
+        list.push({
+          name, closable, visible, disabled, sortable,
+          tabLabel: renderLabel(label),
+        });
+        return true;
+      });
+      if (!hasFindActive && props.validateActive) {
+        props.panels[0].props && props.tabChange(props.panels[0].props.name);
+      }
+      return list;
+    });
+    const dragenterIndex = ref(-1);
+    const dragStartIndex = ref(-1);
+    const draggingEle = ref('');
+    return {
+      navs,
+      dragenterIndex,
+      dragStartIndex,
+      draggingEle,
+      guid: Math.random().toString(16)
+        .substr(4) + Math.random().toString(16)
+        .substr(4),
+    };
   },
   methods: {
     /**
@@ -136,65 +196,6 @@ export default defineComponent({
     handleTabRemove(index: number, panel) {
       this.tabRemove(index, panel);
     },
-  },
-  setup(props: Record<string, any>) {
-    const navs = computed(() => {
-      if (!Array.isArray(props.panels) || !props.panels.length) {
-        return [];
-      }
-      const list = [];
-      let hasFindActive = false;
-      props.panels.filter((item: ComponentInternalInstance, index: number) => {
-        if (!item.props) {
-          return null;
-        }
-        const {
-          name, label, closable, visible, disabled, sortable,
-        } = item.props as any;
-        if (!visible) {
-          return false;
-        }
-        if (props.active === name) {
-          hasFindActive = true;
-        }
-        const renderLabel = (label: any) => {
-          if (item.slots.label) {
-            return h(item.slots.label);
-          }
-          if ([undefined, ''].includes(label)) {
-            return `选项卡${index + 1}`;
-          }
-          if (typeof label === 'string') {
-            return label;
-          }
-          if (typeof label === 'function') {
-            return h(label);
-          }
-          return label;
-        };
-        list.push({
-          name, closable, visible, disabled, sortable,
-          tabLabel: renderLabel(label),
-        });
-        return true;
-      });
-      if (!hasFindActive && props.validateActive) {
-        props.panels[0].props && props.tabChange(props.panels[0].props.name);
-      }
-      return list;
-    });
-    const dragenterIndex = ref(-1);
-    const dragStartIndex = ref(-1);
-    const draggingEle = ref('');
-    return {
-      navs,
-      dragenterIndex,
-      dragStartIndex,
-      draggingEle,
-      guid: Math.random().toString(16)
-        .substr(4) + Math.random().toString(16)
-        .substr(4),
-    };
   },
   render() {
     const {

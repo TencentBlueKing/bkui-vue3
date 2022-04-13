@@ -35,20 +35,20 @@ import { useRoute, useRouter } from 'vue-router';
 
 import './demo-nav.less';
 
-function useFocus() {
-  const isFocus = ref(false);
-  const handleFocus = () => {
-    isFocus.value = true;
-  };
-  const handleBlur = () => {
-    isFocus.value = false;
-  };
-  return {
-    isFocus,
-    handleFocus,
-    handleBlur,
-  };
-}
+// function useFocus() {
+//   const isFocus = ref(false);
+//   const handleFocus = () => {
+//     isFocus.value = true;
+//   };
+//   const handleBlur = () => {
+//     isFocus.value = false;
+//   };
+//   return {
+//     isFocus,
+//     handleFocus,
+//     handleBlur,
+//   };
+// }
 
 function navListScrollToView() {
   const navListRef = ref(null);
@@ -103,14 +103,19 @@ export default defineComponent({
 
     const getNavGroup = (group: NavGroupMeta) => {
       const list = routes.filter(item => item.meta?.group === group);
+      const handleRoute = (routeName) => {
+        push({ name: routeName });
+      };
       return (
         <div class="nav-group">
           <div class="nav-group-title">{group}</div>
           <ul class="nav-group-list">
             {
               list.map(item => (
-                <li class={`nav-item ${item.name === curRoute.name ? 'item-active' : ''}`}
-                  onClick={() => push({ name: item.name })}>{item.meta?.navName || item.name}
+                <li
+                  class={`nav-item ${item.name === curRoute.name ? 'item-active' : ''}`}
+                  onClick={() => handleRoute(name)}>
+                    {item.meta?.navName || item.name}
                 </li>
               ))
             }
