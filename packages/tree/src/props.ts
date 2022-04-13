@@ -97,6 +97,11 @@ export const treeProps = {
     callback: PropTypes.func.def(null),
     cache: PropTypes.bool.def(true),
   }),
+
+  /**
+   * 每个节点偏移左侧距离
+   */
+  offsetLeft: PropTypes.number.def(15),
 };
 
 type AsyncOption = {

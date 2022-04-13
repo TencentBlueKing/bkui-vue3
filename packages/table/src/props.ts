@@ -108,6 +108,11 @@ export const tableProps = {
    */
   pagination: PropTypes.oneOfType([PropTypes.bool.def(false), PropTypes.object.def({})]).def(false),
 
+  /**
+   * 是否启用远程分页
+   */
+  remotePagination: PropTypes.bool.def(false),
+
   ...EventProps,
 
   // /**

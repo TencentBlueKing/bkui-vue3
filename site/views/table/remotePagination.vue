@@ -2,8 +2,11 @@
   <div style="height: 300px; width: 100%">
     <bk-table
       :columns="columns"
-      :data="tableData"
+      :data="remoteData"
       :pagination="pagination"
+      :remote-pagination="true"
+      @page-value-change="handlePageValueChange"
+      @page-limit-change="handlePageLimitChange"
     />
   </div>
 </template>
@@ -25,8 +28,24 @@ export default defineComponent({
     return {
       tableData: DATA_ROWS,
       columns: [...DATA_COLUMNS],
-      pagination: { count: 100, limit: 20 },
+      pagination: { count: DATA_ROWS.length, limit: 20, current: 1 },
     };
+  },
+  computed: {
+    remoteData() {
+      const { limit, current } = this.pagination;
+      const startIndex = (current - 1) * limit;
+      const endIndex = current * limit;
+      return this.tableData.slice(startIndex, endIndex);
+    },
+  },
+  methods: {
+    handlePageValueChange(value) {
+      this.pagination.current = value;
+    },
+    handlePageLimitChange(limit) {
+      this.pagination.limit - limit;
+    },
   },
 });
 </script>

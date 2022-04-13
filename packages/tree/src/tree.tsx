@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
-import { defineComponent, watch, reactive, computed, h } from 'vue';
+import { defineComponent, watch, reactive, computed, h, SetupContext } from 'vue';
 import {
   getFlatdata,
   getLabel,
@@ -32,6 +32,7 @@ import {
   getTreeStyle,
   updateTreeNode,
   assignTreeNode,
+  getNodeRowClass,
 } from './util';
 import { Folder, FolderShapeOpen, TextFile, DownShape, RightShape, Spinner } from '@bkui-vue/icon/';
 import { treeProps, TreePropTypes as defineTypes } from './props';
@@ -43,8 +44,9 @@ export default defineComponent({
   name: 'Tree',
   props: treeProps,
 
-  setup(props: TreePropTypes) {
+  setup(props: TreePropTypes, ctx: SetupContext) {
     const formatData = getFlatdata(props);
+    const checkedNodes = [];
     /**
      * 扁平化数据
      * schema: 需要展示连线时，用于计算连线高度
@@ -59,7 +61,6 @@ export default defineComponent({
      * 监听组件配置Data改变
      */
     watch(() => [props.data], (newData) => {
-      console.log('props.data changed');
       const formatData = getFlatdata(props, newData, schemaValues.value);
       flatData.data = formatData[0] as Array<any>;
       flatData.schema = formatData[1] as any;
@@ -114,12 +115,15 @@ export default defineComponent({
      * @param val
      * @returns
      */
-    const renderPrefixVal = (val: string | { node: string, className: string, text: string, style: any }) => {
+    const renderPrefixVal = (val: string | { node: string, className: string, text: string, style: any } | any) => {
       if (typeof val === 'string') {
         return val;
       }
 
       if (typeof val === 'object' && val !== null) {
+        if (val.__v_isVNode) {
+          return val;
+        }
         const { node, className, text, style } = val;
         return h(node, { class: className, style }, text);
       }
@@ -168,7 +172,7 @@ export default defineComponent({
       }
 
       if (prefixFnVal === 'default' || (typeof props.prefixIcon === 'boolean' && props.prefixIcon)) {
-        return isRootNode(item) ? getRootIcon(item) : <TextFile class="bk-tree-icon" />;
+        return isRootNode(item) || hasChildNode(item) ? getRootIcon(item) : <TextFile class="bk-tree-icon" />;
       }
 
       return null;
@@ -238,6 +242,23 @@ export default defineComponent({
       }
     };
 
+    const handleNodeActionClick = (node: any) => {
+      hanldeTreeNodeClick(node);
+    };
+
+    const handleNodeContentClick = (item: any) => {
+      if (!checkedNodes.includes(item.__uuid)) {
+        checkedNodes.forEach((__uuid: string) => setNodeAttr({ __uuid }, '__checked', false));
+        checkedNodes.length = 0;
+        setNodeAttr(item, '__checked', true);
+        checkedNodes.push(item.__uuid);
+        if (!isNodeOpened(item)) {
+          hanldeTreeNodeClick(item);
+        }
+
+        ctx.emit('check', item, getSchemaVal(item.__uuid));
+      }
+    };
 
     /**
      * 过滤当前状态为Open的节点
@@ -290,6 +311,8 @@ export default defineComponent({
       renderData,
       flatData,
       hanldeTreeNodeClick,
+      handleNodeContentClick,
+      handleNodeActionClick,
       getActionIcon,
       getRootIcon,
       getVirtualLines,
@@ -300,21 +323,23 @@ export default defineComponent({
 
   render() {
     const props = this.$props;
-    const renderTreeNode = (item: any) => <div
-      class={getNodeItemClass(item, this.flatData.schema, props)}
-      style={getNodeItemStyle(item, props, this.flatData)}
-      onClick={() => this.hanldeTreeNodeClick(item)}>
-      {
-        [
-          this.getActionIcon(item),
-          this.getNodePrefixIcon(item),
-          this.getLoadingIcon(item),
-        ]
-      }
-      <span>{getLabel(item, props)}</span>
-      {
-        this.getVirtualLines(item)
-      }
+    const renderTreeNode = (item: any) => <div class={ getNodeRowClass(item, this.flatData.schema) }>
+      <div class={getNodeItemClass(item, this.flatData.schema, props)}
+        style={getNodeItemStyle(item, props, this.flatData)}>
+        <span class="node-action" onClick={() => this.handleNodeActionClick(item)}>{ this.getActionIcon(item) }</span>
+        <span class="node-content" onClick={() => this.handleNodeContentClick(item)}>
+          {
+            [
+              this.getNodePrefixIcon(item),
+              this.getLoadingIcon(item),
+            ]
+          }
+          <span>{getLabel(item, props)}</span>
+        </span>
+        {
+          this.getVirtualLines(item)
+        }
+      </div>
     </div>;
 
     return <VirtualRender class="bk-tree"
