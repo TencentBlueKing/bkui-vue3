@@ -107,7 +107,7 @@ const columns = [
   {
     label: '创建时间',
     field: 'create_time',
-    render: (row: any) => (row || {}).create_time,
+    render: (row: any) => row?.create_time,
   },
 ];
 describe('table.tsx', () => {

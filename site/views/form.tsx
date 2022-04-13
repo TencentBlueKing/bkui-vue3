@@ -102,9 +102,9 @@ export default defineComponent({
           <BkForm
             formType="vertical">
             <BkFormItem label="姓名">
-            <BkInput
-              placeholder="请输入"
-              clearable />
+              <BkInput
+                placeholder="请输入"
+                clearable />
             </BkFormItem>
             <BkFormItem label="年龄">
               <BkRadioGroup>

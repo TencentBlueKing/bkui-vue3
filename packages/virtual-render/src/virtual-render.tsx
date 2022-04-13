@@ -160,7 +160,7 @@ export default defineComponent({
 
     /** 列表数据重置之后的处理事项 */
     const afterListDataReset = () => {
-      const el = (refRoot.value || {}).parentNode;
+      const el = refRoot.value?.parentNode;
       computedVirtualIndex(props.lineHeight, handleScrollCallback, pagination, el, null);
     };
 

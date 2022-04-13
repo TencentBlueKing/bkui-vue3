@@ -290,7 +290,7 @@ export default defineComponent({
       } else {
         curButtonRef.value = firstValue.value > secondValue.value ? firstbutton.value : secondbutton.value;
       }
-      curButtonRef.setPosition(percent);
+      curButtonRef.value.setPosition(percent);
     };
     const firstInputChange = (v: string) => {
       if (v === '') {

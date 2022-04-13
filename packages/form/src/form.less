@@ -4,6 +4,19 @@
   .bk-form-item {
     display: flex;
     margin-bottom: 24px;
+
+    &.is-required {
+      .bk-form-label {
+        &:after {
+          position: absolute;
+          width: 14px;
+          line-height: 32px;
+          color: #ea3636;
+          text-align: center;
+          content: '*';
+        }
+      }
+    }
   }
 
   .bk-form-label {
@@ -34,12 +47,12 @@
 
   &--vertical {
     .bk-form-item {
-      
       flex-direction: column;
     }
 
     .bk-form-label {
       width: auto;
+      padding-right: 0;
       text-align: left;
     }
 

@@ -24,9 +24,18 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent, ref, onMounted, onBeforeUnmount, Ref, Transition, watch } from 'vue';
+import {
+  defineComponent,
+  ref,
+  onMounted,
+  onBeforeUnmount,
+  Transition,
+  watch,
+  type Ref,
+} from 'vue';
+import { throttle } from 'lodash';
 import { AngleUp } from '@bkui-vue/icon';
-import { PropTypes, throttle, bkZIndexManager } from '@bkui-vue/shared';
+import { PropTypes, bkZIndexManager } from '@bkui-vue/shared';
 
 
 export default defineComponent({

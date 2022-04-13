@@ -112,7 +112,11 @@ export default defineComponent({
       >
         {
           props.loading && (
-            <BkLoading class={`${btnClsPrefix}-loading`} mode={props.laodingMode} theme={loadingTheme.value} size={loadingSize.value} />
+            <BkLoading
+              class={`${btnClsPrefix}-loading`}
+              mode={props.laodingMode}
+              theme={loadingTheme.value}
+              size={loadingSize.value} />
           )
         }
         {slots.default && <span class={`${btnClsPrefix}-text`}>{slots.default?.()}</span>}

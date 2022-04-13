@@ -122,7 +122,6 @@ describe('breadcrumb.tsx', () => {
         },
       },
     });
-    console.log(wrapper.find('.bk-breadcrumb-goback'));
     expect(wrapper.find('.bk-breadcrumb-goback').exists()).toBe(true);
     expect(wrapper.find('svg').exists()).toBe(true);
     await wrapper.find('.bk-breadcrumb-goback').find('span')
