@@ -43,6 +43,7 @@ export { default as Popover } from '@bkui-vue/popover';
 export { default as Progress } from '@bkui-vue/progress';
 export { default as Radio, BkRadioButton as RadioButton, BkRadioGroup as RadioGroup } from '@bkui-vue/radio';
 export { default as Rate } from '@bkui-vue/rate';
+export { default as Swiper } from '@bkui-vue/swiper';
 export { default as Select, BkOption, BkOptionGroup } from '@bkui-vue/select';
 export { default as Sideslider } from '@bkui-vue/sideslider';
 export { default as Steps } from '@bkui-vue/steps';
