@@ -24,8 +24,8 @@
  * IN THE SOFTWARE.
  */
 
-import { ExtractPropTypes } from 'vue';
 import { PropTypes } from '@bkui-vue/shared';
+import { ExtractPropTypes } from 'vue';
 
 /**
  * Tree Prop: prefixIcon function

@@ -23,9 +23,10 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent } from 'vue';
-import { Share } from '@bkui-vue/icon';
 import './demo-title.less';
+
+import { Share } from '@bkui-vue/icon';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'DemoTitile',

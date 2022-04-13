@@ -24,23 +24,24 @@
 * IN THE SOFTWARE.
 */
 import {
-  defineComponent,
-  reactive,
-  inject,
-  toRefs,
-  onMounted,
-  onBeforeUnmount,
-  getCurrentInstance,
-  computed,
-} from 'vue';
+  classes,
+  PropTypes,
+} from '@bkui-vue/shared';
 import type { ExtractPropTypes } from 'vue';
 import {
-  PropTypes,
-  classes,
-} from '@bkui-vue/shared';
+  computed,
+  defineComponent,
+  getCurrentInstance,
+  inject,
+  onBeforeUnmount,
+  onMounted,
+  reactive,
+  toRefs,
+} from 'vue';
+
 import { formKey } from './common';
-import validator from './validator';
 import type { IFormItemRules } from './type';
+import validator from './validator';
 
 const formItemProps = {
   label: PropTypes.string,

@@ -24,19 +24,19 @@
  * IN THE SOFTWARE.
 */
 
-import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, reactive, ref, SetupContext, watch } from 'vue';
 import { classes, resolveClassName } from '@bkui-vue/shared';
+import VirtualRender from '@bkui-vue/virtual-render';
+import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, reactive, ref, SetupContext, watch } from 'vue';
+
 import { Column, IColumnActive, tableProps, TablePropTypes } from './props';
 import TableRender from './render';
 import {
-  resolveActiveColumns,
-  resolveNumberOrStringToPix,
-  resolvePropBorderToClassStr,
-  resolveColumnWidth,
-  observerResize,
   isPercentPixOrNumber,
-  resolvePaginationOption } from './utils';
-import VirtualRender from '@bkui-vue/virtual-render';
+  observerResize,
+  resolveActiveColumns,
+  resolveColumnWidth,
+  resolveNumberOrStringToPix,
+  resolvePaginationOption,  resolvePropBorderToClassStr } from './utils';
 
 export default defineComponent({
   name: 'Table',

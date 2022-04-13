@@ -24,12 +24,11 @@
 * IN THE SOFTWARE.
 */
 
+import { format as dateFnsFormat, toDate } from 'date-fns';
 import type { InjectionKey } from 'vue';
-import { toDate, format as dateFnsFormat } from 'date-fns';
 
 import fecha from './fecha';
-
-import type { PickerTypeType, IDatePickerCtx } from './interface';
+import type { IDatePickerCtx, PickerTypeType } from './interface';
 
 export const RANGE_SEPARATOR = ' - ';
 

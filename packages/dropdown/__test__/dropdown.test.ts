@@ -25,9 +25,10 @@
 */
 
 import { mount } from '@vue/test-utils';
+
 import BkDropdown from '../src';
-import BkDropdownMenu from '../src/dropdown-menu';
 import BkDropdownItem from '../src/dropdown-item';
+import BkDropdownMenu from '../src/dropdown-menu';
 const SLEEP_TIME = 50;
 const sleep = (time = SLEEP_TIME) => new Promise(resolve => setTimeout(resolve, time));
 

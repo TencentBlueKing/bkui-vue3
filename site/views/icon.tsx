@@ -24,9 +24,8 @@
 * IN THE SOFTWARE.
 */
 
-import { defineComponent } from 'vue';
-
 import { Help, HelpDocumentFill, HelpFill } from '@bkui-vue/icon';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'SiteIcon',

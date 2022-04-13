@@ -25,6 +25,7 @@
 */
 
 import { mount } from '@vue/test-utils';
+
 import BkException from '../src';
 
 describe('Exception.tsx', () => {

@@ -24,7 +24,8 @@
 * IN THE SOFTWARE.
 */
 
-import { InjectionKey, ref, customRef } from 'vue';
+import { customRef, InjectionKey, ref } from 'vue';
+
 import Option from './option';
 
 /* eslint-disable */

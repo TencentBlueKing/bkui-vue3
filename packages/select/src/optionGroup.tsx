@@ -23,10 +23,11 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { PropTypes, classes } from '@bkui-vue/shared';
-import { ref, defineComponent, reactive, toRefs, provide, onMounted, getCurrentInstance, toRef, computed } from 'vue';
-import { optionGroupKey, OptionInstanceType } from './common';
 import { AngleUpFill } from '@bkui-vue/icon';
+import { classes, PropTypes } from '@bkui-vue/shared';
+import { computed, defineComponent, getCurrentInstance, onMounted, provide, reactive, ref, toRef, toRefs } from 'vue';
+
+import { optionGroupKey, OptionInstanceType } from './common';
 
 export default defineComponent({
   name: 'Group',

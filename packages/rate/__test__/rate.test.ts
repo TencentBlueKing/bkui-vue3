@@ -25,6 +25,7 @@
 */
 
 import { mount } from '@vue/test-utils';
+
 import Rate from '../src';
 
 describe('Rate.tsx', () => {

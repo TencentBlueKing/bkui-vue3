@@ -25,17 +25,18 @@
 */
 
 import { defineComponent } from 'vue';
-import DemoTitle from '../../components/demo-title';
-import DemoBox from '../../components/demo-box';
-import PropsBox from '../../components/props-box';
+
 import { treeProps } from '../../../packages/tree/src/props';
+import DemoBox from '../../components/demo-box';
+import DemoTitle from '../../components/demo-title';
+import PropsBox from '../../components/props-box';
 import { resolvePropsToDesData } from '../utils/index';
+import async from './async.vue';
 import basic from './basic.vue';
-import virtualRender from './virtual-render.vue';
 import levelLine from './level-line.vue';
 import prefixIcon from './prefix-icon.vue';
-import async from './async.vue';
 import prefixIconJsx from './prefix-icon-jsx';
+import virtualRender from './virtual-render.vue';
 
 export default defineComponent({
   components: { basic, virtualRender, levelLine, prefixIcon, async, prefixIconJsx },

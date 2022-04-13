@@ -24,10 +24,9 @@
 * IN THE SOFTWARE.
 */
 
-import { defineComponent } from 'vue';
-
-import { BkLoading, BkLoadingMode, BkLoadingSize } from '@bkui-vue/loading';
 import { Help } from '@bkui-vue/icon';
+import { BkLoading, BkLoadingMode, BkLoadingSize } from '@bkui-vue/loading';
+import { defineComponent } from 'vue';
 
 // BkLoading.setDefaultIndicator(<span style="font-size: 14px;"><Help /></span>);
 

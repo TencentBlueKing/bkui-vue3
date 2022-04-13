@@ -24,10 +24,9 @@
 * IN THE SOFTWARE.
 */
 
-import { defineComponent, ref } from 'vue';
-
-import { BKTab, BKTabPanel } from '@bkui-vue/tab';
 import { CogShape } from '@bkui-vue/icon/';
+import { BKTab, BKTabPanel } from '@bkui-vue/tab';
+import { defineComponent, ref } from 'vue';
 
 export default defineComponent({
   name: 'TabDemo',

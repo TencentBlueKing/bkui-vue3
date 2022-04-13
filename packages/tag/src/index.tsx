@@ -23,7 +23,8 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
-import Component from './tag';
 import { withInstall } from '@bkui-vue/shared';
+
+import Component from './tag';
 const BkTag = withInstall(Component);
 export default BkTag;

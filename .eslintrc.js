@@ -35,7 +35,10 @@ module.exports = {
     ecmaVersion: 2019,
     sourceType: 'module',
   },
-  plugins: ['codecc'],
+  plugins: [
+    'codecc',
+    'simple-import-sort',
+  ],
   env: {
     es6: true,
     node: true,
@@ -65,9 +68,8 @@ module.exports = {
     },
   ],
   rules: {
-    'vue/multi-word-component-names': 'off',
-    'vue/no-setup-props-destructure': 'off',
-    'vue/require-default-prop': 'off',
+    'simple-import-sort/imports': 'error',
+
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'codecc/license': ['error', {
@@ -110,5 +112,8 @@ module.exports = {
         ignoreTemplateLiterals: true,
       },
     ],
+    'vue/multi-word-component-names': 'off',
+    'vue/no-setup-props-destructure': 'off',
+    'vue/require-default-prop': 'off',
   },
 };

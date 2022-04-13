@@ -24,8 +24,9 @@
 * IN THE SOFTWARE.
 */
 
-import { defineComponent, getCurrentInstance, inject } from 'vue';
 import { classes, PropTypes } from '@bkui-vue/shared';
+import { defineComponent, getCurrentInstance, inject } from 'vue';
+
 import { IBreadcrumbProps } from './props';
 
 

@@ -24,9 +24,9 @@
  * IN THE SOFTWARE.
  */
 
-import { defineComponent, computed, ExtractPropTypes, PropType, ref } from 'vue';
-import { classes, PropTypes } from '@bkui-vue/shared';
 import BkLoading, { BkLoadingMode, BkLoadingSize } from '@bkui-vue/loading';
+import { classes, PropTypes } from '@bkui-vue/shared';
+import { computed, defineComponent, ExtractPropTypes, PropType, ref } from 'vue';
 
 
 type IButtonNativeType = PropType<'button' | 'submit' | 'reset'>;

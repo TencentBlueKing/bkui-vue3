@@ -23,9 +23,10 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent } from 'vue';
-import BkPopover from '@bkui-vue/popover';
 import './box-icon.less';
+
+import BkPopover from '@bkui-vue/popover';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'BoxIcon',

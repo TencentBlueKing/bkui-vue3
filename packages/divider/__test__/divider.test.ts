@@ -25,6 +25,7 @@
 */
 
 import { mount } from '@vue/test-utils';
+
 import Divider from '../src';
 
 const dividerContent = 'bk-divider is testing';

@@ -24,8 +24,9 @@
 * IN THE SOFTWARE.
 */
 import { mount } from '@vue/test-utils';
-import Switcher from '../src/index';
 import { nextTick } from 'vue';
+
+import Switcher from '../src/index';
 
 jest.useFakeTimers();
 /** 传入template 其他配置*/

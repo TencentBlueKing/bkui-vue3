@@ -24,9 +24,10 @@
  * IN THE SOFTWARE.
 */
 
+import { withInstallProps } from '@bkui-vue/shared';
+
 import Component from './modal';
 import { propsMixin } from './props.mixin';
-import { withInstallProps } from '@bkui-vue/shared';
 const BkModal = withInstallProps(Component, { propsMixin }, true);
 export default BkModal;
 export {
