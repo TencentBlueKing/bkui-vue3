@@ -24,8 +24,9 @@
  * IN THE SOFTWARE.
 */
 
-import { classes, PropTypes } from '@bkui-vue/shared';
 import { defineComponent } from 'vue';
+
+import { classes, PropTypes } from '@bkui-vue/shared';
 
 export default defineComponent({
   name: 'Link',

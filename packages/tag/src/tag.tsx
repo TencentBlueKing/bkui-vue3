@@ -24,9 +24,10 @@
  * IN THE SOFTWARE.
 */
 
+import { computed, defineComponent } from 'vue';
+
 import { Error } from '@bkui-vue/icon';
 import { classes, PropTypes } from '@bkui-vue/shared';
-import { computed, defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'Tag',

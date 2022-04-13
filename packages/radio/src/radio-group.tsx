@@ -24,9 +24,6 @@
  * IN THE SOFTWARE.
 */
 
-import {
-  PropTypes,
-} from '@bkui-vue/shared';
 import type { ExtractPropTypes } from 'vue';
 import {
   defineComponent,
@@ -34,6 +31,10 @@ import {
   reactive,
   watch,
 } from 'vue';
+
+import {
+  PropTypes,
+} from '@bkui-vue/shared';
 
 import { radioGroupKey } from './common';
 import type { IRadioGroupContext } from './type';

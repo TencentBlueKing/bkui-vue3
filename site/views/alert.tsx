@@ -24,8 +24,9 @@
 * IN THE SOFTWARE.
 */
 
-import BkAlert from '@bkui-vue/alert';
 import { defineComponent, ref } from 'vue';
+
+import BkAlert from '@bkui-vue/alert';
 export default defineComponent({
   name: 'SiteAlert',
   setup() {

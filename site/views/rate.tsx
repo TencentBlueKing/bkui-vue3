@@ -24,8 +24,9 @@
 * IN THE SOFTWARE.
 */
 
-import BKRate from '@bkui-vue/rate';
 import { defineComponent } from 'vue';
+
+import BKRate from '@bkui-vue/rate';
 
 export default defineComponent({
   name: 'SiteAnimateNumber',

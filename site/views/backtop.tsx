@@ -24,8 +24,9 @@
 * IN THE SOFTWARE.
 */
 
-import BKBacktop from '@bkui-vue/backtop';
 import { defineComponent } from 'vue';
+
+import BKBacktop from '@bkui-vue/backtop';
 
 export default defineComponent({
   name: 'SiteBacktop',

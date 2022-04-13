@@ -24,10 +24,11 @@
 * IN THE SOFTWARE.
 */
 
+import { defineComponent } from 'vue';
+
 import BkBadge from '@bkui-vue/badge';
 import BkButton from '@bkui-vue/button';
 import { Help } from '@bkui-vue/icon';
-import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'SiteBadge',

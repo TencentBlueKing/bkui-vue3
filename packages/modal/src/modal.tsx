@@ -24,8 +24,9 @@
  * IN THE SOFTWARE.
 */
 
-import { bkPopIndexManager } from '@bkui-vue/shared';
 import { defineComponent } from 'vue';
+
+import { bkPopIndexManager } from '@bkui-vue/shared';
 
 import { propsMixin } from './props.mixin';
 

@@ -24,8 +24,9 @@
 * IN THE SOFTWARE.
 */
 
-import { BkPagination } from '@bkui-vue/pagination';
 import { defineComponent, ref } from 'vue';
+
+import { BkPagination } from '@bkui-vue/pagination';
 export default defineComponent({
   name: 'Pagination',
   setup() {

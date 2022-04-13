@@ -24,11 +24,12 @@
  * IN THE SOFTWARE.
 */
 
-import { Close, Plus } from '@bkui-vue/icon/';
-import { PropTypes } from '@bkui-vue/shared';
 import {
   ComponentInternalInstance,
   computed,   defineComponent, h, PropType, ref, VNode } from 'vue';
+
+import { Close, Plus } from '@bkui-vue/icon/';
+import { PropTypes } from '@bkui-vue/shared';
 
 /* eslint-disable */
 

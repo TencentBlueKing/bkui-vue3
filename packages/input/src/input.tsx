@@ -24,9 +24,10 @@
  * IN THE SOFTWARE.
 */
 
+import { computed, defineComponent, ExtractPropTypes, ref } from 'vue';
+
 import { Close, DownSmall, Eye, Search, Unvisible } from '@bkui-vue/icon';
 import { classes, ElementType, PropTypes, stringEnum } from '@bkui-vue/shared';
-import { computed, defineComponent, ExtractPropTypes, ref } from 'vue';
 
 
 export const inputType = {

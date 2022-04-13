@@ -24,16 +24,17 @@
 * IN THE SOFTWARE.
 */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import './demo-nav.less';
+import { defineComponent, nextTick, reactive, ref, toRefs, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
 import { clickoutside } from '@bkui-vue/directives';
 import BkInput from '@bkui-vue/input';
 import BKPopover from '@bkui-vue/popover';
 import { OnFirstUpdateFnType } from '@bkui-vue/shared';
-import { defineComponent, nextTick, reactive, ref, toRefs, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
 
 import { NavGroupMeta } from '../typings';
+
+import './demo-nav.less';
 
 // function useFocus() {
 //   const isFocus = ref(false);
@@ -114,7 +115,7 @@ export default defineComponent({
               list.map(item => (
                 <li
                   class={`nav-item ${item.name === curRoute.name ? 'item-active' : ''}`}
-                  onClick={() => handleRoute(name)}>
+                  onClick={() => handleRoute(item.name)}>
                     {item.meta?.navName || item.name}
                 </li>
               ))

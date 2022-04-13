@@ -24,11 +24,6 @@
 * IN THE SOFTWARE.
 */
 
-import {
-  AngleLeft,
-  AngleRight,
-  Ellipsis,
-} from '@bkui-vue/icon';
 import type {
   ComponentInternalInstance,
 } from 'vue';
@@ -39,6 +34,12 @@ import {
   ref,
   watch,
 } from 'vue';
+
+import {
+  AngleLeft,
+  AngleRight,
+  Ellipsis,
+} from '@bkui-vue/icon';
 
 import type {
   IPaginationInstance,

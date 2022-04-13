@@ -23,10 +23,11 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import { defineComponent, reactive, ref, Suspense } from 'vue';
+
 import Button from '@bkui-vue/button';
 import BkCodeDiff, { LanguagesUnionType, ThemesUnionType } from '@bkui-vue/code-diff';
 import Input from '@bkui-vue/input';
-import { defineComponent, reactive, ref, Suspense } from 'vue';
 
 import { NEW_STR, OLD_STR } from './demo';
 

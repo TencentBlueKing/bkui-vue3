@@ -23,12 +23,12 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import './app.less';
-
 import { defineComponent } from 'vue';
 import { RouterView } from 'vue-router';
 
 import DemoNav from './components/demo-nav';
+
+import './app.less';
 export default defineComponent({
   name: 'App',
   render() {

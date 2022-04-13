@@ -24,9 +24,10 @@
 * IN THE SOFTWARE.
 */
 
+import { defineComponent, getCurrentInstance, onMounted, provide } from 'vue';
+
 import { ArrowsLeft } from '@bkui-vue/icon';
 import { classes, PropTypes } from '@bkui-vue/shared';
-import { defineComponent, getCurrentInstance, onMounted, provide } from 'vue';
 
 import { IBreadcrumbProps } from './props';
 
