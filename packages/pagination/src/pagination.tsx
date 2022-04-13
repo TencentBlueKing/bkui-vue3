@@ -24,10 +24,6 @@
  * IN THE SOFTWARE.
 */
 
-import {
-  classes,
-  PropTypes,
-} from '@bkui-vue/shared';
 import type {
   ExtractPropTypes,
 } from 'vue';
@@ -37,6 +33,11 @@ import {
   toRefs,
   watch,
 } from 'vue';
+
+import {
+  classes,
+  PropTypes,
+} from '@bkui-vue/shared';
 
 import useLimit from './use-limit';
 import useList from './use-list';

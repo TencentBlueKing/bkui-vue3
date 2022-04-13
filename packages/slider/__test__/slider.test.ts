@@ -24,8 +24,9 @@
  * IN THE SOFTWARE.
  */
 
-import { mount } from '@vue/test-utils';
 import { nextTick } from 'vue';
+
+import { mount } from '@vue/test-utils';
 
 import Slider from '../src';
 

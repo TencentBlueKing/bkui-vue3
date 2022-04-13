@@ -25,9 +25,10 @@
  * IN THE SOFTWARE.
 */
 
+import { defineComponent, reactive, ref } from 'vue';
+
 import BkButton from '@bkui-vue/button';
 import { BkDropdown, BkDropdownItem, BkDropdownMenu } from '@bkui-vue/dropdown';
-import { defineComponent, reactive, ref } from 'vue';
 
 export default defineComponent({
   name: 'DropdownTest',

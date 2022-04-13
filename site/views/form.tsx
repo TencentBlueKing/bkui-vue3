@@ -24,12 +24,6 @@
 * IN THE SOFTWARE.
 */
 
-import BkButton from '@bkui-vue/button';
-import BkCheckbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
-import BkForm, { BkFormItem } from '@bkui-vue/form';
-import BkInput from '@bkui-vue/input';
-import BkRadio, { BkRadioGroup } from '@bkui-vue/radio';
-import BkSelect from '@bkui-vue/select';
 import {
   defineComponent,
   getCurrentInstance,
@@ -37,6 +31,13 @@ import {
   reactive,
   ref,
 } from 'vue';
+
+import BkButton from '@bkui-vue/button';
+import BkCheckbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
+import BkForm, { BkFormItem } from '@bkui-vue/form';
+import BkInput from '@bkui-vue/input';
+import BkRadio, { BkRadioGroup } from '@bkui-vue/radio';
+import BkSelect from '@bkui-vue/select';
 
 import BKOption from '../../packages/select/src/option';
 

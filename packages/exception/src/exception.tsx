@@ -24,8 +24,9 @@
  * IN THE SOFTWARE.
 */
 
-import { PropTypes } from '@bkui-vue/shared';
 import { defineComponent } from 'vue';
+
+import { PropTypes } from '@bkui-vue/shared';
 
 import permissions from './images/403.svg';
 import notFound from './images/404.svg';

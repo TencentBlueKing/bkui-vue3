@@ -24,8 +24,9 @@
 * IN THE SOFTWARE.
 */
 
-import BKFixedNavbar from '@bkui-vue/fixed-navbar';
 import { defineComponent } from 'vue';
+
+import BKFixedNavbar from '@bkui-vue/fixed-navbar';
 
 export default defineComponent({
   name: 'SiteAlert',

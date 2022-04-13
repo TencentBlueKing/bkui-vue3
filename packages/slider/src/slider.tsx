@@ -24,9 +24,10 @@
  * IN THE SOFTWARE.
  */
 
+import { computed, defineComponent, nextTick, onMounted, ref, watch } from 'vue';
+
 import Input from '@bkui-vue/input';
 import { PropTypes } from '@bkui-vue/shared';
-import { computed, defineComponent, nextTick, onMounted, ref, watch } from 'vue';
 
 import SliderButton from './slider-button';
 

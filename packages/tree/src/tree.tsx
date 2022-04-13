@@ -23,9 +23,10 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
+import { computed, defineComponent, h, reactive, SetupContext, watch } from 'vue';
+
 import { DownShape, Folder, FolderShapeOpen, RightShape, Spinner, TextFile } from '@bkui-vue/icon/';
 import VirtualRender from '@bkui-vue/virtual-render';
-import { computed, defineComponent, h, reactive, SetupContext, watch } from 'vue';
 
 import { treeProps, TreePropTypes as defineTypes } from './props';
 import {

@@ -24,10 +24,11 @@
  * IN THE SOFTWARE.
 */
 
-import { PropTypes } from '@bkui-vue/shared';
 import {
   Component, ComponentInternalInstance, defineComponent, Fragment, getCurrentInstance, onMounted, onUpdated, ref, VNode,
 } from 'vue';
+
+import { PropTypes } from '@bkui-vue/shared';
 
 import TabNav from './tab-nav';
 export default defineComponent({

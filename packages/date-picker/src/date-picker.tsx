@@ -24,7 +24,6 @@
  * IN THE SOFTWARE.
 */
 
-import { clickoutside } from '@bkui-vue/directives';
 import {
   computed,
   defineComponent,
@@ -38,6 +37,8 @@ import {
   Transition,
   watch,
 } from 'vue';
+
+import { clickoutside } from '@bkui-vue/directives';
 
 import PickerDropdown from './base/picker-dropdown';
 // import VueTypes, { toType, toValidableType } from 'vue-types';

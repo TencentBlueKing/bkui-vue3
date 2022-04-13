@@ -24,9 +24,10 @@
  * IN THE SOFTWARE.
 */
 
+import { defineComponent } from 'vue';
+
 import BkButton from '@bkui-vue/button';
 import BkModal, { propsMixin } from '@bkui-vue/modal';
-import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'Dialog',

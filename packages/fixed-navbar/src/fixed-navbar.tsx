@@ -24,8 +24,9 @@
  * IN THE SOFTWARE.
 */
 
-import { bkZIndexManager, PropTypes } from '@bkui-vue/shared';
 import { defineComponent } from 'vue';
+
+import { bkZIndexManager, PropTypes } from '@bkui-vue/shared';
 
 
 interface INavItem {
