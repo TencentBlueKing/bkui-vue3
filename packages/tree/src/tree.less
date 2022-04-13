@@ -1,4 +1,11 @@
 .bk-tree {
+  .bk-node-row {
+    padding-left: calc(var(--offset-left));
+    &.is-checked {
+      background-color: #EBF2FF;
+    }
+  }
+
   .bk-tree-node {
     position: relative;
     height: var(--lineHeight);
@@ -36,6 +43,10 @@
 
     .bk-tree-icon {
       margin: 0 6px 0 4px;
+    }
+
+    .node-content {
+      display: inline-block;
     }
   }
 }
