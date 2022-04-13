@@ -24,10 +24,9 @@
 * IN THE SOFTWARE.
 */
 
-import { defineComponent } from 'vue';
-
-import BkCollapse from '@bkui-vue/collapse';
 import BkButton from '@bkui-vue/button';
+import BkCollapse from '@bkui-vue/collapse';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'SiteCollapse',

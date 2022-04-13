@@ -23,9 +23,9 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent, reactive } from 'vue';
+import { InfoLine, Search } from '@bkui-vue/icon';
 import BkInput from '@bkui-vue/input';
-import { Search, InfoLine } from '@bkui-vue/icon';
+import { defineComponent, reactive } from 'vue';
 
 export default defineComponent({
   setup() {

@@ -25,6 +25,7 @@
 */
 
 import { mount } from '@vue/test-utils';
+
 import BkDropdownMenu from '../src/dropdown-menu';
 
 describe('DropdownMenu.tsx', () => {

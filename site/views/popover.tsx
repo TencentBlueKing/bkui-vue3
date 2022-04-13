@@ -23,10 +23,9 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent, ref, nextTick } from 'vue';
-
-import BkPopover from '@bkui-vue/popover';
 import BkButton from '@bkui-vue/button';
+import BkPopover from '@bkui-vue/popover';
+import { defineComponent, nextTick, ref } from 'vue';
 
 export default defineComponent({
   name: 'SitePopover',

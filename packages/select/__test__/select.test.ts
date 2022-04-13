@@ -25,6 +25,7 @@
 */
 
 import { mount } from '@vue/test-utils';
+
 import BkSelect from '../src';
 import BkOption from '../src/option';
 import BkOptionGroup from '../src/optionGroup';

@@ -23,11 +23,12 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import './props-box.less';
+
 import { defineComponent, PropType } from 'vue';
+
 import { IPropsTableItem } from '../typings';
 import CommonBox from './common-box';
-
-import './props-box.less';
 type ColumnKey = keyof IPropsTableItem;
 const  columnMap: Record<ColumnKey, any> = {
   name: '参数',

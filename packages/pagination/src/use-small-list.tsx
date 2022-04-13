@@ -25,20 +25,21 @@
 */
 
 import {
-  ref,
-  computed,
-  watch,
-  nextTick,
-  getCurrentInstance,
-} from 'vue';
-import BkPopover from '@bkui-vue/popover';
-import {
   LeftShape,
   RightShape,
 } from '@bkui-vue/icon';
+import BkPopover from '@bkui-vue/popover';
 import type {
   ComponentInternalInstance,
 } from 'vue';
+import {
+  computed,
+  getCurrentInstance,
+  nextTick,
+  ref,
+  watch,
+} from 'vue';
+
 import type {
   IPaginationInstance,
 } from './type';

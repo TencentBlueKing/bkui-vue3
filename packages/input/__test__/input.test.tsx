@@ -26,6 +26,7 @@
 
 
 import { mount } from '@vue/test-utils';
+
 import Input from '../src/index';
 describe('Input', () => {
   it('renders correctly', () => {

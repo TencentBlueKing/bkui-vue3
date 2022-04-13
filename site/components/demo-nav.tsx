@@ -24,16 +24,16 @@
 * IN THE SOFTWARE.
 */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { defineComponent, reactive, toRefs, ref, nextTick, watch } from 'vue';
+import './demo-nav.less';
+
+import { clickoutside } from '@bkui-vue/directives';
 import BkInput from '@bkui-vue/input';
 import BKPopover from '@bkui-vue/popover';
-import { clickoutside } from '@bkui-vue/directives';
 import { OnFirstUpdateFnType } from '@bkui-vue/shared';
-
-import { NavGroupMeta } from '../typings';
+import { defineComponent, nextTick, reactive, ref, toRefs, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-import './demo-nav.less';
+import { NavGroupMeta } from '../typings';
 
 // function useFocus() {
 //   const isFocus = ref(false);

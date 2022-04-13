@@ -25,32 +25,33 @@
 */
 
 
-import {
-  PropTypes,
-  OnFirstUpdateFnType,
-} from '@bkui-vue/shared';
-import BKPopover from '@bkui-vue/popover';
-import {
-  defineComponent,
-  toRefs,
-  computed,
-  ref,
-  provide,
-  reactive,
-  watch,
-  unref,
-  onMounted,
-  watchEffect,
-} from 'vue';
-import useDebouncedRef, {
-  useFocus,
-  selectKey,
-  OptionInstanceType,
-  useHover,
-  ISelectState,
-} from './common';
 import { clickoutside } from '@bkui-vue/directives';
 import { AngleUp, Close, Spinner } from '@bkui-vue/icon';
+import BKPopover from '@bkui-vue/popover';
+import {
+  OnFirstUpdateFnType,
+  PropTypes,
+} from '@bkui-vue/shared';
+import {
+  computed,
+  defineComponent,
+  onMounted,
+  provide,
+  reactive,
+  ref,
+  toRefs,
+  unref,
+  watch,
+  watchEffect,
+} from 'vue';
+
+import useDebouncedRef, {
+  ISelectState,
+  OptionInstanceType,
+  selectKey,
+  useFocus,
+  useHover,
+} from './common';
 
 /* eslint-disable */
 

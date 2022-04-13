@@ -25,6 +25,7 @@
  * IN THE SOFTWARE.
  */
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
+
 import { NavGroupMeta } from '../typings';
 
 /**

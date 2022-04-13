@@ -24,8 +24,8 @@
  * IN THE SOFTWARE.
 */
 
-import { computed, defineComponent } from 'vue';
 import { classes, PropTypes } from '@bkui-vue/shared';
+import { computed, defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'ButtonGroup',

@@ -24,8 +24,9 @@
  * IN THE SOFTWARE.
  */
 
-import Slider from './slider';
 import { App } from 'vue';
+
+import Slider from './slider';
 
 Slider.install = (Vue: App) => {
   Vue.component(Slider.name, Slider);

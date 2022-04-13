@@ -25,6 +25,7 @@
  */
 
 import { mount } from '@vue/test-utils';
+
 import Transfer from '../src';
 
 describe('Transfer.tsx', () => {

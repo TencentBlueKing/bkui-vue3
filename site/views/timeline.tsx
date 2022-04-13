@@ -24,10 +24,9 @@
 * IN THE SOFTWARE.
 */
 
-import { defineComponent, reactive } from 'vue';
-
-import BkTimeline from '@bkui-vue/timeline';
 import { Error } from '@bkui-vue/icon';
+import BkTimeline from '@bkui-vue/timeline';
+import { defineComponent, reactive } from 'vue';
 
 export default defineComponent({
   name: 'SiteTimeline',

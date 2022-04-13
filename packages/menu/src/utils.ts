@@ -24,7 +24,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { provide, inject, Ref, InjectionKey, computed, ref, getCurrentInstance } from 'vue';
+import { computed, getCurrentInstance, inject, InjectionKey, provide, Ref, ref } from 'vue';
 export interface IMenuInfo {
   key: string;
   parentKey: string;

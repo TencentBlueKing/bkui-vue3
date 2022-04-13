@@ -25,6 +25,7 @@
 */
 
 import { mount } from '@vue/test-utils';
+
 import Backtop from '../src';
 describe('Backtop.tsx', () => {
   it('test', async () => {

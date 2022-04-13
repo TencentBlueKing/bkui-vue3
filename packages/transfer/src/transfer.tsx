@@ -24,17 +24,17 @@
  * IN THE SOFTWARE.
  */
 
-import {
-  defineComponent,
-  ExtractPropTypes,
-  ref,
-  PropType,
-  computed,
-  watch,
-} from 'vue';
-import { PropTypes, isEmpty } from '@bkui-vue/shared';
 import { ArrowsRight, Error } from '@bkui-vue/icon/';
 import BkInput from '@bkui-vue/input';
+import { isEmpty, PropTypes } from '@bkui-vue/shared';
+import {
+  computed,
+  defineComponent,
+  ExtractPropTypes,
+  PropType,
+  ref,
+  watch,
+} from 'vue';
 
 const transferProps = {
   title: Array as PropType<string[]>,

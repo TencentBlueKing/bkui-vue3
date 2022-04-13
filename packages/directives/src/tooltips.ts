@@ -24,10 +24,11 @@
 * IN THE SOFTWARE.
 */
 
-import { DirectiveBinding, ObjectDirective } from 'vue';
-import { createPopper, Placement, OptionsGeneric } from '@popperjs/core';
-import { bkZIndexManager } from '@bkui-vue/shared';
 import '@bkui-vue/styles/mixins/popper.less';
+
+import { bkZIndexManager } from '@bkui-vue/shared';
+import { createPopper, OptionsGeneric, Placement } from '@popperjs/core';
+import { DirectiveBinding, ObjectDirective } from 'vue';
 
 export declare type IOptions = {
   arrow: boolean,

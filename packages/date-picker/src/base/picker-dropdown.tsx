@@ -24,21 +24,20 @@
 * IN THE SOFTWARE.
 */
 
-import {
-  defineComponent,
-  PropType,
-  ref,
-  reactive,
-  toRefs,
-  onMounted,
-  onBeforeUnmount,
-  computed,
-  nextTick,
-} from 'vue';
-import type { ExtractPropTypes } from 'vue';
+import { BKPopover, bkZIndexManager, IBKPopover } from '@bkui-vue/shared';
 import type { Placement } from '@popperjs/core';
-
-import { bkZIndexManager, BKPopover, IBKPopover } from '@bkui-vue/shared';
+import type { ExtractPropTypes } from 'vue';
+import {
+  computed,
+  defineComponent,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  PropType,
+  reactive,
+  ref,
+  toRefs,
+} from 'vue';
 
 import type { DatePickerPlacementType } from '../interface';
 

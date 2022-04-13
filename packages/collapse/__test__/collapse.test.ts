@@ -25,6 +25,7 @@
  */
 
 import { mount } from '@vue/test-utils';
+
 import BkCollapse from '../src';
 
 describe('collapse.tsx', () => {

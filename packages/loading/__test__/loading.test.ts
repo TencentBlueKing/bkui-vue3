@@ -24,9 +24,10 @@
  * IN THE SOFTWARE.
 */
 
-import { mount } from '@vue/test-utils';
-import BkLoading, { BkLoadingMode } from '../src/';
 import { Help, HelpFill } from '@bkui-vue/icon';
+import { mount } from '@vue/test-utils';
+
+import BkLoading, { BkLoadingMode } from '../src/';
 
 describe('BkLoading.tsx', () => {
   it('renders loading', () => {

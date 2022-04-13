@@ -25,6 +25,7 @@
 */
 
 import { mount } from '@vue/test-utils';
+
 import Link from '../src';
 
 const linkContent = 'bk-link is testing';
