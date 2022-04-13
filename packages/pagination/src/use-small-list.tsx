@@ -24,11 +24,6 @@
 * IN THE SOFTWARE.
 */
 
-import {
-  LeftShape,
-  RightShape,
-} from '@bkui-vue/icon';
-import BkPopover from '@bkui-vue/popover';
 import type {
   ComponentInternalInstance,
 } from 'vue';
@@ -39,6 +34,12 @@ import {
   ref,
   watch,
 } from 'vue';
+
+import {
+  LeftShape,
+  RightShape,
+} from '@bkui-vue/icon';
+import BkPopover from '@bkui-vue/popover';
 
 import type {
   IPaginationInstance,

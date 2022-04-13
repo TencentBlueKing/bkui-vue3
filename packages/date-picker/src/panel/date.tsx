@@ -26,7 +26,6 @@
 
 // import type { Placement } from '@popperjs/core';
 // import { bkZIndexManager, BKPopover, IBKPopover } from '@bkui-vue/shared';
-import { AngleDoubleLeft, AngleDoubleRight, AngleLeft, AngleRight } from '@bkui-vue/icon';
 import type { ExtractPropTypes } from 'vue';
 import {
   // onMounted,
@@ -39,6 +38,8 @@ import {
   toRefs,
   // nextTick,
 } from 'vue';
+
+import { AngleDoubleLeft, AngleDoubleRight, AngleLeft, AngleRight } from '@bkui-vue/icon';
 
 import DateTable from '../base/date-table';
 import type {

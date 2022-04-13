@@ -24,7 +24,6 @@
 * IN THE SOFTWARE.
 */
 
-import BkSelect, { BkOption } from '@bkui-vue/select';
 import type {
   ComponentInternalInstance,
 } from 'vue';
@@ -34,6 +33,8 @@ import {
   ref,
   watch,
 } from 'vue';
+
+import BkSelect, { BkOption } from '@bkui-vue/select';
 
 import type {
   IPaginationInstance,

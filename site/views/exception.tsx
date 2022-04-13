@@ -24,9 +24,10 @@
 * IN THE SOFTWARE.
 */
 
+import { defineComponent, ref } from 'vue';
+
 import BkButton from '@bkui-vue/button';
 import BkException from '@bkui-vue/exception';
-import { defineComponent, ref } from 'vue';
 
 export default defineComponent({
   name: 'SiteException',

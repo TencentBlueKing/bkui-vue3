@@ -31,6 +31,7 @@ import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import { resolvePropsToDesData } from '../utils/index';
+
 import basic from './basic.vue';
 import customLineHeight from './custom-line-height.vue';
 

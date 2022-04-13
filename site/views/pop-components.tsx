@@ -24,11 +24,12 @@
  * IN THE SOFTWARE.
 */
 
+import { defineComponent } from 'vue';
+
 import BkButton from '@bkui-vue/button';
 import BkDialog from '@bkui-vue/dialog';
 import BkPopover from '@bkui-vue/popover';
 import BkSideslider from '@bkui-vue/sideslider';
-import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'PopConmponents',
   data() {

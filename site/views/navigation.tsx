@@ -24,9 +24,10 @@
 * IN THE SOFTWARE.
 */
 
+import { defineComponent, ref } from 'vue';
+
 import { TreeApplicationShape } from '@bkui-vue/icon/';
 import Menu from '@bkui-vue/menu';
-import { defineComponent, ref } from 'vue';
 // import { Navigation } from 'bkui-vue';
 export default defineComponent({
   setup() {

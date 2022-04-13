@@ -24,8 +24,9 @@
 * IN THE SOFTWARE.
 */
 
-import BkLink from '@bkui-vue/link';
 import { defineComponent, ref } from 'vue';
+
+import BkLink from '@bkui-vue/link';
 
 export default defineComponent({
   name: 'SiteLink',

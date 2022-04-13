@@ -23,9 +23,10 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import { computed, defineComponent, ref, watch } from 'vue';
+
 import { SwitcherLoading } from '@bkui-vue/icon';
 import { PropTypes } from '@bkui-vue/shared';
-import { computed, defineComponent, ref, watch } from 'vue';
 export default defineComponent({
   name: 'Switcher',
   props: {

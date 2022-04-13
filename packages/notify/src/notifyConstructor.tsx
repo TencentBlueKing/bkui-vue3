@@ -24,9 +24,10 @@
 * IN THE SOFTWARE.
 */
 
+import { computed, defineComponent, onMounted, onUnmounted, ref, Transition, watch } from 'vue';
+
 import { Close, Error, Info, Success, Warn } from '@bkui-vue/icon';
 import { bkZIndexManager, PropTypes } from '@bkui-vue/shared';
-import { computed, defineComponent, onMounted, onUnmounted, ref, Transition, watch } from 'vue';
 
 const notifyProps = {
   id: PropTypes.string.def(''),

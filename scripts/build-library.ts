@@ -24,10 +24,11 @@
  * IN THE SOFTWARE.
 */
 
-import vue from '@vitejs/plugin-vue';
-import vueJsx from '@vitejs/plugin-vue-jsx';
 import { resolve } from 'path';
 import { build } from 'vite';
+
+import vue from '@vitejs/plugin-vue';
+import vueJsx from '@vitejs/plugin-vue-jsx';
 
 (async () => {
   await build({

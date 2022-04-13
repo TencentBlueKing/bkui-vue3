@@ -24,8 +24,6 @@
  * IN THE SOFTWARE.
 */
 
-import { AngleUp } from '@bkui-vue/icon';
-import { bkZIndexManager, PropTypes } from '@bkui-vue/shared';
 import { throttle } from 'lodash';
 import {
   type Ref,
@@ -36,6 +34,9 @@ import {
   Transition,
   watch,
 } from 'vue';
+
+import { AngleUp } from '@bkui-vue/icon';
+import { bkZIndexManager, PropTypes } from '@bkui-vue/shared';
 
 
 export default defineComponent({

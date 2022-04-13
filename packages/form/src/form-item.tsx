@@ -23,10 +23,6 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import {
-  classes,
-  PropTypes,
-} from '@bkui-vue/shared';
 import type { ExtractPropTypes } from 'vue';
 import {
   computed,
@@ -38,6 +34,11 @@ import {
   reactive,
   toRefs,
 } from 'vue';
+
+import {
+  classes,
+  PropTypes,
+} from '@bkui-vue/shared';
 
 import { formKey } from './common';
 import type { IFormItemRules } from './type';

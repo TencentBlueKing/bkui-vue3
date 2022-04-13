@@ -23,8 +23,9 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { BKTab, BKTabPanel } from '@bkui-vue/tab';
 import { defineComponent, ref } from 'vue';
+
+import { BKTab, BKTabPanel } from '@bkui-vue/tab';
 export default defineComponent({
   name: 'TabDemo',
   setup() {

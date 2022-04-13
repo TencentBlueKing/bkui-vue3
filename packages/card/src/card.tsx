@@ -24,8 +24,9 @@
  * IN THE SOFTWARE.
 */
 
-import { classes, PropTypes } from '@bkui-vue/shared';
 import { computed, defineComponent } from 'vue';
+
+import { classes, PropTypes } from '@bkui-vue/shared';
 
 export default defineComponent({
   name: 'Card',
