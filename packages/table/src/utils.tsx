@@ -244,7 +244,14 @@ export const isPercentPixOrNumber = (val: string | number) => /^\d+\.?\d*(px|%)?
 export const resolvePaginationOption = (propPagination: any, defVal: any) => {
   if (!!propPagination) {
     if (typeof propPagination === 'object') {
-      return { ...propPagination, ...defVal };
+      let current = Object.prototype.hasOwnProperty.call(propPagination, 'current')
+        ? propPagination.current
+        : propPagination.value;
+      if (!/\d+/.test(current)) {
+        current = 1;
+      }
+
+      return { ...defVal, ...propPagination, current };
     }
 
     return defVal;
