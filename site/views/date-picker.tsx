@@ -24,10 +24,9 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent, reactive, toRefs } from 'vue';
-
-import BKDatePicker from '@bkui-vue/date-picker';
 import { BkButton } from '@bkui-vue/button';
+import BKDatePicker from '@bkui-vue/date-picker';
+import { defineComponent, reactive, toRefs } from 'vue';
 
 export default defineComponent({
   name: 'SiteDatePicker',

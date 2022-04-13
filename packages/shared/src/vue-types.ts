@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
 */
 
-import { VNodeChild, CSSProperties } from 'vue';
+import { CSSProperties, VNodeChild } from 'vue';
 import { createTypes, toType, VueTypeDef } from 'vue-types';
 
 const propTypesNS = createTypes({});

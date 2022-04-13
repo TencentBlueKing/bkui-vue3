@@ -24,8 +24,8 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent, computed } from 'vue';
 import { PropTypes } from '@bkui-vue/shared';
+import { computed, defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'BkDropdownItem',

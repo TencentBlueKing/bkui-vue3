@@ -24,9 +24,8 @@
 * IN THE SOFTWARE.
 */
 
-import { defineComponent, ref } from 'vue';
-
 import { BkButton, BkButtonGroup } from '@bkui-vue/button';
+import { defineComponent, ref } from 'vue';
 
 export default defineComponent({
   name: 'SiteButton',

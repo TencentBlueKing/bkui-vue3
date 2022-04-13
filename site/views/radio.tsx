@@ -24,8 +24,8 @@
 * IN THE SOFTWARE.
 */
 
-import { defineComponent, ref, watch } from 'vue';
 import { BkRadio, BkRadioButton, BkRadioGroup } from '@bkui-vue/radio';
+import { defineComponent, ref, watch } from 'vue';
 export default defineComponent({
   name: 'SiteRadio',
   setup() {

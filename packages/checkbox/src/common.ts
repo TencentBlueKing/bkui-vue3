@@ -24,31 +24,32 @@
 * IN THE SOFTWARE.
 */
 import {
-  reactive,
-  ref,
-  computed,
-  inject,
-  onMounted,
-  onBeforeUnmount,
-  getCurrentInstance,
-  nextTick,
-} from 'vue';
-import type {
-  Ref,
-  InjectionKey,
-  ComponentInternalInstance,
-} from 'vue';
-import {
   EMPTY_OBJ,
   isEmptyObj,
 } from '@bkui-vue/shared';
 import type {
-  ICheckboxGroupContext,
-  ICheckboxInstance,
-} from './type';
+  ComponentInternalInstance,
+  InjectionKey,
+  Ref,
+} from 'vue';
+import {
+  computed,
+  getCurrentInstance,
+  inject,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  reactive,
+  ref,
+} from 'vue';
+
 import type {
   CheckboxProps,
 } from './checkbox';
+import type {
+  ICheckboxGroupContext,
+  ICheckboxInstance,
+} from './type';
 
 export const checkboxGroupKey: InjectionKey<ICheckboxGroupContext> = Symbol('CheckboxGroup');
 

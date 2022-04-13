@@ -25,6 +25,7 @@
  */
 
 import { mount } from '@vue/test-utils';
+
 import BKTree from '../src';
 
 describe('tree.tsx', () => {

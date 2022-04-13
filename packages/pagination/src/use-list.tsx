@@ -25,13 +25,6 @@
 */
 
 import {
-  ref,
-  computed,
-  watch,
-  nextTick,
-  getCurrentInstance,
-} from 'vue';
-import {
   AngleLeft,
   AngleRight,
   Ellipsis,
@@ -39,6 +32,14 @@ import {
 import type {
   ComponentInternalInstance,
 } from 'vue';
+import {
+  computed,
+  getCurrentInstance,
+  nextTick,
+  ref,
+  watch,
+} from 'vue';
+
 import type {
   IPaginationInstance,
 } from './type';

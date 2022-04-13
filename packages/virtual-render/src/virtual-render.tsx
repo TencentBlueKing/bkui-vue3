@@ -29,8 +29,9 @@
  *
  * Copyright © 2012-2019 Tencent BlueKing. All Rights Reserved. 蓝鲸智云 版权所有
  */
-import { defineComponent, nextTick, reactive, ref, SetupContext, watch, h, resolveDirective, withDirectives, onMounted, computed } from 'vue';
-import { virtualRenderProps, VirtualRenderProps } from './props';
+import { computed, defineComponent, h, nextTick, onMounted, reactive, ref, resolveDirective, SetupContext, watch, withDirectives } from 'vue';
+
+import { VirtualRenderProps, virtualRenderProps } from './props';
 import virtualRender, { computedVirtualIndex } from './v-virtual-render';
 export default defineComponent({
   name: 'BkVirtualRender',

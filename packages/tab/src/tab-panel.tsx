@@ -24,8 +24,8 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent, h, VNodeChild } from 'vue';
 import { PropTypes } from '@bkui-vue/shared';
+import { defineComponent, h, VNodeChild } from 'vue';
 
 export default defineComponent({
   name: 'TabPanel',

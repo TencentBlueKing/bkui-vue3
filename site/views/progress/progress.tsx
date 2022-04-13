@@ -25,14 +25,15 @@
 */
 
 import { defineComponent, ref } from 'vue';
-import DemoTitle from '../../components/demo-title';
+
 import DemoBox from '../../components/demo-box';
+import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import { IPropsTableItem } from '../../typings';
 import BaseDemo from './base-demo.vue';
+import ChangeDemo from './change-demo.vue';
 import SizeDemo from './size-demo.vue';
 import TextDemo from './text-demo.vue';
-import ChangeDemo from './change-demo.vue';
 import TypeDemo from './type-demo.vue';
 import TypeSizeDemo from './type-size-demo.vue';
 

@@ -24,14 +24,15 @@
 * IN THE SOFTWARE.
 */
 import {
-  defineComponent,
-  provide,
-} from 'vue';
-import type { ExtractPropTypes } from 'vue';
-import {
   classes,
   PropTypes,
 } from '@bkui-vue/shared';
+import type { ExtractPropTypes } from 'vue';
+import {
+  defineComponent,
+  provide,
+} from 'vue';
+
 import { formKey } from './common';
 import type { IFormItemContext } from './type';
 

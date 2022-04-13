@@ -24,9 +24,10 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent, getCurrentInstance, onBeforeUnmount, Transition, ref, computed } from 'vue';
-import { collapseMotion, useMenuInject, useMenuPathInject, useMenuPathProvider } from './utils';
 import { AngleDown, TreeApplicationShape } from '@bkui-vue/icon/';
+import { computed, defineComponent, getCurrentInstance, onBeforeUnmount, ref, Transition } from 'vue';
+
+import { collapseMotion, useMenuInject, useMenuPathInject, useMenuPathProvider } from './utils';
 
 export const subMenuProps = {
   title: {

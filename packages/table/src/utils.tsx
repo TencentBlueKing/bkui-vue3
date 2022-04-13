@@ -24,9 +24,10 @@
 * IN THE SOFTWARE.
 */
 
-import { GroupColumn, TablePropTypes } from './props';
-import { BORDER_OPRIONS } from './const';
 import { throttle } from 'lodash';
+
+import { BORDER_OPRIONS } from './const';
+import { GroupColumn, TablePropTypes } from './props';
 
 
 /**

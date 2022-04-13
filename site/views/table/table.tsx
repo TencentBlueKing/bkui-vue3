@@ -25,18 +25,19 @@
 */
 
 import { defineComponent } from 'vue';
-import DemoTitle from '../../components/demo-title';
-import DemoBox from '../../components/demo-box';
-import PropsBox from '../../components/props-box';
+
 import { tableProps } from '../../../packages/table/src/props';
+import DemoBox from '../../components/demo-box';
+import DemoTitle from '../../components/demo-title';
+import PropsBox from '../../components/props-box';
 import { resolvePropsToDesData } from '../utils/index';
 import basic from './basic.vue';
 import bordered from './bordered.vue';
-import virtualRender from './virtual-render.vue';
 import cellRender from './cell-render';
 import event from './event.vue';
 import pagination from './pagination.vue';
 import RemotePagination from './remotePagination.vue';
+import virtualRender from './virtual-render.vue';
 
 export default defineComponent({
   components: { basic, bordered, virtualRender, cellRender, event, pagination, RemotePagination },

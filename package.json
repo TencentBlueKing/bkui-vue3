@@ -69,6 +69,7 @@
     "eslint-plugin-node": "~11.1.0",
     "eslint-plugin-prettier": "~4.0.0",
     "eslint-plugin-promise": "~6.0.0",
+    "eslint-plugin-simple-import-sort": "~7.0.0",
     "eslint-plugin-vue": "~8.6.0",
     "highlight.js": "~11.5.1",
     "husky": "~7.0.1",

@@ -24,8 +24,8 @@
  * IN THE SOFTWARE.
 */
 
-import {  defineComponent } from 'vue';
 import {  PropTypes } from '@bkui-vue/shared';
+import {  defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'Divider',

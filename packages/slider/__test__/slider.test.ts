@@ -26,6 +26,7 @@
 
 import { mount } from '@vue/test-utils';
 import { nextTick } from 'vue';
+
 import Slider from '../src';
 
 const components = {

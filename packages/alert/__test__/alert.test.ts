@@ -25,6 +25,7 @@
 */
 
 import { mount } from '@vue/test-utils';
+
 import Alert from '../src';
 
 const components = {

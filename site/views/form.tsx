@@ -24,20 +24,21 @@
 * IN THE SOFTWARE.
 */
 
-import {
-  defineComponent,
-  ref,
-  onMounted,
-  getCurrentInstance,
-  reactive,
-} from 'vue';
+import BkButton from '@bkui-vue/button';
+import BkCheckbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
 import BkForm, { BkFormItem } from '@bkui-vue/form';
 import BkInput from '@bkui-vue/input';
 import BkRadio, { BkRadioGroup } from '@bkui-vue/radio';
-import BkCheckbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
 import BkSelect from '@bkui-vue/select';
+import {
+  defineComponent,
+  getCurrentInstance,
+  onMounted,
+  reactive,
+  ref,
+} from 'vue';
+
 import BKOption from '../../packages/select/src/option';
-import BkButton from '@bkui-vue/button';
 
 export default defineComponent({
   name: 'SiteForm',
