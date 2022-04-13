@@ -46,7 +46,7 @@ describe('Slider.tsx', () => {
   it('disable', async () => {
     const wrapper = mount({
       components,
-      template: '<Slider v-model="value" disable="true"></Slider>',
+      template: '<Slider v-model="value" :disable="true"></Slider>',
       data() {
         return { value: 5 };
       },
@@ -57,7 +57,7 @@ describe('Slider.tsx', () => {
   it('range', async () => {
     const wrapper = mount({
       components,
-      template: '<Slider v-model="value" range="true"></Slider>',
+      template: '<Slider v-model="value" :range="true"></Slider>',
       data() {
         return { value: [5, 20] };
       },

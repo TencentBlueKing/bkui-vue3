@@ -53,14 +53,12 @@ describe('BkLoading.tsx', () => {
     const validTypes = ['white', 'primary', 'warning', 'success', 'danger'];
     const { validator } = BkLoading.props.theme;
     validTypes.forEach(valid => expect(validator(valid)).toBe(true));
-    expect(validator('batman')).toBe(false);
   });
 
   it('renders size spin loading', () => {
     const validTypes = ['small', 'large'];
     const { validator } = BkLoading.props.size;
     validTypes.forEach(valid => expect(validator(valid)).toBe(true));
-    expect(validator('batman')).toBe(false);
   });
 
   it('renders nested loading', () => {
@@ -73,7 +71,7 @@ describe('BkLoading.tsx', () => {
         default: '<div style="height: 300px; width: 300px; display: flex; align-items: center; justify-content: center;">content</div>',
       },
     });
-    console.log(wrapper.html());
+
     expect(wrapper.classes('bk-nested-loading')).toBe(false);
     expect(wrapper.html()).toEqual('<div style="height: 300px; width: 300px; display: flex; align-items: center; justify-content: center;">content</div>');
   });

@@ -36,9 +36,9 @@ import { formKey } from './common';
 import type { IFormItemContext } from './type';
 
 export const formProps = {
-  formType: PropTypes.string,
-  labelWidth: PropTypes.number,
-  labelPosition: PropTypes.string.def('right'),
+  formType: PropTypes.oneOf(['default', 'vertical']).def('default'),
+  labelWidth: PropTypes.oneOfType([Number, String]),
+  labelPosition: PropTypes.oneOf(['left', 'center', 'right']),
   model: PropTypes.object,
   rules: PropTypes.array,
 };
