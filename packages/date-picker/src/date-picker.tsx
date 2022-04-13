@@ -375,9 +375,9 @@ export default defineComponent({
           e.stopPropagation();
           e.preventDefault();
 
-          if (isConfirm) {
+          if (isConfirm.value) {
             const selector = '.bk-picker-confirm > *';
-            const tabbable = pickerDropdownRef.$el.querySelectorAll(selector);
+            const tabbable = pickerDropdownRef.value.$el.querySelectorAll(selector);
             state.internalFocus = true;
             const element = [...tabbable][e.shiftKey ? 'pop' : 'shift']();
             element.focus();
