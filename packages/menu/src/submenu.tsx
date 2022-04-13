@@ -24,8 +24,9 @@
  * IN THE SOFTWARE.
 */
 
-import { AngleDown, TreeApplicationShape } from '@bkui-vue/icon/';
 import { computed, defineComponent, getCurrentInstance, onBeforeUnmount, ref, Transition } from 'vue';
+
+import { AngleDown, TreeApplicationShape } from '@bkui-vue/icon/';
 
 import { collapseMotion, useMenuInject, useMenuPathInject, useMenuPathProvider } from './utils';
 

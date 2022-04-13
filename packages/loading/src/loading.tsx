@@ -24,8 +24,9 @@
  * IN THE SOFTWARE.
 */
 
-import { classes, PropTypes } from '@bkui-vue/shared';
 import { computed, defineComponent, ExtractPropTypes, VNode } from 'vue';
+
+import { classes, PropTypes } from '@bkui-vue/shared';
 
 export enum BkLoadingMode {
   Default = 'default',

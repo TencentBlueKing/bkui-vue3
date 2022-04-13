@@ -24,8 +24,9 @@
 * IN THE SOFTWARE.
 */
 
-import BkProcess from '@bkui-vue/process';
 import { defineComponent, reactive } from 'vue';
+
+import BkProcess from '@bkui-vue/process';
 export default defineComponent({
   name: 'SiteProcess',
   setup() {

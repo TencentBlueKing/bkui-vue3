@@ -24,8 +24,9 @@
  * IN THE SOFTWARE.
  */
 
-import { classes, PropTypes } from '@bkui-vue/shared';
 import { defineComponent, ExtractPropTypes, onMounted, ref } from 'vue';
+
+import { classes, PropTypes } from '@bkui-vue/shared';
 
 const timelineProps = {
   list: PropTypes.array.def([]),

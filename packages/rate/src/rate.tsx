@@ -24,8 +24,9 @@
  * IN THE SOFTWARE.
 */
 
-import { classes, PropTypes } from '@bkui-vue/shared';
 import { computed, defineComponent, Ref, ref } from 'vue';
+
+import { classes, PropTypes } from '@bkui-vue/shared';
 
 import star from './star';
 

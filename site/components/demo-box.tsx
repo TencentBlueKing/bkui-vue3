@@ -23,16 +23,17 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import './demo-box.less';
+import ClipboardJS from 'clipboard';
+import { defineComponent, getCurrentInstance, onBeforeMount, onBeforeUnmount, onMounted, ref } from 'vue';
 
 import { Code, Copy, PlayShape } from '@bkui-vue/icon';
 import BkMessage from '@bkui-vue/message';
-import ClipboardJS from 'clipboard';
-import { defineComponent, getCurrentInstance, onBeforeMount, onBeforeUnmount, onMounted, ref } from 'vue';
 
 import BoxIcon from './box-icon';
 import CodeBox from './code-box';
 import CommonBox from './common-box';
+
+import './demo-box.less';
 
 export default defineComponent({
   name: 'DemoBox',

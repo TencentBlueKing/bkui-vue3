@@ -24,8 +24,9 @@
  * IN THE SOFTWARE.
 */
 
-import { mount } from '@vue/test-utils';
 import { h } from 'vue';
+
+import { mount } from '@vue/test-utils';
 
 import BkButton, { BkButtonGroup } from '../src';
 describe('BkButtonGroup.tsx', () => {

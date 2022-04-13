@@ -24,9 +24,10 @@
 * IN THE SOFTWARE.
 */
 
+import { defineComponent, reactive } from 'vue';
+
 import { Error, Eye, Help } from '@bkui-vue/icon';
 import BkSteps from '@bkui-vue/steps';
-import { defineComponent, reactive } from 'vue';
 
 export default defineComponent({
   name: 'SiteSteps',

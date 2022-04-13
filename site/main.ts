@@ -24,13 +24,14 @@
  * IN THE SOFTWARE.
 */
 
-import './reset.less';
-
 import { createApp } from 'vue';
 
 import bkuiVue from '../packages/bkui-vue/index';
+
 import App from './app';
 import router from './router';
+
+import './reset.less';
 // import 'highlight.js/styles/default.css';
 const app = createApp(App);
 app.use(bkuiVue);

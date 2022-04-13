@@ -30,6 +30,7 @@ import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import { IPropsTableItem } from '../../typings';
+
 import BaseDemo from './base-demo.vue';
 const menuPropsJson: IPropsTableItem[] = [
   {

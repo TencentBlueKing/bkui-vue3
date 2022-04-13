@@ -24,12 +24,13 @@
  * IN THE SOFTWARE.
 */
 
+import type { ExtractPropTypes } from 'vue';
+import { defineComponent } from 'vue';
+
 import {
   classes,
   PropTypes,
 } from '@bkui-vue/shared';
-import type { ExtractPropTypes } from 'vue';
-import { defineComponent } from 'vue';
 
 import {
   useFocus,

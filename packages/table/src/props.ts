@@ -24,8 +24,9 @@
  * IN THE SOFTWARE.
  */
 
-import { PropTypes } from '@bkui-vue/shared';
 import { ExtractPropTypes } from 'vue';
+
+import { PropTypes } from '@bkui-vue/shared';
 
 import { BORDER_OPRIONS } from './const';
 

@@ -24,9 +24,10 @@
  * IN THE SOFTWARE.
 */
 
+import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, reactive, ref, SetupContext, watch } from 'vue';
+
 import { classes, resolveClassName } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
-import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, reactive, ref, SetupContext, watch } from 'vue';
 
 import { Column, IColumnActive, tableProps, TablePropTypes } from './props';
 import TableRender from './render';

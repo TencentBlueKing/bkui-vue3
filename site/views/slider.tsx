@@ -23,8 +23,9 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import Slider from '@bkui-vue/slider';
 import { defineComponent, ref } from 'vue';
+
+import Slider from '@bkui-vue/slider';
 
 export default defineComponent({
   name: 'Slider',

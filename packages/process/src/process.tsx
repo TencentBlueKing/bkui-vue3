@@ -24,9 +24,10 @@
  * IN THE SOFTWARE.
  */
 
+import { defineComponent, ExtractPropTypes, onMounted, ref } from 'vue';
+
 import { Circle, Done, Error } from '@bkui-vue/icon';
 import { classes, PropTypes } from '@bkui-vue/shared';
-import { defineComponent, ExtractPropTypes, onMounted, ref } from 'vue';
 // import { Error, Circle, Done } from '@bkui-vue/icon';
 
 const processProps = {

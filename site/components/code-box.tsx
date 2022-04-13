@@ -23,10 +23,10 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import './prism.less';
-
 import Prism from 'prismjs';
 import { defineComponent, h } from 'vue';
+
+import './prism.less';
 export default defineComponent({
   name: 'CodeBox',
   props: {

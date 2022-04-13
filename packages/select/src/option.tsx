@@ -24,7 +24,6 @@
  * IN THE SOFTWARE.
 */
 
-import { classes, PropTypes } from '@bkui-vue/shared';
 import {
   computed,
   defineComponent,
@@ -36,6 +35,8 @@ import {
   toRefs,
   watchEffect,
 } from 'vue';
+
+import { classes, PropTypes } from '@bkui-vue/shared';
 
 import { optionGroupKey, selectKey } from './common';
 

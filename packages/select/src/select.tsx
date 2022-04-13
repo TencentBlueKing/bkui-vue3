@@ -25,13 +25,6 @@
 */
 
 
-import { clickoutside } from '@bkui-vue/directives';
-import { AngleUp, Close, Spinner } from '@bkui-vue/icon';
-import BKPopover from '@bkui-vue/popover';
-import {
-  OnFirstUpdateFnType,
-  PropTypes,
-} from '@bkui-vue/shared';
 import {
   computed,
   defineComponent,
@@ -44,6 +37,14 @@ import {
   watch,
   watchEffect,
 } from 'vue';
+
+import { clickoutside } from '@bkui-vue/directives';
+import { AngleUp, Close, Spinner } from '@bkui-vue/icon';
+import BKPopover from '@bkui-vue/popover';
+import {
+  OnFirstUpdateFnType,
+  PropTypes,
+} from '@bkui-vue/shared';
 
 import useDebouncedRef, {
   ISelectState,

@@ -23,9 +23,10 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import { SetupContext } from 'vue';
+
 import Pagination from '@bkui-vue/pagination';
 import { classes } from '@bkui-vue/shared';
-import { SetupContext } from 'vue';
 
 import { TablePlugins } from './plugins/index';
 import { Column, GroupColumn, IColumnActive, IReactiveProp, TablePropTypes } from './props';

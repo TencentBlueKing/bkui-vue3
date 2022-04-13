@@ -68,7 +68,14 @@ module.exports = {
     },
   ],
   rules: {
-    'simple-import-sort/imports': 'error',
+    'simple-import-sort/imports': ['error', {
+      groups: [
+        ['^[a-zA-Z]'],
+        ['^@\\w'],
+        ['^\\.\\.'],
+        ['^\\.'],
+      ],
+    }],
 
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',

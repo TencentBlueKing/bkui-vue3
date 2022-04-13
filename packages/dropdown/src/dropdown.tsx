@@ -24,9 +24,10 @@
  * IN THE SOFTWARE.
 */
 
+import { defineComponent, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+
 import { BKPopover, classes, IBKPopover, PropTypes } from '@bkui-vue/shared';
 import { Placement } from '@popperjs/core';
-import { defineComponent, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
 
 export default defineComponent({
