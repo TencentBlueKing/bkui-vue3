@@ -34,9 +34,11 @@ import basic from './basic.vue';
 import virtualRender from './virtual-render.vue';
 import levelLine from './level-line.vue';
 import prefixIcon from './prefix-icon.vue';
+import async from './async.vue';
+import prefixIconJsx from './prefix-icon-jsx';
 
 export default defineComponent({
-  components: { basic, virtualRender, levelLine, prefixIcon },
+  components: { basic, virtualRender, levelLine, prefixIcon, async, prefixIconJsx },
   render() {
     const propsJson = resolvePropsToDesData(treeProps);
 
@@ -79,6 +81,26 @@ export default defineComponent({
         demoName: 'prefix-icon',
       },
       component: () => <prefix-icon></prefix-icon>,
+    },    {
+      attrs: {
+        title: '自定义节点Icon-jsx',
+        subtitle: '自定义节点Icon',
+        desc: 'props: prefix-icon',
+        componentName: 'tree',
+        demoName: 'prefix-icon-jsx',
+        suffix: '.tsx',
+      },
+      component: () => <prefix-icon-jsx></prefix-icon-jsx>,
+    },
+    {
+      attrs: {
+        title: '异步加载节点数据',
+        subtitle: '异步加载节点数据',
+        desc: 'props: async',
+        componentName: 'tree',
+        demoName: 'async',
+      },
+      component: () => <async></async>,
     }];
 
     return (

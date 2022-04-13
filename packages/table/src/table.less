@@ -1,9 +1,14 @@
 @import '@bkui-vue/styles/themes/themes.less';
 
 .@{bk-prefix}-table {
-  overflow: auto;
+  overflow: hidden;
+  height: 100%;
   border-top: 1px solid @table-border-color;
   border-bottom: 1px solid @table-border-color;
+  .@{bk-prefix}-table-body {
+    overflow: auto;
+  }
+
   .@{bk-prefix}-table-head,
   .@{bk-prefix}-table-body {
     background: @table-bg-color;
@@ -53,6 +58,10 @@
         }
       }
     }
+  }
+
+  .@{bk-prefix}-table-footer {
+    line-height: 40px;
   }
 
   &.bordered-row {

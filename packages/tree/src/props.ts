@@ -87,6 +87,25 @@ export const treeProps = {
     PropTypes.func.def(() => {}),
     PropTypes.bool.def(false),
   ]).def(true),
+
+  /**
+   * 异步加载节点数据配置
+   * @param callback 请求数据回调函数，函数返回 Promise
+   * @param cache 是否缓存请求结果，默认为True，只有在第一次才会发起请求，若设置为false则每次都会发起请求
+   */
+  async: PropTypes.shape<AsyncOption>({
+    callback: PropTypes.func.def(null),
+    cache: PropTypes.bool.def(true),
+  }),
+
+  /**
+   * 每个节点偏移左侧距离
+   */
+  offsetLeft: PropTypes.number.def(15),
 };
 
+type AsyncOption = {
+  callback: (item, cb) => Promise<any>,
+  cache: Boolean
+};
 export type TreePropTypes = Readonly<ExtractPropTypes<typeof treeProps>>;

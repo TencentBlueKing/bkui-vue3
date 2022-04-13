@@ -34,9 +34,12 @@ import basic from './basic.vue';
 import bordered from './bordered.vue';
 import virtualRender from './virtual-render.vue';
 import cellRender from './cell-render';
+import event from './event.vue';
+import pagination from './pagination.vue';
+import RemotePagination from './remotePagination.vue';
 
 export default defineComponent({
-  components: { basic, bordered, virtualRender, cellRender },
+  components: { basic, bordered, virtualRender, cellRender, event, pagination, RemotePagination },
   render() {
     const menuPropsJson = resolvePropsToDesData(tableProps);
 
@@ -80,6 +83,36 @@ export default defineComponent({
         suffix: '.tsx',
       },
       component: () => <cell-render></cell-render>,
+    },
+    {
+      attrs: {
+        title: 'Events',
+        subtitle: '自定义Column渲染',
+        desc: 'props: column.render',
+        componentName: 'table',
+        demoName: 'event',
+      },
+      component: () => <event></event>,
+    },
+    {
+      attrs: {
+        title: 'Pagination - Local',
+        subtitle: '分页配置',
+        desc: 'props: pagination',
+        componentName: 'table',
+        demoName: 'pagination',
+      },
+      component: () => <pagination></pagination>,
+    },
+    {
+      attrs: {
+        title: 'Pagination - Remote',
+        subtitle: '分页配置: remote-pagination = true',
+        desc: 'props: pagination',
+        componentName: 'table',
+        demoName: 'remotePagination',
+      },
+      component: () => <RemotePagination></RemotePagination>,
     }];
 
     return (

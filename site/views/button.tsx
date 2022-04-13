@@ -59,7 +59,8 @@ export default defineComponent({
           <BkButton size={this.buttonSize} theme="danger">danger</BkButton>
           <BkButton size="large" theme="warning">warning</BkButton>
           <BkButton theme={this.theme} onClick={this.changeTheme} >primary</BkButton>
-          <BkButton size="small" loading={true} theme="primary"></BkButton>
+          <BkButton size="small" loading={true}></BkButton>
+          <BkButton size="small" loading={true} theme="primary" laodingMode='default'></BkButton>
         </div>
 
         <div>

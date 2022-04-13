@@ -55,8 +55,9 @@ export interface OriginComponent {
 
 export const withInstall = <T extends OriginComponent>(
   component: T) => {
-  component.install = function (app: App) {
-    app.component(component.name, component);
+  component.install = function (app: App, { prefix } = {}) {
+    const pre = app.config.globalProperties.bkUIPrefix || prefix || 'Bk';
+    app.component(pre + component.name, component);
   };
   return component as typeof component & Plugin;
 };

@@ -34,20 +34,55 @@ export default defineComponent({
       changeVal: '',
       inputValue: '',
       passwordVal: 'password',
+      ivalue: 'aaa',
     });
 
     function handleInputChange(val) {
       console.log('handleChange', val);
     }
+    function handleInput(val) {
+      console.log('handleInput', val);
+    }
+
+    function handleKeyup(val, e) {
+      console.log(e.type, val);
+    }
+
+    function handlePaste(v) {
+      console.log(v);
+    }
+    function handleEnter(v) {
+      console.log('handleEnter, ', v);
+    }
+
+    function handleiValueInput(v) {
+      state.ivalue = v;
+    }
+
     return () => (
-      <div>
-        <BkInput prefix="https://" style="margin: 10px 0" modelValue={state.changeVal}
-          onChange={handleInputChange} placeholder="请输入" clearable />
-        <BkInput style="margin: 10px 0"  v-model={state.numberValue} clearable max={100} min={0} step={2}
-          precision={3} type="number" />
-        <BkInput style="margin: 10px 0" maxlength={state.numberValue} v-model={state.inputValue} type="search" />
+      <div style="margin: 20px">
+        <BkInput
+          style="margin: 10px 0"
+          prefix="https://"
+          modelValue={state.changeVal}
+          onChange={handleInputChange}
+          onInput={handleInput}
+          placeholder="请输入"
+          clearable
+        />
+        <BkInput
+          style="margin: 10px 0"
+          v-model={state.numberValue}
+          clearable
+          max={100}
+          min={0}
+          step={2}
+          precision={3} type="number"
+        />
+        <BkInput style="margin: 10px 0" showWordLimit maxlength={state.numberValue} v-model={state.inputValue} type="search" />
         <BkInput style="margin: 10px 0" type="url" suffix='@qq.com'/>
-        <BkInput style="margin: 10px 0" v-model={state.passwordVal} clearable type="password" />
+        <BkInput style="margin: 10px 0" onPaste={handlePaste} onKeypress={handleKeyup} v-model={state.passwordVal} clearable type="password" />
+        <BkInput style="margin: 10px 0" size="large" modelValue={state.ivalue} onKeypress={handleKeyup} onKeyup={handleKeyup} onKeydown={handleKeyup} onInput={handleiValueInput} onEnter={handleEnter} />
         <BkInput style="margin: 10px 0" readonly size="small">
           {{
             prefix: () => (
@@ -63,6 +98,7 @@ export default defineComponent({
           }}
         </BkInput>
         <BkInput style="margin: 10px 0" disabled size="large" />
+        <BkInput style="margin: 10px 0" behavior='simplicity' showClearOnlyHover v-model={state.inputValue} clearable />
       </div>
     );
   },

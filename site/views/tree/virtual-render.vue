@@ -12,6 +12,7 @@
       <bk-tree
         :data="treeData"
         :virtual-render="true"
+        :level-line="true"
         label="name"
         children="children"
       />
