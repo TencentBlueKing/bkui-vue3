@@ -28,6 +28,10 @@ import { ExtractPropTypes } from 'vue';
 import { PropTypes } from '@bkui-vue/shared';
 import { BORDER_OPRIONS } from './const';
 
+const EventProps = {
+  onRowClick: Function,
+};
+
 export const tableProps = {
   /**
    * 渲染列表
@@ -81,6 +85,11 @@ export const tableProps = {
   headHeight: PropTypes.number.def(40),
 
   /**
+   * 是否显示Head
+   */
+  showHead: PropTypes.bool.def(true),
+
+  /**
    * 是否启用虚拟渲染 & 滚动
    * 当数据量很大时，启用虚拟渲染可以解决压面卡顿问题
    */
@@ -91,6 +100,15 @@ export const tableProps = {
    * 生效规则: 除非单独设置 none,否则会追加每个设置
    */
   border: PropTypes.arrayOf(PropTypes.commonType(BORDER_OPRIONS, 'border')).def(['row']),
+
+  /**
+   * 分页配置
+   * 默认值为false，不启用分页
+   * 设置为 true，启用分页功能，默认值参考分页组件 Pagination
+   */
+  pagination: PropTypes.oneOfType([PropTypes.bool.def(false), PropTypes.object.def({})]).def(false),
+
+  ...EventProps,
 
   // /**
   //  * Table Caption Config
@@ -110,6 +128,10 @@ export type Column = {
   render?: Function | string;
   width?: number | string;
 };
+
+export type GroupColumn = {
+  calcWidth?: number;
+} & Column;
 
 export type Columns = ReadonlyArray<Column>;
 export type TablePropTypes = Readonly<ExtractPropTypes<typeof tableProps>>;

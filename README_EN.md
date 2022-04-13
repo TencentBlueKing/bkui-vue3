@@ -10,26 +10,31 @@ English | [简体中文](README.md)
 A UI library base on BlueKing Magicbox and Vue3
 
 ## Project setup
+
 ```
 yarn install
 ```
 
 ### Compiles and hot-reloads for development
+
 ```
 yarn dev
 ```
 
 ### Compiles and minifies for production
+
 ```
 yarn build
 ```
 
 ### Run your unit tests
+
 ```
 yarn test
 ```
 
 ### Lints and fixes files
+
 ```
 yarn lint
 ```
@@ -41,10 +46,9 @@ yarn lint
 * Execute the command `yarn generate:icon`
 * Use similar syntax `import { HelpFill } from '@bkui-vue/icon/';` in the component to reference
 
-
 ## How to get started
 
-If you want to contribute code, it is recommended to refer to the existing feature documentation and development environment build documentation first. You can run `npm run plop` and enter the component name to generate a new component template
+If you want to contribute code, it is recommended to refer to the existing feature documentation and development environment build documentation first. You can run `yarn cc` and enter the component name to generate a new component template
 
 ## GIT commit specification
 
@@ -72,7 +76,7 @@ Add chanelog automatic generation mechanism
 ISSUES CLOSED: #1
 ```
 
-### tag description:
+### tag description
 
 | tag           | description                                        |
 | -------------- | ------------------------------------------- |

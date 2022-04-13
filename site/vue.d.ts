@@ -24,12 +24,11 @@
 * IN THE SOFTWARE.
 */
 declare module '*.vue' {
-  import type { ComponentOptions, ComponentOptions } from 'vue';
-  const Component: ComponentOptions;
+  import type { DefineComponent } from 'vue';
+  const component: DefineComponent;
   export default Component;
 }
 declare module '*.md' {
-  ;
-  const Component: ComponentOptions;
+  const component: DefineComponent;
   export default Component;
 }

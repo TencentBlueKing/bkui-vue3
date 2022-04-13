@@ -25,6 +25,21 @@
 */
 
 /**
+ * 前端格式转换为服务器格式
+ * @param fieldName ：字段名称
+ */
+export function formatPropName(fieldName: string): string {
+  let name = fieldName;
+  if (name === undefined || name === null) {
+    name = '';
+  }
+  function upperToServeLower(match: string) {
+    return `-${match.toLowerCase()}`;
+  }
+  return (name.startsWith('-') && name) || name.replace(/[A-Z]/g, upperToServeLower);
+}
+
+/**
  * 解析Props为说明文档
  * @param props
  * @returns
@@ -38,7 +53,7 @@ export const resolvePropsToDesData = (props: any) => {
     if (typeof obj === 'function') {
       const val = obj();
       if (typeof val === 'object') {
-        return Array.isArray(val) ? 'Array' : 'Object';
+        return Array.isArray(val) ? 'array' : 'object';
       }
 
       return typeof val;
@@ -55,7 +70,7 @@ export const resolvePropsToDesData = (props: any) => {
   return Object.keys(props).map((key: string) => {
     const item = props[key];
     return {
-      name: key,
+      name: formatPropName(key),
       type: getType(item.type),
       default: getDefaultVal(item.default),
       desc: '',

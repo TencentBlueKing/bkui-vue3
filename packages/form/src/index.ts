@@ -24,20 +24,20 @@
  * IN THE SOFTWARE.
 */
 
-import type { App } from 'vue';
-import Form from './form';
+import { withInstallProps } from '@bkui-vue/shared';
+
+import Form, { formProps } from './form';
 import FormItem from './form-item';
 
-Form.install = (Vue: App) => {
-  Vue.component(Form.name, Form);
-  Vue.component(FormItem.name, FormItem);
-};
 
-Form.FormItem = FormItem;
+const BkForm = withInstallProps(Form, { FormItem });
+
+export default BkForm;
 
 export {
-  FormItem,
+  BkForm,
   FormItem as BkFormItem,
 };
-
-export default Form;
+export type {
+  formProps,
+};

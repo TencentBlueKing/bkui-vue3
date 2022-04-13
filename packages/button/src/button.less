@@ -16,7 +16,7 @@
 @themeSelectors: primary, warning, success, danger;
 @sizeSelectors: small, large;
 
-.bk-button {
+.@{bk-prefix}-button {
   display: inline-block;
   height: @btnHeight;
   min-width: @btnMinWidth;
@@ -35,13 +35,12 @@
   box-sizing: border-box;
   transition: background-color ease .3s;
   appearance: none;
-
   
   each(@themeSelectors, {
     @color: '@{value}-color';
     @hoverColor: 'button-@{value}-hover-color';
     @activeColor: 'button-@{value}-active-color';
-    &.bk-button-@{value} {
+    &.@{bk-prefix}-button-@{value} {
       background-color: @@color;
       color: @white-color;
       border-color: @@color;
@@ -54,6 +53,7 @@
       &:active {
         background-color: @@activeColor;
         border-color: @@activeColor;
+        color: @white-color;
       }
 
       &.is-disabled {
@@ -82,7 +82,7 @@
       }
     }
 
-    &.bk-button-hover-@{value} {
+    &.@{bk-prefix}-button-hover-@{value} {
       &:hover {
         background-color: @@hoverColor;
         border-color: @@hoverColor;
@@ -96,13 +96,20 @@
     @sizeBtnMinWidth: '@{value}BtnMinWidth';
     @sizeBtnHeight: '@{value}BtnHeight';
     @sizeBtnPadding: '@{value}BtnPadding';
-    &.bk-button-@{value} {
+    &.@{bk-prefix}-button-@{value} {
       min-width: @@sizeBtnMinWidth;
       height: @@sizeBtnHeight;
+      line-height: @@sizeBtnHeight;
       padding: 0 @@sizeBtnPadding;
     }
   })
 ;
+
+  .@{bk-prefix}-button-loading {
+    &:not(:last-child) {
+      margin-right: @smallBtnPadding;
+    }
+  }
 
   &:hover {
     border-color: @button-default-hover-border-color;
@@ -129,7 +136,7 @@
     outline: none;
   }}
 
-.bk-button-group {
+.@{bk-prefix}-button-group {
   display: inline-block;
   font-size: 0;
 
@@ -137,8 +144,8 @@
     @sizeBtnMinWidth: '@{value}BtnMinWidth';
     @sizeBtnHeight: '@{value}BtnHeight';
     @sizeBtnPadding: '@{value}BtnPadding';
-    &.bk-button-group-@{value} {
-      .bk-button {
+    &.@{bk-prefix}-button-group-@{value} {
+      .@{bk-prefix}-button {
         min-width: @@sizeBtnMinWidth;
         height: @@sizeBtnHeight;
         padding: 0 @@sizeBtnPadding;
@@ -147,7 +154,7 @@
   })
 ;
 
-  .bk-button {
+  .@{bk-prefix}-button {
     height: @btnHeight;
     min-width: @btnMinWidth;
     margin: 0 0 0 -1px;
@@ -181,4 +188,5 @@
       border-color: @primary-color;
     }
 
-  }}
+  }
+}

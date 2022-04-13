@@ -6,35 +6,21 @@
     line-height: var(--lineHeight);
     cursor: pointer;
 
-    &.is-open {
-      &:not(.is-virtual-render) {
-        &::after {
-          position: absolute;
-          top: calc(var(--lineHeight) / 2 + 6px);
-          left: 6px;
-          z-index: 1;
-          width: 0;
-          height: calc(var(--lines) * var(--lineHeight) - 6px);
-          pointer-events: none;
-          border-left: var(--level-line);
-          content: '';
-        }
-      }
-    }
-
     &:not(.is-root) {
       margin-left: calc(var(--depth)*var(--indent));
 
-      &::before {
-        position: absolute;
-        top: calc(50% + 1px);
-        left: calc(0px - var(--indent) + 6px);
-        z-index: 1;
-        width: calc(var(--indent) - 6px);
-        height: 0;
-        pointer-events: none;
-        border-bottom: var(--level-line);
-        content: '';
+      &.level-line {
+        &::before {
+          position: absolute;
+          top: calc(50% + 1px);
+          left: calc(0px - var(--indent) + 6px);
+          z-index: 1;
+          width: calc(var(--indent) - 6px);
+          height: 0;
+          pointer-events: none;
+          border-bottom: var(--level-line);
+          content: '';
+        }
       }
     }
 

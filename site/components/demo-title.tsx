@@ -30,15 +30,18 @@ import './demo-title.less';
 export default defineComponent({
   name: 'DemoTitile',
   props: {
-    desc: {
-      type: String,
-      required: true,
-    },
     name: {
       type: String,
       required: true,
     },
-    link: String,
+    desc: {
+      type: String,
+      default: '',
+    },
+    link: {
+      type: String,
+      default: '',
+    },
   },
   setup() {
     // const { name } = useRoute();

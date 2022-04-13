@@ -32,9 +32,13 @@ import { tableProps } from '../../../packages/table/src/props';
 import { resolvePropsToDesData } from '../utils/index';
 import basic from './basic.vue';
 import bordered from './bordered.vue';
+import virtualRender from './virtual-render.vue';
+import cellRender from './cell-render';
+import event from './event.vue';
+import pagination from './pagination.vue';
 
 export default defineComponent({
-  components: { basic, bordered },
+  components: { basic, bordered, virtualRender, cellRender, event, pagination },
   render() {
     const menuPropsJson = resolvePropsToDesData(tableProps);
 
@@ -57,6 +61,47 @@ export default defineComponent({
         demoName: 'bordered',
       },
       component: () => <bordered></bordered>,
+    },
+    {
+      attrs: {
+        title: '启用虚拟滚动-渲染大数据表格',
+        subtitle: '大数据模式启用虚拟滚动',
+        desc: 'props: virtual-enabled',
+        componentName: 'table',
+        demoName: 'virtual-render',
+      },
+      component: () => <virtual-render></virtual-render>,
+    },
+    {
+      attrs: {
+        title: '自定义Column渲染',
+        subtitle: '自定义Column渲染',
+        desc: 'props: column.render',
+        componentName: 'table',
+        demoName: 'cell-render',
+        suffix: '.tsx',
+      },
+      component: () => <cell-render></cell-render>,
+    },
+    {
+      attrs: {
+        title: 'Events',
+        subtitle: '自定义Column渲染',
+        desc: 'props: column.render',
+        componentName: 'table',
+        demoName: 'event',
+      },
+      component: () => <event></event>,
+    },
+    {
+      attrs: {
+        title: 'Events',
+        subtitle: '自定义Column渲染',
+        desc: 'props: pagination',
+        componentName: 'table',
+        demoName: 'pagination',
+      },
+      component: () => <pagination></pagination>,
     }];
 
     return (
