@@ -24,6 +24,7 @@
  * IN THE SOFTWARE.
  */
 
+import { resolveClassName } from '@bkui-vue/shared';
 import { v4 as uuidv4 } from 'uuid';
 
 import { TreePropTypes } from './props';
@@ -222,7 +223,7 @@ export const getNodeRowClass = (item: any, schema: any) => {
   const { __checked } = getSchemaVal(schema as Map<string, any>, item.__uuid) || {};
   return {
     'is-checked': __checked,
-    'bk-node-row': true,
+    [resolveClassName('node-row')]: true,
   };
 };
 

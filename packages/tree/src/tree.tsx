@@ -23,12 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
-import { computed, defineComponent, h, reactive, SetupContext, watch } from 'vue';
-
-import { DownShape, Folder, FolderShapeOpen, RightShape, Spinner, TextFile } from '@bkui-vue/icon/';
-import VirtualRender from '@bkui-vue/virtual-render';
-
-import { treeProps, TreePropTypes as defineTypes } from './props';
+import { defineComponent, watch, reactive, computed, h, SetupContext, onMounted, ref, onUpdated } from 'vue';
 import {
   assignTreeNode,
   getFlatdata,
@@ -39,12 +34,17 @@ import {
   getTreeStyle,
   updateTreeNode,
 } from './util';
+import { Folder, FolderShapeOpen, TextFile, DownShape, RightShape, Spinner } from '@bkui-vue/icon/';
+import { treeProps, TreePropTypes as defineTypes } from './props';
+import VirtualRender from '@bkui-vue/virtual-render';
+import { resolveClassName } from '@bkui-vue/shared';
 
 export type TreePropTypes = defineTypes;
 
 export default defineComponent({
   name: 'Tree',
   props: treeProps,
+  emits: ['check'],
 
   setup(props: TreePropTypes, ctx: SetupContext) {
     const formatData = getFlatdata(props);
@@ -102,14 +102,15 @@ export default defineComponent({
       return false;
     };
 
+
     /**
      * 根据当前节点状态获取节点类型Icon
      * @param item
      * @returns
      */
     const getRootIcon = (item: any) => (isItemOpen(item)
-      ? <FolderShapeOpen class="bk-tree-icon" />
-      : <Folder class="bk-tree-icon" />);
+      ? <FolderShapeOpen class={ resolveClassName('tree-icon') } />
+      : <Folder class={ resolveClassName('tree-icon') } />);
 
 
     /**
@@ -174,7 +175,7 @@ export default defineComponent({
       }
 
       if (prefixFnVal === 'default' || (typeof props.prefixIcon === 'boolean' && props.prefixIcon)) {
-        return isRootNode(item) || hasChildNode(item) ? getRootIcon(item) : <TextFile class="bk-tree-icon" />;
+        return isRootNode(item) || hasChildNode(item) ? getRootIcon(item) : <TextFile class={ resolveClassName('tree-icon') } />;
       }
 
       return null;
@@ -309,9 +310,20 @@ export default defineComponent({
         .map((index: number) => <span class="node-virtual-line" style={ getNodeLineStyle(maxDeep - index) }></span>);
     };
 
+    const root = ref();
+    const setNodeTextStyle = () => {};
+    onMounted(() => {
+      setNodeTextStyle();
+    });
+
+    onUpdated(() => {
+      setNodeTextStyle();
+    });
+
     return {
       renderData,
       flatData,
+      root,
       hanldeTreeNodeClick,
       handleNodeContentClick,
       handleNodeActionClick,
@@ -344,12 +356,14 @@ export default defineComponent({
       </div>
     </div>;
 
-    return <VirtualRender class="bk-tree"
+    return <VirtualRender class={ resolveClassName('tree') }
     style={getTreeStyle(null, props)}
     list={this.renderData}
     lineHeight={props.lineHeight}
     enabled={props.virtualRender}
-    throttleDelay={0}>
+    contentClassName={ resolveClassName('container') }
+    throttleDelay={0}
+    ref='root'>
     {
       {
         default: (scoped: any) => (scoped.data || []).map(renderTreeNode),
