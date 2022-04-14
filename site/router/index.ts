@@ -368,7 +368,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/swiper',
     name: 'swiper',
-    component: () => import('../views/swiper/swiper'),
+    component: () => import('../views/swiper'),
     meta: {
       group: NavGroupMeta.Data,
       navName: 'Swiper 轮播图',
