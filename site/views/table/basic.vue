@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 300px; width: 100%;">
+  <div style="height: 300px; width: 100%">
     <bk-table
       :columns="columns"
       :data="tableData"
