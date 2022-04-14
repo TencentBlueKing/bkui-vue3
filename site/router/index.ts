@@ -319,7 +319,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/select',
     name: 'select',
-    component: () => import('../views/select'),
+    component: () => import('../views/select/select'),
     meta: {
       group: NavGroupMeta.Form,
       navName: 'Select 下拉选框',

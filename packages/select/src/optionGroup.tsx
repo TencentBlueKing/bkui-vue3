@@ -24,9 +24,22 @@
 * IN THE SOFTWARE.
 */
 import { PropTypes, classes } from '@bkui-vue/shared';
-import { ref, defineComponent, reactive, toRefs, provide, onMounted, getCurrentInstance, toRef, computed } from 'vue';
-import { optionGroupKey, OptionInstanceType } from './common';
+import {
+  defineComponent,
+  reactive,
+  toRefs,
+  provide,
+  toRef,
+  computed,
+  inject,
+  onBeforeMount,
+  onBeforeUnmount,
+  getCurrentInstance,
+  ref,
+} from 'vue';
+import { optionGroupKey, useRegistry, selectKey } from './common';
 import { AngleUpFill } from '@bkui-vue/icon';
+import { OptionInstanceType } from './type';
 
 export default defineComponent({
   name: 'Group',
@@ -34,59 +47,47 @@ export default defineComponent({
     label: PropTypes.string.def(''),
     disabled: PropTypes.bool.def(false),
     collapsible: PropTypes.bool.def(false), // 是否开启折叠
-    collapse: PropTypes.bool.def(false), // 是否折叠
+    collapse: PropTypes.bool.def(false), // 是否折叠初始状态
   },
   setup(props, { emit }) {
-    const children = ref<OptionInstanceType[]>([]);
-    const instance = getCurrentInstance();
+    const { proxy } = getCurrentInstance() as any;
+    const select = inject(selectKey, null);
+
     const states = reactive({
       groupCollapse: props.collapse,
       visible: true,
     });
-    const groupLabel = computed(() => `${props.label} (${children.value.filter(option => option.visible).length})`);
-
-    provide(
-      optionGroupKey,
-      reactive({
-        ...toRefs(props),
-        groupCollapse: toRef(states, 'groupCollapse'),
-      }),
-    );
-
-    const flattedChildren = (node) => {
-      const children = [];
-      if (Array.isArray(node.children)) {
-        node.children.forEach((child) => {
-          if (
-            child.type
-            && child.type.name === 'Option'
-            && child.component
-            && child.component.proxy
-          ) {
-            children.push(child.component.proxy);
-          } else if (child.children?.length) {
-            children.push(...flattedChildren(child));
-          }
-        });
-      }
-      return children;
-    };
-
+    const options = ref<Set<OptionInstanceType>>(new Set());
+    const { register, unregister } = useRegistry<OptionInstanceType>(options);
+    const groupLabel = computed(() => `${props.label} (${[...options.value.values()].filter(option => option.visible).length})`);
 
     const handleToggleCollapse = () => {
-      if (!props.collapsible) return;
+      if (!props.collapsible || props.disabled) return;
 
       states.groupCollapse = !states.groupCollapse;
       emit('update:collapse', states.groupCollapse);
     };
 
-    onMounted(() => {
-      children.value = flattedChildren(instance.subTree);
+    provide(
+      optionGroupKey,
+      reactive({
+        ...toRefs(props),
+        register,
+        unregister,
+        groupCollapse: toRef(states, 'groupCollapse'),
+      }),
+    );
+
+    onBeforeMount(() => {
+      select?.registerGroup(proxy);
+    });
+
+    onBeforeUnmount(() => {
+      select?.unregisterGroup(proxy);
     });
 
     return {
       ...toRefs(states),
-      children,
       groupLabel,
       handleToggleCollapse,
     };
@@ -95,6 +96,7 @@ export default defineComponent({
     const groupClass = classes({
       'bk-option-group': true,
       collapsible: this.collapsible,
+      disabled: this.disabled,
     });
     const groupLabelClass = classes({
       'bk-option-group-label': true,
@@ -113,18 +115,14 @@ export default defineComponent({
             : (
               <span class="default-group-label">
                 {
-                  this.collapsible
-                    ? <AngleUpFill class={groupLabelIconClass}></AngleUpFill>
-                    : null
+                  this.collapsible && <AngleUpFill class={groupLabelIconClass}></AngleUpFill>
                 }
-                <span class="default-group-label-title">
-                  {this.groupLabel}
-                </span>
+                <span class="default-group-label-title">{this.groupLabel}</span>
               </span>
             )
         }
       </li>
-      <ul class="bk-option-group-content">
+      <ul class="bk-option-group-content" v-show={!this.groupCollapse}>
         {this.$slots.default?.()}
       </ul>
     </ul>;

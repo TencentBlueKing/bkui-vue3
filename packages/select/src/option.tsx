@@ -34,7 +34,6 @@ import {
   onBeforeUnmount,
   reactive,
   toRefs,
-  watchEffect,
 } from 'vue';
 import { selectKey, optionGroupKey } from './common';
 
@@ -47,31 +46,17 @@ export default defineComponent({
   },
   setup(props) {
     const { proxy } = getCurrentInstance() as any;
+
     const states = reactive({
       visible: true,
     });
 
-    const { disabled, label } = toRefs(props);
+    const { disabled } = toRefs(props);
     const select = inject(selectKey, null);
     const group = inject(optionGroupKey, null);
     const selected = computed<boolean>(() => select.selectedOptions.has(proxy));
     const multiple = computed<boolean>(() => select?.props.multiple);
-    watchEffect(() => {
-      if (group?.groupCollapse) {
-        states.visible = false;
-      } else if (!select?.isRemoteSearch && select?.searchKey) {
-        states.visible = toLowerCase(String(label.value))?.includes(toLowerCase(select?.searchKey));
-      } else {
-        states.visible = true;
-      }
-    });
 
-    const toLowerCase = (value = '') => {
-      if (!value) return value;
-
-      return String(value).trim()
-        .toLowerCase();
-    };
     const handleOptionClick = () => {
       if (disabled.value) return;
       select?.handleOptionSelected(proxy);
@@ -79,10 +64,12 @@ export default defineComponent({
 
     onBeforeMount(() => {
       select?.register(proxy);
+      group?.register(proxy);
     });
 
     onBeforeUnmount(() => {
       select?.unregister(proxy);
+      group?.unregister(proxy);
     });
 
     return {

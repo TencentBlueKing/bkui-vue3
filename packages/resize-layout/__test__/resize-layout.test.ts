@@ -24,12 +24,10 @@
  * IN THE SOFTWARE.
 */
 
-import { mount } from '@vue/test-utils';
+// import { mount } from '@vue/test-utils';
 import ResizeLayout from '../src';
 describe('ResizeLayout.tsx', () => {
   it('test', async () => {
-    const wrapper = await mount(ResizeLayout);
-    // todo
-    console.log(wrapper);
+    console.log(ResizeLayout);
   });
 });

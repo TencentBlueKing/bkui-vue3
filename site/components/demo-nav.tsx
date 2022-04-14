@@ -24,7 +24,7 @@
 * IN THE SOFTWARE.
 */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { defineComponent, reactive, toRefs, ref, nextTick, watch } from 'vue';
+import { defineComponent, reactive, toRefs, ref, nextTick, watch, renderList } from 'vue';
 import BkInput from '@bkui-vue/input';
 import BKPopover from '@bkui-vue/popover';
 import { clickoutside } from '@bkui-vue/directives';
@@ -232,6 +232,13 @@ export default defineComponent({
       popperWidth.value = (reference as HTMLElement).offsetWidth;
     };
 
+    const handleChooseCom = (e) => {
+      const item = state.renderList[state.selectIndex];
+      if (!item) return;
+
+      changeRouter(item, true);
+    };
+
     return {
       ...toRefs(state),
       getNavGroup,
@@ -243,6 +250,7 @@ export default defineComponent({
       onPopoverFirstUpdate,
       searchListContainerRef,
       navListRef,
+      handleChooseCom,
     };
   },
   render() {
@@ -275,7 +283,8 @@ export default defineComponent({
               <BkInput class="demo-nav-input" type="search" clearable={true} v-model={this.searchVal}
                 onInput={this.searchHandler}
                 onClear={this.hidePopover}
-                onKeydown={this.keyupHandler} />
+                onKeydown={this.keyupHandler}
+                onEnter={this.handleChooseCom} />
             ),
             content: () => (
               <div class="search-dropdown-list">
