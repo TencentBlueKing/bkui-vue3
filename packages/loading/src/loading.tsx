@@ -34,9 +34,9 @@ export enum BkLoadingMode {
 }
 
 export enum BkLoadingSize {
+  Normal = '',
   Mini = 'mini',
   Small = 'small',
-  Normal = '',
   Large = 'large',
 }
 
@@ -52,7 +52,7 @@ export const loadingTypes = {
   loading: PropTypes.bool,
   theme: PropTypes.theme(['white', 'primary', 'warning', 'success', 'danger']),
   title: PropTypes.string.def(''),
-  size: PropTypes.oneOf(Object.values(BkLoadingSize)).def(BkLoadingSize.Normal),
+  size: PropTypes.commonType(Object.values(BkLoadingSize)).def(BkLoadingSize.Normal),
   mode: PropTypes.commonType(Object.values(BkLoadingMode)).def('default'),
 };
 
