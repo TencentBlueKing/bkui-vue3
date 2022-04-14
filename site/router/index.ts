@@ -363,6 +363,18 @@ const routes: RouteRecordRaw[] = [
     },
   },
   /**
+   * @description:轮播图
+   */
+  {
+    path: '/swiper',
+    name: 'swiper',
+    component: () => import('../views/swiper/swiper'),
+    meta: {
+      group: NavGroupMeta.Data,
+      navName: 'Swiper 轮播图',
+    },
+  },
+  /**
    * @description:表格
    */
   {
