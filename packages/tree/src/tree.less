@@ -48,8 +48,15 @@
       margin: 0 6px 0 4px;
     }
 
-    .node-content {
-      display: inline-block;
+    .@{bk-prefix}-node-content {
+      display: inline-flex;
+      align-items: center;
+
+      .@{bk-prefix}-node-text {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
     }
   }
 }

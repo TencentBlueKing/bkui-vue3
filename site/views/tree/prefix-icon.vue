@@ -2,43 +2,19 @@
   <div style="height: 300px; width: 100%; overflow: auto; display: flex">
     <div style="width: 25%">
       <span>prefix-icon: true</span>
-      <bk-tree
-        :data="treeData"
-        :level-line="true"
-        :prefix-icon="true"
-        label="name"
-        children="children"
-      />
+      <bk-tree :data="treeData" :level-line="true" :prefix-icon="true" label="name" children="children" />
     </div>
     <div style="width: 25%">
       <span>function 函数返回 'default' 将会调用系统默认样式</span>
-      <bk-tree
-        :data="treeData"
-        :level-line="true"
-        :prefix-icon="getPrefixIcon"
-        label="name"
-        children="children"
-      />
+      <bk-tree :data="treeData" :level-line="true" :prefix-icon="getPrefixIcon" label="name" children="children" />
     </div>
     <div style="width: 25%">
       <span>function 返回字符串</span>
-      <bk-tree
-        :data="treeData"
-        :level-line="true"
-        :prefix-icon="getPrefixIcon2"
-        label="name"
-        children="children"
-      />
+      <bk-tree :data="treeData" :level-line="true" :prefix-icon="getPrefixIcon2" label="name" children="children" />
     </div>
     <div style="width: 25%">
       <span>function 返回对象</span>
-      <bk-tree
-        :data="treeData"
-        :level-line="true"
-        :prefix-icon="getPrefixIcon3"
-        label="name"
-        children="children"
-      />
+      <bk-tree :data="treeData" :level-line="true" :prefix-icon="getPrefixIcon3" label="name" children="children" />
     </div>
   </div>
 </template>
@@ -83,7 +59,6 @@ const getPrefixIcon3 = (isRoot, hasChild, isOpen, renderType, item) => {
       text: '0',
       style: {
         fontSize: '12px',
-        textAlign: 'center',
       },
     };
   }
@@ -94,7 +69,6 @@ const getPrefixIcon3 = (isRoot, hasChild, isOpen, renderType, item) => {
     text: '1',
     style: {
       fontSize: '8px',
-      textAlign: 'center',
     },
   };
 };
@@ -106,6 +80,8 @@ const getPrefixIcon3 = (isRoot, hasChild, isOpen, renderType, item) => {
   width: 18px;
   height: 18px;
   background: #cccc;
+  display: flex;
+  align-items: center;
 }
 
 .custom-root {

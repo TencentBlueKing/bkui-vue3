@@ -72,10 +72,28 @@ export default defineComponent({
 
     const schemaValues = computed(() => Array.from(flatData.schema.values()));
 
+    /**
+     * 获取Schema中指定的对象值
+     * @param key 
+     * @returns 
+     */
     const getSchemaVal = (key: string) => ((flatData.schema as Map<string, any>).get(key));
 
+    /**
+     * 获取节点属性
+     * @param node 当前节点
+     * @param attr 节点属性
+     * @returns 
+     */
     const getNodeAttr = (node: any, attr: string) => getSchemaVal(node.__uuid)?.[attr];
 
+    /**
+     * 设置节点属性
+     * @param node 指定节点
+     * @param attr 节点属性
+     * @param val 属性值
+     * @returns 
+     */
     const setNodeAttr = (node: any, attr: string, val: any) => (flatData.schema as Map<string, any>).set(node.__uuid, {
       ...getSchemaVal(node.__uuid),
       [attr]: val,
@@ -90,6 +108,11 @@ export default defineComponent({
     const renderData = computed(() => flatData.data
       .filter(item => checkNodeIsOpen(item)));
 
+    /**
+     * 判定指定节点是否为展开状态
+     * @param item 节点或者节点 UUID
+     * @returns 
+     */
     const isItemOpen = (item: any) => {
       if (typeof item === 'object') {
         return isNodeOpened(item);
@@ -311,7 +334,21 @@ export default defineComponent({
     };
 
     const root = ref();
-    const setNodeTextStyle = () => {};
+    const setNodeTextStyle = () => {
+      if(root.value && root.value.$el) {
+        const selector = `.${resolveClassName('tree-node')}`;
+        const ctxSelector = `.${resolveClassName('node-content')}`;
+        Array.prototype.forEach.call(root.value.$el.querySelectorAll(selector), (nodeEl: HTMLElement) => {
+          
+          const txtSpans = nodeEl.querySelectorAll(`${ctxSelector} span`);
+          const lastSpan = Array.prototype.slice.call(txtSpans, -1)[0];
+          if (lastSpan) {
+            const maxWidth = nodeEl.offsetWidth - lastSpan.offsetLeft;
+            (lastSpan as HTMLElement).style.setProperty('max-width', `${maxWidth}px`);
+          }
+        })
+      }
+    };
     onMounted(() => {
       setNodeTextStyle();
     });
@@ -340,15 +377,15 @@ export default defineComponent({
     const renderTreeNode = (item: any) => <div class={ getNodeRowClass(item, this.flatData.schema) }>
       <div class={getNodeItemClass(item, this.flatData.schema, props)}
         style={getNodeItemStyle(item, props, this.flatData)}>
-        <span class="node-action" onClick={() => this.handleNodeActionClick(item)}>{ this.getActionIcon(item) }</span>
-        <span class="node-content" onClick={() => this.handleNodeContentClick(item)}>
+        <span class={ resolveClassName('node-action') } onClick={() => this.handleNodeActionClick(item)}>{ this.getActionIcon(item) }</span>
+        <span class={ resolveClassName('node-content') } onClick={() => this.handleNodeContentClick(item)}>
           {
             [
               this.getNodePrefixIcon(item),
               this.getLoadingIcon(item),
             ]
           }
-          <span>{getLabel(item, props)}</span>
+          <span class={ resolveClassName('node-text') }>{getLabel(item, props)}</span>
         </span>
         {
           this.getVirtualLines(item)
