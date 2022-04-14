@@ -31,14 +31,6 @@ import BkButton from '@bkui-vue/button';
 
 export default defineComponent({
   name: 'SiteAnimateNumber',
-  render() {
-    return (
-      <div>
-        <BKAnimateNumber value={ this.num }></BKAnimateNumber>
-        <BkButton onClick={ this.addNum }>+</BkButton>
-      </div>
-    );
-  },
   data() {
     return {
       num: 20,
@@ -48,5 +40,13 @@ export default defineComponent({
     addNum() {
       this.num += 20;
     },
+  },
+  render() {
+    return (
+      <div>
+        <BKAnimateNumber value={ this.num }></BKAnimateNumber>
+        <BkButton onClick={ this.addNum }>+</BkButton>
+      </div>
+    );
   },
 });

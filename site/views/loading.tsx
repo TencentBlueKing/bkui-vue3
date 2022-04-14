@@ -26,8 +26,8 @@
 
 import { defineComponent } from 'vue';
 
-import { BkLoading, BkLoadingMode, BkLoadingSize } from '@bkui-vue/loading';
 import { Help } from '@bkui-vue/icon';
+import { BkLoading, BkLoadingMode, BkLoadingSize } from '@bkui-vue/loading';
 
 // BkLoading.setDefaultIndicator(<span style="font-size: 14px;"><Help /></span>);
 
@@ -40,11 +40,11 @@ export default defineComponent({
   render() {
     return (
       <div>
-        <BkLoading title="normal loading" mode={BkLoadingMode.Spin} theme="primary" />
-        <BkLoading title="small loading" mode={BkLoadingMode.Spin} size={BkLoadingSize.Small} />
+        <BkLoading title="normal loading" mode={BkLoadingMode.Spin} />
+        <BkLoading title="small loading" mode={BkLoadingMode.Spin} />
         <BkLoading title="large loading" mode={BkLoadingMode.Spin} size={BkLoadingSize.Large} />
         <BkLoading style="font-size:40px; margin:0 10px;" title="customIndicator" indicator={Help}></BkLoading>
-        <BkLoading title="loading">
+        <BkLoading title="loading" loading theme='primary'>
           <div style="height: 300px; width: 300px; display: flex; align-items:center; justify-content: center;">
             content
           </div>

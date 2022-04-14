@@ -25,9 +25,11 @@
 */
 
 import {
-  Component, defineComponent, getCurrentInstance, onMounted, onUpdated, ref, Fragment, ComponentInternalInstance, VNode,
+  Component, ComponentInternalInstance, defineComponent, Fragment, getCurrentInstance, onMounted, onUpdated, ref, VNode,
 } from 'vue';
+
 import { PropTypes } from '@bkui-vue/shared';
+
 import TabNav from './tab-nav';
 export default defineComponent({
   name: 'Tab',
@@ -58,33 +60,6 @@ export default defineComponent({
     // 新方法
     'add', 'change', 'remove', 'update:active', 'sort', 'drag',
   ],
-  methods: {
-    tabAdd(e: MouseEvent) {
-      this.$emit('add', { e });
-      this.$emit('add-panel', { e });
-    },
-    tabChange(name: string) {
-      // emit('xxx') 会调用onXxx函数, 所以不必在主动调用onXxx函数了
-      this.$emit('change', name);
-      this.$emit('tab-change', name);
-      this.$emit('update:active', name);
-    },
-    tabRemove(index: number, panel) {
-      // emit('xxx') 会调用onXxx函数, 所以不必在主动调用onXxx函数了
-      this.$emit('remove', index, panel);
-      this.$emit('close-panel', index, panel);
-    },
-    tabSort(dragTabIndex: number, dropTabIndex: number) {
-      // emit('xxx') 会调用onXxx函数, 所以不必在主动调用onXxx函数了
-      this.$emit('sort', dragTabIndex, dropTabIndex);
-      this.$emit('sort-change', dragTabIndex, dropTabIndex);
-    },
-    tabDrag(dragTabIndex: number, dragEvent: DragEvent) {
-      // emit('xxx') 会调用onXxx函数, 所以不必在主动调用onXxx函数了
-      this.$emit('drag', dragTabIndex, dragEvent);
-      this.$emit('on-drag-tab', dragTabIndex, dragEvent);
-    },
-  },
   setup(_props: Record<string, any>, { slots }) {
     /* const panels = slots.default();
     return {
@@ -141,6 +116,33 @@ export default defineComponent({
       isMounted,
       panels,
     };
+  },
+  methods: {
+    tabAdd(e: MouseEvent) {
+      this.$emit('add', { e });
+      this.$emit('add-panel', { e });
+    },
+    tabChange(name: string) {
+      // emit('xxx') 会调用onXxx函数, 所以不必在主动调用onXxx函数了
+      this.$emit('change', name);
+      this.$emit('tab-change', name);
+      this.$emit('update:active', name);
+    },
+    tabRemove(index: number, panel) {
+      // emit('xxx') 会调用onXxx函数, 所以不必在主动调用onXxx函数了
+      this.$emit('remove', index, panel);
+      this.$emit('close-panel', index, panel);
+    },
+    tabSort(dragTabIndex: number, dropTabIndex: number) {
+      // emit('xxx') 会调用onXxx函数, 所以不必在主动调用onXxx函数了
+      this.$emit('sort', dragTabIndex, dropTabIndex);
+      this.$emit('sort-change', dragTabIndex, dropTabIndex);
+    },
+    tabDrag(dragTabIndex: number, dragEvent: DragEvent) {
+      // emit('xxx') 会调用onXxx函数, 所以不必在主动调用onXxx函数了
+      this.$emit('drag', dragTabIndex, dragEvent);
+      this.$emit('on-drag-tab', dragTabIndex, dragEvent);
+    },
   },
   render() {
     const getTabBoxClass = () => {

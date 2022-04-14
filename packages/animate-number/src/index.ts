@@ -24,7 +24,8 @@
  * IN THE SOFTWARE.
 */
 
-import Component from './animate-number';
 import { withInstall } from '@bkui-vue/shared';
+
+import Component from './animate-number';
 const BkAnimateNumber = withInstall(Component);
 export default BkAnimateNumber;

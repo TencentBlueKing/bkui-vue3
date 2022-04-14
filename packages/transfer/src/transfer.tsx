@@ -25,16 +25,17 @@
  */
 
 import {
+  computed,
   defineComponent,
   ExtractPropTypes,
-  ref,
   PropType,
-  computed,
+  ref,
   watch,
 } from 'vue';
-import { PropTypes, isEmpty } from '@bkui-vue/shared';
+
 import { ArrowsRight, Error } from '@bkui-vue/icon/';
 import BkInput from '@bkui-vue/input';
+import { isEmpty, PropTypes } from '@bkui-vue/shared';
 
 const transferProps = {
   title: Array as PropType<string[]>,

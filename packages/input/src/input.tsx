@@ -25,8 +25,10 @@
 */
 
 import { computed, defineComponent, ExtractPropTypes, ref } from 'vue';
-import { classes, PropTypes } from '@bkui-vue/shared';
-import { Close, Search, Eye, DownSmall, Unvisible } from '@bkui-vue/icon';
+
+import { Close, DownSmall, Eye, Search, Unvisible } from '@bkui-vue/icon';
+import { classes, ElementType, PropTypes, stringEnum } from '@bkui-vue/shared';
+
 
 export const inputType = {
   type: PropTypes.string.def('text'),
@@ -42,22 +44,29 @@ export const inputType = {
   max: PropTypes.integer,
   min: PropTypes.integer,
   maxlength: PropTypes.integer,
+  behavior: PropTypes.commonType(['simplicity', 'normal']).def('normal'),
   showWordLimit: PropTypes.bool,
   showControl: PropTypes.bool.def(true),
+  showClearOnlyHover: PropTypes.bool.def(false),
   precision: PropTypes.number.def(0).validate(val => val >= 0 && val < 20),
   modelValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   size: PropTypes.size(),
 };
 
+
+const inputEvents = ['update:modelValue', 'focus', 'blur', 'change', 'clear', 'input', 'keypress', 'keydown', 'keyup', 'enter', 'paste'] as const;
+const EventEnum = stringEnum([...inputEvents]);
+type InputEventUnion = ElementType<typeof inputEvents>;
 export type InputType = ExtractPropTypes<typeof inputType> ;
 
 export default defineComponent({
   name: 'Input',
   inheritAttrs: false,
   props: inputType,
-  emits: ['update:modelValue', 'focus', 'blur', 'change', 'clear', 'input', 'keydown'],
+  emits: [...inputEvents],
   setup(props, ctx) {
     const isFocused = ref(false);
+    const isCNInput = ref(false);
     const inputClsPrefix = 'bk-input';
     const { class: cls, style, ...inputAttrs } = ctx.attrs;
     const inputCls = computed(() => classes({
@@ -65,6 +74,7 @@ export default defineComponent({
       'is-focused': isFocused.value,
       'is-readonly': props.readonly,
       'is-disabled': props.disabled,
+      'is-simplicity': props.behavior === 'simplicity',
       [`${cls}`]: !!cls,
     }, inputClsPrefix));
     const suffixIconMap = {
@@ -82,40 +92,73 @@ export default defineComponent({
     const isNumberInput = computed(() => props.type === 'number');
     const ceilMaxLength = computed(() => Math.floor(props.maxlength));
     const pwdVisible = ref(false);
+    const clearCls = computed(() => classes({
+      'show-clear-only-hover': props.showClearOnlyHover,
+    }, suffixCls));
 
     function clear() {
-      ctx.emit('update:modelValue', '');
-      ctx.emit('change', '');
-      ctx.emit('clear');
+      ctx.emit(EventEnum['update:modelValue'], '');
+      ctx.emit(EventEnum.change, '');
+      ctx.emit(EventEnum.clear);
     }
 
     function handleFocus(e) {
       isFocused.value = true;
-      ctx.emit('focus', e);
+      ctx.emit(EventEnum.focus, e);
     }
 
     function handleBlur(e) {
       isFocused.value = false;
-      ctx.emit('blur', e);
+      ctx.emit(EventEnum.blur, e);
+    }
+    // 事件句柄生成器
+    function eventHandler(eventName: InputEventUnion) {
+      return (e) => {
+        let originEventName = eventName;
+        if (e.code === 'Enter' || e.key === 'Enter' || e.keyCode === 13) {
+          originEventName = EventEnum.enter;
+          if (e.type !== EventEnum.keyup) return;
+        }
+        if (isCNInput.value && [EventEnum.input, EventEnum.change].some(e => eventName === e)) return;
+        if (eventName === EventEnum.input) {
+          ctx.emit(EventEnum['update:modelValue'], isNumberInput.value ? +e.target.value : e.target.value);
+        }
+
+        ctx.emit(originEventName, e.target.value, e);
+      };
+    }
+    const [
+      handleKeyup,
+      handleKeydown,
+      handleKeyPress,
+      handlePaste,
+      handleChange,
+      handleInput,
+    ] = [
+      EventEnum.keyup,
+      EventEnum.keydown,
+      EventEnum.keypress,
+      EventEnum.paste,
+      EventEnum.change,
+      EventEnum.input,
+    ].map(eventHandler);
+
+    // 输入法启用时
+    function handleCompositionStart() {
+      isCNInput.value = true;
     }
 
-    function handleInput(e) {
-      ctx.emit('update:modelValue', isNumberInput.value ? +e.target.value : e.target.value);
-      ctx.emit('input', e.target.value);
-    }
-
-    function handleKeydown(e) {
-      ctx.emit('keydown', e.target.value, e);
-    }
-
-    function handleChange(e) {
-      ctx.emit('change', e.target.value, e);
+    // 输入法输入结束时
+    function handleCompositionEnd(e) {
+      isCNInput.value = false;
+      handleInput(e);
     }
 
     function handleNumber(step: number, INC = true) {
+      const numStep = parseInt(String(step), 10);
       const precision = Number.isInteger(props.precision) ? props.precision : 0;
       const val: number = parseFloat(props.modelValue.toString());
-      const factor = Number.isInteger(step) ? step : 1;
+      const factor = Number.isInteger(numStep) ? numStep : 1;
 
       let newVal = val + (INC ? factor :  -1 * factor);
       if (Number.isInteger(props.max)) {
@@ -129,13 +172,13 @@ export default defineComponent({
     }
 
     function handleInc() {
-      const newVal = handleNumber(parseInt(String(props.step), 10));
-      ctx.emit('update:modelValue', newVal);
+      const newVal = handleNumber(props.step);
+      ctx.emit(EventEnum['update:modelValue'], newVal);
     }
 
     function handleDec() {
-      const newVal = handleNumber(parseInt(String(props.step), 10), false);
-      ctx.emit('update:modelValue', newVal);
+      const newVal = handleNumber(props.step, false);
+      ctx.emit(EventEnum['update:modelValue'], newVal);
     }
 
     function getCls(name) {
@@ -168,10 +211,15 @@ export default defineComponent({
           onInput={handleInput}
           onFocus={handleFocus}
           onBlur={handleBlur}
+          onPaste={handlePaste}
           onChange={handleChange}
+          onKeypress={handleKeyPress}
           onKeydown={handleKeydown}
+          onKeyup={handleKeyup}
+          onCompositionstart={handleCompositionStart}
+          onCompositionend={handleCompositionEnd}
         />
-        {props.clearable && !!props.modelValue && <Close onClick={clear} class={suffixCls} />}
+        {props.clearable && !!props.modelValue && <Close onClick={clear} class={clearCls.value} />}
         {suffixIcon.value}
         {
           typeof props.maxlength === 'number' && props.showWordLimit && (

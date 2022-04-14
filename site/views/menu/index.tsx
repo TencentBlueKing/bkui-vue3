@@ -25,38 +25,40 @@
 */
 
 import { defineComponent } from 'vue';
-import DemoTitle from '../../components/demo-title';
+
 import DemoBox from '../../components/demo-box';
+import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import { IPropsTableItem } from '../../typings';
-import BaseDemo from './baseDemo';
-const propsJson: IPropsTableItem[] = [
+
+import BaseDemo from './base-demo.vue';
+const menuPropsJson: IPropsTableItem[] = [
   {
-    name: 'active',
+    name: 'activeKey',
     type: 'String',
     default: '',
-    desc: '当前显示的选项卡名称',
+    desc: '选中的menu的key',
     optional: [],
   },
   {
-    name: 'type',
-    type: 'String',
-    default: ['border-card'],
-    desc: '选项卡样式',
-    optional: ['card', 'border-card', 'unborder-card'],
+    name: 'OpenedKeys',
+    type: 'Array',
+    default: [],
+    desc: '打开的submenu key值',
+    optional: [],
   },
   {
-    name: 'tab-position',
+    name: 'mode',
     type: 'String',
-    default: 'top',
-    desc: '选项卡位置',
-    optional: ['left', 'right', 'top'],
+    default: 'vertical',
+    desc: '展示方式',
+    optional: ['vertical', 'horizontal'],
   },
   {
-    name: 'closable',
+    name: 'uniqueOpen',
     type: 'Boolean',
     default: 'true',
-    desc: '是否可关闭选项卡',
+    desc: '是否唯一展开一个submenu',
     optional: [],
   },
 ];
@@ -65,18 +67,18 @@ export default defineComponent({
     return (
       <div>
         <DemoTitle
-          name="tab"
-          desc="Tab 选项卡，用于承载同一层级下不同页面或类别的组件，方便用户在同一个页面框架下进行快速切换。 。"
+          name="Menu"
+          desc="Menu组件， 为页面和功能提供导航的菜单列表。"
           link="https://www.google.com.hk/"/>
         <DemoBox
           title="基础用法"
-          subtitle="基础的、简洁的标签页。"
-          desc=""
+          subtitle="基础用法，用于表单内容的录入"
+          desc="垂直菜单，子菜单内嵌在菜单区域。"
           componentName="menu"
           demoName="base-demo">
              <BaseDemo/>
           </DemoBox>
-        <PropsBox propsData={propsJson}/>
+        <PropsBox propsData={menuPropsJson}/>
       </div>
     );
   },

@@ -25,14 +25,14 @@
 */
 import { defineComponent, watch, reactive, computed, h, SetupContext, onMounted, ref, onUpdated } from 'vue';
 import {
+  assignTreeNode,
   getFlatdata,
   getLabel,
-  getNodeItemStyle,
   getNodeItemClass,
+  getNodeItemStyle,
+  getNodeRowClass,
   getTreeStyle,
   updateTreeNode,
-  assignTreeNode,
-  getNodeRowClass,
 } from './util';
 import { Folder, FolderShapeOpen, TextFile, DownShape, RightShape, Spinner } from '@bkui-vue/icon/';
 import { treeProps, TreePropTypes as defineTypes } from './props';

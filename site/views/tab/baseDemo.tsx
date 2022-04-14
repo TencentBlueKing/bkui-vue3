@@ -24,6 +24,7 @@
 * IN THE SOFTWARE.
 */
 import { defineComponent, ref } from 'vue';
+
 import { BKTab, BKTabPanel } from '@bkui-vue/tab';
 export default defineComponent({
   name: 'TabDemo',

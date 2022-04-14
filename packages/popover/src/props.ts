@@ -25,7 +25,8 @@
  */
 
 import { ExtractPropTypes, PropType } from 'vue';
-import { PropTypes, OnFirstUpdateFnType } from '@bkui-vue/shared';
+
+import { OnFirstUpdateFnType, PropTypes } from '@bkui-vue/shared';
 const placements = ['auto', 'auto-start', 'auto-end', 'top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end', 'right', 'right-start', 'right-end', 'left', 'left-start', 'left-end'];
 export const PopoverProps = {
   isShow: PropTypes.bool,

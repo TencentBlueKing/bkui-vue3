@@ -25,10 +25,11 @@
 */
 
 import { defineComponent } from 'vue';
+
 import BkButton from '@bkui-vue/button';
-import BkSideslider from '@bkui-vue/sideslider';
 import BkDialog from '@bkui-vue/dialog';
 import BkPopover from '@bkui-vue/popover';
+import BkSideslider from '@bkui-vue/sideslider';
 export default defineComponent({
   name: 'PopConmponents',
   data() {

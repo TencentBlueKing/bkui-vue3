@@ -25,14 +25,16 @@
 */
 
 import { computed, defineComponent, ExtractPropTypes, VNode } from 'vue';
+
 import { classes, PropTypes } from '@bkui-vue/shared';
 
 export enum BkLoadingMode {
-  Spin = 'spin',
   Default = 'default',
+  Spin = 'spin',
 }
 
 export enum BkLoadingSize {
+  Mini = 'mini',
   Small = 'small',
   Large = 'large',
 }
@@ -49,8 +51,8 @@ export const loadingTypes = {
   loading: PropTypes.bool,
   theme: PropTypes.theme(['white', 'primary', 'warning', 'success', 'danger']),
   title: PropTypes.string.def(''),
-  size: PropTypes.size(),
-  mode: PropTypes.oneOf(Object.values(BkLoadingMode)),
+  size: PropTypes.commonType(Object.values(BkLoadingSize)).def('small'),
+  mode: PropTypes.commonType(Object.values(BkLoadingMode)).def('default'),
 };
 
 export type LoadingTypes = ExtractPropTypes<typeof loadingTypes>;
@@ -72,16 +74,16 @@ export default defineComponent({
     const loadingWrapperCls = computed(() =>  classes({
       'bk-nested-loading': !!ctx.slots.default,
     }, 'bk-loading-wrapper'));
-
+    console.log(props.theme);
     const containerCls = computed(() =>  classes({
-      [`bk-loading-size-${props.size}`]: !props.size,
-      [`bk-loading-${props.theme}`]: !props.theme,
+      [`bk-loading-size-${props.size}`]: !!props.size,
+      [`bk-loading-${props.theme}`]: !!props.theme,
     }, 'bk-loading-indicator'));
     const hasTitle = computed(() => !!props.title);
 
 
     const indicator = computed(() => {
-      const isSpinMode = props.mode === 'spin';
+      const isSpinMode = props.mode === BkLoadingMode.Spin;
       if (typeof props.indicator === 'function') {
         return <props.indicator />;
       } if (typeof defaultIndicator === 'function') {

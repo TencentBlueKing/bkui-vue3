@@ -23,10 +23,11 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
-import Component from './radio';
-import RadioGroup from './radio-group';
-import RadioButton from './radio-button';
 import { withInstallProps } from '@bkui-vue/shared';
+
+import Component from './radio';
+import RadioButton from './radio-button';
+import RadioGroup from './radio-group';
 const BkRadio = withInstallProps(Component, { Group: RadioGroup, Button: RadioButton });
 export default BkRadio;
 export {

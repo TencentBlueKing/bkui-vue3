@@ -23,9 +23,10 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
+import { withInstall } from '@bkui-vue/shared';
+
 import Tab from './tab';
 import TabPanel from './tab-panel';
-import { withInstall } from '@bkui-vue/shared';
 export const BKTab = withInstall(Tab);
 export const BKTabPanel = withInstall(TabPanel);
 export default BKTab;

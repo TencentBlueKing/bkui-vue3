@@ -25,6 +25,7 @@
 */
 
 import { defineComponent, ref } from 'vue';
+
 import { BkCheckbox, BkCheckboxGroup } from '@bkui-vue/checkbox';
 export default defineComponent({
   name: 'SiteCheckbox',

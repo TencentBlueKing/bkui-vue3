@@ -25,54 +25,66 @@
 */
 
 import { defineComponent } from 'vue';
-import DemoTitle from '../../components/demo-title';
+
 import DemoBox from '../../components/demo-box';
+import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
-import { virtualRenderProps } from '../../../packages/virtual-render/src/props';
-import { resolvePropsToDesData } from '../utils/index';
-import basic from './basic.vue';
-import customLineHeight from './custom-line-height.vue';
+import { IPropsTableItem } from '../../typings';
+
+import BaseDemo from './base-demo.vue';
+import RangeDemo from './range-demo.vue';
+
+const menuPropsJson: IPropsTableItem[] = [
+  {
+    name: 'activeKey',
+    type: 'String',
+    default: '',
+    desc: '选中的menu的key',
+    optional: [],
+  },
+  {
+    name: 'OpenedKeys',
+    type: 'Array',
+    default: [],
+    desc: '打开的submenu key值',
+    optional: [],
+  },
+  {
+    name: 'mode',
+    type: 'String',
+    default: 'vertical',
+    desc: '展示方式',
+    optional: ['vertical', 'horizontal'],
+  },
+  {
+    name: 'uniqueOpen',
+    type: 'Boolean',
+    default: 'true',
+    desc: '是否唯一展开一个submenu',
+    optional: [],
+  },
+];
 
 export default defineComponent({
-  components: { basic, customLineHeight },
   render() {
-    const propsJson = resolvePropsToDesData(virtualRenderProps);
-
-    const configs = [{
-      attrs: {
-        title: '基础用法',
-        subtitle: '基础用法，用于表单内容的录入',
-        desc: 'props: --',
-        componentName: 'virtual-render',
-        demoName: 'basic',
-      },
-      component: () => <basic></basic>,
-    }, {
-      attrs: {
-        title: '自定义行高',
-        subtitle: '每行高度不一致，自定义每行高度',
-        desc: 'props: --',
-        componentName: 'virtual-render',
-        demoName: 'custom-line-height',
-      },
-      component: () => <custom-line-height></custom-line-height>,
-    },
-    ];
-
     return (
       <div>
-        <DemoTitle
-          name="virtual-render"
-          desc="virtual-render 为页面和功能提供列表。"
-          link="https://www.google.com.hk/"/>
-          {
-            configs.map(cfg => <DemoBox { ...cfg.attrs }>
-                 {
-                   cfg.component()
-                 }
-              </DemoBox>)
-          }
-        <PropsBox propsData={propsJson}/>
+        <DemoTitle name="DatePicker 日期选择器" desc="日期选择器" />
+          <DemoBox
+            title="基础用法"
+            desc="通过 v-model 或者 value 设置初始值"
+            componentName="date-picker"
+            demoName="base-demo">
+              <BaseDemo />
+          </DemoBox>
+          <DemoBox
+            title="开启日期范围"
+            desc="通过设置 type 属性为 daterange 来开启时间设置"
+            componentName="date-picker"
+            demoName="range-demo">
+              <RangeDemo />
+          </DemoBox>
+        <PropsBox propsData={menuPropsJson}/>
       </div>
     );
   },

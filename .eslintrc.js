@@ -26,8 +26,25 @@
 
 module.exports = {
   root: true,
-  extends: ['eslint-config-tencent', 'plugin:vue/recommended'],
-  plugins: ['codecc'],
+  extends: [
+    'plugin:vue/vue3-recommended',
+    'eslint-config-tencent',
+  ],
+  parserOptions: {
+    parser: '@typescript-eslint/parser',
+    ecmaVersion: 2019,
+    sourceType: 'module',
+  },
+  plugins: [
+    'codecc',
+    'simple-import-sort',
+  ],
+  env: {
+    es6: true,
+    node: true,
+    jest: true,
+    browser: true,
+  },
   overrides: [
     {
       files: ['*.ts', '*.tsx'],
@@ -35,6 +52,7 @@ module.exports = {
     },
     {
       files: ['*.vue'],
+      parser: require.resolve('vue-eslint-parser'),
       rules: {
         'codecc/license': 'off',
       },
@@ -50,6 +68,15 @@ module.exports = {
     },
   ],
   rules: {
+    'simple-import-sort/imports': ['error', {
+      groups: [
+        ['^[a-zA-Z]'],
+        ['^@\\w'],
+        ['^\\.\\.'],
+        ['^\\.'],
+      ],
+    }],
+
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'codecc/license': ['error', {
@@ -92,5 +119,8 @@ module.exports = {
         ignoreTemplateLiterals: true,
       },
     ],
+    'vue/multi-word-component-names': 'off',
+    'vue/no-setup-props-destructure': 'off',
+    'vue/require-default-prop': 'off',
   },
 };

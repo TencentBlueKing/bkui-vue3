@@ -27,14 +27,14 @@
 import {
   createPopper,
   Instance,
-  VirtualElement,
-  Placement,
   Modifier,
+  Placement,
   PositioningStrategy,
   State,
+  VirtualElement,
 } from '@popperjs/core';
 
-import { isElement, merge } from './bk-helper-core';
+import { isElement, merge } from './helper';
 
 export type OnFirstUpdateFnType = (instance: Partial<State>) => void;
 export declare type IOptions = {
@@ -119,7 +119,7 @@ export class BKPopover {
     this.reference = this.resolveInputSelectorToHtmlElement(reference);
     this.popperRefer = this.resolveInputSelectorToHtmlElement(popperRefer);
     this.referenceTarget = this.getTargetReferenceElement();
-    this.container = (this.popperRefer || {}).parentElement;
+    this.container = this.popperRefer?.parentElement;
     this.isShow = !!this.instanceOptions?.isShow;
     this.trigger = this.instanceOptions.trigger;
     this.disabled = this.instanceOptions.disabled;

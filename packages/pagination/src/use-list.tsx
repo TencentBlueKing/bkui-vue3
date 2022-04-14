@@ -24,21 +24,23 @@
 * IN THE SOFTWARE.
 */
 
-import {
-  ref,
-  computed,
-  watch,
-  nextTick,
-  getCurrentInstance,
+import type {
+  ComponentInternalInstance,
 } from 'vue';
+import {
+  computed,
+  getCurrentInstance,
+  nextTick,
+  ref,
+  watch,
+} from 'vue';
+
 import {
   AngleLeft,
   AngleRight,
   Ellipsis,
 } from '@bkui-vue/icon';
-import type {
-  ComponentInternalInstance,
-} from 'vue';
+
 import type {
   IPaginationInstance,
 } from './type';

@@ -24,9 +24,11 @@
  * IN THE SOFTWARE.
  */
 
-import { defineComponent, computed, ExtractPropTypes, PropType } from 'vue';
+import { computed, defineComponent, ExtractPropTypes, PropType, ref } from 'vue';
+
+import BkLoading, { BkLoadingMode, BkLoadingSize } from '@bkui-vue/loading';
 import { classes, PropTypes } from '@bkui-vue/shared';
-import BkLoading, { BkLoadingSize } from '@bkui-vue/loading';
+
 
 type IButtonNativeType = PropType<'button' | 'submit' | 'reset'>;
 
@@ -35,8 +37,11 @@ const buttonProps = {
   hoverTheme: PropTypes.theme(['primary', 'warning', 'success', 'danger']).def(''),
   size: PropTypes.size(),
   title: PropTypes.string,
+  icon: PropTypes.string,
+  iconRight: PropTypes.string,
   disabled: PropTypes.bool,
   loading: PropTypes.bool,
+  laodingMode: PropTypes.commonType(Object.values(BkLoadingMode)),
   outline: PropTypes.bool,
   text: PropTypes.bool,
   nativeType: {
@@ -48,9 +53,10 @@ export type ButtonPropTypes = ExtractPropTypes<typeof buttonProps>;
 
 export default defineComponent({
   name: 'Button',
-  emits: ['click'],
   props: buttonProps,
+  emits: ['click', 'mouseover'],
   setup(props, { slots, attrs, emit }) {
+    const isHover = ref(false);
     const showSlot = slots.default ?? false;
     const btnClsPrefix = 'bk-button';
     const btnCls = computed(() => {
@@ -68,9 +74,14 @@ export default defineComponent({
       }, `${themeCls} ${btnClsPrefix} ${hoverTheme}`);
     });
 
-    const bkLoadingCls = `${btnClsPrefix}-loading`;
-    const loadingTheme = ['', 'default'].includes(props.theme) ? 'default' : 'white';
-
+    const loadingTheme = computed(() => {
+      if (props.text || props.outline || props.hoverTheme) {
+        if (isHover.value && !props.text) return 'white';
+        return props.hoverTheme || props.theme;
+      }
+      return ['', 'default'].includes(props.theme) ? '' : 'white';
+    });
+    const loadingSize = computed(() => (props.size === BkLoadingSize.Small ? BkLoadingSize.Mini : BkLoadingSize.Small));
     const handleClick = () => {
       /**
        * Success event.
@@ -78,6 +89,16 @@ export default defineComponent({
        */
       emit('click');
     };
+
+    const handleMouseOver = () => {
+      isHover.value = true;
+      emit('mouseover');
+    };
+
+    const handleMouseout = () => {
+      isHover.value = false;
+    };
+
 
     return () => (
       <button
@@ -87,18 +108,19 @@ export default defineComponent({
         type={props.nativeType}
         {...attrs}
         onClick={handleClick}
+        onMouseover={handleMouseOver}
+        onMouseleave={handleMouseout}
       >
         {
-          props.loading ? (
-            <div class={bkLoadingCls}>
-              <BkLoading theme={loadingTheme} size={BkLoadingSize.Small} />
-            </div>
-          ) : (
-            <div class="bk-button-content-wrapper">
-              <span>{slots.default?.() ?? 'default'}</span>
-            </div>
+          props.loading && (
+            <BkLoading
+              class={`${btnClsPrefix}-loading`}
+              mode={props.laodingMode}
+              theme={loadingTheme.value}
+              size={loadingSize.value} />
           )
         }
+        {slots.default && <span class={`${btnClsPrefix}-text`}>{slots.default?.()}</span>}
       </button>
     );
   },

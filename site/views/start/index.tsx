@@ -23,61 +23,21 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-
 import { defineComponent } from 'vue';
+
 import DemoTitle from '../../components/demo-title';
-import DemoBox from '../../components/demo-box';
-import PropsBox from '../../components/props-box';
-import { IPropsTableItem } from '../../typings';
-import BaseDemo from './base-demo.vue';
-const menuPropsJson: IPropsTableItem[] = [
-  {
-    name: 'activeKey',
-    type: 'String',
-    default: '',
-    desc: '选中的menu的key',
-    optional: [],
-  },
-  {
-    name: 'OpenedKeys',
-    type: 'Array',
-    default: [],
-    desc: '打开的submenu key值',
-    optional: [],
-  },
-  {
-    name: 'mode',
-    type: 'String',
-    default: 'vertical',
-    desc: '展示方式',
-    optional: ['vertical', 'horizontal'],
-  },
-  {
-    name: 'uniqueOpen',
-    type: 'Boolean',
-    default: 'true',
-    desc: '是否唯一展开一个submenu',
-    optional: [],
-  },
-];
+
+import StartMd from './start.md';
 export default defineComponent({
   render() {
     return (
-      <div>
+      <div style="background: white">
         <DemoTitle
-          name="Menu"
-          desc="Menu组件， 为页面和功能提供导航的菜单列表。"
-          link="https://www.google.com.hk/"/>
-        <DemoBox
-          title="基础用法"
-          subtitle="基础用法，用于表单内容的录入"
-          desc="垂直菜单，子菜单内嵌在菜单区域。"
-          componentName="menu"
-          demoName="base-demo">
-             <BaseDemo/>
-          </DemoBox>
-        <PropsBox propsData={menuPropsJson}/>
+          name="快速上手"
+          desc="本节介绍如何在项目中结合 webpack 一起使用 @blueking/bkui-vue。"/>
+          <StartMd/>
       </div>
     );
   },
 });
+

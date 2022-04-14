@@ -24,11 +24,12 @@
  * IN THE SOFTWARE.
 */
 
-import { computed, defineComponent, toRefs, watch, onMounted, ref, onBeforeUnmount, SetupContext, Transition, nextTick } from 'vue';
+import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, ref, SetupContext, toRefs, Transition, watch } from 'vue';
+
 import {
-  IBKPopover,
   BKPopover,
   bkZIndexManager,
+  IBKPopover,
 } from '@bkui-vue/shared';
 import { Placement } from '@popperjs/core';
 

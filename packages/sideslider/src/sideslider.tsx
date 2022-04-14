@@ -25,8 +25,9 @@
 */
 
 import { defineComponent } from 'vue';
-import BkModal from '@bkui-vue/modal';
+
 import BkButton from '@bkui-vue/button';
+import BkModal from '@bkui-vue/modal';
 const { propsMixin } = BkModal;
 const sliderPops = Object.assign({}, propsMixin);
 sliderPops.width.default = '400';

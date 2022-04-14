@@ -24,9 +24,10 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent, computed, ref, watch } from 'vue';
-import { PropTypes } from '@bkui-vue/shared';
+import { computed, defineComponent, ref, watch } from 'vue';
+
 import { AngleDown, AngleRight } from '@bkui-vue/icon/';
+import { PropTypes } from '@bkui-vue/shared';
 export default defineComponent({
   name: 'Collapse',
   props: {

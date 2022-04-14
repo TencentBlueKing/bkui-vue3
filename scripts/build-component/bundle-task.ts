@@ -24,18 +24,19 @@
  * IN THE SOFTWARE.
 */
 
-import {
-  lstatSync, appendFile, mkdirSync, existsSync, unlinkSync, readdirSync,
-  createReadStream, createWriteStream, rmdirSync, readFileSync, writeFileSync,
-} from 'fs';
-import { resolve, join, basename, extname, parse } from 'path';
-import { promisify } from 'util';
-import * as rollup from 'rollup';
-import { ICompileTaskOption } from './typings/task';
-import { compileStyle, compileTheme } from './compiler/compile-style';
-import { rollupBuildScript } from './compiler/compile-script';
 import { exec } from 'child_process';
+import {
+  appendFile,   createReadStream, createWriteStream, existsSync,   lstatSync, mkdirSync, readdirSync,
+  readFileSync, rmdirSync, unlinkSync, writeFileSync,
+} from 'fs';
 import ora from 'ora';
+import { basename, extname, join, parse, resolve } from 'path';
+import * as rollup from 'rollup';
+import { promisify } from 'util';
+
+import { rollupBuildScript } from './compiler/compile-script';
+import { compileStyle, compileTheme } from './compiler/compile-style';
+import { ICompileTaskOption } from './typings/task';
 const compileDirUrl = resolve(__dirname, '../../packages');
 const libDirUrl =  resolve(__dirname, '../../lib');
 const themeLessUrl = resolve(compileDirUrl, 'styles/src/themes/themes.less');

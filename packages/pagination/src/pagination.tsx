@@ -24,23 +24,25 @@
  * IN THE SOFTWARE.
 */
 
+import type {
+  ExtractPropTypes,
+} from 'vue';
 import {
   defineComponent,
-  watch,
-  toRefs,
   ref,
+  toRefs,
+  watch,
 } from 'vue';
+
 import {
   classes,
   PropTypes,
 } from '@bkui-vue/shared';
-import type {
-  ExtractPropTypes,
-} from 'vue';
-import useTotal from './use-total';
+
+import useLimit from './use-limit';
 import useList from './use-list';
 import useSmallList from './use-small-list';
-import useLimit from './use-limit';
+import useTotal from './use-total';
 
 export const paginationProps = {
   modelValue: PropTypes.number.def(1),

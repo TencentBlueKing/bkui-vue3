@@ -25,8 +25,9 @@
 */
 
 import type { ComponentPublicInstance } from 'vue';
-import type { CheckboxGroupProps } from './checkbox-group';
+
 import type { CheckboxProps } from './checkbox';
+import type { CheckboxGroupProps } from './checkbox-group';
 
 export type ICheckboxInstance = ComponentPublicInstance<CheckboxProps, {
   isChecked: boolean,

@@ -24,8 +24,9 @@
  * IN THE SOFTWARE.
 */
 
-import Navigation from './navigation';
 import { App } from 'vue';
+
+import Navigation from './navigation';
 
 Navigation.install = (Vue: App) => {
   Vue.component(Navigation.name, Navigation);

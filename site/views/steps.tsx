@@ -26,8 +26,8 @@
 
 import { defineComponent, reactive } from 'vue';
 
+import { Error, Eye, Help } from '@bkui-vue/icon';
 import BkSteps from '@bkui-vue/steps';
-import { Help, Error, Eye } from '@bkui-vue/icon';
 
 export default defineComponent({
   name: 'SiteSteps',

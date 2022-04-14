@@ -25,16 +25,18 @@
 */
 
 import { defineComponent } from 'vue';
-import DemoTitle from '../../components/demo-title';
+
 import DemoBox from '../../components/demo-box';
+import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import { IPropsTableItem } from '../../typings';
+
 import BaseDemo from './base-demo.vue';
-import TargetListDemo from './target-list-demo.vue';
-import NormalListDemo from './normal-list-demo.vue';
 import CustomHeaderDemo from './custom-header-demo.vue';
 import CustomOptionDemo from './custom-option-demo.vue';
+import NormalListDemo from './normal-list-demo.vue';
 import SearchDemo from './search-demo.vue';
+import TargetListDemo from './target-list-demo.vue';
 
 const transferPropsJson: IPropsTableItem[] = [
   {

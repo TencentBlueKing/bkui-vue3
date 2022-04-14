@@ -24,9 +24,9 @@
  * IN THE SOFTWARE.
 */
 
+import childProcess from 'child_process';
 import fs from 'fs';
 import path from 'path';
-import childProcess from 'child_process';
 
 const packagePath = path.resolve(__dirname, '../package.json');
 const packageTmpPath = path.resolve(__dirname, '../package.json.bak');

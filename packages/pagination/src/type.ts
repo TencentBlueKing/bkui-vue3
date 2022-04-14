@@ -27,6 +27,7 @@
 import type {
   ComponentPublicInstance,
 } from 'vue';
+
 import type {
   PaginationProps,
 } from './pagination';

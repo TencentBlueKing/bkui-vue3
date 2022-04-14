@@ -26,8 +26,8 @@
 
 import { defineComponent } from 'vue';
 
-import BkButton from '@bkui-vue/button';
 import BkBadge from '@bkui-vue/badge';
+import BkButton from '@bkui-vue/button';
 import { Help } from '@bkui-vue/icon';
 
 export default defineComponent({

@@ -25,6 +25,7 @@
  */
 
 import { mount } from '@vue/test-utils';
+
 import VirtualRender from '../src/virtual-render';
 const listData = [
   {

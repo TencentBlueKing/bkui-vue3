@@ -23,8 +23,12 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { InjectionKey, ref, customRef } from 'vue';
+
+import { customRef, InjectionKey, ref } from 'vue';
+
 import Option from './option';
+
+/* eslint-disable */
 
 export type OptionInstanceType = InstanceType<typeof Option>;
 

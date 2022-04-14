@@ -26,6 +26,7 @@
 
 import { resolveClassName } from '@bkui-vue/shared';
 import { v4 as uuidv4 } from 'uuid';
+
 import { TreePropTypes } from './props';
 
 const DEFAULT_LEVLE_LINE = '1px dashed #c3cdd7';

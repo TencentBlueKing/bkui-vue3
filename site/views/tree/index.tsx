@@ -25,101 +25,91 @@
 */
 
 import { defineComponent } from 'vue';
-import DemoTitle from '../../components/demo-title';
+
+import { treeProps } from '../../../packages/tree/src/props';
 import DemoBox from '../../components/demo-box';
+import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
-import { tableProps } from '../../../packages/table/src/props';
 import { resolvePropsToDesData } from '../utils/index';
+
+import async from './async.vue';
 import basic from './basic.vue';
-import bordered from './bordered.vue';
+import levelLine from './level-line.vue';
+import prefixIcon from './prefix-icon.vue';
+import prefixIconJsx from './prefix-icon-jsx';
 import virtualRender from './virtual-render.vue';
-import cellRender from './cell-render';
-import event from './event.vue';
-import pagination from './pagination.vue';
-import RemotePagination from './remotePagination.vue';
 
 export default defineComponent({
-  components: { basic, bordered, virtualRender, cellRender, event, pagination, RemotePagination },
+  components: { basic, virtualRender, levelLine, prefixIcon, async, prefixIconJsx },
   render() {
-    const menuPropsJson = resolvePropsToDesData(tableProps);
+    const propsJson = resolvePropsToDesData(treeProps);
 
     const configs = [{
       attrs: {
         title: '基础用法',
         subtitle: '基础用法，用于表单内容的录入',
         desc: 'props: --',
-        componentName: 'table',
+        componentName: 'tree',
         demoName: 'basic',
       },
       component: () => <basic></basic>,
     },
     {
       attrs: {
-        title: '设置边框',
-        subtitle: '设置边框显示样式',
-        desc: 'props: border',
-        componentName: 'table',
-        demoName: 'bordered',
-      },
-      component: () => <bordered></bordered>,
-    },
-    {
-      attrs: {
-        title: '启用虚拟滚动-渲染大数据表格',
-        subtitle: '大数据模式启用虚拟滚动',
-        desc: 'props: virtual-enabled',
-        componentName: 'table',
+        title: '启用虚拟滚动',
+        subtitle: '启用虚拟滚动',
+        desc: 'props: virtual-render',
+        componentName: 'tree',
         demoName: 'virtual-render',
       },
       component: () => <virtual-render></virtual-render>,
     },
     {
       attrs: {
-        title: '自定义Column渲染',
-        subtitle: '自定义Column渲染',
-        desc: 'props: column.render',
-        componentName: 'table',
-        demoName: 'cell-render',
+        title: '启用连线',
+        subtitle: '启用连线',
+        desc: 'props: level-line',
+        componentName: 'tree',
+        demoName: 'level-line',
+      },
+      component: () => <level-line></level-line>,
+    },
+    {
+      attrs: {
+        title: '自定义节点Icon',
+        subtitle: '自定义节点Icon',
+        desc: 'props: prefix-icon',
+        componentName: 'tree',
+        demoName: 'prefix-icon',
+      },
+      component: () => <prefix-icon></prefix-icon>,
+    },    {
+      attrs: {
+        title: '自定义节点Icon-jsx',
+        subtitle: '自定义节点Icon',
+        desc: 'props: prefix-icon',
+        componentName: 'tree',
+        demoName: 'prefix-icon-jsx',
         suffix: '.tsx',
       },
-      component: () => <cell-render></cell-render>,
+      component: () => <prefix-icon-jsx></prefix-icon-jsx>,
     },
     {
       attrs: {
-        title: 'Events',
-        subtitle: '自定义Column渲染',
-        desc: 'props: column.render',
-        componentName: 'table',
-        demoName: 'event',
+        title: '异步加载节点数据',
+        subtitle: '异步加载节点数据',
+        desc: 'props: async',
+        componentName: 'tree',
+        demoName: 'async',
       },
-      component: () => <event></event>,
-    },
-    {
-      attrs: {
-        title: 'Pagination - Local',
-        subtitle: '分页配置',
-        desc: 'props: pagination',
-        componentName: 'table',
-        demoName: 'pagination',
-      },
-      component: () => <pagination></pagination>,
-    },
-    {
-      attrs: {
-        title: 'Pagination - Remote',
-        subtitle: '分页配置: remote-pagination = true',
-        desc: 'props: pagination',
-        componentName: 'table',
-        demoName: 'remotePagination',
-      },
-      component: () => <RemotePagination></RemotePagination>,
+      component: () => <async></async>,
     }];
 
     return (
       <div>
         <DemoTitle
-          name="Table"
-          desc="Table组件， 为页面和功能提供列表。"
+          name="Tree"
+          desc="Tree组件， 为页面和功能提供列表。"
           link="https://www.google.com.hk/"/>
           {
             configs.map(cfg => <DemoBox { ...cfg.attrs }>
@@ -128,7 +118,7 @@ export default defineComponent({
                  }
               </DemoBox>)
           }
-        <PropsBox propsData={menuPropsJson}/>
+        <PropsBox propsData={propsJson}/>
       </div>
     );
   },

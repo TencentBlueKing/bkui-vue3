@@ -244,43 +244,6 @@ export function mergerIfFn(key: string, target: any, source: any) {
   }
 }
 
-export function throttle(func: Function, wait: number, options?: any) {
-  let context: null; let args: IArguments | null; let result: any;
-  let timeout: NodeJS.Timeout | null = null;
-  let previous = 0;
-  // eslint-disable-next-line no-param-reassign
-  if (!options) options = {};
-
-  const later = function () {
-    previous = options.leading === false ? 0 : new Date().getTime();
-    timeout = null;
-    result = func.apply(context, args);
-    // eslint-disable-next-line no-multi-assign
-    if (!timeout) context = args = null;
-  };
-  return function (this: any) {
-    const now = new Date().getTime();
-    if (!previous && options.leading === false) previous = now;
-    const remaining = wait - (now - previous);
-    context = this;
-    // eslint-disable-next-line prefer-rest-params
-    args = arguments;
-    if (remaining <= 0 || remaining > wait) {
-      if (timeout) {
-        clearTimeout(timeout);
-        timeout = null;
-      }
-      previous = now;
-      result = func.apply(context, args);
-      // eslint-disable-next-line no-multi-assign
-      if (!timeout) context = args = null;
-    } else if (!timeout && options.trailing !== false) {
-      timeout = setTimeout(later, remaining);
-    }
-    return result;
-  };
-};
-
 
 /**
  * 检查当前元素是否为Html元素

@@ -24,9 +24,11 @@
 * IN THE SOFTWARE.
 */
 import { defineComponent } from 'vue';
-import Line from './line';
+
+import { classes, PropTypes } from '@bkui-vue/shared';
+
 import Circle from './circle';
-import { PropTypes, classes } from '@bkui-vue/shared';
+import Line from './line';
 
 export type ValidatorFunction<T> = (value: T) => boolean;
 

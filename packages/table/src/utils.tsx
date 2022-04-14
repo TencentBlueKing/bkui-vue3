@@ -24,9 +24,10 @@
 * IN THE SOFTWARE.
 */
 
-import { GroupColumn, TablePropTypes } from './props';
+import { throttle } from 'lodash';
+
 import { BORDER_OPRIONS } from './const';
-import { throttle } from '@bkui-vue/shared';
+import { GroupColumn, TablePropTypes } from './props';
 
 
 /**
@@ -201,7 +202,12 @@ export const resolveColumnWidth = (root: HTMLElement, colgroups: GroupColumn[], 
  * @param immediate 是否立即执行回调函数
  * @returns "{ start: () => void, stop: () => void }"
  */
-export const observerResize = (root: HTMLElement, callbackFn: () => void, delay = 60, immediate = false) => {
+export const observerResize = (
+  root: HTMLElement,
+  callbackFn: () => void,
+  delay = 60,
+  immediate = false,
+) => {
   const callFn = throttle(() => {
     if (typeof callbackFn === 'function') {
       callbackFn();
