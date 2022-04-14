@@ -440,7 +440,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/message',
     name: 'message',
-    component: () => import('../views/message'),
+    component: () => import('../views/message/message'),
     meta: {
       group: NavGroupMeta.Feedback,
       navName: 'Message 消息提示',
