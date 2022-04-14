@@ -33,17 +33,14 @@ import BkMessage from '@bkui-vue/message';
 export default {
   name: 'ThemeDemo',
   data() {
-    return {
-      aa: null,
-    };
+    return {};
   },
   methods: {
     handlePrimary() {
-      const aa = BkMessage({
+      BkMessage({
         theme: 'primary',
         message: '选择你导入的构建机并填写相关信息，系统将为你安装必要的软件',
       });
-      console.log(aa);
     },
     handleSuccess() {
       BkMessage({
