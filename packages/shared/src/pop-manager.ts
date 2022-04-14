@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
 */
 
-import { bKMaskManager } from './bk-mask-manager';
+import { bKMaskManager } from './mask-manager';
 import { random } from './utils';
 import { bkZIndexManager } from './z-index-manager';
 
