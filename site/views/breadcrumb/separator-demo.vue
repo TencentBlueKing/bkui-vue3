@@ -24,7 +24,6 @@
 import { defineComponent, ref } from 'vue';
 
 import { BkBreadcrumb, BkBreadcrumbItem } from '@bkui-vue/breadcrumb';
-
 import BkInput from '@bkui-vue/input';
 
 export default defineComponent({

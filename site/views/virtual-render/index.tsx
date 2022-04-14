@@ -40,25 +40,27 @@ export default defineComponent({
   render() {
     const propsJson = resolvePropsToDesData(virtualRenderProps);
 
-    const configs = [{
-      attrs: {
-        title: '基础用法',
-        subtitle: '基础用法，用于表单内容的录入',
-        desc: 'props: --',
-        componentName: 'virtual-render',
-        demoName: 'basic',
+    const configs = [
+      {
+        attrs: {
+          title: '基础用法',
+          subtitle: '基础用法，用于表单内容的录入',
+          desc: 'props: --',
+          componentName: 'virtual-render',
+          demoName: 'basic',
+        },
+        component: () => <basic></basic>,
       },
-      component: () => <basic></basic>,
-    }, {
-      attrs: {
-        title: '自定义行高',
-        subtitle: '每行高度不一致，自定义每行高度',
-        desc: 'props: --',
-        componentName: 'virtual-render',
-        demoName: 'custom-line-height',
+      {
+        attrs: {
+          title: '自定义行高',
+          subtitle: '每行高度不一致，自定义每行高度',
+          desc: 'props: --',
+          componentName: 'virtual-render',
+          demoName: 'custom-line-height',
+        },
+        component: () => <custom-line-height></custom-line-height>,
       },
-      component: () => <custom-line-height></custom-line-height>,
-    },
     ];
 
     return (

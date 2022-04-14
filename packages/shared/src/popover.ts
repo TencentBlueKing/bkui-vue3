@@ -34,7 +34,7 @@ import {
   VirtualElement,
 } from '@popperjs/core';
 
-import { isElement, merge } from './bk-helper-core';
+import { isElement, merge } from './helper';
 
 export type OnFirstUpdateFnType = (instance: Partial<State>) => void;
 export declare type IOptions = {

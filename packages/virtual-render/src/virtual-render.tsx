@@ -29,12 +29,28 @@
  *
  * Copyright © 2012-2019 Tencent BlueKing. All Rights Reserved. 蓝鲸智云 版权所有
  */
-import { computed, defineComponent, h, nextTick, onMounted, reactive, ref, resolveDirective, SetupContext, watch, withDirectives } from 'vue';
+import {
+  type SetupContext,
+  computed,
+  defineComponent,
+  h,
+  nextTick,
+  onMounted,
+  reactive,
+  ref,
+  resolveDirective,
+  watch,
+  withDirectives,
+} from 'vue';
 
-import { VirtualRenderProps, virtualRenderProps } from './props';
+import {
+  type VirtualRenderProps,
+  virtualRenderProps,
+} from './props';
 import virtualRender, { computedVirtualIndex } from './v-virtual-render';
+
 export default defineComponent({
-  name: 'BkVirtualRender',
+  name: 'VirtualRender',
   directives: {
     bkVirtualRender: virtualRender,
   },
@@ -240,7 +256,12 @@ export default defineComponent({
               data: calcList.value,
             }) ?? '',
           ],
-        ), [[vVirtualRender, dirModifier]]),
+        ), [
+          [
+            vVirtualRender,
+            dirModifier,
+          ],
+        ]),
         ctx.slots.afterContent?.() ?? '',
         h('div', {
           class: ['bk-virtual-section'],
