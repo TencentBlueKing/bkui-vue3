@@ -533,7 +533,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/transfer',
     name: 'transfer',
-    component: () => import('../views/BKTransfer/transfer'),
+    component: () => import('../views/transfer/transfer'),
     meta: {
       group: NavGroupMeta.Feedback,
       navName: 'Transfer 穿梭框',
@@ -545,7 +545,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/code-diff',
     name: 'codeDiff',
-    component: () => import('../views/CodeDiff/code-diff'),
+    component: () => import('../views/code-diff/code-diff'),
     meta: {
       group: NavGroupMeta.Data,
       navName: 'Diff 差异对比',
