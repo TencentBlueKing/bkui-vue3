@@ -26,10 +26,10 @@
  */
 import { App, Plugin } from 'vue';
 export * from './z-index-manager';
-export * from './bk-popover';
-export * from './bk-pop-manager';
-export * from './bk-mask-manager';
-export * from './bk-helper-core';
+export * from './popover';
+export * from './pop-manager';
+export * from './mask-manager';
+export * from './helper';
 export * from './vue-types';
 export * from './scrollbar-width';
 

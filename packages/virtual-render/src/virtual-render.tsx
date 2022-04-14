@@ -29,12 +29,28 @@
  *
  * Copyright © 2012-2019 Tencent BlueKing. All Rights Reserved. 蓝鲸智云 版权所有
  */
-import { computed, defineComponent, h, nextTick, onMounted, reactive, ref, resolveDirective, SetupContext, watch, withDirectives } from 'vue';
+import {
+  type SetupContext,
+  computed,
+  defineComponent,
+  h,
+  nextTick,
+  onMounted,
+  reactive,
+  ref,
+  resolveDirective,
+  watch,
+  withDirectives,
+} from 'vue';
 
-import { VirtualRenderProps, virtualRenderProps } from './props';
+import {
+  type VirtualRenderProps,
+  virtualRenderProps,
+} from './props';
 import virtualRender, { computedVirtualIndex } from './v-virtual-render';
+
 export default defineComponent({
-  name: 'BkVirtualRender',
+  name: 'VirtualRender',
   directives: {
     bkVirtualRender: virtualRender,
   },
@@ -125,10 +141,10 @@ export default defineComponent({
     };
 
     /** 如果有分组状态，计算总行数 */
-    const listLength = reactive(ref(0));
+    const listLength = ref(0);
 
     /** 实际高度，根据行高和总行数计算出来的实际高度 */
-    const innerHeight = reactive(ref(0));
+    const innerHeight = ref(0);
 
     /**
      * 列表数据改变时，处理相关参数
@@ -166,7 +182,7 @@ export default defineComponent({
     };
 
     /** 映射传入的数组为新的数组，增加 $index属性，用来处理唯一Index */
-    const localList = computed(() => (props.list || []).map((item, index) => Object.assign(item, { $index: index })));
+    const localList = computed(() => (props.list || []).map((item: any, index) => ({ ...item,  $index: index })));
 
     /** 计算出来的当前页数据 */
     const calcList = computed(() => localList.value.slice(
@@ -240,7 +256,12 @@ export default defineComponent({
               data: calcList.value,
             }) ?? '',
           ],
-        ), [[vVirtualRender, dirModifier]]),
+        ), [
+          [
+            vVirtualRender,
+            dirModifier,
+          ],
+        ]),
         ctx.slots.afterContent?.() ?? '',
         h('div', {
           class: ['bk-virtual-section'],

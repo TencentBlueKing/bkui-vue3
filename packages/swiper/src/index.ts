@@ -1,4 +1,4 @@
-/**
+/*
  * Tencent is pleased to support the open source community by making
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
  *
@@ -22,12 +22,8 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
- */
-
+*/
+import Component from './swiper';
 import { withInstall } from '@bkui-vue/shared';
-
-import Component from './transfer';
-
-
-const Transfer = withInstall(Component);
-export default Transfer;
+const BkSwiper = withInstall(Component);
+export default BkSwiper;
