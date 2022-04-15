@@ -23,8 +23,11 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
-import { withInstall } from '@bkui-vue/shared';
 
-import Component from './swiper';
-const BkSwiper = withInstall(Component);
-export default BkSwiper;
+// import { mount } from '@vue/test-utils';
+import ResizeLayout from '../src';
+describe('ResizeLayout.tsx', () => {
+  it('test', async () => {
+    console.log(ResizeLayout);
+  });
+});

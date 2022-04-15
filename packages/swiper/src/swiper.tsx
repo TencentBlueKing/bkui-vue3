@@ -25,15 +25,16 @@
 */
 
 import {
+  computed,
   defineComponent,
+  onBeforeUnmount,
+  onMounted,
+  Ref,
   ref,
   toRefs,
-  Ref,
-  computed,
   watch,
-  onMounted,
-  onBeforeUnmount,
 } from 'vue';
+
 import { PropTypes } from '@bkui-vue/shared';
 
 interface IRenderData {
