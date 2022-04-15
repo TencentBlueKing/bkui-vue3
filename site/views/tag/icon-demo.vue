@@ -2,19 +2,19 @@
   <div>
     <bk-tag>
       <template #icon>
-        <Bk />
+        <bk />
       </template>
       蓝鲸
     </bk-tag>
     <bk-tag>
       <template #icon>
-        <Weixin />
+        <weixin />
       </template>
       微信
     </bk-tag>
     <bk-tag>
       <template #icon>
-        <QQ />
+        <q-q />
       </template>
       QQ
     </bk-tag>
@@ -22,5 +22,5 @@
 </template>
 
 <script setup>
-import { QQ, Weixin, Bk } from '@bkui-vue/icon';
+  import { Bk, QQ, Weixin } from '@bkui-vue/icon';
 </script>

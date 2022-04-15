@@ -24,37 +24,37 @@
   </div>
 </template>
 <script>
-import { defineComponent, getCurrentInstance, ref } from 'vue';
+  import { defineComponent, getCurrentInstance, ref } from 'vue';
 
-import { BkBreadcrumb, BkBreadcrumbItem } from '@bkui-vue/breadcrumb';
-import { AngleLeft } from '@bkui-vue/icon';
+  import { BkBreadcrumb, BkBreadcrumbItem } from '@bkui-vue/breadcrumb';
+  import { AngleLeft } from '@bkui-vue/icon';
 
-export default defineComponent({
-  name: 'SiteBreadcrumb',
-  components: {
-    BkBreadcrumb,
-    BkBreadcrumbItem,
-    AngleLeft,
-  },
-  setup() {
-    const separator = ref('/');
-    const list = [
-      { title: '首页', link: { path: '/' } },
-      { title: '进度条', link: { path: 'loading' } },
-      { title: '滑块开关', link: { path: 'switcher' } },
-      { title: '面包屑', link: null },
-    ];
-    const { appContext } = getCurrentInstance();
-    const { $router } = appContext.config.globalProperties;
-    const goBack = () => {
-      $router.push({ path: '/' });
-    };
-    return {
-      list,
-      separator,
-      goBack,
-    };
-  },
-});
+  export default defineComponent({
+    name: 'SiteBreadcrumb',
+    components: {
+      BkBreadcrumb,
+      BkBreadcrumbItem,
+      AngleLeft,
+    },
+    setup() {
+      const separator = ref('/');
+      const list = [
+        { title: '首页', link: { path: '/' } },
+        { title: '进度条', link: { path: 'loading' } },
+        { title: '滑块开关', link: { path: 'switcher' } },
+        { title: '面包屑', link: null },
+      ];
+      const { appContext } = getCurrentInstance();
+      const { $router } = appContext.config.globalProperties;
+      const goBack = () => {
+        $router.push({ path: '/' });
+      };
+      return {
+        list,
+        separator,
+        goBack,
+      };
+    },
+  });
 
 </script>

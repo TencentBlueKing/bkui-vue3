@@ -1,17 +1,17 @@
 <script setup>
-import firstSwiper from '../../imgs/firstswiper.jpg';
-import secondSwiper from '../../imgs/secondswiper.jpg';
+  import firstSwiper from '../../imgs/firstswiper.jpg';
+  import secondSwiper from '../../imgs/secondswiper.jpg';
 
-const picList = [
-  { url: firstSwiper, link: 'https://www.npmjs.com/package/bkui-vue' },
-  { url: secondSwiper },
-  { url: firstSwiper, link: 'https://www.npmjs.com/package/bkui-vue' },
-  { url: secondSwiper },
-  { url: firstSwiper, link: 'https://www.npmjs.com/package/bkui-vue' },
-  { url: secondSwiper },
-  { url: firstSwiper, link: 'https://www.npmjs.com/package/bkui-vue' },
-  { url: secondSwiper },
-];
+  const picList = [
+    { url: firstSwiper, link: 'https://www.npmjs.com/package/bkui-vue' },
+    { url: secondSwiper },
+    { url: firstSwiper, link: 'https://www.npmjs.com/package/bkui-vue' },
+    { url: secondSwiper },
+    { url: firstSwiper, link: 'https://www.npmjs.com/package/bkui-vue' },
+    { url: secondSwiper },
+    { url: firstSwiper, link: 'https://www.npmjs.com/package/bkui-vue' },
+    { url: secondSwiper },
+  ];
 </script>
 
 <template>

@@ -1,56 +1,56 @@
 <template>
-  <BkForm form-type="vertical">
-    <BkFormItem label="姓名">
-      <BkInput
+  <bk-form form-type="vertical">
+    <bk-form-item label="姓名">
+      <bk-input
         placeholder="请输入"
         clearable
       />
-    </BkFormItem>
-    <BkFormItem label="性别">
-      <BkRadioGroup>
-        <BkRadio label="男" />
-        <BkRadio label="女" />
-      </BkRadioGroup>
-    </BkFormItem>
-    <BkFormItem label="联系方式">
-      <BkCheckboxGroup>
-        <BkCheckbox label="QQ" />
-        <BkCheckbox label="微信" />
-        <BkCheckbox label="Email" />
-      </BkCheckboxGroup>
-    </BkFormItem>
-    <BkFormItem label="学历">
-      <BkSelect>
-        <BkOption
+    </bk-form-item>
+    <bk-form-item label="性别">
+      <bk-radio-group>
+        <bk-radio label="男" />
+        <bk-radio label="女" />
+      </bk-radio-group>
+    </bk-form-item>
+    <bk-form-item label="联系方式">
+      <bk-checkbox-group>
+        <bk-checkbox label="QQ" />
+        <bk-checkbox label="微信" />
+        <bk-checkbox label="Email" />
+      </bk-checkbox-group>
+    </bk-form-item>
+    <bk-form-item label="学历">
+      <bk-select>
+        <bk-option
           value="1"
           label="本科以下"
         />
-        <BkOption
+        <bk-option
           value="2"
           label="本科以上"
         />
-      </BkSelect>
-    </BkFormItem>
-    <BkFormItem label="介绍">
-      <BkInput
+      </bk-select>
+    </bk-form-item>
+    <bk-form-item label="介绍">
+      <bk-input
         placeholder="请输入"
         type="textarea"
       />
-    </BkFormItem>
-    <BkFormItem>
-      <BkButton theme="primary">
+    </bk-form-item>
+    <bk-form-item>
+      <bk-button theme="primary">
         提交
-      </BkButton>
-    </BkFormItem>
-  </BkForm>
+      </bk-button>
+    </bk-form-item>
+  </bk-form>
 </template>
 <script setup>
-import BkButton from '@bkui-vue/button';
-import BkCheckbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
-import BkForm, { BkFormItem } from '@bkui-vue/form';
-import BkInput from '@bkui-vue/input';
-import BkRadio, { BkRadioGroup } from '@bkui-vue/radio';
-import BkSelect, { BkOption } from '@bkui-vue/select';
+  import BkButton from '@bkui-vue/button';
+  import BkCheckbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
+  import BkForm, { BkFormItem } from '@bkui-vue/form';
+  import BkInput from '@bkui-vue/input';
+  import BkRadio, { BkRadioGroup } from '@bkui-vue/radio';
+  import BkSelect, { BkOption } from '@bkui-vue/select';
 
 </script>
 <style lang="postcss">

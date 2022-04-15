@@ -24,8 +24,9 @@
 * IN THE SOFTWARE.
 */
 import { defineComponent, ref } from 'vue';
-import BkResizeLayout from '@bkui-vue/resize-layout';
+
 import { BkRadio, BkRadioGroup } from '@bkui-vue/radio';
+import BkResizeLayout from '@bkui-vue/resize-layout';
 
 export default defineComponent({
   name: 'ResizeLayoutExample',
