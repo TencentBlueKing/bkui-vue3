@@ -26,117 +26,177 @@
 
 import {
   defineComponent,
-  getCurrentInstance,
-  onMounted,
-  reactive,
-  ref,
 } from 'vue';
 
-import BkButton from '@bkui-vue/button';
-import BkCheckbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
-import BkForm, { BkFormItem } from '@bkui-vue/form';
-import BkInput from '@bkui-vue/input';
-import BkRadio, { BkRadioGroup } from '@bkui-vue/radio';
-import BkSelect, { BkOption } from '@bkui-vue/select';
+import DemoBox from '../../components/demo-box';
+import DemoTitle from '../../components/demo-title';
+import PropsBox from '../../components/props-box';
+import {
+  type IPropsTableItem,
+} from '../../typings';
 
+import DemoForm from './demo/form.vue';
+import DemoFormValidator from './demo/form-validator.vue';
+import DemoFormVertical from './demo/form-vertical.vue';;
+
+
+const formProps: IPropsTableItem[] = [
+  {
+    name: 'formType',
+    type: 'String',
+    default: null,
+    desc: '表单模式',
+    optional: ['default', 'vertical'],
+  },
+  {
+    name: 'labelWidth',
+    type: 'String',
+    default: null,
+    desc: '表单域标签的宽度',
+    optional: [],
+  },
+  {
+    name: 'labelPosition',
+    type: 'String',
+    default: null,
+    desc: '表单域标签的位置',
+    optional: ['left', 'center', 'right'],
+  },
+  {
+    name: 'model',
+    type: 'Object',
+    default: null,
+    desc: '表单数据',
+    optional: [],
+  },
+  {
+    name: 'rules',
+    type: 'Array',
+    default: null,
+    desc: '表单验证规则',
+    optional: [],
+  },
+];
+
+const formItemProps: IPropsTableItem[] = [
+  {
+    name: 'label',
+    type: 'String',
+    default: null,
+    desc: '标签',
+    optional: [],
+  },
+  {
+    name: 'labelWidth',
+    type: 'String',
+    default: null,
+    desc: '表单域标签的宽度',
+    optional: [],
+  },
+  {
+    name: 'labelPosition',
+    type: 'String',
+    default: null,
+    desc: '表单域标签的位置',
+    optional: ['left', 'center', 'right'],
+  },
+  {
+    name: 'property',
+    type: 'String',
+    default: null,
+    desc: '表单域 model 字段',
+    optional: [],
+  },
+  {
+    name: 'required',
+    type: 'Boolean',
+    default: null,
+    desc: '是否必填',
+    optional: [],
+  },
+  {
+    name: 'max',
+    type: 'Number',
+    default: null,
+    desc: '验证规则最大值',
+    optional: [],
+  },
+  {
+    name: 'min',
+    type: 'Number',
+    default: null,
+    desc: '验证规则最小值',
+    optional: [],
+  },
+  {
+    name: 'email',
+    type: 'String',
+    default: null,
+    desc: '验证规则Email',
+    optional: [],
+  },
+  {
+    name: 'rules',
+    type: 'Array',
+    default: null,
+    desc: '验证规则',
+    optional: [],
+  },
+  {
+    name: 'autoCheck',
+    type: 'String',
+    default: null,
+    desc: '是否自动验证',
+    optional: [],
+  },
+  {
+    name: 'description',
+    type: 'String',
+    default: null,
+    desc: '是否自动验证',
+    optional: [],
+  },
+];
 
 export default defineComponent({
-  name: 'SiteForm',
-  setup() {
-    const formRef = ref(null);
-    const state = reactive({
-      formMode: {
-        name: 'asdadasdasdasdasdasdasd',
-        age: 1,
-      },
-    });
-    const currentInstance =  getCurrentInstance();
-    onMounted(() => {
-      console.log('print instalcen == ', currentInstance);
-      console.dir(formRef.value);
-      // console.log('from form mounted = ', formRef.value);
-      formRef.value.validate();
-    });
-
-    return  () => (
-      <div>
-        <div style="margin: 20px auto;">
-          <BkForm ref={formRef} model={state.formMode}>
-            <BkFormItem label="姓名" maxlength={12} required property="name">
-              <BkInput
-                placeholder="请输入"
-                clearable />
-            </BkFormItem>
-            <BkFormItem label="年龄" min={0} max={100} required>
-              <BkRadioGroup>
-                <BkRadio label="test1" disabled />
-                <BkRadio label="test2" />
-                <BkRadio label="test3" disabled checked />
-                <BkRadio label="test4" />
-                <BkRadio label="test5" checked>slosdssdst name</BkRadio>
-              </BkRadioGroup>
-            </BkFormItem>
-            <BkFormItem label="联系方式">
-              <BkCheckboxGroup>
-                <BkCheckbox label="QQ" disabled falseLabel={false} />
-                <BkCheckbox label="WEI XIN" disabled falseLabel={false} />
-                <BkCheckbox label="EMAIL" />
-              </BkCheckboxGroup>
-            </BkFormItem>
-            <BkFormItem label="性别">
-              <BkSelect>
-                <BkOption value="test" label="男"></BkOption>
-                <BkOption value={false} label="女"></BkOption>
-              </BkSelect>
-            </BkFormItem>
-            <BkFormItem label="介绍" maxlength={200}>
-              <BkInput
-                placeholder="请输入"
-                type="paasword" />
-            </BkFormItem>
-            <BkFormItem>
-              <BkButton theme="primary">提交</BkButton>
-            </BkFormItem>
-          </BkForm>
-        </div>
-        <div style="margin: 20px auto;">
-          <BkForm
-            formType="vertical">
-            <BkFormItem label="姓名">
-              <BkInput
-                placeholder="请输入"
-                clearable />
-            </BkFormItem>
-            <BkFormItem label="年龄">
-              <BkRadioGroup>
-                <BkRadio label="test1" disabled />
-                <BkRadio label="test2" />
-                <BkRadio label="test3" disabled checked />
-                <BkRadio label="test4" />
-                <BkRadio label="test5" checked>slosdssdst name</BkRadio>
-              </BkRadioGroup>
-            </BkFormItem>
-            <BkFormItem label="联系方式">
-              <BkCheckboxGroup>
-                <BkCheckbox label="QQ" disabled falseLabel={false} />
-                <BkCheckbox label="WEI XIN" disabled falseLabel={false} />
-                <BkCheckbox label="EMAIL" />
-              </BkCheckboxGroup>
-            </BkFormItem>
-            <BkFormItem label="性别">
-              <BkSelect>
-                <BkOption value="test" label="男"></BkOption>
-                <BkOption value={false} label="女"></BkOption>
-              </BkSelect>
-            </BkFormItem>
-            <BkFormItem label="介绍">
-              <BkInput
-                placeholder="请输入"
-                type="paasword" />
-            </BkFormItem>
-          </BkForm>
-        </div>
-      </div>
+  name: 'Form',
+  render() {
+    return (
+    <div>
+      <DemoTitle
+          name="Radio"
+          desc="表单-单选框，在一组选项中进行单选"
+          link="https://www.qq.com/"/>
+        <DemoBox
+          title="基础用法"
+          desc=""
+          componentName="form"
+          demoName="/demo/form">
+            <DemoForm />
+        </DemoBox>
+        <DemoBox
+          title="顶部对齐"
+          desc=""
+          componentName="form"
+          demoName="/demo/form-vertical">
+            <DemoFormVertical />
+        </DemoBox>
+        <DemoBox
+          title="表单验证"
+          desc=""
+          componentName="form"
+          demoName="/demo/form-validator">
+            <DemoFormValidator />
+        </DemoBox>
+        <PropsBox
+          title="Form Attributes"
+          subtitle=""
+          propsData={formProps}/>
+        <PropsBox
+          title="Form-Item Attributes"
+          subtitle=""
+          propsData={formItemProps}/>
+    </div>
     );
   },
 });
