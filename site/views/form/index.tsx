@@ -165,7 +165,7 @@ export default defineComponent({
     <div>
       <DemoTitle
           name="Radio"
-          desc="表单-单选框，在一组选项中进行单选"
+          desc="由输入框、选择器、单选框、多选框等控件组成"
           link="https://www.qq.com/"/>
         <DemoBox
           title="基础用法"
