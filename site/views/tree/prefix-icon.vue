@@ -83,7 +83,6 @@ const getPrefixIcon3 = (isRoot, hasChild, isOpen, renderType, item) => {
       text: '0',
       style: {
         fontSize: '12px',
-        textAlign: 'center',
       },
     };
   }
@@ -94,7 +93,6 @@ const getPrefixIcon3 = (isRoot, hasChild, isOpen, renderType, item) => {
     text: '1',
     style: {
       fontSize: '8px',
-      textAlign: 'center',
     },
   };
 };
@@ -106,6 +104,8 @@ const getPrefixIcon3 = (isRoot, hasChild, isOpen, renderType, item) => {
   width: 18px;
   height: 18px;
   background: #cccc;
+  display: flex;
+  align-items: center;
 }
 
 .custom-root {

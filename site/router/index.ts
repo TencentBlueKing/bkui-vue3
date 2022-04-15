@@ -320,7 +320,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/select',
     name: 'select',
-    component: () => import('../views/select'),
+    component: () => import('../views/select/select'),
     meta: {
       group: NavGroupMeta.Form,
       navName: 'Select 下拉选框',
@@ -360,6 +360,18 @@ const routes: RouteRecordRaw[] = [
     meta: {
       group: NavGroupMeta.Data,
       navName: 'Rate 评分',
+    },
+  },
+  /**
+   * @description:轮播图
+   */
+  {
+    path: '/swiper',
+    name: 'swiper',
+    component: () => import('../views/swiper'),
+    meta: {
+      group: NavGroupMeta.Data,
+      navName: 'Swiper 轮播图',
     },
   },
   /**
@@ -575,6 +587,15 @@ const routes: RouteRecordRaw[] = [
   /**
    * @description:404
    */
+  {
+    path: '/resize-layout',
+    name: 'resizeLayout',
+    component: () => import('../views/resize-layout'),
+    meta: {
+      group: NavGroupMeta.Layout,
+      navName: 'ResizeLayout',
+    },
+  },
   {
     path: '/:pathMatch(.*)*',
     name: '404',

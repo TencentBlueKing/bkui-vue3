@@ -26,6 +26,8 @@
 
 import { v4 as uuidv4 } from 'uuid';
 
+import { resolveClassName } from '@bkui-vue/shared';
+
 import { TreePropTypes } from './props';
 
 const DEFAULT_LEVLE_LINE = '1px dashed #c3cdd7';
@@ -41,8 +43,13 @@ export const getFlatdata = (props: TreePropTypes, treeData: Array<any> = undefin
   let order = 0;
   const schema = new Map<string, any>();
 
-  function isCachedTreeNodeOpened(uuid: string) {
-    return (cachedSchema || []).some((item: any) => item.__uuid === uuid && item.__isOpen);
+  function isCachedTreeNodeOpened(uuid: string, node: any) {
+    const cached = (cachedSchema || []).find((item: any) => item.__uuid === uuid);
+    if (cached) {
+      return cached.__isOpen;
+    }
+
+    return node.isOpen;
   }
 
   function flatten(array: Array<any>, depth = 0, parent = null, path = null) {
@@ -53,7 +60,7 @@ export const getFlatdata = (props: TreePropTypes, treeData: Array<any> = undefin
       } else {
         if (typeof item === 'object' && item !== null) {
           const uuid = item.__uuid || uuidv4();
-          const isOpen = isCachedTreeNodeOpened(uuid);
+          const isOpen = isCachedTreeNodeOpened(uuid, item);
           const currentPath = path !== null ? `${path}-${i}` : `${i}`;
           const attrs = {
             __depth: depth,
@@ -66,7 +73,7 @@ export const getFlatdata = (props: TreePropTypes, treeData: Array<any> = undefin
             __isRoot: parent === null,
             __order: order,
             __isOpen: isOpen,
-            __checked: false,
+            __checked: !!item.checked,
             [children]: null,
           };
           Object.assign(item, { __uuid: uuid });
@@ -222,7 +229,7 @@ export const getNodeRowClass = (item: any, schema: any) => {
   const { __checked } = getSchemaVal(schema as Map<string, any>, item.__uuid) || {};
   return {
     'is-checked': __checked,
-    'bk-node-row': true,
+    [resolveClassName('node-row')]: true,
   };
 };
 

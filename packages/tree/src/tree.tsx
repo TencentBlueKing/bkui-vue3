@@ -23,9 +23,10 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
-import { computed, defineComponent, h, reactive, SetupContext, watch } from 'vue';
+import { computed, defineComponent, h, onMounted, onUpdated, reactive, ref, SetupContext, watch } from 'vue';
 
 import { DownShape, Folder, FolderShapeOpen, RightShape, Spinner, TextFile } from '@bkui-vue/icon/';
+import { resolveClassName } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
 import { treeProps, TreePropTypes as defineTypes } from './props';
@@ -45,6 +46,7 @@ export type TreePropTypes = defineTypes;
 export default defineComponent({
   name: 'Tree',
   props: treeProps,
+  emits: ['check'],
 
   setup(props: TreePropTypes, ctx: SetupContext) {
     const formatData = getFlatdata(props);
@@ -72,10 +74,28 @@ export default defineComponent({
 
     const schemaValues = computed(() => Array.from(flatData.schema.values()));
 
+    /**
+     * 获取Schema中指定的对象值
+     * @param key
+     * @returns
+     */
     const getSchemaVal = (key: string) => ((flatData.schema as Map<string, any>).get(key));
 
+    /**
+     * 获取节点属性
+     * @param node 当前节点
+     * @param attr 节点属性
+     * @returns
+     */
     const getNodeAttr = (node: any, attr: string) => getSchemaVal(node.__uuid)?.[attr];
 
+    /**
+     * 设置节点属性
+     * @param node 指定节点
+     * @param attr 节点属性
+     * @param val 属性值
+     * @returns
+     */
     const setNodeAttr = (node: any, attr: string, val: any) => (flatData.schema as Map<string, any>).set(node.__uuid, {
       ...getSchemaVal(node.__uuid),
       [attr]: val,
@@ -90,6 +110,11 @@ export default defineComponent({
     const renderData = computed(() => flatData.data
       .filter(item => checkNodeIsOpen(item)));
 
+    /**
+     * 判定指定节点是否为展开状态
+     * @param item 节点或者节点 UUID
+     * @returns
+     */
     const isItemOpen = (item: any) => {
       if (typeof item === 'object') {
         return isNodeOpened(item);
@@ -102,14 +127,15 @@ export default defineComponent({
       return false;
     };
 
+
     /**
      * 根据当前节点状态获取节点类型Icon
      * @param item
      * @returns
      */
     const getRootIcon = (item: any) => (isItemOpen(item)
-      ? <FolderShapeOpen class="bk-tree-icon" />
-      : <Folder class="bk-tree-icon" />);
+      ? <FolderShapeOpen class={ resolveClassName('tree-icon') } />
+      : <Folder class={ resolveClassName('tree-icon') } />);
 
 
     /**
@@ -174,7 +200,7 @@ export default defineComponent({
       }
 
       if (prefixFnVal === 'default' || (typeof props.prefixIcon === 'boolean' && props.prefixIcon)) {
-        return isRootNode(item) || hasChildNode(item) ? getRootIcon(item) : <TextFile class="bk-tree-icon" />;
+        return isRootNode(item) || hasChildNode(item) ? getRootIcon(item) : <TextFile class={ resolveClassName('tree-icon') } />;
       }
 
       return null;
@@ -309,9 +335,33 @@ export default defineComponent({
         .map((index: number) => <span class="node-virtual-line" style={ getNodeLineStyle(maxDeep - index) }></span>);
     };
 
+    const root = ref();
+    const setNodeTextStyle = () => {
+      if (root.value?.$el) {
+        const selector = `.${resolveClassName('tree-node')}`;
+        const ctxSelector = `.${resolveClassName('node-content')}`;
+        Array.prototype.forEach.call(root.value.$el.querySelectorAll(selector), (nodeEl: HTMLElement) => {
+          const txtSpans = nodeEl.querySelectorAll(`${ctxSelector} span`);
+          const lastSpan = Array.prototype.slice.call(txtSpans, -1)[0];
+          if (lastSpan) {
+            const maxWidth = nodeEl.offsetWidth - lastSpan.offsetLeft;
+            (lastSpan as HTMLElement).style.setProperty('max-width', `${maxWidth}px`);
+          }
+        });
+      }
+    };
+    onMounted(() => {
+      setNodeTextStyle();
+    });
+
+    onUpdated(() => {
+      setNodeTextStyle();
+    });
+
     return {
       renderData,
       flatData,
+      root,
       hanldeTreeNodeClick,
       handleNodeContentClick,
       handleNodeActionClick,
@@ -328,15 +378,15 @@ export default defineComponent({
     const renderTreeNode = (item: any) => <div class={ getNodeRowClass(item, this.flatData.schema) }>
       <div class={getNodeItemClass(item, this.flatData.schema, props)}
         style={getNodeItemStyle(item, props, this.flatData)}>
-        <span class="node-action" onClick={() => this.handleNodeActionClick(item)}>{ this.getActionIcon(item) }</span>
-        <span class="node-content" onClick={() => this.handleNodeContentClick(item)}>
+        <span class={ resolveClassName('node-action') } onClick={() => this.handleNodeActionClick(item)}>{ this.getActionIcon(item) }</span>
+        <span class={ resolveClassName('node-content') } onClick={() => this.handleNodeContentClick(item)}>
           {
             [
               this.getNodePrefixIcon(item),
               this.getLoadingIcon(item),
             ]
           }
-          <span>{getLabel(item, props)}</span>
+          <span class={ resolveClassName('node-text') }>{getLabel(item, props)}</span>
         </span>
         {
           this.getVirtualLines(item)
@@ -344,12 +394,14 @@ export default defineComponent({
       </div>
     </div>;
 
-    return <VirtualRender class="bk-tree"
+    return <VirtualRender class={ resolveClassName('tree') }
     style={getTreeStyle(null, props)}
     list={this.renderData}
     lineHeight={props.lineHeight}
     enabled={props.virtualRender}
-    throttleDelay={0}>
+    contentClassName={ resolveClassName('container') }
+    throttleDelay={0}
+    ref='root'>
     {
       {
         default: (scoped: any) => (scoped.data || []).map(renderTreeNode),
