@@ -1,5 +1,5 @@
 {
-  "name": "@bkui-vue/code-diff",
+  "name": "@bkui-vue/swiper",
   "version": "0.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -12,15 +12,9 @@
     "lint": "eslint \"./src/**/*.{ts,tsx}\" --max-warnings=0"
   },
   "devDependencies": {
-    "@vue/test-utils": "~2.0.0-rc.12",
-    "@types/diff": "~5.0.2"
+    "@vue/test-utils": "~2.0.0-rc.12"
   },
   "peerDependencies": {
     "vue": "^3.2.0"
-  },
-  "dependencies": {
-    "diff": "~5.0.0",
-    "diff2html": "~3.4.16",
-    "highlight.js": "~11.5.0"
   }
 }
