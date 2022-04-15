@@ -24,8 +24,9 @@
  * IN THE SOFTWARE.
  */
 
-import { resolveClassName } from '@bkui-vue/shared';
 import { v4 as uuidv4 } from 'uuid';
+
+import { resolveClassName } from '@bkui-vue/shared';
 
 import { TreePropTypes } from './props';
 
