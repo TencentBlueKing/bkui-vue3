@@ -25,8 +25,10 @@
 */
 
 import { DirectiveBinding, ObjectDirective } from 'vue';
-import { createPopper, Placement, OptionsGeneric } from '@popperjs/core';
+
 import { bkZIndexManager } from '@bkui-vue/shared';
+import { createPopper, OptionsGeneric, Placement } from '@popperjs/core';
+
 import '@bkui-vue/styles/mixins/popper.less';
 
 export declare type IOptions = {

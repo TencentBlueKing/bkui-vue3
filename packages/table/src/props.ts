@@ -25,7 +25,9 @@
  */
 
 import { ExtractPropTypes } from 'vue';
+
 import { PropTypes } from '@bkui-vue/shared';
+
 import { BORDER_OPRIONS } from './const';
 
 const EventProps = {
@@ -107,6 +109,11 @@ export const tableProps = {
    * 设置为 true，启用分页功能，默认值参考分页组件 Pagination
    */
   pagination: PropTypes.oneOfType([PropTypes.bool.def(false), PropTypes.object.def({})]).def(false),
+
+  /**
+   * 是否启用远程分页
+   */
+  remotePagination: PropTypes.bool.def(false),
 
   ...EventProps,
 

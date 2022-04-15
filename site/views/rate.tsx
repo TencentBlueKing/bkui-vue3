@@ -30,16 +30,16 @@ import BKRate from '@bkui-vue/rate';
 
 export default defineComponent({
   name: 'SiteAnimateNumber',
-  render() {
-    return <>
-      <BKRate v-model={ this.rate }></BKRate>
-      <BKRate v-model={ this.disableRate } editable={false}></BKRate>
-    </>;
-  },
   data() {
     return {
       disableRate: 3.3,
       rate: 3,
     };
+  },
+  render() {
+    return <>
+      <BKRate v-model={ this.rate }></BKRate>
+      <BKRate v-model={ this.disableRate } editable={false}></BKRate>
+    </>;
   },
 });

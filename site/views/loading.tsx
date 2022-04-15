@@ -26,8 +26,8 @@
 
 import { defineComponent } from 'vue';
 
-import { BkLoading, BkLoadingMode, BkLoadingSize } from '@bkui-vue/loading';
 import { Help } from '@bkui-vue/icon';
+import { BkLoading, BkLoadingMode, BkLoadingSize } from '@bkui-vue/loading';
 
 // BkLoading.setDefaultIndicator(<span style="font-size: 14px;"><Help /></span>);
 

@@ -24,10 +24,11 @@
  * IN THE SOFTWARE.
 */
 
-import { mount } from '@vue/test-utils';
-import Badge from '../src/index';
-import { Help } from '@bkui-vue/icon';
 import Button from '@bkui-vue/button';
+import { Help } from '@bkui-vue/icon';
+import { mount } from '@vue/test-utils';
+
+import Badge from '../src/index';
 const mountTpl = (template: string) => mount({
   components: {
     bkBadge: Badge,

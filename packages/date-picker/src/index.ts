@@ -24,7 +24,8 @@
  * IN THE SOFTWARE.
 */
 
-import Component from './date-picker';
 import { withInstall } from '@bkui-vue/shared';
+
+import Component from './date-picker';
 const BkDatePicker = withInstall(Component);
 export default BkDatePicker;

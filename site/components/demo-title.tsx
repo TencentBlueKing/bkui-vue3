@@ -24,7 +24,9 @@
 * IN THE SOFTWARE.
 */
 import { defineComponent } from 'vue';
+
 import { Share } from '@bkui-vue/icon';
+
 import './demo-title.less';
 
 export default defineComponent({

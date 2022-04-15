@@ -25,6 +25,7 @@
  * IN THE SOFTWARE.
  */
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
+
 import { NavGroupMeta } from '../typings';
 
 /**
@@ -40,7 +41,7 @@ const routes: RouteRecordRaw[] = [
     path: '/start',
     name: 'start',
     alias: '',
-    component: () => import('../views/start/start'),
+    component: () => import('../views/start'),
     meta: {
       group: NavGroupMeta.Start,
       navName: '快速上手',
@@ -53,7 +54,7 @@ const routes: RouteRecordRaw[] = [
     path: '/menu',
     name: 'menu',
     alias: '',
-    component: () => import('../views/menu/menu'),
+    component: () => import('../views/menu'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'Menu 菜单',
@@ -235,7 +236,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/progress',
     name: 'progress',
-    component: () => import('../views/progress/progress'),
+    component: () => import('../views/progress'),
     meta: {
       group: NavGroupMeta.Data,
       navName: 'Progress 进度条',
@@ -247,7 +248,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/switcher',
     name: 'switcher',
-    component: () => import('../views/switcher/switcher'),
+    component: () => import('../views/switcher'),
     meta: {
       group: NavGroupMeta.Form,
       navName: 'Switcher 开关',
@@ -259,7 +260,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/breadcrumb',
     name: 'breadcrumb',
-    component: () => import('../views/breadcrumb/breadcrumb'),
+    component: () => import('../views/breadcrumb'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'Breadcrumb 面包屑',
@@ -362,12 +363,24 @@ const routes: RouteRecordRaw[] = [
     },
   },
   /**
+   * @description:轮播图
+   */
+  {
+    path: '/swiper',
+    name: 'swiper',
+    component: () => import('../views/swiper'),
+    meta: {
+      group: NavGroupMeta.Data,
+      navName: 'Swiper 轮播图',
+    },
+  },
+  /**
    * @description:表格
    */
   {
     path: '/table',
     name: 'table',
-    component: () => import('../views/table/table'),
+    component: () => import('../views/table'),
     meta: {
       group: NavGroupMeta.Data,
       navName: 'Table 表格',
@@ -463,7 +476,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/tree',
     name: 'tree',
-    component: () => import('../views/tree/tree'),
+    component: () => import('../views/tree'),
     meta: {
       group: NavGroupMeta.Data,
       navName: 'Tree 树',
@@ -475,7 +488,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/tag',
     name: 'tag',
-    component: () => import('../views/tag/tag'),
+    component: () => import('../views/tag'),
     meta: {
       group: NavGroupMeta.Data,
       navName: 'Tag 标签',
@@ -484,7 +497,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/date-picker',
     name: 'datePicker',
-    component: () => import('../views/date-picker/date-picker'),
+    component: () => import('../views/date-picker'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'DatePicker 日期选择器',
@@ -532,7 +545,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/transfer',
     name: 'transfer',
-    component: () => import('../views/BKTransfer/transfer'),
+    component: () => import('../views/transfer'),
     meta: {
       group: NavGroupMeta.Feedback,
       navName: 'Transfer 穿梭框',
@@ -544,7 +557,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/code-diff',
     name: 'codeDiff',
-    component: () => import('../views/CodeDiff/code-diff'),
+    component: () => import('../views/code-diff'),
     meta: {
       group: NavGroupMeta.Data,
       navName: 'Diff 差异对比',
@@ -553,7 +566,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/virtual-render',
     name: 'virtualRender',
-    component: () => import('../views/virtual-render/virtual-render'),
+    component: () => import('../views/virtual-render'),
     meta: {
       group: NavGroupMeta.Others,
       navName: 'VirtualRender',

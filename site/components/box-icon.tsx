@@ -24,7 +24,9 @@
 * IN THE SOFTWARE.
 */
 import { defineComponent } from 'vue';
+
 import BkPopover from '@bkui-vue/popover';
+
 import './box-icon.less';
 
 export default defineComponent({

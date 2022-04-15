@@ -24,15 +24,16 @@
  * IN THE SOFTWARE.
 */
 
+import ejs from 'ejs';
+import { appendFile, existsSync, lstatSync, mkdirSync, readdir, readFileSync, unlinkSync } from 'fs';
+import { join, parse, resolve } from 'path';
 import Svgo from 'svgo';
-import * as xml2Js from 'xml-js';
 // @ts-ignore
 import svgpath from 'svgpath';
-import shape2path from './shape2path';
-import { readdir, readFileSync, lstatSync, existsSync, unlinkSync, mkdirSync, appendFile } from 'fs';
-import { join, resolve, parse } from 'path';
 import { promisify } from 'util';
-import ejs from 'ejs';
+import * as xml2Js from 'xml-js';
+
+import shape2path from './shape2path';
 const license = `/*
 * Tencent is pleased to support the open source community by making
 * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.

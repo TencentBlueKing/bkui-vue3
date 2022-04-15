@@ -23,15 +23,16 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
+import jsx from 'acorn-jsx';
 import * as rollup from 'rollup';
+import svg from 'rollup-plugin-svg';
+import { terser } from 'rollup-plugin-terser';
 import typescript from 'rollup-plugin-typescript2';
+
 import babel from '@rollup/plugin-babel';
 import commonjs from '@rollup/plugin-commonjs';
-import resolve from '@rollup/plugin-node-resolve';
-import { terser } from 'rollup-plugin-terser';
-import jsx from 'acorn-jsx';
 import json from '@rollup/plugin-json';
-import svg from 'rollup-plugin-svg';
+import resolve from '@rollup/plugin-node-resolve';
 export const rollupBuildScript = async (url: string, outPath: string, globals: rollup.GlobalsOption) => {
   const extensions = ['.ts', '.js', '.tsx'];
   const bundle = await rollup.rollup({

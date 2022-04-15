@@ -24,11 +24,10 @@
  * IN THE SOFTWARE.
  */
 
-import Transfer from './transfer';
-import { App } from 'vue';
+import { withInstall } from '@bkui-vue/shared';
 
-Transfer.install = (Vue: App) => {
-  Vue.component(Transfer.name, Transfer);
-};
+import Component from './transfer';
 
+
+const Transfer = withInstall(Component);
 export default Transfer;

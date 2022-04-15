@@ -1,10 +1,21 @@
-.bk-tree {
-  .bk-tree-node {
+@import '@bkui-vue/styles/themes/themes.less';
+.@{bk-prefix}-tree {
+  .@{bk-prefix}-node-row {
+    padding-left: calc(var(--offset-left));
+
+    &.is-checked {
+      background-color: #ebf2ff;
+    }
+  }
+
+  .@{bk-prefix}-tree-node {
     position: relative;
+    display: flex;
     height: var(--lineHeight);
     padding-left: 0;
     line-height: var(--lineHeight);
     cursor: pointer;
+    align-items: center;
 
     &:not(.is-root) {
       margin-left: calc(var(--depth)*var(--indent));
@@ -25,17 +36,28 @@
     }
 
     .node-virtual-line {
-      display: inline-block;
       position: absolute;
-      left: calc(var(--depth) * var(--indent) * -1 + 6px);
       top: -12px;
       bottom: 50%;
+      left: calc(var(--depth) * var(--indent) * -1 + 6px);
+      display: inline-block;
       width: 0;
       border-left: var(--level-line);
     }
 
-    .bk-tree-icon {
+    .@{bk-prefix}-tree-icon {
       margin: 0 6px 0 4px;
+    }
+
+    .@{bk-prefix}-node-content {
+      display: inline-flex;
+      align-items: center;
+
+      .@{bk-prefix}-node-text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
     }
   }
 }

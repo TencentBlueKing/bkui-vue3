@@ -25,7 +25,7 @@
 */
 export interface IPropsTableItem {
   name: string;
-  type: 'Array' | 'String' | 'Number' | 'Object' | 'Symbol' | 'Function' | 'Boolean' | 'String/Object',
+  type: string,
   default: unknown;
   desc: string;
   optional: string[];

@@ -25,8 +25,8 @@
 */
 import { defineComponent } from 'vue';
 
-import BkNotify from '@bkui-vue/notify';
 import BkButton from '@bkui-vue/button';
+import BkNotify from '@bkui-vue/notify';
 
 export default defineComponent({
   name: 'SitePopover',

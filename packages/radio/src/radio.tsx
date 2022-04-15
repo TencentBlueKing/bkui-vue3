@@ -24,12 +24,14 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent } from 'vue';
 import type { ExtractPropTypes } from 'vue';
+import { defineComponent } from 'vue';
+
 import {
   classes,
   PropTypes,
 } from '@bkui-vue/shared';
+
 import {
   useFocus,
   useRadio,

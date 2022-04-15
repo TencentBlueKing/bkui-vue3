@@ -24,7 +24,8 @@
  * IN THE SOFTWARE.
 */
 
-import { watchEffect, ref, defineComponent, PropType, watch, computed } from 'vue';
+import { computed, defineComponent, PropType, ref, watch, watchEffect } from 'vue';
+
 import { IMenuInfo, MenuMode, useMenuProvider } from './utils';
 export const menuProps = {
   activeKey: String,

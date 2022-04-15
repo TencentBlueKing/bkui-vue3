@@ -25,8 +25,9 @@
 */
 
 import { computed, defineComponent, ExtractPropTypes, ref } from 'vue';
-import { classes, PropTypes, ElementType, stringEnum } from '@bkui-vue/shared';
-import { Close, Search, Eye, DownSmall, Unvisible } from '@bkui-vue/icon';
+
+import { Close, DownSmall, Eye, Search, Unvisible } from '@bkui-vue/icon';
+import { classes, ElementType, PropTypes, stringEnum } from '@bkui-vue/shared';
 
 
 export const inputType = {

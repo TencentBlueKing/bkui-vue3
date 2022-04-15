@@ -24,9 +24,10 @@
  * IN THE SOFTWARE.
 */
 
-import { mount } from '@vue/test-utils';
-import Card from '../src';
 import { Help, HelpDocumentFill, HelpFill } from '@bkui-vue/icon';
+import { mount } from '@vue/test-utils';
+
+import Card from '../src';
 const mountTpl = (template: string) => mount({
   components: {
     bkCard: Card,

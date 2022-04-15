@@ -25,8 +25,9 @@
  */
 
 import { defineComponent, ExtractPropTypes, onMounted, ref } from 'vue';
+
+import { Circle, Done, Error } from '@bkui-vue/icon';
 import { classes, PropTypes } from '@bkui-vue/shared';
-import { Error, Circle, Done } from '@bkui-vue/icon';
 
 const stepsProps = {
   theme: PropTypes.theme().def('primary'),

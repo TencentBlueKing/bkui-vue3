@@ -24,8 +24,9 @@
 * IN THE SOFTWARE.
 */
 import { defineComponent, reactive } from 'vue';
+
+import { InfoLine, Search } from '@bkui-vue/icon';
 import BkInput from '@bkui-vue/input';
-import { Search, InfoLine } from '@bkui-vue/icon';
 
 export default defineComponent({
   setup() {

@@ -25,6 +25,7 @@
 */
 
 import { mount } from '@vue/test-utils';
+
 import Tag from '../src';
 
 describe('Tag.tsx', () => {

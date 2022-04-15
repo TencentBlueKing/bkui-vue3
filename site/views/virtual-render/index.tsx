@@ -25,78 +25,49 @@
 */
 
 import { defineComponent } from 'vue';
-import DemoTitle from '../../components/demo-title';
+
+import { virtualRenderProps } from '../../../packages/virtual-render/src/props';
 import DemoBox from '../../components/demo-box';
+import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
-import { treeProps } from '../../../packages/tree/src/props';
 import { resolvePropsToDesData } from '../utils/index';
+
 import basic from './basic.vue';
-import virtualRender from './virtual-render.vue';
-import levelLine from './level-line.vue';
-import prefixIcon from './prefix-icon.vue';
-import async from './async.vue';
+import customLineHeight from './custom-line-height.vue';
 
 export default defineComponent({
-  components: { basic, virtualRender, levelLine, prefixIcon, async },
+  components: { basic, customLineHeight },
   render() {
-    const propsJson = resolvePropsToDesData(treeProps);
+    const propsJson = resolvePropsToDesData(virtualRenderProps);
 
-    const configs = [{
-      attrs: {
-        title: '基础用法',
-        subtitle: '基础用法，用于表单内容的录入',
-        desc: 'props: --',
-        componentName: 'tree',
-        demoName: 'basic',
+    const configs = [
+      {
+        attrs: {
+          title: '基础用法',
+          subtitle: '基础用法，用于表单内容的录入',
+          desc: 'props: --',
+          componentName: 'virtual-render',
+          demoName: 'basic',
+        },
+        component: () => <basic></basic>,
       },
-      component: () => <basic></basic>,
-    },
-    {
-      attrs: {
-        title: '启用虚拟滚动',
-        subtitle: '启用虚拟滚动',
-        desc: 'props: virtual-render',
-        componentName: 'tree',
-        demoName: 'virtual-render',
+      {
+        attrs: {
+          title: '自定义行高',
+          subtitle: '每行高度不一致，自定义每行高度',
+          desc: 'props: --',
+          componentName: 'virtual-render',
+          demoName: 'custom-line-height',
+        },
+        component: () => <custom-line-height></custom-line-height>,
       },
-      component: () => <virtual-render></virtual-render>,
-    },
-    {
-      attrs: {
-        title: '启用连线',
-        subtitle: '启用连线',
-        desc: 'props: level-line',
-        componentName: 'tree',
-        demoName: 'level-line',
-      },
-      component: () => <level-line></level-line>,
-    },
-    {
-      attrs: {
-        title: '自定义节点Icon',
-        subtitle: '自定义节点Icon',
-        desc: 'props: prefix-icon',
-        componentName: 'tree',
-        demoName: 'prefix-icon',
-      },
-      component: () => <prefix-icon></prefix-icon>,
-    },
-    {
-      attrs: {
-        title: '异步加载节点数据',
-        subtitle: '异步加载节点数据',
-        desc: 'props: async',
-        componentName: 'tree',
-        demoName: 'async',
-      },
-      component: () => <async></async>,
-    }];
+    ];
 
     return (
       <div>
         <DemoTitle
-          name="Tree"
-          desc="Tree组件， 为页面和功能提供列表。"
+          name="virtual-render"
+          desc="virtual-render 为页面和功能提供列表。"
           link="https://www.google.com.hk/"/>
           {
             configs.map(cfg => <DemoBox { ...cfg.attrs }>

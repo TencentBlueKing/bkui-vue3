@@ -23,61 +23,21 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-
 import { defineComponent } from 'vue';
+
 import DemoTitle from '../../components/demo-title';
-import DemoBox from '../../components/demo-box';
-import PropsBox from '../../components/props-box';
-import { IPropsTableItem } from '../../typings';
-import BaseDemo from './baseDemo';
-const propsJson: IPropsTableItem[] = [
-  {
-    name: 'active',
-    type: 'String',
-    default: '',
-    desc: '当前显示的选项卡名称',
-    optional: [],
-  },
-  {
-    name: 'type',
-    type: 'String',
-    default: ['border-card'],
-    desc: '选项卡样式',
-    optional: ['card', 'border-card', 'unborder-card'],
-  },
-  {
-    name: 'tab-position',
-    type: 'String',
-    default: 'top',
-    desc: '选项卡位置',
-    optional: ['left', 'right', 'top'],
-  },
-  {
-    name: 'closable',
-    type: 'Boolean',
-    default: 'true',
-    desc: '是否可关闭选项卡',
-    optional: [],
-  },
-];
+
+import StartMd from './start.md';
 export default defineComponent({
   render() {
     return (
-      <div>
+      <div style="background: white">
         <DemoTitle
-          name="tab"
-          desc="Tab 选项卡，用于承载同一层级下不同页面或类别的组件，方便用户在同一个页面框架下进行快速切换。 。"
-          link="https://www.google.com.hk/"/>
-        <DemoBox
-          title="基础用法"
-          subtitle="基础的、简洁的标签页。"
-          desc=""
-          componentName="menu"
-          demoName="base-demo">
-             <BaseDemo/>
-          </DemoBox>
-        <PropsBox propsData={propsJson}/>
+          name="快速上手"
+          desc="本节介绍如何在项目中结合 webpack 一起使用 @blueking/bkui-vue。"/>
+          <StartMd/>
       </div>
     );
   },
 });
+

@@ -23,9 +23,11 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { InjectionKey, ref, customRef, watch, Ref } from 'vue';
+import { customRef, InjectionKey, Ref, ref, watch } from 'vue';
+
 import { OnFirstUpdateFnType } from '@bkui-vue/shared';
-import { ISelectContext, IOptionGroupContext, IPopoverConfig } from './type';
+
+import { IOptionGroupContext, IPopoverConfig, ISelectContext } from './type';
 
 export const selectKey: InjectionKey<ISelectContext> = Symbol('BkSelect');
 export const optionGroupKey: InjectionKey<IOptionGroupContext> = Symbol('BkOptionGroup');

@@ -24,7 +24,8 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent, getCurrentInstance, onBeforeUnmount, computed } from 'vue';
+import { computed, defineComponent, getCurrentInstance, onBeforeUnmount } from 'vue';
+
 import { useMenuInject, useMenuPathInject } from './utils';
 
 export default defineComponent({

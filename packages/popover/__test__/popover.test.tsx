@@ -25,6 +25,7 @@
  */
 
 import { shallowMount } from '@vue/test-utils';
+
 import Popover from '../src';
 
 describe('Popover.tsx', () => {

@@ -25,15 +25,17 @@
 */
 
 import { defineComponent } from 'vue';
+
 import { PropTypes } from '@bkui-vue/shared';
-import Building from './images/building.svg';
-import notFound from './images/404.svg';
+
 import permissions from './images/403.svg';
+import notFound from './images/404.svg';
 import maintain from './images/500.svg';
+import Building from './images/building.svg';
 import empty from './images/empty.svg';
-import searchEmpty from './images/search-empty.svg';
 import login from './images/login.svg';
-import { TypesMapType, Types } from './typings';
+import searchEmpty from './images/search-empty.svg';
+import { Types, TypesMapType } from './typings';
 
 export default defineComponent({
   name: 'Exception',

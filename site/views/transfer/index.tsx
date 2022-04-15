@@ -25,16 +25,18 @@
 */
 
 import { defineComponent } from 'vue';
-import DemoTitle from '../../components/demo-title';
+
 import DemoBox from '../../components/demo-box';
+import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import { IPropsTableItem } from '../../typings';
+
 import BaseDemo from './base-demo.vue';
-import TargetListDemo from './target-list-demo.vue';
-import NormalListDemo from './normal-list-demo.vue';
 import CustomHeaderDemo from './custom-header-demo.vue';
 import CustomOptionDemo from './custom-option-demo.vue';
+import NormalListDemo from './normal-list-demo.vue';
 import SearchDemo from './search-demo.vue';
+import TargetListDemo from './target-list-demo.vue';
 
 const transferPropsJson: IPropsTableItem[] = [
   {
@@ -193,7 +195,7 @@ export default defineComponent({
             title="基础用法"
             subtitle=""
             desc="默认配置 source-list 和 display-key，source-list 为必传 source-list 可以是普通数组。当 source-list 为普通数组时，display-key 可不传。"
-            componentName="BkTransfer"
+            componentName="transfer"
             demoName="base-demo">
             <BaseDemo></BaseDemo>
           </DemoBox>
@@ -202,7 +204,7 @@ export default defineComponent({
             title="配置 target-list 以及设置排序"
             subtitle=""
             desc="配置 sortable 以及 sort-key 使得操作数据时数据的排序不变，配置 target-list 设置默认选择的数据。sortable 为 true 时开启排序功能，为 false 时则关闭，sort-key 为排序所依据的 key 值。注意：当 source-list 为普通数组时，开启排序时默认按照数组 index 排序，此时可不传 sort-key。"
-            componentName="BkTransfer"
+            componentName="transfer"
             demoName="target-list-demo">
             <TargetListDemo></TargetListDemo>
           </DemoBox>
@@ -211,7 +213,7 @@ export default defineComponent({
             title="普通数组配置"
             subtitle=""
             desc="此时根据 index 排序；display-key 和 sort-key 以及 setting-key 可不传。"
-            componentName="BkTransfer"
+            componentName="transfer"
             demoName="normal-list-demo">
             <NormalListDemo></NormalListDemo>
           </DemoBox>
@@ -220,7 +222,7 @@ export default defineComponent({
             title="自定义 header 和无数据时显示内容"
             subtitle=""
             desc="配置 slot 为 left-header 或 right-header 可自定义 header 内容，配置 slot 为 left-empty-content 和 right-empty-content 可自定义数据为空时所显示的内容(注意：当配置了 slot 时，其 title 和 empty-content 可不配置)"
-            componentName="BkTransfer"
+            componentName="transfer"
             demoName="custom-header-demo">
             <CustomHeaderDemo></CustomHeaderDemo>
           </DemoBox>
@@ -229,7 +231,7 @@ export default defineComponent({
             title="自定义 选项卡 模板"
             subtitle=""
             desc="配置 slot 为 source-option 或 target-option 可自定义 选项卡 内容。"
-            componentName="BkTransfer"
+            componentName="transfer"
             demoName="custom-option-demo">
             <CustomOptionDemo></CustomOptionDemo>
           </DemoBox>
@@ -238,7 +240,7 @@ export default defineComponent({
             title="左侧带搜索"
             subtitle=""
             desc="配置 searchable 启用搜索功能"
-            componentName="BkTransfer"
+            componentName="transfer"
             demoName="search-demo">
             <SearchDemo></SearchDemo>
           </DemoBox>

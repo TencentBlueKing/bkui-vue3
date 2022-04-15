@@ -24,9 +24,11 @@
 * IN THE SOFTWARE.
 */
 import { defineComponent } from 'vue';
-import DemoNav from './components/demo-nav';
-import './app.less';
 import { RouterView } from 'vue-router';
+
+import DemoNav from './components/demo-nav';
+
+import './app.less';
 export default defineComponent({
   name: 'App',
   render() {

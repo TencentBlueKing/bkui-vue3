@@ -23,22 +23,24 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import type { ExtractPropTypes } from 'vue';
 import {
   defineComponent,
   provide,
 } from 'vue';
-import type { ExtractPropTypes } from 'vue';
+
 import {
   classes,
   PropTypes,
 } from '@bkui-vue/shared';
+
 import { formKey } from './common';
 import type { IFormItemContext } from './type';
 
 export const formProps = {
-  formType: PropTypes.string,
-  labelWidth: PropTypes.number,
-  labelPosition: PropTypes.string.def('right'),
+  formType: PropTypes.oneOf(['default', 'vertical']).def('default'),
+  labelWidth: PropTypes.oneOfType([Number, String]),
+  labelPosition: PropTypes.oneOf(['left', 'center', 'right']),
   model: PropTypes.object,
   rules: PropTypes.array,
 };

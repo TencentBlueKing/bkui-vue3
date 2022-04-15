@@ -46,6 +46,7 @@ import '@bkui-vue/progress/progress.less';
 import '@bkui-vue/radio/radio.less';
 import '@bkui-vue/rate/rate.less';
 import '@bkui-vue/rate/star.less';
+import '@bkui-vue/swiper/swiper.less';
 import '@bkui-vue/select/select.less';
 import '@bkui-vue/sideslider/sideslider.less';
 import '@bkui-vue/switcher/switcher.less';

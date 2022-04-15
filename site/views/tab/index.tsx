@@ -24,35 +24,61 @@
 * IN THE SOFTWARE.
 */
 
-import { defineComponent, ref } from 'vue';
-import { BkCheckbox, BkCheckboxGroup } from '@bkui-vue/checkbox';
-export default defineComponent({
-  name: 'SiteCheckbox',
-  setup() {
-    const checkboxGroupValue = ref(['选项一']);
+import { defineComponent } from 'vue';
 
-    return {
-      checkboxGroupValue,
-    };
+import DemoBox from '../../components/demo-box';
+import DemoTitle from '../../components/demo-title';
+import PropsBox from '../../components/props-box';
+import { IPropsTableItem } from '../../typings';
+
+import BaseDemo from './baseDemo';
+const propsJson: IPropsTableItem[] = [
+  {
+    name: 'active',
+    type: 'String',
+    default: '',
+    desc: '当前显示的选项卡名称',
+    optional: [],
   },
+  {
+    name: 'type',
+    type: 'String',
+    default: ['border-card'],
+    desc: '选项卡样式',
+    optional: ['card', 'border-card', 'unborder-card'],
+  },
+  {
+    name: 'tab-position',
+    type: 'String',
+    default: 'top',
+    desc: '选项卡位置',
+    optional: ['left', 'right', 'top'],
+  },
+  {
+    name: 'closable',
+    type: 'Boolean',
+    default: 'true',
+    desc: '是否可关闭选项卡',
+    optional: [],
+  },
+];
+export default defineComponent({
   render() {
     return (
       <div>
-        <div style="margin: 20px auto;">
-          <BkCheckbox modelValue="选项一" label="选项一" disabled />
-          <BkCheckbox label="选项二" disabled />
-          <BkCheckbox label="选项三" checked />
-          <BkCheckbox label="选项四" />
-        </div>
-        <div>
-          <BkCheckboxGroup v-model={this.checkboxGroupValue}>
-            <BkCheckbox label="选项一" disabled falseLabel={false} />
-            <BkCheckbox label="选项二" disabled falseLabel={false} />
-            <BkCheckbox label="选项三" />
-            <BkCheckbox label="选项四" />
-            <BkCheckbox label="选项五" />
-          </BkCheckboxGroup>
-        </div>
+        <DemoTitle
+          name="tab"
+          desc="Tab 选项卡，用于承载同一层级下不同页面或类别的组件，方便用户在同一个页面框架下进行快速切换。 。"
+          link="https://www.google.com.hk/"/>
+        <DemoBox
+          title="基础用法"
+          subtitle="基础的、简洁的标签页。"
+          desc=""
+          componentName="menu"
+          demoName="base-demo">
+             <BaseDemo/>
+          </DemoBox>
+        <PropsBox propsData={propsJson}/>
       </div>
     );
   },

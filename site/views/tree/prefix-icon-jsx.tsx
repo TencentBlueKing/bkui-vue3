@@ -24,18 +24,35 @@
 * IN THE SOFTWARE.
 */
 import { defineComponent } from 'vue';
-import DemoTitle from '../../components/demo-title';
-import StartMd from './start.md';
+
+import { BASIC_DATA } from './options';
 export default defineComponent({
+  components: {},
+  data() {
+    return {
+      treeData: [...BASIC_DATA],
+    };
+  },
+  methods: {
+    getPrefixIcon(_isRoot, _hasChild, _isOpen, _renderType, _item) {
+      const isAction = _renderType === 'action';
+      const childeFont = _hasChild ? '+' : '*';
+      const openFont = _isOpen ? '-' : childeFont;
+      const rootFont = _isRoot ? 'R' : 'C';
+      const fontIcon = !isAction ? rootFont : openFont;
+      return  <span class="custom-node" style="font-size: 8px; text-align: center;">{fontIcon}</span>;
+    },
+  },
   render() {
-    return (
-      <div style="background: white">
-        <DemoTitle
-          name="快速上手"
-          desc="本节介绍如何在项目中结合 webpack 一起使用 @blueking/bkui-vue。"/>
-          <StartMd/>
-      </div>
-    );
+    return  <div style="height: 300px; width: 100%; overflow: auto;">
+      <span>function 返回对象</span>
+      <bk-tree
+        data={ this.treeData }
+        levelLine={true}
+        prefix-icon={ this.getPrefixIcon }
+        label="name"
+        children="children"
+      />
+    </div>;
   },
 });
-

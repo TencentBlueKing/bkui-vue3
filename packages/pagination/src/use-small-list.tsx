@@ -24,21 +24,23 @@
 * IN THE SOFTWARE.
 */
 
-import {
-  ref,
-  computed,
-  watch,
-  nextTick,
-  getCurrentInstance,
+import type {
+  ComponentInternalInstance,
 } from 'vue';
-import BkPopover from '@bkui-vue/popover';
+import {
+  computed,
+  getCurrentInstance,
+  nextTick,
+  ref,
+  watch,
+} from 'vue';
+
 import {
   LeftShape,
   RightShape,
 } from '@bkui-vue/icon';
-import type {
-  ComponentInternalInstance,
-} from 'vue';
+import BkPopover from '@bkui-vue/popover';
+
 import type {
   IPaginationInstance,
 } from './type';

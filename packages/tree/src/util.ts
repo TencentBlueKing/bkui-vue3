@@ -25,6 +25,9 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
+
+import { resolveClassName } from '@bkui-vue/shared';
+
 import { TreePropTypes } from './props';
 
 const DEFAULT_LEVLE_LINE = '1px dashed #c3cdd7';
@@ -40,8 +43,13 @@ export const getFlatdata = (props: TreePropTypes, treeData: Array<any> = undefin
   let order = 0;
   const schema = new Map<string, any>();
 
-  function isCachedTreeNodeOpened(uuid: string) {
-    return (cachedSchema || []).some((item: any) => item.__uuid === uuid && item.__isOpen);
+  function isCachedTreeNodeOpened(uuid: string, node: any) {
+    const cached = (cachedSchema || []).find((item: any) => item.__uuid === uuid);
+    if (cached) {
+      return cached.__isOpen;
+    }
+
+    return node.isOpen;
   }
 
   function flatten(array: Array<any>, depth = 0, parent = null, path = null) {
@@ -52,7 +60,7 @@ export const getFlatdata = (props: TreePropTypes, treeData: Array<any> = undefin
       } else {
         if (typeof item === 'object' && item !== null) {
           const uuid = item.__uuid || uuidv4();
-          const isOpen = isCachedTreeNodeOpened(uuid);
+          const isOpen = isCachedTreeNodeOpened(uuid, item);
           const currentPath = path !== null ? `${path}-${i}` : `${i}`;
           const attrs = {
             __depth: depth,
@@ -65,6 +73,7 @@ export const getFlatdata = (props: TreePropTypes, treeData: Array<any> = undefin
             __isRoot: parent === null,
             __order: order,
             __isOpen: isOpen,
+            __checked: !!item.checked,
             [children]: null,
           };
           Object.assign(item, { __uuid: uuid });
@@ -163,12 +172,12 @@ const getNodeAttr = (schema: Map<string, any>, uuid: string, key: string) => get
  */
 export const getTreeStyle = (item: any, props: TreePropTypes) => {
   // 处理Props回调函数，参数 [tree] 表示 levelLine 回调参数第二个，此次渲染请求为Tree外层样式
-  const levelLine = getPropsOneOfBoolValueWithDefault(props, 'levelLine', item, DEFAULT_LEVLE_LINE, null, ['tree']);
+  const levelLine: any = getPropsOneOfBoolValueWithDefault(props, 'levelLine', item, DEFAULT_LEVLE_LINE, null, ['tree']);
   return {
     '--level-line': levelLine,
     '--lineHeight': `${props.lineHeight}px`,
     '--indent': `${props.indent}px`,
-    padding: 0,
+    '--offset-left': `${props.offsetLeft}px`,
   };
 };
 
@@ -178,12 +187,11 @@ export const getTreeStyle = (item: any, props: TreePropTypes) => {
  * @param props
  * @returns
  */
-export const getNodeItemStyle = (item: any, props: TreePropTypes, flatData: any = {}) => {
+export const getNodeItemStyle: any = (item: any, props: TreePropTypes, flatData: any = {}) => {
   const {  schema } = flatData;
   const depth = getNodeAttr(schema as Map<string, any>, item.__uuid, '__depth');
   return {
     '--depth': depth,
-    paddingLeft: 0,
     ...(typeof props.levelLine === 'function'
       ? {
         '--level-line': getPropsOneOfBoolValueWithDefault(props, 'levelLine', item, DEFAULT_LEVLE_LINE, null, [
@@ -208,6 +216,20 @@ export const getNodeItemClass = (item: any, schema: any, props: TreePropTypes) =
     'is-open': __isOpen,
     'is-virtual-render': props.virtualRender,
     'level-line': props.levelLine,
+  };
+};
+
+/**
+ * 获取当前渲染节点Class List
+ * @param item
+ * @returns
+ */
+export const getNodeRowClass = (item: any, schema: any) => {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  const { __checked } = getSchemaVal(schema as Map<string, any>, item.__uuid) || {};
+  return {
+    'is-checked': __checked,
+    [resolveClassName('node-row')]: true,
   };
 };
 

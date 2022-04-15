@@ -24,10 +24,11 @@
  * IN THE SOFTWARE.
 */
 
+import { withInstallProps } from '@bkui-vue/shared';
+
 import Component from './menu';
+import Group from './menu-group';
 import Item from './menu-item';
 import Submenu from './submenu';
-import Group from './menu-group';
-import { withInstallProps } from '@bkui-vue/shared';
 const BkMenu = withInstallProps(Component, { Item, Submenu, Group });
 export default BkMenu;

@@ -24,33 +24,35 @@
  * IN THE SOFTWARE.
 */
 
-import { PropTypes, classes } from '@bkui-vue/shared';
-import BKPopover from '@bkui-vue/popover';
+import {
+  computed,
+  defineComponent,
+  onMounted,
+  provide,
+  reactive,
+  ref,
+  toRefs,
+  unref,
+  watch,
+} from 'vue';
+
 import { clickoutside } from '@bkui-vue/directives';
 import { AngleUp, Close } from '@bkui-vue/icon';
 import Loading from '@bkui-vue/loading';
-import { GroupInstanceType, ISelectState, OptionInstanceType } from './type';
+import BKPopover from '@bkui-vue/popover';
+import { classes, PropTypes } from '@bkui-vue/shared';
 import Tag from '@bkui-vue/tag';
+
 import {
-  defineComponent,
-  toRefs,
-  computed,
-  ref,
-  provide,
-  reactive,
-  unref,
-  onMounted,
-  watch,
-} from 'vue';
-import {
-  useFocus,
   selectKey,
-  useHover,
-  useRegistry,
-  usePopover,
-  useRemoteSearch,
   toLowerCase,
+  useFocus,
+  useHover,
+  usePopover,
+  useRegistry,
+  useRemoteSearch,
 } from './common';
+import { GroupInstanceType, ISelectState, OptionInstanceType } from './type';
 
 export default defineComponent({
   name: 'Select',
