@@ -1,16 +1,16 @@
 <template>
-  <BkRadioGroup
+  <bk-radio-group
     v-model="radioGroupValue"
   >
-    <BkRadioButton label="QQ" />
-    <BkRadioButton label="微信" />
-    <BkRadioButton label="Email" />
-  </BkRadioGroup>
+    <bk-radio-button label="QQ" />
+    <bk-radio-button label="微信" />
+    <bk-radio-button label="Email" />
+  </bk-radio-group>
 </template>
 <script setup>
-import { ref } from 'vue';
+  import { ref } from 'vue';
 
-const radioGroupValue = ref('微信');
+  const radioGroupValue = ref('微信');
 </script>
 <style lang="postcss">
 </style>

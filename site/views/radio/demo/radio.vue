@@ -1,7 +1,7 @@
 <template>
-  <BkRadio label="QQ" />
-  <BkRadio label="微信" />
-  <BkRadio label="Email" />
+  <bk-radio label="QQ" />
+  <bk-radio label="微信" />
+  <bk-radio label="Email" />
 </template>
 <script setup>
 

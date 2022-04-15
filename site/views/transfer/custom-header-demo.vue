@@ -5,7 +5,7 @@
     :display-key="'name'"
     :sort-key="'code'"
     :setting-key="'code'"
-    :sortable="true"
+    sortable
     @change="change"
   >
     <template #left-header>
@@ -54,49 +54,49 @@
   </bk-transfer>
 </template>
 <script>
-import BkTransfer from '@bkui-vue/transfer';
+  import BkTransfer from '@bkui-vue/transfer';
 
-export default {
-  components: {
-    BkTransfer,
-  },
-  data() {
-    return {
-      rtxList: [
-        { name: 'zhangsan', code: 1 },
-        { name: 'lisi', code: 2 },
-        { name: 'laowang', code: 3 },
-        { name: 'zhaosi', code: 4 },
-        { name: 'liuer', code: 5 },
-        { name: 'zhousan', code: 6 },
-        { name: 'huangwu', code: 7 },
-        { name: 'tianliu', code: 8 },
-      ],
-      rtxValue: [1, 5, 7],
-      sourceLength: 0,
-      targetLength: 0,
-    };
-  },
-  methods: {
-    change(sourceList, targetList, targetValueList) {
-      this.sourceLength = sourceList.length;
-      this.targetLength = targetList.length;
-      console.log(sourceList);
-      console.log(targetList);
-      console.log(targetValueList);
+  export default {
+    components: {
+      BkTransfer,
     },
-    addAll() {
-      const list = [];
-      this.rtxList.forEach((item) => {
-        list.push(item.code);
-      });
-      this.rtxValue = [...list];
+    data() {
+      return {
+        rtxList: [
+          { name: 'zhangsan', code: 1 },
+          { name: 'lisi', code: 2 },
+          { name: 'laowang', code: 3 },
+          { name: 'zhaosi', code: 4 },
+          { name: 'liuer', code: 5 },
+          { name: 'zhousan', code: 6 },
+          { name: 'huangwu', code: 7 },
+          { name: 'tianliu', code: 8 },
+        ],
+        rtxValue: [1, 5, 7],
+        sourceLength: 0,
+        targetLength: 0,
+      };
     },
-    removeAll() {
-      this.rtxValue = [];
+    methods: {
+      change(sourceList, targetList, targetValueList) {
+        this.sourceLength = sourceList.length;
+        this.targetLength = targetList.length;
+        console.log(sourceList);
+        console.log(targetList);
+        console.log(targetValueList);
+      },
+      addAll() {
+        const list = [];
+        this.rtxList.forEach((item) => {
+          list.push(item.code);
+        });
+        this.rtxValue = [...list];
+      },
+      removeAll() {
+        this.rtxValue = [];
+      },
     },
-  },
-};
+  };
 </script>
 <style lang="postcss">
   .left-header label,

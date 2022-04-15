@@ -8,9 +8,9 @@
     ]
   },
   "scripts": {
-    "lint": "eslint --ext .js,.ts,.tsx ./packages ./site ",
+    "lint": "eslint --ext .js,.ts,.tsx,.vue ./packages ./site ",
     "lint:style": "stylelint --fix ./packages/**/*.{css,less} --custom-syntax",
-    "lint:fix": "eslint --fix ./packages ./site ./scripts --ext .js,.ts,.tsx",
+    "lint:fix": "eslint --fix ./packages ./site ./scripts --ext .js,.ts,.tsx,.vue",
     "test:unit": "jest --passWithNoTests",
     "dev": "vite serve site",
     "build": "yarn build:library && yarn build:component",
