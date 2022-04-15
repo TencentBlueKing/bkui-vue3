@@ -24,15 +24,17 @@
 * IN THE SOFTWARE.
 */
 import { defineComponent } from 'vue';
-import DemoTitle from '../../components/demo-title';
+
 import DemoBox from '../../components/demo-box';
+import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import { IPropsTableItem } from '../../typings';
+
 import SelectBaseDemo from './select-base-demo.vue';
-import SelectStyleDemo from './select-style-demo.vue';
-import SelectMultiDemo from './select-multi-demo.vue';
 import SelectGroupDemo from './select-group-demo.vue';
+import SelectMultiDemo from './select-multi-demo.vue';
 import SelectSearchDemo from './select-search-demo.vue';
+import SelectStyleDemo from './select-style-demo.vue';
 
 const propsJson: IPropsTableItem[] = [];
 export default defineComponent({

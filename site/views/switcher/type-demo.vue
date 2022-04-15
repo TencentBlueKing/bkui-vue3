@@ -136,30 +136,30 @@
   </div>
 </template>
 <script>
-import { defineComponent, ref } from 'vue';
+  import { defineComponent, ref } from 'vue';
 
-import BkSwitcher from '@bkui-vue/switcher';
+  import BkSwitcher from '@bkui-vue/switcher';
 
-export default defineComponent({
-  name: 'SiteBkSwitcher',
-  components: {
-    BkSwitcher,
-  },
-  setup() {
-    const demo1 = ref(true);
-    const requestHandler = lastValue => new Promise((resolve) => {
-      setTimeout(() => {
-        console.log(lastValue);
-        resolve();
-      }, 1000);
-    });
+  export default defineComponent({
+    name: 'SiteBkSwitcher',
+    components: {
+      BkSwitcher,
+    },
+    setup() {
+      const demo1 = ref(true);
+      const requestHandler = lastValue => new Promise((resolve) => {
+        setTimeout(() => {
+          console.log(lastValue);
+          resolve();
+        }, 1000);
+      });
 
-    return {
-      demo1,
-      requestHandler,
-    };
-  },
-});
+      return {
+        demo1,
+        requestHandler,
+      };
+    },
+  });
 
 </script>
 

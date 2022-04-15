@@ -1,19 +1,19 @@
 <template>
   <div class="demo">
-    <BkSelect
+    <bk-select
       v-model="selectedValue"
       class="bk-select"
       multiple
       show-select-all
     >
-      <BkOption
+      <bk-option
         v-for="(item, index) in datasource"
         :key="index"
         :value="item.value"
         :label="item.label"
       />
-    </BkSelect>
-    <BkSelect
+    </bk-select>
+    <bk-select
       v-model="selectedValue"
       class="bk-select"
       filterable
@@ -21,44 +21,44 @@
       show-select-all
       multiple-mode="tag"
     >
-      <BkOption
+      <bk-option
         v-for="(item, index) in datasource"
         :key="index"
         :value="item.value"
         :label="item.label"
       />
-    </BkSelect>
+    </bk-select>
   </div>
 </template>
 <script setup>
-import { ref } from 'vue';
-const datasource = ref([
-  {
-    value: 'string',
-    label: '爬山',
-  },
-  {
-    value: false,
-    label: '跑步',
-  },
-  {
-    value: undefined,
-    label: '未知',
-  },
-  {
-    value: 1,
-    label: '健身',
-  },
-  {
-    value: null,
-    label: '骑车',
-  },
-  {
-    value: '',
-    label: '跳舞',
-  },
-]);
-const selectedValue = ref(false);
+  import { ref } from 'vue';
+  const datasource = ref([
+    {
+      value: 'string',
+      label: '爬山',
+    },
+    {
+      value: false,
+      label: '跑步',
+    },
+    {
+      value: undefined,
+      label: '未知',
+    },
+    {
+      value: 1,
+      label: '健身',
+    },
+    {
+      value: null,
+      label: '骑车',
+    },
+    {
+      value: '',
+      label: '跳舞',
+    },
+  ]);
+  const selectedValue = ref(false);
 </script>
 <style scoped>
 .demo {

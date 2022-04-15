@@ -1,102 +1,102 @@
 <template>
   <div class="style-demo">
     <!-- small -->
-    <BkSelect
+    <bk-select
       v-model="selectedValue"
       class="bk-select"
       size="small"
     >
-      <BkOption
+      <bk-option
         v-for="(item, index) in datasource"
         :key="index"
         :value="item.value"
         :label="item.label"
       />
-    </BkSelect>
+    </bk-select>
     <!-- default -->
-    <BkSelect
+    <bk-select
       v-model="selectedValue"
       class="bk-select"
     >
-      <BkOption
+      <bk-option
         v-for="(item, index) in datasource"
         :key="index"
         :value="item.value"
         :label="item.label"
       />
-    </BkSelect>
+    </bk-select>
     <!-- large -->
-    <BkSelect
+    <bk-select
       v-model="selectedValue"
       class="bk-select"
       size="large"
     >
-      <BkOption
+      <bk-option
         v-for="(item, index) in datasource"
         :key="index"
         :value="item.value"
         :label="item.label"
       />
-    </BkSelect>
+    </bk-select>
     <!-- small large -->
-    <BkSelect
+    <bk-select
       v-model="selectedValue"
       class="bk-select"
       size="small"
       behavior="simplicity"
     >
-      <BkOption
+      <bk-option
         v-for="(item, index) in datasource"
         :key="index"
         :value="item.value"
         :label="item.label"
       />
-    </BkSelect>
+    </bk-select>
     <!-- simplicity large -->
-    <BkSelect
+    <bk-select
       v-model="selectedValue"
       class="bk-select"
       size="large"
       behavior="simplicity"
     >
-      <BkOption
+      <bk-option
         v-for="(item, index) in datasource"
         :key="index"
         :value="item.value"
         :label="item.label"
       />
-    </BkSelect>
+    </bk-select>
   </div>
 </template>
 <script setup>
-import { ref } from 'vue';
-const datasource = ref([
-  {
-    value: 'string',
-    label: '爬山',
-  },
-  {
-    value: false,
-    label: '跑步',
-  },
-  {
-    value: undefined,
-    label: '未知',
-  },
-  {
-    value: 1,
-    label: '健身',
-  },
-  {
-    value: null,
-    label: '骑车',
-  },
-  {
-    value: '',
-    label: '跳舞',
-  },
-]);
-const selectedValue = ref(false);
+  import { ref } from 'vue';
+  const datasource = ref([
+    {
+      value: 'string',
+      label: '爬山',
+    },
+    {
+      value: false,
+      label: '跑步',
+    },
+    {
+      value: undefined,
+      label: '未知',
+    },
+    {
+      value: 1,
+      label: '健身',
+    },
+    {
+      value: null,
+      label: '骑车',
+    },
+    {
+      value: '',
+      label: '跳舞',
+    },
+  ]);
+  const selectedValue = ref(false);
 </script>
 <style scoped>
 .style-demo {

@@ -33,90 +33,90 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue';
-export default defineComponent({
-  components: {},
-  data() {
-    return {
-      randomRows: [
-        {
-          ip: '192.168.0.1',
-          source: 'QQ',
-          status: '创建中',
-          create_time: '2018-05-25 15:02:24',
-        },
-        {
-          ip: '192.168.0.2',
-          source: '微信',
-          status: '正常',
-          create_time: '2018-05-25 15:02:24',
-        },
-        {
-          ip: '192.168.0.3',
-          source: 'QQ',
-          status: '创建中',
-          create_time: '2018-05-25 15:02:24',
-        },
-        {
-          ip: '192.168.0.1',
-          source: 'QQ',
-          status: '创建中',
-          create_time: '2018-05-25 15:02:24',
-        },
-        {
-          ip: '192.168.0.2',
-          source: '微信',
-          status: '正常',
-          create_time: '2018-05-25 15:02:24',
-        },
-        {
-          ip: '192.168.0.3',
-          source: 'QQ',
-          status: '创建中',
-          create_time: '2018-05-25 15:02:24',
-        },
-      ],
-    };
-  },
-  created() {
-    // this.handleRandomRows();
-  },
-  methods: {
-    getLineHeight(index) {
-      return 30 + index;
-    },
-    getCellStyle(item) {
-      const lineHeight = this.getLineHeight(item.$index);
+  import { defineComponent } from 'vue';
+  export default defineComponent({
+    components: {},
+    data() {
       return {
-        padding: '2px 10px',
-        height: `${lineHeight}px`,
-        lineHeight: `${lineHeight}px`,
-        display: 'inline-block',
-        width: '200px',
-      };
-    },
-
-    getRowStyle(item) {
-      const lineHeight = this.getLineHeight(item.$index);
-      return {
-        height: `${lineHeight}px`,
-        lineHeight: `${lineHeight}px`,
-        borderBottom: 'solid 1px #ddd',
-      };
-    },
-    handleRandomRows() {
-      this.randomRows.splice(
-        0,
-        this.randomRows.length,
-        ...new Array(Math.ceil(Math.random() * 900) + 100).fill('')
-          .map((_, index) => ({
-            ip: `${index}--192.168.0.x`,
-            source: `${index}_QQ`,
+        randomRows: [
+          {
+            ip: '192.168.0.1',
+            source: 'QQ',
             status: '创建中',
-            create_time: `2018-05-25 15:02:24.${index}`,
-          })),
-      );
+            create_time: '2018-05-25 15:02:24',
+          },
+          {
+            ip: '192.168.0.2',
+            source: '微信',
+            status: '正常',
+            create_time: '2018-05-25 15:02:24',
+          },
+          {
+            ip: '192.168.0.3',
+            source: 'QQ',
+            status: '创建中',
+            create_time: '2018-05-25 15:02:24',
+          },
+          {
+            ip: '192.168.0.1',
+            source: 'QQ',
+            status: '创建中',
+            create_time: '2018-05-25 15:02:24',
+          },
+          {
+            ip: '192.168.0.2',
+            source: '微信',
+            status: '正常',
+            create_time: '2018-05-25 15:02:24',
+          },
+          {
+            ip: '192.168.0.3',
+            source: 'QQ',
+            status: '创建中',
+            create_time: '2018-05-25 15:02:24',
+          },
+        ],
+      };
     },
-  },
-});
+    created() {
+    // this.handleRandomRows();
+    },
+    methods: {
+      getLineHeight(index) {
+        return 30 + index;
+      },
+      getCellStyle(item) {
+        const lineHeight = this.getLineHeight(item.$index);
+        return {
+          padding: '2px 10px',
+          height: `${lineHeight}px`,
+          lineHeight: `${lineHeight}px`,
+          display: 'inline-block',
+          width: '200px',
+        };
+      },
+
+      getRowStyle(item) {
+        const lineHeight = this.getLineHeight(item.$index);
+        return {
+          height: `${lineHeight}px`,
+          lineHeight: `${lineHeight}px`,
+          borderBottom: 'solid 1px #ddd',
+        };
+      },
+      handleRandomRows() {
+        this.randomRows.splice(
+          0,
+          this.randomRows.length,
+          ...new Array(Math.ceil(Math.random() * 900) + 100).fill('')
+            .map((_, index) => ({
+              ip: `${index}--192.168.0.x`,
+              source: `${index}_QQ`,
+              status: '创建中',
+              create_time: `2018-05-25 15:02:24.${index}`,
+            })),
+        );
+      },
+    },
+  });
 </script>

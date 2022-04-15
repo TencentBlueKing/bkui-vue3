@@ -24,7 +24,8 @@
  * IN THE SOFTWARE.
 */
 
-import Component from './resize-layout';
 import { withInstall } from '@bkui-vue/shared';
+
+import Component from './resize-layout';
 const BkResizeLayout = withInstall(Component);
 export default BkResizeLayout;
