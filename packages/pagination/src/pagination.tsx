@@ -105,7 +105,8 @@ export default defineComponent({
     } = useLimit();
 
     watch([count, localLimit, limit], ([count, localLimit]) => {
-      totalPageNum.value = Math.min(Math.ceil(count / localLimit), 1);
+      const total = Math.ceil(count / localLimit);
+      totalPageNum.value =  total < 1 ? 1 : total;
     }, {
       immediate: true,
     });
