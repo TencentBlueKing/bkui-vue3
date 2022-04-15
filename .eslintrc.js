@@ -127,6 +127,9 @@ module.exports = {
     'vue/script-indent': ['error', 2, {
       baseIndent: 1,
     }],
+    'vue/component-tags-order': ['error', {
+      order: ['template', 'script', 'style'],
+    }],
     'vue/component-name-in-template-casing': ['error', 'kebab-case', {
       registeredComponentsOnly: false,
       ignores: [],

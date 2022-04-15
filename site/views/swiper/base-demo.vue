@@ -1,3 +1,12 @@
+<template>
+  <bk-swiper
+    class="swiper"
+    :pics="picList"
+    :loop-time="6000"
+    :height="400"
+  />
+</template>
+
 <script setup>
   import firstSwiper from '../../imgs/firstswiper.jpg';
   import secondSwiper from '../../imgs/secondswiper.jpg';
@@ -13,12 +22,3 @@
     { url: secondSwiper },
   ];
 </script>
-
-<template>
-  <bk-swiper
-    class="swiper"
-    :pics="picList"
-    :loop-time="6000"
-    :height="400"
-  />
-</template>
