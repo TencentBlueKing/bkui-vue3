@@ -34,6 +34,6 @@ import type {
 
 export type IPaginationInstance = ComponentPublicInstance<PaginationProps, {
   limit: PaginationProps['limit'],
-  pageNum: number
+  totalPageNum: number
 }>;
 

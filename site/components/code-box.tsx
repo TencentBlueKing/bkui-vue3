@@ -23,10 +23,14 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import Prism from 'prismjs';
-import { defineComponent, h } from 'vue';
+import hljs from 'highlight.js';
+import javascript from 'highlight.js/lib/languages/javascript';
+import xml from 'highlight.js/lib/languages/xml';
+import { defineComponent } from 'vue';
 
-import './prism.less';
+hljs.registerLanguage('javascript', javascript);
+hljs.registerLanguage('xml', xml);
+
 export default defineComponent({
   name: 'CodeBox',
   props: {
@@ -37,19 +41,17 @@ export default defineComponent({
     },
   },
   render() {
-    const prismLanguage = Prism.languages[this.language];
-    const className = 'language-'.concat(this.language);
-    return h(
-      'pre',
-      {
-        class: [className],
-      },
-      [
-        h('code', {
-          class: className,
-          innerHTML: Prism.highlight(this.code, prismLanguage),
-        }),
-      ],
+    const code = hljs.highlight(this.code, {
+      language: 'javascript',
+      ignoreIllegals: true,
+    }).value;
+
+    return (
+      <div class="markdown-body">
+        <pre  class="hljs">
+        <code innerHTML={code} />
+      </pre>
+      </div>
     );
   },
 });
