@@ -23,9 +23,10 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import Popover from '@bkui-vue/popover';
+
 import Option from './option';
 import Group from './optionGroup';
-import Popover from '@bkui-vue/popover';
 
 export type OptionInstanceType = InstanceType<typeof Option>;
 export type GroupInstanceType = InstanceType<typeof Group>;

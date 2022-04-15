@@ -7,29 +7,29 @@
   </div>
 </template>
 <script>
-import { defineComponent, ref } from 'vue';
+  import { defineComponent, ref } from 'vue';
 
-import BkSwitcher from '@bkui-vue/switcher';
+  import BkSwitcher from '@bkui-vue/switcher';
 
-export default defineComponent({
-  name: 'SiteBkSwitcher',
-  components: {
-    BkSwitcher,
-  },
-  setup() {
-    const loadingDemo = ref(true);
-    const requestHandler = lastValue => new Promise((resolve) => {
-      setTimeout(() => {
-        console.log(lastValue);
-        resolve();
-      }, 3000);
-    });
+  export default defineComponent({
+    name: 'SiteBkSwitcher',
+    components: {
+      BkSwitcher,
+    },
+    setup() {
+      const loadingDemo = ref(true);
+      const requestHandler = lastValue => new Promise((resolve) => {
+        setTimeout(() => {
+          console.log(lastValue);
+          resolve();
+        }, 3000);
+      });
 
-    return {
-      loadingDemo,
-      requestHandler,
-    };
-  },
-});
+      return {
+        loadingDemo,
+        requestHandler,
+      };
+    },
+  });
 
 </script>

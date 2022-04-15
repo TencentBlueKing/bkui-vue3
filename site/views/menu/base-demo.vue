@@ -30,5 +30,5 @@
 </template>
 
 <script setup>
-import { Search } from '@bkui-vue/icon';
+  import { Search } from '@bkui-vue/icon';
 </script>

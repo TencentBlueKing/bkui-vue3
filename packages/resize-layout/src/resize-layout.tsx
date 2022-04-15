@@ -24,9 +24,10 @@
  * IN THE SOFTWARE.
 */
 
-import { computed, defineComponent, onBeforeUnmount, onMounted, ref, toRefs, withModifiers, nextTick } from 'vue';
-import { PropTypes } from '@bkui-vue/shared';
+import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, ref, toRefs, withModifiers } from 'vue';
+
 import { AngleLeft } from '@bkui-vue/icon';
+import { PropTypes } from '@bkui-vue/shared';
 
 export default defineComponent({
   name: 'ResizeLayout',
@@ -191,7 +192,7 @@ export default defineComponent({
       // 最小化同时设置为已折叠，此时展开以初始化initial-divide数据为参考
       // eslint-disable-next-line no-multi-assign
       minimized.value = collapsed.value = asideRect[cssPropKey.value] <= parseAutoMinimize.value;
-      if (!minimized) {
+      if (!minimized.value) {
         asideContentVisible.value = true;
         return false;
       }

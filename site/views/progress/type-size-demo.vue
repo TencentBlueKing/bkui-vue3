@@ -18,7 +18,7 @@
     </div>
     <div style="margin-bottom: 20px;">
       <bk-progress
-        :text-inside="true"
+        text-inside
         type="circle"
         :width="150"
         :stroke-width="10"
@@ -26,14 +26,14 @@
         color="#f56c6c"
       />
       <bk-progress
-        :text-inside="true"
+        text-inside
         type="circle"
         :width="100"
         :percent="10"
         color="#ff9c01"
       />
       <bk-progress
-        :text-inside="true"
+        text-inside
         type="circle"
         :width="50"
         :percent="10"
@@ -43,19 +43,19 @@
   </div>
 </template>
 <script>
-import { defineComponent } from 'vue';
+  import { defineComponent } from 'vue';
 
-import BkProgress from '@bkui-vue/progress';
+  import BkProgress from '@bkui-vue/progress';
 
-export default defineComponent({
-  name: 'SiteProgress',
-  components: {
-    BkProgress,
-  },
-  setup() {
+  export default defineComponent({
+    name: 'SiteProgress',
+    components: {
+      BkProgress,
+    },
+    setup() {
 
-  },
-});
+    },
+  });
 </script>
 
 <style scoped>
