@@ -10,6 +10,7 @@
 
 <script>
 import { defineComponent } from 'vue';
+
 import { DATA_COLUMNS } from './options';
 const DATA_ROWS = new Array(Math.ceil(Math.random() * 9000) + 1000).fill('')
   .map((_, index) => ({

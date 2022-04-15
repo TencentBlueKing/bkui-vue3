@@ -193,7 +193,7 @@ describe('Select.tsx', () => {
       `,
     });
     expect(wrapper.findAll('.bk-option-group')).toHaveLength(2);
-    expect(wrapper.find('.bk-select-content').isVisible()).toBe(false);
+    expect(wrapper.find('.bk-select-options').isVisible()).toBe(false);
   });
 
   // 单选搜索功能

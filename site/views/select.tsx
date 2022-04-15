@@ -64,9 +64,9 @@ export default defineComponent({
   render() {
     return (
       <div>
-        <div>
+        <div style={{ width: '400px' }}>
           <div>单选</div>
-          <BkSelect v-model={this.selectValue} filterable>
+          <BkSelect v-model={this.selectValue} filterable clearable={false}>
             <BkOption value="test" label="label1"></BkOption>
             <BkOption value={false} label="label2" disabled></BkOption>
             <BkOption value={undefined} label="label3"></BkOption>
@@ -75,32 +75,42 @@ export default defineComponent({
           </BkSelect>
         </div>
 
-        <div style="margin-top: 10px">
+        <div style="margin-top: 10px;width: 400px">
           <div>多选</div>
-          <BkSelect v-model={this.multiSelect} multiple>
+          <BkSelect v-model={this.multiSelect} multiple showSelectAll>
             <BkOption value="test" label="label1"></BkOption>
             <BkOption value={false} label="label2"></BkOption>
             <BkOption value={undefined} label="label3"></BkOption>
-            <BkOption value={1} label="label4">测试label</BkOption>
+            <BkOption value={1} label="label4" disabled>测试label</BkOption>
+            <BkOption value={null} label="label5"></BkOption>
+          </BkSelect>
+        </div>
+        <div style="margin-top: 10px;width: 400px">
+          <div>多选Tag</div>
+          <BkSelect v-model={this.multiSelect} filterable multiple showSelectAll multipleMode='tag'>
+            <BkOption value="test" label="label1"></BkOption>
+            <BkOption value={false} label="测试label测试label测试label测试label测试label测试label测试label测试label测试label测试label测试label测试label"></BkOption>
+            <BkOption value={undefined} label="label3"></BkOption>
+            <BkOption value={1} label="label4" disabled>禁用</BkOption>
             <BkOption value={null} label="label5"></BkOption>
           </BkSelect>
         </div>
 
-        <div style="margin-top: 10px">
+        <div style="margin-top: 10px;width: 400px">
           <div>空select</div>
           <BkSelect v-model={this.multiSelect} multiple>
           </BkSelect>
         </div>
 
-        <div style="margin-top: 10px">
+        <div style="margin-top: 10px;width: 400px">
           <div>空group</div>
-          <BkSelect v-model={this.multiSelect} multiple>
+          <BkSelect v-model={this.multiSelect} multiple popoverMinWidth={300} showOnInit>
             <BkOptionGroup label='label1'></BkOptionGroup>
             <BkOptionGroup label='label2'></BkOptionGroup>
           </BkSelect>
         </div>
 
-        <div style="margin-top: 10px">
+        <div style="margin-top: 10px;width: 400px">
           <div>分组1</div>
           <BkSelect modelValue={1} filterable={false} multiple>
             <BkOptionGroup label="分组1">
@@ -119,7 +129,7 @@ export default defineComponent({
           </BkSelect>
         </div>
 
-        <div style="margin-top: 10px">
+        <div style="margin-top: 10px;width: 400px">
           <div>自定义分组label</div>
           <BkSelect v-model={this.multiSelect2} filterable={false} multiple>
               <BkOptionGroup label="分组1">
@@ -147,8 +157,8 @@ export default defineComponent({
             </BkSelect>
         </div>
 
-        <div style="margin-top: 10px">
-          <div>分组折叠</div>
+        <div style="margin-top: 10px;width: 400px">
+          <div>可搜索分组折叠</div>
           <BkSelect v-model={this.multiSelect2} filterable multiple>
               <BkOptionGroup label="分组折叠" collapsible>
                 <BkOption value="test" label="label6"></BkOption>
@@ -156,7 +166,7 @@ export default defineComponent({
                 <BkOption value={3} label="label8"></BkOption>
                 <BkOption value={4} label="label9">测试label</BkOption>
               </BkOptionGroup>
-              <BkOptionGroup label="分组折叠2" collapsible>
+              <BkOptionGroup label="分组折叠2" collapsible disabled>
                 <BkOption value="test" label="label6"></BkOption>
                 <BkOption value={2} label="label7"></BkOption>
                 <BkOption value={3} label="label8"></BkOption>
@@ -164,14 +174,14 @@ export default defineComponent({
             </BkSelect>
         </div>
 
-        <div style="margin-top: 20px">
+        <div style="margin-top: 10px;width: 400px">
           <div>搜索</div>
           <BkSelect v-model={this.multiSelect3} filterable multiple>
             {this.largeArr.map(item => <BkOption value={item.id} label={item.name}></BkOption>)}
           </BkSelect>
         </div>
 
-        <div style="margin-top: 20px">
+        <div style="margin-top: 10px;width: 400px">
           <div>扩展插槽和前置插槽</div>
           <BkSelect v-model={this.multiSelect3} filterable multiple>
             {{
@@ -188,7 +198,7 @@ export default defineComponent({
           </BkSelect>
         </div>
 
-        <div style="margin-top: 20px">
+        <div style="margin-top: 10px;width: 400px">
           <div>loading</div>
           <BkSelect v-model={this.multiSelect3} filterable multiple loading>
             {{
@@ -199,7 +209,7 @@ export default defineComponent({
           </BkSelect>
         </div>
 
-        <div style="margin-top: 20px">
+        <div style="margin-top: 10px;width: 400px">
           <div>远程加载</div>
           <BkSelect v-model={this.multiSelect3} filterable multiple remoteMethod={this.remoteMethod}>
             {{
@@ -209,7 +219,37 @@ export default defineComponent({
             }}
           </BkSelect>
         </div>
-        <iframe style="margin-top: 100px" src="./select"></iframe>
+        <div style="margin-top: 10px;width: 400px">
+          <div>Size</div>
+          <BkSelect v-model={this.multiSelect3} size="small">
+            <BkOption value="test" label="label1"></BkOption>
+            <BkOption value={false} label="label2"></BkOption>
+            <BkOption value={undefined} label="label3"></BkOption>
+            <BkOption value={1} label="label4" disabled>测试label</BkOption>
+            <BkOption value={null} label="label5"></BkOption>
+          </BkSelect>
+          <BkSelect style="margin-top: 10px;" v-model={this.multiSelect3} size="small" behavior='simplicity'>
+            <BkOption value="test" label="label1"></BkOption>
+            <BkOption value={false} label="label2"></BkOption>
+            <BkOption value={undefined} label="label3"></BkOption>
+            <BkOption value={1} label="label4" disabled>测试label</BkOption>
+            <BkOption value={null} label="label5"></BkOption>
+          </BkSelect>
+          <BkSelect style="margin-top: 10px;" v-model={this.multiSelect3} size="large">
+            <BkOption value="test" label="label1"></BkOption>
+            <BkOption value={false} label="label2"></BkOption>
+            <BkOption value={undefined} label="label3"></BkOption>
+            <BkOption value={1} label="label4" disabled>测试label</BkOption>
+            <BkOption value={null} label="label5"></BkOption>
+          </BkSelect>
+          <BkSelect style="margin-top: 10px;" v-model={this.multiSelect3} size="large" behavior='simplicity'>
+            <BkOption value="test" label="label1"></BkOption>
+            <BkOption value={false} label="label2"></BkOption>
+            <BkOption value={undefined} label="label3"></BkOption>
+            <BkOption value={1} label="label4" disabled>测试label</BkOption>
+            <BkOption value={null} label="label5"></BkOption>
+          </BkSelect>
+        </div>
       </div>
     );
   },

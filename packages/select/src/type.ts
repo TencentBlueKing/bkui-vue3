@@ -23,33 +23,39 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import Option from './option';
+import Group from './optionGroup';
+import Popover from '@bkui-vue/popover';
 
-import { defineComponent, ref } from 'vue';
+export type OptionInstanceType = InstanceType<typeof Option>;
+export type GroupInstanceType = InstanceType<typeof Group>;
+export type PopoverInstanceType = InstanceType<typeof Popover>;
 
-import BkAlert from '@bkui-vue/alert';
-export default defineComponent({
-  name: 'SiteAlert',
-  setup() {
-    const checkboxGroupValue =  ref(['选项一']);
+export interface ISelectContext {
+  props: {
+    multiple?: boolean
+  };
+  selectedOptions: Set<any>;
+  register(option: OptionInstanceType): any;
+  unregister(option: OptionInstanceType): any;
+  registerGroup(option: GroupInstanceType): any;
+  unregisterGroup(option: GroupInstanceType): any;
+  handleOptionSelected (option: OptionInstanceType): void;
+}
 
-    return {
-      checkboxGroupValue,
-    };
-  },
-  render() {
-    return (
-      <div>
-        <div style="margin: 20px auto;">
-          <BkAlert theme="success" title="成功的提示文字" showIcon={false}></BkAlert>
-          <BkAlert theme="info" title="消息的提示文字"></BkAlert>
-          <BkAlert theme="warning" title="警告的提示文字"></BkAlert>
-          <BkAlert theme="error" title="错误的提示文字"></BkAlert>
-          <BkAlert theme="success" title="成功的提示文字" closable close-text="继续努力"></BkAlert>
-          <BkAlert theme="info" title="消息的提示文字" closable close-text="下次见！"></BkAlert>
-          <BkAlert theme="warning" title="警告的提示文字" closable close-text="删掉"></BkAlert>
-          <BkAlert theme="error" title="错误的提示文字" closable></BkAlert>
-        </div>
-      </div>
-    );
-  },
-});
+export interface IOptionGroupContext {
+  disabled: boolean;
+  groupCollapse: boolean;
+  register(option: OptionInstanceType): any;
+  unregister(option: OptionInstanceType): any;
+}
+
+export interface ISelectState {
+  currentPlaceholder: string;
+  selectedOptions: Set<OptionInstanceType>;
+  currentSelectedLabel: string;
+}
+
+export interface IPopoverConfig {
+  popoverMinWidth: number;
+}
