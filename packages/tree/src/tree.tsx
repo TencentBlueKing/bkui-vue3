@@ -296,6 +296,13 @@ export default defineComponent({
      */
     const checkNodeIsOpen = (node: any) => isRootNode(node) || isItemOpen(node) || isItemOpen(getNodeAttr(node, '__parentId'));
 
+    /**
+     * 用于判定当前节点需要展示的连线
+     * 当前指定的depth需不需要展示连线
+     * @param depth 当前需要判定的depth
+     * @param node 当前节点
+     * @returns
+     */
     const filterNextNode = (depth: number, node: any) => {
       if (isRootNode(node)) {
         return false;
