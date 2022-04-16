@@ -10,6 +10,7 @@
 
 <script>
 import { defineComponent } from 'vue';
+
 import { BASIC_DATA } from './options';
 export default defineComponent({
   components: {},

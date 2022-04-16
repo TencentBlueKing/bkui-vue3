@@ -1,7 +1,7 @@
 <template>
   <div class="row">
     <div class="cell">
-      <span>默认连线</span>
+      <span>默认连线: <code>level-line="true"</code></span>
       <bk-tree
         :data="treeData"
         :level-line="true"
@@ -10,10 +10,17 @@
       />
     </div>
     <div class="cell">
-      <span>自定义连线</span>
+      <span>默认展开：<code>data.isOpen = true</code></span>
       <bk-tree
-        :data="treeData"
-        :level-line="'solid 1px red'"
+        :data="autoOpen"
+        label="name"
+        children="children"
+      />
+    </div>
+    <div class="cell">
+      <span>默认选中：<code>data.checked = true</code></span>
+      <bk-tree
+        :data="autoCheck"
         label="name"
         children="children"
       />
@@ -24,12 +31,14 @@
 <script>
 import { defineComponent } from 'vue';
 
-import { BASIC_DATA } from './options';
+import { AUTO_CHECKED_DATA, AUTO_OPEN_DATA, BASIC_DATA } from './options';
 export default defineComponent({
   components: {},
   data() {
     return {
       treeData: [...BASIC_DATA],
+      autoOpen: [...AUTO_OPEN_DATA],
+      autoCheck: [...AUTO_CHECKED_DATA],
     };
   },
 });

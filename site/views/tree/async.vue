@@ -15,6 +15,7 @@
 
 <script>
 import { defineComponent } from 'vue';
+
 import { ASYNC_DATA } from './options';
 export default defineComponent({
   components: {},

@@ -1,20 +1,44 @@
 <template>
-  <div style="height: 300px; width: 100%; overflow: auto; display: flex">
-    <div style="width: 25%">
+  <div class="row">
+    <div class="cell">
       <span>prefix-icon: true</span>
-      <bk-tree :data="treeData" :level-line="true" :prefix-icon="true" label="name" children="children" />
+      <bk-tree
+        :data="treeData"
+        :level-line="true"
+        :prefix-icon="true"
+        label="name"
+        children="children"
+      />
     </div>
-    <div style="width: 25%">
+    <div class="cell">
       <span>function 函数返回 'default' 将会调用系统默认样式</span>
-      <bk-tree :data="treeData" :level-line="true" :prefix-icon="getPrefixIcon" label="name" children="children" />
+      <bk-tree
+        :data="treeData"
+        :level-line="true"
+        :prefix-icon="getPrefixIcon"
+        label="name"
+        children="children"
+      />
     </div>
-    <div style="width: 25%">
+    <div class="cell">
       <span>function 返回字符串</span>
-      <bk-tree :data="treeData" :level-line="true" :prefix-icon="getPrefixIcon2" label="name" children="children" />
+      <bk-tree
+        :data="treeData"
+        :level-line="true"
+        :prefix-icon="getPrefixIcon2"
+        label="name"
+        children="children"
+      />
     </div>
-    <div style="width: 25%">
+    <div class="cell">
       <span>function 返回对象</span>
-      <bk-tree :data="treeData" :level-line="true" :prefix-icon="getPrefixIcon3" label="name" children="children" />
+      <bk-tree
+        :data="treeData"
+        :level-line="true"
+        :prefix-icon="getPrefixIcon3"
+        label="name"
+        children="children"
+      />
     </div>
   </div>
 </template>
@@ -86,5 +110,18 @@ const getPrefixIcon3 = (isRoot, hasChild, isOpen, renderType, item) => {
 
 .custom-root {
   background: #fafb;
+}
+</style>
+<style scoped>
+.row {
+  height: 300px;
+  width: 100%;
+  overflow: auto;
+  display: flex;
+}
+
+.cell {
+  flex: 1;
+  padding: 0 15px;
 }
 </style>
