@@ -82,7 +82,7 @@ export default defineComponent({
     return (
       <div class={this.wrapperCls} style={this.wrapperStyle} onClick={this.handleClick}>
         { this.$slots.icon ? <span class="bk-tag-icon">{this.$slots.icon()}</span> : '' }
-        <span>{ this.$slots.default?.() }</span>
+        <span class="bk-tag-text">{ this.$slots.default?.() }</span>
         { this.closable ? <Error class="bk-tag-close" onClick={this.handleClose} /> : '' }
       </div>
     );

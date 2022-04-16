@@ -9,15 +9,15 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue';
+  import { defineComponent } from 'vue';
 
-import { BASIC_DATA } from './options';
-export default defineComponent({
-  components: {},
-  data() {
-    return {
-      treeData: [...BASIC_DATA],
-    };
-  },
-});
+  import { BASIC_DATA } from './options';
+  export default defineComponent({
+    components: {},
+    data() {
+      return {
+        treeData: [...BASIC_DATA],
+      };
+    },
+  });
 </script>

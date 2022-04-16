@@ -17,5 +17,5 @@
 </template>
 
 <script setup>
-const handleTagClose = e => console.log(e);
+  const handleTagClose = e => console.log(e);
 </script>

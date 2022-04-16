@@ -25,6 +25,7 @@
 */
 
 import { mount } from '@vue/test-utils';
+
 import Swiper from '../src/swiper';
 
 const list = [

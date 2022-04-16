@@ -12,27 +12,27 @@
   </bk-breadcrumb>
 </template>
 <script>
-import { defineComponent } from 'vue';
+  import { defineComponent } from 'vue';
 
-import { BkBreadcrumb, BkBreadcrumbItem } from '@bkui-vue/breadcrumb';
+  import { BkBreadcrumb, BkBreadcrumbItem } from '@bkui-vue/breadcrumb';
 
-export default defineComponent({
-  name: 'SiteBreadcrumb',
-  components: {
-    BkBreadcrumb,
-    BkBreadcrumbItem,
-  },
-  setup() {
-    const list = [
-      { title: '首页', link: { path: '/' } },
-      { title: '进度条', link: { path: 'loading' } },
-      { title: '滑块开关', link: { path: 'switcher' } },
-      { title: '面包屑', link: null },
-    ];
-    return {
-      list,
-    };
-  },
-});
+  export default defineComponent({
+    name: 'SiteBreadcrumb',
+    components: {
+      BkBreadcrumb,
+      BkBreadcrumbItem,
+    },
+    setup() {
+      const list = [
+        { title: '首页', link: { path: '/' } },
+        { title: '进度条', link: { path: 'loading' } },
+        { title: '滑块开关', link: { path: 'switcher' } },
+        { title: '面包屑', link: null },
+      ];
+      return {
+        list,
+      };
+    },
+  });
 
 </script>

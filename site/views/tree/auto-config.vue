@@ -4,7 +4,7 @@
       <span>默认连线: <code>level-line="true"</code></span>
       <bk-tree
         :data="treeData"
-        :level-line="true"
+        level-line
         label="name"
         children="children"
       />
@@ -29,19 +29,19 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue';
+  import { defineComponent } from 'vue';
 
-import { AUTO_CHECKED_DATA, AUTO_OPEN_DATA, BASIC_DATA } from './options';
-export default defineComponent({
-  components: {},
-  data() {
-    return {
-      treeData: [...BASIC_DATA],
-      autoOpen: [...AUTO_OPEN_DATA],
-      autoCheck: [...AUTO_CHECKED_DATA],
-    };
-  },
-});
+  import { AUTO_CHECKED_DATA, AUTO_OPEN_DATA, BASIC_DATA } from './options';
+  export default defineComponent({
+    components: {},
+    data() {
+      return {
+        treeData: [...BASIC_DATA],
+        autoOpen: [...AUTO_OPEN_DATA],
+        autoCheck: [...AUTO_CHECKED_DATA],
+      };
+    },
+  });
 </script>
 <style scoped>
 .row {
