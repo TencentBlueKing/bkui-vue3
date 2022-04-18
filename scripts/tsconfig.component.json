@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "jsx": "preserve",
+    "module": "esnext",
+    "target": "esnext",
+    "isolatedModules": true,
+    "sourceMap": false,
+  }
+}

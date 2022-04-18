@@ -47,3 +47,8 @@ export interface ICompileTaskOption {
   compile: boolean
 }
 
+export interface ITaskItem {
+  type: 'style' | 'script';
+  url: string;
+  newPath: string;
+}

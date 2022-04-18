@@ -17,7 +17,7 @@
     "build:site": "vite build site --mode development",
     "build:library": "rimraf dist && cross-env NODE_ENV=production ts-node --project=scripts/tsconfig.scripts.json scripts/build-library.ts",
     "build:component": "rimraf lib && npm run generate:declation && cross-env NODE_ENV=production ts-node --project=scripts/tsconfig.scripts.json scripts/build-component/index.ts",
-    "compile:dev": "node --inspect-brk ./node_modules/.bin/ts-node --project=./scripts/tsconfig.scripts.json ./scripts/build-component/index.ts",
+    "compile:dev": "node ./node_modules/.bin/ts-node --project=./scripts/tsconfig.scripts.json ./scripts/build-component/index.ts",
     "cz": "git-cz",
     "generate:icon": "lerna run --scope @bkui-vue/icon build",
     "release": "yarn build && rimraf package.json.bak && cross-env NODE_ENV=production ts-node --project=scripts/tsconfig.scripts.json scripts/release.ts",
