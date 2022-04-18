@@ -24,11 +24,11 @@
  * IN THE SOFTWARE.
 */
 
-import { withInstallProps } from '@bkui-vue/shared';
+import { withInstall } from '@bkui-vue/shared';
 
 import CodeDiff, { DiffFormatType, LanguagesUnion, ThemesUnion } from './code-diff';
 
-const BkCodeDiff = withInstallProps(CodeDiff);
+const BkCodeDiff = withInstall(CodeDiff);
 export type ThemesUnionType = ThemesUnion;
 export type DiffFormatUnionType = DiffFormatType;
 export type LanguagesUnionType = LanguagesUnion;
