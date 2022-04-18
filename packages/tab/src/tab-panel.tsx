@@ -25,6 +25,7 @@
 */
 
 import { defineComponent, h, VNodeChild } from 'vue';
+
 import { tabPanelProps } from './props';
 
 export default defineComponent({

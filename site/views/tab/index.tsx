@@ -25,21 +25,22 @@
 */
 
 import { defineComponent } from 'vue';
-import DemoTitle from '../../components/demo-title';
+
+import { tabEventProps, tabPanelProps, tabProps } from '../../../packages/tab/src/props';
 import DemoBox from '../../components/demo-box';
+import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import { IPropsTableItem } from '../../typings';
+import { resolvePropsToDesData } from '../utils';
 
-import DemoBase from './demo-base.vue';
-import CardDemo from './demo-card.vue';
-import BorderCardDemo from './demo-border-card.vue';
-import DemoPosition from './demo-position.vue';
 import DemoAdd from './demo-add.vue';
+import DemoBase from './demo-base.vue';
+import BorderCardDemo from './demo-border-card.vue';
+import CardDemo from './demo-card.vue';
 import DemoDrag from './demo-drag.vue';
 import DemoExtend from './demo-extend.vue';
 import DemoJsx from './demo-jsx';
-import { tabProps, tabPanelProps, tabEventProps } from '../../../packages/tab/src/props';
-import { resolvePropsToDesData } from '../utils';
+import DemoPosition from './demo-position.vue';
 const tabPropsJson: IPropsTableItem[] =  resolvePropsToDesData(tabProps);
 const tabPanelPropsJson: IPropsTableItem[] =  resolvePropsToDesData(tabPanelProps);
 const tabEventPropsJson: IPropsTableItem[] =  resolvePropsToDesData(tabEventProps);

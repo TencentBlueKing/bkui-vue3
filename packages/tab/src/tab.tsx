@@ -25,10 +25,11 @@
 */
 
 import {
-  Component, defineComponent, getCurrentInstance, onMounted, onUpdated, ref, Fragment, ComponentInternalInstance, VNode,
+  Component, ComponentInternalInstance, defineComponent, Fragment, getCurrentInstance, onMounted, onUpdated, ref, VNode,
 } from 'vue';
-import TabNav from './tab-nav';
+
 import { tabProps } from './props';
+import TabNav from './tab-nav';
 export default defineComponent({
   name: 'Tab',
   components: {

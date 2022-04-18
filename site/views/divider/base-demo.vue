@@ -15,6 +15,6 @@
       分割线
     </bk-divider>
     <div>第5段落</div>
-    <bk-divider direction="vertical"/>
+    <bk-divider direction="vertical" />
   </div>
 </template>

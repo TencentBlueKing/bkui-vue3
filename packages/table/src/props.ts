@@ -30,10 +30,6 @@ import { PropTypes } from '@bkui-vue/shared';
 
 import { BORDER_OPRIONS } from './const';
 
-const EventProps = {
-  onRowClick: Function,
-};
-
 export const tableProps = {
   /**
    * 渲染列表
@@ -114,8 +110,6 @@ export const tableProps = {
    * 是否启用远程分页
    */
   remotePagination: PropTypes.bool.def(false),
-
-  ...EventProps,
 
   // /**
   //  * Table Caption Config

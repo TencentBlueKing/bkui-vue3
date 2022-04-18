@@ -24,18 +24,13 @@
  * IN THE SOFTWARE.
 */
 
-import { App } from 'vue';
+import { withInstallProps } from '@bkui-vue/shared';
 
 import CodeDiff, { DiffFormatType, LanguagesUnion, ThemesUnion } from './code-diff';
 
-import './code-diff.less';
-
-CodeDiff.install = (Vue: App) => {
-  Vue.component(CodeDiff.name, CodeDiff);
-};
-
-
-export default CodeDiff;
+const BkCodeDiff = withInstallProps(CodeDiff);
 export type ThemesUnionType = ThemesUnion;
 export type DiffFormatUnionType = DiffFormatType;
 export type LanguagesUnionType = LanguagesUnion;
+
+export default BkCodeDiff;
