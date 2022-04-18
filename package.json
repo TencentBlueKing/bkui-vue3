@@ -103,7 +103,8 @@
     "vite-plugin-md": "~0.12.4",
     "vue": "^3.2.0",
     "vue-router": "~4.0.14",
-    "vue-types": "~4.1.1"
+    "vue-types": "~4.1.1",
+    "webpack": "~5.72.0"
   },
   "peerDependencies": {
     "vue": "^3.2.0"
