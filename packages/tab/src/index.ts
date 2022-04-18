@@ -23,8 +23,6 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
-import Tab from './tab';
-import TabPanel from './tab-panel';
 /* import { withInstall } from '@bkui-vue/shared';
 const BkTab = withInstall(Tab);
 const BkTabPanel = withInstall(TabPanel);
@@ -32,8 +30,10 @@ export {
   BkTab,
   BkTabPanel,
 };*/
-
 import { withInstallProps } from '@bkui-vue/shared';
+
+import Tab from './tab';
+import TabPanel from './tab-panel';
 const BkTab = withInstallProps(Tab, { TabPanel });
 export {
   BkTab,

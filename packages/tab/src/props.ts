@@ -23,8 +23,9 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { PropTypes } from '@bkui-vue/shared';
 import { PropType, VNode } from 'vue';
+
+import { PropTypes } from '@bkui-vue/shared';
 export const tabNavEventProps = {
   tabAdd: {
     type: Function,
