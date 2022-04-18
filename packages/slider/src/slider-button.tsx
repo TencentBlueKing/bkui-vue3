@@ -24,9 +24,11 @@
  * IN THE SOFTWARE.
  */
 
-import { computed, defineComponent, ref, PropType } from 'vue';
-import { on, off } from './slider';
+import { computed, defineComponent, PropType, ref } from 'vue';
+
 import BkPopover from '@bkui-vue/popover';
+
+import { off, on } from './slider';
 
 interface Params {
   vertical: boolean,

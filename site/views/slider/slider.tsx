@@ -25,14 +25,16 @@
 */
 
 import { defineComponent } from 'vue';
-import DemoTitle from '../../components/demo-title';
+
 import DemoBox from '../../components/demo-box';
+import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import { IPropsTableItem } from '../../typings';
+
 import BaseDemo from './base-demo.vue';
-import StepDemo from './step-demo.vue';
 import CustomDemo from './custom-demo.vue';
 import InputDemo from './input-demo.vue';
+import StepDemo from './step-demo.vue';
 import VerticalDemo from './vertical-demo.vue';
 
 const switcherPropsJson: IPropsTableItem[] = [
@@ -196,7 +198,7 @@ export default defineComponent({
             title="基础用法"
             subtitle=""
             desc="使用 v-model 将变量与 slider 滑杆进行数据绑定，默认最大值 max-value 为 100, 默认最小值为 min-value 0"
-            componentName="BkSlider"
+            componentName="slider"
             demoName="base-demo">
             <BaseDemo></BaseDemo>
           </DemoBox>
@@ -204,7 +206,7 @@ export default defineComponent({
             title="刻度"
             subtitle=""
             desc=""
-            componentName="BkSlider"
+            componentName="slider"
             demoName="step-demo">
             <StepDemo></StepDemo>
           </DemoBox>
@@ -212,7 +214,7 @@ export default defineComponent({
             title="带输入"
             subtitle=""
             desc=""
-            componentName="BkSlider"
+            componentName="slider"
             demoName="input-demo">
             <InputDemo></InputDemo>
           </DemoBox>
@@ -220,7 +222,7 @@ export default defineComponent({
             title="垂直"
             subtitle=""
             desc=""
-            componentName="BkSlider"
+            componentName="slider"
             demoName="vertical-demo">
             <VerticalDemo></VerticalDemo>
           </DemoBox>
@@ -228,7 +230,7 @@ export default defineComponent({
             title="自定义"
             subtitle=""
             desc=""
-            componentName="BkSlider"
+            componentName="slider"
             demoName="custom-demo">
             <CustomDemo></CustomDemo>
           </DemoBox>
