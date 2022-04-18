@@ -22,15 +22,15 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
-import { withInstallProps } from '@bkui-vue/shared';
+import { PropTypes } from '@bkui-vue/shared';
 
-import CodeDiff, { DiffFormatType, LanguagesUnion, ThemesUnion } from './code-diff';
+export const dividerProps = {
+  direction: PropTypes.commonType(['horizontal', 'vertical'], 'direction').def('horizontal'),
+  align: PropTypes.commonType(['left', 'center', 'right'], 'align').def('center'),
+  color: PropTypes.string.def('#dde4eb'),
+  width: PropTypes.number.def(1),
+  type: PropTypes.commonType(['dashed', 'solid'], 'lineType').def('dashed'),
+};
 
-const BkCodeDiff = withInstallProps(CodeDiff);
-export type ThemesUnionType = ThemesUnion;
-export type DiffFormatUnionType = DiffFormatType;
-export type LanguagesUnionType = LanguagesUnion;
-
-export default BkCodeDiff;

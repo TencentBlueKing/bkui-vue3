@@ -518,7 +518,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/divider',
     name: 'divider',
-    component: () => import('../views/divider'),
+    component: () => import('../views/divider/divider'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'Divider 分割线',
