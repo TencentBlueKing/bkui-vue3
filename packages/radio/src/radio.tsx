@@ -24,12 +24,14 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent } from 'vue';
 import type { ExtractPropTypes } from 'vue';
+import { defineComponent } from 'vue';
+
 import {
   classes,
   PropTypes,
 } from '@bkui-vue/shared';
+
 import {
   useFocus,
   useRadio,
@@ -81,7 +83,7 @@ export default defineComponent({
   render() {
     const radioClass = classes({
       'bk-radio': true,
-      'is-focus': this.isFocus,
+      'is-focusd': this.isFocus,
       'is-disabled': this.isDisabled,
       'is-checked': this.isCheck,
     });

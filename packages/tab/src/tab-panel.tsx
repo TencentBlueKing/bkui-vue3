@@ -25,29 +25,15 @@
 */
 
 import { defineComponent, h, VNodeChild } from 'vue';
-import { PropTypes } from '@bkui-vue/shared';
+
+import { tabPanelProps } from './props';
 
 export default defineComponent({
   name: 'TabPanel',
-  props: {
-    name: {
-      type: String || Number,
-    },
-    label: String || Function,
-    closable: Function || Boolean,
-    visible: PropTypes.bool.def(true),
-    disabled: PropTypes.bool.def(null) || undefined,
-    sortable: Function || Boolean,
-    renderDirective: PropTypes.commonType(['if', 'show'], 'render').def('show'),
-    panel: String || Function,
-  },
+  props: tabPanelProps,
   render() {
     const active: boolean = this.name === (this.$parent as any).active;
     const getContent = (): VNodeChild => {
-      // const instance = getCurrentInstance();
-      // debugger;
-      // const { active } = (instance as any).ctx;
-      // console.log(active, (this.$parent as any).active);
       // 不渲染
       if (!this.visible || (this.renderDirective === 'if' && !active)) {
         return null;

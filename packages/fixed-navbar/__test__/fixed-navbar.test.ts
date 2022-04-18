@@ -25,6 +25,7 @@
 */
 
 import { mount } from '@vue/test-utils';
+
 import FixedNavbar from '../src';
 describe('FixedNavbar.tsx', () => {
   it('test fixed-navbar render', async () => {

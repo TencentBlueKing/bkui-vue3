@@ -45,4 +45,8 @@ export const propsMixin = {
     type: Boolean,
     default: true,
   },
+  showMask: {
+    type: Boolean,
+    default: true,
+  },
 };

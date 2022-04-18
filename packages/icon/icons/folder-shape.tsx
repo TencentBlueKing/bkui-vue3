@@ -25,6 +25,7 @@
 * IN THE SOFTWARE.
 */
 import { FunctionalComponent } from 'vue';
+
 import BkIcon, { IIconBaseProps } from './icon';
 const data = JSON.parse('{"type":"element","name":"svg","attributes":{"xmlns":"http://www.w3.org/2000/svg","viewBox":"0 0 1024 1024","style":"width: 1em; height: 1em; vertical-align: middle;fill: currentColor;overflow: hidden;"},"elements":[{"type":"element","name":"path","attributes":{"d":"M864 192h-416v-32c0-53.034666666666666-42.96533333333333-96-96-96h-256c-53.034666666666666 0-96 42.96533333333333-96 96v640c0 88.36266666666667 71.63733333333333 160 160 160h704c88.36266666666667 0 160-71.63733333333333 160-160v-448c0-88.36266666666667-71.63733333333333-160-160-160z"}}]}');
 const folderShape: FunctionalComponent<IIconBaseProps> = (props, context) => {

@@ -25,17 +25,11 @@
 */
 
 import {  defineComponent } from 'vue';
-import {  PropTypes } from '@bkui-vue/shared';
 
+import { dividerProps } from './props';
 export default defineComponent({
   name: 'Divider',
-  props: {
-    direction: PropTypes.commonType(['horizontal', 'vertical'], 'direction').def('horizontal'),
-    align: PropTypes.commonType(['left', 'center', 'right'], 'align').def('center'),
-    color: PropTypes.string.def('#dde4eb'),
-    width: PropTypes.number.def(1),
-    type: PropTypes.commonType(['dashed', 'solid'], 'lineType').def('dashed'),
-  },
+  props: dividerProps,
   render() {
     const styles = () => {
       if (this.direction === 'vertical') {

@@ -1,0 +1,145 @@
+@import '@bkui-vue/styles/themes/themes.less';
+@import 'highlight.js/styles/googlecode.css';
+@import 'diff2html/bundles/css/diff2html.min.css';
+
+/* stylelint-disable declaration-no-important */
+.@{bk-prefix}-code-diff {
+  position: relative;
+
+  .d2h-file-header {
+    display: none;
+  }
+
+  &.dark {
+    color: #abb2bf !important;
+    background: #282c34;
+
+    .hljs {
+      color: #abb2bf !important;
+      background: #282c34;
+    }
+
+    .d2h-file-side-diff {
+      &:nth-child(n + 2) {
+        .d2h-code-wrapper {
+          border-left-color: #313238;
+        }
+      }
+    }
+
+    pre code.hljs {
+      display: block;
+      padding: 1em;
+      overflow-x: auto;
+    }
+
+    code.hljs {
+      padding: 3px 5px;
+    }
+
+    .hljs-comment,
+    .hljs-quote {
+      font-style: italic;
+      color: #5c6370;
+    }
+
+    .hljs-doctag,
+    .hljs-formula,
+    .hljs-keyword,
+    .hljs-params {
+      color: #c678dd;
+    }
+
+    .hljs-deletion,
+    .hljs-name,
+    .hljs-section,
+    .hljs-selector-tag,
+    .hljs-subst {
+      color: #e06c75;
+    }
+
+    .hljs-literal {
+      color: #56b6c2;
+    }
+
+    .hljs-addition,
+    .hljs-attribute,
+    .hljs-meta .hljs-string,
+    .hljs-regexp,
+    .hljs-string {
+      color: #98c379;
+    }
+
+    .hljs-attr,
+    .hljs-number,
+    .hljs-selector-attr,
+    .hljs-selector-class,
+    .hljs-selector-pseudo,
+    .hljs-template-variable,
+    .hljs-type,
+    .hljs-variable {
+      color: #d19a66;
+    }
+
+    .hljs-bullet,
+    .hljs-link,
+    .hljs-meta,
+    .hljs-selector-id,
+    .hljs-symbol,
+    .hljs-title {
+      color: #61aeee;
+    }
+
+    .hljs-built_in,
+    .hljs-class .hljs-title,
+    .hljs-title.class_ {
+      color: #e6c07b;
+    }
+
+    .hljs-emphasis {
+      font-style: italic;
+    }
+
+    .hljs-strong {
+      font-weight: 700;
+    }
+
+    .hljs-link {
+      text-decoration: underline;
+    }
+
+    .d2h-code-linenumber,
+    .d2h-code-side-linenumber {
+      font-size: 12px;
+      color: #8f8f89;
+      background: #282c34;
+      border: none;
+    }
+
+    .d2h-info {
+      color: inherit;
+      background-color: transparent;
+    }
+
+    .d2h-del {
+      background-color: #422321 !important;
+
+      .hljs {
+        background: transparent;
+      }
+    }
+
+    .d2h-ins {
+      background: #2d3324 !important;
+
+      .hljs {
+        background: transparent;
+      }
+    }
+
+    .d2h-code-side-emptyplaceholder,
+    .d2h-emptyplaceholder {
+      background-color: #292929 !important;
+    }
+  }
+}

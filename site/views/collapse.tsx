@@ -26,8 +26,8 @@
 
 import { defineComponent } from 'vue';
 
-import BkCollapse from '@bkui-vue/collapse';
 import BkButton from '@bkui-vue/button';
+import BkCollapse from '@bkui-vue/collapse';
 
 export default defineComponent({
   name: 'SiteCollapse',

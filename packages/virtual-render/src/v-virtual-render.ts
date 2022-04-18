@@ -30,7 +30,7 @@
  * Copyright © 2012-2019 Tencent BlueKing. All Rights Reserved. 蓝鲸智云 版权所有
  */
 
-import { throttle } from '@bkui-vue/shared';
+import { throttle } from 'lodash';
 
 function getMatchedIndex(
   maxCount: number,

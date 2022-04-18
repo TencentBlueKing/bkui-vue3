@@ -24,19 +24,18 @@
 * IN THE SOFTWARE.
 */
 
+import jsCalendar from 'js-calendar';
+import type { ExtractPropTypes } from 'vue';
 import {
+  computed,
   defineComponent,
   PropType,
-  computed,
 } from 'vue';
-import type { ExtractPropTypes } from 'vue';
-import jsCalendar from 'js-calendar';
 
 import type {
-  DisableDateType,
   DatePickerValueType,
+  DisableDateType,
 } from '../interface';
-
 import { clearHours, isInRange } from '../utils';
 
 const dateTableProps = {

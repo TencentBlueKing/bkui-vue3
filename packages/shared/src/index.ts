@@ -26,12 +26,13 @@
  */
 import { App, Plugin } from 'vue';
 export * from './z-index-manager';
-export * from './bk-popover';
-export * from './bk-pop-manager';
-export * from './bk-mask-manager';
-export * from './bk-helper-core';
+export * from './popover';
+export * from './pop-manager';
+export * from './mask-manager';
+export * from './helper';
 export * from './vue-types';
 export * from './scrollbar-width';
+
 export function classes(dynamicCls: object, constCls = ''): string {
   return Object.entries(dynamicCls).filter(entry => entry[1])
     .map(entry => entry[0])
@@ -55,15 +56,16 @@ export interface OriginComponent {
 
 export const withInstall = <T extends OriginComponent>(
   component: T) => {
-  component.install = function (app: App) {
-    app.component(component.name, component);
+  component.install = function (app: App, { prefix } = {}) {
+    const pre = app.config.globalProperties.bkUIPrefix || prefix || 'Bk';
+    app.component(pre + component.name, component);
   };
   return component as typeof component & Plugin;
 };
 
 export const withInstallProps = <T extends OriginComponent, K extends Record<string, unknown>>(
   component: T,
-  childComponents: K,
+  childComponents: K = {},
   isProps = false) => {
   component.install = function (app: App, { prefix } = {}) {
     const pre = app.config.globalProperties.bkUIPrefix || prefix || 'Bk';
@@ -86,41 +88,4 @@ export const withInstallProps = <T extends OriginComponent, K extends Record<str
  */
 export function resolveClassName(clsName: string, prefix = 'bk') {
   return `${prefix}-${clsName}`;
-}
-/**
- * 函数防抖
- * @param {*} fn 执行的函数
- * @param {*} delay 延时时间
- * @param {*} immediate 是否立即执行
- */
-export function debounce(delay = 300, fn: Function, immediate = false) {
-  let timeout: any;
-  let result: any;
-  const debounced = function (this: any) {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const ctx = this;// 当前上下文
-    // eslint-disable-next-line prefer-rest-params
-    const args = arguments;// fn的参数
-
-    // 取消之前的延时调用
-    if (timeout) clearTimeout(timeout);
-    if (immediate) {
-      const applyImmediate = !timeout; // 是否执行过
-      timeout = setTimeout(() => {
-        timeout = null;// 标志是否执行过，与clearTimeout有区别，clearTimeout之后timeout不为null而是一个系统分配的队列ID
-      }, delay);
-      if (applyImmediate) result = fn.apply(ctx, args); // 立即调用
-    } else {
-      timeout = setTimeout(() => {
-        fn.apply(ctx, args);
-      }, delay);
-    }
-    return result;
-  };
-  debounced.cancel = function () {
-    clearTimeout(timeout);
-    timeout = null;
-  };
-
-  return debounced;
 }

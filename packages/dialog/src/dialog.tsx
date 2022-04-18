@@ -25,8 +25,9 @@
 */
 
 import { defineComponent } from 'vue';
-import BkModal, { propsMixin } from '@bkui-vue/modal';
+
 import BkButton from '@bkui-vue/button';
+import BkModal, { propsMixin } from '@bkui-vue/modal';
 
 export default defineComponent({
   name: 'Dialog',
@@ -34,7 +35,6 @@ export default defineComponent({
     BkModal,
     BkButton,
   },
-  emits: ['closed', 'update:isShow'],
   props: {
     ...propsMixin,
     confirmText: {
@@ -45,7 +45,7 @@ export default defineComponent({
       type: String,
       default: '取消',
     },
-    Title: {
+    title: {
       type: String,
       default: 'Title',
     },
@@ -74,6 +74,7 @@ export default defineComponent({
       },
     },
   },
+  emits: ['closed', 'update:isShow'],
 
   methods: {
     handleClose() {
@@ -90,7 +91,7 @@ export default defineComponent({
         </div>
         <div class="bk-dialog-header">
           <span class="bk-dialog-title" style={`text-align: ${this.headerAlign}`}>
-            {this.$slots.header?.() ?? this.Title}
+            {this.$slots.header?.() ?? this.title}
           </span>
         </div>
       </>,

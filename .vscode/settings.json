@@ -16,5 +16,8 @@
   "eslint.codeAction.showDocumentation": {
     "enable": true
   },
-  "editor.rulers": [120]
+  "editor.rulers": [
+    120
+  ],
+  "editor.selectionHighlight": false
 }

@@ -24,9 +24,19 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent, ref, onMounted, onBeforeUnmount, Ref, Transition, watch } from 'vue';
+import { throttle } from 'lodash';
+import {
+  type Ref,
+  defineComponent,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  Transition,
+  watch,
+} from 'vue';
+
 import { AngleUp } from '@bkui-vue/icon';
-import { PropTypes, throttle, bkZIndexManager } from '@bkui-vue/shared';
+import { bkZIndexManager, PropTypes } from '@bkui-vue/shared';
 
 
 export default defineComponent({
@@ -41,14 +51,14 @@ export default defineComponent({
   setup(props, { slots }) {
     const container: Ref<Document | HTMLElement | null> = ref(null);
     const el: Ref<HTMLElement | null> = ref(null);
-    const visiable: Ref<boolean> = ref(false);
+    const visible: Ref<boolean> = ref(false);
     const zIndex: Ref<number> = ref(bkZIndexManager.getModalNextIndex());
 
     const styleBottom = `${props.bottom}px`;
     const styleRight = `${props.right}px`;
 
     const scrollHandler = throttle(() => {
-      visiable.value = el.value!.scrollTop >= props.visibilityHeight;
+      visible.value = el.value!.scrollTop >= props.visibilityHeight;
     }, 30);
 
     const scrollTop = () => {
@@ -58,7 +68,7 @@ export default defineComponent({
       });
     };
 
-    watch(() => visiable, () => {
+    watch(() => visible, () => {
       zIndex.value = bkZIndexManager.getModalNextIndex();
     });
 
@@ -81,7 +91,7 @@ export default defineComponent({
 
     return () => (
       <Transition name="bk-fade">
-        { visiable.value
+        { visible.value
           ? <div
             class={`bk-backtop ${props.extCls}`}
             style={{

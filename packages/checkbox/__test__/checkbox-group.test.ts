@@ -24,8 +24,9 @@
 * IN THE SOFTWARE.
 */
 import { mount } from '@vue/test-utils';
-import CheckboxGroup from '../src/checkbox-group';
+
 import Checkbox from '../src/checkbox';
+import CheckboxGroup from '../src/checkbox-group';
 
 const components = {
   CheckboxGroup,

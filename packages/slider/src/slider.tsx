@@ -24,10 +24,12 @@
  * IN THE SOFTWARE.
  */
 
-import { PropTypes } from '@bkui-vue/shared';
-import { computed, defineComponent, onMounted, ref, watch, nextTick } from 'vue';
-import SliderButton from './slider-button';
+import { computed, defineComponent, nextTick, onMounted, ref, watch } from 'vue';
+
 import Input from '@bkui-vue/input';
+import { PropTypes } from '@bkui-vue/shared';
+
+import SliderButton from './slider-button';
 
 
 export const on = (element: Element | Window, event: string, handler) => {

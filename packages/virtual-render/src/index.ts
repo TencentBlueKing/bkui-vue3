@@ -30,7 +30,8 @@
  * Copyright © 2012-2019 Tencent BlueKing. All Rights Reserved. 蓝鲸智云 版权所有
  */
 
-import Component from './virtual-render';
 import { withInstall } from '@bkui-vue/shared';
-const BkTree = withInstall(Component);
-export default BkTree;
+
+import Component from './virtual-render';
+const BkVirtualRender = withInstall(Component);
+export default BkVirtualRender;

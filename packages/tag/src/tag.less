@@ -1,5 +1,113 @@
 @import '@bkui-vue/styles/themes/themes.less';
 
-.@{bk-prefix}-tag {
-  
+@tag-base-color: #fff;
+@tag-success-color: #14a568;
+@tag-info-color: @primary-color;
+@tag-warning-color: #fe9c00;
+@tag-danger-color: @danger-color;
+
+@tag-success-bg-color: rgba(20,165,104,.1);
+@tag-info-bg-color: rgba(58,132,255,.1);
+@tag-warning-bg-color: rgba(254,156,0,.1);
+@tag-danger-bg-color: rgba(234,53,54,.1);
+@tag-filled-bg-color: #979ba5;
+
+@tag-success-border-color: rgba(20,165,104,.3);
+@tag-info-border-color: rgba(58,132,255,.3);
+@tag-warning-border-color: rgba(254,165,0,.3);
+@tag-danger-border-color: rgba(234,53,54,.3);
+
+@tag-checkable-hover-bg-color: rgba(151,155,165,.15);
+
+@themeSelectors: success, info, warning, danger;
+
+.bk-tag {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 10px;
+  margin: 2px 6px 2px 0px;
+  font-size: 12px;
+  line-height: 22px;
+  color: @default-color;
+  cursor: default;
+  background-color: rgba(151,155,165,.1);
+  border-color: rgba(217, 220, 230, .6);
+  box-sizing: border-box;
+
+  each(@themeSelectors, {
+    @color: 'tag-@{value}-color';
+    @borderColor: 'tag-@{value}-border-color';
+    @bgColor: 'tag-@{value}-bg-color';
+    &.bk-tag-@{value} {
+      color: @@color;
+      border-color: @@borderColor;
+      background-color: @@bgColor;
+      &.bk-tag-filled {
+        background-color: @@color;
+      }
+    }
+  });
+
+  &:hover {
+    opacity: .8;
+  }
+
+  &.bk-tag-filled {
+    color: @tag-base-color;
+    background-color: @tag-filled-bg-color;
+  }
+
+  &.bk-tag-stroke {
+    padding: 0 9px;
+    line-height: 20px;
+    border-style: solid;
+    border-width: 1px;
+  }
+
+  &.bk-tag-closable {
+    padding: 0 4px 0 10px;
+  }
+
+  &.bk-tag-checkable {
+    cursor: pointer;
+    background: none;
+
+    &:hover {
+      background: @tag-checkable-hover-bg-color;
+    }
+  }
+
+  &.bk-tag-check {
+    color: @tag-base-color;
+    background: @tag-info-color;
+
+    &:hover {
+      color: @tag-base-color;
+      background: @tag-info-color;
+      opacity: 1;
+    }
+  }
+
+  .bk-tag-text {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .bk-tag-icon {
+    flex-shrink: 0;
+    margin-right: 4px;
+    font-size: 14px;
+    line-height: 0;
+  }
+
+  .bk-tag-close {
+    flex-shrink: 0;
+    margin-left: 4px;
+    font-size: 12px;
+    line-height: 0;
+    cursor: pointer;
+  }
 }

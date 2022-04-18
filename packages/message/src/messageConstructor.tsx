@@ -24,9 +24,10 @@
 * IN THE SOFTWARE.
 */
 
-import { defineComponent, computed, ref, onMounted, onUnmounted, watch, Transition } from 'vue';
-import { PropTypes, bkZIndexManager } from '@bkui-vue/shared';
-import { Error, Close, Info, Warn, Success } from '@bkui-vue/icon';
+import { computed, defineComponent, onMounted, onUnmounted, ref, Transition, watch } from 'vue';
+
+import { Close, Error, Info, Success, Warn } from '@bkui-vue/icon';
+import { bkZIndexManager, PropTypes } from '@bkui-vue/shared';
 
 const messageProps = {
   id: PropTypes.string.def(''),

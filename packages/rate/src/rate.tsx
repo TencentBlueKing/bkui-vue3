@@ -24,8 +24,10 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent, ref, Ref, computed } from 'vue';
-import { PropTypes, classes } from '@bkui-vue/shared';
+import { computed, defineComponent, Ref, ref } from 'vue';
+
+import { classes, PropTypes } from '@bkui-vue/shared';
+
 import star from './star';
 
 export default defineComponent({

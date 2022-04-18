@@ -24,8 +24,13 @@
  * IN THE SOFTWARE.
  */
 
-import { PropTypes } from '@bkui-vue/shared';
 import { ExtractPropTypes } from 'vue';
+
+import { PropTypes } from '@bkui-vue/shared';
+
+const EventProps = {
+  onContentScroll: Function,
+};
 
 export const virtualRenderProps = {
   /** 传入原始数据源 */
@@ -112,6 +117,8 @@ export const virtualRenderProps = {
    * 默认60 ms
    */
   throttleDelay: PropTypes.number.def(60),
+
+  ...EventProps,
 };
 
 export type VirtualRenderProps = Readonly<ExtractPropTypes<typeof virtualRenderProps>>;

@@ -24,6 +24,7 @@
 * IN THE SOFTWARE.
 */
 import { defineComponent, PropType } from 'vue';
+
 import { BkNavigationType } from './navigation';
 const TitleProps = {
   sideTitle: {

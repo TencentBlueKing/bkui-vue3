@@ -23,32 +23,34 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import type {
+  ComponentInternalInstance,
+  InjectionKey,
+  Ref,
+} from 'vue';
 import {
+  computed,
+  getCurrentInstance,
+  inject,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
   reactive,
   ref,
-  computed,
-  inject,
-  onMounted,
-  onBeforeUnmount,
-  getCurrentInstance,
-  nextTick,
 } from 'vue';
-import type {
-  Ref,
-  InjectionKey,
-  ComponentInternalInstance,
-} from 'vue';
+
 import {
   EMPTY_OBJ,
   isEmptyObj,
 } from '@bkui-vue/shared';
+
+import type {
+  CheckboxProps,
+} from './checkbox';
 import type {
   ICheckboxGroupContext,
   ICheckboxInstance,
 } from './type';
-import type {
-  CheckboxProps,
-} from './checkbox';
 
 export const checkboxGroupKey: InjectionKey<ICheckboxGroupContext> = Symbol('CheckboxGroup');
 

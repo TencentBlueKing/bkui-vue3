@@ -29,12 +29,6 @@
   </bk-menu>
 </template>
 
-<script>
-import { defineComponent } from 'vue';
-import { Search } from '@bkui-vue/icon';
-export default defineComponent({
-  components: {
-    Search,
-  },
-});
+<script setup>
+  import { Search } from '@bkui-vue/icon';
 </script>

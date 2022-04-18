@@ -24,10 +24,11 @@
  * IN THE SOFTWARE.
 */
 
-import Dropdown from './dropdown';
-import DropdownMenu from './dropdown-menu';
-import DropdownItem from './dropdown-item';
 import { withInstallProps } from '@bkui-vue/shared';
+
+import Dropdown from './dropdown';
+import DropdownItem from './dropdown-item';
+import DropdownMenu from './dropdown-menu';
 const BkDropdown = withInstallProps(Dropdown, { DropdownMenu, DropdownItem });
 export default BkDropdown;
 export {

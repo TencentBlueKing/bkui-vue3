@@ -23,14 +23,18 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { Code, Copy, PlayShape } from '@bkui-vue/icon';
-import { defineComponent, ref, onMounted, onBeforeUnmount, getCurrentInstance, onBeforeMount } from 'vue';
-import CodeBox from './code-box';
-import BoxIcon from './box-icon';
 import ClipboardJS from 'clipboard';
-import CommonBox from './common-box';
+import { defineComponent, getCurrentInstance, onBeforeMount, onBeforeUnmount, onMounted, ref } from 'vue';
+
+import { Code, Copy, PlayShape } from '@bkui-vue/icon';
 import BkMessage from '@bkui-vue/message';
+
+import BoxIcon from './box-icon';
+import CodeBox from './code-box';
+import CommonBox from './common-box';
+
 import './demo-box.less';
+
 export default defineComponent({
   name: 'DemoBox',
   props: {
@@ -40,7 +44,7 @@ export default defineComponent({
     },
     subtitle: {
       type: String,
-      required: true,
+      default: '',
     },
     desc: {
       type: String,
@@ -58,6 +62,10 @@ export default defineComponent({
       type: String,
       required: true,
     },
+    suffix: {
+      type: String,
+      default: '.vue',
+    },
   },
   setup(props) {
     const showCode = ref(false);
@@ -72,11 +80,11 @@ export default defineComponent({
       if (process.env.NODE_ENV === 'development') {
         // evalCode.value = (await import(/* @vite-ignore */
         // `../views/${props.componentName}/${props.demoName}.vue`)).default;
-        sourceCode.value = (await import(/* @vite-ignore */ `../views/${props.componentName}/${props.demoName}.vue?raw`)).default;
+        sourceCode.value = (await import(/* @vite-ignore */ `../views/${props.componentName}/${props.demoName}${props.suffix}?raw`)).default;
         // const app = createApp(evalCode.value as any);
         // app.mount(preview.value);
       } else {
-        sourceCode.value = await fetch(`../views/${props.componentName}/${props.demoName}.vue`).then(res => res.text());
+        sourceCode.value = await fetch(`../views/${props.componentName}/${props.demoName}${props.suffix}`).then(res => res.text());
       }
     });
     onMounted(() => {

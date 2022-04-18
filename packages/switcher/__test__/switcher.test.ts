@@ -23,9 +23,11 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { mount } from '@vue/test-utils';
-import Switcher from '../src/index';
 import { nextTick } from 'vue';
+
+import { mount } from '@vue/test-utils';
+
+import Switcher from '../src/index';
 
 jest.useFakeTimers();
 /** 传入template 其他配置*/

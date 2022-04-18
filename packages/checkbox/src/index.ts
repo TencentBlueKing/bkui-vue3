@@ -23,10 +23,15 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
+
+import { withInstallProps } from '@bkui-vue/shared';
+
 import Component, { CheckboxProps } from './checkbox';
 import CheckboxGroup from './checkbox-group';
-import { withInstallProps } from '@bkui-vue/shared';
+
+
 const BkCheckbox = withInstallProps(Component, { Group: CheckboxGroup });
+
 export default BkCheckbox;
 export {
   BkCheckbox,

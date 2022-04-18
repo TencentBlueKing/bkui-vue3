@@ -25,6 +25,7 @@
 */
 
 import { computed, defineComponent } from 'vue';
+
 import { classes, PropTypes } from '@bkui-vue/shared';
 
 export default defineComponent({
