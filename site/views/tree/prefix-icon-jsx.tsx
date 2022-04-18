@@ -24,6 +24,7 @@
 * IN THE SOFTWARE.
 */
 import { defineComponent } from 'vue';
+
 import { BASIC_DATA } from './options';
 export default defineComponent({
   components: {},
@@ -38,7 +39,7 @@ export default defineComponent({
       const childeFont = _hasChild ? '+' : '*';
       const openFont = _isOpen ? '-' : childeFont;
       const rootFont = _isRoot ? 'R' : 'C';
-      const fontIcon = isAction ? rootFont : openFont;
+      const fontIcon = !isAction ? rootFont : openFont;
       return  <span class="custom-node" style="font-size: 8px; text-align: center;">{fontIcon}</span>;
     },
   },

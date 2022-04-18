@@ -24,21 +24,23 @@
 * IN THE SOFTWARE.
 */
 
-import {
-  ref,
-  computed,
-  watch,
-  nextTick,
-  getCurrentInstance,
+import type {
+  ComponentInternalInstance,
 } from 'vue';
-import BkPopover from '@bkui-vue/popover';
+import {
+  computed,
+  getCurrentInstance,
+  nextTick,
+  ref,
+  watch,
+} from 'vue';
+
 import {
   LeftShape,
   RightShape,
 } from '@bkui-vue/icon';
-import type {
-  ComponentInternalInstance,
-} from 'vue';
+import BkPopover from '@bkui-vue/popover';
+
 import type {
   IPaginationInstance,
 } from './type';
@@ -54,7 +56,7 @@ export default () => {
   const localCurrent = ref<number>(1);
 
   const isPagePreDisabled = computed<boolean>(() => localCurrent.value === 1);
-  const isPageNextDisabled = computed<boolean>(() => localCurrent.value === proxy.pageNum);
+  const isPageNextDisabled = computed<boolean>(() => localCurrent.value === proxy.totalPageNum);
 
   // 缓存input输入，失焦或者enter键触发提交
   let inputMemo = 0;
@@ -62,21 +64,21 @@ export default () => {
   // 页码可选列表
   const list = computed<number[]>(() => {
     const stack = [];
-    for (let i = 1; i <= proxy.pageNum; i++) {
+    for (let i = 1; i <= proxy.totalPageNum; i++) {
       stack.push(i);
     }
     return stack;
   });
 
   watch(() => proxy.modelValue, (modelValue) => {
-    // nextTick延后执行，保证proxy.pageNum计算正确
+    // nextTick延后执行，保证proxy.totalPageNum计算正确
     nextTick(() => {
-      if (modelValue >= 1 && modelValue <= proxy.pageNum) {
+      if (modelValue >= 1 && modelValue <= proxy.totalPageNum) {
         localCurrent.value = modelValue;
       } else if (modelValue < 1) {
         localCurrent.value = 1;
       } else {
-        localCurrent.value = proxy.pageNum;
+        localCurrent.value = proxy.totalPageNum;
       }
       inputMemo = localCurrent.value;
     });
@@ -84,11 +86,11 @@ export default () => {
     immediate: true,
   });
 
-  // 切换limit时会导致pageNum变小旧的current可能会超出范围，修正localCurrent
+  // 切换limit时会导致totalPageNum变小旧的current可能会超出范围，修正localCurrent
   nextTick(() => {
-    watch(() => proxy.pageNum, (pageNum) => {
-      if (localCurrent.value > pageNum) {
-        localCurrent.value = pageNum;
+    watch(() => proxy.totalPageNum, (totalPageNum) => {
+      if (localCurrent.value > totalPageNum) {
+        localCurrent.value = totalPageNum;
       }
     });
   });
@@ -147,7 +149,7 @@ export default () => {
     const $target = event.target as HTMLElement;
     const value = Number($target.textContent);
     // 无效值不抛出事件
-    if (!value || value < 1 || value > proxy.pageNum || (value === localCurrent.value)) {
+    if (!value || value < 1 || value > proxy.totalPageNum || (value === localCurrent.value)) {
       return;
     };
     inputMemo = value;
@@ -207,7 +209,7 @@ export default () => {
                 {localCurrent.value}
               </span>
               <span>/</span>
-              <span class="bk-pagination-small-list-total">{proxy.pageNum}</span>
+              <span class="bk-pagination-small-list-total">{proxy.totalPageNum}</span>
             </div>
           ),
           content: () => (

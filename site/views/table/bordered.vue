@@ -1,6 +1,6 @@
 <template>
-  <div style="height: 300px; width: 100%;">
-    <div style="padding: 15px 0;">
+  <div style="height: 300px; width: 100%">
+    <div style="padding: 15px 0">
       <bk-checkbox-group v-model="border">
         <bk-checkbox label="none" />
         <bk-checkbox
@@ -20,16 +20,17 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue';
-import { DATA_TABLE, DATA_COLUMNS } from './options';
-export default defineComponent({
-  components: {},
-  data() {
-    return {
-      tableData: [...DATA_TABLE],
-      columns: [...DATA_COLUMNS],
-      border: ['row'],
-    };
-  },
-});
+  import { defineComponent } from 'vue';
+
+  import { DATA_COLUMNS, DATA_TABLE } from './options';
+  export default defineComponent({
+    components: {},
+    data() {
+      return {
+        tableData: [...DATA_TABLE],
+        columns: [...DATA_COLUMNS],
+        border: ['row'],
+      };
+    },
+  });
 </script>

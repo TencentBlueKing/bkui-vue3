@@ -25,6 +25,7 @@
 */
 
 import { mount } from '@vue/test-utils';
+
 import Progress from '../src/index';
 
 describe('Progress.tsx', () => {

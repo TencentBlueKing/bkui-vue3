@@ -25,32 +25,29 @@
 */
 
 import {
-  defineComponent,
-  ref,
-  reactive,
-  toRefs,
   computed,
-  watch,
+  defineComponent,
+  nextTick,
   onMounted,
   provide,
-  Transition,
+  reactive,
+  ref,
   Teleport,
-  nextTick,
+  toRefs,
+  Transition,
+  watch,
 } from 'vue';
 
 import { clickoutside } from '@bkui-vue/directives';
 
+import PickerDropdown from './base/picker-dropdown';
 // import VueTypes, { toType, toValidableType } from 'vue-types';
 // import { PropTypes } from '@bkui-vue/shared';
-
 import type { DatePickerPanelType, SelectionModeType } from './interface';
-
-import { isAllEmptyArr, parseDate, formatDate, extractTime, datePickerKey } from './utils';
-
-import PickerDropdown from './base/picker-dropdown';
 import DatePanel from './panel/date';
 import DateRangePanel from './panel/date-range';
 import { datePickerProps } from './props';
+import { datePickerKey, extractTime, formatDate, isAllEmptyArr, parseDate } from './utils';
 
 export default defineComponent({
   name: 'DatePicker',
@@ -375,9 +372,9 @@ export default defineComponent({
           e.stopPropagation();
           e.preventDefault();
 
-          if (isConfirm) {
+          if (isConfirm.value) {
             const selector = '.bk-picker-confirm > *';
-            const tabbable = pickerDropdownRef.$el.querySelectorAll(selector);
+            const tabbable = pickerDropdownRef.value.$el.querySelectorAll(selector);
             state.internalFocus = true;
             const element = [...tabbable][e.shiftKey ? 'pop' : 'shift']();
             element.focus();

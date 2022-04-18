@@ -24,9 +24,10 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent, computed } from 'vue';
-import { classes, PropTypes } from '@bkui-vue/shared';
+import { computed, defineComponent } from 'vue';
+
 import { Error } from '@bkui-vue/icon';
+import { classes, PropTypes } from '@bkui-vue/shared';
 
 export default defineComponent({
   name: 'Tag',
@@ -81,7 +82,7 @@ export default defineComponent({
     return (
       <div class={this.wrapperCls} style={this.wrapperStyle} onClick={this.handleClick}>
         { this.$slots.icon ? <span class="bk-tag-icon">{this.$slots.icon()}</span> : '' }
-        <span>{ this.$slots.default?.() }</span>
+        <span class="bk-tag-text">{ this.$slots.default?.() }</span>
         { this.closable ? <Error class="bk-tag-close" onClick={this.handleClose} /> : '' }
       </div>
     );

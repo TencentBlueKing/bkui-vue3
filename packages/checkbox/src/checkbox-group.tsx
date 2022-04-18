@@ -24,6 +24,7 @@
  * IN THE SOFTWARE.
 */
 
+import type { ExtractPropTypes } from 'vue';
 import {
   defineComponent,
   onMounted,
@@ -31,18 +32,19 @@ import {
   reactive,
   watch,
 } from 'vue';
-import type { ExtractPropTypes } from 'vue';
+
 import {
   PropTypes,
 } from '@bkui-vue/shared';
+
+import type { CheckboxProps } from './checkbox';
 import {
   checkboxGroupKey,
 } from './common';
 import type {
-  ICheckboxInstance,
   ICheckboxGroupContext,
+  ICheckboxInstance,
 } from './type';
-import type { CheckboxProps } from './checkbox';
 
 const checkboxGroupProps = {
   name: PropTypes.string.def(''),

@@ -23,10 +23,10 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import md from 'vite-plugin-md';
-import markdownItContainer from 'markdown-it-container';
 import hljs from 'highlight.js';
 import type MarkdownIt from 'markdown-it';
+import markdownItContainer from 'markdown-it-container';
+import md from 'vite-plugin-md';
 
 const tipsList = ['info', 'tip', 'warning', 'danger'];
 const createTips = (cls: string) =>  ({

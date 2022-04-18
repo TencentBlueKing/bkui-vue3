@@ -24,8 +24,9 @@
  * IN THE SOFTWARE.
 */
 
-import Component, { setDefaultIndicator, BkLoadingMode, BkLoadingSize } from './loading';
 import { withInstallProps } from '@bkui-vue/shared';
+
+import Component, { BkLoadingMode, BkLoadingSize, setDefaultIndicator } from './loading';
 const BkLoading = withInstallProps(Component, { setDefaultIndicator, BkLoadingMode, BkLoadingSize }, true);
 export default BkLoading;
 export {

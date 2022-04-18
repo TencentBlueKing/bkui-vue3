@@ -80,18 +80,18 @@
   </div>
 </template>
 <script>
-import { defineComponent } from 'vue';
+  import { defineComponent } from 'vue';
 
-import BkProgress from '@bkui-vue/progress';
+  import BkProgress from '@bkui-vue/progress';
 
-export default defineComponent({
-  name: 'SiteProgress',
-  components: {
-    BkProgress,
-  },
-  setup() {
-  },
-});
+  export default defineComponent({
+    name: 'SiteProgress',
+    components: {
+      BkProgress,
+    },
+    setup() {
+    },
+  });
 </script>
 
 <style scoped>

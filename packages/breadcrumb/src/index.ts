@@ -23,9 +23,10 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import { withInstallProps } from '@bkui-vue/shared';
+
 import Component from './breadcrumb';
 import BreadcrumbItem from './breadcrumb-item';
-import { withInstallProps } from '@bkui-vue/shared';
 const BkBreadcrumb = withInstallProps(Component, { Item: BreadcrumbItem });
 export {
   BkBreadcrumb,

@@ -26,8 +26,8 @@
 
 import { defineComponent, ref } from 'vue';
 
-import Menu from '@bkui-vue/menu';
 import { TreeApplicationShape } from '@bkui-vue/icon/';
+import Menu from '@bkui-vue/menu';
 // import { Navigation } from 'bkui-vue';
 export default defineComponent({
   setup() {

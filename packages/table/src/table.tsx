@@ -24,23 +24,25 @@
  * IN THE SOFTWARE.
 */
 
-import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, reactive, ref, SetupContext, watch } from 'vue';
+import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, reactive, ref, SetupContext, watch, watchEffect } from 'vue';
+
 import { classes, resolveClassName } from '@bkui-vue/shared';
+import VirtualRender from '@bkui-vue/virtual-render';
+
 import { Column, IColumnActive, tableProps, TablePropTypes } from './props';
 import TableRender from './render';
 import {
-  resolveActiveColumns,
-  resolveNumberOrStringToPix,
-  resolvePropBorderToClassStr,
-  resolveColumnWidth,
-  observerResize,
   isPercentPixOrNumber,
-  resolvePaginationOption } from './utils';
-import VirtualRender from '@bkui-vue/virtual-render';
+  observerResize,
+  resolveActiveColumns,
+  resolveColumnWidth,
+  resolveNumberOrStringToPix,
+  resolvePaginationOption,  resolvePropBorderToClassStr } from './utils';
 
 export default defineComponent({
   name: 'Table',
   props: tableProps,
+  emits: ['column-pick', 'row-click', 'page-limit-change', 'page-value-change'],
   setup(props: TablePropTypes, ctx: SetupContext) {
     const activeCols = reactive(resolveActiveColumns(props));
     const colgroups = reactive(props.columns.map(col => ({ ...col, calcWidth: null })));
@@ -82,15 +84,13 @@ export default defineComponent({
       scrollTranslateY: 0,
     });
 
-    watch(() => [props.activeColumn, props.columns, props.pagination], () => {
+    watch(() => [props.activeColumn, props.columns], () => {
       nextTick(() => {
         reactiveProp.activeColumns = getActiveColumns();
         const cols = resolveActiveColumns(props);
         reactiveProp.activeColumns.forEach((col: IColumnActive, index: number) => {
           Object.assign(col, { active: cols.some((colIndex: number) => colIndex === index) });
         });
-        pagination = resolvePaginationOption(props.pagination, pagination);
-        resetStartEndIndex();
       });
     }, { deep: true });
 
@@ -101,6 +101,11 @@ export default defineComponent({
       // height: resolveNumberOrStringToPix(props.height),
       minHeight: resolveNumberOrStringToPix(props.minHeight, 'auto'),
     }));
+
+    watchEffect(() => {
+      pagination = resolvePaginationOption(props.pagination, pagination);
+      resetStartEndIndex();
+    });
 
     /**
    * 当前页分页数据

@@ -24,15 +24,15 @@
  * IN THE SOFTWARE.
  */
 
-import { PropType } from 'vue';
 import type { ExtractPropTypes } from 'vue';
+import { PropType } from 'vue';
 
 import type {
   DatePickerPlacementType,
-  PickerTypeType,
   DatePickerShortcutsType,
   DatePickerValueType,
   DisableDateType,
+  PickerTypeType,
 } from './interface';
 
 

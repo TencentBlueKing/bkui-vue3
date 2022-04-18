@@ -24,8 +24,8 @@
  * IN THE SOFTWARE.
 */
 
-import { Task, TaskRunner, ICompileTaskOption } from '../typings/task';
 import bundleTask from '../bundle-task';
+import { ICompileTaskOption, Task, TaskRunner } from '../typings/task';
 
 const compileTaskRunner: TaskRunner<ICompileTaskOption> = async (option) => {
   await bundleTask(option);

@@ -25,6 +25,7 @@
 * IN THE SOFTWARE.
 */
 import { FunctionalComponent } from 'vue';
+
 import BkIcon, { IIconBaseProps } from './icon';
 const data = JSON.parse('{"type":"element","name":"svg","attributes":{"xmlns":"http://www.w3.org/2000/svg","viewBox":"0 0 1024 1024","style":"width: 1em; height: 1em; vertical-align: middle;fill: currentColor;overflow: hidden;"},"elements":[{"type":"element","name":"path","attributes":{"fill-rule":"evenodd","d":"M452.7573333333333 510.91200000000003L225.83338666666668 737.8346666666666 286.1730133333333 798.1738666666666 513.0965333333334 571.2511999999999 739.8399999999999 797.9946666666666 797.9946666666666 739.8399999999999 571.2511999999999 513.0965333333334 798.1738666666666 286.1730133333333 737.8346666666666 225.83338666666668 510.91200000000003 452.7573333333333 283.9867733333333 225.83338666666668 225.83338666666668 283.9867733333333 452.7573333333333 510.91200000000003Z","clip-rule":"evenodd"}}]}');
 const error: FunctionalComponent<IIconBaseProps> = (props, context) => {

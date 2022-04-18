@@ -24,12 +24,12 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent, ExtractPropTypes, ref, nextTick, computed, onMounted, watch } from 'vue';
-import * as Diff2Html from 'diff2html';
 import { createPatch } from 'diff';
+import * as Diff2Html from 'diff2html';
 import hljs from 'highlight.js';
-
+import { computed, defineComponent, ExtractPropTypes, nextTick, onMounted, ref, watch } from 'vue';
 import { number, string } from 'vue-types';
+
 import { classes, ElementType, stringEnum } from '@bkui-vue/shared';
 
 const diffFormats = ['side-by-side', 'line-by-line'] as const;
@@ -180,7 +180,6 @@ export default defineComponent({
     onMounted(async () => {
       await Promise.all([
         generateDiffHTML(props.diffContext, props.language),
-        import('diff2html/bundles/css/diff2html.min.css'),
       ]);
 
       highlightElement();

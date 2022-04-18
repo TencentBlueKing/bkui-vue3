@@ -24,8 +24,10 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent, reactive, ref, PropType, onBeforeUnmount } from 'vue';
+import { defineComponent, onBeforeUnmount, PropType, reactive, ref } from 'vue';
+
 import { CollapseLeft } from '@bkui-vue/icon';
+
 import NavigationTitle from './navigation-title';
 export type BkNavigationType = 'top-bottom' | 'left-right';
 const NavigationProps = {

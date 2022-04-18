@@ -24,23 +24,25 @@
  * IN THE SOFTWARE.
 */
 
+import type {
+  ExtractPropTypes,
+} from 'vue';
 import {
   defineComponent,
-  watch,
-  toRefs,
   ref,
+  toRefs,
+  watch,
 } from 'vue';
+
 import {
   classes,
   PropTypes,
 } from '@bkui-vue/shared';
-import type {
-  ExtractPropTypes,
-} from 'vue';
-import useTotal from './use-total';
+
+import useLimit from './use-limit';
 import useList from './use-list';
 import useSmallList from './use-small-list';
-import useLimit from './use-limit';
+import useTotal from './use-total';
 
 export const paginationProps = {
   modelValue: PropTypes.number.def(1),
@@ -79,7 +81,7 @@ export default defineComponent({
     'limit-change',
   ],
   setup(props, context) {
-    const pageNum = ref<number>(0);
+    const totalPageNum = ref<number>(0);
     const {
       count,
       limit,
@@ -103,7 +105,8 @@ export default defineComponent({
     } = useLimit();
 
     watch([count, localLimit, limit], ([count, localLimit]) => {
-      pageNum.value = Math.ceil(count / localLimit);
+      const total = Math.ceil(count / localLimit);
+      totalPageNum.value =  total < 1 ? 1 : total;
     }, {
       immediate: true,
     });
@@ -120,7 +123,7 @@ export default defineComponent({
     });
 
     return {
-      pageNum,
+      totalPageNum,
       renderTotal,
       renderList,
       renderLimit,
@@ -135,7 +138,7 @@ export default defineComponent({
     });
     const layoutMap = {
       total: this.renderTotal,
-      list: this.renderList,
+      list: this.small ? this.renderSmallList : this.renderList,
       limit: this.renderLimit,
     };
 
@@ -145,7 +148,6 @@ export default defineComponent({
           isFirst: index === 0,
           isLast: index === this.layout.length - 1,
         }))}
-        {this.renderSmallList()}
       </div>
     );
   },

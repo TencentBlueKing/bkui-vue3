@@ -11,7 +11,7 @@
         <span>未开始</span>
       </bk-progress>
       <bk-progress
-        :text-inside="true"
+        text-inside
         type="circle"
         :percent="10"
         color="#f56c6c"
@@ -20,19 +20,19 @@
   </div>
 </template>
 <script>
-import { defineComponent } from 'vue';
+  import { defineComponent } from 'vue';
 
-import BkProgress from '@bkui-vue/progress';
+  import BkProgress from '@bkui-vue/progress';
 
-export default defineComponent({
-  name: 'SiteProgress',
-  components: {
-    BkProgress,
-  },
-  setup() {
+  export default defineComponent({
+    name: 'SiteProgress',
+    components: {
+      BkProgress,
+    },
+    setup() {
 
-  },
-});
+    },
+  });
 </script>
 
 <style scoped>

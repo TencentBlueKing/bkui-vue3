@@ -27,12 +27,13 @@
 import type {
   ComponentPublicInstance,
 } from 'vue';
+
 import type {
   PaginationProps,
 } from './pagination';
 
 export type IPaginationInstance = ComponentPublicInstance<PaginationProps, {
   limit: PaginationProps['limit'],
-  pageNum: number
+  totalPageNum: number
 }>;
 

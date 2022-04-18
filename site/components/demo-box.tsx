@@ -23,13 +23,16 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { Code, Copy, PlayShape } from '@bkui-vue/icon';
-import { defineComponent, ref, onMounted, onBeforeUnmount, getCurrentInstance, onBeforeMount } from 'vue';
-import CodeBox from './code-box';
-import BoxIcon from './box-icon';
 import ClipboardJS from 'clipboard';
-import CommonBox from './common-box';
+import { defineComponent, getCurrentInstance, onBeforeMount, onBeforeUnmount, onMounted, ref } from 'vue';
+
+import { Code, Copy, PlayShape } from '@bkui-vue/icon';
 import BkMessage from '@bkui-vue/message';
+
+import BoxIcon from './box-icon';
+import CodeBox from './code-box';
+import CommonBox from './common-box';
+
 import './demo-box.less';
 
 export default defineComponent({

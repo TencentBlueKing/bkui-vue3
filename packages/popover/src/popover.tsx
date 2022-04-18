@@ -24,11 +24,12 @@
  * IN THE SOFTWARE.
 */
 
-import { computed, defineComponent, toRefs, watch, onMounted, ref, onBeforeUnmount, SetupContext, Transition, nextTick } from 'vue';
+import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, ref, SetupContext, toRefs, Transition, watch } from 'vue';
+
 import {
-  IBKPopover,
   BKPopover,
   bkZIndexManager,
+  IBKPopover,
 } from '@bkui-vue/shared';
 import { Placement } from '@popperjs/core';
 
@@ -61,7 +62,7 @@ export default defineComponent({
 
     const handleManualShow = (val) => {
       if (trigger.value === 'manual' && isPopInstance) {
-        val ? popoverInstance.show() : popoverInstance.hide();
+        val ? popoverInstance.show?.() : popoverInstance.hide?.();
       }
     };
 
@@ -148,7 +149,7 @@ export default defineComponent({
             style={compStyle.value}
             {...customTheme}>
             {ctx.slots.content?.() ?? content.value}
-            {arrow && <div class="arrow" data-popper-arrow></div>}
+            {arrow.value && <div class="arrow" data-popper-arrow></div>}
           </div>
         </Transition>
       </div>

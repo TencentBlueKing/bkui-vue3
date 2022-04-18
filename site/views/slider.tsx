@@ -24,6 +24,7 @@
 * IN THE SOFTWARE.
 */
 import { defineComponent, ref } from 'vue';
+
 import Slider from '@bkui-vue/slider';
 
 export default defineComponent({

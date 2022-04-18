@@ -24,7 +24,9 @@
 * IN THE SOFTWARE.
 */
 import { defineComponent, PropType } from 'vue';
+
 import { IPropsTableItem } from '../typings';
+
 import CommonBox from './common-box';
 
 import './props-box.less';

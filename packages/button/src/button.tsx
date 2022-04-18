@@ -24,9 +24,10 @@
  * IN THE SOFTWARE.
  */
 
-import { defineComponent, computed, ExtractPropTypes, PropType, ref } from 'vue';
-import { classes, PropTypes } from '@bkui-vue/shared';
+import { computed, defineComponent, ExtractPropTypes, PropType, ref } from 'vue';
+
 import BkLoading, { BkLoadingMode, BkLoadingSize } from '@bkui-vue/loading';
+import { classes, PropTypes } from '@bkui-vue/shared';
 
 
 type IButtonNativeType = PropType<'button' | 'submit' | 'reset'>;
@@ -112,7 +113,11 @@ export default defineComponent({
       >
         {
           props.loading && (
-            <BkLoading class={`${btnClsPrefix}-loading`} mode={props.laodingMode} theme={loadingTheme.value} size={loadingSize.value} />
+            <BkLoading
+              class={`${btnClsPrefix}-loading`}
+              mode={props.laodingMode}
+              theme={loadingTheme.value}
+              size={loadingSize.value} />
           )
         }
         {slots.default && <span class={`${btnClsPrefix}-text`}>{slots.default?.()}</span>}

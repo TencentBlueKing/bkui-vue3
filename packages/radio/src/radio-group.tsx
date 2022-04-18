@@ -24,16 +24,18 @@
  * IN THE SOFTWARE.
 */
 
+import type { ExtractPropTypes } from 'vue';
 import {
   defineComponent,
   provide,
   reactive,
   watch,
 } from 'vue';
-import type { ExtractPropTypes } from 'vue';
+
 import {
   PropTypes,
 } from '@bkui-vue/shared';
+
 import { radioGroupKey } from './common';
 import type { IRadioGroupContext } from './type';
 
@@ -77,7 +79,7 @@ export default defineComponent({
   render() {
     return (
       <div class="bk-radio-group">
-        {this.$slots.default()}
+        {this.$slots?.default()}
       </div>
     );
   },

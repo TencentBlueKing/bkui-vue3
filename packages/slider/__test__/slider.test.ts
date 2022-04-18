@@ -24,8 +24,10 @@
  * IN THE SOFTWARE.
  */
 
-import { mount } from '@vue/test-utils';
 import { nextTick } from 'vue';
+
+import { mount } from '@vue/test-utils';
+
 import Slider from '../src';
 
 const components = {
@@ -46,7 +48,7 @@ describe('Slider.tsx', () => {
   it('disable', async () => {
     const wrapper = mount({
       components,
-      template: '<Slider v-model="value" disable="true"></Slider>',
+      template: '<Slider v-model="value" :disable="true"></Slider>',
       data() {
         return { value: 5 };
       },
@@ -57,7 +59,7 @@ describe('Slider.tsx', () => {
   it('range', async () => {
     const wrapper = mount({
       components,
-      template: '<Slider v-model="value" range="true"></Slider>',
+      template: '<Slider v-model="value" :range="true"></Slider>',
       data() {
         return { value: [5, 20] };
       },

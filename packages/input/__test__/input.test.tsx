@@ -26,6 +26,7 @@
 
 
 import { mount } from '@vue/test-utils';
+
 import Input from '../src/index';
 describe('Input', () => {
   it('renders correctly', () => {
@@ -210,7 +211,6 @@ describe('Input', () => {
     expect(wrapper.find('.bk-input--number-control').exists()).toBe(true);
     const spans = wrapper.findAll('.bk-input--number-control span');
     await spans[0].trigger('click');
-    console.log(wrapper.emitted(), wrapper.find('input').element.value);
     expect(wrapper.emitted()).toHaveProperty('update:modelValue');
     expect(wrapper.emitted()['update:modelValue'][0][0]).toBe(1);
 

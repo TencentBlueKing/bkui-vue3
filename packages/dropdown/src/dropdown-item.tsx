@@ -24,16 +24,17 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent, computed } from 'vue';
+import { computed, defineComponent } from 'vue';
+
 import { PropTypes } from '@bkui-vue/shared';
 
 export default defineComponent({
   name: 'BkDropdownItem',
-  emits: ['click'],
   props: {
     /** 外部设置的 class name */
     extCls: PropTypes.string,
   },
+  emits: ['click'],
   setup(props: any, { emit }) {
     const handleClick = (evt: MouseEvent) => {
       emit('click', evt);
