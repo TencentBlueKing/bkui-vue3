@@ -1,6 +1,6 @@
 <template>
-  <div style="height: 300px; width: 100%; overflow: auto; display: flex">
-    <div style="width: 25%">
+  <div class="row">
+    <div class="cell">
       <span>prefix-icon: true</span>
       <bk-tree
         :data="treeData"
@@ -10,7 +10,7 @@
         children="children"
       />
     </div>
-    <div style="width: 25%">
+    <div class="cell">
       <span>function 函数返回 'default' 将会调用系统默认样式</span>
       <bk-tree
         :data="treeData"
@@ -20,7 +20,7 @@
         children="children"
       />
     </div>
-    <div style="width: 25%">
+    <div class="cell">
       <span>function 返回字符串</span>
       <bk-tree
         :data="treeData"
@@ -30,7 +30,7 @@
         children="children"
       />
     </div>
-    <div style="width: 25%">
+    <div class="cell">
       <span>function 返回对象</span>
       <bk-tree
         :data="treeData"
@@ -110,5 +110,18 @@
 
 .custom-root {
   background: #fafb;
+}
+</style>
+<style scoped>
+.row {
+  height: 300px;
+  width: 100%;
+  overflow: auto;
+  display: flex;
+}
+
+.cell {
+  flex: 1;
+  padding: 0 15px;
 }
 </style>

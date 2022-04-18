@@ -50,6 +50,7 @@ export { default as Steps } from '@bkui-vue/steps';
 export { default as Switcher } from '@bkui-vue/switcher';
 export { default as Table } from '@bkui-vue/table';
 export { default as Tag } from '@bkui-vue/tag';
+export { default as TagInput } from '@bkui-vue/tag-input';
 export { default as Divider } from '@bkui-vue/divider';
 export { default as Tab, BKTabPanel as TabPanel } from '@bkui-vue/tab';
 export { default as Message } from '@bkui-vue/message';
