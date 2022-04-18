@@ -65,7 +65,7 @@ export const withInstall = <T extends OriginComponent>(
 
 export const withInstallProps = <T extends OriginComponent, K extends Record<string, unknown>>(
   component: T,
-  childComponents: K = {},
+  childComponents: K,
   isProps = false) => {
   component.install = function (app: App, { prefix } = {}) {
     const pre = app.config.globalProperties.bkUIPrefix || prefix || 'Bk';
