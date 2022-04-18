@@ -119,7 +119,7 @@ export default defineComponent({
       context.emit('change', smallListCurrent);
     });
     watch(localLimit, (localLimit) => {
-      context.emit('limit-change', localLimit);
+      context.emit('limitChange', localLimit);
     });
 
     return {

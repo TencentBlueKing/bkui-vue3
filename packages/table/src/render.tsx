@@ -85,12 +85,12 @@ export default class TableRender {
 
   private handlePageLimitChange(limit: number) {
     Object.assign(this.props.pagination, { limit });
-    this.context.emit('page-limit-change', limit);
+    this.context.emit('pageLimitChange', limit);
   }
 
   private hanlePageChange(current: number) {
     Object.assign(this.props.pagination, { current, value: current });
-    this.context.emit('page-value-change', current);
+    this.context.emit('pageValueChange', current);
   }
 
   /**
