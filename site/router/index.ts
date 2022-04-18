@@ -496,7 +496,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/divider',
     name: 'divider',
-    component: () => import('../views/divider'),
+    component: () => import('../views/divider/divider'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'Divider 分割线',
@@ -508,7 +508,19 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/tab',
     name: 'tab',
-    component: () => import('../views/tab'),
+    component: () => import('../views/tab/tab'),
+    meta: {
+      group: NavGroupMeta.Nav,
+      navName: 'Tab 选项卡',
+    },
+  },
+  /**
+   * @description:选项卡
+   */
+  {
+    path: '/tab/jsx',
+    name: 'tabJsx',
+    component: () => import('../views/tab/demo-jsx'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'Tab 选项卡',
