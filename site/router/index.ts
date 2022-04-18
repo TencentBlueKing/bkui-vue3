@@ -495,6 +495,15 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
+    path: '/tag-input',
+    name: 'tagInput',
+    component: () => import('../views/tag-input'),
+    meta: {
+      group: NavGroupMeta.Form,
+      navName: 'TagInput 标签',
+    },
+  },
+  {
     path: '/date-picker',
     name: 'datePicker',
     component: () => import('../views/date-picker'),

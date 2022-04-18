@@ -33,6 +33,7 @@ import PropsBox from '../../components/props-box';
 import { resolvePropsToDesData } from '../utils/index';
 
 import async from './async.vue';
+import autoConfig from './auto-config.vue';
 import basic from './basic.vue';
 import levelLine from './level-line.vue';
 import prefixIcon from './prefix-icon.vue';
@@ -40,7 +41,7 @@ import prefixIconJsx from './prefix-icon-jsx';
 import virtualRender from './virtual-render.vue';
 
 export default defineComponent({
-  components: { basic, virtualRender, levelLine, prefixIcon, async, prefixIconJsx },
+  components: { basic, virtualRender, levelLine, prefixIcon, async, prefixIconJsx, autoConfig },
   render() {
     const propsJson = resolvePropsToDesData(treeProps);
 
@@ -103,6 +104,16 @@ export default defineComponent({
         demoName: 'async',
       },
       component: () => <async></async>,
+    },
+    {
+      attrs: {
+        title: '设置默认行为',
+        subtitle: '默认连线 | 默认选中 | 默认展开',
+        desc: 'props: --',
+        componentName: 'tree',
+        demoName: 'auto-config',
+      },
+      component: () => <auto-config></auto-config>,
     }];
 
     return (
