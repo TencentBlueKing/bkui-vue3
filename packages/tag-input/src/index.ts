@@ -24,63 +24,12 @@
  * IN THE SOFTWARE.
 */
 
-import type { ExtractPropTypes } from 'vue';
-import {
-  defineComponent,
-  provide,
-  reactive,
-  watch,
-} from 'vue';
+import { App } from 'vue';
 
-import {
-  PropTypes,
-} from '@bkui-vue/shared';
+import TagInput from './tag-input';
 
-import { radioGroupKey } from './common';
-import type { IRadioGroupContext } from './type';
-
-const radioGroupProps = {
-  name: PropTypes.string.def(''),
-  modelValue: PropTypes.oneOfType([String, Number, Boolean]),
-  disabled: PropTypes.bool,
+TagInput.install = (Vue: App) => {
+  Vue.component(TagInput.name, TagInput);
 };
 
-export type RadioGroupProps = Readonly<ExtractPropTypes<typeof radioGroupProps>>;
-
-export default defineComponent({
-  name: 'RadioGroup',
-  props: radioGroupProps,
-  emits: [
-    'change',
-    'update:modelValue',
-  ],
-  setup(props, context) {
-    const state = reactive({
-      localValue: props.modelValue,
-    });
-
-    watch(() => props.modelValue, () => {
-      state.localValue = props.modelValue;
-    });
-
-    const handleChange: IRadioGroupContext['handleChange'] = (value) => {
-      context.emit('update:modelValue', value);
-      context.emit('change', value);
-    };
-
-    provide(radioGroupKey, {
-      props,
-      state,
-      handleChange,
-    });
-
-    return {};
-  },
-  render() {
-    return (
-      <div class="bk-radio-group">
-        {this.$slots?.default()}
-      </div>
-    );
-  },
-});
+export default TagInput;

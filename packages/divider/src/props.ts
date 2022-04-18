@@ -22,65 +22,15 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
-import type { ExtractPropTypes } from 'vue';
-import {
-  defineComponent,
-  provide,
-  reactive,
-  watch,
-} from 'vue';
+import { PropTypes } from '@bkui-vue/shared';
 
-import {
-  PropTypes,
-} from '@bkui-vue/shared';
-
-import { radioGroupKey } from './common';
-import type { IRadioGroupContext } from './type';
-
-const radioGroupProps = {
-  name: PropTypes.string.def(''),
-  modelValue: PropTypes.oneOfType([String, Number, Boolean]),
-  disabled: PropTypes.bool,
+export const dividerProps = {
+  direction: PropTypes.commonType(['horizontal', 'vertical'], 'direction').def('horizontal'),
+  align: PropTypes.commonType(['left', 'center', 'right'], 'align').def('center'),
+  color: PropTypes.string.def('#dde4eb'),
+  width: PropTypes.number.def(1),
+  type: PropTypes.commonType(['dashed', 'solid'], 'lineType').def('dashed'),
 };
 
-export type RadioGroupProps = Readonly<ExtractPropTypes<typeof radioGroupProps>>;
-
-export default defineComponent({
-  name: 'RadioGroup',
-  props: radioGroupProps,
-  emits: [
-    'change',
-    'update:modelValue',
-  ],
-  setup(props, context) {
-    const state = reactive({
-      localValue: props.modelValue,
-    });
-
-    watch(() => props.modelValue, () => {
-      state.localValue = props.modelValue;
-    });
-
-    const handleChange: IRadioGroupContext['handleChange'] = (value) => {
-      context.emit('update:modelValue', value);
-      context.emit('change', value);
-    };
-
-    provide(radioGroupKey, {
-      props,
-      state,
-      handleChange,
-    });
-
-    return {};
-  },
-  render() {
-    return (
-      <div class="bk-radio-group">
-        {this.$slots?.default()}
-      </div>
-    );
-  },
-});

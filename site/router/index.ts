@@ -495,6 +495,15 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
+    path: '/tag-input',
+    name: 'tagInput',
+    component: () => import('../views/tag-input'),
+    meta: {
+      group: NavGroupMeta.Form,
+      navName: 'TagInput 标签',
+    },
+  },
+  {
     path: '/date-picker',
     name: 'datePicker',
     component: () => import('../views/date-picker'),
@@ -509,7 +518,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/divider',
     name: 'divider',
-    component: () => import('../views/divider'),
+    component: () => import('../views/divider/divider'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'Divider 分割线',

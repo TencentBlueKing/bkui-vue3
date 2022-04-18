@@ -24,62 +24,38 @@
  * IN THE SOFTWARE.
 */
 
-import type { ExtractPropTypes } from 'vue';
-import {
-  defineComponent,
-  provide,
-  reactive,
-  watch,
-} from 'vue';
+import { defineComponent, h } from 'vue';
 
-import {
-  PropTypes,
-} from '@bkui-vue/shared';
-
-import { radioGroupKey } from './common';
-import type { IRadioGroupContext } from './type';
-
-const radioGroupProps = {
-  name: PropTypes.string.def(''),
-  modelValue: PropTypes.oneOfType([String, Number, Boolean]),
-  disabled: PropTypes.bool,
-};
-
-export type RadioGroupProps = Readonly<ExtractPropTypes<typeof radioGroupProps>>;
+import { PropTypes } from '@bkui-vue/shared';
 
 export default defineComponent({
-  name: 'RadioGroup',
-  props: radioGroupProps,
-  emits: [
-    'change',
-    'update:modelValue',
-  ],
-  setup(props, context) {
-    const state = reactive({
-      localValue: props.modelValue,
-    });
-
-    watch(() => props.modelValue, () => {
-      state.localValue = props.modelValue;
-    });
-
-    const handleChange: IRadioGroupContext['handleChange'] = (value) => {
-      context.emit('update:modelValue', value);
-      context.emit('change', value);
-    };
-
-    provide(radioGroupKey, {
-      props,
-      state,
-      handleChange,
-    });
-
-    return {};
+  name: 'ListTagRender',
+  props: {
+    node: PropTypes.object,
+    searchKey: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
+    displayKey: PropTypes.string,
+    searchKeyword: PropTypes.string,
+    tpl: {
+      type: Function,
+      default: null,
+    },
   },
   render() {
+    const highlightKeyword = (value: string): string => {
+      if (this.searchKeyword) {
+        const keywordReg = new RegExp(`(${this.searchKeyword})`, 'i');
+        return value.replace(keywordReg, '<strong class="highlight-text">$1</strong>');
+      }
+      return value;
+    };
+
+    if (this.tpl) {
+      return this.tpl(this.node, highlightKeyword, h, this);
+    }
+    const displayText = this.node[this.displayKey];
     return (
-      <div class="bk-radio-group">
-        {this.$slots?.default()}
+      <div class="bk-selector-node">
+        <span class="text" innerHTML={highlightKeyword(displayText)}>{displayText}</span>
       </div>
     );
   },

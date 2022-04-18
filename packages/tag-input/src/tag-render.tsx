@@ -24,62 +24,27 @@
  * IN THE SOFTWARE.
 */
 
-import type { ExtractPropTypes } from 'vue';
-import {
-  defineComponent,
-  provide,
-  reactive,
-  watch,
-} from 'vue';
+import { defineComponent, h } from 'vue';
 
-import {
-  PropTypes,
-} from '@bkui-vue/shared';
-
-import { radioGroupKey } from './common';
-import type { IRadioGroupContext } from './type';
-
-const radioGroupProps = {
-  name: PropTypes.string.def(''),
-  modelValue: PropTypes.oneOfType([String, Number, Boolean]),
-  disabled: PropTypes.bool,
-};
-
-export type RadioGroupProps = Readonly<ExtractPropTypes<typeof radioGroupProps>>;
+import { PropTypes } from '@bkui-vue/shared';
 
 export default defineComponent({
-  name: 'RadioGroup',
-  props: radioGroupProps,
-  emits: [
-    'change',
-    'update:modelValue',
-  ],
-  setup(props, context) {
-    const state = reactive({
-      localValue: props.modelValue,
-    });
-
-    watch(() => props.modelValue, () => {
-      state.localValue = props.modelValue;
-    });
-
-    const handleChange: IRadioGroupContext['handleChange'] = (value) => {
-      context.emit('update:modelValue', value);
-      context.emit('change', value);
-    };
-
-    provide(radioGroupKey, {
-      props,
-      state,
-      handleChange,
-    });
-
-    return {};
+  name: 'TagRender',
+  props: {
+    node: PropTypes.object,
+    displayKey: PropTypes.string,
+    tpl: {
+      type: Function,
+      default: null,
+    },
   },
   render() {
+    if (this.tpl) {
+      return this.tpl(this.node, h, this);
+    }
     return (
-      <div class="bk-radio-group">
-        {this.$slots?.default()}
+      <div class="tag">
+        <span class="text">{this.node[this.displayKey]}</span>
       </div>
     );
   },

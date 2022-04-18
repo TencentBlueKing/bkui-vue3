@@ -94,6 +94,8 @@ export default () => {
         localCurrent.value = proxy.totalPageNum;
       }
     });
+  }, {
+    immediate: true,
   });
   // 切换limit时会导致totalPageNum变小旧的current可能会超出范围，修正localCurrent
   nextTick(() => {

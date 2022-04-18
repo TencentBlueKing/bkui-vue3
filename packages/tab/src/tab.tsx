@@ -25,52 +25,28 @@
 */
 
 import {
-  Component, ComponentInternalInstance, defineComponent, Fragment, getCurrentInstance, onMounted, onUpdated, ref, VNode,
+  Component, defineComponent, getCurrentInstance, onMounted, onUpdated, ref, Fragment, ComponentInternalInstance, VNode,
 } from 'vue';
-
-import { PropTypes } from '@bkui-vue/shared';
-
 import TabNav from './tab-nav';
+import { tabProps } from './props';
 export default defineComponent({
   name: 'Tab',
   components: {
     TabNav,
   },
-  props: {
-    active: {
-      type: String || Number,
-    },
-    type: PropTypes.commonType(['card', 'border-card', 'unborder-card'], 'type').def('border-card'),
-    tabPosition: PropTypes.commonType(['left', 'right', 'top'], 'position').def('top'),
-    closable: PropTypes.bool.def(false),
-    addable: PropTypes.bool.def(false),
-    sortable: PropTypes.bool.def(false),
-    sortType: PropTypes.commonType(['replace', 'insert', 'top'], 'sortType').def('replace'),
-    labelHeight: PropTypes.number.def(50),
-    scrollStep: PropTypes.number.def(200),
-    extCls: PropTypes.string.def(''),
-    validateActive: PropTypes.bool.def(true),
-    showHeader: PropTypes.bool.def(true),
-    changeOnHover: PropTypes.bool.def(false),
-    changeOnHoverDelay: PropTypes.number.def(1000),
-  },
+  props: tabProps,
   emits: [
     // 兼容老方法
-    'add-panel', 'tab-change', 'close-panel', 'sort-change', 'on-drag-tab',
+    'add-panel', 'tab-change', 'remove-panel', 'sort-change', 'on-drag-tab',
     // 新方法
     'add', 'change', 'remove', 'update:active', 'sort', 'drag',
   ],
   setup(_props: Record<string, any>, { slots }) {
-    /* const panels = slots.default();
-    return {
-      panels,
-    };
-    console.log(panels);*/
     const isMounted = ref(false);
     const panels = ref([]);
     const instance = getCurrentInstance();
     if (typeof slots.panel === 'function') {
-      panels.value = slots.default();
+      panels.value = slots.panel();
     }
     if (typeof slots.default === 'function') {
       panels.value = slots.default();
@@ -131,12 +107,28 @@ export default defineComponent({
     tabRemove(index: number, panel) {
       // emit('xxx') 会调用onXxx函数, 所以不必在主动调用onXxx函数了
       this.$emit('remove', index, panel);
-      this.$emit('close-panel', index, panel);
+      this.$emit('remove-panel', index, panel);
     },
-    tabSort(dragTabIndex: number, dropTabIndex: number) {
+    tabSort(dragTabIndex: number, dropTabIndex: number, sortType: string) {
+      // 如果是插队模式
+      if (sortType === 'insert') {
+        if (dragTabIndex < dropTabIndex) {
+          this.panels.splice(dropTabIndex + 1, 0, this.panels[dragTabIndex]);
+          this.panels.splice(dragTabIndex, 1);
+        } else if (dragTabIndex > dropTabIndex) {
+          this.panels.splice(dropTabIndex, 0, this.panels[dragTabIndex]);
+          this.panels.splice(dragTabIndex + 1, 1);
+        } else {
+          return false;
+        }
+      } else {
+        const swap = this.panels[dropTabIndex];
+        this.panels[dropTabIndex] = this.panels[dragTabIndex];
+        this.panels[dragTabIndex] = swap;
+      }
       // emit('xxx') 会调用onXxx函数, 所以不必在主动调用onXxx函数了
-      this.$emit('sort', dragTabIndex, dropTabIndex);
-      this.$emit('sort-change', dragTabIndex, dropTabIndex);
+      this.$emit('sort', dragTabIndex, dropTabIndex, sortType);
+      this.$emit('sort-change', dragTabIndex, dropTabIndex, sortType);
     },
     tabDrag(dragTabIndex: number, dragEvent: DragEvent) {
       // emit('xxx') 会调用onXxx函数, 所以不必在主动调用onXxx函数了
@@ -196,7 +188,7 @@ export default defineComponent({
         return null;
       }
       return (
-        <TabNav v-slots={this.$slots} {...props}></TabNav>
+        <TabNav v-slots={this.$slots} {...props}/>
       );
     };
 
