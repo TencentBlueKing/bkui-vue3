@@ -27,7 +27,7 @@
 import { defineComponent, ref } from 'vue';
 
 import { CogShape } from '@bkui-vue/icon/';
-import { BKTab, BKTabPanel } from '@bkui-vue/tab';
+import { BkTab, BkTabPanel } from '@bkui-vue/tab';
 
 export default defineComponent({
   name: 'TabDemo',
@@ -82,103 +82,86 @@ export default defineComponent({
       ),
     };
     const panels = this.panels.map((item, index) => (
-      <BKTabPanel
+      <BkTabPanel
         key={index}
         name={item.name} label={item.label}
-      >{item.label}-{index}</BKTabPanel>
+      >{item.label}-{index}</BkTabPanel>
     ));
     return (
       <div style='text-align:left;'>
         <div class='mt40'>
           <h2>基础用法</h2>
           <div class='mb20'>基础的、简洁的标签页。</div>
-          <BKTab
+          <BkTab
             type='unborder-card'
-            addable
-            v-slots={slots}
-            sortable
-            onChange={this.tabChange}
             v-model={[this.active, 'active']}>
             {panels}
-          </BKTab>
+          </BkTab>
           <button class='mt20' onClick={() => this.changeActive('history')}> 更改为：history</button>
         </div>
         <div class='mt40'>
           <h2>选项卡样式</h2>
           <div class='mb20'>基础的、简洁的标签页。</div>
-          <BKTab
+          <BkTab
             type='card'
-            addable
-            closable
-            v-slots={slots}
-            onAdd={this.addPanel}
-            onRemove={this.removePanel}
             v-model={[this.active, 'active']}>
             {panels}
-          </BKTab>
+          </BkTab>
         </div>
         <div class='mt40'>
           <h2>卡片样式</h2>
           <div class='mb20'>基础的、简洁的标签页。</div>
-          <BKTab type='border-card' addable onAdd={this.addPanel} v-model={[this.active, 'active']}>
+          <BkTab
+            type='border-card'
+            v-model={[this.active, 'active']}>
             {panels}
-          </BKTab>
+          </BkTab>
         </div>
         <div class='mt40'>
           <h2>垂直居左-基础样式</h2>
           <div class='mb20'>left</div>
-          <BKTab
-            addable
-            onAdd={this.addPanel}
+          <BkTab
             tabPosition='left'
             v-model={[this.active, 'active']}>
             {panels}
-          </BKTab>
+          </BkTab>
         </div>
         <div class='mt40'>
           <h2>垂直居右-基础样式</h2>
           <div class='mb20'>right</div>
-          <BKTab
-            addable
+          <BkTab
             onAdd={this.addPanel}
             tabPosition='right' v-model={[this.active, 'active']}>
             {panels}
-          </BKTab>
+          </BkTab>
         </div>
         <div class='mt40'>
           <h2>拖动</h2>
           <div class='mb20'>排序</div>
-          <BKTab
-            addable
-            onAdd={this.addPanel}
+          <BkTab
             sortable
             v-model={[this.active, 'active']}>
-            {this.panels.map((item, index) => (
-              <BKTabPanel
-                key={index} name={item.name} label={item.label}
-                v-slots={{
-                  label: () => (<div>{index}---{item.name}</div>),
-                  panel: () => (<div>tab内容：{index}---{item.name}</div>),
-                }}/>
-            ))}
-          </BKTab>
+            {panels}
+          </BkTab>
         </div>
         <div class='mt40'>
           <h2>自定义内容</h2>
           <div class='mb20'>slot用法</div>
-          <BKTab
+          <BkTab
             addable
+            closable
+            v-slots={slots}
             onAdd={this.addPanel}
             v-model={[this.active, 'active']}>
             {this.panels.map((item, index) => (
-              <BKTabPanel
+              <BkTabPanel
                 key={index} name={item.name} label={item.label}
                 v-slots={{
                   label: () => (<div>{index}---{item.name}</div>),
                   panel: () => (<div>tab内容：{index}---{item.name}</div>),
                 }}/>
             ))}
-          </BKTab>
+          </BkTab>
         </div>
       </div>
     );

@@ -22,22 +22,15 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
-import Tab from './tab';
-import TabPanel from './tab-panel';
-/* import { withInstall } from '@bkui-vue/shared';
-const BkTab = withInstall(Tab);
-const BkTabPanel = withInstall(TabPanel);
-export {
-  BkTab,
-  BkTabPanel,
-};*/
+ */
 
-import { withInstallProps } from '@bkui-vue/shared';
-const BkTab = withInstallProps(Tab, { TabPanel });
-export {
-  BkTab,
-  TabPanel as BkTabPanel,
+import { PropTypes } from '@bkui-vue/shared';
+
+export const dividerProps = {
+  direction: PropTypes.commonType(['horizontal', 'vertical'], 'direction').def('horizontal'),
+  align: PropTypes.commonType(['left', 'center', 'right'], 'align').def('center'),
+  color: PropTypes.string.def('#dde4eb'),
+  width: PropTypes.number.def(1),
+  type: PropTypes.commonType(['dashed', 'solid'], 'lineType').def('dashed'),
 };
-export default BkTab;
 
