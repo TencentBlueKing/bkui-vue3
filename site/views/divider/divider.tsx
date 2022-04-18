@@ -23,41 +23,31 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent, ref } from 'vue';
 
-import { BKTab, BKTabPanel } from '@bkui-vue/tab';
+import { defineComponent } from 'vue';
+
+import { dividerProps } from '../../../packages/divider/src/props';
+import DemoBox from '../../components/demo-box';
+import DemoTitle from '../../components/demo-title';
+import PropsBox from '../../components/props-box';
+import { IPropsTableItem } from '../../typings';
+import { resolvePropsToDesData } from '../utils';
+
+import BaseDemo from './base-demo.vue';
+const menuPropsJson: IPropsTableItem[] =  resolvePropsToDesData(dividerProps);
 export default defineComponent({
-  name: 'TabDemo',
-  setup() {
-    const active = ref('mission');
-    const panels = ref([
-      { name: 'mission', label: '任务报表', count: 10 },
-      { name: 'config', label: '加速配置', count: 20 },
-      { name: 'history', label: '历史版本', count: 30 },
-      { name: 'deleted', label: '已归档加速任务', count: 40 },
-    ]);
-    return {
-      active,
-      panels,
-    };
-  },
   render() {
-    const panels = this.panels.map((item, index) => (
-      <BKTabPanel
-        key={index}
-        name={item.name} label={item.label}
-      >{item.label}-{index}</BKTabPanel>
-    ));
     return (
       <div>
-        <div class='mt40'>
-          <h2>基础用法</h2>
-          <BKTab
-            type='unborder-card'
-            v-model={[this.active, 'active']}>
-            {panels}
-          </BKTab>
-        </div>
+        <DemoTitle name="Divider 分割线" desc="分割线是一个呈线状的轻量化组件，起到分割、组织、细化的作用，用于有逻辑的组织元素内容和页面结构。" />
+          <DemoBox
+            title="基础用法"
+            desc="基础分割线是没有文字的独立线条，又分为水平分割线和垂直分割线。"
+            componentName="divider"
+            demoName="base-demo">
+              <BaseDemo />
+          </DemoBox>
+        <PropsBox propsData={menuPropsJson}/>
       </div>
     );
   },

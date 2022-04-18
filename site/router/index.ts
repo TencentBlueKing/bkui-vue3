@@ -518,7 +518,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/divider',
     name: 'divider',
-    component: () => import('../views/divider'),
+    component: () => import('../views/divider/divider'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'Divider 分割线',
@@ -542,7 +542,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/slider',
     name: 'slider',
-    component: () => import('../views/slider'),
+    component: () => import('../views/slider/slider'),
     meta: {
       group: NavGroupMeta.Feedback,
       navName: 'Slider 滑动选择器',

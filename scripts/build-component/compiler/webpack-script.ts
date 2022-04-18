@@ -105,6 +105,7 @@ export const webpackBuildScript = async (entryList: ITaskItem[]) => {
       'js-calendar',
       'lodash',
       'vue',
+      'highlight.js',
       'vue-types',
       ({ request }, cb)  => {
         const prefix = '@bkui-vue/';

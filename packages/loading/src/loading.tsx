@@ -50,6 +50,7 @@ export const loadingTypes = {
     type: Function,
   },
   loading: PropTypes.bool,
+  inline: PropTypes.bool.def(true),
   theme: PropTypes.theme(['white', 'primary', 'warning', 'success', 'danger']),
   title: PropTypes.string.def(''),
   size: PropTypes.commonType(Object.values(BkLoadingSize)).def(BkLoadingSize.Normal),
@@ -73,9 +74,9 @@ export default defineComponent({
 
 
     const loadingWrapperCls = computed(() =>  classes({
+      'bk-loading-wrapper': props.loading,
       'bk-nested-loading': !!ctx.slots.default,
-    }, 'bk-loading-wrapper'));
-    console.log(props.theme);
+    }));
     const containerCls = computed(() =>  classes({
       [`bk-loading-size-${props.size}`]: !!props.size,
       [`bk-loading-${props.theme}`]: !!props.theme,
@@ -92,18 +93,22 @@ export default defineComponent({
       }
       return isSpinMode ? spinIndicator : dotIndicator;
     });
+
     return () => (
-      ctx.slots.default && !props.loading
-        ? ctx.slots.default?.()
-        : <div class={loadingWrapperCls.value}>
-            <div class={containerCls.value}>
-              {
-                indicator.value
-              }
-              {hasTitle.value && <div class="bk-loading-title">{props.title}</div>}
-            </div>
-            {ctx.slots.default && <div class="bk-loading-mask">{ctx.slots.default()}</div>}
-        </div>
+      <div class={loadingWrapperCls.value}>
+          {props.loading && (
+            <>
+              <div class={containerCls.value}>
+                {
+                  indicator.value
+                }
+                {hasTitle.value && <div class="bk-loading-title">{props.title}</div>}
+              </div>
+              {ctx.slots.default && <div class="bk-loading-mask"></div>}
+            </>
+          )}
+          {ctx.slots.default?.()}
+      </div>
     );
   },
 });

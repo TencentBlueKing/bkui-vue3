@@ -3,6 +3,7 @@
     <bk-table
       :columns="columns"
       :data="tableData"
+      @dblclick="handleDblClick"
     />
   </div>
 </template>
@@ -18,6 +19,11 @@
         tableData: [...DATA_TABLE],
         columns: [...DATA_COLUMNS],
       };
+    },
+    methods: {
+      handleDblClick(...args) {
+        console.log(args);
+      },
     },
   });
 </script>

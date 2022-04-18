@@ -101,7 +101,8 @@
     "webpack": "~5.72.0"
   },
   "peerDependencies": {
-    "vue": "^3.2.0"
+    "vue": "^3.2.0",
+    "highlight.js": "~11.5.0"
   },
   "main": "dist/bkui-vue.umd.js",
   "module": "dist/bkui-vue.esm.js",
