@@ -24,53 +24,17 @@
  * IN THE SOFTWARE.
 */
 
-import { exec } from 'child_process';
-import {
-  appendFile,   createReadStream, createWriteStream, existsSync,   lstatSync, mkdirSync, readdirSync,
-  readFileSync, rmdirSync, unlinkSync, writeFileSync,
-} from 'fs';
-import ora from 'ora';
-import { basename, extname, join, parse, resolve } from 'path';
-import * as rollup from 'rollup';
-import { promisify } from 'util';
+import {  createReadStream, createWriteStream, lstatSync, readdirSync, readFileSync, rmdirSync, writeFileSync } from 'fs';
+import { join, parse, resolve } from 'path';
 
-import { rollupBuildScript } from './compiler/compile-script';
-import { compileStyle, compileTheme } from './compiler/compile-style';
-import { ICompileTaskOption } from './typings/task';
+import {  compileTheme } from './compiler/compile-style';
+import { ICompileTaskOption, ITaskItem } from './typings/task';
+import { CompileTask } from './workers/compile-task';
+import { writeFileRecursive } from './workers/utils';
+
 const compileDirUrl = resolve(__dirname, '../../packages');
 const libDirUrl =  resolve(__dirname, '../../lib');
 const themeLessUrl = resolve(compileDirUrl, 'styles/src/themes/themes.less');
-interface ITaskItem {
-  type: 'style' | 'script';
-  url: string;
-  newPath: string;
-}
-const writeFileRecursive = async (url: string, content: string) => {
-  let filepath = url.replace(/\\/g, '/');
-  let root = '';
-  if (filepath[0] === '/') {
-    root = '/';
-    filepath = filepath.slice(1);
-  } else if (filepath[1] === ':') {
-    root = filepath.slice(0, 3);   // c:\
-    filepath = filepath.slice(3);
-  }
-
-  const folders = filepath.split('/').slice(0, -1);  // remove last item, file
-  folders.reduce(
-    (acc, folder) => {
-      const folderPath = `${acc + folder}/`;
-      if (!existsSync(folderPath)) {
-        mkdirSync(folderPath);
-      }
-      return folderPath;
-    },
-    root,
-  );
-  if (existsSync(url)) unlinkSync(url);
-  await promisify(appendFile)(url, content, 'utf-8');
-};
-
 export const compileFile = (url: string): ITaskItem => {
   if (/\/dist\/|\.DS_Store|\.bak|bkui-vue\/index/.test(url)) {
     return;
@@ -165,75 +129,6 @@ const compileThemeTovariable = async () => {
   const resource = await compileTheme(themeLessUrl);
   await writeFileRecursive(themeLessUrl.replace(/\.(css|less|scss)$/, '.variable.$1'), resource);
 };
-
-class CompileTask {
-  globals: Record<string, string>;
-  constructor(public taskItemList: ITaskItem[]) { }
-
-  async getRollupGlobals() {
-    const { stdout } = await promisify(exec)('yarn workspaces info --json');
-    const globals: rollup.GlobalsOption = {};
-    Object.keys(JSON.parse(stdout)).forEach((k) => {
-      if (k === '@bkui-vue/icon') {
-        globals[k] = `${k}/icons`;
-      } else {
-        globals[k] = k.replace(
-          /^@bkui-vue\/(\w+)$/,
-          (_char, match) => match.replace(/^\S/, (s: string) => s.toUpperCase()),
-        );
-      }
-    });
-    globals.vue = 'Vue';
-    globals['vue-types'] = 'vue-types';
-    this.globals = globals;
-  }
-  async compileStyle({ url, newPath }: ITaskItem) {
-    const spinner = ora(`building style ${url} \n`).start();
-    const { css, resource, varCss } = await compileStyle(url).catch(() => ({
-      css: '',
-      resource: '',
-      varCss: '',
-    }));
-    css.length && writeFileRecursive(newPath.replace(/\.(css|less|scss)$/, '.css'), css);
-    resource.length && writeFileRecursive(newPath, resource);
-    varCss.length && writeFileRecursive(newPath.replace(/\.(css|less|scss)$/, '.variable.css'), varCss);
-    css.length ? spinner.succeed() : spinner.fail();
-    this.pushTask();
-  }
-  async compileScript({ url, newPath }: ITaskItem) {
-    if (!this.globals) {
-      await this.getRollupGlobals();
-    }
-    const spinner = ora(`building script ${url} \n`).start();
-    if (basename(url).replace(extname(url), '') === 'index' || /\/icon\/icons\//.test(url)) {
-      rollupBuildScript(url, newPath.replace(/\.(js|ts|jsx|tsx)$/, '.js'), this.globals)
-        .catch(() => spinner.fail())
-        .then(() => spinner.succeed())
-        .finally(() => {
-          spinner.stop();
-          spinner.clear();
-          this.pushTask();
-        });
-    } else {
-      spinner.succeed();
-      spinner.stop();
-      spinner.clear();
-      this.pushTask();
-    }
-  }
-  start(parallelNumber = 5) {
-    const startList = this.taskItemList.splice(0, parallelNumber);
-    startList.forEach(item => this.complieTask(item));
-  }
-  complieTask(item: ITaskItem) {
-    item.type === 'style' ? this.compileStyle(item) : this.compileScript(item);
-  }
-  pushTask() {
-    const [item] = this.taskItemList.splice(0, 1);
-    item && this.complieTask(item);
-  }
-}
-
 export default async (option: ICompileTaskOption) => {
   if (option.compile) {
     compilerLibDir(libDirUrl);

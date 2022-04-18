@@ -23,52 +23,73 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
-import jsx from 'acorn-jsx';
+// import jsx from 'acorn-jsx';
+import path from 'path';
 import * as rollup from 'rollup';
 import svg from 'rollup-plugin-svg';
 import { terser } from 'rollup-plugin-terser';
 import typescript from 'rollup-plugin-typescript2';
 
 import babel from '@rollup/plugin-babel';
-import commonjs from '@rollup/plugin-commonjs';
+// import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
-import resolve from '@rollup/plugin-node-resolve';
+// import resolve from '@rollup/plugin-node-resolve';
 export const rollupBuildScript = async (url: string, outPath: string, globals: rollup.GlobalsOption) => {
-  const extensions = ['.ts', '.js', '.tsx'];
+  // const extensions = ['.ts', '.js', '.tsx'];
+  console.info(url);
   const bundle = await rollup.rollup({
     input: url,
     external(id) {
-      return /^vue/.test(id) || /^@bkui-vue/.test(id) || /reset\.less$/.test(id);
+      return /^(lodash|vue|js-calendar|vue-types|@popperjs\/core|date-fns)/.test(id) || /^@bkui-vue/.test(id) || /reset\.less$/.test(id);
     },
-    acornInjectPlugins: [jsx()],
+    // acornInjectPlugins: [jsx()],
     plugins: [
       svg(),
       json(),
       typescript({
+        cwd: path.resolve(url, '../../'),
+        tsconfig: path.resolve(__dirname, '../../tsconfig.component.json'),
         tsconfigOverride: {
           compilerOptions: {
-            declaration: false,
+            baseUrl: path.resolve(url, '../../'),
+            paths: {
+              '@bkui-vue/*': [
+                '../*/src',
+              ],
+            },
           },
+          include: [
+            url,
+          ],
+          exclude: [
+            'node_modules',
+            'dist',
+            '**/*.js',
+            '*bak*',
+          ],
         },
       }),
-      resolve({ extensions: ['.ts', '.tsx', '.js', '.jsx'] }),
-      commonjs({ extensions }),
+      // resolve({ extensions: ['.ts', '.tsx', '.js', '.jsx'] }),
+      // commonjs({ extensions }),
       babel({
         babelHelpers: 'runtime',
         exclude: 'node_modules/**',
         extensions: ['.js', '.jsx', '.ts', '.tsx'],
         presets: [
-          ['@babel/preset-env'],
-          '@babel/preset-typescript',
+          // ['@babel/preset-env'],
+          // '@babel/preset-typescript',
         ],
         plugins: [
           '@vue/babel-plugin-jsx',
-          '@babel/plugin-transform-runtime',
+          // '@babel/plugin-transform-runtime',
         ],
       }),
       terser(),
     ],
+  }).catch((e) => {
+    console.info(e);
   });
+  if (!bundle) return;
   await bundle.write({
     format: 'umd',
     name: 'bkuiVue',
