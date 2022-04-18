@@ -54,6 +54,7 @@ module.exports = {
       files: ['*.vue'],
       parser: require.resolve('vue-eslint-parser'),
       rules: {
+        indent: 'off',
         'codecc/license': 'off',
       },
     },
@@ -76,6 +77,7 @@ module.exports = {
         ['^\\.'],
       ],
     }],
+    'no-param-reassign': ['error', { props: false }],
 
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
@@ -122,5 +124,18 @@ module.exports = {
     'vue/multi-word-component-names': 'off',
     'vue/no-setup-props-destructure': 'off',
     'vue/require-default-prop': 'off',
+    'vue/script-indent': ['error', 2, {
+      baseIndent: 1,
+    }],
+    'vue/component-tags-order': ['error', {
+      order: ['template', 'script', 'style'],
+    }],
+    'vue/component-name-in-template-casing': ['error', 'kebab-case', {
+      registeredComponentsOnly: false,
+      ignores: [],
+    }],
+    'vue/prefer-separate-static-class': 'error',
+    'vue/prefer-true-attribute-shorthand': 'error',
+    'vue/v-on-function-call': 'error',
   },
 };

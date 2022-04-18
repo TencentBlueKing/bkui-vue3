@@ -24,8 +24,9 @@
  * IN THE SOFTWARE.
  */
 
-import { resolveClassName } from '@bkui-vue/shared';
 import { v4 as uuidv4 } from 'uuid';
+
+import { resolveClassName } from '@bkui-vue/shared';
 
 import { TreePropTypes } from './props';
 
@@ -42,37 +43,45 @@ export const getFlatdata = (props: TreePropTypes, treeData: Array<any> = undefin
   let order = 0;
   const schema = new Map<string, any>();
 
-  function isCachedTreeNodeOpened(uuid: string, node: any) {
+  function getCachedTreeNodeAttr(uuid: string, node: any, attr: string, cachedAttr: string) {
     const cached = (cachedSchema || []).find((item: any) => item.__uuid === uuid);
     if (cached) {
-      return cached.__isOpen;
+      return cached[cachedAttr];
     }
 
-    return node.isOpen;
+    return node[attr];
+  }
+
+  function isCachedTreeNodeOpened(uuid: string, node: any) {
+    return getCachedTreeNodeAttr(uuid, node, 'isOpen', '__isOpen');
+  }
+
+  function isCachedTreeNodeChecked(uuid: string, node: any) {
+    return getCachedTreeNodeAttr(uuid, node, 'checked', '__checked');
   }
 
   function flatten(array: Array<any>, depth = 0, parent = null, path = null) {
-    for (let i = 0; i < array.length; i++) {
+    const arrLength = array.length;
+    for (let i = 0; i < arrLength; i++) {
       const item = array[i];
       if (Array.isArray(item)) {
         flatten(item, depth, parent, path);
       } else {
         if (typeof item === 'object' && item !== null) {
           const uuid = item.__uuid || uuidv4();
-          const isOpen = isCachedTreeNodeOpened(uuid, item);
           const currentPath = path !== null ? `${path}-${i}` : `${i}`;
+          const hasChildren = !!(item[children] || []).length;
           const attrs = {
             __depth: depth,
             __index: i,
             __uuid: uuid,
             __parentId: parent,
-            __parentPath: path,
-            __hasChild: !!(item[children] || []).length,
+            __hasChild: hasChildren,
             __path: currentPath,
             __isRoot: parent === null,
             __order: order,
-            __isOpen: isOpen,
-            __checked: !!item.checked,
+            __isOpen: isCachedTreeNodeOpened(uuid, item) && hasChildren,
+            __checked: isCachedTreeNodeChecked(uuid, item),
             [children]: null,
           };
           Object.assign(item, { __uuid: uuid });

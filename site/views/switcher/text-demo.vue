@@ -17,26 +17,26 @@
   </div>
 </template>
 <script>
-import { defineComponent, ref } from 'vue';
+  import { defineComponent, ref } from 'vue';
 
-import BkSwitcher from '@bkui-vue/switcher';
+  import BkSwitcher from '@bkui-vue/switcher';
 
-export default defineComponent({
-  name: 'SiteBkSwitcher',
-  components: {
-    BkSwitcher,
-  },
-  setup() {
-    const demo1 = ref('a');
-    const handleChange = (value) => {
-      console.log(value);
-    };
-    return {
-      demo1,
-      handleChange,
-    };
-  },
-});
+  export default defineComponent({
+    name: 'SiteBkSwitcher',
+    components: {
+      BkSwitcher,
+    },
+    setup() {
+      const demo1 = ref('a');
+      const handleChange = (value) => {
+        console.log(value);
+      };
+      return {
+        demo1,
+        handleChange,
+      };
+    },
+  });
 
 </script>
 

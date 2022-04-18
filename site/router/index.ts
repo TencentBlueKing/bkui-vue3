@@ -320,7 +320,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/select',
     name: 'select',
-    component: () => import('../views/select'),
+    component: () => import('../views/select/select'),
     meta: {
       group: NavGroupMeta.Form,
       navName: 'Select 下拉选框',
@@ -495,6 +495,15 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
+    path: '/tag-input',
+    name: 'tagInput',
+    component: () => import('../views/tag-input'),
+    meta: {
+      group: NavGroupMeta.Form,
+      navName: 'TagInput 标签',
+    },
+  },
+  {
     path: '/date-picker',
     name: 'datePicker',
     component: () => import('../views/date-picker'),
@@ -509,7 +518,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/divider',
     name: 'divider',
-    component: () => import('../views/divider'),
+    component: () => import('../views/divider/divider'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'Divider 分割线',
@@ -587,6 +596,15 @@ const routes: RouteRecordRaw[] = [
   /**
    * @description:404
    */
+  {
+    path: '/resize-layout',
+    name: 'resizeLayout',
+    component: () => import('../views/resize-layout'),
+    meta: {
+      group: NavGroupMeta.Layout,
+      navName: 'ResizeLayout',
+    },
+  },
   {
     path: '/:pathMatch(.*)*',
     name: '404',

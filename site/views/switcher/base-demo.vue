@@ -8,22 +8,22 @@
   </div>
 </template>
 <script>
-import { defineComponent, ref } from 'vue';
+  import { defineComponent, ref } from 'vue';
 
-import BkSwitcher from '@bkui-vue/switcher';
+  import BkSwitcher from '@bkui-vue/switcher';
 
-export default defineComponent({
-  name: 'SiteBkSwitcher',
-  components: {
-    BkSwitcher,
-  },
-  setup() {
-    const demo1 = ref(true);
-    return {
-      demo1,
-    };
-  },
-});
+  export default defineComponent({
+    name: 'SiteBkSwitcher',
+    components: {
+      BkSwitcher,
+    },
+    setup() {
+      const demo1 = ref(true);
+      return {
+        demo1,
+      };
+    },
+  });
 
 </script>
 

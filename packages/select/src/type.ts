@@ -23,38 +23,40 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import Popover from '@bkui-vue/popover';
 
-import { defineComponent } from 'vue';
+import Option from './option';
+import Group from './optionGroup';
 
-import BkDivider from '@bkui-vue/divider';
+export type OptionInstanceType = InstanceType<typeof Option>;
+export type GroupInstanceType = InstanceType<typeof Group>;
+export type PopoverInstanceType = InstanceType<typeof Popover>;
 
-export default defineComponent({
-  name: 'DividerDemo',
-  render() {
-    const style = { marginTop: '50px' };
-    return (
-      <div>
-        <div>
-          <BkDivider></BkDivider>
-        </div>
-        <div style={style}>
-          <BkDivider align={'left'}>这是默认</BkDivider>
-        </div>
-        <div style={style}>
-          <BkDivider align={'center'}>这是默认</BkDivider>
-        </div>
-        <div style={style}>
-          <BkDivider align={'right'}>这是默认</BkDivider>
-        </div>
-        <div style={style}>
-          <BkDivider direction={'vertical'} align={'right'}></BkDivider>
-        </div>
-        <div style={style}>
-          <div style="height:200px">
-            <BkDivider direction={'vertical'} align={'center'}>*</BkDivider>
-          </div>
-        </div>
-      </div>
-    );
-  },
-});
+export interface ISelectContext {
+  props: {
+    multiple?: boolean
+  };
+  selectedOptions: Set<any>;
+  register(option: OptionInstanceType): any;
+  unregister(option: OptionInstanceType): any;
+  registerGroup(option: GroupInstanceType): any;
+  unregisterGroup(option: GroupInstanceType): any;
+  handleOptionSelected (option: OptionInstanceType): void;
+}
+
+export interface IOptionGroupContext {
+  disabled: boolean;
+  groupCollapse: boolean;
+  register(option: OptionInstanceType): any;
+  unregister(option: OptionInstanceType): any;
+}
+
+export interface ISelectState {
+  currentPlaceholder: string;
+  selectedOptions: Set<OptionInstanceType>;
+  currentSelectedLabel: string;
+}
+
+export interface IPopoverConfig {
+  popoverMinWidth: number;
+}

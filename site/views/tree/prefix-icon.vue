@@ -1,77 +1,101 @@
 <template>
-  <div style="height: 300px; width: 100%; overflow: auto; display: flex">
-    <div style="width: 25%">
+  <div class="row">
+    <div class="cell">
       <span>prefix-icon: true</span>
-      <bk-tree :data="treeData" :level-line="true" :prefix-icon="true" label="name" children="children" />
+      <bk-tree
+        :data="treeData"
+        level-line
+        prefix-icon
+        label="name"
+        children="children"
+      />
     </div>
-    <div style="width: 25%">
+    <div class="cell">
       <span>function 函数返回 'default' 将会调用系统默认样式</span>
-      <bk-tree :data="treeData" :level-line="true" :prefix-icon="getPrefixIcon" label="name" children="children" />
+      <bk-tree
+        :data="treeData"
+        level-line
+        :prefix-icon="getPrefixIcon"
+        label="name"
+        children="children"
+      />
     </div>
-    <div style="width: 25%">
+    <div class="cell">
       <span>function 返回字符串</span>
-      <bk-tree :data="treeData" :level-line="true" :prefix-icon="getPrefixIcon2" label="name" children="children" />
+      <bk-tree
+        :data="treeData"
+        level-line
+        :prefix-icon="getPrefixIcon2"
+        label="name"
+        children="children"
+      />
     </div>
-    <div style="width: 25%">
+    <div class="cell">
       <span>function 返回对象</span>
-      <bk-tree :data="treeData" :level-line="true" :prefix-icon="getPrefixIcon3" label="name" children="children" />
+      <bk-tree
+        :data="treeData"
+        level-line
+        :prefix-icon="getPrefixIcon3"
+        label="name"
+        children="children"
+      />
     </div>
   </div>
 </template>
 
 <script setup>
-import { BASIC_DATA } from './options';
-const treeData = [...BASIC_DATA];
-/**
- * Tree Prop: prefixIcon function
- * @param {} isRoot 是否为分跟节点
- * @param {} hasChild 是否有孩子节点
- * @param {} isOpen 当前节点是否展开
- * @param {} renderType 当前渲染类型（action: 用来标识当前节点状态，展开 | 收起, node_type：节点类型，文件、文件夹）
- * @param {} item 当前节点数据
- */
-// eslint-disable-next-line no-unused-vars
-const getPrefixIcon = (isRoot, hasChild, isOpen, renderType, item) => 'default';
+  import { BASIC_DATA } from './options';
+  const treeData = [...BASIC_DATA];
+  /**
+   * Tree Prop: prefixIcon function
+   * @param {} isRoot 是否为分跟节点
+   * @param {} hasChild 是否有孩子节点
+   * @param {} isOpen 当前节点是否展开
+   * @param {} renderType 当前渲染类型（action: 用来标识当前节点状态，展开 | 收起, node_type：节点类型，文件、文件夹）
+   * @param {} item 当前节点数据
+   */
+  // eslint-disable-next-line no-unused-vars
+  const getPrefixIcon = (isRoot, hasChild, isOpen, renderType, item) => 'default';
 
-// eslint-disable-next-line no-unused-vars
-const getPrefixIcon2 = (isRoot, hasChild, isOpen, renderType, item) => {
-  if (renderType === 'action') {
-    return 'default';
-  }
+  // eslint-disable-next-line no-unused-vars
+  const getPrefixIcon2 = (isRoot, hasChild, isOpen, renderType, item) => {
+    if (renderType === 'action') {
+      return 'default';
+    }
 
-  if (isRoot) {
-    return null;
-  }
+    if (isRoot) {
+      return null;
+    }
 
-  return 'Node-';
-};
+    return 'Node-';
+  };
 
-// eslint-disable-next-line no-unused-vars
-const getPrefixIcon3 = (isRoot, hasChild, isOpen, renderType, item) => {
-  if (renderType === 'action') {
-    return 'default';
-  }
+  // eslint-disable-next-line no-unused-vars
+  const getPrefixIcon3 = (isRoot, hasChild, isOpen, renderType, item) => {
+    if (renderType === 'action') {
+      return 'default';
+    }
 
-  if (isRoot) {
+    if (isRoot) {
+      return {
+        node: 'span',
+        className: 'custom-node custom-root',
+        text: '0',
+        style: {
+          fontSize: '12px',
+        },
+      };
+    }
+
     return {
       node: 'span',
-      className: 'custom-node custom-root',
-      text: '0',
+      className: 'custom-node',
+      text: '1',
       style: {
-        fontSize: '12px',
+        fontSize: '8px',
       },
     };
-  }
-
-  return {
-    node: 'span',
-    className: 'custom-node',
-    text: '1',
-    style: {
-      fontSize: '8px',
-    },
   };
-};
 </script>
 <style>
 .custom-node {
@@ -86,5 +110,18 @@ const getPrefixIcon3 = (isRoot, hasChild, isOpen, renderType, item) => {
 
 .custom-root {
   background: #fafb;
+}
+</style>
+<style scoped>
+.row {
+  height: 300px;
+  width: 100%;
+  overflow: auto;
+  display: flex;
+}
+
+.cell {
+  flex: 1;
+  padding: 0 15px;
 }
 </style>

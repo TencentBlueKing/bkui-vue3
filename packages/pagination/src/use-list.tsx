@@ -53,9 +53,9 @@ export default () => {
   } = getCurrentInstance() as ComponentInternalInstance &  { proxy: IPaginationInstance};
 
 
-  const localCurrent = ref<number>(proxy.modelValue);
+  const localCurrent = ref<number>(1);
   const isPagePreDisabled = computed<boolean>(() => localCurrent.value === 1);
-  const isPageNextDisabled = computed<boolean>(() => localCurrent.value === proxy.pageNum);
+  const isPageNextDisabled = computed<boolean>(() => localCurrent.value === proxy.totalPageNum);
   const showPreBatch = ref<boolean>(false);
   const showNextBatch = ref<boolean>(false);
 
@@ -64,19 +64,19 @@ export default () => {
     showPreBatch.value = false;
     showNextBatch.value = false;
     const stack = [];
-    if (proxy.pageNum <= PAGE_ITEMS_NUM) {
-      for (let i = 2; i <= proxy.pageNum - 1; i++) {
+    if (proxy.totalPageNum <= PAGE_ITEMS_NUM) {
+      for (let i = 2; i <= proxy.totalPageNum - 1; i++) {
         stack.push(i);
       }
       return stack;
     }
     const pageItemsNumHalf = Math.floor(PAGE_ITEMS_NUM / 2);
-    if (proxy.pageNum > PAGE_ITEMS_NUM) {
+    if (proxy.totalPageNum > PAGE_ITEMS_NUM) {
       showPreBatch.value = localCurrent.value - pageItemsNumHalf > 2;
-      showNextBatch.value = localCurrent.value + pageItemsNumHalf < proxy.pageNum - 1;
+      showNextBatch.value = localCurrent.value + pageItemsNumHalf < proxy.totalPageNum - 1;
     }
 
-    const start = Math.min(proxy.pageNum - PAGE_ITEMS_NUM, Math.max(2, localCurrent.value - pageItemsNumHalf));
+    const start = Math.min(proxy.totalPageNum - PAGE_ITEMS_NUM, Math.max(2, localCurrent.value - pageItemsNumHalf));
     for (let i = start; i < start + PAGE_ITEMS_NUM ; i++) {
       stack.push(i);
     }
@@ -84,22 +84,24 @@ export default () => {
   });
 
   watch(() => proxy.modelValue, (modelValue) => {
-    // nextTick延后执行，保证proxy.pageNum计算正确
+    // nextTick延后执行，保证proxy.totalPageNum计算正确
     nextTick(() => {
-      if (modelValue >= 1 && modelValue <= proxy.pageNum) {
+      if (modelValue >= 1 && modelValue <= proxy.totalPageNum) {
         localCurrent.value = modelValue;
       } else if (modelValue < 1) {
         localCurrent.value = 1;
       } else {
-        localCurrent.value = proxy.pageNum;
+        localCurrent.value = proxy.totalPageNum;
       }
     });
+  }, {
+    immediate: true,
   });
-  // 切换limit时会导致pageNum变小旧的current可能会超出范围，修正localCurrent
+  // 切换limit时会导致totalPageNum变小旧的current可能会超出范围，修正localCurrent
   nextTick(() => {
-    watch(() => proxy.pageNum, (pageNum) => {
-      if (localCurrent.value > pageNum) {
-        localCurrent.value = pageNum;
+    watch(() => proxy.totalPageNum, (totalPageNum) => {
+      if (localCurrent.value > totalPageNum) {
+        localCurrent.value = totalPageNum;
       }
     });
   });
@@ -124,13 +126,13 @@ export default () => {
   };
   /**
    * @desc 跳转指定页码
-   * @param { Number } pageNum
+   * @param { Number } totalPageNum
    */
-  const handleItemClick = (pageNum: number) => {
-    if (pageNum === localCurrent.value) {
+  const handleItemClick = (totalPageNum: number) => {
+    if (totalPageNum === localCurrent.value) {
       return;
     }
-    localCurrent.value = pageNum;
+    localCurrent.value = totalPageNum;
   };
   /**
    * @desc 上一批分页
@@ -142,7 +144,7 @@ export default () => {
    * @desc 下一批分页
    */
   const handleNextBatch = () => {
-    localCurrent.value = Math.min(proxy.pageNum, localCurrent.value + PAGE_ITEMS_NUM);
+    localCurrent.value = Math.min(proxy.totalPageNum, localCurrent.value + PAGE_ITEMS_NUM);
   };
 
 
@@ -199,15 +201,15 @@ export default () => {
           </div>
       }
       {
-        proxy.pageNum > 1
+        proxy.totalPageNum > 1
         && <div
             class={{
               'bk-pagination-list-item': true,
-              'is-active': localCurrent.value === proxy.pageNum,
+              'is-active': localCurrent.value === proxy.totalPageNum,
             }}
             key="last"
-            onClick={() => handleItemClick(proxy.pageNum)}>
-            {proxy.pageNum}
+            onClick={() => handleItemClick(proxy.totalPageNum)}>
+            {proxy.totalPageNum}
         </div>
       }
       <div
