@@ -62,6 +62,7 @@ export default defineComponent({
     customContent: { type: Object, default: null }, // 自定义内容
     formatterLabel: { type: Function, default: (value: number) => value }, // 自定义间断点下文字格式
     formatterButtonLabel: { type: Function, default: (value: number) => value }, // 自定义滑块下文字格式
+    formatterTipLabel: { type: Function, default: (value: number) => value }, // 自定义tip格式
   },
   emits: ['update:modelValue', 'change'],
   setup(props, { slots, emit }) {
@@ -182,6 +183,7 @@ export default defineComponent({
       showIntervalLabel: props.showIntervalLabel,
       customContent: props.customContent,
       sliderSize: sliderSize.value,
+      formatterTipLabel: props.formatterTipLabel,
     }));
 
     // 监听

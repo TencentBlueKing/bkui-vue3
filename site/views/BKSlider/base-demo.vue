@@ -1,7 +1,10 @@
 <template>
   <div class="demo">
     <div>
-      <bk-slider v-model="demo1" />
+      <bk-slider
+        v-model="demo1"
+        show-tip
+      />
     </div>
     <div :style="{ marginTop: '30px' }">
       <bk-slider

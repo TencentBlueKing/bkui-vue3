@@ -4,6 +4,7 @@
       <bk-slider
         v-model="demo1"
         :custom-content="customContent"
+        :show-tip="true"
         :step="20"
       />
     </div>

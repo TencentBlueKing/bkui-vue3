@@ -11,6 +11,7 @@
         v-model="demo2"
         range
         show-input
+        :min-value="-100"
       />
     </div>
   </div>
