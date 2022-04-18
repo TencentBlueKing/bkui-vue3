@@ -8,7 +8,7 @@
     >
       <bk-tab-panel
         v-for="(item,index) in panels"
-        key="index"
+        :key="item.name"
         :name="item.name"
         :label="item.label"
       >
@@ -23,7 +23,7 @@
     >
       <bk-tab-panel
         v-for="(item,index) in panels"
-        key="index"
+        :key="item.name"
         :name="item.name"
         :label="item.label"
       >
