@@ -5,13 +5,27 @@
       type="card"
       addable
     >
+      <template #add>
+        <div @click="addPanel">
+          + 新增
+        </div>
+      </template>
+      <template #setting>
+        <div>设置</div>
+      </template>
+
       <bk-tab-panel
         v-for="(item,index) in panels"
-        key="index"
+        :key="index"
         :name="item.name"
         :label="item.label"
       >
-        {{ item.label }}-{{ index }}
+        <template #label>
+          <div>自定义标签：{{index}}---{{item.name}}</div>
+        </template>
+        <template #panel>
+          <div>自定义内容:{{item.label}}</div>
+        </template>
       </bk-tab-panel>
     </bk-tab>
   </div>

@@ -25,29 +25,31 @@
 */
 import { PropTypes } from '@bkui-vue/shared';
 import { PropType, VNode } from 'vue';
-const TabNavEventProps = {
+export const tabNavEventProps = {
   tabAdd: {
     type: Function,
     default: (): any => ({}),
   },
   tabChange: {
     type: Function,
-    default: (): any => ({}),
+    default: (name: string): string => name,
   },
   tabRemove: {
     type: Function,
-    default: (): any => ({}),
+    default: (name: string): string => name,
   },
   tabSort: {
     type: Function,
     default: (): any => ({}),
+    // default: (dragTabIndex: number, dropTabIndex: number, sortType: string):
+    // {dragTabIndex: number, dropTabIndex: number, sortType: string} => ({ dragTabIndex, dropTabIndex, sortType }),
   },
   tabDrag: {
     type: Function,
     default: (): any => ({}),
   },
 };
-export const TabEventProps = {
+export const tabEventProps = {
   add: {
     type: Function,
     default: (): any => ({}),
@@ -85,7 +87,6 @@ export const tabProps = {
   showHeader: PropTypes.bool.def(true),
   changeOnHover: PropTypes.bool.def(false),
   changeOnHoverDelay: PropTypes.number.def(1000),
-  // ...TabEventProps,
 };
 
 export const tabNavProps = {
@@ -104,7 +105,7 @@ export const tabNavProps = {
   validateActive: PropTypes.bool.def(true),
   changeOnHover: PropTypes.bool.def(false),
   changeOnHoverDelay: PropTypes.number.def(1000),
-  ...TabNavEventProps,
+  ...tabNavEventProps,
 };
 
 export const tabPanelProps = {

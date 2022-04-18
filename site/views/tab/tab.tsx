@@ -37,10 +37,12 @@ import DemoPosition from './demo-position.vue';
 import DemoAdd from './demo-add.vue';
 import DemoDrag from './demo-drag.vue';
 import DemoExtend from './demo-extend.vue';
-import { tabProps, tabPanelProps } from '../../../packages/tab/src/props';
+import DemoJsx from './demo-jsx';
+import { tabProps, tabPanelProps, tabEventProps } from '../../../packages/tab/src/props';
 import { resolvePropsToDesData } from '../utils';
 const tabPropsJson: IPropsTableItem[] =  resolvePropsToDesData(tabProps);
 const tabPanelPropsJson: IPropsTableItem[] =  resolvePropsToDesData(tabPanelProps);
+const tabEventPropsJson: IPropsTableItem[] =  resolvePropsToDesData(tabEventProps);
 export default defineComponent({
   render() {
     return (
@@ -95,7 +97,16 @@ export default defineComponent({
           demoName="demo-extend">
           <DemoExtend />
         </DemoBox>
+        <DemoBox
+          title="tsx用法"
+          desc="tsx 写法"
+          componentName="tab"
+          suffix='.tsx'
+          demoName="demo-jsx">
+          <DemoJsx />
+        </DemoBox>
         <PropsBox title='tabProps' propsData={tabPropsJson}/>
+        <PropsBox title='tabEvent' propsData={tabEventPropsJson}/>
         <PropsBox title='tabPanelProps' propsData={tabPanelPropsJson}/>
       </div>
     );

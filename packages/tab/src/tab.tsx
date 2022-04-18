@@ -127,8 +127,8 @@ export default defineComponent({
         this.panels[dragTabIndex] = swap;
       }
       // emit('xxx') 会调用onXxx函数, 所以不必在主动调用onXxx函数了
-      this.$emit('sort', dragTabIndex, dropTabIndex);
-      this.$emit('sort-change', dragTabIndex, dropTabIndex);
+      this.$emit('sort', dragTabIndex, dropTabIndex, sortType);
+      this.$emit('sort-change', dragTabIndex, dropTabIndex, sortType);
     },
     tabDrag(dragTabIndex: number, dragEvent: DragEvent) {
       // emit('xxx') 会调用onXxx函数, 所以不必在主动调用onXxx函数了
