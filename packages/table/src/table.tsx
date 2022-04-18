@@ -25,6 +25,7 @@
 */
 
 import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, reactive, ref, SetupContext, watch, watchEffect } from 'vue';
+
 import { classes, resolveClassName } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
@@ -41,7 +42,7 @@ import {
 export default defineComponent({
   name: 'Table',
   props: tableProps,
-  emits: ['column-pick', 'row-click', 'page-limit-change', 'page-value-change'],
+  emits: ['columnPick', 'rowClick', 'pageLimitChange', 'pageValueChange'],
   setup(props: TablePropTypes, ctx: SetupContext) {
     const activeCols = reactive(resolveActiveColumns(props));
     const colgroups = reactive(props.columns.map(col => ({ ...col, calcWidth: null })));

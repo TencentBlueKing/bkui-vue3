@@ -78,7 +78,7 @@ export default defineComponent({
     'update:modelValue',
     'change',
     'update:limit',
-    'limit-change',
+    'limitChange',
   ],
   setup(props, context) {
     const pageNum = ref<number>(0);

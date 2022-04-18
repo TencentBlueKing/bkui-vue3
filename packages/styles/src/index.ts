@@ -68,3 +68,4 @@ import '@bkui-vue/virtual-render/virtual-render.less';
 import '@bkui-vue/transfer/transfer.less';
 import '@bkui-vue/pagination/pagination.less';
 import '@bkui-vue/timeline/timeline.less';
+import '@bkui-vue/code-diff/code-diff.less';
