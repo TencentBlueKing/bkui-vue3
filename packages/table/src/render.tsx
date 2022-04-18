@@ -158,7 +158,11 @@ export default class TableRender {
         };
 
         // @ts-ignore:next-line
-        return <tr style={rowStyle} onClick={ e => this.handleRowClick(e, row, index, rows)}>
+        return <tr
+          style={rowStyle}
+          onClick={ e => this.handleRowClick(e, row, index, rows)}
+          onDblclick={e => this.handleRowDblClick(e, row, index, rows)}
+        >
         {
           this.props.columns.map((column: Column) => <td colspan={1} rowspan={1}>
           <div class="cell">{ this.renderCell(row, column, index, rows) }</div>
@@ -178,7 +182,18 @@ export default class TableRender {
    * @param rows
    */
   private handleRowClick(e: MouseEvent, row: any, index: number, rows: any) {
-    this.context.emit('row-click', e, row, index, rows, this);
+    this.context.emit('rowClick', e, row, index, rows, this);
+  }
+
+  /**
+   * table row click handle
+   * @param e
+   * @param row
+   * @param index
+   * @param rows
+   */
+  private handleRowDblClick(e: MouseEvent, row: any, index: number, rows: any) {
+    this.context.emit('rowDblClick', e, row, index, rows, this);
   }
 
   /**
