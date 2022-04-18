@@ -61,25 +61,29 @@ export default defineComponent({
     showButtonLabel: { type: Boolean, default: false }, // 滑块下是否显示值不可与间断点下的文字同时使用
     showBetweenLabel: { type: Boolean, default: false }, // 是否只显示首尾刻度
     showInput: { type: Boolean, default: false }, // 是否显示输入框
-    customContent: { type: Object }, // 自定义内容
+    customContent: { type: Object, default: null }, // 自定义内容
     formatterLabel: { type: Function, default: (value: number) => value }, // 自定义间断点下文字格式
     formatterButtonLabel: { type: Function, default: (value: number) => value }, // 自定义滑块下文字格式
+    formatterTipLabel: { type: Function, default: (value: number) => value }, // 自定义tip格式
   },
   emits: ['update:modelValue', 'change'],
   setup(props, { slots, emit }) {
+    /* 滑动选择器长度 */
     const sliderSize = ref(1);
+    /* 第一个滑块与第二个滑块的值 */
     const firstValue = ref<number | null>(null);
     const secondValue = ref<number | null>(null);
     const oldValue = ref(null);
-    const stepWidth = ref(0);
+    /* 第一个输入框与第二个输入框的值 */
     const firstInput = ref<number | null>(0);
     const secondInput = ref<number | null>(0);
+    /* 以下为refDom */
     const slider = ref(null);
     const firstbutton = ref(null);
     const secondbutton = ref(null);
     const curButtonRef = ref(null);
 
-    // 计算属性
+    // 小数点后最大位数
     const precision = computed(() => {
       const precisions = [props.minValue, props.maxValue, props.step].map((item) => {
         const decimal = (`${item}`).split('.')[1];
@@ -87,6 +91,7 @@ export default defineComponent({
       });
       return Math.max.apply(null, precisions);
     });
+    /* 当前滑块的最小值与最大值 */
     const rangeMinValue = computed(() => Math.min(firstValue.value, secondValue.value));
     const rangeMaxValue = computed(() => Math.max(firstValue.value, secondValue.value));
     const barSize = computed(() => (props.range
@@ -95,6 +100,7 @@ export default defineComponent({
     const barStart = computed(() => (props.range
       ? `${100 * (rangeMinValue.value - props.minValue) / (props.maxValue - props.minValue)}%`
       : '0%'));
+    /* 当前滑动区域的位置与长度 */
     const barStyle = computed(() => (props.vertical
       ? {
         height: barSize.value,
@@ -103,6 +109,7 @@ export default defineComponent({
         width: barSize.value,
         left: barStart.value,
       }));
+    /* 断点 */
     const intervals = computed(() => {
       if (!props.showInterval || props.minValue > props.maxValue) return [];
       if (props.step === 0) {
@@ -123,7 +130,9 @@ export default defineComponent({
       // eslint-disable-next-line max-len
       return result.filter(step => step > 100 * (firstValue.value - props.minValue) / (props.maxValue - props.minValue));
     });
+    /* 可滑动区域的样式 */
     const runwayStyle = computed(() => (props.vertical ? { height: props.height, width: '4px' } : {}));
+    /* 断点下方的文案 */
     const intervalLabels = computed(() => {
       if (!props.showIntervalLabel) return [];
       if (props.step === 0) {
@@ -142,7 +151,9 @@ export default defineComponent({
       }
       return result;
     });
+    /* 是否显示第二个输入框 */
     const showSecondInput = computed(() => Array.isArray(props.modelValue));
+    /* 自定义断点 */
     const customList = computed(() => {
       if (!props.customContent) {
         return [];
@@ -160,7 +171,7 @@ export default defineComponent({
           };
         });
     });
-
+    /* 传入到滑块的参数 */
     const buttonParms = computed(() => ({
       vertical: props.vertical,
       showTip: props.showTip,
@@ -174,6 +185,7 @@ export default defineComponent({
       showIntervalLabel: props.showIntervalLabel,
       customContent: props.customContent,
       sliderSize: sliderSize.value,
+      formatterTipLabel: props.formatterTipLabel,
     }));
 
     // 监听
@@ -192,7 +204,7 @@ export default defineComponent({
       emit('update:modelValue', [rangeMinValue.value, rangeMaxValue.value]);
       secondInput.value = val;
     });
-
+    /* 初始化 */
     onMounted(() => {
       if (props.range) {
         if (Array.isArray(props.modelValue)) {
@@ -211,16 +223,15 @@ export default defineComponent({
         }
         oldValue.value = firstValue.value;
       }
-      stepWidth.value = 100 * props.step / (props.maxValue - props.minValue);
       resetSize();
       on(window, 'resize', resetSize());
     });
-
     const resetSize = () => {
       if (slider.value) {
         sliderSize.value = slider.value[`client${props.vertical ? 'Height' : 'Width'}`];
       }
     };
+    /* 点击容器时设置滑块位置 */
     const setButtonPos = (event: MouseEvent) => {
       event.stopPropagation();
       if (props.disable) return;
@@ -234,12 +245,14 @@ export default defineComponent({
       }
       emitChange();
     };
+    /* 是否更改了值 */
     const valueChanged = (): boolean => {
       if (props.range) {
         return ![rangeMinValue.value, rangeMaxValue.value].every((item, index) => item === oldValue.value[index]);
       }
       return props.modelValue !== oldValue.value;
     };
+    /* emit */
     const setValues = () => {
       if (props.minValue > props.maxValue) {
         console.error('min should not be greater than max.');
@@ -275,11 +288,14 @@ export default defineComponent({
         }
       }
     };
+    /* 派出事件 */
     const emitChange = async () => {
       await nextTick();
       emit('change', props.range ? [rangeMinValue.value, rangeMaxValue.value] : props.modelValue);
     };
+    /* 断点样式 */
     const getIntervalStyle = (position: number) => (props.vertical ? { bottom: `${position}%` } : { left: `${position}%` });
+    /* 设置滑块位置 */
     const setPosition = (percent: number) => {
       if (!props.range) {
         firstbutton.value.setPosition(percent);

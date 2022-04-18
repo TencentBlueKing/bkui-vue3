@@ -542,7 +542,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/slider',
     name: 'slider',
-    component: () => import('../views/slider'),
+    component: () => import('../views/slider/slider'),
     meta: {
       group: NavGroupMeta.Feedback,
       navName: 'Slider 滑动选择器',
