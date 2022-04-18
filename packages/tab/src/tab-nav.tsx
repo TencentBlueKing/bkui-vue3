@@ -24,8 +24,10 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent, h, ref, computed, ComponentInternalInstance } from 'vue';
-import { Plus, Close } from '@bkui-vue/icon/';
+import { ComponentInternalInstance, computed, defineComponent, h, ref } from 'vue';
+
+import { Close, Plus } from '@bkui-vue/icon/';
+
 import { tabNavProps } from './props';
 
 export default defineComponent({
