@@ -42,7 +42,7 @@ import {
 export default defineComponent({
   name: 'Table',
   props: tableProps,
-  emits: ['columnPick', 'rowClick', 'pageLimitChange', 'pageValueChange'],
+  emits: ['columnPick', 'rowClick', 'rowDblClick', 'pageLimitChange', 'pageValueChange'],
   setup(props: TablePropTypes, ctx: SetupContext) {
     const activeCols = reactive(resolveActiveColumns(props));
     const colgroups = reactive(props.columns.map(col => ({ ...col, calcWidth: null })));
