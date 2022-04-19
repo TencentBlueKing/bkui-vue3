@@ -23,7 +23,6 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { SetupContext } from 'vue';
 
 import Pagination from '@bkui-vue/pagination';
 import { classes } from '@bkui-vue/shared';
@@ -34,11 +33,11 @@ import { resolvePropVal, resolveWidth } from './utils';
 
 export default class TableRender {
   props: TablePropTypes;
-  context: SetupContext;
+  context;
   reactiveProp: any;
   colgroups: GroupColumn[];
   public plugins: TablePlugins;
-  constructor(props: TablePropTypes, ctx: SetupContext, reactiveProp: IReactiveProp, colgroups: GroupColumn[]) {
+  constructor(props, ctx, reactiveProp: IReactiveProp, colgroups: GroupColumn[]) {
     this.props = props;
     this.context = ctx;
     this.reactiveProp = reactiveProp;
@@ -157,8 +156,8 @@ export default class TableRender {
           '--row-height': `${resolvePropVal(this.props, 'rowHeight', ['tbody', row, index])}px`,
         };
 
-        // @ts-ignore:next-line
         return <tr
+          // @ts-ignore:next-line
           style={rowStyle}
           onClick={ e => this.handleRowClick(e, row, index, rows)}
           onDblclick={e => this.handleRowDblClick(e, row, index, rows)}
