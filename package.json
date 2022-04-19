@@ -49,8 +49,6 @@
     "@vue/eslint-config-typescript": "~10.0.0",
     "@vue/test-utils": "~2.0.0-rc.12",
     "@vue/vue3-jest": "~27.0.0-alpha.4",
-    "acorn": "~8.7.0",
-    "acorn-jsx": "~5.3.1",
     "babel-jest": "~27.5.1",
     "babel-loader": "~8.2.4",
     "chalk": "~4.1.2",
@@ -101,7 +99,8 @@
     "webpack": "~5.72.0"
   },
   "peerDependencies": {
-    "vue": "^3.2.0"
+    "vue": "^3.2.0",
+    "highlight.js": "~11.5.0"
   },
   "main": "dist/bkui-vue.umd.js",
   "module": "dist/bkui-vue.esm.js",
