@@ -610,6 +610,18 @@ const routes: RouteRecordRaw[] = [
     name: '404',
     component: () => import('../views/404'),
   },
+  /**
+   * @description:dialog
+   */
+  {
+    path: '/dialog',
+    name: 'dialog',
+    component: () => import('../views/dialog/index'),
+    meta: {
+      group: NavGroupMeta.Feedback,
+      navName: 'Dialog 对话框',
+    },
+  },
 ];
 
 const router = createRouter({
