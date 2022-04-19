@@ -28,8 +28,19 @@ import javascript from 'highlight.js/lib/languages/javascript';
 import xml from 'highlight.js/lib/languages/xml';
 import { defineComponent } from 'vue';
 
+import './code-box.less';
+
 hljs.registerLanguage('javascript', javascript);
 hljs.registerLanguage('xml', xml);
+
+// hljs.addPlugin({
+//   'after:highlight': (result) => {
+//     console.error('highlighthighlighthighlight');
+//     console.error(result);
+//     result.value = result.value
+//       .replace('&lt;template&gt;', '<span class="hljs-name">&lt;template&gt;</span>');
+//   },
+// });
 
 export default defineComponent({
   name: 'CodeBox',
@@ -42,15 +53,15 @@ export default defineComponent({
   },
   render() {
     const code = hljs.highlight(this.code, {
-      language: 'javascript',
+      language: 'html',
       ignoreIllegals: true,
     }).value;
 
     return (
-      <div class="markdown-body">
-        <pre  class="hljs">
-        <code innerHTML={code} />
-      </pre>
+      <div class="markdown-body code-box">
+        <pre class="hljs">
+          <code innerHTML={code} />
+        </pre>
       </div>
     );
   },

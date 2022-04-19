@@ -45,7 +45,7 @@ npm i babel-plugin-import -D
     "plugins": [
         ...
         [
-          "import", 
+          "import",
           {
             "libraryName": "bkui-vue",
             "style": (name) => {
