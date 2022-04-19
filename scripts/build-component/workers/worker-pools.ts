@@ -32,7 +32,7 @@ const buildTask = Symbol('BKUI_BUILD');
 const buildEvent = Symbol('BKUI_BUILD_EVENT');
 const BUILD_TASK = 'BUILD_TASK';
 EventEmitter.setMaxListeners(50);
-class WorkerPoolTaskInfo extends AsyncResource {
+class WorkerTask extends AsyncResource {
   callback: <T>(err: Error, task: T) => void;
   constructor(callback: <T>(err: Error, task: T) => void) {
     super(BUILD_TASK);
@@ -82,7 +82,7 @@ export class WorkerPool extends EventEmitter {
       return;
     }
     const worker = this.freeWorkers.pop();
-    worker[buildTask] = new WorkerPoolTaskInfo(callback);
+    worker[buildTask] = new WorkerTask(callback);
     worker.postMessage({ task, globals });
   }
 
