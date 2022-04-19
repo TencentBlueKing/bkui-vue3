@@ -49,7 +49,7 @@ export const inputType = {
   showControl: PropTypes.bool.def(true),
   showClearOnlyHover: PropTypes.bool.def(false),
   precision: PropTypes.number.def(0).validate(val => val >= 0 && val < 20),
-  modelValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  modelValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   size: PropTypes.size(),
 };
 
