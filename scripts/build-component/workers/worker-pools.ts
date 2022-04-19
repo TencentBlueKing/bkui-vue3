@@ -81,7 +81,6 @@ export class WorkerPool extends EventEmitter {
       this.once(buildEvent, () => this.run(task, globals, callback));
       return;
     }
-
     const worker = this.freeWorkers.pop();
     worker[buildTask] = new WorkerPoolTaskInfo(callback);
     worker.postMessage({ task, globals });

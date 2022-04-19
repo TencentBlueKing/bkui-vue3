@@ -29,6 +29,8 @@ import { join, parse, resolve } from 'path';
 
 import { ITaskItem } from '../typings/task';
 
+import { COMPONENT_URL, DIST_URL } from './helpers';
+
 // 编译转换*.d.ts
 export const compilerLibDir = async (dir: string): Promise<any> => {
   const buildDir: any = (dir: string) => {
@@ -69,11 +71,11 @@ export const moveFile = (oldPath, newPath) => new Promise((resolve, reject) => {
   readStream.pipe(writeStream);
 });
 
-export const compileFile = (url: string, compileDirUrl: string, libDirUrl: string): ITaskItem => {
+export const compileFile = (url: string): ITaskItem => {
   if (/\/dist\/|\.DS_Store|\.bak|bkui-vue\/index/.test(url)) {
     return;
   }
-  const newPath = url.replace(new RegExp(`${compileDirUrl}/([^/]+)/src`), `${libDirUrl}/$1`);
+  const newPath = url.replace(new RegExp(`${COMPONENT_URL}/([^/]+)/src`), `${DIST_URL}/$1`);
   if (/\.(css|less|scss)$/.test(url) && !/\.variable.(css|less|scss)$/.test(url)) {
     return {
       type: 'style',
@@ -91,7 +93,7 @@ export const compileFile = (url: string, compileDirUrl: string, libDirUrl: strin
     return {
       type: 'script',
       url,
-      newPath: url.replace(new RegExp(`${compileDirUrl}/([^/]+)/icons`), `${libDirUrl}/$1`),
+      newPath: url.replace(new RegExp(`${COMPONENT_URL}/([^/]+)/icons`), `${DIST_URL}/$1`),
     };
   }
   return;
