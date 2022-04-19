@@ -25,7 +25,7 @@
 */
 
 declare module '*.less'
-declare module '*.svg'
+// declare module '*.svg'
 
 declare module '*.vue' {
   import { DefineComponent } from 'vue';
