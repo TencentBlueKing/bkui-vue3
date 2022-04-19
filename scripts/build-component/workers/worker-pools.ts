@@ -28,14 +28,13 @@ import { EventEmitter } from 'events';
 import path from 'path';
 import { GlobalsOption } from 'rollup';
 import  { Worker } from 'worker_threads';
-
-import { ITaskItem } from '../typings/task';
 const buildTask = Symbol('BKUI_BUILD');
 const buildEvent = Symbol('BKUI_BUILD_EVENT');
 const BUILD_TASK = 'BUILD_TASK';
+EventEmitter.setMaxListeners(50);
 class WorkerPoolTaskInfo extends AsyncResource {
-  callback: (err: Error) => void;
-  constructor(callback: (err: Error) => void) {
+  callback: <T>(err: Error, task: T) => void;
+  constructor(callback: <T>(err: Error, task: T) => void) {
     super(BUILD_TASK);
     this.callback = callback;
   }
@@ -56,9 +55,9 @@ export class WorkerPool extends EventEmitter {
     this.size = size;
     this.workers = [];
     this.freeWorkers = [];
-    for (let i = 0; i < size; i++) this.addWorker();
+    for (let i = 0; i < size; i++) this.add();
   }
-  addWorker() {
+  add() {
     const worker = new Worker(path.resolve(__dirname, './task.js'));
     worker.on('message', (result) => {
       worker[buildTask].done(null, result);
@@ -70,16 +69,16 @@ export class WorkerPool extends EventEmitter {
       if (worker[buildTask]) worker[buildTask].done(err, null);
       else this.emit('error', err);
       this.workers.splice(this.workers.indexOf(worker), 1);
-      this.addWorker();
+      this.add();
     });
     this.workers.push(worker);
     this.freeWorkers.push(worker);
     this.emit(buildEvent);
   }
 
-  runTask(task: ITaskItem, globals: GlobalsOption, callback: (err: Error) => void) {
+  run<T>(task: T, globals: GlobalsOption, callback: <T>(err: Error, task: T) => void) {
     if (this.freeWorkers.length === 0) {
-      this.once(buildEvent, () => this.runTask(task, globals, callback));
+      this.once(buildEvent, () => this.run(task, globals, callback));
       return;
     }
 

@@ -53,20 +53,31 @@ export class CompileTask {
     this.globals = globals;
   }
   async start() {
-    !this.globals && await this.getRollupGlobals();
-    const workerPool = new WorkerPool(20);
-    console.info(this.taskItemList.length, '========');
-    this.taskItemList
-      // .filter(item => item.type === 'script')
-      // .slice(0, 10)
-      .forEach((item, index) => {
-        workerPool.runTask(item, this.globals, (err: Error) => {
-          err && console.info(err);
-          if (index >= this.taskItemList.length - 1) {
-            workerPool.close();
-          // console.timeEnd();
-          }
-        });
+    // !this.globals && await this.getRollupGlobals();
+    const styleList = this.taskItemList.filter(item => item.type === 'style');
+    const scriptList = [];
+    this.taskItemList.filter(item => item.type === 'script').reduce((pre, cur, index, list) => {
+      if (pre.length <= Math.ceil(list.length / 2)) {
+        pre.push(cur);
+        if (index === list.length - 1) {
+          scriptList.push(pre);
+          return [];
+        }
+        return pre;
+      }
+      scriptList.push(pre);
+      return [];
+    }, []);
+    const workerPool = new WorkerPool(Math.min(10, styleList.length + scriptList.length));
+    let i = scriptList.length;
+    [...styleList, ...scriptList].forEach((item) => {
+      workerPool.run<ITaskItem | ITaskItem[]>(item, this.globals, (err: Error, task) => {
+        err && console.error(err);
+        if (Array.isArray(task)) {
+          i -= 1;
+          i === 0 && workerPool.close();
+        }
       });
+    });
   }
 }

@@ -24,9 +24,10 @@
  * IN THE SOFTWARE.
 */
 
-import {  createReadStream, createWriteStream, lstatSync, readdirSync, readFileSync, rmdirSync, writeFileSync } from 'fs';
-import { join, parse, resolve } from 'path';
+import { lstatSync, readdirSync } from 'fs';
+import { join, resolve } from 'path';
 
+import { compileFile, compilerLibDir  } from './compiler/compile-lib';
 import {  compileTheme } from './compiler/compile-style';
 import { ICompileTaskOption, ITaskItem } from './typings/task';
 import { CompileTask } from './workers/compile-task';
@@ -35,33 +36,6 @@ import { writeFileRecursive } from './workers/utils';
 const compileDirUrl = resolve(__dirname, '../../packages');
 const libDirUrl =  resolve(__dirname, '../../lib');
 const themeLessUrl = resolve(compileDirUrl, 'styles/src/themes/themes.less');
-export const compileFile = (url: string): ITaskItem => {
-  if (/\/dist\/|\.DS_Store|\.bak|bkui-vue\/index/.test(url)) {
-    return;
-  }
-  const newPath = url.replace(new RegExp(`${compileDirUrl}/([^/]+)/src`), `${libDirUrl}/$1`);
-  if (/\.(css|less|scss)$/.test(url) && !/\.variable.(css|less|scss)$/.test(url)) {
-    return {
-      type: 'style',
-      url,
-      newPath,
-    };
-  } if (/\/src\/index\.(js|ts|jsx|tsx)$/.test(url)) {
-    return {
-      type: 'script',
-      url,
-      newPath,
-    };
-  }
-  if (/\/icon\/icons\/[^.]+\.(js|ts|jsx|tsx)$/.test(url)) {
-    return {
-      type: 'script',
-      url,
-      newPath: url.replace(new RegExp(`${compileDirUrl}/([^/]+)/icons`), `${libDirUrl}/$1`),
-    };
-  }
-  return;
-};
 
 export const compilerDir = async (dir: string): Promise<any> => {
   // const urlList: any = [];
@@ -76,51 +50,13 @@ export const compilerDir = async (dir: string): Promise<any> => {
       if (lstatSync(url).isDirectory()) {
         buildDir(url);
       }
-      const data = compileFile(url);
+      const data = compileFile(url, compileDirUrl, libDirUrl);
       data && list.push(data);
     });
   };
   buildDir(dir);
   const taskInstance = new CompileTask(list);
   taskInstance.start();
-};
-// move file
-export const moveFile = (oldPath, newPath) => new Promise((resolve, reject) => {
-  const readStream = createReadStream(oldPath);
-  const writeStream = createWriteStream(newPath);
-  readStream.on('error', err => reject(err));
-  writeStream.on('error', err => reject(err));
-  writeStream.on('close', () => {
-    resolve(undefined);
-  });
-  readStream.pipe(writeStream);
-});
-// 编译转换*.d.ts
-export const compilerLibDir = async (dir: string): Promise<any> => {
-  const buildDir: any = (dir: string) => {
-    const files = readdirSync(dir);
-    const list = files.filter(url =>  /\.d.ts$/.test(join(dir, url)));
-    (list.length ? list : files).forEach((file, index) => {
-      const url = join(dir, file);
-      if (list.length) {
-        if (/lib\/(bkui-vue|styles\/src)\/(components|index)\.d\.ts$/.test(url)) {
-          let chunck = readFileSync(url, 'utf-8');
-          chunck = chunck.replace(/@bkui-vue/gmi, url.match(/styles\/src\/index.d.ts$/) ? '..' : '.');
-          writeFileSync(url, chunck);
-        }
-        moveFile(url, resolve(parse(url).dir, '../', parse(url).base))
-          .then(() => {
-            if (index === list.length - 1) {
-              rmdirSync(parse(url).dir, { recursive: true });
-            }
-          })
-          .catch(console.error);
-      } else if (lstatSync(url).isDirectory()) {
-        buildDir(url);
-      }
-    });
-  };
-  buildDir(dir);
 };
 
 

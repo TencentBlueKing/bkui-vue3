@@ -24,19 +24,17 @@
 * IN THE SOFTWARE.
 */
 import ora from 'ora';
-import { basename, extname } from 'path';
-import { GlobalsOption } from 'rollup';
 import { parentPort } from 'worker_threads';
 
-import { rollupBuildScript } from '../compiler/compile-script';
 import { compileStyle } from '../compiler/compile-style';
+import { webpackBuildScript } from '../compiler/webpack-script';
 import { ITaskItem } from '../typings/task';
 
 import { writeFileRecursive } from './utils';
-parentPort.on('message', ({ task, globals }) => {
+parentPort.on('message', ({ task }) => {
   (task.type === 'style'
     ?  compileStyleTask(task)
-    :  compileScript(task, globals)).finally(() => {
+    :  compileScript(task)).finally(() => {
     parentPort.postMessage(task);
   });
 });
@@ -52,19 +50,6 @@ async function compileStyleTask({ url, newPath }: ITaskItem) {
   varCss.length && writeFileRecursive(newPath.replace(/\.(css|less|scss)$/, '.variable.css'), varCss);
   css.length ? spinner.succeed() : spinner.fail();
 }
-async function compileScript({ url, newPath }: ITaskItem, globals: GlobalsOption) {
-  const spinner = ora(`building script ${url} \n`).start();
-  if (basename(url).replace(extname(url), '') === 'index' || /\/icon\/icons\//.test(url)) {
-    console.time(url);
-    await rollupBuildScript(url, newPath.replace(/\.(js|ts|jsx|tsx)$/, '.js'), globals)
-      .catch(() => spinner.fail())
-      .then(() => spinner.succeed());
-    console.timeEnd(url);
-    spinner.stop();
-    spinner.clear();
-  } else {
-    spinner.succeed();
-    spinner.stop();
-    spinner.clear();
-  }
+async function compileScript(list: ITaskItem[]) {
+  return webpackBuildScript(list);
 }
