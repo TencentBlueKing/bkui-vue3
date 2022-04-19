@@ -157,7 +157,7 @@ export default class TableRender {
         };
 
         return <tr
-          // @ts-ignore:next-line
+          // @ts-ignore
           style={rowStyle}
           onClick={ e => this.handleRowClick(e, row, index, rows)}
           onDblclick={e => this.handleRowDblClick(e, row, index, rows)}
