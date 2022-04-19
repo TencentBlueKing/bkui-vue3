@@ -24,12 +24,12 @@
  * IN THE SOFTWARE.
 */
 
-import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, reactive, ref, SetupContext, watch, watchEffect } from 'vue';
+import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch, watchEffect } from 'vue';
 
 import { classes, resolveClassName } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
-import { Column, IColumnActive, tableProps, TablePropTypes } from './props';
+import { Column, IColumnActive, tableProps } from './props';
 import TableRender from './render';
 import {
   isPercentPixOrNumber,
@@ -43,7 +43,7 @@ export default defineComponent({
   name: 'Table',
   props: tableProps,
   emits: ['columnPick', 'rowClick', 'rowDblClick', 'pageLimitChange', 'pageValueChange'],
-  setup(props: TablePropTypes, ctx: SetupContext) {
+  setup(props, ctx) {
     const activeCols = reactive(resolveActiveColumns(props));
     const colgroups = reactive(props.columns.map(col => ({ ...col, calcWidth: null })));
     const startIndex = ref(0);
