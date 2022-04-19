@@ -28,6 +28,8 @@ import webpack from 'webpack';
 
 import { ITaskItem } from '../typings/task';
 
+import { DIST_URL } from './helpers';
+
 export const webpackBuildScript = async (entryList: ITaskItem[]) => {
   const entry: webpack.EntryObject = {};
   entryList.forEach(({ url }) => {
@@ -52,7 +54,7 @@ export const webpackBuildScript = async (entryList: ITaskItem[]) => {
         }
         return `${pathData.chunk.name}/${pathData.chunk.name}.js`;
       },
-      path: '/Users/liangling/code/githubCode/bkui-vue3/lib',
+      path: DIST_URL,
       // chunkFilename: (pathData: any) => {
       //   console.info(pathData);
       //   return `${pathData.chunk.runtime}`;
@@ -90,7 +92,7 @@ export const webpackBuildScript = async (entryList: ITaskItem[]) => {
           test: /\.(png|jpe?g|gif|svg)$/,
           loader: 'url-loader',
           options: {
-            limit: 8192,
+            limit: 65536,
             outputPath: 'img',
             name: '[name][hash:7].[ext]',
             fallback: 'file-loader',

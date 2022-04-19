@@ -25,20 +25,17 @@
 */
 
 import { lstatSync, readdirSync } from 'fs';
-import { join, resolve } from 'path';
+import { join } from 'path';
 
 import { compileFile, compilerLibDir  } from './compiler/compile-lib';
 import {  compileTheme } from './compiler/compile-style';
+import { COMPONENT_URL, DIST_URL, THEME_LESS_URL } from './compiler/helpers';
 import { ICompileTaskOption, ITaskItem } from './typings/task';
 import { CompileTask } from './workers/compile-task';
 import { writeFileRecursive } from './workers/utils';
 
-const compileDirUrl = resolve(__dirname, '../../packages');
-const libDirUrl =  resolve(__dirname, '../../lib');
-const themeLessUrl = resolve(compileDirUrl, 'styles/src/themes/themes.less');
 
 export const compilerDir = async (dir: string): Promise<any> => {
-  // const urlList: any = [];
   const list: ITaskItem[] = [];
   const buildDir: any = (dir: string) => {
     const files = readdirSync(dir);
@@ -50,7 +47,7 @@ export const compilerDir = async (dir: string): Promise<any> => {
       if (lstatSync(url).isDirectory()) {
         buildDir(url);
       }
-      const data = compileFile(url, compileDirUrl, libDirUrl);
+      const data = compileFile(url);
       data && list.push(data);
     });
   };
@@ -62,13 +59,13 @@ export const compilerDir = async (dir: string): Promise<any> => {
 
 // 将theme.less 装换为 css变量
 const compileThemeTovariable = async () => {
-  const resource = await compileTheme(themeLessUrl);
-  await writeFileRecursive(themeLessUrl.replace(/\.(css|less|scss)$/, '.variable.$1'), resource);
+  const resource = await compileTheme(THEME_LESS_URL);
+  await writeFileRecursive(THEME_LESS_URL.replace(/\.(css|less|scss)$/, '.variable.$1'), resource);
 };
 export default async (option: ICompileTaskOption) => {
   if (option.compile) {
-    compilerLibDir(libDirUrl);
+    compilerLibDir(DIST_URL);
     await compileThemeTovariable();
-    compilerDir(compileDirUrl);
+    compilerDir(COMPONENT_URL);
   }
 };
