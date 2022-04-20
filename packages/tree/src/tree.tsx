@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
-import { computed, defineComponent, h, onMounted, onUpdated, reactive, ref, SetupContext, watch } from 'vue';
+import { computed, defineComponent, h, onMounted, onUpdated, reactive, ref, watch } from 'vue';
 
 import { DownShape, Folder, FolderShapeOpen, RightShape, Spinner, TextFile } from '@bkui-vue/icon/';
 import { resolveClassName } from '@bkui-vue/shared';
@@ -48,7 +48,7 @@ export default defineComponent({
   props: treeProps,
   emits: ['check'],
 
-  setup(props: TreePropTypes, ctx: SetupContext) {
+  setup(props, ctx) {
     const formatData = getFlatdata(props);
     const checkedNodes = [];
     /**

@@ -101,6 +101,7 @@ export default defineComponent({
     onBeforeUnmount(() => {
       copyInstance?.destroy();
     });
+
     return {
       showCode,
       handleShowCodeChange,

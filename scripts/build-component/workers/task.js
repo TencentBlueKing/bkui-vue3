@@ -23,38 +23,8 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-
-import { defineComponent } from 'vue';
-
-import BkDivider from '@bkui-vue/divider';
-
-export default defineComponent({
-  name: 'DividerDemo',
-  render() {
-    const style = { marginTop: '50px' };
-    return (
-      <div>
-        <div>
-          <BkDivider></BkDivider>
-        </div>
-        <div style={style}>
-          <BkDivider align={'left'}>这是默认</BkDivider>
-        </div>
-        <div style={style}>
-          <BkDivider align={'center'}>这是默认</BkDivider>
-        </div>
-        <div style={style}>
-          <BkDivider align={'right'}>这是默认</BkDivider>
-        </div>
-        <div style={style}>
-          <BkDivider direction={'vertical'} align={'right'}></BkDivider>
-        </div>
-        <div style={style}>
-          <div style="height:200px">
-            <BkDivider direction={'vertical'} align={'center'}>*</BkDivider>
-          </div>
-        </div>
-      </div>
-    );
-  },
+const path = require('path');
+require('ts-node').register({
+  project: path.resolve(__dirname, '../../tsconfig.scripts.json'),
 });
+require(path.resolve(__dirname, './task.ts'));

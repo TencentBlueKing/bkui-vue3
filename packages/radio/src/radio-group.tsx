@@ -79,7 +79,7 @@ export default defineComponent({
   render() {
     return (
       <div class="bk-radio-group">
-        {this.$slots.default()}
+        {this.$slots?.default()}
       </div>
     );
   },

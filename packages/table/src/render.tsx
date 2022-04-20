@@ -23,7 +23,6 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { SetupContext } from 'vue';
 
 import Pagination from '@bkui-vue/pagination';
 import { classes, random } from '@bkui-vue/shared';
@@ -35,12 +34,12 @@ import { resolvePropVal, resolveWidth } from './utils';
 
 export default class TableRender {
   props: TablePropTypes;
-  context: SetupContext;
+  context;
   reactiveProp: any;
   colgroups: GroupColumn[];
   uuid: string;
   public plugins: TablePlugins;
-  constructor(props: TablePropTypes, ctx: SetupContext, reactiveProp: IReactiveProp, colgroups: GroupColumn[]) {
+  constructor(props, ctx, reactiveProp: IReactiveProp, colgroups: GroupColumn[]) {
     this.props = props;
     this.context = ctx;
     this.reactiveProp = reactiveProp;
@@ -88,12 +87,12 @@ export default class TableRender {
 
   private handlePageLimitChange(limit: number) {
     Object.assign(this.props.pagination, { limit });
-    this.context.emit('page-limit-change', limit);
+    this.context.emit('pageLimitChange', limit);
   }
 
   private hanlePageChange(current: number) {
     Object.assign(this.props.pagination, { current, value: current });
-    this.context.emit('page-value-change', current);
+    this.context.emit('pageValueChange', current);
   }
 
   /**
@@ -160,8 +159,12 @@ export default class TableRender {
           '--row-height': `${resolvePropVal(this.props, 'rowHeight', ['tbody', row, index])}px`,
         };
 
-        // @ts-ignore:next-line
-        return <tr style={rowStyle} onClick={ e => this.handleRowClick(e, row, index, rows)}>
+        return <tr
+          // @ts-ignore
+          style={rowStyle}
+          onClick={ e => this.handleRowClick(e, row, index, rows)}
+          onDblclick={e => this.handleRowDblClick(e, row, index, rows)}
+        >
         {
           this.props.columns.map((column: Column, index: number) => <td class={this.getColumnClass(index)}
           colspan={1} rowspan={1}>
@@ -184,7 +187,18 @@ export default class TableRender {
    * @param rows
    */
   private handleRowClick(e: MouseEvent, row: any, index: number, rows: any) {
-    this.context.emit('row-click', e, row, index, rows, this);
+    this.context.emit('rowClick', e, row, index, rows, this);
+  }
+
+  /**
+   * table row click handle
+   * @param e
+   * @param row
+   * @param index
+   * @param rows
+   */
+  private handleRowDblClick(e: MouseEvent, row: any, index: number, rows: any) {
+    this.context.emit('rowDblClick', e, row, index, rows, this);
   }
 
   /**

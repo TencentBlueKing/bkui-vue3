@@ -24,4 +24,12 @@
  * IN THE SOFTWARE.
 */
 
-declare module 'acorn-jsx';
+import { App } from 'vue';
+
+import TagInput from './tag-input';
+
+TagInput.install = (Vue: App) => {
+  Vue.component(TagInput.name, TagInput);
+};
+
+export default TagInput;
