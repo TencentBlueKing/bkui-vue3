@@ -6,6 +6,7 @@
     <bk-form-item
       label="姓名"
       required
+      property="name"
     >
       <bk-input
         placeholder="请输入"
@@ -47,7 +48,11 @@
       />
     </bk-form-item>
     <bk-form-item>
-      <bk-button theme="primary">
+      <bk-button
+        theme="primary"
+        native-type="button"
+        @click="submit"
+      >
         提交
       </bk-button>
     </bk-form-item>
@@ -65,7 +70,13 @@
 
 
   const formRef = ref('');
-  const formMode = ref({});
+  const formMode = ref({
+    name: '',
+  });
+
+  const submit = () => {
+    formRef.value.validate();
+  };
 
 </script>
 <style lang="postcss">

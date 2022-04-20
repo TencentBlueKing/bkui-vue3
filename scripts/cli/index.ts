@@ -24,53 +24,39 @@
  * IN THE SOFTWARE.
 */
 
-import { resolve } from 'path';
-import { build } from 'vite';
+import { program } from 'commander';
 
-import vue from '@vitejs/plugin-vue';
-import vueJsx from '@vitejs/plugin-vue-jsx';
-
-(async () => {
-  await build({
-    resolve: {
-      alias: [
-        {
-          find: /^@bkui-vue\/(icon\/)/,
-          replacement: resolve(__dirname, '../packages/$1'),
-        },
-        {
-          find: /^@bkui-vue\/([^/]*)/,
-          replacement: resolve(__dirname, '../packages/$1/src'),
-        },
-      ],
-    },
-    plugins: [vueJsx(), vue()],
-    build: {
-      minify: false,
-      lib: {
-        entry: resolve(__dirname, '../packages/bkui-vue/index.ts'),
-        name: 'bkuiVue',
-      },
-      rollupOptions: {
-        external: ['vue'],
-        output: [
-          {
-            format: 'cjs',
-            exports: 'named',
-          },
-          {
-            format: 'esm',
-            exports: 'named',
-          },
-          {
-            globals: {
-              vue: 'Vue',
-            },
-            exports: 'named',
-            format: 'umd',
-          },
-        ],
-      },
-    },
+import distTask from './tasks/dist';
+import libTask from './tasks/lib';
+import releaseTask from './tasks/release';
+import excuteTask from './utils/excute-task';
+export const run = async () => {
+  program
+    .command('lib')
+    .option('-a, --analyze', 'analyze all components bunlders')
+    .description('build components')
+    .action(async (cmd) => {
+      await excuteTask(libTask)({
+        analyze: !!cmd.analyze,
+      });
+    });
+  program
+    .command('dist')
+    .description('build dist')
+    .action(async () => {
+      await excuteTask(distTask)();
+    });
+  program
+    .command('release')
+    .description('release bkui check')
+    .action(async () => {
+      await excuteTask(releaseTask)();
+    });
+  program.on('command:*', () => {
+    console.error('Invalid command. Please check bkui-vue package.json', program.args.join(' '));
+    process.exit(1);
   });
-})();
+  program.parse(process.argv);
+};
+
+run();

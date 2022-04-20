@@ -24,30 +24,44 @@
  * IN THE SOFTWARE.
 */
 
-import excuteTask from './excute-task';
-import compileTask from './tasks/compile';
-// eslint-disable-next-line import/prefer-default-export
-// export const run = async () => {
-//   program
-//     .command('build')
-//     .option('-c, --compiler', 'compiler all components')
-//     .description('build components')
-//     .action(async (cmd) => {
-//       await excuteTask(compileTask)({
-//         compile: true
-//       });
-//     });
+import { lstatSync, readdirSync } from 'fs';
+import { join } from 'path';
 
-//   program.on('command:*', () => {
-//     console.error('Invalid command: %s\nSee --help for a list of available commands.', program.args.join(' '));
-//     process.exit(1);
-//   });
+import {  compileTheme } from '../compiler/compile-style';
+import { compileFile, compilerLibDir, COMPONENT_URL, LIB_URL, THEME_LESS_URL, writeFileRecursive } from '../compiler/helpers';
+import { ILibTaskOption, ITaskItem } from '../typings/task';
+import { CompileTask } from '../workers/compile-task';
 
-//   program.parse(process.argv);
-// };
 
-(async () => {
-  await excuteTask(compileTask)({
-    compile: true,
-  });
-})();
+export const compilerDir = async (option: ILibTaskOption): Promise<void> => {
+  const list: ITaskItem[] = [];
+  const buildDir: any = (dir: string) => {
+    const files = readdirSync(dir);
+    files.forEach((file) => {
+      const url = join(dir, file);
+      if (/(node_modules|__test__|\.test\.*)/.test(url)) {
+        return ;
+      }
+      if (lstatSync(url).isDirectory()) {
+        buildDir(url);
+      }
+      const data = compileFile(url);
+      data && list.push(data);
+    });
+  };
+  buildDir(COMPONENT_URL);
+  const taskInstance = new CompileTask(list, option);
+  taskInstance.start();
+};
+
+
+// 将theme.less 装换为 css变量
+const compileThemeTovariable = async () => {
+  const resource = await compileTheme(THEME_LESS_URL);
+  await writeFileRecursive(THEME_LESS_URL.replace(/\.(css|less|scss)$/, '.variable.$1'), resource);
+};
+export default async (option: ILibTaskOption) => {
+  compilerLibDir(LIB_URL);
+  await compileThemeTovariable();
+  compilerDir(option);
+};

@@ -24,11 +24,35 @@
  * IN THE SOFTWARE.
 */
 
-import bundleTask from '../bundle-task';
-import { ICompileTaskOption, Task, TaskRunner } from '../typings/task';
+import childProcess from 'child_process';
+import fs from 'fs';
+import path from 'path';
 
-const compileTaskRunner: TaskRunner<ICompileTaskOption> = async (option) => {
-  await bundleTask(option);
+import { BKUI_DIR } from '../compiler/helpers';
+
+const packagePath = path.resolve(BKUI_DIR, './package.json');
+const packageTmpPath = `${packagePath}.bak`;
+
+export default async function () {
+  if (fs.existsSync(packageTmpPath)) fs.unlinkSync(packageTmpPath);
+  const originalData = fs.readFileSync(packagePath, { encoding: 'utf8' });
+  fs.writeFileSync(packageTmpPath, originalData);
+
+  const packageData = JSON.parse(originalData);
+  delete packageData.private;
+  delete packageData.scripts.cc;
+  fs.writeFileSync(packagePath, `${JSON.stringify(packageData, null, 2)}\n`);;
+  try {
+    childProcess.execSync(
+      `cd ${BKUI_DIR} && npm publish --access=public --unsafe-perm --registry https://registry.npmjs.org`
+      , {
+        stdio: [0, 1, 2],
+      },
+    );
+  } catch (e) {
+    throw e;
+  } finally {
+    fs.unlinkSync(packageTmpPath);
+    fs.writeFileSync(packagePath, originalData);
+  }
 };
-
-export default new Task<ICompileTaskOption>('compile', compileTaskRunner);

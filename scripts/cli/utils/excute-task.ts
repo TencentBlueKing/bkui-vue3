@@ -24,29 +24,19 @@
  * IN THE SOFTWARE.
 */
 
-import childProcess from 'child_process';
-import fs from 'fs';
-import path from 'path';
+import chalk from 'chalk';
 
-const packagePath = path.resolve(__dirname, '../package.json');
-const packageTmpPath = path.resolve(__dirname, '../package.json.bak');
+import { Task } from '../typings/task';
 
-(async function () {
-  const originalData = fs.readFileSync(packagePath, { encoding: 'utf8' });
-  fs.writeFileSync(packageTmpPath, originalData);
-
-  const packageData = JSON.parse(originalData);
-  delete packageData.private;
-  delete packageData.scripts.cc;
-  fs.writeFileSync(packagePath, `${JSON.stringify(packageData, null, 2)}\n`);
-
-  const proc = childProcess.spawn(
-    'npm',
-    ['publish', '--access=public', '--unsafe-perm', '--registry', 'https://registry.npmjs.org'],
-    { stdio: 'inherit' },
-  );
-  proc.on('close', () => {
-    fs.unlinkSync(packageTmpPath);
-    fs.writeFileSync(packagePath, originalData);
-  });
-}());
+export default <T>(task: Task<T>) => async (options?: T) => {
+  console.log(chalk.yellow(`Running ${chalk.bold(task.name)} task`));
+  task.setOptions(options);
+  try {
+    console.group();
+    await task.exec();
+    console.groupEnd();
+  } catch (e) {
+    console.trace(e);
+    process.exit(1);
+  }
+};

@@ -32,7 +32,8 @@
   "include": [
     "packages/**/*",
     "site/**/*",
-    "scripts/**/*"
+    "scripts/**/*",
+    "./test-setup.ts"
   ],
   "exclude": [
     "node_modules",
