@@ -112,7 +112,7 @@ describe('Input', () => {
     expect(wrapper.emitted()['update:modelValue'][0][0]).toBe('');
   });
 
-  it('renders with search', () => {
+  it('renders with search input', () => {
     const wrapper = mount({
       render() {
         return (
@@ -287,5 +287,18 @@ describe('Input', () => {
       showWordLimit: false,
     });
     expect(wrapper.find('.bk-input--max-length').exists()).toBe(false);
+  });
+
+  it('render with textarea & showWordLimit', async () => {
+    const wrapper = mount(Input, {
+      props: {
+        type: 'textarea',
+        modelValue: 'demo',
+        maxlength: 10,
+      },
+    });
+
+    expect(wrapper.find('.bk-textarea--max-length').exists()).toBe(true);
+    expect(wrapper.find('.bk-textarea').exists()).toBe(true);
   });
 });

@@ -16,13 +16,13 @@
     table {
       width: 100%;
       border-collapse: collapse;
-
+      table-layout: fixed;
+      
       th,
       td {
         min-width: 80px;
 
         .cell {
-          height: var(--row-height);
           padding: 0 15px;
           overflow: hidden;
           line-height: var(--row-height);
@@ -65,7 +65,8 @@
   }
 
   &.bordered-row {
-    .cell { 
+    td,
+    th { 
       border-bottom: 1px solid @table-border-color;
     }
   }
@@ -78,14 +79,10 @@
   &.bordered-col {
     th,
     td {
-      .cell { 
-        border-right: 1px solid @table-border-color;
-      }
+      border-right: 1px solid @table-border-color;
 
       &:last-child {
-        .cell {
-          border-right: none;
-        }
+        border-right: none;
       }
     }
 
@@ -94,12 +91,10 @@
   &.bordered-none {
     th,
     td {
-      .cell {
-        border-top: none;
-        border-right: none;
-        border-bottom: none;
-        border-left: none;
-      }
+      border-top: none;
+      border-right: none;
+      border-bottom: none;
+      border-left: none;
     }
   }
 

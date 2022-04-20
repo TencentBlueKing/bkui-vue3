@@ -13,6 +13,40 @@
   opacity: 1;
 }
 
+.@{bk-prefix}-textarea {
+  width: 100%;
+  min-height: 70px;
+  font-size: @font-size-base;
+  line-height: 20px;
+  background-color: white;
+  border: @border-width-base @border-style-base @input-border-color;
+  border-radius: 2px;
+  border-radius: @border-radius-base;
+  box-sizing: border-box;
+  transition: all .3s;
+
+  > textarea {
+    width: 100%;
+    padding: 5px 10px;
+    line-height: 1.5;
+    text-align: left;
+    vertical-align: middle;
+    border: 0;
+    outline: none;
+    resize: none;
+  }
+
+  &--max-length {
+    align-self: center;
+    padding-right: @input-horizontal-padding;
+    margin: 0;
+
+    span {
+      color: @input-maxlength-color;
+    }
+  }
+}
+
 .@{bk-prefix}-input {
   display: flex;
   align-items: stretch;
@@ -47,11 +81,27 @@
   }
 
   &--large {
-    .component-size(@component-size-large, @font-size-large);
+    .component-size(@component-size-large, @font-size-medium);
+
+    &--max-length {
+      font-size: @font-size-large;
+    }
   }
 
   &--small {
     .component-size(@component-size-small, @font-size-base);
+
+    &--max-length {
+      font-size: @font-size-base;
+    }
+  }
+
+  &--default {
+    font-size: @font-size-base;
+
+    &--max-length {
+      font-size: @font-size-base;
+    }
   }
 
   &.is-focused:not(.is-readonly) {
@@ -94,7 +144,6 @@
 
   &--text {
     padding: 0 @input-horizontal-padding;
-    font-size: @font-size-base;
     line-height: 1;
     color: @input-color;
     background-color: @input-bg;
