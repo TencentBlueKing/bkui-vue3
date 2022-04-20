@@ -31,4 +31,4 @@ const compileTaskRunner: TaskRunner<undefined> = async () => {
   await bundleDist();
 };
 
-export default new Task<undefined>('compile', compileTaskRunner);
+export default new Task<undefined>('compile dist', compileTaskRunner);

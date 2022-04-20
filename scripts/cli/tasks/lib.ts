@@ -34,4 +34,4 @@ const compileTaskRunner: TaskRunner<ILibTaskOption> = async (option?: ILibTaskOp
   await bundleComponents(option!);
 };
 
-export default new Task<ILibTaskOption>('build lib', compileTaskRunner);
+export default new Task<ILibTaskOption>('compile lib', compileTaskRunner);

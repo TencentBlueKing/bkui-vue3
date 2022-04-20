@@ -31,4 +31,4 @@ const compileTaskRunner: TaskRunner<undefined> = async () => {
   await release();
 };
 
-export default new Task('pre release', compileTaskRunner);
+export default new Task('prepare release', compileTaskRunner);

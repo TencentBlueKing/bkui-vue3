@@ -26,10 +26,10 @@
 
 import { program } from 'commander';
 
-import excuteTask from './excute-task';
 import distTask from './tasks/dist';
 import libTask from './tasks/lib';
 import releaseTask from './tasks/release';
+import excuteTask from './utils/excute-task';
 export const run = async () => {
   program
     .command('lib')

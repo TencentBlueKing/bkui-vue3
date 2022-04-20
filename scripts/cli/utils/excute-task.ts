@@ -26,7 +26,7 @@
 
 import chalk from 'chalk';
 
-import { Task } from './typings/task';
+import { Task } from '../typings/task';
 
 export default <T>(task: Task<T>) => async (options?: T) => {
   console.log(chalk.yellow(`Running ${chalk.bold(task.name)} task`));
