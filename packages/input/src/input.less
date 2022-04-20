@@ -47,11 +47,27 @@
   }
 
   &--large {
-    .component-size(@component-size-large, @font-size-large);
+    .component-size(@component-size-large, @font-size-medium);
+
+    &--max-length {
+      font-size: @font-size-large;
+    }
   }
 
   &--small {
     .component-size(@component-size-small, @font-size-base);
+
+    &--max-length {
+      font-size: @font-size-base;
+    }
+  }
+
+  &--default {
+    font-size: @font-size-base;
+
+    &--max-length {
+      font-size: @font-size-base;
+    }
   }
 
   &.is-focused:not(.is-readonly) {
@@ -94,7 +110,6 @@
 
   &--text {
     padding: 0 @input-horizontal-padding;
-    font-size: @font-size-base;
     line-height: 1;
     color: @input-color;
     background-color: @input-bg;
