@@ -24,9 +24,9 @@
  * IN THE SOFTWARE.
 */
 
-import bundleComponents from '../bundles/bundle-components';
-import generateDecration from '../bundles/generate-decrations';
 import { ILibTaskOption, Task, TaskRunner } from '../typings/task';
+import bundleComponents from '../utils/bundle-components';
+import generateDecration from '../utils/generate-decrations';
 
 const compileTaskRunner: TaskRunner<ILibTaskOption> = async (option?: ILibTaskOption): Promise<void> => {
   process.env.NODE_ENV = 'production';

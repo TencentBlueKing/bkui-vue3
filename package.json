@@ -1,30 +1,33 @@
 {
   "name": "bkui-vue",
-  "version": "0.0.1-beta.36",
-  "private": true,
+  "version": "0.0.1-beta.40",
   "workspaces": {
     "packages": [
       "packages/!(**.bak)*",
       "scripts/cli"
     ]
   },
+  "files": [
+    "lib",
+    "dist"
+  ],
   "scripts": {
+    "prepare": "husky install",
+    "dev": "vite serve site",
+    "build": "yarn build:dist && yarn build:lib",
+    "build:site": "vite build site --mode development",
+    "build:dist": "rimraf dist && lerna run --stream --scope cli dist",
+    "build:lib": "rimraf lib && lerna run --stream --scope cli lib",
+    "prepare:release": "lerna run --stream --scope cli release",
+    "release": "yarn build && rimraf package.json.bak && yarn prepare:release",
+    "analyze:lib": "rimraf lib && lerna run --stream --scope cli lib -- -a",
+    "generate:icon": "lerna run --scope @bkui-vue/icon build",
+    "changelog": "conventional-changelog -c .changelog.config.js -p angular -i CHANGELOG.md -s -l",
     "lint": "eslint --ext .js,.ts,.tsx,.vue ./packages ./site ",
     "lint:style": "stylelint --fix ./packages/**/*.{css,less} --custom-syntax",
     "lint:fix": "eslint --fix ./packages ./site --ext .js,.ts,.tsx,.vue",
     "test:unit": "jest --passWithNoTests",
-    "dev": "vite serve site",
-    "build": "yarn build:dist && yarn build:lib",
-    "build:site": "vite build site --mode development",
-    "build:dist": "rimraf dist && lerna run --scope cli --stream dist",
-    "build:lib": "rimraf lib && lerna run --scope cli --stream lib",
-    "build:release": "rimraf lib && lerna run --scope cli --stream release",
-    "cz": "git-cz",
-    "generate:icon": "lerna run --scope @bkui-vue/icon build",
-    "release": "yarn build && rimraf package.json.bak && yarn build:release",
-    "changelog": "conventional-changelog -c .changelog.config.js -p angular -i CHANGELOG.md -s -l",
-    "cc": "plop --plopfile=./plopfile.js",
-    "prepare": "husky install"
+    "cz": "git-cz"
   },
   "devDependencies": {
     "@commitlint/cli": "~16.2.3",

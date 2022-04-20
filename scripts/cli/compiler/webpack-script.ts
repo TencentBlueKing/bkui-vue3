@@ -131,7 +131,7 @@ export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILi
         analyzerPort: 8888,
       }) : undefined,
       new webpack.ProgressPlugin(),
-    ].filter(Boolean),
+    ].filter(Boolean) as any,
   });
   return new Promise<void>((resolve, reject) => {
     compiler.run((err: Error | null | undefined, stats: Stats | undefined) => {
@@ -144,11 +144,10 @@ export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILi
         stats.compilation.errors.forEach((e) => {
           console.log(e.message);
         });
-
         reject('Build failed');
       }
       console.log('\n', stats?.toString({ colors: true }), '\n');
-      resolve();
+      !taskOption.analyze && resolve();
     });
   });
 };

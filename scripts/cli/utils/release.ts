@@ -39,14 +39,18 @@ export default async function () {
   delete packageData.private;
   delete packageData.scripts.cc;
   fs.writeFileSync(packagePath, `${JSON.stringify(packageData, null, 2)}\n`);
-
-  const proc = childProcess.spawn(
-    'npm',
-    ['publish', '--access=public', '--unsafe-perm', '--registry', 'https://registry.npmjs.org'],
-    { stdio: 'inherit' },
-  );
-  proc.on('close', () => {
+  const rootUrl = path.resolve(process.cwd(), '../../');
+  try {
+    childProcess.execSync(
+      `cd ${rootUrl} && npm publish --access=public --unsafe-perm --registry https://registry.npmjs.org`
+      , {
+        stdio: [0, 1, 2],
+      },
+    );
+  } catch (e) {
+    throw e;
+  } finally {
     fs.unlinkSync(packageTmpPath);
     fs.writeFileSync(packagePath, originalData);
-  });
+  }
 };

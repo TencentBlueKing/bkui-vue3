@@ -23,12 +23,12 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import release from '../bundles/bundle-dist';
 import { Task, TaskRunner } from '../typings/task';
+import release from '../utils/release';
 
 const compileTaskRunner: TaskRunner<undefined> = async () => {
   process.env.NODE_ENV = 'production';
   await release();
 };
 
-export default new Task('compile', compileTaskRunner);
+export default new Task('pre release', compileTaskRunner);

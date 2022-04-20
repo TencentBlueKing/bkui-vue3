@@ -61,7 +61,6 @@ const compileThemeTovariable = async () => {
   await writeFileRecursive(THEME_LESS_URL.replace(/\.(css|less|scss)$/, '.variable.$1'), resource);
 };
 export default async (option: ILibTaskOption) => {
-  console.info(option);
   compilerLibDir(DIST_URL);
   await compileThemeTovariable();
   compilerDir(option);
