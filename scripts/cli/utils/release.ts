@@ -28,8 +28,10 @@ import childProcess from 'child_process';
 import fs from 'fs';
 import path from 'path';
 
-const packagePath = path.resolve(__dirname, '../../../package.json');
-const packageTmpPath = path.resolve(__dirname, '../../../package.json.bak');
+import { BKUI_DIR } from '../compiler/helpers';
+
+const packagePath = path.resolve(BKUI_DIR, './package.json');
+const packageTmpPath = `${packagePath}.bak`;
 
 export default async function () {
   const originalData = fs.readFileSync(packagePath, { encoding: 'utf8' });
@@ -38,11 +40,10 @@ export default async function () {
   const packageData = JSON.parse(originalData);
   delete packageData.private;
   delete packageData.scripts.cc;
-  fs.writeFileSync(packagePath, `${JSON.stringify(packageData, null, 2)}\n`);
-  const rootUrl = path.resolve(process.cwd(), '../../');
+  fs.writeFileSync(packagePath, `${JSON.stringify(packageData, null, 2)}\n`);;
   try {
     childProcess.execSync(
-      `cd ${rootUrl} && npm publish --access=public --unsafe-perm --registry https://registry.npmjs.org`
+      `cd ${BKUI_DIR} && npm publish --access=public --unsafe-perm --registry https://registry.npmjs.org`
       , {
         stdio: [0, 1, 2],
       },

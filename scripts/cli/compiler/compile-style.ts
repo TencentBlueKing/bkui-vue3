@@ -30,9 +30,9 @@ import { resolve } from 'path';
 import postcss from 'postcss';
 import postcssLess from 'postcss-less';
 
-import { LessPluginAlias, transformImport } from './helpers';
+import { BKUI_DIR, LessPluginAlias, transformImport } from './helpers';
 
-const styleDir = resolve(__dirname, '../../../packages/styles/src');
+const styleDir = resolve(BKUI_DIR, './packages/styles/src');
 export const compileStyle = async (url: string) => {
   const resource =  await readFile(url, 'utf-8');
   const varResource = resource.replace(/\/themes\/themes\.less/gmi, '/themes/themes.variable.less');

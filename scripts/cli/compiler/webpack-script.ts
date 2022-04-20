@@ -29,7 +29,7 @@ import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 
 import { ILibTaskOption, ITaskItem } from '../typings/task';
 
-import { DIST_URL } from './helpers';
+import { LIB_URL } from './helpers';
 
 export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILibTaskOption) => {
   const entry: webpack.EntryObject = {};
@@ -55,7 +55,7 @@ export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILi
         }
         return `${pathData.chunk.name}/${pathData.chunk.name}.js`;
       },
-      path: DIST_URL,
+      path: LIB_URL,
       // chunkFilename: (pathData: any) => {
       //   console.info(pathData);
       //   return `${pathData.chunk.runtime}`;

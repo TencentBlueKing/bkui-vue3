@@ -30,25 +30,25 @@ import { build } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
 
-const packagesDir = '../../../packages';
-const entry = resolve(__dirname, `${packagesDir}/bkui-vue/index.ts`);
-const outDir =  resolve(__dirname, '../../../dist');
+import { COMPONENT_URL, DIST_URL } from '../compiler/helpers';
+
+const entry = resolve(COMPONENT_URL, './bkui-vue/index.ts');
 export default async () => await build({
   resolve: {
     alias: [
       {
         find: /^@bkui-vue\/(icon\/)/,
-        replacement: resolve(__dirname, `${packagesDir}/$1`),
+        replacement: resolve(COMPONENT_URL, './$1'),
       },
       {
         find: /^@bkui-vue\/([^/]*)/,
-        replacement: resolve(__dirname, `${packagesDir}/$1/src`),
+        replacement: resolve(COMPONENT_URL, './$1/src'),
       },
     ],
   },
   plugins: [vueJsx(), vue()],
   build: {
-    outDir,
+    outDir: DIST_URL,
     minify: true,
     lib: {
       entry,

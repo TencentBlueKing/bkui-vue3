@@ -29,8 +29,10 @@ import { promisify } from 'util';
 
 import { ITaskItem } from '../typings/task';
 
-export const COMPONENT_URL = resolve(__dirname, '../../../packages');
-export const DIST_URL =  resolve(__dirname, '../../../lib');
+export const BKUI_DIR = resolve(__dirname, '../../../');
+export const COMPONENT_URL = resolve(BKUI_DIR, './packages');
+export const DIST_URL =  resolve(BKUI_DIR, './dist');
+export const LIB_URL =  resolve(BKUI_DIR, './lib');
 export const THEME_LESS_URL = resolve(COMPONENT_URL, 'styles/src/themes/themes.less');
 
 interface Options {
@@ -208,7 +210,7 @@ export const compileFile = (url: string): ITaskItem | undefined => {
   if (/\/dist\/|\.DS_Store|\.bak|bkui-vue\/index/.test(url)) {
     return;
   }
-  const newPath = url.replace(new RegExp(`${COMPONENT_URL}/([^/]+)/src`), `${DIST_URL}/$1`);
+  const newPath = url.replace(new RegExp(`${COMPONENT_URL}/([^/]+)/src`), `${LIB_URL}/$1`);
   if (/\.(css|less|scss)$/.test(url) && !/\.variable.(css|less|scss)$/.test(url)) {
     return {
       type: 'style',
@@ -226,7 +228,7 @@ export const compileFile = (url: string): ITaskItem | undefined => {
     return {
       type: 'script',
       url,
-      newPath: url.replace(new RegExp(`${COMPONENT_URL}/([^/]+)/icons`), `${DIST_URL}/$1`),
+      newPath: url.replace(new RegExp(`${COMPONENT_URL}/([^/]+)/icons`), `${LIB_URL}/$1`),
     };
   }
   return;

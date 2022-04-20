@@ -28,7 +28,7 @@ import { lstatSync, readdirSync } from 'fs';
 import { join } from 'path';
 
 import {  compileTheme } from '../compiler/compile-style';
-import { compileFile, compilerLibDir, COMPONENT_URL, DIST_URL, THEME_LESS_URL, writeFileRecursive } from '../compiler/helpers';
+import { compileFile, compilerLibDir, COMPONENT_URL, LIB_URL, THEME_LESS_URL, writeFileRecursive } from '../compiler/helpers';
 import { ILibTaskOption, ITaskItem } from '../typings/task';
 import { CompileTask } from '../workers/compile-task';
 
@@ -61,7 +61,7 @@ const compileThemeTovariable = async () => {
   await writeFileRecursive(THEME_LESS_URL.replace(/\.(css|less|scss)$/, '.variable.$1'), resource);
 };
 export default async (option: ILibTaskOption) => {
-  compilerLibDir(DIST_URL);
+  compilerLibDir(LIB_URL);
   await compileThemeTovariable();
   compilerDir(option);
 };
