@@ -85,23 +85,23 @@ export default defineComponent({
 
   render() {
     const dialogSlot = {
-      header: () => <>
+      header: () => [
         <div class="bk-dialog-tool">
           <span class="bk-dialog-close" onClick={this.handleClose}>+</span>
-        </div>
+        </div>,
         <div class="bk-dialog-header">
           <span class="bk-dialog-title" style={`text-align: ${this.headerAlign}`}>
             {this.$slots.header?.() ?? this.title}
           </span>
-        </div>
-      </>,
+        </div>,
+      ],
       default: () => this.$slots.default?.() ?? 'default',
       footer: () => <div class="bk-dialog-footer" style={`text-align: ${this.footerAlign}`}>
         {
-          this.$slots.footer?.() ?? <>
-            <BkButton onClick={this.handleClose} theme="primary">{this.confirmText}</BkButton>
-            <BkButton onClick={this.handleClose}>{this.cancelText}</BkButton>
-          </>
+          this.$slots.footer?.() ?? [
+            <BkButton onClick={this.handleClose} theme="primary">{this.confirmText}</BkButton>,
+            <BkButton onClick={this.handleClose}>{this.cancelText}</BkButton>,
+          ]
         }
       </div>,
     };

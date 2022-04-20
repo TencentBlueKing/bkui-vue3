@@ -22,9 +22,12 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/module.exports = {
+*/
+
+module.exports = {
   root: true,
   extends: [
+    'plugin:vue/vue3-recommended',
     'eslint-config-tencent',
   ],
   parserOptions: {
@@ -41,11 +44,21 @@
   env: {
     es6: true,
     node: true,
+    jest: true,
+    browser: true,
   },
   overrides: [
     {
       files: ['*.ts', '*.tsx'],
       extends: ['eslint-config-tencent/ts'],
+    },
+    {
+      files: ['*.vue'],
+      parser: require.resolve('vue-eslint-parser'),
+      rules: {
+        indent: 'off',
+        'codecc/license': 'off',
+      },
     },
     {
       files: [
@@ -110,5 +123,21 @@
         ignoreTemplateLiterals: true,
       },
     ],
+    'vue/multi-word-component-names': 'off',
+    'vue/no-setup-props-destructure': 'off',
+    'vue/require-default-prop': 'off',
+    'vue/script-indent': ['error', 2, {
+      baseIndent: 1,
+    }],
+    'vue/component-tags-order': ['error', {
+      order: ['template', 'script', 'style'],
+    }],
+    'vue/component-name-in-template-casing': ['error', 'kebab-case', {
+      registeredComponentsOnly: false,
+      ignores: [],
+    }],
+    'vue/prefer-separate-static-class': 'error',
+    'vue/prefer-true-attribute-shorthand': 'error',
+    'vue/v-on-function-call': 'error',
   },
 };

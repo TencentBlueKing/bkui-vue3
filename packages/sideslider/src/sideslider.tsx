@@ -64,14 +64,14 @@ export default defineComponent({
 
   render() {
     const dialogSlot = {
-      header: () => <>
+      header: () => [
         <div class="bk-sideslider-header">
           <span class={`bk-sideslider-close ${this.direction}`} onClick={this.handleClose}></span>
           <span class={`bk-sideslider-title ${this.direction}`}>
             {this.$slots.header?.() ?? 'Header'}
           </span>
-        </div>
-      </>,
+        </div>,
+      ],
       default: () => this.$slots.default?.() ?? 'Content',
       footer: () => <div class="bk-sideslider-footer"></div>,
     };

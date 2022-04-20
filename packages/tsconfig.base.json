@@ -9,6 +9,8 @@
     "jsx": "preserve",
     "noUnusedParameters": true,
     "noUnusedLocals": true,
+    "jsxFactory": "h",
+    "jsxFragmentFactory": "Fragment",
     "noImplicitAny": false,
     "module": "esnext",
     "target": "es6",
@@ -18,7 +20,7 @@
     ],
     "skipLibCheck": true,
     "allowJs": true,
-    "baseUrl": "./packages",
+    "baseUrl": "../packages",
     "paths": {
       "@bkui-vue/*": [
         "*/src"
@@ -28,17 +30,5 @@
     "isolatedModules": true,
     "sourceMap": true,
     "noEmitOnError": true,
-  },
-  "include": [
-    "packages/**/*",
-    "site/**/*",
-    "scripts/**/*",
-    "./test-setup.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.js",
-    "*bak*"
-  ]
+  }
 }

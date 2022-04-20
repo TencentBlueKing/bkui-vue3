@@ -32,3 +32,5 @@ declare module '*.md' {
   const component: DefineComponent;
   export default Component;
 }
+declare module '*.less'
+declare module '*.svg'

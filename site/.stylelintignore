@@ -1,5 +1,5 @@
 node_modules/
+es/
 lib/
 dist/
-index.d.ts
-*bak*
+scripts/
