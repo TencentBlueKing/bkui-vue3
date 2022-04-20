@@ -25,7 +25,7 @@
 */
 export const DATA_TABLE = [
   {
-    ip: '192.168.0.1',
+    ip: 'from ip: 192.168.0.1',
     source: 'QQ',
     status: '创建中',
     create_time: '2018-05-25 15:02:24',
@@ -60,10 +60,12 @@ export const DATA_COLUMNS = [
   {
     label: '名称/内网IP',
     field: 'ip',
+    width: 100,
   },
   {
     label: '来源',
     field: 'source',
+    width: 80,
   },
   {
     label: '创建时间',

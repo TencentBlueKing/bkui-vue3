@@ -25,17 +25,19 @@
 */
 
 import Pagination from '@bkui-vue/pagination';
-import { classes } from '@bkui-vue/shared';
+import { classes, random } from '@bkui-vue/shared';
 
 import { TablePlugins } from './plugins/index';
 import { Column, GroupColumn, IColumnActive, IReactiveProp, TablePropTypes } from './props';
 import { resolvePropVal, resolveWidth } from './utils';
+
 
 export default class TableRender {
   props: TablePropTypes;
   context;
   reactiveProp: any;
   colgroups: GroupColumn[];
+  uuid: string;
   public plugins: TablePlugins;
   constructor(props, ctx, reactiveProp: IReactiveProp, colgroups: GroupColumn[]) {
     this.props = props;
@@ -43,6 +45,7 @@ export default class TableRender {
     this.reactiveProp = reactiveProp;
     this.colgroups = colgroups;
     this.plugins = new TablePlugins(props, ctx);
+    this.uuid = random(8);
   }
 
   get propActiveCols(): IColumnActive[] {
@@ -163,8 +166,9 @@ export default class TableRender {
           onDblclick={e => this.handleRowDblClick(e, row, index, rows)}
         >
         {
-          this.props.columns.map((column: Column) => <td colspan={1} rowspan={1}>
-          <div class="cell">{ this.renderCell(row, column, index, rows) }</div>
+          this.props.columns.map((column: Column, index: number) => <td class={this.getColumnClass(index)}
+          colspan={1} rowspan={1}>
+          <div class="cell" >{ this.renderCell(row, column, index, rows) }</div>
         </td>)
         }
       </tr>;
@@ -172,6 +176,8 @@ export default class TableRender {
     }
   </tbody>;
   }
+
+  private getColumnClass = (colIndex: number) => `${this.uuid}-column-${colIndex}`;
 
   /**
    * table row click handle
@@ -232,10 +238,9 @@ export default class TableRender {
           const colCls = classes({
             active: this.isColActive(index),
           });
-          const colStyle = {
-            width: resolveWidth(column.calcWidth),
-          };
-          return <col class={ colCls } style={ colStyle }></col>;
+
+          const width = `${resolveWidth(column.calcWidth)}`.replace(/px$/i, '');
+          return <col class={ colCls } width={ width }></col>;
         })
       }
       </colgroup>;
