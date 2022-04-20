@@ -23,33 +23,12 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import ora from 'ora';
-import { parentPort } from 'worker_threads';
+import { Task, TaskRunner } from '../typings/task';
+import release from '../utils/release';
 
-import { compileStyle } from '../compiler/compile-style';
-import { webpackBuildScript } from '../compiler/webpack-script';
-import { ITaskItem } from '../typings/task';
+const compileTaskRunner: TaskRunner<undefined> = async () => {
+  process.env.NODE_ENV = 'production';
+  await release();
+};
 
-import { writeFileRecursive } from './utils';
-parentPort.on('message', ({ task }) => {
-  (task.type === 'style'
-    ?  compileStyleTask(task)
-    :  compileScript(task)).finally(() => {
-    parentPort.postMessage(task);
-  });
-});
-async function compileStyleTask({ url, newPath }: ITaskItem) {
-  const spinner = ora(`building style ${url} \n`).start();
-  const { css, resource, varCss } = await compileStyle(url).catch(() => ({
-    css: '',
-    resource: '',
-    varCss: '',
-  }));
-  css.length && writeFileRecursive(newPath.replace(/\.(css|less|scss)$/, '.css'), css);
-  resource.length && writeFileRecursive(newPath, resource);
-  varCss.length && writeFileRecursive(newPath.replace(/\.(css|less|scss)$/, '.variable.css'), varCss);
-  css.length ? spinner.succeed() : spinner.fail();
-}
-async function compileScript(list: ITaskItem[]) {
-  return webpackBuildScript(list);
-}
+export default new Task('prepare release', compileTaskRunner);

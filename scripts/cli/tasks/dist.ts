@@ -23,8 +23,12 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { resolve } from 'path';
+import { Task, TaskRunner } from '../typings/task';
+import bundleDist from '../utils/bundle-dist';
 
-export const COMPONENT_URL = resolve(__dirname, '../../../packages');
-export const DIST_URL =  resolve(__dirname, '../../../lib');
-export const THEME_LESS_URL = resolve(COMPONENT_URL, 'styles/src/themes/themes.less');
+const compileTaskRunner: TaskRunner<undefined> = async () => {
+  process.env.NODE_ENV = 'production';
+  await bundleDist();
+};
+
+export default new Task<undefined>('compile dist', compileTaskRunner);
