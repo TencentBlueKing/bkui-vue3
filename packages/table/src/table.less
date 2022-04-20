@@ -23,6 +23,8 @@
         min-width: 80px;
 
         .cell {
+          display: flex;
+          align-items: center;
           padding: 0 15px;
           overflow: hidden;
           line-height: var(--row-height);
@@ -35,15 +37,39 @@
 
       thead {
         th {
-          position: sticky; 
-          top: 0; 
-          z-index: 1;
           color: @table-head-font-color;
           background-color: @table-head-bg-color;
 
           &.active,
           &:hover {
-            background: #f0f1f5;
+            background: @table-row-active-bg-color;
+          }
+
+          .head-cell-sort {
+            display: flex;
+            flex-direction: column;
+            margin-left: 4px;
+            font-size: 10px;
+
+            .sort-action {
+              display: flex;
+              width: 18px;
+              height: calc(var(--row-height)/2);
+              color: #c0c4cc;
+              cursor: pointer;
+
+              &.active {
+                color: #3a84ff;
+              }
+
+              &.sort-asc {
+                align-items: flex-end;
+              }
+
+              &.sort-desc {
+                align-items: flex-start;
+              }
+            }
           }
         }
       }
@@ -108,7 +134,7 @@
 
       &.active {
         position: relative;
-        background: #f0f1f5;
+        background: @table-row-active-bg-color;
       }
     }
   }
