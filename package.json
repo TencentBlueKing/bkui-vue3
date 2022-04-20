@@ -18,7 +18,7 @@
     "build:site": "vite build site --mode development",
     "build:dist": "rimraf dist && lerna run --scope cli --stream dist",
     "build:lib": "rimraf lib && lerna run --scope cli --stream lib",
-    "build:release": "rimraf lib && lerna run --scope cli release",
+    "build:release": "rimraf lib && lerna run --scope cli --stream release",
     "cz": "git-cz",
     "generate:icon": "lerna run --scope @bkui-vue/icon build",
     "release": "yarn build && rimraf package.json.bak && yarn build:release",
