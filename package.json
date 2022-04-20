@@ -19,7 +19,7 @@
     "build:dist": "rimraf dist && lerna run --stream --scope cli dist",
     "build:lib": "rimraf lib && lerna run --stream --scope cli lib",
     "help:release": "lerna run --stream --scope cli release",
-    "release": "yarn build && rimraf package.json.bak && yarn help:release",
+    "release": "yarn build && yarn help:release",
     "analyze:lib": "rimraf lib && lerna run --stream --scope cli lib -- -a",
     "generate:icon": "lerna run --scope @bkui-vue/icon build",
     "changelog": "conventional-changelog -c .changelog.config.js -p angular -i CHANGELOG.md -s -l",

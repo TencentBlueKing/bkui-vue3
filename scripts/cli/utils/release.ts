@@ -34,6 +34,7 @@ const packagePath = path.resolve(BKUI_DIR, './package.json');
 const packageTmpPath = `${packagePath}.bak`;
 
 export default async function () {
+  if (fs.existsSync(packageTmpPath)) fs.unlinkSync(packageTmpPath);
   const originalData = fs.readFileSync(packagePath, { encoding: 'utf8' });
   fs.writeFileSync(packageTmpPath, originalData);
 

@@ -72,7 +72,6 @@ export class CompileTask {
       }, []);
     const workerPool = new WorkerPool(Math.min(10, styleList.length + scriptList.length));
     let i = scriptList.length;
-    console.info(i, '===========');
     [...styleList, ...scriptList].forEach((item) => {
       workerPool.run<ITaskItem | ITaskItem[]>(item, this.taskOption, (err: Error, task) => {
         err && console.error(err);
