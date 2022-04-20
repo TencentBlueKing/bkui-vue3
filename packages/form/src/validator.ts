@@ -26,7 +26,7 @@
 export default {
   required: (value: any): boolean => {
     console.log('required');
-    return  value !== '';
+    return  value !== '' && value !== undefined && value !== null;
   },
   min: (value: number, min: number): boolean => {
     console.log('min');
