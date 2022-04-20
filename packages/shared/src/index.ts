@@ -32,7 +32,7 @@ export * from './mask-manager';
 export * from './helper';
 export * from './vue-types';
 export * from './scrollbar-width';
-
+export * from './utils';
 export function classes(dynamicCls: object, constCls = ''): string {
   return Object.entries(dynamicCls).filter(entry => entry[1])
     .map(entry => entry[0])

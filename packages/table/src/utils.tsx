@@ -136,9 +136,8 @@ export const resolvePropBorderToClassStr = (val: string | string[]) => {
  */
 export const resolveColumnWidth = (root: HTMLElement, colgroups: GroupColumn[], autoWidth = 20) => {
   const { width } = root.getBoundingClientRect() || {};
-
   // 可用来平均的宽度
-  let avgWidth = width;
+  let avgWidth = width - 4;
 
   // 需要平均宽度的列数
   const avgColIndexList = [];
