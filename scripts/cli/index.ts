@@ -53,7 +53,7 @@ export const run = async () => {
       await excuteTask(releaseTask)();
     });
   program.on('command:*', () => {
-    console.error('Invalid command: %s\nSee --help for a list of available commands.', program.args.join(' '));
+    console.error('Invalid command. Please check bkui-vue package.json', program.args.join(' '));
     process.exit(1);
   });
   program.parse(process.argv);
