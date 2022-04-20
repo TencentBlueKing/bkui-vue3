@@ -23,30 +23,8 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { appendFile, existsSync, mkdirSync, unlinkSync } from 'fs';
-import { promisify } from 'util';
-export const writeFileRecursive = async (url: string, content: string) => {
-  let filepath = url.replace(/\\/g, '/');
-  let root = '';
-  if (filepath[0] === '/') {
-    root = '/';
-    filepath = filepath.slice(1);
-  } else if (filepath[1] === ':') {
-    root = filepath.slice(0, 3);   // c:\
-    filepath = filepath.slice(3);
-  }
-
-  const folders = filepath.split('/').slice(0, -1);  // remove last item, file
-  folders.reduce(
-    (acc, folder) => {
-      const folderPath = `${acc + folder}/`;
-      if (!existsSync(folderPath)) {
-        mkdirSync(folderPath);
-      }
-      return folderPath;
-    },
-    root,
-  );
-  if (existsSync(url)) unlinkSync(url);
-  await promisify(appendFile)(url, content, 'utf-8');
-};
+const path = require('path');
+require('ts-node').register({
+  project: path.resolve(__dirname, '../tsconfig.json'),
+});
+require(path.resolve(__dirname, './task.ts'));

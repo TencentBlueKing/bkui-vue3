@@ -24,29 +24,39 @@
  * IN THE SOFTWARE.
 */
 
-import childProcess from 'child_process';
-import fs from 'fs';
-import path from 'path';
+import { program } from 'commander';
 
-const packagePath = path.resolve(__dirname, '../package.json');
-const packageTmpPath = path.resolve(__dirname, '../package.json.bak');
-
-(async function () {
-  const originalData = fs.readFileSync(packagePath, { encoding: 'utf8' });
-  fs.writeFileSync(packageTmpPath, originalData);
-
-  const packageData = JSON.parse(originalData);
-  delete packageData.private;
-  delete packageData.scripts.cc;
-  fs.writeFileSync(packagePath, `${JSON.stringify(packageData, null, 2)}\n`);
-
-  const proc = childProcess.spawn(
-    'npm',
-    ['publish', '--access=public', '--unsafe-perm', '--registry', 'https://registry.npmjs.org'],
-    { stdio: 'inherit' },
-  );
-  proc.on('close', () => {
-    fs.unlinkSync(packageTmpPath);
-    fs.writeFileSync(packagePath, originalData);
+import excuteTask from './excute-task';
+import distTask from './tasks/dist';
+import libTask from './tasks/lib';
+import releaseTask from './tasks/release';
+export const run = async () => {
+  program
+    .command('lib')
+    .option('-a, --analyze', 'analyze all components bunlders')
+    .description('build components')
+    .action(async (cmd) => {
+      await excuteTask(libTask)({
+        analyze: !!cmd.analyze,
+      });
+    });
+  program
+    .command('dist')
+    .description('build dist')
+    .action(async () => {
+      await excuteTask(distTask)();
+    });
+  program
+    .command('release')
+    .description('release bkui check')
+    .action(async () => {
+      await excuteTask(releaseTask)();
+    });
+  program.on('command:*', () => {
+    console.error('Invalid command: %s\nSee --help for a list of available commands.', program.args.join(' '));
+    process.exit(1);
   });
-}());
+  program.parse(process.argv);
+};
+
+run();

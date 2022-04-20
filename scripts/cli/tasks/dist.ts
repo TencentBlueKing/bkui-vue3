@@ -23,8 +23,12 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-const path = require('path');
-require('ts-node').register({
-  project: path.resolve(__dirname, '../../tsconfig.scripts.json'),
-});
-require(path.resolve(__dirname, './task.ts'));
+import bundleDist from '../bundles/bundle-dist';
+import { Task, TaskRunner } from '../typings/task';
+
+const compileTaskRunner: TaskRunner<undefined> = async () => {
+  process.env.NODE_ENV = 'production';
+  await bundleDist();
+};
+
+export default new Task<undefined>('compile', compileTaskRunner);

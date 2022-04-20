@@ -27,15 +27,13 @@
 import { lstatSync, readdirSync } from 'fs';
 import { join } from 'path';
 
-import { compileFile, compilerLibDir  } from './compiler/compile-lib';
-import {  compileTheme } from './compiler/compile-style';
-import { COMPONENT_URL, DIST_URL, THEME_LESS_URL } from './compiler/helpers';
-import { ICompileTaskOption, ITaskItem } from './typings/task';
-import { CompileTask } from './workers/compile-task';
-import { writeFileRecursive } from './workers/utils';
+import {  compileTheme } from '../compiler/compile-style';
+import { compileFile, compilerLibDir, COMPONENT_URL, DIST_URL, THEME_LESS_URL, writeFileRecursive } from '../compiler/helpers';
+import { ILibTaskOption, ITaskItem } from '../typings/task';
+import { CompileTask } from '../workers/compile-task';
 
 
-export const compilerDir = async (dir: string): Promise<any> => {
+export const compilerDir = async (option: ILibTaskOption): Promise<void> => {
   const list: ITaskItem[] = [];
   const buildDir: any = (dir: string) => {
     const files = readdirSync(dir);
@@ -51,8 +49,8 @@ export const compilerDir = async (dir: string): Promise<any> => {
       data && list.push(data);
     });
   };
-  buildDir(dir);
-  const taskInstance = new CompileTask(list);
+  buildDir(COMPONENT_URL);
+  const taskInstance = new CompileTask(list, option);
   taskInstance.start();
 };
 
@@ -62,10 +60,9 @@ const compileThemeTovariable = async () => {
   const resource = await compileTheme(THEME_LESS_URL);
   await writeFileRecursive(THEME_LESS_URL.replace(/\.(css|less|scss)$/, '.variable.$1'), resource);
 };
-export default async (option: ICompileTaskOption) => {
-  if (option.compile) {
-    compilerLibDir(DIST_URL);
-    await compileThemeTovariable();
-    compilerDir(COMPONENT_URL);
-  }
+export default async (option: ILibTaskOption) => {
+  console.info(option);
+  compilerLibDir(DIST_URL);
+  await compileThemeTovariable();
+  compilerDir(option);
 };

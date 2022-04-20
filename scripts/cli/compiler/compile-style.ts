@@ -24,30 +24,48 @@
  * IN THE SOFTWARE.
 */
 
-import excuteTask from './excute-task';
-import compileTask from './tasks/compile';
-// eslint-disable-next-line import/prefer-default-export
-// export const run = async () => {
-//   program
-//     .command('build')
-//     .option('-c, --compiler', 'compiler all components')
-//     .description('build components')
-//     .action(async (cmd) => {
-//       await excuteTask(compileTask)({
-//         compile: true
-//       });
-//     });
+import { readFile } from 'fs/promises';
+import { render } from 'less';
+import { resolve } from 'path';
+import postcss from 'postcss';
+import postcssLess from 'postcss-less';
 
-//   program.on('command:*', () => {
-//     console.error('Invalid command: %s\nSee --help for a list of available commands.', program.args.join(' '));
-//     process.exit(1);
-//   });
+import { LessPluginAlias, transformImport } from './helpers';
 
-//   program.parse(process.argv);
-// };
-
-(async () => {
-  await excuteTask(compileTask)({
-    compile: true,
+const styleDir = resolve(__dirname, '../../../packages/styles/src');
+export const compileStyle = async (url: string) => {
+  const resource =  await readFile(url, 'utf-8');
+  const varResource = resource.replace(/\/themes\/themes\.less/gmi, '/themes/themes.variable.less');
+  const { css } = await render(resource, {
+    filename: url,
+    plugins: [
+      new LessPluginAlias({
+        '@bkui-vue/styles': styleDir,
+      }),
+    ],
   });
-})();
+  const { css: varCss } = await render(varResource, {
+    filename: url,
+    plugins: [
+      new LessPluginAlias({
+        // @import '@bkui-vue/styles/mixins/mixins.less'; => @import 'bkui-vue/packages/styles/src/mixins/mixins.less';
+        '@bkui-vue/styles': styleDir,
+      }),
+    ],
+  });
+  const ret = await postcss([transformImport({
+    '@bkui-vue/styles': styleDir,
+    from: undefined,
+  })]).process(resource, { syntax: postcssLess });
+
+  return { css, varCss, resource: ret.css };
+};
+
+export const compileTheme = async (url: string) => {
+  const resource = await readFile(url, 'utf-8');
+  return `:root {
+    ${resource.replace(/@([^:]+):([^;]+);/gmi, '--$1:$2;').replace(/@([^;]+);/gmi, 'var(--$1);')}
+  }
+  ${resource.replace(/@([^:]+):([^;]+);/gmi, '@$1: var(--$1);').replace('var(--bk-prefix)', 'bk')}
+  `;
+};

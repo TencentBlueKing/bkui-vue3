@@ -24,5 +24,31 @@
  * IN THE SOFTWARE.
 */
 
-declare module 'less'
-declare module 'postcss-less'
+
+export type TaskRunner<T> = (options?: T) => Promise<void>;
+
+export class Task<TOptions>  {
+  options: TOptions = {} as any;
+  // eslint-disable-next-line no-useless-constructor
+  constructor(public name: string, public runner: TaskRunner<TOptions>) {}
+  setName = (name: string) => {
+    this.name = name;
+  };
+  setRunner = (runner: TaskRunner<TOptions>) => {
+    this.runner = runner;
+  };
+  setOptions = (options: TOptions) => {
+    this.options = options;
+  };
+  exec = () => this.runner(this.options);
+}
+
+export interface ILibTaskOption {
+  analyze: boolean
+}
+
+export interface ITaskItem {
+  type: 'style' | 'script';
+  url: string;
+  newPath: string;
+}

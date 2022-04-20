@@ -28,6 +28,8 @@ import { EventEmitter } from 'events';
 import path from 'path';
 import { GlobalsOption } from 'rollup';
 import  { Worker } from 'worker_threads';
+
+import { ILibTaskOption } from '../typings/task';
 const buildTask = Symbol('BKUI_BUILD');
 const buildEvent = Symbol('BKUI_BUILD_EVENT');
 const BUILD_TASK = 'BUILD_TASK';
@@ -39,17 +41,17 @@ class WorkerTask extends AsyncResource {
     this.callback = callback;
   }
 
-  done(err: Error, result: any) {
+  done(err: Error | null, result: any) {
     this.runInAsyncScope(this.callback, null, err, result);
     this.emitDestroy();
   }
 }
-
+export type WorkerType = (Worker & {[buildTask]: WorkerTask | null});
 export class WorkerPool extends EventEmitter {
   size: number;
-  workers: Worker[];
-  freeWorkers: Worker[];
-  globals: GlobalsOption;
+  workers: WorkerType[];
+  freeWorkers: WorkerType[];
+  globals: GlobalsOption | null = null;
   constructor(size: number) {
     super();
     this.size = size;
@@ -58,15 +60,15 @@ export class WorkerPool extends EventEmitter {
     for (let i = 0; i < size; i++) this.add();
   }
   add() {
-    const worker = new Worker(path.resolve(__dirname, './task.js'));
+    const worker = new Worker(path.resolve(__dirname, './task.js')) as WorkerType;
     worker.on('message', (result) => {
-      worker[buildTask].done(null, result);
+      worker[buildTask]?.done(null, result);
       worker[buildTask] = null;
       this.freeWorkers.push(worker);
       this.emit(buildEvent);
     });
     worker.on('error', (err) => {
-      if (worker[buildTask]) worker[buildTask].done(err, null);
+      if (worker[buildTask]) worker[buildTask]?.done(err, null);
       else this.emit('error', err);
       this.workers.splice(this.workers.indexOf(worker), 1);
       this.add();
@@ -76,14 +78,14 @@ export class WorkerPool extends EventEmitter {
     this.emit(buildEvent);
   }
 
-  run<T>(task: T, globals: GlobalsOption, callback: <T>(err: Error, task: T) => void) {
+  run<T>(task: T, taskOption: ILibTaskOption | null, callback: <T>(err: Error, task: T) => void) {
     if (this.freeWorkers.length === 0) {
-      this.once(buildEvent, () => this.run(task, globals, callback));
+      this.once(buildEvent, () => this.run(task, taskOption, callback));
       return;
     }
-    const worker = this.freeWorkers.pop();
+    const worker = this.freeWorkers.pop()! as WorkerType;
     worker[buildTask] = new WorkerTask(callback);
-    worker.postMessage({ task, globals });
+    worker.postMessage({ task, taskOption });
   }
 
   close() {

@@ -24,53 +24,19 @@
  * IN THE SOFTWARE.
 */
 
-import { resolve } from 'path';
-import { build } from 'vite';
+import chalk from 'chalk';
 
-import vue from '@vitejs/plugin-vue';
-import vueJsx from '@vitejs/plugin-vue-jsx';
+import { Task } from './typings/task';
 
-(async () => {
-  await build({
-    resolve: {
-      alias: [
-        {
-          find: /^@bkui-vue\/(icon\/)/,
-          replacement: resolve(__dirname, '../packages/$1'),
-        },
-        {
-          find: /^@bkui-vue\/([^/]*)/,
-          replacement: resolve(__dirname, '../packages/$1/src'),
-        },
-      ],
-    },
-    plugins: [vueJsx(), vue()],
-    build: {
-      minify: false,
-      lib: {
-        entry: resolve(__dirname, '../packages/bkui-vue/index.ts'),
-        name: 'bkuiVue',
-      },
-      rollupOptions: {
-        external: ['vue'],
-        output: [
-          {
-            format: 'cjs',
-            exports: 'named',
-          },
-          {
-            format: 'esm',
-            exports: 'named',
-          },
-          {
-            globals: {
-              vue: 'Vue',
-            },
-            exports: 'named',
-            format: 'umd',
-          },
-        ],
-      },
-    },
-  });
-})();
+export default <T>(task: Task<T>) => async (options?: T) => {
+  console.log(chalk.yellow(`Running ${chalk.bold(task.name)} task`));
+  task.setOptions(options);
+  try {
+    console.group();
+    await task.exec();
+    console.groupEnd();
+  } catch (e) {
+    console.trace(e);
+    process.exit(1);
+  }
+};

@@ -24,31 +24,56 @@
  * IN THE SOFTWARE.
 */
 
+import { resolve } from 'path';
+import { build } from 'vite';
 
-export type TaskRunner<T> = (options: T) => Promise<any>;
+import vue from '@vitejs/plugin-vue';
+import vueJsx from '@vitejs/plugin-vue-jsx';
 
-export class Task<TOptions>  {
-  options: TOptions = {} as any;
-  // eslint-disable-next-line no-useless-constructor
-  constructor(public name: string, public runner: TaskRunner<TOptions>) {}
-  setName = (name: string) => {
-    this.name = name;
-  };
-  setRunner = (runner: TaskRunner<TOptions>) => {
-    this.runner = runner;
-  };
-  setOptions = (options: TOptions) => {
-    this.options = options;
-  };
-  exec = () => this.runner(this.options);
-}
-
-export interface ICompileTaskOption {
-  compile: boolean
-}
-
-export interface ITaskItem {
-  type: 'style' | 'script';
-  url: string;
-  newPath: string;
-}
+const packagesDir = '../../../packages';
+const entry = resolve(__dirname, `${packagesDir}/bkui-vue/index.ts`);
+const outDir =  resolve(__dirname, '../../../dist');
+export default async () => await build({
+  resolve: {
+    alias: [
+      {
+        find: /^@bkui-vue\/(icon\/)/,
+        replacement: resolve(__dirname, `${packagesDir}/$1`),
+      },
+      {
+        find: /^@bkui-vue\/([^/]*)/,
+        replacement: resolve(__dirname, `${packagesDir}/$1/src`),
+      },
+    ],
+  },
+  plugins: [vueJsx(), vue()],
+  build: {
+    outDir,
+    minify: true,
+    lib: {
+      entry,
+      name: 'bkuiVue',
+      fileName: format => `index.${format}.js`,
+    },
+    rollupOptions: {
+      external: ['vue'],
+      output: [
+        {
+          format: 'cjs',
+          exports: 'named',
+        },
+        {
+          format: 'esm',
+          exports: 'named',
+        },
+        {
+          globals: {
+            vue: 'Vue',
+          },
+          exports: 'named',
+          format: 'umd',
+        },
+      ],
+    },
+  },
+});

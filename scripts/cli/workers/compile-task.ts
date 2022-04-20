@@ -28,12 +28,12 @@ import { GlobalsOption } from 'rollup';
 import { promisify } from 'util';
 
 import packageJson from '../../../package.json';
-import { ITaskItem } from '../typings/task';
+import { ILibTaskOption, ITaskItem } from '../typings/task';
 
 import { WorkerPool } from './worker-pools';
 export class CompileTask {
-  globals: GlobalsOption;
-  constructor(public taskItemList: ITaskItem[]) { }
+  globals: GlobalsOption | null = null;
+  constructor(public taskItemList: ITaskItem[], public taskOption: ILibTaskOption) { }
   async getRollupGlobals() {
     const { stdout } = await promisify(exec)('yarn workspaces info --json');
     const globals: GlobalsOption = {};
@@ -55,23 +55,26 @@ export class CompileTask {
   async start() {
     // !this.globals && await this.getRollupGlobals();
     const styleList = this.taskItemList.filter(item => item.type === 'style');
-    const scriptList = [];
-    this.taskItemList.filter(item => item.type === 'script').reduce((pre, cur, index, list) => {
-      if (pre.length <= Math.ceil(list.length / 2)) {
-        pre.push(cur);
-        if (index === list.length - 1) {
-          scriptList.push(pre);
-          return [];
+    const scriptList: ITaskItem[][] = [];
+    this.taskItemList
+      .filter(item => item.type === 'script')
+      .reduce((pre: ITaskItem[], cur: ITaskItem, index, list) => {
+        if (pre.length <= (this.taskOption.analyze ? list.length : Math.ceil(list.length / 2))) {
+          pre.push(cur);
+          if (index === list.length - 1) {
+            scriptList.push(pre);
+            return [];
+          }
+          return pre;
         }
-        return pre;
-      }
-      scriptList.push(pre);
-      return [];
-    }, []);
+        scriptList.push(pre);
+        return [];
+      }, []);
     const workerPool = new WorkerPool(Math.min(10, styleList.length + scriptList.length));
     let i = scriptList.length;
+    console.info(i, '===========');
     [...styleList, ...scriptList].forEach((item) => {
-      workerPool.run<ITaskItem | ITaskItem[]>(item, this.globals, (err: Error, task) => {
+      workerPool.run<ITaskItem | ITaskItem[]>(item, this.taskOption, (err: Error, task) => {
         err && console.error(err);
         if (Array.isArray(task)) {
           i -= 1;

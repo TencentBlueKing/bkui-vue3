@@ -24,11 +24,14 @@
  * IN THE SOFTWARE.
 */
 
-import bundleTask from '../bundle-task';
-import { ICompileTaskOption, Task, TaskRunner } from '../typings/task';
+import bundleComponents from '../bundles/bundle-components';
+import generateDecration from '../bundles/generate-decrations';
+import { ILibTaskOption, Task, TaskRunner } from '../typings/task';
 
-const compileTaskRunner: TaskRunner<ICompileTaskOption> = async (option) => {
-  await bundleTask(option);
+const compileTaskRunner: TaskRunner<ILibTaskOption> = async (option?: ILibTaskOption): Promise<void> => {
+  process.env.NODE_ENV = 'production';
+  await generateDecration();
+  await bundleComponents(option!);
 };
 
-export default new Task<ICompileTaskOption>('compile', compileTaskRunner);
+export default new Task<ILibTaskOption>('build lib', compileTaskRunner);
