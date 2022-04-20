@@ -23,8 +23,34 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-const path = require('path');
-require('ts-node').register({
-  project: path.resolve(__dirname, '../../tsconfig.scripts.json'),
+import ora from 'ora';
+import { parentPort } from 'worker_threads';
+
+import { compileStyle } from '../compiler/compile-style';
+import { writeFileRecursive } from '../compiler/helpers';
+import { webpackBuildScript } from '../compiler/webpack-script';
+import { ILibTaskOption, ITaskItem } from '../typings/task';
+
+parentPort!.on('message', ({ task, taskOption }) => {
+  (task.type === 'style'
+    ?  compileStyleTask(task)
+    :  compileScript(task, taskOption)).finally(() => {
+    parentPort!.postMessage(task);
+  });
 });
-require(path.resolve(__dirname, './task.ts'));
+async function compileStyleTask({ url, newPath }: ITaskItem) {
+  const spinner = ora(`building style ${url} \n`).start();
+  const { css, resource, varCss } = await compileStyle(url).catch(() => ({
+    css: '',
+    resource: '',
+    varCss: '',
+  }));
+  css.length && writeFileRecursive(newPath.replace(/\.(css|less|scss)$/, '.css'), css);
+  resource.length && writeFileRecursive(newPath, resource);
+  varCss.length && writeFileRecursive(newPath.replace(/\.(css|less|scss)$/, '.variable.css'), varCss);
+  css.length ? spinner.succeed() : spinner.fail();
+}
+async function compileScript(list: ITaskItem[], taskOption: ILibTaskOption) {
+  console.info(list.length, '++++++++++');
+  return webpackBuildScript(list, taskOption);
+}

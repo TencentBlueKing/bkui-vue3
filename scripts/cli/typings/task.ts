@@ -25,7 +25,7 @@
 */
 
 
-export type TaskRunner<T> = (options: T) => Promise<any>;
+export type TaskRunner<T> = (options?: T) => Promise<void>;
 
 export class Task<TOptions>  {
   options: TOptions = {} as any;
@@ -37,14 +37,14 @@ export class Task<TOptions>  {
   setRunner = (runner: TaskRunner<TOptions>) => {
     this.runner = runner;
   };
-  setOptions = (options: TOptions) => {
-    this.options = options;
+  setOptions = (options?: TOptions) => {
+    this.options = options || {} as any;
   };
   exec = () => this.runner(this.options);
 }
 
-export interface ICompileTaskOption {
-  compile: boolean
+export interface ILibTaskOption {
+  analyze: boolean
 }
 
 export interface ITaskItem {

@@ -24,19 +24,14 @@
  * IN THE SOFTWARE.
 */
 
-import chalk from 'chalk';
+import { ILibTaskOption, Task, TaskRunner } from '../typings/task';
+import bundleComponents from '../utils/bundle-components';
+import generateDecration from '../utils/generate-decrations';
 
-import { Task } from './typings/task';
-
-export default <T>(task: Task<T>) => async (options: T) => {
-  console.log(chalk.yellow(`Running ${chalk.bold(task.name)} task`));
-  task.setOptions(options);
-  try {
-    console.group();
-    await task.exec();
-    console.groupEnd();
-  } catch (e) {
-    console.trace(e);
-    process.exit(1);
-  }
+const compileTaskRunner: TaskRunner<ILibTaskOption> = async (option?: ILibTaskOption): Promise<void> => {
+  process.env.NODE_ENV = 'production';
+  await generateDecration();
+  await bundleComponents(option!);
 };
+
+export default new Task<ILibTaskOption>('compile lib', compileTaskRunner);
