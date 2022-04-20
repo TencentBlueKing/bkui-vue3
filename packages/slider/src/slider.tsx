@@ -428,17 +428,17 @@ export default defineComponent({
         </div>
         {(props.showInput && !props.vertical) ? <div class="bk-slider-input">
           <div class="input-item">
-              <Input type="number"
-                v-model={firstInput.value}
-                max={props.maxValue}
-                min={props.minValue}
-                onChange={firstInputChange}></Input>
+            <Input type="number"
+              modelValue={firstInput.value}
+              max={props.maxValue}
+              min={props.minValue}
+              onChange={firstInputChange}></Input>
           </div>
           {showSecondInput.value && secondValue.value ? <>
             <div class="input-center">～</div>
             <div class="input-item">
               <Input type="number"
-                v-model={secondInput.value}
+                modelValue={secondInput.value}
                 max={props.maxValue}
                 min={props.minValue}
                 onChange={secondInputChange}
