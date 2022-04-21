@@ -53,7 +53,7 @@ export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILi
         if (/^icon-/.test(name)) {
           return `icon/${name.replace('icon-', '')}.js`;
         }
-        return `${pathData.chunk.name}/${pathData.chunk.name}.js`;
+        return `${pathData.chunk.name}/index.js`;
       },
       path: LIB_URL,
       // chunkFilename: (pathData: any) => {

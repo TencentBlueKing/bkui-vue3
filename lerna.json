@@ -18,8 +18,7 @@
       ],
       "noGitTagVersion": true,
       "noPush": true
-    },
-    
+    },   
     "bootstrap": {
       "hoist": true,
       "npmClientArgs": [

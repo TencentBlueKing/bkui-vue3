@@ -1,5 +1,36 @@
 {
-  "extends": "../packages/tsconfig.base.json",
+  "compilerOptions": {
+    "strictNullChecks": false,
+    "strict": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "resolveJsonModule": true,
+    "jsx": "preserve",
+    "noUnusedParameters": true,
+    "noUnusedLocals": true,
+    "jsxFactory": "h",
+    "jsxFragmentFactory": "Fragment",
+    "noImplicitAny": false,
+    "module": "esnext",
+    "target": "es6",
+    "lib": [
+      "dom",
+      "es2017"
+    ],
+    "skipLibCheck": true,
+    "allowJs": true,
+    "baseUrl": "../packages",
+    "paths": {
+      "@bkui-vue/*": [
+        "*/src"
+      ]
+    },
+    "importHelpers": true,
+    "isolatedModules": true,
+    "sourceMap": true,
+    "noEmitOnError": true,
+  },
   "include": ["./**/*.ts", "./**/*.tsx"],
   "exclude": ["node_modules", "./**/*.js"]
 }
