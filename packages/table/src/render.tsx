@@ -37,7 +37,7 @@ export const enum EVENTS {
 }
 
 /** 排序方式 */
-export const enum SORT_TYPE {
+export const enum SortType {
   ASC = 'asc',
   DESC = 'desc'
 }
@@ -200,7 +200,7 @@ export default class TableRender {
       };
       Object.assign(column, { _sort_reg: type });
       const sortFn = typeof (column.sort as any)?.sortFn === 'function' ? (column.sort as any)?.sortFn : sortFn0;
-      const execFn = (_a, _b) => sortFn(_a, _b) * (type === SORT_TYPE.DESC ? -1 : 1);
+      const execFn = (_a, _b) => sortFn(_a, _b) * (type === SortType.DESC ? -1 : 1);
       this.emitEvent(EVENTS.ON_SORT_BY_CLICK, [{ sortFn: execFn, column, index, type }]);
     };
 
@@ -216,10 +216,10 @@ export default class TableRender {
         // eslint-disable-next-line @typescript-eslint/dot-notation
         const sortReg = column['_sort_reg'];
         const sortCell = <span class="head-cell-sort">
-          <AngleDownFill class={['sort-action', 'sort-asc', sortReg === SORT_TYPE.ASC ? 'active' : '']}
-            onClick={(e: MouseEvent) => hanldeSortClick(e, column, index, SORT_TYPE.ASC)}/>
-          <AngleUpFill class={['sort-action', 'sort-desc', sortReg === SORT_TYPE.DESC ? 'active' : '']}
-            onClick={(e: MouseEvent) => hanldeSortClick(e, column, index, SORT_TYPE.DESC)}/>
+          <AngleDownFill class={['sort-action', 'sort-asc', sortReg === SortType.ASC ? 'active' : '']}
+            onClick={(e: MouseEvent) => hanldeSortClick(e, column, index, SortType.ASC)}/>
+          <AngleUpFill class={['sort-action', 'sort-desc', sortReg === SortType.DESC ? 'active' : '']}
+            onClick={(e: MouseEvent) => hanldeSortClick(e, column, index, SortType.DESC)}/>
         </span>;
         cells.push(sortCell);
       }
