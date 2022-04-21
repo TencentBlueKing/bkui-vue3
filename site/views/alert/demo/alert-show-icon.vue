@@ -1,5 +1,5 @@
 <template>
-    <bk-alert
+  <bk-alert
     theme="success"
     title="成功的提示文字"
     :show-icon="false"
@@ -25,7 +25,7 @@
 
 </script>
 <style lang="postcss">
-  .bk-alert ~ .bk-alert{
-      margin-top: 20px;
+  .bk-alert ~ .bk-alert {
+    margin-top: 20px;
   }
 </style>

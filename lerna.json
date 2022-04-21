@@ -1,7 +1,8 @@
 {
   "packages": [  
     "packages/*", 
-    "scrpits/*"
+    "scrpits/*",
+    "site/"
   ],
   "npmClient": "yarn",
   "useWorkspaces": true,

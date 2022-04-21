@@ -1,14 +1,14 @@
 {
   "name": "bkui-vue",
-  "private": true,
+  "private": "true",
   "version": "0.0.1-beta.41",
   "workspaces": {
     "packages": [
       "packages/!(**.bak)*",
-      "scripts/*"
+      "scripts/*",
+      "site/"
     ]
   },
-  "private": "true",
   "files": [
     "lib",
     "dist"
@@ -16,18 +16,22 @@
   "scripts": {
     "prepare": "husky install",
     "dev": "vite serve site",
-    "build": "yarn build:dist && yarn build:lib",
+    "build": "run-p build:dist build:lib",
     "build:site": "vite build site --mode development",
     "build:dist": "rimraf dist && lerna run --stream --scope cli dist",
     "build:lib": "rimraf lib && lerna run --stream --scope cli lib",
     "help:release": "lerna run --stream --scope cli release",
-    "release": "yarn build && yarn help:release",
+    "release": "run-s build help:release",
     "analyze:lib": "rimraf lib && lerna run --stream --scope cli lib -- -a",
     "generate:icon": "lerna run --scope @bkui-vue/icon build",
     "changelog": "conventional-changelog -c .changelog.config.js -p angular -i CHANGELOG.md -s -l",
-    "lint": "eslint --ext .js,.ts,.tsx,.vue ./packages ./site ",
-    "lint:style": "stylelint --fix ./packages/**/*.{css,less} --custom-syntax",
-    "lint:fix": "eslint --fix ./packages ./site --ext .js,.ts,.tsx,.vue",
+    "lint:packages": "eslint ./packages -c ./packages/.eslintrc.js  --ext .js,.ts,.tsx --cache",
+    "lint:site": "eslint ./site -c ./site/.eslintrc.js  --ext .js,.ts,.tsx,.vue --cache",
+    "lint": "run-p lint:site lint:packages",
+    "lint:fix": "yarn lint:site -- --fix && yarn lint:packages -- --fix",
+    "stylelint:packages": "stylelint ./packages/**/*.{css,less} --fix --config ./packages/.stylelintrc.js --cache",
+    "stylelint:site": "stylelint ./site/**/*.{css,less} --fix --config ./site/.stylelintrc.js --cache",
+    "stylelint:fix": "yarn stylelint:packages -- --fix && yarn stylelint:site -- --fix",
     "test:unit": "jest --passWithNoTests --config=./jest.config.js",
     "cz": "git-cz"
   },
@@ -42,9 +46,6 @@
     "@vitejs/plugin-vue": "~2.3.1",
     "@vitejs/plugin-vue-jsx": "~1.3.9",
     "@vue/babel-plugin-jsx": "~1.1.1",
-    "@vue/babel-preset-jsx": "~1.2.4",
-    "@vue/compiler-sfc": "~3.2.31",
-    "@vue/component-compiler-utils": "~3.3.0",
     "@vue/eslint-config-standard": "~6.1.0",
     "@vue/eslint-config-typescript": "~10.0.0",
     "@vue/test-utils": "~2.0.0-rc.12",
@@ -72,13 +73,16 @@
     "lint-staged": "~12.3.7",
     "markdown-it-container": "~3.0.0",
     "normalize-wheel": "~1.0.1",
+    "npm-run-all": "~4.1.5",
     "plop": "~3.0.5",
     "postcss": "~8.4.12",
+    "postcss-html": "~1.4.1",
     "postcss-less": "~6.0.0",
     "prettier": "~2.6.2",
     "prismjs": "~1.27.0",
     "rimraf": "~3.0.2",
     "stylelint": "~14.6.1",
+    "stylelint-config-recommended-vue": "~1.4.0",
     "stylelint-order": "~5.0.0",
     "stylelint-scss": "~4.2.0",
     "ts-jest": "~27.1.4",
@@ -99,11 +103,13 @@
   "module": "dist/bkui-vue.esm.js",
   "typings": "./lib/index.d.ts",
   "lint-staged": {
-    "*.css": "stylelint",
-    "*.less": "stylelint --fix --customSyntax=postcss-less",
-    "*.{js,ts,tsx,vue}": [
-      "eslint --fix",
-      "git add ."
+    "*.(ts|tsx)": [
+      "eslint --ext .js,.tsx,.ts,.vue --cache --fix",
+      "git add"
+    ],
+    "*.(vue|scss|css|sass)": [
+      "stylelint --cache --fix",
+      "git add"
     ]
   },
   "config": {

@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 300px; width: 100%">
+  <div style=" width: 100%;height: 300px">
     <div style="padding: 15px 0">
       <bk-checkbox-group v-model="border">
         <bk-checkbox label="none" />

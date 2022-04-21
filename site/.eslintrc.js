@@ -30,17 +30,22 @@ module.exports = {
     'plugin:vue/vue3-recommended',
     'eslint-config-tencent',
   ],
-  parser: 'vue-eslint-parser',
+  // parser: 'vue-eslint-parser',
   parserOptions: {
     parser: '@typescript-eslint/parser',
-    ecmaVersion: 2019,
+    ecmaFeatures: {
+      jsx: true,
+    },
+    ecmaVersion: 'latest',
     sourceType: 'module',
     tsconfigRootDir: __dirname,
-    project: 'tsconfig.json',
+    // project: 'tsconfig.json',
+    // extraFileExtensions: 'vue',
   },
   plugins: [
     'codecc',
     'simple-import-sort',
+    'vue',
   ],
   env: {
     es6: true,
@@ -55,7 +60,7 @@ module.exports = {
     },
     {
       files: ['*.vue'],
-      parser: require.resolve('vue-eslint-parser'),
+      parser: 'vue-eslint-parser',
       rules: {
         indent: 'off',
         'codecc/license': 'off',
