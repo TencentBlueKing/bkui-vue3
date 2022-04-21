@@ -188,7 +188,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/exception',
     name: 'exception',
-    component: () => import('../views/exception'),
+    component: () => import('../views/exception/exception'),
     meta: {
       group: NavGroupMeta.Feedback,
       navName: 'Exception 异常提示',
@@ -613,7 +613,7 @@ const routes: RouteRecordRaw[] = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.VITE_APP_BASE_URL),
   routes,
 });
 

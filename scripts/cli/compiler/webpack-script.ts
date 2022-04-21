@@ -71,10 +71,12 @@ export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILi
               loader: 'babel-loader',
               options: {
                 presets: [
-                  [
-                    '@babel/preset-env',
-                  ],
-                  '@vue/babel-preset-jsx',
+                  '@babel/preset-env',
+                  '@babel/preset-typescript',
+                ],
+                plugins: [
+                  '@vue/babel-plugin-jsx',
+                  '@babel/plugin-transform-runtime',
                 ],
               },
             },
@@ -112,9 +114,9 @@ export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILi
       'vue-types',
       ({ request }, cb)  => {
         const prefix = '@bkui-vue/';
-        if (request?.includes('@babel/')) {
-          return cb(undefined, request);
-        }
+        // if (request?.includes('@babel/')) {
+        //   return cb(undefined, request);
+        // }
         if (request?.indexOf(prefix) === 0) {
           return cb(undefined, request.replace(prefix, '../'));
         }
