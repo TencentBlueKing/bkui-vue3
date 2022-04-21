@@ -28,6 +28,10 @@ import { ExtractPropTypes, PropType } from 'vue';
 
 import { OnFirstUpdateFnType, PropTypes } from '@bkui-vue/shared';
 const placements = ['auto', 'auto-start', 'auto-end', 'top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end', 'right', 'right-start', 'right-end', 'left', 'left-start', 'left-end'];
+const EventProps = {
+  onAfterHidden: Function,
+  onAfterShow: Function,
+};
 export const PopoverProps = {
   isShow: PropTypes.bool,
   width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
@@ -86,6 +90,8 @@ export const PopoverProps = {
    * 例如：boundary = document.body, fixOnBoundary = true，则弹出内容会一直固定到body
    */
   fixOnBoundary: PropTypes.bool.def(false),
+
+  ...EventProps,
 };
 
 export type PopoverPropTypes = Readonly<ExtractPropTypes<typeof PopoverProps>>;

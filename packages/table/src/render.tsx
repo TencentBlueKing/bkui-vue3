@@ -28,6 +28,7 @@ import { AngleDownFill, AngleUpFill } from '@bkui-vue/icon/';
 import Pagination from '@bkui-vue/pagination';
 import { classes, random } from '@bkui-vue/shared';
 
+import HeadFilter from './plugins/head-filter';
 import { TablePlugins } from './plugins/index';
 import { Column, GroupColumn, IColumnActive, IReactiveProp, TablePropTypes } from './props';
 import { resolveHeadConfig, resolvePropVal, resolveWidth } from './utils';;
@@ -172,16 +173,19 @@ export default class TableRender {
   }
 
   /**
-   * 渲染Table Header
+   * 获取排序设置表头
+   * @param column 当前渲染排序列
+   * @param index 排序列所在index
    * @returns
    */
-  private renderHeader() {
-    const config = resolveHeadConfig(this.props);
-    const { cellFn } =  config;
-    const rowStyle = {
-      '--row-height': `${resolvePropVal(config, 'height', ['thead'])}px`,
-    };
-
+  private getSortCell(column: Column, index: number) {
+    /**
+     * 点击排序事件
+     * @param e 鼠标事件
+     * @param column 当前列
+     * @param index 当前列index
+     * @param type 排序类型
+     */
     const hanldeSortClick = (e: MouseEvent, column:  Column, index: number, type: string) => {
       e.stopImmediatePropagation();
       e.stopPropagation();
@@ -204,6 +208,32 @@ export default class TableRender {
       this.emitEvent(EVENTS.ON_SORT_BY_CLICK, [{ sortFn: execFn, column, index, type }]);
     };
 
+    // eslint-disable-next-line @typescript-eslint/dot-notation
+    const sortReg = column['_sort_reg'];
+    return <span class="head-cell-sort">
+          <AngleDownFill class={['sort-action', 'sort-asc', sortReg === SORT_TYPE.ASC ? 'active' : '']}
+            onClick={(e: MouseEvent) => hanldeSortClick(e, column, index, SORT_TYPE.ASC)}/>
+          <AngleUpFill class={['sort-action', 'sort-desc', sortReg === SORT_TYPE.DESC ? 'active' : '']}
+            onClick={(e: MouseEvent) => hanldeSortClick(e, column, index, SORT_TYPE.DESC)}/>
+        </span>;
+  }
+
+  private getFilterCell(_column: Column, _index: number) {
+    return <HeadFilter filter={ _column.filter }/>;
+  }
+
+  /**
+   * 渲染Table Header
+   * @returns
+   */
+  private renderHeader() {
+    const config = resolveHeadConfig(this.props);
+    const { cellFn } =  config;
+    const rowStyle = {
+      '--row-height': `${resolvePropVal(config, 'height', ['thead'])}px`,
+    };
+
+
     /**
      * table head cell render
      * @param column
@@ -213,15 +243,11 @@ export default class TableRender {
     const renderHeadCell = (column: Column, index: number) => {
       const cells = [];
       if (column.sort) {
-        // eslint-disable-next-line @typescript-eslint/dot-notation
-        const sortReg = column['_sort_reg'];
-        const sortCell = <span class="head-cell-sort">
-          <AngleDownFill class={['sort-action', 'sort-asc', sortReg === SORT_TYPE.ASC ? 'active' : '']}
-            onClick={(e: MouseEvent) => hanldeSortClick(e, column, index, SORT_TYPE.ASC)}/>
-          <AngleUpFill class={['sort-action', 'sort-desc', sortReg === SORT_TYPE.DESC ? 'active' : '']}
-            onClick={(e: MouseEvent) => hanldeSortClick(e, column, index, SORT_TYPE.DESC)}/>
-        </span>;
-        cells.push(sortCell);
+        cells.push(this.getSortCell(column, index));
+      }
+
+      if (column.filter) {
+        cells.push(this.getFilterCell(column, index));
       }
 
       if (typeof cellFn === 'function') {

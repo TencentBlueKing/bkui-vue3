@@ -41,6 +41,8 @@ import {
   resolvePropBorderToClassStr,
 } from './utils';
 
+import './plugins/head-filter.less';
+
 export default defineComponent({
   name: 'Table',
   props: tableProps,

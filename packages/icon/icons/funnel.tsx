@@ -1,3 +1,4 @@
+
 /*
 * Tencent is pleased to support the open source community by making
 * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
@@ -23,68 +24,16 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-export const DATA_TABLE = [
-  {
-    ip: 'from ip: 192.168.0.1',
-    source: 'QQ',
-    status: '创建中',
-    create_time: '2018-05-25 15:02:241',
-  },
-  {
-    ip: '192.168.0.2',
-    source: '微信',
-    status: '正常',
-    create_time: '2018-05-25 15:02:242',
+import { FunctionalComponent } from 'vue';
 
-  },
-  {
-    ip: '192.168.0.3',
-    source: 'QQ',
-    status: '创建中',
-    create_time: '2018-05-25 15:02:243',
-  },
-  {
-    ip: '192.168.0.3',
-    source: 'QQ',
-    status: '创建中',
-    create_time: '2018-05-25 15:02:244',
-  },
-  {
-    ip: '192.168.0.3',
-    source: 'QQ',
-    status: '创建中',
-    create_time: '2018-05-25 15:02:24',
-  },
-];
+import BkIcon, { IIconBaseProps } from './icon';
+const data = JSON.parse('{"type":"element","name":"svg","attributes":{"xmlns":"http://www.w3.org/2000/svg","viewBox":"0 0 1024 1024","style":"width: 1em; height: 1em; vertical-align: middle;fill: currentColor;overflow: hidden;"},"elements":[{"type":"element","name":"path","attributes":{"d":"M860.8 128H163.2a32 32 0 0 0-27.36 52l295.2 336 0.96 0V896l160-82.72V516.8l0.96 0 295.2-336A32 32 0 0 0 860.8 128Z"}}]}');
+const funnel: FunctionalComponent<IIconBaseProps> = (props, context) => {
+  const p = { ...props, ...context.attrs };
+  return <BkIcon {...p}  data={data} name="funnel"></BkIcon>;
+};
 
-export const DATA_COLUMNS = [
-  {
-    label: '序号',
-    type: 'index',
-    sort: true,
-    width: 100,
-  },
-  {
-    label: '名称/内网IP',
-    field: 'ip',
-    width: 100,
-  },
-  {
-    label: '来源',
-    field: 'source',
-    width: 80,
-    filter: {
-      list: [{ text: 'QQ', value: 'QQ' }, { text: 'WX', value: 'WX' }],
-    },
-  },
-  {
-    label: '创建时间',
-    field: 'create_time',
-    sort: true,
-  },
-  {
-    label: (column, index) => `状态-${index}-${column.field}`,
-    field: 'status',
-    sort: true,
-  },
-];
+funnel.displayName = 'funnel';
+funnel.inheritAttrs = false;
+
+export default funnel;

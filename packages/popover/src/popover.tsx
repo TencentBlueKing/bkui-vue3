@@ -38,6 +38,7 @@ import { PopoverProps, PopoverPropTypes } from './props';
 export default defineComponent({
   name: 'Popover',
   props: PopoverProps,
+  emits: ['afterHidden', 'afterShow', 'update:isShow'],
   setup(props: PopoverPropTypes, ctx: SetupContext) {
     let isPopInstance = false;
     let popoverInstance = Object.create(null);
@@ -72,10 +73,12 @@ export default defineComponent({
 
     const handleClose: any = () => {
       ctx.emit('update:isShow', false);
+      ctx.emit('afterHidden', false);
     };
 
     const handleShown: any = () => {
       ctx.emit('update:isShow', true);
+      ctx.emit('afterShow', false);
     };
 
     const getOptions = () => ({
@@ -136,6 +139,16 @@ export default defineComponent({
     const customTheme = compTheme.value.customThemes.reduce((out, cur) => ({ [`data-${cur}-theme`]: true, ...out }), {});
     const contentClass = `bk-popover-content ${customThemeCls}`;
 
+    /**
+     * 阻止默认事件，避免多层嵌套导致的点击失焦问题
+     * @param e
+     */
+    const handleClickContent = (e: MouseEvent) => {
+      e.stopImmediatePropagation();
+      e.stopPropagation();
+      e.preventDefault();
+    };
+
     return () => (
       <div class="bk-popover" data-bk-pop-container>
         <div ref={ reference } class="bk-popover-reference">
@@ -147,7 +160,8 @@ export default defineComponent({
           <div ref={ refContent }
             class={contentClass}
             style={compStyle.value}
-            {...customTheme}>
+            {...customTheme}
+            onClick={ handleClickContent }>
             {ctx.slots.content?.() ?? content.value}
             {arrow.value && <div class="arrow" data-popper-arrow></div>}
           </div>
