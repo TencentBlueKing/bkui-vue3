@@ -49,6 +49,7 @@ export const tableProps = {
     field: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
     render: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
     width: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]),
+    type: PropTypes.commonType(['selection', 'index', 'expand'], 'columnType').def(''),
     sort: PropTypes.oneOfType([PropTypes.shape({
       sortby: PropTypes.string.def(''),
       sortFn: PropTypes.func.def(null),
@@ -133,9 +134,10 @@ export const tableProps = {
 
 export type Column = {
   label: Function | string;
-  field: Function | string;
+  field?: Function | string;
   render?: Function | string;
   width?: number | string;
+  type?: string;
   sort?: {
     sortby?: string;
     sortFn?: Function;

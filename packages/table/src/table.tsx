@@ -50,6 +50,7 @@ export default defineComponent({
     const colgroups = reactive(props.columns.map(col => ({ ...col, calcWidth: null })));
     const startIndex = ref(0);
     const endIndex = ref(0);
+    let columnSortFn: any = null;
 
     // 当前分页缓存，用于支持内置前端分页，用户无需接收change事件来自行处理数据分割
     let pagination = reactive({ count: 0, limit: 10, current: 1 });
@@ -98,11 +99,15 @@ export default defineComponent({
       });
     }, { deep: true });
 
+    const indexData = computed(() => props.data.map((item: any, index: number) => ({
+      ...item,
+      __$table_row_index: index + 1,
+    })));
+
     /**
    * 当前页分页数据
    */
-    let pageData = reactive(props.data.slice(startIndex.value, endIndex.value));
-    // computed(() => props.data.slice(startIndex.value, endIndex.value).sort(columnSortFn.callFn));
+    const pageData = reactive([]);
 
     /**
     * 根据Pagination配置的改变重新计算startIndex & endIndex
@@ -110,12 +115,22 @@ export default defineComponent({
     watchEffect(() => {
       pagination = resolvePaginationOption(props.pagination, pagination);
       resetStartEndIndex();
-      pageData = props.data.slice(startIndex.value, endIndex.value);
+      pageData.splice(0, pageData.length, ...indexData.value.slice(startIndex.value, endIndex.value));
+
+      if (typeof columnSortFn === 'function') {
+        pageData.sort(columnSortFn);
+      }
     });
 
     const tableRender = new TableRender(props, ctx, reactiveProp, colgroups);
-    tableRender.on(EVENTS.ON_SORT_BY_CLICK, (sortFn: (_a, _b) => 1) => {
-      pageData = props.data.slice(startIndex.value, endIndex.value).sort(sortFn);
+
+    /**
+     * 监听Table 派发的相关事件
+     */
+    tableRender.on(EVENTS.ON_SORT_BY_CLICK, (args: any) => {
+      const { sortFn } = args;
+      columnSortFn = sortFn;
+      pageData.sort(columnSortFn);
     });
 
     /** 表格外层容器样式 */

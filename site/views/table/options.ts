@@ -58,6 +58,12 @@ export const DATA_TABLE = [
 
 export const DATA_COLUMNS = [
   {
+    label: '序号',
+    type: 'index',
+    sort: true,
+    width: 100,
+  },
+  {
     label: '名称/内网IP',
     field: 'ip',
     width: 100,
@@ -70,6 +76,7 @@ export const DATA_COLUMNS = [
   {
     label: '创建时间',
     field: 'create_time',
+    sort: true,
   },
   {
     label: (column, index) => `状态-${index}-${column.field}`,

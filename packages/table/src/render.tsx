@@ -35,6 +35,12 @@ export const enum EVENTS {
   /** 点击排序事件 */
   ON_SORT_BY_CLICK = 'onSortByClick'
 }
+
+/** 排序方式 */
+export const enum SORT_TYPE {
+  ASC = 'asc',
+  DESC = 'desc'
+}
 export default class TableRender {
   props: TablePropTypes;
   context;
@@ -181,17 +187,21 @@ export default class TableRender {
       e.stopPropagation();
       e.preventDefault();
 
-      const sortFn0 = ((a: any, b: any) => {
-        console.log('sortFn0', a, b);
-        return a[column.field as string] - b[column.field as string];
-      });
+      const fieldName = column.field as string;
+      const getVal = (row: any) => this.getRowText(row, fieldName, column);
+      const sortFn0 = (a: any, b: any) => {
+        const val0 = getVal(a);
+        const val1 = getVal(b);
+        if (typeof val0 === 'number' && typeof val1 === 'number') {
+          return val0 - val1;
+        }
 
+        return String.prototype.localeCompare.call(val0, val1);
+      };
       Object.assign(column, { _sort_reg: type });
-      const defaultFn = type === 'desc'
-        ? sortFn0
-        : ((a: any, b: any) => b[column.field as string] - a[column.field as string]);
-      const sortFn = typeof (column.sort as any)?.sortFn === 'function' ? (column.sort as any)?.sortFn : defaultFn;
-      this.emitEvent(EVENTS.ON_SORT_BY_CLICK, [sortFn, column, index, type]);
+      const sortFn = typeof (column.sort as any)?.sortFn === 'function' ? (column.sort as any)?.sortFn : sortFn0;
+      const execFn = (_a, _b) => sortFn(_a, _b) * (type === SORT_TYPE.DESC ? -1 : 1);
+      this.emitEvent(EVENTS.ON_SORT_BY_CLICK, [{ sortFn: execFn, column, index, type }]);
     };
 
     /**
@@ -206,10 +216,10 @@ export default class TableRender {
         // eslint-disable-next-line @typescript-eslint/dot-notation
         const sortReg = column['_sort_reg'];
         const sortCell = <span class="head-cell-sort">
-          <AngleDownFill class={['sort-action', 'sort-asc', sortReg === 'asc' ? 'active' : '']}
-            onClick={(e: MouseEvent) => hanldeSortClick(e, column, index, 'asc')}/>
-          <AngleUpFill class={['sort-action', 'sort-desc', sortReg === 'desc' ? 'active' : '']}
-            onClick={(e: MouseEvent) => hanldeSortClick(e, column, index, 'desc')}/>
+          <AngleDownFill class={['sort-action', 'sort-asc', sortReg === SORT_TYPE.ASC ? 'active' : '']}
+            onClick={(e: MouseEvent) => hanldeSortClick(e, column, index, SORT_TYPE.ASC)}/>
+          <AngleUpFill class={['sort-action', 'sort-desc', sortReg === SORT_TYPE.DESC ? 'active' : '']}
+            onClick={(e: MouseEvent) => hanldeSortClick(e, column, index, SORT_TYPE.DESC)}/>
         </span>;
         cells.push(sortCell);
       }
@@ -245,21 +255,21 @@ export default class TableRender {
   private renderTBody(rows: any) {
     return <tbody>
     {
-      rows.map((row: any, index: number) => {
+      rows.map((row: any, rowIndex: number) => {
         const rowStyle = {
-          '--row-height': `${resolvePropVal(this.props, 'rowHeight', ['tbody', row, index])}px`,
+          '--row-height': `${resolvePropVal(this.props, 'rowHeight', ['tbody', row, rowIndex])}px`,
         };
 
         return <tr
           // @ts-ignore
           style={rowStyle}
-          onClick={ e => this.handleRowClick(e, row, index, rows)}
-          onDblclick={e => this.handleRowDblClick(e, row, index, rows)}
+          onClick={ e => this.handleRowClick(e, row, rowIndex, rows)}
+          onDblclick={e => this.handleRowDblClick(e, row, rowIndex, rows)}
         >
         {
           this.props.columns.map((column: Column, index: number) => <td class={this.getColumnClass(index)}
           colspan={1} rowspan={1}>
-          <div class="cell" >{ this.renderCell(row, column, index, rows) }</div>
+          <div class="cell" >{ this.renderCell(row, column, rowIndex, rows) }</div>
         </td>)
         }
       </tr>;
@@ -293,13 +303,29 @@ export default class TableRender {
   }
 
   /**
+   * 获取当前行指定列的内容
+   * @param row 当前行
+   * @param key 指定列名
+   * @param column 列配置
+   * @param index 当前行Index
+   * @returns
+   */
+  private getRowText(row: any, key: string, column: Column) {
+    if (column.type === 'index') {
+      return row.__$table_row_index;
+    }
+
+    return row[key];
+  }
+
+  /**
    * 渲染表格Cell内容
    * @param row 当前行
    * @param column 当前列
    * @returns
    */
   private renderCell(row: any, column: Column, index: number, rows: any[]) {
-    const cell = row[resolvePropVal(column, 'field', [column, row])];
+    const cell = this.getRowText(row, resolvePropVal(column, 'field', [column, row]), column);
     if (typeof column.render === 'function') {
       return column.render(cell, row, index, rows);
     }
