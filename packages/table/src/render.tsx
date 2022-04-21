@@ -24,20 +24,30 @@
 * IN THE SOFTWARE.
 */
 
+import { AngleDownFill, AngleUpFill } from '@bkui-vue/icon/';
 import Pagination from '@bkui-vue/pagination';
 import { classes, random } from '@bkui-vue/shared';
 
 import { TablePlugins } from './plugins/index';
 import { Column, GroupColumn, IColumnActive, IReactiveProp, TablePropTypes } from './props';
-import { resolvePropVal, resolveWidth } from './utils';
+import { resolveHeadConfig, resolvePropVal, resolveWidth } from './utils';;
+export const enum EVENTS {
+  /** 点击排序事件 */
+  ON_SORT_BY_CLICK = 'onSortByClick'
+}
 
-
+/** 排序方式 */
+export const enum SORT_TYPE {
+  ASC = 'asc',
+  DESC = 'desc'
+}
 export default class TableRender {
   props: TablePropTypes;
   context;
   reactiveProp: any;
   colgroups: GroupColumn[];
   uuid: string;
+  events: Map<string, any[]>;
   public plugins: TablePlugins;
   constructor(props, ctx, reactiveProp: IReactiveProp, colgroups: GroupColumn[]) {
     this.props = props;
@@ -46,6 +56,7 @@ export default class TableRender {
     this.colgroups = colgroups;
     this.plugins = new TablePlugins(props, ctx);
     this.uuid = random(8);
+    this.events = new Map<string, any[]>();
   }
 
   get propActiveCols(): IColumnActive[] {
@@ -58,10 +69,14 @@ export default class TableRender {
    * @returns
    */
   public renderTableHeadSchema() {
+    const { isShow = true } = resolveHeadConfig(this.props);
+    if (!isShow) {
+      return null;
+    }
+
     return <table cellpadding={0} cellspacing={0}>
         { this.renderColGroup() }
         { this.renderHeader() }
-        {/* { this.renderTBody(rows) } */}
       </table>;
   }
 
@@ -73,7 +88,6 @@ export default class TableRender {
   public renderTableBodySchema(rows: any[]) {
     return <table cellpadding={0} cellspacing={0}>
       { this.renderColGroup() }
-      {/* { this.renderHeader() } */}
       { this.renderTBody(rows) }
     </table>;
   }
@@ -83,6 +97,40 @@ export default class TableRender {
     modelValue={options.current}
     onLimitChange={ limit => this.handlePageLimitChange(limit) }
     onChange={ current => this.hanlePageChange(current) }></Pagination>;
+  }
+
+  /**
+   * 注册监听事件
+   * @param eventName
+   * @param wartcher
+   */
+  public on(eventName: string, wartcher: Function) {
+    if (!this.events.has(eventName)) {
+      this.events.set(eventName, []);
+    }
+
+    this.events.get(eventName).push(wartcher);
+    return this;
+  }
+
+  public destroy() {
+    this.events.clear();
+    this.events = null;
+  }
+
+  /**
+   * 派发事件
+   * @param eventName
+   * @param args
+   */
+  private emitEvent(eventName: string, args: any[]) {
+    if (this.events.has(eventName)) {
+      this.events.get(eventName).forEach((evet: any) => {
+        if (typeof evet === 'function') {
+          Reflect.apply(evet, this, args);
+        }
+      });
+    }
   }
 
   private handlePageLimitChange(limit: number) {
@@ -128,8 +176,61 @@ export default class TableRender {
    * @returns
    */
   private renderHeader() {
+    const config = resolveHeadConfig(this.props);
+    const { cellFn } =  config;
     const rowStyle = {
-      '--row-height': `${resolvePropVal(this.props, 'headHeight', ['thead'])}px`,
+      '--row-height': `${resolvePropVal(config, 'height', ['thead'])}px`,
+    };
+
+    const hanldeSortClick = (e: MouseEvent, column:  Column, index: number, type: string) => {
+      e.stopImmediatePropagation();
+      e.stopPropagation();
+      e.preventDefault();
+
+      const fieldName = column.field as string;
+      const getVal = (row: any) => this.getRowText(row, fieldName, column);
+      const sortFn0 = (a: any, b: any) => {
+        const val0 = getVal(a);
+        const val1 = getVal(b);
+        if (typeof val0 === 'number' && typeof val1 === 'number') {
+          return val0 - val1;
+        }
+
+        return String.prototype.localeCompare.call(val0, val1);
+      };
+      Object.assign(column, { _sort_reg: type });
+      const sortFn = typeof (column.sort as any)?.sortFn === 'function' ? (column.sort as any)?.sortFn : sortFn0;
+      const execFn = (_a, _b) => sortFn(_a, _b) * (type === SORT_TYPE.DESC ? -1 : 1);
+      this.emitEvent(EVENTS.ON_SORT_BY_CLICK, [{ sortFn: execFn, column, index, type }]);
+    };
+
+    /**
+     * table head cell render
+     * @param column
+     * @param index
+     * @returns
+     */
+    const renderHeadCell = (column: Column, index: number) => {
+      const cells = [];
+      if (column.sort) {
+        // eslint-disable-next-line @typescript-eslint/dot-notation
+        const sortReg = column['_sort_reg'];
+        const sortCell = <span class="head-cell-sort">
+          <AngleDownFill class={['sort-action', 'sort-asc', sortReg === SORT_TYPE.ASC ? 'active' : '']}
+            onClick={(e: MouseEvent) => hanldeSortClick(e, column, index, SORT_TYPE.ASC)}/>
+          <AngleUpFill class={['sort-action', 'sort-desc', sortReg === SORT_TYPE.DESC ? 'active' : '']}
+            onClick={(e: MouseEvent) => hanldeSortClick(e, column, index, SORT_TYPE.DESC)}/>
+        </span>;
+        cells.push(sortCell);
+      }
+
+      if (typeof cellFn === 'function') {
+        cells.unshift(cellFn(column, index));
+        return cells;
+      }
+
+      cells.unshift(resolvePropVal(column, 'label', [column, index]));
+      return cells;
     };
     // @ts-ignore:next-line
     return <thead style={rowStyle}>
@@ -140,7 +241,7 @@ export default class TableRender {
             active: this.isColActive(index),
           }) }
           onClick={ () => this.handleColumnHeadClick(index) }>
-            <div class="cell">{ resolvePropVal(column, 'label', [column]) }</div>
+            <div class="cell">{ renderHeadCell(column, index) }</div>
           </th>)
         }
         </tr>
@@ -154,21 +255,21 @@ export default class TableRender {
   private renderTBody(rows: any) {
     return <tbody>
     {
-      rows.map((row: any, index: number) => {
+      rows.map((row: any, rowIndex: number) => {
         const rowStyle = {
-          '--row-height': `${resolvePropVal(this.props, 'rowHeight', ['tbody', row, index])}px`,
+          '--row-height': `${resolvePropVal(this.props, 'rowHeight', ['tbody', row, rowIndex])}px`,
         };
 
         return <tr
           // @ts-ignore
           style={rowStyle}
-          onClick={ e => this.handleRowClick(e, row, index, rows)}
-          onDblclick={e => this.handleRowDblClick(e, row, index, rows)}
+          onClick={ e => this.handleRowClick(e, row, rowIndex, rows)}
+          onDblclick={e => this.handleRowDblClick(e, row, rowIndex, rows)}
         >
         {
           this.props.columns.map((column: Column, index: number) => <td class={this.getColumnClass(index)}
           colspan={1} rowspan={1}>
-          <div class="cell" >{ this.renderCell(row, column, index, rows) }</div>
+          <div class="cell" >{ this.renderCell(row, column, rowIndex, rows) }</div>
         </td>)
         }
       </tr>;
@@ -202,13 +303,29 @@ export default class TableRender {
   }
 
   /**
+   * 获取当前行指定列的内容
+   * @param row 当前行
+   * @param key 指定列名
+   * @param column 列配置
+   * @param index 当前行Index
+   * @returns
+   */
+  private getRowText(row: any, key: string, column: Column) {
+    if (column.type === 'index') {
+      return row.__$table_row_index;
+    }
+
+    return row[key];
+  }
+
+  /**
    * 渲染表格Cell内容
    * @param row 当前行
    * @param column 当前列
    * @returns
    */
   private renderCell(row: any, column: Column, index: number, rows: any[]) {
-    const cell = row[resolvePropVal(column, 'field', [column, row])];
+    const cell = this.getRowText(row, resolvePropVal(column, 'field', [column, row]), column);
     if (typeof column.render === 'function') {
       return column.render(cell, row, index, rows);
     }
