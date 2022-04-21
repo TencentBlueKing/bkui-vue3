@@ -5,8 +5,7 @@
   "workspaces": {
     "packages": [
       "packages/!(**.bak)*",
-      "scripts/*",
-      "site/"
+      "scripts/*"
     ]
   },
   "files": [
