@@ -28,25 +28,25 @@ export const DATA_TABLE = [
     ip: 'from ip: 192.168.0.1',
     source: 'QQ',
     status: '创建中',
-    create_time: '2018-05-25 15:02:24',
+    create_time: '2018-05-25 15:02:241',
   },
   {
     ip: '192.168.0.2',
     source: '微信',
     status: '正常',
-    create_time: '2018-05-25 15:02:24',
+    create_time: '2018-05-25 15:02:242',
   },
   {
     ip: '192.168.0.3',
     source: 'QQ',
     status: '创建中',
-    create_time: '2018-05-25 15:02:24',
+    create_time: '2018-05-25 15:02:243',
   },
   {
     ip: '192.168.0.3',
     source: 'QQ',
     status: '创建中',
-    create_time: '2018-05-25 15:02:24',
+    create_time: '2018-05-25 15:02:244',
   },
   {
     ip: '192.168.0.3',
@@ -57,6 +57,12 @@ export const DATA_TABLE = [
 ];
 
 export const DATA_COLUMNS = [
+  {
+    label: '序号',
+    type: 'index',
+    sort: true,
+    width: 100,
+  },
   {
     label: '名称/内网IP',
     field: 'ip',
@@ -70,9 +76,11 @@ export const DATA_COLUMNS = [
   {
     label: '创建时间',
     field: 'create_time',
+    sort: true,
   },
   {
-    label: '状态',
+    label: (column, index) => `状态-${index}-${column.field}`,
     field: 'status',
+    sort: true,
   },
 ];

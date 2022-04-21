@@ -30,6 +30,11 @@ import { PropTypes } from '@bkui-vue/shared';
 
 import { BORDER_OPRIONS } from './const';
 
+export enum SortScope {
+  CURRENT = 'current',
+  ALL = 'all'
+}
+
 export const tableProps = {
   /**
    * 渲染列表
@@ -44,6 +49,12 @@ export const tableProps = {
     field: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
     render: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
     width: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]),
+    type: PropTypes.commonType(['selection', 'index', 'expand'], 'columnType').def(''),
+    sort: PropTypes.oneOfType([PropTypes.shape({
+      sortby: PropTypes.string.def(''),
+      sortFn: PropTypes.func.def(null),
+      sortScope: PropTypes.commonType(Object.values(SortScope)).def(SortScope.CURRENT),
+    }), PropTypes.bool]).def(false),
   })),
 
   /**
@@ -88,6 +99,15 @@ export const tableProps = {
   showHead: PropTypes.bool.def(true),
 
   /**
+   * table header config
+   */
+  thead: PropTypes.shape<Thead>({
+    height: PropTypes.number.def(40),
+    isShow: PropTypes.bool.def(true),
+    cellFn: PropTypes.func.def(null),
+  }),
+
+  /**
    * 是否启用虚拟渲染 & 滚动
    * 当数据量很大时，启用虚拟渲染可以解决压面卡顿问题
    */
@@ -110,24 +130,25 @@ export const tableProps = {
    * 是否启用远程分页
    */
   remotePagination: PropTypes.bool.def(false),
-
-  // /**
-  //  * Table Caption Config
-  //  */
-  // caption: PropTypes.object.def({
-  //   enabled: PropTypes.bool.def(false),
-  //   text: PropTypes.string.def(''),
-  //   textAlign: PropTypes.commonType(['left', 'center', 'right'], 'textAlign').def('center'),
-  //   side: PropTypes.commonType(['top', 'bottom'], 'side').def('top'),
-  //   style: PropTypes.object.def({}),
-  // }),
 };
 
 export type Column = {
   label: Function | string;
-  field: Function | string;
+  field?: Function | string;
   render?: Function | string;
   width?: number | string;
+  type?: string;
+  sort?: {
+    sortby?: string;
+    sortFn?: Function;
+    sortScope?: string;
+  } | boolean;
+};
+
+export type Thead = {
+  height?: Number,
+  isShow?: boolean,
+  cellFn?: Function
 };
 
 export type GroupColumn = {
