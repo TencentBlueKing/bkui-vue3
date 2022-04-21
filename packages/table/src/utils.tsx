@@ -264,3 +264,13 @@ export const resolvePaginationOption = (propPagination: any, defVal: any) => {
 
   return {};
 };
+
+/**
+ * Format Table Head Option
+ * @param props
+ * @returns
+ */
+export const resolveHeadConfig = (props: TablePropTypes) => {
+  const { showHead, headHeight, thead = {} } = props;
+  return Object.assign({}, { isShow: showHead, height: headHeight }, { ...thead });
+};
