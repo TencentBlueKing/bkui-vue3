@@ -105,12 +105,8 @@
   "module": "dist/bkui-vue.esm.js",
   "typings": "./lib/index.d.ts",
   "lint-staged": {
-    "site/**/*.(vue|ts|tsx)": [
+    "*.(vue|ts|tsx|js)": [
       "eslint --ext .js,.tsx,.ts,.vue --cache --fix",
-      "git add"
-    ],
-    "./(packages|scripts)/**/*.(ts|tsx)": [
-      "eslint --ext .js,.tsx,.ts --cache --fix",
       "git add"
     ],
     "*.(vue|scss|css|sass)": [
