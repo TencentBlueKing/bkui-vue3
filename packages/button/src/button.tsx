@@ -83,6 +83,7 @@ export default defineComponent({
     });
     const loadingSize = computed(() => (props.size === BkLoadingSize.Small ? BkLoadingSize.Mini : BkLoadingSize.Small));
     const handleClick = () => {
+      if (props.loading) return;
       /**
        * Success event.
        * @event click
@@ -112,16 +113,17 @@ export default defineComponent({
         onMouseleave={handleMouseout}
       >
         {
-          props.loading && (
+          props.loading ? (
             <BkLoading
               loading
               class={`${btnClsPrefix}-loading`}
               mode={props.laodingMode}
               theme={loadingTheme.value}
               size={loadingSize.value} />
+          ) : (
+            slots.default && <span class={`${btnClsPrefix}-text`}>{slots.default?.()}</span>
           )
         }
-        {slots.default && <span class={`${btnClsPrefix}-text`}>{slots.default?.()}</span>}
       </button>
     );
   },
