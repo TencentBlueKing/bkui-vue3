@@ -99,12 +99,12 @@
 </script>
 <style>
 .custom-node {
-  padding: 0 5px;
-  margin: 0 2px 0 0;
+  display: flex;
   width: 18px;
   height: 18px;
+  padding: 0 5px;
+  margin: 0 2px 0 0;
   background: #cccc;
-  display: flex;
   align-items: center;
 }
 
@@ -114,10 +114,10 @@
 </style>
 <style scoped>
 .row {
-  height: 300px;
-  width: 100%;
-  overflow: auto;
   display: flex;
+  width: 100%;
+  height: 300px;
+  overflow: auto;
 }
 
 .cell {

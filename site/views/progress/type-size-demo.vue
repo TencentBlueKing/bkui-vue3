@@ -62,6 +62,7 @@
 .mb10 {
   margin-bottom: 10px;
 }
+
 .bk-progress {
   margin-right: 30px;
 }

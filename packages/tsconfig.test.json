@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.base.json",
+  "ts-node": {
+    "transpileOnly": false
+  },
+  "include": ["./**/*.tsx", "./**/*.ts"]
+}

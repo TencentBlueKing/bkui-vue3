@@ -19,5 +19,13 @@
   "editor.rulers": [
     120
   ],
-  "editor.selectionHighlight": false
+  "editor.selectionHighlight": false,
+  "stylelint.validate": [
+    "css",
+    "less",
+    "postcss",
+    "vue",
+    "scss",
+    "sass"
+  ]
 }

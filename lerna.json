@@ -1,5 +1,8 @@
 {
-  "packages": ["packages/*", "scrpits/*"],
+  "packages": [  
+    "packages/*", 
+    "scrpits/*"
+  ],
   "npmClient": "yarn",
   "useWorkspaces": true,
   "version": "independent",
@@ -15,8 +18,7 @@
       ],
       "noGitTagVersion": true,
       "noPush": true
-    },
-    
+    },   
     "bootstrap": {
       "hoist": true,
       "npmClientArgs": [

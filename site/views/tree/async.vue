@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 300px; width: 100%; overflow: auto;">
+  <div style=" width: 100%;height: 300px; overflow: auto;">
     <bk-tree
       :data="treeData"
       :async="{

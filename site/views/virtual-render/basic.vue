@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 400px; width: 100%; overflow: auto;">
+  <div style=" width: 100%;height: 400px; overflow: auto;">
     <div style="padding: 15px 0;">
       <bk-button
         theme="primary"
