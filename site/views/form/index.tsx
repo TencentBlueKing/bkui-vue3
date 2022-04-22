@@ -35,6 +35,7 @@ import {
   type IPropsTableItem,
 } from '../../typings';
 
+import DemoComposeFormItem from './demo/compose-form-item.vue';
 import DemoForm from './demo/form.vue';
 import DemoFormValidator from './demo/form-validator.vue';
 import DemoFormVertical from './demo/form-vertical.vue';;
@@ -42,21 +43,21 @@ import DemoFormVertical from './demo/form-vertical.vue';;
 
 const formProps: IPropsTableItem[] = [
   {
-    name: 'formType',
+    name: 'form-type',
     type: 'String',
     default: null,
     desc: '表单模式',
     optional: ['default', 'vertical'],
   },
   {
-    name: 'labelWidth',
+    name: 'label-width',
     type: 'String',
     default: null,
     desc: '表单域标签的宽度',
     optional: [],
   },
   {
-    name: 'labelPosition',
+    name: 'label-position',
     type: 'String',
     default: null,
     desc: '表单域标签的位置',
@@ -87,14 +88,14 @@ const formItemProps: IPropsTableItem[] = [
     optional: [],
   },
   {
-    name: 'labelWidth',
+    name: 'label-width',
     type: 'String',
     default: null,
     desc: '表单域标签的宽度',
     optional: [],
   },
   {
-    name: 'labelPosition',
+    name: 'label-position',
     type: 'String',
     default: null,
     desc: '表单域标签的位置',
@@ -143,7 +144,7 @@ const formItemProps: IPropsTableItem[] = [
     optional: [],
   },
   {
-    name: 'autoCheck',
+    name: 'auto-check',
     type: 'String',
     default: null,
     desc: '是否自动验证',
@@ -187,6 +188,13 @@ export default defineComponent({
           componentName="form"
           demoName="/demo/form-validator">
             <DemoFormValidator />
+        </DemoBox>
+        <DemoBox
+          title="组合表单组件"
+          desc=""
+          componentName="form"
+          demoName="/demo/compose-form-item">
+            <DemoComposeFormItem />
         </DemoBox>
         <PropsBox
           title="Form Attributes"
