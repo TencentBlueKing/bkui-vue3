@@ -26,7 +26,7 @@
 import { computed, defineComponent, reactive, ref, watchEffect } from 'vue';
 
 import BkCheckbox from '@bkui-vue/checkbox';
-import { AngleDownLine } from '@bkui-vue/icon/';
+import { AngleDownLine } from '@bkui-vue/icon';
 import Popover from '@bkui-vue/popover';
 import { classes, PropTypes, resolveClassName } from '@bkui-vue/shared';
 

@@ -32,8 +32,6 @@ import { getRowText } from '../utils';
 
 import { SortType } from './common';
 
-import './head-sort.less';
-
 export default defineComponent({
   name: 'HeadSort',
   props: {
