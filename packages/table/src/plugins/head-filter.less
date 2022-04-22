@@ -20,7 +20,7 @@
 
 .@{bk-prefix}-table-head-filter {
 
-  padding: 5px 0;
+  padding: 5px 0 0 0;
   background-color: #fff;
   // border: 1px solid #dcdee5;
   border-radius: 2px;
@@ -39,11 +39,45 @@
       line-height: 32px;
       color: #63656e;
       text-align: left;
+
+      &:hover {
+        background: #f0f1f5;
+      }
     }
   }
 
   .content-footer {
-    height: 41px;
+    display: flex;
+    height: 42px;
+    padding: 0 10px;
     border-top: solid 1px #dcdee5;
+    justify-content: center;
+    align-items: center;
+
+    span {
+      display: inline-flex;
+      height: 100%;
+      padding: 6px 12px;
+      font-size: 14px;
+      line-height: 22px;
+      color: @primary-color;
+      cursor: pointer;
+      align-items: center;
+
+      &.btn-filter-split {
+        width: 1px;
+        height: calc(100% - 12px);
+        padding: 6px 0;
+        cursor: default;
+        background: #f0f1f5;
+      }
+
+      &.btn-filter-reset {
+        &.disable {
+          color: @gray-color;
+          cursor: not-allowed;
+        }
+      }
+    }
   }
 }

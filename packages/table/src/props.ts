@@ -61,10 +61,7 @@ export const tableProps = {
     }), PropTypes.bool]).def(false),
     filter: PropTypes.oneOfType([PropTypes.shape({
       list: PropTypes.arrayOf(PropTypes.any).def([]),
-      rowRender: PropTypes.func.def(null),
       filterFn: PropTypes.func.def(null),
-      multiple: PropTypes.bool.def(true),
-      searchable: PropTypes.bool.def(true),
     }), PropTypes.bool]).def(false),
   })),
 
@@ -155,10 +152,7 @@ export type Column = {
   } | boolean;
   filter?: {
     list?: any,
-    rowRender?: Function;
     filterFn?: Function;
-    multiple?: boolean;
-    searchable?: boolean;
   } | boolean;
 };
 

@@ -61,14 +61,14 @@ export default defineComponent({
       return { systemThemes, customThemes };
     });
 
-    const handleManualShow = (val) => {
-      if (trigger.value === 'manual' && isPopInstance) {
+    const handlePopShow = (val) => {
+      if (isPopInstance) {
         val ? popoverInstance.show?.() : popoverInstance.hide?.();
       }
     };
 
     watch(() => props.isShow, (val: any) => {
-      handleManualShow(val);
+      handlePopShow(val);
     }, { immediate: true });
 
     const handleClose: any = () => {
@@ -111,7 +111,7 @@ export default defineComponent({
       isPopInstance = true;
 
       // 初次渲染默认isShow 为True时，触发
-      handleManualShow(isShow.value);
+      handlePopShow(isShow.value);
     };
 
     const update = () => {
@@ -144,9 +144,18 @@ export default defineComponent({
      * @param e
      */
     const handleClickContent = (e: MouseEvent) => {
-      e.stopImmediatePropagation();
-      e.stopPropagation();
-      e.preventDefault();
+      const stopBehaviorFn = (behavior: string) => {
+        if (typeof e[behavior] === 'function') {
+          e[behavior]();
+        }
+      };
+      if (Array.isArray(props.stopBehaviors)) {
+        props.stopBehaviors.forEach(stopBehaviorFn);
+      }
+
+      if (typeof props.stopBehaviors === 'string') {
+        stopBehaviorFn(props.stopBehaviors);
+      }
     };
 
     return () => (

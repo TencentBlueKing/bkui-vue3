@@ -23,23 +23,26 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { computed, defineComponent, reactive } from 'vue';
+import { computed, defineComponent, reactive, ref, watchEffect } from 'vue';
 
 import BkCheckbox from '@bkui-vue/checkbox';
 import { AngleDownLine } from '@bkui-vue/icon/';
 import Popover from '@bkui-vue/popover';
 import { classes, PropTypes, resolveClassName } from '@bkui-vue/shared';
 
-import { ColumnFilterListItem } from '../props';
+import { getRowText, resolvePropVal } from '../utils';
 
 export default defineComponent({
   name: 'HeadFilter',
   props: {
-    filter: PropTypes.any.def({}),
+    column: PropTypes.any.def({}),
     height: PropTypes.number.def(40),
   },
-  setup(props) {
-    const { list = [] } = props.filter;
+  emits: ['change'],
+
+  setup(props, { emit }) {
+    const { column } = props;
+    const isShow = ref(false);
     const state = reactive({
       isOpen: false,
       checked: [],
@@ -70,28 +73,70 @@ export default defineComponent({
 
     const theme = `light ${resolveClassName('table-head-filter')}`;
     const handleItemChecked = (value: any, item: any) => {
-      console.log('handleItemChecked', value, item);
+      const isChecked = !!value;
+      if (isChecked) {
+        state.checked.push(item.value);
+      } else {
+        const index = state.checked.findIndex((val: string) => val === item.value);
+        if (index >= 0) {
+          state.checked.splice(index, 1);
+        }
+      }
     };
 
-    return () => <Popover trigger="click" placement="bottom-end" arrow={false}
-    {...{ modifiers, theme }}
-    boundary={ document.body }
-    onAfterShow={ () => handlePopShow(true) }
-    onAfterHidden={() => handlePopShow(false)}>
+    let localData = reactive([]);
+    watchEffect(() => {
+      const { list = [] } = column.filter;
+      localData = list.map((item: any) => ({ ...item, checked: state.checked.includes(item.value) }));
+    });
+
+    const filterFn = typeof column.filter.filterFn === 'function'
+      ? (checked: string[], row: any, index: number, data: any[]) => column.filter
+        .filterFn(checked, row, props.column, index, data)
+      : (checked: string[], row: any) => (checked.length
+        ? checked.includes(getRowText(row, resolvePropVal(column, 'field', [column, row]), column))
+        : true);
+
+    const handleBtnSaveClick = () => {
+      emit('change', [...state.checked], filterFn);
+      isShow.value = false;
+    };
+
+    const handleBtnResetClick = () => {
+      if (state.checked.length) {
+        state.checked.splice(0, state.checked.length);
+        emit('change', state.checked, filterFn);
+        isShow.value = false;
+      }
+    };
+
+    return () => <Popover trigger="click" isShow={isShow.value}
+      placement="bottom-end"
+      stopBehaviors={['stopPropagation']}
+      arrow={false}
+      {...{ modifiers, theme }}
+      boundary={ document.body }
+      onAfterShow={ () => handlePopShow(true) }
+      onAfterHidden={() => handlePopShow(false)}>
       {
         {
-          default: () =>  <AngleDownLine class={headClass.value}/>,
+          default: () =>  <AngleDownLine class={headClass.value} onClick={ () => isShow.value = true } />,
           content: () => <div class={ headFilterContentClass }>
             <div class="content-list">
               {
-                list.map((item: ColumnFilterListItem) => <div class="list-item">
-                  <BkCheckbox label={item.text}
-                  onChange={ (value: any) => handleItemChecked(value, item) }>
+                localData.map((item: any) => <div class="list-item">
+                  <BkCheckbox label={item.text} checked={ item.checked }
+                  onChange={ (val: string) => handleItemChecked(val, item) }>
                   </BkCheckbox>
                 </div>)
               }
             </div>
-            <div class="content-footer"></div>
+            <div class="content-footer">
+              <span class="btn-filter-save" onClick={handleBtnSaveClick}>确定</span>
+              <span class="btn-filter-split"></span>
+              <span class={['btn-filter-reset', state.checked.length ?  '' : 'disable']}
+                onClick={handleBtnResetClick}>重置</span>
+            </div>
           </div>,
         }
       }
