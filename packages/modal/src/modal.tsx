@@ -53,6 +53,7 @@ export default defineComponent({
       return {
         width: this.dialogWidth,
         height: this.dialogHeight,
+        minHeigth: `${200}px`,
         display: this.visible ? 'inherit' : 'none',
       };
     },
@@ -83,7 +84,8 @@ export default defineComponent({
   },
   render() {
     return (
-      <div class={['bk-modal-wrapper', ...this.customClass]} style={this.compStyle}>
+      <div class={['bk-modal-wrapper', this.size, this.customClass, this.fullscreen ? 'bk-model-fullscreen' : '']}
+        style={this.compStyle}>
         {this.isShow ? (
           <div class="bk-modal-body">
             <div class="bk-modal-header">
