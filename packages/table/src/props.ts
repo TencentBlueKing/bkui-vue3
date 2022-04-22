@@ -35,6 +35,11 @@ export enum SortScope {
   ALL = 'all'
 }
 
+export type ColumnFilterListItem = {
+  text?: string;
+  value?: string;
+};
+
 export const tableProps = {
   /**
    * 渲染列表
@@ -49,11 +54,14 @@ export const tableProps = {
     field: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
     render: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
     width: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]),
-    type: PropTypes.commonType(['selection', 'index', 'expand'], 'columnType').def(''),
+    type: PropTypes.commonType(['selection', 'index', 'expand', 'none'], 'columnType').def('none'),
     sort: PropTypes.oneOfType([PropTypes.shape({
-      sortby: PropTypes.string.def(''),
       sortFn: PropTypes.func.def(null),
       sortScope: PropTypes.commonType(Object.values(SortScope)).def(SortScope.CURRENT),
+    }), PropTypes.bool]).def(false),
+    filter: PropTypes.oneOfType([PropTypes.shape({
+      list: PropTypes.arrayOf(PropTypes.any).def([]),
+      filterFn: PropTypes.func.def(null),
     }), PropTypes.bool]).def(false),
   })),
 
@@ -139,9 +147,12 @@ export type Column = {
   width?: number | string;
   type?: string;
   sort?: {
-    sortby?: string;
     sortFn?: Function;
     sortScope?: string;
+  } | boolean;
+  filter?: {
+    list?: any,
+    filterFn?: Function;
   } | boolean;
 };
 
