@@ -34,7 +34,9 @@ import { ILibTaskOption, ITaskItem } from '../typings/task';
 parentPort!.on('message', ({ task, taskOption }) => {
   (task.type === 'style'
     ?  compileStyleTask(task)
-    :  compileScript(task, taskOption)).finally(() => {
+    :  compileScript(task, taskOption).catch(() => {
+      parentPort!.postMessage(null);
+    })).finally(() => {
     parentPort!.postMessage(task);
   });
 });

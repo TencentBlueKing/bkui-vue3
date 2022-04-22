@@ -62,6 +62,9 @@ export class WorkerPool extends EventEmitter {
   add() {
     const worker = new Worker(path.resolve(__dirname, './task.js')) as WorkerType;
     worker.on('message', (result) => {
+      if (result === null) {
+        process.exit(1);
+      }
       worker[buildTask]?.done(null, result);
       worker[buildTask] = null;
       this.freeWorkers.push(worker);
