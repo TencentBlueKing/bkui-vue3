@@ -45,21 +45,25 @@
 
 
 <style scoped>
-  .bk-switcher {
-    margin-right: 10px;
-  }
-  .mb20 {
-    margin-bottom: 20px;
-  }
-  .mr20 {
-    margin-right: 20px;
-    display: inline-block;
-  }
-  .f14 {
-    font-size: 14px;
-  }
-  .block {
-    display: block;
-    width: 100%;
-  }
+.bk-switcher {
+  margin-right: 10px;
+}
+
+.mb20 {
+  margin-bottom: 20px;
+}
+
+.mr20 {
+  display: inline-block;
+  margin-right: 20px;
+}
+
+.f14 {
+  font-size: 14px;
+}
+
+.block {
+  display: block;
+  width: 100%;
+}
 </style>

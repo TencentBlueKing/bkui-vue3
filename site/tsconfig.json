@@ -18,7 +18,7 @@
     ],
     "skipLibCheck": true,
     "allowJs": true,
-    "baseUrl": "./packages",
+    "baseUrl": "../packages",
     "paths": {
       "@bkui-vue/*": [
         "*/src"
@@ -29,16 +29,6 @@
     "sourceMap": true,
     "noEmitOnError": true,
   },
-  "include": [
-    "packages/**/*",
-    "site/**/*",
-    "scripts/**/*",
-    "./test-setup.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.js",
-    "*bak*"
-  ]
+  "include": ["./**/*.ts", "./**/*.tsx"],
+  "exclude": ["node_modules", "./**/*.js"]
 }

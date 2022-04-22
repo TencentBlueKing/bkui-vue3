@@ -354,7 +354,6 @@ export default defineComponent({
     };
 
     const renderDom = () => (
-      <>
       <div class={ ['bk-slider', props.extCls] }>
         { slots.start?.() }
         <div class="bk-slider-runway"
@@ -434,8 +433,8 @@ export default defineComponent({
               min={props.minValue}
               onChange={firstInputChange}></Input>
           </div>
-          {showSecondInput.value && secondValue.value ? <>
-            <div class="input-center">～</div>
+          {showSecondInput.value && secondValue.value ? [
+            <div class="input-center">～</div>,
             <div class="input-item">
               <Input type="number"
                 modelValue={secondInput.value}
@@ -443,12 +442,11 @@ export default defineComponent({
                 min={props.minValue}
                 onChange={secondInputChange}
                 ></Input>
-            </div>
-          </> : undefined}
+            </div>,
+          ] : undefined}
         </div> : undefined }
         { slots.end?.() }
       </div>
-      </>
     );
 
     return {

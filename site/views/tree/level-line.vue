@@ -36,10 +36,10 @@
 </script>
 <style scoped>
 .row {
-  height: 300px;
-  width: 100%;
-  overflow: auto;
   display: flex;
+  width: 100%;
+  height: 300px;
+  overflow: auto;
 }
 
 .cell {
