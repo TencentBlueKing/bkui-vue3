@@ -37,18 +37,30 @@ export default defineComponent({
   },
   props: {
     ...propsMixin,
+    width: {
+      type: [Number, String],
+      default: null,
+    },
+    height: {
+      type: [Number, String],
+      default: null,
+    },
+    // 确认按钮文字
     confirmText: {
       type: String,
       default: '确定',
     },
+    // 取消按钮文字
     cancelText: {
       type: String,
       default: '取消',
     },
+    // 弹框的标题
     title: {
       type: String,
       default: 'Title',
     },
+    // 显示 header 的位置
     headerAlign: {
       type: String,
       default: 'left',
@@ -61,6 +73,7 @@ export default defineComponent({
         return true;
       },
     },
+    // 显示 footer 的位置
     footerAlign: {
       type: String,
       default: 'right',
@@ -73,13 +86,47 @@ export default defineComponent({
         return true;
       },
     },
+    // 颜色 按钮类型
+    theme: {
+      type: String,
+      default: 'primary',
+      validator: (value: string) => {
+        if (['primary', 'warning', 'success', 'danger'].indexOf(value) < 0) {
+          console.error(`theme property is not valid: '${value}'`);
+          return false;
+        }
+        return true;
+      },
+    },
   },
-  emits: ['closed', 'update:isShow'],
-
+  emits: ['closed', 'update:isShow', 'confirm'],
+  mounted() {
+    if (this.escClose) {
+      addEventListener('keydown', this.escCloseHandler);
+    }
+  },
+  beforeDestory() {
+    if (this.escClose) {
+      removeEventListener('keydown', this.escCloseHandler);
+    }
+  },
   methods: {
+    // 关闭弹框
     handleClose() {
       this.$emit('update:isShow', false);
       this.$emit('closed');
+    },
+    handleConfirm() {
+      this.$emit('update:isShow', false);
+      this.$emit('confirm');
+    },
+    // 按 esc 关闭弹框
+    escCloseHandler(e) {
+      if (this.isShow && this.closeIcon) {
+        if (e.keyCode === 27) {
+          this.handleClose();
+        }
+      }
     },
   },
 
@@ -87,7 +134,7 @@ export default defineComponent({
     const dialogSlot = {
       header: () => [
         <div class="bk-dialog-tool">
-          <span class="bk-dialog-close" onClick={this.handleClose}>+</span>
+          <span class={['bk-dialog-close', this.closeIcon ? '' : 'close-icon']} onClick={this.handleClose}>+</span>
         </div>,
         <div class="bk-dialog-header">
           <span class="bk-dialog-title" style={`text-align: ${this.headerAlign}`}>
@@ -98,10 +145,10 @@ export default defineComponent({
       default: () => this.$slots.default?.() ?? 'default',
       footer: () => <div class="bk-dialog-footer" style={`text-align: ${this.footerAlign}`}>
         {
-          this.$slots.footer?.() ?? [
-            <BkButton onClick={this.handleClose} theme="primary">{this.confirmText}</BkButton>,
-            <BkButton onClick={this.handleClose}>{this.cancelText}</BkButton>,
-          ]
+          this.$slots.footer?.() ?? <>
+            <BkButton onClick={this.handleConfirm} theme={this.theme}>{this.confirmText}</BkButton>
+            <BkButton style='margin-left: 8px;' onClick={this.handleClose}>{this.cancelText}</BkButton>
+          </>
         }
       </div>,
     };
