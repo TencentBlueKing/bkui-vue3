@@ -55,7 +55,7 @@ module.exports = {
   // ]
 
   testURL: 'http://localhost/',
-  setupFiles: ['./test-setup.ts'],
+  setupFiles: ['./scripts/cli/test-setup.ts'],
   collectCoverage: true,
   coverageDirectory: 'coverage',
   coverageProvider: 'v8',
