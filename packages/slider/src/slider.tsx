@@ -144,7 +144,7 @@ export default defineComponent({
       for (let i = props.minValue, j = 0; i <= props.maxValue; i += props.step, j++) {
         const item = {
           stepWidth: j * stepWidth,
-          stepLabel: props.formatterLabel(i * props.step),
+          stepLabel: props.formatterLabel(i),
         };
         result.push(item);
       }
