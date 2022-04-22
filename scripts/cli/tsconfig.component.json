@@ -9,8 +9,6 @@
     "noUnusedParameters": true,
     "noUnusedLocals": true,
     "noImplicitAny": false,
-    "jsxFactory": "h",
-    "jsxFragmentFactory": "Fragment",
     "module": "esnext",
     "target": "es6",
     "lib": [
