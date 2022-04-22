@@ -19,6 +19,7 @@
     "build:site": "vite build site --mode development",
     "build:dist": "rimraf dist && lerna run --stream --scope cli dist",
     "build:lib": "rimraf lib && lerna run --stream --scope cli lib",
+    "lib:dev": "rimraf lib && node --inspect-brk ./node_modules/.bin/ts-node --project=./scripts/cli/tsconfig.json ./scripts/cli/index.ts lib",
     "help:release": "lerna run --stream --scope cli release",
     "release": "run-s build help:release",
     "analyze:lib": "rimraf lib && lerna run --stream --scope cli lib -- -a",

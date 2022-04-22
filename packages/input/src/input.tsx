@@ -251,7 +251,7 @@ export default defineComponent({
             ctx.slots?.suffix?.() ?? (props.suffix && <div class={getCls('suffix-area')}>
               <span class={getCls('suffix-area--text')}>{props.suffix}</span>
             </div>)
-          }
+        }
       </div>
 
     );
