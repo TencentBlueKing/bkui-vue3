@@ -26,18 +26,20 @@
 
 import { withInstallProps } from '@bkui-vue/shared';
 
+import ComposeFormItem from './compose-form-item';
 import Form, { formProps } from './form';
 import FormItem from './form-item';
 
-
-const BkForm = withInstallProps(Form, { FormItem });
+const BkForm = withInstallProps(Form, { FormItem, ComposeFormItem });
 
 export default BkForm;
 
 export {
   BkForm,
   FormItem as BkFormItem,
+  ComposeFormItem as BkComposeFormItem,
 };
+
 export type {
   formProps,
 };
