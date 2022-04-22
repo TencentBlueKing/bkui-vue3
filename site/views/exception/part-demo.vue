@@ -52,6 +52,7 @@
 .exception-wrap {
   display: flex;
   flex-wrap: wrap;
+  margin-left: -10px;
 }
 
 .exception-wrap .exception-wrap-item {

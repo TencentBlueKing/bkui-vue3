@@ -61,7 +61,7 @@
 .exception-base-demo-wrap .exception-wrap-item {
   height: 420px;
   padding-top: 22px;
-  margin: 10px;
+  margin-bottom: 10px;
   border: 1px solid #dcdee5;
 }
 
