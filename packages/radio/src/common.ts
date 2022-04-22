@@ -55,15 +55,15 @@ export const radioGroupKey: InjectionKey<IRadioGroupContext> = Symbol('RadioGrou
 
 export function useFocus(): [Ref<boolean>, { blur: () => void, focus: () => void }];
 export function useFocus() {
-  const isFocus = ref<boolean>(false);
+  const isFocused = ref<boolean>(false);
   const blur = () => {
-    isFocus.value = true;
+    isFocused.value = false;
   };
   const focus = () => {
-    isFocus.value = false;
+    isFocused.value = true;
   };
   return [
-    isFocus,
+    isFocused,
     {
       blur,
       focus,

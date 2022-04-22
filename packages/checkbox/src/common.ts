@@ -57,10 +57,10 @@ export function useFocus(): [Ref<boolean>, { blur: () => void, focus: () => void
 export function useFocus() {
   const isFocus = ref<boolean>(false);
   const blur = () => {
-    isFocus.value = true;
+    isFocus.value = false;
   };
   const focus = () => {
-    isFocus.value = false;
+    isFocus.value = true;
   };
   return [
     isFocus,
