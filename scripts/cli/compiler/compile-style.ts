@@ -24,48 +24,48 @@
  * IN THE SOFTWARE.
 */
 
-import { lstatSync, readdirSync } from 'fs';
-import { join } from 'path';
+import { readFile } from 'fs/promises';
+import { render } from 'less';
+import { resolve } from 'path';
+import postcss from 'postcss';
+import postcssLess from 'postcss-less';
 
-import { compileFile, compilerLibDir  } from './compiler/compile-lib';
-import {  compileTheme } from './compiler/compile-style';
-import { COMPONENT_URL, DIST_URL, THEME_LESS_URL } from './compiler/helpers';
-import { ICompileTaskOption, ITaskItem } from './typings/task';
-import { CompileTask } from './workers/compile-task';
-import { writeFileRecursive } from './workers/utils';
+import { BKUI_DIR, LessPluginAlias, transformImport } from './helpers';
 
+const styleDir = resolve(BKUI_DIR, './packages/styles/src');
+export const compileStyle = async (url: string) => {
+  const resource =  await readFile(url, 'utf-8');
+  const varResource = resource.replace(/\/themes\/themes\.less/gmi, '/themes/themes.variable.less');
+  const { css } = await render(resource, {
+    filename: url,
+    plugins: [
+      new LessPluginAlias({
+        '@bkui-vue/styles': styleDir,
+      }),
+    ],
+  });
+  const { css: varCss } = await render(varResource, {
+    filename: url,
+    plugins: [
+      new LessPluginAlias({
+        // @import '@bkui-vue/styles/mixins/mixins.less'; => @import 'bkui-vue/packages/styles/src/mixins/mixins.less';
+        '@bkui-vue/styles': styleDir,
+      }),
+    ],
+  });
+  const ret = await postcss([transformImport({
+    '@bkui-vue/styles': styleDir,
+    from: undefined,
+  })]).process(resource, { syntax: postcssLess });
 
-export const compilerDir = async (dir: string): Promise<any> => {
-  const list: ITaskItem[] = [];
-  const buildDir: any = (dir: string) => {
-    const files = readdirSync(dir);
-    files.forEach((file) => {
-      const url = join(dir, file);
-      if (/(node_modules|__test__|\.test\.*)/.test(url)) {
-        return ;
-      }
-      if (lstatSync(url).isDirectory()) {
-        buildDir(url);
-      }
-      const data = compileFile(url);
-      data && list.push(data);
-    });
-  };
-  buildDir(dir);
-  const taskInstance = new CompileTask(list);
-  taskInstance.start();
+  return { css, varCss, resource: ret.css };
 };
 
-
-// 将theme.less 装换为 css变量
-const compileThemeTovariable = async () => {
-  const resource = await compileTheme(THEME_LESS_URL);
-  await writeFileRecursive(THEME_LESS_URL.replace(/\.(css|less|scss)$/, '.variable.$1'), resource);
-};
-export default async (option: ICompileTaskOption) => {
-  if (option.compile) {
-    compilerLibDir(DIST_URL);
-    await compileThemeTovariable();
-    compilerDir(COMPONENT_URL);
+export const compileTheme = async (url: string) => {
+  const resource = await readFile(url, 'utf-8');
+  return `:root {
+    ${resource.replace(/@([^:]+):([^;]+);/gmi, '--$1:$2;').replace(/@([^;]+);/gmi, 'var(--$1);')}
   }
+  ${resource.replace(/@([^:]+):([^;]+);/gmi, '@$1: var(--$1);').replace('var(--bk-prefix)', 'bk')}
+  `;
 };

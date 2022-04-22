@@ -30,3 +30,11 @@ declare module '*.vue' {
   const Component: ReturnType<typeof defineComponent>;
   export default Component;
 }
+// 指定VITE环境变量
+interface ImportMetaEnv {
+  readonly VITE_APP_BASE_URL: string
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv
+}

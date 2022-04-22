@@ -23,25 +23,8 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-export default {
-  required: (value: any): boolean => {
-    console.log('required');
-    return  value !== '' && value !== undefined && value !== null;
-  },
-  min: (value: number, min: number): boolean => {
-    console.log('min');
-    return value >= min;
-  },
-  max: (value: number, max: number): boolean => {
-    console.log('max');
-    return max >= value;
-  },
-  email: (value: string): boolean => {
-    console.log('email');
-    return /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/.test(value);
-  },
-  maxlength: (value: string, maxlength: number): boolean => {
-    console.log('maxlength');
-    return value.length <= maxlength;
-  },
-};
+const path = require('path');
+require('ts-node').register({
+  project: path.resolve(__dirname, '../tsconfig.json'),
+});
+require(path.resolve(__dirname, './task.ts'));

@@ -24,5 +24,56 @@
  * IN THE SOFTWARE.
 */
 
-declare module 'less'
-declare module 'postcss-less'
+import { resolve } from 'path';
+import { build } from 'vite';
+
+import vue from '@vitejs/plugin-vue';
+import vueJsx from '@vitejs/plugin-vue-jsx';
+
+import { COMPONENT_URL, DIST_URL } from '../compiler/helpers';
+
+const entry = resolve(COMPONENT_URL, './bkui-vue/index.ts');
+export default async () => await build({
+  resolve: {
+    alias: [
+      {
+        find: /^@bkui-vue\/(icon\/)/,
+        replacement: resolve(COMPONENT_URL, './$1'),
+      },
+      {
+        find: /^@bkui-vue\/([^/]*)/,
+        replacement: resolve(COMPONENT_URL, './$1/src'),
+      },
+    ],
+  },
+  plugins: [vueJsx(), vue()],
+  build: {
+    outDir: DIST_URL,
+    minify: true,
+    lib: {
+      entry,
+      name: 'bkuiVue',
+      fileName: format => `index.${format}.js`,
+    },
+    rollupOptions: {
+      external: ['vue'],
+      output: [
+        {
+          format: 'cjs',
+          exports: 'named',
+        },
+        {
+          format: 'esm',
+          exports: 'named',
+        },
+        {
+          globals: {
+            vue: 'Vue',
+          },
+          exports: 'named',
+          format: 'umd',
+        },
+      ],
+    },
+  },
+});

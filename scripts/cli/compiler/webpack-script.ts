@@ -24,13 +24,14 @@
 * IN THE SOFTWARE.
 */
 import path, { basename, extname } from 'path';
-import webpack from 'webpack';
+import webpack, { Stats } from 'webpack';
+import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 
-import { ITaskItem } from '../typings/task';
+import { ILibTaskOption, ITaskItem } from '../typings/task';
 
-import { DIST_URL } from './helpers';
+import { LIB_URL } from './helpers';
 
-export const webpackBuildScript = async (entryList: ITaskItem[]) => {
+export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILibTaskOption) => {
   const entry: webpack.EntryObject = {};
   entryList.forEach(({ url }) => {
     if (url && !url.includes('/styles/')
@@ -52,9 +53,9 @@ export const webpackBuildScript = async (entryList: ITaskItem[]) => {
         if (/^icon-/.test(name)) {
           return `icon/${name.replace('icon-', '')}.js`;
         }
-        return `${pathData.chunk.name}/${pathData.chunk.name}.js`;
+        return `${pathData.chunk.name}/index.js`;
       },
-      path: DIST_URL,
+      path: LIB_URL,
       // chunkFilename: (pathData: any) => {
       //   console.info(pathData);
       //   return `${pathData.chunk.runtime}`;
@@ -70,10 +71,12 @@ export const webpackBuildScript = async (entryList: ITaskItem[]) => {
               loader: 'babel-loader',
               options: {
                 presets: [
-                  [
-                    '@babel/preset-env',
-                  ],
-                  '@vue/babel-preset-jsx',
+                  '@babel/preset-env',
+                  '@babel/preset-typescript',
+                ],
+                plugins: [
+                  '@vue/babel-plugin-jsx',
+                  '@babel/plugin-transform-runtime',
                 ],
               },
             },
@@ -82,7 +85,7 @@ export const webpackBuildScript = async (entryList: ITaskItem[]) => {
               options: {
                 transpileOnly: false, // Set to true if you are using fork-ts-checker-webpack-plugin
                 projectReferences: true,
-                configFile: path.resolve(__dirname, '../../tsconfig.component.json'),
+                configFile: path.resolve(__dirname, '../tsconfig.component.json'),
               },
             },
           ],
@@ -111,11 +114,11 @@ export const webpackBuildScript = async (entryList: ITaskItem[]) => {
       'vue-types',
       ({ request }, cb)  => {
         const prefix = '@bkui-vue/';
-        if (request.includes('@babel/')) {
-          return cb(null, request);
-        }
-        if (request.indexOf(prefix) === 0) {
-          return cb(null, request.replace(prefix, '../'));
+        // if (request?.includes('@babel/')) {
+        //   return cb(undefined, request);
+        // }
+        if (request?.indexOf(prefix) === 0) {
+          return cb(undefined, request.replace(prefix, '../'));
         }
         cb();
       },
@@ -124,25 +127,29 @@ export const webpackBuildScript = async (entryList: ITaskItem[]) => {
       extensions: ['.tsx', '.ts', '.js'],
     },
     plugins: [
+      taskOption.analyze ? new BundleAnalyzerPlugin({
+        analyzerMode: 'server',
+        analyzerHost: '127.0.0.1',
+        analyzerPort: 8888,
+      }) : undefined,
       new webpack.ProgressPlugin(),
-    ],
+    ].filter(Boolean) as any,
   });
   return new Promise<void>((resolve, reject) => {
-    compiler.run((err: Error, stats: webpack.Stats) => {
+    compiler.run((err: Error | null | undefined, stats: Stats | undefined) => {
       if (err) {
         console.info(err);
         reject(err.message);
         return;
       }
-      if (stats.hasErrors()) {
+      if (stats?.hasErrors()) {
         stats.compilation.errors.forEach((e) => {
           console.log(e.message);
         });
-
         reject('Build failed');
       }
-      console.log('\n', stats.toString({ colors: true }), '\n');
-      resolve();
+      console.log('\n', stats?.toString({ colors: true }), '\n');
+      !taskOption.analyze && resolve();
     });
   });
 };
