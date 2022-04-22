@@ -139,12 +139,11 @@ export default defineComponent({
         console.warn('WARNNING:step should not be 0');
         return [];
       }
-      const stepCount = (props.maxValue - props.minValue) / props.step;
       const stepWidth = 100 * props.step / (props.maxValue - props.minValue);
       const result = [];
-      for (let i = 0; i <= stepCount; i++) {
+      for (let i = props.minValue, j = 0; i <= props.maxValue; i += props.step, j++) {
         const item = {
-          stepWidth: i * stepWidth,
+          stepWidth: j * stepWidth,
           stepLabel: props.formatterLabel(i * props.step),
         };
         result.push(item);
