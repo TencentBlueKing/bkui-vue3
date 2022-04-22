@@ -24,13 +24,16 @@
     "analyze:lib": "rimraf lib && lerna run --stream --scope cli lib -- -a",
     "generate:icon": "lerna run --scope @bkui-vue/icon build",
     "changelog": "conventional-changelog -c .changelog.config.js -p angular -i CHANGELOG.md -s -l",
-    "lint:packages": "eslint ./packages -c ./packages/.eslintrc.js  --ext .js,.ts,.tsx --cache",
-    "lint:site": "eslint ./site -c ./site/.eslintrc.js  --ext .js,.ts,.tsx,.vue --cache",
-    "lint": "run-p lint:site lint:packages",
-    "lint:fix": "yarn lint:site -- --fix && yarn lint:packages -- --fix",
-    "stylelint:packages": "stylelint ./packages/**/*.{css,less} --fix --config ./packages/.stylelintrc.js --cache",
-    "stylelint:site": "stylelint ./site/**/*.{css,less} --fix --config ./site/.stylelintrc.js --cache",
-    "stylelint:fix": "yarn stylelint:packages -- --fix && yarn stylelint:site -- --fix",
+    "lint:packages": "eslint ./packages --ext .js,.ts,.tsx --cache",
+    "lint:site": "eslint ./site --ext .js,.ts,.tsx,.vue --cache",
+    "lint:scripts": "eslint ./scripts --ext .js,.ts,.tsx --cache",
+    "lint": "run-p lint:site lint:packages lint:scripts",
+    "fix:packages": "eslint ./packages --ext .js,.ts,.tsx --fix --cache",
+    "fix:site": "eslint ./site --ext .js,.ts,.tsx,.vue --fix --cache",
+    "fix:scripts": "eslint ./scripts --ext .js,.ts,.tsx --fix --cache",
+    "lint:fix": "run-p lint:site lint:packages lint:scripts",
+    "stylelint": "eslint --ext .js,.ts,.tsx,.vue ./packages ./site --cache",
+    "stylelint:fix": "yarn stylelint -- --fix",
     "test:unit": "jest --passWithNoTests --config=./jest.config.js",
     "cz": "git-cz"
   },
@@ -102,8 +105,12 @@
   "module": "dist/bkui-vue.esm.js",
   "typings": "./lib/index.d.ts",
   "lint-staged": {
-    "*.(ts|tsx)": [
+    "site/**/*.(vue|ts|tsx)": [
       "eslint --ext .js,.tsx,.ts,.vue --cache --fix",
+      "git add"
+    ],
+    "./(packages|scripts)/**/*.(ts|tsx)": [
+      "eslint --ext .js,.tsx,.ts --cache --fix",
       "git add"
     ],
     "*.(vue|scss|css|sass)": [
