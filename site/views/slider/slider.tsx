@@ -168,7 +168,7 @@ const switcherPropsJson: IPropsTableItem[] = [
     name: 'formatterTipLabel',
     type: 'Function',
     default: '(value) => value',
-    desc: '自定义滑tip格式',
+    desc: '自定义滑块tip格式',
     optional: [],
   },
 ];
