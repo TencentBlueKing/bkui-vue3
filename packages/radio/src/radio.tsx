@@ -56,7 +56,7 @@ export default defineComponent({
   ],
   setup() {
     const [
-      isFocus,
+      isFocused,
       {
         blur: handleBlur,
         focus: handleFocus,
@@ -71,7 +71,7 @@ export default defineComponent({
     } = useRadio();
 
     return {
-      isFocus,
+      isFocused,
       isChecked,
       isDisabled,
       setChecked,
@@ -83,7 +83,7 @@ export default defineComponent({
   render() {
     const radioClass = classes({
       'bk-radio': true,
-      'is-focusd': this.isFocus,
+      'is-focused': this.isFocused,
       'is-disabled': this.isDisabled,
       'is-checked': this.isChecked,
     });
