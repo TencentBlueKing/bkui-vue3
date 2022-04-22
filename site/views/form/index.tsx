@@ -35,6 +35,7 @@ import {
   type IPropsTableItem,
 } from '../../typings';
 
+import DemoComposeFormItem from './demo/compose-form-item.vue';
 import DemoForm from './demo/form.vue';
 import DemoFormValidator from './demo/form-validator.vue';
 import DemoFormVertical from './demo/form-vertical.vue';;
@@ -187,6 +188,13 @@ export default defineComponent({
           componentName="form"
           demoName="/demo/form-validator">
             <DemoFormValidator />
+        </DemoBox>
+        <DemoBox
+          title="组合表单组件"
+          desc=""
+          componentName="form"
+          demoName="/demo/compose-form-item">
+            <DemoComposeFormItem />
         </DemoBox>
         <PropsBox
           title="Form Attributes"
