@@ -186,6 +186,13 @@ export default defineComponent({
             <DemoRadio />
         </DemoBox>
         <DemoBox
+          title="单选框组"
+          desc="配合 bk-radio-group 使用"
+          componentName="radio"
+          demoName="/demo/radio-group">
+            <DemoRadioGroup />
+        </DemoBox>
+        <DemoBox
           title="默认选中"
           desc=""
           componentName="radio"
@@ -199,13 +206,7 @@ export default defineComponent({
           demoName="/demo/radio-disabled">
             <DemoRadioDisabled />
         </DemoBox>
-        <DemoBox
-          title="单选框组"
-          desc="配合 bk-radio-group 使用"
-          componentName="radio"
-          demoName="/demo/radio-group">
-            <DemoRadioGroup />
-        </DemoBox>
+
         <DemoBox
           title="按钮样式"
           desc=""
