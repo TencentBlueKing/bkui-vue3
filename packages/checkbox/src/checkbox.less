@@ -31,6 +31,23 @@
     }
   }
 
+  &.is-indeterminated {
+    .bk-checkbox-input {
+      &:after {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 8px;
+        height: 2px;
+        background: #fff;
+        border: none;
+        border-radius: 2px;
+        content: '';
+        transform: translate(-50%, -50%);
+      }
+    }
+  }
+
   &.is-disabled {
     color: #c4c6cc;
     cursor: not-allowed;

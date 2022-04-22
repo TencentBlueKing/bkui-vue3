@@ -12,5 +12,4 @@
 
   const radioGroupValue = ref('微信');
 </script>
-<style lang="postcss">
-</style>
+

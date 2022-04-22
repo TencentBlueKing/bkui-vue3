@@ -144,7 +144,7 @@ export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILi
       }
       if (stats?.hasErrors()) {
         stats.compilation.errors.forEach((e) => {
-          console.log(e.message);
+          console.error(e.message);
         });
         reject('Build failed');
       }

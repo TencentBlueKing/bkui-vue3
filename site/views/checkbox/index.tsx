@@ -33,8 +33,11 @@ import {
   type IPropsTableItem,
 } from '../../typings';
 
-import Base from './demo/base.vue';
-import Group from './demo/group.vue';
+import DemoCheckbox from './demo/checkbox.vue';
+import DemoCheckboxChecked from './demo/checkbox-checked.vue';
+import DemoCheckboxDisabled from './demo/checkbox-disabled.vue';
+import DemoCheckboxGroup from './demo/checkbox-group.vue';
+import DemoCheckboxIndeterminate from './demo/checkbox-indeterminate.vue';
 
 const checkboxProps: IPropsTableItem[] = [
   {
@@ -151,18 +154,39 @@ export default defineComponent({
           link="https://www.qq.com/"/>
         <DemoBox
           title="基础用法"
-          desc="使用 bk-checkbox 标签配置多选框"
+          desc="单独使用：选中时值为true"
           componentName="checkbox"
-          demoName="/demo/base">
-            <Base />
+          demoName="/demo/checkbox">
+            <DemoCheckbox />
         </DemoBox>
         <DemoBox
           title="多选框组"
           subtitle="多个选项在同一个数组的场景"
-          desc="配合 bk-checkbox-grop 使用"
+          desc="配合 bk-checkbox-grop 使用，label 配置选中时的值"
           componentName="checkbox"
-          demoName="/demo/group">
-            <Group />
+          demoName="/demo/checkbox-group">
+            <DemoCheckboxGroup />
+        </DemoBox>
+        <DemoBox
+          title="默认选中"
+          desc="配置 checked"
+          componentName="checkbox"
+          demoName="/demo/checkbox-checked">
+            <DemoCheckboxChecked />
+        </DemoBox>
+        <DemoBox
+          title="禁用"
+          desc="配置 disabled"
+          componentName="checkbox"
+          demoName="/demo/checkbox-disabled">
+            <DemoCheckboxDisabled />
+        </DemoBox>
+        <DemoBox
+          title="半选"
+          desc=""
+          componentName="checkbox"
+          demoName="/demo/checkbox-indeterminate">
+            <DemoCheckboxIndeterminate />
         </DemoBox>
         <PropsBox
           title="Checkbox Attributes"
