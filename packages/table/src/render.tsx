@@ -24,23 +24,20 @@
 * IN THE SOFTWARE.
 */
 
-import { AngleDownFill, AngleUpFill } from '@bkui-vue/icon/';
 import Pagination from '@bkui-vue/pagination';
 import { classes, random } from '@bkui-vue/shared';
 
+import HeadFilter from './plugins/head-filter';
+import HeadSort from './plugins/head-sort';
 import { TablePlugins } from './plugins/index';
 import { Column, GroupColumn, IColumnActive, IReactiveProp, TablePropTypes } from './props';
-import { resolveHeadConfig, resolvePropVal, resolveWidth } from './utils';;
+import { getRowText, resolveHeadConfig, resolvePropVal, resolveWidth } from './utils';;
 export const enum EVENTS {
   /** 点击排序事件 */
-  ON_SORT_BY_CLICK = 'onSortByClick'
+  ON_SORT_BY_CLICK = 'onSortByClick',
+  ON_FILTER_CLICK = 'onFilterClick'
 }
 
-/** 排序方式 */
-export const enum SortType {
-  ASC = 'asc',
-  DESC = 'desc'
-}
 export default class TableRender {
   props: TablePropTypes;
   context;
@@ -172,6 +169,35 @@ export default class TableRender {
   }
 
   /**
+   * 获取排序设置表头
+   * @param column 当前渲染排序列
+   * @param index 排序列所在index
+   * @returns
+   */
+  private getSortCell(column: Column, index: number) {
+    /**
+     * 点击排序事件
+     * @param e 鼠标事件
+     * @param column 当前列
+     * @param index 当前列index
+     * @param type 排序类型
+     */
+    const hanldeSortClick = (sortFn: any, type: string) => {
+      this.emitEvent(EVENTS.ON_SORT_BY_CLICK, [{ sortFn, column, index, type }]);
+    };
+    return <HeadSort column={column} onChange={ hanldeSortClick }/>;
+  }
+
+  private getFilterCell(column: Column, index: number) {
+    const handleFilterChange = (checked: any[], filterFn: Function) => {
+      const filterFn0 = (row: any, index: number) => filterFn(checked, row, index);
+      this.emitEvent(EVENTS.ON_FILTER_CLICK, [{ filterFn: filterFn0, checked, column, index }]);
+    };
+    return <HeadFilter column={ column } height={ this.props.headHeight }
+    onChange={ handleFilterChange }/>;
+  }
+
+  /**
    * 渲染Table Header
    * @returns
    */
@@ -182,27 +208,6 @@ export default class TableRender {
       '--row-height': `${resolvePropVal(config, 'height', ['thead'])}px`,
     };
 
-    const hanldeSortClick = (e: MouseEvent, column:  Column, index: number, type: string) => {
-      e.stopImmediatePropagation();
-      e.stopPropagation();
-      e.preventDefault();
-
-      const fieldName = column.field as string;
-      const getVal = (row: any) => this.getRowText(row, fieldName, column);
-      const sortFn0 = (a: any, b: any) => {
-        const val0 = getVal(a);
-        const val1 = getVal(b);
-        if (typeof val0 === 'number' && typeof val1 === 'number') {
-          return val0 - val1;
-        }
-
-        return String.prototype.localeCompare.call(val0, val1);
-      };
-      Object.assign(column, { _sort_reg: type });
-      const sortFn = typeof (column.sort as any)?.sortFn === 'function' ? (column.sort as any)?.sortFn : sortFn0;
-      const execFn = (_a, _b) => sortFn(_a, _b) * (type === SortType.DESC ? -1 : 1);
-      this.emitEvent(EVENTS.ON_SORT_BY_CLICK, [{ sortFn: execFn, column, index, type }]);
-    };
 
     /**
      * table head cell render
@@ -213,15 +218,11 @@ export default class TableRender {
     const renderHeadCell = (column: Column, index: number) => {
       const cells = [];
       if (column.sort) {
-        // eslint-disable-next-line @typescript-eslint/dot-notation
-        const sortReg = column['_sort_reg'];
-        const sortCell = <span class="head-cell-sort">
-          <AngleDownFill class={['sort-action', 'sort-asc', sortReg === SortType.ASC ? 'active' : '']}
-            onClick={(e: MouseEvent) => hanldeSortClick(e, column, index, SortType.ASC)}/>
-          <AngleUpFill class={['sort-action', 'sort-desc', sortReg === SortType.DESC ? 'active' : '']}
-            onClick={(e: MouseEvent) => hanldeSortClick(e, column, index, SortType.DESC)}/>
-        </span>;
-        cells.push(sortCell);
+        cells.push(this.getSortCell(column, index));
+      }
+
+      if (column.filter) {
+        cells.push(this.getFilterCell(column, index));
       }
 
       if (typeof cellFn === 'function') {
@@ -303,29 +304,13 @@ export default class TableRender {
   }
 
   /**
-   * 获取当前行指定列的内容
-   * @param row 当前行
-   * @param key 指定列名
-   * @param column 列配置
-   * @param index 当前行Index
-   * @returns
-   */
-  private getRowText(row: any, key: string, column: Column) {
-    if (column.type === 'index') {
-      return row.__$table_row_index;
-    }
-
-    return row[key];
-  }
-
-  /**
    * 渲染表格Cell内容
    * @param row 当前行
    * @param column 当前列
    * @returns
    */
   private renderCell(row: any, column: Column, index: number, rows: any[]) {
-    const cell = this.getRowText(row, resolvePropVal(column, 'field', [column, row]), column);
+    const cell = getRowText(row, resolvePropVal(column, 'field', [column, row]), column);
     if (typeof column.render === 'function') {
       return column.render(cell, row, index, rows);
     }
