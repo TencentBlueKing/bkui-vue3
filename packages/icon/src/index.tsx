@@ -64,7 +64,7 @@ export { default as Info } from '../icons/info';
 export { default as LeftShape } from '../icons/left-shape';
 export { default as PlayShape } from '../icons/play-shape';
 export { default as Plus } from '../icons/plus';
-export { default as Qq } from '../icons/qq';
+export { default as QQ } from '../icons/qq';
 export { default as RightShape } from '../icons/right-shape';
 export { default as Search } from '../icons/search';
 export { default as Share } from '../icons/share';
