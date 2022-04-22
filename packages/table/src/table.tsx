@@ -41,6 +41,8 @@ import {
   resolvePropBorderToClassStr,
 } from './utils';
 
+import './plugins/head-filter.less';
+
 export default defineComponent({
   name: 'Table',
   props: tableProps,
@@ -51,6 +53,7 @@ export default defineComponent({
     const startIndex = ref(0);
     const endIndex = ref(0);
     let columnSortFn: any = null;
+    let columnFilterFn: any = null;
 
     // 当前分页缓存，用于支持内置前端分页，用户无需接收change事件来自行处理数据分割
     let pagination = reactive({ count: 0, limit: 10, current: 1 });
@@ -109,17 +112,25 @@ export default defineComponent({
    */
     const pageData = reactive([]);
 
+    const resolvePageData = () => {
+      pageData.splice(0, pageData.length, ...indexData.value.slice(startIndex.value, endIndex.value));
+      if (typeof columnFilterFn === 'function') {
+        const filterVals = pageData.filter((row: any, index: number) => columnFilterFn(row, index, props.data));
+        pageData.splice(0, pageData.length, ...filterVals);
+      }
+
+      if (typeof columnSortFn === 'function') {
+        pageData.sort(columnSortFn);
+      }
+    };
+
     /**
     * 根据Pagination配置的改变重新计算startIndex & endIndex
     */
     watchEffect(() => {
       pagination = resolvePaginationOption(props.pagination, pagination);
       resetStartEndIndex();
-      pageData.splice(0, pageData.length, ...indexData.value.slice(startIndex.value, endIndex.value));
-
-      if (typeof columnSortFn === 'function') {
-        pageData.sort(columnSortFn);
-      }
+      resolvePageData();
     });
 
     const tableRender = new TableRender(props, ctx, reactiveProp, colgroups);
@@ -131,11 +142,14 @@ export default defineComponent({
       const { sortFn } = args;
       columnSortFn = sortFn;
       pageData.sort(columnSortFn);
+    }).on(EVENTS.ON_FILTER_CLICK, (args: any) => {
+      const { filterFn } = args;
+      columnFilterFn = filterFn;
+      resolvePageData();
     });
 
     /** 表格外层容器样式 */
     const wrapperStyle = computed(() => ({
-      // height: resolveNumberOrStringToPix(props.height),
       minHeight: resolveNumberOrStringToPix(props.minHeight, 'auto'),
     }));
 

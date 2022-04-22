@@ -27,7 +27,7 @@
 import { throttle } from 'lodash';
 
 import { BORDER_OPRIONS } from './const';
-import { GroupColumn, TablePropTypes } from './props';
+import { Column, GroupColumn, TablePropTypes } from './props';
 
 
 /**
@@ -273,4 +273,20 @@ export const resolvePaginationOption = (propPagination: any, defVal: any) => {
 export const resolveHeadConfig = (props: TablePropTypes) => {
   const { showHead, headHeight, thead = {} } = props;
   return Object.assign({}, { isShow: showHead, height: headHeight }, { ...thead });
+};
+
+/**
+   * 获取当前行指定列的内容
+   * @param row 当前行
+   * @param key 指定列名
+   * @param column 列配置
+   * @param index 当前行Index
+   * @returns
+   */
+export const getRowText = (row: any, key: string, column: Column) => {
+  if (column.type === 'index') {
+    return row.__$table_row_index;
+  }
+
+  return row[key];
 };
