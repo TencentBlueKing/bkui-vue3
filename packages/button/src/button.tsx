@@ -114,6 +114,7 @@ export default defineComponent({
         {
           props.loading && (
             <BkLoading
+              loading
               class={`${btnClsPrefix}-loading`}
               mode={props.laodingMode}
               theme={loadingTheme.value}
