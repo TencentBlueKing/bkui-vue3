@@ -95,20 +95,20 @@ export default defineComponent({
               onMouseleave={() => changeHover(0)}
               {...commonAttrs}
             ></star>
-          ) : <>
+          ) : [
             <star
               rate={5}
               style={starStyle.value}
               class="bk-score-real"
               editable={false}
               {...commonAttrs}
-            ></star>
+            ></star>,
             <star
               rate={0}
               editable={false}
               {...commonAttrs}
-            ></star>
-          </>
+            ></star>,
+          ]
         }
       </p>
     );

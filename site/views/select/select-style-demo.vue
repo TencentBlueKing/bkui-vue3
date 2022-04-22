@@ -102,9 +102,10 @@
 .style-demo {
   display: flex;
 }
+
 .bk-select {
   width: 200px;
-  margin-right:20px;
+  margin-right: 20px;
 }
 </style>
 

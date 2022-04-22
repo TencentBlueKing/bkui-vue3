@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 /*
  * Tencent is pleased to support the open source community by making
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
@@ -24,17 +23,4 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
-
-declare module '*.vue' {
-  import { defineComponent } from 'vue';
-  const Component: ReturnType<typeof defineComponent>;
-  export default Component;
-}
-// 指定VITE环境变量
-interface ImportMetaEnv {
-  readonly VITE_APP_BASE_URL: string
-}
-
-interface ImportMeta {
-  readonly env: ImportMetaEnv
-}
+declare module '*.svg'

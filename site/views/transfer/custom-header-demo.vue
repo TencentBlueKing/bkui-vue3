@@ -104,41 +104,39 @@
     display: inline-block;
     font-size: 12px;
   }
+
   .add-all {
     display: inline-block;
     float: right;
-    cursor: pointer;
     font-size: 14px;
+    cursor: pointer;
+
     span {
       color: #3a84ff;
+
       &.disabled {
         cursor: not-allowed;
-        opacity: 0.5;
+        opacity: .5;
       }
     }
   }
-  .add-all {
-    display: inline-block;
-    float: right;
-    cursor: pointer;
-    font-size: 12px;
-  }
-  .add-all span {
-    color: #3a84ff;
-  }
-  .disabled  {
+
+  .disabled {
     cursor: not-allowed;
-    opacity: 0.5;
+    opacity: .5;
   }
+
   .remove-all {
     display: inline-block;
     float: right;
-    cursor: pointer;
     font-size: 12px;
+    cursor: pointer;
   }
+
   .remove-all span {
     color: #ea3636;
   }
+
   .empty-content {
     position: relative;
     top: 145px;

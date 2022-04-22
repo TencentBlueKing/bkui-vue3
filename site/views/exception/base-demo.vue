@@ -59,29 +59,33 @@
 
 <style lang="postcss">
 .exception-base-demo-wrap .exception-wrap-item {
-    border: 1px solid #DCDEE5;
-    margin: 10px;
-    height: 420px;
-    padding-top: 22px;
+  height: 420px;
+  padding-top: 22px;
+  margin: 10px;
+  border: 1px solid #dcdee5;
 }
+
 .exception-base-demo-wrap .exception-wrap-item .text-wrap {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #3A84FF;
-    font-size: 14px;
-    margin-top: 12px;
+  display: flex;
+  margin-top: 12px;
+  font-size: 14px;
+  color: #3a84ff;
+  align-items: center;
+  justify-content: center;
 }
+
 .exception-base-demo-wrap .exception-wrap-item .text-subtitle {
-    color: #979BA5;
-    font-size: 14px;
-    text-align: center;
-    margin-top: 14px;
+  margin-top: 14px;
+  font-size: 14px;
+  color: #979ba5;
+  text-align: center;
 }
+
 .text-wrap .text-btn {
-    margin: 0 5px;
+  margin: 0 5px;
 }
+
 .text-wrap .text-btn:hover {
-    cursor: pointer;
+  cursor: pointer;
 }
 </style>

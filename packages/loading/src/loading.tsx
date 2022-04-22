@@ -97,15 +97,15 @@ export default defineComponent({
     return () => (
       <div class={loadingWrapperCls.value}>
           {props.loading && (
-            <>
+            [
               <div class={containerCls.value}>
                 {
                   indicator.value
                 }
                 {hasTitle.value && <div class="bk-loading-title">{props.title}</div>}
-              </div>
-              {ctx.slots.default && <div class="bk-loading-mask"></div>}
-            </>
+              </div>,
+              ctx.slots.default && <div class="bk-loading-mask"></div>,
+            ]
           )}
           {ctx.slots.default?.()}
       </div>
