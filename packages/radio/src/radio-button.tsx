@@ -65,20 +65,21 @@ export default defineComponent({
     ] = useFocus();
 
     const  {
-      name,
-      isCheck,
+      isChecked,
       isDisabled,
-      handlerChange,
+      setChecked,
+      handleChange,
     } = useRadio();
 
     return {
       isFocus,
       realName: name,
-      isCheck,
+      isChecked,
       isDisabled,
+      setChecked,
       handleBlur,
       handleFocus,
-      handlerChange,
+      handleChange,
     };
   },
   render() {
@@ -86,7 +87,7 @@ export default defineComponent({
       'bk-radio-button': true,
       'is-focusd': this.isFocus,
       'is-disabled': this.isDisabled,
-      'is-checked': this.isCheck,
+      'is-checked': this.isChecked,
     });
 
     return (
@@ -99,11 +100,11 @@ export default defineComponent({
           tabindex="0"
           name={this.realName}
           value={this.label as any}
-          checked={this.isCheck}
+          checked={this.isChecked}
           disabled={this.isDisabled}
           onFocus={this.handleFocus}
           onBlur={this.handleBlur}
-          onChange={this.handlerChange} />
+          onChange={this.handleChange} />
         <div class="bk-radio-button-text">
           {this.$slots.default ? this.$slots.default() : this.label}
         </div>
