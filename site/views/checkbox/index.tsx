@@ -90,7 +90,7 @@ const checkboxProps: IPropsTableItem[] = [
     optional: [],
   },
   {
-    name: 'beforeChange',
+    name: 'before-change',
     type: 'Function',
     default: null,
     desc: '状态改变时前置校验函数',

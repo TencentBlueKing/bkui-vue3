@@ -43,21 +43,21 @@ import DemoFormVertical from './demo/form-vertical.vue';;
 
 const formProps: IPropsTableItem[] = [
   {
-    name: 'formType',
+    name: 'form-type',
     type: 'String',
     default: null,
     desc: '表单模式',
     optional: ['default', 'vertical'],
   },
   {
-    name: 'labelWidth',
+    name: 'label-width',
     type: 'String',
     default: null,
     desc: '表单域标签的宽度',
     optional: [],
   },
   {
-    name: 'labelPosition',
+    name: 'label-position',
     type: 'String',
     default: null,
     desc: '表单域标签的位置',
@@ -88,14 +88,14 @@ const formItemProps: IPropsTableItem[] = [
     optional: [],
   },
   {
-    name: 'labelWidth',
+    name: 'label-width',
     type: 'String',
     default: null,
     desc: '表单域标签的宽度',
     optional: [],
   },
   {
-    name: 'labelPosition',
+    name: 'label-position',
     type: 'String',
     default: null,
     desc: '表单域标签的位置',
@@ -144,7 +144,7 @@ const formItemProps: IPropsTableItem[] = [
     optional: [],
   },
   {
-    name: 'autoCheck',
+    name: 'auto-check',
     type: 'String',
     default: null,
     desc: '是否自动验证',
