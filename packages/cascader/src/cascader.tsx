@@ -24,14 +24,23 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent, reactive } from 'vue';
-import { PropTypes } from '@bkui-vue/shared';
-import CascaderPanel from './cascader-panel';
+import { defineComponent, reactive, ref } from 'vue';
+
+import { clickoutside } from '@bkui-vue/directives';
+import { AngleUp, Close } from '@bkui-vue/icon';
 import BkPopover from '@bkui-vue/popover';
-import Store from './store';
+import { PropTypes } from '@bkui-vue/shared';
+
+import { useHover } from '../../select/src/common';
+
+import CascaderPanel from './cascader-panel';
+import Store from './store';;
 
 export default defineComponent({
   name: 'BkCascader',
+  directives: {
+    clickoutside,
+  },
   components: {
     CascaderPanel,
     BkPopover,
@@ -39,9 +48,11 @@ export default defineComponent({
   props: {
     modelValue: PropTypes.array.def([]),
     list: PropTypes.array.def([]),
+    placeholder: PropTypes.string.def('请选择'),
+    filterable: PropTypes.bool.def(false),
     multiple: PropTypes.bool.def(false),
     disabled: PropTypes.bool.def(false),
-    clearable: PropTypes.bool.def(false),
+    clearable: PropTypes.bool.def(true),
     trigger: PropTypes.string.def('click'),
     checkAnyLevel: PropTypes.bool.def(false),
     isRemote: PropTypes.bool.def(false),
@@ -50,38 +61,101 @@ export default defineComponent({
     idKey: PropTypes.string.def('id'),
     nameKey: PropTypes.string.def('name'),
     childrenKey: PropTypes.string.def('children'),
+    separator: PropTypes.string.def('/'),
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
+    const { separator } = props;
+    const { isHover, setHover, cancelHover } = useHover();
     const store = reactive(new Store(props));
+    const panelShow = ref(false);
+    const selectedText = ref('');
 
+    /** 更新选中 */
     const updateValue = (val: array<any>) => {
       emit('update:modelValue', val);
+
+      /** 根据配置更新显示内容 */
+      if (val.length === 0) {
+        selectedText.value = '';
+        return;
+      }
+      const node = store.getNodeByValue(val);
+      selectedText.value = node.pathNames.join(separator);
+    };
+
+    const hidePopover = () => {
+      panelShow.value = false;
+    };
+
+    /** 清空所选内容，要stopPropagation防止触发下拉 */
+    const handleClear = (e: Event) => {
+      e.stopPropagation();
+      updateValue([]);
+    };
+
+    /** popover的refer点击回调，切换下拉状态 */
+    const inputClickHandler = (e: Event) => {
+      e.stopPropagation();
+      panelShow.value = !panelShow.value;
     };
 
     return {
       store,
       updateValue,
+      hidePopover,
+      inputClickHandler,
+      selectedText,
+      panelShow,
+      handleClear,
+      isHover,
+      setHover,
+      cancelHover,
     };
   },
   render() {
+    const suffixIcon = () => {
+      if (this.clearable && this.isHover) {
+        return <Close class="bk-icon-clear-icon" onClick={this.handleClear}></Close>;
+      }
+      return <AngleUp class="bk-icon-angle-up"></AngleUp>;
+    };
     return (
-      <BkPopover
-        theme="light bk-cascader-popover"
-        trigger="click"
-        arrow={false}
-        boundary="body">
+      <div class={['bk-cascader', 'bk-cascader-wrapper', {
+        'bk-is-show-panel': this.panelShow,
+        'is-unselected': this.modelValue.length === 0,
+      }]}
+        tabindex="0"
+        data-placeholder={this.placeholder}
+        onMouseenter={this.setHover}
+        onMouseleave={this.cancelHover}>
+        {suffixIcon()}
+        <BkPopover
+          placement="bottom-start"
+          theme="light bk-cascader-popover"
+          trigger="click"
+          arrow={false}
+          v-model:isShow={this.panelShow}
+          boundary="body">
           {{
             default: () => (
-              <div>{ `${this.modelValue}test` }</div>
+              <div class="bk-cascader-name" onClick={this.inputClickHandler}>
+                {this.filterable
+                  ? <input class="bk-cascader-search-input"
+                  type="text"
+                  placeholder={this.placeholder}
+                  />
+                  : <span>{this.selectedText}</span>}
+              </div>
             ),
             content: () => (
-              <div class="bk-cascader">
+              <div class="bk-cascader-popover">
                 <CascaderPanel store={this.store} onInput={val => this.updateValue(val)}></CascaderPanel>
               </div>
             ),
           }}
         </BkPopover>
+      </div>
     );
   },
 });

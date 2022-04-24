@@ -24,8 +24,9 @@
  * IN THE SOFTWARE.
 */
 
-import Cascader from './cascader';
 import { App } from 'vue';
+
+import Cascader from './cascader';
 
 Cascader.install = (Vue: App) => {
   Vue.component(Cascader.name, Cascader);

@@ -25,8 +25,10 @@
 */
 
 import { defineComponent, reactive, ref } from 'vue';
-import { PropTypes, arrayEqual } from '@bkui-vue/shared';
+
 import { AngleRight } from '@bkui-vue/icon';
+import { arrayEqual, PropTypes } from '@bkui-vue/shared';
+
 import { INode }  from './interface';
 
 
@@ -46,6 +48,10 @@ export default defineComponent({
     const nodeCheckHandler = (node: INode) => {
       checkValue.value = node.config.multiple ? checkValue.value.concat(node.path) : node.path;
       emit('input', node.path);
+    };
+
+    const nodeClear = () => {
+      emit('input', []);
     };
 
     const nodeExpandHandler = (node: INode) => {
@@ -95,6 +101,7 @@ export default defineComponent({
       nodeEvent,
       isCheckedNode,
       checkValue,
+      nodeClear,
     };
   },
   render() {
