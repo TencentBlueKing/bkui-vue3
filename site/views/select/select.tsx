@@ -25,6 +25,8 @@
 */
 import { defineComponent } from 'vue';
 
+import { BkSelect } from '@bkui-vue/select';
+
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
@@ -33,10 +35,17 @@ import { IPropsTableItem } from '../../typings';
 import SelectBaseDemo from './select-base-demo.vue';
 import SelectGroupDemo from './select-group-demo.vue';
 import SelectMultiDemo from './select-multi-demo.vue';
+import SelectScrollLoadingDemo from './select-scrollloading-demo.vue';
 import SelectSearchDemo from './select-search-demo.vue';
 import SelectStyleDemo from './select-style-demo.vue';
 
-const propsJson: IPropsTableItem[] = [];
+const propsJson: IPropsTableItem[] = Object.keys(BkSelect.props).map(prop => ({
+  name: prop,
+  type: BkSelect.props[prop]._vueTypes_name,
+  default: BkSelect.props[prop].default,
+  desc: '',
+  optional: [],
+}));
 export default defineComponent({
   render() {
     return (
@@ -76,6 +85,13 @@ export default defineComponent({
           componentName="select"
           demoName="select-search-demo">
             <SelectSearchDemo />
+        </DemoBox>
+        <DemoBox
+          title="滚动加载"
+          desc="滚动加载"
+          componentName="select"
+          demoName="select-scrollloading-demo">
+            <SelectScrollLoadingDemo />
         </DemoBox>
         <PropsBox propsData={propsJson} subtitle="" />
       </div>

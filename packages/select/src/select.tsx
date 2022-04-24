@@ -81,8 +81,9 @@ export default defineComponent({
     loadingText: PropTypes.string.def('加载中...'),
     placeholder: PropTypes.string.def('请选择'),
     selectAllText: PropTypes.string.def('全部'),
+    scrollLoading: PropTypes.bool.def(false),
   },
-  emits: ['update:modelValue', 'change', 'toggle', 'clear'],
+  emits: ['update:modelValue', 'change', 'toggle', 'clear', 'scroll-end'],
   setup(props, { emit }) {
     const {
       modelValue,
@@ -250,6 +251,13 @@ export default defineComponent({
       selectedCallback();
       emitChange([...states.selectedOptions.values()].map(option => option.value));
     };
+    // 滚动事件
+    const handleScroll = (e) => {
+      const { scrollTop, clientHeight, scrollHeight } = e.target;
+      if (scrollTop + clientHeight === scrollHeight) {
+        emit('scroll-end');
+      }
+    };
     const handleClickOutside = () => {
       hidePopover();
       handleBlur();
@@ -309,6 +317,7 @@ export default defineComponent({
       handleToggleAll,
       handleOptionSelected,
       handleClickOutside,
+      handleScroll,
     };
   },
   render() {
@@ -332,7 +341,7 @@ export default defineComponent({
     const renderSelectTrigger = () => {
       const suffixIcon = () => {
         if (this.loading) {
-          return <Loading class="spinner" mode="spin" size="mini"></Loading>;
+          return <Loading loading={true} class="spinner" mode="spin" size="mini"></Loading>;
         } if (this.clearable && this.isHover) {
           return <Close class="clear-icon" onClick={this.handleClear}></Close>;
         }
@@ -402,12 +411,15 @@ export default defineComponent({
           (!this.isShowSelectContent) && (
           <div class="bk-select-empty">
             {this.searchLoading
-            && <Loading class="mr5" mode="spin" size="mini"></Loading>}
+            && <Loading class="mr5" loading={true} mode="spin" size="mini"></Loading>}
             {this.curContentText}
           </div>)
           }
           <div class="bk-select-content">
-            <div class="bk-select-dropdown" style={{ maxHeight: `${this.scrollHeight}px` }}>
+            <div class="bk-select-dropdown"
+              style={{ maxHeight: `${this.scrollHeight}px` }}
+              onScroll={this.handleScroll}
+            >
               <ul class="bk-select-options" v-show={this.isShowSelectContent}>
                 {
                   this.multiple
@@ -418,6 +430,12 @@ export default defineComponent({
                       </li>
                 }
                 {this.$slots.default?.()}
+                {this.scrollLoading && (
+                  <li class="bk-select-options-loading">
+                    <Loading class="spinner mr5" theme='primary' loading={true} mode="spin" size="mini"></Loading>
+                    {this.loadingText}
+                  </li>
+                )}
               </ul>
             </div>
             {this.$slots.extension
