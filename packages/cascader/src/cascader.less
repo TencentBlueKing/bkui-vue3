@@ -5,54 +5,105 @@
 }
 
 .@{bk-prefix}-cascader {
-  .@{bk-prefix}-cascader-panel-wrapper {
+  position: relative;
+  border: 1px solid #c4c6cc;
+  border-radius: 2px;
+  line-height: 30px;
+  font-size: 12px;
+  color: #63656e;
+  cursor: pointer;
+  width: 250px;
+  &.@{bk-prefix}-is-show-panel {
+    .@{bk-prefix}-icon-angle-up {
+      transform: rotate(0);
+    }
+  }
+  &.is-unselected:before {
+    position: absolute;
+    height: 100%;
+    content: attr(data-placeholder);
+    left: 11px;
+    top: 0;
+    color: #c3cdd7;
+    pointer-events: none;
+  }
+  .@{bk-prefix}-icon-angle-up, .@{bk-prefix}-icon-clear-icon {
     display: inline-flex;
-    border: 1px solid @cascader-panel-border-color;
-    border-radius: 2px;
-    box-shadow: 0px 2px 6px 0px rgba(0,0,0,.10);
-    .@{bk-prefix}-cascader-panel {
-      min-width: 160px;
-      padding: 6px 0;
-      background: @white-color;
-      border-right: 1px solid @cascader-panel-border-color;
+    align-items: center;
+    height: 100%;
+    right: 2px;
+    position: absolute;
+    color: #979ba5;
+    font-size: 20px;
+    transition: transform .3s cubic-bezier(.4,0,.2,1);
+    transform: rotate(180deg);
+  }
+  .@{bk-prefix}-icon-clear-icon {
+    font-size: 14px;
+    right: 4px;
+  }
+  .@{bk-prefix}-popover-reference {
+    width: 100%;
+    display: block;
+  }
+  .@{bk-prefix}-cascader-name {
+    height: 30px;
+    padding: 0 36px 0 11px;
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
 
-      &:last-child {
-        border-right: none;
+.@{bk-prefix}-cascader-panel-wrapper {
+  display: inline-flex;
+  border: 1px solid @cascader-panel-border-color;
+  border-radius: 2px;
+  box-shadow: 0px 2px 6px 0px rgba(0,0,0,.10);
+  .@{bk-prefix}-cascader-panel {
+    min-width: 160px;
+    padding: 6px 0;
+    background: @white-color;
+    border-right: 1px solid @cascader-panel-border-color;
+
+    &:last-child {
+      border-right: none;
+    }
+    .@{bk-prefix}-cascader-node {
+      position: relative;
+      padding: 0 16px;
+      line-height: 32px;
+      cursor: pointer;
+
+      &:hover {
+        color: @primary-color;
+        background: @cascader-panel-hover;
       }
-      .@{bk-prefix}-cascader-node {
-        position: relative;
-        padding: 0 16px;
-        line-height: 32px;
-        cursor: pointer;
 
-        &:hover {
-          color: @primary-color;
-          background: @cascader-panel-hover;
-        }
+      &.is-selected,
+      &.is-checked {
+        color: @primary-color;
+        background: @cascader-panel-active;
+      }
 
-        &.is-selected,
-        &.is-checked {
-          color: @primary-color;
-          background: @cascader-panel-active;
-        }
-
-        &.is-disabled {
-          color: @light-gray;
-          cursor: not-allowed;
-          background-color: @white-color;
-
-          .icon-angle-right {
-            color: @light-gray;
-          }
-        }
+      &.is-disabled {
+        color: @light-gray;
+        cursor: not-allowed;
+        background-color: @white-color;
 
         .icon-angle-right {
-          position: absolute;
-          top: -1px;
-          right: 5px;
-          font-size: 20px;
-          color: @gray-color;
+          color: @light-gray;
         }
+      }
+
+      .icon-angle-right {
+        position: absolute;
+        top: -1px;
+        right: 5px;
+        font-size: 20px;
+        color: @gray-color;
       }
     }
   }
