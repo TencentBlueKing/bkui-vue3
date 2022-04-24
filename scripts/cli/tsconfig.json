@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2019",
+    "module": "commonjs",
+    "allowJs": true,
+    "strict": true,
+    "outDir": "./dist",
+    "declaration": false,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "lib": ["esnext", "dom"],
+    "resolveJsonModule": true
+  },
+  "ts-node": {
+    "transpileOnly": true
+  },
+  "include": ["./**/*.ts"],
+  "exclude": ["node_modules", "./**/*.js"]
+}

@@ -23,27 +23,37 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { SetupContext } from 'vue';
 
 import Pagination from '@bkui-vue/pagination';
-import { classes } from '@bkui-vue/shared';
+import { classes, random } from '@bkui-vue/shared';
 
+import HeadFilter from './plugins/head-filter';
+import HeadSort from './plugins/head-sort';
 import { TablePlugins } from './plugins/index';
 import { Column, GroupColumn, IColumnActive, IReactiveProp, TablePropTypes } from './props';
-import { resolvePropVal, resolveWidth } from './utils';
+import { getRowText, resolveHeadConfig, resolvePropVal, resolveWidth } from './utils';;
+export const enum EVENTS {
+  /** 点击排序事件 */
+  ON_SORT_BY_CLICK = 'onSortByClick',
+  ON_FILTER_CLICK = 'onFilterClick'
+}
 
 export default class TableRender {
   props: TablePropTypes;
-  context: SetupContext;
+  context;
   reactiveProp: any;
   colgroups: GroupColumn[];
+  uuid: string;
+  events: Map<string, any[]>;
   public plugins: TablePlugins;
-  constructor(props: TablePropTypes, ctx: SetupContext, reactiveProp: IReactiveProp, colgroups: GroupColumn[]) {
+  constructor(props, ctx, reactiveProp: IReactiveProp, colgroups: GroupColumn[]) {
     this.props = props;
     this.context = ctx;
     this.reactiveProp = reactiveProp;
     this.colgroups = colgroups;
     this.plugins = new TablePlugins(props, ctx);
+    this.uuid = random(8);
+    this.events = new Map<string, any[]>();
   }
 
   get propActiveCols(): IColumnActive[] {
@@ -56,10 +66,14 @@ export default class TableRender {
    * @returns
    */
   public renderTableHeadSchema() {
+    const { isShow = true } = resolveHeadConfig(this.props);
+    if (!isShow) {
+      return null;
+    }
+
     return <table cellpadding={0} cellspacing={0}>
         { this.renderColGroup() }
         { this.renderHeader() }
-        {/* { this.renderTBody(rows) } */}
       </table>;
   }
 
@@ -71,7 +85,6 @@ export default class TableRender {
   public renderTableBodySchema(rows: any[]) {
     return <table cellpadding={0} cellspacing={0}>
       { this.renderColGroup() }
-      {/* { this.renderHeader() } */}
       { this.renderTBody(rows) }
     </table>;
   }
@@ -83,14 +96,48 @@ export default class TableRender {
     onChange={ current => this.hanlePageChange(current) }></Pagination>;
   }
 
+  /**
+   * 注册监听事件
+   * @param eventName
+   * @param wartcher
+   */
+  public on(eventName: string, wartcher: Function) {
+    if (!this.events.has(eventName)) {
+      this.events.set(eventName, []);
+    }
+
+    this.events.get(eventName).push(wartcher);
+    return this;
+  }
+
+  public destroy() {
+    this.events.clear();
+    this.events = null;
+  }
+
+  /**
+   * 派发事件
+   * @param eventName
+   * @param args
+   */
+  private emitEvent(eventName: string, args: any[]) {
+    if (this.events.has(eventName)) {
+      this.events.get(eventName).forEach((evet: any) => {
+        if (typeof evet === 'function') {
+          Reflect.apply(evet, this, args);
+        }
+      });
+    }
+  }
+
   private handlePageLimitChange(limit: number) {
     Object.assign(this.props.pagination, { limit });
-    this.context.emit('page-limit-change', limit);
+    this.context.emit('pageLimitChange', limit);
   }
 
   private hanlePageChange(current: number) {
     Object.assign(this.props.pagination, { current, value: current });
-    this.context.emit('page-value-change', current);
+    this.context.emit('pageValueChange', current);
   }
 
   /**
@@ -122,12 +169,69 @@ export default class TableRender {
   }
 
   /**
+   * 获取排序设置表头
+   * @param column 当前渲染排序列
+   * @param index 排序列所在index
+   * @returns
+   */
+  private getSortCell(column: Column, index: number) {
+    /**
+     * 点击排序事件
+     * @param e 鼠标事件
+     * @param column 当前列
+     * @param index 当前列index
+     * @param type 排序类型
+     */
+    const hanldeSortClick = (sortFn: any, type: string) => {
+      this.emitEvent(EVENTS.ON_SORT_BY_CLICK, [{ sortFn, column, index, type }]);
+    };
+    return <HeadSort column={column} onChange={ hanldeSortClick }/>;
+  }
+
+  private getFilterCell(column: Column, index: number) {
+    const handleFilterChange = (checked: any[], filterFn: Function) => {
+      const filterFn0 = (row: any, index: number) => filterFn(checked, row, index);
+      this.emitEvent(EVENTS.ON_FILTER_CLICK, [{ filterFn: filterFn0, checked, column, index }]);
+    };
+    return <HeadFilter column={ column } height={ this.props.headHeight }
+    onChange={ handleFilterChange }/>;
+  }
+
+  /**
    * 渲染Table Header
    * @returns
    */
   private renderHeader() {
+    const config = resolveHeadConfig(this.props);
+    const { cellFn } =  config;
     const rowStyle = {
-      '--row-height': `${resolvePropVal(this.props, 'headHeight', ['thead'])}px`,
+      '--row-height': `${resolvePropVal(config, 'height', ['thead'])}px`,
+    };
+
+
+    /**
+     * table head cell render
+     * @param column
+     * @param index
+     * @returns
+     */
+    const renderHeadCell = (column: Column, index: number) => {
+      const cells = [];
+      if (column.sort) {
+        cells.push(this.getSortCell(column, index));
+      }
+
+      if (column.filter) {
+        cells.push(this.getFilterCell(column, index));
+      }
+
+      if (typeof cellFn === 'function') {
+        cells.unshift(cellFn(column, index));
+        return cells;
+      }
+
+      cells.unshift(resolvePropVal(column, 'label', [column, index]));
+      return cells;
     };
     // @ts-ignore:next-line
     return <thead style={rowStyle}>
@@ -138,7 +242,7 @@ export default class TableRender {
             active: this.isColActive(index),
           }) }
           onClick={ () => this.handleColumnHeadClick(index) }>
-            <div class="cell">{ resolvePropVal(column, 'label', [column]) }</div>
+            <div class="cell">{ renderHeadCell(column, index) }</div>
           </th>)
         }
         </tr>
@@ -152,16 +256,21 @@ export default class TableRender {
   private renderTBody(rows: any) {
     return <tbody>
     {
-      rows.map((row: any, index: number) => {
+      rows.map((row: any, rowIndex: number) => {
         const rowStyle = {
-          '--row-height': `${resolvePropVal(this.props, 'rowHeight', ['tbody', row, index])}px`,
+          '--row-height': `${resolvePropVal(this.props, 'rowHeight', ['tbody', row, rowIndex])}px`,
         };
 
-        // @ts-ignore:next-line
-        return <tr style={rowStyle} onClick={ e => this.handleRowClick(e, row, index, rows)}>
+        return <tr
+          // @ts-ignore
+          style={rowStyle}
+          onClick={ e => this.handleRowClick(e, row, rowIndex, rows)}
+          onDblclick={e => this.handleRowDblClick(e, row, rowIndex, rows)}
+        >
         {
-          this.props.columns.map((column: Column) => <td colspan={1} rowspan={1}>
-          <div class="cell">{ this.renderCell(row, column, index, rows) }</div>
+          this.props.columns.map((column: Column, index: number) => <td class={this.getColumnClass(index)}
+          colspan={1} rowspan={1}>
+          <div class="cell" >{ this.renderCell(row, column, rowIndex, rows) }</div>
         </td>)
         }
       </tr>;
@@ -169,6 +278,8 @@ export default class TableRender {
     }
   </tbody>;
   }
+
+  private getColumnClass = (colIndex: number) => `${this.uuid}-column-${colIndex}`;
 
   /**
    * table row click handle
@@ -178,7 +289,18 @@ export default class TableRender {
    * @param rows
    */
   private handleRowClick(e: MouseEvent, row: any, index: number, rows: any) {
-    this.context.emit('row-click', e, row, index, rows, this);
+    this.context.emit('rowClick', e, row, index, rows, this);
+  }
+
+  /**
+   * table row click handle
+   * @param e
+   * @param row
+   * @param index
+   * @param rows
+   */
+  private handleRowDblClick(e: MouseEvent, row: any, index: number, rows: any) {
+    this.context.emit('rowDblClick', e, row, index, rows, this);
   }
 
   /**
@@ -188,7 +310,7 @@ export default class TableRender {
    * @returns
    */
   private renderCell(row: any, column: Column, index: number, rows: any[]) {
-    const cell = row[resolvePropVal(column, 'field', [column, row])];
+    const cell = getRowText(row, resolvePropVal(column, 'field', [column, row]), column);
     if (typeof column.render === 'function') {
       return column.render(cell, row, index, rows);
     }
@@ -218,10 +340,9 @@ export default class TableRender {
           const colCls = classes({
             active: this.isColActive(index),
           });
-          const colStyle = {
-            width: resolveWidth(column.calcWidth),
-          };
-          return <col class={ colCls } style={ colStyle }></col>;
+
+          const width = `${resolveWidth(column.calcWidth)}`.replace(/px$/i, '');
+          return <col class={ colCls } width={ width }></col>;
         })
       }
       </colgroup>;

@@ -49,8 +49,9 @@ export const inputType = {
   showControl: PropTypes.bool.def(true),
   showClearOnlyHover: PropTypes.bool.def(false),
   precision: PropTypes.number.def(0).validate(val => val >= 0 && val < 20),
-  modelValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  modelValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def(''),
   size: PropTypes.size(),
+  rows: PropTypes.number,
 };
 
 
@@ -67,16 +68,17 @@ export default defineComponent({
   setup(props, ctx) {
     const isFocused = ref(false);
     const isCNInput = ref(false);
-    const inputClsPrefix = 'bk-input';
+    const isTextArea = computed(() => props.type === 'textarea');
+    const inputClsPrefix = computed(() => (isTextArea.value ? 'bk-textarea' : 'bk-input'));
     const { class: cls, style, ...inputAttrs } = ctx.attrs;
     const inputCls = computed(() => classes({
-      [`${inputClsPrefix}--${props.size}`]: !!props.size,
+      [`${inputClsPrefix.value}--${props.size}`]: !!props.size,
       'is-focused': isFocused.value,
       'is-readonly': props.readonly,
       'is-disabled': props.disabled,
       'is-simplicity': props.behavior === 'simplicity',
       [`${cls}`]: !!cls,
-    }, inputClsPrefix));
+    }, inputClsPrefix.value));
     const suffixIconMap = {
       search: () => <Search />,
       password: () => <Eye onClick={handleVisibleChange} />,
@@ -182,47 +184,58 @@ export default defineComponent({
     }
 
     function getCls(name) {
-      return `${inputClsPrefix}--${name}`;
+      return `${inputClsPrefix.value}--${name}`;
     }
 
     function handleVisibleChange() {
       pwdVisible.value = !pwdVisible.value;
     }
 
+    const bindProps = computed(() => ({
+      value: props.modelValue,
+      maxlength: props.maxlength,
+      placeholder: props.placeholder,
+      readonly: props.readonly,
+      disabled: props.disabled,
+      onInput: handleInput,
+      onFocus: handleFocus,
+      onBlur: handleBlur,
+      onPaste: handlePaste,
+      onChange: handleChange,
+      onKeypress: handleKeyPress,
+      onKeydown: handleKeydown,
+      onKeyup: handleKeyup,
+      onCompositionstart: handleCompositionStart,
+      onCompositionend: handleCompositionEnd,
+    }));
     return () => (
-      <div class={inputCls.value} style={style} >
+        <div class={inputCls.value} style={style} >
         {
           ctx.slots?.prefix?.() ?? (props.prefix && <div class={getCls('prefix-area')}>
             <span class={getCls('prefix-area--text')}>{props.prefix}</span>
           </div>)
         }
-        <input
-          {...inputAttrs}
-          class={`${inputClsPrefix}--text`}
-          value={props.modelValue}
-          type={ pwdVisible.value && props.type === 'password' ? 'text' : props.type}
-          maxlength={props.maxlength}
-          step={props.step}
-          max={props.max}
-          min={props.min}
-          placeholder={props.placeholder}
-          readonly={props.readonly}
-          disabled={props.disabled}
-          onInput={handleInput}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          onPaste={handlePaste}
-          onChange={handleChange}
-          onKeypress={handleKeyPress}
-          onKeydown={handleKeydown}
-          onKeyup={handleKeyup}
-          onCompositionstart={handleCompositionStart}
-          onCompositionend={handleCompositionEnd}
-        />
-        {props.clearable && !!props.modelValue && <Close onClick={clear} class={clearCls.value} />}
+        {isTextArea.value ? (
+            <textarea
+              {...inputAttrs}
+              {...bindProps.value}
+              rows={props.rows}
+            />
+        ) : (
+          <input
+            {...inputAttrs}
+            class={`${inputClsPrefix.value}--text`}
+            type={ pwdVisible.value && props.type === 'password' ? 'text' : props.type}
+            step={props.step}
+            max={props.max}
+            min={props.min}
+            {...bindProps.value}
+          />
+        )}
+        {!isTextArea.value && props.clearable && !!props.modelValue && <Close onClick={clear} class={clearCls.value} />}
         {suffixIcon.value}
         {
-          typeof props.maxlength === 'number' && props.showWordLimit && (
+          typeof props.maxlength === 'number' && (props.showWordLimit || isTextArea.value) && (
             <p class={getCls('max-length')}>
               {props.modelValue.toString().length}/<span>{ceilMaxLength.value}</span>
             </p>
@@ -238,7 +251,7 @@ export default defineComponent({
             ctx.slots?.suffix?.() ?? (props.suffix && <div class={getCls('suffix-area')}>
               <span class={getCls('suffix-area--text')}>{props.suffix}</span>
             </div>)
-          }
+        }
       </div>
 
     );

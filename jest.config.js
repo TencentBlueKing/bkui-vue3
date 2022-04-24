@@ -55,7 +55,7 @@ module.exports = {
   // ]
 
   testURL: 'http://localhost/',
-  setupFiles: ['./scripts/test-setup.ts'],
+  setupFiles: ['./scripts/cli/test-setup.ts'],
   collectCoverage: true,
   coverageDirectory: 'coverage',
   coverageProvider: 'v8',
@@ -78,7 +78,7 @@ module.exports = {
     ...packages.reduce(
       (acc, name) => ({
         ...acc,
-        [`@bkui-vue/${name}(.*)$`]: `<rootDir>/packages/./${name}/src/$1`,
+        [`@bkui-vue/${name}(.*)$`]: `<rootDir>/packages/${name}/src/$1`,
       }),
       {},
     ),
@@ -101,7 +101,8 @@ module.exports = {
   testRegex: '.*\\.test\\.(js|ts|tsx)$',
   globals: {
     'ts-jest': {
-      babelConfig: true,
+      babelConfig: './babel.config.js',
+      tsconfig: './packages/tsconfig.test.json'
     },
   },
 };

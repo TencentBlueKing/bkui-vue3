@@ -25,6 +25,7 @@
 */
 
 export const propsMixin = {
+  // 是否显示弹框
   isShow: {
     type: Boolean,
     default: false,
@@ -37,16 +38,64 @@ export const propsMixin = {
     type: [Number, String],
     default: '50%',
   },
+  // 配置自定义样式类名
   customClass: {
     type: [Array, String],
     default: '',
   },
+  // 弹框出现时，是否允许页面滚动
   scrollable: {
     type: Boolean,
     default: true,
   },
+  // 是否允许出现遮罩
   showMask: {
     type: Boolean,
     default: true,
+  },
+  // 是否显示右上角的关闭 icon
+  closeIcon: {
+    type: Boolean,
+    default: true,
+  },
+  // 是否允许 esc 按键关闭弹框
+  escClose: {
+    type: Boolean,
+    default: true,
+  },
+  // 是否允许点击遮罩关闭弹框
+  maskClose: {
+    type: Boolean,
+    default: true,
+  },
+  // 是否全屏
+  fullscreen: {
+    type: Boolean,
+    default: false,
+  },
+  // 弹框尺寸
+  size: {
+    type: String,
+    default: 'normal',
+    validator: (value: string) => {
+      const dialogSize = ['normal', 'small', 'medium', 'large'];
+      if (dialogSize.indexOf(value) < 0) {
+        console.error(`dialogSize property is not valid: '${value}',【${dialogSize.join(' | ')}】`);
+        return false;
+      }
+      return true;
+    },
+  },
+  // 弹框的渲染方式
+  renderDirective: {
+    type: String,
+    default: 'show',
+    validator: (value: string) => {
+      if (['show', 'if'].indexOf(value) < 0) {
+        console.error(`type render-directive is not valid: '${value}'`);
+        return false;
+      }
+      return true;
+    },
   },
 };

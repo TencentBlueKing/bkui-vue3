@@ -80,11 +80,31 @@ export default defineComponent({
           step={2}
           precision={3} type="number"
         />
+        <BkInput
+          style="margin: 10px 0"
+          v-model={state.numberValue}
+          clearable
+          max={100}
+          min={0}
+          step={2}
+          size="large"
+          precision={3} type="number"
+        />
+        <BkInput
+          style="margin: 10px 0"
+          v-model={state.numberValue}
+          clearable
+          max={100}
+          min={0}
+          step={2}
+          size="small"
+          precision={3} type="number"
+        />
         <BkInput style="margin: 10px 0" showWordLimit maxlength={state.numberValue} v-model={state.inputValue} type="search" />
         <BkInput style="margin: 10px 0" type="url" suffix='@qq.com'/>
         <BkInput style="margin: 10px 0" onPaste={handlePaste} onKeypress={handleKeyup} v-model={state.passwordVal} clearable type="password" />
-        <BkInput style="margin: 10px 0" size="large" modelValue={state.ivalue} onKeypress={handleKeyup} onKeyup={handleKeyup} onKeydown={handleKeyup} onInput={handleiValueInput} onEnter={handleEnter} />
-        <BkInput style="margin: 10px 0" readonly size="small">
+        <BkInput style="margin: 10px 0" size="large" showWordLimit maxlength={100} modelValue={state.ivalue} onKeypress={handleKeyup} onKeyup={handleKeyup} onKeydown={handleKeyup} onInput={handleiValueInput} onEnter={handleEnter} />
+        <BkInput style="margin: 10px 0" size="small" v-model={state.ivalue} maxlength={20} showWordLimit >
           {{
             prefix: () => (
               <span style="display: block; align-self: center; font-size: 16px; padding-left: 10px; color: #c4c6cc;">
@@ -100,6 +120,7 @@ export default defineComponent({
         </BkInput>
         <BkInput style="margin: 10px 0" disabled size="large" />
         <BkInput style="margin: 10px 0" behavior='simplicity' showClearOnlyHover v-model={state.inputValue} clearable />
+        <BkInput {...{ row: 10  }}  maxlength={255} style="margin: 10px 0" type='textarea' v-model={state.inputValue} />
       </div>
     );
   },

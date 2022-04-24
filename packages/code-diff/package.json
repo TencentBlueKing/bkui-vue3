@@ -16,11 +16,11 @@
     "@types/diff": "~5.0.2"
   },
   "peerDependencies": {
-    "vue": "^3.2.0"
+    "vue": "^3.2.0",
+    "highlight.js": "~11.5.0"
   },
   "dependencies": {
     "diff": "~5.0.0",
-    "diff2html": "~3.4.16",
-    "highlight.js": "~11.5.0"
+    "diff2html": "~3.4.16"
   }
 }

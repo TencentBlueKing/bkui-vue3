@@ -1,5 +1,6 @@
 @import '@bkui-vue/styles/themes/themes.less';
-
+@import './plugins/head-filter.less';
+@import './plugins/head-sort.less';
 .@{bk-prefix}-table {
   height: 100%;
   overflow: hidden;
@@ -16,13 +17,15 @@
     table {
       width: 100%;
       border-collapse: collapse;
-
+      table-layout: fixed;
+      
       th,
       td {
         min-width: 80px;
 
         .cell {
-          height: var(--row-height);
+          display: flex;
+          align-items: center;
           padding: 0 15px;
           overflow: hidden;
           line-height: var(--row-height);
@@ -35,21 +38,25 @@
 
       thead {
         th {
-          position: sticky; 
-          top: 0; 
-          z-index: 1;
           color: @table-head-font-color;
           background-color: @table-head-bg-color;
 
           &.active,
           &:hover {
-            background: #f0f1f5;
+            background: @table-row-active-bg-color;
           }
         }
       }
 
       tbody {
         tr {
+          td {
+            .cell {
+              display: inline-block;
+              width: 100%;
+            }
+          }
+
           &:hover {
             td {
               background: @table-row-hover-bg-color;
@@ -65,7 +72,8 @@
   }
 
   &.bordered-row {
-    .cell { 
+    td,
+    th { 
       border-bottom: 1px solid @table-border-color;
     }
   }
@@ -78,14 +86,10 @@
   &.bordered-col {
     th,
     td {
-      .cell { 
-        border-right: 1px solid @table-border-color;
-      }
+      border-right: 1px solid @table-border-color;
 
       &:last-child {
-        .cell {
-          border-right: none;
-        }
+        border-right: none;
       }
     }
 
@@ -94,12 +98,10 @@
   &.bordered-none {
     th,
     td {
-      .cell {
-        border-top: none;
-        border-right: none;
-        border-bottom: none;
-        border-left: none;
-      }
+      border-top: none;
+      border-right: none;
+      border-bottom: none;
+      border-left: none;
     }
   }
 
@@ -113,7 +115,7 @@
 
       &.active {
         position: relative;
-        background: #f0f1f5;
+        background: @table-row-active-bg-color;
       }
     }
   }

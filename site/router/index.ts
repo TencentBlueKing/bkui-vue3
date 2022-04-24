@@ -188,7 +188,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/exception',
     name: 'exception',
-    component: () => import('../views/exception'),
+    component: () => import('../views/exception/exception'),
     meta: {
       group: NavGroupMeta.Feedback,
       navName: 'Exception 异常提示',
@@ -518,7 +518,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/divider',
     name: 'divider',
-    component: () => import('../views/divider'),
+    component: () => import('../views/divider/divider'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'Divider 分割线',
@@ -542,7 +542,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/slider',
     name: 'slider',
-    component: () => import('../views/slider'),
+    component: () => import('../views/slider/slider'),
     meta: {
       group: NavGroupMeta.Feedback,
       navName: 'Slider 滑动选择器',
@@ -610,10 +610,22 @@ const routes: RouteRecordRaw[] = [
     name: '404',
     component: () => import('../views/404'),
   },
+  /**
+   * @description:dialog
+   */
+  {
+    path: '/dialog',
+    name: 'dialog',
+    component: () => import('../views/dialog/index'),
+    meta: {
+      group: NavGroupMeta.Feedback,
+      navName: 'Dialog 对话框',
+    },
+  },
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.VITE_APP_BASE_URL),
   routes,
 });
 

@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
-import { computed, defineComponent, h, onMounted, onUpdated, reactive, ref, SetupContext, watch } from 'vue';
+import { computed, defineComponent, h, onMounted, onUpdated, reactive, ref, watch } from 'vue';
 
 import { DownShape, Folder, FolderShapeOpen, RightShape, Spinner, TextFile } from '@bkui-vue/icon/';
 import { resolveClassName } from '@bkui-vue/shared';
@@ -48,7 +48,7 @@ export default defineComponent({
   props: treeProps,
   emits: ['check'],
 
-  setup(props: TreePropTypes, ctx: SetupContext) {
+  setup(props, ctx) {
     const formatData = getFlatdata(props);
     const checkedNodes = [];
     /**
@@ -249,7 +249,10 @@ export default defineComponent({
       /** 如果是异步请求加载 */
       if (item.async) {
         const { callback = null, cache = true } = props.async || {};
-        if (typeof callback === 'function' && !item.cached) {
+        if (typeof callback === 'function') {
+          if (item.cached) {
+            return;
+          }
           Object.assign(item, { loading: true });
           callback(item, (resp: any) => setNodeRemoteLoad(resp, item))
             .then((resp: any) => setNodeRemoteLoad(resp, item))
@@ -270,10 +273,23 @@ export default defineComponent({
       }
     };
 
-    const handleNodeActionClick = (node: any) => {
+    /**
+     * 点击树形节点展开、收起图标处理事件
+     * @param e 鼠标事件
+     * @param node 当前节点
+     */
+    const handleNodeActionClick = (e: MouseEvent, node: any) => {
+      e.stopImmediatePropagation();
+      e.stopPropagation();
+      e.preventDefault();
+
       hanldeTreeNodeClick(node);
     };
 
+    /**
+     * 点击节点事件
+     * @param item
+     */
     const handleNodeContentClick = (item: any) => {
       if (!checkedNodes.includes(item.__uuid)) {
         checkedNodes.forEach((__uuid: string) => setNodeAttr({ __uuid }, '__checked', false));
@@ -383,10 +399,14 @@ export default defineComponent({
   render() {
     const props = this.$props;
     const renderTreeNode = (item: any) => <div class={ getNodeRowClass(item, this.flatData.schema) }>
-      <div class={getNodeItemClass(item, this.flatData.schema, props)}
-        style={getNodeItemStyle(item, props, this.flatData)}>
-        <span class={ resolveClassName('node-action') } onClick={() => this.handleNodeActionClick(item)}>{ this.getActionIcon(item) }</span>
-        <span class={ resolveClassName('node-content') } onClick={() => this.handleNodeContentClick(item)}>
+      <div class={getNodeItemClass(item, this.flatData.schema, props) }
+        style={getNodeItemStyle(item, props, this.flatData)}
+        onClick={() => this.handleNodeContentClick(item)}>
+        <span class={ resolveClassName('node-action') }
+          onClick={(e: MouseEvent) => this.handleNodeActionClick(e, item)}>
+            { this.getActionIcon(item) }
+          </span>
+        <span class={ resolveClassName('node-content') } >
           {
             [
               this.getNodePrefixIcon(item),

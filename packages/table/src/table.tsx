@@ -24,30 +24,35 @@
  * IN THE SOFTWARE.
 */
 
-import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, reactive, ref, SetupContext, watch, watchEffect } from 'vue';
+import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch, watchEffect } from 'vue';
 
 import { classes, resolveClassName } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
-import { Column, IColumnActive, tableProps, TablePropTypes } from './props';
-import TableRender from './render';
+import { Column, IColumnActive, tableProps } from './props';
+import TableRender, { EVENTS } from './render';
 import {
   isPercentPixOrNumber,
   observerResize,
   resolveActiveColumns,
   resolveColumnWidth,
   resolveNumberOrStringToPix,
-  resolvePaginationOption,  resolvePropBorderToClassStr } from './utils';
+  resolvePaginationOption,
+  resolvePropBorderToClassStr,
+} from './utils';
+
 
 export default defineComponent({
   name: 'Table',
   props: tableProps,
-  emits: ['column-pick', 'row-click', 'page-limit-change', 'page-value-change'],
-  setup(props: TablePropTypes, ctx: SetupContext) {
+  emits: ['columnPick', 'rowClick', 'rowDblClick', 'pageLimitChange', 'pageValueChange'],
+  setup(props, ctx) {
     const activeCols = reactive(resolveActiveColumns(props));
     const colgroups = reactive(props.columns.map(col => ({ ...col, calcWidth: null })));
     const startIndex = ref(0);
     const endIndex = ref(0);
+    let columnSortFn: any = null;
+    let columnFilterFn: any = null;
 
     // 当前分页缓存，用于支持内置前端分页，用户无需接收change事件来自行处理数据分割
     let pagination = reactive({ count: 0, limit: 10, current: 1 });
@@ -89,31 +94,69 @@ export default defineComponent({
         reactiveProp.activeColumns = getActiveColumns();
         const cols = resolveActiveColumns(props);
         reactiveProp.activeColumns.forEach((col: IColumnActive, index: number) => {
-          Object.assign(col, { active: cols.some((colIndex: number) => colIndex === index) });
+          Object.assign(col, {
+            active: cols.some((colIndex: number) => colIndex === index),
+          });
         });
       });
     }, { deep: true });
 
-    const tableRender = new TableRender(props, ctx, reactiveProp, colgroups);
-
-    /** 表格外层容器样式 */
-    const wrapperStyle = computed(() => ({
-      // height: resolveNumberOrStringToPix(props.height),
-      minHeight: resolveNumberOrStringToPix(props.minHeight, 'auto'),
-    }));
-
-    watchEffect(() => {
-      pagination = resolvePaginationOption(props.pagination, pagination);
-      resetStartEndIndex();
-    });
+    const indexData = computed(() => props.data.map((item: any, index: number) => ({
+      ...item,
+      __$table_row_index: index + 1,
+    })));
 
     /**
    * 当前页分页数据
    */
-    const pageData = computed(() => props.data.slice(startIndex.value, endIndex.value));
+    const pageData = reactive([]);
+
+    const resolvePageData = () => {
+      pageData.splice(0, pageData.length, ...indexData.value.slice(startIndex.value, endIndex.value));
+      if (typeof columnFilterFn === 'function') {
+        const filterVals = pageData.filter((row: any, index: number) => columnFilterFn(row, index, props.data));
+        pageData.splice(0, pageData.length, ...filterVals);
+      }
+
+      if (typeof columnSortFn === 'function') {
+        pageData.sort(columnSortFn);
+      }
+    };
+
+    /**
+    * 根据Pagination配置的改变重新计算startIndex & endIndex
+    */
+    watchEffect(() => {
+      pagination = resolvePaginationOption(props.pagination, pagination);
+      resetStartEndIndex();
+      resolvePageData();
+    });
+
+    const tableRender = new TableRender(props, ctx, reactiveProp, colgroups);
+
+    /**
+     * 监听Table 派发的相关事件
+     */
+    tableRender.on(EVENTS.ON_SORT_BY_CLICK, (args: any) => {
+      const { sortFn } = args;
+      columnSortFn = sortFn;
+      pageData.sort(columnSortFn);
+    }).on(EVENTS.ON_FILTER_CLICK, (args: any) => {
+      const { filterFn } = args;
+      columnFilterFn = filterFn;
+      resolvePageData();
+    });
+
+    /** 表格外层容器样式 */
+    const wrapperStyle = computed(() => ({
+      minHeight: resolveNumberOrStringToPix(props.minHeight, 'auto'),
+    }));
 
     /**
      * 分页配置
+     * 用于配置分页组件
+     * pagination 为Prop传入配置
+     * 方便兼容内置分页功能，此处需要单独处理count
      */
     const localPagination = computed(() => {
       if (!props.pagination) {
@@ -169,6 +212,7 @@ export default defineComponent({
     onBeforeUnmount(() => {
       observerIns.stop();
       observerIns = null;
+      tableRender.destroy();
     });
 
     ctx.expose({
@@ -178,14 +222,14 @@ export default defineComponent({
     return () => <div class={tableClass.value} style={wrapperStyle.value} ref={root}>
       <div class={ headClass }>
         {
-          props.showHead && tableRender.renderTableHeadSchema()
+          tableRender.renderTableHeadSchema()
         }
       </div>
     <VirtualRender
       lineHeight={props.rowHeight}
       class={ contentClass }
       style={ contentStyle.value }
-      list={pageData.value}
+      list={pageData}
       onContentScroll={ handleScrollChanged }
       throttleDelay={0}
       enabled={props.virtualEnabled}>
