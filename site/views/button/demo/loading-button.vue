@@ -1,0 +1,31 @@
+<template>
+  <div class="basic-button-list">
+    <bk-button loading />
+    <bk-button
+      loading
+      theme="primary"
+      class="ml10"
+    />
+    <bk-button
+      loading
+      theme="success"
+      class="ml10"
+    />
+    <bk-button
+      loading
+      theme="warning"
+      class="ml10"
+    />
+    <bk-button
+      loading
+      theme="danger"
+      class="ml10"
+    />
+    <bk-button
+      loading
+      theme="danger"
+      loading-mode="spin"
+      class="ml10"
+    />
+  </div>
+</template>
