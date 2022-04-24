@@ -23,13 +23,14 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { computed } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 import { classes, resolveClassName } from '@bkui-vue/shared';
 
 import { isPercentPixOrNumber, resolveNumberOrStringToPix, resolvePropBorderToClassStr } from './utils';
 
-export const useClass = (props) => {
+export const useClass = (props, root) => {
+  const autoHeight = ref('auto');
   const tableClass = computed(() => (classes({
     [resolveClassName('table')]: true,
   }, resolvePropBorderToClassStr(props.border))));
@@ -44,6 +45,7 @@ export const useClass = (props) => {
 
   const footerClass = classes({
     [resolveClassName('table-footer')]: true,
+    ['is-hidden']: !props.pagination,
   });
 
   /** 表格外层容器样式 */
@@ -53,9 +55,10 @@ export const useClass = (props) => {
 
   /** 表格外层容器样式 */
   const contentStyle = computed(() => {
+    const isAutoHeight = !isPercentPixOrNumber(props.height);
     const resolveHeight = resolveNumberOrStringToPix(props.height);
     const resolveHeadHeight = props.showHead ? resolveNumberOrStringToPix(props.headHeight) : '0';
-    const isAutoHeight = !isPercentPixOrNumber(props.height);
+
     const resolveFooterHeight = props.pagination ? 40 : 0;
     const contentHeight = `calc(${resolveHeight} - ${resolveHeadHeight} - ${resolveFooterHeight}px - 2px)`;
     return {
@@ -65,5 +68,16 @@ export const useClass = (props) => {
     };
   });
 
-  return { tableClass, headClass, contentClass, footerClass, wrapperStyle, contentStyle };
+  onMounted(() => {
+    resetTableHeight(root?.value);
+  });
+
+  const resetTableHeight = (rootEl: HTMLElement) => {
+    if (rootEl) {
+      const { height } = (root.value as HTMLElement).parentElement.getBoundingClientRect();
+      autoHeight.value = `${height}px`;
+    }
+  };
+
+  return { tableClass, headClass, contentClass, footerClass, wrapperStyle, contentStyle, resetTableHeight };
 };
