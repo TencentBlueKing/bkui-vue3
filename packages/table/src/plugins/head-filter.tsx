@@ -23,9 +23,9 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { computed, defineComponent, reactive, ref, watchEffect } from 'vue';
+import { computed, defineComponent, reactive, ref } from 'vue';
 
-import BkCheckbox from '@bkui-vue/checkbox';
+import BkCheckbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
 import { AngleDownLine } from '@bkui-vue/icon';
 import Popover from '@bkui-vue/popover';
 import { classes, PropTypes, resolveClassName } from '@bkui-vue/shared';
@@ -72,22 +72,9 @@ export default defineComponent({
     }];
 
     const theme = `light ${resolveClassName('table-head-filter')}`;
-    const handleItemChecked = (value: any, item: any) => {
-      const isChecked = !!value;
-      if (isChecked) {
-        state.checked.push(item.value);
-      } else {
-        const index = state.checked.findIndex((val: string) => val === item.value);
-        if (index >= 0) {
-          state.checked.splice(index, 1);
-        }
-      }
-    };
-
-    let localData = reactive([]);
-    watchEffect(() => {
+    const localData = computed(() => {
       const { list = [] } = column.filter;
-      localData = list.map((item: any) => ({ ...item, checked: state.checked.includes(item.value) }));
+      return list.map((item: any) => ({ ...item, checked: state.checked.includes(item.value) }));
     });
 
     const filterFn = typeof column.filter.filterFn === 'function'
@@ -105,8 +92,8 @@ export default defineComponent({
     const handleBtnResetClick = () => {
       if (state.checked.length) {
         state.checked.splice(0, state.checked.length);
-        emit('change', state.checked, filterFn);
-        isShow.value = false;
+        // emit('change', state.checked, filterFn);
+        // isShow.value = false;
       }
     };
 
@@ -122,15 +109,15 @@ export default defineComponent({
         {
           default: () =>  <AngleDownLine class={headClass.value} onClick={ () => isShow.value = true } />,
           content: () => <div class={ headFilterContentClass }>
-            <div class="content-list">
+            <BkCheckboxGroup class="content-list" v-model={ state.checked }>
               {
-                localData.map((item: any) => <div class="list-item">
-                  <BkCheckbox label={item.text} checked={ item.checked }
-                  onChange={ (val: string) => handleItemChecked(val, item) }>
+                localData.value.map((item: any) => <div class="list-item">
+                  <BkCheckbox label={item.value}>
+                    {item.text}
                   </BkCheckbox>
                 </div>)
               }
-            </div>
+            </BkCheckboxGroup>
             <div class="content-footer">
               <span class="btn-filter-save" onClick={handleBtnSaveClick}>确定</span>
               <span class="btn-filter-split"></span>
