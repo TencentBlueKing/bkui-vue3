@@ -31,6 +31,7 @@ import bkuiVue from '../packages/bkui-vue/index';
 import App from './app';
 import router from './router';
 
+import '../packages/styles/src/index';
 import './reset.less';
 // import 'highlight.js/styles/default.css';
 const app = createApp(App);
