@@ -23,68 +23,47 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-export const DATA_TABLE = [
-  {
-    ip: 'from ip: 192.168.0.1',
-    source: 'QQ',
-    status: '创建中',
-    create_time: '2018-05-25 15:02:241',
-  },
-  {
-    ip: '192.168.0.2',
-    source: '微信',
-    status: '正常',
-    create_time: '2018-05-25 15:02:242',
+import { computed } from 'vue';
 
-  },
-  {
-    ip: '192.168.0.3',
-    source: 'QQ',
-    status: '创建中',
-    create_time: '2018-05-25 15:02:243',
-  },
-  {
-    ip: '192.168.0.3',
-    source: 'QQ',
-    status: '创建中',
-    create_time: '2018-05-25 15:02:244',
-  },
-  {
-    ip: '192.168.0.3',
-    source: 'QQ',
-    status: '创建中',
-    create_time: '2018-05-25 15:02:24',
-  },
-];
+import { classes, resolveClassName } from '@bkui-vue/shared';
 
-export const DATA_COLUMNS = [
-  {
-    label: '序号',
-    type: 'index',
-    sort: true,
-    width: 100,
-  },
-  {
-    label: '名称/内网IP',
-    field: 'ip',
-    width: 100,
-  },
-  {
-    label: '来源',
-    field: 'source',
-    width: 80,
-    filter: {
-      list: [{ text: 'QQ', value: 'QQ' }, { text: '微信', value: '微信' }],
-    },
-  },
-  {
-    label: '创建时间',
-    field: 'create_time',
-    sort: true,
-  },
-  {
-    label: (column, index) => `状态-${index}-${column.field}`,
-    field: 'status',
-    sort: true,
-  },
-];
+import { isPercentPixOrNumber, resolveNumberOrStringToPix, resolvePropBorderToClassStr } from './utils';
+
+export const useClass = (props) => {
+  const tableClass = computed(() => (classes({
+    [resolveClassName('table')]: true,
+  }, resolvePropBorderToClassStr(props.border))));
+
+  const headClass = classes({
+    [resolveClassName('table-head')]: true,
+  });
+
+  const contentClass = classes({
+    [resolveClassName('table-body')]: true,
+  });
+
+  const footerClass = classes({
+    [resolveClassName('table-footer')]: true,
+  });
+
+  /** 表格外层容器样式 */
+  const wrapperStyle = computed(() => ({
+    minHeight: resolveNumberOrStringToPix(props.minHeight, 'auto'),
+  }));
+
+  /** 表格外层容器样式 */
+  const contentStyle = computed(() => {
+    const resolveHeight = resolveNumberOrStringToPix(props.height);
+    const resolveHeadHeight = props.showHead ? resolveNumberOrStringToPix(props.headHeight) : '0';
+    const isAutoHeight = !isPercentPixOrNumber(props.height);
+    const resolveFooterHeight = props.pagination ? 40 : 0;
+    const contentHeight = `calc(${resolveHeight} - ${resolveHeadHeight} - ${resolveFooterHeight}px - 2px)`;
+    return {
+      display: 'block',
+      ...(isAutoHeight ? { maxHeight: contentHeight }
+        : { height: contentHeight }),
+    };
+  });
+
+  return { tableClass, headClass, contentClass, footerClass, wrapperStyle, contentStyle };
+};
