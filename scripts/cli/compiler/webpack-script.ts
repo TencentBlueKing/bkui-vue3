@@ -108,6 +108,18 @@ export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILi
             esModule: false,
           },
         },
+        {
+          test: /\.less$/,
+          use: [
+            {
+              loader: 'css-loader',
+            },
+            {
+              loader: 'less-loader',
+            },
+          ],
+          // include: /directives/,
+        },
       ],
     },
     externals: [
@@ -126,7 +138,7 @@ export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILi
         if (context && request && /\/bkui-vue$/.test(context)) {
           return cb(undefined, request.replace(prefix, './'));
         }
-        if (request?.indexOf(prefix) === 0) {
+        if (request?.indexOf(prefix) === 0 && !/\.(less|css)$/.test(request)) {
           return cb(undefined, request.replace(prefix, '../'));
         }
         cb();

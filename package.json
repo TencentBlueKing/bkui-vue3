@@ -1,7 +1,7 @@
 {
   "name": "bkui-vue",
   "private": true,
-  "version": "0.0.1-beta.50",
+  "version": "0.0.1-beta.54",
   "workspaces": {
     "packages": [
       "packages/!(**.bak)*",
@@ -36,6 +36,7 @@
     "stylelint": "eslint --ext .js,.ts,.tsx,.vue ./packages ./site --cache",
     "stylelint:fix": "yarn stylelint -- --fix",
     "test:unit": "jest --passWithNoTests --config=./jest.config.js",
+    "test:alert": "lerna run --scope @bkui-vue/alert test",
     "cz": "git-cz"
   },
   "devDependencies": {
@@ -62,6 +63,7 @@
     "commitizen": "~4.2.4",
     "conventional-changelog-cli": "~2.2.2",
     "cross-env": "~7.0.3",
+    "css-loader": "~6.7.1",
     "cz-lerna-changelog": "~2.0.3",
     "eslint": "~8.13.0",
     "eslint-config-tencent": "~1.0.4",
@@ -77,6 +79,7 @@
     "jest": "~27.5.1",
     "jest-transform-stub": "~2.0.0",
     "lerna": "~4.0.0",
+    "less-loader": "~10.2.0",
     "lint-staged": "~12.3.7",
     "markdown-it-container": "~3.0.0",
     "normalize-wheel": "~1.0.1",

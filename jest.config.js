@@ -101,8 +101,8 @@ module.exports = {
   testRegex: '.*\\.test\\.(js|ts|tsx)$',
   globals: {
     'ts-jest': {
-      babelConfig: './babel.config.js',
-      tsconfig: './packages/tsconfig.test.json'
+      babelConfig: path.resolve(__dirname, './babel.config.js'),
+      tsconfig: path.resolve(__dirname, './packages/tsconfig.test.json')
     },
   },
 };
