@@ -1,7 +1,7 @@
 {
   "name": "bkui-vue",
   "private": true,
-  "version": "0.0.1-beta.48",
+  "version": "0.0.1-beta.50",
   "workspaces": {
     "packages": [
       "packages/!(**.bak)*",
@@ -39,6 +39,10 @@
     "cz": "git-cz"
   },
   "devDependencies": {
+    "@babel/core": "~7.17.9",
+    "@babel/plugin-transform-runtime": "~7.17.0",
+    "@babel/preset-env": "~7.16.11",
+    "@babel/preset-typescript": "~7.16.7",
     "@commitlint/cli": "~16.2.3",
     "@commitlint/config-conventional": "~16.2.1",
     "@types/jest": "~27.4.1",
