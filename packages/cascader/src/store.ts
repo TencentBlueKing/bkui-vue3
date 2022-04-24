@@ -23,8 +23,21 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import { arrayEqual, filterProperty } from '@bkui-vue/shared';
+
+import { INode } from './interface';
 import Node from './node';
-import { filterProperty } from '@bkui-vue/shared';
+
+const flatNodes = (data, leafOnly) => data.reduce((acc: INode[], node: INode) => {
+  if (node.isLeaf) {
+    acc.push(node);
+  } else {
+    !leafOnly && acc.push(node);
+    // eslint-disable-next-line no-param-reassign
+    acc = acc.concat(flatNodes(node.children, leafOnly));
+  }
+  return acc;
+}, []);
 
 class Store {
   constructor(props) {
@@ -34,8 +47,17 @@ class Store {
     this.nodes = this.data.map(node => new Node(node, this.config));
   }
 
+  getFlattedNodes(leafOnly = false) {
+    return flatNodes(this.nodes, leafOnly);
+  }
+
   getNodes() {
     return this.nodes;
+  }
+
+  getNodeByValue(value: string[]): INode {
+    const nodes = this.getFlattedNodes().filter((node: INode) => arrayEqual(node.path, value));
+    return nodes[0] ?? null;
   }
 }
 

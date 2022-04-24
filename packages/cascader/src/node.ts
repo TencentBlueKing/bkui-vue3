@@ -47,7 +47,9 @@ class Node {
     this.children = (childrenData || []).map(child => new Node(child, this.config, this));
     this.hasChildren = this.children?.length !== 0;
 
-    this.calculateNodesPath();
+    this.pathNodes = this.calculateNodesPath();
+    this.path = this.pathNodes.map(node => node.id);
+    this.pathNames = this.pathNodes.map(node => node.name);
   }
 
   get isLeaf() {
@@ -63,13 +65,14 @@ class Node {
   }
 
   calculateNodesPath() {
-    const path = [this.id];
+    const nodes = [this];
     let { parent } = this;
     while (parent) {
-      path.unshift(parent.id);
+      nodes.unshift(parent);
       parent = parent.parent;
     }
-    this.path = path;
+
+    return nodes;
   }
 }
 
