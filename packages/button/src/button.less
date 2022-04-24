@@ -56,10 +56,6 @@
         color: @white-color;
       }
 
-      &.is-disabled {
-        background-color: @disable-color;
-        border-color: @disable-color;
-      }
       &.is-outline {
         color: @@color;
         border-color: @@color;
@@ -80,6 +76,12 @@
           color: @@hoverColor;
         }
       }
+      &.is-disabled {
+        background-color: @disable-color;
+        border-color: @disable-color;
+        color: @white-color;
+        cursor: not-allowed;
+      }
     }
 
     &.@{bk-prefix}-button-hover-@{value} {
@@ -92,7 +94,7 @@
   })
 
   
-    each(@sizeSelectors, {
+  each(@sizeSelectors, {
     @sizeBtnMinWidth: '@{value}BtnMinWidth';
     @sizeBtnHeight: '@{value}BtnHeight';
     @sizeBtnPadding: '@{value}BtnPadding';
@@ -102,12 +104,12 @@
       line-height: @@sizeBtnHeight;
       padding: 0 @@sizeBtnPadding;
     }
-  })
-;
-
-  .@{bk-prefix}-button-loading {
-    &:not(:last-child) {
-      margin-right: @smallBtnPadding;
+  });
+  &:not(.is-text) {
+    .@{bk-prefix}-button-loading {
+      &:not(:last-child) {
+        margin-right: 6px;
+      }
     }
   }
 
@@ -118,12 +120,6 @@
   &:active {
     color: @primary-color;
     border-color: @primary-color;
-  }
-
-  &.is-disabled {
-    color: @disable-color;
-    cursor: auto;
-    border-color: @disable-color;
   }
 
   &.is-text {
@@ -137,7 +133,15 @@
     background: none;
     border: none;
     outline: none;
-  }}
+  }
+
+  &.is-disabled {
+    color: @disable-color;
+    cursor: not-allowed;
+    border-color: @disable-color;
+  }
+}
+
 
 .@{bk-prefix}-button-group {
   display: inline-block;
