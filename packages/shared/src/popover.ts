@@ -47,8 +47,8 @@ export declare type IOptions = {
   trigger?: string;
   disabled?: boolean;
   appendTo?: string | HTMLElement;
-  afterShow?: () => {};
-  afterHidden?: () => {};
+  afterShow?: () => void;
+  afterHidden?: () => void;
   /**
    * 如果设置了appendTo为指定DOM，此配置项生效
    * 是否将弹出内容固定到目标元素位置
