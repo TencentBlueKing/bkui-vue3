@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { computed, defineComponent, reactive, ref } from 'vue';
+import { computed, defineComponent, nextTick, reactive, ref } from 'vue';
 
 import BkCheckbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
 import { AngleDownLine } from '@bkui-vue/icon';
@@ -92,8 +92,8 @@ export default defineComponent({
     const handleBtnResetClick = () => {
       if (state.checked.length) {
         state.checked.splice(0, state.checked.length);
-        // emit('change', state.checked, filterFn);
-        // isShow.value = false;
+        isShow.value = false;
+        nextTick(() => emit('change', state.checked, filterFn));
       }
     };
 
