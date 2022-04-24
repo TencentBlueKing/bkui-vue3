@@ -404,7 +404,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/dropdown',
     name: 'dropdown',
-    component: () => import('../views/dropdown'),
+    component: () => import('../views/dropdown/dropdown'),
     meta: {
       group: NavGroupMeta.Data,
       navName: 'DropdownMenu 下拉菜单',
