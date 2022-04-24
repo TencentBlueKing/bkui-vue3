@@ -49,7 +49,7 @@ export const loadingTypes = {
   indicator: {
     type: Function,
   },
-  loading: PropTypes.bool,
+  loading: PropTypes.bool.def(true),
   inline: PropTypes.bool.def(true),
   theme: PropTypes.theme(['white', 'primary', 'warning', 'success', 'danger']),
   title: PropTypes.string.def(''),

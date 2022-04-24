@@ -23,68 +23,57 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-export const DATA_TABLE = [
-  {
-    ip: 'from ip: 192.168.0.1',
-    source: 'QQ',
-    status: '创建中',
-    create_time: '2018-05-25 15:02:241',
-  },
-  {
-    ip: '192.168.0.2',
-    source: '微信',
-    status: '正常',
-    create_time: '2018-05-25 15:02:242',
+import {  reactive, watchEffect  } from 'vue';
 
-  },
-  {
-    ip: '192.168.0.3',
-    source: 'QQ',
-    status: '创建中',
-    create_time: '2018-05-25 15:02:243',
-  },
-  {
-    ip: '192.168.0.3',
-    source: 'QQ',
-    status: '创建中',
-    create_time: '2018-05-25 15:02:244',
-  },
-  {
-    ip: '192.168.0.3',
-    source: 'QQ',
-    status: '创建中',
-    create_time: '2018-05-25 15:02:24',
-  },
-];
+import { Column, IColumnActive, TablePropTypes } from '../props';
+import { resolveNumberToNumArray } from '../utils';
 
-export const DATA_COLUMNS = [
-  {
-    label: '序号',
-    type: 'index',
-    sort: true,
-    width: 100,
-  },
-  {
-    label: '名称/内网IP',
-    field: 'ip',
-    width: 100,
-  },
-  {
-    label: '来源',
-    field: 'source',
-    width: 80,
-    filter: {
-      list: [{ text: 'QQ', value: 'QQ' }, { text: '微信', value: '微信' }],
-    },
-  },
-  {
-    label: '创建时间',
-    field: 'create_time',
-    sort: true,
-  },
-  {
-    label: (column, index) => `状态-${index}-${column.field}`,
-    field: 'status',
-    sort: true,
-  },
-];
+/**
+ * 处理Props中的ActiveColumn，解析为统一的数组格式
+ * @param props
+ * @returns
+ */
+export const resolveActiveColumns = (props: TablePropTypes) => {
+  if (props.columnPick !== 'disabled') {
+    if (props.columnPick === 'multi') {
+      return Array.isArray(props.activeColumn) ? props.activeColumn : resolveNumberToNumArray(props.activeColumn);
+    }
+
+    return Array.isArray(props.activeColumn)
+      ? resolveNumberToNumArray(props.activeColumn[0])
+      : resolveNumberToNumArray(props.activeColumn);
+  }
+  return [];
+};
+
+/**
+ * table列处理模块
+ * @param props
+ * @returns
+ */
+export default (props: TablePropTypes) => {
+  let activeColumns = reactive([]);
+
+  if (props.columnPick === 'disabled') {
+    return { activeColumns };
+  }
+
+  const activeCols = reactive(resolveActiveColumns(props));
+  const getActiveColumns = () => (props.columns || []).map((_column: Column, index: number) => ({
+    index,
+    active: activeCols.some((colIndex: number) => colIndex === index),
+    _column,
+  }));
+
+  watchEffect(() => {
+    activeColumns = getActiveColumns();
+    const cols = resolveActiveColumns(props);
+    activeColumns.forEach((col: IColumnActive, index: number) => {
+      Object.assign(col, {
+        active: cols.some((colIndex: number) => colIndex === index),
+      });
+    });
+  });
+
+  return { activeColumns };
+};
