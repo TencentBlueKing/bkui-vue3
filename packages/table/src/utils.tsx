@@ -240,32 +240,6 @@ export const observerResize = (
 export const isPercentPixOrNumber = (val: string | number) => /^\d+\.?\d*(px|%)?$/.test(`${val}`);
 
 /**
- * 处理 Prop中的分页配置
- * prop中的配置会覆盖本地的配置
- * @param propPagination 用户传入的配置
- * @param defVal 默认配置
- * @returns 返回值
- */
-export const resolvePaginationOption = (propPagination: any, defVal: any) => {
-  if (!!propPagination) {
-    if (typeof propPagination === 'object') {
-      let current = Object.prototype.hasOwnProperty.call(propPagination, 'current')
-        ? propPagination.current
-        : propPagination.value;
-      if (!/\d+/.test(current)) {
-        current = 1;
-      }
-
-      return { ...defVal, ...propPagination, current };
-    }
-
-    return defVal;
-  }
-
-  return {};
-};
-
-/**
  * Format Table Head Option
  * @param props
  * @returns
