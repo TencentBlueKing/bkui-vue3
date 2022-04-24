@@ -29,7 +29,7 @@ import { classes, resolveClassName } from '@bkui-vue/shared';
 
 import { isPercentPixOrNumber, resolveNumberOrStringToPix, resolvePropBorderToClassStr } from './utils';
 
-export const useClass = (props, root) => {
+export const useClass = (props, root?) => {
   const autoHeight = ref('auto');
   const tableClass = computed(() => (classes({
     [resolveClassName('table')]: true,
