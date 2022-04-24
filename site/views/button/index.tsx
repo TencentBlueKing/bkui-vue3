@@ -164,7 +164,8 @@ export default defineComponent({
         <DemoTitle
           name="Button"
           desc="常用的操作按钮"
-          link="/magicbox/3.0/button"/>
+          link={`${import.meta.env.VITE_APP_BASE_URL ?? ''}/button`}
+        />
           {
             demos.map(({ DemoComponent, ...demo }) => (
               <DemoBox {...demo}>
