@@ -77,17 +77,25 @@ export const moveFile = (oldPath: string, newPath: string) => new Promise((resol
 });
 
 export const compileFile = (url: string): ITaskItem | undefined => {
-  if (/\/dist\/|\.DS_Store|\.bak|bkui-vue\/index/.test(url)) {
+  if (/\/dist\/|\.DS_Store|\.bak/.test(url)) {
     return;
   }
   const newPath = url.replace(new RegExp(`${COMPONENT_URL}/([^/]+)/src`), `${LIB_URL}/$1`);
+  const isMain = /\/bkui-vue\/.*\.ts$/.test(url);
   if (/\.(css|less|scss)$/.test(url) && !/\.variable.(css|less|scss)$/.test(url)) {
     return {
       type: 'style',
       url,
       newPath,
     };
-  } if (/\/src\/index\.(js|ts|jsx|tsx)$/.test(url)) {
+  } if (/\/src\/index\.(js|ts|jsx|tsx)$/.test(url) || isMain) {
+    if (isMain) {
+      return {
+        type: 'script',
+        url,
+        newPath: LIB_URL,
+      };
+    }
     return {
       type: 'script',
       url,
@@ -101,6 +109,7 @@ export const compileFile = (url: string): ITaskItem | undefined => {
       newPath: url.replace(new RegExp(`${COMPONENT_URL}/([^/]+)/icons`), `${LIB_URL}/$1`),
     };
   }
+
   return;
 };
 export const writeFileRecursive = async (url: string, content: string) => {

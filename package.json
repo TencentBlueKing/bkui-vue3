@@ -102,9 +102,9 @@
     "highlight.js": "~11.5.0",
     "vue": "^3.2.0"
   },
-  "main": "dist/bkui-vue.umd.js",
-  "module": "dist/bkui-vue.esm.js",
-  "typings": "./lib/index.d.ts",
+  "main": "lib/index.js",
+  "module": "lib/index.js",
+  "typings": "lib/index.d.ts",
   "lint-staged": {
     "*.(vue|ts|tsx|js)": [
       "eslint --ext .js,.tsx,.ts,.vue --cache --fix",
