@@ -35,7 +35,7 @@ export const inputType = {
   clearable: PropTypes.bool,
   disabled: PropTypes.bool,
   readonly: PropTypes.bool,
-  placeholder: PropTypes.string,
+  placeholder: PropTypes.string.def('Enter'),
   prefixIcon: PropTypes.string,
   suffixIcon: PropTypes.string,
   suffix: PropTypes.string,

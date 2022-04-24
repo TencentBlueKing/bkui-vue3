@@ -37,9 +37,9 @@
   }
 
   &--max-length {
-    align-self: center;
     padding-right: @input-horizontal-padding;
     margin: 0;
+    text-align: right;
 
     span {
       color: @input-maxlength-color;
@@ -114,8 +114,12 @@
     }
   }
 
-  &.is-disabled {
+  &.is-disabled input,
+  &.is-readonly input {
     .disabled();
+  }
+  &.is-readonly input {
+    cursor: auto;
   }
 
   &--prefix-area,
