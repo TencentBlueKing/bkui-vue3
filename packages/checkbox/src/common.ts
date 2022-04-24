@@ -97,6 +97,8 @@ export const useCheckbox = () => {
   if (isGroup) {
     watch(() => checkboxGroup.props.modelValue, (modelValue) => {
       isChecked.value = modelValue.includes(props.label);
+    }, {
+      deep: true,
     });
   } else {
     watch(() => props.modelValue, (modelValue) => {

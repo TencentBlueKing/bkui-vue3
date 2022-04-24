@@ -43,7 +43,7 @@ export default defineComponent({
     /** 外部设置的 class name */
     extCls: PropTypes.string,
   },
-  emits: ['showChange'],
+  emits: ['showChange', 'show', 'hide'],
   setup(props: any, { emit }) {
     let popoverInstance: any = Object.create(null);
     /** 参考物dom */
@@ -74,6 +74,14 @@ export default defineComponent({
      */
     watch(() => props.disabled, val => handleUpdateDisabled(val));
 
+    /** 显示后回调 */
+    const afterShow = () => {
+      emit('show');
+    };
+    /** 隐藏后回调 */
+    const afterHidden = () => {
+      emit('hide');
+    };
     /**
      * @description: 注册dropdown
      */
@@ -85,6 +93,8 @@ export default defineComponent({
         {
           placement: props.placement as Placement,
           trigger: props.trigger,
+          afterShow,
+          afterHidden,
         },
       );
       props.trigger === 'manual' && props.isShow && popoverInstance.show();
