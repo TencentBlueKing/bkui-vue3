@@ -32,7 +32,7 @@ import vueJsx from '@vitejs/plugin-vue-jsx';
 
 import { COMPONENT_URL, DIST_URL } from '../compiler/helpers';
 
-const entry = resolve(COMPONENT_URL, './bkui-vue/index.ts');
+const entry = resolve(COMPONENT_URL, './bkui-vue/dist.index.ts');
 export default async () => await build({
   resolve: {
     alias: [
