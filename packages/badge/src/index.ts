@@ -23,9 +23,9 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
-import { withInstallProps } from '@bkui-vue/shared';
+import { withInstall } from '@bkui-vue/shared';
 
 import Component from './badge';
-const BkBadge = withInstallProps(Component, {});
+const BkBadge = withInstall(Component);
 export default BkBadge;
 
