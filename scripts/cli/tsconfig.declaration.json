@@ -38,6 +38,7 @@
     "../../index.d.ts"
   ],
   "exclude": [
+    "../../packages/bkui-vue/index.dist.ts",
     "../../packages/icon"
   ]
 }
