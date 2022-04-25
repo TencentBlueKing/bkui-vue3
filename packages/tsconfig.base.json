@@ -16,17 +16,18 @@
       "dom",
       "es2017"
     ],
-    "skipLibCheck": true,
-    "allowJs": true,
-    "baseUrl": "../packages",
+    "baseUrl": "./",
     "paths": {
       "@bkui-vue/*": [
         "*/src"
       ]
     },
+    "skipLibCheck": true,
+    "allowJs": true,
     "importHelpers": true,
     "isolatedModules": true,
     "sourceMap": true,
     "noEmitOnError": true,
-  }
+  },
+  "include": ["./**/*.ts", "./**/*.tsx"]
 }
