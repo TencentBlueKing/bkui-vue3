@@ -26,7 +26,7 @@
 
 import { defineComponent, ref, watch } from 'vue';
 
-import { AngleDown, AngleRight, EditLine } from '@bkui-vue/icon/';
+import { AngleDown, AngleRight, EditLine } from '@bkui-vue/icon';
 import BkInput from '@bkui-vue/input';
 import { classes, PropTypes } from '@bkui-vue/shared';
 
