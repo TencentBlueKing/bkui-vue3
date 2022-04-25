@@ -46,15 +46,21 @@ class Store {
     this.config = filterProperty(props, ['list']);
     this.nodes = this.data.map(node => new Node(node, this.config));
   }
-
-  getFlattedNodes(leafOnly = false) {
-    return flatNodes(this.nodes, leafOnly);
-  }
-
   getNodes() {
     return this.nodes;
   }
 
+  /** 拍平节点，方便筛选 */
+  getFlattedNodes(leafOnly = false) {
+    return flatNodes(this.nodes, leafOnly);
+  }
+
+  /** 获取多选下，被选中(checked)的节点 */
+  getCheckedNodes() {
+    return this.getFlattedNodes().filter((node: INode) => node.checked);
+  }
+
+  /** 根据值获得node实例 */
   getNodeByValue(value: string[]): INode {
     const nodes = this.getFlattedNodes().filter((node: INode) => arrayEqual(node.path, value));
     return nodes[0] ?? null;

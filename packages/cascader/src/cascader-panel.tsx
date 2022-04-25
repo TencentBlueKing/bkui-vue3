@@ -26,10 +26,11 @@
 
 import { defineComponent, reactive, ref } from 'vue';
 
+import BkCheckbox from '@bkui-vue/checkbox';
 import { AngleRight } from '@bkui-vue/icon';
 import { arrayEqual, PropTypes } from '@bkui-vue/shared';
 
-import { INode }  from './interface';
+import { INode }  from './interface';;
 
 
 export default defineComponent({
@@ -39,6 +40,7 @@ export default defineComponent({
   },
   emits: ['input'],
   setup(props, { emit }) {
+    const { store } = props;
     const menus = reactive({
       list: [props.store.getNodes()],
     });
@@ -46,8 +48,12 @@ export default defineComponent({
     const checkValue = ref([]);
 
     const nodeCheckHandler = (node: INode) => {
-      checkValue.value = node.config.multiple ? checkValue.value.concat(node.path) : node.path;
-      emit('input', node.path);
+      if (node.config.multiple) {
+        checkValue.value = store.getCheckedNodes().map(node => node.path);
+      } else {
+        checkValue.value =  node.path;
+      }
+      emit('input', checkValue.value);
     };
 
     const nodeClear = () => {
@@ -65,13 +71,13 @@ export default defineComponent({
     };
 
     const nodeEvent = (node: INode) => {
-      const { trigger, checkAnyLevel } = node.config;
+      const { trigger, checkAnyLevel, multiple } = node.config;
       const events = {
         onClick: (e: Event) => {
-          if (!node.isLeaf) e.stopPropagation();
+          if (!node.isLeaf || multiple) e.stopPropagation();
           trigger === 'click' && nodeExpandHandler(node);
-          checkAnyLevel && nodeCheckHandler(node);
-          node.isLeaf && nodeCheckHandler(node);
+          (checkAnyLevel && !multiple) && nodeCheckHandler(node);
+          (node.isLeaf && !multiple) && nodeCheckHandler(node);
         },
         onMouseenter: () => {
           trigger === 'hover' && nodeExpandHandler(node);
@@ -88,9 +94,15 @@ export default defineComponent({
     const isCheckedNode = (node: INode, checkValue: []) => {
       const { multiple } = node.config;
       if (multiple) {
-        return checkValue.some(val => arrayEqual(val, node.path));
+        return false;
+        // return checkValue.some(val => arrayEqual(val, node.path));
       }
       return arrayEqual(checkValue, node.path);
+    };
+
+    const checkNode = (node: INode, value: boolean) => {
+      node.setNodeCheck(value);
+      nodeCheckHandler(node);
     };
 
     return {
@@ -102,6 +114,7 @@ export default defineComponent({
       isCheckedNode,
       checkValue,
       nodeClear,
+      checkNode,
     };
   },
   render() {
@@ -117,6 +130,11 @@ export default defineComponent({
                       { 'is-checked': this.isCheckedNode(node, this.checkValue) }]
                   }
                     {...this.nodeEvent(node)}>
+                    { node.config.multiple
+                      && <BkCheckbox
+                            disabled={node.isDisabled}
+                            v-model={node.checked}
+                            onChange={(val: boolean) => this.checkNode(node, val)}></BkCheckbox>}
                     <span class="content">{node.name}</span>
                     {!node.isLeaf ? <AngleRight class="icon-angle-right"></AngleRight> : ''}
                   </li>
