@@ -24,8 +24,7 @@
 * IN THE SOFTWARE.
 */
 const baseJestConf = require('../../jest.config');
-
 module.exports = {
   ...baseJestConf,
-  testRegex: 'packages/progress/__test__/.*\\.test\\.(js|ts|tsx)$',
+  testRegex: 'packages/alert/__test__/.*\\.test\\.(js|ts|tsx)$',
 };

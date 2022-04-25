@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "build": "yarn clean && tsc --build && cp \"./package.json\" ./dist/",
-    "test": "jest  --passWithNoTests",
+    "test": "jest --passWithNoTests",
     "lint": "eslint \"./src/**/*.{ts,tsx}\" --max-warnings=0"
   },
   "devDependencies": {
