@@ -27,7 +27,7 @@
 import { defineComponent, reactive, ref } from 'vue';
 
 import { clickoutside } from '@bkui-vue/directives';
-import { AngleUp, Close } from '@bkui-vue/icon';
+import { AngleUp, Close, Error } from '@bkui-vue/icon';
 import BkPopover from '@bkui-vue/popover';
 import { PropTypes } from '@bkui-vue/shared';
 
@@ -62,20 +62,29 @@ export default defineComponent({
     nameKey: PropTypes.string.def('name'),
     childrenKey: PropTypes.string.def('children'),
     separator: PropTypes.string.def('/'),
+    limitOneLine: PropTypes.bool.def(false),
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
-    const { separator } = props;
+    const { separator, multiple } = props;
     const { isHover, setHover, cancelHover } = useHover();
     const store = reactive(new Store(props));
     const panelShow = ref(false);
     const selectedText = ref('');
+    const selectedTags = ref([]);
 
     /** 更新选中 */
     const updateValue = (val: array<any>) => {
       emit('update:modelValue', val);
 
       /** 根据配置更新显示内容 */
+      if (multiple) {
+        selectedTags.value = store.getCheckedNodes().map((node: INode) => ({
+          text: node.pathNames.join(separator),
+          key: node.id,
+        }));
+        return;
+      }
       if (val.length === 0) {
         selectedText.value = '';
         return;
@@ -111,6 +120,7 @@ export default defineComponent({
       isHover,
       setHover,
       cancelHover,
+      selectedTags,
     };
   },
   render() {
@@ -119,6 +129,20 @@ export default defineComponent({
         return <Close class="bk-icon-clear-icon" onClick={this.handleClear}></Close>;
       }
       return <AngleUp class="bk-icon-angle-up"></AngleUp>;
+    };
+
+    const renderTags = () => {
+      if (this.limitOneLine) {
+        return <span>{this.selectedText}</span>;
+      }
+      return <div class="cascader-tag-list">
+        {this.selectedTags.map(tag => (
+          <span class="cascader-tag-item">
+            <span class="cascader-tag-item-name">{tag.text}</span>
+            <Error class="bk-icon-clear-icon"></Error>
+          </span>
+        ))}
+      </div>;
     };
     return (
       <div class={['bk-cascader', 'bk-cascader-wrapper', {
@@ -140,17 +164,21 @@ export default defineComponent({
           {{
             default: () => (
               <div class="bk-cascader-name" onClick={this.inputClickHandler}>
+                {renderTags()}
                 {this.filterable
                   ? <input class="bk-cascader-search-input"
                   type="text"
                   placeholder={this.placeholder}
                   />
-                  : <span>{this.selectedText}</span>}
+                  : this.multiple && <span>{this.selectedText}</span>
+                  }
               </div>
             ),
             content: () => (
               <div class="bk-cascader-popover">
-                <CascaderPanel store={this.store} onInput={val => this.updateValue(val)}></CascaderPanel>
+                <CascaderPanel
+                  store={this.store}
+                  onInput={val => this.updateValue(val)}></CascaderPanel>
               </div>
             ),
           }}

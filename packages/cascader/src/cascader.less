@@ -47,13 +47,38 @@
     display: block;
   }
   .@{bk-prefix}-cascader-name {
-    height: 30px;
+    min-height: 30px;
     padding: 0 36px 0 11px;
     display: block;
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    .cascader-tag-list {
+      padding: 5px 36px 0 10px;
+      min-height: 30px;
+      box-sizing: border-box;
+      &::after {
+        display: block;
+        clear: both;
+        content: "";
+        font-size: 0;
+        height: 0;
+        visibility: hidden;
+      }
+      .cascader-tag-item {
+        cursor: pointer;
+        position: relative;
+        margin: 0 6px 5px 0;
+        border-radius: 2px;
+        float: left;
+        height: 22px;
+        line-height: 22px;
+        overflow: hidden;
+        background-color: #f0f1f5;
+        padding-right: 18px;
+      }
+    }
   }
 }
 
