@@ -24,9 +24,9 @@
 * IN THE SOFTWARE.
 */
 import ClipboardJS from 'clipboard';
-import { defineComponent, getCurrentInstance, onBeforeMount, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, defineComponent, getCurrentInstance, onBeforeMount, onBeforeUnmount, onMounted, ref } from 'vue';
 
-import { Code, Copy, PlayShape } from '@bkui-vue/icon';
+import { Code, Copy, DataShape, PlayShape } from '@bkui-vue/icon';
 import BkMessage from '@bkui-vue/message';
 
 import BoxIcon from './box-icon';
@@ -66,16 +66,31 @@ export default defineComponent({
       type: String,
       default: '.vue',
     },
+    optionData: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   setup(props) {
     const showCode = ref(false);
+    const showConfigData = ref(false);
     const preview = ref<HTMLDivElement>(null);
     let copyInstance = null;
     const sourceCode = ref('');
     const evalCode = ref('');
     const handleShowCodeChange = () => {
       showCode.value = !showCode.value;
+      showConfigData.value = false;
     };
+
+    const handleOptionDataShow = () => {
+      showCode.value = false;
+      showConfigData.value = !showConfigData.value;
+    };
+
+    const optionData = ref('');
+    const activeCode = computed(() => (showConfigData.value ? optionData.value : sourceCode.value));
+    const activeLanguage = computed(() => (showCode.value ? props.language : 'json'));
     onBeforeMount(async () => {
       if (process.env.NODE_ENV === 'development') {
         // evalCode.value = (await import(/* @vite-ignore */
@@ -86,10 +101,12 @@ export default defineComponent({
       } else {
         sourceCode.value = await fetch(`../views/${props.componentName}/${props.demoName}${props.suffix}`).then(res => res.text());
       }
+
+      optionData.value = JSON.stringify(props.optionData, null, 4);
     });
     onMounted(() => {
       copyInstance = new ClipboardJS((getCurrentInstance().refs.copyBtn as any).$el, {
-        text: () => sourceCode.value,
+        text: () => activeCode.value,
       });
       ['success', 'error'].forEach((theme) => {
         copyInstance.on(theme, () => BkMessage({
@@ -105,10 +122,14 @@ export default defineComponent({
     return {
       showCode,
       handleShowCodeChange,
+      handleOptionDataShow,
       copyInstance,
       sourceCode,
       evalCode,
       preview,
+      showConfigData,
+      activeCode,
+      activeLanguage,
     };
   },
   render() {
@@ -130,12 +151,18 @@ export default defineComponent({
               active={this.showCode}>
               <Code/>
             </BoxIcon>
+            <BoxIcon
+              tips='配置数据'
+              onClick={this.handleOptionDataShow}
+              active={this.showConfigData}>
+              <DataShape/>
+            </BoxIcon>
             <BoxIcon tips='copy' ref="copyBtn">
               <Copy/>
             </BoxIcon>
           </div>,
-          <div class="eample-code" style={{ display: this.showCode ? 'block' : 'none' }}>
-            <CodeBox code={this.sourceCode} language={this.language}/>
+          <div class="eample-code" style={{ display: (this.showCode || this.showConfigData) ? 'block' : 'none' }}>
+            <CodeBox code={this.activeCode} language={this.activeLanguage}/>
           </div>,
         ]
       }

@@ -36,6 +36,7 @@ import async from './async.vue';
 import autoConfig from './auto-config.vue';
 import basic from './basic.vue';
 import levelLine from './level-line.vue';
+import * as TREE_DATA from './options';
 import prefixIcon from './prefix-icon.vue';
 import prefixIconJsx from './prefix-icon-jsx';
 import virtualRender from './virtual-render.vue';
@@ -123,7 +124,7 @@ export default defineComponent({
           desc="Tree组件， 为页面和功能提供列表。"
           link="https://www.google.com.hk/"/>
           {
-            configs.map(cfg => <DemoBox { ...cfg.attrs }>
+            configs.map(cfg => <DemoBox { ...cfg.attrs } optionData={ { ...TREE_DATA } }>
                  {
                    cfg.component()
                  }

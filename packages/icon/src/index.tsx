@@ -45,6 +45,7 @@ export { default as Code } from '../icons/code';
 export { default as CogShape } from '../icons/cog-shape';
 export { default as CollapseLeft } from '../icons/collapse-left';
 export { default as Copy } from '../icons/copy';
+export { default as DataShape } from '../icons/data-shape';
 export { default as Done } from '../icons/done';
 export { default as DownShape } from '../icons/down-shape';
 export { default as DownSmall } from '../icons/down-small';
