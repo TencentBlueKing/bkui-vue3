@@ -100,6 +100,25 @@ export default defineComponent({
     },
   },
   emits: ['closed', 'update:isShow', 'confirm'],
+  data() {
+    return {
+      positionX: 0,
+      positionY: 0,
+      moveStyle: {
+        top: '',
+        left: '',
+      },
+    };
+  },
+  computed: {
+    // 如果 fullscreen 为 true，那么 draggable 配置无效
+    isDraggable(): boolean {
+      if (!this.fullscreen) {
+        return this.draggable;
+      }
+      return false;
+    },
+  },
   mounted() {
     if (this.escClose) {
       addEventListener('keydown', this.escCloseHandler);
@@ -128,12 +147,55 @@ export default defineComponent({
         }
       }
     },
+    // 拖拽事件
+    moveHandler(e) {
+      if (!this.isDraggable) {
+        return false;
+      }
+      const odiv = e.target;
+      const parentHeight = e.currentTarget.parentNode.parentNode.offsetHeight;
+      const parentWidth = e.currentTarget.parentNode.parentNode.offsetWidth;
+      let disX;
+      let disY;
+      if (this.positionX !== 0 && this.positionY !== 0) {
+        disX = e.clientX - this.positionX;
+        disY = e.clientY - this.positionY;
+      } else {
+        disX = e.clientX - odiv.offsetLeft;
+        disY = e.clientY - odiv.offsetTop;
+      }
+      document.onmousemove = (e) => {
+        const boxLeft = window.innerWidth - parentWidth;
+        const boxTop = window.innerHeight - parentHeight;
+        let left = e.clientX - disX;
+        let top = e.clientY - disY;
+        if ((boxLeft / 2) - left <= 0) {
+          left = boxLeft / 2;
+        } else if ((boxLeft / 2) + left <= 0) {
+          left = -boxLeft / 2;
+        }
+        if ((boxTop / 2) - top <= 0) {
+          top = boxTop / 2;
+        } else if ((boxTop / 2) + top <= 0) {
+          top = -boxTop / 2;
+        }
+        this.positionX = left;
+        this.positionY = top;
+        this.moveStyle.left = `calc(50% + ${left}px)`;
+        this.moveStyle.top = `calc(50% + ${top}px)`;
+      };
+      document.onmouseup = () => {
+        document.onmousemove = null;
+        document.onmouseup = null;
+      };
+    },
   },
 
   render() {
     const dialogSlot = {
       header: () => [
-        <div class="bk-dialog-tool">
+        <div class={['bk-dialog-tool', this.fullscreen || !this.draggable ? '' : 'move', this.draggable ? 'content-dragging' : '']}
+          onMousedown={this.moveHandler}>
           <span class={['bk-dialog-close', this.closeIcon ? '' : 'close-icon']} onClick={this.handleClose}>+</span>
         </div>,
         <div class="bk-dialog-header">
@@ -154,7 +216,8 @@ export default defineComponent({
     };
 
     const className = `bk-dialog-wrapper ${this.scrollable ? 'scroll-able' : ''}`;
-    return <BkModal {...this.$props} class={className}>
+    return <BkModal {...this.$props} class={[className, this.fullscreen ? 'bk-model-fullscreen' : '']}
+      style={this.moveStyle}>
       {dialogSlot}
     </BkModal>;
   },
