@@ -53,7 +53,15 @@ export default defineComponent({
 
     const { activeColumns } = useActiveColumns(props);
     const { pageData, localPagination, resolvePageData, watchEffectFn } = userPagination(props);
-    const { tableClass, headClass, contentClass, footerClass, wrapperStyle, contentStyle } = useClass(props);
+    const {
+      tableClass,
+      headClass,
+      contentClass,
+      footerClass,
+      wrapperStyle,
+      contentStyle,
+      resetTableHeight,
+    } = useClass(props);
 
     const reactiveProp = reactive({
       scrollTranslateY: 0,
@@ -86,6 +94,7 @@ export default defineComponent({
     onMounted(() => {
       observerIns = observerResize(root.value, () => {
         resolveColumnWidth(root.value, colgroups, 20);
+        resetTableHeight(root.value);
       }, 60, true);
 
       observerIns.start();
