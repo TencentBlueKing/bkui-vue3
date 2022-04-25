@@ -98,4 +98,9 @@ export const propsMixin = {
       return true;
     },
   },
+  // 是否可拖拽
+  draggable: {
+    type: Boolean,
+    default: true,
+  },
 };
