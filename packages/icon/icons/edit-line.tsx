@@ -1,3 +1,4 @@
+
 /*
 * Tencent is pleased to support the open source community by making
 * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
@@ -23,45 +24,15 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import { FunctionalComponent } from 'vue';
+import BkIcon, { IIconBaseProps } from './icon';
+const data = JSON.parse('{"type":"element","name":"svg","attributes":{"xmlns":"http://www.w3.org/2000/svg","viewBox":"0 0 1024 1024","style":"width: 1em; height: 1em; vertical-align: middle;fill: currentColor;overflow: hidden;"},"elements":[{"type":"element","name":"path","attributes":{"d":"M609.6 201.6L203.2 609.6 203.2 710.4 304 710.4 712 304z"}},{"type":"element","name":"path","attributes":{"d":"M128 800H896V896H128z"}},{"type":"element","name":"path","attributes":{"d":"M683.6717566325265 128.04165515828316L785.4933559547056 229.86680878681256 740.2377321198037 275.1208529300033 638.4161327976245 173.2956993014738z"}}]}');
+const editLine: FunctionalComponent<IIconBaseProps> = (props, context) => {
+  const p = { ...props, ...context.attrs };
+  return <BkIcon {...p}  data={data} name="editLine"></BkIcon>;
+};
 
-import { defineComponent } from 'vue';
+editLine.displayName = 'editLine';
+editLine.inheritAttrs = false;
 
-import BkCard from '@bkui-vue/card';
-import { Help, HelpDocumentFill, HelpFill } from '@bkui-vue/icon';
-
-export default defineComponent({
-  name: 'SiteCard',
-  setup() {
-    return {
-    };
-  },
-  render() {
-    const cardSlots = {
-      default: () => <div>
-        <p>卡片内容 1</p>
-        <p>卡片内容 2</p>
-        <p>卡片内容 3</p></div>,
-      footer: () => <div style="background: #fafbfd;">
-        <span class="card-foot-icon"><HelpDocumentFill /></span>
-        <span class="card-foot-icon"><Help /></span>
-        <span class="card-foot-icon"><HelpFill /></span>
-      </div>,
-    };
-    return (
-      <div style="width: 80%; margin: 0 auto; background: #f5f7fa; padding: 30px">
-        <div style="width: 400px; display: inline-block;" class="mr40">
-          <BkCard title="Card卡片标题">
-            <p>卡片内容 1</p>
-            <p>卡片内容 2</p>
-            <p>卡片内容 3</p>
-          </BkCard>
-        </div>
-        <div style="width: 400px; display: inline-block;">
-          <BkCard title="Card卡片标题" class="mr40" showFooter={true} showHeader={false}>
-            {cardSlots}
-          </BkCard>
-        </div>
-      </div>
-    );
-  },
-});
+export default editLine;
