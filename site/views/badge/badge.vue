@@ -10,9 +10,9 @@
     </span>
     <span style="position: relative">
       <bk-badge
-        :dot="true"
+        dot
         theme="danger"
-        style="margin-left: 40px; margin-right: 5px"
+        style=" margin-right: 5px;margin-left: 40px"
       />
       未读消息
     </span>
@@ -28,7 +28,7 @@
 <style lang="less" scoped>
   .badge-demo {
     width: 90%;
-    margin: 0 auto;
     padding: 30px;
+    margin: 0 auto;
   }
 </style>

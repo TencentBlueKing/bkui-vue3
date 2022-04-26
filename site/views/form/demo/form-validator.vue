@@ -1,6 +1,7 @@
 <template>
   <bk-form
     ref="formRef"
+    class="example"
     :model="formMode"
   >
     <bk-form-item
@@ -79,5 +80,8 @@
   };
 
 </script>
-<style lang="postcss">
+<style lang="postcss" scoped>
+  .example {
+    max-width: 800px;
+  }
 </style>

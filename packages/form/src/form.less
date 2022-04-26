@@ -47,11 +47,13 @@
   line-height: 32px;
   color: #63656e;
   text-align: right;
+  flex: 0 0 auto;
 }
 
 .@{bk-prefix}-form-content {
   position: relative;
   line-height: 32px;
+  flex: 1;
 }
 
 .@{bk-prefix}-form-error {
@@ -70,6 +72,7 @@
   display: inline-block;
 
   & > .bk-input,
+  & > .bk-textarea,
   & > .bk-select,
   & > .bk-cascade,
   & > .bk-color-picker,
@@ -84,7 +87,7 @@
 
   .bk-input,
   .bk-form-password,
-  .bk-form-textarea,
+  .bk-textarea,
   .bk-select,
   .bk-cascade,
   .bk-color-picker,
