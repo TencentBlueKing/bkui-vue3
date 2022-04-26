@@ -23,68 +23,25 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-export const DATA_TABLE = [
-  {
-    ip: 'from ip: 192.168.0.1',
-    source: 'QQ',
-    status: '创建中',
-    create_time: '2018-05-25 15:02:241',
-  },
-  {
-    ip: '192.168.0.2',
-    source: '微信',
-    status: '正常',
-    create_time: '2018-05-25 15:02:242',
+import { computed, defineComponent } from 'vue';
 
+import BkException from '@bkui-vue/exception';
+import { PropTypes } from '@bkui-vue/shared';
+export default defineComponent({
+  name: 'BodyEmpty',
+  props: {
+    list: PropTypes.array.def([]),
+    filterList: PropTypes.array.def([]),
+    emptyText: PropTypes.string.def('暂无数据'),
   },
-  {
-    ip: '192.168.0.3',
-    source: 'QQ',
-    status: '创建中',
-    create_time: '2018-05-25 15:02:243',
-  },
-  {
-    ip: '192.168.0.3',
-    source: 'QQ',
-    status: '创建中',
-    create_time: '2018-05-25 15:02:244',
-  },
-  {
-    ip: '192.168.0.3',
-    source: 'QQ',
-    status: '创建中',
-    create_time: '2018-05-25 15:02:24',
-  },
-];
+  emits: ['change'],
 
-export const DATA_COLUMNS = [
-  {
-    label: '序号',
-    type: 'index',
-    sort: true,
-    width: 100,
+  setup(props, { slots }) {
+    const type = computed(() => (props.list.length === 0 ? 'empty' : 'search-empty'));
+    return () => <BkException scene="part" type={type.value}>
+      {
+        slots.default?.() ?? props.emptyText
+      }
+    </BkException>;
   },
-  {
-    label: '名称/内网IP',
-    field: 'ip',
-    width: 100,
-  },
-  {
-    label: '来源',
-    field: 'source',
-    width: 80,
-    filter: {
-      list: [{ text: 'QQ', value: 'QQ' }, { text: '微信', value: '微信' }, { text: 'Email', value: 'Email' }],
-    },
-  },
-  {
-    label: '创建时间',
-    field: 'create_time',
-    sort: true,
-  },
-  {
-    label: (column, index) => `状态-${index}-${column.field}`,
-    field: 'status',
-    sort: true,
-  },
-];
+});
