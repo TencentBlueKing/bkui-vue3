@@ -57,6 +57,9 @@ export default (props: TablePropTypes) => {
   const startIndex = ref(0);
   const endIndex = ref(0);
 
+  /**
+   * 生成内置index
+   */
   const indexData = computed(() => props.data.map((item: any, index: number) => ({
     ...item,
     __$table_row_index: index + 1,
@@ -68,10 +71,10 @@ export default (props: TablePropTypes) => {
   pagination = resolvePaginationOption(props.pagination, pagination);
 
   /**
-       * 重置当前分页开始位置 & 结束位置
-       * 如果未启用分页，则开始位置为0，结束位置为 data.length
-       * @returns
-       */
+   * 重置当前分页开始位置 & 结束位置
+   * 如果未启用分页，则开始位置为0，结束位置为 data.length
+   * @returns
+   */
   const resetStartEndIndex = () => {
     if (!props.pagination || props.remotePagination) {
       startIndex.value = 0;
@@ -83,8 +86,6 @@ export default (props: TablePropTypes) => {
     startIndex.value = (pagination.current - 1) * pagination.limit;
     endIndex.value = pagination.current * pagination.limit;
   };
-
-  resetStartEndIndex();
 
   /**
    * 当前页分页数据
@@ -111,8 +112,8 @@ export default (props: TablePropTypes) => {
   };
 
   /**
-       * 根据Pagination配置的改变重新计算startIndex & endIndex
-       */
+   * 根据Pagination配置的改变重新计算startIndex & endIndex
+   */
   const watchEffectFn = (filterFn: any, sortFn: any) => {
     pagination = resolvePaginationOption(props.pagination, pagination);
     resetStartEndIndex();
@@ -120,11 +121,11 @@ export default (props: TablePropTypes) => {
   };
 
   /**
-     * 分页配置
-     * 用于配置分页组件
-     * pagination 为Prop传入配置
-     * 方便兼容内置分页功能，此处需要单独处理count
-     */
+   * 分页配置
+   * 用于配置分页组件
+   * pagination 为Prop传入配置
+   * 方便兼容内置分页功能，此处需要单独处理count
+   */
   const localPagination = computed(() => {
     if (!props.pagination) {
       return null;

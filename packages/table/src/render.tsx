@@ -27,6 +27,7 @@
 import Pagination from '@bkui-vue/pagination';
 import { classes, random } from '@bkui-vue/shared';
 
+import BodyEmpty from './plugins/body-empty';
 import HeadFilter from './plugins/head-filter';
 import HeadSort from './plugins/head-sort';
 import { TablePlugins } from './plugins/index';
@@ -253,10 +254,10 @@ export default class TableRender {
    * 渲染Table Body
    * @returns
    */
-  private renderTBody(rows: any) {
+  private renderTBody(rows: any[]) {
     return <tbody>
     {
-      rows.map((row: any, rowIndex: number) => {
+      rows.length ? rows.map((row: any, rowIndex: number) => {
         const rowStyle = {
           '--row-height': `${resolvePropVal(this.props, 'rowHeight', ['tbody', row, rowIndex])}px`,
         };
@@ -274,7 +275,16 @@ export default class TableRender {
         </td>)
         }
       </tr>;
-      })
+      }) : <tr>
+        <td colspan={ this.props.columns.length } class="empty-cell">
+          {
+            this.context.slots.empty?.() ?? <BodyEmpty
+            filterList={rows}
+            list={ this.props.data }
+            emptyText={ this.props.emptyText }/>
+          }
+        </td>
+      </tr>
     }
   </tbody>;
   }

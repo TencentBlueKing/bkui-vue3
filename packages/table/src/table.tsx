@@ -116,26 +116,26 @@ export default defineComponent({
           tableRender.renderTableHeadSchema()
         }
       </div>
-    <VirtualRender
-      lineHeight={props.rowHeight}
-      class={ contentClass }
-      style={ contentStyle.value }
-      list={pageData}
-      onContentScroll={ handleScrollChanged }
-      throttleDelay={0}
-      enabled={props.virtualEnabled}>
-        {
+      <VirtualRender
+        lineHeight={props.rowHeight}
+        class={ contentClass }
+        style={ contentStyle.value }
+        list={pageData}
+        onContentScroll={ handleScrollChanged }
+        throttleDelay={0}
+        enabled={props.virtualEnabled}>
           {
-            default: (scope: any) => tableRender.renderTableBodySchema(scope.data || props.data),
-            afterContent: () => <div class={ resolveClassName('table-fixed') }></div>,
+            {
+              default: (scope: any) => tableRender.renderTableBodySchema(scope.data || props.data),
+              afterContent: () => <div class={ resolveClassName('table-fixed') }></div>,
+            }
           }
+      </VirtualRender>
+      <div class={ footerClass }>
+        {
+          props.pagination && props.data.length && tableRender.renderTableFooter(localPagination.value)
         }
-    </VirtualRender>
-    <div class={ footerClass }>
-      {
-        props.pagination && tableRender.renderTableFooter(localPagination.value)
-      }
-    </div>
+      </div>
     </div>;
   },
 });

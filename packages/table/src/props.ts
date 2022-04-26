@@ -144,6 +144,11 @@ export const tableProps = {
    * 是否启用远程分页
    */
   remotePagination: PropTypes.bool.def(false),
+
+  /**
+   * 空数据展示
+   */
+  emptyText: PropTypes.string.def('暂无数据'),
 };
 
 export type Column = {
