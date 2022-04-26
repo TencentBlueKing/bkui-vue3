@@ -23,36 +23,57 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import {  reactive, watchEffect  } from 'vue';
 
-import { defineComponent } from 'vue';
+import { Column, IColumnActive, TablePropTypes } from '../props';
+import { resolveNumberToNumArray } from '../utils';
 
-import BkBadge from '@bkui-vue/badge';
-import BkButton from '@bkui-vue/button';
-import { Help } from '@bkui-vue/icon';
+/**
+ * 处理Props中的ActiveColumn，解析为统一的数组格式
+ * @param props
+ * @returns
+ */
+export const resolveActiveColumns = (props: TablePropTypes) => {
+  if (props.columnPick !== 'disabled') {
+    if (props.columnPick === 'multi') {
+      return Array.isArray(props.activeColumn) ? props.activeColumn : resolveNumberToNumArray(props.activeColumn);
+    }
 
-export default defineComponent({
-  name: 'SiteBadge',
-  setup() {
-    return {
-    };
-  },
-  render() {
-    const badgeSlots = {
-      default: () => <BkButton theme="primary">primary</BkButton>,
-      icon: () => <Help />,
-    };
-    return (
-      <div style="width: 80%; margin: 0 auto; background: #f5f7fa; padding: 30px">
-        <BkBadge class="mr40">
-          {badgeSlots}
-        </BkBadge>
-        <BkBadge count={999} theme="danger" class="mr40">
-          <BkButton theme="primary">primary</BkButton>
-        </BkBadge>
-        <BkBadge count={999} theme="danger" dot={true}>
-          <BkButton theme="primary">primary</BkButton>
-        </BkBadge>
-      </div>
-    );
-  },
-});
+    return Array.isArray(props.activeColumn)
+      ? resolveNumberToNumArray(props.activeColumn[0])
+      : resolveNumberToNumArray(props.activeColumn);
+  }
+  return [];
+};
+
+/**
+ * table列处理模块
+ * @param props
+ * @returns
+ */
+export default (props: TablePropTypes) => {
+  let activeColumns = reactive([]);
+
+  if (props.columnPick === 'disabled') {
+    return { activeColumns };
+  }
+
+  const activeCols = reactive(resolveActiveColumns(props));
+  const getActiveColumns = () => (props.columns || []).map((_column: Column, index: number) => ({
+    index,
+    active: activeCols.some((colIndex: number) => colIndex === index),
+    _column,
+  }));
+
+  watchEffect(() => {
+    activeColumns = getActiveColumns();
+    const cols = resolveActiveColumns(props);
+    activeColumns.forEach((col: IColumnActive, index: number) => {
+      Object.assign(col, {
+        active: cols.some((colIndex: number) => colIndex === index),
+      });
+    });
+  });
+
+  return { activeColumns };
+};

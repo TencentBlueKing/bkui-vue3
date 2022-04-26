@@ -1,7 +1,7 @@
 {
   "name": "bkui-vue",
   "private": true,
-  "version": "0.0.1-beta.46",
+  "version": "0.0.1-beta.55",
   "workspaces": {
     "packages": [
       "packages/!(**.bak)*",
@@ -19,7 +19,6 @@
     "build:site": "vite build site --mode development",
     "build:dist": "rimraf dist && lerna run --stream --scope cli dist",
     "build:lib": "rimraf lib && lerna run --stream --scope cli lib",
-    "lib:dev": "rimraf lib && node --inspect-brk ./node_modules/.bin/ts-node --project=./scripts/cli/tsconfig.json ./scripts/cli/index.ts lib",
     "help:release": "lerna run --stream --scope cli release",
     "release": "run-s build help:release",
     "analyze:lib": "rimraf lib && lerna run --stream --scope cli lib -- -a",
@@ -36,9 +35,14 @@
     "stylelint": "eslint --ext .js,.ts,.tsx,.vue ./packages ./site --cache",
     "stylelint:fix": "yarn stylelint -- --fix",
     "test:unit": "jest --passWithNoTests --config=./jest.config.js",
+    "test:alert": "lerna run --scope @bkui-vue/alert test",
     "cz": "git-cz"
   },
   "devDependencies": {
+    "@babel/core": "~7.17.9",
+    "@babel/plugin-transform-runtime": "~7.17.0",
+    "@babel/preset-env": "~7.16.11",
+    "@babel/preset-typescript": "~7.16.7",
     "@commitlint/cli": "~16.2.3",
     "@commitlint/config-conventional": "~16.2.1",
     "@types/jest": "~27.4.1",
@@ -58,6 +62,7 @@
     "commitizen": "~4.2.4",
     "conventional-changelog-cli": "~2.2.2",
     "cross-env": "~7.0.3",
+    "css-loader": "~6.7.1",
     "cz-lerna-changelog": "~2.0.3",
     "eslint": "~8.13.0",
     "eslint-config-tencent": "~1.0.4",
@@ -73,6 +78,7 @@
     "jest": "~27.5.1",
     "jest-transform-stub": "~2.0.0",
     "lerna": "~4.0.0",
+    "less-loader": "~10.2.0",
     "lint-staged": "~12.3.7",
     "markdown-it-container": "~3.0.0",
     "normalize-wheel": "~1.0.1",
@@ -102,12 +108,20 @@
     "highlight.js": "~11.5.0",
     "vue": "^3.2.0"
   },
-  "main": "dist/bkui-vue.umd.js",
-  "module": "dist/bkui-vue.esm.js",
-  "typings": "./lib/index.d.ts",
+  "main": "lib/index.js",
+  "module": "lib/index.js",
+  "typings": "lib/index.d.ts",
   "lint-staged": {
-    "*.(vue|ts|tsx|js)": [
-      "eslint --ext .js,.tsx,.ts,.vue --cache --fix",
+    "scripts/**/*.(vue|ts|tsx|js)": [
+      "eslint ./scripts --ext .js,.tsx,.ts --cache --fix",
+      "git add"
+    ],
+    "site/**/*.(vue|ts|tsx|js)": [
+      "eslint ./site --ext .js,.tsx,.ts,.vue --cache --fix",
+      "git add"
+    ],
+    "packages/**/*.(vue|ts|tsx|js)": [
+      "eslint ./packages --ext .js,.tsx,.ts --cache --fix",
       "git add"
     ],
     "*.(vue|scss|css|sass)": [

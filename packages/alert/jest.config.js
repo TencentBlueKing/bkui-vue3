@@ -23,45 +23,8 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-
-import { defineComponent } from 'vue';
-
-import BkCard from '@bkui-vue/card';
-import { Help, HelpDocumentFill, HelpFill } from '@bkui-vue/icon';
-
-export default defineComponent({
-  name: 'SiteCard',
-  setup() {
-    return {
-    };
-  },
-  render() {
-    const cardSlots = {
-      default: () => <div>
-        <p>卡片内容 1</p>
-        <p>卡片内容 2</p>
-        <p>卡片内容 3</p></div>,
-      footer: () => <div style="background: #fafbfd;">
-        <span class="card-foot-icon"><HelpDocumentFill /></span>
-        <span class="card-foot-icon"><Help /></span>
-        <span class="card-foot-icon"><HelpFill /></span>
-      </div>,
-    };
-    return (
-      <div style="width: 80%; margin: 0 auto; background: #f5f7fa; padding: 30px">
-        <div style="width: 400px; display: inline-block;" class="mr40">
-          <BkCard title="Card卡片标题">
-            <p>卡片内容 1</p>
-            <p>卡片内容 2</p>
-            <p>卡片内容 3</p>
-          </BkCard>
-        </div>
-        <div style="width: 400px; display: inline-block;">
-          <BkCard title="Card卡片标题" class="mr40" showFooter={true} showHeader={false}>
-            {cardSlots}
-          </BkCard>
-        </div>
-      </div>
-    );
-  },
-});
+const baseJestConf = require('../../jest.config');
+module.exports = {
+  ...baseJestConf,
+  testRegex: 'packages/alert/__test__/.*\\.test\\.(js|ts|tsx)$',
+};

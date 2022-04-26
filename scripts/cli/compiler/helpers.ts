@@ -24,7 +24,7 @@
 * IN THE SOFTWARE.
 */
 import { appendFile, createReadStream, createWriteStream, existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, rmdirSync, unlinkSync, writeFileSync } from 'fs';
-import path, { join, parse, resolve } from 'path';
+import { join, parse, resolve } from 'path';
 import { promisify } from 'util';
 
 import { ITaskItem } from '../typings/task';
@@ -35,136 +35,6 @@ export const DIST_URL =  resolve(BKUI_DIR, './dist');
 export const LIB_URL =  resolve(BKUI_DIR, './lib');
 export const THEME_LESS_URL = resolve(COMPONENT_URL, 'styles/src/themes/themes.less');
 
-interface Options {
-  [key: string]: string;
-}
-
-function normalizePath(filename: string) {
-  if (/\.(?:less|css)$/i.test(filename)) {
-    return existsSync(filename) ? filename : undefined;
-  }
-
-  const checkExtList = ['.less', '.css'];
-
-  for (let i = 0, len = checkExtList.length; i < len; i ++) {
-    const ext = checkExtList[i];
-    if (existsSync(`${filename}${ext}`)) {
-      return `${filename}${ext}`;
-    }
-  }
-}
-
-export class LessPluginAlias {
-  constructor(private options: Options) {
-    this.options = options;
-  }
-
-  install(less: any, pluginManager: any) {
-    const alias = this.options;
-
-    function resolve(filename: string) {
-      const aliasKeys = Object.keys(alias);
-      if (new RegExp(aliasKeys.map(item => `^(${item})`).join('|'), 'gi').test(filename)) {
-        const match = RegExp.$1;
-
-        const restPath = filename.replace(match, '');
-        const resolvedAlias = alias[match];
-
-        let resolvedPath: string | undefined;
-        if (Array.isArray(resolvedAlias)) {
-          for (let i = 0, len = resolvedAlias.length; i < len; i ++) {
-            resolvedPath = normalizePath(path.join(resolvedAlias[i], restPath));
-            if (resolvedPath) {
-              return resolvedPath;
-            }
-          }
-        } else {
-          resolvedPath = normalizePath(path.join(resolvedAlias, restPath));
-        }
-        if (!resolvedPath) {
-          throw new Error(`Invalid alias config for key: ${match}`);
-        }
-        return resolvedPath;
-      }
-
-      return filename;
-    }
-
-    class AliasPlugin extends less.FileManager {
-      supports(filename: string, currentDirectory: string) {
-        const aliasKeys = Object.keys(alias);
-        const len = aliasKeys.length;
-
-        for (let i = 0; i < len; i ++) {
-          const key = `${aliasKeys[i]}`;
-          if (filename.indexOf(key) !== -1 || currentDirectory.indexOf(key) !== -1) {
-            return true;
-          }
-        }
-        return false;
-      }
-
-      supportsSync(filename: string, currentDirectory: string) {
-        return this.supports(filename, currentDirectory);
-      }
-
-      loadFile(
-        filename: string, currentDirectory: string,
-        options: Record<string, unknown>, enviroment: any,
-      ) {
-        let resolved;
-        try {
-          resolved = resolve(filename);
-        } catch (error) {
-          console.error(error);
-        }
-        if (!resolved) {
-          const error = new Error(`[less-plugin-alias]: '${filename}' not found.`);
-          console.error(error);
-          throw error;
-        }
-        return super.loadFile(resolved, currentDirectory, options, enviroment);
-      }
-
-      loadFileSync(
-        filename: string, currentDirectory: string,
-        options: Record<string, unknown>,
-        enviroment: any,
-      ) {
-        let resolved;
-        try {
-          resolved = resolve(filename);
-        } catch (error) {
-          console.error(error);
-        }
-        if (!resolved) {
-          const error = new Error(`[less-plugin-alias]: '${filename}' not found.`);
-          console.error(error);
-          throw error;
-        }
-        return super.loadFileSync(resolved, currentDirectory, options, enviroment);
-      }
-    }
-
-    pluginManager.addFileManager(new AliasPlugin());
-  }
-}
-
-export const transformImport = (alias = {}) => ({
-  postcssPlugin: 'transform-import',
-  Once(root: any) {
-    root.walkAtRules((rule: any) => {
-      const importPath = rule.params.replace(/^"|"$/g, '').replace(/^'|'$/g, '');
-      const aliasKeys = Object.keys(alias);
-      if (new RegExp(aliasKeys.map(item => `^(${item})`).join('|'), 'gi').test(importPath)) {
-        const match = RegExp.$1;
-        const restPath = importPath.replace(match, '');
-        // eslint-disable-next-line no-param-reassign
-        rule.params = `'../styles${restPath}'`;
-      }
-    });
-  },
-});
 
 // 编译转换*.d.ts
 export const compilerLibDir = async (dir: string): Promise<any> => {
@@ -207,17 +77,25 @@ export const moveFile = (oldPath: string, newPath: string) => new Promise((resol
 });
 
 export const compileFile = (url: string): ITaskItem | undefined => {
-  if (/\/dist\/|\.DS_Store|\.bak|bkui-vue\/index/.test(url)) {
+  if (/\/dist\/|\.DS_Store|\.bak/.test(url)) {
     return;
   }
   const newPath = url.replace(new RegExp(`${COMPONENT_URL}/([^/]+)/src`), `${LIB_URL}/$1`);
+  const isMain = /\/bkui-vue\/.*\.ts$/.test(url);
   if (/\.(css|less|scss)$/.test(url) && !/\.variable.(css|less|scss)$/.test(url)) {
     return {
       type: 'style',
       url,
       newPath,
     };
-  } if (/\/src\/index\.(js|ts|jsx|tsx)$/.test(url)) {
+  } if (/\/src\/index\.(js|ts|jsx|tsx)$/.test(url) || isMain) {
+    if (isMain) {
+      return {
+        type: 'script',
+        url,
+        newPath: LIB_URL,
+      };
+    }
     return {
       type: 'script',
       url,
@@ -231,6 +109,7 @@ export const compileFile = (url: string): ITaskItem | undefined => {
       newPath: url.replace(new RegExp(`${COMPONENT_URL}/([^/]+)/icons`), `${LIB_URL}/$1`),
     };
   }
+
   return;
 };
 export const writeFileRecursive = async (url: string, content: string) => {

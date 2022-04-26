@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import path, { basename, extname } from 'path';
+import path, { basename, extname, parse } from 'path';
 import webpack, { Stats } from 'webpack';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 
@@ -33,15 +33,19 @@ import { LIB_URL } from './helpers';
 
 export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILibTaskOption) => {
   const entry: webpack.EntryObject = {};
-  entryList.forEach(({ url }) => {
-    if (url && !url.includes('/styles/')
-     && (basename(url).replace(extname(url), '') === 'index' || /\/icon\/icons\//.test(url))) {
-      let name = url.match(/\/([^/]+)\/src\//)?.[1];
-      if (!name) {
-        const icon = url.match(/\/icons\/(.+)\.tsx?$/)?.[1];
-        name = icon && icon !== 'icon' ? `icon-${icon}` : '';
+  entryList.forEach(({ url, newPath }) => {
+    if (newPath === LIB_URL) {
+      const urlInfo = parse(url);
+      !urlInfo.name.match(/dist\.index\.ts$/) && (entry[`main-${urlInfo.name}`] = url);
+    } else if (url && !url.includes('/styles/')) {
+      if ((basename(url).replace(extname(url), '') === 'index' || /\/icon\/icons\//.test(url))) {
+        let name = url.match(/\/([^/]+)\/src\//)?.[1];
+        if (!name) {
+          const icon = url.match(/\/icons\/(.+)\.tsx?$/)?.[1];
+          name = icon && icon !== 'icon' ? `icon-${icon}` : '';
+        }
+        name && (entry[name] = url);
       }
-      name && (entry[name] = url);
     }
   });
   const compiler = webpack({
@@ -52,6 +56,8 @@ export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILi
         const { name } = pathData.chunk;
         if (/^icon-/.test(name)) {
           return `icon/${name.replace('icon-', '')}.js`;
+        } if (/^main-/.test(name)) {
+          return `${name.replace(/^main-/, '')}.js`;
         }
         return `${pathData.chunk.name}/index.js`;
       },
@@ -102,6 +108,18 @@ export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILi
             esModule: false,
           },
         },
+        {
+          test: /\.less$/,
+          use: [
+            {
+              loader: 'css-loader',
+            },
+            {
+              loader: 'less-loader',
+            },
+          ],
+          // include: /directives/,
+        },
       ],
     },
     externals: [
@@ -112,12 +130,15 @@ export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILi
       'vue',
       'highlight.js',
       'vue-types',
-      ({ request }, cb)  => {
+      ({ request, context }, cb)  => {
         const prefix = '@bkui-vue/';
         // if (request?.includes('@babel/')) {
         //   return cb(undefined, request);
         // }
-        if (request?.indexOf(prefix) === 0) {
+        if (context && request && /\/bkui-vue$/.test(context)) {
+          return cb(undefined, request.replace(prefix, './'));
+        }
+        if (request?.indexOf(prefix) === 0 && !/\.(less|css)$/.test(request)) {
           return cb(undefined, request.replace(prefix, '../'));
         }
         cb();

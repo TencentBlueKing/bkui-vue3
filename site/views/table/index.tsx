@@ -35,13 +35,15 @@ import { resolvePropsToDesData } from '../utils/index';
 import basic from './basic.vue';
 import bordered from './bordered.vue';
 import cellRender from './cell-render';
+import DataEmpty from './data-empty.vue';
 import event from './event.vue';
+import { DATA_COLUMNS, DATA_TABLE } from './options';
 import pagination from './pagination.vue';
 import RemotePagination from './remotePagination.vue';
 import virtualRender from './virtual-render.vue';
 
 export default defineComponent({
-  components: { basic, bordered, virtualRender, cellRender, event, pagination, RemotePagination },
+  components: { basic, bordered, virtualRender, cellRender, event, pagination, RemotePagination, DataEmpty },
   render() {
     const menuPropsJson = resolvePropsToDesData(tableProps);
 
@@ -115,6 +117,16 @@ export default defineComponent({
         demoName: 'remotePagination',
       },
       component: () => <RemotePagination></RemotePagination>,
+    },
+    {
+      attrs: {
+        title: 'Empty - 空数据提示',
+        subtitle: '',
+        desc: 'props: --',
+        componentName: 'table',
+        demoName: 'data-empty',
+      },
+      component: () => <data-empty></data-empty>,
     }];
 
     return (
@@ -124,7 +136,7 @@ export default defineComponent({
           desc="Table组件， 为页面和功能提供列表。"
           link="https://www.google.com.hk/"/>
           {
-            configs.map(cfg => <DemoBox { ...cfg.attrs }>
+            configs.map(cfg => <DemoBox { ...cfg.attrs } optionData={ { DATA_COLUMNS, DATA_TABLE } }>
                  {
                    cfg.component()
                  }

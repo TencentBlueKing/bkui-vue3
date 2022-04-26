@@ -26,5 +26,5 @@
 import { withInstall } from '@bkui-vue/shared';
 
 import Component from './card';
-const BkCard = withInstall(Component);
+const BkCard = withInstall(Component);;
 export default BkCard;

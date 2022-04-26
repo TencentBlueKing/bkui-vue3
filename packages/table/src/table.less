@@ -2,7 +2,7 @@
 @import './plugins/head-filter.less';
 @import './plugins/head-sort.less';
 .@{bk-prefix}-table {
-  height: 100%;
+  height: auto;
   overflow: hidden;
   border-top: 1px solid @table-border-color;
   border-bottom: 1px solid @table-border-color;
@@ -59,7 +59,9 @@
 
           &:hover {
             td {
-              background: @table-row-hover-bg-color;
+              &:not(.empty-cell) {
+                background: @table-row-hover-bg-color;
+              }
             }
           }
         }
@@ -69,6 +71,18 @@
 
   .@{bk-prefix}-table-footer {
     line-height: 40px;
+    border-top: 1px solid @table-border-color;
+    &.is-hidden {
+      display: none;
+    }
+  }
+
+  tr {
+    &:last-child {
+      td {
+        border-bottom: none;
+      }
+    }
   }
 
   &.bordered-row {

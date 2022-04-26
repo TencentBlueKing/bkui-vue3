@@ -26,38 +26,28 @@
 
 import { readFile } from 'fs/promises';
 import { render } from 'less';
-import { resolve } from 'path';
 import postcss from 'postcss';
 import postcssLess from 'postcss-less';
 
-import { BKUI_DIR, LessPluginAlias, transformImport } from './helpers';
+import LessResolvePathPlugin from '../utils/less-plugin';
+import { transformCssImport } from '../utils/postcss-plugin';
 
-const styleDir = resolve(BKUI_DIR, './packages/styles/src');
 export const compileStyle = async (url: string) => {
   const resource =  await readFile(url, 'utf-8');
   const varResource = resource.replace(/\/themes\/themes\.less/gmi, '/themes/themes.variable.less');
   const { css } = await render(resource, {
     filename: url,
     plugins: [
-      new LessPluginAlias({
-        '@bkui-vue/styles': styleDir,
-      }),
+      new LessResolvePathPlugin(),
     ],
   });
   const { css: varCss } = await render(varResource, {
     filename: url,
     plugins: [
-      new LessPluginAlias({
-        // @import '@bkui-vue/styles/mixins/mixins.less'; => @import 'bkui-vue/packages/styles/src/mixins/mixins.less';
-        '@bkui-vue/styles': styleDir,
-      }),
+      new LessResolvePathPlugin(),
     ],
   });
-  const ret = await postcss([transformImport({
-    '@bkui-vue/styles': styleDir,
-    from: undefined,
-  })]).process(resource, { syntax: postcssLess });
-
+  const ret = await postcss([transformCssImport()]).process(resource, { syntax: postcssLess });
   return { css, varCss, resource: ret.css };
 };
 
