@@ -27,9 +27,10 @@ import { computed, onMounted, ref } from 'vue';
 
 import { classes, resolveClassName } from '@bkui-vue/shared';
 
+import { TablePropTypes } from './props';
 import { resolveNumberOrStringToPix, resolvePropBorderToClassStr } from './utils';
 
-export const useClass = (props, root?) => {
+export const useClass = (props: TablePropTypes, root?) => {
   const autoHeight = ref(200);
   const tableClass = computed(() => (classes({
     [resolveClassName('table')]: true,
@@ -45,7 +46,7 @@ export const useClass = (props, root?) => {
 
   const footerClass = classes({
     [resolveClassName('table-footer')]: true,
-    ['is-hidden']: !props.pagination,
+    ['is-hidden']: !props.pagination || !props.data.length,
   });
 
   /** 表格外层容器样式 */
@@ -78,7 +79,7 @@ export const useClass = (props, root?) => {
     const resolveMaxHeight = resolvePropHeight(props.maxHeight, autoHeight.value);
     const resolveMinHeight = resolvePropHeight(props.minHeight, autoHeight.value);
 
-    const resolveFooterHeight = props.pagination ? 40 : 0;
+    const resolveFooterHeight = props.pagination && props.data.length ? 40 : 0;
     const contentHeight = resolveHeight - resolveHeadHeight - resolveFooterHeight;
     const maxHeight = resolveMaxHeight - resolveHeadHeight - resolveFooterHeight;
     const minHeight = resolveMinHeight - resolveHeadHeight - resolveFooterHeight;
