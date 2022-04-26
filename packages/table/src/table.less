@@ -59,7 +59,9 @@
 
           &:hover {
             td {
-              background: @table-row-hover-bg-color;
+              &:not(.empty-cell) {
+                background: @table-row-hover-bg-color;
+              }
             }
           }
         }

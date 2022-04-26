@@ -23,36 +23,8 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import '@bkui-vue/styles';
 
-import { defineComponent } from 'vue';
-
-import BkBadge from '@bkui-vue/badge';
-import BkButton from '@bkui-vue/button';
-import { Help } from '@bkui-vue/icon';
-
-export default defineComponent({
-  name: 'SiteBadge',
-  setup() {
-    return {
-    };
-  },
-  render() {
-    const badgeSlots = {
-      default: () => <BkButton theme="primary">primary</BkButton>,
-      icon: () => <Help />,
-    };
-    return (
-      <div style="width: 80%; margin: 0 auto; background: #f5f7fa; padding: 30px">
-        <BkBadge class="mr40">
-          {badgeSlots}
-        </BkBadge>
-        <BkBadge count={999} theme="danger" class="mr40">
-          <BkButton theme="primary">primary</BkButton>
-        </BkBadge>
-        <BkBadge count={999} theme="danger" dot={true}>
-          <BkButton theme="primary">primary</BkButton>
-        </BkBadge>
-      </div>
-    );
-  },
-});
+export { default } from './preset';
+export * from './components';
+export * from '@bkui-vue/directives';

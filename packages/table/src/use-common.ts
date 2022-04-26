@@ -27,10 +27,11 @@ import { computed, onMounted, ref } from 'vue';
 
 import { classes, resolveClassName } from '@bkui-vue/shared';
 
-import { isPercentPixOrNumber, resolveNumberOrStringToPix, resolvePropBorderToClassStr } from './utils';
+import { TablePropTypes } from './props';
+import { resolveNumberOrStringToPix, resolvePropBorderToClassStr } from './utils';
 
-export const useClass = (props, root?) => {
-  const autoHeight = ref('auto');
+export const useClass = (props: TablePropTypes, root?) => {
+  const autoHeight = ref(200);
   const tableClass = computed(() => (classes({
     [resolveClassName('table')]: true,
   }, resolvePropBorderToClassStr(props.border))));
@@ -45,7 +46,7 @@ export const useClass = (props, root?) => {
 
   const footerClass = classes({
     [resolveClassName('table-footer')]: true,
-    ['is-hidden']: !props.pagination,
+    ['is-hidden']: !props.pagination || !props.data.length,
   });
 
   /** 表格外层容器样式 */
@@ -53,18 +54,41 @@ export const useClass = (props, root?) => {
     minHeight: resolveNumberOrStringToPix(props.minHeight, 'auto'),
   }));
 
+  const resolvePropHeight = (height: Number | string, defaultValue: number) => {
+    const strHeight = String(height);
+    if (/^\d+\.?\d*$/.test(strHeight)) {
+      return Number(strHeight);
+    }
+
+    if (/^\d+\.?\d*px$/ig.test(strHeight)) {
+      return Number(strHeight.replace('px', ''));
+    }
+
+    if (/^\d+\.?\d*%$/ig.test(strHeight)) {
+      const percent = Number(strHeight.replace('%', ''));
+      return defaultValue * percent / 100;
+    }
+
+    return defaultValue;
+  };
+
   /** 表格外层容器样式 */
   const contentStyle = computed(() => {
-    const isAutoHeight = !isPercentPixOrNumber(props.height);
-    const resolveHeight = resolveNumberOrStringToPix(props.height);
-    const resolveHeadHeight = props.showHead ? resolveNumberOrStringToPix(props.headHeight) : '0';
+    const resolveHeight = resolvePropHeight(props.height, autoHeight.value);
+    const resolveHeadHeight = props.showHead ? resolvePropHeight(props.headHeight, 40) + 2 : 0;
+    const resolveMaxHeight = resolvePropHeight(props.maxHeight, autoHeight.value);
+    const resolveMinHeight = resolvePropHeight(props.minHeight, autoHeight.value);
 
-    const resolveFooterHeight = props.pagination ? 40 : 0;
-    const contentHeight = `calc(${resolveHeight} - ${resolveHeadHeight} - ${resolveFooterHeight}px - 2px)`;
+    const resolveFooterHeight = props.pagination && props.data.length ? 40 : 0;
+    const contentHeight = resolveHeight - resolveHeadHeight - resolveFooterHeight;
+    const maxHeight = resolveMaxHeight - resolveHeadHeight - resolveFooterHeight;
+    const minHeight = resolveMinHeight - resolveHeadHeight - resolveFooterHeight;
+    const height = props.height !== 'auto' ? `${contentHeight}px` : 'auto';
     return {
       display: 'block',
-      ...(isAutoHeight ? { maxHeight: contentHeight }
-        : { height: contentHeight }),
+      'max-height': `${maxHeight}px`,
+      'min-height': `${minHeight}px`,
+      height,
     };
   });
 
@@ -74,8 +98,8 @@ export const useClass = (props, root?) => {
 
   const resetTableHeight = (rootEl: HTMLElement) => {
     if (rootEl) {
-      const { height } = (root.value as HTMLElement).parentElement.getBoundingClientRect();
-      autoHeight.value = `${height}px`;
+      const { height } = rootEl.parentElement.getBoundingClientRect();
+      autoHeight.value = height;
     }
   };
 

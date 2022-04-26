@@ -23,9 +23,25 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-const baseJestConf = require('../../jest.config');
+import { computed, defineComponent } from 'vue';
 
-module.exports = {
-  ...baseJestConf,
-  testRegex: 'packages/progress/__test__/.*\\.test\\.(js|ts|tsx)$',
-};
+import BkException from '@bkui-vue/exception';
+import { PropTypes } from '@bkui-vue/shared';
+export default defineComponent({
+  name: 'BodyEmpty',
+  props: {
+    list: PropTypes.array.def([]),
+    filterList: PropTypes.array.def([]),
+    emptyText: PropTypes.string.def('暂无数据'),
+  },
+  emits: ['change'],
+
+  setup(props, { slots }) {
+    const type = computed(() => (props.list.length === 0 ? 'empty' : 'search-empty'));
+    return () => <BkException scene="part" type={type.value}>
+      {
+        slots.default?.() ?? props.emptyText
+      }
+    </BkException>;
+  },
+});

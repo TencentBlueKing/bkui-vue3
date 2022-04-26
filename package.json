@@ -1,7 +1,7 @@
 {
   "name": "bkui-vue",
   "private": true,
-  "version": "0.0.1-beta.54",
+  "version": "0.0.1-beta.55",
   "workspaces": {
     "packages": [
       "packages/!(**.bak)*",
@@ -19,7 +19,6 @@
     "build:site": "vite build site --mode development",
     "build:dist": "rimraf dist && lerna run --stream --scope cli dist",
     "build:lib": "rimraf lib && lerna run --stream --scope cli lib",
-    "lib:dev": "rimraf lib && node --inspect-brk ./node_modules/.bin/ts-node --project=./scripts/cli/tsconfig.json ./scripts/cli/index.ts lib",
     "help:release": "lerna run --stream --scope cli release",
     "release": "run-s build help:release",
     "analyze:lib": "rimraf lib && lerna run --stream --scope cli lib -- -a",
@@ -113,8 +112,16 @@
   "module": "lib/index.js",
   "typings": "lib/index.d.ts",
   "lint-staged": {
-    "*.(vue|ts|tsx|js)": [
-      "eslint --ext .js,.tsx,.ts,.vue --cache --fix",
+    "scripts/**/*.(vue|ts|tsx|js)": [
+      "eslint ./scripts --ext .js,.tsx,.ts --cache --fix",
+      "git add"
+    ],
+    "site/**/*.(vue|ts|tsx|js)": [
+      "eslint ./site --ext .js,.tsx,.ts,.vue --cache --fix",
+      "git add"
+    ],
+    "packages/**/*.(vue|ts|tsx|js)": [
+      "eslint ./packages --ext .js,.tsx,.ts --cache --fix",
       "git add"
     ],
     "*.(vue|scss|css|sass)": [
