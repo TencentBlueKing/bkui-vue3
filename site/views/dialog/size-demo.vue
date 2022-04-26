@@ -1,6 +1,7 @@
 <template>
   <div>
     <bk-button
+      class="mr10"
       @click="() => exampleSetting1.dialog1.isShow = true"
     >
       normal
@@ -16,6 +17,7 @@
     </bk-dialog>
 
     <bk-button
+      class="mr10"
       @click="() => exampleSetting1.dialog2.isShow = true"
     >
       small
@@ -32,6 +34,7 @@
     </bk-dialog>
 
     <bk-button
+      class="mr10"
       @click="() => exampleSetting1.dialog3.isShow = true"
     >
       medium
@@ -48,6 +51,7 @@
     </bk-dialog>
 
     <bk-button
+      class="mr10"
       @click="() => exampleSetting1.dialog4.isShow = true"
     >
       large
@@ -64,6 +68,7 @@
     </bk-dialog>
 
     <bk-button
+      class="mr10"
       @click="() => exampleSetting1.dialog5.isShow = true"
     >
       自定义宽高
@@ -72,8 +77,8 @@
       :is-show="exampleSetting1.dialog5.isShow"
       :title="'这是标题'"
       :theme="'primary'"
-      :width="400"
-      :height="200"
+      :width="'400'"
+      :height="'200'"
       @closed="() => exampleSetting1.dialog5.isShow = false"
       @confirm="() => exampleSetting1.dialog5.isShow = false"
     >
@@ -117,6 +122,8 @@
   });
 </script>
 
-<style>
-
+<style lang="postcss">
+.mr10 {
+  margin-right: 10px;
+}
 </style>

@@ -9,7 +9,8 @@
       :is-show="exampleSetting.dialog.isShow"
       :title="'文本标题'"
       :theme="'primary'"
-      :button-loading="exampleSetting.dialog.loading"
+      :confirm-text="exampleSetting.dialog.confirmText"
+      :is-loading="exampleSetting.dialog.loading"
       @closed="() => exampleSetting.dialog.isShow = false"
       @confirm="handleConfirm"
     >
@@ -37,18 +38,21 @@
           loading: false,
           countdown: 3,
           timer: null,
+          confirmText: '确定',
         },
       });
       return { exampleSetting };
     },
     methods: {
       handleConfirm() {
+        this.exampleSetting.dialog.confirmText = '';
         this.exampleSetting.dialog.loading = true;
         this.exampleSetting.dialog.timer = setInterval(() => {
           this.exampleSetting.dialog.countdown -= 1;
           if (this.exampleSetting.dialog.countdown === 0) {
             this.exampleSetting.dialog.isShow = false;
             this.exampleSetting.dialog.loading = false;
+            this.exampleSetting.dialog.confirmText = '确定';
             this.exampleSetting.dialog.countdown = 3;
             clearInterval(this.exampleSetting.dialog.timer);
           }
