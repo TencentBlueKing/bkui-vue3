@@ -1,5 +1,8 @@
 <template>
-  <bk-form form-type="vertical">
+  <bk-form
+    class="example"
+    form-type="vertical"
+  >
     <bk-form-item label="姓名">
       <bk-input
         placeholder="请输入"
@@ -53,5 +56,8 @@
   import BkSelect, { BkOption } from '@bkui-vue/select';
 
 </script>
-<style lang="postcss">
+<style lang="postcss" scoped>
+  .example {
+    max-width: 800px;
+  }
 </style>
