@@ -44,10 +44,10 @@ export const useClass = (props: TablePropTypes, root?) => {
     [resolveClassName('table-body')]: true,
   });
 
-  const footerClass = classes({
+  const footerClass = computed(() => classes({
     [resolveClassName('table-footer')]: true,
     ['is-hidden']: !props.pagination || !props.data.length,
-  });
+  }));
 
   /** 表格外层容器样式 */
   const wrapperStyle = computed(() => ({
