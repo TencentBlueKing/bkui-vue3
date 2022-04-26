@@ -31,9 +31,10 @@ import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import type { IPropsTableItem } from '../../typings';
 
-import BaseDemo from './base-demo.vue';
-import CloseDemo from './close-demo.vue';
-import ThemeDemo from './theme-demo.vue';
+import Base from './demo/base.vue';
+import Close from './demo/close.vue';
+import Position from './demo/position.vue';
+import Theme from './demo/theme.vue';
 
 const props: IPropsTableItem[] = [
   {
@@ -44,6 +45,13 @@ const props: IPropsTableItem[] = [
     optional: ['primary', 'warning', 'success', 'error'],
   },
   {
+    name: 'title',
+    type: 'String',
+    default: '',
+    desc: '组件的标题',
+    optional: [],
+  },
+  {
     name: 'message',
     type: 'String',
     default: '',
@@ -51,9 +59,16 @@ const props: IPropsTableItem[] = [
     optional: [],
   },
   {
+    name: 'position',
+    type: 'String',
+    default: '',
+    desc: '组件出现的方向',
+    optional: ['top-left', 'top-right', 'bottom-left', 'bottom-right'],
+  },
+  {
     name: 'delay',
     type: 'Number',
-    default: '3000',
+    default: '5000',
     desc: '组件延时关闭时间，值为 0 时需要手动关闭',
     optional: [],
   },
@@ -63,6 +78,13 @@ const props: IPropsTableItem[] = [
     default: 'true',
     desc: '是否显示右侧关闭 icon',
     optional: ['true', 'false'],
+  },
+  {
+    name: 'offsetX',
+    type: 'Number',
+    default: '10',
+    desc: '组件出现时距离视口的水平偏移量',
+    optional: [],
   },
   {
     name: 'offsetY',
@@ -93,40 +115,55 @@ const props: IPropsTableItem[] = [
     optional: [],
   },
 ];
+
+const demos = [
+  {
+    title: '基础用法',
+    desc: '使用默认配置的通知提示',
+    componentName: 'notify',
+    demoName: 'demo/base',
+    DemoComponent: Base,
+  },
+  {
+    title: '内置主题',
+    desc: '通知提示提供消息、成功、警告、失败四种主题',
+    componentName: 'notify',
+    demoName: 'demo/theme',
+    DemoComponent: Theme,
+  },
+  {
+    title: '通知出现的位置',
+    desc: '通知出现可以从 4 个方向出现：左上角、右上角、左下角、右下角',
+    componentName: 'notify',
+    demoName: 'demo/position',
+    DemoComponent: Position,
+  },
+  {
+    title: '通知关闭',
+    desc: '配置 delay 字段定义通知自动关闭的时间，当值为 0 时不自动关闭。配置 dismissable 字段控制是否显示右侧的手动关闭 icon。',
+    componentName: 'notify',
+    demoName: 'demo/close',
+    DemoComponent: Close,
+  },
+];
+
 export default defineComponent({
   render() {
     return (
-    <div>
-      <DemoTitle
-        name="Message 消息提示"
-        desc="用户操作后的消息提示，用于成功、失败、警告等消息提醒。"
-        link="https://www.google.com.hk/"/>
-      <DemoBox
-        title="基础用法"
-        subtitle="使用默认配置的消息提示"
-        desc=""
-        componentName="Message"
-        demoName="base-demo">
-          <BaseDemo/>
-      </DemoBox>
-      <DemoBox
-        title="内置主题"
-        subtitle="消息提醒提供消息、成功、警告、失败四种主题"
-        desc=""
-        componentName="Message"
-        demoName="theme-demo">
-          <ThemeDemo/>
-      </DemoBox>
-      <DemoBox
-        title="消息关闭"
-        subtitle="配置 delay 字段定义消息自动关闭的时间，当值为 0 时不自动关闭。配置 dismissable 字段控制是否显示右侧的手动关闭 icon。"
-        desc=""
-        componentName="Message"
-        demoName="close-demo">
-          <CloseDemo/>
-      </DemoBox>
-        <PropsBox subtitle="" propsData={props}></PropsBox>
-    </div>
+      <div>
+        <DemoTitle
+          name="Notify 通知提示"
+          desc="用来给用户推送通知提示信息，通知可配置为从界面的四个角出现"
+          link="https://www.google.com.hk/"/>
+          {
+            demos.map(({ DemoComponent, ...demo }) => (
+              <DemoBox {...demo}>
+                <DemoComponent />
+              </DemoBox>
+            ))
+          }
+          <PropsBox subtitle="" propsData={props}></PropsBox>
+      </div>
     );
   },
 });
