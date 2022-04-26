@@ -84,7 +84,7 @@ export default defineComponent({
   },
   render() {
     return (
-      <div class={['bk-modal-wrapper', this.size, this.customClass]}
+      <div class={['bk-modal-wrapper', this.customClass]}
         style={this.compStyle}>
         {this.isShow ? (
           <div class="bk-modal-body">

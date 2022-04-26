@@ -164,6 +164,13 @@ const dialogPropsJson: IPropsTableItem[] = [
     desc: '弹框的渲染方式',
     optional: ['show', 'if'],
   },
+  {
+    name: 'draggable',
+    type: 'Boolean',
+    default: 'true',
+    desc: '是否可拖拽',
+    optional: [],
+  },
 ];
 
 export default defineComponent({
@@ -197,7 +204,7 @@ export default defineComponent({
         <DemoBox
           title="自定义内容以及弹框配置"
           subtitle=""
-          desc=""
+          desc="通过设置 draggable 属性来设置是否允许弹框拖拽。通过 closeIcon 属性设置是否显示右上角的关闭 icon。"
           componentName="dialog"
           demoName="config-demo">
           <ConfigDemo></ConfigDemo>

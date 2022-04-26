@@ -24,10 +24,11 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent } from 'vue';
+import { defineComponent, onBeforeUnmount, onMounted, reactive, watch } from 'vue';
 
 import BkButton from '@bkui-vue/button';
 import BkModal, { propsMixin } from '@bkui-vue/modal';
+import { PropTypes } from '@bkui-vue/shared';
 
 export default defineComponent({
   name: 'Dialog',
@@ -37,119 +38,73 @@ export default defineComponent({
   },
   props: {
     ...propsMixin,
-    width: {
-      type: [Number, String],
-      default: null,
-    },
-    height: {
-      type: [Number, String],
-      default: null,
-    },
+    width: PropTypes.string.def('null') || PropTypes.number.def(),
+    height: PropTypes.string.def('null') || PropTypes.number.def(),
     // 确认按钮文字
-    confirmText: {
-      type: String,
-      default: '确定',
-    },
+    confirmText: PropTypes.string.def('确定'),
     // 取消按钮文字
-    cancelText: {
-      type: String,
-      default: '取消',
-    },
+    cancelText: PropTypes.string.def('取消'),
     // 弹框的标题
-    title: {
-      type: String,
-      default: 'Title',
-    },
+    title: PropTypes.string.def('title'),
     // 显示 header 的位置
-    headerAlign: {
-      type: String,
-      default: 'left',
-      validator: (value: string) => {
-        const textAlign = ['left', 'center', 'right'];
-        if (textAlign.indexOf(value) < 0) {
-          console.error(`headerAlign property is not valid: '${value}',【${textAlign.join(' | ')}】`);
-          return false;
-        }
-        return true;
-      },
-    },
+    headerAlign: PropTypes.commonType(['left', 'center', 'right'], 'headerAlign').def('left'),
     // 显示 footer 的位置
-    footerAlign: {
-      type: String,
-      default: 'right',
-      validator: (value: string) => {
-        const textAlign = ['left', 'center', 'right'];
-        if (textAlign.indexOf(value) < 0) {
-          console.error(`footerAlign property is not valid: '${value}',【${textAlign.join(' | ')}】`);
-          return false;
-        }
-        return true;
-      },
-    },
+    footerAlign: PropTypes.commonType(['left', 'center', 'right'], 'footerAlign').def('right'),
     // 颜色 按钮类型
-    theme: {
-      type: String,
-      default: 'primary',
-      validator: (value: string) => {
-        if (['primary', 'warning', 'success', 'danger'].indexOf(value) < 0) {
-          console.error(`theme property is not valid: '${value}'`);
-          return false;
-        }
-        return true;
-      },
-    },
+    theme: PropTypes.commonType(['primary', 'warning', 'success', 'danger'], 'theme').def('primary'),
+    // 按钮loading
+    isLoading: PropTypes.bool.def(false),
   },
   emits: ['closed', 'update:isShow', 'confirm'],
-  data() {
-    return {
+  setup(props: any, { emit }) {
+    const data = reactive({
       positionX: 0,
       positionY: 0,
       moveStyle: {
         top: '',
         left: '',
       },
-    };
-  },
-  computed: {
-    // 如果 fullscreen 为 true，那么 draggable 配置无效
-    isDraggable(): boolean {
-      if (!this.fullscreen) {
-        return this.draggable;
+    });
+    onMounted(() => {
+      if (props.escClose) {
+        addEventListener('keydown', escCloseHandler);
       }
-      return false;
-    },
-  },
-  mounted() {
-    if (this.escClose) {
-      addEventListener('keydown', this.escCloseHandler);
-    }
-  },
-  beforeDestory() {
-    if (this.escClose) {
-      removeEventListener('keydown', this.escCloseHandler);
-    }
-  },
-  methods: {
+    });
+    onBeforeUnmount(() => {
+      if (props.escClose) {
+        removeEventListener('keydown', escCloseHandler);
+      }
+    });
+    watch(() => props.isShow, (val: Boolean) => {
+      if (!val) {
+        data.moveStyle = {
+          top: '50%',
+          left: '50%',
+        };
+        data.positionX = 0;
+        data.positionY = 0;
+      }
+    });
     // 关闭弹框
-    handleClose() {
-      this.$emit('update:isShow', false);
-      this.$emit('closed');
-    },
-    handleConfirm() {
-      this.$emit('update:isShow', false);
-      this.$emit('confirm');
-    },
+    const handleClose = () => {
+      emit('update:isShow', false);
+      emit('closed');
+    };
+    const handleConfirm = () => {
+      emit('update:isShow', false);
+      emit('confirm');
+    };
     // 按 esc 关闭弹框
-    escCloseHandler(e) {
-      if (this.isShow && this.closeIcon) {
+    const escCloseHandler = (e) => {
+      if (props.isShow && props.closeIcon) {
         if (e.keyCode === 27) {
-          this.handleClose();
+          handleClose();
         }
       }
-    },
+    };
     // 拖拽事件
-    moveHandler(e) {
-      if (!this.isDraggable) {
+    const moveHandler = (e) => {
+      if (props.fullscreen) {
         return false;
       }
       const odiv = e.target;
@@ -157,9 +112,9 @@ export default defineComponent({
       const parentWidth = e.currentTarget.parentNode.parentNode.offsetWidth;
       let disX;
       let disY;
-      if (this.positionX !== 0 && this.positionY !== 0) {
-        disX = e.clientX - this.positionX;
-        disY = e.clientY - this.positionY;
+      if (data.positionX !== 0 && data.positionY !== 0) {
+        disX = e.clientX - data.positionX;
+        disY = e.clientY - data.positionY;
       } else {
         disX = e.clientX - odiv.offsetLeft;
         disY = e.clientY - odiv.offsetTop;
@@ -179,16 +134,23 @@ export default defineComponent({
         } else if ((boxTop / 2) + top <= 0) {
           top = -boxTop / 2;
         }
-        this.positionX = left;
-        this.positionY = top;
-        this.moveStyle.left = `calc(50% + ${left}px)`;
-        this.moveStyle.top = `calc(50% + ${top}px)`;
+        data.positionX = left;
+        data.positionY = top;
+        data.moveStyle.left = `calc(50% + ${left}px)`;
+        data.moveStyle.top = `calc(50% + ${top}px)`;
       };
       document.onmouseup = () => {
         document.onmousemove = null;
         document.onmouseup = null;
       };
-    },
+    };
+    return {
+      data,
+      handleClose,
+      handleConfirm,
+      escCloseHandler,
+      moveHandler,
+    };
   },
 
   render() {
@@ -208,7 +170,8 @@ export default defineComponent({
       footer: () => <div class="bk-dialog-footer" style={`text-align: ${this.footerAlign}`}>
         {
           this.$slots.footer?.() ?? <>
-            <BkButton onClick={this.handleConfirm} theme={this.theme}>{this.confirmText}</BkButton>
+            <BkButton onClick={this.handleConfirm} theme={this.theme}
+            loading={this.isLoading}>{this.confirmText}</BkButton>
             <BkButton style='margin-left: 8px;' onClick={this.handleClose}>{this.cancelText}</BkButton>
           </>
         }
@@ -216,8 +179,8 @@ export default defineComponent({
     };
 
     const className = `bk-dialog-wrapper ${this.scrollable ? 'scroll-able' : ''}`;
-    return <BkModal {...this.$props} class={[className, this.fullscreen ? 'bk-model-fullscreen' : '']}
-      style={this.moveStyle}>
+    return <BkModal {...this.$props} class={[className, this.fullscreen ? 'bk-model-fullscreen' : this.size]}
+      style={this.data.moveStyle}>
       {dialogSlot}
     </BkModal>;
   },
