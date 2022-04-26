@@ -131,7 +131,7 @@ export default defineComponent({
             }
           }
       </VirtualRender>
-      <div class={ footerClass }>
+      <div class={ footerClass.value }>
         {
           props.pagination && props.data.length && tableRender.renderTableFooter(localPagination.value)
         }
