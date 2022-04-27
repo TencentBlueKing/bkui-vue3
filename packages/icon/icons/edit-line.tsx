@@ -25,6 +25,7 @@
 * IN THE SOFTWARE.
 */
 import { FunctionalComponent } from 'vue';
+
 import BkIcon, { IIconBaseProps } from './icon';
 const data = JSON.parse('{"type":"element","name":"svg","attributes":{"xmlns":"http://www.w3.org/2000/svg","viewBox":"0 0 1024 1024","style":"width: 1em; height: 1em; vertical-align: middle;fill: currentColor;overflow: hidden;"},"elements":[{"type":"element","name":"path","attributes":{"d":"M609.6 201.6L203.2 609.6 203.2 710.4 304 710.4 712 304z"}},{"type":"element","name":"path","attributes":{"d":"M128 800H896V896H128z"}},{"type":"element","name":"path","attributes":{"d":"M683.6717566325265 128.04165515828316L785.4933559547056 229.86680878681256 740.2377321198037 275.1208529300033 638.4161327976245 173.2956993014738z"}}]}');
 const editLine: FunctionalComponent<IIconBaseProps> = (props, context) => {
