@@ -71,3 +71,4 @@ import '@bkui-vue/timeline/timeline.less';
 import '@bkui-vue/code-diff/code-diff.less';
 import '@bkui-vue/resize-layout/resize-layout.less';
 import '@bkui-vue/tag-input/tag-input.less';
+import '@bkui-vue/container/container.less';
