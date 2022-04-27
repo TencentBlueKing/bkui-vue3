@@ -650,7 +650,7 @@ const routes: RouteRecordRaw[] = [
       group: NavGroupMeta.Others,
       navName: 'Cascader 级联选择',
     },
-    component: () => import('../views/cascader'),
+    component: () => import('../views/cascader/index'),
   },
 ];
 
