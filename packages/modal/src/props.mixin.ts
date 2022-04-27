@@ -23,6 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
+
 import { PropTypes } from '@bkui-vue/shared';
 export const propsMixin = {
   // 是否显示弹框
@@ -43,6 +44,8 @@ export const propsMixin = {
   maskClose: PropTypes.bool.def(true),
   // 是否全屏
   fullscreen: PropTypes.bool.def(false),
+  // 自定义类样式名
+  extCls: PropTypes.string.def(''),
   // 弹框尺寸
   size: PropTypes.commonType(['normal', 'small', 'medium', 'large'], 'size').def('normal'),
   // 是否可拖拽
