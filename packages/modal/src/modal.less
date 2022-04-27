@@ -2,29 +2,37 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  background: #fff;
+  // background: #fff;
   transform: translate(-50%, -50%);
-
+  .bk-modal-outside {
+    bottom: 0;
+    right: 0;
+    top: 0;
+    left: 0;
+    position: fixed;
+  }
   &.bk-model-fullscreen {
     width: 100%;
     height: 100%;
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
   }
 
   &.normal {
     width: 480px;
     height: 240px;
   }
-  
+
   &.small {
     width: 400px;
     height: 200px;
   }
-  
+
   &.medium {
     width: 640px;
     height: 400px;
   }
-  
+
   &.large {
     width: 960px;
     height: 720px;
@@ -32,6 +40,7 @@
 
   .bk-modal-body {
     height: 100%;
+    background: #fff;
     box-shadow: 0 4px 12px rgba(0,0,0,.15);
   }
 }
