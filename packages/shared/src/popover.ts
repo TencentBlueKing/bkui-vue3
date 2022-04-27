@@ -124,8 +124,8 @@ export class BKPopover {
     this.trigger = this.instanceOptions.trigger;
     this.disabled = this.instanceOptions.disabled;
     this.appendTo = this.instanceOptions.appendTo;
-    this.afterHidden = typeof options.afterHidden === 'function' ? options.afterHidden : () => {};
-    this.afterShow = typeof options.afterShow === 'function' ? options.afterShow : () => {};
+    this.afterHidden = typeof options.afterHidden === 'function' ? options.afterHidden : () => { };
+    this.afterShow = typeof options.afterShow === 'function' ? options.afterShow : () => { };
     this.fixOnBoundary = this.instanceOptions.fixOnBoundary;
     this.initInstance();
     this.registerEvents();
@@ -227,9 +227,9 @@ export class BKPopover {
   private restorePopContent() {
     const target = this.getAppendToTarget();
     if (isElement(target)
-        && (target as HTMLElement).contains(this.popperRefer)
-        && this.container
-        && !this.container.contains(this.popperRefer)) {
+      && (target as HTMLElement).contains(this.popperRefer)
+      && this.container
+      && !this.container.contains(this.popperRefer)) {
       this.container.append(this.popperRefer);
     }
   }
@@ -249,7 +249,7 @@ export class BKPopover {
    * @returns
    */
   private getAppendToTarget() {
-    const  { appendTo } = this;
+    const { appendTo } = this;
     let target: string | HTMLElement = appendTo;
     if (appendTo !== 'parent') {
       if (typeof appendTo === 'string') {
