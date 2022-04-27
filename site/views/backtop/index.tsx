@@ -26,37 +26,76 @@
 
 import { defineComponent } from 'vue';
 
-import BKFixedNavbar from '@bkui-vue/fixed-navbar';
+import DemoBox from '../../components/demo-box';
+import DemoTitle from '../../components/demo-title';
+import PropsBox from '../../components/props-box';
+import { IPropsTableItem } from '../../typings';
+
+import BaseDemo from './base-demo.vue';
+
+const backtopPropsJson: IPropsTableItem[] = [
+  {
+    name: 'visibilityHeight',
+    type: 'Number',
+    default: 200,
+    desc: '滚动多少px后，元素可见',
+    optional: [],
+  },
+  {
+    name: 'target',
+    type: 'String',
+    default: '',
+    desc: '触发滚动的对象',
+    optional: [],
+  },
+  {
+    name: 'right',
+    type: 'Number',
+    default: 40,
+    desc: '控制其显示位置, 距离页面右边距',
+    optional: [],
+  },
+  {
+    name: 'bottom',
+    type: 'Number',
+    default: 40,
+    desc: '控制其显示位置, 距离页面底部边距',
+    optional: [],
+  },
+  {
+    name: 'extCls',
+    type: 'String',
+    default: '',
+    desc: '自定义样式',
+    optional: [],
+  },
+
+];
 
 export default defineComponent({
-  name: 'SiteAlert',
   setup() {
-    const navItems = [
-      {
-        icon: 'bkdata-icon icon-weixin-shape',
-        text: '联系',
-        tooltip: '可以通过BK助手联系我们',
-        action: () => {
-          window.open('wxwork://message/?username=BK-MagicBox');
-        },
-      },
-      {
-        icon: 'bkdata-icon icon-icon-help-document-fill',
-        text: '反馈',
-        action: () => {
-          window.open('/');
-        },
-      },
-    ];
-
-    return {
-      navItems,
-    };
   },
   render() {
     return (
       <div>
-        <BKFixedNavbar nav-items={this.navItems}></BKFixedNavbar>
+        <DemoTitle
+          name="Backtop 回到顶部"
+          desc="Backtop 回到页面顶部的操作按钮"
+          link="https://www.google.com.hk/"/>
+
+        <DemoBox
+          title="基础用法"
+          subtitle="向下滚动以显示按钮"
+          componentName="backtop"
+          demoName="base-demo">
+            <BaseDemo></BaseDemo>
+          </DemoBox>
+
+        <PropsBox
+          style="height: 1000px"
+          title="Backtop Attributes"
+          subtitle=""
+          propsData={backtopPropsJson}/>
       </div>
     );
   },
