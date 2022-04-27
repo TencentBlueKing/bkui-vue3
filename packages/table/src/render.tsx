@@ -31,6 +31,7 @@ import BodyEmpty from './plugins/body-empty';
 import HeadFilter from './plugins/head-filter';
 import HeadSort from './plugins/head-sort';
 import { TablePlugins } from './plugins/index';
+import Settings from './plugins/settings';
 import { Column, GroupColumn, IColumnActive, IReactiveProp, TablePropTypes } from './props';
 import { getRowText, resolveHeadConfig, resolvePropVal, resolveWidth } from './utils';;
 export const enum EVENTS {
@@ -72,10 +73,13 @@ export default class TableRender {
       return null;
     }
 
-    return <table cellpadding={0} cellspacing={0}>
+    return [
+      this.props.settings ? <Settings class="table-head-settings" settings={ this.props.settings }></Settings> : '',
+      <table cellpadding={0} cellspacing={0}>
         { this.renderColGroup() }
         { this.renderHeader() }
-      </table>;
+      </table>,
+    ];
   }
 
   /**

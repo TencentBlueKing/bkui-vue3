@@ -60,6 +60,7 @@ export default defineComponent({
       footerClass,
       wrapperStyle,
       contentStyle,
+      headStyle,
       resetTableHeight,
     } = useClass(props);
 
@@ -111,11 +112,14 @@ export default defineComponent({
     });
 
     return () => <div class={tableClass.value} style={wrapperStyle.value} ref={root}>
-      <div class={ headClass }>
+      {
+        // @ts-ignore:next-line
+        <div class={ headClass } style={headStyle}>
         {
           tableRender.renderTableHeadSchema()
         }
       </div>
+      }
       <VirtualRender
         lineHeight={props.rowHeight}
         class={ contentClass }

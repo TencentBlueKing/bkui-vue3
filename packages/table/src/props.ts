@@ -149,7 +149,30 @@ export const tableProps = {
    * 空数据展示
    */
   emptyText: PropTypes.string.def('暂无数据'),
+
+  /**
+   * bk-table-setting-content
+   */
+  settings: PropTypes.oneOfType([PropTypes.bool, PropTypes.shape<Settings>({
+    fields: PropTypes.shape<Field[]>([]).def([]),
+    checked: PropTypes.shape<string[]>([]).def([]),
+    limit: PropTypes.number.def(null),
+    size: PropTypes.size(['small', 'default', 'large']).def('default'),
+  })]).def(false),
 };
+
+export type Settings = {
+  fields?: Field[];
+  checked?: string[];
+  limit?: number;
+  size?: string;
+};
+
+export type Field = {
+  name: string;
+  value: string
+};
+
 
 export type Column = {
   label: Function | string;
