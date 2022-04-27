@@ -71,6 +71,7 @@ export default defineComponent({
     const isTextArea = computed(() => props.type === 'textarea');
     const inputClsPrefix = computed(() => (isTextArea.value ? 'bk-textarea' : 'bk-input'));
     const { class: cls, style, ...inputAttrs } = ctx.attrs;
+    const inputRef = ref();
     const inputCls = computed(() => classes({
       [`${inputClsPrefix.value}--${props.size}`]: !!props.size,
       'is-focused': isFocused.value,
@@ -98,6 +99,13 @@ export default defineComponent({
       'show-clear-only-hover': props.showClearOnlyHover,
     }, suffixCls));
 
+    ctx.expose({
+      focus() {
+        inputRef.value.focus();
+      },
+      clear,
+    });
+
     function clear() {
       ctx.emit(EventEnum['update:modelValue'], '');
       ctx.emit(EventEnum.change, '');
@@ -116,17 +124,15 @@ export default defineComponent({
     // 事件句柄生成器
     function eventHandler(eventName: InputEventUnion) {
       return (e) => {
-        let originEventName = eventName;
         if (e.code === 'Enter' || e.key === 'Enter' || e.keyCode === 13) {
-          originEventName = EventEnum.enter;
-          if (e.type !== EventEnum.keyup) return;
+          ctx.emit(EventEnum.enter, e.target.value, e);
         }
         if (isCNInput.value && [EventEnum.input, EventEnum.change].some(e => eventName === e)) return;
         if (eventName === EventEnum.input) {
           ctx.emit(EventEnum['update:modelValue'], isNumberInput.value ? +e.target.value : e.target.value);
         }
 
-        ctx.emit(originEventName, e.target.value, e);
+        ctx.emit(eventName, e.target.value, e);
       };
     }
     const [
@@ -217,6 +223,7 @@ export default defineComponent({
         }
         {isTextArea.value ? (
             <textarea
+              ref={inputRef}
               {...inputAttrs}
               {...bindProps.value}
               rows={props.rows}
@@ -224,6 +231,7 @@ export default defineComponent({
         ) : (
           <input
             {...inputAttrs}
+            ref={inputRef}
             class={`${inputClsPrefix.value}--text`}
             type={ pwdVisible.value && props.type === 'password' ? 'text' : props.type}
             step={props.step}
