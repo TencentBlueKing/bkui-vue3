@@ -152,7 +152,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/fixed-navbar',
     name: 'fixedNavbar',
-    component: () => import('../views/fixed-navbar'),
+    component: () => import('../views/fixed-navbar/index'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'FixedNavbar 悬浮导航',
@@ -164,7 +164,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/backtop',
     name: 'backtop',
-    component: () => import('../views/backtop'),
+    component: () => import('../views/backtop/index'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'BackTop 返回顶部',
@@ -272,7 +272,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/link',
     name: 'link',
-    component: () => import('../views/link'),
+    component: () => import('../views/link/index'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'Link 文字链接',
