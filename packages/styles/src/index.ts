@@ -26,6 +26,7 @@
 
 import './reset.less';
 import '@bkui-vue/alert/alert.less';
+import '@bkui-vue/affix/affix.less';
 import '@bkui-vue/backtop/backtop.less';
 import '@bkui-vue/badge/badge.less';
 import '@bkui-vue/breadcrumb/breadcrumb.less';
