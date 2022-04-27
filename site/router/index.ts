@@ -606,6 +606,15 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
+    path: '/grid',
+    name: 'Grid 栅格',
+    component: () => import('../views/container'),
+    meta: {
+      group: NavGroupMeta.Layout,
+      navName: 'Grid 栅格',
+    },
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: '404',
     component: () => import('../views/404'),
