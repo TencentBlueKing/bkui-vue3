@@ -1,9 +1,10 @@
 {
   "name": "@bkui-vue/badge",
   "version": "0.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "license": "MIT",
   "scripts": {
-    "dd": "tsc",
     "clean": "rimraf dist && rimraf tsconfig.tsbuildinfo",
     "prepack": "yarn build",
     "build": "yarn clean && tsc --build && cp \"./package.json\" ./dist/",

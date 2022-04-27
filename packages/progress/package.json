@@ -8,7 +8,7 @@
     "clean": "rimraf dist && rimraf tsconfig.tsbuildinfo",
     "prepack": "yarn build",
     "build": "yarn clean && tsc --build && cp \"./package.json\" ./dist/",
-    "test": "echo 'no test'",
+    "test": "jest  --passWithNoTests",
     "lint": "eslint \"./src/**/*.{ts,tsx}\" --max-warnings=0"
   },
   "devDependencies": {
