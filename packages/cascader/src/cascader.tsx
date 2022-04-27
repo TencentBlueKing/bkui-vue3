@@ -63,6 +63,7 @@ export default defineComponent({
     childrenKey: PropTypes.string.def('children'),
     separator: PropTypes.string.def('/'),
     limitOneLine: PropTypes.bool.def(false),
+    extCls: PropTypes.string.def(''),
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
@@ -109,6 +110,13 @@ export default defineComponent({
       panelShow.value = !panelShow.value;
     };
 
+    const removeTag = (value, index, e) => {
+      e.stopPropagation();
+      const current = JSON.parse(JSON.stringify(value));
+      current.splice(index, 1);
+      updateValue(current);
+    };
+
     return {
       store,
       updateValue,
@@ -121,6 +129,7 @@ export default defineComponent({
       setHover,
       cancelHover,
       selectedTags,
+      removeTag,
     };
   },
   render() {
@@ -136,16 +145,16 @@ export default defineComponent({
         return <span>{this.selectedText}</span>;
       }
       return <div class="cascader-tag-list">
-        {this.selectedTags.map(tag => (
+        {this.selectedTags.map((tag, index) => (
           <span class="cascader-tag-item">
             <span class="cascader-tag-item-name">{tag.text}</span>
-            <Error class="bk-icon-clear-icon"></Error>
+            <Error class="bk-icon-clear-icon" onClick={(e: Event) => this.removeTag(this.modelValue, index, e)}></Error>
           </span>
         ))}
       </div>;
     };
     return (
-      <div class={['bk-cascader', 'bk-cascader-wrapper', {
+      <div class={['bk-cascader', 'bk-cascader-wrapper', this.extCls, {
         'bk-is-show-panel': this.panelShow,
         'is-unselected': this.modelValue.length === 0,
       }]}
@@ -164,13 +173,13 @@ export default defineComponent({
           {{
             default: () => (
               <div class="bk-cascader-name" onClick={this.inputClickHandler}>
-                {renderTags()}
+                {this.multiple && renderTags()}
                 {this.filterable
                   ? <input class="bk-cascader-search-input"
                   type="text"
                   placeholder={this.placeholder}
                   />
-                  : this.multiple && <span>{this.selectedText}</span>
+                  : <span>{this.selectedText}</span>
                   }
               </div>
             ),
