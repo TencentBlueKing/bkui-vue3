@@ -50,6 +50,7 @@ export default defineComponent({
 
     let observerIns = null;
     const root = ref();
+    const refVirtualRender = ref();
 
     const { activeColumns } = useActiveColumns(props);
     const { pageData, localPagination, resolvePageData, watchEffectFn } = userPagination(props);
@@ -60,18 +61,24 @@ export default defineComponent({
       footerClass,
       wrapperStyle,
       contentStyle,
+      headStyle,
       resetTableHeight,
     } = useClass(props);
 
     const reactiveProp = reactive({
       scrollTranslateY: 0,
       activeColumns,
+      setting: {
+        size: null,
+        height: null,
+      },
     });
     const tableRender = new TableRender(props, ctx, reactiveProp, colgroups);
 
     watchEffect(() => {
       watchEffectFn(columnFilterFn, columnSortFn);
     });
+
     /**
      * 监听Table 派发的相关事件
      */
@@ -83,7 +90,12 @@ export default defineComponent({
       const { filterFn } = args;
       columnFilterFn = filterFn;
       resolvePageData(columnFilterFn, columnSortFn);
-    });
+    })
+      .on(EVENTS.ON_SETTING_CHANGE, (args: any) => {
+        const { checked = [] } = args;
+        checked.length && resolveColumnWidth(root.value, colgroups, 20);
+        refVirtualRender.value?.reset?.();
+      });
 
 
     const handleScrollChanged = (args: any[]) => {
@@ -111,13 +123,17 @@ export default defineComponent({
     });
 
     return () => <div class={tableClass.value} style={wrapperStyle.value} ref={root}>
-      <div class={ headClass }>
+      {
+        // @ts-ignore:next-line
+        <div class={ headClass } style={headStyle}>
         {
           tableRender.renderTableHeadSchema()
         }
       </div>
+      }
       <VirtualRender
-        lineHeight={props.rowHeight}
+        ref={refVirtualRender}
+        lineHeight={tableRender.getRowHeight}
         class={ contentClass }
         style={ contentStyle.value }
         list={pageData}
