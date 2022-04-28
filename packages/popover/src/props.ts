@@ -34,6 +34,8 @@ const EventProps = {
 };
 export const PopoverProps = {
   isShow: PropTypes.bool.def(false),
+  always: PropTypes.bool.def(false),
+  disabled: PropTypes.bool.def(false),
   width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
   height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
   content: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def(''),
@@ -44,12 +46,12 @@ export const PopoverProps = {
   transition: PropTypes.string.def('fade-in'),
 
   /**
-   * 展示位置
+   * 组件显示位置
    */
   placement: PropTypes.placement(placements).def('top'),
 
   // 'dark', 'light'
-  theme: PropTypes.string.def('light'),
+  theme: PropTypes.string.def('dark'),
 
   /**
    * handleFirstUpdate
