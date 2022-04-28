@@ -50,7 +50,7 @@ export default defineComponent({
 
     let observerIns = null;
     const root = ref();
-    const virtual_render = ref();
+    const refVirtualRender = ref();
 
     const { activeColumns } = useActiveColumns(props);
     const { pageData, localPagination, resolvePageData, watchEffectFn } = userPagination(props);
@@ -94,7 +94,7 @@ export default defineComponent({
       .on(EVENTS.ON_SETTING_CHANGE, (args: any) => {
         const { checked = [] } = args;
         checked.length && resolveColumnWidth(root.value, colgroups, 20);
-        virtual_render.value?.reset?.();
+        refVirtualRender.value?.reset?.();
       });
 
 
@@ -132,7 +132,7 @@ export default defineComponent({
       </div>
       }
       <VirtualRender
-        ref={virtual_render}
+        ref={refVirtualRender}
         lineHeight={tableRender.getRowHeight}
         class={ contentClass }
         style={ contentStyle.value }
