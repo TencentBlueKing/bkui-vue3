@@ -4,7 +4,6 @@
       :columns="columns"
       :data="tableData"
       :pagination="pagination"
-      :height="300"
     />
   </div>
 </template>
