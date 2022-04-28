@@ -250,19 +250,18 @@ export default defineComponent({
       if (item.async) {
         const { callback = null, cache = true } = props.async || {};
         if (typeof callback === 'function') {
-          if (item.cached) {
-            return;
-          }
-          Object.assign(item, { loading: true });
-          callback(item, (resp: any) => setNodeRemoteLoad(resp, item))
-            .then((resp: any) => setNodeRemoteLoad(resp, item))
-            .catch((err: any) => console.error('load remote data error:', err))
-            .finally(() => {
-              assignTreeNode(getNodePath(item), props.data, props.children, {
-                loading: false,
-                ...(cache ? { cached: true } : {}),
+          if (!item.cached) {
+            Object.assign(item, { loading: true });
+            callback(item, (resp: any) => setNodeRemoteLoad(resp, item))
+              .then((resp: any) => setNodeRemoteLoad(resp, item))
+              .catch((err: any) => console.error('load remote data error:', err))
+              .finally(() => {
+                assignTreeNode(getNodePath(item), props.data, props.children, {
+                  loading: false,
+                  ...(cache ? { cached: true } : {}),
+                });
               });
-            });
+          }
         } else {
           console.error('async need to set prop: asyncLoad with function wich will return promise object');
         }
@@ -413,7 +412,9 @@ export default defineComponent({
               this.getLoadingIcon(item),
             ]
           }
-          <span class={ resolveClassName('node-text') }>{getLabel(item, props)}</span>
+          <span class={ resolveClassName('node-text') }>{
+            this.$slots.node?.(item) ?? [getLabel(item, props), this.$slots.nodeAppend?.(item)]
+          }</span>
         </span>
         {
           this.getVirtualLines(item)
