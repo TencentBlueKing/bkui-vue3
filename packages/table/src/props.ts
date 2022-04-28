@@ -158,7 +158,17 @@ export const tableProps = {
     checked: PropTypes.shape<string[]>([]).def([]),
     limit: PropTypes.number.def(null),
     size: PropTypes.size(['small', 'default', 'large']).def('default'),
+    sizeList: PropTypes.shape<SizeItem[]>([]).def(null),
   })]).def(false),
+};
+
+/**
+ * 配置自定义行高选项
+ */
+export type SizeItem = {
+  value?: string;
+  label?: string;
+  height?: number;
 };
 
 export type Settings = {
@@ -166,11 +176,12 @@ export type Settings = {
   checked?: string[];
   limit?: number;
   size?: string;
+  sizeList?: SizeItem[]
 };
 
 export type Field = {
-  name: string;
-  value: string
+  label: string;
+  field?: string;
 };
 
 
@@ -198,6 +209,7 @@ export type Thead = {
 
 export type GroupColumn = {
   calcWidth?: number;
+  isHidden?: boolean;
 } & Column;
 
 export type Columns = ReadonlyArray<Column>;

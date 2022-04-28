@@ -27,13 +27,12 @@ import { computed, defineComponent, ref } from 'vue';
 
 import BkButton from '@bkui-vue/button';
 import BkCheckbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
-import { Close, CogShape } from '@bkui-vue/icon/';
+import { CloseLine, CogShape } from '@bkui-vue/icon/';
 import Popover from '@bkui-vue/popover';
 import { PropTypes, resolveClassName } from '@bkui-vue/shared';
 
-import { Field, Settings } from '../props';
-
-import './settings.less';
+import { Field, Settings, SizeItem } from '../props';
+import { resolvePropVal } from '../utils';
 
 export default defineComponent({
   name: 'Settings',
@@ -44,9 +43,17 @@ export default defineComponent({
       limit: PropTypes.number.def(null),
       size: PropTypes.string.def(null),
     })]).def(false),
+    columns: PropTypes.array.def([]),
+    rowHeight: PropTypes.number.def(40),
   },
   emits: ['change'],
   setup(props, { emit }) {
+    const defaultSizeList: SizeItem[] = [
+      { value: 'small', label: '小', height: 32 },
+      { value: 'default', label: '中', height: props.rowHeight },
+      { value: 'large', label: '大', height: 56 },
+    ];
+
     const modifiers = [{
       name: 'offset',
       options: {
@@ -56,19 +63,22 @@ export default defineComponent({
 
     const isShow = ref(false);
     const settings = (props.settings as Settings);
-    const activeSize = ref(settings.size ?? '');
+    const activeSize = ref(settings.size ?? 'default');
+    const activeHeight = ref(props.rowHeight);
+
     const checkedFields = ref(settings.checked ?? []);
     const className = resolveClassName('table-settings');
     const theme = `light ${className}`;
 
     const handleSaveClick = () => {
-      emit('change', { checked: checkedFields.value, size: activeSize.value });
+      emit('change', { checked: checkedFields.value, size: activeSize.value, height: activeHeight.value });
       isShow.value = false;
     };
 
 
     const handleCancelClick = () => {
       activeSize.value = 'default';
+      activeHeight.value = props.rowHeight;
       checkedFields.value = settings.checked ?? [];
       isShow.value = false;
     };
@@ -78,22 +88,26 @@ export default defineComponent({
     };
 
     const handleCheckAllClick = () => {
-      checkedFields.value = (settings.fields ?? []).map((field: Field) => field.value);
+      checkedFields.value = (settings.fields ?? props.columns ?? [])
+        .map((item: any, index: number) => resolvePropVal(item, 'field', [item, index]));
     };
 
     const isLimit = computed(() => (settings.limit ?? 0) > 0);
-    const sizeList = [{ size: 'small', name: '小' }, { size: 'default', name: '中' }, { size: 'large', name: '大' }];
+    const sizeList = settings.sizeList ?? defaultSizeList;
     const isFiledDisabled = computed(() => isLimit.value && (settings.limit ?? 0) <= checkedFields.value.length);
 
-    const isItemReadonly = (item: any) => isFiledDisabled.value && !checkedFields.value.includes(item.value);
-    const handleSizeItemClick = (item: any) => {
-      activeSize.value = item.size;
+    const isItemReadonly = (item: any, index: number) => isFiledDisabled.value
+      && !checkedFields.value.includes(resolvePropVal(item, 'field', [item, index]));
+
+    const handleSizeItemClick = (item: SizeItem) => {
+      activeSize.value = item.value;
+      activeHeight.value = item.height;
     };
 
-    const getItemClass = (item: any) => ({
+    const getItemClass = (item: SizeItem) => ({
       'line-size': true,
       'is-default': activeSize.value === 'default',
-      active: item.size === activeSize.value,
+      active: item.value === activeSize.value,
     });
 
     const buttonStyle = {
@@ -103,7 +117,7 @@ export default defineComponent({
 
     const renderSize = () => sizeList.map(item => <span
       class={ getItemClass(item) }
-      onClick={() => handleSizeItemClick(item)}>{ item.name }</span>);
+      onClick={() => handleSizeItemClick(item)}>{ item.label }</span>);
 
     return () => <Popover trigger="manual" isShow={isShow.value}
     placement="bottom-end"
@@ -116,7 +130,7 @@ export default defineComponent({
         content: () => <div class="setting-content">
           <div class="setting-head">
             <h2>表格设置</h2>
-            <Close class='icon-close-action' onClick={handleCancelClick}></Close>
+            <CloseLine class='icon-close-action' onClick={handleCancelClick}></CloseLine>
           </div>
           <div class="setting-body">
             <div class="setting-body-title">
@@ -127,9 +141,10 @@ export default defineComponent({
             </div>
             <BkCheckboxGroup class="setting-body-fields" v-model={ checkedFields.value }>
               {
-                (settings.fields ?? []).map((item: any) => <div class="field-item">
-                  <BkCheckbox label={item.value} disabled={isItemReadonly(item)}>
-                    {item.name}
+                (settings.fields ?? props.columns ?? []).map((item: any, index: number) => <div class="field-item">
+                  <BkCheckbox label={ resolvePropVal(item, 'field', [item, index]) }
+                    disabled={isItemReadonly(item, index)}>
+                    { resolvePropVal(item, 'label', [item, index]) }
                   </BkCheckbox>
                 </div>)
               }

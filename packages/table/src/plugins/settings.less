@@ -17,6 +17,14 @@
         font-size: 16px;
         font-weight: 400;
         color: #313238;
+        position: relative;
+
+        .icon-close-action {
+          position: absolute;
+          right: 15px;
+          top: 10px;
+          cursor: pointer;
+        }
       }
       .setting-body {
         padding: 0 24px;
@@ -38,13 +46,15 @@
           }
         }
         .setting-body-fields {
-          height: 150px;
+          max-height: 150px;
           display: flex;
+          align-items: flex-start;
           flex-wrap: wrap;
 
           .field-item {
             width: 150px;
             line-height: 42px;
+            height: 42px;
 
             > label {
               overflow: hidden;

@@ -159,27 +159,29 @@ export const resolveColumnWidth = (root: HTMLElement, colgroups: GroupColumn[], 
   };
 
   colgroups.forEach((col: GroupColumn, index: number) => {
-    const colWidth = String(col.width);
-    let isAutoWidthCol = true;
-    if (/^\d+\.?\d*(px)?$/.test(colWidth)) {
-      const numWidth = Number(colWidth.replace('px', ''));
-      resolveColNumberWidth(col, numWidth);
-      isAutoWidthCol = false;
-    }
-
-    if (/^\d+\.?\d*%$/.test(colWidth)) {
-      let perWidth = autoWidth;
-      if (avgWidth > 0) {
-        const percent = Number(colWidth.replace('%', ''));
-        perWidth = avgWidth * percent / 100;
+    if (!col.isHidden) {
+      const colWidth = String(col.width);
+      let isAutoWidthCol = true;
+      if (/^\d+\.?\d*(px)?$/.test(colWidth)) {
+        const numWidth = Number(colWidth.replace('px', ''));
+        resolveColNumberWidth(col, numWidth);
+        isAutoWidthCol = false;
       }
 
-      resolveColNumberWidth(col, perWidth);
-      isAutoWidthCol = false;
-    }
+      if (/^\d+\.?\d*%$/.test(colWidth)) {
+        let perWidth = autoWidth;
+        if (avgWidth > 0) {
+          const percent = Number(colWidth.replace('%', ''));
+          perWidth = avgWidth * percent / 100;
+        }
 
-    if (isAutoWidthCol) {
-      avgColIndexList.push(index);
+        resolveColNumberWidth(col, perWidth);
+        isAutoWidthCol = false;
+      }
+
+      if (isAutoWidthCol) {
+        avgColIndexList.push(index);
+      }
     }
   });
 
