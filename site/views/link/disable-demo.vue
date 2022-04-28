@@ -31,16 +31,3 @@
     </bk-link>
   </div>
 </template>
-<script>
-  import { defineComponent } from 'vue';
-
-  import BkLink from '@bkui-vue/link';
-
-  export default defineComponent({
-    name: 'SiteBreadcrumb',
-    components: {
-      BkLink,
-    },
-  });
-
-</script>

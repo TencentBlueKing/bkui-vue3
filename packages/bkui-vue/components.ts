@@ -65,3 +65,6 @@ export { default as Form, BkFormItem as FormItem } from '@bkui-vue/form';
 export { default as Pagination } from '@bkui-vue/pagination';
 export { default as Container, BkRow as Row, BkCol as Col } from '@bkui-vue/container';
 export { default as Dropdown, BkDropdownMenu as DropdownMenu, BkDropdownItem as DropdownItem } from '@bkui-vue/dropdown';
+export { default as Link } from '@bkui-vue/link';
+export { default as Backtop } from '@bkui-vue/backtop';
+export { default as FixedNavbar } from '@bkui-vue/fixed-navbar';
