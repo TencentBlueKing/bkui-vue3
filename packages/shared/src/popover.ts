@@ -43,6 +43,7 @@ export declare type IOptions = {
   strategy?: PositioningStrategy;
   onFirstUpdate?: OnFirstUpdateFnType;
   isShow?: boolean;
+  always?: boolean;
   theme?: string;
   trigger?: string;
   disabled?: boolean;
@@ -73,6 +74,9 @@ export class BKPopover {
 
   /** 当前popperjs实例 */
   private instance?: Instance = undefined;
+
+  /** 是否总是可见 */
+  private always?: boolean = false;
 
   /** Popover 外层容器，触发Pop的元素 */
   private reference?: HTMLElement | VirtualElement | null = undefined;
@@ -121,6 +125,7 @@ export class BKPopover {
     this.referenceTarget = this.getTargetReferenceElement();
     this.container = this.popperRefer?.parentElement;
     this.isShow = !!this.instanceOptions?.isShow;
+    this.always = this.instanceOptions.always;
     this.trigger = this.instanceOptions.trigger;
     this.disabled = this.instanceOptions.disabled;
     this.appendTo = this.instanceOptions.appendTo;
@@ -131,7 +136,7 @@ export class BKPopover {
     this.registerEvents();
 
     /** 默认弹出 */
-    if (this.isShow) {
+    if (this.isShow || this.always) {
       this.show(null);
     }
   }
@@ -204,6 +209,7 @@ export class BKPopover {
    * @param event 触发事件
    */
   public hide() {
+    if (this.always) return;
     // Hide the tooltip
     this.popperRefer?.removeAttribute('data-show');
 
