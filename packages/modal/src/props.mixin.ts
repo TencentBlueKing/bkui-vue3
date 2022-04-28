@@ -27,8 +27,8 @@ import { PropTypes } from '@bkui-vue/shared';
 export const propsMixin = {
   // 是否显示弹框
   isShow: PropTypes.bool.def(false),
-  width: PropTypes.string || PropTypes.number,
-  height: PropTypes.string || PropTypes.number,
+  width: PropTypes.oneOfType([String, Number]),
+  height: PropTypes.oneOfType([String, Number]),
   // 配置自定义样式类名
   customClass: PropTypes.string || PropTypes.array,
   // 弹框出现时，是否允许页面滚动
@@ -47,4 +47,6 @@ export const propsMixin = {
   size: PropTypes.commonType(['normal', 'small', 'medium', 'large'], 'size').def('normal'),
   // 是否可拖拽
   draggable: PropTypes.bool.def(true),
+  // 对话框类型
+  dialogType: PropTypes.commonType(['show', 'operation', 'confirm', 'process'], 'dialogType').def('operation'),
 };
