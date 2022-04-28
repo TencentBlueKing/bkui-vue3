@@ -24,6 +24,7 @@
 * IN THE SOFTWARE.
 */
 
+
 import Pagination from '@bkui-vue/pagination';
 import { classes, random } from '@bkui-vue/shared';
 
@@ -31,12 +32,14 @@ import BodyEmpty from './plugins/body-empty';
 import HeadFilter from './plugins/head-filter';
 import HeadSort from './plugins/head-sort';
 import { TablePlugins } from './plugins/index';
+import Settings from './plugins/settings';
 import { Column, GroupColumn, IColumnActive, IReactiveProp, TablePropTypes } from './props';
 import { getRowText, resolveHeadConfig, resolvePropVal, resolveWidth } from './utils';;
 export const enum EVENTS {
   /** 点击排序事件 */
   ON_SORT_BY_CLICK = 'onSortByClick',
-  ON_FILTER_CLICK = 'onFilterClick'
+  ON_FILTER_CLICK = 'onFilterClick',
+  ON_SETTING_CHANGE = 'onSettingChange'
 }
 
 export default class TableRender {
@@ -72,10 +75,31 @@ export default class TableRender {
       return null;
     }
 
-    return <table cellpadding={0} cellspacing={0}>
+    const handleSettingsChanged = (arg: any) => {
+      const { checked = [], size, height } = arg;
+      this.reactiveProp.setting.size = size;
+      this.reactiveProp.setting.height = height;
+      if (checked.length) {
+        this.colgroups.forEach((col: GroupColumn) => {
+          col.isHidden = !(checked ?? []).includes(resolvePropVal(col, 'field', [col]));
+        });
+      }
+      this.emitEvent(EVENTS.ON_SETTING_CHANGE, [arg]);
+    };
+
+    return [
+      this.props.settings
+        ? <Settings class="table-head-settings"
+            settings={ this.props.settings }
+            columns={this.props.columns}
+            rowHeight={ this.props.rowHeight }
+            onChange={ handleSettingsChanged }/>
+        : '',
+      <table cellpadding={0} cellspacing={0}>
         { this.renderColGroup() }
         { this.renderHeader() }
-      </table>;
+      </table>,
+    ];
   }
 
   /**
@@ -96,6 +120,14 @@ export default class TableRender {
     onLimitChange={ limit => this.handlePageLimitChange(limit) }
     onChange={ current => this.hanlePageChange(current) }></Pagination>;
   }
+
+  public getRowHeight = (row?: any, rowIndex?: number) => {
+    const { size, height } = this.setting;
+    if (height !== null && height !== undefined) {
+      return resolvePropVal(this.setting, 'height', ['tbody', row, rowIndex, size]);
+    }
+    return resolvePropVal(this.props, 'rowHeight', ['tbody', row, rowIndex]);
+  };
 
   /**
    * 注册监听事件
@@ -238,7 +270,7 @@ export default class TableRender {
     return <thead style={rowStyle}>
         <tr>
         {
-          this.props.columns.map((column: Column, index: number) => <th colspan={1} rowspan={1}
+          this.filterColgroups.map((column: Column, index: number) => <th colspan={1} rowspan={1}
           class={ classes({
             active: this.isColActive(index),
           }) }
@@ -259,7 +291,7 @@ export default class TableRender {
     {
       rows.length ? rows.map((row: any, rowIndex: number) => {
         const rowStyle = {
-          '--row-height': `${resolvePropVal(this.props, 'rowHeight', ['tbody', row, rowIndex])}px`,
+          '--row-height': `${this.getRowHeight(row, rowIndex)}px`,
         };
 
         return <tr
@@ -269,7 +301,7 @@ export default class TableRender {
           onDblclick={e => this.handleRowDblClick(e, row, rowIndex, rows)}
         >
         {
-          this.props.columns.map((column: Column, index: number) => <td class={this.getColumnClass(index)}
+          this.filterColgroups.map((column: Column, index: number) => <td class={this.getColumnClass(index)}
           colspan={1} rowspan={1}>
           <div class="cell" >{ this.renderCell(row, column, rowIndex, rows) }</div>
         </td>)
@@ -346,7 +378,7 @@ export default class TableRender {
   private renderColGroup() {
     return <colgroup>
       {
-        (this.colgroups || []).map((column: GroupColumn, index: number) => {
+        (this.filterColgroups || []).map((column: GroupColumn, index: number) => {
           const colCls = classes({
             active: this.isColActive(index),
           });
@@ -356,5 +388,19 @@ export default class TableRender {
         })
       }
       </colgroup>;
+  }
+
+  /**
+   * 过滤当前可渲染的列
+   */
+  private get filterColgroups() {
+    return this.colgroups.filter((col: GroupColumn) => !col.isHidden);
+  }
+
+  /**
+   * 当前Table Setting
+   */
+  private get setting() {
+    return this.reactiveProp.setting;
   }
 }

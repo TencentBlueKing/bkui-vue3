@@ -23,28 +23,47 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
+
+import { computed, defineComponent, provide } from 'vue';
+
 import { PropTypes } from '@bkui-vue/shared';
-export const propsMixin = {
-  // 是否显示弹框
-  isShow: PropTypes.bool.def(false),
-  width: PropTypes.string || PropTypes.number,
-  height: PropTypes.string || PropTypes.number,
-  // 配置自定义样式类名
-  customClass: PropTypes.string || PropTypes.array,
-  // 弹框出现时，是否允许页面滚动
-  scrollable: PropTypes.bool.def(true),
-  // 是否允许出现遮罩
-  showMask: PropTypes.bool.def(true),
-  // 是否显示右上角的关闭 icon
-  closeIcon: PropTypes.bool.def(true),
-  // 是否允许 esc 按键关闭弹框
-  escClose: PropTypes.bool.def(true),
-  // 是否允许点击遮罩关闭弹框
-  maskClose: PropTypes.bool.def(true),
-  // 是否全屏
-  fullscreen: PropTypes.bool.def(false),
-  // 弹框尺寸
-  size: PropTypes.commonType(['normal', 'small', 'medium', 'large'], 'size').def('normal'),
-  // 是否可拖拽
-  draggable: PropTypes.bool.def(true),
+
+export const containerProps = {
+  // 栅格数，默认 24
+  col: PropTypes.number.def(24),
+  // 栅格间距，单位 px，左右平分
+  gutter: PropTypes.number.def(20),
+  // 栅格容器的左右外边距
+  margin: PropTypes.number.def(20),
+  // 控制 row 是否使用 flex 布局
+  flex: PropTypes.bool.def(false),
+  // 外部设置的 class name
+  extCls: PropTypes.string,
 };
+export default defineComponent({
+  name: 'Container',
+  props: containerProps,
+  emits: [],
+  setup(props, ctx) {
+    const { col, gutter, flex, extCls } = props;
+
+    provide('containerProps', {
+      col,
+      gutter,
+      flex,
+    });
+
+    const classes: any = computed(() => (extCls ? `bk-grid-container ${extCls}` : 'bk-grid-container'));
+
+    const style: any = computed(() => {
+      const { margin } = props;
+      return { 'padding-right': `${margin}px`, 'padding-left': `${margin}px` };
+    });
+
+    return () => (
+      <div class={classes.value} style={style.value}>
+        {ctx.slots.default?.()}
+      </div>
+    );
+  },
+});

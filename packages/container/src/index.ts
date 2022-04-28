@@ -23,28 +23,19 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
-import { PropTypes } from '@bkui-vue/shared';
-export const propsMixin = {
-  // 是否显示弹框
-  isShow: PropTypes.bool.def(false),
-  width: PropTypes.string || PropTypes.number,
-  height: PropTypes.string || PropTypes.number,
-  // 配置自定义样式类名
-  customClass: PropTypes.string || PropTypes.array,
-  // 弹框出现时，是否允许页面滚动
-  scrollable: PropTypes.bool.def(true),
-  // 是否允许出现遮罩
-  showMask: PropTypes.bool.def(true),
-  // 是否显示右上角的关闭 icon
-  closeIcon: PropTypes.bool.def(true),
-  // 是否允许 esc 按键关闭弹框
-  escClose: PropTypes.bool.def(true),
-  // 是否允许点击遮罩关闭弹框
-  maskClose: PropTypes.bool.def(true),
-  // 是否全屏
-  fullscreen: PropTypes.bool.def(false),
-  // 弹框尺寸
-  size: PropTypes.commonType(['normal', 'small', 'medium', 'large'], 'size').def('normal'),
-  // 是否可拖拽
-  draggable: PropTypes.bool.def(true),
+
+import { withInstallProps } from '@bkui-vue/shared';
+
+import Col from './col';
+import Container from './container';
+import Row from './row';
+
+const BkContainer = withInstallProps(Container, { Row, Col });
+
+export default BkContainer;
+
+export {
+  BkContainer,
+  Row as BkRow,
+  Col as BkCol,
 };

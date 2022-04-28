@@ -3,6 +3,7 @@
     <bk-table
       :columns="columns"
       :data="tableData"
+      settings
       @dblclick="handleDblClick"
     />
   </div>

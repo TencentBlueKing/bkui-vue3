@@ -27,13 +27,13 @@
 import { FunctionalComponent } from 'vue';
 
 import BkIcon, { IIconBaseProps } from './icon';
-const data = JSON.parse('{"type":"element","name":"svg","attributes":{"xmlns":"http://www.w3.org/2000/svg","viewBox":"0 0 1024 1024","style":"width: 1em; height: 1em; vertical-align: middle;fill: currentColor;overflow: hidden;"},"elements":[{"type":"element","name":"path","attributes":{"d":"M609.6 201.6L203.2 609.6 203.2 710.4 304 710.4 712 304z"}},{"type":"element","name":"path","attributes":{"d":"M128 800H896V896H128z"}},{"type":"element","name":"path","attributes":{"d":"M683.6717566325265 128.04165515828316L785.4933559547056 229.86680878681256 740.2377321198037 275.1208529300033 638.4161327976245 173.2956993014738z"}}]}');
-const editLine: FunctionalComponent<IIconBaseProps> = (props, context) => {
+const data = JSON.parse('{"type":"element","name":"svg","attributes":{"xmlns":"http://www.w3.org/2000/svg","viewBox":"0 0 1024 1024","style":"width: 1em; height: 1em; vertical-align: middle;fill: currentColor;overflow: hidden;"},"elements":[{"type":"element","name":"path","attributes":{"d":"M902.56 166.56L857.44 121.44 512 466.72 166.56 121.44 121.44 166.56 466.72 512 121.44 857.44 166.56 902.56 512 557.28 857.44 902.56 902.56 857.44 557.28 512 902.56 166.56z"}}]}');
+const closeLine: FunctionalComponent<IIconBaseProps> = (props, context) => {
   const p = { ...props, ...context.attrs };
-  return <BkIcon {...p}  data={data} name="editLine"></BkIcon>;
+  return <BkIcon {...p}  data={data} name="closeLine"></BkIcon>;
 };
 
-editLine.displayName = 'editLine';
-editLine.inheritAttrs = false;
+closeLine.displayName = 'closeLine';
+closeLine.inheritAttrs = false;
 
-export default editLine;
+export default closeLine;

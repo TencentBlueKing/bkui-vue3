@@ -28,7 +28,7 @@ import { computed, onMounted, ref } from 'vue';
 import { classes, resolveClassName } from '@bkui-vue/shared';
 
 import { TablePropTypes } from './props';
-import { resolveNumberOrStringToPix, resolvePropBorderToClassStr } from './utils';
+import { resolveHeadConfig, resolveNumberOrStringToPix, resolvePropBorderToClassStr, resolvePropVal } from './utils';
 
 export const useClass = (props: TablePropTypes, root?) => {
   const autoHeight = ref(200);
@@ -40,14 +40,19 @@ export const useClass = (props: TablePropTypes, root?) => {
     [resolveClassName('table-head')]: true,
   });
 
+  const config = resolveHeadConfig(props);
+  const headStyle = {
+    '--row-height': `${resolvePropVal(config, 'height', ['thead'])}px`,
+  };
+
   const contentClass = classes({
     [resolveClassName('table-body')]: true,
   });
 
-  const footerClass = classes({
+  const footerClass = computed(() => classes({
     [resolveClassName('table-footer')]: true,
     ['is-hidden']: !props.pagination || !props.data.length,
-  });
+  }));
 
   /** 表格外层容器样式 */
   const wrapperStyle = computed(() => ({
@@ -103,5 +108,5 @@ export const useClass = (props: TablePropTypes, root?) => {
     }
   };
 
-  return { tableClass, headClass, contentClass, footerClass, wrapperStyle, contentStyle, resetTableHeight };
+  return { tableClass, headClass, contentClass, footerClass, wrapperStyle, contentStyle, headStyle, resetTableHeight };
 };

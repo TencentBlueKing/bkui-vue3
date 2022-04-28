@@ -23,28 +23,54 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
+
+import { computed, defineComponent, inject, provide } from 'vue';
+
 import { PropTypes } from '@bkui-vue/shared';
-export const propsMixin = {
-  // 是否显示弹框
-  isShow: PropTypes.bool.def(false),
-  width: PropTypes.string || PropTypes.number,
-  height: PropTypes.string || PropTypes.number,
-  // 配置自定义样式类名
-  customClass: PropTypes.string || PropTypes.array,
-  // 弹框出现时，是否允许页面滚动
-  scrollable: PropTypes.bool.def(true),
-  // 是否允许出现遮罩
-  showMask: PropTypes.bool.def(true),
-  // 是否显示右上角的关闭 icon
-  closeIcon: PropTypes.bool.def(true),
-  // 是否允许 esc 按键关闭弹框
-  escClose: PropTypes.bool.def(true),
-  // 是否允许点击遮罩关闭弹框
-  maskClose: PropTypes.bool.def(true),
-  // 是否全屏
-  fullscreen: PropTypes.bool.def(false),
-  // 弹框尺寸
-  size: PropTypes.commonType(['normal', 'small', 'medium', 'large'], 'size').def('normal'),
-  // 是否可拖拽
-  draggable: PropTypes.bool.def(true),
+
+const colProps = {
+  // 栅格的占位格数，可选值为 0~24 的整数，为 0 时，则为 col 相当于 width: 100%
+  span: PropTypes.number.def(1),
+  // 栅格的偏移
+  offset: PropTypes.number.def(0),
+  // 栅格向左移动格数
+  pull: PropTypes.number.def(0),
+  // 栅格向右移动格数
+  push: PropTypes.number.def(0),
 };
+
+export default defineComponent({
+  name: 'Row',
+  props: colProps,
+  emits: [],
+  setup(props, ctx) {
+    const { col, gutter, flex } = inject('containerProps');
+    const { span, offset, pull, push } = props;
+    const realSpan: any = computed(() => span || col);
+
+    provide('containerProps', {
+      col: realSpan.value,
+      gutter,
+      flex,
+    });
+
+    const formatPercentage = function (val) {
+      return `${Number((val * 100).toFixed(3))}%`;
+    };
+
+    const style: any = computed(() => ({
+      width: formatPercentage(realSpan.value / col),
+      'padding-right': `${gutter / 2}px`,
+      'padding-left': `${gutter / 2}px`,
+      'margin-left': offset ? formatPercentage(offset / col) : null,
+      right: pull ? formatPercentage(pull / col) : null,
+      left: push ? formatPercentage(push / col) : null,
+    }));
+
+    return () => (
+      <div class="bk-grid-col" style={style.value}>
+        {ctx.slots.default?.()}
+      </div>
+    );
+  },
+});
