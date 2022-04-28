@@ -1,6 +1,8 @@
 @import '@bkui-vue/styles/themes/themes.less';
 @import './plugins/head-filter.less';
 @import './plugins/head-sort.less';
+@import './plugins/settings.less';
+
 .@{bk-prefix}-table {
   height: auto;
   overflow: hidden;
@@ -65,6 +67,30 @@
             }
           }
         }
+      }
+    }
+  }
+
+  .@{bk-prefix}-table-head {
+    position: relative;
+    .table-head-settings {
+      .bk-popover-reference {
+        cursor: pointer;
+        width: calc(var(--row-height));
+        font-size: 18px;
+        position: absolute;
+        right: 1px;
+        top: 0;
+        bottom: 1px;     
+        
+        background: #f0f1f5;
+        border-left: 1px solid #dcdee5;
+        border-right: 1px solid #dcdee5;
+        border-radius: 0px 2px 0px 0px;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
     }
   }
