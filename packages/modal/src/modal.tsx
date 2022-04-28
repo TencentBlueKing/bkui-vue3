@@ -86,7 +86,17 @@ export default defineComponent({
     return (
       <div class={['bk-modal-wrapper', this.customClass]}
         style={this.compStyle}>
-        {this.isShow ? (
+        {this.isShow && this.dialogType === 'show' ? (
+          <div class="bk-modal-body">
+            <div class="bk-modal-header">
+              {this.$slots.header?.() ?? ''}
+            </div>
+            <div class="bk-modal-content"
+              style="height: calc(100% - 74px);margin-bottom: 0px;">
+              {this.$slots.default?.() ?? ''}
+            </div>
+          </div>
+        ) : (
           <div class="bk-modal-body">
             <div class="bk-modal-header">
               {this.$slots.header?.() ?? ''}
@@ -94,12 +104,10 @@ export default defineComponent({
             <div class="bk-modal-content">
               {this.$slots.default?.() ?? ''}
             </div>
-            <div class="bk-modal-footer">
-              {this.$slots.footer?.() ?? ''}
-            </div>
+              <div class="bk-modal-footer">
+                {this.$slots.footer?.() ?? ''}
+              </div>
           </div>
-        ) : (
-          ''
         )}
       </div>
     );
