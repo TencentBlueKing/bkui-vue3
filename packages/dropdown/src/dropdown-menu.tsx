@@ -29,7 +29,7 @@ import { computed, defineComponent } from 'vue';
 import { PropTypes } from '@bkui-vue/shared';
 
 export default defineComponent({
-  name: 'BkDropdownMenu',
+  name: 'DropdownMenu',
   props: {
     /** 外部设置的 class name */
     extCls: PropTypes.string,
