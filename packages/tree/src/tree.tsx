@@ -34,6 +34,7 @@ import useNodeAttribute from './use-node-attribute';
 import {
   getFlatdata,
   getTreeStyle,
+  NODE_ATTRIBUTES,
 } from './util';
 
 export type TreePropTypes = defineTypes;
@@ -66,7 +67,12 @@ export default defineComponent({
     const renderData = computed(() => flatData.data
       .filter(item => checkNodeIsOpen(item)));
 
-    const { renderTreeNode, hanldeTreeNodeClick, deepAutoOpen } = useNodeAction(props, ctx, flatData, renderData);
+    const {
+      renderTreeNode,
+      hanldeTreeNodeClick,
+      deepAutoOpen,
+      setNodeOpened,
+    } = useNodeAction(props, ctx, flatData, renderData);
 
     /** 如果设置了异步请求 */
     if (props.async?.callback) {
@@ -90,10 +96,10 @@ export default defineComponent({
 
     const resolveNodeItem = (node: any) => {
       if (typeof node === 'string') {
-        return { __uuid: node };
+        return { [NODE_ATTRIBUTES.UUID]: node };
       }
 
-      if (Object.prototype.hasOwnProperty.call(node, '__uuid')) {
+      if (Object.prototype.hasOwnProperty.call(node, NODE_ATTRIBUTES.UUID)) {
         return node;
       }
 
@@ -126,14 +132,18 @@ export default defineComponent({
      */
     const setOpen = (item: any[] | any, isOpen = true, autoOpenParents = false) => {
       const resolvedItem = resolveNodeItem(item);
-      if (autoOpenParents && isOpen) {
-        setNodeAction(resolvedItem, '__isOpen', isOpen);
-        if (!isRootNode(resolvedItem)) {
-          const parentId = getNodeAttr(resolvedItem, '__parentId');
-          setOpen(parentId, true, true);
+      if (autoOpenParents) {
+        if (isOpen) {
+          setNodeAction(resolvedItem, NODE_ATTRIBUTES.IS_OPEN, isOpen);
+          if (!isRootNode(resolvedItem)) {
+            const parentId = getNodeAttr(resolvedItem, NODE_ATTRIBUTES.PARENT_ID);
+            setOpen(parentId, true, true);
+          }
+        } else {
+          setNodeOpened(resolvedItem, false);
         }
       } else {
-        setNodeAction(resolvedItem, '__isOpen', isOpen);
+        setNodeAction(resolvedItem, NODE_ATTRIBUTES.IS_OPEN, isOpen);
       }
     };
 
@@ -143,7 +153,7 @@ export default defineComponent({
      * @param checked
      */
     const setChecked = (item: any[] | any, checked = true) => {
-      setNodeAction(resolveNodeItem(item), '__checked', checked);
+      setNodeAction(resolveNodeItem(item), NODE_ATTRIBUTES.CHECKED, checked);
     };
 
     ctx.expose({
