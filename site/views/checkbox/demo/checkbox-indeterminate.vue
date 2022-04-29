@@ -11,5 +11,3 @@
 
 
 </script>
-<style lang="postcss">
-</style>
