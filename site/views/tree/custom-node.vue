@@ -18,7 +18,6 @@
       <bk-tree
         :data="treeData"
         level-line
-        :prefix-icon="getPrefixIcon"
         label="name"
         children="children"
       >
