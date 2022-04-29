@@ -78,7 +78,3 @@
     },
   });
 </script>
-
-<style>
-
-</style>

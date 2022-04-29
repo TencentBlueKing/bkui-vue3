@@ -32,8 +32,8 @@
     "fix:site": "eslint ./site --ext .js,.ts,.tsx,.vue --fix --cache",
     "fix:scripts": "eslint ./scripts --ext .js,.ts,.tsx --fix --cache",
     "lint:fix": "run-p lint:site lint:packages lint:scripts",
-    "stylelint": "eslint --ext .js,.ts,.tsx,.vue ./packages ./site --cache",
-    "stylelint:fix": "yarn stylelint -- --fix",
+    "stylelint": "stylelint ./{packages,site}/**/*.{vue,less} --custom-syntax",
+    "stylelint:fix": "stylelint --fix ./{packages,site}/**/*.{vue,less} --custom-syntax",
     "test:unit": "jest --passWithNoTests --config=./jest.config.js",
     "test:alert": "lerna run --scope @bkui-vue/alert test",
     "cz": "git-cz"
@@ -124,7 +124,7 @@
       "eslint ./packages --ext .js,.tsx,.ts --cache --fix",
       "git add"
     ],
-    "*.(vue|scss|css|sass)": [
+    "*.(vue|scss|css|sass|less)": [
       "stylelint --cache --fix",
       "git add"
     ]
