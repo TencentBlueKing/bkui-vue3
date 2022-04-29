@@ -110,11 +110,11 @@ export default defineComponent({
      */
     const setNodeAction = (args: any | any[], action: string, value: any) => {
       if (Array.isArray(args)) {
-        args.forEach((node: any) => setNodeAttr(node, action, value));
+        args.forEach((node: any) => setNodeAttr(resolveNodeItem(node), action, value));
         return;
       }
 
-      setNodeAttr(args, action, value);
+      setNodeAttr(resolveNodeItem(args), action, value);
     };
 
     /**
