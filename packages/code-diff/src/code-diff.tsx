@@ -64,7 +64,7 @@ function changeCodeCls(htmlStr: string, lang): string {
 export type CodeDiffPropsType = ExtractPropTypes<typeof codeDiffProps>;
 
 export default defineComponent({
-  name: 'BkCodeDiff',
+  name: 'CodeDiff',
   props: codeDiffProps,
   emits: [],
   setup(props) {

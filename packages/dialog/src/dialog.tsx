@@ -38,12 +38,19 @@ export default defineComponent({
   },
   props: {
     ...propsMixin,
-    width: PropTypes.string.def('null') || PropTypes.number.def(),
-    height: PropTypes.string.def('null') || PropTypes.number.def(),
+    width: PropTypes.oneOfType([String, Number]).def(''),
+    height: PropTypes.oneOfType([String, Number]).def(''),
     // 确认按钮文字
     confirmText: PropTypes.string.def('确定'),
     // 取消按钮文字
     cancelText: PropTypes.string.def('取消'),
+    // 步骤按钮文字
+    prevText: PropTypes.string.def('上一步'),
+    nextText: PropTypes.string.def('下一步'),
+    // 当前步骤
+    current: PropTypes.number.def(1),
+    // 总步数
+    totalStep: PropTypes.number,
     // 弹框的标题
     title: PropTypes.string.def('title'),
     // 显示 header 的位置
@@ -55,7 +62,7 @@ export default defineComponent({
     // 按钮loading
     isLoading: PropTypes.bool.def(false),
   },
-  emits: ['closed', 'update:isShow', 'confirm'],
+  emits: ['closed', 'update:isShow', 'confirm', 'prev', 'next'],
   setup(props: any, { emit }) {
     const data = reactive({
       positionX: 0,
@@ -101,6 +108,14 @@ export default defineComponent({
           handleClose();
         }
       }
+    };
+    // 上一步
+    const handlePrevStep = () => {
+      emit('prev');
+    };
+    // 下一步
+    const handleNextStep = () => {
+      emit('next');
     };
     // 拖拽事件
     const moveHandler = (e) => {
@@ -150,6 +165,8 @@ export default defineComponent({
       handleConfirm,
       escCloseHandler,
       moveHandler,
+      handlePrevStep,
+      handleNextStep,
     };
   },
 
@@ -168,13 +185,36 @@ export default defineComponent({
       ],
       default: () => this.$slots.default?.() ?? 'default',
       footer: () => <div class="bk-dialog-footer" style={`text-align: ${this.footerAlign}`}>
-        {
+        {this.dialogType === 'process' ? (
+          this.$slots.footer?.() ?? <>
+            {this.current === 1 ? '' : (
+              <BkButton style="float: left;margin-right: 8px" onClick={this.handlePrevStep}>
+                {this.prevText}
+              </BkButton>
+            )}
+            {this.current === this.totalStep ? '' : (
+              <BkButton style="float: left" onClick={this.handleNextStep}>{this.nextText}</BkButton>
+            )}
+            {this.current === this.totalStep ? (
+              <BkButton onClick={this.handleConfirm} theme={this.theme}
+                loading={this.isLoading}>{this.confirmText}</BkButton>
+            ) : ''}
+            <BkButton style="margin-left: 8px" onClick={this.handleClose}>{this.cancelText}</BkButton>
+          </>
+        ) : ''}
+        {this.dialogType === 'operation' ? (
           this.$slots.footer?.() ?? <>
             <BkButton onClick={this.handleConfirm} theme={this.theme}
             loading={this.isLoading}>{this.confirmText}</BkButton>
-            <BkButton style='margin-left: 8px;' onClick={this.handleClose}>{this.cancelText}</BkButton>
+            <BkButton style="margin-left: 8px" onClick={this.handleClose}>{this.cancelText}</BkButton>
           </>
-        }
+        ) : ''}
+        {this.dialogType === 'confirm' ? (
+          this.$slots.footer?.() ?? <>
+            <BkButton onClick={this.handleConfirm} theme={this.theme}
+            loading={this.isLoading}>{this.confirmText}</BkButton>
+          </>
+        ) : ''}
       </div>,
     };
 
