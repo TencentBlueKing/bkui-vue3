@@ -26,6 +26,8 @@
 
 import { computed } from 'vue';
 
+import { NODE_ATTRIBUTES } from './util';
+
 export default (flatData) => {
   const schemaValues = computed(() => Array.from(flatData.schema.values()));
 
@@ -42,7 +44,7 @@ export default (flatData) => {
    * @param attr 节点属性
    * @returns
    */
-  const getNodeAttr = (node: any, attr: string) => getSchemaVal(node.__uuid)?.[attr];
+  const getNodeAttr = (node: any, attr: string) => getSchemaVal(node[NODE_ATTRIBUTES.UUID])?.[attr];
 
   /**
    * 设置节点属性
@@ -51,15 +53,16 @@ export default (flatData) => {
    * @param val 属性值
    * @returns
    */
-  const setNodeAttr = (node: any, attr: string, val: any) => (flatData.schema as Map<string, any>).set(node.__uuid, {
-    ...getSchemaVal(node.__uuid),
-    [attr]: val,
-  });
+  const setNodeAttr = (node: any, attr: string, val: any) => (flatData.schema as Map<string, any>)
+    .set(node[NODE_ATTRIBUTES.UUID], {
+      ...getSchemaVal(node[NODE_ATTRIBUTES.UUID]),
+      [attr]: val,
+    });
 
-  const getNodePath = (node: any) => getNodeAttr(node, '__path');
-  const isRootNode = (node: any) => getNodeAttr(node, '__isRoot');
-  const isNodeOpened = (node: any) => getNodeAttr(node, '__isOpen');
-  const hasChildNode = (node: any) => getNodeAttr(node, '__hasChild');
+  const getNodePath = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.PATH);
+  const isRootNode = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.IS_ROOT);
+  const isNodeOpened = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.IS_OPEN);
+  const hasChildNode = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.HAS_CHILD);
 
 
   /**
@@ -73,7 +76,7 @@ export default (flatData) => {
     }
 
     if (typeof item === 'string') {
-      return getSchemaVal(item)?.__isOpen;
+      return getSchemaVal(item)?.[NODE_ATTRIBUTES.IS_OPEN];
     }
 
     return false;
@@ -85,7 +88,9 @@ export default (flatData) => {
    * @param item
    * @returns
    */
-  const checkNodeIsOpen = (node: any) => isRootNode(node) || isItemOpen(node) || isItemOpen(getNodeAttr(node, '__parentId'));
+  const checkNodeIsOpen = (node: any) => isRootNode(node)
+    || isItemOpen(node)
+    || isItemOpen(getNodeAttr(node, NODE_ATTRIBUTES.PARENT_ID));
 
   return {
     schemaValues,
