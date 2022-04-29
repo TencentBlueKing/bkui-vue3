@@ -53,7 +53,7 @@ export const BASIC_DATA = [
 
 export const ASYNC_DATA = [
   {
-    name: '方案成熟', content: '拥有支撑数百款腾讯业务的经验沉淀，兼容各种复杂的系统架构，生于运维 · 精于运维', children: [],
+    name: '方案成熟', content: '拥有支撑数百款腾讯业务的经验沉淀，兼容各种复杂的系统架构，生于运维 · 精于运维', isOpen: true, children: [],
   },
   {
     name: '覆盖全面', content: '从配置管理，到作业执行、任务调度和监控自愈，再通过运维大数据分析辅助运营决策，全方位覆盖业务运营的全周期保障管理。', children: [],

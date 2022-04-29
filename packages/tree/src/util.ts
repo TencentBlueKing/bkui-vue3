@@ -43,6 +43,15 @@ export const getFlatdata = (props: TreePropTypes, treeData: Array<any> = undefin
   let order = 0;
   const schema = new Map<string, any>();
 
+  function getUid(item: any) {
+    let uid = null;
+    if (typeof props.nodeKey === 'string') {
+      uid = item[props.nodeKey];
+    }
+
+    return uid || item.__uuid || uuidv4();
+  }
+
   function getCachedTreeNodeAttr(uuid: string, node: any, attr: string, cachedAttr: string) {
     const cached = (cachedSchema || []).find((item: any) => item.__uuid === uuid);
     if (cached) {
@@ -68,7 +77,7 @@ export const getFlatdata = (props: TreePropTypes, treeData: Array<any> = undefin
         flatten(item, depth, parent, path);
       } else {
         if (typeof item === 'object' && item !== null) {
-          const uuid = item.__uuid || uuidv4();
+          const uuid = getUid(item);
           const currentPath = path !== null ? `${path}-${i}` : `${i}`;
           const hasChildren = !!(item[children] || []).length;
           const attrs = {
@@ -80,7 +89,7 @@ export const getFlatdata = (props: TreePropTypes, treeData: Array<any> = undefin
             __path: currentPath,
             __isRoot: parent === null,
             __order: order,
-            __isOpen: isCachedTreeNodeOpened(uuid, item) && hasChildren,
+            __isOpen: isCachedTreeNodeOpened(uuid, item),
             __checked: isCachedTreeNodeChecked(uuid, item),
             [children]: null,
           };
