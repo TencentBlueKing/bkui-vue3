@@ -58,6 +58,8 @@ export default defineComponent({
       schemaValues,
       setNodeAttr,
       checkNodeIsOpen,
+      getNodeAttr,
+      isRootNode,
     } = useNodeAttribute(flatData);
 
     // 计算当前需要渲染的节点信息
@@ -86,6 +88,19 @@ export default defineComponent({
       deep: true,
     });
 
+    const resolveNodeItem = (node: any) => {
+      if (typeof node === 'string') {
+        return { __uuid: node };
+      }
+
+      if (Object.prototype.hasOwnProperty.call(node, '__uuid')) {
+        return node;
+      }
+
+      console.error('setNodeAction Error: cannot find uid for the ndoe item');
+      return node;
+    };
+
     /**
      * 设置指定节点行为 checked isOpen
      * @param args
@@ -94,18 +109,6 @@ export default defineComponent({
      * @returns
      */
     const setNodeAction = (args: any | any[], action: string, value: any) => {
-      const resolveNodeItem = (node: any) => {
-        if (typeof node === 'string') {
-          return { __uuid: node };
-        }
-
-        if (Object.prototype.hasOwnProperty.call(node, '__uuid')) {
-          return node;
-        }
-
-        console.error('setNodeAction Error: cannot find uid for the ndoe item');
-        return node;
-      };
       if (Array.isArray(args)) {
         args.forEach((node: any) => setNodeAttr(resolveNodeItem(node), action, value));
         return;
@@ -117,10 +120,21 @@ export default defineComponent({
     /**
      * 指定节点展开
      * @param item 节点数据 | Node Id
+     * @param isOpen 是否展开
+     * @param autoOpenParents 如果是 isOpen = true，是否自动设置所有父级展开
      * @returns
      */
-    const setOpen = (item: any[] | any, isOpen = true) => {
-      setNodeAction(item, '__isOpen', isOpen);
+    const setOpen = (item: any[] | any, isOpen = true, autoOpenParents = false) => {
+      const resolvedItem = resolveNodeItem(item);
+      if (autoOpenParents && isOpen) {
+        setNodeAction(resolvedItem, '__isOpen', isOpen);
+        if (!isRootNode(resolvedItem)) {
+          const parentId = getNodeAttr(resolvedItem, '__parentId');
+          setOpen(parentId, true, true);
+        }
+      } else {
+        setNodeAction(resolvedItem, '__isOpen', isOpen);
+      }
     };
 
     /**
@@ -129,7 +143,7 @@ export default defineComponent({
      * @param checked
      */
     const setChecked = (item: any[] | any, checked = true) => {
-      setNodeAction(item, '__checked', checked);
+      setNodeAction(resolveNodeItem(item), '__checked', checked);
     };
 
     ctx.expose({
