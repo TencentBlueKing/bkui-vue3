@@ -100,7 +100,7 @@ export default defineComponent({
     },
     {
       attrs: {
-        title: '自定义节点Icon-jsx',
+        title: '自定义节点内容',
         subtitle: '自定义节点Icon',
         desc: 'props: prefix-icon',
         componentName: 'tree',

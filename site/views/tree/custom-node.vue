@@ -9,7 +9,7 @@
         children="children"
       >
         <template #node="item">
-          <h3>{{ item.name }}</h3>
+          <span style="color: #3a84ff;">(自定义节点)：{{ item.name }}</span>
         </template>
       </bk-tree>
     </div>
