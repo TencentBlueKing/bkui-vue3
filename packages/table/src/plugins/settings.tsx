@@ -38,10 +38,10 @@ export default defineComponent({
   name: 'Settings',
   props: {
     settings: PropTypes.oneOfType([PropTypes.bool, PropTypes.shape<Settings>({
-      fields: PropTypes.shape<Field[]>([]).def([]),
-      checked: PropTypes.shape<string[]>([]).def([]),
-      limit: PropTypes.number.def(null),
-      size: PropTypes.string.def(null),
+      fields: PropTypes.shape<Field[]>([]).def(undefined),
+      checked: PropTypes.shape<string[]>([]).def(undefined),
+      limit: PropTypes.number.def(undefined),
+      size: PropTypes.string.def(undefined),
     })]).def(false),
     columns: PropTypes.array.def([]),
     rowHeight: PropTypes.number.def(40),

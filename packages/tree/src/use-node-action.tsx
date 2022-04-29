@@ -30,7 +30,7 @@ import useAsync from './use-async';
 * IN THE SOFTWARE.
 */
 import useNodeAttribute from './use-node-attribute';
-import { getLabel, getNodeItemClass, getNodeItemStyle, getNodeRowClass } from './util';
+import { getLabel, getNodeItemClass, getNodeItemStyle, getNodeRowClass, NODE_ATTRIBUTES } from './util';
 
 export default (props, ctx, flatData, renderData) => {
   const checkedNodes = [];
@@ -132,10 +132,11 @@ export default (props, ctx, flatData, renderData) => {
   /**
 * 设置指定节点是否展开
 * @param item
+* @param isOpen
 */
-  const setNodeOpened = (item: any) => {
-    const newVal = !isItemOpen(item);
-    setNodeAttr(item, '__isOpen', newVal);
+  const setNodeOpened = (item: any, isOpen = null) => {
+    const newVal = isOpen === null ? !isItemOpen(item) : !!isOpen;
+    setNodeAttr(item, NODE_ATTRIBUTES.IS_OPEN, newVal);
 
     /**
   * 在收起节点时需要重置当前节点的所有叶子节点状态为 __isOpen = false
@@ -146,7 +147,7 @@ export default (props, ctx, flatData, renderData) => {
     }
 
     renderData.value.filter(node => String.prototype.startsWith.call(getNodePath(node), getNodePath(item)))
-      .forEach(filterNode => setNodeAttr(filterNode, '__isOpen', newVal));
+      .forEach(filterNode => setNodeAttr(filterNode, NODE_ATTRIBUTES.IS_OPEN, newVal));
   };
 
   /**
@@ -180,16 +181,16 @@ export default (props, ctx, flatData, renderData) => {
    * @param item
    */
   const handleNodeContentClick = (item: any) => {
-    if (!checkedNodes.includes(item.__uuid)) {
-      checkedNodes.forEach((__uuid: string) => setNodeAttr({ __uuid }, '__checked', false));
+    if (!checkedNodes.includes(item[NODE_ATTRIBUTES.UUID])) {
+      checkedNodes.forEach((__uuid: string) => setNodeAttr({ __uuid }, NODE_ATTRIBUTES.CHECKED, false));
       checkedNodes.length = 0;
-      setNodeAttr(item, '__checked', true);
-      checkedNodes.push(item.__uuid);
+      setNodeAttr(item, NODE_ATTRIBUTES.CHECKED, true);
+      checkedNodes.push(item[NODE_ATTRIBUTES.UUID]);
       if (!isNodeOpened(item)) {
         hanldeTreeNodeClick(item);
       }
 
-      ctx.emit('check', item, getSchemaVal(item.__uuid));
+      ctx.emit('check', item, getSchemaVal(item[NODE_ATTRIBUTES.UUID]));
     }
   };
 
@@ -218,7 +219,7 @@ export default (props, ctx, flatData, renderData) => {
     const nextLevel = parseInt(lastLevel, 10);
     paths.push(`${nextLevel + 1}`);
     const nextNodePath = paths.join('-');
-    return schemaValues.value.some((val: any) => val.__path === nextNodePath);
+    return schemaValues.value.some((val: any) => val[NODE_ATTRIBUTES.PATH] === nextNodePath);
   };
 
   /**
@@ -235,7 +236,7 @@ export default (props, ctx, flatData, renderData) => {
       '--depth': dpth,
     });
 
-    const maxDeep = getNodeAttr(node, '__depth') + 1;
+    const maxDeep = getNodeAttr(node, NODE_ATTRIBUTES.DEPTH) + 1;
     return new Array(maxDeep).fill('')
       .map((_, index: number) => index)
       .filter((depth: number) => filterNextNode(depth, node))
@@ -273,5 +274,6 @@ export default (props, ctx, flatData, renderData) => {
     renderTreeNode,
     hanldeTreeNodeClick,
     deepAutoOpen,
+    setNodeOpened,
   };
 };
