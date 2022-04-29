@@ -50,6 +50,12 @@ export const treeProps = {
   label: PropTypes.oneOfType([PropTypes.func.def(undefined), PropTypes.string.def('label')]),
 
   /**
+   * 每个树节点用来作为唯一标识的属性，此标识应该是唯一的
+   * 如果设置系统会默认自动生成唯一id
+   */
+  nodeKey: PropTypes.string.def(null),
+
+  /**
    * 子节点 Key, 用于读取子节点
    * 默认 children
    */
@@ -95,8 +101,25 @@ export const treeProps = {
    * @param cache 是否缓存请求结果，默认为True，只有在第一次才会发起请求，若设置为false则每次都会发起请求
    */
   async: PropTypes.shape<AsyncOption>({
+    /**
+     * 点击节点需要执行的异步函数
+     * 返回 Promise
+     */
     callback: PropTypes.func.def(null),
+
+    /**
+     * 是否缓存异步请求结果
+     * true 只在第一次点击请求异步函数
+     * false 每次点击都执行异步函数
+     */
     cache: PropTypes.bool.def(true),
+
+    /**
+     * 异步请求节点是否自动展开
+     * 可选值：once 只在初始化是执行一次
+     * every 每次数据更新都执行
+     */
+    deepAutoOpen: PropTypes.commonType(['once', 'every'], 'columnType').def('once'),
   }),
 
   /**
@@ -107,6 +130,7 @@ export const treeProps = {
 
 type AsyncOption = {
   callback: (item, cb) => Promise<any>,
-  cache: Boolean
+  cache: Boolean,
+  deepAutoOpen?: string
 };
 export type TreePropTypes = Readonly<ExtractPropTypes<typeof treeProps>>;
