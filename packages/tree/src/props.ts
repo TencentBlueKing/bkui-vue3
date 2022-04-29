@@ -53,7 +53,7 @@ export const treeProps = {
    * 每个树节点用来作为唯一标识的属性，此标识应该是唯一的
    * 如果设置系统会默认自动生成唯一id
    */
-  nodeKey: PropTypes.string.def(null),
+  nodeKey: PropTypes.string.def(undefined),
 
   /**
    * 子节点 Key, 用于读取子节点
@@ -105,7 +105,7 @@ export const treeProps = {
      * 点击节点需要执行的异步函数
      * 返回 Promise
      */
-    callback: PropTypes.func.def(null),
+    callback: PropTypes.func.def(undefined),
 
     /**
      * 是否缓存异步请求结果

@@ -24,7 +24,7 @@
 * IN THE SOFTWARE.
 */
 import useNodeAttribute from './use-node-attribute';
-import { assignTreeNode, updateTreeNode } from './util';
+import { assignTreeNode, NODE_ATTRIBUTES, updateTreeNode } from './util';
 
 export default (props, flatData) => {
   const {
@@ -40,7 +40,7 @@ export default (props, flatData) => {
      */
   const setNodeRemoteLoad = (resp: any, item: any) => {
     if (typeof resp === 'object' && resp !== null) {
-      setNodeAttr(item, '__isOpen', true);
+      setNodeAttr(item, NODE_ATTRIBUTES.IS_OPEN, true);
       const nodeValue = Array.isArray(resp) ? resp : [resp];
       updateTreeNode(getNodePath(item), props.data, props.children, props.children, nodeValue);
     }
@@ -51,7 +51,7 @@ export default (props, flatData) => {
     if (item.async) {
       const { callback = null, cache = true } = props.async || {};
       /** 用于注释当前节点是否已经初始化过 */
-      setNodeAttr(item, '__isAsyncInit', true);
+      setNodeAttr(item, NODE_ATTRIBUTES.IS_ASYNC_INIT, true);
       if (typeof callback === 'function') {
         if (!item.cached) {
           Object.assign(item, { loading: true });
@@ -73,7 +73,10 @@ export default (props, flatData) => {
 
   const deepAutoOpen = () => {
     /** 过滤节点为异步加载 & 默认为展开 & 没有初始化过的节点 */
-    const autoOpenNodes = flatData.data.filter((item: any) => item.async && item.isOpen && !getNodeAttr(item, '__isAsyncInit'));
+    const autoOpenNodes = flatData.data.filter((item: any) => item.async
+      && item.isOpen
+      && !getNodeAttr(item, NODE_ATTRIBUTES.IS_ASYNC_INIT));
+
     if (autoOpenNodes.length) {
       Promise.all(autoOpenNodes.map(item => asyncNodeClick(item)))
         .then(() => {
