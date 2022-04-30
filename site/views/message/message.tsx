@@ -107,24 +107,24 @@ export default defineComponent({
         desc=""
         componentName="Message"
         demoName="base-demo">
-           <BaseDemo/>
-        </DemoBox>
+          <BaseDemo/>
+      </DemoBox>
       <DemoBox
         title="内置主题"
-        subtitle="通知提示提供消息、成功、警告、失败四种主题"
+        subtitle="消息提醒提供消息、成功、警告、失败四种主题"
         desc=""
         componentName="Message"
         demoName="theme-demo">
-           <ThemeDemo/>
-        </DemoBox>
+          <ThemeDemo/>
+      </DemoBox>
       <DemoBox
         title="消息关闭"
-        subtitle="配置 delay 字段定义通知自动关闭的时间，当值为 0 时不自动关闭。配置 dismissable 字段控制是否显示右侧的手动关闭 icon。"
+        subtitle="配置 delay 字段定义消息自动关闭的时间，当值为 0 时不自动关闭。配置 dismissable 字段控制是否显示右侧的手动关闭 icon。"
         desc=""
         componentName="Message"
         demoName="close-demo">
-           <CloseDemo/>
-        </DemoBox>
+          <CloseDemo/>
+      </DemoBox>
         <PropsBox subtitle="" propsData={props}></PropsBox>
     </div>
     );

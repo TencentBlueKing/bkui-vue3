@@ -90,6 +90,8 @@ export default defineComponent({
       afterShow: handleShown,
       afterHidden: handleClose,
       appendTo: props.boundary,
+      always: props.always,
+      disabled: props.disabled,
       fixOnBoundary: props.fixOnBoundary,
     });
 
@@ -111,7 +113,7 @@ export default defineComponent({
       isPopInstance = true;
 
       // 初次渲染默认isShow 为True时，触发
-      handlePopShow(isShow.value);
+      isShow.value && handlePopShow(isShow.value);
     };
 
     const update = () => {

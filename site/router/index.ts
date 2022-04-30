@@ -152,7 +152,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/fixed-navbar',
     name: 'fixedNavbar',
-    component: () => import('../views/fixed-navbar'),
+    component: () => import('../views/fixed-navbar/index'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'FixedNavbar 悬浮导航',
@@ -164,7 +164,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/backtop',
     name: 'backtop',
-    component: () => import('../views/backtop'),
+    component: () => import('../views/backtop/index'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'BackTop 返回顶部',
@@ -272,7 +272,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/link',
     name: 'link',
-    component: () => import('../views/link'),
+    component: () => import('../views/link/index'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'Link 文字链接',
@@ -549,6 +549,18 @@ const routes: RouteRecordRaw[] = [
     },
   },
   /**
+   * @description:侧边栏
+   */
+  {
+  	  path: '/sideslider',
+  	  name: 'sideslider',
+  	  component: () => import('../views/sideslider'),
+  	  meta: {
+  	    group: NavGroupMeta.Feedback,
+  	    navName: 'Sideslider 侧栏',
+  	  },
+  },
+  /**
    * @description:穿梭框
    */
   {
@@ -630,6 +642,15 @@ const routes: RouteRecordRaw[] = [
       group: NavGroupMeta.Feedback,
       navName: 'Dialog 对话框',
     },
+  },
+  {
+    path: '/cascader',
+    name: 'cascader',
+    meta: {
+      group: NavGroupMeta.Others,
+      navName: 'Cascader 级联选择',
+    },
+    component: () => import('../views/cascader/index'),
   },
 ];
 
