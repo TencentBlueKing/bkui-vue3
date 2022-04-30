@@ -24,6 +24,7 @@
  * IN THE SOFTWARE.
 */
 
+import { debounce } from 'lodash';
 import { computed, defineComponent, nextTick, onMounted, reactive, Ref, ref, toRefs, watch } from 'vue';
 
 import { bkTooltips } from '@bkui-vue/directives';
@@ -31,13 +32,13 @@ import { Close, Error } from '@bkui-vue/icon';
 import BkLoading, { BkLoadingSize } from '@bkui-vue/loading';
 import BKPopover from '@bkui-vue/popover';
 
-import { getCharLength, INPUT_MIN_WIDTH, useDebouncedRef, useFlatList, usePage } from './common';
+import { getCharLength, INPUT_MIN_WIDTH, useFlatList, usePage } from './common';
 import ListTagRender from './list-tag-render';
 import tagProps from './tag-props';
 import TagRender from './tag-render';
 
 export default defineComponent({
-  name: 'BkTagInput',
+  name: 'TagInput',
   directives: {
     bkTooltips,
   },
@@ -62,7 +63,7 @@ export default defineComponent({
     // 分页处理
     const { maxResult } = toRefs(props);
     const { pageState, initPage, pageChange } = usePage(maxResult);
-    const curInputValue = useDebouncedRef<string>('', 150);
+    const curInputValue = ref('');
     const tagInputRef = ref(null);
     const bkTagSelectorRef = ref(null);
     const tagListRef = ref(null);
@@ -101,14 +102,19 @@ export default defineComponent({
     watch([() => [...props.modelValue], () => [...props.list]], () => {
       initData();
     });
-    watch(curInputValue, (value: string) => {
+    watch(curInputValue, debounce(() => {
       const hasShowCount = pageState.curPageList.length !== 0;
-      if ((value !== '' && hasShowCount) || (value === '' && props.trigger === 'focus')) {
+      const { value } = curInputValue;
+      /**
+       * 1. value !== '' && hasShowCount => search value list.
+       * 2. value === '' && props.trigger === 'focus' && hasShowCount => trigger is focus and show all list.
+       */
+      if ((value !== '' && hasShowCount) || (value === '' && props.trigger === 'focus' && hasShowCount)) {
         popoverProps.isShow = true;
       } else if (props.trigger !== 'focus' || !hasShowCount) {
         popoverProps.isShow = false;
       }
-    });
+    }, 150));
     watch(() => popoverProps.isShow, (show: boolean) => {
       changePopoverOffset();
       if (show) {
