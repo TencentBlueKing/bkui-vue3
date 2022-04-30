@@ -24,8 +24,10 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent } from 'vue';
+import { defineComponent, Transition } from 'vue';
+
 import { bkPopIndexManager } from '@bkui-vue/shared';
+
 import { propsMixin } from './props.mixin';
 
 export default defineComponent({
@@ -51,6 +53,7 @@ export default defineComponent({
       return {
         width: this.dialogWidth,
         height: this.dialogHeight,
+        minHeigth: `${200}px`,
         display: this.visible ? 'inherit' : 'none',
       };
     },
@@ -58,40 +61,65 @@ export default defineComponent({
   watch: {
     isShow: {
       handler(val: boolean) {
-        this.visible = val;
+        if (val) {
+          this.visible = val;
+        } else {
+          this.$emit('hidden'); // 为false直接触发hidden事件，在上层有200ms的延时
+          setTimeout(() => { // 直接设为false会失去离开的动画效果，这里延迟设置
+            this.visible = val;
+          }, 250);
+        }
       },
+      deep: true,
     },
     visible(val: boolean) {
       if (val) {
         this.$nextTick(() => {
-          bkPopIndexManager.show(this.$el);
+          const hideMaskStyle = {
+            'background-color': 'rgba(0,0,0,0)',
+          };
+          const appendStyle = this.showMask ? {} : hideMaskStyle;
+          bkPopIndexManager.show(this.$el, this.showMask, appendStyle, this.transfer);
+          this.$emit('shown');
         });
       } else {
-        bkPopIndexManager.hide(this.$el);
+        bkPopIndexManager.hide(this.$el, this.transfer);
       }
     },
   },
   beforeUnmount() {
     bkPopIndexManager.hide(this.$el);
   },
+  methods: {
+    handleClickOutSide() {
+      this.quickClose && this.$emit('close');
+    },
+  },
   render() {
+    const maxHeight = this.maxHeight ? { maxHeight: this.maxHeight } : {};
+    const bodyClass = `bk-modal-body ${this.animateType === 'slide' ? this.direction : ''}`;
     return (
-      <div class={['bk-modal-wrapper', ...this.customClass]} style={this.compStyle}>
+      <div class={['bk-modal-wrapper', this.size, this.customClass, this.fullscreen ? 'bk-model-fullscreen' : '']}
+        style={this.compStyle}>
+        <div class="bk-modal-outside" onClick={this.handleClickOutSide} v-show={this.isShow}>
+        </div>
+        <Transition name={this.animateType}>
         {this.isShow ? (
-          <div class="bk-modal-body">
-            <div class="bk-modal-header">
-              {this.$slots.header?.() ?? ''}
+            <div class={bodyClass}>
+              <div class="bk-modal-header">
+                {this.$slots.header?.() ?? ''}
+              </div>
+              <div class="bk-modal-content" style={{ ...maxHeight }}>
+                {this.$slots.default?.() ?? ''}
+              </div>
+              <div class="bk-modal-footer">
+                {this.$slots.footer?.() ?? ''}
+              </div>
             </div>
-            <div class="bk-modal-content">
-              {this.$slots.default?.() ?? ''}
-            </div>
-            <div class="bk-modal-footer">
-              {this.$slots.footer?.() ?? ''}
-            </div>
-          </div>
         ) : (
           ''
         )}
+        </Transition>
       </div>
     );
   },

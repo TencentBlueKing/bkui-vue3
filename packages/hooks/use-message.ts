@@ -44,18 +44,20 @@ const Message = (constructor: any, options: any) => {
   }
   const userOnClose = options.onClose;
 
-  let verticalOffset: number = opts.offset || 20;
+  const horizontalOffset: number = opts.offsetX || 10;
+  let verticalOffset: number = opts.offsetY || 30;
+  const { spacing = 10 } = opts;
   instances[position].forEach((vm) => {
-    verticalOffset += (vm.el.offsetHeight || 0) + 16;
+    verticalOffset += (vm.el.offsetHeight || 0) + spacing;
   });
-  verticalOffset += 16;
 
   seed += 1;
   const id = `message_${seed}`;
 
   opts = {
     ...opts,
-    offset: verticalOffset,
+    offsetX: horizontalOffset,
+    offsetY: verticalOffset,
     id,
   };
 
@@ -63,7 +65,7 @@ const Message = (constructor: any, options: any) => {
   const vm = createVNode(constructor, opts);
 
   vm.props.onDestory = (id: string) => {
-    close(id, position, userOnClose);
+    close(id, position, spacing, userOnClose);
     render(null, container);
   };
 
@@ -72,7 +74,7 @@ const Message = (constructor: any, options: any) => {
   document.body.appendChild(container.firstElementChild);
 };
 
-function close(id: string, position: string, userOnClose): void {
+function close(id: string, position: string, spacing: number, userOnClose): void {
   userOnClose?.();
   const verticalProperty = position.startsWith('top') ? 'top' : 'bottom';
   let instanceIndex = -1;
@@ -86,8 +88,8 @@ function close(id: string, position: string, userOnClose): void {
   const removeHeight = vm.el.offsetHeight;
   const len = instances[position].length;
   for (let i = instanceIndex; i < len; i++) {
-    const pos = parseInt(instances[position][i].el.style[verticalProperty], 10) - removeHeight - 16;
-    instances[position][i].component.props.offset = pos;
+    const pos = parseInt(instances[position][i].el.style[verticalProperty], 10) - removeHeight - spacing;
+    instances[position][i].component.props.offsetY = pos;
   }
 
   instances[position].splice(instanceIndex, 1);

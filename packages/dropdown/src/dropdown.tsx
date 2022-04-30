@@ -24,13 +24,14 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent, onMounted, ref, onBeforeUnmount, watch, nextTick } from 'vue';
-import { BKPopover, IBKPopover, PropTypes, classes } from '@bkui-vue/shared';
+import { defineComponent, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+
+import { BKPopover, classes, IBKPopover, PropTypes } from '@bkui-vue/shared';
 import { Placement } from '@popperjs/core';
 
 
 export default defineComponent({
-  name: 'BkDropdown',
+  name: 'Dropdown',
   props: {
     /** trigger = manual时候控制显隐藏  */
     isShow: PropTypes.bool.def(false),
@@ -42,7 +43,7 @@ export default defineComponent({
     /** 外部设置的 class name */
     extCls: PropTypes.string,
   },
-  emits: ['showChange'],
+  emits: ['showChange', 'show', 'hide'],
   setup(props: any, { emit }) {
     let popoverInstance: any = Object.create(null);
     /** 参考物dom */
@@ -73,6 +74,14 @@ export default defineComponent({
      */
     watch(() => props.disabled, val => handleUpdateDisabled(val));
 
+    /** 显示后回调 */
+    const afterShow = () => {
+      emit('show');
+    };
+    /** 隐藏后回调 */
+    const afterHidden = () => {
+      emit('hide');
+    };
     /**
      * @description: 注册dropdown
      */
@@ -84,6 +93,8 @@ export default defineComponent({
         {
           placement: props.placement as Placement,
           trigger: props.trigger,
+          afterShow,
+          afterHidden,
         },
       );
       props.trigger === 'manual' && props.isShow && popoverInstance.show();

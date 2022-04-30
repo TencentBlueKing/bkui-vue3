@@ -1,23 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Badge.tsx icon 1`] = `
-"<div class=\\"bk-badge-main\\">
-  <div><template slot=\\"icon\\"></template><button class=\\"bk-button\\">
-      <div class=\\"bk-button-content-wrapper\\"><span>Badge</span></div>
-    </button></div><span class=\\"bk-badge pinned bk-primary top-right\\"><span><!----></span></span>
-</div>"
+"<div class=\\"bk-badge-main\\"><template slot=\\"icon\\"></template><button class=\\"bk-button\\">
+    <!----><span class=\\"bk-button-text\\">Badge</span>
+  </button><span class=\\"bk-badge bk-primary pinned  top-right\\"><span>1</span></span></div>"
 `;
 
-exports[`Badge.tsx overflowCount 1`] = `
-"<div class=\\"bk-badge-main\\">
-  <div></div><span class=\\"bk-badge pinned bk-primary top-right\\"><span>99+</span></span>
-</div>"
-`;
+exports[`Badge.tsx overflowCount 1`] = `"<div class=\\"bk-badge-main\\"><span class=\\"bk-badge bk-primary\\"><span>99+</span></span></div>"`;
 
 exports[`Badge.tsx slot 1`] = `
-"<div class=\\"bk-badge-main\\">
-  <div><button class=\\"bk-button\\">
-      <div class=\\"bk-button-content-wrapper\\"><span>Badge</span></div>
-    </button></div><span class=\\"bk-badge pinned bk-primary top-right\\"><span><!----></span></span>
-</div>"
+"<div class=\\"bk-badge-main\\"><button class=\\"bk-button\\">
+    <!----><span class=\\"bk-button-text\\">Badge</span>
+  </button><span class=\\"bk-badge bk-primary pinned  top-right\\"><span>1</span></span></div>"
 `;

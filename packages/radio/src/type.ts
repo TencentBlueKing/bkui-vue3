@@ -23,16 +23,26 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+
+import type {
+  ComponentPublicInstance,
+} from 'vue';
+
+import type { RadioProps } from './radio';
 import type {
   RadioGroupProps,
 } from './radio-group';
-import type { RadioProps } from './radio';
+
+export type IRadioInstance = ComponentPublicInstance<RadioProps, {
+  isChecked: boolean,
+  label: string,
+  setChecked: (value: boolean) => void
+}>;
 
 export interface IRadioGroupContext {
   props: RadioGroupProps,
-  state: {
-    localValue: RadioProps['label']
-  },
-  handleChange: (value: RadioProps['label']) => void
+  register: (radioInstance: IRadioInstance) => void,
+  unregister: (radioInstance: IRadioInstance) => void,
+  handleChange: (radioInstance: IRadioInstance) => void
 }
 

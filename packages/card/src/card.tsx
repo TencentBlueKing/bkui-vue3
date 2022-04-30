@@ -24,8 +24,11 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent, computed } from 'vue';
-import { PropTypes, classes } from '@bkui-vue/shared';
+import { defineComponent, ref, watch } from 'vue';
+
+import { AngleDown, AngleRight, EditLine } from '@bkui-vue/icon';
+import BkInput from '@bkui-vue/input';
+import { classes, PropTypes } from '@bkui-vue/shared';
 
 export default defineComponent({
   name: 'Card',
@@ -35,34 +38,83 @@ export default defineComponent({
     showFooter: PropTypes.bool.def(false),
     collapseStatus: PropTypes.bool.def(true),
     border: PropTypes.bool.def(true),
-    headBorder: PropTypes.bool.def(true),
+    disableHeaderStyle: PropTypes.bool.def(false),
+    position: PropTypes.string.def('left'),
+    isEdit: PropTypes.bool.def(false),
+    isCollapse: PropTypes.bool.def(false),
   },
-  setup(props) {
-    const isCollapse = computed(() => props.collapseStatus);
+  emits: ['update:collapseStatus', 'edit'],
+  setup(props, { emit }) {
+    /** 展开&收起的状态 */
+    const collapseActive = ref(true);
+    /** 是否显示编辑框 */
+    const showInput = ref(false);
+    const renderTitle = ref('');
+    const handleCollapse = () => {
+      if (!props.isCollapse) {
+        return;
+      }
+      collapseActive.value = !collapseActive.value;
+      emit('update:collapseStatus', collapseActive.value);
+    };
+    /** 点击编辑按钮 */
+    const clickEdit = () => {
+      showInput.value = !showInput.value;
+    };
+    /** 保存编辑的title */
+    const saveEdit = () => {
+      showInput.value = !showInput.value;
+      emit('edit', renderTitle);
+    };
+    watch(() => props.collapseStatus, (val) => {
+      props.isCollapse && (collapseActive.value = val);
+    }, { immediate: true });
+
+    watch(() => props.title, (val) => {
+      renderTitle.value = val;
+    }, { immediate: true });
     return {
-      isCollapse,
+      collapseActive,
+      showInput,
+      renderTitle,
+      handleCollapse,
+      saveEdit,
+      clickEdit,
     };
   },
   render() {
+    const wrapperName = 'bk-card';
     const cardClass = classes({
-      ['bk-card-border-none']: !this.$props.border,
-    }, 'bk-card');
+      [`${wrapperName}`]: true,
+      [`${wrapperName}-border-none`]: !this.$props.border,
+    }, '');
     const headClass = classes({
-      ['bk-card-border-none']: !this.$props.headBorder,
-    }, 'bk-card-head');
-    const defaultHeader = <div>
-      <div class="title" title={this.$props.title}>{this.$props.title}</div>
+      [`${wrapperName}-head`]: true,
+      [`${wrapperName}-head-${this.$props.position}`]: this.$props.isCollapse && this.$props.position,
+      ['no-line-height']: this.$props.disableHeaderStyle,
+      ['collapse']: !this.collapseActive,
+    }, '');
+
+    const defaultHeader = <div class="title" title={this.renderTitle}>
+      { this.showInput ? <BkInput class={`${wrapperName}-input`} v-model={this.renderTitle}
+        onBlur={this.saveEdit} /> : this.renderTitle}
     </div>;
+
+    const defaultIcon = <span class={`${wrapperName}-icon`} onClick={this.handleCollapse}>
+      { this.collapseActive ? <AngleDown /> : <AngleRight /> }
+    </span>;
+
     return <div class={cardClass}>
       { this.$props.showHeader ? <div class={headClass}>
-        <span>
+          { this.$props.isCollapse && (this.$slots.icon?.() ?? defaultIcon)}
           {this.$slots.header?.() ?? defaultHeader}
-        </span>
+          { (this.$props.isEdit && !this.showInput)
+          && <EditLine class={`${wrapperName}-edit`} onClick={this.clickEdit} /> }
       </div> : ''}
-      { this.$props.collapseStatus ? <div>
-        <div class="bk-card-body">{this.$slots.default?.() ?? 'Content'}</div>
+      { this.collapseActive ? <div>
+        <div class={`${wrapperName}-body`}>{this.$slots.default?.() ?? 'Content'}</div>
         {
-          this.$props.showFooter ? <div class="bk-card-footer">{this.$slots.footer?.() ?? 'Footer'}</div> : ''
+          this.$props.showFooter ? <div class={`${wrapperName}-footer`}>{this.$slots.footer?.() ?? 'Footer'}</div> : ''
         }
       </div> : '' }
     </div>;

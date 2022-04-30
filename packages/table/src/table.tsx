@@ -24,75 +24,135 @@
  * IN THE SOFTWARE.
 */
 
-import { computed, defineComponent, nextTick, reactive, SetupContext, watch } from 'vue';
-import { classes, resolveClassName } from '@bkui-vue/shared';
-import { Column, IColumnActive, tableProps, TablePropTypes } from './props';
-import TableRender from './render';
-import { resolveActiveColumns, resolveNumberOrStringToPix, resolvePropBorderToClassStr } from './utils';
+import { defineComponent, onBeforeUnmount, onMounted, reactive, ref, watchEffect } from 'vue';
+
+import { resolveClassName } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
+import useActiveColumns from './plugins/use-active-columns';
+import userPagination from './plugins/use-pagination';
+import { tableProps } from './props';
+import TableRender, { EVENTS } from './render';
+import { useClass } from './use-common';
+import {
+  observerResize,
+  resolveColumnWidth,
+} from './utils';
+
 export default defineComponent({
-  name: 'BkTable',
+  name: 'Table',
   props: tableProps,
-  setup(props: TablePropTypes, ctx: SetupContext) {
-    const activeCols = reactive(resolveActiveColumns(props));
-    const getActiveColumns = () => (props.columns || []).map((_column: Column, index: number) => ({
-      index,
-      active: activeCols.some((colIndex: number) => colIndex === index),
-      _column,
-    }));
+  emits: ['columnPick', 'rowClick', 'rowDblClick', 'pageLimitChange', 'pageValueChange'],
+  setup(props, ctx) {
+    const colgroups = reactive(props.columns.map(col => ({ ...col, calcWidth: null })));
+    let columnSortFn: any = null;
+    let columnFilterFn: any = null;
+
+    let observerIns = null;
+    const root = ref();
+    const refVirtualRender = ref();
+
+    const { activeColumns } = useActiveColumns(props);
+    const { pageData, localPagination, resolvePageData, watchEffectFn } = userPagination(props);
+    const {
+      tableClass,
+      headClass,
+      contentClass,
+      footerClass,
+      wrapperStyle,
+      contentStyle,
+      headStyle,
+      resetTableHeight,
+    } = useClass(props);
+
     const reactiveProp = reactive({
-      activeColumns: getActiveColumns(),
       scrollTranslateY: 0,
+      activeColumns,
+      setting: {
+        size: null,
+        height: null,
+      },
+    });
+    const tableRender = new TableRender(props, ctx, reactiveProp, colgroups);
+
+    watchEffect(() => {
+      watchEffectFn(columnFilterFn, columnSortFn);
     });
 
-    /** 表格外层容器样式 */
-    const wrapperStyle = computed(() => ({
-      height: resolveNumberOrStringToPix(props.height),
-      minHeight: resolveNumberOrStringToPix(props.minHeight),
-    }));
-
-    watch(() => [props.activeColumn, props.columns], () => {
-      nextTick(() => {
-        reactiveProp.activeColumns = getActiveColumns();
-        const cols = resolveActiveColumns(props);
-        reactiveProp.activeColumns.forEach((col: IColumnActive, index: number) => {
-          Object.assign(col, { active: cols.some((colIndex: number) => colIndex === index) });
-        });
+    /**
+     * 监听Table 派发的相关事件
+     */
+    tableRender.on(EVENTS.ON_SORT_BY_CLICK, (args: any) => {
+      const { sortFn } = args;
+      columnSortFn = sortFn;
+      pageData.sort(columnSortFn);
+    }).on(EVENTS.ON_FILTER_CLICK, (args: any) => {
+      const { filterFn } = args;
+      columnFilterFn = filterFn;
+      resolvePageData(columnFilterFn, columnSortFn);
+    })
+      .on(EVENTS.ON_SETTING_CHANGE, (args: any) => {
+        const { checked = [] } = args;
+        checked.length && resolveColumnWidth(root.value, colgroups, 20);
+        refVirtualRender.value?.reset?.();
       });
-    }, { deep: true });
 
-    const tableRender = new TableRender(props, ctx, reactiveProp);
-
-    const tableClass = computed(() => (classes({
-      [resolveClassName('table')]: true,
-    }, resolvePropBorderToClassStr(props.border))));
-
-
-    const contentClass = classes({
-      [resolveClassName('table-body')]: true,
-    });
 
     const handleScrollChanged = (args: any[]) => {
       const pagination = args[1];
       reactiveProp.scrollTranslateY = pagination.translateY;
     };
 
-    return () => <VirtualRender
-      className={tableClass.value} style={wrapperStyle.value}
-      lineHeight={props.rowHeight}
-      contentClassName={ contentClass }
-      list={props.data}
-      onContentScroll={ handleScrollChanged }
-      throttleDelay={0}
-      enabled={props.virtualEnabled}>
+    onMounted(() => {
+      observerIns = observerResize(root.value, () => {
+        resolveColumnWidth(root.value, colgroups, 20);
+        resetTableHeight(root.value);
+      }, 60, true);
+
+      observerIns.start();
+    });
+
+    onBeforeUnmount(() => {
+      observerIns.stop();
+      observerIns = null;
+      tableRender.destroy();
+    });
+
+    ctx.expose({
+      plugins: tableRender.plugins,
+    });
+
+    return () => <div class={tableClass.value} style={wrapperStyle.value} ref={root}>
+      {
+        // @ts-ignore:next-line
+        <div class={ headClass } style={headStyle}>
         {
-          {
-            default: (scope: any) => tableRender.renderTableBodySchema(scope.data || props.data),
-            afterContent: () => <div class={ resolveClassName('table-fixed') }></div>,
-          }
+          tableRender.renderTableHeadSchema()
         }
-    </VirtualRender>;
+      </div>
+      }
+      <VirtualRender
+        ref={refVirtualRender}
+        lineHeight={tableRender.getRowHeight}
+        class={ contentClass }
+        style={ contentStyle.value }
+        list={pageData}
+        onContentScroll={ handleScrollChanged }
+        throttleDelay={0}
+        enabled={props.virtualEnabled}>
+          {
+            {
+              default: (scope: any) => tableRender.renderTableBodySchema(scope.data || props.data),
+              afterContent: () => <div class={ resolveClassName('table-fixed') }></div>,
+            }
+          }
+      </VirtualRender>
+      <div class={ footerClass.value }>
+        {
+          props.pagination && props.data.length && tableRender.renderTableFooter(localPagination.value)
+        }
+      </div>
+    </div>;
   },
 });
 

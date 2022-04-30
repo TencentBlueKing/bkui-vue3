@@ -24,9 +24,10 @@
  * IN THE SOFTWARE.
 */
 
+import { withInstallProps } from '@bkui-vue/shared';
+
 import Component from './button';
 import ButtonGroup from './button-group';
-import { withInstallProps } from '@bkui-vue/shared';
 const BkButton = withInstallProps(Component, { ButtonGroup });
 export default BkButton;
 export {

@@ -25,8 +25,9 @@
 */
 
 import { defineComponent } from 'vue';
-import BkModal from '@bkui-vue/modal';
+
 import BkButton from '@bkui-vue/button';
+import BkModal from '@bkui-vue/modal';
 const { propsMixin } = BkModal;
 const sliderPops = Object.assign({}, propsMixin);
 sliderPops.width.default = '400';
@@ -53,31 +54,54 @@ export default defineComponent({
       },
     },
   },
-  emits: ['closed', 'update:isShow'],
-  methods: {
-    handleClose() {
-      this.$emit('update:isShow', false);
-      this.$emit('closed');
-    },
-  },
-
-  render() {
-    const dialogSlot = {
-      header: () => <>
-        <div class="bk-sideslider-header">
-          <span class={`bk-sideslider-close ${this.direction}`} onClick={this.handleClose}></span>
-          <span class={`bk-sideslider-title ${this.direction}`}>
-            {this.$slots.header?.() ?? 'Header'}
-          </span>
-        </div>
-      </>,
-      default: () => this.$slots.default?.() ?? 'Content',
-      footer: () => <div class="bk-sideslider-footer"></div>,
+  emits: ['closed', 'update:isShow', 'shown', 'hidden', 'animation-end'],
+  setup(props, { slots, emit }) {
+    const handleClose = async () => {
+      let shouldClose = true;
+      if (typeof props.beforeClose === 'function') {
+        shouldClose = await props.beforeClose();
+      }
+      if (shouldClose) {
+        emit('update:isShow', false);
+        emit('closed');
+        setTimeout(() => { // 有动画，推迟发布事件
+          emit('animation-end');
+        }, 250);
+      }
     };
-
-    const className = `bk-sideslider-wrapper ${this.scrollable ? 'scroll-able' : ''}`;
-    return <BkModal {...this.$props} class={className} style={`${this.direction}: 0`}>
-      {dialogSlot}
-    </BkModal>;
+    const handleShown = () => { // 有动画，推迟发布事件
+      setTimeout(() => {
+        emit('shown');
+      }, 200);
+    };
+    const handleHidden = () => { // 有动画，推迟发布事件
+      setTimeout(() => {
+        emit('hidden');
+      }, 200);
+    };
+    return () => {
+      const dialogSlot = {
+        header: () => <>
+          <div class="bk-sideslider-header">
+            <div class={`bk-sideslider-close ${props.direction}`} onClick={ () => {
+              handleClose();
+            } }></div>
+            <div class={`bk-sideslider-title ${props.direction}`}>
+              {slots.header?.() ?? props.title}
+            </div>
+          </div>
+        </>,
+        default: () => slots.default?.() ?? 'Content',
+        footer: () => <div class="bk-sideslider-footer">
+          {slots.footer?.() ?? ''}
+        </div>,
+      };
+      const className = `bk-sideslider-wrapper ${props.scrollable ? 'scroll-able' : ''} ${props.extCls}`;
+      const maxHeight = slots.footer ? 'calc(100vh - 114px)' : 'calc(100vh - 60px)';
+      // @ts-ignore
+      return <BkModal {...props} maxHeight={maxHeight} class={className} style={`${props.direction}: 0;`} onHidden={handleHidden} onShown={handleShown} onClose={handleClose}>
+        {dialogSlot}
+      </BkModal>;
+    };
   },
 });

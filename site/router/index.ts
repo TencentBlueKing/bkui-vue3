@@ -1,3 +1,4 @@
+/* eslint-disable codecc/comment-ratio */
 /*
  * Tencent is pleased to support the open source community by making
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
@@ -24,6 +25,7 @@
  * IN THE SOFTWARE.
  */
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
+
 import { NavGroupMeta } from '../typings';
 
 /**
@@ -32,11 +34,14 @@ import { NavGroupMeta } from '../typings';
  * @return {*}
  */
 const routes: RouteRecordRaw[] = [
+  /**
+   * @description:快速上手
+   */
   {
     path: '/start',
     name: 'start',
     alias: '',
-    component: () => import('../views/start/start'),
+    component: () => import('../views/start'),
     meta: {
       group: NavGroupMeta.Start,
       navName: '快速上手',
@@ -49,7 +54,7 @@ const routes: RouteRecordRaw[] = [
     path: '/menu',
     name: 'menu',
     alias: '',
-    component: () => import('../views/menu/menu'),
+    component: () => import('../views/menu'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'Menu 菜单',
@@ -81,6 +86,9 @@ const routes: RouteRecordRaw[] = [
       navName: 'Home',
     },
   },
+  /**
+   * @description:Loading
+   */
   {
     path: '/loading',
     name: 'loading',
@@ -90,6 +98,9 @@ const routes: RouteRecordRaw[] = [
       navName: 'Loading 加载',
     },
   },
+  /**
+   * @description:基础按钮
+   */
   {
     path: '/button',
     name: 'button',
@@ -99,6 +110,9 @@ const routes: RouteRecordRaw[] = [
       navName: 'Button 基础按钮',
     },
   },
+  /**
+   * @description:单选框
+   */
   {
     path: '/radio',
     name: 'radio',
@@ -108,6 +122,9 @@ const routes: RouteRecordRaw[] = [
       navName: 'Radio 单选框',
     },
   },
+  /**
+   * @description:多选框
+   */
   {
     path: '/checkbox',
     name: 'checkbox',
@@ -117,6 +134,9 @@ const routes: RouteRecordRaw[] = [
       navName: 'Checkbox 多选框',
     },
   },
+  /**
+   * @description:警告
+   */
   {
     path: '/alert',
     name: 'alert',
@@ -126,24 +146,33 @@ const routes: RouteRecordRaw[] = [
       navName: 'Alert 警告',
     },
   },
+  /**
+   * @description:悬浮导航
+   */
   {
     path: '/fixed-navbar',
     name: 'fixedNavbar',
-    component: () => import('../views/fixed-navbar'),
+    component: () => import('../views/fixed-navbar/index'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'FixedNavbar 悬浮导航',
     },
   },
+  /**
+   * @description:返回顶部
+   */
   {
     path: '/backtop',
     name: 'backtop',
-    component: () => import('../views/backtop'),
+    component: () => import('../views/backtop/index'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'BackTop 返回顶部',
     },
   },
+  /**
+   * @description:图标
+   */
   {
     path: '/icon',
     name: 'icon',
@@ -153,15 +182,21 @@ const routes: RouteRecordRaw[] = [
       navName: 'Icon 图标',
     },
   },
+  /**
+   * @description:异常提示
+   */
   {
     path: '/exception',
     name: 'exception',
-    component: () => import('../views/exception'),
+    component: () => import('../views/exception/exception'),
     meta: {
       group: NavGroupMeta.Feedback,
       navName: 'Exception 异常提示',
     },
   },
+  /**
+   * @description:PopComponents
+   */
   {
     path: '/pop-components',
     name: 'popComponents',
@@ -171,6 +206,9 @@ const routes: RouteRecordRaw[] = [
       navName: 'PopComponents',
     },
   },
+  /**
+   * @description:卡片
+   */
   {
     path: '/card',
     name: 'card',
@@ -180,6 +218,9 @@ const routes: RouteRecordRaw[] = [
       navName: 'Card 卡片',
     },
   },
+  /**
+   * @description:标记
+   */
   {
     path: '/badge',
     name: 'badge',
@@ -189,42 +230,57 @@ const routes: RouteRecordRaw[] = [
       navName: 'Badge 标记',
     },
   },
+  /**
+   * @description:进度条
+   */
   {
     path: '/progress',
     name: 'progress',
-    component: () => import('../views/BkProgress/progress'),
+    component: () => import('../views/progress'),
     meta: {
       group: NavGroupMeta.Data,
       navName: 'Progress 进度条',
     },
   },
+  /**
+   * @description:开关
+   */
   {
     path: '/switcher',
     name: 'switcher',
-    component: () => import('../views/BkSwitcher/switcher'),
+    component: () => import('../views/switcher'),
     meta: {
       group: NavGroupMeta.Form,
       navName: 'Switcher 开关',
     },
   },
+  /**
+   * @description:面包屑
+   */
   {
     path: '/breadcrumb',
     name: 'breadcrumb',
-    component: () => import('../views/BkBreadcrumb/breadcrumb'),
+    component: () => import('../views/breadcrumb'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'Breadcrumb 面包屑',
     },
   },
+  /**
+   * @description:文字链接
+   */
   {
     path: '/link',
     name: 'link',
-    component: () => import('../views/link'),
+    component: () => import('../views/link/index'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'Link 文字链接',
     },
   },
+  /**
+   * @description:折叠面板
+   */
   {
     path: '/collapse',
     name: 'collapse',
@@ -234,6 +290,9 @@ const routes: RouteRecordRaw[] = [
       navName: 'Collapse 折叠面板',
     },
   },
+  /**
+   * @description:步骤
+   */
   {
     path: '/steps',
     name: 'steps',
@@ -243,7 +302,9 @@ const routes: RouteRecordRaw[] = [
       navName: 'Steps 步骤',
     },
   },
-
+  /**
+   * @description:步骤
+   */
   {
     path: '/process',
     name: 'process',
@@ -253,15 +314,21 @@ const routes: RouteRecordRaw[] = [
       navName: 'Process 步骤',
     },
   },
+  /**
+   * @description:下拉选框
+   */
   {
     path: '/select',
     name: 'select',
-    component: () => import('../views/select'),
+    component: () => import('../views/select/select'),
     meta: {
       group: NavGroupMeta.Form,
       navName: 'Select 下拉选框',
     },
   },
+  /**
+   * @description:时间轴
+   */
   {
     path: '/timeline',
     name: 'timeline',
@@ -271,6 +338,9 @@ const routes: RouteRecordRaw[] = [
       navName: 'Timeline 时间轴',
     },
   },
+  /**
+   * @description:动画数字
+   */
   {
     path: '/animateNumber',
     name: 'animateNumber',
@@ -280,6 +350,9 @@ const routes: RouteRecordRaw[] = [
       navName: 'AnimateNumber 动画数字',
     },
   },
+  /**
+   * @description:评分
+   */
   {
     path: '/rate',
     name: 'rate',
@@ -289,15 +362,33 @@ const routes: RouteRecordRaw[] = [
       navName: 'Rate 评分',
     },
   },
+  /**
+   * @description:轮播图
+   */
+  {
+    path: '/swiper',
+    name: 'swiper',
+    component: () => import('../views/swiper'),
+    meta: {
+      group: NavGroupMeta.Data,
+      navName: 'Swiper 轮播图',
+    },
+  },
+  /**
+   * @description:表格
+   */
   {
     path: '/table',
     name: 'table',
-    component: () => import('../views/table/table'),
+    component: () => import('../views/table'),
     meta: {
       group: NavGroupMeta.Data,
       navName: 'Table 表格',
     },
   },
+  /**
+   * @description:输入框
+   */
   {
     path: '/input',
     name: 'input',
@@ -307,15 +398,21 @@ const routes: RouteRecordRaw[] = [
       navName: 'Input 输入框',
     },
   },
+  /**
+   * @description:下拉菜单
+   */
   {
     path: '/dropdown',
     name: 'dropdown',
-    component: () => import('../views/dropdown'),
+    component: () => import('../views/dropdown/dropdown'),
     meta: {
       group: NavGroupMeta.Data,
       navName: 'DropdownMenu 下拉菜单',
     },
   },
+  /**
+   * @description:表单
+   */
   {
     path: '/form',
     name: 'form',
@@ -325,6 +422,9 @@ const routes: RouteRecordRaw[] = [
       navName: 'Form 表单',
     },
   },
+  /**
+   * @description:弹出框提示
+   */
   {
     path: '/popover',
     name: 'popover',
@@ -334,15 +434,21 @@ const routes: RouteRecordRaw[] = [
       navName: 'Popover 弹出框提示',
     },
   },
+  /**
+   * @description:消息提示
+   */
   {
     path: '/message',
     name: 'message',
-    component: () => import('../views/message'),
+    component: () => import('../views/message/message'),
     meta: {
       group: NavGroupMeta.Feedback,
       navName: 'Message 消息提示',
     },
   },
+  /**
+   * @description:通知提示
+   */
   {
     path: '/notify',
     name: 'notify',
@@ -352,6 +458,9 @@ const routes: RouteRecordRaw[] = [
       navName: 'Notify 通知提示',
     },
   },
+  /**
+   * @description:工具提示
+   */
   {
     path: '/tooltips',
     name: 'tooltips',
@@ -361,6 +470,9 @@ const routes: RouteRecordRaw[] = [
       navName: 'Tooltips 工具提示',
     },
   },
+  /**
+   * @description:树
+   */
   {
     path: '/tree',
     name: 'tree',
@@ -368,6 +480,27 @@ const routes: RouteRecordRaw[] = [
     meta: {
       group: NavGroupMeta.Data,
       navName: 'Tree 树',
+    },
+  },
+  /**
+   * @description:日期选择器
+   */
+  {
+    path: '/tag',
+    name: 'tag',
+    component: () => import('../views/tag'),
+    meta: {
+      group: NavGroupMeta.Data,
+      navName: 'Tag 标签',
+    },
+  },
+  {
+    path: '/tag-input',
+    name: 'tagInput',
+    component: () => import('../views/tag-input'),
+    meta: {
+      group: NavGroupMeta.Form,
+      navName: 'TagInput 标签',
     },
   },
   {
@@ -379,15 +512,21 @@ const routes: RouteRecordRaw[] = [
       navName: 'DatePicker 日期选择器',
     },
   },
+  /**
+   * @description:分割线
+   */
   {
     path: '/divider',
     name: 'divider',
-    component: () => import('../views/divider'),
+    component: () => import('../views/divider/divider'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'Divider 分割线',
     },
   },
+  /**
+   * @description:选项卡
+   */
   {
     path: '/tab',
     name: 'tab',
@@ -397,13 +536,52 @@ const routes: RouteRecordRaw[] = [
       navName: 'Tab 选项卡',
     },
   },
+  /**
+   * @description:滑动选择器
+   */
   {
     path: '/slider',
     name: 'slider',
-    component: () => import('../views/slider'),
+    component: () => import('../views/slider/slider'),
     meta: {
       group: NavGroupMeta.Feedback,
       navName: 'Slider 滑动选择器',
+    },
+  },
+  /**
+   * @description:侧边栏
+   */
+  {
+  	  path: '/sideslider',
+  	  name: 'sideslider',
+  	  component: () => import('../views/sideslider'),
+  	  meta: {
+  	    group: NavGroupMeta.Feedback,
+  	    navName: 'Sideslider 侧栏',
+  	  },
+  },
+  /**
+   * @description:穿梭框
+   */
+  {
+    path: '/transfer',
+    name: 'transfer',
+    component: () => import('../views/transfer'),
+    meta: {
+      group: NavGroupMeta.Feedback,
+      navName: 'Transfer 穿梭框',
+    },
+  },
+  /**
+   * @description:VirtualRender
+   */
+  {
+    path: '/code-diff',
+    name: 'codeDiff',
+    component: () => import('../views/code-diff'),
+    meta: {
+      group: NavGroupMeta.Data,
+      navName: 'Diff 差异对比',
     },
   },
   {
@@ -415,15 +593,69 @@ const routes: RouteRecordRaw[] = [
       navName: 'VirtualRender',
     },
   },
+  /**
+   * @description:分页
+   */
+  {
+    path: '/pagination',
+    name: 'pagination',
+    component: () => import('../views/pagination'),
+    meta: {
+      group: NavGroupMeta.Data,
+      navName: 'Pagination 分页',
+    },
+  },
+  /**
+   * @description:404
+   */
+  {
+    path: '/resize-layout',
+    name: 'resizeLayout',
+    component: () => import('../views/resize-layout'),
+    meta: {
+      group: NavGroupMeta.Layout,
+      navName: 'ResizeLayout',
+    },
+  },
+  {
+    path: '/grid',
+    name: 'Grid 栅格',
+    component: () => import('../views/container'),
+    meta: {
+      group: NavGroupMeta.Layout,
+      navName: 'Grid 栅格',
+    },
+  },
   {
     path: '/:pathMatch(.*)*',
     name: '404',
     component: () => import('../views/404'),
   },
+  /**
+   * @description:dialog
+   */
+  {
+    path: '/dialog',
+    name: 'dialog',
+    component: () => import('../views/dialog/index'),
+    meta: {
+      group: NavGroupMeta.Feedback,
+      navName: 'Dialog 对话框',
+    },
+  },
+  {
+    path: '/cascader',
+    name: 'cascader',
+    meta: {
+      group: NavGroupMeta.Others,
+      navName: 'Cascader 级联选择',
+    },
+    component: () => import('../views/cascader/index'),
+  },
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.VITE_APP_BASE_URL),
   routes,
 });
 

@@ -25,10 +25,11 @@
 */
 
 import { defineComponent } from 'vue';
+
 import BkButton from '@bkui-vue/button';
-import BkSideslider from '@bkui-vue/sideslider';
 import BkDialog from '@bkui-vue/dialog';
 import BkPopover from '@bkui-vue/popover';
+import BkSideslider from '@bkui-vue/sideslider';
 export default defineComponent({
   name: 'PopConmponents',
   data() {
@@ -41,6 +42,7 @@ export default defineComponent({
       },
       trigger: 'manual',
       popShow: false,
+      showMask: true,
     };
   },
   methods: {
@@ -53,6 +55,9 @@ export default defineComponent({
     handlePopShowChanged() {
       this.popShow = !this.popShow;
     },
+    handleShowMaskChanged() {
+      this.showMask = !this.showMask;
+    },
   },
   render() {
     return (
@@ -60,7 +65,8 @@ export default defineComponent({
         <BkButton onClick={() => this.handleSliderIsShowChanged(true)}>显示Sideslider</BkButton>
         <BkSideslider isShow={this.slider.isShow} onClosed={() => this.handleSliderIsShowChanged(false)}>
           <button onClick={() => this.handleIsShowChanged(true)}>显示Dialog</button>
-          <BkDialog isShow={this.dialog1.isShow}
+          <button onClick={() => this.handleShowMaskChanged()}>ShowMask { `${this.showMask}` }</button>
+          <BkDialog isShow={this.dialog1.isShow} showMask={ this.showMask }
             onClosed={() => this.handleIsShowChanged(false)} width={600} height={400}>
 
             <p>【首部及导言】</p>

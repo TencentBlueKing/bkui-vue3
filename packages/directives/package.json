@@ -12,6 +12,6 @@
     "lint": "eslint \"./src/**/*.{ts,tsx}\" --max-warnings=0"
   },
   "peerDependencies": {
-    "vue": "3.2.2"
+    "vue": "^3.2.0"
   }
 }

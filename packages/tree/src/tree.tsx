@@ -23,25 +23,28 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
-import { defineComponent, watch, reactive, computed } from 'vue';
+import { computed, defineComponent, onMounted, onUpdated, reactive, ref, watch } from 'vue';
+
+import { resolveClassName } from '@bkui-vue/shared';
+import VirtualRender from '@bkui-vue/virtual-render';
+
+import { treeProps, TreePropTypes as defineTypes } from './props';
+import useNodeAction from './use-node-action';
+import useNodeAttribute from './use-node-attribute';
 import {
   getFlatdata,
-  getLabel,
-  getNodeItemStyle,
-  getNodeItemClass,
   getTreeStyle,
+  NODE_ATTRIBUTES,
 } from './util';
-import { Folder, FolderShapeOpen, TextFile, DownShape, RightShape } from '@bkui-vue/icon/';
-import { treeProps, TreePropTypes as defineTypes } from './props';
-import VirtualRender from '@bkui-vue/virtual-render';
 
 export type TreePropTypes = defineTypes;
 
 export default defineComponent({
   name: 'Tree',
   props: treeProps,
+  emits: ['check'],
 
-  setup(props: TreePropTypes) {
+  setup(props, ctx) {
     const formatData = getFlatdata(props);
     /**
      * 扁平化数据
@@ -52,224 +55,151 @@ export default defineComponent({
       schema: formatData[1],
       levelLineSchema: {},
     });
-
-    /**
-     * 监听组件配置Data改变
-     */
-    watch(() => [props.data], (newData) => {
-      const formatData = getFlatdata(props, newData);
-      flatData.data = formatData[0] as Array<any>;
-      flatData.schema = formatData[1] as any;
-      computeLevelHeight();
-    }, {
-      deep: true,
-    });
-
-    watch(() => [props.levelLine], () => {
-      computeLevelHeight();
-    });
+    const {
+      schemaValues,
+      setNodeAttr,
+      checkNodeIsOpen,
+      getNodeAttr,
+      isRootNode,
+    } = useNodeAttribute(flatData);
 
     // 计算当前需要渲染的节点信息
     const renderData = computed(() => flatData.data
       .filter(item => checkNodeIsOpen(item)));
 
-    // 当前渲染节点路径集合
-    const renderNodePathColl = computed(() => renderData.value.map(node => node.__path));
-
-    const isItemOpen = (item: any) => {
-      if (typeof item === 'object') {
-        return (flatData.schema[item.__path] || {}).__isOpen;
-      }
-
-      if (typeof item === 'string') {
-        return (flatData.schema[item] || {}).__isOpen;
-      }
-
-      return false;
-    };
-
-    /**
-     * 根据当前节点状态获取节点类型Icon
-     * @param item
-     * @returns
-     */
-    const getRootIcon = (item: any) => (isItemOpen(item)
-      ? <FolderShapeOpen class="bk-tree-icon" />
-      : <Folder class="bk-tree-icon" />);
-
-    /**
-     * 根据节点状态获取节点操作Icon
-     * @param item
-     * @returns
-     */
-    const getActionIcon = (item: any) => {
-      if (item.__hasChild) {
-        return isItemOpen(item) ? <DownShape /> : <RightShape />;
-      }
-
-      return null;
-    };
-
-    /**
-     * 节点点击
-     * @param item
-     */
-    const hanldeTreeNodeClick = (item: any) => {
-      if (item.__hasChild) {
-        const newVal = !isItemOpen(item);
-        Object.assign(item, { __isOpen: newVal });
-        renderData.value.filter(node => String.prototype.startsWith.call(node.__path, item.__path))
-          .forEach(filterNode => Object.assign(flatData.schema[filterNode.__path], { __isOpen: newVal }));
-        computeLevelHeight();
-      }
-    };
-
-    /**
-     * 当需要显示连线时，计算每个节点范围连线高度
-     * TODO: 如果启用虚拟渲染，虚拟连线需要重新设计，此方案会存在缺陷
-     */
-    const computeLevelHeight = () => {
-      if (!!props.levelLine) {
-        setTimeout(() => {
-          let showNodeCount = renderData.value.length;
-          const nodeSchema = {};
-
-          const setDefaultNodeSchema = (path: string, lastNode = null, isLeaf = false) => {
-            if (!Object.prototype.hasOwnProperty.call(nodeSchema, path)) {
-              Object.assign(nodeSchema, {
-                [path]: {
-                  childNodeCount: 0,
-                  isLastNode: false,
-                  ...(lastNode !== null ? { lastNode } : {}),
-                  ...(isLeaf !== null ? { isLeaf } : {}),
-                },
-              });
-            }
-          };
-
-          for (; showNodeCount > 0; showNodeCount--) {
-            const node = renderData.value[showNodeCount - 1];
-            const parentPath = getParentNodePath(node);
-            const isLeaf = !renderNodePathColl.value.includes(`${node.__path}-0`);
-
-            setDefaultNodeSchema(node.__path, null, isLeaf);
-            setDefaultNodeSchema(parentPath, node.__path);
-
-            const parentSchema = nodeSchema[parentPath];
-            const currentNodeSchema = nodeSchema[node.__path];
-            const { childNodeCount = 0 } = currentNodeSchema;
-            currentNodeSchema.childNodeCount = childNodeCount + 1;
-            currentNodeSchema.isLastNode = parentSchema.lastNode === node.__path;
-            parentSchema.childNodeCount += currentNodeSchema.childNodeCount;
-          }
-
-          flatData.levelLineSchema = nodeSchema;
-        });
-      } else {
-        flatData.levelLineSchema = {};
-      }
-    };
-
-    /**
-     * 获取当前节点的父级节点Path
-     * @param node
-     * @returns
-     */
-    const getParentNodePath = (node: any) => {
-      if (node.__isRoot) {
-        return null;
-      }
-      const nodePathLen = `-${node.__index}`.length;
-      return String.prototype.substring.call(node.__path, 0, node.__path.length - nodePathLen);
-    };
-
-    /**
-     * 过滤当前状态为Open的节点
-     * 页面展示只会展示Open的节点
-     * @param item
-     * @returns
-     */
-    const checkNodeIsOpen = (node: any) => node.__isRoot || isItemOpen(node) || isItemOpen(getParentNodePath(node));
-
-    const filterNextNode = (depth: number, node: any) => {
-      if (node.__isRoot) {
-        return false;
-      }
-
-      const paths = `${node.__path}`.split('-').slice(0, depth + 1);
-      const currentPath = paths.join('-');
-
-      // 如果是判定当前节点，则必须要有一条线
-      if (currentPath === node.__path) {
-        return true;
-      }
-
-      const lastLevel = paths.pop();
-      const nextLevel = parseInt(lastLevel, 10);
-      paths.push(`${nextLevel + 1}`);
-      const nextNodePath = paths.join('-');
-      const exist  = Object.prototype.hasOwnProperty.call(flatData.schema, nextNodePath);
-      console.log('nextNodePath', nextNodePath, node.__path, exist);
-      return exist;
-    };
-
-    const getVirtualLines = (node: any) => {
-      if (!props.virtualRender) {
-        return null;
-      }
-
-      const getNodeLineStyle = (dpth: number) => ({
-        '--depth': dpth,
-      });
-
-      const maxDeep = node.__depth + 1;
-      return new Array(maxDeep).fill('')
-        .map((_, index: number) => index)
-        .filter((depth: number) => filterNextNode(depth, node))
-        .filter((depth: number) => depth > 0)
-      // @ts-ignore:next-line
-        .map((index: number) => <span class="node-virtual-line" style={ getNodeLineStyle(maxDeep - index) }></span>);
-    };
-
-    computeLevelHeight();
-    return {
-      renderData,
-      flatData,
+    const {
+      renderTreeNode,
       hanldeTreeNodeClick,
-      getActionIcon,
-      getRootIcon,
-      getVirtualLines,
-    };
-  },
+      deepAutoOpen,
+      setNodeOpened,
+    } = useNodeAction(props, ctx, flatData, renderData);
 
-  render() {
-    const props = this.$props;
-    const renderTreeNode = (item: any) => <div
-      class={getNodeItemClass(item, this.flatData.schema, props)}
-      style={getNodeItemStyle(item, props, this.flatData.levelLineSchema)}
-      onClick={() => this.hanldeTreeNodeClick(item)}>
-      {
-        [
-          this.getActionIcon(item),
-          item.__isRoot ? this.getRootIcon(item) : <TextFile class="bk-tree-icon" />,
-        ]
-      }
-      <span>{getLabel(item, props)}</span>
-      {
-        this.getVirtualLines(item)
-      }
-    </div>;
-
-    return <VirtualRender class="bk-tree"
-    style={getTreeStyle(null, props)}
-    list={this.renderData}
-    lineHeight={props.lineHeight}
-    enabled={props.virtualRender}>
-    {
-      {
-        default: (scoped: any) => (scoped.data || []).map(renderTreeNode),
-      }
+    /** 如果设置了异步请求 */
+    if (props.async?.callback) {
+      deepAutoOpen();
     }
-  </VirtualRender>;
+
+
+    /**
+     * 监听组件配置Data改变
+     */
+    watch(() => [props.data], (newData) => {
+      const formatData = getFlatdata(props, newData, schemaValues.value);
+      flatData.data = formatData[0] as Array<any>;
+      flatData.schema = formatData[1] as any;
+      if (props.async?.callback && props.async?.deepAutoOpen === 'every') {
+        deepAutoOpen();
+      }
+    }, {
+      deep: true,
+    });
+
+    const resolveNodeItem = (node: any) => {
+      if (typeof node === 'string') {
+        return { [NODE_ATTRIBUTES.UUID]: node };
+      }
+
+      if (Object.prototype.hasOwnProperty.call(node, NODE_ATTRIBUTES.UUID)) {
+        return node;
+      }
+
+      console.error('setNodeAction Error: cannot find uid for the ndoe item');
+      return node;
+    };
+
+    /**
+     * 设置指定节点行为 checked isOpen
+     * @param args
+     * @param action
+     * @param value
+     * @returns
+     */
+    const setNodeAction = (args: any | any[], action: string, value: any) => {
+      if (Array.isArray(args)) {
+        args.forEach((node: any) => setNodeAttr(resolveNodeItem(node), action, value));
+        return;
+      }
+
+      setNodeAttr(resolveNodeItem(args), action, value);
+    };
+
+    /**
+     * 指定节点展开
+     * @param item 节点数据 | Node Id
+     * @param isOpen 是否展开
+     * @param autoOpenParents 如果是 isOpen = true，是否自动设置所有父级展开
+     * @returns
+     */
+    const setOpen = (item: any[] | any, isOpen = true, autoOpenParents = false) => {
+      const resolvedItem = resolveNodeItem(item);
+      if (autoOpenParents) {
+        if (isOpen) {
+          setNodeAction(resolvedItem, NODE_ATTRIBUTES.IS_OPEN, isOpen);
+          if (!isRootNode(resolvedItem)) {
+            const parentId = getNodeAttr(resolvedItem, NODE_ATTRIBUTES.PARENT_ID);
+            setOpen(parentId, true, true);
+          }
+        } else {
+          setNodeOpened(resolvedItem, false);
+        }
+      } else {
+        setNodeAction(resolvedItem, NODE_ATTRIBUTES.IS_OPEN, isOpen);
+      }
+    };
+
+    /**
+     * 设置指定节点是否选中
+     * @param item Node item | Node Id
+     * @param checked
+     */
+    const setChecked = (item: any[] | any, checked = true) => {
+      setNodeAction(resolveNodeItem(item), NODE_ATTRIBUTES.CHECKED, checked);
+    };
+
+    ctx.expose({
+      hanldeTreeNodeClick,
+      setOpen,
+      setChecked,
+      setNodeAction,
+    });
+
+    const root = ref();
+    const setNodeTextStyle = () => {
+      if (root.value?.$el) {
+        const selector = `.${resolveClassName('tree-node')}`;
+        const ctxSelector = `.${resolveClassName('node-content')}`;
+        Array.prototype.forEach.call(root.value.$el.querySelectorAll(selector), (nodeEl: HTMLElement) => {
+          const txtSpans = nodeEl.querySelectorAll(`${ctxSelector} span`);
+          const lastSpan = Array.prototype.slice.call(txtSpans, -1)[0];
+          if (lastSpan) {
+            const maxWidth = nodeEl.offsetWidth - lastSpan.offsetLeft;
+            (lastSpan as HTMLElement).style.setProperty('max-width', `${maxWidth}px`);
+          }
+        });
+      }
+    };
+    onMounted(() => {
+      setNodeTextStyle();
+    });
+
+    onUpdated(() => {
+      setNodeTextStyle();
+    });
+
+
+    return () => <VirtualRender class={ resolveClassName('tree') }
+      style={getTreeStyle(null, props)}
+      list={renderData.value}
+      lineHeight={props.lineHeight}
+      enabled={props.virtualRender}
+      contentClassName={ resolveClassName('container') }
+      throttleDelay={0}
+      ref={root}>
+      {
+        {
+          default: (scoped: any) => (scoped.data || []).map(renderTreeNode),
+        }
+      }
+    </VirtualRender>;
   },
 });

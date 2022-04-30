@@ -24,31 +24,32 @@
 * IN THE SOFTWARE.
 */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { defineComponent, reactive, toRefs, ref, nextTick, watch } from 'vue';
+import { defineComponent, nextTick, reactive, ref, toRefs, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+
+import { clickoutside } from '@bkui-vue/directives';
 import BkInput from '@bkui-vue/input';
 import BKPopover from '@bkui-vue/popover';
-import { clickoutside } from '@bkui-vue/directives';
 import { OnFirstUpdateFnType } from '@bkui-vue/shared';
 
 import { NavGroupMeta } from '../typings';
-import { useRoute, useRouter } from 'vue-router';
 
 import './demo-nav.less';
 
-function useFocus() {
-  const isFocus = ref(false);
-  const handleFocus = () => {
-    isFocus.value = true;
-  };
-  const handleBlur = () => {
-    isFocus.value = false;
-  };
-  return {
-    isFocus,
-    handleFocus,
-    handleBlur,
-  };
-}
+// function useFocus() {
+//   const isFocus = ref(false);
+//   const handleFocus = () => {
+//     isFocus.value = true;
+//   };
+//   const handleBlur = () => {
+//     isFocus.value = false;
+//   };
+//   return {
+//     isFocus,
+//     handleFocus,
+//     handleBlur,
+//   };
+// }
 
 function navListScrollToView() {
   const navListRef = ref(null);
@@ -103,14 +104,19 @@ export default defineComponent({
 
     const getNavGroup = (group: NavGroupMeta) => {
       const list = routes.filter(item => item.meta?.group === group);
+      const handleRoute = (routeName) => {
+        push({ name: routeName });
+      };
       return (
         <div class="nav-group">
           <div class="nav-group-title">{group}</div>
           <ul class="nav-group-list">
             {
               list.map(item => (
-                <li class={`nav-item ${item.name === curRoute.name ? 'item-active' : ''}`}
-                  onClick={() => push({ name: item.name })}>{item.meta?.navName || item.name}
+                <li
+                  class={`nav-item ${item.name === curRoute.name ? 'item-active' : ''}`}
+                  onClick={() => handleRoute(item.name)}>
+                    {item.meta?.navName || item.name}
                 </li>
               ))
             }
@@ -232,6 +238,13 @@ export default defineComponent({
       popperWidth.value = (reference as HTMLElement).offsetWidth;
     };
 
+    const handleChooseCom = (e) => {
+      const item = state.renderList[state.selectIndex];
+      if (!item) return;
+
+      changeRouter(item, true);
+    };
+
     return {
       ...toRefs(state),
       getNavGroup,
@@ -243,6 +256,7 @@ export default defineComponent({
       onPopoverFirstUpdate,
       searchListContainerRef,
       navListRef,
+      handleChooseCom,
     };
   },
   render() {
@@ -275,7 +289,8 @@ export default defineComponent({
               <BkInput class="demo-nav-input" type="search" clearable={true} v-model={this.searchVal}
                 onInput={this.searchHandler}
                 onClear={this.hidePopover}
-                onKeydown={this.keyupHandler} />
+                onKeydown={this.keyupHandler}
+                onEnter={this.handleChooseCom} />
             ),
             content: () => (
               <div class="search-dropdown-list">

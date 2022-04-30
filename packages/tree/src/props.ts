@@ -25,7 +25,18 @@
  */
 
 import { ExtractPropTypes } from 'vue';
+
 import { PropTypes } from '@bkui-vue/shared';
+
+/**
+ * Tree Prop: prefixIcon function
+ * @param {} isRoot 是否为分跟节点
+ * @param {} hasChild 是否有孩子节点
+ * @param {} isOpen 当前节点是否展开
+ * @param {} renderType 当前渲染类型（action: 用来标识当前节点状态，展开 | 收起, node_type：节点类型，文件、文件夹）
+ * @param {} item 当前节点数据
+ */
+export type IPrefixIcon = (isRoot: boolean, hasChild: boolean, isOpen: boolean, renderType: string, item: any) => any;
 
 export const treeProps = {
   /**
@@ -37,6 +48,12 @@ export const treeProps = {
    * 指定节点标签为节点对象的某个属性值
    */
   label: PropTypes.oneOfType([PropTypes.func.def(undefined), PropTypes.string.def('label')]),
+
+  /**
+   * 每个树节点用来作为唯一标识的属性，此标识应该是唯一的
+   * 如果设置系统会默认自动生成唯一id
+   */
+  nodeKey: PropTypes.string.def(undefined),
 
   /**
    * 子节点 Key, 用于读取子节点
@@ -61,13 +78,59 @@ export const treeProps = {
     PropTypes.bool.def(false),
     PropTypes.func.def(undefined),
     PropTypes.string.def('1px dashed #c3cdd7'),
-  ]),
+  ]).def(false),
 
   /**
    * 是否开启虚拟滚动
    * 默认虚拟滚动是开启的，数据量大的情况下有利于性能优化，可以通过设置 virtualRender = false 关闭虚拟滚动
    */
   virtualRender: PropTypes.bool.def(false),
+
+  /**
+   * 当前节点标识图标
+   * 默认 true
+   */
+  prefixIcon: PropTypes.oneOfType([
+    PropTypes.func.def(() => {}),
+    PropTypes.bool.def(false),
+  ]).def(true),
+
+  /**
+   * 异步加载节点数据配置
+   * @param callback 请求数据回调函数，函数返回 Promise
+   * @param cache 是否缓存请求结果，默认为True，只有在第一次才会发起请求，若设置为false则每次都会发起请求
+   */
+  async: PropTypes.shape<AsyncOption>({
+    /**
+     * 点击节点需要执行的异步函数
+     * 返回 Promise
+     */
+    callback: PropTypes.func.def(undefined),
+
+    /**
+     * 是否缓存异步请求结果
+     * true 只在第一次点击请求异步函数
+     * false 每次点击都执行异步函数
+     */
+    cache: PropTypes.bool.def(true),
+
+    /**
+     * 异步请求节点是否自动展开
+     * 可选值：once 只在初始化是执行一次
+     * every 每次数据更新都执行
+     */
+    deepAutoOpen: PropTypes.commonType(['once', 'every'], 'columnType').def('once'),
+  }),
+
+  /**
+   * 每个节点偏移左侧距离
+   */
+  offsetLeft: PropTypes.number.def(5),
 };
 
+type AsyncOption = {
+  callback: (item, cb) => Promise<any>,
+  cache: Boolean,
+  deepAutoOpen?: string
+};
 export type TreePropTypes = Readonly<ExtractPropTypes<typeof treeProps>>;

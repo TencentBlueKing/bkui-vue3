@@ -24,119 +24,15 @@
  * IN THE SOFTWARE.
 */
 
-import {
-  defineComponent, h, ref, VNode, computed, PropType, ComponentInternalInstance,
-} from 'vue';
-import { PropTypes } from '@bkui-vue/shared';
-import { Plus, Close } from '@bkui-vue/icon/';
+import { ComponentInternalInstance, computed, defineComponent, h, ref } from 'vue';
 
+import { Close, Plus } from '@bkui-vue/icon/';
+
+import { tabNavProps } from './props';
 
 export default defineComponent({
   name: 'TabNav',
-  props: {
-    active: {
-      type: String || Number,
-    },
-    panels: {
-      type: Array as PropType<VNode[]>,
-      default: () => ([]),
-    },
-    closable: PropTypes.bool.def(false),
-    addable: PropTypes.bool.def(false),
-    sortable: PropTypes.bool.def(false),
-    sortType: PropTypes.commonType(['replace', 'insert', 'top'], 'sortType').def('replace'),
-    labelHeight: PropTypes.number.def(50),
-    scrollStep: PropTypes.number.def(200),
-    validateActive: PropTypes.bool.def(true),
-    changeOnHover: PropTypes.bool.def(false),
-    changeOnHoverDelay: PropTypes.number.def(1000),
-    tabAdd: {
-      type: Function,
-      default: (): any => ({}),
-    },
-    tabChange: {
-      type: Function,
-      default: (): any => ({}),
-    },
-    tabRemove: {
-      type: Function,
-      default: (): any => ({}),
-    },
-    tabSort: {
-      type: Function,
-      default: (): any => ({}),
-    },
-    tabDrag: {
-      type: Function,
-      default: (): any => ({}),
-    },
-  },
-  methods: {
-    /**
-     * @description  判断拖动的元素是否是在同一个tab。
-     *               使用guid，相比 el1.parentNode === el2.parentNode 判断，性能要高
-     * @param el1 {string} 拖动的元素
-     * @param el2 {string}  触发的元素
-     * @return {boolean}
-     */
-    distinctRoots(el1: string, el2: string) {
-      return el1 === el2;
-    },
-    swapArr(arr: any[], a: number, b: number) {
-      const swap = arr[a];
-      arr[a] = arr[b];
-      arr[b] = swap;
-    },
-    handleTabAdd(e: MouseEvent) {
-      this.tabAdd(e);
-    },
-    dragstart(index: number, $event: DragEvent) {
-      this.dragStartIndex = index;
-      this.draggingEle = this.guid;
-      // 拖动鼠标效果
-      $event.dataTransfer.effectAllowed = 'move';
-      // $event.dataTransfer.setData('text/plain', index)
-      this.tabDrag(index, $event);
-    },
-    dragenter(index) {
-      // 缓存目标元素索引，方便添加样式
-      if (this.distinctRoots(this.draggingEle, this.guid)) {
-        this.dragenterIndex = index;
-      }
-    },
-    dragend() {
-      this.dragenterIndex = -1;
-      this.dragStartIndex = -1;
-      this.draggingEle = null;
-    },
-    drop(index, sortType) {
-      // 不是同一个tab，返回——暂时不支持跨tab拖动
-      if (!this.distinctRoots(this.draggingEle, this.guid)) {
-        return false;
-      }
-      // 如果是插队模式
-      if (sortType === 'insert') {
-        if (this.dragStartIndex < index) {
-          this.panels.splice(index + 1, 0, this.panels[this.dragStartIndex]);
-          this.panels.splice(this.dragStartIndex, 1);
-        } else if (this.dragStartIndex > index) {
-          this.panels.splice(index, 0, this.panels[this.dragStartIndex]);
-          this.panels.splice(this.dragStartIndex + 1, 1);
-        } else {
-          return false;
-        }
-      } else {
-        this.swapArr(this.panels, this.dragStartIndex, index);
-      }
-      this.tabSort(this.dragStartIndex, index);
-    },
-    handleTabChange(name: string) {
-      this.tabChange(name);
-    },
-    handleTabRemove(index: number, panel) {
-      this.tabRemove(index, panel);
-    },
-  },
+  props: tabNavProps,
   setup(props: Record<string, any>) {
     const navs = computed(() => {
       if (!Array.isArray(props.panels) || !props.panels.length) {
@@ -196,12 +92,58 @@ export default defineComponent({
         .substr(4),
     };
   },
+  methods: {
+    /**
+     * @description  判断拖动的元素是否是在同一个tab。
+     *               使用guid，相比 el1.parentNode === el2.parentNode 判断，性能要高
+     * @param el1 {string} 拖动的元素
+     * @param el2 {string}  触发的元素
+     * @return {boolean}
+     */
+    distinctRoots(el1: string, el2: string) {
+      return el1 === el2;
+    },
+    handleTabAdd(e: MouseEvent) {
+      this.tabAdd(e);
+    },
+    dragstart(index: number, $event: DragEvent) {
+      this.dragStartIndex = index;
+      this.draggingEle = this.guid;
+      // 拖动鼠标效果
+      Object.assign($event.dataTransfer, { effectAllowed: 'move' });
+      // $event.dataTransfer.setData('text/plain', index)
+      this.tabDrag(index, $event);
+    },
+    dragenter(index) {
+      // 缓存目标元素索引，方便添加样式
+      if (this.distinctRoots(this.draggingEle, this.guid)) {
+        this.dragenterIndex = index;
+      }
+    },
+    dragend() {
+      this.dragenterIndex = -1;
+      this.dragStartIndex = -1;
+      this.draggingEle = null;
+    },
+    drop(index, sortType) {
+      // 不是同一个tab，返回——暂时不支持跨tab拖动
+      if (!this.distinctRoots(this.draggingEle, this.guid)) {
+        return false;
+      }
+      this.tabSort(this.dragStartIndex, index, sortType);
+    },
+    handleTabChange(name: string) {
+      this.tabChange(name);
+    },
+    handleTabRemove(index: number, panel) {
+      this.tabRemove(index, panel);
+    },
+  },
   render() {
     const {
       active, closable, addable, sortable, sortType, labelHeight,
       dragstart, dragenter, dragend, drop,
     } = this;
-    // const { active, closable, addable, sortable, sortType, labelHeight, scrollStep } = this;
     const renderNavs = () => this.navs.map((item, index) => {
       if (!item) {
         return null;
@@ -217,7 +159,8 @@ export default defineComponent({
         }
         return classNames.join(' ');
       };
-      const getValue = (value, value2) => (typeof value === 'boolean' ? value : value2);
+      // const getValue = (value, value2) => (typeof value === 'boolean' ? value : value2);
+      const getValue = (curentValue, parentValue) => curentValue || parentValue;
       return (
         <div
           key={name}
@@ -250,31 +193,34 @@ export default defineComponent({
       );
     });
     const renderSlot = () => {
-      let addSlot;
       const list = [];
       if (typeof this.$slots.add === 'function') {
-        addSlot = this.$slots.add?.(h);
+        list.push(this.$slots.add?.(h));
       } else if (addable) {
-        addSlot = (
-          <div onClick={this.handleTabAdd}><Plus width={26} height={26} /></div>
-        );
+        list.push(<div onClick={this.handleTabAdd}><Plus width={26} height={26} /></div>);
       }
-      list.push(addSlot);
       if (typeof this.$slots.setting === 'function') {
         list.push(this.$slots.setting?.(h));
       }
-      return list.map((item, index) => (
-        <div class={'bk-tab-header-item'} key={index}>{item}</div>
-      ));
+      if (list.length) {
+        return (
+          <div class='bk-tab-header-operation'>
+            {
+              list.map((item, index) => (
+                <div class={'bk-tab-header-item'} key={index}>{item}</div>
+              ))
+            }
+          </div>
+        );
+      }
+      return null;
     };
     return (
       <div style={{ lineHeight: `${labelHeight}px` }} class='bk-tab-header'>
         <div class='bk-tab-header-nav'>
           {renderNavs()}
         </div>
-        <div class='bk-tab-header-operation'>
-          {renderSlot()}
-        </div>
+        { renderSlot()}
       </div>
     );
   },

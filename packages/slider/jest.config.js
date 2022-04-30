@@ -28,24 +28,5 @@ const baseJestConf = require('../../jest.config');
 
 module.exports = {
   ...baseJestConf,
-  rootDir: '../../',
-  globals: {
-    'ts-jest': {
-      babelConfig: '<rootDir>/babel.config.js',
-    },
-  },
   testRegex: 'packages/slider/__test__/.*\\.test\\.(js|ts|tsx)$',
-  collectCoverageFrom: [
-    'packages/slider/**/*.{jsx,vue,tsx}',
-    '!packages/*/style/index.{js,jsx,tsx}',
-    '!packages/style/*.{js,jsx}',
-    '!packages/coverage/**',
-    '!packages/*/locale/*.{js,jsx}',
-    '!packages/*/__tests__/**/type.{js,jsx,tsx}',
-    '!packages/style.ts',
-    '!**/node_modules/**',
-  ],
-  transform: {
-    '^.+\\.(ts|tsx)$': 'ts-jest',
-  },
 };

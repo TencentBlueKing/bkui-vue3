@@ -24,33 +24,57 @@
 * IN THE SOFTWARE.
 */
 
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 
-import { BkLoading, BkLoadingMode, BkLoadingSize } from '@bkui-vue/loading';
+import BkButton from '@bkui-vue/button';
 import { Help } from '@bkui-vue/icon';
+import { BkLoading, BkLoadingMode, BkLoadingSize } from '@bkui-vue/loading';
+import BkPagination from '@bkui-vue/pagination';
 
 // BkLoading.setDefaultIndicator(<span style="font-size: 14px;"><Help /></span>);
 
 export default defineComponent({
   name: 'SiteLoading',
   setup() {
+    const loading = ref(true);
+    function handleChange() {
+      loading.value = !loading.value;
+    }
+    const current = ref(1);
+    function handleCurrent(v) {
+      console.log('handleCurrent', v);
+      current.value = v;
+    }
+    console.log(current.value);
     return {
+      loading,
+      current,
+      handleChange,
+      handleCurrent,
     };
   },
   render() {
     return (
       <div>
-        <BkLoading title="normal loading" mode={BkLoadingMode.Spin} theme="primary" />
-        <BkLoading title="small loading" mode={BkLoadingMode.Spin} size={BkLoadingSize.Small} />
-        <BkLoading title="large loading" mode={BkLoadingMode.Spin} size={BkLoadingSize.Large} />
-        <BkLoading style="font-size:40px; margin:0 10px;" title="customIndicator" indicator={Help}></BkLoading>
-        <BkLoading title="loading">
-          <div style="height: 300px; width: 300px; display: flex; align-items:center; justify-content: center;">
-            content
+        <BkButton onClick={this.handleChange}>change loading</BkButton>
+        <BkLoading loading title="normal loading" mode={BkLoadingMode.Spin} />
+        <BkLoading loading title="small loading" mode={BkLoadingMode.Spin} />
+        <BkLoading loading title="large loading" mode={BkLoadingMode.Spin} size={BkLoadingSize.Large} />
+        <BkLoading loading style="font-size:40px; margin:0 10px;" title="customIndicator" indicator={Help}></BkLoading>
+        <BkLoading title="loading" loading={this.loading} theme='primary'>
+          <div style="height: 300px; display: flex; align-items:center; justify-content: center;">
+            <BkPagination
+              onUpdate:modelValue={this.handleCurrent}
+              v-model={this.current}
+              count={30}
+              limit={10}
+              showTotalCount={false}
+            />
           </div>
         </BkLoading>
-        <BkLoading title="small loading" size={BkLoadingSize.Small} />
-        <BkLoading title="large loading" size={BkLoadingSize.Large} />
+        <BkLoading loading title="small loading" size={BkLoadingSize.Small} />
+        <BkLoading loading title="large loading" size={BkLoadingSize.Large} />
+        <BkLoading loading />
       </div>
     );
   },

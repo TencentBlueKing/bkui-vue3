@@ -23,7 +23,8 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
-import bkDivider from './divider';
 import { withInstall } from '@bkui-vue/shared';
+
+import bkDivider from './divider';
 const BkDivider = withInstall(bkDivider);
 export default BkDivider;

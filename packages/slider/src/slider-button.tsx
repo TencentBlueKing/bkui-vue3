@@ -24,8 +24,11 @@
  * IN THE SOFTWARE.
  */
 
-import { computed, defineComponent, ref, PropType } from 'vue';
-import { on, off } from './slider';
+import { computed, defineComponent, PropType, ref } from 'vue';
+
+import BkPopover from '@bkui-vue/popover';
+
+import { off, on } from './slider';
 
 interface Params {
   vertical: boolean,
@@ -39,7 +42,8 @@ interface Params {
   formatterButtonLabel: Function,
   showIntervalLabel: boolean,
   customContent: { [propName: string]: { label?: string, tip?: string } },
-  sliderSize: number
+  sliderSize: number,
+  formatterTipLabel: Function,
 }
 
 export default defineComponent({
@@ -62,18 +66,18 @@ export default defineComponent({
     const isMove = ref(false);
     const button = ref(null);
 
-    // const tip = computed(() => {
-    //   let tip = '';
-    //   if (props.params.customContent?.[props.modelValue]) {
-    //     const customContent = props.params.customContent[props.modelValue];
-    //     tip = customContent.tip || customContent.label || '';
-    //   }
-    //   const placement = props.params.vertical ? 'right' : 'top';
-    //   if (props.params?.showTip) {
-    //     return { content: `${tip || props?.modelValue || '0'}`, placement };
-    //   }
-    //   return { content: '', placement };
-    // });
+    const tip = computed(() => {
+      let tip = '';
+      if (props.params.customContent?.[props.modelValue]) {
+        const customContent = props.params.customContent[props.modelValue];
+        tip = customContent.tip || customContent.label || '';
+      }
+      const placement = props.params.vertical ? 'right' : 'top';
+      if (props.params?.showTip) {
+        return { content: props.params.formatterTipLabel(`${tip || props?.modelValue || '0'}`), placement };
+      }
+      return { content: '', placement };
+    });
     const currentPosition = computed(() => `${(props.modelValue - props.params.minValue) / (props.params.maxValue - props.params.minValue) * 100}%`);
     const wrapperStyle = computed(() => (props.params.vertical
       ? { bottom: currentPosition.value } : { left: currentPosition.value }));
@@ -155,7 +159,15 @@ export default defineComponent({
         style={wrapperStyle.value}
         onClick={(event: MouseEvent) => event.stopPropagation()}
         onMousedown={onButtonDown}>
-          <div class={['slider-button', { 'slider-button-disable': props.params.disable }]}></div>
+          {Boolean(tip.value.content)
+            ? <BkPopover
+              content={tip.value.content}
+              theme={'dark'}
+              placement={tip.value.placement}
+              boundary={document.body}>
+              <div class={['slider-button', { 'slider-button-disable': props.params.disable }]}></div>
+            </BkPopover>
+            : <div class={['slider-button', { 'slider-button-disable': props.params.disable }]}></div>}
           {props.params.showButtonLabel && !props.params.showIntervalLabel
             ? <div class={['slider-button-label', props.params.vertical ? 'vertical' : 'horizontal']}>
               {buttonLabel.value}
@@ -165,6 +177,7 @@ export default defineComponent({
     return {
       renderDom,
       setPosition,
+      tip,
     };
   },
   render() {

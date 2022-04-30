@@ -25,7 +25,9 @@
 */
 
 import { mount } from '@vue/test-utils';
+
 import Navigation from '../src';
+
 describe('Navigation.tsx', () => {
   it('test', async () => {
     const wrapper = await mount(Navigation);

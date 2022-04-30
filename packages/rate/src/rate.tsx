@@ -24,8 +24,10 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent, ref, Ref, computed } from 'vue';
-import { PropTypes, classes } from '@bkui-vue/shared';
+import { computed, defineComponent, Ref, ref } from 'vue';
+
+import { classes, PropTypes } from '@bkui-vue/shared';
+
 import star from './star';
 
 export default defineComponent({
@@ -93,20 +95,20 @@ export default defineComponent({
               onMouseleave={() => changeHover(0)}
               {...commonAttrs}
             ></star>
-          ) : <>
+          ) : [
             <star
               rate={5}
               style={starStyle.value}
               class="bk-score-real"
               editable={false}
               {...commonAttrs}
-            ></star>
+            ></star>,
             <star
               rate={0}
               editable={false}
               {...commonAttrs}
-            ></star>
-          </>
+            ></star>,
+          ]
         }
       </p>
     );

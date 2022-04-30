@@ -12,9 +12,13 @@
   background: @white-color;
   border: @border-width-base @border-style-base @disable-color;
   border-radius: @border-radius-base;
-  box-shadow: 0px 1px 2px 0px rgba(0,0,0,.2);
+
+  &:hover {
+    box-shadow: 0px 1px 2px 0px rgba(0,0,0,.2);
+  }
   .@{bk-prefix}-card-head {
     position: relative;
+    display: flex;
     width: 100%;
     height: 50px;
     padding: 0 20px;
@@ -22,9 +26,51 @@
     border-bottom: 1px solid @border-color;
 
     .title {
+      display: inline-block;
       font-weight: 600;
       color: @default-color;
-      .ellipsis-style(85%);
+      .ellipsis-style(92%);
+    }
+    .@{bk-prefix}-card-input {
+      display: inline-block;
+      line-height: 32px;
+    }
+
+    &.no-line-height {
+      line-height: unset;
+    }
+
+    &.collapse {
+      border-bottom: none;
+    }
+    .@{bk-prefix}-card-icon {
+      position: absolute;
+      top: -2px;
+      font-size: 18px;
+      color: #979ba5;
+      cursor: pointer;
+    }
+  }
+  .@{bk-prefix}-card-edit {
+    display: inline-block;
+    margin-left: 4px;
+    font-size: 18px;
+    line-height: 45px;
+    color: #c4c6cc;
+    cursor: pointer;
+  }
+  .@{bk-prefix}-card-head-left {
+    padding-right: 20px;
+    padding-left: 30px;
+    .@{bk-prefix}-card-icon {
+      left: 10px;
+    }
+  }
+  .@{bk-prefix}-card-head-right {
+    padding-right: 30px;
+    padding-left: 20px;
+    .@{bk-prefix}-card-icon {
+      right: 10px;
     }
   }
   .@{bk-prefix}-card-body {
@@ -37,8 +83,10 @@
     height: 50px;
     line-height: 50px;
     border-top: 1px solid @border-color;
+    border-bottom: 1px solid @border-color;
   }
 }
 .@{bk-prefix}-card-border-none {
   border: none;
+  box-shadow: 0px 1px 2px 0px rgba(0,0,0,.2);
 }

@@ -1,0 +1,41 @@
+{
+  "compilerOptions": {
+    "strictNullChecks": false,
+    "strict": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "jsx": "preserve",
+    "noUnusedParameters": true,
+    "noUnusedLocals": true,
+    "noImplicitAny": false,
+    "module": "esnext",
+    "target": "es6",
+    "lib": [
+      "dom",
+      "es2017"
+    ],
+    "skipLibCheck": true,
+    "allowJs": true,
+    "baseUrl": "../../packages",
+    "paths": {
+      "@bkui-vue/*": [
+        "*/src"
+      ]
+    },
+    "importHelpers": true,
+    "isolatedModules": true,
+    "sourceMap": true,
+    "noEmitOnError": true,
+  },
+  "include": [
+    "../../packages/*/src",
+    "../../packages/**/*.d.ts",
+    "../../packages/bkui-vue/index.ts",
+    "../../index.d.ts"
+  ],
+  "exclude": [
+    "__test__",
+    "node_modules"
+  ]
+}

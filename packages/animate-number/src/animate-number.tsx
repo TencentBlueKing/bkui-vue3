@@ -24,7 +24,8 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent, ref, onMounted, onBeforeUnmount, Ref, watch, computed } from 'vue';
+import { computed, defineComponent, onBeforeUnmount, onMounted, Ref, ref, watch } from 'vue';
+
 import { PropTypes } from '@bkui-vue/shared';
 
 

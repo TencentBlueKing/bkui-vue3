@@ -24,16 +24,20 @@
 * IN THE SOFTWARE.
 */
 
-import { defineComponent, computed, ref, onMounted, onUnmounted, watch, Transition } from 'vue';
-import { PropTypes, bkZIndexManager } from '@bkui-vue/shared';
-import { Error, Close, Info, Warn, Success } from '@bkui-vue/icon';
+import { computed, defineComponent, onMounted, onUnmounted, ref, Transition, watch } from 'vue';
+
+import { Close, Error, Info, Success, Warn } from '@bkui-vue/icon';
+import { bkZIndexManager, PropTypes } from '@bkui-vue/shared';
 
 const messageProps = {
   id: PropTypes.string.def(''),
   message: PropTypes.string.def(''),
-  theme: PropTypes.theme(['primary', 'warning', 'success', 'danger']).def('primary'),
+  theme: PropTypes.theme(['primary', 'warning', 'success', 'error']).def('primary'),
   delay: PropTypes.number.def(3000),
-  offset: PropTypes.number.def(0),
+  dismissable: PropTypes.bool.def(true),
+  offsetY: PropTypes.number.def(30),
+  spacing: PropTypes.number.def(10),
+  extCls: PropTypes.string.def(''),
   onClose: PropTypes.func,
 };
 
@@ -45,11 +49,12 @@ export default defineComponent({
     const classNames = computed(() => [
       'bk-message',
       `bk-message-${props.theme}`,
+      `${props.extCls}`,
     ]);
     const zIndex = bkZIndexManager.getMessageNextIndex();
 
     const styles = computed(() => ({
-      top: `${props.offset}px`,
+      top: `${props.offsetY}px`,
       zIndex,
     }));
 
@@ -62,12 +67,12 @@ export default defineComponent({
       }, props.delay);
     };
 
-    const handleClose = () => {
+    const close = () => {
       visible.value = false;
     };
 
     onMounted(() => {
-      startTimer();
+      props.delay && startTimer();
       visible.value = true;
     });
 
@@ -85,7 +90,7 @@ export default defineComponent({
       classNames,
       styles,
       visible,
-      handleClose,
+      close,
     };
   },
   render() {
@@ -94,7 +99,7 @@ export default defineComponent({
         primary: <Info></Info>,
         warning: <Warn></Warn>,
         success: <Success></Success>,
-        danger: <Close></Close>,
+        error: <Close></Close>,
       };
       return iconMap[this.theme];
     };
@@ -109,7 +114,7 @@ export default defineComponent({
             <div class="bk-message-icon">{renderIcon()}</div>
             {this.message}
           </div>
-          <Error class="bk-message-icon bk-message-close" onClick={this.handleClose}></Error>
+          {this.dismissable && <Error class="bk-message-icon bk-message-close" onClick={this.close} />}
         </div>
       </Transition>
     );

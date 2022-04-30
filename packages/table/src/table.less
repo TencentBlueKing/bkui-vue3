@@ -1,27 +1,38 @@
 @import '@bkui-vue/styles/themes/themes.less';
+@import './plugins/head-filter.less';
+@import './plugins/head-sort.less';
+@import './plugins/settings.less';
 
 .@{bk-prefix}-table {
-  overflow: auto;
+  height: auto;
+  overflow: hidden;
   border-top: 1px solid @table-border-color;
   border-bottom: 1px solid @table-border-color;
-  
+  .@{bk-prefix}-table-body {
+    overflow: auto;
+  }
+
+  .@{bk-prefix}-table-head,
   .@{bk-prefix}-table-body {
     background: @table-bg-color;
 
     table {
       width: 100%;
       border-collapse: collapse;
-
+      table-layout: fixed;
+      
       th,
       td {
         min-width: 80px;
 
         .cell {
-          height: var(--row-height);
+          display: flex;
+          align-items: center;
           padding: 0 15px;
           overflow: hidden;
           line-height: var(--row-height);
           color: @table-body-font-color;
+          text-align: left;
           text-overflow: ellipsis;
           white-space: nowrap;
         }
@@ -29,25 +40,30 @@
 
       thead {
         th {
-          position: sticky; 
-          top: 0; 
-          z-index: 1;
           color: @table-head-font-color;
           background-color: @table-head-bg-color;
-          transform: translateY(var(--translate-y));
 
-          &.active {
-            background: #f0f1f5;
-            // cursor: ;
+          &.active,
+          &:hover {
+            background: @table-row-active-bg-color;
           }
         }
       }
 
       tbody {
         tr {
+          td {
+            .cell {
+              display: inline-block;
+              width: 100%;
+            }
+          }
+
           &:hover {
             td {
-              background: @table-row-hover-bg-color;
+              &:not(.empty-cell) {
+                background: @table-row-hover-bg-color;
+              }
             }
           }
         }
@@ -55,8 +71,51 @@
     }
   }
 
+  .@{bk-prefix}-table-head {
+    position: relative;
+
+    .table-head-settings {
+      .bk-popover-reference {
+        position: absolute;
+        top: 0;
+        right: 1px;
+        bottom: 1px;
+
+        display: flex;
+        width: calc(var(--row-height));
+        font-size: 18px;
+        cursor: pointer;     
+        
+        background: #f0f1f5;
+        border-right: 1px solid #dcdee5;
+        border-left: 1px solid #dcdee5;
+        border-radius: 0px 2px 0px 0px;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+  }
+
+  .@{bk-prefix}-table-footer {
+    line-height: 40px;
+    border-top: 1px solid @table-border-color;
+
+    &.is-hidden {
+      display: none;
+    }
+  }
+
+  tr {
+    &:last-child {
+      td {
+        border-bottom: none;
+      }
+    }
+  }
+
   &.bordered-row {
-    .cell { 
+    td,
+    th { 
       border-bottom: 1px solid @table-border-color;
     }
   }
@@ -69,21 +128,18 @@
   &.bordered-col {
     th,
     td {
-      .cell { 
-        border-right: 1px solid @table-border-color;
-      }
+      border-right: 1px solid @table-border-color;
 
       &:last-child {
-        .cell {
-          border-right: none;
-        }
+        border-right: none;
       }
     }
 
   }
 
   &.bordered-none {
-    .cell {
+    th,
+    td {
       border-top: none;
       border-right: none;
       border-bottom: none;
@@ -101,7 +157,7 @@
 
       &.active {
         position: relative;
-        background: #f0f1f5;
+        background: @table-row-active-bg-color;
       }
     }
   }

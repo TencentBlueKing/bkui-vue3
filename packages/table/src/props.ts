@@ -25,8 +25,20 @@
  */
 
 import { ExtractPropTypes } from 'vue';
+
 import { PropTypes } from '@bkui-vue/shared';
+
 import { BORDER_OPRIONS } from './const';
+
+export enum SortScope {
+  CURRENT = 'current',
+  ALL = 'all'
+}
+
+export type ColumnFilterListItem = {
+  text?: string;
+  value?: string;
+};
 
 export const tableProps = {
   /**
@@ -42,6 +54,15 @@ export const tableProps = {
     field: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
     render: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
     width: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]),
+    type: PropTypes.commonType(['selection', 'index', 'expand', 'none'], 'columnType').def('none'),
+    sort: PropTypes.oneOfType([PropTypes.shape({
+      sortFn: PropTypes.func.def(undefined),
+      sortScope: PropTypes.commonType(Object.values(SortScope)).def(SortScope.CURRENT),
+    }), PropTypes.bool]).def(false),
+    filter: PropTypes.oneOfType([PropTypes.shape({
+      list: PropTypes.arrayOf(PropTypes.any).def([]),
+      filterFn: PropTypes.func.def(undefined),
+    }), PropTypes.bool]).def(false),
   })),
 
   /**
@@ -65,9 +86,15 @@ export const tableProps = {
 
   /**
    * 设置表格最小高度
+   * 默认：300
+   */
+  minHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(200),
+
+  /**
+   * 设置表格最d大高度
    * 默认：auto，依赖外层高度
    */
-  minHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def('auto'),
+  maxHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def('auto'),
 
   /**
    * 行高，可以为固定数值类型
@@ -81,6 +108,20 @@ export const tableProps = {
   headHeight: PropTypes.number.def(40),
 
   /**
+   * 是否显示Head
+   */
+  showHead: PropTypes.bool.def(true),
+
+  /**
+   * table header config
+   */
+  thead: PropTypes.shape<Thead>({
+    height: PropTypes.number.def(40),
+    isShow: PropTypes.bool.def(true),
+    cellFn: PropTypes.func.def(undefined),
+  }),
+
+  /**
    * 是否启用虚拟渲染 & 滚动
    * 当数据量很大时，启用虚拟渲染可以解决压面卡顿问题
    */
@@ -92,24 +133,84 @@ export const tableProps = {
    */
   border: PropTypes.arrayOf(PropTypes.commonType(BORDER_OPRIONS, 'border')).def(['row']),
 
-  // /**
-  //  * Table Caption Config
-  //  */
-  // caption: PropTypes.object.def({
-  //   enabled: PropTypes.bool.def(false),
-  //   text: PropTypes.string.def(''),
-  //   textAlign: PropTypes.commonType(['left', 'center', 'right'], 'textAlign').def('center'),
-  //   side: PropTypes.commonType(['top', 'bottom'], 'side').def('top'),
-  //   style: PropTypes.object.def({}),
-  // }),
+  /**
+   * 分页配置
+   * 默认值为false，不启用分页
+   * 设置为 true，启用分页功能，默认值参考分页组件 Pagination
+   */
+  pagination: PropTypes.oneOfType([PropTypes.bool.def(false), PropTypes.object.def({})]).def(false),
+
+  /**
+   * 是否启用远程分页
+   */
+  remotePagination: PropTypes.bool.def(false),
+
+  /**
+   * 空数据展示
+   */
+  emptyText: PropTypes.string.def('暂无数据'),
+
+  /**
+   * bk-table-setting-content
+   */
+  settings: PropTypes.oneOfType([PropTypes.bool, PropTypes.shape<Settings>({
+    fields: PropTypes.shape<Field[]>([]).def(undefined),
+    checked: PropTypes.shape<string[]>([]).def(undefined),
+    limit: PropTypes.number.def(undefined),
+    size: PropTypes.size(['small', 'default', 'large']).def('default'),
+    sizeList: PropTypes.shape<SizeItem[]>([]).def(undefined),
+  })]).def(false),
 };
+
+/**
+ * 配置自定义行高选项
+ */
+export type SizeItem = {
+  value?: string;
+  label?: string;
+  height?: number;
+};
+
+export type Settings = {
+  fields?: Field[];
+  checked?: string[];
+  limit?: number;
+  size?: string;
+  sizeList?: SizeItem[]
+};
+
+export type Field = {
+  label: string;
+  field?: string;
+};
+
 
 export type Column = {
   label: Function | string;
-  field: Function | string;
+  field?: Function | string;
   render?: Function | string;
   width?: number | string;
+  type?: string;
+  sort?: {
+    sortFn?: Function;
+    sortScope?: string;
+  } | boolean;
+  filter?: {
+    list?: any,
+    filterFn?: Function;
+  } | boolean;
 };
+
+export type Thead = {
+  height?: Number,
+  isShow?: boolean,
+  cellFn?: Function
+};
+
+export type GroupColumn = {
+  calcWidth?: number;
+  isHidden?: boolean;
+} & Column;
 
 export type Columns = ReadonlyArray<Column>;
 export type TablePropTypes = Readonly<ExtractPropTypes<typeof tableProps>>;

@@ -24,9 +24,10 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent, computed, ref, watch } from 'vue';
-import { PropTypes } from '@bkui-vue/shared';
+import { computed, defineComponent, ref, watch } from 'vue';
+
 import { AngleDown, AngleRight } from '@bkui-vue/icon/';
+import { PropTypes } from '@bkui-vue/shared';
 export default defineComponent({
   name: 'Collapse',
   props: {
@@ -139,7 +140,7 @@ export default defineComponent({
     const renderItems = () => collapseData.value.map(item => <div class="bk-collapse-item">
       <div class="bk-collapse-header" onClick={() => handleItemClick(item)}>
         <span class="bk-collapse-title">
-          {slots.default?.() ?? item[props.titleField]}
+          {slots.default?.(item) ?? item[props.titleField]}
         </span>
         { isItemActive(item) ? <AngleDown class="bk-collapse-icon" /> : <AngleRight class="bk-collapse-icon" />}
       </div>

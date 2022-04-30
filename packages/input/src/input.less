@@ -1,4 +1,3 @@
-
 @import '@bkui-vue/styles/themes/themes.less';
 @import '@bkui-vue/styles/mixins/mixins.less';
 
@@ -14,6 +13,40 @@
   opacity: 1;
 }
 
+.@{bk-prefix}-textarea {
+  width: 100%;
+  min-height: 70px;
+  font-size: @font-size-base;
+  line-height: 20px;
+  background-color: white;
+  border: @border-width-base @border-style-base @input-border-color;
+  border-radius: 2px;
+  border-radius: @border-radius-base;
+  box-sizing: border-box;
+  transition: all .3s;
+
+  > textarea {
+    width: 100%;
+    padding: 5px 10px;
+    line-height: 1.5;
+    text-align: left;
+    vertical-align: middle;
+    border: 0;
+    outline: none;
+    resize: none;
+  }
+
+  &--max-length {
+    padding-right: @input-horizontal-padding;
+    margin: 0;
+    text-align: right;
+
+    span {
+      color: @input-maxlength-color;
+    }
+  }
+}
+
 .@{bk-prefix}-input {
   display: flex;
   align-items: stretch;
@@ -23,28 +56,71 @@
   border-radius: @border-radius-base;
   transition: all .3s;
 
+  &:hover {
+    .show-clear-only-hover {
+      display: block;
+    }
+  }
+
+  &.is-simplicity {
+    background-color: transparent;
+    border-color: transparent;
+    border-bottom-color: @input-border-color;
+  }
+
   &--suffix-icon {
     padding-right: @input-horizontal-padding;
     font-size: @input-icon-size;
     line-height: 1;
     color: @light-gray;
     align-self: center;
+
+    &.show-clear-only-hover {
+      display: none;
+    }
   }
 
   &--large {
-    .component-size(@component-size-large, @font-size-large);
+    .component-size(@component-size-large, @font-size-medium);
+
+    .@{bk-prefix}-input--max-length {
+      font-size: @font-size-large;
+    }
   }
 
   &--small {
     .component-size(@component-size-small, @font-size-base);
+
+    .@{bk-prefix}-input--max-length {
+      font-size: @font-size-base;
+    }
+  }
+
+  &--default {
+    font-size: @font-size-base;
+
+    .@{bk-prefix}-input--max-length {
+      font-size: @font-size-base;
+    }
   }
 
   &.is-focused:not(.is-readonly) {
     .active();
+
+    &.is-simplicity {
+      border-color: transparent;
+      border-bottom-color: @primary-color;
+      box-shadow: none;
+    }
   }
 
-  &.is-disabled {
+  &.is-disabled input,
+  &.is-readonly input {
     .disabled();
+  }
+
+  &.is-readonly input {
+    cursor: auto;
   }
 
   &--prefix-area,
@@ -73,7 +149,6 @@
 
   &--text {
     padding: 0 @input-horizontal-padding;
-    font-size: @font-size-base;
     line-height: 1;
     color: @input-color;
     background-color: @input-bg;
@@ -92,13 +167,13 @@
       appearance: none;
     }
     // IE
-    [type=search]::-ms-clear {
+    [type='search']::-ms-clear {
       display: none;
       width: 0;
       height: 0;
     }
 
-    [type=search]::-ms-reveal {
+    [type='search']::-ms-reveal {
       display: none;
       width: 0;
       height: 0;
@@ -125,7 +200,9 @@
       display: block;
       height: 50%;
       overflow: hidden;
+      line-height: 1;
       color: @light-gray;
+      text-align: center;
     }
 
     svg {

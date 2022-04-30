@@ -25,11 +25,12 @@
  */
 
 import { mount } from '@vue/test-utils';
-import BkCollapse from '../src';
+
+import Collapse from '../src';
 
 describe('collapse.tsx', () => {
   it('renders slot default when passed', async () => {
-    const wrapper = await mount(BkCollapse, {
+    const wrapper = await mount(Collapse, {
       props: {
         list: ['Title1', 'Title2'],
       },
@@ -43,7 +44,7 @@ describe('collapse.tsx', () => {
 
 describe('collapse accordion', () => {
   it('renders only one content when accordion is true', async () => {
-    const wrapper = await mount(BkCollapse, {
+    const wrapper = await mount(Collapse, {
       props: {
         list: ['Title1', 'Title2', 'Title2'],
         accordion: true,
@@ -56,7 +57,7 @@ describe('collapse accordion', () => {
   });
 
   it('renders all active content when accordion is false', async () => {
-    const wrapper = await mount(BkCollapse, {
+    const wrapper = await mount(Collapse, {
       props: {
         list: ['Title1', 'Title2', 'Title2'],
         accordion: false,

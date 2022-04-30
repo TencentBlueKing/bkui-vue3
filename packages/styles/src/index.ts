@@ -26,6 +26,7 @@
 
 import './reset.less';
 import '@bkui-vue/alert/alert.less';
+import '@bkui-vue/affix/affix.less';
 import '@bkui-vue/backtop/backtop.less';
 import '@bkui-vue/badge/badge.less';
 import '@bkui-vue/breadcrumb/breadcrumb.less';
@@ -46,6 +47,7 @@ import '@bkui-vue/progress/progress.less';
 import '@bkui-vue/radio/radio.less';
 import '@bkui-vue/rate/rate.less';
 import '@bkui-vue/rate/star.less';
+import '@bkui-vue/swiper/swiper.less';
 import '@bkui-vue/select/select.less';
 import '@bkui-vue/sideslider/sideslider.less';
 import '@bkui-vue/switcher/switcher.less';
@@ -64,4 +66,11 @@ import '@bkui-vue/divider/divider.less';
 import '@bkui-vue/tab/tab.less';
 import '@bkui-vue/process/process.less';
 import '@bkui-vue/virtual-render/virtual-render.less';
+import '@bkui-vue/transfer/transfer.less';
+import '@bkui-vue/pagination/pagination.less';
 import '@bkui-vue/timeline/timeline.less';
+import '@bkui-vue/code-diff/code-diff.less';
+import '@bkui-vue/resize-layout/resize-layout.less';
+import '@bkui-vue/tag-input/tag-input.less';
+import '@bkui-vue/container/container.less';
+import '@bkui-vue/cascader/cascader.less';

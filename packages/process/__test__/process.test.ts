@@ -25,7 +25,9 @@
 */
 
 import { mount } from '@vue/test-utils';
+
 import Process from '../src/';
+
 const Mount = (template: string) => mount({
   components: {
     BkProcess: Process,

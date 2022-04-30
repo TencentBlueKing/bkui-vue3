@@ -25,6 +25,7 @@
 */
 
 import { mount } from '@vue/test-utils';
+
 import BkSelect from '../src';
 import BkOption from '../src/option';
 import BkOptionGroup from '../src/optionGroup';
@@ -192,7 +193,7 @@ describe('Select.tsx', () => {
       `,
     });
     expect(wrapper.findAll('.bk-option-group')).toHaveLength(2);
-    expect(wrapper.find('.bk-select-content').isVisible()).toBe(false);
+    expect(wrapper.find('.bk-select-options').isVisible()).toBe(false);
   });
 
   // 单选搜索功能

@@ -23,9 +23,26 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent, h } from 'vue';
-import Prism from 'prismjs';
-import './prism.less';
+import hljs from 'highlight.js';
+import javascript from 'highlight.js/lib/languages/javascript';
+import json from 'highlight.js/lib/languages/json';
+import xml from 'highlight.js/lib/languages/xml';
+import { defineComponent, ref, watch } from 'vue';
+
+import './code-box.less';
+
+hljs.registerLanguage('javascript', javascript);
+hljs.registerLanguage('json', json);
+hljs.registerLanguage('xml', xml);
+// hljs.addPlugin({
+//   'after:highlight': (result) => {
+//     console.error('highlighthighlighthighlight');
+//     console.error(result);
+//     result.value = result.value
+//       .replace('&lt;template&gt;', '<span class="hljs-name">&lt;template&gt;</span>');
+//   },
+// });
+
 export default defineComponent({
   name: 'CodeBox',
   props: {
@@ -35,20 +52,21 @@ export default defineComponent({
       default: 'html',
     },
   },
-  render() {
-    const prismLanguage = Prism.languages[this.language];
-    const className = 'language-'.concat(this.language);
-    return h(
-      'pre',
-      {
-        class: [className],
-      },
-      [
-        h('code', {
-          class: className,
-          innerHTML: Prism.highlight(this.code, prismLanguage),
-        }),
-      ],
+  render(props) {
+    const code = ref('');
+    watch(() => props.language, () => {
+      code.value = hljs.highlight(this.code, {
+        language: props.language,
+        ignoreIllegals: true,
+      }).value;
+    }, { immediate: true });
+
+    return (
+      <div class="markdown-body code-box">
+        <pre class="hljs">
+          <code innerHTML={code.value} />
+        </pre>
+      </div>
     );
   },
 });

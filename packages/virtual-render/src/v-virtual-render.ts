@@ -30,20 +30,20 @@
  * Copyright © 2012-2019 Tencent BlueKing. All Rights Reserved. 蓝鲸智云 版权所有
  */
 
-import { throttle } from '@bkui-vue/shared';
+import { throttle } from 'lodash';
 
 function getMatchedIndex(
   maxCount: number,
   maxHeight: number,
   groupItemCount: number,
-  callback: (index: number, items: number[]) => 0,
+  callback: (index: number, items: any[]) => 0,
 ) {
   let startIndex = 0;
   let height = 0;
   let diffHeight = 0;
   let lastHeight = 0;
   for (; startIndex < maxCount; startIndex++) {
-    lastHeight = callback(startIndex, [startIndex * groupItemCount, (startIndex + 1) * groupItemCount]);
+    lastHeight = callback(startIndex, [startIndex * groupItemCount, (startIndex + 1) * groupItemCount, 'virtual']);
     if (height + lastHeight > maxHeight) {
       diffHeight = maxHeight - height;
       break;

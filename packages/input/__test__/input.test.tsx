@@ -26,6 +26,7 @@
 
 
 import { mount } from '@vue/test-utils';
+
 import Input from '../src/index';
 describe('Input', () => {
   it('renders correctly', () => {
@@ -111,7 +112,7 @@ describe('Input', () => {
     expect(wrapper.emitted()['update:modelValue'][0][0]).toBe('');
   });
 
-  it('renders with search', () => {
+  it('renders with search input', () => {
     const wrapper = mount({
       render() {
         return (
@@ -210,7 +211,6 @@ describe('Input', () => {
     expect(wrapper.find('.bk-input--number-control').exists()).toBe(true);
     const spans = wrapper.findAll('.bk-input--number-control span');
     await spans[0].trigger('click');
-    console.log(wrapper.emitted(), wrapper.find('input').element.value);
     expect(wrapper.emitted()).toHaveProperty('update:modelValue');
     expect(wrapper.emitted()['update:modelValue'][0][0]).toBe(1);
 
@@ -287,5 +287,18 @@ describe('Input', () => {
       showWordLimit: false,
     });
     expect(wrapper.find('.bk-input--max-length').exists()).toBe(false);
+  });
+
+  it('render with textarea & showWordLimit', async () => {
+    const wrapper = mount(Input, {
+      props: {
+        type: 'textarea',
+        modelValue: 'demo',
+        maxlength: 10,
+      },
+    });
+
+    expect(wrapper.find('.bk-textarea--max-length').exists()).toBe(true);
+    expect(wrapper.find('.bk-textarea').exists()).toBe(true);
   });
 });

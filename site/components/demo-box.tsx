@@ -23,14 +23,18 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { Code, Copy, PlayShape } from '@bkui-vue/icon';
-import { defineComponent, ref, onMounted, onBeforeUnmount, getCurrentInstance, onBeforeMount } from 'vue';
-import CodeBox from './code-box';
-import BoxIcon from './box-icon';
 import ClipboardJS from 'clipboard';
-import CommonBox from './common-box';
+import { computed, defineComponent, getCurrentInstance, onBeforeMount, onBeforeUnmount, onMounted, ref } from 'vue';
+
+import { Code, Copy, DataShape, PlayShape } from '@bkui-vue/icon';
 import BkMessage from '@bkui-vue/message';
+
+import BoxIcon from './box-icon';
+import CodeBox from './code-box';
+import CommonBox from './common-box';
+
 import './demo-box.less';
+
 export default defineComponent({
   name: 'DemoBox',
   props: {
@@ -40,7 +44,7 @@ export default defineComponent({
     },
     subtitle: {
       type: String,
-      required: true,
+      default: '',
     },
     desc: {
       type: String,
@@ -58,30 +62,51 @@ export default defineComponent({
       type: String,
       required: true,
     },
+    suffix: {
+      type: String,
+      default: '.vue',
+    },
+    optionData: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   setup(props) {
     const showCode = ref(false);
+    const showConfigData = ref(false);
     const preview = ref<HTMLDivElement>(null);
     let copyInstance = null;
     const sourceCode = ref('');
     const evalCode = ref('');
     const handleShowCodeChange = () => {
       showCode.value = !showCode.value;
+      showConfigData.value = false;
     };
+
+    const handleOptionDataShow = () => {
+      showCode.value = false;
+      showConfigData.value = !showConfigData.value;
+    };
+
+    const optionData = ref('');
+    const activeCode = computed(() => (showConfigData.value ? optionData.value : sourceCode.value));
+    const activeLanguage = computed(() => (showCode.value ? props.language : 'json'));
     onBeforeMount(async () => {
       if (process.env.NODE_ENV === 'development') {
         // evalCode.value = (await import(/* @vite-ignore */
         // `../views/${props.componentName}/${props.demoName}.vue`)).default;
-        sourceCode.value = (await import(/* @vite-ignore */ `../views/${props.componentName}/${props.demoName}.vue?raw`)).default;
+        sourceCode.value = (await import(/* @vite-ignore */ `../views/${props.componentName}/${props.demoName}${props.suffix}?raw`)).default;
         // const app = createApp(evalCode.value as any);
         // app.mount(preview.value);
       } else {
-        sourceCode.value = await fetch(`../views/${props.componentName}/${props.demoName}.vue`).then(res => res.text());
+        sourceCode.value = await fetch(`../views/${props.componentName}/${props.demoName}${props.suffix}`).then(res => res.text());
       }
+
+      optionData.value = JSON.stringify(props.optionData, null, 4);
     });
     onMounted(() => {
       copyInstance = new ClipboardJS((getCurrentInstance().refs.copyBtn as any).$el, {
-        text: () => sourceCode.value,
+        text: () => activeCode.value,
       });
       ['success', 'error'].forEach((theme) => {
         copyInstance.on(theme, () => BkMessage({
@@ -93,13 +118,18 @@ export default defineComponent({
     onBeforeUnmount(() => {
       copyInstance?.destroy();
     });
+
     return {
       showCode,
       handleShowCodeChange,
+      handleOptionDataShow,
       copyInstance,
       sourceCode,
       evalCode,
       preview,
+      showConfigData,
+      activeCode,
+      activeLanguage,
     };
   },
   render() {
@@ -121,12 +151,18 @@ export default defineComponent({
               active={this.showCode}>
               <Code/>
             </BoxIcon>
+            <BoxIcon
+              tips='配置数据'
+              onClick={this.handleOptionDataShow}
+              active={this.showConfigData}>
+              <DataShape/>
+            </BoxIcon>
             <BoxIcon tips='copy' ref="copyBtn">
               <Copy/>
             </BoxIcon>
           </div>,
-          <div class="eample-code" style={{ display: this.showCode ? 'block' : 'none' }}>
-            <CodeBox code={this.sourceCode} language={this.language}/>
+          <div class="eample-code" style={{ display: (this.showCode || this.showConfigData) ? 'block' : 'none' }}>
+            <CodeBox code={this.activeCode} language={this.activeLanguage}/>
           </div>,
         ]
       }

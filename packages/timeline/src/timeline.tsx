@@ -25,6 +25,7 @@
  */
 
 import { defineComponent, ExtractPropTypes, onMounted, ref } from 'vue';
+
 import { classes, PropTypes } from '@bkui-vue/shared';
 
 const timelineProps = {

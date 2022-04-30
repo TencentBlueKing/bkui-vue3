@@ -23,32 +23,33 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+
 import {
-  reactive,
-  ref,
+  type ComponentInternalInstance,
+  type InjectionKey,
+  type Ref,
   computed,
-  inject,
-  onMounted,
-  onBeforeUnmount,
   getCurrentInstance,
+  inject,
   nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch,
 } from 'vue';
-import type {
-  Ref,
-  InjectionKey,
-  ComponentInternalInstance,
-} from 'vue';
+
 import {
   EMPTY_OBJ,
   isEmptyObj,
 } from '@bkui-vue/shared';
+
+import type {
+  CheckboxProps,
+} from './checkbox';
 import type {
   ICheckboxGroupContext,
   ICheckboxInstance,
 } from './type';
-import type {
-  CheckboxProps,
-} from './checkbox';
 
 export const checkboxGroupKey: InjectionKey<ICheckboxGroupContext> = Symbol('CheckboxGroup');
 
@@ -56,10 +57,10 @@ export function useFocus(): [Ref<boolean>, { blur: () => void, focus: () => void
 export function useFocus() {
   const isFocus = ref<boolean>(false);
   const blur = () => {
-    isFocus.value = true;
+    isFocus.value = false;
   };
   const focus = () => {
-    isFocus.value = false;
+    isFocus.value = true;
   };
   return [
     isFocus,
@@ -82,36 +83,7 @@ export const useCheckbox = () => {
   const checkboxGroup = inject<ICheckboxGroupContext>(checkboxGroupKey, EMPTY_OBJ);
   const isGroup = !isEmptyObj(checkboxGroup);
 
-  const state = reactive({
-    isLocalChecked: props.checked,
-  });
-
-  // 选中状态
-  const isChecked  = computed<boolean>(() => {
-    if (isGroup) {
-      return checkboxGroup.state.localValue.includes(props.label);
-    } if (props.modelValue !== undefined) {
-      // 值判断
-      if (props.modelValue === props.label || props.modelValue === props.trueLabel) {
-        return true;
-      }
-    }
-    return state.isLocalChecked;
-  });
-
-  state.isLocalChecked = isChecked.value;
-
-  const value = computed<CheckboxProps['label']>(() => {
-    if (isGroup) {
-      // 配置 checkbox-group 使用 label 作为值
-      return isChecked.value ? props.label : '';
-    }
-
-    if (isChecked.value) {
-      return props.trueLabel !== '' ? props.trueLabel : props.label;
-    }
-    return props.falseLabel !== '' ? props.falseLabel : '';
-  });
+  const isChecked = ref<boolean>(props.checked);
 
   // 禁用状态
   const isDisabled = computed<boolean>(() => {
@@ -121,25 +93,47 @@ export const useCheckbox = () => {
     return props.disabled;
   });
 
+  // 响应modelValue
+  if (isGroup) {
+    watch(() => checkboxGroup.props.modelValue, (modelValue) => {
+      isChecked.value = modelValue.includes(props.label);
+    }, {
+      deep: true,
+    });
+  } else {
+    watch(() => props.modelValue, (modelValue) => {
+      if (modelValue === '') {
+        return;
+      }
+      isChecked.value = modelValue === props.trueLabel;
+    }, {
+      immediate: true,
+    });
+  }
+
+  const setChecked = (value = true) => {
+    isChecked.value = value;
+  };
+
   // 值更新
   const handleChange = (event: Event) => {
     if (isDisabled.value) {
       return;
     }
     const $targetInput = event.target as HTMLInputElement;
-    state.isLocalChecked = $targetInput.checked;
+    isChecked.value = $targetInput.checked;
 
-    emit('change', value.value);
-    emit('update:modelValue', value.value);
+    const nextValue = isChecked.value ? props.trueLabel : props.falseLabel;
+    emit('change', nextValue);
+    emit('update:modelValue', nextValue);
     // 更新 checkbox-group
     if (isGroup) {
-      checkboxGroup.handleChange(state.isLocalChecked, props.label);
+      checkboxGroup.handleChange();
     }
 
     nextTick(() => {
       // 选中状态保持同步
       if ($targetInput.checked !== isChecked.value) {
-        state.isLocalChecked = isChecked.value;
         $targetInput.checked = isChecked.value;
       }
     });
@@ -158,9 +152,9 @@ export const useCheckbox = () => {
   });
 
   return {
-    value,
     isChecked,
     isDisabled,
+    setChecked,
     handleChange,
   };
 };

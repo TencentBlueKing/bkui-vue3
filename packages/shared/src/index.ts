@@ -26,12 +26,13 @@
  */
 import { App, Plugin } from 'vue';
 export * from './z-index-manager';
-export * from './bk-popover';
-export * from './bk-pop-manager';
-export * from './bk-mask-manager';
-export * from './bk-helper-core';
+export * from './popover';
+export * from './pop-manager';
+export * from './mask-manager';
+export * from './helper';
 export * from './vue-types';
 export * from './scrollbar-width';
+export * from './utils';
 export function classes(dynamicCls: object, constCls = ''): string {
   return Object.entries(dynamicCls).filter(entry => entry[1])
     .map(entry => entry[0])
@@ -41,7 +42,7 @@ export function classes(dynamicCls: object, constCls = ''): string {
 
 export const EMPTY_OBJ = Object.create({});
 
-export const noop = () => {};
+export const noop = () => { };
 
 export const renderEmptyVNode = () => null;
 
@@ -55,8 +56,9 @@ export interface OriginComponent {
 
 export const withInstall = <T extends OriginComponent>(
   component: T) => {
-  component.install = function (app: App) {
-    app.component(component.name, component);
+  component.install = function (app: App, { prefix } = {}) {
+    const pre = app.config.globalProperties.bkUIPrefix || prefix || 'Bk';
+    app.component(pre + component.name, component);
   };
   return component as typeof component & Plugin;
 };
@@ -69,7 +71,7 @@ export const withInstallProps = <T extends OriginComponent, K extends Record<str
     const pre = app.config.globalProperties.bkUIPrefix || prefix || 'Bk';
     app.component(pre + component.name, component);
     !isProps && Object.values(childComponents).forEach((child: any) => {
-      app.component(pre +  child.name, child);
+      app.component(pre + child.name, child);
     });
   };
   Object.keys(childComponents).forEach((key) => {
@@ -123,4 +125,33 @@ export function debounce(delay = 300, fn: Function, immediate = false) {
   };
 
   return debounced;
+}
+
+/**
+ * 过滤（去除）对象中的某个属性
+ * @param data 需要处理的对象
+ * @param filter 过滤关键字
+ * @returns object 去除属性之后的对象
+ */
+export function filterProperty(data: object, filter: string[]) {
+  return JSON.parse(JSON.stringify(data, (key: string, value: any) => {
+    if (filter.includes(key)) {
+      return undefined;
+    }
+    return value;
+  }));
+};
+
+export function arrayEqual(arr1: string[] = [], arr2: string[] = []) {
+  if (arr1.length !== arr2.length) {
+    return false;
+  }
+
+  for (let i = 0; i < arr1.length; i++) {
+    if (arr1[i] !== arr2[i]) {
+      return false;
+    }
+  }
+
+  return true;
 }

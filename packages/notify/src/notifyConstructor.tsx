@@ -24,18 +24,23 @@
 * IN THE SOFTWARE.
 */
 
-import { defineComponent, computed, ref, onMounted, onUnmounted, watch, Transition } from 'vue';
-import { PropTypes, bkZIndexManager } from '@bkui-vue/shared';
-import { Error, Close, Info, Warn, Success } from '@bkui-vue/icon';
+import { computed, defineComponent, onMounted, onUnmounted, ref, Transition, watch } from 'vue';
+
+import { Close, Error, Info, Success, Warn } from '@bkui-vue/icon';
+import { bkZIndexManager, PropTypes } from '@bkui-vue/shared';
 
 const notifyProps = {
   id: PropTypes.string.def(''),
   title: PropTypes.string.def(''),
   message: PropTypes.string.def(''),
-  theme: PropTypes.theme(['primary', 'warning', 'success', 'danger']).def('primary'),
+  theme: PropTypes.theme(['primary', 'warning', 'success', 'error']).def('primary'),
   position: PropTypes.position().def('top-right'),
-  delay: PropTypes.number.def(3000),
-  offset: PropTypes.number.def(0),
+  delay: PropTypes.number.def(5000),
+  dismissable: PropTypes.bool.def(true),
+  offsetX: PropTypes.number.def(100),
+  offsetY: PropTypes.number.def(30),
+  spacing: PropTypes.number.def(10),
+  extCls: PropTypes.string.def(''),
   onClose: PropTypes.func,
 };
 
@@ -44,20 +49,22 @@ export default defineComponent({
   props: notifyProps,
   emits: ['destory'],
   setup(props, { emit }) {
-    const classNames = computed(() => [
-      'bk-notify',
-      `bk-notify-${props.theme}`,
-    ]);
     const zIndex = bkZIndexManager.getMessageNextIndex();
 
     const horizontalClass = computed(() => (props.position.indexOf('right') > 1 ? 'right' : 'left'));
 
     const verticalProperty = computed(() => (props.position.startsWith('top') ? 'top' : 'bottom'));
     const styles = computed(() => ({
-      [horizontalClass.value]: '10px',
-      [verticalProperty.value]: `${props.offset}px`,
+      [horizontalClass.value]: `${props.offsetX}px`,
+      [verticalProperty.value]: `${props.offsetY}px`,
       zIndex,
     }));
+
+    const classNames = computed(() => [
+      'bk-notify',
+      `bk-notify-${props.theme}`,
+      horizontalClass.value,
+    ]);
 
     const visible = ref(false);
 
@@ -73,7 +80,7 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      startTimer();
+      props.delay && startTimer();
       visible.value = true;
     });
 
@@ -100,7 +107,7 @@ export default defineComponent({
         primary: <Info></Info>,
         warning: <Warn></Warn>,
         success: <Success></Success>,
-        danger: <Close></Close>,
+        error: <Close></Close>,
       };
       return iconMap[this.theme];
     };
@@ -116,7 +123,7 @@ export default defineComponent({
             {this.title ? <h3 class="bk-notify-content-header">{this.title}</h3> : ''}
             <div class="bk-notify-content-text">{this.message}</div>
           </div>
-          <Error class="bk-notify-icon bk-notify-close" onClick={this.handleClose}></Error>
+          {this.dismissable && <Error class="bk-notify-icon bk-notify-close" onClick={this.handleClose}></Error>}
         </div>
       </Transition>
     );

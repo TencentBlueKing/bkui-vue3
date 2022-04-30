@@ -25,8 +25,9 @@
 */
 
 import { mount } from '@vue/test-utils';
-import BkButton from '../src/';
+
 import BkLoading from '../../loading/src/';
+import BkButton from '../src/';
 
 describe('BkButton.tsx', () => {
   const label = 'button';

@@ -24,12 +24,14 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent } from 'vue';
 import type { ExtractPropTypes } from 'vue';
+import { defineComponent } from 'vue';
+
 import {
   classes,
   PropTypes,
 } from '@bkui-vue/shared';
+
 import {
   useFocus,
   useRadio,
@@ -55,7 +57,7 @@ export default defineComponent({
   ],
   setup() {
     const [
-      isFocus,
+      isFocused,
       {
         blur: handleBlur,
         focus: handleFocus,
@@ -63,28 +65,29 @@ export default defineComponent({
     ] = useFocus();
 
     const  {
-      name,
-      isCheck,
+      isChecked,
       isDisabled,
-      handlerChange,
+      setChecked,
+      handleChange,
     } = useRadio();
 
     return {
-      isFocus,
+      isFocused,
       realName: name,
-      isCheck,
+      isChecked,
       isDisabled,
+      setChecked,
       handleBlur,
       handleFocus,
-      handlerChange,
+      handleChange,
     };
   },
   render() {
     const radioClass = classes({
       'bk-radio-button': true,
-      'is-focus': this.isFocus,
+      'is-focused': this.isFocused,
       'is-disabled': this.isDisabled,
-      'is-checked': this.isCheck,
+      'is-checked': this.isChecked,
     });
 
     return (
@@ -95,13 +98,12 @@ export default defineComponent({
           class="bk-radio-button-input"
           type="radio"
           tabindex="0"
-          name={this.realName}
           value={this.label as any}
-          checked={this.isCheck}
+          checked={this.isChecked}
           disabled={this.isDisabled}
           onFocus={this.handleFocus}
           onBlur={this.handleBlur}
-          onChange={this.handlerChange} />
+          onChange={this.handleChange} />
         <div class="bk-radio-button-text">
           {this.$slots.default ? this.$slots.default() : this.label}
         </div>

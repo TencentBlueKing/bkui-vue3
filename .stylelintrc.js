@@ -29,6 +29,9 @@ module.exports = {
     'stylelint-scss',
     'stylelint-order',
   ],
+  extends:[
+    "stylelint-config-recommended-vue"
+  ],
   rules: {
     // Base rules
     indentation: 2,
@@ -227,4 +230,14 @@ module.exports = {
       'speak',
     ],
   },
+  overrides: [
+    {
+      files: ['*.less', './**/*.less'],
+      customSyntax: 'postcss-less',
+    },
+    {
+      files: ['*.vue', './**/*.vue'],
+      customSyntax: 'postcss-html',
+    }
+  ]
 };
