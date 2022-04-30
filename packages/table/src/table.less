@@ -8,8 +8,14 @@
   overflow: hidden;
   border-top: 1px solid @table-border-color;
   border-bottom: 1px solid @table-border-color;
+  position: relative;
+
   .@{bk-prefix}-table-body {
     overflow: auto;
+    position: relative;
+    &::-webkit-scrollbar {
+      height: 6px;
+    }
   }
 
   .@{bk-prefix}-table-head,
@@ -24,17 +30,30 @@
       th,
       td {
         min-width: 80px;
+        clear: both;
+        padding: 0 15px;
 
         .cell {
           display: flex;
           align-items: center;
-          padding: 0 15px;
           overflow: hidden;
           line-height: var(--row-height);
           color: @table-body-font-color;
           text-align: left;
           text-overflow: ellipsis;
           white-space: nowrap;
+        }
+
+        &.column_fixed {
+          position: sticky;
+          background: #fff;
+
+          &.column_fixed_left {
+            left: 0;
+          }
+          &.column_fixed_right {
+            right: 0;
+          }
         }
       }
 
@@ -47,6 +66,10 @@
           &:hover {
             background: @table-row-active-bg-color;
           }
+
+          &.column_fixed {
+            transform: translateX(var(--scroll-left));
+          }
         }
       }
 
@@ -54,7 +77,7 @@
         tr {
           td {
             .cell {
-              display: inline-block;
+              display: block;
               width: 100%;
             }
           }
@@ -73,6 +96,8 @@
 
   .@{bk-prefix}-table-head {
     position: relative;
+    transform: translateX(var(--scroll-head-left));
+
     .table-head-settings {
       .bk-popover-reference {
         cursor: pointer;
@@ -147,6 +172,26 @@
 
   .@{bk-prefix}-table-fixed {
     width: 100%;
+    pointer-events: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+
+    .column_fixed {
+      position: absolute;
+      &.column_fixed_left {
+        top: 0;
+        left: 0;
+        box-shadow: 0 0 10px rgb(0 0 0 / 12%);
+      }
+      &.column_fixed_right {
+        top: 0;
+        right: 0;
+        box-shadow: 0 0 10px rgb(0 0 0 / 12%);
+      }
+    }
   }
 
   colgroup {

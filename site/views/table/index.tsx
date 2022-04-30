@@ -37,13 +37,14 @@ import bordered from './bordered.vue';
 import cellRender from './cell-render';
 import DataEmpty from './data-empty.vue';
 import event from './event.vue';
+import fixed from './fixed.vue';
 import { DATA_COLUMNS, DATA_TABLE } from './options';
 import pagination from './pagination.vue';
 import RemotePagination from './remotePagination.vue';
 import virtualRender from './virtual-render.vue';
 
 export default defineComponent({
-  components: { basic, bordered, virtualRender, cellRender, event, pagination, RemotePagination, DataEmpty },
+  components: { basic, bordered, virtualRender, cellRender, event, pagination, RemotePagination, DataEmpty, fixed },
   render() {
     const menuPropsJson = resolvePropsToDesData(tableProps);
 
@@ -127,6 +128,16 @@ export default defineComponent({
         demoName: 'data-empty',
       },
       component: () => <data-empty></data-empty>,
+    },
+    {
+      attrs: {
+        title: '固定列',
+        subtitle: '横纵内容过多时，可选择固定列',
+        desc: 'props: column - fixed',
+        componentName: 'table',
+        demoName: 'fixed',
+      },
+      component: () => <fixed></fixed>,
     }];
 
     return (

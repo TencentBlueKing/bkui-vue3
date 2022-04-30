@@ -30,7 +30,7 @@ import { classes, resolveClassName } from '@bkui-vue/shared';
 import { TablePropTypes } from './props';
 import { resolveHeadConfig, resolveNumberOrStringToPix, resolvePropBorderToClassStr, resolvePropVal } from './utils';
 
-export const useClass = (props: TablePropTypes, root?) => {
+export const useClass = (props: TablePropTypes, root?, reactiveProp?) => {
   const autoHeight = ref(200);
   const tableClass = computed(() => (classes({
     [resolveClassName('table')]: true,
@@ -41,9 +41,11 @@ export const useClass = (props: TablePropTypes, root?) => {
   });
 
   const config = resolveHeadConfig(props);
-  const headStyle = {
+  const headStyle = computed(() => ({
     '--row-height': `${resolvePropVal(config, 'height', ['thead'])}px`,
-  };
+    '--scroll-head-left': `-${reactiveProp.scrollTranslateX}px`,
+    '--scroll-left': `${reactiveProp.scrollTranslateX}px`,
+  }));
 
   const contentClass = classes({
     [resolveClassName('table-body')]: true,

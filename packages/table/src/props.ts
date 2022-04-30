@@ -55,6 +55,10 @@ export const tableProps = {
     render: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
     width: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]),
     type: PropTypes.commonType(['selection', 'index', 'expand', 'none'], 'columnType').def('none'),
+    fixed: PropTypes.oneOfType([
+      PropTypes.bool,
+      PropTypes.commonType(['left', 'right'], 'fixed'),
+    ]).def(false),
     sort: PropTypes.oneOfType([PropTypes.shape({
       sortFn: PropTypes.func.def(undefined),
       sortScope: PropTypes.commonType(Object.values(SortScope)).def(SortScope.CURRENT),
@@ -191,6 +195,7 @@ export type Column = {
   render?: Function | string;
   width?: number | string;
   type?: string;
+  fixed?: string | boolean;
   sort?: {
     sortFn?: Function;
     sortScope?: string;
