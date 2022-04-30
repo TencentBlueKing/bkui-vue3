@@ -56,29 +56,15 @@
   </div>
 </template>
 
-<script>
-  import { defineComponent, ref } from 'vue';
+<script setup>
+  import { ref } from 'vue';
 
   import BkButton from '@bkui-vue/button';
   import BkDialog from '@bkui-vue/dialog';
 
-  export default defineComponent({
-    name: 'SiteDialog',
-    components: {
-      BkButton,
-      BkDialog,
-    },
-    setup() {
-      const exampleSetting = ref({
-        dialog: {
-          isShow: false,
-        },
-      });
-      return { exampleSetting };
+  const exampleSetting = ref({
+    dialog: {
+      isShow: false,
     },
   });
 </script>
-
-<style>
-
-</style>

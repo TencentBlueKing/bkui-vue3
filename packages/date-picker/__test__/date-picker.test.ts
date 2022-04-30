@@ -27,6 +27,7 @@
 import { mount } from '@vue/test-utils';
 
 import DatePicker from '../src';
+
 describe('DatePicker.tsx', () => {
   it('test', async () => {
     const wrapper = await mount(DatePicker);

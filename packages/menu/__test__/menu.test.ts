@@ -27,6 +27,7 @@
 import { mount } from '@vue/test-utils';
 
 import Menu from '../src';
+
 describe('Menu.tsx', () => {
   it('test', async () => {
     const wrapper = await mount(Menu);

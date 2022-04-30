@@ -94,7 +94,7 @@
   })
 
   
-  each(@sizeSelectors, {
+    each(@sizeSelectors, {
     @sizeBtnMinWidth: '@{value}BtnMinWidth';
     @sizeBtnHeight: '@{value}BtnHeight';
     @sizeBtnPadding: '@{value}BtnPadding';
@@ -105,6 +105,7 @@
       padding: 0 @@sizeBtnPadding;
     }
   });
+
   &:not(.is-text) {
     .@{bk-prefix}-button-loading {
       &:not(:last-child) {

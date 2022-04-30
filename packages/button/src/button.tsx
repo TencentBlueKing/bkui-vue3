@@ -74,7 +74,6 @@ export default defineComponent({
         'no-slot': !showSlot,
       }, `${themeCls} ${btnClsPrefix} ${hoverTheme}`);
     });
-    console.log(btnCls.value, props);
     const loadingTheme = computed(() => {
       if (props.text || props.outline || props.hoverTheme) {
         if (isHover.value && !props.text) return 'white';

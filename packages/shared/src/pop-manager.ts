@@ -42,9 +42,10 @@ class BKPopIndexManager {
    * @param content 弹窗内容
    * @param showMask 是否显示遮罩
    * @param appendStyle 追加样式
+   * @param transfer 是否显示在body内（即是否显示在div#app内，默认为false）
    * @returns
    */
-  public show(content?: HTMLElement, showMask = true, appendStyle = {}) {
+  public show(content?: HTMLElement, showMask = true, appendStyle = {}, transfer = false) {
     if (!content) {
       console.warn('pop show error: content is null or undefined');
       return;
@@ -54,7 +55,7 @@ class BKPopIndexManager {
     content.setAttribute(this.uuidAttrName, uuid);
     this.popInstanceList.push({ uuid, zIndex, content, showMask, appendStyle });
     showMask && bKMaskManager.backupActiveInstance();
-    bKMaskManager.show(content, zIndex, showMask, appendStyle, uuid);
+    bKMaskManager.show(content, zIndex, showMask, appendStyle, uuid, transfer);
   }
 
   /**
@@ -83,17 +84,17 @@ class BKPopIndexManager {
    * 关闭指定弹窗
    * @param content { HTMLElement } 关闭弹窗内容
    * **/
-  public hide(content?: HTMLElement) {
+  public hide(content?: HTMLElement, transfer = false) {
     /** 检查当前实例是否存在于已缓存列表 */
     const uuid = content?.getAttribute(this.uuidAttrName);
     if (uuid) {
       const itemIndex = this.popInstanceList.findIndex(item => item.uuid === uuid);
       if (itemIndex >= 0) {
-        this.popInstanceList[itemIndex].content.remove();
+        if (!transfer) this.popInstanceList[itemIndex].content.remove();
         this.popInstanceList.splice(itemIndex, 1);
         bKMaskManager.popIndexStore(uuid);
         if (!this.popInstanceList.length) {
-          bKMaskManager.hide();
+          bKMaskManager.hide(transfer);
         } else {
           this.popHide(false);
         }

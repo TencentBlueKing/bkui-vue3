@@ -232,6 +232,16 @@ export default defineComponent({
       pagination,
       throttleDelay: props.throttleDelay,
     };
+
+    const reset = () => {
+      handleChangeListConfig();
+      afterListDataReset();
+    };
+
+    ctx.expose({
+      reset,
+    });
+
     return () => h(
       // @ts-ignore:next-line
       renderAs || 'div',

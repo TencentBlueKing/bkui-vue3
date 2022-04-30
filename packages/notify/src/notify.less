@@ -29,7 +29,7 @@
     color: @success-color;
   }
 
-  &.@{bk-prefix}-notify-danger .@{bk-prefix}-notify-icon {
+  &.@{bk-prefix}-notify-error .@{bk-prefix}-notify-icon {
     color: @danger-color;
   }
 
@@ -54,5 +54,23 @@
   .bk-notify-content-text {
     display: inline-block;
     padding-left: 23px;
+  }
+}
+
+.bk-notify-fade-enter-active,
+.bk-notify-fade-leave-active {
+  transition: transform .3s linear, opacity .2s linear;
+}
+
+.bk-notify-fade-enter-from,
+.bk-notify-fade-leave-to {
+  opacity: 0;
+
+  &.right {
+    transform: translateX(100%);
+  }
+
+  &.left {
+    transform: translateX(-100%);
   }
 }

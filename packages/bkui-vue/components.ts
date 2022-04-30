@@ -25,6 +25,7 @@
 */
 export { default as Alert }  from '@bkui-vue/alert';
 export { default as AnimateNumber } from '@bkui-vue/animate-number';
+export { default as Affix } from '@bkui-vue/Affix';
 export { default as Backtop } from '@bkui-vue/backtop';
 export { default as Badge } from '@bkui-vue/badge';
 export { default as Breadcrumb, BkBreadcrumbItem as BreadcrumbItem } from '@bkui-vue/breadcrumb';
@@ -68,3 +69,4 @@ export { default as Dropdown, BkDropdownMenu as DropdownMenu, BkDropdownItem as 
 export { default as Link } from '@bkui-vue/link';
 export { default as Backtop } from '@bkui-vue/backtop';
 export { default as FixedNavbar } from '@bkui-vue/fixed-navbar';
+export { default as Cascader } from '@bkui-vue/cascader';

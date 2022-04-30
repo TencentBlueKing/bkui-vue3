@@ -1,67 +1,51 @@
 <template>
   <div>
     <bk-button
-      @click="() => exampleSetting.dialog.isShow = true"
+      @click="() => exampleSetting.isShow = true"
     >
       异步关闭
     </bk-button>
     <bk-dialog
-      :is-show="exampleSetting.dialog.isShow"
+      :is-show="exampleSetting.isShow"
       :title="'文本标题'"
       :theme="'primary'"
-      :confirm-text="exampleSetting.dialog.confirmText"
-      :is-loading="exampleSetting.dialog.loading"
-      @closed="() => exampleSetting.dialog.isShow = false"
+      :confirm-text="exampleSetting.confirmText"
+      :is-loading="exampleSetting.loading"
+      @closed="() => exampleSetting.isShow = false"
       @confirm="handleConfirm"
     >
-      <div> 点击确定后 {{ exampleSetting.dialog.countdown }} 秒关闭</div>
+      <div> 点击确定后 {{ exampleSetting.countdown }} 秒关闭</div>
     </bk-dialog>
   </div>
 </template>
 
-<script>
-  import { defineComponent, ref } from 'vue';
+<script setup>
+  import { ref } from 'vue';
 
   import BkButton from '@bkui-vue/button';
   import BkDialog from '@bkui-vue/dialog';
 
-  export default defineComponent({
-    name: 'SiteDialog',
-    components: {
-      BkButton,
-      BkDialog,
-    },
-    setup() {
-      const exampleSetting = ref({
-        dialog: {
-          isShow: false,
-          loading: false,
-          countdown: 3,
-          timer: null,
-          confirmText: '确定',
-        },
-      });
-      return { exampleSetting };
-    },
-    methods: {
-      handleConfirm() {
-        this.exampleSetting.dialog.confirmText = '';
-        this.exampleSetting.dialog.loading = true;
-        this.exampleSetting.dialog.timer = setInterval(() => {
-          this.exampleSetting.dialog.countdown -= 1;
-          if (this.exampleSetting.dialog.countdown === 0) {
-            this.exampleSetting.dialog.isShow = false;
-            this.exampleSetting.dialog.loading = false;
-            this.exampleSetting.dialog.confirmText = '确定';
-            this.exampleSetting.dialog.countdown = 3;
-            clearInterval(this.exampleSetting.dialog.timer);
-          }
-        }, 1000);
-      },
-    },
+  const exampleSetting = ref({
+    isShow: false,
+    loading: false,
+    countdown: 3,
+    timer: null,
+    confirmText: '确定',
   });
+
+  const handleConfirm = () => {
+    exampleSetting.value.confirmText = '';
+    exampleSetting.value.loading = true;
+    exampleSetting.value.timer = setInterval(() => {
+      exampleSetting.value.countdown -= 1;
+      if (exampleSetting.value.countdown === 0) {
+        exampleSetting.value.isShow = false;
+        exampleSetting.value.loading = false;
+        exampleSetting.value.confirmText = '确定';
+        exampleSetting.value.countdown = 3;
+        clearInterval(exampleSetting.value.timer);
+      }
+    }, 1000);
+  };
 </script>
 
-<style>
-
-</style>

@@ -549,6 +549,18 @@ const routes: RouteRecordRaw[] = [
     },
   },
   /**
+   * @description:侧边栏
+   */
+  {
+  	  path: '/sideslider',
+  	  name: 'sideslider',
+  	  component: () => import('../views/sideslider'),
+  	  meta: {
+  	    group: NavGroupMeta.Feedback,
+  	    navName: 'Sideslider 侧栏',
+  	  },
+  },
+  /**
    * @description:穿梭框
    */
   {
@@ -630,6 +642,15 @@ const routes: RouteRecordRaw[] = [
       group: NavGroupMeta.Feedback,
       navName: 'Dialog 对话框',
     },
+  },
+  {
+    path: '/cascader',
+    name: 'cascader',
+    meta: {
+      group: NavGroupMeta.Others,
+      navName: 'Cascader 级联选择',
+    },
+    component: () => import('../views/cascader/index'),
   },
 ];
 

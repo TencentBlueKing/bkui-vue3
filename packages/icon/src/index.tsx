@@ -40,6 +40,7 @@ export { default as ArrowsLeft } from '../icons/arrows-left';
 export { default as ArrowsRight } from '../icons/arrows-right';
 export { default as Bk } from '../icons/bk';
 export { default as Circle } from '../icons/circle';
+export { default as CloseLine } from '../icons/close-line';
 export { default as Close } from '../icons/close';
 export { default as Code } from '../icons/code';
 export { default as CogShape } from '../icons/cog-shape';

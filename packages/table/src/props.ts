@@ -56,12 +56,12 @@ export const tableProps = {
     width: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]),
     type: PropTypes.commonType(['selection', 'index', 'expand', 'none'], 'columnType').def('none'),
     sort: PropTypes.oneOfType([PropTypes.shape({
-      sortFn: PropTypes.func.def(null),
+      sortFn: PropTypes.func.def(undefined),
       sortScope: PropTypes.commonType(Object.values(SortScope)).def(SortScope.CURRENT),
     }), PropTypes.bool]).def(false),
     filter: PropTypes.oneOfType([PropTypes.shape({
       list: PropTypes.arrayOf(PropTypes.any).def([]),
-      filterFn: PropTypes.func.def(null),
+      filterFn: PropTypes.func.def(undefined),
     }), PropTypes.bool]).def(false),
   })),
 
@@ -118,7 +118,7 @@ export const tableProps = {
   thead: PropTypes.shape<Thead>({
     height: PropTypes.number.def(40),
     isShow: PropTypes.bool.def(true),
-    cellFn: PropTypes.func.def(null),
+    cellFn: PropTypes.func.def(undefined),
   }),
 
   /**
@@ -149,7 +149,41 @@ export const tableProps = {
    * 空数据展示
    */
   emptyText: PropTypes.string.def('暂无数据'),
+
+  /**
+   * bk-table-setting-content
+   */
+  settings: PropTypes.oneOfType([PropTypes.bool, PropTypes.shape<Settings>({
+    fields: PropTypes.shape<Field[]>([]).def(undefined),
+    checked: PropTypes.shape<string[]>([]).def(undefined),
+    limit: PropTypes.number.def(undefined),
+    size: PropTypes.size(['small', 'default', 'large']).def('default'),
+    sizeList: PropTypes.shape<SizeItem[]>([]).def(undefined),
+  })]).def(false),
 };
+
+/**
+ * 配置自定义行高选项
+ */
+export type SizeItem = {
+  value?: string;
+  label?: string;
+  height?: number;
+};
+
+export type Settings = {
+  fields?: Field[];
+  checked?: string[];
+  limit?: number;
+  size?: string;
+  sizeList?: SizeItem[]
+};
+
+export type Field = {
+  label: string;
+  field?: string;
+};
+
 
 export type Column = {
   label: Function | string;
@@ -175,6 +209,7 @@ export type Thead = {
 
 export type GroupColumn = {
   calcWidth?: number;
+  isHidden?: boolean;
 } & Column;
 
 export type Columns = ReadonlyArray<Column>;
