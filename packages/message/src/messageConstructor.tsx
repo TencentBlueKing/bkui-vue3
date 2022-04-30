@@ -105,7 +105,7 @@ export default defineComponent({
     };
 
     return (
-      <Transition name="bk-fade">
+      <Transition name="bk-message-fade">
         <div
           v-show={this.visible}
           class={this.classNames}

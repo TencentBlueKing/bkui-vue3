@@ -23,41 +23,39 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+export interface IPanel {
+  id: string,
+  name: string,
+  disabled?: boolean,
+  children?: IPanel
+}
 
-import { defineComponent } from 'vue';
+export interface INodeConfig {
+  multiple: boolean,
+}
 
-import BKFixedNavbar from '@bkui-vue/fixed-navbar';
+export interface INode {
+  checked: boolean;
+  children?: (null)[] | null;
+  config: Config;
+  data: Data;
+  hasChildren: boolean;
+  id: string;
+  level: number;
+  loading: boolean;
+  name: string;
+  parent?: INode;
+}
 
-export default defineComponent({
-  name: 'SiteAlert',
-  setup() {
-    const navItems = [
-      {
-        icon: 'bkdata-icon icon-weixin-shape',
-        text: '联系',
-        tooltip: '可以通过BK助手联系我们',
-        action: () => {
-          window.open('wxwork://message/?username=BK-MagicBox');
-        },
-      },
-      {
-        icon: 'bkdata-icon icon-icon-help-document-fill',
-        text: '反馈',
-        action: () => {
-          window.open('/');
-        },
-      },
-    ];
-
-    return {
-      navItems,
-    };
-  },
-  render() {
-    return (
-      <div>
-        <BKFixedNavbar nav-items={this.navItems}></BKFixedNavbar>
-      </div>
-    );
-  },
-});
+export interface IConfig {
+  checkAnyLevel: boolean;
+  childrenKey: string;
+  clearable: boolean;
+  disabled: boolean;
+  idKey: string;
+  isRemote: boolean;
+  multiple: boolean;
+  nameKey: string;
+  showCompleteName: boolean;
+  trigger: string;
+}

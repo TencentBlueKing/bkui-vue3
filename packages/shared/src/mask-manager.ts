@@ -101,8 +101,12 @@ export class BkMaskManager {
    * @param zIndex z-index
    * @param showMask 是否显示遮罩
    * @param appendStyle 追加样式
+   * @param transfer 是否显示将内容加入遮罩下
    */
-  public show(content?: HTMLElement, zIndex?: number, showMask = true, appendStyle = {}, uuid: string | null = null) {
+  public show(
+    content?: HTMLElement, zIndex?: number, showMask = true, appendStyle = {}, uuid: string | null = null,
+    transfer = false,
+  ) {
     const uid = uuid ?? random(16);
     // @ts-ignore
     const localZIndex: number = /-?\d+/.test(`${zIndex}`) ? zIndex : bkZIndexManager.getModalNextIndex();
@@ -133,16 +137,19 @@ export class BkMaskManager {
     this.backupMask.style.setProperty('z-index', `${localZIndex - 1}`);
 
     if (content) {
+      if (transfer) content.style.setProperty('z-index', `${localZIndex + 1}`); // 表明内容不在遮罩下，内容区z-index + 1
       this.activeInstance = content;
-      this.appendContentToMask(content);
+      if (!transfer) this.appendContentToMask(content); // 表明内容在body下，即在遮罩下
     }
   }
 
-  public hide(content?: HTMLElement, uuid?: string) {
+  public hide(transfer = false, content?: HTMLElement, uuid?: string) {
     const uid = uuid ?? this.lastUUID;
     this.mask.style.setProperty('display', 'none');
-    content?.remove();
-    this.activeInstance?.remove();
+    if (!transfer) {
+      content?.remove();
+      this.activeInstance?.remove();
+    }
     this.activeInstance = undefined;
     this.popIndexStore(uid);
   }

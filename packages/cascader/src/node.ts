@@ -24,27 +24,56 @@
 * IN THE SOFTWARE.
 */
 
-import { defineComponent } from 'vue';
+import { IPanel } from './interface';
+class Node {
+  constructor(node: IPanel, config: any, parent: any) {
+    this.data = node;
+    this.config = config;
+    this.parent = parent || null;
+    this.level = !this.parent ? 1 : this.parent.level + 1;
 
-import BKBacktop from '@bkui-vue/backtop';
+    this.initState(parent);
+  }
 
-export default defineComponent({
-  name: 'SiteBacktop',
-  setup() {
-    return {
-    };
-  },
-  render() {
-    return (
-      <div>
-        <div style="height: 300px; background: grey; margin-bottom: 15px;">111</div>
-        <div style="height: 300px; background: grey; margin-bottom: 15px;">222</div>
-        <div style="height: 300px; background: grey; margin-bottom: 15px;">333</div>
-        <div style="height: 300px; background: grey; margin-bottom: 15px;">444</div>
-        <div style="height: 300px; background: grey; margin-bottom: 15px;">555</div>
-        <div style="height: 300px; background: grey; margin-bottom: 15px;">666</div>
-        <BKBacktop target=".body-wrapper"></BKBacktop>
-      </div>
-    );
-  },
-});
+  initState() {
+    const { idKey, nameKey, childrenKey } = this.config;
+    this.id = this.data[idKey];
+    this.name = this.data[nameKey];
+
+    this.loading = false;
+    this.checked = false;
+
+    const childrenData = this.data[childrenKey];
+    this.children = (childrenData || []).map(child => new Node(child, this.config, this));
+    this.hasChildren = this.children?.length !== 0;
+
+    this.pathNodes = this.calculateNodesPath();
+    this.path = this.pathNodes.map(node => node.id);
+    this.pathNames = this.pathNodes.map(node => node.name);
+  }
+
+  get isLeaf() {
+    return !this.hasChildren;
+  }
+
+  get isDisabled() {
+    return this.data.disabled;
+  }
+
+  setNodeCheck(status: boolean) {
+    this.checked = status;
+  }
+
+  calculateNodesPath() {
+    const nodes = [this];
+    let { parent } = this;
+    while (parent) {
+      nodes.unshift(parent);
+      parent = parent.parent;
+    }
+
+    return nodes;
+  }
+}
+
+export default Node;
