@@ -29,5 +29,4 @@ const baseJestConf = require('../../jest.config');
 module.exports = {
   ...baseJestConf,
   testRegex: 'packages/exception/__test__/.*\\.test\\.(js|ts|tsx)$',
-
 };

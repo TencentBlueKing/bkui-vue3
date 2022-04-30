@@ -6,79 +6,84 @@
 
 .@{bk-prefix}-cascader {
   position: relative;
-  border: 1px solid #c4c6cc;
-  border-radius: 2px;
-  line-height: 30px;
+  width: 250px;
   font-size: 12px;
+  line-height: 30px;
   color: #63656e;
   cursor: pointer;
-  width: 250px;
+  border: 1px solid #c4c6cc;
+  border-radius: 2px;
   &.@{bk-prefix}-is-show-panel {
     .@{bk-prefix}-icon-angle-up {
       transform: rotate(0);
     }
   }
+
   &.is-unselected:before {
     position: absolute;
-    height: 100%;
-    content: attr(data-placeholder);
-    left: 11px;
     top: 0;
+    left: 11px;
+    height: 100%;
     color: #c3cdd7;
     pointer-events: none;
+    content: attr(data-placeholder);
   }
   .@{bk-prefix}-icon-angle-up, .@{bk-prefix}-icon-clear-icon {
-    display: inline-flex;
-    align-items: center;
-    height: 100%;
-    right: 2px;
     position: absolute;
-    color: #979ba5;
+    right: 2px;
+    display: inline-flex;
+    height: 100%;
     font-size: 20px;
-    transition: transform .3s cubic-bezier(.4,0,.2,1);
+    color: #979ba5;
     transform: rotate(180deg);
+    transition: transform .3s cubic-bezier(.4,0,.2,1);
+    align-items: center;
   }
   .@{bk-prefix}-icon-clear-icon {
-    font-size: 14px;
     right: 4px;
+    font-size: 14px;
   }
   .@{bk-prefix}-popover-reference {
-    width: 100%;
     display: block;
+    width: 100%;
   }
   .@{bk-prefix}-cascader-name {
-    min-height: 30px;
-    padding: 0 36px 0 11px;
     display: block;
     max-width: 100%;
+    min-height: 30px;
+    padding: 0 36px 0 11px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+
     .cascader-tag-list {
+      display: flex;
       min-height: 30px;
       box-sizing: border-box;
-      display: flex;
       flex-wrap: wrap;
+
       .cascader-tag-item {
-        cursor: pointer;
         position: relative;
-        margin: 0 6px 5px 0;
-        border-radius: 2px;
         height: 22px;
-        line-height: 22px;
-        overflow: hidden;
-        background-color: #f0f1f5;
         padding-right: 18px;
+        margin: 0 6px 5px 0;
+        overflow: hidden;
+        line-height: 22px;
+        cursor: pointer;
+        background-color: #f0f1f5;
+        border-radius: 2px;
+
         &:hover {
           background: #dcdee5;
         }
+
         .cascader-tag-item-name {
-          padding: 0 5px;
           display: inline-block;
           width: 100%;
+          padding: 0 5px;
           overflow: hidden;
-          white-space: nowrap;
           text-overflow: ellipsis;
+          white-space: nowrap;
         }
       }
     }

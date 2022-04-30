@@ -31,7 +31,7 @@ const components = {
   BkSideslider,
 };
 const isShow = true;
-describe('Sidesslider.tsx', () => {
+describe('Sideslider.tsx', () => {
   it('render with default settings', async () => {
     const wrapper = await mount(BkSideslider, {
       propsData: {

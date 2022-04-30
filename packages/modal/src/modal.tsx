@@ -105,7 +105,7 @@ export default defineComponent({
         </div>
         <Transition name={this.animateType}>
         {this.isShow ? (
-            <div className={bodyClass}>
+            <div class={bodyClass}>
               <div class="bk-modal-header">
                 {this.$slots.header?.() ?? ''}
               </div>

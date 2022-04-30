@@ -25,6 +25,7 @@
 */
 
 import { mount } from '@vue/test-utils';
+
 import Cascader from '../src';
 describe('Cascader.tsx', () => {
   it('test', async () => {

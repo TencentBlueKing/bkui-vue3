@@ -133,7 +133,7 @@ export function debounce(delay = 300, fn: Function, immediate = false) {
  * @param filter 过滤关键字
  * @returns object 去除属性之后的对象
  */
-export function filterProperty(data: object, filter: array<string>) {
+export function filterProperty(data: object, filter: string[]) {
   return JSON.parse(JSON.stringify(data, (key: string, value: any) => {
     if (filter.includes(key)) {
       return undefined;
@@ -155,4 +155,3 @@ export function arrayEqual(arr1: string[] = [], arr2: string[] = []) {
 
   return true;
 }
-
