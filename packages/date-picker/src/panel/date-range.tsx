@@ -112,6 +112,10 @@ const dateRangePanelProps = {
     type: Date,
     required: true,
   },
+  confirm: {
+    type: Boolean,
+    default: false,
+  },
 } as const;
 
 export type DateRangePanelProps = Readonly<ExtractPropTypes<typeof dateRangePanelProps>>;
