@@ -190,7 +190,6 @@ export default defineComponent({
     };
 
     watch(() => state.visible, (visible) => {
-      console.error(123);
       if (visible === false) {
         pickerDropdownRef.value?.destoryDropdown();
       }
@@ -205,6 +204,7 @@ export default defineComponent({
     const pickerDropdownRef = ref(null);
 
     watch(() => props.modelValue, (modelValue) => {
+      console.error('watchwatchwatch');
       state.internalValue = parseDate(modelValue, props.type, props.multiple, props.format);
     });
 
@@ -453,6 +453,8 @@ export default defineComponent({
     const onPickSuccess = () => {
       state.visible = false;
 
+      console.error('onPickSuccess');
+
       // 点击 shortcuts 会关闭弹层时，如果不在 nextTick 里触发 pick-success，那么会导致触发 pick-success 的时候，
       // v-model 的值还是之前的值
       nextTick(() => {
@@ -540,6 +542,7 @@ export default defineComponent({
       handleClear,
       handleTransferClick,
       onPick,
+      onPickSuccess,
     };
   },
   render() {
@@ -612,7 +615,7 @@ export default defineComponent({
         ]}
         v-clickoutside={this.handleClose}>
           <div ref="triggerRef" class="bk-date-picker-rel">
-            {this.$slots.header?.() ?? defaultTrigger}
+            {this.$slots.trigger?.() ?? defaultTrigger}
           </div>
           <Teleport to="body" disabled={!this.appendToBody}>
             <Transition name="bk-fade-down-transition">
@@ -633,22 +636,26 @@ export default defineComponent({
                     ? (
                       <DateRangePanel
                         ref="pickerPanelRef"
+                        type={this.type}
+                        confirm={this.isConfirm}
                         shortcuts={this.shortcuts}
                         modelValue={this.internalValue}
-                        type={this.type}
                         selectionMode={this.selectionMode}
                         startDate={this.startDate}
                         disableDate={this.disableDate}
                         focusedDate={this.focusedDate}
                         onPick={this.onPick}
+                        onPick-success={this.onPickSuccess}
                       />
                     )
                     : (
                       <DatePanel
                         ref="pickerPanelRef"
+                        clearable={this.clearable}
+                        showTime={this.type === 'datetime' || this.type === 'datetimerange'}
+                        confirm={this.isConfirm}
                         shortcuts={this.shortcuts}
                         multiple={this.multiple}
-                        clearable={this.clearable}
                         shortcutClose={this.shortcutClose}
                         selectionMode={this.selectionMode}
                         modelValue={this.internalValue}
@@ -656,6 +663,8 @@ export default defineComponent({
                         disableDate={this.disableDate}
                         focusedDate={this.focusedDate}
                         onPick={this.onPick}
+                        onPick-clear={this.handleClear}
+                        onPick-success={this.onPickSuccess}
                       />
                     )
                 }
