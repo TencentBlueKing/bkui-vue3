@@ -1,4 +1,3 @@
-
 /*
 * Tencent is pleased to support the open source community by making
 * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
@@ -24,60 +23,57 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { GroupColumn } from '../props';
+import { h, resolveDirective, withDirectives } from 'vue';
 
-export default (colgroups: GroupColumn[], immediate = true) => {
-  const pluginName = 'HeadColumnResize';
-  const enum EVENTS {
-    MOUSE_MOVE = 'onMousemove',
-    MOUSE_OUT = 'onMouseout',
-    MOUSE_DOWN ='onMousedown'
-  };
-  const handler = {
-    [EVENTS.MOUSE_DOWN]: (_e: MouseEvent, _column: GroupColumn) => {
-      console.log('onMousedown');
-    },
-    [EVENTS.MOUSE_MOVE]: (_e: MouseEvent, _column: GroupColumn) => {
-      console.log('onMousemove');
-    },
-    [EVENTS.MOUSE_OUT]: (_e: MouseEvent, _column: GroupColumn) => {
-      console.log('onMouseout');
-    },
+import { VirtualRenderProps } from './props';
+
+export default (props: VirtualRenderProps, ctx) => {
+  const { renderAs, contentAs } = props;
+
+
+  /** 指令触发Scroll事件，计算当前startIndex & endIndex & scrollTop & translateY */
+  const handleScrollCallback = (event, _startIndex, _endIndex, _scrollTop, translateY, scrollLeft) => {
+    ctx.emit('content-scroll', [event, { translateY, translateX: scrollLeft }]);
   };
 
-  const getEventName = (event: string) => `${pluginName}_${event}`;
-
-  const registerResizeEvent = () => {
-    colgroups.forEach((col) => {
-      Object.keys(handler).forEach((event: string) => {
-        const name = getEventName(event);
-        if (!col.listeners.has(name)) {
-          col.listeners.set(name, []);
-        }
-
-        col.listeners.get(name).push(handler[event]);
-      });
-    });
+  const vVirtualRender = resolveDirective('bkVirtualRender');
+  const dirModifier = {
+    lineHeight: props.lineHeight,
+    handleScrollCallback,
+    pagination: {},
+    throttleDelay: props.throttleDelay,
+    onlyScroll: props.scrollEvent,
   };
 
-  const resetResizeEvents = () => {
-    colgroups.forEach((col) => {
-      Object.keys(handler).forEach((event: string) => {
-        const name = getEventName(event);
-        if (col.listeners.has(name)) {
-          const listeners = col.listeners.get(name);
-          listeners.splice(0, listeners.length);
-        }
-      });
-    });
-  };
-
-  if (immediate) {
-    registerResizeEvent();
-  }
 
   return {
-    registerResizeEvent,
-    resetResizeEvents,
+    rendAsTag: () => h(
+      // @ts-ignore:next-line
+      renderAs,
+      {
+        class: props.className,
+      },
+      [
+        ctx.slots.beforeContent?.() ?? '',
+        withDirectives(h(
+          contentAs,
+          {
+            class: props.contentClassName,
+            style: props.contentStyle,
+          },
+          [
+            ctx.slots.default?.({
+              data: props.list,
+            }) ?? '',
+          ],
+        ), [
+          [
+            vVirtualRender,
+            dirModifier,
+          ],
+        ]),
+        ctx.slots.afterContent?.() ?? '',
+      ],
+    ),
   };
 };
