@@ -41,6 +41,7 @@ import {
 
 import { AngleDoubleLeft, AngleDoubleRight, AngleLeft, AngleRight } from '@bkui-vue/icon';
 
+import Confirm from '../base/confirm';
 import DateTable from '../base/date-table';
 import type {
   DatePickerShortcutsType,
@@ -89,13 +90,21 @@ const datePanelProps = {
     type: Date,
     required: true,
   },
+  confirm: {
+    type: Boolean,
+    default: false,
+  },
+  showTime: {
+    type: Boolean,
+    default: false,
+  },
 } as const;
 
 export type DatePanelProps = Readonly<ExtractPropTypes<typeof datePanelProps>>;
 
 export default defineComponent({
   props: datePanelProps,
-  emits: ['pick', 'pick-success'],
+  emits: ['pick', 'pick-success', 'pick-clear'],
   setup(props, { emit }) {
     const getTableType = currentView => (currentView.match(/^time/) ? 'time-picker' : `${currentView}-table`);
 
@@ -144,6 +153,11 @@ export default defineComponent({
     const handlePickSuccess = () => {
       resetView();
       emit('pick-success');
+    };
+
+    const handlePickClear = () => {
+      resetView();
+      emit('pick-clear');
     };
 
     const handleShortcutClick = (shortcut) => {
@@ -214,6 +228,10 @@ export default defineComponent({
 
     const isTime = computed(() => state.currentView === 'time');
 
+    const handleToggleTime = () => {
+      state.currentView = state.currentView === 'time' ? 'date' : 'time';
+    };
+
     console.warn('panelDatepanelDate', state.panelDate);
 
     return {
@@ -228,6 +246,9 @@ export default defineComponent({
       reset,
       isTime,
       onToggleVisibility,
+      handleToggleTime,
+      handlePickSuccess,
+      handlePickClear,
     };
   },
   render() {
@@ -323,7 +344,21 @@ export default defineComponent({
                 })()
                 : ''
             }
-            </div>
+          </div>
+          {
+            this.confirm
+              ? (
+                <Confirm
+                  clearable={this.clearable}
+                  showTime={this.showTime}
+                  isTime={this.isTime}
+                  onPick-toggle-time={this.handleToggleTime}
+                  onPick-clear={this.handlePickClear}
+                  onPick-success={this.handlePickSuccess}
+                ></Confirm>
+              )
+              : ''
+          }
         </div>
       </div>
     );
