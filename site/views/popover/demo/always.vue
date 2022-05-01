@@ -1,0 +1,9 @@
+<template>
+  <bk-popover
+    always
+    placement="right"
+    content="文字提示"
+  >
+    <bk-button>总是显示</bk-button>
+  </bk-popover>
+</template>

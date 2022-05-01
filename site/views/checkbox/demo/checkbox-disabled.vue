@@ -19,5 +19,3 @@
   const checkboxGroupValue = ref(['微信']);
 
 </script>
-<style lang="postcss">
-</style>

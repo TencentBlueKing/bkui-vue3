@@ -1,7 +1,7 @@
 {
   "name": "bkui-vue",
   "private": true,
-  "version": "0.0.1-beta.55",
+  "version": "0.0.1-beta.61",
   "workspaces": {
     "packages": [
       "packages/!(**.bak)*",
@@ -32,8 +32,8 @@
     "fix:site": "eslint ./site --ext .js,.ts,.tsx,.vue --fix --cache",
     "fix:scripts": "eslint ./scripts --ext .js,.ts,.tsx --fix --cache",
     "lint:fix": "run-p lint:site lint:packages lint:scripts",
-    "stylelint": "eslint --ext .js,.ts,.tsx,.vue ./packages ./site --cache",
-    "stylelint:fix": "yarn stylelint -- --fix",
+    "stylelint": "stylelint ./{packages,site}/**/*.{vue,less} --custom-syntax",
+    "stylelint:fix": "stylelint --fix ./{packages,site}/**/*.{vue,less} --custom-syntax",
     "test:unit": "jest --passWithNoTests --config=./jest.config.js",
     "test:alert": "lerna run --scope @bkui-vue/alert test",
     "cz": "git-cz"
@@ -112,11 +112,19 @@
   "module": "lib/index.js",
   "typings": "lib/index.d.ts",
   "lint-staged": {
-    "*.(vue|ts|tsx|js)": [
-      "eslint --ext .js,.tsx,.ts,.vue --cache --fix",
+    "scripts/**/*.(vue|ts|tsx|js)": [
+      "eslint ./scripts --ext .js,.tsx,.ts --cache --fix",
       "git add"
     ],
-    "*.(vue|scss|css|sass)": [
+    "site/**/*.(vue|ts|tsx|js)": [
+      "eslint ./site --ext .js,.tsx,.ts,.vue --cache --fix",
+      "git add"
+    ],
+    "packages/**/*.(vue|ts|tsx|js)": [
+      "eslint ./packages --ext .js,.tsx,.ts --cache --fix",
+      "git add"
+    ],
+    "*.(vue|scss|css|sass|less)": [
       "stylelint --cache --fix",
       "git add"
     ]

@@ -31,7 +31,7 @@ import { Placement } from '@popperjs/core';
 
 
 export default defineComponent({
-  name: 'BkDropdown',
+  name: 'Dropdown',
   props: {
     /** trigger = manual时候控制显隐藏  */
     isShow: PropTypes.bool.def(false),

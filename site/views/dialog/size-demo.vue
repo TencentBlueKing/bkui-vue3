@@ -1,6 +1,7 @@
 <template>
   <div>
     <bk-button
+      class="mr10"
       @click="() => exampleSetting1.dialog1.isShow = true"
     >
       normal
@@ -16,6 +17,7 @@
     </bk-dialog>
 
     <bk-button
+      class="mr10"
       @click="() => exampleSetting1.dialog2.isShow = true"
     >
       small
@@ -32,6 +34,7 @@
     </bk-dialog>
 
     <bk-button
+      class="mr10"
       @click="() => exampleSetting1.dialog3.isShow = true"
     >
       medium
@@ -48,6 +51,7 @@
     </bk-dialog>
 
     <bk-button
+      class="mr10"
       @click="() => exampleSetting1.dialog4.isShow = true"
     >
       large
@@ -64,6 +68,7 @@
     </bk-dialog>
 
     <bk-button
+      class="mr10"
       @click="() => exampleSetting1.dialog5.isShow = true"
     >
       自定义宽高
@@ -82,41 +87,33 @@
   </div>
 </template>
 
-<script>
-  import { defineComponent, ref } from 'vue';
+<script setup>
+  import { ref } from 'vue';
 
   import BkButton from '@bkui-vue/button';
   import BkDialog from '@bkui-vue/dialog';
 
-  export default defineComponent({
-    name: 'SiteDialog',
-    components: {
-      BkButton,
-      BkDialog,
+  const exampleSetting1 = ref({
+    dialog1: {
+      isShow: false,
     },
-    setup() {
-      const exampleSetting1 = ref({
-        dialog1: {
-          isShow: false,
-        },
-        dialog2: {
-          isShow: false,
-        },
-        dialog3: {
-          isShow: false,
-        },
-        dialog4: {
-          isShow: false,
-        },
-        dialog5: {
-          isShow: false,
-        },
-      });
-      return { exampleSetting1 };
+    dialog2: {
+      isShow: false,
+    },
+    dialog3: {
+      isShow: false,
+    },
+    dialog4: {
+      isShow: false,
+    },
+    dialog5: {
+      isShow: false,
     },
   });
 </script>
 
-<style>
-
+<style lang="postcss">
+.mr10 {
+  margin-right: 10px;
+}
 </style>

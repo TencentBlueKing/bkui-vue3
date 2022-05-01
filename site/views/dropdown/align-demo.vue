@@ -10,10 +10,10 @@
       <template #content>
         <bk-dropdown-menu>
           <bk-dropdown-item
-            v-for="item in dropdownList"
-            :key="item"
+            v-for="dropItem in dropdownList"
+            :key="dropItem"
           >
-            {{ item }}
+            {{ dropItem }}
           </bk-dropdown-item>
         </bk-dropdown-menu>
       </template>

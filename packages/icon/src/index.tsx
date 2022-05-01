@@ -51,6 +51,7 @@ export { default as Done } from '../icons/done';
 export { default as DownShape } from '../icons/down-shape';
 export { default as DownSmall } from '../icons/down-small';
 export { default as Ellipsis } from '../icons/ellipsis';
+export { default as EditLine } from '../icons/edit-line';
 export { default as Error } from '../icons/error';
 export { default as Eye } from '../icons/eye';
 export { default as FolderOpen } from '../icons/folder-open';

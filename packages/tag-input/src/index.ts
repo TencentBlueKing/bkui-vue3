@@ -24,12 +24,10 @@
  * IN THE SOFTWARE.
 */
 
-import { App } from 'vue';
+import { withInstall } from '@bkui-vue/shared';
 
-import TagInput from './tag-input';
+import Component from './tag-input';
 
-TagInput.install = (Vue: App) => {
-  Vue.component(TagInput.name, TagInput);
-};
+const TagInput = withInstall(Component);
 
 export default TagInput;

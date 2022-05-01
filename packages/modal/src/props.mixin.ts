@@ -24,78 +24,46 @@
  * IN THE SOFTWARE.
 */
 
+import { PropTypes } from '@bkui-vue/shared';
 export const propsMixin = {
   // 是否显示弹框
-  isShow: {
-    type: Boolean,
-    default: false,
-  },
-  width: {
-    type: [Number, String],
-    default: '50%',
-  },
-  height: {
-    type: [Number, String],
-    default: '50%',
-  },
+  isShow: PropTypes.bool.def(false),
+  width: PropTypes.string.def('50%') || PropTypes.number,
+  height: PropTypes.string.def('50%') || PropTypes.number,
   // 配置自定义样式类名
-  customClass: {
-    type: [Array, String],
-    default: '',
-  },
+  customClass: PropTypes.string || PropTypes.array,
   // 弹框出现时，是否允许页面滚动
-  scrollable: {
-    type: Boolean,
-    default: true,
-  },
+  scrollable: PropTypes.bool.def(true),
   // 是否允许出现遮罩
-  showMask: {
-    type: Boolean,
-    default: true,
-  },
+  showMask: PropTypes.bool.def(true),
   // 是否显示右上角的关闭 icon
-  closeIcon: {
-    type: Boolean,
-    default: true,
-  },
+  closeIcon: PropTypes.bool.def(true),
   // 是否允许 esc 按键关闭弹框
-  escClose: {
-    type: Boolean,
-    default: true,
-  },
+  escClose: PropTypes.bool.def(true),
   // 是否允许点击遮罩关闭弹框
-  maskClose: {
-    type: Boolean,
-    default: true,
-  },
+  maskClose: PropTypes.bool.def(true),
   // 是否全屏
-  fullscreen: {
-    type: Boolean,
-    default: false,
-  },
+  fullscreen: PropTypes.bool.def(false),
+  // 自定义类样式名
+  extCls: PropTypes.string.def(''),
   // 弹框尺寸
-  size: {
-    type: String,
-    default: 'normal',
-    validator: (value: string) => {
-      const dialogSize = ['normal', 'small', 'medium', 'large'];
-      if (dialogSize.indexOf(value) < 0) {
-        console.error(`dialogSize property is not valid: '${value}',【${dialogSize.join(' | ')}】`);
-        return false;
-      }
-      return true;
-    },
-  },
+  size: PropTypes.commonType(['normal', 'small', 'medium', 'large'], 'size').def('normal'),
+  // 是否可拖拽
+  draggable: PropTypes.bool.def(true),
+  // 是否允许点击遮罩关闭弹窗
+  quickClose: PropTypes.bool.def(true),
+  // 是否显示在body内（即与id#app同级
+  transfer: PropTypes.bool.def(false),
+  // 自定义标题
+  title: PropTypes.string.def('Header'),
+  // 内容区最大高度
+  maxHeight: PropTypes.string,
+  // 弹出方向
+  direction: PropTypes.string,
+  // 动画类型
+  animateType: PropTypes.string.def('slide'),
   // 弹框的渲染方式
-  renderDirective: {
-    type: String,
-    default: 'show',
-    validator: (value: string) => {
-      if (['show', 'if'].indexOf(value) < 0) {
-        console.error(`type render-directive is not valid: '${value}'`);
-        return false;
-      }
-      return true;
-    },
-  },
+  renderDirective: PropTypes.commonType(['show', 'if'], 'renderDirective').def('show'),
+  // 关闭前回调
+  beforeClose: PropTypes.custom(() => true),
 };

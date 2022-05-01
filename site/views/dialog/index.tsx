@@ -36,13 +36,14 @@ import BaseDemo from './base-demo.vue';
 import ConfigDemo from './config-demo.vue';
 import FullscreenDemo from './fullscreen-demo.vue';
 import SizeDemo from './size-demo.vue';
+import TypeDemo from './type-demo.vue';
 
 const dialogPropsJson: IPropsTableItem[] = [
   {
     name: 'isShow',
     type: 'Boolean',
     default: 'false',
-    desc: '是否显示弹框，支持 v-model 双向绑定',
+    desc: '是否显示弹框',
     optional: [],
   },
   {
@@ -164,6 +165,103 @@ const dialogPropsJson: IPropsTableItem[] = [
     desc: '弹框的渲染方式',
     optional: ['show', 'if'],
   },
+  {
+    name: 'draggable',
+    type: 'Boolean',
+    default: 'true',
+    desc: '是否可拖拽',
+    optional: [],
+  },
+  {
+    name: 'dialogType',
+    type: 'String',
+    default: 'operation',
+    desc: '对话框类型',
+    optional: ['show', 'operation', 'confirm', 'process'],
+  },
+  {
+    name: 'prevText',
+    type: 'String',
+    default: '上一步',
+    desc: '上一步按钮文字',
+    optional: [],
+  },
+  {
+    name: 'nextText',
+    type: 'String',
+    default: '下一步',
+    desc: '下一步按钮文字',
+    optional: [],
+  },
+  {
+    name: 'current',
+    type: 'Number',
+    default: 1,
+    desc: '当前步骤',
+    optional: [],
+  },
+  {
+    name: 'totalStep',
+    type: 'Number',
+    default: null,
+    desc: '总步数',
+    optional: [],
+  },
+];
+
+const dialogSlotsJson: IPropsTableItem[] = [
+  {
+    name: 'header',
+    type: 'Function',
+    default: '',
+    desc: '头部插槽',
+    optional: [],
+  },
+  {
+    name: 'default',
+    type: 'Function',
+    default: '',
+    desc: '内容插槽',
+    optional: [],
+  },
+  {
+    name: 'footer',
+    type: 'Function',
+    default: '',
+    desc: '底部插槽',
+    optional: [],
+  },
+];
+
+const dialogChangeJson: IPropsTableItem[] = [
+  {
+    name: 'closed',
+    type: 'Function',
+    default: '',
+    desc: '点击 取消，右上角的关闭 icon 或 按 esc 触发',
+    optional: [],
+  },
+  {
+    name: 'confirm',
+    type: 'Function',
+    default: '',
+    desc: '点击确认按钮时触发',
+    optional: [],
+  },
+  {
+    name: 'prev',
+    type: 'Function',
+    default: '',
+    desc: '流程型对话框中，点击上一步触发',
+    optional: [],
+  },
+  {
+    name: 'next',
+    type: 'Function',
+    default: '',
+    desc: '流程型对话框中，点击下一步触发',
+    optional: [],
+  },
 ];
 
 export default defineComponent({
@@ -197,7 +295,7 @@ export default defineComponent({
         <DemoBox
           title="自定义内容以及弹框配置"
           subtitle=""
-          desc=""
+          desc="通过设置 draggable 属性来设置是否允许弹框拖拽。通过 closeIcon 属性设置是否显示右上角的关闭 icon。"
           componentName="dialog"
           demoName="config-demo">
           <ConfigDemo></ConfigDemo>
@@ -221,10 +319,29 @@ export default defineComponent({
           <FullscreenDemo></FullscreenDemo>
         </DemoBox>
 
+        <DemoBox
+          title="对话框类型"
+          subtitle=""
+          desc="对话框分为4种类型。通过 dialogType 属性 show，operation，confirm，process 进行配置，默认 operation 类型。"
+          componentName="dialog"
+          demoName="type-demo">
+          <TypeDemo></TypeDemo>
+        </DemoBox>
+
         <PropsBox
           title="Dialog Attributes"
           subtitle=""
           propsData={dialogPropsJson} />
+
+        <PropsBox
+          title="Dialog Slot"
+          subtitle=""
+          propsData={dialogSlotsJson}/>
+
+        <PropsBox
+          title="Dialog Events"
+          subtitle=""
+          propsData={dialogChangeJson}/>
       </div>
     );
   },

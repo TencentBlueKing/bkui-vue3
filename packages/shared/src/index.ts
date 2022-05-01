@@ -42,7 +42,7 @@ export function classes(dynamicCls: object, constCls = ''): string {
 
 export const EMPTY_OBJ = Object.create({});
 
-export const noop = () => {};
+export const noop = () => { };
 
 export const renderEmptyVNode = () => null;
 
@@ -71,7 +71,7 @@ export const withInstallProps = <T extends OriginComponent, K extends Record<str
     const pre = app.config.globalProperties.bkUIPrefix || prefix || 'Bk';
     app.component(pre + component.name, component);
     !isProps && Object.values(childComponents).forEach((child: any) => {
-      app.component(pre +  child.name, child);
+      app.component(pre + child.name, child);
     });
   };
   Object.keys(childComponents).forEach((key) => {
@@ -88,4 +88,70 @@ export const withInstallProps = <T extends OriginComponent, K extends Record<str
  */
 export function resolveClassName(clsName: string, prefix = 'bk') {
   return `${prefix}-${clsName}`;
+}
+/**
+ * 函数防抖
+ * @param {*} fn 执行的函数
+ * @param {*} delay 延时时间
+ * @param {*} immediate 是否立即执行
+ */
+export function debounce(delay = 300, fn: Function, immediate = false) {
+  let timeout: any;
+  let result: any;
+  const debounced = function (this: any) {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const ctx = this;// 当前上下文
+    // eslint-disable-next-line prefer-rest-params
+    const args = arguments;// fn的参数
+
+    // 取消之前的延时调用
+    if (timeout) clearTimeout(timeout);
+    if (immediate) {
+      const applyImmediate = !timeout; // 是否执行过
+      timeout = setTimeout(() => {
+        timeout = null;// 标志是否执行过，与clearTimeout有区别，clearTimeout之后timeout不为null而是一个系统分配的队列ID
+      }, delay);
+      if (applyImmediate) result = fn.apply(ctx, args); // 立即调用
+    } else {
+      timeout = setTimeout(() => {
+        fn.apply(ctx, args);
+      }, delay);
+    }
+    return result;
+  };
+  debounced.cancel = function () {
+    clearTimeout(timeout);
+    timeout = null;
+  };
+
+  return debounced;
+}
+
+/**
+ * 过滤（去除）对象中的某个属性
+ * @param data 需要处理的对象
+ * @param filter 过滤关键字
+ * @returns object 去除属性之后的对象
+ */
+export function filterProperty(data: object, filter: string[]) {
+  return JSON.parse(JSON.stringify(data, (key: string, value: any) => {
+    if (filter.includes(key)) {
+      return undefined;
+    }
+    return value;
+  }));
+};
+
+export function arrayEqual(arr1: string[] = [], arr2: string[] = []) {
+  if (arr1.length !== arr2.length) {
+    return false;
+  }
+
+  for (let i = 0; i < arr1.length; i++) {
+    if (arr1[i] !== arr2[i]) {
+      return false;
+    }
+  }
+
+  return true;
 }

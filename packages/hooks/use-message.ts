@@ -44,6 +44,7 @@ const Message = (constructor: any, options: any) => {
   }
   const userOnClose = options.onClose;
 
+  const horizontalOffset: number = opts.offsetX || 10;
   let verticalOffset: number = opts.offsetY || 30;
   const { spacing = 10 } = opts;
   instances[position].forEach((vm) => {
@@ -55,6 +56,7 @@ const Message = (constructor: any, options: any) => {
 
   opts = {
     ...opts,
+    offsetX: horizontalOffset,
     offsetY: verticalOffset,
     id,
   };
