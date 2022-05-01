@@ -45,14 +45,20 @@ export default defineComponent({
   props: tableProps,
   emits: ['columnPick', 'rowClick', 'rowDblClick', 'pageLimitChange', 'pageValueChange'],
   setup(props, ctx) {
-    const colgroups = reactive(props.columns.map(col => ({ ...col, calcWidth: null, listeners: new Map() })));
+    const colgroups = reactive(props.columns.map(col => ({
+      ...col,
+      calcWidth: null,
+      resizeWidth: null,
+      listeners: new Map(),
+    })));
+
     let columnSortFn: any = null;
     let columnFilterFn: any = null;
 
     let observerIns = null;
     const root = ref();
     const refVirtualRender = ref();
-    useColumnResize(colgroups, true);
+    const { dragOffsetXStyle } = useColumnResize(colgroups, true);
 
     const { activeColumns } = useActiveColumns(props);
 
@@ -160,6 +166,7 @@ export default defineComponent({
       </VirtualRender>
       <div class={ fixedWrapperClass }>
         { renderFixedColumns() }
+        <div class="bk-drag-column offset-x" style={dragOffsetXStyle.value}></div>
       </div>
       <div class={ footerClass }>
         {

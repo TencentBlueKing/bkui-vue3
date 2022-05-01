@@ -35,7 +35,7 @@ import { TablePlugins } from './plugins/index';
 import Settings from './plugins/settings';
 import useFixedColumn from './plugins/use-fixed-column';
 import { Column, GroupColumn, IColumnActive, IReactiveProp, TablePropTypes } from './props';
-import { getRowText, resolveHeadConfig, resolvePropVal, resolveWidth } from './utils';
+import { getColumnReactWidth, getRowText, resolveHeadConfig, resolvePropVal, resolveWidth } from './utils';
 export const enum EVENTS {
   /** 点击排序事件 */
   ON_SORT_BY_CLICK = 'onSortByClick',
@@ -269,11 +269,14 @@ export default class TableRender {
     };
 
     const resolveEventListener = (col: GroupColumn) => Array.from(col.listeners.keys())
-      .reduce((handle: any, key: string) => Object.assign(handle, {
-        [key]: (e: MouseEvent) => {
-          col.listeners.get(key).forEach((fn: Function) => Reflect.apply(fn, this, [e, col, this]));
-        },
-      }), {});
+      .reduce((handle: any, key: string) => {
+        const eventName = key.split('_').slice(-1)[0];
+        return Object.assign(handle, {
+          [eventName]: (e: MouseEvent) => {
+            col.listeners.get(key).forEach((fn: Function) => Reflect.apply(fn, this, [e, col, this]));
+          },
+        });
+      }, {});
 
     const { getFixedColumnStyleResolve } = useFixedColumn(this.props, this.colgroups);
     const { resolveFixedColumnStyle, fixedoffset } = getFixedColumnStyleResolve();
@@ -409,7 +412,7 @@ export default class TableRender {
             active: this.isColActive(index),
           });
 
-          const width = `${resolveWidth(column.calcWidth)}`.replace(/px$/i, '');
+          const width = `${resolveWidth(getColumnReactWidth(column))}`.replace(/px$/i, '');
           return <col class={ colCls } width={ width }></col>;
         })
       }
