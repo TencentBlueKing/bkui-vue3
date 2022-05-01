@@ -29,6 +29,7 @@ import { defineComponent, onBeforeUnmount, onMounted, reactive, ref, watchEffect
 import VirtualRender from '@bkui-vue/virtual-render';
 
 import useActiveColumns from './plugins/use-active-columns';
+import useColumnResize from './plugins/use-column-resize';
 import useFixedColumn from './plugins/use-fixed-column';
 import userPagination from './plugins/use-pagination';
 import { tableProps } from './props';
@@ -44,13 +45,15 @@ export default defineComponent({
   props: tableProps,
   emits: ['columnPick', 'rowClick', 'rowDblClick', 'pageLimitChange', 'pageValueChange'],
   setup(props, ctx) {
-    const colgroups = reactive(props.columns.map(col => ({ ...col, calcWidth: null })));
+    const colgroups = reactive(props.columns.map(col => ({ ...col, calcWidth: null, listeners: new Map() })));
     let columnSortFn: any = null;
     let columnFilterFn: any = null;
 
     let observerIns = null;
     const root = ref();
     const refVirtualRender = ref();
+    useColumnResize(colgroups, true);
+
     const { activeColumns } = useActiveColumns(props);
 
     const reactiveProp = reactive({

@@ -38,7 +38,7 @@ import cellRender from './cell-render';
 import DataEmpty from './data-empty.vue';
 import event from './event.vue';
 import fixed from './fixed.vue';
-import { DATA_COLUMNS, DATA_TABLE } from './options';
+import * as TABLE_DATA from './options';
 import pagination from './pagination.vue';
 import RemotePagination from './remotePagination.vue';
 import virtualRender from './virtual-render.vue';
@@ -147,7 +147,7 @@ export default defineComponent({
           desc="Table组件， 为页面和功能提供列表。"
           link="https://www.google.com.hk/"/>
           {
-            configs.map(cfg => <DemoBox { ...cfg.attrs } optionData={ { DATA_COLUMNS, DATA_TABLE } }>
+            configs.map(cfg => <DemoBox { ...cfg.attrs } optionData={ TABLE_DATA }>
                  {
                    cfg.component()
                  }

@@ -215,6 +215,7 @@ export type Thead = {
 export type GroupColumn = {
   calcWidth?: number;
   isHidden?: boolean;
+  listeners?: Map<string, any>;
 } & Column;
 
 export type Columns = ReadonlyArray<Column>;

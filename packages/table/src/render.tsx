@@ -268,6 +268,13 @@ export default class TableRender {
       return cells;
     };
 
+    const resolveEventListener = (col: GroupColumn) => Array.from(col.listeners.keys())
+      .reduce((handle: any, key: string) => Object.assign(handle, {
+        [key]: (e: MouseEvent) => {
+          col.listeners.get(key).forEach((fn: Function) => Reflect.apply(fn, this, [e, col, this]));
+        },
+      }), {});
+
     const { getFixedColumnStyleResolve } = useFixedColumn(this.props, this.colgroups);
     const { resolveFixedColumnStyle, fixedoffset } = getFixedColumnStyleResolve();
     // @ts-ignore:next-line
@@ -277,7 +284,8 @@ export default class TableRender {
           this.filterColgroups.map((column: Column, index: number) => <th colspan={1} rowspan={1}
           class={ this.getHeadColumnClass(column, index) }
           style = { resolveFixedColumnStyle(column, fixedoffset) }
-          onClick={ () => this.handleColumnHeadClick(index) }>
+          onClick={ () => this.handleColumnHeadClick(index) }
+          { ...resolveEventListener(column) }>
             <div class="cell">{ renderHeadCell(column, index) }</div>
           </th>)
         }

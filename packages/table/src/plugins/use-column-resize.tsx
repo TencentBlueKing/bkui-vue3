@@ -1,3 +1,4 @@
+
 /*
 * Tencent is pleased to support the open source community by making
 * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
@@ -23,4 +24,60 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-export default () => {};
+import { GroupColumn } from '../props';
+
+export default (colgroups: GroupColumn[], immediate = true) => {
+  const pluginName = 'HeadColumnResize';
+  const enum EVENTS {
+    MOUSE_MOVE = 'onMousemove',
+    MOUSE_OUT = 'onMouseout',
+    MOUSE_DOWN ='onMousedown'
+  };
+  const handler = {
+    [EVENTS.MOUSE_DOWN]: (_e: MouseEvent, _column: GroupColumn) => {
+      console.log('onMousedown');
+    },
+    [EVENTS.MOUSE_MOVE]: (_e: MouseEvent, _column: GroupColumn) => {
+      console.log('onMousemove');
+    },
+    [EVENTS.MOUSE_OUT]: (_e: MouseEvent, _column: GroupColumn) => {
+      console.log('onMouseout');
+    },
+  };
+
+  const getEventName = (event: string) => `${pluginName}_${event}`;
+
+  const registerResizeEvent = () => {
+    colgroups.forEach((col) => {
+      Object.keys(handler).forEach((event: string) => {
+        const name = getEventName(event);
+        if (!col.listeners.has(name)) {
+          col.listeners.set(name, []);
+        }
+
+        col.listeners.get(name).push(handler[event]);
+      });
+    });
+  };
+
+  const resetResizeEvents = () => {
+    colgroups.forEach((col) => {
+      Object.keys(handler).forEach((event: string) => {
+        const name = getEventName(event);
+        if (col.listeners.has(name)) {
+          const listeners = col.listeners.get(name);
+          listeners.splice(0, listeners.length);
+        }
+      });
+    });
+  };
+
+  if (immediate) {
+    registerResizeEvent();
+  }
+
+  return {
+    registerResizeEvent,
+    resetResizeEvents,
+  };
+};
