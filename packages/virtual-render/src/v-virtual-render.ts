@@ -60,6 +60,7 @@ export function computedVirtualIndex(lineHeight, callback, pagination, el, event
     return;
   }
   const elScrollTop = el.scrollTop;
+  const elScrollLeft = el.scrollLeft;
   const { scrollTop, count, groupItemCount, startIndex, endIndex } = pagination;
   const { offsetHeight } = el;
 
@@ -82,12 +83,19 @@ export function computedVirtualIndex(lineHeight, callback, pagination, el, event
   }
 
   if (elScrollTop !== scrollTop || targetStartIndex !== startIndex || targetEndIndex !== endIndex) {
-    typeof callback === 'function' && callback(event, targetStartIndex, targetEndIndex, elScrollTop, translateY);
+    typeof callback === 'function' && callback(event, targetStartIndex, targetEndIndex, elScrollTop, translateY, elScrollLeft);
   }
 }
 
-function visibleRender(e, wrapper, binding) {
-  const { lineHeight = 30, handleScrollCallback, pagination = {} } = binding.value;
+function visibleRender(e, wrapper: HTMLElement, binding) {
+  const { lineHeight = 30, handleScrollCallback, pagination = {}, onlyScroll } = binding.value;
+  if (onlyScroll) {
+    const elScrollTop = wrapper.scrollTop;
+    const elScrollLeft = wrapper.scrollLeft;
+    handleScrollCallback(e, null, null, elScrollTop, elScrollTop, elScrollLeft);
+    return;
+  }
+
   const { startIndex, endIndex, groupItemCount, count, scrollTop } = pagination;
   computedVirtualIndex(
     lineHeight,

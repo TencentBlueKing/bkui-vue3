@@ -33,8 +33,9 @@ import HeadFilter from './plugins/head-filter';
 import HeadSort from './plugins/head-sort';
 import { TablePlugins } from './plugins/index';
 import Settings from './plugins/settings';
+import useFixedColumn from './plugins/use-fixed-column';
 import { Column, GroupColumn, IColumnActive, IReactiveProp, TablePropTypes } from './props';
-import { getRowText, resolveHeadConfig, resolvePropVal, resolveWidth } from './utils';;
+import { getColumnReactWidth, getRowText, resolveHeadConfig, resolvePropVal, resolveWidth } from './utils';
 export const enum EVENTS {
   /** 点击排序事件 */
   ON_SORT_BY_CLICK = 'onSortByClick',
@@ -266,15 +267,28 @@ export default class TableRender {
       cells.unshift(resolvePropVal(column, 'label', [column, index]));
       return cells;
     };
+
+    const resolveEventListener = (col: GroupColumn) => Array.from(col.listeners.keys())
+      .reduce((handle: any, key: string) => {
+        const eventName = key.split('_').slice(-1)[0];
+        return Object.assign(handle, {
+          [eventName]: (e: MouseEvent) => {
+            col.listeners.get(key).forEach((fn: Function) => Reflect.apply(fn, this, [e, col, this]));
+          },
+        });
+      }, {});
+
+    const { getFixedColumnStyleResolve } = useFixedColumn(this.props, this.colgroups);
+    const { resolveFixedColumnStyle, fixedoffset } = getFixedColumnStyleResolve();
     // @ts-ignore:next-line
     return <thead style={rowStyle}>
         <tr>
         {
           this.filterColgroups.map((column: Column, index: number) => <th colspan={1} rowspan={1}
-          class={ classes({
-            active: this.isColActive(index),
-          }) }
-          onClick={ () => this.handleColumnHeadClick(index) }>
+          class={ this.getHeadColumnClass(column, index) }
+          style = { resolveFixedColumnStyle(column, fixedoffset) }
+          onClick={ () => this.handleColumnHeadClick(index) }
+          { ...resolveEventListener(column) }>
             <div class="cell">{ renderHeadCell(column, index) }</div>
           </th>)
         }
@@ -287,12 +301,15 @@ export default class TableRender {
    * @returns
    */
   private renderTBody(rows: any[]) {
+    const { getFixedColumnStyleResolve } = useFixedColumn(this.props, this.colgroups);
+
     return <tbody>
     {
       rows.length ? rows.map((row: any, rowIndex: number) => {
         const rowStyle = {
           '--row-height': `${this.getRowHeight(row, rowIndex)}px`,
         };
+        const { resolveFixedColumnStyle,  fixedoffset } = getFixedColumnStyleResolve();
 
         return <tr
           // @ts-ignore
@@ -301,7 +318,9 @@ export default class TableRender {
           onDblclick={e => this.handleRowDblClick(e, row, rowIndex, rows)}
         >
         {
-          this.filterColgroups.map((column: Column, index: number) => <td class={this.getColumnClass(index)}
+          this.filterColgroups.map((column: Column, index: number) => <td
+          class={this.getColumnClass(column, index)}
+          style={resolveFixedColumnStyle(column, fixedoffset)}
           colspan={1} rowspan={1}>
           <div class="cell" >{ this.renderCell(row, column, rowIndex, rows) }</div>
         </td>)
@@ -321,7 +340,17 @@ export default class TableRender {
   </tbody>;
   }
 
-  private getColumnClass = (colIndex: number) => `${this.uuid}-column-${colIndex}`;
+  private getColumnClass = (column: Column, colIndex: number) => ({
+    [`${this.uuid}-column-${colIndex}`]: true,
+    column_fixed: !!column.fixed,
+    column_fixed_left: !!column.fixed,
+    column_fixed_right: column.fixed === 'right',
+  });
+
+  private getHeadColumnClass = (column: Column, colIndex: number) => ({
+    ...this.getColumnClass(column, colIndex),
+    active: this.isColActive(colIndex),
+  });
 
   /**
    * table row click handle
@@ -383,7 +412,7 @@ export default class TableRender {
             active: this.isColActive(index),
           });
 
-          const width = `${resolveWidth(column.calcWidth)}`.replace(/px$/i, '');
+          const width = `${resolveWidth(getColumnReactWidth(column))}`.replace(/px$/i, '');
           return <col class={ colCls } width={ width }></col>;
         })
       }

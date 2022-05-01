@@ -77,7 +77,7 @@
         />
         <div
           v-if="currentId"
-          style="margin-top:30px"
+          style="margin-top: 30px"
         >
           {{ objectSteps[currentId - 1].text }}
         </div>
