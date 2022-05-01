@@ -129,6 +129,17 @@ export const resolvePropBorderToClassStr = (val: string | string[]) => {
 };
 
 /**
+ * 获取当前列实际宽度
+ * width props中设置的默认宽度
+ * calcWidth 计算后的宽度
+ * resizeWidth 拖拽重置之后的宽度
+ * @param colmun 当前列配置
+ * @param orders 获取宽度顺序
+ * @returns
+ */
+export const getColumnReactWidth = (colmun: GroupColumn, orders = ['resizeWidth', 'calcWidth', 'width']) => colmun[orders[0]] ?? colmun[orders[1]] ?? colmun[orders[2]];
+
+/**
  * 根据Props Column配置计算并设置列宽度
  * @param root 当前根元素
  * @param colgroups Columns配置
@@ -160,7 +171,7 @@ export const resolveColumnWidth = (root: HTMLElement, colgroups: GroupColumn[], 
 
   colgroups.forEach((col: GroupColumn, index: number) => {
     if (!col.isHidden) {
-      const colWidth = String(col.width);
+      const colWidth = String(getColumnReactWidth(col));
       let isAutoWidthCol = true;
       if (/^\d+\.?\d*(px)?$/.test(colWidth)) {
         const numWidth = Number(colWidth.replace('px', ''));

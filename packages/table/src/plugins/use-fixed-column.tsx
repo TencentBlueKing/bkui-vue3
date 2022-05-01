@@ -1,9 +1,3 @@
-import { computed } from 'vue';
-
-import { resolveClassName } from '@bkui-vue/shared';
-
-import { GroupColumn } from '../props';
-
 /*
 * Tencent is pleased to support the open source community by making
 * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
@@ -29,6 +23,12 @@ import { GroupColumn } from '../props';
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import { computed } from 'vue';
+
+import { resolveClassName } from '@bkui-vue/shared';
+
+import { GroupColumn } from '../props';
+import { getColumnReactWidth } from '../utils';
 export default (props, colgroups: GroupColumn[]) => {
   const footHeight = computed(() => (props.pagination && props.data.length ? 40 : 0));
   const resolveColumnClass = (column: GroupColumn) => ({
@@ -41,12 +41,12 @@ export default (props, colgroups: GroupColumn[]) => {
   const resolveFixOffset = {
     left: (ignoreFirst = true) => colgroups.filter(col =>  col.fixed && col.fixed !== 'right')
       .reduce((offset: number, curr: GroupColumn, index: number) => {
-        const outOffset = ignoreFirst && (index === 0) ? offset : (offset + curr.calcWidth);
+        const outOffset = ignoreFirst && (index === 0) ? offset : (offset + getColumnReactWidth(curr));
         return outOffset;
       }, 0),
     right: (ignoreFirst = true) => colgroups.filter(col =>  col.fixed === 'right')
       .reduce((offset: number, curr: GroupColumn, index: number) => {
-        const outOffset = ignoreFirst && (index === 0) ? offset : (offset + curr.calcWidth);
+        const outOffset = ignoreFirst && (index === 0) ? offset : (offset + getColumnReactWidth(curr));
         return outOffset;
       }, 0),
   };
@@ -61,7 +61,7 @@ export default (props, colgroups: GroupColumn[]) => {
       const fixedPos = resolveFixColPos(column);
       const opt = fixedPos === 'right' ? -1 : 1;
       const offsetX = `${fixedoffset[fixedPos]}px`;
-      fixedoffset[fixedPos] = fixedoffset[fixedPos] + column.calcWidth * opt;
+      fixedoffset[fixedPos] = fixedoffset[fixedPos] + getColumnReactWidth(column) * opt;
       return {
         [fixedPos]: offsetX,
       };
