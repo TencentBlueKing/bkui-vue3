@@ -34,7 +34,7 @@ import { INode }  from './interface';;
 
 
 export default defineComponent({
-  name: 'BkCascaderPanel',
+  name: 'CascaderPanel',
   props: {
     store: PropTypes.object.def({}),
   },
