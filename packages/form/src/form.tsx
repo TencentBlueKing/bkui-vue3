@@ -48,9 +48,10 @@ export const formProps = {
 export type FormProps = Readonly<ExtractPropTypes<typeof formProps>>;
 
 export default defineComponent({
-  name: 'BKForm',
+  name: 'Form',
   props: formProps,
-  setup(props) {
+  emits: ['submit'],
+  setup(props, context) {
     // form-item 列表
     let formItemInstanceList: Array<IFormItemContext> = [];
     /**
@@ -77,6 +78,11 @@ export default defineComponent({
       register,
       unregister,
     });
+
+    const handleSubmit = (event: Event): void => {
+      event.preventDefault();
+      context.emit('submit');
+    };
     /**
      * @desc 验证表单
      * @param { string | Array<string> } fields 指定表单字段
@@ -130,6 +136,7 @@ export default defineComponent({
       formItemInstanceList.forEach(formItem => fieldMap[formItem.property] && formItem.clearValidate());
     };
     return {
+      handleSubmit,
       validate,
       clearValidate,
     };
@@ -140,7 +147,9 @@ export default defineComponent({
       [`bk-form--${this.formType}`]: true,
     });
     return (
-      <form class={formClasses}>
+      <form
+        class={formClasses}
+        onSubmit={this.handleSubmit}>
         { this.$slots.default?.() }
       </form>
     );
