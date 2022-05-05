@@ -86,12 +86,14 @@ export default defineComponent({
     });
     watch(() => props.isShow, (val: Boolean) => {
       if (!val) {
-        data.moveStyle = {
-          top: '50%',
-          left: '50%',
-        };
-        data.positionX = 0;
-        data.positionY = 0;
+        setTimeout(() => {
+          data.moveStyle = {
+            top: '50%',
+            left: '50%',
+          };
+          data.positionX = 0;
+          data.positionY = 0;
+        }, 1000);
       }
     });
     // 关闭弹框
@@ -122,6 +124,9 @@ export default defineComponent({
     // 拖拽事件
     const moveHandler = (e) => {
       if (props.fullscreen) {
+        return false;
+      }
+      if (!props.draggable) {
         return false;
       }
       const odiv = e.target;
@@ -177,6 +182,7 @@ export default defineComponent({
       header: () => [
         <div class={['bk-dialog-tool', this.fullscreen || !this.draggable ? '' : 'move', this.draggable ? 'content-dragging' : '']}
           onMousedown={this.moveHandler}>
+          {this.$slots.tools?.() ?? ''}
           <span class={['bk-dialog-close', this.closeIcon ? '' : 'close-icon']} onClick={this.handleClose}>+</span>
         </div>,
         <div class="bk-dialog-header">
@@ -220,7 +226,7 @@ export default defineComponent({
       </div>,
     };
 
-    const className = `bk-dialog-wrapper ${this.scrollable ? 'scroll-able' : ''}`;
+    const className = `bk-dialog-wrapper ${this.scrollable ? 'scroll-able' : ''} ${this.multiInstance ? 'multi-instance' : ''}`;
     return <BkModal {...this.$props} class={[className, this.fullscreen ? 'bk-model-fullscreen' : this.size]}
       style={this.data.moveStyle}>
       {dialogSlot}
