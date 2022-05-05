@@ -45,8 +45,6 @@ export default defineComponent({
     }
     const childrenArr = this.$slots.default();
 
-    console.log('from render = ', childrenArr);
-
     if (childrenArr.length > 1) {
       const childrenLength = childrenArr.length;
       let startIndex = 0;
