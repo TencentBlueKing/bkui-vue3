@@ -26,7 +26,6 @@
   text-align: center;
   text-decoration: none;
   white-space: nowrap;
-  vertical-align: middle;
   cursor: pointer;
   background-color: @white-color;
   border: 1px solid @light-gray;
@@ -97,7 +96,7 @@
     each(@sizeSelectors, {
     @sizeBtnMinWidth: '@{value}BtnMinWidth';
     @sizeBtnHeight: '@{value}BtnHeight';
-      @sizeBtnPadding: '@{value}BtnPadding';
+    @sizeBtnPadding: '@{value}BtnPadding';
       &.@{bk-prefix}-button-@{value} {
         min-width: @@sizeBtnMinWidth;
         height: @@sizeBtnHeight;
