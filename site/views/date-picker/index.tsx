@@ -33,6 +33,7 @@ import { IPropsTableItem } from '../../typings';
 
 import BaseDemo from './base-demo.vue';
 import RangeDemo from './range-demo.vue';
+import SlotDemo from './slot-demo.vue';
 
 const menuPropsJson: IPropsTableItem[] = [
   {
@@ -75,14 +76,21 @@ export default defineComponent({
             desc="通过 v-model 或者 value 设置初始值"
             componentName="date-picker"
             demoName="base-demo">
-              <BaseDemo />
+            <BaseDemo />
           </DemoBox>
           <DemoBox
             title="开启日期范围"
             desc="通过设置 type 属性为 daterange 来开启时间设置"
             componentName="date-picker"
             demoName="range-demo">
-              <RangeDemo />
+            <RangeDemo />
+          </DemoBox>
+          <DemoBox
+            title="slot"
+            desc="可以通过 slot='footer' 来增加自定义的 footer，同时可以配置 footer-slot-cls 来为 footer 的 wrapper 容器设置自定义的样式。不存在 footer slot 时，footer-slot-cls 配置无效"
+            componentName="date-picker"
+            demoName="slot-demo">
+            <SlotDemo />
           </DemoBox>
         <PropsBox propsData={menuPropsJson}/>
       </div>
