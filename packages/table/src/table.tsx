@@ -26,10 +26,11 @@
 
 import { defineComponent, onBeforeUnmount, onMounted, reactive, ref, watchEffect } from 'vue';
 
-import { resolveClassName } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
 import useActiveColumns from './plugins/use-active-columns';
+import useColumnResize from './plugins/use-column-resize';
+import useFixedColumn from './plugins/use-fixed-column';
 import userPagination from './plugins/use-pagination';
 import { tableProps } from './props';
 import TableRender, { EVENTS } from './render';
@@ -44,15 +45,33 @@ export default defineComponent({
   props: tableProps,
   emits: ['columnPick', 'rowClick', 'rowDblClick', 'pageLimitChange', 'pageValueChange'],
   setup(props, ctx) {
-    const colgroups = reactive(props.columns.map(col => ({ ...col, calcWidth: null })));
+    const colgroups = reactive(props.columns.map(col => ({
+      ...col,
+      calcWidth: null,
+      resizeWidth: null,
+      listeners: new Map(),
+    })));
+
     let columnSortFn: any = null;
     let columnFilterFn: any = null;
 
     let observerIns = null;
     const root = ref();
     const refVirtualRender = ref();
+    const { dragOffsetXStyle } = useColumnResize(colgroups, true);
 
     const { activeColumns } = useActiveColumns(props);
+
+    const reactiveProp = reactive({
+      scrollTranslateY: 0,
+      scrollTranslateX: 0,
+      activeColumns,
+      setting: {
+        size: null,
+        height: null,
+      },
+    });
+
     const { pageData, localPagination, resolvePageData, watchEffectFn } = userPagination(props);
     const {
       tableClass,
@@ -63,16 +82,12 @@ export default defineComponent({
       contentStyle,
       headStyle,
       resetTableHeight,
-    } = useClass(props);
+    } = useClass(props, root, reactiveProp);
 
-    const reactiveProp = reactive({
-      scrollTranslateY: 0,
-      activeColumns,
-      setting: {
-        size: null,
-        height: null,
-      },
-    });
+
+    const { renderFixedColumns, fixedWrapperClass } = useFixedColumn(props, colgroups);
+
+
     const tableRender = new TableRender(props, ctx, reactiveProp, colgroups);
 
     watchEffect(() => {
@@ -100,7 +115,9 @@ export default defineComponent({
 
     const handleScrollChanged = (args: any[]) => {
       const pagination = args[1];
-      reactiveProp.scrollTranslateY = pagination.translateY;
+      const { translateX, translateY } = pagination;
+      reactiveProp.scrollTranslateY = translateY;
+      reactiveProp.scrollTranslateX = translateX;
     };
 
     onMounted(() => {
@@ -125,7 +142,7 @@ export default defineComponent({
     return () => <div class={tableClass.value} style={wrapperStyle.value} ref={root}>
       {
         // @ts-ignore:next-line
-        <div class={ headClass } style={headStyle}>
+        <div class={ headClass } style={headStyle.value}>
         {
           tableRender.renderTableHeadSchema()
         }
@@ -139,14 +156,18 @@ export default defineComponent({
         list={pageData}
         onContentScroll={ handleScrollChanged }
         throttleDelay={0}
+        scrollEvent={true}
         enabled={props.virtualEnabled}>
           {
             {
               default: (scope: any) => tableRender.renderTableBodySchema(scope.data || props.data),
-              afterContent: () => <div class={ resolveClassName('table-fixed') }></div>,
             }
           }
       </VirtualRender>
+      <div class={ fixedWrapperClass }>
+        { renderFixedColumns() }
+        <div class="bk-drag-column offset-x" style={dragOffsetXStyle.value}></div>
+      </div>
       <div class={ footerClass.value }>
         {
           props.pagination && props.data.length && tableRender.renderTableFooter(localPagination.value)

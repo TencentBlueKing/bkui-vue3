@@ -24,6 +24,7 @@
  * IN THE SOFTWARE.
 */
 const baseJestConf = require('../../jest.config');
+
 module.exports = {
   ...baseJestConf,
   testRegex: 'packages/button/__test__/.*\\.test\\.(js|ts|tsx)$',

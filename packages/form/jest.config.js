@@ -28,5 +28,5 @@ const baseJestConf = require('../../jest.config');
 
 module.exports = {
   ...baseJestConf,
-  testRegex: 'packages/radio/__test__/.*\\.test\\.(js|ts|tsx)$',
+  testRegex: 'packages/form/__test__/.*\\.test\\.(js|ts|tsx)$',
 };

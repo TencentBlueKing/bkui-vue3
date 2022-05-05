@@ -1,7 +1,7 @@
 {
   "name": "bkui-vue",
   "private": true,
-  "version": "0.0.1-beta.57",
+  "version": "0.0.1-beta.61",
   "workspaces": {
     "packages": [
       "packages/!(**.bak)*",
@@ -117,7 +117,7 @@
       "git add"
     ],
     "site/**/*.(vue|ts|tsx|js)": [
-      "eslint ./site --ext .js,.tsx,.ts,.vue --cache --fix",
+      "eslint ./site --ext .js,.tsx,.ts,.vue --cache --fix --ignore-pattern site/dist/",
       "git add"
     ],
     "packages/**/*.(vue|ts|tsx|js)": [

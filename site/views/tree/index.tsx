@@ -35,14 +35,15 @@ import { resolvePropsToDesData } from '../utils/index';
 import async from './async.vue';
 import autoConfig from './auto-config.vue';
 import basic from './basic.vue';
+import customNode from './custom-node.vue';
 import levelLine from './level-line.vue';
 import * as TREE_DATA from './options';
 import prefixIcon from './prefix-icon.vue';
 import prefixIconJsx from './prefix-icon-jsx';
-import virtualRender from './virtual-render.vue';
+import virtualRender from './virtual-render.vue';;
 
 export default defineComponent({
-  components: { basic, virtualRender, levelLine, prefixIcon, async, prefixIconJsx, autoConfig },
+  components: { basic, virtualRender, levelLine, prefixIcon, async, prefixIconJsx, autoConfig, customNode },
   render() {
     const propsJson = resolvePropsToDesData(treeProps);
 
@@ -85,7 +86,8 @@ export default defineComponent({
         demoName: 'prefix-icon',
       },
       component: () => <prefix-icon></prefix-icon>,
-    },    {
+    },
+    {
       attrs: {
         title: '自定义节点Icon-jsx',
         subtitle: '自定义节点Icon',
@@ -95,6 +97,16 @@ export default defineComponent({
         suffix: '.tsx',
       },
       component: () => <prefix-icon-jsx></prefix-icon-jsx>,
+    },
+    {
+      attrs: {
+        title: '自定义节点内容',
+        subtitle: '自定义节点Icon',
+        desc: 'props: prefix-icon',
+        componentName: 'tree',
+        demoName: 'custom-node',
+      },
+      component: () => <custom-node></custom-node>,
     },
     {
       attrs: {

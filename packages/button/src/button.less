@@ -98,13 +98,13 @@
     @sizeBtnMinWidth: '@{value}BtnMinWidth';
     @sizeBtnHeight: '@{value}BtnHeight';
     @sizeBtnPadding: '@{value}BtnPadding';
-    &.@{bk-prefix}-button-@{value} {
-      min-width: @@sizeBtnMinWidth;
-      height: @@sizeBtnHeight;
-      line-height: @@sizeBtnHeight;
-      padding: 0 @@sizeBtnPadding;
-    }
-  });
+      &.@{bk-prefix}-button-@{value} {
+        min-width: @@sizeBtnMinWidth;
+        height: @@sizeBtnHeight;
+        line-height: @@sizeBtnHeight;
+        padding: 0 @@sizeBtnPadding;
+      }
+    });
 
   &:not(.is-text) {
     .@{bk-prefix}-button-loading {
@@ -125,6 +125,8 @@
 
   &.is-text {
     height: auto;
+    min-width: auto;
+    padding: 0;
     font-size: @font-size-medium;
     font-size: inherit;
     line-height: 1;

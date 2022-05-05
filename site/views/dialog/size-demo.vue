@@ -77,8 +77,8 @@
       :is-show="exampleSetting1.dialog5.isShow"
       :title="'这是标题'"
       :theme="'primary'"
-      :width="'400'"
-      :height="'200'"
+      :width="400"
+      :height="200"
       @closed="() => exampleSetting1.dialog5.isShow = false"
       @confirm="() => exampleSetting1.dialog5.isShow = false"
     >
@@ -87,37 +87,27 @@
   </div>
 </template>
 
-<script>
-  import { defineComponent, ref } from 'vue';
+<script setup>
+  import { ref } from 'vue';
 
   import BkButton from '@bkui-vue/button';
   import BkDialog from '@bkui-vue/dialog';
 
-  export default defineComponent({
-    name: 'SiteDialog',
-    components: {
-      BkButton,
-      BkDialog,
+  const exampleSetting1 = ref({
+    dialog1: {
+      isShow: false,
     },
-    setup() {
-      const exampleSetting1 = ref({
-        dialog1: {
-          isShow: false,
-        },
-        dialog2: {
-          isShow: false,
-        },
-        dialog3: {
-          isShow: false,
-        },
-        dialog4: {
-          isShow: false,
-        },
-        dialog5: {
-          isShow: false,
-        },
-      });
-      return { exampleSetting1 };
+    dialog2: {
+      isShow: false,
+    },
+    dialog3: {
+      isShow: false,
+    },
+    dialog4: {
+      isShow: false,
+    },
+    dialog5: {
+      isShow: false,
     },
   });
 </script>

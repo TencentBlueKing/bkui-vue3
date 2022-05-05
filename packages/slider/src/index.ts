@@ -24,12 +24,9 @@
  * IN THE SOFTWARE.
  */
 
-import { App } from 'vue';
+import { withInstall } from '@bkui-vue/shared';
 
-import Slider from './slider';
+import Component from './slider';
 
-Slider.install = (Vue: App) => {
-  Vue.component(Slider.name, Slider);
-};
-
+const Slider = withInstall(Component);
 export default Slider;

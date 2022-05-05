@@ -29,7 +29,7 @@ import { computed, defineComponent, inject, provide } from 'vue';
 export default defineComponent({
   name: 'Row',
   emits: [],
-  setup(props, ctx) {
+  setup(_props, ctx) {
     const { col, gutter, flex } = inject('containerProps');
     provide('containerProps', {
       col,
