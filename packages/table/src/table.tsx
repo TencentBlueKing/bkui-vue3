@@ -168,7 +168,7 @@ export default defineComponent({
         { renderFixedColumns() }
         <div class="bk-drag-column offset-x" style={dragOffsetXStyle.value}></div>
       </div>
-      <div class={ footerClass }>
+      <div class={ footerClass.value }>
         {
           props.pagination && props.data.length && tableRender.renderTableFooter(localPagination.value)
         }
