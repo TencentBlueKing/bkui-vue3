@@ -26,6 +26,8 @@
 import { App } from 'vue';
 
 import * as components from './components';
+
+console.log(components);
 const createInstall = (prefix = 'Bk') => (app: App) => {
   const pre = app.config.globalProperties.bkUIPrefix || prefix;
   Object

@@ -40,7 +40,7 @@ const colProps = {
 };
 
 export default defineComponent({
-  name: 'Row',
+  name: 'Col',
   props: colProps,
   emits: [],
   setup(props, ctx) {
