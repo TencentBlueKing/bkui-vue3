@@ -40,10 +40,11 @@ import levelLine from './level-line.vue';
 import * as TREE_DATA from './options';
 import prefixIcon from './prefix-icon.vue';
 import prefixIconJsx from './prefix-icon-jsx';
-import virtualRender from './virtual-render.vue';;
+import search from './search.vue';
+import virtualRender from './virtual-render.vue';
 
 export default defineComponent({
-  components: { basic, virtualRender, levelLine, prefixIcon, async, prefixIconJsx, autoConfig, customNode },
+  components: { basic, virtualRender, levelLine, prefixIcon, async, prefixIconJsx, autoConfig, customNode, search },
   render() {
     const propsJson = resolvePropsToDesData(treeProps);
 
@@ -127,6 +128,16 @@ export default defineComponent({
         demoName: 'auto-config',
       },
       component: () => <auto-config></auto-config>,
+    },
+    {
+      attrs: {
+        title: '搜索配置',
+        subtitle: '配置搜索行为',
+        desc: 'props: --',
+        componentName: 'tree',
+        demoName: 'search',
+      },
+      component: () => <search></search>,
     }];
 
     return (
