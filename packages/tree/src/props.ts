@@ -145,12 +145,12 @@ export const treeProps = {
 
       /**
      * 匹配方式
-     * 支持模糊匹配（fuzzy） || 完全匹配（exact）
+     * 支持模糊匹配（fuzzy） || 完全匹配（full）
      * 默认 模糊匹配（fuzzy）
      * 支持自定义匹配函数 (searchValue, itemText, item) => true || false
      */
       match: PropTypes.oneOfType([
-        PropTypes.commonType(['fuzzy', 'exact'], 'TreeSearchMatchType'),
+        PropTypes.commonType(['fuzzy', 'full'], 'TreeSearchMatchType'),
         PropTypes.func,
       ]),
 
