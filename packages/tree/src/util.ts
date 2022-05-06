@@ -75,9 +75,10 @@ export const getFlatdata = (props: TreePropTypes, treeData: Array<any> = undefin
     let result = undefined;
     if (cached) {
       result = cached[cachedAttr];
+    } else {
+      result = node[attr];
     }
 
-    result = node[attr];
     if (result === undefined) {
       result = defaultValue;
     }
@@ -85,11 +86,11 @@ export const getFlatdata = (props: TreePropTypes, treeData: Array<any> = undefin
   }
 
   function isCachedTreeNodeOpened(uuid: string, node: any) {
-    return getCachedTreeNodeAttr(uuid, node, 'isOpen', NODE_ATTRIBUTES.IS_OPEN);
+    return getCachedTreeNodeAttr(uuid, node, 'isOpen', NODE_ATTRIBUTES.IS_OPEN, false);
   }
 
   function isCachedTreeNodeChecked(uuid: string, node: any) {
-    return getCachedTreeNodeAttr(uuid, node, 'checked', NODE_ATTRIBUTES.CHECKED);
+    return getCachedTreeNodeAttr(uuid, node, 'checked', NODE_ATTRIBUTES.CHECKED, false);
   }
 
   function isCachedTreeNodeMatch(uuid: string, node: any) {

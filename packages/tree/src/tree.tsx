@@ -67,6 +67,7 @@ export default defineComponent({
       getNodeAttr,
       getNodePath,
       isRootNode,
+      isChecked,
     } = useNodeAttribute(flatData);
 
     const { searchFn, isSearchActive, refSearch, openResultNode, isTreeUI, isSearchDisabled } = useSearch(props);
@@ -134,7 +135,7 @@ export default defineComponent({
         return node;
       }
 
-      console.error('setNodeAction Error: cannot find uid for the ndoe item');
+      console.error('setNodeAction Error: node id cannot found');
       return node;
     };
 
@@ -187,11 +188,25 @@ export default defineComponent({
       setNodeAction(resolveNodeItem(item), NODE_ATTRIBUTES.CHECKED, checked);
     };
 
+    /**
+     * 选中指定的节点
+     * @param item 指定节点
+     * @param fireOther 是否释放其他已选中节点 默认为 true
+     */
+    const select = (item: string | any, fireOther = true) => {
+      if (fireOther) {
+        setChecked(schemaValues.value.filter((item: any) => isChecked(item)) ?? [], false);
+      }
+
+      setChecked(item, true);
+    };
+
     ctx.expose({
       hanldeTreeNodeClick,
       setOpen,
       setChecked,
       setNodeAction,
+      select,
     });
 
     const root = ref();
