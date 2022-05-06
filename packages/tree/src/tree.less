@@ -50,10 +50,12 @@
     }
 
     .@{bk-prefix}-node-content {
-      display: inline-flex;
+      display: flex;
       align-items: center;
+      min-width: 0;
 
       .@{bk-prefix}-node-text {
+        flex: 1;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
