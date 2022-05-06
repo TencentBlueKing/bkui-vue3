@@ -24,12 +24,13 @@
  * IN THE SOFTWARE.
 */
 
-import { App } from 'vue';
+import { withInstallProps } from '@bkui-vue/shared';
 
-import Cascader from './cascader';
-
-Cascader.install = (Vue: App) => {
-  Vue.component(Cascader.name, Cascader);
+import Component from './cascader';
+import CascaderPanel from './cascader-panel';
+const BkCascader = withInstallProps(Component, { CascaderPanel });
+export default BkCascader;
+export {
+  BkCascader,
+  CascaderPanel as BkCascaderPanel,
 };
-
-export default Cascader;

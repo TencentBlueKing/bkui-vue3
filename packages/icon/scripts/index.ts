@@ -62,6 +62,7 @@ const license = `/*
 const renderTemplate = `
 <%=license%>
 import { FunctionalComponent } from 'vue';
+
 import BkIcon, { IIconBaseProps } from './icon';
 const data = JSON.parse('<%=svgInfo%>');
 const <%=iconName%>: FunctionalComponent<IIconBaseProps> = (props, context) => {

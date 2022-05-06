@@ -23,7 +23,6 @@
       style="width: 100px;"
     />
     <bk-date-picker />
-    <bk-color-picker />
   </bk-compose-form-item>
 </template>
 <script setup>

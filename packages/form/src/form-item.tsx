@@ -35,6 +35,7 @@ import {
   toRefs,
 } from 'vue';
 
+import { bkTooltips } from '@bkui-vue/directives';
 import {
   classes,
   PropTypes,
@@ -137,7 +138,10 @@ const isValid = (value: string | number): boolean => value !== undefined;
 
 
 export default defineComponent({
-  name: 'BKFormItem',
+  name: 'FormItem',
+  directives: {
+    bkTooltips,
+  },
   props: formItemProps,
   setup(props) {
     const currentInstance = getCurrentInstance();
@@ -259,16 +263,30 @@ export default defineComponent({
       'is-required': this.required,
     });
 
+    const renderLabel = () => {
+      if (this.$slots.label) {
+        return this.$slots.label();
+      }
+      if (this.description) {
+        return (
+          <span
+            class={{
+              'bk-form-label-description': Boolean(this.description),
+            }}
+            v-bk-tooltips={this.description}>
+            {this.label}
+          </span>
+        );
+      }
+      return this.label;
+    };
+
     return (
       <div class={itemClassees}>
         <div
           class="bk-form-label"
           style={this.labelStyles}>
-            {
-            this.$slots.label
-              ? this.$slots.label()
-              : this.label
-            }
+            {renderLabel()}
         </div>
         <div class="bk-form-content">
           {this.$slots.default?.()}

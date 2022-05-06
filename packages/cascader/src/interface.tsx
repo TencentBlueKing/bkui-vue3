@@ -37,14 +37,21 @@ export interface INodeConfig {
 export interface INode {
   checked: boolean;
   children?: (null)[] | null;
-  config: Config;
-  data: Data;
+  config: IConfig;
+  data: IData;
   hasChildren: boolean;
   id: string;
   level: number;
   loading: boolean;
   name: string;
   parent?: INode;
+}
+
+export interface IData {
+  id:        string;
+  name:      string;
+  disabled?: boolean;
+  children?: IData[];
 }
 
 export interface IConfig {

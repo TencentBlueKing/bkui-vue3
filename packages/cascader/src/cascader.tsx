@@ -37,7 +37,7 @@ import CascaderPanel from './cascader-panel';
 import Store from './store';;
 
 export default defineComponent({
-  name: 'BkCascader',
+  name: 'Cascader',
   directives: {
     clickoutside,
   },
@@ -168,6 +168,7 @@ export default defineComponent({
           theme="light bk-cascader-popover"
           trigger="click"
           arrow={false}
+          class="bk-cascader-popover-wrapper"
           v-model:isShow={this.panelShow}
           boundary="body">
           {{

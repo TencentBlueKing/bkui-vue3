@@ -26,7 +26,6 @@
   text-align: center;
   text-decoration: none;
   white-space: nowrap;
-  vertical-align: middle;
   cursor: pointer;
   background-color: @white-color;
   border: 1px solid @light-gray;
@@ -98,13 +97,13 @@
     @sizeBtnMinWidth: '@{value}BtnMinWidth';
     @sizeBtnHeight: '@{value}BtnHeight';
     @sizeBtnPadding: '@{value}BtnPadding';
-    &.@{bk-prefix}-button-@{value} {
-      min-width: @@sizeBtnMinWidth;
-      height: @@sizeBtnHeight;
-      line-height: @@sizeBtnHeight;
-      padding: 0 @@sizeBtnPadding;
-    }
-  });
+      &.@{bk-prefix}-button-@{value} {
+        min-width: @@sizeBtnMinWidth;
+        height: @@sizeBtnHeight;
+        line-height: @@sizeBtnHeight;
+        padding: 0 @@sizeBtnPadding;
+      }
+    });
 
   &:not(.is-text) {
     .@{bk-prefix}-button-loading {
@@ -125,6 +124,8 @@
 
   &.is-text {
     height: auto;
+    min-width: auto;
+    padding: 0;
     font-size: @font-size-medium;
     font-size: inherit;
     line-height: 1;

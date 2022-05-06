@@ -108,7 +108,7 @@ export default defineComponent({
     return (
       <div>
         <DemoTitle
-          name="Breadcrumb 面包屑"
+          name="Cascader 级联组件"
           desc="Breadcrumb组件， 显示当前页面的路径，快速返回之前的任意页面。"
           link="https://www.google.com.hk/"/>
 

@@ -50,6 +50,7 @@
 .@{bk-prefix}-input {
   display: flex;
   align-items: stretch;
+  width: 100%;
   height: @input-height-base;
   font-size: @font-size-base;
   border: @border-width-base @border-style-base @input-border-color;
@@ -148,6 +149,7 @@
   }
 
   &--text {
+    width: 100%;
     padding: 0 @input-horizontal-padding;
     line-height: 1;
     color: @input-color;
@@ -195,6 +197,7 @@
     height: 100%;
     font-size: 0;
     flex-direction: column;
+    user-select: none;
 
     span {
       display: block;
