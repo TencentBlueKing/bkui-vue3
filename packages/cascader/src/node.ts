@@ -24,15 +24,30 @@
 * IN THE SOFTWARE.
 */
 
-import { IPanel } from './interface';
-class Node {
-  constructor(node: IPanel, config: any, parent: any) {
+import { IConfig, IData, INode } from './interface';
+class Node implements INode {
+  data: IData;
+  config: IConfig;
+  parent: INode;
+  level: number;
+  id: string;
+  name: string;
+  loading: boolean;
+  checked: boolean;
+  children?: null[];
+  hasChildren: boolean;
+  pathNodes: INode[];
+  path: string[];
+  pathNames: string[];
+  nodes: INode[];
+
+  constructor(node: IData, config: any, parent?: any) {
     this.data = node;
     this.config = config;
     this.parent = parent || null;
     this.level = !this.parent ? 1 : this.parent.level + 1;
 
-    this.initState(parent);
+    this.initState();
   }
 
   initState() {
@@ -65,7 +80,7 @@ class Node {
   }
 
   calculateNodesPath() {
-    const nodes = [this];
+    const nodes: INode[] = [this];
     let { parent } = this;
     while (parent) {
       nodes.unshift(parent);
