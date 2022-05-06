@@ -68,7 +68,7 @@ describe('Sideslider.tsx', () => {
   it('test props width', async () => {
     const wrapper = await mount({
       components,
-      template: '<BkSideslider ref="slider" :width="500"></BkSideslider>',
+      template: '<BkSideslider ref="slider" width="500px"></BkSideslider>',
     });
     expect(wrapper.html()).toContain('<div class="bk-modal-wrapper normal bk-sideslider-wrapper scroll-able" style="width: 500px; height: 100%; display: none; right: 0px;">');
   });
