@@ -426,6 +426,15 @@ const routes: RouteRecordRaw[] = [
    * @description:弹出框提示
    */
   {
+    path: '/upload',
+    name: 'upload',
+    component: () => import('../views/upload'),
+    meta: {
+      group: NavGroupMeta.Form,
+      navName: 'Upload 文件上传',
+    },
+  },
+  {
     path: '/popover',
     name: 'popover',
     component: () => import('../views/popover'),

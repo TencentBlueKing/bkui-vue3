@@ -69,3 +69,4 @@ import '@bkui-vue/transfer/transfer.less';
 import '@bkui-vue/pagination/pagination.less';
 import '@bkui-vue/timeline/timeline.less';
 import '@bkui-vue/resize-layout/resize-layout.less';
+import '@bkui-vue/upload/upload.less';
