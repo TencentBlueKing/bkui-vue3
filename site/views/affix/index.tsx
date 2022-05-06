@@ -29,9 +29,7 @@ import { defineComponent } from 'vue';
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
-import {
-  type IPropsTableItem,
-} from '../../typings';
+import { type IPropsTableItem } from '../../typings';
 
 import DemoAffix from './demo/affix.vue';
 import DemoAffixBottom from './demo/affix-bottom.vue';
@@ -87,47 +85,48 @@ export default defineComponent({
         <DemoTitle
           name="Affix图钉"
           desc="使用图钉，可以将内容固定在屏幕上，并且不随页面的滚动而滚动。"
-          link="https://www.qq.com/"/>
+          link={`${import.meta.env.VITE_APP_BASE_URL ?? ''}/affix`}
+        />
         <DemoBox
           title="基础用法"
           desc="不传值时：默认直接固定在最顶端"
           componentName="affix"
-          demoName="/demo/affix">
+          demoName="demo/affix">
             <DemoAffix />
         </DemoBox>
         <DemoBox
           title="固定在顶部"
           desc="设置offset-top属性"
           componentName="affix"
-          demoName="/demo/affix-top">
+          demoName="demo/affix-top">
             <DemoAffixTop />
         </DemoBox>
         <DemoBox
           title="对象层级"
           desc="设置z-index属性，设置affix对象的层级"
           componentName="affix"
-          demoName="/demo/affix-z-index">
+          demoName="demo/affix-z-index">
             <DemoAffixZIndex />
         </DemoBox>
         <DemoBox
           title="固定在底部"
           desc="设置offset-bottom属性, offset-top和offset-bottom只可以设置一个，如果都设置会使用offset-bottom"
           componentName="affix"
-          demoName="/demo/affix-bottom">
+          demoName="demo/affix-bottom">
             <DemoAffixBottom />
         </DemoBox>
         <DemoBox
           title="固定状态改变时的回调"
           desc="设置on-change属性，固定状态改变时的回调"
           componentName="affix"
-          demoName="/demo/affix-callback">
+          demoName="demo/affix-callback">
             <DemoAffixCallback />
         </DemoBox>
         <DemoBox
           title="设置滚动容器"
           desc="设置target属性，target为需要监听其滚动事件容器的id，默认为 window。"
           componentName="affix"
-          demoName="/demo/affix-container">
+          demoName="demo/affix-container">
             <DemoAffixContainer />
         </DemoBox>
         <PropsBox
