@@ -37,6 +37,7 @@ export default defineComponent({
   emits: ['click'],
   setup(props: any, { emit }) {
     const handleClick = (evt: MouseEvent) => {
+      evt.stopPropagation();
       emit('click', evt);
     };
     const wrapperCLasses = computed(() => [
