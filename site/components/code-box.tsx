@@ -25,11 +25,23 @@
 */
 import hljs from 'highlight.js';
 import javascript from 'highlight.js/lib/languages/javascript';
+import json from 'highlight.js/lib/languages/json';
 import xml from 'highlight.js/lib/languages/xml';
-import { defineComponent } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
+
+import './code-box.less';
 
 hljs.registerLanguage('javascript', javascript);
+hljs.registerLanguage('json', json);
 hljs.registerLanguage('xml', xml);
+// hljs.addPlugin({
+//   'after:highlight': (result) => {
+//     console.error('highlighthighlighthighlight');
+//     console.error(result);
+//     result.value = result.value
+//       .replace('&lt;template&gt;', '<span class="hljs-name">&lt;template&gt;</span>');
+//   },
+// });
 
 export default defineComponent({
   name: 'CodeBox',
@@ -40,17 +52,20 @@ export default defineComponent({
       default: 'html',
     },
   },
-  render() {
-    const code = hljs.highlight(this.code, {
-      language: 'javascript',
-      ignoreIllegals: true,
-    }).value;
+  render(props) {
+    const code = ref('');
+    watch(() => props.language, () => {
+      code.value = hljs.highlight(this.code, {
+        language: props.language,
+        ignoreIllegals: true,
+      }).value;
+    }, { immediate: true });
 
     return (
-      <div class="markdown-body">
-        <pre  class="hljs">
-        <code innerHTML={code} />
-      </pre>
+      <div class="markdown-body code-box">
+        <pre class="hljs">
+          <code innerHTML={code.value} />
+        </pre>
       </div>
     );
   },

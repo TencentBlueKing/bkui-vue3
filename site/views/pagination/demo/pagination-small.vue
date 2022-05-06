@@ -15,5 +15,4 @@
   const current = ref(1);
 
 </script>
-<style lang="postcss">
-</style>
+

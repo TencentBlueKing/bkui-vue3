@@ -1,6 +1,6 @@
 <template>
-  <div style="height: 300px; width: 100%; overflow: auto; display: flex;">
-    <div style="width: 50%;">
+  <div class="row">
+    <div class="cell">
       <span>默认连线</span>
       <bk-tree
         :data="treeData"
@@ -9,7 +9,7 @@
         children="children"
       />
     </div>
-    <div style="width: 50%;">
+    <div class="cell">
       <span>自定义连线</span>
       <bk-tree
         :data="treeData"
@@ -34,3 +34,16 @@
     },
   });
 </script>
+<style scoped>
+.row {
+  display: flex;
+  width: 100%;
+  height: 300px;
+  overflow: auto;
+}
+
+.cell {
+  flex: 1;
+  padding: 0 15px;
+}
+</style>

@@ -1,6 +1,6 @@
 <template>
   <div style="width: 100%">
-    <div style="progress">
+    <div>
       <bk-progress
         :text-inside="false"
         type="dashboard"
@@ -39,6 +39,7 @@
 .mb10 {
   margin-bottom: 10px;
 }
+
 .bk-progress {
   margin-right: 30px;
 }

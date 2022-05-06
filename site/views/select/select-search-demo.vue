@@ -73,9 +73,10 @@
 .demo {
   display: flex;
 }
+
 .bk-select {
   width: 300px;
-  margin-right:20px;
+  margin-right: 20px;
 }
 </style>
 

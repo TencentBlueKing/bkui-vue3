@@ -23,37 +23,47 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import type {
-  ComponentInternalInstance,
-  InjectionKey,
-  Ref,
-} from 'vue';
+
 import {
+  type ComponentInternalInstance,
+  type InjectionKey,
+  type Ref,
   computed,
   getCurrentInstance,
   inject,
-  reactive,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
   ref,
+  watch,
 } from 'vue';
 
-import { EMPTY_OBJ, isEmptyObj } from '@bkui-vue/shared';
+import {
+  EMPTY_OBJ,
+  isEmptyObj,
+} from '@bkui-vue/shared';
 
-import type { RadioProps } from './radio';
-import type { IRadioGroupContext } from './type';
+import type {
+  RadioProps,
+} from './radio';
+import type {
+  IRadioGroupContext,
+  IRadioInstance,
+} from './type';
 
 export const radioGroupKey: InjectionKey<IRadioGroupContext> = Symbol('RadioGroup');
 
 export function useFocus(): [Ref<boolean>, { blur: () => void, focus: () => void }];
 export function useFocus() {
-  const isFocus = ref<boolean>(false);
+  const isFocused = ref<boolean>(false);
   const blur = () => {
-    isFocus.value = false;
+    isFocused.value = false;
   };
   const focus = () => {
-    isFocus.value = true;
+    isFocused.value = true;
   };
   return [
-    isFocus,
+    isFocused,
     {
       blur,
       focus,
@@ -61,30 +71,21 @@ export function useFocus() {
   ];
 };
 
-export function useRadio() {
+export const useRadio = () => {
+  const currentInstance = getCurrentInstance() as
+  ComponentInternalInstance & { props: RadioProps };
+
   const {
     props,
     emit,
-  } = getCurrentInstance() as ComponentInternalInstance & { props: RadioProps };
+  } = currentInstance;
 
   const radioGroup = inject<IRadioGroupContext>(radioGroupKey, EMPTY_OBJ);
   const isGroup = !isEmptyObj(radioGroup);
 
-  const state = reactive({
-    isLocalChecked: props.checked,
-  });
+  const isChecked = ref<boolean>(props.checked);
 
-  const isCheck = computed<boolean>(() => {
-    if (isGroup) {
-      return radioGroup.state.localValue === props.label;
-    } if (props.modelValue !== '') {
-      // 值判断
-      return props.modelValue === props.label;
-    }
-    return state.isLocalChecked;
-  });
-  state.isLocalChecked = isCheck.value;
-
+  // 禁用状态
   const isDisabled = computed<boolean>(() => {
     if (isGroup && radioGroup.props.disabled) {
       return true;
@@ -92,28 +93,66 @@ export function useRadio() {
     return props.disabled;
   });
 
-  const name = computed<string>(() => {
-    if (isGroup && radioGroup.props.name) {
-      return radioGroup.props.name;
-    }
-    return props.name;
-  });
+  // 响应modelValue
+  if (isGroup) {
+    watch(() => radioGroup.props.modelValue, (modelValue) => {
+      isChecked.value = modelValue === props.label;
+    });
+  } else {
+    watch(() => props.modelValue, (modelValue) => {
+      if (modelValue === '') {
+        return;
+      }
+      isChecked.value = modelValue === props.label;
+    }, {
+      immediate: true,
+    });
+  }
 
-  const handlerChange = () => {
+  const setChecked = (value = true) => {
+    isChecked.value = value;
+  };
+
+  // 值更新
+  const handleChange = (event: Event) => {
     if (isDisabled.value) {
       return;
     }
-    emit('change', props.label);
-    emit('update:modelValue', props.label);
+    const $targetInput = event.target as HTMLInputElement;
+    isChecked.value = $targetInput.checked;
+
+    const nextValue = isChecked.value ? props.label : '';
+    emit('change', nextValue);
+    emit('update:modelValue', nextValue);
+    // 更新 radio-group
     if (isGroup) {
-      radioGroup.handleChange(props.label);
+      radioGroup.handleChange(currentInstance.proxy as IRadioInstance);
     }
+
+    nextTick(() => {
+      // 选中状态保持同步
+      if ($targetInput.checked !== isChecked.value) {
+        $targetInput.checked = isChecked.value;
+      }
+    });
   };
 
+  onMounted(() => {
+    if (isGroup) {
+      radioGroup.register(currentInstance.proxy as IRadioInstance);
+    }
+  });
+
+  onBeforeUnmount(() => {
+    if (isGroup) {
+      radioGroup.unregister(currentInstance.proxy as IRadioInstance);
+    }
+  });
+
   return {
-    name,
-    isCheck,
+    isChecked,
     isDisabled,
-    handlerChange,
+    setChecked,
+    handleChange,
   };
-}
+};

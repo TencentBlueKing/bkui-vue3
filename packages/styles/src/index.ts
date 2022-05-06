@@ -26,6 +26,7 @@
 
 import './reset.less';
 import '@bkui-vue/alert/alert.less';
+import '@bkui-vue/affix/affix.less';
 import '@bkui-vue/backtop/backtop.less';
 import '@bkui-vue/badge/badge.less';
 import '@bkui-vue/breadcrumb/breadcrumb.less';
@@ -68,5 +69,9 @@ import '@bkui-vue/virtual-render/virtual-render.less';
 import '@bkui-vue/transfer/transfer.less';
 import '@bkui-vue/pagination/pagination.less';
 import '@bkui-vue/timeline/timeline.less';
+import '@bkui-vue/code-diff/code-diff.less';
 import '@bkui-vue/resize-layout/resize-layout.less';
 import '@bkui-vue/upload/upload.less';
+import '@bkui-vue/tag-input/tag-input.less';
+import '@bkui-vue/container/container.less';
+import '@bkui-vue/cascader/cascader.less';

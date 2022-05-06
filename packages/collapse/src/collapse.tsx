@@ -140,7 +140,7 @@ export default defineComponent({
     const renderItems = () => collapseData.value.map(item => <div class="bk-collapse-item">
       <div class="bk-collapse-header" onClick={() => handleItemClick(item)}>
         <span class="bk-collapse-title">
-          {slots.default?.() ?? item[props.titleField]}
+          {slots.default?.(item) ?? item[props.titleField]}
         </span>
         { isItemActive(item) ? <AngleDown class="bk-collapse-icon" /> : <AngleRight class="bk-collapse-icon" />}
       </div>

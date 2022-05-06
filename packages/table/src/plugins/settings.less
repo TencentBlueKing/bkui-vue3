@@ -1,0 +1,136 @@
+@import '@bkui-vue/styles/themes/themes.less';
+
+.@{bk-prefix}-table-settings {
+  &[data-bk-table-settings-theme='true'] {
+    padding: 0;
+
+    .setting-content {
+      width: 515px;
+      border: 1px solid #dcdee5;
+      border-radius: 2px;
+      opacity: 1;
+
+      .setting-head {
+        position: relative;
+        display: flex;
+        padding: 0 24px;
+        margin: 0;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 32px;
+        color: #313238;
+
+        .icon-close-action {
+          position: absolute;
+          top: 10px;
+          right: 15px;
+          cursor: pointer;
+        }
+      }
+
+      .setting-body {
+        padding: 0 24px;
+
+        .setting-body-title {
+          display: flex;
+          font-size: 14px;
+          line-height: 19px;
+          color: #63656e;
+          justify-content: space-between;
+
+          .limit {
+            color: #c4c6cc;
+          }
+
+          .check-all {
+            color: #3a84ff;
+            cursor: pointer;
+          }
+        }
+
+        .setting-body-fields {
+          display: flex;
+          max-height: 150px;
+          align-items: flex-start;
+          flex-wrap: wrap;
+
+          .field-item {
+            width: 150px;
+            height: 42px;
+            line-height: 42px;
+
+            > label {
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+          }
+        }
+
+        .setting-body-line-height {
+          display: flex;
+          height: 76px;
+          font-size: 14px;
+          border-top: solid 1px #f0f1f5;
+          align-items: center;
+
+          .line-size {
+            display: flex;
+            width: 68px;
+            height: 26px;
+            color: #63656e;
+            cursor: pointer;
+           
+            border: 1px solid #c4c6cc;
+            justify-content: center;
+            align-items: center;
+
+
+            &.active {
+              color: #3a84ff;
+              background: #e1ecff;
+              border: 1px solid #a3c5fd;
+            }
+
+            &:not(.active) {
+              border-right: none;
+              border-left: none;
+            }
+
+            &:first-child {
+              border-right: 1px solid #c4c6cc;
+              border-left: 1px solid #c4c6cc;
+              border-bottom-left-radius: 2px;
+              border-top-left-radius: 2px;
+
+              &.is-default {
+                border-right: none;
+              }
+            }
+
+            &:last-child {
+              border-right: 1px solid #c4c6cc;
+              border-left: 1px solid #c4c6cc;
+              border-top-right-radius: 2px;
+              border-bottom-right-radius: 2px;
+
+              &.is-default {
+                border-left: none;
+              }
+            }
+          }
+        }
+
+      }
+
+      .setting-footer {
+        display: flex;
+        height: 56px;
+        padding: 0 24px;
+        background-color: #fafbfd;
+        justify-content: flex-end;
+        align-items: center;
+      }
+    }
+  }
+}

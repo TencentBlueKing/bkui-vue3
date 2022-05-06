@@ -27,7 +27,7 @@
 import { throttle } from 'lodash';
 
 import { BORDER_OPRIONS } from './const';
-import { GroupColumn, TablePropTypes } from './props';
+import { Column, GroupColumn, TablePropTypes } from './props';
 
 
 /**
@@ -129,6 +129,17 @@ export const resolvePropBorderToClassStr = (val: string | string[]) => {
 };
 
 /**
+ * 获取当前列实际宽度
+ * width props中设置的默认宽度
+ * calcWidth 计算后的宽度
+ * resizeWidth 拖拽重置之后的宽度
+ * @param colmun 当前列配置
+ * @param orders 获取宽度顺序
+ * @returns
+ */
+export const getColumnReactWidth = (colmun: GroupColumn, orders = ['resizeWidth', 'calcWidth', 'width']) => colmun[orders[0]] ?? colmun[orders[1]] ?? colmun[orders[2]];
+
+/**
  * 根据Props Column配置计算并设置列宽度
  * @param root 当前根元素
  * @param colgroups Columns配置
@@ -136,9 +147,8 @@ export const resolvePropBorderToClassStr = (val: string | string[]) => {
  */
 export const resolveColumnWidth = (root: HTMLElement, colgroups: GroupColumn[], autoWidth = 20) => {
   const { width } = root.getBoundingClientRect() || {};
-
   // 可用来平均的宽度
-  let avgWidth = width;
+  let avgWidth = width - 4;
 
   // 需要平均宽度的列数
   const avgColIndexList = [];
@@ -160,27 +170,29 @@ export const resolveColumnWidth = (root: HTMLElement, colgroups: GroupColumn[], 
   };
 
   colgroups.forEach((col: GroupColumn, index: number) => {
-    const colWidth = String(col.width);
-    let isAutoWidthCol = true;
-    if (/^\d+\.?\d*(px)?$/.test(colWidth)) {
-      const numWidth = Number(colWidth.replace('px', ''));
-      resolveColNumberWidth(col, numWidth);
-      isAutoWidthCol = false;
-    }
-
-    if (/^\d+\.?\d*%$/.test(colWidth)) {
-      let perWidth = autoWidth;
-      if (avgWidth > 0) {
-        const percent = Number(colWidth.replace('%', ''));
-        perWidth = avgWidth * percent / 100;
+    if (!col.isHidden) {
+      const colWidth = String(getColumnReactWidth(col));
+      let isAutoWidthCol = true;
+      if (/^\d+\.?\d*(px)?$/.test(colWidth)) {
+        const numWidth = Number(colWidth.replace('px', ''));
+        resolveColNumberWidth(col, numWidth);
+        isAutoWidthCol = false;
       }
 
-      resolveColNumberWidth(col, perWidth);
-      isAutoWidthCol = false;
-    }
+      if (/^\d+\.?\d*%$/.test(colWidth)) {
+        let perWidth = autoWidth;
+        if (avgWidth > 0) {
+          const percent = Number(colWidth.replace('%', ''));
+          perWidth = avgWidth * percent / 100;
+        }
 
-    if (isAutoWidthCol) {
-      avgColIndexList.push(index);
+        resolveColNumberWidth(col, perWidth);
+        isAutoWidthCol = false;
+      }
+
+      if (isAutoWidthCol) {
+        avgColIndexList.push(index);
+      }
     }
   });
 
@@ -241,27 +253,27 @@ export const observerResize = (
 export const isPercentPixOrNumber = (val: string | number) => /^\d+\.?\d*(px|%)?$/.test(`${val}`);
 
 /**
- * 处理 Prop中的分页配置
- * prop中的配置会覆盖本地的配置
- * @param propPagination 用户传入的配置
- * @param defVal 默认配置
- * @returns 返回值
+ * Format Table Head Option
+ * @param props
+ * @returns
  */
-export const resolvePaginationOption = (propPagination: any, defVal: any) => {
-  if (!!propPagination) {
-    if (typeof propPagination === 'object') {
-      let current = Object.prototype.hasOwnProperty.call(propPagination, 'current')
-        ? propPagination.current
-        : propPagination.value;
-      if (!/\d+/.test(current)) {
-        current = 1;
-      }
+export const resolveHeadConfig = (props: TablePropTypes) => {
+  const { showHead, headHeight, thead = {} } = props;
+  return Object.assign({}, { isShow: showHead, height: headHeight }, { ...thead });
+};
 
-      return { ...defVal, ...propPagination, current };
-    }
-
-    return defVal;
+/**
+   * 获取当前行指定列的内容
+   * @param row 当前行
+   * @param key 指定列名
+   * @param column 列配置
+   * @param index 当前行Index
+   * @returns
+   */
+export const getRowText = (row: any, key: string, column: Column) => {
+  if (column.type === 'index') {
+    return row.__$table_row_index;
   }
 
-  return {};
+  return row[key];
 };

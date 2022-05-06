@@ -27,9 +27,8 @@
 import type { ExtractPropTypes } from 'vue';
 import {
   defineComponent,
+  onMounted,
   provide,
-  reactive,
-  watch,
 } from 'vue';
 
 import {
@@ -55,23 +54,44 @@ export default defineComponent({
     'update:modelValue',
   ],
   setup(props, context) {
-    const state = reactive({
-      localValue: props.modelValue,
-    });
+    const radioInstanceList = [];
+    const register: IRadioGroupContext['register'] = (radioContext) => {
+      radioInstanceList.push(radioContext);
+    };
+    const unregister: IRadioGroupContext['unregister'] = (radioContext) => {
+      const index = radioInstanceList.indexOf(radioContext);
+      if (index > -1) {
+        radioInstanceList.splice(index, 1);
+      }
+    };
 
-    watch(() => props.modelValue, () => {
-      state.localValue = props.modelValue;
-    });
+    const handleChange: IRadioGroupContext['handleChange'] = (checkedRadioInstance) => {
+      const nextValue = checkedRadioInstance.label;
 
-    const handleChange: IRadioGroupContext['handleChange'] = (value) => {
-      context.emit('update:modelValue', value);
-      context.emit('change', value);
+      radioInstanceList.forEach((radioInstance) => {
+        if (radioInstance !== checkedRadioInstance) {
+          radioInstance.setChecked(false);
+        }
+      });
+
+      context.emit('update:modelValue', nextValue);
+      context.emit('change', nextValue);
     };
 
     provide(radioGroupKey, {
       props,
-      state,
+      register,
+      unregister,
       handleChange,
+    });
+
+    onMounted(() => {
+      if (props.modelValue === '') {
+        return;
+      }
+      radioInstanceList.forEach((radioInstance) => {
+        radioInstance.setChecked(radioInstance.label === props.modelValue);
+      });
     });
 
     return {};
@@ -79,7 +99,7 @@ export default defineComponent({
   render() {
     return (
       <div class="bk-radio-group">
-        {this.$slots.default()}
+        {this.$slots?.default()}
       </div>
     );
   },

@@ -52,10 +52,21 @@
   }
 }
 
-.@{bk-prefix}-message-danger {
+.@{bk-prefix}-message-error {
   background: @message-danger-bg-color;
   border: 1px solid @message-danger-border-color;
   .@{bk-prefix}-message-icon {
     color: @danger-color;
   }
+}
+
+.bk-message-fade-enter-active,
+.bk-message-fade-leave-active {
+  transition: margin .2s linear;
+}
+
+.bk-message-fade-enter-from,
+.bk-message-fade-leave-to {
+  margin-top: -50px;
+  opacity: 0;
 }

@@ -27,6 +27,7 @@ pnpm-debug.log*
 *.tsbuildinfo
 .npm
 .eslintcache
+.stylelintcache
 .node_repl_history
 *.tgz
 .yarn-integrity

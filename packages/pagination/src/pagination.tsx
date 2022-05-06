@@ -78,7 +78,7 @@ export default defineComponent({
     'update:modelValue',
     'change',
     'update:limit',
-    'limit-change',
+    'limitChange',
   ],
   setup(props, context) {
     const totalPageNum = ref<number>(0);
@@ -119,7 +119,7 @@ export default defineComponent({
       context.emit('change', smallListCurrent);
     });
     watch(localLimit, (localLimit) => {
-      context.emit('limit-change', localLimit);
+      context.emit('limitChange', localLimit);
     });
 
     return {

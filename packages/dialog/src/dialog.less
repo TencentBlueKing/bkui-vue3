@@ -1,3 +1,5 @@
+@import '@bkui-vue/modal/modal.less';
+
 .bk-modal-wrapper {
   &.bk-dialog-wrapper {
     position: relative;
@@ -38,6 +40,20 @@
         justify-content: center;
         align-items: center;
       }
+
+      .close-icon {
+        display: none;
+      }
+    }
+
+    .move {
+      cursor: move;
+    }
+
+    .content-dragging {
+      user-select: none;
+      user-select: none;
+      user-select: none;
     }
 
     .bk-dialog-header {

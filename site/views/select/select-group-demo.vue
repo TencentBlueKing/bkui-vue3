@@ -7,7 +7,10 @@
       show-select-all
       filterable
     >
-      <bk-option-group collapsible>
+      <bk-option-group
+        label="分组1"
+        collapsible
+      >
         <bk-option
           v-for="(item, index) in datasource"
           :key="index"
@@ -37,6 +40,9 @@
 </template>
 <script setup>
   import { ref } from 'vue';
+
+  import { BkOptionGroup } from '@bkui-vue/select';
+
   const datasource = ref([
     {
       value: 'string',
@@ -69,9 +75,10 @@
 .demo {
   display: flex;
 }
+
 .bk-select {
   width: 300px;
-  margin-right:20px;
+  margin-right: 20px;
 }
 </style>
 

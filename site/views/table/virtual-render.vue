@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 400px; width: 100%;">
+  <div>
     <div style="padding: 15px 0;">
       <bk-button
         theme="primary"
@@ -14,6 +14,7 @@
       :data="randomRows"
       :border="border"
       virtual-enabled
+      settings
       :height="300"
     />
   </div>
@@ -31,6 +32,9 @@
         columns: [...DATA_COLUMNS],
         border: ['row'],
       };
+    },
+    mounted() {
+      this.handleRandomRows();
     },
     methods: {
       handleRandomRows() {

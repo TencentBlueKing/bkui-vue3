@@ -33,14 +33,17 @@ import PropsBox from '../../components/props-box';
 import { resolvePropsToDesData } from '../utils/index';
 
 import async from './async.vue';
+import autoConfig from './auto-config.vue';
 import basic from './basic.vue';
+import customNode from './custom-node.vue';
 import levelLine from './level-line.vue';
+import * as TREE_DATA from './options';
 import prefixIcon from './prefix-icon.vue';
 import prefixIconJsx from './prefix-icon-jsx';
-import virtualRender from './virtual-render.vue';
+import virtualRender from './virtual-render.vue';;
 
 export default defineComponent({
-  components: { basic, virtualRender, levelLine, prefixIcon, async, prefixIconJsx },
+  components: { basic, virtualRender, levelLine, prefixIcon, async, prefixIconJsx, autoConfig, customNode },
   render() {
     const propsJson = resolvePropsToDesData(treeProps);
 
@@ -83,7 +86,8 @@ export default defineComponent({
         demoName: 'prefix-icon',
       },
       component: () => <prefix-icon></prefix-icon>,
-    },    {
+    },
+    {
       attrs: {
         title: '自定义节点Icon-jsx',
         subtitle: '自定义节点Icon',
@@ -96,6 +100,16 @@ export default defineComponent({
     },
     {
       attrs: {
+        title: '自定义节点内容',
+        subtitle: '自定义节点Icon',
+        desc: 'props: prefix-icon',
+        componentName: 'tree',
+        demoName: 'custom-node',
+      },
+      component: () => <custom-node></custom-node>,
+    },
+    {
+      attrs: {
         title: '异步加载节点数据',
         subtitle: '异步加载节点数据',
         desc: 'props: async',
@@ -103,6 +117,16 @@ export default defineComponent({
         demoName: 'async',
       },
       component: () => <async></async>,
+    },
+    {
+      attrs: {
+        title: '设置默认行为',
+        subtitle: '默认连线 | 默认选中 | 默认展开',
+        desc: 'props: --',
+        componentName: 'tree',
+        demoName: 'auto-config',
+      },
+      component: () => <auto-config></auto-config>,
     }];
 
     return (
@@ -112,7 +136,7 @@ export default defineComponent({
           desc="Tree组件， 为页面和功能提供列表。"
           link="https://www.google.com.hk/"/>
           {
-            configs.map(cfg => <DemoBox { ...cfg.attrs }>
+            configs.map(cfg => <DemoBox { ...cfg.attrs } optionData={ { ...TREE_DATA } }>
                  {
                    cfg.component()
                  }

@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "strictNullChecks": false,
+    "strict": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "resolveJsonModule": true,
+    "jsx": "preserve",
+    "noUnusedParameters": true,
+    "noUnusedLocals": true,
+    "noImplicitAny": false,
+    "module": "esnext",
+    "target": "esnext",
+    "lib": [
+      "dom",
+      "es2017"
+    ],
+    "baseUrl": "./",
+    "paths": {
+      "@bkui-vue/*": [
+        "*/src"
+      ]
+    },
+    "skipLibCheck": true,
+    "allowJs": true,
+    "importHelpers": true,
+    "isolatedModules": true,
+    "sourceMap": true,
+    "noEmitOnError": true,
+  },
+  "include": ["./**/*.ts", "./**/*.tsx"]
+}

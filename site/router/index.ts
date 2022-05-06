@@ -152,7 +152,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/fixed-navbar',
     name: 'fixedNavbar',
-    component: () => import('../views/fixed-navbar'),
+    component: () => import('../views/fixed-navbar/index'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'FixedNavbar 悬浮导航',
@@ -164,7 +164,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/backtop',
     name: 'backtop',
-    component: () => import('../views/backtop'),
+    component: () => import('../views/backtop/index'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'BackTop 返回顶部',
@@ -188,7 +188,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/exception',
     name: 'exception',
-    component: () => import('../views/exception'),
+    component: () => import('../views/exception/exception'),
     meta: {
       group: NavGroupMeta.Feedback,
       navName: 'Exception 异常提示',
@@ -272,7 +272,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/link',
     name: 'link',
-    component: () => import('../views/link'),
+    component: () => import('../views/link/index'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'Link 文字链接',
@@ -404,7 +404,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/dropdown',
     name: 'dropdown',
-    component: () => import('../views/dropdown'),
+    component: () => import('../views/dropdown/dropdown'),
     meta: {
       group: NavGroupMeta.Data,
       navName: 'DropdownMenu 下拉菜单',
@@ -449,7 +449,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/message',
     name: 'message',
-    component: () => import('../views/message'),
+    component: () => import('../views/message/message'),
     meta: {
       group: NavGroupMeta.Feedback,
       navName: 'Message 消息提示',
@@ -504,6 +504,15 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
+    path: '/tag-input',
+    name: 'tagInput',
+    component: () => import('../views/tag-input'),
+    meta: {
+      group: NavGroupMeta.Form,
+      navName: 'TagInput 标签',
+    },
+  },
+  {
     path: '/date-picker',
     name: 'datePicker',
     component: () => import('../views/date-picker'),
@@ -518,7 +527,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/divider',
     name: 'divider',
-    component: () => import('../views/divider'),
+    component: () => import('../views/divider/divider'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'Divider 分割线',
@@ -542,11 +551,23 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/slider',
     name: 'slider',
-    component: () => import('../views/slider'),
+    component: () => import('../views/slider/slider'),
     meta: {
       group: NavGroupMeta.Feedback,
       navName: 'Slider 滑动选择器',
     },
+  },
+  /**
+   * @description:侧边栏
+   */
+  {
+  	  path: '/sideslider',
+  	  name: 'sideslider',
+  	  component: () => import('../views/sideslider'),
+  	  meta: {
+  	    group: NavGroupMeta.Feedback,
+  	    navName: 'Sideslider 侧栏',
+  	  },
   },
   /**
    * @description:穿梭框
@@ -606,14 +627,44 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
+    path: '/grid',
+    name: 'Grid 栅格',
+    component: () => import('../views/container'),
+    meta: {
+      group: NavGroupMeta.Layout,
+      navName: 'Grid 栅格',
+    },
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: '404',
     component: () => import('../views/404'),
   },
+  /**
+   * @description:dialog
+   */
+  {
+    path: '/dialog',
+    name: 'dialog',
+    component: () => import('../views/dialog/index'),
+    meta: {
+      group: NavGroupMeta.Feedback,
+      navName: 'Dialog 对话框',
+    },
+  },
+  {
+    path: '/cascader',
+    name: 'cascader',
+    meta: {
+      group: NavGroupMeta.Others,
+      navName: 'Cascader 级联选择',
+    },
+    component: () => import('../views/cascader/index'),
+  },
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.VITE_APP_BASE_URL),
   routes,
 });
 
