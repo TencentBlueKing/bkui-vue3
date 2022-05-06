@@ -71,6 +71,7 @@ import '@bkui-vue/pagination/pagination.less';
 import '@bkui-vue/timeline/timeline.less';
 import '@bkui-vue/code-diff/code-diff.less';
 import '@bkui-vue/resize-layout/resize-layout.less';
+import '@bkui-vue/upload/upload.less';
 import '@bkui-vue/tag-input/tag-input.less';
 import '@bkui-vue/container/container.less';
 import '@bkui-vue/cascader/cascader.less';
