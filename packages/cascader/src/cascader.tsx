@@ -34,6 +34,7 @@ import { PropTypes } from '@bkui-vue/shared';
 import { useHover } from '../../select/src/common';
 
 import CascaderPanel from './cascader-panel';
+import { INode } from './interface';
 import Store from './store';;
 
 export default defineComponent({
@@ -75,7 +76,7 @@ export default defineComponent({
     const selectedTags = ref([]);
 
     /** 更新选中 */
-    const updateValue = (val: array<any>) => {
+    const updateValue = (val: Array<any>) => {
       emit('update:modelValue', val);
 
       /** 根据配置更新显示内容 */

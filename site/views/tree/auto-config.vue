@@ -52,7 +52,10 @@
 }
 
 .cell {
-  flex: 1;
+  width: 33%;
   padding: 0 15px;
+  overflow: auto;
+  border-right: solid 1px #ddd;
+  flex: 1;
 }
 </style>

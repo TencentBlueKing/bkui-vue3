@@ -14,7 +14,7 @@
     </bk-tag>
     <bk-tag>
       <template #icon>
-        <q-q />
+        <qq />
       </template>
       QQ
     </bk-tag>
@@ -22,5 +22,5 @@
 </template>
 
 <script setup>
-  import { Bk, QQ, Weixin } from '@bkui-vue/icon';
+  import { Bk, Qq, Weixin } from '@bkui-vue/icon';
 </script>

@@ -46,7 +46,8 @@ export const enum NODE_ATTRIBUTES {
   ORDER= '__order',
   IS_OPEN= '__isOpen',
   CHECKED='__checked',
-  IS_ASYNC_INIT = '__isAsyncInit'
+  IS_ASYNC_INIT = '__isAsyncInit',
+  IS_MATCH = '__isMatch'
 }
 
 /**
@@ -69,21 +70,31 @@ export const getFlatdata = (props: TreePropTypes, treeData: Array<any> = undefin
     return uid || item[NODE_ATTRIBUTES.UUID] || uuidv4();
   }
 
-  function getCachedTreeNodeAttr(uuid: string, node: any, attr: string, cachedAttr: string) {
+  function getCachedTreeNodeAttr(uuid: string, node: any, attr: string, cachedAttr: string, defaultValue = undefined) {
     const cached = (cachedSchema || []).find((item: any) => item[NODE_ATTRIBUTES.UUID] === uuid);
+    let result = undefined;
     if (cached) {
-      return cached[cachedAttr];
+      result = cached[cachedAttr];
+    } else {
+      result = node[attr];
     }
 
-    return node[attr];
+    if (result === undefined) {
+      result = defaultValue;
+    }
+    return result;
   }
 
   function isCachedTreeNodeOpened(uuid: string, node: any) {
-    return getCachedTreeNodeAttr(uuid, node, 'isOpen', NODE_ATTRIBUTES.IS_OPEN);
+    return getCachedTreeNodeAttr(uuid, node, 'isOpen', NODE_ATTRIBUTES.IS_OPEN, false);
   }
 
   function isCachedTreeNodeChecked(uuid: string, node: any) {
-    return getCachedTreeNodeAttr(uuid, node, 'checked', NODE_ATTRIBUTES.CHECKED);
+    return getCachedTreeNodeAttr(uuid, node, 'checked', NODE_ATTRIBUTES.CHECKED, false);
+  }
+
+  function isCachedTreeNodeMatch(uuid: string, node: any) {
+    return getCachedTreeNodeAttr(uuid, node, 'isMatch', NODE_ATTRIBUTES.IS_MATCH, true);
   }
 
   function flatten(array: Array<any>, depth = 0, parent = null, path = null) {
@@ -106,6 +117,7 @@ export const getFlatdata = (props: TreePropTypes, treeData: Array<any> = undefin
             [NODE_ATTRIBUTES.PATH]: currentPath,
             [NODE_ATTRIBUTES.IS_ROOT]: parent === null,
             [NODE_ATTRIBUTES.ORDER]: order,
+            [NODE_ATTRIBUTES.IS_MATCH]: isCachedTreeNodeMatch(uuid, item),
             [NODE_ATTRIBUTES.IS_OPEN]: isCachedTreeNodeOpened(uuid, item),
             [NODE_ATTRIBUTES.CHECKED]: isCachedTreeNodeChecked(uuid, item),
             [children]: null,
