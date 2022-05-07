@@ -32,34 +32,69 @@ import PropsBox from '../../components/props-box';
 import { IPropsTableItem } from '../../typings';
 
 import BaseDemo from './base-demo.vue';
-const menuPropsJson: IPropsTableItem[] = [
+const menuProps: IPropsTableItem[] = [
   {
-    name: 'activeKey',
+    name: 'navWidth',
+    type: 'Number | String',
+    default: '60',
+    desc: '初始左侧折叠导航的宽度',
+    optional: [],
+  },
+  {
+    name: 'hoverWidth',
+    type: 'Number | String',
+    default: '260',
+    desc: '展开左侧导航的宽度',
+    optional: [],
+  },
+  {
+    name: 'sideTitle',
     type: 'String',
     default: '',
-    desc: '选中的menu的key',
+    desc: '左侧导航的主标题',
     optional: [],
   },
   {
-    name: 'OpenedKeys',
-    type: 'Array',
-    default: [],
-    desc: '打开的submenu key值',
-    optional: [],
-  },
-  {
-    name: 'mode',
+    name: 'headerTitle',
     type: 'String',
-    default: 'vertical',
-    desc: '展示方式',
-    optional: ['vertical', 'horizontal'],
+    default: '',
+    desc: '头部导航条的标题',
+    optional: [],
   },
   {
-    name: 'uniqueOpen',
+    name: 'hoverLeaveDelay',
+    type: 'Number',
+    default: '0',
+    desc: '左侧栏hover离开后折叠的延迟时长',
+    optional: [],
+  },
+  {
+    name: 'hoverEnterDelay',
+    type: 'Number',
+    default: '100',
+    desc: '左侧栏hover进入后展开的延迟时长',
+    optional: [],
+  },
+  {
+    name: 'defaultOpen',
+    type: 'Boolean',
+    default: 'false',
+    desc: '左侧栏初始状态',
+    optional: [],
+  },
+  {
+    name: 'needMenu',
     type: 'Boolean',
     default: 'true',
-    desc: '是否唯一展开一个submenu',
+    desc: '是否显示左侧导航',
     optional: [],
+  },
+  {
+    name: 'navigationType',
+    type: 'String',
+    default: 'left-right',
+    desc: '导航风格 （left-right: 左右导航风格 top-bottom: 上下导航风格）',
+    optional: ['left-right', 'top-bottom'],
   },
 ];
 export default defineComponent({
@@ -67,18 +102,18 @@ export default defineComponent({
     return (
       <div>
         <DemoTitle
-          name="Menu"
-          desc="Menu组件， 为页面和功能提供导航的菜单列表。"
+          name="Navigation"
+          desc="Navigation组件， 为应用提供导航的整体布局。"
           link="https://www.google.com.hk/"/>
         <DemoBox
           title="基础用法"
-          subtitle="Menu组件的基础用法"
-          desc="垂直菜单，子菜单内嵌在菜单区域。"
-          componentName="menu"
+          subtitle="点击下面按钮可以切换不同的导航风格"
+          desc="通过属性配置切换不同的导航风格"
+          componentName="navigation"
           demoName="base-demo">
              <BaseDemo/>
           </DemoBox>
-        <PropsBox propsData={menuPropsJson}/>
+        <PropsBox propsData={menuProps}/>
       </div>
     );
   },
