@@ -136,10 +136,7 @@ export default defineComponent({
 
     const opened = computed(() => (props.open === null ? state.visible : props.open));
 
-    const visualValue = computed(() => {
-      console.warn('state.internalValue', state.internalValue);
-      return formatDate(state.internalValue, props.type, props.multiple, props.format);
-    });
+    const visualValue = computed(() => formatDate(state.internalValue, props.type, props.multiple, props.format));
 
     const displayValue = computed(() => {
       // 展示快捷文案
@@ -204,7 +201,6 @@ export default defineComponent({
     const pickerDropdownRef = ref(null);
 
     watch(() => props.modelValue, (modelValue) => {
-      console.error('watchwatchwatch');
       state.internalValue = parseDate(modelValue, props.type, props.multiple, props.format);
     });
 
@@ -304,7 +300,10 @@ export default defineComponent({
     const emitChange = (type) => {
       nextTick(() => {
         emit('change', publicStringValue.value, type);
+        // 使用 :value 或 :model-value 的时候才需要 handleChange，此时没有触发 update:modelValue
+        // 使用 v-model 时才会触发 update:modelValue 事件
         emit('update:modelValue', publicVModelValue.value);
+
         // this.dispatch('bk-form-item', 'form-change');
         if (props.type.indexOf('time') < 0) {
           inputRef?.value?.blur();
