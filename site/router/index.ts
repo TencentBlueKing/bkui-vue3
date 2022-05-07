@@ -67,7 +67,7 @@ const routes: RouteRecordRaw[] = [
     path: '/navigation',
     name: 'navigation',
     alias: '',
-    component: () => import('../views/navigation'),
+    component: () => import('../views/navigation/index'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'Navigation 导航',
