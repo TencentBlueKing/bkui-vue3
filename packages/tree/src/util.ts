@@ -28,27 +28,10 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { resolveClassName } from '@bkui-vue/shared';
 
+import { NODE_ATTRIBUTES } from './constant';
 import { TreePropTypes } from './props';
 
 const DEFAULT_LEVLE_LINE = '1px dashed #c3cdd7';
-/**
- * 节点扩展属性
- */
-// eslint-disable-next-line @typescript-eslint/naming-convention
-export const enum NODE_ATTRIBUTES {
-  DEPTH = '__depth',
-  INDEX = '__index',
-  UUID = '__uuid',
-  PARENT_ID= '__parentId',
-  HAS_CHILD= '__hasChild',
-  PATH= '__path',
-  IS_ROOT= '__isRoot',
-  ORDER= '__order',
-  IS_OPEN= '__isOpen',
-  CHECKED='__checked',
-  IS_ASYNC_INIT = '__isAsyncInit',
-  IS_MATCH = '__isMatch'
-}
 
 /**
  * 扁平化当前数据
