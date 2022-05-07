@@ -126,6 +126,9 @@ export const datePickerProps = {
   modelValue: {
     type: [Date, String, Number, Array] as PropType<DatePickerValueType | null>,
   },
+  value: {
+    type: [Date, String, Number, Array] as PropType<DatePickerValueType | null>,
+  },
   options: {
     type: Object,
     default: () => ({}),

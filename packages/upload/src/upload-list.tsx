@@ -188,15 +188,15 @@ export default defineComponent({
       {
         isSinglePhoto.value
           ? (slots?.innerTrigger && slots?.innerTrigger(props.files?.[0]))
-          : <TransitionGroup name={`${classBlock}__item`} tag="ul" class={classNames.value}>
-            {
-              isPhotowall.value
-                ? Photowall()
-                : Normal()
-            }
-            {
-              slots?.innerTrigger && slots?.innerTrigger()
-            }
+          : <TransitionGroup name={`${classBlock}__item`} tag="ul" moveClass={classNames.value}>
+              {
+                isPhotowall.value
+                  ? Photowall()
+                  : Normal()
+              }
+              {
+                slots?.innerTrigger && slots?.innerTrigger()
+              }
           </TransitionGroup>
       }
       </>
