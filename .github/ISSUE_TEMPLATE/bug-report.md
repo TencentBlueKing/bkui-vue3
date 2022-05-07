@@ -1,7 +1,7 @@
 ---
 name: Bug Report
 about: Report a bug encountered while operating BKUI-VUE3
-title: 'bugfix: '
+title: 'bugfix(): '
 labels: bug
 assignees: 'ielgnaw'
 
