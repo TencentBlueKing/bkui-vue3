@@ -1,6 +1,6 @@
 <template>
   <bk-date-picker
-    v-model="dateValue"
+    :value="dateValue"
     :open="open"
     @change="handleChange"
     @clear="handleClear"
@@ -26,14 +26,14 @@
 <script setup>
   import { ref } from 'vue';
 
-  const dateValue = ''; // new Date();
+  const dateValue = ref(''); // new Date();
   const open = ref(false);
   const handleChange = (date) => {
     console.log('handleChange', date);
-    // this.value = date
+    dateValue.value = date;
   };
   const handleClick = () => {
-    console.error('handleClick');
+    console.log('handleClick');
     open.value = !open.value;
   };
   const handleOpenChange = (isOpen) => {
