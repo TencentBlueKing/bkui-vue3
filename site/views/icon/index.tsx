@@ -26,22 +26,51 @@
 
 import { defineComponent } from 'vue';
 
-import { Help, HelpDocumentFill, HelpFill } from '@bkui-vue/icon';
+import DemoBox from '../../components/demo-box';
+import DemoTitle from '../../components/demo-title';
+import PropsBox from '../../components/props-box';
+import { IPropsTableItem } from '../../typings';
 
-export default defineComponent({
-  name: 'SiteIcon',
-  setup() {
-    return {
-    };
+import BaseDemo from './base-demo.vue';
+const menuProps: IPropsTableItem[] = [
+  {
+    name: 'width',
+    type: 'String',
+    default: '1em',
+    desc: 'svg元素的宽度',
+    optional: [],
   },
+  {
+    name: 'height',
+    type: 'String',
+    default: [],
+    desc: 'svg元素的高度',
+    optional: [],
+  },
+  {
+    name: 'fill',
+    type: 'String',
+    default: 'currentColor',
+    desc: 'svg元素的填充颜色',
+    optional: [],
+  },
+];
+export default defineComponent({
   render() {
     return (
       <div>
-        <Help style={{ fontSize: '100px' }} fill="red"/>
-        <HelpDocumentFill style={{ fontSize: '100px' }} class='sdddddsdf'/>
-        <HelpFill style={{ fontSize: '100px' }}/>
-        <HelpDocumentFill style={{ fontSize: '100px' }}/>
-        <HelpFill style={{ fontSize: '100px' }} />
+        <DemoTitle
+          name="Icon"
+          desc="Icon组件， 可以通过组件的使用方式按需加载。"/>
+        <DemoBox
+          title="Icon展示"
+          subtitle="这里展示了我们UI所用到的所有Icon, 点击复制使用"
+          desc="点击复制使用Icon组件"
+          componentName="icon"
+          demoName="base-demo">
+             <BaseDemo/>
+          </DemoBox>
+        <PropsBox propsData={menuProps}/>
       </div>
     );
   },
