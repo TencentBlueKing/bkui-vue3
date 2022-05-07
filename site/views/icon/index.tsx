@@ -63,9 +63,9 @@ export default defineComponent({
           name="Icon"
           desc="Icon组件， 可以通过组件的使用方式按需加载。"/>
         <DemoBox
-          title="所有的Icon展示"
-          subtitle="这里展示了我们UI所用到的所有组件, 点击复制使用"
-          desc="这里展示了我们UI所用到的所有组件, 点击复制使用"
+          title="Icon展示"
+          subtitle="这里展示了我们UI所用到的所有Icon, 点击复制使用"
+          desc="点击复制使用Icon组件"
           componentName="icon"
           demoName="base-demo">
              <BaseDemo/>
