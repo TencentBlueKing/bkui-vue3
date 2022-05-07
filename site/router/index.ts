@@ -176,7 +176,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/icon',
     name: 'icon',
-    component: () => import('../views/icon'),
+    component: () => import('../views/icon/index'),
     meta: {
       group: NavGroupMeta.Base,
       navName: 'Icon 图标',
