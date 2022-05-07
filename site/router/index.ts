@@ -284,7 +284,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/collapse',
     name: 'collapse',
-    component: () => import('../views/collapse'),
+    component: () => import('../views/collapse/index'),
     meta: {
       group: NavGroupMeta.Data,
       navName: 'Collapse 折叠面板',
