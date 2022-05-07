@@ -45,6 +45,11 @@ export interface INode {
   loading: boolean;
   name: string;
   parent?: INode;
+  isDisabled: boolean;
+  isLeaf: boolean;
+  pathNames: string[];
+  path: string[];
+  setNodeCheck(status: boolean): void;
 }
 
 export interface IData {

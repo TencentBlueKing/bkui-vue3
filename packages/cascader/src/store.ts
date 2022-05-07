@@ -25,10 +25,10 @@
 */
 import { arrayEqual, filterProperty } from '@bkui-vue/shared';
 
-import { INode } from './interface';
+import { IConfig, IData, INode } from './interface';
 import Node from './node';
 
-const flatNodes = (data, leafOnly) => data.reduce((acc: INode[], node: INode) => {
+const flatNodes = (data, leafOnly: boolean) => data.reduce((acc: INode[], node: INode) => {
   if (node.isLeaf) {
     acc.push(node);
   } else {
@@ -40,6 +40,9 @@ const flatNodes = (data, leafOnly) => data.reduce((acc: INode[], node: INode) =>
 }, []);
 
 class Store {
+  public data: IData[];
+  public config: IConfig;
+  public nodes: INode[];
   constructor(props) {
     const { list } = props;
     this.data = list;
