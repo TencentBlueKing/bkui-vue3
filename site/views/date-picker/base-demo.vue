@@ -3,5 +3,6 @@
 </template>
 
 <script setup>
-  const dateValue = new Date();
+  import { ref } from 'vue';
+  const dateValue = ref(new Date());
 </script>

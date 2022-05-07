@@ -82,11 +82,14 @@ export default defineComponent({
                 </div>
                 <div class="bk-alert-description"></div>
             </div>
-            <span
-              class={closeButtonClasses}
-              onClick={this.handleClose}>
-              {this.closeText}
-            </span>
+            {
+              this.closable
+              && <span
+                class={closeButtonClasses}
+                onClick={this.handleClose}>
+                {this.closeText}
+              </span>
+            }
         </div>
     </div>
     );

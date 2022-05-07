@@ -63,7 +63,7 @@ export default (flatData) => {
   const isRootNode = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.IS_ROOT);
   const isNodeOpened = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.IS_OPEN);
   const hasChildNode = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.HAS_CHILD);
-
+  const isChecked = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.CHECKED);
 
   /**
    * 判定指定节点是否为展开状态
@@ -102,6 +102,7 @@ export default (flatData) => {
     isNodeOpened,
     hasChildNode,
     isItemOpen,
+    isChecked,
     checkNodeIsOpen,
   };
 };

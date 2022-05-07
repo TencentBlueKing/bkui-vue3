@@ -136,7 +136,6 @@ export default defineComponent({
     };
 
     const handlePick = (value, type) => {
-      console.warn('handlePick');
       let val = value;
       if (props.selectionMode === 'year') {
         val = new Date(value.getFullYear(), 0, 1);
@@ -231,8 +230,6 @@ export default defineComponent({
     const handleToggleTime = () => {
       state.currentView = state.currentView === 'time' ? 'date' : 'time';
     };
-
-    console.warn('panelDatepanelDate', state.panelDate);
 
     return {
       ...toRefs(state),
