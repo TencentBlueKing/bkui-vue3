@@ -44,6 +44,7 @@ export const enum NODE_ATTRIBUTES {
   ORDER= '__order',
   IS_OPEN= '__isOpen',
   CHECKED='__checked',
+  SELECTED='__isSelected',
   IS_ASYNC_INIT = '__isAsyncInit',
   IS_MATCH = '__isMatch'
 }

@@ -29,7 +29,7 @@ import { DownShape, Folder, FolderShapeOpen, RightShape, Spinner, TextFile } fro
 import { resolveClassName } from '@bkui-vue/shared';
 
 import { EVENTS, NODE_ATTRIBUTES } from './constant';
-import useAsync from './use-async';
+import useNodeAsync from './use-node-async';
 import useNodeAttribute from './use-node-attribute';
 import { getLabel, getNodeItemClass, getNodeItemStyle, getNodeRowClass } from './util';
 export default (props, ctx, flatData, renderData) => {
@@ -40,6 +40,7 @@ export default (props, ctx, flatData, renderData) => {
     getNodePath,
     getSchemaVal,
     getNodeAttr,
+    getNodeId,
     isRootNode,
     hasChildNode,
     isItemOpen,
@@ -49,7 +50,7 @@ export default (props, ctx, flatData, renderData) => {
     schemaValues,
   } = useNodeAttribute(flatData);
 
-  const { asyncNodeClick, deepAutoOpen } = useAsync(props, flatData);
+  const { asyncNodeClick, deepAutoOpen } = useNodeAsync(props, flatData);
 
   /**
    * 根据当前节点状态获取节点类型Icon
@@ -270,7 +271,8 @@ export default (props, ctx, flatData, renderData) => {
     isRoot: isRootNode(item),
   });
 
-  const renderTreeNode = (item: any) => <div class={ getNodeRowClass(item, flatData.schema) }>
+  const renderTreeNode = (item: any) => <div data-tree-node={getNodeId(item)}
+    class={ getNodeRowClass(item, flatData.schema) }>
   <div class={getNodeItemClass(item, flatData.schema, props) }
     style={getNodeItemStyle(item, props, flatData)}
     onClick={(e: MouseEvent) => handleNodeContentClick(item, e)}>
