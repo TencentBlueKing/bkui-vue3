@@ -33,6 +33,7 @@ import { treeProps, TreePropTypes as defineTypes } from './props';
 import useEmpty from './use-empty';
 import useNodeAction from './use-node-action';
 import useNodeAttribute from './use-node-attribute';
+import useNodeDrag from './use-node-drag';
 import useSearch from './use-search';
 import {
   getFlatdata,
@@ -220,6 +221,7 @@ export default defineComponent({
 
     const root = ref();
     const { renderEmpty } = useEmpty(props, ctx);
+    useNodeDrag(props, root, flatData);
     const renderTreeContent = (scopedData: any[]) =>  {
       if (scopedData.length) {
         return scopedData.map(renderTreeNode);

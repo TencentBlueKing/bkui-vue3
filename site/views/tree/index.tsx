@@ -36,6 +36,7 @@ import async from './async.vue';
 import autoConfig from './auto-config.vue';
 import basic from './basic.vue';
 import customNode from './custom-node.vue';
+import draggable from './draggable.vue';
 import levelLine from './level-line.vue';
 import * as TREE_DATA from './options';
 import prefixIcon from './prefix-icon.vue';
@@ -44,7 +45,18 @@ import search from './search.vue';
 import virtualRender from './virtual-render.vue';
 
 export default defineComponent({
-  components: { basic, virtualRender, levelLine, prefixIcon, async, prefixIconJsx, autoConfig, customNode, search },
+  components: {
+    basic,
+    virtualRender,
+    levelLine,
+    prefixIcon,
+    async,
+    prefixIconJsx,
+    autoConfig,
+    customNode,
+    search,
+    draggable,
+  },
   render() {
     const propsJson = resolvePropsToDesData(treeProps);
 
@@ -138,6 +150,16 @@ export default defineComponent({
         demoName: 'search',
       },
       component: () => <search></search>,
+    },
+    {
+      attrs: {
+        title: '可拖拽',
+        subtitle: '通过 draggable 属性可让节点变为可拖拽。',
+        desc: 'props: draggable',
+        componentName: 'tree',
+        demoName: 'draggable',
+      },
+      component: () => <draggable></draggable>,
     }];
 
     return (
