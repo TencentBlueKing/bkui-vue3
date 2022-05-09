@@ -620,7 +620,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/resize-layout',
     name: 'resizeLayout',
-    component: () => import('../views/resize-layout'),
+    component: () => import('../views/resize-layout/resize-layout'),
     meta: {
       group: NavGroupMeta.Layout,
       navName: 'ResizeLayout',
