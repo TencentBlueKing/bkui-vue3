@@ -20,7 +20,7 @@
   const handleExceed = (files, fileList) => {
     console.log(files, fileList, 'handleExceed');
     BkMessage({
-      theme: 'danger',
+      theme: 'error',
       message: `最多上传${limit}个文件`,
     });
   };
