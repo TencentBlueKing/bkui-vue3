@@ -32,6 +32,8 @@ import PropsBox from '../../components/props-box';
 import { IPropsTableItem } from '../../typings';
 
 import BaseDemo from './base-demo.vue';
+import FooterSlotDemo from './footer-slot-demo.vue';
+import HeaderSlotDemo from './header-slot-demo.vue';
 import RangeDemo from './range-demo.vue';
 import TriggerSlotDemo from './trigger-slot-demo.vue';
 
@@ -91,6 +93,20 @@ export default defineComponent({
             componentName="date-picker"
             demoName="trigger-slot-demo">
             <TriggerSlotDemo />
+          </DemoBox>
+          <DemoBox
+            title="header slot"
+            desc="自定义 header"
+            componentName="date-picker"
+            demoName="header-slot-demo">
+            <HeaderSlotDemo />
+          </DemoBox>
+          <DemoBox
+            title="footer slot"
+            desc="自定义 footer"
+            componentName="date-picker"
+            demoName="footer-slot-demo">
+            <FooterSlotDemo />
           </DemoBox>
         <PropsBox propsData={menuPropsJson}/>
       </div>
