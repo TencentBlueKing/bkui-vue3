@@ -28,6 +28,7 @@ import { computed, defineComponent, reactive, ref, watch } from 'vue';
 import { resolveClassName } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
+import { EVENTS, NODE_ATTRIBUTES } from './constant';
 import { treeProps, TreePropTypes as defineTypes } from './props';
 import useEmpty from './use-empty';
 import useNodeAction from './use-node-action';
@@ -37,7 +38,6 @@ import {
   getFlatdata,
   getLabel,
   getTreeStyle,
-  NODE_ATTRIBUTES,
 } from './util';
 
 export type TreePropTypes = defineTypes;
@@ -45,7 +45,7 @@ export type TreePropTypes = defineTypes;
 export default defineComponent({
   name: 'Tree',
   props: treeProps,
-  emits: ['check'],
+  emits: [EVENTS.NODE_CLICK, EVENTS.NODE_COLLAPSE, EVENTS.NODE_EXPAND],
 
   setup(props, ctx) {
     const formatData = getFlatdata(props);
@@ -67,7 +67,10 @@ export default defineComponent({
       getNodeAttr,
       getNodePath,
       isRootNode,
-      isChecked,
+      isNodeOpened,
+      isNodeChecked,
+      isNodeMatched,
+      hasChildNode,
     } = useNodeAttribute(flatData);
 
     const { searchFn, isSearchActive, refSearch, openResultNode, isTreeUI, isSearchDisabled } = useSearch(props);
@@ -172,7 +175,7 @@ export default defineComponent({
             setOpen(parentId, true, true);
           }
         } else {
-          setNodeOpened(resolvedItem, false);
+          setNodeOpened(resolvedItem, false, null, false);
         }
       } else {
         setNodeAction(resolvedItem, NODE_ATTRIBUTES.IS_OPEN, isOpen);
@@ -193,9 +196,9 @@ export default defineComponent({
      * @param item 指定节点
      * @param fireOther 是否释放其他已选中节点 默认为 true
      */
-    const select = (item: string | any, fireOther = true) => {
+    const setSelect = (item: string | any, fireOther = true) => {
       if (fireOther) {
-        setChecked(schemaValues.value.filter((item: any) => isChecked(item)) ?? [], false);
+        setChecked(schemaValues.value.filter((item: any) => isNodeChecked(item)) ?? [], false);
       }
 
       setChecked(item, true);
@@ -203,10 +206,16 @@ export default defineComponent({
 
     ctx.expose({
       hanldeTreeNodeClick,
+      isNodeChecked,
+      isRootNode,
+      isNodeOpened,
+      isNodeMatched,
+      hasChildNode,
       setOpen,
       setChecked,
       setNodeAction,
-      select,
+      setNodeOpened,
+      setSelect,
     });
 
     const root = ref();

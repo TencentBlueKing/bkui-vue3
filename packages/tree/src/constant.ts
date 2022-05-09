@@ -23,41 +23,27 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent } from 'vue';
+export const enum EVENTS {
+  NODE_CLICK = 'node-click',
+  NODE_COLLAPSE = 'node-collapse',
+  NODE_EXPAND = 'node-expand'
+}
 
-import { BASIC_DATA } from './options';
-export default defineComponent({
-  components: {},
-  data() {
-    return {
-      treeData: [...BASIC_DATA],
-    };
-  },
-  methods: {
-    getPrefixIcon(params, renderType) {
-      const {
-        hasChildNode,
-        isOpened,
-        isRoot,
-      } = params;
-      const isAction = renderType === 'node_action';
-      const childeFont = hasChildNode ? '+' : '*';
-      const openFont = isOpened ? '-' : childeFont;
-      const rootFont = isRoot ? 'R' : 'C';
-      const fontIcon = !isAction ? rootFont : openFont;
-      return  <span class="custom-node" style="font-size: 8px; text-align: center;">{fontIcon}</span>;
-    },
-  },
-  render() {
-    return  <div style="height: 300px; width: 100%; overflow: auto;">
-      <span>function 返回对象</span>
-      <bk-tree
-        data={ this.treeData }
-        levelLine={true}
-        prefix-icon={ this.getPrefixIcon }
-        label="name"
-        children="children"
-      />
-    </div>;
-  },
-});
+/**
+ * 节点扩展属性
+ */
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export const enum NODE_ATTRIBUTES {
+  DEPTH = '__depth',
+  INDEX = '__index',
+  UUID = '__uuid',
+  PARENT_ID= '__parentId',
+  HAS_CHILD= '__hasChild',
+  PATH= '__path',
+  IS_ROOT= '__isRoot',
+  ORDER= '__order',
+  IS_OPEN= '__isOpen',
+  CHECKED='__checked',
+  IS_ASYNC_INIT = '__isAsyncInit',
+  IS_MATCH = '__isMatch'
+}

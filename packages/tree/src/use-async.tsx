@@ -23,9 +23,9 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import { NODE_ATTRIBUTES } from './constant';
 import useNodeAttribute from './use-node-attribute';
-import { assignTreeNode, NODE_ATTRIBUTES, updateTreeNode } from './util';
-
+import { assignTreeNode, updateTreeNode } from './util';;
 export default (props, flatData) => {
   const {
     setNodeAttr,
