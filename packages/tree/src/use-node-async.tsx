@@ -40,7 +40,7 @@ export default (props, flatData) => {
      */
   const setNodeRemoteLoad = (resp: any, item: any) => {
     if (typeof resp === 'object' && resp !== null) {
-      setNodeAttr(item, NODE_ATTRIBUTES.IS_OPEN, true);
+      setNodeAttr(item, NODE_ATTRIBUTES.IS_OPENED, true);
       const nodeValue = Array.isArray(resp) ? resp : [resp];
       updateTreeNode(getNodePath(item), props.data, props.children, props.children, nodeValue);
     }

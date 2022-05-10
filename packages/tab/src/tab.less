@@ -19,27 +19,13 @@
     flex-direction: column;
   }
 
-  &--left {
-
-  }
 
   &--right {
     flex-direction: row-reverse;
   }
 
-  &--card {
-
-  }
-
-  &--border-card {
-
-  }
-
-  &--unborder-card {
-
-  }
-
   &-header {
+    position: relative;
     display: flex;
     color: @tab-color;
 
@@ -53,7 +39,12 @@
       }
     }
 
+    &-navs {
+      flex: 1;
+    }
+
     &-nav {
+
       .@{tab-prefix}--top & {
         overflow-x: auto;
         overflow-y: visible;
@@ -64,16 +55,34 @@
         overflow-y: auto;
       }
 
+
       .@{tab-prefix}--card &, .@{tab-prefix}--border-card & {
         border-left: 1px solid @tab-border;
       }
 
-      //flex: 0 1 auto;
       &::-webkit-scrollbar {
         display: none;
         width: 0;
         height: 0;
       }
+    }
+
+    &-next,
+    &-prev {
+      position: absolute;
+      top: 1px;
+      bottom: 1px;
+      width: 15px;
+      background: #fff;
+      content: '';
+    }
+
+    &-prev {
+      left: 1px;
+    }
+
+    &-next {
+      right: 1px;
     }
 
     &-operation {
@@ -82,7 +91,6 @@
         padding: 0 12px;
       }
     }
-
 
     .@{tab-prefix}--left & {
       border-right: 1px solid @tab-border;
@@ -120,7 +128,6 @@
       cursor: pointer;
       justify-content: center;
       align-items: center;
-      //line-height: 42px;
 
       &:hover {
         color: @tab-active;
@@ -194,7 +201,6 @@
     }
 
     &--disabled {
-      //color: @disable-color;
       color: @tab-disable-color;
       pointer-events: none;
       cursor: not-allowed;

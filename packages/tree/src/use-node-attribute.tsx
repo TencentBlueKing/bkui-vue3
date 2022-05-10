@@ -24,14 +24,10 @@
 * IN THE SOFTWARE.
 */
 
-import { computed } from 'vue';
-
 import { NODE_ATTRIBUTES } from './constant';
 import { TreePropTypes } from './props';
 
 export default (flatData, props?: TreePropTypes) => {
-  const schemaValues = computed(() => Array.from(flatData.schema.values()));
-
   /**
    * 获取Schema中指定的对象值
    * @param key
@@ -63,10 +59,10 @@ export default (flatData, props?: TreePropTypes) => {
   const getNodePath = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.PATH);
   const getNodeId = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.UUID);
   const isRootNode = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.IS_ROOT);
-  const isNodeOpened = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.IS_OPEN);
+  const isNodeOpened = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.IS_OPENED);
   const hasChildNode = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.HAS_CHILD);
   const isNodeMatched = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.IS_MATCH);
-  const isNodeChecked = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.CHECKED);
+  const isNodeChecked = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.IS_CHECKED);
   const getNodeParentId = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.PARENT_ID);
   const getNodeParentIdById = (id: string) => getNodeAttr({ [NODE_ATTRIBUTES.UUID]: id }, NODE_ATTRIBUTES.PARENT_ID);
 
@@ -83,7 +79,7 @@ export default (flatData, props?: TreePropTypes) => {
     }
 
     if (typeof item === 'string') {
-      return getSchemaVal(item)?.[NODE_ATTRIBUTES.IS_OPEN];
+      return getSchemaVal(item)?.[NODE_ATTRIBUTES.IS_OPENED];
     }
 
     return false;
@@ -124,7 +120,6 @@ export default (flatData, props?: TreePropTypes) => {
   };
 
   return {
-    schemaValues,
     getSchemaVal,
     getNodeAttr,
     getNodeId,
