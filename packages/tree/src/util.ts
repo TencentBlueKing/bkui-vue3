@@ -201,6 +201,10 @@ export const assignTreeNode = (path: string, treeData: any[], childKey: string, 
 };
 
 export const resolveNodeItem = (node: any) => {
+  if (node === undefined || node === null) {
+    return { __IS_NULL: true };
+  }
+
   if (typeof node === 'string') {
     return { [NODE_ATTRIBUTES.UUID]: node };
   }
