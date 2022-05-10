@@ -32,3 +32,12 @@ declare module '*.md' {
   const component: DefineComponent;
   export default Component;
 }
+declare module '*.less'
+declare module '*.svg'
+interface ImportMetaEnv {
+  readonly VITE_APP_BASE_URL: string
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv
+}

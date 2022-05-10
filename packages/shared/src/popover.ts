@@ -43,12 +43,13 @@ export declare type IOptions = {
   strategy?: PositioningStrategy;
   onFirstUpdate?: OnFirstUpdateFnType;
   isShow?: boolean;
+  always?: boolean;
   theme?: string;
   trigger?: string;
   disabled?: boolean;
   appendTo?: string | HTMLElement;
-  afterShow?: () => {};
-  afterHidden?: () => {};
+  afterShow?: () => void;
+  afterHidden?: () => void;
   /**
    * 如果设置了appendTo为指定DOM，此配置项生效
    * 是否将弹出内容固定到目标元素位置
@@ -73,6 +74,9 @@ export class BKPopover {
 
   /** 当前popperjs实例 */
   private instance?: Instance = undefined;
+
+  /** 是否总是可见 */
+  private always?: boolean = false;
 
   /** Popover 外层容器，触发Pop的元素 */
   private reference?: HTMLElement | VirtualElement | null = undefined;
@@ -121,17 +125,18 @@ export class BKPopover {
     this.referenceTarget = this.getTargetReferenceElement();
     this.container = this.popperRefer?.parentElement;
     this.isShow = !!this.instanceOptions?.isShow;
+    this.always = this.instanceOptions.always;
     this.trigger = this.instanceOptions.trigger;
     this.disabled = this.instanceOptions.disabled;
     this.appendTo = this.instanceOptions.appendTo;
-    this.afterHidden = typeof options.afterHidden === 'function' ? options.afterHidden : () => {};
-    this.afterShow = typeof options.afterShow === 'function' ? options.afterShow : () => {};
+    this.afterHidden = typeof options.afterHidden === 'function' ? options.afterHidden : () => { };
+    this.afterShow = typeof options.afterShow === 'function' ? options.afterShow : () => { };
     this.fixOnBoundary = this.instanceOptions.fixOnBoundary;
     this.initInstance();
     this.registerEvents();
 
     /** 默认弹出 */
-    if (this.isShow) {
+    if (this.isShow || this.always) {
       this.show(null);
     }
   }
@@ -204,6 +209,7 @@ export class BKPopover {
    * @param event 触发事件
    */
   public hide() {
+    if (this.always) return;
     // Hide the tooltip
     this.popperRefer?.removeAttribute('data-show');
 
@@ -227,9 +233,9 @@ export class BKPopover {
   private restorePopContent() {
     const target = this.getAppendToTarget();
     if (isElement(target)
-        && (target as HTMLElement).contains(this.popperRefer)
-        && this.container
-        && !this.container.contains(this.popperRefer)) {
+      && (target as HTMLElement).contains(this.popperRefer)
+      && this.container
+      && !this.container.contains(this.popperRefer)) {
       this.container.append(this.popperRefer);
     }
   }
@@ -249,7 +255,7 @@ export class BKPopover {
    * @returns
    */
   private getAppendToTarget() {
-    const  { appendTo } = this;
+    const { appendTo } = this;
     let target: string | HTMLElement = appendTo;
     if (appendTo !== 'parent') {
       if (typeof appendTo === 'string') {

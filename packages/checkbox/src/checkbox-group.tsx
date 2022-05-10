@@ -29,15 +29,12 @@ import {
   defineComponent,
   onMounted,
   provide,
-  reactive,
-  watch,
 } from 'vue';
 
 import {
   PropTypes,
 } from '@bkui-vue/shared';
 
-import type { CheckboxProps } from './checkbox';
 import {
   checkboxGroupKey,
 } from './common';
@@ -62,12 +59,6 @@ export default defineComponent({
     'update:modelValue',
   ],
   setup(props, context) {
-    const state = reactive<ICheckboxGroupContext['state']>({
-      localValue: props.modelValue ? [...props.modelValue] as CheckboxProps['label'][] : [],
-    });
-    watch(() => props.modelValue, (modelValue = []) => {
-      state.localValue = [...modelValue] as CheckboxProps['label'][];
-    });
     const checkboxInstanceList: ICheckboxInstance[] = [];
     const register: ICheckboxGroupContext['register'] = (checkboxContext) => {
       checkboxInstanceList.push(checkboxContext);
@@ -79,21 +70,14 @@ export default defineComponent({
       }
     };
 
-    const handleChange: ICheckboxGroupContext['handleChange'] = (nextChecked, value) => {
-      let nextValue = [...state.localValue];
-      if (nextChecked) {
-        nextValue = [...state.localValue, value];
-      } else {
-        nextValue = state.localValue.reduce((result, item) => {
-          if (item !== value) {
-            result.push(item);
-          }
-          return result;
-        }, [] as CheckboxProps['label'][]);
-      }
-      if (!props.modelValue) {
-        state.localValue = nextValue;
-      }
+    const handleChange: ICheckboxGroupContext['handleChange'] = () => {
+      const nextValue = checkboxInstanceList.reduce((result, checkboxInstance) => {
+        if (checkboxInstance.isChecked) {
+          result.push(checkboxInstance.label);
+        }
+        return result;
+      }, []);
+
       context.emit('update:modelValue', nextValue);
       context.emit('change', nextValue);
     };
@@ -101,16 +85,16 @@ export default defineComponent({
     provide(checkboxGroupKey, {
       name: 'CheckboxGroup',
       props,
-      state,
       register,
       unregister,
       handleChange,
     });
 
     onMounted(() => {
-      checkboxInstanceList.forEach((checkboxContext) => {
-        if (checkboxContext.isChecked || checkboxContext.checked) {
-          state.localValue.push(checkboxContext.label);
+      const modelValue = props.modelValue || [];
+      checkboxInstanceList.forEach((checkboxInstance) => {
+        if (modelValue.includes(checkboxInstance.label)) {
+          checkboxInstance.setChecked(true);
         }
       });
     });
@@ -120,7 +104,7 @@ export default defineComponent({
   render() {
     return  (
       <div class="bk-checkbox-group">
-        {this.$slots.default()}
+        {this.$slots?.default()}
       </div>
     );
   },

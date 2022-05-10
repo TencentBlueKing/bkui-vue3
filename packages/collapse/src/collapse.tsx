@@ -24,10 +24,12 @@
  * IN THE SOFTWARE.
 */
 
-import { computed, defineComponent, ref, watch } from 'vue';
+import { computed, defineComponent, ref, Transition, watch } from 'vue';
 
-import { AngleDown, AngleRight } from '@bkui-vue/icon/';
+import { AngleRight } from '@bkui-vue/icon/';
 import { PropTypes } from '@bkui-vue/shared';
+
+import { collapseMotion } from './utils';
 export default defineComponent({
   name: 'Collapse',
   props: {
@@ -48,7 +50,7 @@ export default defineComponent({
     titleField: PropTypes.string.def('name'),
 
     /**
-     * Content 字段，默认渲染内容，不配置时自动读取 name字段
+     * Content 字段，默认渲染内容，不配置时自动读取 content 字段
      * 自定义配置slot时可以忽略
      */
     contentField: PropTypes.string.def('content'),
@@ -56,29 +58,31 @@ export default defineComponent({
     /**
      * 当前激活Index
      */
-    activeIndex: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.number).def([]), PropTypes.number.def(-1)]),
-
-    /**
-     * 当前激活 Name, 与activeIndex互斥，同时配置时， activeName 覆盖 activeIndex
-     */
-    activeName: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.string).def([]), PropTypes.string.def('')]),
+    modelValue: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.number).def([]),
+      PropTypes.arrayOf(PropTypes.string).def([]), PropTypes.number.def(-1)]),
 
     /**
      * 是否使用手风琴效果
      */
-    accordion: PropTypes.bool.def(true),
+    accordion: PropTypes.bool.def(false),
   },
+  emits: ['item-click', 'update:modelValue', 'after-leave', 'before-enter'],
+  setup(props, { emit, slots }) {
+    const localActiveItems = ref([]);
+    const transition = ref(collapseMotion(emit));
 
-  setup(props, { slots }) {
-    // 当前点击展开条目
-    // 初始状态为null，当为null时， props配置项中的 activeIndex、activeName生效
-    // 当不为null，说明当前组件内部点击操作生效，此时忽略 props配置
-    const localActiveItems = ref(null);
-
-    // 设置监视，当 activeName or activeIndex 改变时，重置 localActiveItems 为null
     // 以保证当前的设置生效
-    watch(() => [props.activeName, props.activeIndex], () => {
-      localActiveItems.value = null;
+    watch(() => [props.modelValue], () => {
+      const value = props.modelValue;
+      if (Array.isArray(value)) {
+        localActiveItems.value = [...value];
+      } else if (typeof value !== 'undefined') {
+        localActiveItems.value = [value];
+      } else {
+        localActiveItems.value = [];
+      }
+    }, {
+      immediate: true,
     });
 
     // 统一格式化传入数据格式为标准渲染格式
@@ -89,64 +93,42 @@ export default defineComponent({
       return { $index: index, ...item };
     }));
 
-    // 计算当前ActiveItem
-    const activeItemIndexList = computed(() => {
-      if (localActiveItems.value !== null) {
-        return localActiveItems.value.map(item => item.$index);
-      }
-
-      if (props.activeName !== null && props.activeName !== undefined && props.activeName !== '') {
-        const activeNames = resolvePropsActiveValue(props.activeName);
-        return activeNames.map(name => collapseData.value.findIndex(item => item[props.idFiled] === name));
-      }
-
-      return resolvePropsActiveValue(props.activeIndex ?? 0);
-    });
-
-    // 格式化组件传入的ActiveIndex 或者 ActiveName为标准数组格式
-    const resolvePropsActiveValue = (prop: string | number | Array<string> | Array<number>) => {
-      if (Array.isArray(prop)) {
-        return props.accordion ? resolvePropsActiveValue(prop[0]) : prop;
-      }
-
-      if (typeof prop === 'string' || typeof prop === 'number') {
-        return [prop];
-      }
-
-      return [];
-    };
-
     const handleItemClick = (item) => {
-      if (localActiveItems.value === null) {
-        localActiveItems.value = [item];
-      } else {
-        // 手风琴模式，只有一个Active，移除一个新增一个
-        if (props.accordion) {
-          localActiveItems.value = [item];
+      if (item.disabled) return;
+      // 手风琴模式，只有一个Active，移除一个新增一个
+      if (props.accordion) {
+        const activeItemIndex = localActiveItems.value.findIndex(local => local === item[props.idFiled]);
+        if (activeItemIndex >= 0) {
+          localActiveItems.value.splice(activeItemIndex, 1);
         } else {
-          const activeItemIndex = localActiveItems.value.findIndex(local => local.$index === item.$index);
-          if (activeItemIndex >= 0) {
-            localActiveItems.value.splice(activeItemIndex, 1);
-          } else {
-            localActiveItems.value.push(item);
-          }
+          localActiveItems.value = [item[props.idFiled]];
+        }
+      } else {
+        const activeItemIndex = localActiveItems.value.findIndex(local => local === item[props.idFiled]);
+        if (activeItemIndex >= 0) {
+          localActiveItems.value.splice(activeItemIndex, 1);
+        } else {
+          localActiveItems.value.push(item[props.idFiled]);
         }
       }
+      emit('item-click', item);
+      emit('update:modelValue', localActiveItems.value);
     };
 
     // 判定当前Item是否为激活状态
-    const isItemActive = item => activeItemIndexList.value.some(activeIndex => activeIndex === item.$index);
-
-    const renderItems = () => collapseData.value.map(item => <div class="bk-collapse-item">
-      <div class="bk-collapse-header" onClick={() => handleItemClick(item)}>
-        <span class="bk-collapse-title">
-          {slots.default?.() ?? item[props.titleField]}
-        </span>
-        { isItemActive(item) ? <AngleDown class="bk-collapse-icon" /> : <AngleRight class="bk-collapse-icon" />}
-      </div>
-      <div class={`bk-collapse-content ${(isItemActive(item) && 'active') || ''}`}>
-        {slots.content?.(item) ?? item[props.contentField]}
-      </div>
+    const isItemActive = item => localActiveItems.value.includes(item[props.idFiled]);
+    const renderItems = () => collapseData.value.map(item => <div class={`bk-collapse-item ${item.disabled ? 'is-disabled' : ''} ${(isItemActive(item)) ? 'bk-collapse-item-active' : ''}`}>
+        <div class="bk-collapse-header" onClick={() => handleItemClick(item)}>
+          <span class="bk-collapse-title">
+            {slots.default?.(item) ?? item[props.titleField]}
+          </span>
+          { <AngleRight class={`bk-collapse-icon ${(isItemActive(item) &&  'rotate-icon') || ''}`} />}
+        </div>
+        <Transition {...transition.value}>
+          <div v-show={ isItemActive(item)} class={`bk-collapse-content ${(isItemActive(item) && 'active') || ''}`}>
+                {slots.content?.(item) ?? item[props.contentField]}
+          </div>
+        </Transition>
     </div>);
 
     const className = 'bk-collapse-wrapper';

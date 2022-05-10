@@ -35,13 +35,16 @@ import { resolvePropsToDesData } from '../utils/index';
 import basic from './basic.vue';
 import bordered from './bordered.vue';
 import cellRender from './cell-render';
+import DataEmpty from './data-empty.vue';
 import event from './event.vue';
+import fixed from './fixed.vue';
+import * as TABLE_DATA from './options';
 import pagination from './pagination.vue';
 import RemotePagination from './remotePagination.vue';
 import virtualRender from './virtual-render.vue';
 
 export default defineComponent({
-  components: { basic, bordered, virtualRender, cellRender, event, pagination, RemotePagination },
+  components: { basic, bordered, virtualRender, cellRender, event, pagination, RemotePagination, DataEmpty, fixed },
   render() {
     const menuPropsJson = resolvePropsToDesData(tableProps);
 
@@ -115,6 +118,26 @@ export default defineComponent({
         demoName: 'remotePagination',
       },
       component: () => <RemotePagination></RemotePagination>,
+    },
+    {
+      attrs: {
+        title: 'Empty - 空数据提示',
+        subtitle: '',
+        desc: 'props: --',
+        componentName: 'table',
+        demoName: 'data-empty',
+      },
+      component: () => <data-empty></data-empty>,
+    },
+    {
+      attrs: {
+        title: '固定列',
+        subtitle: '横纵内容过多时，可选择固定列',
+        desc: 'props: column - fixed',
+        componentName: 'table',
+        demoName: 'fixed',
+      },
+      component: () => <fixed></fixed>,
     }];
 
     return (
@@ -124,7 +147,7 @@ export default defineComponent({
           desc="Table组件， 为页面和功能提供列表。"
           link="https://www.google.com.hk/"/>
           {
-            configs.map(cfg => <DemoBox { ...cfg.attrs }>
+            configs.map(cfg => <DemoBox { ...cfg.attrs } optionData={ TABLE_DATA }>
                  {
                    cfg.component()
                  }

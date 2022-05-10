@@ -24,143 +24,106 @@
  * IN THE SOFTWARE.
 */
 
-import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, reactive, ref, SetupContext, watch, watchEffect } from 'vue';
+import { defineComponent, onBeforeUnmount, onMounted, reactive, ref, watchEffect } from 'vue';
 
-import { classes, resolveClassName } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
-import { Column, IColumnActive, tableProps, TablePropTypes } from './props';
-import TableRender from './render';
+import useActiveColumns from './plugins/use-active-columns';
+import useColumnResize from './plugins/use-column-resize';
+import useFixedColumn from './plugins/use-fixed-column';
+import userPagination from './plugins/use-pagination';
+import { tableProps } from './props';
+import TableRender, { EVENTS } from './render';
+import { useClass } from './use-common';
 import {
-  isPercentPixOrNumber,
   observerResize,
-  resolveActiveColumns,
   resolveColumnWidth,
-  resolveNumberOrStringToPix,
-  resolvePaginationOption,  resolvePropBorderToClassStr } from './utils';
+} from './utils';
 
 export default defineComponent({
   name: 'Table',
   props: tableProps,
-  emits: ['column-pick', 'row-click', 'page-limit-change', 'page-value-change'],
-  setup(props: TablePropTypes, ctx: SetupContext) {
-    const activeCols = reactive(resolveActiveColumns(props));
-    const colgroups = reactive(props.columns.map(col => ({ ...col, calcWidth: null })));
-    const startIndex = ref(0);
-    const endIndex = ref(0);
+  emits: ['columnPick', 'rowClick', 'rowDblClick', 'pageLimitChange', 'pageValueChange'],
+  setup(props, ctx) {
+    const colgroups = reactive(props.columns.map(col => ({
+      ...col,
+      calcWidth: null,
+      resizeWidth: null,
+      listeners: new Map(),
+    })));
 
-    // 当前分页缓存，用于支持内置前端分页，用户无需接收change事件来自行处理数据分割
-    let pagination = reactive({ count: 0, limit: 10, current: 1 });
-    pagination = resolvePaginationOption(props.pagination, pagination);
-
-    /**
-     * 重置当前分页开始位置 & 结束位置
-     * 如果未启用分页，则开始位置为0，结束位置为 data.length
-     * @returns
-     */
-    const resetStartEndIndex = () => {
-      if (!props.pagination || props.remotePagination) {
-        startIndex.value = 0;
-        endIndex.value = props.data.length;
-        return;
-      }
-
-      // 如果是前端分页
-      startIndex.value = (pagination.current - 1) * pagination.limit;
-      endIndex.value = pagination.current * pagination.limit;
-    };
-
-    resetStartEndIndex();
+    let columnSortFn: any = null;
+    let columnFilterFn: any = null;
 
     let observerIns = null;
     const root = ref();
-    const getActiveColumns = () => (props.columns || []).map((_column: Column, index: number) => ({
-      index,
-      active: activeCols.some((colIndex: number) => colIndex === index),
-      _column,
-    }));
+    const refVirtualRender = ref();
+    const { dragOffsetXStyle } = useColumnResize(colgroups, true);
+
+    const { activeColumns } = useActiveColumns(props);
+
     const reactiveProp = reactive({
-      activeColumns: getActiveColumns(),
       scrollTranslateY: 0,
+      scrollTranslateX: 0,
+      activeColumns,
+      setting: {
+        size: null,
+        height: null,
+      },
     });
 
-    watch(() => [props.activeColumn, props.columns], () => {
-      nextTick(() => {
-        reactiveProp.activeColumns = getActiveColumns();
-        const cols = resolveActiveColumns(props);
-        reactiveProp.activeColumns.forEach((col: IColumnActive, index: number) => {
-          Object.assign(col, { active: cols.some((colIndex: number) => colIndex === index) });
-        });
-      });
-    }, { deep: true });
+    const { pageData, localPagination, resolvePageData, watchEffectFn } = userPagination(props);
+    const {
+      tableClass,
+      headClass,
+      contentClass,
+      footerClass,
+      wrapperStyle,
+      contentStyle,
+      headStyle,
+      resetTableHeight,
+    } = useClass(props, root, reactiveProp);
+
+
+    const { renderFixedColumns, fixedWrapperClass } = useFixedColumn(props, colgroups);
+
 
     const tableRender = new TableRender(props, ctx, reactiveProp, colgroups);
 
-    /** 表格外层容器样式 */
-    const wrapperStyle = computed(() => ({
-      // height: resolveNumberOrStringToPix(props.height),
-      minHeight: resolveNumberOrStringToPix(props.minHeight, 'auto'),
-    }));
-
     watchEffect(() => {
-      pagination = resolvePaginationOption(props.pagination, pagination);
-      resetStartEndIndex();
+      watchEffectFn(columnFilterFn, columnSortFn);
     });
 
     /**
-   * 当前页分页数据
-   */
-    const pageData = computed(() => props.data.slice(startIndex.value, endIndex.value));
-
-    /**
-     * 分页配置
+     * 监听Table 派发的相关事件
      */
-    const localPagination = computed(() => {
-      if (!props.pagination) {
-        return null;
-      }
+    tableRender.on(EVENTS.ON_SORT_BY_CLICK, (args: any) => {
+      const { sortFn } = args;
+      columnSortFn = sortFn;
+      pageData.sort(columnSortFn);
+    }).on(EVENTS.ON_FILTER_CLICK, (args: any) => {
+      const { filterFn } = args;
+      columnFilterFn = filterFn;
+      resolvePageData(columnFilterFn, columnSortFn);
+    })
+      .on(EVENTS.ON_SETTING_CHANGE, (args: any) => {
+        const { checked = [] } = args;
+        checked.length && resolveColumnWidth(root.value, colgroups, 20);
+        refVirtualRender.value?.reset?.();
+      });
 
-      return props.remotePagination ? pagination : { ...pagination, count: props.data.length };
-    });
-
-    /** 表格外层容器样式 */
-    const contentStyle = computed(() => {
-      const resolveHeight = resolveNumberOrStringToPix(props.height);
-      const resolveHeadHeight = props.showHead ? resolveNumberOrStringToPix(props.headHeight) : '0';
-      const isAutoHeight = !isPercentPixOrNumber(props.height);
-      const resolveFooterHeight = props.pagination ? 40 : 0;
-      const contentHeight = `calc(${resolveHeight} - ${resolveHeadHeight} - ${resolveFooterHeight}px - 2px)`;
-      return {
-        display: 'block',
-        ...(isAutoHeight ? { maxHeight: contentHeight }
-          : { height: contentHeight }),
-      };
-    });
-
-    const tableClass = computed(() => (classes({
-      [resolveClassName('table')]: true,
-    }, resolvePropBorderToClassStr(props.border))));
-
-    const headClass = classes({
-      [resolveClassName('table-head')]: true,
-    });
-
-    const contentClass = classes({
-      [resolveClassName('table-body')]: true,
-    });
-
-    const footerClass = classes({
-      [resolveClassName('table-footer')]: true,
-    });
 
     const handleScrollChanged = (args: any[]) => {
       const pagination = args[1];
-      reactiveProp.scrollTranslateY = pagination.translateY;
+      const { translateX, translateY } = pagination;
+      reactiveProp.scrollTranslateY = translateY;
+      reactiveProp.scrollTranslateX = translateX;
     };
 
     onMounted(() => {
       observerIns = observerResize(root.value, () => {
         resolveColumnWidth(root.value, colgroups, 20);
+        resetTableHeight(root.value);
       }, 60, true);
 
       observerIns.start();
@@ -169,6 +132,7 @@ export default defineComponent({
     onBeforeUnmount(() => {
       observerIns.stop();
       observerIns = null;
+      tableRender.destroy();
     });
 
     ctx.expose({
@@ -176,31 +140,39 @@ export default defineComponent({
     });
 
     return () => <div class={tableClass.value} style={wrapperStyle.value} ref={root}>
-      <div class={ headClass }>
+      {
+        // @ts-ignore:next-line
+        <div class={ headClass } style={headStyle.value}>
         {
-          props.showHead && tableRender.renderTableHeadSchema()
+          tableRender.renderTableHeadSchema()
         }
       </div>
-    <VirtualRender
-      lineHeight={props.rowHeight}
-      class={ contentClass }
-      style={ contentStyle.value }
-      list={pageData.value}
-      onContentScroll={ handleScrollChanged }
-      throttleDelay={0}
-      enabled={props.virtualEnabled}>
-        {
-          {
-            default: (scope: any) => tableRender.renderTableBodySchema(scope.data || props.data),
-            afterContent: () => <div class={ resolveClassName('table-fixed') }></div>,
-          }
-        }
-    </VirtualRender>
-    <div class={ footerClass }>
-      {
-        props.pagination && tableRender.renderTableFooter(localPagination.value)
       }
-    </div>
+      <VirtualRender
+        ref={refVirtualRender}
+        lineHeight={tableRender.getRowHeight}
+        class={ contentClass }
+        style={ contentStyle.value }
+        list={pageData}
+        onContentScroll={ handleScrollChanged }
+        throttleDelay={0}
+        scrollEvent={true}
+        enabled={props.virtualEnabled}>
+          {
+            {
+              default: (scope: any) => tableRender.renderTableBodySchema(scope.data || props.data),
+            }
+          }
+      </VirtualRender>
+      <div class={ fixedWrapperClass }>
+        { renderFixedColumns() }
+        <div class="bk-drag-column offset-x" style={dragOffsetXStyle.value}></div>
+      </div>
+      <div class={ footerClass.value }>
+        {
+          props.pagination && props.data.length && tableRender.renderTableFooter(localPagination.value)
+        }
+      </div>
     </div>;
   },
 });

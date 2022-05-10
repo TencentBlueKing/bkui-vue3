@@ -50,6 +50,12 @@ export const treeProps = {
   label: PropTypes.oneOfType([PropTypes.func.def(undefined), PropTypes.string.def('label')]),
 
   /**
+   * 每个树节点用来作为唯一标识的属性，此标识应该是唯一的
+   * 如果设置系统会默认自动生成唯一id
+   */
+  nodeKey: PropTypes.string.def(undefined),
+
+  /**
    * 子节点 Key, 用于读取子节点
    * 默认 children
    */
@@ -95,18 +101,97 @@ export const treeProps = {
    * @param cache 是否缓存请求结果，默认为True，只有在第一次才会发起请求，若设置为false则每次都会发起请求
    */
   async: PropTypes.shape<AsyncOption>({
-    callback: PropTypes.func.def(null),
+    /**
+     * 点击节点需要执行的异步函数
+     * 返回 Promise
+     */
+    callback: PropTypes.func.def(undefined),
+
+    /**
+     * 是否缓存异步请求结果
+     * true 只在第一次点击请求异步函数
+     * false 每次点击都执行异步函数
+     */
     cache: PropTypes.bool.def(true),
+
+    /**
+     * 异步请求节点是否自动展开
+     * 可选值：once 只在初始化是执行一次
+     * every 每次数据更新都执行
+     */
+    deepAutoOpen: PropTypes.commonType(['once', 'every'], 'columnType').def('once'),
   }),
 
   /**
    * 每个节点偏移左侧距离
    */
   offsetLeft: PropTypes.number.def(5),
+
+  /**
+   * 搜索配置
+   * 可以为一个配置项 SearchOption
+   * 或者直接为一个字符串，如果直接为字符串则模糊匹配此值
+   */
+  search: PropTypes.oneOfType([
+    PropTypes.shape<SearchOption>({
+    /**
+     * 需要匹配的值
+     * */
+      value: PropTypes.oneOfType([
+        PropTypes.number,
+        PropTypes.string,
+        PropTypes.bool,
+      ]).def(''),
+
+      /**
+     * 匹配方式
+     * 支持模糊匹配（fuzzy） || 完全匹配（full）
+     * 默认 模糊匹配（fuzzy）
+     * 支持自定义匹配函数 (searchValue, itemText, item) => true || false
+     */
+      match: PropTypes.oneOfType([
+        PropTypes.commonType(['fuzzy', 'full'], 'TreeSearchMatchType'),
+        PropTypes.func,
+      ]),
+
+      /**
+     * 搜索结果如何展示
+     * 显示为 tree || list
+     * 默认 tree
+     */
+      resultType: PropTypes.commonType(['tree', 'list'], 'TreeSearchResultType').def('tree'),
+
+      /**
+       * 默认展开所有搜索结果
+       */
+      openResultNode: PropTypes.bool,
+    }),
+    PropTypes.string,
+    PropTypes.number,
+    PropTypes.bool,
+  ]).def(undefined),
+
+  emptyText: PropTypes.string.def('没有数据'),
+
+  draggable: PropTypes.bool.def(false),
+
+  /**
+   * 节点拖拽时可交换位置（开启拖拽可交换位置后将不支持改变层级）
+   */
+  dragSort: PropTypes.bool.def(false),
 };
 
 type AsyncOption = {
   callback: (item, cb) => Promise<any>,
-  cache: Boolean
+  cache: Boolean,
+  deepAutoOpen?: string
 };
+
+export type SearchOption = {
+  value: string | number | boolean,
+  match: string | Function;
+  resultType: string;
+  openResultNode: boolean;
+};
+
 export type TreePropTypes = Readonly<ExtractPropTypes<typeof treeProps>>;

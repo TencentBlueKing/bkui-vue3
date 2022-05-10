@@ -26,11 +26,10 @@
 
 import { createPatch } from 'diff';
 import * as Diff2Html from 'diff2html';
-import hljs from 'highlight.js';
 import { computed, defineComponent, ExtractPropTypes, nextTick, onMounted, ref, watch } from 'vue';
 import { number, string } from 'vue-types';
 
-import { classes, ElementType, stringEnum } from '@bkui-vue/shared';
+import { classes, ElementType, PropTypes, stringEnum } from '@bkui-vue/shared';
 
 const diffFormats = ['side-by-side', 'line-by-line'] as const;
 const CodeDiffFormat = stringEnum([...diffFormats]);
@@ -53,6 +52,7 @@ export const codeDiffProps = {
   // conf: Object as PropType<Diff2Html.Diff2HtmlUIConfig>,
   theme: string<ThemesUnion>().def('light'),
   language: string<LanguagesUnion>().def('javascript'),
+  hljs: PropTypes.any.isRequired,
 
 };
 
@@ -63,59 +63,8 @@ function changeCodeCls(htmlStr: string, lang): string {
 
 export type CodeDiffPropsType = ExtractPropTypes<typeof codeDiffProps>;
 
-/**
- * 动态引入语法包
- * [string] language
- */
-function languageDynamicImport(language) {
-  switch (language) {
-    case 'css':
-      return import('highlight.js/lib/languages/css');
-    case 'java':
-      return import('highlight.js/lib/languages/java');
-    case 'javascript':
-      return import('highlight.js/lib/languages/javascript');
-    case 'json':
-      return import('highlight.js/lib/languages/json');
-    case 'scss':
-      return import('highlight.js/lib/languages/scss');
-    case 'less':
-      return import('highlight.js/lib/languages/less');
-    case 'stylus':
-      return import('highlight.js/lib/languages/stylus');
-    case 'shell':
-      return import('highlight.js/lib/languages/shell');
-    case 'bash':
-      return import('highlight.js/lib/languages/bash');
-    case 'cpp':
-      return import('highlight.js/lib/languages/cpp');
-    case 'go':
-      return import('highlight.js/lib/languages/go');
-    case 'xml':
-      return import('highlight.js/lib/languages/xml');
-    case 'python':
-      return import('highlight.js/lib/languages/python');
-    case 'typescript':
-      return import('highlight.js/lib/languages/typescript');
-    case 'sql':
-      return import('highlight.js/lib/languages/sql');
-    case 'ruby':
-      return import('highlight.js/lib/languages/ruby');
-    case 'vim':
-      return import('highlight.js/lib/languages/vim');
-    case 'php':
-      return import('highlight.js/lib/languages/php');
-    case 'perl':
-      return import('highlight.js/lib/languages/perl');
-    case 'powershell':
-      return import('highlight.js/lib/languages/powershell');
-    case 'makefile':
-      return import('highlight.js/lib/languages/makefile');
-  }
-}
-
 export default defineComponent({
-  name: 'BkCodeDiff',
+  name: 'CodeDiff',
   props: codeDiffProps,
   emits: [],
   setup(props) {
@@ -124,7 +73,6 @@ export default defineComponent({
     const diffBoxCls = computed(() => classes({
       dark: props.theme === themesEnum.dark,
     }, 'hljs bk-code-diff'));
-    const languageModuleMap = ref({});
 
     /**
      * 高亮语法节点
@@ -133,7 +81,7 @@ export default defineComponent({
       nextTick(() => {
         if (diffBox.value) {
           diffBox.value.querySelectorAll(`.lang-${props.language}`).forEach((item) => {
-            hljs.highlightElement(item);
+            props.hljs.highlightElement(item);
           });
         }
       });
@@ -143,17 +91,7 @@ export default defineComponent({
      * @param diffContext 不同地方间隔多少行不隐藏
      * @param language 语法类型
      */
-    async function generateDiffHTML(diffContext, language) {
-      let languageModule = languageModuleMap.value[language];
-      if (languageModule === undefined) {
-        const mod = await languageDynamicImport(props.language);
-        languageModule = mod.default;
-
-        languageModuleMap.value = {
-          ...languageModuleMap.value,
-          language: languageModule,
-        };
-      }
+    function generateDiffHTML(diffContext, language) {
       const dd = createPatch(
         '',
         props.oldContent,
@@ -165,30 +103,21 @@ export default defineComponent({
         },
       );
 
-      hljs.registerLanguage(language, languageModule);
-      hljs.configure({
-        languages: [language],
-        ignoreUnescapedHTML: true,
-      });
       diffHtml.value = changeCodeCls(Diff2Html.html(dd, {
         drawFileList: false,
         matching: 'lines',
         outputFormat: props.diffFormat,
       }), language);
+      highlightElement();
     }
 
-    onMounted(async () => {
-      await Promise.all([
-        generateDiffHTML(props.diffContext, props.language),
-      ]);
-
-      highlightElement();
+    onMounted(() => {
+      generateDiffHTML(props.diffContext, props.language);
     });
 
-    watch(() => [props.diffContext, props.language], async (newVal) => {
+    watch(() => [props.diffContext, props.language], (newVal) => {
       const [newContext, newLanguage] = newVal;
-      await generateDiffHTML(newContext, newLanguage);
-      highlightElement();
+      generateDiffHTML(newContext, newLanguage);
     });
 
     return () => (

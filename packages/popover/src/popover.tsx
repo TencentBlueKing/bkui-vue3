@@ -38,6 +38,7 @@ import { PopoverProps, PopoverPropTypes } from './props';
 export default defineComponent({
   name: 'Popover',
   props: PopoverProps,
+  emits: ['afterHidden', 'afterShow', 'update:isShow'],
   setup(props: PopoverPropTypes, ctx: SetupContext) {
     let isPopInstance = false;
     let popoverInstance = Object.create(null);
@@ -60,22 +61,24 @@ export default defineComponent({
       return { systemThemes, customThemes };
     });
 
-    const handleManualShow = (val) => {
-      if (trigger.value === 'manual' && isPopInstance) {
+    const handlePopShow = (val) => {
+      if (isPopInstance) {
         val ? popoverInstance.show?.() : popoverInstance.hide?.();
       }
     };
 
     watch(() => props.isShow, (val: any) => {
-      handleManualShow(val);
+      handlePopShow(val);
     }, { immediate: true });
 
     const handleClose: any = () => {
       ctx.emit('update:isShow', false);
+      ctx.emit('afterHidden', false);
     };
 
     const handleShown: any = () => {
       ctx.emit('update:isShow', true);
+      ctx.emit('afterShow', false);
     };
 
     const getOptions = () => ({
@@ -87,6 +90,8 @@ export default defineComponent({
       afterShow: handleShown,
       afterHidden: handleClose,
       appendTo: props.boundary,
+      always: props.always,
+      disabled: props.disabled,
       fixOnBoundary: props.fixOnBoundary,
     });
 
@@ -108,7 +113,7 @@ export default defineComponent({
       isPopInstance = true;
 
       // 初次渲染默认isShow 为True时，触发
-      handleManualShow(isShow.value);
+      isShow.value && handlePopShow(isShow.value);
     };
 
     const update = () => {
@@ -136,6 +141,25 @@ export default defineComponent({
     const customTheme = compTheme.value.customThemes.reduce((out, cur) => ({ [`data-${cur}-theme`]: true, ...out }), {});
     const contentClass = `bk-popover-content ${customThemeCls}`;
 
+    /**
+     * 阻止默认事件，避免多层嵌套导致的点击失焦问题
+     * @param e
+     */
+    const handleClickContent = (e: MouseEvent) => {
+      const stopBehaviorFn = (behavior: string) => {
+        if (typeof e[behavior] === 'function') {
+          e[behavior]();
+        }
+      };
+      if (Array.isArray(props.stopBehaviors)) {
+        props.stopBehaviors.forEach(stopBehaviorFn);
+      }
+
+      if (typeof props.stopBehaviors === 'string') {
+        stopBehaviorFn(props.stopBehaviors);
+      }
+    };
+
     return () => (
       <div class="bk-popover" data-bk-pop-container>
         <div ref={ reference } class="bk-popover-reference">
@@ -147,7 +171,8 @@ export default defineComponent({
           <div ref={ refContent }
             class={contentClass}
             style={compStyle.value}
-            {...customTheme}>
+            {...customTheme}
+            onClick={ handleClickContent }>
             {ctx.slots.content?.() ?? content.value}
             {arrow.value && <div class="arrow" data-popper-arrow></div>}
           </div>

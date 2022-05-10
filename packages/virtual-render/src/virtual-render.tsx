@@ -47,6 +47,7 @@ import {
   type VirtualRenderProps,
   virtualRenderProps,
 } from './props';
+import useTagRender from './use-tag-render';
 import virtualRender, { computedVirtualIndex } from './v-virtual-render';
 
 export default defineComponent({
@@ -72,49 +73,30 @@ export default defineComponent({
     };
 
     if (!props.enabled) {
-      return () => h(
-        // @ts-ignore:next-line
-        renderAs,
-        {
-          class: resolveClassName(props.className),
-        },
-        [
-          ctx.slots.beforeContent?.() ?? '',
-          h(
-            contentAs,
-            {
-              class: resolveClassName(props.contentClassName),
-              style: props.contentStyle,
-            },
-            [
-              ctx.slots.default?.({
-                data: props.list,
-              }) ?? '',
-            ],
-          ),
-          ctx.slots.afterContent?.() ?? '',
-        ],
-      );
+      const { rendAsTag } = useTagRender(props, ctx);
+      return rendAsTag;
     }
+
     const refRoot = ref(null);
     const pagination = reactive({
       startIndex: 0,
       endIndex: 0,
       scrollTop: 1,
       translateY: 0,
+      translateX: 0,
       count: 0,
       groupItemCount: props.groupItemCount,
     });
 
     /** 指令触发Scroll事件，计算当前startIndex & endIndex & scrollTop & translateY */
-    const handleScrollCallback = (event, startIndex, endIndex, scrollTop, translateY) => {
+    const handleScrollCallback = (event, startIndex, endIndex, scrollTop, translateY, scrollLeft) => {
       pagination.startIndex = startIndex;
       pagination.endIndex = endIndex;
       pagination.scrollTop = scrollTop;
 
       // 设置偏移量，避免行高较大时出现卡顿式的滚动
       pagination.translateY = translateY;
-
+      pagination.translateX =  scrollLeft;
       ctx.emit('content-scroll', [event, pagination]);
     };
 
@@ -232,6 +214,16 @@ export default defineComponent({
       pagination,
       throttleDelay: props.throttleDelay,
     };
+
+    const reset = () => {
+      handleChangeListConfig();
+      afterListDataReset();
+    };
+
+    ctx.expose({
+      reset,
+    });
+
     return () => h(
       // @ts-ignore:next-line
       renderAs || 'div',

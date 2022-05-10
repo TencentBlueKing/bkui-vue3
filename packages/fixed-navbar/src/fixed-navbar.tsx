@@ -42,7 +42,9 @@ export default defineComponent({
     navItems: PropTypes.array.def([]),
     extCls: PropTypes.string.def(''),
     position: PropTypes.oneOf(['middle', 'top', 'bottom']).def('middle'),
+    modelValue: PropTypes.bool.def(true),
   },
+  emits: ['update:modelValue', 'click'],
   setup(props, { emit }) {
     const navConfig = props.navItems.map(item => Object.assign({
       tooltip: { disabled: true },
@@ -59,7 +61,7 @@ export default defineComponent({
     };
 
     return () => (
-      <div class={`bk-fixed-navbar ${props.extCls} ${props.position}`}
+      props.modelValue && <div class={`bk-fixed-navbar ${props.extCls} ${props.position}`}
         style={{ zIndex }}>
         { navConfig.map(item => <div class="fixed-navbar-item"
           onClick={handleClick.bind(this, item)}>

@@ -49,17 +49,17 @@
   /**
    * Tree Prop: prefixIcon function
    * @param {} isRoot 是否为分跟节点
-   * @param {} hasChild 是否有孩子节点
-   * @param {} isOpen 当前节点是否展开
-   * @param {} renderType 当前渲染类型（action: 用来标识当前节点状态，展开 | 收起, node_type：节点类型，文件、文件夹）
-   * @param {} item 当前节点数据
+   * @param {} hasChildNode 是否有孩子节点
+   * @param {} isOpened 当前节点是否展开
+   * @param {} renderType 当前渲染类型（node_action: 用来标识当前节点状态，展开 | 收起, node_type：节点类型，文件、文件夹）
    */
   // eslint-disable-next-line no-unused-vars
-  const getPrefixIcon = (isRoot, hasChild, isOpen, renderType, item) => 'default';
+  const getPrefixIcon = (item, renderType) => 'default';
 
   // eslint-disable-next-line no-unused-vars
-  const getPrefixIcon2 = (isRoot, hasChild, isOpen, renderType, item) => {
-    if (renderType === 'action') {
+  const getPrefixIcon2 = (item, renderType) => {
+    const { isRoot } = item;
+    if (renderType === 'node_action') {
       return 'default';
     }
 
@@ -71,8 +71,9 @@
   };
 
   // eslint-disable-next-line no-unused-vars
-  const getPrefixIcon3 = (isRoot, hasChild, isOpen, renderType, item) => {
-    if (renderType === 'action') {
+  const getPrefixIcon3 = (item, renderType) => {
+    const { isRoot } = item;
+    if (renderType === 'node_action') {
       return 'default';
     }
 
@@ -99,12 +100,12 @@
 </script>
 <style>
 .custom-node {
-  padding: 0 5px;
-  margin: 0 2px 0 0;
+  display: flex;
   width: 18px;
   height: 18px;
+  padding: 0 5px;
+  margin: 0 2px 0 0;
   background: #cccc;
-  display: flex;
   align-items: center;
 }
 
@@ -114,14 +115,17 @@
 </style>
 <style scoped>
 .row {
-  height: 300px;
-  width: 100%;
-  overflow: auto;
   display: flex;
+  width: 100%;
+  height: 300px;
+  overflow: auto;
 }
 
 .cell {
-  flex: 1;
+  width: 25%;
   padding: 0 15px;
+  overflow: auto;
+  border-right: solid 1px #ddd;
+  flex: 1;
 }
 </style>

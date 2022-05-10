@@ -26,7 +26,7 @@
 
 import { defineComponent, reactive } from 'vue';
 
-import { Help } from '@bkui-vue/icon';
+import { InfoLine } from '@bkui-vue/icon';
 import { classes, PropTypes } from '@bkui-vue/shared';
 
 export default defineComponent({
@@ -75,18 +75,21 @@ export default defineComponent({
     return (
       <div class={typeClass}>
         <div class="bk-alert-wraper">
-            {this.showIcon && <Help class="bk-alert-icon-info" />}
+            {this.showIcon && <InfoLine class="bk-alert-icon-info" />}
             <div class="bk-alert-content">
                 <div class="bk-alert-title">
                   {this.title}
                 </div>
                 <div class="bk-alert-description"></div>
             </div>
-            <span
-              class={closeButtonClasses}
-              onClick={this.handleClose}>
-              {this.closeText}
-            </span>
+            {
+              this.closable
+              && <span
+                class={closeButtonClasses}
+                onClick={this.handleClose}>
+                {this.closeText}
+              </span>
+            }
         </div>
     </div>
     );

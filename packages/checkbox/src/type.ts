@@ -24,25 +24,23 @@
 * IN THE SOFTWARE.
 */
 
-import type { ComponentPublicInstance } from 'vue';
+import type {
+  ComponentPublicInstance,
+} from 'vue';
 
 import type { CheckboxProps } from './checkbox';
 import type { CheckboxGroupProps } from './checkbox-group';
 
 export type ICheckboxInstance = ComponentPublicInstance<CheckboxProps, {
   isChecked: boolean,
-  checked: boolean,
   label: string,
-  currentValue: CheckboxProps['label']
+  setChecked: (value: boolean) => void
 }>;
 
 export interface ICheckboxGroupContext {
   name: 'CheckboxGroup',
   props: CheckboxGroupProps,
-  state: {
-    localValue: CheckboxProps['label'][]
-  }
   register: (checkboxInstance: ICheckboxInstance) => void,
   unregister: (checkboxInstance: ICheckboxInstance) => void,
-  handleChange: (checked: boolean, value: CheckboxProps['label']) => void
+  handleChange: () => void
 }

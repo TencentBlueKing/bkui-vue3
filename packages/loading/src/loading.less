@@ -26,7 +26,6 @@
 @largeOvalHeight: 12px;
 @largeOvalGap: 26px;
 
-
 .create-rotate(@time, @deg) {
   transform: rotate(@deg);
   animation-delay: @time;
@@ -56,12 +55,18 @@
 
 .@{bk-prefix}-loading-wrapper {
   position: static;
-  display: inline-block;
   font-size: 0;
   vertical-align: middle;
-    
+  &:not(.@{bk-prefix}-nested-loading) {
+    display: inline-block;
+  }
+
   &.@{bk-prefix}-nested-loading {
     position: relative;
+
+    &.is-block {
+      display: block;
+    }
 
     .@{bk-prefix}-loading-indicator {
       position: absolute;
@@ -100,6 +105,7 @@
   }
 
   .@{bk-prefix}-loading-mask {
+    position: absolute;
     width: 100%;
     height: 100%;
     opacity: .5;
@@ -113,12 +119,13 @@
       z-index: 10;
       width: 100%;
       height: 100%;
-      background-color: rgba(255, 255, 255, .9);
+      background-color: rgba(255, 255, 255, .8);
       content: '';
     }
   }
 
   .@{bk-prefix}-loading-indicator {
+    line-height: 1;
     text-align: center;
     each(@themeSelectors, {
       &.@{bk-prefix}-loading-@{key} {
@@ -141,11 +148,9 @@
         .create-rotate(.45s + (@value * .15), -135deg + (45 * (@value - 1)));
       }
     });
-    
-    
-  ;
 
     .@{bk-prefix}-spin-indicator {
+      position: relative;
       display: inline-block;
       width: 2 * @ovalGap;
       height: 2 * @ovalGap;
@@ -182,7 +187,6 @@
       }
     } 
   })
-
     .@{bk-prefix}-loading-title {
       margin-top: @titleMarginTop;
       font-size: @font-size-medium;
@@ -190,7 +194,5 @@
       color: @default-color;
       text-align: center;
     }
-    
-    
   }
 }

@@ -67,7 +67,7 @@ const routes: RouteRecordRaw[] = [
     path: '/navigation',
     name: 'navigation',
     alias: '',
-    component: () => import('../views/navigation'),
+    component: () => import('../views/navigation/index'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'Navigation 导航',
@@ -152,7 +152,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/fixed-navbar',
     name: 'fixedNavbar',
-    component: () => import('../views/fixed-navbar'),
+    component: () => import('../views/fixed-navbar/index'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'FixedNavbar 悬浮导航',
@@ -164,7 +164,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/backtop',
     name: 'backtop',
-    component: () => import('../views/backtop'),
+    component: () => import('../views/backtop/index'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'BackTop 返回顶部',
@@ -176,7 +176,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/icon',
     name: 'icon',
-    component: () => import('../views/icon'),
+    component: () => import('../views/icon/index'),
     meta: {
       group: NavGroupMeta.Base,
       navName: 'Icon 图标',
@@ -188,7 +188,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/exception',
     name: 'exception',
-    component: () => import('../views/exception'),
+    component: () => import('../views/exception/exception'),
     meta: {
       group: NavGroupMeta.Feedback,
       navName: 'Exception 异常提示',
@@ -272,7 +272,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/link',
     name: 'link',
-    component: () => import('../views/link'),
+    component: () => import('../views/link/index'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'Link 文字链接',
@@ -284,7 +284,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/collapse',
     name: 'collapse',
-    component: () => import('../views/collapse'),
+    component: () => import('../views/collapse/index'),
     meta: {
       group: NavGroupMeta.Data,
       navName: 'Collapse 折叠面板',
@@ -404,7 +404,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/dropdown',
     name: 'dropdown',
-    component: () => import('../views/dropdown'),
+    component: () => import('../views/dropdown/dropdown'),
     meta: {
       group: NavGroupMeta.Data,
       navName: 'DropdownMenu 下拉菜单',
@@ -426,6 +426,15 @@ const routes: RouteRecordRaw[] = [
    * @description:弹出框提示
    */
   {
+    path: '/upload',
+    name: 'upload',
+    component: () => import('../views/upload'),
+    meta: {
+      group: NavGroupMeta.Form,
+      navName: 'Upload 文件上传',
+    },
+  },
+  {
     path: '/popover',
     name: 'popover',
     component: () => import('../views/popover'),
@@ -440,7 +449,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/message',
     name: 'message',
-    component: () => import('../views/message'),
+    component: () => import('../views/message/message'),
     meta: {
       group: NavGroupMeta.Feedback,
       navName: 'Message 消息提示',
@@ -542,11 +551,23 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/slider',
     name: 'slider',
-    component: () => import('../views/slider'),
+    component: () => import('../views/slider/slider'),
     meta: {
       group: NavGroupMeta.Feedback,
       navName: 'Slider 滑动选择器',
     },
+  },
+  /**
+   * @description:侧边栏
+   */
+  {
+  	  path: '/sideslider',
+  	  name: 'sideslider',
+  	  component: () => import('../views/sideslider'),
+  	  meta: {
+  	    group: NavGroupMeta.Feedback,
+  	    navName: 'Sideslider 侧栏',
+  	  },
   },
   /**
    * @description:穿梭框
@@ -599,10 +620,19 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/resize-layout',
     name: 'resizeLayout',
-    component: () => import('../views/resize-layout'),
+    component: () => import('../views/resize-layout/resize-layout'),
     meta: {
       group: NavGroupMeta.Layout,
       navName: 'ResizeLayout',
+    },
+  },
+  {
+    path: '/grid',
+    name: 'Grid 栅格',
+    component: () => import('../views/container'),
+    meta: {
+      group: NavGroupMeta.Layout,
+      navName: 'Grid 栅格',
     },
   },
   {
@@ -610,10 +640,31 @@ const routes: RouteRecordRaw[] = [
     name: '404',
     component: () => import('../views/404'),
   },
+  /**
+   * @description:dialog
+   */
+  {
+    path: '/dialog',
+    name: 'dialog',
+    component: () => import('../views/dialog/index'),
+    meta: {
+      group: NavGroupMeta.Feedback,
+      navName: 'Dialog 对话框',
+    },
+  },
+  {
+    path: '/cascader',
+    name: 'cascader',
+    meta: {
+      group: NavGroupMeta.Others,
+      navName: 'Cascader 级联选择',
+    },
+    component: () => import('../views/cascader/index'),
+  },
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.VITE_APP_BASE_URL),
   routes,
 });
 

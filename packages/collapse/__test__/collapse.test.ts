@@ -26,13 +26,13 @@
 
 import { mount } from '@vue/test-utils';
 
-import BkCollapse from '../src';
+import Collapse from '../src';
 
 describe('collapse.tsx', () => {
   it('renders slot default when passed', async () => {
-    const wrapper = await mount(BkCollapse, {
+    const wrapper = await mount(Collapse, {
       props: {
-        list: ['Title1', 'Title2'],
+        list: [{ name: 'Title1', content: 'neirong1' }, { name: 'Title2', content: '内容2' }],
       },
     });
     expect(wrapper.classes()).toContain('bk-collapse-wrapper');
@@ -44,11 +44,11 @@ describe('collapse.tsx', () => {
 
 describe('collapse accordion', () => {
   it('renders only one content when accordion is true', async () => {
-    const wrapper = await mount(BkCollapse, {
+    const wrapper = await mount(Collapse, {
       props: {
-        list: ['Title1', 'Title2', 'Title2'],
+        list: [{ name: 'Title1', content: 'neirong1' }, { name: 'Title2', content: '内容2' }],
         accordion: true,
-        activeIndex: [0],
+        modelValue: [0],
       },
     });
 
@@ -57,16 +57,61 @@ describe('collapse accordion', () => {
   });
 
   it('renders all active content when accordion is false', async () => {
-    const wrapper = await mount(BkCollapse, {
+    const wrapper = await mount(Collapse, {
       props: {
-        list: ['Title1', 'Title2', 'Title2'],
+        list: [{ name: 'Title1', content: 'neirong1' }, { name: 'Title2', content: '内容2' }, { name: 'Title3', content: '内容3' }],
         accordion: false,
-        activeIndex: [0, 2],
+        modelValue: [0, 2],
       },
     });
 
     expect(wrapper.classes()).toContain('bk-collapse-wrapper');
     expect(wrapper.findAll('.bk-collapse-item .bk-collapse-content')[0].classes()).toContain('active');
     expect(wrapper.findAll('.bk-collapse-item .bk-collapse-content')[2].classes()).toContain('active');
+  });
+  it('titleField', async () => {
+    const wrapper = await mount(BkCollapse, {
+      props: {
+        list: [{ title: 'Title1', content: 'neirong1' }, { title: 'Title2', content: '内容2' }, { title: 'Title3', content: '内容3' }],
+        accordion: false,
+        modelValue: [0],
+        titleField: 'title',
+      },
+    });
+    expect(wrapper.findAll('.bk-collapse-item .bk-collapse-title')[0].text()).toEqual('Title1');
+  });
+  it('contentField', async () => {
+    const wrapper = await mount(BkCollapse, {
+      props: {
+        list: [{ name: 'Title1', contentField: 'neirong1' }, { name: 'Title2', contentField: '内容2' }, { name: 'Title3', contentField: '内容3' }],
+        accordion: false,
+        modelValue: [0],
+        contentField: 'contentField',
+      },
+    });
+    expect(wrapper.findAll('.bk-collapse-item .bk-collapse-content')[0].text()).toEqual('neirong1');
+  });
+  it('idFiled', async () => {
+    const wrapper = await mount(BkCollapse, {
+      props: {
+        list: [{ name: 'Title1', contentField: 'neirong1' }, { name: 'Title2', contentField: '内容2' }, { name: 'Title3', contentField: '内容3' }],
+        accordion: false,
+        modelValue: ['Title1'],
+        idFiled: 'name',
+      },
+    });
+    expect(wrapper.findAll('.bk-collapse-item .bk-collapse-content')[0].classes()).toContain('active');
+  });
+  it('content Slots', async () => {
+    const wrapper = await mount(BkCollapse, {
+      props: {
+        list: [{ name: 'Title1', contentField: 'neirong1' }, { name: 'Title2', contentField: '内容2' }, { name: 'Title3', contentField: '内容3' }],
+        accordion: false,
+      },
+      slots: {
+        content: 'contentSlot',
+      },
+    });
+    expect(wrapper.findAll('.bk-collapse-item .bk-collapse-content')[0].text()).toContain('contentSlot');
   });
 });

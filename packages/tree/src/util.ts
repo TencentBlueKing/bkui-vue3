@@ -28,6 +28,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { resolveClassName } from '@bkui-vue/shared';
 
+import { NODE_ATTRIBUTES } from './constant';
 import { TreePropTypes } from './props';
 
 const DEFAULT_LEVLE_LINE = '1px dashed #c3cdd7';
@@ -43,21 +44,40 @@ export const getFlatdata = (props: TreePropTypes, treeData: Array<any> = undefin
   let order = 0;
   const schema = new Map<string, any>();
 
-  function getCachedTreeNodeAttr(uuid: string, node: any, attr: string, cachedAttr: string) {
-    const cached = (cachedSchema || []).find((item: any) => item.__uuid === uuid);
-    if (cached) {
-      return cached[cachedAttr];
+  function getUid(item: any) {
+    let uid = null;
+    if (typeof props.nodeKey === 'string') {
+      uid = item[props.nodeKey];
     }
 
-    return node[attr];
+    return uid || item[NODE_ATTRIBUTES.UUID] || uuidv4();
+  }
+
+  function getCachedTreeNodeAttr(uuid: string, node: any, attr: string, cachedAttr: string, defaultValue = undefined) {
+    const cached = (cachedSchema || []).find((item: any) => item[NODE_ATTRIBUTES.UUID] === uuid);
+    let result = undefined;
+    if (cached) {
+      result = cached[cachedAttr];
+    } else {
+      result = node[attr];
+    }
+
+    if (result === undefined) {
+      result = defaultValue;
+    }
+    return result;
   }
 
   function isCachedTreeNodeOpened(uuid: string, node: any) {
-    return getCachedTreeNodeAttr(uuid, node, 'isOpen', '__isOpen');
+    return getCachedTreeNodeAttr(uuid, node, 'isOpen', NODE_ATTRIBUTES.IS_OPEN, false);
   }
 
   function isCachedTreeNodeChecked(uuid: string, node: any) {
-    return getCachedTreeNodeAttr(uuid, node, 'checked', '__checked');
+    return getCachedTreeNodeAttr(uuid, node, 'checked', NODE_ATTRIBUTES.CHECKED, false);
+  }
+
+  function isCachedTreeNodeMatch(uuid: string, node: any) {
+    return getCachedTreeNodeAttr(uuid, node, 'isMatch', NODE_ATTRIBUTES.IS_MATCH, true);
   }
 
   function flatten(array: Array<any>, depth = 0, parent = null, path = null) {
@@ -68,23 +88,24 @@ export const getFlatdata = (props: TreePropTypes, treeData: Array<any> = undefin
         flatten(item, depth, parent, path);
       } else {
         if (typeof item === 'object' && item !== null) {
-          const uuid = item.__uuid || uuidv4();
+          const uuid = getUid(item);
           const currentPath = path !== null ? `${path}-${i}` : `${i}`;
           const hasChildren = !!(item[children] || []).length;
           const attrs = {
-            __depth: depth,
-            __index: i,
-            __uuid: uuid,
-            __parentId: parent,
-            __hasChild: hasChildren,
-            __path: currentPath,
-            __isRoot: parent === null,
-            __order: order,
-            __isOpen: isCachedTreeNodeOpened(uuid, item) && hasChildren,
-            __checked: isCachedTreeNodeChecked(uuid, item),
+            [NODE_ATTRIBUTES.DEPTH]: depth,
+            [NODE_ATTRIBUTES.INDEX]: i,
+            [NODE_ATTRIBUTES.UUID]: uuid,
+            [NODE_ATTRIBUTES.PARENT_ID]: parent,
+            [NODE_ATTRIBUTES.HAS_CHILD]: hasChildren,
+            [NODE_ATTRIBUTES.PATH]: currentPath,
+            [NODE_ATTRIBUTES.IS_ROOT]: parent === null,
+            [NODE_ATTRIBUTES.ORDER]: order,
+            [NODE_ATTRIBUTES.IS_MATCH]: isCachedTreeNodeMatch(uuid, item),
+            [NODE_ATTRIBUTES.IS_OPEN]: isCachedTreeNodeOpened(uuid, item),
+            [NODE_ATTRIBUTES.CHECKED]: isCachedTreeNodeChecked(uuid, item),
             [children]: null,
           };
-          Object.assign(item, { __uuid: uuid });
+          Object.assign(item, { [NODE_ATTRIBUTES.UUID]: uuid });
           schema.set(uuid, attrs);
           order += 1;
           outputData.push({
@@ -197,7 +218,7 @@ export const getTreeStyle = (item: any, props: TreePropTypes) => {
  */
 export const getNodeItemStyle: any = (item: any, props: TreePropTypes, flatData: any = {}) => {
   const {  schema } = flatData;
-  const depth = getNodeAttr(schema as Map<string, any>, item.__uuid, '__depth');
+  const depth = getNodeAttr(schema as Map<string, any>, item[NODE_ATTRIBUTES.UUID], NODE_ATTRIBUTES.DEPTH);
   return {
     '--depth': depth,
     ...(typeof props.levelLine === 'function'
@@ -217,7 +238,7 @@ export const getNodeItemStyle: any = (item: any, props: TreePropTypes, flatData:
  */
 export const getNodeItemClass = (item: any, schema: any, props: TreePropTypes) => {
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  const { __isRoot, __isOpen } = getSchemaVal(schema as Map<string, any>, item.__uuid) || {};
+  const { __isRoot, __isOpen } = getSchemaVal(schema as Map<string, any>, item[NODE_ATTRIBUTES.UUID]) || {};
   return {
     'is-root': __isRoot,
     'bk-tree-node': true,
@@ -234,7 +255,7 @@ export const getNodeItemClass = (item: any, schema: any, props: TreePropTypes) =
  */
 export const getNodeRowClass = (item: any, schema: any) => {
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  const { __checked } = getSchemaVal(schema as Map<string, any>, item.__uuid) || {};
+  const { __checked } = getSchemaVal(schema as Map<string, any>, item[NODE_ATTRIBUTES.UUID]) || {};
   return {
     'is-checked': __checked,
     [resolveClassName('node-row')]: true,

@@ -1,6 +1,7 @@
 @import '@bkui-vue/styles/themes/themes.less';
-@import 'highlight.js/styles/googlecode.css';
 @import 'diff2html/bundles/css/diff2html.min.css';
+
+// TODO: theme var
 
 /* stylelint-disable declaration-no-important */
 .@{bk-prefix}-code-diff {
@@ -8,6 +9,98 @@
 
   .d2h-file-header {
     display: none;
+  }
+
+  .hljs {
+    color: #000;
+    background: #fff;
+  }
+
+  .hljs-comment,
+  .hljs-quote {
+    color: #800;
+  }
+
+  .hljs-keyword,
+  .hljs-name,
+  .hljs-section,
+  .hljs-selector-tag,
+  .hljs-title {
+    color: #008;
+  }
+
+  .hljs-template-variable,
+  .hljs-variable {
+    color: #660;
+  }
+
+  .hljs-regexp,
+  .hljs-selector-attr,
+  .hljs-selector-pseudo,
+  .hljs-string {
+    color: #080;
+  }
+
+  .hljs-bullet,
+  .hljs-link,
+  .hljs-literal,
+  .hljs-meta,
+  .hljs-number,
+  .hljs-symbol {
+    color: #066;
+  }
+
+  .hljs-attr,
+  .hljs-built_in,
+  .hljs-doctag,
+  .hljs-params,
+  .hljs-title,
+  .hljs-type {
+    color: #606;
+  }
+
+  .hljs-attribute,
+  .hljs-subst {
+    color: #000;
+  }
+
+  .hljs-formula {
+    font-style: italic;
+    background-color: #eee;
+  }
+
+  .hljs-selector-class,
+  .hljs-selector-id {
+    color: #9b703f;
+  }
+
+  .hljs-addition {
+    background-color: #baeeba;
+  }
+
+  .hljs-deletion {
+    background-color: #ffc8bd;
+  }
+
+  .hljs-doctag,
+  .hljs-strong {
+    font-weight: 700;
+  }
+
+  .hljs-emphasis {
+    font-style: italic;
+  }
+
+  .d2h-del {
+    .hljs {
+      background: transparent;
+    }
+  }
+
+  .d2h-ins {
+    .hljs {
+      background: transparent;
+    }
   }
 
   &.dark {

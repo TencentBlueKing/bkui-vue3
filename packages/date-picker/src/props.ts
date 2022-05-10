@@ -126,6 +126,9 @@ export const datePickerProps = {
   modelValue: {
     type: [Date, String, Number, Array] as PropType<DatePickerValueType | null>,
   },
+  value: {
+    type: [Date, String, Number, Array] as PropType<DatePickerValueType | null>,
+  },
   options: {
     type: Object,
     default: () => ({}),
@@ -149,6 +152,10 @@ export const datePickerProps = {
   shortcutSelectedIndex: {
     type: Number,
     default: -1,
+  },
+  headerSlotCls: {
+    type: String,
+    default: '',
   },
   footerSlotCls: {
     type: String,

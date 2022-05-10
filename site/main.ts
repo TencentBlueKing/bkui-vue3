@@ -31,17 +31,13 @@ import bkuiVue from '../packages/bkui-vue/index';
 import App from './app';
 import router from './router';
 
+import '../packages/styles/src/index';
 import './reset.less';
-// import 'highlight.js/styles/default.css';
 const app = createApp(App);
 app.use(bkuiVue);
-console.info(bkuiVue);
 app.use(router);
 
 if (process.env.NODE_ENV === 'development') {
-  // if ('__VUE_DEVTOOLS_GLOBAL_HOOK__' in window) {
-  //   (window as any).__VUE_DEVTOOLS_GLOBAL_HOOK__.Vue = app;
-  // }
   (app.config as any).devtools = true;
 }
 app.mount('#app');

@@ -41,19 +41,20 @@ npm i babel-plugin-import -D
 
 ```js
 {
-    "presets": ...,
-    "plugins": [
-        ...
-        [
-          "import", 
-          {
-            "libraryName": "bkui-vue",
-            "style": (name) => {
-              const index = name.lastIndexOf('/')
-              return `${name}${name.slice(index)}.css`;
-          }
-      ]
+  "presets": ...,
+  "plugins": [
+    ...
+    [
+      "import",
+      {
+        "libraryName": "bkui-vue",
+        "style": (name) => {
+          const index = name.lastIndexOf('/')
+          return `${name}${name.slice(index)}.css`;
+        }
+      }
     ]
+  ]
 }
 ```
 
@@ -71,7 +72,7 @@ console.log(dd)
 ```
 ### 全局配置
 
-在引入组件库时，可以传入一个全局配置对象。该对象目前支持`zIndex` 字段。`zIndex` 设置弹框的初始 z-index（默认值：2000）。按照引入组件库的方式，具体操作如下：
+全局引入组件库，具体使用如下：
 
 完整引入：
 

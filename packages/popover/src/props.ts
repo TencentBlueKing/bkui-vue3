@@ -28,8 +28,14 @@ import { ExtractPropTypes, PropType } from 'vue';
 
 import { OnFirstUpdateFnType, PropTypes } from '@bkui-vue/shared';
 const placements = ['auto', 'auto-start', 'auto-end', 'top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end', 'right', 'right-start', 'right-end', 'left', 'left-start', 'left-end'];
+const EventProps = {
+  onAfterHidden: Function,
+  onAfterShow: Function,
+};
 export const PopoverProps = {
-  isShow: PropTypes.bool,
+  isShow: PropTypes.bool.def(false),
+  always: PropTypes.bool.def(false),
+  disabled: PropTypes.bool.def(false),
   width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
   height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
   content: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def(''),
@@ -40,12 +46,12 @@ export const PopoverProps = {
   transition: PropTypes.string.def('fade-in'),
 
   /**
-   * 展示位置
+   * 组件显示位置
    */
   placement: PropTypes.placement(placements).def('top'),
 
   // 'dark', 'light'
-  theme: PropTypes.string.def('light'),
+  theme: PropTypes.string.def('dark'),
 
   /**
    * handleFirstUpdate
@@ -86,6 +92,22 @@ export const PopoverProps = {
    * 例如：boundary = document.body, fixOnBoundary = true，则弹出内容会一直固定到body
    */
   fixOnBoundary: PropTypes.bool.def(false),
+
+  /**
+   * 弹出框鼠标点击事件是否阻止的点击事件行为
+   * 支持 stopPropagation stopImmediatePropagation preventDefault
+   * 用于在嵌套弹出或者元素定位导致的点击触发关闭问题
+   */
+  stopBehaviors: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.commonType([
+      'stopPropagation',
+      'stopImmediatePropagation',
+      'preventDefault',
+    ], 'stopBehaviors')),
+    PropTypes.string,
+  ]).def([]),
+
+  ...EventProps,
 };
 
 export type PopoverPropTypes = Readonly<ExtractPropTypes<typeof PopoverProps>>;
