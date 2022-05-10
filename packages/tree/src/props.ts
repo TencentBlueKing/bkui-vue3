@@ -172,6 +172,23 @@ export const treeProps = {
   ]).def(undefined),
 
   emptyText: PropTypes.string.def('没有数据'),
+
+  draggable: PropTypes.bool.def(false),
+
+  /**
+   * 节点拖拽时可交换位置（开启拖拽可交换位置后将不支持改变层级）
+   */
+  dragSort: PropTypes.bool.def(false),
+
+  /**
+   * 节点是否可以选中
+   */
+  selectable: PropTypes.bool.def(true),
+
+  /**
+   * 默认选中的节点id，selectable为false时无效
+   */
+  selected: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.any]).def(null),
 };
 
 type AsyncOption = {

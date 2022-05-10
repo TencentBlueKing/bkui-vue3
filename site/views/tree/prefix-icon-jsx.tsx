@@ -34,11 +34,16 @@ export default defineComponent({
     };
   },
   methods: {
-    getPrefixIcon(_isRoot, _hasChild, _isOpen, _renderType, _item) {
-      const isAction = _renderType === 'action';
-      const childeFont = _hasChild ? '+' : '*';
-      const openFont = _isOpen ? '-' : childeFont;
-      const rootFont = _isRoot ? 'R' : 'C';
+    getPrefixIcon(params, renderType) {
+      const {
+        hasChildNode,
+        isOpened,
+        isRoot,
+      } = params;
+      const isAction = renderType === 'node_action';
+      const childeFont = hasChildNode ? '+' : '*';
+      const openFont = isOpened ? '-' : childeFont;
+      const rootFont = isRoot ? 'R' : 'C';
       const fontIcon = !isAction ? rootFont : openFont;
       return  <span class="custom-node" style="font-size: 8px; text-align: center;">{fontIcon}</span>;
     },

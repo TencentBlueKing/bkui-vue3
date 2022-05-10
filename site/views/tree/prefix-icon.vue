@@ -49,17 +49,17 @@
   /**
    * Tree Prop: prefixIcon function
    * @param {} isRoot 是否为分跟节点
-   * @param {} hasChild 是否有孩子节点
-   * @param {} isOpen 当前节点是否展开
-   * @param {} renderType 当前渲染类型（action: 用来标识当前节点状态，展开 | 收起, node_type：节点类型，文件、文件夹）
-   * @param {} item 当前节点数据
+   * @param {} hasChildNode 是否有孩子节点
+   * @param {} isOpened 当前节点是否展开
+   * @param {} renderType 当前渲染类型（node_action: 用来标识当前节点状态，展开 | 收起, node_type：节点类型，文件、文件夹）
    */
   // eslint-disable-next-line no-unused-vars
-  const getPrefixIcon = (isRoot, hasChild, isOpen, renderType, item) => 'default';
+  const getPrefixIcon = (item, renderType) => 'default';
 
   // eslint-disable-next-line no-unused-vars
-  const getPrefixIcon2 = (isRoot, hasChild, isOpen, renderType, item) => {
-    if (renderType === 'action') {
+  const getPrefixIcon2 = (item, renderType) => {
+    const { isRoot } = item;
+    if (renderType === 'node_action') {
       return 'default';
     }
 
@@ -71,8 +71,9 @@
   };
 
   // eslint-disable-next-line no-unused-vars
-  const getPrefixIcon3 = (isRoot, hasChild, isOpen, renderType, item) => {
-    if (renderType === 'action') {
+  const getPrefixIcon3 = (item, renderType) => {
+    const { isRoot } = item;
+    if (renderType === 'node_action') {
       return 'default';
     }
 

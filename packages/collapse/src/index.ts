@@ -26,5 +26,5 @@
 import { withInstall } from '@bkui-vue/shared';
 
 import Component from './collapse';
-const BkCollaspe = withInstall(Component);
-export default BkCollaspe;
+const BkCollapse = withInstall(Component);
+export default BkCollapse;

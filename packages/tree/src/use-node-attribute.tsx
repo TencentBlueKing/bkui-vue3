@@ -24,13 +24,10 @@
 * IN THE SOFTWARE.
 */
 
-import { computed } from 'vue';
+import { NODE_ATTRIBUTES } from './constant';
+import { TreePropTypes } from './props';
 
-import { NODE_ATTRIBUTES } from './util';
-
-export default (flatData) => {
-  const schemaValues = computed(() => Array.from(flatData.schema.values()));
-
+export default (flatData, props?: TreePropTypes) => {
   /**
    * 获取Schema中指定的对象值
    * @param key
@@ -60,10 +57,16 @@ export default (flatData) => {
     });
 
   const getNodePath = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.PATH);
+  const getNodeId = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.UUID);
   const isRootNode = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.IS_ROOT);
-  const isNodeOpened = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.IS_OPEN);
+  const isNodeOpened = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.IS_OPENED);
   const hasChildNode = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.HAS_CHILD);
-  const isChecked = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.CHECKED);
+  const isNodeMatched = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.IS_MATCH);
+  const isNodeChecked = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.IS_CHECKED);
+  const getNodeParentId = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.PARENT_ID);
+  const getNodeParentIdById = (id: string) => getNodeAttr({ [NODE_ATTRIBUTES.UUID]: id }, NODE_ATTRIBUTES.PARENT_ID);
+
+  const deleteNodeSchema = (id: string) => (flatData.schema as Map<string, any>).delete(id);
 
   /**
    * 判定指定节点是否为展开状态
@@ -76,7 +79,7 @@ export default (flatData) => {
     }
 
     if (typeof item === 'string') {
-      return getSchemaVal(item)?.[NODE_ATTRIBUTES.IS_OPEN];
+      return getSchemaVal(item)?.[NODE_ATTRIBUTES.IS_OPENED];
     }
 
     return false;
@@ -92,17 +95,48 @@ export default (flatData) => {
     || isItemOpen(node)
     || isItemOpen(getNodeAttr(node, NODE_ATTRIBUTES.PARENT_ID));
 
+  /**
+     * 根据节点path返回源数据中节点信息
+     * @param path
+     * @returns
+     */
+  const getSourceNodeByPath = (path: string) => {
+    const paths = path.split('-');
+
+    return  paths.reduce((pre: any, nodeIndex: string) => {
+      const index = Number(nodeIndex);
+      return  Array.isArray(pre) ? pre[index] : pre[props.children][index];
+    }, props.data);
+  };
+
+  const getSourceNodeByUID = (uid: string) => getSourceNodeByPath(getNodePath({ [NODE_ATTRIBUTES.UUID]: uid }));
+
+  const getParentNodeData = (uid: string) => {
+    if (isRootNode({ [NODE_ATTRIBUTES.UUID]: uid })) {
+      return { [props.children]: props.data };
+    }
+
+    return getSourceNodeByUID(getNodeParentIdById(uid));
+  };
+
   return {
-    schemaValues,
     getSchemaVal,
     getNodeAttr,
+    getNodeId,
+    getNodeParentId,
+    getNodeParentIdById,
+    getParentNodeData,
     setNodeAttr,
     getNodePath,
     isRootNode,
     isNodeOpened,
     hasChildNode,
     isItemOpen,
-    isChecked,
+    isNodeChecked,
+    isNodeMatched,
     checkNodeIsOpen,
+    getSourceNodeByPath,
+    getSourceNodeByUID,
+    deleteNodeSchema,
   };
 };

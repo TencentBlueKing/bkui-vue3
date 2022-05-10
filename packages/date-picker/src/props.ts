@@ -153,6 +153,10 @@ export const datePickerProps = {
     type: Number,
     default: -1,
   },
+  headerSlotCls: {
+    type: String,
+    default: '',
+  },
   footerSlotCls: {
     type: String,
     default: '',

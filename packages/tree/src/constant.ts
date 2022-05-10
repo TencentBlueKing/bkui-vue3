@@ -23,26 +23,29 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+export const enum EVENTS {
+  NODE_CLICK = 'node-click',
+  NODE_COLLAPSE = 'node-collapse',
+  NODE_EXPAND = 'node-expand'
+}
 
-import { defineComponent } from 'vue';
-
-import { Help, HelpDocumentFill, HelpFill } from '@bkui-vue/icon';
-
-export default defineComponent({
-  name: 'SiteIcon',
-  setup() {
-    return {
-    };
-  },
-  render() {
-    return (
-      <div>
-        <Help style={{ fontSize: '100px' }} fill="red"/>
-        <HelpDocumentFill style={{ fontSize: '100px' }} class='sdddddsdf'/>
-        <HelpFill style={{ fontSize: '100px' }}/>
-        <HelpDocumentFill style={{ fontSize: '100px' }}/>
-        <HelpFill style={{ fontSize: '100px' }} />
-      </div>
-    );
-  },
-});
+/**
+ * 节点扩展属性
+ */
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export const enum NODE_ATTRIBUTES {
+  DEPTH = '__depth',
+  INDEX = '__index',
+  UUID = '__uuid',
+  PARENT_ID= '__parent_id',
+  HAS_CHILD= '__has_child',
+  PATH= '__path',
+  IS_ROOT= '__is_root',
+  ORDER= '__order',
+  IS_OPENED= '__is_open',
+  IS_CHECKED='__is_checked',
+  IS_SELECTED='__is_selected',
+  IS_ASYNC_INIT = '__is_async_init',
+  IS_MATCH = '__is_match',
+  IS_NULL = '__IS_NULL'
+}
