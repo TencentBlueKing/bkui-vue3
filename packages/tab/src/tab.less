@@ -40,6 +40,7 @@
   }
 
   &-header {
+    position: relative;
     display: flex;
     color: @tab-color;
 
@@ -53,7 +54,13 @@
       }
     }
 
+    &-navs {
+
+      flex: 1;
+    }
+
     &-nav {
+
       .@{tab-prefix}--top & {
         overflow-x: auto;
         overflow-y: visible;
@@ -64,9 +71,11 @@
         overflow-y: auto;
       }
 
+
       .@{tab-prefix}--card &, .@{tab-prefix}--border-card & {
         border-left: 1px solid @tab-border;
       }
+
 
       //flex: 0 1 auto;
       &::-webkit-scrollbar {
@@ -76,12 +85,31 @@
       }
     }
 
+    &-next,
+    &-prev {
+      position: absolute;
+      top: 1px;
+      bottom: 1px;
+      width: 15px;
+      background: #fff;
+      content: '';
+    }
+
+    &-prev {
+      left: 1px;
+    }
+
+    &-next {
+      right: 1px;
+    }
+
     &-operation {
       //flex: 0 0 auto;
       .@{tab-prefix}-header-item {
         padding: 0 12px;
       }
     }
+
 
 
     .@{tab-prefix}--left & {
@@ -166,8 +194,8 @@
 
       &-close {
         display: none;
-        color: @tab-gray;
         font-size: 16px;
+        color: @tab-gray;
       }
 
     }

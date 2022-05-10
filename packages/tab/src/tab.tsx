@@ -25,11 +25,20 @@
 */
 
 import {
-  Component, ComponentInternalInstance, defineComponent, Fragment, getCurrentInstance, onMounted, onUpdated, ref, VNode,
+  Component,
+  ComponentInternalInstance,
+  defineComponent,
+  Fragment,
+  getCurrentInstance,
+  onMounted,
+  onUpdated,
+  ref,
+  VNode,
 } from 'vue';
 
 import { tabProps } from './props';
 import TabNav from './tab-nav';
+
 export default defineComponent({
   name: 'Tab',
   components: {
@@ -42,16 +51,10 @@ export default defineComponent({
     // 新方法
     'add', 'change', 'remove', 'update:active', 'sort', 'drag',
   ],
-  setup(_props: Record<string, any>, { slots }) {
+  setup(_props: Record<string, any>, { slots, emit }) {
     const isMounted = ref(false);
     const panels = ref([]);
     const instance = getCurrentInstance();
-    if (typeof slots.panel === 'function') {
-      panels.value = slots.panel();
-    }
-    if (typeof slots.default === 'function') {
-      panels.value = slots.default();
-    }
     // 动态插入tabPanel
     const getPaneInstanceFromSlot = (vnode: VNode, panelInstanceList: ComponentInternalInstance[] = []) => {
       const { children } = vnode;
@@ -72,8 +75,7 @@ export default defineComponent({
         if (!children) return;
         const content = children[0];
         const panelInstanceList = getPaneInstanceFromSlot(content);
-        const isChanged = !(panelInstanceList.length === panels.value.length
-          && panelInstanceList.every((panel, index) => panel.uid === panels.value[index].uid));
+        const isChanged = panelInstanceList.length !== panels.value.length;
         if (isChanged) {
           panels.value = panelInstanceList;
         }
@@ -88,54 +90,57 @@ export default defineComponent({
     onUpdated(() => {
       setPanelInstances();
     });
+    const methods = {
+      tabAdd(e: MouseEvent) {
+        emit('add', { e });
+        emit('add-panel', { e });
+      },
+      tabChange(name: string) {
+      // emit('xxx') 会调用onXxx函数, 所以不必在主动调用onXxx函数了
+        emit('change', name);
+        emit('tab-change', name);
+        emit('update:active', name);
+      },
+      tabRemove(index: number, panel) {
+      // emit('xxx') 会调用onXxx函数, 所以不必在主动调用onXxx函数了
+        emit('remove', index, panel);
+        emit('remove-panel', index, panel);
+      },
+      tabSort(dragTabIndex: number, dropTabIndex: number, sortType: string) {
+        const list = panels.value;
+        // 如果是插队模式
+        if (sortType === 'insert') {
+          if (dragTabIndex < dropTabIndex) {
+            list.splice(dropTabIndex + 1, 0, panels[dragTabIndex]);
+            list.splice(dragTabIndex, 1);
+          } else if (dragTabIndex > dropTabIndex) {
+            list.splice(dropTabIndex, 0, panels[dragTabIndex]);
+            list.splice(dragTabIndex + 1, 1);
+          } else {
+            return false;
+          }
+        } else {
+          const swap = list[dropTabIndex];
+          list[dropTabIndex] = list[dragTabIndex];
+          list[dragTabIndex] = swap;
+        }
+        panels.value = [...list];
+        // emit('xxx') 会调用onXxx函数, 所以不必在主动调用onXxx函数了
+        emit('sort', dragTabIndex, dropTabIndex, sortType);
+        emit('sort-change', dragTabIndex, dropTabIndex, sortType);
+      },
+      tabDrag(dragTabIndex: number, dragEvent: DragEvent) {
+      // emit('xxx') 会调用onXxx函数, 所以不必在主动调用onXxx函数了
+        emit('drag', dragTabIndex, dragEvent);
+        emit('on-drag-tab', dragTabIndex, dragEvent);
+      },
+    } ;
 
     return {
+      ...methods,
       isMounted,
       panels,
     };
-  },
-  methods: {
-    tabAdd(e: MouseEvent) {
-      this.$emit('add', { e });
-      this.$emit('add-panel', { e });
-    },
-    tabChange(name: string) {
-      // emit('xxx') 会调用onXxx函数, 所以不必在主动调用onXxx函数了
-      this.$emit('change', name);
-      this.$emit('tab-change', name);
-      this.$emit('update:active', name);
-    },
-    tabRemove(index: number, panel) {
-      // emit('xxx') 会调用onXxx函数, 所以不必在主动调用onXxx函数了
-      this.$emit('remove', index, panel);
-      this.$emit('remove-panel', index, panel);
-    },
-    tabSort(dragTabIndex: number, dropTabIndex: number, sortType: string) {
-      // 如果是插队模式
-      if (sortType === 'insert') {
-        if (dragTabIndex < dropTabIndex) {
-          this.panels.splice(dropTabIndex + 1, 0, this.panels[dragTabIndex]);
-          this.panels.splice(dragTabIndex, 1);
-        } else if (dragTabIndex > dropTabIndex) {
-          this.panels.splice(dropTabIndex, 0, this.panels[dragTabIndex]);
-          this.panels.splice(dragTabIndex + 1, 1);
-        } else {
-          return false;
-        }
-      } else {
-        const swap = this.panels[dropTabIndex];
-        this.panels[dropTabIndex] = this.panels[dragTabIndex];
-        this.panels[dragTabIndex] = swap;
-      }
-      // emit('xxx') 会调用onXxx函数, 所以不必在主动调用onXxx函数了
-      this.$emit('sort', dragTabIndex, dropTabIndex, sortType);
-      this.$emit('sort-change', dragTabIndex, dropTabIndex, sortType);
-    },
-    tabDrag(dragTabIndex: number, dragEvent: DragEvent) {
-      // emit('xxx') 会调用onXxx函数, 所以不必在主动调用onXxx函数了
-      this.$emit('drag', dragTabIndex, dragEvent);
-      this.$emit('on-drag-tab', dragTabIndex, dragEvent);
-    },
   },
   render() {
     const getTabBoxClass = () => {
@@ -158,6 +163,7 @@ export default defineComponent({
         validateActive,
         changeOnHover,
         changeOnHoverDelay,
+        tabPosition,
         // function
         tabAdd,
         tabChange,
@@ -178,6 +184,7 @@ export default defineComponent({
         validateActive,
         changeOnHover,
         changeOnHoverDelay,
+        tabPosition,
         // function
         tabAdd,
         tabChange,

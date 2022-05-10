@@ -46,7 +46,7 @@ export default defineComponent({
         }
         const {
           name, label, closable, visible, disabled, sortable,
-        } = item.props as any;
+        } = item.props;
         if (!visible) {
           return false;
         }
@@ -82,7 +82,52 @@ export default defineComponent({
     const dragenterIndex = ref(-1);
     const dragStartIndex = ref(-1);
     const draggingEle = ref('');
+    const  distinctRoots = (el1: string, el2: string) => el1 === el2;
+    const methods = {
+      /**
+       * @description  判断拖动的元素是否是在同一个tab。
+       *               使用guid，相比 el1.parentNode === el2.parentNode 判断，性能要高
+       * @param e {event}  触发的元素
+       * @return {boolean}
+       */
+      handleTabAdd(e) {
+        props.tabAdd(e);
+      },
+      dragstart(index: number, $event: DragEvent) {
+        dragStartIndex.value = index;
+        draggingEle.value = props.guid;
+        // 拖动鼠标效果
+        Object.assign($event.dataTransfer, { effectAllowed: 'move' });
+        // $event.dataTransfer.setData('text/plain', index)
+        props.tabDrag(index, $event);
+      },
+      dragenter(index) {
+        // 缓存目标元素索引，方便添加样式
+        if (distinctRoots(draggingEle.value, props.guid)) {
+          dragenterIndex.value = index;
+        }
+      },
+      dragend() {
+        dragenterIndex.value = -1;
+        dragStartIndex.value = -1;
+        draggingEle.value = null;
+      },
+      drop(index, sortType) {
+        // 不是同一个tab，返回——暂时不支持跨tab拖动
+        if (!distinctRoots(draggingEle.value, props.guid)) {
+          return false;
+        }
+        props.tabSort(dragStartIndex.value, index, sortType);
+      },
+      handleTabChange(name: string) {
+        props.tabChange(name);
+      },
+      handleTabRemove(index: number, panel) {
+        props.tabRemove(index, panel);
+      },
+    };
     return {
+      ...methods,
       navs,
       dragenterIndex,
       dragStartIndex,
@@ -91,53 +136,6 @@ export default defineComponent({
         .substr(4) + Math.random().toString(16)
         .substr(4),
     };
-  },
-  methods: {
-    /**
-     * @description  判断拖动的元素是否是在同一个tab。
-     *               使用guid，相比 el1.parentNode === el2.parentNode 判断，性能要高
-     * @param el1 {string} 拖动的元素
-     * @param el2 {string}  触发的元素
-     * @return {boolean}
-     */
-    distinctRoots(el1: string, el2: string) {
-      return el1 === el2;
-    },
-    handleTabAdd(e: MouseEvent) {
-      this.tabAdd(e);
-    },
-    dragstart(index: number, $event: DragEvent) {
-      this.dragStartIndex = index;
-      this.draggingEle = this.guid;
-      // 拖动鼠标效果
-      Object.assign($event.dataTransfer, { effectAllowed: 'move' });
-      // $event.dataTransfer.setData('text/plain', index)
-      this.tabDrag(index, $event);
-    },
-    dragenter(index) {
-      // 缓存目标元素索引，方便添加样式
-      if (this.distinctRoots(this.draggingEle, this.guid)) {
-        this.dragenterIndex = index;
-      }
-    },
-    dragend() {
-      this.dragenterIndex = -1;
-      this.dragStartIndex = -1;
-      this.draggingEle = null;
-    },
-    drop(index, sortType) {
-      // 不是同一个tab，返回——暂时不支持跨tab拖动
-      if (!this.distinctRoots(this.draggingEle, this.guid)) {
-        return false;
-      }
-      this.tabSort(this.dragStartIndex, index, sortType);
-    },
-    handleTabChange(name: string) {
-      this.tabChange(name);
-    },
-    handleTabRemove(index: number, panel) {
-      this.tabRemove(index, panel);
-    },
   },
   render() {
     const {
