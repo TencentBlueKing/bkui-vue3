@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
-import { computed, defineComponent, reactive, ref, watch } from 'vue';
+import { computed, defineComponent, ref, watch } from 'vue';
 
 import { resolveClassName } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
@@ -35,10 +35,11 @@ import useNodeAction from './use-node-action';
 import useNodeAttribute from './use-node-attribute';
 import useNodeDrag from './use-node-drag';
 import useSearch from './use-search';
+import useTreeInit from './use-tree-init';
 import {
-  getFlatdata,
   getLabel,
   getTreeStyle,
+  resolveNodeItem,
 } from './util';
 
 export type TreePropTypes = defineTypes;
@@ -49,20 +50,8 @@ export default defineComponent({
   emits: [EVENTS.NODE_CLICK, EVENTS.NODE_COLLAPSE, EVENTS.NODE_EXPAND],
 
   setup(props, ctx) {
-    const formatData = getFlatdata(props);
-
-    /**
-     * 扁平化数据
-     * schema: 需要展示连线时，用于计算连线高度
-     */
-    const flatData = reactive({
-      data: formatData[0] as Array<any>,
-      schema: formatData[1],
-      levelLineSchema: {},
-    });
-
+    const { flatData, schemaValues } = useTreeInit(props);
     const {
-      schemaValues,
       setNodeAttr,
       checkNodeIsOpen,
       getNodeAttr,
@@ -106,82 +95,11 @@ export default defineComponent({
     const {
       renderTreeNode,
       hanldeTreeNodeClick,
-      deepAutoOpen,
       setNodeOpened,
-    } = useNodeAction(props, ctx, flatData, renderData);
-
-    /** 如果设置了异步请求 */
-    if (props.async?.callback) {
-      deepAutoOpen();
-    }
-
-
-    /**
-     * 监听组件配置Data改变
-     */
-    watch(() => [props.data], (newData) => {
-      const formatData = getFlatdata(props, newData, schemaValues.value);
-      flatData.data = formatData[0] as Array<any>;
-      flatData.schema = formatData[1] as any;
-      if (props.async?.callback && props.async?.deepAutoOpen === 'every') {
-        deepAutoOpen();
-      }
-    }, {
-      deep: true,
-    });
-
-    const resolveNodeItem = (node: any) => {
-      if (typeof node === 'string') {
-        return { [NODE_ATTRIBUTES.UUID]: node };
-      }
-
-      if (Object.prototype.hasOwnProperty.call(node, NODE_ATTRIBUTES.UUID)) {
-        return node;
-      }
-
-      console.error('setNodeAction Error: node id cannot found');
-      return node;
-    };
-
-    /**
-     * 设置指定节点行为 checked isOpen
-     * @param args
-     * @param action
-     * @param value
-     * @returns
-     */
-    const setNodeAction = (args: any | any[], action: string, value: any) => {
-      if (Array.isArray(args)) {
-        args.forEach((node: any) => setNodeAttr(resolveNodeItem(node), action, value));
-        return;
-      }
-
-      setNodeAttr(resolveNodeItem(args), action, value);
-    };
-
-    /**
-     * 指定节点展开
-     * @param item 节点数据 | Node Id
-     * @param isOpen 是否展开
-     * @param autoOpenParents 如果是 isOpen = true，是否自动设置所有父级展开
-     * @returns
-     */
-    const setOpen = (item: any[] | any, isOpen = true, autoOpenParents = false) => {
-      const resolvedItem = resolveNodeItem(item);
-      if (autoOpenParents) {
-        if (isOpen) {
-          setNodeAction(resolvedItem, NODE_ATTRIBUTES.IS_OPEN, isOpen);
-          if (!isRootNode(resolvedItem)) {
-            const parentId = getNodeAttr(resolvedItem, NODE_ATTRIBUTES.PARENT_ID);
-            setOpen(parentId, true, true);
-          }
-        } else {
-          setNodeOpened(resolvedItem, false, null, false);
-        }
-      } else {
-        setNodeAction(resolvedItem, NODE_ATTRIBUTES.IS_OPEN, isOpen);
-      }
-    };
+      setOpen,
+      setNodeAction,
+      setSelect,
+    } = useNodeAction(props, ctx, flatData, renderData, schemaValues);
 
     /**
      * 设置指定节点是否选中
@@ -189,21 +107,16 @@ export default defineComponent({
      * @param checked
      */
     const setChecked = (item: any[] | any, checked = true) => {
-      setNodeAction(resolveNodeItem(item), NODE_ATTRIBUTES.CHECKED, checked);
+      setNodeAction(resolveNodeItem(item), NODE_ATTRIBUTES.IS_CHECKED, checked);
     };
 
-    /**
-     * 选中指定的节点
-     * @param item 指定节点
-     * @param fireOther 是否释放其他已选中节点 默认为 true
-     */
-    const setSelect = (item: string | any, fireOther = true) => {
-      if (fireOther) {
-        setChecked(schemaValues.value.filter((item: any) => isNodeChecked(item)) ?? [], false);
-      }
+    if (props.selectable) {
+      watch(() => props.selected, (newData) => {
+        setSelect(newData, true, true);
+      }, { immediate: true });
+    }
 
-      setChecked(item, true);
-    };
+    const getData = () => flatData;
 
     ctx.expose({
       hanldeTreeNodeClick,
@@ -217,6 +130,7 @@ export default defineComponent({
       setNodeAction,
       setNodeOpened,
       setSelect,
+      getData,
     });
 
     const root = ref();

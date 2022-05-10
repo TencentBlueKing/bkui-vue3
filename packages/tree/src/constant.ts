@@ -37,14 +37,15 @@ export const enum NODE_ATTRIBUTES {
   DEPTH = '__depth',
   INDEX = '__index',
   UUID = '__uuid',
-  PARENT_ID= '__parentId',
-  HAS_CHILD= '__hasChild',
+  PARENT_ID= '__parent_id',
+  HAS_CHILD= '__has_child',
   PATH= '__path',
-  IS_ROOT= '__isRoot',
+  IS_ROOT= '__is_root',
   ORDER= '__order',
-  IS_OPEN= '__isOpen',
-  CHECKED='__checked',
-  SELECTED='__isSelected',
-  IS_ASYNC_INIT = '__isAsyncInit',
-  IS_MATCH = '__isMatch'
+  IS_OPENED= '__is_open',
+  IS_CHECKED='__is_checked',
+  IS_SELECTED='__is_selected',
+  IS_ASYNC_INIT = '__is_async_init',
+  IS_MATCH = '__is_match',
+  IS_NULL = '__IS_NULL'
 }
