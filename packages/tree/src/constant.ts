@@ -23,11 +23,16 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-export const enum EVENTS {
+
+import { UnionToArrayType } from '@bkui-vue/shared';
+
+export enum EVENTS {
   NODE_CLICK = 'node-click',
   NODE_COLLAPSE = 'node-collapse',
   NODE_EXPAND = 'node-expand'
 }
+
+export type EmitsArrayType = UnionToArrayType<`${EVENTS}`>;
 
 /**
  * 节点扩展属性

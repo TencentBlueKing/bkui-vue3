@@ -28,7 +28,7 @@ import { computed, defineComponent, ref, watch } from 'vue';
 import { resolveClassName } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
-import { EVENTS, NODE_ATTRIBUTES } from './constant';
+import { EmitsArrayType, EVENTS, NODE_ATTRIBUTES } from './constant';
 import { treeProps, TreePropTypes as defineTypes } from './props';
 import useEmpty from './use-empty';
 import useNodeAction from './use-node-action';
@@ -43,11 +43,11 @@ import {
 } from './util';
 
 export type TreePropTypes = defineTypes;
-
+;
 export default defineComponent({
   name: 'Tree',
   props: treeProps,
-  emits: [EVENTS.NODE_CLICK, EVENTS.NODE_COLLAPSE, EVENTS.NODE_EXPAND],
+  emits: [EVENTS.NODE_CLICK, EVENTS.NODE_COLLAPSE, EVENTS.NODE_EXPAND] as EmitsArrayType,
 
   setup(props, ctx) {
     const { flatData, schemaValues } = useTreeInit(props);
