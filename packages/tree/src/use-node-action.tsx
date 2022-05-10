@@ -31,10 +31,10 @@ import { resolveClassName } from '@bkui-vue/shared';
 import { EVENTS, NODE_ATTRIBUTES } from './constant';
 import useNodeAsync from './use-node-async';
 import useNodeAttribute from './use-node-attribute';
-import { getLabel, getNodeItemClass, getNodeItemStyle, getNodeRowClass } from './util';
-export default (props, ctx, flatData, renderData) => {
-  const checkedNodes = [];
-
+import { getLabel, getNodeItemClass, getNodeItemStyle, getNodeRowClass, resolveNodeItem } from './util';
+export default (props, ctx, flatData, renderData, schemaValues) => {
+  // const checkedNodes = [];
+  let selectedNodeId = null;
   const {
     setNodeAttr,
     getNodePath,
@@ -47,7 +47,6 @@ export default (props, ctx, flatData, renderData) => {
     isNodeOpened,
     isNodeChecked,
     isNodeMatched,
-    schemaValues,
   } = useNodeAttribute(flatData);
 
   const { asyncNodeClick, deepAutoOpen } = useNodeAsync(props, flatData);
@@ -147,7 +146,7 @@ export default (props, ctx, flatData, renderData) => {
 */
   const setNodeOpened = (item: any, isOpen = null, e: MouseEvent = null, fireEmit = true) => {
     const newVal = isOpen === null ? !isItemOpen(item) : !!isOpen;
-    setNodeAttr(item, NODE_ATTRIBUTES.IS_OPEN, newVal);
+    setNodeAttr(item, NODE_ATTRIBUTES.IS_OPENED, newVal);
 
     if (fireEmit) {
       const emitEvent = isItemOpen(item) ? EVENTS.NODE_EXPAND : EVENTS.NODE_COLLAPSE;
@@ -163,7 +162,47 @@ export default (props, ctx, flatData, renderData) => {
     }
 
     renderData.value.filter(node => String.prototype.startsWith.call(getNodePath(node), getNodePath(item)))
-      .forEach(filterNode => setNodeAttr(filterNode, NODE_ATTRIBUTES.IS_OPEN, newVal));
+      .forEach(filterNode => setNodeAttr(filterNode, NODE_ATTRIBUTES.IS_OPENED, newVal));
+  };
+
+  /**
+     * 设置指定节点行为 checked isOpen
+     * @param args
+     * @param action
+     * @param value
+     * @returns
+     */
+  const setNodeAction = (args: any | any[], action: string, value: any) => {
+    if (Array.isArray(args)) {
+      args.forEach((node: any) => setNodeAttr(resolveNodeItem(node), action, value));
+      return;
+    }
+
+    setNodeAttr(resolveNodeItem(args), action, value);
+  };
+
+  /**
+     * 指定节点展开
+     * @param item 节点数据 | Node Id
+     * @param isOpen 是否展开
+     * @param autoOpenParents 如果是 isOpen = true，是否自动设置所有父级展开
+     * @returns
+     */
+  const setOpen = (item: any[] | any, isOpen = true, autoOpenParents = false) => {
+    const resolvedItem = resolveNodeItem(item);
+    if (autoOpenParents) {
+      if (isOpen) {
+        setNodeAction(resolvedItem, NODE_ATTRIBUTES.IS_OPENED, isOpen);
+        if (!isRootNode(resolvedItem)) {
+          const parentId = getNodeAttr(resolvedItem, NODE_ATTRIBUTES.PARENT_ID);
+          setOpen(parentId, true, true);
+        }
+      } else {
+        setNodeOpened(resolvedItem, false, null, false);
+      }
+    } else {
+      setNodeAction(resolvedItem, NODE_ATTRIBUTES.IS_OPENED, isOpen);
+    }
   };
 
   /**
@@ -189,20 +228,41 @@ export default (props, ctx, flatData, renderData) => {
     hanldeTreeNodeClick(node, e);
   };
 
+  const setSelect = (uuid: any, selected = true, autoOpen = true) => {
+    if (props.selectable) {
+      if (selectedNodeId !== null) {
+        setNodeAttr({ [NODE_ATTRIBUTES.UUID]: selectedNodeId }, NODE_ATTRIBUTES.IS_SELECTED, !selected);
+      }
+
+      setNodeAttr(resolveNodeItem(uuid), NODE_ATTRIBUTES.IS_SELECTED, selected);
+      selectedNodeId = getNodeId(resolveNodeItem(uuid));
+    }
+
+    if (autoOpen) {
+      setOpen(uuid, true, true);
+    }
+  };
+
   /**
    * 点击节点事件
    * @param item
    */
   const handleNodeContentClick = (item: any, e: MouseEvent) => {
-    if (!checkedNodes.includes(item[NODE_ATTRIBUTES.UUID])) {
-      checkedNodes.forEach((__uuid: string) => setNodeAttr({ __uuid }, NODE_ATTRIBUTES.CHECKED, false));
-      checkedNodes.length = 0;
-      setNodeAttr(item, NODE_ATTRIBUTES.CHECKED, true);
-      checkedNodes.push(item[NODE_ATTRIBUTES.UUID]);
-      if (!isNodeOpened(item)) {
-        hanldeTreeNodeClick(item, e);
-      }
+    setSelect(item);
+
+    if (!isNodeOpened(item)) {
+      hanldeTreeNodeClick(item, e);
     }
+
+    // if (!checkedNodes.includes(item[NODE_ATTRIBUTES.UUID])) {
+    //   checkedNodes.forEach((__uuid: string) => setNodeAttr({ __uuid }, NODE_ATTRIBUTES.IS_SELECTED, false));
+    //   checkedNodes.length = 0;
+    //   setNodeAttr(item, NODE_ATTRIBUTES.IS_SELECTED, true);
+    //   checkedNodes.push(item[NODE_ATTRIBUTES.UUID]);
+    //   if (!isNodeOpened(item)) {
+    //     hanldeTreeNodeClick(item, e);
+    //   }
+    // }
     ctx.emit(EVENTS.NODE_CLICK, resolveScopedSlotParam(item), getSchemaVal(item[NODE_ATTRIBUTES.UUID]), e);
   };
 
@@ -305,6 +365,9 @@ export default (props, ctx, flatData, renderData) => {
     renderTreeNode,
     hanldeTreeNodeClick,
     deepAutoOpen,
+    setNodeAction,
     setNodeOpened,
+    setSelect,
+    setOpen,
   };
 };

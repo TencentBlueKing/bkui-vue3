@@ -36,6 +36,7 @@ export default (props: TreePropTypes, root?, flatData?) => {
     getNodeParentIdById,
     getParentNodeData,
     getNodeAttr,
+    getNodePath,
     isRootNode,
   } = useNodeAttribute(flatData, props);
 
@@ -57,9 +58,14 @@ export default (props: TreePropTypes, root?, flatData?) => {
 
   const handleTreeNodeDragover = (e: DragEvent) => {
     e.preventDefault();
+    const targetNode = getTargetTreeNode(e);
 
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.dropEffect = 'move';
+    const sourceNodeId = e.dataTransfer.getData('node-id');
+    const targetNodeId = targetNode.getAttribute('data-tree-node');
+
+    const transferEffect = isNodeSortable(sourceNodeId, targetNodeId) ? 'move' : 'none';
+    e.dataTransfer.effectAllowed = transferEffect;
+    e.dataTransfer.dropEffect = transferEffect;
   };
 
   const handleTreeNodeDragStart = (e: DragEvent) => {
@@ -82,7 +88,25 @@ export default (props: TreePropTypes, root?, flatData?) => {
     Reflect.apply(props.dragSort ? dragSortData : dragAsChildNode, this, [sourceNodeId, targetNodeId]);
   };
 
+  const isNodeSortable = (sourceId: string, tartgetId: string) => {
+    const sourcePath: string = getNodePath({ [NODE_ATTRIBUTES.UUID]: sourceId });
+    const targetPath: string = getNodePath({ [NODE_ATTRIBUTES.UUID]: tartgetId });
+
+    const sourceParentNodeId = getNodeParentIdById(sourceId);
+    const targetParentNode = getNodeParentIdById(tartgetId);
+
+    if (sourceParentNodeId === targetParentNode) {
+      return true;
+    }
+
+    return sourcePath.indexOf(targetPath) === -1 && targetPath.indexOf(sourcePath) === -1;
+  };
+
   const dragSortData = (sourceId: string, tartgetId: string) => {
+    if (!isNodeSortable(sourceId, tartgetId)) {
+      return;
+    }
+
     const sourceNodeData = JSON.parse(JSON.stringify(getSourceNodeByUID(sourceId)));
     const targetNodeData = JSON.parse(JSON.stringify(getSourceNodeByUID(tartgetId)));
 
