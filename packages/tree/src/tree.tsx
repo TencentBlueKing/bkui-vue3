@@ -110,6 +110,13 @@ export default defineComponent({
       setNodeAction(resolveNodeItem(item), NODE_ATTRIBUTES.IS_CHECKED, checked);
     };
 
+    if (props.selectable) {
+      watch(() => props.selected, (newData) => {
+        setSelect(newData, true, true);
+      }, { immediate: true });
+    }
+
+    const getData = () => flatData;
 
     ctx.expose({
       hanldeTreeNodeClick,
@@ -123,6 +130,7 @@ export default defineComponent({
       setNodeAction,
       setNodeOpened,
       setSelect,
+      getData,
     });
 
     const root = ref();

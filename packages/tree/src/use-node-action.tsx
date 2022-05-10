@@ -190,6 +190,10 @@ export default (props, ctx, flatData, renderData, schemaValues) => {
      */
   const setOpen = (item: any[] | any, isOpen = true, autoOpenParents = false) => {
     const resolvedItem = resolveNodeItem(item);
+    if (resolvedItem[NODE_ATTRIBUTES.IS_NULL]) {
+      return;
+    }
+
     if (autoOpenParents) {
       if (isOpen) {
         setNodeAction(resolvedItem, NODE_ATTRIBUTES.IS_OPENED, isOpen);
@@ -229,13 +233,18 @@ export default (props, ctx, flatData, renderData, schemaValues) => {
   };
 
   const setSelect = (uuid: any, selected = true, autoOpen = true) => {
+    const resolvedItem = resolveNodeItem(uuid);
+    if (resolvedItem[NODE_ATTRIBUTES.IS_NULL]) {
+      return;
+    }
+
     if (props.selectable) {
       if (selectedNodeId !== null) {
         setNodeAttr({ [NODE_ATTRIBUTES.UUID]: selectedNodeId }, NODE_ATTRIBUTES.IS_SELECTED, !selected);
       }
 
-      setNodeAttr(resolveNodeItem(uuid), NODE_ATTRIBUTES.IS_SELECTED, selected);
-      selectedNodeId = getNodeId(resolveNodeItem(uuid));
+      setNodeAttr(resolvedItem, NODE_ATTRIBUTES.IS_SELECTED, selected);
+      selectedNodeId = getNodeId(resolvedItem);
     }
 
     if (autoOpen) {

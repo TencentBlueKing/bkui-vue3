@@ -188,7 +188,7 @@ export const treeProps = {
   /**
    * 默认选中的节点id，selectable为false时无效
    */
-  defaultSelectedNode: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def(null),
+  selected: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.any]).def(null),
 };
 
 type AsyncOption = {

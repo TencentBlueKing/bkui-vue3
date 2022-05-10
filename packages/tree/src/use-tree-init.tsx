@@ -81,7 +81,7 @@ export default (props: TreePropTypes) => {
     }
 
     function isCachedTreeNodeSelected(uuid: string, node: any) {
-      return getCachedTreeNodeAttr(uuid, node, 'isSelected', NODE_ATTRIBUTES.IS_SELECTED, props.defaultSelectedNode === uuid);
+      return getCachedTreeNodeAttr(uuid, node, 'isSelected', NODE_ATTRIBUTES.IS_SELECTED, false);
     }
 
     function flatten(array: Array<any>, depth = 0, parent = null, path = null) {
