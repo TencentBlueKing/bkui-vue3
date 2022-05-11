@@ -59,6 +59,8 @@ export default defineComponent({
     footerAlign: PropTypes.commonType(['left', 'center', 'right'], 'footerAlign').def('right'),
     // 颜色 按钮类型
     theme: PropTypes.commonType(['primary', 'warning', 'success', 'danger'], 'theme').def('primary'),
+    // 对话框类型
+    dialogType: PropTypes.commonType(['show', 'operation', 'confirm', 'process'], 'dialogType').def('operation'),
     // 按钮loading
     isLoading: PropTypes.bool.def(false),
   },

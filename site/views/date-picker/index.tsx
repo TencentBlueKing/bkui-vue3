@@ -32,8 +32,10 @@ import PropsBox from '../../components/props-box';
 import { IPropsTableItem } from '../../typings';
 
 import BaseDemo from './base-demo.vue';
+import FooterSlotDemo from './footer-slot-demo.vue';
+import HeaderSlotDemo from './header-slot-demo.vue';
 import RangeDemo from './range-demo.vue';
-import SlotDemo from './slot-demo.vue';
+import TriggerSlotDemo from './trigger-slot-demo.vue';
 
 const menuPropsJson: IPropsTableItem[] = [
   {
@@ -86,11 +88,25 @@ export default defineComponent({
             <RangeDemo />
           </DemoBox>
           <DemoBox
-            title="slot"
-            desc="可以通过 slot='footer' 来增加自定义的 footer，同时可以配置 footer-slot-cls 来为 footer 的 wrapper 容器设置自定义的样式。不存在 footer slot 时，footer-slot-cls 配置无效"
+            title="trigger slot"
+            desc="可以通过 trigger slot 来增加自定义 trigger"
             componentName="date-picker"
-            demoName="slot-demo">
-            <SlotDemo />
+            demoName="trigger-slot-demo">
+            <TriggerSlotDemo />
+          </DemoBox>
+          <DemoBox
+            title="header slot"
+            desc="自定义 header"
+            componentName="date-picker"
+            demoName="header-slot-demo">
+            <HeaderSlotDemo />
+          </DemoBox>
+          <DemoBox
+            title="footer slot"
+            desc="自定义 footer"
+            componentName="date-picker"
+            demoName="footer-slot-demo">
+            <FooterSlotDemo />
           </DemoBox>
         <PropsBox propsData={menuPropsJson}/>
       </div>

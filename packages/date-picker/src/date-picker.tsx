@@ -136,10 +136,7 @@ export default defineComponent({
 
     const opened = computed(() => (props.open === null ? state.visible : props.open));
 
-    const visualValue = computed(() => {
-      console.warn('state.internalValue', state.internalValue);
-      return formatDate(state.internalValue, props.type, props.multiple, props.format);
-    });
+    const visualValue = computed(() => formatDate(state.internalValue, props.type, props.multiple, props.format));
 
     const displayValue = computed(() => {
       // 展示快捷文案
@@ -150,6 +147,9 @@ export default defineComponent({
     });
 
     const isConfirm = computed(() => !!slots.trigger || props.type === 'datetime' || props.type === 'datetimerange' || props.multiple);
+
+    const hasHeader = computed(() => !!slots.header);
+    const hasFooter = computed(() => !!slots.footer);
 
     const fontSizeCls = computed(() => {
       let cls = '';
@@ -179,8 +179,6 @@ export default defineComponent({
       return !props.editable || props.readonly;
     });
 
-    const hasFooter = computed(() => !!slots.footer);
-
     // 限制 allow-cross-day 属性只在 time-picker 组件 type 为 timerange 时生效
     const allowCrossDayProp = computed(() => (panel.value === 'RangeTimePickerPanel' ? props.allowCrossDay : false));
 
@@ -204,7 +202,6 @@ export default defineComponent({
     const pickerDropdownRef = ref(null);
 
     watch(() => props.modelValue, (modelValue) => {
-      console.error('watchwatchwatch');
       state.internalValue = parseDate(modelValue, props.type, props.multiple, props.format);
     });
 
@@ -304,7 +301,10 @@ export default defineComponent({
     const emitChange = (type) => {
       nextTick(() => {
         emit('change', publicStringValue.value, type);
+        // 使用 :value 或 :model-value 的时候才需要 handleChange，此时没有触发 update:modelValue
+        // 使用 v-model 时才会触发 update:modelValue 事件
         emit('update:modelValue', publicVModelValue.value);
+
         // this.dispatch('bk-form-item', 'form-change');
         if (props.type.indexOf('time') < 0) {
           inputRef?.value?.blur();
@@ -520,10 +520,11 @@ export default defineComponent({
       visualValue,
       displayValue,
       isConfirm,
+      hasHeader,
+      hasFooter,
       fontSizeCls,
       longWidthCls,
       localReadonly,
-      hasFooter,
       allowCrossDayProp,
 
       pickerDropdownRef,
@@ -632,6 +633,15 @@ export default defineComponent({
                 onClick={this.handleTransferClick}
               >
                 {
+                  this.hasHeader
+                    ? (
+                      <div class={['bk-date-picker-top-wrapper', this.headerSlotCls]} >
+                        {this.$slots.header?.() ?? null}
+                      </div>
+                    )
+                    : null
+                }
+                {
                   this.panel === 'DateRangePanel'
                     ? (
                       <DateRangePanel
@@ -667,6 +677,15 @@ export default defineComponent({
                         onPick-success={this.onPickSuccess}
                       />
                     )
+                }
+                {
+                  this.hasFooter
+                    ? (
+                      <div class={['bk-date-picker-footer-wrapper', this.footerSlotCls]} >
+                        {this.$slots.footer?.() ?? null}
+                      </div>
+                    )
+                    : null
                 }
               </PickerDropdown>
             </Transition>

@@ -23,26 +23,12 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import BkException from '@bkui-vue/exception';
 
-import { defineComponent } from 'vue';
-
-import { Help, HelpDocumentFill, HelpFill } from '@bkui-vue/icon';
-
-export default defineComponent({
-  name: 'SiteIcon',
-  setup() {
-    return {
-    };
-  },
-  render() {
-    return (
-      <div>
-        <Help style={{ fontSize: '100px' }} fill="red"/>
-        <HelpDocumentFill style={{ fontSize: '100px' }} class='sdddddsdf'/>
-        <HelpFill style={{ fontSize: '100px' }}/>
-        <HelpDocumentFill style={{ fontSize: '100px' }}/>
-        <HelpFill style={{ fontSize: '100px' }} />
-      </div>
-    );
-  },
+export default (props, { slots }) => ({
+  renderEmpty: (type: string) => <BkException scene="part" type={type}>
+    {
+      slots.default?.() ?? props.emptyText
+    }
+  </BkException>,
 });

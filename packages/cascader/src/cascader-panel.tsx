@@ -34,7 +34,7 @@ import { INode }  from './interface';;
 
 
 export default defineComponent({
-  name: 'BkCascaderPanel',
+  name: 'CascaderPanel',
   props: {
     store: PropTypes.object.def({}),
   },
@@ -91,7 +91,7 @@ export default defineComponent({
       return currentLevel.id === node.id;
     };
 
-    const isCheckedNode = (node: INode, checkValue: []) => {
+    const isCheckedNode = (node: INode, checkValue: string[]) => {
       const { multiple } = node.config;
       if (multiple) {
         return false;

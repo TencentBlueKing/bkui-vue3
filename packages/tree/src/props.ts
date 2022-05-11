@@ -126,6 +126,69 @@ export const treeProps = {
    * 每个节点偏移左侧距离
    */
   offsetLeft: PropTypes.number.def(5),
+
+  /**
+   * 搜索配置
+   * 可以为一个配置项 SearchOption
+   * 或者直接为一个字符串，如果直接为字符串则模糊匹配此值
+   */
+  search: PropTypes.oneOfType([
+    PropTypes.shape<SearchOption>({
+    /**
+     * 需要匹配的值
+     * */
+      value: PropTypes.oneOfType([
+        PropTypes.number,
+        PropTypes.string,
+        PropTypes.bool,
+      ]).def(''),
+
+      /**
+     * 匹配方式
+     * 支持模糊匹配（fuzzy） || 完全匹配（full）
+     * 默认 模糊匹配（fuzzy）
+     * 支持自定义匹配函数 (searchValue, itemText, item) => true || false
+     */
+      match: PropTypes.oneOfType([
+        PropTypes.commonType(['fuzzy', 'full'], 'TreeSearchMatchType'),
+        PropTypes.func,
+      ]),
+
+      /**
+     * 搜索结果如何展示
+     * 显示为 tree || list
+     * 默认 tree
+     */
+      resultType: PropTypes.commonType(['tree', 'list'], 'TreeSearchResultType').def('tree'),
+
+      /**
+       * 默认展开所有搜索结果
+       */
+      openResultNode: PropTypes.bool,
+    }),
+    PropTypes.string,
+    PropTypes.number,
+    PropTypes.bool,
+  ]).def(undefined),
+
+  emptyText: PropTypes.string.def('没有数据'),
+
+  draggable: PropTypes.bool.def(false),
+
+  /**
+   * 节点拖拽时可交换位置（开启拖拽可交换位置后将不支持改变层级）
+   */
+  dragSort: PropTypes.bool.def(false),
+
+  /**
+   * 节点是否可以选中
+   */
+  selectable: PropTypes.bool.def(true),
+
+  /**
+   * 默认选中的节点id，selectable为false时无效
+   */
+  selected: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.any]).def(null),
 };
 
 type AsyncOption = {
@@ -133,4 +196,12 @@ type AsyncOption = {
   cache: Boolean,
   deepAutoOpen?: string
 };
+
+export type SearchOption = {
+  value: string | number | boolean,
+  match: string | Function;
+  resultType: string;
+  openResultNode: boolean;
+};
+
 export type TreePropTypes = Readonly<ExtractPropTypes<typeof treeProps>>;

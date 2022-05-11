@@ -77,6 +77,7 @@ export default defineComponent({
     const loadingTheme = computed(() => {
       if (props.text || props.outline || props.hoverTheme) {
         if (isHover.value && !props.text) return 'white';
+        if (props.text && props.disabled) return '';
         return props.hoverTheme || props.theme;
       }
       return ['', 'default'].includes(props.theme) ? '' : 'white';
