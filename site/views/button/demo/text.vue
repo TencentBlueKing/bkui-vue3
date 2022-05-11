@@ -9,6 +9,7 @@
     <bk-button
       text
       theme="primary"
+      disabled
       class="ml10"
       loading
       loading-mode="spin"

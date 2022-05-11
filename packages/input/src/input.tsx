@@ -27,7 +27,7 @@
 import { computed, defineComponent, ExtractPropTypes, ref } from 'vue';
 
 import { Close, DownSmall, Eye, Search, Unvisible } from '@bkui-vue/icon';
-import { classes, ElementType, PropTypes, stringEnum } from '@bkui-vue/shared';
+import { classes, PropTypes, UnionToArrayType } from '@bkui-vue/shared';
 
 
 export const inputType = {
@@ -55,16 +55,40 @@ export const inputType = {
 };
 
 
-const inputEvents = ['update:modelValue', 'focus', 'blur', 'change', 'clear', 'input', 'keypress', 'keydown', 'keyup', 'enter', 'paste'] as const;
-const EventEnum = stringEnum([...inputEvents]);
-type InputEventUnion = ElementType<typeof inputEvents>;
+export enum InputEvent {
+  UPDATE = 'update:modelValue',
+  FOCUS = 'focus',
+  BLUR = 'blur',
+  CHANGE = 'change',
+  CLEAR = 'clear',
+  INPUT = 'input',
+  KEYPRESS = 'keypress',
+  KEYDOWN = 'keydown',
+  KEYUP = 'keyup',
+  ENTER = 'enter',
+  PASTE = 'paste'
+}
+type InputEventUnion = `${InputEvent}`;
+type InputEventArrayType = UnionToArrayType<`${InputEvent}`>;
 export type InputType = ExtractPropTypes<typeof inputType> ;
 
 export default defineComponent({
   name: 'Input',
   inheritAttrs: false,
   props: inputType,
-  emits: [...inputEvents],
+  emits: [
+    InputEvent.UPDATE,
+    InputEvent.FOCUS,
+    InputEvent.BLUR,
+    InputEvent.CHANGE,
+    InputEvent.CLEAR,
+    InputEvent.INPUT,
+    InputEvent.KEYPRESS,
+    InputEvent.KEYDOWN,
+    InputEvent.KEYUP,
+    InputEvent.ENTER,
+    InputEvent.PASTE,
+  ] as InputEventArrayType,
   setup(props, ctx) {
     const isFocused = ref(false);
     const isCNInput = ref(false);
@@ -107,29 +131,29 @@ export default defineComponent({
     });
 
     function clear() {
-      ctx.emit(EventEnum['update:modelValue'], '');
-      ctx.emit(EventEnum.change, '');
-      ctx.emit(EventEnum.clear);
+      ctx.emit(InputEvent.UPDATE, '');
+      ctx.emit(InputEvent.CHANGE, '');
+      ctx.emit(InputEvent.CLEAR);
     }
 
     function handleFocus(e) {
       isFocused.value = true;
-      ctx.emit(EventEnum.focus, e);
+      ctx.emit(InputEvent.FOCUS, e);
     }
 
     function handleBlur(e) {
       isFocused.value = false;
-      ctx.emit(EventEnum.blur, e);
+      ctx.emit(InputEvent.BLUR, e);
     }
     // 事件句柄生成器
     function eventHandler(eventName: InputEventUnion) {
       return (e) => {
         if (e.code === 'Enter' || e.key === 'Enter' || e.keyCode === 13) {
-          ctx.emit(EventEnum.enter, e.target.value, e);
+          ctx.emit(InputEvent.ENTER, e.target.value, e);
         }
-        if (isCNInput.value && [EventEnum.input, EventEnum.change].some(e => eventName === e)) return;
-        if (eventName === EventEnum.input) {
-          ctx.emit(EventEnum['update:modelValue'], isNumberInput.value ? +e.target.value : e.target.value);
+        if (isCNInput.value && [InputEvent.INPUT, InputEvent.CHANGE].some(e => eventName === e)) return;
+        if (eventName === InputEvent.INPUT) {
+          ctx.emit(InputEvent.UPDATE, isNumberInput.value ? +e.target.value : e.target.value);
         }
 
         ctx.emit(eventName, e.target.value, e);
@@ -143,12 +167,12 @@ export default defineComponent({
       handleChange,
       handleInput,
     ] = [
-      EventEnum.keyup,
-      EventEnum.keydown,
-      EventEnum.keypress,
-      EventEnum.paste,
-      EventEnum.change,
-      EventEnum.input,
+      InputEvent.KEYUP,
+      InputEvent.KEYDOWN,
+      InputEvent.KEYPRESS,
+      InputEvent.PASTE,
+      InputEvent.CHANGE,
+      InputEvent.INPUT,
     ].map(eventHandler);
 
     // 输入法启用时
@@ -181,12 +205,12 @@ export default defineComponent({
 
     function handleInc() {
       const newVal = handleNumber(props.step);
-      ctx.emit(EventEnum['update:modelValue'], newVal);
+      ctx.emit(InputEvent.UPDATE, newVal);
     }
 
     function handleDec() {
       const newVal = handleNumber(props.step, false);
-      ctx.emit(EventEnum['update:modelValue'], newVal);
+      ctx.emit(InputEvent.UPDATE, newVal);
     }
 
     function getCls(name) {
