@@ -69,16 +69,19 @@
 
       &.is-text {
         color: @@color;
-        background: none;
+        background-color: transparent;
         border: none;
-        &:hover {
+        &:not(.is-disabled):hover {
           color: @@hoverColor;
         }
       }
       &.is-disabled {
-        background-color: @disable-color;
-        border-color: @disable-color;
-        color: @white-color;
+        &:not(.is-text) {
+          background-color: @disable-color;
+          color: @white-color;
+          border-color: @disable-color;
+        }
+        color: @disable-color;
         cursor: not-allowed;
       }
     }
@@ -98,8 +101,8 @@
     @sizeBtnHeight: '@{value}BtnHeight';
     @sizeBtnPadding: '@{value}BtnPadding';
     &.@{bk-prefix}-button-@{value} {
-        min-width: @@sizeBtnMinWidth;
-        height: @@sizeBtnHeight;
+      min-width: @@sizeBtnMinWidth;
+      height: @@sizeBtnHeight;
         line-height: @@sizeBtnHeight;
         padding: 0 @@sizeBtnPadding;
       }
@@ -132,7 +135,7 @@
     color: @default-color;
     text-decoration: none;
     cursor: pointer;
-    background: none;
+    background-color: transparent;
     border: none;
     outline: none;
   }
