@@ -24,15 +24,17 @@
 * IN THE SOFTWARE.
 */
 
-import { UnionToArrayType } from '@bkui-vue/shared';
-
 export enum EVENTS {
-  NODE_CLICK = 'node-click',
-  NODE_COLLAPSE = 'node-collapse',
-  NODE_EXPAND = 'node-expand'
+  NODE_CLICK = 'nodeClick',
+  NODE_COLLAPSE = 'nodeCollapse',
+  NODE_EXPAND = 'nodeExpand'
 }
-
-export type EmitsArrayType = UnionToArrayType<`${EVENTS}`>;
+const empty = () => {};
+export const TreeEmitEventsType = {
+  [EVENTS.NODE_CLICK]: empty,
+  [EVENTS.NODE_COLLAPSE]: empty,
+  [EVENTS.NODE_EXPAND]: empty,
+};
 
 /**
  * 节点扩展属性

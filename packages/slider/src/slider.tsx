@@ -309,7 +309,7 @@ export default defineComponent({
       }
       curButtonRef.value.setPosition(percent);
     };
-    const firstInputChange = (v: string) => {
+    const firstInputChange = (v) => {
       if (v === '') {
         return;
       }
@@ -324,8 +324,8 @@ export default defineComponent({
         firstValue.value = val;
       }
     };
-    const secondInputChange = (v: string) => {
-      if (v === '') {
+    const secondInputChange = (v: number | string) => {
+      if (v === '' || typeof v === 'number') {
         return;
       }
       const val = parseFloat(v);
@@ -430,7 +430,9 @@ export default defineComponent({
               modelValue={firstInput.value}
               max={props.maxValue}
               min={props.minValue}
-              onChange={firstInputChange}></Input>
+              onChange={firstInputChange}>
+
+              </Input>
           </div>
           {showSecondInput.value && secondValue.value ? [
             <div class="input-center">～</div>,
