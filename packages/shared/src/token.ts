@@ -23,29 +23,8 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import type { FormProps } from './form';
-import type { FormItemProps } from './form-item';
 
-export interface IFormItemContext extends FormItemProps {
-  validate: () => Promise<boolean>,
-  clearValidate: () => void
-}
 
-export interface IFormContext {
-  props: FormProps,
-  register: (IFormItemContext) => void,
-  unregister: (IFormItemContext) => void
-}
+export const formKey = Symbol('form');
 
-export interface IFormItemRule {
-  required?: boolean,
-  email?: boolean,
-  min?: number,
-  max?: number,
-  maxlength?: number,
-  validator?: (any) => boolean | Promise<boolean>,
-  message: string,
-  trigger: 'blur' | 'change'
-}
-
-export type IFormItemRules = Array<IFormItemRule>;
+export const formItemKey = Symbol('formItem');

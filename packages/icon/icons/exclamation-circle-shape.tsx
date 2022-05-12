@@ -1,3 +1,4 @@
+
 /*
 * Tencent is pleased to support the open source community by making
 * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
@@ -23,29 +24,16 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import type { FormProps } from './form';
-import type { FormItemProps } from './form-item';
+import { FunctionalComponent } from 'vue';
 
-export interface IFormItemContext extends FormItemProps {
-  validate: () => Promise<boolean>,
-  clearValidate: () => void
-}
+import BkIcon, { IIconBaseProps } from './icon';
+const data = JSON.parse('{"type":"element","name":"svg","attributes":{"xmlns":"http://www.w3.org/2000/svg","viewBox":"0 0 1024 1024","style":"width: 1em; height: 1em; vertical-align: middle;fill: currentColor;overflow: hidden;"},"elements":[{"type":"element","name":"path","attributes":{"d":"M512 64C264 64 64 264 64 512s200 448 448 448 448-200 448-448S760 64 512 64zM512 768c-27.2 0-48-20.8-48-48s20.8-48 48-48c27.2 0 48 20.8 48 48S539.2 768 512 768zM560 308.8L544 608c0 17.6-14.4 32-32 32-17.6 0-32-14.4-32-32l-16-299.2c0-1.6 0-3.2 0-4.8 0-27.2 20.8-48 48-48 27.2 0 48 20.8 48 48C560 305.6 560 307.2 560 308.8z"}}]}');
+const exclamationCircleShape: FunctionalComponent<IIconBaseProps> = (props, context) => {
+  const p = { ...props, ...context.attrs };
+  return <BkIcon {...p}  data={data} name="exclamationCircleShape"></BkIcon>;
+};
 
-export interface IFormContext {
-  props: FormProps,
-  register: (IFormItemContext) => void,
-  unregister: (IFormItemContext) => void
-}
+exclamationCircleShape.displayName = 'exclamationCircleShape';
+exclamationCircleShape.inheritAttrs = false;
 
-export interface IFormItemRule {
-  required?: boolean,
-  email?: boolean,
-  min?: number,
-  max?: number,
-  maxlength?: number,
-  validator?: (any) => boolean | Promise<boolean>,
-  message: string,
-  trigger: 'blur' | 'change'
-}
-
-export type IFormItemRules = Array<IFormItemRule>;
+export default exclamationCircleShape;
