@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 
 import { classes, resolveClassName } from '@bkui-vue/shared';
 
@@ -32,8 +32,13 @@ import { resolveHeadConfig, resolveNumberOrStringToPix, resolvePropBorderToClass
 
 export const useClass = (props: TablePropTypes, root?, reactiveProp?) => {
   const autoHeight = ref(200);
+  const hasScrollY = ref(false);
+  const hasFooter = computed(() => props.pagination && props.data.length);
   const tableClass = computed(() => (classes({
     [resolveClassName('table')]: true,
+    'has-footer': hasFooter.value,
+    'has-scroll-y': hasScrollY.value || props.virtualEnabled,
+    'is-scroll-bottom': reactiveProp.pos.bottom < 2,
   }, resolvePropBorderToClassStr(props.border))));
 
   const headClass = classes({
@@ -80,7 +85,9 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?) => {
   };
 
   /** 表格外层容器样式 */
-  const contentStyle = computed(() => {
+  const contentStyle = reactive({});
+
+  const resolveContentStyle = () => {
     const resolveHeight = resolvePropHeight(props.height, autoHeight.value);
     const resolveHeadHeight = props.showHead ? resolvePropHeight(props.headHeight, 40) + 2 : 0;
     const resolveMaxHeight = resolvePropHeight(props.maxHeight, autoHeight.value);
@@ -88,16 +95,18 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?) => {
 
     const resolveFooterHeight = props.pagination && props.data.length ? 40 : 0;
     const contentHeight = resolveHeight - resolveHeadHeight - resolveFooterHeight;
-    const maxHeight = resolveMaxHeight - resolveHeadHeight - resolveFooterHeight;
+    const height = props.height !== 'auto' ? `${contentHeight}px` : false;
+    const maxHeight = height ? (resolveMaxHeight - resolveHeadHeight - resolveFooterHeight) : false;
     const minHeight = resolveMinHeight - resolveHeadHeight - resolveFooterHeight;
-    const height = props.height !== 'auto' ? `${contentHeight}px` : 'auto';
-    return {
+
+    Object.assign(contentStyle, {
       display: 'block',
       'max-height': `${maxHeight}px`,
       'min-height': `${minHeight}px`,
       height,
-    };
-  });
+    });
+  };
+
 
   onMounted(() => {
     resetTableHeight(root?.value);
@@ -107,8 +116,27 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?) => {
     if (rootEl) {
       const { height } = rootEl.parentElement.getBoundingClientRect();
       autoHeight.value = height;
+      resolveContentStyle();
     }
   };
 
-  return { tableClass, headClass, contentClass, footerClass, wrapperStyle, contentStyle, headStyle, resetTableHeight };
+  const updateBorderClass = (root: HTMLElement) => {
+    if (root) {
+      const tableBody = root.querySelector('.bk-table-body table') as HTMLElement;
+      hasScrollY.value = tableBody.offsetHeight > root.offsetHeight;
+    }
+  };
+
+  return {
+    tableClass,
+    headClass,
+    contentClass,
+    footerClass,
+    wrapperStyle,
+    contentStyle,
+    headStyle,
+    resetTableHeight,
+    updateBorderClass,
+    hasFooter,
+  };
 };

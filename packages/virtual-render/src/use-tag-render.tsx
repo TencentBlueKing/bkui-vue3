@@ -32,8 +32,8 @@ export default (props: VirtualRenderProps, ctx) => {
 
 
   /** 指令触发Scroll事件，计算当前startIndex & endIndex & scrollTop & translateY */
-  const handleScrollCallback = (event, _startIndex, _endIndex, _scrollTop, translateY, scrollLeft) => {
-    ctx.emit('content-scroll', [event, { translateY, translateX: scrollLeft }]);
+  const handleScrollCallback = (event, _startIndex, _endIndex, _scrollTop, translateY, scrollLeft, pos) => {
+    ctx.emit('content-scroll', [event, { translateY, translateX: scrollLeft, pos }]);
   };
 
   const vVirtualRender = resolveDirective('bkVirtualRender');

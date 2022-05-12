@@ -3,6 +3,7 @@
     <bk-table
       :columns="columns"
       :data="tableData"
+      height="100%"
     />
   </div>
 </template>
