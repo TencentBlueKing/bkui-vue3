@@ -36,13 +36,17 @@ import {
 } from 'vue';
 
 import { bkTooltips } from '@bkui-vue/directives';
+import { ExclamationCircleShape } from '@bkui-vue/icon';
 import {
   classes,
   PropTypes,
 } from '@bkui-vue/shared';
 
 import { formKey } from './common';
-import type { IFormItemRules } from './type';
+import type {
+  IFormItemRule,
+  IFormItemRules,
+} from './type';
 import validator from './validator';
 
 const formItemProps = {
@@ -58,39 +62,12 @@ const formItemProps = {
   rules: PropTypes.array,
   autoCheck: PropTypes.bool.def(false),
   description: PropTypes.string,
+  errorDisplayType: PropTypes.oneOf(['tooltips', 'normal']).def('normal'),
 };
 
 export type FormItemProps = Readonly<ExtractPropTypes<typeof formItemProps>>;
 
 const hasOwn = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key);
-
-const mergeRules: (
-  configRules: IFormItemRules,
-  propsRules: IFormItemRules
-) => IFormItemRules = (configRules, propsRules) => {
-  const formatConfigRules = configRules.map((rule) => {
-    let rulevalidator: (value: any) => boolean;
-    if (rule.required) {
-      rulevalidator = validator.required;
-    } else if (rule.email) {
-      rulevalidator = validator.email;
-    } else if (Number(rule.max) > -1) {
-      rulevalidator = value => validator.max(value, rule.max);
-    } else if (Number(rule.min) > -1) {
-      rulevalidator = value => validator.min(value, rule.max);
-    } else if (Number(rule.maxlength) > -1) {
-      rulevalidator = value => validator.min(value, rule.max);
-    } else {
-      rulevalidator = () => true;
-    }
-    return {
-      validator: rulevalidator,
-      message: rule.message,
-      trigger: rule.trigger,
-    };
-  });
-  return [...propsRules, ...formatConfigRules];
-};
 
 const getRulesFromProps = (props) => {
   const rules: IFormItemRules = [];
@@ -133,6 +110,49 @@ const getRulesFromProps = (props) => {
   return rules;
 };
 
+const mergeRules: (
+  configRules: IFormItemRules,
+  propsRules: IFormItemRules
+) => IFormItemRules = (configRules, propsRules) => {
+  const formatConfigRules = configRules.map((rule) => {
+    let rulevalidator: (value: any) => boolean;
+    if (rule.required) {
+      rulevalidator = validator.required;
+    } else if (rule.email) {
+      rulevalidator = validator.email;
+    } else if (Number(rule.max) > -1) {
+      rulevalidator = value => validator.max(value, rule.max);
+    } else if (Number(rule.min) > -1) {
+      rulevalidator = value => validator.min(value, rule.max);
+    } else if (Number(rule.maxlength) > -1) {
+      rulevalidator = value => validator.min(value, rule.max);
+    } else {
+      rulevalidator = () => true;
+    }
+    return {
+      validator: rulevalidator,
+      message: rule.message,
+      trigger: rule.trigger,
+    };
+  });
+  return [...propsRules, ...formatConfigRules];
+};
+
+const getTriggerRules = (
+  trigger: String,
+  rules: IFormItemRules,
+) => rules.reduce((result, rule) => {
+  if (!rule.trigger || !trigger) {
+    result.push(rule);
+    return result;
+  }
+  const ruleTriggerList = Array.isArray(rule.trigger) ? rule.trigger : [rule.trigger];
+  if (ruleTriggerList.includes(trigger as IFormItemRule['trigger'])) {
+    result.push(rule);
+  }
+  return result;
+}, []);
+
 
 const isValid = (value: string | number): boolean => value !== undefined;
 
@@ -172,16 +192,16 @@ export default defineComponent({
       return styles;
     });
 
-
     /**
      * @desc 验证字段
-     * @returns { Promise }
      */
-    const validate = () => {
+    const validate = (trigger: String): Promise<boolean> => {
+      state.isError = false;
+      state.errorMessage = '';
       // 没有设置 property 不进行验证
       if (!props.property
       || (isForm && !form.props.model)) {
-        return Promise.resolve();
+        return Promise.resolve(true);
       }
       let rules: IFormItemRules = [];
       // 继承 form 的验证规则
@@ -195,7 +215,7 @@ export default defineComponent({
         rules = props.rules as IFormItemRules;
       }
       // 合并规则属性配置
-      rules = mergeRules(rules, getRulesFromProps(props));
+      rules = getTriggerRules(trigger, mergeRules(rules, getRulesFromProps(props)));
       const value = form.props.model[props.property];
 
       const doValidate = (() => {
@@ -203,7 +223,7 @@ export default defineComponent({
         return () => {
           stepIndex = stepIndex + 1;
           if (stepIndex >= rules.length) {
-            return Promise.resolve();
+            return Promise.resolve(true);
           }
           const rule = rules[stepIndex];
           return Promise.resolve()
@@ -231,11 +251,11 @@ export default defineComponent({
       })();
       return doValidate();
     };
+
     /**
      * @desc 清除验证状态
-     * @returns { void }
      */
-    const clearValidate = () => {
+    const clearValidate = (): void => {
       state.isError = false;
       state.errorMessage = '';
     };
@@ -244,11 +264,13 @@ export default defineComponent({
         form.register(currentInstance.proxy);
       }
     });
+
     onBeforeUnmount(() => {
       if (isForm) {
         form.unregister(currentInstance.proxy);
       }
     });
+
     return {
       ...toRefs(state),
       labelStyles,
@@ -281,6 +303,28 @@ export default defineComponent({
       return this.label;
     };
 
+    const renderError = () => {
+      if (!this.isError) {
+        return null;
+      }
+      if (this.errorDisplayType === 'tooltips') {
+        return (
+          <div
+            class="bk-form-error-tips"
+            v-bk-tooltips={this.errorMessage}>
+            <ExclamationCircleShape />
+          </div>
+        );
+      }
+      return (
+          <div class="bk-form-error">
+              {this.$slots.error
+                ? this.$slots.error(this.errorMessage)
+                : this.errorMessage}
+              </div>
+      );
+    };
+
     return (
       <div class={itemClassees}>
         <div
@@ -290,14 +334,7 @@ export default defineComponent({
         </div>
         <div class="bk-form-content">
           {this.$slots.default?.()}
-          {
-            this.isError
-            && <div class="bk-form-error">
-              {this.$slots.error
-                ? this.$slots.error(this.errorMessage)
-                : this.errorMessage}
-              </div>
-          }
+          {renderError()}
         </div>
       </div>
     );
