@@ -27,7 +27,7 @@
 import { computed, defineComponent, ExtractPropTypes, ref } from 'vue';
 
 import { Close, DownSmall, Eye, Search, Unvisible } from '@bkui-vue/icon';
-import { classes, PropTypes, UnionToArrayType } from '@bkui-vue/shared';
+import { classes, PropTypes } from '@bkui-vue/shared';
 
 
 export const inputType = {
@@ -54,8 +54,7 @@ export const inputType = {
   rows: PropTypes.number,
 };
 
-
-export enum InputEvent {
+export enum EVENTS {
   UPDATE = 'update:modelValue',
   FOCUS = 'focus',
   BLUR = 'blur',
@@ -66,29 +65,44 @@ export enum InputEvent {
   KEYDOWN = 'keydown',
   KEYUP = 'keyup',
   ENTER = 'enter',
-  PASTE = 'paste'
+  PASTE = 'paste',
+  COMPOSITIONSTART = 'compositionstart',
+  COMPOSITIONUPDATE = 'compositionupdate',
+  COMPOSITIONEND = 'compositionend',
 }
-type InputEventUnion = `${InputEvent}`;
-type InputEventArrayType = UnionToArrayType<`${InputEvent}`>;
+function EventFunction(value: string | number, evt?: KeyboardEvent | Event) {
+  return {
+    value, evt,
+  };
+};
+function CompositionEventFunction(evt: CompositionEvent) {
+  return evt;
+};
+export const inputEmitEventsType = {
+  [EVENTS.UPDATE]: EventFunction,
+  [EVENTS.FOCUS]: (evt: FocusEvent) => evt,
+  [EVENTS.BLUR]: (evt: FocusEvent) => evt,
+  [EVENTS.CHANGE]: EventFunction,
+  [EVENTS.CLEAR]: () => true,
+  [EVENTS.INPUT]: EventFunction,
+  [EVENTS.KEYPRESS]: EventFunction,
+  [EVENTS.KEYDOWN]: EventFunction,
+  [EVENTS.KEYUP]: EventFunction,
+  [EVENTS.ENTER]: EventFunction,
+  [EVENTS.PASTE]: EventFunction,
+  [EVENTS.COMPOSITIONSTART]: CompositionEventFunction,
+  [EVENTS.COMPOSITIONUPDATE]: CompositionEventFunction,
+  [EVENTS.COMPOSITIONEND]: CompositionEventFunction,
+};
+
+// type InputEventUnion = `${EVENTS}`;
 export type InputType = ExtractPropTypes<typeof inputType> ;
 
 export default defineComponent({
   name: 'Input',
   inheritAttrs: false,
   props: inputType,
-  emits: [
-    InputEvent.UPDATE,
-    InputEvent.FOCUS,
-    InputEvent.BLUR,
-    InputEvent.CHANGE,
-    InputEvent.CLEAR,
-    InputEvent.INPUT,
-    InputEvent.KEYPRESS,
-    InputEvent.KEYDOWN,
-    InputEvent.KEYUP,
-    InputEvent.ENTER,
-    InputEvent.PASTE,
-  ] as InputEventArrayType,
+  emits: inputEmitEventsType,
   setup(props, ctx) {
     const isFocused = ref(false);
     const isCNInput = ref(false);
@@ -131,29 +145,29 @@ export default defineComponent({
     });
 
     function clear() {
-      ctx.emit(InputEvent.UPDATE, '');
-      ctx.emit(InputEvent.CHANGE, '');
-      ctx.emit(InputEvent.CLEAR);
+      ctx.emit(EVENTS.UPDATE, '');
+      ctx.emit(EVENTS.CHANGE, '');
+      ctx.emit(EVENTS.CLEAR);
     }
 
     function handleFocus(e) {
       isFocused.value = true;
-      ctx.emit(InputEvent.FOCUS, e);
+      ctx.emit(EVENTS.FOCUS, e);
     }
 
     function handleBlur(e) {
       isFocused.value = false;
-      ctx.emit(InputEvent.BLUR, e);
+      ctx.emit(EVENTS.BLUR, e);
     }
     // 事件句柄生成器
-    function eventHandler(eventName: InputEventUnion) {
+    function eventHandler(eventName) {
       return (e) => {
         if (e.code === 'Enter' || e.key === 'Enter' || e.keyCode === 13) {
-          ctx.emit(InputEvent.ENTER, e.target.value, e);
+          ctx.emit(EVENTS.ENTER, e.target.value, e);
         }
-        if (isCNInput.value && [InputEvent.INPUT, InputEvent.CHANGE].some(e => eventName === e)) return;
-        if (eventName === InputEvent.INPUT) {
-          ctx.emit(InputEvent.UPDATE, isNumberInput.value ? +e.target.value : e.target.value);
+        if (isCNInput.value && [EVENTS.INPUT, EVENTS.CHANGE].some(e => eventName === e)) return;
+        if (eventName === EVENTS.INPUT) {
+          ctx.emit(EVENTS.UPDATE, isNumberInput.value ? +e.target.value : e.target.value);
         }
 
         ctx.emit(eventName, e.target.value, e);
@@ -167,12 +181,12 @@ export default defineComponent({
       handleChange,
       handleInput,
     ] = [
-      InputEvent.KEYUP,
-      InputEvent.KEYDOWN,
-      InputEvent.KEYPRESS,
-      InputEvent.PASTE,
-      InputEvent.CHANGE,
-      InputEvent.INPUT,
+      EVENTS.KEYUP,
+      EVENTS.KEYDOWN,
+      EVENTS.KEYPRESS,
+      EVENTS.PASTE,
+      EVENTS.CHANGE,
+      EVENTS.INPUT,
     ].map(eventHandler);
 
     // 输入法启用时
@@ -205,12 +219,12 @@ export default defineComponent({
 
     function handleInc() {
       const newVal = handleNumber(props.step);
-      ctx.emit(InputEvent.UPDATE, newVal);
+      ctx.emit(EVENTS.UPDATE, newVal);
     }
 
     function handleDec() {
       const newVal = handleNumber(props.step, false);
-      ctx.emit(InputEvent.UPDATE, newVal);
+      ctx.emit(EVENTS.UPDATE, newVal);
     }
 
     function getCls(name) {
