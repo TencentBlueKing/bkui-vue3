@@ -62,7 +62,7 @@ const formItemProps = {
   rules: PropTypes.array,
   autoCheck: PropTypes.bool.def(false),
   description: PropTypes.string,
-  errorDisplayType: PropTypes.oneOf(['tooltips', 'normal']).def('tooltips'),
+  errorDisplayType: PropTypes.oneOf(['tooltips', 'normal']).def('normal'),
 };
 
 export type FormItemProps = Readonly<ExtractPropTypes<typeof formItemProps>>;
