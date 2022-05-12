@@ -63,6 +63,8 @@
 
   &.@{bk-prefix}-nested-loading {
     position: relative;
+    width: 100%;
+    height: 100%;
 
     &.is-block {
       display: block;
@@ -72,7 +74,7 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      z-index: 4;
+      z-index: 11;
       text-align: center;
       transform: translate(-50%, -50%);
     }
@@ -108,7 +110,6 @@
     position: absolute;
     width: 100%;
     height: 100%;
-    opacity: .5;
 
     &::after {
       position: absolute;
