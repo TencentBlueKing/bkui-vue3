@@ -44,6 +44,22 @@ export default (props: TreePropTypes) => {
     let order = 0;
     const schema = new Map<string, any>();
 
+    function loopUpdateNodeAttr(uuid: string, attrName: string, attrValue: any, callFn: Function) {
+      if (uuid === undefined || uuid === null) {
+        return;
+      }
+
+      if (schema.has(uuid) && !([NODE_ATTRIBUTES.UUID, NODE_ATTRIBUTES.PARENT_ID] as string[]).includes(attrName)) {
+        const target = schema.get(uuid);
+        if (Object.prototype.hasOwnProperty.call(target, attrName)) {
+          if (typeof callFn === 'function' && Reflect.apply(callFn, self, [target, attrName, attrValue])) {
+            Object.assign(target, { [attrName]: attrValue });
+            loopUpdateNodeAttr(target[NODE_ATTRIBUTES.PARENT_ID], attrName, attrValue, callFn);
+          }
+        }
+      }
+    }
+
     function getUid(item: any) {
       let uid = null;
       if (typeof props.nodeKey === 'string') {
@@ -92,6 +108,10 @@ export default (props: TreePropTypes) => {
       return getCachedTreeNodeAttr(uuid, node, 'async', NODE_ATTRIBUTES.IS_ASYNC, false);
     }
 
+    function validateIsOpenLoopFn(target: any) {
+      return !target[NODE_ATTRIBUTES.IS_OPENED];
+    }
+
     function flatten(array: Array<any>, depth = 0, parent = null, path = null) {
       const arrLength = array.length;
       for (let i = 0; i < arrLength; i++) {
@@ -127,6 +147,15 @@ export default (props: TreePropTypes) => {
               ...item,
               [children]: null,
             });
+
+            /**
+             * 如果初始化发现当前属性为展开或者选中
+             * 此时需要设置当前节点的所有父级节点都为展开状态
+             */
+            if (attrs[NODE_ATTRIBUTES.IS_OPENED] || attrs[NODE_ATTRIBUTES.IS_SELECTED]) {
+              loopUpdateNodeAttr(parent, NODE_ATTRIBUTES.IS_OPENED, true, validateIsOpenLoopFn);
+            }
+
             if (Object.prototype.hasOwnProperty.call(item, children)) {
               flatten(item[children] || [], depth + 1, uuid, currentPath);
             }
