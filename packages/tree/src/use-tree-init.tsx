@@ -53,7 +53,6 @@ export default (props: TreePropTypes) => {
         const target = schema.get(uuid);
         if (Object.prototype.hasOwnProperty.call(target, attrName)) {
           if (typeof callFn === 'function' && Reflect.apply(callFn, self, [target, attrName, attrValue])) {
-            console.log('loopUpdateNodeAttr', attrName, attrValue);
             Object.assign(target, { [attrName]: attrValue });
             loopUpdateNodeAttr(target[NODE_ATTRIBUTES.PARENT_ID], attrName, attrValue, callFn);
           }
