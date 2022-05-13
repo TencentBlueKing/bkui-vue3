@@ -96,7 +96,7 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?) => {
     const resolveFooterHeight = props.pagination && props.data.length ? 40 : 0;
     const contentHeight = resolveHeight - resolveHeadHeight - resolveFooterHeight;
     const height = props.height !== 'auto' ? `${contentHeight}px` : false;
-    const maxHeight = height ? (resolveMaxHeight - resolveHeadHeight - resolveFooterHeight) : false;
+    const maxHeight = resolveMaxHeight - resolveHeadHeight - resolveFooterHeight;
     const minHeight = resolveMinHeight - resolveHeadHeight - resolveFooterHeight;
 
     Object.assign(contentStyle, {
