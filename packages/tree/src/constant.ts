@@ -47,5 +47,7 @@ export const enum NODE_ATTRIBUTES {
   IS_SELECTED='__is_selected',
   IS_ASYNC_INIT = '__is_async_init',
   IS_MATCH = '__is_match',
-  IS_NULL = '__IS_NULL'
+  IS_NULL = '__IS_NULL',
+  IS_CACHED = '__is_cached',
+  IS_ASYNC = '__is_async'
 }

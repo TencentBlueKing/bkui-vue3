@@ -43,22 +43,26 @@ export default (props, flatData) => {
       setNodeAttr(item, NODE_ATTRIBUTES.IS_OPENED, true);
       const nodeValue = Array.isArray(resp) ? resp : [resp];
       updateTreeNode(getNodePath(item), props.data, props.children, props.children, nodeValue);
+      return Promise.resolve(resp);
     }
+
+    return Promise.reject(resp);
   };
 
   const asyncNodeClick = (item: any) => {
     /** 如果是异步请求加载 */
-    if (item.async) {
+    if (getNodeAttr(item, NODE_ATTRIBUTES.IS_ASYNC)) {
       const { callback = null, cache = true } = props.async || {};
       /** 用于注释当前节点是否已经初始化过 */
       setNodeAttr(item, NODE_ATTRIBUTES.IS_ASYNC_INIT, true);
       if (typeof callback === 'function') {
-        if (!item.cached) {
+        if (!getNodeAttr(item, NODE_ATTRIBUTES.IS_CACHED)) {
           Object.assign(item, { loading: true });
           return Promise.resolve(callback(item, (resp: any) => setNodeRemoteLoad(resp, item))
             .then((resp: any) => setNodeRemoteLoad(resp, item))
             .catch((err: any) => console.error('load remote data error:', err))
             .finally(() => {
+              setNodeAttr(item, NODE_ATTRIBUTES.IS_CACHED, cache);
               assignTreeNode(getNodePath(item), props.data, props.children, {
                 loading: false,
                 ...(cache ? { cached: true } : {}),
@@ -69,6 +73,8 @@ export default (props, flatData) => {
       }
       return Promise.reject('async need to set prop: asyncLoad with function wich will return promise object');
     }
+
+    return Promise.resolve(true);
   };
 
   const deepAutoOpen = () => {
