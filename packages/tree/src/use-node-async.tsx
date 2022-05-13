@@ -57,12 +57,12 @@ export default (props, flatData) => {
       setNodeAttr(item, NODE_ATTRIBUTES.IS_ASYNC_INIT, true);
       if (typeof callback === 'function') {
         if (!getNodeAttr(item, NODE_ATTRIBUTES.IS_CACHED)) {
+          setNodeAttr(item, NODE_ATTRIBUTES.IS_CACHED, cache);
           Object.assign(item, { loading: true });
           return Promise.resolve(callback(item, (resp: any) => setNodeRemoteLoad(resp, item))
             .then((resp: any) => setNodeRemoteLoad(resp, item))
             .catch((err: any) => console.error('load remote data error:', err))
             .finally(() => {
-              setNodeAttr(item, NODE_ATTRIBUTES.IS_CACHED, cache);
               assignTreeNode(getNodePath(item), props.data, props.children, {
                 loading: false,
                 ...(cache ? { cached: true } : {}),
