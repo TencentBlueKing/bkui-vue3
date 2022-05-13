@@ -120,7 +120,7 @@ export default (props: TreePropTypes) => {
           flatten(item, depth, parent, path);
         } else {
           if (typeof item === 'object' && item !== null) {
-            const uuid = getUid(item);
+            const uuid = `${getUid(item)}`;
             const currentPath = path !== null ? `${path}-${i}` : `${i}`;
             const hasChildren = !!(item[children] || []).length;
             const attrs = {
