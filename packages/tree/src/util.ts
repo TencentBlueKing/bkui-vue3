@@ -205,7 +205,7 @@ export const resolveNodeItem = (node: any) => {
     return { __IS_NULL: true };
   }
 
-  if (typeof node === 'string') {
+  if (typeof node === 'string' || typeof node === 'number' ||  typeof node === 'symbol') {
     return { [NODE_ATTRIBUTES.UUID]: node };
   }
 

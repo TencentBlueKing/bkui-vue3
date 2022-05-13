@@ -1,7 +1,12 @@
 <template>
   <div style=" width: 100%;height: 300px; overflow: auto;">
+    <bk-button @click="handleAutoSelect">
+      设置选中节点
+    </bk-button>
     <bk-tree
+      ref="refAutoSelect"
       :data="treeData"
+      :selected="selected"
       :async="{
         callback: getRemoteData,
         cache: true,
@@ -22,6 +27,7 @@
     data() {
       return {
         treeData: [...ASYNC_DATA].map(item => ({ ...item, async: true })),
+        selected: null,
       };
     },
     methods: {
@@ -46,6 +52,7 @@
                 },
                 {
                   name: 'child-3-开放平台',
+                  isOpen: true,
                   content:
                     '开放的PaaS，具备强大的开发框架和调度引擎，以及完整的运维开发培训体系，助力运维快速转型升级。',
                   children: [],
@@ -55,6 +62,12 @@
             300,
           );
         });
+      },
+      handleAutoSelect() {
+        const treeData = this.$refs.refAutoSelect.getData();
+        const { length } = treeData.data;
+        const randomIndex = Math.floor(Math.random() * length);
+        this.selected = treeData.data[randomIndex];
       },
     },
   });
