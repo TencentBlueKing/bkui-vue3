@@ -99,6 +99,7 @@ export default defineComponent({
       setOpen,
       setNodeAction,
       setSelect,
+      asyncNodeClick,
     } = useNodeAction(props, ctx, flatData, renderData, schemaValues);
 
     /**
@@ -130,6 +131,7 @@ export default defineComponent({
       setNodeAction,
       setNodeOpened,
       setSelect,
+      asyncNodeClick,
       getData,
     });
 
