@@ -84,6 +84,14 @@ export default (props: TreePropTypes) => {
       return getCachedTreeNodeAttr(uuid, node, 'isSelected', NODE_ATTRIBUTES.IS_SELECTED, false);
     }
 
+    function isCachedTreeNodeHasCached(uuid: string, node: any) {
+      return getCachedTreeNodeAttr(uuid, node, 'cached', NODE_ATTRIBUTES.IS_CACHED, false);
+    }
+
+    function isCachedTreeNodeAsync(uuid: string, node: any) {
+      return getCachedTreeNodeAttr(uuid, node, 'async', NODE_ATTRIBUTES.IS_ASYNC, false);
+    }
+
     function flatten(array: Array<any>, depth = 0, parent = null, path = null) {
       const arrLength = array.length;
       for (let i = 0; i < arrLength; i++) {
@@ -108,6 +116,8 @@ export default (props: TreePropTypes) => {
               [NODE_ATTRIBUTES.IS_MATCH]: isCachedTreeNodeMatch(uuid, item),
               [NODE_ATTRIBUTES.IS_OPENED]: isCachedTreeNodeOpened(uuid, item),
               [NODE_ATTRIBUTES.IS_CHECKED]: isCachedTreeNodeChecked(uuid, item),
+              [NODE_ATTRIBUTES.IS_CACHED]: isCachedTreeNodeHasCached(uuid, item),
+              [NODE_ATTRIBUTES.IS_ASYNC]: isCachedTreeNodeAsync(uuid, item),
               [children]: null,
             };
             Object.assign(item, { [NODE_ATTRIBUTES.UUID]: uuid });

@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { h } from 'vue';
+import { h, nextTick } from 'vue';
 
 import { DownShape, Folder, FolderShapeOpen, RightShape, Spinner, TextFile } from '@bkui-vue/icon';
 import { resolveClassName } from '@bkui-vue/shared';
@@ -233,7 +233,12 @@ export default (props, ctx, flatData, renderData, schemaValues) => {
   };
 
   const setSelect = (uuid: any, selected = true, autoOpen = true) => {
-    const resolvedItem = resolveNodeItem(uuid);
+    const nodeList = Array.isArray(uuid) ? uuid : [uuid];
+    if (!nodeList.length) {
+      return;
+    }
+
+    const resolvedItem = resolveNodeItem(nodeList[0]);
     if (resolvedItem[NODE_ATTRIBUTES.IS_NULL]) {
       return;
     }
@@ -245,10 +250,29 @@ export default (props, ctx, flatData, renderData, schemaValues) => {
 
       setNodeAttr(resolvedItem, NODE_ATTRIBUTES.IS_SELECTED, selected);
       selectedNodeId = getNodeId(resolvedItem);
-    }
 
-    if (autoOpen) {
-      setOpen(uuid, true, true);
+      /**
+       * 如果设置了自动展开
+       * 判定长度是为了处理异步节点,如果当前设置selected的节点为多级异步节点
+       * 此时需要一层一层展开所有数据，只需要在最后一次执行setOpen即可
+       */
+      if (autoOpen && nodeList.length === 1) {
+        setOpen(resolvedItem, true, true);
+      }
+
+      /**
+       * 处理异步节点多层级展开选中
+       */
+      if (getNodeAttr(resolvedItem, NODE_ATTRIBUTES.IS_ASYNC)) {
+        asyncNodeClick(resolvedItem).then(() => {
+          nextTick(() => {
+            nodeList.shift();
+            setSelect(nodeList, selected, autoOpen);
+          });
+        });
+      }
+    } else {
+      console.warn('props.selectable is false or undefined, please set selectable with true');
     }
   };
 
@@ -257,7 +281,7 @@ export default (props, ctx, flatData, renderData, schemaValues) => {
    * @param item
    */
   const handleNodeContentClick = (item: any, e: MouseEvent) => {
-    setSelect(item);
+    setSelect(item, true, false);
 
     if (!isNodeOpened(item)) {
       hanldeTreeNodeClick(item, e);
