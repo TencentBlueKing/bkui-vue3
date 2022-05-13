@@ -50,7 +50,7 @@ export default defineComponent({
   emits: [EVENTS.NODE_CLICK, EVENTS.NODE_COLLAPSE, EVENTS.NODE_EXPAND],
 
   setup(props, ctx) {
-    const { flatData, schemaValues } = useTreeInit(props);
+    const { flatData, schemaValues, afterDataUpdate } = useTreeInit(props);
     const {
       setNodeAttr,
       checkNodeIsOpen,
@@ -112,7 +112,8 @@ export default defineComponent({
 
     if (props.selectable) {
       watch(() => props.selected, (newData) => {
-        setSelect(newData, true, true);
+        afterDataUpdate(() => setSelect(newData, true, true))
+        ;
       }, { immediate: true });
     }
 

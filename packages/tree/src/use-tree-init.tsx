@@ -26,7 +26,7 @@
 */
 
 import { v4 as uuidv4 } from 'uuid';
-import { computed, reactive, watch } from 'vue';
+import { computed, nextTick, reactive, watch } from 'vue';
 
 import { NODE_ATTRIBUTES } from './constant';
 import { TreePropTypes } from './props';
@@ -63,7 +63,7 @@ export default (props: TreePropTypes) => {
     function getUid(item: any) {
       let uid = null;
       if (typeof props.nodeKey === 'string') {
-        uid = item[props.nodeKey];
+        uid = item[props.nodeKey] || uuidv4();
       }
 
       return uid || item[NODE_ATTRIBUTES.UUID] || uuidv4();
@@ -75,7 +75,7 @@ export default (props: TreePropTypes) => {
       if (cached) {
         result = cached[cachedAttr];
       } else {
-        result = node[attr];
+        result = attr === null ? undefined : node[attr];
       }
 
       if (result === undefined) {
@@ -97,7 +97,7 @@ export default (props: TreePropTypes) => {
     }
 
     function isCachedTreeNodeSelected(uuid: string, node: any) {
-      return getCachedTreeNodeAttr(uuid, node, 'isSelected', NODE_ATTRIBUTES.IS_SELECTED, false);
+      return getCachedTreeNodeAttr(uuid, node, null, NODE_ATTRIBUTES.IS_SELECTED, false);
     }
 
     function isCachedTreeNodeHasCached(uuid: string, node: any) {
@@ -169,6 +169,8 @@ export default (props: TreePropTypes) => {
 
   const formatData = getFlatdata(props);
 
+  const loopEvents = [];
+
 
   /**
    * 扁平化数据
@@ -195,9 +197,19 @@ export default (props: TreePropTypes) => {
     if (props.async?.callback && props.async?.deepAutoOpen === 'every') {
       deepAutoOpen();
     }
+    nextTick(() => {
+      loopEvents.forEach((event: Function) => {
+        Reflect.apply(event, this, []);
+      });
+      // loopEvents.length = 0;
+    });
   }, {
     deep: true,
   });
+
+  const afterDataUpdate = (callFn: () => any) => {
+    loopEvents.push(callFn);
+  };
 
   /** 如果设置了异步请求 */
   if (props.async?.callback) {
@@ -209,5 +221,6 @@ export default (props: TreePropTypes) => {
     schemaValues,
     asyncNodeClick,
     deepAutoOpen,
+    afterDataUpdate,
   };
 };
