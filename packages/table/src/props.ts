@@ -85,7 +85,8 @@ export const tableProps = {
 
   /**
    * 设置表格高度
-   * 默认：auto，依赖外层高度
+   * 默认：auto 根据行数自动填充高度
+   * 100%，依赖初始化时父级容器高度
    */
   height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def('auto'),
 

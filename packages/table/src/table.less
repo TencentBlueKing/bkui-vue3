@@ -8,7 +8,14 @@
   height: auto;
   overflow: hidden;
   border-top: 1px solid @table-border-color;
-  border-bottom: 1px solid @table-border-color;
+
+  &.has-scroll-y {
+    border-bottom: 1px solid @table-border-color;
+
+    &.is-scroll-bottom {
+      border-bottom: 1px solid transparent;
+    }
+  }
 
   .@{bk-prefix}-table-body {
     position: relative;
@@ -79,6 +86,10 @@
       tbody {
         tr {
           td {
+            &.empty-cell {
+              padding-bottom: 30px;
+            }
+
             .cell {
               display: block;
               width: 100%;
@@ -128,17 +139,10 @@
   .@{bk-prefix}-table-footer {
     line-height: 40px;
     border-top: 1px solid @table-border-color;
-
+    border-bottom: 1px solid @table-border-color;
+    
     &.is-hidden {
       display: none;
-    }
-  }
-
-  tr {
-    &:last-child {
-      td {
-        border-bottom: none;
-      }
     }
   }
 
@@ -146,6 +150,20 @@
     td,
     th { 
       border-bottom: 1px solid @table-border-color;
+    }
+
+    &.has-footer {
+      border-bottom: none;
+
+      &.has-scroll-y {
+        tr {
+          &:last-child {
+            td {
+              border-bottom: none;
+            }
+          }
+        }
+      }
     }
   }
 
