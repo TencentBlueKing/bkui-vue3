@@ -244,7 +244,7 @@ export default (props, ctx, flatData, renderData, schemaValues) => {
     }
 
     if (props.selectable) {
-      if (selectedNodeId !== null) {
+      if (selectedNodeId !== null && selectedNodeId !== undefined) {
         setNodeAttr({ [NODE_ATTRIBUTES.UUID]: selectedNodeId }, NODE_ATTRIBUTES.IS_SELECTED, !selected);
       }
 

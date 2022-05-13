@@ -49,7 +49,7 @@ export default defineComponent({
   props: treeProps,
   emits: TreeEmitEventsType,
   setup(props, ctx) {
-    const { flatData, schemaValues } = useTreeInit(props);
+    const { flatData, schemaValues, afterDataUpdate } = useTreeInit(props);
     const {
       setNodeAttr,
       checkNodeIsOpen,
@@ -110,7 +110,7 @@ export default defineComponent({
 
     if (props.selectable) {
       watch(() => props.selected, (newData) => {
-        setSelect(newData, true, true);
+        afterDataUpdate(() => setSelect(newData, true, true));
       }, { immediate: true });
     }
 
