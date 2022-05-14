@@ -398,6 +398,7 @@ export default (props, ctx, flatData, renderData, schemaValues) => {
     renderTreeNode,
     hanldeTreeNodeClick,
     deepAutoOpen,
+    asyncNodeClick,
     setNodeAction,
     setNodeOpened,
     setSelect,
