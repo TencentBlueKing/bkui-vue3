@@ -33,7 +33,7 @@ export const menuProps = {
     type: Boolean,
     default: false,
   },
-  OpenedKeys: { type: Array as PropType<string[]> },
+  openedKeys: { type: Array as PropType<string[]> },
   mode: { type: String as PropType<MenuMode>, default: 'vertical' },
   uniqueOpen: {
     type: Boolean,
@@ -56,7 +56,7 @@ export default defineComponent({
     const mode = computed<MenuMode>(() => props.mode);
     const collapse = ref<boolean>(props.collapse);
     const oldOpenKeys = ref<string[]>([]);
-    watch(() => props.OpenedKeys, (keys = openedKeys.value) => {
+    watch(() => props.openedKeys, (keys = openedKeys.value) => {
       openedKeys.value = keys;
     }, { immediate: true });
     watchEffect(() => {
