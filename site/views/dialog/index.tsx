@@ -35,6 +35,7 @@ import AsyncDemo from './async-demo.vue';
 import BaseDemo from './base-demo.vue';
 import ConfigDemo from './config-demo.vue';
 import FullscreenDemo from './fullscreen-demo.vue';
+import NestedDemo from './nested-demo.vue';
 import SizeDemo from './size-demo.vue';
 import TypeDemo from './type-demo.vue';
 
@@ -104,7 +105,7 @@ const dialogPropsJson: IPropsTableItem[] = [
   },
   {
     name: 'customClass',
-    type: 'Array | String',
+    type: 'String | Array',
     default: '',
     desc: '配置自定义样式类名',
     optional: [],
@@ -159,13 +160,6 @@ const dialogPropsJson: IPropsTableItem[] = [
     optional: ['normal', 'small', 'medium', 'large'],
   },
   {
-    name: 'renderDirective',
-    type: 'String',
-    default: 'show',
-    desc: '弹框的渲染方式',
-    optional: ['show', 'if'],
-  },
-  {
     name: 'draggable',
     type: 'Boolean',
     default: 'true',
@@ -207,6 +201,13 @@ const dialogPropsJson: IPropsTableItem[] = [
     desc: '总步数',
     optional: [],
   },
+  {
+    name: 'multiInstance',
+    type: 'Boolean',
+    default: 'true',
+    desc: '是否允许多个弹框同时存在',
+    optional: [],
+  },
 ];
 
 const dialogSlotsJson: IPropsTableItem[] = [
@@ -229,6 +230,13 @@ const dialogSlotsJson: IPropsTableItem[] = [
     type: 'Function',
     default: '',
     desc: '底部插槽',
+    optional: [],
+  },
+  {
+    name: 'tools',
+    type: 'Function',
+    default: '',
+    desc: '工具栏插槽，顶部区域',
     optional: [],
   },
 ];
@@ -326,6 +334,15 @@ export default defineComponent({
           componentName="dialog"
           demoName="type-demo">
           <TypeDemo></TypeDemo>
+        </DemoBox>
+
+        <DemoBox
+          title="嵌套弹框"
+          subtitle=""
+          desc="通过 multi-instance 配置是否嵌套弹框同时存在，默认为 true，多个弹框叠加，设置为 false 只保留最后一个。"
+          componentName="dialog"
+          demoName="nested-demo">
+          <NestedDemo></NestedDemo>
         </DemoBox>
 
         <PropsBox
