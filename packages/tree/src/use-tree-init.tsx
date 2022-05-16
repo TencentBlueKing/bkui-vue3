@@ -26,7 +26,7 @@
 */
 
 import { v4 as uuidv4 } from 'uuid';
-import { computed, nextTick, reactive, watch } from 'vue';
+import { computed, reactive, watch } from 'vue';
 
 import { NODE_ATTRIBUTES } from './constant';
 import { TreePropTypes } from './props';
@@ -169,8 +169,9 @@ export default (props: TreePropTypes) => {
 
   const formatData = getFlatdata(props);
 
-  const loopEvents = [];
-
+  const nextLoopEvents: Map<string, any> = new Map();
+  const afterSelectEvents = [];
+  const afterSelectWatch = [];
 
   /**
    * 扁平化数据
@@ -186,6 +187,32 @@ export default (props: TreePropTypes) => {
 
   const { asyncNodeClick, deepAutoOpen } = useNodeAsync(props, flatData);
 
+  /**
+   * 抛出缓存函数，用于注册selected watch
+   * @param event
+   */
+  const onSelected = (event: (d: any) => void) => {
+    afterSelectEvents.push(event);
+  };
+
+  const registerNextLoop = (key: string, event: any, reset = true) => {
+    if (reset && nextLoopEvents.has(key)) {
+      nextLoopEvents.delete(key);
+    }
+
+    nextLoopEvents.set(key, event);
+  };
+
+  const executeNextEvent = () => {
+    Array.from(nextLoopEvents.keys()).forEach((key: string) => {
+      const target = nextLoopEvents.get(key);
+      if (Array.isArray(target)) {
+        target.forEach((event: Function) => Reflect.apply(event, this, []));
+      } else {
+        Reflect.apply(target, this, []);
+      }
+    });
+  };
 
   /**
      * 监听组件配置Data改变
@@ -197,18 +224,35 @@ export default (props: TreePropTypes) => {
     if (props.async?.callback && props.async?.deepAutoOpen === 'every') {
       deepAutoOpen();
     }
-    nextTick(() => {
-      loopEvents.forEach((event: Function) => {
-        Reflect.apply(event, this, []);
-      });
-      // loopEvents.length = 0;
-    });
+
+    /**
+     * 执行缓存下来的周期函数
+     * 保证data改变之后执行相关操作
+     */
+    executeNextEvent();
   }, {
     deep: true,
   });
 
-  const afterDataUpdate = (callFn: () => any) => {
-    loopEvents.push(callFn);
+
+  if (props.selectable) {
+    watch(() => props.selected, (newData) => {
+      afterSelectWatch.length = 0;
+      afterSelectEvents.forEach((event: () => void) => {
+        Reflect.apply(event, this, [newData]);
+
+        /**
+         * selected设置生效有可能会在props.data 改变之前
+         * 此时需要缓存当前执行函数，保证在watch data change 之后执行
+         */
+        afterSelectWatch.push(() => Reflect.apply(event, this, [newData]));
+      });
+      registerNextLoop('afterSelectWatch', afterSelectWatch);
+    }, { immediate: true });
+  }
+
+  const afterDataUpdate = (callFn: (d: any) => any) => {
+    registerNextLoop('afterDataUpdate', callFn);
   };
 
   /** 如果设置了异步请求 */
@@ -222,5 +266,6 @@ export default (props: TreePropTypes) => {
     asyncNodeClick,
     deepAutoOpen,
     afterDataUpdate,
+    onSelected,
   };
 };
