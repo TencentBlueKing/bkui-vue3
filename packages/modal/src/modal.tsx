@@ -99,26 +99,25 @@ export default defineComponent({
     const maxHeight = this.maxHeight ? { maxHeight: this.maxHeight } : {};
     const bodyClass = `bk-modal-body ${this.animateType === 'slide' ? this.direction : ''}`;
     return (
-      <div class={['bk-modal-wrapper', this.size, this.customClass, this.fullscreen ? 'bk-model-fullscreen' : '']}
+      <div class={['bk-modal-wrapper', this.customClass]}
         style={this.compStyle}>
         <div class="bk-modal-outside" onClick={this.handleClickOutSide} v-show={this.isShow}>
         </div>
         <Transition name={this.animateType}>
-        {this.isShow ? (
-            <div class={bodyClass}>
-              <div class="bk-modal-header">
-                {this.$slots.header?.() ?? ''}
-              </div>
-              <div class="bk-modal-content" style={{ ...maxHeight }}>
-                {this.$slots.default?.() ?? ''}
-              </div>
-              <div class="bk-modal-footer">
-                {this.$slots.footer?.() ?? ''}
-              </div>
+        {this.isShow ? <div class={bodyClass}>
+          <div class="bk-modal-header">
+            {this.$slots.header?.() ?? ''}
+          </div>
+          <div class="bk-modal-content"
+            style={[this.dialogType === 'show' ? 'height: calc(100% - 74px);margin-bottom: 0px' : '', { ...maxHeight }]}>
+            {this.$slots.default?.() ?? ''}
+          </div>
+          {this.dialogType === 'show' ? '' : (
+            <div class="bk-modal-footer">
+              {this.$slots.footer?.() ?? ''}
             </div>
-        ) : (
-          ''
-        )}
+          )}
+        </div> : ''}
         </Transition>
       </div>
     );
