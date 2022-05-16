@@ -61,7 +61,7 @@ export default defineComponent({
       isNodeChecked,
       isNodeMatched,
       hasChildNode,
-    } = useNodeAttribute(flatData);
+    } = useNodeAttribute(flatData, props);
 
     const { searchFn, isSearchActive, refSearch, openResultNode, isTreeUI, isSearchDisabled } = useSearch(props);
     if (!isSearchDisabled) {
