@@ -23,11 +23,18 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-export const enum EVENTS {
-  NODE_CLICK = 'node-click',
-  NODE_COLLAPSE = 'node-collapse',
-  NODE_EXPAND = 'node-expand'
+
+export enum EVENTS {
+  NODE_CLICK = 'nodeClick',
+  NODE_COLLAPSE = 'nodeCollapse',
+  NODE_EXPAND = 'nodeExpand'
 }
+const empty = () => {};
+export const TreeEmitEventsType = {
+  [EVENTS.NODE_CLICK]: empty,
+  [EVENTS.NODE_COLLAPSE]: empty,
+  [EVENTS.NODE_EXPAND]: empty,
+};
 
 /**
  * 节点扩展属性

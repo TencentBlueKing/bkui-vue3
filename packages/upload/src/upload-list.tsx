@@ -67,22 +67,28 @@ export default defineComponent({
       emit('remove', file, e);
     }
 
-    const Photowall = () => props.files.map((file) => {
-      const classNames = classes({
-        [`${classBlock}__item`]: true,
-        [`${classBlock}__item-picture`]: true,
-        [`${classBlock}__item--${file.status}`]: true,
-      });
-      return (
-        <li key={file.uid} class={classNames}>
-          {
-            slots?.file
-              ? slots.file(file)
-              : PhotoItem(file)
-          }
-        </li>
-      );
-    });
+    const Photowall = () => (
+      <TransitionGroup name={`${classBlock}__item`}>
+        {
+          props.files.map((file) => {
+            const classNames = classes({
+              [`${classBlock}__item`]: true,
+              [`${classBlock}__item-picture`]: true,
+              [`${classBlock}__item--${file.status}`]: true,
+            });
+            return (
+              <li key={file.uid} class={classNames}>
+                {
+                  slots?.file
+                    ? slots.file(file)
+                    : PhotoItem(file)
+                }
+              </li>
+            );
+          })
+        }
+      </TransitionGroup>
+    );
 
     const PhotoItem = (file: UploadFile) => ([
       <img v-show={file.status !== 'uploading'} src={file.url} class={`${classBlock}__picture-item-thumbnail`} alt="" />,
@@ -105,21 +111,27 @@ export default defineComponent({
       }</>,
     ]);
 
-    const Normal = () => props.files.map((file) => {
-      const classNames = classes({
-        [`${classBlock}__item`]: true,
-        [`${classBlock}__item--${file.status}`]: true,
-      });
-      return (
-        <li key={file.uid} class={classNames}>
-          {
-            slots?.file
-              ? slots.file(file)
-              : NormalItem(file)
-          }
-        </li>
-      );
-    });
+    const Normal = () => (
+      <TransitionGroup name={`${classBlock}__item`}>
+        {
+          props.files.map((file) => {
+            const classNames = classes({
+              [`${classBlock}__item`]: true,
+              [`${classBlock}__item--${file.status}`]: true,
+            });
+            return (
+              <li key={file.uid} class={classNames}>
+                {
+                  slots?.file
+                    ? slots.file(file)
+                    : NormalItem(file)
+                }
+              </li>
+            );
+          })
+        }
+      </TransitionGroup>
+    );
 
     const FileIcon = (file: UploadFile) => {
       const rawType = file?.raw?.type;
@@ -188,7 +200,7 @@ export default defineComponent({
       {
         isSinglePhoto.value
           ? (slots?.innerTrigger && slots?.innerTrigger(props.files?.[0]))
-          : <TransitionGroup name={`${classBlock}__item`} tag="ul" moveClass={classNames.value}>
+          : <ul class={classNames.value}>
               {
                 isPhotowall.value
                   ? Photowall()
@@ -197,7 +209,7 @@ export default defineComponent({
               {
                 slots?.innerTrigger && slots?.innerTrigger()
               }
-          </TransitionGroup>
+          </ul>
       }
       </>
     );

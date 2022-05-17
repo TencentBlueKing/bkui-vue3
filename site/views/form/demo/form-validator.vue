@@ -10,6 +10,7 @@
       property="name"
     >
       <bk-input
+        v-model="formMode.name"
         placeholder="请输入"
         clearable
       />

@@ -37,7 +37,7 @@ export interface IFormContext {
   unregister: (IFormItemContext) => void
 }
 
-export type IFormItemRules = Array<{
+export interface IFormItemRule {
   required?: boolean,
   email?: boolean,
   min?: number,
@@ -46,4 +46,6 @@ export type IFormItemRules = Array<{
   validator?: (any) => boolean | Promise<boolean>,
   message: string,
   trigger: 'blur' | 'change'
-}>;
+}
+
+export type IFormItemRules = Array<IFormItemRule>;

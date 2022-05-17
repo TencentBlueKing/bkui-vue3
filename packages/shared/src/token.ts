@@ -24,25 +24,7 @@
 * IN THE SOFTWARE.
 */
 
-import { defineComponent } from 'vue';
 
-import { Help, HelpDocumentFill, HelpFill } from '@bkui-vue/icon';
+export const formKey = Symbol('form');
 
-export default defineComponent({
-  name: 'SiteIcon',
-  setup() {
-    return {
-    };
-  },
-  render() {
-    return (
-      <div>
-        <Help style={{ fontSize: '100px' }} fill="red"/>
-        <HelpDocumentFill style={{ fontSize: '100px' }} class='sdddddsdf'/>
-        <HelpFill style={{ fontSize: '100px' }}/>
-        <HelpDocumentFill style={{ fontSize: '100px' }}/>
-        <HelpFill style={{ fontSize: '100px' }} />
-      </div>
-    );
-  },
-});
+export const formItemKey = Symbol('formItem');

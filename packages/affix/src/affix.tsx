@@ -24,6 +24,7 @@
  * IN THE SOFTWARE.
 */
 
+import { throttle } from 'lodash';
 import { computed, defineComponent, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
 
 import { classes, PropTypes } from '@bkui-vue/shared';
@@ -68,6 +69,8 @@ export default defineComponent({
   setup(props, { emit, slots }) {
     const point = ref(null);
     const root = ref(null);
+    const targetEl = ref();
+    const styles = ref({});
     const { proxy } = getCurrentInstance();
     const affixWidth = ref(0);
     const offsetStyles = computed(() => ({
@@ -87,8 +90,6 @@ export default defineComponent({
     const pointClass = computed(() => classes({
       'bk-affix': affix.value,
     }));
-    const targetEl = ref();
-    const styles = ref({});
     const offsetType = computed(() => (props.offsetBottom >= 0 ? 'bottom' : 'top'));
     const setTargetLoop = () => {
       if (offsetType.value === 'top') {
@@ -101,28 +102,9 @@ export default defineComponent({
         };
       }
     };
-    const listenScroll = () => {
-      throttle(handleScroll, 100);
-    };
-    // 滚动节流处理
-    const throttle = (method, delay) => {
-      let previous;
-      let timer = null;
-      const now = new Date();
-      const interval = delay - (+now - previous);
-      const args = arguments;
-      if (interval <= 0) {
-        method.apply(self, ...args);
-        previous = new Date();
-      } else if (!timer) {
-        timer = setTimeout(() => {
-          clearTimeout(timer);
-          timer = null;
-          method(...args);
-          previous = new Date();
-        }, interval);
-      }
-    };
+    const listenScroll = throttle(() => {
+      handleScroll();
+    }, 100);
     // 获取元素到浏览器边缘的距离
     const getOffset = (element) => {
       const rect = element.value.getBoundingClientRect();
