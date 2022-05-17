@@ -56,5 +56,16 @@ export const enum NODE_ATTRIBUTES {
   IS_MATCH = '__is_match',
   IS_NULL = '__IS_NULL',
   IS_CACHED = '__is_cached',
-  IS_ASYNC = '__is_async'
+  IS_ASYNC = '__is_async',
+  IS_LOADING = '__is_loading'
 }
+
+export const NODE_SOURCE_ATTRS = {
+  [NODE_ATTRIBUTES.IS_OPENED]: 'isOpen',
+  [NODE_ATTRIBUTES.IS_SELECTED]: 'selected',
+  [NODE_ATTRIBUTES.IS_MATCH]: 'isMatch',
+  [NODE_ATTRIBUTES.HAS_CHILD]: 'hasChild',
+  [NODE_ATTRIBUTES.IS_CHECKED]: 'checked',
+  [NODE_ATTRIBUTES.IS_ASYNC]: 'async',
+  [NODE_ATTRIBUTES.IS_LOADING]: 'loading',
+};

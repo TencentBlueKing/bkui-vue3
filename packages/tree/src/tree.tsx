@@ -49,7 +49,7 @@ export default defineComponent({
   props: treeProps,
   emits: TreeEmitEventsType,
   setup(props, ctx) {
-    const { flatData, schemaValues, onSelected } = useTreeInit(props);
+    const { flatData, schemaValues, onSelected, registerNextLoop } = useTreeInit(props);
     const {
       setNodeAttr,
       checkNodeIsOpen,
@@ -60,7 +60,8 @@ export default defineComponent({
       isNodeChecked,
       isNodeMatched,
       hasChildNode,
-    } = useNodeAttribute(flatData);
+    } = useNodeAttribute(flatData, props);
+
     const { searchFn, isSearchActive, refSearch, openResultNode, isTreeUI, isSearchDisabled } = useSearch(props);
     if (!isSearchDisabled) {
       watch([refSearch], () => {
@@ -98,7 +99,7 @@ export default defineComponent({
       setNodeAction,
       setSelect,
       asyncNodeClick,
-    } = useNodeAction(props, ctx, flatData, renderData, schemaValues);
+    } = useNodeAction(props, ctx, flatData, renderData, schemaValues, { registerNextLoop });
 
     /**
      * 设置指定节点是否选中
