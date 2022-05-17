@@ -47,6 +47,7 @@ export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
     isNodeOpened,
     isNodeLoading,
     resolveScopedSlotParam,
+    extendNodeAttr,
   } = useNodeAttribute(flatData, props);
 
   const { registerNextLoop } = initOption;
@@ -84,7 +85,7 @@ export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
     return null;
   };
 
-  const getLoadingIcon = (item: any) => (ctx.slots.nodeLoading?.(resolveScopedSlotParam(item)) ?? isNodeLoading(item) ? <Spinner></Spinner> : '');
+  const getLoadingIcon = (item: any) => (ctx.slots.nodeLoading?.(extendNodeAttr(item)) ?? isNodeLoading(item) ? <Spinner></Spinner> : '');
 
 
   /**
@@ -94,7 +95,7 @@ export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
 */
   const getActionIcon = (item: any) => {
     if (ctx.slots.nodeAction) {
-      return ctx.slots.nodeAction(resolveScopedSlotParam(item));
+      return ctx.slots.nodeAction(extendNodeAttr(item));
     }
 
     let prefixFnVal = null;
@@ -104,7 +105,7 @@ export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
     }
 
     if (typeof props.prefixIcon === 'function') {
-      prefixFnVal = props.prefixIcon(resolveScopedSlotParam(item), 'node_action');
+      prefixFnVal = props.prefixIcon(extendNodeAttr(item), 'node_action');
       if (prefixFnVal !== 'default') {
         return renderPrefixVal(prefixFnVal);
       }
@@ -126,13 +127,13 @@ export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
 */
   const getNodePrefixIcon = (item: any) => {
     if (ctx.slots.nodeType) {
-      return ctx.slots.nodeType(resolveScopedSlotParam(item));
+      return ctx.slots.nodeType(extendNodeAttr(item));
     }
 
     let prefixFnVal = null;
 
     if (typeof props.prefixIcon === 'function') {
-      prefixFnVal = props.prefixIcon(resolveScopedSlotParam(item), 'node_type');
+      prefixFnVal = props.prefixIcon(extendNodeAttr(item), 'node_type');
 
       if (prefixFnVal !== 'default') {
         return renderPrefixVal(prefixFnVal);
@@ -304,7 +305,7 @@ export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
       hanldeTreeNodeClick(item, e);
     }
 
-    ctx.emit(EVENTS.NODE_CLICK, resolveScopedSlotParam(item), getSchemaVal(item[NODE_ATTRIBUTES.UUID]), e);
+    ctx.emit(EVENTS.NODE_CLICK, item, resolveScopedSlotParam(item), getSchemaVal(item[NODE_ATTRIBUTES.UUID]), e);
   };
 
   /**
@@ -374,11 +375,11 @@ export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
         ]
       }
       <span class={ resolveClassName('node-text') }>{
-        ctx.slots.node?.(resolveScopedSlotParam(item))
+        ctx.slots.node?.(extendNodeAttr(item))
         ?? [getLabel(item, props)]
       }</span>
       {
-        ctx.slots.nodeAppend?.(resolveScopedSlotParam(item))
+        ctx.slots.nodeAppend?.(extendNodeAttr(item))
       }
     </span>
     {
