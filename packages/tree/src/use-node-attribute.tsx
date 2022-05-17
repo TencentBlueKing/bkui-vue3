@@ -72,6 +72,14 @@ export default (flatData, props?: TreePropTypes) => {
   const isNodeChecked = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.IS_CHECKED);
   const getNodeParentId = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.PARENT_ID);
   const getNodeParentIdById = (id: string) => getNodeAttr({ [NODE_ATTRIBUTES.UUID]: id }, NODE_ATTRIBUTES.PARENT_ID);
+  const isNodeLoading = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.IS_LOADING);
+
+  const setTreeNodeLoading = (node: any, value: boolean) => {
+    setNodeAttr(node, NODE_ATTRIBUTES.IS_LOADING, value);
+    if (!props.syncAction) {
+      updateTreeNode(getNodePath(node), props.data, props.children, NODE_ATTRIBUTES.IS_LOADING, value);
+    }
+  };
 
   const deleteNodeSchema = (id: string) => (flatData.schema as Map<string, any>).delete(id);
 
@@ -159,10 +167,12 @@ export default (flatData, props?: TreePropTypes) => {
     isItemOpen,
     isNodeChecked,
     isNodeMatched,
+    isNodeLoading,
     checkNodeIsOpen,
     getSourceNodeByPath,
     getSourceNodeByUID,
     deleteNodeSchema,
     resolveScopedSlotParam,
+    setTreeNodeLoading,
   };
 };

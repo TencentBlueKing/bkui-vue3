@@ -31,7 +31,9 @@ export default (props, flatData) => {
     setNodeAttr,
     getNodePath,
     getNodeAttr,
+    isNodeOpened,
     resolveScopedSlotParam,
+    setTreeNodeLoading,
   } = useNodeAttribute(flatData, props);
 
   /**
@@ -54,27 +56,31 @@ export default (props, flatData) => {
     const { callback = null, cache = true } = props.async || {};
     /** 如果是异步请求加载 */
     if (typeof callback === 'function' && getNodeAttr(item, NODE_ATTRIBUTES.IS_ASYNC) !== false) {
+      const isAsyncInit = getNodeAttr(item, NODE_ATTRIBUTES.IS_ASYNC_INIT);
       /** 用于注释当前节点是否已经初始化过 */
       setNodeAttr(item, NODE_ATTRIBUTES.IS_ASYNC_INIT, true);
-      if ((cache && !getNodeAttr(item, NODE_ATTRIBUTES.IS_CACHED)) || !cache) {
+      if (!getNodeAttr(item, NODE_ATTRIBUTES.IS_CACHED)) {
         setNodeAttr(item, NODE_ATTRIBUTES.IS_CACHED, cache);
+        if (isNodeOpened(item) && isAsyncInit) {
+          return Promise.resolve(true);
+        }
 
         const dataAttr = resolveScopedSlotParam(item);
         const callbackResult = callback(item, (resp: any) => setNodeRemoteLoad(resp, item), dataAttr);
         if (typeof callbackResult === 'object' && callbackResult !== null) {
-          setNodeAttr(item, NODE_ATTRIBUTES.IS_LOADING, true);
-          if (Object.prototype.hasOwnProperty.call(callbackResult, 'then')) {
+          setTreeNodeLoading(item, true);
+          if (callbackResult instanceof Promise) {
             return Promise.resolve(callbackResult
               .then((resp: any) => setNodeRemoteLoad(resp, item))
               .catch((err: any) => console.error('load remote data error:', err))
               .finally(() => {
-                setNodeAttr(item, NODE_ATTRIBUTES.IS_LOADING, false);
+                setTreeNodeLoading(item, false);
                 setNodeAttr(item, NODE_ATTRIBUTES.IS_CACHED, true);
               }));
           }
 
           setNodeRemoteLoad(callbackResult, item);
-          setNodeAttr(item, NODE_ATTRIBUTES.IS_LOADING, false);
+          setTreeNodeLoading(item, false);
           return Promise.resolve(true);
         }
       }

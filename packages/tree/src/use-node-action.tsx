@@ -32,7 +32,7 @@ import { EVENTS, NODE_ATTRIBUTES } from './constant';
 import useNodeAsync from './use-node-async';
 import useNodeAttribute from './use-node-attribute';
 import { getLabel, getNodeItemClass, getNodeItemStyle, getNodeRowClass, resolveNodeItem } from './util';
-export default (props, ctx, flatData, renderData, schemaValues) => {
+export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
   // const checkedNodes = [];
   let selectedNodeId = null;
   const {
@@ -45,8 +45,11 @@ export default (props, ctx, flatData, renderData, schemaValues) => {
     hasChildNode,
     isItemOpen,
     isNodeOpened,
+    isNodeLoading,
     resolveScopedSlotParam,
   } = useNodeAttribute(flatData, props);
+
+  const { registerNextLoop } = initOption;
 
   const { asyncNodeClick, deepAutoOpen } = useNodeAsync(props, flatData);
 
@@ -81,7 +84,7 @@ export default (props, ctx, flatData, renderData, schemaValues) => {
     return null;
   };
 
-  const getLoadingIcon = (item: any) => (ctx.slots.nodeLoading?.(resolveScopedSlotParam(item)) ?? item.loading ? <Spinner></Spinner> : '');
+  const getLoadingIcon = (item: any) => (ctx.slots.nodeLoading?.(resolveScopedSlotParam(item)) ?? isNodeLoading(item) ? <Spinner></Spinner> : '');
 
 
   /**
@@ -96,7 +99,7 @@ export default (props, ctx, flatData, renderData, schemaValues) => {
 
     let prefixFnVal = null;
 
-    if (getNodeAttr(item, NODE_ATTRIBUTES.IS_LOADING)) {
+    if (isNodeLoading(item)) {
       return getLoadingIcon(item);
     }
 
@@ -155,8 +158,7 @@ export default (props, ctx, flatData, renderData, schemaValues) => {
 
     if (fireEmit) {
       const emitEvent = isItemOpen(item) ? EVENTS.NODE_EXPAND : EVENTS.NODE_COLLAPSE;
-      const emitResult = ctx.emit(emitEvent, resolveScopedSlotParam(item), getSchemaVal(item[NODE_ATTRIBUTES.UUID]), e);
-      console.log('emitResult', emitResult);
+      ctx.emit(emitEvent, resolveScopedSlotParam(item), getSchemaVal(item[NODE_ATTRIBUTES.UUID]), e);
     }
 
     /**
@@ -220,9 +222,17 @@ export default (props, ctx, flatData, renderData, schemaValues) => {
    * @param item
    */
   const hanldeTreeNodeClick = (item: any, e: MouseEvent) => {
+    const isOpen = isNodeOpened(item);
     /** 如果是异步请求加载 */
     asyncNodeClick(item).finally(() => {
-      setNodeOpened(item, null, e);
+      if (getNodeAttr(item, NODE_ATTRIBUTES.IS_LOADING)) {
+        registerNextLoop('setNodeOpenedAfterLoading', {
+          type: 'once',
+          fn: () => setNodeOpened(item, !isOpen, e),
+        });
+      } else {
+        setNodeOpened(item, !isOpen, e);
+      }
     });
   };
 

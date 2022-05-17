@@ -50,7 +50,7 @@ export default defineComponent({
   emits: [EVENTS.NODE_CLICK, EVENTS.NODE_COLLAPSE, EVENTS.NODE_EXPAND],
 
   setup(props, ctx) {
-    const { flatData, schemaValues, onSelected } = useTreeInit(props);
+    const { flatData, schemaValues, onSelected, registerNextLoop } = useTreeInit(props);
     const {
       setNodeAttr,
       checkNodeIsOpen,
@@ -100,7 +100,7 @@ export default defineComponent({
       setNodeAction,
       setSelect,
       asyncNodeClick,
-    } = useNodeAction(props, ctx, flatData, renderData, schemaValues);
+    } = useNodeAction(props, ctx, flatData, renderData, schemaValues, { registerNextLoop });
 
     /**
      * 设置指定节点是否选中
