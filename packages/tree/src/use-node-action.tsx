@@ -32,7 +32,7 @@ import { EVENTS, NODE_ATTRIBUTES } from './constant';
 import useNodeAsync from './use-node-async';
 import useNodeAttribute from './use-node-attribute';
 import { getLabel, getNodeItemClass, getNodeItemStyle, getNodeRowClass, resolveNodeItem } from './util';
-export default (props, ctx, flatData, renderData, schemaValues) => {
+export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
   // const checkedNodes = [];
   let selectedNodeId = null;
   const {
@@ -45,9 +45,11 @@ export default (props, ctx, flatData, renderData, schemaValues) => {
     hasChildNode,
     isItemOpen,
     isNodeOpened,
-    isNodeChecked,
-    isNodeMatched,
-  } = useNodeAttribute(flatData);
+    isNodeLoading,
+    resolveScopedSlotParam,
+  } = useNodeAttribute(flatData, props);
+
+  const { registerNextLoop } = initOption;
 
   const { asyncNodeClick, deepAutoOpen } = useNodeAsync(props, flatData);
 
@@ -82,6 +84,9 @@ export default (props, ctx, flatData, renderData, schemaValues) => {
     return null;
   };
 
+  const getLoadingIcon = (item: any) => (ctx.slots.nodeLoading?.(resolveScopedSlotParam(item)) ?? isNodeLoading(item) ? <Spinner></Spinner> : '');
+
+
   /**
 * 根据节点状态获取节点操作Icon
 * @param item
@@ -94,6 +99,10 @@ export default (props, ctx, flatData, renderData, schemaValues) => {
 
     let prefixFnVal = null;
 
+    if (isNodeLoading(item)) {
+      return getLoadingIcon(item);
+    }
+
     if (typeof props.prefixIcon === 'function') {
       prefixFnVal = props.prefixIcon(resolveScopedSlotParam(item), 'node_action');
       if (prefixFnVal !== 'default') {
@@ -102,7 +111,7 @@ export default (props, ctx, flatData, renderData, schemaValues) => {
     }
 
     if (prefixFnVal === 'default' || (typeof props.prefixIcon === 'boolean' && props.prefixIcon)) {
-      if (hasChildNode(item) || item.async) {
+      if (hasChildNode(item) || item.async || !props.autoCheckChildren) {
         return isItemOpen(item) ? <DownShape /> : <RightShape />;
       }
     }
@@ -137,7 +146,6 @@ export default (props, ctx, flatData, renderData, schemaValues) => {
     return null;
   };
 
-  const getLoadingIcon = (item: any) => (ctx.slots.nodeLoading?.(resolveScopedSlotParam(item)) ?? item.loading ? <Spinner></Spinner> : '');
 
   /**
 * 设置指定节点是否展开
@@ -214,9 +222,18 @@ export default (props, ctx, flatData, renderData, schemaValues) => {
    * @param item
    */
   const hanldeTreeNodeClick = (item: any, e: MouseEvent) => {
+    const isOpen = isNodeOpened(item);
     /** 如果是异步请求加载 */
-    asyncNodeClick(item);
-    setNodeOpened(item, null, e);
+    asyncNodeClick(item).finally(() => {
+      if (getNodeAttr(item, NODE_ATTRIBUTES.IS_LOADING)) {
+        registerNextLoop('setNodeOpenedAfterLoading', {
+          type: 'once',
+          fn: () => setNodeOpened(item, !isOpen, e),
+        });
+      } else {
+        setNodeOpened(item, !isOpen, e);
+      }
+    });
   };
 
   /**
@@ -287,15 +304,6 @@ export default (props, ctx, flatData, renderData, schemaValues) => {
       hanldeTreeNodeClick(item, e);
     }
 
-    // if (!checkedNodes.includes(item[NODE_ATTRIBUTES.UUID])) {
-    //   checkedNodes.forEach((__uuid: string) => setNodeAttr({ __uuid }, NODE_ATTRIBUTES.IS_SELECTED, false));
-    //   checkedNodes.length = 0;
-    //   setNodeAttr(item, NODE_ATTRIBUTES.IS_SELECTED, true);
-    //   checkedNodes.push(item[NODE_ATTRIBUTES.UUID]);
-    //   if (!isNodeOpened(item)) {
-    //     hanldeTreeNodeClick(item, e);
-    //   }
-    // }
     ctx.emit(EVENTS.NODE_CLICK, resolveScopedSlotParam(item), getSchemaVal(item[NODE_ATTRIBUTES.UUID]), e);
   };
 
@@ -350,20 +358,6 @@ export default (props, ctx, flatData, renderData, schemaValues) => {
       .map((index: number) => <span class="node-virtual-line" style={ getNodeLineStyle(maxDeep - index) }></span>);
   };
 
-  /**
-   * 处理scoped slot 透传数据
-   * @param item 当前节点数据
-   * @returns
-   */
-  const resolveScopedSlotParam = (item: any) => ({
-    ...item,
-    hasChildNode: hasChildNode(item),
-    isMatched: isNodeMatched(item),
-    isChecked: isNodeChecked(item),
-    isOpened: isNodeOpened(item),
-    isRoot: isRootNode(item),
-  });
-
   const renderTreeNode = (item: any) => <div data-tree-node={getNodeId(item)}
     class={ getNodeRowClass(item, flatData.schema) }>
   <div class={getNodeItemClass(item, flatData.schema, props) }
@@ -377,7 +371,6 @@ export default (props, ctx, flatData, renderData, schemaValues) => {
       {
         [
           getNodePrefixIcon(item),
-          getLoadingIcon(item),
         ]
       }
       <span class={ resolveClassName('node-text') }>{
