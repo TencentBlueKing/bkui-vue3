@@ -158,7 +158,7 @@ export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
 
     if (fireEmit) {
       const emitEvent = isItemOpen(item) ? EVENTS.NODE_EXPAND : EVENTS.NODE_COLLAPSE;
-      ctx.emit(emitEvent, resolveScopedSlotParam(item), getSchemaVal(item[NODE_ATTRIBUTES.UUID]), e);
+      ctx.emit(emitEvent, item, resolveScopedSlotParam(item), getSchemaVal(item[NODE_ATTRIBUTES.UUID]), e);
     }
 
     /**

@@ -140,7 +140,6 @@ export default (flatData, props?: TreePropTypes) => {
    * @returns
    */
   const resolveScopedSlotParam = (item: any) => ({
-    ...item,
     loading: getNodeAttr(item, NODE_ATTRIBUTES.IS_LOADING),
     hasChildNode: hasChildNode(item),
     isMatched: isNodeMatched(item),
