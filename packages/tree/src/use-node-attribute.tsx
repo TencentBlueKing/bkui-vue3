@@ -136,7 +136,7 @@ export default (flatData, props?: TreePropTypes) => {
     hasChildNode: hasChildNode(item),
     isMatched: isNodeMatched(item),
     isChecked: isNodeChecked(item),
-    isOpened: isNodeOpened(item),
+    isOpen: isNodeOpened(item),
     isRoot: isRootNode(item),
     fullPath: getNodeAttr(item, NODE_ATTRIBUTES.PATH),
     uuid: getNodeId(item),
