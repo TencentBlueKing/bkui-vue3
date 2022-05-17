@@ -24,7 +24,7 @@
 * IN THE SOFTWARE.
 */
 
-import { NODE_ATTRIBUTES } from './constant';
+import { NODE_ATTRIBUTES, NODE_SOURCE_ATTRS } from './constant';
 import { TreePropTypes } from './props';
 
 export default (flatData, props?: TreePropTypes) => {
@@ -132,12 +132,12 @@ export default (flatData, props?: TreePropTypes) => {
    * @returns
    */
   const resolveScopedSlotParam = (item: any) => ({
-    loading: getNodeAttr(item, NODE_ATTRIBUTES.IS_LOADING),
-    hasChildNode: hasChildNode(item),
-    isMatched: isNodeMatched(item),
-    isChecked: isNodeChecked(item),
-    isOpen: isNodeOpened(item),
-    isRoot: isRootNode(item),
+    [NODE_SOURCE_ATTRS[NODE_ATTRIBUTES.IS_LOADING]]: getNodeAttr(item, NODE_ATTRIBUTES.IS_LOADING),
+    [NODE_SOURCE_ATTRS[NODE_ATTRIBUTES.HAS_CHILD]]: hasChildNode(item),
+    [NODE_SOURCE_ATTRS[NODE_ATTRIBUTES.IS_MATCH]]: isNodeMatched(item),
+    [NODE_SOURCE_ATTRS[NODE_ATTRIBUTES.IS_CHECKED]]: isNodeChecked(item),
+    [NODE_SOURCE_ATTRS[NODE_ATTRIBUTES.IS_OPEN]]: isNodeOpened(item),
+    [NODE_SOURCE_ATTRS[NODE_ATTRIBUTES.IS_ROOT]]: isRootNode(item),
     fullPath: getNodeAttr(item, NODE_ATTRIBUTES.PATH),
     uuid: getNodeId(item),
     parentId: getNodeAttr(item, NODE_ATTRIBUTES.PARENT_ID),
