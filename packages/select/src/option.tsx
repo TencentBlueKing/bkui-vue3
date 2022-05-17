@@ -42,8 +42,8 @@ import { optionGroupKey, selectKey } from './common';
 export default defineComponent({
   name: 'Option',
   props: {
-    value: PropTypes.oneOfType([String, Number, Boolean]),
-    label: PropTypes.oneOfType([String, Number]),
+    value: PropTypes.any,
+    label: PropTypes.string,
     disabled: PropTypes.bool.def(false),
   },
   setup(props) {
@@ -53,11 +53,11 @@ export default defineComponent({
       visible: true,
     });
 
-    const { disabled } = toRefs(props);
+    const { disabled, value } = toRefs(props);
     const select = inject(selectKey, null);
     const group = inject(optionGroupKey, null);
-    const selected = computed<boolean>(() => select.selectedOptions.has(proxy));
-    const multiple = computed<boolean>(() => select?.props.multiple);
+    const selected = computed<boolean>(() => select?.selected?.some(data => data.value === value.value));
+    const multiple = computed<boolean>(() => select?.multiple);
 
     const handleOptionClick = () => {
       if (disabled.value) return;

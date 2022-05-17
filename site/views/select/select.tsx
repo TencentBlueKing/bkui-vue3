@@ -32,12 +32,13 @@ import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import { IPropsTableItem } from '../../typings';
 
+import SelectAllowCreate from './select-allow-create.vue';
 import SelectBaseDemo from './select-base-demo.vue';
 import SelectGroupDemo from './select-group-demo.vue';
 import SelectMultiDemo from './select-multi-demo.vue';
 import SelectScrollLoadingDemo from './select-scrollloading-demo.vue';
 import SelectSearchDemo from './select-search-demo.vue';
-import SelectStyleDemo from './select-style-demo.vue';
+import SelectStyleDemo from './select-style-demo.vue';;
 
 const propsJson: IPropsTableItem[] = Object.keys(BkSelect.props).map(prop => ({
   name: prop,
@@ -92,6 +93,13 @@ export default defineComponent({
           componentName="select"
           demoName="select-scrollloading-demo">
             <SelectScrollLoadingDemo />
+        </DemoBox>
+        <DemoBox
+          title="自定义创建"
+          desc="自定义创建选项"
+          componentName="select"
+          demoName="select-allow-create">
+            <SelectAllowCreate />
         </DemoBox>
         <PropsBox propsData={propsJson} subtitle="" />
       </div>
