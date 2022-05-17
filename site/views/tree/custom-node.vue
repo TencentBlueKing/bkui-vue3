@@ -23,9 +23,9 @@
       >
         <template #nodeAction="item">
           <span
-            :style="`color: ${item.isOpened ? '#FF9C01;' : '#EA3636;'}`"
+            :style="`color: ${item.__attr__.isOpened ? '#FF9C01;' : '#EA3636;'}`"
           >
-            {{ item.hasChildNode ? (item.isOpened ? '--' : '+') : '*' }}
+            {{ item.__attr__.hasChildNode ? (item.__attr__.isOpened ? '--' : '+') : '*' }}
           </span>
         </template>
       </bk-tree>
@@ -40,7 +40,7 @@
       >
         <template #nodeType="item">
           <span style="padding: 0 5px;">
-            {{ item.hasChildNode ? 'P' : 'C' }}
+            {{ item.__attr__.hasChildNode ? 'P' : 'C' }}
           </span>
         </template>
       </bk-tree>

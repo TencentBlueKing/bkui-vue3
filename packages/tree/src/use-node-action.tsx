@@ -155,11 +155,11 @@ export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
 */
   const setNodeOpened = (item: any, isOpen = null, e: MouseEvent = null, fireEmit = true) => {
     const newVal = isOpen === null ? !isItemOpen(item) : !!isOpen;
-    setNodeAttr(item, NODE_ATTRIBUTES.IS_OPENED, newVal);
+    setNodeAttr(item, NODE_ATTRIBUTES.IS_OPEN, newVal);
 
     if (fireEmit) {
-      const emitEvent = isItemOpen(item) ? EVENTS.NODE_EXPAND : EVENTS.NODE_COLLAPSE;
-      ctx.emit(emitEvent, item, resolveScopedSlotParam(item), getSchemaVal(item[NODE_ATTRIBUTES.UUID]), e);
+      const emitEvent: string = isItemOpen(item) ? EVENTS.NODE_EXPAND : EVENTS.NODE_COLLAPSE;
+      ctx.emit(emitEvent, [item, resolveScopedSlotParam(item), getSchemaVal(item[NODE_ATTRIBUTES.UUID]), e]);
     }
 
     /**
@@ -171,7 +171,7 @@ export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
     }
 
     renderData.value.filter(node => String.prototype.startsWith.call(getNodePath(node), getNodePath(item)))
-      .forEach(filterNode => setNodeAttr(filterNode, NODE_ATTRIBUTES.IS_OPENED, newVal));
+      .forEach(filterNode => setNodeAttr(filterNode, NODE_ATTRIBUTES.IS_OPEN, newVal));
   };
 
   /**
@@ -205,7 +205,7 @@ export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
 
     if (autoOpenParents) {
       if (isOpen) {
-        setNodeAction(resolvedItem, NODE_ATTRIBUTES.IS_OPENED, isOpen);
+        setNodeAction(resolvedItem, NODE_ATTRIBUTES.IS_OPEN, isOpen);
         if (!isRootNode(resolvedItem)) {
           const parentId = getNodeAttr(resolvedItem, NODE_ATTRIBUTES.PARENT_ID);
           setOpen(parentId, true, true);
@@ -214,7 +214,7 @@ export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
         setNodeOpened(resolvedItem, false, null, false);
       }
     } else {
-      setNodeAction(resolvedItem, NODE_ATTRIBUTES.IS_OPENED, isOpen);
+      setNodeAction(resolvedItem, NODE_ATTRIBUTES.IS_OPEN, isOpen);
     }
   };
 
@@ -224,6 +224,11 @@ export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
    */
   const hanldeTreeNodeClick = (item: any, e: MouseEvent) => {
     const isOpen = isNodeOpened(item);
+    if (isOpen) {
+      setNodeOpened(item, false, e);
+      return;
+    }
+
     /** 如果是异步请求加载 */
     asyncNodeClick(item).finally(() => {
       if (getNodeAttr(item, NODE_ATTRIBUTES.IS_LOADING)) {
@@ -305,7 +310,8 @@ export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
       hanldeTreeNodeClick(item, e);
     }
 
-    ctx.emit(EVENTS.NODE_CLICK, item, resolveScopedSlotParam(item), getSchemaVal(item[NODE_ATTRIBUTES.UUID]), e);
+    const eventName: string = EVENTS.NODE_CLICK;
+    ctx.emit(eventName, item, resolveScopedSlotParam(item), getSchemaVal(item[NODE_ATTRIBUTES.UUID]), e);
   };
 
   /**
