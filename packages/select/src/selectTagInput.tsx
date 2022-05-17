@@ -1,0 +1,111 @@
+/*
+* Tencent is pleased to support the open source community by making
+* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+*
+* Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+*
+* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+*
+* License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+*
+* ---------------------------------------------------
+* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+* the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+* THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+* IN THE SOFTWARE.
+*/
+import { defineComponent, ref, toRefs, watch } from 'vue';
+import { PropType } from 'vue-types/dist/types';
+
+import { PropTypes } from '@bkui-vue/shared';
+import Tag from '@bkui-vue/tag';
+
+import { ISelectedData } from './type';
+
+export default defineComponent({
+  name: 'SelectTagInput',
+  props: {
+    selected: {
+      type: Array as PropType<ISelectedData[]>,
+      default: () => [],
+    },
+    tagTheme: PropTypes.theme(['success', 'info', 'warning', 'danger']).def(''),
+    placeholder: PropTypes.string.def(''),
+    filterable: PropTypes.bool.def(false), // 是否支持搜索
+    allowCreate: PropTypes.bool.def(false),
+    modelValue: PropTypes.any,
+  },
+  emits: ['update:modelValue', 'remove', 'focus', 'enter'],
+  setup(props, { emit }) {
+    const { modelValue } = toRefs(props);
+    const value = ref(modelValue.value);
+    const inputRef = ref<HTMLElement>();
+
+    watch(modelValue, () => {
+      value.value = modelValue.value;
+    });
+    const handleRemoveTag = (data: ISelectedData) => {
+      emit('remove', data);
+    };
+    const handleFocus = () => {
+      emit('focus');
+    };
+    const focus = () => {
+      inputRef.value?.focus();
+    };
+    const handleInput = (e) => {
+      emit('update:modelValue', e.target.value);
+    };
+    const handleKeyup = (e) => {
+      if (e.code === 'Enter') {
+        emit('enter', e.target.value);
+      }
+    };
+    return {
+      value,
+      inputRef,
+      handleRemoveTag,
+      handleFocus,
+      focus,
+      handleInput,
+      handleKeyup,
+    };
+  },
+  render() {
+    return (
+      <div class="bk-select-tag">
+        {
+          this.selected.map(data => (
+              <Tag
+                closable
+                theme={this.tagTheme}
+                onClose={() => this.handleRemoveTag(data)}>
+                {data.label}
+              </Tag>
+          ))
+        }
+         <input
+            class="bk-select-tag-input"
+            ref="inputRef"
+            type="text"
+            placeholder={!this.selected.length ? this.placeholder : ''}
+            readonly={!this.filterable}
+            v-model={this.value}
+            onFocus={this.handleFocus}
+            onInput={this.handleInput}
+            onKeyup={this.handleKeyup}/>
+
+        {this.$slots?.suffix?.()}
+      </div>
+    );
+  },
+});

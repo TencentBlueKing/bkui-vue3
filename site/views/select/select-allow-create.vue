@@ -3,8 +3,10 @@
     v-model="selectedValue"
     class="bk-select"
     filterable
-    :scroll-loading="scrollLoading"
-    @scroll-end="handleScrollEnd"
+    multiple
+    allow-create
+    multiple-mode="tag"
+    show-select-all
   >
     <bk-option
       v-for="(item, index) in datasource"
@@ -49,17 +51,6 @@
     },
   ]);
   const selectedValue = ref(false);
-  const scrollLoading = ref(false);
-  const handleScrollEnd = () => {
-    scrollLoading.value = true;
-    setTimeout(() => {
-      datasource.value.push({
-        value: new Date().getTime(),
-        label: `滚动加载${new Date().getTime()}`,
-      });
-      scrollLoading.value = false;
-    }, 3000);
-  };
 </script>
 <style scoped>
 .bk-select {

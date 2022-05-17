@@ -84,12 +84,17 @@ export function useDebouncedRef<T>(value, delay = 200) {
       track();
       return innerValue;
     },
-    set(newValue) {
+    set(newValue: any) {
       clearTimeout(timeout);
-      timeout = setTimeout(() => {
+      if (newValue === undefined || newValue === '') {
         innerValue = newValue;
         trigger();
-      }, delay);
+      } else {
+        timeout = setTimeout(() => {
+          innerValue = newValue;
+          trigger();
+        }, delay);
+      }
     },
   }));
 }
