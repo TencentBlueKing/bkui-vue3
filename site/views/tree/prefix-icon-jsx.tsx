@@ -35,10 +35,11 @@ export default defineComponent({
   },
   methods: {
     getPrefixIcon(params, renderType) {
-      const {
+      const { __attr__: {
         hasChildNode,
         isOpened,
         isRoot,
+      },
       } = params;
       const isAction = renderType === 'node_action';
       const childeFont = hasChildNode ? '+' : '*';

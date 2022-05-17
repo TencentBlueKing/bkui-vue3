@@ -29,7 +29,7 @@ export enum EVENTS {
   NODE_COLLAPSE = 'nodeCollapse',
   NODE_EXPAND = 'nodeExpand'
 }
-const empty = () => {};
+const empty = (_item, _node, _schema, _event) => true;
 export const TreeEmitEventsType = {
   [EVENTS.NODE_CLICK]: empty,
   [EVENTS.NODE_COLLAPSE]: empty,
@@ -49,7 +49,7 @@ export const enum NODE_ATTRIBUTES {
   PATH= '__path',
   IS_ROOT= '__is_root',
   ORDER= '__order',
-  IS_OPENED= '__is_open',
+  IS_OPEN= '__is_open',
   IS_CHECKED='__is_checked',
   IS_SELECTED='__is_selected',
   IS_ASYNC_INIT = '__is_async_init',
@@ -62,7 +62,7 @@ export const enum NODE_ATTRIBUTES {
 }
 
 export const NODE_SOURCE_ATTRS = {
-  [NODE_ATTRIBUTES.IS_OPENED]: 'isOpen',
+  [NODE_ATTRIBUTES.IS_OPEN]: 'isOpen',
   [NODE_ATTRIBUTES.IS_SELECTED]: 'selected',
   [NODE_ATTRIBUTES.IS_MATCH]: 'isMatch',
   [NODE_ATTRIBUTES.HAS_CHILD]: 'hasChild',

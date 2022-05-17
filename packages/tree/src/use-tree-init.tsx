@@ -89,7 +89,7 @@ export default (props: TreePropTypes) => {
     }
 
     function isCachedTreeNodeOpened(uuid: string, node: any) {
-      return getCachedTreeNodeAttr(uuid, node, NODE_ATTRIBUTES.IS_OPENED, false);
+      return getCachedTreeNodeAttr(uuid, node, NODE_ATTRIBUTES.IS_OPEN, false);
     }
 
     function isCachedTreeNodeChecked(uuid: string, node: any) {
@@ -121,7 +121,7 @@ export default (props: TreePropTypes) => {
     }
 
     function validateIsOpenLoopFn(target: any) {
-      return !target[NODE_ATTRIBUTES.IS_OPENED];
+      return !target[NODE_ATTRIBUTES.IS_OPEN];
     }
 
     function flatten(array: Array<any>, depth = 0, parent = null, path = null) {
@@ -146,7 +146,7 @@ export default (props: TreePropTypes) => {
               [NODE_ATTRIBUTES.ORDER]: order,
               [NODE_ATTRIBUTES.IS_SELECTED]: props.selectable ? isCachedTreeNodeSelected(uuid, item) : false,
               [NODE_ATTRIBUTES.IS_MATCH]: isCachedTreeNodeMatch(uuid, item),
-              [NODE_ATTRIBUTES.IS_OPENED]: isCachedTreeNodeOpened(uuid, item),
+              [NODE_ATTRIBUTES.IS_OPEN]: isCachedTreeNodeOpened(uuid, item),
               [NODE_ATTRIBUTES.IS_CHECKED]: isCachedTreeNodeChecked(uuid, item),
               [NODE_ATTRIBUTES.IS_CACHED]: isCachedTreeNodeHasCached(uuid, item),
               [NODE_ATTRIBUTES.IS_ASYNC]: isCachedTreeNodeAsync(uuid, item),
@@ -165,8 +165,8 @@ export default (props: TreePropTypes) => {
              * 如果初始化发现当前属性为展开或者选中
              * 此时需要设置当前节点的所有父级节点都为展开状态
              */
-            if (attrs[NODE_ATTRIBUTES.IS_OPENED] || attrs[NODE_ATTRIBUTES.IS_SELECTED]) {
-              loopUpdateNodeAttr(parent, NODE_ATTRIBUTES.IS_OPENED, true, validateIsOpenLoopFn);
+            if (attrs[NODE_ATTRIBUTES.IS_OPEN]) {
+              loopUpdateNodeAttr(parent, NODE_ATTRIBUTES.IS_OPEN, true, validateIsOpenLoopFn);
             }
 
             if (Object.prototype.hasOwnProperty.call(item, children)) {
@@ -275,6 +275,7 @@ export default (props: TreePropTypes) => {
      * 监听组件配置Data改变
      */
   watch(() => [props.data], (newData) => {
+    console.log('watch data changed');
     const formatData = getFlatdata(props, newData, schemaValues.value);
     flatData.data = formatData[0] as Array<any>;
     flatData.schema = formatData[1] as any;
@@ -294,6 +295,7 @@ export default (props: TreePropTypes) => {
 
   if (props.selectable) {
     watch(() => props.selected, (newData) => {
+      console.log('watch selected changed');
       afterSelectWatch.length = 0;
       afterSelectEvents.forEach((event: () => void) => {
         Reflect.apply(event, this, [newData]);

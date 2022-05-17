@@ -24,9 +24,8 @@
 * IN THE SOFTWARE.
 */
 
-import { NODE_ATTRIBUTES, NODE_SOURCE_ATTRS } from './constant';
+import { NODE_ATTRIBUTES } from './constant';
 import { TreePropTypes } from './props';
-import { updateTreeNode } from './util';
 
 export default (flatData, props?: TreePropTypes) => {
   /**
@@ -52,10 +51,6 @@ export default (flatData, props?: TreePropTypes) => {
    * @returns
    */
   const setNodeAttr = (node: any, attr: string, val: any) => {
-    if (props.syncAction && NODE_SOURCE_ATTRS[attr] !== undefined) {
-      updateTreeNode(getNodePath(node), props.data, props.children, NODE_SOURCE_ATTRS[attr], val);
-    }
-
     (flatData.schema as Map<string, any>)
       .set(node[NODE_ATTRIBUTES.UUID], {
         ...getSchemaVal(node[NODE_ATTRIBUTES.UUID]),
@@ -66,7 +61,7 @@ export default (flatData, props?: TreePropTypes) => {
   const getNodePath = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.PATH);
   const getNodeId = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.UUID);
   const isRootNode = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.IS_ROOT);
-  const isNodeOpened = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.IS_OPENED);
+  const isNodeOpened = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.IS_OPEN);
   const hasChildNode = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.HAS_CHILD);
   const isNodeMatched = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.IS_MATCH);
   const isNodeChecked = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.IS_CHECKED);
@@ -76,9 +71,6 @@ export default (flatData, props?: TreePropTypes) => {
 
   const setTreeNodeLoading = (node: any, value: boolean) => {
     setNodeAttr(node, NODE_ATTRIBUTES.IS_LOADING, value);
-    if (!props.syncAction) {
-      updateTreeNode(getNodePath(node), props.data, props.children, NODE_ATTRIBUTES.IS_LOADING, value);
-    }
   };
 
   const deleteNodeSchema = (id: string) => (flatData.schema as Map<string, any>).delete(id);
@@ -94,7 +86,7 @@ export default (flatData, props?: TreePropTypes) => {
     }
 
     if (typeof item === 'string') {
-      return getSchemaVal(item)?.[NODE_ATTRIBUTES.IS_OPENED];
+      return getSchemaVal(item)?.[NODE_ATTRIBUTES.IS_OPEN];
     }
 
     return false;
