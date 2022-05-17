@@ -125,7 +125,7 @@ export default defineComponent({
           )
         }
         {
-          slots.default && <span class={`${btnClsPrefix}-text`}>{slots.default?.()}</span>
+          slots.default && !props.loading && <span class={`${btnClsPrefix}-text`}>{slots.default?.()}</span>
         }
       </button>
     );
