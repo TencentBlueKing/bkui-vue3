@@ -24,8 +24,9 @@
 * IN THE SOFTWARE.
 */
 
-import { NODE_ATTRIBUTES } from './constant';
+import { NODE_ATTRIBUTES, NODE_SOURCE_ATTRS } from './constant';
 import { TreePropTypes } from './props';
+import { updateTreeNode } from './util';
 
 export default (flatData, props?: TreePropTypes) => {
   /**
@@ -50,11 +51,17 @@ export default (flatData, props?: TreePropTypes) => {
    * @param val 属性值
    * @returns
    */
-  const setNodeAttr = (node: any, attr: string, val: any) => (flatData.schema as Map<string, any>)
-    .set(node[NODE_ATTRIBUTES.UUID], {
-      ...getSchemaVal(node[NODE_ATTRIBUTES.UUID]),
-      [attr]: val,
-    });
+  const setNodeAttr = (node: any, attr: string, val: any) => {
+    if (props.syncAction && NODE_SOURCE_ATTRS[attr] !== undefined) {
+      updateTreeNode(getNodePath(node), props.data, props.children, NODE_SOURCE_ATTRS[attr], val);
+    }
+
+    (flatData.schema as Map<string, any>)
+      .set(node[NODE_ATTRIBUTES.UUID], {
+        ...getSchemaVal(node[NODE_ATTRIBUTES.UUID]),
+        [attr]: val,
+      });
+  };
 
   const getNodePath = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.PATH);
   const getNodeId = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.UUID);
@@ -65,6 +72,14 @@ export default (flatData, props?: TreePropTypes) => {
   const isNodeChecked = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.IS_CHECKED);
   const getNodeParentId = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.PARENT_ID);
   const getNodeParentIdById = (id: string) => getNodeAttr({ [NODE_ATTRIBUTES.UUID]: id }, NODE_ATTRIBUTES.PARENT_ID);
+  const isNodeLoading = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.IS_LOADING);
+
+  const setTreeNodeLoading = (node: any, value: boolean) => {
+    setNodeAttr(node, NODE_ATTRIBUTES.IS_LOADING, value);
+    if (!props.syncAction) {
+      updateTreeNode(getNodePath(node), props.data, props.children, NODE_ATTRIBUTES.IS_LOADING, value);
+    }
+  };
 
   const deleteNodeSchema = (id: string) => (flatData.schema as Map<string, any>).delete(id);
 
@@ -119,6 +134,24 @@ export default (flatData, props?: TreePropTypes) => {
     return getSourceNodeByUID(getNodeParentIdById(uid));
   };
 
+  /**
+   * 处理scoped slot 透传数据
+   * @param item 当前节点数据
+   * @returns
+   */
+  const resolveScopedSlotParam = (item: any) => ({
+    ...item,
+    loading: getNodeAttr(item, NODE_ATTRIBUTES.IS_LOADING),
+    hasChildNode: hasChildNode(item),
+    isMatched: isNodeMatched(item),
+    isChecked: isNodeChecked(item),
+    isOpened: isNodeOpened(item),
+    isRoot: isRootNode(item),
+    fullPath: getNodeAttr(item, NODE_ATTRIBUTES.PATH),
+    uuid: getNodeId(item),
+    parentId: getNodeAttr(item, NODE_ATTRIBUTES.PARENT_ID),
+  });
+
   return {
     getSchemaVal,
     getNodeAttr,
@@ -134,9 +167,12 @@ export default (flatData, props?: TreePropTypes) => {
     isItemOpen,
     isNodeChecked,
     isNodeMatched,
+    isNodeLoading,
     checkNodeIsOpen,
     getSourceNodeByPath,
     getSourceNodeByUID,
     deleteNodeSchema,
+    resolveScopedSlotParam,
+    setTreeNodeLoading,
   };
 };
