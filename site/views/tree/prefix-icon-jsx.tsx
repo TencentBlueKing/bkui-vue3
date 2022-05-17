@@ -37,13 +37,13 @@ export default defineComponent({
     getPrefixIcon(params, renderType) {
       const { __attr__: {
         hasChildNode,
-        isOpened,
+        isOpen,
         isRoot,
       },
       } = params;
       const isAction = renderType === 'node_action';
       const childeFont = hasChildNode ? '+' : '*';
-      const openFont = isOpened ? '-' : childeFont;
+      const openFont = isOpen ? '-' : childeFont;
       const rootFont = isRoot ? 'R' : 'C';
       const fontIcon = !isAction ? rootFont : openFont;
       return  <span class="custom-node" style="font-size: 8px; text-align: center;">{fontIcon}</span>;

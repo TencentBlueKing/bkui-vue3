@@ -69,4 +69,5 @@ export const NODE_SOURCE_ATTRS = {
   [NODE_ATTRIBUTES.IS_CHECKED]: 'checked',
   [NODE_ATTRIBUTES.IS_ASYNC]: 'async',
   [NODE_ATTRIBUTES.IS_LOADING]: 'loading',
+  [NODE_ATTRIBUTES.IS_ROOT]: 'isRoot',
 };

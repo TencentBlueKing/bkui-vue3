@@ -23,9 +23,9 @@
       >
         <template #nodeAction="item">
           <span
-            :style="`color: ${item.__attr__.isOpened ? '#FF9C01;' : '#EA3636;'}`"
+            :style="`color: ${item.__attr__.isOpen ? '#FF9C01;' : '#EA3636;'}`"
           >
-            {{ item.__attr__.hasChildNode ? (item.__attr__.isOpened ? '--' : '+') : '*' }}
+            {{ item.__attr__.hasChildNode ? (item.__attr__.isOpen ? '--' : '+') : '*' }}
           </span>
         </template>
       </bk-tree>
