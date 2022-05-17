@@ -16,6 +16,7 @@
         children="children"
         :auto-check-children="false"
         sync-action
+        @nodeExpand="handleNodeExpand"
       />
     </div>
     <div class="cell">
@@ -54,6 +55,9 @@
       };
     },
     methods: {
+      handleNodeExpand(item, data, schema) {
+        console.log('handleNodeExpand', item, data, schema);
+      },
       getRemoteData(item, callback, schema) {
         const { isOpened, fullPath } = schema;
         const paths = fullPath.split('-');
@@ -63,7 +67,6 @@
         }, this.treeData);
         targetNode.loading = true;
         this.rootId = this.rootId + 100;
-        // this.selected = String(this.rootId + 3);
         !isOpened && setTimeout(
           () => {
             targetNode.children.push({
@@ -97,6 +100,8 @@
           },
           300,
         );
+
+        targetNode.isOpen = true;
       },
       getRemoteData2(_item, _callback, _schema) {
         this.rootId = this.rootId + Math.ceil(Math.random() * 1000);
