@@ -49,7 +49,7 @@ export default (props, flatData) => {
       return Promise.resolve(resp);
     }
 
-    return Promise.reject(resp);
+    return Promise.resolve(resp);
   };
 
   const asyncNodeClick = (item: any) => {
