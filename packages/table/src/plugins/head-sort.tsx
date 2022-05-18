@@ -56,6 +56,7 @@ export default defineComponent({
       sortType.value = type;
       if (props.column.sort === 'custom') {
         emit('change', null, type);
+        return;
       }
 
       const fieldName = props.column.field as string;

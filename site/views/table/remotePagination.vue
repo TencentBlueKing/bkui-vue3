@@ -8,6 +8,7 @@
       remote-pagination
       @page-value-change="handlePageValueChange"
       @page-limit-change="handlePageLimitChange"
+      @column-sort="handleColumnSort"
     />
   </div>
 </template>
@@ -52,6 +53,9 @@
       },
       handlePageLimitChange(limit) {
         this.pagination.limit - limit;
+      },
+      handleColumnSort(...args) {
+        console.log('sort', args);
       },
     },
   });
