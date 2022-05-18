@@ -54,6 +54,11 @@ export default defineComponent({
       e.preventDefault();
 
       sortType.value = type;
+      if (props.column.sort === 'custom') {
+        emit('change', null, type);
+        return;
+      }
+
       const fieldName = props.column.field as string;
       const getVal = (row: any) => getRowText(row, fieldName, props.column);
       const sortFn0 = (a: any, b: any) => {

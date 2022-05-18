@@ -196,12 +196,6 @@ export const treeProps = {
    * 如果需要自已控制，请设置为false
    */
   autoCheckChildren: PropTypes.bool.def(true),
-
-  /**
-   * 同步当前Tree的属性（isOpen 、selected...）到原数组
-   * 默认Tree操作不会修改原数组属性
-   */
-  syncAction: PropTypes.bool.def(false),
 };
 
 type AsyncOption = {

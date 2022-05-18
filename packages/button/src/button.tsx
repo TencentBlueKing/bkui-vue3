@@ -44,6 +44,7 @@ const buttonProps = {
   loadingMode: PropTypes.commonType(Object.values(BkLoadingMode)),
   outline: PropTypes.bool,
   text: PropTypes.bool,
+  circle: PropTypes.bool,
   nativeType: {
     type: String as IButtonNativeType,
   },
@@ -70,6 +71,7 @@ export default defineComponent({
         'is-disabled': props.disabled,
         'is-outline': props.outline,
         'is-text': isText.value,
+        'is-circle': props.circle,
         [`${btnClsPrefix}-${props.size}`]: props.size && btnSizes.includes(props.size),
         'no-slot': !showSlot,
       }, `${themeCls} ${btnClsPrefix} ${hoverTheme}`);
