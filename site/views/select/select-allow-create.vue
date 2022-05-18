@@ -41,8 +41,12 @@
       label: '骑车',
     },
     {
-      value: '',
+      value: 'dancing',
       label: '跳舞',
+    },
+    {
+      value: 'dancing2',
+      label: '跳舞2',
     },
     {
       value: {},

@@ -105,9 +105,10 @@ export default defineComponent({
     const inputRef = ref<HTMLElement>();
     const popoverRef = ref<any>();
     const selectTagInputRef = ref<SelectTagInputType>();
-    const options = ref<Set<OptionInstanceType>>(new Set());
-    const groups = ref<Set<GroupInstanceType>>(new Set());
+    const options = ref<Array<OptionInstanceType>>([]);
+    const groups = ref<Array<GroupInstanceType>>([]);
     const selected = ref<ISelectedData[]>([]);
+    const activeOptionValue = ref<any>(); // 当前悬浮的option
 
     // options对应的map结构（option组件的value不能相同）
     const optionsMap = computed(() => {
@@ -131,7 +132,7 @@ export default defineComponent({
     const selectedLabel = computed(() => selected.value.map(data => data.label));
     // 是否全选(todo: 优化)
     const isAllSelected = computed(() => {
-      const normalSelectedValues = [...options.value.values()].reduce<any[]>((pre, option) => {
+      const normalSelectedValues = options.value.reduce<any[]>((pre, option) => {
         if (!option.disabled) {
           pre.push(option.value);
         }
@@ -141,14 +142,11 @@ export default defineComponent({
         && normalSelectedValues.every(val => selected.value.some(data => data.value === val));
     });
     // 是否含有分组
-    const isGroup = computed(() => !!groups.value.size);
+    const isGroup = computed(() => !!groups.value.length);
     // options是否为空
-    const isOptionsEmpty = computed(() => !options.value.size);
+    const isOptionsEmpty = computed(() => !options.value.length);
     // 是否搜索为空
-    const isSearchEmpty = computed(() => {
-      const data = [...options.value.values()];
-      return data.length && data.every(option => !option.visible);
-    });
+    const isSearchEmpty = computed(() => options.value.length && options.value.every(option => !option.visible));
     // 是否远程搜索
     const isRemoteSearch = computed(() => filterable.value && typeof remoteMethod.value === 'function');
     // 是否显示select下拉内容
@@ -190,9 +188,20 @@ export default defineComponent({
         searchKey.value = '';
       } else {
         focus();
+        initActiveOptionValue();
       }
     });
 
+    // 初始化当前悬浮的option项
+    const initActiveOptionValue = () => {
+      const firstValue = selected.value[0]?.value;
+      const option = optionsMap.value.get(firstValue);
+      if (option && !option.disabled && option.visible) {
+        activeOptionValue.value = firstValue;
+      } else {
+        activeOptionValue.value = options.value.find(option => !option.disabled && option.visible)?.value;
+      }
+    };
     // 默认搜索方法
     const defaultSearchMethod = (value) => {
       if (!filterable.value) return;
@@ -202,7 +211,7 @@ export default defineComponent({
     };
     const { searchKey, searchLoading } = useRemoteSearch(isRemoteSearch.value
       ? remoteMethod.value
-      : defaultSearchMethod);
+      : defaultSearchMethod, initActiveOptionValue);
 
     // 派发change事件
     const emitChange = (val) => {
@@ -217,17 +226,23 @@ export default defineComponent({
       togglePopover();
       emit('toggle', isPopoverShow.value);
     };
+    // 搜索
     const handleInputChange = (value) => {
       if (!filterable.value) return;
       searchKey.value = value;
     };
-    const handleInputEnter = (value) => {
-      if (!allowCreate.value) return;
+    // allow create
+    const handleInputEnter = (value, e: Event) => {
+      if (!allowCreate.value
+        || !value
+        || (filterable.value && options.value.find(data => toLowerCase(data.label) === toLowerCase(value)))
+      ) return; // 开启搜索后，正好匹配到自定义选项，则不进行创建操作
 
-      searchKey.value = '';
-      const data = selected.value.find(data => data.value === value);
-      if (data) return;
+      const data = optionsMap.value.get(value);
+      if (data) return; // 已经存在相同值的option时不能创建
 
+      // todo 优化交互方式
+      e.stopPropagation(); // 阻止触发 handleKeyup enter 事件
       if (multiple.value) {
         selected.value.push({
           label: value,
@@ -242,6 +257,7 @@ export default defineComponent({
         emitChange(value);
         hidePopover();
       }
+      searchKey.value = '';
     };
     // Option点击事件
     const handleOptionSelected = (option: OptionInstanceType) => {
@@ -336,6 +352,47 @@ export default defineComponent({
         }];
       }
     };
+    // 处理键盘事件
+    const handleKeydown = (e: KeyboardEvent) => {
+      const availableOptions = options.value.filter(option => !option.disabled && option.visible);
+      const index = availableOptions.findIndex(option => option.value === activeOptionValue.value);
+      if (!availableOptions.length || index === -1) return;
+
+      switch (e.code) {
+        // 下一个option
+        case 'ArrowDown': {
+          e.preventDefault();// 阻止滚动屏幕
+          const nextIndex = index >= (availableOptions.length - 1) ? 0 : index + 1;
+          activeOptionValue.value = availableOptions[nextIndex]?.value;
+          break;
+        }
+        // 上一个option
+        case 'ArrowUp': {
+          e.preventDefault();// 阻止滚动屏幕
+          const preIndex = index === 0 ? availableOptions.length - 1 : index - 1;
+          activeOptionValue.value = availableOptions[preIndex]?.value;
+          break;
+        }
+        // 删除选项
+        case 'Backspace': {
+          if (!multiple.value || !selected.value.length || searchKey.value.length) return; // 只有多选支持回退键删除
+
+          selected.value.pop();
+          emitChange(selected.value.map(data => data.value));
+          break;
+        }
+        // 选择选项
+        case 'Enter': {
+          if (!isPopoverShow.value) {
+            isPopoverShow.value = true;
+          } else {
+            const option = options.value.find(option => option.value === activeOptionValue.value);
+            handleOptionSelected(option);
+          }
+          break;
+        }
+      }
+    };
     const handleClickOutside = () => {
       hidePopover();
       handleBlur();
@@ -344,6 +401,7 @@ export default defineComponent({
     provide(selectKey, reactive({
       multiple,
       selected,
+      activeOptionValue,
       register,
       unregister,
       registerGroup,
@@ -394,6 +452,7 @@ export default defineComponent({
       handleDeleteTag,
       handleInputChange,
       handleInputEnter,
+      handleKeydown,
     };
   },
   render() {
@@ -438,6 +497,7 @@ export default defineComponent({
             onRemove={this.handleDeleteTag}
             onEnter={this.handleInputEnter}>
               {{
+                prefix: () => this.$slots.prefix?.(),
                 suffix: () => suffixIcon(),
               }}
           </SelectTagInput>
@@ -457,7 +517,7 @@ export default defineComponent({
           onInput={this.handleInputChange}
           onEnter={this.handleInputEnter}>
             {{
-              prefix: () => this.$slots.prefixIcon?.(),
+              prefix: () => this.$slots.prefix?.(),
               suffix: () => suffixIcon(),
             }}
         </Input>
@@ -468,7 +528,8 @@ export default defineComponent({
           class="bk-select-trigger"
           onClick={this.handleTogglePopover}
           onMouseenter={this.setHover}
-          onMouseleave={this.cancelHover}>
+          onMouseleave={this.cancelHover}
+          onKeydown={this.handleKeydown}>
           {renderTriggerInput()}
         </div>
     );
@@ -491,7 +552,7 @@ export default defineComponent({
                 {
                   this.multiple
                     && this.showSelectAll
-                    && !this.searchKey
+                    && (!this.searchKey || !this.filterable)
                     && <li class="bk-select-option" onClick={this.handleToggleAll}>
                       {this.selectAllText}
                       </li>

@@ -58,10 +58,15 @@ export default defineComponent({
     const group = inject(optionGroupKey, null);
     const selected = computed<boolean>(() => select?.selected?.some(data => data.value === value.value));
     const multiple = computed<boolean>(() => select?.multiple);
+    const isHover = computed(() => select?.activeOptionValue === value.value);
 
     const handleOptionClick = () => {
       if (disabled.value) return;
       select?.handleOptionSelected(proxy);
+    };
+
+    const handleMouseEnter = () => {
+      select.activeOptionValue = value.value;
     };
 
     onBeforeMount(() => {
@@ -78,7 +83,9 @@ export default defineComponent({
       ...toRefs(states),
       selected,
       multiple,
+      isHover,
       handleOptionClick,
+      handleMouseEnter,
     };
   },
   render() {
@@ -86,11 +93,14 @@ export default defineComponent({
       'is-selected': this.selected,
       'is-disabled': this.disabled,
       'is-multiple': this.multiple,
-      'is-hover': false,
+      'is-hover': this.isHover,
       'bk-select-option': true,
     });
     return (
-      <li v-show={this.visible} class={selectItemClass} onClick={this.handleOptionClick}>
+      <li v-show={this.visible}
+        class={selectItemClass}
+        onClick={this.handleOptionClick}
+        onMouseenter={this.handleMouseEnter}>
         {this.$slots.default?.() ?? <span>{this.label}</span>}
       </li>
     );
