@@ -189,6 +189,13 @@ export const treeProps = {
    * 默认选中的节点id，selectable为false时无效
    */
   selected: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.object]).def(null),
+
+  /**
+   * 是否自动检查当前节点是否有子节点
+   * 节点前面的展开收起Icon会根据判定值做改变
+   * 如果需要自已控制，请设置为false
+   */
+  autoCheckChildren: PropTypes.bool.def(true),
 };
 
 type AsyncOption = {

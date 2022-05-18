@@ -32,7 +32,7 @@ import { EVENTS, NODE_ATTRIBUTES } from './constant';
 import useNodeAsync from './use-node-async';
 import useNodeAttribute from './use-node-attribute';
 import { getLabel, getNodeItemClass, getNodeItemStyle, getNodeRowClass, resolveNodeItem } from './util';
-export default (props, ctx, flatData, renderData, schemaValues) => {
+export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
   // const checkedNodes = [];
   let selectedNodeId = null;
   const {
@@ -45,9 +45,12 @@ export default (props, ctx, flatData, renderData, schemaValues) => {
     hasChildNode,
     isItemOpen,
     isNodeOpened,
-    isNodeChecked,
-    isNodeMatched,
-  } = useNodeAttribute(flatData);
+    isNodeLoading,
+    resolveScopedSlotParam,
+    extendNodeAttr,
+  } = useNodeAttribute(flatData, props);
+
+  const { registerNextLoop } = initOption;
 
   const { asyncNodeClick, deepAutoOpen } = useNodeAsync(props, flatData);
 
@@ -82,6 +85,9 @@ export default (props, ctx, flatData, renderData, schemaValues) => {
     return null;
   };
 
+  const getLoadingIcon = (item: any) => (ctx.slots.nodeLoading?.(extendNodeAttr(item)) ?? isNodeLoading(item) ? <Spinner></Spinner> : '');
+
+
   /**
 * 根据节点状态获取节点操作Icon
 * @param item
@@ -89,20 +95,24 @@ export default (props, ctx, flatData, renderData, schemaValues) => {
 */
   const getActionIcon = (item: any) => {
     if (ctx.slots.nodeAction) {
-      return ctx.slots.nodeAction(resolveScopedSlotParam(item));
+      return ctx.slots.nodeAction(extendNodeAttr(item));
     }
 
     let prefixFnVal = null;
 
+    if (isNodeLoading(item)) {
+      return getLoadingIcon(item);
+    }
+
     if (typeof props.prefixIcon === 'function') {
-      prefixFnVal = props.prefixIcon(resolveScopedSlotParam(item), 'node_action');
+      prefixFnVal = props.prefixIcon(extendNodeAttr(item), 'node_action');
       if (prefixFnVal !== 'default') {
         return renderPrefixVal(prefixFnVal);
       }
     }
 
     if (prefixFnVal === 'default' || (typeof props.prefixIcon === 'boolean' && props.prefixIcon)) {
-      if (hasChildNode(item) || item.async) {
+      if (hasChildNode(item) || item.async || !props.autoCheckChildren) {
         return isItemOpen(item) ? <DownShape /> : <RightShape />;
       }
     }
@@ -117,13 +127,13 @@ export default (props, ctx, flatData, renderData, schemaValues) => {
 */
   const getNodePrefixIcon = (item: any) => {
     if (ctx.slots.nodeType) {
-      return ctx.slots.nodeType(resolveScopedSlotParam(item));
+      return ctx.slots.nodeType(extendNodeAttr(item));
     }
 
     let prefixFnVal = null;
 
     if (typeof props.prefixIcon === 'function') {
-      prefixFnVal = props.prefixIcon(resolveScopedSlotParam(item), 'node_type');
+      prefixFnVal = props.prefixIcon(extendNodeAttr(item), 'node_type');
 
       if (prefixFnVal !== 'default') {
         return renderPrefixVal(prefixFnVal);
@@ -137,7 +147,6 @@ export default (props, ctx, flatData, renderData, schemaValues) => {
     return null;
   };
 
-  const getLoadingIcon = (item: any) => (ctx.slots.nodeLoading?.(resolveScopedSlotParam(item)) ?? item.loading ? <Spinner></Spinner> : '');
 
   /**
 * 设置指定节点是否展开
@@ -146,11 +155,11 @@ export default (props, ctx, flatData, renderData, schemaValues) => {
 */
   const setNodeOpened = (item: any, isOpen = null, e: MouseEvent = null, fireEmit = true) => {
     const newVal = isOpen === null ? !isItemOpen(item) : !!isOpen;
-    setNodeAttr(item, NODE_ATTRIBUTES.IS_OPENED, newVal);
+    setNodeAttr(item, NODE_ATTRIBUTES.IS_OPEN, newVal);
 
     if (fireEmit) {
-      const emitEvent = isItemOpen(item) ? EVENTS.NODE_EXPAND : EVENTS.NODE_COLLAPSE;
-      ctx.emit(emitEvent, resolveScopedSlotParam(item), getSchemaVal(item[NODE_ATTRIBUTES.UUID]), e);
+      const emitEvent: string = isItemOpen(item) ? EVENTS.NODE_EXPAND : EVENTS.NODE_COLLAPSE;
+      ctx.emit(emitEvent, [item, resolveScopedSlotParam(item), getSchemaVal(item[NODE_ATTRIBUTES.UUID]), e]);
     }
 
     /**
@@ -162,7 +171,7 @@ export default (props, ctx, flatData, renderData, schemaValues) => {
     }
 
     renderData.value.filter(node => String.prototype.startsWith.call(getNodePath(node), getNodePath(item)))
-      .forEach(filterNode => setNodeAttr(filterNode, NODE_ATTRIBUTES.IS_OPENED, newVal));
+      .forEach(filterNode => setNodeAttr(filterNode, NODE_ATTRIBUTES.IS_OPEN, newVal));
   };
 
   /**
@@ -196,7 +205,7 @@ export default (props, ctx, flatData, renderData, schemaValues) => {
 
     if (autoOpenParents) {
       if (isOpen) {
-        setNodeAction(resolvedItem, NODE_ATTRIBUTES.IS_OPENED, isOpen);
+        setNodeAction(resolvedItem, NODE_ATTRIBUTES.IS_OPEN, isOpen);
         if (!isRootNode(resolvedItem)) {
           const parentId = getNodeAttr(resolvedItem, NODE_ATTRIBUTES.PARENT_ID);
           setOpen(parentId, true, true);
@@ -205,7 +214,7 @@ export default (props, ctx, flatData, renderData, schemaValues) => {
         setNodeOpened(resolvedItem, false, null, false);
       }
     } else {
-      setNodeAction(resolvedItem, NODE_ATTRIBUTES.IS_OPENED, isOpen);
+      setNodeAction(resolvedItem, NODE_ATTRIBUTES.IS_OPEN, isOpen);
     }
   };
 
@@ -214,9 +223,23 @@ export default (props, ctx, flatData, renderData, schemaValues) => {
    * @param item
    */
   const hanldeTreeNodeClick = (item: any, e: MouseEvent) => {
+    const isOpen = isNodeOpened(item);
+    if (isOpen) {
+      setNodeOpened(item, false, e);
+      return;
+    }
+
     /** 如果是异步请求加载 */
-    asyncNodeClick(item);
-    setNodeOpened(item, null, e);
+    asyncNodeClick(item).finally(() => {
+      if (getNodeAttr(item, NODE_ATTRIBUTES.IS_LOADING)) {
+        registerNextLoop('setNodeOpenedAfterLoading', {
+          type: 'once',
+          fn: () => setNodeOpened(item, !isOpen, e),
+        });
+      } else {
+        setNodeOpened(item, !isOpen, e);
+      }
+    });
   };
 
   /**
@@ -287,16 +310,8 @@ export default (props, ctx, flatData, renderData, schemaValues) => {
       hanldeTreeNodeClick(item, e);
     }
 
-    // if (!checkedNodes.includes(item[NODE_ATTRIBUTES.UUID])) {
-    //   checkedNodes.forEach((__uuid: string) => setNodeAttr({ __uuid }, NODE_ATTRIBUTES.IS_SELECTED, false));
-    //   checkedNodes.length = 0;
-    //   setNodeAttr(item, NODE_ATTRIBUTES.IS_SELECTED, true);
-    //   checkedNodes.push(item[NODE_ATTRIBUTES.UUID]);
-    //   if (!isNodeOpened(item)) {
-    //     hanldeTreeNodeClick(item, e);
-    //   }
-    // }
-    ctx.emit(EVENTS.NODE_CLICK, resolveScopedSlotParam(item), getSchemaVal(item[NODE_ATTRIBUTES.UUID]), e);
+    const eventName: string = EVENTS.NODE_CLICK;
+    ctx.emit(eventName, item, resolveScopedSlotParam(item), getSchemaVal(item[NODE_ATTRIBUTES.UUID]), e);
   };
 
   /**
@@ -350,20 +365,6 @@ export default (props, ctx, flatData, renderData, schemaValues) => {
       .map((index: number) => <span class="node-virtual-line" style={ getNodeLineStyle(maxDeep - index) }></span>);
   };
 
-  /**
-   * 处理scoped slot 透传数据
-   * @param item 当前节点数据
-   * @returns
-   */
-  const resolveScopedSlotParam = (item: any) => ({
-    ...item,
-    hasChildNode: hasChildNode(item),
-    isMatched: isNodeMatched(item),
-    isChecked: isNodeChecked(item),
-    isOpened: isNodeOpened(item),
-    isRoot: isRootNode(item),
-  });
-
   const renderTreeNode = (item: any) => <div data-tree-node={getNodeId(item)}
     class={ getNodeRowClass(item, flatData.schema) }>
   <div class={getNodeItemClass(item, flatData.schema, props) }
@@ -377,15 +378,14 @@ export default (props, ctx, flatData, renderData, schemaValues) => {
       {
         [
           getNodePrefixIcon(item),
-          getLoadingIcon(item),
         ]
       }
       <span class={ resolveClassName('node-text') }>{
-        ctx.slots.node?.(resolveScopedSlotParam(item))
+        ctx.slots.node?.(extendNodeAttr(item))
         ?? [getLabel(item, props)]
       }</span>
       {
-        ctx.slots.nodeAppend?.(resolveScopedSlotParam(item))
+        ctx.slots.nodeAppend?.(extendNodeAttr(item))
       }
     </span>
     {
