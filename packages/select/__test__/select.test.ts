@@ -84,7 +84,7 @@ describe('Select.tsx', () => {
     const options = wrapper.element.querySelectorAll('.bk-select-option');
     const select = wrapper.findComponent({ name: 'Select' });
     const selectInstance = select.vm as InstanceType<typeof BkSelect>;
-    expect(options.length).toBe(selectInstance.options.size);
+    expect(options.length).toBe(selectInstance.options.length);
 
     const optionInstances = wrapper.findAllComponents({ name: 'Option' });
     expect(optionInstances.filter(item => (item.vm as any).selected).length).toBe(1);

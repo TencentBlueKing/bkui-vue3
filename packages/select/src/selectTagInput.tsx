@@ -65,9 +65,12 @@ export default defineComponent({
     const handleInput = (e) => {
       emit('update:modelValue', e.target.value);
     };
-    const handleKeyup = (e) => {
-      if (e.code === 'Enter') {
-        emit('enter', e.target.value);
+    const handleKeydown = (e) => {
+      switch (e.code) {
+        case 'Enter': {
+          emit('enter', e.target.value, e);
+          break;
+        }
       }
     };
     return {
@@ -77,12 +80,13 @@ export default defineComponent({
       handleFocus,
       focus,
       handleInput,
-      handleKeyup,
+      handleKeydown,
     };
   },
   render() {
     return (
       <div class="bk-select-tag">
+        {this.$slots?.prefix?.()}
         {
           this.selected.map(data => (
               <Tag
@@ -102,7 +106,7 @@ export default defineComponent({
             v-model={this.value}
             onFocus={this.handleFocus}
             onInput={this.handleInput}
-            onKeyup={this.handleKeyup}/>
+            onKeydown={this.handleKeydown}/>
 
         {this.$slots?.suffix?.()}
       </div>

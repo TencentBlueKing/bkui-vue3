@@ -37,6 +37,7 @@ export type SelectTagInputType = InstanceType<typeof SelectTagInput>;
 export interface ISelectContext {
   multiple?: boolean;
   selected: ISelectedData[];
+  activeOptionValue: any;
   register(option: OptionInstanceType): any;
   unregister(option: OptionInstanceType): any;
   registerGroup(option: GroupInstanceType): any;
