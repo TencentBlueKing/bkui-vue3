@@ -7,6 +7,7 @@
         :data="tableData"
         settings
         @dblclick="handleDblClick"
+        @column-sort="handleSortBy"
       />
     </div>
     <div
@@ -48,6 +49,9 @@
       };
     },
     methods: {
+      handleSortBy(arg) {
+        console.log('handleSortBy', arg);
+      },
       handleDblClick(...args) {
         console.log(args);
       },

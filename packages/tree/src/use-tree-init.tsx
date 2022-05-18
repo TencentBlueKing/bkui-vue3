@@ -28,7 +28,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { computed, reactive, watch } from 'vue';
 
-import { NODE_ATTRIBUTES } from './constant';
+import { NODE_ATTRIBUTES, NODE_SOURCE_ATTRS } from './constant';
 import { TreePropTypes } from './props';
 import useNodeAsync from './use-node-async';
 
@@ -69,47 +69,59 @@ export default (props: TreePropTypes) => {
       return uid || item[NODE_ATTRIBUTES.UUID] || uuidv4();
     }
 
-    function getCachedTreeNodeAttr(uuid: string, node: any, attr: string, cachedAttr: string, defVal = undefined) {
+    function getCachedTreeNodeAttr(uuid: string, node: any, cachedAttr: string, defVal = undefined) {
+      const sourceAttr = NODE_SOURCE_ATTRS[cachedAttr];
+      if (Object.prototype.hasOwnProperty.call(node, sourceAttr)) {
+        return node[sourceAttr];
+      }
+
       const cached = (cachedSchema || []).find((item: any) => item[NODE_ATTRIBUTES.UUID] === uuid);
       let result = undefined;
       if (cached) {
         result = cached[cachedAttr];
-      } else {
-        result = attr === null ? undefined : node[attr];
       }
 
-      if (result === undefined) {
+      if (result === undefined || result === null) {
         result = defVal;
       }
+
       return result;
     }
 
     function isCachedTreeNodeOpened(uuid: string, node: any) {
-      return getCachedTreeNodeAttr(uuid, node, 'isOpen', NODE_ATTRIBUTES.IS_OPENED, false);
+      return getCachedTreeNodeAttr(uuid, node, NODE_ATTRIBUTES.IS_OPEN, false);
     }
 
     function isCachedTreeNodeChecked(uuid: string, node: any) {
-      return getCachedTreeNodeAttr(uuid, node, 'checked', NODE_ATTRIBUTES.IS_CHECKED, false);
+      return getCachedTreeNodeAttr(uuid, node, NODE_ATTRIBUTES.IS_CHECKED, false);
     }
 
     function isCachedTreeNodeMatch(uuid: string, node: any) {
-      return getCachedTreeNodeAttr(uuid, node, 'isMatch', NODE_ATTRIBUTES.IS_MATCH, true);
+      return getCachedTreeNodeAttr(uuid, node, NODE_ATTRIBUTES.IS_MATCH, true);
     }
 
     function isCachedTreeNodeSelected(uuid: string, node: any) {
-      return getCachedTreeNodeAttr(uuid, node, null, NODE_ATTRIBUTES.IS_SELECTED, false);
+      return getCachedTreeNodeAttr(uuid, node, NODE_ATTRIBUTES.IS_SELECTED, false);
     }
 
     function isCachedTreeNodeHasCached(uuid: string, node: any) {
-      return getCachedTreeNodeAttr(uuid, node, 'cached', NODE_ATTRIBUTES.IS_CACHED, false);
+      return getCachedTreeNodeAttr(uuid, node, NODE_ATTRIBUTES.IS_CACHED, false);
     }
 
     function isCachedTreeNodeAsync(uuid: string, node: any) {
-      return getCachedTreeNodeAttr(uuid, node, 'async', NODE_ATTRIBUTES.IS_ASYNC, false);
+      return getCachedTreeNodeAttr(uuid, node, NODE_ATTRIBUTES.IS_ASYNC, null);
+    }
+
+    function isCachedTreeNodeLoading(uuid: string, node: any) {
+      if (Object.prototype.hasOwnProperty.call(node, NODE_ATTRIBUTES.IS_LOADING)) {
+        return node[NODE_ATTRIBUTES.IS_LOADING];
+      }
+
+      return getCachedTreeNodeAttr(uuid, node, NODE_ATTRIBUTES.IS_LOADING, false);
     }
 
     function validateIsOpenLoopFn(target: any) {
-      return !target[NODE_ATTRIBUTES.IS_OPENED];
+      return !target[NODE_ATTRIBUTES.IS_OPEN];
     }
 
     function flatten(array: Array<any>, depth = 0, parent = null, path = null) {
@@ -134,10 +146,11 @@ export default (props: TreePropTypes) => {
               [NODE_ATTRIBUTES.ORDER]: order,
               [NODE_ATTRIBUTES.IS_SELECTED]: props.selectable ? isCachedTreeNodeSelected(uuid, item) : false,
               [NODE_ATTRIBUTES.IS_MATCH]: isCachedTreeNodeMatch(uuid, item),
-              [NODE_ATTRIBUTES.IS_OPENED]: isCachedTreeNodeOpened(uuid, item),
+              [NODE_ATTRIBUTES.IS_OPEN]: isCachedTreeNodeOpened(uuid, item),
               [NODE_ATTRIBUTES.IS_CHECKED]: isCachedTreeNodeChecked(uuid, item),
               [NODE_ATTRIBUTES.IS_CACHED]: isCachedTreeNodeHasCached(uuid, item),
               [NODE_ATTRIBUTES.IS_ASYNC]: isCachedTreeNodeAsync(uuid, item),
+              [NODE_ATTRIBUTES.IS_LOADING]: isCachedTreeNodeLoading(uuid, item),
               [children]: null,
             };
             Object.assign(item, { [NODE_ATTRIBUTES.UUID]: uuid });
@@ -152,8 +165,8 @@ export default (props: TreePropTypes) => {
              * 如果初始化发现当前属性为展开或者选中
              * 此时需要设置当前节点的所有父级节点都为展开状态
              */
-            if (attrs[NODE_ATTRIBUTES.IS_OPENED] || attrs[NODE_ATTRIBUTES.IS_SELECTED]) {
-              loopUpdateNodeAttr(parent, NODE_ATTRIBUTES.IS_OPENED, true, validateIsOpenLoopFn);
+            if (attrs[NODE_ATTRIBUTES.IS_OPEN]) {
+              loopUpdateNodeAttr(parent, NODE_ATTRIBUTES.IS_OPEN, true, validateIsOpenLoopFn);
             }
 
             if (Object.prototype.hasOwnProperty.call(item, children)) {
@@ -203,21 +216,66 @@ export default (props: TreePropTypes) => {
     nextLoopEvents.set(key, event);
   };
 
+
+  const resolveEventOption = (event: any) => {
+    if (typeof event === 'function') {
+      return {
+        type: 'loop',
+        fn: event,
+      };
+    }
+
+    if (typeof event === 'object' && typeof event.type === 'string' && typeof event.fn === 'function') {
+      return event;
+    }
+
+    console.error('loop event error', event);
+    return null;
+  };
+
+  const executeFn = (event: any | null) => {
+    const resoveEvent = resolveEventOption(event);
+    if (resoveEvent !== null) {
+      Reflect.apply(resoveEvent.fn, this, []);
+    }
+
+    return resoveEvent?.type ?? 'once';
+  };
+
   const executeNextEvent = () => {
     Array.from(nextLoopEvents.keys()).forEach((key: string) => {
       const target = nextLoopEvents.get(key);
       if (Array.isArray(target)) {
-        target.forEach((event: Function) => Reflect.apply(event, this, []));
+        const clearList = [];
+        target.forEach((event: any, index: number) => {
+          const result = executeFn(event);
+          if (result === 'once') {
+            clearList.unshift(index);
+          }
+        });
+
+        if (clearList.length) {
+          clearList.forEach((index: number) => target.splice(index, 1));
+        }
+
+        if (target.length === 0) {
+          nextLoopEvents.delete(key);
+        }
       } else {
-        Reflect.apply(target, this, []);
+        const result = executeFn(target);
+        if (result === 'once') {
+          nextLoopEvents.delete(key);
+        }
       }
     });
   };
+
 
   /**
      * 监听组件配置Data改变
      */
   watch(() => [props.data], (newData) => {
+    console.log('watch data changed');
     const formatData = getFlatdata(props, newData, schemaValues.value);
     flatData.data = formatData[0] as Array<any>;
     flatData.schema = formatData[1] as any;
@@ -237,6 +295,7 @@ export default (props: TreePropTypes) => {
 
   if (props.selectable) {
     watch(() => props.selected, (newData) => {
+      console.log('watch selected changed');
       afterSelectWatch.length = 0;
       afterSelectEvents.forEach((event: () => void) => {
         Reflect.apply(event, this, [newData]);
@@ -266,6 +325,7 @@ export default (props: TreePropTypes) => {
     asyncNodeClick,
     deepAutoOpen,
     afterDataUpdate,
+    registerNextLoop,
     onSelected,
   };
 };

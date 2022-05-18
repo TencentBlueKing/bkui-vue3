@@ -1,26 +1,17 @@
 @import '@bkui-vue/styles/themes/themes.less';
 
-@btnMinWidth: 64px;
-@btnHeight: 32px;
-@btnPadding: 15px;
+@btnPadding: 5px 12px;
 @btnBorderRadius: 2px;
 
-@smallBtnMinWidth: 48px;
-@smallBtnHeight: 26px;
-@smallBtnPadding: 12px;
+@smallBtnPadding: 2px 12px;
 
-@largeBtnMinWidth: 74px;
-@largeBtnHeight: 38px;
-@largeBtnPadding: 20px;
-
+@largeBtnPadding: 8px 20px;
 @themeSelectors: primary, warning, success, danger;
 @sizeSelectors: small, large;
 
 .@{bk-prefix}-button {
   display: inline-block;
-  height: @btnHeight;
-  min-width: @btnMinWidth;
-  padding: 0 @btnPadding;
+  padding: @btnPadding;
   font-size: @font-size-medium;
   color: @default-color;
   text-align: center;
@@ -97,16 +88,11 @@
 
   
     each(@sizeSelectors, {
-    @sizeBtnMinWidth: '@{value}BtnMinWidth';
-    @sizeBtnHeight: '@{value}BtnHeight';
-    @sizeBtnPadding: '@{value}BtnPadding';
-    &.@{bk-prefix}-button-@{value} {
-      min-width: @@sizeBtnMinWidth;
-      height: @@sizeBtnHeight;
-        line-height: @@sizeBtnHeight;
-        padding: 0 @@sizeBtnPadding;
-      }
-    });
+  @sizeBtnPadding: '@{value}BtnPadding';
+  &.@{bk-prefix}-button-@{value} {
+    padding: @@sizeBtnPadding;
+    }
+  });
 
   &:not(.is-text) {
     .@{bk-prefix}-button-loading {
@@ -145,6 +131,12 @@
     cursor: not-allowed;
     border-color: @disable-color;
   }
+
+  &.is-circle {
+    padding: 10px;
+    line-height: 1;
+    border-radius: 50%;
+  }
 }
 
 
@@ -153,22 +145,16 @@
   font-size: 0;
 
   each(@sizeSelectors, {
-    @sizeBtnMinWidth: '@{value}BtnMinWidth';
-    @sizeBtnHeight: '@{value}BtnHeight';
     @sizeBtnPadding: '@{value}BtnPadding';
     &.@{bk-prefix}-button-group-@{value} {
       .@{bk-prefix}-button {
-        min-width: @@sizeBtnMinWidth;
-        height: @@sizeBtnHeight;
-        padding: 0 @@sizeBtnPadding;
+        padding: @@sizeBtnPadding;
       }
     }
   })
 ;
 
   .@{bk-prefix}-button {
-    height: @btnHeight;
-    min-width: @btnMinWidth;
     margin: 0 0 0 -1px;
     border-radius: 0;
 
