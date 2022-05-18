@@ -28,12 +28,13 @@ import { defineComponent, nextTick, onBeforeUnmount, onMounted, reactive, ref, w
 
 import VirtualRender from '@bkui-vue/virtual-render';
 
+import { EMIT_EVENT_TYPES, EMITEVENTS, EVENTS } from './const';
 import useActiveColumns from './plugins/use-active-columns';
 import useColumnResize from './plugins/use-column-resize';
 import useFixedColumn from './plugins/use-fixed-column';
 import userPagination from './plugins/use-pagination';
 import { tableProps } from './props';
-import TableRender, { EVENTS } from './render';
+import TableRender from './render';
 import { useClass } from './use-common';
 import {
   observerResize,
@@ -43,7 +44,7 @@ import {
 export default defineComponent({
   name: 'Table',
   props: tableProps,
-  emits: ['columnPick', 'rowClick', 'rowDblClick', 'pageLimitChange', 'pageValueChange'],
+  emits: EMIT_EVENT_TYPES,
   setup(props, ctx) {
     const colgroups = reactive(props.columns.map(col => ({
       ...col,
@@ -85,6 +86,7 @@ export default defineComponent({
       contentStyle,
       headStyle,
       updateBorderClass,
+      resetTableHeight,
       hasFooter,
     } = useClass(props, root, reactiveProp);
 
@@ -93,27 +95,39 @@ export default defineComponent({
 
     const tableRender = new TableRender(props, ctx, reactiveProp, colgroups);
 
-    watch(() => [props.data], () => {
+    watch(() => [props.data, props.pagination], () => {
       watchEffectFn(columnFilterFn, columnSortFn);
-      nextTick(() => updateBorderClass(root.value));
+      nextTick(() => {
+        resetTableHeight(root.value);
+        updateBorderClass(root.value);
+      });
     }, { immediate: true, deep: true });
 
     /**
      * 监听Table 派发的相关事件
      */
     tableRender.on(EVENTS.ON_SORT_BY_CLICK, (args: any) => {
-      const { sortFn } = args;
-      columnSortFn = sortFn;
-      pageData.sort(columnSortFn);
+      const { sortFn, column, index, type } = args;
+      if (typeof sortFn === 'function') {
+        columnSortFn = sortFn;
+        pageData.sort(columnSortFn);
+      }
+
+      ctx.emit(EMITEVENTS.COLUMN_SORT, { column, index, type });
     }).on(EVENTS.ON_FILTER_CLICK, (args: any) => {
-      const { filterFn } = args;
-      columnFilterFn = filterFn;
-      resolvePageData(columnFilterFn, columnSortFn);
+      const { filterFn, checked, column, index } = args;
+      if (typeof filterFn === 'function') {
+        columnFilterFn = filterFn;
+        resolvePageData(columnFilterFn, columnSortFn);
+      }
+
+      ctx.emit(EMITEVENTS.COLUMN_FILTER, { checked, column, index });
     })
       .on(EVENTS.ON_SETTING_CHANGE, (args: any) => {
-        const { checked = [] } = args;
+        const { checked = [], size, height } = args;
         checked.length && resolveColumnWidth(root.value, colgroups, 20);
         refVirtualRender.value?.reset?.();
+        ctx.emit(EMITEVENTS.SETTING_CHANGE, { checked, size, height });
       });
 
 

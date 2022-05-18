@@ -28,6 +28,7 @@
 import Pagination from '@bkui-vue/pagination';
 import { classes, random } from '@bkui-vue/shared';
 
+import { EVENTS } from './const';
 import BodyEmpty from './plugins/body-empty';
 import HeadFilter from './plugins/head-filter';
 import HeadSort from './plugins/head-sort';
@@ -36,12 +37,7 @@ import Settings from './plugins/settings';
 import useFixedColumn from './plugins/use-fixed-column';
 import { Column, GroupColumn, IColumnActive, IReactiveProp, TablePropTypes } from './props';
 import { getColumnReactWidth, getRowText, resolveHeadConfig, resolvePropVal, resolveWidth } from './utils';
-export const enum EVENTS {
-  /** 点击排序事件 */
-  ON_SORT_BY_CLICK = 'onSortByClick',
-  ON_FILTER_CLICK = 'onFilterClick',
-  ON_SETTING_CHANGE = 'onSettingChange'
-}
+
 
 export default class TableRender {
   props: TablePropTypes;
