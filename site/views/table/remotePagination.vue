@@ -30,7 +30,7 @@
       return {
         tableData: DATA_ROWS,
         columns: [...DATA_COLUMNS],
-        pagination: { count: DATA_ROWS.length, limit: 20, current: 1 },
+        pagination: { count: 0, limit: 20, current: 1 },
       };
     },
     computed: {
@@ -40,6 +40,11 @@
         const endIndex = current * limit;
         return this.tableData.slice(startIndex, endIndex);
       },
+    },
+    mounted() {
+      setTimeout(() => {
+        this.pagination.count = 100;
+      }, 300);
     },
     methods: {
       handlePageValueChange(value) {

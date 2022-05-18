@@ -60,14 +60,20 @@ export const tableProps = {
       PropTypes.bool,
       PropTypes.commonType(['left', 'right'], 'fixed'),
     ]).def(false),
-    sort: PropTypes.oneOfType([PropTypes.shape({
-      sortFn: PropTypes.func.def(undefined),
-      sortScope: PropTypes.commonType(Object.values(SortScope)).def(SortScope.CURRENT),
-    }), PropTypes.bool]).def(false),
-    filter: PropTypes.oneOfType([PropTypes.shape({
-      list: PropTypes.arrayOf(PropTypes.any).def([]),
-      filterFn: PropTypes.func.def(undefined),
-    }), PropTypes.bool]).def(false),
+    sort: PropTypes.oneOfType([
+      PropTypes.shape({
+        sortFn: PropTypes.func.def(undefined),
+        sortScope: PropTypes.commonType(Object.values(SortScope)).def(SortScope.CURRENT),
+      }),
+      PropTypes.bool,
+      PropTypes.string]).def(false),
+    filter: PropTypes.oneOfType([
+      PropTypes.shape({
+        list: PropTypes.arrayOf(PropTypes.any).def([]),
+        filterFn: PropTypes.func.def(undefined),
+      }),
+      PropTypes.bool,
+      PropTypes.string]).def(false),
   })),
 
   /**
@@ -202,11 +208,11 @@ export type Column = {
   sort?: {
     sortFn?: Function;
     sortScope?: string;
-  } | boolean;
+  } | boolean | string;
   filter?: {
     list?: any,
     filterFn?: Function;
-  } | boolean;
+  } | boolean | string;
 };
 
 export type Thead = {

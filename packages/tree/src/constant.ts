@@ -29,11 +29,11 @@ export enum EVENTS {
   NODE_COLLAPSE = 'nodeCollapse',
   NODE_EXPAND = 'nodeExpand'
 }
-const empty = (_item, _node, _schema, _event) => true;
+const EMPTY = (..._args) => true;
 export const TreeEmitEventsType = {
-  [EVENTS.NODE_CLICK]: empty,
-  [EVENTS.NODE_COLLAPSE]: empty,
-  [EVENTS.NODE_EXPAND]: empty,
+  [EVENTS.NODE_CLICK]: EMPTY,
+  [EVENTS.NODE_COLLAPSE]: EMPTY,
+  [EVENTS.NODE_EXPAND]: EMPTY,
 };
 
 /**
