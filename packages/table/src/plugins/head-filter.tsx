@@ -85,6 +85,12 @@ export default defineComponent({
         : true);
 
     const handleBtnSaveClick = () => {
+      if (props.column.filter === 'custom') {
+        emit('change', [...state.checked], null);
+        isShow.value = false;
+        return;
+      }
+
       emit('change', [...state.checked], filterFn);
       isShow.value = false;
     };

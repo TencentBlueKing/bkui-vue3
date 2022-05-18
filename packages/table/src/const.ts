@@ -28,3 +28,38 @@
  * 边框配置可选项
  */
 export const BORDER_OPRIONS = ['none', 'row', 'col', 'outer'];
+
+export const enum EVENTS {
+  /** 点击排序事件 */
+  ON_SORT_BY_CLICK = 'onSortByClick',
+  ON_FILTER_CLICK = 'onFilterClick',
+  ON_SETTING_CHANGE = 'onSettingChange'
+}
+
+// ['columnPick', 'rowClick', 'rowDblClick', 'pageLimitChange', 'pageValueChange']
+export const enum EMITEVENTS {
+  COLUMN_PICK = 'columnPick',
+  COLUMN_SORT = 'columnSort',
+  COLUMN_FILTER = 'columnFilter',
+
+  ROW_CLICK = 'rowClick',
+  ROW_DBL_CLICK = 'rowDblClick',
+
+  PAGE_LIMIT_CHANGE = 'pageLimitChange',
+  PAGE_VALUE_CHANGE = 'pageValueChange',
+
+  SETTING_CHANGE = 'settingChange'
+}
+
+const EMPTY = (..._args) => true;
+
+export const EMIT_EVENT_TYPES = {
+  [EMITEVENTS.COLUMN_PICK]: EMPTY,
+  [EMITEVENTS.COLUMN_FILTER]: EMPTY,
+  [EMITEVENTS.COLUMN_SORT]: EMPTY,
+  [EMITEVENTS.ROW_CLICK]: EMPTY,
+  [EMITEVENTS.ROW_DBL_CLICK]: EMPTY,
+  [EMITEVENTS.PAGE_LIMIT_CHANGE]: EMPTY,
+  [EMITEVENTS.PAGE_VALUE_CHANGE]: EMPTY,
+  [EMITEVENTS.SETTING_CHANGE]: EMPTY,
+};

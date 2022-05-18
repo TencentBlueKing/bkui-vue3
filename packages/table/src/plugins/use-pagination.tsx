@@ -71,6 +71,14 @@ export default (props: TablePropTypes) => {
   pagination = resolvePaginationOption(props.pagination, pagination);
 
   /**
+   * 分页配置
+   * 用于配置分页组件
+   * pagination 为Prop传入配置
+   * 方便兼容内置分页功能，此处需要单独处理count
+   */
+  const localPagination = ref(null);
+
+  /**
    * 重置当前分页开始位置 & 结束位置
    * 如果未启用分页，则开始位置为0，结束位置为 data.length
    * @returns
@@ -116,23 +124,18 @@ export default (props: TablePropTypes) => {
    */
   const watchEffectFn = (filterFn: any, sortFn: any) => {
     pagination = resolvePaginationOption(props.pagination, pagination);
+    resolveLocalPagination();
     resetStartEndIndex();
     resolvePageData(filterFn, sortFn);
   };
 
-  /**
-   * 分页配置
-   * 用于配置分页组件
-   * pagination 为Prop传入配置
-   * 方便兼容内置分页功能，此处需要单独处理count
-   */
-  const localPagination = computed(() => {
+  const resolveLocalPagination = () => {
     if (!props.pagination) {
-      return null;
+      return;
     }
-
-    return props.remotePagination ? pagination : { ...pagination, count: props.data.length };
-  });
+    localPagination.value = props.remotePagination ? pagination : { ...pagination, count: props.data.length };
+    // Object.assign(localPagination, resolved);
+  };
 
   return {
     pageData,

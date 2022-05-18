@@ -14,7 +14,22 @@
         label="name"
         children="children"
         :auto-check-children="false"
-        sync-action
+      />
+    </div>
+    <div class="cell">
+      <bk-input
+        v-model="selected2"
+        placeholder="设置选中id"
+      />
+      <bk-tree
+        ref="refAutoSelect"
+        :data="treeData2"
+        :selected="selected2"
+        node-key="id"
+        level-line
+        label="name"
+        children="children"
+        :auto-check-children="false"
       />
     </div>
   </div>
@@ -23,15 +38,16 @@
 <script>
   import { defineComponent } from 'vue';
 
-  import { ASYNC_DATA } from './options';
+  import { ASYNC_DATA, SINGLE_NODE_DATA } from './options';
   const id = new Date().getTime();
   export default defineComponent({
     components: {},
     data() {
       return {
         treeData: [...ASYNC_DATA].map(item => ({ ...item })),
-        treeData2: [...ASYNC_DATA].map(item => ({ ...item })),
+        treeData2: [...SINGLE_NODE_DATA].map(item => ({ ...item })),
         selected: null,
+        selected2: null,
         rootId: Math.random() * id,
       };
     },
