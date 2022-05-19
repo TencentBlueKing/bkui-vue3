@@ -99,7 +99,7 @@ export default defineComponent({
         // const app = createApp(evalCode.value as any);
         // app.mount(preview.value);
       } else {
-        sourceCode.value = await fetch(`../views/${props.componentName}/${props.demoName}${props.suffix}`).then(res => res.text());
+        sourceCode.value = await fetch(`${import.meta.env.VITE_CDN_URL}views/${props.componentName}/${props.demoName}${props.suffix}`).then(res => res.text());
       }
 
       optionData.value = JSON.stringify(props.optionData, null, 4);
