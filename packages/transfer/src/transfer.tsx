@@ -414,7 +414,7 @@ export default defineComponent({
 
       return this.$slots[dirct]
         ? <div class="slot-header">
-            <div class="slot-content">{this.$slots[dirct]()}</div>
+            {this.$slots[dirct]()}
           </div>
         : <div class="header">
             {`${titleText}（共${this.dataList.length}条）`}
