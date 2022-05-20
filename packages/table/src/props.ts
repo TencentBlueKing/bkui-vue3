@@ -54,6 +54,7 @@ export const tableProps = {
     field: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
     render: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
     width: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]),
+    minWidth: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]).def(),
     type: PropTypes.commonType(['selection', 'index', 'expand', 'none'], 'columnType').def('none'),
     resizable: PropTypes.bool.def(true),
     fixed: PropTypes.oneOfType([
@@ -202,6 +203,7 @@ export type Column = {
   field?: Function | string;
   render?: Function | string;
   width?: number | string;
+  minWidth?: number | string;
   type?: string;
   fixed?: string | boolean;
   resizable?: boolean;

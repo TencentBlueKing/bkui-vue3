@@ -153,6 +153,28 @@ export const resolveColumnWidth = (root: HTMLElement, colgroups: GroupColumn[], 
   // 需要平均宽度的列数
   const avgColIndexList = [];
 
+  const getMinWidth = (col: GroupColumn, computedWidth: number) => {
+    const { minWidth = undefined } = col;
+    if (minWidth === undefined) {
+      return computedWidth;
+    }
+
+    let calcMinWidth = computedWidth;
+    if (/^\d+\.?\d*$/.test(`${minWidth}`)) {
+      calcMinWidth = Number(minWidth);
+    }
+
+    if (/^\d+\.?\d*%$/.test(`${minWidth}`)) {
+      calcMinWidth = Number(minWidth) * width / 100;
+    }
+
+    if (/^\d+\.?\d*px$/i.test(`${minWidth}`)) {
+      calcMinWidth = Number(`${minWidth}`.replace(/px/i, ''));
+    }
+
+    return calcMinWidth;
+  };
+
   /**
    * 根据Props Column配置计算并设置列宽度
    * @param col 当前Column设置
@@ -160,9 +182,11 @@ export const resolveColumnWidth = (root: HTMLElement, colgroups: GroupColumn[], 
    * @param resetAvgWidth 是否重置可用宽度
    */
   const resolveColNumberWidth = (col: GroupColumn, numWidth: number, resetAvgWidth = true) => {
-    Object.assign(col, { calcWidth: numWidth });
+    const minWidth = getMinWidth(col, numWidth);
+    const computedWidth = numWidth < minWidth ? minWidth : numWidth;
+    Object.assign(col, { calcWidth: computedWidth });
     if (resetAvgWidth) {
-      avgWidth = avgWidth - numWidth;
+      avgWidth = avgWidth - computedWidth;
       if (avgWidth < 0) {
         avgWidth = 0;
       }
