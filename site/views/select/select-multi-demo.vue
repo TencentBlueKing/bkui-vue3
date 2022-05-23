@@ -58,7 +58,7 @@
       label: '跳舞',
     },
   ]);
-  const selectedValue = ref(false);
+  const selectedValue = ref([1, 3, 4, '']);
 </script>
 <style scoped>
 .demo {
