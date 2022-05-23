@@ -13,6 +13,10 @@
 </template>
 
 <style lang="postcss">
+  .basic-button-list {
+    display: flex;
+  }
+
   .ml10 {
     margin-left: 10px;
   }
