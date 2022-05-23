@@ -24,16 +24,17 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent, onBeforeUnmount, onMounted, reactive, ref, watchEffect } from 'vue';
+import { defineComponent, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
 
 import VirtualRender from '@bkui-vue/virtual-render';
 
+import { EMIT_EVENT_TYPES, EMITEVENTS, EVENTS } from './const';
 import useActiveColumns from './plugins/use-active-columns';
 import useColumnResize from './plugins/use-column-resize';
 import useFixedColumn from './plugins/use-fixed-column';
 import userPagination from './plugins/use-pagination';
 import { tableProps } from './props';
-import TableRender, { EVENTS } from './render';
+import TableRender from './render';
 import { useClass } from './use-common';
 import {
   observerResize,
@@ -43,7 +44,7 @@ import {
 export default defineComponent({
   name: 'Table',
   props: tableProps,
-  emits: ['columnPick', 'rowClick', 'rowDblClick', 'pageLimitChange', 'pageValueChange'],
+  emits: EMIT_EVENT_TYPES,
   setup(props, ctx) {
     const colgroups = reactive(props.columns.map(col => ({
       ...col,
@@ -65,6 +66,9 @@ export default defineComponent({
     const reactiveProp = reactive({
       scrollTranslateY: 0,
       scrollTranslateX: 0,
+      pos: {
+        bottom: 1,
+      },
       activeColumns,
       setting: {
         size: null,
@@ -81,49 +85,64 @@ export default defineComponent({
       wrapperStyle,
       contentStyle,
       headStyle,
+      updateBorderClass,
       resetTableHeight,
+      hasFooter,
     } = useClass(props, root, reactiveProp);
 
 
     const { renderFixedColumns, fixedWrapperClass } = useFixedColumn(props, colgroups);
 
-
     const tableRender = new TableRender(props, ctx, reactiveProp, colgroups);
 
-    watchEffect(() => {
+    watch(() => [props.data, props.pagination], () => {
       watchEffectFn(columnFilterFn, columnSortFn);
-    });
+      nextTick(() => {
+        resetTableHeight(root.value);
+        updateBorderClass(root.value);
+      });
+    }, { immediate: true, deep: true });
 
     /**
      * 监听Table 派发的相关事件
      */
     tableRender.on(EVENTS.ON_SORT_BY_CLICK, (args: any) => {
-      const { sortFn } = args;
-      columnSortFn = sortFn;
-      pageData.sort(columnSortFn);
+      const { sortFn, column, index, type } = args;
+      if (typeof sortFn === 'function') {
+        columnSortFn = sortFn;
+        pageData.sort(columnSortFn);
+      }
+
+      ctx.emit(EMITEVENTS.COLUMN_SORT, { column, index, type });
     }).on(EVENTS.ON_FILTER_CLICK, (args: any) => {
-      const { filterFn } = args;
-      columnFilterFn = filterFn;
-      resolvePageData(columnFilterFn, columnSortFn);
+      const { filterFn, checked, column, index } = args;
+      if (typeof filterFn === 'function') {
+        columnFilterFn = filterFn;
+        resolvePageData(columnFilterFn, columnSortFn);
+      }
+
+      ctx.emit(EMITEVENTS.COLUMN_FILTER, { checked, column, index });
     })
       .on(EVENTS.ON_SETTING_CHANGE, (args: any) => {
-        const { checked = [] } = args;
+        const { checked = [], size, height } = args;
         checked.length && resolveColumnWidth(root.value, colgroups, 20);
         refVirtualRender.value?.reset?.();
+        ctx.emit(EMITEVENTS.SETTING_CHANGE, { checked, size, height });
       });
 
 
     const handleScrollChanged = (args: any[]) => {
       const pagination = args[1];
-      const { translateX, translateY } = pagination;
+      const { translateX, translateY, pos = {} } = pagination;
       reactiveProp.scrollTranslateY = translateY;
       reactiveProp.scrollTranslateX = translateX;
+      reactiveProp.pos = pos;
     };
 
     onMounted(() => {
       observerIns = observerResize(root.value, () => {
         resolveColumnWidth(root.value, colgroups, 20);
-        resetTableHeight(root.value);
+        // resetTableHeight(root.value);
       }, 60, true);
 
       observerIns.start();
@@ -152,7 +171,7 @@ export default defineComponent({
         ref={refVirtualRender}
         lineHeight={tableRender.getRowHeight}
         class={ contentClass }
-        style={ contentStyle.value }
+        style={ contentStyle }
         list={pageData}
         onContentScroll={ handleScrollChanged }
         throttleDelay={0}
@@ -170,7 +189,7 @@ export default defineComponent({
       </div>
       <div class={ footerClass.value }>
         {
-          props.pagination && props.data.length && tableRender.renderTableFooter(localPagination.value)
+          hasFooter.value && tableRender.renderTableFooter(localPagination.value)
         }
       </div>
     </div>;

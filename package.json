@@ -1,7 +1,7 @@
 {
   "name": "bkui-vue",
   "private": true,
-  "version": "0.0.1-beta.66",
+  "version": "0.0.1-beta.70",
   "workspaces": {
     "packages": [
       "packages/!(**.bak)*",
@@ -16,7 +16,7 @@
     "prepare": "husky install",
     "dev": "vite serve site",
     "build": "run-p build:dist build:lib",
-    "build:site": "vite build site --mode development",
+    "build:site": "vite build site --mode production && cp -r ./site/views/ ./site/dist/views",
     "build:dist": "rimraf dist && lerna run --stream --scope cli dist",
     "build:lib": "rimraf lib && lerna run --stream --scope cli lib",
     "help:release": "lerna run --stream --scope cli release",

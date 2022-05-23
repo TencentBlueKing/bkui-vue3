@@ -85,11 +85,12 @@ export default defineComponent({
       translateY: 0,
       translateX: 0,
       count: 0,
+      pos: {},
       groupItemCount: props.groupItemCount,
     });
 
     /** 指令触发Scroll事件，计算当前startIndex & endIndex & scrollTop & translateY */
-    const handleScrollCallback = (event, startIndex, endIndex, scrollTop, translateY, scrollLeft) => {
+    const handleScrollCallback = (event, startIndex, endIndex, scrollTop, translateY, scrollLeft, pos) => {
       pagination.startIndex = startIndex;
       pagination.endIndex = endIndex;
       pagination.scrollTop = scrollTop;
@@ -97,6 +98,7 @@ export default defineComponent({
       // 设置偏移量，避免行高较大时出现卡顿式的滚动
       pagination.translateY = translateY;
       pagination.translateX =  scrollLeft;
+      pagination.pos = pos;
       ctx.emit('content-scroll', [event, pagination]);
     };
 

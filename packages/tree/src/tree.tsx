@@ -28,7 +28,7 @@ import { computed, defineComponent, ref, watch } from 'vue';
 import { resolveClassName } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
-import { EmitsArrayType, EVENTS, NODE_ATTRIBUTES } from './constant';
+import { NODE_ATTRIBUTES, TreeEmitEventsType } from './constant';
 import { treeProps, TreePropTypes as defineTypes } from './props';
 import useEmpty from './use-empty';
 import useNodeAction from './use-node-action';
@@ -47,10 +47,9 @@ export type TreePropTypes = defineTypes;
 export default defineComponent({
   name: 'Tree',
   props: treeProps,
-  emits: [EVENTS.NODE_CLICK, EVENTS.NODE_COLLAPSE, EVENTS.NODE_EXPAND] as EmitsArrayType,
-
+  emits: TreeEmitEventsType,
   setup(props, ctx) {
-    const { flatData, schemaValues } = useTreeInit(props);
+    const { flatData, schemaValues, onSelected, registerNextLoop } = useTreeInit(props);
     const {
       setNodeAttr,
       checkNodeIsOpen,
@@ -61,7 +60,7 @@ export default defineComponent({
       isNodeChecked,
       isNodeMatched,
       hasChildNode,
-    } = useNodeAttribute(flatData);
+    } = useNodeAttribute(flatData, props);
 
     const { searchFn, isSearchActive, refSearch, openResultNode, isTreeUI, isSearchDisabled } = useSearch(props);
     if (!isSearchDisabled) {
@@ -99,7 +98,8 @@ export default defineComponent({
       setOpen,
       setNodeAction,
       setSelect,
-    } = useNodeAction(props, ctx, flatData, renderData, schemaValues);
+      asyncNodeClick,
+    } = useNodeAction(props, ctx, flatData, renderData, schemaValues, { registerNextLoop });
 
     /**
      * 设置指定节点是否选中
@@ -110,11 +110,9 @@ export default defineComponent({
       setNodeAction(resolveNodeItem(item), NODE_ATTRIBUTES.IS_CHECKED, checked);
     };
 
-    if (props.selectable) {
-      watch(() => props.selected, (newData) => {
-        setSelect(newData, true, true);
-      }, { immediate: true });
-    }
+    onSelected((newData: any) => {
+      setSelect(newData, true, true);
+    });
 
     const getData = () => flatData;
 
@@ -130,6 +128,7 @@ export default defineComponent({
       setNodeAction,
       setNodeOpened,
       setSelect,
+      asyncNodeClick,
       getData,
     });
 

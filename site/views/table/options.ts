@@ -80,7 +80,7 @@ export const DATA_COLUMNS = [
   {
     label: '创建时间',
     field: 'create_time',
-    sort: true,
+    sort: 'custom',
   },
   {
     label: (column, index) => `状态-${index}-${column.field}`,

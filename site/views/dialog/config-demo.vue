@@ -52,6 +52,22 @@
     >
       <div>配置按钮文案</div>
     </bk-dialog>
+
+    <bk-button
+      class="mr10"
+      @click="() => exampleSetting1.dialog4.isShow = true"
+    >
+      不允许拖拽
+    </bk-button>
+    <bk-dialog
+      :is-show="exampleSetting1.dialog4.isShow"
+      :title="'这是标题'"
+      :draggable="false"
+      @closed="() => exampleSetting1.dialog4.isShow = false"
+      @confirm="() => exampleSetting1.dialog4.isShow = false"
+    >
+      <div>不允许拖拽</div>
+    </bk-dialog>
   </div>
 </template>
 
@@ -70,6 +86,9 @@
       isShow: false,
     },
     dialog3: {
+      isShow: false,
+    },
+    dialog4: {
       isShow: false,
     },
   });

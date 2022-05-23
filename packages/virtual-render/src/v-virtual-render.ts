@@ -83,7 +83,8 @@ export function computedVirtualIndex(lineHeight, callback, pagination, el, event
   }
 
   if (elScrollTop !== scrollTop || targetStartIndex !== startIndex || targetEndIndex !== endIndex) {
-    typeof callback === 'function' && callback(event, targetStartIndex, targetEndIndex, elScrollTop, translateY, elScrollLeft);
+    const bottom = el.scrollHeight - el.offsetHeight - el.scrollTop;
+    typeof callback === 'function' && callback(event, targetStartIndex, targetEndIndex, elScrollTop, translateY, elScrollLeft, { bottom });
   }
 }
 
@@ -92,7 +93,8 @@ function visibleRender(e, wrapper: HTMLElement, binding) {
   if (onlyScroll) {
     const elScrollTop = wrapper.scrollTop;
     const elScrollLeft = wrapper.scrollLeft;
-    handleScrollCallback(e, null, null, elScrollTop, elScrollTop, elScrollLeft);
+    const bottom = wrapper.scrollHeight - wrapper.offsetHeight - wrapper.scrollTop;
+    handleScrollCallback(e, null, null, elScrollTop, elScrollTop, elScrollLeft, { bottom });
     return;
   }
 
@@ -107,16 +109,15 @@ function visibleRender(e, wrapper: HTMLElement, binding) {
 }
 
 const throttledRender = (delay = 60) => throttle((e, wrapper, binding) => visibleRender(e, wrapper, binding), delay);
-let cachedThrottle = null;
+// const debounceRender = (delay = 60) => debounce((e, wrapper, binding) => visibleRender(e, wrapper, binding), delay);
 const executeThrottledRender = (e, wrapper, binding, delay = 60) => {
-  if (!cachedThrottle) {
-    cachedThrottle = throttledRender(delay);
-  }
-
-  if (typeof cachedThrottle === 'function') {
-    cachedThrottle.call(this, e, wrapper, binding);
-  }
+  Reflect.apply(throttledRender(delay), this, [e, wrapper, binding]);
 };
+
+// const executeDebounceRender = (e, wrapper, binding, delay = 60) => {
+//   console.log('executeDebounceRender');
+//   Reflect.apply(debounceRender(delay), this, [e, wrapper, binding]);
+// };
 export default {
   mounted(el, binding) {
     const wrapper = el.parentNode;
@@ -126,12 +127,12 @@ export default {
       executeThrottledRender(e, wrapper, binding, throttleDelay);
     });
   },
-  updated(el, binding) {
-    const wrapper = el.parentNode;
-    const { throttleDelay } = binding.value;
-    // @ts-ignore:next-line
-    executeThrottledRender(null, wrapper, binding, throttleDelay);
-  },
+  // updated(el, binding) {
+  //   const wrapper = el.parentNode;
+  //   console.log('update--scroll');
+  //   // @ts-ignore:next-line
+  //   // executeDebounceRender(null, wrapper, binding, 100);
+  // },
   unbind(el) {
     if (el) {
       const wrapper = el.parentNode;

@@ -68,3 +68,5 @@ export { default as Container } from '@bkui-vue/container';
 export { default as containerProps } from '@bkui-vue/container';
 export { default as Dropdown } from '@bkui-vue/dropdown';
 export { default as Cascader } from '@bkui-vue/cascader';
+export { default as Slider } from '@bkui-vue/slider';
+export { default as ResizeLayout } from '@bkui-vue/resize-layout';
