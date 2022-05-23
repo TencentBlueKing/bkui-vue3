@@ -48,7 +48,7 @@ describe('Transfer.tsx', () => {
         'left-header': 'left-header',
       },
     });
-    expect(wrapper.html()).toContain('<div class="slot-content">left-header</div>');
+    expect(wrapper.html()).toContain('left-header');
   });
 
   it('right header slot is rendered', () => {
@@ -61,7 +61,7 @@ describe('Transfer.tsx', () => {
         'right-header': 'right-header',
       },
     });
-    expect(wrapper.html()).toContain('<div class="slot-content">right-header</div>');
+    expect(wrapper.html()).toContain('right-header');
   });
 
   it('left empty content slot is rendered', () => {

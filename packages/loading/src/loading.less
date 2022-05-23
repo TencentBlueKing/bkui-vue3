@@ -58,7 +58,7 @@
   font-size: 0;
   vertical-align: middle;
   &:not(.@{bk-prefix}-nested-loading) {
-    display: inline-block;
+    display: inline-flex;
   }
 
   &.@{bk-prefix}-nested-loading {
@@ -81,7 +81,7 @@
   }
 
   .dot {
-    display: inline-block;
+    display: inline-flex;
     width: @dotSize;
     height: @dotSize;
     margin-right: @dotGap;
@@ -152,7 +152,8 @@
 
     .@{bk-prefix}-spin-indicator {
       position: relative;
-      display: inline-block;
+      display: inline-flex;
+      justify-content: center;
       width: 2 * @ovalGap;
       height: 2 * @ovalGap;
     }

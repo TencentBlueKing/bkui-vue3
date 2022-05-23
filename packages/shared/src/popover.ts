@@ -421,7 +421,10 @@ export class BKPopover {
           ) {
             this.show(event);
           } else {
-            if (this.isShow && !this.isSameElement(event.target as HTMLElement, this.popperRefer)) {
+            if (this.isShow
+              && !this.isSameElement(event.target as HTMLElement, this.popperRefer)
+              && !(this.popperRefer as HTMLElement).contains(event.target as HTMLElement)
+            ) {
               this.hide();
             }
           }
