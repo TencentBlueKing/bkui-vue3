@@ -4,33 +4,28 @@ body {
 
 .page-container {
   display: flex;
-  width: 100vw;
-  height: 100vw;
   flex-direction: column;
+  height: 100vh;
 
   &-header {
-    width: 100%;
     height: 64px;
-    flex: 0 0 64px;
     background-color: #14182f;
   }
 
   &-body {
-    flex: 1;
     display: flex;
-    width: 100%;
-
-    max-height: calc(100vh - 64px);
+    overflow: hidden;
+    flex: 1;
 
     .body-nav {
+      width: 260px;
       background-color: white;
       border-right: 1px solid #dcdee5;
       box-shadow: 1px 0px 0px 0px rgba(0,0,0,.10);
-      flex: 0 0 260px;
     }
 
     .body-wrapper {
-      overflow: auto;
+      overflow-y: auto;
       background-color: #fafbfd;
       flex: 1;
     }
