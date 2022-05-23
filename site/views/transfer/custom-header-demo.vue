@@ -99,15 +99,19 @@
   };
 </script>
 <style lang="postcss">
-  .left-header label,
-  .right-header label {
-    display: inline-block;
-    font-size: 12px;
+  .left-header,
+  .right-header {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    justify-content: space-between;
+
+    label {
+      font-size: 12px;
+    }
   }
 
   .add-all {
-    display: inline-block;
-    float: right;
     font-size: 14px;
     cursor: pointer;
 
@@ -127,8 +131,6 @@
   }
 
   .remove-all {
-    display: inline-block;
-    float: right;
     font-size: 12px;
     cursor: pointer;
   }

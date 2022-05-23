@@ -142,7 +142,9 @@ export default defineComponent({
     onMounted(() => {
       observerIns = observerResize(root.value, () => {
         resolveColumnWidth(root.value, colgroups, 20);
-        // resetTableHeight(root.value);
+        if (props.height === '100%') {
+          resetTableHeight(root.value);
+        }
       }, 60, true);
 
       observerIns.start();

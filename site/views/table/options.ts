@@ -62,7 +62,8 @@ export const DATA_COLUMNS = [
     label: '序号',
     type: 'index',
     sort: true,
-    width: 100,
+    width: 50,
+    minWidth: 80,
   },
   {
     label: '名称/内网IP',
