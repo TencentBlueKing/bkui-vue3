@@ -14,6 +14,7 @@
 }
 
 .@{bk-prefix}-textarea {
+  display: inline-flex;
   width: 100%;
   min-height: 70px;
   font-size: @font-size-base;
@@ -24,9 +25,11 @@
   border-radius: @border-radius-base;
   box-sizing: border-box;
   transition: all .3s;
+  flex-direction: column;
 
   > textarea {
     width: 100%;
+    flex: 1;
     padding: 5px 10px;
     line-height: 1.5;
     text-align: left;
@@ -48,7 +51,7 @@
 }
 
 .@{bk-prefix}-input {
-  display: flex;
+  display: inline-flex;
   align-items: stretch;
   width: 100%;
   height: @input-height-base;
