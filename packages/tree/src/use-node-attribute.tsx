@@ -92,6 +92,8 @@ export default (flatData, props?: TreePropTypes) => {
     return false;
   };
 
+  const isParentNodeOpened = (node: any) => isItemOpen(getNodeAttr(node, NODE_ATTRIBUTES.PARENT_ID));
+
   /**
    * 过滤当前状态为Open的节点
    * 页面展示只会展示Open的节点
@@ -99,8 +101,7 @@ export default (flatData, props?: TreePropTypes) => {
    * @returns
    */
   const checkNodeIsOpen = (node: any) => isRootNode(node)
-    || isItemOpen(node)
-    || isItemOpen(getNodeAttr(node, NODE_ATTRIBUTES.PARENT_ID));
+    || isParentNodeOpened(node);
 
   /**
      * 根据节点path返回源数据中节点信息

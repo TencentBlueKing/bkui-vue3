@@ -164,9 +164,9 @@ export default defineComponent({
       tableRender.destroy();
     });
 
-    ctx.expose({
-      plugins: tableRender.plugins,
-    });
+    // ctx.expose({
+    //   plugins: tableRender.plugins,
+    // });
 
     const tableBodyClass = {
       ...contentClass,
