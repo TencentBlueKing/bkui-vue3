@@ -196,6 +196,12 @@ export const treeProps = {
    * 如果需要自已控制，请设置为false
    */
   autoCheckChildren: PropTypes.bool.def(true),
+
+  /**
+   * 如果设置了某一个叶子节点状态为展开，是否自动展开所有父级节点
+   * 默认为true，如果设置为false，则每层状态需要自己控制
+   */
+  autoOpenParentNode: PropTypes.bool.def(true),
 };
 
 type AsyncOption = {
