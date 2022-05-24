@@ -59,7 +59,7 @@ export default defineComponent({
       groupCollapse: props.collapse,
       visible: true,
     });
-    const options = ref<Set<OptionInstanceType>>(new Set());
+    const options = ref<Array<OptionInstanceType>>([]);
     const { register, unregister } = useRegistry<OptionInstanceType>(options);
     const groupLabel = computed(() => `${props.label} (${[...options.value.values()].filter(option => option.visible).length})`);
 

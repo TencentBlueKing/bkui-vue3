@@ -30,7 +30,7 @@ import { classes, resolveClassName } from '@bkui-vue/shared';
 import { TablePropTypes } from './props';
 import { resolveHeadConfig, resolveNumberOrStringToPix, resolvePropBorderToClassStr, resolvePropVal } from './utils';
 
-export const useClass = (props: TablePropTypes, root?, reactiveProp?) => {
+export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?) => {
   const autoHeight = ref(200);
   const hasScrollY = ref(false);
   const hasFooter = computed(() => props.pagination && props.data.length);
@@ -52,9 +52,9 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?) => {
     '--scroll-left': `${reactiveProp.scrollTranslateX}px`,
   }));
 
-  const contentClass = classes({
+  const contentClass = {
     [resolveClassName('table-body')]: true,
-  });
+  };
 
   const footerClass = computed(() => classes({
     [resolveClassName('table-footer')]: true,
@@ -100,7 +100,7 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?) => {
     const minHeight = resolveMinHeight - resolveHeadHeight - resolveFooterHeight;
 
     Object.assign(contentStyle, {
-      display: 'block',
+      display: pageData?.length ? 'block' : false,
       'max-height': `${maxHeight}px`,
       'min-height': `${minHeight}px`,
       height,

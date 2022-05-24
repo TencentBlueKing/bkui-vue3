@@ -35,7 +35,7 @@ describe('Select.tsx', () => {
   test('render empty select', async () => {
     const wrapper = await mount(BkSelect);
     expect(wrapper.classes()).toContain('bk-select');
-    expect(wrapper.find('.bk-select-input').element.getAttribute('placeholder')).toBe('请选择');
+    expect(wrapper.find('.bk-input--text').element.getAttribute('placeholder')).toBe('请选择');
     await wrapper.find('.bk-select-trigger').trigger('click');
     expect(wrapper.find('.bk-popover-content').element.hasAttribute('data-show')).toBeTruthy();
   });
@@ -68,18 +68,23 @@ describe('Select.tsx', () => {
         BkOption,
       },
       template: `
-      <BkSelect>
+      <BkSelect v-model="value">
         <BkOption value="test" label="label1"></BkOption>
         <BkOption :value="false" label="label2" disabled></BkOption>
         <BkOption :value="undefined" label="label3"></BkOption>
         <BkOption :value="1" label="label4"></BkOption>
         <BkOption :value="null" label="label5"></BkOption>
       </BkSelect>`,
+      data() {
+        return {
+          value: 'test',
+        };
+      },
     });
     const options = wrapper.element.querySelectorAll('.bk-select-option');
     const select = wrapper.findComponent({ name: 'Select' });
     const selectInstance = select.vm as InstanceType<typeof BkSelect>;
-    expect(options.length).toBe(selectInstance.options.size);
+    expect(options.length).toBe(selectInstance.options.length);
 
     const optionInstances = wrapper.findAllComponents({ name: 'Option' });
     expect(optionInstances.filter(item => (item.vm as any).selected).length).toBe(1);
@@ -163,13 +168,13 @@ describe('Select.tsx', () => {
       `,
       data() {
         return {
-          selectValue: ['test'],
+          selectValue: [],
         };
       },
     });
-    expect(wrapper.findAllComponents('.is-selected.bk-select-option')).toHaveLength(2);
     expect(wrapper.findAllComponents({ name: 'Group' })).toHaveLength(2);
     await wrapper.findComponent({ name: 'Option' }).trigger('click');
+    expect(wrapper.findAllComponents('.is-selected.bk-select-option')).toHaveLength(2);
     expect(wrapper.vm.selectValue).toEqual(['test']);
     const option =  wrapper.findAllComponents({ name: 'Option' })[5];
     await option.trigger('click');

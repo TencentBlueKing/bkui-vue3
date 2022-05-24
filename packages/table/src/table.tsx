@@ -26,6 +26,7 @@
 
 import { defineComponent, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
 
+import { resolveClassName } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
 import { EMIT_EVENT_TYPES, EMITEVENTS, EVENTS } from './const';
@@ -46,7 +47,7 @@ export default defineComponent({
   props: tableProps,
   emits: EMIT_EVENT_TYPES,
   setup(props, ctx) {
-    const colgroups = reactive(props.columns.map(col => ({
+    const colgroups = reactive((props.columns ?? []).map(col => ({
       ...col,
       calcWidth: null,
       resizeWidth: null,
@@ -88,7 +89,7 @@ export default defineComponent({
       updateBorderClass,
       resetTableHeight,
       hasFooter,
-    } = useClass(props, root, reactiveProp);
+    } = useClass(props, root, reactiveProp, pageData);
 
 
     const { renderFixedColumns, fixedWrapperClass } = useFixedColumn(props, colgroups);
@@ -142,7 +143,9 @@ export default defineComponent({
     onMounted(() => {
       observerIns = observerResize(root.value, () => {
         resolveColumnWidth(root.value, colgroups, 20);
-        // resetTableHeight(root.value);
+        if (props.height === '100%') {
+          resetTableHeight(root.value);
+        }
       }, 60, true);
 
       observerIns.start();
@@ -158,6 +161,16 @@ export default defineComponent({
       plugins: tableRender.plugins,
     });
 
+    const tableBodyClass = {
+      ...contentClass,
+      '__is-empty': !pageData.length,
+    };
+
+    const tableBodyContentClass = {
+      [resolveClassName('table-body-content')]: true,
+      'with-virtual-render': props.virtualEnabled,
+    };
+
     return () => <div class={tableClass.value} style={wrapperStyle.value} ref={root}>
       {
         // @ts-ignore:next-line
@@ -170,9 +183,10 @@ export default defineComponent({
       <VirtualRender
         ref={refVirtualRender}
         lineHeight={tableRender.getRowHeight}
-        class={ contentClass }
+        class={ tableBodyClass }
         style={ contentStyle }
-        list={pageData}
+        list={ pageData }
+        contentClassName={ tableBodyContentClass }
         onContentScroll={ handleScrollChanged }
         throttleDelay={0}
         scrollEvent={true}

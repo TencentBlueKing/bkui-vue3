@@ -1,20 +1,24 @@
 @import '@bkui-vue/styles/themes/themes.less';
 
+@btnHeight: 32px;
 @btnPadding: 5px 12px;
 @btnBorderRadius: 2px;
 
-@smallBtnPadding: 2px 12px;
+@smallBtnHeight: 26px;
+@smallBtnPadding: 3px 12px;
 
+@largeBtnHeight: 38px;
 @largeBtnPadding: 8px 20px;
+
 @themeSelectors: primary, warning, success, danger;
 @sizeSelectors: small, large;
 
 .@{bk-prefix}-button {
-  display: inline-block;
+  display: inline-flex;
+  height: @btnHeight;
   padding: @btnPadding;
   font-size: @font-size-medium;
   color: @default-color;
-  text-align: center;
   text-decoration: none;
   white-space: nowrap;
   cursor: pointer;
@@ -25,6 +29,8 @@
   box-sizing: border-box;
   transition: background-color ease .3s;
   appearance: none;
+  align-items: center;
+  justify-content: center;
   
   each(@themeSelectors, {
     @color: '@{value}-color';
@@ -88,11 +94,19 @@
 
   
     each(@sizeSelectors, {
-  @sizeBtnPadding: '@{value}BtnPadding';
-  &.@{bk-prefix}-button-@{value} {
-    padding: @@sizeBtnPadding;
+    @sizeBtnHeight: '@{value}BtnHeight';
+    @sizeBtnPadding: '@{value}BtnPadding';
+    &.@{bk-prefix}-button-@{value} {
+      height: @@sizeBtnHeight;
+      padding: @@sizeBtnPadding;
     }
   });
+
+  .@{bk-prefix}-button-text {
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
+  }
 
   &:not(.is-text) {
     .@{bk-prefix}-button-loading {
@@ -113,11 +127,9 @@
 
   &.is-text {
     height: auto;
-    min-width: auto;
     padding: 0;
     font-size: @font-size-medium;
     font-size: inherit;
-    line-height: 1;
     color: @default-color;
     text-decoration: none;
     cursor: pointer;
@@ -132,11 +144,11 @@
     border-color: @disable-color;
   }
 
-  &.is-circle {
-    padding: 10px;
-    line-height: 1;
-    border-radius: 50%;
-  }
+  // &.is-circle {
+  //   padding: 8px;
+  //   line-height: 1;
+  //   border-radius: 50%;
+  // }
 }
 
 
@@ -145,9 +157,11 @@
   font-size: 0;
 
   each(@sizeSelectors, {
+    @sizeBtnHeight: '@{value}BtnHeight';
     @sizeBtnPadding: '@{value}BtnPadding';
     &.@{bk-prefix}-button-group-@{value} {
       .@{bk-prefix}-button {
+        height: @@sizeBtnHeight;
         padding: @@sizeBtnPadding;
       }
     }
@@ -155,6 +169,7 @@
 ;
 
   .@{bk-prefix}-button {
+    height: @btnHeight;
     margin: 0 0 0 -1px;
     border-radius: 0;
 

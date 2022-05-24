@@ -460,7 +460,7 @@ export default defineComponent({
       e?.stopPropagation();
       removeTag(data, index);
       clearInput();
-      handleChange('remove');
+      handleChange('remove', data);
       tagInputRef.value.style.width = `${INPUT_MIN_WIDTH}px`;
     };
 
@@ -468,10 +468,10 @@ export default defineComponent({
      * emit trigger
      * @param type emit type
      */
-    const handleChange = (type) => {
+    const handleChange = (type, data?) => {
       emit('change', tagList.value);
       // this.dispatch('bk-form-item', 'form-change')
-      emit(type);
+      emit(type, data);
       emit('update:modelValue', tagList.value);
       formItem?.validate?.('change');
     };
@@ -912,7 +912,7 @@ export default defineComponent({
                   </li>
                 </ul>
                 <p class="placeholder" v-show={this.isShowPlaceholder}>{this.placeholder}</p>
-                {this.isShowClear ? <Close class="clear-icon" onClick={this.handleClear} /> : null}
+                {this.$slots?.suffix?.() ?? (this.isShowClear && <Close class="clear-icon" onClick={this.handleClear} />) }
               </div>
             ),
             content: () => (

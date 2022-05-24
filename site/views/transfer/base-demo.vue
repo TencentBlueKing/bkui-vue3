@@ -2,8 +2,11 @@
   <bk-transfer
     :source-list="list"
     :display-key="'service_name'"
+    sort-key="service_name"
     :setting-key="'service_code'"
     show-overflow-tips
+    searchable
+    sortable
     @change="change"
   />
 </template>
@@ -25,6 +28,8 @@
           { service_code: 'code', service_name: '代码库' },
           { service_code: 'experience', service_name: '版本体验' },
           { service_code: 'environment', service_name: '环境管理' },
+          { service_code: 'quality', service_name: '质量红线' },
+          { service_code: 'turbo', service_name: '编译加速' },
         ],
       };
     },

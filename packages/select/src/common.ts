@@ -62,14 +62,19 @@ export function useHover() {
   };
 }
 
-export function useRegistry<T>(data: Ref<Set<T>>) {
+export function useRegistry<T>(data: Ref<Array<T>>) {
   // 注册item
   const register = (item: T) => {
-    if (!item) return;
-    return data.value.add(item);
+    if (!item || data.value.find(d => d === item)) return;
+    return data.value.push(item);
   };
   // 删除item
-  const unregister = (item: T) => data.value.delete(item);
+  const unregister = (item: T) => {
+    const index = data.value.findIndex(d => d === item);
+    if (index > -1) {
+      data.value.splice(index, 1);
+    }
+  };
   return {
     register,
     unregister,
@@ -84,12 +89,17 @@ export function useDebouncedRef<T>(value, delay = 200) {
       track();
       return innerValue;
     },
-    set(newValue) {
+    set(newValue: any) {
       clearTimeout(timeout);
-      timeout = setTimeout(() => {
+      if (newValue === undefined || newValue === '') {
         innerValue = newValue;
         trigger();
-      }, delay);
+      } else {
+        timeout = setTimeout(() => {
+          innerValue = newValue;
+          trigger();
+        }, delay);
+      }
     },
   }));
 }
@@ -122,13 +132,19 @@ export function usePopover(config: IPopoverConfig) {
   };
 }
 
-export function useRemoteSearch(method: Function) {
+export function useRemoteSearch(method: Function, callBack?: Function) {
   const searchKey = useDebouncedRef<string>('');
   const searchLoading = ref(false);
   watch(searchKey, async () => {
-    searchLoading.value = true;
-    await method(searchKey.value);
-    searchLoading.value = false;
+    try {
+      searchLoading.value = true;
+      await method(searchKey.value);
+      searchLoading.value = false;
+    } catch (err) {
+      console.error(err);
+    } finally {
+      callBack?.();
+    }
   });
   return {
     searchKey,

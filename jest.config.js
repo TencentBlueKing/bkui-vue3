@@ -24,55 +24,54 @@
  * IN THE SOFTWARE.
  */
 
- const path = require('path');
- const { lstatSync, readdirSync } = require('fs');
- 
- const basePath = path.resolve(__dirname, './packages');
- const packages = readdirSync(basePath).filter(name => lstatSync(path.join(basePath, name)).isDirectory());
- module.exports = {
-   testURL: 'http://localhost/',
-   setupFiles: [path.resolve(__dirname, './scripts/cli/test-setup.ts')],
-   collectCoverage: true,
-   coverageDirectory: 'coverage',
-   coverageProvider: 'v8',
-   collectCoverageFrom: [
-     'packages/**/*.{jsx,vue,tsx}',
-     '!packages/*/style/index.{js,jsx,tsx}',
-     '!packages/style/*.{js,jsx}',
-     '!packages/coverage/**',
-     '!packages/*/locale/*.{js,jsx}',
-     '!packages/*/__tests__/**/type.{js,jsx,tsx}',
-     '!packages/style.ts',
-     '!**/node_modules/**',
-   ],
-   moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json', 'vue', 'node'],
-   testPathIgnorePatterns: ['node_modules', 'node', 'bak'],
-   moduleNameMapper: {
-     '^.+\\.(css|less|scss)$': 'babel-jest',
-     ...packages.reduce(
-       (acc, name) => ({
-         ...acc,
-         [`@bkui-vue/${name}(.*)$`]: path.resolve(__dirname, `./packages/${name}/src/$1`),
-       }),
-       {},
-     ),
-   },
-   preset: 'ts-jest',
-   testEnvironment: 'jsdom',
-   transform: {
-     '^.+\\.(vue|md)$': path.resolve(__dirname, './node_modules/@vue/vue3-jest'),
-     '^.+\\.(js)$': path.resolve(__dirname, './node_modules/babel-jest'),
-     '^.+\\.(ts|tsx)$': path.resolve(__dirname, './node_modules/ts-jest'),
-     '.+\\.(css|styl|less|sass|scss|svg|png|jpg|ttf|woff|woff2)$': path.resolve(__dirname, './node_modules/jest-transform-stub'),
-   },
-   transformIgnorePatterns: ['node_modules', 'dist', 'bak'],
-   testRegex: '.*\\.test\\.(js|ts|tsx)$',
-   globals: {
-     'ts-jest': {
-       babelConfig: path.resolve(__dirname, './babel.config.js'),
-       tsconfig: path.resolve(__dirname, './packages/tsconfig.json'),
-     },
-   },
- };
- 
- 
+const path = require('path');
+const { lstatSync, readdirSync } = require('fs');
+
+const basePath = path.resolve(__dirname, './packages');
+const packages = readdirSync(basePath).filter(name => lstatSync(path.join(basePath, name)).isDirectory());
+
+module.exports = {
+  testURL: 'http://localhost/',
+  setupFiles: [path.resolve(__dirname, './scripts/cli/test-setup.ts')],
+  collectCoverage: true,
+  coverageDirectory: 'coverage',
+  coverageProvider: 'v8',
+  collectCoverageFrom: [
+    'packages/**/*.{jsx,vue,tsx}',
+    '!packages/*/style/index.{js,jsx,tsx}',
+    '!packages/style/*.{js,jsx}',
+    '!packages/coverage/**',
+    '!packages/*/locale/*.{js,jsx}',
+    '!packages/*/__tests__/**/type.{js,jsx,tsx}',
+    '!packages/style.ts',
+    '!**/node_modules/**',
+  ],
+  moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json', 'vue', 'node'],
+  testPathIgnorePatterns: ['node_modules', 'node', 'bak'],
+  moduleNameMapper: {
+    '^.+\\.(css|less|scss)$': 'babel-jest',
+    ...packages.reduce(
+      (acc, name) => ({
+        ...acc,
+        [`@bkui-vue/${name}(.*)$`]: path.resolve(__dirname, `./packages/${name}/src/$1`),
+      }),
+      {},
+    ),
+  },
+  preset: 'ts-jest',
+  testEnvironment: 'jsdom',
+  transform: {
+    '^.+\\.(vue|md)$': path.resolve(__dirname, './node_modules/@vue/vue3-jest'),
+    '^.+\\.(js)$': path.resolve(__dirname, './node_modules/babel-jest'),
+    '^.+\\.(ts|tsx)$': path.resolve(__dirname, './node_modules/ts-jest'),
+    '.+\\.(css|styl|less|sass|scss|svg|png|jpg|ttf|woff|woff2)$': path.resolve(__dirname, './node_modules/jest-transform-stub'),
+  },
+  transformIgnorePatterns: ['node_modules', 'dist', 'bak'],
+  testRegex: '.*\\.test\\.(js|ts|tsx)$',
+  globals: {
+    'ts-jest': {
+      babelConfig: path.resolve(__dirname, './babel.config.js'),
+      tsconfig: path.resolve(__dirname, './packages/tsconfig.json'),
+    },
+  },
+};

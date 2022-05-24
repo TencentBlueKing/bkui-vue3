@@ -105,6 +105,13 @@ export default class TableRender {
    * @returns
    */
   public renderTableBodySchema(rows: any[]) {
+    if (!rows.length) {
+      return this.context.slots.empty?.() ?? <BodyEmpty
+      filterList={rows}
+      list={ this.props.data }
+      emptyText={ this.props.emptyText }/>;
+    }
+
     return <table cellpadding={0} cellspacing={0}>
       { this.renderColGroup() }
       { this.renderTBody(rows) }
@@ -301,7 +308,7 @@ export default class TableRender {
 
     return <tbody>
     {
-      rows.length ? rows.map((row: any, rowIndex: number) => {
+      rows.map((row: any, rowIndex: number) => {
         const rowStyle = {
           '--row-height': `${this.getRowHeight(row, rowIndex)}px`,
         };
@@ -322,16 +329,7 @@ export default class TableRender {
         </td>)
         }
       </tr>;
-      }) : <tr>
-        <td colspan={ this.props.columns.length } class="empty-cell">
-          {
-            this.context.slots.empty?.() ?? <BodyEmpty
-            filterList={rows}
-            list={ this.props.data }
-            emptyText={ this.props.emptyText }/>
-          }
-        </td>
-      </tr>
+      })
     }
   </tbody>;
   }

@@ -42,8 +42,8 @@ import { optionGroupKey, selectKey } from './common';
 export default defineComponent({
   name: 'Option',
   props: {
-    value: PropTypes.oneOfType([String, Number, Boolean]),
-    label: PropTypes.oneOfType([String, Number]),
+    value: PropTypes.any,
+    label: PropTypes.string,
     disabled: PropTypes.bool.def(false),
   },
   setup(props) {
@@ -53,15 +53,20 @@ export default defineComponent({
       visible: true,
     });
 
-    const { disabled } = toRefs(props);
+    const { disabled, value } = toRefs(props);
     const select = inject(selectKey, null);
     const group = inject(optionGroupKey, null);
-    const selected = computed<boolean>(() => select.selectedOptions.has(proxy));
-    const multiple = computed<boolean>(() => select?.props.multiple);
+    const selected = computed<boolean>(() => select?.selected?.some(data => data.value === value.value));
+    const multiple = computed<boolean>(() => select?.multiple);
+    const isHover = computed(() => select?.activeOptionValue === value.value);
 
     const handleOptionClick = () => {
       if (disabled.value) return;
       select?.handleOptionSelected(proxy);
+    };
+
+    const handleMouseEnter = () => {
+      select.activeOptionValue = value.value;
     };
 
     onBeforeMount(() => {
@@ -78,7 +83,9 @@ export default defineComponent({
       ...toRefs(states),
       selected,
       multiple,
+      isHover,
       handleOptionClick,
+      handleMouseEnter,
     };
   },
   render() {
@@ -86,11 +93,14 @@ export default defineComponent({
       'is-selected': this.selected,
       'is-disabled': this.disabled,
       'is-multiple': this.multiple,
-      'is-hover': false,
+      'is-hover': this.isHover,
       'bk-select-option': true,
     });
     return (
-      <li v-show={this.visible} class={selectItemClass} onClick={this.handleOptionClick}>
+      <li v-show={this.visible}
+        class={selectItemClass}
+        onClick={this.handleOptionClick}
+        onMouseenter={this.handleMouseEnter}>
         {this.$slots.default?.() ?? <span>{this.label}</span>}
       </li>
     );
