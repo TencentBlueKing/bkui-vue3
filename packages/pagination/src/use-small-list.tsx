@@ -115,17 +115,6 @@ export default () => {
   };
 
   /**
-   * @desc 重置输入光标到末尾
-   */
-  const setSelection = () => {
-    nextTick(() => {
-      inputRef.value.focus();
-      const range = window.getSelection();
-      range.selectAllChildren(inputRef.value);
-      range.collapseToEnd();
-    });
-  };
-  /**
    * @desc 获得焦点
    */
   const handlePageEditorFocus = () => {
@@ -153,7 +142,6 @@ export default () => {
       return;
     };
     inputMemo = value;
-    setSelection();
   };
   /**
    * @desc 处理Enter事件
@@ -164,7 +152,6 @@ export default () => {
     if (['Enter', 'NumpadEnter'].includes(event.code)) {
       event.preventDefault();
       handlePageEditorBlur();
-      setSelection();
     }
   };
   /**
