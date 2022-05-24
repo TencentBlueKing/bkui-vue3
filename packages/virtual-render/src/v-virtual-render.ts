@@ -84,7 +84,7 @@ export function computedVirtualIndex(lineHeight, callback, pagination, el, event
 
   if (elScrollTop !== scrollTop || targetStartIndex !== startIndex || targetEndIndex !== endIndex) {
     const bottom = el.scrollHeight - el.offsetHeight - el.scrollTop;
-    typeof callback === 'function' && callback(event, targetStartIndex, targetEndIndex, elScrollTop, translateY, elScrollLeft, { bottom });
+    typeof callback === 'function' && callback(event, targetStartIndex, targetEndIndex, elScrollTop, translateY, elScrollLeft, { bottom: bottom >= 0 ? bottom : 0 });
   }
 }
 
@@ -94,7 +94,7 @@ function visibleRender(e, wrapper: HTMLElement, binding) {
     const elScrollTop = wrapper.scrollTop;
     const elScrollLeft = wrapper.scrollLeft;
     const bottom = wrapper.scrollHeight - wrapper.offsetHeight - wrapper.scrollTop;
-    handleScrollCallback(e, null, null, elScrollTop, elScrollTop, elScrollLeft, { bottom });
+    handleScrollCallback(e, null, null, elScrollTop, elScrollTop, elScrollLeft, { bottom: bottom >= 0 ? bottom : 0 });
     return;
   }
 
