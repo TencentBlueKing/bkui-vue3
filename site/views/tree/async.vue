@@ -47,7 +47,7 @@
         treeData: [...ASYNC_DATA].map(item => ({ ...item })),
         treeData2: [...SINGLE_NODE_DATA].map(item => ({ ...item })),
         selected: null,
-        selected2: null,
+        selected2: '/',
         rootId: Math.random() * id,
       };
     },

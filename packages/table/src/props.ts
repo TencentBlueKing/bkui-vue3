@@ -75,7 +75,7 @@ export const tableProps = {
       }),
       PropTypes.bool,
       PropTypes.string]).def(false),
-  })),
+  })).def([]),
 
   /**
    * 当前选中列
