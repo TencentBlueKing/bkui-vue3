@@ -13,6 +13,7 @@
     "dist"
   ],
   "scripts": {
+    "preinstall": "npx only-allow yarn",
     "prepare": "husky install",
     "dev": "vite serve site",
     "build": "run-p build:dist build:lib",
