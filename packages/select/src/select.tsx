@@ -40,7 +40,11 @@ import { AngleUp, Close } from '@bkui-vue/icon';
 import Input from '@bkui-vue/input';
 import Loading from '@bkui-vue/loading';
 import BKPopover from '@bkui-vue/popover';
-import { classes, PropTypes } from '@bkui-vue/shared';
+import {
+  classes,
+  PropTypes,
+  useFormItem,
+} from '@bkui-vue/shared';
 
 import {
   selectKey,
@@ -101,6 +105,8 @@ export default defineComponent({
       multipleMode,
       allowCreate,
     } = toRefs(props);
+
+    const formItem = useFormItem();
 
     const inputRef = ref<HTMLElement>();
     const popoverRef = ref<any>();
@@ -219,6 +225,7 @@ export default defineComponent({
 
       emit('change', val);
       emit('update:modelValue', val);
+      formItem?.validate?.('change');
     };
     // 派发toggle事件
     const handleTogglePopover = () => {

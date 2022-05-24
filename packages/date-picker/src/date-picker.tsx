@@ -39,6 +39,7 @@ import {
 } from 'vue';
 
 import { clickoutside } from '@bkui-vue/directives';
+import { useFormItem } from '@bkui-vue/shared';
 
 import PickerDropdown from './base/picker-dropdown';
 // import VueTypes, { toType, toValidableType } from 'vue-types';
@@ -58,6 +59,7 @@ export default defineComponent({
   emits: ['open-change', 'input', 'change', 'update:modelValue', 'clear', 'shortcut-change', 'pick-success'],
   slots: ['header'],
   setup(props, { slots, emit }) {
+    const formItem = useFormItem();
     const isRange = props.type.includes('range');
     const emptyArray = isRange ? [null, null] : [null];
     let initialValue = isAllEmptyArr((isRange ? (props.modelValue as any[]) : [props.modelValue]) || [])
@@ -305,6 +307,7 @@ export default defineComponent({
         // 使用 :value 或 :model-value 的时候才需要 handleChange，此时没有触发 update:modelValue
         // 使用 v-model 时才会触发 update:modelValue 事件
         emit('update:modelValue', publicVModelValue.value);
+        formItem?.validate?.('change');
 
         // this.dispatch('bk-form-item', 'form-change');
         if (props.type.indexOf('time') < 0) {
@@ -363,6 +366,7 @@ export default defineComponent({
       state.internalValue = state.internalValue.slice();
       reset();
       pickerPanelRef?.value?.onToggleVisibility(false);
+      formItem?.validate?.('blur');
     };
 
     const handleKeydown = (e: KeyboardEvent) => {

@@ -76,9 +76,9 @@ describe('RadioGroup', () => {
     expect(wrapper.findAll('.is-disabled')).toHaveLength(3);
   });
 
-  it('modelValue', () => {
+  it('modelValue', async () => {
     const label = '选项一';
-    const wrapper = mount({
+    const wrapper = await mount({
       components,
       template: `<RadioGroup modelValue=${label}>
         <Radio label="${label}" />

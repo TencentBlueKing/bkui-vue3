@@ -26,7 +26,11 @@
 
 import { computed, defineComponent, Ref, ref } from 'vue';
 
-import { classes, PropTypes } from '@bkui-vue/shared';
+import {
+  classes,
+  PropTypes,
+  useFormItem,
+} from '@bkui-vue/shared';
 
 import star from './star';
 
@@ -47,6 +51,7 @@ export default defineComponent({
   emits: ['change', 'update:modelValue'],
 
   setup(props, { emit }) {
+    const formItem = useFormItem();
     const hoverRate: Ref<number> = ref(0);
 
     const chooseRate = (val) => {
@@ -54,6 +59,7 @@ export default defineComponent({
 
       emit('update:modelValue', val);
       emit('change', val);
+      formItem?.validate?.('change');
     };
 
     const changeHover = (val) => {

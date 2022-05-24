@@ -28,9 +28,9 @@ import {
   computed,
   defineComponent,
   getCurrentInstance,
-  inject,
   onBeforeUnmount,
   onMounted,
+  provide,
   reactive,
   toRefs,
 } from 'vue';
@@ -39,15 +39,16 @@ import { bkTooltips } from '@bkui-vue/directives';
 import { ExclamationCircleShape } from '@bkui-vue/icon';
 import {
   classes,
+  formItemKey,
   PropTypes,
+  useForm,
 } from '@bkui-vue/shared';
 
-import { formKey } from './common';
 import type {
   IFormItemRule,
   IFormItemRules,
 } from './type';
-import validator from './validator';
+import defaultValidator from './validator';
 
 const formItemProps = {
   label: PropTypes.string,
@@ -74,35 +75,35 @@ const getRulesFromProps = (props) => {
 
   if (props.required) {
     rules.push({
-      validator: validator.required,
+      validator: defaultValidator.required,
       message: `${props.label}不能为空`,
       trigger: 'blur',
     });
   }
   if (props.email) {
     rules.push({
-      validator: validator.email,
+      validator: defaultValidator.email,
       message: `${props.label}格式不正确`,
       trigger: 'blur',
     });
   }
   if (Number(props.max) > -1) {
     rules.push({
-      validator: value => validator.max(value, props.max),
+      validator: value => defaultValidator.max(value, props.max),
       message: `${props.label}最大值${props.max}`,
       trigger: 'blur',
     });
   }
   if (Number(props.min) > -1) {
     rules.push({
-      validator: value => validator.min(value, props.min),
+      validator: value => defaultValidator.min(value, props.min),
       message: `${props.label}最小值${props.min}`,
       trigger: 'blur',
     });
   }
   if (Number(props.maxlength) > -1) {
     rules.push({
-      validator: value => validator.maxlength(value, props.maxlength),
+      validator: value => defaultValidator.maxlength(value, props.maxlength),
       message: `${props.label}最大长度${props.maxlength}`,
       trigger: 'blur',
     });
@@ -114,27 +115,33 @@ const mergeRules: (
   configRules: IFormItemRules,
   propsRules: IFormItemRules
 ) => IFormItemRules = (configRules, propsRules) => {
-  const formatConfigRules = configRules.map((rule) => {
-    let rulevalidator: (value: any) => boolean;
+  const formatConfigRules = configRules.reduce((result, rule) => {
+    let rulevalidator: any;
     if (rule.required) {
-      rulevalidator = validator.required;
+      rulevalidator = defaultValidator.required;
     } else if (rule.email) {
-      rulevalidator = validator.email;
+      rulevalidator = defaultValidator.email;
     } else if (Number(rule.max) > -1) {
-      rulevalidator = value => validator.max(value, rule.max);
+      rulevalidator = value => defaultValidator.max(value, rule.max);
     } else if (Number(rule.min) > -1) {
-      rulevalidator = value => validator.min(value, rule.max);
+      rulevalidator = value => defaultValidator.min(value, rule.max);
     } else if (Number(rule.maxlength) > -1) {
-      rulevalidator = value => validator.min(value, rule.max);
+      rulevalidator = value => defaultValidator.min(value, rule.max);
+    } else if (Object.prototype.toString.call(rule.pattern) === '[object RegExp]') {
+      rulevalidator = value => defaultValidator.pattern(value, rule.pattern);
+    } else if (Object.prototype.toString.call(rule.validator) === '[object Function]') {
+      rulevalidator =  rule.validator;
     } else {
-      rulevalidator = () => true;
+      // 不支持的配置规则
+      return result;
     }
-    return {
+    result.push({
       validator: rulevalidator,
       message: rule.message,
       trigger: rule.trigger,
-    };
-  });
+    });
+    return result;
+  }, []);
   return [...propsRules, ...formatConfigRules];
 };
 
@@ -169,7 +176,8 @@ export default defineComponent({
       isError: false,
       errorMessage: '',
     });
-    const form = inject(formKey);
+    const form = useForm();
+
     const isForm = Boolean(form);
 
     const labelStyles = computed<object>(() => {
@@ -195,7 +203,7 @@ export default defineComponent({
     /**
      * @desc 验证字段
      */
-    const validate = (trigger: String): Promise<boolean> => {
+    const validate = (trigger?: String): Promise<boolean> => {
       state.isError = false;
       state.errorMessage = '';
       // 没有设置 property 不进行验证
@@ -214,8 +222,12 @@ export default defineComponent({
       if (props.rules) {
         rules = props.rules as IFormItemRules;
       }
+      // debugger;
       // 合并规则属性配置
       rules = getTriggerRules(trigger, mergeRules(rules, getRulesFromProps(props)));
+
+      console.log(rules);
+      // debugger;
       const value = form.props.model[props.property];
 
       const doValidate = (() => {
@@ -228,6 +240,7 @@ export default defineComponent({
           const rule = rules[stepIndex];
           return Promise.resolve()
             .then(() => {
+              // debugger;
               const result = rule.validator(value);
               // 异步验证
               if (typeof result !== 'boolean'
@@ -259,6 +272,13 @@ export default defineComponent({
       state.isError = false;
       state.errorMessage = '';
     };
+
+    provide(formItemKey, {
+      ...props,
+      validate,
+      clearValidate,
+    });
+
     onMounted(() => {
       if (isForm) {
         form.register(currentInstance.proxy);

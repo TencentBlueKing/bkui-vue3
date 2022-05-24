@@ -45,7 +45,7 @@ describe('CheckboxGroup', () => {
       </CheckboxGroup>`,
     });
     expect(wrapper.classes()).toContain('bk-checkbox-group');
-    expect(wrapper.findAll('.bk-checkbox')).toHaveLength(3);
+    expect(wrapper.findAll('.bk-checkbox').length).toEqual(3);
   });
   it('disabled', () => {
     const wrapper = mount({
@@ -57,11 +57,11 @@ describe('CheckboxGroup', () => {
       </CheckboxGroup>`,
     });
     expect(wrapper.classes()).toContain('bk-checkbox-group');
-    expect(wrapper.findAll('.is-disabled')).toHaveLength(3);
+    expect(wrapper.findAll('.is-disabled').length).toEqual(3);
   });
-  it('modelValue', () => {
+  it('modelValue', async () => {
     const label = '选项一';
-    const wrapper = mount({
+    const wrapper = await mount({
       components,
       template: `
       <CheckboxGroup :modelValue="['${label}']">
@@ -71,7 +71,7 @@ describe('CheckboxGroup', () => {
       </CheckboxGroup>`,
     });
     const target = wrapper.findAll('.bk-checkbox.is-checked');
-    expect(target).toHaveLength(1);
+    expect(target.length).toEqual(1);
     expect(target[0].text()).toMatch(label);
   });
 });
