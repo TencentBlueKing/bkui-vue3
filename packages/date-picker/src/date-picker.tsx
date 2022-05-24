@@ -150,6 +150,7 @@ export default defineComponent({
 
     const hasHeader = computed(() => !!slots.header);
     const hasFooter = computed(() => !!slots.footer);
+    const hasShortcuts = computed(() => !!slots.shortcuts);
 
     const fontSizeCls = computed(() => {
       let cls = '';
@@ -522,6 +523,7 @@ export default defineComponent({
       isConfirm,
       hasHeader,
       hasFooter,
+      hasShortcuts,
       fontSizeCls,
       longWidthCls,
       localReadonly,
@@ -607,6 +609,8 @@ export default defineComponent({
         }
       </div>
     );
+
+    const shortcutsSlot = this.hasShortcuts ? { shortcuts: () => this.$slots.shortcuts?.() || null } : {};
     return (
       <div
         class={[
@@ -656,6 +660,7 @@ export default defineComponent({
                         focusedDate={this.focusedDate}
                         onPick={this.onPick}
                         onPick-success={this.onPickSuccess}
+                        v-slots={shortcutsSlot}
                       />
                     )
                     : (
@@ -675,6 +680,7 @@ export default defineComponent({
                         onPick={this.onPick}
                         onPick-clear={this.handleClear}
                         onPick-success={this.onPickSuccess}
+                        v-slots={shortcutsSlot}
                       />
                     )
                 }
