@@ -35,6 +35,7 @@ import BaseDemo from './base-demo.vue';
 import FooterSlotDemo from './footer-slot-demo.vue';
 import HeaderSlotDemo from './header-slot-demo.vue';
 import RangeDemo from './range-demo.vue';
+import ShortcutsSlotDemo from './shortcuts-slot-demo.vue';
 import TriggerSlotDemo from './trigger-slot-demo.vue';
 
 const menuPropsJson: IPropsTableItem[] = [
@@ -107,6 +108,13 @@ export default defineComponent({
             componentName="date-picker"
             demoName="footer-slot-demo">
             <FooterSlotDemo />
+          </DemoBox>
+          <DemoBox
+            title="shortcuts slot"
+            desc="自定义 shortcuts"
+            componentName="date-picker"
+            demoName="shortcuts-slot-demo">
+            <ShortcutsSlotDemo />
           </DemoBox>
         <PropsBox propsData={menuPropsJson}/>
       </div>
