@@ -4,6 +4,7 @@
       :columns="columns"
       :data="tableData"
       height="100%"
+      @scroll-bottom="handleScrollBottom"
     />
   </div>
 </template>
@@ -23,6 +24,9 @@
     methods: {
       handleDblClick(...args) {
         console.log(args);
+      },
+      handleScrollBottom(args) {
+        console.log('handleScrollBottom', args);
       },
     },
   });

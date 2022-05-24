@@ -301,3 +301,25 @@ export const getRowText = (row: any, key: string, column: Column) => {
 
   return row[key];
 };
+
+/**
+ * 格式化prop配置为标准数组格式
+ * @param prop prop对象值
+ * @param args 如果是function参数
+ * @returns
+ */
+export const formatPropAsArray = (prop: string | object | (() => any), args: any[]) => {
+  if (Array.isArray(prop)) {
+    return prop;
+  }
+
+  if (typeof prop === 'string' || typeof prop === 'object') {
+    return [prop];
+  }
+
+  if (typeof prop === 'function') {
+    return formatPropAsArray(Reflect.apply(prop, this, args), args);
+  }
+
+  return [];
+};

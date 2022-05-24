@@ -26,7 +26,7 @@
 
 import { defineComponent, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
 
-import { resolveClassName } from '@bkui-vue/shared';
+import { debounce, resolveClassName } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
 import { EMIT_EVENT_TYPES, EMITEVENTS, EVENTS } from './const';
@@ -133,11 +133,18 @@ export default defineComponent({
 
 
     const handleScrollChanged = (args: any[]) => {
+      const preBottom = reactiveProp.pos.bottom ?? 0;
       const pagination = args[1];
       const { translateX, translateY, pos = {} } = pagination;
       reactiveProp.scrollTranslateY = translateY;
       reactiveProp.scrollTranslateX = translateX;
       reactiveProp.pos = pos;
+      const { bottom } = pos;
+      if (bottom <= 2 && preBottom !== bottom) {
+        debounce(60, () => {
+          ctx.emit(EMITEVENTS.SCROLL_BOTTOM, { ...pos, translateX, translateY });
+        }, true)();
+      }
     };
 
     onMounted(() => {
@@ -171,6 +178,15 @@ export default defineComponent({
       'with-virtual-render': props.virtualEnabled,
     };
 
+    const resizeColumnClass = {
+      [resolveClassName('drag-column')]: true,
+      'offset-x': true,
+    };
+
+    const loadingRowClass = {
+      [resolveClassName('table-loading_bottom')]: true,
+    };
+
     return () => <div class={tableClass.value} style={wrapperStyle.value} ref={root}>
       {
         // @ts-ignore:next-line
@@ -199,7 +215,8 @@ export default defineComponent({
       </VirtualRender>
       <div class={ fixedWrapperClass }>
         { renderFixedColumns() }
-        <div class="bk-drag-column offset-x" style={dragOffsetXStyle.value}></div>
+        <div class={ resizeColumnClass } style={dragOffsetXStyle.value}></div>
+        <div class={ loadingRowClass }></div>
       </div>
       <div class={ footerClass.value }>
         {
