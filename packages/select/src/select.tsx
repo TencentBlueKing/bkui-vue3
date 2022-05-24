@@ -40,7 +40,11 @@ import { clickoutside } from '@bkui-vue/directives';
 import { AngleUp, Close } from '@bkui-vue/icon';
 import Loading from '@bkui-vue/loading';
 import BKPopover from '@bkui-vue/popover';
-import { classes, PropTypes } from '@bkui-vue/shared';
+import {
+  classes,
+  PropTypes,
+  useFormItem,
+} from '@bkui-vue/shared';
 import Tag from '@bkui-vue/tag';
 
 import {
@@ -99,6 +103,8 @@ export default defineComponent({
       popoverMinWidth,
       showOnInit,
     } = toRefs(props);
+
+    const formItem = useFormItem();
 
     const states = reactive<ISelectState>({
       currentPlaceholder: placeholder.value, // 当前placeholder（搜索的时候显示当前值）
@@ -193,6 +199,7 @@ export default defineComponent({
 
       emit('change', val);
       emit('update:modelValue', val);
+      formItem?.validate?.('change');
     };
     // 派发toggle事件
     const handleTogglePopover = () => {

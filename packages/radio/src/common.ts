@@ -41,6 +41,7 @@ import {
 import {
   EMPTY_OBJ,
   isEmptyObj,
+  useFormItem,
 } from '@bkui-vue/shared';
 
 import type {
@@ -79,6 +80,8 @@ export const useRadio = () => {
     props,
     emit,
   } = currentInstance;
+
+  const formItem = useFormItem();
 
   const radioGroup = inject<IRadioGroupContext>(radioGroupKey, EMPTY_OBJ);
   const isGroup = !isEmptyObj(radioGroup);
@@ -128,6 +131,7 @@ export const useRadio = () => {
     if (isGroup) {
       radioGroup.handleChange(currentInstance.proxy as IRadioInstance);
     }
+    formItem?.validate?.('change');
 
     nextTick(() => {
       // 选中状态保持同步
