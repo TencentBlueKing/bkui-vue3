@@ -24,45 +24,31 @@
 * IN THE SOFTWARE.
 */
 
-/**
- * 边框配置可选项
- */
-export const BORDER_OPRIONS = ['none', 'row', 'col', 'outer'];
+import { PropTypes } from '@bkui-vue/shared';
 
-export const enum EVENTS {
-  /** 点击排序事件 */
-  ON_SORT_BY_CLICK = 'onSortByClick',
-  ON_FILTER_CLICK = 'onFilterClick',
-  ON_SETTING_CHANGE = 'onSettingChange'
-}
-
-// ['columnPick', 'rowClick', 'rowDblClick', 'pageLimitChange', 'pageValueChange']
-export const enum EMITEVENTS {
-  COLUMN_PICK = 'columnPick',
-  COLUMN_SORT = 'columnSort',
-  COLUMN_FILTER = 'columnFilter',
-
-  ROW_CLICK = 'rowClick',
-  ROW_DBL_CLICK = 'rowDblClick',
-
-  PAGE_LIMIT_CHANGE = 'pageLimitChange',
-  PAGE_VALUE_CHANGE = 'pageValueChange',
-
-  SETTING_CHANGE = 'settingChange',
-
-  SCROLL_BOTTOM = 'scrollBottom'
-}
-
-const EMPTY = (..._args) => true;
-
-export const EMIT_EVENT_TYPES = {
-  [EMITEVENTS.COLUMN_PICK]: EMPTY,
-  [EMITEVENTS.COLUMN_FILTER]: EMPTY,
-  [EMITEVENTS.COLUMN_SORT]: EMPTY,
-  [EMITEVENTS.ROW_CLICK]: EMPTY,
-  [EMITEVENTS.ROW_DBL_CLICK]: EMPTY,
-  [EMITEVENTS.PAGE_LIMIT_CHANGE]: EMPTY,
-  [EMITEVENTS.PAGE_VALUE_CHANGE]: EMPTY,
-  [EMITEVENTS.SETTING_CHANGE]: EMPTY,
-  [EMITEVENTS.SCROLL_BOTTOM]: EMPTY,
+export const transferProps = {
+  // 顶部title(title[0]: 左侧title,title[1]: 右侧title,)
+  title: PropTypes.arrayOf(PropTypes.string).def([]),
+  // 自定义class
+  extCls: PropTypes.string.def(''),
+  // 搜索框 placeholder
+  searchPlaceholder: PropTypes.string.def(''),
+  // 唯一key值
+  settingKey: PropTypes.string.def('id'),
+  // 循环list时，显示字段的key值(当list为普通数组时可不传传了也无效)
+  displayKey: PropTypes.string.def('value'),
+  // 排序所依据的key(当list为普通数组时可不传，默认按照index值排序)
+  sortKey: PropTypes.string.def('value'),
+  // 内容超出是否显示tooltip
+  showOverflowTips: PropTypes.bool.def(false),
+  // 是否开启搜索
+  searchable: PropTypes.bool.def(false),
+  // 是否开启排序功能
+  sortable: PropTypes.bool.def(false),
+  // 穿梭框数据源(支持普通数组)
+  sourceList: PropTypes.arrayOf(PropTypes.any).def([]),
+  // 默认已选择的数据源
+  targetList: PropTypes.arrayOf(PropTypes.any).def([]),
+  // 穿梭框无数据时提示文案
+  emptyContent: PropTypes.arrayOf(PropTypes.string).def([]),
 };

@@ -173,6 +173,28 @@ export const tableProps = {
     size: PropTypes.size(['small', 'default', 'large']).def('default'),
     sizeList: PropTypes.shape<SizeItem[]>([]).def(undefined),
   })]).def(false),
+
+  /**
+   * 行的 class 的回调方法，也可以使用一个固定的 Object 为所有行设置一样的 Style
+   */
+  rowClass: PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.func]).def({}),
+
+  /**
+   * 行的 style 的回调方法，也可以使用一个固定的 Object 为所有行设置一样的 Style
+   */
+  rowStyle: PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.func]).def({}),
+
+
+  /**
+   * 单元格的 style 的回调方法，也可以使用一个固定的 Object 为所有单元格设置一样的 Style
+   */
+  cellStyle: PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.func]).def({}),
+
+
+  /**
+   * 单元格的 className 的回调方法，也可以使用字符串为所有单元格设置一个固定的 className
+   */
+  cellClass: PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.func]).def({}),
 };
 
 /**

@@ -36,7 +36,7 @@ import { TablePlugins } from './plugins/index';
 import Settings from './plugins/settings';
 import useFixedColumn from './plugins/use-fixed-column';
 import { Column, GroupColumn, IColumnActive, IReactiveProp, TablePropTypes } from './props';
-import { getColumnReactWidth, getRowText, resolveHeadConfig, resolvePropVal, resolveWidth } from './utils';
+import { formatPropAsArray, getColumnReactWidth, getRowText, resolveHeadConfig, resolvePropVal, resolveWidth } from './utils';
 
 
 export default class TableRender {
@@ -309,24 +309,44 @@ export default class TableRender {
     return <tbody>
     {
       rows.map((row: any, rowIndex: number) => {
-        const rowStyle = {
-          '--row-height': `${this.getRowHeight(row, rowIndex)}px`,
-        };
+        const rowStyle = [
+          ...formatPropAsArray(this.props.rowStyle, [row, rowIndex, this]),
+          {
+            '--row-height': `${this.getRowHeight(row, rowIndex)}px`,
+          },
+        ];
+
+        const rowClass = [
+          ...formatPropAsArray(this.props.rowClass, [row, rowIndex, this]),
+        ];
+
         const { resolveFixedColumnStyle,  fixedoffset } = getFixedColumnStyleResolve();
 
         return <tr
           // @ts-ignore
           style={rowStyle}
+          class={rowClass}
           onClick={ e => this.handleRowClick(e, row, rowIndex, rows)}
           onDblclick={e => this.handleRowDblClick(e, row, rowIndex, rows)}
         >
         {
-          this.filterColgroups.map((column: Column, index: number) => <td
-          class={this.getColumnClass(column, index)}
-          style={resolveFixedColumnStyle(column, fixedoffset)}
-          colspan={1} rowspan={1}>
-          <div class="cell" >{ this.renderCell(row, column, rowIndex, rows) }</div>
-        </td>)
+          this.filterColgroups.map((column: Column, index: number) => {
+            const cellStyle = [
+              resolveFixedColumnStyle(column, fixedoffset),
+              ...formatPropAsArray(this.props.cellStyle, [column, index, row, rowIndex, this]),
+            ];
+
+            const cellClass = [
+              this.getColumnClass(column, index),
+              ...formatPropAsArray(this.props.cellClass, [column, index, row, rowIndex, this]),
+            ];
+            return <td
+            class={cellClass}
+            style={cellStyle}
+            colspan={1} rowspan={1}>
+            <div class="cell" >{ this.renderCell(row, column, rowIndex, rows) }</div>
+          </td>;
+          })
         }
       </tr>;
       })
