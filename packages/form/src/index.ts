@@ -30,6 +30,8 @@ import ComposeFormItem from './compose-form-item';
 import Form, { formProps } from './form';
 import FormItem from './form-item';
 
+export * from './type';
+
 const BkForm = withInstallProps(Form, { FormItem, ComposeFormItem });
 
 export default BkForm;

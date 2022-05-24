@@ -31,10 +31,10 @@ import {
 
 import {
   classes,
+  formKey,
   PropTypes,
 } from '@bkui-vue/shared';
 
-import { formKey } from './common';
 import type { IFormItemContext } from './type';
 
 export const formProps = {
@@ -42,7 +42,7 @@ export const formProps = {
   labelWidth: PropTypes.oneOfType([Number, String]),
   labelPosition: PropTypes.oneOf(['left', 'center', 'right']),
   model: PropTypes.object,
-  rules: PropTypes.array,
+  rules: PropTypes.object,
 };
 
 export type FormProps = Readonly<ExtractPropTypes<typeof formProps>>;
@@ -88,7 +88,7 @@ export default defineComponent({
      * @param { string | Array<string> } fields 指定表单字段
      * @returns { Promise<[]> }
      */
-    const validate = (fields: string | Array<string>) => {
+    const validate = (fields?: string | Array<string>) => {
       let fieldMap = {};
       if (fields) {
         const fieldList = typeof fields === 'string' ? [fields] : fields;
@@ -119,7 +119,7 @@ export default defineComponent({
      * @desc 清除表单验证错误信息
      * @param { string | Array<string> } fields 指定表单字段
      */
-    const clearValidate = (fields: string | Array<string>) => {
+    const clearValidate = (fields?: string | Array<string>) => {
       let fieldMap = {};
       if (fields) {
         const fieldList = typeof fields === 'string' ? [fields] : fields;

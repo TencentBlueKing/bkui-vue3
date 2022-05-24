@@ -34,6 +34,7 @@ import {
 } from '../../typings';
 
 import DemoAlert from './demo/alert.vue';
+import DemoAlertClose from './demo/alert-close.vue';
 import DemoAlertCloseText from './demo/alert-close-text.vue';
 import DemoAlertShowIcon from './demo/alert-show-icon.vue';
 
@@ -84,6 +85,17 @@ const alertEvents: IPropsTableItem[] = [
     optional: [],
   },
 ];
+
+const alertSlots: IPropsTableItem[] = [
+  {
+    name: 'title',
+    type: '',
+    default: '',
+    desc: '',
+    optional: [],
+  },
+];
+
 export default defineComponent({
   name: 'Alert',
   render() {
@@ -108,6 +120,13 @@ export default defineComponent({
             <DemoAlertShowIcon />
         </DemoBox>
         <DemoBox
+          title="可关闭"
+          desc=""
+          componentName="alert"
+          demoName="/demo/alert-close">
+            <DemoAlertClose />
+        </DemoBox>
+        <DemoBox
           title="自定义关闭按钮文字"
           desc=""
           componentName="alert"
@@ -122,6 +141,10 @@ export default defineComponent({
           title="Alert Events"
           subtitle=""
           propsData={alertEvents}/>
+        <PropsBox
+          title="Alert Slots"
+          subtitle=""
+          propsData={alertSlots}/>
       </div>
     );
   },
