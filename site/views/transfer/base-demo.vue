@@ -1,5 +1,6 @@
 <template>
   <bk-transfer
+    v-model:targetList="targetList"
     :source-list="list"
     :display-key="'service_name'"
     sort-key="service_name"
@@ -19,6 +20,7 @@
     },
     data() {
       return {
+        targetList: [],
         list: [
           { service_code: 'pipeline', service_name: '流水线' },
           { service_code: 'codecc', service_name: '代码检查' },
@@ -38,6 +40,7 @@
         console.log(sourceList);
         console.log(targetList);
         console.log(targetValueList);
+        console.log(this.targetList);
       },
     },
   };
