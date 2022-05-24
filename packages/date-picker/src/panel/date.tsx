@@ -105,7 +105,7 @@ export type DatePanelProps = Readonly<ExtractPropTypes<typeof datePanelProps>>;
 export default defineComponent({
   props: datePanelProps,
   emits: ['pick', 'pick-success', 'pick-clear'],
-  setup(props, { emit }) {
+  setup(props, { slots, emit }) {
     const getTableType = currentView => (currentView.match(/^time/) ? 'time-picker' : `${currentView}-table`);
 
     const dates = (props.modelValue as DatePickerValueType[]).slice().sort();
@@ -231,6 +231,8 @@ export default defineComponent({
       state.currentView = state.currentView === 'time' ? 'date' : 'time';
     };
 
+    const hasShortcuts = computed(() => !!slots.shortcuts);
+
     return {
       ...toRefs(state),
       panelPickerHandlers,
@@ -242,6 +244,7 @@ export default defineComponent({
       changeMonth,
       reset,
       isTime,
+      hasShortcuts,
       onToggleVisibility,
       handleToggleTime,
       handlePickSuccess,
@@ -253,27 +256,27 @@ export default defineComponent({
       <div
         class={[
           'bk-picker-panel-body-wrapper',
-          this.shortcuts.length ? 'bk-picker-panel-with-sidebar' : '',
+          (this.shortcuts.length || this.hasShortcuts) ? 'bk-picker-panel-with-sidebar' : '',
         ]}
         onMousedown={(e: MouseEvent) => {
           e.preventDefault();
         }}
       >
-      {
-        this.shortcuts.length
-          ? (
-            <div class="bk-picker-panel-sidebar">
-              {
-                this.shortcuts.map(shortcut => (
-                  <div class="bk-picker-panel-shortcut" onClick={() => this.handleShortcutClick(shortcut)}>
-                    {shortcut.text}
-                  </div>
-                ))
-              }
-            </div>
-          )
-          : ''
-      }
+        {
+          this.shortcuts.length
+            ? (
+              <div class="bk-picker-panel-sidebar">
+                {
+                  this.shortcuts.map(shortcut => (
+                    <div class="bk-picker-panel-shortcut" onClick={() => this.handleShortcutClick(shortcut)}>
+                      {shortcut.text}
+                    </div>
+                  ))
+                }
+              </div>
+            )
+            : ''
+        }
         <div class="bk-picker-panel-body" style="width: 261px;">
           <div class="bk-date-picker-header" v-show={this.currentView !== 'time'}>
             <span class={iconBtnCls('prev', '-double')} onClick={() => this.changeYear(-1)}>
@@ -357,6 +360,15 @@ export default defineComponent({
               : ''
           }
         </div>
+        {
+          this.hasShortcuts
+            ? (
+              <div class="bk-picker-panel-sidebar">
+                {this.$slots.shortcuts?.() ?? null}
+              </div>
+            )
+            : null
+        }
       </div>
     );
   },

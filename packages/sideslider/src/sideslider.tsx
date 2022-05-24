@@ -41,6 +41,10 @@ export default defineComponent({
   },
   props: {
     ...sliderPops,
+    title: {
+      type: String,
+      default: '',
+    },
     direction: {
       type: String,
       default: 'right',
