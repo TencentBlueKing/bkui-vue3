@@ -4,19 +4,19 @@
       v-model="demo1"
       theme="success"
       is-outline
-      :pre-check="requestHandler"
+      :before-change="requestHandler"
     />
     <bk-switcher
       v-model="demo1"
       size="large"
       is-outline
-      :pre-check="requestHandler"
+      :before-change="requestHandler"
     />
     <bk-switcher
       v-model="demo1"
       size="small"
       is-outline
-      :pre-check="requestHandler"
+      :before-change="requestHandler"
     />
 
     <bk-switcher
@@ -24,21 +24,21 @@
       theme="success"
       is-outline
       show-text
-      :pre-check="requestHandler"
+      :before-change="requestHandler"
     />
     <bk-switcher
       v-model="demo1"
       size="large"
       is-outline
       show-text
-      :pre-check="requestHandler"
+      :before-change="requestHandler"
     />
     <bk-switcher
       v-model="demo1"
       size="small"
       is-outline
       show-text
-      :pre-check="requestHandler"
+      :before-change="requestHandler"
     />
 
     <div class="mt20">
@@ -46,21 +46,21 @@
         v-model="demo1"
         theme="primary"
         is-square
-        :pre-check="requestHandler"
+        :before-change="requestHandler"
       />
       <bk-switcher
         v-model="demo1"
         size="large"
         theme="primary"
         is-square
-        :pre-check="requestHandler"
+        :before-change="requestHandler"
       />
       <bk-switcher
         v-model="demo1"
         size="small"
         theme="primary"
         is-square
-        :pre-check="requestHandler"
+        :before-change="requestHandler"
       />
 
       <bk-switcher
@@ -68,7 +68,7 @@
         theme="primary"
         is-square
         show-text
-        :pre-check="requestHandler"
+        :before-change="requestHandler"
       />
       <bk-switcher
         v-model="demo1"
@@ -76,7 +76,7 @@
         theme="primary"
         is-square
         show-text
-        :pre-check="requestHandler"
+        :before-change="requestHandler"
       />
       <bk-switcher
         v-model="demo1"
@@ -84,7 +84,7 @@
         theme="primary"
         is-square
         show-text
-        :pre-check="requestHandler"
+        :before-change="requestHandler"
       />
     </div>
 
@@ -94,21 +94,21 @@
         v-model="demo1"
         is-square
         is-outline
-        :pre-check="requestHandler"
+        :before-change="requestHandler"
       />
       <bk-switcher
         v-model="demo1"
         size="large"
         is-square
         is-outline
-        :pre-check="requestHandler"
+        :before-change="requestHandler"
       />
       <bk-switcher
         v-model="demo1"
         size="small"
         is-square
         is-outline
-        :pre-check="requestHandler"
+        :before-change="requestHandler"
       />
 
       <bk-switcher
@@ -116,21 +116,21 @@
         is-square
         is-outline
         show-text
-        :pre-check="requestHandler"
+        :before-change="requestHandler"
       />
       <bk-switcher
         v-model="demo1"
         is-square
         is-outline
         show-text
-        :pre-check="requestHandler"
+        :before-change="requestHandler"
       />
       <bk-switcher
         v-model="demo1"
         is-square
         is-outline
         show-text
-        :pre-check="requestHandler"
+        :before-change="requestHandler"
       />
     </div>
   </div>
