@@ -27,7 +27,11 @@
 import { computed, defineComponent, ExtractPropTypes, ref } from 'vue';
 
 import { Close, DownSmall, Eye, Search, Unvisible } from '@bkui-vue/icon';
-import { classes, PropTypes } from '@bkui-vue/shared';
+import {
+  classes,
+  PropTypes,
+  useFormItem,
+} from '@bkui-vue/shared';
 
 
 export const inputType = {
@@ -104,6 +108,8 @@ export default defineComponent({
   props: inputType,
   emits: inputEmitEventsType,
   setup(props, ctx) {
+    const formItem = useFormItem();
+
     const isFocused = ref(false);
     const isCNInput = ref(false);
     const isTextArea = computed(() => props.type === 'textarea');
@@ -148,6 +154,7 @@ export default defineComponent({
       ctx.emit(EVENTS.UPDATE, '');
       ctx.emit(EVENTS.CHANGE, '');
       ctx.emit(EVENTS.CLEAR);
+      formItem?.validate?.('change');
     }
 
     function handleFocus(e) {
@@ -158,6 +165,7 @@ export default defineComponent({
     function handleBlur(e) {
       isFocused.value = false;
       ctx.emit(EVENTS.BLUR, e);
+      formItem?.validate?.('blur');
     }
     // 事件句柄生成器
     function eventHandler(eventName) {
@@ -171,6 +179,9 @@ export default defineComponent({
         }
 
         ctx.emit(eventName, e.target.value, e);
+        if (eventName === EVENTS.INPUT) {
+          formItem?.validate?.('change');
+        }
       };
     }
     const [

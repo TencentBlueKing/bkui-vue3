@@ -26,7 +26,10 @@
 import { computed, defineComponent, ref, watch } from 'vue';
 
 import { SwitcherLoading } from '@bkui-vue/icon';
-import { PropTypes } from '@bkui-vue/shared';
+import {
+  PropTypes,
+  useFormItem,
+} from '@bkui-vue/shared';
 export default defineComponent({
   name: 'Switcher',
   props: {
@@ -47,6 +50,8 @@ export default defineComponent({
   },
   emits: ['update:modelValue', 'change'],
   setup(props, { emit }) {
+    const formItem = useFormItem();
+
     const isLoading = ref(false);
 
     const isChecked = computed(() => props.trueValue === localValue.value);
@@ -100,6 +105,7 @@ export default defineComponent({
       const trigger = () => {
         emit('update:modelValue', lastValue);
         emit('change', lastChecked);
+        formItem?.validate?.('change');
       };
 
       let goodJob: any = true;

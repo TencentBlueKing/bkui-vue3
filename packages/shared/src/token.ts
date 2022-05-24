@@ -24,7 +24,13 @@
 * IN THE SOFTWARE.
 */
 
+import type { InjectionKey } from 'vue';
 
-export const formKey = Symbol('form');
+import {
+  IFormContext,
+  IFormItemContext,
+} from '@bkui-vue/form';
 
-export const formItemKey = Symbol('formItem');
+export const formKey: InjectionKey<IFormContext> = Symbol('form');
+
+export const formItemKey: InjectionKey<IFormItemContext> = Symbol('formItem');

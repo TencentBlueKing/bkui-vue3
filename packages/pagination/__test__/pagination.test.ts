@@ -36,10 +36,10 @@ describe('Pagination', () => {
   const count = 100;
   const limit = 10;
 
-  it('mounted', () => {
-    const wrapper = mount({
+  it('mounted', async () => {
+    const wrapper = await mount({
       components,
-      template: `<Pagination count=${count} />`,
+      template: `<Pagination :count=${count} />`,
     });
     expect(wrapper.classes()).toContain('bk-pagination');
   });
@@ -47,7 +47,7 @@ describe('Pagination', () => {
   it('count', () => {
     const wrapper = mount({
       components,
-      template: `<Pagination count=${count} />`,
+      template: `<Pagination :count=${count} />`,
     });
 
     expect(wrapper.find('.bk-pagination-total-num').text()).toContain(`${count}`);
@@ -56,7 +56,7 @@ describe('Pagination', () => {
   it('limit', () => {
     const wrapper = mount({
       components,
-      template: `<Pagination count=${count} limit=${limit} />`,
+      template: `<Pagination :count=${count} :limit=${limit} />`,
     });
     const pageNumList = wrapper.findAll('.bk-pagination-list-item');
     expect(pageNumList.at(pageNumList.length - 1).text()).toContain(`${Math.ceil(count / limit)}`);
@@ -65,8 +65,15 @@ describe('Pagination', () => {
   it('showLimit', () => {
     const wrapper = mount({
       components,
-      template: `<Pagination count=${count} showLimit />`,
+      template: `<Pagination :count=${count} showLimit />`,
     });
-    expect(wrapper.find('.bk-pagination-small-list')).toHaveLength(1);
+    expect(wrapper.findAll('.bk-pagination-limit-select').length).toEqual(1);
+  });
+  it('smallList', () => {
+    const wrapper = mount({
+      components,
+      template: `<Pagination :count=${count} small />`,
+    });
+    expect(wrapper.findAll('.bk-pagination-small-list').length).toEqual(1);
   });
 });

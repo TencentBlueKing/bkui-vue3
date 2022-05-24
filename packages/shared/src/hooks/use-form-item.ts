@@ -24,10 +24,15 @@
 * IN THE SOFTWARE.
 */
 
-import type { InjectionKey } from 'vue';
+import {
+  inject,
+} from 'vue';
 
-import { getFormKey } from '../../hooks/use-form';
+import {
+  IFormItemContext,
+} from '@bkui-vue/form';
 
-import type { IFormContext } from './type';
+import { EMPTY_OBJ } from '../index';
+import { formItemKey } from '../token';
 
-export const formKey: InjectionKey<IFormContext> = getFormKey();
+export const useFormItem = () => inject<IFormItemContext>(formItemKey, EMPTY_OBJ);
