@@ -123,7 +123,9 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?)
   const updateBorderClass = (root: HTMLElement) => {
     if (root) {
       const tableBody = root.querySelector('.bk-table-body table') as HTMLElement;
-      hasScrollY.value = tableBody.offsetHeight > root.offsetHeight;
+      if (tableBody) {
+        hasScrollY.value = tableBody.offsetHeight > root.offsetHeight;
+      }
     }
   };
 

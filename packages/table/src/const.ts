@@ -48,7 +48,9 @@ export const enum EMITEVENTS {
   PAGE_LIMIT_CHANGE = 'pageLimitChange',
   PAGE_VALUE_CHANGE = 'pageValueChange',
 
-  SETTING_CHANGE = 'settingChange'
+  SETTING_CHANGE = 'settingChange',
+
+  SCROLL_BOTTOM = 'scrollBottom'
 }
 
 const EMPTY = (..._args) => true;
@@ -62,4 +64,5 @@ export const EMIT_EVENT_TYPES = {
   [EMITEVENTS.PAGE_LIMIT_CHANGE]: EMPTY,
   [EMITEVENTS.PAGE_VALUE_CHANGE]: EMPTY,
   [EMITEVENTS.SETTING_CHANGE]: EMPTY,
+  [EMITEVENTS.SCROLL_BOTTOM]: EMPTY,
 };
