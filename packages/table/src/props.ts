@@ -195,7 +195,17 @@ export const tableProps = {
    * 单元格的 className 的回调方法，也可以使用字符串为所有单元格设置一个固定的 className
    */
   cellClass: PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.func]).def({}),
+
+  /**
+   * 表格底部loading加载效果，可以配合表格scroll-bottom事件使用
+   * 详细配置可参考bk-loading组件
+   */
+  scrollLoading: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.bool,
+  ]).def(undefined),
 };
+
 
 /**
  * 配置自定义行高选项
