@@ -75,7 +75,7 @@ export default defineComponent({
     const showCode = ref(false);
     const showConfigData = ref(false);
     const preview = ref<HTMLDivElement>(null);
-    let copyInstance = null;
+    const copyInstance = null;
     const sourceCode = ref('');
     const evalCode = ref('');
     const handleShowCodeChange = () => {
@@ -105,7 +105,7 @@ export default defineComponent({
       optionData.value = JSON.stringify(props.optionData, null, 4);
     });
     onMounted(() => {
-      copyInstance = new ClipboardJS((getCurrentInstance().refs.copyBtn as any).$el, {
+      const copyInstance = new ClipboardJS((getCurrentInstance().refs.copyBtn as any).$el, {
         text: () => activeCode.value,
       });
       ['success', 'error'].forEach((theme) => {
