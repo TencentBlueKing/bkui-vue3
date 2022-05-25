@@ -15,6 +15,7 @@
         :data="autoOpen"
         label="name"
         children="children"
+        :auto-open-parent-node="false"
       />
     </div>
     <div class="cell">

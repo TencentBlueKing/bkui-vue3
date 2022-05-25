@@ -34,13 +34,13 @@ import useActiveColumns from './plugins/use-active-columns';
 import useColumnResize from './plugins/use-column-resize';
 import useFixedColumn from './plugins/use-fixed-column';
 import userPagination from './plugins/use-pagination';
+import useScrollLoading from './plugins/use-scroll-loading';
 import { tableProps } from './props';
 import TableRender from './render';
 import { useClass } from './use-common';
 import {
   observerResize,
-  resolveColumnWidth,
-} from './utils';
+  resolveColumnWidth } from './utils';
 
 export default defineComponent({
   name: 'Table',
@@ -140,7 +140,7 @@ export default defineComponent({
       reactiveProp.scrollTranslateX = translateX;
       reactiveProp.pos = pos;
       const { bottom } = pos;
-      if (bottom <= 2 && preBottom !== bottom) {
+      if (bottom <= 2 && preBottom > bottom) {
         debounce(60, () => {
           ctx.emit(EMITEVENTS.SCROLL_BOTTOM, { ...pos, translateX, translateY });
         }, true)();
@@ -164,9 +164,9 @@ export default defineComponent({
       tableRender.destroy();
     });
 
-    ctx.expose({
-      plugins: tableRender.plugins,
-    });
+    // ctx.expose({
+    //   plugins: tableRender.plugins,
+    // });
 
     const tableBodyClass = {
       ...contentClass,
@@ -184,8 +184,11 @@ export default defineComponent({
     };
 
     const loadingRowClass = {
-      [resolveClassName('table-loading_bottom')]: true,
+      'scroll-loading': true,
+      _bottom: true,
     };
+
+    const { renderScrollLoading } = useScrollLoading(props, ctx);
 
     return () => <div class={tableClass.value} style={wrapperStyle.value} ref={root}>
       {
@@ -216,7 +219,9 @@ export default defineComponent({
       <div class={ fixedWrapperClass }>
         { renderFixedColumns() }
         <div class={ resizeColumnClass } style={dragOffsetXStyle.value}></div>
-        <div class={ loadingRowClass }></div>
+        <div class={ loadingRowClass }>{
+          renderScrollLoading()
+        }</div>
       </div>
       <div class={ footerClass.value }>
         {

@@ -41,10 +41,24 @@ import fixed from './fixed.vue';
 import * as TABLE_DATA from './options';
 import pagination from './pagination.vue';
 import RemotePagination from './remotePagination.vue';
+import ScrollLoading from './scroll-loading.vue';
+import ScrollLoadingSlot from './scroll-loading-slot.vue';
 import virtualRender from './virtual-render.vue';
 
 export default defineComponent({
-  components: { basic, bordered, virtualRender, cellRender, event, pagination, RemotePagination, DataEmpty, fixed },
+  components: {
+    basic,
+    bordered,
+    virtualRender,
+    cellRender,
+    event,
+    pagination,
+    RemotePagination,
+    DataEmpty,
+    fixed,
+    ScrollLoading,
+    ScrollLoadingSlot,
+  },
   render() {
     const menuPropsJson = resolvePropsToDesData(tableProps);
 
@@ -138,6 +152,26 @@ export default defineComponent({
         demoName: 'fixed',
       },
       component: () => <fixed></fixed>,
+    },
+    {
+      attrs: {
+        title: '底部加载',
+        subtitle: '配置底部加载更多',
+        desc: '配置scroll-loading属性设置表格底部加载样式，结合scroll-end监听表格滚动至底部事件进行分页加载',
+        componentName: 'table',
+        demoName: 'scroll-loading',
+      },
+      component: () => <ScrollLoading></ScrollLoading>,
+    },
+    {
+      attrs: {
+        title: '底部加载插槽',
+        subtitle: '自定义配置底部加载更多,需要设置 scroll-loading = true',
+        desc: '配置scroll-loading属性设置表格底部加载样式，结合scroll-end监听表格滚动至底部事件进行分页加载',
+        componentName: 'table',
+        demoName: 'scroll-loading-slot',
+      },
+      component: () => <ScrollLoadingSlot></ScrollLoadingSlot>,
     }];
 
     return (

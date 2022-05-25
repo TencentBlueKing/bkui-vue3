@@ -323,3 +323,11 @@ export const formatPropAsArray = (prop: string | object | (() => any), args: any
 
   return [];
 };
+
+export const isRenderScrollBottomLoading = (props: TablePropTypes) => {
+  if (props.scrollLoading === null) {
+    return false;
+  }
+
+  return typeof props.scrollLoading === 'boolean' || typeof props.scrollLoading === 'object';
+};
