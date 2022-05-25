@@ -23,29 +23,10 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-export default {
-  required: (value: any): boolean => {
-    console.log('required', value, value !== '' && value !== undefined && value !== null);
-    return value !== '' && value !== undefined && value !== null;
-  },
-  min: (value: number, min: number): boolean => {
-    console.log('min');
-    return value >= min;
-  },
-  max: (value: number, max: number): boolean => {
-    console.log('max');
-    return max >= value;
-  },
-  email: (value: string): boolean => {
-    console.log('email');
-    return /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/.test(value);
-  },
-  maxlength: (value: string, maxlength: number): boolean => {
-    console.log('maxlength');
-    return value.length <= maxlength;
-  },
-  pattern: (value: string, pattern: RegExp): boolean => {
-    console.log('pattern');
-    return pattern.test(value);
-  },
-};
+
+// 非数组，基础数据数组，对象数组
+export const enum ArrayType {
+  OBJECT_ARRAY = 'objectArray',
+  BASE_ARRAY = 'baseArray',
+  NOT_ARRAY = 'notArray'
+}

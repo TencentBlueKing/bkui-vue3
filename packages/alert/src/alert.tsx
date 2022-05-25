@@ -26,7 +26,10 @@
 
 import { defineComponent, reactive } from 'vue';
 
-import { InfoLine } from '@bkui-vue/icon';
+import {
+  CloseLine,
+  InfoLine,
+} from '@bkui-vue/icon';
 import { classes, PropTypes } from '@bkui-vue/shared';
 
 export default defineComponent({
@@ -64,7 +67,7 @@ export default defineComponent({
     const closeButtonClasses: string = classes({
       'bk-alert-close': true,
       'close-text': renderCloseText,
-      'icon-close': !renderCloseText,
+      'bk-alert-close-icon': !renderCloseText,
     });
 
     const typeClass: string = classes({
@@ -78,16 +81,18 @@ export default defineComponent({
             {this.showIcon && <InfoLine class="bk-alert-icon-info" />}
             <div class="bk-alert-content">
                 <div class="bk-alert-title">
-                  {this.title}
+                  {this.$slots.title ? this.$slots.title() : this.title}
                 </div>
-                <div class="bk-alert-description"></div>
+                <div class="bk-alert-description">
+                  {this.$slots.default?.()}
+                </div>
             </div>
             {
               this.closable
               && <span
                 class={closeButtonClasses}
                 onClick={this.handleClose}>
-                {this.closeText}
+                {this.closeText ? this.closeText : <CloseLine />}
               </span>
             }
         </div>

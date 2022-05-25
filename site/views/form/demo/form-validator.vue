@@ -3,10 +3,10 @@
     ref="formRef"
     class="example"
     :model="formMode"
+    :rules="rules"
   >
     <bk-form-item
       label="姓名"
-      required
       property="name"
     >
       <bk-input
@@ -75,6 +75,17 @@
   const formMode = ref({
     name: '',
   });
+
+  const rules = {
+    name: [
+      {
+        validator: (value) => {
+          debugger;
+          console.log('asdadasd =', value);
+        },
+      },
+    ],
+  };
 
   const submit = () => {
     formRef.value.validate();

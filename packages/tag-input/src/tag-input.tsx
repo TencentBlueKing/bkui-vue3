@@ -31,6 +31,9 @@ import { bkTooltips } from '@bkui-vue/directives';
 import { Close, Error } from '@bkui-vue/icon';
 import BkLoading, { BkLoadingSize } from '@bkui-vue/loading';
 import BKPopover from '@bkui-vue/popover';
+import {
+  useFormItem,
+} from '@bkui-vue/shared';
 
 import { getCharLength, INPUT_MIN_WIDTH, useFlatList, usePage } from './common';
 import ListTagRender from './list-tag-render';
@@ -45,6 +48,7 @@ export default defineComponent({
   props: tagProps(),
   emits: ['update:modelValue', 'change', 'select', 'blur', 'remove', 'removeAll'],
   setup(props, { emit }) {
+    const formItem = useFormItem();
     const state = reactive({
       isEdit: false,
       isHover: false,
@@ -421,6 +425,7 @@ export default defineComponent({
         }
         popoverProps.isShow = false;
         emit('blur', inputValue, tagList.value);
+        formItem?.validate?.('blur');
       }, 50);
     };
 
@@ -468,6 +473,7 @@ export default defineComponent({
       // this.dispatch('bk-form-item', 'form-change')
       emit(type, data);
       emit('update:modelValue', tagList.value);
+      formItem?.validate?.('change');
     };
 
     /**

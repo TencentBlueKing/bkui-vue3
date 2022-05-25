@@ -98,8 +98,8 @@ const transferPropsJson: IPropsTableItem[] = [
   {
     name: 'target-list',
     type: 'Array',
-    default: '',
-    desc: '已选择的数据',
+    default: [],
+    desc: '已选择的数据（唯一标识 setting-key 的数组），可以使用v-mode:targetList绑定',
     optional: [],
   },
   // {
@@ -174,9 +174,16 @@ const transferSlotsJson: IPropsTableItem[] = [
 const transferChangeJson: IPropsTableItem[] = [
   {
     name: 'change',
-    type: 'Function',
+    type: 'Function(sourceList, targetList, targetValueList)',
     default: '',
-    desc: '数据源改变触发(targetValueList 表示所选数据的 setting-key 值)',
+    desc: '右侧选择数据改变时触发(sourceList:未选择数据，targetList 表示所选数据；targetValueList表示唯一标识 setting-key 的数组)',
+    optional: [],
+  },
+  {
+    name: 'update:targetList',
+    type: 'Function(targetList)',
+    default: '',
+    desc: '可使用v-mode:targetList绑定，也可以单独监听',
     optional: [],
   },
 ];
@@ -194,7 +201,7 @@ export default defineComponent({
           <DemoBox
             title="基础用法"
             subtitle=""
-            desc="默认配置 source-list 和 display-key，source-list 为必传 source-list 可以是普通数组。当 source-list 为普通数组时，display-key 可不传。"
+            desc="默认配置 source-list 和 display-key，source-list 为必传 source-list 可以是普通数组(普通数组会自动去重)。当 source-list 为普通数组时，display-key 可不传。"
             componentName="transfer"
             demoName="base-demo">
             <BaseDemo></BaseDemo>
@@ -203,7 +210,7 @@ export default defineComponent({
           <DemoBox
             title="配置 target-list 以及设置排序"
             subtitle=""
-            desc="配置 sortable 以及 sort-key 使得操作数据时数据的排序不变，配置 target-list 设置默认选择的数据。sortable 为 true 时开启排序功能，为 false 时则关闭，sort-key 为排序所依据的 key 值。注意：当 source-list 为普通数组时，开启排序时默认按照数组 index 排序，此时可不传 sort-key。"
+            desc="配置 sortable 以及 sort-key 使得操作数据时数据的排序不变，配置 target-list 设置默认选择的数据。sortable 为 true 时开启排序功能，为 false 时则关闭，sort-key 为排序所依据的 key 值。注意：当 source-list 为普通数组时，开启排序时默认按照值排序，此时不需要传 sort-key。"
             componentName="transfer"
             demoName="target-list-demo">
             <TargetListDemo></TargetListDemo>
@@ -212,7 +219,7 @@ export default defineComponent({
           <DemoBox
             title="普通数组配置"
             subtitle=""
-            desc="此时根据 index 排序；display-key 和 sort-key 以及 setting-key 可不传。"
+            desc="此时根据值排序；display-key、sort-key、setting-key 不需要传。"
             componentName="transfer"
             demoName="normal-list-demo">
             <NormalListDemo></NormalListDemo>
@@ -221,16 +228,16 @@ export default defineComponent({
           <DemoBox
             title="自定义 header 和无数据时显示内容"
             subtitle=""
-            desc="配置 slot 为 left-header 或 right-header 可自定义 header 内容，配置 slot 为 left-empty-content 和 right-empty-content 可自定义数据为空时所显示的内容(注意：当配置了 slot 时，其 title 和 empty-content 可不配置)"
+            desc="配置 slot 为 left-header 或 right-header 可自定义 header 内容，配置 slot 为 left-empty-content 和 right-empty-content 可自定义数据为空时所显示的内容(注意：当配置了 slot 时，其 title 和 empty-content 配置不会生效)"
             componentName="transfer"
             demoName="custom-header-demo">
             <CustomHeaderDemo></CustomHeaderDemo>
           </DemoBox>
 
           <DemoBox
-            title="自定义 选项卡 模板"
+            title="自定义 选项 模板"
             subtitle=""
-            desc="配置 slot 为 source-option 或 target-option 可自定义 选项卡 内容。"
+            desc="配置 slot 为 source-option 或 target-option 可自定义 选项 内容。"
             componentName="transfer"
             demoName="custom-option-demo">
             <CustomOptionDemo></CustomOptionDemo>
