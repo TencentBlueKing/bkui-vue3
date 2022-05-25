@@ -32,8 +32,8 @@ import PropsBox from '../../components/props-box';
 import { IPropsTableItem } from '../../typings';
 
 import BaseDemo from './base-demo.vue';
+import BeforeChangeDemo from './before-change-demo.vue';
 import DisabledDemo from './disabled-demo.vue';
-import PreCheckDemo from './pre-check-demo.vue';
 import SizeDemo from './size-demo.vue';
 import TextDemo from './text-demo.vue';
 import ThemeDemo from './theme-demo.vue';
@@ -111,7 +111,7 @@ const switcherPropsJson: IPropsTableItem[] = [
     optional: [],
   },
   {
-    name: 'pre-check',
+    name: 'before-change',
     type: 'Function',
     default: '',
     desc: '状态切换的前置检测接收操作后的状态（lastValue），返回true，false，Promise',
@@ -188,10 +188,10 @@ export default defineComponent({
           <DemoBox
             title="前置状态检测"
             subtitle=""
-            desc="可以通过 pre-check 接收一个函数来做前置状态检测，返回 false状态切换失败；返回true状态切换成功；返回一个promise，resolve状态切换成功，reject状态切换失败"
+            desc="可以通过 before-change 接收一个函数来做前置状态检测，返回 false状态切换失败；返回true状态切换成功；返回一个promise，resolve状态切换成功，reject状态切换失败"
             componentName="switcher"
-            demoName="pre-check-demo">
-            <PreCheckDemo></PreCheckDemo>
+            demoName="before-change-demo">
+            <BeforeChangeDemo></BeforeChangeDemo>
           </DemoBox>
 
           <DemoBox

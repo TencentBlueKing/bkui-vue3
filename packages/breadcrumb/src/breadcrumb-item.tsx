@@ -44,7 +44,6 @@ export default defineComponent({
     const parent = inject<IBreadcrumbProps>('breadcrumb');
     const router = appContext.config.globalProperties.$router;
     const { to, replace } = props;
-
     const handleClick = () => {
       if (!to || !router) return;
       replace ? router.replace(to) : router.push(to);
@@ -61,9 +60,11 @@ export default defineComponent({
         {slots?.default?.()}
       </span>
       {
-        parent?.separatorClass
-          ? <i class={`bk-breadcrumb-separator ${parent.separatorClass}`}></i>
-          : <span class="bk-breadcrumb-separator" role="presentation">{parent?.separator}</span>
+        slots?.separator
+          ? slots?.separator?.()
+          : parent?.separatorClass
+            ? <i class={`bk-breadcrumb-separator ${parent.separatorClass}`}></i>
+            : <span class="bk-breadcrumb-separator" role="presentation">{parent?.separator}</span>
       }
     </span>
     );
