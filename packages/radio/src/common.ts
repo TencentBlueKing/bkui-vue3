@@ -86,7 +86,7 @@ export const useRadio = () => {
   const radioGroup = inject<IRadioGroupContext>(radioGroupKey, EMPTY_OBJ);
   const isGroup = !isEmptyObj(radioGroup);
 
-  const isChecked = ref<boolean>(props.checked);
+  const isChecked = ref<boolean>(false);
 
   // 禁用状态
   const isDisabled = computed<boolean>(() => {
@@ -100,6 +100,8 @@ export const useRadio = () => {
   if (isGroup) {
     watch(() => radioGroup.props.modelValue, (modelValue) => {
       isChecked.value = modelValue === props.label;
+    }, {
+      immediate: true,
     });
   } else {
     watch(() => props.modelValue, (modelValue) => {

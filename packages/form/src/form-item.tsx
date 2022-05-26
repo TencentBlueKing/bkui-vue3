@@ -23,6 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import { get } from 'lodash';
 import type { ExtractPropTypes } from 'vue';
 import {
   computed,
@@ -226,9 +227,7 @@ export default defineComponent({
       // 合并规则属性配置
       rules = getTriggerRules(trigger, mergeRules(rules, getRulesFromProps(props)));
 
-      console.log(rules);
-      // debugger;
-      const value = form.props.model[props.property];
+      const value = get(form.props.model, props.property);
 
       const doValidate = (() => {
         let stepIndex = -1;
