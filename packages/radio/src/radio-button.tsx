@@ -73,7 +73,6 @@ export default defineComponent({
 
     return {
       isFocused,
-      realName: name,
       isChecked,
       isDisabled,
       setChecked,
