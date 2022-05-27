@@ -326,6 +326,7 @@ export default class TableRender {
           // @ts-ignore
           style={rowStyle}
           class={rowClass}
+          key={row.__$uuid}
           onClick={ e => this.handleRowClick(e, row, rowIndex, rows)}
           onDblclick={e => this.handleRowDblClick(e, row, rowIndex, rows)}
         >

@@ -25,6 +25,7 @@
 */
 
 import { throttle } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
 
 import { BORDER_OPRIONS } from './const';
 import { Column, GroupColumn, TablePropTypes } from './props';
@@ -330,4 +331,23 @@ export const isRenderScrollBottomLoading = (props: TablePropTypes) => {
   }
 
   return typeof props.scrollLoading === 'boolean' || typeof props.scrollLoading === 'object';
+};
+
+export const getRowKey = (item: any, props: TablePropTypes) => {
+  if (typeof props.rowKey === 'string') {
+    const keys = props.rowKey.split('.');
+    return keys.reduce((pre: any, cur: string) => {
+      if (Object.prototype.hasOwnProperty.call(pre, cur)) {
+        return pre[cur];
+      }
+
+      return pre;
+    }, item);
+  }
+
+  if (typeof props.rowKey === 'function') {
+    return Reflect.apply(props.rowKey, this, [item]);
+  }
+
+  return uuidv4();
 };

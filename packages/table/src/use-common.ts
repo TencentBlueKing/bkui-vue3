@@ -27,8 +27,17 @@ import { computed, onMounted, reactive, ref } from 'vue';
 
 import { classes, resolveClassName } from '@bkui-vue/shared';
 
+import useActiveColumns from './plugins/use-active-columns';
+import useColumnResize from './plugins/use-column-resize';
+import useFixedColumn from './plugins/use-fixed-column';
 import { TablePropTypes } from './props';
-import { resolveHeadConfig, resolveNumberOrStringToPix, resolvePropBorderToClassStr, resolvePropVal } from './utils';
+import {
+  getRowKey,
+  resolveHeadConfig,
+  resolveNumberOrStringToPix,
+  resolvePropBorderToClassStr,
+  resolvePropVal,
+} from './utils';
 
 export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?) => {
   const autoHeight = ref(200);
@@ -140,5 +149,54 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?)
     resetTableHeight,
     updateBorderClass,
     hasFooter,
+  };
+};
+
+export const useInit = (props: TablePropTypes) => {
+  const colgroups = reactive((props.columns ?? []).map(col => ({
+    ...col,
+    calcWidth: null,
+    resizeWidth: null,
+    listeners: new Map(),
+  })));
+
+  const { dragOffsetXStyle } = useColumnResize(colgroups, true);
+  const { activeColumns } = useActiveColumns(props);
+
+  const reactiveSchema = reactive({
+    rowActions: new Map(),
+    scrollTranslateY: 0,
+    scrollTranslateX: 0,
+    pos: {
+      bottom: 1,
+    },
+    activeColumns,
+    setting: {
+      size: null,
+      height: null,
+    },
+  });
+
+  /**
+   * 生成内置index
+   */
+  const indexData = computed(() => props.data.map((item: any, index: number) => {
+    const rowId = getRowKey(item, props);
+    return {
+      ...item,
+      __$table_row_index: index + 1,
+      __$uuid: rowId,
+    };
+  }));
+
+  const { renderFixedColumns, fixedWrapperClass } = useFixedColumn(props, colgroups);
+
+  return {
+    colgroups,
+    dragOffsetXStyle,
+    reactiveSchema,
+    indexData,
+    renderFixedColumns,
+    fixedWrapperClass,
   };
 };
