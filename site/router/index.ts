@@ -296,7 +296,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/steps',
     name: 'steps',
-    component: () => import('../views/steps'),
+    component: () => import('../views/steps/index'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'Steps 步骤',

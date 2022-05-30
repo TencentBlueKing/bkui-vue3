@@ -26,7 +26,7 @@
 
 import { defineComponent, reactive } from 'vue';
 
-import { Error, Eye, Help } from '@bkui-vue/icon';
+import { Error } from '@bkui-vue/icon'; // Error, Help,
 import BkSteps from '@bkui-vue/steps';
 
 export default defineComponent({
@@ -34,9 +34,9 @@ export default defineComponent({
   setup() {
     const state = reactive({
       objectSteps: [
-        { title: '测试一', icon: 1, description: '这是描述' },
+        { title: '测试一', icon: <Error/>, description: '这是描述' },
         { title: '测试二', icon: 2, description: '这是描述2' },
-        { title: '测试三'  },
+        { title: '测试三', icon: <Error/>  },
         { title: '测试四' },
       ],
       curStep: 2,
@@ -68,18 +68,19 @@ export default defineComponent({
     };
   },
   render() {
-    const stepsSlots = {
-      1: () => <span><Eye /></span>,
-      2: () => <span><Error /></span>,
-      3: () => <span><Help /></span>,
-    };
+    // const stepsSlots = {
+    //   1: () => <span><Eye /></span>,
+    //   2: () => <span><Error /></span>,
+    //   3: () => <span><Help /></span>,
+    // };
+    // {stepsSlots}
     return (
       <div style="height: 400px;">
-        <BkSteps cur-step={2}  theme="success" style={{ marginBottom: '40px' }}></BkSteps>
+        <BkSteps cur-step={this.state.curStep} status="error" controllable={true} theme="success" style={{ marginBottom: '40px' }}></BkSteps>
         <BkSteps cur-step={2}  theme="danger" style={{ marginBottom: '40px' }}></BkSteps>
         <BkSteps cur-step={2}  theme="warning" style={{ marginBottom: '40px' }} size="small"></BkSteps>
         <BkSteps controllable={true} onClick={this.stepChanged} beforeChange={this.beforeChangeFunc}
-          direction="vertical" cur-step={this.state.curStep} steps={this.state.objectSteps} size="small">{stepsSlots}
+          direction="vertical" cur-step={this.state.curStep} steps={this.state.objectSteps} size="small">
         </BkSteps>
       </div>
     );

@@ -1,3 +1,4 @@
+/* stylelint-disable declaration-no-important */
 @import '@bkui-vue/styles/themes/themes.less';
 
 @themeSelectors: primary, warning, success, danger;
@@ -172,6 +173,19 @@
         }
       }
     }
+
+    &.isError {
+      .bk-step-indicator {
+        background-color: @danger-color !important;
+        border-color: @danger-color !important;
+      }
+
+      .bk-step-content {
+        .bk-step-title {
+          color: @danger-color !important;
+        }
+      }
+    }
   }
 
 
@@ -295,9 +309,9 @@
         font-size: 12px;
       }
 
-      .bk-icon {
-        font-size: 20px;
-        line-height: 24px;
+      .bk-step-icon {
+        font-size: 14px;
+        line-height: 14px;
       }
 
       &::after {
