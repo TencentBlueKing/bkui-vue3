@@ -25,10 +25,11 @@
 */
 
 
+import { DownShape, RightShape } from '@bkui-vue/icon';
 import Pagination from '@bkui-vue/pagination';
 import { classes, random } from '@bkui-vue/shared';
 
-import { EVENTS } from './const';
+import { EVENTS, TABLE_ROW_ATTRIBUTE } from './const';
 import BodyEmpty from './plugins/body-empty';
 import HeadFilter from './plugins/head-filter';
 import HeadSort from './plugins/head-sort';
@@ -37,7 +38,6 @@ import Settings from './plugins/settings';
 import useFixedColumn from './plugins/use-fixed-column';
 import { Column, GroupColumn, IColumnActive, IReactiveProp, TablePropTypes } from './props';
 import { formatPropAsArray, getColumnReactWidth, getRowText, resolveHeadConfig, resolvePropVal, resolveWidth } from './utils';
-
 
 export default class TableRender {
   props: TablePropTypes;
@@ -322,11 +322,11 @@ export default class TableRender {
 
         const { resolveFixedColumnStyle,  fixedoffset } = getFixedColumnStyleResolve();
 
-        return <tr
+        return [<tr
           // @ts-ignore
           style={rowStyle}
           class={rowClass}
-          key={row.__$uuid}
+          key={row[TABLE_ROW_ATTRIBUTE.ROW_UID]}
           onClick={ e => this.handleRowClick(e, row, rowIndex, rows)}
           onDblclick={e => this.handleRowDblClick(e, row, rowIndex, rows)}
         >
@@ -340,19 +340,40 @@ export default class TableRender {
             const cellClass = [
               this.getColumnClass(column, index),
               ...formatPropAsArray(this.props.cellClass, [column, index, row, rowIndex, this]),
+              { 'expand-row': row[TABLE_ROW_ATTRIBUTE.ROW_EXPAND] },
             ];
+
+            const tdCtxClass = {
+              cell: true,
+              'expand-cell': column.type === 'expand',
+            };
             return <td
             class={cellClass}
             style={cellStyle}
             colspan={1} rowspan={1}>
-            <div class="cell" >{ this.renderCell(row, column, rowIndex, rows) }</div>
+            <div class={tdCtxClass} >{ this.renderCell(row, column, rowIndex, rows) }</div>
           </td>;
           })
         }
-      </tr>;
+      </tr>, this.renderExpandRow(row, rowClass)];
       })
     }
   </tbody>;
+  }
+
+  private renderExpandRow(row: any, rowClass: any[]) {
+    const isExpand = !!row[TABLE_ROW_ATTRIBUTE.ROW_EXPAND];
+    if (isExpand) {
+      const resovledClass = [
+        ...rowClass,
+        { row_expend: true },
+      ];
+      return <tr class={resovledClass}>
+        <td colspan={ this.filterColgroups.length } rowspan={1}>
+          { this.context.slots.expandRow?.(row) ?? <div class='expand-cell-ctx'>Expand Row</div> }
+        </td>
+      </tr>;
+    }
   }
 
   private getColumnClass = (column: Column, colIndex: number) => ({
@@ -389,6 +410,15 @@ export default class TableRender {
     this.context.emit('rowDblClick', e, row, index, rows, this);
   }
 
+  private getExpandCell(row: any) {
+    const isExpand = !!row[TABLE_ROW_ATTRIBUTE.ROW_EXPAND];
+    return isExpand ? <DownShape></DownShape> : <RightShape></RightShape>;
+  }
+
+  private handleRowExpandClick(row: any, column: Column, index: number, rows: any[], e: MouseEvent) {
+    this.emitEvent(EVENTS.ON_ROW_EXPAND_CLICK, [{ row, column, index, rows, e }]);
+  }
+
   /**
    * 渲染表格Cell内容
    * @param row 当前行
@@ -396,6 +426,20 @@ export default class TableRender {
    * @returns
    */
   private renderCell(row: any, column: Column, index: number, rows: any[]) {
+    if (column.type === 'expand') {
+      const renderExpandSlot = () => {
+        if (typeof column.render === 'function') {
+          return column.render(null, row, index, rows);
+        }
+
+        return this.context.slots.expandCell?.({ row, column, index, rows }) ?? this.getExpandCell(row);
+      };
+
+      return <span class="expand-btn-action" onClick={ (e: MouseEvent) => this.handleRowExpandClick(row, column, index, rows, e) }>
+        { renderExpandSlot() }
+        </span>;
+    }
+
     const cell = getRowText(row, resolvePropVal(column, 'field', [column, row]), column);
     if (typeof column.render === 'function') {
       return column.render(cell, row, index, rows);

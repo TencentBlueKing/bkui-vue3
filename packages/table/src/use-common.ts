@@ -27,6 +27,7 @@ import { computed, onMounted, reactive, ref } from 'vue';
 
 import { classes, resolveClassName } from '@bkui-vue/shared';
 
+import { TABLE_ROW_ATTRIBUTE } from './const';
 import useActiveColumns from './plugins/use-active-columns';
 import useColumnResize from './plugins/use-column-resize';
 import useFixedColumn from './plugins/use-fixed-column';
@@ -177,17 +178,45 @@ export const useInit = (props: TablePropTypes) => {
     },
   });
 
+  const isRowExpand = (rowId: any) => {
+    if (reactiveSchema.rowActions.has(rowId)) {
+      return reactiveSchema.rowActions.get(rowId)?.isExpand;
+    }
+
+    return false;
+  };
+
+  const setRowExpand = (row: any, expand = undefined) => {
+    const rowId = row[TABLE_ROW_ATTRIBUTE.ROW_UID];
+    const isExpand = typeof expand === 'boolean' ? expand : !isRowExpand(rowId);
+    reactiveSchema.rowActions.set(rowId, Object.assign({}, reactiveSchema.rowActions.get(rowId) ?? {}, { isExpand }));
+    updateIndexData();
+  };
+
   /**
    * 生成内置index
    */
-  const indexData = computed(() => props.data.map((item: any, index: number) => {
-    const rowId = getRowKey(item, props);
-    return {
-      ...item,
-      __$table_row_index: index + 1,
-      __$uuid: rowId,
-    };
-  }));
+  const indexData = reactive([]);
+
+  const initIndexData = (keepLocalAction = false) => {
+    indexData.splice(0, indexData.length, ...props.data.map((item: any, index: number) => {
+      const rowId = getRowKey(item, props);
+      return {
+        ...item,
+        [TABLE_ROW_ATTRIBUTE.ROW_INDEX]: index + 1,
+        [TABLE_ROW_ATTRIBUTE.ROW_UID]: rowId,
+        [TABLE_ROW_ATTRIBUTE.ROW_EXPAND]: keepLocalAction ? isRowExpand(rowId) : false,
+      };
+    }));
+  };
+
+  const updateIndexData = () => {
+    indexData.forEach((item: any) => {
+      Object.assign(item, {
+        [TABLE_ROW_ATTRIBUTE.ROW_EXPAND]: isRowExpand(item[TABLE_ROW_ATTRIBUTE.ROW_UID]),
+      });
+    });
+  };
 
   const { renderFixedColumns, fixedWrapperClass } = useFixedColumn(props, colgroups);
 
@@ -196,7 +225,10 @@ export const useInit = (props: TablePropTypes) => {
     dragOffsetXStyle,
     reactiveSchema,
     indexData,
-    renderFixedColumns,
     fixedWrapperClass,
+    initIndexData,
+    updateIndexData,
+    renderFixedColumns,
+    setRowExpand,
   };
 };

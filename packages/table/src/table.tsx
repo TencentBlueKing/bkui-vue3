@@ -29,7 +29,7 @@ import { defineComponent, nextTick, onBeforeUnmount, onMounted, ref, watch } fro
 import { debounce, resolveClassName } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
-import { EMIT_EVENT_TYPES, EMITEVENTS, EVENTS } from './const';
+import { EMIT_EVENT_TYPES, EMITEVENTS, EVENTS, TABLE_ROW_ATTRIBUTE } from './const';
 import userPagination from './plugins/use-pagination';
 import useScrollLoading from './plugins/use-scroll-loading';
 import { tableProps } from './props';
@@ -51,6 +51,8 @@ export default defineComponent({
       reactiveSchema,
       indexData,
       renderFixedColumns,
+      setRowExpand,
+      initIndexData,
       fixedWrapperClass } = useInit(props);
 
     let columnSortFn: any = null;
@@ -60,7 +62,7 @@ export default defineComponent({
     const root = ref();
     const refVirtualRender = ref();
 
-    const { pageData, localPagination, resolvePageData, watchEffectFn } = userPagination(props, indexData.value);
+    const { pageData, localPagination, resolvePageData, watchEffectFn } = userPagination(props, indexData);
     const {
       tableClass,
       headClass,
@@ -77,6 +79,7 @@ export default defineComponent({
     const tableRender = new TableRender(props, ctx, reactiveSchema, colgroups);
 
     watch(() => [props.data, props.pagination], () => {
+      initIndexData(props.reserveExpand);
       watchEffectFn(columnFilterFn, columnSortFn);
       nextTick(() => {
         resetTableHeight(root.value);
@@ -109,6 +112,11 @@ export default defineComponent({
         checked.length && resolveColumnWidth(root.value, colgroups, 20);
         refVirtualRender.value?.reset?.();
         ctx.emit(EMITEVENTS.SETTING_CHANGE, { checked, size, height });
+      })
+      .on(EVENTS.ON_ROW_EXPAND_CLICK, (args: any) => {
+        const { row, column, index, rows, e } = args;
+        ctx.emit(EMITEVENTS.ROW_EXPAND_CLICK, { row, column, index, rows, e });
+        setRowExpand(row, !row[TABLE_ROW_ATTRIBUTE.ROW_EXPAND]);
       });
 
 
@@ -144,9 +152,9 @@ export default defineComponent({
       tableRender.destroy();
     });
 
-    // ctx.expose({
-    //   plugins: tableRender.plugins,
-    // });
+    ctx.expose({
+      setRowExpand,
+    });
 
     const tableBodyClass = {
       ...contentClass,
