@@ -37,6 +37,7 @@ import bordered from './bordered.vue';
 import cellRender from './cell-render';
 import DataEmpty from './data-empty.vue';
 import event from './event.vue';
+import Expand from './expand.vue';
 import fixed from './fixed.vue';
 import * as TABLE_DATA from './options';
 import pagination from './pagination.vue';
@@ -58,6 +59,7 @@ export default defineComponent({
     fixed,
     ScrollLoading,
     ScrollLoadingSlot,
+    Expand,
   },
   render() {
     const menuPropsJson = resolvePropsToDesData(tableProps);
@@ -172,6 +174,16 @@ export default defineComponent({
         demoName: 'scroll-loading-slot',
       },
       component: () => <ScrollLoadingSlot></ScrollLoadingSlot>,
+    },
+    {
+      attrs: {
+        title: '折叠功能',
+        subtitle: '结合slot expandRow',
+        desc: '',
+        componentName: 'table',
+        demoName: 'expand',
+      },
+      component: () => <Expand></Expand>,
     }];
 
     return (

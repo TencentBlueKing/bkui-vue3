@@ -24,35 +24,36 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
+import { defineComponent, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
 import { debounce, resolveClassName } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
-import { EMIT_EVENT_TYPES, EMITEVENTS, EVENTS } from './const';
-import useActiveColumns from './plugins/use-active-columns';
-import useColumnResize from './plugins/use-column-resize';
-import useFixedColumn from './plugins/use-fixed-column';
+import { EMIT_EVENT_TYPES, EMITEVENTS, EVENTS, TABLE_ROW_ATTRIBUTE } from './const';
 import userPagination from './plugins/use-pagination';
 import useScrollLoading from './plugins/use-scroll-loading';
 import { tableProps } from './props';
 import TableRender from './render';
-import { useClass } from './use-common';
+import { useClass, useInit } from './use-common';
 import {
   observerResize,
-  resolveColumnWidth } from './utils';
+  resolveColumnWidth,
+} from './utils';
 
 export default defineComponent({
   name: 'Table',
   props: tableProps,
   emits: EMIT_EVENT_TYPES,
   setup(props, ctx) {
-    const colgroups = reactive((props.columns ?? []).map(col => ({
-      ...col,
-      calcWidth: null,
-      resizeWidth: null,
-      listeners: new Map(),
-    })));
+    const {
+      colgroups,
+      dragOffsetXStyle,
+      reactiveSchema,
+      indexData,
+      renderFixedColumns,
+      setRowExpand,
+      initIndexData,
+      fixedWrapperClass } = useInit(props);
 
     let columnSortFn: any = null;
     let columnFilterFn: any = null;
@@ -60,24 +61,8 @@ export default defineComponent({
     let observerIns = null;
     const root = ref();
     const refVirtualRender = ref();
-    const { dragOffsetXStyle } = useColumnResize(colgroups, true);
 
-    const { activeColumns } = useActiveColumns(props);
-
-    const reactiveProp = reactive({
-      scrollTranslateY: 0,
-      scrollTranslateX: 0,
-      pos: {
-        bottom: 1,
-      },
-      activeColumns,
-      setting: {
-        size: null,
-        height: null,
-      },
-    });
-
-    const { pageData, localPagination, resolvePageData, watchEffectFn } = userPagination(props);
+    const { pageData, localPagination, resolvePageData, watchEffectFn } = userPagination(props, indexData);
     const {
       tableClass,
       headClass,
@@ -89,14 +74,12 @@ export default defineComponent({
       updateBorderClass,
       resetTableHeight,
       hasFooter,
-    } = useClass(props, root, reactiveProp, pageData);
+    } = useClass(props, root, reactiveSchema, pageData);
 
-
-    const { renderFixedColumns, fixedWrapperClass } = useFixedColumn(props, colgroups);
-
-    const tableRender = new TableRender(props, ctx, reactiveProp, colgroups);
+    const tableRender = new TableRender(props, ctx, reactiveSchema, colgroups);
 
     watch(() => [props.data, props.pagination], () => {
+      initIndexData(props.reserveExpand);
       watchEffectFn(columnFilterFn, columnSortFn);
       nextTick(() => {
         resetTableHeight(root.value);
@@ -129,16 +112,21 @@ export default defineComponent({
         checked.length && resolveColumnWidth(root.value, colgroups, 20);
         refVirtualRender.value?.reset?.();
         ctx.emit(EMITEVENTS.SETTING_CHANGE, { checked, size, height });
+      })
+      .on(EVENTS.ON_ROW_EXPAND_CLICK, (args: any) => {
+        const { row, column, index, rows, e } = args;
+        ctx.emit(EMITEVENTS.ROW_EXPAND_CLICK, { row, column, index, rows, e });
+        setRowExpand(row, !row[TABLE_ROW_ATTRIBUTE.ROW_EXPAND]);
       });
 
 
     const handleScrollChanged = (args: any[]) => {
-      const preBottom = reactiveProp.pos.bottom ?? 0;
+      const preBottom = reactiveSchema.pos.bottom ?? 0;
       const pagination = args[1];
       const { translateX, translateY, pos = {} } = pagination;
-      reactiveProp.scrollTranslateY = translateY;
-      reactiveProp.scrollTranslateX = translateX;
-      reactiveProp.pos = pos;
+      reactiveSchema.scrollTranslateY = translateY;
+      reactiveSchema.scrollTranslateX = translateX;
+      reactiveSchema.pos = pos;
       const { bottom } = pos;
       if (bottom <= 2 && preBottom > bottom) {
         debounce(60, () => {
@@ -164,9 +152,9 @@ export default defineComponent({
       tableRender.destroy();
     });
 
-    // ctx.expose({
-    //   plugins: tableRender.plugins,
-    // });
+    ctx.expose({
+      setRowExpand,
+    });
 
     const tableBodyClass = {
       ...contentClass,
