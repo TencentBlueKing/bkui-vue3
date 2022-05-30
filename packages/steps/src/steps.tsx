@@ -87,7 +87,6 @@ export default defineComponent({
         },
       ]);
       if (props.steps?.length) {
-        console.log('steps', props.steps);
         updateSteps(props.steps);
       }
     };
