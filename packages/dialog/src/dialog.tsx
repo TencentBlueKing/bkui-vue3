@@ -59,6 +59,8 @@ export default defineComponent({
     footerAlign: PropTypes.commonType(['left', 'center', 'right'], 'footerAlign').def('right'),
     // 颜色 按钮类型
     theme: PropTypes.commonType(['primary', 'warning', 'success', 'danger'], 'theme').def('primary'),
+    // 对话框类型
+    dialogType: PropTypes.commonType(['show', 'operation', 'confirm', 'process'], 'dialogType').def('operation'),
     // 按钮loading
     isLoading: PropTypes.bool.def(false),
   },
@@ -84,12 +86,14 @@ export default defineComponent({
     });
     watch(() => props.isShow, (val: Boolean) => {
       if (!val) {
-        data.moveStyle = {
-          top: '50%',
-          left: '50%',
-        };
-        data.positionX = 0;
-        data.positionY = 0;
+        setTimeout(() => {
+          data.moveStyle = {
+            top: '50%',
+            left: '50%',
+          };
+          data.positionX = 0;
+          data.positionY = 0;
+        }, 250);
       }
     });
     // 关闭弹框
@@ -120,6 +124,9 @@ export default defineComponent({
     // 拖拽事件
     const moveHandler = (e) => {
       if (props.fullscreen) {
+        return false;
+      }
+      if (!props.draggable) {
         return false;
       }
       const odiv = e.target;
@@ -175,12 +182,13 @@ export default defineComponent({
       header: () => [
         <div class={['bk-dialog-tool', this.fullscreen || !this.draggable ? '' : 'move', this.draggable ? 'content-dragging' : '']}
           onMousedown={this.moveHandler}>
-          <span class={['bk-dialog-close', this.closeIcon ? '' : 'close-icon']} onClick={this.handleClose}>+</span>
+          {this.$slots.tools?.() ?? ''}
         </div>,
         <div class="bk-dialog-header">
           <span class="bk-dialog-title" style={`text-align: ${this.headerAlign}`}>
             {this.$slots.header?.() ?? this.title}
           </span>
+          <span class={['bk-dialog-close', this.closeIcon ? '' : 'close-icon']} onClick={this.handleClose}>+</span>
         </div>,
       ],
       default: () => this.$slots.default?.() ?? 'default',
@@ -218,7 +226,7 @@ export default defineComponent({
       </div>,
     };
 
-    const className = `bk-dialog-wrapper ${this.scrollable ? 'scroll-able' : ''}`;
+    const className = `bk-dialog-wrapper ${this.scrollable ? 'scroll-able' : ''} ${this.multiInstance ? 'multi-instance' : ''}`;
     return <BkModal {...this.$props} class={[className, this.fullscreen ? 'bk-model-fullscreen' : this.size]}
       style={this.data.moveStyle}>
       {dialogSlot}

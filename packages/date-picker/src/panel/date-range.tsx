@@ -112,6 +112,10 @@ const dateRangePanelProps = {
     type: Date,
     required: true,
   },
+  confirm: {
+    type: Boolean,
+    default: false,
+  },
 } as const;
 
 export type DateRangePanelProps = Readonly<ExtractPropTypes<typeof dateRangePanelProps>>;
@@ -119,7 +123,7 @@ export type DateRangePanelProps = Readonly<ExtractPropTypes<typeof dateRangePane
 export default defineComponent({
   props: dateRangePanelProps,
   emits: ['pick'],
-  setup(props, { emit }) {
+  setup(props, { slots, emit }) {
     const [minDate, maxDate] = (props.modelValue as any).map(date => date || initTime());
     const leftPanelDate = props.startDate ? props.startDate : minDate;
 
@@ -363,10 +367,12 @@ export default defineComponent({
       right: preSelecting.value.right ? handlePreSelection.bind('right') : handleRangePick,
     }));
 
+    const hasShortcuts = computed(() => !!slots.shortcuts);
+
     return {
       ...toRefs(state),
       isTime,
-
+      hasShortcuts,
       prevYear,
       nextYear,
       prevMonth,
@@ -564,6 +570,15 @@ export default defineComponent({
             }
           </div>
         </div>
+        {
+          this.hasShortcuts
+            ? (
+              <div class="bk-picker-panel-sidebar">
+                {this.$slots.shortcuts?.() ?? null}
+              </div>
+            )
+            : null
+        }
       </div>
     );
   },

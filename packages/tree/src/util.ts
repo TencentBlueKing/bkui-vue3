@@ -24,109 +24,12 @@
  * IN THE SOFTWARE.
  */
 
-import { v4 as uuidv4 } from 'uuid';
-
 import { resolveClassName } from '@bkui-vue/shared';
 
+import { NODE_ATTRIBUTES } from './constant';
 import { TreePropTypes } from './props';
 
 const DEFAULT_LEVLE_LINE = '1px dashed #c3cdd7';
-/**
- * 节点扩展属性
- */
-// eslint-disable-next-line @typescript-eslint/naming-convention
-export const enum NODE_ATTRIBUTES {
-  DEPTH = '__depth',
-  INDEX = '__index',
-  UUID = '__uuid',
-  PARENT_ID= '__parentId',
-  HAS_CHILD= '__hasChild',
-  PATH= '__path',
-  IS_ROOT= '__isRoot',
-  ORDER= '__order',
-  IS_OPEN= '__isOpen',
-  CHECKED='__checked',
-  IS_ASYNC_INIT = '__isAsyncInit'
-}
-
-/**
- * 扁平化当前数据
- * @param arrData
- * @returns
- */
-export const getFlatdata = (props: TreePropTypes, treeData: Array<any> = undefined, cachedSchema: any[] = []) => {
-  const { data, children } = props;
-  const outputData = [];
-  let order = 0;
-  const schema = new Map<string, any>();
-
-  function getUid(item: any) {
-    let uid = null;
-    if (typeof props.nodeKey === 'string') {
-      uid = item[props.nodeKey];
-    }
-
-    return uid || item[NODE_ATTRIBUTES.UUID] || uuidv4();
-  }
-
-  function getCachedTreeNodeAttr(uuid: string, node: any, attr: string, cachedAttr: string) {
-    const cached = (cachedSchema || []).find((item: any) => item[NODE_ATTRIBUTES.UUID] === uuid);
-    if (cached) {
-      return cached[cachedAttr];
-    }
-
-    return node[attr];
-  }
-
-  function isCachedTreeNodeOpened(uuid: string, node: any) {
-    return getCachedTreeNodeAttr(uuid, node, 'isOpen', NODE_ATTRIBUTES.IS_OPEN);
-  }
-
-  function isCachedTreeNodeChecked(uuid: string, node: any) {
-    return getCachedTreeNodeAttr(uuid, node, 'checked', NODE_ATTRIBUTES.CHECKED);
-  }
-
-  function flatten(array: Array<any>, depth = 0, parent = null, path = null) {
-    const arrLength = array.length;
-    for (let i = 0; i < arrLength; i++) {
-      const item = array[i];
-      if (Array.isArray(item)) {
-        flatten(item, depth, parent, path);
-      } else {
-        if (typeof item === 'object' && item !== null) {
-          const uuid = getUid(item);
-          const currentPath = path !== null ? `${path}-${i}` : `${i}`;
-          const hasChildren = !!(item[children] || []).length;
-          const attrs = {
-            [NODE_ATTRIBUTES.DEPTH]: depth,
-            [NODE_ATTRIBUTES.INDEX]: i,
-            [NODE_ATTRIBUTES.UUID]: uuid,
-            [NODE_ATTRIBUTES.PARENT_ID]: parent,
-            [NODE_ATTRIBUTES.HAS_CHILD]: hasChildren,
-            [NODE_ATTRIBUTES.PATH]: currentPath,
-            [NODE_ATTRIBUTES.IS_ROOT]: parent === null,
-            [NODE_ATTRIBUTES.ORDER]: order,
-            [NODE_ATTRIBUTES.IS_OPEN]: isCachedTreeNodeOpened(uuid, item),
-            [NODE_ATTRIBUTES.CHECKED]: isCachedTreeNodeChecked(uuid, item),
-            [children]: null,
-          };
-          Object.assign(item, { [NODE_ATTRIBUTES.UUID]: uuid });
-          schema.set(uuid, attrs);
-          order += 1;
-          outputData.push({
-            ...item,
-            [children]: null,
-          });
-          if (Object.prototype.hasOwnProperty.call(item, children)) {
-            flatten(item[children] || [], depth + 1, uuid, currentPath);
-          }
-        }
-      }
-    }
-  }
-  flatten(treeData ? treeData : data);
-  return [outputData, schema];
-};
 
 /**
  * 获取配置项可为Bool|String|Function类型，如果为Bool则配置默认值
@@ -243,11 +146,11 @@ export const getNodeItemStyle: any = (item: any, props: TreePropTypes, flatData:
  */
 export const getNodeItemClass = (item: any, schema: any, props: TreePropTypes) => {
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  const { __isRoot, __isOpen } = getSchemaVal(schema as Map<string, any>, item[NODE_ATTRIBUTES.UUID]) || {};
+  const { __is_root, __is_open } = getSchemaVal(schema as Map<string, any>, item[NODE_ATTRIBUTES.UUID]) || {};
   return {
-    'is-root': __isRoot,
+    'is-root': __is_root,
     'bk-tree-node': true,
-    'is-open': __isOpen,
+    'is-open': __is_open,
     'is-virtual-render': props.virtualRender,
     'level-line': props.levelLine,
   };
@@ -260,9 +163,10 @@ export const getNodeItemClass = (item: any, schema: any, props: TreePropTypes) =
  */
 export const getNodeRowClass = (item: any, schema: any) => {
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  const { __checked } = getSchemaVal(schema as Map<string, any>, item[NODE_ATTRIBUTES.UUID]) || {};
+  const { __is_checked, __is_selected } = getSchemaVal(schema as Map<string, any>, item[NODE_ATTRIBUTES.UUID]) || {};
   return {
-    'is-checked': __checked,
+    'is-checked': __is_checked,
+    'is-selected': __is_selected,
     [resolveClassName('node-row')]: true,
   };
 };
@@ -294,4 +198,21 @@ export const assignTreeNode = (path: string, treeData: any[], childKey: string, 
   }, treeData);
 
   Object.assign(targetNode, assignVal || {});
+};
+
+export const resolveNodeItem = (node: any) => {
+  if (node === undefined || node === null) {
+    return { __IS_NULL: true };
+  }
+
+  if (typeof node === 'string' || typeof node === 'number' ||  typeof node === 'symbol') {
+    return { [NODE_ATTRIBUTES.UUID]: node };
+  }
+
+  if (Object.prototype.hasOwnProperty.call(node, NODE_ATTRIBUTES.UUID)) {
+    return node;
+  }
+
+  console.error('setNodeAction Error: node id cannot found');
+  return node;
 };

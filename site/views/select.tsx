@@ -66,7 +66,7 @@ export default defineComponent({
       <div>
         <div style={{ width: '400px' }}>
           <div>单选</div>
-          <BkSelect v-model={this.selectValue} filterable clearable={false}>
+          <BkSelect v-model={this.selectValue} clearable={false}>
             <BkOption value="test" label="label1"></BkOption>
             <BkOption value={false} label="label2" disabled></BkOption>
             <BkOption value={undefined} label="label3"></BkOption>
@@ -164,7 +164,7 @@ export default defineComponent({
                 <BkOption value="test" label="label6"></BkOption>
                 <BkOption value={2} label="label7"></BkOption>
                 <BkOption value={3} label="label8"></BkOption>
-                <BkOption value={4} label="label9">测试label</BkOption>
+                <BkOption value={4} label="测试label">测试label</BkOption>
               </BkOptionGroup>
               <BkOptionGroup label="分组折叠2" collapsible disabled>
                 <BkOption value="test" label="label6"></BkOption>

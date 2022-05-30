@@ -23,11 +23,12 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import BkException from '@bkui-vue/exception';
 
-import type { InjectionKey } from 'vue';
-
-import { getFormKey } from '../../hooks/use-form';
-
-import type { IFormContext } from './type';
-
-export const formKey: InjectionKey<IFormContext> = getFormKey();
+export default (props, { slots }) => ({
+  renderEmpty: (type: string) => <BkException scene="part" type={type}>
+    {
+      slots.default?.() ?? props.emptyText
+    }
+  </BkException>,
+});

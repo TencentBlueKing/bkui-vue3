@@ -54,16 +54,28 @@ export const tableProps = {
     field: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
     render: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
     width: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]),
+    minWidth: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]).def(),
     type: PropTypes.commonType(['selection', 'index', 'expand', 'none'], 'columnType').def('none'),
-    sort: PropTypes.oneOfType([PropTypes.shape({
-      sortFn: PropTypes.func.def(undefined),
-      sortScope: PropTypes.commonType(Object.values(SortScope)).def(SortScope.CURRENT),
-    }), PropTypes.bool]).def(false),
-    filter: PropTypes.oneOfType([PropTypes.shape({
-      list: PropTypes.arrayOf(PropTypes.any).def([]),
-      filterFn: PropTypes.func.def(undefined),
-    }), PropTypes.bool]).def(false),
-  })),
+    resizable: PropTypes.bool.def(true),
+    fixed: PropTypes.oneOfType([
+      PropTypes.bool,
+      PropTypes.commonType(['left', 'right'], 'fixed'),
+    ]).def(false),
+    sort: PropTypes.oneOfType([
+      PropTypes.shape({
+        sortFn: PropTypes.func.def(undefined),
+        sortScope: PropTypes.commonType(Object.values(SortScope)).def(SortScope.CURRENT),
+      }),
+      PropTypes.bool,
+      PropTypes.string]).def(false),
+    filter: PropTypes.oneOfType([
+      PropTypes.shape({
+        list: PropTypes.arrayOf(PropTypes.any).def([]),
+        filterFn: PropTypes.func.def(undefined),
+      }),
+      PropTypes.bool,
+      PropTypes.string]).def(false),
+  })).def([]),
 
   /**
    * 当前选中列
@@ -80,7 +92,8 @@ export const tableProps = {
 
   /**
    * 设置表格高度
-   * 默认：auto，依赖外层高度
+   * 默认：auto 根据行数自动填充高度
+   * 100%，依赖初始化时父级容器高度
    */
   height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def('auto'),
 
@@ -160,7 +173,39 @@ export const tableProps = {
     size: PropTypes.size(['small', 'default', 'large']).def('default'),
     sizeList: PropTypes.shape<SizeItem[]>([]).def(undefined),
   })]).def(false),
+
+  /**
+   * 行的 class 的回调方法，也可以使用一个固定的 Object 为所有行设置一样的 Style
+   */
+  rowClass: PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.func]).def({}),
+
+  /**
+   * 行的 style 的回调方法，也可以使用一个固定的 Object 为所有行设置一样的 Style
+   */
+  rowStyle: PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.func]).def({}),
+
+
+  /**
+   * 单元格的 style 的回调方法，也可以使用一个固定的 Object 为所有单元格设置一样的 Style
+   */
+  cellStyle: PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.func]).def({}),
+
+
+  /**
+   * 单元格的 className 的回调方法，也可以使用字符串为所有单元格设置一个固定的 className
+   */
+  cellClass: PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.func]).def({}),
+
+  /**
+   * 表格底部loading加载效果，可以配合表格scroll-bottom事件使用
+   * 详细配置可参考bk-loading组件
+   */
+  scrollLoading: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.bool,
+  ]).def(undefined),
 };
+
 
 /**
  * 配置自定义行高选项
@@ -190,15 +235,18 @@ export type Column = {
   field?: Function | string;
   render?: Function | string;
   width?: number | string;
+  minWidth?: number | string;
   type?: string;
+  fixed?: string | boolean;
+  resizable?: boolean;
   sort?: {
     sortFn?: Function;
     sortScope?: string;
-  } | boolean;
+  } | boolean | string;
   filter?: {
     list?: any,
     filterFn?: Function;
-  } | boolean;
+  } | boolean | string;
 };
 
 export type Thead = {
@@ -209,7 +257,9 @@ export type Thead = {
 
 export type GroupColumn = {
   calcWidth?: number;
+  resizeWidth?: number;
   isHidden?: boolean;
+  listeners?: Map<string, any>;
 } & Column;
 
 export type Columns = ReadonlyArray<Column>;

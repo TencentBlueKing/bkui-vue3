@@ -37,13 +37,28 @@ import bordered from './bordered.vue';
 import cellRender from './cell-render';
 import DataEmpty from './data-empty.vue';
 import event from './event.vue';
-import { DATA_COLUMNS, DATA_TABLE } from './options';
+import fixed from './fixed.vue';
+import * as TABLE_DATA from './options';
 import pagination from './pagination.vue';
 import RemotePagination from './remotePagination.vue';
+import ScrollLoading from './scroll-loading.vue';
+import ScrollLoadingSlot from './scroll-loading-slot.vue';
 import virtualRender from './virtual-render.vue';
 
 export default defineComponent({
-  components: { basic, bordered, virtualRender, cellRender, event, pagination, RemotePagination, DataEmpty },
+  components: {
+    basic,
+    bordered,
+    virtualRender,
+    cellRender,
+    event,
+    pagination,
+    RemotePagination,
+    DataEmpty,
+    fixed,
+    ScrollLoading,
+    ScrollLoadingSlot,
+  },
   render() {
     const menuPropsJson = resolvePropsToDesData(tableProps);
 
@@ -127,6 +142,36 @@ export default defineComponent({
         demoName: 'data-empty',
       },
       component: () => <data-empty></data-empty>,
+    },
+    {
+      attrs: {
+        title: '固定列',
+        subtitle: '横纵内容过多时，可选择固定列',
+        desc: 'props: column - fixed',
+        componentName: 'table',
+        demoName: 'fixed',
+      },
+      component: () => <fixed></fixed>,
+    },
+    {
+      attrs: {
+        title: '底部加载',
+        subtitle: '配置底部加载更多',
+        desc: '配置scroll-loading属性设置表格底部加载样式，结合scroll-end监听表格滚动至底部事件进行分页加载',
+        componentName: 'table',
+        demoName: 'scroll-loading',
+      },
+      component: () => <ScrollLoading></ScrollLoading>,
+    },
+    {
+      attrs: {
+        title: '底部加载插槽',
+        subtitle: '自定义配置底部加载更多,需要设置 scroll-loading = true',
+        desc: '配置scroll-loading属性设置表格底部加载样式，结合scroll-end监听表格滚动至底部事件进行分页加载',
+        componentName: 'table',
+        demoName: 'scroll-loading-slot',
+      },
+      component: () => <ScrollLoadingSlot></ScrollLoadingSlot>,
     }];
 
     return (
@@ -136,7 +181,7 @@ export default defineComponent({
           desc="Table组件， 为页面和功能提供列表。"
           link="https://www.google.com.hk/"/>
           {
-            configs.map(cfg => <DemoBox { ...cfg.attrs } optionData={ { DATA_COLUMNS, DATA_TABLE } }>
+            configs.map(cfg => <DemoBox { ...cfg.attrs } optionData={ TABLE_DATA }>
                  {
                    cfg.component()
                  }

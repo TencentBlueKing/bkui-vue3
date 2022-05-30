@@ -24,25 +24,31 @@
 * IN THE SOFTWARE.
 */
 
-import { defineComponent } from 'vue';
+import { PropTypes } from '@bkui-vue/shared';
 
-import { Help, HelpDocumentFill, HelpFill } from '@bkui-vue/icon';
-
-export default defineComponent({
-  name: 'SiteIcon',
-  setup() {
-    return {
-    };
-  },
-  render() {
-    return (
-      <div>
-        <Help style={{ fontSize: '100px' }} fill="red"/>
-        <HelpDocumentFill style={{ fontSize: '100px' }} class='sdddddsdf'/>
-        <HelpFill style={{ fontSize: '100px' }}/>
-        <HelpDocumentFill style={{ fontSize: '100px' }}/>
-        <HelpFill style={{ fontSize: '100px' }} />
-      </div>
-    );
-  },
-});
+export const transferProps = {
+  // 顶部title(title[0]: 左侧title,title[1]: 右侧title,)
+  title: PropTypes.arrayOf(PropTypes.string).def([]),
+  // 自定义class
+  extCls: PropTypes.string.def(''),
+  // 搜索框 placeholder
+  searchPlaceholder: PropTypes.string.def(''),
+  // 唯一key值
+  settingKey: PropTypes.string.def('id'),
+  // 循环list时，显示字段的key值(当list为普通数组时可不传传了也无效)
+  displayKey: PropTypes.string.def('value'),
+  // 排序所依据的key(当list为普通数组时可不传，默认按照index值排序)
+  sortKey: PropTypes.string.def('value'),
+  // 内容超出是否显示tooltip
+  showOverflowTips: PropTypes.bool.def(false),
+  // 是否开启搜索
+  searchable: PropTypes.bool.def(false),
+  // 是否开启排序功能
+  sortable: PropTypes.bool.def(false),
+  // 穿梭框数据源(支持普通数组)
+  sourceList: PropTypes.arrayOf(PropTypes.any).def([]),
+  // 默认已选择的数据源
+  targetList: PropTypes.arrayOf(PropTypes.any).def([]),
+  // 穿梭框无数据时提示文案
+  emptyContent: PropTypes.arrayOf(PropTypes.string).def([]),
+};

@@ -23,26 +23,33 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import { get } from 'lodash';
 import type { ExtractPropTypes } from 'vue';
 import {
   computed,
   defineComponent,
   getCurrentInstance,
-  inject,
   onBeforeUnmount,
   onMounted,
+  provide,
   reactive,
   toRefs,
 } from 'vue';
 
+import { bkTooltips } from '@bkui-vue/directives';
+import { ExclamationCircleShape } from '@bkui-vue/icon';
 import {
   classes,
+  formItemKey,
   PropTypes,
+  useForm,
 } from '@bkui-vue/shared';
 
-import { formKey } from './common';
-import type { IFormItemRules } from './type';
-import validator from './validator';
+import type {
+  IFormItemRule,
+  IFormItemRules,
+} from './type';
+import defaultValidator from './validator';
 
 const formItemProps = {
   label: PropTypes.string,
@@ -57,74 +64,47 @@ const formItemProps = {
   rules: PropTypes.array,
   autoCheck: PropTypes.bool.def(false),
   description: PropTypes.string,
+  errorDisplayType: PropTypes.oneOf(['tooltips', 'normal']).def('normal'),
 };
 
 export type FormItemProps = Readonly<ExtractPropTypes<typeof formItemProps>>;
 
 const hasOwn = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key);
 
-const mergeRules: (
-  configRules: IFormItemRules,
-  propsRules: IFormItemRules
-) => IFormItemRules = (configRules, propsRules) => {
-  const formatConfigRules = configRules.map((rule) => {
-    let rulevalidator: (value: any) => boolean;
-    if (rule.required) {
-      rulevalidator = validator.required;
-    } else if (rule.email) {
-      rulevalidator = validator.email;
-    } else if (Number(rule.max) > -1) {
-      rulevalidator = value => validator.max(value, rule.max);
-    } else if (Number(rule.min) > -1) {
-      rulevalidator = value => validator.min(value, rule.max);
-    } else if (Number(rule.maxlength) > -1) {
-      rulevalidator = value => validator.min(value, rule.max);
-    } else {
-      rulevalidator = () => true;
-    }
-    return {
-      validator: rulevalidator,
-      message: rule.message,
-      trigger: rule.trigger,
-    };
-  });
-  return [...propsRules, ...formatConfigRules];
-};
-
 const getRulesFromProps = (props) => {
   const rules: IFormItemRules = [];
 
   if (props.required) {
     rules.push({
-      validator: validator.required,
+      validator: defaultValidator.required,
       message: `${props.label}不能为空`,
       trigger: 'blur',
     });
   }
   if (props.email) {
     rules.push({
-      validator: validator.email,
+      validator: defaultValidator.email,
       message: `${props.label}格式不正确`,
       trigger: 'blur',
     });
   }
   if (Number(props.max) > -1) {
     rules.push({
-      validator: value => validator.max(value, props.max),
+      validator: value => defaultValidator.max(value, props.max),
       message: `${props.label}最大值${props.max}`,
       trigger: 'blur',
     });
   }
   if (Number(props.min) > -1) {
     rules.push({
-      validator: value => validator.min(value, props.min),
+      validator: value => defaultValidator.min(value, props.min),
       message: `${props.label}最小值${props.min}`,
       trigger: 'blur',
     });
   }
   if (Number(props.maxlength) > -1) {
     rules.push({
-      validator: value => validator.maxlength(value, props.maxlength),
+      validator: value => defaultValidator.maxlength(value, props.maxlength),
       message: `${props.label}最大长度${props.maxlength}`,
       trigger: 'blur',
     });
@@ -132,12 +112,64 @@ const getRulesFromProps = (props) => {
   return rules;
 };
 
+const mergeRules: (
+  configRules: IFormItemRules,
+  propsRules: IFormItemRules
+) => IFormItemRules = (configRules, propsRules) => {
+  const formatConfigRules = configRules.reduce((result, rule) => {
+    let rulevalidator: any;
+    if (rule.required) {
+      rulevalidator = defaultValidator.required;
+    } else if (rule.email) {
+      rulevalidator = defaultValidator.email;
+    } else if (Number(rule.max) > -1) {
+      rulevalidator = value => defaultValidator.max(value, rule.max);
+    } else if (Number(rule.min) > -1) {
+      rulevalidator = value => defaultValidator.min(value, rule.max);
+    } else if (Number(rule.maxlength) > -1) {
+      rulevalidator = value => defaultValidator.min(value, rule.max);
+    } else if (Object.prototype.toString.call(rule.pattern) === '[object RegExp]') {
+      rulevalidator = value => defaultValidator.pattern(value, rule.pattern);
+    } else if (Object.prototype.toString.call(rule.validator) === '[object Function]') {
+      rulevalidator =  rule.validator;
+    } else {
+      // 不支持的配置规则
+      return result;
+    }
+    result.push({
+      validator: rulevalidator,
+      message: rule.message,
+      trigger: rule.trigger,
+    });
+    return result;
+  }, []);
+  return [...propsRules, ...formatConfigRules];
+};
+
+const getTriggerRules = (
+  trigger: String,
+  rules: IFormItemRules,
+) => rules.reduce((result, rule) => {
+  if (!rule.trigger || !trigger) {
+    result.push(rule);
+    return result;
+  }
+  const ruleTriggerList = Array.isArray(rule.trigger) ? rule.trigger : [rule.trigger];
+  if (ruleTriggerList.includes(trigger as IFormItemRule['trigger'])) {
+    result.push(rule);
+  }
+  return result;
+}, []);
+
 
 const isValid = (value: string | number): boolean => value !== undefined;
 
 
 export default defineComponent({
-  name: 'BKFormItem',
+  name: 'FormItem',
+  directives: {
+    bkTooltips,
+  },
   props: formItemProps,
   setup(props) {
     const currentInstance = getCurrentInstance();
@@ -145,7 +177,8 @@ export default defineComponent({
       isError: false,
       errorMessage: '',
     });
-    const form = inject(formKey);
+    const form = useForm();
+
     const isForm = Boolean(form);
 
     const labelStyles = computed<object>(() => {
@@ -168,16 +201,16 @@ export default defineComponent({
       return styles;
     });
 
-
     /**
      * @desc 验证字段
-     * @returns { Promise }
      */
-    const validate = () => {
+    const validate = (trigger?: String): Promise<boolean> => {
+      state.isError = false;
+      state.errorMessage = '';
       // 没有设置 property 不进行验证
       if (!props.property
       || (isForm && !form.props.model)) {
-        return Promise.resolve();
+        return Promise.resolve(true);
       }
       let rules: IFormItemRules = [];
       // 继承 form 的验证规则
@@ -190,20 +223,23 @@ export default defineComponent({
       if (props.rules) {
         rules = props.rules as IFormItemRules;
       }
+      // debugger;
       // 合并规则属性配置
-      rules = mergeRules(rules, getRulesFromProps(props));
-      const value = form.props.model[props.property];
+      rules = getTriggerRules(trigger, mergeRules(rules, getRulesFromProps(props)));
+
+      const value = get(form.props.model, props.property);
 
       const doValidate = (() => {
         let stepIndex = -1;
         return () => {
           stepIndex = stepIndex + 1;
           if (stepIndex >= rules.length) {
-            return Promise.resolve();
+            return Promise.resolve(true);
           }
           const rule = rules[stepIndex];
           return Promise.resolve()
             .then(() => {
+              // debugger;
               const result = rule.validator(value);
               // 异步验证
               if (typeof result !== 'boolean'
@@ -227,24 +263,33 @@ export default defineComponent({
       })();
       return doValidate();
     };
+
     /**
      * @desc 清除验证状态
-     * @returns { void }
      */
-    const clearValidate = () => {
+    const clearValidate = (): void => {
       state.isError = false;
       state.errorMessage = '';
     };
+
+    provide(formItemKey, {
+      ...props,
+      validate,
+      clearValidate,
+    });
+
     onMounted(() => {
       if (isForm) {
         form.register(currentInstance.proxy);
       }
     });
+
     onBeforeUnmount(() => {
       if (isForm) {
         form.unregister(currentInstance.proxy);
       }
     });
+
     return {
       ...toRefs(state),
       labelStyles,
@@ -259,27 +304,56 @@ export default defineComponent({
       'is-required': this.required,
     });
 
+    const renderLabel = () => {
+      if (this.$slots.label) {
+        return this.$slots.label();
+      }
+      if (this.description) {
+        return (
+          <span
+            class={{
+              'bk-form-label-description': Boolean(this.description),
+            }}
+            v-bk-tooltips={this.description}>
+            {this.label}
+          </span>
+        );
+      }
+      return this.label;
+    };
+
+    const renderError = () => {
+      if (!this.isError) {
+        return null;
+      }
+      if (this.errorDisplayType === 'tooltips') {
+        return (
+          <div
+            class="bk-form-error-tips"
+            v-bk-tooltips={this.errorMessage}>
+            <ExclamationCircleShape />
+          </div>
+        );
+      }
+      return (
+          <div class="bk-form-error">
+              {this.$slots.error
+                ? this.$slots.error(this.errorMessage)
+                : this.errorMessage}
+              </div>
+      );
+    };
+
     return (
       <div class={itemClassees}>
         <div
           class="bk-form-label"
           style={this.labelStyles}>
-            {
-            this.$slots.label
-              ? this.$slots.label()
-              : this.label
-            }
+            {renderLabel()}
         </div>
         <div class="bk-form-content">
           {this.$slots.default?.()}
-          {
-            this.isError
-            && <div class="bk-form-error">
-              {this.$slots.error
-                ? this.$slots.error(this.errorMessage)
-                : this.errorMessage}
-              </div>
-          }
+          {renderError()}
         </div>
       </div>
     );

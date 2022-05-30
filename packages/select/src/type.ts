@@ -27,16 +27,17 @@ import Popover from '@bkui-vue/popover';
 
 import Option from './option';
 import Group from './optionGroup';
+import SelectTagInput from './selectTagInput';
 
 export type OptionInstanceType = InstanceType<typeof Option>;
 export type GroupInstanceType = InstanceType<typeof Group>;
 export type PopoverInstanceType = InstanceType<typeof Popover>;
+export type SelectTagInputType = InstanceType<typeof SelectTagInput>;
 
 export interface ISelectContext {
-  props: {
-    multiple?: boolean
-  };
-  selectedOptions: Set<any>;
+  multiple?: boolean;
+  selected: ISelectedData[];
+  activeOptionValue: any;
   register(option: OptionInstanceType): any;
   unregister(option: OptionInstanceType): any;
   registerGroup(option: GroupInstanceType): any;
@@ -53,10 +54,14 @@ export interface IOptionGroupContext {
 
 export interface ISelectState {
   currentPlaceholder: string;
-  selectedOptions: Set<OptionInstanceType>;
   currentSelectedLabel: string;
 }
 
 export interface IPopoverConfig {
   popoverMinWidth: number;
+}
+
+export interface ISelectedData {
+  value: any;
+  label: string;
 }

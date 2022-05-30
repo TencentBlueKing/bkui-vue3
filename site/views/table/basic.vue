@@ -1,11 +1,38 @@
 <template>
-  <div style=" width: 100%;height: 300px">
-    <bk-table
-      :columns="columns"
-      :data="tableData"
-      settings
-      @dblclick="handleDblClick"
-    />
+  <div class="row">
+    <div class="cell">
+      <span class="title">自动填充高度(默认)：height='auto'</span>
+      <bk-table
+        :columns="columns"
+        :data="tableData"
+        settings
+        @dblclick="handleDblClick"
+        @column-sort="handleSortBy"
+      />
+    </div>
+    <div
+      class="cell"
+      style="height: 300px;"
+    >
+      <span class="title">依赖父级高度：height='100%'</span>
+      <bk-table
+        :columns="columns"
+        :data="tableData"
+        height="100%"
+        settings
+        @dblclick="handleDblClick"
+      />
+    </div>
+    <div class="cell">
+      <span class="title">固定高度：height='number | number px'</span>
+      <bk-table
+        :columns="columns"
+        :data="tableData"
+        :height="300"
+        settings
+        @dblclick="handleDblClick"
+      />
+    </div>
   </div>
 </template>
 
@@ -22,9 +49,23 @@
       };
     },
     methods: {
+      handleSortBy(arg) {
+        console.log('handleSortBy', arg);
+      },
       handleDblClick(...args) {
         console.log(args);
       },
     },
   });
 </script>
+<style scoped>
+.row {
+  display: flex;
+  width: 100%;
+}
+
+.cell {
+  flex: 1;
+  margin: 0 5px 0 5px;
+}
+</style>

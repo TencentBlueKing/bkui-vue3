@@ -279,7 +279,7 @@ export default defineComponent({
         style={this.styles}
         onClick={this.onClick}
       >
-          {this.$slots.default?.() ?? ''}
+        {this.$slots.default?.() ?? ''}
       </div>
     );
   },

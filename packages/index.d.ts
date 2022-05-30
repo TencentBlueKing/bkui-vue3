@@ -23,60 +23,67 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
-declare module '*.svg'
 
-declare module '*.vue' {
-  import { DefineComponent } from 'vue';
-  const component: DefineComponent;
-  export default component;
-}
+import type { HTMLAttributes } from 'vue';
 
-declare module '*.png' {
-  const value: any;
-  export default value;
-}
+declare module 'vue' {
+  interface AnchorHTMLAttributes<T> extends HTMLAttributes<T> {
+    disabled?: boolean;
+  }
 
-declare module '*.gif' {
-  const SRC: string;
-  export default SRC;
-}
+  declare module '*.vue' {
+    import { DefineComponent } from 'vue';
+    const component: DefineComponent;
+    export default component;
+  }
 
-declare module '*.jpg' {
-  const SRC: string;
-  export default SRC;
-}
+  declare module '*.png' {
+    const value: any;
+    export default value;
+  }
 
-declare module '*.jpeg' {
-  const SRC: string;
-  export default SRC;
-}
+  declare module '*.gif' {
+    const SRC: string;
+    export default SRC;
+  }
 
-declare module '*.webp' {
-  const SRC: string;
-  export default SRC;
-}
+  declare module '*.jpg' {
+    const SRC: string;
+    export default SRC;
+  }
 
-declare module '*.svg' {
-  const SRC: string;
-  export default SRC;
-}
+  declare module '*.jpeg' {
+    const SRC: string;
+    export default SRC;
+  }
 
-declare module '*.css' {
-  const content: any;
-  export default content;
-}
+  declare module '*.webp' {
+    const SRC: string;
+    export default SRC;
+  }
 
-declare module '*.module.css' {
-  const classes: { readonly [key: string]: string };
-  export default classes;
-}
+  declare module '*.svg' {
+    const SRC: string;
+    export default SRC;
+  }
 
-declare module '*.module.scss' {
-  const classes: { readonly [key: string]: string };
-  export default classes;
-}
+  declare module '*.css' {
+    const content: any;
+    export default content;
+  }
 
-declare module '*.module.sass' {
-  const classes: { readonly [key: string]: string };
-  export default classes;
+  declare module '*.module.css' {
+    const classes: { readonly [key: string]: string };
+    export default classes;
+  }
+
+  declare module '*.module.scss' {
+    const classes: { readonly [key: string]: string };
+    export default classes;
+  }
+
+  declare module '*.module.sass' {
+    const classes: { readonly [key: string]: string };
+    export default classes;
+  }
 }

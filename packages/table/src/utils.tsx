@@ -129,6 +129,17 @@ export const resolvePropBorderToClassStr = (val: string | string[]) => {
 };
 
 /**
+ * 获取当前列实际宽度
+ * width props中设置的默认宽度
+ * calcWidth 计算后的宽度
+ * resizeWidth 拖拽重置之后的宽度
+ * @param colmun 当前列配置
+ * @param orders 获取宽度顺序
+ * @returns
+ */
+export const getColumnReactWidth = (colmun: GroupColumn, orders = ['resizeWidth', 'calcWidth', 'width']) => colmun[orders[0]] ?? colmun[orders[1]] ?? colmun[orders[2]];
+
+/**
  * 根据Props Column配置计算并设置列宽度
  * @param root 当前根元素
  * @param colgroups Columns配置
@@ -142,6 +153,28 @@ export const resolveColumnWidth = (root: HTMLElement, colgroups: GroupColumn[], 
   // 需要平均宽度的列数
   const avgColIndexList = [];
 
+  const getMinWidth = (col: GroupColumn, computedWidth: number) => {
+    const { minWidth = undefined } = col;
+    if (minWidth === undefined) {
+      return computedWidth;
+    }
+
+    let calcMinWidth = computedWidth;
+    if (/^\d+\.?\d*$/.test(`${minWidth}`)) {
+      calcMinWidth = Number(minWidth);
+    }
+
+    if (/^\d+\.?\d*%$/.test(`${minWidth}`)) {
+      calcMinWidth = Number(minWidth) * width / 100;
+    }
+
+    if (/^\d+\.?\d*px$/i.test(`${minWidth}`)) {
+      calcMinWidth = Number(`${minWidth}`.replace(/px/i, ''));
+    }
+
+    return calcMinWidth;
+  };
+
   /**
    * 根据Props Column配置计算并设置列宽度
    * @param col 当前Column设置
@@ -149,9 +182,11 @@ export const resolveColumnWidth = (root: HTMLElement, colgroups: GroupColumn[], 
    * @param resetAvgWidth 是否重置可用宽度
    */
   const resolveColNumberWidth = (col: GroupColumn, numWidth: number, resetAvgWidth = true) => {
-    Object.assign(col, { calcWidth: numWidth });
+    const minWidth = getMinWidth(col, numWidth);
+    const computedWidth = numWidth < minWidth ? minWidth : numWidth;
+    Object.assign(col, { calcWidth: computedWidth });
     if (resetAvgWidth) {
-      avgWidth = avgWidth - numWidth;
+      avgWidth = avgWidth - computedWidth;
       if (avgWidth < 0) {
         avgWidth = 0;
       }
@@ -160,7 +195,7 @@ export const resolveColumnWidth = (root: HTMLElement, colgroups: GroupColumn[], 
 
   colgroups.forEach((col: GroupColumn, index: number) => {
     if (!col.isHidden) {
-      const colWidth = String(col.width);
+      const colWidth = String(getColumnReactWidth(col));
       let isAutoWidthCol = true;
       if (/^\d+\.?\d*(px)?$/.test(colWidth)) {
         const numWidth = Number(colWidth.replace('px', ''));
@@ -265,4 +300,34 @@ export const getRowText = (row: any, key: string, column: Column) => {
   }
 
   return row[key];
+};
+
+/**
+ * 格式化prop配置为标准数组格式
+ * @param prop prop对象值
+ * @param args 如果是function参数
+ * @returns
+ */
+export const formatPropAsArray = (prop: string | object | (() => any), args: any[]) => {
+  if (Array.isArray(prop)) {
+    return prop;
+  }
+
+  if (typeof prop === 'string' || typeof prop === 'object') {
+    return [prop];
+  }
+
+  if (typeof prop === 'function') {
+    return formatPropAsArray(Reflect.apply(prop, this, args), args);
+  }
+
+  return [];
+};
+
+export const isRenderScrollBottomLoading = (props: TablePropTypes) => {
+  if (props.scrollLoading === null) {
+    return false;
+  }
+
+  return typeof props.scrollLoading === 'boolean' || typeof props.scrollLoading === 'object';
 };

@@ -1,7 +1,7 @@
 <template>
   <div class="row">
     <div class="cell">
-      <span>自定义节点</span>
+      <span>自定义节点内容</span>
       <bk-tree
         :data="treeData"
         level-line
@@ -10,6 +10,38 @@
       >
         <template #node="item">
           <span style="color: #3a84ff;">(自定义节点)：{{ item.name }}</span>
+        </template>
+      </bk-tree>
+    </div>
+    <div class="cell">
+      <span>自定义节点展开\收起</span>
+      <bk-tree
+        :data="treeData"
+        level-line
+        label="name"
+        children="children"
+      >
+        <template #nodeAction="item">
+          <span
+            :style="`color: ${item.__attr__.isOpen ? '#FF9C01;' : '#EA3636;'}`"
+          >
+            {{ item.__attr__.hasChildNode ? (item.__attr__.isOpen ? '--' : '+') : '*' }}
+          </span>
+        </template>
+      </bk-tree>
+    </div>
+    <div class="cell">
+      <span>自定义节点节点类型</span>
+      <bk-tree
+        :data="treeData"
+        level-line
+        label="name"
+        children="children"
+      >
+        <template #nodeType="item">
+          <span style="padding: 0 5px;">
+            {{ item.__attr__.hasChildNode ? 'P' : 'C' }}
+          </span>
         </template>
       </bk-tree>
     </div>
@@ -57,7 +89,9 @@
 }
 
 .cell {
-  flex: 1;
   padding: 0 15px;
+  overflow: auto;
+  border-right: solid 1px #ddd;
+  flex: 1;
 }
 </style>

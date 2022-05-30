@@ -18,6 +18,13 @@
     </bk-button>
     <bk-button
       class="ml10"
+      theme="primary"
+      circle
+    >
+      <search />
+    </bk-button>
+    <bk-button
+      class="ml10"
     >
       <loading
         loading

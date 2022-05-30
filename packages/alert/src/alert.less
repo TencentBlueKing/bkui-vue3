@@ -26,13 +26,13 @@
   border-radius: @border-radius-base;
 
   .bk-alert-icon-info {
+    display: flex; // 修复 svg 对不齐的问题（svg 是一个 inline 元素）
     margin-right: 8px;
     font-size: 16px;
+    line-height: 1;
   }
 
-  .icon-close {
-    font-size: 17px;
-  }
+  
 }
 
 .bk-alert-wraper {
@@ -94,6 +94,10 @@
   font-size: 12px;
   white-space: nowrap;
   cursor: pointer;
+}
+
+.bk-alert-close-icon {
+  line-height: 1;
 }
 
 .bk-alert-leave-leave {

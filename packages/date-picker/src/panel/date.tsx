@@ -41,6 +41,7 @@ import {
 
 import { AngleDoubleLeft, AngleDoubleRight, AngleLeft, AngleRight } from '@bkui-vue/icon';
 
+import Confirm from '../base/confirm';
 import DateTable from '../base/date-table';
 import type {
   DatePickerShortcutsType,
@@ -89,14 +90,22 @@ const datePanelProps = {
     type: Date,
     required: true,
   },
+  confirm: {
+    type: Boolean,
+    default: false,
+  },
+  showTime: {
+    type: Boolean,
+    default: false,
+  },
 } as const;
 
 export type DatePanelProps = Readonly<ExtractPropTypes<typeof datePanelProps>>;
 
 export default defineComponent({
   props: datePanelProps,
-  emits: ['pick', 'pick-success'],
-  setup(props, { emit }) {
+  emits: ['pick', 'pick-success', 'pick-clear'],
+  setup(props, { slots, emit }) {
     const getTableType = currentView => (currentView.match(/^time/) ? 'time-picker' : `${currentView}-table`);
 
     const dates = (props.modelValue as DatePickerValueType[]).slice().sort();
@@ -127,7 +136,6 @@ export default defineComponent({
     };
 
     const handlePick = (value, type) => {
-      console.warn('handlePick');
       let val = value;
       if (props.selectionMode === 'year') {
         val = new Date(value.getFullYear(), 0, 1);
@@ -144,6 +152,11 @@ export default defineComponent({
     const handlePickSuccess = () => {
       resetView();
       emit('pick-success');
+    };
+
+    const handlePickClear = () => {
+      resetView();
+      emit('pick-clear');
     };
 
     const handleShortcutClick = (shortcut) => {
@@ -214,7 +227,11 @@ export default defineComponent({
 
     const isTime = computed(() => state.currentView === 'time');
 
-    console.warn('panelDatepanelDate', state.panelDate);
+    const handleToggleTime = () => {
+      state.currentView = state.currentView === 'time' ? 'date' : 'time';
+    };
+
+    const hasShortcuts = computed(() => !!slots.shortcuts);
 
     return {
       ...toRefs(state),
@@ -227,7 +244,11 @@ export default defineComponent({
       changeMonth,
       reset,
       isTime,
+      hasShortcuts,
       onToggleVisibility,
+      handleToggleTime,
+      handlePickSuccess,
+      handlePickClear,
     };
   },
   render() {
@@ -235,27 +256,27 @@ export default defineComponent({
       <div
         class={[
           'bk-picker-panel-body-wrapper',
-          this.shortcuts.length ? 'bk-picker-panel-with-sidebar' : '',
+          (this.shortcuts.length || this.hasShortcuts) ? 'bk-picker-panel-with-sidebar' : '',
         ]}
         onMousedown={(e: MouseEvent) => {
           e.preventDefault();
         }}
       >
-      {
-        this.shortcuts.length
-          ? (
-            <div class="bk-picker-panel-sidebar">
-              {
-                this.shortcuts.map(shortcut => (
-                  <div class="bk-picker-panel-shortcut" onClick={() => this.handleShortcutClick(shortcut)}>
-                    {shortcut.text}
-                  </div>
-                ))
-              }
-            </div>
-          )
-          : ''
-      }
+        {
+          this.shortcuts.length
+            ? (
+              <div class="bk-picker-panel-sidebar">
+                {
+                  this.shortcuts.map(shortcut => (
+                    <div class="bk-picker-panel-shortcut" onClick={() => this.handleShortcutClick(shortcut)}>
+                      {shortcut.text}
+                    </div>
+                  ))
+                }
+              </div>
+            )
+            : ''
+        }
         <div class="bk-picker-panel-body" style="width: 261px;">
           <div class="bk-date-picker-header" v-show={this.currentView !== 'time'}>
             <span class={iconBtnCls('prev', '-double')} onClick={() => this.changeYear(-1)}>
@@ -323,8 +344,31 @@ export default defineComponent({
                 })()
                 : ''
             }
-            </div>
+          </div>
+          {
+            this.confirm
+              ? (
+                <Confirm
+                  clearable={this.clearable}
+                  showTime={this.showTime}
+                  isTime={this.isTime}
+                  onPick-toggle-time={this.handleToggleTime}
+                  onPick-clear={this.handlePickClear}
+                  onPick-success={this.handlePickSuccess}
+                ></Confirm>
+              )
+              : ''
+          }
         </div>
+        {
+          this.hasShortcuts
+            ? (
+              <div class="bk-picker-panel-sidebar">
+                {this.$slots.shortcuts?.() ?? null}
+              </div>
+            )
+            : null
+        }
       </div>
     );
   },

@@ -43,6 +43,13 @@ export function stringEnum<T extends string>(o: Array<T>): { [K in T]: K } {
   }, Object.create(null));
 }
 
+type UnionToIntersection<T> = (T extends any ? (v: T) => void : never) extends (v: infer V) => void ? V : never;
+type LastOf<T> = UnionToIntersection<T extends any ? () => T : never> extends () => infer R ? R : never;
+type Push<T extends any[], V> = [ ...T, V];
+
+export type UnionToArrayType<T, L = LastOf<T>, N = [T] extends [never]
+  ? true : false> = N extends true ? [] : Push<UnionToArrayType<Exclude<T, L>>, L>;
+
 export enum Size {
   Small = 'small',
   Large = 'large'

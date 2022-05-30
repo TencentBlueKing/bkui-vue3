@@ -98,7 +98,7 @@ export default () => {
           {proxy.limitList.map((num, index) => (
             <BkOption
               value={num}
-              label={num}
+              label={`${num}`}
               key={`${index}_${num}`} />
           ))}
         </BkSelect>

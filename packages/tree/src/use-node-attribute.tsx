@@ -24,13 +24,10 @@
 * IN THE SOFTWARE.
 */
 
-import { computed } from 'vue';
+import { NODE_ATTRIBUTES, NODE_SOURCE_ATTRS } from './constant';
+import { TreePropTypes } from './props';
 
-import { NODE_ATTRIBUTES } from './util';
-
-export default (flatData) => {
-  const schemaValues = computed(() => Array.from(flatData.schema.values()));
-
+export default (flatData, props?: TreePropTypes) => {
   /**
    * 获取Schema中指定的对象值
    * @param key
@@ -53,17 +50,30 @@ export default (flatData) => {
    * @param val 属性值
    * @returns
    */
-  const setNodeAttr = (node: any, attr: string, val: any) => (flatData.schema as Map<string, any>)
-    .set(node[NODE_ATTRIBUTES.UUID], {
-      ...getSchemaVal(node[NODE_ATTRIBUTES.UUID]),
-      [attr]: val,
-    });
+  const setNodeAttr = (node: any, attr: string, val: any) => {
+    (flatData.schema as Map<string, any>)
+      .set(node[NODE_ATTRIBUTES.UUID], {
+        ...getSchemaVal(node[NODE_ATTRIBUTES.UUID]),
+        [attr]: val,
+      });
+  };
 
   const getNodePath = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.PATH);
+  const getNodeId = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.UUID);
   const isRootNode = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.IS_ROOT);
   const isNodeOpened = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.IS_OPEN);
   const hasChildNode = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.HAS_CHILD);
+  const isNodeMatched = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.IS_MATCH);
+  const isNodeChecked = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.IS_CHECKED);
+  const getNodeParentId = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.PARENT_ID);
+  const getNodeParentIdById = (id: string) => getNodeAttr({ [NODE_ATTRIBUTES.UUID]: id }, NODE_ATTRIBUTES.PARENT_ID);
+  const isNodeLoading = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.IS_LOADING);
 
+  const setTreeNodeLoading = (node: any, value: boolean) => {
+    setNodeAttr(node, NODE_ATTRIBUTES.IS_LOADING, value);
+  };
+
+  const deleteNodeSchema = (id: string) => (flatData.schema as Map<string, any>).delete(id);
 
   /**
    * 判定指定节点是否为展开状态
@@ -82,6 +92,8 @@ export default (flatData) => {
     return false;
   };
 
+  const isParentNodeOpened = (node: any) => isItemOpen(getNodeAttr(node, NODE_ATTRIBUTES.PARENT_ID));
+
   /**
    * 过滤当前状态为Open的节点
    * 页面展示只会展示Open的节点
@@ -89,19 +101,76 @@ export default (flatData) => {
    * @returns
    */
   const checkNodeIsOpen = (node: any) => isRootNode(node)
-    || isItemOpen(node)
-    || isItemOpen(getNodeAttr(node, NODE_ATTRIBUTES.PARENT_ID));
+    || isParentNodeOpened(node);
+
+  /**
+     * 根据节点path返回源数据中节点信息
+     * @param path
+     * @returns
+     */
+  const getSourceNodeByPath = (path: string) => {
+    const paths = path.split('-');
+
+    return  paths.reduce((pre: any, nodeIndex: string) => {
+      const index = Number(nodeIndex);
+      return  Array.isArray(pre) ? pre[index] : pre[props.children][index];
+    }, props.data);
+  };
+
+  const getSourceNodeByUID = (uid: string) => getSourceNodeByPath(getNodePath({ [NODE_ATTRIBUTES.UUID]: uid }));
+
+  const getParentNodeData = (uid: string) => {
+    if (isRootNode({ [NODE_ATTRIBUTES.UUID]: uid })) {
+      return { [props.children]: props.data };
+    }
+
+    return getSourceNodeByUID(getNodeParentIdById(uid));
+  };
+
+  /**
+   * 处理scoped slot 透传数据
+   * @param item 当前节点数据
+   * @returns
+   */
+  const resolveScopedSlotParam = (item: any) => ({
+    [NODE_SOURCE_ATTRS[NODE_ATTRIBUTES.IS_LOADING]]: getNodeAttr(item, NODE_ATTRIBUTES.IS_LOADING),
+    [NODE_SOURCE_ATTRS[NODE_ATTRIBUTES.HAS_CHILD]]: hasChildNode(item),
+    [NODE_SOURCE_ATTRS[NODE_ATTRIBUTES.IS_MATCH]]: isNodeMatched(item),
+    [NODE_SOURCE_ATTRS[NODE_ATTRIBUTES.IS_CHECKED]]: isNodeChecked(item),
+    [NODE_SOURCE_ATTRS[NODE_ATTRIBUTES.IS_OPEN]]: isNodeOpened(item),
+    [NODE_SOURCE_ATTRS[NODE_ATTRIBUTES.IS_ROOT]]: isRootNode(item),
+    fullPath: getNodeAttr(item, NODE_ATTRIBUTES.PATH),
+    uuid: getNodeId(item),
+    parentId: getNodeAttr(item, NODE_ATTRIBUTES.PARENT_ID),
+  });
+
+  const extendNodeAttr = (item: any) => ({
+    ...item,
+    [NODE_ATTRIBUTES.TREE_NODE_ATTR]: resolveScopedSlotParam(item),
+  });
 
   return {
-    schemaValues,
     getSchemaVal,
     getNodeAttr,
+    getNodeId,
+    getNodeParentId,
+    getNodeParentIdById,
+    getParentNodeData,
     setNodeAttr,
     getNodePath,
     isRootNode,
     isNodeOpened,
     hasChildNode,
     isItemOpen,
+    isNodeChecked,
+    isNodeMatched,
+    isNodeLoading,
     checkNodeIsOpen,
+    getSourceNodeByPath,
+    getSourceNodeByUID,
+    deleteNodeSchema,
+    resolveScopedSlotParam,
+    setTreeNodeLoading,
+    extendNodeAttr,
   };
 };

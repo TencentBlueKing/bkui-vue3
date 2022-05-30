@@ -29,11 +29,8 @@ import { computed, defineComponent, PropType, ref, watch, watchEffect } from 'vu
 import { IMenuInfo, MenuMode, useMenuProvider } from './utils';
 export const menuProps = {
   activeKey: String,
-  collapse: {
-    type: Boolean,
-    default: false,
-  },
-  OpenedKeys: { type: Array as PropType<string[]> },
+  collapse: Boolean,
+  openedKeys: { type: Array as PropType<string[]> },
   mode: { type: String as PropType<MenuMode>, default: 'vertical' },
   uniqueOpen: {
     type: Boolean,
@@ -49,16 +46,13 @@ export default defineComponent({
     'click',
     'openChange',
   ],
-  setup(props, { slots, emit }) {
+  setup(props, { slots, emit, expose }) {
     const activeKey = ref<string>('');
     const openedKeys = ref<string[]>([]);
     const menuStore = ref<Record<string, IMenuInfo>>({});
     const mode = computed<MenuMode>(() => props.mode);
     const collapse = ref<boolean>(props.collapse);
     const oldOpenKeys = ref<string[]>([]);
-    watch(() => props.OpenedKeys, (keys = openedKeys.value) => {
-      openedKeys.value = keys;
-    }, { immediate: true });
     watchEffect(() => {
       if (props.activeKey !== undefined) {
         activeKey.value = props.activeKey;
@@ -68,6 +62,7 @@ export default defineComponent({
       () => props.collapse,
       () => {
         collapse.value = props.collapse;
+        console.info(props.collapse);
         const oldKeys = [...oldOpenKeys.value];
         const openKeys = [...openedKeys.value];
         openedKeys.value = collapse.value ? [] : oldKeys;
@@ -77,6 +72,9 @@ export default defineComponent({
         immediate: true,
       },
     );
+    watch(() => props.openedKeys, (keys = openedKeys.value) => {
+      openedKeys.value = keys;
+    }, { immediate: true });
     const registerMenuInfo = (key: string, info: IMenuInfo) => {
       menuStore.value = { ... menuStore.value, [key]: info };
     };
@@ -111,12 +109,17 @@ export default defineComponent({
       handleOpenChange,
       handleActiveChange,
     });
+    expose({
+      activeKey,
+      openedKeys,
+      menuStore,
+    });
     return () => (
       <div class={{
         'bk-menu': true,
         'is-collapse': collapse.value,
       }}>
-        {slots?.default?.()}
+        {slots.default?.()}
       </div>
     );
   },

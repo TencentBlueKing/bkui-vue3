@@ -31,10 +31,10 @@ import {
 
 import {
   classes,
+  formKey,
   PropTypes,
 } from '@bkui-vue/shared';
 
-import { formKey } from './common';
 import type { IFormItemContext } from './type';
 
 export const formProps = {
@@ -42,15 +42,16 @@ export const formProps = {
   labelWidth: PropTypes.oneOfType([Number, String]),
   labelPosition: PropTypes.oneOf(['left', 'center', 'right']),
   model: PropTypes.object,
-  rules: PropTypes.array,
+  rules: PropTypes.object,
 };
 
 export type FormProps = Readonly<ExtractPropTypes<typeof formProps>>;
 
 export default defineComponent({
-  name: 'BKForm',
+  name: 'Form',
   props: formProps,
-  setup(props) {
+  emits: ['submit'],
+  setup(props, context) {
     // form-item 列表
     let formItemInstanceList: Array<IFormItemContext> = [];
     /**
@@ -77,12 +78,17 @@ export default defineComponent({
       register,
       unregister,
     });
+
+    const handleSubmit = (event: Event): void => {
+      event.preventDefault();
+      context.emit('submit');
+    };
     /**
      * @desc 验证表单
      * @param { string | Array<string> } fields 指定表单字段
      * @returns { Promise<[]> }
      */
-    const validate = (fields: string | Array<string>) => {
+    const validate = (fields?: string | Array<string>) => {
       let fieldMap = {};
       if (fields) {
         const fieldList = typeof fields === 'string' ? [fields] : fields;
@@ -113,7 +119,7 @@ export default defineComponent({
      * @desc 清除表单验证错误信息
      * @param { string | Array<string> } fields 指定表单字段
      */
-    const clearValidate = (fields: string | Array<string>) => {
+    const clearValidate = (fields?: string | Array<string>) => {
       let fieldMap = {};
       if (fields) {
         const fieldList = typeof fields === 'string' ? [fields] : fields;
@@ -130,6 +136,7 @@ export default defineComponent({
       formItemInstanceList.forEach(formItem => fieldMap[formItem.property] && formItem.clearValidate());
     };
     return {
+      handleSubmit,
       validate,
       clearValidate,
     };
@@ -140,7 +147,9 @@ export default defineComponent({
       [`bk-form--${this.formType}`]: true,
     });
     return (
-      <form class={formClasses}>
+      <form
+        class={formClasses}
+        onSubmit={this.handleSubmit}>
         { this.$slots.default?.() }
       </form>
     );

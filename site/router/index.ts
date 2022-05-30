@@ -67,7 +67,7 @@ const routes: RouteRecordRaw[] = [
     path: '/navigation',
     name: 'navigation',
     alias: '',
-    component: () => import('../views/navigation'),
+    component: () => import('../views/navigation/index'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'Navigation 导航',
@@ -176,7 +176,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/icon',
     name: 'icon',
-    component: () => import('../views/icon'),
+    component: () => import('../views/icon/index'),
     meta: {
       group: NavGroupMeta.Base,
       navName: 'Icon 图标',
@@ -284,7 +284,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/collapse',
     name: 'collapse',
-    component: () => import('../views/collapse'),
+    component: () => import('../views/collapse/index'),
     meta: {
       group: NavGroupMeta.Data,
       navName: 'Collapse 折叠面板',
@@ -425,6 +425,15 @@ const routes: RouteRecordRaw[] = [
   /**
    * @description:弹出框提示
    */
+  {
+    path: '/upload',
+    name: 'upload',
+    component: () => import('../views/upload'),
+    meta: {
+      group: NavGroupMeta.Form,
+      navName: 'Upload 文件上传',
+    },
+  },
   {
     path: '/popover',
     name: 'popover',
@@ -611,7 +620,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/resize-layout',
     name: 'resizeLayout',
-    component: () => import('../views/resize-layout'),
+    component: () => import('../views/resize-layout/resize-layout'),
     meta: {
       group: NavGroupMeta.Layout,
       navName: 'ResizeLayout',

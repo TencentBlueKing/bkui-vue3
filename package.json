@@ -1,7 +1,7 @@
 {
   "name": "bkui-vue",
   "private": true,
-  "version": "0.0.1-beta.61",
+  "version": "0.0.1-beta.84",
   "workspaces": {
     "packages": [
       "packages/!(**.bak)*",
@@ -13,10 +13,11 @@
     "dist"
   ],
   "scripts": {
+    "preinstall": "npx only-allow yarn",
     "prepare": "husky install",
     "dev": "vite serve site",
     "build": "run-p build:dist build:lib",
-    "build:site": "vite build site --mode development",
+    "build:site": "vite build site --mode production && cp -r ./site/views/ ./site/dist/views",
     "build:dist": "rimraf dist && lerna run --stream --scope cli dist",
     "build:lib": "rimraf lib && lerna run --stream --scope cli lib",
     "help:release": "lerna run --stream --scope cli release",
@@ -117,7 +118,7 @@
       "git add"
     ],
     "site/**/*.(vue|ts|tsx|js)": [
-      "eslint ./site --ext .js,.tsx,.ts,.vue --cache --fix",
+      "eslint ./site --ext .js,.tsx,.ts,.vue --cache --fix --ignore-pattern site/dist/",
       "git add"
     ],
     "packages/**/*.(vue|ts|tsx|js)": [

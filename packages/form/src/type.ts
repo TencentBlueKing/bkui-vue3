@@ -26,10 +26,6 @@
 import type { FormProps } from './form';
 import type { FormItemProps } from './form-item';
 
-export interface IFormItemContext extends FormItemProps {
-  validate: () => Promise<boolean>,
-  clearValidate: () => void
-}
 
 export interface IFormContext {
   props: FormProps,
@@ -37,13 +33,21 @@ export interface IFormContext {
   unregister: (IFormItemContext) => void
 }
 
-export type IFormItemRules = Array<{
+export interface IFormItemContext extends FormItemProps {
+  validate: (trigger?: string) => Promise<boolean>,
+  clearValidate: () => void
+}
+
+export interface IFormItemRule {
   required?: boolean,
   email?: boolean,
   min?: number,
   max?: number,
   maxlength?: number,
+  pattern?: RegExp,
   validator?: (any) => boolean | Promise<boolean>,
   message: string,
   trigger: 'blur' | 'change'
-}>;
+}
+
+export type IFormItemRules = Array<IFormItemRule>;

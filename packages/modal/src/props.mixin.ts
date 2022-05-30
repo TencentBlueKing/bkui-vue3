@@ -23,13 +23,12 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
-
 import { PropTypes } from '@bkui-vue/shared';
 export const propsMixin = {
   // 是否显示弹框
   isShow: PropTypes.bool.def(false),
-  width: PropTypes.string.def('50%') || PropTypes.number,
-  height: PropTypes.string.def('50%') || PropTypes.number,
+  width: PropTypes.oneOfType([String, Number]).def('50%'),
+  height: PropTypes.oneOfType([String, Number]).def('50%'),
   // 配置自定义样式类名
   customClass: PropTypes.string || PropTypes.array,
   // 弹框出现时，是否允许页面滚动
@@ -54,8 +53,6 @@ export const propsMixin = {
   quickClose: PropTypes.bool.def(true),
   // 是否显示在body内（即与id#app同级
   transfer: PropTypes.bool.def(false),
-  // 自定义标题
-  title: PropTypes.string.def('Header'),
   // 内容区最大高度
   maxHeight: PropTypes.string,
   // 弹出方向
@@ -66,4 +63,8 @@ export const propsMixin = {
   renderDirective: PropTypes.commonType(['show', 'if'], 'renderDirective').def('show'),
   // 关闭前回调
   beforeClose: PropTypes.custom(() => true),
+  // 对话框类型
+  dialogType: PropTypes.commonType(['show', 'operation', 'confirm', 'process'], 'dialogType').def('operation'),
+  // 是否允许多个弹框同时存在
+  multiInstance: PropTypes.bool.def(true),
 };

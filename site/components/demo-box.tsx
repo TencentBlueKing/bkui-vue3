@@ -75,7 +75,7 @@ export default defineComponent({
     const showCode = ref(false);
     const showConfigData = ref(false);
     const preview = ref<HTMLDivElement>(null);
-    let copyInstance = null;
+    const copyInstance = null;
     const sourceCode = ref('');
     const evalCode = ref('');
     const handleShowCodeChange = () => {
@@ -99,13 +99,13 @@ export default defineComponent({
         // const app = createApp(evalCode.value as any);
         // app.mount(preview.value);
       } else {
-        sourceCode.value = await fetch(`../views/${props.componentName}/${props.demoName}${props.suffix}`).then(res => res.text());
+        sourceCode.value = await fetch(`${import.meta.env.VITE_CDN_URL}views/${props.componentName}/${props.demoName}${props.suffix}`).then(res => res.text());
       }
 
       optionData.value = JSON.stringify(props.optionData, null, 4);
     });
     onMounted(() => {
-      copyInstance = new ClipboardJS((getCurrentInstance().refs.copyBtn as any).$el, {
+      const copyInstance = new ClipboardJS((getCurrentInstance().refs.copyBtn as any).$el, {
         text: () => activeCode.value,
       });
       ['success', 'error'].forEach((theme) => {

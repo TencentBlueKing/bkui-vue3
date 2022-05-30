@@ -28,19 +28,16 @@
 import Pagination from '@bkui-vue/pagination';
 import { classes, random } from '@bkui-vue/shared';
 
+import { EVENTS } from './const';
 import BodyEmpty from './plugins/body-empty';
 import HeadFilter from './plugins/head-filter';
 import HeadSort from './plugins/head-sort';
 import { TablePlugins } from './plugins/index';
 import Settings from './plugins/settings';
+import useFixedColumn from './plugins/use-fixed-column';
 import { Column, GroupColumn, IColumnActive, IReactiveProp, TablePropTypes } from './props';
-import { getRowText, resolveHeadConfig, resolvePropVal, resolveWidth } from './utils';;
-export const enum EVENTS {
-  /** 点击排序事件 */
-  ON_SORT_BY_CLICK = 'onSortByClick',
-  ON_FILTER_CLICK = 'onFilterClick',
-  ON_SETTING_CHANGE = 'onSettingChange'
-}
+import { formatPropAsArray, getColumnReactWidth, getRowText, resolveHeadConfig, resolvePropVal, resolveWidth } from './utils';
+
 
 export default class TableRender {
   props: TablePropTypes;
@@ -108,6 +105,13 @@ export default class TableRender {
    * @returns
    */
   public renderTableBodySchema(rows: any[]) {
+    if (!rows.length) {
+      return this.context.slots.empty?.() ?? <BodyEmpty
+      filterList={rows}
+      list={ this.props.data }
+      emptyText={ this.props.emptyText }/>;
+    }
+
     return <table cellpadding={0} cellspacing={0}>
       { this.renderColGroup() }
       { this.renderTBody(rows) }
@@ -266,15 +270,28 @@ export default class TableRender {
       cells.unshift(resolvePropVal(column, 'label', [column, index]));
       return cells;
     };
+
+    const resolveEventListener = (col: GroupColumn) => Array.from(col.listeners.keys())
+      .reduce((handle: any, key: string) => {
+        const eventName = key.split('_').slice(-1)[0];
+        return Object.assign(handle, {
+          [eventName]: (e: MouseEvent) => {
+            col.listeners.get(key).forEach((fn: Function) => Reflect.apply(fn, this, [e, col, this]));
+          },
+        });
+      }, {});
+
+    const { getFixedColumnStyleResolve } = useFixedColumn(this.props, this.colgroups);
+    const { resolveFixedColumnStyle, fixedoffset } = getFixedColumnStyleResolve();
     // @ts-ignore:next-line
     return <thead style={rowStyle}>
         <tr>
         {
           this.filterColgroups.map((column: Column, index: number) => <th colspan={1} rowspan={1}
-          class={ classes({
-            active: this.isColActive(index),
-          }) }
-          onClick={ () => this.handleColumnHeadClick(index) }>
+          class={ this.getHeadColumnClass(column, index) }
+          style = { resolveFixedColumnStyle(column, fixedoffset) }
+          onClick={ () => this.handleColumnHeadClick(index) }
+          { ...resolveEventListener(column) }>
             <div class="cell">{ renderHeadCell(column, index) }</div>
           </th>)
         }
@@ -287,41 +304,67 @@ export default class TableRender {
    * @returns
    */
   private renderTBody(rows: any[]) {
+    const { getFixedColumnStyleResolve } = useFixedColumn(this.props, this.colgroups);
+
     return <tbody>
     {
-      rows.length ? rows.map((row: any, rowIndex: number) => {
-        const rowStyle = {
-          '--row-height': `${this.getRowHeight(row, rowIndex)}px`,
-        };
+      rows.map((row: any, rowIndex: number) => {
+        const rowStyle = [
+          ...formatPropAsArray(this.props.rowStyle, [row, rowIndex, this]),
+          {
+            '--row-height': `${this.getRowHeight(row, rowIndex)}px`,
+          },
+        ];
+
+        const rowClass = [
+          ...formatPropAsArray(this.props.rowClass, [row, rowIndex, this]),
+        ];
+
+        const { resolveFixedColumnStyle,  fixedoffset } = getFixedColumnStyleResolve();
 
         return <tr
           // @ts-ignore
           style={rowStyle}
+          class={rowClass}
           onClick={ e => this.handleRowClick(e, row, rowIndex, rows)}
           onDblclick={e => this.handleRowDblClick(e, row, rowIndex, rows)}
         >
         {
-          this.filterColgroups.map((column: Column, index: number) => <td class={this.getColumnClass(index)}
-          colspan={1} rowspan={1}>
-          <div class="cell" >{ this.renderCell(row, column, rowIndex, rows) }</div>
-        </td>)
+          this.filterColgroups.map((column: Column, index: number) => {
+            const cellStyle = [
+              resolveFixedColumnStyle(column, fixedoffset),
+              ...formatPropAsArray(this.props.cellStyle, [column, index, row, rowIndex, this]),
+            ];
+
+            const cellClass = [
+              this.getColumnClass(column, index),
+              ...formatPropAsArray(this.props.cellClass, [column, index, row, rowIndex, this]),
+            ];
+            return <td
+            class={cellClass}
+            style={cellStyle}
+            colspan={1} rowspan={1}>
+            <div class="cell" >{ this.renderCell(row, column, rowIndex, rows) }</div>
+          </td>;
+          })
         }
       </tr>;
-      }) : <tr>
-        <td colspan={ this.props.columns.length } class="empty-cell">
-          {
-            this.context.slots.empty?.() ?? <BodyEmpty
-            filterList={rows}
-            list={ this.props.data }
-            emptyText={ this.props.emptyText }/>
-          }
-        </td>
-      </tr>
+      })
     }
   </tbody>;
   }
 
-  private getColumnClass = (colIndex: number) => `${this.uuid}-column-${colIndex}`;
+  private getColumnClass = (column: Column, colIndex: number) => ({
+    [`${this.uuid}-column-${colIndex}`]: true,
+    column_fixed: !!column.fixed,
+    column_fixed_left: !!column.fixed,
+    column_fixed_right: column.fixed === 'right',
+  });
+
+  private getHeadColumnClass = (column: Column, colIndex: number) => ({
+    ...this.getColumnClass(column, colIndex),
+    active: this.isColActive(colIndex),
+  });
 
   /**
    * table row click handle
@@ -383,7 +426,7 @@ export default class TableRender {
             active: this.isColActive(index),
           });
 
-          const width = `${resolveWidth(column.calcWidth)}`.replace(/px$/i, '');
+          const width = `${resolveWidth(getColumnReactWidth(column))}`.replace(/px$/i, '');
           return <col class={ colCls } width={ width }></col>;
         })
       }

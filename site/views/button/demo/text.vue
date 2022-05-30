@@ -9,6 +9,8 @@
     <bk-button
       text
       theme="primary"
+      disabled
+      class="ml10"
       loading
       loading-mode="spin"
     >
@@ -16,6 +18,7 @@
     </bk-button>
     <bk-button
       text
+      class="ml10"
       disabled
     >
       禁用状态

@@ -46,6 +46,13 @@ export const virtualRenderProps = {
   enabled: PropTypes.bool.def(true),
 
   /**
+   * 是否启用内置的Scroll Listener
+   * 当启用虚拟滚动时（enabled = true），滚动监听为内置生效
+   * 只有当（enabled = false)时此配置项才生效
+   */
+  scrollEvent: PropTypes.bool.def(false),
+
+  /**
    * 每行数据高度
    * 默认为数值类型，默认高度 30px
    * 如果每行高度不一致，可为回调函数：(index: number, row: any[]): number => {}

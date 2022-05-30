@@ -15,14 +15,19 @@
         :data="autoOpen"
         label="name"
         children="children"
+        :auto-open-parent-node="false"
       />
     </div>
     <div class="cell">
-      <span>默认选中：<code>data.checked = true</code></span>
+      <bk-button @click="handleAutoSelect">
+        设置选中节点
+      </bk-button>
       <bk-tree
+        ref="refAutoSelect"
         :data="autoCheck"
         label="name"
         children="children"
+        :selected="selected"
       />
     </div>
   </div>
@@ -39,7 +44,16 @@
         treeData: [...BASIC_DATA],
         autoOpen: [...AUTO_OPEN_DATA],
         autoCheck: [...AUTO_CHECKED_DATA],
+        selected: null,
       };
+    },
+    methods: {
+      handleAutoSelect() {
+        const treeData = this.$refs.refAutoSelect.getData();
+        const { length } = treeData.data;
+        const randomIndex = Math.floor(Math.random() * length);
+        this.selected = treeData.data[randomIndex];
+      },
     },
   });
 </script>
@@ -52,7 +66,10 @@
 }
 
 .cell {
-  flex: 1;
+  width: 33%;
   padding: 0 15px;
+  overflow: auto;
+  border-right: solid 1px #ddd;
+  flex: 1;
 }
 </style>

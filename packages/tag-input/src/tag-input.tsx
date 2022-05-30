@@ -31,6 +31,9 @@ import { bkTooltips } from '@bkui-vue/directives';
 import { Close, Error } from '@bkui-vue/icon';
 import BkLoading, { BkLoadingSize } from '@bkui-vue/loading';
 import BKPopover from '@bkui-vue/popover';
+import {
+  useFormItem,
+} from '@bkui-vue/shared';
 
 import { getCharLength, INPUT_MIN_WIDTH, useFlatList, usePage } from './common';
 import ListTagRender from './list-tag-render';
@@ -45,6 +48,7 @@ export default defineComponent({
   props: tagProps(),
   emits: ['update:modelValue', 'change', 'select', 'blur', 'remove', 'removeAll'],
   setup(props, { emit }) {
+    const formItem = useFormItem();
     const state = reactive({
       isEdit: false,
       isHover: false,
@@ -421,6 +425,7 @@ export default defineComponent({
         }
         popoverProps.isShow = false;
         emit('blur', inputValue, tagList.value);
+        formItem?.validate?.('blur');
       }, 50);
     };
 
@@ -455,7 +460,7 @@ export default defineComponent({
       e?.stopPropagation();
       removeTag(data, index);
       clearInput();
-      handleChange('remove');
+      handleChange('remove', data);
       tagInputRef.value.style.width = `${INPUT_MIN_WIDTH}px`;
     };
 
@@ -463,11 +468,12 @@ export default defineComponent({
      * emit trigger
      * @param type emit type
      */
-    const handleChange = (type) => {
+    const handleChange = (type, data?) => {
       emit('change', tagList.value);
       // this.dispatch('bk-form-item', 'form-change')
-      emit(type);
+      emit(type, data);
       emit('update:modelValue', tagList.value);
+      formItem?.validate?.('change');
     };
 
     /**
@@ -906,7 +912,7 @@ export default defineComponent({
                   </li>
                 </ul>
                 <p class="placeholder" v-show={this.isShowPlaceholder}>{this.placeholder}</p>
-                {this.isShowClear ? <Close class="clear-icon" onClick={this.handleClear} /> : null}
+                {this.$slots?.suffix?.() ?? (this.isShowClear && <Close class="clear-icon" onClick={this.handleClear} />) }
               </div>
             ),
             content: () => (

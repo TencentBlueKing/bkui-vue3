@@ -4,30 +4,57 @@
 @import './plugins/settings.less';
 
 .@{bk-prefix}-table {
+  position: relative;
   height: auto;
   overflow: hidden;
   border-top: 1px solid @table-border-color;
-  border-bottom: 1px solid @table-border-color;
+
+  &.has-scroll-y {
+    border-bottom: 1px solid @table-border-color;
+
+    &.is-scroll-bottom {
+      border-bottom: 1px solid transparent;
+    }
+  }
+
   .@{bk-prefix}-table-body {
+    position: relative;
     overflow: auto;
+
+    &::-webkit-scrollbar {
+      height: 6px;
+    }
   }
 
   .@{bk-prefix}-table-head,
   .@{bk-prefix}-table-body {
     background: @table-bg-color;
 
+    &.__is-empty {
+      display: flex;
+      height: 100%;
+      justify-content: center;
+      align-items: center;
+
+      .@{bk-prefix}-table-body-content {
+        display: flex;
+        height: 100%;
+      }
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
       table-layout: fixed;
+      align-self: flex-start;
       
       th,
       td {
         min-width: 80px;
+        clear: both;
 
         .cell {
-          display: flex;
-          align-items: center;
+          height: var(--row-height);
           padding: 0 15px;
           overflow: hidden;
           line-height: var(--row-height);
@@ -36,16 +63,39 @@
           text-overflow: ellipsis;
           white-space: nowrap;
         }
+
+        &.column_fixed {
+          position: sticky;
+          background: #fff;
+
+          &.column_fixed_left {
+            left: 0;
+          }
+
+          &.column_fixed_right {
+            right: 0;
+          }
+        }
       }
 
       thead {
         th {
+          font-weight: 400;
           color: @table-head-font-color;
           background-color: @table-head-bg-color;
+
+          .cell {
+            display: flex;
+            align-items: center;
+          }
 
           &.active,
           &:hover {
             background: @table-row-active-bg-color;
+          }
+
+          &.column_fixed {
+            transform: translateX(var(--scroll-left));
           }
         }
       }
@@ -53,8 +103,12 @@
       tbody {
         tr {
           td {
+            &.empty-cell {
+              padding-bottom: 30px;
+            }
+
             .cell {
-              display: inline-block;
+              display: block;
               width: 100%;
             }
           }
@@ -73,8 +127,11 @@
 
   .@{bk-prefix}-table-head {
     position: relative;
+    transform: translateX(var(--scroll-head-left));
 
     .table-head-settings {
+      display: block;
+
       .bk-popover-reference {
         position: absolute;
         top: 0;
@@ -99,24 +156,35 @@
   .@{bk-prefix}-table-footer {
     line-height: 40px;
     border-top: 1px solid @table-border-color;
-
+    border-bottom: 1px solid @table-border-color;
+    
     &.is-hidden {
       display: none;
-    }
-  }
-
-  tr {
-    &:last-child {
-      td {
-        border-bottom: none;
-      }
     }
   }
 
   &.bordered-row {
     td,
     th { 
-      border-bottom: 1px solid @table-border-color;
+      .cell {
+        border-bottom: 1px solid @table-border-color;
+      }
+    }
+
+    &.has-footer {
+      border-bottom: none;
+
+      &.has-scroll-y {
+        tr {
+          &:last-child {
+            td {
+              .cell {
+                border-bottom: none;
+              }
+            }
+          }
+        }
+      }
     }
   }
 
@@ -142,13 +210,50 @@
     td {
       border-top: none;
       border-right: none;
-      border-bottom: none;
       border-left: none;
+
+      .cell {
+        border-bottom: none;
+      }
     }
   }
 
   .@{bk-prefix}-table-fixed {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
     width: 100%;
+    pointer-events: none;
+
+    .column_fixed {
+      position: absolute;
+
+      &.column_fixed_left {
+        top: 0;
+        left: 0;
+        box-shadow: 0 0 10px rgb(0 0 0 / 12%);
+      }
+
+      &.column_fixed_right {
+        top: 0;
+        right: 0;
+        box-shadow: 0 0 10px rgb(0 0 0 / 12%);
+      }
+    }
+
+    .scroll-loading {
+      &._bottom {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+
+        display: flex;
+        justify-content: center;
+      }
+    }
   }
 
   colgroup {

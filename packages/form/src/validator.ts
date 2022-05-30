@@ -25,8 +25,8 @@
 */
 export default {
   required: (value: any): boolean => {
-    console.log('required');
-    return  value !== '' && value !== undefined && value !== null;
+    console.log('required', value, value !== '' && value !== undefined && value !== null);
+    return value !== '' && value !== undefined && value !== null;
   },
   min: (value: number, min: number): boolean => {
     console.log('min');
@@ -43,5 +43,9 @@ export default {
   maxlength: (value: string, maxlength: number): boolean => {
     console.log('maxlength');
     return value.length <= maxlength;
+  },
+  pattern: (value: string, pattern: RegExp): boolean => {
+    console.log('pattern');
+    return pattern.test(value);
   },
 };

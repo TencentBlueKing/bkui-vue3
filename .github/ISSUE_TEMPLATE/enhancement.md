@@ -1,7 +1,7 @@
 ---
 name: Enhancement Request
 about: Suggest an enhancement to the BKUI-VUE3 project
-title: ''
+title: 'feature(): '
 labels: enhancement
 assignees: ''
 

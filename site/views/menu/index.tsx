@@ -72,7 +72,7 @@ export default defineComponent({
           link="https://www.google.com.hk/"/>
         <DemoBox
           title="基础用法"
-          subtitle="基础用法，用于表单内容的录入"
+          subtitle="Menu组件的基础用法"
           desc="垂直菜单，子菜单内嵌在菜单区域。"
           componentName="menu"
           demoName="base-demo">

@@ -3,6 +3,7 @@
     v-model="selectedValue"
     class="bk-select"
     filterable
+    :scroll-loading="scrollLoading"
     @scroll-end="handleScrollEnd"
   >
     <bk-option

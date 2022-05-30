@@ -97,6 +97,7 @@ export const tabNavProps = {
     type: Array as PropType<VNode[]>,
     default: () => [],
   },
+  tabPosition: PropTypes.commonType(['left', 'right', 'top'], 'position').def('top'),
   closable: Boolean,
   addable: Boolean,
   sortable: Boolean,
