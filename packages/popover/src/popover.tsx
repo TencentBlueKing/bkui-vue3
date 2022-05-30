@@ -42,6 +42,7 @@ export default defineComponent({
   setup(props: PopoverPropTypes, ctx: SetupContext) {
     let isPopInstance = false;
     let popoverInstance = Object.create(null);
+    const localZIndex = ref(0);
     const { width, height, theme, trigger, isShow, placement, modifiers, arrow, content } = toRefs(props);
 
     const reference = ref();
@@ -49,7 +50,7 @@ export default defineComponent({
     const compStyle = computed(() => ({
       width: /^\d+$/.test(String(width.value)) ? `${width.value}px` : width.value,
       height: /^\d+$/.test(String(height.value)) ? `${height.value}px` : height.value,
-      zIndex: bkZIndexManager.getModalNextIndex(),
+      zIndex: localZIndex.value,
     }));
 
     const themeList = ['dark', 'light'];
@@ -63,7 +64,13 @@ export default defineComponent({
 
     const handlePopShow = (val) => {
       if (isPopInstance) {
-        val ? popoverInstance.show?.() : popoverInstance.hide?.();
+        if (val) {
+          localZIndex.value = typeof props.zIndex === 'number' ? props.zIndex : bkZIndexManager.getModalNextIndex();
+          popoverInstance.show?.();
+          return;
+        }
+
+        popoverInstance.hide?.();
       }
     };
 

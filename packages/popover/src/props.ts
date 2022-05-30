@@ -93,6 +93,8 @@ export const PopoverProps = {
    */
   fixOnBoundary: PropTypes.bool.def(false),
 
+  zIndex: PropTypes.number.def(undefined),
+
   /**
    * 弹出框鼠标点击事件是否阻止的点击事件行为
    * 支持 stopPropagation stopImmediatePropagation preventDefault

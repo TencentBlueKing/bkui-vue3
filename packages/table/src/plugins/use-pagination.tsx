@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { computed, reactive, ref } from 'vue';
+import { reactive, ref } from 'vue';
 
 import { TablePropTypes } from '../props';
 
@@ -53,17 +53,9 @@ export const resolvePaginationOption = (propPagination: any, defVal: any) => {
   return {};
 };
 
-export default (props: TablePropTypes) => {
+export default (props: TablePropTypes, indexData: any[]) => {
   const startIndex = ref(0);
   const endIndex = ref(0);
-
-  /**
-   * 生成内置index
-   */
-  const indexData = computed(() => props.data.map((item: any, index: number) => ({
-    ...item,
-    __$table_row_index: index + 1,
-  })));
 
 
   // 当前分页缓存，用于支持内置前端分页，用户无需接收change事件来自行处理数据分割
@@ -114,7 +106,7 @@ export default (props: TablePropTypes) => {
   };
 
   const resolvePageData = (filterFn: any, sortFn: any) => {
-    pageData.splice(0, pageData.length, ...indexData.value.slice(startIndex.value, endIndex.value));
+    pageData.splice(0, pageData.length, ...indexData.slice(startIndex.value, endIndex.value));
     filter(filterFn);
     sort(sortFn);
   };
