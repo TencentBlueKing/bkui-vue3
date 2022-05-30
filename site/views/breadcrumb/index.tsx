@@ -83,10 +83,17 @@ const breadcrumbSlotJson: IPropsTableItem[] = [
     optional: [],
   },
   {
-    name: 'prefix',
+    name: 'default',
     type: 'Function',
     default: '',
-    desc: '前置插槽',
+    desc: '默认插槽',
+    optional: [],
+  },
+  {
+    name: 'separator',
+    type: 'Function',
+    default: '',
+    desc: '分隔符插槽',
     optional: [],
   },
 ];
@@ -141,7 +148,7 @@ export default defineComponent({
           <DemoBox
           title="字符分割"
           subtitle="通过自定义 字符串 如：> | / 分割。"
-          desc="通过设置 BkBreadcrumb 的 separator 属性设置分隔符，它只允许是字符串，默认为斜杠 /。"
+          desc="通过设置 BkBreadcrumb 的 separator 属性设置分隔符，他可以是字符串或者是slot"
           componentName="breadcrumb"
           demoName="separator-demo">
             <SeparatorDemo></SeparatorDemo>
