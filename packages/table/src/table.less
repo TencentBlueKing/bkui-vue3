@@ -62,6 +62,17 @@
           text-align: left;
           text-overflow: ellipsis;
           white-space: nowrap;
+
+          &.expand-cell {
+            padding: 0;
+            text-overflow: unset;
+          }
+
+          .expand-btn-action {
+            display: flex;
+            padding: 0 15px;
+            cursor: pointer;
+          }
         }
 
         &.column_fixed {
@@ -74,6 +85,12 @@
 
           &.column_fixed_right {
             right: 0;
+          }
+        }
+
+        &.row_expend {
+          .expand-cell-ctx {
+            min-height: 30px;
           }
         }
       }
