@@ -151,8 +151,9 @@ export default defineComponent({
     });
 
     function clear() {
-      ctx.emit(EVENTS.UPDATE, '');
-      ctx.emit(EVENTS.CHANGE, '');
+      const resetVal = isNumberInput.value ? props.min : '';
+      ctx.emit(EVENTS.UPDATE, resetVal);
+      ctx.emit(EVENTS.CHANGE, resetVal);
       ctx.emit(EVENTS.CLEAR);
       formItem?.validate?.('change');
     }
@@ -165,6 +166,10 @@ export default defineComponent({
     function handleBlur(e) {
       isFocused.value = false;
       ctx.emit(EVENTS.BLUR, e);
+      if (isNumberInput.value && e.target.value > props.max) {
+        ctx.emit(EVENTS.UPDATE, props.max);
+        ctx.emit(EVENTS.CHANGE, props.max);
+      }
       formItem?.validate?.('blur');
     }
     // 事件句柄生成器
