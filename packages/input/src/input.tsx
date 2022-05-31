@@ -270,7 +270,7 @@ export default defineComponent({
       onCompositionend: handleCompositionEnd,
     }));
     return () => (
-        <div class={inputCls.value} style={style} >
+        <div class={inputCls.value} style={style as any} >
         {
           ctx.slots?.prefix?.() ?? (props.prefix && <div class={getCls('prefix-area')}>
             <span class={getCls('prefix-area--text')}>{props.prefix}</span>

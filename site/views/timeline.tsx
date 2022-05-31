@@ -26,7 +26,7 @@
 
 import { defineComponent, reactive } from 'vue';
 
-import { Error } from '@bkui-vue/icon';
+import { Search } from '@bkui-vue/icon';
 import BkTimeline from '@bkui-vue/timeline';
 
 export default defineComponent({
@@ -63,7 +63,8 @@ export default defineComponent({
           tag: '步骤4',
           content: '<span style="font-size: 12px;">2022-12-15 11:00</span>',
           type: 'danger',
-          icon: <Error />,
+          icon: <Search />,
+          // border: false,
         },
       ],
     });
