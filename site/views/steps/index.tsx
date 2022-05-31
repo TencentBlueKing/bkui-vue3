@@ -45,7 +45,7 @@ const stepsProps: IPropsTableItem[] = [
     name: 'steps',
     type: 'Array',
     default: '--',
-    desc: '	组件步骤内容，数组中的元素可以是对象，可以是数字，可以是字符串，也可以是三者混合；当元素是对象时，有四个可选的key：title icon description status；当元素是数字或字符串时，组件会将其解析成对象形式下的 icon 的值；当元素是字符串时，使用蓝鲸 ICON',
+    desc: '	组件步骤内容，有四个可选的key：title icon description status。',
     optional: [],
   },
   {
