@@ -188,7 +188,7 @@ export const treeProps = {
   /**
    * 默认选中的节点id，selectable为false时无效
    */
-  selected: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.object]).def(null),
+  selected: PropTypes.oneOfType([PropTypes.string, null, PropTypes.number, PropTypes.object]).def(null),
 
   /**
    * 是否自动检查当前节点是否有子节点
@@ -196,6 +196,12 @@ export const treeProps = {
    * 如果需要自已控制，请设置为false
    */
   autoCheckChildren: PropTypes.bool.def(true),
+
+  /**
+   * 如果设置了某一个叶子节点状态为展开，是否自动展开所有父级节点
+   * 默认为true，如果设置为false，则每层状态需要自己控制
+   */
+  autoOpenParentNode: PropTypes.bool.def(true),
 };
 
 type AsyncOption = {

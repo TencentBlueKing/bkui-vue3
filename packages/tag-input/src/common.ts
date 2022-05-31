@@ -97,7 +97,7 @@ export function useFlatList(props: TagProps) {
   } = toRefs(props);
   const flatList = reactive([]);
   watch([useGroup, saveKey, displayKey, list], () => {
-    let formatList = list.value;
+    let formatList: any = list.value;
     if (useGroup.value) {
       formatList = list.value.reduce((formatList: any[], item: any) => {
         let children: any[] = [];

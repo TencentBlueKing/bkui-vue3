@@ -43,9 +43,8 @@ export default defineComponent({
     const { appContext } = getCurrentInstance();
     const parent = inject<IBreadcrumbProps>('breadcrumb');
     const router = appContext.config.globalProperties.$router;
-    const { to, replace } = props;
-
     const handleClick = () => {
+      const { to, replace } = props;
       if (!to || !router) return;
       replace ? router.replace(to) : router.push(to);
     };
@@ -54,16 +53,18 @@ export default defineComponent({
       <span class={classCtx}>
       <span
         ref="link"
-        class={`bk-breadcrumb-item-inner ${to ? 'is-link' : ''}`}
+        class={`bk-breadcrumb-item-inner ${props.to ? 'is-link' : ''}`}
         role="link"
         onClick={handleClick}
       >
         {slots?.default?.()}
       </span>
       {
-        parent?.separatorClass
-          ? <i class={`bk-breadcrumb-separator ${parent.separatorClass}`}></i>
-          : <span class="bk-breadcrumb-separator" role="presentation">{parent?.separator}</span>
+        slots?.separator
+          ? slots?.separator?.()
+          : parent?.separatorClass
+            ? <i class={`bk-breadcrumb-separator ${parent.separatorClass}`}></i>
+            : <span class="bk-breadcrumb-separator" role="presentation">{parent?.separator}</span>
       }
     </span>
     );

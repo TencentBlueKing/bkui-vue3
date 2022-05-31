@@ -93,7 +93,7 @@ export default defineComponent({
           };
           data.positionX = 0;
           data.positionY = 0;
-        }, 1000);
+        }, 250);
       }
     });
     // 关闭弹框
@@ -183,12 +183,12 @@ export default defineComponent({
         <div class={['bk-dialog-tool', this.fullscreen || !this.draggable ? '' : 'move', this.draggable ? 'content-dragging' : '']}
           onMousedown={this.moveHandler}>
           {this.$slots.tools?.() ?? ''}
-          <span class={['bk-dialog-close', this.closeIcon ? '' : 'close-icon']} onClick={this.handleClose}>+</span>
         </div>,
         <div class="bk-dialog-header">
           <span class="bk-dialog-title" style={`text-align: ${this.headerAlign}`}>
             {this.$slots.header?.() ?? this.title}
           </span>
+          <span class={['bk-dialog-close', this.closeIcon ? '' : 'close-icon']} onClick={this.handleClose}>+</span>
         </div>,
       ],
       default: () => this.$slots.default?.() ?? 'default',

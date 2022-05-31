@@ -1,9 +1,10 @@
 <template>
-  <div style=" width: 100%;height: 300px">
+  <div style="height: 300px">
     <bk-table
+      height="100%"
       :columns="columns"
       :data="tableData"
-      height="100%"
+      :scroll-loading="isScrollLoading"
       @scroll-bottom="handleScrollBottom"
     />
   </div>
@@ -19,15 +20,29 @@
       return {
         tableData: [...DATA_FIX_TABLE],
         columns: [...DATA_FIX_COLUMNS],
+        isScrollLoading: false,
       };
     },
     methods: {
-      handleDblClick(...args) {
-        console.log(args);
-      },
-      handleScrollBottom(args) {
-        console.log('handleScrollBottom', args);
+      handleScrollBottom(arg) {
+        console.log('handleScrollBottom', arg);
+        this.isScrollLoading = true;
+
+        setTimeout(() => {
+          this.isScrollLoading = false;
+        }, 1500);
       },
     },
   });
 </script>
+<style scoped>
+.row {
+  display: flex;
+  width: 100%;
+}
+
+.cell {
+  flex: 1;
+  margin: 0 5px 0 5px;
+}
+</style>

@@ -77,6 +77,7 @@ export default (props: TreePropTypes) => {
       [NODE_ATTRIBUTES.IS_SELECTED]: (uuid: string) => props.selected === uuid,
       [NODE_ATTRIBUTES.IS_CACHED]: () => false,
       [NODE_ATTRIBUTES.IS_ASYNC]: () => null,
+      [NODE_ATTRIBUTES.IS_LOADING]: () => false,
     };
 
     function getCachedTreeNodeAttr(uuid: string, node: any, cachedAttr: string, defVal = undefined) {
@@ -110,12 +111,10 @@ export default (props: TreePropTypes) => {
       return getCachedTreeNodeAttr(uuid, node, NODE_ATTRIBUTES.IS_SELECTED, props.selected === uuid);
     }
 
-    function isCachedTreeNodeLoading(uuid: string, node: any) {
-      if (Object.prototype.hasOwnProperty.call(node, NODE_ATTRIBUTES.IS_LOADING)) {
-        return node[NODE_ATTRIBUTES.IS_LOADING];
-      }
-
-      return getCachedTreeNodeAttr(uuid, node, NODE_ATTRIBUTES.IS_LOADING, false);
+    function isNodeOpend(uuid, item, parent) {
+      const isItemOpened = getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_OPEN);
+      const isParentOpened = schema.has(parent) ? schema.get(parent)?.[NODE_ATTRIBUTES.IS_OPEN] : true;
+      return isItemOpened && isParentOpened;
     }
 
     function validateIsOpenLoopFn(target: any) {
@@ -130,10 +129,31 @@ export default (props: TreePropTypes) => {
           flatten(item, depth, parent, path);
         } else {
           if (typeof item === 'object' && item !== null) {
-            const uuid = `${getUid(item)}`;
             const currentPath = path !== null ? `${path}-${i}` : `${i}`;
+            const uuid = `${getUid(item)}`;
             const hasChildren = !!(item[children] || []).length;
-            const attrs = {
+            /**
+             * 当前节点设置是否为展开状态
+             */
+            let isOpened = getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_OPEN);
+
+            /**
+             * 如果初始化发现当前属性为展开或者选中 & 设置了 autoOpenParentNode = true
+             * 此时需要设置当前节点的所有父级节点都为展开状态
+             */
+            if (props.autoOpenParentNode) {
+              isOpened && loopUpdateNodeAttr(parent, NODE_ATTRIBUTES.IS_OPEN, true, validateIsOpenLoopFn);
+            } else {
+              /**
+               * 如果没有设置自动展开所有父级
+               * 此时需要判定当前节点是否可以展开状态需要同时判定父级是否展开
+               * 如果父级不是展开状态，此节点不能展示，应该也是关闭状态，只有当父级展开时，此节点才为展开状态
+               */
+              isOpened = isNodeOpend(uuid, item, parent);
+            }
+
+            Object.assign(item, { [NODE_ATTRIBUTES.UUID]: uuid });
+            schema.set(uuid,  {
               [NODE_ATTRIBUTES.DEPTH]: depth,
               [NODE_ATTRIBUTES.INDEX]: i,
               [NODE_ATTRIBUTES.UUID]: uuid,
@@ -144,28 +164,19 @@ export default (props: TreePropTypes) => {
               [NODE_ATTRIBUTES.ORDER]: order,
               [NODE_ATTRIBUTES.IS_SELECTED]: isCachedTreeNodeSelected(uuid, item),
               [NODE_ATTRIBUTES.IS_MATCH]: getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_MATCH),
-              [NODE_ATTRIBUTES.IS_OPEN]: getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_OPEN),
+              [NODE_ATTRIBUTES.IS_OPEN]: isOpened,
               [NODE_ATTRIBUTES.IS_CHECKED]: getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_CHECKED),
               [NODE_ATTRIBUTES.IS_CACHED]: getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_CACHED),
               [NODE_ATTRIBUTES.IS_ASYNC]: getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_ASYNC),
-              [NODE_ATTRIBUTES.IS_LOADING]: isCachedTreeNodeLoading(uuid, item),
-              [children]: null,
-            };
-            Object.assign(item, { [NODE_ATTRIBUTES.UUID]: uuid });
-            schema.set(uuid, attrs);
-            order += 1;
-            outputData.push({
-              ...item,
+              [NODE_ATTRIBUTES.IS_LOADING]: getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_LOADING),
               [children]: null,
             });
-
-            /**
-             * 如果初始化发现当前属性为展开或者选中
-             * 此时需要设置当前节点的所有父级节点都为展开状态
-             */
-            if (attrs[NODE_ATTRIBUTES.IS_OPEN]) {
-              loopUpdateNodeAttr(parent, NODE_ATTRIBUTES.IS_OPEN, true, validateIsOpenLoopFn);
-            }
+            order += 1;
+            outputData.push({
+              ...(JSON.parse(JSON.stringify(item, (k: string, v: any) => (k === props.children ? null : v)))),
+              [NODE_ATTRIBUTES.IS_OPEN]: isOpened,
+              [children]: null,
+            });
 
             if (Object.prototype.hasOwnProperty.call(item, children)) {
               flatten(item[children] || [], depth + 1, uuid, currentPath);
@@ -273,7 +284,6 @@ export default (props: TreePropTypes) => {
      * 监听组件配置Data改变
      */
   watch(() => [props.data], (newData) => {
-    console.log('watch data changed');
     const formatData = getFlatdata(props, newData, schemaValues.value);
     flatData.data = formatData[0] as Array<any>;
     flatData.schema = formatData[1] as any;
@@ -293,7 +303,7 @@ export default (props: TreePropTypes) => {
 
   if (props.selectable) {
     watch(() => props.selected, (newData) => {
-      console.log('watch selected changed');
+      // console.log('watch selected changed');
       afterSelectWatch.length = 0;
       afterSelectEvents.forEach((event: () => void) => {
         Reflect.apply(event, this, [newData]);

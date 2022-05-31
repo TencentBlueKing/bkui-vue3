@@ -14,6 +14,12 @@
       >
         {{ item.title }}
       </bk-breadcrumb-item>
+      <bk-breadcrumb-item :to="{ path: 'switcher' }">
+        <span>自定义separator</span>
+        <template #separator>
+          <span style="margin: 0px 9px">slot</span>
+        </template>
+      </bk-breadcrumb-item>
       <bk-breadcrumb-item>
         <bk-input clearable />
       </bk-breadcrumb-item>

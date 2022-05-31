@@ -1,3 +1,4 @@
+
 /*
 * Tencent is pleased to support the open source community by making
 * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
@@ -23,45 +24,42 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import Popover from '@bkui-vue/popover';
+import { computed, toRef } from 'vue';
 
-import Option from './option';
-import Group from './optionGroup';
-import SelectTagInput from './selectTagInput';
+import BkLoading, { BkLoadingMode, BkLoadingSize } from '@bkui-vue/loading';
 
-export type OptionInstanceType = InstanceType<typeof Option>;
-export type GroupInstanceType = InstanceType<typeof Group>;
-export type PopoverInstanceType = InstanceType<typeof Popover>;
-export type SelectTagInputType = InstanceType<typeof SelectTagInput>;
+import { TablePropTypes } from '../props';
 
-export interface ISelectContext {
-  multiple?: boolean;
-  selected: ISelectedData[];
-  activeOptionValue: any;
-  register(option: OptionInstanceType): any;
-  unregister(option: OptionInstanceType): any;
-  registerGroup(option: GroupInstanceType): any;
-  unregisterGroup(option: GroupInstanceType): any;
-  handleOptionSelected (option: OptionInstanceType): void;
-}
+export default (props: TablePropTypes, ctx) => {
+  const refScrollLoading = toRef(props, 'scrollLoading');
+  const getLoadingOption = () => {
+    if (typeof refScrollLoading.value === 'boolean') {
+      return {
+        loading: !!refScrollLoading.value,
+        inline: true,
+        title: '',
+        size: BkLoadingSize.Normal,
+        mode: BkLoadingMode.Default,
+        indicator: null,
+      };
+    }
 
-export interface IOptionGroupContext {
-  disabled: boolean;
-  groupCollapse: boolean;
-  register(option: OptionInstanceType): any;
-  unregister(option: OptionInstanceType): any;
-}
+    return refScrollLoading.value;
+  };
 
-export interface ISelectState {
-  currentPlaceholder: string;
-  currentSelectedLabel: string;
-}
+  const isRender = computed(() => refScrollLoading.value !== null
+  && ((typeof refScrollLoading.value === 'boolean' && refScrollLoading.value)
+  || typeof refScrollLoading.value === 'object'));
 
-export interface IPopoverConfig {
-  popoverMinWidth: number;
-}
 
-export interface ISelectedData {
-  value: any;
-  label: string | number;
-}
+  const renderScrollLoading = () =>  {
+    if (isRender.value) {
+      const { loading, size, mode, title, inline, indicator } = getLoadingOption();
+      return ctx.slots.fixedBottom?.() ?? <BkLoading {...{ loading, size, mode, title, inline, indicator }}/>;
+    }
+  };
+  return {
+    renderScrollLoading,
+  };
+};
+

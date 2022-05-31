@@ -23,45 +23,10 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import Popover from '@bkui-vue/popover';
 
-import Option from './option';
-import Group from './optionGroup';
-import SelectTagInput from './selectTagInput';
-
-export type OptionInstanceType = InstanceType<typeof Option>;
-export type GroupInstanceType = InstanceType<typeof Group>;
-export type PopoverInstanceType = InstanceType<typeof Popover>;
-export type SelectTagInputType = InstanceType<typeof SelectTagInput>;
-
-export interface ISelectContext {
-  multiple?: boolean;
-  selected: ISelectedData[];
-  activeOptionValue: any;
-  register(option: OptionInstanceType): any;
-  unregister(option: OptionInstanceType): any;
-  registerGroup(option: GroupInstanceType): any;
-  unregisterGroup(option: GroupInstanceType): any;
-  handleOptionSelected (option: OptionInstanceType): void;
-}
-
-export interface IOptionGroupContext {
-  disabled: boolean;
-  groupCollapse: boolean;
-  register(option: OptionInstanceType): any;
-  unregister(option: OptionInstanceType): any;
-}
-
-export interface ISelectState {
-  currentPlaceholder: string;
-  currentSelectedLabel: string;
-}
-
-export interface IPopoverConfig {
-  popoverMinWidth: number;
-}
-
-export interface ISelectedData {
-  value: any;
-  label: string | number;
+// 非数组，基础数据数组，对象数组
+export const enum ArrayType {
+  OBJECT_ARRAY = 'objectArray',
+  BASE_ARRAY = 'baseArray',
+  NOT_ARRAY = 'notArray'
 }

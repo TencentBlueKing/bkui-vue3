@@ -29,6 +29,10 @@ import { resolveClassName } from '@bkui-vue/shared';
 
 import { GroupColumn } from '../props';
 import { getColumnReactWidth } from '../utils';
+
+/**
+ * 固定列Hooks
+ */
 export default (props, colgroups: GroupColumn[]) => {
   const footHeight = computed(() => (props.pagination && props.data.length ? 40 : 0));
   const resolveColumnClass = (column: GroupColumn) => ({

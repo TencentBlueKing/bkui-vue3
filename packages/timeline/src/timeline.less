@@ -75,18 +75,19 @@
       position: absolute;
       top: calc((15px + 1px) * -1);
       left: -8px;
+      display: flex;
 
-      display: inline-block;
-      width: 15px;
-      height: 15px;
+      width: 16px;
+      height: 16px;
       background: #fff;
       border: 2px solid #d8d8d8;
       border-radius: 50%;
-      box-sizing: border-box;
+      justify-content: center;
+      align-items: center;
 
       .bk-timeline-icon-inner {
         display: inline-block;
-        transform: scale(1) translate(-.5px, -4px);
+        // transform: scale(1) translate(-.5px, -4px);
 
         >:first-child {
           font-size: 12px;

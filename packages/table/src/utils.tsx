@@ -25,8 +25,9 @@
 */
 
 import { throttle } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
 
-import { BORDER_OPRIONS } from './const';
+import { BORDER_OPRIONS, TABLE_ROW_ATTRIBUTE } from './const';
 import { Column, GroupColumn, TablePropTypes } from './props';
 
 
@@ -296,8 +297,57 @@ export const resolveHeadConfig = (props: TablePropTypes) => {
    */
 export const getRowText = (row: any, key: string, column: Column) => {
   if (column.type === 'index') {
-    return row.__$table_row_index;
+    return row[TABLE_ROW_ATTRIBUTE.ROW_INDEX];
   }
 
   return row[key];
+};
+
+/**
+ * 格式化prop配置为标准数组格式
+ * @param prop prop对象值
+ * @param args 如果是function参数
+ * @returns
+ */
+export const formatPropAsArray = (prop: string | object | (() => any), args: any[]) => {
+  if (Array.isArray(prop)) {
+    return prop;
+  }
+
+  if (typeof prop === 'string' || typeof prop === 'object') {
+    return [prop];
+  }
+
+  if (typeof prop === 'function') {
+    return formatPropAsArray(Reflect.apply(prop, this, args), args);
+  }
+
+  return [];
+};
+
+export const isRenderScrollBottomLoading = (props: TablePropTypes) => {
+  if (props.scrollLoading === null) {
+    return false;
+  }
+
+  return typeof props.scrollLoading === 'boolean' || typeof props.scrollLoading === 'object';
+};
+
+export const getRowKey = (item: any, props: TablePropTypes) => {
+  if (typeof props.rowKey === 'string') {
+    const keys = props.rowKey.split('.');
+    return keys.reduce((pre: any, cur: string) => {
+      if (Object.prototype.hasOwnProperty.call(pre, cur)) {
+        return pre[cur];
+      }
+
+      return pre;
+    }, item);
+  }
+
+  if (typeof props.rowKey === 'function') {
+    return Reflect.apply(props.rowKey, this, [item]);
+  }
+
+  return uuidv4();
 };

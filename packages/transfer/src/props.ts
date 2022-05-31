@@ -23,45 +23,32 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import Popover from '@bkui-vue/popover';
 
-import Option from './option';
-import Group from './optionGroup';
-import SelectTagInput from './selectTagInput';
+import { PropTypes } from '@bkui-vue/shared';
 
-export type OptionInstanceType = InstanceType<typeof Option>;
-export type GroupInstanceType = InstanceType<typeof Group>;
-export type PopoverInstanceType = InstanceType<typeof Popover>;
-export type SelectTagInputType = InstanceType<typeof SelectTagInput>;
-
-export interface ISelectContext {
-  multiple?: boolean;
-  selected: ISelectedData[];
-  activeOptionValue: any;
-  register(option: OptionInstanceType): any;
-  unregister(option: OptionInstanceType): any;
-  registerGroup(option: GroupInstanceType): any;
-  unregisterGroup(option: GroupInstanceType): any;
-  handleOptionSelected (option: OptionInstanceType): void;
-}
-
-export interface IOptionGroupContext {
-  disabled: boolean;
-  groupCollapse: boolean;
-  register(option: OptionInstanceType): any;
-  unregister(option: OptionInstanceType): any;
-}
-
-export interface ISelectState {
-  currentPlaceholder: string;
-  currentSelectedLabel: string;
-}
-
-export interface IPopoverConfig {
-  popoverMinWidth: number;
-}
-
-export interface ISelectedData {
-  value: any;
-  label: string | number;
-}
+export const transferProps = {
+  // 顶部title(title[0]: 左侧title,title[1]: 右侧title,)
+  title: PropTypes.arrayOf(PropTypes.string).def([]),
+  // 自定义class
+  extCls: PropTypes.string.def(''),
+  // 搜索框 placeholder
+  searchPlaceholder: PropTypes.string.def(''),
+  // 唯一key值
+  settingKey: PropTypes.string.def('id'),
+  // 循环list时，显示字段的key值(当list为普通数组时可不传传了也无效)
+  displayKey: PropTypes.string.def('value'),
+  // 排序所依据的key(当list为普通数组时可不传，默认按照index值排序)
+  sortKey: PropTypes.string.def('value'),
+  // 内容超出是否显示tooltip
+  showOverflowTips: PropTypes.bool.def(false),
+  // 是否开启搜索
+  searchable: PropTypes.bool.def(false),
+  // 是否开启排序功能
+  sortable: PropTypes.bool.def(false),
+  // 穿梭框数据源(支持普通数组)
+  sourceList: PropTypes.arrayOf(PropTypes.any).def([]),
+  // 默认已选择的数据源
+  targetList: PropTypes.arrayOf(PropTypes.any).def([]),
+  // 穿梭框无数据时提示文案
+  emptyContent: PropTypes.arrayOf(PropTypes.string).def([]),
+};

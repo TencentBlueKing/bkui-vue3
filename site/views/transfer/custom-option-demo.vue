@@ -42,5 +42,10 @@
         rtxValue: [1, 5, 7],
       };
     },
+    methods: {
+      change(...rest) {
+        console.log(...rest);
+      },
+    },
   };
 </script>
