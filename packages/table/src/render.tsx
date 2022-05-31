@@ -347,7 +347,10 @@ export default class TableRender {
               cell: true,
               'expand-cell': column.type === 'expand',
             };
+
+            const cellKey = `__CELL_${rowIndex}_${index}`;
             return <td
+            key={cellKey}
             class={cellClass}
             style={cellStyle}
             colspan={1} rowspan={1}>
@@ -442,7 +445,7 @@ export default class TableRender {
 
     const cell = getRowText(row, resolvePropVal(column, 'field', [column, row]), column);
     if (typeof column.render === 'function') {
-      return column.render(cell, row, index, rows);
+      return column.render(cell, this.props.data[row[TABLE_ROW_ATTRIBUTE.ROW_INDEX]], row, column, index, rows);
     }
 
     return cell;
