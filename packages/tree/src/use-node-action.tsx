@@ -155,23 +155,22 @@ export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
 */
   const setNodeOpened = (item: any, isOpen = null, e: MouseEvent = null, fireEmit = true) => {
     const newVal = isOpen === null ? !isItemOpen(item) : !!isOpen;
+
+    /**
+  * 在收起节点时需要重置当前节点的所有叶子节点状态为 __isOpen = false
+  * 如果是需要点击当前节点展开所有叶子节点此处也可以打开
+  */
+    if (!newVal) {
+      renderData.value.filter(node => String.prototype.startsWith.call(getNodePath(node), getNodePath(item)))
+        .forEach(filterNode => setNodeAttr(filterNode, NODE_ATTRIBUTES.IS_OPEN, newVal));
+    }
+
     setNodeAttr(item, NODE_ATTRIBUTES.IS_OPEN, newVal);
 
     if (fireEmit) {
       const emitEvent: string = isItemOpen(item) ? EVENTS.NODE_EXPAND : EVENTS.NODE_COLLAPSE;
       ctx.emit(emitEvent, [item, resolveScopedSlotParam(item), getSchemaVal(item[NODE_ATTRIBUTES.UUID]), e]);
     }
-
-    /**
-  * 在收起节点时需要重置当前节点的所有叶子节点状态为 __isOpen = false
-  * 如果是需要点击当前节点展开所有叶子节点此处也可以打开
-  */
-    if (newVal) {
-      return;
-    }
-
-    renderData.value.filter(node => String.prototype.startsWith.call(getNodePath(node), getNodePath(item)))
-      .forEach(filterNode => setNodeAttr(filterNode, NODE_ATTRIBUTES.IS_OPEN, newVal));
   };
 
   /**

@@ -42,7 +42,7 @@ export default defineComponent({
     offText: PropTypes.string.def('OFF'),
     isSquare: PropTypes.bool,
     extCls: PropTypes.string,
-    preCheck: PropTypes.func.def(undefined),
+    beforeChange: PropTypes.func.def(undefined),
     trueValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool]).def(true),
     falseValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool]).def(false),
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool]).def(false),
@@ -71,7 +71,7 @@ export default defineComponent({
         'is-checked': isChecked.value,
         'is-unchecked': !isChecked.value,
         'is-loading': isLoading.value,
-        primary: props.theme === 'primary',
+        'bk-primary': props.theme === 'primary',
       };
 
       // 显示文本则size无效，使用固定尺寸
@@ -110,8 +110,8 @@ export default defineComponent({
 
       let goodJob: any = true;
 
-      if (typeof props.preCheck === 'function') {
-        goodJob = props.preCheck(lastValue);
+      if (typeof props.beforeChange === 'function') {
+        goodJob = props.beforeChange(lastValue);
         if (typeof goodJob.then === 'function') {
           isLoading.value = true;
           return goodJob.then(() => {

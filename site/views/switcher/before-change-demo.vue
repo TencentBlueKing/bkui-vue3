@@ -2,7 +2,7 @@
   <div>
     <bk-switcher
       v-model="loadingDemo"
-      :pre-check="requestHandler"
+      :before-change="requestHandler"
     />
   </div>
 </template>

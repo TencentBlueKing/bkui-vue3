@@ -1,3 +1,4 @@
+
 /*
 * Tencent is pleased to support the open source community by making
 * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
@@ -23,50 +24,42 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import { computed, toRef } from 'vue';
 
-import { defineComponent, getCurrentInstance, inject } from 'vue';
+import BkLoading, { BkLoadingMode, BkLoadingSize } from '@bkui-vue/loading';
 
-import { classes, PropTypes } from '@bkui-vue/shared';
+import { TablePropTypes } from '../props';
 
-import { IBreadcrumbProps } from './props';
+export default (props: TablePropTypes, ctx) => {
+  const refScrollLoading = toRef(props, 'scrollLoading');
+  const getLoadingOption = () => {
+    if (typeof refScrollLoading.value === 'boolean') {
+      return {
+        loading: !!refScrollLoading.value,
+        inline: true,
+        title: '',
+        size: BkLoadingSize.Normal,
+        mode: BkLoadingMode.Default,
+        indicator: null,
+      };
+    }
+
+    return refScrollLoading.value;
+  };
+
+  const isRender = computed(() => refScrollLoading.value !== null
+  && ((typeof refScrollLoading.value === 'boolean' && refScrollLoading.value)
+  || typeof refScrollLoading.value === 'object'));
 
 
-export default defineComponent({
-  name: 'BreadcrumbItem',
-  props: {
-    extCls: PropTypes.string,
-    to: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).def(''),
-    replace: PropTypes.bool,
-  },
+  const renderScrollLoading = () =>  {
+    if (isRender.value) {
+      const { loading, size, mode, title, inline, indicator } = getLoadingOption();
+      return ctx.slots.fixedBottom?.() ?? <BkLoading {...{ loading, size, mode, title, inline, indicator }}/>;
+    }
+  };
+  return {
+    renderScrollLoading,
+  };
+};
 
-  setup(props, { slots }) {
-    const { appContext } = getCurrentInstance();
-    const parent = inject<IBreadcrumbProps>('breadcrumb');
-    const router = appContext.config.globalProperties.$router;
-    const handleClick = () => {
-      const { to, replace } = props;
-      if (!to || !router) return;
-      replace ? router.replace(to) : router.push(to);
-    };
-    const classCtx = classes({ 'bk-breadcrumb-item': true }, `${props.extCls || ''}`);
-    return () => (
-      <span class={classCtx}>
-      <span
-        ref="link"
-        class={`bk-breadcrumb-item-inner ${props.to ? 'is-link' : ''}`}
-        role="link"
-        onClick={handleClick}
-      >
-        {slots?.default?.()}
-      </span>
-      {
-        slots?.separator
-          ? slots?.separator?.()
-          : parent?.separatorClass
-            ? <i class={`bk-breadcrumb-separator ${parent.separatorClass}`}></i>
-            : <span class="bk-breadcrumb-separator" role="presentation">{parent?.separator}</span>
-      }
-    </span>
-    );
-  },
-});

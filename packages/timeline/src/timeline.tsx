@@ -46,6 +46,7 @@ export default defineComponent({
     const defaultTimelines = ref([]);
 
     const updateTimelines = (timelines) => {
+      console.log('timelines', timelines);
       const defaults = [];
       timelines.forEach((timeline) => {
         defaults.push({
@@ -56,6 +57,7 @@ export default defineComponent({
           color: timeline.color,
           icon: timeline.icon,
           filled: timeline.filled,
+          border: timeline.border ?? true,
         });
       });
       defaultTimelines.value.splice(0, defaultTimelines.value.length, ...defaults);
@@ -123,7 +125,7 @@ export default defineComponent({
         {
         this.defaultTimelines.map(item => <li class={['bk-timeline-dot', makeClass(item)]}>
           {isIcon(item)
-            ? <div class="bk-timeline-icon">
+            ? <div class="bk-timeline-icon" style={{ borderWidth: item.border ? '2px' : '0px' }}>
                 <span class="bk-timeline-icon-inner">{item.icon}</span>
               </div> : ''}
               <div class="bk-timeline-section">

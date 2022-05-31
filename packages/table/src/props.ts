@@ -195,7 +195,32 @@ export const tableProps = {
    * 单元格的 className 的回调方法，也可以使用字符串为所有单元格设置一个固定的 className
    */
   cellClass: PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.func]).def({}),
+
+  /**
+   * 表格底部loading加载效果，可以配合表格scroll-bottom事件使用
+   * 详细配置可参考bk-loading组件
+   */
+  scrollLoading: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.bool,
+  ]).def(undefined),
+
+  /**
+   * 仅对 type=selection 的列有效，类型为 Boolean，为 true 则会在数据更新之后保留之前选中的展开收起操作（需指定 row-key）
+   */
+  reserveExpand: PropTypes.bool.def(false),
+
+  /**
+   * 行数据的 Key，用来优化 Table 的渲染；
+   * 在使用 reserve-selection, reserve-expand 功能的情况下，该属性是必填的。
+   * 类型为 String 时，支持多层访问：user.info.id，但不支持 user.info[0].id，此种情况请使用 Function
+   */
+  rowKey: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.func,
+  ]).def(undefined),
 };
+
 
 /**
  * 配置自定义行高选项

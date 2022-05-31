@@ -46,6 +46,7 @@
       width: 100%;
       border-collapse: collapse;
       table-layout: fixed;
+      align-self: flex-start;
       
       th,
       td {
@@ -61,6 +62,17 @@
           text-align: left;
           text-overflow: ellipsis;
           white-space: nowrap;
+
+          &.expand-cell {
+            padding: 0;
+            text-overflow: unset;
+          }
+
+          .expand-btn-action {
+            display: flex;
+            padding: 0 15px;
+            cursor: pointer;
+          }
         }
 
         &.column_fixed {
@@ -73,6 +85,12 @@
 
           &.column_fixed_right {
             right: 0;
+          }
+        }
+
+        &.row_expend {
+          .expand-cell-ctx {
+            min-height: 30px;
           }
         }
       }
@@ -239,6 +257,18 @@
         top: 0;
         right: 0;
         box-shadow: 0 0 10px rgb(0 0 0 / 12%);
+      }
+    }
+
+    .scroll-loading {
+      &._bottom {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+
+        display: flex;
+        justify-content: center;
       }
     }
   }

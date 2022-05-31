@@ -40,6 +40,7 @@ export default async function () {
 
   const packageData = JSON.parse(originalData);
   delete packageData.private;
+  delete packageData.scripts.preinstall;
   delete packageData.scripts.cc;
   fs.writeFileSync(packagePath, `${JSON.stringify(packageData, null, 2)}\n`);;
   try {

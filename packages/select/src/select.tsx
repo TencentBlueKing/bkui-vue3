@@ -242,7 +242,7 @@ export default defineComponent({
     const handleInputEnter = (value, e: Event) => {
       if (!allowCreate.value
         || !value
-        || (filterable.value && options.value.find(data => toLowerCase(data.label) === toLowerCase(value)))
+        || (filterable.value && options.value.find(data => toLowerCase(String(data.label)) === toLowerCase(value)))
       ) return; // 开启搜索后，正好匹配到自定义选项，则不进行创建操作
 
       const data = optionsMap.value.get(value);
@@ -277,7 +277,7 @@ export default defineComponent({
           selected.value.splice(index, 1);
         } else {
           selected.value.push({
-            label: option.label,
+            label: option.label as string,
             value: option.value,
           });
         }
@@ -285,7 +285,7 @@ export default defineComponent({
       } else {
         // 单选
         selected.value = [{
-          label: option.label,
+          label: option.label as string,
           value: option.value,
         }];
         emitChange(option.value);
@@ -317,7 +317,7 @@ export default defineComponent({
         options.value.forEach((option) => {
           if (option.disabled || selected.value.find(data => data.value === option.value)) return;
           selected.value.push({
-            label: option.label,
+            label: option.label as string,
             value: option.value,
           });
         });
