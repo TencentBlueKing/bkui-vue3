@@ -181,7 +181,7 @@ export default defineComponent({
 
     const isForm = Boolean(form);
 
-    const labelStyles = computed<object>(() => {
+    const labelStyles = computed<any>(() => {
       const styles = {
         width: '',
         paddingRight: '',

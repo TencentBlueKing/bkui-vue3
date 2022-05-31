@@ -284,7 +284,6 @@ export default (props: TreePropTypes) => {
      * 监听组件配置Data改变
      */
   watch(() => [props.data], (newData) => {
-    console.log('watch data changed');
     const formatData = getFlatdata(props, newData, schemaValues.value);
     flatData.data = formatData[0] as Array<any>;
     flatData.schema = formatData[1] as any;
