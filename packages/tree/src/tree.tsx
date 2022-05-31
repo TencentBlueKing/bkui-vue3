@@ -111,7 +111,7 @@ export default defineComponent({
     };
 
     onSelected((newData: any) => {
-      setSelect(newData, true, true);
+      setSelect(newData, true, props.autoOpenParentNode);
     });
 
     const getData = () => flatData;
