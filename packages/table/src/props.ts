@@ -28,7 +28,7 @@ import { ExtractPropTypes } from 'vue';
 
 import { PropTypes } from '@bkui-vue/shared';
 
-import { BORDER_OPRIONS } from './const';
+import { BORDER_OPRIONS, TABLE_ROW_ATTRIBUTE } from './const';
 
 export enum SortScope {
   CURRENT = 'current',
@@ -218,7 +218,7 @@ export const tableProps = {
   rowKey: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.func,
-  ]).def(undefined),
+  ]).def(TABLE_ROW_ATTRIBUTE.ROW_INDEX),
 };
 
 
