@@ -64,6 +64,7 @@ export default defineComponent({
             icon: step.icon,
             description: step.description,
             status: step.status,
+            border: step.border ?? true,
           });
         }
       });
@@ -154,8 +155,7 @@ export default defineComponent({
       } if (isDone(index)) {
         return (<Done class="bk-steps-icon" />);
       }
-
-      return (<span class="number">{isIcon(index, step)}</span>);
+      return (<span>{isIcon(index, step)}</span>);
     };
 
     return (
@@ -166,6 +166,7 @@ export default defineComponent({
             !step.title ? 'bk-step-no-content' : '',
             isDone(index) ? 'done' : '',
             isCurrent(index) ? 'current' : '',
+            (isCurrent(index) && this.status === 'error') ? 'isError' : '',
             step.status && isCurrent(index) ? [`bk-step-${step.status}`] : '',
           ]
         }>
