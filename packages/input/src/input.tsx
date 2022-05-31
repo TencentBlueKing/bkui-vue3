@@ -166,9 +166,10 @@ export default defineComponent({
     function handleBlur(e) {
       isFocused.value = false;
       ctx.emit(EVENTS.BLUR, e);
-      if (isNumberInput.value && e.target.value > props.max) {
-        ctx.emit(EVENTS.UPDATE, props.max);
-        ctx.emit(EVENTS.CHANGE, props.max);
+      if (isNumberInput.value && (e.target.value > props.max || e.target.value < props.min)) {
+        const val = e.target.value > props.max ? props.max : props.min;
+        ctx.emit(EVENTS.UPDATE, val);
+        ctx.emit(EVENTS.CHANGE, val);
       }
       formItem?.validate?.('blur');
     }
