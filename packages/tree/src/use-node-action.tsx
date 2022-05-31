@@ -34,7 +34,7 @@ import useNodeAttribute from './use-node-attribute';
 import { getLabel, getNodeItemClass, getNodeItemStyle, getNodeRowClass, resolveNodeItem } from './util';
 export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
   // const checkedNodes = [];
-  let selectedNodeId = null;
+  let selectedNodeId = props.selected;
   const {
     setNodeAttr,
     getNodePath,
@@ -169,7 +169,7 @@ export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
 
     if (fireEmit) {
       const emitEvent: string = isItemOpen(item) ? EVENTS.NODE_EXPAND : EVENTS.NODE_COLLAPSE;
-      ctx.emit(emitEvent, [item, resolveScopedSlotParam(item), getSchemaVal(item[NODE_ATTRIBUTES.UUID]), e]);
+      ctx.emit(emitEvent, item, resolveScopedSlotParam(item), getSchemaVal(item[NODE_ATTRIBUTES.UUID]), e);
     }
   };
 
@@ -204,7 +204,7 @@ export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
 
     if (autoOpenParents) {
       if (isOpen) {
-        setNodeAction(resolvedItem, NODE_ATTRIBUTES.IS_OPEN, isOpen);
+        setNodeAction(resolvedItem, NODE_ATTRIBUTES.IS_OPEN, true);
         if (!isRootNode(resolvedItem)) {
           const parentId = getNodeAttr(resolvedItem, NODE_ATTRIBUTES.PARENT_ID);
           setOpen(parentId, true, true);
@@ -233,10 +233,10 @@ export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
       if (getNodeAttr(item, NODE_ATTRIBUTES.IS_LOADING)) {
         registerNextLoop('setNodeOpenedAfterLoading', {
           type: 'once',
-          fn: () => setNodeOpened(item, !isOpen, e),
+          fn: () => setNodeOpened(item, true, e),
         });
       } else {
-        setNodeOpened(item, !isOpen, e);
+        setNodeOpened(item, true, e);
       }
     });
   };
@@ -268,6 +268,10 @@ export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
     if (props.selectable) {
       if (selectedNodeId !== null && selectedNodeId !== undefined) {
         setNodeAttr({ [NODE_ATTRIBUTES.UUID]: selectedNodeId }, NODE_ATTRIBUTES.IS_SELECTED, !selected);
+      }
+
+      if (props.selected && props.selected !== selectedNodeId) {
+        setNodeAttr({ [NODE_ATTRIBUTES.UUID]: props.selected }, NODE_ATTRIBUTES.IS_SELECTED, !selected);
       }
 
       setNodeAttr(resolvedItem, NODE_ATTRIBUTES.IS_SELECTED, selected);
