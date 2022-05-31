@@ -129,8 +129,8 @@ export default (props: TreePropTypes) => {
           flatten(item, depth, parent, path);
         } else {
           if (typeof item === 'object' && item !== null) {
-            const uuid = `${getUid(item)}`;
             const currentPath = path !== null ? `${path}-${i}` : `${i}`;
+            const uuid = `${getUid(item)}`;
             const hasChildren = !!(item[children] || []).length;
             /**
              * 当前节点设置是否为展开状态
@@ -152,7 +152,8 @@ export default (props: TreePropTypes) => {
               isOpened = isNodeOpend(uuid, item, parent);
             }
 
-            const attrs = {
+            Object.assign(item, { [NODE_ATTRIBUTES.UUID]: uuid });
+            schema.set(uuid,  {
               [NODE_ATTRIBUTES.DEPTH]: depth,
               [NODE_ATTRIBUTES.INDEX]: i,
               [NODE_ATTRIBUTES.UUID]: uuid,
@@ -169,12 +170,11 @@ export default (props: TreePropTypes) => {
               [NODE_ATTRIBUTES.IS_ASYNC]: getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_ASYNC),
               [NODE_ATTRIBUTES.IS_LOADING]: getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_LOADING),
               [children]: null,
-            };
-            Object.assign(item, { [NODE_ATTRIBUTES.UUID]: uuid });
-            schema.set(uuid, attrs);
+            });
             order += 1;
             outputData.push({
-              ...item,
+              ...(JSON.parse(JSON.stringify(item, (k: string, v: any) => (k === props.children ? null : v)))),
+              [NODE_ATTRIBUTES.IS_OPEN]: isOpened,
               [children]: null,
             });
 
@@ -284,7 +284,6 @@ export default (props: TreePropTypes) => {
      * 监听组件配置Data改变
      */
   watch(() => [props.data], (newData) => {
-    console.log('watch data changed');
     const formatData = getFlatdata(props, newData, schemaValues.value);
     flatData.data = formatData[0] as Array<any>;
     flatData.schema = formatData[1] as any;
@@ -304,7 +303,7 @@ export default (props: TreePropTypes) => {
 
   if (props.selectable) {
     watch(() => props.selected, (newData) => {
-      console.log('watch selected changed');
+      // console.log('watch selected changed');
       afterSelectWatch.length = 0;
       afterSelectEvents.forEach((event: () => void) => {
         Reflect.apply(event, this, [newData]);

@@ -63,5 +63,5 @@ export interface IPopoverConfig {
 
 export interface ISelectedData {
   value: any;
-  label: string;
+  label: string | number;
 }
