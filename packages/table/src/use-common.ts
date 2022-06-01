@@ -40,7 +40,7 @@ import {
   resolvePropVal,
 } from './utils';
 
-export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?) => {
+export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?: any[]) => {
   const autoHeight = ref(200);
   const hasScrollY = ref(false);
   const hasFooter = computed(() => props.pagination && props.data.length);
@@ -94,6 +94,30 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?)
     return defaultValue;
   };
 
+  const getRowsHeight = () => {
+    if (!pageData?.length) {
+      return 0;
+    }
+
+    if (typeof props.rowHeight === 'function') {
+      return pageData.reduce((out: number, row: any, rowIndex: number) => {
+        const result = Reflect.apply(props.rowHeight, this, ['tbody', row, rowIndex]);
+        let resultHeight = out;
+        if (/^\d+\.?\d*px?$/.test(`${result}`)) {
+          resultHeight += Number(result.replace(/px$/, ''));
+        }
+        return resultHeight;
+      }, 0);
+    }
+
+    if (/^\d+\.?\d*px?$/.test(`${props.rowHeight}`)) {
+      const rowHeight = props.rowHeight.replace(/px$/, '');
+      return pageData.length * Number(rowHeight);
+    }
+
+    return 0;
+  };
+
   /** 表格外层容器样式 */
   const contentStyle = reactive({});
 
@@ -108,10 +132,10 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?)
     const height = props.height !== 'auto' ? `${contentHeight}px` : false;
     const maxHeight = resolveMaxHeight - resolveHeadHeight - resolveFooterHeight;
     const minHeight = resolveMinHeight - resolveHeadHeight - resolveFooterHeight;
-
+    const rowsHeight = getRowsHeight();
     Object.assign(contentStyle, {
       display: pageData?.length ? 'block' : false,
-      'max-height': `${maxHeight}px`,
+      'max-height': `${maxHeight > rowsHeight ? maxHeight : rowsHeight}px`,
       'min-height': `${minHeight}px`,
       height,
     });
@@ -127,6 +151,7 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?)
       const { height } = rootEl.parentElement.getBoundingClientRect();
       autoHeight.value = height;
       resolveContentStyle();
+      updateBorderClass(rootEl);
     }
   };
 
