@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 
-import { defineComponent, ExtractPropTypes, onMounted, ref } from 'vue';
+import { defineComponent, ExtractPropTypes, onMounted, ref, watch } from 'vue';
 
 import { Circle, Done, Error } from '@bkui-vue/icon';
 import { classes, PropTypes } from '@bkui-vue/shared';
@@ -71,6 +71,10 @@ export default defineComponent({
       defaultSteps.value.splice(0, defaultSteps.value.length, ...defaults);
     };
 
+    const updateCurStep = (curStep) => {
+      stepsProps.curStep = curStep;
+    };
+
     const init = () => {
       defaultSteps.value.splice(0, defaultSteps.value.length, ...[
         {
@@ -111,6 +115,14 @@ export default defineComponent({
 
     onMounted(init);
 
+    watch(() => props.steps, () => {
+      updateSteps(props.steps);
+    }, { deep: true });
+
+    watch(() => props.curStep, () => {
+      updateCurStep(props.curStep);
+    }, { deep: true });
+
     return {
       defaultSteps,
       jumpTo,
@@ -141,7 +153,13 @@ export default defineComponent({
       return typeof step === 'string';
     };
 
-    const isIcon = (index, step) => (step.icon ? step.icon : index + 1);
+    // const isIcon = (index, step) => (step.icon ? step.icon : index + 1);
+    const isNumberIcon = (index, step) => {
+      if (!step.icon) {
+        step.icon = index;
+      }
+      return (!isNaN(step.icon));
+    };
 
     const isLoadingStatus =  step => step.status === 'loading';
 
@@ -155,7 +173,7 @@ export default defineComponent({
       } if (isDone(index)) {
         return (<Done class="bk-steps-icon" />);
       }
-      return (<span>{isIcon(index, step)}</span>);
+      return (<span>{isNumberIcon(index, step) ? index + 1 : <step.icon/>}</span>);
     };
 
     return (
@@ -171,7 +189,7 @@ export default defineComponent({
           ]
         }>
           <span
-            class={['bk-step-indicator', `bk-step-${iconType(step) ? 'icon' : 'number'}`]}
+            class={['bk-step-indicator', `bk-step-${iconType(step) ? 'icon' : 'number'}`, `bk-step-icon${step.status}`]}
             style={{ cursor: this.controllable ? 'pointer' : '' }}
             onClick={() => {
               this.jumpTo(index + 1);
