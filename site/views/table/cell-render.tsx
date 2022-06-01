@@ -36,8 +36,8 @@ export default defineComponent({
     };
   },
   methods: {
-    renderCell(cell: any) {
-      return <span>自定义渲染 column ：{ cell }</span>;
+    renderCell(cell: any, row: any, rowMap: any, column: any) {
+      return <input type="text" v-model={ row[column.field] } />;
     },
   },
   render() {
