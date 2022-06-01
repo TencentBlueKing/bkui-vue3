@@ -297,7 +297,7 @@ export const resolveHeadConfig = (props: TablePropTypes) => {
    */
 export const getRowText = (row: any, key: string, column: Column) => {
   if (column.type === 'index') {
-    return row[TABLE_ROW_ATTRIBUTE.ROW_INDEX];
+    return row[TABLE_ROW_ATTRIBUTE.ROW_INDEX] + 1;
   }
 
   return row[key];
@@ -333,8 +333,12 @@ export const isRenderScrollBottomLoading = (props: TablePropTypes) => {
   return typeof props.scrollLoading === 'boolean' || typeof props.scrollLoading === 'object';
 };
 
-export const getRowKey = (item: any, props: TablePropTypes) => {
+export const getRowKey = (item: any, props: TablePropTypes, index: number) => {
   if (typeof props.rowKey === 'string') {
+    if (props.rowKey === TABLE_ROW_ATTRIBUTE.ROW_INDEX) {
+      return `__ROW_INDEX_${index}`;
+    }
+
     const keys = props.rowKey.split('.');
     return keys.reduce((pre: any, cur: string) => {
       if (Object.prototype.hasOwnProperty.call(pre, cur)) {

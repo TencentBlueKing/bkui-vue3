@@ -200,10 +200,10 @@ export const useInit = (props: TablePropTypes) => {
 
   const initIndexData = (keepLocalAction = false) => {
     indexData.splice(0, indexData.length, ...props.data.map((item: any, index: number) => {
-      const rowId = getRowKey(item, props);
+      const rowId = getRowKey(item, props, index);
       return {
         ...item,
-        [TABLE_ROW_ATTRIBUTE.ROW_INDEX]: index + 1,
+        [TABLE_ROW_ATTRIBUTE.ROW_INDEX]: index,
         [TABLE_ROW_ATTRIBUTE.ROW_UID]: rowId,
         [TABLE_ROW_ATTRIBUTE.ROW_EXPAND]: keepLocalAction ? isRowExpand(rowId) : false,
       };
