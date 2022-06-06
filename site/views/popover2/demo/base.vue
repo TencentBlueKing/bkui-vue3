@@ -1,0 +1,10 @@
+<template>
+  <bk-popover2
+    content="气泡框Content"
+    theme="light"
+  >
+    <div>
+      当鼠标经过这段文字时，会显示一个气泡框
+    </div>
+  </bk-popover2>
+</template>

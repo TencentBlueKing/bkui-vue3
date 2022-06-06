@@ -369,6 +369,7 @@ export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
   };
 
   const renderTreeNode = (item: any) => <div data-tree-node={getNodeId(item)}
+    key={getNodeId(item)}
     class={ getNodeRowClass(item, flatData.schema) }>
   <div class={getNodeItemClass(item, flatData.schema, props) }
     style={getNodeItemStyle(item, props, flatData)}
