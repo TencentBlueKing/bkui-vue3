@@ -39,6 +39,10 @@ const NavigationProps = {
     type: [Number, String],
     default: 260,
   },
+  showSideNavTitle: {
+    type: Boolean,
+    default: true,
+  },
   sideTitle: {
     type: String,
     default: '',
@@ -167,7 +171,7 @@ export default defineComponent({
                         borderRight: this.navigationType !== 'top-bottom' ? 'none' : '1px solid #DCDEE5',
                       }}>
                       {
-                        this.navigationType !== 'top-bottom' && <NavigationTitle
+                        this.navigationType !== 'top-bottom' && this.showSideNavTitle && <NavigationTitle
                         style={{ flexBasis: `${this.headHeight}px` }}
                         sideTitle={this.sideTitle}>
                           {
