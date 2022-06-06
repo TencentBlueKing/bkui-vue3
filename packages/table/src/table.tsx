@@ -89,6 +89,10 @@ export default defineComponent({
       });
     }, { immediate: true, deep: true });
 
+    watch(hasScrollY, (val) => {
+      resolveColumnWidth(root.value, colgroups, 20, !!val);
+    });
+
     /**
      * 监听Table 派发的相关事件
      */
@@ -111,7 +115,7 @@ export default defineComponent({
     })
       .on(EVENTS.ON_SETTING_CHANGE, (args: any) => {
         const { checked = [], size, height } = args;
-        checked.length && resolveColumnWidth(root.value, colgroups, 20, hasScrollY.value, true);
+        checked.length && resolveColumnWidth(root.value, colgroups, 20, hasScrollY.value);
         refVirtualRender.value?.reset?.();
         ctx.emit(EMITEVENTS.SETTING_CHANGE, { checked, size, height });
       })
@@ -139,9 +143,6 @@ export default defineComponent({
 
     onMounted(() => {
       observerIns = observerResize(root.value, () => {
-        resolveColumnWidth(root.value, colgroups, 20, hasScrollY.value, true);
-
-        console.log('colgroups', JSON.parse(JSON.stringify(colgroups)));
         if (props.height === '100%') {
           resetTableHeight(root.value);
         }

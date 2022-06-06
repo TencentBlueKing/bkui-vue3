@@ -112,7 +112,6 @@ export default class TableRender {
       emptyText={ this.props.emptyText }/>;
     }
 
-    console.log('render-table-body');
     return <table cellpadding={0} cellspacing={0}>
       { this.renderColGroup() }
       { this.renderTBody(rows) }
@@ -476,7 +475,7 @@ export default class TableRender {
             active: this.isColActive(index),
           });
 
-          const width = `${resolveWidth(getColumnReactWidth(column))}`.replace(/px$/i, '');
+          const width: string | number = `${resolveWidth(getColumnReactWidth(column))}`.replace(/px$/i, '');
           return <col class={ colCls } width={ width }></col>;
         })
       }

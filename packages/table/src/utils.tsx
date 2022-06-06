@@ -153,7 +153,6 @@ export const resolveColumnWidth = (
   colgroups: GroupColumn[],
   autoWidth = 20,
   hasScrollY = false,
-  resetCalcWidth = false,
 ) => {
   const { width } = root.getBoundingClientRect() || {};
   const availableWidth = width - (hasScrollY ? 4 : 0);
@@ -205,7 +204,7 @@ export const resolveColumnWidth = (
 
   colgroups.forEach((col: GroupColumn, index: number) => {
     if (!col.isHidden) {
-      const order = resetCalcWidth ? ['resizeWidth', 'width'] : ['resizeWidth', 'calcWidth', 'width'];
+      const order = ['resizeWidth', 'width'];
       const colWidth = String(getColumnReactWidth(col, order));
       let isAutoWidthCol = true;
       if (/^\d+\.?\d*(px)?$/.test(colWidth)) {

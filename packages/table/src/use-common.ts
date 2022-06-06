@@ -43,7 +43,7 @@ import {
 
 export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?: any[]) => {
   const autoHeight = ref(200);
-  const hasScrollY = ref(false);
+  const hasScrollY = ref(undefined);
   const hasFooter = computed(() => props.pagination && props.data.length);
   const tableClass = computed(() => (classes({
     [resolveClassName('table')]: true,
