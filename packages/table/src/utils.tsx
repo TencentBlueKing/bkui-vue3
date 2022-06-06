@@ -367,7 +367,7 @@ export const getRowKey = (item: any, props: TablePropTypes, index: number) => {
 };
 
 
-export const hasScrollY =  (root) => {
+export const hasRootScrollY =  (root) => {
   if (root) {
     const tableBody = root.querySelector('.bk-table-body table') as HTMLElement;
     if (tableBody) {
