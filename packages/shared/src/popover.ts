@@ -24,6 +24,8 @@
  * IN THE SOFTWARE.
 */
 
+import { v4 as uuidv4 } from 'uuid';
+
 import {
   createPopper,
   Instance,
@@ -198,9 +200,9 @@ export class BKPopover {
 
       this.afterShow();
 
-      if (!this.fixOnBoundary) {
-        this.appendToTarget();
-      }
+      // if (!this.fixOnBoundary) {
+      //   // this.appendToTarget();
+      // }
     }
   }
 
@@ -437,3 +439,16 @@ export class BKPopover {
     return source && (source === target || source === target.firstElementChild);
   }
 }
+
+let popContainerId = null;
+export const getPopContainerId = (prefix = '#') => {
+  if (popContainerId === null) {
+    popContainerId = `id_${uuidv4()}`;
+    const popContainer = document.createElement('div');
+    popContainer.setAttribute('id', popContainerId);
+    popContainer.setAttribute('data-popper-id', popContainerId);
+    document.body.append(popContainer);
+  }
+
+  return `${prefix}${popContainerId}`;
+};

@@ -112,6 +112,7 @@ export default class TableRender {
       emptyText={ this.props.emptyText }/>;
     }
 
+    console.log('render-table-body');
     return <table cellpadding={0} cellspacing={0}>
       { this.renderColGroup() }
       { this.renderTBody(rows) }
@@ -445,7 +446,8 @@ export default class TableRender {
 
     const cell = getRowText(row, resolvePropVal(column, 'field', [column, row]), column);
     if (typeof column.render === 'function') {
-      return column.render(cell, this.props.data[row[TABLE_ROW_ATTRIBUTE.ROW_INDEX]], row, column, index, rows);
+      const data = this.props.data[row[TABLE_ROW_ATTRIBUTE.ROW_INDEX]];
+      return column.render({ cell, data, row, column, index, rows });
     }
 
     return cell;

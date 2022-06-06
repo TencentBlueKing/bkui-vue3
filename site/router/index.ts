@@ -443,6 +443,15 @@ const routes: RouteRecordRaw[] = [
       navName: 'Popover 弹出框提示',
     },
   },
+  {
+    path: '/popover2',
+    name: 'popover2',
+    component: () => import('../views/popover2'),
+    meta: {
+      group: NavGroupMeta.Feedback,
+      navName: 'Popover2 弹出框提示',
+    },
+  },
   /**
    * @description:消息提示
    */

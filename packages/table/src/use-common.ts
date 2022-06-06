@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { computed, onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref, watch } from 'vue';
 
 import { classes, resolveClassName } from '@bkui-vue/shared';
 
@@ -48,7 +48,7 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?:
     [resolveClassName('table')]: true,
     'has-footer': hasFooter.value,
     'has-scroll-y': hasScrollY.value || props.virtualEnabled,
-    'is-scroll-bottom': reactiveProp.pos.bottom < 2,
+    // 'is-scroll-bottom': reactiveProp.pos.bottom < 2,
   }, resolvePropBorderToClassStr(props.border))));
 
   const headClass = classes({
@@ -179,12 +179,21 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?:
 };
 
 export const useInit = (props: TablePropTypes) => {
-  const colgroups = reactive((props.columns ?? []).map(col => ({
-    ...col,
-    calcWidth: null,
-    resizeWidth: null,
-    listeners: new Map(),
-  })));
+  const colgroups = reactive([]);
+
+  const updateColGroups = () => {
+    colgroups.splice(0, colgroups.length, ...(props.columns ?? [])
+      .map(col => ({
+        ...col,
+        calcWidth: null,
+        resizeWidth: null,
+        listeners: new Map(),
+      })));
+  };
+
+  watch(() => props.columns, () => {
+    updateColGroups();
+  }, { immediate: true, deep: true });
 
   const { dragOffsetXStyle } = useColumnResize(colgroups, true);
   const { activeColumns } = useActiveColumns(props);
@@ -255,5 +264,6 @@ export const useInit = (props: TablePropTypes) => {
     updateIndexData,
     renderFixedColumns,
     setRowExpand,
+    updateColGroups,
   };
 };
