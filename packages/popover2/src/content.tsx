@@ -23,15 +23,37 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent } from 'vue';
+import { computed, defineComponent } from 'vue';
 
-import { resolveClassName } from '@bkui-vue/shared';
+import { PropTypes, resolveClassName } from '@bkui-vue/shared';
 
 export default defineComponent({
   name: 'PopContent',
+  props: {
+    width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
+    height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
+  },
+  setup(props) {
+    const resolveValToPix = (val: string | number) => {
+      if (/^\d+\.?\d*$/.test(`${val}`)) {
+        return `${val}px`;
+      }
+
+      return val;
+    };
+    const style = computed(() => ({
+      width: resolveValToPix(props.width),
+      height: resolveValToPix(props.height),
+    }));
+
+    return {
+      style,
+    };
+  },
   render() {
     const className = [resolveClassName('popover2'), resolveClassName('pop2-content')];
-    return <div class={ className } tabindex="-1">
+
+    return <div class={ className } tabindex="-1" style={this.style}>
       { this.$slots.default?.() ?? '' }
       { this.$slots.arrow?.() ?? '' }
     </div>;
