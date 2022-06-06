@@ -1,7 +1,12 @@
 @import '@bkui-vue/styles/themes/themes.less';
 @import '@bkui-vue/styles/mixins/animate.less';
 
-.@{bk-prefix}-select {
+.bk-popover-content.bk-select-popover {
+  padding: 0;
+}
+
+.@{bk-prefix}-select,
+.bk-popover-content {
   .bk-select-icon(@fontSize: 20px, @color: #979ba5) {
     display: flex;
     align-items: center;
@@ -85,10 +90,6 @@
 
   .bk-popover-reference {
     display: unset;
-  }
-
-  .bk-popover-content {
-    padding: 0;
   }
 
   &.large {

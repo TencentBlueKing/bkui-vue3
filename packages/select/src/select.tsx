@@ -40,6 +40,7 @@ import { AngleUp, Close } from '@bkui-vue/icon';
 import Input from '@bkui-vue/input';
 import Loading from '@bkui-vue/loading';
 import BKPopover from '@bkui-vue/popover';
+import { PopoverPropTypes } from '@bkui-vue/popover/src/props';
 import {
   classes,
   PropTypes,
@@ -87,6 +88,7 @@ export default defineComponent({
     selectAllText: PropTypes.string.def('全部'),
     scrollLoading: PropTypes.bool.def(false),
     allowCreate: PropTypes.bool.def(false), // 是否运行创建自定义选项
+    popoverOptions: PropTypes.object.def({}), // popover属性
   },
   emits: ['update:modelValue', 'change', 'toggle', 'clear', 'scroll-end'],
   setup(props, { emit }) {
@@ -472,14 +474,24 @@ export default defineComponent({
       [this.size]: true,
       [this.behavior]: true,
     });
-    const modifiers = [
-      {
-        name: 'offset',
-        options: {
-          offset: [0, 4],
+    const popoverOptions: Partial<PopoverPropTypes> = Object.assign({
+      theme: 'light bk-select-popover',
+      trigger: 'manual',
+      width: this.popperWidth,
+      arrow: false,
+      placement: 'bottom',
+      isShow: this.isPopoverShow,
+      modifiers: [
+        {
+          name: 'offset',
+          options: {
+            offset: [0, 4],
+          },
         },
-      },
-    ];
+      ],
+      boundary: 'body',
+      handleFirstUpdate: this.onPopoverFirstUpdate,
+    }, this.popoverOptions);
 
     const suffixIcon = () => {
       if (this.loading) {
@@ -582,14 +594,7 @@ export default defineComponent({
       <div class={selectClass} v-clickoutside={this.handleClickOutside}>
         <BKPopover
           ref="popoverRef"
-          theme="light"
-          trigger="manual"
-          width={this.popperWidth}
-          arrow={false}
-          placement="bottom"
-          isShow={this.isPopoverShow}
-          modifiers={modifiers}
-          handleFirstUpdate={this.onPopoverFirstUpdate}>
+          {...popoverOptions}>
           {{
             default: () => renderSelectTrigger(),
             content: () => renderSelectContent(),
