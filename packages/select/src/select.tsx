@@ -489,7 +489,7 @@ export default defineComponent({
           },
         },
       ],
-      boundary: 'body',
+      // boundary: 'body',
       handleFirstUpdate: this.onPopoverFirstUpdate,
     }, this.popoverOptions);
 
