@@ -33,7 +33,7 @@ import { getColumnReactWidth } from '../utils';
 /**
  * 固定列Hooks
  */
-export default (props, colgroups: GroupColumn[]) => {
+export default (props, colgroups: GroupColumn[], hasScrollY?) => {
   const footHeight = computed(() => (props.pagination && props.data.length ? 40 : 0));
   const resolveColumnClass = (column: GroupColumn) => ({
     column_fixed: !!column.fixed,
@@ -52,7 +52,7 @@ export default (props, colgroups: GroupColumn[]) => {
       .reduce((offset: number, curr: GroupColumn, index: number) => {
         const outOffset = ignoreFirst && (index === 0) ? offset : (offset + getColumnReactWidth(curr));
         return outOffset;
-      }, 0),
+      }, hasScrollY ? 4 : 0),
   };
   const reolveFixRightOffset = resolveFixOffset.right;
 

@@ -34,6 +34,7 @@ import useFixedColumn from './plugins/use-fixed-column';
 import { TablePropTypes } from './props';
 import {
   getRowKey,
+  hasRootScrollY,
   resolveHeadConfig,
   resolveNumberOrStringToPix,
   resolvePropBorderToClassStr,
@@ -156,6 +157,7 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?:
   };
 
   const updateBorderClass = (root: HTMLElement) => {
+    hasScrollY.value = hasRootScrollY(root);
     if (root) {
       const tableBody = root.querySelector('.bk-table-body table') as HTMLElement;
       if (tableBody) {
@@ -175,12 +177,13 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?:
     resetTableHeight,
     updateBorderClass,
     hasFooter,
+    hasScrollY,
   };
 };
 
 export const useInit = (props: TablePropTypes) => {
   const colgroups = reactive([]);
-
+  // hasScrollY.value = hasRootScrollY(root);
   const updateColGroups = () => {
     colgroups.splice(0, colgroups.length, ...(props.columns ?? [])
       .map(col => ({
