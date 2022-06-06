@@ -40,7 +40,7 @@ export default defineComponent({
   props: PopoverProps,
 
   setup(props, ctx) {
-    const { content, theme, disableTeleport } = props;
+    const { content, theme, disableTeleport, width, height } = props;
     const refIsShow = toRef(props, 'isShow');
     const refReference = ref();
     const refContent = ref();
@@ -150,6 +150,8 @@ export default defineComponent({
       content,
       theme,
       disableTeleport,
+      width,
+      height,
     };
   },
 
@@ -159,7 +161,7 @@ export default defineComponent({
       { this.$slots.default?.() ?? <span></span> }
     </Reference>
     <Teleport to={ this.boundary } disabled={ this.disableTeleport }>
-      <Content ref="refContent" data-theme={ this.theme }
+      <Content ref="refContent" data-theme={ this.theme } width={ this.width } height={ this.height }
       v-slots={ { arrow: () => (this.arrow ? <Arrow ref="refArrow">{ this.$slots.arrow?.() }</Arrow> : '') } }>
         { this.$slots.content?.() ?? this.content }
       </Content>
