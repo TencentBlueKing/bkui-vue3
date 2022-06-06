@@ -200,9 +200,9 @@ export class BKPopover {
 
       this.afterShow();
 
-      // if (!this.fixOnBoundary) {
-      //   // this.appendToTarget();
-      // }
+      if (!this.fixOnBoundary) {
+        this.appendToTarget();
+      }
     }
   }
 
