@@ -45,6 +45,13 @@ export default defineComponent({
   props: tableProps,
   emits: EMIT_EVENT_TYPES,
   setup(props, ctx) {
+    let columnSortFn: any = null;
+    let columnFilterFn: any = null;
+
+    let observerIns = null;
+    const root = ref();
+    const refVirtualRender = ref();
+
     const {
       colgroups,
       dragOffsetXStyle,
@@ -53,14 +60,8 @@ export default defineComponent({
       renderFixedColumns,
       setRowExpand,
       initIndexData,
-      fixedWrapperClass } = useInit(props);
-
-    let columnSortFn: any = null;
-    let columnFilterFn: any = null;
-
-    let observerIns = null;
-    const root = ref();
-    const refVirtualRender = ref();
+      fixedWrapperClass,
+    } = useInit(props);
 
     const { pageData, localPagination, resolvePageData, watchEffectFn } = userPagination(props, indexData);
     const {
@@ -74,6 +75,7 @@ export default defineComponent({
       updateBorderClass,
       resetTableHeight,
       hasFooter,
+      hasScrollY,
     } = useClass(props, root, reactiveSchema, pageData);
 
     const tableRender = new TableRender(props, ctx, reactiveSchema, colgroups);
@@ -86,6 +88,10 @@ export default defineComponent({
         updateBorderClass(root.value);
       });
     }, { immediate: true, deep: true });
+
+    watch(hasScrollY, (val) => {
+      resolveColumnWidth(root.value, colgroups, 20, !!val);
+    });
 
     /**
      * 监听Table 派发的相关事件
@@ -109,7 +115,7 @@ export default defineComponent({
     })
       .on(EVENTS.ON_SETTING_CHANGE, (args: any) => {
         const { checked = [], size, height } = args;
-        checked.length && resolveColumnWidth(root.value, colgroups, 20);
+        checked.length && resolveColumnWidth(root.value, colgroups, 20, hasScrollY.value);
         refVirtualRender.value?.reset?.();
         ctx.emit(EMITEVENTS.SETTING_CHANGE, { checked, size, height });
       })
@@ -137,7 +143,6 @@ export default defineComponent({
 
     onMounted(() => {
       observerIns = observerResize(root.value, () => {
-        resolveColumnWidth(root.value, colgroups, 20);
         if (props.height === '100%') {
           resetTableHeight(root.value);
         }

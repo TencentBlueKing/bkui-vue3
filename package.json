@@ -136,6 +136,7 @@
     }
   },
   "dependencies": {
+    "@floating-ui/dom": "~0.5.2",
     "@popperjs/core": "~2.11.5",
     "date-fns": "~2.28.0",
     "js-calendar": "~1.2.3",

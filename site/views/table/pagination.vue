@@ -26,7 +26,7 @@
     data() {
       return {
         tableData: DATA_ROWS,
-        columns: [...DATA_COLUMNS],
+        columns: DATA_COLUMNS.map(item => ({ ...item })),
         pagination: { count: DATA_ROWS.length, limit: 10 },
       };
     },

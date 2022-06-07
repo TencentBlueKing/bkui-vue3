@@ -64,127 +64,129 @@ export default defineComponent({
   render() {
     const menuPropsJson = resolvePropsToDesData(tableProps);
 
-    const configs = [{
-      attrs: {
-        title: '基础用法',
-        subtitle: '基础用法，用于表单内容的录入',
-        desc: 'props: --',
-        componentName: 'table',
-        demoName: 'basic',
+    const configs = [
+      {
+        attrs: {
+          title: '基础用法',
+          subtitle: '基础用法，用于表单内容的录入',
+          desc: 'props: --',
+          componentName: 'table',
+          demoName: 'basic',
+        },
+        component: () => <basic></basic>,
       },
-      component: () => <basic></basic>,
-    },
-    {
-      attrs: {
-        title: '设置边框',
-        subtitle: '设置边框显示样式',
-        desc: 'props: border',
-        componentName: 'table',
-        demoName: 'bordered',
+      {
+        attrs: {
+          title: '设置边框',
+          subtitle: '设置边框显示样式',
+          desc: 'props: border',
+          componentName: 'table',
+          demoName: 'bordered',
+        },
+        component: () => <bordered></bordered>,
       },
-      component: () => <bordered></bordered>,
-    },
-    {
-      attrs: {
-        title: '启用虚拟滚动-渲染大数据表格',
-        subtitle: '大数据模式启用虚拟滚动',
-        desc: 'props: virtual-enabled',
-        componentName: 'table',
-        demoName: 'virtual-render',
+      {
+        attrs: {
+          title: '启用虚拟滚动-渲染大数据表格',
+          subtitle: '大数据模式启用虚拟滚动',
+          desc: 'props: virtual-enabled',
+          componentName: 'table',
+          demoName: 'virtual-render',
+        },
+        component: () => <virtual-render></virtual-render>,
       },
-      component: () => <virtual-render></virtual-render>,
-    },
-    {
-      attrs: {
-        title: '自定义Column渲染',
-        subtitle: '自定义Column渲染',
-        desc: 'props: column.render',
-        componentName: 'table',
-        demoName: 'cell-render',
-        suffix: '.tsx',
+      {
+        attrs: {
+          title: '自定义Column渲染',
+          subtitle: '自定义Column渲染',
+          desc: 'props: column.render',
+          componentName: 'table',
+          demoName: 'cell-render',
+          suffix: '.tsx',
+        },
+        component: () => <cell-render></cell-render>,
       },
-      component: () => <cell-render></cell-render>,
-    },
-    {
-      attrs: {
-        title: 'Events',
-        subtitle: '自定义Column渲染',
-        desc: 'props: column.render',
-        componentName: 'table',
-        demoName: 'event',
+      {
+        attrs: {
+          title: 'Events',
+          subtitle: '自定义Column渲染',
+          desc: 'props: column.render',
+          componentName: 'table',
+          demoName: 'event',
+        },
+        component: () => <event></event>,
       },
-      component: () => <event></event>,
-    },
-    {
-      attrs: {
-        title: 'Pagination - Local',
-        subtitle: '分页配置',
-        desc: 'props: pagination',
-        componentName: 'table',
-        demoName: 'pagination',
+      {
+        attrs: {
+          title: 'Pagination - Local',
+          subtitle: '分页配置',
+          desc: 'props: pagination',
+          componentName: 'table',
+          demoName: 'pagination',
+        },
+        component: () => <pagination></pagination>,
       },
-      component: () => <pagination></pagination>,
-    },
-    {
-      attrs: {
-        title: 'Pagination - Remote',
-        subtitle: '分页配置: remote-pagination = true',
-        desc: 'props: pagination',
-        componentName: 'table',
-        demoName: 'remotePagination',
+      {
+        attrs: {
+          title: 'Pagination - Remote',
+          subtitle: '分页配置: remote-pagination = true',
+          desc: 'props: pagination',
+          componentName: 'table',
+          demoName: 'remotePagination',
+        },
+        component: () => <RemotePagination></RemotePagination>,
       },
-      component: () => <RemotePagination></RemotePagination>,
-    },
-    {
-      attrs: {
-        title: 'Empty - 空数据提示',
-        subtitle: '',
-        desc: 'props: --',
-        componentName: 'table',
-        demoName: 'data-empty',
+      {
+        attrs: {
+          title: 'Empty - 空数据提示',
+          subtitle: '',
+          desc: 'props: --',
+          componentName: 'table',
+          demoName: 'data-empty',
+        },
+        component: () => <data-empty></data-empty>,
       },
-      component: () => <data-empty></data-empty>,
-    },
-    {
-      attrs: {
-        title: '固定列',
-        subtitle: '横纵内容过多时，可选择固定列',
-        desc: 'props: column - fixed',
-        componentName: 'table',
-        demoName: 'fixed',
+      {
+        attrs: {
+          title: '固定列',
+          subtitle: '横纵内容过多时，可选择固定列',
+          desc: 'props: column - fixed',
+          componentName: 'table',
+          demoName: 'fixed',
+        },
+        component: () => <fixed></fixed>,
       },
-      component: () => <fixed></fixed>,
-    },
-    {
-      attrs: {
-        title: '底部加载',
-        subtitle: '配置底部加载更多',
-        desc: '配置scroll-loading属性设置表格底部加载样式，结合scroll-end监听表格滚动至底部事件进行分页加载',
-        componentName: 'table',
-        demoName: 'scroll-loading',
+      {
+        attrs: {
+          title: '底部加载',
+          subtitle: '配置底部加载更多',
+          desc: '配置scroll-loading属性设置表格底部加载样式，结合scroll-end监听表格滚动至底部事件进行分页加载',
+          componentName: 'table',
+          demoName: 'scroll-loading',
+        },
+        component: () => <ScrollLoading></ScrollLoading>,
       },
-      component: () => <ScrollLoading></ScrollLoading>,
-    },
-    {
-      attrs: {
-        title: '底部加载插槽',
-        subtitle: '自定义配置底部加载更多,需要设置 scroll-loading = true',
-        desc: '配置scroll-loading属性设置表格底部加载样式，结合scroll-end监听表格滚动至底部事件进行分页加载',
-        componentName: 'table',
-        demoName: 'scroll-loading-slot',
+      {
+        attrs: {
+          title: '底部加载插槽',
+          subtitle: '自定义配置底部加载更多,需要设置 scroll-loading = true',
+          desc: '配置scroll-loading属性设置表格底部加载样式，结合scroll-end监听表格滚动至底部事件进行分页加载',
+          componentName: 'table',
+          demoName: 'scroll-loading-slot',
+        },
+        component: () => <ScrollLoadingSlot></ScrollLoadingSlot>,
       },
-      component: () => <ScrollLoadingSlot></ScrollLoadingSlot>,
-    },
-    {
-      attrs: {
-        title: '折叠功能',
-        subtitle: '结合slot expandRow',
-        desc: '',
-        componentName: 'table',
-        demoName: 'expand',
+      {
+        attrs: {
+          title: '折叠功能',
+          subtitle: '结合slot expandRow',
+          desc: '',
+          componentName: 'table',
+          demoName: 'expand',
+        },
+        component: () => <Expand></Expand>,
       },
-      component: () => <Expand></Expand>,
-    }];
+    ];
 
     return (
       <div>
