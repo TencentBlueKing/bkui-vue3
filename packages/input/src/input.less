@@ -73,10 +73,13 @@
   }
 
   &--suffix-icon {
+    display: flex;
+    height: 100%;
     padding-right: @input-horizontal-padding;
     font-size: @input-icon-size;
-    line-height: 1;
     color: @light-gray;
+    background-color: @input-bg;
+    align-items: center;
     align-self: center;
 
     &.show-clear-only-hover {
