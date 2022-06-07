@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { defineComponent, nextTick, onBeforeUnmount, onMounted, ref, watch, watchEffect } from 'vue';
 
 import { debounce, resolveClassName } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
@@ -74,8 +74,8 @@ export default defineComponent({
       headStyle,
       updateBorderClass,
       resetTableHeight,
+      getColumnsWidthOffsetWidth,
       hasFooter,
-      hasScrollY,
     } = useClass(props, root, reactiveSchema, pageData);
 
     const tableRender = new TableRender(props, ctx, reactiveSchema, colgroups);
@@ -89,8 +89,14 @@ export default defineComponent({
       });
     }, { immediate: true, deep: true });
 
-    watch(hasScrollY, (val) => {
-      resolveColumnWidth(root.value, colgroups, 20, !!val);
+    /**
+     * 保证每次计算宽度正确
+     */
+    watchEffect(() => {
+      if (root?.value instanceof HTMLElement) {
+        const offset = getColumnsWidthOffsetWidth();
+        resolveColumnWidth(root.value, colgroups, 20, offset);
+      }
     });
 
     /**
@@ -115,7 +121,8 @@ export default defineComponent({
     })
       .on(EVENTS.ON_SETTING_CHANGE, (args: any) => {
         const { checked = [], size, height } = args;
-        checked.length && resolveColumnWidth(root.value, colgroups, 20, hasScrollY.value);
+        const offset = getColumnsWidthOffsetWidth();
+        checked.length && resolveColumnWidth(root.value, colgroups, 20, offset);
         refVirtualRender.value?.reset?.();
         ctx.emit(EMITEVENTS.SETTING_CHANGE, { checked, size, height });
       })

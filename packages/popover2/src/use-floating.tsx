@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 import { bkZIndexManager } from '@bkui-vue/shared';
 import {
@@ -40,7 +40,7 @@ import {
 
 
 export default (props, ctx, refReference, refContent, refArrow) => {
-  const localIsShow = ref(props.isShow);
+  const localIsShow = ref(false);
 
   const themeList = ['dark', 'light'];
   const compTheme = computed(() => {
@@ -138,19 +138,25 @@ export default (props, ctx, refReference, refContent, refArrow) => {
 
 
   const showPopover = () => {
+    localIsShow.value = true;
+  };
+
+  const hidePopover = () => {
+    localIsShow.value = false;
+  };
+
+  const hanldePopoverShow = () => {
     const elContent = resolveTargetElement(refContent.value?.$el) as HTMLElement;
     elContent.style.setProperty('display', 'block');
     elContent.style.setProperty('z-index', `${props.zIndex ? props.zIndex : bkZIndexManager.getModalNextIndex()}`);
     updatePopover();
-    ctx.emit('update:isShow', true);
-    ctx.emit('afterShow', false);
+    ctx.emit('afterShow', { isSHow: true });
   };
 
-  const hidePopover = () => {
+  const handlePopoverHide = () => {
     const elContent = resolveTargetElement(refContent.value?.$el);
     elContent.style.setProperty('display', 'none');
-    ctx.emit('update:isShow', false);
-    ctx.emit('afterHidden', false);
+    ctx.emit('afterHidden', { isSHow: false });
   };
 
   const triggerPopover = () => {
@@ -159,8 +165,14 @@ export default (props, ctx, refReference, refContent, refArrow) => {
     } else {
       hidePopover();
     }
+  };
 
-    localIsShow.value = !localIsShow.value;
+  const hanldeClickRef = (e: MouseEvent) => {
+    e.stopImmediatePropagation();
+    e.stopPropagation();
+    e.preventDefault();
+
+    triggerPopover();
   };
 
   const resolveTriggerEvents = () => {
@@ -169,12 +181,20 @@ export default (props, ctx, refReference, refContent, refArrow) => {
         ['mouseleave', hidePopover],
         ['focus', showPopover],
         ['blur', hidePopover]],
-      click: [['click', triggerPopover]],
+      click: [['click', hanldeClickRef]],
       manual: [[]],
     };
 
     return triggerEvents[props.trigger] ?? [];
   };
+
+  watch(localIsShow, (val) => {
+    if (val) {
+      hanldePopoverShow();
+    } else {
+      handlePopoverHide();
+    }
+  });
 
   return {
     showPopover,

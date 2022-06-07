@@ -27,7 +27,7 @@ import { computed, onMounted, reactive, ref, watch } from 'vue';
 
 import { classes, resolveClassName } from '@bkui-vue/shared';
 
-import { TABLE_ROW_ATTRIBUTE } from './const';
+import { BORDER_OPTION, TABLE_ROW_ATTRIBUTE } from './const';
 import useActiveColumns from './plugins/use-active-columns';
 import useColumnResize from './plugins/use-column-resize';
 import useFixedColumn from './plugins/use-fixed-column';
@@ -166,6 +166,23 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?:
     }
   };
 
+  /**
+   * 获取当前table计算column宽度需要减去的边框和scroll填充
+   * @returns 宽度
+   */
+  const getColumnsWidthOffsetWidth = () => {
+    let offsetWidth = 0;
+    if (hasScrollY.value) {
+      offsetWidth = offsetWidth + 4;
+    }
+
+    if (props.border.includes(BORDER_OPTION.OUTER) && !props.border.includes(BORDER_OPTION.NONE)) {
+      offsetWidth = offsetWidth + 2;
+    }
+
+    return offsetWidth;
+  };
+
   return {
     tableClass,
     headClass,
@@ -176,6 +193,7 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?:
     headStyle,
     resetTableHeight,
     updateBorderClass,
+    getColumnsWidthOffsetWidth,
     hasFooter,
     hasScrollY,
   };
@@ -183,7 +201,6 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?:
 
 export const useInit = (props: TablePropTypes) => {
   const colgroups = reactive([]);
-  // hasScrollY.value = hasRootScrollY(root);
   const updateColGroups = () => {
     colgroups.splice(0, colgroups.length, ...(props.columns ?? [])
       .map(col => ({

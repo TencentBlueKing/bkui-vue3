@@ -670,6 +670,15 @@ const routes: RouteRecordRaw[] = [
     },
     component: () => import('../views/cascader/index'),
   },
+  {
+    path: '/loading',
+    name: 'loading',
+    meta: {
+      group: NavGroupMeta.Others,
+      navName: 'Loading 加载',
+    },
+    component: () => import('../views/loading/index'),
+  },
 ];
 
 const router = createRouter({
