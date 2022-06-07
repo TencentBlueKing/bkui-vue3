@@ -445,7 +445,8 @@ export default class TableRender {
 
     const cell = getRowText(row, resolvePropVal(column, 'field', [column, row]), column);
     if (typeof column.render === 'function') {
-      return column.render(cell, this.props.data[row[TABLE_ROW_ATTRIBUTE.ROW_INDEX]], row, column, index, rows);
+      const data = this.props.data[row[TABLE_ROW_ATTRIBUTE.ROW_INDEX]];
+      return column.render({ cell, data, row, column, index, rows });
     }
 
     return cell;
@@ -474,7 +475,7 @@ export default class TableRender {
             active: this.isColActive(index),
           });
 
-          const width = `${resolveWidth(getColumnReactWidth(column))}`.replace(/px$/i, '');
+          const width: string | number = `${resolveWidth(getColumnReactWidth(column))}`.replace(/px$/i, '');
           return <col class={ colCls } width={ width }></col>;
         })
       }

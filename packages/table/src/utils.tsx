@@ -145,11 +145,19 @@ export const getColumnReactWidth = (colmun: GroupColumn, orders = ['resizeWidth'
  * @param root 当前根元素
  * @param colgroups Columns配置
  * @param autoWidth 自动填充宽度
+ * @param hasScrollY 是否有Y轴滚动
+ * @param resetCalcWidth 是否重置calcWidth
  */
-export const resolveColumnWidth = (root: HTMLElement, colgroups: GroupColumn[], autoWidth = 20) => {
+export const resolveColumnWidth = (
+  root: HTMLElement,
+  colgroups: GroupColumn[],
+  autoWidth = 20,
+  hasScrollY = false,
+) => {
   const { width } = root.getBoundingClientRect() || {};
+  const availableWidth = width - (hasScrollY ? 4 : 0);
   // 可用来平均的宽度
-  let avgWidth = width - 4;
+  let avgWidth = availableWidth;
 
   // 需要平均宽度的列数
   const avgColIndexList = [];
@@ -166,7 +174,7 @@ export const resolveColumnWidth = (root: HTMLElement, colgroups: GroupColumn[], 
     }
 
     if (/^\d+\.?\d*%$/.test(`${minWidth}`)) {
-      calcMinWidth = Number(minWidth) * width / 100;
+      calcMinWidth = Number(minWidth) * availableWidth / 100;
     }
 
     if (/^\d+\.?\d*px$/i.test(`${minWidth}`)) {
@@ -196,7 +204,8 @@ export const resolveColumnWidth = (root: HTMLElement, colgroups: GroupColumn[], 
 
   colgroups.forEach((col: GroupColumn, index: number) => {
     if (!col.isHidden) {
-      const colWidth = String(getColumnReactWidth(col));
+      const order = ['resizeWidth', 'width'];
+      const colWidth = String(getColumnReactWidth(col, order));
       let isAutoWidthCol = true;
       if (/^\d+\.?\d*(px)?$/.test(colWidth)) {
         const numWidth = Number(colWidth.replace('px', ''));
@@ -354,4 +363,16 @@ export const getRowKey = (item: any, props: TablePropTypes, index: number) => {
   }
 
   return uuidv4();
+};
+
+
+export const hasRootScrollY =  (root) => {
+  if (root) {
+    const tableBody = root.querySelector('.bk-table-body table') as HTMLElement;
+    if (tableBody) {
+      return  tableBody.offsetHeight > root.offsetHeight;
+    }
+  }
+
+  return false;
 };
