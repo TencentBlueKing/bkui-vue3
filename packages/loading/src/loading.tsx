@@ -55,6 +55,9 @@ export const loadingTypes = {
   title: PropTypes.string.def(''),
   size: PropTypes.commonType(Object.values(BkLoadingSize)).def(BkLoadingSize.Normal),
   mode: PropTypes.commonType(Object.values(BkLoadingMode)).def('default'),
+  opacity: PropTypes.number.def(0.9),
+  color: PropTypes.string.def('white'),
+  zIndex: PropTypes.number.def(1),
 };
 
 export type LoadingTypes = ExtractPropTypes<typeof loadingTypes>;
@@ -72,6 +75,14 @@ export default defineComponent({
       ))}
     </div>;
 
+    const zIndexStyle = computed(() => ({
+      zIndex: props.zIndex,
+    }));
+    const maskStyle = computed(() => ({
+      opacity: props.opacity,
+      backgroundColor: props.color,
+      ...zIndexStyle.value,
+    }));
 
     const loadingWrapperCls = computed(() =>  classes({
       'bk-loading-wrapper': props.loading,
@@ -98,13 +109,13 @@ export default defineComponent({
       <div class={loadingWrapperCls.value}>
           {props.loading && (
             [
-              <div class={containerCls.value}>
+              ctx.slots.default && <div class="bk-loading-mask" style={maskStyle.value}></div>,
+              <div class={containerCls.value} style={zIndexStyle.value}>
                 {
                   indicator.value
                 }
                 {hasTitle.value && <div class="bk-loading-title">{props.title}</div>}
               </div>,
-              ctx.slots.default && <div class="bk-loading-mask"></div>,
             ]
           )}
           {ctx.slots.default?.()}
