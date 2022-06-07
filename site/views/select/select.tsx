@@ -38,7 +38,8 @@ import SelectGroupDemo from './select-group-demo.vue';
 import SelectMultiDemo from './select-multi-demo.vue';
 import SelectScrollLoadingDemo from './select-scrollloading-demo.vue';
 import SelectSearchDemo from './select-search-demo.vue';
-import SelectStyleDemo from './select-style-demo.vue';;
+import SelectStyleDemo from './select-style-demo.vue';
+import SelectTreeDemo from './select-tree-demo.vue';
 
 const propsJson: IPropsTableItem[] = Object.keys(BkSelect.props).map(prop => ({
   name: prop,
@@ -100,6 +101,13 @@ export default defineComponent({
           componentName="select"
           demoName="select-allow-create">
             <SelectAllowCreate />
+        </DemoBox>
+        <DemoBox
+          title="Tree Select"
+          desc="Tree Select"
+          componentName="select"
+          demoName="select-tree-demo">
+            <SelectTreeDemo />
         </DemoBox>
         <PropsBox propsData={propsJson} subtitle="" />
       </div>
