@@ -34,8 +34,9 @@ import type { IPropsTableItem } from '../../typings';
 import Always from './demo/always.vue';
 import Base from './demo/base.vue';
 import Callback from './demo/callback.vue';
+import ClickTrigger from './demo/click-trigger.vue';
 import Position from './demo/position.vue';
-import Slot from './demo/slot.vue';
+import Slot from './demo/slot.vue';;
 
 const props: IPropsTableItem[] = [
   {
@@ -145,37 +146,44 @@ const demos = [
   {
     title: '基础用法',
     desc: '最简单的用法',
-    componentName: 'popover',
+    componentName: 'popover2',
     demoName: 'demo/base',
     DemoComponent: Base,
   },
   {
     title: '超长内容',
     desc: '通过自定义 slot 显示多行文本或更复杂的样式',
-    componentName: 'popover',
+    componentName: 'popover2',
     demoName: 'demo/slot',
     DemoComponent: Slot,
   },
   {
     title: '不同位置',
     desc: '通过 placement 属性展示十二种方位的提示',
-    componentName: 'popover',
+    componentName: 'popover2',
     demoName: 'demo/position',
     DemoComponent: Position,
   },
   {
     title: '总是显示',
     desc: '设置属性 always 总是显示提示框',
-    componentName: 'popover',
+    componentName: 'popover2',
     demoName: 'demo/always',
     DemoComponent: Always,
   },
   {
     title: '自定义回调函数',
     desc: '自定义显示以及隐藏时的回调函数',
-    componentName: 'popover',
+    componentName: 'popover2',
     demoName: 'demo/callback',
     DemoComponent: Callback,
+  },
+  {
+    title: 'trigger click',
+    desc: 'trigger click',
+    componentName: 'popover2',
+    demoName: 'demo/click-trigger',
+    DemoComponent: ClickTrigger,
   },
 ];
 
