@@ -185,8 +185,7 @@ export default defineComponent({
           demoName: 'expand',
         },
         component: () => <Expand></Expand>,
-      },
-    ];
+      }];
 
     return (
       <div>

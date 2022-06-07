@@ -76,6 +76,11 @@ export const PopoverProps = {
    */
   autoPlacement: PropTypes.bool.def(false),
 
+  /**
+   * 是否禁用clickoutside
+   */
+  disableOutsideClick: PropTypes.bool.def(false),
+
   ...EventProps,
 };
 
