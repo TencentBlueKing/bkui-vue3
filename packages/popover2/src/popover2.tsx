@@ -24,24 +24,31 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent, onMounted, onUnmounted, ref, Teleport, toRef, watch } from 'vue';
+import { defineComponent, onMounted, onUnmounted, ref, Teleport, watch } from 'vue';
+
+import { clickoutside } from '@bkui-vue/directives';
 
 import Arrow from './arrow';
+import { EMIT_EVENT_TYPES, EMITEVENTS } from './const';
 import Content from './content';
 import { PopoverProps } from './props';
 import Reference from './reference';
 import useFloating from './use-floating';
 import usePopperId from './use-popper-id';
+
 export default defineComponent({
   name: 'Popover2',
   components: {
     Content, Arrow,
   },
+  directives: {
+    clickoutside,
+  },
   props: PopoverProps,
+  emits: EMIT_EVENT_TYPES,
 
   setup(props, ctx) {
     const { content, theme, disableTeleport, width, height } = props;
-    const refIsShow = toRef(props, 'isShow');
     const refReference = ref();
     const refContent = ref();
     const refArrow = ref();
@@ -50,7 +57,7 @@ export default defineComponent({
     const {
       localIsShow,
       showPopover,
-      triggerPopover,
+      hidePopover,
       resolveTriggerEvents,
       updatePopover,
       resolvePopElements,
@@ -58,13 +65,11 @@ export default defineComponent({
     } = useFloating(props, ctx, refReference, refContent, refArrow);
 
     const show = () => {
-      localIsShow.value = true;
-      triggerPopover();
+      showPopover();
     };
 
     const hide = () => {
-      localIsShow.value = false;
-      triggerPopover();
+      hidePopover();
     };
 
     const createPopInstance = () => {
@@ -77,10 +82,9 @@ export default defineComponent({
     };
 
     if (!props.always && !props.disabled) {
-      watch([refIsShow], () => {
-        localIsShow.value = props.isShow;
-        triggerPopover();
-      });
+      watch(() => props.isShow, () => {
+        props.isShow ? showPopover() : hidePopover();
+      }, { immediate: true });
     }
 
     watch(() => [props.disabled], (val) => {
@@ -140,6 +144,17 @@ export default defineComponent({
 
     const { prefixId } = usePopperId();
     const boundary = typeof props.boundary === 'string' ? props.boundary : prefixId;
+    const handleClickOutside = (_e: MouseEvent) => {
+      console.log('handleClickOutside', localIsShow.value);
+      ctx.emit(EMITEVENTS.CLICK_OUTSIDE, { isShow: localIsShow.value });
+      if (props.disableOutsideClick || props.always || props.disabled || props.trigger === 'manual') {
+        return;
+      }
+
+      if (localIsShow.value) {
+        hide();
+      }
+    };
 
     return {
       boundary,
@@ -152,6 +167,7 @@ export default defineComponent({
       disableTeleport,
       width,
       height,
+      handleClickOutside,
     };
   },
 
@@ -162,6 +178,7 @@ export default defineComponent({
     </Reference>
     <Teleport to={ this.boundary } disabled={ this.disableTeleport }>
       <Content ref="refContent" data-theme={ this.theme } width={ this.width } height={ this.height }
+      v-clickoutside={this.handleClickOutside}
       v-slots={ { arrow: () => (this.arrow ? <Arrow ref="refArrow">{ this.$slots.arrow?.() }</Arrow> : '') } }>
         { this.$slots.content?.() ?? this.content }
       </Content>

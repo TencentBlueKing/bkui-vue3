@@ -27,7 +27,7 @@
 import { throttle } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
-import { BORDER_OPRIONS, TABLE_ROW_ATTRIBUTE } from './const';
+import { BORDER_OPTION, BORDER_OPTIONS, TABLE_ROW_ATTRIBUTE } from './const';
 import { Column, GroupColumn, TablePropTypes } from './props';
 
 
@@ -122,7 +122,7 @@ export const resolvePropBorderToClassStr = (val: string | string[]) => {
   }
 
   if (Array.isArray(val)) {
-    defaultVal.push(...val.filter((str: string) => BORDER_OPRIONS.includes(str)));
+    defaultVal.push(...val.filter((str: string) => BORDER_OPTIONS.includes(str as BORDER_OPTION)));
   }
 
   return [...new Set(defaultVal)].map((item: string) => `bordered-${item}`)
@@ -145,17 +145,16 @@ export const getColumnReactWidth = (colmun: GroupColumn, orders = ['resizeWidth'
  * @param root 当前根元素
  * @param colgroups Columns配置
  * @param autoWidth 自动填充宽度
- * @param hasScrollY 是否有Y轴滚动
- * @param resetCalcWidth 是否重置calcWidth
+ * @param offsetWidth 需要减掉的偏移量（滚动条|外层边框）
  */
 export const resolveColumnWidth = (
   root: HTMLElement,
   colgroups: GroupColumn[],
   autoWidth = 20,
-  hasScrollY = false,
+  offsetWidth = 0,
 ) => {
   const { width } = root.getBoundingClientRect() || {};
-  const availableWidth = width - (hasScrollY ? 4 : 0);
+  const availableWidth = width - offsetWidth;
   // 可用来平均的宽度
   let avgWidth = availableWidth;
 

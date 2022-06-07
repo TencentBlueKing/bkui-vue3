@@ -24,10 +24,18 @@
 * IN THE SOFTWARE.
 */
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export const enum BORDER_OPTION {
+  NONE = 'none',
+  ROW = 'row',
+  COL = 'col',
+  OUTER = 'outer'
+}
+
 /**
  * 边框配置可选项
  */
-export const BORDER_OPRIONS = ['none', 'row', 'col', 'outer'];
+export const BORDER_OPTIONS = [BORDER_OPTION.NONE, BORDER_OPTION.ROW, BORDER_OPTION.COL, BORDER_OPTION.OUTER];
 
 export const enum EVENTS {
   /** 点击排序事件 */

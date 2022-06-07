@@ -28,7 +28,7 @@ import { ExtractPropTypes } from 'vue';
 
 import { PropTypes } from '@bkui-vue/shared';
 
-import { BORDER_OPRIONS, TABLE_ROW_ATTRIBUTE } from './const';
+import { BORDER_OPTION, BORDER_OPTIONS, TABLE_ROW_ATTRIBUTE } from './const';
 
 export enum SortScope {
   CURRENT = 'current',
@@ -144,7 +144,7 @@ export const tableProps = {
    * 表格边框显示设置，可以是一个组合
    * 生效规则: 除非单独设置 none,否则会追加每个设置
    */
-  border: PropTypes.arrayOf(PropTypes.commonType(BORDER_OPRIONS, 'border')).def(['row']),
+  border: PropTypes.arrayOf(PropTypes.commonType(BORDER_OPTIONS, 'border')).def([BORDER_OPTION.ROW]),
 
   /**
    * 分页配置
