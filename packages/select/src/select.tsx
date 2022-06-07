@@ -89,6 +89,7 @@ export default defineComponent({
     scrollLoading: PropTypes.bool.def(false),
     allowCreate: PropTypes.bool.def(false), // 是否运行创建自定义选项
     popoverOptions: PropTypes.object.def({}), // popover属性
+    customContent: PropTypes.bool.def(false), // 是否自定义content内容
   },
   emits: ['update:modelValue', 'change', 'toggle', 'clear', 'scroll-end'],
   setup(props, { emit }) {
@@ -106,6 +107,7 @@ export default defineComponent({
       showOnInit,
       multipleMode,
       allowCreate,
+      customContent,
     } = toRefs(props);
 
     const formItem = useFormItem();
@@ -132,7 +134,7 @@ export default defineComponent({
       if (multipleMode.value === 'tag') {
         popoverRef.value?.update();
       }
-    });
+    }, { deep: true });
 
     // select组件是否禁用
     const isDisabled = computed(() => disabled.value || loading.value);
@@ -158,7 +160,8 @@ export default defineComponent({
     // 是否远程搜索
     const isRemoteSearch = computed(() => filterable.value && typeof remoteMethod.value === 'function');
     // 是否显示select下拉内容
-    const isShowSelectContent = computed(() => !(searchLoading.value || isOptionsEmpty.value || isSearchEmpty.value));
+    const isShowSelectContent = computed(() => !(searchLoading.value || isOptionsEmpty.value || isSearchEmpty.value)
+      || customContent.value);
     // 当前空状态时显示文案
     const curContentText = computed(() => {
       if (searchLoading.value) {
@@ -555,12 +558,12 @@ export default defineComponent({
     const renderSelectContent = () => (
         <div>
           {
-          (!this.isShowSelectContent) && (
-          <div class="bk-select-empty">
-            {this.searchLoading
-            && <Loading class="mr5" loading={true} mode="spin" size="mini"></Loading>}
-            {this.curContentText}
-          </div>)
+            !this.isShowSelectContent
+            && (
+            <div class="bk-select-empty">
+              {this.searchLoading && <Loading class="mr5" loading={true} mode="spin" size="mini"></Loading>}
+              {this.curContentText}
+            </div>)
           }
           <div class="bk-select-content">
             <div class="bk-select-dropdown"

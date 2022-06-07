@@ -23,62 +23,34 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { Column } from 'table/src/props';
-import { defineComponent } from 'vue';
+import { computed, defineComponent } from 'vue';
 
-import { DATA_COLUMNS, DATA_TABLE } from './options';
+import { classes, PropTypes } from '@bkui-vue/shared';
+
+import { getColumnReactWidth, resolveWidth } from '../utils';
+
 export default defineComponent({
-  components: {},
-  data() {
-    return {
-      tableData: [
-        ...DATA_TABLE,
-        ...DATA_TABLE,
-        ...DATA_TABLE,
-        ...DATA_TABLE,
-        ...DATA_TABLE,
-        ...DATA_TABLE,
-        ...DATA_TABLE,
-        ...DATA_TABLE,
-        ...DATA_TABLE,
-        ...DATA_TABLE,
-        ...DATA_TABLE,
-        ...DATA_TABLE,
-        ...DATA_TABLE,
-        ...DATA_TABLE,
-        ...DATA_TABLE,
-        ...DATA_TABLE,
-        ...DATA_TABLE,
-        ...DATA_TABLE,
-        ...DATA_TABLE,
-        ...DATA_TABLE,
-        ...DATA_TABLE,
-        ...DATA_TABLE,
-        ...DATA_TABLE,
-        ...DATA_TABLE,
-        ...DATA_TABLE,
-        ...DATA_TABLE,
-        ...DATA_TABLE,
-        ...DATA_TABLE,
-        ...DATA_TABLE,
-        ...DATA_TABLE,
-      ],
-      columns: [...DATA_COLUMNS].map((col: Column, index: number) => ({
-        ...col,
-        render: [1, 2, 3, 4].includes(index) ? this.renderCell : undefined })),
-    };
+  name: 'ColGroup',
+  props: {
+    colgroups: PropTypes.array.def([]),
+    columnPick: PropTypes.string.def(''),
+    propActiveCols: PropTypes.array.def([]),
   },
-  methods: {
-    renderCell({ row, column }) {
-      return <bk-input v-model={ row[column.field] }></bk-input>;
-    },
-  },
-  render() {
-    return  <div style="height: 300px; width: 100%;">
-      <bk-table
-        columns={ this.columns }
-        data={ this.tableData }
-      />
-    </div>;
+  setup(props) {
+    const filterColgroups = computed(() => props.colgroups.filter((col: any) => !col.isHidden));
+    const isColActive = (colIndex: number) => props.columnPick !== 'disabled'
+      && props.propActiveCols.some((col: any) => col.index === colIndex && col.active);
+    return () => <colgroup>
+    {
+      (filterColgroups.value || []).map((column: any, index: number) => {
+        const colCls = classes({
+          active: isColActive(index),
+        });
+
+        const width = `${resolveWidth(getColumnReactWidth(column))}`.replace(/px$/i, '');
+        return <col class={ colCls } width={ width }></col>;
+      })
+    }
+    </colgroup>;
   },
 });
