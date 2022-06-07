@@ -38,10 +38,11 @@ import {
   Placement,
   shift } from '@floating-ui/dom';
 
+import { PopoverPropTypes } from './props';
 
-export default (props, ctx, refReference, refContent, refArrow) => {
+
+export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow) => {
   const localIsShow = ref(false);
-
   const themeList = ['dark', 'light'];
   const compTheme = computed(() => {
     const themes = props.theme.split(/\s+/);
@@ -60,17 +61,29 @@ export default (props, ctx, refReference, refContent, refArrow) => {
     return { elReference, elContent, elArrow };
   };
 
-  const resolvePopOptions = (elArrow: any) => ({
-    placement: props.placement as Placement,
-    middleware: [
-      inline(),
+  const resolvePopOptions = (elArrow: any) => {
+    const middleware = [
       offset(props.offset),
-      (props.autoPlacement ? autoPlacement() : flip()),
       shift({ padding: props.padding }),
       arrow({ element: elArrow }),
-      hide(),
-    ],
-  });
+    ];
+    const options = {
+      placement: props.placement as Placement,
+      middleware,
+    };
+
+    if (props.autoPlacement) {
+      middleware.push(autoPlacement());
+    } else {
+      middleware.unshift(inline());
+      middleware.push(flip());
+    }
+
+    if (props.autoVisibility) {
+      options.middleware.push(hide());
+    }
+    return options;
+  };
 
   const resolveTargetElement = (target: any) => {
     if (target instanceof HTMLElement) {
@@ -91,6 +104,130 @@ export default (props, ctx, refReference, refContent, refArrow) => {
   const contentClass = `${customThemeCls}`;
 
   let cleanup = null;
+
+  const getRoundPixelVal = (val: number) => {
+    const dpr = window.devicePixelRatio || 1;
+    return Math.round(val * dpr) / dpr || 0;
+  };
+
+  const isElementFullScreen = () => document.fullscreenElement !== null;
+
+  const updatePopContentStyle = (elContent, x, y, resolvedPlacement, middlewareData, elReference) => {
+    const { left, top } = elReference.getBoundingClientRect();
+    const resolveFullscreenOffsetX = (xValue: number) => {
+      if (['left', 'right'].includes(resolvedPlacement)) {
+        return getRoundPixelVal(xValue);
+      }
+
+      return left;
+    };
+
+    const resolveFullscreenOffsetY = (yValue: number) => {
+      if (['top', 'bottom'].includes(resolvedPlacement)) {
+        return getRoundPixelVal(yValue);
+      }
+
+      return top;
+    };
+
+    const getOffsetX = () => {
+      if (isElementFullScreen()) {
+        return resolveFullscreenOffsetX(x);
+      }
+
+      return getRoundPixelVal(x);
+    };
+
+    const getOffsetY = () => {
+      if (isElementFullScreen()) {
+        return resolveFullscreenOffsetY(y);
+      }
+
+      return getRoundPixelVal(y);
+    };
+
+    Object.assign(elContent.style, {
+      left: '0',
+      top: '0',
+      transform: `translate3d(${getOffsetX()}px,${getOffsetY()}px,0)`,
+    });
+
+    if (props.autoVisibility) {
+      const { referenceHidden } = middlewareData.hide;
+      Object.assign(elContent.style, {
+        visibility: referenceHidden ? 'hidden' : 'visible',
+      });
+    }
+  };
+
+  const updateArrowStyle = (elArrow, resolvedPlacement, middlewareData, elReference) => {
+    const { left, top, bottom, right } = elReference.getBoundingClientRect();
+    if (props.arrow) {
+      const { x: arrowX, y: arrowY } = middlewareData.arrow;
+      const staticPrefix = {
+        top: 1,
+        right: -1,
+        bottom: -1,
+        left: 1,
+      }[resolvedPlacement];
+
+      const getStaticSidePos = (val, pos, defaultVal) => {
+        const staticSide = {
+          x: {
+            left: 'right',
+            right: 'left',
+          },
+          y: {
+            top: 'bottom',
+            bottom: 'top',
+          },
+        }[pos]?.[resolvedPlacement] ?? defaultVal;
+
+        return [val, staticSide];
+      };
+
+
+      const getFullScreenOffset = (arrowValue: any) => {
+        if (isElementFullScreen()) {
+          if (['left', 'right'].includes(resolvedPlacement)) {
+            return getRoundPixelVal((bottom - top) / 2) - 2;
+          }
+
+          if (['top', 'bottom'].includes(resolvedPlacement)) {
+            return getRoundPixelVal((right - left) / 2) - 2;
+          }
+        }
+
+        return isNumber(arrowValue) ? getRoundPixelVal(arrowValue) : 0;
+      };
+
+      const getOffsetX = () => {
+        if (['left', 'right'].includes(resolvedPlacement)) {
+          return staticPrefix * 4;
+        }
+
+        return getFullScreenOffset(arrowX);
+      };
+
+      const getOffsetY = () => {
+        if (['top', 'bottom'].includes(resolvedPlacement)) {
+          return staticPrefix * 4;
+        }
+
+        return getFullScreenOffset(arrowY);
+      };
+
+      elArrow.setAttribute('data-arrow', resolvedPlacement);
+      const [offsetX, xPos] = getStaticSidePos(getOffsetX(), 'x', 'left');
+      const [offsetY, yPos] = getStaticSidePos(getOffsetY(), 'y', 'top');
+      Object.assign(elArrow.style, {
+        [xPos]: '0',
+        [yPos]: '0',
+        transform: `translate(${offsetX}px,${offsetY}px) rotate(45deg)`,
+      });
+    }
+  };
+
   const updatePopover = () => {
     const { elReference, elContent, elArrow } = resolvePopElements();
     const options = resolvePopOptions(elArrow);
@@ -102,41 +239,19 @@ export default (props, ctx, refReference, refContent, refArrow) => {
           elContent.setAttribute(key, customTheme[key]);
         });
 
-        const { referenceHidden } = middlewareData.hide;
-
-        Object.assign(elContent.style, {
-          left: `${x}px`,
-          top: `${y}px`,
-          visibility: referenceHidden ? 'hidden' : 'visible',
-        });
-
-        if (props.arrow) {
-          const { x: arrowX, y: arrowY } = middlewareData.arrow;
-          const placementStr = placement.split('-')[0];
-          const staticSide = {
-            top: 'bottom',
-            right: 'left',
-            bottom: 'top',
-            left: 'right',
-          }[placementStr];
-
-          elArrow.setAttribute('data-arrow', placementStr);
-
-          Object.assign(elArrow.style, {
-            left: isNumber(arrowX) ? `${arrowX}px` : '',
-            top: isNumber(arrowY) ? `${arrowY}px` : '',
-            right: '',
-            bottom: '',
-            [staticSide]: '-4px',
-          });
+        const placementStr = placement.split('-')[0];
+        let resolvedPlacement = placementStr;
+        if (!['left', 'right', 'top', 'bottom'].includes(placementStr)) {
+          resolvedPlacement = 'top';
         }
+
+        updatePopContentStyle(elContent, x, y, resolvedPlacement, middlewareData, elReference);
+        updateArrowStyle(elArrow, resolvedPlacement, middlewareData, elReference);
       });
     });
   };
 
   const isNumber = (val: string | number) => /^-?\d+\.?\d*$/.test(`${val}`);
-
-
   const showPopover = () => {
     localIsShow.value = true;
   };
@@ -203,6 +318,7 @@ export default (props, ctx, refReference, refContent, refArrow) => {
     updatePopover,
     triggerPopover,
     resolvePopElements,
+    isElementFullScreen,
     localIsShow,
     cleanup,
   };
