@@ -48,6 +48,11 @@
         columns: [...DATA_COLUMNS],
       };
     },
+    mounted() {
+      // setTimeout(() => {
+      //   this.columns.push(...DATA_COLUMNS.slice(-3));
+      // }, 60);
+    },
     methods: {
       handleSortBy(arg) {
         console.log('handleSortBy', arg);

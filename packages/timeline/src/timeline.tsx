@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 
-import { defineComponent, ExtractPropTypes, onMounted, ref } from 'vue';
+import { defineComponent, ExtractPropTypes, onMounted, ref, watch } from 'vue';
 
 import { classes, PropTypes } from '@bkui-vue/shared';
 
@@ -46,7 +46,6 @@ export default defineComponent({
     const defaultTimelines = ref([]);
 
     const updateTimelines = (timelines) => {
-      console.log('timelines', timelines);
       const defaults = [];
       timelines.forEach((timeline) => {
         defaults.push({
@@ -92,6 +91,10 @@ export default defineComponent({
     };
 
     onMounted(init);
+
+    watch(() => props.list, () => {
+      updateTimelines(props.list);
+    }, { deep: true });
 
     return {
       defaultTimelines,

@@ -31,13 +31,18 @@ export default defineComponent({
   components: {},
   data() {
     return {
-      tableData: [...DATA_TABLE],
-      columns: [...DATA_COLUMNS].map((col: Column) => ({ ...col, render: this.renderCell })),
+      tableData: [
+        ...DATA_TABLE,
+      ],
+      columns: [...DATA_COLUMNS].map((col: Column, index: number) => ({
+        ...col,
+        render: [1, 2, 3, 4].includes(index) ? this.renderCell : undefined })),
     };
   },
+
   methods: {
-    renderCell(cell: any) {
-      return <span>自定义渲染 column ：{ cell }</span>;
+    renderCell({ row, column }) {
+      return <bk-input v-model={ row[column.field] }></bk-input>;
     },
   },
   render() {

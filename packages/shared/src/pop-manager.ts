@@ -45,12 +45,12 @@ class BKPopIndexManager {
    * @param transfer 是否显示在body内（即是否显示在div#app内，默认为false）
    * @returns
    */
-  public show(content?: HTMLElement, showMask = true, appendStyle = {}, transfer = false) {
+  public show(content?: HTMLElement, showMask = true, appendStyle = {}, transfer = false, zindex = undefined) {
     if (!content) {
       console.warn('pop show error: content is null or undefined');
       return;
     }
-    const zIndex = bkZIndexManager.getModalNextIndex();
+    const zIndex = typeof zindex === 'number' ? zindex : bkZIndexManager.getModalNextIndex();
     const uuid = random(16);
     content.setAttribute(this.uuidAttrName, uuid);
     this.popInstanceList.push({ uuid, zIndex, content, showMask, appendStyle });

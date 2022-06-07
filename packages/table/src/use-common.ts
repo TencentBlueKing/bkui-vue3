@@ -23,32 +23,33 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { computed, onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref, watch } from 'vue';
 
 import { classes, resolveClassName } from '@bkui-vue/shared';
 
-import { TABLE_ROW_ATTRIBUTE } from './const';
+import { BORDER_OPTION, TABLE_ROW_ATTRIBUTE } from './const';
 import useActiveColumns from './plugins/use-active-columns';
 import useColumnResize from './plugins/use-column-resize';
 import useFixedColumn from './plugins/use-fixed-column';
 import { TablePropTypes } from './props';
 import {
   getRowKey,
+  hasRootScrollY,
   resolveHeadConfig,
   resolveNumberOrStringToPix,
   resolvePropBorderToClassStr,
   resolvePropVal,
 } from './utils';
 
-export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?) => {
+export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?: any[]) => {
   const autoHeight = ref(200);
-  const hasScrollY = ref(false);
+  const hasScrollY = ref(undefined);
   const hasFooter = computed(() => props.pagination && props.data.length);
   const tableClass = computed(() => (classes({
     [resolveClassName('table')]: true,
     'has-footer': hasFooter.value,
     'has-scroll-y': hasScrollY.value || props.virtualEnabled,
-    'is-scroll-bottom': reactiveProp.pos.bottom < 2,
+    // 'is-scroll-bottom': reactiveProp.pos.bottom < 2,
   }, resolvePropBorderToClassStr(props.border))));
 
   const headClass = classes({
@@ -94,6 +95,30 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?)
     return defaultValue;
   };
 
+  const getRowsHeight = () => {
+    if (!pageData?.length) {
+      return 0;
+    }
+
+    if (typeof props.rowHeight === 'function') {
+      return pageData.reduce((out: number, row: any, rowIndex: number) => {
+        const result = Reflect.apply(props.rowHeight, this, ['tbody', row, rowIndex]);
+        let resultHeight = out;
+        if (/^\d+\.?\d*px?$/.test(`${result}`)) {
+          resultHeight += Number(result.replace(/px$/, ''));
+        }
+        return resultHeight;
+      }, 0);
+    }
+
+    if (/^\d+\.?\d*px?$/.test(`${props.rowHeight}`)) {
+      const rowHeight = props.rowHeight.replace(/px$/, '');
+      return pageData.length * Number(rowHeight);
+    }
+
+    return 0;
+  };
+
   /** 表格外层容器样式 */
   const contentStyle = reactive({});
 
@@ -108,10 +133,10 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?)
     const height = props.height !== 'auto' ? `${contentHeight}px` : false;
     const maxHeight = resolveMaxHeight - resolveHeadHeight - resolveFooterHeight;
     const minHeight = resolveMinHeight - resolveHeadHeight - resolveFooterHeight;
-
+    const rowsHeight = getRowsHeight();
     Object.assign(contentStyle, {
       display: pageData?.length ? 'block' : false,
-      'max-height': `${maxHeight}px`,
+      'max-height': `${maxHeight > rowsHeight ? maxHeight : rowsHeight}px`,
       'min-height': `${minHeight}px`,
       height,
     });
@@ -127,16 +152,35 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?)
       const { height } = rootEl.parentElement.getBoundingClientRect();
       autoHeight.value = height;
       resolveContentStyle();
+      updateBorderClass(rootEl);
     }
   };
 
   const updateBorderClass = (root: HTMLElement) => {
+    hasScrollY.value = hasRootScrollY(root);
     if (root) {
       const tableBody = root.querySelector('.bk-table-body table') as HTMLElement;
       if (tableBody) {
         hasScrollY.value = tableBody.offsetHeight > root.offsetHeight;
       }
     }
+  };
+
+  /**
+   * 获取当前table计算column宽度需要减去的边框和scroll填充
+   * @returns 宽度
+   */
+  const getColumnsWidthOffsetWidth = () => {
+    let offsetWidth = 0;
+    if (hasScrollY.value) {
+      offsetWidth = offsetWidth + 4;
+    }
+
+    if (props.border.includes(BORDER_OPTION.OUTER) && !props.border.includes(BORDER_OPTION.NONE)) {
+      offsetWidth = offsetWidth + 2;
+    }
+
+    return offsetWidth;
   };
 
   return {
@@ -149,17 +193,27 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?)
     headStyle,
     resetTableHeight,
     updateBorderClass,
+    getColumnsWidthOffsetWidth,
     hasFooter,
+    hasScrollY,
   };
 };
 
 export const useInit = (props: TablePropTypes) => {
-  const colgroups = reactive((props.columns ?? []).map(col => ({
-    ...col,
-    calcWidth: null,
-    resizeWidth: null,
-    listeners: new Map(),
-  })));
+  const colgroups = reactive([]);
+  const updateColGroups = () => {
+    colgroups.splice(0, colgroups.length, ...(props.columns ?? [])
+      .map(col => ({
+        ...col,
+        calcWidth: null,
+        resizeWidth: null,
+        listeners: new Map(),
+      })));
+  };
+
+  watch(() => props.columns, () => {
+    updateColGroups();
+  }, { immediate: true, deep: true });
 
   const { dragOffsetXStyle } = useColumnResize(colgroups, true);
   const { activeColumns } = useActiveColumns(props);
@@ -200,10 +254,10 @@ export const useInit = (props: TablePropTypes) => {
 
   const initIndexData = (keepLocalAction = false) => {
     indexData.splice(0, indexData.length, ...props.data.map((item: any, index: number) => {
-      const rowId = getRowKey(item, props);
+      const rowId = getRowKey(item, props, index);
       return {
         ...item,
-        [TABLE_ROW_ATTRIBUTE.ROW_INDEX]: index + 1,
+        [TABLE_ROW_ATTRIBUTE.ROW_INDEX]: index,
         [TABLE_ROW_ATTRIBUTE.ROW_UID]: rowId,
         [TABLE_ROW_ATTRIBUTE.ROW_EXPAND]: keepLocalAction ? isRowExpand(rowId) : false,
       };
@@ -230,5 +284,6 @@ export const useInit = (props: TablePropTypes) => {
     updateIndexData,
     renderFixedColumns,
     setRowExpand,
+    updateColGroups,
   };
 };
