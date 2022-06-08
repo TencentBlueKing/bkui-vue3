@@ -69,7 +69,7 @@ export const PopoverProps = {
 
   zIndex: PropTypes.number.def(undefined),
 
-  disableTeleport: PropTypes.bool.def(true),
+  disableTeleport: PropTypes.bool.def(false),
 
   /**
    *  chooses the placement that has the most space available automatically
