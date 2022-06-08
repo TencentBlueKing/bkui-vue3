@@ -76,7 +76,10 @@ export const PopoverProps = {
    */
   autoPlacement: PropTypes.bool.def(false),
 
-  autoVisibility: PropTypes.bool.def(false),
+  /**
+   * 当有滚动条，滚动出可是范围时自动隐藏pop
+   */
+  autoVisibility: PropTypes.bool.def(true),
 
   /**
    * 是否禁用clickoutside
