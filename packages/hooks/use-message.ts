@@ -26,6 +26,8 @@
 
 import { createVNode, render } from 'vue';
 
+import { isElement } from '@bkui-vue/shared';
+
 const instances = {
   'top-left': [],
   'top-right': [],
@@ -71,7 +73,14 @@ const Message = (constructor: any, options: any) => {
 
   render(vm, container);
   instances[position].push(vm);
-  document.body.appendChild(container.firstElementChild);
+
+  let target: HTMLElement;
+  if (vm.props.getContainer && isElement(vm.props.getContainer)) {
+    target = vm.props.getContainer;
+  } else {
+    target = document.body;
+  }
+  target.appendChild(container.firstElementChild);
 };
 
 function close(id: string, position: string, spacing: number, userOnClose): void {
