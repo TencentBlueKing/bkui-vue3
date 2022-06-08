@@ -25,10 +25,13 @@
 */
 
 
+import { v4 as uuidv4 } from 'uuid';
+
 import { DownShape, RightShape } from '@bkui-vue/icon';
 import Pagination from '@bkui-vue/pagination';
-import { classes, random } from '@bkui-vue/shared';
+import { classes } from '@bkui-vue/shared';
 
+import TableRow from './components/table-row';
 import { EVENTS, TABLE_ROW_ATTRIBUTE } from './const';
 import BodyEmpty from './plugins/body-empty';
 import HeadFilter from './plugins/head-filter';
@@ -53,7 +56,7 @@ export default class TableRender {
     this.reactiveProp = reactiveProp;
     this.colgroups = colgroups;
     this.plugins = new TablePlugins(props, ctx);
-    this.uuid = random(8);
+    this.uuid = uuidv4();
     this.events = new Map<string, any[]>();
   }
 
@@ -112,7 +115,7 @@ export default class TableRender {
       emptyText={ this.props.emptyText }/>;
     }
 
-    return <table cellpadding={0} cellspacing={0}>
+    return <table cellpadding={0} cellspacing={0} data-table-uuid={this.uuid}>
       { this.renderColGroup() }
       { this.renderTBody(rows) }
     </table>;
@@ -285,17 +288,19 @@ export default class TableRender {
     const { resolveFixedColumnStyle, fixedoffset } = getFixedColumnStyleResolve();
     // @ts-ignore:next-line
     return <thead style={rowStyle}>
-        <tr>
-        {
-          this.filterColgroups.map((column: Column, index: number) => <th colspan={1} rowspan={1}
-          class={ this.getHeadColumnClass(column, index) }
-          style = { resolveFixedColumnStyle(column, fixedoffset) }
-          onClick={ () => this.handleColumnHeadClick(index) }
-          { ...resolveEventListener(column) }>
-            <div class="cell">{ renderHeadCell(column, index) }</div>
-          </th>)
-        }
-        </tr>
+      <TableRow>
+          <tr>
+          {
+            this.filterColgroups.map((column: Column, index: number) => <th colspan={1} rowspan={1}
+              class={ this.getHeadColumnClass(column, index) }
+              style = { resolveFixedColumnStyle(column, fixedoffset) }
+              onClick={ () => this.handleColumnHeadClick(index) }
+              { ...resolveEventListener(column) }>
+                <div class="cell">{ renderHeadCell(column, index) }</div>
+              </th>)
+          }
+          </tr>
+        </TableRow>
       </thead>;
   }
 
@@ -321,44 +326,47 @@ export default class TableRender {
         ];
 
         const { resolveFixedColumnStyle,  fixedoffset } = getFixedColumnStyleResolve();
+        const rowKey = `${this.uuid}-${row[TABLE_ROW_ATTRIBUTE.ROW_UID]}`;
+        return [
+          <TableRow key={rowKey}>
+            <tr
+              // @ts-ignore
+              style={rowStyle}
+              class={rowClass}
+              onClick={ e => this.handleRowClick(e, row, rowIndex, rows)}
+              onDblclick={e => this.handleRowDblClick(e, row, rowIndex, rows)}
+            >
+            {
+              this.filterColgroups.map((column: Column, index: number) => {
+                const cellStyle = [
+                  resolveFixedColumnStyle(column, fixedoffset),
+                  ...formatPropAsArray(this.props.cellStyle, [column, index, row, rowIndex, this]),
+                ];
 
-        return [<tr
-          // @ts-ignore
-          style={rowStyle}
-          class={rowClass}
-          key={row[TABLE_ROW_ATTRIBUTE.ROW_UID]}
-          onClick={ e => this.handleRowClick(e, row, rowIndex, rows)}
-          onDblclick={e => this.handleRowDblClick(e, row, rowIndex, rows)}
-        >
-        {
-          this.filterColgroups.map((column: Column, index: number) => {
-            const cellStyle = [
-              resolveFixedColumnStyle(column, fixedoffset),
-              ...formatPropAsArray(this.props.cellStyle, [column, index, row, rowIndex, this]),
-            ];
+                const cellClass = [
+                  this.getColumnClass(column, index),
+                  ...formatPropAsArray(this.props.cellClass, [column, index, row, rowIndex, this]),
+                  { 'expand-row': row[TABLE_ROW_ATTRIBUTE.ROW_EXPAND] },
+                ];
 
-            const cellClass = [
-              this.getColumnClass(column, index),
-              ...formatPropAsArray(this.props.cellClass, [column, index, row, rowIndex, this]),
-              { 'expand-row': row[TABLE_ROW_ATTRIBUTE.ROW_EXPAND] },
-            ];
+                const tdCtxClass = {
+                  cell: true,
+                  'expand-cell': column.type === 'expand',
+                };
 
-            const tdCtxClass = {
-              cell: true,
-              'expand-cell': column.type === 'expand',
-            };
-
-            const cellKey = `__CELL_${rowIndex}_${index}`;
-            return <td
-            key={cellKey}
-            class={cellClass}
-            style={cellStyle}
-            colspan={1} rowspan={1}>
-            <div class={tdCtxClass} >{ this.renderCell(row, column, rowIndex, rows) }</div>
-          </td>;
-          })
-        }
-      </tr>, this.renderExpandRow(row, rowClass)];
+                const cellKey = `__CELL_${rowIndex}_${index}`;
+                return <td class={cellClass}
+                  style={cellStyle}
+                  key={cellKey}
+                  colspan={1} rowspan={1}>
+                  <div class={tdCtxClass} >{ this.renderCell(row, column, rowIndex, rows) }</div>
+                </td>;
+              })
+            }
+          </tr>
+          </TableRow>,
+          this.renderExpandRow(row, rowClass),
+        ];
       })
     }
   </tbody>;
@@ -371,11 +379,15 @@ export default class TableRender {
         ...rowClass,
         { row_expend: true },
       ];
-      return <tr class={resovledClass}>
-        <td colspan={ this.filterColgroups.length } rowspan={1}>
-          { this.context.slots.expandRow?.(row) ?? <div class='expand-cell-ctx'>Expand Row</div> }
-        </td>
-      </tr>;
+
+      const rowKey =  `${this.uuid}-${row[TABLE_ROW_ATTRIBUTE.ROW_UID]}_expand`;
+      return <TableRow key={rowKey}>
+        <tr class={resovledClass}>
+          <td colspan={ this.filterColgroups.length } rowspan={1}>
+            { this.context.slots.expandRow?.(row) ?? <div class='expand-cell-ctx'>Expand Row</div> }
+          </td>
+        </tr>
+      </TableRow>;
     }
   }
 

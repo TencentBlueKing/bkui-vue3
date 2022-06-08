@@ -24,7 +24,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent, onMounted, onUnmounted, ref, Teleport, watch } from 'vue';
+import { computed, defineComponent, onMounted, onUnmounted, ref, Teleport, watch } from 'vue';
 
 import { clickoutside } from '@bkui-vue/directives';
 
@@ -48,7 +48,7 @@ export default defineComponent({
   emits: EMIT_EVENT_TYPES,
 
   setup(props, ctx) {
-    const { content, theme, disableTeleport, width, height } = props;
+    const { content, theme, width, height, disableTeleport } = props;
     const refReference = ref();
     const refContent = ref();
     const refArrow = ref();
@@ -61,6 +61,7 @@ export default defineComponent({
       resolveTriggerEvents,
       updatePopover,
       resolvePopElements,
+      isElementFullScreen,
       cleanup,
     } = useFloating(props, ctx, refReference, refContent, refArrow);
 
@@ -145,7 +146,6 @@ export default defineComponent({
     const { prefixId } = usePopperId();
     const boundary = typeof props.boundary === 'string' ? props.boundary : prefixId;
     const handleClickOutside = (_e: MouseEvent) => {
-      console.log('handleClickOutside', localIsShow.value);
       ctx.emit(EMITEVENTS.CLICK_OUTSIDE, { isShow: localIsShow.value });
       if (props.disableOutsideClick || props.always || props.disabled || props.trigger === 'manual') {
         return;
@@ -155,6 +155,7 @@ export default defineComponent({
         hide();
       }
     };
+    const transBoundary = computed(() => !isElementFullScreen() && !disableTeleport);
 
     return {
       boundary,
@@ -164,7 +165,7 @@ export default defineComponent({
       refArrow,
       content,
       theme,
-      disableTeleport,
+      transBoundary,
       width,
       height,
       handleClickOutside,
@@ -176,7 +177,7 @@ export default defineComponent({
     <Reference ref="refReference">
       { this.$slots.default?.() ?? <span></span> }
     </Reference>
-    <Teleport to={ this.boundary } disabled={ this.disableTeleport }>
+    <Teleport to={ this.boundary } disabled={ !this.transBoundary }>
       <Content ref="refContent" data-theme={ this.theme } width={ this.width } height={ this.height }
       v-clickoutside={this.handleClickOutside}
       v-slots={ { arrow: () => (this.arrow ? <Arrow ref="refArrow">{ this.$slots.arrow?.() }</Arrow> : '') } }>
