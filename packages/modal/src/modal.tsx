@@ -57,6 +57,12 @@ export default defineComponent({
         display: this.visible ? 'inherit' : 'none',
       };
     },
+    fullscreenStyle(): any {
+      return {
+        width: `${100}%`,
+        height: `${100}%`,
+      };
+    },
   },
   watch: {
     isShow: {
@@ -81,6 +87,7 @@ export default defineComponent({
           const appendStyle = this.showMask ? {} : hideMaskStyle;
           bkPopIndexManager.show(this.$el, this.showMask, appendStyle, this.transfer);
           this.$emit('shown');
+          this.$emit('mask-close', this.$el);
         });
       } else {
         bkPopIndexManager.hide(this.$el, this.transfer);
@@ -99,8 +106,8 @@ export default defineComponent({
     const maxHeight = this.maxHeight ? { maxHeight: this.maxHeight } : {};
     const bodyClass = `bk-modal-body ${this.animateType === 'slide' ? this.direction : ''}`;
     return (
-      <div class={['bk-modal-wrapper', this.customClass]}
-        style={this.compStyle}>
+      <div class={['bk-modal-wrapper', this.extCls, this.size]}
+        style={[this.compStyle, this.fullscreen ? this.fullscreenStyle : '']}>
         <div class="bk-modal-outside" onClick={this.handleClickOutSide} v-show={this.isShow}>
         </div>
         <Transition name={this.animateType}>
@@ -109,7 +116,7 @@ export default defineComponent({
             {this.$slots.header?.() ?? ''}
           </div>
           <div class="bk-modal-content"
-            style={[this.dialogType === 'show' ? 'height: calc(100% - 74px);margin-bottom: 0px' : '', { ...maxHeight }]}>
+            style={[this.dialogType === 'show' ? 'padding-bottom: 20px' : '', { ...maxHeight }]}>
             {this.$slots.default?.() ?? ''}
           </div>
           {this.dialogType === 'show' ? '' : (

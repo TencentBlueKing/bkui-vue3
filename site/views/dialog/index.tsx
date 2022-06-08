@@ -104,7 +104,7 @@ const dialogPropsJson: IPropsTableItem[] = [
     optional: [],
   },
   {
-    name: 'customClass',
+    name: 'extCls',
     type: 'String | Array',
     default: '',
     desc: '配置自定义样式类名',
@@ -155,8 +155,8 @@ const dialogPropsJson: IPropsTableItem[] = [
   {
     name: 'size',
     type: 'String',
-    default: 'normal',
-    desc: '对话框尺寸，默认normal。',
+    default: '',
+    desc: '对话框尺寸',
     optional: ['normal', 'small', 'medium', 'large'],
   },
   {
@@ -254,6 +254,13 @@ const dialogChangeJson: IPropsTableItem[] = [
     type: 'Function',
     default: '',
     desc: '点击确认按钮时触发',
+    optional: [],
+  },
+  {
+    name: 'value-change',
+    type: 'Function',
+    default: '',
+    desc: '弹框显示状态变化的回调函数',
     optional: [],
   },
   {

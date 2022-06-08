@@ -64,7 +64,7 @@ export default defineComponent({
     // 按钮loading
     isLoading: PropTypes.bool.def(false),
   },
-  emits: ['closed', 'update:isShow', 'confirm', 'prev', 'next'],
+  emits: ['closed', 'update:isShow', 'confirm', 'prev', 'next', 'value-change'],
   setup(props: any, { emit }) {
     const data = reactive({
       positionX: 0,
@@ -95,6 +95,7 @@ export default defineComponent({
           data.positionY = 0;
         }, 250);
       }
+      emit('value-change', val);
     });
     // 关闭弹框
     const handleClose = () => {
@@ -120,6 +121,18 @@ export default defineComponent({
     // 下一步
     const handleNextStep = () => {
       emit('next');
+    };
+    // 点击遮罩关闭
+    const handleMaskClose = (val) => {
+      if (props.maskClose) {
+        let divChild;
+        val.onclick = e => divChild = e.target;
+        val.parentNode.onclick = (e) => {
+          if (divChild !== e.target) {
+            handleClose();
+          }
+        };
+      }
     };
     // 拖拽事件
     const moveHandler = (e) => {
@@ -174,6 +187,7 @@ export default defineComponent({
       moveHandler,
       handlePrevStep,
       handleNextStep,
+      handleMaskClose,
     };
   },
 
@@ -227,8 +241,8 @@ export default defineComponent({
     };
 
     const className = `bk-dialog-wrapper ${this.scrollable ? 'scroll-able' : ''} ${this.multiInstance ? 'multi-instance' : ''}`;
-    return <BkModal {...this.$props} class={[className, this.fullscreen ? 'bk-model-fullscreen' : this.size]}
-      style={this.data.moveStyle}>
+    return <BkModal {...this.$props} class={className}
+      style={this.data.moveStyle} onMaskClose={this.handleMaskClose}>
       {dialogSlot}
     </BkModal>;
   },
