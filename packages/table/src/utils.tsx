@@ -27,7 +27,7 @@
 import { throttle } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
-import { BORDER_OPRIONS, TABLE_ROW_ATTRIBUTE } from './const';
+import { BORDER_OPTION, BORDER_OPTIONS, TABLE_ROW_ATTRIBUTE } from './const';
 import { Column, GroupColumn, TablePropTypes } from './props';
 
 
@@ -122,7 +122,7 @@ export const resolvePropBorderToClassStr = (val: string | string[]) => {
   }
 
   if (Array.isArray(val)) {
-    defaultVal.push(...val.filter((str: string) => BORDER_OPRIONS.includes(str)));
+    defaultVal.push(...val.filter((str: string) => BORDER_OPTIONS.includes(str as BORDER_OPTION)));
   }
 
   return [...new Set(defaultVal)].map((item: string) => `bordered-${item}`)
@@ -145,11 +145,18 @@ export const getColumnReactWidth = (colmun: GroupColumn, orders = ['resizeWidth'
  * @param root 当前根元素
  * @param colgroups Columns配置
  * @param autoWidth 自动填充宽度
+ * @param offsetWidth 需要减掉的偏移量（滚动条|外层边框）
  */
-export const resolveColumnWidth = (root: HTMLElement, colgroups: GroupColumn[], autoWidth = 20) => {
+export const resolveColumnWidth = (
+  root: HTMLElement,
+  colgroups: GroupColumn[],
+  autoWidth = 20,
+  offsetWidth = 0,
+) => {
   const { width } = root.getBoundingClientRect() || {};
+  const availableWidth = width - offsetWidth;
   // 可用来平均的宽度
-  let avgWidth = width - 4;
+  let avgWidth = availableWidth;
 
   // 需要平均宽度的列数
   const avgColIndexList = [];
@@ -166,7 +173,7 @@ export const resolveColumnWidth = (root: HTMLElement, colgroups: GroupColumn[], 
     }
 
     if (/^\d+\.?\d*%$/.test(`${minWidth}`)) {
-      calcMinWidth = Number(minWidth) * width / 100;
+      calcMinWidth = Number(minWidth) * availableWidth / 100;
     }
 
     if (/^\d+\.?\d*px$/i.test(`${minWidth}`)) {
@@ -196,7 +203,8 @@ export const resolveColumnWidth = (root: HTMLElement, colgroups: GroupColumn[], 
 
   colgroups.forEach((col: GroupColumn, index: number) => {
     if (!col.isHidden) {
-      const colWidth = String(getColumnReactWidth(col));
+      const order = ['resizeWidth', 'width'];
+      const colWidth = String(getColumnReactWidth(col, order));
       let isAutoWidthCol = true;
       if (/^\d+\.?\d*(px)?$/.test(colWidth)) {
         const numWidth = Number(colWidth.replace('px', ''));
@@ -297,7 +305,7 @@ export const resolveHeadConfig = (props: TablePropTypes) => {
    */
 export const getRowText = (row: any, key: string, column: Column) => {
   if (column.type === 'index') {
-    return row[TABLE_ROW_ATTRIBUTE.ROW_INDEX];
+    return row[TABLE_ROW_ATTRIBUTE.ROW_INDEX] + 1;
   }
 
   return row[key];
@@ -333,8 +341,12 @@ export const isRenderScrollBottomLoading = (props: TablePropTypes) => {
   return typeof props.scrollLoading === 'boolean' || typeof props.scrollLoading === 'object';
 };
 
-export const getRowKey = (item: any, props: TablePropTypes) => {
+export const getRowKey = (item: any, props: TablePropTypes, index: number) => {
   if (typeof props.rowKey === 'string') {
+    if (props.rowKey === TABLE_ROW_ATTRIBUTE.ROW_INDEX) {
+      return `__ROW_INDEX_${index}`;
+    }
+
     const keys = props.rowKey.split('.');
     return keys.reduce((pre: any, cur: string) => {
       if (Object.prototype.hasOwnProperty.call(pre, cur)) {
@@ -350,4 +362,16 @@ export const getRowKey = (item: any, props: TablePropTypes) => {
   }
 
   return uuidv4();
+};
+
+
+export const hasRootScrollY =  (root) => {
+  if (root) {
+    const tableBody = root.querySelector('.bk-table-body table') as HTMLElement;
+    if (tableBody) {
+      return  tableBody.offsetHeight > root.offsetHeight;
+    }
+  }
+
+  return false;
 };

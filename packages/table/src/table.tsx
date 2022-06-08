@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { defineComponent, nextTick, onBeforeUnmount, onMounted, ref, watch, watchEffect } from 'vue';
 
 import { debounce, resolveClassName } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
@@ -45,6 +45,13 @@ export default defineComponent({
   props: tableProps,
   emits: EMIT_EVENT_TYPES,
   setup(props, ctx) {
+    let columnSortFn: any = null;
+    let columnFilterFn: any = null;
+
+    let observerIns = null;
+    const root = ref();
+    const refVirtualRender = ref();
+
     const {
       colgroups,
       dragOffsetXStyle,
@@ -53,14 +60,8 @@ export default defineComponent({
       renderFixedColumns,
       setRowExpand,
       initIndexData,
-      fixedWrapperClass } = useInit(props);
-
-    let columnSortFn: any = null;
-    let columnFilterFn: any = null;
-
-    let observerIns = null;
-    const root = ref();
-    const refVirtualRender = ref();
+      fixedWrapperClass,
+    } = useInit(props);
 
     const { pageData, localPagination, resolvePageData, watchEffectFn } = userPagination(props, indexData);
     const {
@@ -73,6 +74,7 @@ export default defineComponent({
       headStyle,
       updateBorderClass,
       resetTableHeight,
+      getColumnsWidthOffsetWidth,
       hasFooter,
     } = useClass(props, root, reactiveSchema, pageData);
 
@@ -86,6 +88,16 @@ export default defineComponent({
         updateBorderClass(root.value);
       });
     }, { immediate: true, deep: true });
+
+    /**
+     * 保证每次计算宽度正确
+     */
+    watchEffect(() => {
+      if (root?.value instanceof HTMLElement) {
+        const offset = getColumnsWidthOffsetWidth();
+        resolveColumnWidth(root.value, colgroups, 20, offset);
+      }
+    });
 
     /**
      * 监听Table 派发的相关事件
@@ -109,7 +121,8 @@ export default defineComponent({
     })
       .on(EVENTS.ON_SETTING_CHANGE, (args: any) => {
         const { checked = [], size, height } = args;
-        checked.length && resolveColumnWidth(root.value, colgroups, 20);
+        const offset = getColumnsWidthOffsetWidth();
+        checked.length && resolveColumnWidth(root.value, colgroups, 20, offset);
         refVirtualRender.value?.reset?.();
         ctx.emit(EMITEVENTS.SETTING_CHANGE, { checked, size, height });
       })
@@ -137,7 +150,6 @@ export default defineComponent({
 
     onMounted(() => {
       observerIns = observerResize(root.value, () => {
-        resolveColumnWidth(root.value, colgroups, 20);
         if (props.height === '100%') {
           resetTableHeight(root.value);
         }

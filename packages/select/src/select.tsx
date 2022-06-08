@@ -40,6 +40,7 @@ import { AngleUp, Close } from '@bkui-vue/icon';
 import Input from '@bkui-vue/input';
 import Loading from '@bkui-vue/loading';
 import BKPopover from '@bkui-vue/popover';
+import { PopoverPropTypes } from '@bkui-vue/popover/src/props';
 import {
   classes,
   PropTypes,
@@ -87,6 +88,8 @@ export default defineComponent({
     selectAllText: PropTypes.string.def('全部'),
     scrollLoading: PropTypes.bool.def(false),
     allowCreate: PropTypes.bool.def(false), // 是否运行创建自定义选项
+    popoverOptions: PropTypes.object.def({}), // popover属性
+    customContent: PropTypes.bool.def(false), // 是否自定义content内容
   },
   emits: ['update:modelValue', 'change', 'toggle', 'clear', 'scroll-end'],
   setup(props, { emit }) {
@@ -104,6 +107,7 @@ export default defineComponent({
       showOnInit,
       multipleMode,
       allowCreate,
+      customContent,
     } = toRefs(props);
 
     const formItem = useFormItem();
@@ -130,7 +134,7 @@ export default defineComponent({
       if (multipleMode.value === 'tag') {
         popoverRef.value?.update();
       }
-    });
+    }, { deep: true });
 
     // select组件是否禁用
     const isDisabled = computed(() => disabled.value || loading.value);
@@ -156,7 +160,8 @@ export default defineComponent({
     // 是否远程搜索
     const isRemoteSearch = computed(() => filterable.value && typeof remoteMethod.value === 'function');
     // 是否显示select下拉内容
-    const isShowSelectContent = computed(() => !(searchLoading.value || isOptionsEmpty.value || isSearchEmpty.value));
+    const isShowSelectContent = computed(() => !(searchLoading.value || isOptionsEmpty.value || isSearchEmpty.value)
+      || customContent.value);
     // 当前空状态时显示文案
     const curContentText = computed(() => {
       if (searchLoading.value) {
@@ -472,14 +477,24 @@ export default defineComponent({
       [this.size]: true,
       [this.behavior]: true,
     });
-    const modifiers = [
-      {
-        name: 'offset',
-        options: {
-          offset: [0, 4],
+    const popoverOptions: Partial<PopoverPropTypes> = Object.assign({
+      theme: 'light bk-select-popover',
+      trigger: 'manual',
+      width: this.popperWidth,
+      arrow: false,
+      placement: 'bottom',
+      isShow: this.isPopoverShow,
+      modifiers: [
+        {
+          name: 'offset',
+          options: {
+            offset: [0, 4],
+          },
         },
-      },
-    ];
+      ],
+      // boundary: 'body',
+      handleFirstUpdate: this.onPopoverFirstUpdate,
+    }, this.popoverOptions);
 
     const suffixIcon = () => {
       if (this.loading) {
@@ -543,12 +558,12 @@ export default defineComponent({
     const renderSelectContent = () => (
         <div>
           {
-          (!this.isShowSelectContent) && (
-          <div class="bk-select-empty">
-            {this.searchLoading
-            && <Loading class="mr5" loading={true} mode="spin" size="mini"></Loading>}
-            {this.curContentText}
-          </div>)
+            !this.isShowSelectContent
+            && (
+            <div class="bk-select-empty">
+              {this.searchLoading && <Loading class="mr5" loading={true} mode="spin" size="mini"></Loading>}
+              {this.curContentText}
+            </div>)
           }
           <div class="bk-select-content">
             <div class="bk-select-dropdown"
@@ -582,14 +597,7 @@ export default defineComponent({
       <div class={selectClass} v-clickoutside={this.handleClickOutside}>
         <BKPopover
           ref="popoverRef"
-          theme="light"
-          trigger="manual"
-          width={this.popperWidth}
-          arrow={false}
-          placement="bottom"
-          isShow={this.isPopoverShow}
-          modifiers={modifiers}
-          handleFirstUpdate={this.onPopoverFirstUpdate}>
+          {...popoverOptions}>
           {{
             default: () => renderSelectTrigger(),
             content: () => renderSelectContent(),

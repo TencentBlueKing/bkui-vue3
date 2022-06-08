@@ -1,38 +1,30 @@
 <template>
   <div>
     <bk-steps
+      :controllable="state.controllable"
+      :cur-step="state.curStep"
       :steps="state.objectSteps"
       class="mb20"
-    >
-      <span><error /></span>
-    </bk-steps>
-    <!-- <error /> -->
+      @click="stepChanged"
+    />
   </div>
 </template>
 <script>
-  import { defineComponent, reactive, ref } from 'vue';
+  import { defineComponent, reactive } from 'vue';
 
-  import { Error } from '@bkui-vue/icon';
+  import { Bk } from '@bkui-vue/icon';
 
   export default defineComponent({
-    components: {
-      Error,
-    },
     setup() {
-      const controllable = ref(true);
-
-      // const render = () => (
-      //   1
-      // );
-
       const state = reactive({
         objectSteps: [
-          { title: '测试一', icon: 1, description: '这是描述' },
+          { title: '测试一', icon: Bk, description: '这是描述' },
           { title: '测试二', icon: 2, description: '这是描述2', status: 'error' },
           { title: '测试三', icon: 3  },
           { title: '测试四' },
         ],
-        curStep: 2,
+        curStep: 1,
+        controllable: true,
       });
 
 
@@ -41,10 +33,8 @@
         state.curStep = index;
       };
       return {
-        controllable,
         state,
         stepChanged,
-        // render,
       };
     },
   });

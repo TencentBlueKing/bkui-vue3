@@ -12,6 +12,10 @@
   &.has-scroll-y {
     border-bottom: 1px solid @table-border-color;
 
+    .@{bk-prefix}-table-head {
+      padding-right: 4px;
+    }
+
     &.is-scroll-bottom {
       border-bottom: 1px solid transparent;
     }
@@ -127,6 +131,8 @@
             .cell {
               display: block;
               width: 100%;
+              align-items: center;
+              box-sizing: border-box;
             }
           }
 

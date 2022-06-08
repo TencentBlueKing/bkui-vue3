@@ -26,7 +26,6 @@
 
 import { defineComponent, reactive } from 'vue';
 
-import { Error } from '@bkui-vue/icon'; // Error, Help,
 import BkSteps from '@bkui-vue/steps';
 
 export default defineComponent({
@@ -34,9 +33,9 @@ export default defineComponent({
   setup() {
     const state = reactive({
       objectSteps: [
-        { title: '测试一', icon: <Error/>, description: '这是描述' },
-        { title: '测试二', icon: 2, description: '这是描述2' },
-        { title: '测试三', icon: <Error/>  },
+        { title: '测试一', description: '这是描述' },
+        { title: '测试二', description: '这是描述2' },
+        { title: '测试三'  },
         { title: '测试四' },
       ],
       curStep: 2,
