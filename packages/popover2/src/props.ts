@@ -69,12 +69,14 @@ export const PopoverProps = {
 
   zIndex: PropTypes.number.def(undefined),
 
-  disableTeleport: PropTypes.bool.def(false),
+  disableTeleport: PropTypes.bool.def(true),
 
   /**
    *  chooses the placement that has the most space available automatically
    */
   autoPlacement: PropTypes.bool.def(false),
+
+  autoVisibility: PropTypes.bool.def(false),
 
   /**
    * 是否禁用clickoutside
