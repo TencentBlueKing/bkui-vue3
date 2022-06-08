@@ -26,7 +26,7 @@
 import { defineComponent } from 'vue';
 
 export default defineComponent({
-  name: 'TableRow',
+  name: 'TableCell',
   render() {
     return <>{ this.$slots.default?.() }</>;
   },
