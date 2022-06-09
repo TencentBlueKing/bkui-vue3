@@ -56,7 +56,7 @@ export default defineComponent({
     const { disabled, value } = toRefs(props);
     const select = inject(selectKey, null);
     const group = inject(optionGroupKey, null);
-    const selected = computed<boolean>(() => select?.selected?.some(data => data.value === value.value));
+    const selected = computed<boolean>(() => select?.selected?.some(val => val === value.value));
     const multiple = computed<boolean>(() => select?.multiple);
     const isHover = computed(() => select?.activeOptionValue === value.value);
 
@@ -70,13 +70,13 @@ export default defineComponent({
     };
 
     onBeforeMount(() => {
-      select?.register(proxy);
-      group?.register(proxy);
+      select?.register(value.value, proxy);
+      group?.register(value.value, proxy);
     });
 
     onBeforeUnmount(() => {
-      select?.unregister(proxy);
-      group?.unregister(proxy);
+      select?.unregister(value.value);
+      group?.unregister(value.value);
     });
 
     return {
