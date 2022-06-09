@@ -119,9 +119,9 @@ export default defineComponent({
       }
     };
 
-    const { getPrefixId, resetFullscreenElementTag } = usePopperId();
+    const { getPrefixId, resetFullscreenElementTag } = usePopperId(props);
     const boundary = ref('');
-    boundary.value = typeof props.boundary === 'string' ? props.boundary : getPrefixId();
+    boundary.value = getPrefixId();
 
     const beforeInstanceUnmount = () => {
       if (typeof cleanup === 'function') {
@@ -133,8 +133,8 @@ export default defineComponent({
 
     const handleFullscrennChange = () => {
       isFullscreen.value = isElementFullScreen();
-      boundary.value = getPrefixId();
       resetFullscreenElementTag();
+      boundary.value = getPrefixId();
     };
 
     onMounted(() => {

@@ -27,28 +27,37 @@ import { v4 as uuidv4 } from 'uuid';
 
 let popContainerId = null;
 let fullscreenReferId = null;
-export default (prefix = '#') => {
+export default (props, prefix = '#') => {
   const getPrefixId = () => {
     if (document.fullscreenElement !== null) {
-      fullscreenReferId = `id_${uuidv4()}`;
-      document.fullscreenElement.setAttribute('data-fllsrn-id', fullscreenReferId);
       return `[data-fllsrn-id=${fullscreenReferId}]`;
+    }
+
+    if (typeof props.boundary === 'string') {
+      if (!isAvailableId(props.boundary)) {
+        console.error('props.boundary is not available selector');
+      }
+      return props.boundary;
     }
 
     return `${prefix}${popContainerId}`;
   };
 
-  const isAvaiableId = () => {
-    const container = document.querySelector(getPrefixId());
+  const isAvailableId = (query: string) => {
+    const container = document.querySelector(query);
     return container instanceof HTMLElement;
   };
 
-  if (popContainerId === null || !isAvaiableId()) {
+  if (popContainerId === null || !isAvailableId(`#${popContainerId}`)) {
     popContainerId = `id_${uuidv4()}`;
     const popContainer = document.createElement('div');
     popContainer.setAttribute('id', popContainerId);
     popContainer.setAttribute('data-popper-id', popContainerId);
     document.body.append(popContainer);
+  }
+
+  if (fullscreenReferId === null) {
+    fullscreenReferId = `id_${uuidv4()}`;
   }
 
   const resetFullscreenElementTag = () => {
@@ -58,6 +67,8 @@ export default (prefix = '#') => {
         .forEach((element: { removeAttribute: (arg0: string) => void; }) => {
           element.removeAttribute('data-fllsrn-id');
         });
+    } else {
+      document.fullscreenElement.setAttribute('data-fllsrn-id', fullscreenReferId);
     }
   };
 
