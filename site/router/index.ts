@@ -332,7 +332,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/timeline',
     name: 'timeline',
-    component: () => import('../views/timeline'),
+    component: () => import('../views/timeline/index'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'Timeline 时间轴',
