@@ -26,15 +26,58 @@
 import { v4 as uuidv4 } from 'uuid';
 
 let popContainerId = null;
-export default (prefix = '#') => {
-  const getPrefixId = () => `${prefix}${popContainerId}`;
+let fullscreenReferId = null;
+let parentNodeReferId = null;
+export default (props, prefix = '#') => {
+  const getPrefixId = (isfullscreen = false, root?) => {
+    let resolvedBoundary = null;
+    const reolveBoudary = (fn: () => void) => {
+      if (resolvedBoundary === null) {
+        fn();
+      }
+    };
+    const resolveParentBoundary = () => {
+      if (/^parent$/i.test(props.boundary)) {
+        resolvedBoundary = `${prefix}${popContainerId}`;
+        const { parentNode } = root || {};
+        if (parentNode?.parentNode) {
+          parentNode.parentNode.setAttribute('data-pnode-id', parentNodeReferId);
+          resolvedBoundary = `[data-pnode-id=${parentNodeReferId}]`;
+        }
+      }
+    };
 
-  const isAvaiableId = () => {
-    const container = document.querySelector(getPrefixId());
+    const resolveFullScreenBoundary = () => {
+      if (isfullscreen) {
+        resolvedBoundary = `[data-fllsrn-id=${fullscreenReferId}]`;
+      }
+    };
+
+    const resolveCommonBoundary = () => {
+      if (!/^body$/i.test(props.boundary) && typeof props.boundary === 'string') {
+        if (!isAvailableId(props.boundary)) {
+          console.error('props.boundary is not available selector');
+        }
+        resolvedBoundary = props.boundary;
+      }
+    };
+
+    reolveBoudary(resolveParentBoundary);
+    reolveBoudary(resolveCommonBoundary);
+    reolveBoudary(resolveFullScreenBoundary);
+    reolveBoudary(() => {
+      resolvedBoundary = typeof props.boundary === 'string' ? props.boundary : `${prefix}${popContainerId}`;
+    });
+
+    return resolvedBoundary;
+  };
+
+  const isAvailableId = (query: string) => {
+    const container = document.querySelector(query);
     return container instanceof HTMLElement;
   };
 
-  if (popContainerId === null || !isAvaiableId()) {
+  if (popContainerId === null || !isAvailableId(`#${popContainerId}`)) {
     popContainerId = `id_${uuidv4()}`;
     const popContainer = document.createElement('div');
     popContainer.setAttribute('id', popContainerId);
@@ -42,8 +85,30 @@ export default (prefix = '#') => {
     document.body.append(popContainer);
   }
 
+  if (fullscreenReferId === null) {
+    fullscreenReferId = `id_${uuidv4()}`;
+  }
+
+  if (parentNodeReferId === null) {
+    parentNodeReferId = `id_${uuidv4()}`;
+  }
+
+  const resetFullscreenElementTag = () => {
+    if (document.fullscreenElement === null) {
+      const query = `[data-fllsrn-id=${fullscreenReferId}]`;
+      (document.querySelectorAll(query) ?? [])
+        .forEach((element: { removeAttribute: (arg0: string) => void; }) => {
+          element.removeAttribute('data-fllsrn-id');
+        });
+    } else {
+      document.fullscreenElement.setAttribute('data-fllsrn-id', fullscreenReferId);
+    }
+  };
+
   return {
     popContainerId,
     prefixId: getPrefixId(),
+    getPrefixId,
+    resetFullscreenElementTag,
   };
 };
