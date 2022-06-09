@@ -27,20 +27,49 @@ import { v4 as uuidv4 } from 'uuid';
 
 let popContainerId = null;
 let fullscreenReferId = null;
+let parentNodeReferId = null;
 export default (props, prefix = '#') => {
-  const getPrefixId = () => {
-    if (document.fullscreenElement !== null) {
-      return `[data-fllsrn-id=${fullscreenReferId}]`;
-    }
-
-    if (typeof props.boundary === 'string') {
-      if (!isAvailableId(props.boundary)) {
-        console.error('props.boundary is not available selector');
+  const getPrefixId = (isfullscreen = false, root?) => {
+    let resolvedBoundary = null;
+    const reolveBoudary = (fn: () => void) => {
+      if (resolvedBoundary === null) {
+        fn();
       }
-      return props.boundary;
-    }
+    };
+    const resolveParentBoundary = () => {
+      if (/^parent$/i.test(props.boundary)) {
+        resolvedBoundary = `${prefix}${popContainerId}`;
+        const { parentNode } = root || {};
+        if (parentNode?.parentNode) {
+          parentNode.parentNode.setAttribute('data-pnode-id', parentNodeReferId);
+          resolvedBoundary = `[data-pnode-id=${parentNodeReferId}]`;
+        }
+      }
+    };
 
-    return `${prefix}${popContainerId}`;
+    const resolveFullScreenBoundary = () => {
+      if (isfullscreen) {
+        resolvedBoundary = `[data-fllsrn-id=${fullscreenReferId}]`;
+      }
+    };
+
+    const resolveCommonBoundary = () => {
+      if (!/^body$/i.test(props.boundary) && typeof props.boundary === 'string') {
+        if (!isAvailableId(props.boundary)) {
+          console.error('props.boundary is not available selector');
+        }
+        resolvedBoundary = props.boundary;
+      }
+    };
+
+    reolveBoudary(resolveParentBoundary);
+    reolveBoudary(resolveCommonBoundary);
+    reolveBoudary(resolveFullScreenBoundary);
+    reolveBoudary(() => {
+      resolvedBoundary = typeof props.boundary === 'string' ? props.boundary : `${prefix}${popContainerId}`;
+    });
+
+    return resolvedBoundary;
   };
 
   const isAvailableId = (query: string) => {
@@ -58,6 +87,10 @@ export default (props, prefix = '#') => {
 
   if (fullscreenReferId === null) {
     fullscreenReferId = `id_${uuidv4()}`;
+  }
+
+  if (parentNodeReferId === null) {
+    parentNodeReferId = `id_${uuidv4()}`;
   }
 
   const resetFullscreenElementTag = () => {

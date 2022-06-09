@@ -41,9 +41,12 @@ import {
 import { PopoverPropTypes } from './props';
 
 
-export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow) => {
+export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow, refRoot) => {
   const localIsShow = ref(false);
-  const isElementFullScreen = () => document.fullscreenElement !== null;
+  const isElementFullScreen = () => {
+    const elReference = resolveTargetElement(refReference.value?.$el);
+    return document.fullscreenElement?.contains(elReference);
+  };
 
   const themeList = ['dark', 'light'];
   const compTheme = computed(() => {
@@ -60,8 +63,8 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
     const elReference = resolveTargetElement(refReference.value?.$el);
     const elContent = resolveTargetElement(refContent.value?.$el);
     const elArrow = props.arrow ? resolveTargetElement(refArrow.value?.$el) : null;
-
-    return { elReference, elContent, elArrow };
+    const root = resolveTargetElement(refRoot.value?.$el);
+    return { elReference, elContent, elArrow, root };
   };
 
   const resolvePopOptions = (elArrow: any) => {
@@ -123,11 +126,12 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
       transform: `translate3d(${getRoundPixelVal(x)}px,${getRoundPixelVal(y)}px,0)`,
     });
 
+    const referenceHidden = isHideMiddlewareAvailable() ? middlewareData.hide?.referenceHidden : false;
+    Object.assign(elContent.style, {
+      visibility: referenceHidden ? 'hidden' : 'visible',
+    });
     if (isHideMiddlewareAvailable()) {
-      const { referenceHidden } = middlewareData.hide;
-      Object.assign(elContent.style, {
-        visibility: referenceHidden ? 'hidden' : 'visible',
-      });
+
     }
   };
 
@@ -152,6 +156,10 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
 
 
   const updatePopover = () => {
+    if (typeof cleanup === 'function') {
+      cleanup();
+    }
+
     const { elReference, elContent, elArrow } = resolvePopElements();
     const options = resolvePopOptions(elArrow);
     cleanup = autoUpdate(elReference, elContent, () => {
@@ -241,6 +249,7 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
     triggerPopover,
     resolvePopElements,
     isElementFullScreen,
+    resolveTargetElement,
     localIsShow,
     cleanup,
   };
