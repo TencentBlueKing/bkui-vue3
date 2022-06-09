@@ -24,7 +24,6 @@
 
   import BkButton from '@bkui-vue/button';
   import BkDialog from '@bkui-vue/dialog';
-
   const exampleSetting = ref({
     dialog: {
       isShow: false,
