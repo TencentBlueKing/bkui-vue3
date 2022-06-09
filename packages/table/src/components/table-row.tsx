@@ -25,71 +25,9 @@
 */
 import { defineComponent } from 'vue';
 
-// import { formatPropAsArray } from '../utils';
-
 export default defineComponent({
-  props: {
-    // row:
-  },
-  setup() {
-    // const getRowHeight = (row?: any, rowIndex?: number) => {
-    //   const { size, height } = this.setting;
-    //   if (height !== null && height !== undefined) {
-    //     return resolvePropVal(this.setting, 'height', ['tbody', row, rowIndex, size]);
-    //   }
-    //   return resolvePropVal(this.props, 'rowHeight', ['tbody', row, rowIndex]);
-    // };
-    // const rowStyle = [
-    //   ...formatPropAsArray(this.props.rowStyle, [row, rowIndex, this]),
-    //   {
-    //     '--row-height': `${getRowHeight(row, rowIndex)}px`,
-    //   },
-    // ];
-
-    // const rowClass = [
-    //   ...formatPropAsArray(this.props.rowClass, [row, rowIndex, this]),
-    // ];
-
-    // const { resolveFixedColumnStyle,  fixedoffset } = getFixedColumnStyleResolve();
-  },
+  name: 'TableRow',
   render() {
-    return <div></div>;
-    //     return <tr
-    //     // @ts-ignore
-    //     style={rowStyle}
-    //     class={rowClass}
-    //     key={row[TABLE_ROW_ATTRIBUTE.ROW_UID]}
-    //     onClick={ e => this.handleRowClick(e, row, rowIndex, rows)}
-    //     onDblclick={e => this.handleRowDblClick(e, row, rowIndex, rows)}
-    //   >
-    //   {
-    //     this.filterColgroups.map((column: Column, index: number) => {
-    //       const cellStyle = [
-    //         resolveFixedColumnStyle(column, fixedoffset),
-    //         ...formatPropAsArray(this.props.cellStyle, [column, index, row, rowIndex, this]),
-    //       ];
-
-    //       const cellClass = [
-    //         this.getColumnClass(column, index),
-    //         ...formatPropAsArray(this.props.cellClass, [column, index, row, rowIndex, this]),
-    //         { 'expand-row': row[TABLE_ROW_ATTRIBUTE.ROW_EXPAND] },
-    //       ];
-
-    //       const tdCtxClass = {
-    //         cell: true,
-    //         'expand-cell': column.type === 'expand',
-    //       };
-
-    //       const cellKey = `__CELL_${rowIndex}_${index}`;
-    //       return <td
-    //       key={cellKey}
-    //       class={cellClass}
-    //       style={cellStyle}
-    //       colspan={1} rowspan={1}>
-    //       <div class={tdCtxClass} >{ this.renderCell(row, column, rowIndex, rows) }</div>
-    //     </td>;
-    //     })
-    //   }
-    // </tr>;
+    return <>{ this.$slots.default?.() }</>;
   },
 });

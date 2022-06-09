@@ -33,13 +33,14 @@ import { EMIT_EVENT_TYPES, EMITEVENTS } from './const';
 import Content from './content';
 import { PopoverProps } from './props';
 import Reference from './reference';
+import Root from './root';
 import useFloating from './use-floating';
 import usePopperId from './use-popper-id';
 
 export default defineComponent({
   name: 'Popover2',
   components: {
-    Content, Arrow,
+    Content, Arrow, Root,
   },
   directives: {
     clickoutside,
@@ -52,6 +53,8 @@ export default defineComponent({
     const refReference = ref();
     const refContent = ref();
     const refArrow = ref();
+    const refRoot = ref();
+    const isFullscreen = ref(false);
     let storeEvents = null;
 
     const {
@@ -63,7 +66,7 @@ export default defineComponent({
       resolvePopElements,
       isElementFullScreen,
       cleanup,
-    } = useFloating(props, ctx, refReference, refContent, refArrow);
+    } = useFloating(props, ctx, refReference, refContent, refArrow, refRoot);
 
     const show = () => {
       showPopover();
@@ -96,7 +99,6 @@ export default defineComponent({
       }
     });
 
-
     const addEventToReferenceEl = () => {
       const { elReference } = resolvePopElements();
       storeEvents = resolveTriggerEvents();
@@ -118,6 +120,15 @@ export default defineComponent({
       }
     };
 
+    const updateBoundary = () => {
+      const { elReference, root } = resolvePopElements();
+      boundary.value = getPrefixId(isFullscreen.value, root || elReference);
+    };
+
+    const { getPrefixId, resetFullscreenElementTag } = usePopperId(props, '#');
+    const boundary = ref();
+    updateBoundary();
+
     const beforeInstanceUnmount = () => {
       if (typeof cleanup === 'function') {
         cleanup();
@@ -126,16 +137,27 @@ export default defineComponent({
       removeEventListener();
     };
 
+    const handleFullscrennChange = () => {
+      isFullscreen.value = isElementFullScreen();
+      resetFullscreenElementTag();
+      updateBoundary();
+      updatePopover();
+    };
+
     onMounted(() => {
       if (props.disabled) {
         return;
       }
 
       createPopInstance();
+      updateBoundary();
+
+      document.body.addEventListener('fullscreenchange', handleFullscrennChange);
     });
 
     onUnmounted(() => {
       beforeInstanceUnmount();
+      document.body.removeEventListener('fullscreenchange', handleFullscrennChange);
     });
 
     ctx.expose({
@@ -143,8 +165,6 @@ export default defineComponent({
       hide,
     });
 
-    const { prefixId } = usePopperId();
-    const boundary = typeof props.boundary === 'string' ? props.boundary : prefixId;
     const handleClickOutside = (_e: MouseEvent) => {
       ctx.emit(EMITEVENTS.CLICK_OUTSIDE, { isShow: localIsShow.value });
       if (props.disableOutsideClick || props.always || props.disabled || props.trigger === 'manual') {
@@ -155,7 +175,7 @@ export default defineComponent({
         hide();
       }
     };
-    const transBoundary = computed(() => !isElementFullScreen() && !disableTeleport);
+    const transBoundary = computed(() => (isFullscreen.value || !disableTeleport) && typeof boundary.value === 'string');
 
     return {
       boundary,
@@ -173,17 +193,17 @@ export default defineComponent({
   },
 
   render() {
-    return <>
-    <Reference ref="refReference">
-      { this.$slots.default?.() ?? <span></span> }
-    </Reference>
-    <Teleport to={ this.boundary } disabled={ !this.transBoundary }>
-      <Content ref="refContent" data-theme={ this.theme } width={ this.width } height={ this.height }
-      v-clickoutside={this.handleClickOutside}
-      v-slots={ { arrow: () => (this.arrow ? <Arrow ref="refArrow">{ this.$slots.arrow?.() }</Arrow> : '') } }>
-        { this.$slots.content?.() ?? this.content }
-      </Content>
-    </Teleport>
-    </>;
+    return <Root ref="refRoot">
+      <Reference ref="refReference">
+        { this.$slots.default?.() ?? <span></span> }
+      </Reference>
+      <Teleport to={ this.boundary } disabled={ !this.transBoundary }>
+        <Content ref="refContent" data-theme={ this.theme } width={ this.width } height={ this.height }
+        v-clickoutside={this.handleClickOutside}
+        v-slots={ { arrow: () => (this.arrow ? <Arrow ref="refArrow">{ this.$slots.arrow?.() }</Arrow> : '') } }>
+          { this.$slots.content?.() ?? this.content }
+        </Content>
+      </Teleport>
+    </Root>;
   },
 });

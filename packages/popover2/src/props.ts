@@ -69,14 +69,17 @@ export const PopoverProps = {
 
   zIndex: PropTypes.number.def(undefined),
 
-  disableTeleport: PropTypes.bool.def(true),
+  disableTeleport: PropTypes.bool.def(false),
 
   /**
    *  chooses the placement that has the most space available automatically
    */
   autoPlacement: PropTypes.bool.def(false),
 
-  autoVisibility: PropTypes.bool.def(false),
+  /**
+   * 当有滚动条，滚动出可是范围时自动隐藏pop
+   */
+  autoVisibility: PropTypes.bool.def(true),
 
   /**
    * 是否禁用clickoutside

@@ -52,16 +52,17 @@ export default defineComponent({
     collapse: PropTypes.bool.def(false), // 是否折叠初始状态
   },
   setup(props, { emit }) {
-    const { proxy } = getCurrentInstance() as any;
+    const instance = getCurrentInstance();
+    const { proxy } = instance as any;
     const select = inject(selectKey, null);
 
     const states = reactive({
       groupCollapse: props.collapse,
       visible: true,
     });
-    const options = ref<Array<OptionInstanceType>>([]);
-    const { register, unregister } = useRegistry<OptionInstanceType>(options);
-    const groupLabel = computed(() => `${props.label} (${[...options.value.values()].filter(option => option.visible).length})`);
+    const optionsMap = ref<Map<any, OptionInstanceType>>(new Map());
+    const { register, unregister } = useRegistry<OptionInstanceType>(optionsMap);
+    const groupLabel = computed(() => `${props.label} (${[...optionsMap.value.values()].filter(option => option.visible).length})`);
 
     const handleToggleCollapse = () => {
       if (!props.collapsible || props.disabled) return;
@@ -81,11 +82,11 @@ export default defineComponent({
     );
 
     onBeforeMount(() => {
-      select?.registerGroup(proxy);
+      select?.registerGroup(instance.uid, proxy);
     });
 
     onBeforeUnmount(() => {
-      select?.unregisterGroup(proxy);
+      select?.unregisterGroup(instance.uid);
     });
 
     return {
