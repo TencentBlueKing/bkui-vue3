@@ -52,6 +52,7 @@ export default defineComponent({
     const refReference = ref();
     const refContent = ref();
     const refArrow = ref();
+    const isFullscreen = ref(false);
     let storeEvents = null;
 
     const {
@@ -118,6 +119,10 @@ export default defineComponent({
       }
     };
 
+    const { getPrefixId, resetFullscreenElementTag } = usePopperId();
+    const boundary = ref('');
+    boundary.value = typeof props.boundary === 'string' ? props.boundary : getPrefixId();
+
     const beforeInstanceUnmount = () => {
       if (typeof cleanup === 'function') {
         cleanup();
@@ -126,16 +131,24 @@ export default defineComponent({
       removeEventListener();
     };
 
+    const handleFullscrennChange = () => {
+      isFullscreen.value = isElementFullScreen();
+      boundary.value = getPrefixId();
+      resetFullscreenElementTag();
+    };
+
     onMounted(() => {
       if (props.disabled) {
         return;
       }
 
       createPopInstance();
+      document.body.addEventListener('fullscreenchange', handleFullscrennChange);
     });
 
     onUnmounted(() => {
       beforeInstanceUnmount();
+      document.body.removeEventListener('fullscreenchange', handleFullscrennChange);
     });
 
     ctx.expose({
@@ -143,8 +156,7 @@ export default defineComponent({
       hide,
     });
 
-    const { prefixId } = usePopperId();
-    const boundary = typeof props.boundary === 'string' ? props.boundary : prefixId;
+
     const handleClickOutside = (_e: MouseEvent) => {
       ctx.emit(EMITEVENTS.CLICK_OUTSIDE, { isShow: localIsShow.value });
       if (props.disableOutsideClick || props.always || props.disabled || props.trigger === 'manual') {
@@ -155,7 +167,7 @@ export default defineComponent({
         hide();
       }
     };
-    const transBoundary = computed(() => !isElementFullScreen() && !disableTeleport);
+    const transBoundary = computed(() => isFullscreen.value || !disableTeleport);
 
     return {
       boundary,

@@ -40,6 +40,7 @@ export default defineComponent({
     };
   },
 
+
   methods: {
     renderCell({ row, column }) {
       return <bk-input v-model={ row[column.field] }></bk-input>;

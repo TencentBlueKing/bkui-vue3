@@ -26,8 +26,17 @@
 import { v4 as uuidv4 } from 'uuid';
 
 let popContainerId = null;
+let fullscreenReferId = null;
 export default (prefix = '#') => {
-  const getPrefixId = () => `${prefix}${popContainerId}`;
+  const getPrefixId = () => {
+    if (document.fullscreenElement !== null) {
+      fullscreenReferId = `id_${uuidv4()}`;
+      document.fullscreenElement.setAttribute('data-fllsrn-id', fullscreenReferId);
+      return `[data-fllsrn-id=${fullscreenReferId}]`;
+    }
+
+    return `${prefix}${popContainerId}`;
+  };
 
   const isAvaiableId = () => {
     const container = document.querySelector(getPrefixId());
@@ -42,8 +51,20 @@ export default (prefix = '#') => {
     document.body.append(popContainer);
   }
 
+  const resetFullscreenElementTag = () => {
+    if (document.fullscreenElement === null) {
+      const query = `[data-fllsrn-id=${fullscreenReferId}]`;
+      (document.querySelectorAll(query) ?? [])
+        .forEach((element: { removeAttribute: (arg0: string) => void; }) => {
+          element.removeAttribute('data-fllsrn-id');
+        });
+    }
+  };
+
   return {
     popContainerId,
     prefixId: getPrefixId(),
+    getPrefixId,
+    resetFullscreenElementTag,
   };
 };
