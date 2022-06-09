@@ -47,6 +47,13 @@ const timelineProps: IPropsTableItem[] = [
     optional: ['-'],
   },
   {
+    name: 'list[].border',
+    type: 'Boolean',
+    default: 'true',
+    desc: '是否需要边框',
+    optional: ['true', 'false'],
+  },
+  {
     name: 'list[].tag',
     type: 'String',
     default: '-',
