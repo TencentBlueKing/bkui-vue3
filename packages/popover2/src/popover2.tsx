@@ -52,6 +52,7 @@ export default defineComponent({
     const refReference = ref();
     const refContent = ref();
     const refArrow = ref();
+    const isFullscreen = ref(false);
     let storeEvents = null;
 
     const {
@@ -96,7 +97,6 @@ export default defineComponent({
       }
     });
 
-
     const addEventToReferenceEl = () => {
       const { elReference } = resolvePopElements();
       storeEvents = resolveTriggerEvents();
@@ -118,6 +118,10 @@ export default defineComponent({
       }
     };
 
+    const { getPrefixId, resetFullscreenElementTag } = usePopperId(props);
+    const boundary = ref('');
+    boundary.value = getPrefixId();
+
     const beforeInstanceUnmount = () => {
       if (typeof cleanup === 'function') {
         cleanup();
@@ -126,16 +130,24 @@ export default defineComponent({
       removeEventListener();
     };
 
+    const handleFullscrennChange = () => {
+      isFullscreen.value = isElementFullScreen();
+      resetFullscreenElementTag();
+      boundary.value = getPrefixId();
+    };
+
     onMounted(() => {
       if (props.disabled) {
         return;
       }
 
       createPopInstance();
+      document.body.addEventListener('fullscreenchange', handleFullscrennChange);
     });
 
     onUnmounted(() => {
       beforeInstanceUnmount();
+      document.body.removeEventListener('fullscreenchange', handleFullscrennChange);
     });
 
     ctx.expose({
@@ -143,8 +155,6 @@ export default defineComponent({
       hide,
     });
 
-    const { prefixId } = usePopperId();
-    const boundary = typeof props.boundary === 'string' ? props.boundary : prefixId;
     const handleClickOutside = (_e: MouseEvent) => {
       ctx.emit(EMITEVENTS.CLICK_OUTSIDE, { isShow: localIsShow.value });
       if (props.disableOutsideClick || props.always || props.disabled || props.trigger === 'manual') {
@@ -155,7 +165,7 @@ export default defineComponent({
         hide();
       }
     };
-    const transBoundary = computed(() => !isElementFullScreen() && !disableTeleport);
+    const transBoundary = computed(() => isFullscreen.value || !disableTeleport);
 
     return {
       boundary,
@@ -174,16 +184,16 @@ export default defineComponent({
 
   render() {
     return <>
-    <Reference ref="refReference">
-      { this.$slots.default?.() ?? <span></span> }
-    </Reference>
-    <Teleport to={ this.boundary } disabled={ !this.transBoundary }>
-      <Content ref="refContent" data-theme={ this.theme } width={ this.width } height={ this.height }
-      v-clickoutside={this.handleClickOutside}
-      v-slots={ { arrow: () => (this.arrow ? <Arrow ref="refArrow">{ this.$slots.arrow?.() }</Arrow> : '') } }>
-        { this.$slots.content?.() ?? this.content }
-      </Content>
-    </Teleport>
+      <Reference ref="refReference">
+        { this.$slots.default?.() ?? <span></span> }
+      </Reference>
+      <Teleport to={ this.boundary } disabled={ !this.transBoundary }>
+        <Content ref="refContent" data-theme={ this.theme } width={ this.width } height={ this.height }
+        v-clickoutside={this.handleClickOutside}
+        v-slots={ { arrow: () => (this.arrow ? <Arrow ref="refArrow">{ this.$slots.arrow?.() }</Arrow> : '') } }>
+          { this.$slots.content?.() ?? this.content }
+        </Content>
+      </Teleport>
     </>;
   },
 });
