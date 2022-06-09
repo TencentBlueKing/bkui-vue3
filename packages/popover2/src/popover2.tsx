@@ -33,13 +33,14 @@ import { EMIT_EVENT_TYPES, EMITEVENTS } from './const';
 import Content from './content';
 import { PopoverProps } from './props';
 import Reference from './reference';
+import Root from './root';
 import useFloating from './use-floating';
 import usePopperId from './use-popper-id';
 
 export default defineComponent({
   name: 'Popover2',
   components: {
-    Content, Arrow,
+    Content, Arrow, Root,
   },
   directives: {
     clickoutside,
@@ -52,6 +53,7 @@ export default defineComponent({
     const refReference = ref();
     const refContent = ref();
     const refArrow = ref();
+    const refRoot = ref();
     const isFullscreen = ref(false);
     let storeEvents = null;
 
@@ -64,7 +66,7 @@ export default defineComponent({
       resolvePopElements,
       isElementFullScreen,
       cleanup,
-    } = useFloating(props, ctx, refReference, refContent, refArrow);
+    } = useFloating(props, ctx, refReference, refContent, refArrow, refRoot);
 
     const show = () => {
       showPopover();
@@ -118,9 +120,14 @@ export default defineComponent({
       }
     };
 
-    const { getPrefixId, resetFullscreenElementTag } = usePopperId(props);
-    const boundary = ref('');
-    boundary.value = getPrefixId();
+    const updateBoundary = () => {
+      const { elReference, root } = resolvePopElements();
+      boundary.value = getPrefixId(isFullscreen.value, root || elReference);
+    };
+
+    const { getPrefixId, resetFullscreenElementTag } = usePopperId(props, '#');
+    const boundary = ref();
+    updateBoundary();
 
     const beforeInstanceUnmount = () => {
       if (typeof cleanup === 'function') {
@@ -133,7 +140,8 @@ export default defineComponent({
     const handleFullscrennChange = () => {
       isFullscreen.value = isElementFullScreen();
       resetFullscreenElementTag();
-      boundary.value = getPrefixId();
+      updateBoundary();
+      updatePopover();
     };
 
     onMounted(() => {
@@ -142,6 +150,8 @@ export default defineComponent({
       }
 
       createPopInstance();
+      updateBoundary();
+
       document.body.addEventListener('fullscreenchange', handleFullscrennChange);
     });
 
@@ -165,7 +175,7 @@ export default defineComponent({
         hide();
       }
     };
-    const transBoundary = computed(() => isFullscreen.value || !disableTeleport);
+    const transBoundary = computed(() => (isFullscreen.value || !disableTeleport) && typeof boundary.value === 'string');
 
     return {
       boundary,
@@ -183,7 +193,7 @@ export default defineComponent({
   },
 
   render() {
-    return <>
+    return <Root ref="refRoot">
       <Reference ref="refReference">
         { this.$slots.default?.() ?? <span></span> }
       </Reference>
@@ -194,6 +204,6 @@ export default defineComponent({
           { this.$slots.content?.() ?? this.content }
         </Content>
       </Teleport>
-    </>;
+    </Root>;
   },
 });
