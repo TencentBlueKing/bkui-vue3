@@ -11,6 +11,7 @@
       :is-show="exampleSetting.dialog.isShow"
       :title="'描述'"
       :size="'medium'"
+      :quick-close="false"
       @closed="() => exampleSetting.dialog.isShow = false"
       @confirm="() => exampleSetting.dialog.isShow = false"
     >
@@ -27,6 +28,7 @@
 
     <bk-dialog
       :is-show="nestedDialog1.isShow"
+      :quick-close="false"
       @closed="() => nestedDialog1.isShow = false"
       @confirm="() => nestedDialog1.isShow = false"
     >
