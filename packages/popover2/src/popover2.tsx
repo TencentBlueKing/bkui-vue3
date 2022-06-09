@@ -97,7 +97,6 @@ export default defineComponent({
       }
     });
 
-
     const addEventToReferenceEl = () => {
       const { elReference } = resolvePopElements();
       storeEvents = resolveTriggerEvents();
@@ -156,7 +155,6 @@ export default defineComponent({
       hide,
     });
 
-
     const handleClickOutside = (_e: MouseEvent) => {
       ctx.emit(EMITEVENTS.CLICK_OUTSIDE, { isShow: localIsShow.value });
       if (props.disableOutsideClick || props.always || props.disabled || props.trigger === 'manual') {
@@ -186,16 +184,16 @@ export default defineComponent({
 
   render() {
     return <>
-    <Reference ref="refReference">
-      { this.$slots.default?.() ?? <span></span> }
-    </Reference>
-    <Teleport to={ this.boundary } disabled={ !this.transBoundary }>
-      <Content ref="refContent" data-theme={ this.theme } width={ this.width } height={ this.height }
-      v-clickoutside={this.handleClickOutside}
-      v-slots={ { arrow: () => (this.arrow ? <Arrow ref="refArrow">{ this.$slots.arrow?.() }</Arrow> : '') } }>
-        { this.$slots.content?.() ?? this.content }
-      </Content>
-    </Teleport>
+      <Reference ref="refReference">
+        { this.$slots.default?.() ?? <span></span> }
+      </Reference>
+      <Teleport to={ this.boundary } disabled={ !this.transBoundary }>
+        <Content ref="refContent" data-theme={ this.theme } width={ this.width } height={ this.height }
+        v-clickoutside={this.handleClickOutside}
+        v-slots={ { arrow: () => (this.arrow ? <Arrow ref="refArrow">{ this.$slots.arrow?.() }</Arrow> : '') } }>
+          { this.$slots.content?.() ?? this.content }
+        </Content>
+      </Teleport>
     </>;
   },
 });
