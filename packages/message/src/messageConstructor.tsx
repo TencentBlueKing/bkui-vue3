@@ -27,7 +27,7 @@
 import { computed, defineComponent, onMounted, onUnmounted, ref, Transition, watch } from 'vue';
 
 import { Close, Error, Info, Success, Warn } from '@bkui-vue/icon';
-import { bkZIndexManager, PropTypes } from '@bkui-vue/shared';
+import { bkZIndexManager, isElement, PropTypes } from '@bkui-vue/shared';
 
 const messageProps = {
   id: PropTypes.string.def(''),
@@ -39,6 +39,7 @@ const messageProps = {
   spacing: PropTypes.number.def(10),
   extCls: PropTypes.string.def(''),
   onClose: PropTypes.func,
+  getContainer: PropTypes.instanceOf(HTMLElement),
 };
 
 export default defineComponent({
@@ -53,9 +54,11 @@ export default defineComponent({
     ]);
     const zIndex = bkZIndexManager.getMessageNextIndex();
 
+    const isGetContainer = computed<boolean>(() => props.getContainer && isElement(props.getContainer));
     const styles = computed(() => ({
       top: `${props.offsetY}px`,
       zIndex,
+      position: (isGetContainer.value ? 'absolute' : 'fixed') as ('absolute' | 'fixed'),
     }));
 
     const visible = ref(false);
