@@ -62,18 +62,19 @@ export function useHover() {
   };
 }
 
-export function useRegistry<T>(data: Ref<Array<T>>) {
+export function useRegistry<T>(data: Ref<Map<any, T>>) {
   // 注册item
-  const register = (item: T) => {
-    if (!item || data.value.find(d => d === item)) return;
-    return data.value.push(item);
+  const register = (key: any, item: T) => {
+    if (!item) return;
+    if (data.value.has(key)) {
+      console.warn(`repeat ${key}`, item);
+      return;
+    }
+    return data.value.set(key, item);
   };
   // 删除item
-  const unregister = (item: T) => {
-    const index = data.value.findIndex(d => d === item);
-    if (index > -1) {
-      data.value.splice(index, 1);
-    }
+  const unregister = (key: any) => {
+    data.value.delete(key);
   };
   return {
     register,

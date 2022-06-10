@@ -23,35 +23,12 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { Column } from 'table/src/props';
 import { defineComponent } from 'vue';
 
-import { DATA_COLUMNS, DATA_TABLE } from './options';
 export default defineComponent({
-  components: {},
-  data() {
-    return {
-      tableData: [
-        ...DATA_TABLE,
-      ],
-      columns: [...DATA_COLUMNS].map((col: Column, index: number) => ({
-        ...col,
-        render: [1, 2, 3, 4].includes(index) ? this.renderCell : undefined })),
-    };
-  },
-
-
-  methods: {
-    renderCell({ row, column }) {
-      return <bk-input v-model={ row[column.field] }></bk-input>;
-    },
-  },
   render() {
-    return  <div style="height: 300px; width: 100%;">
-      <bk-table
-        columns={ this.columns }
-        data={ this.tableData }
-      />
-    </div>;
+    return <>
+    { this.$slots.default?.() }
+    </>;
   },
 });

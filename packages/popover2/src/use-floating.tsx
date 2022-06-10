@@ -41,8 +41,13 @@ import {
 import { PopoverPropTypes } from './props';
 
 
-export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow) => {
+export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow, refRoot) => {
   const localIsShow = ref(false);
+  const isElementFullScreen = () => {
+    const elReference = resolveTargetElement(refReference.value?.$el);
+    return document.fullscreenElement?.contains(elReference);
+  };
+
   const themeList = ['dark', 'light'];
   const compTheme = computed(() => {
     const themes = props.theme.split(/\s+/);
@@ -52,34 +57,38 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
     return { systemThemes, customThemes };
   });
 
-
+  const isHideMiddlewareAvailable = () => !isElementFullScreen() && props.autoVisibility;
+  const isAutoPlacemntAvailable = () => isElementFullScreen() || props.autoPlacement;
   const resolvePopElements = () => {
     const elReference = resolveTargetElement(refReference.value?.$el);
     const elContent = resolveTargetElement(refContent.value?.$el);
     const elArrow = props.arrow ? resolveTargetElement(refArrow.value?.$el) : null;
-
-    return { elReference, elContent, elArrow };
+    const root = resolveTargetElement(refRoot.value?.$el);
+    return { elReference, elContent, elArrow, root };
   };
 
   const resolvePopOptions = (elArrow: any) => {
     const middleware = [
       offset(props.offset),
       shift({ padding: props.padding }),
-      arrow({ element: elArrow }),
     ];
     const options = {
       placement: props.placement as Placement,
       middleware,
     };
 
-    if (props.autoPlacement) {
+    if (props.arrow) {
+      middleware.push(arrow({ element: elArrow }));
+    }
+
+    if (isAutoPlacemntAvailable()) {
       middleware.push(autoPlacement());
     } else {
       middleware.unshift(inline());
       middleware.push(flip());
     }
 
-    if (props.autoVisibility) {
+    if (isHideMiddlewareAvailable()) {
       options.middleware.push(hide());
     }
     return options;
@@ -110,125 +119,47 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
     return Math.round(val * dpr) / dpr || 0;
   };
 
-  const isElementFullScreen = () => document.fullscreenElement !== null;
-
-  const updatePopContentStyle = (elContent, x, y, resolvedPlacement, middlewareData, elReference) => {
-    const { left, top } = elReference.getBoundingClientRect();
-    const resolveFullscreenOffsetX = (xValue: number) => {
-      if (['left', 'right'].includes(resolvedPlacement)) {
-        return getRoundPixelVal(xValue);
-      }
-
-      return left;
-    };
-
-    const resolveFullscreenOffsetY = (yValue: number) => {
-      if (['top', 'bottom'].includes(resolvedPlacement)) {
-        return getRoundPixelVal(yValue);
-      }
-
-      return top;
-    };
-
-    const getOffsetX = () => {
-      if (isElementFullScreen()) {
-        return resolveFullscreenOffsetX(x);
-      }
-
-      return getRoundPixelVal(x);
-    };
-
-    const getOffsetY = () => {
-      if (isElementFullScreen()) {
-        return resolveFullscreenOffsetY(y);
-      }
-
-      return getRoundPixelVal(y);
-    };
-
+  const updatePopContentStyle = (elContent, x, y, middlewareData) => {
     Object.assign(elContent.style, {
       left: '0',
       top: '0',
-      transform: `translate3d(${getOffsetX()}px,${getOffsetY()}px,0)`,
+      transform: `translate3d(${getRoundPixelVal(x)}px,${getRoundPixelVal(y)}px,0)`,
     });
 
-    if (props.autoVisibility) {
-      const { referenceHidden } = middlewareData.hide;
-      Object.assign(elContent.style, {
-        visibility: referenceHidden ? 'hidden' : 'visible',
-      });
+    const referenceHidden = isHideMiddlewareAvailable() ? middlewareData.hide?.referenceHidden : false;
+    Object.assign(elContent.style, {
+      visibility: referenceHidden ? 'hidden' : 'visible',
+    });
+    if (isHideMiddlewareAvailable()) {
+
     }
   };
 
-  const updateArrowStyle = (elArrow, resolvedPlacement, middlewareData, elReference) => {
-    const { left, top, bottom, right } = elReference.getBoundingClientRect();
+  const updateArrowStyle = (elArrow, resolvedPlacement, middlewareData) => {
     if (props.arrow) {
       const { x: arrowX, y: arrowY } = middlewareData.arrow;
-      const staticPrefix = {
-        top: 1,
-        right: -1,
-        bottom: -1,
-        left: 1,
-      }[resolvedPlacement];
-
-      const getStaticSidePos = (val, pos, defaultVal) => {
-        const staticSide = {
-          x: {
-            left: 'right',
-            right: 'left',
-          },
-          y: {
-            top: 'bottom',
-            bottom: 'top',
-          },
-        }[pos]?.[resolvedPlacement] ?? defaultVal;
-
-        return [val, staticSide];
-      };
-
-
-      const getFullScreenOffset = (arrowValue: any) => {
-        if (isElementFullScreen()) {
-          if (['left', 'right'].includes(resolvedPlacement)) {
-            return getRoundPixelVal((bottom - top) / 2) - 2;
-          }
-
-          if (['top', 'bottom'].includes(resolvedPlacement)) {
-            return getRoundPixelVal((right - left) / 2) - 2;
-          }
-        }
-
-        return isNumber(arrowValue) ? getRoundPixelVal(arrowValue) : 0;
-      };
-
-      const getOffsetX = () => {
-        if (['left', 'right'].includes(resolvedPlacement)) {
-          return staticPrefix * 4;
-        }
-
-        return getFullScreenOffset(arrowX);
-      };
-
-      const getOffsetY = () => {
-        if (['top', 'bottom'].includes(resolvedPlacement)) {
-          return staticPrefix * 4;
-        }
-
-        return getFullScreenOffset(arrowY);
-      };
-
       elArrow.setAttribute('data-arrow', resolvedPlacement);
-      const [offsetX, xPos] = getStaticSidePos(getOffsetX(), 'x', 'left');
-      const [offsetY, yPos] = getStaticSidePos(getOffsetY(), 'y', 'top');
+
+      const arrowSide = {
+        top: 'bottom',
+        right: 'left',
+        bottom: 'top',
+        left: 'right',
+      }[resolvedPlacement];
       Object.assign(elArrow.style, {
-        [xPos]: '0',
-        [yPos]: '0',
-        transform: `translate(${offsetX}px,${offsetY}px) rotate(45deg)`,
+        left: arrowX !== null ? `${arrowX}px` : '',
+        top: arrowY !== null ? `${arrowY}px` : '',
+        [arrowSide]: '-4px',
       });
     }
   };
 
+
   const updatePopover = () => {
+    if (typeof cleanup === 'function') {
+      cleanup();
+    }
+
     const { elReference, elContent, elArrow } = resolvePopElements();
     const options = resolvePopOptions(elArrow);
     cleanup = autoUpdate(elReference, elContent, () => {
@@ -245,13 +176,12 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
           resolvedPlacement = 'top';
         }
 
-        updatePopContentStyle(elContent, x, y, resolvedPlacement, middlewareData, elReference);
-        updateArrowStyle(elArrow, resolvedPlacement, middlewareData, elReference);
+        updatePopContentStyle(elContent, x, y, middlewareData);
+        updateArrowStyle(elArrow, resolvedPlacement, middlewareData);
       });
     });
   };
 
-  const isNumber = (val: string | number) => /^-?\d+\.?\d*$/.test(`${val}`);
   const showPopover = () => {
     localIsShow.value = true;
   };
@@ -319,6 +249,7 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
     triggerPopover,
     resolvePopElements,
     isElementFullScreen,
+    resolveTargetElement,
     localIsShow,
     cleanup,
   };
