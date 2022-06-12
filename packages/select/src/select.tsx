@@ -40,6 +40,7 @@ import { AngleUp, Close } from '@bkui-vue/icon';
 import Input from '@bkui-vue/input';
 import Loading from '@bkui-vue/loading';
 import BKPopover from '@bkui-vue/popover';
+import { PopoverPropTypes } from '@bkui-vue/popover/src/props';
 import {
   classes,
   PropTypes,
@@ -56,7 +57,7 @@ import {
   useRemoteSearch,
 } from './common';
 import SelectTagInput from './selectTagInput';
-import { GroupInstanceType, ISelectedData, OptionInstanceType, SelectTagInputType } from './type';
+import { GroupInstanceType, OptionInstanceType, SelectTagInputType } from './type';
 
 export default defineComponent({
   name: 'Select',
@@ -87,6 +88,8 @@ export default defineComponent({
     selectAllText: PropTypes.string.def('全部'),
     scrollLoading: PropTypes.bool.def(false),
     allowCreate: PropTypes.bool.def(false), // 是否运行创建自定义选项
+    popoverOptions: PropTypes.object.def({}), // popover属性
+    customContent: PropTypes.bool.def(false), // 是否自定义content内容
   },
   emits: ['update:modelValue', 'change', 'toggle', 'clear', 'scroll-end'],
   setup(props, { emit }) {
@@ -104,6 +107,7 @@ export default defineComponent({
       showOnInit,
       multipleMode,
       allowCreate,
+      customContent,
     } = toRefs(props);
 
     const formItem = useFormItem();
@@ -111,31 +115,24 @@ export default defineComponent({
     const inputRef = ref<HTMLElement>();
     const popoverRef = ref<any>();
     const selectTagInputRef = ref<SelectTagInputType>();
-    const options = ref<Array<OptionInstanceType>>([]);
-    const groups = ref<Array<GroupInstanceType>>([]);
-    const selected = ref<ISelectedData[]>([]);
+    const optionsMap = ref<Map<any, OptionInstanceType>>(new Map());
+    const options = computed(() => [...optionsMap.value.values()]);
+    const groupsMap = ref<Map<any, GroupInstanceType>>(new Map());
+    const selected = ref<string[]>([]);
     const activeOptionValue = ref<any>(); // 当前悬浮的option
 
-    // options对应的map结构（option组件的value不能相同）
-    const optionsMap = computed(() => {
-      const data: Map<any, OptionInstanceType> = new Map();
-      options.value.forEach((option) => {
-        data.set(option.value, option);
-      });
-      return data;
-    });
     watch(modelValue, () => {
       handleSetSelectedData();
       // 修复tag模式下内容超出，popover没有更新问题
       if (multipleMode.value === 'tag') {
         popoverRef.value?.update();
       }
-    });
+    }, { deep: true });
 
     // select组件是否禁用
     const isDisabled = computed(() => disabled.value || loading.value);
     // modelValue对应的label
-    const selectedLabel = computed(() => selected.value.map(data => data.label));
+    const selectedLabel = computed(() => selected.value.map(value => handleGetLabelByValue(value)));
     // 是否全选(todo: 优化)
     const isAllSelected = computed(() => {
       const normalSelectedValues = options.value.reduce<any[]>((pre, option) => {
@@ -145,10 +142,10 @@ export default defineComponent({
         return pre;
       }, []);
       return (normalSelectedValues.length <= selected.value.length)
-        && normalSelectedValues.every(val => selected.value.some(data => data.value === val));
+        && normalSelectedValues.every(val => selected.value.some(value => value === val));
     });
     // 是否含有分组
-    const isGroup = computed(() => !!groups.value.length);
+    const isGroup = computed(() => !!groupsMap.value.size);
     // options是否为空
     const isOptionsEmpty = computed(() => !options.value.length);
     // 是否搜索为空
@@ -156,7 +153,8 @@ export default defineComponent({
     // 是否远程搜索
     const isRemoteSearch = computed(() => filterable.value && typeof remoteMethod.value === 'function');
     // 是否显示select下拉内容
-    const isShowSelectContent = computed(() => !(searchLoading.value || isOptionsEmpty.value || isSearchEmpty.value));
+    const isShowSelectContent = computed(() => !(searchLoading.value || isOptionsEmpty.value || isSearchEmpty.value)
+      || customContent.value);
     // 当前空状态时显示文案
     const curContentText = computed(() => {
       if (searchLoading.value) {
@@ -171,11 +169,11 @@ export default defineComponent({
       return '';
     });
 
-    const { register, unregister } = useRegistry<OptionInstanceType>(options);
+    const { register, unregister } = useRegistry<OptionInstanceType>(optionsMap);
     const {
       register: registerGroup,
       unregister: unregisterGroup,
-    } = useRegistry<GroupInstanceType>(groups);
+    } = useRegistry<GroupInstanceType>(groupsMap);
     const { isHover, setHover, cancelHover } = useHover();
     const { isFocus, handleFocus, handleBlur } = useFocus();
 
@@ -200,7 +198,7 @@ export default defineComponent({
 
     // 初始化当前悬浮的option项
     const initActiveOptionValue = () => {
-      const firstValue = selected.value[0]?.value;
+      const firstValue = selected.value[0];
       const option = optionsMap.value.get(firstValue);
       if (option && !option.disabled && option.visible) {
         activeOptionValue.value = firstValue;
@@ -251,16 +249,10 @@ export default defineComponent({
       // todo 优化交互方式
       e.stopPropagation(); // 阻止触发 handleKeyup enter 事件
       if (multiple.value) {
-        selected.value.push({
-          label: value,
-          value,
-        });
-        emitChange(selected.value.map(data => data.value));
+        selected.value.push(value);
+        emitChange(selected.value);
       } else {
-        selected.value = [{
-          label: value,
-          value,
-        }];
+        selected.value = [value];
         emitChange(value);
         hidePopover();
       }
@@ -272,22 +264,16 @@ export default defineComponent({
 
       if (multiple.value) {
         // 多选
-        const index = selected.value.findIndex(data => data.value === option.value);
+        const index = selected.value.findIndex(value => value === option.value);
         if (index > -1) {
           selected.value.splice(index, 1);
         } else {
-          selected.value.push({
-            label: option.label as string,
-            value: option.value,
-          });
+          selected.value.push(option.value);
         }
-        emitChange(selected.value.map(data => data.value));
+        emitChange(selected.value);
       } else {
         // 单选
-        selected.value = [{
-          label: option.label as string,
-          value: option.value,
-        }];
+        selected.value = [option.value];
         emitChange(option.value);
         hidePopover();
       }
@@ -315,14 +301,11 @@ export default defineComponent({
         selected.value = [];
       } else {
         options.value.forEach((option) => {
-          if (option.disabled || selected.value.find(data => data.value === option.value)) return;
-          selected.value.push({
-            label: option.label as string,
-            value: option.value,
-          });
+          if (option.disabled || selected.value.find(value => value === option.value)) return;
+          selected.value.push(option.value);
         });
       }
-      emitChange(selected.value.map(data => data.value));
+      emitChange(selected.value);
       focus();
     };
     // 滚动事件
@@ -333,30 +316,22 @@ export default defineComponent({
       }
     };
     // tag删除事件
-    const handleDeleteTag = (data: ISelectedData) => {
-      const index = selected.value.findIndex(select => select.value === data.value);
+    const handleDeleteTag = (val) => {
+      const index = selected.value.findIndex(value => value === val);
       if (index > -1) {
         selected.value.splice(index, 1);
-        emitChange(selected.value.map(select => select.value));
+        emitChange(selected.value);
       }
     };
     // options存在 > 上一次选择的label > 当前值
-    const handleGetLabelByValue = val => optionsMap.value?.get(val)?.label
-        || selected.value.find(data => data.value === val)?.label
-        || val;
+    const handleGetLabelByValue = val => optionsMap.value?.get(val)?.label || val;
     // 设置selected选项
     const handleSetSelectedData = () => {
       // 同步内部value值
       if (Array.isArray(modelValue.value)) {
-        selected.value = modelValue.value.map(val => ({
-          label: handleGetLabelByValue(val),
-          value: val,
-        }));
+        selected.value = [...modelValue.value];
       } else if (modelValue.value !== undefined) {
-        selected.value = [{
-          label: handleGetLabelByValue(modelValue.value),
-          value: modelValue.value,
-        }];
+        selected.value = [modelValue.value];
       }
     };
     // 处理键盘事件
@@ -385,7 +360,7 @@ export default defineComponent({
           if (!multiple.value || !selected.value.length || searchKey.value.length) return; // 只有多选支持回退键删除
 
           selected.value.pop();
-          emitChange(selected.value.map(data => data.value));
+          emitChange(selected.value);
           break;
         }
         // 选择选项
@@ -393,7 +368,7 @@ export default defineComponent({
           if (!isPopoverShow.value) {
             isPopoverShow.value = true;
           } else {
-            const option = options.value.find(option => option.value === activeOptionValue.value);
+            const option = optionsMap.value.get(activeOptionValue.value);
             handleOptionSelected(option);
           }
           break;
@@ -414,6 +389,7 @@ export default defineComponent({
       registerGroup,
       unregisterGroup,
       handleOptionSelected,
+      handleGetLabelByValue,
     }));
 
     onMounted(() => {
@@ -472,14 +448,24 @@ export default defineComponent({
       [this.size]: true,
       [this.behavior]: true,
     });
-    const modifiers = [
-      {
-        name: 'offset',
-        options: {
-          offset: [0, 4],
+    const popoverOptions: Partial<PopoverPropTypes> = Object.assign({
+      theme: 'light bk-select-popover',
+      trigger: 'manual',
+      width: this.popperWidth,
+      arrow: false,
+      placement: 'bottom',
+      isShow: this.isPopoverShow,
+      modifiers: [
+        {
+          name: 'offset',
+          options: {
+            offset: [0, 4],
+          },
         },
-      },
-    ];
+      ],
+      // boundary: 'body',
+      handleFirstUpdate: this.onPopoverFirstUpdate,
+    }, this.popoverOptions);
 
     const suffixIcon = () => {
       if (this.loading) {
@@ -543,12 +529,12 @@ export default defineComponent({
     const renderSelectContent = () => (
         <div>
           {
-          (!this.isShowSelectContent) && (
-          <div class="bk-select-empty">
-            {this.searchLoading
-            && <Loading class="mr5" loading={true} mode="spin" size="mini"></Loading>}
-            {this.curContentText}
-          </div>)
+            !this.isShowSelectContent
+            && (
+            <div class="bk-select-empty">
+              {this.searchLoading && <Loading class="mr5" loading={true} mode="spin" size="mini"></Loading>}
+              {this.curContentText}
+            </div>)
           }
           <div class="bk-select-content">
             <div class="bk-select-dropdown"
@@ -582,14 +568,7 @@ export default defineComponent({
       <div class={selectClass} v-clickoutside={this.handleClickOutside}>
         <BKPopover
           ref="popoverRef"
-          theme="light"
-          trigger="manual"
-          width={this.popperWidth}
-          arrow={false}
-          placement="bottom"
-          isShow={this.isPopoverShow}
-          modifiers={modifiers}
-          handleFirstUpdate={this.onPopoverFirstUpdate}>
+          {...popoverOptions}>
           {{
             default: () => renderSelectTrigger(),
             content: () => renderSelectContent(),

@@ -332,7 +332,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/timeline',
     name: 'timeline',
-    component: () => import('../views/timeline'),
+    component: () => import('../views/timeline/index'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'Timeline 时间轴',
@@ -441,6 +441,15 @@ const routes: RouteRecordRaw[] = [
     meta: {
       group: NavGroupMeta.Feedback,
       navName: 'Popover 弹出框提示',
+    },
+  },
+  {
+    path: '/popover2',
+    name: 'popover2',
+    component: () => import('../views/popover2'),
+    meta: {
+      group: NavGroupMeta.Feedback,
+      navName: 'Popover2 弹出框提示',
     },
   },
   /**
@@ -660,6 +669,15 @@ const routes: RouteRecordRaw[] = [
       navName: 'Cascader 级联选择',
     },
     component: () => import('../views/cascader/index'),
+  },
+  {
+    path: '/loading',
+    name: 'loading',
+    meta: {
+      group: NavGroupMeta.Others,
+      navName: 'Loading 加载',
+    },
+    component: () => import('../views/loading/index'),
   },
 ];
 

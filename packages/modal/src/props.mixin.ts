@@ -30,7 +30,7 @@ export const propsMixin = {
   width: PropTypes.oneOfType([String, Number]).def('50%'),
   height: PropTypes.oneOfType([String, Number]).def('50%'),
   // 配置自定义样式类名
-  customClass: PropTypes.string || PropTypes.array,
+  extCls: PropTypes.string || PropTypes.array,
   // 弹框出现时，是否允许页面滚动
   scrollable: PropTypes.bool.def(true),
   // 是否允许出现遮罩
@@ -39,14 +39,10 @@ export const propsMixin = {
   closeIcon: PropTypes.bool.def(true),
   // 是否允许 esc 按键关闭弹框
   escClose: PropTypes.bool.def(true),
-  // 是否允许点击遮罩关闭弹框
-  maskClose: PropTypes.bool.def(true),
   // 是否全屏
   fullscreen: PropTypes.bool.def(false),
-  // 自定义类样式名
-  extCls: PropTypes.string.def(''),
   // 弹框尺寸
-  size: PropTypes.commonType(['normal', 'small', 'medium', 'large'], 'size').def('normal'),
+  size: PropTypes.commonType(['normal', 'small', 'medium', 'large'], 'size').def(),
   // 是否可拖拽
   draggable: PropTypes.bool.def(true),
   // 是否允许点击遮罩关闭弹窗
