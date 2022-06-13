@@ -23,11 +23,11 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { computed, defineComponent, nextTick, reactive, ref } from 'vue';
+import { computed, defineComponent, nextTick, reactive } from 'vue';
 
 import BkCheckbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
 import { AngleDownLine } from '@bkui-vue/icon';
-import Popover from '@bkui-vue/popover';
+import Popover from '@bkui-vue/popover2';
 import { classes, PropTypes, resolveClassName } from '@bkui-vue/shared';
 
 import { getRowText, resolvePropVal } from '../utils';
@@ -42,7 +42,7 @@ export default defineComponent({
 
   setup(props, { emit }) {
     const { column } = props;
-    const isShow = ref(false);
+    // const isShow = ref(false);
     const state = reactive({
       isOpen: false,
       checked: [],
@@ -64,13 +64,6 @@ export default defineComponent({
       state.isOpen = isOpen;
     };
 
-    const modifiers = [{
-      name: 'offset',
-      options: {
-        offset: [0, 0],
-      },
-    }];
-
     const theme = `light ${resolveClassName('table-head-filter')}`;
     const localData = computed(() => {
       const { list = [] } = column.filter;
@@ -87,33 +80,33 @@ export default defineComponent({
     const handleBtnSaveClick = () => {
       if (props.column.filter === 'custom') {
         emit('change', [...state.checked], null);
-        isShow.value = false;
+        state.isOpen = false;
         return;
       }
 
       emit('change', [...state.checked], filterFn);
-      isShow.value = false;
+      state.isOpen = false;
     };
 
     const handleBtnResetClick = () => {
       if (state.checked.length) {
         state.checked.splice(0, state.checked.length);
-        isShow.value = false;
+        state.isOpen = false;
         nextTick(() => emit('change', state.checked, filterFn));
       }
     };
 
-    return () => <Popover trigger="click" isShow={isShow.value}
+    return () => <Popover trigger="click"
+      isShow={ state.isOpen }
       placement="bottom-end"
-      stopBehaviors={['stopPropagation']}
       arrow={false}
-      {...{ modifiers, theme }}
-      boundary={ document.body }
+      offset={0}
+      {...{ theme }}
       onAfterShow={ () => handlePopShow(true) }
       onAfterHidden={() => handlePopShow(false)}>
       {
         {
-          default: () =>  <AngleDownLine class={headClass.value} onClick={ () => isShow.value = true } />,
+          default: () =>  <AngleDownLine class={headClass.value} />,
           content: () => <div class={ headFilterContentClass }>
             <BkCheckboxGroup class="content-list" v-model={ state.checked }>
               {
