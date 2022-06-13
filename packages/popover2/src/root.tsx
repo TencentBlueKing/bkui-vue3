@@ -25,7 +25,12 @@
 */
 import { defineComponent } from 'vue';
 
+import { PropTypes } from '@bkui-vue/shared';
+
 export default defineComponent({
+  props: {
+    class: PropTypes.string.def(''),
+  },
   render() {
     return <>
     { this.$slots.default?.() }
