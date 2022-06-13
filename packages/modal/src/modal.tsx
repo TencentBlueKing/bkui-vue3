@@ -35,6 +35,7 @@ export default defineComponent({
   props: {
     ...propsMixin,
   },
+  emits: ['quick-close', 'quickClose', 'hidden', 'shown', 'close'],
   data() {
     return {
       visible: false,
@@ -88,6 +89,7 @@ export default defineComponent({
           bkPopIndexManager.show(this.$el, this.showMask, appendStyle, this.transfer);
           this.$emit('shown');
           this.$emit('quick-close', this.$el);
+          this.$emit('quickClose', this.$el);
         });
       } else {
         bkPopIndexManager.hide(this.$el, this.transfer);
