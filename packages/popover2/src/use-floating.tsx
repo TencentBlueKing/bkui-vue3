@@ -159,25 +159,9 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
   };
 
   const createPopInstance = () => {
-    const { elReference, elContent, elArrow } = resolvePopElements();
-    const options = resolvePopOptions(elArrow);
+    const { elReference, elContent } = resolvePopElements();
     cleanup = autoUpdate(elReference, elContent, () => {
-      computePosition(elReference, elContent, options).then(({ x, y, placement, middlewareData }) => {
-        const oldClass = elContent.className;
-        elContent.className = `${oldClass.replace(contentClass, '')} ${contentClass}`.replace(/\s+/mg, ' ').replace(/^\s+|\s+$/g, '');
-        Object.keys(customTheme).forEach((key: string) => {
-          elContent.setAttribute(key, customTheme[key]);
-        });
-
-        const placementStr = placement.split('-')[0];
-        let resolvedPlacement = placementStr;
-        if (!['left', 'right', 'top', 'bottom'].includes(placementStr)) {
-          resolvedPlacement = 'top';
-        }
-
-        updatePopContentStyle(elContent, x, y, middlewareData);
-        updateArrowStyle(elArrow, resolvedPlacement, middlewareData);
-      });
+      updatePopover();
     });
   };
 
