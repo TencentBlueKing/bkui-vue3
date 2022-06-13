@@ -130,15 +130,19 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
     Object.assign(elContent.style, {
       visibility: referenceHidden ? 'hidden' : 'visible',
     });
-    if (isHideMiddlewareAvailable()) {
-
-    }
   };
 
   const updateArrowStyle = (elArrow, resolvedPlacement, middlewareData) => {
     if (props.arrow) {
       const { x: arrowX, y: arrowY } = middlewareData.arrow;
       elArrow.setAttribute('data-arrow', resolvedPlacement);
+      const arrowConfig = {
+        left: '',
+        top: '',
+        bottom: '',
+        right: '',
+      };
+      Object.assign(elArrow.style, arrowConfig);
 
       const arrowSide = {
         top: 'bottom',
@@ -154,12 +158,7 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
     }
   };
 
-
-  const updatePopover = () => {
-    if (typeof cleanup === 'function') {
-      cleanup();
-    }
-
+  const createPopInstance = () => {
     const { elReference, elContent, elArrow } = resolvePopElements();
     const options = resolvePopOptions(elArrow);
     cleanup = autoUpdate(elReference, elContent, () => {
@@ -179,6 +178,28 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
         updatePopContentStyle(elContent, x, y, middlewareData);
         updateArrowStyle(elArrow, resolvedPlacement, middlewareData);
       });
+    });
+  };
+
+
+  const updatePopover = () => {
+    const { elReference, elContent, elArrow } = resolvePopElements();
+    const options = resolvePopOptions(elArrow);
+    computePosition(elReference, elContent, options).then(({ x, y, placement, middlewareData }) => {
+      const oldClass = elContent.className;
+      elContent.className = `${oldClass.replace(contentClass, '')} ${contentClass}`.replace(/\s+/mg, ' ').replace(/^\s+|\s+$/g, '');
+      Object.keys(customTheme).forEach((key: string) => {
+        elContent.setAttribute(key, customTheme[key]);
+      });
+
+      const placementStr = placement.split('-')[0];
+      let resolvedPlacement = placementStr;
+      if (!['left', 'right', 'top', 'bottom'].includes(placementStr)) {
+        resolvedPlacement = 'top';
+      }
+
+      updatePopContentStyle(elContent, x, y, middlewareData);
+      updateArrowStyle(elArrow, resolvedPlacement, middlewareData);
     });
   };
 
@@ -246,6 +267,7 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
     resolvePopElements,
     isElementFullScreen,
     resolveTargetElement,
+    createPopInstance,
     localIsShow,
     cleanup,
   };
