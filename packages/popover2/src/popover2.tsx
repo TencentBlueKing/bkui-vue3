@@ -66,6 +66,7 @@ export default defineComponent({
       resolvePopElements,
       isElementFullScreen,
       cleanup,
+      createPopInstance,
     } = useFloating(props, ctx, refReference, refContent, refArrow, refRoot);
 
     const show = () => {
@@ -76,8 +77,8 @@ export default defineComponent({
       hidePopover();
     };
 
-    const createPopInstance = () => {
-      updatePopover();
+    const initPopInstance = () => {
+      createPopInstance();
       if (props.always) {
         showPopover();
       } else {
@@ -93,7 +94,7 @@ export default defineComponent({
 
     watch(() => [props.disabled], (val) => {
       if (val[0]) {
-        createPopInstance();
+        initPopInstance();
       } else {
         beforeInstanceUnmount();
       }
@@ -149,9 +150,8 @@ export default defineComponent({
         return;
       }
 
-      createPopInstance();
+      initPopInstance();
       updateBoundary();
-
       document.body.addEventListener('fullscreenchange', handleFullscrennChange);
     });
 

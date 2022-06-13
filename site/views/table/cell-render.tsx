@@ -36,6 +36,7 @@ export default defineComponent({
       ],
       columns: [...DATA_COLUMNS].map((col: Column, index: number) => ({
         ...col,
+        label: [0, 1].includes(index) ? this.renderTh : (col: any) => col.field,
         render: [1, 2, 3, 4].includes(index) ? this.renderCell : undefined })),
     };
   },
@@ -44,6 +45,11 @@ export default defineComponent({
   methods: {
     renderCell({ row, column }) {
       return <bk-input v-model={ row[column.field] }></bk-input>;
+    },
+    renderTh(column, index) {
+      return <bk-popover2 content={ `${index}-xxxxxxxx` }>
+        <span>{ column.field ?? index }</span>
+      </bk-popover2>;
     },
   },
   render() {
