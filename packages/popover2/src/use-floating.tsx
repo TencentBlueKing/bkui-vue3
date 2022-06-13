@@ -212,11 +212,7 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
     }
   };
 
-  const hanldeClickRef = (e: MouseEvent) => {
-    e.stopImmediatePropagation();
-    e.stopPropagation();
-    e.preventDefault();
-
+  const hanldeClickRef = () => {
     triggerPopover();
   };
 
