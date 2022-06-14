@@ -53,7 +53,12 @@ export default defineComponent({
       e.stopPropagation();
       e.preventDefault();
 
-      sortType.value = type;
+      if (sortType.value === type) {
+        sortType.value = SortType.NULL;
+      } else {
+        sortType.value = type;
+      }
+
       if (props.column.sort === 'custom') {
         emit('change', null, type);
         return;
@@ -72,7 +77,10 @@ export default defineComponent({
       };
       const sortFn = typeof (props.column.sort as any)?.sortFn === 'function'
         ? (props.column.sort as any)?.sortFn : sortFn0;
-      const execFn = (_a, _b) => sortFn(_a, _b) * (type === SortType.DESC ? -1 : 1);
+      const execFn = sortType.value === SortType.NULL
+        ? (() => true)
+        : (_a, _b) => sortFn(_a, _b) * (type === SortType.DESC ? -1 : 1);
+
       emit('change', execFn, type);
     };
     return () => <span class={ resolveClassName('head-cell-sort') }>
