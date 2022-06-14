@@ -43,7 +43,7 @@ function generate(
     {
       key,
       ...node.attributes,
-      style: `${node.attributes.style} ${rootAttrs}`,
+      style: `${node.attributes.style} ${rootAttrs || ''}`,
     },
     (node.elements || []).map((element: any, index: number) => generate(element, `${key}-${node.name}-${index}`)),
   );
