@@ -201,6 +201,67 @@ describe('Select.tsx', () => {
     expect(wrapper.find('.bk-select-options').isVisible()).toBe(false);
   });
 
+  test('model value change', async () => {
+    const wrapper = await mount({
+      components: {
+        BkSelect,
+        BkOption,
+      },
+      template: `
+        <BkSelect :model-value="seletValue">
+          <BkOption v-for="item in options" :value="item.value" :label="item.label"></BkOption>
+        </BkSelect>
+      `,
+      data() {
+        const options = [];
+        for (let i = 0; i < 10; i++) {
+          options.push({
+            label: `${i}-test`,
+            value: i,
+          });
+        }
+        return {
+          seletValue: 1,
+          options,
+        };
+      },
+    });
+    const { vm } = wrapper;
+    vm.seletValue = 2;
+    await vm.$nextTick();
+    expect(wrapper.find<HTMLInputElement>('.bk-select-trigger .bk-input--text').element.value).toBe('2-test');
+  });
+
+  test('options change', async () => {
+    const wrapper = await mount({
+      components: {
+        BkSelect,
+        BkOption,
+      },
+      template: `
+        <BkSelect :model-value="seletValue">
+          <BkOption v-for="item in options" :value="item.value" :label="item.label"></BkOption>
+        </BkSelect>
+      `,
+      data() {
+        return {
+          seletValue: 1,
+          options: [],
+        };
+      },
+    });
+    expect(wrapper.find<HTMLInputElement>('.bk-select-trigger .bk-input--text').element.value).toBe('1');
+    const { vm } = wrapper;
+    for (let i = 0; i < 10; i++) {
+      vm.options.push({
+        label: `${i}-test`,
+        value: i,
+      });
+    }
+    await vm.$nextTick();
+    expect(wrapper.find<HTMLInputElement>('.bk-select-trigger .bk-input--text').element.value).toBe('1-test');
+  });
+
   // 单选搜索功能
   test('single select search', async () => {
     // const wrapper = await mount({

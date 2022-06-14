@@ -107,10 +107,11 @@ export default defineComponent({
       const { icon } = timeline;
 
       if (icon) {
-        return Object.prototype.toString.call(icon) === '[object Object]';
+        return typeof icon === 'function';
       }
       return false;
     };
+
 
     const makeClass = (item) => {
       const timelineClsPrefix = 'bk-timeline';
@@ -128,8 +129,8 @@ export default defineComponent({
         {
         this.defaultTimelines.map(item => <li class={['bk-timeline-dot', makeClass(item)]}>
           {isIcon(item)
-            ? <div class="bk-timeline-icon" style={{ borderWidth: item.border ? '2px' : '0px' }}>
-                <span class="bk-timeline-icon-inner">{item.icon}</span>
+            ? <div class="bk-timeline-icon" style={{ border: item.border ? `2px solid ${item.color}` : '0px', borderRadius: item.border ? '50%' : '0' }}>
+                <span class="bk-timeline-icon-inner">{<item.icon/>}</span>
               </div> : ''}
               <div class="bk-timeline-section">
                 {<div class="bk-timeline-title" onClick={() => {
