@@ -108,6 +108,7 @@ export default (colgroups: GroupColumn[], immediate = true) => {
           isInDragSection = true;
           target.style.setProperty('cursor', 'col-resize');
         } else {
+          target.style.setProperty('cursor', '');
           isInDragSection = false;
         }
       }

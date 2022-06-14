@@ -28,7 +28,7 @@ import { computed, defineComponent, ref } from 'vue';
 import BkButton from '@bkui-vue/button';
 import BkCheckbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
 import { CloseLine, CogShape } from '@bkui-vue/icon/';
-import Popover from '@bkui-vue/popover';
+import Popover from '@bkui-vue/popover2';
 import { PropTypes, resolveClassName } from '@bkui-vue/shared';
 
 import { Field, Settings, SizeItem } from '../props';
@@ -53,13 +53,6 @@ export default defineComponent({
       { value: 'default', label: '中', height: props.rowHeight },
       { value: 'large', label: '大', height: 56 },
     ];
-
-    const modifiers = [{
-      name: 'offset',
-      options: {
-        offset: [10, 10],
-      },
-    }];
 
     const isShow = ref(false);
     const settings = (props.settings as Settings);
@@ -122,11 +115,12 @@ export default defineComponent({
     return () => <Popover trigger="manual" isShow={isShow.value}
     placement="bottom-end"
     arrow={false}
-    {...{ modifiers, theme }}
-    boundary={ document.body }>
+    {...{ theme }}>
     {
       {
-        default: () =>  <CogShape style="color: rgba(99,101,110, 0.6);" onClick={ handleSettingClick }></CogShape>,
+        default: () =>  <span class="table-head-settings">
+          <CogShape style="color: rgba(99,101,110, 0.6);" onClick={ handleSettingClick }></CogShape>
+        </span>,
         content: () => <div class="setting-content">
           <div class="setting-head">
             <h2>表格设置</h2>
