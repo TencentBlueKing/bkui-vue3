@@ -23,7 +23,9 @@
 
     <div class="bk-popover2-position-center">
       <div class="bk-popover2-position-center-left">
-        <bk-popover2 placement="left-start">
+        <bk-popover2
+          placement="left-start"
+        >
           <bk-button>左上</bk-button>
           <template #content>
             <div>Left</div>

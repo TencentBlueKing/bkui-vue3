@@ -104,7 +104,7 @@ const dialogPropsJson: IPropsTableItem[] = [
     optional: [],
   },
   {
-    name: 'customClass',
+    name: 'extCls',
     type: 'String | Array',
     default: '',
     desc: '配置自定义样式类名',
@@ -139,7 +139,7 @@ const dialogPropsJson: IPropsTableItem[] = [
     optional: [],
   },
   {
-    name: 'maskClose',
+    name: 'quickClose',
     type: 'Boolean',
     default: 'true',
     desc: '是否允许点击遮罩关闭弹框',
@@ -155,8 +155,8 @@ const dialogPropsJson: IPropsTableItem[] = [
   {
     name: 'size',
     type: 'String',
-    default: 'normal',
-    desc: '对话框尺寸，默认normal。',
+    default: '',
+    desc: '对话框尺寸',
     optional: ['normal', 'small', 'medium', 'large'],
   },
   {
@@ -257,6 +257,13 @@ const dialogChangeJson: IPropsTableItem[] = [
     optional: [],
   },
   {
+    name: 'value-change',
+    type: 'Function',
+    default: '',
+    desc: '弹框显示状态变化的回调函数',
+    optional: [],
+  },
+  {
     name: 'prev',
     type: 'Function',
     default: '',
@@ -285,7 +292,7 @@ export default defineComponent({
         <DemoBox
           title="基本用法"
           subtitle=""
-          desc="默认配置的对话框。通过 theme 属性配置弹框中不同的主题确认按钮；通过 maskClose 配置是否允许点击遮罩关闭弹框，默认为 true。通过 escClose 配置是否启用 esc 按键关闭弹框，默认为 true。"
+          desc="默认配置的对话框。通过 theme 属性配置弹框中不同的主题确认按钮；通过 quickClose 配置是否允许点击遮罩关闭弹框，默认为 true。通过 escClose 配置是否启用 esc 按键关闭弹框，默认为 true。"
           componentName="dialog"
           demoName="base-demo">
           <BaseDemo></BaseDemo>

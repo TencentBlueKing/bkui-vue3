@@ -23,19 +23,20 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent, ref, toRefs, watch } from 'vue';
+import { defineComponent, inject, ref, toRefs, watch } from 'vue';
 import { PropType } from 'vue-types/dist/types';
 
 import { PropTypes } from '@bkui-vue/shared';
 import Tag from '@bkui-vue/tag';
 
-import { ISelectedData } from './type';
+import { selectKey } from './common';
+
 
 export default defineComponent({
   name: 'SelectTagInput',
   props: {
     selected: {
-      type: Array as PropType<ISelectedData[]>,
+      type: Array as PropType<any[]>,
       default: () => [],
     },
     tagTheme: PropTypes.theme(['success', 'info', 'warning', 'danger']).def(''),
@@ -46,6 +47,7 @@ export default defineComponent({
   },
   emits: ['update:modelValue', 'remove', 'focus', 'enter'],
   setup(props, { emit }) {
+    const select = inject(selectKey, null);
     const { modelValue } = toRefs(props);
     const value = ref(modelValue.value);
     const inputRef = ref<HTMLElement>();
@@ -53,8 +55,8 @@ export default defineComponent({
     watch(modelValue, () => {
       value.value = modelValue.value;
     });
-    const handleRemoveTag = (data: ISelectedData) => {
-      emit('remove', data);
+    const handleRemoveTag = (val: string) => {
+      emit('remove', val);
     };
     const handleFocus = () => {
       emit('focus');
@@ -73,6 +75,7 @@ export default defineComponent({
         }
       }
     };
+    const handleGetLabelByValue = select?.handleGetLabelByValue;
     return {
       value,
       inputRef,
@@ -81,6 +84,7 @@ export default defineComponent({
       focus,
       handleInput,
       handleKeydown,
+      handleGetLabelByValue,
     };
   },
   render() {
@@ -88,12 +92,12 @@ export default defineComponent({
       <div class="bk-select-tag">
         {this.$slots?.prefix?.()}
         {
-          this.selected.map(data => (
+          this.selected.map(val => (
               <Tag
                 closable
                 theme={this.tagTheme}
-                onClose={() => this.handleRemoveTag(data)}>
-                {data.label}
+                onClose={() => this.handleRemoveTag(val)}>
+                {this.handleGetLabelByValue(val)}
               </Tag>
           ))
         }

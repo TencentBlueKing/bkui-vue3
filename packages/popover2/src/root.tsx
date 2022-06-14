@@ -23,41 +23,17 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { Column } from 'table/src/props';
 import { defineComponent } from 'vue';
 
-import { DATA_COLUMNS, DATA_TABLE } from './options';
+import { PropTypes } from '@bkui-vue/shared';
+
 export default defineComponent({
-  components: {},
-  data() {
-    return {
-      tableData: [
-        ...DATA_TABLE,
-      ],
-      columns: [...DATA_COLUMNS].map((col: Column, index: number) => ({
-        ...col,
-        label: [0, 1].includes(index) ? this.renderTh : (col: any) => col.field,
-        render: [1, 2, 3, 4].includes(index) ? this.renderCell : undefined })),
-    };
-  },
-
-
-  methods: {
-    renderCell({ row, column }) {
-      return <bk-input v-model={ row[column.field] }></bk-input>;
-    },
-    renderTh(column, index) {
-      return <bk-popover2 content={ `${index}-xxxxxxxx` }>
-        <span>{ column.field ?? index }</span>
-      </bk-popover2>;
-    },
+  props: {
+    class: PropTypes.string.def(''),
   },
   render() {
-    return  <div style="height: 300px; width: 100%;">
-      <bk-table
-        columns={ this.columns }
-        data={ this.tableData }
-      />
-    </div>;
+    return <>
+    { this.$slots.default?.() }
+    </>;
   },
 });
