@@ -26,5 +26,6 @@
 /** 排序方式 */
 export const enum SortType {
   ASC = 'asc',
-  DESC = 'desc'
+  DESC = 'desc',
+  NULL = 'null'
 }
