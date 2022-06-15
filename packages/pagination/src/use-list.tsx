@@ -64,7 +64,7 @@ export default () => {
     showPreBatch.value = false;
     showNextBatch.value = false;
     const stack = [];
-    if (proxy.totalPageNum <= PAGE_ITEMS_NUM) {
+    if (proxy.totalPageNum <= PAGE_ITEMS_NUM + 2) {
       for (let i = 2; i <= proxy.totalPageNum - 1; i++) {
         stack.push(i);
       }
