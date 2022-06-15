@@ -237,6 +237,7 @@ export default defineComponent({
             return Promise.resolve(true);
           }
           const rule = rules[stepIndex];
+
           return Promise.resolve()
             .then(() => {
               const result = rule.validator(value);
@@ -248,8 +249,7 @@ export default defineComponent({
                   if (data === false) {
                     return Promise.reject(rule.message);
                   }
-                  return doValidate();
-                }, () => {
+                }).then(() => doValidate(), () => {
                   state.isError = true;
                   state.errorMessage = rule.message;
                   return Promise.reject(rule.message);
