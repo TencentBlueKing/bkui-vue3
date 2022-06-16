@@ -70,7 +70,9 @@ export default defineComponent({
       }, props.delay);
     };
 
-    const close = () => {
+    const close = (e: Event) => {
+      e.preventDefault();
+      e.stopPropagation();
       visible.value = false;
     };
 
