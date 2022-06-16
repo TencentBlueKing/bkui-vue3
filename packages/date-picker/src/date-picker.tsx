@@ -39,6 +39,7 @@ import {
 } from 'vue';
 
 import { clickoutside } from '@bkui-vue/directives';
+import { Close } from '@bkui-vue/icon';
 import { useFormItem } from '@bkui-vue/shared';
 
 import PickerDropdown from './base/picker-dropdown';
@@ -294,10 +295,11 @@ export default defineComponent({
       }
     };
 
-    const handleInputMouseleave = (e) => {
-      if (e.toElement?.classList.contains('clear-action')) {
-        return;
-      }
+    const handleInputMouseleave = (_e) => {
+      console.log('handleInputMouseleave');
+      // if (e.toElement?.classList.contains('clear-action')) {
+      //   return;
+      // }
       state.showClose = false;
     };
 
@@ -458,8 +460,6 @@ export default defineComponent({
     const onPickSuccess = () => {
       state.visible = false;
 
-      console.error('onPickSuccess');
-
       // 点击 shortcuts 会关闭弹层时，如果不在 nextTick 里触发 pick-success，那么会导致触发 pick-success 的时候，
       // v-model 的值还是之前的值
       nextTick(() => {
@@ -560,9 +560,7 @@ export default defineComponent({
             'icon-wrapper',
             this.disabled ? 'disabled' : '',
           ]}
-          onClick={this.handleIconClick}
-          onMouseenter={this.handleInputMouseenter}
-          onMouseleave={this.handleInputMouseleave}>
+          onClick={this.handleIconClick}>
           {
             this.type === 'time' || this.type === 'timerange' ? (
               <svg class="picker-icon" x="0px" y="0px" viewBox="0 0 1024 1024">
@@ -601,20 +599,19 @@ export default defineComponent({
           onFocus={this.handleFocus}
           onClick={this.handleFocus}
           onBlur={this.handleBlur}
-          onMouseenter={this.handleInputMouseenter}
-          onMouseleave={this.handleInputMouseleave}
           onKeydown={this.handleKeydown}
           onChange={this.handleInputChange}
         />
         {
           (this.clearable && this.showClose) ? (
-            <i class="bk-icon icon-close-circle-shape clear-action" onClick={this.handleClear}></i>
+            <Close onClick={this.handleClear} class="clear-action" />
           ) : ''
         }
       </div>
     );
 
     const shortcutsSlot = this.hasShortcuts ? { shortcuts: () => this.$slots.shortcuts?.() || null } : {};
+
     return (
       <div
         class={[
@@ -623,7 +620,9 @@ export default defineComponent({
           this.longWidthCls,
         ]}
         v-clickoutside={this.handleClose}>
-          <div ref="triggerRef" class="bk-date-picker-rel">
+          <div ref="triggerRef" class="bk-date-picker-rel"
+            onMouseenter={this.handleInputMouseenter}
+            onMouseleave={this.handleInputMouseleave}>
             {this.$slots.trigger?.() ?? defaultTrigger}
           </div>
           <Teleport to="body" disabled={!this.appendToBody}>
