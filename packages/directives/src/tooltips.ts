@@ -112,15 +112,19 @@ function createPopperInstance(el: HTMLElement, popper: HTMLElement, options: IOp
   });
 
   if (trigger === 'hover') {
-    const showEvents = ['mouseenter', 'focus'];
-    const hideEvents = ['mouseleave', 'blur'];
-
-    showEvents.forEach((event) => {
-      el.addEventListener(event, show);
+    let hideTimeout = null;
+    el.addEventListener('mouseenter', () => {
+      show();
+      clearTimeout(hideTimeout);
     });
-
-    hideEvents.forEach((event) => {
-      el.addEventListener(event, hide);
+    popper.addEventListener('mouseenter', () => {
+      clearTimeout(hideTimeout);
+    });
+    el.addEventListener('mouseleave', () => {
+      hideTimeout = setTimeout(hide, 100);
+    });
+    popper.addEventListener('mouseleave', () => {
+      hideTimeout = setTimeout(hide, 100);
     });
   } else if (trigger === 'click') {
     document.body.addEventListener('click', (event) => {
