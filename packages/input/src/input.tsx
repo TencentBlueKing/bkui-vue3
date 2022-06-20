@@ -176,7 +176,6 @@ export default defineComponent({
     // 事件句柄生成器
     function eventHandler(eventName) {
       return (e) => {
-        e.preventDefault();
         if (eventName === EVENTS.KEYDOWN && (e.code === 'Enter' || e.key === 'Enter' || e.keyCode === 13)) {
           ctx.emit(EVENTS.ENTER, e.target.value, e);
         }
