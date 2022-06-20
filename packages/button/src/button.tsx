@@ -47,6 +47,7 @@ const buttonProps = {
   // circle: PropTypes.bool,
   nativeType: {
     type: String as IButtonNativeType,
+    default: 'button',
   },
 };
 
@@ -86,18 +87,18 @@ export default defineComponent({
     });
     const loadingSize = computed(() => (
       (isText.value || props.size === BkLoadingSize.Small) ? BkLoadingSize.Mini : BkLoadingSize.Small));
-    const handleClick = () => {
+    const handleClick = (e: MouseEvent) => {
       if (props.loading) return;
       /**
        * Success event.
        * @event click
        */
-      emit('click');
+      emit('click', e);
     };
 
-    const handleMouseOver = () => {
+    const handleMouseOver = (e: MouseEvent) => {
       isHover.value = true;
-      emit('mouseover');
+      emit('mouseover', e);
     };
 
     const handleMouseout = () => {
