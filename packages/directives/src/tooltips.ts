@@ -123,6 +123,9 @@ function createPopperInstance(el: HTMLElement, popper: HTMLElement, options: IOp
     el.addEventListener('mouseleave', () => {
       hideTimeout = setTimeout(hide, 100);
     });
+    el.addEventListener('click', () => {
+      hide();
+    });
     popper.addEventListener('mouseleave', () => {
       hideTimeout = setTimeout(hide, 100);
     });
