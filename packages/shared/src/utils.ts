@@ -23,6 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import { throttle } from 'lodash';
 const lowerStr = 'abcdefghijklmnopqrstuvwxyz0123456789';
 /**
  * 生成n位长度的字符串
@@ -35,4 +36,43 @@ export const random = (n: number, str = lowerStr) => {
     result += str[parseInt((Math.random() * str.length).toString(), 10)];
   }
   return result;
+};
+
+/**
+ * 监听目标元素的Resize事件
+ * @param root 目标元素
+ * @param callbackFn 执行函数
+ * @param delay 延迟执行时间，默认 60
+ * @param immediate 是否立即执行回调函数
+ * @returns "{ start: () => void, stop: () => void }"
+ */
+export const observerResize = (
+  root: HTMLElement,
+  callbackFn: () => void,
+  delay = 60,
+  immediate = false,
+) => {
+  const callFn = throttle(() => {
+    if (typeof callbackFn === 'function') {
+      callbackFn();
+    }
+  }, delay);
+  const resizeObserver = new ResizeObserver(() => {
+    callFn();
+  });
+
+  if (immediate) {
+    if (typeof callbackFn === 'function') {
+      callbackFn();
+    }
+  }
+  return {
+    start: () => {
+      resizeObserver.observe(root);
+    },
+    stop: () => {
+      resizeObserver.disconnect();
+      resizeObserver.unobserve(root);
+    },
+  };
 };
