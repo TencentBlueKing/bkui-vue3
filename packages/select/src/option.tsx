@@ -35,6 +35,7 @@ import {
   toRefs,
 } from 'vue';
 
+import { Done } from '@bkui-vue/icon';
 import { classes, PropTypes } from '@bkui-vue/shared';
 
 import { optionGroupKey, selectKey } from './common';
@@ -101,7 +102,12 @@ export default defineComponent({
         class={selectItemClass}
         onClick={this.handleOptionClick}
         onMouseenter={this.handleMouseEnter}>
-        {this.$slots.default?.() ?? <span>{this.label}</span>}
+        {
+          this.$slots.default?.() ?? <span class="bk-select-option-item">
+              {this.label}
+              {this.multiple && this.selected && <Done width={22} height={22}></Done>}
+            </span>
+        }
       </li>
     );
   },

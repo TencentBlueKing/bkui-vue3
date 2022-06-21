@@ -1,6 +1,6 @@
 <template>
   <div class="button-group-list">
-    <div class="mb10">
+    <div class="mb10 basic-button-list">
       <span>小尺寸</span>
       <bk-button
         class="ml10"
@@ -42,7 +42,7 @@
       </bk-button>
     </div>
 
-    <div class="mb10">
+    <div class="mb10 basic-button-list">
       <span>默认尺寸</span>
       <bk-button
         class="ml10"
@@ -72,7 +72,7 @@
       </bk-button>
     </div>
 
-    <div>
+    <div class="basic-button-list">
       <span>大尺寸</span>
       <bk-button
         class="ml10"

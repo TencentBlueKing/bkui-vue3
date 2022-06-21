@@ -52,7 +52,7 @@
       label: '骑车',
     },
     {
-      value: '',
+      value: 'dancing',
       label: '跳舞',
     },
   ]);

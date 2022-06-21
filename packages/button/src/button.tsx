@@ -72,11 +72,13 @@ export default defineComponent({
         'is-disabled': props.disabled,
         'is-outline': props.outline,
         'is-text': isText.value,
+        'is-loading': props.loading,
         // 'is-circle': props.circle,
         [`${btnClsPrefix}-${props.size}`]: props.size && btnSizes.includes(props.size),
         'no-slot': !showSlot,
       }, `${themeCls} ${btnClsPrefix} ${hoverTheme}`);
     });
+
     const loadingTheme = computed(() => {
       if (props.text || props.outline || props.hoverTheme) {
         if (isHover.value && !props.text) return 'white';
@@ -128,7 +130,7 @@ export default defineComponent({
           )
         }
         {
-          slots.default && !props.loading && <span class={`${btnClsPrefix}-text`}>{slots.default?.()}</span>
+          slots.default && <span class={`${btnClsPrefix}-text`}>{slots.default?.()}</span>
         }
       </button>
     );
