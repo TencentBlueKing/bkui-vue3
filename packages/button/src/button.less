@@ -108,17 +108,15 @@
     line-height: 1;
   }
 
-  &:not(.is-text) {
-    &.is-loading {
-      position: relative;
-      .@{bk-prefix}-button-loading {
-        &:not(:last-child) {
-          position: absolute;
-        }
+  &.is-loading {
+    position: relative;
+    .@{bk-prefix}-button-loading {
+      &:not(:last-child) {
+        position: absolute;
       }
-      .@{bk-prefix}-button-text {
-        visibility: hidden;
-      }
+    }
+    .@{bk-prefix}-button-text {
+      visibility: hidden;
     }
   }
 
