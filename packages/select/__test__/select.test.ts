@@ -24,12 +24,15 @@
  * IN THE SOFTWARE.
 */
 
+import ResizeObserver from 'resize-observer-polyfill';
+
 import { mount } from '@vue/test-utils';
 
 import BkSelect from '../src';
 import BkOption from '../src/option';
 import BkOptionGroup from '../src/optionGroup';
 
+window.ResizeObserver = ResizeObserver;
 describe('Select.tsx', () => {
   // 空Select是否正常渲染
   test('render empty select', async () => {
@@ -37,7 +40,9 @@ describe('Select.tsx', () => {
     expect(wrapper.classes()).toContain('bk-select');
     expect(wrapper.find('.bk-input--text').element.getAttribute('placeholder')).toBe('请选择');
     await wrapper.find('.bk-select-trigger').trigger('click');
-    expect(wrapper.find('.bk-popover-content').element.hasAttribute('data-show')).toBeTruthy();
+    const popover = document.querySelector('.bk-pop2-content');
+    expect(window.getComputedStyle(popover).display).toBe('block');
+    wrapper.unmount();
   });
 
   // 下拉是否正常
@@ -57,7 +62,9 @@ describe('Select.tsx', () => {
       disabled: true,
     });
     await wrapper.find('.bk-select-trigger').trigger('click');
-    expect(wrapper.find('.bk-popover-content').element.hasAttribute('data-show')).toBeFalsy();
+    const popover = document.querySelector('.bk-pop2-content');
+    expect(window.getComputedStyle(popover).display).toBe('none');
+    wrapper.unmount();
   });
 
   // options渲染是否正常
@@ -81,13 +88,14 @@ describe('Select.tsx', () => {
         };
       },
     });
-    const options = wrapper.element.querySelectorAll('.bk-select-option');
+    const options = document.querySelectorAll('.bk-select-option');
     const select = wrapper.findComponent({ name: 'Select' });
     const selectInstance = select.vm as InstanceType<typeof BkSelect>;
     expect(options.length).toBe(selectInstance.options.length);
 
     const optionInstances = wrapper.findAllComponents({ name: 'Option' });
     expect(optionInstances.filter(item => (item.vm as any).selected).length).toBe(1);
+    wrapper.unmount();
   });
 
   // 多选
@@ -136,6 +144,7 @@ describe('Select.tsx', () => {
       await item.trigger('click');
     }
     expect(wrapper.vm.selectValue).toEqual([1, undefined, null]);
+    wrapper.unmount();
   });
 
   // 单选
@@ -179,6 +188,7 @@ describe('Select.tsx', () => {
     const option =  wrapper.findAllComponents({ name: 'Option' })[5];
     await option.trigger('click');
     expect(wrapper.vm.selectValue).toHaveLength(0);
+    wrapper.unmount();
   });
 
   // 空组是否渲染正常
@@ -197,8 +207,8 @@ describe('Select.tsx', () => {
         </BkSelect>
       `,
     });
-    expect(wrapper.findAll('.bk-option-group')).toHaveLength(2);
-    expect(wrapper.find('.bk-select-options').isVisible()).toBe(false);
+    expect(document.getElementsByClassName('bk-option-group')).toHaveLength(2);
+    wrapper.unmount();
   });
 
   test('model value change', async () => {
@@ -230,6 +240,7 @@ describe('Select.tsx', () => {
     vm.seletValue = 2;
     await vm.$nextTick();
     expect(wrapper.find<HTMLInputElement>('.bk-select-trigger .bk-input--text').element.value).toBe('2-test');
+    wrapper.unmount();
   });
 
   test('options change', async () => {
@@ -260,6 +271,7 @@ describe('Select.tsx', () => {
     }
     await vm.$nextTick();
     expect(wrapper.find<HTMLInputElement>('.bk-select-trigger .bk-input--text').element.value).toBe('1-test');
+    wrapper.unmount();
   });
 
   // 单选搜索功能
