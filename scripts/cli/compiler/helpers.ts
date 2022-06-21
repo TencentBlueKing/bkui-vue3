@@ -40,11 +40,11 @@ export const THEME_LESS_URL = resolve(COMPONENT_URL, 'styles/src/themes/themes.l
 export const compilerLibDir = async (dir: string): Promise<any> => {
   const buildDir: any = (dir: string) => {
     const files = readdirSync(dir);
-    const list = files.filter(url =>  /\.d.ts$/.test(join(dir, url)));
+    const list = files.filter(url => /\.d.ts$/.test(join(dir, url)));
     (list.length ? list : files).forEach((file, index) => {
       const url = join(dir, file);
       if (list.length) {
-        if (/lib\/(bkui-vue|styles\/src)\/(components|index)\.d\.ts$/.test(url)) {
+        if (/lib\/(bkui-vue|styles\/src)\/(components|index|volar\.components)\.d\.ts$/.test(url)) {
           let chunck = readFileSync(url, 'utf-8');
           chunck = chunck.replace(/@bkui-vue/gmi, url.match(/styles\/src\/index.d.ts$/) ? '..' : '.');
           writeFileSync(url, chunck);
