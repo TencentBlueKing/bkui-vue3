@@ -112,8 +112,10 @@
   }
 
   .@{bk-prefix}-loading-indicator {
+    display: flex;
     line-height: 1;
     text-align: center;
+    flex-direction: column;
     each(@themeSelectors, {
       &.@{bk-prefix}-loading-@{key} {
         .loading-theme(@value);
@@ -135,6 +137,10 @@
         .create-rotate(.45s + ((@value - 1) * .15), 135deg - (45 * (@value - 1)));
       }
     });
+
+    .@{bk-prefix}-normal-indicator {
+      display: inline-flex;
+    }
 
     .@{bk-prefix}-spin-indicator {
       position: relative;
