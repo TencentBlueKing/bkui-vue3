@@ -12,7 +12,6 @@
       disabled
       class="ml10"
       loading
-      loading-mode="spin"
     >
       加载中
     </bk-button>
