@@ -197,9 +197,6 @@ export default defineComponent({
       } else if (addable) {
         list.push(<div onClick={this.handleTabAdd}><Plus width={26} height={26} /></div>);
       }
-      if (typeof this.$slots.setting === 'function') {
-        list.push(this.$slots.setting?.(h));
-      }
       if (list.length) {
         return (
           <div class='bk-tab-header-operation'>
@@ -219,6 +216,13 @@ export default defineComponent({
           {renderNavs()}
         </div>
         { renderSlot()}
+        {
+          typeof this.$slots.setting === 'function' &&  (
+            <div class="bk-tab-header-setting">
+            {this.$slots.setting() }
+          </div>
+          )
+        }
       </div>
     );
   },

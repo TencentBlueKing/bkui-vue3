@@ -24,7 +24,7 @@
 * IN THE SOFTWARE.
 */
 
-import { throttle } from 'lodash';
+import { get as objGet, throttle } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
 import { BORDER_OPTION, BORDER_OPTIONS, TABLE_ROW_ATTRIBUTE } from './const';
@@ -308,7 +308,7 @@ export const getRowText = (row: any, key: string, column: Column) => {
     return row[TABLE_ROW_ATTRIBUTE.ROW_INDEX] + 1;
   }
 
-  return row[key];
+  return objGet(row, key);
 };
 
 /**
@@ -365,9 +365,9 @@ export const getRowKey = (item: any, props: TablePropTypes, index: number) => {
 };
 
 
-export const hasRootScrollY =  (root) => {
+export const hasRootScrollY =  (root, querySelector: string) => {
   if (root) {
-    const tableBody = root.querySelector('.bk-table-body table') as HTMLElement;
+    const tableBody = root.querySelector(querySelector) as HTMLElement;
     if (tableBody) {
       return  tableBody.offsetHeight > root.offsetHeight;
     }

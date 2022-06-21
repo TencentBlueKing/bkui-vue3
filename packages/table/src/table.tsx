@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent, nextTick, onBeforeUnmount, onMounted, ref, watch, watchEffect } from 'vue';
+import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, ref, watch, watchEffect } from 'vue';
 
 import { debounce, resolveClassName } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
@@ -55,6 +55,7 @@ export default defineComponent({
     const {
       colgroups,
       dragOffsetXStyle,
+      dragOffsetX,
       reactiveSchema,
       indexData,
       renderFixedColumns,
@@ -106,7 +107,8 @@ export default defineComponent({
       const { sortFn, column, index, type } = args;
       if (typeof sortFn === 'function') {
         columnSortFn = sortFn;
-        pageData.sort(columnSortFn);
+        resolvePageData(columnFilterFn, columnSortFn);
+        refVirtualRender.value?.reset?.();
       }
 
       ctx.emit(EMITEVENTS.COLUMN_SORT, { column, index, type });
@@ -115,6 +117,7 @@ export default defineComponent({
       if (typeof filterFn === 'function') {
         columnFilterFn = filterFn;
         resolvePageData(columnFilterFn, columnSortFn);
+        refVirtualRender.value?.reset?.();
       }
 
       ctx.emit(EMITEVENTS.COLUMN_FILTER, { checked, column, index });
@@ -168,10 +171,10 @@ export default defineComponent({
       setRowExpand,
     });
 
-    const tableBodyClass = {
+    const tableBodyClass = computed(() => ({
       ...contentClass,
       '__is-empty': !pageData.length,
-    };
+    }));
 
     const tableBodyContentClass = {
       [resolveClassName('table-body-content')]: true,
@@ -179,9 +182,14 @@ export default defineComponent({
     };
 
     const resizeColumnClass = {
-      [resolveClassName('drag-column')]: true,
+      column_drag_line: true,
       'offset-x': true,
     };
+
+    const resizeColumnStyle = computed(() => ({
+      ...dragOffsetXStyle.value,
+      left: `${dragOffsetX.value - reactiveSchema.scrollTranslateX}px`,
+    }));
 
     const loadingRowClass = {
       'scroll-loading': true,
@@ -202,7 +210,7 @@ export default defineComponent({
       <VirtualRender
         ref={refVirtualRender}
         lineHeight={tableRender.getRowHeight}
-        class={ tableBodyClass }
+        class={ tableBodyClass.value }
         style={ contentStyle }
         list={ pageData }
         contentClassName={ tableBodyContentClass }
@@ -218,7 +226,7 @@ export default defineComponent({
       </VirtualRender>
       <div class={ fixedWrapperClass }>
         { renderFixedColumns() }
-        <div class={ resizeColumnClass } style={dragOffsetXStyle.value}></div>
+        <div class={ resizeColumnClass } style={ resizeColumnStyle.value }></div>
         <div class={ loadingRowClass }>{
           renderScrollLoading()
         }</div>

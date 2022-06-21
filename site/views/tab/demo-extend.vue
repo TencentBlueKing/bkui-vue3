@@ -11,7 +11,9 @@
         </div>
       </template>
       <template #setting>
-        <div>设置</div>
+        <div style="margin: 0 10px">
+          设置
+        </div>
       </template>
 
       <bk-tab-panel

@@ -95,53 +95,23 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?:
     return defaultValue;
   };
 
-  const getRowsHeight = () => {
-    if (!pageData?.length) {
-      return 0;
-    }
-
-    if (typeof props.rowHeight === 'function') {
-      return pageData.reduce((out: number, row: any, rowIndex: number) => {
-        const result = Reflect.apply(props.rowHeight, this, ['tbody', row, rowIndex]);
-        let resultHeight = out;
-        if (/^\d+\.?\d*px?$/.test(`${result}`)) {
-          resultHeight += Number(result.replace(/px$/, ''));
-        }
-        return resultHeight;
-      }, 0);
-    }
-
-    if (/^\d+\.?\d*px?$/.test(`${props.rowHeight}`)) {
-      const rowHeight = props.rowHeight.replace(/px$/, '');
-      return pageData.length * Number(rowHeight);
-    }
-
-    return 0;
-  };
-
   /** 表格外层容器样式 */
   const contentStyle = reactive({});
 
   const resolveContentStyle = () => {
     const resolveHeight = resolvePropHeight(props.height, autoHeight.value);
     const resolveHeadHeight = props.showHead ? resolvePropHeight(props.headHeight, 40) + 2 : 0;
-    const resolveMaxHeight = resolvePropHeight(props.maxHeight, autoHeight.value);
     const resolveMinHeight = resolvePropHeight(props.minHeight, autoHeight.value);
-
     const resolveFooterHeight = props.pagination && props.data.length ? 40 : 0;
     const contentHeight = resolveHeight - resolveHeadHeight - resolveFooterHeight;
     const height = props.height !== 'auto' ? `${contentHeight}px` : false;
-    const maxHeight = resolveMaxHeight - resolveHeadHeight - resolveFooterHeight;
     const minHeight = resolveMinHeight - resolveHeadHeight - resolveFooterHeight;
-    const rowsHeight = getRowsHeight();
     Object.assign(contentStyle, {
       display: pageData?.length ? 'block' : false,
-      'max-height': `${maxHeight > rowsHeight ? maxHeight : rowsHeight}px`,
       'min-height': `${minHeight}px`,
       height,
     });
   };
-
 
   onMounted(() => {
     resetTableHeight(root?.value);
@@ -157,13 +127,11 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?:
   };
 
   const updateBorderClass = (root: HTMLElement) => {
-    hasScrollY.value = hasRootScrollY(root);
-    if (root) {
-      const tableBody = root.querySelector('.bk-table-body table') as HTMLElement;
-      if (tableBody) {
-        hasScrollY.value = tableBody.offsetHeight > root.offsetHeight;
-      }
-    }
+    const querySelector = props.virtualEnabled
+      ? `.${resolveClassName('virtual-section')}`
+      : `.${resolveClassName('table-body-content')}`;
+
+    hasScrollY.value = hasRootScrollY(root, querySelector);
   };
 
   /**
@@ -215,7 +183,7 @@ export const useInit = (props: TablePropTypes) => {
     updateColGroups();
   }, { immediate: true, deep: true });
 
-  const { dragOffsetXStyle } = useColumnResize(colgroups, true);
+  const { dragOffsetXStyle, dragOffsetX } = useColumnResize(colgroups, true);
   const { activeColumns } = useActiveColumns(props);
 
   const reactiveSchema = reactive({
@@ -277,6 +245,7 @@ export const useInit = (props: TablePropTypes) => {
   return {
     colgroups,
     dragOffsetXStyle,
+    dragOffsetX,
     reactiveSchema,
     indexData,
     fixedWrapperClass,
