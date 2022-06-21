@@ -279,12 +279,14 @@ export default defineComponent({
         {isTextArea.value ? (
             <textarea
               ref={inputRef}
+              spellcheck={false}
               {...inputAttrs}
               {...bindProps.value}
               rows={props.rows}
             />
         ) : (
           <input
+            spellcheck={false}
             {...inputAttrs}
             ref={inputRef}
             class={`${inputClsPrefix.value}--text`}
