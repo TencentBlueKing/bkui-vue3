@@ -1,5 +1,8 @@
 <template>
-  <bk-date-picker v-model="dateValue" />
+  <bk-date-picker
+    v-model="dateValue"
+    clearable
+  />
 </template>
 
 <script setup>

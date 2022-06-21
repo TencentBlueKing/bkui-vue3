@@ -51,10 +51,13 @@ module.exports = {
   moduleNameMapper: {
     '^.+\\.(css|less|scss)$': 'babel-jest',
     ...packages.reduce(
-      (acc, name) => ({
-        ...acc,
-        [`@bkui-vue/${name}(.*)$`]: path.resolve(__dirname, `./packages/${name}/src/$1`),
-      }),
+      (acc, name) => {
+        return {
+          ...acc,
+          '@bkui-vue/popover2': path.resolve(__dirname, `./packages/popover2/src/index.ts`),
+          [`@bkui-vue/${name}(.*)$`]: path.resolve(__dirname, `./packages/${name}/src/$1`),
+        }
+      },
       {},
     ),
   },

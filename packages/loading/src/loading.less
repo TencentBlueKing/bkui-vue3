@@ -28,7 +28,7 @@
 
 .create-rotate(@time, @deg) {
   transform: rotate(@deg);
-  animation-delay: @time;
+  animation-delay: -@time;
 }
 
 .loading-theme(@theme) {
@@ -94,6 +94,7 @@
 
   .oval {
     position: absolute;
+
     width: @ovalWidth;
     height: @ovalHeight;
     background-color: @default-color;
@@ -102,7 +103,6 @@
     animation-iteration-count: infinite;
     animation-name: fade;
     transform-origin: center @ovalGap;
-    animation-direction: normal;
   }
 
   .@{bk-prefix}-loading-mask {
@@ -112,8 +112,10 @@
   }
 
   .@{bk-prefix}-loading-indicator {
+    display: flex;
     line-height: 1;
     text-align: center;
+    flex-direction: column;
     each(@themeSelectors, {
       &.@{bk-prefix}-loading-@{key} {
         .loading-theme(@value);
@@ -132,9 +134,13 @@
 
     each(range(8), {
       .oval-@{value} {
-        .create-rotate(.45s + (@value * .15), -135deg + (45 * (@value - 1)));
+        .create-rotate(.45s + ((@value - 1) * .15), 135deg - (45 * (@value - 1)));
       }
     });
+
+    .@{bk-prefix}-normal-indicator {
+      display: inline-flex;
+    }
 
     .@{bk-prefix}-spin-indicator {
       position: relative;

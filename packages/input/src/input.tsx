@@ -176,7 +176,7 @@ export default defineComponent({
     // 事件句柄生成器
     function eventHandler(eventName) {
       return (e) => {
-        if (e.code === 'Enter' || e.key === 'Enter' || e.keyCode === 13) {
+        if (eventName === EVENTS.KEYDOWN && (e.code === 'Enter' || e.key === 'Enter' || e.keyCode === 13)) {
           ctx.emit(EVENTS.ENTER, e.target.value, e);
         }
         if (isCNInput.value && [EVENTS.INPUT, EVENTS.CHANGE].some(e => eventName === e)) return;
@@ -279,12 +279,14 @@ export default defineComponent({
         {isTextArea.value ? (
             <textarea
               ref={inputRef}
+              spellcheck={false}
               {...inputAttrs}
               {...bindProps.value}
               rows={props.rows}
             />
         ) : (
           <input
+            spellcheck={false}
             {...inputAttrs}
             ref={inputRef}
             class={`${inputClsPrefix.value}--text`}

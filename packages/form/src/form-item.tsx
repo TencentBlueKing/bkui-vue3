@@ -237,14 +237,19 @@ export default defineComponent({
             return Promise.resolve(true);
           }
           const rule = rules[stepIndex];
+
           return Promise.resolve()
             .then(() => {
-              // debugger;
               const result = rule.validator(value);
               // 异步验证
               if (typeof result !== 'boolean'
                 && typeof result.then === 'function') {
-                return result.then(() => doValidate, () => {
+                return result.then((data) => {
+                  // 异步验证结果为 false
+                  if (data === false) {
+                    return Promise.reject(rule.message);
+                  }
+                }).then(() => doValidate(), () => {
                   state.isError = true;
                   state.errorMessage = rule.message;
                   return Promise.reject(rule.message);
