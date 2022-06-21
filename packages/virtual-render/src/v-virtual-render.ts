@@ -114,10 +114,6 @@ const executeThrottledRender = (e, wrapper, binding, delay = 60) => {
   Reflect.apply(throttledRender(delay), this, [e, wrapper, binding]);
 };
 
-// const executeDebounceRender = (e, wrapper, binding, delay = 60) => {
-//   console.log('executeDebounceRender');
-//   Reflect.apply(debounceRender(delay), this, [e, wrapper, binding]);
-// };
 export default {
   mounted(el, binding) {
     const wrapper = el.parentNode;
@@ -127,12 +123,6 @@ export default {
       executeThrottledRender(e, wrapper, binding, throttleDelay);
     });
   },
-  // updated(el, binding) {
-  //   const wrapper = el.parentNode;
-  //   console.log('update--scroll');
-  //   // @ts-ignore:next-line
-  //   // executeDebounceRender(null, wrapper, binding, 100);
-  // },
   unbind(el) {
     if (el) {
       const wrapper = el.parentNode;

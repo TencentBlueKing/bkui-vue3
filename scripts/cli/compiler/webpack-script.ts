@@ -49,7 +49,7 @@ export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILi
     }
   });
   const compiler = webpack({
-    mode: 'production',
+    mode: 'development',
     entry,
     output: {
       filename: (pathData: any) => {
