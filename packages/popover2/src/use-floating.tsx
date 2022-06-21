@@ -168,6 +168,7 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
 
   const updatePopover = () => {
     const { elReference, elContent, elArrow } = resolvePopElements();
+    if (!elReference) return;
     const options = resolvePopOptions(elArrow);
     computePosition(elReference, elContent, options).then(({ x, y, placement, middlewareData }) => {
       const oldClass = elContent.className;
