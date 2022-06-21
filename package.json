@@ -90,6 +90,7 @@
     "postcss-less": "~6.0.0",
     "prettier": "~2.6.2",
     "prismjs": "~1.27.0",
+    "resize-observer-polyfill": "~1.5.1",
     "rimraf": "~3.0.2",
     "stylelint": "~14.6.1",
     "stylelint-config-recommended-vue": "~1.4.0",
