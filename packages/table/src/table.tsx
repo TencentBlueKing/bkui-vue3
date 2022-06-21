@@ -171,10 +171,10 @@ export default defineComponent({
       setRowExpand,
     });
 
-    const tableBodyClass = {
+    const tableBodyClass = computed(() => ({
       ...contentClass,
       '__is-empty': !pageData.length,
-    };
+    }));
 
     const tableBodyContentClass = {
       [resolveClassName('table-body-content')]: true,
@@ -210,7 +210,7 @@ export default defineComponent({
       <VirtualRender
         ref={refVirtualRender}
         lineHeight={tableRender.getRowHeight}
-        class={ tableBodyClass }
+        class={ tableBodyClass.value }
         style={ contentStyle }
         list={ pageData }
         contentClassName={ tableBodyContentClass }

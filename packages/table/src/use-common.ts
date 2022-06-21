@@ -95,53 +95,23 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?:
     return defaultValue;
   };
 
-  // const getRowsHeight = () => {
-  //   if (!pageData?.length) {
-  //     return 0;
-  //   }
-
-  //   if (typeof props.rowHeight === 'function') {
-  //     return pageData.reduce((out: number, row: any, rowIndex: number) => {
-  //       const result = Reflect.apply(props.rowHeight, this, ['tbody', row, rowIndex]);
-  //       let resultHeight = out;
-  //       if (/^\d+\.?\d*px?$/.test(`${result}`)) {
-  //         resultHeight += Number(result.replace(/px$/, ''));
-  //       }
-  //       return resultHeight;
-  //     }, 0);
-  //   }
-
-  //   if (/^\d+\.?\d*px?$/.test(`${props.rowHeight}`)) {
-  //     const rowHeight = props.rowHeight.replace(/px$/, '');
-  //     return pageData.length * Number(rowHeight);
-  //   }
-
-  //   return 0;
-  // };
-
   /** 表格外层容器样式 */
   const contentStyle = reactive({});
 
   const resolveContentStyle = () => {
     const resolveHeight = resolvePropHeight(props.height, autoHeight.value);
     const resolveHeadHeight = props.showHead ? resolvePropHeight(props.headHeight, 40) + 2 : 0;
-    // const resolveMaxHeight = resolvePropHeight(props.maxHeight, autoHeight.value);
     const resolveMinHeight = resolvePropHeight(props.minHeight, autoHeight.value);
-
     const resolveFooterHeight = props.pagination && props.data.length ? 40 : 0;
     const contentHeight = resolveHeight - resolveHeadHeight - resolveFooterHeight;
     const height = props.height !== 'auto' ? `${contentHeight}px` : false;
-    // const maxHeight = resolveMaxHeight - resolveHeadHeight - resolveFooterHeight;
     const minHeight = resolveMinHeight - resolveHeadHeight - resolveFooterHeight;
-    // const rowsHeight = getRowsHeight();
     Object.assign(contentStyle, {
       display: pageData?.length ? 'block' : false,
-      // 'max-height': `${maxHeight > rowsHeight ? maxHeight : rowsHeight}px`,
       'min-height': `${minHeight}px`,
       height,
     });
   };
-
 
   onMounted(() => {
     resetTableHeight(root?.value);

@@ -101,7 +101,7 @@ export const tableProps = {
    * 设置表格最小高度
    * 默认：300
    */
-  minHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(200),
+  minHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(80),
 
   /**
    * 设置表格最d大高度
