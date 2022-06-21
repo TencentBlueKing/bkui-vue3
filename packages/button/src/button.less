@@ -109,9 +109,15 @@
   }
 
   &:not(.is-text) {
-    .@{bk-prefix}-button-loading {
-      &:not(:last-child) {
-        margin-right: 6px;
+    &.is-loading {
+      position: relative;
+      .@{bk-prefix}-button-loading {
+        &:not(:last-child) {
+          position: absolute;
+        }
+      }
+      .@{bk-prefix}-button-text {
+        visibility: hidden;
       }
     }
   }
