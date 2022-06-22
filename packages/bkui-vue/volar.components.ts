@@ -23,51 +23,8 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent } from 'vue';
-
-import BkButton from '@bkui-vue/button';
-import { bkTooltips } from '@bkui-vue/directives';
-
-export default defineComponent({
-  name: 'SiteTooltips',
-  directives: {
-    bkTooltips,
-  },
-  setup() {
-    const leftContent = {
-      arrow: true,
-      disabled: false,
-      trigger: 'hover',
-      theme: 'dark',
-      content: '提示信息',
-      showOnInit: false,
-      placement: 'left',
-      distance: 8,
-      onShow: () => {
-        console.log('onshow');
-      },
-      onHide: () => {
-        console.log('onHide');
-      },
-    };
-
-    const rightContent = Object.assign({}, leftContent, { placement: 'right', trigger: 'click', showOnInit: true });
-    const bottomContent = Object.assign({}, leftContent, { placement: 'bottom', theme: 'light' });
-
-    return {
-      leftContent,
-      rightContent,
-      bottomContent,
-    };
-  },
-  render() {
-    return (
-      <div style="margin: 50px auto;">
-        <BkButton ref="tooltip" v-bk-tooltips="提示信息">上边</BkButton><br /><br />
-        <BkButton ref="tooltip" v-bk-tooltips={this.leftContent}>左边</BkButton><br /><br />
-        <BkButton ref="tooltip" v-bk-tooltips={this.rightContent}>右边</BkButton><br /><br />
-        <BkButton ref="tooltip" v-bk-tooltips={this.bottomContent}>下边</BkButton><br /><br />
-      </div>
-    );
-  },
-});
+import * as globalComponents from './components';
+declare module '@vue/runtime-core' {
+  export type GlobalComponents = typeof globalComponents;
+}
+export {};

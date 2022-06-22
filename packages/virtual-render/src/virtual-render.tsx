@@ -160,9 +160,12 @@ export default defineComponent({
     };
 
     /** 列表数据重置之后的处理事项 */
-    const afterListDataReset = () => {
-      const el = refRoot.value?.parentNode;
+    const afterListDataReset = (scrollTop = true) => {
+      const el = refRoot.value?.parentNode as HTMLElement;
       computedVirtualIndex(props.lineHeight, handleScrollCallback, pagination, el, null);
+      if (scrollTop && refRoot.value) {
+        refRoot.value.scrollTo(0, 0);
+      }
     };
 
     /** 映射传入的数组为新的数组，增加 $index属性，用来处理唯一Index */

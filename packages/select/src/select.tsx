@@ -24,6 +24,8 @@
  * IN THE SOFTWARE.
 */
 
+import { merge } from 'lodash';
+import { PopoverPropTypes } from 'popover2/src/props';
 import {
   computed,
   defineComponent,
@@ -39,8 +41,7 @@ import { clickoutside } from '@bkui-vue/directives';
 import { AngleUp, Close } from '@bkui-vue/icon';
 import Input from '@bkui-vue/input';
 import Loading from '@bkui-vue/loading';
-import BKPopover from '@bkui-vue/popover';
-import { PopoverPropTypes } from '@bkui-vue/popover/src/props';
+import BKPopover from '@bkui-vue/popover2';
 import {
   classes,
   PropTypes,
@@ -50,7 +51,6 @@ import {
 import {
   selectKey,
   toLowerCase,
-  useFocus,
   useHover,
   usePopover,
   useRegistry,
@@ -91,7 +91,7 @@ export default defineComponent({
     popoverOptions: PropTypes.object.def({}), // popover属性
     customContent: PropTypes.bool.def(false), // 是否自定义content内容
   },
-  emits: ['update:modelValue', 'change', 'toggle', 'clear', 'scroll-end'],
+  emits: ['update:modelValue', 'change', 'toggle', 'clear', 'scroll-end', 'focus', 'blur'],
   setup(props, { emit }) {
     const {
       modelValue,
@@ -113,7 +113,7 @@ export default defineComponent({
     const formItem = useFormItem();
 
     const inputRef = ref<HTMLElement>();
-    const popoverRef = ref<any>();
+    const triggerRef = ref<HTMLElement>();
     const selectTagInputRef = ref<SelectTagInputType>();
     const optionsMap = ref<Map<any, OptionInstanceType>>(new Map());
     const options = computed(() => [...optionsMap.value.values()]);
@@ -123,10 +123,6 @@ export default defineComponent({
 
     watch(modelValue, () => {
       handleSetSelectedData();
-      // 修复tag模式下内容超出，popover没有更新问题
-      if (multipleMode.value === 'tag') {
-        popoverRef.value?.update();
-      }
     }, { deep: true });
 
     // select组件是否禁用
@@ -175,16 +171,23 @@ export default defineComponent({
       unregister: unregisterGroup,
     } = useRegistry<GroupInstanceType>(groupsMap);
     const { isHover, setHover, cancelHover } = useHover();
-    const { isFocus, handleFocus, handleBlur } = useFocus();
+    const isFocus = ref(false);
+    const handleFocus = (e: FocusEvent) => {
+      isFocus.value = true;
+      emit('focus', e);
+    };
+    const handleBlur = () => {
+      isFocus.value && emit('blur');
+      isFocus.value = false;
+    };
 
     const {
       popperWidth,
       isPopoverShow,
-      onPopoverFirstUpdate,
       hidePopover,
       showPopover,
       togglePopover,
-    } = usePopover({ popoverMinWidth: popoverMinWidth.value });
+    } = usePopover({ popoverMinWidth: popoverMinWidth.value }, triggerRef);
     // 输入框是否可以输入内容
     const isInput = computed(() => (filterable.value || allowCreate.value) && isPopoverShow.value);
     watch(isPopoverShow, (isShow) => {
@@ -375,7 +378,9 @@ export default defineComponent({
         }
       }
     };
-    const handleClickOutside = () => {
+    const handleClickOutside = ({ event }) => {
+      const { target } = event;
+      if (triggerRef.value?.contains(target) || triggerRef.value === target) return;
       hidePopover();
       handleBlur();
     };
@@ -409,8 +414,8 @@ export default defineComponent({
       isPopoverShow,
       isHover,
       popperWidth,
-      popoverRef,
       inputRef,
+      triggerRef,
       selectTagInputRef,
       searchLoading,
       isOptionsEmpty,
@@ -425,7 +430,6 @@ export default defineComponent({
       handleFocus,
       handleTogglePopover,
       handleClear,
-      onPopoverFirstUpdate,
       hidePopover,
       showPopover,
       handleToggleAll,
@@ -448,24 +452,15 @@ export default defineComponent({
       [this.size]: true,
       [this.behavior]: true,
     });
-    const popoverOptions: Partial<PopoverPropTypes> = Object.assign({
+    const basePopoverOptions: Partial<PopoverPropTypes> = {
       theme: 'light bk-select-popover',
       trigger: 'manual',
       width: this.popperWidth,
       arrow: false,
       placement: 'bottom',
       isShow: this.isPopoverShow,
-      modifiers: [
-        {
-          name: 'offset',
-          options: {
-            offset: [0, 4],
-          },
-        },
-      ],
-      // boundary: 'body',
-      handleFirstUpdate: this.onPopoverFirstUpdate,
-    }, this.popoverOptions);
+    };
+    const popoverOptions: Partial<PopoverPropTypes> = merge(basePopoverOptions, this.popoverOptions);
 
     const suffixIcon = () => {
       if (this.loading) {
@@ -519,6 +514,7 @@ export default defineComponent({
     const renderSelectTrigger = () => (
         <div
           class="bk-select-trigger"
+          ref="triggerRef"
           onClick={this.handleTogglePopover}
           onMouseenter={this.setHover}
           onMouseleave={this.cancelHover}
@@ -527,7 +523,7 @@ export default defineComponent({
         </div>
     );
     const renderSelectContent = () => (
-        <div>
+        <div class="bk-select-content">
           {
             !this.isShowSelectContent
             && (
@@ -565,10 +561,8 @@ export default defineComponent({
         </div>
     );
     return (
-      <div class={selectClass} v-clickoutside={this.handleClickOutside}>
-        <BKPopover
-          ref="popoverRef"
-          {...popoverOptions}>
+      <div class={selectClass}>
+        <BKPopover {...popoverOptions} onClickoutside={this.handleClickOutside}>
           {{
             default: () => renderSelectTrigger(),
             content: () => renderSelectContent(),

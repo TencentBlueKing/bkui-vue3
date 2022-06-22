@@ -66,9 +66,15 @@ export default defineComponent({
   name: 'Loading',
   props: loadingTypes,
   setup(props: LoadingTypes, ctx) {
-    const dotIndicator = [1, 2, 3, 4].map(i => (
-      <span class={`dot dot-${i}`}></span>
-    ));
+    const dotIndicator = (
+      <div class="bk-normal-indicator">
+        {
+          [1, 2, 3, 4].map(i => (
+            <span class={`dot dot-${i}`}></span>
+          ))
+        }
+      </div>
+    );
     const spinIndicator = <div class="bk-spin-indicator">
       {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
         <span class={`oval oval-${i}`}></span>

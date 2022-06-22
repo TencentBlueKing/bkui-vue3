@@ -108,11 +108,15 @@
     line-height: 1;
   }
 
-  &:not(.is-text) {
+  &.is-loading {
+    position: relative;
     .@{bk-prefix}-button-loading {
       &:not(:last-child) {
-        margin-right: 6px;
+        position: absolute;
       }
+    }
+    .@{bk-prefix}-button-text {
+      visibility: hidden;
     }
   }
 
