@@ -27,7 +27,7 @@ import * as globalComponents from './components';
 declare module '@vue/runtime-core' {
   type OriginComponents = typeof globalComponents;
   type OriginKeys = keyof OriginComponents;
-  export type GlobalComponents = Record<`Bk${OriginKeys}`, OriginComponents[OriginKeys]> & {
+  export interface GlobalComponents extends Record<`Bk${OriginKeys}`, OriginComponents[OriginKeys]> {
     BkBreadcrumbItem: typeof globalComponents.Breadcrumb.Item;
     BkButtonGroup: typeof globalComponents.Button.ButtonGroup;
     BkCascaderPanel: typeof globalComponents.Cascader.CascaderPanel;
@@ -48,6 +48,6 @@ declare module '@vue/runtime-core' {
     BkOption: typeof globalComponents.Select.Option;
     BkOptionGroup: typeof globalComponents.Select.Group;
     BkTabPanel: typeof globalComponents.Tab.TabPanel;
-  };
+  }
 }
 export {};
