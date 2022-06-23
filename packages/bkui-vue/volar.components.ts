@@ -25,7 +25,9 @@
 */
 import * as globalComponents from './components';
 declare module '@vue/runtime-core' {
-  export type GlobalComponents = typeof globalComponents & {
+  type OriginComponents = typeof globalComponents;
+  type OriginKeys = keyof OriginComponents;
+  export type GlobalComponents = Record<`Bk${OriginKeys}`, OriginComponents[OriginKeys]> & {
     BkBreadcrumbItem: typeof globalComponents.Breadcrumb.Item;
     BkButtonGroup: typeof globalComponents.Button.ButtonGroup;
     BkCascaderPanel: typeof globalComponents.Cascader.CascaderPanel;
