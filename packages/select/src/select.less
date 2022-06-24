@@ -7,6 +7,17 @@
   white-space: nowrap;
 }
 
+.flex-center() {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-text() {
+  margin-left: 4px;
+  line-height: 18px;
+}
+
 .@{bk-prefix}-select {
   .bk-select-icon(@fontSize: 20px, @color: #979ba5) {
     display: flex;
@@ -178,9 +189,8 @@
     }
 
     .spinner {
-      position: absolute;
-      top: 8px;
       right: 6px;
+      .fix-icon();
     }
   }
 }
@@ -190,9 +200,7 @@
 
   .bk-select-content {
     .bk-select-empty {
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      .flex-center();
       height: 56px;
       color: #63656e;
   
@@ -205,6 +213,10 @@
         color: #c4c6cc;
         align-items: center;
         justify-content: center;
+      }
+
+      span {
+        .icon-text()
       }
     }
 
@@ -260,9 +272,11 @@
     }
 
     .bk-select-options-loading {
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      .flex-center();
+
+      span {
+        .icon-text()
+      }
     }
 
     .bk-option-group {

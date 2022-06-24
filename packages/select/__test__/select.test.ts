@@ -274,6 +274,40 @@ describe('Select.tsx', () => {
     wrapper.unmount();
   });
 
+  // tag 删除功能
+  test('select tag remove', async () => {
+    const wrapper = await mount({
+      components: {
+        BkSelect,
+        BkOption,
+      },
+      template: `
+        <BkSelect v-model="seletValue" multiple multiple-mode="tag">
+          <BkOption v-for="item in options" :value="item.value" :label="item.label"></BkOption>
+        </BkSelect>
+      `,
+      data() {
+        return {
+          seletValue: [1, 2],
+          options: [
+            {
+              value: 1,
+              label: 'test1',
+            },
+            {
+              value: 2,
+              label: 'test2',
+            },
+          ],
+        };
+      },
+    });
+    const tags = wrapper.findAllComponents('.bk-tag');
+    expect(tags).toHaveLength(2);
+    tags[0].find('.bk-tag-close').trigger('click');
+    expect(wrapper.vm.seletValue).toEqual([2]);
+  });
+
   // 单选搜索功能
   test('single select search', async () => {
     // const wrapper = await mount({
