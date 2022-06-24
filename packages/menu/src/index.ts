@@ -32,3 +32,9 @@ import Item from './menu-item';
 import Submenu from './submenu';
 const BkMenu = withInstallProps(Component, { Item, Submenu, Group });
 export default BkMenu;
+export {
+  BkMenu,
+  Item as BkMenuItem,
+  Submenu as BkSubmenu,
+  Group as BkMenuGroup,
+};
