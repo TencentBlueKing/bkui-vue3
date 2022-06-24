@@ -53,6 +53,8 @@ export const propsMixin = {
   maxHeight: PropTypes.string,
   // 弹出方向
   direction: PropTypes.string,
+  // title
+  title: PropTypes.string.def(''),
   // 动画类型
   animateType: PropTypes.string.def('slide'),
   // 弹框的渲染方式
