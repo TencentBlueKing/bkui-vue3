@@ -95,8 +95,11 @@ export function useFlatList(props: TagProps) {
     displayKey,
     list,
   } = toRefs(props);
-  const flatList = reactive([]);
+  const state = reactive({
+    flatList: [],
+  });
   watch([useGroup, saveKey, displayKey, list], () => {
+    state.flatList = [];
     let formatList: any = list.value;
     if (useGroup.value) {
       formatList = list.value.reduce((formatList: any[], item: any) => {
@@ -113,9 +116,9 @@ export function useFlatList(props: TagProps) {
         return formatList.concat(children);
       }, []);
     }
-    flatList.splice(0, flatList.length, ...formatList);
+    state.flatList = [...formatList];
   }, { immediate: true, deep: true });
-  return flatList;
+  return state.flatList;
 }
 
 /**
