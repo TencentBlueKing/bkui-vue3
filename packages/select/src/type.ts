@@ -29,11 +29,9 @@ import Option from './option';
 import Group from './optionGroup';
 import SelectTagInput from './selectTagInput';
 
-interface OptionType extends InstanceType<typeof Option> {
+export interface OptionInstanceType extends InstanceType<typeof Option> {
   value: string;
 }
-
-export type OptionInstanceType = OptionType;
 export type GroupInstanceType = InstanceType<typeof Group>;
 export type PopoverInstanceType = InstanceType<typeof Popover>;
 export type SelectTagInputType = InstanceType<typeof SelectTagInput>;
