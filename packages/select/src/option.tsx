@@ -44,7 +44,7 @@ export default defineComponent({
   name: 'Option',
   props: {
     value: PropTypes.any,
-    label: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    label: PropTypes.string.def(''),
     disabled: PropTypes.bool.def(false),
   },
   setup(props) {
@@ -57,7 +57,7 @@ export default defineComponent({
     const { disabled, value } = toRefs(props);
     const select = inject(selectKey, null);
     const group = inject(optionGroupKey, null);
-    const selected = computed<boolean>(() => select?.selected?.some(val => val === value.value));
+    const selected = computed<boolean>(() => select?.selected?.some(item => item.value === value.value as string));
     const multiple = computed<boolean>(() => select?.multiple);
     const isHover = computed(() => select?.activeOptionValue === value.value);
 
