@@ -59,14 +59,19 @@
   const selectedValue = ref(false);
   const list = ref([]);
   const remoteMethod = async value => new Promise((resolve) => {
-    setTimeout(() => {
-      list.value = new Array(10).fill('')
-        .map((_, i) => ({
-          value: `${i}-${value}`,
-          label: `label-${value}-${i}`,
-        }));
+    if (!value)  {
+      list.value = [];
       resolve('ok');
-    }, 3000);
+    } else {
+      setTimeout(() => {
+        list.value = new Array(10).fill('')
+          .map((_, i) => ({
+            value: `${i}-${value}`,
+            label: `label-${value}-${i}`,
+          }));
+        resolve('ok');
+      }, 1000);
+    };
   });
 </script>
 <style scoped>
