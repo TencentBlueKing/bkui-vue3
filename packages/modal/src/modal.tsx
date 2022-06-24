@@ -32,7 +32,6 @@ import { propsMixin } from './props.mixin';
 
 export default defineComponent({
   name: 'Modal',
-  inheritAttrs: false,
   props: {
     ...propsMixin,
   },
