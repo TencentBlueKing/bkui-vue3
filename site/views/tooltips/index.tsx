@@ -86,6 +86,13 @@ const props: IPropsTableItem[] = [
     desc: '是否禁用提示框',
     optional: ['true', 'false'],
   },
+  {
+    name: 'extCls',
+    type: 'String',
+    default: '',
+    desc: '配置自定义样式类名，传入的类会被加在组件最外层的 DOM',
+    optional: [],
+  },
 ];
 
 const events: IPropsTableItem[] = [

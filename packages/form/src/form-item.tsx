@@ -181,6 +181,13 @@ export default defineComponent({
 
     const isForm = Boolean(form);
 
+    const isFormTypeVertical = computed(() => {
+      if (!isForm) {
+        return false;
+      }
+      return form.props.formType === 'vertical';
+    });
+
     const labelStyles = computed<any>(() => {
       const styles = {
         width: '',
@@ -298,6 +305,7 @@ export default defineComponent({
     return {
       ...toRefs(state),
       labelStyles,
+      isFormTypeVertical,
       validate,
       clearValidate,
     };
@@ -355,6 +363,7 @@ export default defineComponent({
           class="bk-form-label"
           style={this.labelStyles}>
             {renderLabel()}
+            {this.isFormTypeVertical && this.$slots.labelAppend?.()}
         </div>
         <div class="bk-form-content">
           {this.$slots.default?.()}

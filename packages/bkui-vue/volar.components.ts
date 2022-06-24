@@ -25,6 +25,29 @@
 */
 import * as globalComponents from './components';
 declare module '@vue/runtime-core' {
-  export type GlobalComponents = typeof globalComponents;
+  type OriginComponents = typeof globalComponents;
+  type OriginKeys = keyof OriginComponents;
+  export interface GlobalComponents extends Record<`Bk${OriginKeys}`, OriginComponents[OriginKeys]> {
+    BkBreadcrumbItem: typeof globalComponents.Breadcrumb.Item;
+    BkButtonGroup: typeof globalComponents.Button.ButtonGroup;
+    BkCascaderPanel: typeof globalComponents.Cascader.CascaderPanel;
+    BkCheckboxGroup: typeof globalComponents.Checkbox.Group;
+    BkRow: typeof globalComponents.Container.Row;
+    BkCol: typeof globalComponents.Container.Col;
+    BkDropdownMenu: typeof globalComponents.Dropdown.DropdownMenu;
+    BkDropdownItem: typeof globalComponents.Dropdown.DropdownItem;
+    BkFormItem: typeof globalComponents.Form.FormItem;
+    BkComposeFormItem: typeof globalComponents.Form.ComposeFormItem;
+    BkLoadingMode: typeof globalComponents.Loading.BkLoadingMode;
+    BkLoadingSize: typeof globalComponents.Loading.BkLoadingSize;
+    BkMenuItem: typeof globalComponents.Menu.Item;
+    BkSubmenu: typeof globalComponents.Menu.Submenu;
+    BkMenuGroup: typeof globalComponents.Menu.Group;
+    BkRadioGroup: typeof globalComponents.Radio.Group;
+    BkRadioButton: typeof globalComponents.Radio.Button;
+    BkOption: typeof globalComponents.Select.Option;
+    BkOptionGroup: typeof globalComponents.Select.Group;
+    BkTabPanel: typeof globalComponents.Tab.TabPanel;
+  }
 }
 export {};
