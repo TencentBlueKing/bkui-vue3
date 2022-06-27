@@ -23,48 +23,31 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import Popover from '@bkui-vue/popover';
-
-import Option from './option';
-import Group from './optionGroup';
-import SelectTagInput from './selectTagInput';
-
-export interface OptionInstanceType extends InstanceType<typeof Option> {
-  value: string;
+import * as globalComponents from './components';
+declare module '@vue/runtime-core' {
+  type OriginComponents = typeof globalComponents;
+  type OriginKeys = keyof OriginComponents;
+  export interface GlobalComponents extends Record<`Bk${OriginKeys}`, OriginComponents[OriginKeys]> {
+    BkBreadcrumbItem: typeof globalComponents.Breadcrumb.Item;
+    BkButtonGroup: typeof globalComponents.Button.ButtonGroup;
+    BkCascaderPanel: typeof globalComponents.Cascader.CascaderPanel;
+    BkCheckboxGroup: typeof globalComponents.Checkbox.Group;
+    BkRow: typeof globalComponents.Container.Row;
+    BkCol: typeof globalComponents.Container.Col;
+    BkDropdownMenu: typeof globalComponents.Dropdown.DropdownMenu;
+    BkDropdownItem: typeof globalComponents.Dropdown.DropdownItem;
+    BkFormItem: typeof globalComponents.Form.FormItem;
+    BkComposeFormItem: typeof globalComponents.Form.ComposeFormItem;
+    BkLoadingMode: typeof globalComponents.Loading.BkLoadingMode;
+    BkLoadingSize: typeof globalComponents.Loading.BkLoadingSize;
+    BkMenuItem: typeof globalComponents.Menu.Item;
+    BkSubmenu: typeof globalComponents.Menu.Submenu;
+    BkMenuGroup: typeof globalComponents.Menu.Group;
+    BkRadioGroup: typeof globalComponents.Radio.Group;
+    BkRadioButton: typeof globalComponents.Radio.Button;
+    BkOption: typeof globalComponents.Select.Option;
+    BkOptionGroup: typeof globalComponents.Select.Group;
+    BkTabPanel: typeof globalComponents.Tab.TabPanel;
+  }
 }
-export type GroupInstanceType = InstanceType<typeof Group>;
-export type PopoverInstanceType = InstanceType<typeof Popover>;
-export type SelectTagInputType = InstanceType<typeof SelectTagInput>;
-
-export interface ISelectContext {
-  multiple?: boolean;
-  selected: ISelected[];
-  activeOptionValue: any;
-  register(key: any, option: OptionInstanceType): any;
-  unregister(key: any): any;
-  registerGroup(key: any, option: GroupInstanceType): any;
-  unregisterGroup(key: any): any;
-  handleOptionSelected (option: OptionInstanceType): void;
-  handleGetLabelByValue (item: ISelected): string
-}
-
-export interface IOptionGroupContext {
-  disabled: boolean;
-  groupCollapse: boolean;
-  register(key: any, option: OptionInstanceType): any;
-  unregister(key: any): any;
-}
-
-export interface ISelectState {
-  currentPlaceholder: string;
-  currentSelectedLabel: string;
-}
-
-export interface IPopoverConfig {
-  popoverMinWidth: number;
-}
-
-export interface ISelected {
-  value: string;
-  label: string;
-}
+export {};

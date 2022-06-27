@@ -426,7 +426,7 @@ export default defineComponent({
         popoverProps.isShow = false;
         emit('blur', inputValue, tagList.value);
         formItem?.validate?.('blur');
-      }, 50);
+      }, 200);
     };
 
     /**

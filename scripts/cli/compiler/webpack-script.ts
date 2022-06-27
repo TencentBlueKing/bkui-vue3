@@ -36,8 +36,10 @@ export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILi
   entryList.forEach(({ url, newPath }) => {
     if (newPath === LIB_URL) {
       const urlInfo = parse(url);
-      !urlInfo.name.match(/dist\.index\.ts$/) && (entry[`main-${urlInfo.name}`] = url);
-    } else if (url && !url.includes('/styles/')) {
+      if (!urlInfo.name.match(/dist\.index\.ts$|volar\.components/)) {
+        (entry[`main-${urlInfo.name}`] = url);
+      };
+    } else if (url && !url.match(/\/styles\//)) {
       if ((basename(url).replace(extname(url), '') === 'index' || /\/icon\/icons\//.test(url))) {
         let name = url.match(/\/([^/]+)\/src\//)?.[1];
         if (!name) {
