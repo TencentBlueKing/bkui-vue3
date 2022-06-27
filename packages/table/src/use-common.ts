@@ -49,7 +49,6 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?:
     [resolveClassName('table')]: true,
     'has-footer': hasFooter.value,
     'has-scroll-y': hasScrollY.value || props.virtualEnabled,
-    [resolveClassName('scroll-y')]: true,
   }, resolvePropBorderToClassStr(props.border))));
 
   const headClass = classes({

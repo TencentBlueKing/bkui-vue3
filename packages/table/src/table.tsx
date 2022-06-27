@@ -179,6 +179,7 @@ export default defineComponent({
     const tableBodyContentClass = {
       [resolveClassName('table-body-content')]: true,
       'with-virtual-render': props.virtualEnabled,
+      [resolveClassName('scroll-y')]: true,
     };
 
     const resizeColumnClass = {
