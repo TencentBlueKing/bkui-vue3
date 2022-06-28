@@ -25,14 +25,16 @@
 */
 import { h, nextTick } from 'vue';
 
+import BkCheckbox from '@bkui-vue/checkbox';
 import { DownShape, Folder, FolderShapeOpen, RightShape, Spinner, TextFile } from '@bkui-vue/icon';
 import { resolveClassName } from '@bkui-vue/shared';
 
 import { EVENTS, NODE_ATTRIBUTES } from './constant';
+import { TreePropTypes } from './props';
 import useNodeAsync from './use-node-async';
 import useNodeAttribute from './use-node-attribute';
 import { getLabel, getNodeItemClass, getNodeItemStyle, getNodeRowClass, resolveNodeItem } from './util';
-export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
+export default (props: TreePropTypes, ctx, flatData, renderData, schemaValues, initOption) => {
   // const checkedNodes = [];
   let selectedNodeId = props.selected;
   const {
@@ -46,6 +48,8 @@ export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
     isItemOpen,
     isNodeOpened,
     isNodeLoading,
+    isNodeChecked,
+    getNodeParentId,
     resolveScopedSlotParam,
     extendNodeAttr,
   } = useNodeAttribute(flatData, props);
@@ -85,7 +89,8 @@ export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
     return null;
   };
 
-  const getLoadingIcon = (item: any) => (ctx.slots.nodeLoading?.(extendNodeAttr(item)) ?? isNodeLoading(item) ? <Spinner></Spinner> : '');
+  const getLoadingIcon = (item: any) => (ctx.slots.nodeLoading?.(extendNodeAttr(item)) ?? isNodeLoading(item)
+    ? <Spinner></Spinner> : '');
 
 
   /**
@@ -126,6 +131,10 @@ export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
 * @returns
 */
   const getNodePrefixIcon = (item: any) => {
+    if (!props.showNodeTypeIcon) {
+      return null;
+    }
+
     if (ctx.slots.nodeType) {
       return ctx.slots.nodeType(extendNodeAttr(item));
     }
@@ -141,10 +150,53 @@ export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
     }
 
     if (prefixFnVal === 'default' || (typeof props.prefixIcon === 'boolean' && props.prefixIcon)) {
-      return isRootNode(item) || hasChildNode(item) ? getRootIcon(item) : <TextFile class={ resolveClassName('tree-icon') } />;
+      return isRootNode(item) || hasChildNode(item) ? getRootIcon(item)
+        : <TextFile class={ resolveClassName('tree-icon') } />;
     }
 
     return null;
+  };
+
+  const updateParentChecked = (item: any, isChecked) => {
+    const parent = getNodeParentId(item);
+    const checked = isChecked ? true : renderData.value
+      .filter(node => String.prototype.startsWith.call(getNodePath(node), getNodePath(item)))
+      .some(filterNode => isNodeChecked(filterNode));
+
+    if (parent) {
+      setNodeAttr(parent, NODE_ATTRIBUTES.IS_CHECKED, checked);
+      if (!isRootNode(parent)) {
+        updateParentChecked(parent, isChecked);
+      }
+    }
+  };
+
+  const handleNodeItemCheckboxChange = (item: any, value: boolean) => {
+    setNodeAttr(item, NODE_ATTRIBUTES.IS_CHECKED, !!value);
+    renderData.value.filter(node => String.prototype.startsWith.call(getNodePath(node), getNodePath(item)))
+      .forEach(filterNode => setNodeAttr(filterNode, NODE_ATTRIBUTES.IS_CHECKED, !!value));
+
+    updateParentChecked(item, value);
+  };
+
+  const isIndeterminate = (item: any) => !renderData.value
+    .filter(node => String.prototype.startsWith.call(getNodePath(node), getNodePath(item)))
+    .every(filterNode => isNodeChecked(filterNode));
+
+  const isNodeItemChecked = (item: any) => isNodeChecked(item) || renderData.value
+    .filter(node => String.prototype.startsWith.call(getNodePath(node), getNodePath(item)))
+    .some(filterNode => isNodeChecked(filterNode));
+
+  const getCheckboxRender = (item: any) => {
+    if (!props.showCheckbox) {
+      return null;
+    }
+
+    return <BkCheckbox
+    modelValue={ isNodeItemChecked(item) }
+    indeterminate={ isIndeterminate(item) }
+    onChange={ (val: boolean) => handleNodeItemCheckboxChange(item, val) }>
+  </BkCheckbox>;
   };
 
 
@@ -381,6 +433,7 @@ export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
     <span class={ resolveClassName('node-content') } >
       {
         [
+          getCheckboxRender(item),
           getNodePrefixIcon(item),
         ]
       }
