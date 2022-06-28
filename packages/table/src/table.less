@@ -25,10 +25,6 @@
   .@{bk-prefix}-table-body {
     position: relative;
     overflow: auto;
-
-    &::-webkit-scrollbar {
-      height: 6px;
-    }
   }
 
   .@{bk-prefix}-table-head,
@@ -43,6 +39,7 @@
 
       .@{bk-prefix}-table-body-content {
         display: flex;
+        width: 100%;
         height: 100%;
       }
     }

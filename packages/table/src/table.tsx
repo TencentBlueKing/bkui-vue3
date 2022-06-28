@@ -153,9 +153,12 @@ export default defineComponent({
 
     onMounted(() => {
       observerIns = observerResize(root.value, () => {
-        if (props.height === '100%') {
+        if (props.height === '100%' || props.height === 'auto') {
           resetTableHeight(root.value);
         }
+
+        const offset = getColumnsWidthOffsetWidth();
+        resolveColumnWidth(root.value, colgroups, 20, offset);
       }, 60, true);
 
       observerIns.start();
@@ -179,7 +182,7 @@ export default defineComponent({
     const tableBodyContentClass = {
       [resolveClassName('table-body-content')]: true,
       'with-virtual-render': props.virtualEnabled,
-      [resolveClassName('scroll-y')]: true,
+      // [resolveClassName('F-scroll-y')]: !props.virtualEnabled,
     };
 
     const resizeColumnClass = {
@@ -198,6 +201,7 @@ export default defineComponent({
     };
 
     const { renderScrollLoading } = useScrollLoading(props, ctx);
+    const scrollClass = props.virtualEnabled ? {} : { scrollXName: '', scrollYName: '' };
 
     return () => <div class={tableClass.value} style={wrapperStyle.value} ref={root}>
       {
@@ -214,6 +218,7 @@ export default defineComponent({
         class={ tableBodyClass.value }
         style={ contentStyle }
         list={ pageData }
+        { ...scrollClass }
         contentClassName={ tableBodyContentClass }
         onContentScroll={ handleScrollChanged }
         throttleDelay={0}

@@ -27,6 +27,7 @@ import { computed } from 'vue';
 
 import { resolveClassName } from '@bkui-vue/shared';
 
+import { SCROLLY_WIDTH } from '../const';
 import { GroupColumn } from '../props';
 import { getColumnReactWidth } from '../utils';
 
@@ -52,7 +53,7 @@ export default (props, colgroups: GroupColumn[], hasScrollY?) => {
       .reduce((offset: number, curr: GroupColumn, index: number) => {
         const outOffset = ignoreFirst && (index === 0) ? offset : (offset + getColumnReactWidth(curr));
         return outOffset;
-      }, hasScrollY ? 4 : 0),
+      }, hasScrollY ? SCROLLY_WIDTH : 0),
   };
   const reolveFixRightOffset = resolveFixOffset.right;
 
