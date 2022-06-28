@@ -142,6 +142,13 @@ export default defineComponent({
     const clearCls = computed(() => classes({
       'show-clear-only-hover': props.showClearOnlyHover,
     }, suffixCls));
+    const incControlCls = computed(() => classes({
+      'is-disabled': props.disabled || props.modelValue >= props.max,
+    }));
+
+    const decControlCls = computed(() => classes({
+      'is-disabled': props.disabled || props.modelValue <= props.min,
+    }));
 
     ctx.expose({
       focus() {
@@ -235,11 +242,13 @@ export default defineComponent({
     }
 
     function handleInc() {
+      if (props.disabled) return;
       const newVal = handleNumber(props.step);
       ctx.emit(EVENTS.UPDATE, newVal);
     }
 
     function handleDec() {
+      if (props.disabled) return;
       const newVal = handleNumber(props.step, false);
       ctx.emit(EVENTS.UPDATE, newVal);
     }
@@ -308,8 +317,8 @@ export default defineComponent({
         }
         {
           isNumberInput.value && props.showControl && (<div class={getCls('number-control')}>
-          <DownSmall onClick={handleInc} />
-          <DownSmall onClick={handleDec}/>
+          <DownSmall class={incControlCls.value} onClick={handleInc} />
+          <DownSmall class={decControlCls.value} onClick={handleDec}/>
         </div>)
         }
         {
