@@ -13,7 +13,7 @@
     "dist"
   ],
   "scripts": {
-    "preinstall": "npx https://github.com/lockiechen/only-allow.git yarn -y",
+    "preinstall": "npx only-allow yarn -y",
     "prepare": "husky install",
     "dev": "vite serve site",
     "build": "run-p build:dist build:lib",

@@ -85,7 +85,7 @@ export default defineComponent({
 
         <DemoBox
           title="基础用法"
-          subtitle="向下滚动以显示按钮"
+          desc="向下滚动以显示按钮"
           componentName="backtop"
           demoName="base-demo">
             <BaseDemo></BaseDemo>
