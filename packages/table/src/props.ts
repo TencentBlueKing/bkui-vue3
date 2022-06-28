@@ -287,3 +287,9 @@ export type IColumnActive = {
 export type IReactiveProp = {
   activeColumns: IColumnActive[]
 };
+
+export type Colgroups = Column & {
+  calcWidth: number,
+  resizeWidth: number,
+  listeners: Map<string, Function>,
+};

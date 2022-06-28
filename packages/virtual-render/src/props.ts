@@ -86,10 +86,10 @@ export const virtualRenderProps = {
   contentStyle: PropTypes.object.def({}),
 
   /** 用于自定义X轴滚动条样式 */
-  scrollXName: PropTypes.string.def(resolveClassName('scroll-x')),
+  scrollXName: PropTypes.string.def(resolveClassName('F-scroll-x')),
 
   /** 用于自定义Y轴滚动条样式 */
-  scrollYName: PropTypes.string.def(resolveClassName('scroll-y')),
+  scrollYName: PropTypes.string.def(resolveClassName('F-scroll-y')),
 
   /** 分组展示，一行数据可能有多条数据 */
   groupItemCount: PropTypes.number.def(1),

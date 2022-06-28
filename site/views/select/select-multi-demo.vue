@@ -58,7 +58,7 @@
       label: '跳舞',
     },
   ]);
-  const selectedValue = ref([1, 3, 4, '']);
+  const selectedValue = ref([1, 'dancing']);
 </script>
 <style scoped>
 .demo {

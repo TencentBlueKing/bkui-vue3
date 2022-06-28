@@ -27,11 +27,11 @@ import { computed, onMounted, reactive, ref, watch } from 'vue';
 
 import { classes, resolveClassName } from '@bkui-vue/shared';
 
-import { BORDER_OPTION, TABLE_ROW_ATTRIBUTE } from './const';
+import { BORDER_OPTION, SCROLLY_WIDTH, TABLE_ROW_ATTRIBUTE } from './const';
 import useActiveColumns from './plugins/use-active-columns';
 import useColumnResize from './plugins/use-column-resize';
 import useFixedColumn from './plugins/use-fixed-column';
-import { TablePropTypes } from './props';
+import { Colgroups, Column, TablePropTypes } from './props';
 import {
   getRowKey,
   hasRootScrollY,
@@ -71,9 +71,21 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?:
     ['is-hidden']: !props.pagination || !props.data.length,
   }));
 
+  const resolveWidth = () => {
+    if (props.columns.every((col: Column) => /^\d+\.?\d*(px)?$/ig.test(`${col.width}`))) {
+      const rectWidth = props.columns.reduce((width: number, col: Column) => width + Number(`${col.width}`.replace(/px/ig, '')), 0);
+      const offset = hasScrollY.value ? SCROLLY_WIDTH : 0;
+      return `${rectWidth + offset}px`;
+    }
+
+    return '100%';
+  };
+
   /** 表格外层容器样式 */
   const wrapperStyle = computed(() => ({
     minHeight: resolveNumberOrStringToPix(props.minHeight, 'auto'),
+    width: resolveWidth(),
+    maxWidth: '100%',
   }));
 
   const resolvePropHeight = (height: Number | string, defaultValue: number) => {
@@ -140,7 +152,7 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?:
   const getColumnsWidthOffsetWidth = () => {
     let offsetWidth = 0;
     if (hasScrollY.value) {
-      offsetWidth = offsetWidth + 4;
+      offsetWidth = offsetWidth + SCROLLY_WIDTH;
     }
 
     if (props.border.includes(BORDER_OPTION.OUTER) && !props.border.includes(BORDER_OPTION.NONE)) {
@@ -167,7 +179,7 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?:
 };
 
 export const useInit = (props: TablePropTypes) => {
-  const colgroups = reactive([]);
+  const colgroups: Colgroups[] = reactive([]);
   const updateColGroups = () => {
     colgroups.splice(0, colgroups.length, ...(props.columns ?? [])
       .map(col => ({

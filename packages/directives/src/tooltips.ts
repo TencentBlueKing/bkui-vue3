@@ -39,6 +39,7 @@ export declare type IOptions = {
   theme: string;
   trigger: string;
   distance: number;
+  extCls: string,
   onShow: () => void;
   onHide: () => void;
 };
@@ -51,11 +52,11 @@ const tooltips: ObjectDirective = {
     } else {
       opts.content = binding.value;
     }
-    const { disabled, arrow, theme } = opts;
+    const { disabled, arrow, theme, extCls } = opts;
     if (disabled) {
       return;
     }
-    const popper = renderContent(opts.content, arrow, theme === 'light');
+    const popper = renderContent(opts.content, arrow, theme === 'light', extCls);
     createPopperInstance(el, popper, opts);
   },
 };
@@ -70,16 +71,17 @@ function initOptions(): IOptions {
     showOnInit: false,
     placement: 'top',
     distance: 8,
+    extCls: '',
     onShow: () => {},
     onHide: () => {},
   };
   return defaultOpts;
 }
 
-function renderContent(value: string, hasArrow: boolean, isLight: boolean): HTMLElement {
+function renderContent(value: string, hasArrow: boolean, isLight: boolean, extCls: string): HTMLElement {
   const zIndex = bkZIndexManager.getPopperIndex();
   const content = document.createElement('div');
-  content.className = `bk-popper ${isLight ? 'light' : 'dark'}`;
+  content.className = `bk-popper ${isLight ? 'light' : 'dark'} ${extCls}`;
   content.innerText = value;
   content.style.zIndex = String(zIndex);
   if (hasArrow) {
