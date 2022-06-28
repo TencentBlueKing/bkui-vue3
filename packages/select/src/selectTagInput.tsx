@@ -30,13 +30,14 @@ import { PropTypes } from '@bkui-vue/shared';
 import Tag from '@bkui-vue/tag';
 
 import { selectKey } from './common';
+import { ISelected } from './type';
 
 
 export default defineComponent({
   name: 'SelectTagInput',
   props: {
     selected: {
-      type: Array as PropType<any[]>,
+      type: Array as PropType<ISelected[]>,
       default: () => [],
     },
     tagTheme: PropTypes.theme(['success', 'info', 'warning', 'danger']).def(''),
@@ -92,12 +93,12 @@ export default defineComponent({
       <div class="bk-select-tag">
         {this.$slots?.prefix?.()}
         {
-          this.selected.map(val => (
+          this.selected.map(item => (
               <Tag
                 closable
                 theme={this.tagTheme}
-                onClose={() => this.handleRemoveTag(val)}>
-                {this.handleGetLabelByValue(val)}
+                onClose={() => this.handleRemoveTag(item.value)}>
+                {this.handleGetLabelByValue(item)}
               </Tag>
           ))
         }

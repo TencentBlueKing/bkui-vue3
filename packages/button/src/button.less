@@ -108,17 +108,15 @@
     line-height: 1;
   }
 
-  &:not(.is-text) {
-    &.is-loading {
-      position: relative;
-      .@{bk-prefix}-button-loading {
-        &:not(:last-child) {
-          position: absolute;
-        }
+  &.is-loading {
+    position: relative;
+    .@{bk-prefix}-button-loading {
+      &:not(:last-child) {
+        position: absolute;
       }
-      .@{bk-prefix}-button-text {
-        visibility: hidden;
-      }
+    }
+    .@{bk-prefix}-button-text {
+      visibility: hidden;
     }
   }
 
@@ -184,10 +182,13 @@
       background-color: @white-color;
       border-color: @light-gray;
     }
+
+    &.is-disabled {
+      color: @light-gray;
+    }
     
     &:first-child {
       border-radius: @btnBorderRadius 0 0 @btnBorderRadius;
-        
     }
 
     &:last-child {
@@ -205,6 +206,14 @@
       color: @primary-color;
       background-color: @white-color;
       border-color: @primary-color;
+    }
+
+    &.is-selected:not(.is-disabled) {
+      background-color: @button-selected-bg-color;
+    }
+
+    &.is-selected.is-disabled {
+      background-color: @button-disabled-selected-bg-color;
     }
 
   }
