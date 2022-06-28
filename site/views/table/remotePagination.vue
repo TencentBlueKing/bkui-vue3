@@ -52,7 +52,7 @@
         this.pagination.current = value;
       },
       handlePageLimitChange(limit) {
-        this.pagination.limit - limit;
+        this.pagination.limit = limit;
       },
       handleColumnSort(...args) {
         console.log('sort', args);
