@@ -182,10 +182,13 @@
       background-color: @white-color;
       border-color: @light-gray;
     }
+
+    &.is-disabled {
+      color: @light-gray;
+    }
     
     &:first-child {
       border-radius: @btnBorderRadius 0 0 @btnBorderRadius;
-        
     }
 
     &:last-child {
@@ -203,6 +206,14 @@
       color: @primary-color;
       background-color: @white-color;
       border-color: @primary-color;
+    }
+
+    &.is-selected:not(.is-disabled) {
+      background-color: @button-selected-bg-color;
+    }
+
+    &.is-selected.is-disabled {
+      background-color: @button-disabled-selected-bg-color;
     }
 
   }
