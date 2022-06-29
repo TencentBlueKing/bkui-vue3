@@ -45,6 +45,10 @@ export default defineComponent({
       type: String,
       default: '',
     },
+    extCls: {
+      type: String,
+      default: '',
+    },
     direction: {
       type: String,
       default: 'right',
@@ -103,7 +107,7 @@ export default defineComponent({
       const className = `bk-sideslider-wrapper ${props.scrollable ? 'scroll-able' : ''} ${props.extCls}`;
       const maxHeight = slots.footer ? 'calc(100vh - 114px)' : 'calc(100vh - 60px)';
       // @ts-ignore
-      return <BkModal {...props} maxHeight={maxHeight} class={className} style={`${props.direction}: 0;`} onHidden={handleHidden} onShown={handleShown} onClose={handleClose}>
+      return <BkModal {...props} maxHeight={maxHeight} extCls={className} style={`${props.direction}: 0;`} onHidden={handleHidden} onShown={handleShown} onClose={handleClose}>
         {dialogSlot}
       </BkModal>;
     };

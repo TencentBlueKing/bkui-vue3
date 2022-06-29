@@ -1,3 +1,5 @@
+@import '@bkui-vue/styles/themes/themes.less';
+@import '@bkui-vue/styles/mixins/scroll.less';
 
 .bk-virtual-render {
   position: relative;
@@ -15,29 +17,6 @@
   .bk-virtual-section {
     width: 1px;
     background: transparent;
-  }
-
-         
-  &.bk-scroll-x {
-    overflow-x: auto;
-    scrollbar-color: #a0a0a0 transparent;
-    scrollbar-width: thin;
-
-    &::-webkit-scrollbar {
-      height: 6px;
-    }
-  }
-    
-  &.bk-scroll-y {
-    overflow-y: auto;
-
-    &::-webkit-scrollbar {
-      width: 4px;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      border-radius: 4px;
-    }
   }
 }
  

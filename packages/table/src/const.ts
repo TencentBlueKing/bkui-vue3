@@ -46,7 +46,6 @@ export const enum EVENTS {
   ON_ROW_EXPAND_CLICK = 'onRowExpandClick'
 }
 
-// ['columnPick', 'rowClick', 'rowDblClick', 'pageLimitChange', 'pageValueChange']
 export const enum EMITEVENTS {
   COLUMN_PICK = 'columnPick',
   COLUMN_SORT = 'columnSort',
@@ -87,3 +86,8 @@ export const TABLE_ROW_ATTRIBUTE = {
   ROW_UID: '__$uuid',
   ROW_EXPAND: '__row_expand',
 };
+
+/**
+ * Y 轴滚动条宽度
+ */
+export const SCROLLY_WIDTH = 4;

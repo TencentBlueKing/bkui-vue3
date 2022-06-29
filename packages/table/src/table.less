@@ -1,4 +1,5 @@
 @import '@bkui-vue/styles/themes/themes.less';
+@import '@bkui-vue/styles/mixins/scroll.less';
 @import './plugins/head-filter.less';
 @import './plugins/head-sort.less';
 @import './plugins/settings.less';
@@ -24,10 +25,6 @@
   .@{bk-prefix}-table-body {
     position: relative;
     overflow: auto;
-
-    &::-webkit-scrollbar {
-      height: 6px;
-    }
   }
 
   .@{bk-prefix}-table-head,
@@ -42,6 +39,7 @@
 
       .@{bk-prefix}-table-body-content {
         display: flex;
+        width: 100%;
         height: 100%;
       }
     }
@@ -61,6 +59,7 @@
           height: var(--row-height);
           padding: 0 15px;
           overflow: hidden;
+          font-size: 14px;
           line-height: var(--row-height);
           color: @table-body-font-color;
           text-align: left;
