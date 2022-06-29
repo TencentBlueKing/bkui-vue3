@@ -49,7 +49,7 @@ export default (props: TreePropTypes, ctx, flatData, renderData, schemaValues, i
     isNodeOpened,
     isNodeLoading,
     isNodeChecked,
-    getNodeParentId,
+    getParentNode,
     resolveScopedSlotParam,
     extendNodeAttr,
   } = useNodeAttribute(flatData, props);
@@ -64,8 +64,8 @@ export default (props: TreePropTypes, ctx, flatData, renderData, schemaValues, i
    * @returns
    */
   const getRootIcon = (item: any) => (isItemOpen(item)
-    ? <FolderShapeOpen class={ resolveClassName('tree-icon') } />
-    : <Folder class={ resolveClassName('tree-icon') } />);
+    ? <FolderShapeOpen class={ [resolveClassName('tree-icon'), resolveClassName('node-prefix')] } />
+    : <Folder class={ [resolveClassName('tree-icon'), resolveClassName('node-prefix')] } />);
 
 
   /**
@@ -118,7 +118,8 @@ export default (props: TreePropTypes, ctx, flatData, renderData, schemaValues, i
 
     if (prefixFnVal === 'default' || (typeof props.prefixIcon === 'boolean' && props.prefixIcon)) {
       if (hasChildNode(item) || item.async || !props.autoCheckChildren) {
-        return isItemOpen(item) ? <DownShape /> : <RightShape />;
+        return isItemOpen(item) ? <DownShape class={resolveClassName('node-prefix')}/>
+          : <RightShape class={resolveClassName('node-prefix')} />;
       }
     }
 
@@ -151,15 +152,15 @@ export default (props: TreePropTypes, ctx, flatData, renderData, schemaValues, i
 
     if (prefixFnVal === 'default' || (typeof props.prefixIcon === 'boolean' && props.prefixIcon)) {
       return isRootNode(item) || hasChildNode(item) ? getRootIcon(item)
-        : <TextFile class={ resolveClassName('tree-icon') } />;
+        : <TextFile class={ [resolveClassName('tree-icon'), resolveClassName('node-prefix')] } />;
     }
 
     return null;
   };
 
   const updateParentChecked = (item: any, isChecked) => {
-    const parent = getNodeParentId(item);
-    const checked = isChecked ? true : renderData.value
+    const parent = getParentNode(item);
+    const checked = isChecked || schemaValues.value
       .filter(node => String.prototype.startsWith.call(getNodePath(node), getNodePath(item)))
       .some(filterNode => isNodeChecked(filterNode));
 
@@ -173,17 +174,19 @@ export default (props: TreePropTypes, ctx, flatData, renderData, schemaValues, i
 
   const handleNodeItemCheckboxChange = (item: any, value: boolean) => {
     setNodeAttr(item, NODE_ATTRIBUTES.IS_CHECKED, !!value);
-    renderData.value.filter(node => String.prototype.startsWith.call(getNodePath(node), getNodePath(item)))
+    schemaValues.value.filter(node => String.prototype.startsWith.call(getNodePath(node), getNodePath(item)))
       .forEach(filterNode => setNodeAttr(filterNode, NODE_ATTRIBUTES.IS_CHECKED, !!value));
 
     updateParentChecked(item, value);
+    ctx.emit(EVENTS.NODE_CHECKED, schemaValues.value.filter((t: any) => isNodeChecked(t))
+      .map((n: any) => n[NODE_ATTRIBUTES.UUID]));
   };
 
-  const isIndeterminate = (item: any) => !renderData.value
+  const isIndeterminate = (item: any) => isNodeChecked(item)  && !schemaValues.value
     .filter(node => String.prototype.startsWith.call(getNodePath(node), getNodePath(item)))
     .every(filterNode => isNodeChecked(filterNode));
 
-  const isNodeItemChecked = (item: any) => isNodeChecked(item) || renderData.value
+  const isNodeItemChecked = (item: any) => isNodeChecked(item) || schemaValues.value
     .filter(node => String.prototype.startsWith.call(getNodePath(node), getNodePath(item)))
     .some(filterNode => isNodeChecked(filterNode));
 
@@ -193,10 +196,11 @@ export default (props: TreePropTypes, ctx, flatData, renderData, schemaValues, i
     }
 
     return <BkCheckbox
-    modelValue={ isNodeItemChecked(item) }
-    indeterminate={ isIndeterminate(item) }
-    onChange={ (val: boolean) => handleNodeItemCheckboxChange(item, val) }>
-  </BkCheckbox>;
+      size='small'
+      modelValue={ isNodeItemChecked(item) }
+      indeterminate={ isIndeterminate(item) }
+      onChange={ (val: boolean) => handleNodeItemCheckboxChange(item, val) }>
+    </BkCheckbox>;
   };
 
 
@@ -426,7 +430,7 @@ export default (props: TreePropTypes, ctx, flatData, renderData, schemaValues, i
   <div class={getNodeItemClass(item, flatData.schema, props) }
     style={getNodeItemStyle(item, props, flatData)}
     onClick={(e: MouseEvent) => handleNodeContentClick(item, e)}>
-    <span class={ resolveClassName('node-action') }
+    <span class={ [resolveClassName('node-action')] }
       onClick={(e: MouseEvent) => handleNodeActionClick(e, item)}>
         { getActionIcon(item) }
       </span>
