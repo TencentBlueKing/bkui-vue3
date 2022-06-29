@@ -4,6 +4,8 @@
       :data="treeData"
       label="name"
       children="children"
+      show-checkbox
+      level-line
       :auto-open-parent-node="false"
       @node-click="handleNodeClick"
       @node-expand="handleNodeExpand"

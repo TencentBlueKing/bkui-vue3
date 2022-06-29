@@ -75,6 +75,7 @@ export default (flatData, props?: TreePropTypes) => {
 
   const deleteNodeSchema = (id: string) => (flatData.schema as Map<string, any>).delete(id);
 
+  const getParentNode = (node: any) => getSchemaVal(getNodeParentId(node));
   /**
    * 判定指定节点是否为展开状态
    * @param item 节点或者节点 UUID
@@ -156,6 +157,7 @@ export default (flatData, props?: TreePropTypes) => {
     getNodeParentId,
     getNodeParentIdById,
     getParentNodeData,
+    getParentNode,
     setNodeAttr,
     getNodePath,
     isRootNode,
