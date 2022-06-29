@@ -186,6 +186,16 @@ export const treeProps = {
   selectable: PropTypes.bool.def(true),
 
   /**
+   * 是否支持多选
+   */
+  showCheckbox: PropTypes.bool.def(false),
+
+  /**
+   * 是否显示节点类型Icon
+   */
+  showNodeTypeIcon: PropTypes.bool.def(true),
+
+  /**
    * 默认选中的节点id，selectable为false时无效
    */
   selected: PropTypes.oneOfType([PropTypes.string, null, PropTypes.number, PropTypes.object]).def(null),
