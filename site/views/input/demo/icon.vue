@@ -12,7 +12,7 @@
 
     <bk-input class="mb10">
       <template #suffix>
-        <span class="input-icon">
+        <span class="input-icon suffix-icon">
           <info-line />
         </span>
       </template>
@@ -28,10 +28,15 @@
 <style lang="postcss" scoped>
   .input-icon {
     display: block;
-    padding: 0 10px;
+    padding-left: 10px;
     font-size: 16px;
     color: #c4c6cc;
     align-self: center;
+
+  }
+
+  .suffix-icon {
+    padding-right: 10px;
   }
 </style>
 
