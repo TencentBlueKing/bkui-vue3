@@ -68,7 +68,12 @@ export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILi
       //   console.info(pathData);
       //   return `${pathData.chunk.runtime}`;
       // },
-      libraryTarget: 'umd',
+      library: {
+        type: 'umd',
+      },
+    },
+    optimization: {
+      minimize: false,
     },
     module: {
       rules: [
