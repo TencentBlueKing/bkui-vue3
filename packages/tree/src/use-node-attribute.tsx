@@ -118,6 +118,15 @@ export default (flatData, props?: TreePropTypes) => {
     }, props.data);
   };
 
+  const getChildNodes = (node: any) => {
+    const source = (flatData.schema as Map<string, any>);
+    return Array.prototype.filter
+      .call(
+        Array.from(source.keys()),
+        (key: string) => source.get(key)[NODE_ATTRIBUTES.PARENT_ID] === node[NODE_ATTRIBUTES.UUID],
+      );
+  };
+
   const getSourceNodeByUID = (uid: string) => getSourceNodeByPath(getNodePath({ [NODE_ATTRIBUTES.UUID]: uid }));
 
   const getParentNodeData = (uid: string) => {
@@ -174,5 +183,6 @@ export default (flatData, props?: TreePropTypes) => {
     resolveScopedSlotParam,
     setTreeNodeLoading,
     extendNodeAttr,
+    getChildNodes,
   };
 };

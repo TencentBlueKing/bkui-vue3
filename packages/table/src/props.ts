@@ -242,6 +242,7 @@ export type Settings = {
 export type Field = {
   label: string;
   field?: string;
+  disabled?: boolean;
 };
 
 

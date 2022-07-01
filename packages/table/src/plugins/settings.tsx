@@ -89,8 +89,9 @@ export default defineComponent({
     const sizeList = settings.sizeList ?? defaultSizeList;
     const isFiledDisabled = computed(() => isLimit.value && (settings.limit ?? 0) <= checkedFields.value.length);
 
-    const isItemReadonly = (item: any, index: number) => isFiledDisabled.value
-      && !checkedFields.value.includes(resolvePropVal(item, 'field', [item, index]));
+    const isItemReadonly = (item: any, index: number) =>  item.disabled
+      || (isFiledDisabled.value
+      && !checkedFields.value.includes(resolvePropVal(item, 'field', [item, index])));
 
     const handleSizeItemClick = (item: SizeItem) => {
       activeSize.value = item.value;
@@ -135,7 +136,7 @@ export default defineComponent({
             </div>
             <BkCheckboxGroup class="setting-body-fields" v-model={ checkedFields.value }>
               {
-                (settings.fields ?? props.columns ?? []).map((item: any, index: number) => <div class="field-item">
+                (settings.fields || props.columns || []).map((item: any, index: number) => <div class="field-item">
                   <BkCheckbox label={ resolvePropVal(item, 'field', [item, index]) }
                     disabled={isItemReadonly(item, index)}>
                     { resolvePropVal(item, 'label', [item, index]) }
