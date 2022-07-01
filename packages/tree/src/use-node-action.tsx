@@ -43,6 +43,7 @@ export default (props: TreePropTypes, ctx, flatData, renderData, schemaValues, i
     getSchemaVal,
     getNodeAttr,
     getNodeId,
+    getChildNodes,
     isRootNode,
     hasChildNode,
     isItemOpen,
@@ -160,23 +161,24 @@ export default (props: TreePropTypes, ctx, flatData, renderData, schemaValues, i
 
   const updateParentChecked = (item: any, isChecked) => {
     const parent = getParentNode(item);
-    const checked = isChecked || schemaValues.value
-      .filter(node => String.prototype.startsWith.call(getNodePath(node), getNodePath(item)))
-      .some(filterNode => isNodeChecked(filterNode));
-
     if (parent) {
-      setNodeAttr(parent, NODE_ATTRIBUTES.IS_CHECKED, checked);
+      setNodeAttr(parent, NODE_ATTRIBUTES.IS_CHECKED, isChecked);
       if (!isRootNode(parent)) {
         updateParentChecked(parent, isChecked);
       }
     }
   };
 
+  const deepUpdateChildNode = (node: any, attr: string, value: any) => {
+    getChildNodes(node).forEach((id: string) => {
+      setNodeAttr({ [NODE_ATTRIBUTES.UUID]: id }, attr, value);
+      deepUpdateChildNode({ [NODE_ATTRIBUTES.UUID]: id }, attr, value);
+    });
+  };
+
   const handleNodeItemCheckboxChange = (item: any, value: boolean) => {
     setNodeAttr(item, NODE_ATTRIBUTES.IS_CHECKED, !!value);
-    schemaValues.value.filter(node => String.prototype.startsWith.call(getNodePath(node), getNodePath(item)))
-      .forEach(filterNode => setNodeAttr(filterNode, NODE_ATTRIBUTES.IS_CHECKED, !!value));
-
+    deepUpdateChildNode(item,  NODE_ATTRIBUTES.IS_CHECKED, !!value);
     updateParentChecked(item, value);
     ctx.emit(EVENTS.NODE_CHECKED, schemaValues.value.filter((t: any) => isNodeChecked(t))
       .map((n: any) => n[NODE_ATTRIBUTES.UUID]));
@@ -217,8 +219,9 @@ export default (props: TreePropTypes, ctx, flatData, renderData, schemaValues, i
   * 如果是需要点击当前节点展开所有叶子节点此处也可以打开
   */
     if (!newVal) {
-      renderData.value.filter(node => String.prototype.startsWith.call(getNodePath(node), getNodePath(item)))
-        .forEach(filterNode => setNodeAttr(filterNode, NODE_ATTRIBUTES.IS_OPEN, newVal));
+      deepUpdateChildNode(item, NODE_ATTRIBUTES.IS_OPEN, newVal);
+      // renderData.value.filter(node => String.prototype.startsWith.call(getNodePath(node), getNodePath(item)))
+      //   .forEach(filterNode => setNodeAttr(filterNode, NODE_ATTRIBUTES.IS_OPEN, newVal));
     }
 
     setNodeAttr(item, NODE_ATTRIBUTES.IS_OPEN, newVal);
