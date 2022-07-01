@@ -31,18 +31,24 @@ import { CloseLine, CogShape } from '@bkui-vue/icon/';
 import Popover from '@bkui-vue/popover2';
 import { PropTypes, resolveClassName } from '@bkui-vue/shared';
 
-import { Field, Settings, SizeItem } from '../props';
+import { Settings, SizeItem } from '../props';
 import { resolvePropVal } from '../utils';
 
 export default defineComponent({
   name: 'Settings',
   props: {
-    settings: PropTypes.oneOfType([PropTypes.bool, PropTypes.shape<Settings>({
-      fields: PropTypes.shape<Field[]>([]).def(undefined),
-      checked: PropTypes.shape<string[]>([]).def(undefined),
-      limit: PropTypes.number.def(undefined),
-      size: PropTypes.string.def(undefined),
-    })]).def(false),
+    // settings: PropTypes.shape<Settings>({
+    //   fields: PropTypes.arrayOf(PropTypes.shape<Field>({
+    //     label: PropTypes.string,
+    //     field: PropTypes.string,
+    //     disabled: PropTypes.bool,
+    //   })),
+    //   checked: PropTypes.arrayOf(PropTypes.string),
+    //   limit: PropTypes.number.def(0),
+    //   size: PropTypes.size(['small', 'default', 'large']).def('default'),
+    //   sizeList: PropTypes.shape<SizeItem[]>([]).def([]),
+    // }) || PropTypes.bool.def(false),
+    settings: PropTypes.any,
     columns: PropTypes.array.def([]),
     rowHeight: PropTypes.number.def(40),
   },
@@ -54,6 +60,7 @@ export default defineComponent({
       { value: 'large', label: '大', height: 56 },
     ];
 
+    const checkAll = ref(false);
     const isShow = ref(false);
     const settings = (props.settings as Settings);
     const activeSize = ref(settings.size ?? 'default');
@@ -80,9 +87,18 @@ export default defineComponent({
       isShow.value = true;
     };
 
-    const handleCheckAllClick = () => {
-      checkedFields.value = (settings.fields ?? props.columns ?? [])
-        .map((item: any, index: number) => resolvePropVal(item, 'field', [item, index]));
+    const handleCheckAllClick = (e: MouseEvent) => {
+      e.stopImmediatePropagation();
+      e.stopPropagation();
+      e.preventDefault();
+
+      checkAll.value = !checkAll.value;
+      if (checkAll.value) {
+        checkedFields.value = (settings.fields || props.columns || [])
+          .map((item: any, index: number) => resolvePropVal(item, 'field', [item, index]));
+      } else {
+        checkedFields.value.splice(0, checkedFields.value.length);
+      }
     };
 
     const isLimit = computed(() => (settings.limit ?? 0) > 0);
@@ -105,8 +121,7 @@ export default defineComponent({
     });
 
     const buttonStyle = {
-      width: '85px',
-      marginRight: '5px',
+      marginRight: '12px',
     };
 
     const renderSize = () => sizeList.map(item => <span
@@ -124,15 +139,18 @@ export default defineComponent({
         </span>,
         content: () => <div class="setting-content">
           <div class="setting-head">
-            <h2>表格设置</h2>
+            <span class="head-title">表格设置</span>
             <CloseLine class='icon-close-action' onClick={handleCancelClick}></CloseLine>
           </div>
           <div class="setting-body">
             <div class="setting-body-title">
               <div>
-                <span>字段显示设置</span>
+                <span class="field-setting-label">字段显示设置</span>
                 { isLimit.value ? <span class="limit">（最多{settings.limit}项）</span> : '' }</div>
-                { isLimit.value ? '' : <span class="check-all" onClick={handleCheckAllClick}>全选</span>}
+                { isLimit.value ? '' : <span class="check-all" onClick={handleCheckAllClick}>
+                    <BkCheckbox label="全选" modelValue={ checkAll.value }>全选</BkCheckbox>
+                  </span>
+                }
             </div>
             <BkCheckboxGroup class="setting-body-fields" v-model={ checkedFields.value }>
               {
