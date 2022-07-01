@@ -141,6 +141,7 @@ export default defineComponent({
     const pwdVisible = ref(false);
     const clearCls = computed(() => classes({
       'show-clear-only-hover': props.showClearOnlyHover,
+      [`${inputClsPrefix.value}--clear-icon`]: true,
     }, suffixCls));
     const incControlCls = computed(() => classes({
       'is-disabled': props.disabled || props.modelValue >= props.max,
@@ -158,6 +159,7 @@ export default defineComponent({
     });
 
     function clear() {
+      if (props.disabled) return;
       const resetVal = isNumberInput.value ? props.min : '';
       ctx.emit(EVENTS.UPDATE, resetVal);
       ctx.emit(EVENTS.CHANGE, resetVal);

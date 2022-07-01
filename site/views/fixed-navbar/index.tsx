@@ -37,15 +37,8 @@ const fixedNavBarPropsJson: IPropsTableItem[] = [
   {
     name: 'navItems',
     type: 'Array',
-    default: [],
+    default: null,
     desc: '需要固定展示的元素',
-    optional: [],
-  },
-  {
-    name: 'extCls',
-    type: 'String',
-    default: '',
-    desc: '自定义样式',
     optional: [],
   },
   {
@@ -90,7 +83,7 @@ const fixedItemPropsJson: IPropsTableItem[] = [
   {
     name: 'tooltip',
     type: 'Object',
-    default: { disabled: true },
+    default: '{ disabled: true }',
     desc: '用于自定义鼠标悬浮内容的配置',
     optional: [],
   },
@@ -99,7 +92,7 @@ const fixedItemPropsJson: IPropsTableItem[] = [
 export default defineComponent({
   render() {
     return (
-      <div>
+      <>
         <DemoTitle
           name="FixedNavbar 悬浮导航"
           desc="FixedNavbar 悬浮导航组件，快速设置右侧悬浮面板"
@@ -107,21 +100,25 @@ export default defineComponent({
 
         <DemoBox
           title="基础用法"
-          subtitle="悬浮导航在右侧展示"
+          desc="悬浮导航在右侧展示"
           componentName="fixed-navbar"
-          demoName="base-demo">
+          demoName="base-demo"
+        >
             <BaseDemo></BaseDemo>
-          </DemoBox>
+        </DemoBox>
 
         <PropsBox
           title="FixedNavbar Attributes"
           subtitle=""
-          propsData={fixedNavBarPropsJson}/>
+          propsData={fixedNavBarPropsJson}
+        />
         <PropsBox
           subtitle=""
           title="NavItems Attributes"
-          propsData={fixedItemPropsJson}/>
-      </div>
+          propsData={fixedItemPropsJson}
+        />
+
+      </>
     );
   },
 });

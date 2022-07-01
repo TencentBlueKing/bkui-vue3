@@ -3,6 +3,7 @@
     <bk-input
       v-model="val"
       type="textarea"
+      :rows="6"
       :maxlength="255"
     />
   </div>
