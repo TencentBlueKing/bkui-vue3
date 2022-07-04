@@ -27,11 +27,11 @@ import { computed, onMounted, reactive, ref, watch } from 'vue';
 
 import { classes, resolveClassName } from '@bkui-vue/shared';
 
-import { BORDER_OPTION, SCROLLY_WIDTH, TABLE_ROW_ATTRIBUTE } from './const';
+import { BORDER_OPTION, SCROLLY_WIDTH, SETTING_SIZE, TABLE_ROW_ATTRIBUTE } from './const';
 import useActiveColumns from './plugins/use-active-columns';
 import useColumnResize from './plugins/use-column-resize';
 import useFixedColumn from './plugins/use-fixed-column';
-import { Colgroups, Column, TablePropTypes } from './props';
+import { Colgroups, Column, Settings, TablePropTypes } from './props';
 import {
   getRowKey,
   hasRootScrollY,
@@ -53,6 +53,7 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?:
 
   const headClass = classes({
     [resolveClassName('table-head')]: true,
+    'has-settings': !!props.settings,
   });
 
   const config = resolveHeadConfig(props);
@@ -205,9 +206,10 @@ export const useInit = (props: TablePropTypes) => {
       bottom: 1,
     },
     activeColumns,
+    settings: props.settings,
     setting: {
-      size: null,
-      height: null,
+      size: (props.settings as Settings)?.size,
+      height: SETTING_SIZE[(props.settings as Settings)?.size],
     },
   });
 
