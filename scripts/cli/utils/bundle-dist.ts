@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
-
+import { existsSync, readdirSync, rmdirSync, statSync, unlinkSync } from 'fs';
 import { resolve } from 'path';
 import { build } from 'vite';
 
@@ -32,8 +32,26 @@ import vueJsx from '@vitejs/plugin-vue-jsx';
 
 import { COMPONENT_URL, DIST_URL } from '../compiler/helpers';
 
+import { replaceThemeTovariable } from './bundle-components';
+
 const entry = resolve(COMPONENT_URL, './bkui-vue/dist.index.ts');
-export default async () => await build({
+// 删除目录
+function rmDir(dirPath: string) {
+  if (existsSync(dirPath)) {
+    const files = readdirSync(dirPath);
+    files.forEach((file) => {
+      const nextFilePath = `${dirPath}/${file}`;
+      const states = statSync(nextFilePath);
+      if (states.isDirectory()) {
+        rmDir(nextFilePath);
+      } else {
+        unlinkSync(nextFilePath);
+      }
+    });
+    rmdirSync(dirPath);
+  }
+}
+export const buildDistScript = async () => await build({
   resolve: {
     alias: [
       {
@@ -77,3 +95,34 @@ export default async () => await build({
     },
   },
 });
+
+export const buildDistStyles = async () => {
+  const resetTheme = await replaceThemeTovariable();
+  await build({
+    resolve: {
+      alias: [
+        {
+          find: /^@bkui-vue\/(icon\/)/,
+          replacement: resolve(COMPONENT_URL, './$1'),
+        },
+        {
+          find: /^@bkui-vue\/([^/]*)/,
+          replacement: resolve(COMPONENT_URL, './$1/src'),
+        },
+      ],
+    },
+    build: {
+      rollupOptions: {
+        input: resolve(COMPONENT_URL, './styles/src/index.ts'),
+        output: {
+          dir: DIST_URL,
+          assetFileNames() {
+            return 'style.variable.css';
+          },
+        },
+      },
+    },
+  });
+  resetTheme();
+  rmDir(resolve(DIST_URL, './assets'));
+};

@@ -31,7 +31,6 @@ import postcssLess from 'postcss-less';
 
 import LessResolvePathPlugin from '../utils/less-plugin';
 import { transformCssImport } from '../utils/postcss-plugin';
-
 export const compileStyle = async (url: string) => {
   const resource =  await readFile(url, 'utf-8');
   const varResource = resource.replace(/\/themes\/themes\.less/gmi, '/themes/themes.variable.less');
@@ -47,7 +46,7 @@ export const compileStyle = async (url: string) => {
       new LessResolvePathPlugin(),
     ],
   });
-  const ret = await postcss([transformCssImport()]).process(resource, { syntax: postcssLess });
+  const ret = await postcss([transformCssImport(url)]).process(resource, { syntax: postcssLess });
   return { css, varCss, resource: ret.css };
 };
 

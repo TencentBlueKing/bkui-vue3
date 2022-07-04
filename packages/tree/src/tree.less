@@ -1,7 +1,11 @@
 @import '@bkui-vue/styles/themes/themes.less';
 @import '@bkui-vue/styles/mixins/scroll.less';
+@import '@bkui-vue/virtual-render/virtual-render.less';
+@import '@bkui-vue/checkbox/checkbox.less';
 
 .@{bk-prefix}-tree {
+  font-size: 14px;
+
   .@{bk-prefix}-node-row {
     padding-left: calc(var(--offset-left));
 
@@ -47,6 +51,18 @@
       border-left: var(--level-line);
     }
 
+    .@{bk-prefix}-node-prefix {
+      display: flex;
+      width: 14px;
+      height: 14px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .@{bk-prefix}-node-action {
+      margin-right: 2px;
+    }
+    
     .@{bk-prefix}-tree-icon {
       margin: 0 6px 0 4px;
     }
@@ -56,6 +72,14 @@
       flex: 1;
       align-items: center;
       min-width: 0;
+
+      .@{bk-prefix}-checkbox {
+        margin: 0;
+
+        .@{bk-prefix}-checkbox-input {
+          margin: 0;
+        }
+      }
 
       .@{bk-prefix}-node-text {
         flex: 1;
