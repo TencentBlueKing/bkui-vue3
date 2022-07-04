@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
 */
 
-import { lstatSync, readdirSync } from 'fs';
+import { lstatSync, readdirSync, readFileSync, unlinkSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
 import {  compileTheme } from '../compiler/compile-style';
@@ -55,10 +55,22 @@ export const compilerDir = async (option: ILibTaskOption): Promise<void> => {
 };
 
 
-// 将theme.less 装换为 css变量
-const compileThemeTovariable = async () => {
+// 将theme.less 转换为 css变量
+export const compileThemeTovariable = async () => {
   const resource = await compileTheme(THEME_LESS_URL);
   await writeFileRecursive(THEME_LESS_URL.replace(/\.(css|less|scss)$/, '.variable.$1'), resource);
+  return resource;
+};
+// 替换theme.lss 替换为 css变量
+export const replaceThemeTovariable = async () => {
+  const variableThemeText = await compileThemeTovariable();
+  const themeText = readFileSync(THEME_LESS_URL);
+  unlinkSync(THEME_LESS_URL);
+  writeFileSync(THEME_LESS_URL, variableThemeText);
+  return function resetTheme() {
+    unlinkSync(THEME_LESS_URL);
+    writeFileSync(THEME_LESS_URL, themeText);
+  };
 };
 export default async (option: ILibTaskOption) => {
   compilerLibDir(LIB_URL);

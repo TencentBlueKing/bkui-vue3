@@ -23,118 +23,127 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import hljs from 'highlight.js';
-import { defineComponent, onMounted, reactive, ref, Suspense } from 'vue';
 
-import Button from '@bkui-vue/button';
-import BkCodeDiff, { LanguagesUnionType, ThemesUnionType } from '@bkui-vue/code-diff';
-import Input from '@bkui-vue/input';
+import { defineComponent } from 'vue';
 
-import { NEW_STR, OLD_STR } from './demo';
+import DemoBox from '../../components/demo-box';
+import DemoTitle from '../../components/demo-title';
+import PropsBox from '../../components/props-box';
+import {
+  type IPropsTableItem,
+} from '../../typings';
 
-/**
- * 动态引入语法包
- * [string] language
- */
-function languageDynamicImport(language) {
-  switch (language) {
-    case 'css':
-      return import('highlight.js/lib/languages/css');
-    case 'java':
-      return import('highlight.js/lib/languages/java');
-    case 'javascript':
-      return import('highlight.js/lib/languages/javascript');
-    case 'json':
-      return import('highlight.js/lib/languages/json');
-    case 'scss':
-      return import('highlight.js/lib/languages/scss');
-    case 'less':
-      return import('highlight.js/lib/languages/less');
-    case 'stylus':
-      return import('highlight.js/lib/languages/stylus');
-    case 'shell':
-      return import('highlight.js/lib/languages/shell');
-    case 'bash':
-      return import('highlight.js/lib/languages/bash');
-    case 'cpp':
-      return import('highlight.js/lib/languages/cpp');
-    case 'go':
-      return import('highlight.js/lib/languages/go');
-    case 'xml':
-      return import('highlight.js/lib/languages/xml');
-    case 'python':
-      return import('highlight.js/lib/languages/python');
-    case 'typescript':
-      return import('highlight.js/lib/languages/typescript');
-    case 'sql':
-      return import('highlight.js/lib/languages/sql');
-    case 'ruby':
-      return import('highlight.js/lib/languages/ruby');
-    case 'vim':
-      return import('highlight.js/lib/languages/vim');
-    case 'php':
-      return import('highlight.js/lib/languages/php');
-    case 'perl':
-      return import('highlight.js/lib/languages/perl');
-    case 'powershell':
-      return import('highlight.js/lib/languages/powershell');
-    case 'makefile':
-      return import('highlight.js/lib/languages/makefile');
-  }
-}
+import Basic from './demo/basic.vue';
+import DiffContext from './demo/diff-context.vue';
+import Format from './demo/format.vue';
+import Theme from './demo/theme.vue';
+// 输入框属性列表
+const codeDiffProps: IPropsTableItem[] = [
+  {
+    name: 'oldContent',
+    type: 'String',
+    default: '',
+    desc: '旧内容',
+    optional: [],
+  },
+  {
+    name: 'newContent',
+    type: 'String',
+    default: '',
+    desc: '新内容',
+    optional: [],
+  },
+  {
+    name: 'diffFormat',
+    type: 'String',
+    default: 'line-by-line',
+    desc: '展示方式',
+    optional: ['line-by-line', 'side-by-side'],
+  },
+  {
+    name: 'diffContext',
+    type: 'String',
+    default: '',
+    desc: '不同地方间隔多少行不隐藏	',
+    optional: [],
+  },
+  {
+    name: 'theme',
+    type: 'String',
+    default: 'light',
+    desc: '主题风格	',
+    optional: ['light', 'dark'],
+  },
+  {
+    name: 'language',
+    type: 'String',
+    default: 'javascript',
+    desc: '语法高亮',
+    optional: ['css', 'java', 'javascript', 'json', 'scss', 'less', 'stylus', 'shell', 'bash', 'cpp', 'go', 'xml', 'python', 'typescript', 'sql', 'ruby', 'vim', 'php', 'perl', 'powershell', 'makefile'],
+  },
+  {
+    name: 'hljs',
+    type: 'Object',
+    default: null,
+    desc: 'highlight 对象',
+    optional: [],
+  },
+];
+
+const demos = [{
+  // '基础输入框',
+  title: '基本用法',
+  desc: '配置对比内容 old-content 和 new-content',
+  componentName: 'code-diff',
+  demoName: 'demo/basic',
+  DemoComponent: Basic,
+}, {
+  // '基础输入框',
+  title: '展示方式配置',
+  desc: '配置展示方式format',
+  componentName: 'code-diff',
+  demoName: 'demo/format',
+  DemoComponent: Format,
+}, {
+  // '基础输入框',
+  title: '暗黑主题配置',
+  desc: '配置Theme',
+  componentName: 'code-diff',
+  demoName: 'demo/theme',
+  DemoComponent: Theme,
+}, {
+  // '基础输入框',
+  title: '不隐藏行数配置',
+  desc: '配置diffContext',
+  componentName: 'code-diff',
+  demoName: 'demo/diff-context',
+  DemoComponent: DiffContext,
+}];
+
 
 export default defineComponent({
-  setup() {
-    const theme = ref<ThemesUnionType>('dark');
-    const languageModuleMap = ref({});
-    const state = reactive({
-      language: 'javascript',
-      diffContext: 20,
-    });
-    function handleClick() {
-      theme.value = theme.value === 'dark' ? 'light' : 'dark';
-    }
-    function handleChange(val) {
-      state.diffContext = val;
-    }
-    function handleLanChange(val) {
-      state.language = val;
-    }
-    onMounted(async () => {
-      let languageModule = languageModuleMap.value[state.language];
-      if (languageModule === undefined) {
-        const mod = await languageDynamicImport(state.language);
-        languageModule = mod.default;
+  name: 'Input',
 
-        languageModuleMap.value = {
-          ...languageModuleMap.value,
-          language: languageModule,
-        };
-      }
-      hljs.registerLanguage(state.language, languageModule);
-    });
-    return () => (
-      <div style="margin: 20px">
-          <Button onClick={handleClick}>Switch Theme</Button>
-          <span>
-            language:
-            <Input modelValue={state.language} onChange={handleLanChange}></Input>
-          </span>
-          <span>
-            context:
-            <Input type='number' modelValue={state.diffContext} onChange={handleChange}></Input>
-          </span>
-          <Suspense>
-            {{
-              default: () => (
-                <BkCodeDiff hljs={hljs} language={state.language as LanguagesUnionType} diffContext={state.diffContext} diffFormat='side-by-side' theme={theme.value} oldContent={OLD_STR} newContent={NEW_STR} />
-              ),
-              fallback: () => (
-                <span>loading</span>
-              ),
-            }}
-          </Suspense>
-          <BkCodeDiff hljs={hljs} diffFormat='line-by-line' language='javascript' theme='dark' oldContent={OLD_STR} newContent={NEW_STR} />
+  render() {
+    return (
+      <div>
+        <DemoTitle
+          name="Diff 差异对比"
+          desc="代码差异对比使用highlight.js做代码高亮，所以在使用该组件之前，请先安装highlight.js依赖"
+          link={`${import.meta.env.VITE_APP_BASE_URL ?? ''}/code-diff`}
+        />
+          {
+            demos.map(({ DemoComponent, ...demo }) => (
+              <DemoBox {...demo}>
+                  <DemoComponent />
+              </DemoBox>
+            ))
+          }
+        <PropsBox
+          title="CodeDiff Attributes"
+          subtitle=""
+          propsData={codeDiffProps}/>
+
       </div>
     );
   },

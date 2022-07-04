@@ -6,9 +6,11 @@
 
 @smallBtnHeight: 26px;
 @smallBtnPadding: 3px 12px;
+@smallBtnFontSize: @font-size-base;
 
 @largeBtnHeight: 38px;
 @largeBtnPadding: 8px 20px;
+@largeBtnFontSize: @font-size-large;
 
 @themeSelectors: primary, warning, success, danger;
 @sizeSelectors: small, large;
@@ -95,12 +97,14 @@
   
     each(@sizeSelectors, {
     @sizeBtnHeight: '@{value}BtnHeight';
-    @sizeBtnPadding: '@{value}BtnPadding';
-    &.@{bk-prefix}-button-@{value} {
-      height: @@sizeBtnHeight;
-      padding: @@sizeBtnPadding;
-    }
-  });
+      @sizeBtnPadding: '@{value}BtnPadding';
+      @sizeBtnFontSize: '@{value}BtnFontSize';
+      &.@{bk-prefix}-button-@{value} {
+        height: @@sizeBtnHeight;
+        padding: @@sizeBtnPadding;
+        font-size: @@sizeBtnFontSize;
+      }
+    });
 
   .@{bk-prefix}-button-text {
     display: inline-flex;
@@ -159,14 +163,16 @@
 .@{bk-prefix}-button-group {
   display: inline-block;
   font-size: 0;
-
+  
   each(@sizeSelectors, {
     @sizeBtnHeight: '@{value}BtnHeight';
     @sizeBtnPadding: '@{value}BtnPadding';
+    @sizeBtnFontSize: '@{value}BtnFontSize';
     &.@{bk-prefix}-button-group-@{value} {
       .@{bk-prefix}-button {
         height: @@sizeBtnHeight;
         padding: @@sizeBtnPadding;
+        font-size: @@sizeBtnFontSize;
       }
     }
   })
