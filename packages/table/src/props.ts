@@ -166,7 +166,7 @@ export const tableProps = {
   /**
    * bk-table-setting-content
    */
-  settings: PropTypes.any,
+  settings: PropTypes.oneOfType([PropTypes.any, PropTypes.bool]).def(false),
 
   // PropTypes.bool.def(false),
   // PropTypes.shape<Settings>({
