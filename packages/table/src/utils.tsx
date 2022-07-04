@@ -38,16 +38,24 @@ import { Column, GroupColumn, TablePropTypes } from './props';
  * @param args 如果是函数，传递参数
  * @returns
  */
-export const resolvePropVal = (prop: any, key: string, args: any[]) => {
-  if (Object.prototype.hasOwnProperty.call(prop, key)) {
-    if (typeof prop[key] === 'function') {
-      return prop[key].call(this, ...args);
+export const resolvePropVal = (prop: any, key: string | string[], args: any[]) => {
+  if (typeof key === 'string') {
+    if (Object.prototype.hasOwnProperty.call(prop, key)) {
+      if (typeof prop[key] === 'function') {
+        return prop[key].call(this, ...args);
+      }
+
+      return prop[key];
     }
 
-    return prop[key];
+    return undefined;
   }
 
-  return undefined;
+  if (Array.isArray(key)) {
+    return key.map((_key: string) => resolvePropVal(prop, _key, args))
+      .filter((val: any) => val !== undefined)
+      .at(0);
+  }
 };
 
 /**

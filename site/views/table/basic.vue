@@ -18,7 +18,6 @@
         :columns="columns"
         :data="tableData"
         height="100%"
-        settings
         @dblclick="handleDblClick"
       />
     </div>
@@ -47,14 +46,16 @@
         columns: [...DATA_COLUMNS],
         settings: {
           fields: [],
+          checked: [],
         },
       };
     },
     mounted() {
       setTimeout(() => {
+        this.settings.checked.push('index');
         this.settings.fields.push(...[{
                                         label: '序号',
-                                        type: 'index',
+                                        field: 'index',
                                         disabled: true,
                                       },
                                       {
