@@ -48,7 +48,7 @@ export default defineComponent({
     //   size: PropTypes.size(['small', 'default', 'large']).def('default'),
     //   sizeList: PropTypes.shape<SizeItem[]>([]).def([]),
     // }) || PropTypes.bool.def(false),
-    settings: PropTypes.any,
+    settings: PropTypes.oneOfType([PropTypes.any, PropTypes.bool]).def(false),
     columns: PropTypes.array.def([]),
     rowHeight: PropTypes.number.def(40),
   },
@@ -128,51 +128,53 @@ export default defineComponent({
       class={ getItemClass(item) }
       onClick={() => handleSizeItemClick(item)}>{ item.label }</span>);
 
+    const renderFields = computed(() => settings.fields || props.columns || []);
+
     return () => <Popover trigger="manual" isShow={isShow.value}
-    placement="bottom-end"
-    arrow={false}
-    {...{ theme }}>
-    {
+      placement="bottom-end"
+      arrow={false}
+      {...{ theme }}>
       {
-        default: () =>  <span class="table-head-settings">
-          <CogShape style="color: rgba(99,101,110, 0.6);" onClick={ handleSettingClick }></CogShape>
-        </span>,
-        content: () => <div class="setting-content">
-          <div class="setting-head">
-            <span class="head-title">表格设置</span>
-            <CloseLine class='icon-close-action' onClick={handleCancelClick}></CloseLine>
-          </div>
-          <div class="setting-body">
-            <div class="setting-body-title">
-              <div>
-                <span class="field-setting-label">字段显示设置</span>
-                { isLimit.value ? <span class="limit">（最多{settings.limit}项）</span> : '' }</div>
-                { isLimit.value ? '' : <span class="check-all" onClick={handleCheckAllClick}>
-                    <BkCheckbox label="全选" modelValue={ checkAll.value }>全选</BkCheckbox>
-                  </span>
+        {
+          default: () =>  <span class="table-head-settings">
+            <CogShape style="color: rgba(99,101,110, 0.6);" onClick={ handleSettingClick }></CogShape>
+          </span>,
+          content: () => <div class="setting-content">
+            <div class="setting-head">
+              <span class="head-title">表格设置</span>
+              <CloseLine class='icon-close-action' onClick={handleCancelClick}></CloseLine>
+            </div>
+            <div class="setting-body">
+              <div class="setting-body-title">
+                <div>
+                  <span class="field-setting-label">字段显示设置</span>
+                  { isLimit.value ? <span class="limit">（最多{settings.limit}项）</span> : '' }</div>
+                  { isLimit.value ? '' : <span class="check-all" onClick={handleCheckAllClick}>
+                      <BkCheckbox label="全选" modelValue={ checkAll.value }>全选</BkCheckbox>
+                    </span>
+                  }
+              </div>
+              <BkCheckboxGroup class="setting-body-fields" v-model={ checkedFields.value }>
+                {
+                  (renderFields.value).map((item: any, index: number) => <div class="field-item">
+                    <BkCheckbox label={ resolvePropVal(item, 'field', [item, index]) }
+                      disabled={isItemReadonly(item, index)}>
+                      { resolvePropVal(item, 'label', [item, index]) }
+                    </BkCheckbox>
+                  </div>)
                 }
+              </BkCheckboxGroup>
+              <div class="setting-body-line-height">
+              表格行高：{ renderSize() }
+              </div>
             </div>
-            <BkCheckboxGroup class="setting-body-fields" v-model={ checkedFields.value }>
-              {
-                (settings.fields || props.columns || []).map((item: any, index: number) => <div class="field-item">
-                  <BkCheckbox label={ resolvePropVal(item, 'field', [item, index]) }
-                    disabled={isItemReadonly(item, index)}>
-                    { resolvePropVal(item, 'label', [item, index]) }
-                  </BkCheckbox>
-                </div>)
-              }
-            </BkCheckboxGroup>
-            <div class="setting-body-line-height">
-            表格行高：{ renderSize() }
+            <div class="setting-footer">
+                <BkButton theme='primary' style={buttonStyle} onClick={handleSaveClick}>确定</BkButton>
+                <BkButton style={buttonStyle} onClick={handleCancelClick}>取消</BkButton>
             </div>
-          </div>
-          <div class="setting-footer">
-              <BkButton theme='primary' style={buttonStyle} onClick={handleSaveClick}>确定</BkButton>
-              <BkButton style={buttonStyle} onClick={handleCancelClick}>取消</BkButton>
-          </div>
-        </div>,
+          </div>,
+        }
       }
-    }
     </Popover>;
   },
 });
