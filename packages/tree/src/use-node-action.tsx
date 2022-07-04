@@ -34,7 +34,7 @@ import { TreePropTypes } from './props';
 import useNodeAsync from './use-node-async';
 import useNodeAttribute from './use-node-attribute';
 import { getLabel, getNodeItemClass, getNodeItemStyle, getNodeRowClass, resolveNodeItem } from './util';
-export default (props: TreePropTypes, ctx, flatData, renderData, schemaValues, initOption) => {
+export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, initOption) => {
   // const checkedNodes = [];
   let selectedNodeId = props.selected;
   const {
