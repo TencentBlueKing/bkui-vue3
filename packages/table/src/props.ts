@@ -166,20 +166,18 @@ export const tableProps = {
   /**
    * bk-table-setting-content
    */
-  settings: PropTypes.any,
-
-  // PropTypes.bool.def(false),
-  // PropTypes.shape<Settings>({
-  //   fields: PropTypes.arrayOf(PropTypes.shape<Field>({
-  //     label: PropTypes.string,
-  //     field: PropTypes.string,
-  //     disabled: PropTypes.bool,
-  //   })),
-  //   checked: PropTypes.arrayOf(PropTypes.string),
-  //   limit: PropTypes.number.def(0),
-  //   size: PropTypes.size(['small', 'default', 'large']).def('default'),
-  //   sizeList: PropTypes.shape<SizeItem[]>([]),
-  // })
+  settings: PropTypes.oneOfType([
+    PropTypes.shape<Settings>({
+      fields: PropTypes.arrayOf(PropTypes.shape<Field>({
+        label: PropTypes.string,
+        field: PropTypes.string,
+        disabled: PropTypes.bool,
+      })),
+      checked: PropTypes.arrayOf(PropTypes.string),
+      limit: PropTypes.number.def(0),
+      size: PropTypes.size(['small', 'default', 'large']).def('default'),
+      sizeList: PropTypes.shape<SizeItem[]>([]),
+    }), PropTypes.bool]).def(false),
 
   /**
    * 行的 class 的回调方法，也可以使用一个固定的 Object 为所有行设置一样的 Style

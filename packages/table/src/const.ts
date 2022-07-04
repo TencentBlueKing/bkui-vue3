@@ -91,3 +91,9 @@ export const TABLE_ROW_ATTRIBUTE = {
  * Y 轴滚动条宽度
  */
 export const SCROLLY_WIDTH = 4;
+
+export const SETTING_SIZE = {
+  large: 56,
+  default: 40,
+  small: 32,
+};
