@@ -3,13 +3,15 @@
 .@{bk-prefix}-checkbox {
   display: inline-flex;
   justify-self: center;
-  margin-right: 30px;
   font-size: 14px;
   line-height: 18px;
   letter-spacing: normal;
   color: #63656e;
   cursor: pointer;
   user-select: none;
+  &~.@{bk-prefix}-checkbox {
+    margin-left: 30px;
+  }
 
   &.is-checked {
     .bk-checkbox-input {
