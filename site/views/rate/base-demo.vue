@@ -1,6 +1,6 @@
 <template>
   <bk-rate
-    v-model:modelValue="disableRate"
+    :model-value="disableRate"
     :editable="false"
   />
 </template>
