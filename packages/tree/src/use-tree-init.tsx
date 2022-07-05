@@ -194,7 +194,7 @@ export default (props: TreePropTypes) => {
     if (props.showCheckbox) {
       checkedList?.forEach((value: string) => {
         Array.from(schema.values())
-          .filter((t: any) => t[NODE_ATTRIBUTES.PATH].startsWith(schema.get(value)[NODE_ATTRIBUTES.PATH]))
+          .filter((t: any) => t[NODE_ATTRIBUTES.PATH]?.startsWith(schema.get(value)[NODE_ATTRIBUTES.PATH]))
           .forEach((n: any) => Object.assign(n, { [NODE_ATTRIBUTES.IS_CHECKED]: true }));
 
         loopUpdateNodeAttr(value, NODE_ATTRIBUTES.IS_CHECKED, true, () => true);

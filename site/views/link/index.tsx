@@ -85,7 +85,7 @@ export default defineComponent({
 
         <DemoBox
           title="基础用法"
-          subtitle="基础的文字链接用法"
+          desc="基础的文字链接用法"
           componentName="link"
           demoName="base-demo">
             <BaseDemo></BaseDemo>
@@ -93,7 +93,7 @@ export default defineComponent({
 
         <DemoBox
           title="禁用状态和下划线"
-          subtitle="文字链接不可用状态，添加underline实现下划线"
+          desc="文字链接不可用状态，添加underline实现下划线"
           componentName="link"
           demoName="disable-demo">
             <DisabledDemo></DisabledDemo>

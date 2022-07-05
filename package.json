@@ -1,7 +1,7 @@
 {
   "name": "bkui-vue",
   "private": true,
-  "version": "0.0.1-beta.128",
+  "version": "0.0.1-beta.129",
   "workspaces": {
     "packages": [
       "packages/!(**.bak)*",
@@ -13,7 +13,7 @@
     "dist"
   ],
   "scripts": {
-    "preinstall": "npx https://github.com/lockiechen/only-allow.git yarn -y",
+    "preinstall": "npx only-allow yarn -y",
     "prepare": "husky install",
     "dev": "vite serve site",
     "build": "run-s build:dist build:lib",

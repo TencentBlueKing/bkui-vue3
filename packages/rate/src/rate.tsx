@@ -45,7 +45,6 @@ export default defineComponent({
     modelValue: PropTypes.number.def(0),
     size: PropTypes.size(),
     editable: PropTypes.bool.def(true),
-    // tooltips: PropTypes.array.def([]),
   },
 
   emits: ['change', 'update:modelValue'],
@@ -86,7 +85,6 @@ export default defineComponent({
     const commonAttrs = {
       width: rateSize.width,
       height: rateSize.height,
-      // tooltips: props.tooltips,
     };
 
     return () => (

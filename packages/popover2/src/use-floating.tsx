@@ -39,6 +39,7 @@ import {
   shift } from '@floating-ui/dom';
 
 import { PopoverPropTypes } from './props';
+import usePlatform from './use-platform';
 
 
 export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow, refRoot) => {
@@ -90,6 +91,22 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
 
     if (isHideMiddlewareAvailable()) {
       options.middleware.push(hide());
+    }
+
+    if (isElementFullScreen()) {
+      const  {
+        getElementRects,
+        getDimensions,
+        getClippingRect,
+      } = usePlatform();
+
+      Object.assign(options, {
+        platform: {
+          getElementRects,
+          getDimensions,
+          getClippingRect,
+        },
+      });
     }
     return options;
   };
