@@ -92,8 +92,19 @@ export const TABLE_ROW_ATTRIBUTE = {
  */
 export const SCROLLY_WIDTH = 4;
 
+/**
+ * 默认行高
+ */
+export const LINE_HEIGHT = 42;
+
 export const SETTING_SIZE = {
-  large: 56,
-  default: 40,
-  small: 32,
+  large: 78,
+  medium: 60,
+  small: 42,
 };
+
+export const DEFAULT_SIZE_LIST = [
+  { value: 'small', label: '小', height: SETTING_SIZE.small },
+  { value: 'medium', label: '中', height: SETTING_SIZE.medium },
+  { value: 'large', label: '大', height: SETTING_SIZE.large },
+];

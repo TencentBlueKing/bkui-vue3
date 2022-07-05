@@ -30,13 +30,14 @@ import { AngleDownLine } from '@bkui-vue/icon';
 import Popover from '@bkui-vue/popover2';
 import { classes, PropTypes, resolveClassName } from '@bkui-vue/shared';
 
+import { LINE_HEIGHT } from '../const';
 import { getRowText, resolvePropVal } from '../utils';
 
 export default defineComponent({
   name: 'HeadFilter',
   props: {
     column: PropTypes.any.def({}),
-    height: PropTypes.number.def(40),
+    height: PropTypes.number.def(LINE_HEIGHT),
   },
   emits: ['change'],
 
