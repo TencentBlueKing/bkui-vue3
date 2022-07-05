@@ -166,13 +166,18 @@ export const tableProps = {
   /**
    * bk-table-setting-content
    */
-  settings: PropTypes.oneOfType([PropTypes.bool, PropTypes.shape<Settings>({
-    fields: PropTypes.shape<Field[]>([]).def(undefined),
-    checked: PropTypes.shape<string[]>([]).def(undefined),
-    limit: PropTypes.number.def(undefined),
-    size: PropTypes.size(['small', 'default', 'large']).def('default'),
-    sizeList: PropTypes.shape<SizeItem[]>([]).def(undefined),
-  })]).def(false),
+  settings: PropTypes.oneOfType([
+    PropTypes.shape<Settings>({
+      fields: PropTypes.arrayOf(PropTypes.shape<Field>({
+        label: PropTypes.string,
+        field: PropTypes.string,
+        disabled: PropTypes.bool,
+      })),
+      checked: PropTypes.arrayOf(PropTypes.string),
+      limit: PropTypes.number.def(0),
+      size: PropTypes.size(['small', 'default', 'large']).def('default'),
+      sizeList: PropTypes.shape<SizeItem[]>([]),
+    }), PropTypes.bool]).def(false),
 
   /**
    * 行的 class 的回调方法，也可以使用一个固定的 Object 为所有行设置一样的 Style
@@ -232,7 +237,7 @@ export type SizeItem = {
 };
 
 export type Settings = {
-  fields?: Field[];
+  fields?: Field[],
   checked?: string[];
   limit?: number;
   size?: string;
@@ -242,6 +247,7 @@ export type Settings = {
 export type Field = {
   label: string;
   field?: string;
+  disabled?: boolean;
 };
 
 

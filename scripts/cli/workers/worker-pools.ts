@@ -33,7 +33,7 @@ import { ILibTaskOption } from '../typings/task';
 const buildTask = Symbol('BKUI_BUILD');
 const buildEvent = Symbol('BKUI_BUILD_EVENT');
 const BUILD_TASK = 'BUILD_TASK';
-EventEmitter.setMaxListeners(50);
+EventEmitter.setMaxListeners(100);
 class WorkerTask extends AsyncResource {
   callback: <T>(err: Error, task: T) => void;
   constructor(callback: <T>(err: Error, task: T) => void) {

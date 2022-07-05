@@ -5,7 +5,6 @@
       <bk-table
         :columns="columns"
         :data="tableData"
-        settings
         @dblclick="handleDblClick"
         @column-sort="handleSortBy"
       />
@@ -19,7 +18,6 @@
         :columns="columns"
         :data="tableData"
         height="100%"
-        settings
         @dblclick="handleDblClick"
       />
     </div>
@@ -29,7 +27,7 @@
         :columns="columns"
         :data="tableData"
         :height="300"
-        settings
+        :settings="settings"
         @dblclick="handleDblClick"
       />
     </div>
@@ -46,12 +44,33 @@
       return {
         tableData: [...DATA_TABLE],
         columns: [...DATA_COLUMNS],
+        settings: {
+          fields: [],
+          checked: [],
+        },
       };
     },
     mounted() {
-      // setTimeout(() => {
-      //   this.columns.push(...DATA_COLUMNS.slice(-3));
-      // }, 60);
+      setTimeout(() => {
+        this.settings.checked.push('index');
+        this.settings.fields.push(...[{
+                                        label: '序号',
+                                        field: 'index',
+                                        disabled: true,
+                                      },
+                                      {
+                                        label: '名称/内网IP',
+                                        field: 'ip',
+                                      },
+                                      {
+                                        label: '来源',
+                                        field: 'source',
+                                      },
+                                      {
+                                        label: '创建时间',
+                                        field: 'create_time',
+                                      }]);
+      }, 1000);
     },
     methods: {
       handleSortBy(arg) {

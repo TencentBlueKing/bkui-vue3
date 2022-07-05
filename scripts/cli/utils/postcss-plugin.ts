@@ -24,12 +24,12 @@
 * IN THE SOFTWARE.
 */
 import { AtRule, Root } from 'postcss';
-export const transformCssImport = () => ({
+export const transformCssImport = (fileUrl: string) => ({
   postcssPlugin: 'transform-css-import',
   Once(root: Root) {
     root.walkAtRules((rule: AtRule) => {
       if (rule.params && /@bkui-vue/.test(rule.params)) {
-        rule.params = rule.params.replace('@bkui-vue', '..');
+        rule.params = rule.params.replace('@bkui-vue', fileUrl.split('/src/')[1].replace(/([^/]+)/gmi, '..'));
       }
     });
   },
