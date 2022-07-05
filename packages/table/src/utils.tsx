@@ -373,11 +373,11 @@ export const getRowKey = (item: any, props: TablePropTypes, index: number) => {
 };
 
 
-export const hasRootScrollY =  (root, querySelector: string) => {
+export const hasRootScrollY =  (root, querySelector: string, offsetHeight = 0) => {
   if (root) {
     const tableBody = root.querySelector(querySelector) as HTMLElement;
     if (tableBody) {
-      return  tableBody.offsetHeight > root.offsetHeight;
+      return  tableBody.offsetHeight > (root.offsetHeight - offsetHeight);
     }
   }
 

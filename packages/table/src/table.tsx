@@ -124,10 +124,13 @@ export default defineComponent({
     })
       .on(EVENTS.ON_SETTING_CHANGE, (args: any) => {
         const { checked = [], size, height } = args;
-        const offset = getColumnsWidthOffsetWidth();
-        checked.length && resolveColumnWidth(root.value, colgroups, 20, offset);
-        refVirtualRender.value?.reset?.();
-        ctx.emit(EMITEVENTS.SETTING_CHANGE, { checked, size, height });
+        nextTick(() => {
+          updateBorderClass(root.value);
+          const offset = getColumnsWidthOffsetWidth();
+          checked.length && resolveColumnWidth(root.value, colgroups, 20, offset);
+          refVirtualRender.value?.reset?.();
+          ctx.emit(EMITEVENTS.SETTING_CHANGE, { checked, size, height });
+        });
       })
       .on(EVENTS.ON_ROW_EXPAND_CLICK, (args: any) => {
         const { row, column, index, rows, e } = args;
@@ -157,6 +160,7 @@ export default defineComponent({
           resetTableHeight(root.value);
         }
 
+        updateBorderClass(root.value);
         const offset = getColumnsWidthOffsetWidth();
         resolveColumnWidth(root.value, colgroups, 20, offset);
       }, 60, true);

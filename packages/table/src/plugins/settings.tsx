@@ -31,7 +31,7 @@ import { CloseLine, CogShape } from '@bkui-vue/icon/';
 import Popover from '@bkui-vue/popover2';
 import { PropTypes, resolveClassName } from '@bkui-vue/shared';
 
-import { SETTING_SIZE } from '../const';
+import { DEFAULT_SIZE_LIST, LINE_HEIGHT } from '../const';
 import { Field, Settings, SizeItem } from '../props';
 import { resolvePropVal } from '../utils';
 
@@ -47,19 +47,15 @@ export default defineComponent({
         })),
         checked: PropTypes.arrayOf(PropTypes.string),
         limit: PropTypes.number.def(0),
-        size: PropTypes.size(['small', 'default', 'large']).def('default'),
+        size: PropTypes.size(['small', 'medium', 'large']).def('small'),
         sizeList: PropTypes.shape<SizeItem[]>([]),
       }), PropTypes.bool]).def(false),
     columns: PropTypes.array.def([]),
-    rowHeight: PropTypes.number.def(40),
+    rowHeight: PropTypes.number.def(LINE_HEIGHT),
   },
   emits: ['change'],
   setup(props, { emit }) {
-    const defaultSizeList: SizeItem[] = [
-      { value: 'small', label: '小', height: SETTING_SIZE.small },
-      { value: 'default', label: '中', height: props.rowHeight },
-      { value: 'large', label: '大', height: SETTING_SIZE.large },
-    ];
+    const defaultSizeList: SizeItem[] = DEFAULT_SIZE_LIST;
 
     const checkAll = ref(false);
     const isShow = ref(false);
@@ -67,11 +63,11 @@ export default defineComponent({
       fields: props.columns.map((col: any) => ({ ...col, field: col.field || col.type })),
       checked: [],
       limit: 0,
-      size: 'default',
+      size: 'small',
       sizeList: defaultSizeList,
     }) : ref(props.settings as Settings);
 
-    const activeSize = ref(localSettings.value.size || 'default');
+    const activeSize = ref(localSettings.value.size || 'small');
     const activeHeight = ref(props.rowHeight);
 
     const checkedFields = ref(localSettings.value.checked);
@@ -125,7 +121,7 @@ export default defineComponent({
     };
 
     const isLimit = computed(() => (localSettings.value.limit ?? 0) > 0);
-    const sizeList = localSettings.value.sizeList ?? defaultSizeList;
+    const sizeList = localSettings.value.sizeList || defaultSizeList;
     const isFiledDisabled = computed(() => isLimit.value
       && (localSettings.value.limit ? localSettings.value.limit : 0) <= checkedFields.value.length);
 
@@ -140,7 +136,7 @@ export default defineComponent({
 
     const getItemClass = (item: SizeItem) => ({
       'line-size': true,
-      'is-default': activeSize.value === 'default',
+      'is-medium': activeSize.value === 'medium',
       active: item.value === activeSize.value,
     });
 

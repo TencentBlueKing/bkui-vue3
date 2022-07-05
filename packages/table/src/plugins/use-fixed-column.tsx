@@ -27,7 +27,7 @@ import { computed } from 'vue';
 
 import { resolveClassName } from '@bkui-vue/shared';
 
-import { SCROLLY_WIDTH } from '../const';
+import { LINE_HEIGHT, SCROLLY_WIDTH } from '../const';
 import { GroupColumn } from '../props';
 import { getColumnReactWidth } from '../utils';
 
@@ -35,7 +35,7 @@ import { getColumnReactWidth } from '../utils';
  * 固定列Hooks
  */
 export default (props, colgroups: GroupColumn[], hasScrollY?) => {
-  const footHeight = computed(() => (props.pagination && props.data.length ? 40 : 0));
+  const footHeight = computed(() => (props.pagination && props.data.length ? LINE_HEIGHT : 0));
   const resolveColumnClass = (column: GroupColumn) => ({
     column_fixed: !!column.fixed,
     column_fixed_left: column.fixed !== 'right',
