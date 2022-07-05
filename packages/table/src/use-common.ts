@@ -27,7 +27,7 @@ import { computed, onMounted, reactive, ref, watch } from 'vue';
 
 import { classes, resolveClassName } from '@bkui-vue/shared';
 
-import { BORDER_OPTION, SCROLLY_WIDTH, SETTING_SIZE, TABLE_ROW_ATTRIBUTE } from './const';
+import { BORDER_OPTION, LINE_HEIGHT, SCROLLY_WIDTH, SETTING_SIZE, TABLE_ROW_ATTRIBUTE } from './const';
 import useActiveColumns from './plugins/use-active-columns';
 import useColumnResize from './plugins/use-column-resize';
 import useFixedColumn from './plugins/use-fixed-column';
@@ -110,11 +110,13 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?:
   /** 表格外层容器样式 */
   const contentStyle = reactive({});
 
+  const getHeadHeight = () => (props.showHead ? resolvePropHeight(props.headHeight, LINE_HEIGHT) : 0);
+
   const resolveContentStyle = () => {
     const resolveHeight = resolvePropHeight(props.height, autoHeight.value);
-    const resolveHeadHeight = props.showHead ? resolvePropHeight(props.headHeight, 40) + 2 : 0;
+    const resolveHeadHeight = getHeadHeight();
     const resolveMinHeight = resolvePropHeight(props.minHeight, autoHeight.value);
-    const resolveFooterHeight = props.pagination && props.data.length ? 40 : 0;
+    const resolveFooterHeight = props.pagination && props.data.length ? LINE_HEIGHT : 0;
     const contentHeight = resolveHeight - resolveHeadHeight - resolveFooterHeight;
     const height = props.height !== 'auto' ? `${contentHeight}px` : false;
     const minHeight = resolveMinHeight - resolveHeadHeight - resolveFooterHeight;
@@ -142,8 +144,9 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?:
     const querySelector = props.virtualEnabled
       ? `.${resolveClassName('virtual-section')}`
       : `.${resolveClassName('table-body-content')}`;
+    const rootBody = root.querySelector('.bk-table-body');
 
-    hasScrollY.value = hasRootScrollY(root, querySelector);
+    hasScrollY.value = hasRootScrollY(rootBody, querySelector, 0);
   };
 
   /**
@@ -182,7 +185,7 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?:
 export const useInit = (props: TablePropTypes) => {
   const colgroups: Colgroups[] = reactive([]);
   const updateColGroups = () => {
-    colgroups.splice(0, colgroups.length, ...(props.columns ?? [])
+    colgroups.splice(0, colgroups.length, ...(props.columns || [])
       .map(col => ({
         ...col,
         calcWidth: null,
@@ -191,12 +194,14 @@ export const useInit = (props: TablePropTypes) => {
       })));
   };
 
+  const { dragOffsetXStyle, dragOffsetX, resetResizeEvents, registerResizeEvent } = useColumnResize(colgroups, true);
+  const { activeColumns } = useActiveColumns(props);
+
   watch(() => props.columns, () => {
     updateColGroups();
+    resetResizeEvents();
+    registerResizeEvent();
   }, { immediate: true, deep: true });
-
-  const { dragOffsetXStyle, dragOffsetX } = useColumnResize(colgroups, true);
-  const { activeColumns } = useActiveColumns(props);
 
   const reactiveSchema = reactive({
     rowActions: new Map(),
