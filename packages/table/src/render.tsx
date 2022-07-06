@@ -81,7 +81,7 @@ export default class TableRender {
       this.reactiveProp.setting.height = height;
       if (checked.length) {
         this.colgroups.forEach((col: GroupColumn) => {
-          col.isHidden = !(checked ?? []).includes(resolvePropVal(col, 'field', [col]));
+          col.isHidden = !(checked ?? []).includes(resolvePropVal(col, ['field', 'type'], [col]));
         });
       }
       this.emitEvent(EVENTS.ON_SETTING_CHANGE, [arg]);
@@ -90,7 +90,7 @@ export default class TableRender {
     return [
       this.props.settings
         ? <Settings class="table-head-settings"
-            settings={ this.props.settings }
+            settings={ this.reactiveProp.settings }
             columns={this.props.columns}
             rowHeight={ this.props.rowHeight }
             onChange={ handleSettingsChanged }/>
@@ -133,6 +133,7 @@ export default class TableRender {
     if (height !== null && height !== undefined) {
       return resolvePropVal(this.setting, 'height', ['tbody', row, rowIndex, size]);
     }
+
     return resolvePropVal(this.props, 'rowHeight', ['tbody', row, rowIndex]);
   };
 
