@@ -26,11 +26,11 @@
 import * as globalComponents from './components';
 declare module '@vue/runtime-core' {
 
-  type ExcludeOriginComponent<T> = {
+  type ExtendOriginComponent<T> = {
     [K in keyof T as (K extends string ? `BK${K}` : never)]: T[K] extends { C: infer COM } ? COM : never
   };
 
-  interface GlobalComponents extends ExcludeOriginComponent<typeof globalComponents> {
+  interface GlobalComponents extends ExtendOriginComponent<typeof globalComponents> {
     BkBreadcrumbItem: typeof globalComponents.Breadcrumb.Item;
     BkButtonGroup: typeof globalComponents.Button.ButtonGroup;
     BkCascaderPanel: typeof globalComponents.Cascader.CascaderPanel;
