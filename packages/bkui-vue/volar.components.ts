@@ -23,13 +23,14 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { Plugin } from 'vue';
-
 import * as globalComponents from './components';
 declare module '@vue/runtime-core' {
-  type OriginComponents = typeof globalComponents;
-  type OriginKeys = keyof OriginComponents;
-  export interface GlobalComponents extends Record<`Bk${OriginKeys}`, Exclude<OriginComponents[OriginKeys], Plugin>> {
+
+  type ExtendOriginComponent<T> = {
+    [K in keyof T as (K extends string ? `BK${K}` : never)]: T[K] extends { C: infer COM } ? COM : never
+  };
+
+  interface GlobalComponents extends ExtendOriginComponent<typeof globalComponents> {
     BkBreadcrumbItem: typeof globalComponents.Breadcrumb.Item;
     BkButtonGroup: typeof globalComponents.Button.ButtonGroup;
     BkCascaderPanel: typeof globalComponents.Cascader.CascaderPanel;
