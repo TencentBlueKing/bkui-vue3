@@ -24,14 +24,18 @@
  * IN THE SOFTWARE.
 */
 
+import { exec } from 'child_process';
+import path from 'path';
+
+import { COMPONENT_URL, LIB_URL } from '../compiler/helpers';
 import { ILibTaskOption, Task, TaskRunner } from '../typings/task';
 import bundleComponents from '../utils/bundle-components';
 import generateDecration from '../utils/generate-decrations';
-
 const compileTaskRunner: TaskRunner<ILibTaskOption> = async (option?: ILibTaskOption): Promise<void> => {
   process.env.NODE_ENV = 'production';
   await generateDecration();
   await bundleComponents(option!);
+  exec(`cp -v ${path.resolve(COMPONENT_URL, './bkui-vue/volar.components.d.ts')} ${LIB_URL}`);
 };
 
 export default new Task<ILibTaskOption>('compile lib', compileTaskRunner);

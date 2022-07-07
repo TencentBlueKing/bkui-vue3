@@ -257,10 +257,10 @@
             justify-content: space-between;
           }
 
-          // &.is-hover {
-          //   color: #3a84ff;
-          //   background-color: #f5f7fa;
-          // }
+          &.is-hover {
+            color: #3a84ff;
+            background-color: #f5f7fa;
+          }
 
           &:hover {
             color: #63656e;
@@ -276,6 +276,20 @@
             color: #c4c6cc;
             cursor: not-allowed;
             background-color: transparent;
+          }
+
+          &.is-multiple {
+            &.is-selected {
+              background-color: #fff
+            }
+
+            &.is-hover {
+              background-color: #f5f7fa;
+            }
+
+            &:hover {
+              background-color: #f5f7fa;
+            }
           }
         }
 

@@ -35,7 +35,6 @@
     "../../packages/*/src",
     "../../packages/**/*.d.ts",
     "../../packages/bkui-vue/index.ts",
-    "../../packages/bkui-vue/volar.components.ts",
     "../../index.d.ts"
   ],
   "exclude": [
