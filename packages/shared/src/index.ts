@@ -60,14 +60,13 @@ export interface OriginComponent {
   install?: Plugin;
 }
 export const withInstall = <T extends OriginComponent>(
-  component: T): T & Plugin & {C: T} => {
+  component: T): T & Plugin  => {
   component.install = function (app: App, { prefix } = {}) {
     const pre = app.config.globalProperties.bkUIPrefix || prefix || 'Bk';
     app.component(pre + component.name, component);
   };
-  return component as T & Plugin & {C: T};
+  return component as T & Plugin;
 };
-
 export const withInstallProps = <T extends OriginComponent, K extends Record<string, unknown>>(
   component: T,
   childComponents: K,
