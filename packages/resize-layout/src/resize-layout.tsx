@@ -26,7 +26,7 @@
 
 import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, ref, toRefs, withModifiers } from 'vue';
 
-import { AngleLeft } from '@bkui-vue/icon';
+import { AngleLeft, AngleRight } from '@bkui-vue/icon';
 import { PropTypes } from '@bkui-vue/shared';
 
 export default defineComponent({
@@ -281,7 +281,11 @@ export default defineComponent({
             this.collapsible
             && (
               this.$slots['collapse-trigger']?.()
-              || <AngleLeft class="bk-resize-collapse" onClick={this.setCollapse}></AngleLeft>
+              || (
+                this.collapsed
+                  ? <AngleRight class="bk-resize-collapse" onClick={this.setCollapse}></AngleRight>
+                  : <AngleLeft class="bk-resize-collapse" onClick={this.setCollapse}></AngleLeft>
+              )
             )
           }
         </aside>
