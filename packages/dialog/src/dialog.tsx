@@ -210,25 +210,27 @@ export default defineComponent({
         {this.dialogType === 'process' ? (
           this.$slots.footer?.() ?? <>
             {this.current === 1 ? '' : (
-              <BkButton style="float: left;margin-right: 8px" onClick={this.handlePrevStep}>
+              <BkButton class="bk-dialog-perv" onClick={this.handlePrevStep}>
                 {this.prevText}
               </BkButton>
             )}
             {this.current === this.totalStep ? '' : (
-              <BkButton style="float: left" onClick={this.handleNextStep}>{this.nextText}</BkButton>
+              <BkButton class="bk-dialog-next" onClick={this.handleNextStep}>{this.nextText}</BkButton>
             )}
             {this.current === this.totalStep ? (
               <BkButton onClick={this.handleConfirm} theme={this.theme}
                 loading={this.isLoading}>{this.confirmText}</BkButton>
             ) : ''}
-            <BkButton style="margin-left: 8px" onClick={this.handleClose}>{this.cancelText}</BkButton>
+            <BkButton class="bk-dialog-cancel" onClick={this.handleClose}
+              disabled={this.isLoading}>{this.cancelText}</BkButton>
           </>
         ) : ''}
         {this.dialogType === 'operation' ? (
           this.$slots.footer?.() ?? <>
             <BkButton onClick={this.handleConfirm} theme={this.theme}
             loading={this.isLoading}>{this.confirmText}</BkButton>
-            <BkButton style="margin-left: 8px" onClick={this.handleClose}>{this.cancelText}</BkButton>
+            <BkButton class="bk-dialog-cancel" onClick={this.handleClose}
+              disabled={this.isLoading}>{this.cancelText}</BkButton>
           </>
         ) : ''}
         {this.dialogType === 'confirm' ? (
