@@ -58,15 +58,15 @@
       
       th,
       td {
+        height: var(--row-height);
         min-width: 80px;
         clear: both;
 
         .cell {
-          height: var(--row-height);
           padding: 0 15px;
           overflow: hidden;
           font-size: 12px;
-          line-height: var(--row-height);
+          // line-height: calc(var(--row-height) - 1px);
           color: @table-body-font-color;
           text-align: left;
           text-overflow: ellipsis;
@@ -113,6 +113,7 @@
           .cell {
             display: flex;
             align-items: center;
+            height: calc(var(--row-height) - 1px);
           }
 
           &.active,
@@ -168,10 +169,10 @@
       font-size: 14px;
       cursor: pointer;     
       
-      background: #fafbfd;
-      border-right: 1px solid #dcdee5;
-      border-bottom: 1px solid #dcdee5;
-      border-left: 1px solid #dcdee5;
+      background: @table-head-bg-color;
+      border-right: 1px solid @table-border-color;
+      border-bottom: 1px solid @table-border-color;
+      border-left: 1px solid @table-border-color;
       border-radius: 0px 2px 0px 0px;
       justify-content: center;
       align-items: center;
