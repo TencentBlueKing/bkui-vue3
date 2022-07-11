@@ -161,20 +161,26 @@
       position: absolute;
       top: 0;
       right: 1px;
-      bottom: 1px;
+      bottom: 0px;
       display: block;
-
       display: flex;
       width: calc(var(--row-height));
-      font-size: 18px;
+      font-size: 14px;
       cursor: pointer;     
       
-      background: #f0f1f5;
+      background: #fafbfd;
       border-right: 1px solid #dcdee5;
+      border-bottom: 1px solid #dcdee5;
       border-left: 1px solid #dcdee5;
       border-radius: 0px 2px 0px 0px;
       justify-content: center;
       align-items: center;
+
+      > span {
+        display: flex;
+        width: 1rem;
+        height: 1rem;
+      }
     }
   }
 
@@ -191,9 +197,7 @@
   &.bordered-row {
     td,
     th { 
-      .cell {
-        border-bottom: 1px solid @table-border-color;
-      }
+      border-bottom: 1px solid @table-border-color;
     }
 
     &.has-footer {
@@ -203,9 +207,7 @@
         tr {
           &:last-child {
             td {
-              .cell {
-                border-bottom: none;
-              }
+              border-bottom: none;
             }
           }
         }
@@ -235,11 +237,8 @@
     td {
       border-top: none;
       border-right: none;
+      border-bottom: none;
       border-left: none;
-
-      .cell {
-        border-bottom: none;
-      }
     }
   }
 
