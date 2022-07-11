@@ -43,7 +43,7 @@ const radioButtonProps = {
   modelValue: PropTypes.oneOfType([String, Number, Boolean]).def(''),
   checked: PropTypes.bool.def(false),
   disabled: PropTypes.bool.def(false),
-  size: PropTypes.size,
+  size: PropTypes.size(),
 };
 
 export type RadioButtonProps = Readonly<ExtractPropTypes<typeof radioButtonProps>>;

@@ -15,6 +15,7 @@
     .@{bk-prefix}-input--prefix-area,
     .@{bk-prefix}-input--suffix-area,
     .@{bk-prefix}-input--suffix-icon {
+      cursor: not-allowed;
       background-color: @input-disabled-bg;
     }
   }
@@ -64,7 +65,6 @@
     padding: 5px 10px;
     line-height: 1.5;
     text-align: left;
-    vertical-align: middle;
     border: 0;
     outline: none;
     resize: none;
@@ -139,6 +139,15 @@
       display: none;
     }
   }
+
+  &--clear-icon {
+    cursor: pointer;
+
+    &:hover {
+      color: @gray-color;
+    }
+  }
+
 
   &--large {
     .component-size(@component-size-large, @font-size-medium);
@@ -276,6 +285,7 @@
       align-items: center;
 
       &.is-disabled {
+        color: @light-gray;
         cursor: not-allowed;
       }
     }
@@ -288,7 +298,7 @@
       transform: rotate(180deg);
     }
 
-    span:hover {
+    span:not(.is-disabled):hover {
       background-color: @input-block-hover-color;
     }
   }

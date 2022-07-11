@@ -32,93 +32,97 @@ import PropsBox from '../../components/props-box';
 import { IPropsTableItem } from '../../typings';
 
 import BaseDemo from './base-demo.vue';
+import EditDemo from './edit-demo.vue';
+import SizeDemo from './size-demo.vue';
 
-const fixedNavBarPropsJson: IPropsTableItem[] = [
+const ratePropsJson: IPropsTableItem[] = [
   {
-    name: 'navItems',
-    type: 'Array',
-    default: null,
-    desc: '需要固定展示的元素',
+    name: 'modelValue',
+    type: 'Number',
+    default: '0',
+    desc: '分数',
     optional: [],
   },
   {
-    name: 'position',
+    name: 'size',
     type: 'String',
-    default: 'middle',
-    desc: '位置，可以分别设置为上、中、下的位置',
-    optional: ['top', 'middle', 'bottom'],
+    default: 'default',
+    desc: '尺寸',
+    optional: ['small', 'default', 'large'],
   },
   {
-    name: 'extCls',
-    type: 'String',
-    default: '',
-    desc: '自定义样式',
+    name: 'editable',
+    type: 'Boolean',
+    default: 'true',
+    desc: '是否可编辑',
     optional: [],
   },
-
 ];
 
-const fixedItemPropsJson: IPropsTableItem[] = [
+const rateEventJson: IPropsTableItem[] = [
   {
-    name: 'icon',
-    type: 'String',
-    default: '',
-    desc: '元素的icon',
-    optional: [],
-  },
-  {
-    name: 'text',
-    type: 'String',
-    default: '',
-    desc: '元素的显示的文字',
-    optional: [],
-  },
-  {
-    name: 'action',
+    name: 'change',
     type: 'Function',
-    default: () => {},
-    desc: '元素点击的回调函数',
-    optional: [],
-  },
-  {
-    name: 'tooltip',
-    type: 'Object',
-    default: '{ disabled: true }',
-    desc: '用于自定义鼠标悬浮内容的配置',
+    default: '',
+    desc: '评分发生变化的时候',
     optional: [],
   },
 ];
 
 export default defineComponent({
+  setup() {
+
+  },
   render() {
     return (
-      <>
+      <div>
         <DemoTitle
-          name="FixedNavbar 悬浮导航"
-          desc="FixedNavbar 悬浮导航组件，快速设置右侧悬浮面板"
-          link="https://www.google.com.hk/"/>
+          name="Rate 评分"
+          desc="评分组件"
+        />
 
         <DemoBox
           title="基础用法"
-          desc="悬浮导航在右侧展示"
-          componentName="fixed-navbar"
+          subtitle=""
+          desc="通过 editable 设置为 false, 让 rate 组件只能查看不能编辑，只有非编辑态可以展示小数"
+          componentName="rate"
           demoName="base-demo"
         >
-            <BaseDemo></BaseDemo>
+          <BaseDemo></BaseDemo>
+        </DemoBox>
+
+        <DemoBox
+          title="控制组件大小"
+          subtitle=""
+          desc="通过 size 属性控制组件大小"
+          componentName="rate"
+          demoName="size-demo"
+        >
+          <SizeDemo></SizeDemo>
+        </DemoBox>
+
+        <DemoBox
+          title="事件"
+          subtitle=""
+          desc="通过监听 change 事件来做出响应"
+          componentName="rate"
+          demoName="edit-demo"
+        >
+          <EditDemo></EditDemo>
         </DemoBox>
 
         <PropsBox
-          title="FixedNavbar Attributes"
+          title="BkRate Attributes"
           subtitle=""
-          propsData={fixedNavBarPropsJson}
-        />
-        <PropsBox
-          subtitle=""
-          title="NavItems Attributes"
-          propsData={fixedItemPropsJson}
+          propsData={ratePropsJson}
         />
 
-      </>
+        <PropsBox
+          title="BkRate Events"
+          subtitle=""
+          propsData={rateEventJson}
+        />
+      </div>
     );
   },
 });

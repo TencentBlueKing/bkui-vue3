@@ -23,31 +23,61 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import * as globalComponents from './components';
-declare module '@vue/runtime-core' {
-  type OriginComponents = typeof globalComponents;
-  type OriginKeys = keyof OriginComponents;
-  export interface GlobalComponents extends Record<`Bk${OriginKeys}`, OriginComponents[OriginKeys]> {
-    BkBreadcrumbItem: typeof globalComponents.Breadcrumb.Item;
-    BkButtonGroup: typeof globalComponents.Button.ButtonGroup;
-    BkCascaderPanel: typeof globalComponents.Cascader.CascaderPanel;
-    BkCheckboxGroup: typeof globalComponents.Checkbox.Group;
-    BkRow: typeof globalComponents.Container.Row;
-    BkCol: typeof globalComponents.Container.Col;
-    BkDropdownMenu: typeof globalComponents.Dropdown.DropdownMenu;
-    BkDropdownItem: typeof globalComponents.Dropdown.DropdownItem;
-    BkFormItem: typeof globalComponents.Form.FormItem;
-    BkComposeFormItem: typeof globalComponents.Form.ComposeFormItem;
-    BkLoadingMode: typeof globalComponents.Loading.BkLoadingMode;
-    BkLoadingSize: typeof globalComponents.Loading.BkLoadingSize;
-    BkMenuItem: typeof globalComponents.Menu.Item;
-    BkSubmenu: typeof globalComponents.Menu.Submenu;
-    BkMenuGroup: typeof globalComponents.Menu.Group;
-    BkRadioGroup: typeof globalComponents.Radio.Group;
-    BkRadioButton: typeof globalComponents.Radio.Button;
-    BkOption: typeof globalComponents.Select.Option;
-    BkOptionGroup: typeof globalComponents.Select.Group;
-    BkTabPanel: typeof globalComponents.Tab.TabPanel;
-  }
-}
-export {};
+
+import { defineComponent } from 'vue';
+
+import DemoBox from '../../components/demo-box';
+import DemoTitle from '../../components/demo-title';
+import PropsBox from '../../components/props-box';
+import { IPropsTableItem } from '../../typings';
+
+import BaseDemo from './base-demo.vue';
+
+const animateNumberPropsJson: IPropsTableItem[] = [
+  {
+    name: 'value',
+    type: 'Number',
+    default: '0',
+    desc: '数字',
+    optional: [],
+  },
+  {
+    name: 'digits',
+    type: 'Number',
+    default: '0',
+    desc: '小数位',
+    optional: [],
+  },
+];
+
+export default defineComponent({
+  setup() {
+
+  },
+  render() {
+    return (
+      <div>
+        <DemoTitle
+          name="AnimateNumber 动态数字"
+          desc="动态数字组件"
+        />
+
+        <DemoBox
+          title="基础用法"
+          subtitle=""
+          desc="通过 value 设置初始值, 通过 digits 设置小数位。"
+          componentName="animate-number"
+          demoName="base-demo"
+        >
+          <BaseDemo></BaseDemo>
+        </DemoBox>
+
+        <PropsBox
+          title="BkAnimateNumber Attributes"
+          subtitle=""
+          propsData={animateNumberPropsJson}
+        />
+      </div>
+    );
+  },
+});

@@ -4,6 +4,8 @@
       v-model="val"
       clearable
       type="search"
+      :maxlength="88"
+      show-word-limit
     />
   </div>
 </template>
