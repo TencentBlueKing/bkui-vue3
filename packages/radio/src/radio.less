@@ -3,7 +3,6 @@
 .bk-radio {
   display: inline-flex;
   align-items: center;
-  margin-right: 30px;
   font-size: @font-size-base;
   font-weight: normal;
   line-height: 1;
@@ -14,8 +13,8 @@
   outline: none;
   user-select: none;
 
-  &:last-child {
-    margin-right: 0;
+  &~.bk-radio {
+    margin-left: 30px;
   }
 
   &.is-checked {
@@ -118,8 +117,8 @@
     z-index: 2;
 
     .bk-radio-button-text {
-      color: #fff;
-      background: @primary-color;
+      color: @primary-color;
+      background: #e1ecff;
       border-color: @primary-color;
     }
   }

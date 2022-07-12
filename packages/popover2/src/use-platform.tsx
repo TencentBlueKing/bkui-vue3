@@ -23,30 +23,33 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-
-import { defineComponent } from 'vue';
-
-import BKAnimateNumber from '@bkui-vue/animate-number';
-import BkButton from '@bkui-vue/button';
-
-export default defineComponent({
-  name: 'SiteAnimateNumber',
-  data() {
+export default () => {
+  const getElementRects = ({ reference, floating }) => {
+    const refRect = (reference as HTMLElement).getBoundingClientRect();
+    const floatRect = (floating as HTMLElement).getBoundingClientRect();
     return {
-      num: 20,
+      reference: { width: refRect.width, height: refRect.height, x: refRect.x, y: refRect.y },
+      floating: { width: floatRect.width, height: floatRect.height, x: floatRect.x, y: floatRect.y },
     };
-  },
-  methods: {
-    addNum() {
-      this.num += 20;
-    },
-  },
-  render() {
-    return (
-      <div>
-        <BKAnimateNumber value={ this.num }></BKAnimateNumber>
-        <BkButton onClick={ this.addNum }>+</BkButton>
-      </div>
-    );
-  },
-});
+  };
+  const getDimensions = (element: HTMLElement) => {
+    const { width, height } = element.getBoundingClientRect();
+    return { width, height };
+  };
+
+  const getClippingRect = ({ }) => {
+    const { width, height } = document.fullscreenElement.getBoundingClientRect();
+    return {
+      width,
+      height,
+      x: 0,
+      y: 0,
+    };
+  };
+
+  return {
+    getElementRects,
+    getDimensions,
+    getClippingRect,
+  };
+};
