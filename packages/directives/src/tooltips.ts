@@ -210,9 +210,11 @@ function show(el: HTMLElement) {
  */
 function hide(el: HTMLElement) {
   const { popper, popperInstance, opts: { onHide } } = nodeList.get(el);
-  popper.removeAttribute('data-show');
-  popperInstance?.destroy();
-  popper && document.body.removeChild(popper);
-  onHide();
+  if (popper && document.body.contains(popper)) {
+    popper.removeAttribute('data-show');
+    popperInstance?.destroy();
+    document.body.removeChild(popper);
+    onHide();
+  }
 }
 export default tooltips;
