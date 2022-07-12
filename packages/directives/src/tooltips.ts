@@ -209,6 +209,7 @@ function show(el: HTMLElement) {
  * @param el
  */
 function hide(el: HTMLElement) {
+  if (!nodeList.get(el)) return;
   const { popper, popperInstance, opts: { onHide } } = nodeList.get(el);
   if (popper && document.body.contains(popper)) {
     popper.removeAttribute('data-show');
