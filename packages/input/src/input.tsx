@@ -185,7 +185,6 @@ export default defineComponent({
     function eventHandler(eventName) {
       return (e) => {
         e.stopPropagation();
-        e.stopImmediatePropagation();
         if (eventName === EVENTS.KEYDOWN && (e.code === 'Enter' || e.key === 'Enter' || e.keyCode === 13)) {
           ctx.emit(EVENTS.ENTER, e.target.value, e);
         }
