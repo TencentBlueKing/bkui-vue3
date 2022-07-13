@@ -48,7 +48,7 @@
       <div class="text-wrap">
         <bk-button
           theme="primary"
-          class="text-btn"
+          class="login-btn"
         >
           登入
         </bk-button>
@@ -85,7 +85,12 @@
   margin: 0 5px;
 }
 
+.text-wrap .login-btn {
+  min-width: 88px;
+}
+
 .text-wrap .text-btn:hover {
+  color: #1768ef;
   cursor: pointer;
 }
 </style>
