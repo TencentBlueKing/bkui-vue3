@@ -210,6 +210,7 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
   };
 
   let popShowTimerId = undefined;
+  let isMouseenter = false;
 
   const hidePopover = () => {
     popShowTimerId = setTimeout(() => {
@@ -244,11 +245,22 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
   };
 
   const handlePopContentMouseEnter = () => {
-    popShowTimerId && clearTimeout(popShowTimerId);
+    if (props.trigger !== 'hover') {
+      return;
+    }
+
+    if (popShowTimerId) {
+      isMouseenter = true;
+      clearTimeout(popShowTimerId);
+      popShowTimerId = undefined;
+    }
   };
 
   const handlePopContentMouseLeave = () => {
-    hidePopover();
+    if (isMouseenter) {
+      hidePopover();
+      isMouseenter = false;
+    }
   };
 
   const resolveTriggerEvents = () => {
