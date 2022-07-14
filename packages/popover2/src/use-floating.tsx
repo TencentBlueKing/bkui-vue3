@@ -209,8 +209,13 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
     localIsShow.value = true;
   };
 
+  let popShowTimerId = undefined;
+  let isMouseenter = false;
+
   const hidePopover = () => {
-    localIsShow.value = false;
+    popShowTimerId = setTimeout(() => {
+      localIsShow.value = false;
+    }, 100);
   };
 
   const hanldePopoverShow = () => {
@@ -239,12 +244,39 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
     triggerPopover();
   };
 
+  const handlePopContentMouseEnter = () => {
+    if (props.trigger !== 'hover') {
+      return;
+    }
+
+    if (popShowTimerId) {
+      isMouseenter = true;
+      clearTimeout(popShowTimerId);
+      popShowTimerId = undefined;
+    }
+  };
+
+  const handlePopContentMouseLeave = () => {
+    if (isMouseenter) {
+      hidePopover();
+      isMouseenter = false;
+    }
+  };
+
   const resolveTriggerEvents = () => {
     const triggerEvents = {
-      hover: [['mouseenter', showPopover],
-        ['mouseleave', hidePopover],
-        ['focus', showPopover],
-        ['blur', hidePopover]],
+      hover: {
+        content: [
+          ['mouseenter', handlePopContentMouseEnter],
+          ['mouseleave', handlePopContentMouseLeave],
+        ],
+        reference: [
+          ['mouseenter', showPopover],
+          ['mouseleave', hidePopover],
+          ['focus', showPopover],
+          ['blur', hidePopover],
+        ],
+      },
       click: [['click', hanldeClickRef]],
       manual: [[]],
     };
