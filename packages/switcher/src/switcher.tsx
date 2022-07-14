@@ -79,9 +79,6 @@ export default defineComponent({
         const sizeStr = `bk-switcher-${props.size}`;
         cls[sizeStr] = true;
       }
-      if (!props.size) {
-        cls['bk-switcher-nomal'] = true;
-      }
       return cls;
     });
 
