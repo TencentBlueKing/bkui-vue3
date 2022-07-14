@@ -59,16 +59,14 @@ export interface OriginComponent {
   name: string;
   install?: Plugin;
 }
-
 export const withInstall = <T extends OriginComponent>(
-  component: T) => {
+  component: T): T & Plugin  => {
   component.install = function (app: App, { prefix } = {}) {
     const pre = app.config.globalProperties.bkUIPrefix || prefix || 'Bk';
     app.component(pre + component.name, component);
   };
-  return component as typeof component & Plugin;
+  return component as T & Plugin;
 };
-
 export const withInstallProps = <T extends OriginComponent, K extends Record<string, unknown>>(
   component: T,
   childComponents: K,
@@ -83,7 +81,7 @@ export const withInstallProps = <T extends OriginComponent, K extends Record<str
   Object.keys(childComponents).forEach((key) => {
     component[key] = childComponents[key];
   });
-  return component as typeof component & Plugin & Readonly<typeof childComponents>;
+  return component as T & Plugin & Readonly<typeof childComponents>;
 };
 
 /**

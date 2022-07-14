@@ -34,7 +34,7 @@ import { TreePropTypes } from './props';
 import useNodeAsync from './use-node-async';
 import useNodeAttribute from './use-node-attribute';
 import { getLabel, getNodeItemClass, getNodeItemStyle, getNodeRowClass, resolveNodeItem } from './util';
-export default (props: TreePropTypes, ctx, flatData, renderData, schemaValues, initOption) => {
+export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, initOption) => {
   // const checkedNodes = [];
   let selectedNodeId = props.selected;
   const {
@@ -185,11 +185,11 @@ export default (props: TreePropTypes, ctx, flatData, renderData, schemaValues, i
   };
 
   const isIndeterminate = (item: any) => isNodeChecked(item)  && !schemaValues.value
-    .filter(node => String.prototype.startsWith.call(getNodePath(node), getNodePath(item)))
+    .filter(node => getNodePath(node)?.startsWith(getNodePath(item)))
     .every(filterNode => isNodeChecked(filterNode));
 
   const isNodeItemChecked = (item: any) => isNodeChecked(item) || schemaValues.value
-    .filter(node => String.prototype.startsWith.call(getNodePath(node), getNodePath(item)))
+    .filter(node => getNodePath(node)?.startsWith(getNodePath(item)))
     .some(filterNode => isNodeChecked(filterNode));
 
   const getCheckboxRender = (item: any) => {
@@ -220,8 +220,6 @@ export default (props: TreePropTypes, ctx, flatData, renderData, schemaValues, i
   */
     if (!newVal) {
       deepUpdateChildNode(item, NODE_ATTRIBUTES.IS_OPEN, newVal);
-      // renderData.value.filter(node => String.prototype.startsWith.call(getNodePath(node), getNodePath(item)))
-      //   .forEach(filterNode => setNodeAttr(filterNode, NODE_ATTRIBUTES.IS_OPEN, newVal));
     }
 
     setNodeAttr(item, NODE_ATTRIBUTES.IS_OPEN, newVal);

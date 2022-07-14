@@ -99,7 +99,7 @@
   &.is-focus.normal {
     .bk-select-trigger .bk-select-tag {
       border-color: @primary-color;
-      box-shadow: 0px 0px 3px 0px #a3c5fd; 
+      box-shadow: 0px 0px 3px 0px #a3c5fd;
     }
   }
 
@@ -131,7 +131,7 @@
 
       &.is-focused {
         .active();
-    
+
         &.is-simplicity {
           border-color: transparent;
           border-bottom-color: @primary-color;
@@ -195,138 +195,162 @@
   }
 }
 
-.bk-popover2.bk-select-popover {
-  padding: 0;
+.@{bk-prefix}-popover2 {
+  &.@{bk-prefix}-pop2-content {
+    &.bk-select-popover {
+      padding: 0;
 
-  .bk-select-content {
-    .bk-select-empty {
-      .flex-center();
-      height: 56px;
-      color: #63656e;
-  
-      .spinner {
-        display: flex;
-        width: 14px;
-        height: 14px;
-        margin-right: 4px;
-        font-size: 14px;
-        color: #c4c6cc;
-        align-items: center;
-        justify-content: center;
-      }
+      .bk-select-content {
+        .bk-select-empty {
+          .flex-center();
+          height: 56px;
+          color: #63656e;
 
-      span {
-        .icon-text()
-      }
-    }
+          .spinner {
+            display: flex;
+            width: 14px;
+            height: 14px;
+            margin-right: 4px;
+            font-size: 14px;
+            color: #c4c6cc;
+            align-items: center;
+            justify-content: center;
+          }
 
-    .bk-select-dropdown {
-      overflow: auto;
-    }
-
-    .bk-select-extension {
-      display: flex;
-      height: 40px;
-      background-color: #fafbfd;
-      align-items: center;
-    }
-
-    .bk-select-options {
-      padding: 8px 0;
-    }
-
-    .bk-select-option {
-      position: relative;
-      height: 32px;
-      padding: 0 12px;
-      line-height: 32px;
-      color: #63656e;
-      text-align: left;
-      cursor: pointer;
-      user-select: none;
-  
-      .ellipsis();
-  
-      &-item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-      }
-      
-      &:hover,
-      &.is-hover {
-        color: #3a84ff;
-        background-color: #f5f7fa;
-      }
-  
-      &.is-selected {
-        color: #3a84ff;
-      }
-  
-      &.is-disabled {
-        color: #c4c6cc;
-        cursor: not-allowed;
-        background-color: transparent;
-      }
-  
-    }
-
-    .bk-select-options-loading {
-      .flex-center();
-
-      span {
-        .icon-text()
-      }
-    }
-
-    .bk-option-group {
-      &-label {
-        height: 32px;
-        padding: 0 8px;
-        line-height: 32px;
-        color: #979ba5;
-        text-align: left;
-  
-        &.collapsible {
-          cursor: pointer;
-        }
-      }
-  
-      &.collapsible {
-        .bk-select-option {
-          padding-left: 40px;
-        }
-      }
-  
-      &.disabled {
-        .default-group-label {
-          color: #c4c6cc;
-          cursor: not-allowed;
-        }
-      }
-  
-      .default-group-label {
-        display: flex;
-        user-select: none;
-        align-items: center;
-  
-        &-icon {
-          display: flex;
-          width: 12px;
-          height: 12px;
-          margin-right: 8px;
-          transition: all .1s;
-          align-items: center;
-          justify-content: center;
-  
-          &.collapse {
-            transform: rotate(-90deg);
+          span {
+            .icon-text()
           }
         }
-      }
-  
-      .bk-select-option {
-        padding-left: 24px;
+
+        .bk-select-dropdown {
+          overflow: auto;
+        }
+
+        .bk-select-extension {
+          display: flex;
+          height: 40px;
+          background-color: #fafbfd;
+          align-items: center;
+          border-top: 1px solid #dcdee5;
+          border-radius: 0 0 2px 2px;
+        }
+
+        .bk-select-options {
+          padding: 8px 0;
+        }
+
+        .bk-select-option {
+          position: relative;
+          height: 32px;
+          padding: 0 12px;
+          line-height: 32px;
+          color: #63656e;
+          text-align: left;
+          cursor: pointer;
+          user-select: none;
+
+          .ellipsis();
+
+          &-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+          }
+
+          &.is-hover {
+            color: #3a84ff;
+            background-color: #f5f7fa;
+          }
+
+          &:hover {
+            color: #63656e;
+            background-color: #f5f7fa;
+          }
+
+          &.is-selected {
+            color: #3a84ff;
+            background-color: #e1ecff;
+          }
+
+          &.is-disabled {
+            color: #c4c6cc;
+            cursor: not-allowed;
+            background-color: transparent;
+          }
+
+          &.is-multiple {
+            &.is-selected {
+              background-color: #fff
+            }
+
+            &.is-hover {
+              background-color: #f5f7fa;
+            }
+
+            &:hover {
+              background-color: #f5f7fa;
+            }
+          }
+        }
+
+        .bk-select-options-loading {
+          .flex-center();
+
+          span {
+            .icon-text()
+          }
+        }
+
+        .bk-option-group {
+          &-label {
+            height: 32px;
+            padding: 0 8px;
+            line-height: 32px;
+            color: #979ba5;
+            text-align: left;
+
+            &.collapsible {
+              cursor: pointer;
+            }
+          }
+
+          &.collapsible {
+            .bk-select-option {
+              padding-left: 40px;
+            }
+          }
+
+          &.disabled {
+            .default-group-label {
+              color: #c4c6cc;
+              cursor: not-allowed;
+            }
+          }
+
+          .default-group-label {
+            display: flex;
+            user-select: none;
+            align-items: center;
+
+            &-icon {
+              display: flex;
+              width: 12px;
+              height: 12px;
+              margin-right: 8px;
+              transition: all .1s;
+              align-items: center;
+              justify-content: center;
+
+              &.collapse {
+                transform: rotate(-90deg);
+              }
+            }
+          }
+
+          .bk-select-option {
+            padding-left: 24px;
+          }
+        }
       }
     }
   }

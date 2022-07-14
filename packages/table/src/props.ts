@@ -28,7 +28,7 @@ import { ExtractPropTypes } from 'vue';
 
 import { PropTypes } from '@bkui-vue/shared';
 
-import { BORDER_OPTION, BORDER_OPTIONS, TABLE_ROW_ATTRIBUTE } from './const';
+import { BORDER_OPTION, BORDER_OPTIONS, LINE_HEIGHT, TABLE_ROW_ATTRIBUTE } from './const';
 
 export enum SortScope {
   CURRENT = 'current',
@@ -101,7 +101,7 @@ export const tableProps = {
    * 设置表格最小高度
    * 默认：300
    */
-  minHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(80),
+  minHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(LINE_HEIGHT * 2),
 
   /**
    * 设置表格最d大高度
@@ -113,12 +113,12 @@ export const tableProps = {
    * 行高，可以为固定数值类型
    * 可以是函数，返回当前行的高度，返回值为数值类型
    */
-  rowHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.func]).def(40),
+  rowHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.func]).def(LINE_HEIGHT),
 
   /**
    * Thead行高，可以为固定数值类型
    */
-  headHeight: PropTypes.number.def(40),
+  headHeight: PropTypes.number.def(LINE_HEIGHT),
 
   /**
    * 是否显示Head
@@ -129,7 +129,7 @@ export const tableProps = {
    * table header config
    */
   thead: PropTypes.shape<Thead>({
-    height: PropTypes.number.def(40),
+    height: PropTypes.number.def(LINE_HEIGHT),
     isShow: PropTypes.bool.def(true),
     cellFn: PropTypes.func.def(undefined),
   }),
@@ -166,13 +166,18 @@ export const tableProps = {
   /**
    * bk-table-setting-content
    */
-  settings: PropTypes.oneOfType([PropTypes.bool, PropTypes.shape<Settings>({
-    fields: PropTypes.shape<Field[]>([]).def(undefined),
-    checked: PropTypes.shape<string[]>([]).def(undefined),
-    limit: PropTypes.number.def(undefined),
-    size: PropTypes.size(['small', 'default', 'large']).def('default'),
-    sizeList: PropTypes.shape<SizeItem[]>([]).def(undefined),
-  })]).def(false),
+  settings: PropTypes.oneOfType([
+    PropTypes.shape<Settings>({
+      fields: PropTypes.arrayOf(PropTypes.shape<Field>({
+        label: PropTypes.string,
+        field: PropTypes.string,
+        disabled: PropTypes.bool,
+      })),
+      checked: PropTypes.arrayOf(PropTypes.string),
+      limit: PropTypes.number.def(0),
+      size: PropTypes.size(['small', 'medium', 'large']).def('small'),
+      sizeList: PropTypes.shape<SizeItem[]>([]),
+    }), PropTypes.bool]).def(false),
 
   /**
    * 行的 class 的回调方法，也可以使用一个固定的 Object 为所有行设置一样的 Style
@@ -232,7 +237,7 @@ export type SizeItem = {
 };
 
 export type Settings = {
-  fields?: Field[];
+  fields?: Field[],
   checked?: string[];
   limit?: number;
   size?: string;

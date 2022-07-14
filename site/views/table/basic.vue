@@ -44,32 +44,33 @@
       return {
         tableData: [...DATA_TABLE],
         columns: [...DATA_COLUMNS],
+        settings: {
+          fields: [],
+          checked: [],
+        },
       };
     },
-    computed: {
-      settings() {
-        return {
-          fields: [
-            {
-              label: '序号',
-              type: 'index',
-              disabled: true,
-            },
-            {
-              label: '名称/内网IP',
-              field: 'ip',
-            },
-            {
-              label: '来源',
-              field: 'source',
-            },
-            {
-              label: '创建时间',
-              field: 'create_time',
-            },
-          ],
-        };
-      },
+    mounted() {
+      setTimeout(() => {
+        this.settings.checked.push('index');
+        this.settings.fields.push(...[{
+                                        label: '序号',
+                                        field: 'index',
+                                        disabled: true,
+                                      },
+                                      {
+                                        label: '名称/内网IP',
+                                        field: 'ip',
+                                      },
+                                      {
+                                        label: '来源',
+                                        field: 'source',
+                                      },
+                                      {
+                                        label: '创建时间',
+                                        field: 'create_time',
+                                      }]);
+      }, 1000);
     },
     methods: {
       handleSortBy(arg) {

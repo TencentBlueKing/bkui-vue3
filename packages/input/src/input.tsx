@@ -33,7 +33,6 @@ import {
   useFormItem,
 } from '@bkui-vue/shared';
 
-
 export const inputType = {
   type: PropTypes.string.def('text'),
   clearable: PropTypes.bool,
@@ -53,12 +52,12 @@ export const inputType = {
   showControl: PropTypes.bool.def(true),
   showClearOnlyHover: PropTypes.bool.def(false),
   precision: PropTypes.number.def(0).validate(val => val >= 0 && val < 20),
-  modelValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def(''),
+  modelValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   size: PropTypes.size(),
   rows: PropTypes.number,
 };
 
-export enum EVENTS {
+export const enum EVENTS {
   UPDATE = 'update:modelValue',
   FOCUS = 'focus',
   BLUR = 'blur',
@@ -74,14 +73,13 @@ export enum EVENTS {
   COMPOSITIONUPDATE = 'compositionupdate',
   COMPOSITIONEND = 'compositionend',
 }
-function EventFunction(value: string | number, evt?: KeyboardEvent | Event) {
-  return {
-    value, evt,
-  };
-};
+function EventFunction(_value: any, _evt?: KeyboardEvent | Event) {
+  return true;
+}
+
 function CompositionEventFunction(evt: CompositionEvent) {
   return evt;
-};
+}
 export const inputEmitEventsType = {
   [EVENTS.UPDATE]: EventFunction,
   [EVENTS.FOCUS]: (evt: FocusEvent) => evt,
@@ -115,6 +113,7 @@ export default defineComponent({
     const isTextArea = computed(() => props.type === 'textarea');
     const inputClsPrefix = computed(() => (isTextArea.value ? 'bk-textarea' : 'bk-input'));
     const { class: cls, style, ...inputAttrs } = ctx.attrs;
+    console.log(inputAttrs, 333, ctx.attrs);
     const inputRef = ref();
     const inputCls = computed(() => classes({
       [`${inputClsPrefix.value}--${props.size}`]: !!props.size,
@@ -141,6 +140,7 @@ export default defineComponent({
     const pwdVisible = ref(false);
     const clearCls = computed(() => classes({
       'show-clear-only-hover': props.showClearOnlyHover,
+      [`${inputClsPrefix.value}--clear-icon`]: true,
     }, suffixCls));
     const incControlCls = computed(() => classes({
       'is-disabled': props.disabled || props.modelValue >= props.max,
@@ -158,6 +158,7 @@ export default defineComponent({
     });
 
     function clear() {
+      if (props.disabled) return;
       const resetVal = isNumberInput.value ? props.min : '';
       ctx.emit(EVENTS.UPDATE, resetVal);
       ctx.emit(EVENTS.CHANGE, resetVal);
@@ -183,6 +184,7 @@ export default defineComponent({
     // 事件句柄生成器
     function eventHandler(eventName) {
       return (e) => {
+        e.stopPropagation();
         if (eventName === EVENTS.KEYDOWN && (e.code === 'Enter' || e.key === 'Enter' || e.keyCode === 13)) {
           ctx.emit(EVENTS.ENTER, e.target.value, e);
         }
@@ -261,12 +263,19 @@ export default defineComponent({
       pwdVisible.value = !pwdVisible.value;
     }
 
-    const bindProps = computed(() => ({
-      value: props.modelValue,
-      maxlength: props.maxlength,
-      placeholder: props.placeholder,
-      readonly: props.readonly,
-      disabled: props.disabled,
+    const bindProps = computed(() => {
+      const val = typeof props.modelValue === 'undefined' || props.modelValue === null ? {} : {
+        value: props.modelValue,
+      };
+      return ({
+        ...val,
+        maxlength: props.maxlength,
+        placeholder: props.placeholder,
+        readonly: props.readonly,
+        disabled: props.disabled,
+      });
+    });
+    const eventListener = {
       onInput: handleInput,
       onFocus: handleFocus,
       onBlur: handleBlur,
@@ -277,7 +286,7 @@ export default defineComponent({
       onKeyup: handleKeyup,
       onCompositionstart: handleCompositionStart,
       onCompositionend: handleCompositionEnd,
-    }));
+    };
     return () => (
         <div class={inputCls.value} style={style as any} >
         {
@@ -290,6 +299,7 @@ export default defineComponent({
               ref={inputRef}
               spellcheck={false}
               {...inputAttrs}
+              {...eventListener}
               {...bindProps.value}
               rows={props.rows}
             />
@@ -303,6 +313,7 @@ export default defineComponent({
             step={props.step}
             max={props.max}
             min={props.min}
+            {...eventListener}
             {...bindProps.value}
           />
         )}

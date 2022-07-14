@@ -37,7 +37,6 @@ export default defineComponent({
     height: PropTypes.number.def(16),
     editable: PropTypes.bool.def(true),
     hoverRate: PropTypes.number.def(0),
-    // tooltips: PropTypes.array.def([]),
     max: PropTypes.number.def(5),
   },
 
@@ -83,7 +82,6 @@ export default defineComponent({
                 x="0px"
                 y="0px"
                 viewBox="0 0 64 64"
-                // v-bk-tooltips="{ content: tooltips[index], disabled: !tooltips[index] }"
                 onClick={() => chooseRate(index)}
                 onMouseenter={() => changeHover(index)}
               >

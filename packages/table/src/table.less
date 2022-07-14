@@ -1,5 +1,11 @@
 @import '@bkui-vue/styles/themes/themes.less';
 @import '@bkui-vue/styles/mixins/scroll.less';
+@import '@bkui-vue/virtual-render/virtual-render.less';
+@import '@bkui-vue/checkbox/checkbox.less';
+@import '@bkui-vue/button/button.less';
+@import '@bkui-vue/exception/exception.less';
+@import '@bkui-vue/pagination/pagination.less';
+@import '@bkui-vue/popover2/popover2.less';
 @import './plugins/head-filter.less';
 @import './plugins/head-sort.less';
 @import './plugins/settings.less';
@@ -52,15 +58,15 @@
       
       th,
       td {
+        height: var(--row-height);
         min-width: 80px;
         clear: both;
 
         .cell {
-          height: var(--row-height);
           padding: 0 15px;
           overflow: hidden;
-          font-size: 14px;
-          line-height: var(--row-height);
+          font-size: 12px;
+          // line-height: calc(var(--row-height) - 1px);
           color: @table-body-font-color;
           text-align: left;
           text-overflow: ellipsis;
@@ -107,6 +113,7 @@
           .cell {
             display: flex;
             align-items: center;
+            height: calc(var(--row-height) - 1px);
           }
 
           &.active,
@@ -130,8 +137,10 @@
             .cell {
               display: block;
               width: 100%;
-              align-items: center;
+              height: 100%;
+              line-height: calc(var(--row-height) - 1px);
               box-sizing: border-box;
+              align-items: center;
             }
           }
 
@@ -155,20 +164,26 @@
       position: absolute;
       top: 0;
       right: 1px;
-      bottom: 1px;
+      bottom: 0px;
       display: block;
-
       display: flex;
       width: calc(var(--row-height));
-      font-size: 18px;
+      font-size: 14px;
       cursor: pointer;     
       
-      background: #f0f1f5;
-      border-right: 1px solid #dcdee5;
-      border-left: 1px solid #dcdee5;
+      background: @table-head-bg-color;
+      border-right: 1px solid @table-border-color;
+      border-bottom: 1px solid @table-border-color;
+      border-left: 1px solid @table-border-color;
       border-radius: 0px 2px 0px 0px;
       justify-content: center;
       align-items: center;
+
+      > span {
+        display: flex;
+        width: 1rem;
+        height: 1rem;
+      }
     }
   }
 
@@ -185,9 +200,7 @@
   &.bordered-row {
     td,
     th { 
-      .cell {
-        border-bottom: 1px solid @table-border-color;
-      }
+      border-bottom: 1px solid @table-border-color;
     }
 
     &.has-footer {
@@ -197,9 +210,7 @@
         tr {
           &:last-child {
             td {
-              .cell {
-                border-bottom: none;
-              }
+              border-bottom: none;
             }
           }
         }
@@ -229,11 +240,8 @@
     td {
       border-top: none;
       border-right: none;
+      border-bottom: none;
       border-left: none;
-
-      .cell {
-        border-bottom: none;
-      }
     }
   }
 
