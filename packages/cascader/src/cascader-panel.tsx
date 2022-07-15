@@ -135,7 +135,7 @@ export default defineComponent({
                             disabled={node.isDisabled}
                             v-model={node.checked}
                             onChange={(val: boolean) => this.checkNode(node, val)}></BkCheckbox>}
-                    <span class="content">{node.name}</span>
+                    <span class="bk-cascader-node-name">{node.name}</span>
                     {!node.isLeaf ? <AngleRight class="icon-angle-right"></AngleRight> : ''}
                   </li>
               ))}

@@ -66,7 +66,7 @@ const Message = (constructor: any, options: any) => {
   const container = document.createElement('div');
   const vm = createVNode(constructor, opts);
 
-  vm.props.onDestory = (id: string) => {
+  vm.props.onDestroy = (id: string) => {
     close(id, position, spacing, userOnClose);
     render(null, container);
   };
