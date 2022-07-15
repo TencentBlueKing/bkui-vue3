@@ -102,6 +102,30 @@ const cascaderPropsJson: IPropsTableItem[] = [
 
 ];
 
+const cascaderEventsJson: IPropsTableItem[] = [
+  {
+    name: 'change',
+    type: 'String',
+    default: null,
+    desc: '内容改变时触发，回调为当前所选内容',
+    optional: [],
+  },
+  {
+    name: 'toggle',
+    type: 'String',
+    default: null,
+    desc: '	切换下拉折叠状态时调用, 回调参数为当前是否展开',
+    optional: ['true', 'false'],
+  },
+  {
+    name: 'clear',
+    type: 'String',
+    default: null,
+    desc: '清空选项时调用, 回调参数为请空前的内容',
+    optional: [],
+  },
+];
+
 
 export default defineComponent({
   render() {
@@ -142,7 +166,11 @@ export default defineComponent({
         <PropsBox
           title="Cascader Attributes"
           subtitle=""
-          propsData={cascaderPropsJson}/>
+          propsData={cascaderPropsJson} />
+        <PropsBox
+          title="Cascader Events"
+          subtitle=""
+          propsData={cascaderEventsJson} />
       </div>
     );
   },
