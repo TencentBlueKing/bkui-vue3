@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
 */
 
-import { computed, defineComponent, ref, watch } from 'vue';
+import { computed, defineComponent, provide, ref, watch } from 'vue';
 
 import CollapsePanel from './collapse-panel';
 import { propsCollapse as props } from './props';
@@ -33,9 +33,9 @@ export default defineComponent({
   name: 'Collapse',
   props,
   emits: ['item-click', 'update:modelValue', 'after-leave', 'before-enter'],
+
   setup(props, { emit, slots }) {
     const localActiveItems = ref([]);
-
     // 以保证当前的设置生效
     watch(() => [props.modelValue], () => {
       const value = props.modelValue;
@@ -49,24 +49,24 @@ export default defineComponent({
     }, {
       immediate: true,
     });
-
+    provide('localActiveItems', localActiveItems.value);
 
     const handleItemClick = (item) => {
-      if (item.disabled) return;
       // 手风琴模式，只有一个Active，移除一个新增一个
+      const { name } = item;
       if (props.accordion) {
-        const activeItemIndex = localActiveItems.value.findIndex(local => local === item[props.idFiled]);
+        const activeItemIndex = localActiveItems.value.findIndex(local => local === name);
         if (activeItemIndex >= 0) {
           localActiveItems.value.splice(activeItemIndex, 1);
         } else {
-          localActiveItems.value = [item[props.idFiled]];
+          localActiveItems.value = [name];
         }
       } else {
-        const activeItemIndex = localActiveItems.value.findIndex(local => local === item[props.idFiled]);
+        const activeItemIndex = localActiveItems.value.findIndex(local => local === name);
         if (activeItemIndex >= 0) {
           localActiveItems.value.splice(activeItemIndex, 1);
         } else {
-          localActiveItems.value.push(item[props.idFiled]);
+          localActiveItems.value.push(name);
         }
       }
       emit('item-click', item);
@@ -87,22 +87,28 @@ export default defineComponent({
       }
       return { $index: index, ...item };
     }));
-
     // 判定当前Item是否为激活状态
-    const isItemActive = item => localActiveItems.value.includes(item[props.idFiled]);
-    const renderItems = () => collapseData.value.map((item, index) => (
-      <CollapsePanel
-        key={index}
-        on-change={data => handleItemClick(data)}
-        disabled={item.disabled}
-        after-leave={ars => emit('after-leave', ars)}
-        before-enter={ars => emit('before-enter', ars)}
-        isActive={isItemActive(props)}
-        name={item[props.idFiled] || index}
-        title={item[props.titleField]}
-        content={item[props.contentField]}
-      />
-    ));
+    const renderItems = () => collapseData.value.map((item, index) => {
+      const name = item[props.idFiled] || index;
+      let title = item[props.titleField];
+      if (slots.title) {
+        if (typeof slots.title === 'function') {
+          title = slots.title(item);
+        } else {
+          title = slots.title;
+        }
+      }
+      return  (
+        <CollapsePanel
+          key={index}
+          item-click={handleItemClick}
+          disabled={item.disabled}
+          name={name}
+          title={title}
+          content={item[props.contentField]}
+        />
+      );
+    });
 
 
     return () => (

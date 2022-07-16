@@ -59,11 +59,20 @@ export const propsCollapse = {
    */
   accordion: PropTypes.bool.def(false),
 };
+export const CollapsePanelEventProps = {
+  itemClick: {
+    type: Function,
+    default: (): any => ({}),
+  },
+};
 export const propsCollapsePanel = {
-  name: PropTypes.string || PropTypes.func,
-  title: PropTypes.string,
+  name: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(''),
+  title: PropTypes.any,
   content: PropTypes.string,
-  isActive: PropTypes.bool.def(false),
   disabled: PropTypes.bool.def(false),
   renderDirective: PropTypes.commonType(['if', 'show'], 'render').def('show'),
+  modelValue: PropTypes.bool.def(false),
+  ...CollapsePanelEventProps,
 };
+
+

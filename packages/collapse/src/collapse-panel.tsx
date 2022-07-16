@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent, h, ref, Transition } from 'vue';
+import { defineComponent, h, inject, ref, Transition, watch } from 'vue';
 
 import { AngleRight } from '@bkui-vue/icon';
 
@@ -31,43 +31,95 @@ import { propsCollapsePanel as props } from './props';
 import { collapseMotion } from './utils';
 
 export default defineComponent({
-  name: 'Collapse',
+  name: 'CollapsePanel',
   props,
-  emits: ['change', 'after-leave', 'before-enter'],
+  emits: ['change', 'update:modelValue', 'after-leave', 'before-enter'],
   setup(props, { emit, slots }) {
+    const localActiveItems = inject<(string | number)[]>('localActiveItems');
+    const isActive = ref(props.modelValue);
+    watch(() => props.modelValue, (newVal) => {
+      isActive.value = newVal;
+    });
+    watch(() => localActiveItems, (newVal) => {
+      if (newVal?.length) {
+        isActive.value = newVal.includes(props.name);
+      }
+    }, {
+      immediate: true,
+    });
+
     function handleItemClick(props) {
-      emit('change', props);
+      const { disabled, name, itemClick } = props;
+      if (disabled) return;
+      const data = { name };
+      itemClick(data);
+      isActive.value = !isActive.value;
+      emit('change', data);
+      emit('update:modelValue', isActive.value);
     }
 
 
     const transition = ref(collapseMotion(emit));
-    const { content } = slots;
+    const { content } = props;
+
     function getContent() {
       if (content) {
         return content;
       }
       if (typeof slots.content === 'function') {
-        slots.content(h);
+        return slots.content(h);
       }
-      return  slots.content;
+      return slots.content;
+    }
+
+    function renderPanel() {
+      if (props.renderDirective === 'if' && !isActive.value) {
+        return '';
+      }
+      return (
+        <div v-show={isActive.value} class={`bk-collapse-content ${(isActive.value && 'active') || ''}`}>
+          {getContent()}
+        </div>
+      );
+    }
+
+    function renderHeader() {
+      if (slots.header) {
+        if (typeof slots.header === 'function') {
+          return slots.header(h);
+        }
+        return slots.header;
+      }
+      let title;
+      if (slots.default) {
+        if (typeof slots.default === 'function') {
+          title = slots.default(h);
+        } else {
+          title = slots.default;
+        }
+      } else {
+        title = props.title;
+      }
+      return (
+        <>
+        <span class='bk-collapse-title'>
+            {title}
+          </span>
+          {<AngleRight class={`bk-collapse-icon ${(isActive.value && 'rotate-icon') || ''}`}/>}
+        </>
+      );
     }
 
     return () => (
-
       <div
-        class={`bk-collapse-item ${props.disabled ? 'is-disabled' : ''} ${props.isActive ? 'bk-collapse-item-active' : ''}`}>
+        class={`bk-collapse-item ${props.disabled ? 'is-disabled' : ''} ${isActive.value ? 'bk-collapse-item-active' : ''}`}>
         <div class='bk-collapse-header' onClick={() => handleItemClick(props)}>
-          <span class='bk-collapse-title'>
-            {props.title || slots.title}
-          </span>
-          {<AngleRight class={`bk-collapse-icon ${(props.isActive && 'rotate-icon') || ''}`}/>}
+          {renderHeader()}
         </div>
         <Transition {...transition.value}>
-          {props.renderDirective === 'show' ? (
-            <div v-show={props.isActive} class={`bk-collapse-content ${(props.isActive && 'active') || ''}`}>
-              {getContent()}
-            </div>
-          ) : ''}
+          {
+            renderPanel()
+          }
         </Transition>
       </div>
     );
