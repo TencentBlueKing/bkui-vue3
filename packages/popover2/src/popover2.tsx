@@ -82,7 +82,7 @@ export default defineComponent({
       if (props.always) {
         showPopover();
       } else {
-        addEventToReferenceEl();
+        addEventToPopTargetEl();
       }
     };
 
@@ -100,11 +100,21 @@ export default defineComponent({
       }
     });
 
-    const addEventToReferenceEl = () => {
-      const { elReference } = resolvePopElements();
+    const addEventToPopTargetEl = () => {
+      const { elReference, elContent } = resolvePopElements();
       storeEvents = resolveTriggerEvents();
-      storeEvents.forEach(([event, listener]) => {
-        elReference.addEventListener(event, listener);
+      if (Array.isArray(storeEvents)) {
+        addEventToTargetEl(elReference, storeEvents);
+      } else {
+        const { content, reference } = storeEvents;
+        addEventToTargetEl(elReference, reference);
+        addEventToTargetEl(elContent, content);
+      }
+    };
+
+    const addEventToTargetEl = (target: HTMLElement, evets: any[]) => {
+      evets.forEach(([event, listener]) => {
+        target.addEventListener(event, listener);
       });
     };
 
@@ -152,6 +162,7 @@ export default defineComponent({
 
       initPopInstance();
       updateBoundary();
+
       document.body.addEventListener('fullscreenchange', handleFullscrennChange);
     });
 

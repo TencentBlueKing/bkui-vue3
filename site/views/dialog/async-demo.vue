@@ -34,7 +34,6 @@
   });
 
   const handleConfirm = () => {
-    exampleSetting.value.confirmText = '';
     exampleSetting.value.loading = true;
     exampleSetting.value.timer = setInterval(() => {
       exampleSetting.value.countdown -= 1;

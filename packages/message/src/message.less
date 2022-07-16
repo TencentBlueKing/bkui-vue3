@@ -13,14 +13,19 @@
   border: 1px solid @message-primary-border-color;
   border-radius: 2px;
   transform: translateX(-50%);
-  box-shadow: 0px 2px 4px 0px rgba(16, 37, 74, .1);
+  box-shadow: 0px 2px 4px 0px @message-primary-shadow-color;
   justify-content: space-between;
 
   .bk-message-close {
     padding-left: 20px;
     margin-right: 0;
     font-size: 18px;
+    color: @light-gray;
     cursor: pointer;
+
+    &:hover {
+      color: @gray-color;
+    }
   }
 }
 
@@ -39,6 +44,7 @@
 .@{bk-prefix}-message-warning {
   background: @message-warning-bg-color;
   border: 1px solid @message-warning-border-color;
+  box-shadow: 0px 2px 4px 0px @message-warning-shadow-color;
   .@{bk-prefix}-message-icon {
     color: @warning-color;
   }
@@ -47,6 +53,7 @@
 .@{bk-prefix}-message-success {
   background: @message-success-bg-color;
   border: 1px solid @message-success-border-color;
+  box-shadow: 0px 2px 4px 0px @message-success-shadow-color;
   .@{bk-prefix}-message-icon {
     color: @success-color;
   }
@@ -55,6 +62,7 @@
 .@{bk-prefix}-message-error {
   background: @message-danger-bg-color;
   border: 1px solid @message-danger-border-color;
+  box-shadow: 0px 2px 4px 0px @message-danger-shadow-color;
   .@{bk-prefix}-message-icon {
     color: @danger-color;
   }
