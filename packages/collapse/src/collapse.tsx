@@ -27,45 +27,13 @@
 import { computed, defineComponent, ref, Transition, watch } from 'vue';
 
 import { AngleRight } from '@bkui-vue/icon/';
-import { PropTypes } from '@bkui-vue/shared';
 
+import { propsCollapse as props } from './props';
 import { collapseMotion } from './utils';
+
 export default defineComponent({
   name: 'Collapse',
-  props: {
-    /**
-     * 渲染列表
-     * 对象数组或者字符串数组，字符串数组默认会增加 name 字段，值为传入的字符串值
-     */
-    list: PropTypes.arrayOf(PropTypes.any).def([]),
-
-    /**
-     * ID字段
-     */
-    idFiled: PropTypes.string.def('$index'),
-
-    /**
-     * Title 字段
-     */
-    titleField: PropTypes.string.def('name'),
-
-    /**
-     * Content 字段，默认渲染内容，不配置时自动读取 content 字段
-     * 自定义配置slot时可以忽略
-     */
-    contentField: PropTypes.string.def('content'),
-
-    /**
-     * 当前激活Index
-     */
-    modelValue: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.number).def([]),
-      PropTypes.arrayOf(PropTypes.string).def([]), PropTypes.number.def(-1)]),
-
-    /**
-     * 是否使用手风琴效果
-     */
-    accordion: PropTypes.bool.def(false),
-  },
+  props,
   emits: ['item-click', 'update:modelValue', 'after-leave', 'before-enter'],
   setup(props, { emit, slots }) {
     const localActiveItems = ref([]);
@@ -117,18 +85,19 @@ export default defineComponent({
 
     // 判定当前Item是否为激活状态
     const isItemActive = item => localActiveItems.value.includes(item[props.idFiled]);
-    const renderItems = () => collapseData.value.map(item => <div class={`bk-collapse-item ${item.disabled ? 'is-disabled' : ''} ${(isItemActive(item)) ? 'bk-collapse-item-active' : ''}`}>
-        <div class="bk-collapse-header" onClick={() => handleItemClick(item)}>
-          <span class="bk-collapse-title">
+    const renderItems = () => collapseData.value.map(item => <div
+      class={`bk-collapse-item ${item.disabled ? 'is-disabled' : ''} ${(isItemActive(item)) ? 'bk-collapse-item-active' : ''}`}>
+      <div class='bk-collapse-header' onClick={() => handleItemClick(item)}>
+          <span class='bk-collapse-title'>
             {slots.default?.(item) ?? item[props.titleField]}
           </span>
-          { <AngleRight class={`bk-collapse-icon ${(isItemActive(item) &&  'rotate-icon') || ''}`} />}
+        {<AngleRight class={`bk-collapse-icon ${(isItemActive(item) && 'rotate-icon') || ''}`}/>}
+      </div>
+      <Transition {...transition.value}>
+        <div v-show={isItemActive(item)} class={`bk-collapse-content ${(isItemActive(item) && 'active') || ''}`}>
+          {slots.content?.(item) ?? item[props.contentField]}
         </div>
-        <Transition {...transition.value}>
-          <div v-show={ isItemActive(item)} class={`bk-collapse-content ${(isItemActive(item) && 'active') || ''}`}>
-                {slots.content?.(item) ?? item[props.contentField]}
-          </div>
-        </Transition>
+      </Transition>
     </div>);
 
     const className = 'bk-collapse-wrapper';
