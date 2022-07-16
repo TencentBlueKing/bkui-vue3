@@ -24,12 +24,10 @@
  * IN THE SOFTWARE.
 */
 
-import { computed, defineComponent, ref, Transition, watch } from 'vue';
+import { computed, defineComponent, ref, watch } from 'vue';
 
-import { AngleRight } from '@bkui-vue/icon/';
-
+import CollapsePanel from './collapse-panel';
 import { propsCollapse as props } from './props';
-import { collapseMotion } from './utils';
 
 export default defineComponent({
   name: 'Collapse',
@@ -37,7 +35,6 @@ export default defineComponent({
   emits: ['item-click', 'update:modelValue', 'after-leave', 'before-enter'],
   setup(props, { emit, slots }) {
     const localActiveItems = ref([]);
-    const transition = ref(collapseMotion(emit));
 
     // 以保证当前的设置生效
     watch(() => [props.modelValue], () => {
@@ -53,13 +50,6 @@ export default defineComponent({
       immediate: true,
     });
 
-    // 统一格式化传入数据格式为标准渲染格式
-    const collapseData = computed(() => (props.list || []).map((item, index) => {
-      if (typeof item === 'string' || typeof item === 'number' || typeof item === 'boolean') {
-        return { $index: index, name: item };
-      }
-      return { $index: index, ...item };
-    }));
 
     const handleItemClick = (item) => {
       if (item.disabled) return;
@@ -82,27 +72,43 @@ export default defineComponent({
       emit('item-click', item);
       emit('update:modelValue', localActiveItems.value);
     };
+    const className = 'bk-collapse-wrapper';
+    if (!Array.isArray(props.list) || !props.list.length) {
+      return () => (
+        <div class={className}>
+          {slots.default?.()}
+        </div>
+      );
+    }
+    // 统一格式化传入数据格式为标准渲染格式
+    const collapseData = computed(() => (props.list || []).map((item, index) => {
+      if (typeof item === 'string' || typeof item === 'number' || typeof item === 'boolean') {
+        return { $index: index, name: item };
+      }
+      return { $index: index, ...item };
+    }));
 
     // 判定当前Item是否为激活状态
     const isItemActive = item => localActiveItems.value.includes(item[props.idFiled]);
-    const renderItems = () => collapseData.value.map(item => <div
-      class={`bk-collapse-item ${item.disabled ? 'is-disabled' : ''} ${(isItemActive(item)) ? 'bk-collapse-item-active' : ''}`}>
-      <div class='bk-collapse-header' onClick={() => handleItemClick(item)}>
-          <span class='bk-collapse-title'>
-            {slots.default?.(item) ?? item[props.titleField]}
-          </span>
-        {<AngleRight class={`bk-collapse-icon ${(isItemActive(item) && 'rotate-icon') || ''}`}/>}
-      </div>
-      <Transition {...transition.value}>
-        <div v-show={isItemActive(item)} class={`bk-collapse-content ${(isItemActive(item) && 'active') || ''}`}>
-          {slots.content?.(item) ?? item[props.contentField]}
-        </div>
-      </Transition>
-    </div>);
+    const renderItems = () => collapseData.value.map((item, index) => (
+      <CollapsePanel
+        key={index}
+        on-change={data => handleItemClick(data)}
+        disabled={item.disabled}
+        after-leave={ars => emit('after-leave', ars)}
+        before-enter={ars => emit('before-enter', ars)}
+        isActive={isItemActive(props)}
+        name={item[props.idFiled] || index}
+        title={item[props.titleField]}
+        content={item[props.contentField]}
+      />
+    ));
 
-    const className = 'bk-collapse-wrapper';
-    return () => <div class={className}>
-      {renderItems()}
-    </div>;
+
+    return () => (
+      <div class={className}>
+        {renderItems()}
+      </div>
+    );
   },
 });

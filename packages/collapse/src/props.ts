@@ -60,5 +60,10 @@ export const propsCollapse = {
   accordion: PropTypes.bool.def(false),
 };
 export const propsCollapsePanel = {
-  label: PropTypes.string || PropTypes.func,
+  name: PropTypes.string || PropTypes.func,
+  title: PropTypes.string,
+  content: PropTypes.string,
+  isActive: PropTypes.bool.def(false),
+  disabled: PropTypes.bool.def(false),
+  renderDirective: PropTypes.commonType(['if', 'show'], 'render').def('show'),
 };

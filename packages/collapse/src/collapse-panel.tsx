@@ -23,19 +23,52 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent } from 'vue';
+import { defineComponent, h, ref, Transition } from 'vue';
 
-import { PropTypes } from '@bkui-vue/shared';
+import { AngleRight } from '@bkui-vue/icon';
+
+import { propsCollapsePanel as props } from './props';
+import { collapseMotion } from './utils';
 
 export default defineComponent({
   name: 'Collapse',
-  props: {
-    label: PropTypes.string || PropTypes.func,
-  },
-  render() {
-    return (
-      <div v-show={ } class={`bk-collapse-content ${(isItemActive(item) && 'active') || ''}`}>
+  props,
+  emits: ['change', 'after-leave', 'before-enter'],
+  setup(props, { emit, slots }) {
+    function handleItemClick(props) {
+      emit('change', props);
+    }
 
+
+    const transition = ref(collapseMotion(emit));
+    const { content } = slots;
+    function getContent() {
+      if (content) {
+        return content;
+      }
+      if (typeof slots.content === 'function') {
+        slots.content(h);
+      }
+      return  slots.content;
+    }
+
+    return () => (
+
+      <div
+        class={`bk-collapse-item ${props.disabled ? 'is-disabled' : ''} ${props.isActive ? 'bk-collapse-item-active' : ''}`}>
+        <div class='bk-collapse-header' onClick={() => handleItemClick(props)}>
+          <span class='bk-collapse-title'>
+            {props.title || slots.title}
+          </span>
+          {<AngleRight class={`bk-collapse-icon ${(props.isActive && 'rotate-icon') || ''}`}/>}
+        </div>
+        <Transition {...transition.value}>
+          {props.renderDirective === 'show' ? (
+            <div v-show={props.isActive} class={`bk-collapse-content ${(props.isActive && 'active') || ''}`}>
+              {getContent()}
+            </div>
+          ) : ''}
+        </Transition>
       </div>
     );
   },
