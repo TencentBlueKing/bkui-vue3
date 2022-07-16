@@ -102,7 +102,7 @@ export default defineComponent({
       }
       return (
         <>
-        <span class='bk-collapse-title'>
+          <span class='bk-collapse-title'>
             {title}
           </span>
           {<AngleRight class={`bk-collapse-icon ${(isActive.value && 'rotate-icon') || ''}`}/>}
