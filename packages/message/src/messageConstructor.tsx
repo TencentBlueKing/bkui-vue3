@@ -45,7 +45,7 @@ const messageProps = {
 export default defineComponent({
   name: 'Message',
   props: messageProps,
-  emits: ['destory'],
+  emits: ['destroy'],
   setup(props, { emit }) {
     const classNames = computed(() => [
       'bk-message',
@@ -70,7 +70,9 @@ export default defineComponent({
       }, props.delay);
     };
 
-    const close = () => {
+    const close = (e: Event) => {
+      e.preventDefault();
+      e.stopPropagation();
       visible.value = false;
     };
 
@@ -85,7 +87,7 @@ export default defineComponent({
 
     watch(visible, () => {
       if (!visible.value) {
-        emit('destory', props.id);
+        emit('destroy', props.id);
       }
     });
 
@@ -117,7 +119,7 @@ export default defineComponent({
             <div class="bk-message-icon">{renderIcon()}</div>
             {this.message}
           </div>
-          {this.dismissable && <Error class="bk-message-icon bk-message-close" onClick={this.close} />}
+          {this.dismissable && <Error class="bk-message-close" onClick={this.close} />}
         </div>
       </Transition>
     );

@@ -27,11 +27,11 @@ import { computed, onMounted, reactive, ref, watch } from 'vue';
 
 import { classes, resolveClassName } from '@bkui-vue/shared';
 
-import { BORDER_OPTION, TABLE_ROW_ATTRIBUTE } from './const';
+import { BORDER_OPTION, LINE_HEIGHT, SCROLLY_WIDTH, SETTING_SIZE, TABLE_ROW_ATTRIBUTE } from './const';
 import useActiveColumns from './plugins/use-active-columns';
 import useColumnResize from './plugins/use-column-resize';
 import useFixedColumn from './plugins/use-fixed-column';
-import { TablePropTypes } from './props';
+import { Colgroups, Column, Settings, TablePropTypes } from './props';
 import {
   getRowKey,
   hasRootScrollY,
@@ -49,11 +49,11 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?:
     [resolveClassName('table')]: true,
     'has-footer': hasFooter.value,
     'has-scroll-y': hasScrollY.value || props.virtualEnabled,
-    // 'is-scroll-bottom': reactiveProp.pos.bottom < 2,
   }, resolvePropBorderToClassStr(props.border))));
 
   const headClass = classes({
     [resolveClassName('table-head')]: true,
+    'has-settings': !!props.settings,
   });
 
   const config = resolveHeadConfig(props);
@@ -72,9 +72,21 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?:
     ['is-hidden']: !props.pagination || !props.data.length,
   }));
 
+  const resolveWidth = () => {
+    if (props.columns.every((col: Column) => /^\d+\.?\d*(px)?$/ig.test(`${col.width}`))) {
+      const rectWidth = props.columns.reduce((width: number, col: Column) => width + Number(`${col.width}`.replace(/px/ig, '')), 0);
+      const offset = hasScrollY.value ? SCROLLY_WIDTH : 0;
+      return `${rectWidth + offset}px`;
+    }
+
+    return '100%';
+  };
+
   /** 表格外层容器样式 */
   const wrapperStyle = computed(() => ({
     minHeight: resolveNumberOrStringToPix(props.minHeight, 'auto'),
+    width: resolveWidth(),
+    maxWidth: '100%',
   }));
 
   const resolvePropHeight = (height: Number | string, defaultValue: number) => {
@@ -95,53 +107,25 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?:
     return defaultValue;
   };
 
-  // const getRowsHeight = () => {
-  //   if (!pageData?.length) {
-  //     return 0;
-  //   }
-
-  //   if (typeof props.rowHeight === 'function') {
-  //     return pageData.reduce((out: number, row: any, rowIndex: number) => {
-  //       const result = Reflect.apply(props.rowHeight, this, ['tbody', row, rowIndex]);
-  //       let resultHeight = out;
-  //       if (/^\d+\.?\d*px?$/.test(`${result}`)) {
-  //         resultHeight += Number(result.replace(/px$/, ''));
-  //       }
-  //       return resultHeight;
-  //     }, 0);
-  //   }
-
-  //   if (/^\d+\.?\d*px?$/.test(`${props.rowHeight}`)) {
-  //     const rowHeight = props.rowHeight.replace(/px$/, '');
-  //     return pageData.length * Number(rowHeight);
-  //   }
-
-  //   return 0;
-  // };
-
   /** 表格外层容器样式 */
   const contentStyle = reactive({});
 
+  const getHeadHeight = () => (props.showHead ? resolvePropHeight(props.headHeight, LINE_HEIGHT) : 0);
+
   const resolveContentStyle = () => {
     const resolveHeight = resolvePropHeight(props.height, autoHeight.value);
-    const resolveHeadHeight = props.showHead ? resolvePropHeight(props.headHeight, 40) + 2 : 0;
-    // const resolveMaxHeight = resolvePropHeight(props.maxHeight, autoHeight.value);
+    const resolveHeadHeight = getHeadHeight();
     const resolveMinHeight = resolvePropHeight(props.minHeight, autoHeight.value);
-
-    const resolveFooterHeight = props.pagination && props.data.length ? 40 : 0;
+    const resolveFooterHeight = props.pagination && props.data.length ? LINE_HEIGHT : 0;
     const contentHeight = resolveHeight - resolveHeadHeight - resolveFooterHeight;
     const height = props.height !== 'auto' ? `${contentHeight}px` : false;
-    // const maxHeight = resolveMaxHeight - resolveHeadHeight - resolveFooterHeight;
     const minHeight = resolveMinHeight - resolveHeadHeight - resolveFooterHeight;
-    // const rowsHeight = getRowsHeight();
     Object.assign(contentStyle, {
       display: pageData?.length ? 'block' : false,
-      // 'max-height': `${maxHeight > rowsHeight ? maxHeight : rowsHeight}px`,
       'min-height': `${minHeight}px`,
       height,
     });
   };
-
 
   onMounted(() => {
     resetTableHeight(root?.value);
@@ -160,8 +144,9 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?:
     const querySelector = props.virtualEnabled
       ? `.${resolveClassName('virtual-section')}`
       : `.${resolveClassName('table-body-content')}`;
+    const rootBody = root.querySelector('.bk-table-body');
 
-    hasScrollY.value = hasRootScrollY(root, querySelector);
+    hasScrollY.value = hasRootScrollY(rootBody, querySelector, 0);
   };
 
   /**
@@ -171,7 +156,7 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?:
   const getColumnsWidthOffsetWidth = () => {
     let offsetWidth = 0;
     if (hasScrollY.value) {
-      offsetWidth = offsetWidth + 4;
+      offsetWidth = offsetWidth + SCROLLY_WIDTH;
     }
 
     if (props.border.includes(BORDER_OPTION.OUTER) && !props.border.includes(BORDER_OPTION.NONE)) {
@@ -198,9 +183,9 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?:
 };
 
 export const useInit = (props: TablePropTypes) => {
-  const colgroups = reactive([]);
+  const colgroups: Colgroups[] = reactive([]);
   const updateColGroups = () => {
-    colgroups.splice(0, colgroups.length, ...(props.columns ?? [])
+    colgroups.splice(0, colgroups.length, ...(props.columns || [])
       .map(col => ({
         ...col,
         calcWidth: null,
@@ -209,12 +194,14 @@ export const useInit = (props: TablePropTypes) => {
       })));
   };
 
+  const { dragOffsetXStyle, dragOffsetX, resetResizeEvents, registerResizeEvent } = useColumnResize(colgroups, true);
+  const { activeColumns } = useActiveColumns(props);
+
   watch(() => props.columns, () => {
     updateColGroups();
+    resetResizeEvents();
+    registerResizeEvent();
   }, { immediate: true, deep: true });
-
-  const { dragOffsetXStyle, dragOffsetX } = useColumnResize(colgroups, true);
-  const { activeColumns } = useActiveColumns(props);
 
   const reactiveSchema = reactive({
     rowActions: new Map(),
@@ -224,9 +211,10 @@ export const useInit = (props: TablePropTypes) => {
       bottom: 1,
     },
     activeColumns,
+    settings: props.settings,
     setting: {
-      size: null,
-      height: null,
+      size: (props.settings as Settings)?.size,
+      height: SETTING_SIZE[(props.settings as Settings)?.size],
     },
   });
 

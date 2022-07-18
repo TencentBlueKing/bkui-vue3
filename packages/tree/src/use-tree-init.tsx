@@ -40,6 +40,7 @@ export default (props: TreePropTypes) => {
  */
   const getFlatdata = (props: TreePropTypes, treeData: Array<any> = undefined, cachedSchema: any[] = []) => {
     const { data, children } = props;
+    const checkedList = [];
     const outputData = [];
     let order = 0;
     const schema = new Map<string, any>();
@@ -153,6 +154,10 @@ export default (props: TreePropTypes) => {
             }
 
             Object.assign(item, { [NODE_ATTRIBUTES.UUID]: uuid });
+            const isChecked = props.showCheckbox && getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_CHECKED);
+            if (isChecked) {
+              checkedList.push(uuid);
+            }
             schema.set(uuid,  {
               [NODE_ATTRIBUTES.DEPTH]: depth,
               [NODE_ATTRIBUTES.INDEX]: i,
@@ -165,7 +170,7 @@ export default (props: TreePropTypes) => {
               [NODE_ATTRIBUTES.IS_SELECTED]: isCachedTreeNodeSelected(uuid, item),
               [NODE_ATTRIBUTES.IS_MATCH]: getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_MATCH),
               [NODE_ATTRIBUTES.IS_OPEN]: isOpened,
-              [NODE_ATTRIBUTES.IS_CHECKED]: getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_CHECKED),
+              [NODE_ATTRIBUTES.IS_CHECKED]: isChecked,
               [NODE_ATTRIBUTES.IS_CACHED]: getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_CACHED),
               [NODE_ATTRIBUTES.IS_ASYNC]: getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_ASYNC),
               [NODE_ATTRIBUTES.IS_LOADING]: getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_LOADING),
@@ -186,6 +191,15 @@ export default (props: TreePropTypes) => {
       }
     }
     flatten(treeData ? treeData : data);
+    if (props.showCheckbox) {
+      checkedList?.forEach((value: string) => {
+        Array.from(schema.values())
+          .filter((t: any) => t[NODE_ATTRIBUTES.PATH]?.startsWith(schema.get(value)[NODE_ATTRIBUTES.PATH]))
+          .forEach((n: any) => Object.assign(n, { [NODE_ATTRIBUTES.IS_CHECKED]: true }));
+
+        loopUpdateNodeAttr(value, NODE_ATTRIBUTES.IS_CHECKED, true, () => true);
+      });
+    }
     return [outputData, schema];
   };
 

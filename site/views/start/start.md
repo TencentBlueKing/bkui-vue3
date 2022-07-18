@@ -29,12 +29,12 @@ createApp(App)
 特别需要注意的是，按需引入是在使用的时候做的处理，即仅仅只是引入 `import { bkButton } from 'bkui-vue'` 组件，但没有任何使用到 `bkButton` 组件时，那么 `bkButton` 组件并不会被引入。
 :::
 
-按需引入我们需要借助 [babel-plugin-import](https://github.com/umijs/babel-plugin-import) 来实现。
+按需引入我们需要借助 [babel-plugin-import-bkui-vue](https://www.npmjs.com/package/babel-plugin-import-bkui-vue) 来实现。
 
 首先，安装 `babel-plugin-import`
 
 ```bash
-npm i babel-plugin-import -D
+npm i babel-plugin-import-bkui-vue -D
 ```
 
 然后需要在项目的 `.babelrc` 文件中 `plugins` 增加一行配置
@@ -45,13 +45,10 @@ npm i babel-plugin-import -D
   "plugins": [
     ...
     [
-      "import",
+      "import-bkui-vue",
       {
         "libraryName": "bkui-vue",
-        "style": (name) => {
-          const index = name.lastIndexOf('/')
-          return `${name}${name.slice(index)}.css`;
-        }
+        "style": true
       }
     ]
   ]

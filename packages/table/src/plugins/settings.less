@@ -26,6 +26,15 @@
           right: 15px;
           cursor: pointer;
         }
+
+        .head-title {
+          display: inline-block;
+          height: 26px;
+          margin: 24px 0;
+          font-size: 20px;
+          line-height: 26px;
+          color: #313238;
+        }
       }
 
       .setting-body {
@@ -37,6 +46,14 @@
           line-height: 19px;
           color: #63656e;
           justify-content: space-between;
+
+          .field-setting-label {
+            height: 22px;
+            font-size: 14px;
+            line-height: 22px;
+            color: #313238;
+            text-align: left;
+          }
 
           .limit {
             color: #c4c6cc;
@@ -53,11 +70,13 @@
           max-height: 150px;
           align-items: flex-start;
           flex-wrap: wrap;
+          margin-bottom: 16px;
 
           .field-item {
             width: 150px;
-            height: 42px;
-            line-height: 42px;
+            height: 16px;
+            margin-top: 16px;
+            line-height: 16px;
 
             > label {
               overflow: hidden;
@@ -103,7 +122,7 @@
               border-bottom-left-radius: 2px;
               border-top-left-radius: 2px;
 
-              &.is-default {
+              &.is-medium {
                 border-right: none;
               }
             }
@@ -114,7 +133,7 @@
               border-top-right-radius: 2px;
               border-bottom-right-radius: 2px;
 
-              &.is-default {
+              &.is-medium {
                 border-left: none;
               }
             }
@@ -125,9 +144,11 @@
 
       .setting-footer {
         display: flex;
-        height: 56px;
+        height: 50px;
         padding: 0 24px;
-        background-color: #fafbfd;
+        background: #fafbfd;
+        border: 1px solid #dcdee5;
+        border-radius: 0px 0px 2px 2px;
         justify-content: flex-end;
         align-items: center;
       }

@@ -11,6 +11,9 @@
       :label="item.label"
       :disabled="item.disabled"
     />
+    <template #extension>
+      <i class="bk-icon icon-plus-circle" />新增
+    </template>
   </bk-select>
 </template>
 <script setup>
@@ -37,7 +40,7 @@
       label: '骑车',
     },
     {
-      value: '',
+      value: 'dancing',
       label: '跳舞',
     },
     {
@@ -53,4 +56,3 @@
   width: 300px;
 }
 </style>
-

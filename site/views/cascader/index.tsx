@@ -33,6 +33,7 @@ import { IPropsTableItem } from '../../typings';
 
 import BaseDemo from './base-demo.vue';
 import CheckAnyLevelDemo from './check-any-level-demo.vue';
+import RemoteDemo from './remote-demo.vue';
 import SeparatorDemo from './separator-demo.vue';
 
 const cascaderPropsJson: IPropsTableItem[] = [
@@ -102,6 +103,30 @@ const cascaderPropsJson: IPropsTableItem[] = [
 
 ];
 
+const cascaderEventsJson: IPropsTableItem[] = [
+  {
+    name: 'change',
+    type: 'String',
+    default: null,
+    desc: '内容改变时触发，回调为当前所选内容',
+    optional: [],
+  },
+  {
+    name: 'toggle',
+    type: 'String',
+    default: null,
+    desc: '	切换下拉折叠状态时调用, 回调参数为当前是否展开',
+    optional: ['true', 'false'],
+  },
+  {
+    name: 'clear',
+    type: 'String',
+    default: null,
+    desc: '清空选项时调用, 回调参数为请空前的内容',
+    optional: [],
+  },
+];
+
 
 export default defineComponent({
   render() {
@@ -137,12 +162,25 @@ export default defineComponent({
             componentName="cascader"
             demoName="separator-demo">
               <SeparatorDemo></SeparatorDemo>
-            </DemoBox>
+        </DemoBox>
+
+        <DemoBox
+          title="远程加载"
+          subtitle="远程加载list，异步加载"
+          desc="可以通过`is-remote`开启动态加载，并通过`remote-method`来设置加载数据源的方法。注意远程拉取数据格式需要遵循list的要求"
+          componentName="cascader"
+          demoName="remote-demo">
+          <RemoteDemo></RemoteDemo>
+        </DemoBox>
 
         <PropsBox
           title="Cascader Attributes"
           subtitle=""
-          propsData={cascaderPropsJson}/>
+          propsData={cascaderPropsJson} />
+        <PropsBox
+          title="Cascader Events"
+          subtitle=""
+          propsData={cascaderEventsJson} />
       </div>
     );
   },

@@ -82,7 +82,7 @@
   </div>
 </template>
 
-<style lang="postcss">
+<style lang="postcss" scoped>
   .wrapper {
     padding: 20px 0;
     overflow: hidden;

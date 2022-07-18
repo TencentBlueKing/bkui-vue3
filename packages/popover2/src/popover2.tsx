@@ -49,7 +49,7 @@ export default defineComponent({
   emits: EMIT_EVENT_TYPES,
 
   setup(props, ctx) {
-    const { content, theme, width, height, disableTeleport } = props;
+    const { content, theme, disableTeleport } = props;
     const refReference = ref();
     const refContent = ref();
     const refArrow = ref();
@@ -82,7 +82,7 @@ export default defineComponent({
       if (props.always) {
         showPopover();
       } else {
-        addEventToReferenceEl();
+        addEventToPopTargetEl();
       }
     };
 
@@ -100,11 +100,21 @@ export default defineComponent({
       }
     });
 
-    const addEventToReferenceEl = () => {
-      const { elReference } = resolvePopElements();
+    const addEventToPopTargetEl = () => {
+      const { elReference, elContent } = resolvePopElements();
       storeEvents = resolveTriggerEvents();
-      storeEvents.forEach(([event, listener]) => {
-        elReference.addEventListener(event, listener);
+      if (Array.isArray(storeEvents)) {
+        addEventToTargetEl(elReference, storeEvents);
+      } else {
+        const { content, reference } = storeEvents;
+        addEventToTargetEl(elReference, reference);
+        addEventToTargetEl(elContent, content);
+      }
+    };
+
+    const addEventToTargetEl = (target: HTMLElement, evets: any[]) => {
+      evets.forEach(([event, listener]) => {
+        target.addEventListener(event, listener);
       });
     };
 
@@ -152,6 +162,7 @@ export default defineComponent({
 
       initPopInstance();
       updateBoundary();
+
       document.body.addEventListener('fullscreenchange', handleFullscrennChange);
     });
 
@@ -166,7 +177,7 @@ export default defineComponent({
     });
 
     const handleClickOutside = (_e: MouseEvent) => {
-      ctx.emit(EMITEVENTS.CLICK_OUTSIDE, { isShow: localIsShow.value });
+      ctx.emit(EMITEVENTS.CLICK_OUTSIDE, { isShow: localIsShow.value, event: _e });
       if (props.disableOutsideClick || props.always || props.disabled || props.trigger === 'manual') {
         return;
       }
@@ -186,8 +197,6 @@ export default defineComponent({
       content,
       theme,
       transBoundary,
-      width,
-      height,
       handleClickOutside,
     };
   },

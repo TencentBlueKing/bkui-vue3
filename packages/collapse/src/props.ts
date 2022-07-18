@@ -23,30 +23,56 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import { PropTypes } from '@bkui-vue/shared';
 
-import { defineComponent } from 'vue';
+export const propsCollapse = {
+  /**
+   * 渲染列表
+   * 对象数组或者字符串数组，字符串数组默认会增加 name 字段，值为传入的字符串值
+   */
+  list: PropTypes.arrayOf(PropTypes.any).def([]),
 
-import BKAnimateNumber from '@bkui-vue/animate-number';
-import BkButton from '@bkui-vue/button';
+  /**
+   * ID字段
+   */
+  idFiled: PropTypes.string.def('$index'),
 
-export default defineComponent({
-  name: 'SiteAnimateNumber',
-  data() {
-    return {
-      num: 20,
-    };
+  /**
+   * Title 字段
+   */
+  titleField: PropTypes.string.def('name'),
+
+  /**
+   * Content 字段，默认渲染内容，不配置时自动读取 content 字段
+   * 自定义配置slot时可以忽略
+   */
+  contentField: PropTypes.string.def('content'),
+
+  /**
+   * 当前激活Index
+   */
+  modelValue: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.number).def([]),
+    PropTypes.arrayOf(PropTypes.string).def([]), PropTypes.number.def(-1)]),
+
+  /**
+   * 是否使用手风琴效果
+   */
+  accordion: PropTypes.bool.def(false),
+};
+export const CollapsePanelEventProps = {
+  itemClick: {
+    type: Function,
+    default: (): any => ({}),
   },
-  methods: {
-    addNum() {
-      this.num += 20;
-    },
-  },
-  render() {
-    return (
-      <div>
-        <BKAnimateNumber value={ this.num }></BKAnimateNumber>
-        <BkButton onClick={ this.addNum }>+</BkButton>
-      </div>
-    );
-  },
-});
+};
+export const propsCollapsePanel = {
+  name: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(''),
+  title: PropTypes.any,
+  content: PropTypes.string,
+  disabled: PropTypes.bool.def(false),
+  renderDirective: PropTypes.commonType(['if', 'show'], 'render').def('show'),
+  modelValue: PropTypes.bool.def(false),
+  ...CollapsePanelEventProps,
+};
+
+

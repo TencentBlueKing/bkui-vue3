@@ -46,7 +46,6 @@ export const enum EVENTS {
   ON_ROW_EXPAND_CLICK = 'onRowExpandClick'
 }
 
-// ['columnPick', 'rowClick', 'rowDblClick', 'pageLimitChange', 'pageValueChange']
 export const enum EMITEVENTS {
   COLUMN_PICK = 'columnPick',
   COLUMN_SORT = 'columnSort',
@@ -87,3 +86,25 @@ export const TABLE_ROW_ATTRIBUTE = {
   ROW_UID: '__$uuid',
   ROW_EXPAND: '__row_expand',
 };
+
+/**
+ * Y 轴滚动条宽度
+ */
+export const SCROLLY_WIDTH = 4;
+
+/**
+ * 默认行高
+ */
+export const LINE_HEIGHT = 42;
+
+export const SETTING_SIZE = {
+  large: 78,
+  medium: 60,
+  small: 42,
+};
+
+export const DEFAULT_SIZE_LIST = [
+  { value: 'small', label: '小', height: SETTING_SIZE.small },
+  { value: 'medium', label: '中', height: SETTING_SIZE.medium },
+  { value: 'large', label: '大', height: SETTING_SIZE.large },
+];

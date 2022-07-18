@@ -32,6 +32,7 @@ import {
 import {
   classes,
   PropTypes,
+  resolveClassName,
 } from '@bkui-vue/shared';
 
 import {
@@ -48,7 +49,7 @@ export const checkboxProps = {
   checked: PropTypes.bool.def(false),
   indeterminate: PropTypes.bool,
   beforeChange: PropTypes.func,
-  size: PropTypes.size(),
+  size: PropTypes.size().def('large'),
 };
 
 export type CheckboxProps = Readonly<ExtractPropTypes<typeof checkboxProps>>;
@@ -60,7 +61,7 @@ export default defineComponent({
     'update:modelValue',
     'change',
   ],
-  setup() {
+  setup(props) {
     const [
       isFocus,
       {
@@ -84,7 +85,7 @@ export default defineComponent({
       handleBlur,
       handleFocus,
       handleChange,
-
+      size: props.size,
     };
   },
   render() {
@@ -97,7 +98,7 @@ export default defineComponent({
     });
     return (
       <label class={checkboxClass}>
-        <span class="bk-checkbox-input">
+        <span class={[resolveClassName('checkbox-input'), this.size]}>
           <input
             role="checkbox"
             type="checkbox"

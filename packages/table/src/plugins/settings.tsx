@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { computed, defineComponent, ref } from 'vue';
+import { computed, defineComponent, ref, watch } from 'vue';
 
 import BkButton from '@bkui-vue/button';
 import BkCheckbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
@@ -31,66 +31,103 @@ import { CloseLine, CogShape } from '@bkui-vue/icon/';
 import Popover from '@bkui-vue/popover2';
 import { PropTypes, resolveClassName } from '@bkui-vue/shared';
 
+import { DEFAULT_SIZE_LIST, LINE_HEIGHT } from '../const';
 import { Field, Settings, SizeItem } from '../props';
 import { resolvePropVal } from '../utils';
 
 export default defineComponent({
   name: 'Settings',
   props: {
-    settings: PropTypes.oneOfType([PropTypes.bool, PropTypes.shape<Settings>({
-      fields: PropTypes.shape<Field[]>([]).def(undefined),
-      checked: PropTypes.shape<string[]>([]).def(undefined),
-      limit: PropTypes.number.def(undefined),
-      size: PropTypes.string.def(undefined),
-    })]).def(false),
+    settings: PropTypes.oneOfType([
+      PropTypes.shape<Settings>({
+        fields: PropTypes.arrayOf(PropTypes.shape<Field>({
+          label: PropTypes.string,
+          field: PropTypes.string,
+          disabled: PropTypes.bool,
+        })),
+        checked: PropTypes.arrayOf(PropTypes.string),
+        limit: PropTypes.number.def(0),
+        size: PropTypes.size(['small', 'medium', 'large']).def('small'),
+        sizeList: PropTypes.shape<SizeItem[]>([]),
+      }), PropTypes.bool]).def(false),
     columns: PropTypes.array.def([]),
-    rowHeight: PropTypes.number.def(40),
+    rowHeight: PropTypes.number.def(LINE_HEIGHT),
   },
   emits: ['change'],
   setup(props, { emit }) {
-    const defaultSizeList: SizeItem[] = [
-      { value: 'small', label: '小', height: 32 },
-      { value: 'default', label: '中', height: props.rowHeight },
-      { value: 'large', label: '大', height: 56 },
-    ];
+    const defaultSizeList: SizeItem[] = DEFAULT_SIZE_LIST;
 
+    const checkAll = ref(false);
     const isShow = ref(false);
-    const settings = (props.settings as Settings);
-    const activeSize = ref(settings.size ?? 'default');
+    const localSettings = typeof props.settings === 'boolean' ? ref({
+      fields: props.columns.map((col: any) => ({ ...col, field: col.field || col.type })),
+      checked: [],
+      limit: 0,
+      size: 'small',
+      sizeList: defaultSizeList,
+    }) : ref(props.settings as Settings);
+
+    const activeSize = ref(localSettings.value.size || 'small');
     const activeHeight = ref(props.rowHeight);
 
-    const checkedFields = ref(settings.checked ?? []);
+    const checkedFields = ref(localSettings.value.checked);
     const className = resolveClassName('table-settings');
     const theme = `light ${className}`;
+
+    const cachedValue = {
+      checkAll: checkAll.value,
+      activeSize: activeSize.value,
+      activeHeight: activeHeight.value,
+    };
 
     const handleSaveClick = () => {
       emit('change', { checked: checkedFields.value, size: activeSize.value, height: activeHeight.value });
       isShow.value = false;
     };
 
-
     const handleCancelClick = () => {
-      activeSize.value = 'default';
-      activeHeight.value = props.rowHeight;
-      checkedFields.value = settings.checked ?? [];
+      checkAll.value = cachedValue.checkAll;
+      activeSize.value = cachedValue.activeSize;
+      activeHeight.value = cachedValue.activeHeight;
+      checkedFields.value = localSettings.value.checked || [];
       isShow.value = false;
     };
 
     const handleSettingClick = () => {
+      Object.assign(cachedValue, {
+        checkAll: checkAll.value,
+        activeSize: activeSize.value,
+        activeHeight: activeHeight.value,
+      });
       isShow.value = true;
     };
 
-    const handleCheckAllClick = () => {
-      checkedFields.value = (settings.fields ?? props.columns ?? [])
-        .map((item: any, index: number) => resolvePropVal(item, 'field', [item, index]));
+    const handleCheckAllClick = (e: MouseEvent) => {
+      e.stopImmediatePropagation();
+      e.stopPropagation();
+      e.preventDefault();
+
+      checkAll.value = !checkAll.value;
+      const fields = (localSettings.value.fields || props.columns || []);
+      if (checkAll.value) {
+        checkedFields.value = fields
+          .map((item: any, index: number) => resolvePropVal(item, 'field', [item, index]));
+      } else {
+        const readonlyFields = fields.filter((item: any) => item.disabled)
+          .map((item: any, index: number) => resolvePropVal(item, 'field', [item, index]));
+
+        checkedFields.value.splice(0, checkedFields.value.length, ...readonlyFields);
+      }
     };
 
-    const isLimit = computed(() => (settings.limit ?? 0) > 0);
-    const sizeList = settings.sizeList ?? defaultSizeList;
-    const isFiledDisabled = computed(() => isLimit.value && (settings.limit ?? 0) <= checkedFields.value.length);
+    const isLimit = computed(() => (localSettings.value.limit ?? 0) > 0);
+    const sizeList = localSettings.value.sizeList || defaultSizeList;
+    const isFiledDisabled = computed(() => isLimit.value
+      && (localSettings.value.limit ? localSettings.value.limit : 0) <= checkedFields.value.length);
 
-    const isItemReadonly = (item: any, index: number) => isFiledDisabled.value
-      && !checkedFields.value.includes(resolvePropVal(item, 'field', [item, index]));
+    const isItemReadonly = (item: any, index: number) =>  item.disabled
+      || (isFiledDisabled.value
+      && !checkedFields.value.includes(resolvePropVal(item, 'field', [item, index])));
 
     const handleSizeItemClick = (item: SizeItem) => {
       activeSize.value = item.value;
@@ -99,61 +136,88 @@ export default defineComponent({
 
     const getItemClass = (item: SizeItem) => ({
       'line-size': true,
-      'is-default': activeSize.value === 'default',
+      'is-medium': activeSize.value === 'medium',
       active: item.value === activeSize.value,
     });
 
     const buttonStyle = {
-      width: '85px',
-      marginRight: '5px',
+      marginRight: '12px',
     };
 
     const renderSize = () => sizeList.map(item => <span
       class={ getItemClass(item) }
       onClick={() => handleSizeItemClick(item)}>{ item.label }</span>);
 
-    return () => <Popover trigger="manual" isShow={isShow.value}
-    placement="bottom-end"
-    arrow={false}
-    {...{ theme }}>
-    {
-      {
-        default: () =>  <span class="table-head-settings">
-          <CogShape style="color: rgba(99,101,110, 0.6);" onClick={ handleSettingClick }></CogShape>
-        </span>,
-        content: () => <div class="setting-content">
-          <div class="setting-head">
-            <h2>表格设置</h2>
-            <CloseLine class='icon-close-action' onClick={handleCancelClick}></CloseLine>
-          </div>
-          <div class="setting-body">
-            <div class="setting-body-title">
-              <div>
-                <span>字段显示设置</span>
-                { isLimit.value ? <span class="limit">（最多{settings.limit}项）</span> : '' }</div>
-                { isLimit.value ? '' : <span class="check-all" onClick={handleCheckAllClick}>全选</span>}
-            </div>
-            <BkCheckboxGroup class="setting-body-fields" v-model={ checkedFields.value }>
-              {
-                (settings.fields ?? props.columns ?? []).map((item: any, index: number) => <div class="field-item">
-                  <BkCheckbox label={ resolvePropVal(item, 'field', [item, index]) }
-                    disabled={isItemReadonly(item, index)}>
-                    { resolvePropVal(item, 'label', [item, index]) }
-                  </BkCheckbox>
-                </div>)
-              }
-            </BkCheckboxGroup>
-            <div class="setting-body-line-height">
-            表格行高：{ renderSize() }
-            </div>
-          </div>
-          <div class="setting-footer">
-              <BkButton theme='primary' style={buttonStyle} onClick={handleSaveClick}>确定</BkButton>
-              <BkButton style={buttonStyle} onClick={handleCancelClick}>取消</BkButton>
-          </div>
-        </div>,
+    const renderFields = computed(() => localSettings.value.fields || props.columns || []);
+
+    const indeterminate = computed(() => checkedFields.value.length > 0 && !renderFields.value
+      .every((field: any, index: number) => checkedFields.value
+        .includes(resolvePropVal(field, 'field', [field, index]))));
+
+    watch(() => [checkedFields.value], () => {
+      if (!checkedFields.value.length) {
+        checkAll.value = false;
       }
-    }
-    </Popover>;
+
+      if (checkedFields.value.length && renderFields.value
+        .every((field: any, index: number) => checkedFields.value
+          .includes(resolvePropVal(field, 'field', [field, index])))) {
+        checkAll.value = true;
+      }
+    }, { immediate: true, deep: true });
+
+    watch(() => [(props.settings as Settings).checked], () => {
+      checkedFields.value.splice(0, checkedFields.value.length, ...localSettings.value.checked);
+    }, { immediate: true, deep: true });
+
+    return () => (props.settings ? <Popover trigger="manual" isShow={isShow.value}
+      placement="bottom-end"
+      arrow={false}
+      {...{ theme }}>
+      {
+        {
+          default: () =>  <span class="table-head-settings">
+            <CogShape style="color: #c4c6cc;" onClick={ handleSettingClick }></CogShape>
+          </span>,
+          content: () => <div class="setting-content">
+            <div class="setting-head">
+              <span class="head-title">表格设置</span>
+              <CloseLine class='icon-close-action' onClick={handleCancelClick}></CloseLine>
+            </div>
+            <div class="setting-body">
+              <div class="setting-body-title">
+                <div>
+                  <span class="field-setting-label">字段显示设置</span>
+                  { isLimit.value ? <span class="limit">（最多{localSettings.value.limit}项）</span> : '' }</div>
+                  { isLimit.value ? '' : <span class="check-all" onClick={handleCheckAllClick}>
+                      <BkCheckbox label="全选"
+                        indeterminate={ Boolean(indeterminate.value) }
+                        modelValue={ checkedFields.value.length > 0 }>全选</BkCheckbox>
+                    </span>
+                  }
+              </div>
+              <BkCheckboxGroup class="setting-body-fields" v-model={ checkedFields.value }>
+                {
+                  (renderFields.value).map((item: any, index: number) => <div class="field-item">
+                    <BkCheckbox label={ resolvePropVal(item, 'field', [item, index]) }
+                      checked={ checkedFields.value.includes(resolvePropVal(item, 'field', [item, index])) }
+                      disabled={isItemReadonly(item, index)}>
+                      { resolvePropVal(item, 'label', [item, index]) }
+                    </BkCheckbox>
+                  </div>)
+                }
+              </BkCheckboxGroup>
+              <div class="setting-body-line-height">
+              表格行高：{ renderSize() }
+              </div>
+            </div>
+            <div class="setting-footer">
+                <BkButton theme='primary' style={buttonStyle} onClick={handleSaveClick}>确定</BkButton>
+                <BkButton style={buttonStyle} onClick={handleCancelClick}>取消</BkButton>
+            </div>
+          </div>,
+        }
+      }
+    </Popover> : '');
   },
 });

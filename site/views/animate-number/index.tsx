@@ -23,50 +23,60 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+
 import { defineComponent } from 'vue';
 
-import BkButton from '@bkui-vue/button';
-import { bkTooltips } from '@bkui-vue/directives';
+import DemoBox from '../../components/demo-box';
+import DemoTitle from '../../components/demo-title';
+import PropsBox from '../../components/props-box';
+import { IPropsTableItem } from '../../typings';
+
+import BaseDemo from './base-demo.vue';
+
+const animateNumberPropsJson: IPropsTableItem[] = [
+  {
+    name: 'value',
+    type: 'Number',
+    default: '0',
+    desc: '数字',
+    optional: [],
+  },
+  {
+    name: 'digits',
+    type: 'Number',
+    default: '0',
+    desc: '小数位',
+    optional: [],
+  },
+];
 
 export default defineComponent({
-  name: 'SiteTooltips',
-  directives: {
-    bkTooltips,
-  },
   setup() {
-    const leftContent = {
-      arrow: true,
-      disabled: false,
-      trigger: 'hover',
-      theme: 'dark',
-      content: '提示信息',
-      showOnInit: false,
-      placement: 'left',
-      distance: 8,
-      onShow: () => {
-        console.log('onshow');
-      },
-      onHide: () => {
-        console.log('onHide');
-      },
-    };
 
-    const rightContent = Object.assign({}, leftContent, { placement: 'right', trigger: 'click', showOnInit: true });
-    const bottomContent = Object.assign({}, leftContent, { placement: 'bottom', theme: 'light' });
-
-    return {
-      leftContent,
-      rightContent,
-      bottomContent,
-    };
   },
   render() {
     return (
-      <div style="margin: 50px auto;">
-        <BkButton ref="tooltip" v-bk-tooltips="提示信息">上边</BkButton><br /><br />
-        <BkButton ref="tooltip" v-bk-tooltips={this.leftContent}>左边</BkButton><br /><br />
-        <BkButton ref="tooltip" v-bk-tooltips={this.rightContent}>右边</BkButton><br /><br />
-        <BkButton ref="tooltip" v-bk-tooltips={this.bottomContent}>下边</BkButton><br /><br />
+      <div>
+        <DemoTitle
+          name="AnimateNumber 动态数字"
+          desc="动态数字组件"
+        />
+
+        <DemoBox
+          title="基础用法"
+          subtitle=""
+          desc="通过 value 设置初始值, 通过 digits 设置小数位。"
+          componentName="animate-number"
+          demoName="base-demo"
+        >
+          <BaseDemo></BaseDemo>
+        </DemoBox>
+
+        <PropsBox
+          title="BkAnimateNumber Attributes"
+          subtitle=""
+          propsData={animateNumberPropsJson}
+        />
       </div>
     );
   },

@@ -47,7 +47,7 @@ const notifyProps = {
 export default defineComponent({
   name: 'Notify',
   props: notifyProps,
-  emits: ['destory'],
+  emits: ['destroy'],
   setup(props, { emit }) {
     const zIndex = bkZIndexManager.getMessageNextIndex();
 
@@ -90,7 +90,7 @@ export default defineComponent({
 
     watch(visible, () => {
       if (!visible.value) {
-        emit('destory', props.id);
+        emit('destroy', props.id);
       }
     });
 
@@ -120,7 +120,7 @@ export default defineComponent({
           style={this.styles}>
           <div class="bk-notify-content">
             <div class="bk-notify-icon">{renderIcon()}</div>
-            {this.title ? <h3 class="bk-notify-content-header">{this.title}</h3> : ''}
+            {this.title ? <div class="bk-notify-content-header">{this.title}</div> : ''}
             <div class="bk-notify-content-text">{this.message}</div>
           </div>
           {this.dismissable && <Error class="bk-notify-icon bk-notify-close" onClick={this.handleClose}></Error>}

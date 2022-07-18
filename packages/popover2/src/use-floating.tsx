@@ -39,12 +39,16 @@ import {
   shift } from '@floating-ui/dom';
 
 import { PopoverPropTypes } from './props';
+import usePlatform from './use-platform';
 
 
 export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow, refRoot) => {
   const localIsShow = ref(false);
   const isElementFullScreen = () => {
     const elReference = resolveTargetElement(refReference.value?.$el);
+    if (document.fullscreenElement?.shadowRoot) {
+      return document.fullscreenElement.shadowRoot.contains(elReference);
+    }
     return document.fullscreenElement?.contains(elReference);
   };
 
@@ -90,6 +94,22 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
 
     if (isHideMiddlewareAvailable()) {
       options.middleware.push(hide());
+    }
+
+    if (isElementFullScreen()) {
+      const  {
+        getElementRects,
+        getDimensions,
+        getClippingRect,
+      } = usePlatform();
+
+      Object.assign(options, {
+        platform: {
+          getElementRects,
+          getDimensions,
+          getClippingRect,
+        },
+      });
     }
     return options;
   };
@@ -168,6 +188,7 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
 
   const updatePopover = () => {
     const { elReference, elContent, elArrow } = resolvePopElements();
+    if (!elReference) return;
     const options = resolvePopOptions(elArrow);
     computePosition(elReference, elContent, options).then(({ x, y, placement, middlewareData }) => {
       const oldClass = elContent.className;
@@ -191,8 +212,13 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
     localIsShow.value = true;
   };
 
+  let popShowTimerId = undefined;
+  let isMouseenter = false;
+
   const hidePopover = () => {
-    localIsShow.value = false;
+    popShowTimerId = setTimeout(() => {
+      localIsShow.value = false;
+    }, 100);
   };
 
   const hanldePopoverShow = () => {
@@ -221,12 +247,39 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
     triggerPopover();
   };
 
+  const handlePopContentMouseEnter = () => {
+    if (props.trigger !== 'hover') {
+      return;
+    }
+
+    if (popShowTimerId) {
+      isMouseenter = true;
+      clearTimeout(popShowTimerId);
+      popShowTimerId = undefined;
+    }
+  };
+
+  const handlePopContentMouseLeave = () => {
+    if (isMouseenter) {
+      hidePopover();
+      isMouseenter = false;
+    }
+  };
+
   const resolveTriggerEvents = () => {
     const triggerEvents = {
-      hover: [['mouseenter', showPopover],
-        ['mouseleave', hidePopover],
-        ['focus', showPopover],
-        ['blur', hidePopover]],
+      hover: {
+        content: [
+          ['mouseenter', handlePopContentMouseEnter],
+          ['mouseleave', handlePopContentMouseLeave],
+        ],
+        reference: [
+          ['mouseenter', showPopover],
+          ['mouseleave', hidePopover],
+          ['focus', showPopover],
+          ['blur', hidePopover],
+        ],
+      },
       click: [['click', hanldeClickRef]],
       manual: [[]],
     };
