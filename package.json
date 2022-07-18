@@ -141,6 +141,7 @@
     "date-fns": "~2.28.0",
     "js-calendar": "~1.2.3",
     "lodash": "~4.17.21",
+    "tinycolor2": "~1.4.1",
     "vue-types": "~4.1.1"
   }
 }
