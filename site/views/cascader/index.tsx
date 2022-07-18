@@ -33,6 +33,7 @@ import { IPropsTableItem } from '../../typings';
 
 import BaseDemo from './base-demo.vue';
 import CheckAnyLevelDemo from './check-any-level-demo.vue';
+import RemoteDemo from './remote-demo.vue';
 import SeparatorDemo from './separator-demo.vue';
 
 const cascaderPropsJson: IPropsTableItem[] = [
@@ -161,7 +162,16 @@ export default defineComponent({
             componentName="cascader"
             demoName="separator-demo">
               <SeparatorDemo></SeparatorDemo>
-            </DemoBox>
+        </DemoBox>
+
+        <DemoBox
+          title="远程加载"
+          subtitle="远程加载list，异步加载"
+          desc="可以通过`is-remote`开启动态加载，并通过`remote-method`来设置加载数据源的方法。注意远程拉取数据格式需要遵循list的要求"
+          componentName="cascader"
+          demoName="remote-demo">
+          <RemoteDemo></RemoteDemo>
+        </DemoBox>
 
         <PropsBox
           title="Cascader Attributes"
