@@ -1,59 +1,57 @@
 @import '@bkui-vue/styles/themes/themes.less';
 
-.bk-collapse-wrapper {
-  .bk-collapse-item {
-    display: flex;
-    flex-direction: column;
-    text-align: left;
+.bk-collapse-item {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
 
-    &.is-disabled {
-      cursor: not-allowed;
-
-      .bk-collapse-header {
-        color: @disable-color;
-        pointer-events: none;
-      }
-    }
+  &.is-disabled {
+    cursor: not-allowed;
 
     .bk-collapse-header {
-      position: relative;
-      height: 42px;
-      padding: 0 10px;
-      overflow: hidden;
-      font-size: 14px;
-      line-height: 42px;
-      color: #63656e;
-      text-overflow: ellipsis;
-      cursor: pointer;
-
-      .bk-collapse-icon {
-        position: absolute;
-        right: 10px;
-        transition: all linear .3s;
-
-        &.rotate-icon {
-          transform: rotate(90deg);
-        }
-
-        svg {
-          font-size: 20px;
-        }
-      }
+      color: @disable-color;
+      pointer-events: none;
     }
+  }
 
-    .bk-collapse-content {
-      padding: 0 10px;
-      font-size: 13px;
-      will-change: all;
-      color: #979ba5;
+  .bk-collapse-header {
+    position: relative;
+    height: 42px;
+    padding: 0 10px;
+    overflow: hidden;
+    font-size: 14px;
+    line-height: 42px;
+    color: #63656e;
+    text-overflow: ellipsis;
+    cursor: pointer;
 
-      &.active {
-        display: block;
+    .bk-collapse-icon {
+      position: absolute;
+      right: 10px;
+      transition: all linear .3s;
+
+      &.rotate-icon {
+        transform: rotate(90deg);
+      }
+
+      svg {
+        font-size: 20px;
       }
     }
   }
 
-  .collapse-transition {
-    transition: all .3s ease-in-out;
+  .bk-collapse-content {
+    padding: 0 10px;
+    font-size: 13px;
+    will-change: all;
+    color: #979ba5;
+
+    &.active {
+      display: block;
+    }
   }
+}
+
+.collapse-transition {
+  transition: all .3s ease-in-out;
 }
