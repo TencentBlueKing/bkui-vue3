@@ -36,6 +36,8 @@ import DemCollapseAccordion from './demo/collapse-accordion.vue';
 import DemCollapseClick from './demo/collapse-click.vue';
 import DemCollapseDisabled from './demo/collapse-disabled.vue';
 import DemCollapseEnterLeave from './demo/collapse-enter-leave.vue';
+import DemCollapsePanel from './demo/collapse-panel.vue';
+import DemCollapseSlot from './demo/collapse-slot.vue';
 import DemCollapseTitle from './demo/collapse-title.vue';
 
 const collapseProps: IPropsTableItem[] = [
@@ -82,7 +84,67 @@ const collapseProps: IPropsTableItem[] = [
     optional: [],
   },
 ];
+const collapsePanelProps: IPropsTableItem[] = [
+  {
+    name: '(modelValue)v-model',
+    type: 'string | number',
+    default: '--',
+    desc: '当前激活面板的key',
+    optional: [],
+  },
+  {
+    name: 'name',
+    type: 'String',
+    default: '--',
+    desc: '唯一标识符，相当于 ID',
+    optional: [],
+  },
+  {
+    name: 'title',
+    type: 'String',
+    default: 'name',
+    desc: '面板标题',
+    optional: [],
+  },
+  {
+    name: 'content',
+    type: 'String',
+    default: 'content',
+    desc: '面板内容',
+    optional: [],
+  },
+  {
+    name: 'renderDirective',
+    type: 'if|show',
+    default: 'show',
+    desc: '配置内容隐藏方式，默认是 show，收起时，通过设置 display:none(v-show) 不显示在页面,if 为不渲染组件',
+    optional: [],
+  },
+  {
+    name: 'disabled',
+    type: 'Boolean',
+    default: 'false',
+    desc: '是否禁用当前面板，禁用后展开过的面板会自动折叠',
+    optional: [],
+  },
+];
 const collapseEvents: IPropsTableItem[] = [
+  {
+    name: 'item-click',
+    type: 'event',
+    default: '回调参数（item）',
+    desc: '点击时触发，回调参数为点击的面板对象',
+    optional: [],
+  },
+];
+const collapsePanelEvents: IPropsTableItem[] = [
+  {
+    name: 'change',
+    type: 'event',
+    default: '回调参数 name',
+    desc: '点击时触发，回调参数为点击的面板对象',
+    optional: [],
+  },
   {
     name: 'item-click',
     type: 'event',
@@ -105,12 +167,29 @@ const collapseEvents: IPropsTableItem[] = [
     optional: [],
   },
 ];
+
 const collapseSlots: IPropsTableItem[] = [
+  {
+    name: 'title',
+    type: 'Slot',
+    default: '--',
+    desc: '面板标题插槽',
+    optional: [],
+  },
+];
+const collapsePanelSlots: IPropsTableItem[] = [
   {
     name: 'default',
     type: 'Slot',
     default: '--',
     desc: '面板标题插槽',
+    optional: [],
+  },
+  {
+    name: 'header',
+    type: 'Slot',
+    default: '--',
+    desc: '面板头部插槽',
     optional: [],
   },
   {
@@ -133,7 +212,7 @@ export default defineComponent({
         />
         <DemoBox
           title="基础用法"
-          desc="v-model绑定默认激活的item项，idFiled作为唯一标识符,如果不填写默认为当前的item的index， list配置列表"
+          desc="v-model绑定默认激活的item项，idFiled作为唯一标识符,如果不填写默认为当前的item的index， list配置列表。"
           componentName="collapse"
           demoName="demo/collapse">
             <DemCollapse />
@@ -151,6 +230,13 @@ export default defineComponent({
           componentName="collapse"
           demoName="demo/collapse-title">
             <DemCollapseTitle />
+        </DemoBox>
+        <DemoBox
+          title="插槽：面板"
+          desc="传统用法，通过CollapsePanel配置内如"
+          componentName="collapse"
+          demoName="demo/collapse-enter-leave">
+          <DemCollapseSlot />
         </DemoBox>
         <DemoBox
           title="点击事件"
@@ -173,18 +259,39 @@ export default defineComponent({
           demoName="demo/collapse-enter-leave">
             <DemCollapseEnterLeave />
         </DemoBox>
+        <DemoBox
+          title="collapse-panel单独使用"
+          desc="单个collapse-panel使用"
+          componentName="collapse"
+          demoName="demo/collapse-enter-leave">
+            <DemCollapsePanel />
+        </DemoBox>
+
         <PropsBox
           title="Collapse Attributes"
           subtitle=""
           propsData={collapseProps}/>
         <PropsBox
+          title="CollapsePanel Attributes"
+          subtitle=""
+          propsData={collapsePanelProps}/>
+
+        <PropsBox
           title="Collapse Slots"
           subtitle=""
           propsData={collapseSlots}/>
         <PropsBox
+          title="CollapsePanel Slots"
+          subtitle=""
+          propsData={collapsePanelSlots}/>
+        <PropsBox
           title="Collapse Events"
           subtitle=""
           propsData={collapseEvents}/>
+        <PropsBox
+          title="CollapsePanel Attributes"
+          subtitle=""
+          propsData={collapsePanelEvents}/>
       </div>
     );
   },
