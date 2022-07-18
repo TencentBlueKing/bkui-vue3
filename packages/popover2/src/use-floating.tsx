@@ -46,6 +46,9 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
   const localIsShow = ref(false);
   const isElementFullScreen = () => {
     const elReference = resolveTargetElement(refReference.value?.$el);
+    if (document.fullscreenElement?.shadowRoot) {
+      return document.fullscreenElement.shadowRoot.contains(elReference);
+    }
     return document.fullscreenElement?.contains(elReference);
   };
 
