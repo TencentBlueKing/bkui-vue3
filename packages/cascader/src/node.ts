@@ -33,9 +33,10 @@ class Node implements INode {
   id: string;
   name: string;
   loading: boolean;
+  loaded: boolean;
   checked: boolean;
   children?: null[];
-  hasChildren: boolean;
+  leaf: boolean;
   pathNodes: INode[];
   path: string[];
   pathNames: string[];
@@ -45,6 +46,7 @@ class Node implements INode {
     this.data = node;
     this.config = config;
     this.parent = parent || null;
+    this.leaf = node.leaf;
     this.level = !this.parent ? 1 : this.parent.level + 1;
 
     this.initState();
@@ -56,11 +58,11 @@ class Node implements INode {
     this.name = this.data[nameKey];
 
     this.loading = false;
+    this.loaded = false;
     this.checked = false;
 
     const childrenData = this.data[childrenKey];
     this.children = (childrenData || []).map(child => new Node(child, this.config, this));
-    this.hasChildren = this.children?.length !== 0;
 
     this.pathNodes = this.calculateNodesPath();
     this.path = this.pathNodes.map(node => node.id);
@@ -68,7 +70,11 @@ class Node implements INode {
   }
 
   get isLeaf() {
-    return !this.hasChildren;
+    if (this.config.isRemote) {
+      const isLeaf = this.leaf || (this.loaded ? !this.children.length : false);
+      return isLeaf;
+    }
+    return !(Array.isArray(this.children) && this.children?.length !== 0);
   }
 
   get isDisabled() {
