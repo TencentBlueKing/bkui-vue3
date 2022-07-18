@@ -113,7 +113,7 @@ export default defineComponent({
     const isTextArea = computed(() => props.type === 'textarea');
     const inputClsPrefix = computed(() => (isTextArea.value ? 'bk-textarea' : 'bk-input'));
     const { class: cls, style, ...inputAttrs } = ctx.attrs;
-    console.log(inputAttrs, 333, ctx.attrs);
+
     const inputRef = ref();
     const inputCls = computed(() => classes({
       [`${inputClsPrefix.value}--${props.size}`]: !!props.size,
@@ -229,7 +229,7 @@ export default defineComponent({
     function handleNumber(step: number, INC = true) {
       const numStep = parseInt(String(step), 10);
       const precision = Number.isInteger(props.precision) ? props.precision : 0;
-      const val: number = parseFloat(props.modelValue.toString());
+      const val: number = parseFloat((props.modelValue ?? 0).toString());
       const factor = Number.isInteger(numStep) ? numStep : 1;
 
       let newVal = val + (INC ? factor :  -1 * factor);
@@ -322,7 +322,7 @@ export default defineComponent({
         {
           typeof props.maxlength === 'number' && (props.showWordLimit || isTextArea.value) && (
             <p class={getCls('max-length')}>
-              {props.modelValue.toString().length}/<span>{ceilMaxLength.value}</span>
+              {(props.modelValue ?? '').toString().length}/<span>{ceilMaxLength.value}</span>
             </p>
           )
         }
