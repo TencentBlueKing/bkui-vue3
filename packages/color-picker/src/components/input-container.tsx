@@ -23,54 +23,49 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-export interface IPanel {
-  id: string,
-  name: string,
-  disabled?: boolean,
-  children?: IPanel
-}
+import {
+  computed,
+  defineComponent,
+  ExtractPropTypes,
+} from 'vue';
 
-export interface INodeConfig {
-  multiple: boolean,
-}
+import { classes, PropTypes } from '@bkui-vue/shared';
 
-export interface INode {
-  checked: boolean;
-  children?: (null)[] | null;
-  config: IConfig;
-  data: IData;
-  leaf: boolean;
-  id: string;
-  level: number;
-  loading: boolean;
-  loaded: boolean;
-  name: string;
-  parent?: INode;
-  isDisabled: boolean;
-  isLeaf: boolean;
-  pathNames: string[];
-  path: string[];
-  setNodeCheck(status: boolean): void;
-}
+const inputContainerProps = {
+  info: PropTypes.object.isRequired,
+};
 
-export interface IData {
-  id:        string;
-  name: string;
-  leaf?: boolean;
-  disabled?: boolean;
-  children?: IData[];
-}
+export type InputContainerProps = ExtractPropTypes<typeof inputContainerProps>;
 
-export interface IConfig {
-  checkAnyLevel: boolean;
-  childrenKey: string;
-  clearable: boolean;
-  disabled: boolean;
-  idKey: string;
-  isRemote: boolean;
-  multiple: boolean;
-  nameKey: string;
-  showCompleteName: boolean;
-  trigger: string;
-  remoteMethod: Function;
-}
+export default defineComponent({
+  props: inputContainerProps,
+  emits: ['tab', 'input'],
+  setup(props, { emit }) {
+    const handleTab = (e) => {
+      if (props.info.key === 'a') {
+        emit('tab', e);
+      }
+    };
+
+    const handleInput = (e) => {
+      const { key } = props.info;
+      const { value } = e.target;
+      emit('input', key, value);
+    };
+    const colorPickerCls = computed(() => classes({
+      error: props.info.error,
+    }, 'bk-color-picker-input-value'));
+
+    return () => (
+      <div class="bk-color-picker-input-part">
+      <input type={props.info.name === 'HEX' ? 'text' : 'number'}
+        class={colorPickerCls.value}
+        value={props.info.value}
+        onKeydown={handleTab}
+        onInput={handleInput}/>
+      <span class="bk-color-picker-input-text">{props.info.name}</span>
+    </div>
+    );
+  },
+});
+

@@ -513,6 +513,18 @@ const routes: RouteRecordRaw[] = [
     },
   },
   /**
+   * @description:颜色选择器
+   */
+  {
+    path: '/color-picker',
+    name: 'colorPicker',
+    component: () => import('../views/color-picker/color-picker'),
+    meta: {
+      group: NavGroupMeta.Nav,
+      navName: 'ColorPicker 颜色选择器',
+    },
+  },
+  /**
    * @description:日期选择器
    */
   {

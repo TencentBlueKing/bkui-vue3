@@ -27,10 +27,10 @@
 import { defineComponent, reactive, ref } from 'vue';
 
 import BkCheckbox from '@bkui-vue/checkbox';
-import { AngleRight } from '@bkui-vue/icon';
+import { AngleRight, Spinner } from '@bkui-vue/icon';
 import { arrayEqual, PropTypes } from '@bkui-vue/shared';
 
-import { INode }  from './interface';;
+import { IData, INode }  from './interface';
 
 
 export default defineComponent({
@@ -60,13 +60,31 @@ export default defineComponent({
       emit('input', []);
     };
 
+    /** node点击展开回调 */
     const nodeExpandHandler = (node: INode) => {
       if (node.isDisabled) return;
+
       menus.list = menus.list.slice(0, node.level);
       activePath.value = activePath.value.slice(0, node.level - 1);
+
+      /** 如果所点击的node具有children元素，则直接展开
+       *  否则判断是否开启了远程加载，进行远程加载列表
+       */
       if (node.children?.length) {
         menus.list.push(node.children);
         activePath.value.push(node);
+        return;
+      }
+      if (store.config.isRemote && !node.isLeaf) {
+        node.loading = true;
+        const updateNodes = (nodeData: IData[]) => {
+          store.appendNodes(nodeData, node || null);
+          menus.list.push(node.children);
+          activePath.value.push(node);
+          node.loading = false;
+        };
+        store.config.remoteMethod(node, updateNodes);
+        console.log('remote fuck here');
       }
     };
 
@@ -105,6 +123,10 @@ export default defineComponent({
       nodeCheckHandler(node);
     };
 
+    const iconRender = node => (
+      node.loading ? <Spinner class="icon-spinner"></Spinner> : <AngleRight class="icon-angle-right"></AngleRight>
+    );
+
     return {
       menus,
       activePath,
@@ -115,6 +137,7 @@ export default defineComponent({
       checkValue,
       nodeClear,
       checkNode,
+      iconRender,
     };
   },
   render() {
@@ -136,7 +159,9 @@ export default defineComponent({
                             v-model={node.checked}
                             onChange={(val: boolean) => this.checkNode(node, val)}></BkCheckbox>}
                     <span class="bk-cascader-node-name">{node.name}</span>
-                    {!node.isLeaf ? <AngleRight class="icon-angle-right"></AngleRight> : ''}
+                  {!node.isLeaf
+                    ? this.iconRender(node)
+                    : ''}
                   </li>
               ))}
             </ul>
