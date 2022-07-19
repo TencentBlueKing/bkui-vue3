@@ -131,7 +131,7 @@ const InfoBox = (config: ModalFuncProps) => {
       }, getContent());
     },
   });
-  const app = createApp(dialog).mount(container);
+  const app: any = createApp(dialog).mount(container);
   const instance = {
     show: () => {
       isShow.value = true;
