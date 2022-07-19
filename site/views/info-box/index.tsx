@@ -34,8 +34,10 @@ import type { IPropsTableItem } from '../../typings';
 import BaseDemo from './base-demo.vue';
 import ConfirmDemo from './confirm-demo.vue';
 import UpdateDemo from './update-demo.vue';
+// import propsDialog from '@bkui-vue/dialog/src/props';
+// import { resolvePropsToDesData } from '../utils';
 
-
+// const props = resolvePropsToDesData(propsDialog);
 const props: IPropsTableItem[] = [
   {
     name: 'isShow',
