@@ -43,7 +43,7 @@ const props: IPropsTableItem[] = [
     name: 'isShow',
     type: 'Boolean',
     default: 'false',
-    desc: '初始化是否展示',
+    desc: '初始化时否展示',
     optional: [],
   },
   {
@@ -79,6 +79,13 @@ const props: IPropsTableItem[] = [
     type: 'String',
     default: '',
     desc: '弹框的标题',
+    optional: [],
+  },
+  {
+    name: 'subTitle',
+    type: 'String|VNode',
+    default: '',
+    desc: '弹窗内容',
     optional: [],
   },
   {

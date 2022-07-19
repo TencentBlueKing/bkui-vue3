@@ -57,26 +57,19 @@ import Dialog from '../../dialog/src/dialog';
 // import props from '../dialog/src/props'
 export interface ModalFuncProps {
   isShow?: boolean;
-  class?: string;
   width?: string | number;
   type?: 'primary' | 'warning' | 'success' | 'danger';
   title?: string | (() => VNode | string) | VNode;
-  subHeader?: string | (() => VNode) | VNode;
-  subTitle?: string | (() => VNode) | VNode;
-  showFooter?: boolean;
-  maskClosable?: boolean;
-  escClosable?: boolean;
-  closeIcon?: boolean;
-  boundary?: HTMLElement;
-  okText?: string | (() => VNode) | VNode;
-  okType?: 'primary' | 'warning' | 'success' | 'danger'
-  cancelText?: string | (() => VNode) | VNode;
-  container?: string | (() => VNode) | VNode;
-  icon?: string | (() => VNode) | VNode;
-  confirmLoading?: boolean
+  subTitle?: string | (() => VNode) | VNode;// 弹窗内容
+  confirmText?: string | (() => VNode) | VNode;
+  cancelText?: 'primary' | 'warning' | 'success' | 'danger'
   onConfirm?: (...args: any[]) => any;
   onClosed?: (...args: any[]) => any;
-  zIndex?: number
+  boundary?: HTMLElement;// 插入元素
+  draggable?: boolean;
+  maskClose?: boolean;
+  escClose?: boolean;
+  closeIcon?: boolean;
 }
 
 const InfoBox = (config: ModalFuncProps) => {
@@ -116,10 +109,16 @@ const InfoBox = (config: ModalFuncProps) => {
       const getContent = () => {
         const children = [];
         if (modalFuncProps.value.subTitle) {
-          if (typeof modalFuncProps.value.subTitle === 'string') {
-            children.push(h('div', modalFuncProps.value.subTitle));
-          } else {
-            children.push(h(modalFuncProps.value.subTitle));
+          switch (typeof modalFuncProps.value.subTitle) {
+            case 'string':
+              children.push(h('div', modalFuncProps.value.subTitle));
+              break;
+            case 'function':
+              children.push(h('div', modalFuncProps.value.subTitle()));
+              break;
+            default:
+              children.push(h(modalFuncProps.value.subTitle));
+              break;
           }
         }
         return children;
