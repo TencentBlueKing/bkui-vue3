@@ -465,6 +465,18 @@ const routes: RouteRecordRaw[] = [
     },
   },
   /**
+   * @description:消息提示
+   */
+  {
+    path: '/info-box',
+    name: 'info-box',
+    component: () => import('../views/info-box/index'),
+    meta: {
+      group: NavGroupMeta.Feedback,
+      navName: 'Info 提示框，模态对话框组件',
+    },
+  },
+  /**
    * @description:通知提示
    */
   {

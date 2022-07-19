@@ -27,8 +27,9 @@
 import { defineComponent, onBeforeUnmount, onMounted, reactive, watch } from 'vue';
 
 import BkButton from '@bkui-vue/button';
-import BkModal, { propsMixin } from '@bkui-vue/modal';
-import { PropTypes } from '@bkui-vue/shared';
+import BkModal from '@bkui-vue/modal';
+
+import props from './props';
 
 export default defineComponent({
   name: 'Dialog',
@@ -36,34 +37,7 @@ export default defineComponent({
     BkModal,
     BkButton,
   },
-  props: {
-    ...propsMixin,
-    width: PropTypes.oneOfType([String, Number]).def(''),
-    height: PropTypes.oneOfType([String, Number]).def(''),
-    // 确认按钮文字
-    confirmText: PropTypes.string.def('确定'),
-    // 取消按钮文字
-    cancelText: PropTypes.string.def('取消'),
-    // 步骤按钮文字
-    prevText: PropTypes.string.def('上一步'),
-    nextText: PropTypes.string.def('下一步'),
-    // 当前步骤
-    current: PropTypes.number.def(1),
-    // 总步数
-    totalStep: PropTypes.number,
-    // 弹框的标题
-    title: PropTypes.string.def('title'),
-    // 显示 header 的位置
-    headerAlign: PropTypes.commonType(['left', 'center', 'right'], 'headerAlign').def('left'),
-    // 显示 footer 的位置
-    footerAlign: PropTypes.commonType(['left', 'center', 'right'], 'footerAlign').def('right'),
-    // 颜色 按钮类型
-    theme: PropTypes.commonType(['primary', 'warning', 'success', 'danger'], 'theme').def('primary'),
-    // 对话框类型
-    dialogType: PropTypes.commonType(['show', 'operation', 'confirm', 'process'], 'dialogType').def('operation'),
-    // 按钮loading
-    isLoading: PropTypes.bool.def(false),
-  },
+  props,
   emits: ['closed', 'update:isShow', 'confirm', 'prev', 'next', 'value-change'],
   setup(props: any, { emit }) {
     const data = reactive({
