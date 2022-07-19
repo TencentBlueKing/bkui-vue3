@@ -95,13 +95,13 @@ const InfoBox = (config: ModalFuncProps) => {
         }
       });
       const onClosed = async () => {
-        if (typeof config?.onClosed === 'function') {
+        if (typeof modalFuncProps.value?.onClosed === 'function') {
           await modalFuncProps.value?.onClosed();
         }
         isShow.value = false;
       };
       const onConfirm = async () => {
-        if (typeof config?.onConfirm === 'function') {
+        if (typeof modalFuncProps.value?.onConfirm === 'function') {
           await modalFuncProps.value?.onConfirm();
         }
         isShow.value = false;
@@ -133,8 +133,6 @@ const InfoBox = (config: ModalFuncProps) => {
     },
   });
   const app = createApp(dialog).mount(container);
-  const target: HTMLElement = modalFuncProps.value.boundary || document.body;
-  target.appendChild(container);
   const instance = {
     show: () => {
       isShow.value = true;
@@ -145,14 +143,7 @@ const InfoBox = (config: ModalFuncProps) => {
     update: (config: ModalFuncProps) => {
       app.update(config);
     },
-    destroy: () => {
-      isShow.value = false;
-      setTimeout(() => {
-        container.parentNode.removeChild(container);
-      }, 300);
-    },
   };
-
   return instance;
 };
 

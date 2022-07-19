@@ -32,6 +32,7 @@ import PropsBox from '../../components/props-box';
 import type { IPropsTableItem } from '../../typings';
 
 import BaseDemo from './base-demo.vue';
+import ConfirmDemo from './confirm-demo.vue';
 import UpdateDemo from './update-demo.vue';
 
 
@@ -40,7 +41,21 @@ const props: IPropsTableItem[] = [
     name: 'isShow',
     type: 'Boolean',
     default: 'false',
-    desc: '是否显示弹框',
+    desc: '初始化是否展示',
+    optional: [],
+  },
+  {
+    name: 'onClose',
+    type: 'Function',
+    default: '',
+    desc: '关闭执行函数',
+    optional: [],
+  },
+  {
+    name: 'onConfirm',
+    type: 'Function',
+    default: '',
+    desc: '确定执行函数',
     optional: [],
   },
   {
@@ -221,6 +236,14 @@ export default defineComponent({
           componentName='message'
           demoName='base-demo'>
           <UpdateDemo/>
+        </DemoBox>
+        <DemoBox
+          title='Confirm'
+          subtitle='confirm 确定按钮'
+          desc='对话框分为4种类型。通过 dialogType 属性 设置为 confirm 实现'
+          componentName='message'
+          demoName='base-demo'>
+          <ConfirmDemo/>
         </DemoBox>
         <PropsBox subtitle='' propsData={props}/>
       </div>
