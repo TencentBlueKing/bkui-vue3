@@ -213,6 +213,29 @@ const props: IPropsTableItem[] = [
     optional: [],
   },
 ];
+const infoBox: IPropsTableItem[] = [
+  {
+    name: 'show',
+    type: 'Function',
+    default: '',
+    desc: '展示',
+    optional: [],
+  },
+  {
+    name: 'hide',
+    type: 'Function',
+    default: '',
+    desc: '隐藏',
+    optional: [],
+  },
+  {
+    name: 'update',
+    type: 'Function',
+    default: '',
+    desc: '更新',
+    optional: [],
+  },
+];
 export default defineComponent({
   render() {
     return (
@@ -245,7 +268,8 @@ export default defineComponent({
           demoName='base-demo'>
           <ConfirmDemo/>
         </DemoBox>
-        <PropsBox subtitle='' propsData={props}/>
+        <PropsBox subtitle='InfoBox函数参数（以Dialog为准）' propsData={props}/>
+        <PropsBox subtitle='InfoBox函数返回实例' propsData={infoBox}/>
       </div>
     );
   },
