@@ -31,14 +31,15 @@ import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import { type IPropsTableItem } from '../../typings';
 
-import DemCollapse from './demo/collapse.vue';
-import DemCollapseAccordion from './demo/collapse-accordion.vue';
-import DemCollapseClick from './demo/collapse-click.vue';
-import DemCollapseDisabled from './demo/collapse-disabled.vue';
-import DemCollapseEnterLeave from './demo/collapse-enter-leave.vue';
-import DemCollapsePanel from './demo/collapse-panel.vue';
-import DemCollapseSlot from './demo/collapse-slot.vue';
-import DemCollapseTitle from './demo/collapse-title.vue';
+import DemoCollapse from './demo/collapse.vue';
+import DemoCollapseAccordion from './demo/collapse-accordion.vue';
+import DemoCollapseClick from './demo/collapse-click.vue';
+import DemoCollapseDisabled from './demo/collapse-disabled.vue';
+import DemoCollapseEnterLeave from './demo/collapse-enter-leave.vue';
+import DemoCollapsePanel from './demo/collapse-panel.vue';
+import DemoCollapseSingle from './demo/collapse-single';
+import DemoCollapseSlot from './demo/collapse-slot.vue';
+import DemoCollapseTitle from './demo/collapse-title.vue';
 
 const collapseProps: IPropsTableItem[] = [
   {
@@ -87,9 +88,9 @@ const collapseProps: IPropsTableItem[] = [
 const collapsePanelProps: IPropsTableItem[] = [
   {
     name: '(modelValue)v-model',
-    type: 'string | number',
+    type: 'Boolean',
     default: '--',
-    desc: '当前激活面板的key',
+    desc: '当前面板是否这边(单独使用时才生效)',
     optional: [],
   },
   {
@@ -215,56 +216,64 @@ export default defineComponent({
           desc="v-model绑定默认激活的item项，idFiled作为唯一标识符,如果不填写默认为当前的item的index， list配置列表。"
           componentName="collapse"
           demoName="demo/collapse">
-            <DemCollapse />
+            <DemoCollapse />
         </DemoBox>
         <DemoBox
           title="是否使用手风琴模式"
           desc="可以配置参数 accordion 来确定是否使用手风琴模式"
           componentName="collapse"
           demoName="demo/collapse-accordion">
-            <DemCollapseAccordion />
+            <DemoCollapseAccordion />
         </DemoBox>
         <DemoBox
           title="插槽：自定义面板标题"
           desc="通过配置默认插槽即可自定义标题内容"
           componentName="collapse"
           demoName="demo/collapse-title">
-            <DemCollapseTitle />
+            <DemoCollapseTitle />
         </DemoBox>
-        <DemoBox
-          title="插槽：面板"
-          desc="传统用法，通过CollapsePanel配置内如"
-          componentName="collapse"
-          demoName="demo/collapse-enter-leave">
-          <DemCollapseSlot />
-        </DemoBox>
+
         <DemoBox
           title="点击事件"
           desc="通过配置默认插槽即可自定义标题内容"
           componentName="collapse"
           demoName="demo/collapse-click">
-            <DemCollapseClick />
+            <DemoCollapseClick />
         </DemoBox>
         <DemoBox
           title="设置列表不可点击disabled"
           desc="通过配置list字段disabled即可"
           componentName="collapse"
           demoName="demo/collapse-disabled">
-            <DemCollapseDisabled />
+            <DemoCollapseDisabled />
         </DemoBox>
         <DemoBox
           title="展开/收起 动画状态改变的回调事件"
           desc="配置事件before-enter/after-leave"
           componentName="collapse"
           demoName="demo/collapse-enter-leave">
-            <DemCollapseEnterLeave />
+            <DemoCollapseEnterLeave />
+        </DemoBox>
+        <DemoBox
+          title="collapse-panel"
+          desc="collapse-panel"
+          componentName="collapse"
+          demoName="demo/collapse-panel">
+            <DemoCollapsePanel />
+        </DemoBox>
+        <DemoBox
+          title="插槽：面板"
+          desc="传统用法，通过CollapsePanel配置内如"
+          componentName="collapse"
+          demoName="demo/collapse-slot">
+          <DemoCollapseSlot />
         </DemoBox>
         <DemoBox
           title="collapse-panel单独使用"
           desc="单个collapse-panel使用"
           componentName="collapse"
-          demoName="demo/collapse-enter-leave">
-            <DemCollapsePanel />
+          demoName="demo/collapse-single">
+          <DemoCollapseSingle />
         </DemoBox>
 
         <PropsBox
