@@ -37,7 +37,7 @@ import DemoCollapseClick from './demo/collapse-click.vue';
 import DemoCollapseDisabled from './demo/collapse-disabled.vue';
 import DemoCollapseEnterLeave from './demo/collapse-enter-leave.vue';
 import DemoCollapsePanel from './demo/collapse-panel.vue';
-import DemoCollapseSingle from './demo/collapse-single';
+import DemoCollapseSingle from './demo/collapse-single.vue';
 import DemoCollapseSlot from './demo/collapse-slot.vue';
 import DemoCollapseTitle from './demo/collapse-title.vue';
 
