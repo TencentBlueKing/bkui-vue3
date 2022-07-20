@@ -1,20 +1,23 @@
 <template>
-  <bk-collapse
-    v-model="activeIndex"
-  >
-    <bk-collapse-panel
-      v-for="(item,index) in list"
-      :key="index"
-      :name="index"
+  <div>
+    <bk-collapse
+      v-model="activeIndex"
     >
-      <span>{{ index }}-{{ item.name }}}</span>
-      <template #content>
-        <div>
-          {{ item.content }}
-        </div>
-      </template>
-    </bk-collapse-panel>
-  </bk-collapse>
+      <bk-collapse-panel
+        v-for="(item,index) in list"
+        :key="index"
+        :name="index"
+      >
+        <span>{{ index }}-{{ item.name }}}</span>
+        <template #content>
+          <div>
+            {{ item.content }}
+          </div>
+        </template>
+      </bk-collapse-panel>
+    </bk-collapse>
+    <div>{{ activeIndex }}</div>
+  </div>
 </template>
 <script setup>
   import { ref } from 'vue';
