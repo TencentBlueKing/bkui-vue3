@@ -46,8 +46,8 @@ class Store {
   constructor(props) {
     const { list } = props;
     this.data = list;
-    this.nodes = this.data.map(node => new Node(node, this.config));
     this.config = props;
+    this.nodes = this.data.map(node => new Node(node, this.config));
   }
   getNodes() {
     return this.nodes;
