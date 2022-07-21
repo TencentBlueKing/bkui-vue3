@@ -70,6 +70,7 @@ export const propsCollapsePanel = {
   title: PropTypes.any,
   content: PropTypes.string,
   disabled: PropTypes.bool.def(false),
+  isFormList: PropTypes.bool.def(false),
   renderDirective: PropTypes.commonType(['if', 'show'], 'render').def('show'),
   modelValue: PropTypes.bool.def(false),
   ...CollapsePanelEventProps,

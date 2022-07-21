@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
 */
 
-import { computed, defineComponent, provide, ref, watch } from 'vue';
+import { computed, createVNode, defineComponent, provide, ref, renderSlot, watch } from 'vue';
 
 import CollapsePanel from './collapse-panel';
 import { propsCollapse as props } from './props';
@@ -49,8 +49,6 @@ export default defineComponent({
     }, {
       immediate: true,
     });
-    provide('localActiveItems', localActiveItems.value);
-
     const handleItemClick = (item) => {
       // 手风琴模式，只有一个Active，移除一个新增一个
       const { name } = item;
@@ -72,13 +70,13 @@ export default defineComponent({
       emit('item-click', item);
       emit('update:modelValue', localActiveItems.value);
     };
+    provide('localActiveItems', localActiveItems.value);
+    provide('handleItemClick', handleItemClick);
     const className = 'bk-collapse-wrapper';
     if (!Array.isArray(props.list) || !props.list.length) {
-      return () => (
-        <div class={className}>
-          {slots.default?.()}
-        </div>
-      );
+      return () => createVNode('div', {
+        class: className,
+      }, [renderSlot(slots, 'default', { props: { isList: true } })]);
     }
     // 统一格式化传入数据格式为标准渲染格式
     const collapseData = computed(() => (props.list || []).map((item, index) => {
@@ -104,6 +102,7 @@ export default defineComponent({
           item-click={handleItemClick}
           disabled={item.disabled}
           name={name}
+          isFormList={true}
           title={title}
           content={item[props.contentField]}
         />
