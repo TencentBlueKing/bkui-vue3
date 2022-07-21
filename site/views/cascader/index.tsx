@@ -59,6 +59,27 @@ const cascaderPropsJson: IPropsTableItem[] = [
     optional: [],
   },
   {
+    name: 'id-key',
+    type: 'String',
+    default: 'id',
+    desc: '列表id指定的key值，默认为id,若需要改为其他key值，在这里传入即可',
+    optional: [],
+  },
+  {
+    name: 'name-key',
+    type: 'String',
+    default: 'id',
+    desc: '列表name指定的key值，默认为name,若需要改为其他key值，在这里传入即可',
+    optional: [],
+  },
+  {
+    name: 'children-key',
+    type: 'String',
+    default: 'id',
+    desc: '列表children子节点了列表指定的key值，默认为children,若需要改为其他key值，在这里传入即可',
+    optional: [],
+  },
+  {
     name: 'trigger',
     type: 'String',
     default: 'click',
