@@ -36,6 +36,7 @@ export default defineComponent({
   emits: ['change', 'update:modelValue', 'after-leave', 'before-enter'],
   setup(props, { emit, slots }) {
     const localActiveItems = inject<(string | number)[]>('localActiveItems');
+    const handleItemClick = inject<(value: Partial<{name: string}>) => void>('handleItemClick');
     const isActive = ref(props.modelValue);
     watch(() => props.modelValue, (newVal) => {
       isActive.value = newVal;
@@ -48,7 +49,7 @@ export default defineComponent({
       immediate: true,
     });
 
-    function handleItemClick(props) {
+    function clickItem(props) {
       const { disabled, name, itemClick } = props;
       if (disabled) return;
       const data = { name };
@@ -56,15 +57,15 @@ export default defineComponent({
       isActive.value = !isActive.value;
       emit('change', data);
       emit('update:modelValue', isActive.value);
+      handleItemClick({ name });
     }
 
 
     const transition = ref(collapseMotion(emit));
-    const { content } = props;
 
     function getContent() {
-      if (content) {
-        return content;
+      if (props.content) {
+        return props.content;
       }
       if (typeof slots.content === 'function') {
         return slots.content(h);
@@ -100,20 +101,21 @@ export default defineComponent({
       } else {
         title = props.title;
       }
+
       return (
-        <>
+        <div class='bk-collapse-header'>
           <span class='bk-collapse-title'>
             {title}
           </span>
           {<AngleRight class={`bk-collapse-icon ${(isActive.value && 'rotate-icon') || ''}`}/>}
-        </>
+        </div>
       );
     }
 
     return () => (
       <div
         class={`bk-collapse-item ${props.disabled ? 'is-disabled' : ''} ${isActive.value ? 'bk-collapse-item-active' : ''}`}>
-        <div class='bk-collapse-header' onClick={() => handleItemClick(props)}>
+        <div onClick={() => clickItem(props)}>
           {renderHeader()}
         </div>
         <Transition {...transition.value}>
