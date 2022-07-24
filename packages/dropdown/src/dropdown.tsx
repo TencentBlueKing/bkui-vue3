@@ -24,10 +24,12 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-
-import { BKPopover, classes, IBKPopover, PropTypes } from '@bkui-vue/shared';
-import { Placement } from '@popperjs/core';
+import { defineComponent } from 'vue';
+import { merge } from 'lodash';
+import { classes, PropTypes } from '@bkui-vue/shared';
+import BKPopover from '@bkui-vue/popover2';
+import { PopoverPropTypes } from 'popover/src/props';
+import { PLACEMENT_OPTIONS, TRIGGER_OPTIONS } from './const'
 
 
 export default defineComponent({
@@ -35,104 +37,66 @@ export default defineComponent({
   props: {
     /** trigger = manual时候控制显隐藏  */
     isShow: PropTypes.bool.def(false),
-    placement: PropTypes.commonType(['auto', 'auto-start', 'auto-end', 'top', 'right', 'bottom', 'left', 'top-start', 'top-end', 'bottom-start', 'bottom-end', 'right-start', 'right-end', 'left-start', 'left-end'], 'placement').def('bottom'),
+    /** 弹层出现位置 */
+    placement: PropTypes.commonType(PLACEMENT_OPTIONS, 'placement').def('bottom'),
     /** 触发方式 */
-    trigger: PropTypes.commonType(['hover', 'click', 'manual'], 'trigger').def('hover'),
+    trigger: PropTypes.commonType(TRIGGER_OPTIONS, 'trigger').def('hover'),
     /** 是否禁用 */
     disabled: PropTypes.bool.def(false),
+    /** popover属性 */
+    popoverOptions: PropTypes.object.def({}),
     /** 外部设置的 class name */
     extCls: PropTypes.string,
   },
   emits: ['showChange', 'show', 'hide'],
-  setup(props: any, { emit }) {
-    let popoverInstance: any = Object.create(null);
-    /** 参考物dom */
-    const reference = ref(null);
-    /** 下拉菜单dom */
-    const refContent = ref(null);
-
-    onMounted(() => {
-      registerDropdown();
-    });
-    onBeforeUnmount(() => {
-      destoryDropdown();
-    });
-
-    /**
-     * @description: trigger = 'manual' isShow状态变化
-     */
-    watch(() => props.isShow, (val: Boolean) => {
-      nextTick(() => {
-        if (props.trigger === 'manual' && popoverInstance && !props.disabled) {
-          val ? popoverInstance.show() : popoverInstance.hide();
-        }
-      });
-    });
-
-    /**
-     * @description: disabled状态变化
-     */
-    watch(() => props.disabled, val => handleUpdateDisabled(val));
-
+  setup(_props, { emit }) {
+    /** 弹层显示值变更 */
+    const handleShowChagne = (val: boolean) => {
+      emit('showChange', val)
+    }
     /** 显示后回调 */
     const afterShow = () => {
       emit('show');
+      handleShowChagne(true)
     };
     /** 隐藏后回调 */
     const afterHidden = () => {
       emit('hide');
-    };
-    /**
-     * @description: 注册dropdown
-     */
-    const registerDropdown = () => {
-      if (props.disabled) return;
-      popoverInstance = new BKPopover(
-        reference.value as HTMLElement,
-        refContent.value as HTMLElement,
-        {
-          placement: props.placement as Placement,
-          trigger: props.trigger,
-          afterShow,
-          afterHidden,
-        },
-      );
-      props.trigger === 'manual' && props.isShow && popoverInstance.show();
-    };
-
-    /**
-     * @description: 销毁dropdown实例
-     */
-    const destoryDropdown = () => {
-      if (popoverInstance) {
-        const instance = popoverInstance as IBKPopover;
-        instance.isShow && instance.hide();
-        instance.destroy();
-        popoverInstance = null;
-        props.trigger === 'manual' && emit('showChange', false);
-      }
-    };
-    const handleUpdateDisabled = (val: boolean) => {
-      const instance = popoverInstance as IBKPopover;
-      props.trigger === 'manual' && !val && emit('showChange', false);
-      instance.updateDisabled(val);
+      handleShowChagne(false)
     };
     return {
-      reference,
-      refContent,
-    };
+      afterShow,
+      afterHidden
+    }
   },
   render() {
     const wrapperClasses = classes({
       'bk-dropdown': true,
     }, this.$props.extCls);
+    /** popover 基础配置 */
+    const basePopoverOptions: Partial<PopoverPropTypes> = {
+      theme: 'light bk-dropdown-popover',
+      trigger: this.trigger,
+      arrow: false,
+      placement: this.placement,
+      isShow: this.isShow,
+      disabled: this.disabled
+    };
+    const popoverOptions: Partial<PopoverPropTypes> = merge(basePopoverOptions, this.popoverOptions);
     return <div class={wrapperClasses}>
-      <div ref="reference" class="bk-dropdown-reference">
-        {this.$slots.default?.()}
-      </div>
-      <div ref="refContent" class="bk-dropdown-content">
-        {this.$slots.content?.()}
-      </div>
+      <BKPopover
+        { ...popoverOptions }
+        onAfterShow={this.afterShow}
+        onAfterHidden={this.afterHidden} >
+        {{
+          default: () => (
+            <div class="bk-dropdown-reference"> {this.$slots.default?.()} </div>
+          ),
+          content: () => (
+            <div class="bk-dropdown-content"> { this.$slots.content?.()} </div>
+          ),
+        }}
+      </BKPopover>
     </div>;
   },
 });

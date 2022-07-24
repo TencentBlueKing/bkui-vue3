@@ -209,7 +209,7 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
   };
 
   const showPopover = () => {
-    localIsShow.value = true;
+    !props.disabled && (localIsShow.value = true);
   };
 
   let popShowTimerId = undefined;
