@@ -73,6 +73,7 @@ export default (props: VirtualRenderProps, ctx) => {
           ],
         ]),
         ctx.slots.afterContent?.() ?? '',
+        ctx.slots.afterSection?.() ?? '',
       ],
     ),
   };

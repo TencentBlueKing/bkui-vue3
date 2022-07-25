@@ -266,6 +266,7 @@ export default defineComponent({
           class: [resolveClassName('virtual-section')],
           style: innerStyle.value,
         }),
+        ctx.slots.afterSection?.() ?? '',
       ],
     );
   },
