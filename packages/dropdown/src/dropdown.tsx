@@ -24,12 +24,14 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent } from 'vue';
 import { merge } from 'lodash';
-import { classes, PropTypes } from '@bkui-vue/shared';
-import BKPopover from '@bkui-vue/popover2';
 import { PopoverPropTypes } from 'popover/src/props';
-import { PLACEMENT_OPTIONS, TRIGGER_OPTIONS } from './const'
+import { defineComponent } from 'vue';
+
+import BKPopover from '@bkui-vue/popover2';
+import { classes, PropTypes } from '@bkui-vue/shared';
+
+import { PLACEMENT_OPTIONS, TRIGGER_OPTIONS } from './const';
 
 
 export default defineComponent({
@@ -52,22 +54,22 @@ export default defineComponent({
   setup(_props, { emit }) {
     /** 弹层显示值变更 */
     const handleShowChagne = (val: boolean) => {
-      emit('showChange', val)
-    }
+      emit('showChange', val);
+    };
     /** 显示后回调 */
     const afterShow = () => {
       emit('show');
-      handleShowChagne(true)
+      handleShowChagne(true);
     };
     /** 隐藏后回调 */
     const afterHidden = () => {
       emit('hide');
-      handleShowChagne(false)
+      handleShowChagne(false);
     };
     return {
       afterShow,
-      afterHidden
-    }
+      afterHidden,
+    };
   },
   render() {
     const wrapperClasses = classes({
@@ -80,7 +82,7 @@ export default defineComponent({
       arrow: false,
       placement: this.placement,
       isShow: this.isShow,
-      disabled: this.disabled
+      disabled: this.disabled,
     };
     const popoverOptions: Partial<PopoverPropTypes> = merge(basePopoverOptions, this.popoverOptions);
     return <div class={wrapperClasses}>

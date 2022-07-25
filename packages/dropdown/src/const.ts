@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
 */
 /** 弹层出现位置选项 */
-export const PLACEMENT_OPTIONS: string[] = ['auto', 'auto-start', 'auto-end', 'top', 'right', 'bottom', 'left', 'top-start', 'top-end', 'bottom-start', 'bottom-end', 'right-start', 'right-end', 'left-start', 'left-end']
+export const PLACEMENT_OPTIONS: string[] = ['auto', 'auto-start', 'auto-end', 'top', 'right', 'bottom', 'left', 'top-start', 'top-end', 'bottom-start', 'bottom-end', 'right-start', 'right-end', 'left-start', 'left-end'];
 
 /** 弹层触发选项  */
 export const TRIGGER_OPTIONS: string[] = ['hover', 'click', 'manual'];
