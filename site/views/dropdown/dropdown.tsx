@@ -37,6 +37,7 @@ import DisabledDemo from './disabled-demo.vue';
 import DropdownMethodsDemo from './dropdown-methods-demo.vue';
 import IsShowDemo from './is-show-demo.vue';
 import TriggerDemo from './trigger-demo.vue';
+import DropdownBoundaryBody from './boundary-body-demo.vue';
 
 const dropdowProps: IPropsTableItem[] = [
   {
@@ -59,6 +60,13 @@ const dropdowProps: IPropsTableItem[] = [
     desc: '是否禁用弹出菜单',
     optional: ['true', 'false'],
     default: 'false',
+  },
+  {
+    name: 'popoverOptions',
+    type: 'Object',
+    desc: 'Popover组件的配置项',
+    optional: [],
+    default: '{}',
   },
   {
     name: 'extCls',
@@ -157,6 +165,13 @@ export default defineComponent({
             componentName="dropdown"
             demoName="dropdown-methods-demo">
               <DropdownMethodsDemo />
+          </DemoBox>
+          <DemoBox
+            title="元素绑定在body下"
+            desc="通过 popoverOptions 设置 boundary: 'body'"
+            componentName="dropdown"
+            demoName="boundary-body-demo">
+              <DropdownBoundaryBody />
           </DemoBox>
           <PropsBox
           title="Dropdown Attributes"

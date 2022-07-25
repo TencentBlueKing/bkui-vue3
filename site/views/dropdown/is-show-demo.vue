@@ -3,6 +3,7 @@
     <bk-dropdown
       trigger="manual"
       :is-show="isShow"
+      @show-change="handleShowChange"
     >
       <bk-button @click="handleShow">
         点击触发
@@ -24,8 +25,13 @@
   import { ref } from 'vue';
 
   import BkDropdown from '@bkui-vue/dropdown';
+  import BkMessage from '@bkui-vue/message';
 
   const isShow = ref(false);
+
+  const handleShowChange = (val) => {
+    BkMessage(`is-show: ${ val }`)
+  }
 
   const handleShow = () => {
     isShow.value = !isShow.value;
