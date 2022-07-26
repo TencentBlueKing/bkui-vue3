@@ -176,7 +176,6 @@ export default defineComponent({
           <span class="bk-dialog-title" style={`text-align: ${this.headerAlign}`}>
             {this.$slots.header?.() ?? this.title}
           </span>
-          <span class={['bk-dialog-close', this.closeIcon ? '' : 'close-icon']} onClick={this.handleClose}>+</span>
         </div>,
       ],
       default: () => this.$slots.default?.() ?? 'default',
@@ -214,6 +213,7 @@ export default defineComponent({
           </>
         ) : ''}
       </div>,
+      close: () => <span class="bk-dialog-close" onClick={this.handleClose}>+</span>,
     };
 
     const className = `bk-dialog-wrapper ${this.scrollable ? 'scroll-able' : ''} ${this.multiInstance ? 'multi-instance' : ''}`;
