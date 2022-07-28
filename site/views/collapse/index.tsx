@@ -36,6 +36,7 @@ import DemoCollapseAccordion from './demo/collapse-accordion.vue';
 import DemoCollapseClick from './demo/collapse-click.vue';
 import DemoCollapseDisabled from './demo/collapse-disabled.vue';
 import DemoCollapseEnterLeave from './demo/collapse-enter-leave.vue';
+import CollapseJsx from './demo/collapse-jsx';
 import DemoCollapsePanel from './demo/collapse-panel.vue';
 import DemoCollapseSingle from './demo/collapse-single.vue';
 import DemoCollapseSlot from './demo/collapse-slot.vue';
@@ -274,6 +275,14 @@ export default defineComponent({
           componentName="collapse"
           demoName="demo/collapse-single">
           <DemoCollapseSingle />
+        </DemoBox>
+        <DemoBox
+          title="collapse jsx"
+          desc="tsx使用"
+          componentName="collapse"
+          suffix='.tsx'
+          demoName="demo/collapse-jsx">
+          <CollapseJsx />
         </DemoBox>
 
         <PropsBox

@@ -30,8 +30,8 @@
   const isShow = ref(false);
 
   const handleShowChange = (val) => {
-    BkMessage(`is-show: ${ val }`)
-  }
+    BkMessage(`is-show: ${val}`);
+  };
 
   const handleShow = () => {
     isShow.value = !isShow.value;

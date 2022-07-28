@@ -91,10 +91,13 @@ export default defineComponent({
       let title = item[props.titleField];
       if (slots.title) {
         if (typeof slots.title === 'function') {
-          title = slots.title(item);
+          title = slots.title(item, index);
         } else {
           title = slots.title;
         }
+      }
+      if (slots.default) {
+        title = slots.default?.(item, index);
       }
       return  (
         <CollapsePanel
@@ -104,12 +107,10 @@ export default defineComponent({
           name={name}
           isFormList={true}
           title={title}
-          content={item[props.contentField]}
+          content={slots.content?.(item, index) ?? item[props.contentField]}
         />
       );
     });
-
-
     return () => (
       <div class={className}>
         {renderItems()}
