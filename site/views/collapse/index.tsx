@@ -280,7 +280,8 @@ export default defineComponent({
           title="collapse jsx"
           desc="tsx使用"
           componentName="collapse"
-          demoName="demo/collapse-single">
+          suffix='.tsx'
+          demoName="demo/collapse-jsx">
           <CollapseJsx />
         </DemoBox>
 
