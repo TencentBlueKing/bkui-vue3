@@ -60,6 +60,14 @@ export default defineComponent({
       emit('input', []);
     };
 
+    const syncCheckedValue = (value: Array<number | string>) => {
+      value.forEach((id: number | string) => {
+        const node = store.getNodeById(id);
+        nodeExpandHandler(node);
+      });
+      checkValue.value = value;
+    };
+
     /** node点击展开回调 */
     const nodeExpandHandler = (node: INode) => {
       if (node.isDisabled) return;
@@ -84,7 +92,6 @@ export default defineComponent({
           node.loading = false;
         };
         store.config.remoteMethod(node, updateNodes);
-        console.log('remote fuck here');
       }
     };
 
@@ -138,6 +145,7 @@ export default defineComponent({
       nodeClear,
       checkNode,
       iconRender,
+      syncCheckedValue,
     };
   },
   render() {
