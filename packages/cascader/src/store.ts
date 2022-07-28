@@ -64,9 +64,13 @@ class Store {
   }
 
   /** 根据值获得node实例 */
-  getNodeByValue(value: string[]): INode {
+  getNodeByValue(value: Array<number | string>): INode {
     const nodes = this.getFlattedNodes().filter((node: INode) => arrayEqual(node.path, value));
     return nodes[0] ?? null;
+  }
+
+  getNodeById(id: number | string): INode {
+    return this.getFlattedNodes().find((node: INode) => node.id === id);
   }
 
   /** 插入单个节点 */
