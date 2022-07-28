@@ -50,29 +50,6 @@
         text-overflow: ellipsis;
         white-space: nowrap;
       }
-
-      .bk-dialog-close {
-        position: absolute;
-        top: 5px;
-        right: 5px;
-        width: 26px;
-        height: 26px;
-        font-size: 22px;
-        font-weight: 700;
-        color: #979ba5;
-        text-align: center;
-        cursor: pointer;
-        border-radius: 50%;
-        transform: rotate(45deg);
-
-        &:hover {
-          background-color: #f0f1f5;
-        }
-      }
-
-      .close-icon {
-        display: none;
-      }
     }
 
     .bk-modal-content {
@@ -108,6 +85,30 @@
       .bk-dialog-cancel {
         margin-left: 8px;
       }
+    }
+
+    .bk-modal-close {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      width: 26px;
+      height: 26px;
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 26px;
+      color: #979ba5;
+      text-align: center;
+      cursor: pointer;
+      border-radius: 50%;
+      transform: rotate(45deg);
+
+      &:hover {
+        background-color: #f0f1f5;
+      }
+    }
+
+    .close-icon {
+      display: none;
     }
   }
 }
