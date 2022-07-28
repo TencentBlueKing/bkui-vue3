@@ -23,57 +23,50 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { PropTypes } from '@bkui-vue/shared';
+import { defineComponent, ref } from 'vue';
 
-export const propsCollapse = {
-  /**
-   * 渲染列表
-   * 对象数组或者字符串数组，字符串数组默认会增加 name 字段，值为传入的字符串值
-   */
-  list: PropTypes.arrayOf(PropTypes.any).def([]),
+import { Collapse } from '@bkui-vue/collapse';
 
-  /**
-   * ID字段
-   */
-  idFiled: PropTypes.string.def('$index'),
+export default defineComponent({
+  name: 'CollapseJsx',
+  setup() {
+    const list = ref([
+      { name: '方案成熟', content: '拥有支撑数百款腾讯业务的经验沉淀，兼容各种复杂的系统架构，生于运维 · 精于运维' },
+      { name: '覆盖全面', content: '从配置管理，到作业执行、任务调度和监控自愈，再通过运维大数据分析辅助运营决策，全方位覆盖业务运营的全周期保障管理。' },
+      { name: '开放平台', content: '开放的PaaS，具备强大的开发框架和调度引擎，以及完整的运维开发培训体系，助力运维快速转型升级。' },
+    ]);
+    const active = ref([0]);
 
-  /**
-   * Title 字段
-   */
-  titleField: PropTypes.string.def('name'),
+    function titleSlot(item, index) {
+      return `${active.value.includes(index) ? 'V' : '>'} ${index} - ${item.name}`;
+    }
 
-  /**
-   * Content 字段，默认渲染内容，不配置时自动读取 content 字段
-   * 自定义配置slot时可以忽略
-   */
-  contentField: PropTypes.string.def('content'),
+    function contentSlot(item, index) {
+      return `${item.content}-${index}`;
+    }
 
-  /**
-   * 当前激活Index
-   */
-  modelValue: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.number).def([]),
-    PropTypes.arrayOf(PropTypes.string).def([]), PropTypes.number.def(-1)]),
-
-  /**
-   * 是否使用手风琴效果
-   */
-  accordion: PropTypes.bool.def(false),
-};
-export const CollapsePanelEventProps = {
-  itemClick: {
-    type: Function,
-    default: null,
+    return {
+      list,
+      active,
+      titleSlot,
+      contentSlot,
+    };
   },
-};
-export const propsCollapsePanel = {
-  name: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(''),
-  title: PropTypes.any,
-  content: PropTypes.string,
-  disabled: PropTypes.bool.def(false),
-  isFormList: PropTypes.bool.def(false),
-  renderDirective: PropTypes.commonType(['if', 'show'], 'render').def('show'),
-  modelValue: PropTypes.bool.def(false),
-  ...CollapsePanelEventProps,
-};
-
-
+  render() {
+    return (
+      <div>
+        <Collapse
+          v-model={this.active}
+          list={this.list}
+          v-slots={{
+            default: (item, index) => this.titleSlot(item, index),
+            content: (item, index) => this.contentSlot(item, index),
+          }}
+        />
+        <div>
+          {this.active}
+        </div>
+      </div>
+    );
+  },
+});
