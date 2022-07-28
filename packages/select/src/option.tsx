@@ -103,9 +103,10 @@ export default defineComponent({
         onClick={this.handleOptionClick}
         onMouseenter={this.handleMouseEnter}>
         {
-          this.$slots.default?.() ?? <span class="bk-select-option-item">
+          this.$slots.default?.() ?? <span class="bk-select-option-item" title={this.label}>
               {this.label}
-              {this.multiple && this.selected && <Done width={22} height={22}></Done>}
+              {this.multiple && this.selected
+                && <Done class="done-icon" width={22} height={22}></Done>}
             </span>
         }
       </li>
