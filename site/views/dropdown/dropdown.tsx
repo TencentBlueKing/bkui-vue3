@@ -33,11 +33,11 @@ import { IPropsTableItem } from '../../typings';
 
 import AlignDemo from './align-demo.vue';
 import BaseDemo from './base-demo.vue';
+import DropdownBoundaryBody from './boundary-body-demo.vue';
 import DisabledDemo from './disabled-demo.vue';
 import DropdownMethodsDemo from './dropdown-methods-demo.vue';
 import IsShowDemo from './is-show-demo.vue';
 import TriggerDemo from './trigger-demo.vue';
-import DropdownBoundaryBody from './boundary-body-demo.vue';
 
 const dropdowProps: IPropsTableItem[] = [
   {

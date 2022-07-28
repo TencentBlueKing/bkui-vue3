@@ -1,6 +1,6 @@
 <template>
   <div>
-    <bk-dropdown :popoverOptions="popoverOptions">
+    <bk-dropdown :popover-options="popoverOptions">
       <bk-button>hover触发</bk-button>
       <template #content>
         <bk-dropdown-menu>
@@ -28,6 +28,6 @@
   };
 
   const popoverOptions = {
-    boundary: 'body'
-  }
+    boundary: 'body',
+  };
 </script>
