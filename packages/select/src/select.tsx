@@ -74,7 +74,7 @@ export default defineComponent({
     filterable: PropTypes.bool.def(false), // 是否支持搜索
     remoteMethod: PropTypes.func,
     scrollHeight: PropTypes.number.def(216),
-    showSelectAll: PropTypes.bool.def(false), // 权限
+    showSelectAll: PropTypes.bool.def(false), // 全选
     popoverMinWidth: PropTypes.number.def(0), // popover最小宽度
     showOnInit: PropTypes.bool.def(false), // 是否默认显示popover
     multipleMode: PropTypes.oneOf(['default', 'tag']).def('default'), // 多选展示方式
@@ -361,7 +361,7 @@ export default defineComponent({
       }
     };
     // 处理键盘事件
-    const handleKeydown = (e: KeyboardEvent) => {
+    const handleKeydown = (e: any) => {
       const availableOptions = options.value.filter(option => !option.disabled && option.visible);
       const index = availableOptions.findIndex(option => option.value === activeOptionValue.value);
       if (!availableOptions.length || index === -1) return;
@@ -488,7 +488,7 @@ export default defineComponent({
     const suffixIcon = () => {
       if (this.loading) {
         return <Loading loading={true} theme='primary' class="spinner" mode="spin" size="mini"></Loading>;
-      } if (this.clearable && this.isHover && this.selected.length) {
+      } if (this.clearable && this.isHover && this.selected.length && !this.isDisabled) {
         return <Close class="clear-icon" onClick={this.handleClear}></Close>;
       }
       return <AngleUp class="angle-up"></AngleUp>;
@@ -526,7 +526,8 @@ export default defineComponent({
           size={this.size}
           onFocus={this.handleFocus}
           onInput={this.handleInputChange}
-          onEnter={this.handleInputEnter}>
+          onEnter={this.handleInputEnter}
+          onKeydown={(_, e) => this.handleKeydown(e)}>
             {{
               prefix: () => this.$slots.prefix?.(),
               suffix: () => suffixIcon(),

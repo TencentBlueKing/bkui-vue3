@@ -105,7 +105,8 @@ export default defineComponent({
         {
           this.$slots.default?.() ?? <span class="bk-select-option-item">
               {this.label}
-              {this.multiple && this.selected && <Done width={22} height={22}></Done>}
+              {this.multiple && this.selected
+                && <Done class="done-icon" width={22} height={22}></Done>}
             </span>
         }
       </li>
