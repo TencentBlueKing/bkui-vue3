@@ -124,9 +124,13 @@
     }
 
     .bk-input {
+      background-color: @white-color;
+      border-color: @input-border-color;
+
       input {
+        padding-right: 24px;
         cursor: pointer;
-        background-color: #fff;
+        background-color: @white-color; 
       }
 
       &.is-focused {
@@ -252,9 +256,12 @@
           .ellipsis();
 
           &-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            .ellipsis();
+
+            .done-icon {
+              position: absolute;
+              right: 10px;
+            }
           }
 
           &.is-hover {
@@ -279,6 +286,8 @@
           }
 
           &.is-multiple {
+            padding-right: 32px;
+
             &.is-selected {
               background-color: #fff
             }
