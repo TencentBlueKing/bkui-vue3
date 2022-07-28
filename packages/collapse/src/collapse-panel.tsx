@@ -53,11 +53,15 @@ export default defineComponent({
       const { disabled, name, itemClick } = props;
       if (disabled) return;
       const data = { name };
-      itemClick(data);
+
       isActive.value = !isActive.value;
       emit('change', data);
       emit('update:modelValue', isActive.value);
-      handleItemClick({ name });
+      if (typeof itemClick === 'function') {
+        itemClick(data);
+      } else if (typeof handleItemClick === 'function') {
+        handleItemClick({ name });
+      }
     }
 
 
