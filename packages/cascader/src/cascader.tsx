@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent,  reactive, ref } from 'vue';
+import { defineComponent,  reactive, ref, watch } from 'vue';
 
 import { clickoutside } from '@bkui-vue/directives';
 import { AngleUp, Close, Error } from '@bkui-vue/icon';
@@ -47,7 +47,8 @@ export default defineComponent({
     BkPopover,
   },
   props: {
-    modelValue: PropTypes.array.def([]),
+    modelValue: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.number).def([]),
+      PropTypes.arrayOf(PropTypes.string).def([])]),
     list: PropTypes.array.def([]),
     placeholder: PropTypes.string.def('请选择'),
     filterable: PropTypes.bool.def(false),
@@ -74,9 +75,19 @@ export default defineComponent({
     const panelShow = ref(false);
     const selectedText = ref('');
     const selectedTags = ref([]);
+    const checkedValue = ref(props.modelValue);
+    const cascaderPanel = ref();
+
+    watch(
+      () => props.modelValue,
+      (value: Array<string | number>) => {
+        updateValue(value);
+      },
+    );
 
     /** 更新选中 */
-    const updateValue = (val: Array<any>) => {
+    const updateValue = (val: Array<string | number>) => {
+      cascaderPanel.value.syncCheckedValue(val);
       /** 根据配置更新显示内容 */
       if (multiple) {
         selectedTags.value = store.getCheckedNodes().map((node: INode) => ({
@@ -93,7 +104,10 @@ export default defineComponent({
         const node = store.getNodeByValue(val);
         selectedText.value = node.pathNames.join(separator);
       }
+    };
 
+    const inputChangeHandler = (val: Array<string | number>) => {
+      updateValue(val);
       /** 派发相关事件 */
       emit('update:modelValue', val);
       emit('change', val);
@@ -130,6 +144,7 @@ export default defineComponent({
       hidePopover,
       inputClickHandler,
       selectedText,
+      checkedValue,
       panelShow,
       handleClear,
       isHover,
@@ -137,6 +152,8 @@ export default defineComponent({
       cancelHover,
       selectedTags,
       removeTag,
+      inputChangeHandler,
+      cascaderPanel,
     };
   },
   render() {
@@ -195,7 +212,8 @@ export default defineComponent({
               <div class="bk-cascader-popover">
                 <CascaderPanel
                   store={this.store}
-                  onInput={val => this.updateValue(val)}></CascaderPanel>
+                  ref="cascaderPanel"
+                  onInput={val => this.inputChangeHandler(val)}></CascaderPanel>
               </div>
             ),
           }}
