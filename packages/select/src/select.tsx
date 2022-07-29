@@ -56,6 +56,7 @@ import {
   useRegistry,
   useRemoteSearch,
 } from './common';
+import Option from './option';
 import SelectTagInput from './selectTagInput';
 import { GroupInstanceType, ISelected, OptionInstanceType, SelectTagInputType } from './type';
 
@@ -90,6 +91,9 @@ export default defineComponent({
     allowCreate: PropTypes.bool.def(false), // 是否运行创建自定义选项
     popoverOptions: PropTypes.object.def({}), // popover属性
     customContent: PropTypes.bool.def(false), // 是否自定义content内容
+    list: PropTypes.array.def([]),
+    idKey: PropTypes.string.def('value'),
+    displayKey: PropTypes.string.def('label'),
   },
   emits: ['update:modelValue', 'change', 'toggle', 'clear', 'scroll-end', 'focus', 'blur'],
   setup(props, { emit }) {
@@ -224,8 +228,8 @@ export default defineComponent({
     const emitChange = (val: string | string[]) => {
       if (val === modelValue.value) return;
 
-      emit('change', val);
-      emit('update:modelValue', val);
+      emit('change', val, modelValue.value);
+      emit('update:modelValue', val, modelValue.value);
       formItem?.validate?.('change');
     };
     // 派发toggle事件
@@ -521,6 +525,7 @@ export default defineComponent({
           modelValue={this.isInput ? this.searchKey : this.selectedLabel.join(',')}
           placeholder={this.isInput ? (this.selectedLabel.join(',') || this.placeholder) : this.placeholder}
           readonly={!this.isInput}
+          selectReadonly={true}
           disabled={this.isDisabled}
           behavior={this.behavior}
           size={this.size}
@@ -575,6 +580,7 @@ export default defineComponent({
                       {this.selectAllText}
                       </li>
                 }
+                {this.list.map(item => <Option value={item[this.idKey]} label={item[this.displayKey]}></Option>)}
                 {this.$slots.default?.()}
                 {this.scrollLoading && (
                   <li class="bk-select-options-loading">
