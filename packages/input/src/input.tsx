@@ -55,6 +55,7 @@ export const inputType = {
   modelValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   size: PropTypes.size(),
   rows: PropTypes.number,
+  selectReadonly: PropTypes.bool.def(false), // selectReadonly select组件使用，readonly属性，但是组件样式属于正常输入框样式
 };
 
 export const enum EVENTS {
@@ -118,7 +119,7 @@ export default defineComponent({
     const inputCls = computed(() => classes({
       [`${inputClsPrefix.value}--${props.size}`]: !!props.size,
       'is-focused': isFocused.value,
-      'is-readonly': props.readonly,
+      'is-readonly': props.readonly && !props.selectReadonly,
       'is-disabled': props.disabled,
       'is-simplicity': props.behavior === 'simplicity',
       [`${cls}`]: !!cls,
