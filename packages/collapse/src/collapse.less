@@ -1,7 +1,7 @@
 @import '@bkui-vue/styles/themes/themes.less';
 
-.bk-collapse-wrapper {
-  .bk-collapse-item {
+.bk-collapse {
+  &-item {
     display: flex;
     flex-direction: column;
     text-align: left;
@@ -15,45 +15,48 @@
       }
     }
 
-    .bk-collapse-header {
-      position: relative;
-      height: 42px;
-      padding: 0 10px;
-      overflow: hidden;
-      font-size: 14px;
-      line-height: 42px;
-      color: #63656e;
-      text-overflow: ellipsis;
-      cursor: pointer;
 
-      .bk-collapse-icon {
-        position: absolute;
-        right: 10px;
-        transition: all linear .3s;
+  }
 
-        &.rotate-icon {
-          transform: rotate(90deg);
-        }
+  &-header {
+    position: relative;
+    height: 42px;
+    padding: 0 10px;
+    overflow: hidden;
+    font-size: 14px;
+    line-height: 42px;
+    color: #63656e;
+    text-overflow: ellipsis;
+    cursor: pointer;
 
-        svg {
-          font-size: 20px;
-        }
-      }
-    }
+  }
 
-    .bk-collapse-content {
-      padding: 0 10px;
-      font-size: 13px;
-      will-change: all;
-      color: #979ba5;
+  &-content {
+    padding: 0 10px;
+    font-size: 13px;
+    will-change: all;
+    color: #979ba5;
 
-      &.active {
-        display: block;
-      }
+    &.active {
+      display: block;
     }
   }
 
-  .collapse-transition {
+  &-icon {
+    position: absolute;
+    right: 10px;
+    transition: all linear .3s;
+
+    &.rotate-icon {
+      transform: rotate(90deg);
+    }
+
+    svg {
+      font-size: 20px;
+    }
+  }
+
+  &-transition {
     transition: all .3s ease-in-out;
   }
 }

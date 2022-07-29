@@ -39,10 +39,11 @@ export interface INode {
   children?: (null)[] | null;
   config: IConfig;
   data: IData;
-  hasChildren: boolean;
+  leaf: boolean;
   id: string;
   level: number;
   loading: boolean;
+  loaded: boolean;
   name: string;
   parent?: INode;
   isDisabled: boolean;
@@ -54,7 +55,8 @@ export interface INode {
 
 export interface IData {
   id:        string;
-  name:      string;
+  name: string;
+  leaf?: boolean;
   disabled?: boolean;
   children?: IData[];
 }
@@ -70,4 +72,5 @@ export interface IConfig {
   nameKey: string;
   showCompleteName: boolean;
   trigger: string;
+  remoteMethod: Function;
 }

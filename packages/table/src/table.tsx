@@ -186,7 +186,6 @@ export default defineComponent({
     const tableBodyContentClass = {
       [resolveClassName('table-body-content')]: true,
       'with-virtual-render': props.virtualEnabled,
-      // [resolveClassName('F-scroll-y')]: !props.virtualEnabled,
     };
 
     const resizeColumnClass = {
@@ -202,6 +201,11 @@ export default defineComponent({
     const loadingRowClass = {
       'scroll-loading': true,
       _bottom: true,
+    };
+
+    const fixedBottomBorder = {
+      [resolveClassName('fixed-bottom-border')]: true,
+      '_is-empty': !props.data.length,
     };
 
     const { renderScrollLoading } = useScrollLoading(props, ctx);
@@ -231,6 +235,7 @@ export default defineComponent({
           {
             {
               default: (scope: any) => tableRender.renderTableBodySchema(scope.data || props.data),
+              afterSection: () => <div class={ fixedBottomBorder }></div>,
             }
           }
       </VirtualRender>
@@ -241,6 +246,7 @@ export default defineComponent({
           renderScrollLoading()
         }</div>
       </div>
+      {/* <div class={ fixedBottomBorder }></div> */}
       <div class={ footerClass.value }>
         {
           hasFooter.value && tableRender.renderTableFooter(localPagination.value)

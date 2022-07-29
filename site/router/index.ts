@@ -465,6 +465,18 @@ const routes: RouteRecordRaw[] = [
     },
   },
   /**
+   * @description:消息提示
+   */
+  {
+    path: '/info-box',
+    name: 'info-box',
+    component: () => import('../views/info-box/index'),
+    meta: {
+      group: NavGroupMeta.Feedback,
+      navName: 'InfoBox提示框',
+    },
+  },
+  /**
    * @description:通知提示
    */
   {
@@ -498,6 +510,18 @@ const routes: RouteRecordRaw[] = [
     meta: {
       group: NavGroupMeta.Data,
       navName: 'Tree 树',
+    },
+  },
+  /**
+   * @description:颜色选择器
+   */
+  {
+    path: '/color-picker',
+    name: 'colorPicker',
+    component: () => import('../views/color-picker/color-picker'),
+    meta: {
+      group: NavGroupMeta.Nav,
+      navName: 'ColorPicker 颜色选择器',
     },
   },
   /**

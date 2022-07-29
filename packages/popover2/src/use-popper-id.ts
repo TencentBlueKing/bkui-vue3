@@ -57,6 +57,8 @@ export default (props, prefix = '#') => {
       if (!/^body$/i.test(props.boundary) && typeof props.boundary === 'string') {
         if (!isAvailableId(props.boundary)) {
           console.error('props.boundary is not available selector');
+          resolvedBoundary = 'body';
+          return;
         }
         resolvedBoundary = props.boundary;
       }

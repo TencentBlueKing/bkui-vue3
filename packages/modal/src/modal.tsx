@@ -126,6 +126,9 @@ export default defineComponent({
               {this.$slots.footer?.() ?? ''}
             </div>
           )}
+          <div class={['bk-modal-close', this.closeIcon ? '' : 'close-icon']}>
+              {this.$slots.close?.() ?? ''}
+            </div>
         </div> : ''}
         </Transition>
       </div>

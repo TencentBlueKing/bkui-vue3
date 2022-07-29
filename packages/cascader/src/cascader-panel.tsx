@@ -27,10 +27,10 @@
 import { defineComponent, reactive, ref } from 'vue';
 
 import BkCheckbox from '@bkui-vue/checkbox';
-import { AngleRight } from '@bkui-vue/icon';
+import { AngleRight, Spinner } from '@bkui-vue/icon';
 import { arrayEqual, PropTypes } from '@bkui-vue/shared';
 
-import { INode }  from './interface';;
+import { IData, INode }  from './interface';
 
 
 export default defineComponent({
@@ -60,13 +60,38 @@ export default defineComponent({
       emit('input', []);
     };
 
+    const syncCheckedValue = (value: Array<number | string>) => {
+      value.forEach((id: number | string) => {
+        const node = store.getNodeById(id);
+        nodeExpandHandler(node);
+      });
+      checkValue.value = value;
+    };
+
+    /** node点击展开回调 */
     const nodeExpandHandler = (node: INode) => {
       if (node.isDisabled) return;
+
       menus.list = menus.list.slice(0, node.level);
       activePath.value = activePath.value.slice(0, node.level - 1);
+
+      /** 如果所点击的node具有children元素，则直接展开
+       *  否则判断是否开启了远程加载，进行远程加载列表
+       */
       if (node.children?.length) {
         menus.list.push(node.children);
         activePath.value.push(node);
+        return;
+      }
+      if (store.config.isRemote && !node.isLeaf) {
+        node.loading = true;
+        const updateNodes = (nodeData: IData[]) => {
+          store.appendNodes(nodeData, node || null);
+          menus.list.push(node.children);
+          activePath.value.push(node);
+          node.loading = false;
+        };
+        store.config.remoteMethod(node, updateNodes);
       }
     };
 
@@ -105,6 +130,10 @@ export default defineComponent({
       nodeCheckHandler(node);
     };
 
+    const iconRender = node => (
+      node.loading ? <Spinner class="icon-spinner"></Spinner> : <AngleRight class="icon-angle-right"></AngleRight>
+    );
+
     return {
       menus,
       activePath,
@@ -115,6 +144,8 @@ export default defineComponent({
       checkValue,
       nodeClear,
       checkNode,
+      iconRender,
+      syncCheckedValue,
     };
   },
   render() {
@@ -135,8 +166,10 @@ export default defineComponent({
                             disabled={node.isDisabled}
                             v-model={node.checked}
                             onChange={(val: boolean) => this.checkNode(node, val)}></BkCheckbox>}
-                    <span class="content">{node.name}</span>
-                    {!node.isLeaf ? <AngleRight class="icon-angle-right"></AngleRight> : ''}
+                    <span class="bk-cascader-node-name">{node.name}</span>
+                  {!node.isLeaf
+                    ? this.iconRender(node)
+                    : ''}
                   </li>
               ))}
             </ul>

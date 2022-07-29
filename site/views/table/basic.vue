@@ -26,6 +26,7 @@
       <bk-table
         :columns="columns"
         :data="tableData"
+        :max-height="200"
         :height="300"
         :settings="settings"
         @dblclick="handleDblClick"
