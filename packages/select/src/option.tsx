@@ -60,6 +60,7 @@ export default defineComponent({
     const selected = computed<boolean>(() => select?.selected?.some(item => item.value === value.value as string));
     const multiple = computed<boolean>(() => select?.multiple);
     const isHover = computed(() => select?.activeOptionValue === value.value);
+    const showSelectedIcon = computed(() => select?.showSelectedIcon);
 
     const handleOptionClick = () => {
       if (disabled.value) return;
@@ -85,6 +86,7 @@ export default defineComponent({
       selected,
       multiple,
       isHover,
+      showSelectedIcon,
       handleOptionClick,
       handleMouseEnter,
     };
@@ -103,11 +105,18 @@ export default defineComponent({
         onClick={this.handleOptionClick}
         onMouseenter={this.handleMouseEnter}>
         {
-          this.$slots.default?.() ?? <span class="bk-select-option-item" title={this.label}>
+          this.$slots.default?.()
+          ?? (
+            <span class="bk-select-option-item" title={this.label}>
               {this.label}
-              {this.multiple && this.selected
-                && <Done class="done-icon" width={22} height={22}></Done>}
             </span>
+          )
+        }
+        {
+          this.multiple
+            && this.selected
+            && this.showSelectedIcon
+            && <Done class="bk-select-selected-icon" width={22} height={22}></Done>
         }
       </li>
     );
