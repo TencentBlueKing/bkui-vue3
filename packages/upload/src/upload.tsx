@@ -46,7 +46,7 @@ import { ajaxSliceUpload, ajaxUpload } from './use-ajax-upload';
 import useFileHandler from './use-file-handler';
 
 export default defineComponent({
-  name: 'BkUpload',
+  name: 'Upload',
   props: uploadProps,
   emits: ['on-exceed', 'on-progress', 'on-success', 'on-error', 'on-delete', 'on-done'],
   setup(props, { slots, emit }) {
