@@ -71,6 +71,10 @@ const tagProps = () => ({
     type: Function as PropType<(value: string) => any[]>,
     default: null,
   },
+  withValidate: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 export default tagProps;

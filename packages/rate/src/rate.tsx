@@ -24,7 +24,13 @@
  * IN THE SOFTWARE.
 */
 
-import { computed, defineComponent, Ref, ref } from 'vue';
+import {
+  type Ref,
+  computed,
+  defineComponent,
+  ref,
+  watch,
+} from 'vue';
 
 import {
   classes,
@@ -45,6 +51,7 @@ export default defineComponent({
     modelValue: PropTypes.number.def(0),
     size: PropTypes.size(),
     editable: PropTypes.bool.def(true),
+    withValidate: PropTypes.bool.def(true),
   },
 
   emits: ['change', 'update:modelValue'],
@@ -58,7 +65,6 @@ export default defineComponent({
 
       emit('update:modelValue', val);
       emit('change', val);
-      formItem?.validate?.('change');
     };
 
     const changeHover = (val) => {
@@ -86,6 +92,12 @@ export default defineComponent({
       width: rateSize.width,
       height: rateSize.height,
     };
+
+    watch(() => props.modelValue, () => {
+      if (props.withValidate) {
+        formItem?.validate?.('change');
+      }
+    });
 
     return () => (
       <p class={rateClass}>

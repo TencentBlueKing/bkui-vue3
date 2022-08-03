@@ -173,6 +173,10 @@ export const datePickerProps = {
     },
   },
   disableDate: Function as PropType<DisableDateType>,
+  withValidate: {
+    type: Boolean,
+    default: true,
+  },
 } as const;
 
 export type DatePickerProps = Readonly<ExtractPropTypes<typeof datePickerProps>>;

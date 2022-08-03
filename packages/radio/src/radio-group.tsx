@@ -29,10 +29,12 @@ import {
   defineComponent,
   onMounted,
   provide,
+  watch,
 } from 'vue';
 
 import {
   PropTypes,
+  useFormItem,
 } from '@bkui-vue/shared';
 
 import { radioGroupKey } from './common';
@@ -42,6 +44,7 @@ const radioGroupProps = {
   name: PropTypes.string.def(''),
   modelValue: PropTypes.oneOfType([String, Number, Boolean]),
   disabled: PropTypes.bool,
+  withValidate: PropTypes.bool.def(true),
 };
 
 export type RadioGroupProps = Readonly<ExtractPropTypes<typeof radioGroupProps>>;
@@ -54,6 +57,7 @@ export default defineComponent({
     'update:modelValue',
   ],
   setup(props, context) {
+    const formItem = useFormItem();
     const radioInstanceList = [];
     const register: IRadioGroupContext['register'] = (radioContext) => {
       radioInstanceList.push(radioContext);
@@ -83,6 +87,12 @@ export default defineComponent({
       register,
       unregister,
       handleChange,
+    });
+
+    watch(() => props.modelValue, () => {
+      if (props.withValidate) {
+        formItem?.validate?.('change');
+      }
     });
 
     onMounted(() => {
