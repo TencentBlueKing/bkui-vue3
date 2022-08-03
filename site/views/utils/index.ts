@@ -53,10 +53,11 @@ export const resolvePropsToDesData = (props: any) => {
     if (typeof obj === 'function') {
       const val = obj();
       if (typeof val === 'object') {
-        return Array.isArray(val) ? 'array' : 'object';
+        return Array.isArray(val) ? 'Array' : 'Object';
       }
 
-      return typeof val;
+      const typeStr = typeof val;
+      return `${typeStr.toLocaleUpperCase()[0]}${typeStr.slice(1)}`;
     }
   };
 
