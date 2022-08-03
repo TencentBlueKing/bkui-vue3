@@ -95,6 +95,7 @@ export default defineComponent({
     idKey: PropTypes.string.def('value'),
     displayKey: PropTypes.string.def('label'),
     withValidate: PropTypes.bool.def(true),
+    showSelectedIcon: PropTypes.bool.def(true), // 多选时是否显示勾选ICON
   },
   emits: ['update:modelValue', 'change', 'toggle', 'clear', 'scroll-end', 'focus', 'blur'],
   setup(props, { emit }) {
@@ -113,6 +114,7 @@ export default defineComponent({
       multipleMode,
       allowCreate,
       customContent,
+      showSelectedIcon,
     } = toRefs(props);
 
     const formItem = useFormItem();
@@ -419,6 +421,7 @@ export default defineComponent({
       multiple,
       selected,
       activeOptionValue,
+      showSelectedIcon,
       register,
       unregister,
       registerGroup,
