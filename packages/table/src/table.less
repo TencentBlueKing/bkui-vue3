@@ -70,6 +70,12 @@
         min-width: 80px;
         clear: both;
 
+        &.expand-row {
+          .expand-btn-action {
+            color: #575961;
+          }
+        }
+
         .cell {
           padding: 0 15px;
           overflow: hidden;
@@ -83,12 +89,13 @@
             padding: 0;
             text-overflow: unset;
           }
+        }
 
-          .expand-btn-action {
-            display: flex;
-            padding: 0 15px;
-            cursor: pointer;
-          }
+        .expand-btn-action {
+          display: flex;
+          padding: 0 15px;
+          color: #c4c6cc;
+          cursor: pointer;
         }
 
         &.column_fixed {
