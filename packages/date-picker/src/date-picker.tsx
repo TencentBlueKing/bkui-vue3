@@ -207,6 +207,9 @@ export default defineComponent({
 
     watch(() => props.modelValue, (modelValue) => {
       state.internalValue = parseDate(modelValue, props.type, props.multiple, props.format);
+      if (props.withValidate) {
+        formItem?.validate?.('change');
+      }
     });
 
     watch(() => props.open, (open) => {
@@ -296,7 +299,6 @@ export default defineComponent({
     };
 
     const handleInputMouseleave = (_e) => {
-      console.log('handleInputMouseleave');
       // if (e.toElement?.classList.contains('clear-action')) {
       //   return;
       // }
@@ -309,7 +311,6 @@ export default defineComponent({
         // 使用 :value 或 :model-value 的时候才需要 handleChange，此时没有触发 update:modelValue
         // 使用 v-model 时才会触发 update:modelValue 事件
         emit('update:modelValue', publicVModelValue.value);
-        formItem?.validate?.('change');
 
         // this.dispatch('bk-form-item', 'form-change');
         if (props.type.indexOf('time') < 0) {

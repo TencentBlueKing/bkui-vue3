@@ -76,3 +76,4 @@ export { default as TimeLine  } from '@bkui-vue/timeline';
 export { default as Process  } from '@bkui-vue/process';
 export { default as Upload  } from '@bkui-vue/upload';
 export { default as CodeDiff  } from '@bkui-vue/code-diff';
+export { default as ColorPicker  } from '@bkui-vue/color-picker';
