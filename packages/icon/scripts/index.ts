@@ -295,7 +295,6 @@ const transformSvg = async (url: string) => {
     tranformPath(svgDom.elements);
     return xmlDom;
   } catch (err) {
-    console.info(err, '=====');
     process.exit(1);
   }
 };

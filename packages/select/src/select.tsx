@@ -94,6 +94,7 @@ export default defineComponent({
     list: PropTypes.array.def([]),
     idKey: PropTypes.string.def('value'),
     displayKey: PropTypes.string.def('label'),
+    withValidate: PropTypes.bool.def(true),
   },
   emits: ['update:modelValue', 'change', 'toggle', 'clear', 'scroll-end', 'focus', 'blur'],
   setup(props, { emit }) {
@@ -127,6 +128,9 @@ export default defineComponent({
 
     watch(modelValue, () => {
       handleSetSelectedData();
+      if (props.withValidate) {
+        formItem?.validate?.('change');
+      }
     }, { deep: true });
 
     // select组件是否禁用
@@ -230,7 +234,6 @@ export default defineComponent({
 
       emit('change', val, modelValue.value);
       emit('update:modelValue', val, modelValue.value);
-      formItem?.validate?.('change');
     };
     // 派发toggle事件
     const handleTogglePopover = () => {
