@@ -39,7 +39,11 @@ import {
 
 import { clickoutside } from '@bkui-vue/directives';
 import { AngleUp } from '@bkui-vue/icon';
-import { classes, PropTypes } from '@bkui-vue/shared';
+import {
+  classes,
+  PropTypes,
+  useFormItem,
+} from '@bkui-vue/shared';
 
 import PickerDropdown from '../../date-picker/src/base/picker-dropdown';
 
@@ -61,6 +65,7 @@ const colorPickerProps = {
   // 数组 自定义预设值
   recommend: PropTypes.oneOfType([PropTypes.array.def(() => []), PropTypes.bool.def(true)]).def(true),
   extCls: PropTypes.string.def(''),
+  withValidate: PropTypes.bool.def(true),
 };
 const whiteColorObj = formatColor('#FFFFFF');
 
@@ -74,6 +79,7 @@ export default defineComponent({
   props: colorPickerProps,
   emits: ['update:modelValue', 'change'],
   setup(props, { emit }) {
+    const formItem = useFormItem();
     const showDropdown =  ref(false);
     // 当前颜色的色值，如果为空字符串显示：默认白色背景 + 中间一个叉
     const colorStr = ref('');
@@ -102,6 +108,9 @@ export default defineComponent({
     watch(() => props.modelValue, () => {
       // 2. 如果组件绑定值被外部修改，自动根据绑定至更新组件色值
       changeColorFromProps();
+      if (props.withValidate) {
+        formItem?.validate?.('change');
+      }
     });
 
     const handleTriggerKeydown = (e) => {

@@ -41,7 +41,6 @@ import {
 import {
   EMPTY_OBJ,
   isEmptyObj,
-  useFormItem,
 } from '@bkui-vue/shared';
 
 import type {
@@ -81,7 +80,6 @@ export const useCheckbox = () => {
     emit,
   } = currentInstance;
 
-  const formItem = useFormItem();
   const checkboxGroup = inject<ICheckboxGroupContext>(checkboxGroupKey, EMPTY_OBJ);
   const isGroup = !isEmptyObj(checkboxGroup);
 
@@ -132,7 +130,6 @@ export const useCheckbox = () => {
     if (isGroup) {
       checkboxGroup.handleChange();
     }
-    formItem?.validate?.('change');
 
     nextTick(() => {
       // 选中状态保持同步

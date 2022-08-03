@@ -10,6 +10,7 @@
       property="name"
     >
       <bk-input
+        v-model="formModel.name"
         placeholder="请输入"
         clearable
       />
@@ -77,6 +78,7 @@
           return false;
         },
         message: 'this is errror',
+        trigger: 'change',
       },
     ],
   };

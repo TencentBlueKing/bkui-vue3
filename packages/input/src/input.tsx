@@ -24,7 +24,13 @@
  * IN THE SOFTWARE.
 */
 
-import { computed, defineComponent, ExtractPropTypes, ref } from 'vue';
+import {
+  computed,
+  defineComponent,
+  ExtractPropTypes,
+  ref,
+  watch,
+} from 'vue';
 
 import { Close, DownSmall, Eye, Search, Unvisible } from '@bkui-vue/icon';
 import {
@@ -56,6 +62,7 @@ export const inputType = {
   size: PropTypes.size(),
   rows: PropTypes.number,
   selectReadonly: PropTypes.bool.def(false), // selectReadonly select组件使用，readonly属性，但是组件样式属于正常输入框样式
+  withValidate: PropTypes.bool.def(true),
 };
 
 export const enum EVENTS {
@@ -151,6 +158,12 @@ export default defineComponent({
       'is-disabled': props.disabled || props.modelValue <= props.min,
     }));
 
+    watch(() => props.modelValue, () => {
+      if (props.withValidate) {
+        formItem?.validate?.('change');
+      }
+    });
+
     ctx.expose({
       focus() {
         inputRef.value.focus();
@@ -164,7 +177,6 @@ export default defineComponent({
       ctx.emit(EVENTS.UPDATE, resetVal);
       ctx.emit(EVENTS.CHANGE, resetVal);
       ctx.emit(EVENTS.CLEAR);
-      formItem?.validate?.('change');
     }
 
     function handleFocus(e) {
@@ -195,9 +207,6 @@ export default defineComponent({
         }
 
         ctx.emit(eventName, e.target.value, e);
-        if (eventName === EVENTS.INPUT) {
-          formItem?.validate?.('change');
-        }
       };
     }
     const [
