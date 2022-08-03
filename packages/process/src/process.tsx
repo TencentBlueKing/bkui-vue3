@@ -68,19 +68,15 @@ export default defineComponent({
           content: '步骤5',
         },
       ]);
-      console.log('props.list', props.list);
       if (props.list?.length) {
         defaultProcessList.value.splice(0, defaultProcessList.value.length, ...props.list);
       }
     };
 
     const jumpTo = async (index) => {
-      console.log(index);
       try {
         if (props.controllable && index !== props.curProcess) {
-          console.log(props.curProcess);
           emit('update:curProcess', index);
-          console.log(props.curProcess);
           emit('click', index);
         }
       } catch (e) {
