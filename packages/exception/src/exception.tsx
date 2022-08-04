@@ -24,9 +24,13 @@
  * IN THE SOFTWARE.
 */
 
+import _ from 'lodash';
 import { defineComponent } from 'vue';
 
-import { PropTypes } from '@bkui-vue/shared';
+import {
+  classes,
+  PropTypes,
+} from '@bkui-vue/shared';
 
 import permissions from './images/403.svg';
 import notFound from './images/404.svg';
@@ -35,7 +39,7 @@ import Building from './images/building.svg';
 import empty from './images/empty.svg';
 import login from './images/login.svg';
 import searchEmpty from './images/search-empty.svg';
-import { Types, TypesMapType } from './typings';
+import { TypesMapType } from './typings';
 
 export default defineComponent({
   name: 'Exception',
@@ -44,19 +48,10 @@ export default defineComponent({
     type: PropTypes.commonType(['404', '403', '500', 'building', 'empty', 'search-empty', 'login'], 'type').def('404'),
     // 场景
     scene: PropTypes.commonType(['page', 'part'], 'scene').def('page'),
-    // 外部设置的 class name
-    extCls: PropTypes.string,
+    title: PropTypes.string,
+    description: PropTypes.string,
   },
   setup(props, { slots }) {
-    const tipText: TypesMapType = {
-      403: '无业务权限',
-      404: '页面不存在',
-      500: '服务维护中',
-      building: '功能建设中',
-      empty: '没有数据',
-      'search-empty': '搜索为空',
-      login: '请登入蓝鲸',
-    };
     const images: TypesMapType = {
       403: permissions,
       404: notFound,
@@ -66,15 +61,66 @@ export default defineComponent({
       'search-empty': searchEmpty,
       login,
     };
-    return () => (
-      <div class={['bk-exception-wrapper', props.extCls]}>
-        <div class={['bk-exception-img', `${props.scene}-img`]}>
-            <img class="exception-image" src={images[props.type as Types]} alt="type" />
+
+    const renderImg = () => {
+      const imgSrc = images[props.type] ? images[props.type] : empty;
+      return (
+        <div class="bk-exception-img">
+          <img class="exception-image" src={imgSrc} alt="type" />
         </div>
-        <div class={['bk-exception-text', `${props.scene}-text`]}>
-            {slots.default?.() ?? tipText[props.type as Types]}
-        </div>
-    </div>
-    );
+      );
+    };
+
+    const renderTitle = () => {
+      if (_.isFunction(slots.title)) {
+        return (
+          <div class="bk-exception-title">{slots.title()}</div>
+        );
+      }
+      if (props.title) {
+        return (
+          <div class="bk-exception-title">{props.title}</div>
+        );
+      }
+      return null;
+    };
+
+    const renderDescription = () => {
+      if (_.isFunction(slots.description)) {
+        return (
+          <div class="bk-exception-description">{slots.description()}</div>
+        );
+      }
+      if (props.description) {
+        return (
+          <div class="bk-exception-description">{props.description}</div>
+        );
+      }
+      return null;
+    };
+
+    const renderFooter = () => {
+      if (_.isFunction(slots.default)) {
+        return (
+          <div class="bk-exception-footer">{slots.default()}</div>
+        );
+      }
+      return null;
+    };
+
+    return () => {
+      const rootClass = classes({
+        'bk-exception': true,
+        [`bk-exception-${props.scene}`]: true,
+      });
+      return (
+        <div class={rootClass}>
+          {renderImg()}
+          {renderTitle()}
+          {renderDescription()}
+          {renderFooter()}
+      </div>
+      );
+    };
   },
 });

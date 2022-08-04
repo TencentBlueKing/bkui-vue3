@@ -50,9 +50,16 @@ const props: IPropsTableItem[] = [
     default: 'page',
   },
   {
-    name: 'extCls',
+    name: 'title',
     type: 'String',
-    desc: '配置自定义样式类名，传入的类会被加在组件最外层的 DOM .bk-exception 上',
+    desc: '异常 title',
+    optional: [],
+    default: '',
+  },
+  {
+    name: 'description',
+    type: 'String',
+    desc: '异常 description',
     optional: [],
     default: '',
   },
