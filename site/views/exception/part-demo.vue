@@ -12,17 +12,22 @@
       class="exception-wrap-item exception-part"
       type="403"
       scene="part"
+      title="没有权限"
+      description="你没有相应业务的访问权限，请前往申请相关业务权限"
       :class="{'exception-gray': isGray}"
     >
-      <span>没有权限</span>
-      <div class="text-wrap text-part">
-        <span class="text-btn">去申请</span>
-      </div>
+      <bk-button
+        text
+        theme="primary"
+      >
+        去申请
+      </bk-button>
     </bk-exception>
     <bk-exception
       class="exception-wrap-item exception-part"
       type="empty"
       scene="part"
+      description="没有数据"
       :class="{'exception-gray': isGray}"
     />
   </div>
@@ -31,12 +36,14 @@
       class="exception-wrap-item exception-part"
       type="500"
       scene="part"
+      description="服务维护中"
       :class="{'exception-gray': isGray}"
     />
     <bk-exception
       class="exception-wrap-item exception-part"
       type="search-empty"
       scene="part"
+      description="搜索为空"
       :class="{'exception-gray': isGray}"
     />
   </div>
@@ -70,34 +77,5 @@
 
 .exception-wrap-item.exception-gray {
   background-color: #f5f6fa;
-}
-
-.exception-wrap .exception-wrap-item .text-wrap {
-  display: flex;
-  margin-top: 12px;
-  font-size: 14px;
-  color: #3a84ff;
-  align-items: center;
-  justify-content: center;
-}
-
-.exception-wrap .exception-wrap-item .text-wrap.text-part {
-  margin-top: 10px;
-  font-size: 12px;
-}
-
-.exception-wrap .exception-wrap-item .text-subtitle {
-  margin-top: 14px;
-  font-size: 14px;
-  color: #979ba5;
-  text-align: center;
-}
-
-.text-wrap .text-btn {
-  margin: 0 10px;
-}
-
-.text-wrap .text-btn:hover {
-  cursor: pointer;
 }
 </style>
