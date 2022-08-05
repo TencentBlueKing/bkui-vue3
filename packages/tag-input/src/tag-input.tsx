@@ -114,7 +114,9 @@ export default defineComponent({
     }));
 
     watch([() => [...props.modelValue], () => [...props.list]], () => {
-      initData();
+      nextTick(() => {
+        initData();
+      });
       if (props.withValidate) {
         formItem?.validate?.('change');
       }
