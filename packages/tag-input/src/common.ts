@@ -95,11 +95,10 @@ export function useFlatList(props: TagProps) {
     displayKey,
     list,
   } = toRefs(props);
-  const state = reactive({
-    flatList: [],
-  });
+  const flatList = reactive([]);
+
   watch([useGroup, saveKey, displayKey, list], () => {
-    state.flatList = [];
+    flatList.splice(0, flatList.length);
     let formatList: any = list.value;
     if (useGroup.value) {
       formatList = list.value.reduce((formatList: any[], item: any) => {
@@ -116,9 +115,25 @@ export function useFlatList(props: TagProps) {
         return formatList.concat(children);
       }, []);
     }
-    state.flatList = [...formatList];
+    appendToTargetList(formatList);
   }, { immediate: true, deep: true });
-  return state.flatList;
+
+  /**
+   * 不改变原有数组 - flatList 引用地址，将目标数组添加到原有数组里
+   * 使用 push 添加时会有最大数量限制，超出会报错：Maximum call stack size exceeded
+   * @param targetList 目标数组
+   */
+  function appendToTargetList(targetList: any[]) {
+    const QUANTUM = 30000; // 限制每次添加数量
+    const len = targetList.length;
+
+    for (let i = 0; i < len; i += QUANTUM) {
+      const appendList = targetList.slice(i, Math.min(i + QUANTUM, len));
+      flatList.push(...appendList);
+    }
+  }
+
+  return flatList;
 }
 
 /**

@@ -77,8 +77,8 @@
 .flex-wrapper {
   display: flex;
 
-  div {
-    margin-right: 50px;
+  .bk-cascader {
+    margin-right: 200px;
   }
 }
 </style>
