@@ -36,12 +36,8 @@ export default defineComponent({
   },
   emits: ['change'],
 
-  setup(props, { slots }) {
+  setup(props) {
     const type = computed(() => (props.list.length === 0 ? 'empty' : 'search-empty'));
-    return () => <BkException scene="part" type={type.value}>
-      {
-        slots.default?.() ?? props.emptyText
-      }
-    </BkException>;
+    return () => <BkException scene="part" type={type.value} description={props.emptyText} />;
   },
 });
