@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent,  reactive, ref, watch } from 'vue';
+import { computed, defineComponent,  reactive, ref, toRefs, watch } from 'vue';
 
 import { clickoutside } from '@bkui-vue/directives';
 import { AngleUp, Close, Error } from '@bkui-vue/icon';
@@ -75,19 +75,20 @@ export default defineComponent({
     const panelShow = ref(false);
     const selectedText = ref('');
     const selectedTags = ref([]);
-    const checkedValue = ref(props.modelValue);
+    const { modelValue } = toRefs(props);
     const cascaderPanel = ref();
 
-    watch(
-      () => props.modelValue,
-      (value: Array<string | number>) => {
-        updateValue(value);
+    const checkedValue = computed({
+      get: () => modelValue.value,
+      set: (value: Array<string | number>) => {
+        emit('update:modelValue', value);
       },
-    );
+    });
+
+    const popover = ref(null);
 
     /** 更新选中 */
     const updateValue = (val: Array<string | number>) => {
-      cascaderPanel.value.syncCheckedValue(val);
       /** 根据配置更新显示内容 */
       if (multiple) {
         selectedTags.value = store.getCheckedNodes().map((node: INode) => ({
@@ -106,13 +107,6 @@ export default defineComponent({
       }
     };
 
-    const inputChangeHandler = (val: Array<string | number>) => {
-      updateValue(val);
-      /** 派发相关事件 */
-      emit('update:modelValue', val);
-      emit('change', val);
-    };
-
     const hidePopover = () => {
       panelShow.value = false;
     };
@@ -121,6 +115,7 @@ export default defineComponent({
     const handleClear = (e: Event) => {
       e.stopPropagation();
       updateValue([]);
+      emit('update:modelValue', []);
       emit('clear', JSON.parse(JSON.stringify(props.modelValue)));
     };
 
@@ -138,6 +133,18 @@ export default defineComponent({
       updateValue(current);
     };
 
+    watch(
+      () => props.modelValue,
+      (value: Array<string | number>) => {
+        updateValue(value);
+        popover?.value?.handlePopShow(false);
+
+        /** 派发相关事件 */
+        emit('update:modelValue', value);
+        emit('change', value);
+      }, { immediate: true },
+    );
+
     return {
       store,
       updateValue,
@@ -149,10 +156,10 @@ export default defineComponent({
       handleClear,
       isHover,
       setHover,
+      popover,
       cancelHover,
       selectedTags,
       removeTag,
-      inputChangeHandler,
       cascaderPanel,
     };
   },
@@ -181,6 +188,7 @@ export default defineComponent({
       <div class={['bk-cascader', 'bk-cascader-wrapper', this.extCls, {
         'bk-is-show-panel': this.panelShow,
         'is-unselected': this.modelValue.length === 0,
+        'is-hover': this.isHover,
       }]}
         tabindex="0"
         data-placeholder={this.placeholder}
@@ -194,6 +202,7 @@ export default defineComponent({
           arrow={false}
           class="bk-cascader-popover-wrapper"
           v-model:isShow={this.panelShow}
+          ref="popover"
           boundary="body">
           {{
             default: () => (
@@ -213,7 +222,7 @@ export default defineComponent({
                 <CascaderPanel
                   store={this.store}
                   ref="cascaderPanel"
-                  onInput={val => this.inputChangeHandler(val)}></CascaderPanel>
+                  v-model={this.checkedValue}></CascaderPanel>
               </div>
             ),
           }}
