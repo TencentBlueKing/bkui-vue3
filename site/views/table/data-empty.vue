@@ -12,6 +12,7 @@
     <div style=" width: 100%;height: 300px;">
       <bk-table
         empty-text="没有数据"
+        :border="['outer']"
         :columns="columns"
         :data="tableData"
       />

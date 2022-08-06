@@ -25,7 +25,17 @@
 */
 
 import { debounce } from 'lodash';
-import { computed, defineComponent, nextTick, onMounted, reactive, Ref, ref, toRefs, watch } from 'vue';
+import {
+  type Ref,
+  computed,
+  defineComponent,
+  nextTick,
+  onMounted,
+  reactive,
+  ref,
+  toRefs,
+  watch,
+} from 'vue';
 
 import { bkTooltips } from '@bkui-vue/directives';
 import { Close, Error } from '@bkui-vue/icon';
@@ -104,7 +114,12 @@ export default defineComponent({
     }));
 
     watch([() => [...props.modelValue], () => [...props.list]], () => {
-      initData();
+      nextTick(() => {
+        initData();
+      });
+      if (props.withValidate) {
+        formItem?.validate?.('change');
+      }
     });
     watch(curInputValue, debounce(() => {
       const hasShowCount = pageState.curPageList.length !== 0;
@@ -473,7 +488,6 @@ export default defineComponent({
       // this.dispatch('bk-form-item', 'form-change')
       emit(type, data);
       emit('update:modelValue', tagList.value);
-      formItem?.validate?.('change');
     };
 
     /**

@@ -8,6 +8,7 @@
     <bk-form-item
       label="姓名"
       property="name"
+      required
     >
       <bk-input
         v-model="formMode.name"
@@ -80,8 +81,8 @@
     name: [
       {
         validator: (value) => {
-          debugger;
           console.log('asdadasd =', value);
+          return false;
         },
       },
     ],

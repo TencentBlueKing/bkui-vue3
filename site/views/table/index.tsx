@@ -35,6 +35,7 @@ import { resolvePropsToDesData } from '../utils/index';
 import basic from './basic.vue';
 import bordered from './bordered.vue';
 import cellRender from './cell-render';
+import configList from './config';
 import DataEmpty from './data-empty.vue';
 import event from './event.vue';
 import Expand from './expand.vue';
@@ -63,7 +64,7 @@ export default defineComponent({
   },
   render() {
     const menuPropsJson = resolvePropsToDesData(tableProps);
-
+    console.log('menuPropsJson', menuPropsJson);
     const configs = [
       {
         attrs: {
@@ -187,6 +188,12 @@ export default defineComponent({
         component: () => <Expand></Expand>,
       }];
 
+    const eventColumnMap = {
+      name: '事件名称',
+      desc: '说明',
+      params: '回调参数',
+    };
+
     return (
       <div>
         <DemoTitle
@@ -200,7 +207,20 @@ export default defineComponent({
                  }
               </DemoBox>)
           }
-        <PropsBox propsData={menuPropsJson}/>
+        {
+          configList.map(cfg => <div>
+            {
+              cfg.type === 'events'
+                ? <PropsBox
+                    title={ cfg.title }
+                     columnMap={ eventColumnMap }
+                     subtitle={ cfg.subTile }
+                     propsData={ cfg.config }/>
+                : <PropsBox title={ cfg.title } subtitle={ cfg.subTile }
+                     propsData={ cfg.config }/>
+            }
+          </div>)
+        }
       </div>
     );
   },

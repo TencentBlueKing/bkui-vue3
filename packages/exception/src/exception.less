@@ -1,39 +1,76 @@
 @import '@bkui-vue/styles/themes/themes.less';
 
-.bk-exception-wrapper {
+.bk-exception {
   position: relative;
   display: flex;
   width: 100%;
   align-items: center;
   flex-direction: column;
+  text-align: center;
+}
 
+.bk-exception-img {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .exception-image {
+    display: block;
+    height: 100%;
+    object-fit: contain;
+  }
+}
+
+.bk-exception-title {
+  color: #313238;
+}
+
+.bk-exception-description {
+  color: #63656e;
+}
+
+.bk-exception-page {
   .bk-exception-img {
-    display: flex;
     width: 480px;
     height: 240px;
-    align-items: center;
-    justify-content: center;
-
-    &.part-img {
-      width: 120px;
-      height: 100px;
-    }
-
-    .exception-image {
-      display: block;
-      height: 100%;
-      vertical-align: middle;
-      object-fit: contain;
-    }
   }
 
-  .bk-exception-text {
+  .bk-exception-title {
+    margin-top: 18px;
     font-size: 24px;
-    color: #63656e;
-    text-align: center;
+    line-height: 32px;
+  }
 
-    &.part-text {
-      font-size: 14px;
-    }
+  .bk-exception-description {
+    margin-top: 16px;
+    font-size: 14px;
+    line-height: 22px;
+  }
+
+  .bk-exception-footer {
+    margin-top: 24px;
+  }
+}
+
+.bk-exception-part {
+  .bk-exception-img {
+    width: 120px;
+    height: 100px;
+  }
+
+  .bk-exception-title {
+    margin-top: 8px;
+    font-size: 14px;
+    line-height: 22px;
+  }
+
+  .bk-exception-description {
+    margin-top: 8px;
+    font-size: 12px;
+    line-height: 20px;
+  }
+
+  .bk-exception-footer {
+    margin-top: 8px;
   }
 }

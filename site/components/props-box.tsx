@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent, PropType } from 'vue';
+import { defineComponent } from 'vue';
 
 import { IPropsTableItem } from '../typings';
 
@@ -31,7 +31,8 @@ import CommonBox from './common-box';
 
 import './props-box.less';
 type ColumnKey = keyof IPropsTableItem;
-const  columnMap: Record<ColumnKey, any> = {
+type IColumnMap = Record<ColumnKey, any>;
+const  columnMap: IColumnMap = {
   name: '参数',
   desc: '说明',
   type: '类型',
@@ -49,11 +50,15 @@ export default defineComponent({
       default: '用于多行文本的输入，输入框高度可以自动适配，或出现滚动条',
     },
     propsData: {
-      type: Array as PropType<IPropsTableItem[]>,
+      type: Array,
       required: true,
     },
+    columnMap: {
+      type: Object,
+      default: () => columnMap,
+    },
   },
-  setup() {
+  setup(props) {
     const getPropsCell = (key: keyof IPropsTableItem, item: IPropsTableItem) => {
       let val = item[key] || '--';
       switch (key) {
@@ -73,9 +78,9 @@ export default defineComponent({
           return <td key={key}>{val}</td>;
       }
     };
-    const getPropsRow = (item: IPropsTableItem) => <tr>
+    const getPropsRow = (item: IPropsTableItem | IColumnMap) => <tr>
         {
-          Object.keys(columnMap).map(key => getPropsCell(key as ColumnKey, item))
+          Object.keys(props.columnMap).map(key => getPropsCell(key as ColumnKey, item))
         }
       </tr>;
     return {
@@ -88,12 +93,12 @@ export default defineComponent({
         <table class="props-table">
             <thead>
               {
-                Object.values(columnMap).map(v => <th key={v}>{v}</th>)
+                Object.values(this.columnMap).map(v => <th key={v}>{v}</th>)
               }
             </thead>
             <tbody>
               {
-                this.propsData.map(item => this.getPropsRow(item))
+                this.propsData.map((item: any) => this.getPropsRow(item))
               }
             </tbody>
         </table>

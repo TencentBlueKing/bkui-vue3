@@ -56,6 +56,7 @@ import {
   useRegistry,
   useRemoteSearch,
 } from './common';
+import Option from './option';
 import SelectTagInput from './selectTagInput';
 import { GroupInstanceType, ISelected, OptionInstanceType, SelectTagInputType } from './type';
 
@@ -74,7 +75,7 @@ export default defineComponent({
     filterable: PropTypes.bool.def(false), // 是否支持搜索
     remoteMethod: PropTypes.func,
     scrollHeight: PropTypes.number.def(216),
-    showSelectAll: PropTypes.bool.def(false), // 权限
+    showSelectAll: PropTypes.bool.def(false), // 全选
     popoverMinWidth: PropTypes.number.def(0), // popover最小宽度
     showOnInit: PropTypes.bool.def(false), // 是否默认显示popover
     multipleMode: PropTypes.oneOf(['default', 'tag']).def('default'), // 多选展示方式
@@ -90,6 +91,11 @@ export default defineComponent({
     allowCreate: PropTypes.bool.def(false), // 是否运行创建自定义选项
     popoverOptions: PropTypes.object.def({}), // popover属性
     customContent: PropTypes.bool.def(false), // 是否自定义content内容
+    list: PropTypes.array.def([]),
+    idKey: PropTypes.string.def('value'),
+    displayKey: PropTypes.string.def('label'),
+    withValidate: PropTypes.bool.def(true),
+    showSelectedIcon: PropTypes.bool.def(true), // 多选时是否显示勾选ICON
   },
   emits: ['update:modelValue', 'change', 'toggle', 'clear', 'scroll-end', 'focus', 'blur'],
   setup(props, { emit }) {
@@ -108,6 +114,7 @@ export default defineComponent({
       multipleMode,
       allowCreate,
       customContent,
+      showSelectedIcon,
     } = toRefs(props);
 
     const formItem = useFormItem();
@@ -123,6 +130,9 @@ export default defineComponent({
 
     watch(modelValue, () => {
       handleSetSelectedData();
+      if (props.withValidate) {
+        formItem?.validate?.('change');
+      }
     }, { deep: true });
 
     // select组件是否禁用
@@ -224,9 +234,8 @@ export default defineComponent({
     const emitChange = (val: string | string[]) => {
       if (val === modelValue.value) return;
 
-      emit('change', val);
-      emit('update:modelValue', val);
-      formItem?.validate?.('change');
+      emit('change', val, modelValue.value);
+      emit('update:modelValue', val, modelValue.value);
     };
     // 派发toggle事件
     const handleTogglePopover = () => {
@@ -361,7 +370,7 @@ export default defineComponent({
       }
     };
     // 处理键盘事件
-    const handleKeydown = (e: KeyboardEvent) => {
+    const handleKeydown = (e: any) => {
       const availableOptions = options.value.filter(option => !option.disabled && option.visible);
       const index = availableOptions.findIndex(option => option.value === activeOptionValue.value);
       if (!availableOptions.length || index === -1) return;
@@ -412,6 +421,7 @@ export default defineComponent({
       multiple,
       selected,
       activeOptionValue,
+      showSelectedIcon,
       register,
       unregister,
       registerGroup,
@@ -488,7 +498,7 @@ export default defineComponent({
     const suffixIcon = () => {
       if (this.loading) {
         return <Loading loading={true} theme='primary' class="spinner" mode="spin" size="mini"></Loading>;
-      } if (this.clearable && this.isHover && this.selected.length) {
+      } if (this.clearable && this.isHover && this.selected.length && !this.isDisabled) {
         return <Close class="clear-icon" onClick={this.handleClear}></Close>;
       }
       return <AngleUp class="angle-up"></AngleUp>;
@@ -521,12 +531,14 @@ export default defineComponent({
           modelValue={this.isInput ? this.searchKey : this.selectedLabel.join(',')}
           placeholder={this.isInput ? (this.selectedLabel.join(',') || this.placeholder) : this.placeholder}
           readonly={!this.isInput}
+          selectReadonly={true}
           disabled={this.isDisabled}
           behavior={this.behavior}
           size={this.size}
           onFocus={this.handleFocus}
           onInput={this.handleInputChange}
-          onEnter={this.handleInputEnter}>
+          onEnter={this.handleInputEnter}
+          onKeydown={(_, e) => this.handleKeydown(e)}>
             {{
               prefix: () => this.$slots.prefix?.(),
               suffix: () => suffixIcon(),
@@ -574,6 +586,7 @@ export default defineComponent({
                       {this.selectAllText}
                       </li>
                 }
+                {this.list.map(item => <Option value={item[this.idKey]} label={item[this.displayKey]}></Option>)}
                 {this.$slots.default?.()}
                 {this.scrollLoading && (
                   <li class="bk-select-options-loading">

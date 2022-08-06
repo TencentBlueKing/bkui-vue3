@@ -29,10 +29,12 @@ import {
   defineComponent,
   onMounted,
   provide,
+  watch,
 } from 'vue';
 
 import {
   PropTypes,
+  useFormItem,
 } from '@bkui-vue/shared';
 
 import {
@@ -47,6 +49,7 @@ const checkboxGroupProps = {
   name: PropTypes.string.def(''),
   modelValue: PropTypes.array,
   disabled: PropTypes.bool,
+  withValidate: PropTypes.bool.def(true),
 };
 
 export type CheckboxGroupProps = Readonly<ExtractPropTypes<typeof checkboxGroupProps>>;
@@ -59,6 +62,8 @@ export default defineComponent({
     'update:modelValue',
   ],
   setup(props, context) {
+    const formItem = useFormItem();
+
     const checkboxInstanceList: ICheckboxInstance[] = [];
     const register: ICheckboxGroupContext['register'] = (checkboxContext) => {
       checkboxInstanceList.push(checkboxContext);
@@ -88,6 +93,12 @@ export default defineComponent({
       register,
       unregister,
       handleChange,
+    });
+
+    watch(() => props.modelValue, () => {
+      if (props.withValidate) {
+        formItem?.validate?.('change');
+      }
     });
 
     onMounted(() => {

@@ -146,7 +146,7 @@ export function filterProperty(data: object, filter: string[]) {
   }));
 };
 
-export function arrayEqual(arr1: string[] = [], arr2: string[] = []) {
+export function arrayEqual(arr1: Array<string | number> = [], arr2: Array<string | number> = []) {
   if (arr1.length !== arr2.length) {
     return false;
   }
