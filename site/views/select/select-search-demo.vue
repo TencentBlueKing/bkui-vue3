@@ -14,6 +14,49 @@
       />
     </bk-select>
     <bk-select
+      v-model="selectedValue"
+      class="bk-select"
+      :input-search="false"
+      multiple
+      filterable
+    >
+      <bk-option
+        v-for="(item, index) in datasource"
+        :key="index"
+        :value="item.value"
+        :label="item.label"
+      />
+    </bk-select>
+    <bk-select
+      v-model="selectedValue"
+      class="bk-select"
+      :input-search="false"
+      multiple
+      filterable
+      multiple-mode="tag"
+    >
+      <bk-option
+        v-for="(item, index) in datasource"
+        :key="index"
+        :value="item.value"
+        :label="item.label"
+      />
+    </bk-select>
+    <bk-select
+      v-model="selectedValue"
+      class="bk-select"
+      multiple
+      filterable
+      multiple-mode="tag"
+    >
+      <bk-option
+        v-for="(item, index) in datasource"
+        :key="index"
+        :value="item.value"
+        :label="item.label"
+      />
+    </bk-select>
+    <bk-select
       class="bk-select"
       multiple
       filterable
