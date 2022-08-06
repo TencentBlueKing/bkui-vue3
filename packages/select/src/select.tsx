@@ -193,13 +193,11 @@ export default defineComponent({
       if (isFocus.value) return;
       isFocus.value = true;
       emit('focus');
-      console.log('focus');
     };
     const handleBlur = () => {
       if (!isFocus.value) return;
       isFocus.value = false;
       emit('blur');
-      console.log('blur');
     };
 
     const {
