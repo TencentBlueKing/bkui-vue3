@@ -46,7 +46,7 @@ export default defineComponent({
     allowCreate: PropTypes.bool.def(false),
     modelValue: PropTypes.any,
   },
-  emits: ['update:modelValue', 'remove', 'focus', 'enter'],
+  emits: ['update:modelValue', 'remove', 'enter'],
   setup(props, { emit }) {
     const select = inject(selectKey, null);
     const { modelValue } = toRefs(props);
@@ -58,9 +58,6 @@ export default defineComponent({
     });
     const handleRemoveTag = (val: string) => {
       emit('remove', val);
-    };
-    const handleFocus = () => {
-      emit('focus');
     };
     const focus = () => {
       inputRef.value?.focus();
@@ -81,7 +78,6 @@ export default defineComponent({
       value,
       inputRef,
       handleRemoveTag,
-      handleFocus,
       focus,
       handleInput,
       handleKeydown,
@@ -102,16 +98,15 @@ export default defineComponent({
               </Tag>
           ))
         }
-         <input
-            class="bk-select-tag-input"
-            ref="inputRef"
-            type="text"
-            placeholder={!this.selected.length ? this.placeholder : ''}
-            readonly={!this.filterable}
-            v-model={this.value}
-            onFocus={this.handleFocus}
-            onInput={this.handleInput}
-            onKeydown={this.handleKeydown}/>
+        <input
+          class="bk-select-tag-input"
+          ref="inputRef"
+          type="text"
+          placeholder={!this.selected.length ? this.placeholder : ''}
+          readonly={!this.filterable}
+          value={!this.filterable ? '' : this.value}
+          onInput={this.handleInput}
+          onKeydown={this.handleKeydown}/>
 
         {this.$slots?.suffix?.()}
       </div>

@@ -29,6 +29,7 @@ import { PopoverPropTypes } from 'popover2/src/props';
 import {
   computed,
   defineComponent,
+  onBeforeMount,
   onMounted,
   provide,
   reactive,
@@ -38,15 +39,16 @@ import {
 } from 'vue';
 
 import { clickoutside } from '@bkui-vue/directives';
-import { AngleUp, Close } from '@bkui-vue/icon';
+import { AngleUp, Close, Search } from '@bkui-vue/icon';
 import Input from '@bkui-vue/input';
 import Loading from '@bkui-vue/loading';
 import BKPopover from '@bkui-vue/popover2';
 import {
   classes,
+  off,
+  on,
   PropTypes,
-  useFormItem,
-} from '@bkui-vue/shared';
+  useFormItem } from '@bkui-vue/shared';
 
 import {
   selectKey,
@@ -86,6 +88,7 @@ export default defineComponent({
     noMatchText: PropTypes.string.def('无匹配数据'),
     loadingText: PropTypes.string.def('加载中...'),
     placeholder: PropTypes.string.def('请选择'),
+    searchPlaceholder: PropTypes.string.def('请输入关键字'),
     selectAllText: PropTypes.string.def('全部'),
     scrollLoading: PropTypes.bool.def(false),
     allowCreate: PropTypes.bool.def(false), // 是否运行创建自定义选项
@@ -96,6 +99,7 @@ export default defineComponent({
     displayKey: PropTypes.string.def('label'),
     withValidate: PropTypes.bool.def(true),
     showSelectedIcon: PropTypes.bool.def(true), // 多选时是否显示勾选ICON
+    inputSearch: PropTypes.bool.def(true), // 是否采用输入框支持搜索的方式
   },
   emits: ['update:modelValue', 'change', 'toggle', 'clear', 'scroll-end', 'focus', 'blur'],
   setup(props, { emit }) {
@@ -115,12 +119,15 @@ export default defineComponent({
       allowCreate,
       customContent,
       showSelectedIcon,
+      inputSearch,
     } = toRefs(props);
 
     const formItem = useFormItem();
 
     const inputRef = ref<HTMLElement>();
     const triggerRef = ref<HTMLElement>();
+    const contentRef = ref<HTMLElement>();
+    const searchRef = ref<HTMLElement>();
     const selectTagInputRef = ref<SelectTagInputType>();
     const optionsMap = ref<Map<string, OptionInstanceType>>(new Map());
     const options = computed(() => [...optionsMap.value.values()]);
@@ -182,13 +189,15 @@ export default defineComponent({
     } = useRegistry<GroupInstanceType>(groupsMap);
     const { isHover, setHover, cancelHover } = useHover();
     const isFocus = ref(false);
-    const handleFocus = (e: FocusEvent) => {
+    const handleFocus = () => {
+      if (isFocus.value) return;
       isFocus.value = true;
-      emit('focus', e);
+      emit('focus');
     };
     const handleBlur = () => {
-      isFocus.value && emit('blur');
+      if (!isFocus.value) return;
       isFocus.value = false;
+      emit('blur');
     };
 
     const {
@@ -199,12 +208,14 @@ export default defineComponent({
       togglePopover,
     } = usePopover({ popoverMinWidth: popoverMinWidth.value }, triggerRef);
     // 输入框是否可以输入内容
-    const isInput = computed(() => (filterable.value || allowCreate.value) && isPopoverShow.value);
+    const isInput = computed(() => (
+      (filterable.value && inputSearch.value) || allowCreate.value)
+      && isPopoverShow.value);
     watch(isPopoverShow, (isShow) => {
       if (!isShow) {
         searchKey.value = '';
       } else {
-        focus();
+        focusInput();
         initActiveOptionValue();
       }
     });
@@ -240,6 +251,7 @@ export default defineComponent({
     // 派发toggle事件
     const handleTogglePopover = () => {
       if (isDisabled.value) return;
+      handleFocus();
       togglePopover();
       emit('toggle', isPopoverShow.value);
     };
@@ -248,7 +260,7 @@ export default defineComponent({
       if (!filterable.value) return;
       searchKey.value = value;
     };
-    // allow create
+    // allow create(创建自定义选项)
     const handleInputEnter = (val: string | number, e: Event) => {
       const value = String(val);
       if (!allowCreate.value
@@ -299,15 +311,21 @@ export default defineComponent({
         emitChange(option.value);
         hidePopover();
       }
-      focus();
+      focusInput();
     };
     // 聚焦输入框
-    const focus = () => {
-      if (multipleMode.value === 'tag') {
-        selectTagInputRef.value?.focus();
-      } else {
-        inputRef.value?.focus();
-      }
+    const focusInput = () => {
+      setTimeout(() => {
+        if (!inputSearch.value && !allowCreate.value) {
+          searchRef.value?.focus();
+        } else {
+          if (multipleMode.value === 'tag') {
+            selectTagInputRef.value?.focus();
+          } else {
+            inputRef.value?.focus();
+          }
+        }
+      }, 0);
     };
     // 清空事件
     const handleClear = (e: Event) => {
@@ -334,7 +352,7 @@ export default defineComponent({
         });
       }
       emitChange(selected.value.map(item => item.value));
-      focus();
+      focusInput();
     };
     // 滚动事件
     const handleScroll = (e) => {
@@ -371,6 +389,8 @@ export default defineComponent({
     };
     // 处理键盘事件
     const handleKeydown = (e: any) => {
+      if (!triggerRef.value.contains(e.target) && !contentRef.value.contains(e.target)) return;
+
       const availableOptions = options.value.filter(option => !option.disabled && option.visible);
       const index = availableOptions.findIndex(option => option.value === activeOptionValue.value);
       if (!availableOptions.length || index === -1) return;
@@ -392,7 +412,12 @@ export default defineComponent({
         }
         // 删除选项
         case 'Backspace': {
-          if (!multiple.value || !selected.value.length || searchKey.value.length) return; // 只有多选支持回退键删除
+          if (
+            !multiple.value
+            || !selected.value.length
+            || searchKey.value.length
+            || e.target === searchRef.value
+          ) return; // 单选和下拉搜索不支持回退键删除
 
           selected.value.pop();
           emitChange(selected.value.map(item => item.value));
@@ -435,6 +460,10 @@ export default defineComponent({
       setTimeout(() => {
         showOnInit.value && showPopover();
       });
+      on(document, 'keydown', handleKeydown);
+    });
+    onBeforeMount(() => {
+      off(document, 'keydown', handleKeydown);
     });
 
     return {
@@ -448,6 +477,8 @@ export default defineComponent({
       popperWidth,
       inputRef,
       triggerRef,
+      contentRef,
+      searchRef,
       selectTagInputRef,
       searchLoading,
       isOptionsEmpty,
@@ -460,6 +491,7 @@ export default defineComponent({
       setHover,
       cancelHover,
       handleFocus,
+      handleBlur,
       handleTogglePopover,
       handleClear,
       hidePopover,
@@ -514,7 +546,6 @@ export default defineComponent({
             tagTheme={this.tagTheme}
             placeholder={this.placeholder}
             filterable={this.isInput}
-            onFocus={this.handleFocus}
             onRemove={this.handleDeleteTag}
             onEnter={this.handleInputEnter}>
               {{
@@ -535,10 +566,8 @@ export default defineComponent({
           disabled={this.isDisabled}
           behavior={this.behavior}
           size={this.size}
-          onFocus={this.handleFocus}
           onInput={this.handleInputChange}
-          onEnter={this.handleInputEnter}
-          onKeydown={(_, e) => this.handleKeydown(e)}>
+          onEnter={this.handleInputEnter}>
             {{
               prefix: () => this.$slots.prefix?.(),
               suffix: () => suffixIcon(),
@@ -552,13 +581,25 @@ export default defineComponent({
           ref="triggerRef"
           onClick={this.handleTogglePopover}
           onMouseenter={this.setHover}
-          onMouseleave={this.cancelHover}
-          onKeydown={this.handleKeydown}>
+          onMouseleave={this.cancelHover}>
           {renderTriggerInput()}
         </div>
     );
     const renderSelectContent = () => (
-        <div class="bk-select-content">
+        <div class="bk-select-content" ref="contentRef">
+          {
+            this.filterable && !this.inputSearch && (
+              <div class="bk-select-search-wrapper">
+                <Search class="icon-search" width={16} height={16} />
+                <input
+                  ref="searchRef"
+                  class="bk-select-search-input"
+                  placeholder={this.searchPlaceholder}
+                  v-model={this.searchKey}
+                />
+              </div>
+            )
+          }
           {
             !this.isShowSelectContent
             && (
