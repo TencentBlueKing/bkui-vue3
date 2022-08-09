@@ -75,7 +75,7 @@ export default defineComponent({
 
     /** node点击展开回调 */
     const nodeExpandHandler = (node: INode) => {
-      if (node.isDisabled) return;
+      if (!node || node?.isDisabled) return;
 
       menus.list = menus.list.slice(0, node.level);
       activePath.value = activePath.value.slice(0, node.level - 1);
@@ -143,6 +143,13 @@ export default defineComponent({
         updateCheckValue(value);
       },
       { immediate: true },
+    );
+
+    watch(
+      () => props.store,
+      (value) => {
+        menus.list = [value.getNodes()];
+      },
     );
 
     return {
