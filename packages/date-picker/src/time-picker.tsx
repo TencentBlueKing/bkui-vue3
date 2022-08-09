@@ -27,6 +27,7 @@
 import {
   computed,
   defineComponent,
+  getCurrentInstance,
   nextTick,
   onMounted,
   provide,
@@ -46,17 +47,21 @@ import PickerDropdown from './base/picker-dropdown';
 // import VueTypes, { toType, toValidableType } from 'vue-types';
 // import { PropTypes } from '@bkui-vue/shared';
 import type { DatePickerPanelType, SelectionModeType } from './interface';
-import DatePanel from './panel/date';
-import DateRangePanel from './panel/date-range';
-import { datePickerProps } from './props';
-import { datePickerKey, extractTime, formatDate, isAllEmptyArr, parseDate } from './utils';
+// import DateRangePanel from './panel/date-range';
+import TimePanel from './panel/time';
+import { datePickerProps, timePanelProps, timePickerProps } from './props';
+import { datePickerKey, extractTime, findChildComponents, formatDate, isAllEmptyArr, parseDate } from './utils';
 
 export default defineComponent({
-  name: 'DatePicker',
+  name: 'TimePicker',
   directives: {
     clickoutside,
   },
-  props: datePickerProps,
+  props: {
+    ...datePickerProps,
+    ...timePickerProps,
+    ...timePanelProps,
+  },
   emits: ['open-change', 'input', 'change', 'update:modelValue', 'clear', 'shortcut-change', 'pick-success'],
   slots: ['header'],
   setup(props, { slots, emit }) {
@@ -133,8 +138,8 @@ export default defineComponent({
     });
 
     const panel = computed<DatePickerPanelType>(() => {
-      const isRange = props.type === 'daterange' || props.type === 'datetimerange';
-      return isRange ? 'DateRangePanel' : 'DatePanel';
+      const isRange = props.type === 'timerange';
+      return isRange ? 'RangeTimePickerPanel' : 'TimePickerPanel';
     });
 
     const opened = computed(() => (props.open === null ? state.visible : props.open));
@@ -183,7 +188,12 @@ export default defineComponent({
       return !props.editable || props.readonly;
     });
 
-    const ownPickerProps = computed(() => props.options);
+    const ownPickerProps = computed(() => ({
+      disabledHours: props.disabledHours,
+      disabledMinutes: props.disabledMinutes,
+      disabledSeconds: props.disabledSeconds,
+      hideDisabledOptions: props.hideDisabledOptions,
+    }));
 
     // 限制 allow-cross-day 属性只在 time-picker 组件 type 为 timerange 时生效
     const allowCrossDayProp = computed(() => (panel.value === 'RangeTimePickerPanel' ? props.allowCrossDay : false));
@@ -193,16 +203,15 @@ export default defineComponent({
       inputRef?.value?.focus();
     };
 
+    const { proxy } = getCurrentInstance();
+
     watch(() => state.visible, (visible) => {
-      if (visible === false) {
-        pickerDropdownRef.value?.destoryDropdown();
+      if (visible) {
+        nextTick(() => {
+          const spinners = findChildComponents(proxy, 'TimeSpinner');
+          spinners.forEach(instance => instance.updateScroll());
+        });
       }
-      pickerDropdownRef.value?.updateDropdown();
-      // TODO: provide/inject
-      // if (!visible) {
-      //   this.dispatch('bk-form-item', 'form-blur');
-      // }
-      emit('open-change', visible);
     });
 
     const pickerDropdownRef = ref(null);
@@ -454,6 +463,12 @@ export default defineComponent({
       );
     };
 
+    const handleTransferClick = () => {
+      if (props.appendToBody) {
+        state.disableCloseUnderTransfer = true;
+      }
+    };
+
     const onPickSuccess = () => {
       state.visible = false;
 
@@ -514,6 +529,9 @@ export default defineComponent({
 
     const triggerRef = ref<HTMLElement>(null);
 
+    console.error(panel);
+    console.error(panel.value);
+
     return {
       ...toRefs(state),
       panel,
@@ -545,6 +563,7 @@ export default defineComponent({
       handleKeydown,
       handleInputChange,
       handleClear,
+      handleTransferClick,
       onPick,
       onPickSuccess,
     };
@@ -607,10 +626,7 @@ export default defineComponent({
       </div>
     );
 
-    // const shortcutsSlot = this.hasShortcuts ? { shortcuts: () => this.$slots.shortcuts?.() || null } : {};
-    const shortcutsSlot = this.hasShortcuts
-      ? { shortcuts: () => this.$slots.shortcuts?.({ change: this.onPick }) || null }
-      : {};
+    const shortcutsSlot = this.hasShortcuts ? { shortcuts: () => this.$slots.shortcuts?.() || null } : {};
 
     return (
       <div
@@ -637,6 +653,7 @@ export default defineComponent({
                 placement={this.placement}
                 extPopoverCls={this.extPopoverCls}
                 appendToBody={this.appendToBody}
+                onClick={this.handleTransferClick}
               >
                 {
                   this.hasHeader
@@ -647,8 +664,8 @@ export default defineComponent({
                     )
                     : null
                 }
-                {
-                  this.panel === 'DateRangePanel'
+                {/* {
+                  this.panel === 'RangeTimePickerPanel'
                     ? (
                       <DateRangePanel
                         ref="pickerPanelRef"
@@ -662,34 +679,47 @@ export default defineComponent({
                         focusedDate={this.focusedDate}
                         onPick={this.onPick}
                         onPick-success={this.onPickSuccess}
-                        onSelection-mode-change={this.onSelectionModeChange}
                         v-slots={shortcutsSlot}
-                        // v-bind={this.ownPickerProps}
+                        v-bind={this.ownPickerProps}
                       />
                     )
                     : (
-                      <DatePanel
+                      <TimePanel
                         ref="pickerPanelRef"
                         clearable={this.clearable}
-                        showTime={this.type === 'datetime' || this.type === 'datetimerange'}
                         confirm={this.isConfirm}
                         shortcuts={this.shortcuts}
                         multiple={this.multiple}
                         shortcutClose={this.shortcutClose}
-                        selectionMode={this.selectionMode}
                         modelValue={this.internalValue}
                         startDate={this.startDate}
                         disableDate={this.disableDate}
-                        focusedDate={this.focusedDate}
                         onPick={this.onPick}
                         onPick-clear={this.handleClear}
                         onPick-success={this.onPickSuccess}
-                        onSelection-mode-change={this.onSelectionModeChange}
                         v-slots={shortcutsSlot}
-                        // v-bind={this.ownPickerProps}
+                        v-bind={this.ownPickerProps}
                       />
                     )
-                }
+                } */}
+                <TimePanel
+                  ref="pickerPanelRef"
+                  clearable={this.clearable}
+                  confirm={this.isConfirm}
+                  shortcuts={this.shortcuts}
+                  multiple={this.multiple}
+                  shortcutClose={this.shortcutClose}
+                  value={this.internalValue}
+                  startDate={this.startDate}
+                  disableDate={this.disableDate}
+                  onPick={this.onPick}
+                  onPick-clear={this.handleClear}
+                  onPick-success={this.onPickSuccess}
+                  v-slots={shortcutsSlot}
+                  disabledHours={this.ownPickerProps.disabledHours}
+                  disabledMinutes={this.ownPickerProps.disabledMinutes}
+                  disabledSeconds={this.ownPickerProps.disabledSeconds}
+                />
                 {
                   this.hasFooter
                     ? (

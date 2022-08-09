@@ -180,3 +180,58 @@ export const datePickerProps = {
 } as const;
 
 export type DatePickerProps = Readonly<ExtractPropTypes<typeof datePickerProps>>;
+
+export const timePanelProps = {
+  // 禁止选择的小时
+  disabledHours: {
+    type: Array,
+    default: () => [],
+  },
+  // 禁止选择的分钟
+  disabledMinutes: {
+    type: Array,
+    default: () => [],
+  },
+  // 禁止选择的秒
+  disabledSeconds: {
+    type: Array,
+    default: () => [],
+  },
+  // 是否隐藏禁止选择的小时、分钟、秒
+  hideDisabledOptions: {
+    type: Boolean,
+    default: false,
+  },
+  width: {
+    type: Number,
+    default: 261,
+  },
+  // 回车模式，为 true 即需要按回车才会把时间回填到文本框
+  enterMode: {
+    type: Boolean,
+    default: true,
+  },
+} as const;
+
+export type TimePanelProps = Readonly<ExtractPropTypes<typeof timePanelProps>>;
+
+export const timePickerProps = {
+  type: {
+    type: String as PropType<PickerTypeType>,
+    default: 'time',
+    validator(value) {
+      const validList: PickerTypeType[] = ['time', 'timerange'];
+      if (validList.indexOf(value) < 0) {
+        console.error(`type property is not valid: '${value}'`);
+        return false;
+      }
+      return true;
+    },
+  },
+  allowCrossDay: {
+    type: Boolean,
+    default: false,
+  },
+};
+
+export type TimePickerProps = Readonly<ExtractPropTypes<typeof timePickerProps>>;

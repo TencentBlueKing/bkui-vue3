@@ -24,14 +24,8 @@
  * IN THE SOFTWARE.
 */
 
+import { TimePicker } from '@bkui-vue/date-picker';
 import { withInstall } from '@bkui-vue/shared';
 
-import Component from './date-picker';
-import TimePicker from './time-picker';
-
-const BkDatePicker = withInstall(Component);
-export default BkDatePicker;
-
-export  {
-  TimePicker,
-};
+const BkTimePicker = withInstall(TimePicker);
+export default BkTimePicker;

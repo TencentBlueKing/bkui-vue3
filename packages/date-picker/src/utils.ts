@@ -28,7 +28,7 @@ import { format as dateFnsFormat, toDate } from 'date-fns';
 import type { InjectionKey } from 'vue';
 
 import fecha from './fecha';
-import type { IDatePickerCtx, PickerTypeType } from './interface';
+import type { IDatePickerCtx, ITimePickerCtx, PickerTypeType } from './interface';
 
 export const RANGE_SEPARATOR = ' - ';
 
@@ -298,6 +298,7 @@ export const formatDate = (val, type, multiple, format) => {
 };
 
 export const datePickerKey: InjectionKey<IDatePickerCtx> = Symbol('date-picker');
+export const timePickerKey: InjectionKey<ITimePickerCtx> = Symbol('time-picker');
 
 /**
  * 寻找子组件
@@ -411,3 +412,34 @@ export const isInRange = (time, a, b) => {
   const [start, end] = [a, b].sort();
   return time >= start && time <= end;
 };
+
+/**
+ * firstUpperCase
+ *
+ * @param {string} str str
+ *
+ * @return {string} str
+ */
+export function firstUpperCase(str) {
+  return str.toString()[0].toUpperCase() + str.toString().slice(1);
+}
+
+/**
+ * 根据 date 设置 h, m, s
+ *
+ * @param {Date} date date 对象
+ * @param {number} h 小时数
+ * @param {number} m 分钟数
+ * @param {number} s 秒数
+ *
+ * @return {Date} date 对象
+ */
+export const mergeDateHMS = (date, ...hms) => {
+  const newDate = new Date(date.getTime());
+  newDate.setHours(hms[0]);
+  newDate.setMinutes(hms[1]);
+  newDate.setSeconds(hms[2]);
+  return newDate;
+};
+
+export const capitalize = str => str[0].toUpperCase() + str.slice(1);

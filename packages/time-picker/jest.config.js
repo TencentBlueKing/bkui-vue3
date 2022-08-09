@@ -23,58 +23,10 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-export const on = (() => {
-  if (document.addEventListener) {
-    return (element, event, handler) => {
-      if (element && event && handler) {
-        element.addEventListener(event, handler, true);
-      }
-    };
-  }
-  return (element, event, handler) => {
-    if (element && event && handler) {
-      element.attachEvent(`on${event}`, handler);
-    }
-  };
-})();
-// 兼容浏览器，移除事件监听器
-export const off = (() => {
-  if (document.removeEventListener) {
-    return (element, event, handler) => {
-      if (element && event) {
-        element.removeEventListener(event, handler, true);
-      }
-    };
-  }
-  return (element, event, handler) => {
-    if (element && event) {
-      element.detachEvent(`on${event}`, handler);
-    }
-  };
-})();
 
-// scrollTop animation
-export function scrollTop(el, from = 0, to, duration = 500, endCallback?) {
-  const difference = Math.abs(from - to);
-  const step = Math.ceil(difference / duration * 50);
+const baseJestConf = require('../../jest.config');
 
-  function scroll(start, end, step) {
-    if (start === end) {
-      endCallback?.();
-      return;
-    }
-
-    let d = (start + step > end) ? end : start + step;
-    if (start > end) {
-      d = (start - step < end) ? end : start - step;
-    }
-
-    if (el === window) {
-      window.scrollTo(d, d);
-    } else {
-      el.scrollTop = d;
-    }
-    window.requestAnimationFrame(() => scroll(d, end, step));
-  }
-  scroll(from, to, step);
-}
+module.exports = {
+  ...baseJestConf,
+  testRegex: 'packages/time-picker/__test__/.*\\.test\\.(js|ts|tsx)$',
+};
