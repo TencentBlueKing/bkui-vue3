@@ -37,6 +37,7 @@ import HeaderSlotDemo from './header-slot-demo.vue';
 import RangeDemo from './range-demo.vue';
 import ShortcutsSlotDemo from './shortcuts-slot-demo.vue';
 import TriggerSlotDemo from './trigger-slot-demo.vue';
+import WithTimeDemo from './with-time-demo.vue';
 
 const menuPropsJson: IPropsTableItem[] = [
   {
@@ -87,6 +88,13 @@ export default defineComponent({
             componentName="date-picker"
             demoName="range-demo">
             <RangeDemo />
+          </DemoBox>
+          <DemoBox
+            title="开启时间设置"
+            desc="通过设置 type 属性为 datetime 来开启时间设置"
+            componentName="date-picker"
+            demoName="with-time-demo">
+            <WithTimeDemo />
           </DemoBox>
           <DemoBox
             title="trigger slot"

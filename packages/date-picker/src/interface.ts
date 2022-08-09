@@ -26,7 +26,7 @@
 
 import type { ComputedPlacement } from '@popperjs/core';
 
-import type { DatePickerProps } from './props';
+import type { DatePickerProps } from './props';;
 
 // export type DatePickerPlacementType =
 //   | 'top'
@@ -68,6 +68,17 @@ export interface IDatePickerCtx {
   focus: () => void
 }
 
+export interface ITimePickerCtx {
+  panelDate: Date,
+  parentName: string
+}
+
 export type DatePickerPanelType = 'DateRangePanel' | 'DatePanel' | 'RangeTimePickerPanel' | 'TimePickerPanel';
 
 export type SelectionModeType = 'year' | 'month' | 'date' | 'time';
+
+export interface IDisabledHMS {
+  disabledHours?: number[],
+  disabledMinutes?: number[],
+  disabledSeconds?: number[],
+}
