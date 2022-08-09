@@ -48,7 +48,7 @@ import useFileHandler from './use-file-handler';
 export default defineComponent({
   name: 'Upload',
   props: uploadProps,
-  emits: ['on-exceed', 'on-progress', 'on-success', 'on-error', 'on-delete', 'on-done'],
+  emits: ['exceed', 'progress', 'success', 'error', 'delete', 'done'],
   setup(props, { slots, emit }) {
     const requests = shallowRef<Record<string, XMLHttpRequest | Promise<unknown>>>({});
 
@@ -73,7 +73,7 @@ export default defineComponent({
 
     function onRemove(file: UploadFile, fileList: UploadFiles) {
       abort(file);
-      emit('on-delete', file, fileList);
+      emit('delete', file, fileList);
     }
 
     const {
@@ -92,7 +92,7 @@ export default defineComponent({
 
       // limit检查
       if (props.limit && fileList.value.length + files.length > props.limit) {
-        emit('on-exceed', files, fileList.value);
+        emit('exceed', files, fileList.value);
         return;
       }
 
@@ -106,7 +106,7 @@ export default defineComponent({
         const error = handlePreprocess(rawFile);
 
         if (error) {
-          emit('on-error', rawFile, fileList.value, error);
+          emit('error', rawFile, fileList.value, error);
           return;
         }
 
@@ -168,29 +168,29 @@ export default defineComponent({
         chunkSize,
         onProgress: (event) => {
           handleProgress(event, file);
-          emit('on-progress', event, file, fileList.value);
+          emit('progress', event, file, fileList.value);
         },
         onSuccess: (res: SuccessResponse) => {
           const result = res as APIResponse;
           if (props?.handleResCode?.(result)) {
             handleSuccess(res, file);
-            emit('on-success', res, file, fileList.value);
+            emit('success', res, file, fileList.value);
           } else {
             const err = new Error(result?.message || 'unknow error');
             handleError(err, file);
-            emit('on-error', file, fileList.value, err);
+            emit('error', file, fileList.value, err);
           }
 
           delete requests.value[uid];
         },
         onError: (err) => {
           handleError(err, file);
-          emit('on-error', file, fileList.value, err);
+          emit('error', file, fileList.value, err);
           delete requests.value[uid];
         },
         onComplete: () => {
           if (sendFiles.indexOf(file) === sendFiles.length - 1) {
-            emit('on-done', fileList.value);
+            emit('done', fileList.value);
           }
         },
       };
