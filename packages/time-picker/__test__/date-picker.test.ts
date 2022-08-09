@@ -24,14 +24,14 @@
  * IN THE SOFTWARE.
 */
 
-import { withInstall } from '@bkui-vue/shared';
+import { mount } from '@vue/test-utils';
 
-import Component from './date-picker';
-import TimePicker from './time-picker';
+import DatePicker from '../src';
 
-const BkDatePicker = withInstall(Component);
-export default BkDatePicker;
-
-export  {
-  TimePicker,
-};
+describe('DatePicker.tsx', () => {
+  it('test', async () => {
+    const wrapper = await mount(DatePicker);
+    // todo
+    console.log(wrapper);
+  });
+});

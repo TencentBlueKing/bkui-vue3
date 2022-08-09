@@ -23,58 +23,61 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-export const on = (() => {
-  if (document.addEventListener) {
-    return (element, event, handler) => {
-      if (element && event && handler) {
-        element.addEventListener(event, handler, true);
-      }
-    };
-  }
-  return (element, event, handler) => {
-    if (element && event && handler) {
-      element.attachEvent(`on${event}`, handler);
-    }
-  };
-})();
-// 兼容浏览器，移除事件监听器
-export const off = (() => {
-  if (document.removeEventListener) {
-    return (element, event, handler) => {
-      if (element && event) {
-        element.removeEventListener(event, handler, true);
-      }
-    };
-  }
-  return (element, event, handler) => {
-    if (element && event) {
-      element.detachEvent(`on${event}`, handler);
-    }
-  };
-})();
 
-// scrollTop animation
-export function scrollTop(el, from = 0, to, duration = 500, endCallback?) {
-  const difference = Math.abs(from - to);
-  const step = Math.ceil(difference / duration * 50);
+import { defineComponent } from 'vue';
 
-  function scroll(start, end, step) {
-    if (start === end) {
-      endCallback?.();
-      return;
-    }
+import DemoBox from '../../components/demo-box';
+import DemoTitle from '../../components/demo-title';
+import PropsBox from '../../components/props-box';
+import { IPropsTableItem } from '../../typings';
 
-    let d = (start + step > end) ? end : start + step;
-    if (start > end) {
-      d = (start - step < end) ? end : start - step;
-    }
+import BaseDemo from './base-demo.vue';
 
-    if (el === window) {
-      window.scrollTo(d, d);
-    } else {
-      el.scrollTop = d;
-    }
-    window.requestAnimationFrame(() => scroll(d, end, step));
-  }
-  scroll(from, to, step);
-}
+const menuPropsJson: IPropsTableItem[] = [
+  {
+    name: 'activeKey',
+    type: 'String',
+    default: '',
+    desc: '选中的menu的key',
+    optional: [],
+  },
+  {
+    name: 'OpenedKeys',
+    type: 'Array',
+    default: [],
+    desc: '打开的submenu key值',
+    optional: [],
+  },
+  {
+    name: 'mode',
+    type: 'String',
+    default: 'vertical',
+    desc: '展示方式',
+    optional: ['vertical', 'horizontal'],
+  },
+  {
+    name: 'uniqueOpen',
+    type: 'Boolean',
+    default: 'true',
+    desc: '是否唯一展开一个submenu',
+    optional: [],
+  },
+];
+
+export default defineComponent({
+  render() {
+    return (
+      <div>
+        <DemoTitle name="TimePicker 时间选择器" desc="时间选择器" />
+          <DemoBox
+            title="基础用法"
+            desc="通过 v-model 或者 value 设置初始值"
+            componentName="date-picker"
+            demoName="base-demo">
+            <BaseDemo />
+          </DemoBox>
+        <PropsBox propsData={menuPropsJson}/>
+      </div>
+    );
+  },
+});
