@@ -607,7 +607,9 @@ export default defineComponent({
       </div>
     );
 
-    const shortcutsSlot = this.hasShortcuts ? { shortcuts: () => this.$slots.shortcuts?.() || null } : {};
+    // const shortcutsSlot = this.hasShortcuts ? { shortcuts: () => this.$slots.shortcuts?.() || null } : {};
+    const shortcutsSlot = this.hasShortcuts
+      ? { shortcuts: () => this.$slots.shortcuts?.({ change: this.onPick }) || null } : {};
 
     return (
       <div
