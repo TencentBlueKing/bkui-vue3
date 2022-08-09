@@ -171,11 +171,6 @@ export default defineComponent({
       document.body.removeEventListener('fullscreenchange', handleFullscrennChange);
     });
 
-    ctx.expose({
-      show,
-      hide,
-    });
-
     const handleClickOutside = (_e: MouseEvent) => {
       ctx.emit(EMITEVENTS.CLICK_OUTSIDE, { isShow: localIsShow.value, event: _e });
       if (props.disableOutsideClick || props.always || props.disabled || props.trigger === 'manual') {
@@ -198,6 +193,8 @@ export default defineComponent({
       theme,
       transBoundary,
       handleClickOutside,
+      hide,
+      show,
     };
   },
 

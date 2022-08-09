@@ -226,13 +226,13 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
     elContent.style.setProperty('display', 'block');
     elContent.style.setProperty('z-index', `${props.zIndex ? props.zIndex : bkZIndexManager.getModalNextIndex()}`);
     updatePopover();
-    ctx.emit('afterShow', { isSHow: true });
+    ctx.emit('afterShow', { isShow: true });
   };
 
   const handlePopoverHide = () => {
     const elContent = resolveTargetElement(refContent.value?.$el);
     elContent.style.setProperty('display', 'none');
-    ctx.emit('afterHidden', { isSHow: false });
+    ctx.emit('afterHidden', { isShow: false });
   };
 
   const triggerPopover = () => {

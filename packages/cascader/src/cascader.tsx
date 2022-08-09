@@ -24,11 +24,11 @@
  * IN THE SOFTWARE.
 */
 
-import { computed, defineComponent,  reactive, ref, toRefs, watch } from 'vue';
+import { computed, defineComponent, ref, toRefs, watch  } from 'vue';
 
 import { clickoutside } from '@bkui-vue/directives';
 import { AngleUp, Close, Error } from '@bkui-vue/icon';
-import BkPopover from '@bkui-vue/popover';
+import BkPopover from '@bkui-vue/popover2';
 import { PropTypes } from '@bkui-vue/shared';
 
 import { useHover } from '../../select/src/common';
@@ -71,7 +71,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const { separator, multiple } = props;
     const { isHover, setHover, cancelHover } = useHover();
-    const store = reactive(new Store(props));
+    const store = ref(new Store(props));
     const panelShow = ref(false);
     const selectedText = ref('');
     const selectedTags = ref([]);
@@ -91,7 +91,7 @@ export default defineComponent({
     const updateValue = (val: Array<string | number>) => {
       /** 根据配置更新显示内容 */
       if (multiple) {
-        selectedTags.value = store.getCheckedNodes().map((node: INode) => ({
+        selectedTags.value = store.value.getCheckedNodes().map((node: INode) => ({
           text: node.pathNames.join(separator),
           key: node.id,
         }));
@@ -99,16 +99,14 @@ export default defineComponent({
       }
 
       /** 根据val的值，设置selectedText显示内容 */
+      popover?.value?.hide(); // 非多选，选中后，关闭popover
       if (val.length === 0) {
         selectedText.value = '';
       } else {
-        const node = store.getNodeByValue(val);
+        const node = store.value.getNodeByValue(val);
+        if (!node) return;
         selectedText.value = node.pathNames.join(separator);
       }
-    };
-
-    const hidePopover = () => {
-      panelShow.value = false;
     };
 
     /** 清空所选内容，要stopPropagation防止触发下拉 */
@@ -119,13 +117,6 @@ export default defineComponent({
       emit('clear', JSON.parse(JSON.stringify(props.modelValue)));
     };
 
-    /** popover的refer点击回调，切换下拉状态 */
-    const inputClickHandler = (e: Event) => {
-      e.stopPropagation();
-      panelShow.value = !panelShow.value;
-      emit('toggle', panelShow.value);
-    };
-
     const removeTag = (value, index, e) => {
       e.stopPropagation();
       const current = JSON.parse(JSON.stringify(value));
@@ -133,26 +124,40 @@ export default defineComponent({
       updateValue(current);
     };
 
+    const modelValueChangeHandler = (value) => {
+      updateValue(value);
+
+      /** 派发相关事件 */
+      emit('update:modelValue', value);
+      emit('change', value);
+    };
+
+    const listChangeHandler = () => {
+      store.value = new Store(props);
+      updateValue(props.modelValue);
+    };
+
+    const popoverChangeEmitter = (val) => {
+      emit('toggle', val.isShow);
+    };
+
     watch(
       () => props.modelValue,
-      (value: Array<string | number>) => {
-        updateValue(value);
-        popover?.value?.handlePopShow(false);
+      modelValueChangeHandler, { immediate: true },
+    );
 
-        /** 派发相关事件 */
-        emit('update:modelValue', value);
-        emit('change', value);
-      }, { immediate: true },
+    watch(
+      () => props.list,
+      listChangeHandler,
+      { deep: true, immediate: true },
     );
 
     return {
       store,
       updateValue,
-      hidePopover,
-      inputClickHandler,
+      panelShow,
       selectedText,
       checkedValue,
-      panelShow,
       handleClear,
       isHover,
       setHover,
@@ -161,6 +166,7 @@ export default defineComponent({
       selectedTags,
       removeTag,
       cascaderPanel,
+      popoverChangeEmitter,
     };
   },
   render() {
@@ -201,12 +207,13 @@ export default defineComponent({
           trigger="click"
           arrow={false}
           class="bk-cascader-popover-wrapper"
-          v-model:isShow={this.panelShow}
           ref="popover"
+          onAfterHidden={this.popoverChangeEmitter}
+          onAfterShow={this.popoverChangeEmitter}
           boundary="body">
           {{
             default: () => (
-              <div class="bk-cascader-name" onClick={this.inputClickHandler}>
+              <div class="bk-cascader-name">
                 {this.multiple && renderTags()}
                 {this.filterable
                   ? <input class="bk-cascader-search-input"
