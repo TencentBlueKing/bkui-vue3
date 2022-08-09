@@ -6,7 +6,7 @@
       :handle-res-code="handleRes"
       :tip="'最大上传5(Mb)的文件'"
       :url="'https://jsonplaceholder.typicode.com/posts/'"
-      @on-error="handleError"
+      @error="handleError"
     />
   </div>
 </template>

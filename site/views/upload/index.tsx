@@ -194,42 +194,42 @@ const uploadProps: IPropsTableItem[] = [
 
 const uploadEvents: IPropsTableItem[] = [
   {
-    name: 'on-done',
+    name: 'done',
     type: 'Function',
     default: null,
     desc: '所有文件上传完毕后的事件',
     optional: ['fileList'],
   },
   {
-    name: 'on-progress',
+    name: 'progress',
     type: 'Function',
     default: null,
     desc: '文件上传进行时的事件',
     optional: ['event', 'file', 'fileList'],
   },
   {
-    name: 'on-success',
+    name: 'success',
     type: 'Function',
     default: null,
     desc: '文件上传成功后的事件',
     optional: ['file', 'fileList'],
   },
   {
-    name: 'on-error',
+    name: 'error',
     type: 'Function',
     default: null,
     desc: '文件上传失败后的事件',
     optional: ['file', 'fileList', 'error'],
   },
   {
-    name: 'on-exceed',
+    name: 'exceed',
     type: 'Function',
     default: null,
     desc: '文件上传个数超出限制后的事件',
     optional: ['file', 'fileList'],
   },
   {
-    name: 'on-delete',
+    name: 'delete',
     type: 'Function',
     default: null,
     desc: '文件上传成功后，点击删除文件触发的事件	',
