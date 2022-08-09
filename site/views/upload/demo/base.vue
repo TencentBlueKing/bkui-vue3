@@ -5,10 +5,10 @@
       :tip="'只允许上传JPG、PNG、JPEG、ZIP的文件'"
       :handle-res-code="handleRes"
       :url="'https://jsonplaceholder.typicode.com/posts/'"
-      @on-success="handleSuccess"
-      @on-error="handleError"
-      @on-progress="handleProgress"
-      @on-done="handleDone"
+      @success="handleSuccess"
+      @error="handleError"
+      @progress="handleProgress"
+      @done="handleDone"
     />
   </div>
 </template>

@@ -7,7 +7,7 @@
       :files="files"
       :handle-res-code="handleRes"
       :url="'https://jsonplaceholder.typicode.com/posts/'"
-      @on-delete="handleDelete"
+      @delete="handleDelete"
     />
   </div>
 </template>
