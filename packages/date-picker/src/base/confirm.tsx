@@ -102,7 +102,7 @@ export default defineComponent({
         {
           this.showTime
             ? (
-              <a href="javascript: void(0);" class="bk-picker-confirm-time" disabled={this.timeDisabled} onClick={this.handleToggleTime}>
+              <a href="javascript: void(0);" class="bk-picker-confirm-time" onClick={this.handleToggleTime}>
                 {this.labels.time}
               </a>
             )

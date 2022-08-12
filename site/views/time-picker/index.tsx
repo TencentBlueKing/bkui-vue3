@@ -32,12 +32,6 @@ import PropsBox from '../../components/props-box';
 import { IPropsTableItem } from '../../typings';
 
 import BaseDemo from './base-demo.vue';
-import FooterSlotDemo from './footer-slot-demo.vue';
-import HeaderSlotDemo from './header-slot-demo.vue';
-import RangeDemo from './range-demo.vue';
-import ShortcutsSlotDemo from './shortcuts-slot-demo.vue';
-import TriggerSlotDemo from './trigger-slot-demo.vue';
-import WithTimeDemo from './with-time-demo.vue';
 
 const menuPropsJson: IPropsTableItem[] = [
   {
@@ -74,55 +68,13 @@ export default defineComponent({
   render() {
     return (
       <div>
-        <DemoTitle name="DatePicker 日期选择器" desc="日期选择器" />
+        <DemoTitle name="TimePicker 时间选择器" desc="时间选择器" />
           <DemoBox
             title="基础用法"
             desc="通过 v-model 或者 value 设置初始值"
             componentName="date-picker"
             demoName="base-demo">
             <BaseDemo />
-          </DemoBox>
-          <DemoBox
-            title="开启日期范围"
-            desc="通过设置 type 属性为 daterange 来开启时间设置"
-            componentName="date-picker"
-            demoName="range-demo">
-            <RangeDemo />
-          </DemoBox>
-          <DemoBox
-            title="开启时间设置"
-            desc="通过设置 type 属性为 datetime 来开启时间设置"
-            componentName="date-picker"
-            demoName="with-time-demo">
-            <WithTimeDemo />
-          </DemoBox>
-          <DemoBox
-            title="trigger slot"
-            desc="可以通过 trigger slot 来增加自定义 trigger"
-            componentName="date-picker"
-            demoName="trigger-slot-demo">
-            <TriggerSlotDemo />
-          </DemoBox>
-          <DemoBox
-            title="header slot"
-            desc="自定义 header"
-            componentName="date-picker"
-            demoName="header-slot-demo">
-            <HeaderSlotDemo />
-          </DemoBox>
-          <DemoBox
-            title="footer slot"
-            desc="自定义 footer"
-            componentName="date-picker"
-            demoName="footer-slot-demo">
-            <FooterSlotDemo />
-          </DemoBox>
-          <DemoBox
-            title="shortcuts slot"
-            desc="自定义 shortcuts"
-            componentName="date-picker"
-            demoName="shortcuts-slot-demo">
-            <ShortcutsSlotDemo />
           </DemoBox>
         <PropsBox propsData={menuPropsJson}/>
       </div>

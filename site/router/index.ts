@@ -554,6 +554,15 @@ const routes: RouteRecordRaw[] = [
       navName: 'DatePicker 日期选择器',
     },
   },
+  {
+    path: '/time-picker',
+    name: 'timePicker',
+    component: () => import('../views/time-picker'),
+    meta: {
+      group: NavGroupMeta.Nav,
+      navName: 'TimePicker 日期选择器',
+    },
+  },
   /**
    * @description:分割线
    */
