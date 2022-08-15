@@ -337,7 +337,7 @@ export default defineComponent({
       if (shortcut.onClick) {
         shortcut.onClick(shortcut, index);
       }
-      emit('pick', typeof shortcut.value === 'function' ? shortcut.value() : shortcut.value, false, props.type, shortcut);
+      emit('pick', typeof shortcut.value === 'function' ? shortcut.value() : shortcut.value, false, 'shortcut', shortcut);
       if (props.shortcutClose) {
         emit('pick-success');
       }
