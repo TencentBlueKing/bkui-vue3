@@ -2,7 +2,7 @@
   <div>
     <div>
       <bk-date-picker
-        :value="defaultValue"
+        v-model="defaultValue"
         type="datetimerange"
         use-shortcut-text
         :shortcuts="shortcutsRange"
@@ -11,7 +11,8 @@
     </div>
     <div style="margin-top: 20px;">
       <bk-date-picker
-        :value="dateValue"
+        v-model="dateValue"
+        @change="change"
       >
         <template #shortcuts>
           <div class="custom-shortcuts">
@@ -27,8 +28,8 @@
   import { reactive, ref } from 'vue';
   const defaultValue = reactive([new Date(), new Date()]);
   const dateValue = ref(new Date());
-  const change = (value) => {
-    console.log(value);
+  const change = (value, type) => {
+    console.log(value, type);
   };
   const shortcutsRange = reactive([
     {
