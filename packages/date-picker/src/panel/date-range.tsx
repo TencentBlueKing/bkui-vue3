@@ -72,6 +72,10 @@ const dateRangePanelProps = {
     type: Array as PropType<DatePickerShortcutsType>,
     default: () => [],
   },
+  shortcutClose: {
+    type: Boolean,
+    default: false,
+  },
   clearable: {
     type: Boolean,
     default: true,
@@ -79,10 +83,6 @@ const dateRangePanelProps = {
   splitPanels: {
     type: Boolean,
     default: true,
-  },
-  shortcutClose: {
-    type: Boolean,
-    default: false,
   },
   showTime: {
     type: Boolean,
@@ -122,7 +122,7 @@ export type DateRangePanelProps = Readonly<ExtractPropTypes<typeof dateRangePane
 
 export default defineComponent({
   props: dateRangePanelProps,
-  emits: ['pick'],
+  emits: ['pick', 'pick-success'],
   setup(props, { slots, emit }) {
     const [minDate, maxDate] = (props.modelValue as any).map(date => date || initTime());
     const leftPanelDate = props.startDate ? props.startDate : minDate;
@@ -330,6 +330,18 @@ export default defineComponent({
         changePanelDate(otherPanel, 'Month', increment, false);
       }
     };
+    const handleShortcutClick = (shortcut, index) => {
+      if (!shortcut?.value) {
+        return false;
+      }
+      if (shortcut.onClick) {
+        shortcut.onClick(shortcut, index);
+      }
+      emit('pick', typeof shortcut.value === 'function' ? shortcut.value() : shortcut.value, false, props.type, shortcut);
+      if (props.shortcutClose) {
+        emit('pick-success');
+      }
+    };
 
     const handleChangeRange = (val) => {
       state.rangeState.to = val;
@@ -367,7 +379,8 @@ export default defineComponent({
       right: preSelecting.value.right ? handlePreSelection.bind('right') : handleRangePick,
     }));
 
-    const hasShortcuts = computed(() => !!slots.shortcuts);
+    const hasShortcuts = computed(() => slots.shortcuts || props.shortcuts?.length);
+
 
     return {
       ...toRefs(state),
@@ -388,6 +401,7 @@ export default defineComponent({
       preSelecting,
       panelPickerHandlers,
 
+      handleShortcutClick,
       reset,
       onToggleVisibility,
       handleRangePick,
@@ -408,8 +422,8 @@ export default defineComponent({
       >
         <div class={['bk-picker-panel-body', this.showTime ? 'bk-picker-panel-body-time' : 'bk-picker-panel-body-date']}>
           {/* left panel */}
-          <div class="bk-picker-panel-content bk-picker-panel-content-left" v-show={!this.isTime} style="width: 261px;">
-            <div class="bk-date-picker-header" v-show={this.currentView !== 'time'}>
+          <div class='bk-picker-panel-content bk-picker-panel-content-left' v-show={!this.isTime} style='width: 261px;'>
+            <div class='bk-date-picker-header' v-show={this.currentView !== 'time'}>
               <span class={iconBtnCls('prev', '-double')} onClick={() => this.prevYear('left')}>
                 <AngleDoubleLeft style={{ fontSize: '20px', lineHeight: 1 }}></AngleDoubleLeft>
               </span>
@@ -426,11 +440,11 @@ export default defineComponent({
                 this.leftDatePanelLabel && Object.keys(this.leftDatePanelLabel).length > 0
                   ? (
                     <span>
-                      <span class="bk-date-picker-header-label" v-show={this.leftShowLabelFirst} onClick={() => this.leftDatePanelLabel.labels[0].handler}>
+                      <span class='bk-date-picker-header-label' v-show={this.leftShowLabelFirst} onClick={() => this.leftDatePanelLabel.labels[0].handler}>
                         {this.leftDatePanelLabel.labels[0].label}
                       </span>
                       {this.leftDatePanelView === 'date' ? ` ${this.leftDatePanelLabel.separator} ` : ' '}
-                      <span class="bk-date-picker-header-label" v-show={this.leftShowLabelSecond} onClick={() => this.leftDatePanelLabel.labels[1].handler}>
+                      <span class='bk-date-picker-header-label' v-show={this.leftShowLabelSecond} onClick={() => this.leftDatePanelLabel.labels[1].handler}>
                         {this.leftDatePanelLabel.labels[1].label}
                       </span>
                     </span>
@@ -472,7 +486,7 @@ export default defineComponent({
                           }
                           focusedDate={this.focusedDate}
                           onChangeRange={this.handleChangeRange}
-                          onPick={this.panelPickerHandlers.left} />
+                          onPick={this.panelPickerHandlers.left}/>
                       );
                     default:
                       return null;
@@ -482,8 +496,8 @@ export default defineComponent({
             }
           </div>
           {/* right panel */}
-          <div class="bk-picker-panel-content bk-picker-panel-content-right" v-show={!this.isTime} style="width: 261px;">
-            <div class="bk-date-picker-header" v-show={this.currentView !== 'time'}>
+          <div class='bk-picker-panel-content bk-picker-panel-content-right' v-show={!this.isTime} style='width: 261px;'>
+            <div class='bk-date-picker-header' v-show={this.currentView !== 'time'}>
               {
                 this.splitPanels || this.rightPickerTable !== 'date-table'
                   ? (
@@ -506,11 +520,11 @@ export default defineComponent({
                 this.rightDatePanelLabel && Object.keys(this.rightDatePanelLabel).length > 0
                   ? (
                     <span>
-                      <span class="bk-date-picker-header-label" v-show={this.rightShowLabelFirst} onClick={() => this.rightDatePanelLabel.labels[0].handler}>
+                      <span class='bk-date-picker-header-label' v-show={this.rightShowLabelFirst} onClick={() => this.rightDatePanelLabel.labels[0].handler}>
                         {this.rightDatePanelLabel.labels[0].label}
                       </span>
                       {this.rightDatePanelView === 'date' ? ` ${this.rightDatePanelLabel.separator} ` : ' '}
-                      <span class="bk-date-picker-header-label" v-show={this.rightShowLabelSecond} onClick={() => this.rightDatePanelLabel.labels[1].handler}>
+                      <span class='bk-date-picker-header-label' v-show={this.rightShowLabelSecond} onClick={() => this.rightDatePanelLabel.labels[1].handler}>
                         {this.rightDatePanelLabel.labels[1].label}
                       </span>
                     </span>
@@ -521,9 +535,9 @@ export default defineComponent({
                 this.upToNow
                   ? (() => {
                     if ((this.rangeState.selecting || this.currentView === 'time') && this.upToNowEnable) {
-                      return <span class="up-to-now" onClick={() => this.handleRangePick(new Date(), 'upToNow')}>至今</span>;
+                      return <span class='up-to-now' onClick={() => this.handleRangePick(new Date(), 'upToNow')}>至今</span>;
                     }
-                    return <span class="up-to-now disabled">至今</span>;
+                    return <span class='up-to-now disabled'>至今</span>;
                   })()
                   : ''
               }
@@ -560,7 +574,7 @@ export default defineComponent({
                           }
                           focusedDate={this.focusedDate}
                           onChangeRange={this.handleChangeRange}
-                          onPick={this.panelPickerHandlers.right} />
+                          onPick={this.panelPickerHandlers.right}/>
                       );
                     default:
                       return null;
@@ -573,8 +587,19 @@ export default defineComponent({
         {
           this.hasShortcuts
             ? (
-              <div class="bk-picker-panel-sidebar">
-                {this.$slots.shortcuts?.() ?? null}
+              <div class='bk-picker-panel-sidebar'>
+                {this.$slots.shortcuts?.() ?? this.shortcuts.length ? (
+                  <div class='bk-picker-panel-shortcuts'>
+                    {
+                      this.shortcuts.map((item, index) => (
+                        <div
+                          key={index}
+                          class='shortcuts-item'
+                          onClick={() => this.handleShortcutClick(item, index)}>{item.text}</div>
+                      ))
+                    }
+                  </div>
+                ) : ''}
               </div>
             )
             : null
