@@ -522,7 +522,7 @@ export default defineComponent({
       trigger: 'manual',
       width: this.popperWidth,
       arrow: false,
-      placement: 'bottom',
+      placement: 'bottom-start',
       isShow: this.isPopoverShow,
     };
     const popoverOptions: Partial<PopoverPropTypes> = merge(basePopoverOptions, this.popoverOptions);
