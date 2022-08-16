@@ -26,7 +26,7 @@
 import { defineComponent, ref, toRefs, watch } from 'vue';
 import { PropType } from 'vue-types/dist/types';
 
-import { PropTypes } from '@bkui-vue/shared';
+import { classes, PropTypes } from '@bkui-vue/shared';
 import Tag from '@bkui-vue/tag';
 
 import { ISelected } from './type';
@@ -43,11 +43,12 @@ export default defineComponent({
     placeholder: PropTypes.string.def(''),
     filterable: PropTypes.bool.def(false), // 是否支持搜索
     allowCreate: PropTypes.bool.def(false),
+    disabled: PropTypes.bool.def(false),
     modelValue: PropTypes.any,
   },
   emits: ['update:modelValue', 'remove', 'enter'],
   setup(props, { emit }) {
-    const { modelValue } = toRefs(props);
+    const { modelValue, disabled } = toRefs(props);
     const value = ref(modelValue.value);
     const inputRef = ref<HTMLElement>();
 
@@ -55,6 +56,7 @@ export default defineComponent({
       value.value = modelValue.value;
     });
     const handleRemoveTag = (val: string) => {
+      if (disabled.value) return;
       emit('remove', val);
     };
     const focus = () => {
@@ -81,8 +83,12 @@ export default defineComponent({
     };
   },
   render() {
+    const tagClass = classes({
+      'bk-select-tag': true,
+      'is-disabled': this.disabled,
+    });
     return (
-      <div class="bk-select-tag">
+      <div class={tagClass}>
         {this.$slots?.prefix?.()}
         {
           this.selected.map(item => (
@@ -100,6 +106,7 @@ export default defineComponent({
           type="text"
           placeholder={!this.selected.length ? this.placeholder : ''}
           readonly={!this.filterable}
+          disabled={this.disabled}
           value={!this.filterable ? '' : this.value}
           onInput={this.handleInput}
           onKeydown={this.handleKeydown}/>

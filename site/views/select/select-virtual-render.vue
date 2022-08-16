@@ -16,7 +16,7 @@
   const selectedValue = ref();
   onMounted(() => {
     console.time();
-    datasource.value = new Array(100000).fill('')
+    datasource.value = new Array(6000).fill('')
       .map((_, index) => ({ value: index, label: `测试数据${index}` }));
     console.timeEnd();
   });

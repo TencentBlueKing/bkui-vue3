@@ -164,7 +164,8 @@ export default defineComponent({
     // select组件是否禁用
     const isDisabled = computed(() => disabled.value || loading.value);
     // modelValue对应的label
-    const selectedLabel = computed(() => selected.value.map(item => item.label));
+    const selectedLabel = computed(() => selected.value
+      .map(item => optionsMap.value?.get(item.value)?.label || item.label));
     // 是否全选(todo: 优化)
     const isAllSelected = computed(() => {
       const normalSelectedValues = options.value.reduce<string[]>((pre, option) => {
@@ -424,8 +425,8 @@ export default defineComponent({
     // 处理键盘事件
     const handleKeydown = (e: any) => {
       if (
-        !triggerRef.value.contains(e.target)
-        && !contentRef.value.contains(e.target)
+        !triggerRef.value?.contains(e.target)
+        && !contentRef.value?.contains(e.target)
         && !enableVirtualRender.value
         && !customContent.value
       ) return;
@@ -588,6 +589,7 @@ export default defineComponent({
             tagTheme={this.tagTheme}
             placeholder={this.placeholder}
             filterable={this.isInput}
+            disabled={this.isDisabled}
             onRemove={this.handleDeleteTag}
             onEnter={this.handleInputEnter}>
               {{
@@ -669,22 +671,24 @@ export default defineComponent({
                   )
                 }
                 {
-                  <VirtualRender
-                    list={this.filterList}
-                    height={this.virtualHeight}
-                    lineHeight={32}
-                    ref="virtualRenderRef">
-                      {{
-                        default: ({ data }) => data
-                          .map(item => (
-                            <Option
-                              key={item[this.idKey]}
-                              value={item[this.idKey]}
-                              label={item[this.displayKey]}
-                            />
-                          )),
-                      }}
-                  </VirtualRender>
+                  this.enableVirtualRender
+                    ? <VirtualRender
+                        list={this.filterList}
+                        height={this.virtualHeight}
+                        lineHeight={32}
+                        ref="virtualRenderRef">
+                          {{
+                            default: ({ data }) => data
+                              .map(item => (
+                                <Option
+                                  key={item[this.idKey]}
+                                  value={item[this.idKey]}
+                                  label={item[this.displayKey]}
+                                />
+                              )),
+                          }}
+                      </VirtualRender>
+                    : this.list.map(item => <Option value={item[this.idKey]} label={item[this.displayKey]}></Option>)
                 }
                 {this.$slots.default?.()}
                 {this.scrollLoading && (
