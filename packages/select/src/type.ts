@@ -46,7 +46,6 @@ export interface ISelectContext {
   registerGroup(key: any, option: GroupInstanceType): any;
   unregisterGroup(key: any): any;
   handleOptionSelected (option: OptionInstanceType): void;
-  handleGetLabelByValue (item: ISelected): string
 }
 
 export interface IOptionGroupContext {

@@ -62,8 +62,7 @@ describe('Select.tsx', () => {
       disabled: true,
     });
     await wrapper.find('.bk-select-trigger').trigger('click');
-    const popover = document.querySelector('.bk-pop2-content');
-    expect(window.getComputedStyle(popover).display).toBe('none');
+    expect(vm.isPopoverShow).toBeFalsy();
     wrapper.unmount();
   });
 
@@ -308,42 +307,20 @@ describe('Select.tsx', () => {
     expect(wrapper.vm.seletValue).toEqual([2]);
   });
 
-  // 单选搜索功能
+  // 搜索功能
   test('single select search', async () => {
-    // const wrapper = await mount({
-    //   components: {
-    //     BkSelect,
-    //     BkOption,
-    //   },
-    //   template: `
-    //     <BkSelect v-model="seletValue" filterable>
-    //       <BkOption value="test" label="label1"></BkOption>
-    //       <BkOption :value="false" label="label2" disabled></BkOption>
-    //       <BkOption :value="undefined" label="label3"></BkOption>
-    //       <BkOption :value="1" label="label4"></BkOption>
-    //       <BkOption :value="null" label="label5"></BkOption>
-    //     </BkSelect>
-    //   `,
-    //   data() {
-    //     return {
-    //       seletValue: '',
-    //     };
-    //   },
-    // });
 
-    // const { vm } = wrapper;
-    // const select = wrapper.findComponent({ name: 'Select' }).vm as InstanceType<typeof BkSelect>;;
-    // await wrapper.find('.bk-select-trigger').trigger('click');
-    // select.searchKey = '2';
-    // await vm.$nextTick();
-    // const options = wrapper.findAll('.bk-select-option').filter(item => item.isVisible());
-    // expect(options).toHaveLength(1);
-    // expect(await options[0].trigger('click'));
-    // expect(vm.seletValue).toBe('');
-    // select.searchKey = 'LABEL1';
-    // await vm.$nextTick();
-    // const [matchOption] = wrapper.findAll('.bk-select-option').filter(item => item.isVisible());
-    // await matchOption.trigger('click');
-    // expect(vm.seletValue).toBe('test');
+  });
+
+  // 虚拟滚动功能
+  test('virtual select', async () => {
+    const wrapper = await mount(BkSelect, {
+      props: {
+        enableVirtualRender: true,
+        list: new Array(1000000).fill('')
+          .map((_, index) => ({ value: index, label: `测试数据${index}` })),
+      },
+    });
+    expect(wrapper.findAllComponents(BkOption).length).toBeLessThan(10);
   });
 });

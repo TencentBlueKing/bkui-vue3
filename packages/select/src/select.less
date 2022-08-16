@@ -165,6 +165,31 @@
       align-items: center;
       flex-wrap: wrap;
 
+      &:not(.is-disabled):hover {
+        border-color: #979ba5;
+      }
+
+      &.is-disabled {
+        cursor: not-allowed;
+        background-color: #fafbfd;
+
+        input {
+          cursor: not-allowed;
+        }
+
+        .bk-tag {
+          cursor: not-allowed;
+
+          &:hover {
+            background-color: #f0f1f5;
+          }
+
+          .bk-tag-close {
+            cursor: not-allowed;
+          }
+        }
+      }
+
       &-input {
         .input();
         width: 1%;
@@ -173,6 +198,7 @@
         padding: 0;
         margin: 4px 5px 4px 0;
         overflow: hidden;
+        background-color: transparent;
         border: none;
         outline: none;
         flex-grow: 1;
