@@ -49,6 +49,7 @@ import {
   on,
   PropTypes,
   useFormItem } from '@bkui-vue/shared';
+import VirtualRender from '@bkui-vue/virtual-render';
 
 import {
   selectKey,
@@ -76,7 +77,7 @@ export default defineComponent({
     loading: PropTypes.bool.def(false),
     filterable: PropTypes.bool.def(false), // 是否支持搜索
     remoteMethod: PropTypes.func,
-    scrollHeight: PropTypes.number.def(216),
+    scrollHeight: PropTypes.number.def(200),
     showSelectAll: PropTypes.bool.def(false), // 全选
     popoverMinWidth: PropTypes.number.def(0), // popover最小宽度
     showOnInit: PropTypes.bool.def(false), // 是否默认显示popover
@@ -100,6 +101,7 @@ export default defineComponent({
     withValidate: PropTypes.bool.def(true),
     showSelectedIcon: PropTypes.bool.def(true), // 多选时是否显示勾选ICON
     inputSearch: PropTypes.bool.def(true), // 是否采用输入框支持搜索的方式
+    enableVirtualRender: PropTypes.bool.def(false), // 是否开启虚拟滚动（List模式下才会生效）
   },
   emits: ['update:modelValue', 'change', 'toggle', 'clear', 'scroll-end', 'focus', 'blur'],
   setup(props, { emit }) {
@@ -120,6 +122,7 @@ export default defineComponent({
       customContent,
       showSelectedIcon,
       inputSearch,
+      enableVirtualRender,
     } = toRefs(props);
 
     const formItem = useFormItem();
@@ -129,6 +132,7 @@ export default defineComponent({
     const contentRef = ref<HTMLElement>();
     const searchRef = ref<HTMLElement>();
     const selectTagInputRef = ref<SelectTagInputType>();
+    const virtualRenderRef = ref();
     const optionsMap = ref<Map<string, OptionInstanceType>>(new Map());
     const options = computed(() => [...optionsMap.value.values()]);
     const groupsMap = ref<Map<string, GroupInstanceType>>(new Map());
@@ -217,6 +221,10 @@ export default defineComponent({
       } else {
         focusInput();
         initActiveOptionValue();
+        // 虚拟滚动首次未更新问题
+        enableVirtualRender.value && setTimeout(() => {
+          virtualRenderRef.value?.reset?.();
+        });
       }
     });
 
@@ -480,6 +488,7 @@ export default defineComponent({
       contentRef,
       searchRef,
       selectTagInputRef,
+      virtualRenderRef,
       searchLoading,
       isOptionsEmpty,
       isSearchEmpty,
@@ -627,7 +636,18 @@ export default defineComponent({
                       {this.selectAllText}
                       </li>
                 }
-                {this.list.map(item => <Option value={item[this.idKey]} label={item[this.displayKey]}></Option>)}
+                {
+                  <VirtualRender
+                    list={this.list}
+                    height={this.scrollHeight - 12}
+                    enabled={!!this.list.length && this.enableVirtualRender}
+                    ref="virtualRenderRef">
+                      {{
+                        default: ({ data }) => data
+                          .map(item => <Option value={item[this.idKey]} label={item[this.displayKey]}></Option>),
+                      }}
+                  </VirtualRender>
+                }
                 {this.$slots.default?.()}
                 {this.scrollLoading && (
                   <li class="bk-select-options-loading">
