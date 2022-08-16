@@ -640,6 +640,7 @@ export default defineComponent({
                   <VirtualRender
                     list={this.list}
                     height={this.scrollHeight - 12}
+                    lineHeight={32}
                     enabled={!!this.list.length && this.enableVirtualRender}
                     ref="virtualRenderRef">
                       {{
