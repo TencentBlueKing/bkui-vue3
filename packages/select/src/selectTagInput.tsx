@@ -23,13 +23,12 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent, inject, ref, toRefs, watch } from 'vue';
+import { defineComponent, ref, toRefs, watch } from 'vue';
 import { PropType } from 'vue-types/dist/types';
 
 import { PropTypes } from '@bkui-vue/shared';
 import Tag from '@bkui-vue/tag';
 
-import { selectKey } from './common';
 import { ISelected } from './type';
 
 
@@ -48,7 +47,6 @@ export default defineComponent({
   },
   emits: ['update:modelValue', 'remove', 'enter'],
   setup(props, { emit }) {
-    const select = inject(selectKey, null);
     const { modelValue } = toRefs(props);
     const value = ref(modelValue.value);
     const inputRef = ref<HTMLElement>();
@@ -73,7 +71,6 @@ export default defineComponent({
         }
       }
     };
-    const handleGetLabelByValue = select?.handleGetLabelByValue;
     return {
       value,
       inputRef,
@@ -81,7 +78,6 @@ export default defineComponent({
       focus,
       handleInput,
       handleKeydown,
-      handleGetLabelByValue,
     };
   },
   render() {
@@ -94,7 +90,7 @@ export default defineComponent({
                 closable
                 theme={this.tagTheme}
                 onClose={() => this.handleRemoveTag(item.value)}>
-                {this.handleGetLabelByValue(item)}
+                {item.label}
               </Tag>
           ))
         }

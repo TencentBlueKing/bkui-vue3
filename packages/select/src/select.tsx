@@ -123,6 +123,10 @@ export default defineComponent({
       showSelectedIcon,
       inputSearch,
       enableVirtualRender,
+      showSelectAll,
+      scrollHeight,
+      list,
+      displayKey,
     } = toRefs(props);
 
     const formItem = useFormItem();
@@ -137,6 +141,10 @@ export default defineComponent({
     const options = computed(() => [...optionsMap.value.values()]);
     const groupsMap = ref<Map<string, GroupInstanceType>>(new Map());
     const selected = ref<ISelected[]>([]);
+    const cacheSelectedMap = computed<Record<string, string>>(() => selected.value.reduce((pre, item) => {
+      pre[item.value] = item.label;
+      return pre;
+    }, {}));
     const activeOptionValue = ref<any>(); // 当前悬浮的option
 
     watch(modelValue, () => {
@@ -146,10 +154,17 @@ export default defineComponent({
       }
     }, { deep: true });
 
+    // list模式下搜索后的值
+    const filterList = computed(() => (
+      isRemoteSearch.value
+        ? list.value
+        : list.value
+          .filter(item => toLowerCase(String(item[displayKey.value]))?.includes(searchKey.value))
+    ));
     // select组件是否禁用
     const isDisabled = computed(() => disabled.value || loading.value);
     // modelValue对应的label
-    const selectedLabel = computed(() => selected.value.map(item => handleGetLabelByValue(item)));
+    const selectedLabel = computed(() => selected.value.map(item => item.label));
     // 是否全选(todo: 优化)
     const isAllSelected = computed(() => {
       const normalSelectedValues = options.value.reduce<string[]>((pre, option) => {
@@ -172,6 +187,11 @@ export default defineComponent({
     // 是否显示select下拉内容
     const isShowSelectContent = computed(() => !(searchLoading.value || isOptionsEmpty.value || isSearchEmpty.value)
       || customContent.value);
+    // 是否显示全选
+    const isShowSelectAll = computed(() => multiple.value && showSelectAll.value
+      && (!searchKey.value || !filterable.value));
+    // 虚拟滚动高度 12 上下边距，32 显示全选时的高度
+    const virtualHeight = computed(() => scrollHeight.value - 12 - (isShowSelectAll.value ? 32 : 0));
     // 当前空状态时显示文案
     const curContentText = computed(() => {
       if (searchLoading.value) {
@@ -221,11 +241,14 @@ export default defineComponent({
       } else {
         focusInput();
         initActiveOptionValue();
-        // 虚拟滚动首次未更新问题
-        enableVirtualRender.value && setTimeout(() => {
-          virtualRenderRef.value?.reset?.();
-        });
       }
+    });
+    const watchOnce = watch(isPopoverShow, () => {
+      setTimeout(() => {
+        // 虚拟滚动首次未更新问题
+        enableVirtualRender.value && virtualRenderRef.value?.reset?.();
+        watchOnce();
+      });
     });
 
     // 初始化当前悬浮的option项
@@ -245,9 +268,12 @@ export default defineComponent({
         option.visible = toLowerCase(String(option.label))?.includes(toLowerCase(value));
       });
     };
-    const { searchKey, searchLoading } = useRemoteSearch(isRemoteSearch.value
-      ? remoteMethod.value
-      : defaultSearchMethod, initActiveOptionValue);
+    const { searchKey, searchLoading } = useRemoteSearch(
+      isRemoteSearch.value
+        ? remoteMethod.value
+        : defaultSearchMethod,
+      initActiveOptionValue,
+    );
 
     // 派发change事件
     const emitChange = (val: string | string[]) => {
@@ -378,26 +404,31 @@ export default defineComponent({
       }
     };
     // options存在 > 上一次选择的label > 当前值
-    const handleGetLabelByValue = (item: ISelected) => optionsMap.value?.get(item.value)?.label
-    || item.label || item.value;
+    const handleGetLabelByValue = (value: string) => optionsMap.value?.get(value)?.label
+      || cacheSelectedMap.value[value] || value;
     // 设置selected选项
     const handleSetSelectedData = () => {
       // 同步内部value值
       if (Array.isArray(modelValue.value)) {
         selected.value = [...(modelValue.value as string[]).map(value => ({
           value,
-          label: value,
+          label: handleGetLabelByValue(value),
         }))];
-      } else if (modelValue.value !== undefined) {
+      } else if (modelValue.value !== undefined && modelValue.value !== '') {
         selected.value = [{
           value: modelValue.value,
-          label: modelValue.value,
+          label: handleGetLabelByValue(modelValue.value),
         }];
       }
     };
     // 处理键盘事件
     const handleKeydown = (e: any) => {
-      if (!triggerRef.value.contains(e.target) && !contentRef.value.contains(e.target)) return;
+      if (
+        !triggerRef.value.contains(e.target)
+        && !contentRef.value.contains(e.target)
+        && !enableVirtualRender.value
+        && !customContent.value
+      ) return;
 
       const availableOptions = options.value.filter(option => !option.disabled && option.visible);
       const index = availableOptions.findIndex(option => option.value === activeOptionValue.value);
@@ -460,7 +491,6 @@ export default defineComponent({
       registerGroup,
       unregisterGroup,
       handleOptionSelected,
-      handleGetLabelByValue,
     }));
 
     onMounted(() => {
@@ -497,6 +527,9 @@ export default defineComponent({
       curContentText,
       isGroup,
       searchKey,
+      isShowSelectAll,
+      virtualHeight,
+      filterList,
       setHover,
       cancelHover,
       handleFocus,
@@ -627,25 +660,29 @@ export default defineComponent({
             >
               <ul class="bk-select-options" v-show={this.isShowSelectContent}>
                 {
-                  this.multiple
-                    && this.showSelectAll
-                    && (!this.searchKey || !this.filterable)
-                    && <li class="bk-select-option"
+                  this.isShowSelectAll && (
+                    <li class="bk-select-option"
                       onMouseenter={this.handleSelectedAllOptionMouseEnter}
                       onClick={this.handleToggleAll}>
                       {this.selectAllText}
-                      </li>
+                    </li>
+                  )
                 }
                 {
                   <VirtualRender
-                    list={this.list}
-                    height={this.scrollHeight - 12}
+                    list={this.filterList}
+                    height={this.virtualHeight}
                     lineHeight={32}
-                    enabled={!!this.list.length && this.enableVirtualRender}
                     ref="virtualRenderRef">
                       {{
                         default: ({ data }) => data
-                          .map(item => <Option value={item[this.idKey]} label={item[this.displayKey]}></Option>),
+                          .map(item => (
+                            <Option
+                              key={item[this.idKey]}
+                              value={item[this.idKey]}
+                              label={item[this.displayKey]}
+                            />
+                          )),
                       }}
                   </VirtualRender>
                 }
