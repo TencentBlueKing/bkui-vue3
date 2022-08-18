@@ -36,10 +36,10 @@ import {
 } from 'vue';
 
 import {
-  LeftShape,
-  RightShape,
+  AngleLeft,
+  AngleRight,
 } from '@bkui-vue/icon';
-import BkPopover from '@bkui-vue/popover';
+import BkPopover2 from '@bkui-vue/popover2';
 
 import type {
   IPaginationInstance,
@@ -170,12 +170,13 @@ export default () => {
           'is-disabled': isPagePreDisabled.value,
         }}
         onClick={handlePrePage}>
-          <LeftShape />
+          <AngleLeft />
       </div>
-      <BkPopover
+      <BkPopover2
         theme="light"
         trigger="click"
         arrow={false}
+        width={56}
         boundary="body"
         placement="bottom">
         {{
@@ -215,14 +216,14 @@ export default () => {
             </div>
           ),
         }}
-      </BkPopover>
+      </BkPopover2>
       <div
         class={{
           'bk-pagination-btn-next': true,
           'is-disabled': isPageNextDisabled.value,
         }}
         onClick={handleNextPage}>
-          <RightShape />
+          <AngleRight />
       </div>
     </div>
   );
