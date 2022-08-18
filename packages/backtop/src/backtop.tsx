@@ -100,7 +100,7 @@ export default defineComponent({
               zIndex: zIndex.value,
             }}
             onClick={scrollTop}>
-            {slots.default?.() ?? <AngleUp style={{ fontSize: '14px' }}></AngleUp>}
+            {slots.default?.() ?? <AngleUp class="bk-backtop-icon"></AngleUp>}
           </div>
           : ''
         }

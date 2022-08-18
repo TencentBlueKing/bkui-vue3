@@ -15,48 +15,50 @@
   &.default {
     color: @default-color;
 
+    &:hover {
+      color: @link-default-hover-color;
+    }
+
     &.is-disabled {
       color: @link-default-disabled-color;
     }
 
-    &:hover {
-      color: @link-default-hover-color;
-    }
   }
 
   &.primary {
     color: @primary-color;
 
-    &.is-disabled {
-      color: @link-primary-disabled-color;
-    }
-
     &:hover {
       color: @link-primary-hover-color;
+    }
+
+    &.is-disabled {
+      color: @link-primary-disabled-color;
     }
   }
 
   &.success {
     color: @success-color;
 
+    &:hover {
+      color: @link-success-hover-color;
+    }
+
     &.is-disabled {
       color: @link-success-disabled-color;
     }
 
-    &:hover {
-      color: @link-success-hover-color;
-    }
   }
 
   &.warning {
     color: @warning-color;
 
-    &.is-disabled {
-      color: @link-warning-disabled-color;
-    }
-
     &:hover {
       color: @link-warning-hover-color;
+    }
+
+    &.is-disabled {
+      color: @link-warning-disabled-color;
     }
   }
 

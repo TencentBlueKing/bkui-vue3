@@ -52,7 +52,7 @@ export const enum EMITEVENTS {
   COLUMN_FILTER = 'columnFilter',
 
   ROW_CLICK = 'rowClick',
-  ROW_DBL_CLICK = 'rowDblClick',
+  ROW_DBL_CLICK = 'rowDblclick',
   ROW_EXPAND_CLICK = 'rowExpand',
 
   PAGE_LIMIT_CHANGE = 'pageLimitChange',

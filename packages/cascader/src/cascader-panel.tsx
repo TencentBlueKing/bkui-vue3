@@ -22,23 +22,24 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
-import { defineComponent, reactive, ref } from 'vue';
+import { defineComponent, reactive, ref, watch } from 'vue';
 
 import BkCheckbox from '@bkui-vue/checkbox';
 import { AngleRight, Spinner } from '@bkui-vue/icon';
 import { arrayEqual, PropTypes } from '@bkui-vue/shared';
 
-import { IData, INode }  from './interface';
-
+import { IData, INode } from './interface';
 
 export default defineComponent({
   name: 'CascaderPanel',
   props: {
     store: PropTypes.object.def({}),
+    modelValue: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.number).def([]),
+      PropTypes.arrayOf(PropTypes.string).def([])]),
   },
-  emits: ['input'],
+  emits: ['update:modelValue'],
   setup(props, { emit }) {
     const { store } = props;
     const menus = reactive({
@@ -47,20 +48,11 @@ export default defineComponent({
     const activePath = ref([]);
     const checkValue = ref([]);
 
-    const nodeCheckHandler = (node: INode) => {
-      if (node.config.multiple) {
-        checkValue.value = store.getCheckedNodes().map(node => node.path);
-      } else {
-        checkValue.value =  node.path;
+    const updateCheckValue = (value: Array<number | string>) => {
+      if (value.length === 0) {
+        menus.list = menus.list.slice(0, 1);
+        activePath.value = [];
       }
-      emit('input', checkValue.value);
-    };
-
-    const nodeClear = () => {
-      emit('input', []);
-    };
-
-    const syncCheckedValue = (value: Array<number | string>) => {
       value.forEach((id: number | string) => {
         const node = store.getNodeById(id);
         nodeExpandHandler(node);
@@ -68,9 +60,22 @@ export default defineComponent({
       checkValue.value = value;
     };
 
+    /** 节点选中回调
+     *  根据单选、多选配置checkValue
+     *  派发事件，更新选中值
+     */
+    const nodeCheckHandler = (node: INode) => {
+      if (node.config.multiple) {
+        checkValue.value = store.getCheckedNodes().map(node => node.path);
+      } else {
+        checkValue.value = node.path;
+      }
+      emit('update:modelValue', checkValue.value);
+    };
+
     /** node点击展开回调 */
     const nodeExpandHandler = (node: INode) => {
-      if (node.isDisabled) return;
+      if (!node || node?.isDisabled) return;
 
       menus.list = menus.list.slice(0, node.level);
       activePath.value = activePath.value.slice(0, node.level - 1);
@@ -101,8 +106,8 @@ export default defineComponent({
         onClick: (e: Event) => {
           if (!node.isLeaf || multiple) e.stopPropagation();
           trigger === 'click' && nodeExpandHandler(node);
-          (checkAnyLevel && !multiple) && nodeCheckHandler(node);
-          (node.isLeaf && !multiple) && nodeCheckHandler(node);
+          checkAnyLevel && !multiple && nodeCheckHandler(node);
+          node.isLeaf && !multiple && nodeCheckHandler(node);
         },
         onMouseenter: () => {
           trigger === 'hover' && nodeExpandHandler(node);
@@ -130,8 +135,21 @@ export default defineComponent({
       nodeCheckHandler(node);
     };
 
-    const iconRender = node => (
-      node.loading ? <Spinner class="icon-spinner"></Spinner> : <AngleRight class="icon-angle-right"></AngleRight>
+    const iconRender = node => (node.loading ? <Spinner class="icon-spinner"></Spinner> : <AngleRight class="icon-angle-right"></AngleRight>);
+
+    watch(
+      () => props.modelValue,
+      (value: Array<string | number>) => {
+        updateCheckValue(value);
+      },
+      { immediate: true },
+    );
+
+    watch(
+      () => props.store,
+      (value) => {
+        menus.list = [value.getNodes()];
+      },
     );
 
     return {
@@ -142,37 +160,36 @@ export default defineComponent({
       nodeEvent,
       isCheckedNode,
       checkValue,
-      nodeClear,
       checkNode,
       iconRender,
-      syncCheckedValue,
     };
   },
   render() {
     return (
-      <div class='bk-cascader-panel-wrapper'>
+      <div class="bk-cascader-panel-wrapper">
         {this.menus.list.map(menu => (
-            <ul class='bk-cascader-panel'>
-              {menu.map(node => (
-                  <li class={
-                    ['bk-cascader-node',
-                      { 'is-selected': this.isNodeInPath(node) },
-                      { 'is-disabled': node.isDisabled },
-                      { 'is-checked': this.isCheckedNode(node, this.checkValue) }]
-                  }
-                    {...this.nodeEvent(node)}>
-                    { node.config.multiple
-                      && <BkCheckbox
-                            disabled={node.isDisabled}
-                            v-model={node.checked}
-                            onChange={(val: boolean) => this.checkNode(node, val)}></BkCheckbox>}
-                    <span class="bk-cascader-node-name">{node.name}</span>
-                  {!node.isLeaf
-                    ? this.iconRender(node)
-                    : ''}
-                  </li>
-              ))}
-            </ul>
+          <ul class="bk-cascader-panel">
+            {menu.map(node => (
+              <li
+                class={[
+                  'bk-cascader-node',
+                  { 'is-selected': this.isNodeInPath(node) },
+                  { 'is-disabled': node.isDisabled },
+                  { 'is-checked': this.isCheckedNode(node, this.checkValue) },
+                ]}
+                {...this.nodeEvent(node)}
+              >
+                {node.config.multiple && (
+                  <BkCheckbox
+                    disabled={node.isDisabled}
+                    v-model={node.checked}
+                    onChange={(val: boolean) => this.checkNode(node, val)}></BkCheckbox>
+                )}
+                <span class="bk-cascader-node-name">{node.name}</span>
+                {!node.isLeaf ? this.iconRender(node) : ''}
+              </li>
+            ))}
+          </ul>
         ))}
       </div>
     );

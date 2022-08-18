@@ -32,11 +32,14 @@ import {
   // onBeforeUnmount,
   computed,
   defineComponent,
+  getCurrentInstance,
+  nextTick,
   PropType,
+  provide,
   reactive,
   ref,
   toRefs,
-  // nextTick,
+  watch,
 } from 'vue';
 
 import { AngleDoubleLeft, AngleDoubleRight, AngleLeft, AngleRight } from '@bkui-vue/icon';
@@ -49,7 +52,9 @@ import type {
   DisableDateType,
   SelectionModeType,
 } from '../interface';
-import { formatDateLabels, iconBtnCls, siblingMonth } from '../utils';
+import { formatDateLabels, iconBtnCls, siblingMonth, timePickerKey } from '../utils';
+
+import Time from './time';
 
 const datePanelProps = {
   modelValue: {
@@ -98,13 +103,22 @@ const datePanelProps = {
     type: Boolean,
     default: false,
   },
+  format: {
+    type: String,
+    default: 'yyyy-MM-dd',
+  },
+  disabledDate: {
+    type: Function,
+    default: () => false,
+  },
 } as const;
 
 export type DatePanelProps = Readonly<ExtractPropTypes<typeof datePanelProps>>;
 
 export default defineComponent({
+  name: 'DatePanel',
   props: datePanelProps,
-  emits: ['pick', 'pick-success', 'pick-clear'],
+  emits: ['pick', 'pick-success', 'pick-clear', 'pick-click', 'selection-mode-change'],
   setup(props, { slots, emit }) {
     const getTableType = currentView => (currentView.match(/^time/) ? 'time-picker' : `${currentView}-table`);
 
@@ -115,6 +129,33 @@ export default defineComponent({
       pickerTable: getTableType(props.selectionMode),
       dates,
       panelDate: props.startDate || dates[0] || new Date(),
+    });
+
+    const { proxy } = getCurrentInstance();
+    provide(timePickerKey, {
+      panelDate: state.panelDate,
+      parentName: proxy.$options.name,
+    });
+
+    const timePickerRef = ref(null);
+    const timeSpinnerRef = ref(null);
+    const timeSpinnerEndRef = ref(null);
+
+    watch(() => state.currentView, (val) => {
+      console.error(11111, val);
+      emit('selection-mode-change', val);
+
+      if (state.currentView === 'time') {
+        nextTick(() => {
+          const spinner = timePickerRef.value.timeSpinnerRef;
+          spinner.updateScroll();
+        });
+      }
+    });
+
+    watch(() => props.selectionMode, (type) => {
+      state.currentView = type;
+      state.pickerTable = getTableType(type);
     });
 
     const resetView = () => {
@@ -189,13 +230,10 @@ export default defineComponent({
       state.panelDate = siblingMonth(state.panelDate, dir);
     };
 
-    const timeSpinner = ref(null);
-    const timeSpinnerEnd = ref(null);
-
     const onToggleVisibility = (open) => {
       if (open) {
-        timeSpinner?.value?.updateScroll();
-        timeSpinnerEnd?.value?.updateScroll();
+        timeSpinnerRef?.value?.updateScroll();
+        timeSpinnerEndRef?.value?.updateScroll();
       }
     };
 
@@ -233,6 +271,12 @@ export default defineComponent({
 
     const hasShortcuts = computed(() => !!slots.shortcuts);
 
+    const timeDisabled = computed(() => !state.dates[0]);
+
+    function handlePickClick() {
+      emit('pick-click');
+    }
+
     return {
       ...toRefs(state),
       panelPickerHandlers,
@@ -245,10 +289,16 @@ export default defineComponent({
       reset,
       isTime,
       hasShortcuts,
+      timeDisabled,
+
       onToggleVisibility,
       handleToggleTime,
       handlePickSuccess,
       handlePickClear,
+      handlePick,
+      handlePickClick,
+
+      timePickerRef,
     };
   },
   render() {
@@ -280,14 +330,12 @@ export default defineComponent({
         <div class="bk-picker-panel-body" style="width: 261px;">
           <div class="bk-date-picker-header" v-show={this.currentView !== 'time'}>
             <span class={iconBtnCls('prev', '-double')} onClick={() => this.changeYear(-1)}>
-              {/* <i class="bk-icon icon-angle-double-left"></i> */}
               <AngleDoubleLeft style={{ fontSize: '20px', lineHeight: 1 }}></AngleDoubleLeft>
             </span>
             {
               this.pickerTable === 'date-table'
                 ? (
                   <span class={iconBtnCls('prev')} onClick={() => this.changeMonth(-1)} v-show={this.currentView === 'date'}>
-                    {/* <i class="bk-icon icon-angle-left"></i> */}
                     <AngleLeft style={{ fontSize: '20px', lineHeight: 1 }}></AngleLeft>
                   </span>
                 )
@@ -309,14 +357,12 @@ export default defineComponent({
                 : ''
             }
             <span class={iconBtnCls('next', '-double')} onClick={() => this.changeYear(+1)}>
-              {/* <i class="bk-icon icon-angle-double-right"></i> */}
               <AngleDoubleRight style={{ fontSize: '20px', lineHeight: 1 }}></AngleDoubleRight>
             </span>
             {
               this.pickerTable === 'date-table'
                 ? (
                   <span class={iconBtnCls('next')} onClick={() => this.changeMonth(+1)} v-show={this.currentView === 'date'}>
-                    {/* <i class="bk-icon icon-angle-right"></i> */}
                     <AngleRight style={{ fontSize: '20px', lineHeight: 1 }}></AngleRight>
                   </span>
                 )
@@ -342,7 +388,15 @@ export default defineComponent({
                       return null;
                   }
                 })()
-                : ''
+                : <Time
+                    ref="timePickerRef"
+                    value={this.dates}
+                    format={this.format}
+                    disabledDate={this.disabledDate}
+                    onPick={this.handlePick}
+                    onPick-clear={this.handlePickClear}
+                    onPick-success={this.handlePickSuccess}
+                  />
             }
           </div>
           {

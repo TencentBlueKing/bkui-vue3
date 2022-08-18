@@ -32,7 +32,7 @@ import Pagination from '@bkui-vue/pagination';
 import { classes } from '@bkui-vue/shared';
 
 import TableRow from './components/table-row';
-import { EVENTS, TABLE_ROW_ATTRIBUTE } from './const';
+import { EMITEVENTS, EVENTS, TABLE_ROW_ATTRIBUTE } from './const';
 import BodyEmpty from './plugins/body-empty';
 import HeadFilter from './plugins/head-filter';
 import HeadSort from './plugins/head-sort';
@@ -173,12 +173,12 @@ export default class TableRender {
 
   private handlePageLimitChange(limit: number) {
     Object.assign(this.props.pagination, { limit });
-    this.context.emit('pageLimitChange', limit);
+    this.context.emit(EMITEVENTS.PAGE_LIMIT_CHANGE, limit);
   }
 
   private hanlePageChange(current: number) {
     Object.assign(this.props.pagination, { current, value: current });
-    this.context.emit('pageValueChange', current);
+    this.context.emit(EMITEVENTS.PAGE_VALUE_CHANGE, current);
   }
 
   /**
@@ -205,7 +205,7 @@ export default class TableRender {
   private handleColumnHeadClick(index: number) {
     if (this.props.columnPick !== 'disabled') {
       this.setColumnActive(index, this.props.columnPick === 'single');
-      this.context.emit('column-pick', this.propActiveCols);
+      this.context.emit(EMITEVENTS.COLUMN_PICK, this.propActiveCols);
     }
   }
 
@@ -412,7 +412,7 @@ export default class TableRender {
    * @param rows
    */
   private handleRowClick(e: MouseEvent, row: any, index: number, rows: any) {
-    this.context.emit('rowClick', e, row, index, rows, this);
+    this.context.emit(EMITEVENTS.ROW_CLICK, e, row, index, rows, this);
   }
 
   /**
@@ -423,7 +423,7 @@ export default class TableRender {
    * @param rows
    */
   private handleRowDblClick(e: MouseEvent, row: any, index: number, rows: any) {
-    this.context.emit('rowDblClick', e, row, index, rows, this);
+    this.context.emit(EMITEVENTS.ROW_DBL_CLICK, e, row, index, rows, this);
   }
 
   private getExpandCell(row: any) {

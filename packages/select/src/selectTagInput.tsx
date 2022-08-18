@@ -23,13 +23,12 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent, inject, ref, toRefs, watch } from 'vue';
+import { defineComponent, ref, toRefs, watch } from 'vue';
 import { PropType } from 'vue-types/dist/types';
 
-import { PropTypes } from '@bkui-vue/shared';
+import { classes, PropTypes } from '@bkui-vue/shared';
 import Tag from '@bkui-vue/tag';
 
-import { selectKey } from './common';
 import { ISelected } from './type';
 
 
@@ -44,12 +43,12 @@ export default defineComponent({
     placeholder: PropTypes.string.def(''),
     filterable: PropTypes.bool.def(false), // 是否支持搜索
     allowCreate: PropTypes.bool.def(false),
+    disabled: PropTypes.bool.def(false),
     modelValue: PropTypes.any,
   },
-  emits: ['update:modelValue', 'remove', 'focus', 'enter'],
+  emits: ['update:modelValue', 'remove', 'enter'],
   setup(props, { emit }) {
-    const select = inject(selectKey, null);
-    const { modelValue } = toRefs(props);
+    const { modelValue, disabled } = toRefs(props);
     const value = ref(modelValue.value);
     const inputRef = ref<HTMLElement>();
 
@@ -57,10 +56,8 @@ export default defineComponent({
       value.value = modelValue.value;
     });
     const handleRemoveTag = (val: string) => {
+      if (disabled.value) return;
       emit('remove', val);
-    };
-    const handleFocus = () => {
-      emit('focus');
     };
     const focus = () => {
       inputRef.value?.focus();
@@ -76,21 +73,22 @@ export default defineComponent({
         }
       }
     };
-    const handleGetLabelByValue = select?.handleGetLabelByValue;
     return {
       value,
       inputRef,
       handleRemoveTag,
-      handleFocus,
       focus,
       handleInput,
       handleKeydown,
-      handleGetLabelByValue,
     };
   },
   render() {
+    const tagClass = classes({
+      'bk-select-tag': true,
+      'is-disabled': this.disabled,
+    });
     return (
-      <div class="bk-select-tag">
+      <div class={tagClass}>
         {this.$slots?.prefix?.()}
         {
           this.selected.map(item => (
@@ -98,20 +96,20 @@ export default defineComponent({
                 closable
                 theme={this.tagTheme}
                 onClose={() => this.handleRemoveTag(item.value)}>
-                {this.handleGetLabelByValue(item)}
+                {item.label}
               </Tag>
           ))
         }
-         <input
-            class="bk-select-tag-input"
-            ref="inputRef"
-            type="text"
-            placeholder={!this.selected.length ? this.placeholder : ''}
-            readonly={!this.filterable}
-            v-model={this.value}
-            onFocus={this.handleFocus}
-            onInput={this.handleInput}
-            onKeydown={this.handleKeydown}/>
+        <input
+          class="bk-select-tag-input"
+          ref="inputRef"
+          type="text"
+          placeholder={!this.selected.length ? this.placeholder : ''}
+          readonly={!this.filterable}
+          disabled={this.disabled}
+          value={!this.filterable ? '' : this.value}
+          onInput={this.handleInput}
+          onKeydown={this.handleKeydown}/>
 
         {this.$slots?.suffix?.()}
       </div>
