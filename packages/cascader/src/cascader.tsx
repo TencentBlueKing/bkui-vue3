@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
 */
 
-import { computed, defineComponent, ref, toRefs, watch  } from 'vue';
+import { computed, defineComponent, ref, toRefs, watch } from 'vue';
 
 import { clickoutside } from '@bkui-vue/directives';
 import { AngleUp, Close, Error } from '@bkui-vue/icon';
@@ -59,7 +59,7 @@ export default defineComponent({
     checkAnyLevel: PropTypes.bool.def(false),
     isRemote: PropTypes.bool.def(false),
     remoteMethod: PropTypes.func,
-    showCompleteName: PropTypes.bool.def(false),
+    showCompleteName: PropTypes.bool.def(true),
     idKey: PropTypes.string.def('id'),
     nameKey: PropTypes.string.def('name'),
     childrenKey: PropTypes.string.def('children'),
@@ -73,7 +73,7 @@ export default defineComponent({
     const { isHover, setHover, cancelHover } = useHover();
     const store = ref(new Store(props));
     const panelShow = ref(false);
-    const selectedText = ref('');
+    const selectedText = ref<string | number>('');
     const selectedTags = ref([]);
     const { modelValue } = toRefs(props);
     const cascaderPanel = ref();
@@ -87,12 +87,17 @@ export default defineComponent({
 
     const popover = ref(null);
 
+    /** 根据配置，获取输入框显示的text */
+    const getShowText = (node: INode) =>  (props.showCompleteName
+      ? node.pathNames.join(separator)
+      : node.pathNames[node.pathNames.length - 1]);
+
     /** 更新选中 */
     const updateValue = (val: Array<string | number>) => {
       /** 根据配置更新显示内容 */
       if (multiple) {
         selectedTags.value = store.value.getCheckedNodes().map((node: INode) => ({
-          text: node.pathNames.join(separator),
+          text: getShowText(node),
           key: node.id,
         }));
         return;
@@ -105,7 +110,7 @@ export default defineComponent({
       } else {
         const node = store.value.getNodeByValue(val);
         if (!node) return;
-        selectedText.value = node.pathNames.join(separator);
+        selectedText.value = getShowText(node);
       }
     };
 
@@ -217,11 +222,11 @@ export default defineComponent({
                 {this.multiple && renderTags()}
                 {this.filterable
                   ? <input class="bk-cascader-search-input"
-                  type="text"
-                  placeholder={this.placeholder}
+                    type="text"
+                    placeholder={this.placeholder}
                   />
                   : <span>{this.selectedText}</span>
-                  }
+                }
               </div>
             ),
             content: () => (

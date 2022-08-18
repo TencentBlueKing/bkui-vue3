@@ -36,6 +36,7 @@ import CheckAnyLevelDemo from './check-any-level-demo.vue';
 import IdKey from './id-key.vue';
 import RemoteDemo from './remote-demo.vue';
 import SeparatorDemo from './separator-demo.vue';
+import ShowCompleteName from './show-complete-name.vue';
 
 const cascaderPropsJson: IPropsTableItem[] = [
   {
@@ -92,6 +93,13 @@ const cascaderPropsJson: IPropsTableItem[] = [
     type: 'Boolean',
     default: false,
     desc: '是否允许选择任意一级',
+    optional: [],
+  },
+  {
+    name: 'show-complete-came',
+    type: 'Boolean',
+    default: true,
+    desc: '输入框中是否显示选中值的完整路径',
     optional: [],
   },
   {
@@ -157,7 +165,7 @@ export default defineComponent({
         <DemoTitle
           name='Cascader 级联组件'
           desc='Breadcrumb组件， 显示当前页面的路径，快速返回之前的任意页面。'
-          link='https://www.google.com.hk/'/>
+          link='https://www.google.com.hk/' />
 
         <DemoBox
           title='基础用法'
@@ -193,6 +201,14 @@ export default defineComponent({
           <SeparatorDemo></SeparatorDemo>
         </DemoBox>
 
+        <DemoBox title='仅显示最后一级'
+          subtitle='可在输入框仅显示最后一级的标签，而非完整路径'
+          desc='设置`show-complete-name`属性为`false`，则可以使输入框仅显示最后一级，默认显示完整路径'
+          componentName='cascader'
+          demoName='show-complete-name'>
+          <ShowCompleteName></ShowCompleteName>
+        </DemoBox>
+
         <DemoBox
           title='远程加载'
           subtitle='远程加载list，异步加载'
@@ -205,11 +221,11 @@ export default defineComponent({
         <PropsBox
           title='Cascader Attributes'
           subtitle=''
-          propsData={cascaderPropsJson}/>
+          propsData={cascaderPropsJson} />
         <PropsBox
           title='Cascader Events'
           subtitle=''
-          propsData={cascaderEventsJson}/>
+          propsData={cascaderEventsJson} />
       </div>
     );
   },
