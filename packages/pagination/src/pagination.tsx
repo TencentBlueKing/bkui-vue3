@@ -59,6 +59,7 @@ export const paginationProps = {
   prevText: PropTypes.string,
   nextText: PropTypes.string,
   disabled: PropTypes.bool.def(false),
+  beforeChange: PropTypes.func,
   layout: PropTypes.custom((value: string[]) => {
     const layoutNameMap = {
       total: true,

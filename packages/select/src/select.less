@@ -91,13 +91,13 @@
   }
 
   &.large {
-    .bk-select-content {
+    .bk-select-content-wrapper {
       font-size: 14px;
     }
   }
 
   &.is-focus.normal {
-    .bk-select-trigger .bk-select-tag {
+    .bk-select-trigger .bk-select-tag.bk-select-tag--default {
       border-color: @primary-color;
       box-shadow: 0px 0px 3px 0px #a3c5fd;
     }
@@ -125,10 +125,29 @@
   }
 
   &.is-disabled {
-    .bk-select-trigger .bk-input input {
+    .bk-input--text {
       cursor: not-allowed;
       background-color: #fafbfd;
     }
+  }
+
+  .bk-input {
+    &.is-focused {
+      .active();
+
+      &.is-simplicity {
+        border-color: transparent;
+        border-bottom-color: @primary-color;
+        box-shadow: none;
+      }
+    }
+  }
+
+  .bk-input--text {
+    .ellipsis();
+    padding-right: 24px;
+    cursor: pointer;
+    background-color: @white-color; 
   }
 
   .bk-select-trigger {
@@ -138,32 +157,29 @@
       margin-right: 0;
     }
 
-    .bk-input {
-      input {
-        padding-right: 24px;
-        cursor: pointer;
-        background-color: @white-color; 
-      }
-
-      &.is-focused {
-        .active();
-
-        &.is-simplicity {
-          border-color: transparent;
-          border-bottom-color: @primary-color;
-          box-shadow: none;
-        }
-      }
-    }
-
     .bk-select-tag {
       .input();
       display: flex;
       width: auto;
-      height: auto;
-      min-height: 32px;
       align-items: center;
-      flex-wrap: wrap;
+
+      &.collapse-tag .bk-select-tag-wrapper {
+        height: 30px;
+      }
+
+      &:not(.collapse-tag) {
+        height: auto;
+        min-height: 32px;
+        flex-wrap: wrap;
+      }
+
+      &-wrapper {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        padding: 2px 0;
+        overflow: hidden;
+      }
 
       &:not(.is-disabled):hover {
         border-color: #979ba5;
@@ -172,6 +188,7 @@
       &.is-disabled {
         cursor: not-allowed;
         background-color: #fafbfd;
+        border-color: #dcdee5;
 
         input {
           cursor: not-allowed;
@@ -192,15 +209,13 @@
 
       &-input {
         .input();
+        .ellipsis();
         width: 1%;
         height: 22px;
-        max-width: 190px;
         padding: 0;
-        margin: 4px 5px 4px 0;
-        overflow: hidden;
+        margin: 2px 5px 4px 0;
         background-color: transparent;
         border: none;
-        outline: none;
         flex-grow: 1;
       }
 
@@ -245,7 +260,7 @@
       border-radius: 2px;
       box-shadow: 0 2px 6px 0 rgba(0,0,0,.10);
 
-      .bk-select-content {
+      .bk-select-content-wrapper {
         .bk-select-empty {
           .flex-center();
           height: 56px;

@@ -30,6 +30,8 @@
       v-model="selectedValue"
       class="bk-select"
       size="large"
+      multiple
+      filterable
     >
       <bk-option
         v-for="(item, index) in datasource"
@@ -38,12 +40,14 @@
         :label="item.label"
       />
     </bk-select>
-    <!-- small large -->
+    <!-- simplicity small -->
     <bk-select
       v-model="selectedValue"
       class="bk-select"
       size="small"
       behavior="simplicity"
+      multiple
+      filterable
     >
       <bk-option
         v-for="(item, index) in datasource"
