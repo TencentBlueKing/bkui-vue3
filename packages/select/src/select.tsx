@@ -84,7 +84,7 @@ export default defineComponent({
     multipleMode: PropTypes.oneOf(['default', 'tag']).def('default'), // 多选展示方式
     tagTheme: PropTypes.theme(['success', 'info', 'warning', 'danger']).def(''),
     behavior: PropTypes.oneOf(['normal', 'simplicity']).def('normal'), // 输入框模式
-    collapseTags: PropTypes.bool.def(false), // todo:当以标签形式显示选择结果时，是否合并溢出的结果以数字显示
+    collapseTags: PropTypes.bool.def(false), // 当以标签形式显示选择结果时，是否合并溢出的结果以数字显示
     noDataText: PropTypes.string.def('无数据'),
     noMatchText: PropTypes.string.def('无匹配数据'),
     loadingText: PropTypes.string.def('加载中...'),
@@ -398,6 +398,7 @@ export default defineComponent({
     };
     // tag删除事件
     const handleDeleteTag = (val: string) => {
+      if (isDisabled.value) return;
       const index = selected.value.findIndex(item => item.value === val);
       if (index > -1) {
         selected.value.splice(index, 1);
@@ -427,7 +428,6 @@ export default defineComponent({
       if (
         !triggerRef.value?.contains(e.target)
         && !contentRef.value?.contains(e.target)
-        && !enableVirtualRender.value
         && !customContent.value
       ) return;
 
@@ -591,9 +591,11 @@ export default defineComponent({
             filterable={this.isInput}
             disabled={this.isDisabled}
             onRemove={this.handleDeleteTag}
+            collapseTags={this.collapseTags}
             onEnter={this.handleInputEnter}>
               {{
                 prefix: () => this.$slots.prefix?.(),
+                default: this.$slots.tag?.({ selected: this.selected }),
                 suffix: () => suffixIcon(),
               }}
           </SelectTagInput>
@@ -630,7 +632,7 @@ export default defineComponent({
         </div>
     );
     const renderSelectContent = () => (
-        <div class="bk-select-content" ref="contentRef">
+        <div class="bk-select-content-wrapper" ref="contentRef">
           {
             this.filterable && !this.inputSearch && (
               <div class="bk-select-search-wrapper">

@@ -38,9 +38,10 @@ import SelectGroupDemo from './select-group-demo.vue';
 import SelectMultiDemo from './select-multi-demo.vue';
 import SelectScrollLoadingDemo from './select-scrollloading-demo.vue';
 import SelectSearchDemo from './select-search-demo.vue';
+import SelectSlotDemo from './select-slot-demo.vue';
 import SelectStyleDemo from './select-style-demo.vue';
 import SelectTreeDemo from './select-tree-demo.vue';
-import SelectVirtualRender from './select-virtual-render.vue';
+import SelectVirtualRender from './select-virtual-render.vue';;
 
 const propsJson: IPropsTableItem[] = Object.keys(BkSelect.props).map(prop => ({
   name: prop,
@@ -116,6 +117,13 @@ export default defineComponent({
           componentName="select"
           demoName="select-virtual-render">
             <SelectVirtualRender />
+        </DemoBox>
+        <DemoBox
+          title="多选模式下自定义tag"
+          desc="多选模式下自定义tag"
+          componentName="select"
+          demoName="select-slot-demo">
+            <SelectSlotDemo />
         </DemoBox>
         <PropsBox propsData={propsJson} subtitle="" />
       </div>
