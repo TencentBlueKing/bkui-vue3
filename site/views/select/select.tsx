@@ -85,7 +85,7 @@ export default defineComponent({
         </DemoBox>
         <DemoBox
           title="搜索"
-          desc="远程搜索和本地搜索"
+          desc="远程搜索和本地搜索，注意：动态Options时建议使用value作为key，防止出现option没有销毁问题"
           componentName="select"
           demoName="select-search-demo">
             <SelectSearchDemo />
