@@ -67,7 +67,7 @@ export function useRegistry<T>(data: Ref<Map<any, T>>) {
   };
 }
 
-export function useDebouncedRef<T>(value, delay = 300) {
+export function useDebouncedRef<T>(value, delay = 200) {
   let timeout;
   let innerValue = value;
   return customRef<T>((track, trigger) => ({

@@ -63,8 +63,8 @@
       :remote-method="remoteMethod"
     >
       <bk-option
-        v-for="(item, index) in list"
-        :key="index"
+        v-for="(item) in list"
+        :key="item.value"
         :value="item.value"
         :label="item.label"
       />
