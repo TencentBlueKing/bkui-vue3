@@ -125,10 +125,29 @@
   }
 
   &.is-disabled {
-    .bk-select-trigger .bk-input input {
+    .bk-input--text {
       cursor: not-allowed;
       background-color: #fafbfd;
     }
+  }
+
+  .bk-input {
+    &.is-focused {
+      .active();
+
+      &.is-simplicity {
+        border-color: transparent;
+        border-bottom-color: @primary-color;
+        box-shadow: none;
+      }
+    }
+  }
+
+  .bk-input--text {
+    .ellipsis();
+    padding-right: 24px;
+    cursor: pointer;
+    background-color: @white-color; 
   }
 
   .bk-select-trigger {
@@ -136,25 +155,6 @@
 
     .bk-tag-input .bk-tag-input-trigger .clear-icon {
       margin-right: 0;
-    }
-
-    .bk-input {
-      input {
-        .ellipsis();
-        padding-right: 24px;
-        cursor: pointer;
-        background-color: @white-color; 
-      }
-
-      &.is-focused {
-        .active();
-
-        &.is-simplicity {
-          border-color: transparent;
-          border-bottom-color: @primary-color;
-          box-shadow: none;
-        }
-      }
     }
 
     .bk-select-tag {
