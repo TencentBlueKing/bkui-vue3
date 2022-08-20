@@ -5,6 +5,7 @@
         v-model="defaultValue"
         type="datetimerange"
         use-shortcut-text
+        format="yyyy-MM-dd HH:mm:ss"
         :shortcuts="shortcutsRange"
         @change="change"
       />
@@ -26,7 +27,7 @@
 
 <script setup>
   import { reactive, ref } from 'vue';
-  const defaultValue = reactive([new Date(), new Date()]);
+  const defaultValue = reactive(['2022-07-21 12:02:26', '2022-08-20 12:02:26']);
   const dateValue = ref(new Date());
   const change = (value, type) => {
     console.log(value, type);
