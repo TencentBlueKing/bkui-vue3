@@ -116,6 +116,9 @@ export default defineComponent({
       context.emit('change', listCurrent);
     });
     watch(smallListCurrent, (smallListCurrent) => {
+      if (!props.small) {
+        return;
+      }
       context.emit('update:modelValue', smallListCurrent);
       context.emit('change', smallListCurrent);
     });
