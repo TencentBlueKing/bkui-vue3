@@ -29,9 +29,9 @@ let popContainerId = null;
 let fullscreenReferId = null;
 let parentNodeReferId = null;
 export default (props, prefix = '#') => {
-  const getPrefixId = (isfullscreen = false, root?) => {
+  const getPrefixId = (isFullscreen = false, root?) => {
     let resolvedBoundary = null;
-    const reolveBoudary = (fn: () => void) => {
+    const resolveBoundary = (fn: () => void) => {
       if (resolvedBoundary === null) {
         fn();
       }
@@ -48,7 +48,7 @@ export default (props, prefix = '#') => {
     };
 
     const resolveFullScreenBoundary = () => {
-      if (isfullscreen) {
+      if (isFullscreen) {
         resolvedBoundary = `[data-fllsrn-id=${fullscreenReferId}]`;
       }
     };
@@ -64,10 +64,10 @@ export default (props, prefix = '#') => {
       }
     };
 
-    reolveBoudary(resolveParentBoundary);
-    reolveBoudary(resolveCommonBoundary);
-    reolveBoudary(resolveFullScreenBoundary);
-    reolveBoudary(() => {
+    resolveBoundary(resolveParentBoundary);
+    resolveBoundary(resolveCommonBoundary);
+    resolveBoundary(resolveFullScreenBoundary);
+    resolveBoundary(() => {
       resolvedBoundary = typeof props.boundary === 'string' ? props.boundary : `${prefix}${popContainerId}`;
     });
 

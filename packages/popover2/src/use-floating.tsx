@@ -54,7 +54,7 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
 
   const themeList = ['dark', 'light'];
   const compTheme = computed(() => {
-    const themes = props.theme.split(/\s+/);
+    const themes = props.theme?.split(/\s+/) ?? [];
     themes.sort((a: string, b: string) => Number(themeList.includes(b)) - (Number(themeList.includes(a))));
     const systemThemes = themes;
     const customThemes = themes.filter((item: string) => !themeList.includes(item));
@@ -71,7 +71,7 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
     return { elReference, elContent, elArrow, root };
   };
 
-  const resolvePopOptions = (elArrow: any) => {
+  const resolvePopOptions = (elArrow, props) => {
     const middleware = [
       offset(props.offset),
       shift({ padding: props.padding }),
@@ -96,7 +96,7 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
       options.middleware.push(hide());
     }
 
-    if (isElementFullScreen()) {
+    if (isElementFullScreen() || props.isVirtualEl) {
       const  {
         getElementRects,
         getDimensions,
@@ -105,6 +105,7 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
 
       Object.assign(options, {
         platform: {
+          ...(props?.platform ?? {}),
           getElementRects,
           getDimensions,
           getClippingRect,
@@ -121,6 +122,10 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
 
     if (target instanceof Text) {
       return resolveTargetElement(target.nextElementSibling);
+    }
+
+    if (typeof target?.getBoundingClientRect === 'function') {
+      return target;
     }
 
     return null;
@@ -140,11 +145,18 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
   };
 
   const updatePopContentStyle = (elContent, x, y, middlewareData) => {
-    Object.assign(elContent.style, {
-      left: '0',
-      top: '0',
-      transform: `translate3d(${getRoundPixelVal(x)}px,${getRoundPixelVal(y)}px,0)`,
-    });
+    if (props.disableTransform) {
+      Object.assign(elContent.style, {
+        left: `${getRoundPixelVal(x)}px`,
+        top: `${getRoundPixelVal(y)}px`,
+      });
+    } else {
+      Object.assign(elContent.style, {
+        left: '0',
+        top: '0',
+        transform: `translate3d(${getRoundPixelVal(x)}px,${getRoundPixelVal(y)}px,0)`,
+      });
+    }
 
     const referenceHidden = isHideMiddlewareAvailable() ? middlewareData.hide?.referenceHidden : false;
     Object.assign(elContent.style, {
@@ -154,7 +166,7 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
 
   const updateArrowStyle = (elArrow, resolvedPlacement, middlewareData) => {
     if (props.arrow) {
-      const { x: arrowX, y: arrowY } = middlewareData.arrow;
+      const { x: arrowX, y: arrowY } = middlewareData.arrow ?? {};
       elArrow.setAttribute('data-arrow', resolvedPlacement);
       const arrowConfig = {
         left: '',
@@ -181,16 +193,17 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
   const createPopInstance = () => {
     const { elReference, elContent } = resolvePopElements();
     cleanup = autoUpdate(elReference, elContent, () => {
-      updatePopover();
+      updatePopover(null, props);
     });
   };
 
 
-  const updatePopover = () => {
+  const updatePopover = (virtualEl = null, props = {}) => {
     const { elReference, elContent, elArrow } = resolvePopElements();
-    if (!elReference) return;
-    const options = resolvePopOptions(elArrow);
-    computePosition(elReference, elContent, options).then(({ x, y, placement, middlewareData }) => {
+    const targetEl = virtualEl || elReference;
+    if (!targetEl) return;
+    const options = resolvePopOptions(elArrow, props);
+    computePosition(targetEl, elContent, options).then(({ x, y, placement, middlewareData }) => {
       const oldClass = elContent.className;
       elContent.className = `${oldClass.replace(contentClass, '')} ${contentClass}`.replace(/\s+/mg, ' ').replace(/^\s+|\s+$/g, '');
       Object.keys(customTheme).forEach((key: string) => {
