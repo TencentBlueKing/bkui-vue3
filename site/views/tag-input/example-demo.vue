@@ -1,7 +1,7 @@
 <template>
   <div>
     <bk-tag-input
-      v-model="tags"
+      v-model="state.tags"
       placeholder="请输入 username 或 nickname"
       display-key="username"
       save-key="username"
@@ -10,7 +10,7 @@
       :tpl="tpl"
       :tag-tpl="tagTpl"
       :search-key="searchKey"
-      :list="list"
+      :list="state.list"
     />
   </div>
 </template>
@@ -19,13 +19,15 @@
   import { reactive } from 'vue';
 
   const searchKey = ['username', 'nickname'];
-  const tags = reactive([]);
-  const list = reactive([
-    { username: 'Jack', nickname: '杰克' },
-    { username: 'Json', nickname: '杰森' },
-    { username: 'Jane', nickname: '简' },
-    { username: 'Arman', nickname: '阿尔曼' },
-  ]);
+  const state = reactive({
+    tags: [],
+    list: [
+      { username: 'Jack', nickname: '杰克' },
+      { username: 'Json', nickname: '杰森' },
+      { username: 'Jane', nickname: '简' },
+      { username: 'Arman', nickname: '阿尔曼' },
+    ],
+  });
   const tpl = (node, highlightKeyword, h) => {
     const innerHTML = `${highlightKeyword(node.username)} (${node.nickname})`;
     return h(
