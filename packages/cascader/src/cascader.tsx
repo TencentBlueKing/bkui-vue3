@@ -131,12 +131,11 @@ export default defineComponent({
       updateValue(current);
     };
 
-    const modelValueChangeHandler = (value) => {
+    const modelValueChangeHandler = (value, oldValue) => {
       updateValue(value);
-
       /** 派发相关事件 */
       emit('update:modelValue', value);
-      emit('change', value);
+      oldValue !== undefined && emit('change', value); // oldValue = undefined代表初始化，init不派发change事件
     };
 
     const listChangeHandler = () => {
