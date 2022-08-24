@@ -1,7 +1,7 @@
 <template>
   <div>
     <bk-tag-input
-      v-model="tags"
+      v-model="state.tags"
       placeholder="通过 username 或 sex 搜索列表"
       display-key="nickname"
       save-key="username"
@@ -13,7 +13,7 @@
       :tag-tpl="tagTpl"
       :filter-callback="filterFn"
       :create-tag-validator="tagValidator"
-      :list="list"
+      :list="state.list"
     />
     <p>该例子自定义 filter-callback 通过 username 或 sex 搜索列表，定义 create-tag-validator 只允许创建以 A 开头的标签</p>
   </div>
@@ -22,13 +22,15 @@
 <script setup>
   import { reactive } from 'vue';
 
-  const tags = reactive([]);
-  const list = reactive([
-    { username: 'Jack', nickname: '杰克', sex: '男' },
-    { username: 'Json', nickname: '杰森', sex: '男' },
-    { username: 'Jane', nickname: '简', sex: '女' },
-    { username: 'Arman', nickname: '阿尔曼', sex: '女' },
-  ]);
+  const state = reactive({
+    tags: [],
+    list: [
+      { username: 'Jack', nickname: '杰克', sex: '男' },
+      { username: 'Json', nickname: '杰森', sex: '男' },
+      { username: 'Jane', nickname: '简', sex: '女' },
+      { username: 'Arman', nickname: '阿尔曼', sex: '女' },
+    ],
+  });
 
   const filterFn = (searchValue, searchKey, list) => list.filter((data) => {
     if (!searchValue) return list;

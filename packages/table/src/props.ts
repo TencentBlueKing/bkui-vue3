@@ -72,6 +72,8 @@ export const tableProps = {
       PropTypes.shape({
         list: PropTypes.arrayOf(PropTypes.any).def([]),
         filterFn: PropTypes.func.def(undefined),
+        btnSave: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]).def('确定'),
+        btnReset: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]).def('重置'),
       }),
       PropTypes.bool,
       PropTypes.string]).def(false),
