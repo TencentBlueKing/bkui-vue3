@@ -94,6 +94,8 @@ export default [
     config: [
       { name: 'filterFn', type: 'Function', default: '--', desc: '自定义过滤函数，参数：(checked, row, props.column, index, data) => boolean', optional: [] },
       { name: 'list', type: 'Array[{ value, text }]', default: '[]', desc: '数据过滤的选项，数组格式，数组中的元素需要有 text 和 value 属性。', optional: ['current', 'all'] },
+      { name: 'btnSave', type: 'String|Boolean', default: '确定', desc: '数据过滤的`确定`按钮配置，可配置为String类型，配置不同显示文本；也可以配置为false，禁用确定按钮，当此按钮禁用，单击过滤选项即生效', optional: [] },
+      { name: 'btnReset', type: 'String|Boolean', default: '重置', desc: '数据过滤的`重置`按钮配置，可配置为String类型，配置不同显示文本；也可以配置为false，禁用`重置`按钮', optional: [] },
     ],
   },
   {

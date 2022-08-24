@@ -234,8 +234,14 @@ export default class TableRender {
       const filterFn0 = (row: any, index: number) => filterFn(checked, row, index);
       this.emitEvent(EVENTS.ON_FILTER_CLICK, [{ filterFn: filterFn0, checked, column, index }]);
     };
+
+    const filterSave = (values: any[]) => {
+      this.context.emit(EMITEVENTS.COLUMN_FILTER_SAVE, { column, values });
+    };
+
     return <HeadFilter column={ column } height={ this.props.headHeight }
-    onChange={ handleFilterChange }/>;
+    onChange={ handleFilterChange }
+    onFilterSave={ filterSave }/>;
   }
 
   /**
