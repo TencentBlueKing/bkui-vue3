@@ -35,8 +35,9 @@ import Always from './demo/always.vue';
 import Base from './demo/base.vue';
 import Callback from './demo/callback.vue';
 import ClickTrigger from './demo/click-trigger.vue';
+// import MouseEvent from './demo/mouse-event.vue';
 import Position from './demo/position.vue';
-import Slot from './demo/slot.vue';;
+import Slot from './demo/slot.vue';
 
 const props: IPropsTableItem[] = [
   {
@@ -185,6 +186,13 @@ const demos = [
     demoName: 'demo/click-trigger',
     DemoComponent: ClickTrigger,
   },
+  // {
+  //   title: 'mouse click',
+  //   desc: 'mouse click',
+  //   componentName: 'popover2',
+  //   demoName: 'demo/mouse-event',
+  //   DemoComponent: MouseEvent,
+  // },
 ];
 
 export default defineComponent({

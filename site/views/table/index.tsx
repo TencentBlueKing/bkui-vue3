@@ -26,13 +26,12 @@
 
 import { defineComponent } from 'vue';
 
-import { tableProps } from '../../../packages/table/src/props';
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
-import { resolvePropsToDesData } from '../utils/index';
 
 import basic from './basic.vue';
+import basicFilter from './basic-filter.vue';
 import bordered from './bordered.vue';
 import cellRender from './cell-render';
 import configList from './config';
@@ -61,10 +60,9 @@ export default defineComponent({
     ScrollLoading,
     ScrollLoadingSlot,
     Expand,
+    basicFilter,
   },
   render() {
-    const menuPropsJson = resolvePropsToDesData(tableProps);
-    console.log('menuPropsJson', menuPropsJson);
     const configs = [
       {
         attrs: {
@@ -186,6 +184,16 @@ export default defineComponent({
           demoName: 'expand',
         },
         component: () => <Expand></Expand>,
+      },
+      {
+        attrs: {
+          title: '自定义过滤配置',
+          subtitle: '自定义保存 & 重置按钮',
+          desc: '',
+          componentName: 'table',
+          demoName: 'basic-filter',
+        },
+        component: () => <basicFilter></basicFilter>,
       }];
 
     const eventColumnMap = {
