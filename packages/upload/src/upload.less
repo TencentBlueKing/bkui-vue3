@@ -222,7 +222,6 @@
 
   &:not(.@{bk-prefix}-upload-trigger--disabled) {
     &:hover {
-      color: @primary-color;
       border-color: @primary-color;
 
       .@{bk-prefix}-upload-trigger {
@@ -351,6 +350,13 @@
   }
 
   &__item-del-icon {
+    font-size: 14px;
+    color: @gray-color;
+    cursor: pointer;
+  }
+
+  &__item-retry-icon {
+    margin-right: 12px;
     font-size: 14px;
     color: @gray-color;
     cursor: pointer;

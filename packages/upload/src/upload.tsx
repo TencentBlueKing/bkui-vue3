@@ -116,6 +116,10 @@ export default defineComponent({
       }
     };
 
+    function handleRetry(file: UploadFile) {
+      send(file.raw);
+    }
+
     async function upload(file: UploadRawFile, sendFiles: File[]) {
       if (!props.beforeUpload) {
         return send(file, sendFiles);
@@ -136,7 +140,7 @@ export default defineComponent({
       send(file, sendFiles);
     }
 
-    function send(file: UploadRawFile, sendFiles: File[]) {
+    function send(file: UploadRawFile, sendFiles?: File[]) {
       const {
         headers,
         header,
@@ -189,7 +193,7 @@ export default defineComponent({
           delete requests.value[uid];
         },
         onComplete: () => {
-          if (sendFiles.indexOf(file) === sendFiles.length - 1) {
+          if (sendFiles && sendFiles.indexOf(file) === sendFiles.length - 1) {
             emit('done', fileList.value);
           }
         },
@@ -241,7 +245,8 @@ export default defineComponent({
           theme={props.theme}
           disabled={props.disabled}
           multiple={props.multiple}
-          onRemove={handleRemove}>
+          onRemove={handleRemove}
+          onRetry={handleRetry}>
           {{
             innerTrigger: (file: UploadFile) => isPhotowall.value
               && <UploadTrigger
