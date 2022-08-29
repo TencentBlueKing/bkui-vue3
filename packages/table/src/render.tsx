@@ -292,7 +292,7 @@ export default class TableRender {
       }, {});
 
     const { getFixedColumnStyleResolve } = useFixedColumn(this.props, this.colgroups);
-    const { resolveFixedColumnStyle, fixedoffset } = getFixedColumnStyleResolve();
+    const { resolveFixedColumnStyle, fixedOffset } = getFixedColumnStyleResolve();
     // @ts-ignore:next-line
     return <thead style={rowStyle}>
       <TableRow>
@@ -300,7 +300,7 @@ export default class TableRender {
           {
             this.filterColgroups.map((column: Column, index: number) => <th colspan={1} rowspan={1}
               class={ this.getHeadColumnClass(column, index) }
-              style = { resolveFixedColumnStyle(column, fixedoffset) }
+              style = { resolveFixedColumnStyle(column, fixedOffset) }
               onClick={ () => this.handleColumnHeadClick(index) }
               { ...resolveEventListener(column) }>
                 <div class="cell">{ renderHeadCell(column, index) }</div>
@@ -332,7 +332,7 @@ export default class TableRender {
           ...formatPropAsArray(this.props.rowClass, [row, rowIndex, this]),
         ];
 
-        const { resolveFixedColumnStyle,  fixedoffset } = getFixedColumnStyleResolve();
+        const { resolveFixedColumnStyle,  fixedOffset } = getFixedColumnStyleResolve();
         const rowKey = `${this.uuid}-${row[TABLE_ROW_ATTRIBUTE.ROW_UID]}`;
         return [
           <TableRow key={rowKey}>
@@ -346,7 +346,7 @@ export default class TableRender {
             {
               this.filterColgroups.map((column: Column, index: number) => {
                 const cellStyle = [
-                  resolveFixedColumnStyle(column, fixedoffset),
+                  resolveFixedColumnStyle(column, fixedOffset),
                   ...formatPropAsArray(this.props.cellStyle, [column, index, row, rowIndex, this]),
                 ];
 

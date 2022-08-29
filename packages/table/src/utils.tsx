@@ -383,3 +383,10 @@ export const hasRootScrollY =  (root, querySelector: string, offsetHeight = 0) =
 
   return false;
 };
+
+export const getColumnClass = (column: Column, colIndex = 0, uuid: string = null) => ({
+  ...(uuid ? { [`${uuid}-column-${colIndex}`]: true } : {}),
+  column_fixed: !!column.fixed,
+  column_fixed_left: !!column.fixed,
+  column_fixed_right: column.fixed === 'right',
+});

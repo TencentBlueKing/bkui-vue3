@@ -72,6 +72,8 @@ export const tableProps = {
       PropTypes.shape({
         list: PropTypes.arrayOf(PropTypes.any).def([]),
         filterFn: PropTypes.func.def(undefined),
+        match: PropTypes.commonType(['full', 'fuzzy'], 'full'),
+        filterScope: PropTypes.commonType(Object.values(SortScope)).def(SortScope.CURRENT),
         btnSave: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]).def('确定'),
         btnReset: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]).def('重置'),
       }),
