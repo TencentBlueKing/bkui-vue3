@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
 */
 
-import { computed, defineComponent, ref, toRefs, watch  } from 'vue';
+import { computed, defineComponent, ref, toRefs, watch } from 'vue';
 
 import { clickoutside } from '@bkui-vue/directives';
 import { AngleUp, Close, Error } from '@bkui-vue/icon';
@@ -59,13 +59,15 @@ export default defineComponent({
     checkAnyLevel: PropTypes.bool.def(false),
     isRemote: PropTypes.bool.def(false),
     remoteMethod: PropTypes.func,
-    showCompleteName: PropTypes.bool.def(false),
+    showCompleteName: PropTypes.bool.def(true),
     idKey: PropTypes.string.def('id'),
     nameKey: PropTypes.string.def('name'),
     childrenKey: PropTypes.string.def('children'),
     separator: PropTypes.string.def('/'),
     limitOneLine: PropTypes.bool.def(false),
     extCls: PropTypes.string.def(''),
+    scrollHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(216),
+    scrollWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def('auto'),
   },
   emits: ['update:modelValue', 'change', 'clear', 'toggle'],
   setup(props, { emit }) {
@@ -73,7 +75,7 @@ export default defineComponent({
     const { isHover, setHover, cancelHover } = useHover();
     const store = ref(new Store(props));
     const panelShow = ref(false);
-    const selectedText = ref('');
+    const selectedText = ref<string | number>('');
     const selectedTags = ref([]);
     const { modelValue } = toRefs(props);
     const cascaderPanel = ref();
@@ -87,25 +89,30 @@ export default defineComponent({
 
     const popover = ref(null);
 
+    /** 根据配置，获取输入框显示的text */
+    const getShowText = (node: INode) =>  (props.showCompleteName
+      ? node.pathNames.join(separator)
+      : node.pathNames[node.pathNames.length - 1]);
+
     /** 更新选中 */
     const updateValue = (val: Array<string | number>) => {
       /** 根据配置更新显示内容 */
       if (multiple) {
         selectedTags.value = store.value.getCheckedNodes().map((node: INode) => ({
-          text: node.pathNames.join(separator),
+          text: getShowText(node),
           key: node.id,
         }));
         return;
       }
 
       /** 根据val的值，设置selectedText显示内容 */
-      popover?.value?.hide(); // 非多选，选中后，关闭popover
+      !props.checkAnyLevel && popover?.value?.hide(); // 非多选，选中后，关闭popover
       if (val.length === 0) {
         selectedText.value = '';
       } else {
         const node = store.value.getNodeByValue(val);
         if (!node) return;
-        selectedText.value = node.pathNames.join(separator);
+        selectedText.value = getShowText(node);
       }
     };
 
@@ -124,12 +131,11 @@ export default defineComponent({
       updateValue(current);
     };
 
-    const modelValueChangeHandler = (value) => {
+    const modelValueChangeHandler = (value, oldValue) => {
       updateValue(value);
-
       /** 派发相关事件 */
       emit('update:modelValue', value);
-      emit('change', value);
+      oldValue !== undefined && emit('change', value); // oldValue = undefined代表初始化，init不派发change事件
     };
 
     const listChangeHandler = () => {
@@ -217,11 +223,11 @@ export default defineComponent({
                 {this.multiple && renderTags()}
                 {this.filterable
                   ? <input class="bk-cascader-search-input"
-                  type="text"
-                  placeholder={this.placeholder}
+                    type="text"
+                    placeholder={this.placeholder}
                   />
                   : <span>{this.selectedText}</span>
-                  }
+                }
               </div>
             ),
             content: () => (
@@ -229,7 +235,15 @@ export default defineComponent({
                 <CascaderPanel
                   store={this.store}
                   ref="cascaderPanel"
-                  v-model={this.checkedValue}></CascaderPanel>
+                  width={this.scrollWidth}
+                  height={this.scrollHeight}
+                  v-model={this.checkedValue}
+                  v-slots={{
+                    default: scope => (this.$slots.default
+                      ? this.$slots.default(scope)
+                      : <span class="bk-cascader-node-name">{scope.node.name}</span>),
+                  }}>
+                </CascaderPanel>
               </div>
             ),
           }}

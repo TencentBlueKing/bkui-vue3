@@ -23,13 +23,12 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent, inject, ref, toRefs, watch } from 'vue';
+import { defineComponent, getCurrentInstance, ref, toRefs, watch } from 'vue';
 import { PropType } from 'vue-types/dist/types';
 
-import { PropTypes } from '@bkui-vue/shared';
+import { classes, PropTypes } from '@bkui-vue/shared';
 import Tag from '@bkui-vue/tag';
 
-import { selectKey } from './common';
 import { ISelected } from './type';
 
 
@@ -44,17 +43,23 @@ export default defineComponent({
     placeholder: PropTypes.string.def(''),
     filterable: PropTypes.bool.def(false), // 是否支持搜索
     allowCreate: PropTypes.bool.def(false),
+    disabled: PropTypes.bool.def(false),
     modelValue: PropTypes.any,
+    collapseTags: PropTypes.bool.def(false),
   },
   emits: ['update:modelValue', 'remove', 'enter'],
   setup(props, { emit }) {
-    const select = inject(selectKey, null);
-    const { modelValue } = toRefs(props);
+    const { proxy } = getCurrentInstance();
+    const { modelValue, collapseTags, selected } = toRefs(props);
     const value = ref(modelValue.value);
     const inputRef = ref<HTMLElement>();
+    const overflowTagIndex = ref<number|null>(null);
 
     watch(modelValue, () => {
       value.value = modelValue.value;
+    });
+    watch(selected, () => {
+      calcOverflow();
     });
     const handleRemoveTag = (val: string) => {
       emit('remove', val);
@@ -73,41 +78,88 @@ export default defineComponent({
         }
       }
     };
-    const handleGetLabelByValue = select?.handleGetLabelByValue;
+    const getTagDOM = (index?: number) => {
+      const tags = [...proxy.$el.querySelectorAll('.bk-tag')];
+      return typeof index === 'number' ? tags[index] : tags;
+    };
+    // 计算出现换行的索引
+    const calcOverflow = () => {
+      if (!collapseTags.value) return;
+
+      overflowTagIndex.value = null;
+      setTimeout(() => {
+        const tags = getTagDOM();
+        const tagIndexInSecondRow = tags.findIndex((currentUser, index) => {
+          if (!index) {
+            return false;
+          }
+          const previousTag = tags[index - 1];
+          return previousTag.offsetTop !== currentUser.offsetTop;
+        });
+        if ((tagIndexInSecondRow - 1) > -1) {
+          overflowTagIndex.value = (tagIndexInSecondRow - 1);
+        } else {
+          overflowTagIndex.value = null;
+        }
+      });
+    };
     return {
+      overflowTagIndex,
       value,
       inputRef,
       handleRemoveTag,
       focus,
       handleInput,
       handleKeydown,
-      handleGetLabelByValue,
     };
   },
   render() {
+    const selectTagClass = classes({
+      'bk-select-tag': true,
+      'bk-select-tag--default': true,
+      'is-disabled': this.disabled,
+      'collapse-tag': this.collapseTags,
+    });
+    const tagWrapperClass = classes({
+      'bk-select-tag-wrapper': true,
+    });
+    const inputStyle = {
+      display: this.selected.length && !this.filterable ? 'none' : '',
+    };
     return (
-      <div class="bk-select-tag">
+      <div class={selectTagClass}>
         {this.$slots?.prefix?.()}
-        {
-          this.selected.map(item => (
+        <span class={tagWrapperClass}>
+          {
+            this.$slots.default?.() ?? this.selected.map((item, index) => (
               <Tag
                 closable
                 theme={this.tagTheme}
+                style={{
+                  display: this.overflowTagIndex && index >= this.overflowTagIndex ? 'none' : '',
+                }}
                 onClose={() => this.handleRemoveTag(item.value)}>
-                {this.handleGetLabelByValue(item)}
+                {item.label}
               </Tag>
-          ))
-        }
+            ))
+          }
+          {
+            this.overflowTagIndex && this.collapseTags && (
+              <Tag class="bk-select-overflow-tag">+{this.selected.length - this.overflowTagIndex}</Tag>
+            )
+          }
+        </span>
         <input
           class="bk-select-tag-input"
           ref="inputRef"
           type="text"
+          style={inputStyle}
           placeholder={!this.selected.length ? this.placeholder : ''}
           readonly={!this.filterable}
+          disabled={this.disabled}
           value={!this.filterable ? '' : this.value}
           onInput={this.handleInput}
           onKeydown={this.handleKeydown}/>
-
         {this.$slots?.suffix?.()}
       </div>
     );

@@ -7,8 +7,8 @@
     @scroll-end="handleScrollEnd"
   >
     <bk-option
-      v-for="(item, index) in datasource"
-      :key="index"
+      v-for="(item) in datasource"
+      :key="item.value"
       :value="item.value"
       :label="item.label"
       :disabled="item.disabled"

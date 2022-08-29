@@ -49,7 +49,7 @@
       disabled: true,
     },
   ]);
-  const selectedValue = ref(false);
+  const selectedValue = ref('');
 </script>
 <style scoped>
 .bk-select {

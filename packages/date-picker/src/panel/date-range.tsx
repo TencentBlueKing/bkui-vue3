@@ -121,6 +121,7 @@ const dateRangePanelProps = {
 export type DateRangePanelProps = Readonly<ExtractPropTypes<typeof dateRangePanelProps>>;
 
 export default defineComponent({
+  name: 'DateRangePanel',
   props: dateRangePanelProps,
   emits: ['pick', 'pick-success'],
   setup(props, { slots, emit }) {
@@ -337,7 +338,12 @@ export default defineComponent({
       if (shortcut.onClick) {
         shortcut.onClick(shortcut, index);
       }
-      emit('pick', typeof shortcut.value === 'function' ? shortcut.value() : shortcut.value, false, 'shortcut', shortcut);
+      const value = typeof shortcut.value === 'function' ? shortcut.value() : shortcut.value;
+      const [form, to] = value;
+      state.rangeState.from = form;
+      state.rangeState.to = to;
+      state.dates = [form, to];
+      emit('pick', value, false, 'shortcut', shortcut);
       if (props.shortcutClose) {
         emit('pick-success');
       }

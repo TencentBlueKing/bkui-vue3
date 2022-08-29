@@ -68,6 +68,7 @@ const dateTableProps = {
 export type DateTableProps = Readonly<ExtractPropTypes<typeof dateTableProps>>;
 
 export default defineComponent({
+  name: 'DateTable',
   props: dateTableProps,
   emits: ['pick', 'pick-click', 'changeRange'],
   setup(props, { emit }) {
