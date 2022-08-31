@@ -35,6 +35,8 @@ import { IData, INode } from './interface';
 export default defineComponent({
   name: 'CascaderPanel',
   props: {
+    width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def('auto'),
+    height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(216),
     store: PropTypes.object.def({}),
     modelValue: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.number).def([]),
       PropTypes.arrayOf(PropTypes.string).def([])]),
@@ -47,6 +49,16 @@ export default defineComponent({
     });
     const activePath = ref([]);
     const checkValue = ref([]);
+
+    const getSizeComputed = (value: string | number) => {
+      if (typeof value === 'number') {
+        return `${value}px`;
+      }
+      return value;
+    };
+
+    const panelHeight = getSizeComputed(props.height);
+    const panelWidth = getSizeComputed(props.width);
 
     const updateCheckValue = (value: Array<number | string>) => {
       if (value.length === 0) {
@@ -162,13 +174,16 @@ export default defineComponent({
       checkValue,
       checkNode,
       iconRender,
+      panelWidth,
+      panelHeight,
     };
   },
   render() {
     return (
       <div class="bk-cascader-panel-wrapper">
         {this.menus.list.map(menu => (
-          <ul class="bk-cascader-panel">
+          <ul class="bk-cascader-panel bk-scroll-y"
+            style={{ height: this.panelHeight, width: this.panelWidth }}>
             {menu.map(node => (
               <li
                 class={[
@@ -185,7 +200,7 @@ export default defineComponent({
                     v-model={node.checked}
                     onChange={(val: boolean) => this.checkNode(node, val)}></BkCheckbox>
                 )}
-                <span class="bk-cascader-node-name">{node.name}</span>
+                {this.$slots.default?.({ node, data: node.data })}
                 {!node.isLeaf ? this.iconRender(node) : ''}
               </li>
             ))}

@@ -66,6 +66,8 @@ export default defineComponent({
     separator: PropTypes.string.def('/'),
     limitOneLine: PropTypes.bool.def(false),
     extCls: PropTypes.string.def(''),
+    scrollHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(216),
+    scrollWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def('auto'),
   },
   emits: ['update:modelValue', 'change', 'clear', 'toggle'],
   setup(props, { emit }) {
@@ -104,7 +106,7 @@ export default defineComponent({
       }
 
       /** 根据val的值，设置selectedText显示内容 */
-      popover?.value?.hide(); // 非多选，选中后，关闭popover
+      !props.checkAnyLevel && popover?.value?.hide(); // 非多选，选中后，关闭popover
       if (val.length === 0) {
         selectedText.value = '';
       } else {
@@ -129,12 +131,11 @@ export default defineComponent({
       updateValue(current);
     };
 
-    const modelValueChangeHandler = (value) => {
+    const modelValueChangeHandler = (value, oldValue) => {
       updateValue(value);
-
       /** 派发相关事件 */
       emit('update:modelValue', value);
-      emit('change', value);
+      oldValue !== undefined && emit('change', value); // oldValue = undefined代表初始化，init不派发change事件
     };
 
     const listChangeHandler = () => {
@@ -234,7 +235,15 @@ export default defineComponent({
                 <CascaderPanel
                   store={this.store}
                   ref="cascaderPanel"
-                  v-model={this.checkedValue}></CascaderPanel>
+                  width={this.scrollWidth}
+                  height={this.scrollHeight}
+                  v-model={this.checkedValue}
+                  v-slots={{
+                    default: scope => (this.$slots.default
+                      ? this.$slots.default(scope)
+                      : <span class="bk-cascader-node-name">{scope.node.name}</span>),
+                  }}>
+                </CascaderPanel>
               </div>
             ),
           }}
