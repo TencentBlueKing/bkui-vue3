@@ -594,7 +594,9 @@ export default defineComponent({
           this.hasShortcuts
             ? (
               <div class='bk-picker-panel-sidebar'>
-                {this.$slots.shortcuts?.() ?? this.shortcuts.length ? (
+                { this.$slots.shortcuts ? (
+                  typeof this.$slots.shortcuts === 'function' ? this.$slots.shortcuts() : this.$slots.shortcuts
+                ) : this.shortcuts.length ? (
                   <div class='bk-picker-panel-shortcuts'>
                     {
                       this.shortcuts.map((item, index) => (
