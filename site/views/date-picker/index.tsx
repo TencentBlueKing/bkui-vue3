@@ -32,6 +32,7 @@ import PropsBox from '../../components/props-box';
 import { IPropsTableItem } from '../../typings';
 
 import BaseDemo from './base-demo.vue';
+import DemoTsx from './demo-tsx';
 import FooterSlotDemo from './footer-slot-demo.vue';
 import HeaderSlotDemo from './header-slot-demo.vue';
 import RangeDemo from './range-demo.vue';
@@ -124,6 +125,14 @@ export default defineComponent({
             demoName="shortcuts-slot-demo">
             <ShortcutsSlotDemo />
           </DemoBox>
+        <DemoBox
+          title="demo-tsx"
+          desc="自定义插槽 tsx 写法"
+          componentName="date-picker"
+          suffix='.tsx'
+          demoName="demo-tsx">
+          <DemoTsx />
+        </DemoBox>
         <PropsBox propsData={menuPropsJson}/>
       </div>
     );
