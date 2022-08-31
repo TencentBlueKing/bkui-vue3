@@ -127,7 +127,7 @@ export default defineComponent({
           </DemoBox>
         <DemoBox
           title="demo-tsx"
-          desc="自定义 tsx"
+          desc="自定义插槽 tsx 写法"
           componentName="date-picker"
           suffix='.tsx'
           demoName="demo-tsx">
