@@ -23,44 +23,6 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { computed, defineComponent, onMounted, ref } from 'vue';
-
-import { bkEllipsis } from '@bkui-vue/directives';
-import { PropTypes } from '@bkui-vue/shared';
-
-import { getElementTextWidth } from '../utils';
-export default defineComponent({
-  name: 'TableCell',
-  directives: {
-    bkEllipsis,
-  },
-  props: {
-    showOverflowTooltip: PropTypes.bool.def(false),
-    text: PropTypes.string.def(''),
-  },
-
-  setup(props, { slots }) {
-    const refRoot = ref();
-    const isTipsEnabled = ref(false);
-    const ellipsis = computed(() => ({
-      content: props.text,
-      disabled: !props.showOverflowTooltip && !isTipsEnabled.value,
-    }));
-
-    onMounted(() => {
-      if (props.showOverflowTooltip) {
-        const textWidth = getElementTextWidth(refRoot.value);
-        const cellWidth = (refRoot.value as HTMLElement).clientWidth;
-        isTipsEnabled.value = textWidth > cellWidth;
-      }
-    });
-
-    return () => (ellipsis.value.disabled
-      ? <div class="cell" ref={ refRoot }>
-      { slots.default?.() }
-    </div>
-      : <div class="cell" v-bk-ellipsis={ ellipsis.value } ref="refRoot">
-      { slots.default?.() }
-    </div>);
-  },
-});
+export * as TableCell from './table-cell';
+export * as TableColumn from './table-column';
+export * as TableRow from './table-row';
