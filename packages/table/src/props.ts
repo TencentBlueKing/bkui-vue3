@@ -55,6 +55,7 @@ export const tableProps = {
     render: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
     width: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]),
     minWidth: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]).def(),
+    showOverflowTooltip: PropTypes.bool.def(false),
     type: PropTypes.commonType(['selection', 'index', 'expand', 'none'], 'columnType').def('none'),
     resizable: PropTypes.bool.def(true),
     fixed: PropTypes.oneOfType([
@@ -261,6 +262,7 @@ export type Column = {
   render?: Function | string;
   width?: number | string;
   minWidth?: number | string;
+  showOverflowTooltip?: boolean;
   type?: string;
   fixed?: string | boolean;
   resizable?: boolean;

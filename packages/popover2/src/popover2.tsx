@@ -59,6 +59,7 @@ export default defineComponent({
     const {
       showPopover,
       hidePopover,
+      updatePopover,
     } = useFloating(props, ctx, refReference, refContent, refArrow, refRoot);
 
     const {
@@ -111,6 +112,7 @@ export default defineComponent({
       theme,
       transBoundary,
       handleClickOutside,
+      updatePopover,
       hide,
       show,
     };

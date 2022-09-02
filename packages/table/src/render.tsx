@@ -31,6 +31,7 @@ import { DownShape, RightShape } from '@bkui-vue/icon';
 import Pagination from '@bkui-vue/pagination';
 import { classes } from '@bkui-vue/shared';
 
+import TableCell from './components/table-cell';
 import TableRow from './components/table-row';
 import { EMITEVENTS, EVENTS, TABLE_ROW_ATTRIBUTE } from './const';
 import BodyEmpty from './plugins/body-empty';
@@ -303,7 +304,9 @@ export default class TableRender {
               style = { resolveFixedColumnStyle(column, fixedOffset) }
               onClick={ () => this.handleColumnHeadClick(index) }
               { ...resolveEventListener(column) }>
-                <div class="cell">{ renderHeadCell(column, index) }</div>
+                <TableCell>
+                  { renderHeadCell(column, index) }
+                </TableCell>
               </th>)
           }
           </tr>
@@ -366,7 +369,9 @@ export default class TableRender {
                   style={cellStyle}
                   key={cellKey}
                   colspan={1} rowspan={1}>
-                  <div class={tdCtxClass} >{ this.renderCell(row, column, rowIndex, rows) }</div>
+                  <TableCell class={tdCtxClass} showOverflowTooltip={ column.showOverflowTooltip }>
+                    { this.renderCell(row, column, rowIndex, rows) }
+                  </TableCell>
                 </td>;
               })
             }

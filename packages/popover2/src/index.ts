@@ -28,3 +28,4 @@ import { withInstall } from '@bkui-vue/shared';
 import Component from './popover2';
 const BkPopover2 = withInstall(Component);
 export default BkPopover2;
+export { default as $bkPopover } from './plugin-popover';
