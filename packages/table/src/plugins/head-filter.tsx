@@ -26,7 +26,7 @@
 import { computed, defineComponent, nextTick, reactive } from 'vue';
 
 import BkCheckbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
-import { AngleDownLine } from '@bkui-vue/icon';
+import { Funnel } from '@bkui-vue/icon';
 import Popover from '@bkui-vue/popover2';
 import { classes, PropTypes, resolveClassName } from '@bkui-vue/shared';
 
@@ -39,7 +39,7 @@ export default defineComponent({
     column: PropTypes.any.def({}),
     height: PropTypes.number.def(LINE_HEIGHT),
   },
-  emits: ['change'],
+  emits: ['change', 'filterSave'],
 
   setup(props, { emit }) {
     const { column } = props;
@@ -71,22 +71,43 @@ export default defineComponent({
       return list.map((item: any) => ({ ...item, checked: state.checked.includes(item.value) }));
     });
 
+    const getRegExp = (searchValue: string | number | boolean, flags = 'ig') => new RegExp(`${searchValue}`.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&'), flags);
+
+    const defaultFilterFn = (checked: string[], row: any) => {
+      const { match } = column.filter;
+      const matchText = getRowText(row, resolvePropVal(column, 'field', [column, row]), column);
+      if (match === 'full') {
+        checked.includes(matchText);
+      }
+
+      return checked.some((str: string) => getRegExp(str, 'img').test(matchText));
+    };
+
     const filterFn = typeof column.filter.filterFn === 'function'
       ? (checked: string[], row: any, index: number, data: any[]) => column.filter
         .filterFn(checked, row, props.column, index, data)
       : (checked: string[], row: any) => (checked.length
-        ? checked.includes(getRowText(row, resolvePropVal(column, 'field', [column, row]), column))
+        ? defaultFilterFn(checked, row)
         : true);
 
     const handleBtnSaveClick = () => {
-      if (props.column.filter === 'custom') {
-        emit('change', [...state.checked], null);
-        state.isOpen = false;
-        return;
-      }
-
-      emit('change', [...state.checked], filterFn);
+      handleFilterChange(true);
+      emit('filterSave', [...state.checked]);
       state.isOpen = false;
+    };
+
+    const handleFilterChange = (btnSaveClick = false) => {
+      const { disabled } = resolveBtnOption(btnSave, '确定');
+
+      if (disabled || btnSaveClick) {
+        if (props.column.filter === 'custom') {
+          emit('change', [...state.checked], null);
+          state.isOpen = false;
+          return;
+        }
+
+        emit('change', [...state.checked], filterFn);
+      }
     };
 
     const handleBtnResetClick = () => {
@@ -95,6 +116,33 @@ export default defineComponent({
         state.isOpen = false;
         nextTick(() => emit('change', state.checked, filterFn));
       }
+    };
+
+    const resolveBtnOption = (opt: string | boolean, defText: string) => {
+      const disabled = opt === 'disabled' || opt === false;
+      const text = typeof opt === 'string' ? opt : defText;
+      return { disabled, text };
+    };
+
+    const { btnSave, btnReset } = column.filter;
+
+    const renderSaveBtn = () => {
+      const { disabled, text } = resolveBtnOption(btnSave, '确定');
+      if (disabled) {
+        return <span class="btn-filter-save disabled">{ text }</span>;
+      }
+
+      return <span class="btn-filter-save" onClick={handleBtnSaveClick}>{ text }</span>;
+    };
+
+    const renderResetBtn = () => {
+      const { disabled, text } = resolveBtnOption(btnReset, '重置');
+      if (disabled) {
+        return '';
+      }
+
+      return <span class={['btn-filter-reset', state.checked.length ?  '' : 'disable']}
+        onClick={handleBtnResetClick}>{ text }</span>;
     };
 
     return () => <Popover trigger="click"
@@ -107,9 +155,9 @@ export default defineComponent({
       onAfterHidden={() => handlePopShow(false)}>
       {
         {
-          default: () =>  <AngleDownLine class={headClass.value} />,
+          default: () => <Funnel class={headClass.value} />,
           content: () => <div class={ headFilterContentClass }>
-            <BkCheckboxGroup class="content-list" v-model={ state.checked }>
+            <BkCheckboxGroup class="content-list" v-model={ state.checked } onChange={ () => handleFilterChange(false) }>
               {
                 localData.value.map((item: any) => <div class="list-item">
                   <BkCheckbox label={item.value}>
@@ -119,10 +167,9 @@ export default defineComponent({
               }
             </BkCheckboxGroup>
             <div class="content-footer">
-              <span class="btn-filter-save" onClick={handleBtnSaveClick}>确定</span>
+              { renderSaveBtn() }
               <span class="btn-filter-split"></span>
-              <span class={['btn-filter-reset', state.checked.length ?  '' : 'disable']}
-                onClick={handleBtnResetClick}>重置</span>
+              { renderResetBtn() }
             </div>
           </div>,
         }

@@ -47,6 +47,7 @@ export default defineComponent({
     falseValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool]).def(false),
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool]).def(false),
     modelValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool]).def(false),
+    withValidate: PropTypes.bool.def(true),
   },
   emits: ['update:modelValue', 'change'],
   setup(props, { emit }) {
@@ -79,14 +80,14 @@ export default defineComponent({
         const sizeStr = `bk-switcher-${props.size}`;
         cls[sizeStr] = true;
       }
-      if (!props.size) {
-        cls['bk-switcher-nomal'] = true;
-      }
       return cls;
     });
 
     watch(() => props.modelValue, () => {
       isModelValue.value = true;
+      if (props.withValidate) {
+        formItem?.validate?.('change');
+      }
     });
 
     watch(() => props.value, () => {
@@ -105,7 +106,6 @@ export default defineComponent({
       const trigger = () => {
         emit('update:modelValue', lastValue);
         emit('change', lastChecked);
-        formItem?.validate?.('change');
       };
 
       let goodJob: any = true;

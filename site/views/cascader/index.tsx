@@ -33,7 +33,11 @@ import { IPropsTableItem } from '../../typings';
 
 import BaseDemo from './base-demo.vue';
 import CheckAnyLevelDemo from './check-any-level-demo.vue';
+import IdKey from './id-key.vue';
+import RemoteDemo from './remote-demo.vue';
 import SeparatorDemo from './separator-demo.vue';
+import ShowCompleteName from './show-complete-name.vue';
+import SlotsDemo from './slots-demo.vue';
 
 const cascaderPropsJson: IPropsTableItem[] = [
   {
@@ -48,13 +52,34 @@ const cascaderPropsJson: IPropsTableItem[] = [
     type: 'Boolean',
     default: false,
     desc: '是否多选',
-    optional: [],
+    optional: ['true', 'false'],
   },
   {
     name: 'list',
     type: 'Array',
     default: '[]',
     desc: '可选项数据源',
+    optional: [],
+  },
+  {
+    name: 'id-key',
+    type: 'String',
+    default: 'id',
+    desc: '列表id指定的key值，默认为id,若需要改为其他key值，在这里传入即可',
+    optional: [],
+  },
+  {
+    name: 'name-key',
+    type: 'String',
+    default: 'id',
+    desc: '列表name指定的key值，默认为name,若需要改为其他key值，在这里传入即可',
+    optional: [],
+  },
+  {
+    name: 'children-key',
+    type: 'String',
+    default: 'id',
+    desc: '列表children子节点了列表指定的key值，默认为children,若需要改为其他key值，在这里传入即可',
     optional: [],
   },
   {
@@ -67,16 +92,23 @@ const cascaderPropsJson: IPropsTableItem[] = [
   {
     name: 'check-any-level',
     type: 'Boolean',
-    default: false,
+    default: 'false',
     desc: '是否允许选择任意一级',
-    optional: [],
+    optional: ['true', 'false'],
+  },
+  {
+    name: 'show-complete-came',
+    type: 'Boolean',
+    default: 'true',
+    desc: '输入框中是否显示选中值的完整路径',
+    optional: ['true', 'false'],
   },
   {
     name: 'clearable',
     type: 'Boolean',
-    default: true,
+    default: 'true',
     desc: '是否允许选择任意一级',
-    optional: [],
+    optional: ['true', 'false'],
   },
   {
     name: 'placeholder',
@@ -93,6 +125,20 @@ const cascaderPropsJson: IPropsTableItem[] = [
     optional: [],
   },
   {
+    name: 'scroll-height',
+    type: 'String/Number',
+    default: '216',
+    desc: '下拉列表滚动高度',
+    optional: [],
+  },
+  {
+    name: 'scroll-width',
+    type: 'String/Number',
+    default: 'auto',
+    desc: '子版面的宽度',
+    optional: [],
+  },
+  {
     name: 'extCls',
     type: 'String',
     default: '',
@@ -102,47 +148,106 @@ const cascaderPropsJson: IPropsTableItem[] = [
 
 ];
 
+const cascaderEventsJson: IPropsTableItem[] = [
+  {
+    name: 'change',
+    type: 'String',
+    default: null,
+    desc: '内容改变时触发，回调为当前所选内容',
+    optional: [],
+  },
+  {
+    name: 'toggle',
+    type: 'String',
+    default: null,
+    desc: '	切换下拉折叠状态时调用, 回调参数为当前是否展开',
+    optional: ['true', 'false'],
+  },
+  {
+    name: 'clear',
+    type: 'String',
+    default: null,
+    desc: '清空选项时调用, 回调参数为请空前的内容',
+    optional: [],
+  },
+];
+
 
 export default defineComponent({
   render() {
     return (
       <div>
         <DemoTitle
-          name="Cascader 级联组件"
-          desc="Breadcrumb组件， 显示当前页面的路径，快速返回之前的任意页面。"
-          link="https://www.google.com.hk/"/>
+          name='Cascader 级联组件'
+          desc='Breadcrumb组件， 显示当前页面的路径，快速返回之前的任意页面。'
+          link='https://www.google.com.hk/' />
 
         <DemoBox
-          title="基础用法"
-          subtitle="基础数据展示"
-          desc="通过trigger设置`click`或`hover`实现下一级的触发方式"
-          componentName="cascader"
-          demoName="base-demo">
-            <BaseDemo></BaseDemo>
-          </DemoBox>
-
-          <DemoBox
-          title="任意级可选"
-          subtitle="通过配置实现任意级可选"
-          desc="设置`check-any-level`为true，可以将非叶子节点作为可选级"
-          componentName="cascader"
-          demoName="check-any-level-demo">
-            <CheckAnyLevelDemo></CheckAnyLevelDemo>
+          title='基础用法'
+          subtitle='基础数据展示'
+          desc='通过trigger设置`click`或`hover`实现下一级的触发方式'
+          componentName='cascader'
+          demoName='base-demo'>
+          <BaseDemo></BaseDemo>
         </DemoBox>
 
-          <DemoBox
-            title="分隔符"
-            subtitle="自定义分隔符"
-            desc="设置`separator`属性实现自定义分隔符"
-            componentName="cascader"
-            demoName="separator-demo">
-              <SeparatorDemo></SeparatorDemo>
-            </DemoBox>
+        <DemoBox
+          title='任意级可选'
+          subtitle='通过配置实现任意级可选'
+          desc='设置`check-any-level`为true，可以将非叶子节点作为可选级'
+          componentName='cascader'
+          demoName='check-any-level-demo'>
+          <CheckAnyLevelDemo></CheckAnyLevelDemo>
+        </DemoBox>
+        <DemoBox
+          title='列表别名设置'
+          subtitle='id-key name-key适配'
+          desc='列表id指定的key值，默认为id,若需要改为其他key值，在这里传入即可,列表name指定的key值，默认为name,若需要改为其他key值，在这里传入即可'
+          componentName='cascader'
+          demoName='id-key'>
+          <IdKey></IdKey>
+        </DemoBox>
+        <DemoBox
+          title='分隔符'
+          subtitle='自定义分隔符'
+          desc='设置`separator`属性实现自定义分隔符'
+          componentName='cascader'
+          demoName='separator-demo'>
+          <SeparatorDemo></SeparatorDemo>
+        </DemoBox>
+
+        <DemoBox title='仅显示最后一级'
+          subtitle='可在输入框仅显示最后一级的标签，而非完整路径'
+          desc='设置`show-complete-name`属性为`false`，则可以使输入框仅显示最后一级，默认显示完整路径'
+          componentName='cascader'
+          demoName='show-complete-name'>
+          <ShowCompleteName></ShowCompleteName>
+        </DemoBox>
+        <DemoBox
+          title='自定义节点'
+          subtitle='通过插槽对节点内容实现个性化需求'
+          desc='可以通过`scoped slot`对级联选择器的备选项的节点内容进行自定义，scoped slot传入node表示当前节点的 Node 的数据,data代表原数据'
+          componentName='cascader'
+          demoName='slots-demo'>
+          <SlotsDemo></SlotsDemo>
+        </DemoBox>
+        <DemoBox
+          title='远程加载'
+          subtitle='远程加载list，异步加载'
+          desc='可以通过`is-remote`开启动态加载，并通过`remote-method`来设置加载数据源的方法。注意远程拉取数据格式需要遵循list的要求'
+          componentName='cascader'
+          demoName='remote-demo'>
+          <RemoteDemo></RemoteDemo>
+        </DemoBox>
 
         <PropsBox
-          title="Cascader Attributes"
-          subtitle=""
-          propsData={cascaderPropsJson}/>
+          title='Cascader Attributes'
+          subtitle=''
+          propsData={cascaderPropsJson} />
+        <PropsBox
+          title='Cascader Events'
+          subtitle=''
+          propsData={cascaderEventsJson} />
       </div>
     );
   },

@@ -26,18 +26,20 @@
 
 import { defineComponent } from 'vue';
 
-import { tableProps } from '../../../packages/table/src/props';
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
-import { resolvePropsToDesData } from '../utils/index';
 
 import basic from './basic.vue';
+import basicFilter from './basic-filter.vue';
+import basicSort from './basic-sort.vue';
 import bordered from './bordered.vue';
 import cellRender from './cell-render';
+import configList from './config';
 import DataEmpty from './data-empty.vue';
 import event from './event.vue';
 import Expand from './expand.vue';
+import filterScope from './filter-scope.vue';
 import fixed from './fixed.vue';
 import * as TABLE_DATA from './options';
 import pagination from './pagination.vue';
@@ -60,10 +62,11 @@ export default defineComponent({
     ScrollLoading,
     ScrollLoadingSlot,
     Expand,
+    basicFilter,
+    basicSort,
+    filterScope,
   },
   render() {
-    const menuPropsJson = resolvePropsToDesData(tableProps);
-
     const configs = [
       {
         attrs: {
@@ -185,7 +188,43 @@ export default defineComponent({
           demoName: 'expand',
         },
         component: () => <Expand></Expand>,
+      },
+      {
+        attrs: {
+          title: '自定义过滤配置',
+          subtitle: '自定义保存 & 重置按钮',
+          desc: '',
+          componentName: 'table',
+          demoName: 'basic-filter',
+        },
+        component: () => <basicFilter></basicFilter>,
+      },
+      {
+        attrs: {
+          title: '过滤范围',
+          subtitle: '通过设置filterScope设置过滤范围为当前页面还是全部数据，如果是all，则过滤完毕会重置分页为首页',
+          desc: '',
+          componentName: 'table',
+          demoName: 'filter-scope',
+        },
+        component: () => <filterScope></filterScope>,
+      },
+      {
+        attrs: {
+          title: '排序范围',
+          subtitle: '通过设置sortScope设置排序范围为当前页面还是全部数据',
+          desc: '',
+          componentName: 'table',
+          demoName: 'basic-sort',
+        },
+        component: () => <basicSort></basicSort>,
       }];
+
+    const eventColumnMap = {
+      name: '事件名称',
+      desc: '说明',
+      params: '回调参数',
+    };
 
     return (
       <div>
@@ -200,7 +239,20 @@ export default defineComponent({
                  }
               </DemoBox>)
           }
-        <PropsBox propsData={menuPropsJson}/>
+        {
+          configList.map(cfg => <div>
+            {
+              cfg.type === 'events'
+                ? <PropsBox
+                    title={ cfg.title }
+                     columnMap={ eventColumnMap }
+                     subtitle={ cfg.subTile }
+                     propsData={ cfg.config }/>
+                : <PropsBox title={ cfg.title } subtitle={ cfg.subTile }
+                     propsData={ cfg.config }/>
+            }
+          </div>)
+        }
       </div>
     );
   },

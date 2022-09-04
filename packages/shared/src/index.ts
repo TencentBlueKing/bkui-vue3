@@ -37,6 +37,7 @@ export * from './token';
 
 export * from './hooks/use-form';
 export * from './hooks/use-form-item';
+export * from './dom';
 
 
 export function classes(dynamicCls: object, constCls = ''): string {
@@ -146,7 +147,7 @@ export function filterProperty(data: object, filter: string[]) {
   }));
 };
 
-export function arrayEqual(arr1: string[] = [], arr2: string[] = []) {
+export function arrayEqual(arr1: Array<string | number> = [], arr2: Array<string | number> = []) {
   if (arr1.length !== arr2.length) {
     return false;
   }

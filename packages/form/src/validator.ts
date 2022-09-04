@@ -24,28 +24,10 @@
 * IN THE SOFTWARE.
 */
 export default {
-  required: (value: any): boolean => {
-    console.log('required', value, value !== '' && value !== undefined && value !== null);
-    return value !== '' && value !== undefined && value !== null;
-  },
-  min: (value: number, min: number): boolean => {
-    console.log('min');
-    return value >= min;
-  },
-  max: (value: number, max: number): boolean => {
-    console.log('max');
-    return max >= value;
-  },
-  email: (value: string): boolean => {
-    console.log('email');
-    return /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/.test(value);
-  },
-  maxlength: (value: string, maxlength: number): boolean => {
-    console.log('maxlength');
-    return value.length <= maxlength;
-  },
-  pattern: (value: string, pattern: RegExp): boolean => {
-    console.log('pattern');
-    return pattern.test(value);
-  },
+  required: (value: any): boolean => value !== '' && value !== undefined && value !== null,
+  min: (value: number, min: number): boolean => value >= min,
+  max: (value: number, max: number): boolean => max >= value,
+  email: (value: string): boolean => /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/.test(value),
+  maxlength: (value: string, maxlength: number): boolean => value.length <= maxlength,
+  pattern: (value: string, pattern: RegExp): boolean => pattern.test(value),
 };

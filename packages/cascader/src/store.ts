@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { arrayEqual, filterProperty } from '@bkui-vue/shared';
+import { arrayEqual } from '@bkui-vue/shared';
 
 import { IConfig, IData, INode } from './interface';
 import Node from './node';
@@ -46,7 +46,7 @@ class Store {
   constructor(props) {
     const { list } = props;
     this.data = list;
-    this.config = filterProperty(props, ['list']);
+    this.config = props;
     this.nodes = this.data.map(node => new Node(node, this.config));
   }
   getNodes() {
@@ -64,9 +64,24 @@ class Store {
   }
 
   /** 根据值获得node实例 */
-  getNodeByValue(value: string[]): INode {
+  getNodeByValue(value: Array<number | string>): INode {
     const nodes = this.getFlattedNodes().filter((node: INode) => arrayEqual(node.path, value));
     return nodes[0] ?? null;
+  }
+
+  getNodeById(id: number | string): INode {
+    return this.getFlattedNodes().find((node: INode) => node.id === id);
+  }
+
+  /** 插入单个节点 */
+  appendNode(nodeData: IData, parentNode: IData) {
+    const node = new Node(nodeData, this.config, parentNode);
+    const children = parentNode ? parentNode.children : this.nodes;
+    children.push(node);
+  }
+
+  appendNodes(nodeDataList: IData[], parentNode: IData) {
+    nodeDataList.forEach((node: IData) => this.appendNode(node, parentNode));
   }
 }
 

@@ -46,12 +46,14 @@ export default defineComponent({
   emits: EMIT_EVENT_TYPES,
   setup(props, ctx) {
     let columnSortFn: any = null;
+    let activeSortColumn: any = null;
     let columnFilterFn: any = null;
 
     let observerIns = null;
     const root = ref();
     const refVirtualRender = ref();
-
+    // scrollX 右侧距离
+    const tableOffsetRight = ref(0);
     const {
       colgroups,
       dragOffsetXStyle,
@@ -81,9 +83,19 @@ export default defineComponent({
 
     const tableRender = new TableRender(props, ctx, reactiveSchema, colgroups);
 
+    const updateOffsetRight = () => {
+      const $tableContent = root.value.querySelector('.bk-table-body-content');
+      const $table = $tableContent.querySelector('table');
+      if ($table) {
+        const $tableScrollWidth = $table.scrollWidth;
+        const $contentWidth = $tableContent.clientWidth;
+        tableOffsetRight.value = $tableScrollWidth - $contentWidth;
+      }
+    };
+
     watch(() => [props.data, props.pagination], () => {
       initIndexData(props.reserveExpand);
-      watchEffectFn(columnFilterFn, columnSortFn);
+      watchEffectFn(columnFilterFn, columnSortFn, activeSortColumn);
       nextTick(() => {
         resetTableHeight(root.value);
         updateBorderClass(root.value);
@@ -97,6 +109,7 @@ export default defineComponent({
       if (root?.value instanceof HTMLElement) {
         const offset = getColumnsWidthOffsetWidth();
         resolveColumnWidth(root.value, colgroups, 20, offset);
+        updateOffsetRight();
       }
     });
 
@@ -107,7 +120,8 @@ export default defineComponent({
       const { sortFn, column, index, type } = args;
       if (typeof sortFn === 'function') {
         columnSortFn = sortFn;
-        resolvePageData(columnFilterFn, columnSortFn);
+        activeSortColumn = column;
+        resolvePageData(columnFilterFn, columnSortFn, activeSortColumn);
         refVirtualRender.value?.reset?.();
       }
 
@@ -116,7 +130,7 @@ export default defineComponent({
       const { filterFn, checked, column, index } = args;
       if (typeof filterFn === 'function') {
         columnFilterFn = filterFn;
-        resolvePageData(columnFilterFn, columnSortFn);
+        resolvePageData(columnFilterFn, columnSortFn, activeSortColumn);
         refVirtualRender.value?.reset?.();
       }
 
@@ -152,6 +166,8 @@ export default defineComponent({
           ctx.emit(EMITEVENTS.SCROLL_BOTTOM, { ...pos, translateX, translateY });
         }, true)();
       }
+
+      updateOffsetRight();
     };
 
     onMounted(() => {
@@ -186,7 +202,6 @@ export default defineComponent({
     const tableBodyContentClass = {
       [resolveClassName('table-body-content')]: true,
       'with-virtual-render': props.virtualEnabled,
-      // [resolveClassName('F-scroll-y')]: !props.virtualEnabled,
     };
 
     const resizeColumnClass = {
@@ -202,6 +217,11 @@ export default defineComponent({
     const loadingRowClass = {
       'scroll-loading': true,
       _bottom: true,
+    };
+
+    const fixedBottomBorder = {
+      [resolveClassName('fixed-bottom-border')]: true,
+      '_is-empty': !props.data.length,
     };
 
     const { renderScrollLoading } = useScrollLoading(props, ctx);
@@ -231,11 +251,12 @@ export default defineComponent({
           {
             {
               default: (scope: any) => tableRender.renderTableBodySchema(scope.data || props.data),
+              afterSection: () => <div class={ fixedBottomBorder }></div>,
             }
           }
       </VirtualRender>
       <div class={ fixedWrapperClass }>
-        { renderFixedColumns() }
+        { renderFixedColumns(reactiveSchema.scrollTranslateX, tableOffsetRight.value) }
         <div class={ resizeColumnClass } style={ resizeColumnStyle.value }></div>
         <div class={ loadingRowClass }>{
           renderScrollLoading()

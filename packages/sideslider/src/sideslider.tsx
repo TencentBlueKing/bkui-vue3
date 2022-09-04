@@ -28,6 +28,7 @@ import { defineComponent } from 'vue';
 
 import BkButton from '@bkui-vue/button';
 import BkModal from '@bkui-vue/modal';
+
 const { propsMixin } = BkModal;
 const sliderPops = Object.assign({}, propsMixin);
 sliderPops.width.default = '400';
@@ -41,14 +42,6 @@ export default defineComponent({
   },
   props: {
     ...sliderPops,
-    title: {
-      type: String,
-      default: '',
-    },
-    extCls: {
-      type: String,
-      default: '',
-    },
     direction: {
       type: String,
       default: 'right',
@@ -62,7 +55,15 @@ export default defineComponent({
       },
     },
   },
-  emits: ['closed', 'update:isShow', 'shown', 'hidden', 'animation-end'],
+
+  emits: [
+    'closed',
+    'update:isShow',
+    'shown',
+    'hidden',
+    'animation-end',
+  ],
+
   setup(props, { slots, emit }) {
     const handleClose = async () => {
       let shouldClose = true;
@@ -100,16 +101,33 @@ export default defineComponent({
           </div>
         </>,
         default: () => slots.default?.() ?? 'Content',
-        footer: () => <div class="bk-sideslider-footer">
-          {slots.footer?.() ?? ''}
-        </div>,
+        footer: () => {
+          if (slots.footer) {
+            return (
+              <div class="bk-sideslider-footer">
+                {slots.footer()}
+              </div>
+            );
+          }
+
+          return null;
+        },
       };
       const className = `bk-sideslider-wrapper ${props.scrollable ? 'scroll-able' : ''} ${props.extCls}`;
-      const maxHeight = slots.footer ? 'calc(100vh - 114px)' : 'calc(100vh - 60px)';
-      // @ts-ignore
-      return <BkModal {...props} maxHeight={maxHeight} extCls={className} style={`${props.direction}: 0;`} onHidden={handleHidden} onShown={handleShown} onClose={handleClose}>
-        {dialogSlot}
-      </BkModal>;
+      const maxHeight = slots.footer ? 'calc(100vh - 106px)' : 'calc(100vh - 52px)';
+
+      return (
+        <BkModal
+          {...props}
+          maxHeight={maxHeight}
+          class={className}
+          style={`${props.direction}: 0;`}
+          onHidden={handleHidden}
+          onShown={handleShown}
+          onClose={handleClose}>
+          {dialogSlot}
+        </BkModal>
+      );
     };
   },
 });

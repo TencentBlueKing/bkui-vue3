@@ -99,7 +99,7 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?:
       return Number(strHeight.replace('px', ''));
     }
 
-    if (/^\d+\.?\d*%$/ig.test(strHeight)) {
+    if (/^\d+\.?\d*%$/ig.test(strHeight) && typeof defaultValue === 'number') {
       const percent = Number(strHeight.replace('%', ''));
       return defaultValue * percent / 100;
     }
@@ -120,10 +120,16 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?:
     const contentHeight = resolveHeight - resolveHeadHeight - resolveFooterHeight;
     const height = props.height !== 'auto' ? `${contentHeight}px` : false;
     const minHeight = resolveMinHeight - resolveHeadHeight - resolveFooterHeight;
+    const resolveMaxHeight = resolvePropHeight(props.maxHeight, undefined);
+    const maxHeight = typeof resolveMaxHeight === 'number'
+      ? `${resolveMaxHeight - resolveHeadHeight - resolveFooterHeight}px`
+      : false;
+
     Object.assign(contentStyle, {
       display: pageData?.length ? 'block' : false,
       'min-height': `${minHeight}px`,
       height,
+      maxHeight,
     });
   };
 
@@ -258,7 +264,7 @@ export const useInit = (props: TablePropTypes) => {
     });
   };
 
-  const { renderFixedColumns, fixedWrapperClass } = useFixedColumn(props, colgroups);
+  const { renderFixedColumns, fixedWrapperClass } = useFixedColumn(props, colgroups, false);
 
   return {
     colgroups,

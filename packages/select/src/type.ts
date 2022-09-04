@@ -40,12 +40,12 @@ export interface ISelectContext {
   multiple?: boolean;
   selected: ISelected[];
   activeOptionValue: any;
+  showSelectedIcon: boolean;
   register(key: any, option: OptionInstanceType): any;
   unregister(key: any): any;
   registerGroup(key: any, option: GroupInstanceType): any;
   unregisterGroup(key: any): any;
   handleOptionSelected (option: OptionInstanceType): void;
-  handleGetLabelByValue (item: ISelected): string
 }
 
 export interface IOptionGroupContext {

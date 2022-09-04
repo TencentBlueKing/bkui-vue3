@@ -28,6 +28,22 @@
         :label="item.label"
       />
     </bk-select>
+    <bk-select
+      v-model="selectedValue"
+      class="bk-select"
+      filterable
+      multiple
+      show-select-all
+      multiple-mode="tag"
+      collapse-tags
+    >
+      <bk-option
+        v-for="(item, index) in datasource"
+        :key="index"
+        :value="item.value"
+        :label="item.label"
+      />
+    </bk-select>
   </div>
 </template>
 <script setup>
@@ -58,7 +74,7 @@
       label: '跳舞',
     },
   ]);
-  const selectedValue = ref([1, 'dancing']);
+  const selectedValue = ref([1, 'dancing', false, undefined, null, 'string']);
 </script>
 <style scoped>
 .demo {

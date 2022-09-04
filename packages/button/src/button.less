@@ -98,13 +98,13 @@
     each(@sizeSelectors, {
     @sizeBtnHeight: '@{value}BtnHeight';
     @sizeBtnPadding: '@{value}BtnPadding';
-      @sizeBtnFontSize: '@{value}BtnFontSize';
-      &.@{bk-prefix}-button-@{value} {
-        height: @@sizeBtnHeight;
-        padding: @@sizeBtnPadding;
-        font-size: @@sizeBtnFontSize;
-      }
-    });
+    @sizeBtnFontSize: '@{value}BtnFontSize';
+    &.@{bk-prefix}-button-@{value} {
+      height: @@sizeBtnHeight;
+      padding: @@sizeBtnPadding;
+      font-size: @@sizeBtnFontSize;
+    }
+  });
 
   .@{bk-prefix}-button-text {
     display: inline-flex;
@@ -136,7 +136,6 @@
   &.is-text {
     height: auto;
     padding: 0;
-    font-size: @font-size-medium;
     font-size: inherit;
     color: @default-color;
     text-decoration: none;

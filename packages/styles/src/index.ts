@@ -76,3 +76,5 @@ import '@bkui-vue/upload/upload.less';
 import '@bkui-vue/tag-input/tag-input.less';
 import '@bkui-vue/container/container.less';
 import '@bkui-vue/cascader/cascader.less';
+import '@bkui-vue/color-picker/color-picker.less';
+import '@bkui-vue/time-picker/time-picker.less';

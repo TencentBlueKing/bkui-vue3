@@ -58,7 +58,7 @@ export default defineComponent({
   name: 'Button',
   props: buttonProps,
   emits: ['click', 'mouseover'],
-  setup(props, { slots, attrs, emit }) {
+  setup(props, { slots, emit }) {
     const isHover = ref(false);
     const showSlot = slots.default ?? false;
     const btnClsPrefix = 'bk-button';
@@ -80,7 +80,6 @@ export default defineComponent({
         'no-slot': !showSlot,
       }, `${themeCls} ${btnClsPrefix} ${hoverTheme}`);
     });
-
     const loadingTheme = computed(() => {
       if (props.text || props.outline || props.hoverTheme) {
         if (isHover.value && !props.text) return 'white';
@@ -116,7 +115,6 @@ export default defineComponent({
         disabled={props.disabled}
         class={btnCls.value}
         type={props.nativeType}
-        {...attrs}
         onClick={handleClick}
         onMouseover={handleMouseOver}
         onMouseleave={handleMouseout}

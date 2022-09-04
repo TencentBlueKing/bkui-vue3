@@ -65,7 +65,7 @@ export const PopoverProps = {
   /**
    * 弹出内容绑定元素
    */
-  boundary: PropTypes.string.def(undefined),
+  boundary: PropTypes.oneOfType([PropTypes.string.def('parent'), PropTypes.instanceOf(HTMLElement)]),
 
   zIndex: PropTypes.number.def(undefined),
 
@@ -85,6 +85,11 @@ export const PopoverProps = {
    * 是否禁用clickoutside
    */
   disableOutsideClick: PropTypes.bool.def(false),
+
+  /**
+   * 是否禁用样式的transform更新位移
+   */
+  disableTransform: PropTypes.bool.def(false),
 
   ...EventProps,
 };

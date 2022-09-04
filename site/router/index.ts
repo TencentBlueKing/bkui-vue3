@@ -465,6 +465,18 @@ const routes: RouteRecordRaw[] = [
     },
   },
   /**
+   * @description:消息提示
+   */
+  {
+    path: '/info-box',
+    name: 'info-box',
+    component: () => import('../views/info-box/index'),
+    meta: {
+      group: NavGroupMeta.Feedback,
+      navName: 'InfoBox提示框',
+    },
+  },
+  /**
    * @description:通知提示
    */
   {
@@ -501,6 +513,18 @@ const routes: RouteRecordRaw[] = [
     },
   },
   /**
+   * @description:颜色选择器
+   */
+  {
+    path: '/color-picker',
+    name: 'colorPicker',
+    component: () => import('../views/color-picker/color-picker'),
+    meta: {
+      group: NavGroupMeta.Nav,
+      navName: 'ColorPicker 颜色选择器',
+    },
+  },
+  /**
    * @description:日期选择器
    */
   {
@@ -528,6 +552,15 @@ const routes: RouteRecordRaw[] = [
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'DatePicker 日期选择器',
+    },
+  },
+  {
+    path: '/time-picker',
+    name: 'timePicker',
+    component: () => import('../views/time-picker'),
+    meta: {
+      group: NavGroupMeta.Nav,
+      navName: 'TimePicker 日期选择器',
     },
   },
   /**

@@ -50,9 +50,10 @@ export const enum EMITEVENTS {
   COLUMN_PICK = 'columnPick',
   COLUMN_SORT = 'columnSort',
   COLUMN_FILTER = 'columnFilter',
+  COLUMN_FILTER_SAVE = 'colFilterSave',
 
   ROW_CLICK = 'rowClick',
-  ROW_DBL_CLICK = 'rowDblClick',
+  ROW_DBL_CLICK = 'rowDblclick',
   ROW_EXPAND_CLICK = 'rowExpand',
 
   PAGE_LIMIT_CHANGE = 'pageLimitChange',
@@ -76,6 +77,7 @@ export const EMIT_EVENT_TYPES = {
   [EMITEVENTS.PAGE_VALUE_CHANGE]: EMPTY,
   [EMITEVENTS.SETTING_CHANGE]: EMPTY,
   [EMITEVENTS.SCROLL_BOTTOM]: EMPTY,
+  [EMITEVENTS.COLUMN_FILTER_SAVE]: EMPTY,
 };
 
 /**

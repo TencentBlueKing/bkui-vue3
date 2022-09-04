@@ -1,6 +1,6 @@
 @import '@bkui-vue/styles/themes/themes.less';
 
-.@{bk-prefix}-cascader-popover {
+.@{bk-prefix}-cascader-popover.bk-pop2-content {
   padding: 0;
 }
 .@{bk-prefix}-cascader-popover-wrapper {
@@ -16,6 +16,15 @@
   cursor: pointer;
   border: 1px solid #c4c6cc;
   border-radius: 2px;
+  outline: none;
+
+  &.is-hover {
+    border: 1px solid #979ba5;
+  }
+
+  &:focus {
+    border: 1px solid #3a84ff;
+  }
   &.@{bk-prefix}-is-show-panel {
     .@{bk-prefix}-icon-angle-up {
       transform: rotate(0);
@@ -45,6 +54,11 @@
   .@{bk-prefix}-icon-clear-icon {
     right: 4px;
     font-size: 14px;
+    color: #c4c6cc;
+
+    &:hover {
+      color: #979ba5;
+    }
   }
   .@{bk-prefix}-popover-reference {
     display: block;
@@ -110,11 +124,13 @@
     .@{bk-prefix}-cascader-node {
       position: relative;
       padding: 0 16px;
+      overflow: hidden;
       line-height: 32px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       cursor: pointer;
 
       &:hover {
-        color: @primary-color;
         background: @cascader-panel-hover;
       }
 
@@ -137,8 +153,16 @@
       .icon-angle-right {
         position: absolute;
         top: -1px;
-        right: 5px;
+        right: 0;
         font-size: 20px;
+        color: @gray-color;
+      }
+
+      .icon-spinner {
+        position: absolute;
+        top: -1px;
+        right: 5px;
+        font-size: 12px;
         color: @gray-color;
       }
     }

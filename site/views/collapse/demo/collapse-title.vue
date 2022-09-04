@@ -2,7 +2,7 @@
   <bk-collapse
     :list="list"
   >
-    <template #default="slotProps">
+    <template #title="slotProps">
       <span> {{ slotProps.name }} 自定义title</span>
     </template>
   </bk-collapse>

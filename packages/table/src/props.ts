@@ -55,6 +55,7 @@ export const tableProps = {
     render: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
     width: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]),
     minWidth: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]).def(),
+    showOverflowTooltip: PropTypes.bool.def(false),
     type: PropTypes.commonType(['selection', 'index', 'expand', 'none'], 'columnType').def('none'),
     resizable: PropTypes.bool.def(true),
     fixed: PropTypes.oneOfType([
@@ -72,6 +73,10 @@ export const tableProps = {
       PropTypes.shape({
         list: PropTypes.arrayOf(PropTypes.any).def([]),
         filterFn: PropTypes.func.def(undefined),
+        match: PropTypes.commonType(['full', 'fuzzy'], 'full'),
+        filterScope: PropTypes.commonType(Object.values(SortScope)).def(SortScope.CURRENT),
+        btnSave: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]).def('确定'),
+        btnReset: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]).def('重置'),
       }),
       PropTypes.bool,
       PropTypes.string]).def(false),
@@ -257,6 +262,7 @@ export type Column = {
   render?: Function | string;
   width?: number | string;
   minWidth?: number | string;
+  showOverflowTooltip?: boolean;
   type?: string;
   fixed?: string | boolean;
   resizable?: boolean;
