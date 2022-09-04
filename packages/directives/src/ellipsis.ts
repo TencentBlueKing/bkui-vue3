@@ -42,7 +42,7 @@ const resolveOptions = (el: HTMLElement, binding: DirectiveBinding) => {
   return options;
 };
 
-const createInstance = (el: HTMLElement, binding: DirectiveBinding) => {
+export const createInstance = (el: HTMLElement, binding: any) => {
   let instance = null;
   let createTimer = null;
   const options = resolveOptions(el, binding);

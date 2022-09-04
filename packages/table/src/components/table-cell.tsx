@@ -23,44 +23,58 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { computed, defineComponent, onMounted, ref } from 'vue';
+import { defineComponent, onMounted, ref } from 'vue';
 
-import { bkEllipsis } from '@bkui-vue/directives';
+import { bkEllipsisInstance } from '@bkui-vue/directives';
 import { PropTypes } from '@bkui-vue/shared';
 
 import { getElementTextWidth } from '../utils';
 export default defineComponent({
   name: 'TableCell',
-  directives: {
-    bkEllipsis,
-  },
   props: {
-    showOverflowTooltip: PropTypes.bool.def(false),
-    text: PropTypes.string.def(''),
+    column: PropTypes.any.def({}) ,
+    row: PropTypes.any.def({})
   },
 
   setup(props, { slots }) {
     const refRoot = ref();
     const isTipsEnabled = ref(false);
-    const ellipsis = computed(() => ({
-      content: props.text,
-      disabled: !props.showOverflowTooltip && !isTipsEnabled.value,
-    }));
+    const { showOverflowTooltip = false } = props.column || {};
+
+    const resolveTooltipOption = () => {
+      let disabled = true;
+      let content = refRoot.value.innerText;
+
+      if (typeof showOverflowTooltip === 'boolean') {
+        disabled = !showOverflowTooltip;
+      }
+
+      if (typeof showOverflowTooltip === 'object') {
+        disabled = showOverflowTooltip.disabled;
+        if (typeof showOverflowTooltip.content === 'function') {
+          content = showOverflowTooltip.content(props.column, props.row);
+        }
+        content = showOverflowTooltip.content || refRoot.value.innerText;
+      }
+
+      return { disabled, content };
+    }
 
     onMounted(() => {
-      if (props.showOverflowTooltip) {
+      if (props.column.showOverflowTooltip) {
         const textWidth = getElementTextWidth(refRoot.value);
         const cellWidth = (refRoot.value as HTMLElement).clientWidth;
+
         isTipsEnabled.value = textWidth > cellWidth;
+        if(isTipsEnabled.value) {
+          const bindings = ref(resolveTooltipOption());
+          bkEllipsisInstance(refRoot.value, bindings);
+        }
       }
     });
 
-    return () => (ellipsis.value.disabled
-      ? <div class="cell" ref={ refRoot }>
+    return () => <div class="cell" ref={ refRoot }>
       { slots.default?.() }
-    </div>
-      : <div class="cell" v-bk-ellipsis={ ellipsis.value } ref="refRoot">
-      { slots.default?.() }
-    </div>);
+    </div>;
   },
 });
