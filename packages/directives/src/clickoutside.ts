@@ -25,9 +25,11 @@
 */
 
 import type {
+  App,
   ComponentPublicInstance,
   DirectiveBinding,
   ObjectDirective,
+  Plugin,
 } from 'vue';
 
 type Nullable<T> = T | null;
@@ -121,6 +123,10 @@ const ClickOutside: ObjectDirective = {
     // remove all listeners when a component unmounted
     nodeList.delete(el);
   },
+};
+
+(ClickOutside as Plugin).install = (app: App): void => {
+  app.directive('bkTooltips', ClickOutside);
 };
 
 export default ClickOutside;
