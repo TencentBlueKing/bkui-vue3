@@ -41,7 +41,7 @@ export { default as Link  } from '@bkui-vue/link';
 export { default as Loading  } from '@bkui-vue/loading';
 export { default as Modal  } from '@bkui-vue/modal';
 export { default as Popover  } from '@bkui-vue/popover';
-export { default as Popover2  } from '@bkui-vue/popover2';
+export { default as Popover2 } from '@bkui-vue/popover2';
 export { default as Progress  } from '@bkui-vue/progress';
 export { default as Radio  } from '@bkui-vue/radio';
 export { default as Rate  } from '@bkui-vue/rate';
