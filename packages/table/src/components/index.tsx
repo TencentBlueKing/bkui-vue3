@@ -23,9 +23,6 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-
-export { default as mousewheel } from './mousewheel';
-export { default as clickoutside } from './clickoutside';
-export { default as bkTooltips } from './tooltips';
-export { default as bkEllipsis } from './ellipsis';
-export { createInstance as bkEllipsisInstance } from './ellipsis';
+export * as TableCell from './table-cell';
+export * as TableColumn from './table-column';
+export * as TableRow from './table-row';

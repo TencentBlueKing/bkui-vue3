@@ -71,11 +71,23 @@ export default defineComponent({
       return list.map((item: any) => ({ ...item, checked: state.checked.includes(item.value) }));
     });
 
+    const getRegExp = (searchValue: string | number | boolean, flags = 'ig') => new RegExp(`${searchValue}`.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&'), flags);
+
+    const defaultFilterFn = (checked: string[], row: any) => {
+      const { match } = column.filter;
+      const matchText = getRowText(row, resolvePropVal(column, 'field', [column, row]), column);
+      if (match === 'full') {
+        checked.includes(matchText);
+      }
+
+      return checked.some((str: string) => getRegExp(str, 'img').test(matchText));
+    };
+
     const filterFn = typeof column.filter.filterFn === 'function'
       ? (checked: string[], row: any, index: number, data: any[]) => column.filter
         .filterFn(checked, row, props.column, index, data)
       : (checked: string[], row: any) => (checked.length
-        ? checked.includes(getRowText(row, resolvePropVal(column, 'field', [column, row]), column))
+        ? defaultFilterFn(checked, row)
         : true);
 
     const handleBtnSaveClick = () => {
