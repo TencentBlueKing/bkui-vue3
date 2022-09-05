@@ -43,7 +43,7 @@ export type ColumnFilterListItem = {
 export type IOverflowTooltip = {
   content: string | Function,
   disabled?: boolean
-}
+};
 
 export const IColumnType = {
   label: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
@@ -53,7 +53,7 @@ export const IColumnType = {
   minWidth: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]).def(),
   showOverflowTooltip: PropTypes.oneOfType([PropTypes.bool, PropTypes.shape<IOverflowTooltip>({
     content: PropTypes.string,
-    disabled: PropTypes.bool
+    disabled: PropTypes.bool,
   })]).def(false),
   type: PropTypes.commonType(['selection', 'index', 'expand', 'none'], 'columnType').def('none'),
   resizable: PropTypes.bool.def(true),
@@ -79,7 +79,7 @@ export const IColumnType = {
     }),
     PropTypes.bool,
     PropTypes.string]).def(false),
-}
+};
 
 export const tableProps = {
   /**

@@ -32,8 +32,8 @@ import { getElementTextWidth } from '../utils';
 export default defineComponent({
   name: 'TableCell',
   props: {
-    column: PropTypes.any.def({}) ,
-    row: PropTypes.any.def({})
+    column: PropTypes.any.def({}),
+    row: PropTypes.any.def({}),
   },
 
   setup(props, { slots }) {
@@ -58,7 +58,7 @@ export default defineComponent({
       }
 
       return { disabled, content };
-    }
+    };
 
     onMounted(() => {
       if (props.column.showOverflowTooltip) {
@@ -66,7 +66,7 @@ export default defineComponent({
         const cellWidth = (refRoot.value as HTMLElement).clientWidth;
 
         isTipsEnabled.value = textWidth > cellWidth;
-        if(isTipsEnabled.value) {
+        if (isTipsEnabled.value) {
           const bindings = ref(resolveTooltipOption());
           bkEllipsisInstance(refRoot.value, bindings);
         }
