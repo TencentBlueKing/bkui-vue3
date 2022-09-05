@@ -23,136 +23,164 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { throttle } from 'lodash';
-import { createApp, onMounted, onUnmounted, ref, Teleport } from 'vue';
+import { computed, createApp, nextTick, ref } from 'vue';
 
-import Arrow from './arrow';
-import Content from './content';
-import usePopoverInit from './use-popover-init';
-export default function createPopoverComponent(options: any) {
-  const props = {
-    ...options,
+import Popover from './popover2';
+import { PopoverPropTypes } from './props';
+import { isAvailableId } from './utils';
+
+export type $Popover = PopoverPropTypes & {
+  target: HTMLElement | HTMLElement | MouseEvent
+};
+
+export default function createPopoverComponent(options: $Popover) {
+  let $PopoverInstance = null;
+  let $PopoverInstanceVm = null;
+  let $PopoverInstanceEl: HTMLElement = null;
+
+  const resolvedOptions = {
     boundary: 'body',
-    isVirtualEl: true,
+    placement: 'top',
+    autoVisibility: false,
+    ...options,
     trigger: 'manual',
-    disableTransform: true,
   };
 
-  const {
-    arrow = true,
-    content = '',
-    boundary = 'parent',
-    disableTeleport = false,
-    target = null,
-    immediateShow = false,
-  } = props;
+  const isElement = element => element instanceof Element || element instanceof HTMLDocument;
+
   const popoverComponent = {
     name: '$popover',
-    setup() {
-      const getEventRect = ({ clientX, clientY }) => ({
-        width: 0,
-        height: 0,
-        x: clientX,
-        y: clientY - 10,
-        left: clientX,
-        right: clientX,
-        top: clientY,
-        bottom: clientY,
+    setup(_, { expose }) {
+      const refProps = ref(resolvedOptions);
+      const refReference = ref();
+      const referStyle = ref({
+        position: 'absolute' as const,
+        pointerEvents: 'none' as const,
+        left: 0,
+        top: 0,
+        width: 'auto',
+        height: 'auto',
+        transform: '',
       });
-      const refReference = ref({ $el:
-        {
-          getBoundingClientRect() {
-            return getEventRect(target);
-          },
-        },
-      });
-      const refContent = ref();
-      const refArrow = ref();
-      const {
-        onMountedFn,
-        onUnmountedFn,
-        handleClickOutside,
-        beforeInstanceUnmount,
-        updateBoundary,
-        updatePopover,
-        showFn,
-        hideFn,
-      } = usePopoverInit(props, { emit: () => {} }, refReference, refContent, refArrow, { value: null });
 
-      const throttleShow = throttle(showFn, 120);
+      const updateStyle = (target: HTMLElement | HTMLElement | MouseEvent) => {
+        if (isElement(target)) {
+          const { x, y, width, height } = (target as HTMLElement).getBoundingClientRect();
+          Object.assign(referStyle.value, {
+            width: `${width}px`,
+            height: `${height}px`,
+            transform: `translate3d(${x}px,${y}px,0)`,
+          });
+
+          return;
+        }
+
+        const { clientX, clientY } = target as MouseEvent;
+        Object.assign(referStyle.value, {
+          transform: `translate3d(${clientX}px,${clientY}px,0)`,
+          width: '10px',
+          height: '10px',
+        });
+      };
+
+      updateStyle(refProps.value.target);
       const show = () => {
-        throttleShow();
+        refReference.value?.show?.();
       };
 
       const hide = () => {
-        beforeInstanceUnmount();
-        hideFn();
+        refReference.value?.hide?.();
       };
 
-      const updatePosition = (event: MouseEvent) => {
-        const virtualEl = {
-          getBoundingClientRect() {
-            return getEventRect(event);
-          },
-        };
-        Object.assign(refReference.value.$el, virtualEl);
-        updatePopover(null, props);
-      };
-
-      updateBoundary();
-      onMounted(() => {
-        onMountedFn();
-        if (immediateShow) {
-          setTimeout(() => {
-            showFn();
-          });
-        }
+      const attrs = computed(() => {
+        const excludeKeys = ['target'];
+        return Object.keys(refProps.value)
+          .filter((key: string) => !excludeKeys.includes(key))
+          .reduce((out: any, curKey: string) => ({ ...out, [curKey]: refProps.value[curKey] }), {});
       });
-      onUnmounted(onUnmountedFn);
 
-      return {
-        refContent,
-        refArrow,
-        handleClickOutside,
+      const updateTarget = (target: MouseEvent | HTMLElement) => {
+        refProps.value.target = target;
+        updateStyle(target);
+        refReference.value?.updatePopover?.();
+        nextTick(() => {
+          refReference.value?.updatePopover?.();
+        });
+      };
+
+      expose({
         show,
         hide,
-        updatePosition,
-      };
-    },
-    render() {
-      return <Teleport to={ boundary } disabled={ disableTeleport }>
-        <Content ref="refContent"
-        v-slots={ { arrow: () => (arrow ? <Arrow ref="refArrow"></Arrow> : '') } }>
-          { content }
-        </Content>
-      </Teleport>;
+        updateTarget,
+      });
+
+      return () => <Popover { ...attrs.value } ref={refReference}>
+        <span style={ referStyle.value }></span>
+      </Popover>;
     },
   };
 
-  const popoverInstance = createApp(popoverComponent);
-  let vm = popoverInstance.mount(document.createElement('div'));
+
+  function getBoundaryDom(boundary) {
+    if (/^body$/i.test(boundary)) {
+      return document.body;
+    }
+
+    if (/^parent$/i.test(boundary)) {
+      if (isElement(resolvedOptions.target)) {
+        return (resolvedOptions.target as HTMLElement).parentNode;
+      }
+      return ((resolvedOptions.target as MouseEvent).target as HTMLElement).parentNode;
+    }
+
+    if (typeof boundary === 'string' && isAvailableId(boundary)) {
+      return document.querySelector(boundary);
+    }
+
+    return document.body;
+  }
+
+  if ($PopoverInstance === null) {
+    $PopoverInstanceEl = document.createElement('div');
+    getBoundaryDom(resolvedOptions.boundary)
+      .append($PopoverInstanceEl);
+
+    setTimeout(() => {
+      $PopoverInstance = createApp(popoverComponent);
+      $PopoverInstanceVm = $PopoverInstance.mount($PopoverInstanceEl);
+    });
+  }
+
 
   function close() {
-    // (vm as any)?.hide();
-    popoverInstance.unmount();
-    vm = null;
+    if ($PopoverInstance) {
+      $PopoverInstance.unmount();
+      $PopoverInstanceVm = null;
+      $PopoverInstance = null;
+      $PopoverInstanceEl.remove();
+    }
   };
 
   function show() {
-    (vm as any)?.show();
+    ($PopoverInstanceVm as any)?.show();
   }
 
   function update(e: MouseEvent) {
-    (vm as any)?.updatePosition(e);
+    ($PopoverInstanceVm as any)?.updateTarget(e);
   };
+
+  function hide() {
+    ($PopoverInstanceVm as any)?.hide();
+  }
 
   return {
     close,
     show,
+    hide,
     update,
-    vm,
+    vm: $PopoverInstanceVm,
     get $el(): HTMLElement {
-      return vm.$el;
+      return $PopoverInstanceVm.$el;
     },
   };
 }

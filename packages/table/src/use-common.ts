@@ -264,7 +264,7 @@ export const useInit = (props: TablePropTypes) => {
     });
   };
 
-  const { renderFixedColumns, fixedWrapperClass } = useFixedColumn(props, colgroups);
+  const { renderFixedColumns, fixedWrapperClass } = useFixedColumn(props, colgroups, false);
 
   return {
     colgroups,

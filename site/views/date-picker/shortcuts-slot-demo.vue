@@ -12,6 +12,21 @@
     </div>
     <div style="margin-top: 20px;">
       <bk-date-picker
+        v-model="defaultValue"
+        type="datetimerange"
+        use-shortcut-text
+        format="yyyy-MM-dd HH:mm:ss"
+        @change="change"
+      >
+        <template #shortcuts>
+          <div class="custom-shortcuts">
+            自定义插槽
+          </div>
+        </template>
+      </bk-date-picker>
+    </div>
+    <div style="margin-top: 20px;">
+      <bk-date-picker
         v-model="dateValue"
         @change="change"
       >

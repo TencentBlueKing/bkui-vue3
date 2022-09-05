@@ -23,9 +23,29 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import { defineComponent, ref } from 'vue';
 
-export { default as mousewheel } from './mousewheel';
-export { default as clickoutside } from './clickoutside';
-export { default as bkTooltips } from './tooltips';
-export { default as bkEllipsis } from './ellipsis';
-export { createInstance as bkEllipsisInstance } from './ellipsis';
+// import BkDatePicker from '../../../packages/date-picker/src/index';
+import BkDatePicker from '@bkui-vue/date-picker';
+export default defineComponent({
+  name: 'BkDatePickerDemo',
+  setup() {
+    const dateValue = ref(new Date());
+    return { dateValue };
+  },
+  render() {
+    return (
+      <BkDatePicker
+        v-model={this.dateValue}
+        format='yyyy-MM-dd HH:mm:ss'
+        placeholder='选择日期范围'
+      >
+        {{
+          shortcuts: () => (
+            <div>22</div>
+          ),
+        }}
+      </BkDatePicker>
+    );
+  },
+});

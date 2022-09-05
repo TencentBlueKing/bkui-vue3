@@ -25,7 +25,7 @@
 */
 export const DATA_TABLE = [
   {
-    ip: 'from ip: 192.168.0.1',
+    ip: '192.168.0.1-2018-05-25 15:02:241',
     source: 'QQ',
     status: '创建中',
     create_time: '2018-05-25 15:02:241',
@@ -94,7 +94,9 @@ export const DATA_COLUMNS1 = [
   {
     label: '序号',
     type: 'index',
-    sort: true,
+    sort: {
+      sortScope: 'all',
+    },
     width: 50,
     minWidth: 80,
   },
@@ -108,15 +110,15 @@ export const DATA_COLUMNS1 = [
     field: 'source',
     width: 80,
     filter: {
-      list: [{ text: 'QQ', value: 'QQ' }, { text: '微信', value: '微信' }, { text: 'Email', value: 'Email' }],
-      btnSave: false,
-      btnReset: '取消',
+      list: [{ text: 'QQ', value: 'QQ' }, { text: '4_QQ', value: '4_QQ' }, { text: '微信', value: '微信' }, { text: 'Email', value: 'Email' }],
+      filterScope: 'all',
+      match: 'fuzzy',
     },
   },
   {
     label: '创建时间',
     field: 'create_time',
-    sort: 'custom',
+    sort: false,
   },
   {
     label: (column, index) => `状态-${index}-${column.field}`,
