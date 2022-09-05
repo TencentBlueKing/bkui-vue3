@@ -25,6 +25,8 @@
 */
 import { v4 as uuidv4 } from 'uuid';
 
+import { isAvailableId } from './utils';
+
 let popContainerId = null;
 let fullscreenReferId = null;
 let parentNodeReferId = null;
@@ -72,11 +74,6 @@ export default (props, prefix = '#') => {
     });
 
     return resolvedBoundary;
-  };
-
-  const isAvailableId = (query: string) => {
-    const container = document.querySelector(query);
-    return container instanceof HTMLElement;
   };
 
   if (popContainerId === null || !isAvailableId(`#${popContainerId}`)) {
