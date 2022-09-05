@@ -369,7 +369,7 @@ export default class TableRender {
                   style={cellStyle}
                   key={cellKey}
                   colspan={1} rowspan={1}>
-                  <TableCell class={tdCtxClass} showOverflowTooltip={ column.showOverflowTooltip }>
+                  <TableCell class={tdCtxClass} column={ column } row={ row }>
                     { this.renderCell(row, column, rowIndex, rows) }
                   </TableCell>
                 </td>;

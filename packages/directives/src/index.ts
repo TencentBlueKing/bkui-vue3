@@ -28,3 +28,4 @@ export { default as mousewheel } from './mousewheel';
 export { default as clickoutside } from './clickoutside';
 export { default as bkTooltips } from './tooltips';
 export { default as bkEllipsis } from './ellipsis';
+export { createInstance as bkEllipsisInstance } from './ellipsis';

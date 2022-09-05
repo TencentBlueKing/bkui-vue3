@@ -40,6 +40,47 @@ export type ColumnFilterListItem = {
   value?: string;
 };
 
+export type IOverflowTooltip = {
+  content: string | Function,
+  disabled?: boolean
+};
+
+export const IColumnType = {
+  label: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
+  field: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
+  render: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
+  width: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]),
+  minWidth: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]).def(),
+  showOverflowTooltip: PropTypes.oneOfType([PropTypes.bool, PropTypes.shape<IOverflowTooltip>({
+    content: PropTypes.string,
+    disabled: PropTypes.bool,
+  })]).def(false),
+  type: PropTypes.commonType(['selection', 'index', 'expand', 'none'], 'columnType').def('none'),
+  resizable: PropTypes.bool.def(true),
+  fixed: PropTypes.oneOfType([
+    PropTypes.bool,
+    PropTypes.commonType(['left', 'right'], 'fixed'),
+  ]).def(false),
+  sort: PropTypes.oneOfType([
+    PropTypes.shape({
+      sortFn: PropTypes.func.def(undefined),
+      sortScope: PropTypes.commonType(Object.values(SortScope)).def(SortScope.CURRENT),
+    }),
+    PropTypes.bool,
+    PropTypes.string]).def(false),
+  filter: PropTypes.oneOfType([
+    PropTypes.shape({
+      list: PropTypes.arrayOf(PropTypes.any).def([]),
+      filterFn: PropTypes.func.def(undefined),
+      match: PropTypes.commonType(['full', 'fuzzy'], 'full'),
+      filterScope: PropTypes.commonType(Object.values(SortScope)).def(SortScope.CURRENT),
+      btnSave: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]).def('确定'),
+      btnReset: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]).def('重置'),
+    }),
+    PropTypes.bool,
+    PropTypes.string]).def(false),
+};
+
 export const tableProps = {
   /**
    * 渲染列表
@@ -49,38 +90,7 @@ export const tableProps = {
   /**
    * Table 列渲染
    */
-  columns: PropTypes.arrayOf(PropTypes.shape<Column>({
-    label: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
-    field: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
-    render: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
-    width: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]),
-    minWidth: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]).def(),
-    showOverflowTooltip: PropTypes.bool.def(false),
-    type: PropTypes.commonType(['selection', 'index', 'expand', 'none'], 'columnType').def('none'),
-    resizable: PropTypes.bool.def(true),
-    fixed: PropTypes.oneOfType([
-      PropTypes.bool,
-      PropTypes.commonType(['left', 'right'], 'fixed'),
-    ]).def(false),
-    sort: PropTypes.oneOfType([
-      PropTypes.shape({
-        sortFn: PropTypes.func.def(undefined),
-        sortScope: PropTypes.commonType(Object.values(SortScope)).def(SortScope.CURRENT),
-      }),
-      PropTypes.bool,
-      PropTypes.string]).def(false),
-    filter: PropTypes.oneOfType([
-      PropTypes.shape({
-        list: PropTypes.arrayOf(PropTypes.any).def([]),
-        filterFn: PropTypes.func.def(undefined),
-        match: PropTypes.commonType(['full', 'fuzzy'], 'full'),
-        filterScope: PropTypes.commonType(Object.values(SortScope)).def(SortScope.CURRENT),
-        btnSave: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]).def('确定'),
-        btnReset: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]).def('重置'),
-      }),
-      PropTypes.bool,
-      PropTypes.string]).def(false),
-  })).def([]),
+  columns: PropTypes.arrayOf(PropTypes.shape<Column>(IColumnType)).def([]),
 
   /**
    * 当前选中列
@@ -262,7 +272,7 @@ export type Column = {
   render?: Function | string;
   width?: number | string;
   minWidth?: number | string;
-  showOverflowTooltip?: boolean;
+  showOverflowTooltip?: boolean | IOverflowTooltip;
   type?: string;
   fixed?: string | boolean;
   resizable?: boolean;
