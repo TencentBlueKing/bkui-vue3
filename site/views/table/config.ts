@@ -77,6 +77,7 @@ export default [
     config: [
       { name: 'content', type: 'String|Function', default: 'Cell innerText', desc: 'tooltip展示内容，可以为回调函数，回调参数 (column, row) => string', optional: [] },
       { name: 'disabled', type: 'Boolean', default: 'false', desc: '是否展示tooltip', optional: ['true', 'false'] },
+      { name: 'watchCellResize', type: 'Boolean', default: 'true', desc: '是否监听当前cell尺寸变化, 动态添加tooltip, 【如果需要提升性能，请禁用此功能】', optional: ['true', 'false'] },
     ],
   },
   {

@@ -42,7 +42,8 @@ export type ColumnFilterListItem = {
 
 export type IOverflowTooltip = {
   content: string | Function,
-  disabled?: boolean
+  disabled?: boolean,
+  watchCellResize?: boolean
 };
 
 export const IColumnType = {
@@ -52,8 +53,9 @@ export const IColumnType = {
   width: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]),
   minWidth: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]).def(),
   showOverflowTooltip: PropTypes.oneOfType([PropTypes.bool, PropTypes.shape<IOverflowTooltip>({
-    content: PropTypes.string,
-    disabled: PropTypes.bool,
+    content: PropTypes.string.def(''),
+    disabled: PropTypes.bool.def(false),
+    watchCellResize: PropTypes.bool.def(true),
   })]).def(false),
   type: PropTypes.commonType(['selection', 'index', 'expand', 'none'], 'columnType').def('none'),
   resizable: PropTypes.bool.def(true),
