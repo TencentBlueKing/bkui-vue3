@@ -85,6 +85,7 @@ export default defineComponent({
     tagTheme: PropTypes.theme(['success', 'info', 'warning', 'danger']).def(''),
     behavior: PropTypes.oneOf(['normal', 'simplicity']).def('normal'), // 输入框模式
     collapseTags: PropTypes.bool.def(false), // 当以标签形式显示选择结果时，是否合并溢出的结果以数字显示
+    autoHeight: PropTypes.bool.def(true), // collapseTags模式下，聚焦时自动展开所有Tag
     noDataText: PropTypes.string.def('无数据'),
     noMatchText: PropTypes.string.def('无匹配数据'),
     loadingText: PropTypes.string.def('加载中...'),
@@ -127,6 +128,9 @@ export default defineComponent({
       scrollHeight,
       list,
       displayKey,
+      collapseTags,
+      autoHeight,
+      popoverOptions,
     } = toRefs(props);
 
     const formItem = useFormItem();
@@ -137,6 +141,7 @@ export default defineComponent({
     const searchRef = ref<HTMLElement>();
     const selectTagInputRef = ref<SelectTagInputType>();
     const virtualRenderRef = ref();
+    const popoverRef = ref();
     const optionsMap = ref<Map<string, OptionInstanceType>>(new Map());
     const options = computed(() => [...optionsMap.value.values()]);
     const groupsMap = ref<Map<string, GroupInstanceType>>(new Map());
@@ -153,6 +158,10 @@ export default defineComponent({
         formItem?.validate?.('change');
       }
     }, { deep: true });
+
+    watch(selected, () => {
+      popoverRef.value?.updatePopover(null, popoverConfig.value);
+    });
 
     // list模式下搜索后的值
     const filterList = computed(() => (
@@ -206,6 +215,25 @@ export default defineComponent({
       }
       return '';
     });
+    // 是否合并tag以数字形式展示
+    const isCollapseTags = computed(() => (
+      autoHeight.value
+        ? collapseTags.value && !isPopoverShow.value
+        : collapseTags.value
+    ));
+    const popoverConfig = computed<Partial<PopoverPropTypes>>(() => merge(
+      {
+        theme: 'light bk-select-popover',
+        trigger: 'manual',
+        width: popperWidth.value,
+        arrow: false,
+        placement: 'bottom-start',
+        isShow: isPopoverShow.value,
+        reference: selectTagInputRef.value,
+        offset: 6,
+      },
+      popoverOptions.value,
+    ));
 
     const { register, unregister } = useRegistry<OptionInstanceType>(optionsMap);
     const {
@@ -520,6 +548,7 @@ export default defineComponent({
       searchRef,
       selectTagInputRef,
       virtualRenderRef,
+      popoverRef,
       searchLoading,
       isOptionsEmpty,
       isSearchEmpty,
@@ -531,6 +560,8 @@ export default defineComponent({
       isShowSelectAll,
       virtualHeight,
       filterList,
+      isCollapseTags,
+      popoverConfig,
       setHover,
       cancelHover,
       handleFocus,
@@ -560,15 +591,6 @@ export default defineComponent({
       [this.size]: true,
       [this.behavior]: true,
     });
-    const basePopoverOptions: Partial<PopoverPropTypes> = {
-      theme: 'light bk-select-popover',
-      trigger: 'manual',
-      width: this.popperWidth,
-      arrow: false,
-      placement: 'bottom-start',
-      isShow: this.isPopoverShow,
-    };
-    const popoverOptions: Partial<PopoverPropTypes> = merge(basePopoverOptions, this.popoverOptions);
 
     const suffixIcon = () => {
       if (this.loading) {
@@ -591,7 +613,7 @@ export default defineComponent({
             filterable={this.isInput}
             disabled={this.isDisabled}
             onRemove={this.handleDeleteTag}
-            collapseTags={this.collapseTags}
+            collapseTags={this.isCollapseTags}
             onEnter={this.handleInputEnter}>
               {{
                 prefix: () => this.$slots.prefix?.(),
@@ -624,6 +646,7 @@ export default defineComponent({
     const renderSelectTrigger = () => (
         <div
           class="bk-select-trigger"
+          style={{ height: this.autoHeight && this.collapseTags ? '32px' : '' }}
           ref="triggerRef"
           onClick={this.handleTogglePopover}
           onMouseenter={this.setHover}
@@ -708,7 +731,7 @@ export default defineComponent({
     );
     return (
       <div class={selectClass}>
-        <BKPopover {...popoverOptions} onClickoutside={this.handleClickOutside}>
+        <BKPopover {...this.popoverConfig} onClickoutside={this.handleClickOutside} ref="popoverRef">
           {{
             default: () => renderSelectTrigger(),
             content: () => renderSelectContent(),
