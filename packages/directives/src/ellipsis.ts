@@ -81,6 +81,17 @@ export const createInstance = (el: HTMLElement, binding: any) => {
       handleMouseLeave,
     },
   });
+
+  const destroyInstance = (element?: HTMLElement) => {
+    handleMouseLeave();
+    (element ?? el)?.removeEventListener('mouseenter', handleMouseEnter);
+    (element ?? el)?.removeEventListener('mouseleave', handleMouseLeave);
+  };
+
+  return {
+    destroyInstance,
+    instance,
+  };
 };
 
 const ellipsis: ObjectDirective = {

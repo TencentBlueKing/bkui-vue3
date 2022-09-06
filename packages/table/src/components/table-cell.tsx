@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent, onMounted, ref } from 'vue';
+import { defineComponent, onBeforeUnmount, onMounted, ref } from 'vue';
 
 import { bkEllipsisInstance } from '@bkui-vue/directives';
 import { PropTypes } from '@bkui-vue/shared';
@@ -40,7 +40,7 @@ export default defineComponent({
     const refRoot = ref();
     const isTipsEnabled = ref(false);
     const { showOverflowTooltip = false } = props.column || {};
-
+    let bkEllipsisIns = null;
     const resolveTooltipOption = () => {
       let disabled = true;
       let content = refRoot.value.innerText;
@@ -68,9 +68,13 @@ export default defineComponent({
         isTipsEnabled.value = textWidth > cellWidth;
         if (isTipsEnabled.value) {
           const bindings = ref(resolveTooltipOption());
-          bkEllipsisInstance(refRoot.value, bindings);
+          bkEllipsisIns = bkEllipsisInstance(refRoot.value, bindings);
         }
       }
+    });
+
+    onBeforeUnmount(() => {
+      bkEllipsisIns?.destroyInstance();
     });
 
     return () => <div class="cell" ref={ refRoot }>
