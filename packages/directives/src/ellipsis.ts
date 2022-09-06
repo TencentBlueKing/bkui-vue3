@@ -82,10 +82,10 @@ export const createInstance = (el: HTMLElement, binding: any) => {
     },
   });
 
-  const destroyInstance = (el: HTMLElement) => {
+  const destroyInstance = (element?: HTMLElement) => {
     handleMouseLeave();
-    el.removeEventListener('mouseenter', handleMouseEnter);
-    el.removeEventListener('mouseleave', handleMouseLeave);
+    (element ?? el)?.removeEventListener('mouseenter', handleMouseEnter);
+    (element ?? el)?.removeEventListener('mouseleave', handleMouseLeave);
   };
 
   return {
