@@ -62,6 +62,9 @@ export default defineComponent({
     };
 
     const resolveOverflowTooltip = () => {
+      if (!refRoot.value) {
+        return;
+      }
       const textWidth = getElementTextWidth(refRoot.value);
       const cellWidth = (refRoot.value as HTMLElement).clientWidth;
 
@@ -93,6 +96,7 @@ export default defineComponent({
     });
 
     onBeforeUnmount(() => {
+      observerIns.stop();
       bkEllipsisIns?.destroyInstance(refRoot.value);
     });
 

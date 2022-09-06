@@ -91,6 +91,11 @@ export const PopoverProps = {
    */
   disableTransform: PropTypes.bool.def(false),
 
+  /**
+   * 自定义 reference
+   */
+  reference: PropTypes.object.def(null),
+
   ...EventProps,
 };
 
