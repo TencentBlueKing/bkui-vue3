@@ -24,7 +24,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { computed, defineComponent, onMounted, onUnmounted, ref, Teleport, watch } from 'vue';
+import { computed, defineComponent, onMounted, onUnmounted, ref, Teleport, toRefs, watch } from 'vue';
 
 import { clickoutside } from '@bkui-vue/directives';
 
@@ -50,12 +50,14 @@ export default defineComponent({
 
   setup(props, ctx) {
     const { content, theme, disableTeleport } = props;
-    const refReference = ref();
+    const { reference } = toRefs(props);
+    const refDefaultReference = ref();
     const refContent = ref();
     const refArrow = ref();
     const refRoot = ref();
     const isFullscreen = ref(false);
 
+    const refReference = computed(() => reference.value || refDefaultReference.value);
     const {
       showPopover,
       hidePopover,
@@ -72,6 +74,7 @@ export default defineComponent({
       showFn,
       hideFn,
       boundary,
+      updatePopover,
     } = usePopoverInit(props, ctx, refReference, refContent, refArrow, refRoot);
 
 
@@ -105,7 +108,7 @@ export default defineComponent({
     return {
       boundary,
       arrow: props.arrow,
-      refReference,
+      refDefaultReference,
       refContent,
       refArrow,
       content,
@@ -115,12 +118,13 @@ export default defineComponent({
       updatePopover,
       hide,
       show,
+      updatePopover,
     };
   },
 
   render() {
     return <Root ref="refRoot">
-      <Reference ref="refReference">
+      <Reference ref="refDefaultReference">
         { this.$slots.default?.() ?? <span></span> }
       </Reference>
       <Teleport to={ this.boundary } disabled={ !this.transBoundary }>
