@@ -74,7 +74,7 @@ export default defineComponent({
     });
 
     onBeforeUnmount(() => {
-      bkEllipsisIns?.destroyInstance();
+      bkEllipsisIns?.destroyInstance(refRoot.value);
     });
 
     return () => <div class="cell" ref={ refRoot }>
