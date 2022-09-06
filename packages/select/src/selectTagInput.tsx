@@ -58,9 +58,13 @@ export default defineComponent({
     watch(modelValue, () => {
       value.value = modelValue.value;
     });
-    watch(selected, () => {
-      calcOverflow();
-    });
+    watch(
+      [selected, collapseTags],
+      () => {
+        calcOverflow();
+      },
+      { flush: 'post' },
+    );
     const handleRemoveTag = (val: string) => {
       emit('remove', val);
     };
@@ -136,7 +140,7 @@ export default defineComponent({
                 closable
                 theme={this.tagTheme}
                 style={{
-                  display: this.overflowTagIndex && index >= this.overflowTagIndex ? 'none' : '',
+                  display: this.collapseTags && this.overflowTagIndex && index >= this.overflowTagIndex ? 'none' : '',
                 }}
                 onClose={() => this.handleRemoveTag(item.value)}>
                 {item.label}
