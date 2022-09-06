@@ -74,7 +74,6 @@ export default defineComponent({
       showFn,
       hideFn,
       boundary,
-      updatePopover,
     } = usePopoverInit(props, ctx, refReference, refContent, refArrow, refRoot);
 
 
@@ -118,7 +117,6 @@ export default defineComponent({
       updatePopover,
       hide,
       show,
-      updatePopover,
     };
   },
 
