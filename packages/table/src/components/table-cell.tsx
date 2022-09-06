@@ -28,7 +28,7 @@ import { defineComponent, onBeforeUnmount, onMounted, ref } from 'vue';
 import { bkEllipsisInstance } from '@bkui-vue/directives';
 import { PropTypes } from '@bkui-vue/shared';
 
-import { getElementTextWidth } from '../utils';
+import { getElementTextWidth, observerResize } from '../utils';
 export default defineComponent({
   name: 'TableCell',
   props: {
@@ -40,6 +40,7 @@ export default defineComponent({
     const refRoot = ref();
     const isTipsEnabled = ref(false);
     const { showOverflowTooltip = false } = props.column || {};
+    let observerIns = null;
     let bkEllipsisIns = null;
     const resolveTooltipOption = () => {
       let disabled = true;
@@ -60,15 +61,33 @@ export default defineComponent({
       return { disabled, content };
     };
 
-    onMounted(() => {
-      if (props.column.showOverflowTooltip) {
-        const textWidth = getElementTextWidth(refRoot.value);
-        const cellWidth = (refRoot.value as HTMLElement).clientWidth;
+    const resolveOverflowTooltip = () => {
+      const textWidth = getElementTextWidth(refRoot.value);
+      const cellWidth = (refRoot.value as HTMLElement).clientWidth;
 
-        isTipsEnabled.value = textWidth > cellWidth;
-        if (isTipsEnabled.value) {
-          const bindings = ref(resolveTooltipOption());
+      isTipsEnabled.value = textWidth > cellWidth;
+      if (isTipsEnabled.value) {
+        const bindings = ref(resolveTooltipOption());
+        if (bkEllipsisIns === null) {
           bkEllipsisIns = bkEllipsisInstance(refRoot.value, bindings);
+        }
+      } else {
+        bkEllipsisIns?.destroyInstance(refRoot.value);
+        bkEllipsisIns = null;
+      }
+    };
+
+    onMounted(() => {
+      const { disabled } = resolveTooltipOption();
+      if (!disabled) {
+        resolveOverflowTooltip();
+
+        if (props.column.showOverflowTooltip?.watchCellResize !== false) {
+          observerIns = observerResize(refRoot.value, () => {
+            resolveOverflowTooltip();
+          }, 60, true);
+
+          observerIns.start();
         }
       }
     });
