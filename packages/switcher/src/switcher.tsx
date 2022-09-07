@@ -126,8 +126,15 @@ export default defineComponent({
       }
     };
 
+    const handleKeydown = (e: KeyboardEvent) => {
+      // Enter 键盘事件可触发开关切换
+      if (e.code === 'Enter' || e.key === 'Enter' || e.keyCode === 13) {
+        handleChange(e);
+      }
+    };
+
     return () => (
-      <div class={classObject.value} onClick={handleChange} tabindex="0" onKeydown={handleChange}>
+      <div class={classObject.value} onClick={handleChange} tabindex="0" onKeydown={handleKeydown}>
           {
             isLoading.value ? <SwitcherLoading class="bk-switcher-loading"></SwitcherLoading> : ''
           }
