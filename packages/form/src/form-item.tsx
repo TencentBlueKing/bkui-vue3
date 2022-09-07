@@ -212,8 +212,6 @@ export default defineComponent({
      * @desc 验证字段
      */
     const validate = (trigger?: String): Promise<boolean> => {
-      state.isError = false;
-      state.errorMessage = '';
       // 没有设置 property 不进行验证
       if (!props.property
       || (isForm && !form.props.model)) {
@@ -230,9 +228,14 @@ export default defineComponent({
       if (props.rules) {
         rules = props.rules as IFormItemRules;
       }
-      // debugger;
+
       // 合并规则属性配置
       rules = getTriggerRules(trigger, mergeRules(rules, getRulesFromProps(props)));
+      // 重新触发验证重置上次的验证状态
+      if (rules.length > 0) {
+        state.isError = false;
+        state.errorMessage = '';
+      }
 
       const value = get(form.props.model, props.property);
 
