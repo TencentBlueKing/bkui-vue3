@@ -53,6 +53,25 @@ class Store {
     return this.nodes;
   }
 
+  /** 清空所有checked */
+  clearChecked() {
+    this.getFlattedNodes().forEach((node: INode) => {
+      node.checked = false;
+      node.isIndeterminate = false;
+    });
+  }
+
+  /** 移除某一个Tag的check状态 */
+  removeTag(tag: string[]) {
+    this.getFlattedNodes().find((node: INode) => {
+      if (arrayEqual(tag, node.path)) {
+        node.checked = false;
+        return true;
+      }
+      return false;
+    });
+  }
+
   /** 拍平节点，方便筛选 */
   getFlattedNodes(leafOnly = false) {
     return flatNodes(this.nodes, leafOnly);
@@ -64,7 +83,7 @@ class Store {
   }
 
   /** 根据值获得node实例 */
-  getNodeByValue(value: Array<number | string>): INode {
+  getNodeByValue(value: Array<number | string | string[]>): INode {
     const nodes = this.getFlattedNodes().filter((node: INode) => arrayEqual(node.path, value));
     return nodes[0] ?? null;
   }

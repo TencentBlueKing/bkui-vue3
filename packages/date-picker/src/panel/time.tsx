@@ -36,11 +36,13 @@ import {
   watch,
 } from 'vue';
 
+import { capitalize } from '@bkui-vue/shared';
+
 import TimeSpinner from '../base/time-spinner';
 import fecha from '../fecha';
 import { IDisabledHMS } from '../interface';
 import { datePickerProps, timePanelProps } from '../props';
-import { capitalize, initTime, mergeDateHMS, timePickerKey } from '../utils';;
+import { initTime, mergeDateHMS, timePickerKey } from '../utils';
 
 const timeProps = {
   disabledDate: {

@@ -47,10 +47,13 @@ export interface INode {
   name: string;
   parent?: INode;
   isDisabled: boolean;
+  isIndeterminate: boolean;
   isLeaf: boolean;
   pathNames: string[];
   path: string[];
   setNodeCheck(status: boolean): void;
+  broadcast(event: string, check: boolean): void;
+  emit(event: string): void;
 }
 
 export interface IData {
@@ -72,5 +75,6 @@ export interface IConfig {
   nameKey: string;
   showCompleteName: boolean;
   trigger: string;
+  separator: string,
   remoteMethod: Function;
 }
