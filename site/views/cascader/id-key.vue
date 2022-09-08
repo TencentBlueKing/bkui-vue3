@@ -12,7 +12,7 @@
 
   const list = shallowRef([
     {
-      uid: 'roo',
+      uid: 'root',
       title: '根目录',
     },
     {

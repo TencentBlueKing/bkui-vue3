@@ -40,6 +40,10 @@
     pointer-events: none;
     content: attr(data-placeholder);
   }
+
+  &.is-filterable:before {
+    display: none;
+  }
   .@{bk-prefix}-icon-angle-up, .@{bk-prefix}-icon-clear-icon {
     position: absolute;
     right: 2px;
@@ -73,9 +77,22 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 
+    .bk-cascader-search-input {
+      width: 100%;
+      font-size: 12px;
+      cursor: text;
+      border: none;
+      outline: 0;
+
+      &::placeholder {
+        color: #c3cdd7;
+      }
+    }
+
     .cascader-tag-list {
       display: flex;
       min-height: 30px;
+      padding-top: 5px;
       box-sizing: border-box;
       flex-wrap: wrap;
 
@@ -123,12 +140,14 @@
     }
     .@{bk-prefix}-cascader-node {
       position: relative;
+      display: flex;
       padding: 0 16px;
       overflow: hidden;
       line-height: 32px;
       text-overflow: ellipsis;
       white-space: nowrap;
       cursor: pointer;
+      align-items: center;
 
       &:hover {
         background: @cascader-panel-hover;
@@ -166,5 +185,12 @@
         color: @gray-color;
       }
     }
+  }
+  .@{bk-prefix}-cascader-search-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 56px;
+    color: #63656e
   }
 }
