@@ -24,4 +24,4 @@
 * IN THE SOFTWARE.
 */
 
-export { $bkPopover } from '@bkui-vue/popover2';
+export { default as $bkPopover } from '@bkui-vue/plugin-popover';
