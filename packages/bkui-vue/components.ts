@@ -78,4 +78,4 @@ export { default as Upload  } from '@bkui-vue/upload';
 export { default as CodeDiff  } from '@bkui-vue/code-diff';
 export { default as ColorPicker  } from '@bkui-vue/color-picker';
 export { default as TimePicker  } from '@bkui-vue/time-picker';
-export * as plugins from '@bkui-vue/plugins';
+export { default as $bkPopover } from '@bkui-vue/plugin-popover';
