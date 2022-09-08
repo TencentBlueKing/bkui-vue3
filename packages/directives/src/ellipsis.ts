@@ -26,7 +26,7 @@
 
 import { DirectiveBinding, ObjectDirective } from 'vue';
 
-import { $bkPopover } from '@bkui-vue/plugins';
+import $bkPopover from '@bkui-vue/plugin-popover';
 
 const resolveOptions = (el: HTMLElement, binding: DirectiveBinding) => {
   const options: any = {
