@@ -25,6 +25,17 @@
 */
 
 import { IConfig, IData, INode } from './interface';
+
+/** 除了节点本身的嗯disabled，如果父级是disabled，直接点也必须是disabled */
+function isNodeDisabled(node: INode) {
+  if (node.data.disabled) {
+    return true;
+  } if (node.level !== 1) {
+    return isNodeDisabled(node.parent);
+  }
+  return node.data.disabled;
+}
+
 class Node implements INode {
   data: IData;
   config: IConfig;
@@ -78,7 +89,7 @@ class Node implements INode {
   }
 
   get isDisabled() {
-    return this.data.disabled;
+    return isNodeDisabled(this);
   }
 
   setNodeCheck(status: boolean) {

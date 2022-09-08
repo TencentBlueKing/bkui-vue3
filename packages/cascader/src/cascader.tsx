@@ -29,7 +29,7 @@ import { computed, defineComponent, ref, toRefs, watch } from 'vue';
 import { clickoutside } from '@bkui-vue/directives';
 import { AngleUp, Close, Error } from '@bkui-vue/icon';
 import BkPopover from '@bkui-vue/popover2';
-import { PropTypes } from '@bkui-vue/shared';
+import { debounce, PropTypes } from '@bkui-vue/shared';
 
 import { useHover } from '../../select/src/common';
 
@@ -79,6 +79,9 @@ export default defineComponent({
     const selectedTags = ref([]);
     const { modelValue } = toRefs(props);
     const cascaderPanel = ref();
+    const searchKey = ref<string | number>('');  // 支持搜索时，搜索框绑定变量
+    const suggestions = ref([]); // 搜索功能打开时，面板给出的列表
+    const isFiltering = ref(false); // 是否正在搜索，过滤
 
     const checkedValue = computed({
       get: () => modelValue.value,
@@ -93,6 +96,11 @@ export default defineComponent({
     const getShowText = (node: INode) =>  (props.showCompleteName
       ? node.pathNames.join(separator)
       : node.pathNames[node.pathNames.length - 1]);
+
+    /** 更新搜索框的值 */
+    const updateSearchKey = () => {
+      searchKey.value = selectedText.value;
+    };
 
     /** 更新选中 */
     const updateValue = (val: Array<string | number>) => {
@@ -114,6 +122,7 @@ export default defineComponent({
         if (!node) return;
         selectedText.value = getShowText(node);
       }
+      updateSearchKey();
     };
 
     /** 清空所选内容，要stopPropagation防止触发下拉 */
@@ -145,7 +154,29 @@ export default defineComponent({
 
     const popoverChangeEmitter = (val) => {
       emit('toggle', val.isShow);
+      /** 面板收起，搜索状态关闭 */
+      if (!val.isShow) {
+        isFiltering.value = false;
+      }
     };
+
+    const searchInputHandler = debounce(200, (e: InputEvent) => {
+      const target = e.target as HTMLInputElement;
+      searchKey.value = target.value;
+      if (searchKey.value === '') {
+        isFiltering.value = false;
+        return;
+      }
+      isFiltering.value = true;
+      const targetNodes = store.value.getFlattedNodes().filter((node) => {
+        if (props.checkAnyLevel) {
+          return node.pathNames.join(props.separator).includes(searchKey.value);
+        }
+        return node.isLeaf && node.pathNames.join(props.separator).includes(searchKey.value);
+      });
+      suggestions.value = targetNodes;
+      !popover?.value.isShow && popover?.value.show();
+    });
 
     watch(
       () => props.modelValue,
@@ -173,6 +204,10 @@ export default defineComponent({
       removeTag,
       cascaderPanel,
       popoverChangeEmitter,
+      searchKey,
+      suggestions,
+      isFiltering,
+      searchInputHandler,
     };
   },
   render() {
@@ -201,6 +236,7 @@ export default defineComponent({
         'bk-is-show-panel': this.panelShow,
         'is-unselected': this.modelValue.length === 0,
         'is-hover': this.isHover,
+        'is-filterable': this.filterable,
       }]}
         tabindex="0"
         data-placeholder={this.placeholder}
@@ -224,7 +260,9 @@ export default defineComponent({
                 {this.filterable
                   ? <input class="bk-cascader-search-input"
                     type="text"
+                    onInput={this.searchInputHandler}
                     placeholder={this.placeholder}
+                    value={this.searchKey}
                   />
                   : <span>{this.selectedText}</span>
                 }
@@ -237,6 +275,9 @@ export default defineComponent({
                   ref="cascaderPanel"
                   width={this.scrollWidth}
                   height={this.scrollHeight}
+                  search-key={this.searchKey}
+                  is-filtering={this.isFiltering}
+                  suggestions={this.suggestions}
                   v-model={this.checkedValue}
                   v-slots={{
                     default: scope => (this.$slots.default

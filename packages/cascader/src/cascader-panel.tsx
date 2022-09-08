@@ -25,6 +25,7 @@
  */
 
 import { defineComponent, reactive, ref, watch } from 'vue';
+import { object } from 'vue-types';
 
 import BkCheckbox from '@bkui-vue/checkbox';
 import { AngleRight, Spinner } from '@bkui-vue/icon';
@@ -38,6 +39,10 @@ export default defineComponent({
     width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def('auto'),
     height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(216),
     store: PropTypes.object.def({}),
+    separator: PropTypes.string.def(''),
+    suggestions: PropTypes.arrayOf(object<INode>()),
+    isFiltering: PropTypes.bool.def(false),
+    searchKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def(''),
     modelValue: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.number).def([]),
       PropTypes.arrayOf(PropTypes.string).def([])]),
   },
@@ -77,6 +82,9 @@ export default defineComponent({
      *  派发事件，更新选中值
      */
     const nodeCheckHandler = (node: INode) => {
+      if (node.isDisabled) {
+        return;
+      }
       if (node.config.multiple) {
         checkValue.value = store.getCheckedNodes().map(node => node.path);
       } else {
@@ -179,9 +187,29 @@ export default defineComponent({
     };
   },
   render() {
+    const emptyWidth = parseInt(this.panelWidth, 10) > 200 ? this.panelWidth : `${200}px`;
+    const searchPanelRender = () => (
+      this.suggestions.length ? <ul
+        class="bk-cascader-panel bk-scroll-y"
+        style={{ height: this.panelHeight, width: this.panelWidth }}>
+          {this.suggestions.map(node => (
+            <li class={[
+              'bk-cascader-node',
+              { 'is-selected': this.isNodeInPath(node) },
+              { 'is-disabled': node.isDisabled },
+              { 'is-checked': this.isCheckedNode(node, this.checkValue) },
+            ]}
+            {...this.nodeEvent(node)}>
+              {node.pathNames.join(this.separator)}
+            </li>
+          ))}
+      </ul> : <div class="bk-cascader-search-empty" style={{ width: emptyWidth }}>
+        <span>暂无搜索结果</span>
+      </div>
+    );
     return (
       <div class="bk-cascader-panel-wrapper">
-        {this.menus.list.map(menu => (
+        {this.isFiltering ? searchPanelRender() : this.menus.list.map(menu => (
           <ul class="bk-cascader-panel bk-scroll-y"
             style={{ height: this.panelHeight, width: this.panelWidth }}>
             {menu.map(node => (
