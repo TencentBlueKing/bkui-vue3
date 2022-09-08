@@ -3,8 +3,15 @@
     <bk-cascader
       v-model="area"
       :list="list"
+      multiple
+      filterable
       trigger="click"
-      :show-complete-name="false"
+    />
+    <bk-cascader
+      v-model="area"
+      :list="list"
+      multiple
+      trigger="click"
     />
   </div>
 </template>
@@ -67,3 +74,10 @@
 
 </script>
 
+<style lang="less" scoped>
+.cascader-wrapper {
+  .bk-cascader:first-of-type {
+    margin-bottom: 20px;
+  }
+}
+</style>

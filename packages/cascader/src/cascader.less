@@ -92,6 +92,7 @@
     .cascader-tag-list {
       display: flex;
       min-height: 30px;
+      padding-top: 5px;
       box-sizing: border-box;
       flex-wrap: wrap;
 
@@ -139,12 +140,14 @@
     }
     .@{bk-prefix}-cascader-node {
       position: relative;
+      display: flex;
       padding: 0 16px;
       overflow: hidden;
       line-height: 32px;
       text-overflow: ellipsis;
       white-space: nowrap;
       cursor: pointer;
+      align-items: center;
 
       &:hover {
         background: @cascader-panel-hover;

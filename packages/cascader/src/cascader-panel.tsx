@@ -25,7 +25,7 @@
  */
 
 import { defineComponent, reactive, ref, watch } from 'vue';
-import { object } from 'vue-types';
+import { array, object } from 'vue-types';
 
 import BkCheckbox from '@bkui-vue/checkbox';
 import { AngleRight, Spinner } from '@bkui-vue/icon';
@@ -43,8 +43,7 @@ export default defineComponent({
     suggestions: PropTypes.arrayOf(object<INode>()),
     isFiltering: PropTypes.bool.def(false),
     searchKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def(''),
-    modelValue: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.number).def([]),
-      PropTypes.arrayOf(PropTypes.string).def([])]),
+    modelValue: PropTypes.arrayOf(PropTypes.oneOfType([array<string>(), String, Number])),
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
@@ -53,7 +52,7 @@ export default defineComponent({
       list: [props.store.getNodes()],
     });
     const activePath = ref([]);
-    const checkValue = ref([]);
+    const checkValue = ref<(number | string | string[])[]>([]);
 
     const getSizeComputed = (value: string | number) => {
       if (typeof value === 'number') {
@@ -65,12 +64,12 @@ export default defineComponent({
     const panelHeight = getSizeComputed(props.height);
     const panelWidth = getSizeComputed(props.width);
 
-    const updateCheckValue = (value: Array<number | string>) => {
+    const updateCheckValue = (value: Array<number | string | string[]>) => {
       if (value.length === 0) {
         menus.list = menus.list.slice(0, 1);
         activePath.value = [];
       }
-      value.forEach((id: number | string) => {
+      value.forEach((id: number | string | string[]) => {
         const node = store.getNodeById(id);
         nodeExpandHandler(node);
       });
@@ -136,22 +135,38 @@ export default defineComponent({
       return events;
     };
 
+    const searchPanelEvents = (node: INode) => {
+      const { multiple } = node.config;
+      const events = {
+        onClick: (e: Event) => {
+          if (multiple) {
+            e.stopPropagation();
+            checkNode(node, !node.checked);
+            return;
+          }
+          nodeExpandHandler(node);
+          node.isLeaf && !multiple && nodeCheckHandler(node);
+        },
+      };
+      return events;
+    };
+
     const isNodeInPath = (node: INode) => {
       const currentLevel = activePath.value[node.level - 1] || {};
       return currentLevel.id === node.id;
     };
 
-    const isCheckedNode = (node: INode, checkValue: string[]) => {
+    const isCheckedNode = (node: INode, checkValue: (string | number | string[])[]) => {
       const { multiple } = node.config;
       if (multiple) {
-        return false;
-        // return checkValue.some(val => arrayEqual(val, node.path));
+        return (checkValue as string[][]).some((val: string[]) => arrayEqual(val, node.path as string[]));
       }
       return arrayEqual(checkValue, node.path);
     };
 
+    /** 多选节点checkbox点击的回调 */
     const checkNode = (node: INode, value: boolean) => {
-      node.setNodeCheck(value);
+      node.setNodeCheck(value ? value : false);
       nodeCheckHandler(node);
     };
 
@@ -159,7 +174,7 @@ export default defineComponent({
 
     watch(
       () => props.modelValue,
-      (value: Array<string | number>) => {
+      (value: Array<string | number | string[]>) => {
         updateCheckValue(value);
       },
       { immediate: true },
@@ -184,6 +199,7 @@ export default defineComponent({
       iconRender,
       panelWidth,
       panelHeight,
+      searchPanelEvents,
     };
   },
   render() {
@@ -199,7 +215,7 @@ export default defineComponent({
               { 'is-disabled': node.isDisabled },
               { 'is-checked': this.isCheckedNode(node, this.checkValue) },
             ]}
-            {...this.nodeEvent(node)}>
+            {...this.searchPanelEvents(node)}>
               {node.pathNames.join(this.separator)}
             </li>
           ))}
@@ -218,14 +234,15 @@ export default defineComponent({
                   'bk-cascader-node',
                   { 'is-selected': this.isNodeInPath(node) },
                   { 'is-disabled': node.isDisabled },
-                  { 'is-checked': this.isCheckedNode(node, this.checkValue) },
+                  { 'is-checked': !node.config.multiple && this.isCheckedNode(node, this.checkValue) },
                 ]}
-                {...this.nodeEvent(node)}
+                {...Object.assign(this.nodeEvent(node), node.config.multiple ? {} : {})}
               >
                 {node.config.multiple && (
                   <BkCheckbox
                     disabled={node.isDisabled}
                     v-model={node.checked}
+                    indeterminate={node.isIndeterminate}
                     onChange={(val: boolean) => this.checkNode(node, val)}></BkCheckbox>
                 )}
                 {this.$slots.default?.({ node, data: node.data })}

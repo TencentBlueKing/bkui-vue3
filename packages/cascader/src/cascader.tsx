@@ -25,6 +25,7 @@
 */
 
 import { computed, defineComponent, ref, toRefs, watch } from 'vue';
+import { array } from 'vue-types';
 
 import { clickoutside } from '@bkui-vue/directives';
 import { AngleUp, Close, Error } from '@bkui-vue/icon';
@@ -35,7 +36,7 @@ import { useHover } from '../../select/src/common';
 
 import CascaderPanel from './cascader-panel';
 import { INode } from './interface';
-import Store from './store';;
+import Store from './store';
 
 export default defineComponent({
   name: 'Cascader',
@@ -47,8 +48,7 @@ export default defineComponent({
     BkPopover,
   },
   props: {
-    modelValue: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.number).def([]),
-      PropTypes.arrayOf(PropTypes.string).def([])]),
+    modelValue: PropTypes.arrayOf(PropTypes.oneOfType([array<string>(), String, Number])),
     list: PropTypes.array.def([]),
     placeholder: PropTypes.string.def('请选择'),
     filterable: PropTypes.bool.def(false),
@@ -85,7 +85,7 @@ export default defineComponent({
 
     const checkedValue = computed({
       get: () => modelValue.value,
-      set: (value: Array<string | number>) => {
+      set: (value: Array<string | number | string[]>) => {
         emit('update:modelValue', value);
       },
     });
@@ -103,7 +103,7 @@ export default defineComponent({
     };
 
     /** 更新选中 */
-    const updateValue = (val: Array<string | number>) => {
+    const updateValue = (val: Array<string | number | string[]>) => {
       /** 根据配置更新显示内容 */
       if (multiple) {
         selectedTags.value = store.value.getCheckedNodes().map((node: INode) => ({
@@ -128,6 +128,8 @@ export default defineComponent({
     /** 清空所选内容，要stopPropagation防止触发下拉 */
     const handleClear = (e: Event) => {
       e.stopPropagation();
+      store.value.clearChecked();
+      searchKey.value = '';
       updateValue([]);
       emit('update:modelValue', []);
       emit('clear', JSON.parse(JSON.stringify(props.modelValue)));
@@ -136,8 +138,10 @@ export default defineComponent({
     const removeTag = (value, index, e) => {
       e.stopPropagation();
       const current = JSON.parse(JSON.stringify(value));
-      current.splice(index, 1);
+      const tag = current.splice(index, 1)[0];
+      store.value.removeTag(tag);
       updateValue(current);
+      emit('update:modelValue', store.value.getCheckedNodes().map((node: INode) => node.path));
     };
 
     const modelValueChangeHandler = (value, oldValue) => {
@@ -256,7 +260,7 @@ export default defineComponent({
           {{
             default: () => (
               <div class="bk-cascader-name">
-                {this.multiple && renderTags()}
+                {this.multiple && this.selectedTags.length > 0 && renderTags()}
                 {this.filterable
                   ? <input class="bk-cascader-search-input"
                     type="text"
@@ -276,6 +280,7 @@ export default defineComponent({
                   width={this.scrollWidth}
                   height={this.scrollHeight}
                   search-key={this.searchKey}
+                  separator={this.separator}
                   is-filtering={this.isFiltering}
                   suggestions={this.suggestions}
                   v-model={this.checkedValue}
