@@ -33,6 +33,7 @@ import type { IPropsTableItem } from '../../typings';
 
 import BaseDemo from './base-demo.vue';
 import ConfirmDemo from './confirm-demo.vue';
+import StatusDemo from './status-demo.vue';
 import UpdateDemo from './update-demo.vue';
 // import propsDialog from '@bkui-vue/dialog/src/props';
 // import { resolvePropsToDesData } from '../utils';
@@ -255,17 +256,25 @@ export default defineComponent({
           link='https://www.google.com.hk/'/>
         <DemoBox
           title='基础用法'
-          subtitle='使用默认配置的消息提示'
-          desc=''
-          componentName='message'
+          subtitle=''
+          desc='调用 InfoBox 方法，配置 title, subTitle 等参数'
+          componentName='info-box'
           demoName='base-demo'>
           <BaseDemo/>
+        </DemoBox>
+        <DemoBox
+          title='各种状态'
+          subtitle=''
+          desc='配置 type 的值，实现成功，错误，警告，加载中的不同类型'
+          componentName='info-box'
+          demoName='base-demo'>
+          <StatusDemo/>
         </DemoBox>
         <DemoBox
           title='更新'
           subtitle='实例复用'
           desc=''
-          componentName='message'
+          componentName='info-box'
           demoName='base-demo'>
           <UpdateDemo/>
         </DemoBox>
@@ -273,7 +282,7 @@ export default defineComponent({
           title='Confirm'
           subtitle='confirm 确定按钮'
           desc='对话框分为4种类型。通过 dialogType 属性 设置为 confirm 实现'
-          componentName='message'
+          componentName='info-box'
           demoName='base-demo'>
           <ConfirmDemo/>
         </DemoBox>
