@@ -49,12 +49,10 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { createApp, createVNode, defineComponent, h, onMounted, ref, shallowRef, VNode } from 'vue';
+import { createApp, defineComponent, h, onMounted, ref, shallowRef, VNode } from 'vue';
 
 import Dialog from '../../dialog/src/dialog';
-// const Dialog = defineAsyncComponent(() => import('../../dialog/src/dialog'));
 
-// import props from '../dialog/src/props'
 export interface ModalFuncProps {
   isShow?: boolean;
   width?: string | number;
@@ -70,6 +68,9 @@ export interface ModalFuncProps {
   maskClose?: boolean;
   escClose?: boolean;
   closeIcon?: boolean;
+  headerAlign: 'left' | 'center' | 'right'
+  footerAlign: 'left' | 'center' | 'right'
+  contentAlign: 'left' | 'center' | 'right'
 }
 
 const InfoBox = (config: ModalFuncProps) => {
@@ -123,12 +124,25 @@ const InfoBox = (config: ModalFuncProps) => {
         }
         return children;
       };
-      return () => createVNode(Dialog, {
-        ...modalFuncProps.value,
-        isShow: isShow.value,
-        onClosed,
-        onConfirm,
-      }, getContent());
+      return () => (
+        <Dialog
+          headerAlign="center"
+          footerAlign="center"
+          {...modalFuncProps.value}
+          isShow={isShow.value}
+          onConfirm={onConfirm}
+          onClosed={onClosed}
+
+        >
+          {getContent()}
+        </Dialog>
+      );
+      // return () => createVNode(Dialog, {
+      //   ...modalFuncProps.value,
+      //   isShow: isShow.value,
+      //   onClosed,
+      //   onConfirm,
+      // }, getContent());
     },
   });
   const app: any = createApp(dialog).mount(container);
