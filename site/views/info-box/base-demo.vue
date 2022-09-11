@@ -8,7 +8,7 @@
     </bk-button>
     <bk-button
       theme="primary"
-      class="ml10"
+      style="margin-left: 15px;"
       @click="handleDefault2"
     >
       默认配置的提示框2
