@@ -49,7 +49,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { createApp, defineComponent, h, onMounted, ref, shallowRef, VNode } from 'vue';
+import { createApp, createVNode, defineComponent, h, onMounted, ref, shallowRef, VNode } from 'vue';
 
 import Dialog from '../../dialog/src/dialog';
 
@@ -77,7 +77,6 @@ const InfoBox = (config: ModalFuncProps) => {
   const container = document.createElement('div');
   const isShow = ref(false);
   const modalFuncProps = shallowRef<ModalFuncProps>(config);
-
   const dialog = defineComponent({
     name: 'DialogConfirm',
     setup(_props, { expose }) {
@@ -108,41 +107,28 @@ const InfoBox = (config: ModalFuncProps) => {
       expose({ update });
 
       const getContent = () => {
-        const children = [];
-        if (modalFuncProps.value.subTitle) {
-          switch (typeof modalFuncProps.value.subTitle) {
-            case 'string':
-              children.push(h('div', { class: 'bk-info-subTitle' }, modalFuncProps.value.subTitle));
-              break;
-            case 'function':
-              children.push(h('div', { class: 'bk-info-subTitle' }, modalFuncProps.value.subTitle()));
-              break;
-            default:
-              children.push(h(modalFuncProps.value.subTitle));
-              break;
-          }
+        if (!modalFuncProps.value.subTitle) {
+          return '';
         }
-        return children;
+        switch (typeof modalFuncProps.value.subTitle) {
+          case 'function':
+            return modalFuncProps.value.subTitle();
+          default:
+          case 'string':
+            return modalFuncProps.value.subTitle;
+        }
       };
-      return () => (
-        <Dialog
-          headerAlign="center"
-          footerAlign="center"
-          {...modalFuncProps.value}
-          isShow={isShow.value}
-          onConfirm={onConfirm}
-          onClosed={onClosed}
-
-        >
-          {getContent()}
-        </Dialog>
-      );
-      // return () => createVNode(Dialog, {
-      //   ...modalFuncProps.value,
-      //   isShow: isShow.value,
-      //   onClosed,
-      //   onConfirm,
-      // }, getContent());
+      return () => createVNode(Dialog, {
+        headerAlign: 'center',
+        footerAlign: 'center',
+        ...modalFuncProps.value,
+        isShow: isShow.value,
+        onClosed,
+        onConfirm,
+      }, [h('div', {
+        class: 'bk-info-sub-title',
+        style: `text-Align:${modalFuncProps.value.contentAlign || 'center'}`,
+      }, getContent())]);
     },
   });
   const app: any = createApp(dialog).mount(container);

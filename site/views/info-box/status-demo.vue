@@ -10,6 +10,7 @@
     <bk-button
       theme="danger"
       class="ml10"
+      style="margin-left: 15px;"
       @click="handleDefault2"
     >
       错误
@@ -18,6 +19,7 @@
     <bk-button
       theme="warning"
       class="ml10"
+      style="margin-left: 15px;"
       @click="handleDefault3"
     >
       警告
@@ -25,6 +27,7 @@
 
     <bk-button
       class="ml10"
+      style="margin-left: 15px;"
       @click="handleDefault4"
     >
       loading
