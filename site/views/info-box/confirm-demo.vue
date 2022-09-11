@@ -18,15 +18,16 @@
 
 <script setup>
   import InfoBox from '@bkui-vue/info-box';
+
   const handleDefault = () => {
     InfoBox({
       title: '确认要删除1？',
-      subTitle: '确认要删除22222',
+      subTitle: '确认要删除？',
       dialogType: 'confirm',
       headerAlign: 'center',
       footerAlign: 'center',
       onConfirm() {
-        alert(2);
+        return confirm('确定删除？');
       },
     });
   };
@@ -37,7 +38,7 @@
     confirmInstance.update(opts);
     confirmInstance.show(opts);
   };
-  const  handleDefault2 = () => {
+  const handleDefault2 = () => {
     Confirm({
       title: '确认要删除1？',
       subTitle: '确认要删除22222',
@@ -45,7 +46,11 @@
       headerAlign: 'center',
       footerAlign: 'center',
       onConfirm() {
-        alert(3);
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve(true);
+          }, 100);
+        });
       },
     });
   };
