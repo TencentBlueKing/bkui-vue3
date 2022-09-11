@@ -112,10 +112,10 @@ const InfoBox = (config: ModalFuncProps) => {
         if (modalFuncProps.value.subTitle) {
           switch (typeof modalFuncProps.value.subTitle) {
             case 'string':
-              children.push(h('div', modalFuncProps.value.subTitle));
+              children.push(h('div', { class: 'bk-info-subTitle' }, modalFuncProps.value.subTitle));
               break;
             case 'function':
-              children.push(h('div', modalFuncProps.value.subTitle()));
+              children.push(h('div', { class: 'bk-info-subTitle' }, modalFuncProps.value.subTitle()));
               break;
             default:
               children.push(h(modalFuncProps.value.subTitle));

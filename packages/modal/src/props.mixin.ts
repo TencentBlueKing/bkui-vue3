@@ -65,4 +65,6 @@ export const propsMixin = {
   dialogType: PropTypes.commonType(['show', 'operation', 'confirm', 'process'], 'dialogType').def('operation'),
   // 是否允许多个弹框同时存在
   multiInstance: PropTypes.bool.def(true),
+  // info-box
+  infoType: PropTypes.commonType(['success', 'warning', 'danger', 'loading'], 'infoType').def(),
 };

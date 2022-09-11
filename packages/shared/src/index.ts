@@ -147,12 +147,15 @@ export function filterProperty(data: object, filter: string[]) {
   }));
 };
 
-export function arrayEqual(arr1: Array<string | number> = [], arr2: Array<string | number> = []) {
+export function arrayEqual(arr1: Array<string | number | string[]> = [], arr2: Array<string | number | string[]> = []) {
   if (arr1.length !== arr2.length) {
     return false;
   }
 
   for (let i = 0; i < arr1.length; i++) {
+    if (Array.isArray(arr1[i])) {
+      return arrayEqual(arr1[i] as string[], arr2[i] as string[]);
+    }
     if (arr1[i] !== arr2[i]) {
       return false;
     }
