@@ -35,6 +35,7 @@ import basicFilter from './basic-filter.vue';
 import basicSort from './basic-sort.vue';
 import bordered from './bordered.vue';
 import cellRender from './cell-render';
+import ColumnTemplate from './column-template.vue';
 import configList from './config';
 import DataEmpty from './data-empty.vue';
 import event from './event.vue';
@@ -65,6 +66,7 @@ export default defineComponent({
     basicFilter,
     basicSort,
     filterScope,
+    ColumnTemplate,
   },
   render() {
     const configs = [
@@ -77,6 +79,16 @@ export default defineComponent({
           demoName: 'basic',
         },
         component: () => <basic></basic>,
+      },
+      {
+        attrs: {
+          title: '基础用法-<bk-column />',
+          subtitle: '基础用法，用于表单内容的录入',
+          desc: 'props: --',
+          componentName: 'table',
+          demoName: 'column-template',
+        },
+        component: () => <ColumnTemplate></ColumnTemplate>,
       },
       {
         attrs: {

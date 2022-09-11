@@ -24,16 +24,17 @@
  * IN THE SOFTWARE.
 */
 
-import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, ref, watch, watchEffect } from 'vue';
+import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, provide, reactive, ref, watch, watchEffect } from 'vue';
 
 import { debounce, resolveClassName } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
-import { EMIT_EVENT_TYPES, EMITEVENTS, EVENTS, TABLE_ROW_ATTRIBUTE } from './const';
+import { EMIT_EVENT_TYPES, EMITEVENTS, EVENTS, PROVIDE_KEY_INIT_COL, TABLE_ROW_ATTRIBUTE } from './const';
 import userPagination from './plugins/use-pagination';
 import useScrollLoading from './plugins/use-scroll-loading';
 import { tableProps } from './props';
 import TableRender from './render';
+import useColumn from './use-column';
 import { useClass, useInit } from './use-common';
 import {
   observerResize,
@@ -50,6 +51,10 @@ export default defineComponent({
     let columnFilterFn: any = null;
 
     let observerIns = null;
+    const targetColumns = reactive([]);
+    const { initColumns } = useColumn(props, targetColumns);
+    provide(PROVIDE_KEY_INIT_COL, initColumns);
+
     const root = ref();
     const refVirtualRender = ref();
     // scrollX 右侧距离
@@ -64,7 +69,7 @@ export default defineComponent({
       setRowExpand,
       initIndexData,
       fixedWrapperClass,
-    } = useInit(props);
+    } = useInit(props, targetColumns);
 
     const { pageData, localPagination, resolvePageData, watchEffectFn } = userPagination(props, indexData);
     const {
@@ -79,7 +84,7 @@ export default defineComponent({
       resetTableHeight,
       getColumnsWidthOffsetWidth,
       hasFooter,
-    } = useClass(props, root, reactiveSchema, pageData);
+    } = useClass(props, targetColumns, root, reactiveSchema, pageData);
 
     const tableRender = new TableRender(props, ctx, reactiveSchema, colgroups);
 
@@ -224,6 +229,15 @@ export default defineComponent({
       '_is-empty': !props.data.length,
     };
 
+    const columnGhostStyle = {
+      zIndex: -1,
+      width: 0,
+      height: 0,
+      position: 'absolute' as const,
+      left: '-999px',
+      top: '-999px',
+    };
+
     const { renderScrollLoading } = useScrollLoading(props, ctx);
     const scrollClass = props.virtualEnabled ? {} : { scrollXName: '', scrollYName: '' };
 
@@ -267,6 +281,7 @@ export default defineComponent({
           hasFooter.value && tableRender.renderTableFooter(localPagination.value)
         }
       </div>
+      <div style={columnGhostStyle}>{ ctx.slots.default?.() }</div>
     </div>;
   },
 });

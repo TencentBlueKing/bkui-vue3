@@ -92,7 +92,7 @@ export default class TableRender {
       this.props.settings
         ? <Settings class="table-head-settings"
             settings={ this.reactiveProp.settings }
-            columns={this.props.columns}
+            columns={this.colgroups}
             rowHeight={ this.props.rowHeight }
             onChange={ handleSettingsChanged }/>
         : '',
