@@ -92,6 +92,7 @@ export const useClass = (props: TablePropTypes, targetColumns: Column[], root?, 
     maxWidth: '100%',
   }));
 
+
   const resolvePropHeight = (height: Number | string, defaultValue: number) => {
     const strHeight = String(height);
     if (/^\d+\.?\d*$/.test(strHeight)) {

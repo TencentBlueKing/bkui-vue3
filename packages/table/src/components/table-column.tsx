@@ -25,20 +25,26 @@
 */
 import { defineComponent, inject, onMounted, reactive } from 'vue';
 
+import { PropTypes } from '@bkui-vue/shared';
+
 import { PROVIDE_KEY_INIT_COL } from '../const';
 import { Column, IColumnType } from '../props';
+
+export type ITableColumn = Column & {
+  prop?: string | Function
+};
 
 export default defineComponent({
   name: 'TableColumn',
   props: {
     ...IColumnType,
+    prop: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
   },
-  setup(props: Column, { slots }) {
+  setup(props: ITableColumn, { slots }) {
     const initColumns = inject(PROVIDE_KEY_INIT_COL, (_column: Column) => {}, false);
-    const column = reactive({ ...props, __from_column_component: true });
-    initColumns(column);
-
     onMounted(() => {
+      const column = reactive({ ...props, field: props.prop || props.field });
+      initColumns(column);
       column.render = slots.default ? (args: any) => slots.default?.(args) : undefined;
     });
     return () => <>{ slots.default?.({ data: '' }) }</>;

@@ -233,9 +233,7 @@ export default defineComponent({
       zIndex: -1,
       width: 0,
       height: 0,
-      position: 'absolute' as const,
-      left: '-999px',
-      top: '-999px',
+      display: 'none' as const,
     };
 
     const { renderScrollLoading } = useScrollLoading(props, ctx);

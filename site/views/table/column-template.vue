@@ -3,24 +3,59 @@
     <div class="cell">
       <bk-table
         :data="tableData"
+        :settings="settings"
       >
         <bk-table-column
           label="序号"
           type="index"
           sort
           :width="50"
-          :min-width="80"
+        />
+        <bk-table-column
+          label="名称/内网IP"
+          prop="ip"
+        >
+          <template #default="props">
+            {{ props?.data.ip }}
+          </template>
+        </bk-table-column>
+        <bk-table-column
+          label="来源"
+          prop="source"
+        />
+        <bk-table-column
+          label="创建时间"
+          prop="create_time"
+        />
+      </bk-table>
+    </div>
+    <div class="cell">
+      <bk-table
+        :data="tableData"
+        :settings="settings"
+      >
+        <bk-table-column
+          label="序号"
+          type="index"
+          sort
+          :width="50"
         />
         <bk-table-column
           label="名称/内网IP"
           field="ip"
-          :width="100"
-          :min-width="80"
         >
           <template #default="props">
-            {{ props?.data }}
+            {{ props?.data.ip }}
           </template>
         </bk-table-column>
+        <bk-table-column
+          label="来源"
+          field="source"
+        />
+        <bk-table-column
+          label="创建时间"
+          field="create_time"
+        />
       </bk-table>
     </div>
   </div>
@@ -44,23 +79,25 @@
     mounted() {
       setTimeout(() => {
         this.settings.checked.push('index');
-        this.settings.fields.push(...[{
-                                        label: '序号',
-                                        field: 'index',
-                                        disabled: true,
-                                      },
-                                      {
-                                        label: '名称/内网IP',
-                                        field: 'ip',
-                                      },
-                                      {
-                                        label: '来源',
-                                        field: 'source',
-                                      },
-                                      {
-                                        label: '创建时间',
-                                        field: 'create_time',
-                                      }]);
+        this.settings.fields.push(...[
+          {
+            label: '序号',
+            field: 'index',
+            disabled: true,
+          },
+          {
+            label: '名称/内网IP',
+            field: 'ip',
+          },
+          {
+            label: '来源',
+            field: 'source',
+          },
+          {
+            label: '创建时间',
+            field: 'create_time',
+          },
+        ]);
       }, 1000);
     },
     methods: {
@@ -74,13 +111,14 @@
   });
 </script>
 <style scoped>
-.row {
-  display: flex;
-  width: 100%;
-}
+  .row {
+    display: flex;
+    width: 100%;
+  }
 
-.cell {
-  flex: 1;
-  margin: 0 5px 0 5px;
-}
-</style>
+  .cell {
+    flex: 1;
+    margin: 0 5px 0 5px;
+  }
+  </style>
+

@@ -82,9 +82,9 @@ export default defineComponent({
       },
       {
         attrs: {
-          title: '基础用法-<bk-column />',
+          title: '基础用法-模板方式调用 bk-column',
           subtitle: '基础用法，用于表单内容的录入',
-          desc: 'props: --',
+          desc: 'props: 支持 `field` 和 `prop`两种配置，配置效果一样',
           componentName: 'table',
           demoName: 'column-template',
         },
@@ -233,9 +233,9 @@ export default defineComponent({
       }];
 
     const eventColumnMap = {
-      name: '事件名称',
+      name: '名称',
       desc: '说明',
-      params: '回调参数',
+      params: '参数',
     };
 
     return (
