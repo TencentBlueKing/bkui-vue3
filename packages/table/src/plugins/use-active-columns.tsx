@@ -26,8 +26,8 @@
 import {  reactive, watchEffect  } from 'vue';
 
 import { Column, IColumnActive, TablePropTypes } from '../props';
+import useColumn from '../use-column';
 import { resolveNumberToNumArray } from '../utils';
-
 /**
  * 处理Props中的ActiveColumn，解析为统一的数组格式
  * @param props
@@ -51,15 +51,15 @@ export const resolveActiveColumns = (props: TablePropTypes) => {
  * @param props
  * @returns
  */
-export default (props: TablePropTypes) => {
+export default (props: TablePropTypes, targetColumns: Column[]) => {
   let activeColumns = reactive([]);
-
+  const { getColumns } = useColumn(props, targetColumns);
   if (props.columnPick === 'disabled') {
     return { activeColumns };
   }
 
   const activeCols = reactive(resolveActiveColumns(props));
-  const getActiveColumns = () => (props.columns || []).map((_column: Column, index: number) => ({
+  const getActiveColumns = () => getColumns().map((_column: Column, index: number) => ({
     index,
     active: activeCols.some((colIndex: number) => colIndex === index),
     _column,

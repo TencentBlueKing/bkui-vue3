@@ -35,6 +35,7 @@ import basicFilter from './basic-filter.vue';
 import basicSort from './basic-sort.vue';
 import bordered from './bordered.vue';
 import cellRender from './cell-render';
+import ColumnTemplate from './column-template.vue';
 import configList from './config';
 import DataEmpty from './data-empty.vue';
 import event from './event.vue';
@@ -65,6 +66,7 @@ export default defineComponent({
     basicFilter,
     basicSort,
     filterScope,
+    ColumnTemplate,
   },
   render() {
     const configs = [
@@ -77,6 +79,16 @@ export default defineComponent({
           demoName: 'basic',
         },
         component: () => <basic></basic>,
+      },
+      {
+        attrs: {
+          title: '基础用法-模板方式调用 bk-column',
+          subtitle: '基础用法，用于表单内容的录入',
+          desc: 'props: 支持 `field` 和 `prop`两种配置，配置效果一样',
+          componentName: 'table',
+          demoName: 'column-template',
+        },
+        component: () => <ColumnTemplate></ColumnTemplate>,
       },
       {
         attrs: {
@@ -221,9 +233,9 @@ export default defineComponent({
       }];
 
     const eventColumnMap = {
-      name: '事件名称',
+      name: '名称',
       desc: '说明',
-      params: '回调参数',
+      params: '参数',
     };
 
     return (

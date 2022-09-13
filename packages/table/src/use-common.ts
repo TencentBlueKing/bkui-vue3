@@ -32,6 +32,7 @@ import useActiveColumns from './plugins/use-active-columns';
 import useColumnResize from './plugins/use-column-resize';
 import useFixedColumn from './plugins/use-fixed-column';
 import { Colgroups, Column, Settings, TablePropTypes } from './props';
+import useColumn from './use-column';
 import {
   getRowKey,
   hasRootScrollY,
@@ -41,7 +42,8 @@ import {
   resolvePropVal,
 } from './utils';
 
-export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?: any[]) => {
+export const useClass = (props: TablePropTypes, targetColumns: Column[], root?, reactiveProp?, pageData?: any[]) => {
+  const { getColumns } = useColumn(props, targetColumns);
   const autoHeight = ref(200);
   const hasScrollY = ref(undefined);
   const hasFooter = computed(() => props.pagination && props.data.length);
@@ -73,8 +75,9 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?:
   }));
 
   const resolveWidth = () => {
-    if (props.columns.every((col: Column) => /^\d+\.?\d*(px)?$/ig.test(`${col.width}`))) {
-      const rectWidth = props.columns.reduce((width: number, col: Column) => width + Number(`${col.width}`.replace(/px/ig, '')), 0);
+    const columns = getColumns();
+    if (columns.every((col: Column) => /^\d+\.?\d*(px)?$/ig.test(`${col.width}`))) {
+      const rectWidth = columns.reduce((width: number, col: Column) => width + Number(`${col.width}`.replace(/px/ig, '')), 0);
       const offset = hasScrollY.value ? SCROLLY_WIDTH : 0;
       return `${rectWidth + offset}px`;
     }
@@ -88,6 +91,7 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?:
     width: resolveWidth(),
     maxWidth: '100%',
   }));
+
 
   const resolvePropHeight = (height: Number | string, defaultValue: number) => {
     const strHeight = String(height);
@@ -188,10 +192,12 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?:
   };
 };
 
-export const useInit = (props: TablePropTypes) => {
+export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
   const colgroups: Colgroups[] = reactive([]);
+  const { getColumns } = useColumn(props, targetColumns);
+
   const updateColGroups = () => {
-    colgroups.splice(0, colgroups.length, ...(props.columns || [])
+    colgroups.splice(0, colgroups.length, ...(getColumns())
       .map(col => ({
         ...col,
         calcWidth: null,
@@ -201,9 +207,9 @@ export const useInit = (props: TablePropTypes) => {
   };
 
   const { dragOffsetXStyle, dragOffsetX, resetResizeEvents, registerResizeEvent } = useColumnResize(colgroups, true);
-  const { activeColumns } = useActiveColumns(props);
+  const { activeColumns } = useActiveColumns(props, targetColumns);
 
-  watch(() => props.columns, () => {
+  watch(() => [props.columns, targetColumns], () => {
     updateColGroups();
     resetResizeEvents();
     registerResizeEvent();
