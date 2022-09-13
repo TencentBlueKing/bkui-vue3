@@ -1,9 +1,19 @@
 <template>
-  <bk-cascader
-    v-model="area"
-    :list="list"
-    check-any-level
-  />
+  <div class="cascader-wrapper">
+    <bk-cascader
+      v-model="area"
+      style="height: 32px;"
+      :list="list"
+      check-any-level
+    />
+    <bk-cascader
+      v-model="multipleArea"
+      :list="list"
+      multiple
+      filterable
+      check-any-level
+    />
+  </div>
 </template>
 <script setup>
   import { ref } from 'vue';
@@ -61,6 +71,15 @@
     },
   ];
   const area = ref([]);
+  const multipleArea = ref([]);
 
 </script>
+
+<style lang="less" scoped>
+  .cascader-wrapper {
+    .bk-cascader:first-of-type {
+      margin-bottom: 20px;
+    }
+  }
+  </style>
 

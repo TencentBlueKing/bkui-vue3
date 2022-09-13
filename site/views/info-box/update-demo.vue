@@ -1,17 +1,17 @@
 <template>
   <div>
     <bk-button
-      type="primary"
+      theme="primary"
       @click="handleDefault"
     >
-      默认配置的消息提示
+      点击删除(成功)
     </bk-button>
     <bk-button
       style="margin-left: 15px;"
-      type="primary"
+      theme="primary"
       @click="handleDefault2"
     >
-      默认配置的消息提示
+      点击删除(失败)
     </bk-button>
   </div>
 </template>
@@ -19,12 +19,12 @@
 <script setup>
   import InfoBox from '@bkui-vue/info-box';
   const confirmA = InfoBox({
-    title: '确认要删除1？',
-    subTitle: '11111',
+    title: '确认要删除？',
     isShow: false,
-    onConfirm() {
-      alert(2);
-    },
+    headerAlign: 'center',
+    footerAlign: 'center',
+    isLoading: false,
+    onConfirm() {},
   });
   const handleDefault = () => {
     confirmA.show();
