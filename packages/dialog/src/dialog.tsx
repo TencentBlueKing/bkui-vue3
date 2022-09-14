@@ -27,6 +27,7 @@
 import { defineComponent, onBeforeUnmount, onMounted, reactive, watch } from 'vue';
 
 import BkButton from '@bkui-vue/button';
+import { Close, Spinner, Success, Warn } from '@bkui-vue/icon';
 import BkModal from '@bkui-vue/modal';
 
 import props from './props';
@@ -166,6 +167,16 @@ export default defineComponent({
   },
 
   render() {
+    const renderIcon = () => {
+      const iconMap = {
+        loading: <Spinner class="bk-info-icon primary"></Spinner>,
+        warning: <Warn class="bk-info-icon warning"></Warn>,
+        success: <Success class="bk-info-icon success"></Success>,
+        danger: <Close class="bk-info-icon danger"></Close>,
+      };
+      return iconMap[this.infoType];
+    };
+
     const dialogSlot = {
       header: () => [
         <div class={['bk-dialog-tool', this.fullscreen || !this.draggable ? '' : 'move', this.draggable ? 'content-dragging' : '']}
@@ -173,6 +184,9 @@ export default defineComponent({
           {this.$slots.tools?.() ?? ''}
         </div>,
         <div class="bk-dialog-header">
+          <div class="bk-header-icon">
+            {this.infoType ? renderIcon() : <slot name="info-icon" />}
+          </div>
           <span class="bk-dialog-title" style={`text-align: ${this.headerAlign}`}>
             {this.$slots.header?.() ?? this.title}
           </span>

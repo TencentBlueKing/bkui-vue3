@@ -59,6 +59,7 @@ export const paginationProps = {
   prevText: PropTypes.string,
   nextText: PropTypes.string,
   disabled: PropTypes.bool.def(false),
+  beforeChange: PropTypes.func,
   layout: PropTypes.custom((value: string[]) => {
     const layoutNameMap = {
       total: true,
@@ -115,6 +116,9 @@ export default defineComponent({
       context.emit('change', listCurrent);
     });
     watch(smallListCurrent, (smallListCurrent) => {
+      if (!props.small) {
+        return;
+      }
       context.emit('update:modelValue', smallListCurrent);
       context.emit('change', smallListCurrent);
     });

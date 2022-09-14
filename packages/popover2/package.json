@@ -1,5 +1,5 @@
 {
-  "name": "@bkui-vue/popoverv2",
+  "name": "@bkui-vue/popover2",
   "version": "0.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

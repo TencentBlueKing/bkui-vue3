@@ -25,7 +25,7 @@
 */
 import { reactive, ref } from 'vue';
 
-import { TablePropTypes } from '../props';
+import { SortScope, TablePropTypes } from '../props';
 
 /**
  * 处理 Prop中的分页配置
@@ -92,33 +92,39 @@ export default (props: TablePropTypes, indexData: any[]) => {
    */
   const pageData = reactive([]);
 
-  const sort = (sortFn: any) => {
+  const sort = (sourceData: any[], sortFn: any) => {
     if (typeof sortFn === 'function') {
-      pageData.sort(sortFn);
+      sourceData.sort(sortFn);
     }
   };
 
-  const filter = (filterFn: any) => {
+  const filter = (sourceData: any[], filterFn: any) => {
     if (typeof filterFn === 'function') {
-      const filterVals = pageData.filter((row: any, index: number) => filterFn(row, index, props.data));
-      pageData.splice(0, pageData.length, ...filterVals);
+      const filterVals = sourceData.filter((row: any, index: number) => filterFn(row, index, props.data));
+      sourceData.splice(0, sourceData.length, ...filterVals);
     }
   };
 
-  const resolvePageData = (filterFn: any, sortFn: any) => {
-    pageData.splice(0, pageData.length, ...indexData.slice(startIndex.value, endIndex.value));
-    filter(filterFn);
-    sort(sortFn);
+  const resolvePageData = (filterFn: any, sortFn: any, activeSortColumn: any) => {
+    const sourceData = indexData.slice();
+    const { sortScope } = activeSortColumn?.sort ?? {};
+    if (sortScope === SortScope.ALL) {
+      sort(sourceData, sortFn);
+    }
+
+    pageData.splice(0, pageData.length, ...sourceData.slice(startIndex.value, endIndex.value));
+    filter(pageData, filterFn);
+    sort(pageData, sortFn);
   };
 
   /**
    * 根据Pagination配置的改变重新计算startIndex & endIndex
    */
-  const watchEffectFn = (filterFn: any, sortFn: any) => {
+  const watchEffectFn = (filterFn: any, sortFn: any, activeSortColumn: any) => {
     pagination = resolvePaginationOption(props.pagination, pagination);
     resolveLocalPagination();
     resetStartEndIndex();
-    resolvePageData(filterFn, sortFn);
+    resolvePageData(filterFn, sortFn, activeSortColumn);
   };
 
   const resolveLocalPagination = () => {

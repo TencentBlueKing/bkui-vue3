@@ -31,6 +31,7 @@ import { DownShape, RightShape } from '@bkui-vue/icon';
 import Pagination from '@bkui-vue/pagination';
 import { classes } from '@bkui-vue/shared';
 
+import TableCell from './components/table-cell';
 import TableRow from './components/table-row';
 import { EMITEVENTS, EVENTS, TABLE_ROW_ATTRIBUTE } from './const';
 import BodyEmpty from './plugins/body-empty';
@@ -234,8 +235,14 @@ export default class TableRender {
       const filterFn0 = (row: any, index: number) => filterFn(checked, row, index);
       this.emitEvent(EVENTS.ON_FILTER_CLICK, [{ filterFn: filterFn0, checked, column, index }]);
     };
+
+    const filterSave = (values: any[]) => {
+      this.context.emit(EMITEVENTS.COLUMN_FILTER_SAVE, { column, values });
+    };
+
     return <HeadFilter column={ column } height={ this.props.headHeight }
-    onChange={ handleFilterChange }/>;
+    onChange={ handleFilterChange }
+    onFilterSave={ filterSave }/>;
   }
 
   /**
@@ -286,7 +293,7 @@ export default class TableRender {
       }, {});
 
     const { getFixedColumnStyleResolve } = useFixedColumn(this.props, this.colgroups);
-    const { resolveFixedColumnStyle, fixedoffset } = getFixedColumnStyleResolve();
+    const { resolveFixedColumnStyle, fixedOffset } = getFixedColumnStyleResolve();
     // @ts-ignore:next-line
     return <thead style={rowStyle}>
       <TableRow>
@@ -294,10 +301,12 @@ export default class TableRender {
           {
             this.filterColgroups.map((column: Column, index: number) => <th colspan={1} rowspan={1}
               class={ this.getHeadColumnClass(column, index) }
-              style = { resolveFixedColumnStyle(column, fixedoffset) }
+              style = { resolveFixedColumnStyle(column, fixedOffset) }
               onClick={ () => this.handleColumnHeadClick(index) }
               { ...resolveEventListener(column) }>
-                <div class="cell">{ renderHeadCell(column, index) }</div>
+                <TableCell>
+                  { renderHeadCell(column, index) }
+                </TableCell>
               </th>)
           }
           </tr>
@@ -326,7 +335,7 @@ export default class TableRender {
           ...formatPropAsArray(this.props.rowClass, [row, rowIndex, this]),
         ];
 
-        const { resolveFixedColumnStyle,  fixedoffset } = getFixedColumnStyleResolve();
+        const { resolveFixedColumnStyle,  fixedOffset } = getFixedColumnStyleResolve();
         const rowKey = `${this.uuid}-${row[TABLE_ROW_ATTRIBUTE.ROW_UID]}`;
         return [
           <TableRow key={rowKey}>
@@ -340,7 +349,7 @@ export default class TableRender {
             {
               this.filterColgroups.map((column: Column, index: number) => {
                 const cellStyle = [
-                  resolveFixedColumnStyle(column, fixedoffset),
+                  resolveFixedColumnStyle(column, fixedOffset),
                   ...formatPropAsArray(this.props.cellStyle, [column, index, row, rowIndex, this]),
                 ];
 
@@ -360,7 +369,9 @@ export default class TableRender {
                   style={cellStyle}
                   key={cellKey}
                   colspan={1} rowspan={1}>
-                  <div class={tdCtxClass} >{ this.renderCell(row, column, rowIndex, rows) }</div>
+                  <TableCell class={tdCtxClass} column={ column } row={ row }>
+                    { this.renderCell(row, column, rowIndex, rows) }
+                  </TableCell>
                 </td>;
               })
             }

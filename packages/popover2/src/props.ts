@@ -86,6 +86,16 @@ export const PopoverProps = {
    */
   disableOutsideClick: PropTypes.bool.def(false),
 
+  /**
+   * 是否禁用样式的transform更新位移
+   */
+  disableTransform: PropTypes.bool.def(false),
+
+  /**
+   * 自定义 reference
+   */
+  reference: PropTypes.object.def(null),
+
   ...EventProps,
 };
 

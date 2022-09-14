@@ -38,7 +38,7 @@ export default () => {
   };
 
   const getClippingRect = ({ }) => {
-    const { width, height } = document.fullscreenElement.getBoundingClientRect();
+    const { width = 0, height = 0 } = document.fullscreenElement?.getBoundingClientRect() ?? {};
     return {
       width,
       height,
@@ -53,3 +53,4 @@ export default () => {
     getClippingRect,
   };
 };
+

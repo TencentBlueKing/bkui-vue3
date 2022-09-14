@@ -24,18 +24,18 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { computed, defineComponent, onMounted, onUnmounted, ref, Teleport, watch } from 'vue';
+import { computed, defineComponent, onMounted, onUnmounted, ref, Teleport, toRefs, watch } from 'vue';
 
 import { clickoutside } from '@bkui-vue/directives';
 
 import Arrow from './arrow';
-import { EMIT_EVENT_TYPES, EMITEVENTS } from './const';
+import { EMIT_EVENT_TYPES } from './const';
 import Content from './content';
 import { PopoverProps } from './props';
 import Reference from './reference';
 import Root from './root';
 import useFloating from './use-floating';
-import usePopperId from './use-popper-id';
+import usePopoverInit from './use-popover-init';
 
 export default defineComponent({
   name: 'Popover2',
@@ -50,41 +50,32 @@ export default defineComponent({
 
   setup(props, ctx) {
     const { content, theme, disableTeleport } = props;
-    const refReference = ref();
+    const { reference } = toRefs(props);
+    const refDefaultReference = ref();
     const refContent = ref();
     const refArrow = ref();
     const refRoot = ref();
     const isFullscreen = ref(false);
-    let storeEvents = null;
 
+    const refReference = computed(() => reference.value || refDefaultReference.value);
     const {
-      localIsShow,
       showPopover,
       hidePopover,
-      resolveTriggerEvents,
       updatePopover,
-      resolvePopElements,
-      isElementFullScreen,
-      cleanup,
-      createPopInstance,
     } = useFloating(props, ctx, refReference, refContent, refArrow, refRoot);
 
-    const show = () => {
-      showPopover();
-    };
+    const {
+      onMountedFn,
+      onUnmountedFn,
+      handleClickOutside,
+      beforeInstanceUnmount,
+      updateBoundary,
+      initPopInstance,
+      showFn,
+      hideFn,
+      boundary,
+    } = usePopoverInit(props, ctx, refReference, refContent, refArrow, refRoot);
 
-    const hide = () => {
-      hidePopover();
-    };
-
-    const initPopInstance = () => {
-      createPopInstance();
-      if (props.always) {
-        showPopover();
-      } else {
-        addEventToPopTargetEl();
-      }
-    };
 
     if (!props.always && !props.disabled) {
       watch(() => props.isShow, () => {
@@ -100,99 +91,30 @@ export default defineComponent({
       }
     });
 
-    const addEventToPopTargetEl = () => {
-      const { elReference, elContent } = resolvePopElements();
-      storeEvents = resolveTriggerEvents();
-      if (Array.isArray(storeEvents)) {
-        addEventToTargetEl(elReference, storeEvents);
-      } else {
-        const { content, reference } = storeEvents;
-        addEventToTargetEl(elReference, reference);
-        addEventToTargetEl(elContent, content);
-      }
-    };
-
-    const addEventToTargetEl = (target: HTMLElement, evets: any[]) => {
-      evets.forEach(([event, listener]) => {
-        target.addEventListener(event, listener);
-      });
-    };
-
-    const removeEventListener = () => {
-      if (storeEvents?.length) {
-        const { elReference } = resolvePopElements();
-        if (elReference) {
-          storeEvents.forEach(([event, listener]) => {
-            elReference.removeEventListener(event, listener);
-          });
-        }
-
-        storeEvents = null;
-      }
-    };
-
-    const updateBoundary = () => {
-      const { elReference, root } = resolvePopElements();
-      boundary.value = getPrefixId(isFullscreen.value, root || elReference);
-    };
-
-    const { getPrefixId, resetFullscreenElementTag } = usePopperId(props, '#');
-    const boundary = ref();
     updateBoundary();
+    onMounted(onMountedFn);
+    onUnmounted(onUnmountedFn);
 
-    const beforeInstanceUnmount = () => {
-      if (typeof cleanup === 'function') {
-        cleanup();
-      }
-
-      removeEventListener();
-    };
-
-    const handleFullscrennChange = () => {
-      isFullscreen.value = isElementFullScreen();
-      resetFullscreenElementTag();
-      updateBoundary();
-      updatePopover();
-    };
-
-    onMounted(() => {
-      if (props.disabled) {
-        return;
-      }
-
-      initPopInstance();
-      updateBoundary();
-
-      document.body.addEventListener('fullscreenchange', handleFullscrennChange);
-    });
-
-    onUnmounted(() => {
-      beforeInstanceUnmount();
-      document.body.removeEventListener('fullscreenchange', handleFullscrennChange);
-    });
-
-    const handleClickOutside = (_e: MouseEvent) => {
-      ctx.emit(EMITEVENTS.CLICK_OUTSIDE, { isShow: localIsShow.value, event: _e });
-      if (props.disableOutsideClick || props.always || props.disabled || props.trigger === 'manual') {
-        return;
-      }
-
-      if (localIsShow.value) {
-        hide();
-      }
-    };
     const transBoundary = computed(() => (isFullscreen.value || !disableTeleport) && typeof boundary.value === 'string');
+    const show = () => {
+      showFn();
+    };
+
+    const hide = () => {
+      hideFn();
+    };
 
     return {
       boundary,
       arrow: props.arrow,
-      refReference,
+      refDefaultReference,
       refContent,
       refArrow,
       content,
       theme,
       transBoundary,
       handleClickOutside,
+      updatePopover,
       hide,
       show,
     };
@@ -200,7 +122,7 @@ export default defineComponent({
 
   render() {
     return <Root ref="refRoot">
-      <Reference ref="refReference">
+      <Reference ref="refDefaultReference">
         { this.$slots.default?.() ?? <span></span> }
       </Reference>
       <Teleport to={ this.boundary } disabled={ !this.transBoundary }>

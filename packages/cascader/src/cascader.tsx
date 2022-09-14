@@ -24,18 +24,19 @@
  * IN THE SOFTWARE.
 */
 
-import { computed, defineComponent, ref, toRefs, watch  } from 'vue';
+import { computed, defineComponent, ref, toRefs, watch } from 'vue';
+import { array } from 'vue-types';
 
 import { clickoutside } from '@bkui-vue/directives';
 import { AngleUp, Close, Error } from '@bkui-vue/icon';
 import BkPopover from '@bkui-vue/popover2';
-import { PropTypes } from '@bkui-vue/shared';
+import { debounce, PropTypes } from '@bkui-vue/shared';
 
 import { useHover } from '../../select/src/common';
 
 import CascaderPanel from './cascader-panel';
 import { INode } from './interface';
-import Store from './store';;
+import Store from './store';
 
 export default defineComponent({
   name: 'Cascader',
@@ -47,8 +48,7 @@ export default defineComponent({
     BkPopover,
   },
   props: {
-    modelValue: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.number).def([]),
-      PropTypes.arrayOf(PropTypes.string).def([])]),
+    modelValue: PropTypes.arrayOf(PropTypes.oneOfType([array<string>(), String, Number])),
     list: PropTypes.array.def([]),
     placeholder: PropTypes.string.def('请选择'),
     filterable: PropTypes.bool.def(false),
@@ -59,13 +59,15 @@ export default defineComponent({
     checkAnyLevel: PropTypes.bool.def(false),
     isRemote: PropTypes.bool.def(false),
     remoteMethod: PropTypes.func,
-    showCompleteName: PropTypes.bool.def(false),
+    showCompleteName: PropTypes.bool.def(true),
     idKey: PropTypes.string.def('id'),
     nameKey: PropTypes.string.def('name'),
     childrenKey: PropTypes.string.def('children'),
     separator: PropTypes.string.def('/'),
     limitOneLine: PropTypes.bool.def(false),
     extCls: PropTypes.string.def(''),
+    scrollHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(216),
+    scrollWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def('auto'),
   },
   emits: ['update:modelValue', 'change', 'clear', 'toggle'],
   setup(props, { emit }) {
@@ -73,45 +75,61 @@ export default defineComponent({
     const { isHover, setHover, cancelHover } = useHover();
     const store = ref(new Store(props));
     const panelShow = ref(false);
-    const selectedText = ref('');
+    const selectedText = ref<string | number>('');
     const selectedTags = ref([]);
     const { modelValue } = toRefs(props);
     const cascaderPanel = ref();
+    const searchKey = ref<string | number>('');  // 支持搜索时，搜索框绑定变量
+    const suggestions = ref([]); // 搜索功能打开时，面板给出的列表
+    const isFiltering = ref(false); // 是否正在搜索，过滤
 
     const checkedValue = computed({
       get: () => modelValue.value,
-      set: (value: Array<string | number>) => {
+      set: (value: Array<string | number | string[]>) => {
         emit('update:modelValue', value);
       },
     });
 
     const popover = ref(null);
 
+    /** 根据配置，获取输入框显示的text */
+    const getShowText = (node: INode) =>  (props.showCompleteName
+      ? node.pathNames.join(separator)
+      : node.pathNames[node.pathNames.length - 1]);
+
+    /** 更新搜索框的值 */
+    const updateSearchKey = () => {
+      searchKey.value = selectedText.value;
+    };
+
     /** 更新选中 */
-    const updateValue = (val: Array<string | number>) => {
+    const updateValue = (val: Array<string | number | string[]>) => {
       /** 根据配置更新显示内容 */
       if (multiple) {
         selectedTags.value = store.value.getCheckedNodes().map((node: INode) => ({
-          text: node.pathNames.join(separator),
+          text: getShowText(node),
           key: node.id,
         }));
         return;
       }
 
       /** 根据val的值，设置selectedText显示内容 */
-      popover?.value?.hide(); // 非多选，选中后，关闭popover
+      !props.checkAnyLevel && popover?.value?.hide(); // 非多选，选中后，关闭popover
       if (val.length === 0) {
         selectedText.value = '';
       } else {
         const node = store.value.getNodeByValue(val);
         if (!node) return;
-        selectedText.value = node.pathNames.join(separator);
+        selectedText.value = getShowText(node);
       }
+      updateSearchKey();
     };
 
     /** 清空所选内容，要stopPropagation防止触发下拉 */
     const handleClear = (e: Event) => {
       e.stopPropagation();
+      store.value.clearChecked();
+      searchKey.value = '';
       updateValue([]);
       emit('update:modelValue', []);
       emit('clear', JSON.parse(JSON.stringify(props.modelValue)));
@@ -120,16 +138,17 @@ export default defineComponent({
     const removeTag = (value, index, e) => {
       e.stopPropagation();
       const current = JSON.parse(JSON.stringify(value));
-      current.splice(index, 1);
+      const tag = current.splice(index, 1)[0];
+      store.value.removeTag(tag);
       updateValue(current);
+      emit('update:modelValue', store.value.getCheckedNodes().map((node: INode) => node.path));
     };
 
-    const modelValueChangeHandler = (value) => {
+    const modelValueChangeHandler = (value, oldValue) => {
       updateValue(value);
-
       /** 派发相关事件 */
       emit('update:modelValue', value);
-      emit('change', value);
+      oldValue !== undefined && emit('change', value); // oldValue = undefined代表初始化，init不派发change事件
     };
 
     const listChangeHandler = () => {
@@ -139,7 +158,29 @@ export default defineComponent({
 
     const popoverChangeEmitter = (val) => {
       emit('toggle', val.isShow);
+      /** 面板收起，搜索状态关闭 */
+      if (!val.isShow) {
+        isFiltering.value = false;
+      }
     };
+
+    const searchInputHandler = debounce(200, (e: InputEvent) => {
+      const target = e.target as HTMLInputElement;
+      searchKey.value = target.value;
+      if (searchKey.value === '') {
+        isFiltering.value = false;
+        return;
+      }
+      isFiltering.value = true;
+      const targetNodes = store.value.getFlattedNodes().filter((node) => {
+        if (props.checkAnyLevel) {
+          return node.pathNames.join(props.separator).includes(searchKey.value);
+        }
+        return node.isLeaf && node.pathNames.join(props.separator).includes(searchKey.value);
+      });
+      suggestions.value = targetNodes;
+      !popover?.value.isShow && popover?.value.show();
+    });
 
     watch(
       () => props.modelValue,
@@ -167,6 +208,10 @@ export default defineComponent({
       removeTag,
       cascaderPanel,
       popoverChangeEmitter,
+      searchKey,
+      suggestions,
+      isFiltering,
+      searchInputHandler,
     };
   },
   render() {
@@ -195,6 +240,7 @@ export default defineComponent({
         'bk-is-show-panel': this.panelShow,
         'is-unselected': this.modelValue.length === 0,
         'is-hover': this.isHover,
+        'is-filterable': this.filterable,
       }]}
         tabindex="0"
         data-placeholder={this.placeholder}
@@ -214,14 +260,16 @@ export default defineComponent({
           {{
             default: () => (
               <div class="bk-cascader-name">
-                {this.multiple && renderTags()}
+                {this.multiple && this.selectedTags.length > 0 && renderTags()}
                 {this.filterable
                   ? <input class="bk-cascader-search-input"
-                  type="text"
-                  placeholder={this.placeholder}
+                    type="text"
+                    onInput={this.searchInputHandler}
+                    placeholder={this.placeholder}
+                    value={this.searchKey}
                   />
                   : <span>{this.selectedText}</span>
-                  }
+                }
               </div>
             ),
             content: () => (
@@ -229,7 +277,19 @@ export default defineComponent({
                 <CascaderPanel
                   store={this.store}
                   ref="cascaderPanel"
-                  v-model={this.checkedValue}></CascaderPanel>
+                  width={this.scrollWidth}
+                  height={this.scrollHeight}
+                  search-key={this.searchKey}
+                  separator={this.separator}
+                  is-filtering={this.isFiltering}
+                  suggestions={this.suggestions}
+                  v-model={this.checkedValue}
+                  v-slots={{
+                    default: scope => (this.$slots.default
+                      ? this.$slots.default(scope)
+                      : <span class="bk-cascader-node-name">{scope.node.name}</span>),
+                  }}>
+                </CascaderPanel>
               </div>
             ),
           }}
