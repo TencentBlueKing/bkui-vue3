@@ -60,6 +60,7 @@ export default [
     config: [
       { name: 'label', type: 'String|Function', default: '--', desc: '显示的标题，可以是字符串或者函数，函数的话需要返回一个String类型字符串', optional: [] },
       { name: 'field', type: 'String|Function', default: '', desc: '绑定的展示字段，可以是字符串或者函数，函数的话需要返回一个存在的字段名称', optional: [] },
+      { name: 'prop', type: 'String|Function', default: '', desc: '此属性只在<bk-column>模板绑定时才会生效，如果是函数式绑定请使用`field`. 绑定的展示字段，可以是字符串或者函数，函数的话需要返回一个存在的字段名称', optional: [] },
       { name: 'render', type: 'String|Function', default: '--', desc: '自定义当前列渲染函数', optional: [] },
       { name: 'width', type: 'Number|String', default: 'auto', desc: '对应列的宽度', optional: [] },
       { name: 'minWidth', type: 'Number|String', default: 'auto', desc: '对应列的最小宽度，与 width 的区别是 width 是固定的，min-width 会把剩余宽度按比例分配给设置了 min-width 的列', optional: [] },
@@ -133,6 +134,16 @@ export default [
       { name: 'column-sort', desc: '当表格的排序条件发生变化的时候会触发该事件', params: '{ column, index, type }' },
       { name: 'column-filter', desc: '当表格的筛选条件发生变化的时候会触发该事件', params: '{ checked, column, index }' },
       { name: 'column-pick', desc: '当表格的选中一列的时候会触发该事件,(prop column-pick启用)', params: 'column[]' },
+    ],
+  },
+  {
+    title: 'Slots',
+    subTile: '预留插槽',
+    type: 'events',
+    config: [
+      { name: '#empty', desc: '自定义空数据-empty插槽', params: '' },
+      { name: '#default', desc: '<bk-column />模板使用自定义显示默认插槽', params: '{ cell, data, row, column, index, rows }' },
+      { name: '#fixedBottom', desc: '底部加载插槽', params: '' },
     ],
   },
 ];

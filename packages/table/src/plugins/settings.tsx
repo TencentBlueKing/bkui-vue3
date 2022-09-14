@@ -176,8 +176,8 @@ export default defineComponent({
       {...{ theme }}>
       {
         {
-          default: () =>  <span class="table-head-settings">
-            <CogShape style="color: #c4c6cc;" onClick={ handleSettingClick }></CogShape>
+          default: () =>  <span class="table-head-settings" onClick={ handleSettingClick }>
+            <CogShape style="color: #c4c6cc;" ></CogShape>
           </span>,
           content: () => <div class="setting-content">
             <div class="setting-head">

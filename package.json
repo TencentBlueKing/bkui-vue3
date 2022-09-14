@@ -15,7 +15,7 @@
   "scripts": {
     "preinstall": "npx only-allow yarn -y",
     "prepare": "husky install",
-    "dev": "vite serve site",
+    "dev": "vite serve site --force",
     "build": "run-s build:dist build:lib",
     "build:site": "vite build site --mode production && cp -r ./site/views/ ./site/dist/views",
     "build:dist": "rimraf dist && lerna run --stream --scope cli dist",
