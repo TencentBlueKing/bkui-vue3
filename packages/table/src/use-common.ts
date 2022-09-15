@@ -112,7 +112,12 @@ export const useClass = (props: TablePropTypes, targetColumns: Column[], root?, 
   };
 
   /** 表格外层容器样式 */
-  const contentStyle = reactive({});
+  const contentStyle = reactive({
+    display: '',
+    'min-height': '',
+    height: '',
+    maxHeight: '',
+  });
 
   const getHeadHeight = () => (props.showHead ? resolvePropHeight(props.headHeight, LINE_HEIGHT) : 0);
 
