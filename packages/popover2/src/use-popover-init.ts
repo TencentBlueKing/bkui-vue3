@@ -107,7 +107,7 @@ export default (props, ctx, refReference, refContent, refArrow, refRoot) => {
 
   const beforeInstanceUnmount = () => {
     if (typeof cleanup === 'function') {
-      cleanup();
+      // cleanup();
     }
 
     removeEventListener();
