@@ -1,7 +1,7 @@
 {
   "name": "bkui-vue",
   "private": true,
-  "version": "0.0.1-beta.159",
+  "version": "0.0.1-beta.177",
   "workspaces": {
     "packages": [
       "packages/!(**.bak)*",
@@ -15,7 +15,7 @@
   "scripts": {
     "preinstall": "npx only-allow yarn -y",
     "prepare": "husky install",
-    "dev": "vite serve site",
+    "dev": "vite serve site --force",
     "build": "run-s build:dist build:lib",
     "build:site": "vite build site --mode production && cp -r ./site/views/ ./site/dist/views",
     "build:dist": "rimraf dist && lerna run --stream --scope cli dist",
@@ -110,7 +110,7 @@
     "highlight.js": "~11.5.0",
     "vue": "^3.2.0"
   },
-  "main": "lib/index.js",
+  "main": "dist/index.umd.js",
   "module": "lib/index.js",
   "typings": "lib/index.d.ts",
   "lint-staged": {

@@ -38,7 +38,6 @@ const createInstall = (prefix = 'Bk') => (app: App) => {
       }
     });
 };
-
 export default {
   createInstall,
   install: createInstall(),

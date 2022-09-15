@@ -42,8 +42,9 @@ export type ColumnFilterListItem = {
 
 export type IOverflowTooltip = {
   content: string | Function,
-  disabled?: boolean
-}
+  disabled?: boolean,
+  watchCellResize?: boolean
+};
 
 export const IColumnType = {
   label: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
@@ -51,9 +52,11 @@ export const IColumnType = {
   render: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
   width: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]),
   minWidth: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]).def(),
+  columnKey: PropTypes.string.def(''),
   showOverflowTooltip: PropTypes.oneOfType([PropTypes.bool, PropTypes.shape<IOverflowTooltip>({
-    content: PropTypes.string,
-    disabled: PropTypes.bool
+    content: PropTypes.string.def(''),
+    disabled: PropTypes.bool.def(false),
+    watchCellResize: PropTypes.bool.def(true),
   })]).def(false),
   type: PropTypes.commonType(['selection', 'index', 'expand', 'none'], 'columnType').def('none'),
   resizable: PropTypes.bool.def(true),
@@ -79,7 +82,7 @@ export const IColumnType = {
     }),
     PropTypes.bool,
     PropTypes.string]).def(false),
-}
+};
 
 export const tableProps = {
   /**
@@ -272,6 +275,7 @@ export type Column = {
   render?: Function | string;
   width?: number | string;
   minWidth?: number | string;
+  columnKey?: string;
   showOverflowTooltip?: boolean | IOverflowTooltip;
   type?: string;
   fixed?: string | boolean;

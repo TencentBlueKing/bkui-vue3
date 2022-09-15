@@ -1,5 +1,5 @@
 <template>
-  <div class="flex-wrapper">
+  <div class="cascader-wrapper">
     <bk-cascader
       v-model="area"
       :list="list"
@@ -9,6 +9,7 @@
     <bk-cascader
       v-model="hoverArea"
       :list="list"
+      filterable
       trigger="hover"
     />
   </div>
@@ -74,11 +75,9 @@
 </script>
 
 <style lang="less" scoped>
-.flex-wrapper {
-  display: flex;
-
-  .bk-cascader {
-    margin-right: 200px;
+  .cascader-wrapper {
+    .bk-cascader:first-of-type {
+      margin-bottom: 20px;
+    }
   }
-}
-</style>
+  </style>

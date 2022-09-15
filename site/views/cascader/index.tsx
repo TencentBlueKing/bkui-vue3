@@ -33,11 +33,12 @@ import { IPropsTableItem } from '../../typings';
 
 import BaseDemo from './base-demo.vue';
 import CheckAnyLevelDemo from './check-any-level-demo.vue';
+import CheckboxDemo from './checkbox-demo.vue';
 import IdKey from './id-key.vue';
 import RemoteDemo from './remote-demo.vue';
 import SeparatorDemo from './separator-demo.vue';
 import ShowCompleteName from './show-complete-name.vue';
-import SlotsDemo from './slots-demo.vue';
+import SlotsDemo from './slots-demo.vue';;
 
 const cascaderPropsJson: IPropsTableItem[] = [
   {
@@ -52,6 +53,13 @@ const cascaderPropsJson: IPropsTableItem[] = [
     type: 'Boolean',
     default: false,
     desc: '是否多选',
+    optional: ['true', 'false'],
+  },
+  {
+    name: 'filterable',
+    type: 'Boolean',
+    default: false,
+    desc: '是否开启搜索',
     optional: ['true', 'false'],
   },
   {
@@ -185,7 +193,7 @@ export default defineComponent({
         <DemoBox
           title='基础用法'
           subtitle='基础数据展示'
-          desc='通过trigger设置`click`或`hover`实现下一级的触发方式'
+          desc='通过trigger设置`click`或`hover`实现下一级的触发方式; 设置`filterable`属性可以进行搜索。'
           componentName='cascader'
           demoName='base-demo'>
           <BaseDemo></BaseDemo>
@@ -198,6 +206,14 @@ export default defineComponent({
           componentName='cascader'
           demoName='check-any-level-demo'>
           <CheckAnyLevelDemo></CheckAnyLevelDemo>
+        </DemoBox>
+        <DemoBox
+          title='多选'
+          subtitle='通过multiple开启多选'
+          desc='开启 multiple 属性进行多选，注意此时 v-model 对应的值应是二维数组'
+          componentName='cascader'
+          demoName='checkbox-demo'>
+          <CheckboxDemo></CheckboxDemo>
         </DemoBox>
         <DemoBox
           title='列表别名设置'

@@ -1,4 +1,4 @@
-/*
+/**
  * Tencent is pleased to support the open source community by making
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
  *
@@ -22,13 +22,21 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
-import { withInstall } from '@bkui-vue/shared';
+ */
 
-import Column from './components/table-column';
-import Component from './table';
-const BkTable = withInstall(Component);
-export default BkTable;
+import { shallowMount } from '@vue/test-utils';
 
-const BkColumn = withInstall(Column);
-export { BkColumn };
+import Popover from '../src';
+
+describe('Popover.tsx', () => {
+  it('renders correctly', () => {
+    const wrapper = shallowMount(Popover, {
+      slots: {
+        default: () => <span>trigger</span>,
+        content: () => 'content',
+      },
+    });
+    expect(wrapper.classes()).toContain('bk-popover');
+    expect(wrapper.html()).toContain('<span>trigger</span>');
+  });
+});

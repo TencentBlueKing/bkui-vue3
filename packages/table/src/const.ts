@@ -110,3 +110,8 @@ export const DEFAULT_SIZE_LIST = [
   { value: 'medium', label: '中', height: SETTING_SIZE.medium },
   { value: 'large', label: '大', height: SETTING_SIZE.large },
 ];
+
+/**
+ * Provide key: init column when use <column { ...props }> template
+ */
+export const PROVIDE_KEY_INIT_COL = 'InitColumns';

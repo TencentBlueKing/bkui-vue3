@@ -1,5 +1,5 @@
 {
-  "name": "@bkui-vue/popover2",
+  "name": "@bkui-vue/table-column",
   "version": "0.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

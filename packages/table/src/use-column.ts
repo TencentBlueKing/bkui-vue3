@@ -23,9 +23,42 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import { unref } from 'vue';
 
-export { default as mousewheel } from './mousewheel';
-export { default as clickoutside } from './clickoutside';
-export { default as bkTooltips } from './tooltips';
-export { default as bkEllipsis, createInstance as bkEllipsisInstance } from './ellipsis';
-// export { createInstance as bkEllipsisInstance } from './ellipsis';
+import { Column, TablePropTypes } from './props';
+export default (props: TablePropTypes, targetColumns: Column[]) => {
+  const initColumns = (column: Column | Column[]) => {
+    let resolveColumns: Column[] = [];
+
+    if (!Array.isArray(column)) {
+      resolveColumns = [column];
+    } else {
+      resolveColumns = column;
+    }
+
+    resolveColumns.forEach((col) => {
+      const matchCol = targetColumns.find(c => c.label === col.label && c.field === col.field);
+      if (!matchCol) {
+        const unrefCol = unref(col);
+        targetColumns.push(unrefCol);
+      }
+    });
+  };
+
+  const getColumns = () => {
+    if (targetColumns?.length) {
+      return targetColumns;
+    }
+
+    if (props.columns?.length) {
+      return props.columns;
+    }
+
+    return [];
+  };
+
+  return {
+    initColumns,
+    getColumns,
+  };
+};

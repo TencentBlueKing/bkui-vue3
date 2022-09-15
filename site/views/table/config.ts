@@ -60,14 +60,25 @@ export default [
     config: [
       { name: 'label', type: 'String|Function', default: '--', desc: '显示的标题，可以是字符串或者函数，函数的话需要返回一个String类型字符串', optional: [] },
       { name: 'field', type: 'String|Function', default: '', desc: '绑定的展示字段，可以是字符串或者函数，函数的话需要返回一个存在的字段名称', optional: [] },
+      { name: 'prop', type: 'String|Function', default: '', desc: '此属性只在<bk-column>模板绑定时才会生效，如果是函数式绑定请使用`field`. 绑定的展示字段，可以是字符串或者函数，函数的话需要返回一个存在的字段名称', optional: [] },
       { name: 'render', type: 'String|Function', default: '--', desc: '自定义当前列渲染函数', optional: [] },
       { name: 'width', type: 'Number|String', default: 'auto', desc: '对应列的宽度', optional: [] },
       { name: 'minWidth', type: 'Number|String', default: 'auto', desc: '对应列的最小宽度，与 width 的区别是 width 是固定的，min-width 会把剩余宽度按比例分配给设置了 min-width 的列', optional: [] },
+      { name: 'show-overflow-tooltip', type: 'Boolean|IOverflowTooltip', default: 'false', desc: '表格cell内容超长时，是否自动展示tooltip，默认值为false，可以通过设置为true开启，如果需要自定义content请设置为对象，具体参考 IOverflowTooltip', optional: [] },
       { name: 'type', type: 'String', default: 'none', desc: '对应列的类型。如果设置了 index 则显示该行的索引（从 1 开始计算）；如果设置了 expand 则显示为一个可展开的按钮', optional: ['index', 'expand', 'none'] },
       { name: 'resizable', type: 'Boolean', default: 'true', desc: '对应列是否可以通过拖动改变宽度', optional: [] },
       { name: 'fixed', type: 'String', default: 'false', desc: '列是否固定在左侧或者右侧，true 表示固定在左侧', optional: ['left', 'right'] },
       { name: 'sort', type: 'Boolean|ISort', default: 'false', desc: '对应列是否可以排序，可以简单设置true开启默认排序，也可以通过详细配置排序方式，请参考ISort', optional: [] },
       { name: 'filter', type: 'Boolean|String|IFilter', default: 'false', desc: '数据过滤的选项,可以简单设置true开启默认过滤，也可以通过详细配置排序方式，请参考IFilter', optional: [] },
+    ],
+  },
+  {
+    title: 'IOverflowTooltip',
+    subTile: 'Table Cell ellipsis tooltip config',
+    config: [
+      { name: 'content', type: 'String|Function', default: 'Cell innerText', desc: 'tooltip展示内容，可以为回调函数，回调参数 (column, row) => string', optional: [] },
+      { name: 'disabled', type: 'Boolean', default: 'false', desc: '是否展示tooltip', optional: ['true', 'false'] },
+      { name: 'watchCellResize', type: 'Boolean', default: 'true', desc: '是否监听当前cell尺寸变化, 动态添加tooltip, 【如果需要提升性能，请禁用此功能】', optional: ['true', 'false'] },
     ],
   },
   {
@@ -79,7 +90,6 @@ export default [
       { name: 'cellFn', type: 'Function', default: 'undefined', desc: '自定义当前列渲染函数', optional: [] },
     ],
   },
-
   {
     title: 'ISort',
     subTile: '排序详细配置',
@@ -124,6 +134,16 @@ export default [
       { name: 'column-sort', desc: '当表格的排序条件发生变化的时候会触发该事件', params: '{ column, index, type }' },
       { name: 'column-filter', desc: '当表格的筛选条件发生变化的时候会触发该事件', params: '{ checked, column, index }' },
       { name: 'column-pick', desc: '当表格的选中一列的时候会触发该事件,(prop column-pick启用)', params: 'column[]' },
+    ],
+  },
+  {
+    title: 'Slots',
+    subTile: '预留插槽',
+    type: 'events',
+    config: [
+      { name: '#empty', desc: '自定义空数据-empty插槽', params: '' },
+      { name: '#default', desc: '<bk-column />模板使用自定义显示默认插槽', params: '{ cell, data, row, column, index, rows }' },
+      { name: '#fixedBottom', desc: '底部加载插槽', params: '' },
     ],
   },
 ];

@@ -23,12 +23,10 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
-import { withInstall } from '@bkui-vue/shared';
 
-import Column from './components/table-column';
-import Component from './table';
-const BkTable = withInstall(Component);
-export default BkTable;
+const baseJestConf = require('../../jest.config');
 
-const BkColumn = withInstall(Column);
-export { BkColumn };
+module.exports = {
+  ...baseJestConf,
+  testRegex: 'packages/popover-v2/__test__/.*\\.test\\.(js|ts|tsx)$',
+};

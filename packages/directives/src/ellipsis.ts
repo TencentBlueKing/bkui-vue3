@@ -26,7 +26,7 @@
 
 import { DirectiveBinding, ObjectDirective } from 'vue';
 
-import { $bkPopover } from '@bkui-vue/popover2';
+import $bkPopover from '@bkui-vue/plugin-popover';
 
 const resolveOptions = (el: HTMLElement, binding: DirectiveBinding) => {
   const options: any = {
@@ -81,6 +81,17 @@ export const createInstance = (el: HTMLElement, binding: any) => {
       handleMouseLeave,
     },
   });
+
+  const destroyInstance = (element?: HTMLElement) => {
+    handleMouseLeave();
+    (element ?? el)?.removeEventListener('mouseenter', handleMouseEnter);
+    (element ?? el)?.removeEventListener('mouseleave', handleMouseLeave);
+  };
+
+  return {
+    destroyInstance,
+    instance,
+  };
 };
 
 const ellipsis: ObjectDirective = {
