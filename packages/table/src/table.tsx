@@ -98,7 +98,7 @@ export default defineComponent({
       }
     };
 
-    watch(() => [props.data, props.pagination], () => {
+    watch(() => [props.data, props.pagination, props.height, props.maxHeight, props.minHeight], () => {
       initIndexData(props.reserveExpand);
       watchEffectFn(columnFilterFn, columnSortFn, activeSortColumn);
       nextTick(() => {
