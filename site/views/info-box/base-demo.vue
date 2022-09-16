@@ -22,8 +22,6 @@
   const handleDefault1 = () => {
     InfoBox({
       title: '确认要删除？',
-      headerAlign: 'center',
-      footerAlign: 'center',
       confirmFn() {},
     });
   };
@@ -31,8 +29,6 @@
     InfoBox({
       title: '请确认是否重置',
       subTitle: '重置SecureKey，需要自行修改templates中的callback地址字段！',
-      headerAlign: 'center',
-      footerAlign: 'center',
       confirmText: '按钮1',
       cancelText: '按钮2',
       onConfirm() {},

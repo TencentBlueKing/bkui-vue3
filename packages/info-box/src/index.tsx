@@ -60,7 +60,7 @@ export interface ModalFuncProps {
   title?: string | (() => VNode | string) | VNode;
   subTitle?: string | (() => VNode) | VNode;// 弹窗内容
   confirmText?: string | (() => VNode) | VNode;
-  cancelText?: 'primary' | 'warning' | 'success' | 'danger'
+  cancelText?: string | (() => VNode) | VNode;
   onConfirm?: (...args: any[]) => any;
   onClosed?: (...args: any[]) => any;
   boundary?: HTMLElement;// 插入元素
@@ -107,28 +107,39 @@ const InfoBox = (config: ModalFuncProps) => {
       expose({ update });
 
       const getContent = () => {
-        if (!modalFuncProps.value.subTitle) {
-          return '';
+        const children = [];
+        const subTitleBox = [];
+        if (modalFuncProps.value.subTitle) {
+          switch (typeof modalFuncProps.value.subTitle) {
+            case 'string':
+              children.push(modalFuncProps.value.subTitle);
+              break;
+            case 'function':
+              children.push(modalFuncProps.value.subTitle());
+              break;
+            default:
+              children.push(modalFuncProps.value.subTitle);
+              break;
+          }
         }
-        switch (typeof modalFuncProps.value.subTitle) {
-          case 'function':
-            return modalFuncProps.value.subTitle();
-          default:
-          case 'string':
-            return modalFuncProps.value.subTitle;
+        if (children.length) {
+          subTitleBox.push(h('div', {
+            class: 'bk-info-sub-title',
+            style: `text-Align:${modalFuncProps.value.contentAlign || 'center'}`,
+          }, children));
         }
+        return subTitleBox;
       };
+
       return () => createVNode(Dialog, {
+        class: 'bk-info-wrapper',
         headerAlign: 'center',
         footerAlign: 'center',
         ...modalFuncProps.value,
         isShow: isShow.value,
         onClosed,
         onConfirm,
-      }, [h('div', {
-        class: 'bk-info-sub-title',
-        style: `text-Align:${modalFuncProps.value.contentAlign || 'center'}`,
-      }, getContent())]);
+      }, getContent());
     },
   });
   const app: any = createApp(dialog).mount(container);
