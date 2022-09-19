@@ -266,6 +266,14 @@ export const tableProps = {
     disabled: PropTypes.bool.def(false),
     watchCellResize: PropTypes.bool.def(true),
   })]).def(false),
+
+  /**
+   * 为避免不必要的数据修改导致的不可控组件更新
+   * 默认组件不会对传入组件的data进行任何修改
+   * 设置此属性为true则会对源数据进行同步（如：启用selection，勾选时想要自动同步到源数据）
+   * 目前只会对指定了selectionKey的情况下才会对指定的字段数据进行更新，同时需要指定 rowKey，保证匹配到的row是正确的目标对象
+   */
+  asyncData: PropTypes.bool.def(false),
 };
 
 

@@ -27,11 +27,8 @@
 
   import { DATA_TABLE } from './options';
   const DATA_ROWS = DATA_TABLE
-    .map((_, index) => ({
-      ip: `${index}--192.168.0.x`,
-      source: `${index}_QQ`,
-      status: '创建中',
-      create_time: `2018-05-25 15:02:24.${index}`,
+    .map(item => ({
+      ...item,
     }));
   export default defineComponent({
     components: {},

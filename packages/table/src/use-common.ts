@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { get as objGet } from 'lodash';
+import { get as objGet, has as objHas, set as objSet } from 'lodash';
 import { computed, onMounted, reactive, ref, watch } from 'vue';
 
 import { classes, resolveClassName } from '@bkui-vue/shared';
@@ -286,6 +286,7 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
     const isChecked = typeof checked === 'boolean' ? checked : !isSelectionAll();
     reactiveSchema.rowActions.set(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_ALL, isChecked);
     updateIndexData();
+    asyncSelection(null, checked, true);
   };
 
   const clearSelection = () => {
@@ -304,6 +305,7 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
       const target = Object.assign({}, reactiveSchema.rowActions.get(rowId) ?? {}, { isSelected });
       reactiveSchema.rowActions.set(rowId, target);
       updateIndexData();
+      asyncSelection(row, selected, false);
     }
   };
 
@@ -362,6 +364,23 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
         [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: resolveSelection(item, item[TABLE_ROW_ATTRIBUTE.ROW_UID]),
       });
     });
+  };
+
+  const asyncSelection = (row: any, value: boolean, all = false) => {
+    if (props.asyncData && props.rowKey) {
+      if (all) {
+        props.data.forEach((item: any) => {
+          if (objHas(item, props.selectionKey)) {
+            objSet(item, props.selectionKey, !!value);
+          }
+        });
+      } else {
+        if (objHas(row, props.selectionKey)) {
+          const target = props.data.find((item: any) => objGet(item, props.rowKey) === objGet(row, props.rowKey));
+          objSet(target, props.selectionKey, !!value);
+        }
+      }
+    }
   };
 
   const { renderFixedColumns, fixedWrapperClass } = useFixedColumn(props, colgroups, false);

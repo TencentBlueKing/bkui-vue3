@@ -30,7 +30,7 @@ import { debounce, resolveClassName } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
 import { EMIT_EVENT_TYPES, EMITEVENTS, EVENTS, PROVIDE_KEY_INIT_COL, TABLE_ROW_ATTRIBUTE } from './const';
-import userPagination from './plugins/use-pagination';
+import usePagination from './plugins/use-pagination';
 import useScrollLoading from './plugins/use-scroll-loading';
 import { tableProps } from './props';
 import TableRender from './render';
@@ -74,7 +74,7 @@ export default defineComponent({
       toggleRowSelection,
     } = useInit(props, targetColumns);
 
-    const { pageData, localPagination, resolvePageData, watchEffectFn } = userPagination(props, indexData);
+    const { pageData, localPagination, resolvePageData, watchEffectFn } = usePagination(props, indexData);
     const {
       tableClass,
       headClass,

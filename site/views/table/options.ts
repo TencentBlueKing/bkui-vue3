@@ -29,31 +29,35 @@ export const DATA_TABLE = [
     source: 'QQ',
     status: '创建中',
     create_time: '2018-05-25 15:02:241',
+    selected: false,
   },
   {
     ip: '192.168.0.2',
     source: '微信',
     status: '正常',
     create_time: '2018-05-25 15:02:242',
-
+    selected: false,
   },
   {
     ip: '192.168.0.3',
     source: 'QQ',
     status: '创建中',
     create_time: '2018-05-25 15:02:243',
+    selected: false,
   },
   {
     ip: '192.168.0.3',
     source: 'QQ',
     status: '创建中',
     create_time: '2018-05-25 15:02:244',
+    selected: true,
   },
   {
     ip: '192.168.0.3',
     source: 'QQ',
     status: '创建中',
     create_time: '2018-05-25 15:02:24',
+    selected: false,
   },
 ];
 
