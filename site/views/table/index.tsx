@@ -80,6 +80,10 @@ export default defineComponent({
           componentName: 'table',
           demoName: 'basic',
         },
+        /**
+         * Table
+         * @returns
+         */
         component: () => <basic></basic>,
       },
       {
@@ -90,6 +94,10 @@ export default defineComponent({
           componentName: 'table',
           demoName: 'column-template',
         },
+        /**
+         * Table
+         * @returns
+         */
         component: () => <ColumnTemplate></ColumnTemplate>,
       },
       {
@@ -100,6 +108,10 @@ export default defineComponent({
           componentName: 'table',
           demoName: 'bordered',
         },
+        /**
+         * Table
+         * @returns
+         */
         component: () => <bordered></bordered>,
       },
       {
@@ -110,6 +122,10 @@ export default defineComponent({
           componentName: 'table',
           demoName: 'virtual-render',
         },
+        /**
+         * Table
+         * @returns
+         */
         component: () => <virtual-render></virtual-render>,
       },
       {
@@ -121,6 +137,10 @@ export default defineComponent({
           demoName: 'cell-render',
           suffix: '.tsx',
         },
+        /**
+         * Table
+         * @returns
+         */
         component: () => <cell-render></cell-render>,
       },
       {
@@ -131,6 +151,10 @@ export default defineComponent({
           componentName: 'table',
           demoName: 'event',
         },
+        /**
+         * Table
+         * @returns
+         */
         component: () => <event></event>,
       },
       {
@@ -141,6 +165,10 @@ export default defineComponent({
           componentName: 'table',
           demoName: 'pagination',
         },
+        /**
+         * Table
+         * @returns
+         */
         component: () => <pagination></pagination>,
       },
       {
@@ -151,6 +179,10 @@ export default defineComponent({
           componentName: 'table',
           demoName: 'remotePagination',
         },
+        /**
+         * Table
+         * @returns
+         */
         component: () => <RemotePagination></RemotePagination>,
       },
       {
@@ -161,6 +193,10 @@ export default defineComponent({
           componentName: 'table',
           demoName: 'data-empty',
         },
+        /**
+         * Table
+         * @returns
+         */
         component: () => <data-empty></data-empty>,
       },
       {
@@ -171,6 +207,10 @@ export default defineComponent({
           componentName: 'table',
           demoName: 'fixed',
         },
+        /**
+         * Table
+         * @returns
+         */
         component: () => <fixed></fixed>,
       },
       {
@@ -181,6 +221,10 @@ export default defineComponent({
           componentName: 'table',
           demoName: 'scroll-loading',
         },
+        /**
+         * Table
+         * @returns
+         */
         component: () => <ScrollLoading></ScrollLoading>,
       },
       {
@@ -191,6 +235,10 @@ export default defineComponent({
           componentName: 'table',
           demoName: 'scroll-loading-slot',
         },
+        /**
+         * Table
+         * @returns
+         */
         component: () => <ScrollLoadingSlot></ScrollLoadingSlot>,
       },
       {
@@ -201,6 +249,10 @@ export default defineComponent({
           componentName: 'table',
           demoName: 'expand',
         },
+        /**
+         * Table
+         * @returns
+         */
         component: () => <Expand></Expand>,
       },
       {
@@ -211,6 +263,10 @@ export default defineComponent({
           componentName: 'table',
           demoName: 'basic-filter',
         },
+        /**
+         * Table
+         * @returns
+         */
         component: () => <basicFilter></basicFilter>,
       },
       {
@@ -221,6 +277,10 @@ export default defineComponent({
           componentName: 'table',
           demoName: 'filter-scope',
         },
+        /**
+         * Table
+         * @returns
+         */
         component: () => <filterScope></filterScope>,
       },
       {
@@ -231,6 +291,10 @@ export default defineComponent({
           componentName: 'table',
           demoName: 'basic-sort',
         },
+        /**
+         * basicSort
+         * @returns
+         */
         component: () => <basicSort></basicSort>,
       },
       {
@@ -241,9 +305,17 @@ export default defineComponent({
           componentName: 'table',
           demoName: 'selection',
         },
+        /**
+         * basicSort
+         * @returns
+         */
         component: () => <Selection></Selection>,
       }];
 
+    /**
+     * eventColumnMap
+     * @returns
+     */
     const eventColumnMap = {
       name: '名称',
       desc: '说明',
