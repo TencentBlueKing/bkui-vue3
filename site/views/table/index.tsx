@@ -47,6 +47,7 @@ import pagination from './pagination.vue';
 import RemotePagination from './remotePagination.vue';
 import ScrollLoading from './scroll-loading.vue';
 import ScrollLoadingSlot from './scroll-loading-slot.vue';
+import Selection from './selection.vue';
 import virtualRender from './virtual-render.vue';
 
 export default defineComponent({
@@ -67,6 +68,7 @@ export default defineComponent({
     basicSort,
     filterScope,
     ColumnTemplate,
+    Selection,
   },
   render() {
     const configs = [
@@ -230,6 +232,16 @@ export default defineComponent({
           demoName: 'basic-sort',
         },
         component: () => <basicSort></basicSort>,
+      },
+      {
+        attrs: {
+          title: 'Selection',
+          subtitle: '内置选择功能',
+          desc: '',
+          componentName: 'table',
+          demoName: 'selection',
+        },
+        component: () => <Selection></Selection>,
       }];
 
     const eventColumnMap = {

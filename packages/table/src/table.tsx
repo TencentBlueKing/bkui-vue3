@@ -69,6 +69,9 @@ export default defineComponent({
       setRowExpand,
       initIndexData,
       fixedWrapperClass,
+      clearSelection,
+      toggleAllSelection,
+      toggleRowSelection,
     } = useInit(props, targetColumns);
 
     const { pageData, localPagination, resolvePageData, watchEffectFn } = userPagination(props, indexData);
@@ -155,6 +158,17 @@ export default defineComponent({
         const { row, column, index, rows, e } = args;
         ctx.emit(EMITEVENTS.ROW_EXPAND_CLICK, { row, column, index, rows, e });
         setRowExpand(row, !row[TABLE_ROW_ATTRIBUTE.ROW_EXPAND]);
+      })
+      .on(EVENTS.ON_ROW_CHECK, ({ row, isAll, index, value }) => {
+        if (isAll) {
+          toggleAllSelection(value);
+          ctx.emit(EMITEVENTS.ROW_SELECT_ALL, { checked: value, data: props.data });
+        } else {
+          toggleRowSelection(row, value);
+          ctx.emit(EMITEVENTS.ROW_SELECT, { row, index, checked: value, data: props.data });
+        }
+
+        ctx.emit(EMITEVENTS.ROW_SELECT_CHANGE, { row, isAll, index, checked: value, data: props.data });
       });
 
 
@@ -197,6 +211,9 @@ export default defineComponent({
 
     ctx.expose({
       setRowExpand,
+      clearSelection,
+      toggleAllSelection,
+      toggleRowSelection,
     });
 
     const tableBodyClass = computed(() => ({

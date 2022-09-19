@@ -23,6 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import { get as objGet } from 'lodash';
 import { computed, onMounted, reactive, ref, watch } from 'vue';
 
 import { classes, resolveClassName } from '@bkui-vue/shared';
@@ -42,6 +43,14 @@ import {
   resolvePropVal,
 } from './utils';
 
+/**
+ * 渲染class settings
+ * @param props: TablePropTypes
+ * @param targetColumns 解析之后的column配置（主要用来处理通过<bk-column>配置的数据结构）
+ * @param root root element
+ * @param reactiveProp 组件内部定义的响应式对象
+ * @param pageData 当前页数据
+ */
 export const useClass = (props: TablePropTypes, targetColumns: Column[], root?, reactiveProp?, pageData?: any[]) => {
   const { getColumns } = useColumn(props, targetColumns);
   const autoHeight = ref(200);
@@ -197,6 +206,12 @@ export const useClass = (props: TablePropTypes, targetColumns: Column[], root?, 
   };
 };
 
+
+/**
+ * 渲染初始化数据 settings
+ * @param props: TablePropTypes
+ * @param targetColumns 解析之后的column配置（主要用来处理通过<bk-column>配置的数据结构）
+ */
 export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
   const colgroups: Colgroups[] = reactive([]);
   const { getColumns } = useColumn(props, targetColumns);
@@ -250,6 +265,77 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
     updateIndexData();
   };
 
+  const isSelectionAll = () => {
+    if (reactiveSchema.rowActions.has(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_ALL)) {
+      return reactiveSchema.rowActions.get(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_ALL);
+    }
+
+    if (!!props.selectionKey) {
+      return indexData.every((row: any) => resolveSelectionRow(row));
+    }
+
+    return false;
+  };
+
+  /**
+   * 用于多选表格，切换所有行的选中状态
+   * @param checked 是否选中
+   * @param update 是否触发更新表格数据, 如果是初始化时根据用户数据初始化全选状态，此时不需要update，如果是通过页面点击操作全选，则需要update
+   */
+  const toggleAllSelection = (checked = undefined) => {
+    const isChecked = typeof checked === 'boolean' ? checked : !isSelectionAll();
+    reactiveSchema.rowActions.set(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_ALL, isChecked);
+    updateIndexData();
+  };
+
+  const clearSelection = () => {
+    toggleAllSelection(false);
+  };
+
+  /**
+   * 用于多选表格，切换某一行的选中状态，如果使用了第二个参数，则是设置这一行选中与否（selected 为 true 则选中）
+   * @param row
+   * @param selected
+   */
+  const toggleRowSelection = (row: any, selected: boolean) => {
+    const rowId = row[TABLE_ROW_ATTRIBUTE.ROW_UID];
+    if (rowId) {
+      const isSelected = typeof selected === 'boolean' ? selected : !resolveSelection(row, rowId);
+      const target = Object.assign({}, reactiveSchema.rowActions.get(rowId) ?? {}, { isSelected });
+      reactiveSchema.rowActions.set(rowId, target);
+      updateIndexData();
+    }
+  };
+
+  const resolveSelectionRow = (row: any, thenFn = () => false) => {
+    if (typeof props.isSelectedFn === 'function') {
+      return Reflect.apply(props.isSelectedFn, this, [{ row, data: props.data }]);
+    }
+
+    if (typeof props.selectionKey === 'string' && props.selectionKey.length) {
+      return objGet(row, props.selectionKey);
+    }
+
+    return thenFn();
+  };
+
+  const resolveSelection = (row: any, rowId: string) => resolveSelectionRow(row, () => {
+    if (isSelectionAll()) {
+      return true;
+    }
+
+    if (reactiveSchema.rowActions.has(rowId)) {
+      return reactiveSchema.rowActions.get(rowId)?.isSelected;
+    }
+
+    if (Object.prototype.hasOwnProperty.call(row, TABLE_ROW_ATTRIBUTE.ROW_SELECTION) && typeof row[TABLE_ROW_ATTRIBUTE.ROW_SELECTION] === 'boolean') {
+      return row[TABLE_ROW_ATTRIBUTE.ROW_SELECTION];
+    }
+
+    return false;
+  });
+
+
   /**
    * 生成内置index
    */
@@ -258,11 +344,13 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
   const initIndexData = (keepLocalAction = false) => {
     indexData.splice(0, indexData.length, ...props.data.map((item: any, index: number) => {
       const rowId = getRowKey(item, props, index);
+
       return {
         ...item,
         [TABLE_ROW_ATTRIBUTE.ROW_INDEX]: index,
         [TABLE_ROW_ATTRIBUTE.ROW_UID]: rowId,
         [TABLE_ROW_ATTRIBUTE.ROW_EXPAND]: keepLocalAction ? isRowExpand(rowId) : false,
+        [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: resolveSelection(item, rowId),
       };
     }));
   };
@@ -271,6 +359,7 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
     indexData.forEach((item: any) => {
       Object.assign(item, {
         [TABLE_ROW_ATTRIBUTE.ROW_EXPAND]: isRowExpand(item[TABLE_ROW_ATTRIBUTE.ROW_UID]),
+        [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: resolveSelection(item, item[TABLE_ROW_ATTRIBUTE.ROW_UID]),
       });
     });
   };
@@ -289,5 +378,8 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
     renderFixedColumns,
     setRowExpand,
     updateColGroups,
+    clearSelection,
+    toggleAllSelection,
+    toggleRowSelection,
   };
 };

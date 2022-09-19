@@ -57,7 +57,7 @@ export const IColumnType = {
     content: PropTypes.string.def(''),
     disabled: PropTypes.bool.def(false),
     watchCellResize: PropTypes.bool.def(true),
-  })]).def(false),
+  })]).def(undefined),
   type: PropTypes.commonType(['selection', 'index', 'expand', 'none'], 'columnType').def('none'),
   resizable: PropTypes.bool.def(true),
   fixed: PropTypes.oneOfType([
@@ -234,6 +234,20 @@ export const tableProps = {
   reserveExpand: PropTypes.bool.def(false),
 
   /**
+   * 仅对设置了selection的情况下生效
+   * 用于初始化或者更新row已选中状态
+   * 内部使用逻辑为：row[selectionKey]，可以为多级选择，但是多级选择只支持 row.child.child
+   */
+  selectionKey: PropTypes.string.def(''),
+
+  /**
+ * 提供自定义判定当前行是否选中
+ * 如果设置了此属性，其他判定均不生效
+ * ({ row, cell, data }) => bool
+ */
+  isSelectedFn: PropTypes.func.def(undefined),
+
+  /**
    * 行数据的 Key，用来优化 Table 的渲染；
    * 在使用 reserve-selection, reserve-expand 功能的情况下，该属性是必填的。
    * 类型为 String 时，支持多层访问：user.info.id，但不支持 user.info[0].id，此种情况请使用 Function
@@ -242,6 +256,16 @@ export const tableProps = {
     PropTypes.string,
     PropTypes.func,
   ]).def(TABLE_ROW_ATTRIBUTE.ROW_INDEX),
+
+  /**
+   * 当内容过长被隐藏时显示 tooltip, 此处为全局配置, 如果只配置此处，整个table都启用
+   * column内部可以单个配置覆盖此配置
+   */
+  showOverflowTooltip: PropTypes.oneOfType([PropTypes.bool, PropTypes.shape<IOverflowTooltip>({
+    content: PropTypes.string.def(''),
+    disabled: PropTypes.bool.def(false),
+    watchCellResize: PropTypes.bool.def(true),
+  })]).def(false),
 };
 
 
