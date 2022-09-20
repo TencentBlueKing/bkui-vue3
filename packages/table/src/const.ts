@@ -43,7 +43,8 @@ export const enum EVENTS {
   ON_FILTER_CLICK = 'onFilterClick',
   ON_SETTING_CHANGE = 'onSettingChange',
 
-  ON_ROW_EXPAND_CLICK = 'onRowExpandClick'
+  ON_ROW_EXPAND_CLICK = 'onRowExpandClick',
+  ON_ROW_CHECK = 'onRowCheck'
 }
 
 export const enum EMITEVENTS {
@@ -61,7 +62,11 @@ export const enum EMITEVENTS {
 
   SETTING_CHANGE = 'settingChange',
 
-  SCROLL_BOTTOM = 'scrollBottom'
+  SCROLL_BOTTOM = 'scrollBottom',
+
+  ROW_SELECT = 'select',
+  ROW_SELECT_ALL = 'selectAll',
+  ROW_SELECT_CHANGE = 'selectionChange'
 }
 
 const EMPTY = (..._args) => true;
@@ -70,14 +75,21 @@ export const EMIT_EVENT_TYPES = {
   [EMITEVENTS.COLUMN_PICK]: EMPTY,
   [EMITEVENTS.COLUMN_FILTER]: EMPTY,
   [EMITEVENTS.COLUMN_SORT]: EMPTY,
+  [EMITEVENTS.COLUMN_FILTER_SAVE]: EMPTY,
+
   [EMITEVENTS.ROW_CLICK]: EMPTY,
   [EMITEVENTS.ROW_DBL_CLICK]: EMPTY,
   [EMITEVENTS.ROW_EXPAND_CLICK]: EMPTY,
+
+  [EMITEVENTS.ROW_SELECT]: EMPTY,
+  [EMITEVENTS.ROW_SELECT_ALL]: EMPTY,
+  [EMITEVENTS.ROW_SELECT_CHANGE]: EMPTY,
+
   [EMITEVENTS.PAGE_LIMIT_CHANGE]: EMPTY,
   [EMITEVENTS.PAGE_VALUE_CHANGE]: EMPTY,
+
   [EMITEVENTS.SETTING_CHANGE]: EMPTY,
   [EMITEVENTS.SCROLL_BOTTOM]: EMPTY,
-  [EMITEVENTS.COLUMN_FILTER_SAVE]: EMPTY,
 };
 
 /**
@@ -87,6 +99,8 @@ export const TABLE_ROW_ATTRIBUTE = {
   ROW_INDEX: '__$table_row_index',
   ROW_UID: '__$uuid',
   ROW_EXPAND: '__row_expand',
+  ROW_SELECTION: '__row_selection',
+  ROW_SELECTION_ALL: '__row_selection_all',
 };
 
 /**
