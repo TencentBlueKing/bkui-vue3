@@ -28,18 +28,33 @@ import { defineComponent, onBeforeUnmount, onMounted, ref } from 'vue';
 import { bkEllipsisInstance } from '@bkui-vue/directives';
 import { PropTypes } from '@bkui-vue/shared';
 
+import { IOverflowTooltip } from '../props';
 import { getElementTextWidth, observerResize } from '../utils';
 export default defineComponent({
   name: 'TableCell',
   props: {
     column: PropTypes.any.def({}),
     row: PropTypes.any.def({}),
+    parentSetting: PropTypes.oneOfType([PropTypes.bool, PropTypes.shape<IOverflowTooltip>({
+      content: PropTypes.string.def(''),
+      disabled: PropTypes.bool.def(false),
+      watchCellResize: PropTypes.bool.def(true),
+    })]).def(undefined),
   },
 
   setup(props, { slots }) {
     const refRoot = ref();
     const isTipsEnabled = ref(false);
-    const { showOverflowTooltip = false } = props.column || {};
+
+    const resolveSetting = () => {
+      if (/boolean|object/.test(props.column.showOverflowTooltip) && props.column.showOverflowTooltip !== null) {
+        return props.column;
+      }
+
+      return { showOverflowTooltip: props.parentSetting };
+    };
+
+    const { showOverflowTooltip = false } = resolveSetting();
     let observerIns = null;
     let bkEllipsisIns = null;
     const resolveTooltipOption = () => {
