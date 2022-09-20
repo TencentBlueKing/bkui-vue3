@@ -24,7 +24,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { computed, defineComponent, onBeforeUnmount, onMounted, ref, Teleport, toRefs, watch } from 'vue';
+import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, ref, Teleport, toRefs, watch } from 'vue';
 
 import { clickoutside } from '@bkui-vue/directives';
 
@@ -83,8 +83,12 @@ export default defineComponent({
       }, { immediate: true });
     }
 
-    watch(() => [props.disabled], (val) => {
-      if (val[0]) {
+    watch(() => [props.disabled], async (val) => {
+      console.log('disabled changed', val);
+      await nextTick();
+      console.log(props.disabled);
+      if (!val[0]) {
+        // debugger;
         initPopInstance();
       } else {
         beforeInstanceUnmount();
