@@ -36,14 +36,20 @@
 </template>
 
 <script setup>
+  import { h } from 'vue';
 
   import InfoBox from '@bkui-vue/info-box';
   const handleDefault1 = () => {
     InfoBox({
       infoType: 'success',
       title: '添加用户成功',
-      headerAlign: 'center',
-      footerAlign: 'center',
+      subTitle: h('a', {
+        style: {
+          color: '#3a84ff',
+          textDecoration: 'none',
+          cursor: 'pointer',
+        },
+      }, '继续添加'),
       onConfirm() {},
     });
   };
@@ -52,8 +58,6 @@
     InfoBox({
       infoType: 'danger',
       title: '添加用户失败',
-      headerAlign: 'center',
-      footerAlign: 'center',
       onConfirm() {},
     });
   };
@@ -62,8 +66,6 @@
     InfoBox({
       infoType: 'warning',
       title: '此操作存在安全风险',
-      headerAlign: 'center',
-      footerAlign: 'center',
       isLoading: false,
       onConfirm() {},
     });
@@ -74,8 +76,6 @@
       infoType: 'loading',
       title: 'loding',
       subTitle: '请稍等',
-      headerAlign: 'center',
-      footerAlign: 'center',
       onConfirm() {},
     });
   };
