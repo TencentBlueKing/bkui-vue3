@@ -24,16 +24,17 @@
  * IN THE SOFTWARE.
 */
 
-import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, ref, watch, watchEffect } from 'vue';
+import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, provide, reactive, ref, watch, watchEffect } from 'vue';
 
 import { debounce, resolveClassName } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
-import { EMIT_EVENT_TYPES, EMITEVENTS, EVENTS, TABLE_ROW_ATTRIBUTE } from './const';
-import userPagination from './plugins/use-pagination';
+import { EMIT_EVENT_TYPES, EMITEVENTS, EVENTS, PROVIDE_KEY_INIT_COL, TABLE_ROW_ATTRIBUTE } from './const';
+import usePagination from './plugins/use-pagination';
 import useScrollLoading from './plugins/use-scroll-loading';
 import { tableProps } from './props';
 import TableRender from './render';
+import useColumn from './use-column';
 import { useClass, useInit } from './use-common';
 import {
   observerResize,
@@ -50,6 +51,10 @@ export default defineComponent({
     let columnFilterFn: any = null;
 
     let observerIns = null;
+    const targetColumns = reactive([]);
+    const { initColumns } = useColumn(props, targetColumns);
+    provide(PROVIDE_KEY_INIT_COL, initColumns);
+
     const root = ref();
     const refVirtualRender = ref();
     // scrollX 右侧距离
@@ -64,9 +69,12 @@ export default defineComponent({
       setRowExpand,
       initIndexData,
       fixedWrapperClass,
-    } = useInit(props);
+      clearSelection,
+      toggleAllSelection,
+      toggleRowSelection,
+    } = useInit(props, targetColumns);
 
-    const { pageData, localPagination, resolvePageData, watchEffectFn } = userPagination(props, indexData);
+    const { pageData, localPagination, resolvePageData, watchEffectFn } = usePagination(props, indexData);
     const {
       tableClass,
       headClass,
@@ -79,7 +87,7 @@ export default defineComponent({
       resetTableHeight,
       getColumnsWidthOffsetWidth,
       hasFooter,
-    } = useClass(props, root, reactiveSchema, pageData);
+    } = useClass(props, targetColumns, root, reactiveSchema, pageData);
 
     const tableRender = new TableRender(props, ctx, reactiveSchema, colgroups);
 
@@ -93,7 +101,7 @@ export default defineComponent({
       }
     };
 
-    watch(() => [props.data, props.pagination], () => {
+    watch(() => [props.data, props.pagination, props.height, props.maxHeight, props.minHeight], () => {
       initIndexData(props.reserveExpand);
       watchEffectFn(columnFilterFn, columnSortFn, activeSortColumn);
       nextTick(() => {
@@ -150,6 +158,17 @@ export default defineComponent({
         const { row, column, index, rows, e } = args;
         ctx.emit(EMITEVENTS.ROW_EXPAND_CLICK, { row, column, index, rows, e });
         setRowExpand(row, !row[TABLE_ROW_ATTRIBUTE.ROW_EXPAND]);
+      })
+      .on(EVENTS.ON_ROW_CHECK, ({ row, isAll, index, value }) => {
+        if (isAll) {
+          toggleAllSelection(value);
+          ctx.emit(EMITEVENTS.ROW_SELECT_ALL, { checked: value, data: props.data });
+        } else {
+          toggleRowSelection(row, value);
+          ctx.emit(EMITEVENTS.ROW_SELECT, { row, index, checked: value, data: props.data });
+        }
+
+        ctx.emit(EMITEVENTS.ROW_SELECT_CHANGE, { row, isAll, index, checked: value, data: props.data });
       });
 
 
@@ -192,6 +211,9 @@ export default defineComponent({
 
     ctx.expose({
       setRowExpand,
+      clearSelection,
+      toggleAllSelection,
+      toggleRowSelection,
     });
 
     const tableBodyClass = computed(() => ({
@@ -222,6 +244,13 @@ export default defineComponent({
     const fixedBottomBorder = {
       [resolveClassName('fixed-bottom-border')]: true,
       '_is-empty': !props.data.length,
+    };
+
+    const columnGhostStyle = {
+      zIndex: -1,
+      width: 0,
+      height: 0,
+      display: 'none' as const,
     };
 
     const { renderScrollLoading } = useScrollLoading(props, ctx);
@@ -267,6 +296,7 @@ export default defineComponent({
           hasFooter.value && tableRender.renderTableFooter(localPagination.value)
         }
       </div>
+      <div style={columnGhostStyle}>{ ctx.slots.default?.() }</div>
     </div>;
   },
 });

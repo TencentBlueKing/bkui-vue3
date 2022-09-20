@@ -355,14 +355,7 @@ export const getRowKey = (item: any, props: TablePropTypes, index: number) => {
       return `__ROW_INDEX_${index}`;
     }
 
-    const keys = props.rowKey.split('.');
-    return keys.reduce((pre: any, cur: string) => {
-      if (Object.prototype.hasOwnProperty.call(pre, cur)) {
-        return pre[cur];
-      }
-
-      return pre;
-    }, item);
+    return objGet(item, props.rowKey);
   }
 
   if (typeof props.rowKey === 'function') {
@@ -423,3 +416,4 @@ export const getElementTextWidth = (element: HTMLElement, text?: string) => {
 
   return getTextWidth(text || element?.innerHTML, getCanvasFont(element));
 };
+

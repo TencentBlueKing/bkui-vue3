@@ -35,6 +35,7 @@ import basicFilter from './basic-filter.vue';
 import basicSort from './basic-sort.vue';
 import bordered from './bordered.vue';
 import cellRender from './cell-render';
+import ColumnTemplate from './column-template.vue';
 import configList from './config';
 import DataEmpty from './data-empty.vue';
 import event from './event.vue';
@@ -46,6 +47,7 @@ import pagination from './pagination.vue';
 import RemotePagination from './remotePagination.vue';
 import ScrollLoading from './scroll-loading.vue';
 import ScrollLoadingSlot from './scroll-loading-slot.vue';
+import Selection from './selection.vue';
 import virtualRender from './virtual-render.vue';
 
 export default defineComponent({
@@ -65,6 +67,8 @@ export default defineComponent({
     basicFilter,
     basicSort,
     filterScope,
+    ColumnTemplate,
+    Selection,
   },
   render() {
     const configs = [
@@ -76,7 +80,25 @@ export default defineComponent({
           componentName: 'table',
           demoName: 'basic',
         },
+        /**
+         * Table
+         * @returns
+         */
         component: () => <basic></basic>,
+      },
+      {
+        attrs: {
+          title: '基础用法-模板方式调用 bk-column',
+          subtitle: '基础用法，用于表单内容的录入',
+          desc: 'props: 支持 `field` 和 `prop`两种配置，配置效果一样',
+          componentName: 'table',
+          demoName: 'column-template',
+        },
+        /**
+         * Table
+         * @returns
+         */
+        component: () => <ColumnTemplate></ColumnTemplate>,
       },
       {
         attrs: {
@@ -86,6 +108,10 @@ export default defineComponent({
           componentName: 'table',
           demoName: 'bordered',
         },
+        /**
+         * Table
+         * @returns
+         */
         component: () => <bordered></bordered>,
       },
       {
@@ -96,6 +122,10 @@ export default defineComponent({
           componentName: 'table',
           demoName: 'virtual-render',
         },
+        /**
+         * Table
+         * @returns
+         */
         component: () => <virtual-render></virtual-render>,
       },
       {
@@ -107,6 +137,10 @@ export default defineComponent({
           demoName: 'cell-render',
           suffix: '.tsx',
         },
+        /**
+         * Table
+         * @returns
+         */
         component: () => <cell-render></cell-render>,
       },
       {
@@ -117,6 +151,10 @@ export default defineComponent({
           componentName: 'table',
           demoName: 'event',
         },
+        /**
+         * Table
+         * @returns
+         */
         component: () => <event></event>,
       },
       {
@@ -127,6 +165,10 @@ export default defineComponent({
           componentName: 'table',
           demoName: 'pagination',
         },
+        /**
+         * Table
+         * @returns
+         */
         component: () => <pagination></pagination>,
       },
       {
@@ -137,6 +179,10 @@ export default defineComponent({
           componentName: 'table',
           demoName: 'remotePagination',
         },
+        /**
+         * Table
+         * @returns
+         */
         component: () => <RemotePagination></RemotePagination>,
       },
       {
@@ -147,6 +193,10 @@ export default defineComponent({
           componentName: 'table',
           demoName: 'data-empty',
         },
+        /**
+         * Table
+         * @returns
+         */
         component: () => <data-empty></data-empty>,
       },
       {
@@ -157,6 +207,10 @@ export default defineComponent({
           componentName: 'table',
           demoName: 'fixed',
         },
+        /**
+         * Table
+         * @returns
+         */
         component: () => <fixed></fixed>,
       },
       {
@@ -167,6 +221,10 @@ export default defineComponent({
           componentName: 'table',
           demoName: 'scroll-loading',
         },
+        /**
+         * Table
+         * @returns
+         */
         component: () => <ScrollLoading></ScrollLoading>,
       },
       {
@@ -177,6 +235,10 @@ export default defineComponent({
           componentName: 'table',
           demoName: 'scroll-loading-slot',
         },
+        /**
+         * Table
+         * @returns
+         */
         component: () => <ScrollLoadingSlot></ScrollLoadingSlot>,
       },
       {
@@ -187,6 +249,10 @@ export default defineComponent({
           componentName: 'table',
           demoName: 'expand',
         },
+        /**
+         * Table
+         * @returns
+         */
         component: () => <Expand></Expand>,
       },
       {
@@ -197,6 +263,10 @@ export default defineComponent({
           componentName: 'table',
           demoName: 'basic-filter',
         },
+        /**
+         * Table
+         * @returns
+         */
         component: () => <basicFilter></basicFilter>,
       },
       {
@@ -207,6 +277,10 @@ export default defineComponent({
           componentName: 'table',
           demoName: 'filter-scope',
         },
+        /**
+         * Table
+         * @returns
+         */
         component: () => <filterScope></filterScope>,
       },
       {
@@ -217,13 +291,35 @@ export default defineComponent({
           componentName: 'table',
           demoName: 'basic-sort',
         },
+        /**
+         * basicSort
+         * @returns
+         */
         component: () => <basicSort></basicSort>,
+      },
+      {
+        attrs: {
+          title: 'Selection',
+          subtitle: '内置选择功能',
+          desc: '',
+          componentName: 'table',
+          demoName: 'selection',
+        },
+        /**
+         * basicSort
+         * @returns
+         */
+        component: () => <Selection></Selection>,
       }];
 
+    /**
+     * eventColumnMap
+     * @returns
+     */
     const eventColumnMap = {
-      name: '事件名称',
+      name: '名称',
       desc: '说明',
-      params: '回调参数',
+      params: '参数',
     };
 
     return (

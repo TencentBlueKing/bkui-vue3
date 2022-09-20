@@ -23,6 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import { get as objGet, has as objHas, set as objSet } from 'lodash';
 import { computed, onMounted, reactive, ref, watch } from 'vue';
 
 import { classes, resolveClassName } from '@bkui-vue/shared';
@@ -32,6 +33,7 @@ import useActiveColumns from './plugins/use-active-columns';
 import useColumnResize from './plugins/use-column-resize';
 import useFixedColumn from './plugins/use-fixed-column';
 import { Colgroups, Column, Settings, TablePropTypes } from './props';
+import useColumn from './use-column';
 import {
   getRowKey,
   hasRootScrollY,
@@ -41,7 +43,16 @@ import {
   resolvePropVal,
 } from './utils';
 
-export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?: any[]) => {
+/**
+ * 渲染class settings
+ * @param props: TablePropTypes
+ * @param targetColumns 解析之后的column配置（主要用来处理通过<bk-column>配置的数据结构）
+ * @param root root element
+ * @param reactiveProp 组件内部定义的响应式对象
+ * @param pageData 当前页数据
+ */
+export const useClass = (props: TablePropTypes, targetColumns: Column[], root?, reactiveProp?, pageData?: any[]) => {
+  const { getColumns } = useColumn(props, targetColumns);
   const autoHeight = ref(200);
   const hasScrollY = ref(undefined);
   const hasFooter = computed(() => props.pagination && props.data.length);
@@ -73,8 +84,9 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?:
   }));
 
   const resolveWidth = () => {
-    if (props.columns.every((col: Column) => /^\d+\.?\d*(px)?$/ig.test(`${col.width}`))) {
-      const rectWidth = props.columns.reduce((width: number, col: Column) => width + Number(`${col.width}`.replace(/px/ig, '')), 0);
+    const columns = getColumns();
+    if (columns.every((col: Column) => /^\d+\.?\d*(px)?$/ig.test(`${col.width}`))) {
+      const rectWidth = columns.reduce((width: number, col: Column) => width + Number(`${col.width}`.replace(/px/ig, '')), 0);
       const offset = hasScrollY.value ? SCROLLY_WIDTH : 0;
       return `${rectWidth + offset}px`;
     }
@@ -88,6 +100,7 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?:
     width: resolveWidth(),
     maxWidth: '100%',
   }));
+
 
   const resolvePropHeight = (height: Number | string, defaultValue: number) => {
     const strHeight = String(height);
@@ -108,7 +121,12 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?:
   };
 
   /** 表格外层容器样式 */
-  const contentStyle = reactive({});
+  const contentStyle = reactive({
+    display: '',
+    'min-height': '',
+    height: '',
+    maxHeight: '',
+  });
 
   const getHeadHeight = () => (props.showHead ? resolvePropHeight(props.headHeight, LINE_HEIGHT) : 0);
 
@@ -188,10 +206,18 @@ export const useClass = (props: TablePropTypes, root?, reactiveProp?, pageData?:
   };
 };
 
-export const useInit = (props: TablePropTypes) => {
+
+/**
+ * 渲染初始化数据 settings
+ * @param props: TablePropTypes
+ * @param targetColumns 解析之后的column配置（主要用来处理通过<bk-column>配置的数据结构）
+ */
+export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
   const colgroups: Colgroups[] = reactive([]);
+  const { getColumns } = useColumn(props, targetColumns);
+
   const updateColGroups = () => {
-    colgroups.splice(0, colgroups.length, ...(props.columns || [])
+    colgroups.splice(0, colgroups.length, ...(getColumns())
       .map(col => ({
         ...col,
         calcWidth: null,
@@ -201,9 +227,9 @@ export const useInit = (props: TablePropTypes) => {
   };
 
   const { dragOffsetXStyle, dragOffsetX, resetResizeEvents, registerResizeEvent } = useColumnResize(colgroups, true);
-  const { activeColumns } = useActiveColumns(props);
+  const { activeColumns } = useActiveColumns(props, targetColumns);
 
-  watch(() => props.columns, () => {
+  watch(() => [props.columns, targetColumns], () => {
     updateColGroups();
     resetResizeEvents();
     registerResizeEvent();
@@ -239,6 +265,79 @@ export const useInit = (props: TablePropTypes) => {
     updateIndexData();
   };
 
+  const isSelectionAll = () => {
+    if (reactiveSchema.rowActions.has(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_ALL)) {
+      return reactiveSchema.rowActions.get(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_ALL);
+    }
+
+    if (!!props.selectionKey) {
+      return indexData.every((row: any) => resolveSelectionRow(row));
+    }
+
+    return false;
+  };
+
+  /**
+   * 用于多选表格，切换所有行的选中状态
+   * @param checked 是否选中
+   * @param update 是否触发更新表格数据, 如果是初始化时根据用户数据初始化全选状态，此时不需要update，如果是通过页面点击操作全选，则需要update
+   */
+  const toggleAllSelection = (checked = undefined) => {
+    const isChecked = typeof checked === 'boolean' ? checked : !isSelectionAll();
+    reactiveSchema.rowActions.set(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_ALL, isChecked);
+    updateIndexData();
+    asyncSelection(null, checked, true);
+  };
+
+  const clearSelection = () => {
+    toggleAllSelection(false);
+  };
+
+  /**
+   * 用于多选表格，切换某一行的选中状态，如果使用了第二个参数，则是设置这一行选中与否（selected 为 true 则选中）
+   * @param row
+   * @param selected
+   */
+  const toggleRowSelection = (row: any, selected: boolean) => {
+    const rowId = row[TABLE_ROW_ATTRIBUTE.ROW_UID];
+    if (rowId) {
+      const isSelected = typeof selected === 'boolean' ? selected : !resolveSelection(row, rowId);
+      const target = Object.assign({}, reactiveSchema.rowActions.get(rowId) ?? {}, { isSelected });
+      reactiveSchema.rowActions.set(rowId, target);
+      updateIndexData();
+      asyncSelection(row, selected, false);
+    }
+  };
+
+  const resolveSelectionRow = (row: any, thenFn = () => false) => {
+    if (typeof props.isSelectedFn === 'function') {
+      return Reflect.apply(props.isSelectedFn, this, [{ row, data: props.data }]);
+    }
+
+    if (typeof props.selectionKey === 'string' && props.selectionKey.length) {
+      return objGet(row, props.selectionKey);
+    }
+
+    return thenFn();
+  };
+
+  const resolveSelection = (row: any, rowId: string) => resolveSelectionRow(row, () => {
+    if (isSelectionAll()) {
+      return true;
+    }
+
+    if (reactiveSchema.rowActions.has(rowId)) {
+      return reactiveSchema.rowActions.get(rowId)?.isSelected;
+    }
+
+    if (Object.prototype.hasOwnProperty.call(row, TABLE_ROW_ATTRIBUTE.ROW_SELECTION) && typeof row[TABLE_ROW_ATTRIBUTE.ROW_SELECTION] === 'boolean') {
+      return row[TABLE_ROW_ATTRIBUTE.ROW_SELECTION];
+    }
+
+    return false;
+  });
+
+
   /**
    * 生成内置index
    */
@@ -247,11 +346,13 @@ export const useInit = (props: TablePropTypes) => {
   const initIndexData = (keepLocalAction = false) => {
     indexData.splice(0, indexData.length, ...props.data.map((item: any, index: number) => {
       const rowId = getRowKey(item, props, index);
+
       return {
         ...item,
         [TABLE_ROW_ATTRIBUTE.ROW_INDEX]: index,
         [TABLE_ROW_ATTRIBUTE.ROW_UID]: rowId,
         [TABLE_ROW_ATTRIBUTE.ROW_EXPAND]: keepLocalAction ? isRowExpand(rowId) : false,
+        [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: resolveSelection(item, rowId),
       };
     }));
   };
@@ -260,8 +361,26 @@ export const useInit = (props: TablePropTypes) => {
     indexData.forEach((item: any) => {
       Object.assign(item, {
         [TABLE_ROW_ATTRIBUTE.ROW_EXPAND]: isRowExpand(item[TABLE_ROW_ATTRIBUTE.ROW_UID]),
+        [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: resolveSelection(item, item[TABLE_ROW_ATTRIBUTE.ROW_UID]),
       });
     });
+  };
+
+  const asyncSelection = (row: any, value: boolean, all = false) => {
+    if (props.asyncData && props.rowKey) {
+      if (all) {
+        props.data.forEach((item: any) => {
+          if (objHas(item, props.selectionKey)) {
+            objSet(item, props.selectionKey, !!value);
+          }
+        });
+      } else {
+        if (objHas(row, props.selectionKey)) {
+          const target = props.data.find((item: any) => objGet(item, props.rowKey) === objGet(row, props.rowKey));
+          objSet(target, props.selectionKey, !!value);
+        }
+      }
+    }
   };
 
   const { renderFixedColumns, fixedWrapperClass } = useFixedColumn(props, colgroups, false);
@@ -278,5 +397,8 @@ export const useInit = (props: TablePropTypes) => {
     renderFixedColumns,
     setRowExpand,
     updateColGroups,
+    clearSelection,
+    toggleAllSelection,
+    toggleRowSelection,
   };
 };

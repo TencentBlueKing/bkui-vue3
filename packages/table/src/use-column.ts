@@ -23,23 +23,47 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { App } from 'vue';
+import { unref } from 'vue';
 
-import * as components from './components';
-const createInstall = (prefix = 'Bk') => (app: App) => {
-  const pre = app.config.globalProperties.bkUIPrefix || prefix;
-  Object
-    .keys(components).forEach((key) => {
-      const component = components[key];
-      if ('install' in component) {
-        app.use(component, { prefix: pre });
-      } else {
-        app.component(pre + key, components[key]);
+import { Column, TablePropTypes } from './props';
+/**
+ * 渲染column settings
+ * @param props: TablePropTypes
+ * @param targetColumns 解析之后的column配置（主要用来处理通过<bk-column>配置的数据结构）
+ */
+export default (props: TablePropTypes, targetColumns: Column[]) => {
+  const initColumns = (column: Column | Column[]) => {
+    let resolveColumns: Column[] = [];
+
+    if (!Array.isArray(column)) {
+      resolveColumns = [column];
+    } else {
+      resolveColumns = column;
+    }
+
+    resolveColumns.forEach((col) => {
+      const matchCol = targetColumns.find(c => c.label === col.label && c.field === col.field);
+      if (!matchCol) {
+        const unrefCol = unref(col);
+        targetColumns.push(unrefCol);
       }
     });
-};
-export default {
-  createInstall,
-  install: createInstall(),
-  version: '0.0.1',
+  };
+
+  const getColumns = () => {
+    if (targetColumns?.length) {
+      return targetColumns;
+    }
+
+    if (props.columns?.length) {
+      return props.columns;
+    }
+
+    return [];
+  };
+
+  return {
+    initColumns,
+    getColumns,
+  };
 };
