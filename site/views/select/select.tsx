@@ -113,7 +113,7 @@ export default defineComponent({
         </DemoBox>
         <DemoBox
           title="Virtual Select"
-          desc="Virtual Select"
+          desc="虚拟滚动只支持list模式数据源"
           componentName="select"
           demoName="select-virtual-render">
             <SelectVirtualRender />
