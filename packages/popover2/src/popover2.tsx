@@ -85,9 +85,9 @@ export default defineComponent({
 
     watch(() => [props.disabled], (val) => {
       if (val[0]) {
-        initPopInstance();
-      } else {
         beforeInstanceUnmount();
+      } else {
+        initPopInstance();
       }
     });
 
