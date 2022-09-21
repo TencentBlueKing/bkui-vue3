@@ -5,6 +5,7 @@
       <bk-table
         :columns="columns"
         :data="tableData"
+        show-overflow-tooltip
         @dblclick="handleDblClick"
         @column-sort="handleSortBy"
       />
