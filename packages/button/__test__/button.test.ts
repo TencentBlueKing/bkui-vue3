@@ -46,7 +46,7 @@ describe('BkButton.tsx', () => {
   it('renders without slot', async () => {
     const wrapper = await mount(BkButton);
 
-    expect(wrapper.text()).toMatch('default');
+    expect(wrapper.text()).toMatch('');
     expect(wrapper.classes()).toContain('bk-button');
   });
 
@@ -104,7 +104,7 @@ describe('BkButton.tsx', () => {
       },
     });
     expect(wrapper.findComponent(BkLoading).exists()).toBe(true);
-    expect(wrapper.findComponent(BkLoading).props('theme')).toMatch('default');
+    expect(wrapper.findComponent(BkLoading).props('theme')).toMatch('');
   });
 
   it('renders loading when passed with primary theme', () => {
