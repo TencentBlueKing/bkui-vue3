@@ -266,7 +266,10 @@ export default class TableRender {
      */
     const renderHeadCell = (column: Column, index: number) => {
       if (column.type === 'selection') {
-        return this.renderCheckboxColumn({}, 0, true);
+        const selectAll = this.reactiveProp.rowActions.get(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_ALL);
+        return this.renderCheckboxColumn({
+          [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: !!selectAll,
+        }, 0, true);
       }
 
       const cells = [];
@@ -465,7 +468,10 @@ export default class TableRender {
       this.emitEvent(EVENTS.ON_ROW_CHECK, [{ row, index, isAll, value }]);
     };
 
-    return <BkCheckbox onChange={ handleChecked } modelValue={ row[TABLE_ROW_ATTRIBUTE.ROW_SELECTION] }></BkCheckbox>;
+    const indeterminate = isAll && !!this.reactiveProp.rowActions.get(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_INDETERMINATE);
+    return <BkCheckbox onChange={ handleChecked }
+      modelValue={ row[TABLE_ROW_ATTRIBUTE.ROW_SELECTION] }
+      indeterminate = { indeterminate }></BkCheckbox>;
   }
 
   private renderExpandColumn(row: any, column: Column, index: number, rows: any[]) {

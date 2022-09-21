@@ -101,6 +101,7 @@ export const TABLE_ROW_ATTRIBUTE = {
   ROW_EXPAND: '__row_expand',
   ROW_SELECTION: '__row_selection',
   ROW_SELECTION_ALL: '__row_selection_all',
+  ROW_SELECTION_INDETERMINATE: '__row_selection_indeterminate',
 };
 
 /**
