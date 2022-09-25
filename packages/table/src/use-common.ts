@@ -333,7 +333,14 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
   const toggleAllSelection = (checked = undefined) => {
     const isChecked = typeof checked === 'boolean' ? checked : !isSelectionAll();
     reactiveSchema.rowActions.set(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_ALL, isChecked);
-    updateIndexData();
+    reactiveSchema.rowActions.set(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_INDETERMINATE, false);
+    indexData.forEach((row: any) => {
+      const rowId = row[TABLE_ROW_ATTRIBUTE.ROW_UID];
+      const target = Object.assign({}, reactiveSchema.rowActions.get(rowId) ?? {}, { isSelected: isChecked });
+      reactiveSchema.rowActions.set(rowId, target);
+    });
+
+    updateIndexData(isChecked);
     asyncSelection(null, checked, true);
   };
 
@@ -389,7 +396,8 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
    * @param rowId 指定row id
    * @returns boolean
    */
-  const resolveSelection = (row: any, rowId: string) => resolveSelectionRow(row, () => {
+  const resolveSelection = (row: any, _rowId?: string) => resolveSelectionRow(row, () => {
+    const rowId = _rowId === undefined ? row[TABLE_ROW_ATTRIBUTE.ROW_UID] : _rowId;
     if (isSelectionAll()) {
       return true;
     }
@@ -423,17 +431,25 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
     initSelectionAllByData();
   };
 
-  const updateIndexData = () => {
+  const updateIndexData = (selectedAll?: boolean) => {
     indexData.forEach((item: any) => {
       Object.assign(item, {
         [TABLE_ROW_ATTRIBUTE.ROW_EXPAND]: isRowExpand(item[TABLE_ROW_ATTRIBUTE.ROW_UID]),
-        [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: resolveSelection(item, item[TABLE_ROW_ATTRIBUTE.ROW_UID]),
+        [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: typeof selectedAll === 'boolean' ? selectedAll : resolveSelection(item, item[TABLE_ROW_ATTRIBUTE.ROW_UID]),
       });
     });
 
-    initSelectionAllByData();
+    if (typeof selectedAll !== 'boolean') {
+      initSelectionAllByData();
+    }
   };
 
+  /**
+   * 如果设置了数据同步，点击操作更新选中状态到用户数据
+   * @param row 当前操作行
+   * @param value 选中状态
+   * @param all 是否全选
+   */
   const asyncSelection = (row: any, value: boolean, all = false) => {
     if (props.asyncData && props.rowKey) {
       if (all) {
@@ -453,6 +469,12 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
 
   const { renderFixedColumns, fixedWrapperClass } = useFixedColumn(props, colgroups, false);
 
+  /**
+   * 获取已经勾选的数据
+   * @returns
+   */
+  const getSelection = () => indexData.filter(row => resolveSelection(row));
+
   return {
     colgroups,
     dragOffsetXStyle,
@@ -468,5 +490,6 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
     clearSelection,
     toggleAllSelection,
     toggleRowSelection,
+    getSelection,
   };
 };
