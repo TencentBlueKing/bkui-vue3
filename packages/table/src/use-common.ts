@@ -265,16 +265,64 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
     updateIndexData();
   };
 
+  /**
+   * 判定是否全选
+   * @returns
+   */
   const isSelectionAll = () => {
     if (reactiveSchema.rowActions.has(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_ALL)) {
       return reactiveSchema.rowActions.get(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_ALL);
     }
 
+    // 如果设置了selectionKey，则根据用户传入数据判定
     if (!!props.selectionKey) {
       return indexData.every((row: any) => resolveSelectionRow(row));
     }
 
     return false;
+  };
+
+  const validateSelectionFn = (row: any) => {
+    const rowId = row[TABLE_ROW_ATTRIBUTE.ROW_UID];
+    const { isSelected = false } = reactiveSchema.rowActions.get(rowId) || {};
+    return isSelected;
+  };
+
+  /**
+   * 根据每行勾选状态更新全选checkbox勾选状态
+   * 此方法在toggleRowSelection触发，所以必定有一行是被选中或者被取消勾选
+   * 更新全选、半选状态
+   */
+  const updateSelectionAll = (validateFn = validateSelectionFn) => {
+    let hasUnchecked = false;
+    let hasChecked = false;
+
+    indexData.forEach((row) => {
+      const isSelected = validateFn(row);
+      // 判定是否有未选中数据
+      if (!hasUnchecked && !isSelected) {
+        hasUnchecked = true;
+      }
+
+      // 判定是否有选定数据
+      if (!hasChecked && isSelected) {
+        hasChecked = true;
+      }
+    });
+
+    reactiveSchema.rowActions.set(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_ALL, hasChecked && !hasUnchecked);
+    reactiveSchema.rowActions.set(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_INDETERMINATE, hasChecked && hasUnchecked);
+  };
+
+  const isSelectionEnable = () => props.columns.some(col => col.type === 'selection');
+
+  /**
+   * 用于初始化时，根据用户传入数据进行初始化操作
+   */
+  const initSelectionAllByData = () =>  {
+    if (isSelectionEnable()) {
+      updateSelectionAll(row => resolveSelectionRow(row));
+    }
   };
 
   /**
@@ -285,7 +333,14 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
   const toggleAllSelection = (checked = undefined) => {
     const isChecked = typeof checked === 'boolean' ? checked : !isSelectionAll();
     reactiveSchema.rowActions.set(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_ALL, isChecked);
-    updateIndexData();
+    reactiveSchema.rowActions.set(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_INDETERMINATE, false);
+    indexData.forEach((row: any) => {
+      const rowId = row[TABLE_ROW_ATTRIBUTE.ROW_UID];
+      const target = Object.assign({}, reactiveSchema.rowActions.get(rowId) ?? {}, { isSelected: isChecked });
+      reactiveSchema.rowActions.set(rowId, target);
+    });
+
+    updateIndexData(isChecked);
     asyncSelection(null, checked, true);
   };
 
@@ -304,11 +359,25 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
       const isSelected = typeof selected === 'boolean' ? selected : !resolveSelection(row, rowId);
       const target = Object.assign({}, reactiveSchema.rowActions.get(rowId) ?? {}, { isSelected });
       reactiveSchema.rowActions.set(rowId, target);
+
+      // 如果是取消勾选，则全选状态取消
+      if (!selected) {
+        reactiveSchema.rowActions.set(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_ALL, false);
+      }
+
+      // 根据每行勾选状态更新全选checkbox勾选状态
+      updateSelectionAll();
       updateIndexData();
       asyncSelection(row, selected, false);
     }
   };
 
+  /**
+   * 通过table data 判定指定row是否选中
+   * @param row 指定row
+   * @param thenFn 如果table data没有满足判定条件，后续判定逻辑函数，返回 boolean
+   * @returns Boolean
+   */
   const resolveSelectionRow = (row: any, thenFn = () => false) => {
     if (typeof props.isSelectedFn === 'function') {
       return Reflect.apply(props.isSelectedFn, this, [{ row, data: props.data }]);
@@ -321,17 +390,20 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
     return thenFn();
   };
 
-  const resolveSelection = (row: any, rowId: string) => resolveSelectionRow(row, () => {
+  /**
+   * 判定指定row是否选中
+   * @param row 指定row
+   * @param rowId 指定row id
+   * @returns boolean
+   */
+  const resolveSelection = (row: any, _rowId?: string) => resolveSelectionRow(row, () => {
+    const rowId = _rowId === undefined ? row[TABLE_ROW_ATTRIBUTE.ROW_UID] : _rowId;
     if (isSelectionAll()) {
       return true;
     }
 
     if (reactiveSchema.rowActions.has(rowId)) {
       return reactiveSchema.rowActions.get(rowId)?.isSelected;
-    }
-
-    if (Object.prototype.hasOwnProperty.call(row, TABLE_ROW_ATTRIBUTE.ROW_SELECTION) && typeof row[TABLE_ROW_ATTRIBUTE.ROW_SELECTION] === 'boolean') {
-      return row[TABLE_ROW_ATTRIBUTE.ROW_SELECTION];
     }
 
     return false;
@@ -355,17 +427,29 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
         [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: resolveSelection(item, rowId),
       };
     }));
+
+    initSelectionAllByData();
   };
 
-  const updateIndexData = () => {
+  const updateIndexData = (selectedAll?: boolean) => {
     indexData.forEach((item: any) => {
       Object.assign(item, {
         [TABLE_ROW_ATTRIBUTE.ROW_EXPAND]: isRowExpand(item[TABLE_ROW_ATTRIBUTE.ROW_UID]),
-        [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: resolveSelection(item, item[TABLE_ROW_ATTRIBUTE.ROW_UID]),
+        [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: typeof selectedAll === 'boolean' ? selectedAll : resolveSelection(item, item[TABLE_ROW_ATTRIBUTE.ROW_UID]),
       });
     });
+
+    if (typeof selectedAll !== 'boolean') {
+      initSelectionAllByData();
+    }
   };
 
+  /**
+   * 如果设置了数据同步，点击操作更新选中状态到用户数据
+   * @param row 当前操作行
+   * @param value 选中状态
+   * @param all 是否全选
+   */
   const asyncSelection = (row: any, value: boolean, all = false) => {
     if (props.asyncData && props.rowKey) {
       if (all) {
@@ -385,6 +469,12 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
 
   const { renderFixedColumns, fixedWrapperClass } = useFixedColumn(props, colgroups, false);
 
+  /**
+   * 获取已经勾选的数据
+   * @returns
+   */
+  const getSelection = () => indexData.filter(row => resolveSelection(row));
+
   return {
     colgroups,
     dragOffsetXStyle,
@@ -400,5 +490,6 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
     clearSelection,
     toggleAllSelection,
     toggleRowSelection,
+    getSelection,
   };
 };
