@@ -25,6 +25,7 @@
 */
 
 import ResizeObserver from 'resize-observer-polyfill';
+import { nextTick } from 'vue';
 
 import { mount } from '@vue/test-utils';
 
@@ -381,7 +382,7 @@ describe('Select.tsx', () => {
     const select = wrapper.findComponent(BkSelect);
     setTimeout(() => {
       expect(select.vm.searchKey).toBe('test2');
-      expect(wrapper.findAllComponents({ name: 'Option' }).filter(com => com.isVisible()).length).toBe(2);
+      expect(wrapper.findAllComponents({ name: 'Option' }).filter(com => com.vm.visible).length).toBe(2);
       wrapper.unmount();
       done();
     }, 400);
@@ -428,7 +429,7 @@ describe('Select.tsx', () => {
     const select = wrapper.findComponent(BkSelect);
     setTimeout(() => {
       expect(select.vm.searchKey).toBe('test4');
-      expect(wrapper.findAllComponents({ name: 'Option' }).filter(com => com.isVisible()).length).toBe(1);
+      expect(wrapper.findAllComponents({ name: 'Option' }).filter(com => com.vm.visible).length).toBe(1);
       wrapper.unmount();
       done();
     }, 400);
@@ -447,7 +448,7 @@ describe('Select.tsx', () => {
     wrapper.unmount();
   });
 
-  // 测试禁用态
+  // 测试多选禁用态
   test('disabled multiple select', async () => {
     const wrapper = await mount({
       components: {
@@ -483,6 +484,7 @@ describe('Select.tsx', () => {
     wrapper.unmount();
   });
 
+  // 测试单选禁用态
   test('disabled single select', async () => {
     const wrapper = await mount({
       components: {
@@ -517,6 +519,40 @@ describe('Select.tsx', () => {
     const option = wrapper.findComponent(BkOption);
     await option.trigger('click');
     expect(wrapper.vm.seletValue).toBe('');
+    wrapper.unmount();
+  });
+
+  // 测试重置modelValue
+  test('reset model value', async () => {
+    const wrapper = await mount({
+      components: {
+        BkSelect,
+        BkOption,
+      },
+      template: `
+        <BkSelect v-model="seletValue">
+          <BkOption v-for="item in options" :value="item.value" :label="item.label"></BkOption>
+        </BkSelect>
+      `,
+      data() {
+        return {
+          seletValue: 'test1',
+          options: [
+            {
+              value: 'test1',
+              label: 'test1',
+            },
+            {
+              value: 'test2',
+              label: 'test2',
+            },
+          ],
+        };
+      },
+    });
+    wrapper.vm.seletValue = '';
+    await nextTick();
+    expect((wrapper.find('input[type="text"]').element as any).value).toBe('');
     wrapper.unmount();
   });
 });

@@ -24,7 +24,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { computed, defineComponent, onMounted, onUnmounted, ref, Teleport, toRefs, watch } from 'vue';
+import { computed, defineComponent, onBeforeUnmount, onMounted, ref, Teleport, toRefs, watch } from 'vue';
 
 import { clickoutside } from '@bkui-vue/directives';
 
@@ -85,15 +85,16 @@ export default defineComponent({
 
     watch(() => [props.disabled], (val) => {
       if (val[0]) {
-        initPopInstance();
-      } else {
         beforeInstanceUnmount();
+      } else {
+        initPopInstance();
       }
     });
 
     updateBoundary();
     onMounted(onMountedFn);
-    onUnmounted(onUnmountedFn);
+    onBeforeUnmount(onUnmountedFn);
+    // onUnmounted(onUnmountedFn);
 
     const transBoundary = computed(() => (isFullscreen.value || !disableTeleport) && typeof boundary.value === 'string');
     const show = () => {

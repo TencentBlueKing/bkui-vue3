@@ -27,6 +27,7 @@
 
 import { v4 as uuidv4 } from 'uuid';
 
+import BkCheckbox from '@bkui-vue/checkbox';
 import { DownShape, RightShape } from '@bkui-vue/icon';
 import Pagination from '@bkui-vue/pagination';
 import { classes } from '@bkui-vue/shared';
@@ -264,6 +265,13 @@ export default class TableRender {
      * @returns
      */
     const renderHeadCell = (column: Column, index: number) => {
+      if (column.type === 'selection') {
+        const selectAll = this.reactiveProp.rowActions.get(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_ALL);
+        return this.renderCheckboxColumn({
+          [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: !!selectAll,
+        }, 0, true);
+      }
+
       const cells = [];
       if (column.sort) {
         cells.push(this.getSortCell(column, index));
@@ -369,7 +377,10 @@ export default class TableRender {
                   style={cellStyle}
                   key={cellKey}
                   colspan={1} rowspan={1}>
-                  <TableCell class={tdCtxClass} column={ column } row={ row }>
+                  <TableCell class={tdCtxClass}
+                    column={ column }
+                    row={ row }
+                    parentSetting={ this.props.showOverflowTooltip }>
                     { this.renderCell(row, column, rowIndex, rows) }
                   </TableCell>
                 </td>;
@@ -446,6 +457,37 @@ export default class TableRender {
     this.emitEvent(EVENTS.ON_ROW_EXPAND_CLICK, [{ row, column, index, rows, e }]);
   }
 
+  private renderCellCallbackFn(row: any, column: Column, index: number, rows: any[]) {
+    const cell = getRowText(row, resolvePropVal(column, 'field', [column, row]), column);
+    const data = this.props.data[row[TABLE_ROW_ATTRIBUTE.ROW_INDEX]];
+    return (column.render as Function)({ cell, data, row, column, index, rows });
+  }
+
+  private renderCheckboxColumn(row: any, index: number, isAll = false) {
+    const handleChecked = (value) => {
+      this.emitEvent(EVENTS.ON_ROW_CHECK, [{ row, index, isAll, value }]);
+    };
+
+    const indeterminate = isAll && !!this.reactiveProp.rowActions.get(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_INDETERMINATE);
+    return <BkCheckbox onChange={ handleChecked }
+      modelValue={ row[TABLE_ROW_ATTRIBUTE.ROW_SELECTION] }
+      indeterminate = { indeterminate }></BkCheckbox>;
+  }
+
+  private renderExpandColumn(row: any, column: Column, index: number, rows: any[]) {
+    const renderExpandSlot = () => {
+      if (typeof column.render === 'function') {
+        return this.renderCellCallbackFn(row, column, index, rows);
+      }
+
+      return this.context.slots.expandCell?.({ row, column, index, rows }) ?? this.getExpandCell(row);
+    };
+
+    return <span class="expand-btn-action" onClick={ (e: MouseEvent) => this.handleRowExpandClick(row, column, index, rows, e) }>
+      { renderExpandSlot() }
+      </span>;
+  }
+
   /**
    * 渲染表格Cell内容
    * @param row 当前行
@@ -453,27 +495,21 @@ export default class TableRender {
    * @returns
    */
   private renderCell(row: any, column: Column, index: number, rows: any[]) {
-    if (column.type === 'expand') {
-      const renderExpandSlot = () => {
-        if (typeof column.render === 'function') {
-          return column.render(null, row, index, rows);
-        }
+    const defaultFn = () => {
+      const cell = getRowText(row, resolvePropVal(column, 'field', [column, row]), column);
+      if (typeof column.render === 'function') {
+        return this.renderCellCallbackFn(row, column, index, rows);
+      }
 
-        return this.context.slots.expandCell?.({ row, column, index, rows }) ?? this.getExpandCell(row);
-      };
+      return cell;
+    };
 
-      return <span class="expand-btn-action" onClick={ (e: MouseEvent) => this.handleRowExpandClick(row, column, index, rows, e) }>
-        { renderExpandSlot() }
-        </span>;
-    }
+    const renderFn = {
+      expand: (row, column, index, rows) => this.renderExpandColumn(row, column, index, rows),
+      selection: (row, _column, index, _rows) => this.renderCheckboxColumn(row, index),
+    };
 
-    const cell = getRowText(row, resolvePropVal(column, 'field', [column, row]), column);
-    if (typeof column.render === 'function') {
-      const data = this.props.data[row[TABLE_ROW_ATTRIBUTE.ROW_INDEX]];
-      return column.render({ cell, data, row, column, index, rows });
-    }
-
-    return cell;
+    return renderFn[column.type]?.(row, column, index, rows) ?? defaultFn();
   }
 
   /**

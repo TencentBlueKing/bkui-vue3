@@ -52,7 +52,12 @@ export default [
       { name: 'scroll-loading', type: 'Object|Boolean', default: 'undefined', desc: '表格底部loading加载效果，可以配合表格scroll-bottom事件使用, 详细配置可参考bk-loading组件', optional: [] },
       { name: 'reserve-expand', type: 'Boolean', default: 'false', desc: '仅对 type=selection 的列有效，类型为 Boolean，为 true 则会在数据更新之后保留之前选中的展开收起操作（需指定 row-key）', optional: [] },
       { name: 'row-key', type: 'String|Function', default: '--', desc: '行数据的 Key，用来优化 Table 的渲染；在使用 reserve-selection, reserve-expand 功能的情况下，该属性是必填的。类型为 String 时，支持多层访问：user.info.id，但不支持 user.info[0].id，此种情况请使用 Function', optional: [] },
+      { name: 'show-overflow-tooltip', type: 'Boolean|IOverflowTooltip', default: 'false', desc: '表格cell内容超长时，是否自动展示tooltip，默认值为false，可以通过设置为true开启，如果需要自定义content请设置为对象，具体参考 IOverflowTooltip（此处配置整个table都启用，单个column配置可覆盖）', optional: [] },
+      { name: 'selection-key', type: 'string', default: '', desc: '仅对设置了selection的情况下生效, 用于初始化或者更新row已选中状态,内部使用逻辑为：row[selectionKey]，可以为多级选择，但是多级选择只支持 row.child.child，更多请参考lodash.get', optional: [] },
+      { name: 'is-selected-fn', type: 'Function', default: 'undefined', desc: '提供自定义判定当前行是否选中, 如果设置了此属性，其他判定均不生效, ({ row, cell, data }) => bool', optional: [] },
+      { name: 'async-data', type: 'Boolean', default: 'false', desc: '为避免不必要的数据修改导致的不可控组件更新,默认组件不会对传入组件的data进行任何修改,设置此属性为true则会对源数据进行同步（如：启用selection，勾选时想要自动同步到源数据）, 目前只会对指定了selectionKey的情况下才会对指定的字段数据进行更新，同时需要指定 rowKey，保证匹配到的row是正确的目标对象', optional: ['true', 'false'] },
     ],
+
   },
   {
     title: 'IColumn',
@@ -134,6 +139,21 @@ export default [
       { name: 'column-sort', desc: '当表格的排序条件发生变化的时候会触发该事件', params: '{ column, index, type }' },
       { name: 'column-filter', desc: '当表格的筛选条件发生变化的时候会触发该事件', params: '{ checked, column, index }' },
       { name: 'column-pick', desc: '当表格的选中一列的时候会触发该事件,(prop column-pick启用)', params: 'column[]' },
+      { name: 'select-all', desc: '当用户手动勾选全选 Checkbox 时触发的事件', params: '{ checked, data }' },
+      { name: 'select', desc: '当用户手动勾选数据行的 Checkbox 时触发的事件', params: '{ row, index, checked, data }' },
+      { name: 'selection-change', desc: '当选择项发生变化时会触发该事件', params: '{ row, isAll, index, checked, data }' },
+    ],
+  },
+  {
+    title: 'Methods',
+    subTile: 'bk-table 方法',
+    type: 'events',
+    config: [
+      { name: 'clearSelection', desc: '用于多选表格，清空用户的选择', params: '' },
+      { name: 'getSelection', desc: '用于多选表格，获取用户的选择', params: '' },
+      { name: 'toggleRowSelection', desc: '用于多选表格，切换某一行的选中状态，如果使用了第二个参数，则是设置这一行选中与否（selected 为 true 则选中）', params: 'row, selected' },
+      { name: 'toggleAllSelection', desc: '用于多选表格，切换所有行的选中状态', params: '' },
+      { name: 'setRowExpand', desc: '用于可展开表格，切换某一行的展开状态，如果使用了第二个参数，则是设置这一行展开与否（expanded 为 true 则展开）', params: 'row, expanded' },
     ],
   },
   {

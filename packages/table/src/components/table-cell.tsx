@@ -26,20 +26,35 @@
 import { defineComponent, onBeforeUnmount, onMounted, ref } from 'vue';
 
 import { bkEllipsisInstance } from '@bkui-vue/directives';
-import { PropTypes } from '@bkui-vue/shared';
+import { isElement, PropTypes  } from '@bkui-vue/shared';
 
+import { IOverflowTooltip } from '../props';
 import { getElementTextWidth, observerResize } from '../utils';
 export default defineComponent({
   name: 'TableCell',
   props: {
     column: PropTypes.any.def({}),
     row: PropTypes.any.def({}),
+    parentSetting: PropTypes.oneOfType([PropTypes.bool, PropTypes.shape<IOverflowTooltip>({
+      content: PropTypes.string.def(''),
+      disabled: PropTypes.bool.def(false),
+      watchCellResize: PropTypes.bool.def(true),
+    })]).def(undefined),
   },
 
   setup(props, { slots }) {
     const refRoot = ref();
     const isTipsEnabled = ref(false);
-    const { showOverflowTooltip = false } = props.column || {};
+
+    const resolveSetting = () => {
+      if (/boolean|object/.test(typeof props.column.showOverflowTooltip) && props.column.showOverflowTooltip !== null) {
+        return props.column;
+      }
+
+      return { showOverflowTooltip: props.parentSetting };
+    };
+
+    const { showOverflowTooltip = false } = resolveSetting();
     let observerIns = null;
     let bkEllipsisIns = null;
     const resolveTooltipOption = () => {
@@ -62,13 +77,18 @@ export default defineComponent({
     };
 
     const resolveOverflowTooltip = () => {
-      if (!refRoot.value) {
+      if (!refRoot.value || /selection|index|expand/.test(props.column.type) || !isElement(refRoot.value)) {
         return;
       }
-      const textWidth = getElementTextWidth(refRoot.value);
-      const cellWidth = (refRoot.value as HTMLElement).clientWidth;
 
-      isTipsEnabled.value = textWidth > cellWidth;
+      const { content } = resolveTooltipOption();
+      const textWidth = getElementTextWidth(refRoot.value, content);
+      const cellWidth = (refRoot.value as HTMLElement).clientWidth;
+      const computedStyle = window.getComputedStyle(refRoot.value);
+      const paddingWidth = ['padding-left', 'padding-right'].reduce((width, prop) => width + Number(computedStyle.getPropertyValue(prop).replace('px', '')), 0);
+      const cellInnerWidth = cellWidth - paddingWidth;
+
+      isTipsEnabled.value = textWidth > cellInnerWidth;
       if (isTipsEnabled.value) {
         const bindings = ref(resolveTooltipOption());
         if (bkEllipsisIns === null) {

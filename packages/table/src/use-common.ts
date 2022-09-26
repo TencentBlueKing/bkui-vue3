@@ -23,6 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import { get as objGet, has as objHas, set as objSet } from 'lodash';
 import { computed, onMounted, reactive, ref, watch } from 'vue';
 
 import { classes, resolveClassName } from '@bkui-vue/shared';
@@ -42,6 +43,14 @@ import {
   resolvePropVal,
 } from './utils';
 
+/**
+ * 渲染class settings
+ * @param props: TablePropTypes
+ * @param targetColumns 解析之后的column配置（主要用来处理通过<bk-column>配置的数据结构）
+ * @param root root element
+ * @param reactiveProp 组件内部定义的响应式对象
+ * @param pageData 当前页数据
+ */
 export const useClass = (props: TablePropTypes, targetColumns: Column[], root?, reactiveProp?, pageData?: any[]) => {
   const { getColumns } = useColumn(props, targetColumns);
   const autoHeight = ref(200);
@@ -112,7 +121,12 @@ export const useClass = (props: TablePropTypes, targetColumns: Column[], root?, 
   };
 
   /** 表格外层容器样式 */
-  const contentStyle = reactive({});
+  const contentStyle = reactive({
+    display: '',
+    'min-height': '',
+    height: '',
+    maxHeight: '',
+  });
 
   const getHeadHeight = () => (props.showHead ? resolvePropHeight(props.headHeight, LINE_HEIGHT) : 0);
 
@@ -192,6 +206,12 @@ export const useClass = (props: TablePropTypes, targetColumns: Column[], root?, 
   };
 };
 
+
+/**
+ * 渲染初始化数据 settings
+ * @param props: TablePropTypes
+ * @param targetColumns 解析之后的column配置（主要用来处理通过<bk-column>配置的数据结构）
+ */
 export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
   const colgroups: Colgroups[] = reactive([]);
   const { getColumns } = useColumn(props, targetColumns);
@@ -246,6 +266,151 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
   };
 
   /**
+   * 判定是否全选
+   * @returns
+   */
+  const isSelectionAll = () => {
+    if (reactiveSchema.rowActions.has(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_ALL)) {
+      return reactiveSchema.rowActions.get(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_ALL);
+    }
+
+    // 如果设置了selectionKey，则根据用户传入数据判定
+    if (!!props.selectionKey) {
+      return indexData.every((row: any) => resolveSelectionRow(row));
+    }
+
+    return false;
+  };
+
+  const validateSelectionFn = (row: any) => {
+    const rowId = row[TABLE_ROW_ATTRIBUTE.ROW_UID];
+    const { isSelected = false } = reactiveSchema.rowActions.get(rowId) || {};
+    return isSelected;
+  };
+
+  /**
+   * 根据每行勾选状态更新全选checkbox勾选状态
+   * 此方法在toggleRowSelection触发，所以必定有一行是被选中或者被取消勾选
+   * 更新全选、半选状态
+   */
+  const updateSelectionAll = (validateFn = validateSelectionFn) => {
+    let hasUnchecked = false;
+    let hasChecked = false;
+
+    indexData.forEach((row) => {
+      const isSelected = validateFn(row);
+      // 判定是否有未选中数据
+      if (!hasUnchecked && !isSelected) {
+        hasUnchecked = true;
+      }
+
+      // 判定是否有选定数据
+      if (!hasChecked && isSelected) {
+        hasChecked = true;
+      }
+    });
+
+    reactiveSchema.rowActions.set(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_ALL, hasChecked && !hasUnchecked);
+    reactiveSchema.rowActions.set(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_INDETERMINATE, hasChecked && hasUnchecked);
+  };
+
+  const isSelectionEnable = () => props.columns.some(col => col.type === 'selection');
+
+  /**
+   * 用于初始化时，根据用户传入数据进行初始化操作
+   */
+  const initSelectionAllByData = () =>  {
+    if (isSelectionEnable()) {
+      updateSelectionAll(row => resolveSelectionRow(row));
+    }
+  };
+
+  /**
+   * 用于多选表格，切换所有行的选中状态
+   * @param checked 是否选中
+   * @param update 是否触发更新表格数据, 如果是初始化时根据用户数据初始化全选状态，此时不需要update，如果是通过页面点击操作全选，则需要update
+   */
+  const toggleAllSelection = (checked = undefined) => {
+    const isChecked = typeof checked === 'boolean' ? checked : !isSelectionAll();
+    reactiveSchema.rowActions.set(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_ALL, isChecked);
+    reactiveSchema.rowActions.set(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_INDETERMINATE, false);
+    indexData.forEach((row: any) => {
+      const rowId = row[TABLE_ROW_ATTRIBUTE.ROW_UID];
+      const target = Object.assign({}, reactiveSchema.rowActions.get(rowId) ?? {}, { isSelected: isChecked });
+      reactiveSchema.rowActions.set(rowId, target);
+    });
+
+    updateIndexData(isChecked);
+    asyncSelection(null, checked, true);
+  };
+
+  const clearSelection = () => {
+    toggleAllSelection(false);
+  };
+
+  /**
+   * 用于多选表格，切换某一行的选中状态，如果使用了第二个参数，则是设置这一行选中与否（selected 为 true 则选中）
+   * @param row
+   * @param selected
+   */
+  const toggleRowSelection = (row: any, selected: boolean) => {
+    const rowId = row[TABLE_ROW_ATTRIBUTE.ROW_UID];
+    if (rowId) {
+      const isSelected = typeof selected === 'boolean' ? selected : !resolveSelection(row, rowId);
+      const target = Object.assign({}, reactiveSchema.rowActions.get(rowId) ?? {}, { isSelected });
+      reactiveSchema.rowActions.set(rowId, target);
+
+      // 如果是取消勾选，则全选状态取消
+      if (!selected) {
+        reactiveSchema.rowActions.set(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_ALL, false);
+      }
+
+      // 根据每行勾选状态更新全选checkbox勾选状态
+      updateSelectionAll();
+      updateIndexData();
+      asyncSelection(row, selected, false);
+    }
+  };
+
+  /**
+   * 通过table data 判定指定row是否选中
+   * @param row 指定row
+   * @param thenFn 如果table data没有满足判定条件，后续判定逻辑函数，返回 boolean
+   * @returns Boolean
+   */
+  const resolveSelectionRow = (row: any, thenFn = () => false) => {
+    if (typeof props.isSelectedFn === 'function') {
+      return Reflect.apply(props.isSelectedFn, this, [{ row, data: props.data }]);
+    }
+
+    if (typeof props.selectionKey === 'string' && props.selectionKey.length) {
+      return objGet(row, props.selectionKey);
+    }
+
+    return thenFn();
+  };
+
+  /**
+   * 判定指定row是否选中
+   * @param row 指定row
+   * @param rowId 指定row id
+   * @returns boolean
+   */
+  const resolveSelection = (row: any, _rowId?: string) => resolveSelectionRow(row, () => {
+    const rowId = _rowId === undefined ? row[TABLE_ROW_ATTRIBUTE.ROW_UID] : _rowId;
+    if (isSelectionAll()) {
+      return true;
+    }
+
+    if (reactiveSchema.rowActions.has(rowId)) {
+      return reactiveSchema.rowActions.get(rowId)?.isSelected;
+    }
+
+    return false;
+  });
+
+
+  /**
    * 生成内置index
    */
   const indexData = reactive([]);
@@ -253,24 +418,62 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
   const initIndexData = (keepLocalAction = false) => {
     indexData.splice(0, indexData.length, ...props.data.map((item: any, index: number) => {
       const rowId = getRowKey(item, props, index);
+
       return {
         ...item,
         [TABLE_ROW_ATTRIBUTE.ROW_INDEX]: index,
         [TABLE_ROW_ATTRIBUTE.ROW_UID]: rowId,
         [TABLE_ROW_ATTRIBUTE.ROW_EXPAND]: keepLocalAction ? isRowExpand(rowId) : false,
+        [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: resolveSelection(item, rowId),
       };
     }));
+
+    initSelectionAllByData();
   };
 
-  const updateIndexData = () => {
+  const updateIndexData = (selectedAll?: boolean) => {
     indexData.forEach((item: any) => {
       Object.assign(item, {
         [TABLE_ROW_ATTRIBUTE.ROW_EXPAND]: isRowExpand(item[TABLE_ROW_ATTRIBUTE.ROW_UID]),
+        [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: typeof selectedAll === 'boolean' ? selectedAll : resolveSelection(item, item[TABLE_ROW_ATTRIBUTE.ROW_UID]),
       });
     });
+
+    if (typeof selectedAll !== 'boolean') {
+      initSelectionAllByData();
+    }
+  };
+
+  /**
+   * 如果设置了数据同步，点击操作更新选中状态到用户数据
+   * @param row 当前操作行
+   * @param value 选中状态
+   * @param all 是否全选
+   */
+  const asyncSelection = (row: any, value: boolean, all = false) => {
+    if (props.asyncData && props.rowKey) {
+      if (all) {
+        props.data.forEach((item: any) => {
+          if (objHas(item, props.selectionKey)) {
+            objSet(item, props.selectionKey, !!value);
+          }
+        });
+      } else {
+        if (objHas(row, props.selectionKey)) {
+          const target = props.data.find((item: any) => objGet(item, props.rowKey) === objGet(row, props.rowKey));
+          objSet(target, props.selectionKey, !!value);
+        }
+      }
+    }
   };
 
   const { renderFixedColumns, fixedWrapperClass } = useFixedColumn(props, colgroups, false);
+
+  /**
+   * 获取已经勾选的数据
+   * @returns
+   */
+  const getSelection = () => indexData.filter(row => resolveSelection(row));
 
   return {
     colgroups,
@@ -284,5 +487,9 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
     renderFixedColumns,
     setRowExpand,
     updateColGroups,
+    clearSelection,
+    toggleAllSelection,
+    toggleRowSelection,
+    getSelection,
   };
 };

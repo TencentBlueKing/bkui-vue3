@@ -83,7 +83,7 @@ export default function createPopoverComponent(options: $Popover) {
         });
       };
 
-      updateStyle(refProps.value.target);
+      updateStyle(refProps.value.target as any);
       const show = () => {
         refReference.value?.show?.();
       };
@@ -100,7 +100,7 @@ export default function createPopoverComponent(options: $Popover) {
       });
 
       const updateTarget = (target: MouseEvent | HTMLElement) => {
-        refProps.value.target = target;
+        refProps.value.target = target as any;
         updateStyle(target);
         refReference.value?.updatePopover?.();
         nextTick(() => {
