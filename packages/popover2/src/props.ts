@@ -94,7 +94,7 @@ export const PopoverProps = {
   /**
    * 自定义 reference
    */
-  reference: PropTypes.object.def(null),
+  reference: PropTypes.any.def(null),
 
   ...EventProps,
 };
