@@ -39,7 +39,8 @@ export default defineComponent({
   },
   emits: ['change'],
   setup(props, { emit }) {
-    const sortType = ref('');
+    const { value = SortType.NULL } = props.column?.sort ?? {};
+    const sortType = ref(value);
 
     /**
      * 点击排序事件
