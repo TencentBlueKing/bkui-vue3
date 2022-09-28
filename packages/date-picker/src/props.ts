@@ -73,7 +73,6 @@ export const datePickerProps = {
   },
   open: {
     type: Boolean,
-    default: null,
   },
   multiple: {
     type: Boolean,

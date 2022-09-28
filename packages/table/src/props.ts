@@ -68,7 +68,7 @@ export const IColumnType = {
     PropTypes.shape({
       sortFn: PropTypes.func.def(undefined),
       sortScope: PropTypes.commonType(Object.values(SortScope)).def(SortScope.CURRENT),
-      value: PropTypes.string.def(null),
+      value: PropTypes.string,
     }),
     PropTypes.bool,
     PropTypes.string]).def(false),
