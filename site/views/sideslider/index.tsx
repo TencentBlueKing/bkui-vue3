@@ -99,6 +99,13 @@ const SideSliserPropsJson: IPropsTableItem[] = [
     desc: '控制 sidslider 是否出现在 body 内',
     optional: ['false', 'true'],
   },
+  {
+    name: 'zIndex',
+    type: 'Number',
+    default: '',
+    desc: '设置侧栏的z-index值，在transfer为true的情况下，改值会自动+1',
+    optional: [],
+  },
 ];
 
 const SideSliserEventJson: IPropsTableItem[] = [
