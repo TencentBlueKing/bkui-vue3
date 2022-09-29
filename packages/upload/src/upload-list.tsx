@@ -84,7 +84,7 @@ export default defineComponent({
               <li key={file.uid} class={classNames}>
                 {
                   slots?.file
-                    ? slots.file(file)
+                    ? slots.file({ file })
                     : PhotoItem(file)
                 }
               </li>
@@ -127,7 +127,7 @@ export default defineComponent({
               <li key={file.uid} class={classNames}>
                 {
                   slots?.file
-                    ? slots.file(file)
+                    ? slots.file({ file })
                     : NormalItem(file)
                 }
               </li>
