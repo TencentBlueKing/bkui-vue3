@@ -33,7 +33,6 @@ const { propsMixin } = BkModal;
 const sliderPops = Object.assign({}, propsMixin);
 sliderPops.width.default = '400';
 sliderPops.height.default = '100%';
-console.log('sliderPops', sliderPops.zIndex);
 export default defineComponent({
   name: 'Sideslider',
   components: {
