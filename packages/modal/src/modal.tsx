@@ -86,7 +86,7 @@ export default defineComponent({
             'background-color': 'rgba(0,0,0,0)',
           };
           const appendStyle = this.showMask ? {} : hideMaskStyle;
-          bkPopIndexManager.show(this.$el, this.showMask, appendStyle, this.transfer);
+          bkPopIndexManager.show(this.$el, this.showMask, appendStyle, this.transfer, this.zIndex);
           this.$emit('shown');
           this.$emit('quick-close', this.$el);
           this.$emit('quickClose', this.$el);
