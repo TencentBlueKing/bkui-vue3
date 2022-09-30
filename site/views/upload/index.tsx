@@ -39,6 +39,7 @@ import Base from './demo/base.vue';
 import Limit from './demo/limit.vue';
 import MaxSize from './demo/max-size.vue';
 import SinglePicture from './demo/single-picture.vue';
+import SlotsFile from './demo/slots-file.vue';
 import ThemeButton from './demo/theme-button.vue';
 import ThemePicture from './demo/theme-picture.vue';
 
@@ -333,6 +334,13 @@ export default defineComponent({
           componentName="upload"
           demoName="/demo/single-picture">
             <SinglePicture />
+        </DemoBox>
+        <DemoBox
+          title="自定义文件列表项"
+          desc="使用 slot 自定义文件列表项"
+          componentName="upload"
+          demoName="/demo/slots-file">
+            <SlotsFile />
         </DemoBox>
         <PropsBox
           title="Upload Attributes"
