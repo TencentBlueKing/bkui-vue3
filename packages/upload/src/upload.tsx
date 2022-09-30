@@ -181,7 +181,7 @@ export default defineComponent({
             emit('success', res, file, fileList.value);
           } else {
             const err = new Error(result?.message || 'unknow error');
-            handleError(err, file);
+            handleError(err, file, res);
             emit('error', file, fileList.value, err);
           }
 
