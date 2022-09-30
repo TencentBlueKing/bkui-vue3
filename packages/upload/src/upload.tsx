@@ -49,7 +49,7 @@ export default defineComponent({
   name: 'Upload',
   props: uploadProps,
   emits: ['exceed', 'progress', 'success', 'error', 'delete', 'done'],
-  setup(props, { slots, emit }) {
+  setup(props, { slots, emit, expose }) {
     const requests = shallowRef<Record<string, XMLHttpRequest | Promise<unknown>>>({});
 
     const isPhotowall = computed<boolean>(() => props.theme === EThemes.PICTURE);
@@ -230,6 +230,11 @@ export default defineComponent({
       });
     });
 
+    expose({
+      handleRemove,
+      handleRetry,
+    });
+
     return () => (
       <div class={classNames.value}>
         {
@@ -255,6 +260,7 @@ export default defineComponent({
                 v-slots={slots}
                 onChange={handleFiles}
                 onRemove={handleRemove} />,
+            file: slots.file,
           }}
         </UploadList>
       </div>
