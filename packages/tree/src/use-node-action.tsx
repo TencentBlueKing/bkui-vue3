@@ -25,27 +25,32 @@
 */
 import { h, nextTick } from 'vue';
 
+import BkCheckbox from '@bkui-vue/checkbox';
 import { DownShape, Folder, FolderShapeOpen, RightShape, Spinner, TextFile } from '@bkui-vue/icon';
 import { resolveClassName } from '@bkui-vue/shared';
 
 import { EVENTS, NODE_ATTRIBUTES } from './constant';
+import { TreePropTypes } from './props';
 import useNodeAsync from './use-node-async';
 import useNodeAttribute from './use-node-attribute';
 import { getLabel, getNodeItemClass, getNodeItemStyle, getNodeRowClass, resolveNodeItem } from './util';
-export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
+export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, initOption) => {
   // const checkedNodes = [];
-  let selectedNodeId = null;
+  let selectedNodeId = props.selected;
   const {
     setNodeAttr,
     getNodePath,
     getSchemaVal,
     getNodeAttr,
     getNodeId,
+    getChildNodes,
     isRootNode,
     hasChildNode,
     isItemOpen,
     isNodeOpened,
     isNodeLoading,
+    isNodeChecked,
+    getParentNode,
     resolveScopedSlotParam,
     extendNodeAttr,
   } = useNodeAttribute(flatData, props);
@@ -60,8 +65,8 @@ export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
    * @returns
    */
   const getRootIcon = (item: any) => (isItemOpen(item)
-    ? <FolderShapeOpen class={ resolveClassName('tree-icon') } />
-    : <Folder class={ resolveClassName('tree-icon') } />);
+    ? <FolderShapeOpen class={ [resolveClassName('tree-icon'), resolveClassName('node-prefix')] } />
+    : <Folder class={ [resolveClassName('tree-icon'), resolveClassName('node-prefix')] } />);
 
 
   /**
@@ -85,7 +90,8 @@ export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
     return null;
   };
 
-  const getLoadingIcon = (item: any) => (ctx.slots.nodeLoading?.(extendNodeAttr(item)) ?? isNodeLoading(item) ? <Spinner></Spinner> : '');
+  const getLoadingIcon = (item: any) => (ctx.slots.nodeLoading?.(extendNodeAttr(item)) ?? isNodeLoading(item)
+    ? <Spinner></Spinner> : '');
 
 
   /**
@@ -113,7 +119,8 @@ export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
 
     if (prefixFnVal === 'default' || (typeof props.prefixIcon === 'boolean' && props.prefixIcon)) {
       if (hasChildNode(item) || item.async || !props.autoCheckChildren) {
-        return isItemOpen(item) ? <DownShape /> : <RightShape />;
+        return isItemOpen(item) ? <DownShape class={resolveClassName('node-prefix')}/>
+          : <RightShape class={resolveClassName('node-prefix')} />;
       }
     }
 
@@ -126,6 +133,10 @@ export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
 * @returns
 */
   const getNodePrefixIcon = (item: any) => {
+    if (!props.showNodeTypeIcon) {
+      return null;
+    }
+
     if (ctx.slots.nodeType) {
       return ctx.slots.nodeType(extendNodeAttr(item));
     }
@@ -141,10 +152,57 @@ export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
     }
 
     if (prefixFnVal === 'default' || (typeof props.prefixIcon === 'boolean' && props.prefixIcon)) {
-      return isRootNode(item) || hasChildNode(item) ? getRootIcon(item) : <TextFile class={ resolveClassName('tree-icon') } />;
+      return isRootNode(item) || hasChildNode(item) ? getRootIcon(item)
+        : <TextFile class={ [resolveClassName('tree-icon'), resolveClassName('node-prefix')] } />;
     }
 
     return null;
+  };
+
+  const updateParentChecked = (item: any, isChecked) => {
+    const parent = getParentNode(item);
+    if (parent) {
+      setNodeAttr(parent, NODE_ATTRIBUTES.IS_CHECKED, isChecked);
+      if (!isRootNode(parent)) {
+        updateParentChecked(parent, isChecked);
+      }
+    }
+  };
+
+  const deepUpdateChildNode = (node: any, attr: string, value: any) => {
+    getChildNodes(node).forEach((id: string) => {
+      setNodeAttr({ [NODE_ATTRIBUTES.UUID]: id }, attr, value);
+      deepUpdateChildNode({ [NODE_ATTRIBUTES.UUID]: id }, attr, value);
+    });
+  };
+
+  const handleNodeItemCheckboxChange = (item: any, value: boolean) => {
+    setNodeAttr(item, NODE_ATTRIBUTES.IS_CHECKED, !!value);
+    deepUpdateChildNode(item,  NODE_ATTRIBUTES.IS_CHECKED, !!value);
+    updateParentChecked(item, value);
+    ctx.emit(EVENTS.NODE_CHECKED, schemaValues.value.filter((t: any) => isNodeChecked(t))
+      .map((n: any) => n[NODE_ATTRIBUTES.UUID]));
+  };
+
+  const isIndeterminate = (item: any) => isNodeChecked(item)  && !schemaValues.value
+    .filter(node => getNodePath(node)?.startsWith(getNodePath(item)))
+    .every(filterNode => isNodeChecked(filterNode));
+
+  const isNodeItemChecked = (item: any) => isNodeChecked(item) || schemaValues.value
+    .filter(node => getNodePath(node)?.startsWith(getNodePath(item)))
+    .some(filterNode => isNodeChecked(filterNode));
+
+  const getCheckboxRender = (item: any) => {
+    if (!props.showCheckbox) {
+      return null;
+    }
+
+    return <BkCheckbox
+      size='small'
+      modelValue={ isNodeItemChecked(item) }
+      indeterminate={ isIndeterminate(item) }
+      onChange={ (val: boolean) => handleNodeItemCheckboxChange(item, val) }>
+    </BkCheckbox>;
   };
 
 
@@ -161,15 +219,14 @@ export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
   * 如果是需要点击当前节点展开所有叶子节点此处也可以打开
   */
     if (!newVal) {
-      renderData.value.filter(node => String.prototype.startsWith.call(getNodePath(node), getNodePath(item)))
-        .forEach(filterNode => setNodeAttr(filterNode, NODE_ATTRIBUTES.IS_OPEN, newVal));
+      deepUpdateChildNode(item, NODE_ATTRIBUTES.IS_OPEN, newVal);
     }
 
     setNodeAttr(item, NODE_ATTRIBUTES.IS_OPEN, newVal);
 
     if (fireEmit) {
       const emitEvent: string = isItemOpen(item) ? EVENTS.NODE_EXPAND : EVENTS.NODE_COLLAPSE;
-      ctx.emit(emitEvent, [item, resolveScopedSlotParam(item), getSchemaVal(item[NODE_ATTRIBUTES.UUID]), e]);
+      ctx.emit(emitEvent, item, resolveScopedSlotParam(item), getSchemaVal(item[NODE_ATTRIBUTES.UUID]), e);
     }
   };
 
@@ -204,7 +261,7 @@ export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
 
     if (autoOpenParents) {
       if (isOpen) {
-        setNodeAction(resolvedItem, NODE_ATTRIBUTES.IS_OPEN, isOpen);
+        setNodeAction(resolvedItem, NODE_ATTRIBUTES.IS_OPEN, true);
         if (!isRootNode(resolvedItem)) {
           const parentId = getNodeAttr(resolvedItem, NODE_ATTRIBUTES.PARENT_ID);
           setOpen(parentId, true, true);
@@ -233,10 +290,10 @@ export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
       if (getNodeAttr(item, NODE_ATTRIBUTES.IS_LOADING)) {
         registerNextLoop('setNodeOpenedAfterLoading', {
           type: 'once',
-          fn: () => setNodeOpened(item, !isOpen, e),
+          fn: () => setNodeOpened(item, true, e),
         });
       } else {
-        setNodeOpened(item, !isOpen, e);
+        setNodeOpened(item, true, e);
       }
     });
   };
@@ -268,6 +325,10 @@ export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
     if (props.selectable) {
       if (selectedNodeId !== null && selectedNodeId !== undefined) {
         setNodeAttr({ [NODE_ATTRIBUTES.UUID]: selectedNodeId }, NODE_ATTRIBUTES.IS_SELECTED, !selected);
+      }
+
+      if (props.selected && props.selected !== selectedNodeId) {
+        setNodeAttr({ [NODE_ATTRIBUTES.UUID]: props.selected }, NODE_ATTRIBUTES.IS_SELECTED, !selected);
       }
 
       setNodeAttr(resolvedItem, NODE_ATTRIBUTES.IS_SELECTED, selected);
@@ -365,17 +426,19 @@ export default (props, ctx, flatData, renderData, schemaValues, initOption) => {
   };
 
   const renderTreeNode = (item: any) => <div data-tree-node={getNodeId(item)}
+    key={getNodeId(item)}
     class={ getNodeRowClass(item, flatData.schema) }>
   <div class={getNodeItemClass(item, flatData.schema, props) }
     style={getNodeItemStyle(item, props, flatData)}
     onClick={(e: MouseEvent) => handleNodeContentClick(item, e)}>
-    <span class={ resolveClassName('node-action') }
+    <span class={ [resolveClassName('node-action')] }
       onClick={(e: MouseEvent) => handleNodeActionClick(e, item)}>
         { getActionIcon(item) }
       </span>
     <span class={ resolveClassName('node-content') } >
       {
         [
+          getCheckboxRender(item),
           getNodePrefixIcon(item),
         ]
       }

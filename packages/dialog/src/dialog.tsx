@@ -27,8 +27,10 @@
 import { defineComponent, onBeforeUnmount, onMounted, reactive, watch } from 'vue';
 
 import BkButton from '@bkui-vue/button';
-import BkModal, { propsMixin } from '@bkui-vue/modal';
-import { PropTypes } from '@bkui-vue/shared';
+import { Close, Spinner, Success, Warn } from '@bkui-vue/icon';
+import BkModal from '@bkui-vue/modal';
+
+import props from './props';
 
 export default defineComponent({
   name: 'Dialog',
@@ -36,35 +38,8 @@ export default defineComponent({
     BkModal,
     BkButton,
   },
-  props: {
-    ...propsMixin,
-    width: PropTypes.oneOfType([String, Number]).def(''),
-    height: PropTypes.oneOfType([String, Number]).def(''),
-    // 确认按钮文字
-    confirmText: PropTypes.string.def('确定'),
-    // 取消按钮文字
-    cancelText: PropTypes.string.def('取消'),
-    // 步骤按钮文字
-    prevText: PropTypes.string.def('上一步'),
-    nextText: PropTypes.string.def('下一步'),
-    // 当前步骤
-    current: PropTypes.number.def(1),
-    // 总步数
-    totalStep: PropTypes.number,
-    // 弹框的标题
-    title: PropTypes.string.def('title'),
-    // 显示 header 的位置
-    headerAlign: PropTypes.commonType(['left', 'center', 'right'], 'headerAlign').def('left'),
-    // 显示 footer 的位置
-    footerAlign: PropTypes.commonType(['left', 'center', 'right'], 'footerAlign').def('right'),
-    // 颜色 按钮类型
-    theme: PropTypes.commonType(['primary', 'warning', 'success', 'danger'], 'theme').def('primary'),
-    // 对话框类型
-    dialogType: PropTypes.commonType(['show', 'operation', 'confirm', 'process'], 'dialogType').def('operation'),
-    // 按钮loading
-    isLoading: PropTypes.bool.def(false),
-  },
-  emits: ['closed', 'update:isShow', 'confirm', 'prev', 'next'],
+  props,
+  emits: ['closed', 'update:isShow', 'confirm', 'prev', 'next', 'value-change'],
   setup(props: any, { emit }) {
     const data = reactive({
       positionX: 0,
@@ -95,6 +70,7 @@ export default defineComponent({
           data.positionY = 0;
         }, 250);
       }
+      emit('value-change', val);
     });
     // 关闭弹框
     const handleClose = () => {
@@ -120,6 +96,18 @@ export default defineComponent({
     // 下一步
     const handleNextStep = () => {
       emit('next');
+    };
+    // 点击遮罩关闭
+    const handleQuickClose = (val) => {
+      if (props.quickClose) {
+        let divChild;
+        val.onclick = e => divChild = e.target;
+        val.parentNode.onclick = (e) => {
+          if (divChild !== e.target) {
+            handleClose();
+          }
+        };
+      }
     };
     // 拖拽事件
     const moveHandler = (e) => {
@@ -174,10 +162,21 @@ export default defineComponent({
       moveHandler,
       handlePrevStep,
       handleNextStep,
+      handleQuickClose,
     };
   },
 
   render() {
+    const renderIcon = () => {
+      const iconMap = {
+        loading: <Spinner class="bk-info-icon primary"></Spinner>,
+        warning: <Warn class="bk-info-icon warning"></Warn>,
+        success: <Success class="bk-info-icon success"></Success>,
+        danger: <Close class="bk-info-icon danger"></Close>,
+      };
+      return iconMap[this.infoType];
+    };
+
     const dialogSlot = {
       header: () => [
         <div class={['bk-dialog-tool', this.fullscreen || !this.draggable ? '' : 'move', this.draggable ? 'content-dragging' : '']}
@@ -185,10 +184,12 @@ export default defineComponent({
           {this.$slots.tools?.() ?? ''}
         </div>,
         <div class="bk-dialog-header">
+          <div class="bk-header-icon">
+            {this.infoType ? renderIcon() : <slot name="info-icon" />}
+          </div>
           <span class="bk-dialog-title" style={`text-align: ${this.headerAlign}`}>
             {this.$slots.header?.() ?? this.title}
           </span>
-          <span class={['bk-dialog-close', this.closeIcon ? '' : 'close-icon']} onClick={this.handleClose}>+</span>
         </div>,
       ],
       default: () => this.$slots.default?.() ?? 'default',
@@ -196,25 +197,27 @@ export default defineComponent({
         {this.dialogType === 'process' ? (
           this.$slots.footer?.() ?? <>
             {this.current === 1 ? '' : (
-              <BkButton style="float: left;margin-right: 8px" onClick={this.handlePrevStep}>
+              <BkButton class="bk-dialog-perv" onClick={this.handlePrevStep}>
                 {this.prevText}
               </BkButton>
             )}
             {this.current === this.totalStep ? '' : (
-              <BkButton style="float: left" onClick={this.handleNextStep}>{this.nextText}</BkButton>
+              <BkButton class="bk-dialog-next" onClick={this.handleNextStep}>{this.nextText}</BkButton>
             )}
             {this.current === this.totalStep ? (
               <BkButton onClick={this.handleConfirm} theme={this.theme}
                 loading={this.isLoading}>{this.confirmText}</BkButton>
             ) : ''}
-            <BkButton style="margin-left: 8px" onClick={this.handleClose}>{this.cancelText}</BkButton>
+            <BkButton class="bk-dialog-cancel" onClick={this.handleClose}
+              disabled={this.isLoading}>{this.cancelText}</BkButton>
           </>
         ) : ''}
         {this.dialogType === 'operation' ? (
           this.$slots.footer?.() ?? <>
             <BkButton onClick={this.handleConfirm} theme={this.theme}
             loading={this.isLoading}>{this.confirmText}</BkButton>
-            <BkButton style="margin-left: 8px" onClick={this.handleClose}>{this.cancelText}</BkButton>
+            <BkButton class="bk-dialog-cancel" onClick={this.handleClose}
+              disabled={this.isLoading}>{this.cancelText}</BkButton>
           </>
         ) : ''}
         {this.dialogType === 'confirm' ? (
@@ -224,11 +227,12 @@ export default defineComponent({
           </>
         ) : ''}
       </div>,
+      close: () => <span class="bk-dialog-close" onClick={this.handleClose}>+</span>,
     };
 
     const className = `bk-dialog-wrapper ${this.scrollable ? 'scroll-able' : ''} ${this.multiInstance ? 'multi-instance' : ''}`;
-    return <BkModal {...this.$props} class={[className, this.fullscreen ? 'bk-model-fullscreen' : this.size]}
-      style={this.data.moveStyle}>
+    return <BkModal {...this.$props} class={className}
+      style={this.data.moveStyle} onQuickClose={this.handleQuickClose}>
       {dialogSlot}
     </BkModal>;
   },

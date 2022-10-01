@@ -24,12 +24,17 @@
  * IN THE SOFTWARE.
 */
 
+import ResizeObserver from 'resize-observer-polyfill';
+import { nextTick } from 'vue';
+
 import { mount } from '@vue/test-utils';
 
 import BkSelect from '../src';
 import BkOption from '../src/option';
 import BkOptionGroup from '../src/optionGroup';
 
+jest.setTimeout(6000);
+window.ResizeObserver = ResizeObserver;
 describe('Select.tsx', () => {
   // 空Select是否正常渲染
   test('render empty select', async () => {
@@ -37,7 +42,9 @@ describe('Select.tsx', () => {
     expect(wrapper.classes()).toContain('bk-select');
     expect(wrapper.find('.bk-input--text').element.getAttribute('placeholder')).toBe('请选择');
     await wrapper.find('.bk-select-trigger').trigger('click');
-    expect(wrapper.find('.bk-popover-content').element.hasAttribute('data-show')).toBeTruthy();
+    const popover = document.querySelector('.bk-pop2-content');
+    expect(window.getComputedStyle(popover).display).toBe('block');
+    wrapper.unmount();
   });
 
   // 下拉是否正常
@@ -57,7 +64,8 @@ describe('Select.tsx', () => {
       disabled: true,
     });
     await wrapper.find('.bk-select-trigger').trigger('click');
-    expect(wrapper.find('.bk-popover-content').element.hasAttribute('data-show')).toBeFalsy();
+    expect(vm.isPopoverShow).toBeFalsy();
+    wrapper.unmount();
   });
 
   // options渲染是否正常
@@ -81,13 +89,14 @@ describe('Select.tsx', () => {
         };
       },
     });
-    const options = wrapper.element.querySelectorAll('.bk-select-option');
+    const options = document.querySelectorAll('.bk-select-option');
     const select = wrapper.findComponent({ name: 'Select' });
     const selectInstance = select.vm as InstanceType<typeof BkSelect>;
     expect(options.length).toBe(selectInstance.options.length);
 
     const optionInstances = wrapper.findAllComponents({ name: 'Option' });
     expect(optionInstances.filter(item => (item.vm as any).selected).length).toBe(1);
+    wrapper.unmount();
   });
 
   // 多选
@@ -136,10 +145,42 @@ describe('Select.tsx', () => {
       await item.trigger('click');
     }
     expect(wrapper.vm.selectValue).toEqual([1, undefined, null]);
+    wrapper.unmount();
   });
 
   // 单选
-  test('single select', async () => {});
+  test('single select', async () => {
+    const wrapper = await mount({
+      components: {
+        BkSelect,
+        BkOption,
+      },
+      template: `
+        <BkSelect v-model="seletValue">
+          <BkOption v-for="item in options" :value="item.value" :label="item.label"></BkOption>
+        </BkSelect>
+      `,
+      data() {
+        return {
+          seletValue: 1,
+          options: [
+            {
+              value: 1,
+              label: 'test1',
+            },
+            {
+              value: 2,
+              label: 'test2',
+            },
+          ],
+        };
+      },
+    });
+    const options = wrapper.findAllComponents({ name: 'Option' });
+    options[1].trigger('click');
+    expect(wrapper.vm.seletValue).toBe(2);
+    wrapper.unmount();
+  });
 
   // 分组
   test('group select', async () => {
@@ -179,6 +220,7 @@ describe('Select.tsx', () => {
     const option =  wrapper.findAllComponents({ name: 'Option' })[5];
     await option.trigger('click');
     expect(wrapper.vm.selectValue).toHaveLength(0);
+    wrapper.unmount();
   });
 
   // 空组是否渲染正常
@@ -197,46 +239,320 @@ describe('Select.tsx', () => {
         </BkSelect>
       `,
     });
-    expect(wrapper.findAll('.bk-option-group')).toHaveLength(2);
-    expect(wrapper.find('.bk-select-options').isVisible()).toBe(false);
+    expect(document.getElementsByClassName('bk-option-group')).toHaveLength(2);
+    wrapper.unmount();
   });
 
-  // 单选搜索功能
-  test('single select search', async () => {
-    // const wrapper = await mount({
-    //   components: {
-    //     BkSelect,
-    //     BkOption,
-    //   },
-    //   template: `
-    //     <BkSelect v-model="seletValue" filterable>
-    //       <BkOption value="test" label="label1"></BkOption>
-    //       <BkOption :value="false" label="label2" disabled></BkOption>
-    //       <BkOption :value="undefined" label="label3"></BkOption>
-    //       <BkOption :value="1" label="label4"></BkOption>
-    //       <BkOption :value="null" label="label5"></BkOption>
-    //     </BkSelect>
-    //   `,
-    //   data() {
-    //     return {
-    //       seletValue: '',
-    //     };
-    //   },
-    // });
+  test('model value change', async () => {
+    const wrapper = await mount({
+      components: {
+        BkSelect,
+        BkOption,
+      },
+      template: `
+        <BkSelect :model-value="seletValue">
+          <BkOption v-for="item in options" :value="item.value" :label="item.label"></BkOption>
+        </BkSelect>
+      `,
+      data() {
+        const options = [];
+        for (let i = 0; i < 10; i++) {
+          options.push({
+            label: `${i}-test`,
+            value: i,
+          });
+        }
+        return {
+          seletValue: 1,
+          options,
+        };
+      },
+    });
+    const { vm } = wrapper;
+    vm.seletValue = 2;
+    await vm.$nextTick();
+    expect(wrapper.find<HTMLInputElement>('.bk-select-trigger .bk-input--text').element.value).toBe('2-test');
+    wrapper.unmount();
+  });
 
-    // const { vm } = wrapper;
-    // const select = wrapper.findComponent({ name: 'Select' }).vm as InstanceType<typeof BkSelect>;;
-    // await wrapper.find('.bk-select-trigger').trigger('click');
-    // select.searchKey = '2';
-    // await vm.$nextTick();
-    // const options = wrapper.findAll('.bk-select-option').filter(item => item.isVisible());
-    // expect(options).toHaveLength(1);
-    // expect(await options[0].trigger('click'));
-    // expect(vm.seletValue).toBe('');
-    // select.searchKey = 'LABEL1';
-    // await vm.$nextTick();
-    // const [matchOption] = wrapper.findAll('.bk-select-option').filter(item => item.isVisible());
-    // await matchOption.trigger('click');
-    // expect(vm.seletValue).toBe('test');
+  test('options change', async () => {
+    const wrapper = await mount({
+      components: {
+        BkSelect,
+        BkOption,
+      },
+      template: `
+        <BkSelect :model-value="seletValue">
+          <BkOption v-for="item in options" :value="item.value" :label="item.label"></BkOption>
+        </BkSelect>
+      `,
+      data() {
+        return {
+          seletValue: 1,
+          options: [],
+        };
+      },
+    });
+    expect(wrapper.find<HTMLInputElement>('.bk-select-trigger .bk-input--text').element.value).toBe('1');
+    const { vm } = wrapper;
+    for (let i = 0; i < 10; i++) {
+      vm.options.push({
+        label: `${i}-test`,
+        value: i,
+      });
+    }
+    await vm.$nextTick();
+    expect(wrapper.find<HTMLInputElement>('.bk-select-trigger .bk-input--text').element.value).toBe('1-test');
+    wrapper.unmount();
+  });
+
+  // tag 删除功能
+  test('select tag remove', async () => {
+    const wrapper = await mount({
+      components: {
+        BkSelect,
+        BkOption,
+      },
+      template: `
+        <BkSelect v-model="seletValue" multiple multiple-mode="tag">
+          <BkOption v-for="item in options" :value="item.value" :label="item.label"></BkOption>
+        </BkSelect>
+      `,
+      data() {
+        return {
+          seletValue: [1, 2],
+          options: [
+            {
+              value: 1,
+              label: 'test1',
+            },
+            {
+              value: 2,
+              label: 'test2',
+            },
+          ],
+        };
+      },
+    });
+    const tags = wrapper.findAllComponents('.bk-tag');
+    expect(tags).toHaveLength(2);
+    tags[0].find('.bk-tag-close').trigger('click');
+    expect(wrapper.vm.seletValue).toEqual([2]);
+    wrapper.unmount();
+  });
+
+  // 搜索功能
+  test('select search', (done) => {
+    const wrapper = mount({
+      components: {
+        BkSelect,
+        BkOption,
+      },
+      template: `
+        <BkSelect v-model="seletValue" filterable>
+          <BkOption v-for="item in options" :value="item.value" :label="item.label"></BkOption>
+        </BkSelect>
+      `,
+      data() {
+        return {
+          seletValue: '',
+          options: [
+            {
+              value: 1,
+              label: 'test1',
+            },
+            {
+              value: 2,
+              label: 'test2',
+            },
+            {
+              value: 3,
+              label: 'test2',
+            },
+            {
+              value: 4,
+              label: 'test4',
+            },
+          ],
+        };
+      },
+    });
+    const input = wrapper.find('input[type="text"]');
+    input.setValue('test2');
+    const select = wrapper.findComponent(BkSelect);
+    setTimeout(() => {
+      expect(select.vm.searchKey).toBe('test2');
+      expect(wrapper.findAllComponents({ name: 'Option' }).filter(com => com.vm.visible).length).toBe(2);
+      wrapper.unmount();
+      done();
+    }, 400);
+  });
+
+  // 下拉框搜索测试
+  test('select input search', (done) => {
+    const wrapper = mount({
+      components: {
+        BkSelect,
+        BkOption,
+      },
+      template: `
+        <BkSelect v-model="seletValue" :input-search="false" multiple filterable multiple-mode="tag">
+          <BkOption v-for="item in options" :value="item.value" :label="item.label"></BkOption>
+        </BkSelect>
+      `,
+      data() {
+        return {
+          seletValue: '',
+          options: [
+            {
+              value: 1,
+              label: 'test1',
+            },
+            {
+              value: 2,
+              label: 'test2',
+            },
+            {
+              value: 3,
+              label: 'test2',
+            },
+            {
+              value: 4,
+              label: 'test4',
+            },
+          ],
+        };
+      },
+    });
+    const input = wrapper.findComponent({ name: 'PopContent' }).find('.bk-select-search-input');
+    input.setValue('test4');
+    const select = wrapper.findComponent(BkSelect);
+    setTimeout(() => {
+      expect(select.vm.searchKey).toBe('test4');
+      expect(wrapper.findAllComponents({ name: 'Option' }).filter(com => com.vm.visible).length).toBe(1);
+      wrapper.unmount();
+      done();
+    }, 400);
+  });
+
+  // 虚拟滚动功能
+  test('virtual select', async () => {
+    const wrapper = await mount(BkSelect, {
+      props: {
+        enableVirtualRender: true,
+        list: new Array(1000000).fill('')
+          .map((_, index) => ({ value: index, label: `测试数据${index}` })),
+      },
+    });
+    expect(wrapper.findAllComponents(BkOption).length).toBeLessThan(10);
+    wrapper.unmount();
+  });
+
+  // 测试多选禁用态
+  test('disabled multiple select', async () => {
+    const wrapper = await mount({
+      components: {
+        BkSelect,
+        BkOption,
+      },
+      template: `
+        <BkSelect v-model="seletValue" disabled multiple multiple-mode="tag">
+          <BkOption v-for="item in options" :value="item.value" :label="item.label"></BkOption>
+        </BkSelect>
+      `,
+      data() {
+        return {
+          seletValue: [1, 2],
+          options: [
+            {
+              value: 1,
+              label: 'test1',
+            },
+            {
+              value: 2,
+              label: 'test2',
+            },
+          ],
+        };
+      },
+    });
+    await wrapper.find('.bk-select-trigger').trigger('click');
+    expect(wrapper.findComponent(BkSelect).vm.isPopoverShow).toBeFalsy();
+    const tag = wrapper.findComponent('.bk-tag');
+    await tag.find('.bk-tag-close').trigger('click');
+    expect(wrapper.vm.seletValue).toEqual([1, 2]);
+    wrapper.unmount();
+  });
+
+  // 测试单选禁用态
+  test('disabled single select', async () => {
+    const wrapper = await mount({
+      components: {
+        BkSelect,
+        BkOption,
+      },
+      template: `
+        <BkSelect v-model="seletValue" disabled>
+          <BkOption v-for="item in options" :value="item.value" :label="item.label"></BkOption>
+        </BkSelect>
+      `,
+      data() {
+        return {
+          seletValue: '',
+          options: [
+            {
+              value: 1,
+              label: 'test1',
+            },
+            {
+              value: 2,
+              label: 'test2',
+            },
+          ],
+        };
+      },
+    });
+    await wrapper.find('.bk-select-trigger').trigger('click');
+    expect(wrapper.findComponent(BkSelect).vm.isPopoverShow).toBeFalsy();
+    // expect(wrapper.findAllComponents({ name: 'PopContent' })).toHaveLength(1);
+    // expect(wrapper.findComponent({ name: 'PopContent' }).isVisible()).toBe(false);
+    const option = wrapper.findComponent(BkOption);
+    await option.trigger('click');
+    expect(wrapper.vm.seletValue).toBe('');
+    wrapper.unmount();
+  });
+
+  // 测试重置modelValue
+  test('reset model value', async () => {
+    const wrapper = await mount({
+      components: {
+        BkSelect,
+        BkOption,
+      },
+      template: `
+        <BkSelect v-model="seletValue">
+          <BkOption v-for="item in options" :value="item.value" :label="item.label"></BkOption>
+        </BkSelect>
+      `,
+      data() {
+        return {
+          seletValue: 'test1',
+          options: [
+            {
+              value: 'test1',
+              label: 'test1',
+            },
+            {
+              value: 'test2',
+              label: 'test2',
+            },
+          ],
+        };
+      },
+    });
+    wrapper.vm.seletValue = '';
+    await nextTick();
+    expect((wrapper.find('input[type="text"]').element as any).value).toBe('');
+    wrapper.unmount();
   });
 });

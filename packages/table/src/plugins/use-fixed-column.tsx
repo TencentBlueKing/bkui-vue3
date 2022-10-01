@@ -27,20 +27,21 @@ import { computed } from 'vue';
 
 import { resolveClassName } from '@bkui-vue/shared';
 
+import { LINE_HEIGHT, SCROLLY_WIDTH } from '../const';
 import { GroupColumn } from '../props';
 import { getColumnReactWidth } from '../utils';
 
 /**
  * 固定列Hooks
  */
-export default (props, colgroups: GroupColumn[]) => {
-  const footHeight = computed(() => (props.pagination && props.data.length ? 40 : 0));
-  const resolveColumnClass = (column: GroupColumn) => ({
+export default (props, colgroups: GroupColumn[], hasScrollY?) => {
+  const footHeight = computed(() => (props.pagination && props.data.length ? LINE_HEIGHT : 0));
+  const resolveColumnClass = (column: GroupColumn, scrollX?, offsetRight?) => ({
     column_fixed: !!column.fixed,
     column_fixed_left: column.fixed !== 'right',
     column_fixed_right: column.fixed === 'right',
+    shadow: column.fixed === 'right' ? scrollX < offsetRight :  scrollX > 0,
   });
-
   const resolveFixColPos = (column: GroupColumn) => (column.fixed === 'right' ? 'right' : 'left');
   const resolveFixOffset = {
     left: (ignoreFirst = true) => colgroups.filter(col =>  col.fixed && col.fixed !== 'right')
@@ -52,39 +53,39 @@ export default (props, colgroups: GroupColumn[]) => {
       .reduce((offset: number, curr: GroupColumn, index: number) => {
         const outOffset = ignoreFirst && (index === 0) ? offset : (offset + getColumnReactWidth(curr));
         return outOffset;
-      }, 0),
+      }, hasScrollY ? SCROLLY_WIDTH : 0),
   };
-  const reolveFixRightOffset = resolveFixOffset.right;
+  const resolveFixRightOffset = resolveFixOffset.right;
 
   const getFixedColumnStyleResolve = () => {
-    const resolveFixedColumnStyle = (column: GroupColumn, fixedoffset) => {
+    const resolveFixedColumnStyle = (column: GroupColumn, fixedOffset) => {
       if (!column.fixed) {
         return {};
       }
 
       const fixedPos = resolveFixColPos(column);
       const opt = fixedPos === 'right' ? -1 : 1;
-      const offsetX = `${fixedoffset[fixedPos]}px`;
-      fixedoffset[fixedPos] = fixedoffset[fixedPos] + getColumnReactWidth(column) * opt;
+      const offsetX = `${fixedOffset[fixedPos]}px`;
+      fixedOffset[fixedPos] = fixedOffset[fixedPos] + getColumnReactWidth(column) * opt;
       return {
         [fixedPos]: offsetX,
       };
     };
 
-    const rightOffsetWidth = reolveFixRightOffset(true);
+    const rightOffsetWidth = resolveFixRightOffset(true);
 
-    const fixedoffset: any = {
+    const fixedOffset: any = {
       left: 0,
       right: rightOffsetWidth,
     };
 
     return {
-      fixedoffset,
+      fixedOffset,
       resolveFixedColumnStyle,
     };
   };
 
-  const renderFixedColumns = () => {
+  const renderFixedColumns = (scrollX?, offsetRight?) => {
     const resolveColumnStyle = (colPos: string) => ({
       width: `${resolveFixOffset[colPos](false)}px`,
       bottom: `${footHeight.value}px`,
@@ -99,7 +100,7 @@ export default (props, colgroups: GroupColumn[]) => {
         const isExist = colPosExist[colPos];
         colPosExist[colPos] = true;
         return isExist ? '' : <div
-          class={ resolveColumnClass(col) }
+          class={ resolveColumnClass(col, scrollX, offsetRight) }
           style={ resolveColumnStyle(colPos) }></div>;
       });
   };

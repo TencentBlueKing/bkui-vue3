@@ -6,7 +6,7 @@
       :handle-res-code="handleRes"
       :tip="'最多上传2个文件'"
       :url="'https://jsonplaceholder.typicode.com/posts/'"
-      @on-exceed="handleExceed"
+      @exceed="handleExceed"
     />
   </div>
 </template>

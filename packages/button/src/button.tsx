@@ -44,9 +44,11 @@ const buttonProps = {
   loadingMode: PropTypes.commonType(Object.values(BkLoadingMode)),
   outline: PropTypes.bool,
   text: PropTypes.bool,
+  selected: PropTypes.bool,
   // circle: PropTypes.bool,
   nativeType: {
     type: String as IButtonNativeType,
+    default: 'button',
   },
 };
 
@@ -56,7 +58,7 @@ export default defineComponent({
   name: 'Button',
   props: buttonProps,
   emits: ['click', 'mouseover'],
-  setup(props, { slots, attrs, emit }) {
+  setup(props, { slots, emit }) {
     const isHover = ref(false);
     const showSlot = slots.default ?? false;
     const btnClsPrefix = 'bk-button';
@@ -71,6 +73,8 @@ export default defineComponent({
         'is-disabled': props.disabled,
         'is-outline': props.outline,
         'is-text': isText.value,
+        'is-loading': props.loading,
+        'is-selected': props.selected,
         // 'is-circle': props.circle,
         [`${btnClsPrefix}-${props.size}`]: props.size && btnSizes.includes(props.size),
         'no-slot': !showSlot,
@@ -86,18 +90,18 @@ export default defineComponent({
     });
     const loadingSize = computed(() => (
       (isText.value || props.size === BkLoadingSize.Small) ? BkLoadingSize.Mini : BkLoadingSize.Small));
-    const handleClick = () => {
+    const handleClick = (e: MouseEvent) => {
       if (props.loading) return;
       /**
        * Success event.
        * @event click
        */
-      emit('click');
+      emit('click', e);
     };
 
-    const handleMouseOver = () => {
+    const handleMouseOver = (e: MouseEvent) => {
       isHover.value = true;
-      emit('mouseover');
+      emit('mouseover', e);
     };
 
     const handleMouseout = () => {
@@ -111,7 +115,6 @@ export default defineComponent({
         disabled={props.disabled}
         class={btnCls.value}
         type={props.nativeType}
-        {...attrs}
         onClick={handleClick}
         onMouseover={handleMouseOver}
         onMouseleave={handleMouseout}
@@ -127,7 +130,7 @@ export default defineComponent({
           )
         }
         {
-          slots.default && !props.loading && <span class={`${btnClsPrefix}-text`}>{slots.default?.()}</span>
+          slots.default && <span class={`${btnClsPrefix}-text`}>{slots.default?.()}</span>
         }
       </button>
     );

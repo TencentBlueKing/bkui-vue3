@@ -27,7 +27,7 @@
 import { computed, defineComponent, onMounted, onUnmounted, ref, Transition, watch } from 'vue';
 
 import { Close, Error, Info, Success, Warn } from '@bkui-vue/icon';
-import { bkZIndexManager, PropTypes } from '@bkui-vue/shared';
+import { bkZIndexManager, isElement, PropTypes } from '@bkui-vue/shared';
 
 const messageProps = {
   id: PropTypes.string.def(''),
@@ -39,12 +39,13 @@ const messageProps = {
   spacing: PropTypes.number.def(10),
   extCls: PropTypes.string.def(''),
   onClose: PropTypes.func,
+  getContainer: PropTypes.instanceOf(HTMLElement),
 };
 
 export default defineComponent({
   name: 'Message',
   props: messageProps,
-  emits: ['destory'],
+  emits: ['destroy'],
   setup(props, { emit }) {
     const classNames = computed(() => [
       'bk-message',
@@ -53,9 +54,11 @@ export default defineComponent({
     ]);
     const zIndex = bkZIndexManager.getMessageNextIndex();
 
+    const isGetContainer = computed<boolean>(() => props.getContainer && isElement(props.getContainer));
     const styles = computed(() => ({
       top: `${props.offsetY}px`,
       zIndex,
+      position: (isGetContainer.value ? 'absolute' : 'fixed') as ('absolute' | 'fixed'),
     }));
 
     const visible = ref(false);
@@ -67,7 +70,9 @@ export default defineComponent({
       }, props.delay);
     };
 
-    const close = () => {
+    const close = (e: Event) => {
+      e.preventDefault();
+      e.stopPropagation();
       visible.value = false;
     };
 
@@ -82,7 +87,7 @@ export default defineComponent({
 
     watch(visible, () => {
       if (!visible.value) {
-        emit('destory', props.id);
+        emit('destroy', props.id);
       }
     });
 
@@ -114,7 +119,7 @@ export default defineComponent({
             <div class="bk-message-icon">{renderIcon()}</div>
             {this.message}
           </div>
-          {this.dismissable && <Error class="bk-message-icon bk-message-close" onClick={this.close} />}
+          {this.dismissable && <Error class="bk-message-close" onClick={this.close} />}
         </div>
       </Transition>
     );

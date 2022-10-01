@@ -30,7 +30,7 @@ export const propsMixin = {
   width: PropTypes.oneOfType([String, Number]).def('50%'),
   height: PropTypes.oneOfType([String, Number]).def('50%'),
   // 配置自定义样式类名
-  customClass: PropTypes.string || PropTypes.array,
+  extCls: PropTypes.string || PropTypes.array,
   // 弹框出现时，是否允许页面滚动
   scrollable: PropTypes.bool.def(true),
   // 是否允许出现遮罩
@@ -39,24 +39,24 @@ export const propsMixin = {
   closeIcon: PropTypes.bool.def(true),
   // 是否允许 esc 按键关闭弹框
   escClose: PropTypes.bool.def(true),
-  // 是否允许点击遮罩关闭弹框
-  maskClose: PropTypes.bool.def(true),
   // 是否全屏
   fullscreen: PropTypes.bool.def(false),
-  // 自定义类样式名
-  extCls: PropTypes.string.def(''),
   // 弹框尺寸
-  size: PropTypes.commonType(['normal', 'small', 'medium', 'large'], 'size').def('normal'),
+  size: PropTypes.commonType(['normal', 'small', 'medium', 'large'], 'size').def(),
   // 是否可拖拽
   draggable: PropTypes.bool.def(true),
   // 是否允许点击遮罩关闭弹窗
   quickClose: PropTypes.bool.def(true),
   // 是否显示在body内（即与id#app同级
   transfer: PropTypes.bool.def(false),
+  // 弹出层z-index，实际显示的值会自动+1。为了抱证在遮罩上正常显示
+  zIndex: PropTypes.number,
   // 内容区最大高度
   maxHeight: PropTypes.string,
   // 弹出方向
   direction: PropTypes.string,
+  // title
+  title: PropTypes.string.def(''),
   // 动画类型
   animateType: PropTypes.string.def('slide'),
   // 弹框的渲染方式
@@ -67,4 +67,6 @@ export const propsMixin = {
   dialogType: PropTypes.commonType(['show', 'operation', 'confirm', 'process'], 'dialogType').def('operation'),
   // 是否允许多个弹框同时存在
   multiInstance: PropTypes.bool.def(true),
+  // info-box
+  infoType: PropTypes.commonType(['success', 'warning', 'danger', 'loading'], 'infoType').def(),
 };

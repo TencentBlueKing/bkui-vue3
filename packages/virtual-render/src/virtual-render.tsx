@@ -43,6 +43,8 @@ import {
   withDirectives,
 } from 'vue';
 
+import { resolveClassName } from '@bkui-vue/shared';
+
 import {
   type VirtualRenderProps,
   virtualRenderProps,
@@ -60,7 +62,7 @@ export default defineComponent({
   setup(props: VirtualRenderProps, ctx: SetupContext) {
     const { renderAs, contentAs } = props;
 
-    const resolveClassName = (prop: string | string[] | any[] | any) => {
+    const resolvePropClassName = (prop: string | string[] | any[] | any) => {
       if (typeof prop === 'string') {
         return [prop];
       }
@@ -160,9 +162,12 @@ export default defineComponent({
     };
 
     /** 列表数据重置之后的处理事项 */
-    const afterListDataReset = () => {
-      const el = refRoot.value?.parentNode;
+    const afterListDataReset = (scrollTop = true) => {
+      const el = refRoot.value?.parentNode as HTMLElement;
       computedVirtualIndex(props.lineHeight, handleScrollCallback, pagination, el, null);
+      if (scrollTop && refRoot.value) {
+        refRoot.value.scrollTo(0, 0);
+      }
     };
 
     /** 映射传入的数组为新的数组，增加 $index属性，用来处理唯一Index */
@@ -199,16 +204,16 @@ export default defineComponent({
 
     /** 外层样式列表 */
     const wrapperClass = computed(() => [
-      'bk-virtual-render',
+      resolveClassName('virtual-render'),
       props.scrollXName,
       props.scrollYName,
-      ...resolveClassName(props.className),
-      props.scrollPosition === 'container' ? 'bk-virtual-content' : '']);
+      ...resolvePropClassName(props.className),
+      props.scrollPosition === 'container' ? resolveClassName('virtual-content') : '']);
 
     /** 内容区域样式列表 */
     const innerClass = computed(() => [
-      props.scrollPosition === 'content' ? 'bk-virtual-content' : '',
-      ...resolveClassName(props.contentClassName)]);
+      props.scrollPosition === 'content' ? resolveClassName('virtual-content') : '',
+      ...resolvePropClassName(props.contentClassName)]);
     const vVirtualRender = resolveDirective('bkVirtualRender');
     const dirModifier = {
       lineHeight: props.lineHeight,
@@ -258,9 +263,10 @@ export default defineComponent({
         ]),
         ctx.slots.afterContent?.() ?? '',
         h('div', {
-          class: ['bk-virtual-section'],
+          class: [resolveClassName('virtual-section')],
           style: innerStyle.value,
         }),
+        ctx.slots.afterSection?.() ?? '',
       ],
     );
   },

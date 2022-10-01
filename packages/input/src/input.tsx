@@ -24,7 +24,13 @@
  * IN THE SOFTWARE.
 */
 
-import { computed, defineComponent, ExtractPropTypes, ref } from 'vue';
+import {
+  computed,
+  defineComponent,
+  ExtractPropTypes,
+  ref,
+  watch,
+} from 'vue';
 
 import { Close, DownSmall, Eye, Search, Unvisible } from '@bkui-vue/icon';
 import {
@@ -32,7 +38,6 @@ import {
   PropTypes,
   useFormItem,
 } from '@bkui-vue/shared';
-
 
 export const inputType = {
   type: PropTypes.string.def('text'),
@@ -53,12 +58,14 @@ export const inputType = {
   showControl: PropTypes.bool.def(true),
   showClearOnlyHover: PropTypes.bool.def(false),
   precision: PropTypes.number.def(0).validate(val => val >= 0 && val < 20),
-  modelValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def(''),
+  modelValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   size: PropTypes.size(),
   rows: PropTypes.number,
+  selectReadonly: PropTypes.bool.def(false), // selectReadonly select组件使用，readonly属性，但是组件样式属于正常输入框样式
+  withValidate: PropTypes.bool.def(true),
 };
 
-export enum EVENTS {
+export const enum EVENTS {
   UPDATE = 'update:modelValue',
   FOCUS = 'focus',
   BLUR = 'blur',
@@ -74,14 +81,13 @@ export enum EVENTS {
   COMPOSITIONUPDATE = 'compositionupdate',
   COMPOSITIONEND = 'compositionend',
 }
-function EventFunction(value: string | number, evt?: KeyboardEvent | Event) {
-  return {
-    value, evt,
-  };
-};
+function EventFunction(_value: any, _evt?: KeyboardEvent | Event) {
+  return true;
+}
+
 function CompositionEventFunction(evt: CompositionEvent) {
   return evt;
-};
+}
 export const inputEmitEventsType = {
   [EVENTS.UPDATE]: EventFunction,
   [EVENTS.FOCUS]: (evt: FocusEvent) => evt,
@@ -115,11 +121,12 @@ export default defineComponent({
     const isTextArea = computed(() => props.type === 'textarea');
     const inputClsPrefix = computed(() => (isTextArea.value ? 'bk-textarea' : 'bk-input'));
     const { class: cls, style, ...inputAttrs } = ctx.attrs;
+
     const inputRef = ref();
     const inputCls = computed(() => classes({
       [`${inputClsPrefix.value}--${props.size}`]: !!props.size,
       'is-focused': isFocused.value,
-      'is-readonly': props.readonly,
+      'is-readonly': props.readonly && !props.selectReadonly,
       'is-disabled': props.disabled,
       'is-simplicity': props.behavior === 'simplicity',
       [`${cls}`]: !!cls,
@@ -141,7 +148,21 @@ export default defineComponent({
     const pwdVisible = ref(false);
     const clearCls = computed(() => classes({
       'show-clear-only-hover': props.showClearOnlyHover,
+      [`${inputClsPrefix.value}--clear-icon`]: true,
     }, suffixCls));
+    const incControlCls = computed(() => classes({
+      'is-disabled': props.disabled || props.modelValue >= props.max,
+    }));
+
+    const decControlCls = computed(() => classes({
+      'is-disabled': props.disabled || props.modelValue <= props.min,
+    }));
+
+    watch(() => props.modelValue, () => {
+      if (props.withValidate) {
+        formItem?.validate?.('change');
+      }
+    });
 
     ctx.expose({
       focus() {
@@ -151,11 +172,11 @@ export default defineComponent({
     });
 
     function clear() {
+      if (props.disabled) return;
       const resetVal = isNumberInput.value ? props.min : '';
       ctx.emit(EVENTS.UPDATE, resetVal);
       ctx.emit(EVENTS.CHANGE, resetVal);
       ctx.emit(EVENTS.CLEAR);
-      formItem?.validate?.('change');
     }
 
     function handleFocus(e) {
@@ -166,16 +187,18 @@ export default defineComponent({
     function handleBlur(e) {
       isFocused.value = false;
       ctx.emit(EVENTS.BLUR, e);
-      if (isNumberInput.value && e.target.value > props.max) {
-        ctx.emit(EVENTS.UPDATE, props.max);
-        ctx.emit(EVENTS.CHANGE, props.max);
+      if (isNumberInput.value && (e.target.value > props.max || e.target.value < props.min)) {
+        const val = e.target.value > props.max ? props.max : props.min;
+        ctx.emit(EVENTS.UPDATE, val);
+        ctx.emit(EVENTS.CHANGE, val);
       }
       formItem?.validate?.('blur');
     }
     // 事件句柄生成器
     function eventHandler(eventName) {
       return (e) => {
-        if (e.code === 'Enter' || e.key === 'Enter' || e.keyCode === 13) {
+        e.stopPropagation();
+        if (eventName === EVENTS.KEYDOWN && (e.code === 'Enter' || e.key === 'Enter' || e.keyCode === 13)) {
           ctx.emit(EVENTS.ENTER, e.target.value, e);
         }
         if (isCNInput.value && [EVENTS.INPUT, EVENTS.CHANGE].some(e => eventName === e)) return;
@@ -184,9 +207,6 @@ export default defineComponent({
         }
 
         ctx.emit(eventName, e.target.value, e);
-        if (eventName === EVENTS.INPUT) {
-          formItem?.validate?.('change');
-        }
       };
     }
     const [
@@ -219,7 +239,7 @@ export default defineComponent({
     function handleNumber(step: number, INC = true) {
       const numStep = parseInt(String(step), 10);
       const precision = Number.isInteger(props.precision) ? props.precision : 0;
-      const val: number = parseFloat(props.modelValue.toString());
+      const val: number = parseFloat((props.modelValue ?? 0).toString());
       const factor = Number.isInteger(numStep) ? numStep : 1;
 
       let newVal = val + (INC ? factor :  -1 * factor);
@@ -234,11 +254,13 @@ export default defineComponent({
     }
 
     function handleInc() {
+      if (props.disabled) return;
       const newVal = handleNumber(props.step);
       ctx.emit(EVENTS.UPDATE, newVal);
     }
 
     function handleDec() {
+      if (props.disabled) return;
       const newVal = handleNumber(props.step, false);
       ctx.emit(EVENTS.UPDATE, newVal);
     }
@@ -251,12 +273,19 @@ export default defineComponent({
       pwdVisible.value = !pwdVisible.value;
     }
 
-    const bindProps = computed(() => ({
-      value: props.modelValue,
-      maxlength: props.maxlength,
-      placeholder: props.placeholder,
-      readonly: props.readonly,
-      disabled: props.disabled,
+    const bindProps = computed(() => {
+      const val = typeof props.modelValue === 'undefined' || props.modelValue === null ? {} : {
+        value: props.modelValue,
+      };
+      return ({
+        ...val,
+        maxlength: props.maxlength,
+        placeholder: props.placeholder,
+        readonly: props.readonly,
+        disabled: props.disabled,
+      });
+    });
+    const eventListener = {
       onInput: handleInput,
       onFocus: handleFocus,
       onBlur: handleBlur,
@@ -267,9 +296,9 @@ export default defineComponent({
       onKeyup: handleKeyup,
       onCompositionstart: handleCompositionStart,
       onCompositionend: handleCompositionEnd,
-    }));
+    };
     return () => (
-        <div class={inputCls.value} style={style} >
+        <div class={inputCls.value} style={style as any} >
         {
           ctx.slots?.prefix?.() ?? (props.prefix && <div class={getCls('prefix-area')}>
             <span class={getCls('prefix-area--text')}>{props.prefix}</span>
@@ -278,12 +307,15 @@ export default defineComponent({
         {isTextArea.value ? (
             <textarea
               ref={inputRef}
+              spellcheck={false}
               {...inputAttrs}
+              {...eventListener}
               {...bindProps.value}
               rows={props.rows}
             />
         ) : (
           <input
+            spellcheck={false}
             {...inputAttrs}
             ref={inputRef}
             class={`${inputClsPrefix.value}--text`}
@@ -291,6 +323,7 @@ export default defineComponent({
             step={props.step}
             max={props.max}
             min={props.min}
+            {...eventListener}
             {...bindProps.value}
           />
         )}
@@ -299,14 +332,14 @@ export default defineComponent({
         {
           typeof props.maxlength === 'number' && (props.showWordLimit || isTextArea.value) && (
             <p class={getCls('max-length')}>
-              {props.modelValue.toString().length}/<span>{ceilMaxLength.value}</span>
+              {(props.modelValue ?? '').toString().length}/<span>{ceilMaxLength.value}</span>
             </p>
           )
         }
         {
           isNumberInput.value && props.showControl && (<div class={getCls('number-control')}>
-          <DownSmall onClick={handleInc} />
-          <DownSmall onClick={handleDec}/>
+          <DownSmall class={incControlCls.value} onClick={handleInc} />
+          <DownSmall class={decControlCls.value} onClick={handleDec}/>
         </div>)
         }
         {

@@ -24,9 +24,10 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import { throttle } from 'lodash';
 import { computed, ref } from 'vue';
 
-import { GroupColumn } from '../props';
+import { GroupColumn } from '../props';;
 
 export default (colgroups: GroupColumn[], immediate = true) => {
   const pluginName = 'HeadColumnResize';
@@ -63,10 +64,14 @@ export default (colgroups: GroupColumn[], immediate = true) => {
     targetTable.querySelectorAll('th').forEach((th: HTMLElement) => th.style.setProperty('user-select', 'inherit'));
   };
 
+  const updateOffsetX = (e: MouseEvent) => throttle(() => {
+    dragOffsetX.value = e.clientX - startX + dragStartOffsetX;
+  }, 60);
+
   const handleMouseMove = (e: MouseEvent) => {
     const bodyStyle = document.body.style;
     bodyStyle.setProperty('cursor', '');
-    dragOffsetX.value = e.clientX - startX + dragStartOffsetX;
+    updateOffsetX(e)();
   };
 
   const handler = {
@@ -108,6 +113,7 @@ export default (colgroups: GroupColumn[], immediate = true) => {
           isInDragSection = true;
           target.style.setProperty('cursor', 'col-resize');
         } else {
+          target.style.setProperty('cursor', '');
           isInDragSection = false;
         }
       }
@@ -157,7 +163,7 @@ export default (colgroups: GroupColumn[], immediate = true) => {
     position: 'absolute',
     top: 0,
     bottom: 0,
-    left: `${dragOffsetX.value}px`,
+    left: 0,
     width: '1px',
     'background-color': '#ebeef5',
   } as const));

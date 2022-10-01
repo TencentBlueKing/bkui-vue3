@@ -46,10 +46,10 @@ import { ajaxSliceUpload, ajaxUpload } from './use-ajax-upload';
 import useFileHandler from './use-file-handler';
 
 export default defineComponent({
-  name: 'BkUpload',
+  name: 'Upload',
   props: uploadProps,
-  emits: ['on-exceed', 'on-progress', 'on-success', 'on-error', 'on-delete', 'on-done'],
-  setup(props, { slots, emit }) {
+  emits: ['exceed', 'progress', 'success', 'error', 'delete', 'done'],
+  setup(props, { slots, emit, expose }) {
     const requests = shallowRef<Record<string, XMLHttpRequest | Promise<unknown>>>({});
 
     const isPhotowall = computed<boolean>(() => props.theme === EThemes.PICTURE);
@@ -73,7 +73,7 @@ export default defineComponent({
 
     function onRemove(file: UploadFile, fileList: UploadFiles) {
       abort(file);
-      emit('on-delete', file, fileList);
+      emit('delete', file, fileList);
     }
 
     const {
@@ -92,7 +92,7 @@ export default defineComponent({
 
       // limit检查
       if (props.limit && fileList.value.length + files.length > props.limit) {
-        emit('on-exceed', files, fileList.value);
+        emit('exceed', files, fileList.value);
         return;
       }
 
@@ -106,7 +106,7 @@ export default defineComponent({
         const error = handlePreprocess(rawFile);
 
         if (error) {
-          emit('on-error', rawFile, fileList.value, error);
+          emit('error', rawFile, fileList.value, error);
           return;
         }
 
@@ -115,6 +115,10 @@ export default defineComponent({
         }
       }
     };
+
+    function handleRetry(file: UploadFile) {
+      send(file.raw);
+    }
 
     async function upload(file: UploadRawFile, sendFiles: File[]) {
       if (!props.beforeUpload) {
@@ -136,7 +140,7 @@ export default defineComponent({
       send(file, sendFiles);
     }
 
-    function send(file: UploadRawFile, sendFiles: File[]) {
+    function send(file: UploadRawFile, sendFiles?: File[]) {
       const {
         headers,
         header,
@@ -168,29 +172,29 @@ export default defineComponent({
         chunkSize,
         onProgress: (event) => {
           handleProgress(event, file);
-          emit('on-progress', event, file, fileList.value);
+          emit('progress', event, file, fileList.value);
         },
         onSuccess: (res: SuccessResponse) => {
           const result = res as APIResponse;
           if (props?.handleResCode?.(result)) {
             handleSuccess(res, file);
-            emit('on-success', res, file, fileList.value);
+            emit('success', res, file, fileList.value);
           } else {
             const err = new Error(result?.message || 'unknow error');
-            handleError(err, file);
-            emit('on-error', file, fileList.value, err);
+            handleError(err, file, res);
+            emit('error', file, fileList.value, err);
           }
 
           delete requests.value[uid];
         },
         onError: (err) => {
           handleError(err, file);
-          emit('on-error', file, fileList.value, err);
+          emit('error', file, fileList.value, err);
           delete requests.value[uid];
         },
         onComplete: () => {
-          if (sendFiles.indexOf(file) === sendFiles.length - 1) {
-            emit('on-done', fileList.value);
+          if (sendFiles && sendFiles.indexOf(file) === sendFiles.length - 1) {
+            emit('done', fileList.value);
           }
         },
       };
@@ -226,6 +230,11 @@ export default defineComponent({
       });
     });
 
+    expose({
+      handleRemove,
+      handleRetry,
+    });
+
     return () => (
       <div class={classNames.value}>
         {
@@ -241,7 +250,8 @@ export default defineComponent({
           theme={props.theme}
           disabled={props.disabled}
           multiple={props.multiple}
-          onRemove={handleRemove}>
+          onRemove={handleRemove}
+          onRetry={handleRetry}>
           {{
             innerTrigger: (file: UploadFile) => isPhotowall.value
               && <UploadTrigger
@@ -250,6 +260,7 @@ export default defineComponent({
                 v-slots={slots}
                 onChange={handleFiles}
                 onRemove={handleRemove} />,
+            file: slots.file,
           }}
         </UploadList>
       </div>

@@ -181,7 +181,14 @@ export default defineComponent({
 
     const isForm = Boolean(form);
 
-    const labelStyles = computed<object>(() => {
+    const isFormTypeVertical = computed(() => {
+      if (!isForm) {
+        return false;
+      }
+      return form.props.formType === 'vertical';
+    });
+
+    const labelStyles = computed<any>(() => {
       const styles = {
         width: '',
         paddingRight: '',
@@ -205,8 +212,6 @@ export default defineComponent({
      * @desc 验证字段
      */
     const validate = (trigger?: String): Promise<boolean> => {
-      state.isError = false;
-      state.errorMessage = '';
       // 没有设置 property 不进行验证
       if (!props.property
       || (isForm && !form.props.model)) {
@@ -223,9 +228,14 @@ export default defineComponent({
       if (props.rules) {
         rules = props.rules as IFormItemRules;
       }
-      // debugger;
+
       // 合并规则属性配置
       rules = getTriggerRules(trigger, mergeRules(rules, getRulesFromProps(props)));
+      // 重新触发验证重置上次的验证状态
+      if (rules.length > 0) {
+        state.isError = false;
+        state.errorMessage = '';
+      }
 
       const value = get(form.props.model, props.property);
 
@@ -237,14 +247,19 @@ export default defineComponent({
             return Promise.resolve(true);
           }
           const rule = rules[stepIndex];
+
           return Promise.resolve()
             .then(() => {
-              // debugger;
               const result = rule.validator(value);
               // 异步验证
               if (typeof result !== 'boolean'
                 && typeof result.then === 'function') {
-                return result.then(() => doValidate, () => {
+                return result.then((data) => {
+                  // 异步验证结果为 false
+                  if (data === false) {
+                    return Promise.reject(rule.message);
+                  }
+                }).then(() => doValidate(), () => {
                   state.isError = true;
                   state.errorMessage = rule.message;
                   return Promise.reject(rule.message);
@@ -293,6 +308,7 @@ export default defineComponent({
     return {
       ...toRefs(state),
       labelStyles,
+      isFormTypeVertical,
       validate,
       clearValidate,
     };
@@ -350,6 +366,7 @@ export default defineComponent({
           class="bk-form-label"
           style={this.labelStyles}>
             {renderLabel()}
+            {this.isFormTypeVertical && this.$slots.labelAppend?.()}
         </div>
         <div class="bk-form-content">
           {this.$slots.default?.()}

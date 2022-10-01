@@ -23,23 +23,11 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-
 import { defineComponent } from 'vue';
 
-import BKRate from '@bkui-vue/rate';
-
 export default defineComponent({
-  name: 'SiteAnimateNumber',
-  data() {
-    return {
-      disableRate: 3.3,
-      rate: 3,
-    };
-  },
+  name: 'TableRow',
   render() {
-    return <>
-      <BKRate v-model={ this.rate }></BKRate>
-      <BKRate v-model={ this.disableRate } editable={false}></BKRate>
-    </>;
+    return <>{ this.$slots.default?.() }</>;
   },
 });

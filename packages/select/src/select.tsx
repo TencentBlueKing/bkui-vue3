@@ -24,9 +24,12 @@
  * IN THE SOFTWARE.
 */
 
+import { merge } from 'lodash';
+import { PopoverPropTypes } from 'popover2/src/props';
 import {
   computed,
   defineComponent,
+  onBeforeMount,
   onMounted,
   provide,
   reactive,
@@ -36,27 +39,29 @@ import {
 } from 'vue';
 
 import { clickoutside } from '@bkui-vue/directives';
-import { AngleUp, Close } from '@bkui-vue/icon';
+import { AngleUp, Close, Search } from '@bkui-vue/icon';
 import Input from '@bkui-vue/input';
 import Loading from '@bkui-vue/loading';
-import BKPopover from '@bkui-vue/popover';
+import BKPopover from '@bkui-vue/popover2';
 import {
   classes,
+  off,
+  on,
   PropTypes,
-  useFormItem,
-} from '@bkui-vue/shared';
+  useFormItem } from '@bkui-vue/shared';
+import VirtualRender from '@bkui-vue/virtual-render';
 
 import {
   selectKey,
   toLowerCase,
-  useFocus,
   useHover,
   usePopover,
   useRegistry,
   useRemoteSearch,
 } from './common';
+import Option from './option';
 import SelectTagInput from './selectTagInput';
-import { GroupInstanceType, ISelectedData, OptionInstanceType, SelectTagInputType } from './type';
+import { GroupInstanceType, ISelected, OptionInstanceType, SelectTagInputType } from './type';
 
 export default defineComponent({
   name: 'Select',
@@ -72,23 +77,35 @@ export default defineComponent({
     loading: PropTypes.bool.def(false),
     filterable: PropTypes.bool.def(false), // 是否支持搜索
     remoteMethod: PropTypes.func,
-    scrollHeight: PropTypes.number.def(216),
-    showSelectAll: PropTypes.bool.def(false), // 权限
+    scrollHeight: PropTypes.number.def(200),
+    showSelectAll: PropTypes.bool.def(false), // 全选
     popoverMinWidth: PropTypes.number.def(0), // popover最小宽度
     showOnInit: PropTypes.bool.def(false), // 是否默认显示popover
     multipleMode: PropTypes.oneOf(['default', 'tag']).def('default'), // 多选展示方式
     tagTheme: PropTypes.theme(['success', 'info', 'warning', 'danger']).def(''),
     behavior: PropTypes.oneOf(['normal', 'simplicity']).def('normal'), // 输入框模式
-    collapseTags: PropTypes.bool.def(false), // todo:当以标签形式显示选择结果时，是否合并溢出的结果以数字显示
+    collapseTags: PropTypes.bool.def(false), // 当以标签形式显示选择结果时，是否合并溢出的结果以数字显示
+    autoHeight: PropTypes.bool.def(true), // collapseTags模式下，聚焦时自动展开所有Tag
     noDataText: PropTypes.string.def('无数据'),
     noMatchText: PropTypes.string.def('无匹配数据'),
     loadingText: PropTypes.string.def('加载中...'),
     placeholder: PropTypes.string.def('请选择'),
+    searchPlaceholder: PropTypes.string.def('请输入关键字'),
     selectAllText: PropTypes.string.def('全部'),
     scrollLoading: PropTypes.bool.def(false),
     allowCreate: PropTypes.bool.def(false), // 是否运行创建自定义选项
+    popoverOptions: PropTypes.object.def({}), // popover属性
+    customContent: PropTypes.bool.def(false), // 是否自定义content内容
+    list: PropTypes.array.def([]),
+    idKey: PropTypes.string.def('value'),
+    displayKey: PropTypes.string.def('label'),
+    withValidate: PropTypes.bool.def(true),
+    showSelectedIcon: PropTypes.bool.def(true), // 多选时是否显示勾选ICON
+    inputSearch: PropTypes.bool.def(true), // 是否采用输入框支持搜索的方式
+    enableVirtualRender: PropTypes.bool.def(false), // 是否开启虚拟滚动（List模式下才会生效）
+    allowEmptyValues: PropTypes.array.def([]), // 允许的空值作为options选项
   },
-  emits: ['update:modelValue', 'change', 'toggle', 'clear', 'scroll-end'],
+  emits: ['update:modelValue', 'change', 'toggle', 'clear', 'scroll-end', 'focus', 'blur'],
   setup(props, { emit }) {
     const {
       modelValue,
@@ -104,51 +121,75 @@ export default defineComponent({
       showOnInit,
       multipleMode,
       allowCreate,
+      customContent,
+      showSelectedIcon,
+      inputSearch,
+      enableVirtualRender,
+      showSelectAll,
+      scrollHeight,
+      list,
+      displayKey,
+      collapseTags,
+      autoHeight,
+      popoverOptions,
+      allowEmptyValues,
     } = toRefs(props);
 
     const formItem = useFormItem();
 
     const inputRef = ref<HTMLElement>();
-    const popoverRef = ref<any>();
+    const triggerRef = ref<HTMLElement>();
+    const contentRef = ref<HTMLElement>();
+    const searchRef = ref<HTMLElement>();
     const selectTagInputRef = ref<SelectTagInputType>();
-    const options = ref<Array<OptionInstanceType>>([]);
-    const groups = ref<Array<GroupInstanceType>>([]);
-    const selected = ref<ISelectedData[]>([]);
+    const virtualRenderRef = ref();
+    const popoverRef = ref();
+    const optionsMap = ref<Map<string, OptionInstanceType>>(new Map());
+    const options = computed(() => [...optionsMap.value.values()]);
+    const groupsMap = ref<Map<string, GroupInstanceType>>(new Map());
+    const selected = ref<ISelected[]>([]);
+    const cacheSelectedMap = computed<Record<string, string>>(() => selected.value.reduce((pre, item) => {
+      pre[item.value] = item.label;
+      return pre;
+    }, {}));
     const activeOptionValue = ref<any>(); // 当前悬浮的option
 
-    // options对应的map结构（option组件的value不能相同）
-    const optionsMap = computed(() => {
-      const data: Map<any, OptionInstanceType> = new Map();
-      options.value.forEach((option) => {
-        data.set(option.value, option);
-      });
-      return data;
-    });
     watch(modelValue, () => {
       handleSetSelectedData();
-      // 修复tag模式下内容超出，popover没有更新问题
-      if (multipleMode.value === 'tag') {
-        popoverRef.value?.update();
+      if (props.withValidate) {
+        formItem?.validate?.('change');
       }
+    }, { deep: true });
+
+    watch(selected, () => {
+      popoverRef.value?.updatePopover(null, popoverConfig.value);
     });
 
+    // list模式下搜索后的值
+    const filterList = computed(() => (
+      isRemoteSearch.value
+        ? list.value
+        : list.value
+          .filter(item => toLowerCase(String(item[displayKey.value]))?.includes(searchKey.value))
+    ));
     // select组件是否禁用
     const isDisabled = computed(() => disabled.value || loading.value);
     // modelValue对应的label
-    const selectedLabel = computed(() => selected.value.map(data => data.label));
+    const selectedLabel = computed(() => selected.value
+      .map(item => optionsMap.value?.get(item.value)?.label || item.label));
     // 是否全选(todo: 优化)
     const isAllSelected = computed(() => {
-      const normalSelectedValues = options.value.reduce<any[]>((pre, option) => {
+      const normalSelectedValues = options.value.reduce<string[]>((pre, option) => {
         if (!option.disabled) {
           pre.push(option.value);
         }
         return pre;
       }, []);
       return (normalSelectedValues.length <= selected.value.length)
-        && normalSelectedValues.every(val => selected.value.some(data => data.value === val));
+        && normalSelectedValues.every(val => selected.value.some(item => item.value === val));
     });
     // 是否含有分组
-    const isGroup = computed(() => !!groups.value.length);
+    const isGroup = computed(() => !!groupsMap.value.size);
     // options是否为空
     const isOptionsEmpty = computed(() => !options.value.length);
     // 是否搜索为空
@@ -156,7 +197,13 @@ export default defineComponent({
     // 是否远程搜索
     const isRemoteSearch = computed(() => filterable.value && typeof remoteMethod.value === 'function');
     // 是否显示select下拉内容
-    const isShowSelectContent = computed(() => !(searchLoading.value || isOptionsEmpty.value || isSearchEmpty.value));
+    const isShowSelectContent = computed(() => !(searchLoading.value || isOptionsEmpty.value || isSearchEmpty.value)
+      || customContent.value);
+    // 是否显示全选
+    const isShowSelectAll = computed(() => multiple.value && showSelectAll.value
+      && (!searchKey.value || !filterable.value));
+    // 虚拟滚动高度 12 上下边距，32 显示全选时的高度
+    const virtualHeight = computed(() => scrollHeight.value - 12 - (isShowSelectAll.value ? 32 : 0));
     // 当前空状态时显示文案
     const curContentText = computed(() => {
       if (searchLoading.value) {
@@ -170,40 +217,77 @@ export default defineComponent({
       }
       return '';
     });
+    // 是否合并tag以数字形式展示
+    const isCollapseTags = computed(() => (
+      autoHeight.value
+        ? collapseTags.value && !isPopoverShow.value
+        : collapseTags.value
+    ));
+    const popoverConfig = computed<Partial<PopoverPropTypes>>(() => merge(
+      {
+        theme: 'light bk-select-popover',
+        trigger: 'manual',
+        width: popperWidth.value,
+        arrow: false,
+        placement: 'bottom-start',
+        isShow: isPopoverShow.value,
+        reference: selectTagInputRef.value,
+        offset: 6,
+      },
+      popoverOptions.value,
+    ));
 
-    const { register, unregister } = useRegistry<OptionInstanceType>(options);
+    const { register, unregister } = useRegistry<OptionInstanceType>(optionsMap);
     const {
       register: registerGroup,
       unregister: unregisterGroup,
-    } = useRegistry<GroupInstanceType>(groups);
+    } = useRegistry<GroupInstanceType>(groupsMap);
     const { isHover, setHover, cancelHover } = useHover();
-    const { isFocus, handleFocus, handleBlur } = useFocus();
+    const isFocus = ref(false);
+    const handleFocus = () => {
+      if (isFocus.value) return;
+      isFocus.value = true;
+      emit('focus');
+    };
+    const handleBlur = () => {
+      if (!isFocus.value) return;
+      isFocus.value = false;
+      emit('blur');
+    };
 
     const {
       popperWidth,
       isPopoverShow,
-      onPopoverFirstUpdate,
       hidePopover,
       showPopover,
       togglePopover,
-    } = usePopover({ popoverMinWidth: popoverMinWidth.value });
+    } = usePopover({ popoverMinWidth: popoverMinWidth.value }, triggerRef);
     // 输入框是否可以输入内容
-    const isInput = computed(() => (filterable.value || allowCreate.value) && isPopoverShow.value);
+    const isInput = computed(() => (
+      (filterable.value && inputSearch.value) || allowCreate.value)
+      && isPopoverShow.value);
     watch(isPopoverShow, (isShow) => {
       if (!isShow) {
         searchKey.value = '';
       } else {
-        focus();
+        focusInput();
         initActiveOptionValue();
       }
+    });
+    const watchOnce = watch(isPopoverShow, () => {
+      setTimeout(() => {
+        // 虚拟滚动首次未更新问题
+        enableVirtualRender.value && virtualRenderRef.value?.reset?.();
+        watchOnce();
+      });
     });
 
     // 初始化当前悬浮的option项
     const initActiveOptionValue = () => {
-      const firstValue = selected.value[0]?.value;
-      const option = optionsMap.value.get(firstValue);
+      const firstSelected = selected.value[0];
+      const option = optionsMap.value.get(firstSelected?.value);
       if (option && !option.disabled && option.visible) {
-        activeOptionValue.value = firstValue;
+        activeOptionValue.value = firstSelected?.value;
       } else {
         activeOptionValue.value = options.value.find(option => !option.disabled && option.visible)?.value;
       }
@@ -215,21 +299,24 @@ export default defineComponent({
         option.visible = toLowerCase(String(option.label))?.includes(toLowerCase(value));
       });
     };
-    const { searchKey, searchLoading } = useRemoteSearch(isRemoteSearch.value
-      ? remoteMethod.value
-      : defaultSearchMethod, initActiveOptionValue);
+    const { searchKey, searchLoading } = useRemoteSearch(
+      isRemoteSearch.value
+        ? remoteMethod.value
+        : defaultSearchMethod,
+      initActiveOptionValue,
+    );
 
     // 派发change事件
-    const emitChange = (val) => {
+    const emitChange = (val: string | string[]) => {
       if (val === modelValue.value) return;
 
-      emit('change', val);
-      emit('update:modelValue', val);
-      formItem?.validate?.('change');
+      emit('change', val, modelValue.value);
+      emit('update:modelValue', val, modelValue.value);
     };
     // 派发toggle事件
     const handleTogglePopover = () => {
       if (isDisabled.value) return;
+      handleFocus();
       togglePopover();
       emit('toggle', isPopoverShow.value);
     };
@@ -238,11 +325,12 @@ export default defineComponent({
       if (!filterable.value) return;
       searchKey.value = value;
     };
-    // allow create
-    const handleInputEnter = (value, e: Event) => {
+    // allow create(创建自定义选项)
+    const handleInputEnter = (val: string | number, e: Event) => {
+      const value = String(val);
       if (!allowCreate.value
         || !value
-        || (filterable.value && options.value.find(data => toLowerCase(data.label) === toLowerCase(value)))
+        || (filterable.value && options.value.find(data => toLowerCase(String(data.label)) === toLowerCase(value)))
       ) return; // 开启搜索后，正好匹配到自定义选项，则不进行创建操作
 
       const data = optionsMap.value.get(value);
@@ -252,15 +340,12 @@ export default defineComponent({
       e.stopPropagation(); // 阻止触发 handleKeyup enter 事件
       if (multiple.value) {
         selected.value.push({
-          label: value,
           value,
+          label: value,
         });
-        emitChange(selected.value.map(data => data.value));
+        emitChange(selected.value.map(item => item.value));
       } else {
-        selected.value = [{
-          label: value,
-          value,
-        }];
+        selected.value = [{ value, label: value }];
         emitChange(value);
         hidePopover();
       }
@@ -272,34 +357,40 @@ export default defineComponent({
 
       if (multiple.value) {
         // 多选
-        const index = selected.value.findIndex(data => data.value === option.value);
+        const index = selected.value.findIndex(item => item.value === option.value);
         if (index > -1) {
           selected.value.splice(index, 1);
         } else {
           selected.value.push({
-            label: option.label,
             value: option.value,
+            label: option.label || option.value,
           });
         }
-        emitChange(selected.value.map(data => data.value));
+        emitChange(selected.value.map(item => item.value));
       } else {
         // 单选
         selected.value = [{
-          label: option.label,
+          label: option.label || option.value,
           value: option.value,
         }];
         emitChange(option.value);
         hidePopover();
       }
-      focus();
+      focusInput();
     };
     // 聚焦输入框
-    const focus = () => {
-      if (multipleMode.value === 'tag') {
-        selectTagInputRef.value?.focus();
-      } else {
-        inputRef.value?.focus();
-      }
+    const focusInput = () => {
+      setTimeout(() => {
+        if (!inputSearch.value && !allowCreate.value) {
+          searchRef.value?.focus();
+        } else {
+          if (multipleMode.value === 'tag') {
+            selectTagInputRef.value?.focus();
+          } else {
+            inputRef.value?.focus();
+          }
+        }
+      }, 0);
     };
     // 清空事件
     const handleClear = (e: Event) => {
@@ -310,20 +401,23 @@ export default defineComponent({
       hidePopover();
     };
     // 全选/取消全选
+    const handleSelectedAllOptionMouseEnter = () => {
+      activeOptionValue.value = '';
+    };
     const handleToggleAll = () => {
       if (isAllSelected.value) {
         selected.value = [];
       } else {
         options.value.forEach((option) => {
-          if (option.disabled || selected.value.find(data => data.value === option.value)) return;
+          if (option.disabled || selected.value.find(item => item.value === option.value)) return;
           selected.value.push({
-            label: option.label,
             value: option.value,
+            label: option.label || option.value,
           });
         });
       }
-      emitChange(selected.value.map(data => data.value));
-      focus();
+      emitChange(selected.value.map(item => item.value));
+      focusInput();
     };
     // 滚动事件
     const handleScroll = (e) => {
@@ -333,34 +427,44 @@ export default defineComponent({
       }
     };
     // tag删除事件
-    const handleDeleteTag = (data: ISelectedData) => {
-      const index = selected.value.findIndex(select => select.value === data.value);
+    const handleDeleteTag = (val: string) => {
+      if (isDisabled.value) return;
+      const index = selected.value.findIndex(item => item.value === val);
       if (index > -1) {
         selected.value.splice(index, 1);
-        emitChange(selected.value.map(select => select.value));
+        emitChange(selected.value.map(item => item.value));
       }
     };
     // options存在 > 上一次选择的label > 当前值
-    const handleGetLabelByValue = val => optionsMap.value?.get(val)?.label
-        || selected.value.find(data => data.value === val)?.label
-        || val;
+    const handleGetLabelByValue = (value: string) => optionsMap.value?.get(value)?.label
+      || cacheSelectedMap.value[value] || value;
     // 设置selected选项
     const handleSetSelectedData = () => {
       // 同步内部value值
       if (Array.isArray(modelValue.value)) {
-        selected.value = modelValue.value.map(val => ({
-          label: handleGetLabelByValue(val),
-          value: val,
-        }));
-      } else if (modelValue.value !== undefined) {
-        selected.value = [{
-          label: handleGetLabelByValue(modelValue.value),
-          value: modelValue.value,
-        }];
+        selected.value = [...(modelValue.value as string[]).map(value => ({
+          value,
+          label: handleGetLabelByValue(value),
+        }))];
+      } else {
+        if (!!modelValue.value || allowEmptyValues.value.includes(modelValue.value)) {
+          selected.value = [{
+            value: modelValue.value,
+            label: handleGetLabelByValue(modelValue.value),
+          }];
+        } else {
+          selected.value = [];
+        }
       }
     };
     // 处理键盘事件
-    const handleKeydown = (e: KeyboardEvent) => {
+    const handleKeydown = (e: any) => {
+      if (
+        !triggerRef.value?.contains(e.target)
+        && !contentRef.value?.contains(e.target)
+        && !customContent.value
+      ) return;
+
       const availableOptions = options.value.filter(option => !option.disabled && option.visible);
       const index = availableOptions.findIndex(option => option.value === activeOptionValue.value);
       if (!availableOptions.length || index === -1) return;
@@ -382,10 +486,15 @@ export default defineComponent({
         }
         // 删除选项
         case 'Backspace': {
-          if (!multiple.value || !selected.value.length || searchKey.value.length) return; // 只有多选支持回退键删除
+          if (
+            !multiple.value
+            || !selected.value.length
+            || searchKey.value.length
+            || e.target === searchRef.value
+          ) return; // 单选和下拉搜索不支持回退键删除
 
           selected.value.pop();
-          emitChange(selected.value.map(data => data.value));
+          emitChange(selected.value.map(item => item.value));
           break;
         }
         // 选择选项
@@ -393,14 +502,16 @@ export default defineComponent({
           if (!isPopoverShow.value) {
             isPopoverShow.value = true;
           } else {
-            const option = options.value.find(option => option.value === activeOptionValue.value);
+            const option = optionsMap.value.get(activeOptionValue.value);
             handleOptionSelected(option);
           }
           break;
         }
       }
     };
-    const handleClickOutside = () => {
+    const handleClickOutside = ({ event }) => {
+      const { target } = event;
+      if (triggerRef.value?.contains(target) || triggerRef.value === target) return;
       hidePopover();
       handleBlur();
     };
@@ -409,6 +520,7 @@ export default defineComponent({
       multiple,
       selected,
       activeOptionValue,
+      showSelectedIcon,
       register,
       unregister,
       registerGroup,
@@ -419,9 +531,12 @@ export default defineComponent({
     onMounted(() => {
       handleSetSelectedData();
       setTimeout(() => {
-        // todo：popover组件渲染问题，暂时用setTimeout
         showOnInit.value && showPopover();
       });
+      on(document, 'keydown', handleKeydown);
+    });
+    onBeforeMount(() => {
+      off(document, 'keydown', handleKeydown);
     });
 
     return {
@@ -433,9 +548,13 @@ export default defineComponent({
       isPopoverShow,
       isHover,
       popperWidth,
-      popoverRef,
       inputRef,
+      triggerRef,
+      contentRef,
+      searchRef,
       selectTagInputRef,
+      virtualRenderRef,
+      popoverRef,
       searchLoading,
       isOptionsEmpty,
       isSearchEmpty,
@@ -444,12 +563,17 @@ export default defineComponent({
       curContentText,
       isGroup,
       searchKey,
+      isShowSelectAll,
+      virtualHeight,
+      filterList,
+      isCollapseTags,
+      popoverConfig,
       setHover,
       cancelHover,
       handleFocus,
+      handleBlur,
       handleTogglePopover,
       handleClear,
-      onPopoverFirstUpdate,
       hidePopover,
       showPopover,
       handleToggleAll,
@@ -460,6 +584,7 @@ export default defineComponent({
       handleInputChange,
       handleInputEnter,
       handleKeydown,
+      handleSelectedAllOptionMouseEnter,
     };
   },
   render() {
@@ -472,19 +597,11 @@ export default defineComponent({
       [this.size]: true,
       [this.behavior]: true,
     });
-    const modifiers = [
-      {
-        name: 'offset',
-        options: {
-          offset: [0, 4],
-        },
-      },
-    ];
 
     const suffixIcon = () => {
       if (this.loading) {
-        return <Loading loading={true} class="spinner" mode="spin" size="mini"></Loading>;
-      } if (this.clearable && this.isHover && this.selected.length) {
+        return <Loading loading={true} theme='primary' class="spinner" mode="spin" size="mini"></Loading>;
+      } if (this.clearable && this.isHover && this.selected.length && !this.isDisabled) {
         return <Close class="clear-icon" onClick={this.handleClear}></Close>;
       }
       return <AngleUp class="angle-up"></AngleUp>;
@@ -500,11 +617,13 @@ export default defineComponent({
             tagTheme={this.tagTheme}
             placeholder={this.placeholder}
             filterable={this.isInput}
-            onFocus={this.handleFocus}
+            disabled={this.isDisabled}
             onRemove={this.handleDeleteTag}
+            collapseTags={this.isCollapseTags}
             onEnter={this.handleInputEnter}>
               {{
                 prefix: () => this.$slots.prefix?.(),
+                default: this.$slots.tag && (() => this.$slots.tag({ selected: this.selected })),
                 suffix: () => suffixIcon(),
               }}
           </SelectTagInput>
@@ -517,10 +636,10 @@ export default defineComponent({
           modelValue={this.isInput ? this.searchKey : this.selectedLabel.join(',')}
           placeholder={this.isInput ? (this.selectedLabel.join(',') || this.placeholder) : this.placeholder}
           readonly={!this.isInput}
+          selectReadonly={true}
           disabled={this.isDisabled}
           behavior={this.behavior}
           size={this.size}
-          onFocus={this.handleFocus}
           onInput={this.handleInputChange}
           onEnter={this.handleInputEnter}>
             {{
@@ -533,22 +652,39 @@ export default defineComponent({
     const renderSelectTrigger = () => (
         <div
           class="bk-select-trigger"
+          style={{ height: this.autoHeight && this.collapseTags ? '32px' : '' }}
+          ref="triggerRef"
           onClick={this.handleTogglePopover}
           onMouseenter={this.setHover}
-          onMouseleave={this.cancelHover}
-          onKeydown={this.handleKeydown}>
+          onMouseleave={this.cancelHover}>
           {renderTriggerInput()}
         </div>
     );
     const renderSelectContent = () => (
-        <div>
+        <div class="bk-select-content-wrapper" ref="contentRef">
           {
-          (!this.isShowSelectContent) && (
-          <div class="bk-select-empty">
-            {this.searchLoading
-            && <Loading class="mr5" loading={true} mode="spin" size="mini"></Loading>}
-            {this.curContentText}
-          </div>)
+            this.filterable && !this.inputSearch && (
+              <div class="bk-select-search-wrapper">
+                <Search class="icon-search" width={16} height={16} />
+                <input
+                  ref="searchRef"
+                  class="bk-select-search-input"
+                  placeholder={this.searchPlaceholder}
+                  v-model={this.searchKey}
+                />
+              </div>
+            )
+          }
+          {
+            !this.isShowSelectContent
+            && (
+            <div class="bk-select-empty">
+              {
+                this.searchLoading
+                && <Loading class="mr5" theme='primary' loading={true} mode="spin" size="mini"></Loading>
+              }
+              <span>{this.curContentText}</span>
+            </div>)
           }
           <div class="bk-select-content">
             <div class="bk-select-dropdown"
@@ -557,18 +693,39 @@ export default defineComponent({
             >
               <ul class="bk-select-options" v-show={this.isShowSelectContent}>
                 {
-                  this.multiple
-                    && this.showSelectAll
-                    && (!this.searchKey || !this.filterable)
-                    && <li class="bk-select-option" onClick={this.handleToggleAll}>
+                  this.isShowSelectAll && (
+                    <li class="bk-select-option"
+                      onMouseenter={this.handleSelectedAllOptionMouseEnter}
+                      onClick={this.handleToggleAll}>
                       {this.selectAllText}
-                      </li>
+                    </li>
+                  )
+                }
+                {
+                  this.enableVirtualRender
+                    ? <VirtualRender
+                        list={this.filterList}
+                        height={this.virtualHeight}
+                        lineHeight={32}
+                        ref="virtualRenderRef">
+                          {{
+                            default: ({ data }) => data
+                              .map(item => (
+                                <Option
+                                  key={item[this.idKey]}
+                                  value={item[this.idKey]}
+                                  label={item[this.displayKey]}
+                                />
+                              )),
+                          }}
+                      </VirtualRender>
+                    : this.list.map(item => <Option value={item[this.idKey]} label={item[this.displayKey]}></Option>)
                 }
                 {this.$slots.default?.()}
                 {this.scrollLoading && (
                   <li class="bk-select-options-loading">
                     <Loading class="spinner mr5" theme='primary' loading={true} mode="spin" size="mini"></Loading>
-                    {this.loadingText}
+                    <span>{this.loadingText}</span>
                   </li>
                 )}
               </ul>
@@ -579,17 +736,8 @@ export default defineComponent({
         </div>
     );
     return (
-      <div class={selectClass} v-clickoutside={this.handleClickOutside}>
-        <BKPopover
-          ref="popoverRef"
-          theme="light"
-          trigger="manual"
-          width={this.popperWidth}
-          arrow={false}
-          placement="bottom"
-          isShow={this.isPopoverShow}
-          modifiers={modifiers}
-          handleFirstUpdate={this.onPopoverFirstUpdate}>
+      <div class={selectClass}>
+        <BKPopover {...this.popoverConfig} onClickoutside={this.handleClickOutside} ref="popoverRef">
           {{
             default: () => renderSelectTrigger(),
             content: () => renderSelectContent(),

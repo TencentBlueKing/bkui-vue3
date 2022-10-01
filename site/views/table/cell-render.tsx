@@ -31,13 +31,25 @@ export default defineComponent({
   components: {},
   data() {
     return {
-      tableData: [...DATA_TABLE],
-      columns: [...DATA_COLUMNS].map((col: Column) => ({ ...col, render: this.renderCell })),
+      tableData: [
+        ...DATA_TABLE,
+      ],
+      columns: [...DATA_COLUMNS].map((col: Column, index: number) => ({
+        ...col,
+        label: [0, 1].includes(index) ? this.renderTh : (col: any) => col.field,
+        render: [1, 2, 3, 4].includes(index) ? this.renderCell : undefined })),
     };
   },
+
+
   methods: {
-    renderCell(cell: any) {
-      return <span>自定义渲染 column ：{ cell }</span>;
+    renderCell({ row, column }) {
+      return <bk-input v-model={ row[column.field] }></bk-input>;
+    },
+    renderTh(column, index) {
+      return <bk-popover2 content={ `${index}-xxxxxxxx` }>
+        <span>{ column.field ?? index }</span>
+      </bk-popover2>;
     },
   },
   render() {

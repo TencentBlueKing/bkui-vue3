@@ -40,6 +40,7 @@ export default (props: TreePropTypes) => {
  */
   const getFlatdata = (props: TreePropTypes, treeData: Array<any> = undefined, cachedSchema: any[] = []) => {
     const { data, children } = props;
+    const checkedList = [];
     const outputData = [];
     let order = 0;
     const schema = new Map<string, any>();
@@ -129,8 +130,8 @@ export default (props: TreePropTypes) => {
           flatten(item, depth, parent, path);
         } else {
           if (typeof item === 'object' && item !== null) {
-            const uuid = `${getUid(item)}`;
             const currentPath = path !== null ? `${path}-${i}` : `${i}`;
+            const uuid = `${getUid(item)}`;
             const hasChildren = !!(item[children] || []).length;
             /**
              * 当前节点设置是否为展开状态
@@ -152,7 +153,12 @@ export default (props: TreePropTypes) => {
               isOpened = isNodeOpend(uuid, item, parent);
             }
 
-            const attrs = {
+            Object.assign(item, { [NODE_ATTRIBUTES.UUID]: uuid });
+            const isChecked = props.showCheckbox && getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_CHECKED);
+            if (isChecked) {
+              checkedList.push(uuid);
+            }
+            schema.set(uuid,  {
               [NODE_ATTRIBUTES.DEPTH]: depth,
               [NODE_ATTRIBUTES.INDEX]: i,
               [NODE_ATTRIBUTES.UUID]: uuid,
@@ -164,17 +170,16 @@ export default (props: TreePropTypes) => {
               [NODE_ATTRIBUTES.IS_SELECTED]: isCachedTreeNodeSelected(uuid, item),
               [NODE_ATTRIBUTES.IS_MATCH]: getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_MATCH),
               [NODE_ATTRIBUTES.IS_OPEN]: isOpened,
-              [NODE_ATTRIBUTES.IS_CHECKED]: getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_CHECKED),
+              [NODE_ATTRIBUTES.IS_CHECKED]: isChecked,
               [NODE_ATTRIBUTES.IS_CACHED]: getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_CACHED),
               [NODE_ATTRIBUTES.IS_ASYNC]: getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_ASYNC),
               [NODE_ATTRIBUTES.IS_LOADING]: getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_LOADING),
               [children]: null,
-            };
-            Object.assign(item, { [NODE_ATTRIBUTES.UUID]: uuid });
-            schema.set(uuid, attrs);
+            });
             order += 1;
             outputData.push({
-              ...item,
+              ...(JSON.parse(JSON.stringify(item, (k: string, v: any) => (k === props.children ? null : v)))),
+              [NODE_ATTRIBUTES.IS_OPEN]: isOpened,
               [children]: null,
             });
 
@@ -186,6 +191,15 @@ export default (props: TreePropTypes) => {
       }
     }
     flatten(treeData ? treeData : data);
+    if (props.showCheckbox) {
+      checkedList?.forEach((value: string) => {
+        Array.from(schema.values())
+          .filter((t: any) => t[NODE_ATTRIBUTES.PATH]?.startsWith(schema.get(value)[NODE_ATTRIBUTES.PATH]))
+          .forEach((n: any) => Object.assign(n, { [NODE_ATTRIBUTES.IS_CHECKED]: true }));
+
+        loopUpdateNodeAttr(value, NODE_ATTRIBUTES.IS_CHECKED, true, () => true);
+      });
+    }
     return [outputData, schema];
   };
 
@@ -284,7 +298,6 @@ export default (props: TreePropTypes) => {
      * 监听组件配置Data改变
      */
   watch(() => [props.data], (newData) => {
-    console.log('watch data changed');
     const formatData = getFlatdata(props, newData, schemaValues.value);
     flatData.data = formatData[0] as Array<any>;
     flatData.schema = formatData[1] as any;
@@ -304,7 +317,7 @@ export default (props: TreePropTypes) => {
 
   if (props.selectable) {
     watch(() => props.selected, (newData) => {
-      console.log('watch selected changed');
+      // console.log('watch selected changed');
       afterSelectWatch.length = 0;
       afterSelectEvents.forEach((event: () => void) => {
         Reflect.apply(event, this, [newData]);

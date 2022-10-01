@@ -78,7 +78,7 @@ export default defineComponent({
     const filterFn = (item: any) => {
       if (isSearchActive.value) {
         const treeUiFilter = () => (isTreeUI ? schemaValues.value
-          .some((schema: any) => schema[NODE_ATTRIBUTES.PATH].startsWith(getNodePath(item))
+          .some((schema: any) => schema[NODE_ATTRIBUTES.PATH]?.startsWith(getNodePath(item))
           && schema[NODE_ATTRIBUTES.IS_MATCH]) : false);
 
         return getNodeAttr(item, NODE_ATTRIBUTES.IS_MATCH) || treeUiFilter();
@@ -111,7 +111,7 @@ export default defineComponent({
     };
 
     onSelected((newData: any) => {
-      setSelect(newData, true, true);
+      setSelect(newData, true, props.autoOpenParentNode);
     });
 
     const getData = () => flatData;

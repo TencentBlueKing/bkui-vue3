@@ -202,7 +202,8 @@ const cleaner = new Svgo({
     },
     {
       removeAttrs: { attrs: '(stroke|fill|data-name)' },
-    }],
+    },
+  ],
 });
 
 // 将特殊图形转换为path路径
@@ -236,6 +237,13 @@ const transformSvg = async (url: string) => {
       ignoreText: false,
     });
     let xmlDom = JSON.parse(xmlJson);
+    if (text.includes('linearGradient')) {
+      xmlDom.elements[0].attributes.style = ''
+      + 'width: 1em; height: 1em; vertical-align: middle;fill: currentColor;overflow: hidden;';
+      const str = JSON.stringify(xmlDom).split('\\n\\t')
+        .join('');
+      return JSON.parse(str);
+    }
     // 转换图形
     xmlDom.elements[0] = elemToPath(xmlDom.elements[0]);
     const svgText = xml2Js.json2xml(JSON.stringify(xmlDom)).replace(/&/gm, '');
@@ -287,7 +295,6 @@ const transformSvg = async (url: string) => {
     tranformPath(svgDom.elements);
     return xmlDom;
   } catch (err) {
-    console.info(err, '=====');
     process.exit(1);
   }
 };

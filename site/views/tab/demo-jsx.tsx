@@ -78,7 +78,7 @@ export default defineComponent({
         <div onClick={this.addPanel}> +&nbsp;新增</div>
       ),
       setting: () => (
-        <div><CogShape/></div>
+        <div style="margin: 0 10px"><CogShape/></div>
       ),
     };
     const panels = this.panels.map((item, index) => (

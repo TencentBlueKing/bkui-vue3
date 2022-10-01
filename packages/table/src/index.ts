@@ -25,7 +25,10 @@
 */
 import { withInstall } from '@bkui-vue/shared';
 
+import Column from './components/table-column';
 import Component from './table';
 const BkTable = withInstall(Component);
 export default BkTable;
 
+const BkColumn = withInstall(Column);
+export { BkColumn };

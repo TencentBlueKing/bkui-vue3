@@ -28,7 +28,7 @@ import { ExtractPropTypes } from 'vue';
 
 import { PropTypes } from '@bkui-vue/shared';
 
-import { BORDER_OPRIONS } from './const';
+import { BORDER_OPTION, BORDER_OPTIONS, LINE_HEIGHT, TABLE_ROW_ATTRIBUTE } from './const';
 
 export enum SortScope {
   CURRENT = 'current',
@@ -40,6 +40,51 @@ export type ColumnFilterListItem = {
   value?: string;
 };
 
+export type IOverflowTooltip = {
+  content: string | Function,
+  disabled?: boolean,
+  watchCellResize?: boolean
+};
+
+export const IColumnType = {
+  label: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
+  field: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
+  render: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
+  width: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]),
+  minWidth: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]).def(),
+  columnKey: PropTypes.string.def(''),
+  showOverflowTooltip: PropTypes.oneOfType([PropTypes.bool, PropTypes.shape<IOverflowTooltip>({
+    content: PropTypes.string.def(''),
+    disabled: PropTypes.bool.def(false),
+    watchCellResize: PropTypes.bool.def(true),
+  })]).def(undefined),
+  type: PropTypes.commonType(['selection', 'index', 'expand', 'none'], 'columnType').def('none'),
+  resizable: PropTypes.bool.def(true),
+  fixed: PropTypes.oneOfType([
+    PropTypes.bool,
+    PropTypes.commonType(['left', 'right'], 'fixed'),
+  ]).def(false),
+  sort: PropTypes.oneOfType([
+    PropTypes.shape({
+      sortFn: PropTypes.func.def(undefined),
+      sortScope: PropTypes.commonType(Object.values(SortScope)).def(SortScope.CURRENT),
+      value: PropTypes.string.def(null),
+    }),
+    PropTypes.bool,
+    PropTypes.string]).def(false),
+  filter: PropTypes.oneOfType([
+    PropTypes.shape({
+      list: PropTypes.arrayOf(PropTypes.any).def([]),
+      filterFn: PropTypes.func.def(undefined),
+      match: PropTypes.commonType(['full', 'fuzzy'], 'full'),
+      filterScope: PropTypes.commonType(Object.values(SortScope)).def(SortScope.CURRENT),
+      btnSave: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]).def('确定'),
+      btnReset: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]).def('重置'),
+    }),
+    PropTypes.bool,
+    PropTypes.string]).def(false),
+};
+
 export const tableProps = {
   /**
    * 渲染列表
@@ -49,33 +94,7 @@ export const tableProps = {
   /**
    * Table 列渲染
    */
-  columns: PropTypes.arrayOf(PropTypes.shape<Column>({
-    label: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
-    field: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
-    render: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
-    width: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]),
-    minWidth: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]).def(),
-    type: PropTypes.commonType(['selection', 'index', 'expand', 'none'], 'columnType').def('none'),
-    resizable: PropTypes.bool.def(true),
-    fixed: PropTypes.oneOfType([
-      PropTypes.bool,
-      PropTypes.commonType(['left', 'right'], 'fixed'),
-    ]).def(false),
-    sort: PropTypes.oneOfType([
-      PropTypes.shape({
-        sortFn: PropTypes.func.def(undefined),
-        sortScope: PropTypes.commonType(Object.values(SortScope)).def(SortScope.CURRENT),
-      }),
-      PropTypes.bool,
-      PropTypes.string]).def(false),
-    filter: PropTypes.oneOfType([
-      PropTypes.shape({
-        list: PropTypes.arrayOf(PropTypes.any).def([]),
-        filterFn: PropTypes.func.def(undefined),
-      }),
-      PropTypes.bool,
-      PropTypes.string]).def(false),
-  })).def([]),
+  columns: PropTypes.arrayOf(PropTypes.shape<Column>(IColumnType)).def([]),
 
   /**
    * 当前选中列
@@ -101,7 +120,7 @@ export const tableProps = {
    * 设置表格最小高度
    * 默认：300
    */
-  minHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(200),
+  minHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(LINE_HEIGHT * 2),
 
   /**
    * 设置表格最d大高度
@@ -113,12 +132,12 @@ export const tableProps = {
    * 行高，可以为固定数值类型
    * 可以是函数，返回当前行的高度，返回值为数值类型
    */
-  rowHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.func]).def(40),
+  rowHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.func]).def(LINE_HEIGHT),
 
   /**
    * Thead行高，可以为固定数值类型
    */
-  headHeight: PropTypes.number.def(40),
+  headHeight: PropTypes.number.def(LINE_HEIGHT),
 
   /**
    * 是否显示Head
@@ -129,7 +148,7 @@ export const tableProps = {
    * table header config
    */
   thead: PropTypes.shape<Thead>({
-    height: PropTypes.number.def(40),
+    height: PropTypes.number.def(LINE_HEIGHT),
     isShow: PropTypes.bool.def(true),
     cellFn: PropTypes.func.def(undefined),
   }),
@@ -144,7 +163,7 @@ export const tableProps = {
    * 表格边框显示设置，可以是一个组合
    * 生效规则: 除非单独设置 none,否则会追加每个设置
    */
-  border: PropTypes.arrayOf(PropTypes.commonType(BORDER_OPRIONS, 'border')).def(['row']),
+  border: PropTypes.arrayOf(PropTypes.commonType(BORDER_OPTIONS, 'border')).def([BORDER_OPTION.ROW]),
 
   /**
    * 分页配置
@@ -166,13 +185,18 @@ export const tableProps = {
   /**
    * bk-table-setting-content
    */
-  settings: PropTypes.oneOfType([PropTypes.bool, PropTypes.shape<Settings>({
-    fields: PropTypes.shape<Field[]>([]).def(undefined),
-    checked: PropTypes.shape<string[]>([]).def(undefined),
-    limit: PropTypes.number.def(undefined),
-    size: PropTypes.size(['small', 'default', 'large']).def('default'),
-    sizeList: PropTypes.shape<SizeItem[]>([]).def(undefined),
-  })]).def(false),
+  settings: PropTypes.oneOfType([
+    PropTypes.shape<Settings>({
+      fields: PropTypes.arrayOf(PropTypes.shape<Field>({
+        label: PropTypes.string,
+        field: PropTypes.string,
+        disabled: PropTypes.bool,
+      })),
+      checked: PropTypes.arrayOf(PropTypes.string),
+      limit: PropTypes.number.def(0),
+      size: PropTypes.size(['small', 'medium', 'large']).def('small'),
+      sizeList: PropTypes.shape<SizeItem[]>([]),
+    }), PropTypes.bool]).def(false),
 
   /**
    * 行的 class 的回调方法，也可以使用一个固定的 Object 为所有行设置一样的 Style
@@ -211,6 +235,20 @@ export const tableProps = {
   reserveExpand: PropTypes.bool.def(false),
 
   /**
+   * 仅对设置了selection的情况下生效
+   * 用于初始化或者更新row已选中状态
+   * 内部使用逻辑为：row[selectionKey]，可以为多级选择，但是多级选择只支持 row.child.child
+   */
+  selectionKey: PropTypes.string.def(''),
+
+  /**
+ * 提供自定义判定当前行是否选中
+ * 如果设置了此属性，其他判定均不生效
+ * ({ row, cell, data }) => bool
+ */
+  isSelectedFn: PropTypes.func.def(undefined),
+
+  /**
    * 行数据的 Key，用来优化 Table 的渲染；
    * 在使用 reserve-selection, reserve-expand 功能的情况下，该属性是必填的。
    * 类型为 String 时，支持多层访问：user.info.id，但不支持 user.info[0].id，此种情况请使用 Function
@@ -218,7 +256,25 @@ export const tableProps = {
   rowKey: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.func,
-  ]).def(undefined),
+  ]).def(TABLE_ROW_ATTRIBUTE.ROW_INDEX),
+
+  /**
+   * 当内容过长被隐藏时显示 tooltip, 此处为全局配置, 如果只配置此处，整个table都启用
+   * column内部可以单个配置覆盖此配置
+   */
+  showOverflowTooltip: PropTypes.oneOfType([PropTypes.bool, PropTypes.shape<IOverflowTooltip>({
+    content: PropTypes.string.def(''),
+    disabled: PropTypes.bool.def(false),
+    watchCellResize: PropTypes.bool.def(true),
+  })]).def(false),
+
+  /**
+   * 为避免不必要的数据修改导致的不可控组件更新
+   * 默认组件不会对传入组件的data进行任何修改
+   * 设置此属性为true则会对源数据进行同步（如：启用selection，勾选时想要自动同步到源数据）
+   * 目前只会对指定了selectionKey的情况下才会对指定的字段数据进行更新，同时需要指定 rowKey，保证匹配到的row是正确的目标对象
+   */
+  asyncData: PropTypes.bool.def(false),
 };
 
 
@@ -232,7 +288,7 @@ export type SizeItem = {
 };
 
 export type Settings = {
-  fields?: Field[];
+  fields?: Field[],
   checked?: string[];
   limit?: number;
   size?: string;
@@ -242,6 +298,7 @@ export type Settings = {
 export type Field = {
   label: string;
   field?: string;
+  disabled?: boolean;
 };
 
 
@@ -251,6 +308,8 @@ export type Column = {
   render?: Function | string;
   width?: number | string;
   minWidth?: number | string;
+  columnKey?: string;
+  showOverflowTooltip?: boolean | IOverflowTooltip;
   type?: string;
   fixed?: string | boolean;
   resizable?: boolean;
@@ -286,4 +345,10 @@ export type IColumnActive = {
 
 export type IReactiveProp = {
   activeColumns: IColumnActive[]
+};
+
+export type Colgroups = Column & {
+  calcWidth: number,
+  resizeWidth: number,
+  listeners: Map<string, Function>,
 };

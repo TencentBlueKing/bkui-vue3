@@ -75,6 +75,7 @@ export default (flatData, props?: TreePropTypes) => {
 
   const deleteNodeSchema = (id: string) => (flatData.schema as Map<string, any>).delete(id);
 
+  const getParentNode = (node: any) => getSchemaVal(getNodeParentId(node));
   /**
    * 判定指定节点是否为展开状态
    * @param item 节点或者节点 UUID
@@ -117,6 +118,15 @@ export default (flatData, props?: TreePropTypes) => {
     }, props.data);
   };
 
+  const getChildNodes = (node: any) => {
+    const source = (flatData.schema as Map<string, any>);
+    return Array.prototype.filter
+      .call(
+        Array.from(source.keys()),
+        (key: string) => source.get(key)[NODE_ATTRIBUTES.PARENT_ID] === node[NODE_ATTRIBUTES.UUID],
+      );
+  };
+
   const getSourceNodeByUID = (uid: string) => getSourceNodeByPath(getNodePath({ [NODE_ATTRIBUTES.UUID]: uid }));
 
   const getParentNodeData = (uid: string) => {
@@ -156,6 +166,7 @@ export default (flatData, props?: TreePropTypes) => {
     getNodeParentId,
     getNodeParentIdById,
     getParentNodeData,
+    getParentNode,
     setNodeAttr,
     getNodePath,
     isRootNode,
@@ -172,5 +183,6 @@ export default (flatData, props?: TreePropTypes) => {
     resolveScopedSlotParam,
     setTreeNodeLoading,
     extendNodeAttr,
+    getChildNodes,
   };
 };

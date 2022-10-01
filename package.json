@@ -1,7 +1,7 @@
 {
   "name": "bkui-vue",
   "private": true,
-  "version": "0.0.1-beta.84",
+  "version": "0.0.1-beta.177",
   "workspaces": {
     "packages": [
       "packages/!(**.bak)*",
@@ -13,10 +13,10 @@
     "dist"
   ],
   "scripts": {
-    "preinstall": "npx https://github.com/lockiechen/only-allow.git yarn -y",
+    "preinstall": "npx only-allow yarn -y",
     "prepare": "husky install",
-    "dev": "vite serve site",
-    "build": "run-p build:dist build:lib",
+    "dev": "vite serve site --force",
+    "build": "run-s build:dist build:lib",
     "build:site": "vite build site --mode production && cp -r ./site/views/ ./site/dist/views",
     "build:dist": "rimraf dist && lerna run --stream --scope cli dist",
     "build:lib": "rimraf lib && lerna run --stream --scope cli lib",
@@ -90,6 +90,7 @@
     "postcss-less": "~6.0.0",
     "prettier": "~2.6.2",
     "prismjs": "~1.27.0",
+    "resize-observer-polyfill": "~1.5.1",
     "rimraf": "~3.0.2",
     "stylelint": "~14.6.1",
     "stylelint-config-recommended-vue": "~1.4.0",
@@ -109,7 +110,7 @@
     "highlight.js": "~11.5.0",
     "vue": "^3.2.0"
   },
-  "main": "lib/index.js",
+  "main": "dist/index.umd.js",
   "module": "lib/index.js",
   "typings": "lib/index.d.ts",
   "lint-staged": {
@@ -136,10 +137,12 @@
     }
   },
   "dependencies": {
+    "@floating-ui/dom": "~0.5.2",
     "@popperjs/core": "~2.11.5",
     "date-fns": "~2.28.0",
     "js-calendar": "~1.2.3",
     "lodash": "~4.17.21",
+    "tinycolor2": "~1.4.1",
     "vue-types": "~4.1.1"
   }
 }

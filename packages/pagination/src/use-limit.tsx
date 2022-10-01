@@ -92,6 +92,7 @@ export default () => {
         <BkSelect
           class="bk-pagination-limit-select"
           clearable={false}
+          size="small"
           modelValue={localLimit.value}
           onChange={handleLimitChange}
           disabled={proxy.disabled}>

@@ -24,7 +24,20 @@
 * IN THE SOFTWARE.
 */
 
-import { IConfig, IData, INode } from './interface';
+import { capitalize } from '@bkui-vue/shared';
+
+import { IConfig, IData, INode } from './interface';;
+
+/** 除了节点本身的disabled，如果父级是disabled，直接点也必须是disabled */
+function isNodeDisabled(node: INode) {
+  if (node.data.disabled) {
+    return true;
+  } if (node.level !== 1) {
+    return isNodeDisabled(node.parent);
+  }
+  return node.data.disabled;
+}
+
 class Node implements INode {
   data: IData;
   config: IConfig;
@@ -33,9 +46,11 @@ class Node implements INode {
   id: string;
   name: string;
   loading: boolean;
+  loaded: boolean;
   checked: boolean;
+  isIndeterminate: boolean; // 是否是半选状态
   children?: null[];
-  hasChildren: boolean;
+  leaf: boolean;
   pathNodes: INode[];
   path: string[];
   pathNames: string[];
@@ -45,6 +60,7 @@ class Node implements INode {
     this.data = node;
     this.config = config;
     this.parent = parent || null;
+    this.leaf = node.leaf;
     this.level = !this.parent ? 1 : this.parent.level + 1;
 
     this.initState();
@@ -56,11 +72,11 @@ class Node implements INode {
     this.name = this.data[nameKey];
 
     this.loading = false;
+    this.loaded = false;
     this.checked = false;
 
     const childrenData = this.data[childrenKey];
     this.children = (childrenData || []).map(child => new Node(child, this.config, this));
-    this.hasChildren = this.children?.length !== 0;
 
     this.pathNodes = this.calculateNodesPath();
     this.path = this.pathNodes.map(node => node.id);
@@ -68,15 +84,76 @@ class Node implements INode {
   }
 
   get isLeaf() {
-    return !this.hasChildren;
+    if (this.config.isRemote) {
+      const isLeaf = this.leaf || (this.loaded ? !this.children.length : false);
+      return isLeaf;
+    }
+    return !(Array.isArray(this.children) && this.children?.length !== 0);
   }
 
   get isDisabled() {
-    return this.data.disabled;
+    return isNodeDisabled(this);
+  }
+
+  broadcast(event: string, checkStatus: boolean) {
+    const handlerName = `onParent${capitalize(event)}`;
+
+    this.children.forEach((child: INode) => {
+      if (child) {
+        // bottom up
+        child.broadcast(event, checkStatus);
+        child[handlerName]?.(checkStatus);
+      }
+    });
+  }
+
+  emit(event: string) {
+    const { parent } = this;
+    const handlerName = `onChild${capitalize(event)}`;
+    if (parent) {
+      parent[handlerName]?.();
+      parent.emit(event);
+    }
+  }
+
+  onParentCheck(checked: boolean) {
+    if (!this.isDisabled) {
+      this.setCheckState(checked);
+    }
+  }
+
+  onChildCheck() {
+    const { children } = this;
+    const validChildren = children.filter((child: INode) => !child.isDisabled);
+    const checked = validChildren.length
+      ? validChildren.every((child: INode) => child.checked)
+      : false;
+
+    this.setCheckState(checked);
+  }
+
+  setCheckState(checked: boolean) {
+    const totalNum = this.children.length;
+    const checkedNum = this.children.reduce((c: number, p: INode) => {
+      const tempNum = p.isIndeterminate ? 0.5 : 0;
+      const num = p.checked ? 1 : tempNum;
+      return c + num;
+    }, 0);
+
+    this.checked = checked;
+    this.isIndeterminate = checkedNum !== totalNum && checkedNum > 0;
   }
 
   setNodeCheck(status: boolean) {
-    this.checked = status;
+    if (this.checked !== status) {
+      if (this.config.checkAnyLevel) {
+        this.checked = status;
+        return;
+      }
+      this.broadcast('check', status);
+      this.setCheckState(status);
+      this.emit('check');
+    }
   }
 
   calculateNodesPath() {

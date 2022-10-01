@@ -38,7 +38,10 @@ import SelectGroupDemo from './select-group-demo.vue';
 import SelectMultiDemo from './select-multi-demo.vue';
 import SelectScrollLoadingDemo from './select-scrollloading-demo.vue';
 import SelectSearchDemo from './select-search-demo.vue';
-import SelectStyleDemo from './select-style-demo.vue';;
+import SelectSlotDemo from './select-slot-demo.vue';
+import SelectStyleDemo from './select-style-demo.vue';
+import SelectTreeDemo from './select-tree-demo.vue';
+import SelectVirtualRender from './select-virtual-render.vue';;
 
 const propsJson: IPropsTableItem[] = Object.keys(BkSelect.props).map(prop => ({
   name: prop,
@@ -82,7 +85,7 @@ export default defineComponent({
         </DemoBox>
         <DemoBox
           title="搜索"
-          desc="远程搜索和本地搜索"
+          desc="远程搜索和本地搜索，注意：动态Options时建议使用value作为key，防止出现option没有销毁问题"
           componentName="select"
           demoName="select-search-demo">
             <SelectSearchDemo />
@@ -100,6 +103,27 @@ export default defineComponent({
           componentName="select"
           demoName="select-allow-create">
             <SelectAllowCreate />
+        </DemoBox>
+        <DemoBox
+          title="Tree Select"
+          desc="Tree Select"
+          componentName="select"
+          demoName="select-tree-demo">
+            <SelectTreeDemo />
+        </DemoBox>
+        <DemoBox
+          title="Virtual Select"
+          desc="虚拟滚动只支持list模式数据源"
+          componentName="select"
+          demoName="select-virtual-render">
+            <SelectVirtualRender />
+        </DemoBox>
+        <DemoBox
+          title="多选模式下自定义tag"
+          desc="多选模式下自定义tag"
+          componentName="select"
+          demoName="select-slot-demo">
+            <SelectSlotDemo />
         </DemoBox>
         <PropsBox propsData={propsJson} subtitle="" />
       </div>

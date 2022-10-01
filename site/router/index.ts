@@ -443,6 +443,15 @@ const routes: RouteRecordRaw[] = [
       navName: 'Popover 弹出框提示',
     },
   },
+  {
+    path: '/popover2',
+    name: 'popover2',
+    component: () => import('../views/popover2'),
+    meta: {
+      group: NavGroupMeta.Feedback,
+      navName: 'Popover2 弹出框提示',
+    },
+  },
   /**
    * @description:消息提示
    */
@@ -453,6 +462,18 @@ const routes: RouteRecordRaw[] = [
     meta: {
       group: NavGroupMeta.Feedback,
       navName: 'Message 消息提示',
+    },
+  },
+  /**
+   * @description:消息提示
+   */
+  {
+    path: '/info-box',
+    name: 'info-box',
+    component: () => import('../views/info-box/index'),
+    meta: {
+      group: NavGroupMeta.Feedback,
+      navName: 'InfoBox提示框',
     },
   },
   /**
@@ -492,6 +513,18 @@ const routes: RouteRecordRaw[] = [
     },
   },
   /**
+   * @description:颜色选择器
+   */
+  {
+    path: '/color-picker',
+    name: 'colorPicker',
+    component: () => import('../views/color-picker/color-picker'),
+    meta: {
+      group: NavGroupMeta.Nav,
+      navName: 'ColorPicker 颜色选择器',
+    },
+  },
+  /**
    * @description:日期选择器
    */
   {
@@ -519,6 +552,15 @@ const routes: RouteRecordRaw[] = [
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'DatePicker 日期选择器',
+    },
+  },
+  {
+    path: '/time-picker',
+    name: 'timePicker',
+    component: () => import('../views/time-picker'),
+    meta: {
+      group: NavGroupMeta.Nav,
+      navName: 'TimePicker 日期选择器',
     },
   },
   /**
@@ -660,6 +702,15 @@ const routes: RouteRecordRaw[] = [
       navName: 'Cascader 级联选择',
     },
     component: () => import('../views/cascader/index'),
+  },
+  {
+    path: '/loading',
+    name: 'loading',
+    meta: {
+      group: NavGroupMeta.Others,
+      navName: 'Loading 加载',
+    },
+    component: () => import('../views/loading/index'),
   },
 ];
 

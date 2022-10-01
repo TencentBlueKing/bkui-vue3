@@ -1,3 +1,4 @@
+
 /*
 * Tencent is pleased to support the open source community by making
 * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
@@ -23,30 +24,16 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import { FunctionalComponent } from 'vue';
 
-import { defineComponent } from 'vue';
+import BkIcon, { IIconBaseProps } from './icon';
+const data = JSON.parse('{"type":"element","name":"svg","attributes":{"xmlns":"http://www.w3.org/2000/svg","viewBox":"0 0 1024 1024","style":"width: 1em; height: 1em; vertical-align: middle;fill: currentColor;overflow: hidden;"},"elements":[{"type":"element","name":"path","attributes":{"d":"M128 384L192 384 192 192 384 192 384 128 128 128 128 384Z"}},{"type":"element","name":"path","attributes":{"d":"M640 128L640 192 832 192 832 384 896 384 896 128 640 128Z"}},{"type":"element","name":"path","attributes":{"d":"M192 640L128 640 128 896 384 896 384 832 192 832 192 640Z"}},{"type":"element","name":"path","attributes":{"d":"M832 832L640 832 640 896 896 896 896 640 832 640 832 832Z"}}]}');
+const filliscreenLine: FunctionalComponent<IIconBaseProps> = (props, context) => {
+  const p = { ...props, ...context.attrs };
+  return <BkIcon {...p}  data={data} name="filliscreenLine"></BkIcon>;
+};
 
-import BKAnimateNumber from '@bkui-vue/animate-number';
-import BkButton from '@bkui-vue/button';
+filliscreenLine.displayName = 'filliscreenLine';
+filliscreenLine.inheritAttrs = false;
 
-export default defineComponent({
-  name: 'SiteAnimateNumber',
-  data() {
-    return {
-      num: 20,
-    };
-  },
-  methods: {
-    addNum() {
-      this.num += 20;
-    },
-  },
-  render() {
-    return (
-      <div>
-        <BKAnimateNumber value={ this.num }></BKAnimateNumber>
-        <BkButton onClick={ this.addNum }>+</BkButton>
-      </div>
-    );
-  },
-});
+export default filliscreenLine;

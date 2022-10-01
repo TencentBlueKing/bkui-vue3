@@ -26,7 +26,7 @@
 
 import { computed, defineComponent, h, toRefs, TransitionGroup } from 'vue';
 
-import { ArchiveFill, AudioFill, Del, Done, ImageFill, TextFill, VideoFill } from '@bkui-vue/icon';
+import { ArchiveFill, AudioFill, Del, Done, ImageFill, RightTurnLine, TextFill, VideoFill } from '@bkui-vue/icon';
 import BkProgress from '@bkui-vue/progress';
 import { classes } from '@bkui-vue/shared';
 
@@ -41,7 +41,7 @@ export default defineComponent({
     files: uploadProps.files,
     multiple: uploadProps.multiple,
   },
-  emits: ['remove'],
+  emits: ['remove', 'retry'],
   setup(props, { slots, emit }) {
     const { theme, disabled, multiple } = toRefs(props);
 
@@ -67,6 +67,10 @@ export default defineComponent({
       emit('remove', file, e);
     }
 
+    function handleRetry(file: UploadFile, e: MouseEvent) {
+      emit('retry', file, e);
+    }
+
     const Photowall = () => (
       <TransitionGroup name={`${classBlock}__item`}>
         {
@@ -80,7 +84,7 @@ export default defineComponent({
               <li key={file.uid} class={classNames}>
                 {
                   slots?.file
-                    ? slots.file(file)
+                    ? slots.file({ file })
                     : PhotoItem(file)
                 }
               </li>
@@ -123,7 +127,7 @@ export default defineComponent({
               <li key={file.uid} class={classNames}>
                 {
                   slots?.file
-                    ? slots.file(file)
+                    ? slots.file({ file })
                     : NormalItem(file)
                 }
               </li>
@@ -189,6 +193,7 @@ export default defineComponent({
         {
           !disabled.value
           && <div class={`${classBlock}__item-actions`}>
+            { file.status === 'fail' && <RightTurnLine class={`${classBlock}__item-retry-icon`} onClick={e => handleRetry(file, e)} /> }
             <Del class={`${classBlock}__item-del-icon`} onClick={e => handleRemove(file, e)} />
           </div>
         }

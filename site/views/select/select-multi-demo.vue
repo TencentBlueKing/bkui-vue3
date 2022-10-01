@@ -28,37 +28,58 @@
         :label="item.label"
       />
     </bk-select>
+    <bk-select
+      v-model="selectedValue"
+      class="bk-select"
+      filterable
+      multiple
+      show-select-all
+      multiple-mode="tag"
+      collapse-tags
+    >
+      <bk-option
+        v-for="(item, index) in datasource"
+        :key="index"
+        :value="item.value"
+        :label="item.label"
+      />
+    </bk-select>
   </div>
 </template>
 <script setup>
   import { ref } from 'vue';
   const datasource = ref([
     {
-      value: 'string',
+      value: 'climbing',
       label: '爬山',
     },
     {
-      value: false,
+      value: 'running',
       label: '跑步',
     },
     {
-      value: undefined,
+      value: 'unknow',
       label: '未知',
     },
     {
-      value: 1,
+      value: 'fitness',
       label: '健身',
     },
     {
-      value: null,
+      value: 'bike',
       label: '骑车',
     },
     {
-      value: '',
+      value: 'dancing',
       label: '跳舞',
     },
+    {
+      value: 'sleep',
+      label: '睡觉',
+      disabled: true,
+    },
   ]);
-  const selectedValue = ref([1, 3, 4, '']);
+  const selectedValue = ref(['dancing', 'bike']);
 </script>
 <style scoped>
 .demo {

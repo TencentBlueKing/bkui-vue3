@@ -37,6 +37,7 @@ export * from './token';
 
 export * from './hooks/use-form';
 export * from './hooks/use-form-item';
+export * from './dom';
 
 
 export function classes(dynamicCls: object, constCls = ''): string {
@@ -59,16 +60,14 @@ export interface OriginComponent {
   name: string;
   install?: Plugin;
 }
-
 export const withInstall = <T extends OriginComponent>(
-  component: T) => {
+  component: T): T & Plugin  => {
   component.install = function (app: App, { prefix } = {}) {
     const pre = app.config.globalProperties.bkUIPrefix || prefix || 'Bk';
     app.component(pre + component.name, component);
   };
-  return component as typeof component & Plugin;
+  return component as T & Plugin;
 };
-
 export const withInstallProps = <T extends OriginComponent, K extends Record<string, unknown>>(
   component: T,
   childComponents: K,
@@ -83,7 +82,7 @@ export const withInstallProps = <T extends OriginComponent, K extends Record<str
   Object.keys(childComponents).forEach((key) => {
     component[key] = childComponents[key];
   });
-  return component as typeof component & Plugin & Readonly<typeof childComponents>;
+  return component as T & Plugin & Readonly<typeof childComponents>;
 };
 
 /**
@@ -148,12 +147,15 @@ export function filterProperty(data: object, filter: string[]) {
   }));
 };
 
-export function arrayEqual(arr1: string[] = [], arr2: string[] = []) {
+export function arrayEqual(arr1: Array<string | number | string[]> = [], arr2: Array<string | number | string[]> = []) {
   if (arr1.length !== arr2.length) {
     return false;
   }
 
   for (let i = 0; i < arr1.length; i++) {
+    if (Array.isArray(arr1[i])) {
+      return arrayEqual(arr1[i] as string[], arr2[i] as string[]);
+    }
     if (arr1[i] !== arr2[i]) {
       return false;
     }

@@ -23,29 +23,14 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { customRef, InjectionKey, Ref, ref, watch } from 'vue';
+import { customRef, InjectionKey, onBeforeUnmount, onMounted, Ref, ref, watch } from 'vue';
 
-import { OnFirstUpdateFnType } from '@bkui-vue/shared';
+import { observerResize } from '@bkui-vue/shared';
 
 import { IOptionGroupContext, IPopoverConfig, ISelectContext } from './type';
 
 export const selectKey: InjectionKey<ISelectContext> = Symbol('BkSelect');
 export const optionGroupKey: InjectionKey<IOptionGroupContext> = Symbol('BkOptionGroup');
-
-export function useFocus() {
-  const isFocus = ref(false);
-  const handleFocus = () => {
-    isFocus.value = true;
-  };
-  const handleBlur = () => {
-    isFocus.value = false;
-  };
-  return {
-    isFocus,
-    handleFocus,
-    handleBlur,
-  };
-}
 
 export function useHover() {
   const isHover = ref(false);
@@ -62,18 +47,19 @@ export function useHover() {
   };
 }
 
-export function useRegistry<T>(data: Ref<Array<T>>) {
+export function useRegistry<T>(data: Ref<Map<any, T>>) {
   // 注册item
-  const register = (item: T) => {
-    if (!item || data.value.find(d => d === item)) return;
-    return data.value.push(item);
+  const register = (key: any, item: T) => {
+    if (!item) return;
+    if (data.value.has(key)) {
+      console.warn(`repeat ${key}`, item);
+      return;
+    }
+    return data.value.set(key, item);
   };
   // 删除item
-  const unregister = (item: T) => {
-    const index = data.value.findIndex(d => d === item);
-    if (index > -1) {
-      data.value.splice(index, 1);
-    }
+  const unregister = (key: any) => {
+    data.value.delete(key);
   };
   return {
     register,
@@ -104,15 +90,11 @@ export function useDebouncedRef<T>(value, delay = 200) {
   }));
 }
 
-export function usePopover(config: IPopoverConfig) {
+export function usePopover(config: IPopoverConfig, triggerRef: Ref<HTMLElement>) {
   const { popoverMinWidth } = config;
+  let observerIns = null;
   const popperWidth = ref<string | number>('auto');
   const isPopoverShow = ref(false);
-  // 初始化PopoverWidth（默认跟输入框宽度一致）
-  const onPopoverFirstUpdate: OnFirstUpdateFnType = (instance) => {
-    const { reference } = instance.elements;
-    popperWidth.value = Math.max((reference as HTMLElement).offsetWidth, popoverMinWidth);
-  };
   const togglePopover = () => {
     isPopoverShow.value = !isPopoverShow.value;
   };
@@ -122,11 +104,22 @@ export function usePopover(config: IPopoverConfig) {
   const showPopover = () => {
     isPopoverShow.value = true;
   };
+  const triggerRefResize = () => {
+    popperWidth.value = Math.max((triggerRef.value)?.offsetWidth, popoverMinWidth);
+  };
+  onMounted(() => {
+    if (!triggerRef.value) return;
+    observerIns = observerResize(triggerRef.value, triggerRefResize, 60, true);
+    observerIns.start();
+  });
+  onBeforeUnmount(() => {
+    observerIns?.stop();
+    observerIns = null;
+  });
   return {
     isPopoverShow,
     popperWidth,
     togglePopover,
-    onPopoverFirstUpdate,
     hidePopover,
     showPopover,
   };

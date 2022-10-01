@@ -35,6 +35,7 @@ export default defineComponent({
   props: {
     ...propsMixin,
   },
+  emits: ['quick-close', 'quickClose', 'hidden', 'shown', 'close'],
   data() {
     return {
       visible: false,
@@ -55,6 +56,12 @@ export default defineComponent({
         height: this.dialogHeight,
         minHeigth: `${200}px`,
         display: this.visible ? 'inherit' : 'none',
+      };
+    },
+    fullscreenStyle(): any {
+      return {
+        width: `${100}%`,
+        height: `${100}%`,
       };
     },
   },
@@ -79,8 +86,10 @@ export default defineComponent({
             'background-color': 'rgba(0,0,0,0)',
           };
           const appendStyle = this.showMask ? {} : hideMaskStyle;
-          bkPopIndexManager.show(this.$el, this.showMask, appendStyle, this.transfer);
+          bkPopIndexManager.show(this.$el, this.showMask, appendStyle, this.transfer, this.zIndex);
           this.$emit('shown');
+          this.$emit('quick-close', this.$el);
+          this.$emit('quickClose', this.$el);
         });
       } else {
         bkPopIndexManager.hide(this.$el, this.transfer);
@@ -99,8 +108,8 @@ export default defineComponent({
     const maxHeight = this.maxHeight ? { maxHeight: this.maxHeight } : {};
     const bodyClass = `bk-modal-body ${this.animateType === 'slide' ? this.direction : ''}`;
     return (
-      <div class={['bk-modal-wrapper', this.customClass]}
-        style={this.compStyle}>
+      <div class={['bk-modal-wrapper', this.extCls, this.size]}
+        style={[this.compStyle, this.fullscreen ? this.fullscreenStyle : '']}>
         <div class="bk-modal-outside" onClick={this.handleClickOutSide} v-show={this.isShow}>
         </div>
         <Transition name={this.animateType}>
@@ -109,7 +118,7 @@ export default defineComponent({
             {this.$slots.header?.() ?? ''}
           </div>
           <div class="bk-modal-content"
-            style={[this.dialogType === 'show' ? 'height: calc(100% - 74px);margin-bottom: 0px' : '', { ...maxHeight }]}>
+            style={[this.dialogType === 'show' ? 'padding-bottom: 20px' : '', { ...maxHeight }]}>
             {this.$slots.default?.() ?? ''}
           </div>
           {this.dialogType === 'show' ? '' : (
@@ -117,6 +126,9 @@ export default defineComponent({
               {this.$slots.footer?.() ?? ''}
             </div>
           )}
+          <div class={['bk-modal-close', this.closeIcon ? '' : 'close-icon']}>
+              {this.$slots.close?.() ?? ''}
+            </div>
         </div> : ''}
         </Transition>
       </div>

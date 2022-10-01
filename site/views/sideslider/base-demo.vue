@@ -5,6 +5,7 @@
     </bk-button>
     <bk-sideslider
       v-model:isShow="isShow"
+      title="我是标题"
       quick-close
     />
   </div>

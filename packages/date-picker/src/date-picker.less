@@ -80,12 +80,14 @@
 
   .clear-action {
     position: absolute;
-    top: 50%;
+    // transform: translateY(-50%);
+    top: 0;
+    // top: 50%;
     right: 10px;
+    padding: 5px 0;
     font-size: 14px;
     color: @light-gray;
     cursor: pointer;
-    transform: translateY(-50%);
 
     &:hover {
       color: @gray-color;
@@ -192,6 +194,24 @@
 
     &:hover {
       background-color: #e1ecff;
+    }
+  }
+
+  .bk-picker-panel-shortcuts {
+    height: 100%;
+    overflow: auto;
+
+    >div {
+      height: 32px;
+      padding-left: 30px;
+      line-height: 32px;
+      color: #63656e;
+      cursor: pointer;
+
+      &:hover {
+        color: #3a84ff;
+        background-color: #e1ecff;
+      }
     }
   }
 }

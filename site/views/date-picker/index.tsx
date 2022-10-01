@@ -32,11 +32,13 @@ import PropsBox from '../../components/props-box';
 import { IPropsTableItem } from '../../typings';
 
 import BaseDemo from './base-demo.vue';
+import DemoTsx from './demo-tsx';
 import FooterSlotDemo from './footer-slot-demo.vue';
 import HeaderSlotDemo from './header-slot-demo.vue';
 import RangeDemo from './range-demo.vue';
 import ShortcutsSlotDemo from './shortcuts-slot-demo.vue';
 import TriggerSlotDemo from './trigger-slot-demo.vue';
+import WithTimeDemo from './with-time-demo.vue';
 
 const menuPropsJson: IPropsTableItem[] = [
   {
@@ -89,6 +91,13 @@ export default defineComponent({
             <RangeDemo />
           </DemoBox>
           <DemoBox
+            title="开启时间设置"
+            desc="通过设置 type 属性为 datetime 来开启时间设置"
+            componentName="date-picker"
+            demoName="with-time-demo">
+            <WithTimeDemo />
+          </DemoBox>
+          <DemoBox
             title="trigger slot"
             desc="可以通过 trigger slot 来增加自定义 trigger"
             componentName="date-picker"
@@ -116,6 +125,14 @@ export default defineComponent({
             demoName="shortcuts-slot-demo">
             <ShortcutsSlotDemo />
           </DemoBox>
+        <DemoBox
+          title="demo-tsx"
+          desc="自定义插槽 tsx 写法"
+          componentName="date-picker"
+          suffix='.tsx'
+          demoName="demo-tsx">
+          <DemoTsx />
+        </DemoBox>
         <PropsBox propsData={menuPropsJson}/>
       </div>
     );

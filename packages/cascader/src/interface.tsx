@@ -39,22 +39,27 @@ export interface INode {
   children?: (null)[] | null;
   config: IConfig;
   data: IData;
-  hasChildren: boolean;
+  leaf: boolean;
   id: string;
   level: number;
   loading: boolean;
+  loaded: boolean;
   name: string;
   parent?: INode;
   isDisabled: boolean;
+  isIndeterminate: boolean;
   isLeaf: boolean;
   pathNames: string[];
   path: string[];
   setNodeCheck(status: boolean): void;
+  broadcast(event: string, check: boolean): void;
+  emit(event: string): void;
 }
 
 export interface IData {
   id:        string;
-  name:      string;
+  name: string;
+  leaf?: boolean;
   disabled?: boolean;
   children?: IData[];
 }
@@ -70,4 +75,6 @@ export interface IConfig {
   nameKey: string;
   showCompleteName: boolean;
   trigger: string;
+  separator: string,
+  remoteMethod: Function;
 }

@@ -25,7 +25,17 @@
 */
 
 import { debounce } from 'lodash';
-import { computed, defineComponent, nextTick, onMounted, reactive, Ref, ref, toRefs, watch } from 'vue';
+import {
+  type Ref,
+  computed,
+  defineComponent,
+  nextTick,
+  onMounted,
+  reactive,
+  ref,
+  toRefs,
+  watch,
+} from 'vue';
 
 import { bkTooltips } from '@bkui-vue/directives';
 import { Close, Error } from '@bkui-vue/icon';
@@ -104,7 +114,12 @@ export default defineComponent({
     }));
 
     watch([() => [...props.modelValue], () => [...props.list]], () => {
-      initData();
+      nextTick(() => {
+        initData();
+      });
+      if (props.withValidate) {
+        formItem?.validate?.('change');
+      }
     });
     watch(curInputValue, debounce(() => {
       const hasShowCount = pageState.curPageList.length !== 0;
@@ -426,7 +441,7 @@ export default defineComponent({
         popoverProps.isShow = false;
         emit('blur', inputValue, tagList.value);
         formItem?.validate?.('blur');
-      }, 50);
+      }, 200);
     };
 
     /**
@@ -473,7 +488,6 @@ export default defineComponent({
       // this.dispatch('bk-form-item', 'form-change')
       emit(type, data);
       emit('update:modelValue', tagList.value);
-      formItem?.validate?.('change');
     };
 
     /**
@@ -630,10 +644,12 @@ export default defineComponent({
     const defaultPasteFn = (value: string): any[] => {
       const target = [];
       const textArr = value.split(';');
+      const regx = /^[a-zA-Z][a-zA-Z_]*/g;
 
       textArr.forEach((item) => {
-        if (item.match(/^[a-zA-Z][a-zA-Z_]+/g)) {
-          const finalItem = item.match(/^[a-zA-Z][a-zA-Z_]+/g).join('');
+        const matchValue = item.match(regx);
+        if (matchValue) {
+          const finalItem = matchValue.join('');
           target.push({ [props.saveKey]: finalItem, [props.displayKey]: finalItem });
         }
       });
@@ -651,7 +667,9 @@ export default defineComponent({
       const {
         maxData,
         saveKey,
+        displayKey,
         pasteFn,
+        allowCreate,
       } = props;
       const value = e.clipboardData.getData('text');
       const valArr = pasteFn ? pasteFn(value) : defaultPasteFn(value);
@@ -661,7 +679,11 @@ export default defineComponent({
         const index = getTagInputItemSite();
         const localInitData = listState.localList.map(data => data[saveKey]);
 
-        tags = tags.filter(tag => tag?.trim() && !tagList.value.includes(tag) && localInitData.includes(tag));
+        tags = tags.filter((tag) => {
+          const canSelected = tag?.trim() && !tagList.value.includes(tag);
+
+          return allowCreate ? canSelected : canSelected && localInitData.includes(tag);
+        });
         // 最大显示限制处理
         if (maxData !== -1) {
           const selectedLength = listState.selectedTagList.length;
@@ -674,7 +696,12 @@ export default defineComponent({
             tags = [];
           }
         }
-        const localTags = listState.localList.filter(tag => tags.includes(tag[saveKey]));
+        const localTags = allowCreate
+          ? tags.map((tag) => {
+            const localTag = listState.localList.find(localTag => localTag[saveKey] === tag);
+            return localTag ?? { [saveKey]: tag, [displayKey]: tag };
+          })
+          : listState.localList.filter(tag => tags.includes(tag[saveKey]));
 
         if (tags.length) {
           listState.selectedTagList.splice(index, 0, ...localTags);

@@ -14,14 +14,57 @@
       />
     </bk-select>
     <bk-select
+      v-model="selectedValue"
+      class="bk-select"
+      :input-search="false"
+      multiple
+      filterable
+    >
+      <bk-option
+        v-for="(item, index) in datasource"
+        :key="index"
+        :value="item.value"
+        :label="item.label"
+      />
+    </bk-select>
+    <bk-select
+      v-model="selectedValue"
+      class="bk-select"
+      :input-search="false"
+      multiple
+      filterable
+      multiple-mode="tag"
+    >
+      <bk-option
+        v-for="(item, index) in datasource"
+        :key="index"
+        :value="item.value"
+        :label="item.label"
+      />
+    </bk-select>
+    <bk-select
+      v-model="selectedValue"
+      class="bk-select"
+      multiple
+      filterable
+      multiple-mode="tag"
+    >
+      <bk-option
+        v-for="(item, index) in datasource"
+        :key="index"
+        :value="item.value"
+        :label="item.label"
+      />
+    </bk-select>
+    <bk-select
       class="bk-select"
       multiple
       filterable
       :remote-method="remoteMethod"
     >
       <bk-option
-        v-for="(item, index) in list"
-        :key="index"
+        v-for="(item) in list"
+        :key="item.value"
         :value="item.value"
         :label="item.label"
       />
@@ -32,41 +75,51 @@
   import { ref } from 'vue';
   const datasource = ref([
     {
-      value: 'string',
+      value: 'climbing',
       label: '爬山',
     },
     {
-      value: false,
+      value: 'running',
       label: '跑步',
     },
     {
-      value: undefined,
+      value: 'unknow',
       label: '未知',
     },
     {
-      value: 1,
+      value: 'fitness',
       label: '健身',
     },
     {
-      value: null,
+      value: 'bike',
       label: '骑车',
     },
     {
-      value: '',
+      value: 'dancing',
       label: '跳舞',
     },
+    {
+      value: 'sleep',
+      label: '睡觉',
+      disabled: true,
+    },
   ]);
-  const selectedValue = ref(false);
+  const selectedValue = ref('dancing');
   const list = ref([]);
   const remoteMethod = async value => new Promise((resolve) => {
-    setTimeout(() => {
-      list.value = new Array(10).fill('')
-        .map((_, i) => ({
-          value: `${i}-${value}`,
-          label: `label-${value}-${i}`,
-        }));
+    if (!value)  {
+      list.value = [];
       resolve('ok');
-    }, 3000);
+    } else {
+      setTimeout(() => {
+        list.value = new Array(10).fill('')
+          .map((_, i) => ({
+            value: `${i}-${value}`,
+            label: `label-${value}-${i}`,
+          }));
+        resolve('ok');
+      }, 1000);
+    };
   });
 </script>
 <style scoped>

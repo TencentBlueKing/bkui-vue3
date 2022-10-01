@@ -7,8 +7,8 @@
     @scroll-end="handleScrollEnd"
   >
     <bk-option
-      v-for="(item, index) in datasource"
-      :key="index"
+      v-for="(item) in datasource"
+      :key="item.value"
       :value="item.value"
       :label="item.label"
       :disabled="item.disabled"
@@ -19,36 +19,36 @@
   import { ref } from 'vue';
   const datasource = ref([
     {
-      value: 'string',
+      value: 'climbing',
       label: '爬山',
     },
     {
-      value: false,
+      value: 'running',
       label: '跑步',
     },
     {
-      value: undefined,
+      value: 'unknow',
       label: '未知',
     },
     {
-      value: 1,
+      value: 'fitness',
       label: '健身',
     },
     {
-      value: null,
+      value: 'bike',
       label: '骑车',
     },
     {
-      value: '',
+      value: 'dancing',
       label: '跳舞',
     },
     {
-      value: {},
+      value: 'sleep',
       label: '睡觉',
       disabled: true,
     },
   ]);
-  const selectedValue = ref(false);
+  const selectedValue = ref('dancing');
   const scrollLoading = ref(false);
   const handleScrollEnd = () => {
     scrollLoading.value = true;

@@ -8,17 +8,48 @@
 }
 
 .disabled() {
-  cursor: not-allowed;
-  background-color: @input-disabled-bg;
-  opacity: 1;
+  &.is-disabled,
+  &.is-readonly {
+    background-color: @input-disabled-bg;
+    border-color: @disable-color;
+    .@{bk-prefix}-input--prefix-area,
+    .@{bk-prefix}-input--suffix-area,
+    .@{bk-prefix}-input--suffix-icon {
+      cursor: not-allowed;
+      background-color: @input-disabled-bg;
+    }
+  }
+
+  &.is-disabled input,
+  &.is-readonly input,
+  &.is-disabled textarea,
+  &.is-readonly textarea {
+    cursor: not-allowed;
+    background-color: @input-disabled-bg;
+    opacity: 1;
+  }
+
+  &.is-readonly input,
+  &.is-readonly textarea {
+    cursor: auto;
+  }
+
+}
+
+.placeholder() {
+  ::placeholder {
+    color: @light-gray;
+  }
 }
 
 .@{bk-prefix}-textarea {
+  .placeholder();
   display: inline-flex;
   width: 100%;
   min-height: 70px;
   font-size: @font-size-base;
   line-height: 20px;
+  color: @input-color;
   background-color: white;
   border: @border-width-base @border-style-base @input-border-color;
   border-radius: 2px;
@@ -26,6 +57,7 @@
   box-sizing: border-box;
   transition: all .3s;
   flex-direction: column;
+  .disabled();
 
   > textarea {
     width: 100%;
@@ -33,7 +65,6 @@
     padding: 5px 10px;
     line-height: 1.5;
     text-align: left;
-    vertical-align: middle;
     border: 0;
     outline: none;
     resize: none;
@@ -42,11 +73,20 @@
   &--max-length {
     padding-right: @input-horizontal-padding;
     margin: 0;
+    margin-left: auto;
+    font-size: 12px;
     text-align: right;
+    transform: scale(.8);
+    justify-content: flex-end;
 
     span {
       color: @input-maxlength-color;
+
     }
+  }
+
+  &.is-focused:not(.is-readonly) {
+    .active();
   }
 }
 
@@ -59,10 +99,14 @@
   border: @border-width-base @border-style-base @input-border-color;
   border-radius: @border-radius-base;
   transition: all .3s;
+  .placeholder();
+  .disabled();
 
-  &:hover {
+  &:hover:not(.is-disabled) {
+    border-color: @gray-color;
+
     .show-clear-only-hover {
-      display: block;
+      display: flex;
     }
   }
 
@@ -70,13 +114,25 @@
     background-color: transparent;
     border-color: transparent;
     border-bottom-color: @input-border-color;
+
+    &:hover:not(.is-disabled) {
+      border-color: transparent;
+      border-bottom-color: @light-gray;
+      box-shadow: none;
+      .@{bk-prefix}-input--text {
+        background-color: @input-block-color;
+      }
+    }
   }
 
   &--suffix-icon {
+    display: flex;
+    height: 100%;
     padding-right: @input-horizontal-padding;
     font-size: @input-icon-size;
-    line-height: 1;
     color: @light-gray;
+    background-color: @input-bg;
+    align-items: center;
     align-self: center;
 
     &.show-clear-only-hover {
@@ -84,11 +140,25 @@
     }
   }
 
+  &--clear-icon {
+    cursor: pointer;
+
+    &:hover {
+      color: @gray-color;
+    }
+  }
+
+
   &--large {
     .component-size(@component-size-large, @font-size-medium);
 
     .@{bk-prefix}-input--max-length {
       font-size: @font-size-large;
+    }
+    .@{bk-prefix}-input--number-control {
+      span:first-child {
+        margin-bottom: 4px;
+      }
     }
   }
 
@@ -115,17 +185,13 @@
       border-color: transparent;
       border-bottom-color: @primary-color;
       box-shadow: none;
+      .@{bk-prefix}-input--text {
+        background-color: @input-block-color;
+      }
     }
   }
 
-  &.is-disabled input,
-  &.is-readonly input {
-    .disabled();
-  }
 
-  &.is-readonly input {
-    cursor: auto;
-  }
 
   &--prefix-area,
   &--suffix-area {
@@ -145,6 +211,8 @@
   &--max-length {
     align-self: center;
     padding-right: @input-horizontal-padding;
+    font-size: 12px;
+    transform: scale(.8);
 
     span {
       color: @input-maxlength-color;
@@ -196,19 +264,30 @@
   }
 
   &--number-control {
+    display: flex;
     width: 26px;
     height: 100%;
+    padding: 4px 0;
     font-size: 0;
-    flex-direction: column;
     user-select: none;
+    flex-direction: column;
+    align-items: center;
 
     span {
-      display: block;
-      height: 50%;
+      display: flex;
       overflow: hidden;
       line-height: 1;
-      color: @light-gray;
+      color: @gray-color;
       text-align: center;
+      cursor: pointer;
+      background-color: @input-block-color;
+      flex: 1;
+      align-items: center;
+
+      &.is-disabled {
+        color: @light-gray;
+        cursor: not-allowed;
+      }
     }
 
     svg {
@@ -219,8 +298,8 @@
       transform: rotate(180deg);
     }
 
-    span:hover {
-      background-color: #f4f6fa;
+    span:not(.is-disabled):hover {
+      background-color: @input-block-hover-color;
     }
   }
 }

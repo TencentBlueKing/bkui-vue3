@@ -29,27 +29,30 @@ import Option from './option';
 import Group from './optionGroup';
 import SelectTagInput from './selectTagInput';
 
-export type OptionInstanceType = InstanceType<typeof Option>;
+export interface OptionInstanceType extends InstanceType<typeof Option> {
+  value: string;
+}
 export type GroupInstanceType = InstanceType<typeof Group>;
 export type PopoverInstanceType = InstanceType<typeof Popover>;
 export type SelectTagInputType = InstanceType<typeof SelectTagInput>;
 
 export interface ISelectContext {
   multiple?: boolean;
-  selected: ISelectedData[];
+  selected: ISelected[];
   activeOptionValue: any;
-  register(option: OptionInstanceType): any;
-  unregister(option: OptionInstanceType): any;
-  registerGroup(option: GroupInstanceType): any;
-  unregisterGroup(option: GroupInstanceType): any;
+  showSelectedIcon: boolean;
+  register(key: any, option: OptionInstanceType): any;
+  unregister(key: any): any;
+  registerGroup(key: any, option: GroupInstanceType): any;
+  unregisterGroup(key: any): any;
   handleOptionSelected (option: OptionInstanceType): void;
 }
 
 export interface IOptionGroupContext {
   disabled: boolean;
   groupCollapse: boolean;
-  register(option: OptionInstanceType): any;
-  unregister(option: OptionInstanceType): any;
+  register(key: any, option: OptionInstanceType): any;
+  unregister(key: any): any;
 }
 
 export interface ISelectState {
@@ -61,7 +64,7 @@ export interface IPopoverConfig {
   popoverMinWidth: number;
 }
 
-export interface ISelectedData {
-  value: any;
+export interface ISelected {
+  value: string;
   label: string;
 }

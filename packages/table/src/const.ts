@@ -24,10 +24,18 @@
 * IN THE SOFTWARE.
 */
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export const enum BORDER_OPTION {
+  NONE = 'none',
+  ROW = 'row',
+  COL = 'col',
+  OUTER = 'outer'
+}
+
 /**
  * 边框配置可选项
  */
-export const BORDER_OPRIONS = ['none', 'row', 'col', 'outer'];
+export const BORDER_OPTIONS = [BORDER_OPTION.NONE, BORDER_OPTION.ROW, BORDER_OPTION.COL, BORDER_OPTION.OUTER];
 
 export const enum EVENTS {
   /** 点击排序事件 */
@@ -35,17 +43,18 @@ export const enum EVENTS {
   ON_FILTER_CLICK = 'onFilterClick',
   ON_SETTING_CHANGE = 'onSettingChange',
 
-  ON_ROW_EXPAND_CLICK = 'onRowExpandClick'
+  ON_ROW_EXPAND_CLICK = 'onRowExpandClick',
+  ON_ROW_CHECK = 'onRowCheck'
 }
 
-// ['columnPick', 'rowClick', 'rowDblClick', 'pageLimitChange', 'pageValueChange']
 export const enum EMITEVENTS {
   COLUMN_PICK = 'columnPick',
   COLUMN_SORT = 'columnSort',
   COLUMN_FILTER = 'columnFilter',
+  COLUMN_FILTER_SAVE = 'colFilterSave',
 
   ROW_CLICK = 'rowClick',
-  ROW_DBL_CLICK = 'rowDblClick',
+  ROW_DBL_CLICK = 'rowDblclick',
   ROW_EXPAND_CLICK = 'rowExpand',
 
   PAGE_LIMIT_CHANGE = 'pageLimitChange',
@@ -53,7 +62,11 @@ export const enum EMITEVENTS {
 
   SETTING_CHANGE = 'settingChange',
 
-  SCROLL_BOTTOM = 'scrollBottom'
+  SCROLL_BOTTOM = 'scrollBottom',
+
+  ROW_SELECT = 'select',
+  ROW_SELECT_ALL = 'selectAll',
+  ROW_SELECT_CHANGE = 'selectionChange'
 }
 
 const EMPTY = (..._args) => true;
@@ -62,11 +75,19 @@ export const EMIT_EVENT_TYPES = {
   [EMITEVENTS.COLUMN_PICK]: EMPTY,
   [EMITEVENTS.COLUMN_FILTER]: EMPTY,
   [EMITEVENTS.COLUMN_SORT]: EMPTY,
+  [EMITEVENTS.COLUMN_FILTER_SAVE]: EMPTY,
+
   [EMITEVENTS.ROW_CLICK]: EMPTY,
   [EMITEVENTS.ROW_DBL_CLICK]: EMPTY,
   [EMITEVENTS.ROW_EXPAND_CLICK]: EMPTY,
+
+  [EMITEVENTS.ROW_SELECT]: EMPTY,
+  [EMITEVENTS.ROW_SELECT_ALL]: EMPTY,
+  [EMITEVENTS.ROW_SELECT_CHANGE]: EMPTY,
+
   [EMITEVENTS.PAGE_LIMIT_CHANGE]: EMPTY,
   [EMITEVENTS.PAGE_VALUE_CHANGE]: EMPTY,
+
   [EMITEVENTS.SETTING_CHANGE]: EMPTY,
   [EMITEVENTS.SCROLL_BOTTOM]: EMPTY,
 };
@@ -78,4 +99,34 @@ export const TABLE_ROW_ATTRIBUTE = {
   ROW_INDEX: '__$table_row_index',
   ROW_UID: '__$uuid',
   ROW_EXPAND: '__row_expand',
+  ROW_SELECTION: '__row_selection',
+  ROW_SELECTION_ALL: '__row_selection_all',
+  ROW_SELECTION_INDETERMINATE: '__row_selection_indeterminate',
 };
+
+/**
+ * Y 轴滚动条宽度
+ */
+export const SCROLLY_WIDTH = 4;
+
+/**
+ * 默认行高
+ */
+export const LINE_HEIGHT = 42;
+
+export const SETTING_SIZE = {
+  large: 78,
+  medium: 60,
+  small: 42,
+};
+
+export const DEFAULT_SIZE_LIST = [
+  { value: 'small', label: '小', height: SETTING_SIZE.small },
+  { value: 'medium', label: '中', height: SETTING_SIZE.medium },
+  { value: 'large', label: '大', height: SETTING_SIZE.large },
+];
+
+/**
+ * Provide key: init column when use <column { ...props }> template
+ */
+export const PROVIDE_KEY_INIT_COL = 'InitColumns';

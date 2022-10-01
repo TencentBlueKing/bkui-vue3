@@ -27,9 +27,8 @@
 import { DirectiveBinding, ObjectDirective } from 'vue';
 
 import { bkZIndexManager } from '@bkui-vue/shared';
-import { createPopper, OptionsGeneric, Placement } from '@popperjs/core';
+import { createPopper, Placement } from '@popperjs/core';
 
-import '../../styles/src/mixins/popper.less';
 export declare type IOptions = {
   arrow: boolean,
   disabled: boolean,
@@ -39,27 +38,73 @@ export declare type IOptions = {
   theme: string;
   trigger: string;
   distance: number;
+  extCls: string,
   onShow: () => void;
   onHide: () => void;
 };
+const nodeList = new Map();
 
 const tooltips: ObjectDirective = {
-  mounted(el: HTMLElement, binding: DirectiveBinding) {
+  beforeMount(el: HTMLElement, binding: DirectiveBinding) {
     const opts = initOptions();
     if (typeof binding.value === 'object') {
       Object.assign(opts, binding.value);
     } else {
       opts.content = binding.value;
     }
-    const { disabled, arrow, theme } = opts;
+    const { disabled, trigger, content, arrow, theme, extCls } = opts;
     if (disabled) {
       return;
     }
-    const popper = renderContent(opts.content, arrow, theme === 'light');
-    createPopperInstance(el, popper, opts);
+    const popper = renderContent(content, arrow, theme === 'light', extCls);
+
+    if (trigger === 'hover') {
+      let hideTimeout = null;
+      el.addEventListener('mouseenter', () => {
+        show(el);
+        clearTimeout(hideTimeout);
+      });
+      popper.addEventListener('mouseenter', () => {
+        clearTimeout(hideTimeout);
+      });
+      el.addEventListener('mouseleave', () => {
+        hideTimeout = setTimeout(() => {
+          hide(el);
+        }, 100);
+      });
+      el.addEventListener('click', () => {
+        hide(el);
+      });
+      popper.addEventListener('mouseleave', () => {
+        hideTimeout = setTimeout(() => {
+          hide(el);
+        }, 100);
+      });
+    } else if (trigger === 'click') {
+      document.body.addEventListener('click', (event) => {
+        if (el.contains(event.target as HTMLElement) && !popper.hasAttribute('data-show')) {
+          show(el);
+        } else if (popper.hasAttribute('data-show')) {
+          hide(el);
+        }
+      });
+    }
+
+    nodeList.set(el, {
+      opts,
+      popper,
+      popperInstance: null,
+    });
+  },
+  unmounted(el) {
+    hide(el);
   },
 };
 
+/**
+ * 初始化配置
+ * @returns tooltips配置
+ */
 function initOptions(): IOptions {
   const defaultOpts: IOptions = {
     arrow: true,
@@ -70,26 +115,38 @@ function initOptions(): IOptions {
     showOnInit: false,
     placement: 'top',
     distance: 8,
+    extCls: '',
     onShow: () => {},
     onHide: () => {},
   };
   return defaultOpts;
 }
 
-function renderContent(value: string, hasArrow: boolean, isLight: boolean): HTMLElement {
+/**
+ * 创建tooltips DOM
+ * @param value
+ * @param hasArrow
+ * @param isLight
+ * @param extCls
+ * @returns
+ */
+function renderContent(value: string, hasArrow: boolean, isLight: boolean, extCls: string): HTMLElement {
   const zIndex = bkZIndexManager.getPopperIndex();
   const content = document.createElement('div');
-  content.className = `bk-popper ${isLight ? 'light' : 'dark'}`;
+  content.className = `bk-popper ${isLight ? 'light' : 'dark'} ${extCls}`;
   content.innerText = value;
   content.style.zIndex = String(zIndex);
   if (hasArrow) {
     const arrow = renderArrow();
     content.appendChild(arrow);
   }
-  document.body.appendChild(content);
   return content;
 }
 
+/**
+ * 渲染箭头dom
+ * @returns arrow DOM
+ */
 function renderArrow(): HTMLElement {
   const arrow = document.createElement('div');
   arrow.className = 'bk-popper-arrow';
@@ -97,8 +154,14 @@ function renderArrow(): HTMLElement {
   return arrow;
 }
 
-function createPopperInstance(el: HTMLElement, popper: HTMLElement, options: IOptions) {
-  const { placement, distance, trigger, showOnInit, onShow, onHide } = options;
+/**
+ * 创建popper实例
+ * @param el
+ * @param popper
+ * @returns popper实例
+ */
+function createPopperInstance(el: HTMLElement, popper: HTMLElement) {
+  const { placement, distance, showOnInit } = nodeList.get(el).opts;
   const popperInstance = createPopper(el, popper, {
     placement,
     modifiers: [
@@ -111,61 +174,48 @@ function createPopperInstance(el: HTMLElement, popper: HTMLElement, options: IOp
     ],
   });
 
-  if (trigger === 'hover') {
-    const showEvents = ['mouseenter', 'focus'];
-    const hideEvents = ['mouseleave', 'blur'];
-
-    showEvents.forEach((event) => {
-      el.addEventListener(event, show);
-    });
-
-    hideEvents.forEach((event) => {
-      el.addEventListener(event, hide);
-    });
-  } else if (trigger === 'click') {
-    document.body.addEventListener('click', (event) => {
-      if (el.contains(event.target as HTMLElement) && !popper.hasAttribute('data-show')) {
-        show();
-      } else if (popper.hasAttribute('data-show')) {
-        hide();
-      }
-    });
-  }
-
-  if (showOnInit) show();
-
-  function show() {
-    // Make the tooltip visible
-    popper.setAttribute('data-show', '');
-    onShow();
-
-    // Enable the event listeners
-    popperInstance.setOptions(options => ({
-      ...options,
-      modifiers: [
-        ...options.modifiers,
-        { name: 'eventListeners', enabled: true },
-      ],
-    }));
-
-    // Update its position
-    popperInstance.update();
-  }
-
-  function hide() {
-    // Hide the tooltip
-    popper.removeAttribute('data-show');
-    onHide();
-
-    // Disable the event listeners
-    popperInstance.setOptions((options: Partial<OptionsGeneric<any>>) => ({
-      ...options,
-      modifiers: [
-        ...options.modifiers,
-        { name: 'eventListeners', enabled: false },
-      ],
-    }));
-  }
+  if (showOnInit) show(el);
+  return popperInstance;
 }
 
+/**
+ * 显示
+ * @param el
+ */
+function show(el: HTMLElement) {
+  const { popper, opts: { onShow } } = nodeList.get(el);
+  document.body.appendChild(popper);
+  const popperInstance = createPopperInstance(el, popper);
+  onShow();
+
+  // Make the tooltip visible
+  popper.setAttribute('data-show', '');
+  // Enable the event listeners
+  popperInstance.setOptions(options => ({
+    ...options,
+    modifiers: [
+      ...options.modifiers,
+      { name: 'eventListeners', enabled: true },
+    ],
+  }));
+
+  // Update its position
+  popperInstance.forceUpdate();
+  nodeList.get(el).popperInstance = popperInstance;
+}
+
+/**
+ * 隐藏
+ * @param el
+ */
+function hide(el: HTMLElement) {
+  if (!nodeList.get(el)) return;
+  const { popper, popperInstance, opts: { onHide } } = nodeList.get(el);
+  if (popper && document.body.contains(popper)) {
+    popper.removeAttribute('data-show');
+    popperInstance?.destroy();
+    document.body.removeChild(popper);
+    onHide();
+  }
+}
 export default tooltips;

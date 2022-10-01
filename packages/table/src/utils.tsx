@@ -24,10 +24,10 @@
 * IN THE SOFTWARE.
 */
 
-import { throttle } from 'lodash';
+import { get as objGet, throttle } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
-import { BORDER_OPRIONS, TABLE_ROW_ATTRIBUTE } from './const';
+import { BORDER_OPTION, BORDER_OPTIONS, TABLE_ROW_ATTRIBUTE } from './const';
 import { Column, GroupColumn, TablePropTypes } from './props';
 
 
@@ -38,16 +38,24 @@ import { Column, GroupColumn, TablePropTypes } from './props';
  * @param args 如果是函数，传递参数
  * @returns
  */
-export const resolvePropVal = (prop: any, key: string, args: any[]) => {
-  if (Object.prototype.hasOwnProperty.call(prop, key)) {
-    if (typeof prop[key] === 'function') {
-      return prop[key].call(this, ...args);
+export const resolvePropVal = (prop: any, key: string | string[], args: any[]) => {
+  if (typeof key === 'string') {
+    if (Object.prototype.hasOwnProperty.call(prop, key)) {
+      if (typeof prop[key] === 'function') {
+        return prop[key].call(this, ...args);
+      }
+
+      return prop[key];
     }
 
-    return prop[key];
+    return undefined;
   }
 
-  return undefined;
+  if (Array.isArray(key)) {
+    return key.map((_key: string) => resolvePropVal(prop, _key, args))
+      .filter((val: any) => val !== undefined)
+      .at(0);
+  }
 };
 
 /**
@@ -122,7 +130,7 @@ export const resolvePropBorderToClassStr = (val: string | string[]) => {
   }
 
   if (Array.isArray(val)) {
-    defaultVal.push(...val.filter((str: string) => BORDER_OPRIONS.includes(str)));
+    defaultVal.push(...val.filter((str: string) => BORDER_OPTIONS.includes(str as BORDER_OPTION)));
   }
 
   return [...new Set(defaultVal)].map((item: string) => `bordered-${item}`)
@@ -145,11 +153,18 @@ export const getColumnReactWidth = (colmun: GroupColumn, orders = ['resizeWidth'
  * @param root 当前根元素
  * @param colgroups Columns配置
  * @param autoWidth 自动填充宽度
+ * @param offsetWidth 需要减掉的偏移量（滚动条|外层边框）
  */
-export const resolveColumnWidth = (root: HTMLElement, colgroups: GroupColumn[], autoWidth = 20) => {
+export const resolveColumnWidth = (
+  root: HTMLElement,
+  colgroups: GroupColumn[],
+  autoWidth = 20,
+  offsetWidth = 0,
+) => {
   const { width } = root.getBoundingClientRect() || {};
+  const availableWidth = width - offsetWidth;
   // 可用来平均的宽度
-  let avgWidth = width - 4;
+  let avgWidth = availableWidth;
 
   // 需要平均宽度的列数
   const avgColIndexList = [];
@@ -166,7 +181,7 @@ export const resolveColumnWidth = (root: HTMLElement, colgroups: GroupColumn[], 
     }
 
     if (/^\d+\.?\d*%$/.test(`${minWidth}`)) {
-      calcMinWidth = Number(minWidth) * width / 100;
+      calcMinWidth = Number(minWidth) * availableWidth / 100;
     }
 
     if (/^\d+\.?\d*px$/i.test(`${minWidth}`)) {
@@ -196,7 +211,8 @@ export const resolveColumnWidth = (root: HTMLElement, colgroups: GroupColumn[], 
 
   colgroups.forEach((col: GroupColumn, index: number) => {
     if (!col.isHidden) {
-      const colWidth = String(getColumnReactWidth(col));
+      const order = ['resizeWidth', 'width'];
+      const colWidth = String(getColumnReactWidth(col, order));
       let isAutoWidthCol = true;
       if (/^\d+\.?\d*(px)?$/.test(colWidth)) {
         const numWidth = Number(colWidth.replace('px', ''));
@@ -297,10 +313,10 @@ export const resolveHeadConfig = (props: TablePropTypes) => {
    */
 export const getRowText = (row: any, key: string, column: Column) => {
   if (column.type === 'index') {
-    return row[TABLE_ROW_ATTRIBUTE.ROW_INDEX];
+    return row[TABLE_ROW_ATTRIBUTE.ROW_INDEX] + 1;
   }
 
-  return row[key];
+  return objGet(row, key);
 };
 
 /**
@@ -333,16 +349,13 @@ export const isRenderScrollBottomLoading = (props: TablePropTypes) => {
   return typeof props.scrollLoading === 'boolean' || typeof props.scrollLoading === 'object';
 };
 
-export const getRowKey = (item: any, props: TablePropTypes) => {
+export const getRowKey = (item: any, props: TablePropTypes, index: number) => {
   if (typeof props.rowKey === 'string') {
-    const keys = props.rowKey.split('.');
-    return keys.reduce((pre: any, cur: string) => {
-      if (Object.prototype.hasOwnProperty.call(pre, cur)) {
-        return pre[cur];
-      }
+    if (props.rowKey === TABLE_ROW_ATTRIBUTE.ROW_INDEX) {
+      return `__ROW_INDEX_${index}`;
+    }
 
-      return pre;
-    }, item);
+    return objGet(item, props.rowKey);
   }
 
   if (typeof props.rowKey === 'function') {
@@ -351,3 +364,56 @@ export const getRowKey = (item: any, props: TablePropTypes) => {
 
   return uuidv4();
 };
+
+
+export const hasRootScrollY =  (root, querySelector: string, offsetHeight = 0) => {
+  if (root) {
+    const tableBody = root.querySelector(querySelector) as HTMLElement;
+    if (tableBody) {
+      return  tableBody.offsetHeight > (root.offsetHeight - offsetHeight);
+    }
+  }
+
+  return false;
+};
+
+export const getColumnClass = (column: Column, colIndex = 0, uuid: string = null) => ({
+  ...(uuid ? { [`${uuid}-column-${colIndex}`]: true } : {}),
+  column_fixed: !!column.fixed,
+  column_fixed_left: !!column.fixed,
+  column_fixed_right: column.fixed === 'right',
+});
+
+export const getElementTextWidth = (element: HTMLElement, text?: string) => {
+  /**
+  * Uses canvas.measureText to compute and return the width of the given text of given font in pixels.
+  *
+  * @param {String} text The text to be rendered.
+  * @param {String} font The css font descriptor that text is to be rendered with (e.g. "bold 14px verdana").
+  *
+  * @see https://stackoverflow.com/questions/118241/calculate-text-width-with-javascript/21015393#21015393
+  */
+  function getTextWidth(text, font) {
+  // re-use canvas object for better performance
+    const canvas = (getTextWidth as any).canvas || ((getTextWidth as any).canvas = document.createElement('canvas'));
+    const context = canvas.getContext('2d');
+    context.font = font;
+    const metrics = context.measureText(text);
+    return metrics.width;
+  }
+
+  function getCssStyle(element, prop) {
+    return window.getComputedStyle(element, null).getPropertyValue(prop);
+  }
+
+  function getCanvasFont(el = document.body) {
+    const fontWeight = getCssStyle(el, 'font-weight') || 'normal';
+    const fontSize = getCssStyle(el, 'font-size') || '16px';
+    const fontFamily = getCssStyle(el, 'font-family') || 'Times New Roman';
+
+    return `${fontWeight} ${fontSize} ${fontFamily}`;
+  }
+
+  return getTextWidth(text || element?.innerHTML, getCanvasFont(element));
+};
+

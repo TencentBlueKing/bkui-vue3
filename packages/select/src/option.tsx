@@ -35,6 +35,7 @@ import {
   toRefs,
 } from 'vue';
 
+import { Done } from '@bkui-vue/icon';
 import { classes, PropTypes } from '@bkui-vue/shared';
 
 import { optionGroupKey, selectKey } from './common';
@@ -43,7 +44,7 @@ export default defineComponent({
   name: 'Option',
   props: {
     value: PropTypes.any,
-    label: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    label: PropTypes.string.def(''),
     disabled: PropTypes.bool.def(false),
   },
   setup(props) {
@@ -56,9 +57,10 @@ export default defineComponent({
     const { disabled, value } = toRefs(props);
     const select = inject(selectKey, null);
     const group = inject(optionGroupKey, null);
-    const selected = computed<boolean>(() => select?.selected?.some(data => data.value === value.value));
+    const selected = computed<boolean>(() => select?.selected?.some(item => item.value === value.value as string));
     const multiple = computed<boolean>(() => select?.multiple);
     const isHover = computed(() => select?.activeOptionValue === value.value);
+    const showSelectedIcon = computed(() => select?.showSelectedIcon);
 
     const handleOptionClick = () => {
       if (disabled.value) return;
@@ -70,13 +72,13 @@ export default defineComponent({
     };
 
     onBeforeMount(() => {
-      select?.register(proxy);
-      group?.register(proxy);
+      select?.register(value.value, proxy);
+      group?.register(value.value, proxy);
     });
 
     onBeforeUnmount(() => {
-      select?.unregister(proxy);
-      group?.unregister(proxy);
+      select?.unregister(value.value);
+      group?.unregister(value.value);
     });
 
     return {
@@ -84,6 +86,7 @@ export default defineComponent({
       selected,
       multiple,
       isHover,
+      showSelectedIcon,
       handleOptionClick,
       handleMouseEnter,
     };
@@ -101,7 +104,20 @@ export default defineComponent({
         class={selectItemClass}
         onClick={this.handleOptionClick}
         onMouseenter={this.handleMouseEnter}>
-        {this.$slots.default?.() ?? <span>{this.label}</span>}
+        {
+          this.$slots.default?.()
+          ?? (
+            <span class="bk-select-option-item" title={this.label}>
+              {this.label}
+            </span>
+          )
+        }
+        {
+          this.multiple
+            && this.selected
+            && this.showSelectedIcon
+            && <Done class="bk-select-selected-icon" width={22} height={22}></Done>
+        }
       </li>
     );
   },

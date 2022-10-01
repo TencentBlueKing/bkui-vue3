@@ -23,51 +23,47 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent } from 'vue';
+import { unref } from 'vue';
 
-import BkButton from '@bkui-vue/button';
-import { bkTooltips } from '@bkui-vue/directives';
+import { Column, TablePropTypes } from './props';
+/**
+ * 渲染column settings
+ * @param props: TablePropTypes
+ * @param targetColumns 解析之后的column配置（主要用来处理通过<bk-column>配置的数据结构）
+ */
+export default (props: TablePropTypes, targetColumns: Column[]) => {
+  const initColumns = (column: Column | Column[]) => {
+    let resolveColumns: Column[] = [];
 
-export default defineComponent({
-  name: 'SiteTooltips',
-  directives: {
-    bkTooltips,
-  },
-  setup() {
-    const leftContent = {
-      arrow: true,
-      disabled: false,
-      trigger: 'hover',
-      theme: 'dark',
-      content: '提示信息',
-      showOnInit: false,
-      placement: 'left',
-      distance: 8,
-      onShow: () => {
-        console.log('onshow');
-      },
-      onHide: () => {
-        console.log('onHide');
-      },
-    };
+    if (!Array.isArray(column)) {
+      resolveColumns = [column];
+    } else {
+      resolveColumns = column;
+    }
 
-    const rightContent = Object.assign({}, leftContent, { placement: 'right', trigger: 'click', showOnInit: true });
-    const bottomContent = Object.assign({}, leftContent, { placement: 'bottom', theme: 'light' });
+    resolveColumns.forEach((col) => {
+      const matchCol = targetColumns.find(c => c.label === col.label && c.field === col.field);
+      if (!matchCol) {
+        const unrefCol = unref(col);
+        targetColumns.push(unrefCol);
+      }
+    });
+  };
 
-    return {
-      leftContent,
-      rightContent,
-      bottomContent,
-    };
-  },
-  render() {
-    return (
-      <div style="margin: 50px auto;">
-        <BkButton ref="tooltip" v-bk-tooltips="提示信息">上边</BkButton><br /><br />
-        <BkButton ref="tooltip" v-bk-tooltips={this.leftContent}>左边</BkButton><br /><br />
-        <BkButton ref="tooltip" v-bk-tooltips={this.rightContent}>右边</BkButton><br /><br />
-        <BkButton ref="tooltip" v-bk-tooltips={this.bottomContent}>下边</BkButton><br /><br />
-      </div>
-    );
-  },
-});
+  const getColumns = () => {
+    if (targetColumns?.length) {
+      return targetColumns;
+    }
+
+    if (props.columns?.length) {
+      return props.columns;
+    }
+
+    return [];
+  };
+
+  return {
+    initColumns,
+    getColumns,
+  };
+};

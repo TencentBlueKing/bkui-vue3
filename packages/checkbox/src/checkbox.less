@@ -3,13 +3,15 @@
 .@{bk-prefix}-checkbox {
   display: inline-flex;
   justify-self: center;
-  margin-right: 30px;
   font-size: 14px;
   line-height: 18px;
   letter-spacing: normal;
   color: #63656e;
   cursor: pointer;
   user-select: none;
+  &~.@{bk-prefix}-checkbox {
+    margin-left: 30px;
+  }
 
   &.is-checked {
     .bk-checkbox-input {
@@ -17,17 +19,24 @@
       border-color: @primary-color;
       transition: all .1s;
 
+      &.small {
+        &::after {
+          width: 3px;
+          height: 6px;
+        }
+      }
+
       &::after {
         position: absolute;
-        top: 1px;
-        left: 5px;
+        top: 50%;
+        left: 50%;
         width: 4px;
         height: 8px;
         border: 2px solid #fff;
         border-top: 0;
         border-left: 0;
         content: '';
-        transform: scaleY(1) rotate(45deg);
+        transform: translate(-50%, -60%) scaleY(1) rotate(45deg);
         transform-origin: center;
       }
     }
@@ -35,7 +44,18 @@
 
   &.is-indeterminated {
     .bk-checkbox-input {
-      &:after {
+      background: @primary-color;
+      border-color: @primary-color;
+      transition: all .1s;
+
+      &.small {
+        &::after {
+          width: 6px;
+          height: 2px;
+        }
+      }
+
+      &::after {
         position: absolute;
         top: 50%;
         left: 50%;
@@ -80,6 +100,10 @@
     border: 1px solid #979ba5;
     border-radius: 2px;
     
+    &.small {
+      width: 14px;
+      height: 14px;
+    }
   }
 
   .bk-checkbox-original {

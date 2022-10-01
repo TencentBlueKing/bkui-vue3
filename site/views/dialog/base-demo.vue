@@ -10,6 +10,7 @@
       :is-show="exampleSetting.dialog.isShow"
       :title="'描述'"
       :theme="'primary'"
+      :quick-close="false"
       @closed="() => exampleSetting.dialog.isShow = false"
       @confirm="() => exampleSetting.dialog.isShow = false"
     >
@@ -23,7 +24,6 @@
 
   import BkButton from '@bkui-vue/button';
   import BkDialog from '@bkui-vue/dialog';
-
   const exampleSetting = ref({
     dialog: {
       isShow: false,

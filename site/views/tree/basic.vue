@@ -4,6 +4,9 @@
       :data="treeData"
       label="name"
       children="children"
+      show-checkbox
+      level-line
+      :auto-open-parent-node="false"
       @node-click="handleNodeClick"
       @node-expand="handleNodeExpand"
       @node-collapse="handleNodeCollapse"
@@ -19,7 +22,7 @@
     components: {},
     data() {
       return {
-        treeData: [...BASIC_DATA],
+        treeData: [...(JSON.parse(JSON.stringify(BASIC_DATA)))],
       };
     },
     methods: {
@@ -28,8 +31,13 @@
       },
       handleNodeExpand(item, attrs, event) {
         console.log('handleNodeExpand', item, attrs, event);
+        Object.assign(this.treeData[0], { isOpen: true });
       },
       handleNodeCollapse(item, attrs, event) {
+        setTimeout(() => {
+          Object.assign(this.treeData[0], { isOpen: false });
+        });
+
         console.log('handleNodeCollapse', item, attrs, event);
       },
     },

@@ -25,11 +25,16 @@
 */
 
 
+import { v4 as uuidv4 } from 'uuid';
+
+import BkCheckbox from '@bkui-vue/checkbox';
 import { DownShape, RightShape } from '@bkui-vue/icon';
 import Pagination from '@bkui-vue/pagination';
-import { classes, random } from '@bkui-vue/shared';
+import { classes } from '@bkui-vue/shared';
 
-import { EVENTS, TABLE_ROW_ATTRIBUTE } from './const';
+import TableCell from './components/table-cell';
+import TableRow from './components/table-row';
+import { EMITEVENTS, EVENTS, TABLE_ROW_ATTRIBUTE } from './const';
 import BodyEmpty from './plugins/body-empty';
 import HeadFilter from './plugins/head-filter';
 import HeadSort from './plugins/head-sort';
@@ -53,7 +58,7 @@ export default class TableRender {
     this.reactiveProp = reactiveProp;
     this.colgroups = colgroups;
     this.plugins = new TablePlugins(props, ctx);
-    this.uuid = random(8);
+    this.uuid = uuidv4();
     this.events = new Map<string, any[]>();
   }
 
@@ -78,7 +83,7 @@ export default class TableRender {
       this.reactiveProp.setting.height = height;
       if (checked.length) {
         this.colgroups.forEach((col: GroupColumn) => {
-          col.isHidden = !(checked ?? []).includes(resolvePropVal(col, 'field', [col]));
+          col.isHidden = !(checked ?? []).includes(resolvePropVal(col, ['field', 'type'], [col]));
         });
       }
       this.emitEvent(EVENTS.ON_SETTING_CHANGE, [arg]);
@@ -87,8 +92,8 @@ export default class TableRender {
     return [
       this.props.settings
         ? <Settings class="table-head-settings"
-            settings={ this.props.settings }
-            columns={this.props.columns}
+            settings={ this.reactiveProp.settings }
+            columns={this.colgroups}
             rowHeight={ this.props.rowHeight }
             onChange={ handleSettingsChanged }/>
         : '',
@@ -112,7 +117,7 @@ export default class TableRender {
       emptyText={ this.props.emptyText }/>;
     }
 
-    return <table cellpadding={0} cellspacing={0}>
+    return <table cellpadding={0} cellspacing={0} data-table-uuid={this.uuid}>
       { this.renderColGroup() }
       { this.renderTBody(rows) }
     </table>;
@@ -130,6 +135,7 @@ export default class TableRender {
     if (height !== null && height !== undefined) {
       return resolvePropVal(this.setting, 'height', ['tbody', row, rowIndex, size]);
     }
+
     return resolvePropVal(this.props, 'rowHeight', ['tbody', row, rowIndex]);
   };
 
@@ -169,12 +175,12 @@ export default class TableRender {
 
   private handlePageLimitChange(limit: number) {
     Object.assign(this.props.pagination, { limit });
-    this.context.emit('pageLimitChange', limit);
+    this.context.emit(EMITEVENTS.PAGE_LIMIT_CHANGE, limit);
   }
 
   private hanlePageChange(current: number) {
     Object.assign(this.props.pagination, { current, value: current });
-    this.context.emit('pageValueChange', current);
+    this.context.emit(EMITEVENTS.PAGE_VALUE_CHANGE, current);
   }
 
   /**
@@ -201,7 +207,7 @@ export default class TableRender {
   private handleColumnHeadClick(index: number) {
     if (this.props.columnPick !== 'disabled') {
       this.setColumnActive(index, this.props.columnPick === 'single');
-      this.context.emit('column-pick', this.propActiveCols);
+      this.context.emit(EMITEVENTS.COLUMN_PICK, this.propActiveCols);
     }
   }
 
@@ -230,8 +236,14 @@ export default class TableRender {
       const filterFn0 = (row: any, index: number) => filterFn(checked, row, index);
       this.emitEvent(EVENTS.ON_FILTER_CLICK, [{ filterFn: filterFn0, checked, column, index }]);
     };
+
+    const filterSave = (values: any[]) => {
+      this.context.emit(EMITEVENTS.COLUMN_FILTER_SAVE, { column, values });
+    };
+
     return <HeadFilter column={ column } height={ this.props.headHeight }
-    onChange={ handleFilterChange }/>;
+    onChange={ handleFilterChange }
+    onFilterSave={ filterSave }/>;
   }
 
   /**
@@ -253,6 +265,13 @@ export default class TableRender {
      * @returns
      */
     const renderHeadCell = (column: Column, index: number) => {
+      if (column.type === 'selection') {
+        const selectAll = this.reactiveProp.rowActions.get(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_ALL);
+        return this.renderCheckboxColumn({
+          [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: !!selectAll,
+        }, 0, true);
+      }
+
       const cells = [];
       if (column.sort) {
         cells.push(this.getSortCell(column, index));
@@ -282,20 +301,24 @@ export default class TableRender {
       }, {});
 
     const { getFixedColumnStyleResolve } = useFixedColumn(this.props, this.colgroups);
-    const { resolveFixedColumnStyle, fixedoffset } = getFixedColumnStyleResolve();
+    const { resolveFixedColumnStyle, fixedOffset } = getFixedColumnStyleResolve();
     // @ts-ignore:next-line
     return <thead style={rowStyle}>
-        <tr>
-        {
-          this.filterColgroups.map((column: Column, index: number) => <th colspan={1} rowspan={1}
-          class={ this.getHeadColumnClass(column, index) }
-          style = { resolveFixedColumnStyle(column, fixedoffset) }
-          onClick={ () => this.handleColumnHeadClick(index) }
-          { ...resolveEventListener(column) }>
-            <div class="cell">{ renderHeadCell(column, index) }</div>
-          </th>)
-        }
-        </tr>
+      <TableRow>
+          <tr>
+          {
+            this.filterColgroups.map((column: Column, index: number) => <th colspan={1} rowspan={1}
+              class={ this.getHeadColumnClass(column, index) }
+              style = { resolveFixedColumnStyle(column, fixedOffset) }
+              onClick={ () => this.handleColumnHeadClick(index) }
+              { ...resolveEventListener(column) }>
+                <TableCell>
+                  { renderHeadCell(column, index) }
+                </TableCell>
+              </th>)
+          }
+          </tr>
+        </TableRow>
       </thead>;
   }
 
@@ -320,42 +343,53 @@ export default class TableRender {
           ...formatPropAsArray(this.props.rowClass, [row, rowIndex, this]),
         ];
 
-        const { resolveFixedColumnStyle,  fixedoffset } = getFixedColumnStyleResolve();
+        const { resolveFixedColumnStyle,  fixedOffset } = getFixedColumnStyleResolve();
+        const rowKey = `${this.uuid}-${row[TABLE_ROW_ATTRIBUTE.ROW_UID]}`;
+        return [
+          <TableRow key={rowKey}>
+            <tr
+              // @ts-ignore
+              style={rowStyle}
+              class={rowClass}
+              onClick={ e => this.handleRowClick(e, row, rowIndex, rows)}
+              onDblclick={e => this.handleRowDblClick(e, row, rowIndex, rows)}
+            >
+            {
+              this.filterColgroups.map((column: Column, index: number) => {
+                const cellStyle = [
+                  resolveFixedColumnStyle(column, fixedOffset),
+                  ...formatPropAsArray(this.props.cellStyle, [column, index, row, rowIndex, this]),
+                ];
 
-        return [<tr
-          // @ts-ignore
-          style={rowStyle}
-          class={rowClass}
-          key={row[TABLE_ROW_ATTRIBUTE.ROW_UID]}
-          onClick={ e => this.handleRowClick(e, row, rowIndex, rows)}
-          onDblclick={e => this.handleRowDblClick(e, row, rowIndex, rows)}
-        >
-        {
-          this.filterColgroups.map((column: Column, index: number) => {
-            const cellStyle = [
-              resolveFixedColumnStyle(column, fixedoffset),
-              ...formatPropAsArray(this.props.cellStyle, [column, index, row, rowIndex, this]),
-            ];
+                const cellClass = [
+                  this.getColumnClass(column, index),
+                  ...formatPropAsArray(this.props.cellClass, [column, index, row, rowIndex, this]),
+                  { 'expand-row': row[TABLE_ROW_ATTRIBUTE.ROW_EXPAND] },
+                ];
 
-            const cellClass = [
-              this.getColumnClass(column, index),
-              ...formatPropAsArray(this.props.cellClass, [column, index, row, rowIndex, this]),
-              { 'expand-row': row[TABLE_ROW_ATTRIBUTE.ROW_EXPAND] },
-            ];
+                const tdCtxClass = {
+                  cell: true,
+                  'expand-cell': column.type === 'expand',
+                };
 
-            const tdCtxClass = {
-              cell: true,
-              'expand-cell': column.type === 'expand',
-            };
-            return <td
-            class={cellClass}
-            style={cellStyle}
-            colspan={1} rowspan={1}>
-            <div class={tdCtxClass} >{ this.renderCell(row, column, rowIndex, rows) }</div>
-          </td>;
-          })
-        }
-      </tr>, this.renderExpandRow(row, rowClass)];
+                const cellKey = `__CELL_${rowIndex}_${index}`;
+                return <td class={cellClass}
+                  style={cellStyle}
+                  key={cellKey}
+                  colspan={1} rowspan={1}>
+                  <TableCell class={tdCtxClass}
+                    column={ column }
+                    row={ row }
+                    parentSetting={ this.props.showOverflowTooltip }>
+                    { this.renderCell(row, column, rowIndex, rows) }
+                  </TableCell>
+                </td>;
+              })
+            }
+          </tr>
+          </TableRow>,
+          this.renderExpandRow(row, rowClass),
+        ];
       })
     }
   </tbody>;
@@ -368,11 +402,15 @@ export default class TableRender {
         ...rowClass,
         { row_expend: true },
       ];
-      return <tr class={resovledClass}>
-        <td colspan={ this.filterColgroups.length } rowspan={1}>
-          { this.context.slots.expandRow?.(row) ?? <div class='expand-cell-ctx'>Expand Row</div> }
-        </td>
-      </tr>;
+
+      const rowKey =  `${this.uuid}-${row[TABLE_ROW_ATTRIBUTE.ROW_UID]}_expand`;
+      return <TableRow key={rowKey}>
+        <tr class={resovledClass}>
+          <td colspan={ this.filterColgroups.length } rowspan={1}>
+            { this.context.slots.expandRow?.(row) ?? <div class='expand-cell-ctx'>Expand Row</div> }
+          </td>
+        </tr>
+      </TableRow>;
     }
   }
 
@@ -396,7 +434,7 @@ export default class TableRender {
    * @param rows
    */
   private handleRowClick(e: MouseEvent, row: any, index: number, rows: any) {
-    this.context.emit('rowClick', e, row, index, rows, this);
+    this.context.emit(EMITEVENTS.ROW_CLICK, e, row, index, rows, this);
   }
 
   /**
@@ -407,7 +445,7 @@ export default class TableRender {
    * @param rows
    */
   private handleRowDblClick(e: MouseEvent, row: any, index: number, rows: any) {
-    this.context.emit('rowDblClick', e, row, index, rows, this);
+    this.context.emit(EMITEVENTS.ROW_DBL_CLICK, e, row, index, rows, this);
   }
 
   private getExpandCell(row: any) {
@@ -419,6 +457,37 @@ export default class TableRender {
     this.emitEvent(EVENTS.ON_ROW_EXPAND_CLICK, [{ row, column, index, rows, e }]);
   }
 
+  private renderCellCallbackFn(row: any, column: Column, index: number, rows: any[]) {
+    const cell = getRowText(row, resolvePropVal(column, 'field', [column, row]), column);
+    const data = this.props.data[row[TABLE_ROW_ATTRIBUTE.ROW_INDEX]];
+    return (column.render as Function)({ cell, data, row, column, index, rows });
+  }
+
+  private renderCheckboxColumn(row: any, index: number, isAll = false) {
+    const handleChecked = (value) => {
+      this.emitEvent(EVENTS.ON_ROW_CHECK, [{ row, index, isAll, value }]);
+    };
+
+    const indeterminate = isAll && !!this.reactiveProp.rowActions.get(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_INDETERMINATE);
+    return <BkCheckbox onChange={ handleChecked }
+      modelValue={ row[TABLE_ROW_ATTRIBUTE.ROW_SELECTION] }
+      indeterminate = { indeterminate }></BkCheckbox>;
+  }
+
+  private renderExpandColumn(row: any, column: Column, index: number, rows: any[]) {
+    const renderExpandSlot = () => {
+      if (typeof column.render === 'function') {
+        return this.renderCellCallbackFn(row, column, index, rows);
+      }
+
+      return this.context.slots.expandCell?.({ row, column, index, rows }) ?? this.getExpandCell(row);
+    };
+
+    return <span class="expand-btn-action" onClick={ (e: MouseEvent) => this.handleRowExpandClick(row, column, index, rows, e) }>
+      { renderExpandSlot() }
+      </span>;
+  }
+
   /**
    * 渲染表格Cell内容
    * @param row 当前行
@@ -426,26 +495,21 @@ export default class TableRender {
    * @returns
    */
   private renderCell(row: any, column: Column, index: number, rows: any[]) {
-    if (column.type === 'expand') {
-      const renderExpandSlot = () => {
-        if (typeof column.render === 'function') {
-          return column.render(null, row, index, rows);
-        }
+    const defaultFn = () => {
+      const cell = getRowText(row, resolvePropVal(column, 'field', [column, row]), column);
+      if (typeof column.render === 'function') {
+        return this.renderCellCallbackFn(row, column, index, rows);
+      }
 
-        return this.context.slots.expandCell?.({ row, column, index, rows }) ?? this.getExpandCell(row);
-      };
+      return cell;
+    };
 
-      return <span class="expand-btn-action" onClick={ (e: MouseEvent) => this.handleRowExpandClick(row, column, index, rows, e) }>
-        { renderExpandSlot() }
-        </span>;
-    }
+    const renderFn = {
+      expand: (row, column, index, rows) => this.renderExpandColumn(row, column, index, rows),
+      selection: (row, _column, index, _rows) => this.renderCheckboxColumn(row, index),
+    };
 
-    const cell = getRowText(row, resolvePropVal(column, 'field', [column, row]), column);
-    if (typeof column.render === 'function') {
-      return column.render(cell, row, index, rows);
-    }
-
-    return cell;
+    return renderFn[column.type]?.(row, column, index, rows) ?? defaultFn();
   }
 
   /**
@@ -471,7 +535,7 @@ export default class TableRender {
             active: this.isColActive(index),
           });
 
-          const width = `${resolveWidth(getColumnReactWidth(column))}`.replace(/px$/i, '');
+          const width: string | number = `${resolveWidth(getColumnReactWidth(column))}`.replace(/px$/i, '');
           return <col class={ colCls } width={ width }></col>;
         })
       }
