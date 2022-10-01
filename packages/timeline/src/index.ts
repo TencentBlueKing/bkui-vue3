@@ -26,5 +26,5 @@
 import { withInstall } from '@bkui-vue/shared';
 
 import Component from './timeline';
-const BkSteps = withInstall(Component);
-export default BkSteps;
+const BkTimeline = withInstall(Component);
+export default BkTimeline;

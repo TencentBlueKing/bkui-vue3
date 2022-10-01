@@ -42,7 +42,7 @@ const processProps = {
 export type ProcessPropType = ExtractPropTypes<typeof processProps>;
 
 export default defineComponent({
-  name: 'BKProcess',
+  name: 'Process',
   props: processProps,
   emits: ['update:curProcess', 'click'],
 
@@ -63,9 +63,6 @@ export default defineComponent({
         },
         {
           content: '步骤4',
-        },
-        {
-          content: '步骤5',
         },
       ]);
       if (props.list?.length) {
@@ -107,16 +104,17 @@ export default defineComponent({
 
     const isIcon = item => (item.icon ? item.icon : '');
 
-
     const renderIcon = (index, item) => {
       if (index === this.curProcess - 1 && isLoadingStatus(item)) {
         return (<Circle class="bk-icon bk-process-icon icon-loading" />);
-      }  if (isErrorStatus(item)) {
+      }  if (index === this.curProcess - 1 && isErrorStatus(item)) {
         return (<Error class="bk-process-icon" />);
+      }  if (index === this.curProcess - 1 && isIcon(item)) {
+        return (<span class="bk-process-icon-custom">{<item.icon/>}</span>);
       } if (isDone(index)) {
         return (<Done class="bk-process-icon-done" />);
       }
-      return (<span class="number">{isIcon(item)}</span>);
+      // return (<span class="number">{<item.icon/>}</span>);
     };
 
     return (
@@ -127,7 +125,9 @@ export default defineComponent({
               this.jumpTo(index + 1);
             }} style={{ cursor: this.controllable ? 'pointer' : '' }}
               class={{ success: this.curProcess >= (index + 1),
-                current: isLoadingStatus(item) && index === this.curProcess - 1 }}>
+                current: isLoadingStatus(item) && index === this.curProcess - 1,
+                error: isErrorStatus(item) && index === this.curProcess - 1 } }
+                >
             {item[this.displayKey]}
             {renderIcon(index, item)}
           </li>)}
