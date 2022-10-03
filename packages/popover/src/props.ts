@@ -33,6 +33,7 @@ const EventProps = {
   onAfterShow: Function,
 };
 export const PopoverProps = {
+  contentCls: PropTypes.string.def(''),
   isShow: PropTypes.bool.def(false),
   always: PropTypes.bool.def(false),
   disabled: PropTypes.bool.def(false),
