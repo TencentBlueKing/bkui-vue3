@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { customRef, reactive, Ref, toRefs, watch } from 'vue';
+import { customRef, markRaw, reactive, Ref, ref, toRefs, watch } from 'vue';
 
 import type { TagProps } from './tag-props';
 
@@ -95,13 +95,14 @@ export function useFlatList(props: TagProps) {
     displayKey,
     list,
   } = toRefs(props);
-  const flatList = reactive([]);
+  const flatList = ref([]);
+
 
   watch([useGroup, saveKey, displayKey, list], () => {
-    flatList.splice(0, flatList.length);
-    let formatList: any = list.value;
+    flatList.value = [];
+    let formatList: any = markRaw(list.value);
     if (useGroup.value) {
-      formatList = list.value.reduce((formatList: any[], item: any) => {
+      formatList = formatList.reduce((formatList: any[], item: any) => {
         let children: any[] = [];
         if (item.children) {
           children = item.children.map((child: any) => ({
@@ -115,23 +116,8 @@ export function useFlatList(props: TagProps) {
         return formatList.concat(children);
       }, []);
     }
-    appendToTargetList(formatList);
-  }, { immediate: true, deep: true });
-
-  /**
-   * 不改变原有数组 - flatList 引用地址，将目标数组添加到原有数组里
-   * 使用 push 添加时会有最大数量限制，超出会报错：Maximum call stack size exceeded
-   * @param targetList 目标数组
-   */
-  function appendToTargetList(targetList: any[]) {
-    const QUANTUM = 30000; // 限制每次添加数量
-    const len = targetList.length;
-
-    for (let i = 0; i < len; i += QUANTUM) {
-      const appendList = targetList.slice(i, Math.min(i + QUANTUM, len));
-      flatList.push(...appendList);
-    }
-  }
+    flatList.value = formatList;
+  }, { immediate: true });
 
   return flatList;
 }
