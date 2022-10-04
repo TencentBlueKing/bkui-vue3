@@ -82,7 +82,7 @@ export default defineComponent({
     const isFocus = ref(false);
     const showPopover = ref(false);
     const selectedList = ref<SeletedItem[]>([]);
-    const searchValue = ref('');
+    const keyword = ref('');
     const usingItem = ref<SeletedItem>();
     const showNoSelectValueError = ref(false);
     const overflowIndex = ref(-1);
@@ -91,16 +91,16 @@ export default defineComponent({
     // computeds
     const menuList = computed(() => {
       if (!usingItem?.value) return props.data.filter(item => item.name.toLocaleLowerCase()
-        .includes(searchValue.value.toLocaleLowerCase()));
+        .includes(keyword.value.toLocaleLowerCase()));
       if (!usingItem.value.values?.length || usingItem.value.multiple) return usingItem.value.children
         .filter(item => item.name.toLocaleLowerCase()
-          .includes(searchValue.value.toLocaleLowerCase()));
+          .includes(keyword.value.toLocaleLowerCase()));
       return [];
     });
 
     // effects
     watchEffect(() => {
-      if (!searchValue.value) {
+      if (!keyword.value) {
         setInputText();
       }
     }, { flush: 'pre' });
@@ -170,9 +170,15 @@ export default defineComponent({
         text = text.replace(/(\r|\n)/gm, '|').replace(/\s{2}/gm, '');
         inputRef.value.innerText = text;
         handleInputFocus();
-      }
-      if (!usingItem.value?.values?.length) {
-        searchValue.value = inputRef.value?.innerText.replace(usingItem.value?.keyInnerText || '', '').trim();
+      } else if (!keyword.value && text.length < (usingItem.value?.inputInnerText?.length || 1)) {
+        usingItem.value = null;
+        keyword.value = text;
+      } else if (!usingItem.value?.values?.length) {
+        keyword.value = text
+          .replace('\u00A0', '\u0020')
+          .replace(usingItem.value?.keyInnerText.replace('\u00A0', '\u0020') || '', '')
+          .trim();
+        handleInputFocus();
       }
     }
     function handleInputKeyup(event: KeyboardEvent) {
@@ -190,51 +196,51 @@ export default defineComponent({
     }
     function handleKeyBackspace(event: KeyboardEvent) {
       // 删除已选择项
-      if (!usingItem.value && !searchValue.value) {
+      if (!usingItem.value && !keyword.value) {
         selectedList.value.length && selectedList.value.splice(selectedList.value.length - 1, 1);
         return;
       }
       // 删除可多选项
       if (usingItem.value?.multiple && usingItem.value?.values.length) {
         usingItem.value.values.splice(-1, 1);
-        searchValue.value = '';
+        keyword.value = '';
         handleInputFocus();
         return;
       }
       const inputText = (event.target as HTMLDivElement).innerText;
-      if (!searchValue.value && inputText.length <= (usingItem.value?.inputInnerText?.length || 1)) {
-        event.preventDefault();
-        const { anchorOffset, focusOffset } = window.getSelection();
-        const startIndex = Math.min(anchorOffset, focusOffset);
-        const endIndex = Math.max(anchorOffset, focusOffset);
-        const list =  inputText.split('');
-        list.splice(startIndex, Math.max(endIndex - startIndex, 1));
-        searchValue.value = list.join('').trim();
-        usingItem.value = null;
-        setInputText(searchValue.value);
-        handleInputFocus();
+      if (!keyword.value && inputText.length < (usingItem.value?.inputInnerText?.length || 1)) {
+        // event.preventDefault();
+        // const { anchorOffset, focusOffset } = window.getSelection();
+        // const startIndex = Math.min(anchorOffset, focusOffset);
+        // const endIndex = Math.max(anchorOffset, focusOffset);
+        // const list =  inputText.split('');
+        // list.splice(startIndex, Math.max(endIndex - startIndex, 1));
+        // keyword.value = list.join('').trim();
+        // usingItem.value = null;
+        // setInputText(keyword.value);
+        // handleInputFocus();
       }
     }
     function handleKeyEnter(event?: KeyboardEvent) {
       event?.preventDefault();
       if (!usingItem.value) {
-        if (!searchValue.value) return;
+        if (!keyword.value) return;
         selectedList.value.push(new SeletedItem({
-          id: searchValue.value,
-          name: searchValue.value,
+          id: keyword.value,
+          name: keyword.value,
         }, 'text'));
-        searchValue.value = '';
+        keyword.value = '';
         return;
       }
       const { values } = usingItem.value;
       if (!values?.length) {
-        if (searchValue.value?.length) {
+        if (keyword.value?.length) {
           usingItem.value.addValue({
-            id: searchValue.value,
-            name: searchValue.value,
+            id: keyword.value,
+            name: keyword.value,
           });
           selectedList.value.push(usingItem.value);
-          searchValue.value = '';
+          keyword.value = '';
           usingItem.value = null;
           return;
         }
@@ -246,7 +252,7 @@ export default defineComponent({
     function handleSelectItem(item: ISearchItem, type?: SearchItemType) {
       if (!usingItem.value || !inputRef?.value?.innerText) {
         usingItem.value = new SeletedItem(item, type);
-        searchValue.value = '';
+        keyword.value = '';
         const isCondition = type === 'condition';
         isCondition && setSelectedItem();
         showPopover.value = isCondition || !!usingItem.value.children.length;
@@ -283,7 +289,7 @@ export default defineComponent({
     function handleClearAll() {
       usingItem.value = null;
       selectedList.value = [];
-      searchValue.value = '';
+      keyword.value = '';
       overflowIndex.value = -1;
     }
 
@@ -291,7 +297,7 @@ export default defineComponent({
     function setSelectedItem(item?: SeletedItem) {
       selectedList.value.push(item ?? usingItem.value);
       usingItem.value = null;
-      searchValue.value = '';
+      keyword.value = '';
       handleInputFocus();
     }
     function clearInput() {
@@ -319,7 +325,7 @@ export default defineComponent({
       isFocus,
       selectedList,
       overflowIndex,
-      searchValue,
+      keyword,
       showPopover,
       showNoSelectValueError,
       setInputText,
@@ -341,8 +347,8 @@ export default defineComponent({
     // vars
     const { multiple, values, placeholder, inputInnerHtml } = this.usingItem || {};
     const maxHeight = `${!this.shrink || this.isFocus ?  this.maxHeight : this.minHeight}px`;
-    const showInputBefore = !this.selectedList.length && !this.searchValue?.length;
-    const showInpitAfter = !this.searchValue?.length && !values?.length && placeholder;
+    const showInputBefore = !this.selectedList.length && !this.keyword?.length;
+    const showInpitAfter = !this.keyword?.length && !values?.length && placeholder;
     const showCondition = !this.usingItem && this.selectedList.length && this.selectedList.slice(-1)[0].type !== 'condition';
     const showPopover = this.showNoSelectValueError || (this.showPopover && !!this.menuList?.length);
 
@@ -355,7 +361,7 @@ export default defineComponent({
         'input-after': showInpitAfter,
       }}
       contenteditable={true}
-      data-placeholder={!inputInnerHtml && !this.searchValue ? '请选择' : ''}
+      data-placeholder={!inputInnerHtml && !this.keyword ? '请选择' : ''}
       data-tips={placeholder || ''}
       spellcheck="false"
       v-clickoutside={this.handleClickOutside}
@@ -369,7 +375,7 @@ export default defineComponent({
       return this.menuList?.length ? <div ref="popoverRef" class="popover-content">
       <SearchSelectMenu
         list={this.menuList}
-        keyword={this.searchValue}
+        keyword={this.keyword}
         multiple={!!multiple}
         selected={values?.map(item => item.id) || []}
         conditions={showCondition ? this.conditions : []}

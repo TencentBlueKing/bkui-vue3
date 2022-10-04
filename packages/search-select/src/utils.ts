@@ -83,11 +83,11 @@ export class SeletedItem {
   }
   get keyInnerHtml() {
     if (this.isSpecialType()) return this.name;
-    return this.name ? `${this.name}:&nbsp;`  : '';
+    return this.name ? `${this.name}:\u00A0`  : '';
   }
   get keyInnerText() {
     if (this.isSpecialType()) return this.name;
-    return this.keyInnerHtml.replace(/&nbsp;/gmi, ' ');
+    return this.name ? `${this.name}: `  : '';
   }
   isSpecialType() {
     return ['text', 'condition'].includes(this.type);
