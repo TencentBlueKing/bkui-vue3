@@ -64,6 +64,7 @@ export default defineComponent({
       isHover: false,
       focusItemIndex: props.allowCreate ? -1 : 0,
     });
+
     const popoverProps = reactive({
       isShow: false,
       width: 190,
@@ -73,7 +74,10 @@ export default defineComponent({
           offset: [0, 4],
         },
       }],
+      ...props.popoverProps,
+
     });
+
     // 分页处理
     const { maxResult } = toRefs(props);
     const { pageState, initPage, pageChange } = usePage(maxResult);
@@ -113,7 +117,7 @@ export default defineComponent({
       disabled: props.disabled,
     }));
 
-    watch([() => [...props.modelValue], () => [...props.list]], () => {
+    watch([() => props.modelValue, () => props.list], () => {
       nextTick(() => {
         initData();
       });
@@ -269,7 +273,7 @@ export default defineComponent({
         trigger,
       } = props;
       listState.selectedTagList = [];
-      listState.localList = [...formatList];
+      listState.localList = formatList.value;
 
       if (modelValue.length) {
         modelValue.forEach((tag) => {
@@ -500,7 +504,7 @@ export default defineComponent({
       listState.selectedTagList = [];
 
       // 将删除的项加入加列表
-      const existList = formatList.filter(item => (
+      const existList = formatList.value.filter(item => (
         removeList.some(removeItem => removeItem[props.saveKey] === item[props.saveKey])
       ));
       if (((props.allowCreate && (existList.length !== 0)) || !props.allowCreate) && !isSingleSelect.value) {
@@ -547,7 +551,7 @@ export default defineComponent({
       listState.selectedTagList.splice(index - 1, 1);
       focusInputTrigger();
 
-      const isExistInit = formatList.some(item => item === target[props.saveKey]);
+      const isExistInit = formatList.value.some(item => item === target[props.saveKey]);
 
       // 将删除的项加入加列表
       if (((props.allowCreate && isExistInit) || !props.allowCreate) && !isSingleSelect.value) {
@@ -815,7 +819,7 @@ export default defineComponent({
     const removeTag = (data, index) => {
       listState.selectedTagList.splice(index, 1);
 
-      const isExistInit = formatList.some(item => item === data[props.saveKey]);
+      const isExistInit = formatList.value.some(item => item === data[props.saveKey]);
 
       // 将删除的项加入加列表
       if (((props.allowCreate && isExistInit) || !props.allowCreate) && !isSingleSelect.value) {
@@ -855,41 +859,9 @@ export default defineComponent({
     };
   },
   render() {
-    const renderSelectorList = () => {
-      if (this.useGroup) {
-        return this.renderList.map(group => (
-          <li class="bk-selector-group-item">
-            <span class="group-name">{group.name} ({group.children.length})</span>
-            <ul class="bk-selector-group-list-item">
-              {
-                group.children.map((item, index: number) => (
-                  <li class={['bk-selector-list-item', { disabled: item.disabled }, this.activeClass(item, index)]}
-                    onClick={this.handleTagSelected.bind(this, item, 'select')}>
-                    <ListTagRender node={item}
-                      displayKey={this.displayKey}
-                      tpl={this.tpl}
-                      searchKey={this.searchKey}
-                      searchKeyword={this.curInputValue} />
-                  </li>
-                ))
-              }
-            </ul>
-          </li>
-        ));
-      }
-      return this.renderList.map((item, index: number) => (
-        <li class={['bk-selector-list-item', { disabled: item.disabled }, this.activeClass(item, index)]}
-          onClick={this.handleTagSelected.bind(this, item, 'select')}>
-          <ListTagRender node={item}
-            displayKey={this.displayKey}
-            tpl={this.tpl}
-            searchKey={this.searchKey}
-            searchKeyword={this.curInputValue} />
-        </li>
-      ));
-    };
     return (
-      <div class="bk-tag-input"
+      <div
+        class="bk-tag-input"
         ref="bkTagSelectorRef"
         onClick={this.focusInputTrigger}
         onMouseenter={() => this.isHover = true}
@@ -899,10 +871,10 @@ export default defineComponent({
           theme="light"
           trigger="manual"
           placement="bottom-start"
+          content-cls="bk-tag-input-popover-content"
           arrow={false}
-          width={this.popoverProps.width}
-          isShow={this.popoverProps.isShow}
-          modifiers={this.popoverProps.modifiers}>
+          {...this.popoverProps}
+        >
           {{
             default: () => (
               <div class={this.triggerClass}>
@@ -945,7 +917,36 @@ export default defineComponent({
             content: () => (
               <div class="bk-selector-list">
                 <ul ref="selectorListRef" style={{ 'max-height': `${this.contentMaxHeight}px` }} class="outside-ul">
-                  {renderSelectorList()}
+                  {
+                    this.renderList.map((group, index) => (this.useGroup ? (
+                          <li class="bk-selector-group-item">
+                            <span class="group-name">{group.name} ({group.children.length})</span>
+                            <ul class="bk-selector-group-list-item">
+                              {
+                                group.children.map((item, index: number) => (
+                                  <li class={['bk-selector-list-item', { disabled: item.disabled }, this.activeClass(item, index)]}
+                                    onClick={this.handleTagSelected.bind(this, item, 'select')}>
+                                    <ListTagRender node={item}
+                                      displayKey={this.displayKey}
+                                      tpl={this.tpl}
+                                      searchKey={this.searchKey}
+                                      searchKeyword={this.curInputValue} />
+                                  </li>
+                                ))
+                              }
+                            </ul>
+                          </li>
+                    ) : (
+                          <li class={['bk-selector-list-item', { disabled: group.disabled }, this.activeClass(group, index)]}
+                            onClick={this.handleTagSelected.bind(this, group, 'select')}>
+                            <ListTagRender node={group}
+                              displayKey={this.displayKey}
+                              tpl={this.tpl}
+                              searchKey={this.searchKey}
+                              searchKeyword={this.curInputValue} />
+                          </li>
+                    )))
+                  }
                   {
                     this.isPageLoading
                       ? <li class="bk-selector-list-item loading"><BkLoading theme="primary" size={BkLoadingSize.Small} /></li>
