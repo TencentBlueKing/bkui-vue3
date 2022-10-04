@@ -73,16 +73,22 @@ export default defineComponent({
   },
   props: SearchSelectProps,
   setup(props) {
+    // refs
+    const inputRef = ref<HTMLDivElement>(null);
+    const popoverRef = ref<HTMLDivElement>(null);
+    const wrapRef = ref<HTMLDivElement>(null);
+
+    // vars
     const isFocus = ref(false);
     const showPopover = ref(false);
     const selectedList = ref<SeletedItem[]>([]);
     const searchValue = ref('');
     const usingItem = ref<SeletedItem>();
-    const inputRef = ref<HTMLDivElement>(null);
-    const popoverRef = ref<HTMLDivElement>(null);
-    const wrapRef = ref<HTMLDivElement>(null);
     const showNoSelectValueError = ref(false);
     const overflowIndex = ref(-1);
+    const debounceResize = debounce(32, handleResize);
+
+    // computeds
     const menuList = computed(() => {
       if (!usingItem?.value) return props.data.filter(item => item.name.toLocaleLowerCase()
         .includes(searchValue.value.toLocaleLowerCase()));
@@ -91,21 +97,23 @@ export default defineComponent({
           .includes(searchValue.value.toLocaleLowerCase()));
       return [];
     });
-    const debounceResize = debounce(32, handleResize);
 
+    // effects
     watchEffect(() => {
       if (!searchValue.value) {
         setInputText();
       }
-    }, {
-      flush: 'pre',
-    });
+    }, { flush: 'pre' });
+
+    // life hooks
     onMounted(() => {
       addListener(wrapRef.value.querySelector('.bk-search-select') as HTMLElement, debounceResize);
     });
     onBeforeUnmount(() => {
       removeListener(wrapRef.value.querySelector('.bk-search-select') as HTMLElement, debounceResize);
     });
+
+    // events
     function handleResize() {
       if (isFocus.value || selectedList.value.length < 1) {
         overflowIndex.value = -1;
@@ -235,12 +243,6 @@ export default defineComponent({
       }
       setSelectedItem();
     }
-    function setSelectedItem(item?: SeletedItem) {
-      selectedList.value.push(item ?? usingItem.value);
-      usingItem.value = null;
-      searchValue.value = '';
-      handleInputFocus();
-    }
     function handleSelectItem(item: ISearchItem, type?: SearchItemType) {
       if (!usingItem.value || !inputRef?.value?.innerText) {
         usingItem.value = new SeletedItem(item, type);
@@ -248,6 +250,7 @@ export default defineComponent({
         const isCondition = type === 'condition';
         isCondition && setSelectedItem();
         showPopover.value = isCondition || !!usingItem.value.children.length;
+        handleInputFocus();
         return;
       }
       usingItem.value.addValue(item);
@@ -283,6 +286,14 @@ export default defineComponent({
       searchValue.value = '';
       overflowIndex.value = -1;
     }
+
+    // methods
+    function setSelectedItem(item?: SeletedItem) {
+      selectedList.value.push(item ?? usingItem.value);
+      usingItem.value = null;
+      searchValue.value = '';
+      handleInputFocus();
+    }
     function clearInput() {
       const text = inputRef.value.innerText;
       if (text[text.length - 1] === '\n' || text[0] === '\r') {
@@ -298,6 +309,7 @@ export default defineComponent({
         inputRef.value.innerHTML = text || usingItem.value?.inputInnerHtml || '';
       }
     }
+
     return {
       inputRef,
       popoverRef,
@@ -326,12 +338,15 @@ export default defineComponent({
     };
   },
   render() {
+    // vars
     const { multiple, values, placeholder, inputInnerHtml } = this.usingItem || {};
     const maxHeight = `${!this.shrink || this.isFocus ?  this.maxHeight : this.minHeight}px`;
     const showInputBefore = !this.selectedList.length && !this.searchValue?.length;
     const showInpitAfter = !this.searchValue?.length && !values?.length && placeholder;
     const showCondition = !this.usingItem && this.selectedList.length && this.selectedList.slice(-1)[0].type !== 'condition';
     const showPopover = this.showNoSelectValueError || (this.showPopover && !!this.menuList?.length);
+
+    // common elements
     const inputContent = () => <div
       ref="inputRef"
       class={{
@@ -383,6 +398,7 @@ export default defineComponent({
         ])
       }
     </>;
+    // render
     return <div class="search-select-wrap" ref="wrapRef">
     <div
       class={{

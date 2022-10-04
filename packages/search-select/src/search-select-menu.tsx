@@ -66,6 +66,7 @@ export default defineComponent({
   },
   emits: ['selectItem', 'selectCondition', 'footerClick'],
   setup(props, { emit }) {
+    // events
     function handleClick(item: ICommonItem) {
       emit('selectItem', item);
     }
@@ -75,11 +76,13 @@ export default defineComponent({
     function handleClickFooterBtn(item: IMenuFooterItem) {
       emit('footerClick', item);
     }
+
     const filterList = computed(() => {
       if (!props.list?.length) return [];
       if (!props.keyword?.length) return props.list;
       return props.list.filter(item => item.name.toLocaleLowerCase().includes(props.keyword.toLocaleLowerCase()));
     });
+
     function getSearchNode(str: string) {
       if (!str) return str;
       let { keyword } = props;
