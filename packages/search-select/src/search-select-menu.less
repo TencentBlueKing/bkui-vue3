@@ -1,3 +1,29 @@
+.menu-list-mixin {
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-item-mixin {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 32px;
+  padding: 0 12px;
+
+  &:hover {
+    cursor: pointer;
+    background-color: #f5f7fa;
+  }
+}
+
+.menu-disabled-mixin {
+  color: #c4c6cc;
+
+  &:hover {
+    cursor: not-allowed;
+    background-color: white;
+  }
+}
 
 .search-select-menu {
   display: flex;
@@ -6,34 +32,79 @@
   color: #63656e;
   flex-direction: column;
 
-  .menu-item {
+  .menu-header {
+    .menu-list-mixin();
+    border-bottom: 1px solid #dcdee5;
+
+    &-item {
+      .menu-item-mixin();
+
+      &.is-disabled {
+        .menu-disabled-mixin()
+      }
+    }
+  }
+
+  .menu-content {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    flex: 1;
+    max-height: 300px;
+    overflow: auto;
+
+    .menu-item {
+      .menu-item-mixin();
+  
+      .is-keyword {
+        display: inline-flex;
+        color: #3a84ff;
+      }
+  
+      .is-selected {
+        display: flex;
+        width: 14px;
+        height: 14px;
+        margin-left: auto;
+        overflow: hidden;
+        font-size: 18px;
+        font-weight: bold;
+        color: #3a84ff;
+        align-items: center;
+        justify-content: center;
+      }
+
+      &.is-disabled {
+        .menu-disabled-mixin()
+      }
+    }
+  }
+
+  .menu-footer {
+    display: flex;
     width: 100%;
     height: 32px;
-    padding: 0 12px;
+    border-top: 1px solid #dcdee5;
+    align-items: center;
 
-    &:hover {
-      cursor: pointer;
-      background-color: #f5f7fa;
-    }
-
-    .is-keyword {
-      display: inline-flex;
-      color: #3a84ff;
-    }
-
-    .is-selected {
+    &-btn {
+      flex: 1;
       display: flex;
-      width: 14px;
-      height: 14px;
-      margin-left: auto;
-      overflow: hidden;
-      font-size: 18px;
-      font-weight: bold;
-      color: #3a84ff;
       align-items: center;
       justify-content: center;
+      height: 100%;
+
+      &:first-child {
+        border-right: 1px solid #dcdee5;
+      }
+
+      &:hover {
+        color: #3a84ff;
+        cursor: pointer;
+      }
+
+      &.is-disabled {
+        .menu-disabled-mixin()
+      }
     }
   }
 }

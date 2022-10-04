@@ -24,27 +24,30 @@
  * IN THE SOFTWARE.
 */
 
-import { computed, defineComponent, PropType, ref, watchEffect } from 'vue';
+import { addListener, removeListener } from 'resize-detector';
+import { computed, defineComponent, onBeforeUnmount, onMounted, PropType, ref, watchEffect } from 'vue';
 
 import { clickoutside } from '@bkui-vue/directives';
-import { Close } from '@bkui-vue/icon';
+import { Close, Search } from '@bkui-vue/icon';
 import Popover from '@bkui-vue/popover2';
+import { debounce } from '@bkui-vue/shared';
 
 import { defaultData } from './mock';
 import SearchSelectMenu from './search-select-menu';
-import { ISearchItem, ISearchValue, SeletedItem } from './utils';;
+import { ICommonItem, IMenuFooterItem, ISearchItem, ISearchValue, SearchItemType, SeletedItem } from './utils';
+;
 export const SearchSelectProps = {
   data: {
-    type: Object as PropType<ISearchItem[]>,
+    type: Array as PropType<ISearchItem[]>,
     default: () => defaultData,
   },
   value: {
-    type: Object as PropType<ISearchValue[]>,
+    type: Array as PropType<ISearchValue[]>,
     default: () => [],
   },
   shrink: {
     type: Boolean,
-    default: false,
+    default: true,
   },
   maxHeight: {
     type: Number,
@@ -53,6 +56,14 @@ export const SearchSelectProps = {
   minHeight: {
     type: Number,
     default: 26,
+  },
+  conditions: {
+    type: Array as PropType<ICommonItem[]>,
+    default: () => [{ id: 'or', name: '或', disabled: true }, { id: 'and', name: '且' }],
+  },
+  clearable: {
+    type: Boolean,
+    default: true,
   },
 };
 export default defineComponent({
@@ -69,9 +80,10 @@ export default defineComponent({
     const usingItem = ref<SeletedItem>();
     const inputRef = ref<HTMLDivElement>(null);
     const popoverRef = ref<HTMLDivElement>(null);
+    const wrapRef = ref<HTMLDivElement>(null);
     const showNoSelectValueError = ref(false);
+    const overflowIndex = ref(-1);
     const menuList = computed(() => {
-      console.info('11111111');
       if (!usingItem?.value) return props.data.filter(item => item.name.toLocaleLowerCase()
         .includes(searchValue.value.toLocaleLowerCase()));
       if (!usingItem.value.values?.length || usingItem.value.multiple) return usingItem.value.children
@@ -79,26 +91,56 @@ export default defineComponent({
           .includes(searchValue.value.toLocaleLowerCase()));
       return [];
     });
+    const debounceResize = debounce(32, handleResize);
+
     watchEffect(() => {
-      console.info('222222222');
       if (!searchValue.value) {
         setInputText();
       }
     }, {
       flush: 'pre',
     });
+    onMounted(() => {
+      addListener(wrapRef.value.querySelector('.bk-search-select') as HTMLElement, debounceResize);
+    });
+    onBeforeUnmount(() => {
+      removeListener(wrapRef.value.querySelector('.bk-search-select') as HTMLElement, debounceResize);
+    });
+    function handleResize() {
+      if (isFocus.value || selectedList.value.length < 1) {
+        overflowIndex.value = -1;
+        return;
+      }
+      const inputEl = wrapRef.value.querySelector('.bk-search-select');
+      const maxWidth = wrapRef.value.querySelector('.search-input').clientWidth - 8;
+      const tagList = inputEl.querySelectorAll('.search-input-chip:not(.overflow-chip)');
+      let width = 0;
+      let index = 0;
+      let i = 0;
+      while (width <= maxWidth - 40 && i <= tagList.length - 1) {
+        const el = tagList[i];
+        if (el.clientHeight > props.minHeight) {
+          overflowIndex.value = i;
+          return;
+        }
+        width += el ? el.clientWidth + 6 : 0;
+        i += 1;
+        if (width <= maxWidth - 40) index = i;
+      }
+
+      if (index === tagList.length - 1 && width <= maxWidth) {
+        overflowIndex.value = -1;
+        return;
+      }
+      overflowIndex.value = width >= maxWidth - 40 ? index : index - 1;
+    }
     function handleWrapClick() {
-
-    }
-    function handleInputClick() {
       handleInputFocus();
-    }
-    function handleInputCut() {
-
     }
     function handleInputFocus() {
       isFocus.value = true;
       showPopover.value = true;
+      overflowIndex.value = -1;
       showNoSelectValueError.value = false;
       const timer = setTimeout(() => {
         if (inputRef.value) {
@@ -112,19 +154,17 @@ export default defineComponent({
         window.clearTimeout(timer);
       }, 0);
     }
-    function handleInputChange() {
+    function handleInputChange(event: Event) {
+      clearInput();
+      let text = (event.target as HTMLDivElement).innerText;
+      if (/(\r|\n)/gm.test(text) || /\s{2}/gm.test(text)) {
+        event.preventDefault();
+        text = text.replace(/(\r|\n)/gm, '|').replace(/\s{2}/gm, '');
+        inputRef.value.innerText = text;
+        handleInputFocus();
+      }
       if (!usingItem.value?.values?.length) {
         searchValue.value = inputRef.value?.innerText.replace(usingItem.value?.keyInnerText || '', '').trim();
-      }
-    }
-    function clearInput() {
-      const text = inputRef.value.innerText;
-      if (text[text.length - 1] === '\n' || text[0] === '\r') {
-        setInputText(text.slice(0, -1));
-        clearInput();
-      } else if (text[0] === '\n' || text[0] === '\r') {
-        setInputText(text.slice(1));
-        clearInput();
       }
     }
     function handleInputKeyup(event: KeyboardEvent) {
@@ -135,6 +175,8 @@ export default defineComponent({
           break;
         case 'Backspace':
           handleKeyBackspace(event);
+        default:
+          showNoSelectValueError.value = false;
           break;
       }
     }
@@ -145,7 +187,7 @@ export default defineComponent({
         return;
       }
       // 删除可多选项
-      if (usingItem.value?.searchItem?.multiple && usingItem.value?.values.length) {
+      if (usingItem.value?.multiple && usingItem.value?.values.length) {
         usingItem.value.values.splice(-1, 1);
         searchValue.value = '';
         handleInputFocus();
@@ -154,14 +196,19 @@ export default defineComponent({
       const inputText = (event.target as HTMLDivElement).innerText;
       if (!searchValue.value && inputText.length <= (usingItem.value?.inputInnerText?.length || 1)) {
         event.preventDefault();
-        searchValue.value = inputText.trim().slice(0, -1);
+        const { anchorOffset, focusOffset } = window.getSelection();
+        const startIndex = Math.min(anchorOffset, focusOffset);
+        const endIndex = Math.max(anchorOffset, focusOffset);
+        const list =  inputText.split('');
+        list.splice(startIndex, Math.max(endIndex - startIndex, 1));
+        searchValue.value = list.join('').trim();
         usingItem.value = null;
         setInputText(searchValue.value);
         handleInputFocus();
       }
     }
-    function handleKeyEnter(event: KeyboardEvent) {
-      event.preventDefault();
+    function handleKeyEnter(event?: KeyboardEvent) {
+      event?.preventDefault();
       if (!usingItem.value) {
         if (!searchValue.value) return;
         selectedList.value.push(new SeletedItem({
@@ -186,21 +233,38 @@ export default defineComponent({
         showNoSelectValueError.value = true;
         return;
       }
-      selectedList.value.push(usingItem.value);
-      usingItem.value = null;
+      setSelectedItem();
     }
-    function handleSelectItem(item: ISearchItem) {
+    function setSelectedItem(item?: SeletedItem) {
+      selectedList.value.push(item ?? usingItem.value);
+      usingItem.value = null;
+      searchValue.value = '';
+      handleInputFocus();
+    }
+    function handleSelectItem(item: ISearchItem, type?: SearchItemType) {
       if (!usingItem.value || !inputRef?.value?.innerText) {
-        usingItem.value = new SeletedItem(item);
+        usingItem.value = new SeletedItem(item, type);
         searchValue.value = '';
-        showPopover.value = !!usingItem.value.children.length;
+        const isCondition = type === 'condition';
+        isCondition && setSelectedItem();
+        showPopover.value = isCondition || !!usingItem.value.children.length;
         return;
       }
-      usingItem.value.updateValue(item);
-      if (!usingItem.value.multiple) {
-        selectedList.value.push(usingItem.value);
-        usingItem.value = null;
-        searchValue.value = '';
+      usingItem.value.addValue(item);
+      !usingItem.value.multiple && setSelectedItem();
+    }
+    function handleSelectCondtionItem(item: ICommonItem) {
+      handleSelectItem(item, 'condition');
+    }
+    function handleMenuFooterClick(item: IMenuFooterItem) {
+      switch (item.id) {
+        case 'confirm':
+          handleKeyEnter();
+          break;
+        case 'cancel':
+          usingItem.value.values = [];
+          handleInputFocus();
+          break;
       }
     }
     function handleDeleteItem(item: SeletedItem, index: number) {
@@ -208,9 +272,25 @@ export default defineComponent({
       selectedList.value.splice(index, 1);
     }
     function handleClickOutside(e: MouseEvent) {
-      if (!popoverRef.value.contains(e.target as Node)) {
+      if (!popoverRef.value?.contains(e.target as Node) && !wrapRef.value?.contains(e.target as Node)) {
         showPopover.value = false;
         isFocus.value = false;
+      }
+    }
+    function handleClearAll() {
+      usingItem.value = null;
+      selectedList.value = [];
+      searchValue.value = '';
+      overflowIndex.value = -1;
+    }
+    function clearInput() {
+      const text = inputRef.value.innerText;
+      if (text[text.length - 1] === '\n' || text[0] === '\r') {
+        setInputText(text.slice(0, -1));
+        clearInput();
+      } else if (text[0] === '\n' || text[0] === '\r') {
+        setInputText(text.slice(1));
+        clearInput();
       }
     }
     function setInputText(text = '') {
@@ -221,24 +301,28 @@ export default defineComponent({
     return {
       inputRef,
       popoverRef,
+      wrapRef,
       usingItem,
       menuList,
       isFocus,
       selectedList,
+      overflowIndex,
       searchValue,
       showPopover,
       showNoSelectValueError,
       setInputText,
       clearInput,
       handleWrapClick,
-      handleInputClick,
       handleInputFocus,
-      handleInputCut,
       handleInputChange,
       handleInputKeyup,
       handleSelectItem,
+      handleSelectCondtionItem,
+      handleMenuFooterClick,
       handleDeleteItem,
       handleClickOutside,
+      handleResize,
+      handleClearAll,
     };
   },
   render() {
@@ -246,6 +330,8 @@ export default defineComponent({
     const maxHeight = `${!this.shrink || this.isFocus ?  this.maxHeight : this.minHeight}px`;
     const showInputBefore = !this.selectedList.length && !this.searchValue?.length;
     const showInpitAfter = !this.searchValue?.length && !values?.length && placeholder;
+    const showCondition = !this.usingItem && this.selectedList.length && this.selectedList.slice(-1)[0].type !== 'condition';
+    const showPopover = this.showNoSelectValueError || (this.showPopover && !!this.menuList?.length);
     const inputContent = () => <div
       ref="inputRef"
       class={{
@@ -258,9 +344,7 @@ export default defineComponent({
       data-tips={placeholder || ''}
       spellcheck="false"
       v-clickoutside={this.handleClickOutside}
-      onClick={this.handleInputClick}
       onFocus={this.handleInputFocus}
-      onCut={this.handleInputCut}
       onInput={this.handleInputChange}
       onKeydown={this.handleInputKeyup}/>;
     const popoverContent = () => {
@@ -273,22 +357,33 @@ export default defineComponent({
         keyword={this.searchValue}
         multiple={!!multiple}
         selected={values?.map(item => item.id) || []}
-        onSelectItem={this.handleSelectItem}/>
+        conditions={showCondition ? this.conditions : []}
+        onSelectItem={this.handleSelectItem}
+        onSelectCondition={this.handleSelectCondtionItem}
+        onFooterClick={this.handleMenuFooterClick}/>
     </div> : undefined;
     };
-    const selectedContent = () => <ul>
+    const selectedContent = () => <>
       {
-        this.selectedList.map((item, index) => <li
-          class="search-input-chip"
-          key={item.id}>
-          <span class="chip-name">
-            {item.inputInnerText}
-          </span>
-          <Close class="chip-clear" onClick={() => this.handleDeleteItem(item, index)}/>
-        </li>)
+
+        this.selectedList.map((item, index) => [
+          this.overflowIndex >= 0
+          && index === this.overflowIndex
+          && <div class="search-input-chip overflow-chip">
+                +{this.selectedList.length - this.overflowIndex}
+              </div>,
+          <li
+            class={`search-input-chip ${!(this.overflowIndex >= 0 ? index < this.overflowIndex : index >= 0) ? 'hidden-chip' : ''}`}
+            key={item.id}>
+            <span class="chip-name">
+              {item.inputInnerText}
+            </span>
+            <Close class="chip-clear" onClick={() => this.handleDeleteItem(item, index)}/>
+          </li>,
+        ])
       }
-    </ul>;
-    return <div class="search-select-wrap">
+    </>;
+    return <div class="search-select-wrap" ref="wrapRef">
     <div
       class={{
         'bk-search-select': true,
@@ -300,19 +395,30 @@ export default defineComponent({
       </div>
       <div class="search-input" style={{ maxHeight }}>
         {selectedContent()}
-      <div class="search-input-input">
+        <div class="search-input-input">
           <Popover
             trigger='manual'
             theme='light'
             placement='bottom-start'
             arrow={false}
-            isShow={this.showNoSelectValueError || (this.showPopover && !!this.menuList?.length)}>
+            disableOutsideClick={true}
+            isShow={showPopover}>
               {{
                 default: inputContent,
                 content: popoverContent,
               }}
           </Popover>
         </div>
+      </div>
+      <div class="search-nextfix">
+        { this.clearable && (!!this.selectedList.length || !!this.usingItem?.values?.length) && <Close
+          class="search-clear"
+          onClick={this.handleClearAll}/>
+        }
+        { this.$slots.nextfix
+          ? this.$slots.nextfix()
+          : <Search class={`search-nextfix-icon ${this.isFocus ? 'is-focus'  : ''}`}></Search>
+        }
       </div>
     </div>
   </div>;

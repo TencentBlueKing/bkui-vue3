@@ -70,6 +70,10 @@
           visibility: hidden
         }
 
+        &.overflow-chip {
+          padding-right: 8px;
+        }
+
         &:hover {
           background: #dcdee5;
 
@@ -152,11 +156,14 @@
       // @extend .search-prefix;
 
       .search-clear {
+        display: flex;
         width: 12px;
         height: 12px;
         margin-right: 6px;
         font-size: 12px;
         color: #c4c6cc;
+        align-items: center;
+        justify-content: center;
 
         &:hover {
           color: #979ba5;

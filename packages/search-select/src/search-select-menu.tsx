@@ -27,7 +27,7 @@ import { computed, defineComponent, PropType } from 'vue';
 
 import { Done } from '@bkui-vue/icon';
 
-import { ICommonItem } from './utils';;
+import { ICommonItem, IMenuFooterItem } from './utils';;
 export default defineComponent({
   name: 'SearchSelectMenu',
   props: {
@@ -46,11 +46,34 @@ export default defineComponent({
       type: Array as PropType<string[]>,
       default: () => [],
     },
+    conditions: {
+      type: Array as PropType<ICommonItem[]>,
+    },
+    footerBtns: {
+      type: Array as PropType<IMenuFooterItem[]>,
+      default: () => [
+        {
+          id: 'confirm',
+          name: '确认',
+        },
+        {
+          id: 'cancel',
+          name: '取消',
+          disabled: true,
+        },
+      ],
+    },
   },
-  emits: ['selectItem'],
+  emits: ['selectItem', 'selectCondition', 'footerClick'],
   setup(props, { emit }) {
     function handleClick(item: ICommonItem) {
       emit('selectItem', item);
+    }
+    function handleClickCondition(item: ICommonItem) {
+      emit('selectCondition', item);
+    }
+    function handleClickFooterBtn(item: IMenuFooterItem) {
+      emit('footerClick', item);
     }
     const filterList = computed(() => {
       if (!props.list?.length) return [];
@@ -82,20 +105,45 @@ export default defineComponent({
     };
     return {
       handleClick,
+      handleClickCondition,
+      handleClickFooterBtn,
       filterList,
       getSearchNode,
     };
   },
   render() {
-    return <ul class='search-select-menu'>
+    return <div class='search-select-menu'>
       {
-        this.filterList.map(item => <li
-          class="menu-item"
-          key={item.id}
-          onClick={() => this.handleClick(item)}>{this.getSearchNode(item.name)}
-          {this.multiple && this.selected.includes(item.id) && <Done class="is-selected"/>}
-        </li>)
+        !!this.conditions?.length
+        && <ul class="menu-header">
+          {
+            this.conditions.map(item => <li
+            key={item.id}
+            class={`menu-header-item  ${item.disabled ? 'is-disabled' : ''}`}
+            onClick={() => !item.disabled && this.handleClickCondition(item)}>{item.name}</li>)
+          }
+        </ul>
       }
-    </ul>;
+      <ul class='menu-content'>
+        {
+          this.filterList.map(item => <li
+            class={`menu-item ${item.disabled ? 'is-disabled' : ''}`}
+            key={item.id}
+            onClick={() => !item.disabled && this.handleClick(item)}>{this.getSearchNode(item.name)}
+            {this.multiple && this.selected.includes(item.id) && <Done class="is-selected"/>}
+          </li>)
+        }
+      </ul>
+      {
+        this.multiple && this.footerBtns?.length && <div class="menu-footer">
+          {
+            this.footerBtns.map(item => <span
+              class={`menu-footer-btn ${item.disabled ? 'is-disabled' : ''}`}
+              key={item.id}
+              onClick={() => !item.disabled && this.handleClickFooterBtn(item)}>{item.name}</span>)
+          }
+        </div>
+      }
+    </div>;
   },
 });

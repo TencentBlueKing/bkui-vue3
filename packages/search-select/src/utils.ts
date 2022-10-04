@@ -26,10 +26,11 @@
 export interface ICommonItem {
   id: string;
   name: string;
+  disabled?: boolean;
 }
 
 export interface ISearchValue extends ICommonItem {
-  values: ICommonItem[];
+  values: (ICommonItem & {type?: SearchItemType})[];
 }
 
 export interface ISearchItem {
@@ -47,9 +48,14 @@ export interface ISearchItem {
   validate?: (values: ISearchItem, item: ISearchItem) => boolean;
   // placeholder
   placeholder?: string;
+  disabled?: boolean;
 }
-
-export type SearchItemType = 'text' | 'default';
+export interface IMenuFooterItem {
+  id: 'confirm' | 'cancel';
+  name: string;
+  disabled?: boolean;
+}
+export type SearchItemType = 'text' | 'default' | 'condition';
 export class SeletedItem {
   id: string;
   name: string;
@@ -68,26 +74,25 @@ export class SeletedItem {
     return this.searchItem.children || [];
   }
   get inputInnerHtml() {
-    if (this.type === 'text') return this.name;
+    if (this.isSpecialType()) return this.name;
     return `${this.keyInnerHtml}${this.values?.map(item => item.name).join('|') || ''}`;
   }
   get inputInnerText() {
-    if (this.type === 'text') return this.name;
+    if (this.isSpecialType()) return this.name;
     return `${this.keyInnerText}${this.values?.map(item => item.name).join('|') || ''}`;
   }
   get keyInnerHtml() {
-    if (this.type === 'text') return this.name;
+    if (this.isSpecialType()) return this.name;
     return this.name ? `${this.name}:&nbsp;`  : '';
   }
   get keyInnerText() {
-    if (this.type === 'text') return this.name;
+    if (this.isSpecialType()) return this.name;
     return this.keyInnerHtml.replace(/&nbsp;/gmi, ' ');
   }
-
-  addValue(item: ICommonItem) {
-    this.values.push(item);
+  isSpecialType() {
+    return ['text', 'condition'].includes(this.type);
   }
-  updateValue(item: ICommonItem) {
+  addValue(item: ICommonItem) {
     if (this.multiple) {
       const index = this.values.findIndex(val => val.id === item.id);
       if (index > -1) {
@@ -95,6 +100,6 @@ export class SeletedItem {
         return;
       }
     }
-    this.addValue(item);
+    this.values.push(item);
   }
 }
