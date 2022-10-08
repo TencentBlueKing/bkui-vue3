@@ -76,7 +76,10 @@ const tagProps = () => ({
     type: Boolean,
     default: true,
   },
-  popoverProps: Object as PropType<Partial<PopoverPropTypes>>,
+  popoverProps: {
+    type: Object as PropType<Partial<PopoverPropTypes>>,
+    default: () => ({}),
+  },
 });
 
 
