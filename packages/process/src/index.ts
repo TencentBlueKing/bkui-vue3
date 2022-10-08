@@ -26,5 +26,5 @@
 import { withInstall } from '@bkui-vue/shared';
 
 import Component from './process';
-const BkSteps = withInstall(Component);
-export default BkSteps;
+const BkProcess = withInstall(Component);
+export default BkProcess;
