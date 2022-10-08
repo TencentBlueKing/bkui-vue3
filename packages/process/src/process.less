@@ -43,6 +43,10 @@
       font-size: 22px;
       line-height: 18px;
     }
+
+    &-custom {
+      padding-left: 5px;
+    }
     
   }
 
@@ -168,6 +172,19 @@
 
       &::after {
         border-color: transparent transparent transparent @primary-color;
+      }
+
+      >.bk-spin-loading {
+        vertical-align: -3px;
+      }
+    }
+    
+    &.error {
+      color: #fff;
+      background: @danger-color;
+
+      &::after {
+        border-color: transparent transparent transparent @danger-color;
       }
 
       >.bk-spin-loading {
