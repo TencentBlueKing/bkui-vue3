@@ -23,14 +23,32 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+
+import { inject, InjectionKey, provide, Ref } from 'vue';
+export interface ISearchSelectProvider {
+  onEditClick: (item: SelectedItem, index: number) => void;
+  onEditEnter: (item: SelectedItem, index: number) => void;
+  editKey: Ref<String>;
+}
+export const SEARCH_SLECT_PROVIDER_KEY: InjectionKey<ISearchSelectProvider> =  Symbol('SEARCH_SLECT_PROVIDER_KEY');
+export const useSearchSelectProvider = (data: ISearchSelectProvider) => {
+  provide(SEARCH_SLECT_PROVIDER_KEY, data);
+};
+export const useSearchSelectInject = () => inject(SEARCH_SLECT_PROVIDER_KEY);
+
+export enum SearchInputMode {
+  'DEFAULT',
+  'EDIT'
+}
 export interface ICommonItem {
   id: string;
   name: string;
   disabled?: boolean;
 }
 
-export interface ISearchValue extends ICommonItem {
-  values: (ICommonItem & {type?: SearchItemType})[];
+export interface ISearchValue extends Omit<ICommonItem, 'disabled'> {
+  type?: SearchItemType;
+  values?: Omit<ICommonItem, 'disabled'>[];
 }
 
 export interface ISearchItem {
@@ -56,10 +74,11 @@ export interface IMenuFooterItem {
   disabled?: boolean;
 }
 export type SearchItemType = 'text' | 'default' | 'condition';
-export class SeletedItem {
+export class SelectedItem {
   id: string;
   name: string;
   values: ICommonItem[] = [];
+  condition: string;
   constructor(public searchItem: ISearchItem, public type: SearchItemType = 'default') {
     this.id = searchItem.id;
     this.name = searchItem.name;
@@ -72,6 +91,9 @@ export class SeletedItem {
   }
   get children() {
     return this.searchItem.children || [];
+  }
+  get conditions() {
+    return this.searchItem.conditions?.length ? this.searchItem.conditions : undefined;
   }
   get inputInnerHtml() {
     if (this.isSpecialType()) return this.name;
@@ -101,5 +123,21 @@ export class SeletedItem {
       }
     }
     this.values.push(item);
+  }
+  toValue(): ISearchValue {
+    const value: ISearchValue = {
+      id: this.id,
+      name: this.name,
+    };
+    if (this.values?.length) {
+      value.values = this.values.map(item => ({ id: item.id, name: item.name }));
+    }
+    if (this.type && this.type !== 'default') {
+      value.type = this.type;
+    }
+    return value;
+  }
+  toValueKey() {
+    return JSON.stringify(this.toValue());
   }
 }

@@ -65,6 +65,28 @@ export const defaultData: ISearchItem[]  = [
         id: '2-3',
       },
     ],
+    conditions: [
+      {
+        name: '>',
+        id: '>',
+      },
+      {
+        name: '>=',
+        id: '>=',
+      },
+      {
+        name: '<=',
+        id: '<=',
+      },
+      {
+        name: '<',
+        id: '<',
+      },
+      {
+        name: '=',
+        id: '=',
+      },
+    ],
   },
   {
     name: 'IP地址',
