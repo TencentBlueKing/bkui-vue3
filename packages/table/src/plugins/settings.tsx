@@ -49,6 +49,7 @@ export default defineComponent({
         limit: PropTypes.number.def(0),
         size: PropTypes.size(['small', 'medium', 'large']).def('small'),
         sizeList: PropTypes.shape<SizeItem[]>([]),
+        showLineHeight: PropTypes.bool.def(true),
       }), PropTypes.bool]).def(false),
     columns: PropTypes.array.def([]),
     rowHeight: PropTypes.number.def(LINE_HEIGHT),
@@ -65,6 +66,7 @@ export default defineComponent({
       limit: 0,
       size: 'small',
       sizeList: defaultSizeList,
+      showLineHeight: true,
     }) : ref(props.settings as Settings);
 
     const activeSize = ref(localSettings.value.size || 'small');
@@ -153,6 +155,7 @@ export default defineComponent({
     const indeterminate = computed(() => checkedFields.value.length > 0 && !renderFields.value
       .every((field: any, index: number) => checkedFields.value
         .includes(resolvePropVal(field, 'field', [field, index]))));
+    const showLineHeight = computed(() => (typeof localSettings.value.showLineHeight === 'boolean' ? localSettings.value.showLineHeight : true));
 
     watch(() => [checkedFields.value], () => {
       if (!checkedFields.value.length) {
@@ -207,9 +210,13 @@ export default defineComponent({
                   </div>)
                 }
               </BkCheckboxGroup>
-              <div class="setting-body-line-height">
-              表格行高：{ renderSize() }
-              </div>
+              {
+                showLineHeight.value
+                  ? <div class="setting-body-line-height">
+                      表格行高：{ renderSize() }
+                    </div> : ''
+              }
+
             </div>
             <div class="setting-footer">
                 <BkButton theme='primary' style={buttonStyle} onClick={handleSaveClick}>确定</BkButton>

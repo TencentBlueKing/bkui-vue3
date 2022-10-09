@@ -33,6 +33,17 @@ export const enum BORDER_OPTION {
 }
 
 /**
+ * 鼠标划过行样式
+ */
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export const enum ROW_HOVER {
+  HIGHLIGHT = 'highlight',
+  AUTO = 'auto'
+}
+
+export const ROW_HOVER_OPTIONS = [ROW_HOVER.AUTO, ROW_HOVER.HIGHLIGHT];
+
+/**
  * 边框配置可选项
  */
 export const BORDER_OPTIONS = [BORDER_OPTION.NONE, BORDER_OPTION.ROW, BORDER_OPTION.COL, BORDER_OPTION.OUTER];

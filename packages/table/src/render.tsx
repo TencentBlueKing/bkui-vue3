@@ -341,6 +341,7 @@ export default class TableRender {
 
         const rowClass = [
           ...formatPropAsArray(this.props.rowClass, [row, rowIndex, this]),
+          `hover-${this.props.rowHover}`,
         ];
 
         const { resolveFixedColumnStyle,  fixedOffset } = getFixedColumnStyleResolve();

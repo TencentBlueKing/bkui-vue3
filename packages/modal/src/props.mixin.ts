@@ -49,6 +49,8 @@ export const propsMixin = {
   quickClose: PropTypes.bool.def(true),
   // 是否显示在body内（即与id#app同级
   transfer: PropTypes.bool.def(false),
+  // 弹出层z-index，实际显示的值会自动+1。为了抱证在遮罩上正常显示
+  zIndex: PropTypes.number,
   // 内容区最大高度
   maxHeight: PropTypes.string,
   // 弹出方向

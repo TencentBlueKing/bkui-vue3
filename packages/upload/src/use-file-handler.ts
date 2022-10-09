@@ -135,12 +135,13 @@ export default (props: UploadProps, hooks: UploadHanderHooks) => {
     }
   }
 
-  async function handleError(err: Error, rawFile: UploadRawFile) {
+  async function handleError(err: Error, rawFile: UploadRawFile, res?: unknown) {
     const file = findFile(rawFile);
     if (!file) return;
 
     file.status = 'fail';
     file.statusText = err.message;
+    file.response = res;
   }
 
   async function handleSuccess(res: unknown, rawFile: UploadRawFile) {

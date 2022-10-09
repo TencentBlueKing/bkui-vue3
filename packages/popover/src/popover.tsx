@@ -144,9 +144,11 @@ export default defineComponent({
 
     // 兼容多种样式处理规则
     // class custom-theme
-    const customThemeCls = compTheme.value.customThemes.join(' ');
-    const customTheme = compTheme.value.customThemes.reduce((out, cur) => ({ [`data-${cur}-theme`]: true, ...out }), {});
-    const contentClass = `bk-popover-content ${customThemeCls}`;
+    const customTheme = computed(() => compTheme.value.customThemes.reduce((out, cur) => ({ [`data-${cur}-theme`]: true, ...out }), {}));
+    const contentClass = computed(() => {
+      const customThemeCls = compTheme.value.customThemes.join(' ');
+      return `bk-popover-content ${customThemeCls} ${props.contentCls}`.trim();
+    });
 
     /**
      * 阻止默认事件，避免多层嵌套导致的点击失焦问题
@@ -176,9 +178,9 @@ export default defineComponent({
           onAfterEnter={ handleAfterEnter }
           onAfterLeave={ handleAfterLeave }>
           <div ref={ refContent }
-            class={contentClass}
+            class={contentClass.value}
             style={compStyle.value}
-            {...customTheme}
+            {...customTheme.value}
             onClick={ handleClickContent }>
             {ctx.slots.content?.() ?? content.value}
             {arrow.value && <div class="arrow" data-popper-arrow></div>}
