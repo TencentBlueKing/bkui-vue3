@@ -103,6 +103,7 @@ export default defineComponent({
     showSelectedIcon: PropTypes.bool.def(true), // 多选时是否显示勾选ICON
     inputSearch: PropTypes.bool.def(true), // 是否采用输入框支持搜索的方式
     enableVirtualRender: PropTypes.bool.def(false), // 是否开启虚拟滚动（List模式下才会生效）
+    allowEmptyValues: PropTypes.array.def([]), // 允许的空值作为options选项
   },
   emits: ['update:modelValue', 'change', 'toggle', 'clear', 'scroll-end', 'focus', 'blur'],
   setup(props, { emit }) {
@@ -131,6 +132,7 @@ export default defineComponent({
       collapseTags,
       autoHeight,
       popoverOptions,
+      allowEmptyValues,
     } = toRefs(props);
 
     const formItem = useFormItem();
@@ -444,11 +446,15 @@ export default defineComponent({
           value,
           label: handleGetLabelByValue(value),
         }))];
-      } else if (modelValue.value !== undefined && modelValue.value !== '') {
-        selected.value = [{
-          value: modelValue.value,
-          label: handleGetLabelByValue(modelValue.value),
-        }];
+      } else {
+        if (!!modelValue.value || allowEmptyValues.value.includes(modelValue.value)) {
+          selected.value = [{
+            value: modelValue.value,
+            label: handleGetLabelByValue(modelValue.value),
+          }];
+        } else {
+          selected.value = [];
+        }
       }
     };
     // 处理键盘事件
@@ -617,7 +623,7 @@ export default defineComponent({
             onEnter={this.handleInputEnter}>
               {{
                 prefix: () => this.$slots.prefix?.(),
-                default: this.$slots.tag?.({ selected: this.selected }),
+                default: this.$slots.tag && (() => this.$slots.tag({ selected: this.selected })),
                 suffix: () => suffixIcon(),
               }}
           </SelectTagInput>
