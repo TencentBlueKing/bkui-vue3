@@ -10,17 +10,24 @@
 @tag-info-bg-color: #EDF4FF;
 @tag-warning-bg-color: #FFF1DB;
 @tag-danger-bg-color: #FEEBEA;
-@tag-filled-bg-color: #979ba5;
+@tag-stroke-bg-color: #FAFBFD;
+@tag-filled-bg-color: #979BA5;
+@tag-filled-success-bg-color: #14A568;
+@tag-filled-info-bg-color: #3A84FF;
+@tag-filled-warning-bg-color: #FE9C00;
+@tag-filled-danger-bg-color: #EA3536;
 
 @tag-success-border-color: rgba(20,165,104,.3);
 @tag-info-border-color: rgba(58,132,255,.3);
 @tag-warning-border-color: rgba(254,165,0,.3);
 @tag-danger-border-color: rgba(234,53,54,.3);
 
-@tag-success-hover-bg-color: #DCF8EC;
+@tag-success-hover-bg-color: #C9F5E2;
 @tag-info-hover-bg-color: #E1ECFF;
 @tag-warning-hover-bg-color: #FFE8C3;
 @tag-danger-hover-bg-color: #FEDDDC;
+@tag-stroke-hover-bg-color: #F0F1F5;
+@tag-filled-hover-bg-color: #ACAFB6;
 @tag-filled-success-hover-bg-color: #42B685;
 @tag-filled-info-hover-bg-color: #609CFE;
 @tag-filled-warning-hover-bg-color: #FDAF32;
@@ -48,13 +55,17 @@
     @borderColor: 'tag-@{value}-border-color';
     @bgColor: 'tag-@{value}-bg-color';
     @bgHoverColor: 'tag-@{value}-hover-bg-color';
+    @filledBgColor: 'tag-filled-@{value}-bg-color';
     @filledBgHoverColor: 'tag-filled-@{value}-hover-bg-color';
     &.bk-tag-@{value} {
       color: @@color;
       border-color: @@borderColor;
       background-color: @@bgColor;
       &.bk-tag-filled {
-        background-color: @@color;
+        background-color: @@filledBgColor;
+        &:hover {
+          background-color: @@filledBgHoverColor;
+        }
       }
       &:hover:not(.bk-tag-filled) {
         background-color: @@bgHoverColor;
@@ -71,7 +82,7 @@
     background-color: @tag-filled-bg-color;
 
     &:hover {
-      opacity: .8;
+      background-color: @tag-filled-hover-bg-color;
     }
   }
 
@@ -80,6 +91,14 @@
     line-height: 20px;
     border-style: solid;
     border-width: 1px;
+
+    &:not(.bk-tag-success, .bk-tag-warning, .bk-tag-info, .bk-tag-danger) {
+      background-color: @tag-stroke-bg-color;
+
+      &:hover {
+        background-color: @tag-stroke-hover-bg-color;
+      }
+    }
   }
 
   &.bk-tag-closable {
