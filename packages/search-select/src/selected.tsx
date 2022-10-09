@@ -28,7 +28,7 @@ import { defineComponent, PropType, ref } from 'vue';
 import { Close } from '@bkui-vue/icon';
 
 import SearchSelectInput from './input';
-import { ISearchItem, SearchInputMode, SelectedItem, useSearchSelectInject } from './utils';;
+import { GetMenuListFunc, ICommonItem, ISearchItem, SearchInputMode, SelectedItem, useSearchSelectInject } from './utils';;
 export default defineComponent({
   name: 'SearchSelected',
   props: {
@@ -44,34 +44,43 @@ export default defineComponent({
       type: Number,
       default: -1,
     },
+    conditions: {
+      type: Array as PropType<ICommonItem[]>,
+      default: () => [],
+    },
+    geMenuList: Function as PropType<GetMenuListFunc>,
   },
   emits: ['delete'],
   setup(props, { emit }) {
     const inputRef = ref<typeof SearchSelectInput>(null);
-    const { onEditClick, onEditEnter, editKey } = useSearchSelectInject();
+    const { onEditClick, onEditEnter, onEditBlur, editKey } = useSearchSelectInject();
     function handleDeleteSelected(index: number) {
       emit('delete', index);
     }
     function handleEditSeleted(e: MouseEvent, item: SelectedItem, index: number) {
-      // e.preventDefault();
-      // e.stopPropagation();
       onEditClick(item, index);
-      setTimeout(() => {
-        inputRef.value.handleInputFocus();
-      }, 200);
+      // magic code
+      setTimeout(() => inputRef.value.handleInputFocus(), 200);
     };
     function handleAddSelected(item: SelectedItem, index: number) {
       onEditEnter(item, index);
     }
-    function handleInputFocus() {
-
+    function handleInputFocus(isFocus: boolean) {
+      if (isFocus) return;
+      onEditBlur();
     }
     function handleInputOutside() {
       return true;
     }
+    function copySeletedItem(item: SelectedItem): SelectedItem {
+      const newItem = new SelectedItem(item.searchItem, item.type);
+      newItem.values = item.values.slice();
+      return newItem;
+    }
     return {
       inputRef,
       editKey,
+      copySeletedItem,
       handleDeleteSelected,
       handleEditSeleted,
       handleInputOutside,
@@ -85,8 +94,10 @@ export default defineComponent({
           <SearchSelectInput ref="inputRef"
             key={ this.editKey.toString()}
             mode={SearchInputMode.EDIT}
-            data={this.data} defautUsingItem={item}
+            data={this.data}
             showCondition={false}
+            conditions={this.conditions}
+            defautUsingItem={this.copySeletedItem(item)}
             clickOutside={this.handleInputOutside}
             onAdd={v => this.handleAddSelected(v, index)}
             onFocus={this.handleInputFocus}/>

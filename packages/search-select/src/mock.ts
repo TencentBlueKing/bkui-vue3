@@ -39,7 +39,7 @@ export const defaultData: ISearchItem[]  = [
       {
         name: '运行中',
         id: '1-3',
-        disabled: true,
+        disabled: false,
       },
       {
         name: '已关机',
@@ -54,7 +54,7 @@ export const defaultData: ISearchItem[]  = [
       {
         name: '王者荣耀',
         id: '2-1',
-        disabled: true,
+        disabled: false,
       },
       {
         name: '刺激战场',

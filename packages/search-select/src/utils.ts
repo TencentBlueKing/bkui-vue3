@@ -25,9 +25,17 @@
 */
 
 import { inject, InjectionKey, provide, Ref } from 'vue';
+/**
+ * @description: 获取menu list方法
+ * @param {ISearchItem} item 已选择的key字段 为空则代表当前并未选择key字段
+ * @param {string} keyword 已输入的文本
+ * @return {*} menu list用于渲染选择弹层列表
+ */
+export type GetMenuListFunc = (item: ISearchItem, keyword: string) => Promise<ISearchItem[]>;
 export interface ISearchSelectProvider {
   onEditClick: (item: SelectedItem, index: number) => void;
   onEditEnter: (item: SelectedItem, index: number) => void;
+  onEditBlur: () => void;
   editKey: Ref<String>;
 }
 export const SEARCH_SLECT_PROVIDER_KEY: InjectionKey<ISearchSelectProvider> =  Symbol('SEARCH_SLECT_PROVIDER_KEY');
@@ -45,7 +53,6 @@ export interface ICommonItem {
   name: string;
   disabled?: boolean;
 }
-
 export interface ISearchValue extends Omit<ICommonItem, 'disabled'> {
   type?: SearchItemType;
   values?: Omit<ICommonItem, 'disabled'>[];
@@ -121,8 +128,10 @@ export class SelectedItem {
         this.values.splice(index, 1);
         return;
       }
+      this.values.push(item);
+      return;
     }
-    this.values.push(item);
+    this.values = [item];
   }
   toValue(): ISearchValue {
     const value: ISearchValue = {
@@ -139,5 +148,8 @@ export class SelectedItem {
   }
   toValueKey() {
     return JSON.stringify(this.toValue());
+  }
+  isInValueList(item: ICommonItem) {
+    return this.children.some(v => v.id === item?.id);
   }
 }

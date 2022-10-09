@@ -34,7 +34,7 @@ import { debounce } from '@bkui-vue/shared';
 import SearchSelectInput from './input';
 import { defaultData } from './mock';
 import SearchSelected from './selected';
-import { ICommonItem, ISearchItem, ISearchValue,  SearchItemType,  SelectedItem, useSearchSelectProvider } from './utils';
+import { GetMenuListFunc, ICommonItem, ISearchItem, ISearchValue,  SearchItemType,  SelectedItem, useSearchSelectProvider } from './utils';
 const INPUT_PADDING_WIDTH = 40;
 const SELETED_MARGING_RIGHT = 6;
 export const SearchSelectProps = {
@@ -60,11 +60,14 @@ export const SearchSelectProps = {
   },
   conditions: {
     type: Array as PropType<ICommonItem[]>,
-    default: () => [{ id: 'or', name: '或', disabled: true }, { id: 'and', name: '且' }],
+    default: () => [{ id: 'or', name: '或' }, { id: 'and', name: '且' }],
   },
   clearable: {
     type: Boolean,
     default: true,
+  },
+  geMenuList: {
+    type: Function as PropType<GetMenuListFunc>,
   },
 };
 export default defineComponent({
@@ -130,10 +133,12 @@ export default defineComponent({
     onBeforeUnmount(() => {
       removeListener(wrapRef.value.querySelector('.bk-search-select') as HTMLElement, debounceResize);
     });
+
     // edit item
     useSearchSelectProvider({
       onEditClick,
       onEditEnter,
+      onEditBlur,
       editKey,
     });
     function onEditClick(item: SelectedItem, index: number) {
@@ -143,6 +148,9 @@ export default defineComponent({
       const list = selectedList.value.slice();
       list.splice(index, 1, item);
       emit('update:modelValue', list.map(item => item.toValue()));
+      editKey.value = '';
+    }
+    function onEditBlur() {
       editKey.value = '';
     }
 
@@ -237,6 +245,7 @@ export default defineComponent({
       <div class="search-input" style={{ maxHeight }}>
         <SearchSelected
           data={this.data}
+          conditions={this.conditions}
           selectedList={this.selectedList}
           overflowIndex={this.overflowIndex}
           onDelete={this.handleDeleteSelected}

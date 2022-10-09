@@ -34,6 +34,7 @@ export default defineComponent({
     list: {
       type: Array as PropType<ICommonItem[]>,
     },
+    hoverId: String,
     keyword: {
       type: String,
       default: '',
@@ -76,7 +77,6 @@ export default defineComponent({
     function handleClickFooterBtn(item: IMenuFooterItem) {
       emit('footerClick', item);
     }
-
     const filterList = computed(() => {
       if (!props.list?.length) return [];
       if (!props.keyword?.length) return props.list;
@@ -123,14 +123,15 @@ export default defineComponent({
             this.conditions.map(item => <li
             key={item.id}
             class={`menu-header-item  ${item.disabled ? 'is-disabled' : ''}`}
-            onClick={() => !item.disabled && this.handleClickCondition(item)}>{item.name}</li>)
+            onClick={() => !item.disabled && this.handleClickCondition(item)}>
+            {item.name}</li>)
           }
         </ul>
       }
       <ul class='menu-content'>
         {
           this.filterList.map(item => <li
-            class={`menu-item ${item.disabled ? 'is-disabled' : ''}`}
+            class={`menu-item ${item.disabled ? 'is-disabled' : ''} ${this.hoverId === item.id && !item.disabled ? 'is-hover' : ''}`}
             key={item.id}
             onClick={() => !item.disabled && this.handleClick(item)}>{this.getSearchNode(item.name)}
             {this.multiple && this.selected.includes(item.id) && <Done class="is-selected"/>}
