@@ -47,7 +47,7 @@ export default defineComponent({
     },
     subtitle: {
       type: String,
-      default: '用于多行文本的输入，输入框高度可以自动适配，或出现滚动条',
+      default: '',
     },
     propsData: {
       type: Array,
