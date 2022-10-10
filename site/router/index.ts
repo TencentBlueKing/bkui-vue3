@@ -717,7 +717,7 @@ const routes: RouteRecordRaw[] = [
     name: 'searchSelect',
     meta: {
       group: NavGroupMeta.Form,
-      navName: 'Search Select 选择器',
+      navName: 'SearchSelect 查询选择器',
     },
     component: () => import('../views/search-select/index'),
   },

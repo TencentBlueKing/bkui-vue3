@@ -61,6 +61,7 @@ export interface ICommonItem {
   id: string;
   name: string;
   disabled?: boolean;
+  realId?: string;
   value?:  Omit<ICommonItem, 'disabled' | 'value'>;
 }
 export interface ISearchValue extends Omit<ICommonItem, 'disabled' | 'value'> {

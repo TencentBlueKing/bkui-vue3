@@ -251,7 +251,7 @@ export default defineComponent({
     async function handleSelectItem(item: ICommonItem, type?: SearchItemType) {
       // 快捷选中
       if (item.value?.id) {
-        const seleted = new SelectedItem(item, type);
+        const seleted = new SelectedItem({ ...item, id: item.realId ?? item.id }, type);
         seleted.addValue(item.value);
         setSelectedItem(seleted);
         return;
@@ -340,19 +340,17 @@ export default defineComponent({
           const isMatched = item.name.toLocaleLowerCase().includes(keyword.value.toLocaleLowerCase());
           if (isMatched) {
             list.push(item);
-            if (item.children?.length) {
-              item.children.forEach((child) => {
-                if (isMatched || child.name.toLocaleLowerCase().includes(keyword.value.toLocaleLowerCase())) {
-                  list.push({
-                    ...item,
-                    id: `${item.id}-${child.id}`,
-                    value: child,
-                  });
-                }
+            item.children?.forEach((child) => {
+              list.push({
+                ...item,
+                realId: item.id,
+                id: random(10),
+                value: child,
               });
-            }
+            });
             list.push({
               ...item,
+              realId: item.id,
               id: random(10),
               value: {
                 id: keyword.value,
@@ -360,6 +358,16 @@ export default defineComponent({
               },
             });
           } else {
+            item.children?.forEach((child) => {
+              if (child.name.toLocaleLowerCase().includes(keyword.value.toLocaleLowerCase())) {
+                list.push({
+                  ...item,
+                  realId: item.id,
+                  id: random(10),
+                  value: child,
+                });
+              }
+            });
             list.push({
               ...item,
               value: {
