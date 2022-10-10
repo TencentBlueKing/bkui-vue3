@@ -308,7 +308,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/process',
     name: 'process',
-    component: () => import('../views/process'),
+    component: () => import('../views/process/index'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'Process 步骤',
