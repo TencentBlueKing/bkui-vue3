@@ -96,6 +96,7 @@ export function useFlatList(props: TagProps) {
     list,
   } = toRefs(props);
   const flatList = ref([]);
+  const saveKeyMap = ref({});
 
 
   watch([useGroup, saveKey, displayKey, list], () => {
@@ -117,9 +118,16 @@ export function useFlatList(props: TagProps) {
       }, []);
     }
     flatList.value = formatList;
+    saveKeyMap.value = formatList.reduce((acc, item) => {
+      acc[item[saveKey.value]] = item;
+      return acc;
+    }, {});
   }, { immediate: true });
 
-  return flatList;
+  return {
+    flatList,
+    saveKeyMap,
+  };
 }
 
 /**
