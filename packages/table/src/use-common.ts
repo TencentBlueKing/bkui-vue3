@@ -425,6 +425,7 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
         [TABLE_ROW_ATTRIBUTE.ROW_UID]: rowId,
         [TABLE_ROW_ATTRIBUTE.ROW_EXPAND]: keepLocalAction ? isRowExpand(rowId) : false,
         [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: resolveSelection(item, rowId),
+        [TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA]: { ...item },
       };
     }));
 

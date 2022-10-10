@@ -157,7 +157,10 @@ export default defineComponent({
       })
       .on(EVENTS.ON_ROW_EXPAND_CLICK, (args: any) => {
         const { row, column, index, rows, e } = args;
-        ctx.emit(EMITEVENTS.ROW_EXPAND_CLICK, { row, column, index, rows, e });
+        ctx.emit(EMITEVENTS.ROW_EXPAND_CLICK, {
+          row: row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA],
+          column, index, rows, e,
+        });
         setRowExpand(row, !row[TABLE_ROW_ATTRIBUTE.ROW_EXPAND]);
       })
       .on(EVENTS.ON_ROW_CHECK, ({ row, isAll, index, value }) => {
@@ -166,10 +169,21 @@ export default defineComponent({
           ctx.emit(EMITEVENTS.ROW_SELECT_ALL, { checked: value, data: props.data });
         } else {
           toggleRowSelection(row, value);
-          ctx.emit(EMITEVENTS.ROW_SELECT, { row, index, checked: value, data: props.data });
+          ctx.emit(EMITEVENTS.ROW_SELECT, {
+            row: row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA],
+            index,
+            checked: value,
+            data: props.data,
+          });
         }
 
-        ctx.emit(EMITEVENTS.ROW_SELECT_CHANGE, { row, isAll, index, checked: value, data: props.data });
+        ctx.emit(EMITEVENTS.ROW_SELECT_CHANGE, {
+          row: row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA],
+          isAll,
+          index,
+          checked: value,
+          data: props.data,
+        });
       });
 
 

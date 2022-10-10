@@ -408,7 +408,7 @@ export default class TableRender {
       return <TableRow key={rowKey}>
         <tr class={resovledClass}>
           <td colspan={ this.filterColgroups.length } rowspan={1}>
-            { this.context.slots.expandRow?.(row) ?? <div class='expand-cell-ctx'>Expand Row</div> }
+            { this.context.slots.expandRow?.(row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA]) ?? <div class='expand-cell-ctx'>Expand Row</div> }
           </td>
         </tr>
       </TableRow>;
