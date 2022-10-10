@@ -2,6 +2,7 @@
   <bk-search-select
     v-model="value"
     :data="data"
+    :get-menu-list="getMenuList"
   />
 </template>
 <script setup>
@@ -55,14 +56,11 @@
       disabled: true,
     },
   ];
-  const value = ref([
-    {
-      id: '1',
-      name: '实例状态',
-      values: [{
-        name: '创建中',
-        id: '1-2',
-      }],
-    },
-  ]);
+  const value = ref([]);
+  const getMenuList = async (item, keyword) => {
+    console.info(item, keyword);
+    await new Promise(resolve => setTimeout(resolve, 300));
+    if (!item) return data;
+    return data.find(set => set.id === item.id)?.children;
+  };
 </script>

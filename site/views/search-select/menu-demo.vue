@@ -2,7 +2,11 @@
   <bk-search-select
     v-model="value"
     :data="data"
-  />
+  >
+    <template #menu="{item}">
+      <div>{{ item.name + '-- hello' }}</div>
+    </template>
+  </bk-search-select>
 </template>
 <script setup>
   import { ref } from 'vue';
@@ -11,9 +15,7 @@
       name: '实例状态',
       id: '1',
       multiple: true,
-      placeholder: '必须项',
-      async: true,
-      validate: true,
+      placeholder: '实例状态是必选项',
       children: [
         {
           name: '创建中',
@@ -33,6 +35,7 @@
     {
       name: '实例业务',
       id: '2',
+      placeholder: '输入格式为XXX',
       children: [
         {
           name: '王者荣耀',
@@ -52,17 +55,20 @@
     {
       name: 'IP地址',
       id: '3',
-      disabled: true,
+      placeholder: '输入格式为XXX.XXX.XXX',
+    },
+    {
+      name: '实例名',
+      id: '4',
+    },
+    {
+      name: '实例地址',
+      id: '5',
+    },
+    {
+      name: '测试六',
+      id: '6',
     },
   ];
-  const value = ref([
-    {
-      id: '1',
-      name: '实例状态',
-      values: [{
-        name: '创建中',
-        id: '1-2',
-      }],
-    },
-  ]);
+  const value = ref([]);
 </script>

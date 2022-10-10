@@ -24,7 +24,7 @@
 * IN THE SOFTWARE.
 */
 
-import { inject, InjectionKey, provide, Ref } from 'vue';
+import { inject, InjectionKey, provide, Ref, VNode } from 'vue';
 /**
  * @description: 获取menu list方法
  * @param {ISearchItem} item 已选择的key字段 为空则代表当前并未选择key字段
@@ -32,10 +32,19 @@ import { inject, InjectionKey, provide, Ref } from 'vue';
  * @return {*} menu list用于渲染选择弹层列表
  */
 export type GetMenuListFunc = (item: ISearchItem, keyword: string) => Promise<ISearchItem[]>;
+export type ValidateValuesFunc = (item: ISearchItem, values: ICommonItem[]) => Promise<string | true>;
+export type MenuSlotParams = {
+  item: ISearchItem;
+  list: ISearchItem[];
+  hoverId: string;
+  multiple: boolean;
+  getSearchNode: (str: string) => string | (string | VNode)[]
+};
 export interface ISearchSelectProvider {
   onEditClick: (item: SelectedItem, index: number) => void;
   onEditEnter: (item: SelectedItem, index: number) => void;
   onEditBlur: () => void;
+  onValidate: (str: string) => void;
   editKey: Ref<String>;
 }
 export const SEARCH_SLECT_PROVIDER_KEY: InjectionKey<ISearchSelectProvider> =  Symbol('SEARCH_SLECT_PROVIDER_KEY');
@@ -52,8 +61,9 @@ export interface ICommonItem {
   id: string;
   name: string;
   disabled?: boolean;
+  value?:  Omit<ICommonItem, 'disabled' | 'value'>;
 }
-export interface ISearchValue extends Omit<ICommonItem, 'disabled'> {
+export interface ISearchValue extends Omit<ICommonItem, 'disabled' | 'value'> {
   type?: SearchItemType;
   values?: Omit<ICommonItem, 'disabled'>[];
 }
@@ -65,14 +75,15 @@ export interface ISearchItem {
   children?: ICommonItem[];
   // 是否多选
   multiple?: boolean;
-  // 是否远程获取子列表
-  remote?: boolean;
-  // 条件列表
-  conditions?: ICommonItem[]
-  // 校验
-  validate?: (values: ISearchItem, item: ISearchItem) => boolean;
+  // 是否远程获取子列表 需配合组件属性 getMenuList使用
+  // false 默认 如果配置了属性 getMenuList 则通过 getMenuList来获取子列表
+  // true 则是直接拿到 children字段来获取子列表
+  async?: boolean;
+  // 是校验
+  noValidate?: boolean;
   // placeholder
   placeholder?: string;
+  // disable
   disabled?: boolean;
 }
 export interface IMenuFooterItem {
@@ -99,8 +110,8 @@ export class SelectedItem {
   get children() {
     return this.searchItem.children || [];
   }
-  get conditions() {
-    return this.searchItem.conditions?.length ? this.searchItem.conditions : undefined;
+  get validate() {
+    return !this.searchItem.noValidate;
   }
   get inputInnerHtml() {
     if (this.isSpecialType()) return this.name;

@@ -23,13 +23,14 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { computed, ComputedRef, defineComponent, PropType, Ref, ref, watch, watchEffect } from 'vue';
+import { defineComponent, PropType, Ref, ref, watch, watchEffect } from 'vue';
 
 import { clickoutside } from '@bkui-vue/directives';
 import Popover from '@bkui-vue/popover2';
+import { debounce, random } from '@bkui-vue/shared';
 
 import SearchSelectMenu from './menu';
-import { GetMenuListFunc, ICommonItem, IMenuFooterItem, ISearchItem, SearchInputMode, SearchItemType, SelectedItem, useSearchSelectInject } from './utils';
+import { GetMenuListFunc, ICommonItem, IMenuFooterItem, ISearchItem, MenuSlotParams, SearchInputMode, SearchItemType, SelectedItem, useSearchSelectInject, ValidateValuesFunc } from './utils';
 export default defineComponent({
   name: 'SearchSelectInput',
   directives: {
@@ -53,6 +54,7 @@ export default defineComponent({
       default: SearchInputMode.DEFAULT,
     },
     geMenuList: Function as PropType<GetMenuListFunc>,
+    validateValues: Function as PropType<ValidateValuesFunc>,
   },
   emits: ['focus', 'add', 'delete'],
   setup(props, { emit, expose }) {
@@ -66,26 +68,15 @@ export default defineComponent({
     const usingItem: Ref<SelectedItem> = ref(props.defautUsingItem);
     const menuHoverId = ref('');
     const loading = ref<boolean>(false);
+    const debounceSetMenuList = debounce(300, setMenuList);
     // const selectMenuList = ref<ICommonItem[]>([]);
     let isBindEvent = false;
 
     const remoteMenuList = ref<ICommonItem[]>([]);
-    const menuList: ComputedRef<ICommonItem[]> = computed(() => {
-      if (!usingItem?.value) return props.data
-        .filter(item => item.name.toLocaleLowerCase().includes(keyword.value.toLocaleLowerCase()));
-      // .map(item => ({ ...item, hover: false }));
-      if (usingItem.value.type === 'condition') {
-        return props.conditions;
-      }
-      if (!usingItem.value.values?.length
-        || usingItem.value.multiple
-        || props.mode === SearchInputMode.EDIT) return usingItem.value.children
-        .filter(item => item.name.toLocaleLowerCase().includes(keyword.value.toLocaleLowerCase()));
-      return [];
-    });
+    const menuList: Ref<ISearchItem[]> = ref([]);
 
 
-    const { editKey } = useSearchSelectInject();
+    const { editKey, onValidate } = useSearchSelectInject();
     watch(editKey, () => {
       if (props.mode === SearchInputMode.DEFAULT && editKey.value) {
         showPopover.value = false;
@@ -129,17 +120,19 @@ export default defineComponent({
     }
     function documentArrowEvent(e: KeyboardEvent) {
       e.preventDefault();
-      inputRef.value.blur();
+      inputRef.value?.blur();
       const len = menuList.value.length;
       let i = len;
-      let curIndex = menuList.value.findIndex(set => set.id === menuHoverId.value);
+      let index = menuList.value.findIndex(set => set.id === menuHoverId.value);
       while (i >= 0) {
-        curIndex = e.code === 'ArrowDown' ? curIndex + 1 : curIndex - 1;
+        index = e.code === 'ArrowDown' ? index + 1 : index - 1;
         // eslint-disable-next-line no-nested-ternary
-        curIndex = curIndex > len - 1 ? 0 : (curIndex < 0 ? len - 1 : curIndex);
-        const item = menuList.value[curIndex];
+        index = index > len - 1 ? 0 : (index < 0 ? len - 1 : index);
+        const item = menuList.value[index];
         if (!item.disabled) {
           i = -1;
+          const dom = document.getElementById(item.id);
+          dom?.focus();
           menuHoverId.value = item.id;
           return;
         }
@@ -160,7 +153,164 @@ export default defineComponent({
         emit('focus', isFocus.value);
       }
     }
-    function handleInputFocus() {
+    function handleInputFocus(e: FocusEvent) {
+      setInputFocus();
+      e && setMenuList();
+    }
+    function handleInputChange(event: Event) {
+      clearInput();
+      let text = (event.target as HTMLDivElement).innerText;
+      if (/(\r|\n)/gm.test(text) || /\s{2}/gm.test(text)) {
+        event.preventDefault();
+        text = text.replace(/(\r|\n)/gm, '|').replace(/\s{2}/gm, '');
+        inputRef.value.innerText = text;
+        setInputFocus();
+        keyword.value = text;
+        debounceSetMenuList();
+      } else if (!keyword.value && text.length < (usingItem.value?.inputInnerText?.length || 1)) {
+        const outerText = text
+          .replace('\u00A0', '\u0020')
+          .replace(usingItem.value?.keyInnerText.replace('\u00A0', '\u0020').trim() || '', '')
+          .trim();
+        outerText && (usingItem.value = null);
+        keyword.value = outerText ? text : '';
+        debounceSetMenuList();
+      } else if (!usingItem.value?.values?.length) {
+        keyword.value = text
+          .replace('\u00A0', '\u0020')
+          .replace(usingItem.value?.keyInnerText.replace('\u00A0', '\u0020') || '', '')
+          .trim();
+        setInputFocus();
+        debounceSetMenuList();
+      }
+    }
+    function handleInputKeyup(event: KeyboardEvent) {
+      switch (event.code) {
+        case 'Enter':
+        case 'NumpadEnter':
+          handleKeyEnter(event);
+          break;
+        case 'Backspace':
+          handleKeyBackspace();
+        default:
+          showNoSelectValueError.value = false;
+          break;
+      }
+    }
+    async function handleKeyEnter(event?: KeyboardEvent) {
+      event?.preventDefault();
+      if (!usingItem.value) {
+        if (!keyword.value) return;
+        const value = {
+          id: keyword.value,
+          name: keyword.value,
+        };
+        const res = await validateUsingItemValues(value);
+        if (!res) return;
+        emit('add', new SelectedItem(value, 'text'));
+        keyword.value = '';
+        setMenuList();
+        return;
+      }
+      const { values } = usingItem.value;
+      if (!values?.length) {
+        if (keyword.value?.length) {
+          const value = { id: keyword.value, name: keyword.value };
+          const res = await validateUsingItemValues(value);
+          if (!res) return;
+          usingItem.value.addValue(value);
+          emit('add', usingItem.value);
+          keyword.value = '';
+          usingItem.value = null;
+          return;
+        }
+        showNoSelectValueError.value = true;
+        return;
+      }
+      const res = await validateUsingItemValues();
+      if (!res) return;
+      setSelectedItem();
+    }
+    function handleKeyBackspace() {
+      // 删除已选择项
+      if (!usingItem.value && !keyword.value) {
+        emit('delete');
+        return;
+      }
+      if (usingItem.value?.values.length) {
+        // 删除选项
+        if (usingItem.value?.multiple || usingItem.value.isInValueList(usingItem.value.values[0])) {
+          usingItem.value.values.splice(-1, 1);
+          keyword.value = '';
+          setInputFocus();
+          return;
+        }
+      }
+      onValidate('');
+    }
+    async function handleSelectItem(item: ICommonItem, type?: SearchItemType) {
+      // 快捷选中
+      if (item.value?.id) {
+        const seleted = new SelectedItem(item, type);
+        seleted.addValue(item.value);
+        setSelectedItem(seleted);
+        return;
+      }
+      if (!usingItem.value || !inputRef?.value?.innerText) {
+        usingItem.value = new SelectedItem(item, type);
+        keyword.value = '';
+        const isCondition = type === 'condition';
+        isCondition && setSelectedItem();
+        showPopover.value = isCondition || !!usingItem.value.children.length;
+        setInputFocus();
+        return;
+      } if (usingItem.value?.type === 'condition') {
+        usingItem.value = new SelectedItem(item, type);
+        setSelectedItem();
+        return;
+      }
+      usingItem.value.addValue(item);
+      const res = await validateUsingItemValues(item);
+      if (!res) return;
+      !usingItem.value.multiple && setSelectedItem();
+    }
+    function handleSelectCondtionItem(item: ICommonItem) {
+      handleSelectItem(item, 'condition');
+    }
+    function handleMenuFooterClick(item: IMenuFooterItem) {
+      switch (item.id) {
+        case 'confirm':
+          handleKeyEnter();
+          break;
+        case 'cancel':
+          usingItem.value.values = [];
+          setInputFocus();
+          break;
+      }
+    }
+
+    // functions
+    async function validateUsingItemValues(value?: ICommonItem) {
+      if (!usingItem.value) {
+        return await validateValues(null, [value]);
+      }
+      const { searchItem, validate, values } = usingItem.value;
+      if (validate && typeof props.validateValues === 'function') {
+        return await validateValues(searchItem, value ? [value] : values);
+      }
+      onValidate('');
+      return true;
+    }
+    async function validateValues(searchItem?: ISearchItem, value?: ICommonItem[]) {
+      const validateStr =  await props.validateValues?.(searchItem ?? null, value).catch(() => false);
+      if (typeof validateStr === 'string' || validateStr === false) {
+        onValidate(validateStr || '校验错误');
+        return false;
+      }
+      onValidate('');
+      return true;
+    }
+    function setInputFocus() {
       isFocus.value = true;
       showPopover.value = true;
       showNoSelectValueError.value = false;
@@ -177,142 +327,63 @@ export default defineComponent({
       }, 0);
       emit('focus', isFocus.value);
     }
-    function handleInputChange(event: Event) {
-      clearInput();
-      let text = (event.target as HTMLDivElement).innerText;
-      if (/(\r|\n)/gm.test(text) || /\s{2}/gm.test(text)) {
-        event.preventDefault();
-        text = text.replace(/(\r|\n)/gm, '|').replace(/\s{2}/gm, '');
-        inputRef.value.innerText = text;
-        handleInputFocus();
-        keyword.value = text;
-        getMenuList();
-      } else if (!keyword.value && text.length < (usingItem.value?.inputInnerText?.length || 1)) {
-        usingItem.value = null;
-        keyword.value = text;
-        getMenuList();
-      } else if (!usingItem.value?.values?.length) {
-        keyword.value = text
-          .replace('\u00A0', '\u0020')
-          .replace(usingItem.value?.keyInnerText.replace('\u00A0', '\u0020') || '', '')
-          .trim();
-        getMenuList();
-        handleInputFocus();
-      }
-    }
-    function handleInputKeyup(event: KeyboardEvent) {
-      switch (event.code) {
-        case 'Enter':
-        case 'NumpadEnter':
-          handleKeyEnter(event);
-          break;
-        case 'Backspace':
-          handleKeyBackspace();
-        default:
-          showNoSelectValueError.value = false;
-          break;
-      }
-    }
-    function handleKeyEnter(event?: KeyboardEvent) {
-      event?.preventDefault();
-      if (!usingItem.value) {
-        if (!keyword.value) return;
-        emit('add', new SelectedItem({
-          id: keyword.value,
-          name: keyword.value,
-        }, 'text'));
-        keyword.value = '';
-        return;
-      }
-      const { values } = usingItem.value;
-      if (!values?.length) {
-        if (keyword.value?.length) {
-          usingItem.value.addValue({
-            id: keyword.value,
-            name: keyword.value,
-          });
-          emit('add', usingItem.value);
-          keyword.value = '';
-          usingItem.value = null;
-          return;
-        }
-        showNoSelectValueError.value = true;
-        return;
-      }
-      setSelectedItem();
-    }
-    function handleKeyBackspace() {
-      // 删除已选择项
-      if (!usingItem.value && !keyword.value) {
-        emit('delete');
-        return;
-      }
-      if (usingItem.value?.values.length) {
-        // 删除选项
-        if (usingItem.value?.multiple || usingItem.value.isInValueList(usingItem.value.values[0])) {
-          usingItem.value.values.splice(-1, 1);
-          keyword.value = '';
-          handleInputFocus();
-          return;
-        }
-      }
-    }
-    function handleSelectItem(item: ISearchItem, type?: SearchItemType) {
-      if (!usingItem.value || !inputRef?.value?.innerText) {
-        usingItem.value = new SelectedItem(item, type);
-        keyword.value = '';
-        const isCondition = type === 'condition';
-        isCondition && setSelectedItem();
-        showPopover.value = isCondition || !!usingItem.value.children.length;
-        handleInputFocus();
-        return;
-      } if (usingItem.value?.type === 'condition') {
-        usingItem.value = new SelectedItem(item, type);
-        setSelectedItem();
-        return;
-      }
-      usingItem.value.addValue(item);
-      !usingItem.value.multiple && setSelectedItem();
-    }
-    function handleSelectCondtionItem(item: ICommonItem) {
-      handleSelectItem(item, 'condition');
-    }
-    function handleMenuFooterClick(item: IMenuFooterItem) {
-      switch (item.id) {
-        case 'confirm':
-          handleKeyEnter();
-          break;
-        case 'cancel':
-          usingItem.value.values = [];
-          handleInputFocus();
-          break;
-      }
-    }
-
-    // functions
-    async function getMenuList() {
-      if (typeof props.geMenuList === 'function') {
+    async function setMenuList() {
+      let list = [];
+      if (typeof props.geMenuList === 'function' && !usingItem.value?.searchItem?.async) {
         loading.value = true;
-        const list = await props.geMenuList(usingItem.value.searchItem, keyword.value).catch(() => []);
+        list = await props.geMenuList(usingItem.value?.searchItem, keyword.value).catch(() => []);
         loading.value = false;
-        return list;
-      }
-      if (!usingItem?.value) return props.data
-        .filter(item => item.name.toLocaleLowerCase().includes(keyword.value.toLocaleLowerCase()));
-      if (usingItem.value.type === 'condition') {
-        return props.conditions;
-      }
-      if (!usingItem.value.values?.length
+      } else if (!usingItem?.value) {
+        if (!keyword.value?.length) {
+          list = props.data.slice();
+        } else props.data.forEach((item) => {
+          const isMatched = item.name.toLocaleLowerCase().includes(keyword.value.toLocaleLowerCase());
+          if (isMatched) {
+            list.push(item);
+            if (item.children?.length) {
+              item.children.forEach((child) => {
+                if (isMatched || child.name.toLocaleLowerCase().includes(keyword.value.toLocaleLowerCase())) {
+                  list.push({
+                    ...item,
+                    id: `${item.id}-${child.id}`,
+                    value: child,
+                  });
+                }
+              });
+            }
+            list.push({
+              ...item,
+              id: random(10),
+              value: {
+                id: keyword.value,
+                name: keyword.value,
+              },
+            });
+          } else {
+            list.push({
+              ...item,
+              value: {
+                id: keyword.value,
+                name: keyword.value,
+              },
+            });
+          }
+        });
+      }  else if (usingItem.value.type === 'condition') {
+        list = props.conditions;
+      } else if (!usingItem.value.values?.length
         || usingItem.value.multiple
-        || props.mode === SearchInputMode.EDIT) return usingItem.value.children
-        .filter(item => item.name.toLocaleLowerCase().includes(keyword.value.toLocaleLowerCase()));
-      return [];
+        || props.mode === SearchInputMode.EDIT) {
+        list = usingItem.value.children
+          .filter(item => item.name.toLocaleLowerCase().includes(keyword.value.toLocaleLowerCase()));
+      }
+      menuList.value = list;
     }
     function setSelectedItem(item?: SelectedItem) {
       emit('add', item ?? usingItem.value);
       usingItem.value = null;
       keyword.value = '';
-      handleInputFocus();
+      setInputFocus();
     }
     function clearInput() {
       const text = inputRef.value.innerText;
@@ -340,6 +411,7 @@ export default defineComponent({
       popoverRef,
       inputRef,
       keyword,
+      loading,
       remoteMenuList,
       menuList,
       menuHoverId,
@@ -347,6 +419,7 @@ export default defineComponent({
       usingItem,
       showPopover,
       showNoSelectValueError,
+      debounceSetMenuList,
       documentArrowEvent,
       handleClickOutside,
       handleInputFocus,
@@ -360,9 +433,11 @@ export default defineComponent({
   render() {
     const { multiple, values, placeholder, inputInnerHtml } = this.usingItem || {};
     const showInputAfter = !this.keyword?.length && !values?.length && placeholder;
-    const showPopover = this.showNoSelectValueError || (this.showPopover && !!this.menuList?.length);
+    const showPopover = this.loading || this.showNoSelectValueError || (this.showPopover && !!this.menuList?.length);
     const showCondition = !this.usingItem && this.showCondition;
-    // const menuList = typeof this.geMenuList === 'function' ? this.remoteMenuList : this.menuList;
+    const menuSlots = Object.assign({}, this.$slots.menu ? {
+      default: (data: MenuSlotParams) => this.$slots.menu?.(data),
+    } : {});
     const inputContent = () => <div
     ref="inputRef"
     class={{
@@ -379,6 +454,9 @@ export default defineComponent({
     onInput={this.handleInputChange}
     onKeydown={this.handleInputKeyup}/>;
     const popoverContent = () => {
+      if (this.loading) {
+        return <div>加载中...</div>;
+      }
       if (this.showNoSelectValueError) {
         return <div>包含键值的过滤查询必须有一个值</div>;
       }
@@ -392,7 +470,9 @@ export default defineComponent({
         conditions={showCondition ? this.conditions : []}
         onSelectItem={this.handleSelectItem}
         onSelectCondition={this.handleSelectCondtionItem}
-        onFooterClick={this.handleMenuFooterClick}/>
+        onFooterClick={this.handleMenuFooterClick}
+        v-slots={{ ...menuSlots }}
+        />
     </div> : undefined;
     };
 

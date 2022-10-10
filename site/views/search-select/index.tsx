@@ -32,53 +32,209 @@ import PropsBox from '../../components/props-box';
 import { IPropsTableItem } from '../../typings';
 
 import BaseDemo from './base-demo.vue';
-const menuPropsJson: IPropsTableItem[] = [
+import MenuDemo from './menu-demo.vue';
+import PlaceholderDemo from './placeholder-demo.vue';
+import RemoteDemo from './remote-demo.vue';
+import ValidateDemo from './validate-demo.vue';;
+const propsJson: IPropsTableItem[] = [
   {
-    name: 'activeKey',
-    type: 'String',
-    default: '',
-    desc: '选中的menu的key',
-    optional: [],
-  },
-  {
-    name: 'OpenedKeys',
+    name: 'data',
     type: 'Array',
     default: [],
-    desc: '打开的submenu key值',
+    desc: '搜索选择数据',
     optional: [],
   },
   {
-    name: 'mode',
-    type: 'String',
-    default: 'vertical',
-    desc: '展示方式',
-    optional: ['vertical', 'horizontal'],
+    name: 'modelValue',
+    type: 'Array',
+    default: [],
+    desc: '已选择的数据项',
+    optional: [],
   },
   {
-    name: 'uniqueOpen',
+    name: 'maxHeight',
+    type: 'Number',
+    default: '120',
+    desc: '最大高度',
+    optional: [],
+  },
+  {
+    name: 'conditions',
+    type: 'Array',
+    default: '[{ id: \'or\', name: \'或\' }, { id: \'and\', name: \'且\' }]',
+    desc: '条件选择列表',
+    optional: [],
+  },
+  {
+    name: 'clearable',
     type: 'Boolean',
     default: 'true',
-    desc: '是否唯一展开一个submenu',
+    desc: '是否可以清空',
+    optional: [],
+  },
+  {
+    name: 'getMenuList',
+    type: 'Function',
+    default: '',
+    desc: '自定义动态获取选择项列表方法',
+    optional: [],
+  },
+  {
+    name: 'validateValues',
+    type: 'Function',
+    default: '',
+    desc: '自定义动态验证选择或者输入值 如果返回 校验失败的文本则代表校验失败',
     optional: [],
   },
 ];
+const slotsJson = [
+  {
+    name: 'prepend',
+    type: 'name slot',
+    default: [],
+    desc: '组件最左侧填充插槽',
+    params: '--',
+  },
+  {
+    name: 'append',
+    type: 'name slot',
+    default: [],
+    desc: '组件最右侧填充插槽',
+    params: '--',
+  },
+  {
+    name: 'menu',
+    type: 'scoped slot',
+    default: [],
+    desc: 'menu面板子项插槽',
+    params: '{list, item, hoverId, multiple, getSearchNode}',
+  },
+];
+const eventJson = [
+  {
+    name: 'update:modelValue',
+    desc: '选择项发生变化时触发',
+    params: '[{id, name, values}]',
+  },
+];
+const dataJson = [
+  {
+    name: 'id',
+    type: 'String',
+    default: '--',
+    desc: '搜索选择数据选项唯一key值（必须是全局唯一）',
+  },
+  {
+    name: 'name',
+    type: 'String',
+    default: '--',
+    desc: '展示字段',
+  },
+  {
+    name: 'children',
+    type: '{id, name}[]',
+    default: '--',
+    desc: '子列表',
+  },
+  {
+    name: 'multiple',
+    type: 'Boolean',
+    default: '--',
+    desc: '是否可多选 默认不可多选',
+  },
+  {
+    name: 'async',
+    type: 'Boolean',
+    default: '--',
+    desc: '是否远程获取子列表 需配合组件属性 getMenuList使用',
+  },
+  {
+    name: 'noValidate',
+    type: 'Boolean',
+    default: '--',
+    desc: '是否校验 需配合组件属性 validateValues使用',
+  },
+  {
+    name: 'placeholder',
+    type: 'String',
+    default: '--',
+    desc: 'placeholder',
+  },
+  {
+    name: 'disabled',
+    type: 'Boolean',
+    default: '--',
+    desc: '是否禁用',
+  },
+];
+const slotColumnMap = {
+  name: '名称',
+  desc: '说明',
+  type: '类型',
+  params: '参数',
+};
+const eventColumnMap = {
+  name: '名称',
+  desc: '说明',
+  params: '参数',
+};
+const dataColumnMap = {
+  name: '名称',
+  type: '类型',
+  desc: '说明',
+  default: '默认值',
+};
 export default defineComponent({
   render() {
     return (
       <div>
         <DemoTitle
-          name="Menu"
-          desc="Menu组件， 为页面和功能提供导航的菜单列表。"
-          link="https://www.google.com.hk/"/>
+          name="Search Select"
+          desc="Search Select组件， 为页面和模块提供方便的搜索选择功能。"/>
         <DemoBox
           title="基础用法"
-          subtitle="Menu组件的基础用法"
-          desc="垂直菜单，子菜单内嵌在菜单区域。"
-          componentName="menu"
+          subtitle="基础使用"
+          desc="基础用法"
+          componentName="search-select"
           demoName="base-demo">
              <BaseDemo/>
           </DemoBox>
-        <PropsBox propsData={menuPropsJson}/>
+          <DemoBox
+          title="远程加载子列表"
+          subtitle="通过配置属性 geMenuList 方法 来做到异步获取menu列表 同时配合 data 内子项 async 属性来配置针对不同的选择项是否需要远程获取子列表"
+          desc="远程加载子列表"
+          componentName="search-select"
+          demoName="remote-demo">
+             <RemoteDemo/>
+          </DemoBox>
+          <DemoBox
+          title="校验输入的选择项"
+          subtitle="通过配置属性 validateValues 方法 来做到对选择的子项进行校验 validateValues 返回校验失败文案 返回true则代表校验成功"
+          desc="同时配合子项配置 noValidate 来做到不同的选择项是否触发校验"
+          componentName="search-select"
+          demoName="validate-demo">
+             <ValidateDemo/>
+          </DemoBox>
+          <DemoBox
+          title="配置每个选项独立的placeholder"
+          subtitle="通过配置子选项属性 placeholder 来做到针对每一个选项都有独自的placeholder"
+          desc="独立的placeholder"
+          componentName="search-select"
+          demoName="placeholder-demo">
+             <PlaceholderDemo/>
+          </DemoBox>
+          <DemoBox
+          title="配置 menu 插槽来自定义 menu 面板"
+          subtitle="通过配置子选项属性 placeholder 来做到针对每一个选项都有独自的placeholder"
+          desc="menu 插槽"
+          componentName="search-select"
+          demoName="menu-demo">
+             <MenuDemo/>
+          </DemoBox>
+        <PropsBox propsData={propsJson}/>
+        <PropsBox title='data数据字段配置' columnMap={dataColumnMap} propsData={dataJson}/>
+        <PropsBox title='插槽' columnMap={slotColumnMap} propsData={slotsJson}/>
+        <PropsBox title='事件' columnMap={eventColumnMap} propsData={eventJson}/>
       </div>
     );
   },

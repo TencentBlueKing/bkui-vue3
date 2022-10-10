@@ -28,19 +28,18 @@ import { addListener, removeListener } from 'resize-detector';
 import {  defineComponent, onBeforeUnmount, onMounted, PropType, ref, watch } from 'vue';
 
 import { clickoutside } from '@bkui-vue/directives';
-import { Close, Search } from '@bkui-vue/icon';
+import { Close, ExclamationCircleShape, Search } from '@bkui-vue/icon';
 import { debounce } from '@bkui-vue/shared';
 
 import SearchSelectInput from './input';
-import { defaultData } from './mock';
 import SearchSelected from './selected';
-import { GetMenuListFunc, ICommonItem, ISearchItem, ISearchValue,  SearchItemType,  SelectedItem, useSearchSelectProvider } from './utils';
+import { GetMenuListFunc, ICommonItem, ISearchItem, ISearchValue,  MenuSlotParams,  SearchItemType,  SelectedItem, useSearchSelectProvider, ValidateValuesFunc } from './utils';
 const INPUT_PADDING_WIDTH = 40;
 const SELETED_MARGING_RIGHT = 6;
 export const SearchSelectProps = {
   data: {
     type: Array as PropType<ISearchItem[]>,
-    default: () => defaultData,
+    default: () => [],
   },
   modelValue: {
     type: Array as PropType<ISearchValue[]>,
@@ -66,9 +65,8 @@ export const SearchSelectProps = {
     type: Boolean,
     default: true,
   },
-  geMenuList: {
-    type: Function as PropType<GetMenuListFunc>,
-  },
+  getMenuList: Function as PropType<GetMenuListFunc>,
+  validateValues: Function as PropType<ValidateValuesFunc>,
 };
 export default defineComponent({
   name: 'SearchSelect',
@@ -88,6 +86,7 @@ export default defineComponent({
     const overflowIndex = ref(-1);
     const debounceResize = debounce(32, handleResize);
     const editKey = ref('');
+    const validateStr = ref('');
 
     // effects
     watch(
@@ -139,6 +138,7 @@ export default defineComponent({
       onEditClick,
       onEditEnter,
       onEditBlur,
+      onValidate,
       editKey,
     });
     function onEditClick(item: SelectedItem, index: number) {
@@ -152,8 +152,11 @@ export default defineComponent({
     }
     function onEditBlur() {
       editKey.value = '';
+      onValidate('');
     }
-
+    function onValidate(str: string) {
+      validateStr.value = str || '';
+    }
     // events
     function handleResize() {
       if (isFocus.value || selectedList.value.length < 1) {
@@ -166,17 +169,18 @@ export default defineComponent({
       let width = 0;
       let index = 0;
       let i = 0;
-      while (width <= maxWidth - INPUT_PADDING_WIDTH && i <= tagList.length - 1) {
+      while (index === 0 && width <= maxWidth - INPUT_PADDING_WIDTH && i <= tagList.length - 1) {
         const el = tagList[i];
         if (el.clientHeight > props.minHeight) {
           overflowIndex.value = i;
           return;
         }
         width += el ? el.clientWidth + SELETED_MARGING_RIGHT : 0;
+        if (width >= maxWidth - INPUT_PADDING_WIDTH) {
+          index = i;
+        };
         i += 1;
-        if (width <= maxWidth - INPUT_PADDING_WIDTH) index = i;
       }
-
       if (index === tagList.length - 1 && width <= maxWidth) {
         overflowIndex.value = -1;
         return;
@@ -199,11 +203,13 @@ export default defineComponent({
     function handleAddSelected(item: SelectedItem) {
       const list = selectedList.value.slice();
       list.push(item);
+      onValidate('');
       emit('update:modelValue', list.map(item => item.toValue()));
     }
     function handleDeleteSelected(index?: number) {
       const list = selectedList.value.slice();
       list.splice(typeof index === 'number' ? index : selectedList.value.length - 1, 1);
+      onValidate('');
       emit('update:modelValue', list.map(item => item.toValue()));
     }
     function handleInputFocus(v: boolean) {
@@ -216,6 +222,7 @@ export default defineComponent({
       isFocus,
       selectedList,
       overflowIndex,
+      validateStr,
       onEditClick,
       onEditEnter,
       handleWrapClick,
@@ -231,6 +238,9 @@ export default defineComponent({
     // vars
     const maxHeight = `${!this.shrink || this.isFocus ?  this.maxHeight : this.minHeight}px`;
     const showCondition = this.selectedList.length && this.selectedList.slice(-1)[0].type !== 'condition';
+    const menuSlots = Object.assign({}, this.$slots.menu ? {
+      menu: (data: MenuSlotParams) => this.$slots.menu?.(data),
+    } : {});
     // render
     return <div class="search-select-wrap" ref="wrapRef">
     <div
@@ -240,7 +250,7 @@ export default defineComponent({
       }}
       onClick={this.handleWrapClick}>
       <div class="search-prefix">
-        {this.$slots.prefix?.()}
+        {this.$slots.prepend?.()}
       </div>
       <div class="search-input" style={{ maxHeight }}>
         <SearchSelected
@@ -248,8 +258,10 @@ export default defineComponent({
           conditions={this.conditions}
           selectedList={this.selectedList}
           overflowIndex={this.overflowIndex}
+          geMenuList={this.getMenuList}
+          validateValues={this.validateValues}
           onDelete={this.handleDeleteSelected}
-          />
+          v-slots={{ ...menuSlots }}/>
         <div class="search-input-input">
           <SearchSelectInput
            ref="inputRef"
@@ -258,10 +270,12 @@ export default defineComponent({
            showCondition={showCondition}
            conditions={this.conditions}
            clickOutside={this.handleInputOutside}
+           geMenuList={this.getMenuList}
+           validateValues={this.validateValues}
            onAdd={this.handleAddSelected}
            onDelete={this.handleDeleteSelected}
            onFocus={this.handleInputFocus}
-           />
+           v-slots={{ ...menuSlots }}/>
         </div>
       </div>
       <div class="search-nextfix">
@@ -270,12 +284,21 @@ export default defineComponent({
           onClick={this.handleClearAll}/>
         }
         {
-          this.$slots.nextfix
-            ? this.$slots.nextfix()
+          this.$slots.append
+            ? this.$slots.append()
             : <Search class={`search-nextfix-icon ${this.isFocus ? 'is-focus'  : ''}`}></Search>
         }
       </div>
     </div>
+    {
+      !!this.validateStr.length && <div class="bk-select-tips">
+        {
+          this.$slots.validate ? this.$slots.validate() : <>
+            <ExclamationCircleShape class="select-tips"/>{this.validateStr || ''}
+          </>
+        }
+      </div>
+    }
   </div>;
   },
 });

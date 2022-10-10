@@ -173,9 +173,12 @@
       }
 
       .search-nextfix-icon {
+        display: flex;
         margin-right: 8px;
         font-size: 16px;
         transition: color .2s linear;
+        align-items: center;
+        justify-content: center;
 
         &.is-focus {
           color: #3c96ff;
@@ -206,10 +209,14 @@
     align-items: center;
 
     .select-tips {
+      display: flex;
       width: 16px;
       height: 16px;
       margin-right: 5px;
+      overflow: hidden;
       font-size: 16px;
+      align-items: center;
+      justify-content: center;
     }
   }
 

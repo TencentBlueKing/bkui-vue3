@@ -9,6 +9,8 @@
   width: 100%;
   height: 32px;
   padding: 0 12px;
+  flex: 0 0 32px;
+  outline: none;
 
   &:hover {
     cursor: pointer;
@@ -49,7 +51,7 @@
     display: flex;
     flex-direction: column;
     flex: 1;
-    max-height: 300px;
+    max-height: 240px;
     overflow: auto;
 
     .menu-item {
@@ -76,10 +78,27 @@
       &.is-hover {
         color: #3a84ff;
         background-color: #f5f7fa;
+
+        .menu-name {
+          color: #3a84ff;
+        }
       }
 
       &.is-disabled {
-        .menu-disabled-mixin()
+        .menu-disabled-mixin();
+
+        .menu-name {
+          color: #c4c6cc;;
+        }
+      }
+
+      .menu-name {
+        display: flex;
+        max-width: 100px;
+        margin-right: 5px;
+        font-weight: bold;
+        color: #63656e;
+        align-items: center;
       }
     }
   }

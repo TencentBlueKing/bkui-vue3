@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { computed, defineComponent, PropType } from 'vue';
+import { computed, defineComponent, PropType, VNode } from 'vue';
 
 import { Done } from '@bkui-vue/icon';
 
@@ -60,7 +60,7 @@ export default defineComponent({
         {
           id: 'cancel',
           name: '取消',
-          disabled: true,
+          disabled: false,
         },
       ],
     },
@@ -82,8 +82,7 @@ export default defineComponent({
       if (!props.keyword?.length) return props.list;
       return props.list.filter(item => item.name.toLocaleLowerCase().includes(props.keyword.toLocaleLowerCase()));
     });
-
-    function getSearchNode(str: string) {
+    function transformNode(str: string): string | (string | VNode)[] {
       if (!str) return str;
       let { keyword } = props;
       const len = keyword.length;
@@ -105,6 +104,13 @@ export default defineComponent({
         list.push(str.slice(lastIndex + len));
       }
       return list.length ? list : str;
+    }
+    function getSearchNode(item: ICommonItem): string | (string | VNode)[] {
+      if (!item.value?.name) return transformNode(item.name);
+      return [
+        <span class="menu-name">{item.name}:</span>,
+        item.value.name,
+      ];
     };
     return {
       handleClick,
@@ -130,11 +136,26 @@ export default defineComponent({
       }
       <ul class='menu-content'>
         {
-          this.filterList.map(item => <li
+          this.list?.map(item => <li
             class={`menu-item ${item.disabled ? 'is-disabled' : ''} ${this.hoverId === item.id && !item.disabled ? 'is-hover' : ''}`}
             key={item.id}
-            onClick={() => !item.disabled && this.handleClick(item)}>{this.getSearchNode(item.name)}
-            {this.multiple && this.selected.includes(item.id) && <Done class="is-selected"/>}
+            id={item.id}
+            tabindex='-1'
+            onClick={() => !item.disabled && this.handleClick(item)}>
+            {
+              this.$slots.default
+                ? this.$slots.default({
+                  item,
+                  list: this.list,
+                  multiple: !!this.multiple,
+                  hoverId: this.hoverId,
+                  getSearchNode: this.getSearchNode,
+                })
+                : <>
+                {this.getSearchNode(item)}
+                {this.multiple && this.selected.includes(item.id) && <Done class="is-selected"/>}
+              </>
+            }
           </li>)
         }
       </ul>

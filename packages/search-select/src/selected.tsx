@@ -28,7 +28,7 @@ import { defineComponent, PropType, ref } from 'vue';
 import { Close } from '@bkui-vue/icon';
 
 import SearchSelectInput from './input';
-import { GetMenuListFunc, ICommonItem, ISearchItem, SearchInputMode, SelectedItem, useSearchSelectInject } from './utils';;
+import { GetMenuListFunc, ICommonItem, ISearchItem, SearchInputMode, SelectedItem, useSearchSelectInject, ValidateValuesFunc } from './utils';;
 export default defineComponent({
   name: 'SearchSelected',
   props: {
@@ -49,15 +49,18 @@ export default defineComponent({
       default: () => [],
     },
     geMenuList: Function as PropType<GetMenuListFunc>,
+    validateValues: Function as PropType<ValidateValuesFunc>,
   },
   emits: ['delete'],
-  setup(props, { emit }) {
+  setup(_, { emit }) {
     const inputRef = ref<typeof SearchSelectInput>(null);
     const { onEditClick, onEditEnter, onEditBlur, editKey } = useSearchSelectInject();
     function handleDeleteSelected(index: number) {
       emit('delete', index);
     }
     function handleEditSeleted(e: MouseEvent, item: SelectedItem, index: number) {
+      e.preventDefault();
+      e.stopPropagation();
       onEditClick(item, index);
       // magic code
       setTimeout(() => inputRef.value.handleInputFocus(), 200);
@@ -99,6 +102,8 @@ export default defineComponent({
             conditions={this.conditions}
             defautUsingItem={this.copySeletedItem(item)}
             clickOutside={this.handleInputOutside}
+            geMenuList={this.geMenuList}
+            validateValues={this.validateValues}
             onAdd={v => this.handleAddSelected(v, index)}
             onFocus={this.handleInputFocus}/>
         </div>
