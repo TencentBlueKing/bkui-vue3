@@ -28,7 +28,7 @@ import { ExtractPropTypes } from 'vue';
 
 import { PropTypes } from '@bkui-vue/shared';
 
-import { BORDER_OPTION, BORDER_OPTIONS, LINE_HEIGHT, ROW_HOVER, ROW_HOVER_OPTIONS, TABLE_ROW_ATTRIBUTE } from './const';
+import { BORDER_OPTION, BORDER_OPTIONS, LINE_HEIGHT, ROW_HOVER, ROW_HOVER_OPTIONS, SORT_OPTION, TABLE_ROW_ATTRIBUTE } from './const';
 
 export enum SortScope {
   CURRENT = 'current',
@@ -44,6 +44,10 @@ export type IOverflowTooltip = {
   content: string | Function,
   disabled?: boolean,
   watchCellResize?: boolean
+};
+
+export type ISortOption = {
+  [key: string]: SORT_OPTION;
 };
 
 export const IColumnType = {
@@ -250,9 +254,10 @@ export const tableProps = {
   isSelectedFn: PropTypes.func.def(undefined),
 
   /**
-   * 行数据的 Key，用来优化 Table 的渲染；
+   * 行数据的 Key，用来优化 Table 的渲染
+   * 此key用于渲染table row的key，便于大数据渲染时的性能优化
    * 在使用 reserve-selection, reserve-expand 功能的情况下，该属性是必填的。
-   * 类型为 String 时，支持多层访问：user.info.id，但不支持 user.info[0].id，此种情况请使用 Function
+   * 类型为 String 时，支持多层访问：user.info.id，同时支持 user.info[0].id
    */
   rowKey: PropTypes.oneOfType([
     PropTypes.string,
@@ -283,6 +288,11 @@ export const tableProps = {
    * @param { ROW_HOVER.HIGHLIGHT }
    */
   rowHover: PropTypes.oneOf(ROW_HOVER_OPTIONS).def(ROW_HOVER.HIGHLIGHT),
+
+  /**
+   * 默认的排序列的 prop 和顺序。它的 prop 属性指定默认的排序的列，order指定默认排序的顺序
+   */
+  defaultSort: PropTypes.shape<ISortOption>({}).def(),
 };
 
 
