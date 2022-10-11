@@ -34,7 +34,7 @@ import { classes } from '@bkui-vue/shared';
 
 import TableCell from './components/table-cell';
 import TableRow from './components/table-row';
-import { EMIT_EVENTS, EVENTS, TABLE_ROW_ATTRIBUTE } from './const';
+import { EMIT_EVENTS, EVENTS, SORT_OPTION, TABLE_ROW_ATTRIBUTE } from './const';
 import BodyEmpty from './plugins/body-empty';
 import HeadFilter from './plugins/head-filter';
 import HeadSort from './plugins/head-sort';
@@ -228,7 +228,16 @@ export default class TableRender {
     const handleSortClick = (sortFn: any, type: string) => {
       this.emitEvent(EVENTS.ON_SORT_BY_CLICK, [{ sortFn, column, index, type }]);
     };
-    return <HeadSort column={column} onChange={ handleSortClick }/>;
+
+    let defaultSort = SORT_OPTION.NULL;
+    if (typeof this.props.defaultSort === 'object' && this.props.defaultSort !== null) {
+      const columnName = resolvePropVal(column, ['field', 'type'], [column, index]);
+      if (Object.prototype.hasOwnProperty.call(this.props.defaultSort, columnName)) {
+        defaultSort = this.props.defaultSort[columnName];
+      }
+    }
+
+    return <HeadSort column={column} defaultSort={ defaultSort } onChange={ handleSortClick }/>;
   }
 
   private getFilterCell(column: Column, index: number) {

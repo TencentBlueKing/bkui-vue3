@@ -143,3 +143,15 @@ export const DEFAULT_SIZE_LIST = [
  * Provide key: init column when use <column { ...props }> template
  */
 export const PROVIDE_KEY_INIT_COL = 'InitColumns';
+
+/**
+ * 排序可选择项
+ */
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export const enum SORT_OPTION {
+  ASC = 'asc',
+  DESC = 'desc',
+  NULL = 'null'
+}
+
+export const SORT_OPTIONS = [SORT_OPTION.ASC, SORT_OPTION.DESC];
