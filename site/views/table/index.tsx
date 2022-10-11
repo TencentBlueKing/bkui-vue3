@@ -310,7 +310,8 @@ export default defineComponent({
          * @returns
          */
         component: () => <Selection></Selection>,
-      }];
+      },
+    ];
 
     /**
      * eventColumnMap

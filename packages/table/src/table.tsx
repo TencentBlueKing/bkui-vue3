@@ -29,7 +29,7 @@ import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, provid
 import { debounce, resolveClassName } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
-import { EMIT_EVENT_TYPES, EMITEVENTS, EVENTS, PROVIDE_KEY_INIT_COL, TABLE_ROW_ATTRIBUTE } from './const';
+import { EMIT_EVENT_TYPES, EMIT_EVENTS, EVENTS, PROVIDE_KEY_INIT_COL, TABLE_ROW_ATTRIBUTE } from './const';
 import usePagination from './plugins/use-pagination';
 import useScrollLoading from './plugins/use-scroll-loading';
 import { tableProps } from './props';
@@ -134,7 +134,7 @@ export default defineComponent({
         refVirtualRender.value?.reset?.();
       }
 
-      ctx.emit(EMITEVENTS.COLUMN_SORT, { column, index, type });
+      ctx.emit(EMIT_EVENTS.COLUMN_SORT, { column, index, type });
     }).on(EVENTS.ON_FILTER_CLICK, (args: any) => {
       const { filterFn, checked, column, index } = args;
       if (typeof filterFn === 'function') {
@@ -143,7 +143,7 @@ export default defineComponent({
         refVirtualRender.value?.reset?.();
       }
 
-      ctx.emit(EMITEVENTS.COLUMN_FILTER, { checked, column, index });
+      ctx.emit(EMIT_EVENTS.COLUMN_FILTER, { checked, column, index });
     })
       .on(EVENTS.ON_SETTING_CHANGE, (args: any) => {
         const { checked = [], size, height } = args;
@@ -152,12 +152,12 @@ export default defineComponent({
           const offset = getColumnsWidthOffsetWidth();
           checked.length && resolveColumnWidth(root.value, colgroups, 20, offset);
           refVirtualRender.value?.reset?.();
-          ctx.emit(EMITEVENTS.SETTING_CHANGE, { checked, size, height });
+          ctx.emit(EMIT_EVENTS.SETTING_CHANGE, { checked, size, height });
         });
       })
       .on(EVENTS.ON_ROW_EXPAND_CLICK, (args: any) => {
         const { row, column, index, rows, e } = args;
-        ctx.emit(EMITEVENTS.ROW_EXPAND_CLICK, {
+        ctx.emit(EMIT_EVENTS.ROW_EXPAND_CLICK, {
           row: row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA],
           column, index, rows, e,
         });
@@ -166,10 +166,10 @@ export default defineComponent({
       .on(EVENTS.ON_ROW_CHECK, ({ row, isAll, index, value }) => {
         if (isAll) {
           toggleAllSelection(value);
-          ctx.emit(EMITEVENTS.ROW_SELECT_ALL, { checked: value, data: props.data });
+          ctx.emit(EMIT_EVENTS.ROW_SELECT_ALL, { checked: value, data: props.data });
         } else {
           toggleRowSelection(row, value);
-          ctx.emit(EMITEVENTS.ROW_SELECT, {
+          ctx.emit(EMIT_EVENTS.ROW_SELECT, {
             row: row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA],
             index,
             checked: value,
@@ -177,7 +177,7 @@ export default defineComponent({
           });
         }
 
-        ctx.emit(EMITEVENTS.ROW_SELECT_CHANGE, {
+        ctx.emit(EMIT_EVENTS.ROW_SELECT_CHANGE, {
           row: row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA],
           isAll,
           index,
@@ -197,7 +197,7 @@ export default defineComponent({
       const { bottom } = pos;
       if (bottom <= 2 && preBottom > bottom) {
         debounce(60, () => {
-          ctx.emit(EMITEVENTS.SCROLL_BOTTOM, { ...pos, translateX, translateY });
+          ctx.emit(EMIT_EVENTS.SCROLL_BOTTOM, { ...pos, translateX, translateY });
         }, true)();
       }
 
