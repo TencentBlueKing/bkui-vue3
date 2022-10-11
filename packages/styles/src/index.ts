@@ -78,3 +78,4 @@ import '@bkui-vue/container/container.less';
 import '@bkui-vue/cascader/cascader.less';
 import '@bkui-vue/color-picker/color-picker.less';
 import '@bkui-vue/time-picker/time-picker.less';
+import '@bkui-vue/search-select/search-select.less';
