@@ -719,7 +719,8 @@ export default defineComponent({
                               )),
                           }}
                       </VirtualRender>
-                    : this.list.map(item => <Option value={item[this.idKey]} label={item[this.displayKey]}></Option>)
+                    : this.filterList
+                      .map(item => <Option value={item[this.idKey]} label={item[this.displayKey]}></Option>)
                 }
                 {this.$slots.default?.()}
                 {this.scrollLoading && (
