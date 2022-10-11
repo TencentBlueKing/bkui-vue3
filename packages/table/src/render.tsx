@@ -34,7 +34,7 @@ import { classes } from '@bkui-vue/shared';
 
 import TableCell from './components/table-cell';
 import TableRow from './components/table-row';
-import { EMITEVENTS, EVENTS, TABLE_ROW_ATTRIBUTE } from './const';
+import { EMIT_EVENTS, EVENTS, TABLE_ROW_ATTRIBUTE } from './const';
 import BodyEmpty from './plugins/body-empty';
 import HeadFilter from './plugins/head-filter';
 import HeadSort from './plugins/head-sort';
@@ -127,7 +127,7 @@ export default class TableRender {
     return <Pagination { ...options }
     modelValue={options.current}
     onLimitChange={ limit => this.handlePageLimitChange(limit) }
-    onChange={ current => this.hanlePageChange(current) }></Pagination>;
+    onChange={ current => this.handlePageChange(current) }></Pagination>;
   }
 
   public getRowHeight = (row?: any, rowIndex?: number) => {
@@ -142,14 +142,14 @@ export default class TableRender {
   /**
    * 注册监听事件
    * @param eventName
-   * @param wartcher
+   * @param watcher
    */
-  public on(eventName: string, wartcher: Function) {
+  public on(eventName: string, watcher: Function) {
     if (!this.events.has(eventName)) {
       this.events.set(eventName, []);
     }
 
-    this.events.get(eventName).push(wartcher);
+    this.events.get(eventName).push(watcher);
     return this;
   }
 
@@ -165,9 +165,9 @@ export default class TableRender {
    */
   private emitEvent(eventName: string, args: any[]) {
     if (this.events.has(eventName)) {
-      this.events.get(eventName).forEach((evet: any) => {
-        if (typeof evet === 'function') {
-          Reflect.apply(evet, this, args);
+      this.events.get(eventName).forEach((event: any) => {
+        if (typeof event === 'function') {
+          Reflect.apply(event, this, args);
         }
       });
     }
@@ -175,12 +175,12 @@ export default class TableRender {
 
   private handlePageLimitChange(limit: number) {
     Object.assign(this.props.pagination, { limit });
-    this.context.emit(EMITEVENTS.PAGE_LIMIT_CHANGE, limit);
+    this.context.emit(EMIT_EVENTS.PAGE_LIMIT_CHANGE, limit);
   }
 
-  private hanlePageChange(current: number) {
+  private handlePageChange(current: number) {
     Object.assign(this.props.pagination, { current, value: current });
-    this.context.emit(EMITEVENTS.PAGE_VALUE_CHANGE, current);
+    this.context.emit(EMIT_EVENTS.PAGE_VALUE_CHANGE, current);
   }
 
   /**
@@ -207,7 +207,7 @@ export default class TableRender {
   private handleColumnHeadClick(index: number) {
     if (this.props.columnPick !== 'disabled') {
       this.setColumnActive(index, this.props.columnPick === 'single');
-      this.context.emit(EMITEVENTS.COLUMN_PICK, this.propActiveCols);
+      this.context.emit(EMIT_EVENTS.COLUMN_PICK, this.propActiveCols);
     }
   }
 
@@ -225,10 +225,10 @@ export default class TableRender {
      * @param index 当前列index
      * @param type 排序类型
      */
-    const hanldeSortClick = (sortFn: any, type: string) => {
+    const handleSortClick = (sortFn: any, type: string) => {
       this.emitEvent(EVENTS.ON_SORT_BY_CLICK, [{ sortFn, column, index, type }]);
     };
-    return <HeadSort column={column} onChange={ hanldeSortClick }/>;
+    return <HeadSort column={column} onChange={ handleSortClick }/>;
   }
 
   private getFilterCell(column: Column, index: number) {
@@ -238,7 +238,7 @@ export default class TableRender {
     };
 
     const filterSave = (values: any[]) => {
-      this.context.emit(EMITEVENTS.COLUMN_FILTER_SAVE, { column, values });
+      this.context.emit(EMIT_EVENTS.COLUMN_FILTER_SAVE, { column, values });
     };
 
     return <HeadFilter column={ column } height={ this.props.headHeight }
@@ -341,10 +341,11 @@ export default class TableRender {
 
         const rowClass = [
           ...formatPropAsArray(this.props.rowClass, [row, rowIndex, this]),
+          `hover-${this.props.rowHover}`,
         ];
 
         const { resolveFixedColumnStyle,  fixedOffset } = getFixedColumnStyleResolve();
-        const rowKey = `${this.uuid}-${row[TABLE_ROW_ATTRIBUTE.ROW_UID]}`;
+        const rowKey = row[TABLE_ROW_ATTRIBUTE.ROW_UID];
         return [
           <TableRow key={rowKey}>
             <tr
@@ -403,11 +404,11 @@ export default class TableRender {
         { row_expend: true },
       ];
 
-      const rowKey =  `${this.uuid}-${row[TABLE_ROW_ATTRIBUTE.ROW_UID]}_expand`;
+      const rowKey =  `${row[TABLE_ROW_ATTRIBUTE.ROW_UID]}_expand`;
       return <TableRow key={rowKey}>
         <tr class={resovledClass}>
           <td colspan={ this.filterColgroups.length } rowspan={1}>
-            { this.context.slots.expandRow?.(row) ?? <div class='expand-cell-ctx'>Expand Row</div> }
+            { this.context.slots.expandRow?.(row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA]) ?? <div class='expand-cell-ctx'>Expand Row</div> }
           </td>
         </tr>
       </TableRow>;
@@ -434,7 +435,7 @@ export default class TableRender {
    * @param rows
    */
   private handleRowClick(e: MouseEvent, row: any, index: number, rows: any) {
-    this.context.emit(EMITEVENTS.ROW_CLICK, e, row, index, rows, this);
+    this.context.emit(EMIT_EVENTS.ROW_CLICK, e, row, index, rows, this);
   }
 
   /**
@@ -445,7 +446,7 @@ export default class TableRender {
    * @param rows
    */
   private handleRowDblClick(e: MouseEvent, row: any, index: number, rows: any) {
-    this.context.emit(EMITEVENTS.ROW_DBL_CLICK, e, row, index, rows, this);
+    this.context.emit(EMIT_EVENTS.ROW_DBL_CLICK, e, row, index, rows, this);
   }
 
   private getExpandCell(row: any) {

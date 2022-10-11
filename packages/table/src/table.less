@@ -160,9 +160,11 @@
           }
 
           &:hover {
-            td {
-              &:not(.empty-cell) {
-                background: @table-row-hover-bg-color;
+            &.hover-highlight {
+              td {
+                &:not(.empty-cell) {
+                  background: @table-row-hover-bg-color;
+                }
               }
             }
           }
@@ -180,6 +182,7 @@
       top: 0;
       right: 1px;
       bottom: 0px;
+      z-index: 1;
       display: block;
       display: flex;
       width: calc(var(--row-height));
@@ -191,6 +194,7 @@
       border-bottom: 1px solid @table-border-color;
       border-left: 1px solid @table-border-color;
       border-radius: 0px 2px 0px 0px;
+      transform: translateX(var(--scroll-left));
       justify-content: center;
       align-items: center;
 

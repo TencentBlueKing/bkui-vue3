@@ -28,7 +28,7 @@ import { ExtractPropTypes } from 'vue';
 
 import { PropTypes } from '@bkui-vue/shared';
 
-import { BORDER_OPTION, BORDER_OPTIONS, LINE_HEIGHT, TABLE_ROW_ATTRIBUTE } from './const';
+import { BORDER_OPTION, BORDER_OPTIONS, LINE_HEIGHT, ROW_HOVER, ROW_HOVER_OPTIONS, TABLE_ROW_ATTRIBUTE } from './const';
 
 export enum SortScope {
   CURRENT = 'current',
@@ -196,6 +196,7 @@ export const tableProps = {
       limit: PropTypes.number.def(0),
       size: PropTypes.size(['small', 'medium', 'large']).def('small'),
       sizeList: PropTypes.shape<SizeItem[]>([]),
+      showLineHeight: PropTypes.bool.def(true),
     }), PropTypes.bool]).def(false),
 
   /**
@@ -275,6 +276,13 @@ export const tableProps = {
    * 目前只会对指定了selectionKey的情况下才会对指定的字段数据进行更新，同时需要指定 rowKey，保证匹配到的row是正确的目标对象
    */
   asyncData: PropTypes.bool.def(false),
+
+  /**
+   * 鼠标划过行样式行为
+   * @param { ROW_HOVER.AUTO }
+   * @param { ROW_HOVER.HIGHLIGHT }
+   */
+  rowHover: PropTypes.oneOf(ROW_HOVER_OPTIONS).def(ROW_HOVER.HIGHLIGHT),
 };
 
 
@@ -292,7 +300,8 @@ export type Settings = {
   checked?: string[];
   limit?: number;
   size?: string;
-  sizeList?: SizeItem[]
+  sizeList?: SizeItem[];
+  showLineHeight?: boolean;
 };
 
 export type Field = {
