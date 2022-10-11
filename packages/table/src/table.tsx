@@ -223,10 +223,10 @@ export default defineComponent({
       '__is-empty': !pageData.length,
     }));
 
-    const tableBodyContentClass = {
+    const tableBodyContentClass = computed(() => ({
       [resolveClassName('table-body-content')]: true,
       'with-virtual-render': props.virtualEnabled,
-    };
+    }));
 
     const resizeColumnClass = {
       column_drag_line: true,
@@ -243,10 +243,10 @@ export default defineComponent({
       _bottom: true,
     };
 
-    const fixedBottomBorder = {
+    const fixedBottomBorder = computed(() => ({
       [resolveClassName('fixed-bottom-border')]: true,
       '_is-empty': !props.data.length,
-    };
+    }));
 
     const columnGhostStyle = {
       zIndex: -1,
@@ -256,7 +256,7 @@ export default defineComponent({
     };
 
     const { renderScrollLoading } = useScrollLoading(props, ctx);
-    const scrollClass = props.virtualEnabled ? {} : { scrollXName: '', scrollYName: '' };
+    const scrollClass = computed(() => (props.virtualEnabled ? {} : { scrollXName: '', scrollYName: '' }));
 
     return () => <div class={tableClass.value} style={wrapperStyle.value} ref={root}>
       {
@@ -273,8 +273,8 @@ export default defineComponent({
         class={ tableBodyClass.value }
         style={ contentStyle }
         list={ pageData }
-        { ...scrollClass }
-        contentClassName={ tableBodyContentClass }
+        { ...scrollClass.value }
+        contentClassName={ tableBodyContentClass.value }
         onContentScroll={ handleScrollChanged }
         throttleDelay={0}
         scrollEvent={true}
@@ -282,7 +282,7 @@ export default defineComponent({
           {
             {
               default: (scope: any) => tableRender.renderTableBodySchema(scope.data || props.data),
-              afterSection: () => <div class={ fixedBottomBorder }></div>,
+              afterSection: () => <div class={ fixedBottomBorder.value }></div>,
             }
           }
       </VirtualRender>
