@@ -2,13 +2,16 @@
   <div class="row">
     <div class="cell">
       <span class="title">自动填充高度(默认)：height='auto'</span>
-      <bk-table
-        :columns="columns"
-        :data="tableData"
-        show-overflow-tooltip
-        @dblclick="handleDblClick"
-        @column-sort="handleSortBy"
-      />
+      <bk-loading :loading="isLoading">
+        <bk-table
+          :columns="columns"
+          :data="tableData"
+          row-hover="auto"
+          show-overflow-tooltip
+          @dblclick="handleDblClick"
+          @column-sort="handleSortBy"
+        />
+      </bk-loading>
     </div>
     <div
       class="cell"
@@ -44,35 +47,30 @@
     components: {},
     data() {
       return {
+        isLoading: false,
         tableData: [...DATA_TABLE],
         columns: [...DATA_COLUMNS],
         settings: {
-          fields: [],
-          checked: [],
+          fields: [{
+                     label: '序号',
+                     field: 'index',
+                     disabled: true,
+                   },
+                   {
+                     label: '名称/内网IP',
+                     field: 'ip',
+                   },
+                   {
+                     label: '来源',
+                     field: 'source',
+                   },
+                   {
+                     label: '创建时间',
+                     field: 'create_time',
+                   }],
+          checked: ['ip', 'index'],
         },
       };
-    },
-    mounted() {
-      setTimeout(() => {
-        this.settings.checked.push('index');
-        this.settings.fields.push(...[{
-                                        label: '序号',
-                                        field: 'index',
-                                        disabled: true,
-                                      },
-                                      {
-                                        label: '名称/内网IP',
-                                        field: 'ip',
-                                      },
-                                      {
-                                        label: '来源',
-                                        field: 'source',
-                                      },
-                                      {
-                                        label: '创建时间',
-                                        field: 'create_time',
-                                      }]);
-      }, 1000);
     },
     methods: {
       handleSortBy(arg) {
