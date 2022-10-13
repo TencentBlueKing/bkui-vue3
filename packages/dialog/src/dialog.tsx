@@ -97,18 +97,7 @@ export default defineComponent({
     const handleNextStep = () => {
       emit('next');
     };
-    // 点击遮罩关闭
-    const handleQuickClose = (val) => {
-      if (props.quickClose) {
-        let divChild;
-        val.onclick = e => divChild = e.target;
-        val.parentNode.onclick = (e) => {
-          if (divChild !== e.target) {
-            handleClose();
-          }
-        };
-      }
-    };
+
     // 拖拽事件
     const moveHandler = (e) => {
       if (props.fullscreen) {
@@ -162,7 +151,6 @@ export default defineComponent({
       moveHandler,
       handlePrevStep,
       handleNextStep,
-      handleQuickClose,
     };
   },
 
@@ -232,7 +220,8 @@ export default defineComponent({
 
     const className = `bk-dialog-wrapper ${this.scrollable ? 'scroll-able' : ''} ${this.multiInstance ? 'multi-instance' : ''}`;
     return <BkModal {...this.$props} class={className}
-      style={this.data.moveStyle} onQuickClose={this.handleQuickClose}>
+      onClose={this.handleClose}
+      style={this.data.moveStyle}>
       {dialogSlot}
     </BkModal>;
   },
