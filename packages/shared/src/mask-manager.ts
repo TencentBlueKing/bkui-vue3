@@ -31,7 +31,8 @@ type BkMaskManagerConfig = {
   multiInstance?: boolean,
   maskAttrTag?: string,
   parentNode?: HTMLElement | Document,
-  maskStyle?: any
+  maskStyle?: any,
+  onClick?: (e: MouseEvent) => void
 };
 
 type MaskConfigStore = {
@@ -77,6 +78,8 @@ export class BkMaskManager {
     'background-color': 'rgba(0,0,0,.6)',
   };
 
+  private onClick;
+
   /**
    * 遮罩管理器
    *
@@ -84,7 +87,8 @@ export class BkMaskManager {
    * @param maskAttrTag 遮罩DOM唯一标志，支持自定义和 auto
    */
   constructor(config?: BkMaskManagerConfig) {
-    const { multiInstance = false, maskAttrTag = 'auto', parentNode = document.body, maskStyle = {} } = config || {};
+    const { multiInstance = false, maskAttrTag = 'auto', parentNode = document.body, maskStyle = {}, onClick = null } = config || {};
+    this.onClick = onClick;
     this.activeInstance = undefined;
     this.multiInstance = multiInstance;
     this.uniqueMaskAttrTag = this.getMaskAttrTag(maskAttrTag);
@@ -94,6 +98,12 @@ export class BkMaskManager {
     this.setMaskStyle(Object.assign({}, this.maskStyle, maskStyle));
   }
 
+  public setOption(option: BkMaskManagerConfig) {
+    const { parentNode = document.body, maskStyle = {}, onClick = null } = option || {};
+    this.onClick = onClick;
+    this.parentNode = parentNode || document;
+    this.setMaskStyle(Object.assign({}, this.maskStyle, maskStyle));
+  }
 
   /**
    * 显示遮罩
@@ -200,6 +210,13 @@ export class BkMaskManager {
     let div: HTMLElement | null = this.parentNode.querySelector(`[data-bkmask-uid='${this.uniqueMaskAttrTag}']`);
     if (!div) {
       div = this.createMask();
+      div.addEventListener('click', (e: MouseEvent) => {
+        if (e.target === div) {
+          if (typeof this.onClick === 'function') {
+            Reflect.apply(this.onClick, this, [e]);
+          }
+        }
+      }, true);
     }
 
     return div;
