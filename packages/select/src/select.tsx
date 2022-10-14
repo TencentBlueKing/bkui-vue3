@@ -526,6 +526,7 @@ export default defineComponent({
       registerGroup,
       unregisterGroup,
       handleOptionSelected,
+      handleGetLabelByValue,
     }));
 
     onMounted(() => {
