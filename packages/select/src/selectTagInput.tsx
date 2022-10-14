@@ -93,18 +93,14 @@ export default defineComponent({
       overflowTagIndex.value = null;
       setTimeout(() => {
         const tags = getTagDOM();
-        const tagIndexInSecondRow = tags.findIndex((currentUser, index) => {
+        const tagIndexInSecondRow = tags.findIndex((currentTag, index) => {
           if (!index) {
             return false;
           }
           const previousTag = tags[index - 1];
-          return previousTag.offsetTop !== currentUser.offsetTop;
+          return previousTag.offsetTop !== currentTag.offsetTop;
         });
-        if ((tagIndexInSecondRow - 1) > -1) {
-          overflowTagIndex.value = (tagIndexInSecondRow - 1);
-        } else {
-          overflowTagIndex.value = null;
-        }
+        overflowTagIndex.value = tagIndexInSecondRow > 0 ? tagIndexInSecondRow : null;
       });
     };
     return {
@@ -148,7 +144,7 @@ export default defineComponent({
             ))
           }
           {
-            this.overflowTagIndex && this.collapseTags && (
+            !!this.overflowTagIndex && this.collapseTags && (
               <Tag class="bk-select-overflow-tag">+{this.selected.length - this.overflowTagIndex}</Tag>
             )
           }

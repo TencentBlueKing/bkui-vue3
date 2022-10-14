@@ -40,24 +40,44 @@ export const THEME_LESS_URL = resolve(COMPONENT_URL, 'styles/src/themes/themes.l
 export const compilerLibDir = async (dir: string): Promise<any> => {
   const buildDir: any = (dir: string) => {
     const files = readdirSync(dir);
-    const list = files.filter(url => /\.d.ts$/.test(join(dir, url)));
-    (list.length ? list : files).forEach((file, index) => {
+    files.forEach((file, index) => {
       const url = join(dir, file);
-      if (list.length) {
-        if (/lib\/(bkui-vue|styles\/src)\/(components|index|volar\.components)\.d\.ts$/.test(url)) {
-          let chunck = readFileSync(url, 'utf-8');
-          chunck = chunck.replace(/@bkui-vue/gmi, url.match(/styles\/src\/index.d.ts$/) ? '..' : '.');
-          writeFileSync(url, chunck);
-        }
-        moveFile(url, resolve(parse(url).dir, '../', parse(url).base))
-          .then(() => {
-            if (index === list.length - 1) {
-              rmdirSync(parse(url).dir, { recursive: true });
+      if (lstatSync(url).isDirectory()) {
+        if (!(/\/src$/.test(dir) && !/\/src$/.test(url))) {
+          buildDir(url);
+        } else {
+          const list =  readdirSync(url).filter(url => /\.d.ts$/.test(join(dir, url)));
+          list.forEach((file) => {
+            const fileUrl = join(url, file);
+            let chunk =  readFileSync(fileUrl, 'utf-8');
+            if (chunk.includes('@bkui-vue')) {
+              chunk = chunk.replace('@bkui-vue', fileUrl.split('/src/')[1].replace(/([^/]+)/gmi, '..'));
             }
-          })
-          .catch(console.error);
-      } else if (lstatSync(url).isDirectory()) {
-        buildDir(url);
+            writeFileRecursive(fileUrl.replace('/src', ''), chunk);
+          });
+          if (index === files.length - 1) {
+            rmdirSync(parse(url).dir, { recursive: true });
+          }
+        }
+      } else if (/\.d.ts$/.test(url)) {
+        let chunk = readFileSync(url, 'utf-8');
+        if (/lib\/(bkui-vue|styles\/src)\/(components|index|volar\.components)\.d\.ts$/.test(url)) {
+          chunk = chunk.replace(/@bkui-vue/gmi, url.match(/styles\/src\/index.d.ts$/) ? '..' : '.');
+          writeFileSync(url, chunk);
+        } else if (chunk.match(/@bkui-vue/gmi)) {
+          chunk = chunk.replace(/@bkui-vue/gmi, url.split('/src/')[1].replace(/([^/]+)/gmi, '..'));
+        }
+        writeFileRecursive(resolve(parse(url).dir, '../', parse(url).base), chunk);
+        if (index === files.length - 1) {
+          rmdirSync(parse(url).dir, { recursive: true });
+        }
+        // moveFile(url, resolve(parse(url).dir, '../', parse(url).base))
+        //   .then(() => {
+        //     if (index === files.length - 1) {
+        //       rmdirSync(parse(url).dir, { recursive: true });
+        //     }
+        //   })
+        //   .catch(console.error);
       }
     });
   };

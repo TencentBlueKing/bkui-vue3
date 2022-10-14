@@ -416,4 +416,3 @@ export const getElementTextWidth = (element: HTMLElement, text?: string) => {
 
   return getTextWidth(text || element?.innerHTML, getCanvasFont(element));
 };
-
