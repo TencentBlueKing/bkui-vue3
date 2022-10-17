@@ -24,6 +24,7 @@
  * IN THE SOFTWARE.
  */
 
+
 import { mount } from '@vue/test-utils';
 
 import BKTable from '../src/table';
@@ -112,22 +113,33 @@ const columns = [
   },
 ];
 describe('table.tsx', () => {
-  it('renders single active when passed', async () => {
-    const wrapper = await mount(BKTable, {
+  it('renders single active when passed', (done) => {
+    const containerHeight = 500;
+    const wrapper = mount(BKTable, {
       props: {
         data,
         columns,
         activeColumn: [0],
         columnPick: 'single',
+
       },
     });
-    expect(wrapper.classes()).toContain('bk-table');
-    expect(wrapper.findAll('table > tbody > tr').length).toEqual(3);
-    expect(wrapper.findAll('table > thead > tr > th')[0].classes()).toContain('active');
+    jest.spyOn(wrapper.vm.$el, 'offsetHeight', 'get').mockImplementation(() => containerHeight);
+    console.log('before update');
+    wrapper.setProps({
+      height: containerHeight,
+      virtualEnabled: true,
+    });
+
+    setTimeout(() => {
+      expect(wrapper.findAll('table > tbody > tr').length).toEqual(3);
+      expect(wrapper.findAll('table > thead > tr > th')[0].classes()).toContain('active');
+      done();
+    }, 0);
   });
 
-  it('renders mlti active when passed', async () => {
-    const wrapper = await mount(BKTable, {
+  it('renders mlti active when passed', () => {
+    const wrapper = mount(BKTable, {
       props: {
         data,
         columns,

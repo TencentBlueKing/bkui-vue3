@@ -30,3 +30,9 @@ config.global.stubs = {
   transition: false,
   'transition-group': false,
 };
+
+global.ResizeObserver = jest.fn().mockImplementation(() => ({
+  observe: jest.fn(),
+  unobserve: jest.fn(),
+  disconnect: jest.fn(),
+}));
