@@ -72,7 +72,7 @@ export const IColumnType = {
     PropTypes.shape({
       sortFn: PropTypes.func.def(undefined),
       sortScope: PropTypes.commonType(Object.values(SortScope)).def(SortScope.CURRENT),
-      value: PropTypes.string.def(null),
+      value: PropTypes.string.def(SORT_OPTION.NULL),
     }),
     PropTypes.bool,
     PropTypes.string]).def(false),
@@ -292,7 +292,7 @@ export const tableProps = {
   /**
    * 默认的排序列的 prop 和顺序。它的 prop 属性指定默认的排序的列，order指定默认排序的顺序
    */
-  defaultSort: PropTypes.shape<ISortOption>({}).def(),
+  defaultSort: PropTypes.shape<ISortOption>({}).def({}),
 };
 
 
