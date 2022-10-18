@@ -135,27 +135,11 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
     removeEventListener();
   };
 
-  const getFullscreenRootElement = (target: HTMLElement | Node) => {
-    if (document.fullscreenElement?.shadowRoot && document.fullscreenElement.shadowRoot.contains(target)) {
-      if (target.parentNode === document.fullscreenElement.shadowRoot) {
-        return target;
-      }
-
-      if (target.parentNode === document.body) {
-        return document.body;
-      }
-
-      return getFullscreenRootElement(target.parentNode);
-    }
-
-    return document.fullscreenElement;
-  };
-
   const handleFullscreenChange = (e: Event) => {
     if (!document.fullscreenElement) {
       clearFullscreenTag();
     }
-    fullScreenTarget.value = getFullscreenRootElement(e.target as HTMLElement);
+    fullScreenTarget.value = e.target;
     updateFullscreenTarget(e.target as HTMLElement);
     isFullscreen.value = isElementFullScreen();
     setFullscreenTag();
