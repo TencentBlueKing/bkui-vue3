@@ -34,7 +34,6 @@ import Content from './content';
 import { PopoverProps } from './props';
 import Reference from './reference';
 import Root from './root';
-import useFloating from './use-floating';
 import usePopoverInit from './use-popover-init';
 
 export default defineComponent({
@@ -58,11 +57,6 @@ export default defineComponent({
     const isFullscreen = ref(false);
 
     const refReference = computed(() => reference.value || refDefaultReference.value);
-    const {
-      showPopover,
-      hidePopover,
-      updatePopover,
-    } = useFloating(props, ctx, refReference, refContent, refArrow, refRoot);
 
     const {
       onMountedFn,
@@ -74,8 +68,12 @@ export default defineComponent({
       showFn,
       hideFn,
       boundary,
-    } = usePopoverInit(props, ctx, refReference, refContent, refArrow, refRoot);
-
+      showPopover,
+      hidePopover,
+      updatePopover,
+    } = usePopoverInit(props, ctx, {
+      refReference, refContent, refArrow, refRoot,
+    });
 
     if (!props.always && !props.disabled) {
       watch(() => props.isShow, () => {
@@ -94,7 +92,6 @@ export default defineComponent({
     updateBoundary();
     onMounted(onMountedFn);
     onBeforeUnmount(onUnmountedFn);
-    // onUnmounted(onUnmountedFn);
 
     const transBoundary = computed(() => (isFullscreen.value || !disableTeleport) && typeof boundary.value === 'string');
     const show = () => {

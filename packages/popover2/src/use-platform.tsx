@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-export default () => {
+export default (fullscreenTarget?: HTMLElement) => {
   const getElementRects = ({ reference, floating }) => {
     const refRect = (reference as HTMLElement).getBoundingClientRect();
     const floatRect = (floating as HTMLElement).getBoundingClientRect();
@@ -38,7 +38,7 @@ export default () => {
   };
 
   const getClippingRect = ({ }) => {
-    const { width = 0, height = 0 } = document.fullscreenElement?.getBoundingClientRect() ?? {};
+    const { width = 0, height = 0 } = fullscreenTarget?.getBoundingClientRect() ?? {};
     return {
       width,
       height,
