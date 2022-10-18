@@ -1,41 +1,14 @@
 <template>
   <div class="row">
-    <div class="cell">
-      <span class="title">自动填充高度(默认)：height='auto'</span>
-      <bk-loading :loading="isLoading">
-        <bk-table
-          :columns="columns"
-          :data="tableData"
-          row-hover="auto"
-          show-overflow-tooltip
-          @dblclick="handleDblClick"
-          @column-sort="handleSortBy"
-        />
-      </bk-loading>
-    </div>
-    <div
-      class="cell"
-      style="height: 300px;"
-    >
-      <span class="title">依赖父级高度：height='100%'</span>
-      <bk-table
-        :columns="columns"
-        :data="tableData"
-        height="100%"
-        @dblclick="handleDblClick"
-      />
-    </div>
-    <div class="cell">
-      <span class="title">固定高度：height='number | number px'</span>
-      <bk-table
-        :columns="columns"
-        :data="tableData"
-        :max-height="200"
-        :height="300"
-        :settings="settings"
-        @dblclick="handleDblClick"
-      />
-    </div>
+    <bk-table
+      :columns="columns"
+      :data="tableData"
+      row-hover="auto"
+      settings
+      show-overflow-tooltip
+      @dblclick="handleDblClick"
+      @column-sort="handleSortBy"
+    />
   </div>
 </template>
 

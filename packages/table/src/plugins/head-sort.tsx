@@ -35,7 +35,7 @@ export default defineComponent({
   name: 'HeadSort',
   props: {
     column: PropTypes.any.def({}),
-    defaultSort: PropTypes.oneOf(SORT_OPTIONS).def(SORT_OPTION.ASC),
+    defaultSort: PropTypes.oneOf(SORT_OPTIONS).def(SORT_OPTION.NULL),
   },
   emits: ['change'],
   setup(props, { emit }) {
