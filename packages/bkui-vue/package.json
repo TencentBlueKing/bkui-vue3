@@ -30,11 +30,14 @@
     "@bkui-vue/radio": "^0.0.0",
     "@bkui-vue/select": "0.0.0",
     "@bkui-vue/sideslider": "0.0.0",
+    "@bkui-vue/slider": "0.0.0",
     "@bkui-vue/switcher": "0.0.0",
-    "@bkui-vue/table": "0.0.0",
     "@bkui-vue/tab": "0.0.0",
+    "@bkui-vue/table": "0.0.0",
     "@bkui-vue/tag": "0.0.0",
-    "@bkui-vue/transfer": "0.0.0",
-    "@bkui-vue/slider": "0.0.0"
+    "@bkui-vue/transfer": "0.0.0"
+  },
+  "devDependencies": {
+    "@vue/test-utils": "2.1.0"
   }
 }
