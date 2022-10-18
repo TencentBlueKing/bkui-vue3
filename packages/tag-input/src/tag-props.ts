@@ -54,23 +54,18 @@ const tagProps = () => ({
   leftSpace: PropTypes.number.def(0),
   createTagValidator: {
     type: Function as PropType<(tag: any) => boolean>,
-    default: null,
   },
   filterCallback: {
     type: Function as PropType<(value: string, searchKey: string | string[], list: any[]) => any[]>,
-    default: null,
   },
   tagTpl: {
     type: Function as PropType<(node, highlightKeyword: Function, h: Function, ctx: VNode) => VNode>,
-    default: null,
   },
   tpl: {
     type: Function as PropType<(node, h: Function, ctx: VNode) => VNode>,
-    default: null,
   },
   pasteFn: {
     type: Function as PropType<(value: string) => any[]>,
-    default: null,
   },
   withValidate: {
     type: Boolean,
