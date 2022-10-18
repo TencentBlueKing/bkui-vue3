@@ -2,15 +2,9 @@
   <bk-radio-group
     v-model="radioGroupValue"
   >
-    <bk-radio-button
-      label="QQ"
-      disabled
-    />
+    <bk-radio-button label="QQ" />
     <bk-radio-button label="微信" />
-    <bk-radio-button
-      label="Email"
-      disabled
-    />
+    <bk-radio-button label="Email" />
   </bk-radio-group>
 </template>
 <script setup>
