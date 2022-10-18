@@ -147,7 +147,7 @@ export default defineComponent({
 
     return () => <Popover trigger="click"
       isShow={ state.isOpen }
-      placement="bottom-end"
+      placement="bottom-start"
       arrow={false}
       offset={0}
       {...{ theme }}
