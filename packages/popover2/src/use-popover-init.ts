@@ -119,9 +119,9 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
 
   const clearFullscreenTag = () => {
     const query = `[data-fllsrn-id=${fullscreenReferId}]`;
-    (fullScreenTarget?.value.querySelectorAll(query) ?? [])
+    (fullScreenTarget?.value?.querySelectorAll(query) ?? [])
       .forEach((element: { removeAttribute: (arg0: string) => void; }) => {
-        element.removeAttribute('data-fllsrn-id');
+        element?.removeAttribute('data-fllsrn-id');
       });
   };
 
