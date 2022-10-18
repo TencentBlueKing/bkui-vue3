@@ -104,7 +104,7 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
   const updateBoundary = () => {
     const { elReference, root } = resolvePopElements();
     if (isFullscreen.value) {
-      boundary.value = fullScreenTarget;
+      boundary.value = fullScreenTarget?.value;
       return;
     }
 
@@ -113,16 +113,16 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
 
   const { getPrefixId } = usePopperId(props, '#');
 
-  const resetFullscreenElementTag = () => {
-    if (fullScreenTarget.value === null || fullScreenTarget.value === undefined) {
-      const query = `[data-fllsrn-id=${fullscreenReferId}]`;
-      (fullScreenTarget.value.querySelectorAll(query) ?? [])
-        .forEach((element: { removeAttribute: (arg0: string) => void; }) => {
-          element.removeAttribute('data-fllsrn-id');
-        });
-    } else {
-      fullScreenTarget.value.setAttribute('data-fllsrn-id', fullscreenReferId);
-    }
+  const setFullscreenTag = () => {
+    fullScreenTarget?.value?.setAttribute('data-fllsrn-id', fullscreenReferId);
+  };
+
+  const clearFullscreenTag = () => {
+    const query = `[data-fllsrn-id=${fullscreenReferId}]`;
+    (fullScreenTarget?.value.querySelectorAll(query) ?? [])
+      .forEach((element: { removeAttribute: (arg0: string) => void; }) => {
+        element.removeAttribute('data-fllsrn-id');
+      });
   };
 
   const boundary = ref();
@@ -135,11 +135,30 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
     removeEventListener();
   };
 
+  const getFullscreenRootElement = (target: HTMLElement | Node) => {
+    if (document.fullscreenElement?.shadowRoot && document.fullscreenElement.shadowRoot.contains(target)) {
+      if (target.parentNode === document.fullscreenElement.shadowRoot) {
+        return target;
+      }
+
+      if (target.parentNode === document.body) {
+        return document.body;
+      }
+
+      return getFullscreenRootElement(target.parentNode);
+    }
+
+    return document.fullscreenElement;
+  };
+
   const handleFullscreenChange = (e: Event) => {
-    fullScreenTarget.value = e.target;
+    if (!document.fullscreenElement) {
+      clearFullscreenTag();
+    }
+    fullScreenTarget.value = getFullscreenRootElement(e.target as HTMLElement);
     updateFullscreenTarget(e.target as HTMLElement);
     isFullscreen.value = isElementFullScreen();
-    resetFullscreenElementTag();
+    setFullscreenTag();
     updateBoundary();
     updatePopover(null, props);
   };
@@ -183,6 +202,7 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
     hidePopover,
     showFn,
     hideFn,
+    isFullscreen,
     boundary,
   };
 };

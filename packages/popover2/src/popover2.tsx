@@ -54,7 +54,6 @@ export default defineComponent({
     const refContent = ref();
     const refArrow = ref();
     const refRoot = ref();
-    const isFullscreen = ref(false);
 
     const refReference = computed(() => reference.value || refDefaultReference.value);
 
@@ -67,10 +66,10 @@ export default defineComponent({
       initPopInstance,
       showFn,
       hideFn,
-      boundary,
       showPopover,
       hidePopover,
       updatePopover,
+      boundary,
     } = usePopoverInit(props, ctx, {
       refReference, refContent, refArrow, refRoot,
     });
@@ -93,7 +92,7 @@ export default defineComponent({
     onMounted(onMountedFn);
     onBeforeUnmount(onUnmountedFn);
 
-    const transBoundary = computed(() => (isFullscreen.value || !disableTeleport) && typeof boundary.value === 'string');
+    const transBoundary = computed(() => !disableTeleport);
     const show = () => {
       showFn();
     };

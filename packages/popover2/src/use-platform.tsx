@@ -38,12 +38,12 @@ export default (fullscreenTarget?: HTMLElement) => {
   };
 
   const getClippingRect = ({ }) => {
-    const { width = 0, height = 0, left, top } = fullscreenTarget?.getBoundingClientRect() ?? {};
+    const { width = 0, height = 0 } = fullscreenTarget?.getBoundingClientRect() ?? {};
     return {
       width,
       height,
-      x: `${left}px`,
-      y: `${top}px`,
+      x: 0,
+      y: 0,
     };
   };
 
