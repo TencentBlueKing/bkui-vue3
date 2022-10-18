@@ -76,7 +76,7 @@ export default [
       { name: 'resizable', type: 'Boolean', default: 'true', desc: '对应列是否可以通过拖动改变宽度', optional: [] },
       { name: 'fixed', type: 'String', default: 'false', desc: '列是否固定在左侧或者右侧，true 表示固定在左侧', optional: ['left', 'right'] },
       { name: 'sort', type: 'Boolean|ISort', default: 'false', desc: '对应列是否可以排序，可以简单设置true开启默认排序，也可以通过详细配置排序方式，请参考ISort', optional: [] },
-      { name: 'filter', type: 'Boolean|String|IFilter', default: 'false', desc: '数据过滤的选项,可以简单设置true开启默认过滤，也可以通过详细配置排序方式，请参考IFilter', optional: [] },
+      { name: 'filter', type: 'Boolean|String|IFilter', default: 'false', desc: '数据过滤的选项,可以简单设置true开启默认过滤。可以通过详细配置排序方式，请参考IFilter', optional: [] },
     ],
   },
   {
@@ -109,8 +109,10 @@ export default [
     title: 'IFilter',
     subTile: '过滤详细配置',
     config: [
-      { name: 'filterFn', type: 'Function', default: '--', desc: '自定义过滤函数，参数：(checked, row, props.column, index, data) => boolean', optional: [] },
-      { name: 'list', type: 'Array[{ value, text }]', default: '[]', desc: '数据过滤的选项，数组格式，数组中的元素需要有 text 和 value 属性。', optional: ['current', 'all'] },
+      { name: 'filterFn', type: 'Function', default: '--', desc: '自定义过滤函数，参数：(checked, row, props.column, index, data) => boolean。如果要使用远程过滤，为防止默认过滤，请配置此选项为: () => true', optional: [] },
+      { name: 'list', type: 'Array[{ value, text }]', default: '[]', desc: '数据过滤的选项，数组格式，数组中的元素需要有 text 和 value 属性。', optional: [] },
+      { name: 'match', type: 'String', default: 'full', desc: '过滤匹配模式，默认全量匹配', optional: ['full', 'fuzzy'] },
+      { name: 'filterScope', type: 'String', default: 'current', desc: '如果有分页，配置过滤范围为当前页面或者跨页', optional: ['current', 'all'] },
       { name: 'btnSave', type: 'String|Boolean', default: '确定', desc: '数据过滤的`确定`按钮配置，可配置为String类型，配置不同显示文本；也可以配置为false，禁用确定按钮，当此按钮禁用，单击过滤选项即生效', optional: [] },
       { name: 'btnReset', type: 'String|Boolean', default: '重置', desc: '数据过滤的`重置`按钮配置，可配置为String类型，配置不同显示文本；也可以配置为false，禁用`重置`按钮', optional: [] },
     ],
