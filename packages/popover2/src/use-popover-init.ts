@@ -24,17 +24,17 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { v4 as uuidv4 } from 'uuid';
 import { ref } from 'vue';
 
 import { EMITEVENTS } from './const';
 import useFloating from './use-floating';
 import usePopperId from './use-popper-id';
+import { getFullscreenUid } from './utils';
 
 export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => {
   let storeEvents = null;
   const isFullscreen = ref(false);
-  const fullscreenReferId = `id_${uuidv4()}`;
+  const fullscreenReferId = getFullscreenUid();
   const fullScreenTarget = ref();
   const {
     localIsShow,
@@ -45,8 +45,8 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
     resolvePopElements,
     isElementFullScreen,
     updateFullscreenTarget,
-    cleanup,
     createPopInstance,
+    getFullscreenRoot,
   } = useFloating(props, ctx, { refReference, refContent, refArrow, refRoot });
 
   const showFn = () => {
@@ -128,21 +128,21 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
   const boundary = ref();
 
   const beforeInstanceUnmount = () => {
-    if (typeof cleanup === 'function') {
-      // cleanup();
-    }
-
     removeEventListener();
+  };
+
+  const updateFullscreen = (target) => {
+    fullScreenTarget.value = target;
+    updateFullscreenTarget(target as HTMLElement);
+    isFullscreen.value = isElementFullScreen();
+    setFullscreenTag();
   };
 
   const handleFullscreenChange = (e: Event) => {
     if (!document.fullscreenElement) {
       clearFullscreenTag();
     }
-    fullScreenTarget.value = e.target;
-    updateFullscreenTarget(e.target as HTMLElement);
-    isFullscreen.value = isElementFullScreen();
-    setFullscreenTag();
+    updateFullscreen(e.target);
     updateBoundary();
     updatePopover(null, props);
   };
@@ -153,8 +153,14 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
     }
 
     initPopInstance();
-    updateBoundary();
 
+    if (isElementFullScreen()) {
+      const query = `[data-fllsrn-id=${fullscreenReferId}]`;
+      const target = getFullscreenRoot(query);
+      updateFullscreen(target);
+    }
+
+    updateBoundary();
     document.body.addEventListener('fullscreenchange', handleFullscreenChange);
   };
 

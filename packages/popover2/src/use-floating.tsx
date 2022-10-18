@@ -53,6 +53,18 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
     return document.fullscreenElement?.contains(elReference);
   };
 
+  const getFullscreenRoot = (selector) => {
+    if (isElementFullScreen()) {
+      if (document.fullscreenElement.shadowRoot) {
+        return document.fullscreenElement.shadowRoot.querySelector(selector);
+      }
+
+      return document.fullscreenElement.querySelector(selector);
+    }
+
+    return document.body;
+  };
+
   const themeList = ['dark', 'light'];
   const compTheme = computed(() => {
     const themes = props.theme?.split(/\s+/) ?? [];
@@ -324,6 +336,7 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
     resolveTargetElement,
     createPopInstance,
     updateFullscreenTarget,
+    getFullscreenRoot,
     localIsShow,
     cleanup,
   };
