@@ -95,6 +95,7 @@ declare module '@vue/runtime-core' {
     BkProcess: typeof import('./process/process').default;
     BkUpload: typeof import('./upload/upload').default;
     BkCodeDiff: typeof import('./code-diff/code-diff').default;
+    BkSeachSelect: typeof import('./code-diff/search-select').default;
   }
 }
 export {};

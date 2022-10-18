@@ -4,6 +4,7 @@
       :columns="columns"
       :data="tableData"
       height="100%"
+      settings
       @scroll-bottom="handleScrollBottom"
     />
   </div>

@@ -308,7 +308,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/process',
     name: 'process',
-    component: () => import('../views/process'),
+    component: () => import('../views/process/index'),
     meta: {
       group: NavGroupMeta.Nav,
       navName: 'Process 步骤',
@@ -711,6 +711,15 @@ const routes: RouteRecordRaw[] = [
       navName: 'Loading 加载',
     },
     component: () => import('../views/loading/index'),
+  },
+  {
+    path: '/search-select',
+    name: 'searchSelect',
+    meta: {
+      group: NavGroupMeta.Form,
+      navName: 'SearchSelect 查询选择器',
+    },
+    component: () => import('../views/search-select/index'),
   },
 ];
 

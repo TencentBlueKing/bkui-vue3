@@ -24,15 +24,18 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import { v4 as uuidv4 } from 'uuid';
 import { ref } from 'vue';
 
 import { EMITEVENTS } from './const';
 import useFloating from './use-floating';
 import usePopperId from './use-popper-id';
 
-export default (props, ctx, refReference, refContent, refArrow, refRoot) => {
+export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => {
   let storeEvents = null;
   const isFullscreen = ref(false);
+  const fullscreenReferId = `id_${uuidv4()}`;
+  const fullScreenTarget = ref();
   const {
     localIsShow,
     showPopover,
@@ -41,9 +44,10 @@ export default (props, ctx, refReference, refContent, refArrow, refRoot) => {
     resolveTriggerEvents,
     resolvePopElements,
     isElementFullScreen,
+    updateFullscreenTarget,
     cleanup,
     createPopInstance,
-  } = useFloating(props, ctx, refReference, refContent, refArrow, refRoot);
+  } = useFloating(props, ctx, { refReference, refContent, refArrow, refRoot });
 
   const showFn = () => {
     showPopover();
@@ -99,10 +103,28 @@ export default (props, ctx, refReference, refContent, refArrow, refRoot) => {
 
   const updateBoundary = () => {
     const { elReference, root } = resolvePopElements();
-    boundary.value = getPrefixId(isFullscreen.value, root || elReference);
+    if (isFullscreen.value) {
+      boundary.value = fullScreenTarget?.value;
+      return;
+    }
+
+    boundary.value = getPrefixId(root || elReference);
   };
 
-  const { getPrefixId, resetFullscreenElementTag } = usePopperId(props, '#');
+  const { getPrefixId } = usePopperId(props, '#');
+
+  const setFullscreenTag = () => {
+    fullScreenTarget?.value?.setAttribute('data-fllsrn-id', fullscreenReferId);
+  };
+
+  const clearFullscreenTag = () => {
+    const query = `[data-fllsrn-id=${fullscreenReferId}]`;
+    (fullScreenTarget?.value.querySelectorAll(query) ?? [])
+      .forEach((element: { removeAttribute: (arg0: string) => void; }) => {
+        element.removeAttribute('data-fllsrn-id');
+      });
+  };
+
   const boundary = ref();
 
   const beforeInstanceUnmount = () => {
@@ -113,9 +135,30 @@ export default (props, ctx, refReference, refContent, refArrow, refRoot) => {
     removeEventListener();
   };
 
-  const handleFullscreenChange = () => {
+  const getFullscreenRootElement = (target: HTMLElement | Node) => {
+    if (document.fullscreenElement?.shadowRoot && document.fullscreenElement.shadowRoot.contains(target)) {
+      if (target.parentNode === document.fullscreenElement.shadowRoot) {
+        return target;
+      }
+
+      if (target.parentNode === document.body) {
+        return document.body;
+      }
+
+      return getFullscreenRootElement(target.parentNode);
+    }
+
+    return document.fullscreenElement;
+  };
+
+  const handleFullscreenChange = (e: Event) => {
+    if (!document.fullscreenElement) {
+      clearFullscreenTag();
+    }
+    fullScreenTarget.value = getFullscreenRootElement(e.target as HTMLElement);
+    updateFullscreenTarget(e.target as HTMLElement);
     isFullscreen.value = isElementFullScreen();
-    resetFullscreenElementTag();
+    setFullscreenTag();
     updateBoundary();
     updatePopover(null, props);
   };
@@ -155,8 +198,11 @@ export default (props, ctx, refReference, refContent, refArrow, refRoot) => {
     updateBoundary,
     initPopInstance,
     updatePopover,
+    showPopover,
+    hidePopover,
     showFn,
     hideFn,
+    isFullscreen,
     boundary,
   };
 };

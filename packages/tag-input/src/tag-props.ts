@@ -26,6 +26,7 @@
 
 import { ExtractPropTypes, PropType, VNode } from 'vue';
 
+import { PopoverPropTypes } from '@bkui-vue/popover';
 import { PropTypes } from '@bkui-vue/shared';
 
 const tagProps = () => ({
@@ -70,7 +71,12 @@ const tagProps = () => ({
     type: Boolean,
     default: true,
   },
+  popoverProps: {
+    type: Object as PropType<Partial<PopoverPropTypes>>,
+    default: () => ({}),
+  },
 });
+
 
 export default tagProps;
 export type TagProps = Partial<ExtractPropTypes<ReturnType<typeof tagProps>>>;

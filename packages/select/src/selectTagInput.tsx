@@ -23,12 +23,13 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent, getCurrentInstance, ref, toRefs, watch } from 'vue';
+import { defineComponent, getCurrentInstance, inject, ref, toRefs, watch } from 'vue';
 import { PropType } from 'vue-types/dist/types';
 
 import { classes, PropTypes } from '@bkui-vue/shared';
 import Tag from '@bkui-vue/tag';
 
+import { selectKey } from './common';
 import { ISelected } from './type';
 
 
@@ -50,6 +51,7 @@ export default defineComponent({
   emits: ['update:modelValue', 'remove', 'enter'],
   setup(props, { emit }) {
     const { proxy } = getCurrentInstance();
+    const select = inject(selectKey, null);
     const { modelValue, collapseTags, selected } = toRefs(props);
     const value = ref(modelValue.value);
     const inputRef = ref<HTMLElement>();
@@ -93,21 +95,18 @@ export default defineComponent({
       overflowTagIndex.value = null;
       setTimeout(() => {
         const tags = getTagDOM();
-        const tagIndexInSecondRow = tags.findIndex((currentUser, index) => {
+        const tagIndexInSecondRow = tags.findIndex((currentTag, index) => {
           if (!index) {
             return false;
           }
           const previousTag = tags[index - 1];
-          return previousTag.offsetTop !== currentUser.offsetTop;
+          return previousTag.offsetTop !== currentTag.offsetTop;
         });
-        if ((tagIndexInSecondRow - 1) > -1) {
-          overflowTagIndex.value = (tagIndexInSecondRow - 1);
-        } else {
-          overflowTagIndex.value = null;
-        }
+        overflowTagIndex.value = tagIndexInSecondRow > 0 ? tagIndexInSecondRow : null;
       });
     };
     return {
+      select,
       overflowTagIndex,
       value,
       inputRef,
@@ -143,12 +142,12 @@ export default defineComponent({
                   display: this.collapseTags && this.overflowTagIndex && index >= this.overflowTagIndex ? 'none' : '',
                 }}
                 onClose={() => this.handleRemoveTag(item.value)}>
-                {item.label}
+                {this.select?.handleGetLabelByValue(item.value)}
               </Tag>
             ))
           }
           {
-            this.overflowTagIndex && this.collapseTags && (
+            !!this.overflowTagIndex && this.collapseTags && (
               <Tag class="bk-select-overflow-tag">+{this.selected.length - this.overflowTagIndex}</Tag>
             )
           }

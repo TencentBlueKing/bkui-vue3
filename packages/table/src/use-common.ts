@@ -217,17 +217,28 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
   const { getColumns } = useColumn(props, targetColumns);
 
   const updateColGroups = () => {
+    const checked = (props.settings as Settings)?.checked || [];
+    const settingFields = (props.settings as Settings)?.fields || [];
+    const isSettingField = (col: Column) => settingFields.some(field => field.field === resolvePropVal(col, 'field', [col]));
+
     colgroups.splice(0, colgroups.length, ...(getColumns())
       .map(col => ({
         ...col,
         calcWidth: null,
         resizeWidth: null,
         listeners: new Map(),
+        isHidden: isSettingField(col) && checked.length && !checked.includes(resolvePropVal(col, ['field', 'type'], [col])),
       })));
   };
 
   const { dragOffsetXStyle, dragOffsetX, resetResizeEvents, registerResizeEvent } = useColumnResize(colgroups, true);
   const { activeColumns } = useActiveColumns(props, targetColumns);
+
+  watch(() => [props.settings], () => {
+    if (((props.settings as Settings)?.checked || []).length) {
+      updateColGroups();
+    }
+  });
 
   watch(() => [props.columns, targetColumns], () => {
     updateColGroups();
@@ -425,6 +436,7 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
         [TABLE_ROW_ATTRIBUTE.ROW_UID]: rowId,
         [TABLE_ROW_ATTRIBUTE.ROW_EXPAND]: keepLocalAction ? isRowExpand(rowId) : false,
         [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: resolveSelection(item, rowId),
+        [TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA]: { ...item },
       };
     }));
 

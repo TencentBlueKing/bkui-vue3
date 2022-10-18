@@ -64,6 +64,7 @@ export default defineComponent({
       isHover: false,
       focusItemIndex: props.allowCreate ? -1 : 0,
     });
+
     const popoverProps = reactive({
       isShow: false,
       width: 190,
@@ -73,7 +74,10 @@ export default defineComponent({
           offset: [0, 4],
         },
       }],
+      ...props.popoverProps,
+
     });
+
     // 分页处理
     const { maxResult } = toRefs(props);
     const { pageState, initPage, pageChange } = usePage(maxResult);
@@ -113,14 +117,53 @@ export default defineComponent({
       disabled: props.disabled,
     }));
 
-    watch([() => [...props.modelValue], () => [...props.list]], () => {
+    const listState = reactive({
+      localList: [],
+      tagListCache: [],
+      selectedTagList: [],
+      selectedTagListCache: [],
+    });
+    // 选中标签 save key 列表
+    const tagList = computed(() => listState.selectedTagList.map(tag => tag[props.saveKey]));
+    // 扁平化 list
+    const { flatList, saveKeyMap } = useFlatList(props);
+    // 下拉框渲染列表
+    const renderList = computed(() => {
+      if (props.useGroup) {
+        const groupMap = {};
+        pageState.curPageList.forEach((item: any, index: number) => {
+          item.__index__ = index;
+          if (!groupMap[item.group.groupId]) {
+            groupMap[item.group.groupId] = {
+              id: item.group.groupId,
+              name: item.group.groupName,
+              children: [],
+            };
+          }
+          groupMap[item.group.groupId].children.push(item);
+        });
+        return Object.keys(groupMap).map((key: string) => groupMap[key]);
+      }
+      return pageState.curPageList;
+    });
+
+    watch([() => flatList.value], () => {
       nextTick(() => {
         initData();
       });
-      if (props.withValidate) {
-        formItem?.validate?.('change');
+    });
+
+    watch(() => props.modelValue, (val) => {
+      if (!shallowCompareArray(tagList.value, val)) {
+        nextTick(() => {
+          initData();
+        });
+        if (props.withValidate) {
+          formItem?.validate?.('change');
+        }
       }
     });
+
     watch(curInputValue, debounce(() => {
       const hasShowCount = pageState.curPageList.length !== 0;
       const { value } = curInputValue;
@@ -134,6 +177,7 @@ export default defineComponent({
         popoverProps.isShow = false;
       }
     }, 150));
+
     watch(() => popoverProps.isShow, (show: boolean) => {
       changePopoverOffset();
       if (show) {
@@ -145,6 +189,10 @@ export default defineComponent({
           selectorListRef.value.addEventListener('scroll', scrollHandler);
         }
       }
+    });
+
+    onMounted(() => {
+      initData();
     });
 
     const changePopoverOffset = () => {
@@ -227,36 +275,6 @@ export default defineComponent({
       });
     };
 
-    const listState = reactive({
-      localList: [],
-      tagListCache: [],
-      selectedTagList: [],
-      selectedTagListCache: [],
-    });
-    // 选中标签 save key 列表
-    const tagList = computed(() => listState.selectedTagList.map(tag => tag[props.saveKey]));
-    // 扁平化 list
-    const formatList = useFlatList(props);
-    // 下拉框渲染列表
-    const renderList = computed(() => {
-      if (props.useGroup) {
-        const groupMap = {};
-        pageState.curPageList.forEach((item: any, index: number) => {
-          item.__index__ = index;
-          if (!groupMap[item.group.groupId]) {
-            groupMap[item.group.groupId] = {
-              id: item.group.groupId,
-              name: item.group.groupName,
-              children: [],
-            };
-          }
-          groupMap[item.group.groupId].children.push(item);
-        });
-        return Object.keys(groupMap).map((key: string) => groupMap[key]);
-      }
-      return pageState.curPageList;
-    });
-
     /**
      * 初始化列表数据
      */
@@ -269,21 +287,23 @@ export default defineComponent({
         trigger,
       } = props;
       listState.selectedTagList = [];
-      listState.localList = [...formatList];
+      listState.localList = flatList.value;
+
 
       if (modelValue.length) {
-        modelValue.forEach((tag) => {
-          const value = listState.localList.find(val => tag === val[saveKey]);
-          if (value !== undefined) {
-            listState.selectedTagList.push(value);
-          } else if (allowCreate && !tagList.value.includes(tag)) {
-            listState.selectedTagList.push({ [saveKey]: tag, [displayKey]: tag });
+        const modelValueMap = {};
+        listState.selectedTagList = modelValue.map((tag) => {
+          const item = saveKeyMap.value[tag];
+          modelValueMap[tag] = 1;
+          if (!item && allowCreate) {
+            return { [saveKey]: tag, [displayKey]: tag };
           }
-        });
+          return item;
+        }).filter(item => item);
 
         // 如果不是单选时，需要将已选的过滤掉
         if (!isSingleSelect.value) {
-          listState.localList = listState.localList.filter(val => !modelValue.includes(val[saveKey]));
+          listState.localList = listState.localList.filter(val => !modelValueMap[val[saveKey]]);
         }
       }
 
@@ -299,7 +319,11 @@ export default defineComponent({
         searchKey,
         filterCallback,
       } = props;
-      const lowerCaseValue = value.toLowerCase();
+      const lowerCaseValue = value.toLowerCase().trim();
+      if (lowerCaseValue === '') {
+        initPage(listState.localList);
+        return;
+      }
       let filterData: any[] = [];
       if (typeof filterCallback === 'function') {
         filterData = filterCallback(lowerCaseValue, searchKey, listState.localList) || [];
@@ -307,12 +331,11 @@ export default defineComponent({
         // 根据文本框输入的值筛选过来的数据
         if (Array.isArray(searchKey)) {
           // 数组，过滤多个关键字
-          const filterDataList = searchKey.map((searchKey: string) => (
-            listState.localList.filter(item => item[searchKey].toLowerCase().indexOf(lowerCaseValue) !== -1)
-          ));
-          filterData = Array.from(new Set(filterDataList.flat()));
+
+          filterData = listState.localList
+            .filter(item => searchKey.some(keyword => item[keyword].toLowerCase().indexOf(lowerCaseValue) > -1));
         } else {
-          filterData = listState.localList.filter(item => item[searchKey].toLowerCase().indexOf(lowerCaseValue) !== -1);
+          filterData = listState.localList.filter(item => item[searchKey].toLowerCase().indexOf(lowerCaseValue) > -1);
         }
       }
       initPage(filterData);
@@ -332,9 +355,11 @@ export default defineComponent({
       return style;
     };
 
-    onMounted(() => {
-      initData();
-    });
+    function shallowCompareArray(arr1, arr2) {
+      if (arr1.length !== arr2.length) return false;
+
+      return arr2.every((item, index) => arr1[index] === item);
+    }
 
     const clearSingleCache = () => {
       listState.tagListCache = [];
@@ -500,9 +525,7 @@ export default defineComponent({
       listState.selectedTagList = [];
 
       // 将删除的项加入加列表
-      const existList = formatList.filter(item => (
-        removeList.some(removeItem => removeItem[props.saveKey] === item[props.saveKey])
-      ));
+      const existList = removeList.filter(item => saveKeyMap.value[item[props.saveKey]]);
       if (((props.allowCreate && (existList.length !== 0)) || !props.allowCreate) && !isSingleSelect.value) {
         listState.localList.push(...existList);
       }
@@ -547,7 +570,7 @@ export default defineComponent({
       listState.selectedTagList.splice(index - 1, 1);
       focusInputTrigger();
 
-      const isExistInit = formatList.some(item => item === target[props.saveKey]);
+      const isExistInit = saveKeyMap.value[target[props.saveKey]];
 
       // 将删除的项加入加列表
       if (((props.allowCreate && isExistInit) || !props.allowCreate) && !isSingleSelect.value) {
@@ -753,14 +776,14 @@ export default defineComponent({
         }
         return true;
       };
-      const existTag = (value: string) => listState.localList.find(tag => tag[saveKey] === value);
+
       // 自定义
       if (type === 'custom') {
         // 自定义时，如果配置分隔符可以一次性输入多个值
         if (separator) {
           let tags = item.split(separator);
           tags = tags.filter(tag => tag?.trim() && !tagList.value.includes(tag) && validateTag(tag));
-          const localTags = tags.map(tag => existTag(tag) || {
+          const localTags = tags.map(tag => saveKeyMap.value[tag] || {
             [saveKey]: tag,
             [displayKey]: tag,
           });
@@ -774,7 +797,8 @@ export default defineComponent({
           newValue = isObject ? item[saveKey] : item.trim();
           newValue = newValue.replace(/\s+/g, '');
           if (newValue !== undefined && !tagList.value.includes(newValue) && validateTag(newValue)) {
-            const localItem = existTag(newValue) || (isObject ? item : { [saveKey]: newValue, [displayKey]: newValue });
+            const localItem = saveKeyMap.value[newValue]
+              || (isObject ? item : { [saveKey]: newValue, [displayKey]: newValue });
             listState.selectedTagList.splice(targetIndex, 0, localItem);
             isSelected = true;
           }
@@ -801,7 +825,11 @@ export default defineComponent({
             // focus继续让用户进行下一个输入
             props.allowNextFocus && focusInputTrigger();
             // 将已经选中的项从数据列表中去除
-            listState.localList = listState.localList.filter(val => !tagList.value.includes(val[saveKey]));
+            const selectedMap = tagList.value.reduce((acc, tag) => {
+              acc[tag] = 1;
+              return acc;
+            }, {});
+            listState.localList = listState.localList.filter(val => !selectedMap[val[saveKey]]);
           }
         });
       }
@@ -815,7 +843,7 @@ export default defineComponent({
     const removeTag = (data, index) => {
       listState.selectedTagList.splice(index, 1);
 
-      const isExistInit = formatList.some(item => item === data[props.saveKey]);
+      const isExistInit = saveKeyMap.value[data[props.saveKey]];
 
       // 将删除的项加入加列表
       if (((props.allowCreate && isExistInit) || !props.allowCreate) && !isSingleSelect.value) {
@@ -831,7 +859,6 @@ export default defineComponent({
       isShowPlaceholder,
       isShowClear,
       curInputValue,
-      formatList,
       renderList,
       showTagClose,
       tagInputRef,
@@ -855,41 +882,9 @@ export default defineComponent({
     };
   },
   render() {
-    const renderSelectorList = () => {
-      if (this.useGroup) {
-        return this.renderList.map(group => (
-          <li class="bk-selector-group-item">
-            <span class="group-name">{group.name} ({group.children.length})</span>
-            <ul class="bk-selector-group-list-item">
-              {
-                group.children.map((item, index: number) => (
-                  <li class={['bk-selector-list-item', { disabled: item.disabled }, this.activeClass(item, index)]}
-                    onClick={this.handleTagSelected.bind(this, item, 'select')}>
-                    <ListTagRender node={item}
-                      displayKey={this.displayKey}
-                      tpl={this.tpl}
-                      searchKey={this.searchKey}
-                      searchKeyword={this.curInputValue} />
-                  </li>
-                ))
-              }
-            </ul>
-          </li>
-        ));
-      }
-      return this.renderList.map((item, index: number) => (
-        <li class={['bk-selector-list-item', { disabled: item.disabled }, this.activeClass(item, index)]}
-          onClick={this.handleTagSelected.bind(this, item, 'select')}>
-          <ListTagRender node={item}
-            displayKey={this.displayKey}
-            tpl={this.tpl}
-            searchKey={this.searchKey}
-            searchKeyword={this.curInputValue} />
-        </li>
-      ));
-    };
     return (
-      <div class="bk-tag-input"
+      <div
+        class="bk-tag-input"
         ref="bkTagSelectorRef"
         onClick={this.focusInputTrigger}
         onMouseenter={() => this.isHover = true}
@@ -899,10 +894,10 @@ export default defineComponent({
           theme="light"
           trigger="manual"
           placement="bottom-start"
+          content-cls="bk-tag-input-popover-content"
           arrow={false}
-          width={this.popoverProps.width}
-          isShow={this.popoverProps.isShow}
-          modifiers={this.popoverProps.modifiers}>
+          {...this.popoverProps}
+        >
           {{
             default: () => (
               <div class={this.triggerClass}>
@@ -945,7 +940,36 @@ export default defineComponent({
             content: () => (
               <div class="bk-selector-list">
                 <ul ref="selectorListRef" style={{ 'max-height': `${this.contentMaxHeight}px` }} class="outside-ul">
-                  {renderSelectorList()}
+                  {
+                    this.renderList.map((group, index) => (this.useGroup ? (
+                          <li class="bk-selector-group-item">
+                            <span class="group-name">{group.name} ({group.children.length})</span>
+                            <ul class="bk-selector-group-list-item">
+                              {
+                                group.children.map((item, index: number) => (
+                                  <li class={['bk-selector-list-item', { disabled: item.disabled }, this.activeClass(item, index)]}
+                                    onClick={this.handleTagSelected.bind(this, item, 'select')}>
+                                    <ListTagRender node={item}
+                                      displayKey={this.displayKey}
+                                      tpl={this.tpl}
+                                      searchKey={this.searchKey}
+                                      searchKeyword={this.curInputValue} />
+                                  </li>
+                                ))
+                              }
+                            </ul>
+                          </li>
+                    ) : (
+                          <li class={['bk-selector-list-item', { disabled: group.disabled }, this.activeClass(group, index)]}
+                            onClick={this.handleTagSelected.bind(this, group, 'select')}>
+                            <ListTagRender node={group}
+                              displayKey={this.displayKey}
+                              tpl={this.tpl}
+                              searchKey={this.searchKey}
+                              searchKeyword={this.curInputValue} />
+                          </li>
+                    )))
+                  }
                   {
                     this.isPageLoading
                       ? <li class="bk-selector-list-item loading"><BkLoading theme="primary" size={BkLoadingSize.Small} /></li>

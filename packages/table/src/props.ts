@@ -28,7 +28,7 @@ import { ExtractPropTypes } from 'vue';
 
 import { PropTypes } from '@bkui-vue/shared';
 
-import { BORDER_OPTION, BORDER_OPTIONS, LINE_HEIGHT, TABLE_ROW_ATTRIBUTE } from './const';
+import { BORDER_OPTION, BORDER_OPTIONS, LINE_HEIGHT, ROW_HOVER, ROW_HOVER_OPTIONS, SORT_OPTION, TABLE_ROW_ATTRIBUTE } from './const';
 
 export enum SortScope {
   CURRENT = 'current',
@@ -44,6 +44,10 @@ export type IOverflowTooltip = {
   content: string | Function,
   disabled?: boolean,
   watchCellResize?: boolean
+};
+
+export type ISortOption = {
+  [key: string]: SORT_OPTION;
 };
 
 export const IColumnType = {
@@ -68,7 +72,7 @@ export const IColumnType = {
     PropTypes.shape({
       sortFn: PropTypes.func.def(undefined),
       sortScope: PropTypes.commonType(Object.values(SortScope)).def(SortScope.CURRENT),
-      value: PropTypes.string,
+      value: PropTypes.string.def(SORT_OPTION.NULL),
     }),
     PropTypes.bool,
     PropTypes.string]).def(false),
@@ -196,6 +200,7 @@ export const tableProps = {
       limit: PropTypes.number.def(0),
       size: PropTypes.size(['small', 'medium', 'large']).def('small'),
       sizeList: PropTypes.shape<SizeItem[]>([]),
+      showLineHeight: PropTypes.bool.def(true),
     }), PropTypes.bool]).def(false),
 
   /**
@@ -249,9 +254,10 @@ export const tableProps = {
   isSelectedFn: PropTypes.func.def(undefined),
 
   /**
-   * 行数据的 Key，用来优化 Table 的渲染；
+   * 行数据的 Key，用来优化 Table 的渲染
+   * 此key用于渲染table row的key，便于大数据渲染时的性能优化
    * 在使用 reserve-selection, reserve-expand 功能的情况下，该属性是必填的。
-   * 类型为 String 时，支持多层访问：user.info.id，但不支持 user.info[0].id，此种情况请使用 Function
+   * 类型为 String 时，支持多层访问：user.info.id，同时支持 user.info[0].id
    */
   rowKey: PropTypes.oneOfType([
     PropTypes.string,
@@ -275,6 +281,18 @@ export const tableProps = {
    * 目前只会对指定了selectionKey的情况下才会对指定的字段数据进行更新，同时需要指定 rowKey，保证匹配到的row是正确的目标对象
    */
   asyncData: PropTypes.bool.def(false),
+
+  /**
+   * 鼠标划过行样式行为
+   * @param { ROW_HOVER.AUTO }
+   * @param { ROW_HOVER.HIGHLIGHT }
+   */
+  rowHover: PropTypes.oneOf(ROW_HOVER_OPTIONS).def(ROW_HOVER.HIGHLIGHT),
+
+  /**
+   * 默认的排序列的 prop 和顺序。它的 prop 属性指定默认的排序的列，order指定默认排序的顺序
+   */
+  defaultSort: PropTypes.shape<ISortOption>({}).def({}),
 };
 
 
@@ -292,7 +310,8 @@ export type Settings = {
   checked?: string[];
   limit?: number;
   size?: string;
-  sizeList?: SizeItem[]
+  sizeList?: SizeItem[];
+  showLineHeight?: boolean;
 };
 
 export type Field = {

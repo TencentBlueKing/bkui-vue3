@@ -33,6 +33,17 @@ export const enum BORDER_OPTION {
 }
 
 /**
+ * 鼠标划过行样式
+ */
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export const enum ROW_HOVER {
+  HIGHLIGHT = 'highlight',
+  AUTO = 'auto'
+}
+
+export const ROW_HOVER_OPTIONS = [ROW_HOVER.AUTO, ROW_HOVER.HIGHLIGHT];
+
+/**
  * 边框配置可选项
  */
 export const BORDER_OPTIONS = [BORDER_OPTION.NONE, BORDER_OPTION.ROW, BORDER_OPTION.COL, BORDER_OPTION.OUTER];
@@ -47,7 +58,8 @@ export const enum EVENTS {
   ON_ROW_CHECK = 'onRowCheck'
 }
 
-export const enum EMITEVENTS {
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export const enum EMIT_EVENTS {
   COLUMN_PICK = 'columnPick',
   COLUMN_SORT = 'columnSort',
   COLUMN_FILTER = 'columnFilter',
@@ -72,24 +84,24 @@ export const enum EMITEVENTS {
 const EMPTY = (..._args) => true;
 
 export const EMIT_EVENT_TYPES = {
-  [EMITEVENTS.COLUMN_PICK]: EMPTY,
-  [EMITEVENTS.COLUMN_FILTER]: EMPTY,
-  [EMITEVENTS.COLUMN_SORT]: EMPTY,
-  [EMITEVENTS.COLUMN_FILTER_SAVE]: EMPTY,
+  [EMIT_EVENTS.COLUMN_PICK]: EMPTY,
+  [EMIT_EVENTS.COLUMN_FILTER]: EMPTY,
+  [EMIT_EVENTS.COLUMN_SORT]: EMPTY,
+  [EMIT_EVENTS.COLUMN_FILTER_SAVE]: EMPTY,
 
-  [EMITEVENTS.ROW_CLICK]: EMPTY,
-  [EMITEVENTS.ROW_DBL_CLICK]: EMPTY,
-  [EMITEVENTS.ROW_EXPAND_CLICK]: EMPTY,
+  [EMIT_EVENTS.ROW_CLICK]: EMPTY,
+  [EMIT_EVENTS.ROW_DBL_CLICK]: EMPTY,
+  [EMIT_EVENTS.ROW_EXPAND_CLICK]: EMPTY,
 
-  [EMITEVENTS.ROW_SELECT]: EMPTY,
-  [EMITEVENTS.ROW_SELECT_ALL]: EMPTY,
-  [EMITEVENTS.ROW_SELECT_CHANGE]: EMPTY,
+  [EMIT_EVENTS.ROW_SELECT]: EMPTY,
+  [EMIT_EVENTS.ROW_SELECT_ALL]: EMPTY,
+  [EMIT_EVENTS.ROW_SELECT_CHANGE]: EMPTY,
 
-  [EMITEVENTS.PAGE_LIMIT_CHANGE]: EMPTY,
-  [EMITEVENTS.PAGE_VALUE_CHANGE]: EMPTY,
+  [EMIT_EVENTS.PAGE_LIMIT_CHANGE]: EMPTY,
+  [EMIT_EVENTS.PAGE_VALUE_CHANGE]: EMPTY,
 
-  [EMITEVENTS.SETTING_CHANGE]: EMPTY,
-  [EMITEVENTS.SCROLL_BOTTOM]: EMPTY,
+  [EMIT_EVENTS.SETTING_CHANGE]: EMPTY,
+  [EMIT_EVENTS.SCROLL_BOTTOM]: EMPTY,
 };
 
 /**
@@ -102,6 +114,7 @@ export const TABLE_ROW_ATTRIBUTE = {
   ROW_SELECTION: '__row_selection',
   ROW_SELECTION_ALL: '__row_selection_all',
   ROW_SELECTION_INDETERMINATE: '__row_selection_indeterminate',
+  ROW_SOURCE_DATA: '__row_source_data',
 };
 
 /**
@@ -130,3 +143,15 @@ export const DEFAULT_SIZE_LIST = [
  * Provide key: init column when use <column { ...props }> template
  */
 export const PROVIDE_KEY_INIT_COL = 'InitColumns';
+
+/**
+ * 排序可选择项
+ */
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export const enum SORT_OPTION {
+  ASC = 'asc',
+  DESC = 'desc',
+  NULL = 'null'
+}
+
+export const SORT_OPTIONS = [SORT_OPTION.ASC, SORT_OPTION.DESC, SORT_OPTION.NULL];
