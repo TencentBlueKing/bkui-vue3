@@ -27,5 +27,10 @@
     "vue",
     "scss",
     "sass"
-  ]
+  ],
+  "preCI.localCodeCheck.filter.whitePath": "",
+  "preCI.localCodeCheck.filter.skipPath": ".*/\\.codecc/.*",
+  "preCI.localCodeCheck.preCommit": "none",
+  "preCI.localCodeCheck.prePush": "none",
+  "preCI.pipeline.yamlFilePath": "build.yml"
 }

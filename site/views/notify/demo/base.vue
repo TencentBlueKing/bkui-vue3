@@ -14,7 +14,7 @@
 </template>
 
 <script>
-  import BkNotify from '@bkui-vue/notify';
+  import { Notify } from 'bkui-vue';
 
   export default {
     data() {
@@ -25,13 +25,13 @@
     },
     methods: {
       handleDefault() {
-        BkNotify({
+        Notify({
           title: this.title,
           message: this.message,
         });
       },
       handleHideTitle() {
-        BkNotify({
+        Notify({
           message: this.message,
         });
       },

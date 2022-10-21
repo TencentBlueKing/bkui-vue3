@@ -22,7 +22,7 @@
 </template>
 
 <script>
-  import BkNotify from '@bkui-vue/notify';
+  import { Notify } from 'bkui-vue';
 
   export default {
     data() {
@@ -38,7 +38,7 @@
           message: this.message,
           ...config,
         };
-        BkNotify(notifyConfig);
+        Notify(notifyConfig);
       },
     },
   };

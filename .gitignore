@@ -36,3 +36,4 @@ yarn*
 package-lock.json
 themes.variable.less
 .history
+.codecc
