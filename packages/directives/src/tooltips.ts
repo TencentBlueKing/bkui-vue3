@@ -47,8 +47,8 @@ const nodeList = new Map();
 const tooltips: ObjectDirective = {
   beforeMount(el: HTMLElement, binding: DirectiveBinding) {
     const opts = getOpts(binding);
-    const { trigger, content, arrow, theme, extCls } = opts.value;
-    const popper = renderContent(content, arrow, theme === 'light', extCls);
+    const { trigger } = opts.value;
+    const popper = renderContent(opts);
 
     if (trigger === 'hover') {
       let hideTimeout = null;
@@ -115,7 +115,11 @@ function initOptions(): IOptions {
   return defaultOpts;
 }
 
-function getOpts(binding) {
+/**
+ * 获取配置
+ * @returns tooltips配置
+ */
+function getOpts(binding: DirectiveBinding) {
   const opts = ref(initOptions());
   if (typeof binding.value === 'object') {
     Object.assign(opts.value, binding.value);
@@ -127,13 +131,12 @@ function getOpts(binding) {
 
 /**
  * 创建tooltips DOM
- * @param value
- * @param hasArrow
- * @param isLight
- * @param extCls
+ * @param opts
  * @returns
  */
-function renderContent(value: string, hasArrow: boolean, isLight: boolean, extCls: string): HTMLElement {
+function renderContent(opts): HTMLElement {
+  const { content: value, arrow: hasArrow, theme, extCls } = opts.value;
+  const isLight = theme === 'light';
   const zIndex = bkZIndexManager.getPopperIndex();
   const content = document.createElement('div');
   content.className = `bk-popper ${isLight ? 'light' : 'dark'} ${extCls}`;
@@ -188,8 +191,13 @@ function createPopperInstance(el: HTMLElement, popper: HTMLElement) {
  */
 function show(el: HTMLElement) {
   const { popper, binding } = nodeList.get(el);
-  const { disabled, onShow } = getOpts(binding).value;
+  const { disabled, content, arrow: hasArrow, onShow } = getOpts(binding).value;
   if (disabled) return;
+  popper.innerText = content;
+  if (hasArrow) {
+    const arrow = renderArrow();
+    popper.appendChild(arrow);
+  }
   document.body.appendChild(popper);
   const popperInstance = createPopperInstance(el, popper);
   onShow();
