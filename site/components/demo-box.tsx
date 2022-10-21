@@ -32,7 +32,7 @@ import BkMessage from '@bkui-vue/message';
 import BoxIcon from './box-icon';
 import CodeBox from './code-box';
 import CommonBox from './common-box';
-import Stackblitz from './stackblitz.vue';
+import Stackblitz from './stackblitz';
 
 import './demo-box.less';
 
