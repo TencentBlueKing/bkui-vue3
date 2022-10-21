@@ -32,7 +32,7 @@
 </template>
 
 <script>
-  import BkNotify from '@bkui-vue/notify';
+  import { Notify } from 'bkui-vue';
 
   export default {
     data() {
@@ -51,7 +51,7 @@
       handleSingle(config) {
         config.title = this.title;
         config.message = this.message;
-        BkNotify(config);
+        Notify(config);
       },
     },
   };

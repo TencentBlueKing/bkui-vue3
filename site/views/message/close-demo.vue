@@ -22,7 +22,7 @@
 </template>
 
 <script>
-  import BkMessage from '@bkui-vue/message';
+  import { Message } from 'bkui-vue';
 
   export default {
     name: 'ThemeDemo',
@@ -37,7 +37,7 @@
           message: this.defaultMessage,
           ...config,
         };
-        BkMessage(messageConfig);
+        Message(messageConfig);
       },
     },
   };
