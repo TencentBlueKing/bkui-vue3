@@ -35,7 +35,6 @@ export default defineComponent({
     displayKey: PropTypes.string,
     tpl: {
       type: Function,
-      default: null,
     },
   },
   render() {

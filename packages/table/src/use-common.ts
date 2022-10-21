@@ -218,13 +218,16 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
 
   const updateColGroups = () => {
     const checked = (props.settings as Settings)?.checked || [];
+    const settingFields = (props.settings as Settings)?.fields || [];
+    const isSettingField = (col: Column) => settingFields.some(field => field.field === resolvePropVal(col, 'field', [col]));
+
     colgroups.splice(0, colgroups.length, ...(getColumns())
       .map(col => ({
         ...col,
         calcWidth: null,
         resizeWidth: null,
         listeners: new Map(),
-        isHidden: checked.length && !checked.includes(resolvePropVal(col, ['field', 'type'], [col])),
+        isHidden: isSettingField(col) && checked.length && !checked.includes(resolvePropVal(col, ['field', 'type'], [col])),
       })));
   };
 

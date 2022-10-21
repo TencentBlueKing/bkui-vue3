@@ -154,4 +154,4 @@ export const enum SORT_OPTION {
   NULL = 'null'
 }
 
-export const SORT_OPTIONS = [SORT_OPTION.ASC, SORT_OPTION.DESC];
+export const SORT_OPTIONS = [SORT_OPTION.ASC, SORT_OPTION.DESC, SORT_OPTION.NULL];

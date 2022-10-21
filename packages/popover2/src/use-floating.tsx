@@ -42,14 +42,27 @@ import { PopoverPropTypes } from './props';
 import usePlatform from './use-platform';
 
 
-export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow, refRoot) => {
+export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArrow, refRoot }) => {
   const localIsShow = ref(false);
+  const fullScreenTarget = ref();
   const isElementFullScreen = () => {
     const elReference = resolveTargetElement(refReference.value?.$el);
     if (document.fullscreenElement?.shadowRoot) {
       return document.fullscreenElement.shadowRoot.contains(elReference);
     }
     return document.fullscreenElement?.contains(elReference);
+  };
+
+  const getFullscreenRoot = (selector) => {
+    if (isElementFullScreen()) {
+      if (document.fullscreenElement.shadowRoot) {
+        return document.fullscreenElement.shadowRoot.querySelector(selector);
+      }
+
+      return document.fullscreenElement.querySelector(selector);
+    }
+
+    return document.body;
   };
 
   const themeList = ['dark', 'light'];
@@ -61,8 +74,8 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
     return { systemThemes, customThemes };
   });
 
-  const isHideMiddlewareAvailable = () => !isElementFullScreen() && props.autoVisibility;
-  const isAutoPlacemntAvailable = () => isElementFullScreen() || props.autoPlacement;
+  const isHideMiddlewareAvailable = () => props.autoVisibility;
+  const isAutoPlacementAvailable = () => props.autoPlacement;
   const resolvePopElements = () => {
     const elReference = resolveTargetElement(refReference.value?.$el);
     const elContent = resolveTargetElement(refContent.value?.$el);
@@ -85,7 +98,7 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
       middleware.push(arrow({ element: elArrow }));
     }
 
-    if (isAutoPlacemntAvailable()) {
+    if (isAutoPlacementAvailable()) {
       middleware.push(autoPlacement());
     } else {
       middleware.unshift(inline());
@@ -101,7 +114,7 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
         getElementRects,
         getDimensions,
         getClippingRect,
-      } = usePlatform();
+      } = usePlatform(fullScreenTarget.value);
 
       Object.assign(options, {
         platform: {
@@ -300,6 +313,10 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
     return triggerEvents[props.trigger] ?? [];
   };
 
+  const updateFullscreenTarget = (val?: HTMLElement) => {
+    fullScreenTarget.value = val;
+  };
+
   watch(localIsShow, (val) => {
     if (val) {
       hanldePopoverShow();
@@ -318,6 +335,8 @@ export default (props: PopoverPropTypes, ctx, refReference, refContent, refArrow
     isElementFullScreen,
     resolveTargetElement,
     createPopInstance,
+    updateFullscreenTarget,
+    getFullscreenRoot,
     localIsShow,
     cleanup,
   };

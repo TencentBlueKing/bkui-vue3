@@ -62,7 +62,6 @@ export const propsCollapse = {
 export const CollapsePanelEventProps = {
   itemClick: {
     type: Function,
-    default: null,
   },
 };
 export const propsCollapsePanel = {

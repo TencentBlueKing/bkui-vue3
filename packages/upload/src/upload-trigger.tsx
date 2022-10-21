@@ -43,7 +43,6 @@ export default defineComponent({
     accept: uploadProps.accept,
     file: {
       type: Object as PropType<UploadFile>,
-      default: null,
     },
   },
   emits: ['change', 'remove'],

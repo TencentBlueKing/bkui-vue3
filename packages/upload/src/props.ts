@@ -143,14 +143,12 @@ export default {
     type: Function as PropType<(
       file: UploadRawFile
     ) => Promise<boolean> | boolean>,
-    default: null,
   },
   beforeRemove: {
     type: Function as PropType<(
       file: UploadFile,
       uploadFiles: UploadFile[]
     ) => Promise<boolean> | boolean>,
-    default: null,
   },
   sliceUpload: {
     type: Boolean,
