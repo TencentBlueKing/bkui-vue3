@@ -54,8 +54,8 @@ export const useSearchSelectProvider = (data: ISearchSelectProvider) => {
 export const useSearchSelectInject = () => inject(SEARCH_SLECT_PROVIDER_KEY);
 
 export enum SearchInputMode {
-  'DEFAULT',
-  'EDIT'
+  'DEFAULT' = 'default',
+  'EDIT' = 'edit'
 }
 export interface ICommonItem {
   id: string;
