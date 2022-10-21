@@ -50,7 +50,7 @@ export default defineComponent({
     },
     defautUsingItem: Object as PropType<SelectedItem>,
     mode: {
-      type: Object as PropType<SearchInputMode>,
+      type: String as PropType<SearchInputMode>,
       default: SearchInputMode.DEFAULT,
     },
     geMenuList: Function as PropType<GetMenuListFunc>,
@@ -468,7 +468,7 @@ export default defineComponent({
       if (this.showNoSelectValueError) {
         return <div>包含键值的过滤查询必须有一个值</div>;
       }
-      return this.menuList?.length ? <div ref="popoverRef" class="popover-content">
+      return this.menuList?.length ? <div ref="popoverRef" class="bk-search-select-popover">
       <SearchSelectMenu
         list={this.menuList}
         keyword={this.keyword}

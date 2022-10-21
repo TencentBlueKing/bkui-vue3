@@ -127,10 +127,10 @@ export default defineComponent({
 
     // life hooks
     onMounted(() => {
-      addListener(wrapRef.value.querySelector('.bk-search-select') as HTMLElement, debounceResize);
+      addListener(wrapRef.value.querySelector('.bk-search-select-container') as HTMLElement, debounceResize);
     });
     onBeforeUnmount(() => {
-      removeListener(wrapRef.value.querySelector('.bk-search-select') as HTMLElement, debounceResize);
+      removeListener(wrapRef.value.querySelector('.bk-search-select-container') as HTMLElement, debounceResize);
     });
 
     // edit item
@@ -163,9 +163,9 @@ export default defineComponent({
         overflowIndex.value = -1;
         return;
       }
-      const inputEl = wrapRef.value.querySelector('.bk-search-select');
-      const maxWidth = wrapRef.value.querySelector('.search-input').clientWidth - SELETED_MARGING_RIGHT - 2;
-      const tagList = inputEl.querySelectorAll('.search-input-chip:not(.overflow-chip)');
+      const inputEl = wrapRef.value.querySelector('.bk-search-select-container');
+      const maxWidth = wrapRef.value.querySelector('.search-container').clientWidth - SELETED_MARGING_RIGHT - 2;
+      const tagList = inputEl.querySelectorAll('.search-container-selected:not(.overflow-selected)');
       let width = 0;
       let index = 0;
       let i = 0;
@@ -237,22 +237,22 @@ export default defineComponent({
   render() {
     // vars
     const maxHeight = `${!this.shrink || this.isFocus ?  this.maxHeight : this.minHeight}px`;
-    const showCondition = this.selectedList.length && this.selectedList.slice(-1)[0].type !== 'condition';
+    const showCondition = !!this.selectedList.length && this.selectedList.slice(-1)[0].type !== 'condition';
     const menuSlots = Object.assign({}, this.$slots.menu ? {
       menu: (data: MenuSlotParams) => this.$slots.menu?.(data),
     } : {});
     // render
-    return <div class="search-select-wrap" ref="wrapRef">
+    return <div class="bk-search-select" ref="wrapRef">
     <div
       class={{
-        'bk-search-select': true,
+        'bk-search-select-container': true,
         'is-focus': this.isFocus,
       }}
       onClick={this.handleWrapClick}>
       <div class="search-prefix">
         {this.$slots.prepend?.()}
       </div>
-      <div class="search-input" style={{ maxHeight }}>
+      <div class="search-container" style={{ maxHeight }}>
         <SearchSelected
           data={this.data}
           conditions={this.conditions}
@@ -262,7 +262,7 @@ export default defineComponent({
           validateValues={this.validateValues}
           onDelete={this.handleDeleteSelected}
           v-slots={{ ...menuSlots }}/>
-        <div class="search-input-input">
+        <div class="search-container-input">
           <SearchSelectInput
            ref="inputRef"
            data={this.data}
@@ -291,7 +291,7 @@ export default defineComponent({
       </div>
     </div>
     {
-      !!this.validateStr.length && <div class="bk-select-tips">
+      !!this.validateStr.length && <div class="bk-search-select-tips">
         {
           this.$slots.validate ? this.$slots.validate() : <>
             <ExclamationCircleShape class="select-tips"/>{this.validateStr || ''}
