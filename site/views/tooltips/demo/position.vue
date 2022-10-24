@@ -63,10 +63,9 @@
 </template>
 
 <script>
+  import { bkTooltips } from 'bkui-vue';
+  import { Info } from 'bkui-vue/lib/icon';
   import { defineComponent } from 'vue';
-
-  import { bkTooltips } from '@bkui-vue/directives';
-  import { Info } from '@bkui-vue/icon';
 
   export default defineComponent({
     components: {

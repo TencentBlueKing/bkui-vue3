@@ -24,7 +24,7 @@
 * IN THE SOFTWARE.
 */
 
-import { DirectiveBinding, ObjectDirective } from 'vue';
+import { DirectiveBinding, ObjectDirective, ref } from 'vue';
 
 import { bkZIndexManager } from '@bkui-vue/shared';
 import { createPopper, Placement } from '@popperjs/core';
@@ -46,17 +46,9 @@ const nodeList = new Map();
 
 const tooltips: ObjectDirective = {
   beforeMount(el: HTMLElement, binding: DirectiveBinding) {
-    const opts = initOptions();
-    if (typeof binding.value === 'object') {
-      Object.assign(opts, binding.value);
-    } else {
-      opts.content = binding.value;
-    }
-    const { disabled, trigger, content, arrow, theme, extCls } = opts;
-    if (disabled) {
-      return;
-    }
-    const popper = renderContent(content, arrow, theme === 'light', extCls);
+    const opts = getOpts(binding);
+    const { trigger } = opts.value;
+    const popper = renderContent(opts);
 
     if (trigger === 'hover') {
       let hideTimeout = null;
@@ -91,13 +83,14 @@ const tooltips: ObjectDirective = {
     }
 
     nodeList.set(el, {
-      opts,
+      binding,
       popper,
       popperInstance: null,
     });
   },
   unmounted(el) {
     hide(el);
+    nodeList.delete(el);
   },
 };
 
@@ -123,14 +116,27 @@ function initOptions(): IOptions {
 }
 
 /**
+ * 获取配置
+ * @returns tooltips配置
+ */
+function getOpts(binding: DirectiveBinding) {
+  const opts = ref(initOptions());
+  if (typeof binding.value === 'object') {
+    Object.assign(opts.value, binding.value);
+  } else {
+    opts.value.content = binding.value;
+  }
+  return opts;
+}
+
+/**
  * 创建tooltips DOM
- * @param value
- * @param hasArrow
- * @param isLight
- * @param extCls
+ * @param opts
  * @returns
  */
-function renderContent(value: string, hasArrow: boolean, isLight: boolean, extCls: string): HTMLElement {
+function renderContent(opts): HTMLElement {
+  const { content: value, arrow: hasArrow, theme, extCls } = opts.value;
+  const isLight = theme === 'light';
   const zIndex = bkZIndexManager.getPopperIndex();
   const content = document.createElement('div');
   content.className = `bk-popper ${isLight ? 'light' : 'dark'} ${extCls}`;
@@ -161,7 +167,8 @@ function renderArrow(): HTMLElement {
  * @returns popper实例
  */
 function createPopperInstance(el: HTMLElement, popper: HTMLElement) {
-  const { placement, distance, showOnInit } = nodeList.get(el).opts;
+  const { binding } = nodeList.get(el);
+  const { placement, distance, showOnInit } = getOpts(binding).value;
   const popperInstance = createPopper(el, popper, {
     placement,
     modifiers: [
@@ -183,7 +190,14 @@ function createPopperInstance(el: HTMLElement, popper: HTMLElement) {
  * @param el
  */
 function show(el: HTMLElement) {
-  const { popper, opts: { onShow } } = nodeList.get(el);
+  const { popper, binding } = nodeList.get(el);
+  const { disabled, content, arrow: hasArrow, onShow } = getOpts(binding).value;
+  if (disabled) return;
+  popper.innerText = content;
+  if (hasArrow) {
+    const arrow = renderArrow();
+    popper.appendChild(arrow);
+  }
   document.body.appendChild(popper);
   const popperInstance = createPopperInstance(el, popper);
   onShow();
@@ -210,7 +224,8 @@ function show(el: HTMLElement) {
  */
 function hide(el: HTMLElement) {
   if (!nodeList.get(el)) return;
-  const { popper, popperInstance, opts: { onHide } } = nodeList.get(el);
+  const { popper, popperInstance, binding } = nodeList.get(el);
+  const { onHide } = getOpts(binding).value;
   if (popper && document.body.contains(popper)) {
     popper.removeAttribute('data-show');
     popperInstance?.destroy();

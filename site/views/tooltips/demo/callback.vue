@@ -8,11 +8,9 @@
 </template>
 
 <script>
+  import { bkTooltips, Message } from 'bkui-vue';
+  import { Info } from 'bkui-vue/lib/icon';
   import { defineComponent } from 'vue';
-
-  import { bkTooltips } from '@bkui-vue/directives';
-  import { Info } from '@bkui-vue/icon';
-  import BkMessage from '@bkui-vue/message';
 
   export default defineComponent({
     components: {
@@ -25,13 +23,13 @@
       const config = {
         content: '提示信息',
         onShow: () => {
-          BkMessage({
+          Message({
             theme: 'success',
             message: 'onShow',
           });
         },
         onHide: () => {
-          BkMessage({
+          Message({
             theme: 'error',
             message: 'onHide',
           });
