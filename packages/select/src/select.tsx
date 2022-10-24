@@ -641,6 +641,7 @@ export default defineComponent({
           disabled={this.isDisabled}
           behavior={this.behavior}
           size={this.size}
+          withValidate={false}
           onInput={this.handleInputChange}
           onEnter={this.handleInputEnter}>
             {{
