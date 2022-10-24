@@ -26,6 +26,11 @@
   .@{bk-prefix}-table-body {
     position: relative;
     overflow: auto;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
   }
 
   .@{bk-prefix}-fixed-bottom-border {

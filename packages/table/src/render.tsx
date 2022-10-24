@@ -42,7 +42,7 @@ import { TablePlugins } from './plugins/index';
 import Settings from './plugins/settings';
 import useFixedColumn from './plugins/use-fixed-column';
 import { Column, GroupColumn, IColumnActive, IReactiveProp, TablePropTypes } from './props';
-import { formatPropAsArray, getColumnReactWidth, getRowText, resolveHeadConfig, resolvePropVal, resolveWidth } from './utils';
+import { formatPropAsArray, getColumnReactWidth, getRowText, isColumnHidden, resolveHeadConfig, resolvePropVal, resolveWidth } from './utils';
 
 export default class TableRender {
   props: TablePropTypes;
@@ -81,9 +81,10 @@ export default class TableRender {
       const { checked = [], size, height } = arg;
       this.reactiveProp.setting.size = size;
       this.reactiveProp.setting.height = height;
+      const settingFields = (this.props.settings as any)?.fields || [];
       if (checked.length) {
         this.colgroups.forEach((col: GroupColumn) => {
-          col.isHidden = !(checked ?? []).includes(resolvePropVal(col, ['field', 'type'], [col]));
+          col.isHidden = isColumnHidden(settingFields, col, checked);
         });
       }
       this.emitEvent(EVENTS.ON_SETTING_CHANGE, [arg]);
@@ -309,8 +310,7 @@ export default class TableRender {
         });
       }, {});
 
-    const { getFixedColumnStyleResolve } = useFixedColumn(this.props, this.colgroups);
-    const { resolveFixedColumnStyle, fixedOffset } = getFixedColumnStyleResolve();
+    const { resolveFixedColumnStyle } = useFixedColumn(this.props, this.colgroups);
     // @ts-ignore:next-line
     return <thead style={rowStyle}>
       <TableRow>
@@ -318,7 +318,7 @@ export default class TableRender {
           {
             this.filterColgroups.map((column: Column, index: number) => <th colspan={1} rowspan={1}
               class={ this.getHeadColumnClass(column, index) }
-              style = { resolveFixedColumnStyle(column, fixedOffset) }
+              style = { resolveFixedColumnStyle(column) }
               onClick={ () => this.handleColumnHeadClick(index) }
               { ...resolveEventListener(column) }>
                 <TableCell>
@@ -336,7 +336,7 @@ export default class TableRender {
    * @returns
    */
   private renderTBody(rows: any[]) {
-    const { getFixedColumnStyleResolve } = useFixedColumn(this.props, this.colgroups);
+    const { resolveFixedColumnStyle } = useFixedColumn(this.props, this.colgroups);
 
     return <tbody>
     {
@@ -353,7 +353,6 @@ export default class TableRender {
           `hover-${this.props.rowHover}`,
         ];
 
-        const { resolveFixedColumnStyle,  fixedOffset } = getFixedColumnStyleResolve();
         const rowKey = row[TABLE_ROW_ATTRIBUTE.ROW_UID];
         return [
           <TableRow key={rowKey}>
@@ -367,7 +366,7 @@ export default class TableRender {
             {
               this.filterColgroups.map((column: Column, index: number) => {
                 const cellStyle = [
-                  resolveFixedColumnStyle(column, fixedOffset),
+                  resolveFixedColumnStyle(column),
                   ...formatPropAsArray(this.props.cellStyle, [column, index, row, rowIndex, this]),
                 ];
 
