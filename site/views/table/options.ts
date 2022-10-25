@@ -186,6 +186,11 @@ export const DATA_FIX_TABLE = [
 
 export const DATA_FIX_COLUMNS = [
   {
+    type: 'selection',
+    width: 100,
+    fixed: true,
+  },
+  {
     label: '序号',
     type: 'index',
     sort: true,
