@@ -49,7 +49,11 @@ export default defineConfig({
         replacement: resolve(__dirname, '.'),
       },
       {
-        find: '^bkui-vue$',
+        find: /^@?bkui-vue\/lib\/icon/,
+        replacement: resolve(__dirname, '../packages/icon/src/index'),
+      },
+      {
+        find: /^bkui-vue$/,
         replacement: resolve(__dirname, '../packages/bkui-vue/index'),
       },
       {

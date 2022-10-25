@@ -417,3 +417,8 @@ export const getElementTextWidth = (element: HTMLElement, text?: string) => {
   return getTextWidth(text || element?.innerHTML, getCanvasFont(element));
 };
 
+
+export const isColumnHidden = (settingFields, column, checked) => {
+  const isSettingField = (col: Column) => settingFields.some(field => field.field === resolvePropVal(col, ['field', 'type'], [col]));
+  return isSettingField(column) && checked.length && !checked.includes(resolvePropVal(column, ['field', 'type'], [column]));
+};

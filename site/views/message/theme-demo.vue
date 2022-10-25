@@ -28,7 +28,7 @@
 </template>
 
 <script>
-  import BkMessage from '@bkui-vue/message';
+  import { Message } from 'bkui-vue';
 
   export default {
     name: 'ThemeDemo',
@@ -37,25 +37,25 @@
     },
     methods: {
       handlePrimary() {
-        BkMessage({
+        Message({
           theme: 'primary',
           message: '选择你导入的构建机并填写相关信息，系统将为你安装必要的软件',
         });
       },
       handleSuccess() {
-        BkMessage({
+        Message({
           theme: 'success',
           message: '恭喜！你提交的申请已经审核通过，请及时跟进了解下一步操作方式',
         });
       },
       handleWarning() {
-        BkMessage({
+        Message({
           theme: 'warning',
           message: '系统即将于19：00-21：00进行升个级，请及时保存你的资料',
         });
       },
       handleError() {
-        BkMessage({
+        Message({
           theme: 'error',
           message: '系统错误，请稍后重试',
         });

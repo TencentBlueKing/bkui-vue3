@@ -24,11 +24,12 @@
 * IN THE SOFTWARE.
 */
 import { get as objGet, has as objHas, set as objSet } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
 import { computed, onMounted, reactive, ref, watch } from 'vue';
 
 import { classes, resolveClassName } from '@bkui-vue/shared';
 
-import { BORDER_OPTION, LINE_HEIGHT, SCROLLY_WIDTH, SETTING_SIZE, TABLE_ROW_ATTRIBUTE } from './const';
+import { BORDER_OPTION, COLUMN_ATTRIBUTE, LINE_HEIGHT, SCROLLY_WIDTH, SETTING_SIZE, TABLE_ROW_ATTRIBUTE } from './const';
 import useActiveColumns from './plugins/use-active-columns';
 import useColumnResize from './plugins/use-column-resize';
 import useFixedColumn from './plugins/use-fixed-column';
@@ -37,6 +38,7 @@ import useColumn from './use-column';
 import {
   getRowKey,
   hasRootScrollY,
+  isColumnHidden,
   resolveHeadConfig,
   resolveNumberOrStringToPix,
   resolvePropBorderToClassStr,
@@ -217,17 +219,28 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
   const { getColumns } = useColumn(props, targetColumns);
 
   const updateColGroups = () => {
+    const checked = (props.settings as Settings)?.checked || [];
+    const settingFields = (props.settings as Settings)?.fields || [];
+
     colgroups.splice(0, colgroups.length, ...(getColumns())
       .map(col => ({
         ...col,
         calcWidth: null,
         resizeWidth: null,
         listeners: new Map(),
+        isHidden: isColumnHidden(settingFields, col, checked),
+        [COLUMN_ATTRIBUTE.COL_UID]: uuidv4(),
       })));
   };
 
   const { dragOffsetXStyle, dragOffsetX, resetResizeEvents, registerResizeEvent } = useColumnResize(colgroups, true);
   const { activeColumns } = useActiveColumns(props, targetColumns);
+
+  watch(() => [props.settings], () => {
+    if (((props.settings as Settings)?.checked || []).length) {
+      updateColGroups();
+    }
+  });
 
   watch(() => [props.columns, targetColumns], () => {
     updateColGroups();
@@ -378,7 +391,7 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
    * @param thenFn 如果table data没有满足判定条件，后续判定逻辑函数，返回 boolean
    * @returns Boolean
    */
-  const resolveSelectionRow = (row: any, thenFn = () => false) => {
+  const resolveSelectionRow = (row: any, thenFn = row => validateSelectionFn(row)) => {
     if (typeof props.isSelectedFn === 'function') {
       return Reflect.apply(props.isSelectedFn, this, [{ row, data: props.data }]);
     }
@@ -387,7 +400,7 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
       return objGet(row, props.selectionKey);
     }
 
-    return thenFn();
+    return thenFn(row);
   };
 
   /**
@@ -425,6 +438,7 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
         [TABLE_ROW_ATTRIBUTE.ROW_UID]: rowId,
         [TABLE_ROW_ATTRIBUTE.ROW_EXPAND]: keepLocalAction ? isRowExpand(rowId) : false,
         [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: resolveSelection(item, rowId),
+        [TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA]: { ...item },
       };
     }));
 

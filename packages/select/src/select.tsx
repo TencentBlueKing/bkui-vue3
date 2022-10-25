@@ -526,6 +526,7 @@ export default defineComponent({
       registerGroup,
       unregisterGroup,
       handleOptionSelected,
+      handleGetLabelByValue,
     }));
 
     onMounted(() => {
@@ -640,6 +641,7 @@ export default defineComponent({
           disabled={this.isDisabled}
           behavior={this.behavior}
           size={this.size}
+          withValidate={false}
           onInput={this.handleInputChange}
           onEnter={this.handleInputEnter}>
             {{
@@ -719,7 +721,8 @@ export default defineComponent({
                               )),
                           }}
                       </VirtualRender>
-                    : this.list.map(item => <Option value={item[this.idKey]} label={item[this.displayKey]}></Option>)
+                    : this.filterList
+                      .map(item => <Option value={item[this.idKey]} label={item[this.displayKey]}></Option>)
                 }
                 {this.$slots.default?.()}
                 {this.scrollLoading && (

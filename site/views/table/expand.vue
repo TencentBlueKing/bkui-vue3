@@ -1,9 +1,13 @@
 <template>
-  <div class="row">
+  <div
+    class="row"
+    @click="handleTClick"
+  >
     <div class="cell">
       <bk-table
         :columns="columns"
         :data="tableData"
+        @row-expand="handleRowExpand"
       >
         <template #expandRow="row">
           <div style="height: 80px">
@@ -43,6 +47,18 @@
       };
     },
     methods: {
+      handleRowExpand({ row, column, index, rows, e }) {
+        // 可以通过自定义逻辑，阻止事件冒泡
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        e.preventDefault();
+
+        console.log('handleRowExpand', row, column, index, rows);
+      },
+
+      handleTClick() {
+        console.log('handleTClick');
+      },
     },
   });
 </script>

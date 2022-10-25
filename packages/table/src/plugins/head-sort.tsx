@@ -28,19 +28,19 @@ import { defineComponent, ref } from 'vue';
 import { AngleDownFill, AngleUpFill } from '@bkui-vue/icon/';
 import { PropTypes, resolveClassName } from '@bkui-vue/shared';
 
+import { SORT_OPTION, SORT_OPTIONS } from '../const';
 import { getRowText } from '../utils';
-
-import { SortType } from './common';
 
 export default defineComponent({
   name: 'HeadSort',
   props: {
     column: PropTypes.any.def({}),
+    defaultSort: PropTypes.oneOf(SORT_OPTIONS).def(SORT_OPTION.NULL),
   },
   emits: ['change'],
   setup(props, { emit }) {
-    const { value = SortType.NULL } = props.column?.sort ?? {};
-    const sortType = ref(value);
+    const defSort = props.column?.sort?.value || props.defaultSort || SORT_OPTION.NULL;
+    const sortType = ref(defSort);
 
     /**
      * 点击排序事件
@@ -49,13 +49,13 @@ export default defineComponent({
      * @param index 当前列index
      * @param type 排序类型
      */
-    const hanldeSortClick = (e: MouseEvent, type: string) => {
+    const handleSortClick = (e: MouseEvent, type: string) => {
       e.stopImmediatePropagation();
       e.stopPropagation();
       e.preventDefault();
 
       if (sortType.value === type) {
-        sortType.value = SortType.NULL;
+        sortType.value = SORT_OPTION.NULL;
       } else {
         sortType.value = type;
       }
@@ -78,17 +78,17 @@ export default defineComponent({
       };
       const sortFn = typeof (props.column.sort as any)?.sortFn === 'function'
         ? (props.column.sort as any)?.sortFn : sortFn0;
-      const execFn = sortType.value === SortType.NULL
+      const execFn = sortType.value === SORT_OPTION.NULL
         ? (() => true)
-        : (_a, _b) => sortFn(_a, _b) * (type === SortType.DESC ? -1 : 1);
+        : (_a, _b) => sortFn(_a, _b) * (type === SORT_OPTION.DESC ? -1 : 1);
 
       emit('change', execFn, type);
     };
     return () => <span class={ resolveClassName('head-cell-sort') }>
-    <AngleDownFill class={['sort-action', 'sort-asc', sortType.value === SortType.ASC ? 'active' : '']}
-      onClick={(e: MouseEvent) => hanldeSortClick(e, SortType.ASC)}/>
-    <AngleUpFill class={['sort-action', 'sort-desc', sortType.value === SortType.DESC ? 'active' : '']}
-      onClick={(e: MouseEvent) => hanldeSortClick(e, SortType.DESC)}/>
+    <AngleDownFill class={['sort-action', 'sort-asc', sortType.value === SORT_OPTION.ASC ? 'active' : '']}
+      onClick={(e: MouseEvent) => handleSortClick(e, SORT_OPTION.ASC)}/>
+    <AngleUpFill class={['sort-action', 'sort-desc', sortType.value === SORT_OPTION.DESC ? 'active' : '']}
+      onClick={(e: MouseEvent) => handleSortClick(e, SORT_OPTION.DESC)}/>
   </span>;
   },
 });

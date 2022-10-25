@@ -21,6 +21,7 @@
         tableData: [...DATA_FIX_TABLE],
         columns: [...DATA_FIX_COLUMNS],
         settings: {
+          checked: [],
           fields: [{
                      label: '序号',
                      field: 'index',
@@ -38,7 +39,6 @@
                      label: '创建时间',
                      field: 'create_time',
                    }],
-          checked: ['ip', 'index'],
         },
       };
     },

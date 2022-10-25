@@ -26,12 +26,13 @@
 import ClipboardJS from 'clipboard';
 import { computed, defineComponent, getCurrentInstance, onBeforeMount, onBeforeUnmount, onMounted, ref } from 'vue';
 
-import { Code, Copy, DataShape, PlayShape } from '@bkui-vue/icon';
+import { Code, Copy, DataShape } from '@bkui-vue/icon';
 import BkMessage from '@bkui-vue/message';
 
 import BoxIcon from './box-icon';
 import CodeBox from './code-box';
 import CommonBox from './common-box';
+import Stackblitz from './stackblitz';
 
 import './demo-box.less';
 
@@ -143,7 +144,7 @@ export default defineComponent({
           <div class="example-tools">
             {this.desc}
               <BoxIcon tips='执行' style={{ marginLeft: 'auto' }}>
-                  <PlayShape/>
+                  <Stackblitz code={this.activeCode}/>
               </BoxIcon>
             <BoxIcon
               tips='代码'

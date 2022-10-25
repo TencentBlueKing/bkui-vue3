@@ -26,7 +26,7 @@
 
 import { defineComponent, Transition } from 'vue';
 
-import { bkPopIndexManager } from '@bkui-vue/shared';
+import { BKPopIndexManager } from '@bkui-vue/shared';
 
 import { propsMixin } from './props.mixin';
 
@@ -39,6 +39,7 @@ export default defineComponent({
   data() {
     return {
       visible: false,
+      bkPopIndexManager: null,
     };
   },
   computed: {
@@ -77,31 +78,41 @@ export default defineComponent({
           }, 250);
         }
       },
+      immediate: true,
       deep: true,
     },
     visible(val: boolean) {
       if (val) {
+        this.bkPopIndexManager = new BKPopIndexManager();
+        this.bkPopIndexManager.onMaskClick((_e: MouseEvent) => {
+          this.handleClickOutSide();
+        });
         this.$nextTick(() => {
           const hideMaskStyle = {
             'background-color': 'rgba(0,0,0,0)',
           };
           const appendStyle = this.showMask ? {} : hideMaskStyle;
-          bkPopIndexManager.show(this.$el, this.showMask, appendStyle, this.transfer, this.zIndex);
+          this.bkPopIndexManager.show(this.$el, this.showMask, appendStyle, this.transfer, this.zIndex);
           this.$emit('shown');
-          this.$emit('quick-close', this.$el);
-          this.$emit('quickClose', this.$el);
         });
       } else {
-        bkPopIndexManager.hide(this.$el, this.transfer);
+        this.bkPopIndexManager?.hide(this.$el, this.transfer);
+        this.bkPopIndexManager?.destroy();
       }
     },
   },
+
   beforeUnmount() {
-    bkPopIndexManager.hide(this.$el);
+    this.bkPopIndexManager?.hide(this.$el);
+    this.bkPopIndexManager?.destroy();
   },
   methods: {
     handleClickOutSide() {
-      this.quickClose && this.$emit('close');
+      if (this.quickClose) {
+        this.$emit('close');
+        this.$emit('quick-close', this.$el);
+        this.$emit('quickClose', this.$el);
+      }
     },
   },
   render() {
@@ -110,8 +121,6 @@ export default defineComponent({
     return (
       <div class={['bk-modal-wrapper', this.extCls, this.size]}
         style={[this.compStyle, this.fullscreen ? this.fullscreenStyle : '']}>
-        <div class="bk-modal-outside" onClick={this.handleClickOutSide} v-show={this.isShow}>
-        </div>
         <Transition name={this.animateType}>
         {this.isShow ? <div class={bodyClass}>
           <div class="bk-modal-header">

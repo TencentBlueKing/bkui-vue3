@@ -23,7 +23,20 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import { v4 as uuidv4 } from 'uuid';
+
+const CachedConst: any = {};
+
 export const isAvailableId = (query: string) => {
   const container = document.querySelector(query);
   return container instanceof HTMLElement;
+};
+
+
+export const getFullscreenUid = () => {
+  if (!CachedConst.fullscreenReferId) {
+    CachedConst.fullscreenReferId = `id_${uuidv4()}`;
+  }
+
+  return CachedConst.fullscreenReferId;
 };

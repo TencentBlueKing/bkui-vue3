@@ -8,10 +8,9 @@
 </template>
 
 <script>
-  import { defineComponent } from 'vue';
-
-  import { bkTooltips } from '@bkui-vue/directives';
-  import { Info } from '@bkui-vue/icon';
+  import { bkTooltips } from 'bkui-vue';
+  import { Info } from 'bkui-vue/lib/icon';
+  import { defineComponent } from 'vue';;
 
   export default defineComponent({
     components: {
