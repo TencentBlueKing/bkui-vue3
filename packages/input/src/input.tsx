@@ -192,7 +192,9 @@ export default defineComponent({
         ctx.emit(EVENTS.UPDATE, val);
         ctx.emit(EVENTS.CHANGE, val);
       }
-      formItem?.validate?.('blur');
+      if (props.withValidate) {
+        formItem?.validate?.('blur');
+      }
     }
     // 事件句柄生成器
     function eventHandler(eventName) {

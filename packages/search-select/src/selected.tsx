@@ -93,7 +93,7 @@ export default defineComponent({
   },
   render() {
     const contentComponent = (item: SelectedItem, index: number) => (this.editKey === `${item.id}_${index}`
-      ? <div class="search-seleted-input" key={this.editKey.toString()}>
+      ? <div class="selected-input" key={this.editKey.toString()}>
           <SearchSelectInput ref="inputRef"
             key={ this.editKey.toString()}
             mode={SearchInputMode.EDIT}
@@ -108,19 +108,19 @@ export default defineComponent({
             onFocus={this.handleInputFocus}/>
         </div>
       : <li
-            class={`search-input-chip ${!(this.overflowIndex >= 0 ? index < this.overflowIndex : index >= 0) ? 'hidden-chip' : ''}`}
+            class={`search-container-selected ${!(this.overflowIndex >= 0 ? index < this.overflowIndex : index >= 0) ? 'hidden-selected' : ''}`}
             key={`${item.id}_${index}`}>
-            <span class="chip-name" onClick={e => this.handleEditSeleted(e, item, index)}>
+            <span class="selected-name" onClick={e => this.handleEditSeleted(e, item, index)}>
               {item.inputInnerText}
             </span>
-            <Close class="chip-clear" onClick={() => this.handleDeleteSelected(index)}/>
+            <Close class="selected-clear" onClick={() => this.handleDeleteSelected(index)}/>
           </li>);
     return <>
       {
         this.selectedList.map((item, index) => [
           this.overflowIndex >= 0
           && index === this.overflowIndex
-          && <div class="search-input-chip overflow-chip">
+          && <div class="search-container-selected overflow-selected">
                 +{this.selectedList.length - this.overflowIndex}
               </div>,
           contentComponent(item, index),

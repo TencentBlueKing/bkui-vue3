@@ -117,10 +117,14 @@ export const TABLE_ROW_ATTRIBUTE = {
   ROW_SOURCE_DATA: '__row_source_data',
 };
 
+export const COLUMN_ATTRIBUTE = {
+  COL_UID: '__col_$uuid',
+};
+
 /**
  * Y 轴滚动条宽度
  */
-export const SCROLLY_WIDTH = 4;
+export const SCROLLY_WIDTH = 6;
 
 /**
  * 默认行高

@@ -121,7 +121,7 @@ export default defineComponent({
     };
   },
   render() {
-    return <div class='search-select-menu'>
+    return <div class='bk-search-select-menu'>
       {
         !!this.conditions?.length
         && <ul class="menu-header">
