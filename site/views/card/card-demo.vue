@@ -36,9 +36,8 @@
 </template>
 
 <script>
+  import { Help, HelpDocumentFill, HelpFill } from 'bkui-vue/lib/icon';
   import { defineComponent } from 'vue';
-
-  import { Help, HelpDocumentFill, HelpFill } from '@bkui-vue/icon';
   export default defineComponent({
     components: {
       Help,

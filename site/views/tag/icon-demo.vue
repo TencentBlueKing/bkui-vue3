@@ -22,5 +22,5 @@
 </template>
 
 <script setup>
-  import { Bk, Qq, Weixin } from '@bkui-vue/icon';
+  import { Bk, Qq, Weixin } from 'bkui-vue/lib/icon';
 </script>
