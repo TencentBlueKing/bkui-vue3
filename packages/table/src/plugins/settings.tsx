@@ -57,7 +57,7 @@ export default defineComponent({
   emits: ['change'],
   setup(props, { emit }) {
     const defaultSizeList: SizeItem[] = DEFAULT_SIZE_LIST;
-    const resolvedColVal = (item, index) => resolvePropVal(item, ['field', 'index'], [item, index]);
+    const resolvedColVal = (item, index) => resolvePropVal(item, ['field', 'type'], [item, index]);
 
     const checkAll = ref(false);
     const isShow = ref(false);
@@ -73,7 +73,7 @@ export default defineComponent({
     const activeSize = ref(localSettings.value.size || 'small');
     const activeHeight = ref(props.rowHeight);
 
-    const checkedFields = ref(localSettings.value.checked);
+    const checkedFields = ref(localSettings.value.checked || []);
     const className = resolveClassName('table-settings');
     const theme = `light ${className}`;
 
@@ -114,12 +114,16 @@ export default defineComponent({
 
       checkAll.value = !checkAll.value;
       const fields = (localSettings.value.fields || props.columns || []);
+      const readonlyFields = fields
+        .filter((f, index) => f.disabled && checkedFields.value.includes(resolvedColVal(f, index)))
+        .map((item: any, index: number) => resolvedColVal(item, index));
       if (checkAll.value) {
-        checkedFields.value = fields
+        const allFields = fields
           .filter(f => !f.disabled)
           .map((item: any, index: number) => resolvedColVal(item, index));
+        checkedFields.value.splice(0, checkedFields.value.length, ...allFields, ...readonlyFields);
       } else {
-        checkedFields.value.splice(0, checkedFields.value.length);
+        checkedFields.value.splice(0, checkedFields.value.length, ...readonlyFields);
       }
     };
 
@@ -128,9 +132,9 @@ export default defineComponent({
     const isFiledDisabled = computed(() => isLimit.value
       && (localSettings.value.limit ? localSettings.value.limit : 0) <= checkedFields.value.length);
 
-    const isItemReadonly = (item: any, index: number) =>  item.disabled
+    const isItemReadonly = (item: any, index: number) => item.disabled
       || (isFiledDisabled.value
-      && !checkedFields.value.includes(resolvedColVal(item, index)));
+        && !checkedFields.value.includes(resolvedColVal(item, index)));
 
     const handleSizeItemClick = (item: SizeItem) => {
       activeSize.value = item.value;
@@ -148,8 +152,8 @@ export default defineComponent({
     };
 
     const renderSize = () => sizeList.map(item => <span
-      class={ getItemClass(item) }
-      onClick={() => handleSizeItemClick(item)}>{ item.label }</span>);
+      class={getItemClass(item)}
+      onClick={() => handleSizeItemClick(item)}>{item.label}</span>);
 
     const renderFields = computed(() => localSettings.value.fields || props.columns || []);
 
@@ -180,7 +184,7 @@ export default defineComponent({
       {...{ theme }}>
       {
         {
-          default: () =>  <span class="table-head-settings" onClick={ handleSettingClick }>
+          default: () => <span class="table-head-settings" onClick={handleSettingClick}>
             <CogShape style="color: #c4c6cc;" ></CogShape>
           </span>,
           content: () => <div class="setting-content">
@@ -192,21 +196,21 @@ export default defineComponent({
               <div class="setting-body-title">
                 <div>
                   <span class="field-setting-label">字段显示设置</span>
-                  { isLimit.value ? <span class="limit">（最多{localSettings.value.limit}项）</span> : '' }</div>
-                  { isLimit.value ? '' : <span class="check-all" onClick={handleCheckAllClick}>
-                      <BkCheckbox label="全选"
-                        indeterminate={ Boolean(indeterminate.value) }
-                        modelValue={ checkedFields.value.length > 0 }>全选</BkCheckbox>
-                    </span>
-                  }
+                  {isLimit.value ? <span class="limit">（最多{localSettings.value.limit}项）</span> : ''}</div>
+                {isLimit.value ? '' : <span class="check-all" onClick={handleCheckAllClick}>
+                  <BkCheckbox label="全选"
+                    indeterminate={Boolean(indeterminate.value)}
+                    modelValue={checkedFields.value.length > 0}>全选</BkCheckbox>
+                </span>
+                }
               </div>
-              <BkCheckboxGroup class="setting-body-fields" v-model={ checkedFields.value }>
+              <BkCheckboxGroup class="setting-body-fields" v-model={checkedFields.value}>
                 {
                   (renderFields.value).map((item: any, index: number) => <div class="field-item">
-                    <BkCheckbox checked={ checkedFields.value.includes(resolvedColVal(item, index)) }
-                      label={ resolvedColVal(item, index) }
+                    <BkCheckbox checked={checkedFields.value.includes(resolvedColVal(item, index))}
+                      label={resolvedColVal(item, index)}
                       disabled={isItemReadonly(item, index)}>
-                      { resolvePropVal(item, 'label', [item, index]) }
+                      {resolvePropVal(item, 'label', [item, index])}
                     </BkCheckbox>
                   </div>)
                 }
@@ -214,14 +218,14 @@ export default defineComponent({
               {
                 showLineHeight.value
                   ? <div class="setting-body-line-height">
-                      表格行高：{ renderSize() }
-                    </div> : ''
+                    表格行高：{renderSize()}
+                  </div> : ''
               }
 
             </div>
             <div class="setting-footer">
-                <BkButton theme='primary' style={buttonStyle} onClick={handleSaveClick}>确定</BkButton>
-                <BkButton style={buttonStyle} onClick={handleCancelClick}>取消</BkButton>
+              <BkButton theme='primary' style={buttonStyle} onClick={handleSaveClick}>确定</BkButton>
+              <BkButton style={buttonStyle} onClick={handleCancelClick}>取消</BkButton>
             </div>
           </div>,
         }
