@@ -116,12 +116,10 @@ export default defineComponent({
       const fields = (localSettings.value.fields || props.columns || []);
       if (checkAll.value) {
         checkedFields.value = fields
+          .filter(f => !f.disabled)
           .map((item: any, index: number) => resolvedColVal(item, index));
       } else {
-        const readonlyFields = fields.filter((item: any) => item.disabled)
-          .map((item: any, index: number) => resolvedColVal(item, index));
-
-        checkedFields.value.splice(0, checkedFields.value.length, ...readonlyFields);
+        checkedFields.value.splice(0, checkedFields.value.length);
       }
     };
 
