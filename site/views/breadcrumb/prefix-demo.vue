@@ -24,10 +24,10 @@
   </div>
 </template>
 <script>
+  import { AngleLeft } from 'bkui-vue/lib/icon';
   import { defineComponent, getCurrentInstance, ref } from 'vue';
 
   import { BkBreadcrumb, BkBreadcrumbItem } from '@bkui-vue/breadcrumb';
-  import { AngleLeft } from '@bkui-vue/icon';
 
   export default defineComponent({
     name: 'SiteBreadcrumb',

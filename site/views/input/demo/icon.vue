@@ -21,7 +21,7 @@
 </template>
 
 <script setup>
-  import { InfoLine, Search } from '@bkui-vue/icon';
+  import { InfoLine, Search } from 'bkui-vue/lib/icon';
 
 </script>
 
