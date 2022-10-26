@@ -38,10 +38,13 @@ import {
   Placement,
   shift } from '@floating-ui/dom';
 
+import { EMIT_EVENTS } from './const';
 import { PopoverPropTypes } from './props';
 import usePlatform from './use-platform';
 
-
+/**
+ * 解析popover相关配置
+ */
 export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArrow, refRoot }) => {
   const localIsShow = ref(false);
   const fullScreenTarget = ref();
@@ -53,6 +56,12 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
     return document.fullscreenElement?.contains(elReference);
   };
 
+  /**
+   * 当全屏模式开启，获取指定选择器下面的全屏元素
+   * 如果是启用了webcomponent组件，则返回shadowRoot内指定的目标元素
+   * @param selector
+   * @returns
+   */
   const getFullscreenRoot = (selector) => {
     if (isElementFullScreen()) {
       if (document.fullscreenElement.shadowRoot) {
@@ -66,6 +75,12 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
   };
 
   const themeList = ['dark', 'light'];
+  /**
+   * 根据props.theme计算theme
+   * 返回systemTheme & customTheme
+   * systemTheme是指包含在 ['dark', 'light'] 内置主题
+   * customTheme是指自定义的theme，string类型
+   */
   const compTheme = computed(() => {
     const themes = props.theme?.split(/\s+/) ?? [];
     themes.sort((a: string, b: string) => Number(themeList.includes(b)) - (Number(themeList.includes(a))));
@@ -76,6 +91,11 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
 
   const isHideMiddlewareAvailable = () => props.autoVisibility;
   const isAutoPlacementAvailable = () => props.autoPlacement;
+
+  /**
+   * 解析弹出reference元素，content元素， arrow元素
+   * @returns
+   */
   const resolvePopElements = () => {
     const elReference = resolveTargetElement(refReference.value?.$el);
     const elContent = resolveTargetElement(refContent.value?.$el);
@@ -109,6 +129,12 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
       options.middleware.push(hide());
     }
 
+    /**
+     * 如果是全屏元素或者指定的虚拟元素
+     * 则启用自定义的platform
+     * 在弹出的全屏元素中，元素相对位置有别于document下面元素
+     * 全屏模式下面，需要自定义当前元素的一个platform
+     */
     if (isElementFullScreen() || props.isVirtualEl) {
       const  {
         getElementRects,
@@ -234,15 +260,18 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
     });
   };
 
-  const showPopover = () => {
-    !props.disabled && (localIsShow.value = true);
-  };
-
-  let popShowTimerId = undefined;
+  let popHideTimerId = undefined;
   let isMouseenter = false;
 
+  const showPopover = () => {
+    // 设置settimeout避免hidePopover导致显示问题
+    setTimeout(() => {
+      !props.disabled && (localIsShow.value = true);
+    }, 100);
+  };
+
   const hidePopover = () => {
-    popShowTimerId = setTimeout(() => {
+    popHideTimerId = setTimeout(() => {
       localIsShow.value = false;
     }, 100);
   };
@@ -269,7 +298,7 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
     }
   };
 
-  const hanldeClickRef = () => {
+  const handleClickRef = () => {
     triggerPopover();
   };
 
@@ -278,18 +307,37 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
       return;
     }
 
-    if (popShowTimerId) {
+    if (popHideTimerId) {
       isMouseenter = true;
-      clearTimeout(popShowTimerId);
-      popShowTimerId = undefined;
+      clearTimeout(popHideTimerId);
+      popHideTimerId = undefined;
     }
+
+    emitPopContentMouseEnter();
   };
 
   const handlePopContentMouseLeave = () => {
     if (isMouseenter) {
       hidePopover();
       isMouseenter = false;
+      emitPopContentMouseLeave();
     }
+  };
+
+  /**
+   * 弹出内容鼠标移入事件
+   * 抛出相关事件，方便后续操作
+   * 例如：鼠标移入内容区域，则取消弹出内容隐藏操作
+   */
+  const emitPopContentMouseEnter = () => {
+    ctx.emit(EMIT_EVENTS.CONTENT_MOUSEENTER);
+  };
+
+  /**
+   * 弹出内容鼠标移出事件
+   */
+  const emitPopContentMouseLeave = () => {
+    ctx.emit(EMIT_EVENTS.CONTENT_MOUSELEAVE);
   };
 
   const resolveTriggerEvents = () => {
@@ -306,8 +354,14 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
           ['blur', hidePopover],
         ],
       },
-      click: [['click', hanldeClickRef]],
-      manual: [[]],
+      click: [['click', handleClickRef]],
+      manual: {
+        content: [
+          ['mouseenter', emitPopContentMouseEnter],
+          ['mouseleave', emitPopContentMouseLeave],
+        ],
+        reference: [[]],
+      },
     };
 
     return triggerEvents[props.trigger] ?? [];
@@ -325,6 +379,14 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
     }
   });
 
+  const stopHide = () => {
+    if (popHideTimerId) {
+      isMouseenter = true;
+      clearTimeout(popHideTimerId);
+      popHideTimerId = undefined;
+    }
+  };
+
   return {
     showPopover,
     hidePopover,
@@ -337,6 +399,7 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
     createPopInstance,
     updateFullscreenTarget,
     getFullscreenRoot,
+    stopHide,
     localIsShow,
     cleanup,
   };

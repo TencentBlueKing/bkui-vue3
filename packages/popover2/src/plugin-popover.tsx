@@ -38,7 +38,7 @@ export default function createPopoverComponent(options: $Popover) {
   let $PopoverInstanceVm = null;
   let $PopoverInstanceEl: HTMLElement = null;
 
-  const resolvedOptions = {
+  const resolvedOptions: any = {
     boundary: 'body',
     placement: 'top',
     autoVisibility: false,
@@ -85,11 +85,17 @@ export default function createPopoverComponent(options: $Popover) {
 
       updateStyle(refProps.value.target as any);
       const show = () => {
-        refReference.value?.show?.();
+        setTimeout(() => {
+          refReference.value?.show?.();
+        });
       };
 
       const hide = () => {
         refReference.value?.hide?.();
+      };
+
+      const stopHide = () => {
+        refReference.value?.stopHide?.();
       };
 
       const attrs = computed(() => {
@@ -108,13 +114,24 @@ export default function createPopoverComponent(options: $Popover) {
         });
       };
 
+      const handleContentMouseenter = () => {
+        resolvedOptions.onContentMouseenter?.();
+      };
+
+      const handleContentMouseleave = () => {
+        resolvedOptions.onContentMouseleave?.();
+      };
+
       expose({
         show,
         hide,
         updateTarget,
+        stopHide,
       });
 
-      return () => <Popover { ...attrs.value } ref={refReference}>
+      return () => <Popover { ...attrs.value } ref={refReference}
+        onContentMouseenter={ handleContentMouseenter }
+        onContentMouseleave={ handleContentMouseleave }>
         <span style={ referStyle.value }></span>
       </Popover>;
     },
@@ -178,7 +195,9 @@ export default function createPopoverComponent(options: $Popover) {
     show,
     hide,
     update,
-    vm: $PopoverInstanceVm,
+    get vm() {
+      return $PopoverInstanceVm;
+    },
     get $el(): HTMLElement {
       return $PopoverInstanceVm.$el;
     },
