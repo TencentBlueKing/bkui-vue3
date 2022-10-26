@@ -85,7 +85,9 @@ export default function createPopoverComponent(options: $Popover) {
 
       updateStyle(refProps.value.target as any);
       const show = () => {
-        refReference.value?.show?.();
+        setTimeout(() => {
+          refReference.value?.show?.();
+        });
       };
 
       const hide = () => {

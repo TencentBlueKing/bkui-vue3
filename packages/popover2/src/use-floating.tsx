@@ -235,16 +235,17 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
   };
 
   const showPopover = () => {
-    !props.disabled && (localIsShow.value = true);
+    popShowTimerId = setTimeout(() => {
+      !props.disabled && (localIsShow.value = true);
+    }, 100);
   };
 
   let popShowTimerId = undefined;
   let isMouseenter = false;
 
   const hidePopover = () => {
-    popShowTimerId = setTimeout(() => {
-      localIsShow.value = false;
-    }, 100);
+    clearTimeout(popShowTimerId);
+    localIsShow.value = false;
   };
 
   const hanldePopoverShow = () => {
