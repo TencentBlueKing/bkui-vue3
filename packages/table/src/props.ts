@@ -87,6 +87,8 @@ export const IColumnType = {
     }),
     PropTypes.bool,
     PropTypes.string]).def(false),
+  colspan: PropTypes.oneOfType([PropTypes.func.def(() => 1), PropTypes.number.def(1)]),
+  rowspan: PropTypes.oneOfType([PropTypes.func.def(() => 1), PropTypes.number.def(1)]),
 };
 
 export const tableProps = {
@@ -340,6 +342,8 @@ export type Column = {
     list?: any,
     filterFn?: Function;
   } | boolean | string;
+  colspan?: Function | Number;
+  rowspan?: Function | Number;
 };
 
 export type Thead = {
