@@ -40,6 +40,7 @@ export default defineComponent({
     return {
       visible: false,
       bkPopIndexManager: null,
+      closeTimer: null,
     };
   },
   computed: {
@@ -70,10 +71,13 @@ export default defineComponent({
     isShow: {
       handler(val: boolean) {
         if (val) {
+          // 避免is-show: false执行覆盖
+          this.closeTimer && clearTimeout(this.closeTimer);
+          this.closeTimer = null;
           this.visible = val;
         } else {
-          this.$emit('hidden'); // 为false直接触发hidden事件，在上层有200ms的延时
-          setTimeout(() => { // 直接设为false会失去离开的动画效果，这里延迟设置
+          this.closeTimer = setTimeout(() => { // 直接设为false会失去离开的动画效果，这里延迟设置
+            this.$emit('hidden'); // 为false直接触发hidden事件，在上层有200ms的延时
             this.visible = val;
           }, 250);
         }
