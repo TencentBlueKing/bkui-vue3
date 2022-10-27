@@ -42,7 +42,7 @@ import { TablePlugins } from './plugins/index';
 import Settings from './plugins/settings';
 import useFixedColumn from './plugins/use-fixed-column';
 import { Column, GroupColumn, IColumnActive, IReactiveProp, TablePropTypes } from './props';
-import { formatPropAsArray, getColumnReactWidth, getRowText, isColumnHidden, resolveHeadConfig, resolvePropVal, resolveWidth } from './utils';
+import { formatPropAsArray, getColumnReactWidth, getRowText, isColumnHidden, resolveCellSpan, resolveHeadConfig, resolvePropVal, resolveWidth } from './utils';
 
 export default class TableRender {
   props: TablePropTypes;
@@ -337,7 +337,8 @@ export default class TableRender {
    */
   private renderTBody(rows: any[]) {
     const { resolveFixedColumnStyle } = useFixedColumn(this.props, this.colgroups);
-
+    const skipRow = new Map();
+    const rowLength = rows.length;
     return <tbody>
     {
       rows.map((row: any, rowIndex: number) => {
@@ -354,6 +355,7 @@ export default class TableRender {
         ];
 
         const rowKey = row[TABLE_ROW_ATTRIBUTE.ROW_UID];
+        let skipColumn = 0;
         return [
           <TableRow key={rowKey}>
             <tr
@@ -370,29 +372,50 @@ export default class TableRender {
                   ...formatPropAsArray(this.props.cellStyle, [column, index, row, rowIndex, this]),
                 ];
 
-                const cellClass = [
-                  this.getColumnClass(column, index),
-                  ...formatPropAsArray(this.props.cellClass, [column, index, row, rowIndex, this]),
-                  { 'expand-row': row[TABLE_ROW_ATTRIBUTE.ROW_EXPAND] },
-                ];
-
                 const tdCtxClass = {
                   cell: true,
                   'expand-cell': column.type === 'expand',
                 };
 
                 const cellKey = `__CELL_${rowIndex}_${index}`;
-                return <td class={cellClass}
-                  style={cellStyle}
-                  key={cellKey}
-                  colspan={1} rowspan={1}>
-                  <TableCell class={tdCtxClass}
-                    column={ column }
-                    row={ row }
-                    parentSetting={ this.props.showOverflowTooltip }>
-                    { this.renderCell(row, column, rowIndex, rows) }
-                  </TableCell>
-                </td>;
+                const { colspan, rowspan } = resolveCellSpan(column, index, row, rowIndex);
+                const skipCurrentRow = skipRow.get(index);
+                if (skipColumn === 0 && !skipCurrentRow) {
+                  if (colspan > 1) {
+                    skipColumn = colspan - 1;
+                  }
+
+                  if (rowspan > 1) {
+                    skipRow.set(index, rowspan - 1);
+                  }
+
+                  const cellClass = [
+                    this.getColumnClass(column, index),
+                    ...formatPropAsArray(this.props.cellClass, [column, index, row, rowIndex, this]),
+                    { 'expand-row': row[TABLE_ROW_ATTRIBUTE.ROW_EXPAND], 'is-last': rowIndex + rowspan >= rowLength },
+                  ];
+
+                  return <td class={cellClass}
+                    style={cellStyle}
+                    key={cellKey}
+                    colspan={ colspan } rowspan={ rowspan }>
+                    <TableCell class={tdCtxClass}
+                      column={ column }
+                      row={ row }
+                      parentSetting={ this.props.showOverflowTooltip }>
+                      { this.renderCell(row, column, rowIndex, rows) }
+                    </TableCell>
+                  </td>;
+                }
+
+                if (skipColumn > 0) {
+                  skipColumn = skipColumn - 1;
+                }
+                if (skipCurrentRow > 0) {
+                  skipRow.set(index, skipCurrentRow - 1);
+                }
+
+                return null;
               })
             }
           </tr>

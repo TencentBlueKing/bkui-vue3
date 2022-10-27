@@ -64,7 +64,7 @@ export default (props, colgroups: GroupColumn[], hasScrollY?) => {
     let preOffset = 0;
 
     for (start; ;) {
-      start += -1 * opt;
+      start = start + -1 * opt;
       const index = Math.abs(start);
       const current = colgroups[index];
       const curFixedPos = resolveFixColPos(current);
