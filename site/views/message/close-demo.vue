@@ -21,24 +21,14 @@
   </div>
 </template>
 
-<script>
+<script setup>
   import { Message } from 'bkui-vue';
 
-  export default {
-    name: 'ThemeDemo',
-    data() {
-      return {
-        defaultMessage: '选择你导入的构建机并填写相关信息，系统将为你安装必要的软件',
-      };
-    },
-    methods: {
-      handleSingle(config) {
-        const messageConfig = {
-          message: this.defaultMessage,
-          ...config,
-        };
-        Message(messageConfig);
-      },
-    },
+  const  handleSingle = (config) => {
+    const messageConfig = {
+      message: '选择你导入的构建机并填写相关信息，系统将为你安装必要的软件',
+      ...config,
+    };
+    Message(messageConfig);
   };
 </script>

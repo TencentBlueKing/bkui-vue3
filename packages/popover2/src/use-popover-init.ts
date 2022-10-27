@@ -26,7 +26,7 @@
 */
 import { ref } from 'vue';
 
-import { EMITEVENTS } from './const';
+import { EMIT_EVENTS } from './const';
 import useFloating from './use-floating';
 import usePopperId from './use-popper-id';
 import { getFullscreenUid } from './utils';
@@ -47,6 +47,7 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
     updateFullscreenTarget,
     createPopInstance,
     getFullscreenRoot,
+    stopHide,
   } = useFloating(props, ctx, { refReference, refContent, refArrow, refRoot });
 
   const showFn = () => {
@@ -170,7 +171,7 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
   };
 
   const handleClickOutside = (_e: MouseEvent) => {
-    ctx.emit(EMITEVENTS.CLICK_OUTSIDE, { isShow: localIsShow.value, event: _e });
+    ctx.emit(EMIT_EVENTS.CLICK_OUTSIDE, { isShow: localIsShow.value, event: _e });
     if (props.disableOutsideClick || props.always || props.disabled || props.trigger === 'manual') {
       return;
     }
@@ -192,6 +193,7 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
     hidePopover,
     showFn,
     hideFn,
+    stopHide,
     isFullscreen,
     boundary,
   };

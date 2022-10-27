@@ -7,15 +7,10 @@
   </bk-button>
 </template>
 
-<script>
+<script setup>
   import { Message } from 'bkui-vue';
 
-  export default {
-    name: 'BaseDemo',
-    methods: {
-      handleDefault() {
-        Message('选择你导入的构建机并填写相关信息，系统将为你安装必要的软件');
-      },
-    },
-  };
+  function handleDefault() {
+    Message('选择你导入的构建机并填写相关信息，系统将为你安装必要的软件');
+  }
 </script>
