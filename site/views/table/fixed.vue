@@ -21,7 +21,7 @@
         tableData: [...DATA_FIX_TABLE],
         columns: [...DATA_FIX_COLUMNS],
         settings: {
-          checked: [],
+          checked: ['index'],
           fields: [{
                      label: '序号',
                      field: 'index',

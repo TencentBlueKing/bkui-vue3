@@ -25,14 +25,21 @@
 */
 const EMPTY = (..._args) => true;
 
-export const enum EMITEVENTS {
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export const enum EMIT_EVENTS {
   SHOW = 'show',
   HIDE = 'hide',
-  CLICK_OUTSIDE = 'clickoutside'
+  CLICK_OUTSIDE = 'clickoutside',
+  CONTENT_MOUSEENTER = 'contentMouseenter',
+  CONTENT_MOUSELEAVE = 'contentMouseleave',
+  STOP_HIDE = 'stopHide'
 }
 export const EMIT_EVENT_TYPES = {
-  [EMITEVENTS.SHOW]: EMPTY,
-  [EMITEVENTS.HIDE]: EMPTY,
-  [EMITEVENTS.CLICK_OUTSIDE]: EMPTY,
+  [EMIT_EVENTS.SHOW]: EMPTY,
+  [EMIT_EVENTS.HIDE]: EMPTY,
+  [EMIT_EVENTS.CLICK_OUTSIDE]: EMPTY,
+  [EMIT_EVENTS.CONTENT_MOUSEENTER]: EMPTY,
+  [EMIT_EVENTS.CONTENT_MOUSELEAVE]: EMPTY,
+  [EMIT_EVENTS.STOP_HIDE]: EMPTY,
 };
 
