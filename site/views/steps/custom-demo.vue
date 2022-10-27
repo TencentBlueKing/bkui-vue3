@@ -10,9 +10,8 @@
   </div>
 </template>
 <script>
+  import { Bk } from 'bkui-vue/lib/icon';
   import { defineComponent, reactive } from 'vue';
-
-  import { Bk } from '@bkui-vue/icon';
 
   export default defineComponent({
     setup() {

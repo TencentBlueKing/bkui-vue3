@@ -117,7 +117,7 @@
 </template>
 
 <script setup>
-  import { AngleDown, Bk, Plus } from '@bkui-vue/icon';
+  import { AngleDown, Bk, Plus } from 'bkui-vue/lib/icon';
 </script>
 
 <style lang="postcss">

@@ -82,26 +82,29 @@ export default defineComponent({
         }
       },
       immediate: true,
-      deep: true,
     },
-    visible(val: boolean) {
-      if (val) {
-        // this.bkPopIndexManager = new BKPopIndexManager();
-        bkPopIndexManager.onMaskClick((_e: MouseEvent) => {
-          this.handleClickOutSide();
-        });
-        this.$nextTick(() => {
-          const hideMaskStyle = {
-            'background-color': 'rgba(0,0,0,0)',
-          };
-          const appendStyle = this.showMask ? {} : hideMaskStyle;
-          bkPopIndexManager.show(this.$el, this.showMask, appendStyle, this.transfer, this.zIndex);
-          this.$emit('shown');
-        });
-      } else {
-        bkPopIndexManager?.hide(this.$el, this.transfer);
-        bkPopIndexManager?.destroy();
-      }
+    // isShow 初始化为 true 的时候，防止直接展示
+    visible: {
+      handler(val: boolean) {
+        if (val) {
+          // this.bkPopIndexManager = new BKPopIndexManager();
+          bkPopIndexManager.onMaskClick((_e: MouseEvent) => {
+            this.handleClickOutSide();
+          });
+          this.$nextTick(() => {
+            const hideMaskStyle = {
+              'background-color': 'rgba(0,0,0,0)',
+            };
+            const appendStyle = this.showMask ? {} : hideMaskStyle;
+            bkPopIndexManager.show(this.$el, this.showMask, appendStyle, this.transfer, this.zIndex);
+            this.$emit('shown');
+          });
+        } else {
+          bkPopIndexManager?.hide(this.$el, this.transfer);
+          bkPopIndexManager?.destroy();
+        }
+      },
+      immediate: true,
     },
   },
 
