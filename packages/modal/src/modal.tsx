@@ -26,7 +26,7 @@
 
 import { defineComponent, Transition } from 'vue';
 
-import { BKPopIndexManager } from '@bkui-vue/shared';
+import { bkPopIndexManager } from '@bkui-vue/shared';
 
 import { propsMixin } from './props.mixin';
 
@@ -39,7 +39,6 @@ export default defineComponent({
   data() {
     return {
       visible: false,
-      bkPopIndexManager: null,
       closeTimer: null,
     };
   },
@@ -88,8 +87,8 @@ export default defineComponent({
     visible: {
       handler(val: boolean) {
         if (val) {
-          this.bkPopIndexManager = new BKPopIndexManager();
-          this.bkPopIndexManager.onMaskClick((_e: MouseEvent) => {
+          // this.bkPopIndexManager = new BKPopIndexManager();
+          bkPopIndexManager.onMaskClick((_e: MouseEvent) => {
             this.handleClickOutSide();
           });
           this.$nextTick(() => {
@@ -97,12 +96,12 @@ export default defineComponent({
               'background-color': 'rgba(0,0,0,0)',
             };
             const appendStyle = this.showMask ? {} : hideMaskStyle;
-            this.bkPopIndexManager.show(this.$el, this.showMask, appendStyle, this.transfer, this.zIndex);
+            bkPopIndexManager.show(this.$el, this.showMask, appendStyle, this.transfer, this.zIndex);
             this.$emit('shown');
           });
         } else {
-          this.bkPopIndexManager?.hide(this.$el, this.transfer);
-          this.bkPopIndexManager?.destroy();
+          bkPopIndexManager?.hide(this.$el, this.transfer);
+          bkPopIndexManager?.destroy();
         }
       },
       immediate: true,
@@ -110,8 +109,10 @@ export default defineComponent({
   },
 
   beforeUnmount() {
-    this.bkPopIndexManager?.hide(this.$el);
-    this.bkPopIndexManager?.destroy();
+    if (this.visible) {
+      bkPopIndexManager?.hide(this.$el);
+      bkPopIndexManager?.destroy();
+    }
   },
   methods: {
     handleClickOutSide() {

@@ -77,6 +77,8 @@ export default [
       { name: 'fixed', type: 'String', default: 'false', desc: '列是否固定在左侧或者右侧，true 表示固定在左侧', optional: ['left', 'right'] },
       { name: 'sort', type: 'Boolean|ISort', default: 'false', desc: '对应列是否可以排序，可以简单设置true开启默认排序，也可以通过详细配置排序方式，请参考ISort', optional: [] },
       { name: 'filter', type: 'Boolean|String|IFilter', default: 'false', desc: '数据过滤的选项,可以简单设置true开启默认过滤。可以通过详细配置排序方式，请参考IFilter', optional: [] },
+      { name: 'colspan', type: 'Number|Function', default: 1, desc: '规定单元格可横跨的列数', optional: [] },
+      { name: 'rowspan', type: 'Number|Function', default: 1, desc: '规定单元格可横跨的行数', optional: [] },
     ],
   },
   {
