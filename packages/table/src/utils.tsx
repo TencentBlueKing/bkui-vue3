@@ -422,3 +422,21 @@ export const isColumnHidden = (settingFields, column, checked) => {
   const isSettingField = (col: Column) => settingFields.some(field => field.field === resolvePropVal(col, ['field', 'type'], [col]));
   return isSettingField(column) && checked.length && !checked.includes(resolvePropVal(column, ['field', 'type'], [column]));
 };
+
+export const resolveColumnSpan = (column: Column, colIndex: number, row: any, rowIndex: number, key: string) => {
+  if (typeof column[key] === 'function') {
+    return Reflect.apply(column[key], this, [{ column, colIndex, row, rowIndex }]);
+  }
+
+  if (typeof column[key] === 'number') {
+    return column[key];
+  }
+
+  return 1;
+};
+
+export const resolveCellSpan = (column: Column, colIndex: number, row: any, rowIndex: number) => {
+  const colspan = resolveColumnSpan(column, colIndex, row, rowIndex, 'colspan');
+  const rowspan = resolveColumnSpan(column, colIndex, row, rowIndex, 'rowspan');
+  return { colspan, rowspan };
+};
