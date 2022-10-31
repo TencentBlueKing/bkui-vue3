@@ -440,3 +440,17 @@ export const resolveCellSpan = (column: Column, colIndex: number, row: any, rowI
   const rowspan = resolveColumnSpan(column, colIndex, row, rowIndex, 'rowspan');
   return { colspan, rowspan };
 };
+
+export const skipThisColumn = (columns: Column[], colIndex: number, row: any, rowIndex: number) => {
+  let skip = false;
+
+  for (let i = colIndex; i > 0; i--) {
+    const colspan = resolveColumnSpan(columns[i], i, row, rowIndex, 'colspan');
+    if (colspan > 1) {
+      skip = (colspan - 1 + i) >= colIndex;
+      break;
+    }
+  }
+  return skip;
+};
+

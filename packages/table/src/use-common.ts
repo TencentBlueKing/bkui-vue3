@@ -39,6 +39,7 @@ import {
   getRowKey,
   hasRootScrollY,
   isColumnHidden,
+  resolveCellSpan,
   resolveHeadConfig,
   resolveNumberOrStringToPix,
   resolvePropBorderToClassStr,
@@ -429,9 +430,12 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
   const indexData = reactive([]);
 
   const initIndexData = (keepLocalAction = false) => {
+    let preRowId = null;
+    const skipConfig = {};
     indexData.splice(0, indexData.length, ...props.data.map((item: any, index: number) => {
       const rowId = getRowKey(item, props, index);
-
+      const cfg = getSkipConfig(item, rowId, index, skipConfig, preRowId);
+      preRowId = rowId;
       return {
         ...item,
         [TABLE_ROW_ATTRIBUTE.ROW_INDEX]: index,
@@ -439,6 +443,7 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
         [TABLE_ROW_ATTRIBUTE.ROW_EXPAND]: keepLocalAction ? isRowExpand(rowId) : false,
         [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: resolveSelection(item, rowId),
         [TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA]: { ...item },
+        [TABLE_ROW_ATTRIBUTE.ROW_SKIP_CFG]: cfg,
       };
     }));
 
@@ -446,16 +451,69 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
   };
 
   const updateIndexData = (selectedAll?: boolean) => {
-    indexData.forEach((item: any) => {
+    let preRowId = null;
+    const skipConfig = {};
+    indexData.forEach((item: any, index: number) => {
+      const cfg = getSkipConfig(item, item[TABLE_ROW_ATTRIBUTE.ROW_UID], index, skipConfig, preRowId);
       Object.assign(item, {
         [TABLE_ROW_ATTRIBUTE.ROW_EXPAND]: isRowExpand(item[TABLE_ROW_ATTRIBUTE.ROW_UID]),
         [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: typeof selectedAll === 'boolean' ? selectedAll : resolveSelection(item, item[TABLE_ROW_ATTRIBUTE.ROW_UID]),
+        [TABLE_ROW_ATTRIBUTE.ROW_SKIP_CFG]: cfg,
       });
+      preRowId = item[TABLE_ROW_ATTRIBUTE.ROW_UID];
     });
 
     if (typeof selectedAll !== 'boolean') {
       initSelectionAllByData();
     }
+  };
+
+  const getSkipConfig = (row: any, rowId: string, rowIndex: number, skipCfg: any, preRowId: string) => {
+    let skipColumnNum = 0;
+    const preRowConfig = skipCfg[preRowId] ?? {};
+
+    if (!skipCfg[rowId]) {
+      skipCfg[rowId] = {};
+    }
+
+    colgroups.forEach((column, index) => {
+      const { colspan, rowspan } = resolveCellSpan(column, index, row, rowIndex);
+      const colId = column[COLUMN_ATTRIBUTE.COL_UID];
+      const preRowColSkipLen = preRowConfig[colId]?.skipRowLen ?? 0;
+      const target = {
+        [colId]: {
+          skipRowLen: 0,
+          skipRow: false,
+          skipCol: false,
+          skipColLen: 0,
+        },
+      };
+
+      if (skipColumnNum > 0) {
+        target[colId].skipColLen = skipColumnNum;
+        target[colId].skipCol = true;
+        skipColumnNum = skipColumnNum - 1;
+      }
+
+      if (preRowColSkipLen > 1) {
+        target[colId].skipRowLen = preRowColSkipLen - 1;
+        target[colId].skipRow = true;
+      } else {
+        if (rowspan > 1) {
+          target[colId].skipRowLen = rowspan;
+          target[colId].skipRow = false;
+        }
+      }
+
+      if (colspan > 1) {
+        target[colId].skipColLen = colspan;
+        skipColumnNum = colspan - 1;
+      }
+
+      Object.assign(skipCfg[rowId], { ...target });
+    });
+
+    return skipCfg[rowId];
   };
 
   /**

@@ -34,7 +34,7 @@ import { classes } from '@bkui-vue/shared';
 
 import TableCell from './components/table-cell';
 import TableRow from './components/table-row';
-import { EMIT_EVENTS, EVENTS, SORT_OPTION, TABLE_ROW_ATTRIBUTE } from './const';
+import { COLUMN_ATTRIBUTE, EMIT_EVENTS, EVENTS, SORT_OPTION, TABLE_ROW_ATTRIBUTE } from './const';
 import BodyEmpty from './plugins/body-empty';
 import HeadFilter from './plugins/head-filter';
 import HeadSort from './plugins/head-sort';
@@ -337,7 +337,6 @@ export default class TableRender {
    */
   private renderTBody(rows: any[]) {
     const { resolveFixedColumnStyle } = useFixedColumn(this.props, this.colgroups);
-    const skipRow = new Map();
     const rowLength = rows.length;
     return <tbody>
     {
@@ -355,7 +354,6 @@ export default class TableRender {
         ];
 
         const rowKey = row[TABLE_ROW_ATTRIBUTE.ROW_UID];
-        let skipColumn = 0;
         return [
           <TableRow key={rowKey}>
             <tr
@@ -379,16 +377,11 @@ export default class TableRender {
 
                 const cellKey = `__CELL_${rowIndex}_${index}`;
                 const { colspan, rowspan } = resolveCellSpan(column, index, row, rowIndex);
-                const skipCurrentRow = skipRow.get(index);
-                if (skipColumn === 0 && !skipCurrentRow) {
-                  if (colspan > 1) {
-                    skipColumn = colspan - 1;
-                  }
+                const skipRowKey = TABLE_ROW_ATTRIBUTE.ROW_SKIP_CFG;
+                const columnIdKey = column[COLUMN_ATTRIBUTE.COL_UID];
+                const { skipRow = false, skipCol = false } = row[skipRowKey]?.[columnIdKey] ?? {};
 
-                  if (rowspan > 1) {
-                    skipRow.set(index, rowspan - 1);
-                  }
-
+                if (!skipRow && !skipCol) {
                   const cellClass = [
                     this.getColumnClass(column, index),
                     ...formatPropAsArray(this.props.cellClass, [column, index, row, rowIndex, this]),
@@ -406,13 +399,6 @@ export default class TableRender {
                       { this.renderCell(row, column, rowIndex, rows) }
                     </TableCell>
                   </td>;
-                }
-
-                if (skipColumn > 0) {
-                  skipColumn = skipColumn - 1;
-                }
-                if (skipCurrentRow > 0) {
-                  skipRow.set(index, skipCurrentRow - 1);
                 }
 
                 return null;
