@@ -429,12 +429,14 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
    */
   const indexData = reactive([]);
 
+  const neepColspanOrRowspan = computed(() => colgroups.some(col => typeof col.rowspan === 'function' || /^\d$/.test(`${col.rowspan}`) || typeof col.colspan === 'function' || /^\d$/.test(`${col.colspan}`)));
+
   const initIndexData = (keepLocalAction = false) => {
     let preRowId = null;
     const skipConfig = {};
     indexData.splice(0, indexData.length, ...props.data.map((item: any, index: number) => {
       const rowId = getRowKey(item, props, index);
-      const cfg = getSkipConfig(item, rowId, index, skipConfig, preRowId);
+      const cfg = neepColspanOrRowspan.value ? getSkipConfig(item, rowId, index, skipConfig, preRowId) : {};
       preRowId = rowId;
       return {
         ...item,
@@ -454,7 +456,8 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
     let preRowId = null;
     const skipConfig = {};
     indexData.forEach((item: any, index: number) => {
-      const cfg = getSkipConfig(item, item[TABLE_ROW_ATTRIBUTE.ROW_UID], index, skipConfig, preRowId);
+      const rowId = item[TABLE_ROW_ATTRIBUTE.ROW_UID];
+      const cfg = neepColspanOrRowspan.value ? getSkipConfig(item, rowId, index, skipConfig, preRowId) : {};
       Object.assign(item, {
         [TABLE_ROW_ATTRIBUTE.ROW_EXPAND]: isRowExpand(item[TABLE_ROW_ATTRIBUTE.ROW_UID]),
         [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: typeof selectedAll === 'boolean' ? selectedAll : resolveSelection(item, item[TABLE_ROW_ATTRIBUTE.ROW_UID]),
