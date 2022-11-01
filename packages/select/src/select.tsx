@@ -274,13 +274,6 @@ export default defineComponent({
         initActiveOptionValue();
       }
     });
-    const watchOnce = watch(isPopoverShow, () => {
-      setTimeout(() => {
-        // 虚拟滚动首次未更新问题
-        enableVirtualRender.value && virtualRenderRef.value?.reset?.();
-        watchOnce();
-      });
-    });
 
     // 初始化当前悬浮的option项
     const initActiveOptionValue = () => {
@@ -515,6 +508,12 @@ export default defineComponent({
       hidePopover();
       handleBlur();
     };
+    const handlePopoverShow = () => {
+      setTimeout(() => {
+        // 虚拟滚动首次未更新问题
+        enableVirtualRender.value && virtualRenderRef.value?.reset?.();
+      });
+    };
 
     provide(selectKey, reactive({
       multiple,
@@ -586,6 +585,7 @@ export default defineComponent({
       handleInputEnter,
       handleKeydown,
       handleSelectedAllOptionMouseEnter,
+      handlePopoverShow,
     };
   },
   render() {
@@ -740,7 +740,10 @@ export default defineComponent({
     );
     return (
       <div class={selectClass}>
-        <BKPopover {...this.popoverConfig} onClickoutside={this.handleClickOutside} ref="popoverRef">
+        <BKPopover {...this.popoverConfig}
+          onClickoutside={this.handleClickOutside}
+          onAfterShow={this.handlePopoverShow}
+          ref="popoverRef">
           {{
             default: () => renderSelectTrigger(),
             content: () => renderSelectContent(),
