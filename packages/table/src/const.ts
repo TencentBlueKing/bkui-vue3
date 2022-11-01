@@ -115,6 +115,7 @@ export const TABLE_ROW_ATTRIBUTE = {
   ROW_SELECTION_ALL: '__row_selection_all',
   ROW_SELECTION_INDETERMINATE: '__row_selection_indeterminate',
   ROW_SOURCE_DATA: '__row_source_data',
+  ROW_SKIP_CFG: '__row_skip_config',
 };
 
 export const COLUMN_ATTRIBUTE = {
