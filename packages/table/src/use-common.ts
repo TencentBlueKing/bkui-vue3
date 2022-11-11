@@ -44,6 +44,7 @@ import {
   resolveNumberOrStringToPix,
   resolvePropBorderToClassStr,
   resolvePropVal,
+  resolveSort,
 } from './utils';
 
 /**
@@ -249,6 +250,15 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
     registerResizeEvent();
   }, { immediate: true, deep: true });
 
+  const defSort = props.columns.reduce((out: any, col, index) => {
+    const columnName = resolvePropVal(col, ['field', 'type'], [col, index]);
+    const sort = resolveSort(col.sort);
+    if (sort) {
+      return { ...(out || {}), [columnName]: sort?.value };
+    }
+    return out;
+  }, null);
+
   const reactiveSchema = reactive({
     rowActions: new Map(),
     scrollTranslateY: 0,
@@ -262,6 +272,7 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
       size: (props.settings as Settings)?.size,
       height: SETTING_SIZE[(props.settings as Settings)?.size],
     },
+    defaultSort: defSort || props.defaultSort,
   });
 
   const isRowExpand = (rowId: any) => {
