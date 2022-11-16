@@ -43,7 +43,8 @@ export type ColumnFilterListItem = {
 export type IOverflowTooltip = {
   content: string | Function,
   disabled?: boolean,
-  watchCellResize?: boolean
+  watchCellResize?: boolean,
+  mode?: string
 };
 
 export type ISortOption = {
@@ -61,6 +62,7 @@ export const IColumnType = {
     content: PropTypes.string.def(''),
     disabled: PropTypes.bool.def(false),
     watchCellResize: PropTypes.bool.def(true),
+    mode: PropTypes.commonType(['static', 'auto'], 'showOverflowTooltipMode').def('auto'),
   })]).def(undefined),
   type: PropTypes.commonType(['selection', 'index', 'expand', 'none'], 'columnType').def('none'),
   resizable: PropTypes.bool.def(true),
@@ -274,6 +276,7 @@ export const tableProps = {
     content: PropTypes.string.def(''),
     disabled: PropTypes.bool.def(false),
     watchCellResize: PropTypes.bool.def(true),
+    mode: PropTypes.commonType(['static', 'auto'], 'showOverflowTooltipMode').def('auto'),
   })]).def(false),
 
   /**
