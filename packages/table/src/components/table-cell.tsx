@@ -57,10 +57,11 @@ export default defineComponent({
     const { showOverflowTooltip = false } = resolveSetting();
     let observerIns = null;
     let bkEllipsisIns = null;
+
     const resolveTooltipOption = () => {
       let disabled = true;
       let content = refRoot.value.innerText;
-
+      let mode = 'auto';
       if (typeof showOverflowTooltip === 'boolean') {
         disabled = !showOverflowTooltip;
       }
@@ -71,9 +72,10 @@ export default defineComponent({
           content = showOverflowTooltip.content(props.column, props.row);
         }
         content = showOverflowTooltip.content || refRoot.value.innerText;
+        mode = showOverflowTooltip.mode || 'auto';
       }
 
-      return { disabled, content };
+      return { disabled, content, mode };
     };
 
     const resolveOverflowTooltip = () => {
@@ -81,14 +83,21 @@ export default defineComponent({
         return;
       }
 
-      const { content } = resolveTooltipOption();
-      const textWidth = getElementTextWidth(refRoot.value, content);
-      const cellWidth = (refRoot.value as HTMLElement).clientWidth;
-      const computedStyle = window.getComputedStyle(refRoot.value);
-      const paddingWidth = ['padding-left', 'padding-right'].reduce((width, prop) => width + Number(computedStyle.getPropertyValue(prop).replace('px', '')), 0);
-      const cellInnerWidth = cellWidth - paddingWidth;
+      const { content, mode } = resolveTooltipOption();
+      if (mode === 'auto') {
+        const textWidth = getElementTextWidth(refRoot.value, content);
+        const cellWidth = (refRoot.value as HTMLElement).clientWidth;
+        const computedStyle = window.getComputedStyle(refRoot.value);
+        const paddingWidth = ['padding-left', 'padding-right'].reduce((width, prop) => width + Number(computedStyle.getPropertyValue(prop).replace('px', '')), 0);
+        const cellInnerWidth = cellWidth - paddingWidth;
 
-      isTipsEnabled.value = textWidth > cellInnerWidth;
+        isTipsEnabled.value = textWidth > cellInnerWidth;
+      }
+
+      if (mode === 'static') {
+        isTipsEnabled.value = true;
+      }
+
       if (isTipsEnabled.value) {
         const bindings = ref(resolveTooltipOption());
         if (bkEllipsisIns === null) {

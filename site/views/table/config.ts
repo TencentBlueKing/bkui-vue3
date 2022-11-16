@@ -87,6 +87,7 @@ export default [
     config: [
       { name: 'content', type: 'String|Function', default: 'Cell innerText', desc: 'tooltip展示内容，可以为回调函数，回调参数 (column, row) => string', optional: [] },
       { name: 'disabled', type: 'Boolean', default: 'false', desc: '是否展示tooltip', optional: ['true', 'false'] },
+      { name: 'mode', type: 'String', default: 'auto', desc: '渲染模式，可选项 auto|static, auto模式会自动计算文本宽度和表格单元宽度，只有当文本宽度超出tip才会激活，如果是static模式，则会一直激活状态', optional: ['auto', 'static'] },
       { name: 'watchCellResize', type: 'Boolean', default: 'true', desc: '是否监听当前cell尺寸变化, 动态添加tooltip, 【如果需要提升性能，请禁用此功能】', optional: ['true', 'false'] },
     ],
   },
