@@ -156,7 +156,8 @@ export const PROVIDE_KEY_INIT_COL = 'InitColumns';
 export const enum SORT_OPTION {
   ASC = 'asc',
   DESC = 'desc',
-  NULL = 'null'
+  NULL = 'null',
+  CUSTOM = 'custom'
 }
 
-export const SORT_OPTIONS = [SORT_OPTION.ASC, SORT_OPTION.DESC, SORT_OPTION.NULL];
+export const SORT_OPTIONS = [SORT_OPTION.ASC, SORT_OPTION.DESC, SORT_OPTION.NULL, SORT_OPTION.CUSTOM];

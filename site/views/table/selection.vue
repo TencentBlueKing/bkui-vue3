@@ -1,6 +1,7 @@
 <template>
   <bk-table
     :data="tableData"
+    :is-row-select-enable="isRowSelectEnable"
   >
     <bk-table-column
       type="selection"
@@ -45,6 +46,12 @@
       },
       handleDblClick(...args) {
         console.log(args);
+      },
+      isRowSelectEnable({ index, isCheckAll }) {
+        if (isCheckAll) {
+          return true;
+        }
+        return index % 3;
       },
     },
   });
