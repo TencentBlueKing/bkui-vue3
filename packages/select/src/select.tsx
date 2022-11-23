@@ -170,7 +170,7 @@ export default defineComponent({
       isRemoteSearch.value
         ? list.value
         : list.value
-          .filter(item => toLowerCase(String(item[displayKey.value]))?.includes(searchKey.value))
+          .filter(item => toLowerCase(String(item[displayKey.value]))?.includes(toLowerCase(searchKey.value)))
     ));
     // select组件是否禁用
     const isDisabled = computed(() => disabled.value || loading.value);
