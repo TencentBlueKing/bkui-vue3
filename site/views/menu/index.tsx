@@ -145,7 +145,6 @@ export default defineComponent({
           demoName="base-demo">
              <BaseDemo/>
           </DemoBox>
-        <PropsBox propsData={menuPropsJson}/>
         <PropsBox title='Menu属性' propsData={menuPropsJson}/>
         <PropsBox title='Menu事件' columnMap={eventColumnMap} propsData={eventJson}/>
         <PropsBox title='SubMenu事件' columnMap={eventColumnMap} propsData={subMenuEventJson}/>
