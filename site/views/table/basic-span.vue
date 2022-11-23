@@ -5,6 +5,7 @@
       :data="tableData"
       row-hover="auto"
       settings
+      show-overflow-tooltip
       @dblclick="handleDblClick"
       @column-sort="handleSortBy"
     />
@@ -14,14 +15,14 @@
 <script>
   import { defineComponent } from 'vue';
 
-  import { DATA_COLUMNS, DATA_TABLE } from './options';
+  import { DATA_TABLE, DATE_COL_SPAN } from './options';
   export default defineComponent({
     components: {},
     data() {
       return {
         isLoading: false,
         tableData: [...DATA_TABLE],
-        columns: [...DATA_COLUMNS],
+        columns: [...DATE_COL_SPAN],
         settings: {
           fields: [{
                      label: '序号',

@@ -124,9 +124,8 @@
 </template>
 
 <script setup>
+  import { TreeApplicationShape } from 'bkui-vue/lib/icon';
   import { ref } from 'vue';
-
-  import { TreeApplicationShape } from '@bkui-vue/icon';
   const collapse = ref(false);
   const navigationType = ref('left-right');
   const handleCollapse = (v) => {

@@ -27,7 +27,7 @@
 import { get as objGet, throttle } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
-import { BORDER_OPTION, BORDER_OPTIONS, TABLE_ROW_ATTRIBUTE } from './const';
+import { BORDER_OPTION, BORDER_OPTIONS, SORT_OPTION, TABLE_ROW_ATTRIBUTE } from './const';
 import { Column, GroupColumn, TablePropTypes } from './props';
 
 
@@ -421,4 +421,109 @@ export const getElementTextWidth = (element: HTMLElement, text?: string) => {
 export const isColumnHidden = (settingFields, column, checked) => {
   const isSettingField = (col: Column) => settingFields.some(field => field.field === resolvePropVal(col, ['field', 'type'], [col]));
   return isSettingField(column) && checked.length && !checked.includes(resolvePropVal(column, ['field', 'type'], [column]));
+};
+
+export const resolveColumnSpan = (column: Column, colIndex: number, row: any, rowIndex: number, key: string) => {
+  if (typeof column[key] === 'function') {
+    return Reflect.apply(column[key], this, [{ column, colIndex, row, rowIndex }]);
+  }
+
+  if (typeof column[key] === 'number') {
+    return column[key];
+  }
+
+  return 1;
+};
+
+export const resolveCellSpan = (column: Column, colIndex: number, row: any, rowIndex: number) => {
+  const colspan = resolveColumnSpan(column, colIndex, row, rowIndex, 'colspan');
+  const rowspan = resolveColumnSpan(column, colIndex, row, rowIndex, 'rowspan');
+  return { colspan, rowspan };
+};
+
+export const skipThisColumn = (columns: Column[], colIndex: number, row: any, rowIndex: number) => {
+  let skip = false;
+
+  for (let i = colIndex; i > 0; i--) {
+    const colspan = resolveColumnSpan(columns[i], i, row, rowIndex, 'colspan');
+    if (colspan > 1) {
+      skip = (colspan - 1 + i) >= colIndex;
+      break;
+    }
+  }
+  return skip;
+};
+
+export const getSortFn = (column, sortType) => {
+  const fieldName = column.field as string;
+  const getVal = (row: any) => getRowText(row, fieldName, column);
+  const sortFn0 = (a: any, b: any) => {
+    const val0 = getVal(a);
+    const val1 = getVal(b);
+    if (typeof val0 === 'number' && typeof val1 === 'number') {
+      return val0 - val1;
+    }
+
+    return String.prototype.localeCompare.call(val0, val1);
+  };
+  const sortFn = typeof (column.sort as any)?.sortFn === 'function'
+    ? (column.sort as any)?.sortFn : sortFn0;
+
+  return  sortType === SORT_OPTION.NULL
+    ? (() => true)
+    : (_a, _b) => sortFn(_a, _b) * (sortType === SORT_OPTION.DESC ? -1 : 1);
+};
+
+export const getNextSortType = (sortType: string) => {
+  const steps = {
+    [SORT_OPTION.NULL]: 0,
+    [SORT_OPTION.ASC]: 1,
+    [SORT_OPTION.DESC]: 2,
+  };
+
+  if (sortType === undefined) {
+    return SORT_OPTION.NULL;
+  }
+
+  return Object.keys(steps)[(steps[sortType] + 1) % 3];
+};
+
+export const resolveSort = (sort: string | boolean | any) => {
+  if (typeof sort === 'string') {
+    return {
+      value: sort,
+    };
+  }
+
+  if (typeof sort === 'boolean' && sort) {
+    return {
+      value: SORT_OPTION.ASC,
+    };
+  }
+
+  if (typeof sort === 'object' && sort !== null) {
+    if (typeof sort.sortFn) {
+      return {
+        value: 'custom',
+        ...sort,
+      };
+    }
+
+    return sort;
+  }
+
+  return null;
+};
+
+
+export const isRowSelectEnable = (props, { row, index, isCheckAll }) => {
+  if (typeof props.isRowSelectEnable === 'boolean') {
+    return props.isRowSelectEnable;
+  }
+
+  if (typeof props.isRowSelectEnable === 'function') {
+    return props.isRowSelectEnable({ row, index, isCheckAll });
+  }
+
+  return true;
 };

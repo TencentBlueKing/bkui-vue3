@@ -34,7 +34,7 @@ import { classes } from '@bkui-vue/shared';
 
 import TableCell from './components/table-cell';
 import TableRow from './components/table-row';
-import { EMIT_EVENTS, EVENTS, SORT_OPTION, TABLE_ROW_ATTRIBUTE } from './const';
+import { COLUMN_ATTRIBUTE, EMIT_EVENTS, EVENTS, TABLE_ROW_ATTRIBUTE } from './const';
 import BodyEmpty from './plugins/body-empty';
 import HeadFilter from './plugins/head-filter';
 import HeadSort from './plugins/head-sort';
@@ -42,7 +42,7 @@ import { TablePlugins } from './plugins/index';
 import Settings from './plugins/settings';
 import useFixedColumn from './plugins/use-fixed-column';
 import { Column, GroupColumn, IColumnActive, IReactiveProp, TablePropTypes } from './props';
-import { formatPropAsArray, getColumnReactWidth, getRowText, isColumnHidden, resolveHeadConfig, resolvePropVal, resolveWidth } from './utils';
+import { formatPropAsArray, getColumnReactWidth, getNextSortType, getRowText, getSortFn, isColumnHidden, isRowSelectEnable, resolveCellSpan, resolveHeadConfig, resolvePropVal, resolveWidth } from './utils';
 
 export default class TableRender {
   props: TablePropTypes;
@@ -205,10 +205,18 @@ export default class TableRender {
    * 点击选中一列事件
    * @param index 当前选中列Index
    */
-  private handleColumnHeadClick(index: number) {
+  private handleColumnHeadClick(index: number, column: Column) {
     if (this.props.columnPick !== 'disabled') {
       this.setColumnActive(index, this.props.columnPick === 'single');
       this.context.emit(EMIT_EVENTS.COLUMN_PICK, this.propActiveCols);
+    }
+
+    if (column.sort && !column.filter) {
+      const columnName = resolvePropVal(column, ['field', 'type'], [column, index]);
+      const nextSort = getNextSortType(this.reactiveProp.defaultSort[columnName]);
+      Object.assign(this.reactiveProp.defaultSort, { [columnName]: nextSort });
+      const sortFn = getSortFn(column, nextSort);
+      this.emitEvent(EVENTS.ON_SORT_BY_CLICK, [{ sortFn, column, index, nextSort }]);
     }
   }
 
@@ -219,6 +227,7 @@ export default class TableRender {
    * @returns
    */
   private getSortCell(column: Column, index: number) {
+    const columnName = resolvePropVal(column, ['field', 'type'], [column, index]);
     /**
      * 点击排序事件
      * @param e 鼠标事件
@@ -227,18 +236,12 @@ export default class TableRender {
      * @param type 排序类型
      */
     const handleSortClick = (sortFn: any, type: string) => {
+      Object.assign(this.reactiveProp.defaultSort, { [columnName]: type });
       this.emitEvent(EVENTS.ON_SORT_BY_CLICK, [{ sortFn, column, index, type }]);
     };
 
-    let defaultSort = SORT_OPTION.NULL;
-    if (typeof this.props.defaultSort === 'object' && this.props.defaultSort !== null) {
-      const columnName = resolvePropVal(column, ['field', 'type'], [column, index]);
-      if (Object.prototype.hasOwnProperty.call(this.props.defaultSort, columnName)) {
-        defaultSort = this.props.defaultSort[columnName];
-      }
-    }
-
-    return <HeadSort column={column} defaultSort={ defaultSort } onChange={ handleSortClick }/>;
+    const nextSort = this.reactiveProp.defaultSort[columnName];
+    return <HeadSort column={column} defaultSort={ nextSort } onChange={ handleSortClick }/>;
   }
 
   private getFilterCell(column: Column, index: number) {
@@ -319,7 +322,7 @@ export default class TableRender {
             this.filterColgroups.map((column: Column, index: number) => <th colspan={1} rowspan={1}
               class={ this.getHeadColumnClass(column, index) }
               style = { resolveFixedColumnStyle(column) }
-              onClick={ () => this.handleColumnHeadClick(index) }
+              onClick={ () => this.handleColumnHeadClick(index, column) }
               { ...resolveEventListener(column) }>
                 <TableCell>
                   { renderHeadCell(column, index) }
@@ -337,7 +340,7 @@ export default class TableRender {
    */
   private renderTBody(rows: any[]) {
     const { resolveFixedColumnStyle } = useFixedColumn(this.props, this.colgroups);
-
+    const rowLength = rows.length;
     return <tbody>
     {
       rows.map((row: any, rowIndex: number) => {
@@ -370,29 +373,38 @@ export default class TableRender {
                   ...formatPropAsArray(this.props.cellStyle, [column, index, row, rowIndex, this]),
                 ];
 
-                const cellClass = [
-                  this.getColumnClass(column, index),
-                  ...formatPropAsArray(this.props.cellClass, [column, index, row, rowIndex, this]),
-                  { 'expand-row': row[TABLE_ROW_ATTRIBUTE.ROW_EXPAND] },
-                ];
-
                 const tdCtxClass = {
                   cell: true,
                   'expand-cell': column.type === 'expand',
                 };
 
                 const cellKey = `__CELL_${rowIndex}_${index}`;
-                return <td class={cellClass}
-                  style={cellStyle}
-                  key={cellKey}
-                  colspan={1} rowspan={1}>
-                  <TableCell class={tdCtxClass}
-                    column={ column }
-                    row={ row }
-                    parentSetting={ this.props.showOverflowTooltip }>
-                    { this.renderCell(row, column, rowIndex, rows) }
-                  </TableCell>
-                </td>;
+                const { colspan, rowspan } = resolveCellSpan(column, index, row, rowIndex);
+                const skipRowKey = TABLE_ROW_ATTRIBUTE.ROW_SKIP_CFG;
+                const columnIdKey = column[COLUMN_ATTRIBUTE.COL_UID];
+                const { skipRow = false, skipCol = false } = row[skipRowKey]?.[columnIdKey] ?? {};
+
+                if (!skipRow && !skipCol) {
+                  const cellClass = [
+                    this.getColumnClass(column, index),
+                    ...formatPropAsArray(this.props.cellClass, [column, index, row, rowIndex, this]),
+                    { 'expand-row': row[TABLE_ROW_ATTRIBUTE.ROW_EXPAND], 'is-last': rowIndex + rowspan >= rowLength },
+                  ];
+
+                  return <td class={cellClass}
+                    style={cellStyle}
+                    key={cellKey}
+                    colspan={ colspan } rowspan={ rowspan }>
+                    <TableCell class={tdCtxClass}
+                      column={ column }
+                      row={ row }
+                      parentSetting={ this.props.showOverflowTooltip }>
+                      { this.renderCell(row, column, rowIndex, rows) }
+                    </TableCell>
+                  </td>;
+                }
+
+                return null;
               })
             }
           </tr>
@@ -478,7 +490,10 @@ export default class TableRender {
     };
 
     const indeterminate = isAll && !!this.reactiveProp.rowActions.get(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_INDETERMINATE);
+    const isEnable = isRowSelectEnable(this.props, { row, index, isCheckAll: isAll });
+
     return <BkCheckbox onChange={ handleChecked }
+      disabled={ !isEnable }
       modelValue={ row[TABLE_ROW_ATTRIBUTE.ROW_SELECTION] }
       indeterminate = { indeterminate }></BkCheckbox>;
   }

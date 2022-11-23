@@ -23,13 +23,13 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
 
 import { AngleDownFill, AngleUpFill } from '@bkui-vue/icon/';
 import { PropTypes, resolveClassName } from '@bkui-vue/shared';
 
 import { SORT_OPTION, SORT_OPTIONS } from '../const';
-import { getRowText } from '../utils';
+import { getNextSortType, getSortFn, resolveSort } from '../utils';
 
 export default defineComponent({
   name: 'HeadSort',
@@ -41,6 +41,10 @@ export default defineComponent({
   setup(props, { emit }) {
     const defSort = props.column?.sort?.value || props.defaultSort || SORT_OPTION.NULL;
     const sortType = ref(defSort);
+
+    watch(() => [props.defaultSort], ([val]) => {
+      sortType.value = val;
+    });
 
     /**
      * 点击排序事件
@@ -54,37 +58,21 @@ export default defineComponent({
       e.stopPropagation();
       e.preventDefault();
 
-      if (sortType.value === type) {
-        sortType.value = SORT_OPTION.NULL;
-      } else {
-        sortType.value = type;
+      let currentSort = type;
+      if (type === SORT_OPTION.NULL) {
+        currentSort = getNextSortType(type);
       }
 
-      if (props.column.sort === 'custom') {
-        emit('change', null, type);
+      const sort = resolveSort(props.column.sort);
+      if (sort?.value === 'custom') {
+        emit('change', null, currentSort);
         return;
       }
 
-      const fieldName = props.column.field as string;
-      const getVal = (row: any) => getRowText(row, fieldName, props.column);
-      const sortFn0 = (a: any, b: any) => {
-        const val0 = getVal(a);
-        const val1 = getVal(b);
-        if (typeof val0 === 'number' && typeof val1 === 'number') {
-          return val0 - val1;
-        }
-
-        return String.prototype.localeCompare.call(val0, val1);
-      };
-      const sortFn = typeof (props.column.sort as any)?.sortFn === 'function'
-        ? (props.column.sort as any)?.sortFn : sortFn0;
-      const execFn = sortType.value === SORT_OPTION.NULL
-        ? (() => true)
-        : (_a, _b) => sortFn(_a, _b) * (type === SORT_OPTION.DESC ? -1 : 1);
-
-      emit('change', execFn, type);
+      const execFn = getSortFn(props.column, currentSort);
+      emit('change', execFn, currentSort);
     };
-    return () => <span class={ resolveClassName('head-cell-sort') }>
+    return () => <span class={ resolveClassName('head-cell-sort') } onClick={(e: MouseEvent) => handleSortClick(e, SORT_OPTION.NULL)}>
     <AngleDownFill class={['sort-action', 'sort-asc', sortType.value === SORT_OPTION.ASC ? 'active' : '']}
       onClick={(e: MouseEvent) => handleSortClick(e, SORT_OPTION.ASC)}/>
     <AngleUpFill class={['sort-action', 'sort-desc', sortType.value === SORT_OPTION.DESC ? 'active' : '']}

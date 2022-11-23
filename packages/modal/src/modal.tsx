@@ -26,7 +26,7 @@
 
 import { defineComponent, Transition } from 'vue';
 
-import { BKPopIndexManager } from '@bkui-vue/shared';
+import { bkPopIndexManager } from '@bkui-vue/shared';
 
 import { propsMixin } from './props.mixin';
 
@@ -39,7 +39,6 @@ export default defineComponent({
   data() {
     return {
       visible: false,
-      bkPopIndexManager: null,
       closeTimer: null,
     };
   },
@@ -83,32 +82,37 @@ export default defineComponent({
         }
       },
       immediate: true,
-      deep: true,
     },
-    visible(val: boolean) {
-      if (val) {
-        this.bkPopIndexManager = new BKPopIndexManager();
-        this.bkPopIndexManager.onMaskClick((_e: MouseEvent) => {
-          this.handleClickOutSide();
-        });
-        this.$nextTick(() => {
-          const hideMaskStyle = {
-            'background-color': 'rgba(0,0,0,0)',
-          };
-          const appendStyle = this.showMask ? {} : hideMaskStyle;
-          this.bkPopIndexManager.show(this.$el, this.showMask, appendStyle, this.transfer, this.zIndex);
-          this.$emit('shown');
-        });
-      } else {
-        this.bkPopIndexManager?.hide(this.$el, this.transfer);
-        this.bkPopIndexManager?.destroy();
-      }
+    // isShow 初始化为 true 的时候，防止直接展示
+    visible: {
+      handler(val: boolean) {
+        if (val) {
+          // this.bkPopIndexManager = new BKPopIndexManager();
+          bkPopIndexManager.onMaskClick((_e: MouseEvent) => {
+            this.handleClickOutSide();
+          });
+          this.$nextTick(() => {
+            const hideMaskStyle = {
+              'background-color': 'rgba(0,0,0,0)',
+            };
+            const appendStyle = this.showMask ? {} : hideMaskStyle;
+            bkPopIndexManager.show(this.$el, this.showMask, appendStyle, this.transfer, this.zIndex);
+            this.$emit('shown');
+          });
+        } else {
+          bkPopIndexManager?.hide(this.$el, this.transfer);
+          bkPopIndexManager?.destroy();
+        }
+      },
+      immediate: true,
     },
   },
 
   beforeUnmount() {
-    this.bkPopIndexManager?.hide(this.$el);
-    this.bkPopIndexManager?.destroy();
+    if (this.visible) {
+      bkPopIndexManager?.hide(this.$el);
+      bkPopIndexManager?.destroy();
+    }
   },
   methods: {
     handleClickOutSide() {
