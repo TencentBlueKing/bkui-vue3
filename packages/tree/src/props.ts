@@ -174,6 +174,8 @@ export const treeProps = {
   emptyText: PropTypes.string.def('没有数据'),
 
   draggable: PropTypes.bool.def(false),
+  disableDrag: Function,
+  disableDrop: Function,
 
   /**
    * 节点拖拽时可交换位置（开启拖拽可交换位置后将不支持改变层级）
