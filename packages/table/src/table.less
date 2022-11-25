@@ -14,7 +14,6 @@
   position: relative;
   height: auto;
   overflow: hidden;
-  border-top: 1px solid @table-border-color;
   // border-bottom: 1px solid @table-border-color;
 
   &.has-scroll-y {
@@ -69,7 +68,7 @@
       border-collapse: collapse;
       table-layout: fixed;
       align-self: flex-start;
-      
+
       th,
       td {
         height: var(--row-height);
@@ -196,8 +195,8 @@
       display: flex;
       width: calc(var(--row-height));
       font-size: 14px;
-      cursor: pointer;     
-      
+      cursor: pointer;
+
       background: @table-head-bg-color;
       border-right: 1px solid @table-border-color;
       border-bottom: 1px solid @table-border-color;
@@ -217,8 +216,7 @@
 
   .@{bk-prefix}-table-footer {
     line-height: 40px;
-    border-bottom: 1px solid @table-border-color;
-    
+
     &.is-hidden {
       display: none;
     }
@@ -226,7 +224,7 @@
 
   &.bordered-row {
     td,
-    th { 
+    th {
       border-bottom: 1px solid @table-border-color;
     }
 
@@ -240,8 +238,12 @@
   }
 
   &.bordered-outer {
+    border-top: 1px solid @table-border-color;
     border-right: 1px solid @table-border-color;
     border-left: 1px solid @table-border-color;
+    .@{bk-prefix}-table-footer {
+      border-bottom: 1px solid @table-border-color;
+    }
   }
 
   &.bordered-col {
