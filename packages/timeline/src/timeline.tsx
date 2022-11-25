@@ -124,6 +124,12 @@ export default defineComponent({
       return timelinesCls;
     };
 
+    const getContent = item => (
+      this.$slots.content
+        ? <div class="bk-timeline-content">{this.$slots.content(item)}</div>
+        : <div class="bk-timeline-content" v-html={item.content} />
+    );
+
     return (
       <ul class={['bk-timeline', this.extCls]}>
         {
@@ -135,8 +141,8 @@ export default defineComponent({
               <div class="bk-timeline-section">
                 {<div class="bk-timeline-title" onClick={() => {
                   this.titleSelect(item);
-                }}>{this.$slots.default?.() ?? <span v-html={item.tag}></span>}</div>}
-                {item.content ? <div class="bk-timeline-content" v-html={item.content}></div> : ''}
+                }}>{this.$slots.default?.(item) ?? <span v-html={item.tag}></span>}</div>}
+                {item.content ? getContent(item) : ''}
               </div>
         </li>)
           }
