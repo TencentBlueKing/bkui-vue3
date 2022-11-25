@@ -14,7 +14,7 @@
     }
   }
 
-  .@{bk-prefix}-tree-node {
+  &-node {
     position: relative;
     display: flex;
     height: var(--lineHeight);
@@ -69,7 +69,7 @@
       margin-right: 6px;
       color: #979ba5;
     }
-    
+
     .@{bk-prefix}-tree-icon {
       margin: 0 6px 0 4px;
     }
@@ -95,5 +95,20 @@
         white-space: nowrap;
       }
     }
+  }
+
+  &-drop-active {
+    background: #f5f7fa;
+  }
+
+  &-drop-disabled {
+    background: #ffd5d5;
+    .@{bk-prefix}-tree-node {
+      cursor: no-drop;
+    }
+  }
+
+  &-drag-disabled{
+
   }
 }
