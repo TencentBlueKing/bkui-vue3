@@ -47,13 +47,13 @@ const menuPropsJson: IPropsTableItem[] = [
     desc: '打开的submenu key值',
     optional: [],
   },
-  {
-    name: 'mode',
-    type: 'String',
-    default: 'vertical',
-    desc: '展示方式',
-    optional: ['vertical', 'horizontal'],
-  },
+  // {
+  //   name: 'mode',
+  //   type: 'String',
+  //   default: 'vertical',
+  //   desc: '展示方式',
+  //   optional: ['vertical', 'horizontal'],
+  // },
   {
     name: 'uniqueOpen',
     type: 'Boolean',
@@ -62,6 +62,73 @@ const menuPropsJson: IPropsTableItem[] = [
     optional: [],
   },
 ];
+const eventJson = [
+  {
+    name: 'update:activeKey',
+    desc: '选择项发生变化时触发',
+    params: 'key: string, {key: string, parentKey: string}',
+  },
+  {
+    name: 'update:openKeys',
+    desc: '展开menu时触发',
+    params: 'value: string[]',
+  },
+  {
+    name: 'click',
+    desc: '点击子项时触发',
+    params: 'key: string',
+  },
+  {
+    name: 'openChange',
+    desc: '展开项发生变化时触发',
+    params: 'opened: boolean, {key: string, parentKey: string}',
+  },
+];
+const subMenuEventJson = [
+  {
+    name: 'collapse',
+    desc: '展开变化时触发事件',
+    params: 'collapse: boolean, instance: VNode',
+  },
+];
+const subMenuSlotsJson = [
+  {
+    name: 'icon',
+    type: 'icon slot',
+    default: [],
+    desc: 'icon 插槽',
+    params: '--',
+  },
+];
+const menuItemPropsJson = [
+  {
+    name: 'needIcon',
+    type: 'Boolean',
+    default: 'true',
+    desc: '是否展示Icon',
+    optional: [],
+  },
+];
+const menuItemSlotsJson = [
+  {
+    name: 'icon',
+    type: 'icon slot',
+    default: [],
+    desc: 'icon 插槽',
+    params: '--',
+  },
+];
+const eventColumnMap = {
+  name: '名称',
+  desc: '说明',
+  params: '参数',
+};
+const slotColumnMap = {
+  name: '名称',
+  desc: '说明',
+  type: '类型',
+  params: '参数',
+};
 export default defineComponent({
   render() {
     return (
@@ -78,7 +145,12 @@ export default defineComponent({
           demoName="base-demo">
              <BaseDemo/>
           </DemoBox>
-        <PropsBox propsData={menuPropsJson}/>
+        <PropsBox title='Menu属性' propsData={menuPropsJson}/>
+        <PropsBox title='Menu事件' columnMap={eventColumnMap} propsData={eventJson}/>
+        <PropsBox title='SubMenu事件' columnMap={eventColumnMap} propsData={subMenuEventJson}/>
+        <PropsBox title='SubMenu插槽' columnMap={slotColumnMap} propsData={subMenuSlotsJson}/>
+        <PropsBox title='MenuItem属性' propsData={menuItemPropsJson}/>
+        <PropsBox title='MenuItem插槽' columnMap={slotColumnMap} propsData={menuItemSlotsJson}/>
       </div>
     );
   },

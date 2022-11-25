@@ -43,7 +43,8 @@ export type ColumnFilterListItem = {
 export type IOverflowTooltip = {
   content: string | Function,
   disabled?: boolean,
-  watchCellResize?: boolean
+  watchCellResize?: boolean,
+  mode?: string
 };
 
 export type ISortOption = {
@@ -61,6 +62,7 @@ export const IColumnType = {
     content: PropTypes.string.def(''),
     disabled: PropTypes.bool.def(false),
     watchCellResize: PropTypes.bool.def(true),
+    mode: PropTypes.commonType(['static', 'auto'], 'showOverflowTooltipMode').def('auto'),
   })]).def(undefined),
   type: PropTypes.commonType(['selection', 'index', 'expand', 'none'], 'columnType').def('none'),
   resizable: PropTypes.bool.def(true),
@@ -274,6 +276,7 @@ export const tableProps = {
     content: PropTypes.string.def(''),
     disabled: PropTypes.bool.def(false),
     watchCellResize: PropTypes.bool.def(true),
+    mode: PropTypes.commonType(['static', 'auto'], 'showOverflowTooltipMode').def('auto'),
   })]).def(false),
 
   /**
@@ -295,6 +298,18 @@ export const tableProps = {
    * 默认的排序列的 prop 和顺序。它的 prop 属性指定默认的排序的列，order指定默认排序的顺序
    */
   defaultSort: PropTypes.shape<ISortOption>({}).def({}),
+
+  /**
+   * 配合 column selection 使用
+   * 用于配置渲染行数据的勾选框是否可用
+   * 可以直接为 true|false，全部启用或者禁用
+   * 如果是函数，则返回 true|false
+   * ({ row, index, isCheckAll }) => boolean
+   */
+  isRowSelectEnable: PropTypes.oneOfType([
+    PropTypes.func.def(() => true),
+    PropTypes.bool.def(true),
+  ]).def(true),
 };
 
 
@@ -337,6 +352,7 @@ export type Column = {
   sort?: {
     sortFn?: Function;
     sortScope?: string;
+    value?: string;
   } | boolean | string;
   filter?: {
     list?: any,
@@ -367,7 +383,14 @@ export type IColumnActive = {
 };
 
 export type IReactiveProp = {
-  activeColumns: IColumnActive[]
+  activeColumns: IColumnActive[],
+  rowActions: Record<string, any>,
+  scrollTranslateY: Number,
+  scrollTranslateX: Number,
+  pos: Record<string, any>,
+  settings: any,
+  setting: any,
+  defaultSort: Record<string, any>
 };
 
 export type Colgroups = Column & {

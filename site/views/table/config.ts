@@ -57,9 +57,9 @@ export default [
       { name: 'is-selected-fn', type: 'Function', default: 'undefined', desc: '提供自定义判定当前行是否选中, 如果设置了此属性，其他判定均不生效, ({ row, cell, data }) => bool', optional: [] },
       { name: 'async-data', type: 'Boolean', default: 'false', desc: '为避免不必要的数据修改导致的不可控组件更新,默认组件不会对传入组件的data进行任何修改,设置此属性为true则会对源数据进行同步（如：启用selection，勾选时想要自动同步到源数据）, 目前只会对指定了selectionKey的情况下才会对指定的字段数据进行更新，同时需要指定 rowKey，保证匹配到的row是正确的目标对象', optional: ['true', 'false'] },
       { name: 'row-hover', type: 'String', default: 'highlight', desc: '鼠标划过行样式行为,配置`highlight`会高亮当前行，`auto`自行设置样式', optional: ['highlight', 'auto'] },
-      { name: 'default-sort', type: 'Object', default: 'order:ascending,descending', desc: '如果只指定了 prop, 没有指定 order, 则默认顺序是 ascending', optional: [] },
+      { name: 'default-sort', type: 'Object', default: '{}', desc: '如果只指定了 prop, 没有指定 order, 则默认顺序是 asc, 配置格式：{ column: order }', optional: [] },
+      { name: 'isRowSelectEnable', type: 'Function|Boolean', default: 'true', desc: '   * 配合 column selection 使用用于配置渲染行数据的勾选框是否可用, 可以直接为 true|false，全部启用或者禁用如果是函数，则返回 true|false({ row, index, isCheckAll }) => boolean', optional: [] },
     ],
-
   },
   {
     title: 'IColumn',
@@ -75,7 +75,7 @@ export default [
       { name: 'type', type: 'String', default: 'none', desc: '对应列的类型。如果设置了 index 则显示该行的索引（从 1 开始计算）；如果设置了 expand 则显示为一个可展开的按钮', optional: ['index', 'expand', 'none'] },
       { name: 'resizable', type: 'Boolean', default: 'true', desc: '对应列是否可以通过拖动改变宽度', optional: [] },
       { name: 'fixed', type: 'String', default: 'false', desc: '列是否固定在左侧或者右侧，true 表示固定在左侧', optional: ['left', 'right'] },
-      { name: 'sort', type: 'Boolean|ISort', default: 'false', desc: '对应列是否可以排序，可以简单设置true开启默认排序，也可以通过详细配置排序方式，请参考ISort', optional: [] },
+      { name: 'sort', type: 'Boolean|ISort|String', default: 'false', desc: '对应列是否可以排序，可以简单设置true开启默认排序，也可以通过详细配置排序方式，请参考ISort', optional: [] },
       { name: 'filter', type: 'Boolean|String|IFilter', default: 'false', desc: '数据过滤的选项,可以简单设置true开启默认过滤。可以通过详细配置排序方式，请参考IFilter', optional: [] },
       { name: 'colspan', type: 'Number|Function', default: 1, desc: '规定单元格可横跨的列数', optional: [] },
       { name: 'rowspan', type: 'Number|Function', default: 1, desc: '规定单元格可横跨的行数', optional: [] },
@@ -87,6 +87,7 @@ export default [
     config: [
       { name: 'content', type: 'String|Function', default: 'Cell innerText', desc: 'tooltip展示内容，可以为回调函数，回调参数 (column, row) => string', optional: [] },
       { name: 'disabled', type: 'Boolean', default: 'false', desc: '是否展示tooltip', optional: ['true', 'false'] },
+      { name: 'mode', type: 'String', default: 'auto', desc: '渲染模式，可选项 auto|static, auto模式会自动计算文本宽度和表格单元宽度，只有当文本宽度超出tip才会激活，如果是static模式，则会一直激活状态', optional: ['auto', 'static'] },
       { name: 'watchCellResize', type: 'Boolean', default: 'true', desc: '是否监听当前cell尺寸变化, 动态添加tooltip, 【如果需要提升性能，请禁用此功能】', optional: ['true', 'false'] },
     ],
   },
@@ -103,6 +104,7 @@ export default [
     title: 'ISort',
     subTile: '排序详细配置',
     config: [
+      { name: 'value', type: 'string', default: 'asc', desc: '排序规则', optional: ['asc', 'desc'] },
       { name: 'sortFn', type: 'Function', default: '--', desc: '自定义排序函数，返回true | false，函数参考 Array.sort((a,b) => boolean)', optional: [] },
       { name: 'sortScope', type: 'String', default: 'current', desc: '排序生效范围，针对分页表格，当前排序是当前页生效还是全部数据排序', optional: ['current', 'all'] },
     ],
