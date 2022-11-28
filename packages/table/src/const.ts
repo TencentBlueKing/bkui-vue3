@@ -29,7 +29,8 @@ export const enum BORDER_OPTION {
   NONE = 'none',
   ROW = 'row',
   COL = 'col',
-  OUTER = 'outer'
+  OUTER = 'outer',
+  HORIZONTAL = 'horizontal'
 }
 
 /**
