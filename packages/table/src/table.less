@@ -246,6 +246,13 @@
     }
   }
 
+  &.bordered-horizontal {
+    border-top: 1px solid @table-border-color;
+    .@{bk-prefix}-table-footer {
+      border-bottom: 1px solid @table-border-color;
+    }
+  }
+
   &.bordered-col {
     th,
     td {
