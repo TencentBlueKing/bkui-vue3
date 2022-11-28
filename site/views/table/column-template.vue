@@ -3,6 +3,7 @@
     <bk-table
       :data="tableData"
       :settings="settings"
+      border="horizontal"
     >
       <bk-table-column
         label="序号"
