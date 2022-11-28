@@ -144,19 +144,21 @@ export default defineComponent({
       return renderEmpty(emptyType);
     };
 
-    return () => <VirtualRender class={resolveClassName('tree')}
-      style={getTreeStyle(null, props)}
-      list={renderData.value}
-      lineHeight={props.lineHeight}
-      enabled={props.virtualRender}
-      contentClassName={resolveClassName('container')}
-      throttleDelay={0}
-      ref={root}>
-      {
+    return () => (
+      <VirtualRender class={resolveClassName('tree')}
+        style={getTreeStyle(null, props)}
+        list={renderData.value}
+        lineHeight={props.lineHeight}
+        enabled={props.virtualRender}
+        contentClassName={resolveClassName('container')}
+        throttleDelay={0}
+        ref={root}>
         {
-          default: (scoped: any) => renderTreeContent(scoped.data || []),
+          {
+            default: (scoped: any) => renderTreeContent(scoped.data || []),
+          }
         }
-      }
-    </VirtualRender>;
+      </VirtualRender>
+    );
   },
 });
