@@ -174,8 +174,8 @@ export const treeProps = {
   emptyText: PropTypes.string.def('没有数据'),
 
   draggable: PropTypes.bool.def(false),
-  disableDrag: Function,
-  disableDrop: Function,
+  disableDrag: PropTypes.func.def(null),
+  disableDrop: PropTypes.func.def(null),
 
   /**
    * 节点拖拽时可交换位置（开启拖拽可交换位置后将不支持改变层级）
@@ -185,7 +185,8 @@ export const treeProps = {
   /**
    * 节点是否可以选中
    */
-  selectable: PropTypes.bool.def(true),
+  selectable: PropTypes.oneOfType([PropTypes.bool, PropTypes.func]).def(true),
+  disabledFolderSelectable: PropTypes.bool.def(false),
 
   /**
    * 是否支持多选

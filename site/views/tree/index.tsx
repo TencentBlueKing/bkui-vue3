@@ -43,6 +43,7 @@ import * as TREE_DATA from './options';
 import prefixIcon from './prefix-icon.vue';
 import prefixIconJsx from './prefix-icon-jsx';
 import search from './search.vue';
+import selected from './selected.vue';
 import virtualRender from './virtual-render.vue';
 
 export default defineComponent({
@@ -58,6 +59,7 @@ export default defineComponent({
     search,
     draggable,
     draggableFunction,
+    selected,
   },
   render() {
     const propsJson = resolvePropsToDesData(treeProps);
@@ -173,6 +175,16 @@ export default defineComponent({
           demoName: 'draggable-function',
         },
         component: () => <draggableFunction></draggableFunction>,
+      },
+      {
+        attrs: {
+          title: '设置默认选中',
+          subtitle: '配置搜索行为',
+          desc: 'props: --',
+          componentName: 'tree',
+          demoName: 'selected',
+        },
+        component: () => <selected></selected>,
       }];
 
     return (
