@@ -168,6 +168,7 @@ export const getNodeRowClass = (item: any, schema: any) => {
     'is-checked': __is_checked,
     'is-selected': __is_selected,
     'node-folder': item.is_folder,
+    'node-leaf': item.is_leaf,
     [resolveClassName('node-row')]: true,
   };
 };
