@@ -43,7 +43,6 @@ import {
 } from './util';
 
 export type TreePropTypes = defineTypes;
-;
 export default defineComponent({
   name: 'Tree',
   props: treeProps,
