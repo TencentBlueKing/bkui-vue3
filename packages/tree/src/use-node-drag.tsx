@@ -25,11 +25,11 @@
 */
 import { computed, onMounted, onUnmounted } from 'vue';
 
-import { NODE_ATTRIBUTES } from './constant';
+import { EVENTS, NODE_ATTRIBUTES } from './constant';
 import { TreePropTypes } from './props';
 import useNodeAttribute from './use-node-attribute';
 
-export default (props: TreePropTypes, root?, flatData?) => {
+export default (props: TreePropTypes, ctx, root?, flatData?) => {
   const {
     getSourceNodeByUID,
     getNodeParentIdById,
@@ -69,6 +69,7 @@ export default (props: TreePropTypes, root?, flatData?) => {
     e.preventDefault();
     const targetNode = getTargetTreeNode(e);
     const data = getNodeByTargetTreeNode(targetNode);
+    ctx.emit(EVENTS.NODE_DRAG_OVER, e, targetNode, data);
     if (isNeedCheckDroppable.value && props?.disableDrop(data)) {
       e.dataTransfer.effectAllowed = 'move';
       e.dataTransfer.dropEffect = 'none';
@@ -90,6 +91,7 @@ export default (props: TreePropTypes, root?, flatData?) => {
     const targetNode = getTargetTreeNode(e);
     e.dataTransfer.setData('text/plain', '');
     e.dataTransfer.setData('node-id', targetNode.getAttribute('data-tree-node'));
+    ctx.emit(EVENTS.NODE_DRAG_START, e, targetNode);
   };
 
   const handleTreeNodeDrop = (e: DragEvent) => {
@@ -106,6 +108,7 @@ export default (props: TreePropTypes, root?, flatData?) => {
     const targetNodeId = targetNode.getAttribute('data-tree-node');
 
     Reflect.apply(props.dragSort ? dragSortData : dragAsChildNode, this, [sourceNodeId, targetNodeId]);
+    ctx.emit(EVENTS.NODE_DROP, e, targetNode, data);
   };
 
   const isNodeSortable = (sourceId: string, targetId: string) => {
@@ -168,6 +171,7 @@ export default (props: TreePropTypes, root?, flatData?) => {
     e.preventDefault();
     const targetNode = getTargetTreeNode(e);
     targetNode.classList.remove('bk-tree-drop-active', 'bk-tree-drop-disabled');
+    ctx.emit(EVENTS.NODE_DRAG_LEAVE, e, targetNode);
   };
 
   onMounted(() => {
