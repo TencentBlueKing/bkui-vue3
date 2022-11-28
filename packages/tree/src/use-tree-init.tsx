@@ -26,7 +26,7 @@
 */
 
 import { v4 as uuidv4 } from 'uuid';
-import { computed, reactive, watch } from 'vue';
+import { computed, onMounted, reactive, watch } from 'vue';
 
 import { NODE_ATTRIBUTES, NODE_SOURCE_ATTRS } from './constant';
 import { TreePropTypes } from './props';
@@ -316,20 +316,22 @@ export default (props: TreePropTypes) => {
 
 
   if (props.selectable) {
-    watch(() => props.selected, (newData) => {
-      // console.log('watch selected changed');
-      afterSelectWatch.length = 0;
-      afterSelectEvents.forEach((event: () => void) => {
-        Reflect.apply(event, this, [newData]);
+    onMounted(() => {
+      watch(() => props.selected, (newData) => {
+        // console.log('watch selected changed');
+        afterSelectWatch.length = 0;
+        afterSelectEvents.forEach((event: () => void) => {
+          Reflect.apply(event, this, [newData]);
 
-        /**
-         * selected设置生效有可能会在props.data 改变之前
-         * 此时需要缓存当前执行函数，保证在watch data change 之后执行
-         */
-        afterSelectWatch.push(() => Reflect.apply(event, this, [newData]));
-      });
-      registerNextLoop('afterSelectWatch', afterSelectWatch);
-    }, { immediate: true });
+          /**
+           * selected设置生效有可能会在props.data 改变之前
+           * 此时需要缓存当前执行函数，保证在watch data change 之后执行
+           */
+          afterSelectWatch.push(() => Reflect.apply(event, this, [newData]));
+        });
+        registerNextLoop('afterSelectWatch', afterSelectWatch);
+      }, { immediate: true });
+    });
   }
 
   const afterDataUpdate = (callFn: (d: any) => any) => {
