@@ -79,7 +79,7 @@ export default defineComponent({
       if (isSearchActive.value) {
         const treeUiFilter = () => (isTreeUI ? schemaValues.value
           .some((schema: any) => schema[NODE_ATTRIBUTES.PATH]?.startsWith(getNodePath(item))
-          && schema[NODE_ATTRIBUTES.IS_MATCH]) : false);
+            && schema[NODE_ATTRIBUTES.IS_MATCH]) : false);
 
         return getNodeAttr(item, NODE_ATTRIBUTES.IS_MATCH) || treeUiFilter();
       }
@@ -134,8 +134,8 @@ export default defineComponent({
 
     const root = ref();
     const { renderEmpty } = useEmpty(props, ctx);
-    useNodeDrag(props, root, flatData);
-    const renderTreeContent = (scopedData: any[]) =>  {
+    useNodeDrag(props, ctx, root, flatData);
+    const renderTreeContent = (scopedData: any[]) => {
       if (scopedData.length) {
         return scopedData.map(renderTreeNode);
       }
@@ -144,12 +144,12 @@ export default defineComponent({
       return renderEmpty(emptyType);
     };
 
-    return () => <VirtualRender class={ resolveClassName('tree') }
+    return () => <VirtualRender class={resolveClassName('tree')}
       style={getTreeStyle(null, props)}
       list={renderData.value}
       lineHeight={props.lineHeight}
       enabled={props.virtualRender}
-      contentClassName={ resolveClassName('container') }
+      contentClassName={resolveClassName('container')}
       throttleDelay={0}
       ref={root}>
       {
