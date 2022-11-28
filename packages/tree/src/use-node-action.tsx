@@ -425,36 +425,41 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
       .map((index: number) => <span class="node-virtual-line" style={ getNodeLineStyle(maxDeep - index) }></span>);
   };
 
-  const renderTreeNode = (item: any) => <div data-tree-node={getNodeId(item)}
-    key={getNodeId(item)}
-    class={ getNodeRowClass(item, flatData.schema) }>
-  <div class={getNodeItemClass(item, flatData.schema, props) }
-    style={getNodeItemStyle(item, props, flatData)}
-    onClick={(e: MouseEvent) => handleNodeContentClick(item, e)}>
-    <span class={ [resolveClassName('node-action')] }
-      onClick={(e: MouseEvent) => handleNodeActionClick(e, item)}>
-        { getActionIcon(item) }
-      </span>
-    <span class={ resolveClassName('node-content') } >
-      {
-        [
-          getCheckboxRender(item),
-          getNodePrefixIcon(item),
-        ]
-      }
-      <span class={ resolveClassName('node-text') }>{
-        ctx.slots.node?.(extendNodeAttr(item))
-        ?? [getLabel(item, props)]
-      }</span>
-      {
-        ctx.slots.nodeAppend?.(extendNodeAttr(item))
-      }
-    </span>
-    {
-      getVirtualLines(item)
-    }
-  </div>
-</div>;
+  const renderTreeNode = (item: any) => (
+    <div
+      data-tree-node={getNodeId(item)}
+      key={getNodeId(item)}
+      class={ getNodeRowClass(item, flatData.schema) }>
+      <div
+        class={getNodeItemClass(item, flatData.schema, props) }
+        style={getNodeItemStyle(item, props, flatData)}
+        onClick={(e: MouseEvent) => handleNodeContentClick(item, e)}>
+        <div
+          class={ [resolveClassName('node-action')] }
+          onClick={(e: MouseEvent) => handleNodeActionClick(e, item)}>
+          { getActionIcon(item) }
+        </div>
+        <div class={ resolveClassName('node-content') } >
+          {
+            [
+              getCheckboxRender(item),
+              getNodePrefixIcon(item),
+            ]
+          }
+          <span
+            class={ resolveClassName('node-text') }>
+            {ctx.slots.node?.(extendNodeAttr(item)) ?? [getLabel(item, props)]}
+          </span>
+          {
+            ctx.slots.nodeAppend?.(extendNodeAttr(item))
+          }
+        </div>
+        {
+          getVirtualLines(item)
+        }
+      </div>
+    </div>
+  );
 
   return {
     renderTreeNode,
