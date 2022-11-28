@@ -5,6 +5,7 @@
       :data="remoteData"
       :pagination="pagination"
       :height="300"
+      border="horizontal"
       remote-pagination
       @page-value-change="handlePageValueChange"
       @page-limit-change="handlePageLimitChange"
