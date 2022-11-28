@@ -5,11 +5,12 @@
         v-model="selectText"
         style="width: 120px;margin: 0 15px 0 0;"
       />
-      <bk-button>
+      <bk-button @click="handleSelect">
         测试选中
       </bk-button>
     </div>
     <bk-tree
+      ref="refAutoSelect"
       :data="treeData"
       label="name"
       children="children"
@@ -33,7 +34,7 @@
     data() {
       return {
         selectText: '2',
-        selected: [{ id: '1', name: '方案成熟', isOpen: true, content: '拥有支撑数百款腾讯业务的经验沉淀，兼容各种复杂的系统架构，生于运维 · 精于运维' }],
+        selected: ['2'],
         treeData: [
           {
             id: '1', name: '方案成熟', isOpen: true, content: '拥有支撑数百款腾讯业务的经验沉淀，兼容各种复杂的系统架构，生于运维 · 精于运维',

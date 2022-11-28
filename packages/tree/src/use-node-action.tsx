@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { h, nextTick } from 'vue';
+import { h, nextTick, watch } from 'vue';
 
 import BkCheckbox from '@bkui-vue/checkbox';
 import { DownShape, Folder, FolderShapeOpen, RightShape, Spinner, TextFile } from '@bkui-vue/icon';
@@ -465,6 +465,12 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
     </div>
   );
 
+  watch(() => props.selected, (selected) => {
+    if (!Array.isArray(selected) || !selected.length) {
+      return;
+    }
+    setSelect(selected);
+  }, { immediate: true });
   return {
     renderTreeNode,
     hanldeTreeNodeClick,
