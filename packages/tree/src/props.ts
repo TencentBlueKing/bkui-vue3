@@ -185,7 +185,7 @@ export const treeProps = {
   /**
    * 节点是否可以选中
    */
-  selectable: PropTypes.oneOfType([PropTypes.bool, PropTypes.func]).def(null),
+  selectable: PropTypes.oneOfType([PropTypes.bool, PropTypes.func]).def(true),
   disabledFolderSelectable: PropTypes.bool.def(false),
 
   /**
