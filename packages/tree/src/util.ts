@@ -162,7 +162,6 @@ export const getNodeItemClass = (item: any, schema: any, props: TreePropTypes) =
  * @returns
  */
 export const getNodeRowClass = (item: any, schema: any) => {
-  debugger;
   // eslint-disable-next-line @typescript-eslint/naming-convention
   const { __is_checked, __is_selected } = getSchemaVal(schema as Map<string, any>, item[NODE_ATTRIBUTES.UUID]) || {};
   return {
