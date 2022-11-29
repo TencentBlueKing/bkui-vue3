@@ -3,6 +3,7 @@
     v-model="state.tags"
     placeholder="请选择城市"
     trigger="focus"
+    collapse-tags
     :list="state.list"
   />
 </template>
