@@ -148,3 +148,47 @@ export const getCharLength = (str: string) => {
 
   return bitLen;
 };
+
+/**
+ * 获取隐藏 tag index
+ * @param tagInputRef 组件容器 ref
+ * @param collapseTags 是否折叠 tags
+ * @param selectedTagList 已选择 tags
+ */
+export const useTagsOverflow = (
+  tagInputRef: Ref<HTMLDivElement>,
+  collapseTags: Ref<Boolean>,
+  selectedTagList: Ref<string[]>,
+) => {
+  watch(
+    [selectedTagList, collapseTags],
+    () => {
+      calcOverflow();
+    },
+    { flush: 'post' },
+  );
+
+  const overflowTagIndex = ref<null | number>(null);
+
+  // 计算出现换行的索引
+  const calcOverflow = () => {
+    if (!collapseTags.value) return;
+
+    overflowTagIndex.value = null;
+    setTimeout(() => {
+      const tags: HTMLElement[] = Array.from(tagInputRef.value.querySelectorAll('.tag-item'));
+      const tagIndexInSecondRow = tags.findIndex((currentTag, index) => {
+        if (!index) {
+          return false;
+        }
+        const previousTag = tags[index - 1];
+        return previousTag.offsetTop !== currentTag.offsetTop;
+      });
+      overflowTagIndex.value = tagIndexInSecondRow > 0 ? tagIndexInSecondRow - 1 : null;
+    });
+  };
+
+  return {
+    overflowTagIndex,
+  };
+};
