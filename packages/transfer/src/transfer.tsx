@@ -27,7 +27,7 @@
 /* eslint-disable arrow-body-style */
 import { computed, defineComponent, ref, toRaw, toRefs, watch } from 'vue';
 
-import { ArrowsRight, Error } from '@bkui-vue/icon/';
+import { ArrowsRight, Error, Search, Transfer } from '@bkui-vue/icon/';
 import BkInput from '@bkui-vue/input';
 
 import { ArrayType } from './const';
@@ -176,7 +176,7 @@ export default defineComponent({
     const rightList = this.sortable ? this.selectedListSort : this.selectedList;
     const getHeaderHtml = (dirct) => {
       const isLeft = dirct === 'left-header';
-      const titleText = isLeft ? `${this.title[0] ?? '左侧列表'}` : `${this.title[1] ?? '右侧列表'}`;
+      const titleText = isLeft ? `${this.title[0] ?? '源列表'}` : `${this.title[1] ?? '目标列表'}`;
       const isDisabled = isLeft ? !leftList.length : !rightList.length;
       const headerClick = () => {
         if (isDisabled) return;
@@ -188,11 +188,11 @@ export default defineComponent({
             {this.$slots[dirct]()}
           </div>
         : <div class="header">
-            {`${titleText}（共${isLeft ? leftList.length : rightList.length}条）`}
+            {`${titleText}（${isLeft ? leftList.length : rightList.length}）`}
             <span
               class={{ disabled: isDisabled }}
               onClick={() => headerClick()}>
-              {isLeft ? '全部添加' : '清空'}
+              {isLeft ? '选择全部' : '清空'}
               </span>
           </div>;
     };
@@ -226,7 +226,7 @@ export default defineComponent({
             {item[this.displayCode]}
           </span>
           <span class="icon-wrapper">
-            {isLeft ? <ArrowsRight class="bk-icon" /> : <Error class="bk-icon" />}
+            {isLeft ? <ArrowsRight class="bk-icon icon-move" /> : <Error class="bk-icon icon-delete" />}
           </span>
         </div>
       );
@@ -261,13 +261,17 @@ export default defineComponent({
                 v-model={this.selectSearchQuery}
                 class="transfer-search-input"
                 clearable={true}
-                placeholder={this.searchPlaceholder || '请输入搜索关键字'}
-                type="search"
-                left-icon='bk-icon icon-search' />
+                placeholder={this.searchPlaceholder || '搜索'}>
+                {{
+                  prefix: () => (
+                    <Search class="icon-search" />
+                  ),
+                }}
+                </BkInput>
           }
           {getListContentHtml('left')}
         </div>
-        <div class="transfer"></div>
+        <Transfer class="transfer" />
         <div class="target-list">
           {getHeaderHtml('right-header')}
           {getListContentHtml('right')}
