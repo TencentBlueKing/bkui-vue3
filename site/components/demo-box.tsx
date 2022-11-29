@@ -72,6 +72,7 @@ export default defineComponent({
       default: () => ({}),
     },
   },
+  emits: ['click'],
   setup(props) {
     const showCode = ref(false);
     const showConfigData = ref(false);
@@ -119,7 +120,6 @@ export default defineComponent({
     onBeforeUnmount(() => {
       copyInstance?.destroy();
     });
-
     return {
       showCode,
       handleShowCodeChange,
@@ -143,8 +143,8 @@ export default defineComponent({
           </div>,
           <div class="example-tools">
             {this.desc}
-              <BoxIcon tips='执行' style={{ marginLeft: 'auto' }}>
-                  <Stackblitz code={this.activeCode}/>
+              <BoxIcon tips='执行' style={{ marginLeft: 'auto'}}  >
+                  <Stackblitz code={this.activeCode} style={{ width: '100%', height: '100%', textAlign: "center", lineHeight: "23px" }}/>
               </BoxIcon>
             <BoxIcon
               tips='代码'
