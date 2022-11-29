@@ -4,6 +4,7 @@
     placeholder="请选择城市"
     allow-create
     has-delete-icon
+    collapse-tags
     :list="state.list"
   />
 </template>
