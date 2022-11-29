@@ -93,6 +93,7 @@ export { default as Success } from '../icons/success';
 export { default as SwitcherLoading } from '../icons/switcher-loading';
 export { default as TextFile } from '../icons/text-file';
 export { default as TextFill } from '../icons/text-fill';
+export { default as Transfer } from '../icons/transfer';
 export { default as TreeApplicationShape } from '../icons/tree-application-shape';
 export { default as UnfullScreen } from '../icons/unfull-screen';
 export { default as Unvisible } from '../icons/unvisible';
