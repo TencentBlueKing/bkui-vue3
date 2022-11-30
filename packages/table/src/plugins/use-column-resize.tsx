@@ -51,7 +51,9 @@ export default (colgroups: GroupColumn[], immediate = true) => {
     bodyStyle.cursor = '';
 
     const diff = e.clientX - startX;
-    dragColumn.resizeWidth = (dragColumn.resizeWidth ?? dragColumn.calcWidth) + diff;
+    const resolveWidth = (dragColumn.resizeWidth ?? dragColumn.calcWidth) + diff;
+    const minWidth = Number(dragColumn.minWidth);
+    dragColumn.resizeWidth = resolveWidth > minWidth ? resolveWidth : minWidth;
 
     document.removeEventListener('mouseup', handleMouseUp);
     document.removeEventListener('mousemove', handleMouseMove);
@@ -65,7 +67,13 @@ export default (colgroups: GroupColumn[], immediate = true) => {
   };
 
   const updateOffsetX = (e: MouseEvent) => throttle(() => {
-    dragOffsetX.value = e.clientX - startX + dragStartOffsetX;
+    const diff = e.clientX - startX;
+    const resolveWidth = (dragColumn.resizeWidth ?? dragColumn.calcWidth) + diff;
+    const minWidth = Number(dragColumn.minWidth);
+
+    if (minWidth < resolveWidth) {
+      dragOffsetX.value = e.clientX - startX + dragStartOffsetX;
+    }
   }, 60);
 
   const handleMouseMove = (e: MouseEvent) => {
