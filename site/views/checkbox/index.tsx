@@ -189,19 +189,19 @@ export default defineComponent({
             <DemoCheckboxIndeterminate />
         </DemoBox>
         <PropsBox
-          title="Checkbox Attributes"
+          title="Checkbox 属性"
           subtitle=""
           propsData={checkboxProps}/>
         <PropsBox
-          title="Checkbox Events"
+          title="Checkbox 事件"
           subtitle=""
           propsData={checkboxEvents}/>
         <PropsBox
-          title="Checkbox-Group Attributes"
+          title="Checkbox-Group 属性"
           subtitle=""
           propsData={checkboxGroupProps}/>
         <PropsBox
-          title="Checkbox-Group Events"
+          title="Checkbox-Group 事件"
           subtitle=""
           propsData={checkboxGroupEvents}/>
       </div>

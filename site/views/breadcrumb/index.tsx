@@ -164,16 +164,16 @@ export default defineComponent({
           </DemoBox>
 
         <PropsBox
-          title="Breadcrumb Attributes"
+          title="Breadcrumb 属性"
           subtitle=""
           propsData={breadcrumbPropsJson}/>
         <PropsBox
-          title="Breadcrumb slot"
+          title="Breadcrumb 插槽"
           subtitle=""
           propsData={breadcrumbSlotJson}/>
         <PropsBox
           subtitle=""
-          title="Breadcrumb Item Attributes"
+          title="Breadcrumb Item 属性"
           propsData={breadcrumbItemPropsJson}/>
       </div>
     );

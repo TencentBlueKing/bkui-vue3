@@ -286,20 +286,20 @@ export default defineComponent({
         </DemoBox>
 
         <PropsBox
-          title="Collapse Attributes"
+          title="Collapse 属性"
           subtitle=""
           propsData={collapseProps}/>
         <PropsBox
-          title="CollapsePanel Attributes"
+          title="Collapse-Panel 属性"
           subtitle=""
           propsData={collapsePanelProps}/>
 
         <PropsBox
-          title="Collapse Slots"
+          title="Collapse 插槽"
           subtitle=""
           propsData={collapseSlots}/>
         <PropsBox
-          title="CollapsePanel Slots"
+          title="CollapsePanel 插槽"
           subtitle=""
           propsData={collapsePanelSlots}/>
         <PropsBox

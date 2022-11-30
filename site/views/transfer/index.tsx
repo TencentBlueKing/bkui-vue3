@@ -249,17 +249,17 @@ export default defineComponent({
           <SearchDemo></SearchDemo>
         </DemoBox>
         <PropsBox
-          title="Transfer Attributes"
+          title="Transfer 属性"
           subtitle=""
           propsData={transferPropsJson}
         />
         <PropsBox
-          title="Transfer Slot"
+          title="Transfer 插槽"
           subtitle=""
           propsData={transferSlotsJson}
         />
         <PropsBox
-          title="Transfer Events"
+          title="Transfer 事件"
           subtitle=""
           propsData={transferChangeJson}
         />

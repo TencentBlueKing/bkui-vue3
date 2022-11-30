@@ -108,13 +108,13 @@ export default defineComponent({
         </DemoBox>
 
         <PropsBox
-          title="FixedNavbar Attributes"
+          title="FixedNavbar 属性"
           subtitle=""
           propsData={fixedNavBarPropsJson}
         />
         <PropsBox
           subtitle=""
-          title="NavItems Attributes"
+          title="NavItems 属性"
           propsData={fixedItemPropsJson}
         />
 
