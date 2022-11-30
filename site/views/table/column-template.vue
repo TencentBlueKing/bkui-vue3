@@ -9,7 +9,7 @@
         label="序号"
         type="index"
         sort
-        :width="50"
+        :width="80"
       />
       <bk-table-column
         label="名称/内网IP"

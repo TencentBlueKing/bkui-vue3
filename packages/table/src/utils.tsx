@@ -27,7 +27,7 @@
 import { get as objGet, throttle } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
-import { BORDER_OPTION, BORDER_OPTIONS, SORT_OPTION, TABLE_ROW_ATTRIBUTE } from './const';
+import { BORDER_OPTION, BORDER_OPTIONS, COL_MIN_WIDTH, SORT_OPTION, TABLE_ROW_ATTRIBUTE } from './const';
 import { Column, GroupColumn, TablePropTypes } from './props';
 
 
@@ -158,7 +158,7 @@ export const getColumnReactWidth = (colmun: GroupColumn, orders = ['resizeWidth'
 export const resolveColumnWidth = (
   root: HTMLElement,
   colgroups: GroupColumn[],
-  autoWidth = 20,
+  autoWidth = COL_MIN_WIDTH,
   offsetWidth = 0,
 ) => {
   const { width } = root.getBoundingClientRect() || {};
@@ -241,8 +241,12 @@ export const resolveColumnWidth = (
   if (avgColIndexList.length > 0) {
     let autoAvgWidth = autoWidth;
     if (avgWidth > 0) {
-      autoAvgWidth = avgWidth / avgColIndexList.length;
-      avgColIndexList.forEach(idx => resolveColNumberWidth(colgroups[idx], autoAvgWidth, false));
+      avgColIndexList.forEach((idx, index) => {
+        autoAvgWidth = avgWidth / (avgColIndexList.length - index);
+        resolveColNumberWidth(colgroups[idx], autoAvgWidth, false);
+        const { calcWidth } = colgroups[idx];
+        avgWidth = avgWidth - calcWidth;
+      });
     }
   }
 };
@@ -497,7 +501,7 @@ export const resolveSort = (sort: string | boolean | any) => {
 
   if (typeof sort === 'boolean' && sort) {
     return {
-      value: SORT_OPTION.ASC,
+      value: SORT_OPTION.NULL,
     };
   }
 
