@@ -270,6 +270,14 @@ export default class TableRender {
       '--row-height': `${resolvePropVal(config, 'height', ['thead'])}px`,
     };
 
+    const getHeadCellText = (column, index) => {
+      if (typeof cellFn === 'function') {
+        return cellFn(column, index);
+      }
+
+      return resolvePropVal(column, 'label', [column, index]);
+    };
+
 
     /**
      * table head cell render
@@ -294,13 +302,11 @@ export default class TableRender {
         cells.push(this.getFilterCell(column, index));
       }
 
-      if (typeof cellFn === 'function') {
-        cells.unshift(cellFn(column, index));
-        return cells;
-      }
+      const cellText = getHeadCellText(column, index);
+      cells.unshift(cellText);
 
-      cells.unshift(resolvePropVal(column, 'label', [column, index]));
-      return cells;
+      const showTitle = typeof cellText === 'string' ? cellText : undefined;
+      return <TableCell title={ showTitle }>{ cells }</TableCell>;
     };
 
     const resolveEventListener = (col: GroupColumn) => Array.from(col.listeners.keys())
@@ -324,9 +330,7 @@ export default class TableRender {
               style = { resolveFixedColumnStyle(column) }
               onClick={ () => this.handleColumnHeadClick(index, column) }
               { ...resolveEventListener(column) }>
-                <TableCell>
-                  { renderHeadCell(column, index) }
-                </TableCell>
+                { renderHeadCell(column, index) }
               </th>)
           }
           </tr>
