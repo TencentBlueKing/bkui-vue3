@@ -56,7 +56,15 @@ export default defineComponent({
     bkTooltips,
   },
   props: tagProps(),
-  emits: ['update:modelValue', 'change', 'select', 'blur', 'remove', 'removeAll'],
+  emits: [
+    'update:modelValue',
+    'change',
+    'select',
+    'focus',
+    'blur',
+    'remove',
+    'removeAll',
+  ],
   setup(props, { emit }) {
     const formItem = useFormItem();
     const state = reactive({
@@ -428,6 +436,7 @@ export default defineComponent({
     const handleFocus = () => {
       // this.dispatch('bk-form-item', 'form-focus')
       popoverProps.width = isSingleSelect.value ? bkTagSelectorRef.value?.clientWidth : props.contentWidth;
+      emit('focus');
       // e.currentTarget.select();
     };
 
