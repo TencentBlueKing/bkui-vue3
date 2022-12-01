@@ -46,17 +46,9 @@ const nodeList = new Map();
 
 const tooltips: ObjectDirective = {
   beforeMount(el: HTMLElement, binding: DirectiveBinding) {
-    const opts = initOptions();
-    if (typeof binding.value === 'object') {
-      Object.assign(opts, binding.value);
-    } else {
-      opts.content = binding.value;
-    }
-    const { disabled, trigger, content, arrow, theme, extCls } = opts;
-    if (disabled) {
-      return;
-    }
-    const popper = renderContent(content, arrow, theme === 'light', extCls);
+    const opts = getOpts(binding);
+    const { trigger } = opts;
+    const popper = renderContent(opts);
 
     if (trigger === 'hover') {
       let hideTimeout = null;
@@ -96,8 +88,12 @@ const tooltips: ObjectDirective = {
       popperInstance: null,
     });
   },
+  updated(el: HTMLElement, binding: DirectiveBinding) {
+    nodeList.get(el).opts = getOpts(binding);
+  },
   unmounted(el) {
     hide(el);
+    nodeList.delete(el);
   },
 };
 
@@ -123,14 +119,27 @@ function initOptions(): IOptions {
 }
 
 /**
+ * 获取配置
+ * @returns tooltips配置
+ */
+function getOpts(binding: DirectiveBinding) {
+  const opts = initOptions();
+  if (typeof binding.value === 'object') {
+    Object.assign(opts, binding.value);
+  } else {
+    opts.content = binding.value;
+  }
+  return opts;
+}
+
+/**
  * 创建tooltips DOM
- * @param value
- * @param hasArrow
- * @param isLight
- * @param extCls
+ * @param opts
  * @returns
  */
-function renderContent(value: string, hasArrow: boolean, isLight: boolean, extCls: string): HTMLElement {
+function renderContent(opts): HTMLElement {
+  const { content: value, arrow: hasArrow, theme, extCls } = opts;
+  const isLight = theme === 'light';
   const zIndex = bkZIndexManager.getPopperIndex();
   const content = document.createElement('div');
   content.className = `bk-popper ${isLight ? 'light' : 'dark'} ${extCls}`;
@@ -161,7 +170,8 @@ function renderArrow(): HTMLElement {
  * @returns popper实例
  */
 function createPopperInstance(el: HTMLElement, popper: HTMLElement) {
-  const { placement, distance, showOnInit } = nodeList.get(el).opts;
+  const { opts } = nodeList.get(el);
+  const { placement, distance, showOnInit } = opts;
   const popperInstance = createPopper(el, popper, {
     placement,
     modifiers: [
@@ -183,7 +193,14 @@ function createPopperInstance(el: HTMLElement, popper: HTMLElement) {
  * @param el
  */
 function show(el: HTMLElement) {
-  const { popper, opts: { onShow } } = nodeList.get(el);
+  const { popper, opts } = nodeList.get(el);
+  const { disabled, content, arrow: hasArrow, onShow } = opts;
+  if (disabled) return;
+  popper.innerText = content;
+  if (hasArrow) {
+    const arrow = renderArrow();
+    popper.appendChild(arrow);
+  }
   document.body.appendChild(popper);
   const popperInstance = createPopperInstance(el, popper);
   onShow();
@@ -210,7 +227,8 @@ function show(el: HTMLElement) {
  */
 function hide(el: HTMLElement) {
   if (!nodeList.get(el)) return;
-  const { popper, popperInstance, opts: { onHide } } = nodeList.get(el);
+  const { popper, popperInstance, opts } = nodeList.get(el);
+  const { onHide } = opts;
   if (popper && document.body.contains(popper)) {
     popper.removeAttribute('data-show');
     popperInstance?.destroy();

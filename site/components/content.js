@@ -23,23 +23,72 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-const EMPTY = (..._args) => true;
+import orgPkg from '../../package.json';
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
-export const enum EMIT_EVENTS {
-  SHOW = 'show',
-  HIDE = 'hide',
-  CLICK_OUTSIDE = 'clickoutside',
-  CONTENT_MOUSEENTER = 'contentMouseenter',
-  CONTENT_MOUSELEAVE = 'contentMouseleave',
-  STOP_HIDE = 'stopHide'
+export const htmlContent = `
+<div id="app"></div>
+<script type="module" src="/src/main.js"></script>
+`;
+
+export const mainJsContent = `
+import { createApp } from 'vue';
+import bkui from 'bkui-vue';
+import Demo from './demo.vue';
+
+// 引入组件库全局样式资源
+import 'bkui-vue/dist/style.css'
+import './index.css';
+
+const app = createApp(Demo);
+
+app.use(bkui).mount('#app');
+`;
+
+export const styleContent = `
+body {
+  margin: 8px;
 }
-export const EMIT_EVENT_TYPES = {
-  [EMIT_EVENTS.SHOW]: EMPTY,
-  [EMIT_EVENTS.HIDE]: EMPTY,
-  [EMIT_EVENTS.CLICK_OUTSIDE]: EMPTY,
-  [EMIT_EVENTS.CONTENT_MOUSEENTER]: EMPTY,
-  [EMIT_EVENTS.CONTENT_MOUSELEAVE]: EMPTY,
-  [EMIT_EVENTS.STOP_HIDE]: EMPTY,
-};
+`;
 
+export const stackblitzRc = `
+  {
+    "installDependencies": false,
+    "startCommand": "turbo && turbo dev"
+  }
+`;
+
+export const viteConfigContent = `
+  import { defineConfig } from 'vite';
+  import vue from '@vitejs/plugin-vue';
+  import vueJsx from '@vitejs/plugin-vue-jsx';
+
+  export default defineConfig({
+    plugins: [vue(), vueJsx()],
+  });
+`;
+
+export const packageJSONContent = JSON.stringify(
+  {
+    name: 'bkui-vue-demo',
+    version: '0.0.0',
+    private: true,
+    scripts: {
+      dev: 'vite',
+      build: 'vite build',
+      serve: 'vite preview',
+    },
+    dependencies: {
+      vue: orgPkg.devDependencies.vue,
+      less: '^4.1.2',
+      'bkui-vue': orgPkg.version,
+    },
+    devDependencies: {
+      vite: orgPkg.devDependencies.vite,
+      '@vue/compiler-sfc': orgPkg.devDependencies['@vue/compiler-sfc'],
+      '@vitejs/plugin-vue': orgPkg.devDependencies['@vitejs/plugin-vue'],
+      '@vitejs/plugin-vue-jsx': orgPkg.devDependencies['@vitejs/plugin-vue-jsx'],
+    },
+  },
+  null,
+  2,
+);

@@ -28,7 +28,7 @@ import { bKMaskManager } from './mask-manager';
 import { random } from './utils';
 import { bkZIndexManager } from './z-index-manager';
 
-class BKPopIndexManager {
+export class BKPopIndexManager {
   /** 用来缓存弹出层实例 */
   private popInstanceList: Array<any>;
   private readonly uuidAttrName: string;

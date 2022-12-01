@@ -65,9 +65,7 @@ export const DATA_COLUMNS = [
   {
     label: '序号',
     type: 'index',
-    sort: {
-      value: 'asc',
-    },
+    sort: true,
     width: 50,
     minWidth: 80,
   },
@@ -75,7 +73,6 @@ export const DATA_COLUMNS = [
     label: '名称/内网IP',
     field: 'ip',
     width: 100,
-    // showOverflowTooltip: true,
   },
   {
     label: '来源',
@@ -186,6 +183,11 @@ export const DATA_FIX_TABLE = [
 
 export const DATA_FIX_COLUMNS = [
   {
+    type: 'selection',
+    width: 100,
+    fixed: true,
+  },
+  {
     label: '序号',
     type: 'index',
     sort: true,
@@ -225,3 +227,38 @@ export const DATA_FIX_COLUMNS = [
     fixed: 'right',
   },
 ];
+
+export const DATE_COL_SPAN = [{
+  label: '序号',
+  type: 'index',
+  sort: {
+    value: 'asc',
+  },
+  width: 50,
+  minWidth: 80,
+},
+{
+  label: '名称/内网IP',
+  field: 'ip',
+  width: 100,
+  colspan: 2,
+},
+{
+  label: '来源',
+  field: 'source',
+  width: 80,
+  filter: {
+    list: [{ text: 'QQ', value: 'QQ' }, { text: '微信', value: '微信' }, { text: 'Email', value: 'Email' }],
+  },
+},
+{
+  label: '创建时间',
+  field: 'create_time',
+  rowspan: 3,
+  sort: 'custom',
+},
+{
+  label: (column, index) => `状态-${index}-${column.field}`,
+  field: 'status',
+  sort: true,
+}];

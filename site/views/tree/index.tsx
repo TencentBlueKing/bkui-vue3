@@ -37,11 +37,13 @@ import autoConfig from './auto-config.vue';
 import basic from './basic.vue';
 import customNode from './custom-node.vue';
 import draggable from './draggable.vue';
+import draggableFunction from './draggable-function.vue';
 import levelLine from './level-line.vue';
 import * as TREE_DATA from './options';
 import prefixIcon from './prefix-icon.vue';
 import prefixIconJsx from './prefix-icon-jsx';
 import search from './search.vue';
+import selected from './selected.vue';
 import virtualRender from './virtual-render.vue';
 
 export default defineComponent({
@@ -56,6 +58,8 @@ export default defineComponent({
     customNode,
     search,
     draggable,
+    draggableFunction,
+    selected,
   },
   render() {
     const propsJson = resolvePropsToDesData(treeProps);
@@ -161,6 +165,26 @@ export default defineComponent({
           demoName: 'draggable',
         },
         component: () => <draggable></draggable>,
+      },
+      {
+        attrs: {
+          title: '可拖拽限制',
+          subtitle: '通过 disableDrag(nodeData)、disableDrop(nodeData) 函数返回值 限制drag与drop,比如目录不能drop',
+          desc: 'props: draggable',
+          componentName: 'tree',
+          demoName: 'draggable-function',
+        },
+        component: () => <draggableFunction></draggableFunction>,
+      },
+      {
+        attrs: {
+          title: '设置默认选中',
+          subtitle: '配置搜索行为',
+          desc: 'props: --',
+          componentName: 'tree',
+          demoName: 'selected',
+        },
+        component: () => <selected></selected>,
       }];
 
     return (

@@ -29,7 +29,8 @@ export const enum BORDER_OPTION {
   NONE = 'none',
   ROW = 'row',
   COL = 'col',
-  OUTER = 'outer'
+  OUTER = 'outer',
+  HORIZONTAL = 'horizontal'
 }
 
 /**
@@ -115,12 +116,17 @@ export const TABLE_ROW_ATTRIBUTE = {
   ROW_SELECTION_ALL: '__row_selection_all',
   ROW_SELECTION_INDETERMINATE: '__row_selection_indeterminate',
   ROW_SOURCE_DATA: '__row_source_data',
+  ROW_SKIP_CFG: '__row_skip_config',
+};
+
+export const COLUMN_ATTRIBUTE = {
+  COL_UID: '__col_$uuid',
 };
 
 /**
  * Y 轴滚动条宽度
  */
-export const SCROLLY_WIDTH = 4;
+export const SCROLLY_WIDTH = 6;
 
 /**
  * 默认行高
@@ -151,7 +157,13 @@ export const PROVIDE_KEY_INIT_COL = 'InitColumns';
 export const enum SORT_OPTION {
   ASC = 'asc',
   DESC = 'desc',
-  NULL = 'null'
+  NULL = 'null',
+  CUSTOM = 'custom'
 }
 
-export const SORT_OPTIONS = [SORT_OPTION.ASC, SORT_OPTION.DESC, SORT_OPTION.NULL];
+export const SORT_OPTIONS = [SORT_OPTION.ASC, SORT_OPTION.DESC, SORT_OPTION.NULL, SORT_OPTION.CUSTOM];
+
+/**
+ * 列宽最小设置
+ */
+export const COL_MIN_WIDTH = 20;

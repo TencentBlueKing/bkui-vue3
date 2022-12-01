@@ -1,4 +1,3 @@
-
 /*
 * Tencent is pleased to support the open source community by making
 * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
@@ -24,13 +23,13 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { onMounted, onUnmounted } from 'vue';
+import { computed, onMounted, onUnmounted } from 'vue';
 
-import { NODE_ATTRIBUTES } from './constant';
+import { EVENTS, NODE_ATTRIBUTES } from './constant';
 import { TreePropTypes } from './props';
 import useNodeAttribute from './use-node-attribute';
 
-export default (props: TreePropTypes, root?, flatData?) => {
+export default (props: TreePropTypes, ctx, root?, flatData?) => {
   const {
     getSourceNodeByUID,
     getNodeParentIdById,
@@ -39,10 +38,15 @@ export default (props: TreePropTypes, root?, flatData?) => {
     getNodePath,
     isRootNode,
   } = useNodeAttribute(flatData, props);
-
+  const isNeedCheckDraggable = computed(() => typeof props.disableDrag === 'function');
+  const isNeedCheckDroppable = computed(() => typeof props.disableDrop === 'function');
   const getTargetTreeNode = (e: MouseEvent) => {
     const target = (e.target as HTMLElement);
     return target.closest('[data-tree-node]') as HTMLElement;
+  };
+  const getNodeByTargetTreeNode = (targetNode) => {
+    const uid = targetNode?.dataset?.treeNode;
+    return getSourceNodeByUID(uid);
   };
 
   const handleTreeNodeMouseup = (e: MouseEvent) => {
@@ -52,6 +56,11 @@ export default (props: TreePropTypes, root?, flatData?) => {
 
   const handleTreeNodeMousedown = (e: MouseEvent) => {
     const targetNode = getTargetTreeNode(e);
+    const data = getNodeByTargetTreeNode(targetNode);
+    if (data.draggable === false || (isNeedCheckDraggable.value && props.disableDrag(data))) {
+      targetNode.classList.add('bk-tree-drag-disabled');
+      return;
+    }
     targetNode.setAttribute('draggable', 'true');
     targetNode.addEventListener('mouseup', handleTreeNodeMouseup);
   };
@@ -59,7 +68,15 @@ export default (props: TreePropTypes, root?, flatData?) => {
   const handleTreeNodeDragover = (e: DragEvent) => {
     e.preventDefault();
     const targetNode = getTargetTreeNode(e);
-
+    const data = getNodeByTargetTreeNode(targetNode);
+    ctx.emit(EVENTS.NODE_DRAG_OVER, e, targetNode, data);
+    if (isNeedCheckDroppable.value && props?.disableDrop(data)) {
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.dropEffect = 'none';
+      targetNode.classList.add('bk-tree-drop-disabled');
+      return;
+    }
+    targetNode.classList.add('bk-tree-drop-active');
     const sourceNodeId = e.dataTransfer.getData('node-id');
     const targetNodeId = targetNode.getAttribute('data-tree-node');
 
@@ -74,6 +91,7 @@ export default (props: TreePropTypes, root?, flatData?) => {
     const targetNode = getTargetTreeNode(e);
     e.dataTransfer.setData('text/plain', '');
     e.dataTransfer.setData('node-id', targetNode.getAttribute('data-tree-node'));
+    ctx.emit(EVENTS.NODE_DRAG_START, e, targetNode);
   };
 
   const handleTreeNodeDrop = (e: DragEvent) => {
@@ -81,19 +99,26 @@ export default (props: TreePropTypes, root?, flatData?) => {
     e.preventDefault();
     e.stopPropagation();
     const targetNode = getTargetTreeNode(e);
-
+    targetNode.classList.remove('bk-tree-drop-active', 'bk-tree-drop-disabled');
+    const data = getNodeByTargetTreeNode(targetNode);
+    if (isNeedCheckDroppable.value && props.disableDrop(data)) {
+      return;
+    }
     const sourceNodeId = e.dataTransfer.getData('node-id');
     const targetNodeId = targetNode.getAttribute('data-tree-node');
 
     Reflect.apply(props.dragSort ? dragSortData : dragAsChildNode, this, [sourceNodeId, targetNodeId]);
+    ctx.emit(EVENTS.NODE_DROP, e, targetNode, data);
   };
 
-  const isNodeSortable = (sourceId: string, tartgetId: string) => {
+  const isNodeSortable = (sourceId: string, targetId: string) => {
     const sourcePath: string = getNodePath({ [NODE_ATTRIBUTES.UUID]: sourceId });
-    const targetPath: string = getNodePath({ [NODE_ATTRIBUTES.UUID]: tartgetId });
-
+    const targetPath: string = getNodePath({ [NODE_ATTRIBUTES.UUID]: targetId });
+    // if (!sourcePath || targetPath) {
+    //   return false;
+    // }
     const sourceParentNodeId = getNodeParentIdById(sourceId);
-    const targetParentNode = getNodeParentIdById(tartgetId);
+    const targetParentNode = getNodeParentIdById(targetId);
 
     if (sourceParentNodeId === targetParentNode) {
       return true;
@@ -102,19 +127,19 @@ export default (props: TreePropTypes, root?, flatData?) => {
     return sourcePath.indexOf(targetPath) === -1 && targetPath.indexOf(sourcePath) === -1;
   };
 
-  const dragSortData = (sourceId: string, tartgetId: string) => {
-    if (!isNodeSortable(sourceId, tartgetId)) {
+  const dragSortData = (sourceId: string, targetId: string) => {
+    if (!isNodeSortable(sourceId, targetId)) {
       return;
     }
 
     const sourceNodeData = JSON.parse(JSON.stringify(getSourceNodeByUID(sourceId)));
-    const targetNodeData = JSON.parse(JSON.stringify(getSourceNodeByUID(tartgetId)));
+    const targetNodeData = JSON.parse(JSON.stringify(getSourceNodeByUID(targetId)));
 
     const sourceNodeParent = getParentNodeData(sourceId);
-    const targetNodeParent = getParentNodeData(tartgetId);
+    const targetNodeParent = getParentNodeData(targetId);
 
     const sourceNodeIndex = getNodeAttr({ [NODE_ATTRIBUTES.UUID]: sourceId }, NODE_ATTRIBUTES.INDEX);
-    const targetNodeIndex = getNodeAttr({ [NODE_ATTRIBUTES.UUID]: tartgetId }, NODE_ATTRIBUTES.INDEX);
+    const targetNodeIndex = getNodeAttr({ [NODE_ATTRIBUTES.UUID]: targetId }, NODE_ATTRIBUTES.INDEX);
 
     sourceNodeParent?.[props.children].splice(sourceNodeIndex, 1, targetNodeData);
     targetNodeParent?.[props.children].splice(targetNodeIndex, 1, sourceNodeData);
@@ -142,6 +167,12 @@ export default (props: TreePropTypes, root?, flatData?) => {
 
     targetNodeData[props.children].unshift(sourceNodeData);
   };
+  const handleTreeNodeDragLeave = (e: DragEvent) => {
+    e.preventDefault();
+    const targetNode = getTargetTreeNode(e);
+    targetNode.classList.remove('bk-tree-drop-active', 'bk-tree-drop-disabled');
+    ctx.emit(EVENTS.NODE_DRAG_LEAVE, e, targetNode);
+  };
 
   onMounted(() => {
     if (props.draggable && root.value) {
@@ -149,6 +180,7 @@ export default (props: TreePropTypes, root?, flatData?) => {
       rootTree.addEventListener('mousedown', handleTreeNodeMousedown);
       rootTree.addEventListener('dragstart', handleTreeNodeDragStart);
       rootTree.addEventListener('dragover', handleTreeNodeDragover);
+      rootTree.addEventListener('dragleave', handleTreeNodeDragLeave);
       rootTree.addEventListener('drop', handleTreeNodeDrop);
     }
   });
@@ -159,6 +191,7 @@ export default (props: TreePropTypes, root?, flatData?) => {
       rootTree.removeEventListener('mousedown', handleTreeNodeMousedown);
       rootTree.removeEventListener('dragstart', handleTreeNodeDragStart);
       rootTree.removeEventListener('dragover', handleTreeNodeDragover);
+      rootTree.removeEventListener('dragleave', handleTreeNodeDragLeave);
       rootTree.removeEventListener('drop', handleTreeNodeDrop);
     }
   });

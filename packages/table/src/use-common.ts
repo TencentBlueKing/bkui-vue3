@@ -24,11 +24,12 @@
 * IN THE SOFTWARE.
 */
 import { get as objGet, has as objHas, set as objSet } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
 import { computed, onMounted, reactive, ref, watch } from 'vue';
 
 import { classes, resolveClassName } from '@bkui-vue/shared';
 
-import { BORDER_OPTION, LINE_HEIGHT, SCROLLY_WIDTH, SETTING_SIZE, TABLE_ROW_ATTRIBUTE } from './const';
+import { BORDER_OPTION, COL_MIN_WIDTH, COLUMN_ATTRIBUTE, LINE_HEIGHT, SCROLLY_WIDTH, SETTING_SIZE, TABLE_ROW_ATTRIBUTE } from './const';
 import useActiveColumns from './plugins/use-active-columns';
 import useColumnResize from './plugins/use-column-resize';
 import useFixedColumn from './plugins/use-fixed-column';
@@ -37,10 +38,13 @@ import useColumn from './use-column';
 import {
   getRowKey,
   hasRootScrollY,
+  isColumnHidden,
+  resolveCellSpan,
   resolveHeadConfig,
   resolveNumberOrStringToPix,
   resolvePropBorderToClassStr,
   resolvePropVal,
+  resolveSort,
 } from './utils';
 
 /**
@@ -216,18 +220,35 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
   const colgroups: Colgroups[] = reactive([]);
   const { getColumns } = useColumn(props, targetColumns);
 
+  const resolveMinWidth = (col: Column) => {
+    if (/^\d+/.test(`${col.minWidth}`)) {
+      return col.minWidth;
+    }
+
+    let minWidth = COL_MIN_WIDTH;
+    if (col.sort) {
+      minWidth = minWidth + 18;
+    }
+
+    if (col.filter) {
+      minWidth = minWidth + 28;
+    }
+    return minWidth;
+  };
+
   const updateColGroups = () => {
     const checked = (props.settings as Settings)?.checked || [];
     const settingFields = (props.settings as Settings)?.fields || [];
-    const isSettingField = (col: Column) => settingFields.some(field => field.field === resolvePropVal(col, 'field', [col]));
 
     colgroups.splice(0, colgroups.length, ...(getColumns())
       .map(col => ({
         ...col,
         calcWidth: null,
         resizeWidth: null,
+        minWidth: resolveMinWidth(col),
         listeners: new Map(),
-        isHidden: isSettingField(col) && checked.length && !checked.includes(resolvePropVal(col, ['field', 'type'], [col])),
+        isHidden: isColumnHidden(settingFields, col, checked),
+        [COLUMN_ATTRIBUTE.COL_UID]: uuidv4(),
       })));
   };
 
@@ -246,6 +267,15 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
     registerResizeEvent();
   }, { immediate: true, deep: true });
 
+  const defSort = props.columns.reduce((out: any, col, index) => {
+    const columnName = resolvePropVal(col, ['field', 'type'], [col, index]);
+    const sort = resolveSort(col.sort);
+    if (sort) {
+      return { ...(out || {}), [columnName]: sort?.value };
+    }
+    return out;
+  }, null);
+
   const reactiveSchema = reactive({
     rowActions: new Map(),
     scrollTranslateY: 0,
@@ -259,6 +289,7 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
       size: (props.settings as Settings)?.size,
       height: SETTING_SIZE[(props.settings as Settings)?.size],
     },
+    defaultSort: defSort || props.defaultSort,
   });
 
   const isRowExpand = (rowId: any) => {
@@ -267,6 +298,14 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
     }
 
     return false;
+  };
+
+  const clearSort = () => {
+    if (Array.isArray(reactiveSchema.defaultSort)) {
+      reactiveSchema.defaultSort.splice(0);
+    }
+
+    reactiveSchema.defaultSort = defSort || props.defaultSort;
   };
 
   const setRowExpand = (row: any, expand = undefined) => {
@@ -389,7 +428,7 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
    * @param thenFn 如果table data没有满足判定条件，后续判定逻辑函数，返回 boolean
    * @returns Boolean
    */
-  const resolveSelectionRow = (row: any, thenFn = () => false) => {
+  const resolveSelectionRow = (row: any, thenFn = row => validateSelectionFn(row)) => {
     if (typeof props.isSelectedFn === 'function') {
       return Reflect.apply(props.isSelectedFn, this, [{ row, data: props.data }]);
     }
@@ -398,7 +437,7 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
       return objGet(row, props.selectionKey);
     }
 
-    return thenFn();
+    return thenFn(row);
   };
 
   /**
@@ -426,10 +465,15 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
    */
   const indexData = reactive([]);
 
+  const neepColspanOrRowspan = computed(() => colgroups.some(col => typeof col.rowspan === 'function' || /^\d$/.test(`${col.rowspan}`) || typeof col.colspan === 'function' || /^\d$/.test(`${col.colspan}`)));
+
   const initIndexData = (keepLocalAction = false) => {
+    let preRowId = null;
+    const skipConfig = {};
     indexData.splice(0, indexData.length, ...props.data.map((item: any, index: number) => {
       const rowId = getRowKey(item, props, index);
-
+      const cfg = neepColspanOrRowspan.value ? getSkipConfig(item, rowId, index, skipConfig, preRowId) : {};
+      preRowId = rowId;
       return {
         ...item,
         [TABLE_ROW_ATTRIBUTE.ROW_INDEX]: index,
@@ -437,6 +481,7 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
         [TABLE_ROW_ATTRIBUTE.ROW_EXPAND]: keepLocalAction ? isRowExpand(rowId) : false,
         [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: resolveSelection(item, rowId),
         [TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA]: { ...item },
+        [TABLE_ROW_ATTRIBUTE.ROW_SKIP_CFG]: cfg,
       };
     }));
 
@@ -444,16 +489,70 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
   };
 
   const updateIndexData = (selectedAll?: boolean) => {
-    indexData.forEach((item: any) => {
+    let preRowId = null;
+    const skipConfig = {};
+    indexData.forEach((item: any, index: number) => {
+      const rowId = item[TABLE_ROW_ATTRIBUTE.ROW_UID];
+      const cfg = neepColspanOrRowspan.value ? getSkipConfig(item, rowId, index, skipConfig, preRowId) : {};
       Object.assign(item, {
         [TABLE_ROW_ATTRIBUTE.ROW_EXPAND]: isRowExpand(item[TABLE_ROW_ATTRIBUTE.ROW_UID]),
         [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: typeof selectedAll === 'boolean' ? selectedAll : resolveSelection(item, item[TABLE_ROW_ATTRIBUTE.ROW_UID]),
+        [TABLE_ROW_ATTRIBUTE.ROW_SKIP_CFG]: cfg,
       });
+      preRowId = item[TABLE_ROW_ATTRIBUTE.ROW_UID];
     });
 
     if (typeof selectedAll !== 'boolean') {
       initSelectionAllByData();
     }
+  };
+
+  const getSkipConfig = (row: any, rowId: string, rowIndex: number, skipCfg: any, preRowId: string) => {
+    let skipColumnNum = 0;
+    const preRowConfig = skipCfg[preRowId] ?? {};
+
+    if (!skipCfg[rowId]) {
+      skipCfg[rowId] = {};
+    }
+
+    colgroups.forEach((column, index) => {
+      const { colspan, rowspan } = resolveCellSpan(column, index, row, rowIndex);
+      const colId = column[COLUMN_ATTRIBUTE.COL_UID];
+      const preRowColSkipLen = preRowConfig[colId]?.skipRowLen ?? 0;
+      const target = {
+        [colId]: {
+          skipRowLen: 0,
+          skipRow: false,
+          skipCol: false,
+          skipColLen: 0,
+        },
+      };
+
+      if (skipColumnNum > 0) {
+        target[colId].skipColLen = skipColumnNum;
+        target[colId].skipCol = true;
+        skipColumnNum = skipColumnNum - 1;
+      }
+
+      if (preRowColSkipLen > 1) {
+        target[colId].skipRowLen = preRowColSkipLen - 1;
+        target[colId].skipRow = true;
+      } else {
+        if (rowspan > 1) {
+          target[colId].skipRowLen = rowspan;
+          target[colId].skipRow = false;
+        }
+      }
+
+      if (colspan > 1) {
+        target[colId].skipColLen = colspan;
+        skipColumnNum = colspan - 1;
+      }
+
+      Object.assign(skipCfg[rowId], { ...target });
+    });
+
+    return skipCfg[rowId];
   };
 
   /**
@@ -503,5 +602,6 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
     toggleAllSelection,
     toggleRowSelection,
     getSelection,
+    clearSort,
   };
 };

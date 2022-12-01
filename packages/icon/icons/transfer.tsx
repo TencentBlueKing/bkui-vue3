@@ -1,3 +1,4 @@
+
 /*
 * Tencent is pleased to support the open source community by making
 * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
@@ -23,23 +24,16 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-const EMPTY = (..._args) => true;
+import { FunctionalComponent } from 'vue';
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
-export const enum EMIT_EVENTS {
-  SHOW = 'show',
-  HIDE = 'hide',
-  CLICK_OUTSIDE = 'clickoutside',
-  CONTENT_MOUSEENTER = 'contentMouseenter',
-  CONTENT_MOUSELEAVE = 'contentMouseleave',
-  STOP_HIDE = 'stopHide'
-}
-export const EMIT_EVENT_TYPES = {
-  [EMIT_EVENTS.SHOW]: EMPTY,
-  [EMIT_EVENTS.HIDE]: EMPTY,
-  [EMIT_EVENTS.CLICK_OUTSIDE]: EMPTY,
-  [EMIT_EVENTS.CONTENT_MOUSEENTER]: EMPTY,
-  [EMIT_EVENTS.CONTENT_MOUSELEAVE]: EMPTY,
-  [EMIT_EVENTS.STOP_HIDE]: EMPTY,
+import BkIcon, { IIconBaseProps } from './icon';
+const data = JSON.parse('{"type":"element","name":"svg","attributes":{"xmlns":"http://www.w3.org/2000/svg","viewBox":"0 0 1024 1024","style":"width: 1em; height: 1em; vertical-align: middle;fill: currentColor;overflow: hidden;"},"elements":[{"type":"element","name":"path","attributes":{"fill-rule":"evenodd","d":"M832 448L618.6800000000001 224.00000000000003 617.0133344000001 368.9411776 192 368.94117760000006 192 448.00000000000006 832 448ZM832 576L192 576 405.34666560000005 800 407.01333439999996 655.0588224 832 655.0588224 832 576Z"}}]}');
+const transfer: FunctionalComponent<IIconBaseProps> = (props, context) => {
+  const p = { ...props, ...context.attrs };
+  return <BkIcon {...p}  data={data} name="transfer"></BkIcon>;
 };
 
+transfer.displayName = 'transfer';
+transfer.inheritAttrs = false;
+
+export default transfer;

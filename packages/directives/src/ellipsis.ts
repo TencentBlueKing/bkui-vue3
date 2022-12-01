@@ -45,18 +45,38 @@ const resolveOptions = (el: HTMLElement, binding: DirectiveBinding) => {
 export const createInstance = (el: HTMLElement, binding: any) => {
   let instance = null;
   let createTimer = null;
+  let hidePopTimer = null;
   const options = resolveOptions(el, binding);
   const { disabled } = options;
   if (disabled || instance) {
     return;
   }
 
+  const handleContentEnter = () => {
+    hidePopTimer && clearTimeout(hidePopTimer);
+    hidePopTimer = null;
+  };
+
+  const handleContentLeave = () => {
+    if (createTimer) {
+      clearTimeout(createTimer);
+    }
+    instance?.hide();
+    instance?.close();
+    instance = null;
+  };
+
   const handleMouseEnter = () => {
     createTimer && clearTimeout(createTimer);
     createTimer = setTimeout(() => {
       const targetOptions = resolveOptions(el, binding);
       targetOptions.content = targetOptions.content || el.innerHTML;
+      Object.assign(targetOptions, {
+        onContentMouseenter: handleContentEnter,
+        onContentMouseleave: handleContentLeave,
+      });
       instance = $bkPopover(targetOptions);
+
       setTimeout(() => {
         instance.show();
       });
@@ -64,12 +84,14 @@ export const createInstance = (el: HTMLElement, binding: any) => {
   };
 
   const handleMouseLeave = () => {
-    if (createTimer) {
-      clearTimeout(createTimer);
-    }
-    instance?.hide();
-    instance?.close();
-    instance = null;
+    hidePopTimer = setTimeout(() => {
+      if (createTimer) {
+        clearTimeout(createTimer);
+      }
+      instance?.hide();
+      instance?.close();
+      instance = null;
+    }, 120);
   };
 
   el.addEventListener('mouseenter', handleMouseEnter);

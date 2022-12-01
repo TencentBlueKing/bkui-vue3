@@ -44,9 +44,8 @@
 </template>
 
 <script>
+  import { Help } from 'bkui-vue/lib/icon';
   import { defineComponent } from 'vue';
-
-  import { Help } from '@bkui-vue/icon';
   export default defineComponent({
     components: {
       Help,

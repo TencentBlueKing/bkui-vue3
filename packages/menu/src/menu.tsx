@@ -62,7 +62,6 @@ export default defineComponent({
       () => props.collapse,
       () => {
         collapse.value = props.collapse;
-        console.info(props.collapse);
         const oldKeys = [...oldOpenKeys.value];
         const openKeys = [...openedKeys.value];
         openedKeys.value = collapse.value ? [] : oldKeys;

@@ -113,9 +113,8 @@
 </template>
 
 <script setup>
+  import { AngleDown } from 'bkui-vue/lib/icon';
   import { ref } from 'vue';
-
-  import { AngleDown } from '@bkui-vue/icon';
   const selected = ref('深圳');
   function handleSelected(v) {
     selected.value = v;
