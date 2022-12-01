@@ -37,7 +37,12 @@ import { transferProps } from './props';
 function useTransferData(sourceData, targetList, settingCode) {
   const selectList = ref([]);
   const selectedList = ref([]);
-  const transformData = () => {
+  const transformData = (isChange = false) => {
+    if (isChange) { // watch监听时需要清空重新按照targetList赋值
+      selectList.value = [];
+      selectedList.value = [];
+    }
+
     sourceData.value.forEach((s) => {
       const keyId = s[settingCode.value];
       if (targetList.value.includes(keyId)) {
@@ -48,7 +53,12 @@ function useTransferData(sourceData, targetList, settingCode) {
     });
   };
   transformData();
-  watch(() => [sourceData, targetList, settingCode], transformData);
+  watch(
+    () => [sourceData, targetList, settingCode],
+    () => {
+      transformData(true);
+    }, { deep: true },
+  );
 
   return {
     selectList,
@@ -119,18 +129,40 @@ export default defineComponent({
         return va > vb ? 1 : -1;
       });
     });
+
+    watch(() => [selectList, selectedList], () => {
+      handleEmitUpdateTargetList();
+    }, { deep: true });
+
+    /** 全选、清空操作过滤禁用选项 */
+    const handleCheckAllItemSelect = (list, source) => {
+      const itemKey = settingCode.value;
+      return list.some(val => val[itemKey] === source[itemKey]) && source.disabled;
+    };
     /** 全选 */
     const allToRight = () => {
-      selectList.value = [];
-      selectedList.value = [...sourceData.value];
+      // 清空源列表 除源列表禁用选项
+      selectList.value = [...sourceData.value.filter((source) => {
+        return handleCheckAllItemSelect(selectList.value, source);
+      })];
+      // 填满目标列表 除源列表禁用选项
+      selectedList.value = [...sourceData.value.filter((source) => {
+        return !handleCheckAllItemSelect(selectList.value, source);
+      })];
       // 全选搜索结果
       // selectedList.value.push(...selectListSearch.value)
       handleEmitUpdateTargetList();
     };
     /** 移除 */
     const allToLeft = () => {
-      selectList.value = [...sourceData.value];
-      selectedList.value = [];
+      // 填满源列表 除目标列表禁用选项
+      selectList.value = [...sourceData.value.filter((source) => {
+        return !handleCheckAllItemSelect(selectedList.value, source);
+      })];
+      // 清空目标列表 除目标列表禁用选项
+      selectedList.value = [...sourceData.value.filter((source) => {
+        return handleCheckAllItemSelect(selectedList.value, source);
+      })];
       handleEmitUpdateTargetList();
     };
       /**
@@ -138,7 +170,9 @@ export default defineComponent({
      * @param { string } itemKey settingCode值
      * @param { boolean } isLeft 左右面板
      */
-    const handleItemClick = (itemKey, isLeft) => {
+    const handleItemClick = (item, isLeft) => {
+      if (item.disabled) return;
+      const itemKey = item[settingCode.value];
       const from = isLeft ? selectList : selectedList;
       const to = isLeft ? selectedList : selectList;
       const index = from.value.findIndex(item => item[settingCode.value] === itemKey);
@@ -206,7 +240,7 @@ export default defineComponent({
     };
     const getDefaultListHtml = (item, isLeft = true) => {
       return (
-        <div class="item-content">
+        <div class={['item-content', { 'is-disabled': item.disabled }]}>
           {/* 暂无该指令 */}
           {/* {this.showOverflowTips
             ? <span
@@ -243,7 +277,7 @@ export default defineComponent({
               <li
                 key={item[this.settingCode]}
                 class={[this.$slots[slotName] ? 'custom-item' : '']}
-                onClick={() => this.handleItemClick(item[this.settingCode], isLeft)}>
+                onClick={() => this.handleItemClick(item, isLeft)}>
                 {this.$slots[slotName]?.(item) ?? (getDefaultListHtml(item, isLeft))}
               </li>
             ))}
