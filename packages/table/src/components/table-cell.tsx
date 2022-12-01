@@ -39,7 +39,9 @@ export default defineComponent({
       content: PropTypes.string.def(''),
       disabled: PropTypes.bool.def(false),
       watchCellResize: PropTypes.bool.def(true),
+      mode: PropTypes.string.def('auto'),
     })]).def(undefined),
+    title: PropTypes.string.def(undefined),
   },
 
   setup(props, { slots }) {
@@ -129,7 +131,7 @@ export default defineComponent({
       bkEllipsisIns?.destroyInstance(refRoot.value);
     });
 
-    return () => <div class="cell" ref={ refRoot }>
+    return () => <div class="cell" ref={ refRoot } title={ props.title }>
       { slots.default?.() }
     </div>;
   },
