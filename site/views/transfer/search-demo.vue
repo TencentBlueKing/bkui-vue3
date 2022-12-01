@@ -78,8 +78,8 @@
           { name: 'tianliu', code: 8 },
         ],
         rtxValue: [1, 5, 7],
-        sourceLength: 0,
-        targetLength: 0,
+        sourceLength: 5,
+        targetLength: 3,
       };
     },
     methods: {
