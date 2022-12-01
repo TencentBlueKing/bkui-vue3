@@ -101,7 +101,7 @@
         cursor: pointer;
         align-items: center;
 
-        &:hover {
+        &:hover:not(.is-disabled) {
           color: @primary-color;
           background-color: @transfer-item-hover-background-color;
 
@@ -129,6 +129,11 @@
             margin-right: 6px;
             font-size: 16px;
           }
+        }
+
+        &.is-disabled {
+          color: @light-gray;
+          cursor: not-allowed;
         }
       }
 
