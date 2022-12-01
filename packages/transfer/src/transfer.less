@@ -1,22 +1,6 @@
 @import '@bkui-vue/styles/themes/themes.less';
 
-/* 边框色 */
-@borderInlineColor: #dde4eb;
-
-/* 按钮、表单边框颜色、禁用时文本颜色 */
-@newGreyColor: #c4c6cc;
-
-/* 表格头部背景色、禁用底色 */
-@newGreyColor2: #f0f1f5;
-
-/* 大面积背景色 */
-@newGreyColor3: #fafbfd;
-
-/* 重点表示、强调、链接以及带有明确指示性 */
-@newMainColor: #3a84ff;
-
-/* 正常尺寸图标 */
-@iconNormalSize: 22px;
+@transfer-item-hover-background-color: #e1ecff;
 
 .@{bk-prefix}-transfer {
   display: flex;
@@ -25,10 +9,9 @@
   font-size: 14px;
 
   .transfer {
-    width: 30px;
-    height: 30px;
-    margin: 0 2px;
-    background: url('@bkui-vue/styles/images/transfer.png') no-repeat center center;
+    margin: 0 8px;
+    font-size: 24px;
+    color: @light-gray;
   }
 
   .source-list,
@@ -39,44 +22,58 @@
     height: 400px;
     min-width: 200px;
     overflow: hidden;
-    background-color: #fff;
-    border: 1px solid @borderInlineColor;
+    background-color: @white-color;
+    border: 1px solid @disable-color;
     border-radius: 2px;
 
     .slot-header,
     .header {
-      height: 43px;
-      padding: 0 20px;
-      background-color: @newGreyColor3;
-      border-bottom: 1px solid @borderInlineColor;
+      height: 40px;
+      padding: 0 16px;
+      background-color: @whitesmoke-color;
+      border-bottom: 1px solid @disable-color;
     }
 
     .header {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      font-weight: 700;
 
       span {
         font-size: 12px;
-        color: @newMainColor;
+        font-weight: normal;
+        color: @primary-color;
         cursor: pointer;
 
         &.disabled {
-          color: @newGreyColor;
+          color: @light-gray;
           cursor: not-allowed;
         }
       }
     }
     
     .transfer-search-input {
-      height: 36px;
-      border-bottom: 1px solid @newGreyColor2;
+      width: calc(100% - 32px);
+      height: 30px;
+      margin: 8px 16px 0;
+      border-bottom: 1px solid @disable-color;
       border-width: 0 0 1px 0;
       border-radius: 0;
       outline: none;
 
       &.is-focused {
         box-shadow: none;
+      }
+
+      .icon-search {
+        font-size: 18px;
+        line-height: 28px;
+        color: @light-gray;
+      }
+
+      input {
+        padding-left: 4px;
       }
     }
 
@@ -86,26 +83,27 @@
       align-items: center;
       justify-content: center;
       padding-bottom: 30px;
-      color: @newGreyColor;
+      color: @light-gray;
       cursor: default;
     }
 
     .content {
       flex: 1;
-      margin: 6px 0;
+      margin: 8px 0;
       overflow-y: auto;
 
       li.custom-item,
       li .item-content {
         display: flex;
-        align-items: center;
-        height: 40px;
-        padding: 0 20px;
+        height: 32px;
+        padding: 0 10px 0 16px;
+        margin-bottom: 4px;
         cursor: pointer;
+        align-items: center;
 
         &:hover {
-          color: @newMainColor;
-          background-color: #eef6fe;
+          color: @primary-color;
+          background-color: @transfer-item-hover-background-color;
 
           .icon-wrapper {
             visibility: visible;
@@ -124,19 +122,23 @@
 
           .bk-icon {
             display: flex;
-            font-size: @iconNormalSize;
+            font-size: 30px;
+          }
+
+          .icon-delete {
+            margin-right: 6px;
+            font-size: 16px;
           }
         }
       }
 
       &::-webkit-scrollbar {
         width: 4px;
-        // background-color: color(transparent lightness(80%));
       }
 
       &::-webkit-scrollbar-thumb {
         height: 5px;
-        background-color: #e6e9ea;
+        background-color: #dcdee5;
         border-radius: 2px;
       }
     }

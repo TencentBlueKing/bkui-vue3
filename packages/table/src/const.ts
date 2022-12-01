@@ -162,3 +162,8 @@ export const enum SORT_OPTION {
 }
 
 export const SORT_OPTIONS = [SORT_OPTION.ASC, SORT_OPTION.DESC, SORT_OPTION.NULL, SORT_OPTION.CUSTOM];
+
+/**
+ * 列宽最小设置
+ */
+export const COL_MIN_WIDTH = 20;

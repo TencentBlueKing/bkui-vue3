@@ -171,7 +171,10 @@ export const tableProps = {
    * 表格边框显示设置，可以是一个组合
    * 生效规则: 除非单独设置 none,否则会追加每个设置
    */
-  border: PropTypes.arrayOf(PropTypes.commonType(BORDER_OPTIONS, 'border')).def([BORDER_OPTION.ROW]),
+  border: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.commonType(BORDER_OPTIONS, 'border')),
+    PropTypes.string,
+  ]).def([BORDER_OPTION.ROW]),
 
   /**
    * 分页配置

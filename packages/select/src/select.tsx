@@ -568,6 +568,7 @@ export default defineComponent({
       filterList,
       isCollapseTags,
       popoverConfig,
+      focusInput,
       setHover,
       cancelHover,
       handleFocus,
