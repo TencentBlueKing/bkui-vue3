@@ -92,7 +92,7 @@ export default defineComponent({
 
     const {
       renderTreeNode,
-      hanldeTreeNodeClick,
+      handleTreeNodeClick,
       setNodeOpened,
       setOpen,
       setNodeAction,
@@ -116,7 +116,7 @@ export default defineComponent({
     const getData = () => flatData;
 
     ctx.expose({
-      hanldeTreeNodeClick,
+      handleTreeNodeClick,
       isNodeChecked,
       isRootNode,
       isNodeOpened,
