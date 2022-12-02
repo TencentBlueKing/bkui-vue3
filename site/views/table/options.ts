@@ -65,9 +65,7 @@ export const DATA_COLUMNS = [
   {
     label: '序号',
     type: 'index',
-    sort: {
-      value: 'asc',
-    },
+    sort: true,
     width: 50,
     minWidth: 80,
   },

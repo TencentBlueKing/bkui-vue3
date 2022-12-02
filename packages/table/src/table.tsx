@@ -73,6 +73,7 @@ export default defineComponent({
       toggleAllSelection,
       toggleRowSelection,
       getSelection,
+      clearSort,
     } = useInit(props, targetColumns);
 
     const { pageData, localPagination, resolvePageData, watchEffectFn } = usePagination(props, indexData);
@@ -230,6 +231,7 @@ export default defineComponent({
       toggleAllSelection,
       toggleRowSelection,
       getSelection,
+      clearSort,
     });
 
     const tableBodyClass = computed(() => ({
