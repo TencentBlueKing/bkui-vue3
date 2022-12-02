@@ -39,6 +39,7 @@ export default defineComponent({
   data() {
     return {
       visible: false,
+      closeTimer: null,
     };
   },
   computed: {
@@ -69,39 +70,57 @@ export default defineComponent({
     isShow: {
       handler(val: boolean) {
         if (val) {
+          // 避免is-show: false执行覆盖
+          this.closeTimer && clearTimeout(this.closeTimer);
+          this.closeTimer = null;
           this.visible = val;
         } else {
-          this.$emit('hidden'); // 为false直接触发hidden事件，在上层有200ms的延时
-          setTimeout(() => { // 直接设为false会失去离开的动画效果，这里延迟设置
+          this.closeTimer = setTimeout(() => { // 直接设为false会失去离开的动画效果，这里延迟设置
+            this.$emit('hidden'); // 为false直接触发hidden事件，在上层有200ms的延时
             this.visible = val;
           }, 250);
         }
       },
-      deep: true,
+      immediate: true,
     },
-    visible(val: boolean) {
-      if (val) {
-        this.$nextTick(() => {
-          const hideMaskStyle = {
-            'background-color': 'rgba(0,0,0,0)',
-          };
-          const appendStyle = this.showMask ? {} : hideMaskStyle;
-          bkPopIndexManager.show(this.$el, this.showMask, appendStyle, this.transfer, this.zIndex);
-          this.$emit('shown');
-          this.$emit('quick-close', this.$el);
-          this.$emit('quickClose', this.$el);
-        });
-      } else {
-        bkPopIndexManager.hide(this.$el, this.transfer);
-      }
+    // isShow 初始化为 true 的时候，防止直接展示
+    visible: {
+      handler(val: boolean) {
+        if (val) {
+          // this.bkPopIndexManager = new BKPopIndexManager();
+          bkPopIndexManager.onMaskClick((_e: MouseEvent) => {
+            this.handleClickOutSide();
+          });
+          this.$nextTick(() => {
+            const hideMaskStyle = {
+              'background-color': 'rgba(0,0,0,0)',
+            };
+            const appendStyle = this.showMask ? {} : hideMaskStyle;
+            bkPopIndexManager.show(this.$el, this.showMask, appendStyle, this.transfer, this.zIndex);
+            this.$emit('shown');
+          });
+        } else {
+          bkPopIndexManager?.hide(this.$el, this.transfer);
+          bkPopIndexManager?.destroy();
+        }
+      },
+      immediate: true,
     },
   },
+
   beforeUnmount() {
-    bkPopIndexManager.hide(this.$el);
+    if (this.visible) {
+      bkPopIndexManager?.hide(this.$el);
+      bkPopIndexManager?.destroy();
+    }
   },
   methods: {
     handleClickOutSide() {
-      this.quickClose && this.$emit('close');
+      if (this.quickClose) {
+        this.$emit('close');
+        this.$emit('quick-close', this.$el);
+        this.$emit('quickClose', this.$el);
+      }
     },
   },
   render() {
@@ -110,8 +129,6 @@ export default defineComponent({
     return (
       <div class={['bk-modal-wrapper', this.extCls, this.size]}
         style={[this.compStyle, this.fullscreen ? this.fullscreenStyle : '']}>
-        <div class="bk-modal-outside" onClick={this.handleClickOutSide} v-show={this.isShow}>
-        </div>
         <Transition name={this.animateType}>
         {this.isShow ? <div class={bodyClass}>
           <div class="bk-modal-header">

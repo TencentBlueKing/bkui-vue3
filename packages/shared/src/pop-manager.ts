@@ -28,13 +28,23 @@ import { bKMaskManager } from './mask-manager';
 import { random } from './utils';
 import { bkZIndexManager } from './z-index-manager';
 
-class BKPopIndexManager {
+export class BKPopIndexManager {
   /** 用来缓存弹出层实例 */
   private popInstanceList: Array<any>;
   private readonly uuidAttrName: string;
+  private clickFn: Array<any>;
   constructor() {
     this.popInstanceList = [];
+    this.clickFn = [];
     this.uuidAttrName = 'data-bk-pop-uuid';
+    bKMaskManager.setOption({
+      onClick: this.onMaskClickFn.bind(this),
+    });
+  }
+
+
+  public onMaskClick(callFn: (e: MouseEvent) => void) {
+    this.clickFn.push(callFn);
   }
 
   /**
@@ -56,6 +66,11 @@ class BKPopIndexManager {
     this.popInstanceList.push({ uuid, zIndex, content, showMask, appendStyle });
     showMask && bKMaskManager.backupActiveInstance();
     bKMaskManager.show(content, zIndex, showMask, appendStyle, uuid, transfer);
+  }
+
+  public destroy(content?: HTMLElement, transfer = false) {
+    this.clickFn?.pop();
+    this.hide(content, transfer);
   }
 
   /**
@@ -101,6 +116,13 @@ class BKPopIndexManager {
       }
     } else {
       content?.remove();
+    }
+  }
+
+  private onMaskClickFn(e: MouseEvent) {
+    const fn = this.clickFn?.slice(-1)?.at(0);
+    if (fn) {
+      Reflect.apply(fn, this, [e]);
     }
   }
 }

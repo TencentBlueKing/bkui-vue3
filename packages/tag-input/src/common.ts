@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { customRef, reactive, Ref, toRefs, watch } from 'vue';
+import { customRef, markRaw, reactive, Ref, ref, toRefs, watch } from 'vue';
 
 import type { TagProps } from './tag-props';
 
@@ -95,13 +95,15 @@ export function useFlatList(props: TagProps) {
     displayKey,
     list,
   } = toRefs(props);
-  const flatList = reactive([]);
+  const flatList = ref([]);
+  const saveKeyMap = ref({});
+
 
   watch([useGroup, saveKey, displayKey, list], () => {
-    flatList.splice(0, flatList.length);
-    let formatList: any = list.value;
+    flatList.value = [];
+    let formatList: any = markRaw(list.value);
     if (useGroup.value) {
-      formatList = list.value.reduce((formatList: any[], item: any) => {
+      formatList = formatList.reduce((formatList: any[], item: any) => {
         let children: any[] = [];
         if (item.children) {
           children = item.children.map((child: any) => ({
@@ -115,25 +117,17 @@ export function useFlatList(props: TagProps) {
         return formatList.concat(children);
       }, []);
     }
-    appendToTargetList(formatList);
-  }, { immediate: true, deep: true });
+    flatList.value = formatList;
+    saveKeyMap.value = formatList.reduce((acc, item) => {
+      acc[item[saveKey.value]] = item;
+      return acc;
+    }, {});
+  }, { immediate: true });
 
-  /**
-   * 不改变原有数组 - flatList 引用地址，将目标数组添加到原有数组里
-   * 使用 push 添加时会有最大数量限制，超出会报错：Maximum call stack size exceeded
-   * @param targetList 目标数组
-   */
-  function appendToTargetList(targetList: any[]) {
-    const QUANTUM = 30000; // 限制每次添加数量
-    const len = targetList.length;
-
-    for (let i = 0; i < len; i += QUANTUM) {
-      const appendList = targetList.slice(i, Math.min(i + QUANTUM, len));
-      flatList.push(...appendList);
-    }
-  }
-
-  return flatList;
+  return {
+    flatList,
+    saveKeyMap,
+  };
 }
 
 /**
@@ -153,4 +147,48 @@ export const getCharLength = (str: string) => {
   }
 
   return bitLen;
+};
+
+/**
+ * 获取隐藏 tag index
+ * @param tagInputRef 组件容器 ref
+ * @param collapseTags 是否折叠 tags
+ * @param selectedTagList 已选择 tags
+ */
+export const useTagsOverflow = (
+  tagInputRef: Ref<HTMLDivElement>,
+  collapseTags: Ref<Boolean>,
+  selectedTagList: Ref<string[]>,
+) => {
+  watch(
+    [selectedTagList, collapseTags],
+    () => {
+      calcOverflow();
+    },
+    { flush: 'post' },
+  );
+
+  const overflowTagIndex = ref<null | number>(null);
+
+  // 计算出现换行的索引
+  const calcOverflow = () => {
+    if (!collapseTags.value) return;
+
+    overflowTagIndex.value = null;
+    setTimeout(() => {
+      const tags: HTMLElement[] = Array.from(tagInputRef.value.querySelectorAll('.tag-item'));
+      const tagIndexInSecondRow = tags.findIndex((currentTag, index) => {
+        if (!index) {
+          return false;
+        }
+        const previousTag = tags[index - 1];
+        return previousTag.offsetTop !== currentTag.offsetTop;
+      });
+      overflowTagIndex.value = tagIndexInSecondRow > 0 ? tagIndexInSecondRow - 1 : null;
+    });
+  };
+
+  return {
+    overflowTagIndex,
+  };
 };

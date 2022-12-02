@@ -1,63 +1,33 @@
 <template>
   <div class="row">
-    <div class="cell">
-      <bk-table
-        :data="tableData"
-        :settings="settings"
+    <bk-table
+      :data="tableData"
+      :settings="settings"
+      border="horizontal"
+    >
+      <bk-table-column
+        label="序号"
+        type="index"
+        sort
+        :width="80"
+      />
+      <bk-table-column
+        label="名称/内网IP"
+        prop="ip"
       >
-        <bk-table-column
-          label="序号"
-          type="index"
-          sort
-          :width="50"
-        />
-        <bk-table-column
-          label="名称/内网IP"
-          prop="ip"
-        >
-          <template #default="props">
-            {{ props?.data.ip }}
-          </template>
-        </bk-table-column>
-        <bk-table-column
-          label="来源"
-          prop="source"
-        />
-        <bk-table-column
-          label="创建时间"
-          prop="create_time"
-        />
-      </bk-table>
-    </div>
-    <div class="cell">
-      <bk-table
-        :data="tableData"
-        :settings="settings"
-      >
-        <bk-table-column
-          label="序号"
-          type="index"
-          sort
-          :width="50"
-        />
-        <bk-table-column
-          label="名称/内网IP"
-          field="ip"
-        >
-          <template #default="props">
-            {{ props?.data.ip }}
-          </template>
-        </bk-table-column>
-        <bk-table-column
-          label="来源"
-          field="source"
-        />
-        <bk-table-column
-          label="创建时间"
-          field="create_time"
-        />
-      </bk-table>
-    </div>
+        <template #default="props">
+          {{ props?.data.ip }}
+        </template>
+      </bk-table-column>
+      <bk-table-column
+        label="来源"
+        prop="source"
+      />
+      <bk-table-column
+        label="创建时间"
+        prop="create_time"
+      />
+    </bk-table>
   </div>
 </template>
 

@@ -21,25 +21,19 @@
   </div>
 </template>
 
-<script>
-  import BkNotify from '@bkui-vue/notify';
+<script setup>
+  import { Notify } from 'bkui-vue';
+  import { ref } from 'vue';
 
-  export default {
-    data() {
-      return {
-        title: '你好！欢迎你使用蓝鲸智云产品',
-        message: '你好，你申请的功能权限现已开通，请及时登录查询。如有疑问，请与蓝鲸智云管理人员联系或关注微信公众账号。',
-      };
-    },
-    methods: {
-      handleSingle(config) {
-        const notifyConfig = {
-          title: this.title,
-          message: this.message,
-          ...config,
-        };
-        BkNotify(notifyConfig);
-      },
-    },
-  };
+  const title = ref('你好！欢迎你使用蓝鲸智云产品');
+  const message = ref('你好，你申请的功能权限现已开通，请及时登录查询。如有疑问，请与蓝鲸智云管理人员联系或关注微信公众账号。');
+
+  function handleSingle(config) {
+    const notifyConfig = {
+      title: title.value,
+      message: message.value,
+      ...config,
+    };
+    Notify(notifyConfig);
+  }
 </script>

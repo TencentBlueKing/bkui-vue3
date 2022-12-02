@@ -1,38 +1,13 @@
 <template>
   <div class="row">
-    <div class="cell">
-      <span class="title">自动填充高度(默认)：height='auto'</span>
-      <bk-table
-        :columns="columns"
-        :data="tableData"
-        show-overflow-tooltip
-        @dblclick="handleDblClick"
-        @column-sort="handleSortBy"
-      />
-    </div>
-    <div
-      class="cell"
-      style="height: 300px;"
-    >
-      <span class="title">依赖父级高度：height='100%'</span>
-      <bk-table
-        :columns="columns"
-        :data="tableData"
-        height="100%"
-        @dblclick="handleDblClick"
-      />
-    </div>
-    <div class="cell">
-      <span class="title">固定高度：height='number | number px'</span>
-      <bk-table
-        :columns="columns"
-        :data="tableData"
-        :max-height="200"
-        :height="300"
-        :settings="settings"
-        @dblclick="handleDblClick"
-      />
-    </div>
+    <bk-table
+      :columns="columns"
+      :data="tableData"
+      row-hover="auto"
+      settings
+      @dblclick="handleDblClick"
+      @column-sort="handleSortBy"
+    />
   </div>
 </template>
 
@@ -44,35 +19,30 @@
     components: {},
     data() {
       return {
+        isLoading: false,
         tableData: [...DATA_TABLE],
         columns: [...DATA_COLUMNS],
         settings: {
-          fields: [],
-          checked: [],
+          fields: [{
+                     label: '序号',
+                     field: 'index',
+                     disabled: true,
+                   },
+                   {
+                     label: '名称/内网IP',
+                     field: 'ip',
+                   },
+                   {
+                     label: '来源',
+                     field: 'source',
+                   },
+                   {
+                     label: '创建时间',
+                     field: 'create_time',
+                   }],
+          checked: ['ip', 'index'],
         },
       };
-    },
-    mounted() {
-      setTimeout(() => {
-        this.settings.checked.push('index');
-        this.settings.fields.push(...[{
-                                        label: '序号',
-                                        field: 'index',
-                                        disabled: true,
-                                      },
-                                      {
-                                        label: '名称/内网IP',
-                                        field: 'ip',
-                                      },
-                                      {
-                                        label: '来源',
-                                        field: 'source',
-                                      },
-                                      {
-                                        label: '创建时间',
-                                        field: 'create_time',
-                                      }]);
-      }, 1000);
     },
     methods: {
       handleSortBy(arg) {

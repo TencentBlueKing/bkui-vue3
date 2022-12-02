@@ -14,7 +14,6 @@
   position: relative;
   height: auto;
   overflow: hidden;
-  border-top: 1px solid @table-border-color;
   // border-bottom: 1px solid @table-border-color;
 
   &.has-scroll-y {
@@ -26,6 +25,11 @@
   .@{bk-prefix}-table-body {
     position: relative;
     overflow: auto;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
   }
 
   .@{bk-prefix}-fixed-bottom-border {
@@ -64,7 +68,7 @@
       border-collapse: collapse;
       table-layout: fixed;
       align-self: flex-start;
-      
+
       th,
       td {
         height: var(--row-height);
@@ -149,6 +153,10 @@
               padding-bottom: 30px;
             }
 
+            &.is-last {
+              border-bottom: none;
+            }
+
             .cell {
               display: block;
               width: 100%;
@@ -160,9 +168,11 @@
           }
 
           &:hover {
-            td {
-              &:not(.empty-cell) {
-                background: @table-row-hover-bg-color;
+            &.hover-highlight {
+              td {
+                &:not(.empty-cell) {
+                  background: @table-row-hover-bg-color;
+                }
               }
             }
           }
@@ -180,17 +190,19 @@
       top: 0;
       right: 1px;
       bottom: 0px;
+      z-index: 1;
       display: block;
       display: flex;
       width: calc(var(--row-height));
       font-size: 14px;
-      cursor: pointer;     
-      
+      cursor: pointer;
+
       background: @table-head-bg-color;
       border-right: 1px solid @table-border-color;
       border-bottom: 1px solid @table-border-color;
       border-left: 1px solid @table-border-color;
       border-radius: 0px 2px 0px 0px;
+      transform: translateX(var(--scroll-left));
       justify-content: center;
       align-items: center;
 
@@ -204,8 +216,7 @@
 
   .@{bk-prefix}-table-footer {
     line-height: 40px;
-    border-bottom: 1px solid @table-border-color;
-    
+
     &.is-hidden {
       display: none;
     }
@@ -213,7 +224,7 @@
 
   &.bordered-row {
     td,
-    th { 
+    th {
       border-bottom: 1px solid @table-border-color;
     }
 
@@ -227,8 +238,19 @@
   }
 
   &.bordered-outer {
+    border-top: 1px solid @table-border-color;
     border-right: 1px solid @table-border-color;
     border-left: 1px solid @table-border-color;
+    .@{bk-prefix}-table-footer {
+      border-bottom: 1px solid @table-border-color;
+    }
+  }
+
+  &.bordered-horizontal {
+    border-top: 1px solid @table-border-color;
+    .@{bk-prefix}-table-footer {
+      border-bottom: 1px solid @table-border-color;
+    }
   }
 
   &.bordered-col {

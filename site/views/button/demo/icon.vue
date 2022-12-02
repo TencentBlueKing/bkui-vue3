@@ -57,8 +57,8 @@
 </template>
 
 <script setup>
-  import { AngleDown, Plus, Search } from '@bkui-vue/icon';
-  import Loading from '@bkui-vue/loading';
+  import { Loading } from 'bkui-vue';
+  import { AngleDown, Plus, Search } from 'bkui-vue/lib/icon';
 </script>
 
 <style lang="postcss">

@@ -27,7 +27,7 @@
 /* eslint-disable arrow-body-style */
 import { computed, defineComponent, ref, toRaw, toRefs, watch } from 'vue';
 
-import { ArrowsRight, Error } from '@bkui-vue/icon/';
+import { ArrowsRight, Error, Search, Transfer } from '@bkui-vue/icon/';
 import BkInput from '@bkui-vue/input';
 
 import { ArrayType } from './const';
@@ -37,7 +37,12 @@ import { transferProps } from './props';
 function useTransferData(sourceData, targetList, settingCode) {
   const selectList = ref([]);
   const selectedList = ref([]);
-  const transformData = () => {
+  const transformData = (isChange = false) => {
+    if (isChange) { // watch监听时需要清空重新按照targetList赋值
+      selectList.value = [];
+      selectedList.value = [];
+    }
+
     sourceData.value.forEach((s) => {
       const keyId = s[settingCode.value];
       if (targetList.value.includes(keyId)) {
@@ -48,7 +53,12 @@ function useTransferData(sourceData, targetList, settingCode) {
     });
   };
   transformData();
-  watch(() => [sourceData, targetList, settingCode], transformData);
+  watch(
+    () => [sourceData, targetList, settingCode],
+    () => {
+      transformData(true);
+    }, { deep: true },
+  );
 
   return {
     selectList,
@@ -119,18 +129,40 @@ export default defineComponent({
         return va > vb ? 1 : -1;
       });
     });
+
+    watch(() => [selectList, selectedList], () => {
+      handleEmitUpdateTargetList();
+    }, { deep: true });
+
+    /** 全选、清空操作过滤禁用选项 */
+    const handleCheckAllItemSelect = (list, source) => {
+      const itemKey = settingCode.value;
+      return list.some(val => val[itemKey] === source[itemKey]) && source.disabled;
+    };
     /** 全选 */
     const allToRight = () => {
-      selectList.value = [];
-      selectedList.value = [...sourceData.value];
+      // 清空源列表 除源列表禁用选项
+      selectList.value = [...sourceData.value.filter((source) => {
+        return handleCheckAllItemSelect(selectList.value, source);
+      })];
+      // 填满目标列表 除源列表禁用选项
+      selectedList.value = [...sourceData.value.filter((source) => {
+        return !handleCheckAllItemSelect(selectList.value, source);
+      })];
       // 全选搜索结果
       // selectedList.value.push(...selectListSearch.value)
       handleEmitUpdateTargetList();
     };
     /** 移除 */
     const allToLeft = () => {
-      selectList.value = [...sourceData.value];
-      selectedList.value = [];
+      // 填满源列表 除目标列表禁用选项
+      selectList.value = [...sourceData.value.filter((source) => {
+        return !handleCheckAllItemSelect(selectedList.value, source);
+      })];
+      // 清空目标列表 除目标列表禁用选项
+      selectedList.value = [...sourceData.value.filter((source) => {
+        return handleCheckAllItemSelect(selectedList.value, source);
+      })];
       handleEmitUpdateTargetList();
     };
       /**
@@ -138,7 +170,9 @@ export default defineComponent({
      * @param { string } itemKey settingCode值
      * @param { boolean } isLeft 左右面板
      */
-    const handleItemClick = (itemKey, isLeft) => {
+    const handleItemClick = (item, isLeft) => {
+      if (item.disabled) return;
+      const itemKey = item[settingCode.value];
       const from = isLeft ? selectList : selectedList;
       const to = isLeft ? selectedList : selectList;
       const index = from.value.findIndex(item => item[settingCode.value] === itemKey);
@@ -176,7 +210,7 @@ export default defineComponent({
     const rightList = this.sortable ? this.selectedListSort : this.selectedList;
     const getHeaderHtml = (dirct) => {
       const isLeft = dirct === 'left-header';
-      const titleText = isLeft ? `${this.title[0] ?? '左侧列表'}` : `${this.title[1] ?? '右侧列表'}`;
+      const titleText = isLeft ? `${this.title[0] ?? '源列表'}` : `${this.title[1] ?? '目标列表'}`;
       const isDisabled = isLeft ? !leftList.length : !rightList.length;
       const headerClick = () => {
         if (isDisabled) return;
@@ -188,11 +222,11 @@ export default defineComponent({
             {this.$slots[dirct]()}
           </div>
         : <div class="header">
-            {`${titleText}（共${isLeft ? leftList.length : rightList.length}条）`}
+            {`${titleText}（${isLeft ? leftList.length : rightList.length}）`}
             <span
               class={{ disabled: isDisabled }}
               onClick={() => headerClick()}>
-              {isLeft ? '全部添加' : '清空'}
+              {isLeft ? '选择全部' : '清空'}
               </span>
           </div>;
     };
@@ -206,7 +240,7 @@ export default defineComponent({
     };
     const getDefaultListHtml = (item, isLeft = true) => {
       return (
-        <div class="item-content">
+        <div class={['item-content', { 'is-disabled': item.disabled }]}>
           {/* 暂无该指令 */}
           {/* {this.showOverflowTips
             ? <span
@@ -226,7 +260,7 @@ export default defineComponent({
             {item[this.displayCode]}
           </span>
           <span class="icon-wrapper">
-            {isLeft ? <ArrowsRight class="bk-icon" /> : <Error class="bk-icon" />}
+            {isLeft ? <ArrowsRight class="bk-icon icon-move" /> : <Error class="bk-icon icon-delete" />}
           </span>
         </div>
       );
@@ -243,7 +277,7 @@ export default defineComponent({
               <li
                 key={item[this.settingCode]}
                 class={[this.$slots[slotName] ? 'custom-item' : '']}
-                onClick={() => this.handleItemClick(item[this.settingCode], isLeft)}>
+                onClick={() => this.handleItemClick(item, isLeft)}>
                 {this.$slots[slotName]?.(item) ?? (getDefaultListHtml(item, isLeft))}
               </li>
             ))}
@@ -261,13 +295,17 @@ export default defineComponent({
                 v-model={this.selectSearchQuery}
                 class="transfer-search-input"
                 clearable={true}
-                placeholder={this.searchPlaceholder || '请输入搜索关键字'}
-                type="search"
-                left-icon='bk-icon icon-search' />
+                placeholder={this.searchPlaceholder || '搜索'}>
+                {{
+                  prefix: () => (
+                    <Search class="icon-search" />
+                  ),
+                }}
+                </BkInput>
           }
           {getListContentHtml('left')}
         </div>
-        <div class="transfer"></div>
+        <Transfer class="transfer" />
         <div class="target-list">
           {getHeaderHtml('right-header')}
           {getListContentHtml('right')}

@@ -49,6 +49,7 @@ export default defineComponent({
         limit: PropTypes.number.def(0),
         size: PropTypes.size(['small', 'medium', 'large']).def('small'),
         sizeList: PropTypes.shape<SizeItem[]>([]),
+        showLineHeight: PropTypes.bool.def(true),
       }), PropTypes.bool]).def(false),
     columns: PropTypes.array.def([]),
     rowHeight: PropTypes.number.def(LINE_HEIGHT),
@@ -56,6 +57,7 @@ export default defineComponent({
   emits: ['change'],
   setup(props, { emit }) {
     const defaultSizeList: SizeItem[] = DEFAULT_SIZE_LIST;
+    const resolvedColVal = (item, index) => resolvePropVal(item, ['field', 'type'], [item, index]);
 
     const checkAll = ref(false);
     const isShow = ref(false);
@@ -65,12 +67,13 @@ export default defineComponent({
       limit: 0,
       size: 'small',
       sizeList: defaultSizeList,
+      showLineHeight: true,
     }) : ref(props.settings as Settings);
 
     const activeSize = ref(localSettings.value.size || 'small');
     const activeHeight = ref(props.rowHeight);
 
-    const checkedFields = ref(localSettings.value.checked);
+    const checkedFields = ref(localSettings.value.checked || []);
     const className = resolveClassName('table-settings');
     const theme = `light ${className}`;
 
@@ -78,9 +81,16 @@ export default defineComponent({
       checkAll: checkAll.value,
       activeSize: activeSize.value,
       activeHeight: activeHeight.value,
+      checkedFields: localSettings.value.checked || [],
     };
 
     const handleSaveClick = () => {
+      Object.assign(cachedValue, {
+        checkAll: checkAll.value,
+        activeSize: activeSize.value,
+        activeHeight: activeHeight.value,
+        checkedFields: checkedFields.value,
+      });
       emit('change', { checked: checkedFields.value, size: activeSize.value, height: activeHeight.value });
       isShow.value = false;
     };
@@ -89,16 +99,11 @@ export default defineComponent({
       checkAll.value = cachedValue.checkAll;
       activeSize.value = cachedValue.activeSize;
       activeHeight.value = cachedValue.activeHeight;
-      checkedFields.value = localSettings.value.checked || [];
+      checkedFields.value = cachedValue.checkedFields;
       isShow.value = false;
     };
 
     const handleSettingClick = () => {
-      Object.assign(cachedValue, {
-        checkAll: checkAll.value,
-        activeSize: activeSize.value,
-        activeHeight: activeHeight.value,
-      });
       isShow.value = true;
     };
 
@@ -109,13 +114,15 @@ export default defineComponent({
 
       checkAll.value = !checkAll.value;
       const fields = (localSettings.value.fields || props.columns || []);
+      const readonlyFields = fields
+        .filter((f, index) => f.disabled && checkedFields.value.includes(resolvedColVal(f, index)))
+        .map((item: any, index: number) => resolvedColVal(item, index));
       if (checkAll.value) {
-        checkedFields.value = fields
-          .map((item: any, index: number) => resolvePropVal(item, 'field', [item, index]));
+        const allFields = fields
+          .filter(f => !f.disabled)
+          .map((item: any, index: number) => resolvedColVal(item, index));
+        checkedFields.value.splice(0, checkedFields.value.length, ...allFields, ...readonlyFields);
       } else {
-        const readonlyFields = fields.filter((item: any) => item.disabled)
-          .map((item: any, index: number) => resolvePropVal(item, 'field', [item, index]));
-
         checkedFields.value.splice(0, checkedFields.value.length, ...readonlyFields);
       }
     };
@@ -125,9 +132,9 @@ export default defineComponent({
     const isFiledDisabled = computed(() => isLimit.value
       && (localSettings.value.limit ? localSettings.value.limit : 0) <= checkedFields.value.length);
 
-    const isItemReadonly = (item: any, index: number) =>  item.disabled
+    const isItemReadonly = (item: any, index: number) => item.disabled
       || (isFiledDisabled.value
-      && !checkedFields.value.includes(resolvePropVal(item, 'field', [item, index])));
+        && !checkedFields.value.includes(resolvedColVal(item, index)));
 
     const handleSizeItemClick = (item: SizeItem) => {
       activeSize.value = item.value;
@@ -145,14 +152,15 @@ export default defineComponent({
     };
 
     const renderSize = () => sizeList.map(item => <span
-      class={ getItemClass(item) }
-      onClick={() => handleSizeItemClick(item)}>{ item.label }</span>);
+      class={getItemClass(item)}
+      onClick={() => handleSizeItemClick(item)}>{item.label}</span>);
 
     const renderFields = computed(() => localSettings.value.fields || props.columns || []);
 
     const indeterminate = computed(() => checkedFields.value.length > 0 && !renderFields.value
       .every((field: any, index: number) => checkedFields.value
         .includes(resolvePropVal(field, 'field', [field, index]))));
+    const showLineHeight = computed(() => (typeof localSettings.value.showLineHeight === 'boolean' ? localSettings.value.showLineHeight : true));
 
     watch(() => [checkedFields.value], () => {
       if (!checkedFields.value.length) {
@@ -161,7 +169,7 @@ export default defineComponent({
 
       if (checkedFields.value.length && renderFields.value
         .every((field: any, index: number) => checkedFields.value
-          .includes(resolvePropVal(field, 'field', [field, index])))) {
+          .includes(resolvedColVal(field, index)))) {
         checkAll.value = true;
       }
     }, { immediate: true, deep: true });
@@ -176,7 +184,7 @@ export default defineComponent({
       {...{ theme }}>
       {
         {
-          default: () =>  <span class="table-head-settings" onClick={ handleSettingClick }>
+          default: () => <span class="table-head-settings" onClick={handleSettingClick}>
             <CogShape style="color: #c4c6cc;" ></CogShape>
           </span>,
           content: () => <div class="setting-content">
@@ -188,32 +196,36 @@ export default defineComponent({
               <div class="setting-body-title">
                 <div>
                   <span class="field-setting-label">字段显示设置</span>
-                  { isLimit.value ? <span class="limit">（最多{localSettings.value.limit}项）</span> : '' }</div>
-                  { isLimit.value ? '' : <span class="check-all" onClick={handleCheckAllClick}>
-                      <BkCheckbox label="全选"
-                        indeterminate={ Boolean(indeterminate.value) }
-                        modelValue={ checkedFields.value.length > 0 }>全选</BkCheckbox>
-                    </span>
-                  }
+                  {isLimit.value ? <span class="limit">（最多{localSettings.value.limit}项）</span> : ''}</div>
+                {isLimit.value ? '' : <span class="check-all" onClick={handleCheckAllClick}>
+                  <BkCheckbox label="全选"
+                    indeterminate={Boolean(indeterminate.value)}
+                    modelValue={checkedFields.value.length > 0}>全选</BkCheckbox>
+                </span>
+                }
               </div>
-              <BkCheckboxGroup class="setting-body-fields" v-model={ checkedFields.value }>
+              <BkCheckboxGroup class="setting-body-fields" v-model={checkedFields.value}>
                 {
                   (renderFields.value).map((item: any, index: number) => <div class="field-item">
-                    <BkCheckbox label={ resolvePropVal(item, 'field', [item, index]) }
-                      checked={ checkedFields.value.includes(resolvePropVal(item, 'field', [item, index])) }
+                    <BkCheckbox checked={checkedFields.value.includes(resolvedColVal(item, index))}
+                      label={resolvedColVal(item, index)}
                       disabled={isItemReadonly(item, index)}>
-                      { resolvePropVal(item, 'label', [item, index]) }
+                      {resolvePropVal(item, 'label', [item, index])}
                     </BkCheckbox>
                   </div>)
                 }
               </BkCheckboxGroup>
-              <div class="setting-body-line-height">
-              表格行高：{ renderSize() }
-              </div>
+              {
+                showLineHeight.value
+                  ? <div class="setting-body-line-height">
+                    表格行高：{renderSize()}
+                  </div> : ''
+              }
+
             </div>
             <div class="setting-footer">
-                <BkButton theme='primary' style={buttonStyle} onClick={handleSaveClick}>确定</BkButton>
-                <BkButton style={buttonStyle} onClick={handleCancelClick}>取消</BkButton>
+              <BkButton theme='primary' style={buttonStyle} onClick={handleSaveClick}>确定</BkButton>
+              <BkButton style={buttonStyle} onClick={handleCancelClick}>取消</BkButton>
             </div>
           </div>,
         }

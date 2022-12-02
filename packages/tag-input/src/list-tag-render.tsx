@@ -37,7 +37,6 @@ export default defineComponent({
     searchKeyword: PropTypes.string,
     tpl: {
       type: Function,
-      default: null,
     },
   },
   render() {

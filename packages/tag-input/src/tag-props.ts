@@ -26,6 +26,7 @@
 
 import { ExtractPropTypes, PropType, VNode } from 'vue';
 
+import { PopoverPropTypes } from '@bkui-vue/popover';
 import { PropTypes } from '@bkui-vue/shared';
 
 const tagProps = () => ({
@@ -53,29 +54,33 @@ const tagProps = () => ({
   leftSpace: PropTypes.number.def(0),
   createTagValidator: {
     type: Function as PropType<(tag: any) => boolean>,
-    default: null,
   },
   filterCallback: {
     type: Function as PropType<(value: string, searchKey: string | string[], list: any[]) => any[]>,
-    default: null,
   },
   tagTpl: {
     type: Function as PropType<(node, highlightKeyword: Function, h: Function, ctx: VNode) => VNode>,
-    default: null,
   },
   tpl: {
     type: Function as PropType<(node, h: Function, ctx: VNode) => VNode>,
-    default: null,
   },
   pasteFn: {
     type: Function as PropType<(value: string) => any[]>,
-    default: null,
   },
   withValidate: {
     type: Boolean,
     default: true,
   },
+  popoverProps: {
+    type: Object as PropType<Partial<PopoverPropTypes>>,
+    default: () => ({}),
+  },
+  collapseTags: {
+    type: Boolean,
+    default: false,
+  },
 });
+
 
 export default tagProps;
 export type TagProps = Partial<ExtractPropTypes<ReturnType<typeof tagProps>>>;

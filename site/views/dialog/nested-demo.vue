@@ -40,6 +40,17 @@
       @closed="() => nestedDialog2.isShow = false"
     >
       <div>sideslider</div>
+      <bk-button @click="nestedDialog3.isShow = true">
+        打开弹窗
+      </bk-button>
+      <bk-dialog
+        :is-show="nestedDialog3.isShow"
+        :quick-close="false"
+        @closed="() => nestedDialog3.isShow = false"
+        @confirm="() => nestedDialog3.isShow = false"
+      >
+        <div>嵌套的弹框内容~</div>
+      </bk-dialog>
     </bk-sideslider>
   </div>
 </template>
@@ -60,7 +71,12 @@
   const nestedDialog1 = ref({
     isShow: false,
   });
+
   const nestedDialog2 = ref({
+    isShow: false,
+  });
+
+  const nestedDialog3 = ref({
     isShow: false,
   });
 </script>

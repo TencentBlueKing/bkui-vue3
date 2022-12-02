@@ -33,6 +33,7 @@ import PropsBox from '../../components/props-box';
 import basic from './basic.vue';
 import basicFilter from './basic-filter.vue';
 import basicSort from './basic-sort.vue';
+import BasicSpan from './basic-span.vue';
 import bordered from './bordered.vue';
 import cellRender from './cell-render';
 import ColumnTemplate from './column-template.vue';
@@ -49,7 +50,6 @@ import ScrollLoading from './scroll-loading.vue';
 import ScrollLoadingSlot from './scroll-loading-slot.vue';
 import Selection from './selection.vue';
 import virtualRender from './virtual-render.vue';
-
 export default defineComponent({
   components: {
     basic,
@@ -69,6 +69,7 @@ export default defineComponent({
     filterScope,
     ColumnTemplate,
     Selection,
+    BasicSpan,
   },
   render() {
     const configs = [
@@ -310,7 +311,22 @@ export default defineComponent({
          * @returns
          */
         component: () => <Selection></Selection>,
-      }];
+      },
+      {
+        attrs: {
+          title: '表格合并',
+          subtitle: 'colspan & rowspan',
+          desc: '',
+          componentName: 'table',
+          demoName: 'basic-span',
+        },
+        /**
+         * basicSort
+         * @returns
+         */
+        component: () => <BasicSpan></BasicSpan>,
+      },
+    ];
 
     /**
      * eventColumnMap

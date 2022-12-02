@@ -26,5 +26,9 @@
 import { withInstall } from '@bkui-vue/shared';
 
 import Component from './popover';
+export { PopoverProps } from './props';
+export type { PopoverPropTypes } from './props';
+
 const BkPopover = withInstall(Component);
 export default BkPopover;
+

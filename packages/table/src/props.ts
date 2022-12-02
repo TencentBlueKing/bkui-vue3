@@ -28,7 +28,7 @@ import { ExtractPropTypes } from 'vue';
 
 import { PropTypes } from '@bkui-vue/shared';
 
-import { BORDER_OPTION, BORDER_OPTIONS, LINE_HEIGHT, TABLE_ROW_ATTRIBUTE } from './const';
+import { BORDER_OPTION, BORDER_OPTIONS, LINE_HEIGHT, ROW_HOVER, ROW_HOVER_OPTIONS, SORT_OPTION, TABLE_ROW_ATTRIBUTE } from './const';
 
 export enum SortScope {
   CURRENT = 'current',
@@ -43,7 +43,12 @@ export type ColumnFilterListItem = {
 export type IOverflowTooltip = {
   content: string | Function,
   disabled?: boolean,
-  watchCellResize?: boolean
+  watchCellResize?: boolean,
+  mode?: string
+};
+
+export type ISortOption = {
+  [key: string]: SORT_OPTION;
 };
 
 export const IColumnType = {
@@ -57,6 +62,7 @@ export const IColumnType = {
     content: PropTypes.string.def(''),
     disabled: PropTypes.bool.def(false),
     watchCellResize: PropTypes.bool.def(true),
+    mode: PropTypes.commonType(['static', 'auto'], 'showOverflowTooltipMode').def('auto'),
   })]).def(undefined),
   type: PropTypes.commonType(['selection', 'index', 'expand', 'none'], 'columnType').def('none'),
   resizable: PropTypes.bool.def(true),
@@ -68,7 +74,7 @@ export const IColumnType = {
     PropTypes.shape({
       sortFn: PropTypes.func.def(undefined),
       sortScope: PropTypes.commonType(Object.values(SortScope)).def(SortScope.CURRENT),
-      value: PropTypes.string.def(null),
+      value: PropTypes.string.def(SORT_OPTION.NULL),
     }),
     PropTypes.bool,
     PropTypes.string]).def(false),
@@ -83,6 +89,8 @@ export const IColumnType = {
     }),
     PropTypes.bool,
     PropTypes.string]).def(false),
+  colspan: PropTypes.oneOfType([PropTypes.func.def(() => 1), PropTypes.number.def(1)]),
+  rowspan: PropTypes.oneOfType([PropTypes.func.def(() => 1), PropTypes.number.def(1)]),
 };
 
 export const tableProps = {
@@ -163,7 +171,10 @@ export const tableProps = {
    * 表格边框显示设置，可以是一个组合
    * 生效规则: 除非单独设置 none,否则会追加每个设置
    */
-  border: PropTypes.arrayOf(PropTypes.commonType(BORDER_OPTIONS, 'border')).def([BORDER_OPTION.ROW]),
+  border: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.commonType(BORDER_OPTIONS, 'border')),
+    PropTypes.string,
+  ]).def([BORDER_OPTION.ROW]),
 
   /**
    * 分页配置
@@ -196,6 +207,7 @@ export const tableProps = {
       limit: PropTypes.number.def(0),
       size: PropTypes.size(['small', 'medium', 'large']).def('small'),
       sizeList: PropTypes.shape<SizeItem[]>([]),
+      showLineHeight: PropTypes.bool.def(true),
     }), PropTypes.bool]).def(false),
 
   /**
@@ -249,9 +261,10 @@ export const tableProps = {
   isSelectedFn: PropTypes.func.def(undefined),
 
   /**
-   * 行数据的 Key，用来优化 Table 的渲染；
+   * 行数据的 Key，用来优化 Table 的渲染
+   * 此key用于渲染table row的key，便于大数据渲染时的性能优化
    * 在使用 reserve-selection, reserve-expand 功能的情况下，该属性是必填的。
-   * 类型为 String 时，支持多层访问：user.info.id，但不支持 user.info[0].id，此种情况请使用 Function
+   * 类型为 String 时，支持多层访问：user.info.id，同时支持 user.info[0].id
    */
   rowKey: PropTypes.oneOfType([
     PropTypes.string,
@@ -266,6 +279,7 @@ export const tableProps = {
     content: PropTypes.string.def(''),
     disabled: PropTypes.bool.def(false),
     watchCellResize: PropTypes.bool.def(true),
+    mode: PropTypes.commonType(['static', 'auto'], 'showOverflowTooltipMode').def('auto'),
   })]).def(false),
 
   /**
@@ -275,6 +289,30 @@ export const tableProps = {
    * 目前只会对指定了selectionKey的情况下才会对指定的字段数据进行更新，同时需要指定 rowKey，保证匹配到的row是正确的目标对象
    */
   asyncData: PropTypes.bool.def(false),
+
+  /**
+   * 鼠标划过行样式行为
+   * @param { ROW_HOVER.AUTO }
+   * @param { ROW_HOVER.HIGHLIGHT }
+   */
+  rowHover: PropTypes.oneOf(ROW_HOVER_OPTIONS).def(ROW_HOVER.HIGHLIGHT),
+
+  /**
+   * 默认的排序列的 prop 和顺序。它的 prop 属性指定默认的排序的列，order指定默认排序的顺序
+   */
+  defaultSort: PropTypes.shape<ISortOption>({}).def({}),
+
+  /**
+   * 配合 column selection 使用
+   * 用于配置渲染行数据的勾选框是否可用
+   * 可以直接为 true|false，全部启用或者禁用
+   * 如果是函数，则返回 true|false
+   * ({ row, index, isCheckAll }) => boolean
+   */
+  isRowSelectEnable: PropTypes.oneOfType([
+    PropTypes.func.def(() => true),
+    PropTypes.bool.def(true),
+  ]).def(true),
 };
 
 
@@ -292,7 +330,8 @@ export type Settings = {
   checked?: string[];
   limit?: number;
   size?: string;
-  sizeList?: SizeItem[]
+  sizeList?: SizeItem[];
+  showLineHeight?: boolean;
 };
 
 export type Field = {
@@ -316,11 +355,14 @@ export type Column = {
   sort?: {
     sortFn?: Function;
     sortScope?: string;
+    value?: string;
   } | boolean | string;
   filter?: {
     list?: any,
     filterFn?: Function;
   } | boolean | string;
+  colspan?: Function | Number;
+  rowspan?: Function | Number;
 };
 
 export type Thead = {
@@ -344,7 +386,14 @@ export type IColumnActive = {
 };
 
 export type IReactiveProp = {
-  activeColumns: IColumnActive[]
+  activeColumns: IColumnActive[],
+  rowActions: Record<string, any>,
+  scrollTranslateY: Number,
+  scrollTranslateX: Number,
+  pos: Record<string, any>,
+  settings: any,
+  setting: any,
+  defaultSort: Record<string, any>
 };
 
 export type Colgroups = Column & {
