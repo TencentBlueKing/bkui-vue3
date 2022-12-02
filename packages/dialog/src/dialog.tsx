@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent, onBeforeUnmount, onMounted, reactive, watch } from 'vue';
+import { computed, defineComponent, onBeforeUnmount, onMounted, reactive, watch } from 'vue';
 
 import BkButton from '@bkui-vue/button';
 import { Close, Spinner, Success, Warn } from '@bkui-vue/icon';
@@ -81,6 +81,8 @@ export default defineComponent({
       emit('update:isShow', false);
       emit('confirm');
     };
+
+    const hasFooter = computed(() => ['process', 'operation', 'confirm'].includes(props.dialogType));
     // 按 esc 关闭弹框
     const escCloseHandler = (e) => {
       if (props.isShow && props.closeIcon) {
@@ -151,6 +153,7 @@ export default defineComponent({
       moveHandler,
       handlePrevStep,
       handleNextStep,
+      hasFooter,
     };
   },
 
@@ -218,7 +221,7 @@ export default defineComponent({
       close: () => <span class="bk-dialog-close" onClick={this.handleClose}>+</span>,
     };
 
-    const className = `bk-dialog-wrapper ${this.scrollable ? 'scroll-able' : ''} ${this.multiInstance ? 'multi-instance' : ''}`;
+    const className = `bk-dialog-wrapper ${this.scrollable ? 'scroll-able' : ''} ${this.multiInstance ? 'multi-instance' : ''} ${this.hasFooter ? 'has-footer' : 'no-footer'}`;
     return <BkModal {...this.$props} class={className}
       onClose={this.handleClose}
       style={this.data.moveStyle}>

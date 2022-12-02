@@ -45,6 +45,14 @@ export default (props: TreePropTypes) => {
     let order = 0;
     const schema = new Map<string, any>();
 
+    /**
+     * 递归更新节点属性
+     * @param uuid 当前节点id
+     * @param attrName 需要更新的节点属性名称
+     * @param attrValue 需要更新的节点属性值
+     * @param callFn 回电函数
+     * @returns
+     */
     function loopUpdateNodeAttr(uuid: string, attrName: string, attrValue: any, callFn: Function) {
       if (uuid === undefined || uuid === null) {
         return;
@@ -72,7 +80,7 @@ export default (props: TreePropTypes) => {
 
 
     const cachedDefaultVal = {
-      [NODE_ATTRIBUTES.IS_OPEN]: () => false,
+      [NODE_ATTRIBUTES.IS_OPEN]: () => !!props.expandAll,
       [NODE_ATTRIBUTES.IS_CHECKED]: () => false,
       [NODE_ATTRIBUTES.IS_MATCH]: () => true,
       [NODE_ATTRIBUTES.IS_SELECTED]: (uuid: string) => props.selected === uuid,
