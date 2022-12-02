@@ -17,7 +17,7 @@
 </template>
 
 <script setup>
-  import InfoBox from '@bkui-vue/info-box';
+  import { InfoBox } from 'bkui-vue';
   const confirmA = InfoBox({
     title: '确认要删除？',
     isShow: false,
