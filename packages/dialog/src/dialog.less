@@ -38,6 +38,7 @@
     }
 
     .bk-dialog-header {
+      height: 79px;
       padding: 24px;
       font-size: 20px;
 
@@ -73,13 +74,32 @@
     }
 
     .bk-modal-content {
-      height: calc(100% - 70px);
-      max-height: calc(100vh - 70px);
-      min-height: calc(258px - 137px);
-      padding: 3px 24px 58px;
+      max-height: calc(100vh - 300px);
+      min-height: 100px;
+      padding: 3px 24px 0;
       font-size: 14px;
       line-height: 1.5;
       color: #63656e;
+    }
+
+    &.fullscreen {
+      .bk-modal-content {
+        max-height: calc(100vh - 137px);
+      }
+
+      &.no-footer {
+        max-height: calc(100vh - 79px);
+      }
+    }
+
+    .bk-modal-body {
+      padding-bottom: 58px;
+    }
+
+    &.no-footer {
+      .bk-modal-body {
+        padding-bottom: 0;
+      }
     }
 
     .bk-modal-footer {

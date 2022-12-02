@@ -81,3 +81,10 @@ export const NODE_SOURCE_ATTRS = {
   [NODE_ATTRIBUTES.IS_LOADING]: 'loading',
   [NODE_ATTRIBUTES.IS_ROOT]: 'isRoot',
 };
+
+/**
+ * 节点点击可执行行为配置
+ */
+export const NODE_CONTENT_ACTIONS = [
+  'click', 'selected', 'expand', 'collapse',
+];
