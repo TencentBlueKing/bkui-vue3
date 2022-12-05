@@ -36,9 +36,8 @@
 </template>
 
 <script setup>
+  import { InfoBox } from 'bkui-vue';
   import { h } from 'vue';
-
-  import InfoBox from '@bkui-vue/info-box';
   const handleDefault1 = () => {
     InfoBox({
       infoType: 'success',
