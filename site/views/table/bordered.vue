@@ -1,6 +1,6 @@
 <template>
   <div style=" width: 100%;height: 300px">
-    <div style="padding: 15px 0">
+    <div style="display: flex;padding: 15px 0;align-items: center;">
       <bk-checkbox-group v-model="border">
         <bk-checkbox label="none" />
         <bk-checkbox
@@ -9,7 +9,14 @@
         />
         <bk-checkbox label="col" />
         <bk-checkbox label="outer" />
+        <bk-checkbox label="horizontal" />
       </bk-checkbox-group>
+      <bk-button
+        style="margin-left: 20px;"
+        @click="()=>tableData=[]"
+      >
+        清空表格数据
+      </bk-button>
     </div>
     <bk-table
       :columns="columns"
