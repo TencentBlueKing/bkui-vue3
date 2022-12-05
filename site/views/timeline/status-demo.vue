@@ -101,7 +101,7 @@
           {
             tag: 'tony审批通过，并附“同意”',
             content: '<span style="font-size: 12px;">2019-12-15 11:00</span>',
-            color: 'green',
+            color: 'blue',
             filled: true,
           },
           {
