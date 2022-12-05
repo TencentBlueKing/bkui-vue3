@@ -99,7 +99,7 @@ export default defineComponent({
             <DisabledDemo></DisabledDemo>
           </DemoBox>
         <PropsBox
-          title="Link Attributes"
+          title="Link 属性"
           subtitle=""
           propsData={linkPropsJson}/>
       </div>

@@ -108,7 +108,7 @@ export default defineComponent({
           value="node"
         />
 
-        <div class="action-online">
+        <div class="action-online"  >
           <PlayShape />
         </div>
       </form>

@@ -73,7 +73,7 @@ export default defineComponent({
         </DemoBox>
 
         <PropsBox
-          title="BkAnimateNumber Attributes"
+          title="AnimateNumber 属性"
           subtitle=""
           propsData={animateNumberPropsJson}
         />

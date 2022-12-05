@@ -232,12 +232,12 @@ export default defineComponent({
             <TypeSizeDemo></TypeSizeDemo>
           </DemoBox>
         <PropsBox
-          title="Progress Attributes"
+          title="Progress 属性"
           subtitle=""
           propsData={progressPropsJson}/>
         <PropsBox
           subtitle="可以自定义文案"
-          title="Progress slot"
+          title="Progress 插槽"
           propsData={progressSlotJson}/>
       </div>
     );

@@ -140,7 +140,7 @@ export default defineComponent({
             ))
           }
         <PropsBox
-          title="CodeDiff Attributes"
+          title="CodeDiff 属性"
           subtitle=""
           propsData={codeDiffProps}/>
 
