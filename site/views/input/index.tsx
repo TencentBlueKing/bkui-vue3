@@ -355,15 +355,15 @@ export default defineComponent({
             ))
           }
         <PropsBox
-          title="Input Attributes"
+          title="Input 属性"
           subtitle=""
           propsData={inputProps}/>
         <PropsBox
-          title="Input Slots"
+          title="Input 插槽"
           subtitle=""
           propsData={inputSlots}/>
         <PropsBox
-          title="Input Events"
+          title="Input 事件"
           subtitle=""
           propsData={inputEvents}/>
       </div>

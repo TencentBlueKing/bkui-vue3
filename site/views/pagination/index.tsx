@@ -164,11 +164,11 @@ export default defineComponent({
             <DemoPaginationSmall />
         </DemoBox>
         <PropsBox
-          title="Pagination Attributes"
+          title="Pagination 属性"
           subtitle=""
           propsData={paginationProps}/>
         <PropsBox
-          title="Pagination Events"
+          title="Pagination 事件"
           subtitle=""
           propsData={paginationEvents}/>
       </div>

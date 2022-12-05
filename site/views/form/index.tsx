@@ -205,11 +205,11 @@ export default defineComponent({
             <DemoComposeFormItem />
         </DemoBox>
         <PropsBox
-          title="Form Attributes"
+          title="Form 属性"
           subtitle=""
           propsData={formProps}/>
         <PropsBox
-          title="Form-Item Attributes"
+          title="Form-Item 属性"
           subtitle=""
           propsData={formItemProps}/>
     </div>

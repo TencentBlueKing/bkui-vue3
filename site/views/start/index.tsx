@@ -34,7 +34,7 @@ export default defineComponent({
       <div style="background: white">
         <DemoTitle
           name="快速上手"
-          desc="本节介绍如何在项目中结合 webpack 一起使用 @blueking/bkui-vue。"/>
+          desc="本组件库基于Vue3研发，本节介绍如何在项目中结合 webpack 一起使用 @blueking/bkui-vue。"/>
           <StartMd/>
       </div>
     );

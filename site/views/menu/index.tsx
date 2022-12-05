@@ -145,12 +145,12 @@ export default defineComponent({
           demoName="base-demo">
              <BaseDemo/>
           </DemoBox>
-        <PropsBox title='Menu属性' propsData={menuPropsJson}/>
-        <PropsBox title='Menu事件' columnMap={eventColumnMap} propsData={eventJson}/>
-        <PropsBox title='SubMenu事件' columnMap={eventColumnMap} propsData={subMenuEventJson}/>
-        <PropsBox title='SubMenu插槽' columnMap={slotColumnMap} propsData={subMenuSlotsJson}/>
-        <PropsBox title='MenuItem属性' propsData={menuItemPropsJson}/>
-        <PropsBox title='MenuItem插槽' columnMap={slotColumnMap} propsData={menuItemSlotsJson}/>
+        <PropsBox title='Menu 属性' propsData={menuPropsJson}/>
+        <PropsBox title='Menu 事件' columnMap={eventColumnMap} propsData={eventJson}/>
+        <PropsBox title='SubMenu 事件' columnMap={eventColumnMap} propsData={subMenuEventJson}/>
+        <PropsBox title='SubMenu 插槽' columnMap={slotColumnMap} propsData={subMenuSlotsJson}/>
+        <PropsBox title='MenuItem 属性' propsData={menuItemPropsJson}/>
+        <PropsBox title='MenuItem 插槽' columnMap={slotColumnMap} propsData={menuItemSlotsJson}/>
       </div>
     );
   },

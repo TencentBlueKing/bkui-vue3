@@ -134,15 +134,15 @@ export default defineComponent({
             <DemoAlertCloseText />
         </DemoBox>
         <PropsBox
-          title="Alert Attributes"
+          title="Alert 属性"
           subtitle=""
           propsData={alertProps}/>
         <PropsBox
-          title="Alert Events"
+          title="Alert 事件"
           subtitle=""
           propsData={alertEvents}/>
         <PropsBox
-          title="Alert Slots"
+          title="Alert 插槽"
           subtitle=""
           propsData={alertSlots}/>
       </div>

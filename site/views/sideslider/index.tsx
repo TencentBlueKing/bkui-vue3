@@ -188,9 +188,9 @@ export default defineComponent({
         demoName="footer-demo">
         <FooterDemo></FooterDemo>
       </DemoBox>
-      <PropsBox title="Sideslider Attributes" subtitle="" propsData={SideSliserPropsJson}/>
-      <PropsBox title="Sideslider Event" subtitle="" propsData={SideSliserEventJson}/>
-      <PropsBox title="Sideslider Slot" subtitle="" propsData={SideSliserSlotJson}/>
+      <PropsBox title="Sideslider 属性" subtitle="" propsData={SideSliserPropsJson}/>
+      <PropsBox title="Sideslider 事件" subtitle="" propsData={SideSliserEventJson}/>
+      <PropsBox title="Sideslider 插槽" subtitle="" propsData={SideSliserSlotJson}/>
     </div>
     );
   },
