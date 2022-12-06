@@ -231,6 +231,7 @@ export default defineComponent({
 
       // 合并规则属性配置
       rules = getTriggerRules(trigger, mergeRules(rules, getRulesFromProps(props)));
+
       // 重新触发验证重置上次的验证状态
       if (rules.length > 0) {
         state.isError = false;
