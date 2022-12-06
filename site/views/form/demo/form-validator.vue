@@ -81,14 +81,12 @@
     name: '',
     school: '',
   });
-
   const rules = {
     name: [
       {
-        validator: (value) => {
-          console.log('asdadasd =', value);
-          return false;
-        },
+        validator: value => value.length > 2,
+        message: '姓名长度不能小于2',
+        trigger: 'change',
       },
     ],
   };
