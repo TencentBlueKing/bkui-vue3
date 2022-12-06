@@ -47,9 +47,9 @@ import {
 
 import type {
   IFormItemRule,
-  IFormItemRules,
 } from './type';
-import defaultValidator from './validator';
+import { getRuleMessage } from './utils';
+import defaultValidator from './validator';;
 
 const formItemProps = {
   label: PropTypes.string,
@@ -72,7 +72,7 @@ export type FormItemProps = Readonly<ExtractPropTypes<typeof formItemProps>>;
 const hasOwn = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key);
 
 const getRulesFromProps = (props) => {
-  const rules: IFormItemRules = [];
+  const rules: IFormItemRule[] = [];
 
   if (props.required) {
     rules.push({
@@ -91,21 +91,21 @@ const getRulesFromProps = (props) => {
   if (Number(props.max) > -1) {
     rules.push({
       validator: value => defaultValidator.max(value, props.max),
-      message: `${props.label}最大值${props.max}`,
+      message: `${props.label}最大值 ${props.max}`,
       trigger: 'blur',
     });
   }
   if (Number(props.min) > -1) {
     rules.push({
       validator: value => defaultValidator.min(value, props.min),
-      message: `${props.label}最小值${props.min}`,
+      message: `${props.label}最小值 ${props.min}`,
       trigger: 'blur',
     });
   }
   if (Number(props.maxlength) > -1) {
     rules.push({
       validator: value => defaultValidator.maxlength(value, props.maxlength),
-      message: `${props.label}最大长度${props.maxlength}`,
+      message: `${props.label}最大长度 ${props.maxlength}`,
       trigger: 'blur',
     });
   }
@@ -113,9 +113,9 @@ const getRulesFromProps = (props) => {
 };
 
 const mergeRules: (
-  configRules: IFormItemRules,
-  propsRules: IFormItemRules
-) => IFormItemRules = (configRules, propsRules) => {
+  configRules: IFormItemRule[],
+  propsRules: IFormItemRule[]
+) => IFormItemRule[] = (configRules, propsRules) => {
   const formatConfigRules = configRules.reduce((result, rule) => {
     let rulevalidator: any;
     if (rule.required) {
@@ -138,8 +138,8 @@ const mergeRules: (
     }
     result.push({
       validator: rulevalidator,
-      message: rule.message,
-      trigger: rule.trigger,
+      message: rule.message || '验证错误',
+      trigger: rule.trigger || 'blur',
     });
     return result;
   }, []);
@@ -148,7 +148,7 @@ const mergeRules: (
 
 const getTriggerRules = (
   trigger: String,
-  rules: IFormItemRules,
+  rules: IFormItemRule[],
 ) => rules.reduce((result, rule) => {
   if (!rule.trigger || !trigger) {
     result.push(rule);
@@ -217,7 +217,7 @@ export default defineComponent({
       || (isForm && !form.props.model)) {
         return Promise.resolve(true);
       }
-      let rules: IFormItemRules = [];
+      let rules: IFormItemRule[] = [];
       // 继承 form 的验证规则
       if (isForm
         && form.props.rules
@@ -226,11 +226,12 @@ export default defineComponent({
       }
       // form-item 自己的 rules 规则优先级更高
       if (props.rules) {
-        rules = props.rules as IFormItemRules;
+        rules = props.rules as IFormItemRule[];
       }
 
       // 合并规则属性配置
       rules = getTriggerRules(trigger, mergeRules(rules, getRulesFromProps(props)));
+
       // 重新触发验证重置上次的验证状态
       if (rules.length > 0) {
         state.isError = false;
@@ -251,25 +252,26 @@ export default defineComponent({
           return Promise.resolve()
             .then(() => {
               const result = rule.validator(value);
+              const errorMessage = getRuleMessage(rule);
               // 异步验证
               if (typeof result !== 'boolean'
                 && typeof result.then === 'function') {
                 return result.then((data) => {
                   // 异步验证结果为 false
                   if (data === false) {
-                    return Promise.reject(rule.message);
+                    return Promise.reject(errorMessage);
                   }
                 }).then(() => doValidate(), () => {
                   state.isError = true;
-                  state.errorMessage = rule.message;
-                  return Promise.reject(rule.message);
+                  state.errorMessage = errorMessage;
+                  return Promise.reject(errorMessage);
                 });
               }
               // 验证失败
               if (!result) {
                 state.isError = true;
-                state.errorMessage = rule.message;
-                return Promise.reject(rule.message);
+                state.errorMessage = errorMessage;
+                return Promise.reject(errorMessage);
               }
               // 下一步
               return doValidate();

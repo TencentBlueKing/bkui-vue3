@@ -102,9 +102,9 @@ export default defineComponent({
     return (
       <div>
         <DemoTitle
-          name="Radio"
+          name="Alert"
           desc="展示页面的提示信息"
-          link="https://www.qq.com/"/>
+          link={`${import.meta.env.VITE_APP_BASE_URL ?? ''}/alert`} />
         <DemoBox
           title="基本用法"
           desc=""

@@ -46,8 +46,6 @@ export interface IFormItemRule {
   maxlength?: number,
   pattern?: RegExp,
   validator?: (any) => boolean | Promise<boolean>,
-  message: string,
+  message: string | (() => string),
   trigger: 'blur' | 'change'
 }
-
-export type IFormItemRules = Array<IFormItemRule>;
