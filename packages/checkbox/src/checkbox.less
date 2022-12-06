@@ -1,20 +1,26 @@
 @import '@bkui-vue/styles/themes/themes.less';
 
+.@{bk-prefix}-checkbox-group {
+  display: inline-block;
+  letter-spacing: normal;
+}
+
 .@{bk-prefix}-checkbox {
   display: inline-flex;
   justify-self: center;
+  align-items: center;
   font-size: 14px;
-  line-height: 18px;
   letter-spacing: normal;
   color: #63656e;
   cursor: pointer;
   user-select: none;
-  &~.@{bk-prefix}-checkbox {
+
+  & ~ .@{bk-prefix}-checkbox {
     margin-left: 30px;
   }
 
   &.is-checked {
-    .bk-checkbox-input {
+    .@{bk-prefix}-checkbox-input {
       background: @primary-color;
       border-color: @primary-color;
       transition: all .1s;
@@ -43,7 +49,7 @@
   }
 
   &.is-indeterminated {
-    .bk-checkbox-input {
+    .@{bk-prefix}-checkbox-input {
       background: @primary-color;
       border-color: @primary-color;
       transition: all .1s;
@@ -74,7 +80,7 @@
     color: #c4c6cc;
     cursor: not-allowed;
 
-    .bk-checkbox-input {
+    .@{bk-prefix}-checkbox-input {
       background: #fafbfd;
       border-color: @disable-color;
 
@@ -84,39 +90,39 @@
     }
 
     &.is-checked {
-      .bk-checkbox-input {
+      .@{bk-prefix}-checkbox-input {
         background: @disable-color;
       }
     }
   }
+}
 
-  .bk-checkbox-input {
-    position: relative;
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    margin-right: 5px;
-    vertical-align: middle;
-    border: 1px solid #979ba5;
-    border-radius: 2px;
-    
-    &.small {
-      width: 14px;
-      height: 14px;
-    }
-  }
+.@{bk-prefix}-checkbox-input {
+  position: relative;
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  border: 1px solid #979ba5;
+  border-radius: 2px;
 
-  .bk-checkbox-original {
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: -1;
-    width: 0;
-    height: 0;
+  &.small {
+    width: 14px;
+    height: 14px;
   }
+}
 
-  .bk-checkbox-label {
-    display: inline-block;
-    vertical-align: middle;
-  }
+.@{bk-prefix}-checkbox-original {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  width: 0;
+  height: 0;
+}
+
+.@{bk-prefix}-checkbox-label {
+  display: inline-block;
+  margin-left: 5px;
+  vertical-align: middle;
 }

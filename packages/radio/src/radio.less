@@ -1,11 +1,15 @@
 @import '@bkui-vue/styles/themes/themes.less';
 
-.bk-radio {
+.@{bk-prefix}-radio-group {
+  display: inline-block;
+  letter-spacing: normal;
+}
+
+.@{bk-prefix}-radio {
   display: inline-flex;
   align-items: center;
   font-size: @font-size-base;
   font-weight: normal;
-  line-height: 1;
   letter-spacing: normal;
   color: @radio-font-color;
   white-space: nowrap;
@@ -13,43 +17,12 @@
   outline: none;
   user-select: none;
 
-  &~.bk-radio {
+  & ~ .@{bk-prefix}-radio {
     margin-left: 30px;
   }
 
-  .bk-radio-text {
-    font-size: 12px;
-    font-style: normal;
-    font-weight: normal;
-    vertical-align: middle;
-    cursor: pointer;
-  }
-
-  .bk-radio-input {
-    position: relative;
-    display: inline-block;
-    width: @line-height-base;
-    height: @line-height-base;
-    margin: 0 5px 0 0;
-    color: #fff;
-    vertical-align: middle;
-    cursor: pointer;
-    background-color: #fff;
-    border: @border-width-base @border-style-base @light-gray;
-    border-radius: 50%;
-    outline: none;
-    visibility: visible;
-    transition: all .3s;
-    background-clip: content-box;
-    appearance: none;
-
-    &:hover {
-      border-color: @radio-hover-border-color;
-    }
-  }
-
   &.is-checked {
-    .bk-radio-input {
+    .@{bk-prefix}-radio-input {
       padding: 3px;
       color: @radio-active-color;
       background-color: @radio-active-color;
@@ -62,29 +35,60 @@
     cursor: not-allowed;
 
     &.is-checked {
-      .bk-radio-input {
+      .@{bk-prefix}-radio-input {
         background-color: @radio-distable-checked-bg;
       }
     }
 
-    .bk-radio-input {
+    .@{bk-prefix}-radio-input {
       cursor: not-allowed;
       border-color: @radio-disabled-border;
     }
 
-    .bk-radio-text {
+    .@{bk-prefix}-radio-label {
       cursor: not-allowed;
     }
   }
 
   &.is-focused {
-    .bk-radio-input {
+    .@{bk-prefix}-radio-input {
       border-color: @radio-active-color;
     }
   }
 }
 
-.bk-radio-button {
+.@{bk-prefix}-radio-input {
+  position: relative;
+  display: inline-block;
+  width: @line-height-base;
+  height: @line-height-base;
+  color: #fff;
+  vertical-align: middle;
+  cursor: pointer;
+  background-color: #fff;
+  border: @border-width-base @border-style-base @light-gray;
+  border-radius: 50%;
+  outline: none;
+  visibility: visible;
+  transition: all .3s;
+  background-clip: content-box;
+  appearance: none;
+
+  &:hover {
+    border-color: @radio-hover-border-color;
+  }
+}
+
+.@{bk-prefix}-radio-label {
+  margin-left: 5px;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: normal;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.@{bk-prefix}-radio-button {
   position: relative;
   z-index: 1;
   display: inline-block;
@@ -103,41 +107,15 @@
     margin-left: -1px;
   }
 
-  .bk-radio-button-input {
-    position: absolute;
-    z-index: -1;
-    outline: none;
-    opacity: 0;
-  }
-
-  .bk-radio-button-text {
-    height: @component-size-base;
-    padding: 0 18px;
-    font-size: 12px;
-    font-style: normal;
-    font-weight: normal;
-    line-height: @component-size-base;
-    color: @default-color;
-    text-align: center;
-    vertical-align: middle;
-    cursor: pointer;
-    border: @border-width-base @border-style-base @light-gray;
-    transition: all .3s;
-
-    &:hover {
-      border-color: @radio-hover-border-color;
-    }
-  }
-
   &:first-child {
-    .bk-radio-button-text {
+    .@{bk-prefix}-radio-button-label {
       border-bottom-left-radius: @border-radius-base;
       border-top-left-radius: @border-radius-base;
     }
   }
 
   &:last-child {
-    .bk-radio-button-text {
+    .@{bk-prefix}-radio-button-label {
       border-top-right-radius: @border-radius-base;
       border-bottom-right-radius: @border-radius-base;
     }
@@ -146,7 +124,7 @@
   &.is-checked {
     z-index: 2;
 
-    .bk-radio-button-text {
+    .@{bk-prefix}-radio-button-label {
       color: @radio-active-color;
       background: @radio-button-checked-bg;
       border-color: @radio-active-color;
@@ -158,7 +136,7 @@
     color: @radio-disabled-font-color;
     cursor: not-allowed;
 
-    .bk-radio-button-text {
+    .@{bk-prefix}-radio-button-label {
       cursor: not-allowed;
       background: @radio-distable-checked-bg;
       border-color: @radio-disabled-border;
@@ -166,17 +144,35 @@
   }
 
   &.is-focused {
-    .bk-radio-button-text {
+    .@{bk-prefix}-radio-button-label {
       border-color: @radio-active-color;
     }
   }
-
-  
 }
 
-.bk-radio-group {
-  display: inline-block;
-  font-size: 0;
-  line-height: 0;
-  letter-spacing: normal;
+.@{bk-prefix}-radio-button-input {
+  position: absolute;
+  z-index: -1;
+  outline: none;
+  opacity: 0;
 }
+
+.@{bk-prefix}-radio-button-label {
+  height: @component-size-base;
+  padding: 0 18px;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: normal;
+  line-height: @component-size-base;
+  color: @default-color;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  border: @border-width-base @border-style-base @light-gray;
+  transition: all .3s;
+
+  &:hover {
+    border-color: @radio-hover-border-color;
+  }
+}
+
