@@ -235,11 +235,11 @@ export default defineComponent({
             <CustomDemo></CustomDemo>
           </DemoBox>
           <PropsBox
-            title="BkSlider Attributes"
+            title="Slider 属性"
             subtitle=""
             propsData={switcherPropsJson}/>
           <PropsBox
-          title="BkSlider Events"
+          title="Slider 事件"
           subtitle=""
           propsData={switcherChangeJson}/>
       </div>

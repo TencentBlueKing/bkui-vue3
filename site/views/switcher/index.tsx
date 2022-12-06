@@ -214,12 +214,12 @@ export default defineComponent({
 
 
           <PropsBox
-            title="BkSwitcher Attributes"
+            title="Switcher 属性"
             subtitle=""
             propsData={switcherPropsJson}/>
 
           <PropsBox
-          title="BkSwitcher Events"
+          title="Switcher 事件"
           subtitle=""
           propsData={switcherChangeJson}/>
       </div>

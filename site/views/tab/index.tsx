@@ -106,9 +106,9 @@ export default defineComponent({
           demoName="demo-jsx">
           <DemoJsx />
         </DemoBox>
-        <PropsBox title='tabProps' propsData={tabPropsJson}/>
-        <PropsBox title='tabEvent' propsData={tabEventPropsJson}/>
-        <PropsBox title='tabPanelProps' propsData={tabPanelPropsJson}/>
+        <PropsBox title='tab 属性' propsData={tabPropsJson}/>
+        <PropsBox title='tab 事件' propsData={tabEventPropsJson}/>
+        <PropsBox title='tab-Panel 属性' propsData={tabPanelPropsJson}/>
       </div>
     );
   },

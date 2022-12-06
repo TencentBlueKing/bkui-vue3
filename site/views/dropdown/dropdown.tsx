@@ -174,23 +174,23 @@ export default defineComponent({
               <DropdownBoundaryBody />
           </DemoBox>
           <PropsBox
-          title="Dropdown Attributes"
+          title="Dropdown 属性"
           subtitle=""
           propsData={dropdowProps}/>
           <PropsBox
-          title="DropdownMenu Attributes"
+          title="DropdownMenu 属性"
           subtitle=""
           propsData={dropdownMenuProps}/>
           <PropsBox
-          title="DropdownItem Attributes"
+          title="DropdownItem 属性"
           subtitle=""
           propsData={dropdownItemProps}/>
           <PropsBox
-          title="Dropdown Events"
+          title="Dropdown 事件"
           subtitle=""
           propsData={dropdownMethods}/>
           <PropsBox
-          title="DropdownItem Events"
+          title="DropdownItem 事件"
           subtitle=""
           propsData={dropdownItemMethods}/>
       </div>

@@ -127,7 +127,7 @@ export default defineComponent({
     const maxHeight = this.maxHeight ? { maxHeight: this.maxHeight } : {};
     const bodyClass = `bk-modal-body ${this.animateType === 'slide' ? this.direction : ''}`;
     return (
-      <div class={['bk-modal-wrapper', this.extCls, this.size]}
+      <div class={['bk-modal-wrapper', this.extCls, this.size, this.fullscreen ? 'fullscreen' : '']}
         style={[this.compStyle, this.fullscreen ? this.fullscreenStyle : '']}>
         <Transition name={this.animateType}>
         {this.isShow ? <div class={bodyClass}>

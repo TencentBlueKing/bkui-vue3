@@ -257,11 +257,11 @@ export default defineComponent({
         </DemoBox>
 
         <PropsBox
-          title='Cascader Attributes'
+          title='Cascader 属性'
           subtitle=''
           propsData={cascaderPropsJson} />
         <PropsBox
-          title='Cascader Events'
+          title='Cascader 事件'
           subtitle=''
           propsData={cascaderEventsJson} />
       </div>
