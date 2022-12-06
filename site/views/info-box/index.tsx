@@ -187,41 +187,6 @@ const props: IPropsTableItem[] = [
     desc: '是否可拖拽',
     optional: [],
   },
-  {
-    name: 'dialogType',
-    type: 'String',
-    default: 'operation',
-    desc: '对话框类型',
-    optional: ['show', 'operation', 'confirm', 'process'],
-  },
-  {
-    name: 'prevText',
-    type: 'String',
-    default: '上一步',
-    desc: '上一步按钮文字',
-    optional: [],
-  },
-  {
-    name: 'nextText',
-    type: 'String',
-    default: '下一步',
-    desc: '下一步按钮文字',
-    optional: [],
-  },
-  {
-    name: 'current',
-    type: 'Number',
-    default: 1,
-    desc: '当前步骤',
-    optional: [],
-  },
-  {
-    name: 'totalStep',
-    type: 'Number',
-    default: null,
-    desc: '总步数',
-    optional: [],
-  },
 ];
 const infoBox: IPropsTableItem[] = [
   {
