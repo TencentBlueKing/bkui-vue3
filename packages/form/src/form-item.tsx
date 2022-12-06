@@ -53,7 +53,7 @@ import defaultValidator from './validator';;
 
 const formItemProps = {
   label: PropTypes.string,
-  labelWidth: PropTypes.oneOfType([Number, String]),
+  labelWidth: PropTypes.oneOfType([Number, String]).def(150),
   labelPosition: PropTypes.oneOf(['left', 'center', 'right']),
   property: PropTypes.string.def(''),
   required: PropTypes.bool.def(false),
@@ -171,7 +171,7 @@ export default defineComponent({
     bkTooltips,
   },
   props: formItemProps,
-  setup(props) {
+  setup(props, context) {
     const currentInstance = getCurrentInstance();
     const state = reactive({
       isError: false,
@@ -188,17 +188,27 @@ export default defineComponent({
       return form.props.formType === 'vertical';
     });
 
+    const isShowLabel = computed(() => {
+      if (props.label || context.slots.label) {
+        return true;
+      }
+      return false;
+    });
+
     const labelStyles = computed<any>(() => {
       const styles = {
         width: '',
         paddingRight: '',
         textAlign: '',
       };
-      const labelWidth = isValid(props.labelWidth) ? props.labelWidth : (isForm && form.props.labelWidth);
-      if (isValid(labelWidth)) {
-        styles.width = `${labelWidth}px`;
-        styles.paddingRight = labelWidth ? '' : '0px';
+      if (form.props.formType !== 'vertical') {
+        const labelWidth = isValid(props.labelWidth) ? props.labelWidth : (isForm && form.props.labelWidth);
+        if (isValid(labelWidth)) {
+          styles.width = `${labelWidth}px`;
+          styles.paddingRight = labelWidth ? '' : '0px';
+        }
       }
+
 
       const labelPosition = props.labelPosition || (isForm && form.props.labelPosition);
       if (labelPosition) {
@@ -207,6 +217,9 @@ export default defineComponent({
 
       return styles;
     });
+    const contentStyles = computed(() => ({
+      ['margin-left']: labelStyles.value.width,
+    }));
 
     /**
      * @desc 验证字段
@@ -309,7 +322,9 @@ export default defineComponent({
 
     return {
       ...toRefs(state),
+      isShowLabel,
       labelStyles,
+      contentStyles,
       isFormTypeVertical,
       validate,
       clearValidate,
@@ -364,13 +379,19 @@ export default defineComponent({
 
     return (
       <div class={itemClassees}>
+        {
+          this.isShowLabel && (
+            <div
+              class="bk-form-label"
+              style={this.labelStyles}>
+                {renderLabel()}
+                {this.isFormTypeVertical && this.$slots.labelAppend?.()}
+            </div>
+          )
+        }
         <div
-          class="bk-form-label"
-          style={this.labelStyles}>
-            {renderLabel()}
-            {this.isFormTypeVertical && this.$slots.labelAppend?.()}
-        </div>
-        <div class="bk-form-content">
+          class="bk-form-content"
+          style={this.contentStyles}>
           {this.$slots.default?.()}
           {renderError()}
         </div>

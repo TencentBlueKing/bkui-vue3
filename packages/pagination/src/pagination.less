@@ -113,37 +113,39 @@
   width: 60px;
   margin: 0 4px;
 
-  .bk-input {
+  .@{bk-prefix}-input {
     border-color: #f0f1f5;
   }
 
-  .bk-input--text {
+  .@{bk-prefix}-input--text {
     background-color: #f0f1f5;
   }
 
   &:hover {
-    .bk-input {
+    .@{bk-prefix}-input {
       border-color: #eaebf0;
     }
-  
-    .bk-input--text {
+
+    .@{bk-prefix}-input--text {
       background-color: #eaebf0;
     }
   }
 
-  .bk-input {
+  .@{bk-prefix}-input {
     &.is-focused {
       border-color: #3a84ff;
 
-      .bk-input--text {
+      .@{bk-prefix}-input--text {
         background-color: #fff;
       }
     }
   }
 }
+
 .@{bk-prefix}-pagination-small-list {
   display: flex;
   align-items: center;
+
   .@{bk-prefix}-pagination-picker {
     display: flex;
     height: 26px;
