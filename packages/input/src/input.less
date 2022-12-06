@@ -116,10 +116,11 @@
     border-bottom-color: @input-border-color;
 
     &:hover:not(.is-disabled) {
+      background-color: @input-block-color;
       border-color: transparent;
       border-bottom-color: @light-gray;
       box-shadow: none;
-      .@{bk-prefix}-input--text {
+      .@{bk-prefix}-input--text, .@{bk-prefix}-input--suffix-icon {
         background-color: @input-block-color;
       }
     }
@@ -185,7 +186,7 @@
       border-color: transparent;
       border-bottom-color: @primary-color;
       box-shadow: none;
-      .@{bk-prefix}-input--text {
+      .@{bk-prefix}-input--text, .@{bk-prefix}-input--suffix-icon {
         background-color: @input-block-color;
       }
     }
