@@ -104,9 +104,32 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
     return { elReference, elContent, elArrow, root };
   };
 
+  const resolveModifiers: any = () => {
+    const resolveResult = {};
+    if (Array.isArray(props.modifiers)) {
+      props.modifiers.forEach((m) => {
+        let result = 0;
+        if (m.name === 'offset') {
+          if (typeof m.options?.offset === 'number') {
+            result = m.options?.offset;
+          }
+
+          if (Array.isArray(m.options?.offset)) {
+            result = m.options?.offset.reduce((o, c) => (o + c), 0);
+          }
+          Object.assign(resolveResult, { offset: result });
+        }
+      });
+    }
+
+    return resolveResult;
+  };
+
   const resolvePopOptions = (elArrow, props) => {
+    const modifiers = resolveModifiers();
+
     const middleware = [
-      offset(props.offset),
+      offset(modifiers.offset || props.offset),
       shift({ padding: props.padding }),
     ];
     const options = {

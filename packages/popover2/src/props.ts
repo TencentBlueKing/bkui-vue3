@@ -96,6 +96,12 @@ export const PopoverProps = {
    */
   reference: PropTypes.any.def(null),
 
+  /**
+   * 兼容v1版本遗留配置
+   * 不建议使用
+   */
+  modifiers: PropTypes.array.def([]),
+
   ...EventProps,
 };
 
