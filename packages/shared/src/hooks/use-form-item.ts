@@ -32,7 +32,6 @@ import {
   IFormItemContext,
 } from '@bkui-vue/form';
 
-import { EMPTY_OBJ } from '../index';
 import { formItemKey } from '../token';
 
-export const useFormItem = () => inject<IFormItemContext>(formItemKey, EMPTY_OBJ);
+export const useFormItem = () => inject<IFormItemContext>(formItemKey, undefined);
