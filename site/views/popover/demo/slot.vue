@@ -1,8 +1,7 @@
 <template>
-  <bk-popover
+  <bk-popover2
     placement="top"
     width="490"
-    :ext-cls="'aaaaaa'"
   >
     <bk-button>超长</bk-button>
     <template #content>
@@ -17,5 +16,5 @@
         今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错
       </div>
     </template>
-  </bk-popover>
+  </bk-popover2>
 </template>
