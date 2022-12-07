@@ -43,6 +43,7 @@ import {
   formItemKey,
   PropTypes,
   useForm,
+  useFormItem,
 } from '@bkui-vue/shared';
 
 import type {
@@ -172,14 +173,16 @@ export default defineComponent({
   },
   props: formItemProps,
   setup(props, context) {
+    const form = useForm();
+    const isForm = Boolean(form);
+    const parentFormItem = useFormItem();
+    const isNested = Boolean(parentFormItem);
+
     const currentInstance = getCurrentInstance();
     const state = reactive({
       isError: false,
       errorMessage: '',
     });
-    const form = useForm();
-
-    const isForm = Boolean(form);
 
     const isFormTypeVertical = computed(() => {
       if (!isForm) {
@@ -201,22 +204,25 @@ export default defineComponent({
         paddingRight: '',
         textAlign: '',
       };
-      if (form.props.formType !== 'vertical') {
-        const labelWidth = isValid(props.labelWidth) ? props.labelWidth : (isForm && form.props.labelWidth);
-        if (isValid(labelWidth)) {
-          styles.width = `${labelWidth}px`;
-          styles.paddingRight = labelWidth ? '' : '0px';
-        }
-      }
-
 
       const labelPosition = props.labelPosition || (isForm && form.props.labelPosition);
       if (labelPosition) {
         styles['text-align'] = labelPosition;
       }
 
+      if (form.props.formType === 'vertical' || (!props.label && isNested)) {
+        return styles;
+      }
+
+      const labelWidth = isValid(props.labelWidth) ? props.labelWidth : (isForm && form.props.labelWidth);
+      if (isValid(labelWidth)) {
+        styles.width = `${labelWidth}px`;
+        styles.paddingRight = labelWidth ? '' : '0px';
+      }
+
       return styles;
     });
+
     const contentStyles = computed(() => ({
       ['margin-left']: labelStyles.value.width,
     }));
