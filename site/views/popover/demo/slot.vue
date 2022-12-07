@@ -1,5 +1,5 @@
 <template>
-  <bk-popover2
+  <bk-popover
     placement="top"
     width="490"
   >
@@ -16,5 +16,5 @@
         今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错
       </div>
     </template>
-  </bk-popover2>
+  </bk-popover>
 </template>

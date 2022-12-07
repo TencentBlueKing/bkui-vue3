@@ -24,6 +24,7 @@
  * IN THE SOFTWARE.
  */
 import BkPopover from '../../popover2/src/index';
+BkPopover.name = 'Popover';
 export default BkPopover;
 
 export { default as $bkPopover } from '../../popover2/src/plugin-popover';

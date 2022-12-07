@@ -1,12 +1,12 @@
 <template>
-  <bk-popover2
+  <bk-popover
     placement="bottom"
     content="文字提示"
     @after-hidden="handleHide"
     @after-show="handleShow"
   >
     <bk-button>自定义回调函数</bk-button>
-  </bk-popover2>
+  </bk-popover>
 </template>
 
 <script setup>
