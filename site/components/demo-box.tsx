@@ -143,7 +143,7 @@ export default defineComponent({
           </div>,
           <div class="example-tools">
             {this.desc}
-              <BoxIcon tips='执行' style={{ marginLeft: 'auto'}}  >
+              <BoxIcon tips='执行' style={{ marginLeft: 'auto' }}  >
                   <Stackblitz code={this.activeCode} style={{ width: '100%', height: '100%', textAlign: 'center', lineHeight: '23px' }}/>
               </BoxIcon>
             <BoxIcon
