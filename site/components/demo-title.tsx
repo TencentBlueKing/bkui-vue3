@@ -23,9 +23,10 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent } from 'vue';
-
+/*
 import { Share } from '@bkui-vue/icon';
+*/
+import { defineComponent } from 'vue';
 
 import './demo-title.less';
 
@@ -55,11 +56,11 @@ export default defineComponent({
     return <div class="demo-title">
       <div class="title-name">{this.name}</div>
       <div class="title-desc">{this.desc}
-        {
+        {/* {
           this.link && <a class="desc-link" href={this.link}>
             <Share/>如何使用?
           </a>
-        }
+        } */}
       </div>
     </div>;
   },

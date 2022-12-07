@@ -16,7 +16,7 @@
     </bk-select>
     <bk-input
       placeholder="请输入"
-      type="textarea"
+      type="number"
     />
     <bk-tag-input
       :list="list"

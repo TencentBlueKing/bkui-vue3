@@ -142,11 +142,11 @@ export default defineComponent({
           </DemoBox>
 
           <PropsBox
-            title="BkColorPicker Attributes"
+            title="BkColorPicker 属性"
             propsData={colorPickerPropsJson}/>
 
           <PropsBox
-            title="BkColorPicker Events"
+            title="BkColorPicker 事件"
             propsData={colorPickerChangePropsJson}/>
       </div>
     );

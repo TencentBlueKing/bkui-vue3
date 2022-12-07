@@ -16,7 +16,7 @@
 @error-background-color: #ffeded;
 @error-icon-color: #ea3636;
 
-.bk-alert {
+.@{bk-prefix}-alert {
   position: relative;
   font-size: @font-size-base;
   color: #63656e;
@@ -25,90 +25,95 @@
   border: @border-width-base @border-style-base;
   border-radius: @border-radius-base;
 
-  .bk-alert-icon-info {
+  .@{bk-prefix}-alert-icon-info {
     display: flex; // 修复 svg 对不齐的问题（svg 是一个 inline 元素）
     margin-right: 8px;
     font-size: 16px;
     line-height: 1;
   }
 
-  
+
 }
 
-.bk-alert-wraper {
+.@{bk-prefix}-alert-wraper {
   display: flex;
   padding: 8px 10px;
 }
 
-.bk-alert-info {
+.@{bk-prefix}-alert-info {
   background-color: @info-background-color;
   border-color: @info-border-color;
 
-  .bk-alert-icon-info {
+  .@{bk-prefix}-alert-icon-info {
     color: @info-icon-color;
   }
 }
 
-.bk-alert-success {
+.@{bk-prefix}-alert-success {
   background-color: @success-background-color;
   border-color: @success-border-color;
 
-  .bk-alert-icon-info {
+  .@{bk-prefix}-alert-icon-info {
     color: @success-icon-color;
   }
 }
 
-.bk-alert-warning {
+.@{bk-prefix}-alert-warning {
   background-color: @warning-background-color;
   border-color: @warning-border-color;
 
-  .bk-alert-icon-info {
+  .@{bk-prefix}-alert-icon-info {
     color: @warning-icon-color;
   }
 }
 
-.bk-alert-error {
+.@{bk-prefix}-alert-error {
   background-color: @error-background-color;
   border-color: @error-border-color;
 
-  .bk-alert-icon-info {
+  .@{bk-prefix}-alert-icon-info {
     color: @error-icon-color;
   }
 }
 
-.bk-alert-content {
+.@{bk-prefix}-alert-content {
   display: flex;
   flex: 1;
   flex-direction: column;
   overflow: hidden;
 }
 
-.bk-alert-title {
+.@{bk-prefix}-alert-title {
   line-height: 16px;
 }
 
-.bk-alert-close {
+.@{bk-prefix}-alert-close {
   padding: 8px 12px 0 6px;
   margin-top: -8px;
   margin-right: -10px;
   font-size: 12px;
+  color: #c4c6cc;
   white-space: nowrap;
   cursor: pointer;
+
+  &:hover {
+    color: #979ba5;
+  }
 }
 
-.bk-alert-close-icon {
+.@{bk-prefix}-alert-close-icon {
   line-height: 1;
 }
 
-.bk-alert-leave-leave {
+.@{bk-prefix}-alert-leave-leave {
   opacity: 1;
 }
 
-.bk-alert-leave-leave-active {
+.@{bk-prefix}-alert-leave-leave-active {
   overflow: hidden;
   transition: opacity .15s, height .2s;
 }
 
-.bk-alert-leave-leave-to {
+.@{bk-prefix}-alert-leave-leave-to {
   opacity: 0;
 }

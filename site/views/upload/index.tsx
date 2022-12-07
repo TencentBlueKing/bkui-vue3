@@ -343,15 +343,15 @@ export default defineComponent({
             <SlotsFile />
         </DemoBox>
         <PropsBox
-          title="Upload Attributes"
+          title="Upload 属性"
           subtitle=""
           propsData={uploadProps}/>
         <PropsBox
-          title="Upload Events"
+          title="Upload 事件"
           subtitle=""
           propsData={uploadEvents}/>
         <PropsBox
-          title="Upload Slots"
+          title="Upload 插槽"
           subtitle=""
           propsData={uploadSlots}/>
       </div>

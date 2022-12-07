@@ -102,9 +102,9 @@ export default defineComponent({
     return (
       <div>
         <DemoTitle
-          name="Radio"
+          name="Alert"
           desc="展示页面的提示信息"
-          link="https://www.qq.com/"/>
+          link={`${import.meta.env.VITE_APP_BASE_URL ?? ''}/alert`} />
         <DemoBox
           title="基本用法"
           desc=""
@@ -134,15 +134,15 @@ export default defineComponent({
             <DemoAlertCloseText />
         </DemoBox>
         <PropsBox
-          title="Alert Attributes"
+          title="Alert 属性"
           subtitle=""
           propsData={alertProps}/>
         <PropsBox
-          title="Alert Events"
+          title="Alert 事件"
           subtitle=""
           propsData={alertEvents}/>
         <PropsBox
-          title="Alert Slots"
+          title="Alert 插槽"
           subtitle=""
           propsData={alertSlots}/>
       </div>

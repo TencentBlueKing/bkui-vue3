@@ -18,7 +18,7 @@
 
 <script setup>
 
-  import InfoBox from '@bkui-vue/info-box';
+  import { InfoBox } from 'bkui-vue';
   const handleDefault1 = () => {
     InfoBox({
       title: '确认要删除？',

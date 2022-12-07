@@ -59,7 +59,13 @@ export default (props: TablePropTypes, indexData: any[]) => {
 
 
   // 当前分页缓存，用于支持内置前端分页，用户无需接收change事件来自行处理数据分割
-  let pagination = reactive({ count: 0, limit: 10, current: 1 });
+  let pagination = reactive({
+    count: 0,
+    limit: 10,
+    current: 1,
+    align: 'right',
+    layout: ['total', 'limit', 'list'],
+  });
   pagination = resolvePaginationOption(props.pagination, pagination);
 
   /**
