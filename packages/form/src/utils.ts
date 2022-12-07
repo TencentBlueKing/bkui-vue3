@@ -24,13 +24,13 @@
 * IN THE SOFTWARE.
 */
 
-import _ from 'lodash';
+import type {
+  IFormItemRule,
+} from './type';
 
-export default {
-  required: (value: any): boolean => !_.isEmpty(value),
-  min: (value: number, min: number): boolean => value >= min,
-  max: (value: number, max: number): boolean => max >= value,
-  email: (value: string): boolean => /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/.test(value),
-  maxlength: (value: string, maxlength: number): boolean => value.length <= maxlength,
-  pattern: (value: string, pattern: RegExp): boolean => pattern.test(value),
+export const getRuleMessage = (rule: IFormItemRule) => {
+  if (typeof rule.message === 'function') {
+    return rule.message();
+  }
+  return rule.message;
 };

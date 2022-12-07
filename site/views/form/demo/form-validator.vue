@@ -2,7 +2,7 @@
   <bk-form
     ref="formRef"
     class="example"
-    :model="formMode"
+    :model="formData"
     :rules="rules"
   >
     <bk-form-item
@@ -11,7 +11,7 @@
       required
     >
       <bk-input
-        v-model="formMode.name"
+        v-model="formData.name"
         placeholder="请输入"
         clearable
       />
@@ -32,8 +32,12 @@
         <bk-checkbox label="Email" />
       </bk-checkbox-group>
     </bk-form-item>
-    <bk-form-item label="学历">
-      <bk-select>
+    <bk-form-item
+      label="学历"
+      property="school"
+      required
+    >
+      <bk-select v-model="formData.school">
         <bk-option
           value="1"
           label="本科以下"
@@ -73,17 +77,16 @@
 
 
   const formRef = ref('');
-  const formMode = ref({
+  const formData = ref({
     name: '',
+    school: '',
   });
-
   const rules = {
     name: [
       {
-        validator: (value) => {
-          console.log('asdadasd =', value);
-          return false;
-        },
+        validator: value => value.length > 2,
+        message: '姓名长度不能小于2',
+        trigger: 'change',
       },
     ],
   };

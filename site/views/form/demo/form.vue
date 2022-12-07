@@ -22,7 +22,7 @@
       </bk-radio-group>
     </bk-form-item>
     <bk-form-item label="联系方式">
-      <bk-checkbox-group>
+      <bk-checkbox-group v-model="formModel.link">
         <bk-checkbox label="QQ" />
         <bk-checkbox label="微信" />
         <bk-checkbox label="Email" />
@@ -68,15 +68,13 @@
 
   const formModel = reactive({
     name: '',
+    link: [],
   });
 
   const rules = {
     name: [
       {
-        validator: (name) => {
-          console.log('fom validator name = ', name);
-          return false;
-        },
+        validator: name => !name,
         message: 'this is errror',
         trigger: 'change',
       },
