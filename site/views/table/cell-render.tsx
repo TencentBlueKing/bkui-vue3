@@ -47,9 +47,9 @@ export default defineComponent({
       return <bk-input v-model={ row[column.field] }></bk-input>;
     },
     renderTh(column, index) {
-      return <bk-popover2 content={ `${index}-xxxxxxxx` }>
+      return <bk-popover content={ `${index}-xxxxxxxx` }>
         <span>{ column.field ?? index }</span>
-      </bk-popover2>;
+      </bk-popover>;
     },
   },
   render() {

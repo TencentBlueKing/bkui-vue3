@@ -249,6 +249,7 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
         listeners: new Map(),
         isHidden: isColumnHidden(settingFields, col, checked),
         [COLUMN_ATTRIBUTE.COL_UID]: uuidv4(),
+        [COLUMN_ATTRIBUTE.COL_SOURCE_DATA]: col,
       })));
   };
 

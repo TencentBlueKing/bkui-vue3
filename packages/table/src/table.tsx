@@ -24,12 +24,12 @@
  * IN THE SOFTWARE.
 */
 
-import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, provide, reactive, ref, watch, watchEffect } from 'vue';
+import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, provide, reactive, ref, unref, watch, watchEffect } from 'vue';
 
 import { debounce, resolveClassName } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
-import { EMIT_EVENT_TYPES, EMIT_EVENTS, EVENTS, PROVIDE_KEY_INIT_COL, TABLE_ROW_ATTRIBUTE } from './const';
+import { COLUMN_ATTRIBUTE, EMIT_EVENT_TYPES, EMIT_EVENTS, EVENTS, PROVIDE_KEY_INIT_COL, TABLE_ROW_ATTRIBUTE } from './const';
 import usePagination from './plugins/use-pagination';
 import useScrollLoading from './plugins/use-scroll-loading';
 import { tableProps } from './props';
@@ -135,7 +135,7 @@ export default defineComponent({
         refVirtualRender.value?.reset?.();
       }
 
-      ctx.emit(EMIT_EVENTS.COLUMN_SORT, { column, index, type });
+      ctx.emit(EMIT_EVENTS.COLUMN_SORT, { column: unref(column[COLUMN_ATTRIBUTE.COL_SOURCE_DATA]), index, type });
     }).on(EVENTS.ON_FILTER_CLICK, (args: any) => {
       const { filterFn, checked, column, index } = args;
       if (typeof filterFn === 'function') {
@@ -144,7 +144,7 @@ export default defineComponent({
         refVirtualRender.value?.reset?.();
       }
 
-      ctx.emit(EMIT_EVENTS.COLUMN_FILTER, { checked, column, index });
+      ctx.emit(EMIT_EVENTS.COLUMN_FILTER, { checked, column: unref(column[COLUMN_ATTRIBUTE.COL_SOURCE_DATA]), index });
     })
       .on(EVENTS.ON_SETTING_CHANGE, (args: any) => {
         const { checked = [], size, height } = args;
@@ -159,8 +159,8 @@ export default defineComponent({
       .on(EVENTS.ON_ROW_EXPAND_CLICK, (args: any) => {
         const { row, column, index, rows, e } = args;
         ctx.emit(EMIT_EVENTS.ROW_EXPAND_CLICK, {
-          row: row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA],
-          column, index, rows, e,
+          row: unref(row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA]),
+          column: unref(column[COLUMN_ATTRIBUTE.COL_SOURCE_DATA]), index, rows, e,
         });
         setRowExpand(row, !row[TABLE_ROW_ATTRIBUTE.ROW_EXPAND]);
       })
@@ -171,7 +171,7 @@ export default defineComponent({
         } else {
           toggleRowSelection(row, value);
           ctx.emit(EMIT_EVENTS.ROW_SELECT, {
-            row: row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA],
+            row: unref(row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA]),
             index,
             checked: value,
             data: props.data,
@@ -179,7 +179,7 @@ export default defineComponent({
         }
 
         ctx.emit(EMIT_EVENTS.ROW_SELECT_CHANGE, {
-          row: row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA],
+          row: unref(row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA]),
           isAll,
           index,
           checked: value,
