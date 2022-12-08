@@ -61,7 +61,7 @@ export type DatePickerShortcutsType = IDatePickerShortcut[];
 type ValueType = Date | string | number;
 export type DatePickerValueType = ValueType | [ValueType, ValueType];
 
-export type DisableDateType = (date: number | Date) => boolean;
+export type DisabledDateType = (date: number | Date) => boolean;
 
 export interface IDatePickerCtx {
   props: DatePickerProps,
@@ -69,8 +69,9 @@ export interface IDatePickerCtx {
 }
 
 export interface ITimePickerCtx {
-  panelDate: Date,
-  parentName: string
+  parentName: string,
+  panelDate?: Date | string | number,
+  dates?: ValueType | [ValueType, ValueType]
 }
 
 export type DatePickerPanelType = 'DateRangePanel' | 'DatePanel' | 'RangeTimePickerPanel' | 'TimePickerPanel';

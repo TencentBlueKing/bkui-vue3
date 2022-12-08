@@ -32,6 +32,7 @@ import PropsBox from '../../components/props-box';
 import { IPropsTableItem } from '../../typings';
 
 import BaseDemo from './base-demo.vue';
+import RangeDemo from './range-demo.vue';
 
 const menuPropsJson: IPropsTableItem[] = [
   {
@@ -75,6 +76,13 @@ export default defineComponent({
             componentName="date-picker"
             demoName="base-demo">
             <BaseDemo />
+          </DemoBox>
+          <DemoBox
+            title="开启时间范围"
+            desc="通过设置 type 属性为 timerange 来开启时间设置"
+            componentName="time-picker"
+            demoName="range-demo">
+            <RangeDemo />
           </DemoBox>
         <PropsBox propsData={menuPropsJson}/>
       </div>
