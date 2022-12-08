@@ -31,7 +31,7 @@ export default {
     if (typeof value === 'number') {
       return true;
     }
-    return _.isEmpty(value);
+    return !_.isEmpty(value);
   },
   min: (value: number, min: number): boolean => value >= min,
   max: (value: number, max: number): boolean => max >= value,
