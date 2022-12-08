@@ -27,7 +27,12 @@
 import _ from 'lodash';
 
 export default {
-  required: (value: any): boolean => !_.isEmpty(value),
+  required: (value: any): boolean => {
+    if (typeof value === 'number') {
+      return true;
+    }
+    return _.isEmpty(value);
+  },
   min: (value: number, min: number): boolean => value >= min,
   max: (value: number, max: number): boolean => max >= value,
   email: (value: string): boolean => /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/.test(value),
