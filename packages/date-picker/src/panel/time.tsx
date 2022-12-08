@@ -29,6 +29,7 @@ import {
   computed,
   defineComponent,
   inject,
+  // InjectionKey,
   onMounted,
   reactive,
   ref,
@@ -40,6 +41,7 @@ import { capitalize } from '@bkui-vue/shared';
 
 import TimeSpinner from '../base/time-spinner';
 import fecha from '../fecha';
+// import type { DatePickerValueType } from '../interface';
 import { IDisabledHMS } from '../interface';
 import { datePickerProps, timePanelProps } from '../props';
 import { initTime, mergeDateHMS, timePickerKey } from '../utils';
@@ -59,6 +61,7 @@ const timeProps = {
   },
   value: {
     type: Array,
+    // type: [Date, String, Number, Array] as PropType<DatePickerValueType | null>,
     required: true,
   },
   confirm: {
@@ -69,8 +72,16 @@ const timeProps = {
 
 export type TimePanelProps = Readonly<ExtractPropTypes<typeof timeProps>>;
 
+// function injectStrict<T>(key: InjectionKey<T>, fallback?: T) {
+//   const resolved = inject(key, fallback);
+//   if (!resolved) {
+//     throw new Error(`Could not resolve ${key.description}`);
+//   }
+//   return resolved;
+// }
+
 export default defineComponent({
-  name: 'TimePickerPanel',
+  name: 'TimePanel',
   props: {
     ...datePickerProps,
     ...timePanelProps,
@@ -83,6 +94,7 @@ export default defineComponent({
       showDate: false,
     });
 
+    // const parentProvide = injectStrict(timePickerKey);
     const parentProvide = inject(timePickerKey);
 
     const timeSpinnerRef = ref(null);

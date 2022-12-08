@@ -34,7 +34,7 @@ import {
 
 import type {
   DatePickerValueType,
-  DisableDateType,
+  DisabledDateType,
 } from '../interface';
 import { clearHours, isInRange } from '../utils';
 
@@ -43,7 +43,7 @@ const dateTableProps = {
     type: Date,
     required: true,
   },
-  disableDate: Function as PropType<DisableDateType>,
+  disabledDate: Function as PropType<DisabledDateType>,
   selectionMode: {
     type: String,
     required: true,
@@ -97,7 +97,7 @@ export default defineComponent({
       const rangeEnd = props.rangeState.to && clearHours(props.rangeState.to);
 
       const isRange = props.selectionMode === 'range';
-      const disableTestFn = typeof props.disableDate === 'function' && props.disableDate;
+      const disableTestFn = typeof props.disabledDate === 'function' && props.disabledDate;
 
       return calendar.value(tableYear, tableMonth, (cell) => {
         if (cell.date instanceof Date) {
