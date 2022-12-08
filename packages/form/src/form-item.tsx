@@ -271,26 +271,25 @@ export default defineComponent({
           return Promise.resolve()
             .then(() => {
               const result = rule.validator(value);
-              const errorMessage = getRuleMessage(rule);
               // 异步验证
               if (typeof result !== 'boolean'
                 && typeof result.then === 'function') {
                 return result.then((data) => {
                   // 异步验证结果为 false
                   if (data === false) {
-                    return Promise.reject(errorMessage);
+                    return Promise.reject(getRuleMessage(rule));
                   }
                 }).then(() => doValidate(), () => {
                   state.isError = true;
-                  state.errorMessage = errorMessage;
-                  return Promise.reject(errorMessage);
+                  state.errorMessage = getRuleMessage(rule);
+                  return Promise.reject(state.errorMessage);
                 });
               }
               // 验证失败
               if (!result) {
                 state.isError = true;
-                state.errorMessage = errorMessage;
-                return Promise.reject(errorMessage);
+                state.errorMessage = getRuleMessage(rule);
+                return Promise.reject(state.errorMessage);
               }
               // 下一步
               return doValidate();
