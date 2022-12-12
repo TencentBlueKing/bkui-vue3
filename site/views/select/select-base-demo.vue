@@ -3,6 +3,8 @@
     v-model="selectedValue"
     class="bk-select"
     filterable
+    auto-focus
+    @toggle="handleToggle"
   >
     <bk-option
       v-for="(item, index) in datasource"
@@ -50,6 +52,9 @@
     },
   ]);
   const selectedValue = ref('sleep');
+  const handleToggle = (value) => {
+    console.log(value);
+  };
 </script>
 <style scoped>
 .bk-select {
