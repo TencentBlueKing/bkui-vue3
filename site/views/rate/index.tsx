@@ -112,13 +112,13 @@ export default defineComponent({
         </DemoBox>
 
         <PropsBox
-          title="BkRate Attributes"
+          title="Rate 属性"
           subtitle=""
           propsData={ratePropsJson}
         />
 
         <PropsBox
-          title="BkRate Events"
+          title="Rate 事件"
           subtitle=""
           propsData={rateEventJson}
         />

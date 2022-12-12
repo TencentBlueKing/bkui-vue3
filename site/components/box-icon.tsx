@@ -37,7 +37,8 @@ export default defineComponent({
   },
   emits: ['click'],
   setup() {
-    return {};
+    return {
+    };
   },
   render() {
     return <BkPopover content={this.tips} theme="dark">

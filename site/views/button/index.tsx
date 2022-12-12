@@ -174,11 +174,11 @@ export default defineComponent({
             ))
           }
         <PropsBox
-          title="Button Attributes"
+          title="Button 属性"
           subtitle=""
           propsData={buttonProps}/>
         <PropsBox
-          title="Button Events"
+          title="Button 事件"
           subtitle=""
           propsData={buttonEvents}/>
       </div>

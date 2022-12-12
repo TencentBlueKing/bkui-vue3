@@ -96,6 +96,19 @@ export default defineComponent({
       'is-disabled': this.isDisabled,
       'is-indeterminated': this.indeterminate,
     });
+
+    const renderLabel = () => {
+      if (!this.label && !this.$slots.default) {
+        return null;
+      }
+
+      return (
+        <span class="bk-checkbox-label">
+          {this.$slots.default ? this.$slots.default() : this.label}
+        </span>
+      );
+    };
+
     return (
       <label class={checkboxClass}>
         <span class={[resolveClassName('checkbox-input'), this.size]}>
@@ -107,10 +120,7 @@ export default defineComponent({
             checked={this.isChecked}
             onChange={this.handleChange} />
         </span>
-        {this.$slots.default
-          ? this.$slots.default()
-          : <span class="bk-checkbox-label">{ this.label }</span>
-         }
+        {renderLabel()}
       </label>
     );
   },

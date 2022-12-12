@@ -278,7 +278,7 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
    * 节点点击
    * @param item
    */
-  const hanldeTreeNodeClick = (item: any, e: MouseEvent) => {
+  const handleTreeNodeClick = (item: any, e: MouseEvent) => {
     const isOpen = isNodeOpened(item);
     if (isOpen) {
       setNodeOpened(item, false, e);
@@ -308,7 +308,7 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
     e.stopPropagation();
     e.preventDefault();
 
-    hanldeTreeNodeClick(node, e);
+    handleTreeNodeClick(node, e);
   };
 
   const setSelect = (uuid: any, selected = true, autoOpen = true) => {
@@ -363,19 +363,48 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
     }
   };
 
+  const resolveNodeAction = (node: any) => {
+    if (typeof props.nodeContentAction === 'function') {
+      return Reflect.apply(props.nodeContentAction, this, [{ node }]);
+    }
+
+    if (typeof props.nodeContentAction === 'string') {
+      return [props.nodeContentAction];
+    }
+
+    if (Array.isArray(props.nodeContentAction)) {
+      return props.nodeContentAction;
+    }
+
+    return ['selected', 'expand', 'click'];
+  };
+
   /**
    * 点击节点事件
    * @param item
    */
   const handleNodeContentClick = (item: any, e: MouseEvent) => {
-    setSelect(item, true, false);
-
-    if (!isNodeOpened(item)) {
-      hanldeTreeNodeClick(item, e);
+    const nodeActions = resolveNodeAction(item);
+    if (nodeActions.includes('selected')) {
+      setSelect(item, true, false);
     }
 
-    const eventName: string = EVENTS.NODE_CLICK;
-    ctx.emit(eventName, item, resolveScopedSlotParam(item), getSchemaVal(item[NODE_ATTRIBUTES.UUID]), e);
+    if (nodeActions.includes('expand')) {
+      if (!isNodeOpened(item)) {
+        handleTreeNodeClick(item, e);
+      }
+    }
+
+    if (nodeActions.includes('collapse')) {
+      if (isNodeOpened(item)) {
+        handleTreeNodeClick(item, e);
+      }
+    }
+
+    if (nodeActions.includes('click')) {
+      const eventName: string = EVENTS.NODE_CLICK;
+      ctx.emit(eventName, item, resolveScopedSlotParam(item), getSchemaVal(item[NODE_ATTRIBUTES.UUID]), e);
+    }
   };
 
   /**
@@ -467,7 +496,7 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
 
   return {
     renderTreeNode,
-    hanldeTreeNodeClick,
+    handleTreeNodeClick,
     deepAutoOpen,
     asyncNodeClick,
     setNodeAction,

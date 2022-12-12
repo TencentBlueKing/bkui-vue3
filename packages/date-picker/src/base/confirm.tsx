@@ -27,6 +27,8 @@
 import type { ExtractPropTypes } from 'vue';
 import { computed, defineComponent, ref } from 'vue';
 
+import BkButton from '@bkui-vue/button';
+
 const confirmProps = {
   showTime: {
     type: Boolean,
@@ -102,24 +104,48 @@ export default defineComponent({
         {
           this.showTime
             ? (
-              <a href="javascript: void(0);" class="bk-picker-confirm-time" onClick={this.handleToggleTime}>
+              // <a href="javascript: void(0);" class="bk-picker-confirm-time" disabled onClick={this.handleToggleTime}>
+              //   {this.labels.time}
+              // </a>
+              <BkButton text class="bk-picker-confirm-time" disabled={this.timeDisabled} onClick={this.handleToggleTime}>
                 {this.labels.time}
-              </a>
+              </BkButton>
             )
             : ''
         }
         {
-          this.clearable
-            ? (
-              <a href="javascript: void(0);" onClick={this.handleClear} onKeydown={this.handleClear}>
-                {this.labels.clear}
+          this.$slots.confirm?.() ?? (
+            <div class="bk-picker-confirm-action">
+              {
+                this.clearable
+                  ? (
+                    <a href="javascript: void(0);" onClick={this.handleClear} onKeydown={this.handleClear}>
+                      {this.labels.clear}
+                    </a>
+                  )
+                  : ''
+              }
+              <a href="javascript: void(0);" class="confirm" onClick={this.handleSuccess} onKeydown_enter={this.handleSuccess}>
+                {this.labels.ok}
               </a>
-            )
-            : ''
+            </div>
+          )
         }
-        <a href="javascript: void(0);" class="confirm" onClick={this.handleSuccess} onKeydown_enter={this.handleSuccess}>
-          {this.labels.ok}
-        </a>
+        {/* <div class="bk-picker-confirm-action">
+          {
+            this.clearable
+              ? (
+                <a href="javascript: void(0);" onClick={this.handleClear} onKeydown={this.handleClear}>
+                  {this.labels.clear}
+                </a>
+              )
+              : ''
+          }
+          <a href="javascript: void(0);" class="confirm" onClick={this.handleSuccess}
+            onKeydown_enter={this.handleSuccess}>
+            {this.labels.ok}
+          </a>
+        </div> */}
       </div>
     );
   },

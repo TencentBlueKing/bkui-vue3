@@ -124,6 +124,7 @@ export const useCheckbox = () => {
     isChecked.value = $targetInput.checked;
 
     const nextValue = isChecked.value ? props.trueLabel : props.falseLabel;
+
     emit('change', nextValue);
     emit('update:modelValue', nextValue);
     // 更新 checkbox-group
