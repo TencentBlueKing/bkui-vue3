@@ -28,7 +28,7 @@ import _ from 'lodash';
 
 export default {
   required: (value: any): boolean => {
-    if (typeof value === 'number') {
+    if (typeof value === 'number' || typeof value === 'boolean') {
       return true;
     }
     return !_.isEmpty(value);
