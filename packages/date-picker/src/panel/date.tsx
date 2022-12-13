@@ -49,7 +49,7 @@ import DateTable from '../base/date-table';
 import type {
   DatePickerShortcutsType,
   DatePickerValueType,
-  DisableDateType,
+  DisabledDateType,
   SelectionModeType,
 } from '../interface';
 import { formatDateLabels, iconBtnCls, siblingMonth, timePickerKey } from '../utils';
@@ -90,7 +90,6 @@ const datePanelProps = {
   startDate: {
     type: Date,
   },
-  disableDate: Function as PropType<DisableDateType>,
   focusedDate: {
     type: Date,
     required: true,
@@ -108,8 +107,13 @@ const datePanelProps = {
     default: 'yyyy-MM-dd',
   },
   disabledDate: {
-    type: Function,
+    // type: Function,
+    type: Function as PropType<DisabledDateType>,
     default: () => false,
+  },
+  timePickerOptions: {
+    type: Object as PropType<Record<string, any>>,
+    default: () => ({}),
   },
 } as const;
 
@@ -122,13 +126,13 @@ export default defineComponent({
   setup(props, { slots, emit }) {
     const getTableType = currentView => (currentView.match(/^time/) ? 'time-picker' : `${currentView}-table`);
 
-    const dates = (props.modelValue as DatePickerValueType[]).slice().sort();
+    const dates = ((props.modelValue as DatePickerValueType[]).slice().sort()) as any;
 
     const state = reactive({
       currentView: props.selectionMode || 'date',
       pickerTable: getTableType(props.selectionMode),
       dates,
-      panelDate: props.startDate || dates[0] || new Date(),
+      panelDate: (props.startDate || dates[0] || new Date()) as any,
     });
 
     const { proxy } = getCurrentInstance();
@@ -142,7 +146,6 @@ export default defineComponent({
     const timeSpinnerEndRef = ref(null);
 
     watch(() => state.currentView, (val) => {
-      console.error(11111, val);
       emit('selection-mode-change', val);
 
       if (state.currentView === 'time') {
@@ -157,6 +160,13 @@ export default defineComponent({
       state.currentView = type;
       state.pickerTable = getTableType(type);
     });
+
+    watch(() => props.modelValue, (newVal) => {
+      state.dates = newVal;
+      const panelDate = props.multiple ? state.dates[state.dates.length - 1] : props.startDate || state.dates[0];
+      state.panelDate = panelDate || new Date();
+    });
+
 
     const resetView = () => {
       setTimeout(
@@ -301,6 +311,7 @@ export default defineComponent({
       timePickerRef,
     };
   },
+
   render() {
     return (
       <div
@@ -378,7 +389,7 @@ export default defineComponent({
                       return (
                         <DateTable
                           tableDate={this.panelDate as Date}
-                          disableDate={this.disableDate}
+                          disabledDate={this.disabledDate}
                           selectionMode={this.selectionMode}
                           modelValue={this.dates as DatePickerValueType}
                           focusedDate={this.focusedDate}
@@ -393,9 +404,12 @@ export default defineComponent({
                     value={this.dates}
                     format={this.format}
                     disabledDate={this.disabledDate}
+                    // v-bind={this.timePickerOptions}
                     onPick={this.handlePick}
+                    onPick-click={this.handlePickClick}
                     onPick-clear={this.handlePickClear}
                     onPick-success={this.handlePickSuccess}
+                    onPick-toggle-time={this.handleToggleTime}
                   />
             }
           </div>
@@ -405,10 +419,12 @@ export default defineComponent({
                 <Confirm
                   clearable={this.clearable}
                   showTime={this.showTime}
+                  timeDisabled={this.timeDisabled}
                   isTime={this.isTime}
                   onPick-toggle-time={this.handleToggleTime}
                   onPick-clear={this.handlePickClear}
                   onPick-success={this.handlePickSuccess}
+                  v-slots={this.$slots}
                 ></Confirm>
               )
               : ''

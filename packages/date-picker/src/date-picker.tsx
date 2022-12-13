@@ -153,6 +153,7 @@ export default defineComponent({
     const hasHeader = computed(() => !!slots.header);
     const hasFooter = computed(() => !!slots.footer);
     const hasShortcuts = computed(() => !!slots.shortcuts);
+    const hasConfirm = computed(() => !!slots.confirm);
 
     const fontSizeCls = computed(() => {
       let cls = '';
@@ -308,10 +309,10 @@ export default defineComponent({
 
     const emitChange = (type) => {
       nextTick(() => {
-        emit('change', publicStringValue.value, type);
         // 使用 :value 或 :model-value 的时候才需要 handleChange，此时没有触发 update:modelValue
         // 使用 v-model 时才会触发 update:modelValue 事件
         emit('update:modelValue', publicVModelValue.value);
+        emit('change', publicStringValue.value, type);
 
         // this.dispatch('bk-form-item', 'form-change');
         if (props.type.indexOf('time') < 0) {
@@ -326,7 +327,7 @@ export default defineComponent({
       const newValue = e.target.value;
       const newDate = parseDate(newValue, props.type, props.multiple, props.format);
       const valueToTest = isArrayValue ? newDate : newDate[0];
-      const isDisabled = props.disableDate?.(valueToTest);
+      const isDisabled = props.disabledDate?.(valueToTest);
       const isValidDate = newDate.reduce((valid, date) => valid && date instanceof Date, true);
 
       if (newValue !== oldValue && !isDisabled && isValidDate) {
@@ -513,6 +514,10 @@ export default defineComponent({
 
     const triggerRef = ref<HTMLElement>(null);
 
+    const handleToggleTime = () => {
+      pickerPanelRef.value.handleToggleTime?.();
+    };
+
     return {
       ...toRefs(state),
       panel,
@@ -524,6 +529,7 @@ export default defineComponent({
       hasHeader,
       hasFooter,
       hasShortcuts,
+      hasConfirm,
       fontSizeCls,
       longWidthCls,
       localReadonly,
@@ -546,6 +552,8 @@ export default defineComponent({
       handleClear,
       onPick,
       onPickSuccess,
+
+      handleToggleTime,
     };
   },
   render() {
@@ -611,6 +619,10 @@ export default defineComponent({
       ? { shortcuts: () => this.$slots.shortcuts?.({ change: this.onPick }) || null }
       : {};
 
+    const confirmSlot = this.hasConfirm ? { confirm: this.$slots.confirm } : {};
+
+    const slots = { ...shortcutsSlot, ...confirmSlot };
+
     return (
       <div
         class={[
@@ -652,18 +664,21 @@ export default defineComponent({
                     <DateRangePanel
                       ref='pickerPanelRef'
                       type={this.type}
+                      showTime={this.type === 'datetime' || this.type === 'datetimerange'}
                       confirm={this.isConfirm}
                       shortcuts={this.shortcuts}
                       shortcutClose={this.shortcutClose}
                       modelValue={this.internalValue}
                       selectionMode={this.selectionMode}
                       startDate={this.startDate}
-                      disableDate={this.disableDate}
+                      disabledDate={this.disabledDate}
                       focusedDate={this.focusedDate}
+                      timePickerOptions={this.timePickerOptions}
                       onPick={this.onPick}
+                      onPick-clear={this.handleClear}
                       onPick-success={this.onPickSuccess}
                       onSelection-mode-change={this.onSelectionModeChange}
-                      v-slots={shortcutsSlot}
+                      v-slots={slots}
                       // v-bind={this.ownPickerProps}
                     />
                   )
@@ -679,13 +694,14 @@ export default defineComponent({
                       selectionMode={this.selectionMode}
                       modelValue={this.internalValue}
                       startDate={this.startDate}
-                      disableDate={this.disableDate}
+                      disabledDate={this.disabledDate}
                       focusedDate={this.focusedDate}
+                      timePickerOptions={this.timePickerOptions}
                       onPick={this.onPick}
                       onPick-clear={this.handleClear}
                       onPick-success={this.onPickSuccess}
                       onSelection-mode-change={this.onSelectionModeChange}
-                      v-slots={shortcutsSlot}
+                      v-slots={slots}
                       // v-bind={this.ownPickerProps}
                     />
                   )

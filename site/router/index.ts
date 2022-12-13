@@ -74,19 +74,6 @@ const routes: RouteRecordRaw[] = [
     },
   },
   /**
-   * @description:首页
-   */
-  {
-    path: '/home',
-    name: 'home',
-    alias: '',
-    component: () => import('../views/home'),
-    meta: {
-      group: NavGroupMeta.Others,
-      navName: 'Home',
-    },
-  },
-  /**
    * @description:Loading
    */
   {
@@ -624,7 +611,7 @@ const routes: RouteRecordRaw[] = [
     },
   },
   /**
-   * @description:VirtualRender
+   * @description:差异对比
    */
   {
     path: '/code-diff',
@@ -635,12 +622,15 @@ const routes: RouteRecordRaw[] = [
       navName: 'Diff 差异对比',
     },
   },
+  /**
+   * @description:VirtualRender
+   */
   {
     path: '/virtual-render',
     name: 'virtualRender',
     component: () => import('../views/virtual-render'),
     meta: {
-      group: NavGroupMeta.Others,
+      group: NavGroupMeta.Data,
       navName: 'VirtualRender',
     },
   },
@@ -698,19 +688,10 @@ const routes: RouteRecordRaw[] = [
     path: '/cascader',
     name: 'cascader',
     meta: {
-      group: NavGroupMeta.Others,
+      group: NavGroupMeta.Form,
       navName: 'Cascader 级联选择',
     },
     component: () => import('../views/cascader/index'),
-  },
-  {
-    path: '/loading',
-    name: 'loading',
-    meta: {
-      group: NavGroupMeta.Others,
-      navName: 'Loading 加载',
-    },
-    component: () => import('../views/loading/index'),
   },
   {
     path: '/search-select',

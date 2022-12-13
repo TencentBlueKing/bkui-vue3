@@ -244,8 +244,8 @@ export default defineComponent({
       const handleColorStr = handleColorObj.rgba.a === 1 ? handleColorObj.hex : toRGBAString(handleColorObj.rgba);
       colorStr.value  = handleColorStr;
       Object.assign(colorObj, handleColorObj);
-      emit('change', handleColorStr);
       emit('update:modelValue', colorStr.value);
+      emit('change', handleColorStr);
     };
 
     const hideDropDown = () => {

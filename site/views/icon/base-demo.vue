@@ -23,6 +23,7 @@
     pre[name.replace(/([A-Z]+)/gm, (_, match, offset) => `${offset < 1 ? '' : '-'}${match.toLowerCase()}`)] = IconModule[name];
     return pre;
   }, {});
+  console.error(Icons);
   const activeCode = ref('');
   let copyInstance;
   onMounted(() => {

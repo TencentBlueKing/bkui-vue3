@@ -95,9 +95,9 @@ export default defineComponent({
       }
 
       return (
-        <span class="bk-radio-label">
+        <div class="bk-radio-button-label">
           {this.$slots.default ? this.$slots.default() : this.label}
-        </span>
+        </div>
       );
     };
 

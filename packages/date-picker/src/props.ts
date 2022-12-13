@@ -31,7 +31,7 @@ import type {
   DatePickerPlacementType,
   DatePickerShortcutsType,
   DatePickerValueType,
-  DisableDateType,
+  DisabledDateType,
   PickerTypeType,
 } from './interface';
 
@@ -173,7 +173,7 @@ export const datePickerProps = {
       return ['simplicity', 'normal'].indexOf(v) > -1;
     },
   },
-  disableDate: Function as PropType<DisableDateType>,
+  disabledDate: Function as PropType<DisabledDateType>,
   withValidate: {
     type: Boolean,
     default: true,
