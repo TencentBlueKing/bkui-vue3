@@ -518,10 +518,10 @@ export default defineComponent({
      * @param type emit type
      */
     const handleChange = (type, data?) => {
-      emit('change', tagList.value);
       // this.dispatch('bk-form-item', 'form-change')
       emit(type, data);
       emit('update:modelValue', tagList.value);
+      emit('change', tagList.value);
     };
 
     /**

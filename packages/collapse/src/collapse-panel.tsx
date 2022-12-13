@@ -55,8 +55,9 @@ export default defineComponent({
       const data = { name };
 
       isActive.value = !isActive.value;
-      emit('change', data);
+
       emit('update:modelValue', isActive.value);
+      emit('change', data);
       if (typeof itemClick === 'function') {
         itemClick(data);
       } else if (typeof handleItemClick === 'function') {
