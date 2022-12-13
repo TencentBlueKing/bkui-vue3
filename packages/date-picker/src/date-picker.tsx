@@ -308,10 +308,10 @@ export default defineComponent({
 
     const emitChange = (type) => {
       nextTick(() => {
-        emit('change', publicStringValue.value, type);
         // 使用 :value 或 :model-value 的时候才需要 handleChange，此时没有触发 update:modelValue
         // 使用 v-model 时才会触发 update:modelValue 事件
         emit('update:modelValue', publicVModelValue.value);
+        emit('change', publicStringValue.value, type);
 
         // this.dispatch('bk-form-item', 'form-change');
         if (props.type.indexOf('time') < 0) {
