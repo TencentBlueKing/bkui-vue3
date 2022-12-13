@@ -28,7 +28,9 @@ import _ from 'lodash';
 
 export default {
   required: (value: any): boolean => {
-    if (typeof value === 'number' || typeof value === 'boolean') {
+    if (typeof value === 'number'
+       || typeof value === 'boolean'
+       || _.isDate(value)) {
       return true;
     }
     return !_.isEmpty(value);
