@@ -308,8 +308,8 @@ export default defineComponent({
     const emitChange = (val: string | string[]) => {
       if (val === modelValue.value) return;
 
-      emit('change', val, modelValue.value);
       emit('update:modelValue', val, modelValue.value);
+      emit('change', val, modelValue.value);
     };
     // 派发toggle事件
     const handleTogglePopover = () => {
