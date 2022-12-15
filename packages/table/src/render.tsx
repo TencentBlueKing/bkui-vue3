@@ -216,7 +216,7 @@ export default class TableRender {
       const nextSort = getNextSortType(this.reactiveProp.defaultSort[columnName]);
       Object.assign(this.reactiveProp.defaultSort, { [columnName]: nextSort });
       const sortFn = getSortFn(column, nextSort);
-      this.emitEvent(EVENTS.ON_SORT_BY_CLICK, [{ sortFn, column, index, nextSort }]);
+      this.emitEvent(EVENTS.ON_SORT_BY_CLICK, [{ sortFn, column, index, type: nextSort }]);
     }
   }
 

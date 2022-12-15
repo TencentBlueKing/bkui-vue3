@@ -421,6 +421,15 @@ const routes: RouteRecordRaw[] = [
       navName: 'Upload 文件上传',
     },
   },
+  // {
+  //   path: '/popover',
+  //   name: 'popover',
+  //   component: () => import('../views/popover'),
+  //   meta: {
+  //     group: NavGroupMeta.Feedback,
+  //     navName: 'Popover 弹出框提示',
+  //   },
+  // },
   {
     path: '/popover',
     name: 'popover',
@@ -428,15 +437,6 @@ const routes: RouteRecordRaw[] = [
     meta: {
       group: NavGroupMeta.Feedback,
       navName: 'Popover 弹出框提示',
-    },
-  },
-  {
-    path: '/popover2',
-    name: 'popover2',
-    component: () => import('../views/popover2'),
-    meta: {
-      group: NavGroupMeta.Feedback,
-      navName: 'Popover2 弹出框提示',
     },
   },
   /**

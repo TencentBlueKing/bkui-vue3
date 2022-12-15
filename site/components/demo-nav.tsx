@@ -260,15 +260,6 @@ export default defineComponent({
     };
   },
   render() {
-    const modifiers = [
-      {
-        name: 'offset',
-        options: {
-          offset: [0, 4],
-        },
-      },
-    ];
-
     return <div class="demo-nav">
       <h1 class="demo-nav-title">Vue 组件库 <span class="title-mark">3.x</span></h1>
       {/* <BkInput class="demo-nav-input" type="search" onInput={this.searchHandler} v-model={this.searchVal}/> */}
@@ -281,8 +272,6 @@ export default defineComponent({
           arrow={false}
           placement="bottom"
           isShow={this.isPopoverShow}
-          modifiers={modifiers}
-          handleFirstUpdate={this.onPopoverFirstUpdate}
         >
           {{
             default: () => (

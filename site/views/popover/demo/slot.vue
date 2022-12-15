@@ -2,7 +2,6 @@
   <bk-popover
     placement="top"
     width="490"
-    :ext-cls="'aaaaaa'"
   >
     <bk-button>超长</bk-button>
     <template #content>

@@ -5,7 +5,7 @@
   <bk-button @click="handleBtnClick(false)">
     手动设置Isshow = false
   </bk-button>
-  <bk-popover2
+  <bk-popover
     trigger="click"
     :is-show="isShow"
     width="450"
@@ -26,7 +26,7 @@
         今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错
       </div>
     </template>
-  </bk-popover2>
+  </bk-popover>
 </template>
 <script>
   export default {
