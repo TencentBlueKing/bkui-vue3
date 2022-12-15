@@ -237,7 +237,7 @@ export default defineComponent({
     // 获取选中元素节点
     const getSelectedTagNodes = (): HTMLElement[] => {
       const nodes = Array.from(tagListRef.value?.childNodes || []) as HTMLElement[];
-      return nodes.filter((node: HTMLElement) => node.nodeType !== Node.TEXT_NODE);
+      return nodes.filter((node: HTMLElement) => ![Node.TEXT_NODE, Node.COMMENT_NODE].includes(node.nodeType));
     };
 
     /**
