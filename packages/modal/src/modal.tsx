@@ -57,7 +57,7 @@ export default defineComponent({
         height: this.dialogHeight,
         minHeigth: `${200}px`,
         display: this.visible ? 'inherit' : 'none',
-        zIndex: this.zIndex,
+        zIndex: this.zIndex || 'inherit',
       };
     },
     fullscreenStyle(): any {
