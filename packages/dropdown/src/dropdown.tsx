@@ -25,10 +25,9 @@
 */
 
 import { merge } from 'lodash';
-import { PopoverPropTypes } from 'popover/src/props';
 import { defineComponent } from 'vue';
 
-import BKPopover from '@bkui-vue/popover2';
+import BKPopover, { PopoverPropTypes } from '@bkui-vue/popover';
 import { classes, PropTypes } from '@bkui-vue/shared';
 
 import { PLACEMENT_OPTIONS, TRIGGER_OPTIONS } from './const';

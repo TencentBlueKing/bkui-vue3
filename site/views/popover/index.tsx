@@ -34,6 +34,8 @@ import type { IPropsTableItem } from '../../typings';
 import Always from './demo/always.vue';
 import Base from './demo/base.vue';
 import Callback from './demo/callback.vue';
+import ClickTrigger from './demo/click-trigger.vue';
+import MouseEvent from './demo/mouse-event.vue';
 import Position from './demo/position.vue';
 import Slot from './demo/slot.vue';
 
@@ -176,6 +178,20 @@ const demos = [
     componentName: 'popover',
     demoName: 'demo/callback',
     DemoComponent: Callback,
+  },
+  {
+    title: 'trigger click',
+    desc: 'trigger click',
+    componentName: 'popover',
+    demoName: 'demo/click-trigger',
+    DemoComponent: ClickTrigger,
+  },
+  {
+    title: 'mouse click',
+    desc: 'mouse click',
+    componentName: 'popover',
+    demoName: 'demo/mouse-event',
+    DemoComponent: MouseEvent,
   },
 ];
 

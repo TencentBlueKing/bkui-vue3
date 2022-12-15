@@ -25,7 +25,7 @@
 */
 
 import { merge } from 'lodash';
-import { PopoverPropTypes } from 'popover2/src/props';
+import { PopoverPropTypes } from 'popover/src/props';
 import {
   computed,
   defineComponent,
@@ -42,7 +42,7 @@ import { clickoutside } from '@bkui-vue/directives';
 import { AngleUp, Close, Search } from '@bkui-vue/icon';
 import Input from '@bkui-vue/input';
 import Loading from '@bkui-vue/loading';
-import BKPopover from '@bkui-vue/popover2';
+import BKPopover from '@bkui-vue/popover';
 import {
   classes,
   off,
@@ -104,6 +104,7 @@ export default defineComponent({
     inputSearch: PropTypes.bool.def(true), // 是否采用输入框支持搜索的方式
     enableVirtualRender: PropTypes.bool.def(false), // 是否开启虚拟滚动（List模式下才会生效）
     allowEmptyValues: PropTypes.array.def([]), // 允许的空值作为options选项
+    autoFocus: PropTypes.bool.def(false), // 挂载的时候是否自动聚焦输入框
   },
   emits: ['update:modelValue', 'change', 'toggle', 'clear', 'scroll-end', 'focus', 'blur'],
   setup(props, { emit }) {
@@ -133,6 +134,7 @@ export default defineComponent({
       autoHeight,
       popoverOptions,
       allowEmptyValues,
+      autoFocus,
     } = toRefs(props);
 
     const formItem = useFormItem();
@@ -262,6 +264,9 @@ export default defineComponent({
       showPopover,
       togglePopover,
     } = usePopover({ popoverMinWidth: popoverMinWidth.value }, triggerRef);
+    watch(isPopoverShow, () => {
+      emit('toggle', isPopoverShow.value);
+    });
     // 输入框是否可以输入内容
     const isInput = computed(() => (
       (filterable.value && inputSearch.value) || allowCreate.value)
@@ -303,15 +308,14 @@ export default defineComponent({
     const emitChange = (val: string | string[]) => {
       if (val === modelValue.value) return;
 
-      emit('change', val, modelValue.value);
       emit('update:modelValue', val, modelValue.value);
+      emit('change', val, modelValue.value);
     };
     // 派发toggle事件
     const handleTogglePopover = () => {
       if (isDisabled.value) return;
       handleFocus();
       togglePopover();
-      emit('toggle', isPopoverShow.value);
     };
     // 搜索
     const handleInputChange = (value) => {
@@ -532,6 +536,7 @@ export default defineComponent({
       handleSetSelectedData();
       setTimeout(() => {
         showOnInit.value && showPopover();
+        autoFocus.value && focusInput();
       });
       on(document, 'keydown', handleKeydown);
     });

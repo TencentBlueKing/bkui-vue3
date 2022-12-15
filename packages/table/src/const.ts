@@ -123,6 +123,7 @@ export const TABLE_ROW_ATTRIBUTE = {
 
 export const COLUMN_ATTRIBUTE = {
   COL_UID: '__col_$uuid',
+  COL_SOURCE_DATA: '__col_source_data',
 };
 
 /**

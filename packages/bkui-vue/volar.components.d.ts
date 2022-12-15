@@ -61,7 +61,7 @@ declare module '@vue/runtime-core' {
     BkLoading: typeof import('./loading/loading').default;
     BkModal: typeof import('./modal/modal').default;
     BkPopover: typeof import('./popover/popover').default;
-    BkPopover2: typeof import('./popover2/popover2').default;
+    BkPopover2: typeof import('./popover/popover').default;
     BkProgress: typeof import('./progress/progress').default;
     BkRadio: typeof import('./radio/radio').default;
     BkRate: typeof import('./rate/rate').default;

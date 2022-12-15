@@ -124,8 +124,8 @@ export const useRadio = () => {
     isChecked.value = $targetInput.checked;
 
     const nextValue = isChecked.value ? props.label : '';
-    emit('change', nextValue);
     emit('update:modelValue', nextValue);
+    emit('change', nextValue);
     // 更新 radio-group
     if (isGroup) {
       radioGroup.handleChange(currentInstance.proxy as IRadioInstance);
