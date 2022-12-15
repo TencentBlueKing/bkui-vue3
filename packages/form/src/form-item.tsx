@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { get } from 'lodash';
+import { get, isFunction } from 'lodash';
 import type { ExtractPropTypes } from 'vue';
 import {
   computed,
@@ -75,39 +75,43 @@ const hasOwn = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key);
 const getRulesFromProps = (props) => {
   const rules: IFormItemRule[] = [];
 
+  const label = props.label || '';
+
   if (props.required) {
     rules.push({
+      required: true,
       validator: defaultValidator.required,
-      message: `${props.label}不能为空`,
-      trigger: 'blur',
+      message: `${label}不能为空`,
+      trigger: 'change',
     });
   }
   if (props.email) {
     rules.push({
+      email: true,
       validator: defaultValidator.email,
-      message: `${props.label}格式不正确`,
-      trigger: 'blur',
+      message: `${label}格式不正确`,
+      trigger: 'change',
     });
   }
   if (Number(props.max) > -1) {
     rules.push({
       validator: value => defaultValidator.max(value, props.max),
-      message: `${props.label}最大值 ${props.max}`,
-      trigger: 'blur',
+      message: `${label}最大值 ${props.max}`,
+      trigger: 'change',
     });
   }
   if (Number(props.min) > -1) {
     rules.push({
       validator: value => defaultValidator.min(value, props.min),
-      message: `${props.label}最小值 ${props.min}`,
-      trigger: 'blur',
+      message: `${label}最小值 ${props.min}`,
+      trigger: 'change',
     });
   }
   if (Number(props.maxlength) > -1) {
     rules.push({
       validator: value => defaultValidator.maxlength(value, props.maxlength),
-      message: `${props.label}最大长度 ${props.maxlength}`,
-      trigger: 'blur',
+      message: `${label}最大长度 ${props.maxlength}`,
+      trigger: 'change',
     });
   }
   return rules;
@@ -115,14 +119,19 @@ const getRulesFromProps = (props) => {
 
 const mergeRules: (
   configRules: IFormItemRule[],
-  propsRules: IFormItemRule[]
-) => IFormItemRule[] = (configRules, propsRules) => {
+  propRules: IFormItemRule[]
+) => IFormItemRule[] = (configRules, propRules) => {
+  let customRequired = false;
+  let customEmail = false;
+
   const formatConfigRules = configRules.reduce((result, rule) => {
     let rulevalidator: any;
     if (rule.required) {
-      rulevalidator = defaultValidator.required;
+      rulevalidator = isFunction(rule.validator) ? rule.validator : defaultValidator.required;
+      customRequired = true;
     } else if (rule.email) {
-      rulevalidator = defaultValidator.email;
+      rulevalidator = isFunction(rule.validator) ? rule.validator : defaultValidator.email;
+      customEmail = true;
     } else if (Number(rule.max) > -1) {
       rulevalidator = value => defaultValidator.max(value, rule.max);
     } else if (Number(rule.min) > -1) {
@@ -131,7 +140,7 @@ const mergeRules: (
       rulevalidator = value => defaultValidator.min(value, rule.max);
     } else if (Object.prototype.toString.call(rule.pattern) === '[object RegExp]') {
       rulevalidator = value => defaultValidator.pattern(value, rule.pattern);
-    } else if (Object.prototype.toString.call(rule.validator) === '[object Function]') {
+    } else if (isFunction(rule.validator)) {
       rulevalidator =  rule.validator;
     } else {
       // 不支持的配置规则
@@ -144,7 +153,20 @@ const mergeRules: (
     });
     return result;
   }, []);
-  return [...propsRules, ...formatConfigRules];
+
+  // 自定义配置验证规则覆盖内置验证规则
+  const filterPropRules = propRules.reduce((result, ruleItem) => {
+    if (ruleItem.required && customRequired) {
+      return result;
+    }
+    if (ruleItem.email && customEmail) {
+      return result;
+    }
+    result.push(ruleItem);
+    return result;
+  }, []);
+
+  return [...filterPropRules, ...formatConfigRules];
 };
 
 const getTriggerRules = (
@@ -179,6 +201,7 @@ export default defineComponent({
     const isNested = Boolean(parentFormItem);
 
     const currentInstance = getCurrentInstance();
+
     const state = reactive({
       isError: false,
       errorMessage: '',
@@ -288,7 +311,8 @@ export default defineComponent({
               // 验证失败
               if (!result) {
                 state.isError = true;
-                state.errorMessage = getRuleMessage(rule);
+                // 验证结果返回的是 String 表示验证失败，返回结果作为错误信息
+                state.errorMessage = typeof result === 'string' ? result : getRuleMessage(rule);
                 return Promise.reject(state.errorMessage);
               }
               // 下一步
