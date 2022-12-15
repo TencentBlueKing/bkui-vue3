@@ -19,7 +19,7 @@
   import { defineComponent } from 'vue';
 
   import { bkEllipsis } from '@bkui-vue/directives';
-  import { $bkPopover } from '@bkui-vue/popover2';
+  import { $bkPopover } from '@bkui-vue/popover';
 
   export default defineComponent({
     directives: {

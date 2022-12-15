@@ -26,22 +26,27 @@
 
 import { defineComponent } from 'vue';
 
-import { treeProps } from '../../../packages/tree/src/props';
+// import { treeProps } from '../../../packages/tree/src/props';
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
-import { resolvePropsToDesData } from '../utils/index';
 
+// import { resolvePropsToDesData } from '../utils/index';
 import async from './async.vue';
 import autoConfig from './auto-config.vue';
 import basic from './basic.vue';
+import configList from './config';
 import customNode from './custom-node.vue';
 import draggable from './draggable.vue';
+import draggableFunction from './draggable-function.vue';
+import ExpandAll from './expand-all.vue';
 import levelLine from './level-line.vue';
+import NodeContentActions from './node-content-action.vue';
 import * as TREE_DATA from './options';
 import prefixIcon from './prefix-icon.vue';
 import prefixIconJsx from './prefix-icon-jsx';
 import search from './search.vue';
+import selected from './selected.vue';
 import virtualRender from './virtual-render.vue';
 
 export default defineComponent({
@@ -56,9 +61,23 @@ export default defineComponent({
     customNode,
     search,
     draggable,
+    draggableFunction,
+    selected,
+    ExpandAll,
+    NodeContentActions,
   },
   render() {
-    const propsJson = resolvePropsToDesData(treeProps);
+    // const propsJson = resolvePropsToDesData(treeProps);
+
+    /**
+     * eventColumnMap
+     * @returns
+     */
+    const eventColumnMap = {
+      name: '名称',
+      desc: '说明',
+      params: '参数',
+    };
 
     const configs = [
       {
@@ -161,6 +180,46 @@ export default defineComponent({
           demoName: 'draggable',
         },
         component: () => <draggable></draggable>,
+      },
+      {
+        attrs: {
+          title: '可拖拽限制',
+          subtitle: '通过 disableDrag(nodeData)、disableDrop(nodeData) 函数返回值 限制drag与drop,比如目录不能drop',
+          desc: 'props: draggable',
+          componentName: 'tree',
+          demoName: 'draggable-function',
+        },
+        component: () => <draggableFunction></draggableFunction>,
+      },
+      {
+        attrs: {
+          title: '设置默认选中',
+          subtitle: '配置搜索行为',
+          desc: 'props: --',
+          componentName: 'tree',
+          demoName: 'selected',
+        },
+        component: () => <selected></selected>,
+      },
+      {
+        attrs: {
+          title: '设置默认展开所有节点',
+          subtitle: '',
+          desc: 'props: expandAll',
+          componentName: 'tree',
+          demoName: 'expand-all',
+        },
+        component: () => <ExpandAll></ExpandAll>,
+      },
+      {
+        attrs: {
+          title: '此处配置每个节点除了展开\\收起箭头之外的内容块时的行为',
+          subtitle: '默认配置：["selected", "expand", "click"]',
+          desc: 'props: node-content-action',
+          componentName: 'tree',
+          demoName: 'node-content-action',
+        },
+        component: () => <NodeContentActions></NodeContentActions>,
       }];
 
     return (
@@ -176,7 +235,21 @@ export default defineComponent({
                  }
               </DemoBox>)
           }
-        <PropsBox propsData={propsJson}/>
+                  {
+          configList.map(cfg => <div>
+            {
+              cfg.type === 'events'
+                ? <PropsBox
+                    title={ cfg.title }
+                     columnMap={ eventColumnMap }
+                     subtitle={ cfg.subTile }
+                     propsData={ cfg.config }/>
+                : <PropsBox title={ cfg.title } subtitle={ cfg.subTile }
+                     propsData={ cfg.config }/>
+            }
+          </div>)
+        }
+        {/* <PropsBox propsData={propsJson}/> */}
       </div>
     );
   },

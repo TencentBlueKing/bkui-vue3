@@ -29,7 +29,7 @@ import { computed, onMounted, reactive, ref, watch } from 'vue';
 
 import { classes, resolveClassName } from '@bkui-vue/shared';
 
-import { BORDER_OPTION, COLUMN_ATTRIBUTE, LINE_HEIGHT, SCROLLY_WIDTH, SETTING_SIZE, TABLE_ROW_ATTRIBUTE } from './const';
+import { BORDER_OPTION, COL_MIN_WIDTH, COLUMN_ATTRIBUTE, LINE_HEIGHT, SCROLLY_WIDTH, SETTING_SIZE, TABLE_ROW_ATTRIBUTE } from './const';
 import useActiveColumns from './plugins/use-active-columns';
 import useColumnResize from './plugins/use-column-resize';
 import useFixedColumn from './plugins/use-fixed-column';
@@ -220,6 +220,22 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
   const colgroups: Colgroups[] = reactive([]);
   const { getColumns } = useColumn(props, targetColumns);
 
+  const resolveMinWidth = (col: Column) => {
+    if (/^\d+/.test(`${col.minWidth}`)) {
+      return col.minWidth;
+    }
+
+    let minWidth = COL_MIN_WIDTH;
+    if (col.sort) {
+      minWidth = minWidth + 18;
+    }
+
+    if (col.filter) {
+      minWidth = minWidth + 28;
+    }
+    return minWidth;
+  };
+
   const updateColGroups = () => {
     const checked = (props.settings as Settings)?.checked || [];
     const settingFields = (props.settings as Settings)?.fields || [];
@@ -229,9 +245,11 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
         ...col,
         calcWidth: null,
         resizeWidth: null,
+        minWidth: resolveMinWidth(col),
         listeners: new Map(),
         isHidden: isColumnHidden(settingFields, col, checked),
         [COLUMN_ATTRIBUTE.COL_UID]: uuidv4(),
+        [COLUMN_ATTRIBUTE.COL_SOURCE_DATA]: col,
       })));
   };
 
@@ -281,6 +299,14 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
     }
 
     return false;
+  };
+
+  const clearSort = () => {
+    if (Array.isArray(reactiveSchema.defaultSort)) {
+      reactiveSchema.defaultSort.splice(0);
+    }
+
+    reactiveSchema.defaultSort = defSort || props.defaultSort;
   };
 
   const setRowExpand = (row: any, expand = undefined) => {
@@ -577,5 +603,6 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
     toggleAllSelection,
     toggleRowSelection,
     getSelection,
+    clearSort,
   };
 };

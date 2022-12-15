@@ -28,6 +28,8 @@ import { ExtractPropTypes } from 'vue';
 
 import { PropTypes } from '@bkui-vue/shared';
 
+import { NODE_CONTENT_ACTIONS } from './constant';
+
 /**
  * Tree Prop: prefixIcon function
  * @param {} isRoot 是否为分跟节点
@@ -174,6 +176,8 @@ export const treeProps = {
   emptyText: PropTypes.string.def('没有数据'),
 
   draggable: PropTypes.bool.def(false),
+  disableDrag: PropTypes.func.def(null),
+  disableDrop: PropTypes.func.def(null),
 
   /**
    * 节点拖拽时可交换位置（开启拖拽可交换位置后将不支持改变层级）
@@ -183,7 +187,8 @@ export const treeProps = {
   /**
    * 节点是否可以选中
    */
-  selectable: PropTypes.bool.def(true),
+  selectable: PropTypes.oneOfType([PropTypes.bool, PropTypes.func]).def(true),
+  disabledFolderSelectable: PropTypes.bool.def(false),
 
   /**
    * 是否支持多选
@@ -212,6 +217,21 @@ export const treeProps = {
    * 默认为true，如果设置为false，则每层状态需要自己控制
    */
   autoOpenParentNode: PropTypes.bool.def(true),
+
+  /**
+   * 默认是否展开所有节点
+   */
+  expandAll: PropTypes.bool.def(false),
+
+  /**
+   * 节点内容点击行为
+   * 此处配置每个节点除了展开\收起箭头之外的内容块时的行为
+   * 默认为 ['selected', 'expand', 'click']，点击内容块为选中当前节点
+   */
+  nodeContentAction: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.commonType(NODE_CONTENT_ACTIONS)),
+    PropTypes.func.def(() => ['selected']),
+  ]).def(['selected', 'expand', 'click']),
 };
 
 type AsyncOption = {

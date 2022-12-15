@@ -45,7 +45,7 @@ import {
   useFormItem,
 } from '@bkui-vue/shared';
 
-import { getCharLength, INPUT_MIN_WIDTH, useFlatList, usePage } from './common';
+import { getCharLength, INPUT_MIN_WIDTH, useFlatList, usePage, useTagsOverflow } from './common';
 import ListTagRender from './list-tag-render';
 import tagProps from './tag-props';
 import TagRender from './tag-render';
@@ -56,7 +56,15 @@ export default defineComponent({
     bkTooltips,
   },
   props: tagProps(),
-  emits: ['update:modelValue', 'change', 'select', 'blur', 'remove', 'removeAll'],
+  emits: [
+    'update:modelValue',
+    'change',
+    'select',
+    'focus',
+    'blur',
+    'remove',
+    'removeAll',
+  ],
   setup(props, { emit }) {
     const formItem = useFormItem();
     const state = reactive({
@@ -229,7 +237,7 @@ export default defineComponent({
     // 获取选中元素节点
     const getSelectedTagNodes = (): HTMLElement[] => {
       const nodes = Array.from(tagListRef.value?.childNodes || []) as HTMLElement[];
-      return nodes.filter((node: HTMLElement) => node.nodeType !== Node.TEXT_NODE);
+      return nodes.filter((node: HTMLElement) => ![Node.TEXT_NODE, Node.COMMENT_NODE].includes(node.nodeType));
     };
 
     /**
@@ -428,6 +436,7 @@ export default defineComponent({
     const handleFocus = () => {
       // this.dispatch('bk-form-item', 'form-focus')
       popoverProps.width = isSingleSelect.value ? bkTagSelectorRef.value?.clientWidth : props.contentWidth;
+      emit('focus');
       // e.currentTarget.select();
     };
 
@@ -509,10 +518,10 @@ export default defineComponent({
      * @param type emit type
      */
     const handleChange = (type, data?) => {
-      emit('change', tagList.value);
       // this.dispatch('bk-form-item', 'form-change')
       emit(type, data);
       emit('update:modelValue', tagList.value);
+      emit('change', tagList.value);
     };
 
     /**
@@ -850,6 +859,13 @@ export default defineComponent({
         listState.localList.push(data);
       }
     };
+    // 折叠 tags index
+    const localCollapseTags = computed(() => (
+      props.collapseTags
+        ? props.collapseTags && !state.isEdit
+        : props.collapseTags
+    ));
+    const { overflowTagIndex } = useTagsOverflow(bkTagSelectorRef, localCollapseTags, tagList);
 
     return {
       popoverProps,
@@ -868,6 +884,8 @@ export default defineComponent({
       selectorListRef,
       popoverRef,
       triggerClass,
+      overflowTagIndex,
+      localCollapseTags,
       focusInputTrigger,
       activeClass,
       handleInput,
@@ -911,8 +929,15 @@ export default defineComponent({
                         content: item[this.tooltipKey],
                         disabled: !this.tooltipKey,
                       };
+                      const isOverflow = this.localCollapseTags
+                        && this.overflowTagIndex
+                        && index >= this.overflowTagIndex;
                       return (
-                        <li class="tag-item" v-bk-tooltips={tooltips} onClick={this.tagFocus}>
+                        <li
+                          class="tag-item"
+                          style={{ display: isOverflow ? 'none' : '' }}
+                          v-bk-tooltips={tooltips}
+                          onClick={this.tagFocus}>
                           <TagRender node={item} tpl={this.tagTpl} displayKey={this.displayKey} />
                           {this.showTagClose ? <Error class="remove-tag" onClick={this.handleTagRemove.bind(this, item, index)} /> : null}
                         </li>
@@ -932,6 +957,15 @@ export default defineComponent({
                       onPaste={this.handlePaste}
                       />
                   </li>
+                  {
+                    !!this.overflowTagIndex && this.localCollapseTags && (
+                      <li class="tag-item">
+                        <div class="tag">
+                          <span class="text">+{this.selectedTagList.length - this.overflowTagIndex}</span>
+                        </div>
+                      </li>
+                    )
+                  }
                 </ul>
                 <p class="placeholder" v-show={this.isShowPlaceholder}>{this.placeholder}</p>
                 {this.$slots?.suffix?.() ?? (this.isShowClear && <Close class="clear-icon" onClick={this.handleClear} />) }

@@ -63,9 +63,14 @@ export default defineComponent({
         currentSort = getNextSortType(type);
       }
 
+      // 第二次点击取消当前排序
+      if (sortType.value === type) {
+        currentSort = SORT_OPTION.NULL;
+      }
+
       const sort = resolveSort(props.column.sort);
       if (sort?.value === 'custom') {
-        emit('change', null, currentSort);
+        emit('change', sort?.sortFn, currentSort);
         return;
       }
 

@@ -43,7 +43,7 @@ const affixProps: IPropsTableItem[] = [
     name: 'offset-top',
     type: 'Number',
     default: 0,
-    desc: '	距离窗口顶部达到指定偏移量后触发',
+    desc: '距离窗口顶部达到指定偏移量后触发',
     optional: [],
   },
   {

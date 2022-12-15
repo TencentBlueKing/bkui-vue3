@@ -228,6 +228,13 @@ const propsJson: IPropsTableItem[] = [
     desc: '是否在只有 hover 的时候才显示 clear 清除按钮',
     optional: [],
   },
+  {
+    name: 'collapse-tags',
+    type: 'Boolean',
+    default: 'false',
+    desc: '失焦是否折叠 tags',
+    optional: ['true', 'false'],
+  },
 ];
 export default defineComponent({
   render() {

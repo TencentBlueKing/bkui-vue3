@@ -215,27 +215,27 @@ export default defineComponent({
             <DemoRadioButton />
         </DemoBox>
         <PropsBox
-          title="Radios Attributes"
+          title="Radios 属性"
           subtitle=""
           propsData={radioProps}/>
         <PropsBox
-          title="Radios Events"
+          title="Radios 事件"
           subtitle=""
           propsData={radioEvents}/>
         <PropsBox
-          title="Radios-Groups Attributes"
+          title="Radios-Groups 属性"
           subtitle=""
           propsData={radioGroupProps}/>
         <PropsBox
-          title="Radios-Groups Events"
+          title="Radios-Groups 事件"
           subtitle=""
           propsData={radioGroupEvents}/>
         <PropsBox
-          title="Radios-Button Attributes"
+          title="Radios-Button 属性"
           subtitle=""
           propsData={radioButtonProps}/>
         <PropsBox
-          title="Radios-Button Events"
+          title="Radios-Button 事件"
           subtitle=""
           propsData={radioButtonEvents}/>
       </div>

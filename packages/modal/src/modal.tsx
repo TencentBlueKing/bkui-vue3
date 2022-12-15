@@ -57,6 +57,7 @@ export default defineComponent({
         height: this.dialogHeight,
         minHeigth: `${200}px`,
         display: this.visible ? 'inherit' : 'none',
+        zIndex: this.zIndex || 'inherit',
       };
     },
     fullscreenStyle(): any {
@@ -127,7 +128,7 @@ export default defineComponent({
     const maxHeight = this.maxHeight ? { maxHeight: this.maxHeight } : {};
     const bodyClass = `bk-modal-body ${this.animateType === 'slide' ? this.direction : ''}`;
     return (
-      <div class={['bk-modal-wrapper', this.extCls, this.size]}
+      <div class={['bk-modal-wrapper', this.extCls, this.size, this.fullscreen ? 'fullscreen' : '']}
         style={[this.compStyle, this.fullscreen ? this.fullscreenStyle : '']}>
         <Transition name={this.animateType}>
         {this.isShow ? <div class={bodyClass}>

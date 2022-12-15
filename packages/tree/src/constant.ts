@@ -28,7 +28,11 @@ export enum EVENTS {
   NODE_CLICK = 'nodeClick',
   NODE_COLLAPSE = 'nodeCollapse',
   NODE_EXPAND = 'nodeExpand',
-  NODE_CHECKED = 'nodeChecked'
+  NODE_CHECKED = 'nodeChecked',
+  NODE_DRAG_START = 'nodeDragStart',
+  NODE_DRAG_OVER = 'nodeDragOver',
+  NODE_DRAG_LEAVE = 'nodeDragLeave',
+  NODE_DROP = 'nodeDrop',
 }
 const EMPTY = (..._args) => true;
 export const TreeEmitEventsType = {
@@ -36,6 +40,10 @@ export const TreeEmitEventsType = {
   [EVENTS.NODE_COLLAPSE]: EMPTY,
   [EVENTS.NODE_EXPAND]: EMPTY,
   [EVENTS.NODE_CHECKED]: EMPTY,
+  [EVENTS.NODE_DRAG_START]: EMPTY,
+  [EVENTS.NODE_DRAG_OVER]: EMPTY,
+  [EVENTS.NODE_DRAG_LEAVE]: EMPTY,
+  [EVENTS.NODE_DROP]: EMPTY,
 };
 
 /**
@@ -73,3 +81,10 @@ export const NODE_SOURCE_ATTRS = {
   [NODE_ATTRIBUTES.IS_LOADING]: 'loading',
   [NODE_ATTRIBUTES.IS_ROOT]: 'isRoot',
 };
+
+/**
+ * 节点点击可执行行为配置
+ */
+export const NODE_CONTENT_ACTIONS = [
+  'click', 'selected', 'expand', 'collapse',
+];

@@ -122,13 +122,13 @@ export default defineComponent({
         </DemoBox>
 
         <PropsBox
-          title="BkSwiper Attributes"
+          title="Swiper 属性"
           subtitle=""
           propsData={swiperPropsJson}
         />
 
         <PropsBox
-          title="BkSwiper Events"
+          title="Swiper 事件"
           subtitle=""
           propsData={swiperEventJson}
         />

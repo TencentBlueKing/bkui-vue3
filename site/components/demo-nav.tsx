@@ -231,7 +231,7 @@ export default defineComponent({
       }
     };
 
-    const popperWidth = ref<string | number>('auto');
+    const popperWidth = ref<string | number>(220);
     // 初始化PopoverWidth
     const onPopoverFirstUpdate: OnFirstUpdateFnType = (instance) => {
       const { reference } = instance.elements;
@@ -260,37 +260,29 @@ export default defineComponent({
     };
   },
   render() {
-    const modifiers = [
-      {
-        name: 'offset',
-        options: {
-          offset: [0, 4],
-        },
-      },
-    ];
-
     return <div class="demo-nav">
       <h1 class="demo-nav-title">Vue 组件库 <span class="title-mark">3.x</span></h1>
       {/* <BkInput class="demo-nav-input" type="search" onInput={this.searchHandler} v-model={this.searchVal}/> */}
       <div class="demo-nav-search-wrapper" v-clickoutside={this.hidePopover}>
         <BKPopover
-          class="demo-nav-popover"
           theme="light"
           trigger="manual"
           width={this.popperWidth}
           arrow={false}
-          placement="bottom"
+          placement="bottom-start"
+          offset={2}
           isShow={this.isPopoverShow}
-          modifiers={modifiers}
-          handleFirstUpdate={this.onPopoverFirstUpdate}
+          disableTeleport
         >
           {{
             default: () => (
-              <BkInput class="demo-nav-input" type="search" clearable={true} v-model={this.searchVal}
+              <div class="demo-nav-popover">
+                <BkInput class="demo-nav-input" type="search" clearable={true} v-model={this.searchVal}
                 onInput={this.searchHandler}
                 onClear={this.hidePopover}
                 onKeydown={this.keyupHandler}
                 onEnter={this.handleChooseCom} />
+              </div>
             ),
             content: () => (
               <div class="search-dropdown-list">

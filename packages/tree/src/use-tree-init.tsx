@@ -26,7 +26,7 @@
 */
 
 import { v4 as uuidv4 } from 'uuid';
-import { computed, reactive, watch } from 'vue';
+import { computed, onMounted, reactive, watch } from 'vue';
 
 import { NODE_ATTRIBUTES, NODE_SOURCE_ATTRS } from './constant';
 import { TreePropTypes } from './props';
@@ -45,6 +45,14 @@ export default (props: TreePropTypes) => {
     let order = 0;
     const schema = new Map<string, any>();
 
+    /**
+     * 递归更新节点属性
+     * @param uuid 当前节点id
+     * @param attrName 需要更新的节点属性名称
+     * @param attrValue 需要更新的节点属性值
+     * @param callFn 回电函数
+     * @returns
+     */
     function loopUpdateNodeAttr(uuid: string, attrName: string, attrValue: any, callFn: Function) {
       if (uuid === undefined || uuid === null) {
         return;
@@ -72,7 +80,7 @@ export default (props: TreePropTypes) => {
 
 
     const cachedDefaultVal = {
-      [NODE_ATTRIBUTES.IS_OPEN]: () => false,
+      [NODE_ATTRIBUTES.IS_OPEN]: () => !!props.expandAll,
       [NODE_ATTRIBUTES.IS_CHECKED]: () => false,
       [NODE_ATTRIBUTES.IS_MATCH]: () => true,
       [NODE_ATTRIBUTES.IS_SELECTED]: (uuid: string) => props.selected === uuid,
@@ -316,20 +324,22 @@ export default (props: TreePropTypes) => {
 
 
   if (props.selectable) {
-    watch(() => props.selected, (newData) => {
-      // console.log('watch selected changed');
-      afterSelectWatch.length = 0;
-      afterSelectEvents.forEach((event: () => void) => {
-        Reflect.apply(event, this, [newData]);
+    onMounted(() => {
+      watch(() => props.selected, (newData) => {
+        // console.log('watch selected changed');
+        afterSelectWatch.length = 0;
+        afterSelectEvents.forEach((event: () => void) => {
+          Reflect.apply(event, this, [newData]);
 
-        /**
-         * selected设置生效有可能会在props.data 改变之前
-         * 此时需要缓存当前执行函数，保证在watch data change 之后执行
-         */
-        afterSelectWatch.push(() => Reflect.apply(event, this, [newData]));
-      });
-      registerNextLoop('afterSelectWatch', afterSelectWatch);
-    }, { immediate: true });
+          /**
+           * selected设置生效有可能会在props.data 改变之前
+           * 此时需要缓存当前执行函数，保证在watch data change 之后执行
+           */
+          afterSelectWatch.push(() => Reflect.apply(event, this, [newData]));
+        });
+        registerNextLoop('afterSelectWatch', afterSelectWatch);
+      }, { immediate: true });
+    });
   }
 
   const afterDataUpdate = (callFn: (d: any) => any) => {

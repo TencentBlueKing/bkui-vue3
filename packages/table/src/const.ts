@@ -29,7 +29,8 @@ export const enum BORDER_OPTION {
   NONE = 'none',
   ROW = 'row',
   COL = 'col',
-  OUTER = 'outer'
+  OUTER = 'outer',
+  HORIZONTAL = 'horizontal'
 }
 
 /**
@@ -46,7 +47,9 @@ export const ROW_HOVER_OPTIONS = [ROW_HOVER.AUTO, ROW_HOVER.HIGHLIGHT];
 /**
  * 边框配置可选项
  */
-export const BORDER_OPTIONS = [BORDER_OPTION.NONE, BORDER_OPTION.ROW, BORDER_OPTION.COL, BORDER_OPTION.OUTER];
+export const BORDER_OPTIONS = [
+  BORDER_OPTION.NONE, BORDER_OPTION.ROW, BORDER_OPTION.COL, BORDER_OPTION.OUTER, BORDER_OPTION.HORIZONTAL,
+];
 
 export const enum EVENTS {
   /** 点击排序事件 */
@@ -120,6 +123,7 @@ export const TABLE_ROW_ATTRIBUTE = {
 
 export const COLUMN_ATTRIBUTE = {
   COL_UID: '__col_$uuid',
+  COL_SOURCE_DATA: '__col_source_data',
 };
 
 /**
@@ -161,3 +165,8 @@ export const enum SORT_OPTION {
 }
 
 export const SORT_OPTIONS = [SORT_OPTION.ASC, SORT_OPTION.DESC, SORT_OPTION.NULL, SORT_OPTION.CUSTOM];
+
+/**
+ * 列宽最小设置
+ */
+export const COL_MIN_WIDTH = 20;

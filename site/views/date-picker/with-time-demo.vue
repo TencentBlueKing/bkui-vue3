@@ -8,7 +8,18 @@
     @clear="handleClear"
     @pick-success="handleOk"
     @open-change="handleOpenChange"
-  />
+  >
+    <template #footer>
+      <div class="custom-footer">
+        我是自定义 footer
+      </div>
+    </template>
+    <!-- <template #confirm>
+      <div class="custom-footer">
+        我是自定义 confirm
+      </div>
+    </template> -->
+  </bk-date-picker>
 </template>
 
 <script setup>

@@ -93,7 +93,7 @@ export default defineComponent({
 
         <PropsBox
           style="height: 1000px"
-          title="Backtop Attributes"
+          title="Backtop 属性"
           subtitle=""
           propsData={backtopPropsJson}/>
       </div>

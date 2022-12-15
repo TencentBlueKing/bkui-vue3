@@ -278,7 +278,7 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
    * 节点点击
    * @param item
    */
-  const hanldeTreeNodeClick = (item: any, e: MouseEvent) => {
+  const handleTreeNodeClick = (item: any, e: MouseEvent) => {
     const isOpen = isNodeOpened(item);
     if (isOpen) {
       setNodeOpened(item, false, e);
@@ -308,7 +308,7 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
     e.stopPropagation();
     e.preventDefault();
 
-    hanldeTreeNodeClick(node, e);
+    handleTreeNodeClick(node, e);
   };
 
   const setSelect = (uuid: any, selected = true, autoOpen = true) => {
@@ -322,41 +322,61 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
       return;
     }
 
-    if (props.selectable) {
-      if (selectedNodeId !== null && selectedNodeId !== undefined) {
-        setNodeAttr({ [NODE_ATTRIBUTES.UUID]: selectedNodeId }, NODE_ATTRIBUTES.IS_SELECTED, !selected);
-      }
-
-      if (props.selected && props.selected !== selectedNodeId) {
-        setNodeAttr({ [NODE_ATTRIBUTES.UUID]: props.selected }, NODE_ATTRIBUTES.IS_SELECTED, !selected);
-      }
-
-      setNodeAttr(resolvedItem, NODE_ATTRIBUTES.IS_SELECTED, selected);
-      selectedNodeId = getNodeId(resolvedItem);
-
-      /**
-       * 如果设置了自动展开
-       * 判定长度是为了处理异步节点,如果当前设置selected的节点为多级异步节点
-       * 此时需要一层一层展开所有数据，只需要在最后一次执行setOpen即可
-       */
-      if (autoOpen && nodeList.length === 1) {
-        setOpen(resolvedItem, true, true);
-      }
-
-      /**
-       * 处理异步节点多层级展开选中
-       */
-      if (getNodeAttr(resolvedItem, NODE_ATTRIBUTES.IS_ASYNC)) {
-        asyncNodeClick(resolvedItem).then(() => {
-          nextTick(() => {
-            nodeList.shift();
-            setSelect(nodeList, selected, autoOpen);
-          });
-        });
-      }
-    } else {
+    if (
+      !props.selectable
+      || (typeof props.selectable === 'function' && !props.selectable(uuid))
+      || (props.disabledFolderSelectable && uuid?.is_folder === true)
+    ) {
       console.warn('props.selectable is false or undefined, please set selectable with true');
+      return;
     }
+    if (selectedNodeId !== null && selectedNodeId !== undefined) {
+      setNodeAttr({ [NODE_ATTRIBUTES.UUID]: selectedNodeId }, NODE_ATTRIBUTES.IS_SELECTED, !selected);
+    }
+
+    if (props.selected && props.selected !== selectedNodeId) {
+      setNodeAttr({ [NODE_ATTRIBUTES.UUID]: props.selected }, NODE_ATTRIBUTES.IS_SELECTED, !selected);
+    }
+
+    setNodeAttr(resolvedItem, NODE_ATTRIBUTES.IS_SELECTED, selected);
+    selectedNodeId = getNodeId(resolvedItem);
+
+    /**
+     * 如果设置了自动展开
+     * 判定长度是为了处理异步节点,如果当前设置selected的节点为多级异步节点
+     * 此时需要一层一层展开所有数据，只需要在最后一次执行setOpen即可
+     */
+    if (autoOpen && nodeList.length === 1) {
+      setOpen(resolvedItem, true, true);
+    }
+
+    /**
+     * 处理异步节点多层级展开选中
+     */
+    if (getNodeAttr(resolvedItem, NODE_ATTRIBUTES.IS_ASYNC)) {
+      asyncNodeClick(resolvedItem).then(() => {
+        nextTick(() => {
+          nodeList.shift();
+          setSelect(nodeList, selected, autoOpen);
+        });
+      });
+    }
+  };
+
+  const resolveNodeAction = (node: any) => {
+    if (typeof props.nodeContentAction === 'function') {
+      return Reflect.apply(props.nodeContentAction, this, [{ node }]);
+    }
+
+    if (typeof props.nodeContentAction === 'string') {
+      return [props.nodeContentAction];
+    }
+
+    if (Array.isArray(props.nodeContentAction)) {
+      return props.nodeContentAction;
+    }
+
+    return ['selected', 'expand', 'click'];
   };
 
   /**
@@ -364,14 +384,27 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
    * @param item
    */
   const handleNodeContentClick = (item: any, e: MouseEvent) => {
-    setSelect(item, true, false);
-
-    if (!isNodeOpened(item)) {
-      hanldeTreeNodeClick(item, e);
+    const nodeActions = resolveNodeAction(item);
+    if (nodeActions.includes('selected')) {
+      setSelect(item, true, false);
     }
 
-    const eventName: string = EVENTS.NODE_CLICK;
-    ctx.emit(eventName, item, resolveScopedSlotParam(item), getSchemaVal(item[NODE_ATTRIBUTES.UUID]), e);
+    if (nodeActions.includes('expand')) {
+      if (!isNodeOpened(item)) {
+        handleTreeNodeClick(item, e);
+      }
+    }
+
+    if (nodeActions.includes('collapse')) {
+      if (isNodeOpened(item)) {
+        handleTreeNodeClick(item, e);
+      }
+    }
+
+    if (nodeActions.includes('click')) {
+      const eventName: string = EVENTS.NODE_CLICK;
+      ctx.emit(eventName, item, resolveScopedSlotParam(item), getSchemaVal(item[NODE_ATTRIBUTES.UUID]), e);
+    }
   };
 
   /**
@@ -425,40 +458,45 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
       .map((index: number) => <span class="node-virtual-line" style={ getNodeLineStyle(maxDeep - index) }></span>);
   };
 
-  const renderTreeNode = (item: any) => <div data-tree-node={getNodeId(item)}
-    key={getNodeId(item)}
-    class={ getNodeRowClass(item, flatData.schema) }>
-  <div class={getNodeItemClass(item, flatData.schema, props) }
-    style={getNodeItemStyle(item, props, flatData)}
-    onClick={(e: MouseEvent) => handleNodeContentClick(item, e)}>
-    <span class={ [resolveClassName('node-action')] }
-      onClick={(e: MouseEvent) => handleNodeActionClick(e, item)}>
-        { getActionIcon(item) }
-      </span>
-    <span class={ resolveClassName('node-content') } >
-      {
-        [
-          getCheckboxRender(item),
-          getNodePrefixIcon(item),
-        ]
-      }
-      <span class={ resolveClassName('node-text') }>{
-        ctx.slots.node?.(extendNodeAttr(item))
-        ?? [getLabel(item, props)]
-      }</span>
-      {
-        ctx.slots.nodeAppend?.(extendNodeAttr(item))
-      }
-    </span>
-    {
-      getVirtualLines(item)
-    }
-  </div>
-</div>;
+  const renderTreeNode = (item: any) => (
+    <div
+      data-tree-node={getNodeId(item)}
+      key={getNodeId(item)}
+      class={ getNodeRowClass(item, flatData.schema) }>
+      <div
+        class={getNodeItemClass(item, flatData.schema, props) }
+        style={getNodeItemStyle(item, props, flatData)}
+        onClick={(e: MouseEvent) => handleNodeContentClick(item, e)}>
+        <div
+          class={ [resolveClassName('node-action')] }
+          onClick={(e: MouseEvent) => handleNodeActionClick(e, item)}>
+          { getActionIcon(item) }
+        </div>
+        <div class={ resolveClassName('node-content') } >
+          {
+            [
+              getCheckboxRender(item),
+              getNodePrefixIcon(item),
+            ]
+          }
+          <span
+            class={ resolveClassName('node-text') }>
+            {ctx.slots.node?.(extendNodeAttr(item)) ?? [getLabel(item, props)]}
+          </span>
+          {
+            ctx.slots.nodeAppend?.(extendNodeAttr(item))
+          }
+        </div>
+        {
+          getVirtualLines(item)
+        }
+      </div>
+    </div>
+  );
 
   return {
     renderTreeNode,
-    hanldeTreeNodeClick,
+    handleTreeNodeClick,
     deepAutoOpen,
     asyncNodeClick,
     setNodeAction,

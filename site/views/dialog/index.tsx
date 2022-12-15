@@ -353,17 +353,17 @@ export default defineComponent({
         </DemoBox>
 
         <PropsBox
-          title="Dialog Attributes"
+          title="Dialog 属性"
           subtitle=""
           propsData={dialogPropsJson} />
 
         <PropsBox
-          title="Dialog Slot"
+          title="Dialog 插槽"
           subtitle=""
           propsData={dialogSlotsJson}/>
 
         <PropsBox
-          title="Dialog Events"
+          title="Dialog 事件"
           subtitle=""
           propsData={dialogChangeJson}/>
       </div>

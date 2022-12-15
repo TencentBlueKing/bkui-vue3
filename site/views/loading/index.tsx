@@ -151,7 +151,7 @@ export default defineComponent({
             ))
           }
         <PropsBox
-          title="Loading Attributes"
+          title="Loading 属性"
           subtitle=""
           propsData={loadingProps}/>
 

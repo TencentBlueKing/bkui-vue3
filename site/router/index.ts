@@ -74,19 +74,6 @@ const routes: RouteRecordRaw[] = [
     },
   },
   /**
-   * @description:首页
-   */
-  {
-    path: '/home',
-    name: 'home',
-    alias: '',
-    component: () => import('../views/home'),
-    meta: {
-      group: NavGroupMeta.Others,
-      navName: 'Home',
-    },
-  },
-  /**
    * @description:Loading
    */
   {
@@ -197,15 +184,15 @@ const routes: RouteRecordRaw[] = [
   /**
    * @description:PopComponents
    */
-  {
-    path: '/pop-components',
-    name: 'popComponents',
-    component: () => import('../views/pop-components'),
-    meta: {
-      group: NavGroupMeta.Feedback,
-      navName: 'PopComponents',
-    },
-  },
+  // {
+  //   path: '/pop-components',
+  //   name: 'popComponents',
+  //   component: () => import('../views/pop-components'),
+  //   meta: {
+  //     group: NavGroupMeta.Feedback,
+  //     navName: 'PopComponents',
+  //   },
+  // },
   /**
    * @description:卡片
    */
@@ -434,6 +421,15 @@ const routes: RouteRecordRaw[] = [
       navName: 'Upload 文件上传',
     },
   },
+  // {
+  //   path: '/popover',
+  //   name: 'popover',
+  //   component: () => import('../views/popover'),
+  //   meta: {
+  //     group: NavGroupMeta.Feedback,
+  //     navName: 'Popover 弹出框提示',
+  //   },
+  // },
   {
     path: '/popover',
     name: 'popover',
@@ -441,15 +437,6 @@ const routes: RouteRecordRaw[] = [
     meta: {
       group: NavGroupMeta.Feedback,
       navName: 'Popover 弹出框提示',
-    },
-  },
-  {
-    path: '/popover2',
-    name: 'popover2',
-    component: () => import('../views/popover2'),
-    meta: {
-      group: NavGroupMeta.Feedback,
-      navName: 'Popover2 弹出框提示',
     },
   },
   /**
@@ -624,7 +611,7 @@ const routes: RouteRecordRaw[] = [
     },
   },
   /**
-   * @description:VirtualRender
+   * @description:差异对比
    */
   {
     path: '/code-diff',
@@ -635,12 +622,15 @@ const routes: RouteRecordRaw[] = [
       navName: 'Diff 差异对比',
     },
   },
+  /**
+   * @description:VirtualRender
+   */
   {
     path: '/virtual-render',
     name: 'virtualRender',
     component: () => import('../views/virtual-render'),
     meta: {
-      group: NavGroupMeta.Others,
+      group: NavGroupMeta.Data,
       navName: 'VirtualRender',
     },
   },
@@ -698,19 +688,10 @@ const routes: RouteRecordRaw[] = [
     path: '/cascader',
     name: 'cascader',
     meta: {
-      group: NavGroupMeta.Others,
+      group: NavGroupMeta.Form,
       navName: 'Cascader 级联选择',
     },
     component: () => import('../views/cascader/index'),
-  },
-  {
-    path: '/loading',
-    name: 'loading',
-    meta: {
-      group: NavGroupMeta.Others,
-      navName: 'Loading 加载',
-    },
-    component: () => import('../views/loading/index'),
   },
   {
     path: '/search-select',

@@ -26,31 +26,36 @@
 
 // import type { Placement } from '@popperjs/core';
 // import { bkZIndexManager, BKPopover, IBKPopover } from '@bkui-vue/shared';
+import { toDate } from 'date-fns';
 import type { ExtractPropTypes } from 'vue';
 import {
   // onMounted,
   // onBeforeUnmount,
   computed,
   defineComponent,
+  getCurrentInstance,
+  nextTick,
   PropType,
+  provide,
   reactive,
   ref,
   toRefs,
-  watch,
-  // nextTick,
-} from 'vue';
+  watch } from 'vue';
 
 import { AngleDoubleLeft, AngleDoubleRight, AngleLeft, AngleRight } from '@bkui-vue/icon';
 
+import Confirm from '../base/confirm';
 import DateTable from '../base/date-table';
 import type {
   DatePickerShortcutsType,
   DatePickerValueType,
-  DisableDateType,
+  DisabledDateType,
   PickerTypeType,
   SelectionModeType,
 } from '../interface';
-import { formatDateLabels, iconBtnCls, initTime } from '../utils';
+import { formatDateLabels, iconBtnCls, initTime, timePickerKey } from '../utils';
+
+import TimeRange from './time-range';
 
 const dateRangePanelProps = {
   modelValue: {
@@ -107,7 +112,7 @@ const dateRangePanelProps = {
     type: Boolean,
     default: false,
   },
-  disableDate: Function as PropType<DisableDateType>,
+  disabledDate: Function as PropType<DisabledDateType>,
   focusedDate: {
     type: Date,
     required: true,
@@ -116,6 +121,14 @@ const dateRangePanelProps = {
     type: Boolean,
     default: false,
   },
+  format: {
+    type: String,
+    default: 'yyyy-MM-dd',
+  },
+  timePickerOptions: {
+    type: Object as PropType<Record<string, any>>,
+    default: () => ({}),
+  },
 } as const;
 
 export type DateRangePanelProps = Readonly<ExtractPropTypes<typeof dateRangePanelProps>>;
@@ -123,7 +136,7 @@ export type DateRangePanelProps = Readonly<ExtractPropTypes<typeof dateRangePane
 export default defineComponent({
   name: 'DateRangePanel',
   props: dateRangePanelProps,
-  emits: ['pick', 'pick-success'],
+  emits: ['pick', 'pick-success', 'pick-clear', 'pick-click'],
   setup(props, { slots, emit }) {
     const [minDate, maxDate] = (props.modelValue as any).map(date => date || initTime());
     const leftPanelDate = props.startDate ? props.startDate : minDate;
@@ -137,10 +150,16 @@ export default defineComponent({
       rangeState: { from: props.modelValue[0], to: props.modelValue[1], selecting: minDate && !maxDate },
       // 判断 range 中，第一次选的时间是否晚于当前时间
       upToNowEnable: false,
-      dates: props.modelValue,
+      dates: props.modelValue as any,
       // pickerTable: getTableType(props.selectionMode),
       // dates,
       // panelDate: props.startDate || dates[0] || new Date(),
+    });
+
+    const { proxy } = getCurrentInstance();
+    provide(timePickerKey, {
+      dates: state.dates,
+      parentName: proxy.$options.name,
     });
 
     const dateSorter = (a, b) => {
@@ -278,7 +297,6 @@ export default defineComponent({
      * handleRangePick
      */
     const handleRangePick = (val, type) => {
-      console.warn('handleRangePick');
       if (state.rangeState.selecting || state.currentView === 'time') {
         if (state.currentView === 'time') {
           state.dates = val;
@@ -353,8 +371,53 @@ export default defineComponent({
       state.rangeState.to = val;
     };
 
+    function setPanelDates(leftPanelDate) {
+      state.leftPanelDate = leftPanelDate;
+      const rightPanelDate = new Date(leftPanelDate.getFullYear(), leftPanelDate.getMonth() + 1, 1);
+      const splitRightPanelDate = state.dates[1] ? state.dates[1].getTime() : state.dates[1];
+      state.rightPanelDate = props.splitPanels
+        ? new Date(Math.max(splitRightPanelDate, rightPanelDate.getTime()))
+        : rightPanelDate;
+    }
+
     watch(() => props.selectionMode, (v) => {
       state.currentView = (v || 'range') as SelectionModeType;
+    });
+
+    watch(() => props.modelValue, (newVal) => {
+      const minDate = newVal[0] ? toDate(newVal[0]) : null;
+      const maxDate = newVal[1] ? toDate(newVal[1]) : null;
+      state.dates = [minDate, maxDate].sort(dateSorter);
+
+      state.rangeState = {
+        from: state.dates[0],
+        to: state.dates[1],
+        selecting: false,
+      };
+
+      setPanelDates(props.startDate || state.dates[0] || new Date());
+    });
+
+    watch(() => state.currentView, (v) => {
+      const leftMonth = state.leftPanelDate.getMonth();
+      const rightMonth = state.rightPanelDate.getMonth();
+      const isSameYear = state.leftPanelDate.getFullYear() === state.rightPanelDate.getFullYear();
+
+      if (v === 'date' && isSameYear && leftMonth === rightMonth) {
+        changePanelDate('right', 'Month', 1);
+      }
+      if (v === 'month' && isSameYear) {
+        changePanelDate('right', 'FullYear', 1);
+      }
+      if (v === 'year' && isSameYear) {
+        changePanelDate('right', 'FullYear', 10);
+      }
+
+      if (state.currentView === 'time') {
+        nextTick(() => {
+          timePickerRef.value.updateScroll();
+        });
+      }
     });
 
     const isTime = computed(() => state.currentView === 'time');
@@ -387,6 +450,37 @@ export default defineComponent({
 
     const hasShortcuts = computed(() => slots.shortcuts || props.shortcuts?.length);
 
+    const handleToggleTime = () => {
+      state.currentView = state.currentView === 'time' ? 'date' : 'time';
+    };
+
+    const resetView = () => {
+      setTimeout(
+        () => {
+          state.currentView = props.selectionMode;
+        },
+        500,
+      );
+    };
+
+    const handlePickSuccess = () => {
+      resetView();
+      emit('pick-success');
+    };
+
+    const handlePickClear = () => {
+      resetView();
+      emit('pick-clear');
+    };
+
+    function handlePickClick() {
+      emit('pick-click');
+    }
+
+
+    const timeDisabled = computed(() => !(state.dates[0] && state.dates[1]));
+
+    const timePickerRef = ref(null);
 
     return {
       ...toRefs(state),
@@ -406,15 +500,46 @@ export default defineComponent({
       rightShowLabelSecond,
       preSelecting,
       panelPickerHandlers,
+      timeDisabled,
 
       handleShortcutClick,
       reset,
       onToggleVisibility,
       handleRangePick,
       handleChangeRange,
+      handleToggleTime,
+      handlePickSuccess,
+      handlePickClear,
+      handlePickClick,
+
+      timePickerRef,
     };
   },
   render() {
+    let shortcuts = null;
+    if (this.hasShortcuts) {
+      let inner: any = '';
+      if (this.$slots.shortcuts) {
+        inner = typeof this.$slots.shortcuts === 'function' ? this.$slots.shortcuts() : this.$slots.shortcuts;
+      } else {
+        if (this.shortcuts.length) {
+          inner = (
+            <div class='bk-picker-panel-shortcuts'>
+              {
+                this.shortcuts.map((item, index) => (
+                  <div
+                    key={index}
+                    class='shortcuts-item'
+                    onClick={() => this.handleShortcutClick(item, index)}>{item.text}</div>
+                ))
+              }
+            </div>
+          );
+        }
+      }
+      shortcuts = <div class='bk-picker-panel-sidebar'>{inner}</div>;
+    }
+
     return (
       <div
         class={[
@@ -485,7 +610,7 @@ export default defineComponent({
                         <DateTable
                           selectionMode='range'
                           tableDate={this.leftPanelDate as Date}
-                          disableDate={this.disableDate}
+                          disabledDate={this.disabledDate}
                           rangeState={this.rangeState}
                           modelValue={
                             (this.preSelecting.left ? [this.dates[0]] : this.dates) as any
@@ -569,7 +694,7 @@ export default defineComponent({
                         <DateTable
                           selectionMode='range'
                           tableDate={this.rightPanelDate as Date}
-                          disableDate={this.disableDate}
+                          disabledDate={this.disabledDate}
                           rangeState={this.rangeState}
                           modelValue={
                             (
@@ -589,29 +714,58 @@ export default defineComponent({
                 : ''
             }
           </div>
+
+          {
+            this.isTime
+              ? (
+                <TimeRange
+                    ref="timePickerRef"
+                    value={this.dates as any}
+                    format={this.format}
+                    disabledDate={this.disabledDate}
+                    // v-bind={this.timePickerOptions}
+                    onPick={this.handleRangePick}
+                    onPick-click={this.handlePickClick}
+                    onPick-clear={this.handlePickClear}
+                    onPick-success={this.handlePickSuccess}
+                    onPick-toggle-time={this.handleToggleTime}
+                  />
+              )
+              : ''
+          }
+          {/* {
+            this.confirm
+              ? this.$slots.confirm?.() ?? (
+                <Confirm
+                  clearable={this.clearable}
+                  showTime={this.showTime}
+                  timeDisabled={this.timeDisabled}
+                  isTime={this.isTime}
+                  onPick-toggle-time={this.handleToggleTime}
+                  onPick-clear={this.handlePickClear}
+                  onPick-success={this.handlePickSuccess}
+                ></Confirm>
+              )
+              : ''
+          } */}
+          {
+            this.confirm
+              ? (
+                <Confirm
+                  clearable={this.clearable}
+                  showTime={this.showTime}
+                  timeDisabled={this.timeDisabled}
+                  isTime={this.isTime}
+                  onPick-toggle-time={this.handleToggleTime}
+                  onPick-clear={this.handlePickClear}
+                  onPick-success={this.handlePickSuccess}
+                  v-slots={this.$slots}
+                ></Confirm>
+              )
+              : ''
+          }
         </div>
-        {
-          this.hasShortcuts
-            ? (
-              <div class='bk-picker-panel-sidebar'>
-                { this.$slots.shortcuts ? (
-                  typeof this.$slots.shortcuts === 'function' ? this.$slots.shortcuts() : this.$slots.shortcuts
-                ) : this.shortcuts.length ? (
-                  <div class='bk-picker-panel-shortcuts'>
-                    {
-                      this.shortcuts.map((item, index) => (
-                        <div
-                          key={index}
-                          class='shortcuts-item'
-                          onClick={() => this.handleShortcutClick(item, index)}>{item.text}</div>
-                      ))
-                    }
-                  </div>
-                ) : ''}
-              </div>
-            )
-            : null
-        }
+        {shortcuts}
       </div>
     );
   },
