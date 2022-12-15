@@ -28,7 +28,7 @@ import { computed, defineComponent, ref, watch } from 'vue';
 import BkButton from '@bkui-vue/button';
 import BkCheckbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
 import { CloseLine, CogShape } from '@bkui-vue/icon/';
-import Popover from '@bkui-vue/popover2';
+import Popover from '@bkui-vue/popover';
 import { PropTypes, resolveClassName } from '@bkui-vue/shared';
 
 import { DEFAULT_SIZE_LIST, LINE_HEIGHT } from '../const';
@@ -180,7 +180,7 @@ export default defineComponent({
 
     return () => (props.settings ? <Popover trigger="manual" isShow={isShow.value}
       placement="bottom-end"
-      arrow={false}
+      arrow={true}
       {...{ theme }}>
       {
         {
