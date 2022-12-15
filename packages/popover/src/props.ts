@@ -24,4 +24,86 @@
  * IN THE SOFTWARE.
  */
 
-export * from '../../popover2/src/props';
+import { ExtractPropTypes } from 'vue';
+
+import { PropTypes } from '@bkui-vue/shared';
+const placements = ['auto', 'auto-start', 'auto-end', 'top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end', 'right', 'right-start', 'right-end', 'left', 'left-start', 'left-end'];
+const EventProps = {
+  onAfterHidden: Function,
+  onAfterShow: Function,
+};
+export const PopoverProps = {
+  isShow: PropTypes.bool.def(false),
+  always: PropTypes.bool.def(false),
+  disabled: PropTypes.bool.def(false),
+  width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
+  height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
+  content: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def(''),
+
+  /**
+   * 组件显示位置
+   */
+  placement: PropTypes.placement(placements).def('top'),
+
+  // 'dark', 'light'
+  theme: PropTypes.string.def('dark'),
+
+  /**
+   * 触发方式
+   * 支持 click hover manual
+   * manual： 通过isShow控制显示、隐藏
+   */
+  trigger: PropTypes.string.def('hover'),
+
+  // 是否显示箭头
+  arrow: PropTypes.bool.def(true),
+
+  padding: PropTypes.number.def(5),
+
+  offset: PropTypes.number.def(6),
+
+  /**
+   * 弹出内容绑定元素
+   */
+  boundary: PropTypes.oneOfType([PropTypes.string.def('parent'), PropTypes.instanceOf(HTMLElement)]),
+
+  zIndex: PropTypes.number.def(undefined),
+
+  disableTeleport: PropTypes.bool.def(false),
+
+  /**
+   *  chooses the placement that has the most space available automatically
+   */
+  autoPlacement: PropTypes.bool.def(false),
+
+  /**
+   * 当有滚动条，滚动出可是范围时自动隐藏pop
+   */
+  autoVisibility: PropTypes.bool.def(true),
+
+  /**
+   * 是否禁用clickoutside
+   */
+  disableOutsideClick: PropTypes.bool.def(false),
+
+  /**
+   * 是否禁用样式的transform更新位移
+   */
+  disableTransform: PropTypes.bool.def(false),
+
+  /**
+   * 自定义 reference
+   */
+  reference: PropTypes.any.def(null),
+
+  /**
+   * 兼容v1版本遗留配置
+   * 不建议使用
+   */
+  modifiers: PropTypes.array.def([]),
+
+  ...EventProps,
+};
+
+export type PopoverPropTypes = Readonly<ExtractPropTypes<typeof PopoverProps>>;
+

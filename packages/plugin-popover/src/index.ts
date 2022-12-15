@@ -24,5 +24,5 @@
  * IN THE SOFTWARE.
  */
 
-import $bkPopover from '../../popover2/src/plugin-popover';
+import $bkPopover from '../../popover/src/plugin-popover';
 export default $bkPopover;

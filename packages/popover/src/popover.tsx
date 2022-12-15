@@ -37,7 +37,7 @@ import Root from './root';
 import usePopoverInit from './use-popover-init';
 
 export default defineComponent({
-  name: 'Popover2',
+  name: 'Popover',
   components: {
     Content, Arrow, Root,
   },

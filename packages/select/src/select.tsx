@@ -25,7 +25,7 @@
 */
 
 import { merge } from 'lodash';
-import { PopoverPropTypes } from 'popover2/src/props';
+import { PopoverPropTypes } from 'popover/src/props';
 import {
   computed,
   defineComponent,
@@ -42,7 +42,7 @@ import { clickoutside } from '@bkui-vue/directives';
 import { AngleUp, Close, Search } from '@bkui-vue/icon';
 import Input from '@bkui-vue/input';
 import Loading from '@bkui-vue/loading';
-import BKPopover from '@bkui-vue/popover2';
+import BKPopover from '@bkui-vue/popover';
 import {
   classes,
   off,

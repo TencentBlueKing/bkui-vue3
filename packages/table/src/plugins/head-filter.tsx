@@ -27,7 +27,7 @@ import { computed, defineComponent, nextTick, reactive } from 'vue';
 
 import BkCheckbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
 import { Funnel } from '@bkui-vue/icon';
-import Popover from '@bkui-vue/popover2';
+import Popover from '@bkui-vue/popover';
 import { classes, PropTypes, resolveClassName } from '@bkui-vue/shared';
 
 import { LINE_HEIGHT } from '../const';
