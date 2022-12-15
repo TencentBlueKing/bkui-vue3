@@ -105,9 +105,8 @@ export default defineComponent({
   render() {
     const isIcon = (timeline) => {
       const { icon } = timeline;
-
       if (icon) {
-        return typeof icon === 'function';
+        return typeof icon === 'object' || typeof icon === 'function';
       }
       return false;
     };
@@ -120,7 +119,8 @@ export default defineComponent({
       const timelineSizeCls: string = item.size ? `${timelineClsPrefix}-${item.size}` : '';
       const timelineFilledCls: string = item.filled ? `${timelineClsPrefix}-filled` : '';
       const timelinesColorsCls: string = (item.color && dotColors.includes(item.color)) ? `${timelineClsPrefix}-${item.color}` : '';
-      const timelinesCls: string = classes({}, `${timelineClsPrefix} ${timelineThemeCls} ${timelineSizeCls} ${timelinesColorsCls} ${timelineFilledCls}`);
+      const timelineCustomIcon: string = (isIcon(item)) ? `${timelineClsPrefix}-custom` : '';
+      const timelinesCls: string = classes({}, `${timelineClsPrefix} ${timelineThemeCls} ${timelineSizeCls} ${timelinesColorsCls} ${timelineFilledCls} ${timelineCustomIcon}`);
       return timelinesCls;
     };
 
@@ -136,7 +136,7 @@ export default defineComponent({
         this.defaultTimelines.map(item => <li class={['bk-timeline-dot', makeClass(item)]}>
           {isIcon(item)
             ? <div class="bk-timeline-icon" style={{ border: item.border ? `2px solid ${item.color}` : '0px', borderRadius: item.border ? '50%' : '0' }}>
-                <span class="bk-timeline-icon-inner">{<item.icon/>}</span>
+                <span class="bk-timeline-icon-inner">{typeof item.icon === 'function' ? <item.icon/> : item.icon}</span>
               </div> : ''}
               <div class="bk-timeline-section">
                 {<div class="bk-timeline-title" onClick={() => {
