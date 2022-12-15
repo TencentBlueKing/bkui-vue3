@@ -26,7 +26,7 @@
 import { defineComponent, PropType, Ref, ref, watch, watchEffect } from 'vue';
 
 import { clickoutside } from '@bkui-vue/directives';
-import Popover from '@bkui-vue/popover2';
+import Popover from '@bkui-vue/popover';
 import { debounce, random } from '@bkui-vue/shared';
 
 import SearchSelectMenu from './menu';

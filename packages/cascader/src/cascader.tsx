@@ -29,7 +29,7 @@ import { array } from 'vue-types';
 
 import { clickoutside } from '@bkui-vue/directives';
 import { AngleUp, Close, Error } from '@bkui-vue/icon';
-import BkPopover from '@bkui-vue/popover2';
+import BkPopover from '@bkui-vue/popover';
 import { debounce, PropTypes } from '@bkui-vue/shared';
 
 import { useHover } from '../../select/src/common';

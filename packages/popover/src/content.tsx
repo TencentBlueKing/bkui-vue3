@@ -51,11 +51,11 @@ export default defineComponent({
     };
   },
   render() {
-    const className = [resolveClassName('popover2'), resolveClassName('pop2-content')];
+    const className = [resolveClassName('popover'), resolveClassName('pop2-content')];
 
     return <div class={ className } tabindex="-1" style={this.style}>
-      { this.$slots.default?.() ?? '' }
       { this.$slots.arrow?.() ?? '' }
+      { this.$slots.default?.() ?? '' }
     </div>;
   },
 });

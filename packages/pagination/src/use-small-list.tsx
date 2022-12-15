@@ -39,7 +39,7 @@ import {
   AngleLeft,
   AngleRight,
 } from '@bkui-vue/icon';
-import BkPopover2 from '@bkui-vue/popover2';
+import BkPopover2 from '@bkui-vue/popover';
 
 import type {
   IPaginationInstance,

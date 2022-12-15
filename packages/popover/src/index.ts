@@ -23,8 +23,13 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import BkPopover from '../../popover2/src/index';
-BkPopover.name = 'Popover';
+import { withInstall } from '@bkui-vue/shared';
+
+import Component from './popover';
+const BkPopover = withInstall(Component);
+
 export default BkPopover;
 
-export { default as $bkPopover } from '../../popover2/src/plugin-popover';
+export { default as $bkPopover } from './plugin-popover';
+
+export { PopoverProps, type PopoverPropTypes } from './props';
