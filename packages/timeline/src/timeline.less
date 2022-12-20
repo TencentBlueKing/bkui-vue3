@@ -35,7 +35,7 @@
 
     &::before {
       position: absolute;
-      top: calc((11px + 1px) * -1);
+      top: calc(12px * -1);
       left: -6px;
       display: inline-block;
       width: 11px;
@@ -73,13 +73,12 @@
 
     .bk-timeline-icon {
       position: absolute;
-      top: calc((15px + 1px) * -1);
+      top: calc(16px * -1);
       left: -8px;
       display: flex;
 
       width: 16px;
       height: 16px;
-      background: #fff;
       border: 2px solid #d8d8d8;
       border-radius: 50%;
       justify-content: center;
@@ -131,6 +130,19 @@
       margin-top: 0;
     }
 
+  }
+
+  .bk-timeline-custom {
+    &::before {
+      /* stylelint-disable-next-line declaration-no-important */
+      border: none !important;
+    }
+
+    .bk-timeline-icon {
+      /* stylelint-disable-next-line declaration-no-important */
+      border: none !important;
+    }
+    
   }
 
 

@@ -31,6 +31,3 @@ const BkPopover2 = withInstall(popover);
 
 export default BkPopover2;
 
-export { default as $bkPopover } from '@bkui-vue/popover';
-
-export { PopoverProps, type PopoverPropTypes } from '@bkui-vue/popover';
