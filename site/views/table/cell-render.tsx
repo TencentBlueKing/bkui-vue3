@@ -26,6 +26,8 @@
 import { Column } from 'table/src/props';
 import { defineComponent } from 'vue';
 
+import BkTable from '@bkui-vue/table';
+
 import { DATA_COLUMNS, DATA_TABLE } from './options';
 export default defineComponent({
   components: {},
@@ -47,14 +49,16 @@ export default defineComponent({
       return <bk-input v-model={ row[column.field] }></bk-input>;
     },
     renderTh(column, index) {
-      return <bk-popover content={ `${index}-xxxxxxxx` }>
-        <span>{ column.field ?? index }</span>
-      </bk-popover>;
+      return (
+        <bk-popover content={ `${index}-xxxxxxxx` }>
+          <span>{ column.field ?? index }</span>
+        </bk-popover>
+      );
     },
   },
   render() {
     return  <div style="height: 300px; width: 100%;">
-      <bk-table
+      <BkTable
         columns={ this.columns }
         data={ this.tableData }
       />

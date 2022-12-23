@@ -24,14 +24,23 @@
 * IN THE SOFTWARE.
 */
 import { PropType } from 'vue';
+import { toType } from 'vue-types';
 
 import { PropTypes } from '@bkui-vue/shared';
+enum FitEnum {
+  FILL = 'fill',
+  CONTAIN = 'contain',
+  COVER = 'cover',
+  NONE = 'none',
+  SCALE_DOWN = 'scale-down',
+
+}
 
 export const propsImage = {
   src: PropTypes.string.def(''),
   fallback: PropTypes.string.def(''),
   placeholder: PropTypes.any,
-  fit: PropTypes.commonType(['fill', 'contain', 'cover', 'none', 'scale-down'], 'fit').def('fit'),
+  fit: toType<`${FitEnum}`>('fit', {}).def(FitEnum.FILL),
   lazy: PropTypes.bool,
   urlList: PropTypes.array.def([]),
   isShowPreviewTitle: PropTypes.bool.def(true),

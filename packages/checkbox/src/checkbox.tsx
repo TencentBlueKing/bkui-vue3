@@ -33,6 +33,7 @@ import {
   classes,
   PropTypes,
   resolveClassName,
+  SizeEnum,
 } from '@bkui-vue/shared';
 
 import {
@@ -49,7 +50,7 @@ export const checkboxProps = {
   checked: PropTypes.bool.def(false),
   indeterminate: PropTypes.bool,
   beforeChange: PropTypes.func,
-  size: PropTypes.size().def('large'),
+  size: PropTypes.size().def(SizeEnum.LARGE),
 };
 
 export type CheckboxProps = Readonly<ExtractPropTypes<typeof checkboxProps>>;

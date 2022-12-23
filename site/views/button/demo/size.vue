@@ -12,7 +12,7 @@
         class="ml10"
         size="small"
       >
-        <plus />
+        <plus class="f20" />
         新增
       </bk-button>
       <bk-button
@@ -20,7 +20,7 @@
         size="small"
       >
         下拉
-        <angle-down />
+        <angle-down class="f20" />
       </bk-button>
       <bk-button
         class="ml10"
@@ -37,7 +37,7 @@
         class="ml10"
         size="small"
       >
-        <bk />
+        <bk class="f20" />
         成功
       </bk-button>
     </div>
@@ -50,12 +50,12 @@
         基础按钮
       </bk-button>
       <bk-button class="ml10">
-        <plus />
+        <plus class="f22" />
         新增
       </bk-button>
       <bk-button class="ml10">
         下拉
-        <angle-down />
+        <angle-down class="f22" />
       </bk-button>
       <bk-button
         class="ml10"
@@ -67,7 +67,7 @@
         loading
       />
       <bk-button class="ml10">
-        <bk />
+        <bk class="f22" />
         成功
       </bk-button>
     </div>
@@ -84,7 +84,7 @@
         class="ml10"
         size="large"
       >
-        <plus />
+        <plus class="f24" />
         新增
       </bk-button>
       <bk-button
@@ -92,7 +92,7 @@
         size="large"
       >
         下拉
-        <angle-down />
+        <angle-down class="f24" />
       </bk-button>
       <bk-button
         class="ml10"
@@ -109,7 +109,7 @@
         class="ml10"
         size="large"
       >
-        <bk />
+        <bk class="f24" />
         成功
       </bk-button>
     </div>
@@ -123,5 +123,17 @@
 <style lang="postcss">
   .mb10 {
     margin-bottom: 10px;
+  }
+
+  .f20 {
+    font-size: 20px;
+  }
+
+  .f22 {
+    font-size: 22px;
+  }
+
+  .f24 {
+    font-size: 24px;
   }
 </style>

@@ -25,16 +25,32 @@
 */
 
 import { computed, defineComponent } from 'vue';
+import { toType } from 'vue-types';
 
 import { Error } from '@bkui-vue/icon';
 import { classes, PropTypes } from '@bkui-vue/shared';
 
+enum TagThemeEnum {
+  SUCCESS = 'success',
+  INFO = 'info',
+  WARNING = 'warning',
+  DANGER = 'danger',
+}
+
+enum TagStrokeType {
+  UNKNOWN = '',
+  FILLED = 'filled',
+  STROKE = 'stroke',
+}
+
+export const TagThemeType = toType<`${TagThemeEnum}`>('tagTheme', {});
+
 export default defineComponent({
   name: 'Tag',
   props: {
-    theme: PropTypes.theme(['success', 'info', 'warning', 'danger']).def(''),
+    theme: TagThemeType,
     closable: PropTypes.bool.def(false),
-    type: PropTypes.commonType(['', 'filled', 'stroke']).def(''),
+    type: toType<`${TagStrokeType}`>('tagStorkeType', {}).def(TagStrokeType.UNKNOWN),
     checkable: PropTypes.bool.def(false),
     checked: PropTypes.bool.def(false),
     radius: PropTypes.string.def('2px'),

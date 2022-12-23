@@ -35,9 +35,11 @@ import {
 import { Close, DownSmall, Eye, Search, Unvisible } from '@bkui-vue/icon';
 import {
   classes,
+  InputBehaviorType,
   PropTypes,
   useFormItem,
 } from '@bkui-vue/shared';
+
 
 export const inputType = {
   type: PropTypes.string.def('text'),
@@ -53,10 +55,10 @@ export const inputType = {
   max: PropTypes.integer,
   min: PropTypes.integer,
   maxlength: PropTypes.integer,
-  behavior: PropTypes.commonType(['simplicity', 'normal']).def('normal'),
+  behavior: InputBehaviorType,
   showWordLimit: PropTypes.bool,
   showControl: PropTypes.bool.def(true),
-  showClearOnlyHover: PropTypes.bool.def(false),
+  showClearOnlyHover: PropTypes.bool.def(true),
   precision: PropTypes.number.def(0).validate(val => val >= 0 && val < 20),
   modelValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   size: PropTypes.size(),

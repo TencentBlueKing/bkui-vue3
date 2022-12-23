@@ -1,3 +1,5 @@
+import { toType } from 'vue-types';
+
 /*
  * Tencent is pleased to support the open source community by making
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
@@ -23,7 +25,13 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
-import { PropTypes } from '@bkui-vue/shared';
+import { dialogTypeUnion, PropTypes, renderDirectiveType } from '@bkui-vue/shared';
+enum ModalSizeEnum {
+  NORMAL = 'normal',
+  SMALL = 'small',
+  MEDIUM = 'medium',
+  LARGE = 'large',
+}
 export const propsMixin = {
   // 是否显示弹框
   isShow: PropTypes.bool.def(false),
@@ -42,7 +50,7 @@ export const propsMixin = {
   // 是否全屏
   fullscreen: PropTypes.bool.def(false),
   // 弹框尺寸
-  size: PropTypes.commonType(['normal', 'small', 'medium', 'large'], 'size').def(),
+  size: toType<`${ModalSizeEnum}`>('size', {}),
   // 是否可拖拽
   draggable: PropTypes.bool.def(true),
   // 是否允许点击遮罩关闭弹窗
@@ -60,13 +68,13 @@ export const propsMixin = {
   // 动画类型
   animateType: PropTypes.string.def('slide'),
   // 弹框的渲染方式
-  renderDirective: PropTypes.commonType(['show', 'if'], 'renderDirective').def('show'),
+  renderDirective: renderDirectiveType,
   // 关闭前回调
   beforeClose: PropTypes.custom(() => true),
   // 对话框类型
-  dialogType: PropTypes.commonType(['show', 'operation', 'confirm', 'process'], 'dialogType').def('operation'),
+  dialogType: dialogTypeUnion,
   // 是否允许多个弹框同时存在
   multiInstance: PropTypes.bool.def(true),
   // info-box
-  infoType: PropTypes.commonType(['success', 'warning', 'danger', 'loading'], 'infoType').def(),
+  infoType: PropTypes.theme(),
 };

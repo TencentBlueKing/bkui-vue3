@@ -25,14 +25,21 @@
 */
 
 import { computed, defineComponent, onMounted, onUnmounted, ref, Transition, watch } from 'vue';
+import { toType } from 'vue-types';
 
 import { Close, Error, Info, Success, Warn } from '@bkui-vue/icon';
 import { bkZIndexManager, isElement, PropTypes } from '@bkui-vue/shared';
 
+enum MessageThemeEnum {
+  PRIMARY = 'primary',
+  WARNING = 'warning',
+  SUCCESS = 'success',
+  ERROR = 'error',
+}
 const messageProps = {
   id: PropTypes.string.def(''),
   message: PropTypes.string.def(''),
-  theme: PropTypes.theme(['primary', 'warning', 'success', 'error']).def('primary'),
+  theme: toType<`${MessageThemeEnum}`>('messageTheme', {}).def(MessageThemeEnum.PRIMARY),
   delay: PropTypes.number.def(3000),
   dismissable: PropTypes.bool.def(true),
   offsetY: PropTypes.number.def(30),

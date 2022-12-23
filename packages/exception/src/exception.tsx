@@ -26,6 +26,7 @@
 
 import _ from 'lodash';
 import { defineComponent } from 'vue';
+import { toType } from 'vue-types';
 
 import {
   classes,
@@ -41,13 +42,26 @@ import login from './images/login.svg';
 import searchEmpty from './images/search-empty.svg';
 import { TypesMapType } from './typings';
 
+enum ExceptionEnum {
+  CODE_404 = '404',
+  CODE_403 = '403',
+  CODE_500 = '500',
+  BUILDING = 'building',
+  EMPTY = 'empty',
+  SEARCH = 'search-empty',
+  LOGIN = 'login',
+}
+enum SceneEnum {
+  PAGE = 'page',
+  PART = 'part',
+}
 export default defineComponent({
   name: 'Exception',
   props: {
     // 类型
-    type: PropTypes.commonType(['404', '403', '500', 'building', 'empty', 'search-empty', 'login'], 'type').def('404'),
+    type: toType<`${ExceptionEnum}`>('type', {}).def(ExceptionEnum.CODE_404),
     // 场景
-    scene: PropTypes.commonType(['page', 'part'], 'scene').def('page'),
+    scene: toType<`${SceneEnum}`>('scene', {}).def(SceneEnum.PAGE),
     title: PropTypes.string,
     description: PropTypes.string,
   },

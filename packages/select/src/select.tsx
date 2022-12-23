@@ -45,9 +45,12 @@ import Loading from '@bkui-vue/loading';
 import BKPopover from '@bkui-vue/popover';
 import {
   classes,
+  InputBehaviorType,
   off,
   on,
   PropTypes,
+  SizeEnum,
+  TagThemeType,
   useFormItem } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
@@ -72,7 +75,7 @@ export default defineComponent({
     modelValue: PropTypes.any,
     multiple: PropTypes.bool.def(false),
     disabled: PropTypes.bool.def(false),
-    size: PropTypes.size().def('default'),
+    size: PropTypes.size().def(SizeEnum.DEFAULT),
     clearable: PropTypes.bool.def(true),
     loading: PropTypes.bool.def(false),
     filterable: PropTypes.bool.def(false), // 是否支持搜索
@@ -82,8 +85,8 @@ export default defineComponent({
     popoverMinWidth: PropTypes.number.def(0), // popover最小宽度
     showOnInit: PropTypes.bool.def(false), // 是否默认显示popover
     multipleMode: PropTypes.oneOf(['default', 'tag']).def('default'), // 多选展示方式
-    tagTheme: PropTypes.theme(['success', 'info', 'warning', 'danger']).def(''),
-    behavior: PropTypes.oneOf(['normal', 'simplicity']).def('normal'), // 输入框模式
+    tagTheme: TagThemeType,
+    behavior: InputBehaviorType, // 输入框模式
     collapseTags: PropTypes.bool.def(false), // 当以标签形式显示选择结果时，是否合并溢出的结果以数字显示
     autoHeight: PropTypes.bool.def(true), // collapseTags模式下，聚焦时自动展开所有Tag
     noDataText: PropTypes.string.def('无数据'),
