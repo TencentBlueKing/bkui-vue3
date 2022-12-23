@@ -28,22 +28,13 @@ import { computed, defineComponent } from 'vue';
 import { toType } from 'vue-types';
 
 import { Error } from '@bkui-vue/icon';
-import { classes, PropTypes } from '@bkui-vue/shared';
-
-enum TagThemeEnum {
-  SUCCESS = 'success',
-  INFO = 'info',
-  WARNING = 'warning',
-  DANGER = 'danger',
-}
+import { classes, PropTypes, TagThemeType } from '@bkui-vue/shared';
 
 enum TagStrokeType {
   UNKNOWN = '',
   FILLED = 'filled',
   STROKE = 'stroke',
 }
-
-export const TagThemeType = toType<`${TagThemeEnum}`>('tagTheme', {});
 
 export default defineComponent({
   name: 'Tag',
