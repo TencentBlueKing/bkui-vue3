@@ -26,9 +26,8 @@
 import { Column } from 'table/src/props';
 import { defineComponent } from 'vue';
 
-import BkTable from '@bkui-vue/table';
-
 import { DATA_COLUMNS, DATA_TABLE } from './options';
+
 export default defineComponent({
   components: {},
   data() {
@@ -58,7 +57,7 @@ export default defineComponent({
   },
   render() {
     return  <div style="height: 300px; width: 100%;">
-      <BkTable
+      <bk-table
         columns={ this.columns }
         data={ this.tableData }
       />
