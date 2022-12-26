@@ -37,7 +37,7 @@
         class="ml10"
         size="small"
       >
-        <bk class="f20" />
+        <bk class="f20 mr6" />
         成功
       </bk-button>
     </div>
@@ -67,7 +67,7 @@
         loading
       />
       <bk-button class="ml10">
-        <bk class="f22" />
+        <bk class="f22 mr6" />
         成功
       </bk-button>
     </div>
@@ -109,7 +109,7 @@
         class="ml10"
         size="large"
       >
-        <bk class="f24" />
+        <bk class="f24 mr6" />
         成功
       </bk-button>
     </div>
@@ -123,6 +123,10 @@
 <style lang="postcss">
   .mb10 {
     margin-bottom: 10px;
+  }
+
+  .mr6 {
+    margin-right: 6px;
   }
 
   .f20 {
