@@ -45,7 +45,7 @@ enum OverflowModeEnum {
   AUTO = 'auto'
 }
 
-const overflowModeType = toType<`${OverflowModeEnum}`>('showOverflowTooltipMode', {
+export const overflowModeType = toType<`${OverflowModeEnum}`>('showOverflowTooltipMode', {
   default: OverflowModeEnum.AUTO,
 });
 
