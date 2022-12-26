@@ -25,7 +25,7 @@
 */
 import { defineComponent } from 'vue';
 
-import { classes, PropTypes } from '@bkui-vue/shared';
+import { classes, PropTypes, ThemeEnum } from '@bkui-vue/shared';
 
 import Circle from './circle';
 import Line from './line';
@@ -40,7 +40,7 @@ export default defineComponent({
       .validate((value: any) => ['line', 'circle', 'dashboard'].includes(value))
       .def('line'),
     percent: PropTypes.number.def(0),
-    theme: PropTypes.theme().def('primary'),
+    theme: PropTypes.theme().def(ThemeEnum.PRIMARY),
     size: PropTypes.size(),
     width: PropTypes.number.def(126),
     strokeWidth: PropTypes.number,

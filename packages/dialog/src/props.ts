@@ -23,8 +23,11 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+
 import { propsMixin } from '@bkui-vue/modal';
-import { PropTypes } from '@bkui-vue/shared';
+import { alignType, PropTypes } from '@bkui-vue/shared';
+
+import { AlignEnum, dialogTypeUnion, ThemeEnum } from './../../shared/src/vue-types';
 
 const props = {
   ...propsMixin,
@@ -44,13 +47,13 @@ const props = {
   // 弹框的标题
   title: PropTypes.string.def('title'),
   // 显示 header 的位置
-  headerAlign: PropTypes.commonType(['left', 'center', 'right'], 'headerAlign').def('left'),
+  headerAlign: alignType,
   // 显示 footer 的位置
-  footerAlign: PropTypes.commonType(['left', 'center', 'right'], 'footerAlign').def('right'),
+  footerAlign: alignType.def(AlignEnum.RIGHT),
   // 颜色 按钮类型
-  theme: PropTypes.commonType(['primary', 'warning', 'success', 'danger'], 'theme').def('primary'),
+  theme: PropTypes.theme().def(ThemeEnum.PRIMARY),
   // 对话框类型
-  dialogType: PropTypes.commonType(['show', 'operation', 'confirm', 'process'], 'dialogType').def('operation'),
+  dialogType: dialogTypeUnion,
   // 按钮loading
   isLoading: PropTypes.bool.def(false),
 };

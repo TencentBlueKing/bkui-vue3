@@ -33,7 +33,7 @@ import {
 export default defineComponent({
   name: 'Switcher',
   props: {
-    theme: PropTypes.theme().def(''),
+    theme: PropTypes.theme(),
     size: PropTypes.size(),
     disabled: PropTypes.bool,
     showText: PropTypes.bool,

@@ -59,11 +59,17 @@ const bkIcon: FunctionalComponent<IBkIconProps> = (props, context) => {
     ...restProps
   } = { ...context.attrs, ...props };
   const rootAttrs = `width: ${width}; height: ${height}; fill: ${fill}`;
+  const iconBoxStyle = {
+    height: '1em',
+    width: '1em',
+    display: 'inline-flex',
+    'line-height': '1em',
+    'align-items': 'center',
+    'justify-content': 'center',
+  };
   return (
-    <span {...restProps}>
-      {
-        generate(data, name, rootAttrs)
-      }
+    <span style={iconBoxStyle} {...restProps} >
+      {generate(data, name, rootAttrs)}
     </span>
   );
 };

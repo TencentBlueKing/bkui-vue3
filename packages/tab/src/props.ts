@@ -24,8 +24,30 @@
 * IN THE SOFTWARE.
 */
 import { PropType, VNode } from 'vue';
+import { toType } from 'vue-types';
 
-import { PropTypes } from '@bkui-vue/shared';
+import { PropTypes, renderDirectiveType } from '@bkui-vue/shared';
+
+enum TabTypeEnum {
+  CARD = 'card',
+  BORDER_CARD = 'border-card',
+  UNBORDER_CARD = 'unborder-card',
+}
+
+enum PositionEnum {
+  LEFT = 'left',
+  RIGHT = 'right',
+  TOP = 'top',
+}
+const tabPositionType = toType<`${PositionEnum}`>('position', {}).def(PositionEnum.TOP);
+
+enum SortTypeEnum {
+  REPLACE = 'replace',
+  INSERT = 'insert',
+  TOP = 'top',
+}
+const sortTypeUnion = toType<`${SortTypeEnum}`>('sortType', {}).def(SortTypeEnum.REPLACE);
+
 export const tabNavEventProps = {
   tabAdd: {
     type: Function,
@@ -75,12 +97,12 @@ export const tabEventProps = {
 };
 export const tabProps = {
   active: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(''),
-  type: PropTypes.commonType(['card', 'border-card', 'unborder-card'], 'type').def('border-card'),
-  tabPosition: PropTypes.commonType(['left', 'right', 'top'], 'position').def('top'),
+  type: toType<`${TabTypeEnum}`>('type', {}).def(TabTypeEnum.BORDER_CARD),
+  tabPosition: tabPositionType,
   closable: Boolean,
   addable: Boolean,
   sortable: Boolean,
-  sortType: PropTypes.commonType(['replace', 'insert', 'top'], 'sortType').def('replace'),
+  sortType: sortTypeUnion,
   labelHeight: PropTypes.number.def(50),
   scrollStep: PropTypes.number.def(200),
   extCls: PropTypes.string.def(''),
@@ -97,11 +119,11 @@ export const tabNavProps = {
     type: Array as PropType<VNode[]>,
     default: () => [],
   },
-  tabPosition: PropTypes.commonType(['left', 'right', 'top'], 'position').def('top'),
+  tabPosition: tabPositionType,
   closable: Boolean,
   addable: Boolean,
   sortable: Boolean,
-  sortType: PropTypes.commonType(['replace', 'insert', 'top'], 'sortType').def('replace'),
+  sortType: sortTypeUnion,
   labelHeight: PropTypes.number.def(50),
   scrollStep: PropTypes.number.def(200),
   validateActive: PropTypes.bool.def(true),
@@ -117,6 +139,6 @@ export const tabPanelProps = {
   visible: PropTypes.bool.def(true),
   disabled: PropTypes.bool,
   sortable: PropTypes.bool,
-  renderDirective: PropTypes.commonType(['if', 'show'], 'render').def('show'),
+  renderDirective: renderDirectiveType,
   panel: PropTypes.string || PropTypes.func,
 };
