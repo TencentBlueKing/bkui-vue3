@@ -4,7 +4,7 @@
       :theme="'primary'"
       @click="() => exampleSetting.dialog.isShow = true"
     >
-      primary
+      primary-1
     </bk-button>
     <bk-dialog
       :is-show="exampleSetting.dialog.isShow"
@@ -16,22 +16,26 @@
     >
       <div>primary 主题，点击遮罩不会关闭弹框，esc 按键会关闭弹框</div>
       <bk-button @click="() => exampleSetting.dialog.isShow2 = true">
-        Show
+        Show-2
       </bk-button>
       <bk-dialog
-        :is-show="exampleSetting.dialog.isShow"
-        :title="'描述'"
+        :is-show="exampleSetting.dialog.isShow2"
+        :title="'描述-嵌套2'"
         :theme="'primary'"
         quick-close
+        @closed="() => exampleSetting.dialog.isShow2 = false"
+        @confirm="() => exampleSetting.dialog.isShow2 = false"
       >
         <bk-button @click="() => exampleSetting.dialog.isShow3 = true">
-          Show
+          Show-3
         </bk-button>
         <bk-dialog
           :is-show="exampleSetting.dialog.isShow3"
-          :title="'描述'"
+          :title="'描述-嵌套3'"
           :theme="'primary'"
           quick-close
+          @closed="() => exampleSetting.dialog.isShow3 = false"
+          @confirm="() => exampleSetting.dialog.isShow3 = false"
         />
       </bk-dialog>
     </bk-dialog>
