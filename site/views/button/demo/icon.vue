@@ -1,7 +1,7 @@
 <template>
   <div class="basic-button-list">
     <bk-button>
-      <plus />
+      <plus class="f22" />
       新增
     </bk-button>
     <bk-button
@@ -9,24 +9,25 @@
       class="ml10"
     >
       下拉
-      <angle-down />
+      <angle-down class="f22" />
     </bk-button>
     <bk-button
       class="ml10"
     >
-      <search />
+      <search class="f22" />
     </bk-button>
     <bk-button
       class="ml10"
       theme="primary"
       circle
     >
-      <search />
+      <search class="f22" />
     </bk-button>
     <bk-button
       class="ml10"
     >
       <loading
+        class="mr6"
         loading
         size="mini"
         mode="spin"
@@ -64,5 +65,13 @@
 <style lang="postcss">
   .ml10 {
     margin-left: 10px;
+  }
+
+  .mr6 {
+    margin-right: 6px;
+  }
+
+  .f22 {
+    font-size: 22px;
   }
 </style>

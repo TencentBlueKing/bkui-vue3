@@ -25,18 +25,24 @@
  */
 
 import { defineComponent, ExtractPropTypes, onMounted, ref, watch } from 'vue';
+import { toType } from 'vue-types';
 
 import { Circle, Done, Error } from '@bkui-vue/icon';
-import { classes, PropTypes } from '@bkui-vue/shared';
+import { classes, directionType, lineStyleType, PropTypes, ThemeEnum } from '@bkui-vue/shared';
 
+enum StatusEnum {
+  UNKNOWN = '',
+  ERROR = 'error',
+  LOADING = 'loading',
+}
 const stepsProps = {
-  theme: PropTypes.theme().def('primary'),
+  theme: PropTypes.theme().def(ThemeEnum.PRIMARY),
   size: PropTypes.size(),
   curStep: PropTypes.number.def(1),
   controllable: PropTypes.bool.def(false),
-  direction: PropTypes.commonType(['horizontal', 'vertical'], 'direction').def('horizontal'),
-  status: PropTypes.commonType(['', 'error', 'loading'], 'status').def(''),
-  lineType: PropTypes.commonType(['dashed', 'solid'], 'lineType').def('dashed'),
+  direction: directionType,
+  status: toType<`${StatusEnum}`>('status', {}).def(StatusEnum.UNKNOWN),
+  lineType: lineStyleType,
   text: PropTypes.bool,
   extCls: PropTypes.string,
   steps: PropTypes.array.def([]),
