@@ -91,7 +91,7 @@ export default defineComponent({
           // this.bkPopIndexManager = new BKPopIndexManager();
           bkPopIndexManager.onMaskClick((_e: MouseEvent) => {
             this.handleClickOutSide();
-          });
+          }, this.$el);
           this.$nextTick(() => {
             const hideMaskStyle = {
               'background-color': 'rgba(0,0,0,0)',
