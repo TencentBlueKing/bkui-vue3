@@ -67,18 +67,22 @@ enum RenderDirectiveEnum {
   SHOW = 'show',
 }
 
-export const renderDirectiveType = toType<`${RenderDirectiveEnum}`>('renderDirective', {
-  default: RenderDirectiveEnum.SHOW,
-});
+export function renderDirectiveType() {
+  return toType<`${RenderDirectiveEnum}`>('renderDirective', {
+    default: RenderDirectiveEnum.SHOW,
+  });
+};
 
 export enum AlignEnum {
   LEFT = 'left',
   CENTER = 'center',
   RIGHT = 'right',
 }
-export const alignType = toType<`${AlignEnum}`>('align', {
-  default: AlignEnum.LEFT,
-});
+export function alignType() {
+  return toType<`${AlignEnum}`>('align', {
+    default: AlignEnum.LEFT,
+  }).def(AlignEnum.LEFT);
+};
 
 export enum ThemeEnum {
   PRIMARY = 'primary',
@@ -106,7 +110,9 @@ export enum PlacementEnum {
   LEFT_END = 'left-end',
 }
 
-export const placementType = toType<`${PlacementEnum}`>('placement', {}).def(PlacementEnum.BOTTOM);
+export function placementType() {
+  return toType<`${PlacementEnum}`>('placement', {}).def(PlacementEnum.BOTTOM);
+};
 
 /** 弹层触发选项  */
 export enum TriggerEnum {
@@ -114,7 +120,9 @@ export enum TriggerEnum {
   CLICK = 'click',
   MANUAL = 'manual'
 }
-export const triggerType = toType<`${TriggerEnum}`>('trigger', {}).def(TriggerEnum.HOVER);
+export function triggerType() {
+  return toType<`${TriggerEnum}`>('trigger', {}).def(TriggerEnum.HOVER);
+};
 
 export enum DialogTypeEnum {
   SHOW = 'show',
@@ -122,21 +130,27 @@ export enum DialogTypeEnum {
   CONFIRM = 'confirm',
   PROCESS = 'process',
 }
-export const dialogTypeUnion = toType<`${DialogTypeEnum}`>('dialogType', {
-  default: DialogTypeEnum.OPERATION,
-});
+export function dialogTypeUnion() {
+  return toType<`${DialogTypeEnum}`>('dialogType', {
+    default: DialogTypeEnum.OPERATION,
+  });
+}
 
 export enum DirectionEnum {
   HORIZONTAL = 'horizontal',
   VERTICAL = 'vertical'
 }
-export const directionType = toType<`${DirectionEnum}`>('direction', {}).def(DirectionEnum.HORIZONTAL);
+export function directionType() {
+  return toType<`${DirectionEnum}`>('direction', {}).def(DirectionEnum.HORIZONTAL);
+}
 
 export enum LineStyleEnum {
   DASHED = 'dashed',
   SOLID = 'solid'
 }
-export const lineStyleType = toType<`${LineStyleEnum}`>('lineType', {}).def(LineStyleEnum.DASHED);
+export function lineStyleType() {
+  return toType<`${LineStyleEnum}`>('lineType', {}).def(LineStyleEnum.DASHED);
+};
 
 export enum TagThemeEnum {
   SUCCESS = 'success',
@@ -145,13 +159,17 @@ export enum TagThemeEnum {
   DANGER = 'danger',
 }
 
-export const TagThemeType = toType<`${TagThemeEnum}`>('tagTheme', {});
+export function TagThemeType() {
+  return toType<`${TagThemeEnum}`>('tagTheme', {}).def();
+}
 
 export enum InputBehaviorEnum {
   SIMPLICITY = 'simplicity',
   NORMAL = 'normal'
 }
-export const InputBehaviorType = toType<`${InputBehaviorEnum}`>('behavior', {}).def(InputBehaviorEnum.NORMAL);
+export function InputBehaviorType() {
+  return toType<`${InputBehaviorEnum}`>('behavior', {}).def(InputBehaviorEnum.NORMAL);
+};
 
 export class PropTypes extends propTypesNS {
   static size() {

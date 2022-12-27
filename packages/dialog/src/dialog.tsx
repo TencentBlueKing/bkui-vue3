@@ -40,7 +40,7 @@ export default defineComponent({
   },
   props,
   emits: ['closed', 'update:isShow', 'confirm', 'prev', 'next', 'value-change'],
-  setup(props: any, { emit }) {
+  setup(props, { emit }) {
     const data = reactive({
       positionX: 0,
       positionY: 0,
@@ -49,7 +49,6 @@ export default defineComponent({
         left: '',
       },
     });
-
     const isModalShow = ref(props.isShow);
     onMounted(() => {
       if (props.escClose) {

@@ -28,10 +28,10 @@ import { AlignEnum, PropTypes } from '@bkui-vue/shared';
 import { alignType, directionType, lineStyleType } from './../../shared/src/vue-types';
 
 export const dividerProps = {
-  direction: directionType,
-  align: alignType.def(AlignEnum.CENTER),
+  direction: directionType(),
+  align: alignType().def(AlignEnum.CENTER),
   color: PropTypes.string.def('#dde4eb'),
   width: PropTypes.number.def(1),
-  type: lineStyleType,
+  type: lineStyleType(),
 };
 
