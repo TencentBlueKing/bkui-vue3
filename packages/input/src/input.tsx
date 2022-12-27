@@ -55,7 +55,7 @@ export const inputType = {
   max: PropTypes.integer,
   min: PropTypes.integer,
   maxlength: PropTypes.integer,
-  behavior: InputBehaviorType,
+  behavior: InputBehaviorType(),
   showWordLimit: PropTypes.bool,
   showControl: PropTypes.bool.def(true),
   showClearOnlyHover: PropTypes.bool.def(true),

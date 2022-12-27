@@ -35,7 +35,7 @@ import { classes, PropTypes, TagThemeEnum, TagThemeType } from '@bkui-vue/shared
 export default defineComponent({
   name: 'Alert',
   props: {
-    theme: TagThemeType.def(TagThemeEnum.INFO),
+    theme: TagThemeType().def(TagThemeEnum.INFO),
     size: PropTypes.string,
     title: PropTypes.string,
     closable: PropTypes.bool.def(false),
