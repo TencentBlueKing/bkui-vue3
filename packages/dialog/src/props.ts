@@ -25,9 +25,7 @@
 */
 
 import { propsMixin } from '@bkui-vue/modal';
-import { alignType, PropTypes } from '@bkui-vue/shared';
-
-import { AlignEnum, dialogTypeUnion, ThemeEnum } from './../../shared/src/vue-types';
+import { AlignEnum, alignType, dialogTypeUnion, PropTypes, ThemeEnum } from '@bkui-vue/shared';
 
 const props = {
   ...propsMixin,
@@ -47,13 +45,13 @@ const props = {
   // 弹框的标题
   title: PropTypes.string.def('title'),
   // 显示 header 的位置
-  headerAlign: alignType,
+  headerAlign: alignType().def(AlignEnum.LEFT),
   // 显示 footer 的位置
-  footerAlign: alignType.def(AlignEnum.RIGHT),
+  footerAlign: alignType().def(AlignEnum.RIGHT),
   // 颜色 按钮类型
   theme: PropTypes.theme().def(ThemeEnum.PRIMARY),
   // 对话框类型
-  dialogType: dialogTypeUnion,
+  dialogType: dialogTypeUnion(),
   // 按钮loading
   isLoading: PropTypes.bool.def(false),
 };
