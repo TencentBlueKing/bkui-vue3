@@ -32,6 +32,12 @@ const EventProps = {
   onAfterHidden: Function,
   onAfterShow: Function,
 };
+type IAxesOffsets = {
+  mainAxis?: number;
+  crossAxis?: number;
+  alignmentAxis?: number | null;
+};
+
 export const PopoverProps = {
   isShow: PropTypes.bool.def(false),
   always: PropTypes.bool.def(false),
@@ -60,7 +66,7 @@ export const PopoverProps = {
 
   padding: PropTypes.number.def(5),
 
-  offset: PropTypes.number.def(6),
+  offset: PropTypes.oneOfType([PropTypes.number, PropTypes.shape<IAxesOffsets>({})]).def(6),
 
   /**
    * 弹出内容绑定元素
