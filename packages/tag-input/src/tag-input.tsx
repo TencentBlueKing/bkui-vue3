@@ -76,14 +76,12 @@ export default defineComponent({
     const popoverProps = reactive({
       isShow: false,
       width: 190,
-      modifiers: [{
-        name: 'offset',
-        options: {
-          offset: [0, 4],
-        },
-      }],
+      offset: {
+        mainAxis: 4,
+        crossAxis: 0,
+        // alignmentAxis: 50,
+      },
       ...props.popoverProps,
-
     });
 
     // 分页处理
@@ -95,7 +93,6 @@ export default defineComponent({
     const tagListRef = ref(null);
     const tagInputItemRef = ref(null);
     const selectorListRef = ref(null);
-    const popoverRef = ref(null);
     const timer: Ref<ReturnType<typeof setTimeout>> = ref(null);
 
     // 是否展示tag close
@@ -205,14 +202,7 @@ export default defineComponent({
 
     const changePopoverOffset = () => {
       // 修改popover offset
-      const left = isSingleSelect.value ? 0 : tagInputItemRef.value?.offsetLeft;
-      popoverProps.modifiers = [{
-        name: 'offset',
-        options: {
-          offset: [left, 4],
-        },
-      }];
-      popoverRef.value?.update();
+      popoverProps.offset.crossAxis = isSingleSelect.value ? 0 : tagInputItemRef.value?.offsetLeft;
     };
     const scrollHandler = () => {
       if (pageState.isPageLoading || selectorListRef.value.scrollTop === 0) {
@@ -882,7 +872,6 @@ export default defineComponent({
       tagListRef,
       tagInputItemRef,
       selectorListRef,
-      popoverRef,
       triggerClass,
       overflowTagIndex,
       localCollapseTags,
@@ -908,11 +897,9 @@ export default defineComponent({
         onMouseenter={() => this.isHover = true}
         onMouseleave={() => this.isHover = false}>
         <BKPopover
-          ref="popoverRef"
-          theme="light"
+          theme="light bk-tag-input-popover-content"
           trigger="manual"
           placement="bottom-start"
-          content-cls="bk-tag-input-popover-content"
           arrow={false}
           {...this.popoverProps}
         >
