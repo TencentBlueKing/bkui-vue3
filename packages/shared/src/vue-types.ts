@@ -145,7 +145,7 @@ export enum TagThemeEnum {
   DANGER = 'danger',
 }
 
-export const TagThemeType = toType<`${TagThemeEnum}`>('tagTheme', {});
+export const TagThemeType = toType<`${TagThemeEnum}`>('tagTheme', {}).def();
 
 export enum InputBehaviorEnum {
   SIMPLICITY = 'simplicity',
