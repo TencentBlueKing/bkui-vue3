@@ -62,7 +62,7 @@ export enum Placements {
   Bottom = 'bottom'
 }
 
-enum RenderDirectiveEnum {
+export enum RenderDirectiveEnum {
   IF = 'if',
   SHOW = 'show',
 }
