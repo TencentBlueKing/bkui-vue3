@@ -25,10 +25,15 @@
 */
 
 import { ExtractPropTypes, PropType, VNode } from 'vue';
+import { toType } from 'vue-types';
 
 import { PopoverPropTypes } from '@bkui-vue/popover';
 import { PropTypes } from '@bkui-vue/shared';
 
+enum TagInputTriggerEnum {
+  FOCUS ='focus',
+  SEARCH ='search'
+}
 const tagProps = () => ({
   modelValue: PropTypes.arrayOf(PropTypes.string).def([]),
   placeholder: PropTypes.string.def('请输入并按 Enter 结束'),
@@ -39,7 +44,7 @@ const tagProps = () => ({
   displayKey: PropTypes.string.def('name'),
   hasDeleteIcon: PropTypes.bool.def(false),
   clearable: PropTypes.bool.def(true),
-  trigger: PropTypes.commonType(['focus', 'search']).def('search'),
+  trigger: toType<`${TagInputTriggerEnum}`>('treeTriggerType', {}).def(TagInputTriggerEnum.SEARCH),
   searchKey: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]).def('name'),
   useGroup: PropTypes.bool.def(false),
   allowCreate: PropTypes.bool.def(false),

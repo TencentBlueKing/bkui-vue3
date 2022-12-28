@@ -104,7 +104,7 @@ export default defineComponent({
           componentName="fixed-navbar"
           demoName="base-demo"
         >
-            <BaseDemo></BaseDemo>
+          <BaseDemo></BaseDemo>
         </DemoBox>
 
         <PropsBox

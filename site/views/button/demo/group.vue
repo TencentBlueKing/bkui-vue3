@@ -33,7 +33,7 @@
           @click="handleSelected('其他')"
         >
           其他
-          <angle-down />
+          <angle-down class="f20" />
         </bk-button>
       </bk-button-group>
     </div>
@@ -69,7 +69,7 @@
           @click="handleSelected('其他')"
         >
           其他
-          <angle-down />
+          <angle-down class="f22" />
         </bk-button>
       </bk-button-group>
     </div>
@@ -105,7 +105,7 @@
           @click="handleSelected('其他')"
         >
           其他
-          <angle-down />
+          <angle-down class="f24" />
         </bk-button>
       </bk-button-group>
     </div>
@@ -124,5 +124,17 @@
 <style lang="postcss">
   .mb10 {
     margin-bottom: 10px;
+  }
+
+  .f20 {
+    font-size: 20px;
+  }
+
+  .f22 {
+    font-size: 22px;
+  }
+
+  .f24 {
+    font-size: 24px;
   }
 </style>

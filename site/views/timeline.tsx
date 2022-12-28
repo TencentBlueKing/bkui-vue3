@@ -26,7 +26,7 @@
 
 import { defineComponent, reactive } from 'vue';
 
-import { Search } from '@bkui-vue/icon';
+import { Bk } from '@bkui-vue/icon';
 import BkTimeline from '@bkui-vue/timeline';
 
 export default defineComponent({
@@ -62,8 +62,8 @@ export default defineComponent({
         {
           tag: '步骤4',
           content: '<span style="font-size: 12px;">2022-12-15 11:00</span>',
-          type: 'danger',
-          icon: <Search />,
+          // type: 'danger',
+          icon: <Bk></Bk>,
           // border: false,
         },
       ],
@@ -81,8 +81,18 @@ export default defineComponent({
   },
   render() {
     return (
+      // v-slots={{
+      //   icon: () => (
+      //     <>
+      //       <Search></Search>
+      //       <Search></Search>
+      //     </>
+      //   ),
+      // }}
       <div style="height: 400px; margin-left: 40px; margin-top: 40px">
-        <BkTimeline list={this.state.list} style={{ marginBottom: '40px' }} onSelect={this.select}></BkTimeline>
+        <BkTimeline list={this.state.list} style={{ marginBottom: '40px' }} onSelect={this.select}
+        >
+        </BkTimeline>
       </div>
     );
   },

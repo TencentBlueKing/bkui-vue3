@@ -25,7 +25,7 @@
 */
 import { computed, createApp, nextTick, ref } from 'vue';
 
-import Popover from './popover2';
+import Popover from './popover';
 import { PopoverPropTypes } from './props';
 import { isAvailableId } from './utils';
 

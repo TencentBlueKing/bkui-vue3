@@ -1,192 +1,136 @@
+
 /*
- * Tencent is pleased to support the open source community by making
- * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
- *
- * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
- *
- * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
- *
- * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
- *
- * ---------------------------------------------------
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
- * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
- * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
- * the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
- * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
- * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE.
+* Tencent is pleased to support the open source community by making
+* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+*
+* Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+*
+* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+*
+* License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+*
+* ---------------------------------------------------
+* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+* the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+* THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+* IN THE SOFTWARE.
 */
+import { computed, defineComponent, onBeforeUnmount, onMounted, ref, Teleport, toRefs, watch } from 'vue';
 
-import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, ref, SetupContext, toRefs, Transition, watch } from 'vue';
+import { clickoutside } from '@bkui-vue/directives';
 
-import {
-  BKPopover,
-  bkZIndexManager,
-  IBKPopover,
-} from '@bkui-vue/shared';
-import { Placement } from '@popperjs/core';
-
-import { PopoverProps, PopoverPropTypes } from './props';
+import Arrow from './arrow';
+import { EMIT_EVENT_TYPES } from './const';
+import Content from './content';
+import { PopoverProps } from './props';
+import Reference from './reference';
+import Root from './root';
+import usePopoverInit from './use-popover-init';
 
 export default defineComponent({
   name: 'Popover',
+  components: {
+    Content, Arrow, Root,
+  },
+  directives: {
+    clickoutside,
+  },
   props: PopoverProps,
-  emits: ['afterHidden', 'afterShow', 'update:isShow'],
-  setup(props: PopoverPropTypes, ctx: SetupContext) {
-    let isPopInstance = false;
-    let popoverInstance = Object.create(null);
-    const localZIndex = ref(0);
-    const { width, height, theme, trigger, isShow, placement, modifiers, arrow, content } = toRefs(props);
+  emits: EMIT_EVENT_TYPES,
 
-    const reference = ref();
+  setup(props, ctx) {
+    const { content, theme, disableTeleport } = props;
+    const { reference } = toRefs(props);
+    const refDefaultReference = ref();
     const refContent = ref();
-    const compStyle = computed(() => ({
-      width: /^\d+$/.test(String(width.value)) ? `${width.value}px` : width.value,
-      height: /^\d+$/.test(String(height.value)) ? `${height.value}px` : height.value,
-      zIndex: localZIndex.value,
-    }));
+    const refArrow = ref();
+    const refRoot = ref();
 
-    const themeList = ['dark', 'light'];
-    const compTheme = computed(() => {
-      const themes = theme.value.split(/\s+/);
-      themes.sort((a: string, b: string) => Number(themeList.includes(b)) - (Number(themeList.includes(a))));
-      const systemThemes = themes;
-      const customThemes = themes.filter((item: string) => !themeList.includes(item));
-      return { systemThemes, customThemes };
+    const refReference = computed(() => reference.value || refDefaultReference.value);
+
+    const {
+      onMountedFn,
+      onUnmountedFn,
+      handleClickOutside,
+      beforeInstanceUnmount,
+      updateBoundary,
+      initPopInstance,
+      showFn,
+      hideFn,
+      showPopover,
+      hidePopover,
+      updatePopover,
+      stopHide,
+      boundary,
+    } = usePopoverInit(props, ctx, {
+      refReference, refContent, refArrow, refRoot,
     });
 
-    const handlePopShow = (val) => {
-      if (isPopInstance) {
-        if (val) {
-          localZIndex.value = typeof props.zIndex === 'number' ? props.zIndex : bkZIndexManager.getModalNextIndex();
-          popoverInstance.show?.();
-          return;
-        }
+    if (!props.always && !props.disabled) {
+      watch(() => props.isShow, () => {
+        props.isShow ? showPopover() : hidePopover();
+      }, { immediate: true });
+    }
 
-        popoverInstance.hide?.();
+    watch(() => [props.disabled], (val) => {
+      if (val[0]) {
+        beforeInstanceUnmount();
+      } else {
+        initPopInstance();
       }
-    };
-
-    watch(() => props.isShow, (val: any) => {
-      handlePopShow(val);
-    }, { immediate: true });
-
-    const handleClose: any = () => {
-      ctx.emit('update:isShow', false);
-      ctx.emit('afterHidden', false);
-    };
-
-    const handleShown: any = () => {
-      ctx.emit('update:isShow', true);
-      ctx.emit('afterShow', false);
-    };
-
-    const getOptions = () => ({
-      theme: compTheme.value.systemThemes.join(' '),
-      placement: placement.value as Placement,
-      trigger: trigger.value,
-      modifiers: modifiers.value,
-      onFirstUpdate: props.handleFirstUpdate,
-      afterShow: handleShown,
-      afterHidden: handleClose,
-      appendTo: props.boundary,
-      always: props.always,
-      disabled: props.disabled,
-      fixOnBoundary: props.fixOnBoundary,
     });
 
-    const destroyPopInstance = () => {
-      const instance = popoverInstance as IBKPopover;
-      if (instance.constructor) {
-        instance.isShow && instance.hide();
-        instance.destroy();
-        popoverInstance = Object.create(null);
-      }
+    updateBoundary();
+    onMounted(onMountedFn);
+    onBeforeUnmount(onUnmountedFn);
+
+    const transBoundary = computed(() => !disableTeleport);
+    const show = () => {
+      showFn();
     };
 
-    const initPopInstance = () => {
-      popoverInstance = new BKPopover(
-        reference.value as HTMLElement,
-        refContent.value as HTMLElement,
-        getOptions(),
-      );
-      isPopInstance = true;
-
-      // 初次渲染默认isShow 为True时，触发
-      isShow.value && handlePopShow(isShow.value);
+    const hide = () => {
+      hideFn();
     };
 
-    const update = () => {
-      destroyPopInstance();
-      nextTick(initPopInstance);
+    return {
+      boundary,
+      arrow: props.arrow,
+      refDefaultReference,
+      refContent,
+      refArrow,
+      content,
+      theme,
+      transBoundary,
+      handleClickOutside,
+      updatePopover,
+      hide,
+      show,
+      stopHide,
     };
+  },
 
-    ctx.expose({
-      update,
-    });
-
-    onMounted(update);
-    onBeforeUnmount(destroyPopInstance);
-
-    const handleAfterEnter = () => {
-      ctx.emit('after-enter');
-    };
-    const handleAfterLeave = () => {
-      ctx.emit('after-leave');
-    };
-
-    // 兼容多种样式处理规则
-    // class custom-theme
-    const customTheme = computed(() => compTheme.value.customThemes.reduce((out, cur) => ({ [`data-${cur}-theme`]: true, ...out }), {}));
-    const contentClass = computed(() => {
-      const customThemeCls = compTheme.value.customThemes.join(' ');
-      return `bk-popover-content ${customThemeCls} ${props.contentCls}`.trim();
-    });
-
-    /**
-     * 阻止默认事件，避免多层嵌套导致的点击失焦问题
-     * @param e
-     */
-    const handleClickContent = (e: MouseEvent) => {
-      const stopBehaviorFn = (behavior: string) => {
-        if (typeof e[behavior] === 'function') {
-          e[behavior]();
-        }
-      };
-      if (Array.isArray(props.stopBehaviors)) {
-        props.stopBehaviors.forEach(stopBehaviorFn);
-      }
-
-      if (typeof props.stopBehaviors === 'string') {
-        stopBehaviorFn(props.stopBehaviors);
-      }
-    };
-
-    return () => (
-      <div class="bk-popover" data-bk-pop-container>
-        <div ref={ reference } class="bk-popover-reference">
-          {ctx.slots.default?.()}
-        </div>
-        <Transition name={ props.transition }
-          onAfterEnter={ handleAfterEnter }
-          onAfterLeave={ handleAfterLeave }>
-          <div ref={ refContent }
-            class={contentClass.value}
-            style={compStyle.value}
-            {...customTheme.value}
-            onClick={ handleClickContent }>
-            {ctx.slots.content?.() ?? content.value}
-            {arrow.value && <div class="arrow" data-popper-arrow></div>}
-          </div>
-        </Transition>
-      </div>
-    );
+  render() {
+    return <Root ref="refRoot">
+      <Reference ref="refDefaultReference">
+        { this.$slots.default?.() ?? <span></span> }
+      </Reference>
+      <Teleport to={ this.boundary } disabled={ !this.transBoundary }>
+        <Content ref="refContent" data-theme={ this.theme } width={ this.width } height={ this.height }
+        v-clickoutside={this.handleClickOutside}
+        v-slots={ { arrow: () => (this.arrow ? <Arrow ref="refArrow">{ this.$slots.arrow?.() }</Arrow> : '') } }>
+          { this.$slots.content?.() ?? this.content }
+        </Content>
+      </Teleport>
+    </Root>;
   },
 });

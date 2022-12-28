@@ -1,84 +1,35 @@
 @import '@bkui-vue/styles/themes/themes.less';
 
+
 .@{bk-prefix}-popover {
-  display: inline-block;
+  &.@{bk-prefix}-pop2-content {
+    position: absolute;
+    display: none;
+    
+    padding: 7px 14px;
 
-  .bk-popover-reference {
-    display: inline-block;
-  }
-
-  .fade-in-enter-active,
-  .fade-in-linear-leave-active {
-    transition: opacity 200ms linear;
-  }
-
-  .fade-in-enter,
-  .fade-in-leave,
-  .fade-in-leave-active {
-    opacity: 0;
-  }
-}
-
-.bk-popover-content {
-  display: none;
-  padding: 7px 14px;
-  font-size: 12px;
-  color: #fff;
-  background: #26323d;
-  border-radius: 4px;
-  box-sizing: border-box;
-
-  &[data-theme^='dark'] {
+    font-size: 12px;
     color: #fff;
     background: #26323d;
-  }
+    border-radius: 4px;
+    box-sizing: border-box;
 
-  &[data-theme^='light'] {
-    color: #26323d;
-    background-color: #fff;
-    box-shadow: 0 0 6px 0 #dcdee5;
-
-    &[data-show] {
-      box-shadow: 0 0 6px 0 #dcdee5;
-    }
-  }
-
-  &[data-show] {
-    display: block;
-  }
-
-  .arrow {
-    position: absolute;
-    z-index: -1;
-    width: 8px;
-    height: 8px;
-    background: inherit;
-    visibility: hidden;
-
-    &::before {
+    .@{bk-prefix}-pop2-arrow {
       position: absolute;
       width: 8px;
       height: 8px;
-      background: inherit;
-      content: '';
-      visibility: visible;
+      background: #333;
       transform: rotate(45deg);
     }
-  }
 
-  &[data-popper-placement^='top'] > .arrow {
-    bottom: -4px;
-  }
+    &[data-theme^='light'] {
+      color: #26323d;
+      background-color: #fff;
+      box-shadow: 0 0 6px 0 #dcdee5;
 
-  &[data-popper-placement^='bottom'] > .arrow {
-    top: -4px;
-  }
-
-  &[data-popper-placement^='left'] > .arrow {
-    right: -4px;
-  }
-
-  &[data-popper-placement^='right'] > .arrow {
-    left: -4px;
+      .@{bk-prefix}-pop2-arrow {
+        background-color: #fff;
+      }
+    }
   }
 }

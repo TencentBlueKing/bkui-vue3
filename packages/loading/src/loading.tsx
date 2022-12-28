@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
 */
 
-import { computed, defineComponent, ExtractPropTypes, VNode } from 'vue';
+import { computed, defineComponent, ExtractPropTypes, PropType, VNode } from 'vue';
 
 import { classes, PropTypes } from '@bkui-vue/shared';
 
@@ -51,10 +51,18 @@ export const loadingTypes = {
   },
   loading: PropTypes.bool.def(true),
   inline: PropTypes.bool.def(true),
-  theme: PropTypes.theme(['white', 'primary', 'warning', 'success', 'danger']),
+  theme: {
+    type: String as PropType<'white' | 'primary' | 'warning' | 'success' | 'danger'>,
+  },
   title: PropTypes.string.def(''),
-  size: PropTypes.commonType(Object.values(BkLoadingSize)).def(BkLoadingSize.Normal),
-  mode: PropTypes.commonType(Object.values(BkLoadingMode)).def('default'),
+  size: {
+    type: String as PropType<`${BkLoadingSize}`>,
+    default: BkLoadingSize.Normal,
+  },
+  mode: {
+    type: String as PropType<`${BkLoadingMode}`>,
+    default: 'default',
+  },
   opacity: PropTypes.number.def(0.9),
   color: PropTypes.string.def('white'),
   zIndex: PropTypes.number.def(1),

@@ -47,10 +47,10 @@ import PickerDropdown from './base/picker-dropdown';
 // import VueTypes, { toType, toValidableType } from 'vue-types';
 // import { PropTypes } from '@bkui-vue/shared';
 import type { DatePickerPanelType, SelectionModeType } from './interface';
-// import DateRangePanel from './panel/date-range';
 import TimePanel from './panel/time';
+import TimeRangePanel from './panel/time-range';
 import { datePickerProps, timePanelProps, timePickerProps } from './props';
-import { datePickerKey, extractTime, findChildComponents, formatDate, isAllEmptyArr, parseDate } from './utils';
+import { datePickerKey, extractTime, formatDate, isAllEmptyArr, parseDate } from './utils';
 
 export default defineComponent({
   name: 'TimePicker',
@@ -208,8 +208,7 @@ export default defineComponent({
     watch(() => state.visible, (visible) => {
       if (visible) {
         nextTick(() => {
-          const spinners = findChildComponents(proxy, 'TimeSpinner');
-          spinners.forEach(instance => instance.updateScroll());
+          (proxy as any).pickerPanelRef?.timeSpinnerRef?.updateScroll();
         });
       }
     });
@@ -335,7 +334,7 @@ export default defineComponent({
       const newValue = e.target.value;
       const newDate = parseDate(newValue, props.type, props.multiple, props.format);
       const valueToTest = isArrayValue ? newDate : newDate[0];
-      const isDisabled = props.disableDate?.(valueToTest);
+      const isDisabled = props.disabledDate?.(valueToTest);
       const isValidDate = newDate.reduce((valid, date) => valid && date instanceof Date, true);
 
       if (newValue !== oldValue && !isDisabled && isValidDate) {
@@ -361,7 +360,7 @@ export default defineComponent({
     };
 
     const reset = () => {
-      pickerPanelRef?.value?.reset();
+      pickerPanelRef?.value?.reset?.();
     };
 
     const handleBlur = (e) => {
@@ -528,9 +527,6 @@ export default defineComponent({
 
     const triggerRef = ref<HTMLElement>(null);
 
-    console.error(panel);
-    console.error(panel.value);
-
     return {
       ...toRefs(state),
       panel,
@@ -663,23 +659,25 @@ export default defineComponent({
                     )
                     : null
                 }
-                {/* {
+                {
                   this.panel === 'RangeTimePickerPanel'
                     ? (
-                      <DateRangePanel
+                      <TimeRangePanel
                         ref="pickerPanelRef"
-                        type={this.type}
-                        confirm={this.isConfirm}
+                        clearable={this.clearable}
                         shortcuts={this.shortcuts}
-                        modelValue={this.internalValue}
-                        selectionMode={this.selectionMode}
+                        multiple={this.multiple}
+                        shortcutClose={this.shortcutClose}
+                        value={this.internalValue}
                         startDate={this.startDate}
-                        disableDate={this.disableDate}
-                        focusedDate={this.focusedDate}
+                        disabledDate={this.disabledDate}
                         onPick={this.onPick}
+                        onPick-clear={this.handleClear}
                         onPick-success={this.onPickSuccess}
                         v-slots={shortcutsSlot}
-                        v-bind={this.ownPickerProps}
+                        disabledHours={this.ownPickerProps.disabledHours}
+                        disabledMinutes={this.ownPickerProps.disabledMinutes}
+                        disabledSeconds={this.ownPickerProps.disabledSeconds}
                       />
                     )
                     : (
@@ -690,35 +688,19 @@ export default defineComponent({
                         shortcuts={this.shortcuts}
                         multiple={this.multiple}
                         shortcutClose={this.shortcutClose}
-                        modelValue={this.internalValue}
+                        value={this.internalValue}
                         startDate={this.startDate}
-                        disableDate={this.disableDate}
+                        disabledDate={this.disabledDate}
                         onPick={this.onPick}
                         onPick-clear={this.handleClear}
                         onPick-success={this.onPickSuccess}
                         v-slots={shortcutsSlot}
-                        v-bind={this.ownPickerProps}
+                        disabledHours={this.ownPickerProps.disabledHours}
+                        disabledMinutes={this.ownPickerProps.disabledMinutes}
+                        disabledSeconds={this.ownPickerProps.disabledSeconds}
                       />
                     )
-                } */}
-                <TimePanel
-                  ref="pickerPanelRef"
-                  clearable={this.clearable}
-                  confirm={this.isConfirm}
-                  shortcuts={this.shortcuts}
-                  multiple={this.multiple}
-                  shortcutClose={this.shortcutClose}
-                  value={this.internalValue}
-                  startDate={this.startDate}
-                  disableDate={this.disableDate}
-                  onPick={this.onPick}
-                  onPick-clear={this.handleClear}
-                  onPick-success={this.onPickSuccess}
-                  v-slots={shortcutsSlot}
-                  disabledHours={this.ownPickerProps.disabledHours}
-                  disabledMinutes={this.ownPickerProps.disabledMinutes}
-                  disabledSeconds={this.ownPickerProps.disabledSeconds}
-                />
+                }
                 {
                   this.hasFooter
                     ? (

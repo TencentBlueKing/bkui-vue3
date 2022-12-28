@@ -33,7 +33,7 @@ import type { IDatePickerCtx, ITimePickerCtx, PickerTypeType } from './interface
 export const RANGE_SEPARATOR = ' - ';
 
 // export const toDate = (date) => {
-//   let _date = new Date(date);
+//   let _date: any = new Date(date);
 //   // IE patch start (#1422)
 //   if (isNaN(_date.getTime()) && typeof date === 'string') {
 //     _date = date.split('-').map(Number);
@@ -308,15 +308,15 @@ export const timePickerKey: InjectionKey<ITimePickerCtx> = Symbol('time-picker')
  *
  * @return {Array} 组件集合
  */
-export function findChildComponents(context, componentName) {
-  return context.$children.reduce((components, child) => {
-    if (child.$options.name === componentName) {
-      components.push(child);
-    }
-    const foundChilds = findChildComponents(child, componentName);
-    return components.concat(foundChilds);
-  }, []);
-}
+// export function findChildComponents(context, componentName) {
+//   return (context.$children || []).reduce((components, child) => {
+//     if (child.$options.name === componentName) {
+//       components.push(child);
+//     }
+//     const foundChilds = findChildComponents(child, componentName);
+//     return components.concat(foundChilds);
+//   }, []);
+// }
 
 export function iconBtnCls(direction, type = '') {
   return [

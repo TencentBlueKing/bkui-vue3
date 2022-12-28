@@ -28,11 +28,11 @@ import { computed, defineComponent, ref, watch } from 'vue';
 import BkButton from '@bkui-vue/button';
 import BkCheckbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
 import { CloseLine, CogShape } from '@bkui-vue/icon/';
-import Popover from '@bkui-vue/popover2';
+import Popover from '@bkui-vue/popover';
 import { PropTypes, resolveClassName } from '@bkui-vue/shared';
 
 import { DEFAULT_SIZE_LIST, LINE_HEIGHT } from '../const';
-import { Field, Settings, SizeItem } from '../props';
+import { Field, Settings, SettingSizeEnum, settingSizeType, SizeItem } from '../props';
 import { resolvePropVal } from '../utils';
 
 export default defineComponent({
@@ -47,7 +47,7 @@ export default defineComponent({
         })),
         checked: PropTypes.arrayOf(PropTypes.string),
         limit: PropTypes.number.def(0),
-        size: PropTypes.size(['small', 'medium', 'large']).def('small'),
+        size: settingSizeType.def(SettingSizeEnum.SMALL),
         sizeList: PropTypes.shape<SizeItem[]>([]),
         showLineHeight: PropTypes.bool.def(true),
       }), PropTypes.bool]).def(false),
@@ -180,7 +180,7 @@ export default defineComponent({
 
     return () => (props.settings ? <Popover trigger="manual" isShow={isShow.value}
       placement="bottom-end"
-      arrow={false}
+      arrow={true}
       {...{ theme }}>
       {
         {

@@ -23,17 +23,22 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
+import { ExtractPropTypes } from 'vue';
 
-import { ExtractPropTypes, PropType } from 'vue';
+import { placementType, PropTypes } from '@bkui-vue/shared';
 
-import { OnFirstUpdateFnType, PropTypes } from '@bkui-vue/shared';
-const placements = ['auto', 'auto-start', 'auto-end', 'top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end', 'right', 'right-start', 'right-end', 'left', 'left-start', 'left-end'];
+import { PlacementEnum, triggerType } from './../../shared/src/vue-types';
 const EventProps = {
   onAfterHidden: Function,
   onAfterShow: Function,
 };
+type IAxesOffsets = {
+  mainAxis?: number;
+  crossAxis?: number;
+  alignmentAxis?: number | null;
+};
+
 export const PopoverProps = {
-  contentCls: PropTypes.string.def(''),
   isShow: PropTypes.bool.def(false),
   always: PropTypes.bool.def(false),
   disabled: PropTypes.bool.def(false),
@@ -42,73 +47,66 @@ export const PopoverProps = {
   content: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def(''),
 
   /**
-   * 动画展示方式
-   */
-  transition: PropTypes.string.def('fade-in'),
-
-  /**
    * 组件显示位置
    */
-  placement: PropTypes.placement(placements).def('top'),
+  placement: placementType().def(PlacementEnum.TOP),
 
   // 'dark', 'light'
   theme: PropTypes.string.def('dark'),
-
-  /**
-   * handleFirstUpdate
-   */
-  handleFirstUpdate: {
-    type: Function as PropType<OnFirstUpdateFnType>,
-    default: () => {},
-  },
 
   /**
    * 触发方式
    * 支持 click hover manual
    * manual： 通过isShow控制显示、隐藏
    */
-  trigger: PropTypes.string.def('hover'),
+  trigger: triggerType(),
 
   // 是否显示箭头
   arrow: PropTypes.bool.def(true),
 
-  // popper modifiers配置
-  modifiers: PropTypes.array.def([
-    {
-      name: 'offset',
-      options: {
-        offset: [0, 8],
-      },
-    },
-  ]),
+  padding: PropTypes.number.def(5),
+
+  offset: PropTypes.oneOfType([PropTypes.number, PropTypes.shape<IAxesOffsets>({})]).def(6),
 
   /**
    * 弹出内容绑定元素
    */
   boundary: PropTypes.oneOfType([PropTypes.string.def('parent'), PropTypes.instanceOf(HTMLElement)]),
 
-  /**
-   * 如果设置了boundary为指定DOM，此配置项生效
-   * 是否将弹出内容固定到目标元素位置
-   * 例如：boundary = document.body, fixOnBoundary = true，则弹出内容会一直固定到body
-   */
-  fixOnBoundary: PropTypes.bool.def(false),
-
   zIndex: PropTypes.number.def(undefined),
 
+  disableTeleport: PropTypes.bool.def(false),
+
   /**
-   * 弹出框鼠标点击事件是否阻止的点击事件行为
-   * 支持 stopPropagation stopImmediatePropagation preventDefault
-   * 用于在嵌套弹出或者元素定位导致的点击触发关闭问题
+   *  chooses the placement that has the most space available automatically
    */
-  stopBehaviors: PropTypes.oneOfType([
-    PropTypes.arrayOf(PropTypes.commonType([
-      'stopPropagation',
-      'stopImmediatePropagation',
-      'preventDefault',
-    ], 'stopBehaviors')),
-    PropTypes.string,
-  ]).def([]),
+  autoPlacement: PropTypes.bool.def(false),
+
+  /**
+   * 当有滚动条，滚动出可是范围时自动隐藏pop
+   */
+  autoVisibility: PropTypes.bool.def(true),
+
+  /**
+   * 是否禁用clickoutside
+   */
+  disableOutsideClick: PropTypes.bool.def(false),
+
+  /**
+   * 是否禁用样式的transform更新位移
+   */
+  disableTransform: PropTypes.bool.def(false),
+
+  /**
+   * 自定义 reference
+   */
+  reference: PropTypes.any.def(null),
+
+  /**
+   * 兼容v1版本遗留配置
+   * 不建议使用
+   */
+  modifiers: PropTypes.array.def([]),
 
   ...EventProps,
 };

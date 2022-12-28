@@ -25,13 +25,10 @@
 */
 
 import { merge } from 'lodash';
-import { PopoverPropTypes } from 'popover/src/props';
 import { defineComponent } from 'vue';
 
-import BKPopover from '@bkui-vue/popover2';
-import { classes, PropTypes } from '@bkui-vue/shared';
-
-import { PLACEMENT_OPTIONS, TRIGGER_OPTIONS } from './const';
+import BKPopover, { PopoverPropTypes } from '@bkui-vue/popover';
+import { classes,  placementType, PropTypes, triggerType } from '@bkui-vue/shared';
 
 
 export default defineComponent({
@@ -40,9 +37,9 @@ export default defineComponent({
     /** trigger = manual时候控制显隐藏  */
     isShow: PropTypes.bool.def(false),
     /** 弹层出现位置 */
-    placement: PropTypes.commonType(PLACEMENT_OPTIONS, 'placement').def('bottom'),
+    placement: placementType(),
     /** 触发方式 */
-    trigger: PropTypes.commonType(TRIGGER_OPTIONS, 'trigger').def('hover'),
+    trigger: triggerType(),
     /** 是否禁用 */
     disabled: PropTypes.bool.def(false),
     /** popover属性 */
