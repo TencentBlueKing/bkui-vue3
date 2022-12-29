@@ -70,7 +70,7 @@ export const propsCollapsePanel = {
   content: PropTypes.string,
   disabled: PropTypes.bool.def(false),
   isFormList: PropTypes.bool.def(false),
-  renderDirective: renderDirectiveType,
+  renderDirective: renderDirectiveType(),
   modelValue: PropTypes.bool.def(false),
   ...CollapsePanelEventProps,
 };

@@ -139,6 +139,6 @@ export const tabPanelProps = {
   visible: PropTypes.bool.def(true),
   disabled: PropTypes.bool,
   sortable: PropTypes.bool,
-  renderDirective: renderDirectiveType,
+  renderDirective: renderDirectiveType(),
   panel: PropTypes.string || PropTypes.func,
 };
