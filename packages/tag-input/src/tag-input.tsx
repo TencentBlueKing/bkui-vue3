@@ -104,15 +104,14 @@ export default defineComponent({
       listState.selectedTagList.length === 0 && curInputValue.value === '' && !state.isEdit
     ));
     // 是否展示清空Icon
-    const isShowClear = computed(() =>
-      /**
-       * 不显示条件：
-       * 1. 设置不可清除
-       * 2. 禁用时
-       * 3. tag标签为空时
-       * 4. 设置了showClearOnlyHover，且没有hover的时候
-       */
-      props.clearable
+    /**
+     * 不显示条件：
+     * 1. 设置不可清除
+     * 2. 禁用时
+     * 3. tag标签为空时
+     * 4. 设置了showClearOnlyHover，且没有hover的时候
+     */
+    const isShowClear = computed(() => props.clearable
         && !props.disabled
         && listState.selectedTagList.length !== 0
         && (props.showClearOnlyHover ? state.isHover : true));
