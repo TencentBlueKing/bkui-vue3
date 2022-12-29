@@ -42,10 +42,10 @@ import {
 } from './common';
 
 export const checkboxProps = {
-  modelValue: PropTypes.oneOfType([String, Number, Boolean]).def(''),
+  modelValue: PropTypes.oneOfType([String, Number, Boolean]),
   label: PropTypes.oneOfType([String, Number, Boolean]),
   trueLabel: PropTypes.oneOfType([String, Number, Boolean]).def(true),
-  falseLabel: PropTypes.oneOfType([String, Number, Boolean]).def(''),
+  falseLabel: PropTypes.oneOfType([String, Number, Boolean]).def(false),
   disabled: PropTypes.bool.def(false),
   checked: PropTypes.bool.def(false),
   indeterminate: PropTypes.bool,
@@ -72,6 +72,7 @@ export default defineComponent({
     ] = useFocus();
 
     const {
+      inputRef,
       isChecked,
       isDisabled,
       setChecked,
@@ -79,6 +80,7 @@ export default defineComponent({
     } = useCheckbox();
 
     return {
+      inputRef,
       isFocus,
       isChecked,
       isDisabled,
@@ -114,6 +116,7 @@ export default defineComponent({
       <label class={checkboxClass}>
         <span class={[resolveClassName('checkbox-input'), this.size]}>
           <input
+            ref="inputRef"
             role="checkbox"
             type="checkbox"
             class="bk-checkbox-original"
