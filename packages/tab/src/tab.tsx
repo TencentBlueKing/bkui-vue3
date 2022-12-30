@@ -36,6 +36,8 @@ import {
   VNode,
 } from 'vue';
 
+import { resolveClassName } from '@bkui-vue/shared';
+
 import { tabProps } from './props';
 import TabNav from './tab-nav';
 
@@ -203,7 +205,7 @@ export default defineComponent({
     return (
       <div class={getTabBoxClass()}>
         {getTabHeader()}
-        <div class='bk-tab-content'>
+        <div class={resolveClassName('tab-content')}>
           {this.$slots.default?.()}
         </div>
       </div>
