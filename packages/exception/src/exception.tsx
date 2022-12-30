@@ -63,6 +63,13 @@ export default defineComponent({
     };
 
     const renderImg = () => {
+      if (_.isFunction(slots.type)) {
+        return (
+          <div class="bk-exception-img">
+            {slots.type()}
+          </div>
+        );
+      }
       const imgSrc = images[props.type] ? images[props.type] : empty;
       return (
         <div class="bk-exception-img">
@@ -119,7 +126,7 @@ export default defineComponent({
           {renderTitle()}
           {renderDescription()}
           {renderFooter()}
-      </div>
+        </div>
       );
     };
   },
