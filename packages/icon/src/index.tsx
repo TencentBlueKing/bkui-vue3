@@ -78,7 +78,7 @@ export { default as Info } from '../icons/info';
 export { default as LeftShape } from '../icons/left-shape';
 export { default as LeftTurnLine } from '../icons/left-turn-line';
 export { default as NarrowLine } from '../icons/narrow-line';
-export { default as Original  } from '../icons/original ';
+export { default as Original } from '../icons/original';
 export { default as PdfFill } from '../icons/pdf-fill';
 export { default as PlayShape } from '../icons/play-shape';
 export { default as Plus } from '../icons/plus';

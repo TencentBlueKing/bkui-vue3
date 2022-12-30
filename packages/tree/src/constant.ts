@@ -85,6 +85,9 @@ export const NODE_SOURCE_ATTRS = {
 /**
  * 节点点击可执行行为配置
  */
-export const NODE_CONTENT_ACTIONS = [
-  'click', 'selected', 'expand', 'collapse',
-];
+export enum NodeContentActionEnum {
+  CLICK = 'click',
+  SELECTED = 'selected',
+  EXPAND = 'expand',
+  COLLAPSE = 'collapse',
+}

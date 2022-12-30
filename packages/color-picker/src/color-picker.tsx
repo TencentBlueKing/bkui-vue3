@@ -36,6 +36,7 @@ import {
   Transition,
   watch,
 } from 'vue';
+import { toType } from 'vue-types';
 
 import { clickoutside } from '@bkui-vue/directives';
 import { AngleUp } from '@bkui-vue/icon';
@@ -53,12 +54,18 @@ import RecommendColors from './components/recommend-colors';
 import SaturationPanel from './components/saturation-panel';
 import { formatColor, toRGBAString } from './utils';
 
+enum ColorPickSizeEnum {
+  UNKNOWN = '',
+  SMALL = 'small',
+  LARGE = 'large',
+
+}
 const colorPickerProps = {
   modelValue: PropTypes.string.def(''),
   disabled: PropTypes.bool.def(false),
   readonly: PropTypes.bool.def(false),
   transfer: PropTypes.bool.def(false), // 控制面板是否出现在 body 内
-  size: PropTypes.size(['', 'small', 'large']).def(''),
+  size: toType<`${ColorPickSizeEnum}`>('colorPickSize', {}).def(ColorPickSizeEnum.UNKNOWN),
   showValue: PropTypes.bool.def(true), // 是否在颜色选择器上显示色值
   // true 展示组件内置预设值
   // false 不展示预设值

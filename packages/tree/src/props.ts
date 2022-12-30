@@ -23,12 +23,26 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-
 import { ExtractPropTypes } from 'vue';
+import { toType } from 'vue-types';
 
 import { PropTypes } from '@bkui-vue/shared';
 
-import { NODE_CONTENT_ACTIONS } from './constant';
+import { NodeContentActionEnum } from './constant';
+
+enum ColumnTypeEnum {
+  ONCE = 'once',
+  EVERY = 'every',
+}
+enum TreeSearchMatchEnum {
+  FUZZY = 'fuzzy',
+  FULL = 'full',
+}
+
+enum TreeSearchResultEnum {
+  TREE = 'tree',
+  LIST = 'list',
+}
 
 /**
  * Tree Prop: prefixIcon function
@@ -121,7 +135,7 @@ export const treeProps = {
      * 可选值：once 只在初始化是执行一次
      * every 每次数据更新都执行
      */
-    deepAutoOpen: PropTypes.commonType(['once', 'every'], 'columnType').def('once'),
+    deepAutoOpen: toType<`${ColumnTypeEnum}`>('columnType', {}).def(ColumnTypeEnum.ONCE),
   }),
 
   /**
@@ -152,7 +166,7 @@ export const treeProps = {
      * 支持自定义匹配函数 (searchValue, itemText, item) => true || false
      */
       match: PropTypes.oneOfType([
-        PropTypes.commonType(['fuzzy', 'full'], 'TreeSearchMatchType'),
+        toType<`${TreeSearchMatchEnum}`>('TreeSearchMatchType', {}).def(TreeSearchMatchEnum.FUZZY),
         PropTypes.func,
       ]),
 
@@ -161,7 +175,7 @@ export const treeProps = {
      * 显示为 tree || list
      * 默认 tree
      */
-      resultType: PropTypes.commonType(['tree', 'list'], 'TreeSearchResultType').def('tree'),
+      resultType: toType<`${TreeSearchResultEnum}`>('treeSearchResultType', {}).def(TreeSearchResultEnum.TREE),
 
       /**
        * 默认展开所有搜索结果
@@ -229,7 +243,7 @@ export const treeProps = {
    * 默认为 ['selected', 'expand', 'click']，点击内容块为选中当前节点
    */
   nodeContentAction: PropTypes.oneOfType([
-    PropTypes.arrayOf(PropTypes.commonType(NODE_CONTENT_ACTIONS)),
+    PropTypes.arrayOf(toType<`${NodeContentActionEnum}`>('nodeContentActionType', {}).def(NodeContentActionEnum.CLICK)),
     PropTypes.func.def(() => ['selected']),
   ]).def(['selected', 'expand', 'click']),
 };

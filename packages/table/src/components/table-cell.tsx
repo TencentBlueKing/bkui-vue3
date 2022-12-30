@@ -28,7 +28,7 @@ import { defineComponent, onBeforeUnmount, onMounted, ref } from 'vue';
 import { bkEllipsisInstance } from '@bkui-vue/directives';
 import { isElement, PropTypes  } from '@bkui-vue/shared';
 
-import { IOverflowTooltip } from '../props';
+import { IOverflowTooltip, overflowModeType } from '../props';
 import { getElementTextWidth, observerResize } from '../utils';
 export default defineComponent({
   name: 'TableCell',
@@ -39,7 +39,7 @@ export default defineComponent({
       content: PropTypes.string.def(''),
       disabled: PropTypes.bool.def(false),
       watchCellResize: PropTypes.bool.def(true),
-      mode: PropTypes.string.def('auto'),
+      mode: overflowModeType,
     })]).def(undefined),
     title: PropTypes.string.def(undefined),
   },

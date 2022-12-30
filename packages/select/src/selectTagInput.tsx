@@ -26,7 +26,7 @@
 import { defineComponent, getCurrentInstance, inject, ref, toRefs, watch } from 'vue';
 import { PropType } from 'vue-types/dist/types';
 
-import { classes, PropTypes } from '@bkui-vue/shared';
+import { classes, PropTypes, TagThemeType } from '@bkui-vue/shared';
 import Tag from '@bkui-vue/tag';
 
 import { selectKey } from './common';
@@ -40,7 +40,7 @@ export default defineComponent({
       type: Array as PropType<ISelected[]>,
       default: () => [],
     },
-    tagTheme: PropTypes.theme(['success', 'info', 'warning', 'danger']).def(''),
+    tagTheme: TagThemeType,
     placeholder: PropTypes.string.def(''),
     filterable: PropTypes.bool.def(false), // 是否支持搜索
     allowCreate: PropTypes.bool.def(false),

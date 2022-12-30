@@ -23,15 +23,21 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-
 import { ExtractPropTypes } from 'vue';
 
-import { PropTypes } from '@bkui-vue/shared';
-const placements = ['auto', 'auto-start', 'auto-end', 'top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end', 'right', 'right-start', 'right-end', 'left', 'left-start', 'left-end'];
+import { placementType, PropTypes } from '@bkui-vue/shared';
+
+import { triggerType } from './../../shared/src/vue-types';
 const EventProps = {
   onAfterHidden: Function,
   onAfterShow: Function,
 };
+type IAxesOffsets = {
+  mainAxis?: number;
+  crossAxis?: number;
+  alignmentAxis?: number | null;
+};
+
 export const PopoverProps = {
   isShow: PropTypes.bool.def(false),
   always: PropTypes.bool.def(false),
@@ -43,7 +49,7 @@ export const PopoverProps = {
   /**
    * 组件显示位置
    */
-  placement: PropTypes.placement(placements).def('top'),
+  placement: placementType.def('top'),
 
   // 'dark', 'light'
   theme: PropTypes.string.def('dark'),
@@ -53,14 +59,14 @@ export const PopoverProps = {
    * 支持 click hover manual
    * manual： 通过isShow控制显示、隐藏
    */
-  trigger: PropTypes.string.def('hover'),
+  trigger: triggerType,
 
   // 是否显示箭头
   arrow: PropTypes.bool.def(true),
 
   padding: PropTypes.number.def(5),
 
-  offset: PropTypes.number.def(6),
+  offset: PropTypes.oneOfType([PropTypes.number, PropTypes.shape<IAxesOffsets>({})]).def(6),
 
   /**
    * 弹出内容绑定元素

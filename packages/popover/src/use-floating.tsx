@@ -108,15 +108,17 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
     const resolveResult = {};
     if (Array.isArray(props.modifiers)) {
       props.modifiers.forEach((m) => {
-        let result = 0;
+        let result;
         if (m.name === 'offset') {
           if (typeof m.options?.offset === 'number') {
             result = m.options?.offset;
           }
 
           if (Array.isArray(m.options?.offset)) {
-            result = m.options?.offset.reduce((o, c) => (o + c), 0);
+            const [mainAxis, crossAxis] = m.options?.offset;
+            result = { mainAxis, crossAxis };
           }
+
           Object.assign(resolveResult, { offset: result });
         }
       });
