@@ -30,12 +30,12 @@ import {
   CloseLine,
   InfoLine,
 } from '@bkui-vue/icon';
-import { classes, PropTypes } from '@bkui-vue/shared';
+import { classes, PropTypes, TagThemeEnum, TagThemeType } from '@bkui-vue/shared';
 
 export default defineComponent({
   name: 'Alert',
   props: {
-    theme: PropTypes.theme(['info', 'success', 'warning', 'error']).def('info'),
+    theme: TagThemeType().def(TagThemeEnum.INFO),
     size: PropTypes.string,
     title: PropTypes.string,
     closable: PropTypes.bool.def(false),

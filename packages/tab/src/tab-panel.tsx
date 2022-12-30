@@ -37,7 +37,7 @@ export default defineComponent({
     const active: boolean = this.name === (this.$parent as any).active;
     const getContent = (): VNodeChild => {
       // 不渲染
-      if (!this.visible || (this.renderDirective === 'if' && !active)) {
+      if (!this.visible || ((this.renderDirective as unknown as string) === 'if' && !active)) {
         return null;
       }
       if (typeof this.panel === 'function') {

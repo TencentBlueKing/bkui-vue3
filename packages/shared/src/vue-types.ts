@@ -23,7 +23,6 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
-
 import { CSSProperties, VNodeChild } from 'vue';
 import { createTypes, toType, VueTypeDef } from 'vue-types';
 
@@ -50,9 +49,10 @@ type Push<T extends any[], V> = [ ...T, V];
 export type UnionToArrayType<T, L = LastOf<T>, N = [T] extends [never]
   ? true : false> = N extends true ? [] : Push<UnionToArrayType<Exclude<T, L>>, L>;
 
-export enum Size {
-  Small = 'small',
-  Large = 'large'
+export enum SizeEnum {
+  SMALL = 'small',
+  LARGE = 'large',
+  DEFAULT = 'default'
 }
 
 export enum Placements {
@@ -61,25 +61,136 @@ export enum Placements {
   Right = 'right',
   Bottom = 'bottom'
 }
+
+export enum RenderDirectiveEnum {
+  IF = 'if',
+  SHOW = 'show',
+}
+
+export function renderDirectiveType() {
+  return toType<`${RenderDirectiveEnum}`>('renderDirective', {
+    default: RenderDirectiveEnum.SHOW,
+  });
+};
+
+export enum AlignEnum {
+  LEFT = 'left',
+  CENTER = 'center',
+  RIGHT = 'right',
+}
+export function alignType() {
+  return toType<`${AlignEnum}`>('align', {
+    default: AlignEnum.LEFT,
+  }).def(AlignEnum.LEFT);
+};
+
+export enum ThemeEnum {
+  PRIMARY = 'primary',
+  WARNING = 'warning',
+  SUCCESS = 'success',
+  DANGER = 'danger'
+}
+
+/** 弹层出现位置选项 */
+export enum PlacementEnum {
+  AUTO = 'auto',
+  AUTO_START = 'auto-start',
+  AUTO_END = 'auto-end',
+  TOP = 'top',
+  RIGHT = 'right',
+  BOTTOM = 'bottom',
+  LEFT = 'left',
+  TOP_START = 'top-start',
+  TOP_END = 'top-end',
+  BOTTOM_START = 'bottom-start',
+  BOTTOM_END = 'bottom-end',
+  RIGHT_START = 'right-start',
+  RIGHT_END = 'right-end',
+  LEFT_START = 'left-start',
+  LEFT_END = 'left-end',
+}
+
+export function placementType() {
+  return toType<`${PlacementEnum}`>('placement', {}).def(PlacementEnum.BOTTOM);
+};
+
+/** 弹层触发选项  */
+export enum TriggerEnum {
+  HOVER = 'hover',
+  CLICK = 'click',
+  MANUAL = 'manual'
+}
+export function triggerType() {
+  return toType<`${TriggerEnum}`>('trigger', {}).def(TriggerEnum.HOVER);
+};
+
+export enum DialogTypeEnum {
+  SHOW = 'show',
+  OPERATION = 'operation',
+  CONFIRM = 'confirm',
+  PROCESS = 'process',
+}
+export function dialogTypeUnion() {
+  return toType<`${DialogTypeEnum}`>('dialogType', {
+    default: DialogTypeEnum.OPERATION,
+  });
+}
+
+export enum DirectionEnum {
+  HORIZONTAL = 'horizontal',
+  VERTICAL = 'vertical'
+}
+export function directionType() {
+  return toType<`${DirectionEnum}`>('direction', {}).def(DirectionEnum.HORIZONTAL);
+}
+
+export enum LineStyleEnum {
+  DASHED = 'dashed',
+  SOLID = 'solid'
+}
+export function lineStyleType() {
+  return toType<`${LineStyleEnum}`>('lineType', {}).def(LineStyleEnum.DASHED);
+};
+
+export enum TagThemeEnum {
+  SUCCESS = 'success',
+  INFO = 'info',
+  WARNING = 'warning',
+  DANGER = 'danger',
+}
+
+export function TagThemeType() {
+  return toType<`${TagThemeEnum}`>('tagTheme', {}).def();
+}
+
+export enum InputBehaviorEnum {
+  SIMPLICITY = 'simplicity',
+  NORMAL = 'normal'
+}
+export function InputBehaviorType() {
+  return toType<`${InputBehaviorEnum}`>('behavior', {}).def(InputBehaviorEnum.NORMAL);
+};
+
 export class PropTypes extends propTypesNS {
-  static size(sizes: string[] = ['small', 'default', 'large']): VueTypeDef<string> {
-    return toType('Size', {
-      type: String,
-      validator: (val: string) => {
-        if (!val || sizes.includes(val)) {
+  static size() {
+    const defaultList = ['small', 'default', 'large'] as const;
+    type CommonSizeEnum = ElementType<typeof defaultList>;
+    return toType<CommonSizeEnum>('Size', {
+      validator: (val: CommonSizeEnum) => {
+        if (!val || defaultList.includes(val)) {
           return true;
         }
-        console.error(`invalid size, ${val}, the size must be one of 【${sizes.join(' | ')}】`);
+        console.error(`invalid theme, ${val}, the theme must be one of 【${defaultList.join(' | ')}】`);
         return false;
       },
       default: 'default',
     });
   }
 
-  static theme(themes: string[] = ['primary', 'warning', 'success', 'danger']): VueTypeDef<string>  {
-    return toType('Theme', {
-      type: String,
-      validator: (val: string) => {
+  static theme() {
+    const themes = ['primary', 'warning', 'success', 'danger'] as const;
+    return toType<`${ThemeEnum}`>('Theme', {
+      validator: (val: `${ThemeEnum}`) => {
         if (!val || themes.includes(val)) {
           return true;
         }
@@ -89,10 +200,11 @@ export class PropTypes extends propTypesNS {
     });
   }
 
-  static placement(placements: string[] = ['top', 'left', 'right', 'bottom']): VueTypeDef<string>  {
-    return toType('Placements', {
-      type: String,
-      validator: (val: string) => {
+  static placement() {
+    const placements = ['top', 'left', 'right', 'bottom'] as const;
+    type PlacementEnum = ElementType<typeof placements>;
+    return toType<PlacementEnum>('Placements', {
+      validator: (val: PlacementEnum) => {
         if (!val || placements.includes(val)) {
           return true;
         }
@@ -100,20 +212,6 @@ export class PropTypes extends propTypesNS {
         return false;
       },
       default: 'top',
-    });
-  }
-
-  static commonType(types: string[] = [], name = 'commonType'): VueTypeDef<string>  {
-    return toType(name.replace(/^\S/, s => s.toUpperCase()), {
-      type: String,
-      validator: (val: string) => {
-        const valid = types.includes(val);
-        if (!valid) {
-          console.error(`invalid ${name}, ${val}, the ${name} must be one of 【${types.join(' | ')}】`);
-        }
-        return valid;
-      },
-      default: types[0],
     });
   }
 

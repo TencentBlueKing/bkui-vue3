@@ -83,6 +83,7 @@ export const useCheckbox = () => {
   const checkboxGroup = inject<ICheckboxGroupContext>(checkboxGroupKey, EMPTY_OBJ);
   const isGroup = !isEmptyObj(checkboxGroup);
 
+  const inputRef = ref();
   const isChecked = ref<boolean>(props.checked);
 
   // 禁用状态
@@ -92,6 +93,27 @@ export const useCheckbox = () => {
     }
     return props.disabled;
   });
+
+  // 触发更新
+  const triggerChange = () => {
+    // 单独使用时状态切换返回 trueLabel、falseLabel
+    const nextValue = isChecked.value ? props.trueLabel : props.falseLabel;
+
+    emit('update:modelValue', nextValue);
+    emit('change', nextValue);
+    // 更新 checkbox-group
+    // 配合 checkbox-group 使用时返回 props.label
+    if (isGroup) {
+      checkboxGroup.handleChange();
+    }
+
+    nextTick(() => {
+      // 选中状态保持同步
+      if (inputRef.value.checked !== isChecked.value) {
+        inputRef.value.checked = isChecked.value;
+      }
+    });
+  };
 
   // 响应modelValue
   if (isGroup) {
@@ -111,6 +133,11 @@ export const useCheckbox = () => {
     });
   }
 
+  watch(() => props.checked, () => {
+    isChecked.value = props.checked;
+    triggerChange();
+  });
+
   const setChecked = (value = true) => {
     isChecked.value = value;
   };
@@ -122,21 +149,7 @@ export const useCheckbox = () => {
     }
     const $targetInput = event.target as HTMLInputElement;
     isChecked.value = $targetInput.checked;
-
-    const nextValue = isChecked.value ? props.trueLabel : props.falseLabel;
-    emit('change', nextValue);
-    emit('update:modelValue', nextValue);
-    // 更新 checkbox-group
-    if (isGroup) {
-      checkboxGroup.handleChange();
-    }
-
-    nextTick(() => {
-      // 选中状态保持同步
-      if ($targetInput.checked !== isChecked.value) {
-        $targetInput.checked = isChecked.value;
-      }
-    });
+    triggerChange();
   };
 
   onMounted(() => {
@@ -152,6 +165,7 @@ export const useCheckbox = () => {
   });
 
   return {
+    inputRef,
     isChecked,
     isDisabled,
     setChecked,

@@ -49,24 +49,32 @@ export default defineComponent({
       replace ? router.replace(to) : router.push(to);
     };
     const classCtx = classes({ 'bk-breadcrumb-item': true }, `${props.extCls || ''}`);
+
+    const renderSeparator = () => {
+      if (slots.separator) {
+        return slots.separator();
+      }
+      if (parent.separatorClass) {
+        return <i class={`bk-breadcrumb-separator ${parent.separatorClass}`} />;
+      }
+      if (parent.separator) {
+        return <span class="bk-breadcrumb-separator" role="presentation">{parent?.separator}</span>;
+      }
+      return null;
+    };
+
     return () => (
       <span class={classCtx}>
-      <span
-        ref="link"
-        class={`bk-breadcrumb-item-inner ${props.to ? 'is-link' : ''}`}
-        role="link"
-        onClick={handleClick}
-      >
-        {slots?.default?.()}
+        <span
+          ref="link"
+          class={`bk-breadcrumb-item-inner ${props.to ? 'is-link' : ''}`}
+          role="link"
+          onClick={handleClick}
+        >
+          {slots.default?.()}
+        </span>
+        { renderSeparator() }
       </span>
-      {
-        slots?.separator
-          ? slots?.separator?.()
-          : parent?.separatorClass
-            ? <i class={`bk-breadcrumb-separator ${parent.separatorClass}`}></i>
-            : <span class="bk-breadcrumb-separator" role="presentation">{parent?.separator}</span>
-      }
-    </span>
     );
   },
 });

@@ -80,14 +80,13 @@
 
   .clear-action {
     position: absolute;
-    // transform: translateY(-50%);
-    top: 0;
-    // top: 50%;
+    top: 50%;
     right: 10px;
     padding: 5px 0;
     font-size: 14px;
     color: @light-gray;
     cursor: pointer;
+    transform: translateY(-50%);
 
     &:hover {
       color: @gray-color;
@@ -221,6 +220,7 @@
 }
 
 .bk-picker-confirm {
+  display: flex;
   height: 42px;
   padding: 0 20px;
   clear: both;
@@ -229,6 +229,7 @@
   text-align: right;
   background-color: #fafbfd;
   border-top: 1px solid #dcdee5;
+  justify-content: flex-end;
 
   a {
     color: #979ba5;
@@ -245,7 +246,17 @@
   }
 
   .bk-picker-confirm-time {
-    float: left;
+    height: 100%;
+    margin-right: auto;
+    color: #979ba5;
+
+    &.is-disabled {
+      color: #c4c6cc;
+    }
+  }
+
+  .bk-picker-confirm-action {
+    flex: 1;
   }
 }
 

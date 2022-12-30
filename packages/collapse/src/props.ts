@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { PropTypes } from '@bkui-vue/shared';
+import { PropTypes, renderDirectiveType } from '@bkui-vue/shared';
 
 export const propsCollapse = {
   /**
@@ -70,7 +70,7 @@ export const propsCollapsePanel = {
   content: PropTypes.string,
   disabled: PropTypes.bool.def(false),
   isFormList: PropTypes.bool.def(false),
-  renderDirective: PropTypes.commonType(['if', 'show'], 'render').def('show'),
+  renderDirective: renderDirectiveType(),
   modelValue: PropTypes.bool.def(false),
   ...CollapsePanelEventProps,
 };

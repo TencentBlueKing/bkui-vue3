@@ -27,6 +27,7 @@
 import { computed, defineComponent, PropType, ref } from 'vue';
 
 import BkPopover from '@bkui-vue/popover';
+import { PlacementEnum } from '@bkui-vue/shared';
 
 import { off, on } from './slider';
 
@@ -72,7 +73,7 @@ export default defineComponent({
         const customContent = props.params.customContent[props.modelValue];
         tip = customContent.tip || customContent.label || '';
       }
-      const placement = props.params.vertical ? 'right' : 'top';
+      const placement = props.params.vertical ? PlacementEnum.RIGHT : PlacementEnum.TOP;
       if (props.params?.showTip) {
         return { content: props.params.formatterTipLabel(`${tip || props?.modelValue || '0'}`), placement };
       }

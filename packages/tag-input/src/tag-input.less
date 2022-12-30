@@ -7,11 +7,6 @@
   position: relative;
   min-height: @min-height;
 
-  .bk-popover,
-  .bk-popover-reference {
-    display: block;
-  }
-
   .bk-tag-input-trigger {
     position: relative;
     display: flex;
@@ -122,7 +117,9 @@
 }
 
 .bk-tag-input-popover-content {
-  padding: 0;
+  &.bk-popover {
+    padding: 0;
+  }
   
   .bk-selector-list {
     min-width: 150px;

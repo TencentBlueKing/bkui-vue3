@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { get } from 'lodash';
+import { get, isFunction } from 'lodash';
 import type { ExtractPropTypes } from 'vue';
 import {
   computed,
@@ -43,17 +43,18 @@ import {
   formItemKey,
   PropTypes,
   useForm,
+  useFormItem,
 } from '@bkui-vue/shared';
 
 import type {
   IFormItemRule,
-  IFormItemRules,
 } from './type';
-import defaultValidator from './validator';
+import { getRuleMessage } from './utils';
+import defaultValidator from './validator';;
 
 const formItemProps = {
   label: PropTypes.string,
-  labelWidth: PropTypes.oneOfType([Number, String]),
+  labelWidth: PropTypes.oneOfType([Number, String]).def(150),
   labelPosition: PropTypes.oneOf(['left', 'center', 'right']),
   property: PropTypes.string.def(''),
   required: PropTypes.bool.def(false),
@@ -72,56 +73,65 @@ export type FormItemProps = Readonly<ExtractPropTypes<typeof formItemProps>>;
 const hasOwn = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key);
 
 const getRulesFromProps = (props) => {
-  const rules: IFormItemRules = [];
+  const rules: IFormItemRule[] = [];
+
+  const label = props.label || '';
 
   if (props.required) {
     rules.push({
+      required: true,
       validator: defaultValidator.required,
-      message: `${props.label}不能为空`,
-      trigger: 'blur',
+      message: `${label}不能为空`,
+      trigger: 'change',
     });
   }
   if (props.email) {
     rules.push({
+      email: true,
       validator: defaultValidator.email,
-      message: `${props.label}格式不正确`,
-      trigger: 'blur',
+      message: `${label}格式不正确`,
+      trigger: 'change',
     });
   }
   if (Number(props.max) > -1) {
     rules.push({
       validator: value => defaultValidator.max(value, props.max),
-      message: `${props.label}最大值${props.max}`,
-      trigger: 'blur',
+      message: `${label}最大值 ${props.max}`,
+      trigger: 'change',
     });
   }
   if (Number(props.min) > -1) {
     rules.push({
       validator: value => defaultValidator.min(value, props.min),
-      message: `${props.label}最小值${props.min}`,
-      trigger: 'blur',
+      message: `${label}最小值 ${props.min}`,
+      trigger: 'change',
     });
   }
   if (Number(props.maxlength) > -1) {
     rules.push({
       validator: value => defaultValidator.maxlength(value, props.maxlength),
-      message: `${props.label}最大长度${props.maxlength}`,
-      trigger: 'blur',
+      message: `${label}最大长度 ${props.maxlength}`,
+      trigger: 'change',
     });
   }
   return rules;
 };
 
 const mergeRules: (
-  configRules: IFormItemRules,
-  propsRules: IFormItemRules
-) => IFormItemRules = (configRules, propsRules) => {
+  configRules: IFormItemRule[],
+  propRules: IFormItemRule[]
+) => IFormItemRule[] = (configRules, propRules) => {
+  let customRequired = false;
+  let customEmail = false;
+
   const formatConfigRules = configRules.reduce((result, rule) => {
     let rulevalidator: any;
     if (rule.required) {
-      rulevalidator = defaultValidator.required;
+      rulevalidator = isFunction(rule.validator) ? rule.validator : defaultValidator.required;
+      customRequired = true;
     } else if (rule.email) {
-      rulevalidator = defaultValidator.email;
+      rulevalidator = isFunction(rule.validator) ? rule.validator : defaultValidator.email;
+      customEmail = true;
     } else if (Number(rule.max) > -1) {
       rulevalidator = value => defaultValidator.max(value, rule.max);
     } else if (Number(rule.min) > -1) {
@@ -130,7 +140,7 @@ const mergeRules: (
       rulevalidator = value => defaultValidator.min(value, rule.max);
     } else if (Object.prototype.toString.call(rule.pattern) === '[object RegExp]') {
       rulevalidator = value => defaultValidator.pattern(value, rule.pattern);
-    } else if (Object.prototype.toString.call(rule.validator) === '[object Function]') {
+    } else if (isFunction(rule.validator)) {
       rulevalidator =  rule.validator;
     } else {
       // 不支持的配置规则
@@ -138,17 +148,30 @@ const mergeRules: (
     }
     result.push({
       validator: rulevalidator,
-      message: rule.message,
-      trigger: rule.trigger,
+      message: rule.message || '验证错误',
+      trigger: rule.trigger || 'blur',
     });
     return result;
   }, []);
-  return [...propsRules, ...formatConfigRules];
+
+  // 自定义配置验证规则覆盖内置验证规则
+  const filterPropRules = propRules.reduce((result, ruleItem) => {
+    if (ruleItem.required && customRequired) {
+      return result;
+    }
+    if (ruleItem.email && customEmail) {
+      return result;
+    }
+    result.push(ruleItem);
+    return result;
+  }, []);
+
+  return [...filterPropRules, ...formatConfigRules];
 };
 
 const getTriggerRules = (
   trigger: String,
-  rules: IFormItemRules,
+  rules: IFormItemRule[],
 ) => rules.reduce((result, rule) => {
   if (!rule.trigger || !trigger) {
     result.push(rule);
@@ -171,15 +194,18 @@ export default defineComponent({
     bkTooltips,
   },
   props: formItemProps,
-  setup(props) {
+  setup(props, context) {
+    const form = useForm();
+    const isForm = Boolean(form);
+    const parentFormItem = useFormItem();
+    const isNested = Boolean(parentFormItem);
+
     const currentInstance = getCurrentInstance();
+
     const state = reactive({
       isError: false,
       errorMessage: '',
     });
-    const form = useForm();
-
-    const isForm = Boolean(form);
 
     const isFormTypeVertical = computed(() => {
       if (!isForm) {
@@ -188,25 +214,41 @@ export default defineComponent({
       return form.props.formType === 'vertical';
     });
 
+    const isShowLabel = computed(() => {
+      if (props.label || context.slots.label) {
+        return true;
+      }
+      return false;
+    });
+
     const labelStyles = computed<any>(() => {
       const styles = {
         width: '',
         paddingRight: '',
         textAlign: '',
       };
-      const labelWidth = isValid(props.labelWidth) ? props.labelWidth : (isForm && form.props.labelWidth);
-      if (isValid(labelWidth)) {
-        styles.width = `${labelWidth}px`;
-        styles.paddingRight = labelWidth ? '' : '0px';
-      }
 
       const labelPosition = props.labelPosition || (isForm && form.props.labelPosition);
       if (labelPosition) {
         styles['text-align'] = labelPosition;
       }
 
+      if (form.props.formType === 'vertical' || (!props.label && isNested)) {
+        return styles;
+      }
+
+      const labelWidth = isValid(props.labelWidth) ? props.labelWidth : (isForm && form.props.labelWidth);
+      if (isValid(labelWidth)) {
+        styles.width = `${labelWidth}px`;
+        styles.paddingRight = labelWidth ? '' : '0px';
+      }
+
       return styles;
     });
+
+    const contentStyles = computed(() => ({
+      ['margin-left']: labelStyles.value.width,
+    }));
 
     /**
      * @desc 验证字段
@@ -217,7 +259,7 @@ export default defineComponent({
       || (isForm && !form.props.model)) {
         return Promise.resolve(true);
       }
-      let rules: IFormItemRules = [];
+      let rules: IFormItemRule[] = [];
       // 继承 form 的验证规则
       if (isForm
         && form.props.rules
@@ -226,11 +268,12 @@ export default defineComponent({
       }
       // form-item 自己的 rules 规则优先级更高
       if (props.rules) {
-        rules = props.rules as IFormItemRules;
+        rules = props.rules as IFormItemRule[];
       }
 
       // 合并规则属性配置
       rules = getTriggerRules(trigger, mergeRules(rules, getRulesFromProps(props)));
+
       // 重新触发验证重置上次的验证状态
       if (rules.length > 0) {
         state.isError = false;
@@ -257,19 +300,20 @@ export default defineComponent({
                 return result.then((data) => {
                   // 异步验证结果为 false
                   if (data === false) {
-                    return Promise.reject(rule.message);
+                    return Promise.reject(getRuleMessage(rule));
                   }
                 }).then(() => doValidate(), () => {
                   state.isError = true;
-                  state.errorMessage = rule.message;
-                  return Promise.reject(rule.message);
+                  state.errorMessage = getRuleMessage(rule);
+                  return Promise.reject(state.errorMessage);
                 });
               }
               // 验证失败
               if (!result) {
                 state.isError = true;
-                state.errorMessage = rule.message;
-                return Promise.reject(rule.message);
+                // 验证结果返回的是 String 表示验证失败，返回结果作为错误信息
+                state.errorMessage = typeof result === 'string' ? result : getRuleMessage(rule);
+                return Promise.reject(state.errorMessage);
               }
               // 下一步
               return doValidate();
@@ -307,7 +351,9 @@ export default defineComponent({
 
     return {
       ...toRefs(state),
+      isShowLabel,
       labelStyles,
+      contentStyles,
       isFormTypeVertical,
       validate,
       clearValidate,
@@ -362,13 +408,19 @@ export default defineComponent({
 
     return (
       <div class={itemClassees}>
+        {
+          this.isShowLabel && (
+            <div
+              class="bk-form-label"
+              style={this.labelStyles}>
+                {renderLabel()}
+                {this.isFormTypeVertical && this.$slots.labelAppend?.()}
+            </div>
+          )
+        }
         <div
-          class="bk-form-label"
-          style={this.labelStyles}>
-            {renderLabel()}
-            {this.isFormTypeVertical && this.$slots.labelAppend?.()}
-        </div>
-        <div class="bk-form-content">
+          class="bk-form-content"
+          style={this.contentStyles}>
           {this.$slots.default?.()}
           {renderError()}
         </div>

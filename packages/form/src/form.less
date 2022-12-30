@@ -4,13 +4,13 @@
   text-align: left;
 
   &--vertical {
-    .@{bk-prefix}-form-item {
-      flex-direction: column;
-    }
 
     .@{bk-prefix}-form-label {
+      float: unset;
       width: auto;
       padding-right: 0;
+      margin-bottom: 8px;
+      line-height: 20px;
       text-align: left;
     }
 
@@ -21,7 +21,6 @@
 }
 
 .@{bk-prefix}-form-item {
-  display: flex;
   margin-bottom: 24px;
 
   &.is-required {
@@ -30,7 +29,6 @@
         position: absolute;
         top: 0;
         width: 14px;
-        line-height: 32px;
         color: #ea3636;
         text-align: center;
         content: '*';
@@ -46,18 +44,29 @@
       border-color: #ea3636;
     }
   }
+
+  &:after,
+  &:before {
+    display: table;
+    content: ''
+  }
+
+  &:after {
+    clear: both
+  }
 }
 
 .@{bk-prefix}-form-label {
   position: relative;
-  width: 150px;
+  float: left;
   padding-right: 24px;
   font-size: 14px;
   font-weight: normal;
   line-height: 32px;
   color: #63656e;
   text-align: right;
-  flex: 0 0 auto;
+  text-align: right;
+  vertical-align: middle;
 }
 .@{bk-prefix}-form-label-description {
   cursor: pointer;
@@ -67,7 +76,6 @@
 .@{bk-prefix}-form-content {
   position: relative;
   line-height: 32px;
-  flex: 1;
 }
 
 .@{bk-prefix}-form-error {
@@ -92,69 +100,69 @@
   display: inline-block;
   display: inline-block;
 
-  & > .bk-input,
-  & > .bk-textarea,
-  & > .bk-select,
-  & > .bk-cascade,
-  & > .bk-color-picker,
-  & > .bk-date-picker,
-  & > .bk-tag-input,
-  & > .bk-tag-selector,
-  & > .bk-search-select {
+  & > .@{bk-prefix}-input,
+  & > .@{bk-prefix}-textarea,
+  & > .@{bk-prefix}-select,
+  & > .@{bk-prefix}-cascade,
+  & > .@{bk-prefix}-color-picker,
+  & > .@{bk-prefix}-date-picker,
+  & > .@{bk-prefix}-tag-input,
+  & > .@{bk-prefix}-tag-selector,
+  & > .@{bk-prefix}-search-select {
     float: left;
     width: auto;
     margin-left: -1px;
   }
 
-  .bk-input,
-  .bk-form-password,
-  .bk-textarea,
-  .bk-select,
-  .bk-cascade,
-  .bk-color-picker,
-  .bk-date-picker .bk-date-picker-editor,
-  .bk-tag-input,
-  .bk-search-select {
+  .@{bk-prefix}-input,
+  .@{bk-prefix}-form-password,
+  .@{bk-prefix}-textarea,
+  .@{bk-prefix}-select,
+  .@{bk-prefix}-cascade,
+  .@{bk-prefix}-color-picker,
+  .@{bk-prefix}-date-picker .@{bk-prefix}-date-picker-editor,
+  .@{bk-prefix}-tag-input,
+  .@{bk-prefix}-search-select {
     border-radius: 0;
   }
 
-  .bk-input.control-active,
-  .bk-select.is-focus,
-  .bk-cascade.is-focus,
-  .bk-color-picker.bk-color-picker-show-dropdown,
-  .bk-color-picker:hover,
-  .bk-date-picker .bk-date-picker-editor:focus,
-  .bk-tag-input.active,
-  .bk-tag-selector,
-  .bk-search-select.is-focus {
+  .@{bk-prefix}-input.control-active,
+  .@{bk-prefix}-select.is-focus,
+  .@{bk-prefix}-cascade.is-focus,
+  .@{bk-prefix}-color-picker.@{bk-prefix}-color-picker-show-dropdown,
+  .@{bk-prefix}-color-picker:hover,
+  .@{bk-prefix}-date-picker .@{bk-prefix}-date-picker-editor:focus,
+  .@{bk-prefix}-tag-input.active,
+  .@{bk-prefix}-tag-selector,
+  .@{bk-prefix}-search-select.is-focus {
     z-index: 1;
     opacity: 1;
   }
 
-  .bk-compose-form-item-head {
-    &.bk-input,
-    &.bk-select,
-    &.bk-cascade,
-    &.bk-color-picker,
-    &.bk-date-picker .bk-date-picker-editor,
-    &.bk-tag-input,
-    &.bk-tag-input,
-    &.bk-search-select {
+  .@{bk-prefix}-compose-form-item-head {
+    &.@{bk-prefix}-input,
+    &.@{bk-prefix}-select,
+    &.@{bk-prefix}-cascade,
+    &.@{bk-prefix}-color-picker,
+    &.@{bk-prefix}-date-picker .@{bk-prefix}-date-picker-editor,
+    &.@{bk-prefix}-tag-input,
+    &.@{bk-prefix}-tag-input,
+    &.@{bk-prefix}-search-select {
       margin-left: 0;
       border-top-right-radius: 0px;
       border-bottom-right-radius: 0px;
     }
   }
 
-  .bk-compose-form-item-tail {
-    &.bk-input,
-    &.bk-select,
-    &.bk-cascade,
-    &.bk-color-picker,
-    &.bk-date-picker,
-    &.bk-tag-input,
-    &.bk-tag-input,
-    &.bk-search-select {
+  .@{bk-prefix}-compose-form-item-tail {
+    &.@{bk-prefix}-input,
+    &.@{bk-prefix}-select,
+    &.@{bk-prefix}-cascade,
+    &.@{bk-prefix}-color-picker,
+    &.@{bk-prefix}-date-picker,
+    &.@{bk-prefix}-tag-input,
+    &.@{bk-prefix}-tag-input,
+    &.@{bk-prefix}-search-select {
       border-top-right-radius: 2px;
       border-bottom-right-radius: 2px;
     }

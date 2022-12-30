@@ -27,21 +27,27 @@
 import { computed, defineComponent, ExtractPropTypes, PropType, ref } from 'vue';
 
 import BkLoading, { BkLoadingMode, BkLoadingSize } from '@bkui-vue/loading';
-import { classes, PropTypes } from '@bkui-vue/shared';
+import { classes, ElementType, PropTypes } from '@bkui-vue/shared';
 
 
 type IButtonNativeType = PropType<'button' | 'submit' | 'reset'>;
-const btnSizes = ['', 'small', 'large'];
+const btnSizes = ['', 'small', 'large'] as const;
 const buttonProps = {
-  theme: PropTypes.theme().def(''),
-  hoverTheme: PropTypes.theme(['primary', 'warning', 'success', 'danger']).def(''),
-  size: PropTypes.size(btnSizes).def(''),
+  theme: PropTypes.theme(),
+  hoverTheme: PropTypes.theme(),
+  size: {
+    type: String as PropType<ElementType<typeof btnSizes>>,
+    default: btnSizes[0],
+  },
   title: PropTypes.string,
   icon: PropTypes.string,
   iconRight: PropTypes.string,
   disabled: PropTypes.bool,
   loading: PropTypes.bool,
-  loadingMode: PropTypes.commonType(Object.values(BkLoadingMode)),
+  loadingMode: {
+    type: String as PropType<`${BkLoadingMode}`>,
+    default: 'default',
+  },
   outline: PropTypes.bool,
   text: PropTypes.bool,
   selected: PropTypes.bool,
@@ -83,10 +89,10 @@ export default defineComponent({
     const loadingTheme = computed(() => {
       if (props.text || props.outline || props.hoverTheme) {
         if (isHover.value && !props.text) return 'white';
-        if (props.text && props.disabled) return '';
+        if (props.text && props.disabled) return;
         return props.hoverTheme || props.theme;
       }
-      return ['', 'default'].includes(props.theme) ? '' : 'white';
+      return !props.theme ? undefined : 'white';
     });
     const loadingSize = computed(() => (
       (isText.value || props.size === BkLoadingSize.Small) ? BkLoadingSize.Mini : BkLoadingSize.Small));
@@ -125,8 +131,13 @@ export default defineComponent({
               loading
               class={`${btnClsPrefix}-loading`}
               mode={props.loadingMode}
-              theme={loadingTheme.value}
-              size={loadingSize.value} />
+              size={loadingSize.value}
+              {
+                ...(loadingTheme.value ? {
+                  theme: loadingTheme.value,
+                } : {})
+              }
+            />
           )
         }
         {

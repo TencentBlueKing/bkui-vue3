@@ -42,8 +42,6 @@ import '@bkui-vue/link/link.less';
 import '@bkui-vue/dropdown/dropdown.less';
 import '@bkui-vue/loading/loading.less';
 import '@bkui-vue/modal/modal.less';
-import '@bkui-vue/popover/popover.less';
-import '@bkui-vue/popover2/popover2.less';
 import '@bkui-vue/progress/progress.less';
 import '@bkui-vue/radio/radio.less';
 import '@bkui-vue/rate/rate.less';

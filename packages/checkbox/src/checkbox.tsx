@@ -33,6 +33,7 @@ import {
   classes,
   PropTypes,
   resolveClassName,
+  SizeEnum,
 } from '@bkui-vue/shared';
 
 import {
@@ -41,15 +42,15 @@ import {
 } from './common';
 
 export const checkboxProps = {
-  modelValue: PropTypes.oneOfType([String, Number, Boolean]).def(''),
+  modelValue: PropTypes.oneOfType([String, Number, Boolean]),
   label: PropTypes.oneOfType([String, Number, Boolean]),
   trueLabel: PropTypes.oneOfType([String, Number, Boolean]).def(true),
-  falseLabel: PropTypes.oneOfType([String, Number, Boolean]).def(''),
+  falseLabel: PropTypes.oneOfType([String, Number, Boolean]).def(false),
   disabled: PropTypes.bool.def(false),
   checked: PropTypes.bool.def(false),
   indeterminate: PropTypes.bool,
   beforeChange: PropTypes.func,
-  size: PropTypes.size().def('large'),
+  size: PropTypes.size().def(SizeEnum.LARGE),
 };
 
 export type CheckboxProps = Readonly<ExtractPropTypes<typeof checkboxProps>>;
@@ -71,6 +72,7 @@ export default defineComponent({
     ] = useFocus();
 
     const {
+      inputRef,
       isChecked,
       isDisabled,
       setChecked,
@@ -78,6 +80,7 @@ export default defineComponent({
     } = useCheckbox();
 
     return {
+      inputRef,
       isFocus,
       isChecked,
       isDisabled,
@@ -96,10 +99,24 @@ export default defineComponent({
       'is-disabled': this.isDisabled,
       'is-indeterminated': this.indeterminate,
     });
+
+    const renderLabel = () => {
+      if (!this.label && !this.$slots.default) {
+        return null;
+      }
+
+      return (
+        <span class="bk-checkbox-label">
+          {this.$slots.default ? this.$slots.default() : this.label}
+        </span>
+      );
+    };
+
     return (
       <label class={checkboxClass}>
         <span class={[resolveClassName('checkbox-input'), this.size]}>
           <input
+            ref="inputRef"
             role="checkbox"
             type="checkbox"
             class="bk-checkbox-original"
@@ -107,10 +124,7 @@ export default defineComponent({
             checked={this.isChecked}
             onChange={this.handleChange} />
         </span>
-        {this.$slots.default
-          ? this.$slots.default()
-          : <span class="bk-checkbox-label">{ this.label }</span>
-         }
+        {renderLabel()}
       </label>
     );
   },

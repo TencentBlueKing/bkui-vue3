@@ -76,14 +76,12 @@ export default defineComponent({
     const popoverProps = reactive({
       isShow: false,
       width: 190,
-      modifiers: [{
-        name: 'offset',
-        options: {
-          offset: [0, 4],
-        },
-      }],
+      offset: {
+        mainAxis: 4,
+        crossAxis: 0,
+        // alignmentAxis: 50,
+      },
       ...props.popoverProps,
-
     });
 
     // 分页处理
@@ -95,7 +93,6 @@ export default defineComponent({
     const tagListRef = ref(null);
     const tagInputItemRef = ref(null);
     const selectorListRef = ref(null);
-    const popoverRef = ref(null);
     const timer: Ref<ReturnType<typeof setTimeout>> = ref(null);
 
     // 是否展示tag close
@@ -107,15 +104,14 @@ export default defineComponent({
       listState.selectedTagList.length === 0 && curInputValue.value === '' && !state.isEdit
     ));
     // 是否展示清空Icon
-    const isShowClear = computed(() =>
-      /**
-       * 不显示条件：
-       * 1. 设置不可清除
-       * 2. 禁用时
-       * 3. tag标签为空时
-       * 4. 设置了showClearOnlyHover，且没有hover的时候
-       */
-      props.clearable
+    /**
+     * 不显示条件：
+     * 1. 设置不可清除
+     * 2. 禁用时
+     * 3. tag标签为空时
+     * 4. 设置了showClearOnlyHover，且没有hover的时候
+     */
+    const isShowClear = computed(() => props.clearable
         && !props.disabled
         && listState.selectedTagList.length !== 0
         && (props.showClearOnlyHover ? state.isHover : true));
@@ -205,14 +201,7 @@ export default defineComponent({
 
     const changePopoverOffset = () => {
       // 修改popover offset
-      const left = isSingleSelect.value ? 0 : tagInputItemRef.value?.offsetLeft;
-      popoverProps.modifiers = [{
-        name: 'offset',
-        options: {
-          offset: [left, 4],
-        },
-      }];
-      popoverRef.value?.update();
+      popoverProps.offset.crossAxis = isSingleSelect.value ? 0 : tagInputItemRef.value?.offsetLeft;
     };
     const scrollHandler = () => {
       if (pageState.isPageLoading || selectorListRef.value.scrollTop === 0) {
@@ -237,7 +226,7 @@ export default defineComponent({
     // 获取选中元素节点
     const getSelectedTagNodes = (): HTMLElement[] => {
       const nodes = Array.from(tagListRef.value?.childNodes || []) as HTMLElement[];
-      return nodes.filter((node: HTMLElement) => node.nodeType !== Node.TEXT_NODE);
+      return nodes.filter((node: HTMLElement) => ![Node.TEXT_NODE, Node.COMMENT_NODE].includes(node.nodeType));
     };
 
     /**
@@ -518,10 +507,10 @@ export default defineComponent({
      * @param type emit type
      */
     const handleChange = (type, data?) => {
-      emit('change', tagList.value);
       // this.dispatch('bk-form-item', 'form-change')
       emit(type, data);
       emit('update:modelValue', tagList.value);
+      emit('change', tagList.value);
     };
 
     /**
@@ -882,7 +871,6 @@ export default defineComponent({
       tagListRef,
       tagInputItemRef,
       selectorListRef,
-      popoverRef,
       triggerClass,
       overflowTagIndex,
       localCollapseTags,
@@ -908,11 +896,9 @@ export default defineComponent({
         onMouseenter={() => this.isHover = true}
         onMouseleave={() => this.isHover = false}>
         <BKPopover
-          ref="popoverRef"
-          theme="light"
+          theme="light bk-tag-input-popover-content"
           trigger="manual"
           placement="bottom-start"
-          content-cls="bk-tag-input-popover-content"
           arrow={false}
           {...this.popoverProps}
         >

@@ -87,6 +87,19 @@ export default defineComponent({
       'is-disabled': this.isDisabled,
       'is-checked': this.isChecked,
     });
+
+    const renderLabel = () => {
+      if (!this.label && !this.$slots.default) {
+        return null;
+      }
+
+      return (
+        <span class="bk-radio-label">
+          {this.$slots.default ? this.$slots.default() : this.label}
+        </span>
+      );
+    };
+
     return (
       <label
         class={radioClass}
@@ -95,15 +108,13 @@ export default defineComponent({
           class="bk-radio-input"
           type="radio"
           tabindex="0"
-          value={this.label as any}
+          value={this.label as string}
           checked={this.isChecked}
           disabled={this.isDisabled}
           onFocus={this.handleFocus}
           onBlur={this.handleBlur}
           onChange={this.handleChange} />
-        <span class="bk-radio-text">
-          {this.$slots.default ? this.$slots.default() : this.label}
-        </span>
+          {renderLabel()}
       </label>
     );
   },

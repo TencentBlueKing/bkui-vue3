@@ -1,3 +1,4 @@
+
 /*
 * Tencent is pleased to support the open source community by making
 * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
@@ -23,39 +24,11 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { computed, defineComponent } from 'vue';
-
-import { PropTypes, resolveClassName } from '@bkui-vue/shared';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
-  name: 'PopContent',
-  props: {
-    width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
-    height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
-  },
-  setup(props) {
-    const resolveValToPix = (val: string | number) => {
-      if (/^\d+\.?\d*$/.test(`${val}`)) {
-        return `${val}px`;
-      }
-
-      return val;
-    };
-    const style = computed(() => ({
-      width: resolveValToPix(props.width),
-      height: resolveValToPix(props.height),
-    }));
-
-    return {
-      style,
-    };
-  },
-  render() {
-    const className = [resolveClassName('popover2'), resolveClassName('pop2-content')];
-
-    return <div class={ className } tabindex="-1" style={this.style}>
-      { this.$slots.default?.() ?? '' }
-      { this.$slots.arrow?.() ?? '' }
-    </div>;
+  name: 'Popover2',
+  setup() {
+    return () => <code>{ '<bk-popover2></bk-popover2>已经合并为<bk-popover></bk-popover>，请替换为<bk-popover></bk-popover>' }</code>;
   },
 });
