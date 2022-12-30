@@ -39,6 +39,7 @@ import {
   getRowKey,
   hasRootScrollY,
   isColumnHidden,
+  isRowSelectEnable,
   resolveCellSpan,
   resolveHeadConfig,
   resolveNumberOrStringToPix,
@@ -361,7 +362,6 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
       }
     });
 
-    reactiveSchema.rowActions.set(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_ALL, hasChecked && !hasUnchecked);
     reactiveSchema.rowActions.set(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_INDETERMINATE, hasChecked && hasUnchecked);
   };
 
@@ -385,12 +385,15 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
     const isChecked = typeof checked === 'boolean' ? checked : !isSelectionAll();
     reactiveSchema.rowActions.set(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_ALL, isChecked);
     reactiveSchema.rowActions.set(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_INDETERMINATE, false);
-    indexData.forEach((row: any) => {
-      const rowId = row[TABLE_ROW_ATTRIBUTE.ROW_UID];
-      const target = Object.assign({}, reactiveSchema.rowActions.get(rowId) ?? {}, { isSelected: isChecked });
-      reactiveSchema.rowActions.set(rowId, target);
+    indexData.forEach((row: any, index) => {
+      if (isRowSelectEnable(props, { row, index, isCheckAll: false })) {
+        const rowId = row[TABLE_ROW_ATTRIBUTE.ROW_UID];
+        const target = Object.assign({}, reactiveSchema.rowActions.get(rowId) ?? {}, { isSelected: isChecked });
+        reactiveSchema.rowActions.set(rowId, target);
+      }
     });
 
+    updateSelectionAll();
     updateIndexData(isChecked);
     asyncSelection(null, checked, true);
   };
@@ -447,9 +450,9 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
    * @param rowId 指定row id
    * @returns boolean
    */
-  const resolveSelection = (row: any, _rowId?: string) => resolveSelectionRow(row, () => {
+  const resolveSelection = (row: any, _rowId?: string, index?: number) => resolveSelectionRow(row, () => {
     const rowId = _rowId === undefined ? row[TABLE_ROW_ATTRIBUTE.ROW_UID] : _rowId;
-    if (isSelectionAll()) {
+    if (isRowSelectEnable(props, { row, index, isCheckAll: false }) && isSelectionAll()) {
       return true;
     }
 
@@ -480,7 +483,7 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
         [TABLE_ROW_ATTRIBUTE.ROW_INDEX]: index,
         [TABLE_ROW_ATTRIBUTE.ROW_UID]: rowId,
         [TABLE_ROW_ATTRIBUTE.ROW_EXPAND]: keepLocalAction ? isRowExpand(rowId) : false,
-        [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: resolveSelection(item, rowId),
+        [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: resolveSelection(item, rowId, index),
         [TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA]: { ...item },
         [TABLE_ROW_ATTRIBUTE.ROW_SKIP_CFG]: cfg,
       };
@@ -489,15 +492,33 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
     initSelectionAllByData();
   };
 
+  /**
+   * 判定当前行是否选中
+   * @param isRowCheckEnable
+   * @param selectedAll
+   * @param item
+   * @returns
+   */
+  const isRowChecked = (isRowCheckEnable, selectedAll, item, index) => {
+    const isChecked = resolveSelection(item, item[TABLE_ROW_ATTRIBUTE.ROW_UID], index);
+    if (isRowCheckEnable) {
+      return typeof selectedAll === 'boolean' ? selectedAll : isChecked;
+    }
+
+    return isChecked;
+  };
+
   const updateIndexData = (selectedAll?: boolean) => {
     let preRowId = null;
     const skipConfig = {};
     indexData.forEach((item: any, index: number) => {
       const rowId = item[TABLE_ROW_ATTRIBUTE.ROW_UID];
       const cfg = neepColspanOrRowspan.value ? getSkipConfig(item, rowId, index, skipConfig, preRowId) : {};
+      const isRowCheckEnable = isRowSelectEnable(props, { row: item, index, isCheckAll: false });
+
       Object.assign(item, {
         [TABLE_ROW_ATTRIBUTE.ROW_EXPAND]: isRowExpand(item[TABLE_ROW_ATTRIBUTE.ROW_UID]),
-        [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: typeof selectedAll === 'boolean' ? selectedAll : resolveSelection(item, item[TABLE_ROW_ATTRIBUTE.ROW_UID]),
+        [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: isRowChecked(isRowCheckEnable, selectedAll, item, index),
         [TABLE_ROW_ATTRIBUTE.ROW_SKIP_CFG]: cfg,
       });
       preRowId = item[TABLE_ROW_ATTRIBUTE.ROW_UID];
