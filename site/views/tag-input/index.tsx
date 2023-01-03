@@ -235,6 +235,13 @@ const propsJson: IPropsTableItem[] = [
     desc: '失焦是否折叠 tags',
     optional: ['true', 'false'],
   },
+  {
+    name: 'tag-overflow-tips',
+    type: 'Object',
+    default: '{}',
+    desc: '定义 tag 超出内容的 v-bk-tooltips 配置',
+    optional: [],
+  },
 ];
 export default defineComponent({
   render() {
