@@ -26,6 +26,8 @@
 
 import { defineComponent, h, VNodeChild } from 'vue';
 
+import { resolveClassName } from '@bkui-vue/shared';
+
 import { tabPanelProps } from './props';
 
 export default defineComponent({
@@ -51,7 +53,7 @@ export default defineComponent({
     };
 
     return (
-      <div v-show={active} ref='content' class="bk-tab-panel">
+      <div v-show={active} ref='content' class={resolveClassName('tab-panel')}>
         {getContent()}
       </div>
     );
