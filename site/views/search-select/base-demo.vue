@@ -2,6 +2,7 @@
   <bk-search-select
     v-model="value"
     :data="data"
+    :value-split-code="'+'"
   />
 </template>
 <script setup>
@@ -16,7 +17,7 @@
       validate: true,
       children: [
         {
-          name: '创建中',
+          name: 'redis 创 建 中 ',
           id: '1-2',
         },
         {

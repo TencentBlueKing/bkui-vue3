@@ -28,7 +28,8 @@ import { defineComponent, PropType, ref } from 'vue';
 import { Close } from '@bkui-vue/icon';
 
 import SearchSelectInput from './input';
-import { GetMenuListFunc, ICommonItem, ISearchItem, SearchInputMode, SelectedItem, useSearchSelectInject, ValidateValuesFunc } from './utils';;
+import { GetMenuListFunc, ICommonItem, ISearchItem, SearchInputMode, SelectedItem, useSearchSelectInject, ValidateValuesFunc } from './utils';
+;
 export default defineComponent({
   name: 'SearchSelected',
   props: {
@@ -48,13 +49,13 @@ export default defineComponent({
       type: Array as PropType<ICommonItem[]>,
       default: () => [],
     },
-    geMenuList: Function as PropType<GetMenuListFunc>,
+    getMenuList: Function as PropType<GetMenuListFunc>,
     validateValues: Function as PropType<ValidateValuesFunc>,
   },
   emits: ['delete'],
-  setup(_, { emit }) {
+  setup(props, { emit }) {
     const inputRef = ref<typeof SearchSelectInput>(null);
-    const { onEditClick, onEditEnter, onEditBlur, editKey } = useSearchSelectInject();
+    const { onEditClick, onEditEnter, onEditBlur, editKey, valueSplitCode } = useSearchSelectInject();
     function handleDeleteSelected(index: number) {
       emit('delete', index);
     }
@@ -76,7 +77,7 @@ export default defineComponent({
       return true;
     }
     function copySeletedItem(item: SelectedItem): SelectedItem {
-      const newItem = new SelectedItem(item.searchItem, item.type);
+      const newItem = new SelectedItem(item.searchItem, item.type, valueSplitCode.value);
       newItem.values = item.values.slice();
       return newItem;
     }
@@ -102,7 +103,7 @@ export default defineComponent({
             conditions={this.conditions}
             defautUsingItem={this.copySeletedItem(item)}
             clickOutside={this.handleInputOutside}
-            geMenuList={this.geMenuList}
+            getMenuList={this.getMenuList}
             validateValues={this.validateValues}
             onAdd={v => this.handleAddSelected(v, index)}
             onFocus={this.handleInputFocus}/>
