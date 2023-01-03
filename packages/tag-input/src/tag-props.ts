@@ -27,6 +27,7 @@
 import { ExtractPropTypes, PropType, VNode } from 'vue';
 import { toType } from 'vue-types';
 
+import { IOptions } from '@bkui-vue/directives/src/tooltips';
 import { PopoverPropTypes } from '@bkui-vue/popover';
 import { PropTypes } from '@bkui-vue/shared';
 
@@ -83,6 +84,10 @@ const tagProps = () => ({
   collapseTags: {
     type: Boolean,
     default: false,
+  },
+  tagOverflowTips: {
+    type: Object as PropType<Partial<IOptions>>,
+    default: () => ({}),
   },
 });
 
