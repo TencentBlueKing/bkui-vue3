@@ -25,7 +25,7 @@
 */
 
 import { addListener, removeListener } from 'resize-detector';
-import {  defineComponent, onBeforeUnmount, onMounted, PropType, ref, watch } from 'vue';
+import {  computed, defineComponent, onBeforeUnmount, onMounted, PropType, ref, watch } from 'vue';
 
 import { clickoutside } from '@bkui-vue/directives';
 import { Close, ExclamationCircleShape, Search } from '@bkui-vue/icon';
@@ -67,6 +67,10 @@ export const SearchSelectProps = {
   },
   getMenuList: Function as PropType<GetMenuListFunc>,
   validateValues: Function as PropType<ValidateValuesFunc>,
+  valueSplitCode: {
+    type: String,
+    default: '|',
+  },
 };
 export default defineComponent({
   name: 'SearchSelect',
@@ -87,6 +91,7 @@ export default defineComponent({
     const debounceResize = debounce(32, handleResize);
     const editKey = ref('');
     const validateStr = ref('');
+    const splitCode = computed(() => props.valueSplitCode);
 
     // effects
     watch(
@@ -112,7 +117,7 @@ export default defineComponent({
             if (!searchItem && !item.values?.length) {
               searchType = 'text';
             }
-            const newSelected = new SelectedItem(searchItem || item, searchType);
+            const newSelected = new SelectedItem(searchItem || item, searchType, splitCode.value);
             newSelected.values = item.values || [];
             list.push(newSelected);
           }
@@ -140,6 +145,7 @@ export default defineComponent({
       onEditBlur,
       onValidate,
       editKey,
+      valueSplitCode: splitCode,
     });
     function onEditClick(item: SelectedItem, index: number) {
       editKey.value = `${item.id}_${index}`;
@@ -223,6 +229,7 @@ export default defineComponent({
       selectedList,
       overflowIndex,
       validateStr,
+      splitCode,
       onEditClick,
       onEditEnter,
       handleWrapClick,
@@ -258,7 +265,7 @@ export default defineComponent({
           conditions={this.conditions}
           selectedList={this.selectedList}
           overflowIndex={this.overflowIndex}
-          geMenuList={this.getMenuList}
+          getMenuList={this.getMenuList}
           validateValues={this.validateValues}
           onDelete={this.handleDeleteSelected}
           v-slots={{ ...menuSlots }}/>
@@ -270,7 +277,7 @@ export default defineComponent({
            showCondition={showCondition}
            conditions={this.conditions}
            clickOutside={this.handleInputOutside}
-           geMenuList={this.getMenuList}
+           getMenuList={this.getMenuList}
            validateValues={this.validateValues}
            onAdd={this.handleAddSelected}
            onDelete={this.handleDeleteSelected}
