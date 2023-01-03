@@ -86,6 +86,13 @@ const propsJson: IPropsTableItem[] = [
     desc: '自定义动态验证选择或者输入值 如果返回 校验失败的文本则代表校验失败',
     optional: [],
   },
+  {
+    name: 'valueSplitCode',
+    type: 'String',
+    default: '|',
+    desc: '多选的值的链接符号',
+    optional: [],
+  },
 ];
 const slotsJson = [
   {
