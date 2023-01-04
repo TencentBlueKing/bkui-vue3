@@ -2,12 +2,13 @@
   <bk-search-select
     v-model="value"
     :data="data"
+    unique-select
     :value-split-code="'+'"
   />
 </template>
 <script setup>
-  import { ref } from 'vue';
-  const data = [
+  import { computed, ref } from 'vue';
+  const data = computed(() => [
     {
       name: '实例状态',
       id: '1',
@@ -55,7 +56,11 @@
       id: '3',
       disabled: true,
     },
-  ];
+    {
+      name: 'testestset',
+      id: '4',
+    },
+  ]);
   const value = ref([
     {
       id: '1',

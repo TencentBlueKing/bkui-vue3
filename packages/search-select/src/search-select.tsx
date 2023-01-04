@@ -100,7 +100,7 @@ export default defineComponent({
     watch(() => props.data, () => {
       copyData = ref(JSON.parse(JSON.stringify(props.data)));
       copyData.value?.forEach((item) => {
-        item.isSelected = !!props.modelValue.some(set => set.id === item.id);
+        item.isSelected = props.uniqueSelect && !!props.modelValue.some(set => set.id === item.id);
       });
     }, {
       immediate: true,
@@ -139,7 +139,7 @@ export default defineComponent({
         });
         selectedList.value = list;
         copyData.value?.forEach((item) => {
-          item.isSelected = !!list.some(set => set.id === item.id);
+          item.isSelected = props.uniqueSelect && !!list.some(set => set.id === item.id);
         });
       },
       {
