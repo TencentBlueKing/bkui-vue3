@@ -64,6 +64,8 @@ export interface ICommonItem {
   disabled?: boolean;
   realId?: string;
   value?:  Omit<ICommonItem, 'disabled' | 'value'>;
+  // 是否已选中
+  isSelected?: boolean
 }
 export interface ISearchValue extends Omit<ICommonItem, 'disabled' | 'value'> {
   type?: SearchItemType;
@@ -78,8 +80,8 @@ export interface ISearchItem {
   // 是否多选
   multiple?: boolean;
   // 是否远程获取子列表 需配合组件属性 getMenuList使用
-  // false 默认 如果配置了属性 getMenuList 则通过 getMenuList来获取子列表
-  // true 则是直接拿到 children字段来获取子列表
+  // true 默认 如果配置了属性 getMenuList 则通过 getMenuList来获取子列表
+  // false 则是直接拿到 children字段来获取子列表
   async?: boolean;
   // 是校验
   noValidate?: boolean;
@@ -89,6 +91,8 @@ export interface ISearchItem {
   disabled?: boolean;
   // 选中后立即生成tag
   value?: ICommonItem
+  // 是否已选中
+  isSelected?: boolean
 }
 export interface IMenuFooterItem {
   id: 'confirm' | 'cancel';
