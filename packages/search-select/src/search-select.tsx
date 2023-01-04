@@ -73,7 +73,7 @@ export const SearchSelectProps = {
   },
   uniqueSelect: {
     type: Boolean,
-    default: true,
+    default: false,
   },
 };
 export default defineComponent({
