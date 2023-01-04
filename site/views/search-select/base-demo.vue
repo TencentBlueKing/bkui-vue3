@@ -7,8 +7,8 @@
   />
 </template>
 <script setup>
-  import { computed, ref } from 'vue';
-  const data = computed(() => [
+  import { ref, shallowRef } from 'vue';
+  const data = shallowRef([
     {
       name: '实例状态',
       id: '1',
