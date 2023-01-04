@@ -25,7 +25,7 @@
 */
 
 import { addListener, removeListener } from 'resize-detector';
-import {  computed, defineComponent, onBeforeUnmount, onMounted, PropType, Ref, ref, watch } from 'vue';
+import {  computed, defineComponent, onBeforeUnmount, onMounted, PropType, ref, ShallowRef, shallowRef, watch } from 'vue';
 
 import { clickoutside } from '@bkui-vue/directives';
 import { Close, ExclamationCircleShape, Search } from '@bkui-vue/icon';
@@ -96,11 +96,11 @@ export default defineComponent({
     const editKey = ref('');
     const validateStr = ref('');
     const splitCode = computed(() => props.valueSplitCode);
-    let copyData: Ref<ISearchItem[]>;
+    const copyData: ShallowRef<ISearchItem[]> = shallowRef([]);
     watch(() => props.data, () => {
-      copyData = ref(JSON.parse(JSON.stringify(props.data)));
+      copyData.value = JSON.parse(JSON.stringify(props.data));
       copyData.value?.forEach((item) => {
-        item.isSelected = !!props.modelValue.some(set => set.id === item.id);
+        item.isSelected = props.uniqueSelect && !!props.modelValue.some(set => set.id === item.id);
       });
     }, {
       immediate: true,
@@ -139,7 +139,7 @@ export default defineComponent({
         });
         selectedList.value = list;
         copyData.value?.forEach((item) => {
-          item.isSelected = !!list.some(set => set.id === item.id);
+          item.isSelected = props.uniqueSelect && !!list.some(set => set.id === item.id);
         });
       },
       {
