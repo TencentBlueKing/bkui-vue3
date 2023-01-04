@@ -292,13 +292,13 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
     // 设置settimeout避免hidePopover导致显示问题
     setTimeout(() => {
       !props.disabled && (localIsShow.value = true);
-    }, 100);
+    }, props.popoverDelay);
   };
 
   const hidePopover = () => {
     popHideTimerId = setTimeout(() => {
       localIsShow.value = false;
-    }, 100);
+    }, props.popoverDelay);
   };
 
   const hanldePopoverShow = () => {
