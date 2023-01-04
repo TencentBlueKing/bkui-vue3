@@ -645,7 +645,7 @@ export default defineComponent({
             || (props.allowCreate && state.focusItemIndex >= 0 && popoverProps.isShow)
           ) {
             handleTagSelected(pageState.curPageList[state.focusItemIndex], 'select', e);
-          } else if (props.allowCreate) {
+          } else if (props.allowCreate && curInputValue.value.trim()) {
             handleTagSelected(curInputValue.value, 'custom', e);
           }
           // 如果是enter, 防止触发form submit
@@ -924,7 +924,13 @@ export default defineComponent({
                           style={{ display: isOverflow ? 'none' : '' }}
                           v-bk-tooltips={tooltips}
                           onClick={this.tagFocus}>
-                          <TagRender node={item} tpl={this.tagTpl} displayKey={this.displayKey} />
+                          <TagRender
+                            node={item}
+                            tpl={this.tagTpl}
+                            displayKey={this.displayKey}
+                            hasTips={!!this.tooltipKey}
+                            tagOverflowTips={this.tagOverflowTips}
+                          />
                           {this.showTagClose ? <Error class="remove-tag" onClick={this.handleTagRemove.bind(this, item, index)} /> : null}
                         </li>
                       );
