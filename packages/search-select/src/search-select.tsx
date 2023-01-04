@@ -25,7 +25,7 @@
 */
 
 import { addListener, removeListener } from 'resize-detector';
-import {  computed, defineComponent, onBeforeUnmount, onMounted, PropType, ref, watch } from 'vue';
+import {  computed, defineComponent, onBeforeUnmount, onMounted, PropType, Ref, ref, watch } from 'vue';
 
 import { clickoutside } from '@bkui-vue/directives';
 import { Close, ExclamationCircleShape, Search } from '@bkui-vue/icon';
@@ -71,6 +71,10 @@ export const SearchSelectProps = {
     type: String,
     default: '|',
   },
+  uniqueSelect: {
+    type: Boolean,
+    default: false,
+  },
 };
 export default defineComponent({
   name: 'SearchSelect',
@@ -92,13 +96,24 @@ export default defineComponent({
     const editKey = ref('');
     const validateStr = ref('');
     const splitCode = computed(() => props.valueSplitCode);
-
+    let copyData: Ref<ISearchItem[]>;
+    watch(() => props.data, () => {
+      copyData = ref(JSON.parse(JSON.stringify(props.data)));
+      copyData.value?.forEach((item) => {
+        item.isSelected = !!props.modelValue.some(set => set.id === item.id);
+      });
+    }, {
+      immediate: true,
+    });
     // effects
     watch(
       () => props.modelValue,
       (v: ISearchValue[]) => {
         if (!v?.length) {
           selectedList.value = [];
+          copyData.value?.forEach((item) => {
+            item.isSelected = false;
+          });
           return;
         }
         const list = [];
@@ -123,6 +138,9 @@ export default defineComponent({
           }
         });
         selectedList.value = list;
+        copyData.value?.forEach((item) => {
+          item.isSelected = !!list.some(set => set.id === item.id);
+        });
       },
       {
         immediate: true,
@@ -226,6 +244,7 @@ export default defineComponent({
       inputRef,
       wrapRef,
       isFocus,
+      copyData,
       selectedList,
       overflowIndex,
       validateStr,
@@ -261,7 +280,7 @@ export default defineComponent({
       </div>
       <div class="search-container" style={{ maxHeight }}>
         <SearchSelected
-          data={this.data}
+          data={this.copyData}
           conditions={this.conditions}
           selectedList={this.selectedList}
           overflowIndex={this.overflowIndex}
@@ -272,7 +291,7 @@ export default defineComponent({
         <div class="search-container-input">
           <SearchSelectInput
            ref="inputRef"
-           data={this.data}
+           data={this.copyData}
            showInputBefore={!this.selectedList.length}
            showCondition={showCondition}
            conditions={this.conditions}

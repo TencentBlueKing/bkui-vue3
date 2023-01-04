@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent, PropType, Ref, ref, watch, watchEffect } from 'vue';
+import { defineComponent, nextTick, PropType, Ref, ref, watch, watchEffect } from 'vue';
 
 import { clickoutside } from '@bkui-vue/directives';
 import Popover from '@bkui-vue/popover';
@@ -217,7 +217,6 @@ export default defineComponent({
         return;
       }
       const { values } = usingItem.value;
-      debugger;
       if (!values?.length) {
         if (keyword.value?.length) {
           if (keyword.value.includes(valueSplitCode.value)) {
@@ -247,6 +246,8 @@ export default defineComponent({
       // 删除已选择项
       if (!usingItem.value && !keyword.value) {
         emit('delete');
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        nextTick(setMenuList);
         return;
       }
       if (usingItem.value?.values.length) {
@@ -341,14 +342,15 @@ export default defineComponent({
     }
     async function setMenuList() {
       let list = [];
-      if (typeof props.getMenuList === 'function' && !usingItem.value?.searchItem?.async) {
+      if (typeof props.getMenuList === 'function'
+        && (typeof usingItem.value?.searchItem?.async === 'undefined' || usingItem.value.searchItem.async === true)) {
         loading.value = true;
         list = await props.getMenuList(usingItem.value?.searchItem, keyword.value).catch(() => []);
         loading.value = false;
       } else if (!usingItem?.value) {
         if (!keyword.value?.length) {
-          list = props.data.slice();
-        } else props.data.forEach((item) => {
+          list = props.data.filter(item => !item.isSelected).slice();
+        } else props.data.filter(item => !item.isSelected).forEach((item) => {
           const isMatched = item.name.toLocaleLowerCase().includes(keyword.value.toLocaleLowerCase());
           if (isMatched) {
             list.push(item);
