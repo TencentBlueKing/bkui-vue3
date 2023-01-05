@@ -173,4 +173,4 @@ export const SORT_OPTIONS = [SORT_OPTION.ASC, SORT_OPTION.DESC, SORT_OPTION.NULL
 /**
  * 列宽最小设置
  */
-export const COL_MIN_WIDTH = 20;
+export const COL_MIN_WIDTH = 80;
