@@ -3,7 +3,6 @@
     <bk-input
       v-model="val"
       clearable
-      show-clear-only-hover
     />
   </div>
 </template>

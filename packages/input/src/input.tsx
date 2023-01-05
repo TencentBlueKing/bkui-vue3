@@ -331,7 +331,11 @@ export default defineComponent({
             {...bindProps.value}
           />
         )}
-        {!isTextArea.value && props.clearable && !!props.modelValue && <Close onClick={clear} class={clearCls.value} />}
+        {!isTextArea.value && props.clearable && !!props.modelValue && (
+          <span class={clearCls.value} onClick={clear}>
+            <Close />
+          </span>
+        )}
         {suffixIcon.value}
         {
           typeof props.maxlength === 'number' && (props.showWordLimit || isTextArea.value) && (
