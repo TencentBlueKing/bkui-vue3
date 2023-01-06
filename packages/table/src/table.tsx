@@ -215,7 +215,6 @@ export default defineComponent({
 
         updateBorderClass(root.value);
         const offset = getColumnsWidthOffsetWidth();
-        console.log('resolveColumnWidth');
         resolveColumnWidth(root.value, colgroups, 20, offset);
       }, 60, true);
 
