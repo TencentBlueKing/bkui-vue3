@@ -172,6 +172,10 @@ export const resolveColumnWidth = (
   const getMinWidth = (col: GroupColumn, computedWidth: number) => {
     const { minWidth = undefined } = col;
     if (minWidth === undefined) {
+      if (computedWidth < COL_MIN_WIDTH) {
+        return COL_MIN_WIDTH;
+      }
+
       return computedWidth;
     }
 

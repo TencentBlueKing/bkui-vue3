@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { computed, defineComponent, ref, watch } from 'vue';
+import { computed, defineComponent, ref, unref, watch } from 'vue';
 
 import BkButton from '@bkui-vue/button';
 import BkCheckbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
@@ -76,6 +76,7 @@ export default defineComponent({
     const checkedFields = ref(localSettings.value.checked || []);
     const className = resolveClassName('table-settings');
     const theme = `light ${className}`;
+    const renderFields = computed(() => localSettings.value.fields || props.columns || []);
 
     const cachedValue = {
       checkAll: checkAll.value,
@@ -91,7 +92,7 @@ export default defineComponent({
         activeHeight: activeHeight.value,
         checkedFields: checkedFields.value,
       });
-      emit('change', { checked: checkedFields.value, size: activeSize.value, height: activeHeight.value });
+      emit('change', { checked: checkedFields.value, size: activeSize.value, height: activeHeight.value, fields: unref(renderFields) });
       isShow.value = false;
     };
 
@@ -154,8 +155,6 @@ export default defineComponent({
     const renderSize = () => sizeList.map(item => <span
       class={getItemClass(item)}
       onClick={() => handleSizeItemClick(item)}>{item.label}</span>);
-
-    const renderFields = computed(() => localSettings.value.fields || props.columns || []);
 
     const indeterminate = computed(() => checkedFields.value.length > 0 && !renderFields.value
       .every((field: any, index: number) => checkedFields.value

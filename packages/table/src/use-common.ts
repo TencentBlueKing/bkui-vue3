@@ -237,9 +237,9 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
     return minWidth;
   };
 
-  const updateColGroups = () => {
-    const checked = (props.settings as Settings)?.checked || [];
-    const settingFields = (props.settings as Settings)?.fields || [];
+  const updateColGroups = (settings?: Settings) => {
+    const checked = settings?.checked || (props.settings as Settings)?.checked || [];
+    const settingFields = settings?.fields || (props.settings as Settings)?.fields || [];
 
     colgroups.splice(0, colgroups.length, ...(getColumns())
       .map(col => ({
