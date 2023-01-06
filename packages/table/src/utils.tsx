@@ -251,6 +251,11 @@ export const resolveColumnWidth = (
         const { calcWidth } = colgroups[idx];
         avgWidth = avgWidth - calcWidth;
       });
+    } else {
+      avgColIndexList.forEach((idx) => {
+        const calcWidth = getMinWidth(colgroups[idx], COL_MIN_WIDTH);
+        Object.assign(colgroups[idx], { calcWidth });
+      });
     }
   }
 };

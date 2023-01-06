@@ -14,14 +14,14 @@
 <script>
   import { defineComponent } from 'vue';
 
-  import { DATA_COLUMNS, DATA_TABLE } from './options';
+  import { DATA_FIX_COLUMNS, DATA_TABLE } from './options';
   export default defineComponent({
     components: {},
     data() {
       return {
         isLoading: false,
         tableData: [...DATA_TABLE],
-        columns: [...DATA_COLUMNS],
+        columns: [...DATA_FIX_COLUMNS],
         settings: {
           fields: [{
                      label: '序号',
