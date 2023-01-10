@@ -53,7 +53,7 @@ const props: IPropsTableItem[] = [
   },
   {
     name: 'message',
-    type: 'String',
+    type: 'String | Function',
     default: '',
     desc: '组件显示的文字内容',
     optional: [],
