@@ -35,7 +35,6 @@ import { resolvePropsToDesData } from '../utils';
 
 import DemoAdd from './demo-add.vue';
 import DemoBase from './demo-base.vue';
-import BorderCardDemo from './demo-border-card.vue';
 import CardDemo from './demo-card.vue';
 import DemoDrag from './demo-drag.vue';
 import DemoExtend from './demo-extend.vue';
@@ -62,13 +61,6 @@ export default defineComponent({
           componentName="tab"
           demoName="demo-card">
           <CardDemo />
-        </DemoBox>
-        <DemoBox
-          title="卡片样式"
-          desc="通过配置 type 属性，设置选项卡样式。支持的属性有 card, border-card, unborder-card, vertical-card"
-          componentName="tab"
-          demoName="demo-base">
-          <BorderCardDemo />
         </DemoBox>
         <DemoBox
           title="选项卡位置"

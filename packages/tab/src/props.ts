@@ -28,23 +28,23 @@ import { toType } from 'vue-types';
 
 import { PropTypes, renderDirectiveType } from '@bkui-vue/shared';
 
-enum TabTypeEnum {
+export enum TabTypeEnum {
   CARD = 'card',
   BORDER_CARD = 'border-card',
   UNBORDER_CARD = 'unborder-card',
+  CARD_TAB = 'card-tab',
 }
 
-enum PositionEnum {
+export enum PositionEnum {
   LEFT = 'left',
   RIGHT = 'right',
   TOP = 'top',
 }
 const tabPositionType = toType<`${PositionEnum}`>('position', {}).def(PositionEnum.TOP);
 
-enum SortTypeEnum {
+export enum SortTypeEnum {
   REPLACE = 'replace',
   INSERT = 'insert',
-  TOP = 'top',
 }
 const sortTypeUnion = toType<`${SortTypeEnum}`>('sortType', {}).def(SortTypeEnum.REPLACE);
 
