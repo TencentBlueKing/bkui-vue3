@@ -39,7 +39,7 @@ enum NotifyThemeEnum {
 const notifyProps = {
   id: PropTypes.string.def(''),
   title: PropTypes.string.def(''),
-  message: PropTypes.string.def(''),
+  message: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).def(''),
   theme: toType<`${NotifyThemeEnum}`>('notifyTheme', {}).def(NotifyThemeEnum.PRIMARY),
   position: PropTypes.position().def('top-right'),
   delay: PropTypes.number.def(5000),
@@ -73,6 +73,14 @@ export default defineComponent({
       horizontalClass.value,
     ]);
 
+    const renderMessage = computed(() => {
+      if (typeof props.message === 'function') {
+        return props.message();
+      }
+
+      return props.message;
+    });
+
     const visible = ref(false);
 
     let timer = null;
@@ -105,6 +113,7 @@ export default defineComponent({
       classNames,
       styles,
       visible,
+      renderMessage,
       handleClose,
     };
   },
@@ -128,7 +137,7 @@ export default defineComponent({
           <div class="bk-notify-content">
             <div class="bk-notify-icon">{renderIcon()}</div>
             {this.title ? <div class="bk-notify-content-header">{this.title}</div> : ''}
-            <div class="bk-notify-content-text">{this.message}</div>
+            <div class="bk-notify-content-text">{this.renderMessage}</div>
           </div>
           {this.dismissable && <Error class="bk-notify-icon bk-notify-close" onClick={this.handleClose}></Error>}
         </div>
