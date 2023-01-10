@@ -378,7 +378,6 @@ export default class TableRender {
                 ];
 
                 const tdCtxClass = {
-                  cell: true,
                   'expand-cell': column.type === 'expand',
                 };
 

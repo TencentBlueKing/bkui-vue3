@@ -107,6 +107,10 @@ export const PopoverProps = {
    * 不建议使用
    */
   modifiers: PropTypes.array.def([]),
+  /**
+   * popover显示和隐藏的延时时间
+   */
+  popoverDelay: PropTypes.number.def(100),
 
   ...EventProps,
 };

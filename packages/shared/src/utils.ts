@@ -78,3 +78,45 @@ export const observerResize = (
 };
 
 export const capitalize = str => str[0].toUpperCase() + str.slice(1);
+
+/**
+ * 判断元素是否溢出容器
+ * @param {*} el
+ * @returns
+ */
+export function checkOverflow(el) {
+  if (!el) return false;
+
+  const createDom = (el, css) => {
+    const dom = document.createElement('div');
+    const width = parseFloat(css.width) ? `${Math.ceil(parseFloat(css.width))}px` : css.width;
+    dom.style.cssText = `
+      width: ${width};
+      line-height: ${css['line-height']};
+      font-size: ${css['font-size']};
+      word-break: ${css['word-break']};
+      padding: ${css.padding};
+    `;
+    dom.textContent = el.textContent;
+    return dom;
+  };
+
+  let isOverflow = false;
+  try {
+    const css = window.getComputedStyle(el, null);
+    const lineClamp = css.webkitLineClamp;
+    if (lineClamp !== 'none') {
+      const targetHeight = parseFloat(css.height);
+      const dom = createDom(el, css);
+      document.body.appendChild(dom);
+      const domHeight = window.getComputedStyle(dom, null).height;
+      document.body.removeChild(dom);
+      isOverflow = targetHeight < parseFloat(domHeight);
+    } else {
+      isOverflow = el.clientWidth < el.scrollWidth || el.clientHeight < el.scrollHeight;
+    }
+  } catch (e) {
+    console.warn('There is an error when check element overflow state: ', e);
+  }
+  return isOverflow;
+}

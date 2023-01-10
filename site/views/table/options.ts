@@ -184,25 +184,25 @@ export const DATA_FIX_TABLE = [
 export const DATA_FIX_COLUMNS = [
   {
     type: 'selection',
-    width: 100,
+    minWidth: 100,
     fixed: true,
   },
   {
     label: '序号',
     type: 'index',
     sort: true,
-    width: 100,
+    minWidth: 100,
     fixed: true,
   },
   {
     label: '名称/内网IP',
     field: 'ip',
-    width: 400,
+    minWidth: 400,
   },
   {
     label: '来源',
     field: 'source',
-    width: 280,
+    minWidth: 280,
   },
   {
     label: '创建者',

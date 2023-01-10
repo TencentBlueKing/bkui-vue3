@@ -109,7 +109,7 @@ export const IColumnType = {
   field: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
   render: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
   width: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]),
-  minWidth: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]).def(),
+  minWidth: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]).def(80),
   columnKey: PropTypes.string.def(''),
   showOverflowTooltip: PropTypes.oneOfType([PropTypes.bool, PropTypes.shape<IOverflowTooltip>({
     content: PropTypes.string.def(''),

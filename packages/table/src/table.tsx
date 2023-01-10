@@ -29,7 +29,7 @@ import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, provid
 import { debounce, resolveClassName } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
-import { COLUMN_ATTRIBUTE, EMIT_EVENT_TYPES, EMIT_EVENTS, EVENTS, PROVIDE_KEY_INIT_COL, TABLE_ROW_ATTRIBUTE } from './const';
+import { COL_MIN_WIDTH, COLUMN_ATTRIBUTE, EMIT_EVENT_TYPES, EMIT_EVENTS, EVENTS, PROVIDE_KEY_INIT_COL, TABLE_ROW_ATTRIBUTE } from './const';
 import usePagination from './plugins/use-pagination';
 import useScrollLoading from './plugins/use-scroll-loading';
 import { tableProps } from './props';
@@ -74,6 +74,7 @@ export default defineComponent({
       toggleRowSelection,
       getSelection,
       clearSort,
+      updateColGroups,
     } = useInit(props, targetColumns);
 
     const { pageData, localPagination, resolvePageData, watchEffectFn } = usePagination(props, indexData);
@@ -147,13 +148,14 @@ export default defineComponent({
       ctx.emit(EMIT_EVENTS.COLUMN_FILTER, { checked, column: unref(column[COLUMN_ATTRIBUTE.COL_SOURCE_DATA]), index });
     })
       .on(EVENTS.ON_SETTING_CHANGE, (args: any) => {
-        const { checked = [], size, height } = args;
+        const { checked = [], size, height, fields } = args;
         nextTick(() => {
+          updateColGroups({ checked, fields });
           updateBorderClass(root.value);
           const offset = getColumnsWidthOffsetWidth();
-          checked.length && resolveColumnWidth(root.value, colgroups, 20, offset);
+          checked.length && resolveColumnWidth(root.value, colgroups, COL_MIN_WIDTH, offset);
           refVirtualRender.value?.reset?.();
-          ctx.emit(EMIT_EVENTS.SETTING_CHANGE, { checked, size, height });
+          ctx.emit(EMIT_EVENTS.SETTING_CHANGE, { checked, size, height, fields });
         });
       })
       .on(EVENTS.ON_ROW_EXPAND_CLICK, (args: any) => {
