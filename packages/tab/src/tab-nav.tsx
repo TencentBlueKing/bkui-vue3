@@ -196,7 +196,7 @@ export default defineComponent({
       if (typeof this.$slots.add === 'function') {
         list.push(this.$slots.add?.(h));
       } else if (addable) {
-        list.push(<div onClick={this.handleTabAdd}><Plus width={26} height={26} /></div>);
+        list.push(<div onClick={this.handleTabAdd}><Plus style="display:flex;" width={26} height={26} /></div>);
       }
       if (list.length) {
         return (
