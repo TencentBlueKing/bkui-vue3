@@ -257,7 +257,7 @@ export default defineComponent({
         }
         <input
           ref={inputEl}
-          class="bk-upload__input-file"
+          class={`${classBlock}__input-file`}
           tabindex="-1"
           onChange={handleFileChange}
           accept={acceptTypes.value}
