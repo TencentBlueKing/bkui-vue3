@@ -25,7 +25,7 @@
 */
 
 import { addListener, removeListener } from 'resize-detector';
-import {  defineComponent, onBeforeUnmount, onMounted, PropType, ref, watch } from 'vue';
+import {  computed, defineComponent, onBeforeUnmount, onMounted, PropType, ref, ShallowRef, shallowRef, watch } from 'vue';
 
 import { clickoutside } from '@bkui-vue/directives';
 import { Close, ExclamationCircleShape, Search } from '@bkui-vue/icon';
@@ -67,6 +67,14 @@ export const SearchSelectProps = {
   },
   getMenuList: Function as PropType<GetMenuListFunc>,
   validateValues: Function as PropType<ValidateValuesFunc>,
+  valueSplitCode: {
+    type: String,
+    default: '|',
+  },
+  uniqueSelect: {
+    type: Boolean,
+    default: false,
+  },
 };
 export default defineComponent({
   name: 'SearchSelect',
@@ -87,13 +95,25 @@ export default defineComponent({
     const debounceResize = debounce(32, handleResize);
     const editKey = ref('');
     const validateStr = ref('');
-
+    const splitCode = computed(() => props.valueSplitCode);
+    const copyData: ShallowRef<ISearchItem[]> = shallowRef([]);
+    watch(() => props.data, () => {
+      copyData.value = JSON.parse(JSON.stringify(props.data));
+      copyData.value?.forEach((item) => {
+        item.isSelected = props.uniqueSelect && !!props.modelValue.some(set => set.id === item.id);
+      });
+    }, {
+      immediate: true,
+    });
     // effects
     watch(
       () => props.modelValue,
       (v: ISearchValue[]) => {
         if (!v?.length) {
           selectedList.value = [];
+          copyData.value?.forEach((item) => {
+            item.isSelected = false;
+          });
           return;
         }
         const list = [];
@@ -112,12 +132,15 @@ export default defineComponent({
             if (!searchItem && !item.values?.length) {
               searchType = 'text';
             }
-            const newSelected = new SelectedItem(searchItem || item, searchType);
+            const newSelected = new SelectedItem(searchItem || item, searchType, splitCode.value);
             newSelected.values = item.values || [];
             list.push(newSelected);
           }
         });
         selectedList.value = list;
+        copyData.value?.forEach((item) => {
+          item.isSelected = props.uniqueSelect && !!list.some(set => set.id === item.id);
+        });
       },
       {
         immediate: true,
@@ -140,6 +163,7 @@ export default defineComponent({
       onEditBlur,
       onValidate,
       editKey,
+      valueSplitCode: splitCode,
     });
     function onEditClick(item: SelectedItem, index: number) {
       editKey.value = `${item.id}_${index}`;
@@ -220,9 +244,11 @@ export default defineComponent({
       inputRef,
       wrapRef,
       isFocus,
+      copyData,
       selectedList,
       overflowIndex,
       validateStr,
+      splitCode,
       onEditClick,
       onEditEnter,
       handleWrapClick,
@@ -254,23 +280,23 @@ export default defineComponent({
       </div>
       <div class="search-container" style={{ maxHeight }}>
         <SearchSelected
-          data={this.data}
+          data={this.copyData}
           conditions={this.conditions}
           selectedList={this.selectedList}
           overflowIndex={this.overflowIndex}
-          geMenuList={this.getMenuList}
+          getMenuList={this.getMenuList}
           validateValues={this.validateValues}
           onDelete={this.handleDeleteSelected}
           v-slots={{ ...menuSlots }}/>
         <div class="search-container-input">
           <SearchSelectInput
            ref="inputRef"
-           data={this.data}
+           data={this.copyData}
            showInputBefore={!this.selectedList.length}
            showCondition={showCondition}
            conditions={this.conditions}
            clickOutside={this.handleInputOutside}
-           geMenuList={this.getMenuList}
+           getMenuList={this.getMenuList}
            validateValues={this.validateValues}
            onAdd={this.handleAddSelected}
            onDelete={this.handleDeleteSelected}

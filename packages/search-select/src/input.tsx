@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent, PropType, Ref, ref, watch, watchEffect } from 'vue';
+import { defineComponent, nextTick, PropType, Ref, ref, watch, watchEffect } from 'vue';
 
 import { clickoutside } from '@bkui-vue/directives';
 import Popover from '@bkui-vue/popover';
@@ -53,7 +53,7 @@ export default defineComponent({
       type: String as PropType<SearchInputMode>,
       default: SearchInputMode.DEFAULT,
     },
-    geMenuList: Function as PropType<GetMenuListFunc>,
+    getMenuList: Function as PropType<GetMenuListFunc>,
     validateValues: Function as PropType<ValidateValuesFunc>,
   },
   emits: ['focus', 'add', 'delete'],
@@ -76,7 +76,7 @@ export default defineComponent({
     const menuList: Ref<ISearchItem[]> = ref([]);
 
 
-    const { editKey, onValidate } = useSearchSelectInject();
+    const { editKey, onValidate, valueSplitCode } = useSearchSelectInject();
     watch(editKey, () => {
       if (props.mode === SearchInputMode.DEFAULT && editKey.value) {
         showPopover.value = false;
@@ -162,17 +162,21 @@ export default defineComponent({
       let text = (event.target as HTMLDivElement).innerText;
       if (/(\r|\n)/gm.test(text) || /\s{2}/gm.test(text)) {
         event.preventDefault();
-        text = text.replace(/(\r|\n)/gm, '|').replace(/\s{2}/gm, '');
+        text = text.replace(/(\r|\n)/gm, valueSplitCode.value).replace(/\s{2}/gm, '');
         inputRef.value.innerText = text;
         setInputFocus();
-        keyword.value = text;
+        keyword.value = text
+          .replace(usingItem.value?.keyInnerText || '', '')
+          .trim();
         debounceSetMenuList();
       } else if (!keyword.value && text.length < (usingItem.value?.inputInnerText?.length || 1)) {
         const outerText = text
           .replace('\u00A0', '\u0020')
           .replace(usingItem.value?.keyInnerText.replace('\u00A0', '\u0020').trim() || '', '')
           .trim();
-        outerText && (usingItem.value = null);
+        if (outerText || !text?.length) {
+          usingItem.value = null;
+        }
         keyword.value = outerText ? text : '';
         debounceSetMenuList();
       } else if (!usingItem.value?.values?.length) {
@@ -207,7 +211,7 @@ export default defineComponent({
         };
         const res = await validateUsingItemValues(value);
         if (!res) return;
-        emit('add', new SelectedItem(value, 'text'));
+        emit('add', new SelectedItem(value, 'text', valueSplitCode.value));
         keyword.value = '';
         setMenuList();
         return;
@@ -215,10 +219,17 @@ export default defineComponent({
       const { values } = usingItem.value;
       if (!values?.length) {
         if (keyword.value?.length) {
-          const value = { id: keyword.value, name: keyword.value };
-          const res = await validateUsingItemValues(value);
-          if (!res) return;
-          usingItem.value.addValue(value);
+          if (keyword.value.includes(valueSplitCode.value)) {
+            const valueList = keyword.value.split(valueSplitCode.value);
+            const res = await validateUsingItemValues({ id: keyword.value, name: keyword.value });
+            if (!res) return;
+            valueList.forEach(v => usingItem.value.addValue({ id: v, name: v }));
+          } else {
+            const value = { id: keyword.value, name: keyword.value };
+            const res = await validateUsingItemValues(value);
+            if (!res) return;
+            usingItem.value.addValue(value);
+          }
           emit('add', usingItem.value);
           keyword.value = '';
           usingItem.value = null;
@@ -235,6 +246,8 @@ export default defineComponent({
       // 删除已选择项
       if (!usingItem.value && !keyword.value) {
         emit('delete');
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        nextTick(setMenuList);
         return;
       }
       if (usingItem.value?.values.length) {
@@ -251,13 +264,13 @@ export default defineComponent({
     async function handleSelectItem(item: ICommonItem, type?: SearchItemType) {
       // 快捷选中
       if (item.value?.id) {
-        const seleted = new SelectedItem({ ...item, id: item.realId ?? item.id }, type);
+        const seleted = new SelectedItem({ ...item, id: item.realId ?? item.id }, type, valueSplitCode.value);
         seleted.addValue(item.value);
         setSelectedItem(seleted);
         return;
       }
       if (!usingItem.value || !inputRef?.value?.innerText) {
-        usingItem.value = new SelectedItem(item, type);
+        usingItem.value = new SelectedItem(item, type, valueSplitCode.value);
         keyword.value = '';
         const isCondition = type === 'condition';
         isCondition && setSelectedItem();
@@ -265,7 +278,7 @@ export default defineComponent({
         setInputFocus();
         return;
       } if (usingItem.value?.type === 'condition') {
-        usingItem.value = new SelectedItem(item, type);
+        usingItem.value = new SelectedItem(item, type, valueSplitCode.value);
         setSelectedItem();
         return;
       }
@@ -329,14 +342,15 @@ export default defineComponent({
     }
     async function setMenuList() {
       let list = [];
-      if (typeof props.geMenuList === 'function' && !usingItem.value?.searchItem?.async) {
+      if (typeof props.getMenuList === 'function'
+        && (typeof usingItem.value?.searchItem?.async === 'undefined' || usingItem.value.searchItem.async === true)) {
         loading.value = true;
-        list = await props.geMenuList(usingItem.value?.searchItem, keyword.value).catch(() => []);
+        list = await props.getMenuList(usingItem.value?.searchItem, keyword.value).catch(() => []);
         loading.value = false;
       } else if (!usingItem?.value) {
         if (!keyword.value?.length) {
-          list = props.data.slice();
-        } else props.data.forEach((item) => {
+          list = props.data.filter(item => !item.isSelected).slice();
+        } else props.data.filter(item => !item.isSelected).forEach((item) => {
           const isMatched = item.name.toLocaleLowerCase().includes(keyword.value.toLocaleLowerCase());
           if (isMatched) {
             list.push(item);

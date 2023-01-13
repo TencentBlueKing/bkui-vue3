@@ -27,6 +27,7 @@
 import { ComponentInternalInstance, computed, defineComponent, h, ref } from 'vue';
 
 import { Close, Plus } from '@bkui-vue/icon/';
+import { resolveClassName } from '@bkui-vue/shared';
 
 import { tabNavProps } from './props';
 
@@ -148,12 +149,12 @@ export default defineComponent({
       }
       const { name, disabled, tabLabel } = item;
       const getNavItemClass = () => {
-        const classNames = ['bk-tab-header-item'];
+        const classNames = [resolveClassName('tab-header-item')];
         if (disabled) {
-          classNames.push('bk-tab-header--disabled');
+          classNames.push(resolveClassName('tab-header--disabled'));
         }
         if (active === name) {
-          classNames.push('bk-tab-header--active');
+          classNames.push(resolveClassName('tab-header--active'));
         }
         return classNames.join(' ');
       };
@@ -186,7 +187,7 @@ export default defineComponent({
           class={getNavItemClass()}>
           <div>{tabLabel}</div>
           {getValue(item.closable, closable)
-          && (<Close class='bk-tab-header-item-close' onClick={(): void => this.handleTabRemove(index, item)} />)}
+          && (<Close class={resolveClassName('tab-header-item-close')} onClick={(): void => this.handleTabRemove(index, item)} />)}
         </div>
       );
     });
@@ -195,14 +196,14 @@ export default defineComponent({
       if (typeof this.$slots.add === 'function') {
         list.push(this.$slots.add?.(h));
       } else if (addable) {
-        list.push(<div onClick={this.handleTabAdd}><Plus width={26} height={26} /></div>);
+        list.push(<div onClick={this.handleTabAdd}><Plus style="display:flex;" width={26} height={26} /></div>);
       }
       if (list.length) {
         return (
-          <div class='bk-tab-header-operation'>
+          <div class={resolveClassName('tab-header-operation')}>
             {
               list.map((item, index) => (
-                <div class={'bk-tab-header-item'} key={index}>{item}</div>
+                <div class={resolveClassName('tab-header-item')} key={index}>{item}</div>
               ))
             }
           </div>
@@ -211,14 +212,14 @@ export default defineComponent({
       return null;
     };
     return (
-      <div style={{ lineHeight: `${labelHeight}px` }} class='bk-tab-header'>
-        <div class='bk-tab-header-nav'>
+      <div style={{ lineHeight: `${labelHeight}px` }} class={resolveClassName('tab-header')}>
+        <div class={resolveClassName('tab-header-nav')}>
           {renderNavs()}
         </div>
         { renderSlot()}
         {
           typeof this.$slots.setting === 'function' &&  (
-            <div class="bk-tab-header-setting">
+            <div class={resolveClassName('tab-header-setting')}>
             {this.$slots.setting() }
           </div>
           )

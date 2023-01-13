@@ -49,6 +49,17 @@
         登入
       </bk-button>
     </bk-exception>
+    <bk-exception
+      class="exception-wrap-item"
+      title="自定义icon"
+    >
+      <template #type>
+        <img src="https://bk.tencent.com/static/images/index/index/%E9%AB%98%E6%95%88%E8%BF%90%E8%90%A5@2x.png">
+      </template>
+      <bk-button theme="primary">
+        登入
+      </bk-button>
+    </bk-exception>
   </div>
 </template>
 

@@ -172,6 +172,10 @@ export const resolveColumnWidth = (
   const getMinWidth = (col: GroupColumn, computedWidth: number) => {
     const { minWidth = undefined } = col;
     if (minWidth === undefined) {
+      if (computedWidth < COL_MIN_WIDTH) {
+        return COL_MIN_WIDTH;
+      }
+
       return computedWidth;
     }
 
@@ -246,6 +250,11 @@ export const resolveColumnWidth = (
         resolveColNumberWidth(colgroups[idx], autoAvgWidth, false);
         const { calcWidth } = colgroups[idx];
         avgWidth = avgWidth - calcWidth;
+      });
+    } else {
+      avgColIndexList.forEach((idx) => {
+        const calcWidth = getMinWidth(colgroups[idx], COL_MIN_WIDTH);
+        Object.assign(colgroups[idx], { calcWidth });
       });
     }
   }
@@ -462,8 +471,8 @@ export const getSortFn = (column, sortType) => {
   const fieldName = column.field as string;
   const getVal = (row: any) => getRowText(row, fieldName, column);
   const sortFn0 = (a: any, b: any) => {
-    const val0 = getVal(a);
-    const val1 = getVal(b);
+    const val0 = getVal(a) || '';
+    const val1 = getVal(b) || '';
     if (typeof val0 === 'number' && typeof val1 === 'number') {
       return val0 - val1;
     }
@@ -522,7 +531,7 @@ export const resolveSort = (sort: string | boolean | any) => {
 
 export const isRowSelectEnable = (props, { row, index, isCheckAll }) => {
   if (typeof props.isRowSelectEnable === 'boolean') {
-    return props.isRowSelectEnable;
+    return props.isRowSelectEnable !== false;
   }
 
   if (typeof props.isRowSelectEnable === 'function') {

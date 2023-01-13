@@ -239,6 +239,7 @@ export default defineComponent({
         isShow: isPopoverShow.value,
         reference: selectTagInputRef.value,
         offset: 6,
+        popoverDelay: 0,
       },
       popoverOptions.value,
     ));
@@ -279,8 +280,10 @@ export default defineComponent({
       if (!isShow) {
         searchKey.value = '';
       } else {
-        focusInput();
-        initActiveOptionValue();
+        setTimeout(() => {
+          focusInput();
+          initActiveOptionValue();
+        }, 0);
       }
     });
 
