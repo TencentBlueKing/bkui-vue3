@@ -54,7 +54,7 @@ import defaultValidator from './validator';;
 
 const formItemProps = {
   label: PropTypes.string,
-  labelWidth: PropTypes.oneOfType([Number, String]).def(150),
+  labelWidth: PropTypes.oneOfType([Number, String]),
   labelPosition: PropTypes.oneOf(['left', 'center', 'right']),
   property: PropTypes.string.def(''),
   required: PropTypes.bool.def(false),
