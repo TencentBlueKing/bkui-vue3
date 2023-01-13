@@ -163,7 +163,7 @@ export default defineComponent({
     watch(modelValue, () => {
       handleSetSelectedData();
       if (props.withValidate) {
-        formItem?.validate?.('blur');
+        formItem?.validate?.('change');
       }
     }, { deep: true });
 
