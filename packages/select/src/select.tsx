@@ -51,7 +51,8 @@ import {
   PropTypes,
   SizeEnum,
   TagThemeType,
-  useFormItem } from '@bkui-vue/shared';
+  useFormItem,
+} from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
 import {
@@ -85,8 +86,8 @@ export default defineComponent({
     popoverMinWidth: PropTypes.number.def(0), // popover最小宽度
     showOnInit: PropTypes.bool.def(false), // 是否默认显示popover
     multipleMode: PropTypes.oneOf(['default', 'tag']).def('default'), // 多选展示方式
-    tagTheme: TagThemeType,
-    behavior: InputBehaviorType, // 输入框模式
+    tagTheme: TagThemeType(),
+    behavior: InputBehaviorType(), // 输入框模式
     collapseTags: PropTypes.bool.def(false), // 当以标签形式显示选择结果时，是否合并溢出的结果以数字显示
     autoHeight: PropTypes.bool.def(true), // collapseTags模式下，聚焦时自动展开所有Tag
     noDataText: PropTypes.string.def('无数据'),
@@ -238,6 +239,7 @@ export default defineComponent({
         isShow: isPopoverShow.value,
         reference: selectTagInputRef.value,
         offset: 6,
+        popoverDelay: 0,
       },
       popoverOptions.value,
     ));
@@ -278,8 +280,10 @@ export default defineComponent({
       if (!isShow) {
         searchKey.value = '';
       } else {
-        focusInput();
-        initActiveOptionValue();
+        setTimeout(() => {
+          focusInput();
+          initActiveOptionValue();
+        }, 0);
       }
     });
 

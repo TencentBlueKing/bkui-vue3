@@ -19,7 +19,7 @@
   }
 
   .div-input {
-    height: @component-size-base;
+    height: 100%;
     padding: 5px 0;
     line-height: 20px;
     word-break: break-all;
@@ -33,7 +33,7 @@
   &-container {
     position: relative;
     display: flex;
-    min-height: @component-size-base;
+    min-height: 30px;
     overflow: hidden;
     font-size: 12px;
     color: @search-select-font-color;
@@ -50,6 +50,10 @@
     &.is-focus {
       overflow: auto;
       .focus();
+
+      // .search-container-selected {
+      //   margin-bottom: 2p;
+      // }
     }
 
     .search-prefix {
@@ -293,7 +297,8 @@
 
     .menu-item {
       .menu-item-mixin();
-  
+      white-space: pre;
+
       .is-keyword {
         display: inline-flex;
         color: @primary-color;

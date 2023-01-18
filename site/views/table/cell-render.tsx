@@ -23,10 +23,9 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { Column } from 'table/src/props';
 import { defineComponent } from 'vue';
 
-import { DATA_COLUMNS, DATA_TABLE } from './options';
+import { DATA_FIX_COLUMNS, DATA_TABLE } from './options';
 
 export default defineComponent({
   components: {},
@@ -35,17 +34,18 @@ export default defineComponent({
       tableData: [
         ...DATA_TABLE,
       ],
-      columns: [...DATA_COLUMNS].map((col: Column, index: number) => ({
+      columns: [...DATA_FIX_COLUMNS].map((col: any, index: number) => ({
         ...col,
         label: [0, 1].includes(index) ? this.renderTh : (col: any) => col.field,
         render: [1, 2, 3, 4].includes(index) ? this.renderCell : undefined })),
+      pagination: { count: DATA_TABLE.length, limit: 10 },
     };
   },
 
 
   methods: {
     renderCell({ row, column }) {
-      return <bk-input v-model={ row[column.field] }></bk-input>;
+      return <div style="position: relative;">{ row[column.field] }</div>;
     },
     renderTh(column, index) {
       return (
@@ -60,6 +60,8 @@ export default defineComponent({
       <bk-table
         columns={ this.columns }
         data={ this.tableData }
+        pagination={ this.pagination }
+        settings={true}
       />
     </div>;
   },

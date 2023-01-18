@@ -112,7 +112,7 @@ export default defineComponent({
 
     const handleBtnResetClick = () => {
       if (state.checked.length) {
-        state.checked.splice(0, state.checked.length);
+        state.checked.length = 0;
         state.isOpen = false;
         nextTick(() => emit('change', state.checked, filterFn));
       }

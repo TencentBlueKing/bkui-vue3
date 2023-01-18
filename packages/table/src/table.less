@@ -30,6 +30,12 @@
       width: 6px;
       height: 6px;
     }
+
+    &::-webkit-scrollbar-thumb {
+      background: #dcdee5;
+      border-radius: 50%;
+      box-shadow: inset 0 0 6px rgba(204, 204, 204, .3);
+    }
   }
 
   .@{bk-prefix}-fixed-bottom-border {
@@ -91,6 +97,10 @@
           text-overflow: ellipsis;
           white-space: nowrap;
 
+          &.selection {
+            text-align: center;
+          }
+
           &.expand-cell {
             padding: 0;
             text-overflow: unset;
@@ -106,6 +116,7 @@
 
         &.column_fixed {
           position: sticky;
+          z-index: 1;
           background: #fff;
 
           &.column_fixed_left {
@@ -191,7 +202,7 @@
       top: 0;
       right: 1px;
       bottom: 0px;
-      z-index: 1;
+      z-index: 2;
       display: block;
       display: flex;
       width: calc(var(--row-height));

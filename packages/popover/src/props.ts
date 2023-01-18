@@ -27,7 +27,7 @@ import { ExtractPropTypes } from 'vue';
 
 import { placementType, PropTypes } from '@bkui-vue/shared';
 
-import { triggerType } from './../../shared/src/vue-types';
+import { PlacementEnum, triggerType } from './../../shared/src/vue-types';
 const EventProps = {
   onAfterHidden: Function,
   onAfterShow: Function,
@@ -49,7 +49,7 @@ export const PopoverProps = {
   /**
    * 组件显示位置
    */
-  placement: placementType.def('top'),
+  placement: placementType().def(PlacementEnum.TOP),
 
   // 'dark', 'light'
   theme: PropTypes.string.def('dark'),
@@ -59,7 +59,7 @@ export const PopoverProps = {
    * 支持 click hover manual
    * manual： 通过isShow控制显示、隐藏
    */
-  trigger: triggerType,
+  trigger: triggerType(),
 
   // 是否显示箭头
   arrow: PropTypes.bool.def(true),
@@ -107,6 +107,10 @@ export const PopoverProps = {
    * 不建议使用
    */
   modifiers: PropTypes.array.def([]),
+  /**
+   * popover显示和隐藏的延时时间
+   */
+  popoverDelay: PropTypes.number.def(100),
 
   ...EventProps,
 };

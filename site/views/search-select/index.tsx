@@ -86,6 +86,20 @@ const propsJson: IPropsTableItem[] = [
     desc: '自定义动态验证选择或者输入值 如果返回 校验失败的文本则代表校验失败',
     optional: [],
   },
+  {
+    name: 'valueSplitCode',
+    type: 'String',
+    default: '|',
+    desc: '多选的值的链接符号',
+    optional: [],
+  },
+  {
+    name: 'uniqueSelect',
+    type: 'Boolean',
+    default: 'false',
+    desc: '是否过滤掉已选择项',
+    optional: [],
+  },
 ];
 const slotsJson = [
   {
@@ -146,7 +160,7 @@ const dataJson = [
     name: 'async',
     type: 'Boolean',
     default: '--',
-    desc: '是否远程获取子列表 需配合组件属性 getMenuList使用',
+    desc: '是否远程获取子列表 需配合组件属性 getMenuList使用 (默认是true)',
   },
   {
     name: 'noValidate',

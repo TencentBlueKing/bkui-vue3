@@ -37,9 +37,9 @@ export default defineComponent({
     /** trigger = manual时候控制显隐藏  */
     isShow: PropTypes.bool.def(false),
     /** 弹层出现位置 */
-    placement: placementType,
+    placement: placementType(),
     /** 触发方式 */
-    trigger: triggerType,
+    trigger: triggerType(),
     /** 是否禁用 */
     disabled: PropTypes.bool.def(false),
     /** popover属性 */

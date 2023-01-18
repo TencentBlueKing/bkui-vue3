@@ -29,7 +29,7 @@ import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, provid
 import { debounce, resolveClassName } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
-import { COLUMN_ATTRIBUTE, EMIT_EVENT_TYPES, EMIT_EVENTS, EVENTS, PROVIDE_KEY_INIT_COL, TABLE_ROW_ATTRIBUTE } from './const';
+import { COL_MIN_WIDTH, COLUMN_ATTRIBUTE, EMIT_EVENT_TYPES, EMIT_EVENTS, EVENTS, PROVIDE_KEY_INIT_COL, TABLE_ROW_ATTRIBUTE } from './const';
 import usePagination from './plugins/use-pagination';
 import useScrollLoading from './plugins/use-scroll-loading';
 import { tableProps } from './props';
@@ -74,6 +74,7 @@ export default defineComponent({
       toggleRowSelection,
       getSelection,
       clearSort,
+      updateColGroups,
     } = useInit(props, targetColumns);
 
     const { pageData, localPagination, resolvePageData, watchEffectFn } = usePagination(props, indexData);
@@ -147,19 +148,20 @@ export default defineComponent({
       ctx.emit(EMIT_EVENTS.COLUMN_FILTER, { checked, column: unref(column[COLUMN_ATTRIBUTE.COL_SOURCE_DATA]), index });
     })
       .on(EVENTS.ON_SETTING_CHANGE, (args: any) => {
-        const { checked = [], size, height } = args;
+        const { checked = [], size, height, fields } = args;
         nextTick(() => {
+          updateColGroups({ checked, fields });
           updateBorderClass(root.value);
           const offset = getColumnsWidthOffsetWidth();
-          checked.length && resolveColumnWidth(root.value, colgroups, 20, offset);
+          checked.length && resolveColumnWidth(root.value, colgroups, COL_MIN_WIDTH, offset);
           refVirtualRender.value?.reset?.();
-          ctx.emit(EMIT_EVENTS.SETTING_CHANGE, { checked, size, height });
+          ctx.emit(EMIT_EVENTS.SETTING_CHANGE, { checked, size, height, fields });
         });
       })
       .on(EVENTS.ON_ROW_EXPAND_CLICK, (args: any) => {
         const { row, column, index, rows, e } = args;
         ctx.emit(EMIT_EVENTS.ROW_EXPAND_CLICK, {
-          row: unref(row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA]),
+          row: unref(row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA] || row),
           column: unref(column[COLUMN_ATTRIBUTE.COL_SOURCE_DATA]), index, rows, e,
         });
         setRowExpand(row, !row[TABLE_ROW_ATTRIBUTE.ROW_EXPAND]);
@@ -171,7 +173,7 @@ export default defineComponent({
         } else {
           toggleRowSelection(row, value);
           ctx.emit(EMIT_EVENTS.ROW_SELECT, {
-            row: unref(row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA]),
+            row: unref(row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA] || row),
             index,
             checked: value,
             data: props.data,
@@ -179,7 +181,7 @@ export default defineComponent({
         }
 
         ctx.emit(EMIT_EVENTS.ROW_SELECT_CHANGE, {
-          row: unref(row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA]),
+          row: unref(row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA] || row),
           isAll,
           index,
           checked: value,
@@ -294,6 +296,7 @@ export default defineComponent({
         onContentScroll={ handleScrollChanged }
         throttleDelay={0}
         scrollEvent={true}
+        rowKey={props.rowKey}
         enabled={props.virtualEnabled}>
           {
             {

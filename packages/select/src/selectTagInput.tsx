@@ -40,7 +40,7 @@ export default defineComponent({
       type: Array as PropType<ISelected[]>,
       default: () => [],
     },
-    tagTheme: TagThemeType,
+    tagTheme: TagThemeType(),
     placeholder: PropTypes.string.def(''),
     filterable: PropTypes.bool.def(false), // 是否支持搜索
     allowCreate: PropTypes.bool.def(false),

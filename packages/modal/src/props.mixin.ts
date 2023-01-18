@@ -68,11 +68,11 @@ export const propsMixin = {
   // 动画类型
   animateType: PropTypes.string.def('slide'),
   // 弹框的渲染方式
-  renderDirective: renderDirectiveType,
+  renderDirective: renderDirectiveType(),
   // 关闭前回调
   beforeClose: PropTypes.custom(() => true),
   // 对话框类型
-  dialogType: dialogTypeUnion,
+  dialogType: dialogTypeUnion(),
   // 是否允许多个弹框同时存在
   multiInstance: PropTypes.bool.def(true),
   // info-box
