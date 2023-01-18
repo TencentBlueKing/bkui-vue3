@@ -540,3 +540,17 @@ export const isRowSelectEnable = (props, { row, index, isCheckAll }) => {
 
   return true;
 };
+
+
+export const getRowId = (row, index, props) => {
+  if (row[TABLE_ROW_ATTRIBUTE.ROW_UID] !== undefined) {
+    return row[TABLE_ROW_ATTRIBUTE.ROW_UID];
+  }
+
+  const key = getRowKey(row, props, index);
+  if (key !== undefined && row[key] !== undefined) {
+    return row[key];
+  }
+
+  return index;
+};

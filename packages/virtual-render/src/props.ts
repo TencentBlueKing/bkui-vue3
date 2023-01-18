@@ -125,6 +125,8 @@ export const virtualRenderProps = {
    */
   throttleDelay: PropTypes.number.def(60),
 
+  rowKey: PropTypes.string.def(undefined),
+
   ...EventProps,
 };
 
