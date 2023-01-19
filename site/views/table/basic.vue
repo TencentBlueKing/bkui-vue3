@@ -4,6 +4,7 @@
       :columns="columns"
       :data="tableData"
       row-hover="auto"
+      resizer-way="debounce"
       settings
       @dblclick="handleDblClick"
       @column-sort="handleSortBy"
