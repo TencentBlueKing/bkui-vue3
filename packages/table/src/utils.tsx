@@ -277,9 +277,11 @@ export const observerResize = (
   immediate = false,
   resizerWay = 'throttle',
 ) => {
+  // 设置判定，避免因计算导致的resize死循环
+  let isExecute = false;
   const resolveCallbackFn = () => {
     if (typeof callbackFn === 'function') {
-      console.log('observerResize');
+      isExecute = true;
       callbackFn();
     }
   };
@@ -287,7 +289,11 @@ export const observerResize = (
   const callFn = () => Reflect.apply(execFn, this, []);
 
   const resizeObserver = new ResizeObserver(() => {
-    callFn();
+    if (!isExecute) {
+      callFn();
+    } else {
+      isExecute = false;
+    }
   });
 
   if (immediate) {
