@@ -24,7 +24,7 @@
 * IN THE SOFTWARE.
 */
 
-import { get as objGet, throttle } from 'lodash';
+import { debounce, get as objGet, throttle } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
 import { BORDER_OPTION, BORDER_OPTIONS, COL_MIN_WIDTH, SORT_OPTION, TABLE_ROW_ATTRIBUTE } from './const';
@@ -266,6 +266,7 @@ export const resolveColumnWidth = (
  * @param callbackFn 执行函数
  * @param delay 延迟执行时间，默认 60
  * @param immediate 是否立即执行回调函数
+ * @param resizerWay 执行方式：debounce | throttle
  * @returns "{ start: () => void, stop: () => void }"
  */
 export const observerResize = (
@@ -273,12 +274,18 @@ export const observerResize = (
   callbackFn: () => void,
   delay = 60,
   immediate = false,
+  resizerWay = 'throttle',
 ) => {
-  const callFn = throttle(() => {
-    if (typeof callbackFn === 'function') {
-      callbackFn();
-    }
-  }, delay);
+  const execFn = resizerWay === 'debounce' ? debounce : throttle;
+  const agrList = [
+    () => {
+      if (typeof callbackFn === 'function') {
+        callbackFn();
+      }
+    }, delay,
+  ];
+  const callFn = () => Reflect.apply(execFn, this, agrList);
+
   const resizeObserver = new ResizeObserver(() => {
     callFn();
   });

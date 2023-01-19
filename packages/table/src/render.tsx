@@ -484,7 +484,9 @@ export default class TableRender {
 
   private renderCellCallbackFn(row: any, column: Column, index: number, rows: any[]) {
     const cell = getRowText(row, resolvePropVal(column, 'field', [column, row]), column);
-    const data = this.props.data[row[TABLE_ROW_ATTRIBUTE.ROW_INDEX]];
+    const attrIndex = row[TABLE_ROW_ATTRIBUTE.ROW_INDEX];
+    const rowIndex = typeof attrIndex === 'number' ? attrIndex : index;
+    const data = this.props.data[rowIndex];
     return (column.render as Function)({ cell, data, row, column, index, rows });
   }
 

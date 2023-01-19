@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { get as objGet, has as objHas, set as objSet } from 'lodash';
+import { debounce, get as objGet, has as objHas, set as objSet } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import { computed, onMounted, reactive, ref, watch } from 'vue';
 
@@ -263,10 +263,13 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
     }
   });
 
-  watch(() => [props.columns, targetColumns], () => {
+  const debounceColUpdate = debounce(() => {
     updateColGroups();
     resetResizeEvents();
     registerResizeEvent();
+  }, 120);
+  watch(() => [props.columns, targetColumns], () => {
+    debounceColUpdate();
   }, { immediate: true, deep: true });
 
   const defSort = props.columns.reduce((out: any, col, index) => {
@@ -541,7 +544,7 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
   };
 
   const updateIndexData = (selectedAll?: boolean) => {
-    if (neepColspanOrRowspan.value || needSelection.value || needExpand.value) {
+    if (neepColspanOrRowspan.value || needSelection.value || needExpand.value || needIndexColumn.value) {
       let preRowId = null;
       const skipConfig = {};
       indexData.forEach((item: any, index: number) => {
@@ -560,6 +563,10 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
           Object.assign(item, {
             [TABLE_ROW_ATTRIBUTE.ROW_SKIP_CFG]: cfg,
           });
+        }
+
+        if (needIndexColumn.value) {
+          Object.assign(item, { [TABLE_ROW_ATTRIBUTE.ROW_INDEX]: index });
         }
 
         if (needSelection.value) {
@@ -625,6 +632,11 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
 
     return skipCfg[rowId];
   };
+
+  const debounceUpdate = debounce(updateIndexData, 120);
+  watch([neepColspanOrRowspan, needSelection, needExpand, needIndexColumn], () => {
+    debounceUpdate();
+  });
 
   /**
    * 如果设置了数据同步，点击操作更新选中状态到用户数据

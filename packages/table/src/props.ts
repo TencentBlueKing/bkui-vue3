@@ -104,6 +104,11 @@ enum ColumnPickEnum {
   DISABLED = 'disabled',
 }
 
+enum ResizerWay {
+  DEBOUNCE = 'debounce',
+  THROTTLE = 'throttle'
+}
+
 export const IColumnType = {
   label: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
   field: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
@@ -366,6 +371,15 @@ export const tableProps = {
     PropTypes.func.def(() => true),
     PropTypes.bool.def(true),
   ]).def(true),
+
+  /**
+   * 当外层容器尺寸改变时，当前组件用什么方式进行重新计算
+   * 默认为 throttle，按照指定频率重新计算
+   * 可选值：debounce，在指定时间范围内只执行一次重新计算
+   */
+  resizerWay: toType<`${ResizerWay}`>('ResizerWay', {
+    default: ResizerWay.THROTTLE,
+  }),
 };
 
 
