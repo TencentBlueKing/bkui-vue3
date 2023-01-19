@@ -25,6 +25,7 @@
 */
 
 import { debounce, get as objGet, throttle } from 'lodash';
+import ResizeObserver from 'resize-observer-polyfill';
 import { v4 as uuidv4 } from 'uuid';
 
 import { BORDER_OPTION, BORDER_OPTIONS, COL_MIN_WIDTH, SORT_OPTION, TABLE_ROW_ATTRIBUTE } from './const';
@@ -276,15 +277,14 @@ export const observerResize = (
   immediate = false,
   resizerWay = 'throttle',
 ) => {
-  const execFn = resizerWay === 'debounce' ? debounce : throttle;
-  const agrList = [
-    () => {
-      if (typeof callbackFn === 'function') {
-        callbackFn();
-      }
-    }, delay,
-  ];
-  const callFn = () => Reflect.apply(execFn, this, agrList);
+  const resolveCallbackFn = () => {
+    if (typeof callbackFn === 'function') {
+      console.log('observerResize');
+      callbackFn();
+    }
+  };
+  const execFn = resizerWay === 'debounce' ? debounce(resolveCallbackFn, delay) : throttle(resolveCallbackFn, delay);
+  const callFn = () => Reflect.apply(execFn, this, []);
 
   const resizeObserver = new ResizeObserver(() => {
     callFn();
@@ -298,10 +298,6 @@ export const observerResize = (
   return {
     start: () => {
       resizeObserver.observe(root);
-    },
-    stop: () => {
-      resizeObserver.disconnect();
-      resizeObserver.unobserve(root);
     },
   };
 };

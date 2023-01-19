@@ -222,7 +222,7 @@ export default defineComponent({
     });
 
     onBeforeUnmount(() => {
-      observerIns.stop();
+      // observerIns.stop();
       observerIns = null;
       tableRender.destroy();
     });
