@@ -53,7 +53,7 @@ export default defineComponent({
     validateValues: Function as PropType<ValidateValuesFunc>,
   },
   emits: ['delete'],
-  setup(props, { emit }) {
+  setup(_props, { emit }) {
     const inputRef = ref<typeof SearchSelectInput>(null);
     const { onEditClick, onEditEnter, onEditBlur, editKey, valueSplitCode } = useSearchSelectInject();
     function handleDeleteSelected(index: number) {
