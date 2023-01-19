@@ -184,14 +184,14 @@ export const DATA_FIX_TABLE = [
 export const DATA_FIX_COLUMNS = [
   {
     type: 'selection',
-    minWidth: 100,
+    width: 80,
     fixed: true,
   },
   {
     label: '序号',
     type: 'index',
     sort: true,
-    minWidth: 100,
+    width: 100,
     fixed: true,
   },
   {

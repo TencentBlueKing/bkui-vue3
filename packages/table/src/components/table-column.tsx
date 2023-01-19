@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent, inject, onMounted, reactive } from 'vue';
+import { defineComponent, inject, onBeforeMount, reactive } from 'vue';
 
 import { PropTypes } from '@bkui-vue/shared';
 
@@ -42,11 +42,12 @@ export default defineComponent({
   },
   setup(props: ITableColumn, { slots }) {
     const initColumns = inject(PROVIDE_KEY_INIT_COL, (_column: Column) => {}, false);
-    onMounted(() => {
+
+    onBeforeMount(() => {
       const column = reactive({ ...props, field: props.prop || props.field });
       initColumns(column);
       column.render = slots.default ? (args: any) => slots.default?.(args) : undefined;
     });
-    return () => <>{ slots.default?.({ data: '' }) }</>;
+    return () => <>{ slots.default?.({ data: {} }) }</>;
   },
 });
