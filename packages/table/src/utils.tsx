@@ -281,7 +281,6 @@ export const observerResize = (
   // 设置判定，避免因计算导致的resize死循环
   const resolveCallbackFn = () => {
     if (typeof callbackFn === 'function') {
-      console.log('resolveCallbackFn', root.getBoundingClientRect());
       callbackFn();
     }
   };
