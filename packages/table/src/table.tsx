@@ -216,7 +216,7 @@ export default defineComponent({
         updateBorderClass(root.value);
         const offset = getColumnsWidthOffsetWidth();
         resolveColumnWidth(root.value, colgroups, 20, offset);
-      }, 60, true, props.resizerWay);
+      }, 180, true, props.resizerWay);
 
       observerIns.start();
     });

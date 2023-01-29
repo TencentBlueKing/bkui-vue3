@@ -196,5 +196,6 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
     stopHide,
     isFullscreen,
     boundary,
+    localIsShow,
   };
 };

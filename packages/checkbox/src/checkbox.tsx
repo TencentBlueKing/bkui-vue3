@@ -51,6 +51,7 @@ export const checkboxProps = {
   indeterminate: PropTypes.bool,
   beforeChange: PropTypes.func,
   size: PropTypes.size().def(SizeEnum.LARGE),
+  immediateEmitChange: PropTypes.bool.def(true), // 默认设置checked是否触发change事件
 };
 
 export type CheckboxProps = Readonly<ExtractPropTypes<typeof checkboxProps>>;
