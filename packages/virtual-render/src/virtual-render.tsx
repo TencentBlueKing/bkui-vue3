@@ -171,7 +171,13 @@ export default defineComponent({
     };
 
     /** 映射传入的数组为新的数组，增加 $index属性，用来处理唯一Index */
-    const localList = computed(() => (props.list || []).map((item: any, index) => ({ ...item,  $index: index })));
+    const localList = computed(() => {
+      if (props.rowKey !== undefined) {
+        return props.list;
+      }
+
+      return (props.list || []).map((item: any, index) => ({ ...item,  $index: index }));
+    });
 
     /** 计算出来的当前页数据 */
     const calcList = computed(() => localList.value.slice(
