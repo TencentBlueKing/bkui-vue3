@@ -27,6 +27,7 @@
 import { computed, defineComponent, onBeforeUnmount, onMounted, ref, Teleport, toRefs, watch } from 'vue';
 
 import { clickoutside } from '@bkui-vue/directives';
+import { RenderType } from '@bkui-vue/shared';
 
 import Arrow from './arrow';
 import { EMIT_EVENT_TYPES } from './const';
@@ -70,6 +71,7 @@ export default defineComponent({
       hidePopover,
       updatePopover,
       stopHide,
+      localIsShow,
       boundary,
     } = usePopoverInit(props, ctx, {
       refReference, refContent, refArrow, refRoot,
@@ -102,6 +104,14 @@ export default defineComponent({
       hideFn();
     };
 
+    const contentIsShow = computed(() => {
+      if (props.renderType === RenderType.AUTO) {
+        return true;
+      }
+
+      return localIsShow.value;
+    });
+
     return {
       boundary,
       arrow: props.arrow,
@@ -116,6 +126,7 @@ export default defineComponent({
       hide,
       show,
       stopHide,
+      contentIsShow,
     };
   },
 
@@ -125,10 +136,10 @@ export default defineComponent({
         { this.$slots.default?.() ?? <span></span> }
       </Reference>
       <Teleport to={ this.boundary } disabled={ !this.transBoundary }>
-        <Content ref="refContent" data-theme={ this.theme } width={ this.width } height={ this.height }
+        <Content ref="refContent" data-theme={ this.theme } width={ this.width } height={ this.height } maxHeight={ this.maxHeight }
         v-clickoutside={this.handleClickOutside}
         v-slots={ { arrow: () => (this.arrow ? <Arrow ref="refArrow">{ this.$slots.arrow?.() }</Arrow> : '') } }>
-          { this.$slots.content?.() ?? this.content }
+          { this.contentIsShow ? this.$slots.content?.() ?? this.content : '' }
         </Content>
       </Teleport>
     </Root>;

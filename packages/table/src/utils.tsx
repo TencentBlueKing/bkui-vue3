@@ -162,6 +162,7 @@ export const resolveColumnWidth = (
   autoWidth = COL_MIN_WIDTH,
   offsetWidth = 0,
 ) => {
+  console.log('resolveColumnWidth');
   const { width } = root.getBoundingClientRect() || {};
   const availableWidth = width - offsetWidth;
   // 可用来平均的宽度
@@ -278,10 +279,9 @@ export const observerResize = (
   resizerWay = 'throttle',
 ) => {
   // 设置判定，避免因计算导致的resize死循环
-  let isExecute = false;
   const resolveCallbackFn = () => {
     if (typeof callbackFn === 'function') {
-      isExecute = true;
+      console.log('resolveCallbackFn', root.getBoundingClientRect());
       callbackFn();
     }
   };
@@ -289,11 +289,7 @@ export const observerResize = (
   const callFn = () => Reflect.apply(execFn, this, []);
 
   const resizeObserver = new ResizeObserver(() => {
-    if (!isExecute) {
-      callFn();
-    } else {
-      isExecute = false;
-    }
+    callFn();
   });
 
   if (immediate) {

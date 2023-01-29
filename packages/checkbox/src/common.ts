@@ -135,7 +135,9 @@ export const useCheckbox = () => {
 
   watch(() => props.checked, () => {
     isChecked.value = props.checked;
-    triggerChange();
+    if (props.immediateEmitChange !== false) {
+      triggerChange();
+    }
   });
 
   const setChecked = (value = true) => {

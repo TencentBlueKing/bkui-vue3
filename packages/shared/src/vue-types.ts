@@ -124,6 +124,16 @@ export function triggerType() {
   return toType<`${TriggerEnum}`>('trigger', {}).def(TriggerEnum.HOVER);
 };
 
+/** 内容渲染类型：目前是在popover内容渲染时使用 */
+export enum RenderType {
+  AUTO = 'auto', // 自动配置，默认值，不加干涉，调用方控制
+  SHOWN = 'shown' // 默认不渲染，只有在popover弹出之后才会渲染
+}
+
+export function renderType() {
+  return toType<`${RenderType}`>('trigger', {}).def(RenderType.AUTO);
+};
+
 export enum DialogTypeEnum {
   SHOW = 'show',
   OPERATION = 'operation',
