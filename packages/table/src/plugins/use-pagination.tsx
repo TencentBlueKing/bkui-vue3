@@ -107,7 +107,8 @@ export default (props: TablePropTypes, indexData: any[]) => {
   const filter = (sourceData: any[], filterFn: any) => {
     if (typeof filterFn === 'function') {
       const filterVals = sourceData.filter((row: any, index: number) => filterFn(row, index, props.data));
-      sourceData.splice(0, sourceData.length, ...filterVals);
+      sourceData.length = 0;
+      sourceData.push(...filterVals);
     }
   };
 
@@ -117,8 +118,8 @@ export default (props: TablePropTypes, indexData: any[]) => {
     if (sortScope === SortScope.ALL) {
       sort(sourceData, sortFn);
     }
-
-    pageData.splice(0, pageData.length, ...sourceData.slice(startIndex.value, endIndex.value));
+    pageData.length = 0;
+    pageData.push(...sourceData.slice(startIndex.value, endIndex.value));
     filter(pageData, filterFn);
     sort(pageData, sortFn);
   };

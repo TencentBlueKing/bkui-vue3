@@ -27,7 +27,7 @@ import { ExtractPropTypes } from 'vue';
 
 import { placementType, PropTypes } from '@bkui-vue/shared';
 
-import { PlacementEnum, triggerType } from './../../shared/src/vue-types';
+import { PlacementEnum, renderType, triggerType } from './../../shared/src/vue-types';
 const EventProps = {
   onAfterHidden: Function,
   onAfterShow: Function,
@@ -44,6 +44,7 @@ export const PopoverProps = {
   disabled: PropTypes.bool.def(false),
   width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
   height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
+  maxHeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
   content: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def(''),
 
   /**
@@ -60,6 +61,11 @@ export const PopoverProps = {
    * manual： 通过isShow控制显示、隐藏
    */
   trigger: triggerType(),
+
+  /**
+   * content 渲染方式
+   */
+  renderType: renderType(),
 
   // 是否显示箭头
   arrow: PropTypes.bool.def(true),

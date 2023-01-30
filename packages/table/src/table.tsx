@@ -161,7 +161,7 @@ export default defineComponent({
       .on(EVENTS.ON_ROW_EXPAND_CLICK, (args: any) => {
         const { row, column, index, rows, e } = args;
         ctx.emit(EMIT_EVENTS.ROW_EXPAND_CLICK, {
-          row: unref(row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA]),
+          row: unref(row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA] || row),
           column: unref(column[COLUMN_ATTRIBUTE.COL_SOURCE_DATA]), index, rows, e,
         });
         setRowExpand(row, !row[TABLE_ROW_ATTRIBUTE.ROW_EXPAND]);
@@ -173,7 +173,7 @@ export default defineComponent({
         } else {
           toggleRowSelection(row, value);
           ctx.emit(EMIT_EVENTS.ROW_SELECT, {
-            row: unref(row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA]),
+            row: unref(row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA] || row),
             index,
             checked: value,
             data: props.data,
@@ -181,7 +181,7 @@ export default defineComponent({
         }
 
         ctx.emit(EMIT_EVENTS.ROW_SELECT_CHANGE, {
-          row: unref(row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA]),
+          row: unref(row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA] || row),
           isAll,
           index,
           checked: value,
@@ -216,13 +216,13 @@ export default defineComponent({
         updateBorderClass(root.value);
         const offset = getColumnsWidthOffsetWidth();
         resolveColumnWidth(root.value, colgroups, 20, offset);
-      }, 60, true);
+      }, 180, true, props.resizerWay);
 
       observerIns.start();
     });
 
     onBeforeUnmount(() => {
-      observerIns.stop();
+      // observerIns.stop();
       observerIns = null;
       tableRender.destroy();
     });
@@ -296,6 +296,7 @@ export default defineComponent({
         onContentScroll={ handleScrollChanged }
         throttleDelay={0}
         scrollEvent={true}
+        rowKey={props.rowKey}
         enabled={props.virtualEnabled}>
           {
             {
