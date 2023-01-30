@@ -127,7 +127,6 @@ export default defineComponent({
     });
 
     onBeforeUnmount(() => {
-      observerIns?.stop();
       bkEllipsisIns?.destroyInstance(refRoot.value);
     });
 

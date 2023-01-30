@@ -42,7 +42,7 @@ import { TablePlugins } from './plugins/index';
 import Settings from './plugins/settings';
 import useFixedColumn from './plugins/use-fixed-column';
 import { Column, GroupColumn, IColumnActive, IReactiveProp, TablePropTypes } from './props';
-import { formatPropAsArray, getColumnReactWidth, getNextSortType, getRowText, getSortFn, isColumnHidden, isRowSelectEnable, resolveCellSpan, resolveHeadConfig, resolvePropVal, resolveWidth } from './utils';
+import { formatPropAsArray, getColumnReactWidth, getNextSortType, getRowId, getRowText, getSortFn, isColumnHidden, isRowSelectEnable, resolveCellSpan, resolveHeadConfig, resolvePropVal, resolveWidth } from './utils';
 
 export default class TableRender {
   props: TablePropTypes;
@@ -360,7 +360,7 @@ export default class TableRender {
           `hover-${this.props.rowHover}`,
         ];
 
-        const rowKey = row[TABLE_ROW_ATTRIBUTE.ROW_UID];
+        const rowKey = getRowId(row, rowIndex, this.props);
         return [
           <TableRow key={rowKey}>
             <tr
@@ -412,14 +412,14 @@ export default class TableRender {
             }
           </tr>
           </TableRow>,
-          this.renderExpandRow(row, rowClass),
+          this.renderExpandRow(row, rowClass, rowIndex),
         ];
       })
     }
   </tbody>;
   }
 
-  private renderExpandRow(row: any, rowClass: any[]) {
+  private renderExpandRow(row: any, rowClass: any[], rowIndex: number) {
     const isExpand = !!row[TABLE_ROW_ATTRIBUTE.ROW_EXPAND];
     if (isExpand) {
       const resovledClass = [
@@ -427,11 +427,12 @@ export default class TableRender {
         { row_expend: true },
       ];
 
-      const rowKey =  `${row[TABLE_ROW_ATTRIBUTE.ROW_UID]}_expand`;
+      const rowId = getRowId(row, rowIndex, this.props);
+      const rowKey =  `${rowId}_expand`;
       return <TableRow key={rowKey}>
         <tr class={resovledClass}>
           <td colspan={ this.filterColgroups.length } rowspan={1}>
-            { this.context.slots.expandRow?.(row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA]) ?? <div class='expand-cell-ctx'>Expand Row</div> }
+            { this.context.slots.expandRow?.(row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA] || row) ?? <div class='expand-cell-ctx'>Expand Row</div> }
           </td>
         </tr>
       </TableRow>;
@@ -483,7 +484,9 @@ export default class TableRender {
 
   private renderCellCallbackFn(row: any, column: Column, index: number, rows: any[]) {
     const cell = getRowText(row, resolvePropVal(column, 'field', [column, row]), column);
-    const data = this.props.data[row[TABLE_ROW_ATTRIBUTE.ROW_INDEX]];
+    const attrIndex = row[TABLE_ROW_ATTRIBUTE.ROW_INDEX];
+    const rowIndex = typeof attrIndex === 'number' ? attrIndex : index;
+    const data = this.props.data[rowIndex];
     return (column.render as Function)({ cell, data, row, column, index, rows });
   }
 

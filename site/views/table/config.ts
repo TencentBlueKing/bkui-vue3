@@ -59,6 +59,7 @@ export default [
       { name: 'row-hover', type: 'String', default: 'highlight', desc: '鼠标划过行样式行为,配置`highlight`会高亮当前行，`auto`自行设置样式', optional: ['highlight', 'auto'] },
       { name: 'default-sort', type: 'Object', default: '{}', desc: '如果只指定了 prop, 没有指定 order, 则默认顺序是 asc, 配置格式：{ column: order }', optional: [] },
       { name: 'isRowSelectEnable', type: 'Function|Boolean', default: 'true', desc: '   * 配合 column selection 使用用于配置渲染行数据的勾选框是否可用, 可以直接为 true|false，全部启用或者禁用如果是函数，则返回 true|false({ row, index, isCheckAll }) => boolean', optional: [] },
+      { name: 'resizerWay', type: 'String', default: 'true', desc: '当外层容器尺寸改变时，当前组件用什么方式进行重新计算,默认为 throttle，按照指定频率重新计算,可选值：debounce，在指定时间范围内只执行一次重新计算', optional: ['throttle', 'debounce'] },
     ],
   },
   {

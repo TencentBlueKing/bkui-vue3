@@ -24,7 +24,8 @@
 * IN THE SOFTWARE.
 */
 
-import { get as objGet, throttle } from 'lodash';
+import { debounce, get as objGet, throttle } from 'lodash';
+import ResizeObserver from 'resize-observer-polyfill';
 import { v4 as uuidv4 } from 'uuid';
 
 import { BORDER_OPTION, BORDER_OPTIONS, COL_MIN_WIDTH, SORT_OPTION, TABLE_ROW_ATTRIBUTE } from './const';
@@ -161,6 +162,7 @@ export const resolveColumnWidth = (
   autoWidth = COL_MIN_WIDTH,
   offsetWidth = 0,
 ) => {
+  console.log('resolveColumnWidth');
   const { width } = root.getBoundingClientRect() || {};
   const availableWidth = width - offsetWidth;
   // 可用来平均的宽度
@@ -266,6 +268,7 @@ export const resolveColumnWidth = (
  * @param callbackFn 执行函数
  * @param delay 延迟执行时间，默认 60
  * @param immediate 是否立即执行回调函数
+ * @param resizerWay 执行方式：debounce | throttle
  * @returns "{ start: () => void, stop: () => void }"
  */
 export const observerResize = (
@@ -273,12 +276,17 @@ export const observerResize = (
   callbackFn: () => void,
   delay = 60,
   immediate = false,
+  resizerWay = 'throttle',
 ) => {
-  const callFn = throttle(() => {
+  // 设置判定，避免因计算导致的resize死循环
+  const resolveCallbackFn = () => {
     if (typeof callbackFn === 'function') {
       callbackFn();
     }
-  }, delay);
+  };
+  const execFn = resizerWay === 'debounce' ? debounce(resolveCallbackFn, delay) : throttle(resolveCallbackFn, delay);
+  const callFn = () => Reflect.apply(execFn, this, []);
+
   const resizeObserver = new ResizeObserver(() => {
     callFn();
   });
@@ -291,10 +299,6 @@ export const observerResize = (
   return {
     start: () => {
       resizeObserver.observe(root);
-    },
-    stop: () => {
-      resizeObserver.disconnect();
-      resizeObserver.unobserve(root);
     },
   };
 };
@@ -539,4 +543,18 @@ export const isRowSelectEnable = (props, { row, index, isCheckAll }) => {
   }
 
   return true;
+};
+
+
+export const getRowId = (row, index, props) => {
+  if (row[TABLE_ROW_ATTRIBUTE.ROW_UID] !== undefined) {
+    return row[TABLE_ROW_ATTRIBUTE.ROW_UID];
+  }
+
+  const key = getRowKey(row, props, index);
+  if (key !== undefined && row[key] !== undefined) {
+    return row[key];
+  }
+
+  return index;
 };

@@ -157,7 +157,7 @@ export default (colgroups: GroupColumn[], immediate = true) => {
         const name = getEventName(event);
         if (col.listeners.has(name)) {
           const listeners = col.listeners.get(name);
-          listeners.splice(0, listeners.length);
+          listeners.length = 0;
         }
       });
     });
