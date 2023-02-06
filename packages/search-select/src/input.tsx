@@ -30,7 +30,7 @@ import Popover from '@bkui-vue/popover';
 import { debounce, random } from '@bkui-vue/shared';
 
 import SearchSelectMenu from './menu';
-import { GetMenuListFunc, ICommonItem, IMenuFooterItem, ISearchItem, MenuSlotParams, SearchInputMode, SearchItemType, SelectedItem, useSearchSelectInject, ValidateValuesFunc } from './utils';
+import { GetMenuListFunc, ICommonItem, IMenuFooterItem, ISearchItem, MenuSlotParams, SearchInputMode, SearchItemType, SelectedItem, useSearchSelectInject, ValidateValuesFunc, ValueBehavior } from './utils';
 export default defineComponent({
   name: 'SearchSelectInput',
   directives: {
@@ -55,6 +55,7 @@ export default defineComponent({
     },
     getMenuList: Function as PropType<GetMenuListFunc>,
     validateValues: Function as PropType<ValidateValuesFunc>,
+    valueBehavior: String as PropType<ValueBehavior>,
   },
   emits: ['focus', 'add', 'delete'],
   setup(props, { emit, expose }) {
@@ -93,15 +94,20 @@ export default defineComponent({
     watch([menuList, showPopover], () => {
       if (menuList.value?.some(item => !item.disabled) && showPopover.value) {
         if (!isBindEvent) {
-          // menuHoverId.value = menuList.value.find(item => !item.disabled).id;
-          menuHoverId.value = '';
+          if (props.valueBehavior === ValueBehavior.NEEDKEY) {
+            menuHoverId.value = menuList.value.find(item => !item.disabled).id;
+          } else {
+            menuHoverId.value = '';
+          }
           isBindEvent = true;
           document.addEventListener('keydown', handleDocumentKeydown);
         }
       } else {
         document.removeEventListener('keydown', handleDocumentKeydown);
         isBindEvent = false;
-        menuHoverId.value = '';
+        if (props.valueBehavior !== ValueBehavior.NEEDKEY) {
+          menuHoverId.value = '';
+        }
       }
     });
 
@@ -129,7 +135,7 @@ export default defineComponent({
         // eslint-disable-next-line no-nested-ternary
         index = index > len - 1 ? 0 : (index < 0 ? len - 1 : index);
         const item = menuList.value[index];
-        if (!item.disabled) {
+        if (item && !item.disabled) {
           i = -1;
           const dom = document.getElementById(item.id);
           dom?.focus();
@@ -192,6 +198,8 @@ export default defineComponent({
       switch (event.code) {
         case 'Enter':
         case 'NumpadEnter':
+          if (props.valueBehavior === ValueBehavior.NEEDKEY
+             && menuList.value.some(item => item.id === menuHoverId.value)) return;
           handleKeyEnter(event);
           break;
         case 'Backspace':
@@ -206,7 +214,7 @@ export default defineComponent({
       // resolve 中文输入时直接按下enter的错误表现
       await new Promise(r => setTimeout(r, 0));
       if (!usingItem.value) {
-        if (!keyword.value) return;
+        if (!keyword.value || props.valueBehavior === ValueBehavior.NEEDKEY) return;
         const value = {
           id: keyword.value,
           name: keyword.value,
@@ -235,6 +243,7 @@ export default defineComponent({
           emit('add', usingItem.value);
           keyword.value = '';
           usingItem.value = null;
+          setInputFocus(true);
           return;
         }
         showNoSelectValueError.value = true;
@@ -260,16 +269,26 @@ export default defineComponent({
           setInputFocus();
           return;
         }
+      } else if (!keyword.value) {
+        usingItem.value = null;
+        keyword.value = '';
+        setMenuList();
       }
       onValidate('');
     }
     async function handleSelectItem(item: ICommonItem, type?: SearchItemType) {
       // 快捷选中
       if (item.value?.id) {
-        const seleted = new SelectedItem({ ...item, id: item.realId ?? item.id }, type, valueSplitCode.value);
-        seleted.addValue(item.value);
-        setSelectedItem(seleted);
-        return;
+        if ((props.valueBehavior === ValueBehavior.NEEDKEY && item.value) || !props.validateValues) {
+          const seleted = new SelectedItem({ ...item, id: item.realId ?? item.id }, type, valueSplitCode.value);
+          seleted.addValue(item.value);
+          setSelectedItem(seleted);
+          if (props.valueBehavior === ValueBehavior.NEEDKEY && menuHoverId.value) {
+            setInputFocus(true);
+          }
+          menuHoverId.value = '';
+          return;
+        }
       }
       if (!usingItem.value || !inputRef?.value?.innerText) {
         usingItem.value = new SelectedItem(item, type, valueSplitCode.value);
@@ -277,7 +296,7 @@ export default defineComponent({
         const isCondition = type === 'condition';
         isCondition && setSelectedItem();
         showPopover.value = isCondition || !!usingItem.value.children.length;
-        setInputFocus();
+        setInputFocus(props.valueBehavior === ValueBehavior.NEEDKEY && !!menuHoverId.value);
         return;
       } if (usingItem.value?.type === 'condition') {
         usingItem.value = new SelectedItem(item, type, valueSplitCode.value);
@@ -287,7 +306,11 @@ export default defineComponent({
       usingItem.value.addValue(item);
       const res = await validateUsingItemValues(item);
       if (!res) return;
-      !usingItem.value.multiple && setSelectedItem();
+      if (props.valueBehavior === ValueBehavior.NEEDKEY && usingItem.value.multiple) {
+        setInputFocus();
+      } else {
+        setSelectedItem();
+      }
     }
     function handleSelectCondtionItem(item: ICommonItem) {
       handleSelectItem(item, 'condition');
@@ -299,7 +322,7 @@ export default defineComponent({
           break;
         case 'cancel':
           usingItem.value.values = [];
-          setInputFocus();
+          showPopover.value = false;
           break;
       }
     }
@@ -325,7 +348,12 @@ export default defineComponent({
       onValidate('');
       return true;
     }
-    function setInputFocus() {
+    function setInputFocus(refleshMenuList = false) {
+      if (refleshMenuList) {
+        nextTick().then(() => {
+          setMenuList();
+        });
+      }
       isFocus.value = true;
       showPopover.value = true;
       showNoSelectValueError.value = false;
@@ -402,12 +430,21 @@ export default defineComponent({
           .filter(item => item.name.toLocaleLowerCase().includes(keyword.value.toLocaleLowerCase()));
       }
       menuList.value = list;
+      if (props.valueBehavior === ValueBehavior.NEEDKEY) {
+        const hoverItem = list.find(item => !item.disabled);
+        if (hoverItem && (
+          !menuHoverId.value
+          || (menuHoverId.value && !list.some(item => item.id === menuHoverId.value))
+        )) {
+          menuHoverId.value = hoverItem.id;
+        }
+      }
     }
     function setSelectedItem(item?: SelectedItem) {
       emit('add', item ?? usingItem.value);
       usingItem.value = null;
       keyword.value = '';
-      setInputFocus();
+      setInputFocus(props.valueBehavior === ValueBehavior.NEEDKEY);
     }
     function clearInput() {
       const text = inputRef.value.innerText;

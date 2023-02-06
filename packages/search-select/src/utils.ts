@@ -31,6 +31,10 @@ import { ComputedRef, inject, InjectionKey, provide, Ref, VNode } from 'vue';
  * @param {string} keyword 已输入的文本
  * @return {*} menu list用于渲染选择弹层列表
  */
+export enum ValueBehavior {
+  ALL = 'all',
+  NEEDKEY = 'need-key'
+}
 export type GetMenuListFunc = (item: ISearchItem, keyword: string) => Promise<ISearchItem[]>;
 export type ValidateValuesFunc = (item: ISearchItem, values: ICommonItem[]) => Promise<string | true>;
 export type MenuSlotParams = {
