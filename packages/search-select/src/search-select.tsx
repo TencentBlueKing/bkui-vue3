@@ -33,7 +33,7 @@ import { debounce } from '@bkui-vue/shared';
 
 import SearchSelectInput from './input';
 import SearchSelected from './selected';
-import { GetMenuListFunc, ICommonItem, ISearchItem, ISearchValue,  MenuSlotParams,  SearchItemType,  SelectedItem, useSearchSelectProvider, ValidateValuesFunc } from './utils';
+import { GetMenuListFunc, ICommonItem, ISearchItem, ISearchValue,  MenuSlotParams,  SearchItemType,  SelectedItem, useSearchSelectProvider, ValidateValuesFunc, ValueBehavior } from './utils';
 const INPUT_PADDING_WIDTH = 40;
 const SELETED_MARGING_RIGHT = 6;
 export const SearchSelectProps = {
@@ -74,6 +74,13 @@ export const SearchSelectProps = {
   uniqueSelect: {
     type: Boolean,
     default: false,
+  },
+  valueBehavior: {
+    type: String as PropType<ValueBehavior>,
+    default: ValueBehavior.ALL,
+    validator(v: ValueBehavior) {
+      return [ValueBehavior.ALL, ValueBehavior.NEEDKEY].includes(v);
+    },
   },
 };
 export default defineComponent({
@@ -286,6 +293,7 @@ export default defineComponent({
           overflowIndex={this.overflowIndex}
           getMenuList={this.getMenuList}
           validateValues={this.validateValues}
+          valueBehavior={this.valueBehavior}
           onDelete={this.handleDeleteSelected}
           v-slots={{ ...menuSlots }}/>
         <div class="search-container-input">
@@ -298,6 +306,7 @@ export default defineComponent({
            clickOutside={this.handleInputOutside}
            getMenuList={this.getMenuList}
            validateValues={this.validateValues}
+           valueBehavior={this.valueBehavior}
            onAdd={this.handleAddSelected}
            onDelete={this.handleDeleteSelected}
            onFocus={this.handleInputFocus}
