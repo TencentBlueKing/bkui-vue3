@@ -203,6 +203,8 @@ export default defineComponent({
     }
     async function handleKeyEnter(event?: KeyboardEvent) {
       event?.preventDefault();
+      // resolve 中文输入时直接按下enter的错误表现
+      await new Promise(r => setTimeout(r, 0));
       if (!usingItem.value) {
         if (!keyword.value) return;
         const value = {
