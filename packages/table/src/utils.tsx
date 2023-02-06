@@ -162,7 +162,6 @@ export const resolveColumnWidth = (
   autoWidth = COL_MIN_WIDTH,
   offsetWidth = 0,
 ) => {
-  console.log('resolveColumnWidth');
   const { width } = root.getBoundingClientRect() || {};
   const availableWidth = width - offsetWidth;
   // 可用来平均的宽度
@@ -299,6 +298,10 @@ export const observerResize = (
   return {
     start: () => {
       resizeObserver.observe(root);
+    },
+    disconnect: () => {
+      resizeObserver.unobserve(root);
+      resizeObserver.disconnect();
     },
   };
 };

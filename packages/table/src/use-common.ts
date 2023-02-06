@@ -170,6 +170,9 @@ export const useClass = (props: TablePropTypes, targetColumns: Column[], root?, 
   };
 
   const updateBorderClass = (root: HTMLElement) => {
+    if (!root) {
+      return;
+    }
     const querySelector = props.virtualEnabled
       ? `.${resolveClassName('virtual-section')}`
       : `.${resolveClassName('table-body-content')}`;
