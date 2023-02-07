@@ -11,6 +11,7 @@
     {
       name: '实例状态',
       id: '1',
+      multiple: true,
       children: [
         {
           name: 'redis 创 建 中 ',
