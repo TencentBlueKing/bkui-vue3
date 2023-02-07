@@ -25,7 +25,7 @@
 */
 import { defineComponent, PropType, ref } from 'vue';
 
-import { Close } from '@bkui-vue/icon';
+import { Error } from '@bkui-vue/icon';
 
 import SearchSelectInput from './input';
 import { GetMenuListFunc, ICommonItem, ISearchItem, SearchInputMode, SelectedItem, useSearchSelectInject, ValidateValuesFunc, ValueBehavior } from './utils';
@@ -116,7 +116,7 @@ export default defineComponent({
             <span class="selected-name" onClick={e => this.handleEditSeleted(e, item, index)}>
               {item.inputInnerText}
             </span>
-            <Close class="selected-clear" onClick={() => this.handleDeleteSelected(index)}/>
+            <Error class="selected-clear" onClick={() => this.handleDeleteSelected(index)}/>
           </li>);
     return <>
       {
