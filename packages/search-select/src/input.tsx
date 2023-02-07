@@ -306,10 +306,9 @@ export default defineComponent({
       usingItem.value.addValue(item);
       const res = await validateUsingItemValues(item);
       if (!res) return;
+      if (!usingItem.value.multiple)setSelectedItem();
       if (props.valueBehavior === ValueBehavior.NEEDKEY && usingItem.value.multiple) {
         setInputFocus();
-      } else {
-        setSelectedItem();
       }
     }
     function handleSelectCondtionItem(item: ICommonItem) {
