@@ -25,7 +25,7 @@
 */
 
 import { merge } from 'lodash';
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 
 import BKPopover, { PopoverPropTypes } from '@bkui-vue/popover';
 import { classes,  placementType, PropTypes, triggerType } from '@bkui-vue/shared';
@@ -63,9 +63,13 @@ export default defineComponent({
       emit('hide');
       handleShowChagne(false);
     };
+
+    const popoverRef = ref(null);
+
     return {
       afterShow,
       afterHidden,
+      popoverRef,
     };
   },
   render() {
@@ -83,7 +87,7 @@ export default defineComponent({
     };
     const popoverOptions: Partial<PopoverPropTypes> = merge(basePopoverOptions, this.popoverOptions);
     return <div class={wrapperClasses}>
-      <BKPopover
+      <BKPopover ref="popoverRef"
         { ...popoverOptions }
         onAfterShow={this.afterShow}
         onAfterHidden={this.afterHidden} >
