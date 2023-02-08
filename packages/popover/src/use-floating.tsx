@@ -304,7 +304,7 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
   const hanldePopoverShow = () => {
     const elContent = resolveTargetElement(refContent.value?.$el) as HTMLElement;
     elContent.style.setProperty('display', 'block');
-    elContent.style.setProperty('z-index', `${props.zIndex ? props.zIndex : bkZIndexManager.getModalNextIndex()}`);
+    elContent.style.setProperty('z-index', `${props.zIndex ? props.zIndex : bkZIndexManager.getPopperIndex()}`);
     updatePopover();
     ctx.emit('afterShow', { isShow: true });
   };
