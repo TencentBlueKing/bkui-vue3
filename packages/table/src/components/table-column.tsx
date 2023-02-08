@@ -48,6 +48,6 @@ export default defineComponent({
       initColumns(column);
       column.render = slots.default ? (args: any) => slots.default?.(args) : undefined;
     });
-    return () => <>{ slots.default?.({ data: {} }) }</>;
+    return () => <>{ slots.default?.({ row: {} }) }</>;
   },
 });

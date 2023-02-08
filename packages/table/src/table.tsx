@@ -209,6 +209,9 @@ export default defineComponent({
 
     onMounted(() => {
       observerIns = observerResize(root.value, () => {
+        if (!root.value) {
+          return;
+        }
         if (props.height === '100%' || props.height === 'auto') {
           resetTableHeight(root.value);
         }
@@ -222,7 +225,7 @@ export default defineComponent({
     });
 
     onBeforeUnmount(() => {
-      // observerIns.stop();
+      observerIns.disconnect();
       observerIns = null;
       tableRender.destroy();
     });
