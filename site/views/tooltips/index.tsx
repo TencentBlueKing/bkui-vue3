@@ -87,6 +87,13 @@ const props: IPropsTableItem[] = [
     optional: ['true', 'false'],
   },
   {
+    name: 'delay',
+    type: 'Number',
+    default: '0',
+    desc: '显示的延迟，毫秒',
+    optional: [],
+  },
+  {
     name: 'extCls',
     type: 'String',
     default: '',
