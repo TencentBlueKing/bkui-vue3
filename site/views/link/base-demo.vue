@@ -1,7 +1,10 @@
 <template>
   <div>
     <bk-link>这是默认</bk-link>
-    <bk-link theme="danger">
+    <bk-link
+      theme="danger"
+      @click="handleClick"
+    >
       这是危险
     </bk-link>
     <bk-link theme="warning">
@@ -15,3 +18,9 @@
     </bk-link>
   </div>
 </template>
+<script setup>
+
+  const handleClick = () => {
+    console.error('handleClickhandleClickhandleClickhandleClick');
+  };
+</script>
