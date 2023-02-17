@@ -32,5 +32,9 @@
   "preCI.localCodeCheck.filter.skipPath": ".*/\\.codecc/.*",
   "preCI.localCodeCheck.preCommit": "none",
   "preCI.localCodeCheck.prePush": "none",
-  "preCI.pipeline.yamlFilePath": "build.yml"
+  "preCI.pipeline.yamlFilePath": "build.yml",
+  "i18n-ally.localesPaths": [
+    "site/language",
+    "site/locales"
+  ]
 }

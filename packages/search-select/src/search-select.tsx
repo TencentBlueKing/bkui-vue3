@@ -31,64 +31,68 @@ import { clickoutside } from '@bkui-vue/directives';
 import { Close, ExclamationCircleShape, Search } from '@bkui-vue/icon';
 import { debounce } from '@bkui-vue/shared';
 
+import i18n from '../../../site/language/i18n';
+
 import SearchSelectInput from './input';
 import SearchSelected from './selected';
 import { GetMenuListFunc, ICommonItem, ISearchItem, ISearchValue,  MenuSlotParams,  SearchItemType,  SelectedItem, useSearchSelectProvider, ValidateValuesFunc, ValueBehavior } from './utils';
 const INPUT_PADDING_WIDTH = 40;
 const SELETED_MARGING_RIGHT = 6;
-export const SearchSelectProps = {
-  data: {
-    type: Array as PropType<ISearchItem[]>,
-    default: () => [],
-  },
-  modelValue: {
-    type: Array as PropType<ISearchValue[]>,
-    default: () => [],
-  },
-  shrink: {
-    type: Boolean,
-    default: true,
-  },
-  maxHeight: {
-    type: Number,
-    default: 120,
-  },
-  minHeight: {
-    type: Number,
-    default: 26,
-  },
-  conditions: {
-    type: Array as PropType<ICommonItem[]>,
-    default: () => [{ id: 'or', name: '或' }, { id: 'and', name: '且' }],
-  },
-  clearable: {
-    type: Boolean,
-    default: true,
-  },
-  getMenuList: Function as PropType<GetMenuListFunc>,
-  validateValues: Function as PropType<ValidateValuesFunc>,
-  valueSplitCode: {
-    type: String,
-    default: '|',
-  },
-  uniqueSelect: {
-    type: Boolean,
-    default: false,
-  },
-  valueBehavior: {
-    type: String as PropType<ValueBehavior>,
-    default: ValueBehavior.ALL,
-    validator(v: ValueBehavior) {
-      return [ValueBehavior.ALL, ValueBehavior.NEEDKEY].includes(v);
-    },
-  },
-};
+
+const { t } = i18n.global;
+
 export default defineComponent({
   name: 'SearchSelect',
   directives: {
     clickoutside,
   },
-  props: SearchSelectProps,
+  props: {
+    data: {
+      type: Array as PropType<ISearchItem[]>,
+      default: () => [],
+    },
+    modelValue: {
+      type: Array as PropType<ISearchValue[]>,
+      default: () => [],
+    },
+    shrink: {
+      type: Boolean,
+      default: true,
+    },
+    maxHeight: {
+      type: Number,
+      default: 120,
+    },
+    minHeight: {
+      type: Number,
+      default: 26,
+    },
+    conditions: {
+      type: Array as PropType<ICommonItem[]>,
+      default: () => [{ id: 'or', name: t('或') }, { id: 'and', name: t('且') }],
+    },
+    clearable: {
+      type: Boolean,
+      default: true,
+    },
+    getMenuList: Function as PropType<GetMenuListFunc>,
+    validateValues: Function as PropType<ValidateValuesFunc>,
+    valueSplitCode: {
+      type: String,
+      default: '|',
+    },
+    uniqueSelect: {
+      type: Boolean,
+      default: false,
+    },
+    valueBehavior: {
+      type: String as PropType<ValueBehavior>,
+      default: ValueBehavior.ALL,
+      validator(v: ValueBehavior) {
+        return [ValueBehavior.ALL, ValueBehavior.NEEDKEY].includes(v);
+      },
+    },
+  },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
     // refs

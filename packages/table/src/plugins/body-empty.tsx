@@ -24,6 +24,7 @@
 * IN THE SOFTWARE.
 */
 import { computed, defineComponent } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import BkException from '@bkui-vue/exception';
 import { PropTypes } from '@bkui-vue/shared';
@@ -32,12 +33,17 @@ export default defineComponent({
   props: {
     list: PropTypes.array.def([]),
     filterList: PropTypes.array.def([]),
-    emptyText: PropTypes.string.def('暂无数据'),
+    emptyText: String,
   },
   emits: ['change'],
 
   setup(props) {
-    const type = computed(() => (props.list.length === 0 ? 'empty' : 'search-empty'));
-    return () => <BkException scene="part" type={type.value} description={props.emptyText} />;
+    const { t } = useI18n();
+    const { emptyText, list } = props;
+    if (!emptyText) {
+      PropTypes.string.def(t('暂无数据'));
+    }
+    const type = computed(() => (list.length === 0 ? 'empty' : 'search-empty'));
+    return () => <BkException scene="part" type={type.value} description={emptyText} />;
   },
 });

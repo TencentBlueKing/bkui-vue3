@@ -44,6 +44,7 @@ import type {
 export default () => {
   const {
     proxy,
+    appContext: { config: { globalProperties } },
   } = getCurrentInstance() as ComponentInternalInstance &  { proxy: IPaginationInstance};
 
   const localLimit = ref<number>(proxy.limit);
@@ -88,7 +89,7 @@ export default () => {
         {...{
           disabled: proxy.disabled,
         }}>
-        <div>每页</div>
+        <div>{ globalProperties.$t('每页') }</div>
         <BkSelect
           class="bk-pagination-limit-select"
           clearable={false}
@@ -104,7 +105,7 @@ export default () => {
               key={`${index}_${num}`} />
           ))}
         </BkSelect>
-        <div>条</div>
+        <div>{ globalProperties.$t('条') }</div>
       </div>
     );
   };

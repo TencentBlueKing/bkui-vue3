@@ -218,7 +218,7 @@ const Swiper: LANG = {
   'Swiper 属性': ['Swiper Attributes'],
   'Swiper 事件': ['Swiper Event'],
   '图片列表，[{ link: String, url: String, color: String, class: String }]': [
-    'Picture list, [{ link: String, url: String, color: String, class: String }]',
+    'Picture list, [{\'{\'} link: String, url: String, color: String, class: String {\'}\'}]',
   ],
   '数据列表，配合 slot 使用': ['Data list, used with slot'],
   '轮播图高度，如果不传将使用父元素高度': [

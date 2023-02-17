@@ -31,6 +31,7 @@ import {
   defineComponent,
   PropType,
 } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import type {
   DatePickerValueType,
@@ -72,12 +73,13 @@ export default defineComponent({
   props: dateTableProps,
   emits: ['pick', 'pick-click', 'changeRange'],
   setup(props, { emit }) {
+    const { t } = useI18n();
     const calendar = computed(() => new jsCalendar.Generator({ onlyDays: true, weekStart: 0 }));
 
     const headerDays = computed(() => {
       const translatedDays = [
         '日', '一', '二', '三', '四', '五', '六',
-      ];
+      ].map((item: string) => t(item));
       return translatedDays.splice(0, 7 - 0).concat(translatedDays.splice(0, 0));
     });
 

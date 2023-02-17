@@ -27,7 +27,12 @@ import { computed, defineComponent, PropType, VNode } from 'vue';
 
 import { Done } from '@bkui-vue/icon';
 
-import { ICommonItem, IMenuFooterItem } from './utils';;
+import i18n from '../../../site/language/i18n';
+
+import { ICommonItem, IMenuFooterItem } from './utils';
+
+const { t } = i18n.global;
+
 export default defineComponent({
   name: 'SearchSelectMenu',
   props: {
@@ -55,11 +60,11 @@ export default defineComponent({
       default: () => [
         {
           id: 'confirm',
-          name: '确认',
+          name: t('确认'),
         },
         {
           id: 'cancel',
-          name: '取消',
+          name: t('取消'),
           disabled: false,
         },
       ],

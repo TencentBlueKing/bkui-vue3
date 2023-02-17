@@ -24,6 +24,7 @@
 * IN THE SOFTWARE.
 */
 import { defineComponent, nextTick, PropType, Ref, ref, watch, watchEffect } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import { clickoutside } from '@bkui-vue/directives';
 import Popover from '@bkui-vue/popover';
@@ -59,6 +60,7 @@ export default defineComponent({
   },
   emits: ['focus', 'add', 'delete'],
   setup(props, { emit, expose }) {
+    const { t } = useI18n();
     const inputRef = ref<HTMLDivElement>(null);
     const popoverRef = ref<HTMLDivElement>(null);
 
@@ -488,6 +490,7 @@ export default defineComponent({
       handleSelectItem,
       handleSelectCondtionItem,
       handleMenuFooterClick,
+      t,
     };
   },
   render() {
@@ -506,7 +509,7 @@ export default defineComponent({
       'input-after': showInputAfter,
     }}
     contenteditable={true}
-    data-placeholder={!inputInnerHtml && !this.keyword ? '请选择' : ''}
+    data-placeholder={!inputInnerHtml && !this.keyword ? this.t('请选择') : ''}
     data-tips={placeholder || ''}
     spellcheck="false"
     v-clickoutside={this.handleClickOutside}
@@ -515,10 +518,10 @@ export default defineComponent({
     onKeydown={this.handleInputKeyup}/>;
     const popoverContent = () => {
       if (this.loading) {
-        return <div>加载中...</div>;
+        return <div>{ this.t('加载中...') }</div>;
       }
       if (this.showNoSelectValueError) {
-        return <div>包含键值的过滤查询必须有一个值</div>;
+        return <div>{ this.t('包含键值的过滤查询必须有一个值') }</div>;
       }
       return this.menuList?.length ? <div ref="popoverRef" class="bk-search-select-popover">
       <SearchSelectMenu

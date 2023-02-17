@@ -24,6 +24,7 @@
 * IN THE SOFTWARE.
 */
 import { computed, defineComponent, ref, unref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import BkButton from '@bkui-vue/button';
 import BkCheckbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
@@ -56,7 +57,8 @@ export default defineComponent({
   },
   emits: ['change'],
   setup(props, { emit }) {
-    const defaultSizeList: SizeItem[] = DEFAULT_SIZE_LIST;
+    const { t } = useI18n();
+    const defaultSizeList: SizeItem[] = DEFAULT_SIZE_LIST.map(item => ({ ...item, label: t(item.label) }));
     const resolvedColVal = (item, index) => resolvePropVal(item, ['field', 'type'], [item, index]);
 
     const checkAll = ref(false);
@@ -188,18 +190,18 @@ export default defineComponent({
           </span>,
           content: () => <div class="setting-content">
             <div class="setting-head">
-              <span class="head-title">表格设置</span>
+              <span class="head-title">{ t('表格设置') }</span>
               <CloseLine class='icon-close-action' onClick={handleCancelClick}></CloseLine>
             </div>
             <div class="setting-body">
               <div class="setting-body-title">
                 <div>
-                  <span class="field-setting-label">字段显示设置</span>
-                  {isLimit.value ? <span class="limit">（最多{localSettings.value.limit}项）</span> : ''}</div>
+                  <span class="field-setting-label">{ t('字段显示设置')}</span>
+                  {isLimit.value ? <span class="limit">（`${t('最多')}{localSettings.value.limit}${t('项')}`）</span> : ''}</div>
                 {isLimit.value ? '' : <span class="check-all" onClick={handleCheckAllClick}>
-                  <BkCheckbox label="全选"
+                  <BkCheckbox label={ t('全选') }
                     indeterminate={Boolean(indeterminate.value)}
-                    modelValue={checkedFields.value.length > 0}>全选</BkCheckbox>
+                    modelValue={checkedFields.value.length > 0}>{ t('全选') }</BkCheckbox>
                 </span>
                 }
               </div>
@@ -217,14 +219,14 @@ export default defineComponent({
               {
                 showLineHeight.value
                   ? <div class="setting-body-line-height">
-                    表格行高：{renderSize()}
+                    { t('表格行高')}：{renderSize()}
                   </div> : ''
               }
 
             </div>
             <div class="setting-footer">
-              <BkButton theme='primary' style={buttonStyle} onClick={handleSaveClick}>确定</BkButton>
-              <BkButton style={buttonStyle} onClick={handleCancelClick}>取消</BkButton>
+              <BkButton theme='primary' style={buttonStyle} onClick={handleSaveClick}>{ t('确定') }</BkButton>
+              <BkButton style={buttonStyle} onClick={handleCancelClick}>{ t('取消') }</BkButton>
             </div>
           </div>,
         }

@@ -55,6 +55,8 @@ import {
 } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
+import i18n from '../../../site/language/i18n';
+
 import {
   selectKey,
   toLowerCase,
@@ -66,6 +68,8 @@ import {
 import Option from './option';
 import SelectTagInput from './selectTagInput';
 import { GroupInstanceType, ISelected, OptionInstanceType, SelectTagInputType } from './type';
+
+const { t } = i18n.global;
 
 export default defineComponent({
   name: 'Select',
@@ -90,12 +94,12 @@ export default defineComponent({
     behavior: InputBehaviorType(), // 输入框模式
     collapseTags: PropTypes.bool.def(false), // 当以标签形式显示选择结果时，是否合并溢出的结果以数字显示
     autoHeight: PropTypes.bool.def(true), // collapseTags模式下，聚焦时自动展开所有Tag
-    noDataText: PropTypes.string.def('无数据'),
-    noMatchText: PropTypes.string.def('无匹配数据'),
-    loadingText: PropTypes.string.def('加载中...'),
-    placeholder: PropTypes.string.def('请选择'),
-    searchPlaceholder: PropTypes.string.def('请输入关键字'),
-    selectAllText: PropTypes.string.def('全部'),
+    noDataText: PropTypes.string.def(t('无数据')),
+    noMatchText: PropTypes.string.def(t('无匹配数据')),
+    loadingText: PropTypes.string.def(t('加载中...')),
+    placeholder: PropTypes.string.def(t('请选择')),
+    searchPlaceholder: PropTypes.string.def(t('请输入关键字')),
+    selectAllText: PropTypes.string.def(t('全部')),
     scrollLoading: PropTypes.bool.def(false),
     allowCreate: PropTypes.bool.def(false), // 是否运行创建自定义选项
     popoverOptions: PropTypes.object.def({}), // popover属性
