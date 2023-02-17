@@ -25,10 +25,11 @@
  */
 
 import { defineComponent, ExtractPropTypes, onMounted, ref } from 'vue';
+// import { Error, Circle, Done } from '@bkui-vue/icon';
+import { useI18n } from 'vue-i18n';
 
 import { Circle, Done, Error } from '@bkui-vue/icon';
 import { classes, PropTypes } from '@bkui-vue/shared';
-// import { Error, Circle, Done } from '@bkui-vue/icon';
 
 const processProps = {
   list: PropTypes.array.def([]),
@@ -45,24 +46,24 @@ export default defineComponent({
   name: 'Process',
   props: processProps,
   emits: ['update:curProcess', 'click'],
-
   setup(props: ProcessPropType, { emit }) {
+    const { t } = useI18n();
     const defaultProcessList = ref([]);
     const paddingBottom = ref(0);
 
     const init = () => {
       defaultProcessList.value.splice(0, defaultProcessList.value.length, ...[
         {
-          content: '步骤1',
+          content: t('步骤1'),
         },
         {
-          content: '步骤2',
+          content: t('步骤2'),
         },
         {
-          content: '步骤3',
+          content: t('步骤3'),
         },
         {
-          content: '步骤4',
+          content: t('步骤4'),
         },
       ]);
       if (props.list?.length) {

@@ -30,8 +30,12 @@ import { ArchiveFill, AudioFill, Del, Done, ImageFill, RightTurnLine, TextFill, 
 import BkProgress from '@bkui-vue/progress';
 import { classes } from '@bkui-vue/shared';
 
+import i18n from '../../../site/language/i18n';
+
 import uploadProps from './props';
 import { CLASS_PREFIX, EThemes, UploadFile } from './upload.type';
+
+const { t } = i18n.global;
 
 export default defineComponent({
   name: 'UploadList',
@@ -171,8 +175,8 @@ export default defineComponent({
         {
           file.status !== 'uploading'
           && <div class={`${classBlock}__item-message`} title={file.statusText}>
-            { file.status === 'success' && <span><Done class={`${classBlock}__item-message-success-icon`} />{file.statusText || '上传成功'}</span> }
-            { file.status === 'fail' && <span>{file.statusText || '上传失败'}</span> }
+            { file.status === 'success' && <span><Done class={`${classBlock}__item-message-success-icon`} />{file.statusText || t('上传成功')}</span> }
+            { file.status === 'fail' && <span>{file.statusText || t('上传失败')}</span> }
           </div>
         }
         {

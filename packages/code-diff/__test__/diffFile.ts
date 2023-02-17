@@ -23,6 +23,11 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+
+import i18n from '../../../site/language/i18n';
+
+const { t } = i18n.global;
+
 export const NEW_STR = `
 Vue.component('app-exception', Exception)
 Vue.component('app-auth', AuthComponent)
@@ -46,12 +51,12 @@ auth.requestCurrentUser().then(user => {
 }, err => {
     let message;
     if (err.status === 403) {
-        message = 'Sorry，您的权限不足!';
+        message = ${t('Sorry，您的权限不足!')};
         if (err.data && err.data.msg) {
             message = err.data.msg;
         }
     } else {
-        message = '无法连接到后端服务，请稍候再试。'
+      message = ${t('无法连接到后端服务，请稍候再试。')}
     }
 
     const divStyle = ''
@@ -89,12 +94,12 @@ auth.requestCurrentUser().then(user => {
 }, err => {
     let message;
     if (err.status === 403) {
-        message = 'Sorry，您的权限不足!'
+        message = ${t('Sorry，您的权限不足!')};
         if (err.data && err.data.msg) {
             message = err.data.msg;
         }
     } else {
-        message = '服务暂时未响应，请稍后再试。'
+      message = ${t('无法连接到后端服务，请稍候再试。')}
     }
 
     const divStyle = ''

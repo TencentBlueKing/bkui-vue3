@@ -36,6 +36,7 @@ import {
   toRefs,
   watch,
 } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import { scrollTop } from '@bkui-vue/shared';
 
@@ -363,6 +364,7 @@ export default defineComponent({
     };
   },
   render() {
+    const { t } = useI18n();
     return (
       <div
         class={[
@@ -371,9 +373,9 @@ export default defineComponent({
         ]}
       >
         <div class="bk-time-picker-cells-title-wrapper">
-          <div class={['bk-time-picker-cells-title', this.focusedColumn === 0 ? 'active' : '']} style={this.styles}>时</div>
-          <div class={['bk-time-picker-cells-title', this.focusedColumn === 1 ? 'active' : '']} style={this.styles}>分</div>
-          <div class={['bk-time-picker-cells-title', this.focusedColumn === 2 ? 'active' : '']} v-show={this.showSeconds} style={this.styles}>秒</div>
+          <div class={['bk-time-picker-cells-title', this.focusedColumn === 0 ? 'active' : '']} style={this.styles}>{ t('时') }</div>
+          <div class={['bk-time-picker-cells-title', this.focusedColumn === 1 ? 'active' : '']} style={this.styles}>{ t('分') }</div>
+          <div class={['bk-time-picker-cells-title', this.focusedColumn === 2 ? 'active' : '']} v-show={this.showSeconds} style={this.styles}>{ t('秒') }</div>
         </div>
         <div class="bk-time-picker-cells-list" ref="hoursRef" style={this.styles}>
           <ul class="bk-time-picker-cells-ul">

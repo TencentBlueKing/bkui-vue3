@@ -24,6 +24,7 @@
  * IN THE SOFTWARE.
  */
 import { computed, defineComponent, nextTick, reactive, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import BkCheckbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
 import { Funnel } from '@bkui-vue/icon';
@@ -43,6 +44,7 @@ export default defineComponent({
   emits: ['change', 'filterSave'],
 
   setup(props, { emit }) {
+    const { t } = useI18n();
     const { column } = props;
     const state = reactive({
       isOpen: false,
@@ -131,7 +133,7 @@ export default defineComponent({
     const { btnSave, btnReset } = column.filter;
 
     const renderSaveBtn = () => {
-      const { disabled, text } = resolveBtnOption(btnSave, '确定');
+      const { disabled, text } = resolveBtnOption(btnSave, t('确定'));
       if (disabled) {
         return <span class='btn-filter-save disabled'>{text}</span>;
       }
@@ -144,7 +146,7 @@ export default defineComponent({
     };
 
     const renderResetBtn = () => {
-      const { disabled, text } = resolveBtnOption(btnReset, '重置');
+      const { disabled, text } = resolveBtnOption(btnReset, t('重置'));
       if (disabled) {
         return '';
       }
@@ -183,7 +185,7 @@ export default defineComponent({
         </div>);
       }
 
-      return <div class="list-item is-empty">暂无数据</div>;
+      return <div class="list-item is-empty">{ t('暂无数据') }</div>;
     };
 
     return () => (

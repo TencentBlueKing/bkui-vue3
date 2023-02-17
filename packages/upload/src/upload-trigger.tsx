@@ -31,8 +31,12 @@ import { Del, Plus, Upload } from '@bkui-vue/icon';
 import BkProgress from '@bkui-vue/progress';
 import { classes } from '@bkui-vue/shared';
 
+import i18n from '../../../site/language/i18n';
+
 import uploadProps from './props';
 import { CLASS_PREFIX, EThemes, UploadFile } from './upload.type';
+
+const { t } = i18n.global;
 
 export default defineComponent({
   name: 'UploadTrigger',
@@ -175,7 +179,7 @@ export default defineComponent({
                 <>
                   <Upload class={`${classBlock}__draggable-icon`} />
                   <div class={`${classBlock}__draggable-text`}>
-                    将文件拖到此处或<span class={`${classBlock}__draggable-upload-link`}>点击上传</span>
+                    { t('将文件拖到此处或')}<span class={`${classBlock}__draggable-upload-link`}>{ t('点击上传') }</span>
                   </div>
                 </>
               )
@@ -233,7 +237,7 @@ export default defineComponent({
 
     const Button = () => (
       <BkButton disabled={disabled.value}>
-        <Upload class={`${classBlock}__button-icon`} /><span class={`${classBlock}__button-text`}>上传文件</span>
+        <Upload class={`${classBlock}__button-icon`} /><span class={`${classBlock}__button-text`}>{ t('上传文件') }</span>
       </BkButton>
     );
 

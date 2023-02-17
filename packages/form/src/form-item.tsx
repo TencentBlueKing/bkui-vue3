@@ -46,11 +46,15 @@ import {
   useFormItem,
 } from '@bkui-vue/shared';
 
+import i18n from '../../../site/language/i18n';
+
 import type {
   IFormItemRule,
 } from './type';
 import { getRuleMessage } from './utils';
-import defaultValidator from './validator';;
+import defaultValidator from './validator';
+
+const { t } = i18n.global;
 
 const formItemProps = {
   label: PropTypes.string,
@@ -81,7 +85,7 @@ const getRulesFromProps = (props) => {
     rules.push({
       required: true,
       validator: defaultValidator.required,
-      message: `${label}不能为空`,
+      message: `${label}${t('不能为空')}`,
       trigger: 'change',
     });
   }
@@ -89,28 +93,28 @@ const getRulesFromProps = (props) => {
     rules.push({
       email: true,
       validator: defaultValidator.email,
-      message: `${label}格式不正确`,
+      message: `${label}${t('格式不正确')}`,
       trigger: 'change',
     });
   }
   if (Number(props.max) > -1) {
     rules.push({
       validator: value => defaultValidator.max(value, props.max),
-      message: `${label}最大值 ${props.max}`,
+      message: `${label}${t('最大值')} ${props.max}`,
       trigger: 'change',
     });
   }
   if (Number(props.min) > -1) {
     rules.push({
       validator: value => defaultValidator.min(value, props.min),
-      message: `${label}最小值 ${props.min}`,
+      message: `${label}${t('最小值')} ${props.min}`,
       trigger: 'change',
     });
   }
   if (Number(props.maxlength) > -1) {
     rules.push({
       validator: value => defaultValidator.maxlength(value, props.maxlength),
-      message: `${label}最大长度 ${props.maxlength}`,
+      message: `${label}${t('最大长度')} ${props.maxlength}`,
       trigger: 'change',
     });
   }

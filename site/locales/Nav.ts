@@ -123,6 +123,7 @@ const FixedNavbar: LANG = {
 };
 
 const BackTop: LANG = {
+  'Backtop 回到顶部': ['Backtop '],
   'Backtop 回到页面顶部的操作按钮': ['Back to the action button at the top of the page'],
   '滚动页面，滚动条超过40px后，按钮会出现在右下角': [
     'Scroll the page. When the scroll bar exceeds 40px, the button will appear in the lower right corner',

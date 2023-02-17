@@ -36,8 +36,8 @@ import type {
 export default () => ({ isFirst, isLast }) => {
   const {
     props,
+    appContext: { config: { globalProperties } },
   } = getCurrentInstance() as ComponentInternalInstance &  { props: PaginationProps};
-
 
   if (!props.showTotalCount) {
     return null;
@@ -52,9 +52,9 @@ export default () => ({ isFirst, isLast }) => {
       {...{
         disabled: props.disabled,
       }}>
-      共计
+      { globalProperties.$t('共计') }
       <div class="bk-pagination-total-num">{ props.count }</div>
-      条
+      { globalProperties.$t('条') }
     </div>
   );
 };

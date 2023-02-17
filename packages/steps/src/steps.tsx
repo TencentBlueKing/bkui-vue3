@@ -25,6 +25,7 @@
  */
 
 import { defineComponent, ExtractPropTypes, onMounted, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { toType } from 'vue-types';
 
 import { Circle, Done, Error } from '@bkui-vue/icon';
@@ -57,6 +58,7 @@ export default defineComponent({
   emits: ['update:curStep', 'click'],
 
   setup(props: StepsPropTypes, { emit }) {
+    const { t } = useI18n();
     const defaultSteps = ref([]);
 
     const updateSteps = (steps) => {
@@ -84,15 +86,15 @@ export default defineComponent({
     const init = () => {
       defaultSteps.value.splice(0, defaultSteps.value.length, ...[
         {
-          title: '步骤1',
+          title: t('步骤1'),
           icon: 1,
         },
         {
-          title: '步骤2',
+          title: t('步骤2'),
           icon: 2,
         },
         {
-          title: '步骤3',
+          title: t('步骤3'),
           icon: 3,
         },
       ]);
