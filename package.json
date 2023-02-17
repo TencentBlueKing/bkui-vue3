@@ -138,10 +138,12 @@
   "dependencies": {
     "@floating-ui/dom": "~0.5.2",
     "@popperjs/core": "~2.11.5",
+    "cookie": "~0.5.0",
     "date-fns": "~2.28.0",
     "js-calendar": "~1.2.3",
     "lodash": "~4.17.21",
     "tinycolor2": "~1.4.1",
+    "vue-i18n": "~9.2.2",
     "vue-types": "~4.1.1"
   }
 }
