@@ -33,11 +33,11 @@ const Menu: LANG = {
     'Menu component, which provides a menu list for navigation of pages and functions.',
   ],
   Menu组件的基础用法: ['Basic usage of Menu components'],
-  'Menu 属性': ['Menu Property'],
+  'Menu 属性': ['Menu Attributes'],
   'Menu 事件': ['Menu Events'],
   'SubMenu 事件': ['SubMenu Events'],
   'SubMenu 插槽': ['SubMenu Slot'],
-  'MenuItem 属性': ['MenuItem Property'],
+  'MenuItem 属性': ['MenuItem Attributes'],
   'MenuItem 插槽': ['MenuItem Slot'],
   选中的menu的key: ['The key of the selected menu'],
   '打开的submenu key值': ['Open submenu key value'],
@@ -123,13 +123,13 @@ const FixedNavbar: LANG = {
 };
 
 const BackTop: LANG = {
-  'Backtop 回到顶部': ['Backtop '],
+  'Backtop 回到顶部': ['BackTop '],
   'Backtop 回到页面顶部的操作按钮': ['Back to the action button at the top of the page'],
   '滚动页面，滚动条超过40px后，按钮会出现在右下角': [
     'Scroll the page. When the scroll bar exceeds 40px, the button will appear in the lower right corner',
   ],
   向下滚动以显示按钮: ['Scroll down to display buttons'],
-  'Backtop 属性': ['Backtop Property'],
+  'Backtop 属性': ['Backtop Attributes'],
   '滚动多少px后，元素可见': ['After how many px is scrolled, the element is visible'],
   触发滚动的对象: ['Objects that trigger scrolling'],
   '控制其显示位置, 距离页面右边距': ['Control its display position, distance from the right margin of the page'],
@@ -187,7 +187,7 @@ const Link: LANG = {
   'a标签的target属性，规定在何处打开链接文档': [
     'The target attribute of the a tag specifies where to open the linked document',
   ],
-  'Link 属性': ['Link Property'],
+  'Link 属性': ['Link Attributes'],
   'Link 文字超链接': ['Link Text Hyperlink'],
   选项一: ['Option 1'],
 };

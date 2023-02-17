@@ -25,15 +25,17 @@
 */
 
 import { defineComponent } from 'vue';
-import { useI18n } from 'vue-i18n';
 
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
+import i18n from '../../language/i18n';
 import { IPropsTableItem } from '../../typings';
 
 import BaseDemo from './base-demo.vue';
 import PartDemo from './part-demo.vue';
+
+const { t } = i18n.global;
 
 const props: IPropsTableItem[] = [
   {
@@ -47,7 +49,7 @@ const props: IPropsTableItem[] = [
     name: 'scene',
     type: 'String',
     desc: '异常类型',
-    optional: ['page（页面）', 'part（局部）'],
+    optional: [t('page（页面）'), t('part（局部）')],
     default: 'page',
   },
   {
@@ -64,29 +66,34 @@ const props: IPropsTableItem[] = [
     optional: [],
     default: '',
   },
-];
+].map((item: IPropsTableItem) => {
+  const result =  Object.assign(item, { desc: t(item.desc) });
+  return {
+    ...result,
+  };
+});
+
 export default defineComponent({
   render() {
-    const { t } = useI18n();
     return (
       <div>
         <DemoTitle name={ t('Exception 异常提示') } desc="" />
           <DemoBox
             title={t('基础用法')}
-            desc="配置 type 为异常类型 403、404、500、building、empty、search-empty，也可以不配置，默认为 404"
+            desc={ t('配置 type 为异常类型 403、404、500、building、empty、search-empty，也可以不配置，默认为 404')}
             componentName="exception"
             demoName="base-demo">
               <BaseDemo />
           </DemoBox>
           <DemoBox
-            title="局部异常提示"
-            desc="配置 scene 为使用场景为 part"
+            title={ t('局部异常提示') }
+            desc={t('配置 scene 为使用场景为 part')}
             componentName="exception"
             demoName="part-demo">
               <PartDemo />
           </DemoBox>
           <PropsBox
-          title="属性"
+          title={ t('属性') }
           subtitle=""
           propsData={props}/>
       </div>

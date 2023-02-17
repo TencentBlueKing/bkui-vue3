@@ -1,29 +1,45 @@
 <template>
   <bk-alert
     theme="success"
-    title="成功的提示文字"
+    :title="t('成功的提示文字')"
+    :close-text="t('继续努力')"
     closable
-    close-text="继续努力"
   />
   <bk-alert
     theme="info"
-    title="消息的提示文字"
+    :title="t('消息的提示文字')"
+    :close-text="t('下次见！')"
     closable
-    close-text="下次见！"
   />
   <bk-alert
     theme="warning"
-    title="警告的提示文字"
+    :title="t('警告的提示文字')"
+    :close-text="t('删掉')"
     closable
-    close-text="删掉"
   />
 </template>
-<script setup>
-  import BkAlert from '@bkui-vue/alert';
 
+<script>
+  import { defineComponent } from 'vue';
+  import { useI18n } from 'vue-i18n';
+
+  import BkAlert from '@bkui-vue/alert';
+  export default defineComponent({
+    components: {
+      BkAlert,
+    },
+    setup() {
+      const { t } = useI18n();
+
+      return {
+        t,
+      };
+    },
+  });
 </script>
+
 <style lang="postcss">
-  .bk-alert ~ .bk-alert {
-    margin-top: 20px;
-  }
+.bk-alert ~ .bk-alert {
+  margin-top: 20px;
+}
 </style>

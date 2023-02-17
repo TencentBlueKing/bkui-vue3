@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import cookie from 'cookie';
+import VueCookies from 'vue-cookies';
 import { createI18n } from 'vue-i18n';
 
 import langMap from './lang';
@@ -40,7 +40,9 @@ Object.keys(langMap).forEach((key) => {
   zh[key] = langMap[key][1] || key;
 });
 
-const localLanguage = cookie.parse(document.cookie).blueking_language || 'en';
+const Cookies = VueCookies as any;
+
+const localLanguage = Cookies.get('lang') || 'zh-cn';
 
 const i18n = createI18n({
   silentTranslationWarn: true,

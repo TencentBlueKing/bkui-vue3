@@ -32,7 +32,7 @@ import Data from '../locales/Data';
 import FeedBack from '../locales/FeedBack';
 import Form from '../locales/Form';
 import Layout from '../locales/Layout';
-import Nav from '../locales/Nav';;
+import Nav from '../locales/Nav';
 
 interface LANG {
   [langName: string]: string[];
@@ -41,7 +41,7 @@ interface LANG {
 const Common: LANG = {
   复制成功: ['Copy succeeded'],
   复制失败: ['Copy failed'],
-  属性: ['Property'],
+  属性: ['Attributes'],
   删除: ['Delete'],
   基本用法: ['Basic Usage'],
   基础用法: ['Basic Usage'],
@@ -77,6 +77,16 @@ const Common: LANG = {
   小: ['small'],
   中: ['medium'],
   大: ['large'],
+  标题: ['Title'],
+  数据加载中: ['Data loading'],
+  没有权限: ['No permission'],
+  返回首页: ['Return to the home page'],
+  登入: ['Login'],
+  成功: ['Success'],
+  失败: ['Fail'],
+  错误: ['Error'],
+  更新: ['Update'],
+  警告: ['Warning'],
 };
 
 const MenuTitle: LANG = {
@@ -148,11 +158,10 @@ const MenuSubTitle: LANG = {
 };
 
 const QuickStart: LANG = {
-  '本组件库基于Vue3研发，本节介绍如何在项目中结合webpack 一起使用@blueking/bkui-vue': [
-    'This component library is based on Vue3 research and development. This section describes how to use @blueking/bkui-vue in combination with webpack in a project',
+  '本组件库基于Vue3研发，本节介绍如何在项目中结合webpack 一起使用{\'@\'}blueking/bkui-vue。': [
+    'This component library is based on Vue3 research and development. This section describes how to use {\'@\'}blueking/bkui-vue in combination with webpack in a project.',
   ],
 };
-
 
 const Lang = {
   ...Common,

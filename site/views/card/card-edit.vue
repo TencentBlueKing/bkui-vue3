@@ -2,14 +2,14 @@
   <div class="card-demo">
     <div class="card-demo-item">
       <bk-card
-        title="Card卡片标题"
+        :title="t('Card卡片标题')"
         position="right"
         is-edit
         is-collapse
       >
-        <p>卡片内容 1</p>
-        <p>卡片内容 2</p>
-        <p>卡片内容 3</p>
+        <p>{{ t('卡片内容 1') }}</p>
+        <p>{{ t('卡片内容 2') }}</p>
+        <p>{{ t('卡片内容 3') }}</p>
       </bk-card>
     </div>
   </div>
@@ -17,8 +17,16 @@
 
 <script>
   import { defineComponent } from 'vue';
+  import { useI18n } from 'vue-i18n';
   export default defineComponent({
     components: {},
+    setup() {
+      const { t } = useI18n();
+
+      return {
+        t,
+      };
+    },
   });
 </script>
 <style lang="less" scoped>
