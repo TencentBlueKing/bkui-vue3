@@ -1,9 +1,9 @@
 <template>
   <bk-button @click="handleBtnClick(true)">
-    手动设置Isshow = true
+    {{ t("手动设置IsShow = true") }}
   </bk-button>
   <bk-button @click="handleBtnClick(false)">
-    手动设置Isshow = false
+    {{ t("手动设置IsShow = false") }}
   </bk-button>
   <bk-popover
     trigger="click"
@@ -12,37 +12,45 @@
     @after-hidden="handleAfterHidden"
   >
     <bk-button>
-      当鼠标点击
+      {{ t("当鼠标点击") }}
     </bk-button>
     <template #content>
       <div>
-        今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错
-        今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错
-        今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错
-        今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错
-        今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错
-        今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错
-        今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错
-        今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错
+        <span>{{ t('今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错') }}</span>
+        <span>{{ t('今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错') }}</span>>
+        <span>{{ t('今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错') }}</span>
+        <span>{{ t('今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错') }}</span>
+        <span>{{ t('今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错') }}</span>
+        <span>{{ t('今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错') }}</span>
+        <span>{{ t('今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错') }}</span>
       </div>
     </template>
   </bk-popover>
 </template>
-<script>
-  export default {
-    data() {
-      return {
-        isShow: false,
 
+<script>
+  import { defineComponent, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
+
+  export default defineComponent({
+    setup() {
+      const { t } = useI18n();
+      const isShow = ref(false);
+
+      const handleBtnClick = (val) => {
+        isShow.value = val;
+      };
+
+      const handleAfterHidden = ({ isShow }) => {
+        isShow.value  = isShow;
+      };
+
+      return {
+        isShow,
+        handleBtnClick,
+        handleAfterHidden,
+        t,
       };
     },
-    methods: {
-      handleBtnClick(val) {
-        this.isShow = val;
-      },
-      handleAfterHidden({ isShow }) {
-        this.isShow = isShow;
-      },
-    },
-  };
+  });
 </script>

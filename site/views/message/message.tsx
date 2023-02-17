@@ -31,9 +31,12 @@ import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import type { IPropsTableItem } from '../../typings';
 
+import i18n from './../../language/i18n';
 import BaseDemo from './base-demo.vue';
 import CloseDemo from './close-demo.vue';
 import ThemeDemo from './theme-demo.vue';
+
+const { t } = i18n.global;
 
 const props: IPropsTableItem[] = [
   {
@@ -92,34 +95,41 @@ const props: IPropsTableItem[] = [
     desc: '关闭组件时的回调函数, 参数为组件实例',
     optional: [],
   },
-];
+].map((item: IPropsTableItem) => {
+  const result =  Object.assign(item, { desc: t(item.desc) });
+  return {
+    ...result,
+  };
+});
+
+
 export default defineComponent({
   render() {
     return (
     <div>
       <DemoTitle
-        name="Message 消息提示"
-        desc="用户操作后的消息提示，用于成功、失败、警告等消息提醒。"
+        name={ t('Message 消息提示') }
+        desc={  t('用户操作后的消息提示，用于成功、失败、警告等消息提醒。') }
         link="https://www.google.com.hk/"/>
       <DemoBox
-        title="基础用法"
-        subtitle="使用默认配置的消息提示"
+        title={ t('基础用法')}
+        subtitle={ t('使用默认配置的消息提示') }
         desc=""
         componentName="message"
         demoName="base-demo">
           <BaseDemo/>
       </DemoBox>
       <DemoBox
-        title="内置主题"
-        subtitle="消息提醒提供消息、成功、警告、失败四种主题"
+        title={ t('内置主题')}
+        subtitle={ t('消息提醒提供消息、成功、警告、失败四种主题')}
         desc=""
         componentName="message"
         demoName="theme-demo">
           <ThemeDemo/>
       </DemoBox>
       <DemoBox
-        title="消息关闭"
-        subtitle="配置 delay 字段定义消息自动关闭的时间，当值为 0 时不自动关闭。配置 dismissable 字段控制是否显示右侧的手动关闭 icon。"
+        title={ t('消息关闭')}
+        subtitle={ t('配置 delay 字段定义消息自动关闭的时间，当值为 0 时不自动关闭。配置 dismissable 字段控制是否显示右侧的手动关闭 icon。') }
         desc=""
         componentName="message"
         demoName="close-demo">

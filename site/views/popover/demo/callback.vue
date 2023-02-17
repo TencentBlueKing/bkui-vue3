@@ -1,28 +1,42 @@
 <template>
   <bk-popover
     placement="bottom"
-    content="文字提示"
+    :content="t('文字提示')"
     @after-hidden="handleHide"
     @after-show="handleShow"
   >
-    <bk-button>自定义回调函数</bk-button>
+    <bk-button>{{ t('自定义回调函数') }}</bk-button>
   </bk-popover>
 </template>
 
-<script setup>
+<script>
+  import { defineComponent } from 'vue';
+  import { useI18n } from 'vue-i18n';
+
   import BkMessage from '@bkui-vue/message';
+  export default defineComponent({
+    setup() {
+      const  { t } = useI18n();
 
-  const handleShow = () => {
-    BkMessage({
-      theme: 'success',
-      message: 'onShow',
-    });
-  };
+      const handleShow = () => {
+        BkMessage({
+          theme: 'success',
+          message: 'onShow',
+        });
+      };
 
-  const handleHide = () => {
-    BkMessage({
-      theme: 'error',
-      message: 'onClose',
-    });
-  };
+      const handleHide = () => {
+        BkMessage({
+          theme: 'error',
+          message: 'onClose',
+        });
+      };
+
+      return {
+        handleShow,
+        handleHide,
+        t,
+      };
+    },
+  });
 </script>

@@ -30,7 +30,8 @@ import { useI18n } from 'vue-i18n';
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
-import type { IPropsTableItem } from '../../typings';
+import i18n from '../../language/i18n';
+import type { DemoPropsItem, IPropsTableItem } from '../../typings';
 
 import Always from './demo/always.vue';
 import Base from './demo/base.vue';
@@ -39,6 +40,8 @@ import ClickTrigger from './demo/click-trigger.vue';
 import MouseEvent from './demo/mouse-event.vue';
 import Position from './demo/position.vue';
 import Slot from './demo/slot.vue';
+
+const { t } = i18n.global;
 
 const props: IPropsTableItem[] = [
   {
@@ -125,7 +128,12 @@ const props: IPropsTableItem[] = [
     desc: '如果设置了boundary为指定DOM，此配置项生效。是否将弹出内容固定到目标元素位置。例如：boundary = document.body, fixOnBoundary = true，则弹出内容会一直固定到body',
     optional: ['true', 'false'],
   },
-];
+].map((item: IPropsTableItem) => {
+  const result =  Object.assign(item, { desc: t(item.desc) });
+  return {
+    ...result,
+  };
+});
 
 const events: IPropsTableItem[] = [
   {
@@ -142,9 +150,14 @@ const events: IPropsTableItem[] = [
     desc: '隐藏提示框时触发函数',
     optional: [],
   },
-];
+].map((item: IPropsTableItem) => {
+  const result =  Object.assign(item, { desc: t(item.desc) });
+  return {
+    ...result,
+  };
+});
 
-const demos = [
+const demos: DemoPropsItem[] = [
   {
     title: '基础用法',
     desc: '最简单的用法',
@@ -194,7 +207,15 @@ const demos = [
     demoName: 'demo/mouse-event',
     DemoComponent: MouseEvent,
   },
-];
+].map((item: DemoPropsItem) => {
+  const result =  Object.assign(item, {
+    title: t(item.title),
+    desc: t(item.desc),
+  });
+  return {
+    ...result,
+  };
+});
 
 export default defineComponent({
   render() {

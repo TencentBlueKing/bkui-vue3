@@ -3,7 +3,7 @@
     v-bk-ellipsis="'xxccxcxc'"
     @click="handlePopMsgBtn"
   >
-    点击初始化Popover
+    {{ t("点击初始化Popover" ) }}
   </bk-button>
   <bk-button @click="handleShowPop">
     show
@@ -15,8 +15,10 @@
     close
   </bk-button>
 </template>
+
 <script>
-  import { defineComponent } from 'vue';
+  import { defineComponent, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   import { bkEllipsis } from '@bkui-vue/directives';
   import { $bkPopover } from '@bkui-vue/popover';
@@ -25,27 +27,37 @@
     directives: {
       bkEllipsis,
     },
-    data() {
-      return {
-        popInstance: null,
-      };
-    },
-    methods: {
-      handlePopMsgBtn(e) {
-        this.popInstance = $bkPopover({
+    setup() {
+      const popInstance = ref(null);
+      const { t } = useI18n();
+
+      const handlePopMsgBtn = (e) => {
+        popInstance.value = $bkPopover({
           target: e,
           content: 'create mode 100644 packages/icon/icons/left-turn-line.tsx',
         });
-      },
-      handleShowPop() {
-        this.popInstance?.show();
-      },
-      handleHidePop() {
-        this.popInstance?.close();
-      },
-      handleMouseMove(e) {
-        this.popInstance?.update(e);
-      },
+      };
+
+      const handleShowPop = () => {
+        popInstance.value?.show();
+      };
+
+      const handleHidePop = () => {
+        popInstance.value?.close();
+      };
+
+      const handleMouseMove = (e) => {
+        popInstance.value?.update(e);
+      };
+
+      return {
+        popInstance,
+        handlePopMsgBtn,
+        handleShowPop,
+        handleHidePop,
+        handleMouseMove,
+        t,
+      };
     },
   });
 </script>

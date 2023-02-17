@@ -294,6 +294,104 @@ const Table: LANG = {
   操作: ['Operate'],
   清空表格数据: ['Clear table data'],
   依赖父级高度: ['Dependent on parent height'],
+  自定义当前列渲染函数: ['Customize the current column rendering function'],
+  对应列的宽度: ['Width of corresponding column'],
+  '对应列的最小宽度，与 width 的区别是 width 是固定的，min-width 会把剩余宽度按比例分配给设置了 min-width 的列': [
+    'The difference between the minimum width of the corresponding column and the width is that the width is fixed, and min-width will allocate the remaining width to the column with min-width set proportionally',
+  ],
+  '表格cell内容超长时，是否自动展示tooltip，默认值为false，可以通过设置为true开启，如果需要自定义content请设置为对象，具体参考 IOverflowTooltip':
+    [
+      'If the table cell content is too long, whether to automatically display tooltip. The default value is false. It can be enabled by setting it to true. If you need to customize the content, please set it as an object. For details, refer to IOverflowTooltip',
+    ],
+  '对应列的类型。如果设置了 index 则显示该行的索引（从 1 开始计算）；如果设置了 expand 则显示为一个可展开的按钮': [
+    'The type of the corresponding column. If index is set, the index of the row will be displayed (calculated from 1); If expand is set, it will be displayed as an expandable button',
+  ],
+  对应列是否可以通过拖动改变宽度: ['Whether the width of the corresponding column can be changed by dragging'],
+  '列是否固定在左侧或者右侧，true 表示固定在左侧': [
+    'Whether the column is fixed on the left or right. True means fixed on the left',
+  ],
+  '对应列是否可以排序，可以简单设置true开启默认排序，也可以通过详细配置排序方式，请参考ISort': [
+    'Whether the corresponding column can be sorted, you can simply set true to enable the default sorting, or you can configure the sorting method in detail. Please refer to ISort',
+  ],
+  '数据过滤的选项,可以简单设置true开启默认过滤。可以通过详细配置排序方式，请参考IFilter': [
+    'For data filtering options, you can simply set true to enable default filtering. You can configure the sorting method in detail. Please refer to IFilter',
+  ],
+  规定单元格可横跨的列数: ['Specify the number of columns a cell can span'],
+  规定单元格可横跨的行数: ['Specify the number of rows a cell can span'],
+  'tooltip展示内容，可以为回调函数，回调参数 (column, row) => string': [
+    'Tooltip shows the content, which can be callback function, callback parameter (column, row)=>string',
+  ],
+  是否展示tooltip: ['Whether to display tooltip'],
+  '渲染模式，可选项 auto|static, auto模式会自动计算文本宽度和表格单元宽度，只有当文本宽度超出tip才会激活，如果是static模式，则会一直激活状态':
+    [
+      'Rendering mode, optional auto | static, auto mode will automatically calculate the text width and table cell width. Only when the text width exceeds tip, it will be activated. If it is static mode, it will always be activated',
+    ],
+  '是否监听当前cell尺寸变化, 动态添加tooltip, 【如果需要提升性能，请禁用此功能】': [
+    'Whether to listen to the current cell size change and dynamically add tooltip, [If you need to improve performance, please disable this function]',
+  ],
+  排序规则: ['Collation'],
+  '自定义排序函数，返回true | false，函数参考 Array.sort((a,b) => boolean)': [
+    'Custom sorting function, return true | false, refer to Array.sort ((a, b)=>boolean)',
+  ],
+  '排序生效范围，针对分页表格，当前排序是当前页生效还是全部数据排序': [
+    'Sorting effective range. For paged tables, whether the current sorting is effective on the current page or all data sorting',
+  ],
+  '自定义过滤函数，参数：(checked, row, props.column, index, data) => boolean。如果要使用远程过滤，为防止默认过滤，请配置此选项为: () => true':
+    [
+      'User-defined filter function, parameters: (checked, row, props. column, index, data)=>boolean. If you want to use remote filtering, to prevent default filtering, configure this option to: ()=>true',
+    ],
+  '数据过滤的选项，数组格式，数组中的元素需要有 text 和 value 属性。': [
+    'Data filtering options, array format, and elements in the array need to have text and value attributes.',
+  ],
+  '过滤匹配模式，默认全量匹配': ['Filter matching mode, default full matching'],
+  '如果有分页，配置过滤范围为当前页面或者跨页': [
+    'If there is paging, configure the filtering range to be the current page or cross-page',
+  ],
+  '数据过滤的`确定`按钮配置，可配置为String类型，配置不同显示文本；也可以配置为false，禁用确定按钮，当此按钮禁用，单击过滤选项即生效':
+    [
+      'The \'OK\' button configuration of data filtering can be configured as String type, and different display text can be configured; You can also configure it to false and disable the OK button. When this button is disabled, click the filter option to take effect',
+    ],
+  '数据过滤的`重置`按钮配置，可配置为String类型，配置不同显示文本；也可以配置为false，禁用`重置`按钮': [
+    'The \'Reset\' button configuration of data filtering can be configured as String type, and different display text can be configured; It can also be configured as false to disable the \'Reset\' button',
+  ],
+  可选的字段列表: ['List of optional fields'],
+  已选的字段列表: ['Selected field list'],
+  '	配置最多能选择多少个字段，配置该属性后，字段列表将不提供全选功能': [
+    'Configure how many fields can be selected at most. After configuring this attribute, the field list will not provide the function of selecting all',
+  ],
+  当前表格的尺寸: ['Size of the current table'],
+  自定义表格尺寸列表: ['Custom Table Size List'],
+  当某一行被点击时会触发该事件: ['This event will be triggered when a row is clicked'],
+  当某一行被双击时会触发该事件: ['This event will be triggered when a row is double-clicked'],
+  当用户对某一行展开或者关闭的时候会触发该事件: ['This event will be triggered when the user expands or closes a row'],
+  当用户切换表格每页显示条数时会出发的事件: [
+    'Event triggered when the user switches the number of items displayed on each page of the table',
+  ],
+  当用户切换表格分页时会触发的事件: ['Event triggered when the user switches table paging'],
+  滚动到底部触发事件: ['Scroll to the bottom trigger event'],
+  表格设置发生变化时的事件: ['Events when table settings change'],
+  当表格的排序条件发生变化的时候会触发该事件: [
+    'This event will be triggered when the sorting condition of the table changes',
+  ],
+  当表格的筛选条件发生变化的时候会触发该事件: [
+    'This event will be triggered when the filter condition of the table changes',
+  ],
+  '当表格的选中一列的时候会触发该事件,(prop column-pick启用)': [
+    'This event will be triggered when a column of the table is selected (prop column-pick is enabled)',
+  ],
+  '当用户手动勾选全选 Checkbox 时触发的事件': ['Event triggered when the user manually checks all Checkboxes'],
+  '当用户手动勾选数据行的 Checkbox 时触发的事件': [
+    'Event triggered when the user manually checks the Checkbox of the data line',
+  ],
+  当选择项发生变化时会触发该事件: ['This event will be triggered when the selection changes'],
+  '用于多选表格，清空用户的选择': ['Used to select multiple tables to obtain user\'s selection'],
+  '用于多选表格，获取用户的选择': ['Used to select multiple tables to obtain user\'s selection'],
+  '用于多选表格，切换某一行的选中状态，如果使用了第二个参数，则是设置这一行选中与否（selected 为 true 则选中）': [
+    'It is used to select multiple tables and switch the selected status of a row. If the second parameter is used, it is used to set whether this row is selected or not (if selected is true, it is selected)',
+  ],
+  '用于多选表格，切换所有行的选中状态': ['Used to select multiple tables and switch the selected status of all rows'],
+  '用于可展开表格，切换某一行的展开状态，如果使用了第二个参数，则是设置这一行展开与否（expanded 为 true 则展开）': ['Used to expand a table and switch the expansion status of a row. If the second parameter is used, it is used to set whether the row is expanded or not (if expanded is true, it is expanded)'],
+  '<bk-column />模板使用自定义显示默认插槽': ['<bk-column/>Template uses custom display default slot'],
 };
 
 const DropdownMenu: LANG = {
@@ -625,7 +723,6 @@ const Tree: LANG = {
     [
       'This attribute only takes effect when the<bk-column>template is bound. If it is a functional binding, please use \'field\' The bound display field can be a string or a function. The function needs to return an existing field name',
     ],
-
 };
 
 const Tags: LANG = {

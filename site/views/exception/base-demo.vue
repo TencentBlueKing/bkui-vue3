@@ -3,65 +3,86 @@
     <bk-exception
       class="exception-wrap-item"
       type="404"
-      title="页面不存在"
+      :title="t('页面不存在')"
     >
       <bk-button theme="primary">
-        刷新页面
+        {{ t('刷新页面') }}
       </bk-button>
       <bk-button theme="primary">
-        返回首页
+        {{ t('返回首页') }}
       </bk-button>
     </bk-exception>
     <bk-exception
       class="exception-wrap-item"
       type="building"
-      title="功能建设中"
+      :title="t('功能建设中')"
     >
       <bk-button theme="primary">
-        返回首页
+        {{ t('返回首页') }}
       </bk-button>
     </bk-exception>
     <bk-exception
       class="exception-wrap-item"
       type="403"
-      title="无业务权限"
-      description="你没有相应业务的访问权限，请前往申请相关业务权限"
+      :title="t('无业务权限')"
+      :description="t('你没有相应业务的访问权限，请前往申请相关业务权限')"
     >
       <bk-button theme="primary">
-        去申请
+        {{ t('去申请') }}
       </bk-button>
     </bk-exception>
     <bk-exception
       class="exception-wrap-item"
       type="500"
-      title="拉取用户配置数据失败"
+      :title="t('拉取用户配置数据失败')"
     >
       <bk-button theme="primary">
-        重新获取
+        {{ t('重新获取') }}
       </bk-button>
     </bk-exception>
     <bk-exception
       class="exception-wrap-item"
       type="login"
-      title="请登入蓝鲸"
+      :title="t('请登入蓝鲸')"
     >
       <bk-button theme="primary">
-        登入
+        {{ t('登入') }}
       </bk-button>
     </bk-exception>
     <bk-exception
       class="exception-wrap-item"
-      title="自定义icon"
+      :title="t('自定义icon')"
     >
       <template #type>
         <img src="https://bk.tencent.com/static/images/index/index/%E9%AB%98%E6%95%88%E8%BF%90%E8%90%A5@2x.png">
       </template>
       <bk-button theme="primary">
-        登入
+        {{ t('登入') }}
       </bk-button>
     </bk-exception>
   </div>
 </template>
+
+<script>
+  import { defineComponent, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
+
+  import BkException from '@bkui-vue/exception';
+  export default defineComponent({
+    components: {
+      BkException,
+    },
+    setup() {
+      const { t } = useI18n();
+
+      const isGray = ref(false);
+      return {
+        isGray,
+        t,
+      };
+    },
+  });
+</script>
 
 <style lang="postcss">
 .exception-base-demo-wrap .exception-wrap-item {

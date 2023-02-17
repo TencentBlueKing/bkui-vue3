@@ -29,6 +29,7 @@ import { defineComponent } from 'vue';
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
+import i18n from '../../language/i18n';
 import {
   type IPropsTableItem,
 } from '../../typings';
@@ -46,6 +47,17 @@ import Title from './demo/title.vue';
 // import Size from './demo/size.vue';
 // import Status from './demo/status.vue';
 // import Textarea from './demo/textarea.vue';;
+
+const { t } = i18n.global;
+
+interface DemoPropsTableItem {
+  title: string
+  desc: string
+  componentName: string
+  demoName:  string
+  DemoComponent: any
+}
+
 // 输入框属性列表
 const loadingProps: IPropsTableItem[] = [
   {
@@ -81,7 +93,7 @@ const loadingProps: IPropsTableItem[] = [
     type: 'number',
     default: 0.9,
     desc: 'loading 遮罩的背景透明度 （注：如设置了 color 属性为 rgba 类型颜色则此属性将被覆盖）',
-    optional: ['0-1之间的小数'],
+    optional: [t('0-1之间的小数')],
   },
   {
     name: 'color',
@@ -90,9 +102,14 @@ const loadingProps: IPropsTableItem[] = [
     desc: 'loading 遮罩的背景色 支持 rgb/hex/rgba',
     optional: [],
   },
-];
+].map((item: IPropsTableItem) => {
+  const result = Object.assign(item, { desc: t(item.desc) });
+  return {
+    ...result,
+  };
+});
 
-const demos = [{
+const demos: DemoPropsTableItem[] = [{
   // '基础输入框',
   title: '基础用法',
   desc: '对指定 dom 节点添加 loading 效果',
@@ -113,7 +130,7 @@ const demos = [{
   DemoComponent: Theme,
 }, {
   title: '配置 mode loading的显示形式',
-  desc: '配置 mode 为 spin 可使其以spin的形式显示。',
+  desc: '配置 mode 为 spin 可使其以spin的形式显示',
   componentName: 'loading',
   demoName: 'demo/mode',
   DemoComponent: Mode,
@@ -129,7 +146,15 @@ const demos = [{
   componentName: 'loading',
   demoName: 'demo/title',
   DemoComponent: Title,
-}];
+}].map((item: DemoPropsTableItem) => {
+  const result = Object.assign(item, {
+    title: t(item.title),
+    desc: t(item.desc),
+  });
+  return {
+    ...result,
+  };
+});
 
 
 export default defineComponent({
@@ -140,7 +165,7 @@ export default defineComponent({
       <div>
         <DemoTitle
           name="Loading"
-          desc="覆盖正在加载数据的组件一个 loading 层"
+          desc={ t('覆盖正在加载数据的组件一个 loading 层') }
           link={`${import.meta.env.VITE_APP_BASE_URL ?? ''}/loading`}
         />
           {
@@ -151,7 +176,7 @@ export default defineComponent({
             ))
           }
         <PropsBox
-          title="Loading 属性"
+          title={ t('Loading 属性') }
           subtitle=""
           propsData={loadingProps}/>
 

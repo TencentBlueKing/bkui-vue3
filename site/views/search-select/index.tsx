@@ -66,7 +66,7 @@ const propsJson: IPropsTableItem[] = [
   {
     name: 'conditions',
     type: 'Array',
-    default: t('[{ id: \'or\', name: \'或\' }, { id: \'and\', name: \'且\' }]'),
+    default: t('[{\'{\'} id: \'or\', name: \'或\' {\'}\'}, {\'{\'} id: \'and\', name: \'且\' {\'}\'}]'),
     desc: '条件选择列表',
     optional: [],
   },

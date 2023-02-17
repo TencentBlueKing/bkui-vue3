@@ -2,33 +2,45 @@
   <div>
     <bk-button
       type="primary"
-      @click="handleSingle({delay: 10000})"
+      @click="handleSingle({ delay: 10000 })"
     >
-      10s 后关闭
+      <span>{{ t("10s 后关闭") }}</span>
     </bk-button>&nbsp;&nbsp;
     <bk-button
       type="primary"
-      @click="handleSingle({delay: 0})"
+      @click="handleSingle({ delay: 0 })"
     >
-      不自动关闭
+      <span>{{ t("不自动关闭") }}</span>
     </bk-button>&nbsp;&nbsp;
     <bk-button
       type="primary"
-      @click="handleSingle({dismissable: false})"
+      @click="handleSingle({ dismissable: false })"
     >
-      不显示关闭 icon
+      {{ t("不显示关闭 icon") }}
     </bk-button>
   </div>
 </template>
 
-<script setup>
+<script>
   import { Message } from 'bkui-vue';
+  import { defineComponent } from 'vue';
+  import { useI18n } from 'vue-i18n';
+  export default defineComponent({
+    setup() {
+      const { t } = useI18n();
 
-  const  handleSingle = (config) => {
-    const messageConfig = {
-      message: '选择你导入的构建机并填写相关信息，系统将为你安装必要的软件',
-      ...config,
-    };
-    Message(messageConfig);
-  };
+      const handleSingle = (config) => {
+        const messageConfig = {
+          message: t('选择你导入的构建机并填写相关信息，系统将为你安装必要的软件'),
+          ...config,
+        };
+        Message(messageConfig);
+      };
+
+      return {
+        handleSingle,
+        t,
+      };
+    },
+  });
 </script>

@@ -48,6 +48,7 @@
     />
   </div>
 </template>
+
 <script>
   import { defineComponent, ref } from 'vue';
   import { useI18n } from 'vue-i18n';
@@ -67,9 +68,8 @@
       };
     },
   });
-
-
 </script>
+
 <style>
 .exception-wrap {
   display: flex;

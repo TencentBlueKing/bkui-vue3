@@ -143,6 +143,7 @@
     "js-calendar": "~1.2.3",
     "lodash": "~4.17.21",
     "tinycolor2": "~1.4.1",
+    "vue-cookies": "~1.8.2",
     "vue-i18n": "~9.2.2",
     "vue-types": "~4.1.1"
   }
