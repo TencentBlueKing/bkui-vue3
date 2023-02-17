@@ -8,7 +8,7 @@
         bg-color="#3a84ff"
         color="#f56c6c"
       >
-        <span>未开始</span>
+        <span>{{ t("未开始") }}</span>
       </bk-progress>
       <bk-progress
         text-inside
@@ -21,6 +21,7 @@
 </template>
 <script>
   import { defineComponent } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   import BkProgress from '@bkui-vue/progress';
 
@@ -30,7 +31,10 @@
       BkProgress,
     },
     setup() {
-
+      const { t } = useI18n();
+      return {
+        t,
+      };
     },
   });
 </script>

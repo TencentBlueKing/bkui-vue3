@@ -27,6 +27,7 @@
 </template>
 <script>
   import { defineComponent } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   import BkProgress from '@bkui-vue/progress';
 
@@ -36,9 +37,11 @@
       BkProgress,
     },
     setup() {
-      const format = value => `自定义过滤文案：${value}`;
+      const { t } = useI18n();
+      const format = value => `${t('自定义过滤文案')}：${value}`;
       return {
         format,
+        t,
       };
     },
   });

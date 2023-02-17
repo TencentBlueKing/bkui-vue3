@@ -13,6 +13,7 @@
 </template>
 <script>
   import { defineComponent } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   import { BkBreadcrumb, BkBreadcrumbItem } from '@bkui-vue/breadcrumb';
 
@@ -23,11 +24,12 @@
       BkBreadcrumbItem,
     },
     setup() {
+      const { t } = useI18n();
       const list = [
-        { title: '首页', link: { path: '/' } },
-        { title: '进度条', link: { path: 'loading' } },
-        { title: '滑块开关', link: { path: 'switcher' } },
-        { title: '面包屑', link: null },
+        { title: t('首页'), link: { path: '/' } },
+        { title: t('进度条'), link: { path: 'loading' } },
+        { title: t('滑块开关'), link: { path: 'switcher' } },
+        { title: t('面包屑'), link: null },
       ];
       return {
         list,

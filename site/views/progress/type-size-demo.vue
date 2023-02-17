@@ -13,7 +13,7 @@
         :percent="0"
         color="#f56c6c"
       >
-        <span>未开始</span>
+        <span>{{ value }}</span>
       </bk-progress>
     </div>
     <div style="margin-bottom: 20px;">
@@ -43,7 +43,8 @@
   </div>
 </template>
 <script>
-  import { defineComponent } from 'vue';
+  import { defineComponent, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   import BkProgress from '@bkui-vue/progress';
 
@@ -53,7 +54,12 @@
       BkProgress,
     },
     setup() {
+      const { t } = useI18n();
+      const value = ref(t('未开始'));
 
+      return {
+        value,
+      };
     },
   });
 </script>

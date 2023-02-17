@@ -29,6 +29,7 @@ import { defineComponent } from 'vue';
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
+import i18n from '../../language/i18n';
 import { type IPropsTableItem } from '../../typings';
 
 import DemoCollapse from './demo/collapse.vue';
@@ -42,12 +43,14 @@ import DemoCollapseSingle from './demo/collapse-single.vue';
 import DemoCollapseSlot from './demo/collapse-slot.vue';
 import DemoCollapseTitle from './demo/collapse-title.vue';
 
+const { t } = i18n.global;
+
 const collapseProps: IPropsTableItem[] = [
   {
     name: 'list',
     type: 'Array',
     default: '[]',
-    desc: '配置面板列表数据	',
+    desc: '配置面板列表数据',
     optional: [],
   },
   {
@@ -85,7 +88,13 @@ const collapseProps: IPropsTableItem[] = [
     desc: '面板内容key值',
     optional: [],
   },
-];
+].map((item: IPropsTableItem) => {
+  const result =  Object.assign(item, { desc: t(item.desc) });
+  return {
+    ...result,
+  };
+});
+
 const collapsePanelProps: IPropsTableItem[] = [
   {
     name: '(modelValue)v-model',
@@ -129,28 +138,35 @@ const collapsePanelProps: IPropsTableItem[] = [
     desc: '是否禁用当前面板，禁用后展开过的面板会自动折叠',
     optional: [],
   },
-];
+].map((item: IPropsTableItem) => {
+  const result =  Object.assign(item, { desc: t(item.desc) });
+  return {
+    ...result,
+  };
+});
+
 const collapseEvents: IPropsTableItem[] = [
   {
     name: 'item-click',
     type: 'event',
-    default: '回调参数（item）',
-    desc: '点击时触发，回调参数为点击的面板对象',
+    default: t('回调参数（item）'),
+    desc: t('点击时触发，回调参数为点击的面板对象'),
     optional: [],
   },
 ];
+
 const collapsePanelEvents: IPropsTableItem[] = [
   {
     name: 'change',
     type: 'event',
-    default: '回调参数 name',
+    default: t('回调参数 name'),
     desc: '点击时触发，回调参数为点击的面板对象',
     optional: [],
   },
   {
     name: 'item-click',
     type: 'event',
-    default: '回调参数（item）',
+    default: t('回调参数（item）'),
     desc: '点击时触发，回调参数为点击的面板对象',
     optional: [],
   },
@@ -168,17 +184,23 @@ const collapsePanelEvents: IPropsTableItem[] = [
     desc: '动画结束后',
     optional: [],
   },
-];
+].map((item: IPropsTableItem) => {
+  const result =  Object.assign(item, { desc: t(item.desc) });
+  return {
+    ...result,
+  };
+});
 
 const collapseSlots: IPropsTableItem[] = [
   {
     name: 'title',
     type: 'Slot',
     default: '--',
-    desc: '面板标题插槽',
+    desc: t('面板标题插槽'),
     optional: [],
   },
 ];
+
 const collapsePanelSlots: IPropsTableItem[] = [
   {
     name: 'default',
@@ -201,84 +223,90 @@ const collapsePanelSlots: IPropsTableItem[] = [
     desc: '面板内容插槽',
     optional: [],
   },
-];
+].map((item: IPropsTableItem) => {
+  const result =  Object.assign(item, { desc: t(item.desc) });
+  return {
+    ...result,
+  };
+});
+
 export default defineComponent({
   name: 'Affix',
   render() {
     return (
       <div>
         <DemoTitle
-          name="Collapse 折叠面板"
+          name={ t('Collapse 折叠面板') }
           desc=""
           link={`${import.meta.env.VITE_APP_BASE_URL ?? ''}/collapse`}
         />
         <DemoBox
-          title="基础用法"
-          desc="v-model绑定默认激活的item项，idFiled作为唯一标识符,如果不填写默认为当前的item的index， list配置列表。"
+          title={t('基础用法')}
+          desc={ t('v-model绑定默认激活的item项，idFiled作为唯一标识符,如果不填写默认为当前的item的index， list配置列表。') }
           componentName="collapse"
           demoName="demo/collapse">
             <DemoCollapse />
         </DemoBox>
         <DemoBox
-          title="是否使用手风琴模式"
-          desc="可以配置参数 accordion 来确定是否使用手风琴模式"
+          title={ t('是否使用手风琴模式') }
+          desc={ t('可以配置参数 accordion 来确定是否使用手风琴模式') }
           componentName="collapse"
           demoName="demo/collapse-accordion">
             <DemoCollapseAccordion />
         </DemoBox>
         <DemoBox
-          title="插槽：自定义面板标题"
-          desc="通过配置默认插槽即可自定义标题内容"
+          title={ t('插槽：自定义面板标题') }
+          desc={ t('通过配置默认插槽即可自定义标题内容') }
           componentName="collapse"
           demoName="demo/collapse-title">
             <DemoCollapseTitle />
         </DemoBox>
 
         <DemoBox
-          title="点击事件"
-          desc="通过配置默认插槽即可自定义标题内容"
+          title={ t('点击事件') }
+          desc={ t('通过配置默认插槽即可自定义标题内容') }
           componentName="collapse"
           demoName="demo/collapse-click">
             <DemoCollapseClick />
         </DemoBox>
         <DemoBox
-          title="设置列表不可点击disabled"
-          desc="通过配置list字段disabled即可"
+          title={ t('设置列表不可点击disabled') }
+          desc={ t('通过配置list字段disabled即可') }
           componentName="collapse"
           demoName="demo/collapse-disabled">
             <DemoCollapseDisabled />
         </DemoBox>
         <DemoBox
-          title="展开/收起 动画状态改变的回调事件"
-          desc="配置事件before-enter/after-leave"
+          title={ t('展开/收起 动画状态改变的回调事件') }
+          desc={ t('配置事件before-enter/after-leave') }
           componentName="collapse"
           demoName="demo/collapse-enter-leave">
             <DemoCollapseEnterLeave />
         </DemoBox>
         <DemoBox
-          title="collapse-panel"
+          title="Collapse-Panel"
           desc="collapse-panel"
           componentName="collapse"
           demoName="demo/collapse-panel">
             <DemoCollapsePanel />
         </DemoBox>
         <DemoBox
-          title="插槽：面板"
-          desc="传统用法，通过CollapsePanel配置内如"
+          title={ t('插槽：面板') }
+          desc={ t('传统用法，通过CollapsePanel配置内如') }
           componentName="collapse"
           demoName="demo/collapse-slot">
           <DemoCollapseSlot />
         </DemoBox>
         <DemoBox
-          title="collapse-panel单独使用"
-          desc="单个collapse-panel使用"
+          title={ t('collapse-panel单独使用') }
+          desc={ t('单个collapse-panel使用') }
           componentName="collapse"
           demoName="demo/collapse-single">
           <DemoCollapseSingle />
         </DemoBox>
         <DemoBox
-          title="collapse jsx"
-          desc="tsx使用"
+          title="Collapse Jsx"
+          desc={ t('tsx使用') }
           componentName="collapse"
           suffix='.tsx'
           demoName="demo/collapse-jsx">
@@ -286,20 +314,20 @@ export default defineComponent({
         </DemoBox>
 
         <PropsBox
-          title="Collapse 属性"
+          title={ t('Collapse 属性')}
           subtitle=""
           propsData={collapseProps}/>
         <PropsBox
-          title="Collapse-Panel 属性"
+          title={ t('Collapse-Panel 属性') }
           subtitle=""
           propsData={collapsePanelProps}/>
 
         <PropsBox
-          title="Collapse 插槽"
+          title={ t('Collapse 插槽') }
           subtitle=""
           propsData={collapseSlots}/>
         <PropsBox
-          title="CollapsePanel 插槽"
+          title={ t('CollapsePanel 插槽') }
           subtitle=""
           propsData={collapsePanelSlots}/>
         <PropsBox

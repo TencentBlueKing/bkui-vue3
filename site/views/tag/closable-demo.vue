@@ -11,11 +11,25 @@
       closable
       @close="handleTagClose"
     >
-      企业邮箱
+      {{ t('企业邮箱') }}
     </bk-tag>
   </div>
 </template>
 
-<script setup>
-  const handleTagClose = e => console.log(e);
+
+<script>
+  import { defineComponent } from 'vue';
+  import { useI18n } from 'vue-i18n';
+
+  export default defineComponent({
+    setup() {
+      const { t } = useI18n();
+
+      const handleTagClose = e => console.log(e);
+      return {
+        handleTagClose,
+        t,
+      };
+    },
+  });
 </script>

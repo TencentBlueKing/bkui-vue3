@@ -24,14 +24,24 @@
 * IN THE SOFTWARE.
 */
 
+import i18n from '../language/i18n';
+
+const { t } = i18n.global;
 // nav group setting
 export enum NavGroupMeta  {
-  Start = '开始',
-  Base = '基础',
-  Layout= '布局',
-  Nav = '导航',
-  Form = '表单',
-  Data = '数据',
-  Feedback = '反馈'
+  // @ts-ignore
+  Start = t('开始'),
+  // @ts-ignore
+  Base = t('基础'),
+  // @ts-ignore
+  Layout= t('布局'),
+  // @ts-ignore
+  Nav = t('导航'),
+  // @ts-ignore
+  Form = t('表单'),
+  // @ts-ignore
+  Data = t('数据'),
+  // @ts-ignore
+  Feedback = t('反馈')
   // Others = '其他'
 }

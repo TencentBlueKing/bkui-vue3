@@ -3,7 +3,7 @@
     <div class="row">
       <div class="column">
         <div class="attr-tag">
-          node-content-action = ['selected', 'click', 'expand'] | (默认配置)
+          {{ `node-content-action = ['selected', 'click', 'expand'] | (${t("默认配置")})` }}
         </div>
         <div class="cell">
           <bk-tree
@@ -29,7 +29,7 @@
       </div>
       <div class="column">
         <div class="attr-tag">
-          node-content-action =[] | (如果要禁用所有行为请设置为[],不要设置null|undefined之类，这类设置会被置换为默认配置)
+          {{ `node-content-action =[] | (${t("如果要禁用所有行为请设置为[],不要设置null|undefined之类，这类设置会被置换为默认配置")})` }}
         </div>
         <div class="cell">
           <bk-tree
@@ -46,13 +46,16 @@
 
 <script>
   import { defineComponent } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   import { BASIC_DATA } from './options';
+
   export default defineComponent({
     components: {},
     data() {
       return {
         treeData: [...JSON.parse(JSON.stringify(BASIC_DATA))],
+        t: useI18n().t,
       };
     },
   });

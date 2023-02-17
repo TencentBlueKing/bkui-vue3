@@ -1,7 +1,7 @@
 <template>
   <div class="row">
     <div class="cell">
-      <span>默认连线</span>
+      <span>{{ t('默认连线') }}</span>
       <bk-tree
         :data="treeData"
         level-line
@@ -10,7 +10,7 @@
       />
     </div>
     <div class="cell">
-      <span>自定义连线</span>
+      <span>{{ t('自定义连线') }}</span>
       <bk-tree
         :data="treeData"
         :level-line="'solid 1px red'"
@@ -23,6 +23,7 @@
 
 <script>
   import { defineComponent } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   import { BASIC_DATA } from './options';
   export default defineComponent({
@@ -30,6 +31,7 @@
     data() {
       return {
         treeData: [...BASIC_DATA],
+        t: useI18n().t,
       };
     },
   });

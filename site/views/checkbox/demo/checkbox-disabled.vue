@@ -1,6 +1,6 @@
 <template>
   <bk-checkbox-group v-model="checkboxGroupValue">
-    <bk-checkbox label="微信" />
+    <bk-checkbox :label="t('微信')" />
     <bk-checkbox
       label="QQ"
       disabled
@@ -8,14 +8,27 @@
     <bk-checkbox label="Email" />
   </bk-checkbox-group>
   <div style="margin-top: 10px">
-    选中：{{ checkboxGroupValue.join('，') }}
+    {{ t("选中") }}：{{ checkboxGroupValue.join('，') }}
   </div>
 </template>
-<script setup>
-  import { ref } from 'vue';
+
+<script>
+  import { defineComponent, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   import { BkCheckbox, BkCheckboxGroup } from '@bkui-vue/checkbox';
 
-  const checkboxGroupValue = ref(['微信']);
+  export default defineComponent({
+    setup() {
+      const { t } = useI18n();
 
+      const checkboxGroupValue = ref([t('微信')]);
+      return {
+        t,
+        checkboxGroupValue,
+        BkCheckbox,
+        BkCheckboxGroup,
+      };
+    },
+  });
 </script>

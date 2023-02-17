@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="mb20 block">
-      <span class="mr20 f14">选中时禁用</span>
+      <span class="mr20 f14">{{ t('选中时禁用') }}</span>
       <bk-switcher
         v-model="value1"
         disabled
@@ -13,7 +13,7 @@
       />
     </div>
     <div class="mb20 block">
-      <span class="mr20 f14">未选中时禁用</span>
+      <span class="mr20 f14">{{ t('未选中时禁用') }}</span>
       <bk-switcher
         v-model="value2"
         disabled
@@ -23,6 +23,7 @@
 </template>
 <script>
   import { defineComponent, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   import BkSwitcher from '@bkui-vue/switcher';
 
@@ -32,11 +33,15 @@
       BkSwitcher,
     },
     setup() {
+      const { t } = useI18n();
+
       const value1 = ref(true);
       const value2 = ref(false);
+
       return {
         value1,
         value2,
+        t,
       };
     },
   });

@@ -24,6 +24,7 @@
 * IN THE SOFTWARE.
 */
 import { defineComponent } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import { BASIC_DATA } from './options';
 export default defineComponent({
@@ -50,8 +51,9 @@ export default defineComponent({
     },
   },
   render() {
+    const { t } = useI18n();
     return  <div style="height: 300px; width: 100%; overflow: auto;">
-      <span>function 返回对象</span>
+      <span>{ t('function 返回对象')}</span>
       <bk-tree
         data={ this.treeData }
         levelLine={true}

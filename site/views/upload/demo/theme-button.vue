@@ -6,25 +6,44 @@
       :files="files"
       :size="5"
       :handle-res-code="handleRes"
-      :tip="'最大上传5(Mb)的文件'"
+      :tip="t('最大上传5(Mb)的文件')"
       :url="'https://jsonplaceholder.typicode.com/posts/'"
     />
   </div>
 </template>
 
-<script setup>
+<script>
+  import { defineComponent } from 'vue';
+  import { useI18n } from 'vue-i18n';
+
   import BkUpload from '@bkui-vue/upload';
 
-  const files = [
-    {
-      name: 'test.ppt',
+  export default defineComponent({
+    components: {
+      BkUpload,
     },
-  ];
+    setup() {
+      const { t } = useI18n();
 
-  const handleRes = (response) => {
-    if (response.id) {
-      return true;
-    }
-    return false;
-  };
+      const files = [
+        {
+          name: 'test.ppt',
+        },
+      ];
+
+      const handleRes = (response) => {
+        console.log(response, 'handleRes');
+        if (response.id) {
+          return true;
+        }
+        return false;
+      };
+
+      return {
+        t,
+        files,
+        handleRes,
+      };
+    },
+  });
 </script>

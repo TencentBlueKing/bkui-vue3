@@ -25,6 +25,7 @@
 */
 
 import { defineComponent } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
@@ -193,15 +194,16 @@ export default defineComponent({
 
   },
   render() {
+    const { t } = useI18n();
     return (
       <div>
         <DemoTitle
-          name="Transfer 穿梭框"
+          name={ t('Transfer 穿梭框') }
           desc="通过双栏穿梭选择框，利用更大的空间展示更多可选项、已选项的信息。"
           link="https://www.google.com.hk/"
         />
         <DemoBox
-          title="基础用法"
+          title={t('基础用法')}
           subtitle=""
           desc="默认配置 source-list 和 display-key，source-list 为必传 source-list 可以是普通数组(普通数组会自动去重)。当 source-list 为普通数组时，display-key 可不传。"
           componentName="transfer"

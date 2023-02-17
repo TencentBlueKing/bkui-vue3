@@ -1,19 +1,20 @@
 <template>
   <div class="row">
     <div class="cell">
-      <span class="title">默认过滤</span>
+      <span class="title">{{ t("默认过滤") }}</span>
       <bk-table
         :columns="columns"
         :data="tableData"
+        :empty-text="t('暂无数据')"
         @dblclick="handleDblClick"
         @column-sort="handleSortBy"
       />
     </div>
     <div
       class="cell"
-      style="height: 300px;"
+      style="height: 300px"
     >
-      <span class="title">自定义过滤</span>
+      <span class="title">{{ t("自定义过滤") }}</span>
       <bk-table
         :columns="columns1"
         :data="tableData"
@@ -25,51 +26,62 @@
 </template>
 
 <script>
-  import { defineComponent } from 'vue';
+  import { defineComponent, onMounted, reactive } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   import { DATA_COLUMNS, DATA_COLUMNS1, DATA_TABLE } from './options';
   export default defineComponent({
     components: {},
-    data() {
+    setup() {
+      const { t } = useI18n()
+      ;
+      const settings = reactive({
+        fields: [],
+        checked: [],
+      });
+
+      onMounted(() => {
+        setTimeout(() => {
+          settings.checked.push('index');
+          settings.fields.push(...[
+            {
+              label: t('序号'),
+              field: 'index',
+              disabled: true,
+            },
+            {
+              label: t('名称/内网IP'),
+              field: 'ip',
+            },
+            {
+              label: t('来源'),
+              field: 'source',
+            },
+            {
+              label: t('创建时间'),
+              field: 'create_time',
+            },
+          ]);
+        }, 1000);
+      });
+
+      const handleSortBy = (arg) => {
+        console.log('handleSortBy', arg);
+      };
+
+      const handleDblClick = (...args) => {
+        console.log(args);
+      };
+
       return {
         tableData: [...DATA_TABLE],
         columns: [...DATA_COLUMNS],
         columns1: [...DATA_COLUMNS1],
-        settings: {
-          fields: [],
-          checked: [],
-        },
+        settings,
+        handleSortBy,
+        handleDblClick,
+        t,
       };
-    },
-    mounted() {
-      setTimeout(() => {
-        this.settings.checked.push('index');
-        this.settings.fields.push(...[{
-                                        label: '序号',
-                                        field: 'index',
-                                        disabled: true,
-                                      },
-                                      {
-                                        label: '名称/内网IP',
-                                        field: 'ip',
-                                      },
-                                      {
-                                        label: '来源',
-                                        field: 'source',
-                                      },
-                                      {
-                                        label: '创建时间',
-                                        field: 'create_time',
-                                      }]);
-      }, 1000);
-    },
-    methods: {
-      handleSortBy(arg) {
-        console.log('handleSortBy', arg);
-      },
-      handleDblClick(...args) {
-        console.log(args);
-      },
     },
   });
 </script>

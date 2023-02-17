@@ -29,6 +29,7 @@ import { defineComponent } from 'vue';
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
+import i18n from '../../language/i18n';
 import {
   type IPropsTableItem,
 } from '../../typings';
@@ -39,68 +40,70 @@ import DemoCheckboxDisabled from './demo/checkbox-disabled.vue';
 import DemoCheckboxGroup from './demo/checkbox-group.vue';
 import DemoCheckboxIndeterminate from './demo/checkbox-indeterminate.vue';
 
+const { t } = i18n.global;
+
 const checkboxProps: IPropsTableItem[] = [
   {
     name: 'model-value / v-model',
     type: 'String',
     default: null,
-    desc: '邦定值',
+    desc: t('邦定值'),
     optional: [],
   },
   {
     name: 'label',
     type: 'String / Number / Boolean',
     default: null,
-    desc: '选中状态的值',
+    desc: t('选中状态的值'),
     optional: [],
   },
   {
     name: 'true-label',
     type: 'String',
     default: null,
-    desc: '选中时的值',
+    desc: t('选中时的值'),
     optional: [],
   },
   {
     name: 'false-label',
     type: 'String',
     default: null,
-    desc: '没有选中时的值',
+    desc: t('没有选中时的值'),
     optional: [],
   },
   {
     name: 'disabled',
     type: 'Boolean',
     default: 'false',
-    desc: '禁用',
+    desc: t('禁用'),
     optional: [],
   },
   {
     name: 'checked',
     type: 'Boolean',
     default: 'false',
-    desc: '默认是否勾选',
+    desc: t('默认是否勾选'),
     optional: [],
   },
   {
     name: 'indeterminate',
     type: 'Boolean',
     default: 'false',
-    desc: '是否半选',
+    desc: t('是否半选'),
     optional: [],
   },
   {
     name: 'before-change',
     type: 'Function',
     default: null,
-    desc: '状态改变时前置校验函数',
+    desc: t('状态改变时前置校验函数'),
     optional: [],
   },
   {
     name: 'size',
     type: 'String',
     default: null,
-    desc: '尺寸',
+    desc: t('尺寸'),
     optional: ['large', 'small'],
   },
 ];
@@ -110,7 +113,7 @@ const checkboxEvents: IPropsTableItem[] = [
     name: 'change',
     type: 'String',
     default: null,
-    desc: '当绑定值变化时触发的事件',
+    desc: t('当绑定值变化时触发的事件'),
     optional: [],
   },
 ];
@@ -120,14 +123,14 @@ const checkboxGroupProps: IPropsTableItem[] = [
     name: 'model-value / v-model',
     type: 'Array',
     default: '[]',
-    desc: '邦定值',
+    desc: t('邦定值'),
     optional: [],
   },
   {
     name: 'disabled',
     type: 'Boolean',
     default: 'false',
-    desc: '禁用',
+    desc: t('禁用'),
     optional: [],
   },
 ];
@@ -137,7 +140,7 @@ const checkboxGroupEvents: IPropsTableItem[] = [
     name: 'change',
     type: 'String',
     default: null,
-    desc: '当绑定值变化时触发的事件',
+    desc: t('当绑定值变化时触发的事件'),
     optional: [],
   },
 ];
@@ -150,58 +153,58 @@ export default defineComponent({
       <div>
         <DemoTitle
           name="Checkbox"
-          desc="表单-多选框，在一组选项中进行多选"
+          desc={ t('表单-多选框，在一组选项中进行多选') }
           link="https://www.qq.com/"/>
         <DemoBox
-          title="基础用法"
-          desc="单独使用：选中时值为true"
+          title={t('基础用法')}
+          desc={ t('单独使用：选中时值为true') }
           componentName="checkbox"
           demoName="/demo/checkbox">
             <DemoCheckbox />
         </DemoBox>
         <DemoBox
-          title="多选框组"
-          subtitle="多个选项在同一个数组的场景"
-          desc="配合 bk-checkbox-grop 使用，label 配置选中时的值"
+          title={ t('多选框组') }
+          subtitle={t('多个选项在同一个数组的场景') }
+          desc={ t('配合 bk-checkbox-grop 使用，label 配置选中时的值') }
           componentName="checkbox"
           demoName="/demo/checkbox-group">
             <DemoCheckboxGroup />
         </DemoBox>
         <DemoBox
-          title="默认选中"
-          desc="配置 checked"
+          title={ t('默认选中')}
+          desc={ t('配置 checked') }
           componentName="checkbox"
           demoName="/demo/checkbox-checked">
             <DemoCheckboxChecked />
         </DemoBox>
         <DemoBox
-          title="禁用"
-          desc="配置 disabled"
+          title={ t('禁用') }
+          desc={ t('配置 disabled') }
           componentName="checkbox"
           demoName="/demo/checkbox-disabled">
             <DemoCheckboxDisabled />
         </DemoBox>
         <DemoBox
-          title="半选"
+          title={ t('半选') }
           desc=""
           componentName="checkbox"
           demoName="/demo/checkbox-indeterminate">
             <DemoCheckboxIndeterminate />
         </DemoBox>
         <PropsBox
-          title="Checkbox 属性"
+          title={ t('Checkbox 属性') }
           subtitle=""
           propsData={checkboxProps}/>
         <PropsBox
-          title="Checkbox 事件"
+          title={ t('Checkbox 事件')}
           subtitle=""
           propsData={checkboxEvents}/>
         <PropsBox
-          title="Checkbox-Group 属性"
+          title={ t('Checkbox-Group 属性') }
           subtitle=""
           propsData={checkboxGroupProps}/>
         <PropsBox
-          title="Checkbox-Group 事件"
+          title={ t('Checkbox-Group 事件') }
           subtitle=""
           propsData={checkboxGroupEvents}/>
       </div>

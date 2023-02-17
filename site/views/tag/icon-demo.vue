@@ -4,13 +4,13 @@
       <template #icon>
         <bk />
       </template>
-      蓝鲸
+      {{ t('蓝鲸') }}
     </bk-tag>
     <bk-tag>
       <template #icon>
         <weixin />
       </template>
-      微信
+      {{ t('微信') }}
     </bk-tag>
     <bk-tag>
       <template #icon>
@@ -21,6 +21,21 @@
   </div>
 </template>
 
-<script setup>
+<script>
   import { Bk, Qq, Weixin } from 'bkui-vue/lib/icon';
+  import { defineComponent } from 'vue';
+  import { useI18n } from 'vue-i18n';
+  export default defineComponent({
+    components: {
+      Bk,
+      Qq,
+      Weixin,
+    },
+    setup() {
+      const { t } = useI18n();
+      return {
+        t,
+      };
+    },
+  });
 </script>

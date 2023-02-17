@@ -29,6 +29,7 @@ import { defineComponent } from 'vue';
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
+import i18n from '../../language/i18n';
 import {
   type IPropsTableItem,
 } from '../../typings';
@@ -39,40 +40,42 @@ import DemoRadioChecked from './demo/radio-checked.vue';
 import DemoRadioDisabled from './demo/radio-disabled.vue';
 import DemoRadioGroup from './demo/radio-group.vue';;
 
+const { t } = i18n.global;
+
 const radioProps: IPropsTableItem[] = [
   {
     name: 'model-value / v-model',
     type: 'String',
     default: null,
-    desc: '邦定值',
+    desc: t('邦定值'),
     optional: [],
   },
   {
     name: 'label',
     type: 'String / Number / Boolean',
     default: null,
-    desc: '选中状态的值',
+    desc: t('选中状态的值'),
     optional: [],
   },
   {
     name: 'disabled',
     type: 'Boolean',
     default: 'false',
-    desc: '禁用',
+    desc: t('禁用'),
     optional: [],
   },
   {
     name: 'checked',
     type: 'Boolean',
     default: 'false',
-    desc: '默认是否选中',
+    desc: t('默认是否选中'),
     optional: [],
   },
   {
     name: 'size',
     type: 'String',
     default: null,
-    desc: '尺寸',
+    desc: t('尺寸'),
     optional: ['large', 'small'],
   },
 ];
@@ -82,7 +85,7 @@ const radioEvents: IPropsTableItem[] = [
     name: 'change',
     type: 'String',
     default: null,
-    desc: '当绑定值变化时触发的事件',
+    desc: t('当绑定值变化时触发的事件'),
     optional: [],
   },
 ];
@@ -92,21 +95,21 @@ const radioGroupProps: IPropsTableItem[] = [
     name: 'model-value / v-model',
     type: 'String',
     default: null,
-    desc: '邦定值',
+    desc: t('邦定值'),
     optional: [],
   },
   {
     name: 'disabled',
     type: 'Boolean',
     default: 'false',
-    desc: '禁用',
+    desc: t('禁用'),
     optional: [],
   },
   {
     name: 'size',
     type: 'String',
     default: null,
-    desc: '尺寸',
+    desc: t('尺寸'),
     optional: ['large', 'small'],
   },
 ];
@@ -116,7 +119,7 @@ const radioGroupEvents: IPropsTableItem[] = [
     name: 'change',
     type: 'String',
     default: null,
-    desc: '当绑定值变化时触发的事件',
+    desc: t('当绑定值变化时触发的事件'),
     optional: [],
   },
 ];
@@ -126,35 +129,35 @@ const radioButtonProps: IPropsTableItem[] = [
     name: 'model-value / v-model',
     type: 'String',
     default: null,
-    desc: '邦定值',
+    desc: t('邦定值'),
     optional: [],
   },
   {
     name: 'label',
     type: 'String / Number / Boolean',
     default: null,
-    desc: '选中状态的值',
+    desc: t('选中状态的值'),
     optional: [],
   },
   {
     name: 'disabled',
     type: 'Boolean',
     default: 'false',
-    desc: '禁用',
+    desc: t('禁用'),
     optional: [],
   },
   {
     name: 'checked',
     type: 'Boolean',
     default: 'false',
-    desc: '默认是否选中',
+    desc: t('默认是否选中'),
     optional: [],
   },
   {
     name: 'size',
     type: 'String',
     default: null,
-    desc: '尺寸',
+    desc: t('尺寸'),
     optional: ['large', 'small'],
   },
 ];
@@ -164,7 +167,7 @@ const radioButtonEvents: IPropsTableItem[] = [
     name: 'change',
     type: 'String',
     default: null,
-    desc: '当绑定值变化时触发的事件',
+    desc: t('当绑定值变化时触发的事件'),
     optional: [],
   },
 ];
@@ -176,31 +179,31 @@ export default defineComponent({
       <div>
         <DemoTitle
           name="Radio"
-          desc="表单-单选框，在一组选项中进行单选"
+          desc={t('表单-单选框，在一组选项中进行单选')}
           link="https://www.qq.com/"/>
         <DemoBox
-          title="基础用法"
+          title={t('基础用法')}
           desc=""
           componentName="radio"
           demoName="/demo/radio">
             <DemoRadio />
         </DemoBox>
         <DemoBox
-          title="单选框组"
-          desc="配合 bk-radio-group 使用"
+          title={ t('单选框组') }
+          desc={t('配合 bk-radio-group 使用')}
           componentName="radio"
           demoName="/demo/radio-group">
             <DemoRadioGroup />
         </DemoBox>
         <DemoBox
-          title="默认选中"
+          title={ t('默认选中') }
           desc=""
           componentName="radio"
           demoName="/demo/radio-checked">
             <DemoRadioChecked />
         </DemoBox>
         <DemoBox
-          title="禁用状态"
+          title={ t('禁用状态') }
           desc=""
           componentName="radio"
           demoName="/demo/radio-disabled">
@@ -208,34 +211,34 @@ export default defineComponent({
         </DemoBox>
 
         <DemoBox
-          title="按钮样式"
+          title={ t('按钮样式') }
           desc=""
           componentName="radio"
           demoName="/demo/radio-group">
             <DemoRadioButton />
         </DemoBox>
         <PropsBox
-          title="Radios 属性"
+          title={ t('Radios 属性') }
           subtitle=""
           propsData={radioProps}/>
         <PropsBox
-          title="Radios 事件"
+          title={ t('Radios-Groups 属性') }
           subtitle=""
           propsData={radioEvents}/>
         <PropsBox
-          title="Radios-Groups 属性"
+          title={ t('Radios-Groups 属性') }
           subtitle=""
           propsData={radioGroupProps}/>
         <PropsBox
-          title="Radios-Groups 事件"
+          title={ t('Radios-Groups 事件') }
           subtitle=""
           propsData={radioGroupEvents}/>
         <PropsBox
-          title="Radios-Button 属性"
+          title={ t('Radios-Button 属性') }
           subtitle=""
           propsData={radioButtonProps}/>
         <PropsBox
-          title="Radios-Button 事件"
+          title={ t('Radios-Button 事件') }
           subtitle=""
           propsData={radioButtonEvents}/>
       </div>

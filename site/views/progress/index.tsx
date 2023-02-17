@@ -29,6 +29,7 @@ import { defineComponent, ref } from 'vue';
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
+import i18n from '../../language/i18n';
 import { IPropsTableItem } from '../../typings';
 
 import BaseDemo from './base-demo.vue';
@@ -37,6 +38,8 @@ import SizeDemo from './size-demo.vue';
 import TextDemo from './text-demo.vue';
 import TypeDemo from './type-demo.vue';
 import TypeSizeDemo from './type-size-demo.vue';
+
+const { t } = i18n.global;
 
 const progressPropsJson: IPropsTableItem[] = [
   {
@@ -144,14 +147,19 @@ const progressPropsJson: IPropsTableItem[] = [
     desc: '自定义样式',
     optional: [],
   },
-];
+].map((item: IPropsTableItem) => {
+  const result =  Object.assign(item, { desc: t(item.desc) });
+  return {
+    ...result,
+  };
+});
 
 const progressSlotJson: IPropsTableItem[] = [
   {
     name: 'default',
     type: 'String',
     default: '',
-    desc: '默认插槽',
+    desc: t('默认插槽'),
     optional: [],
   },
 ];
@@ -160,10 +168,10 @@ export default defineComponent({
   setup() {
     const separator = ref('/');
     const list = [
-      { title: '首页', link: { path: '/' } },
-      { title: '进度条', link: { path: 'loading' } },
-      { title: '滑块开关', link: { path: 'switcher' } },
-      { title: '面包屑', link: null },
+      { title: t('首页'), link: { path: '/' } },
+      { title: t('进度条'), link: { path: 'loading' } },
+      { title: t('滑块开关'), link: { path: 'switcher' } },
+      { title: t('面包屑'), link: null },
     ];
     return {
       list,
@@ -174,70 +182,70 @@ export default defineComponent({
     return (
       <div>
         <DemoTitle
-          name="Progress 进度条"
-          desc="进度条"
+          name={ t('Progress 进度条') }
+          desc={ t('进度条') }
           link="https://www.google.com.hk/"/>
 
         <DemoBox
-            title="基础用法"
-            subtitle="修改进度条主题"
-            desc="percent 是 0 到 100 之间的数值，提供 4 种主题，由 theme 属性来定义，可选的主题有 primary, warning, success, danger，默认为 primary, 由 color 属性来自定义颜色值。"
+            title={ t('基础用法') }
+            subtitle={ t('修改进度条主题') }
+            desc={ t('percent 是 0 到 100 之间的数值，提供 4 种主题，由 theme 属性来定义，可选的主题有 primary, warning, success, danger，默认为 primary, 由 color 属性来自定义颜色值。') }
             componentName="progress"
             demoName="base-demo">
             <BaseDemo></BaseDemo>
           </DemoBox>
 
           <DemoBox
-            title="大小设置"
+            title={ t('大小设置')}
             subtitle=""
-            desc="可以使用 size 属性来配置进度条的尺寸，可接受 small large，也可配置strokeWidth线宽"
+            desc={ t('可以使用 size 属性来配置进度条的尺寸，可接受 small large，也可配置strokeWidth线宽') }
             componentName="progress"
             demoName="size-demo">
             <SizeDemo></SizeDemo>
           </DemoBox>
 
           <DemoBox
-            title="文案内显"
+            title={ t('文案内显')}
             subtitle=""
-            desc="Progress 组件可通过 show-text 来控制文案是否显示， 通过 text-inside 属性来将进度条描述置于进度条内部, titleStyle 属性来调整百分数显示的样式 format 过滤文案展示"
+            desc={ t('Progress 组件可通过 show-text 来控制文案是否显示， 通过 text-inside 属性来将进度条描述置于进度条内部, titleStyle 属性来调整百分数显示的样式 format 过滤文案展示')}
             componentName="progress"
             demoName="text-demo">
             <TextDemo></TextDemo>
           </DemoBox>
 
           <DemoBox
-            title="动态值"
+            title={ t('动态值')}
             subtitle=""
-            desc="通过改变 percent 改变进度"
+            desc={ t('通过改变 percent 改变进度') }
             componentName="progress"
             demoName="change-demo">
             <ChangeDemo></ChangeDemo>
           </DemoBox>
 
           <DemoBox
-            title="环形/仪表盘"
+            title={t('环形/仪表盘') }
             subtitle=""
-            desc="通过改变 type 修改进度条形状， line 默认线性 circle 圆形 dashboard 仪表盘"
+            desc={ t('通过改变 type 修改进度条形状， line 默认线性 circle 圆形 dashboard 仪表盘')}
             componentName="progress"
             demoName="type-demo">
             <TypeDemo></TypeDemo>
           </DemoBox>
 
           <DemoBox
-            title="环形/仪表盘大小颜色配置"
+            title={ t('环形/仪表盘大小颜色配置') }
             subtitle=""
-            desc="通过改变 color 修改进度颜色，bgColor修改背景颜色 width 修改大小 strokeWidth修改线宽"
+            desc={ t('通过改变 color 修改进度颜色，bgColor修改背景颜色 width 修改大小 strokeWidth修改线宽')}
             componentName="progress"
             demoName="type-size-demo">
             <TypeSizeDemo></TypeSizeDemo>
           </DemoBox>
         <PropsBox
-          title="Progress 属性"
+          title={ t('Progress 属性') }
           subtitle=""
           propsData={progressPropsJson}/>
         <PropsBox
-          subtitle="可以自定义文案"
-          title="Progress 插槽"
+          subtitle={ t('可以自定义文案') }
+          title={ t('Progress 插槽') }
           propsData={progressSlotJson}/>
       </div>
     );

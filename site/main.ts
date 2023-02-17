@@ -29,13 +29,17 @@ import { createApp } from 'vue';
 import bkuiVue from '../packages/bkui-vue/index';
 
 import App from './app';
+import i18n from './language/i18n';
 import router from './router';
 
 import '../packages/styles/src/index';
 import './reset.less';
+
 const app = createApp(App);
-app.use(bkuiVue);
-app.use(router);
+
+app.use(i18n)
+  .use(router)
+  .use(bkuiVue);
 
 if (process.env.NODE_ENV === 'development') {
   (app.config as any).devtools = true;

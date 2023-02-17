@@ -7,6 +7,7 @@
       <bk-table
         :columns="columns"
         :data="tableData"
+        :empty-text="t('暂无数据')"
         @row-expand="handleRowExpand"
       >
         <template #expandRow="row">
@@ -23,7 +24,7 @@
       class="cell"
       style="height: 300px;"
     >
-      <span class="title">依赖父级高度：height='100%'</span>
+      <span class="title">{{ `${t('依赖父级高度')}：height='100%'` }}</span>
       <bk-table
         :columns="columns"
         :data="tableData"
@@ -36,29 +37,34 @@
 
 <script>
   import { defineComponent } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   import { DATA_EXPAND_COLUMNS, DATA_TABLE } from './options';
   export default defineComponent({
     components: {},
-    data() {
-      return {
-        tableData: [...DATA_TABLE],
-        columns: [...DATA_EXPAND_COLUMNS],
-      };
-    },
-    methods: {
-      handleRowExpand({ row, column, index, rows, e }) {
+    setup() {
+      const { t } = useI18n();
+
+      const handleRowExpand = ({ row, column, index, rows, e }) => {
         // 可以通过自定义逻辑，阻止事件冒泡
         e.stopPropagation();
         e.stopImmediatePropagation();
         e.preventDefault();
 
         console.log('handleRowExpand', row, column, index, rows);
-      },
+      };
 
-      handleTClick() {
+      const handleTClick = () => {
         console.log('handleTClick');
-      },
+      };
+
+      return {
+        tableData: [...DATA_TABLE],
+        columns: [...DATA_EXPAND_COLUMNS],
+        handleRowExpand,
+        handleTClick,
+        t,
+      };
     },
   });
 </script>

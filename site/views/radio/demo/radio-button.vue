@@ -1,16 +1,31 @@
 <template>
-  <bk-radio-group
-    v-model="radioGroupValue"
-  >
+  <bk-radio-group v-model="radioGroupValue">
     <bk-radio-button label="QQ" />
-    <bk-radio-button label="微信" />
+    <bk-radio-button :label="t('微信')" />
     <bk-radio-button label="Email" />
   </bk-radio-group>
+  <div style="margin-top: 10px">
+    {{ t("选中") }}：{{ radioGroupValue }}
+  </div>
 </template>
-<script setup>
-  import { ref } from 'vue';
+<script>
+  import { defineComponent, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
-  const radioGroupValue = ref('微信');
+  import { BkRadioButton } from '@bkui-vue/radio';
 
+  export default defineComponent({
+    setup() {
+      const { t } = useI18n();
+
+      const radioGroupValue = ref(t('微信'));
+
+      return {
+        t,
+        radioGroupValue,
+        BkRadioButton,
+      };
+    },
+  });
 </script>
 

@@ -24,6 +24,7 @@
 * IN THE SOFTWARE.
 */
 import { defineComponent, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 // import BkDatePicker from '../../../packages/date-picker/src/index';
 import BkDatePicker from '@bkui-vue/date-picker';
@@ -34,11 +35,12 @@ export default defineComponent({
     return { dateValue };
   },
   render() {
+    const { t } = useI18n();
     return (
       <BkDatePicker
         v-model={this.dateValue}
         format='yyyy-MM-dd HH:mm:ss'
-        placeholder='选择日期范围'
+        placeholder={ t('选择日期范围') }
       >
         {{
           shortcuts: () => (

@@ -2,7 +2,7 @@
   <div class="demo-box">
     <div class="tool-box">
       <bk-dropdown :popover-options="popoverOptions">
-        <bk-button>更多操作</bk-button>
+        <bk-button>{{ tips }}</bk-button>
         <template #content>
           <bk-dropdown-menu>
             <bk-dropdown-item
@@ -18,17 +18,45 @@
     </div>
   </div>
 </template>
-<script setup>
-  import { ref } from 'vue';
+
+<script>
+  import { defineComponent, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   import BkDropdown from '@bkui-vue/dropdown';
   import BkMessage from '@bkui-vue/message';
-  const dropdownList = ref(['生产环境', '预发布环境', '测试环境', '正式环境', '开发环境', '调试环境']);
-  const popoverOptions =   { boundary: 'body' };
-  const handleClick = (item) => {
-    BkMessage(item);
-  };
+  export default defineComponent({
+    components: {
+      BkDropdown,
+    },
+    setup() {
+      const { t } = useI18n();
+
+      const tips = ref(t('更多操作'));
+      const dropdownList = ref([
+        t('生产环境'),
+        t('预发布环境'),
+        t('测试环境'),
+        t('正式环境'),
+        t('开发环境'),
+        t('调试环境'),
+      ]);
+      const popoverOptions = { boundary: 'body' };
+
+      const handleClick = (item) => {
+        BkMessage(item);
+      };
+
+      return {
+        tips,
+        dropdownList,
+        popoverOptions,
+        handleClick,
+      };
+    },
+  });
 </script>
+
 <style>
 .tool-box {
   background: #fff;

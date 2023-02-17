@@ -11,6 +11,7 @@
   import { bkTooltips, Message } from 'bkui-vue';
   import { Info } from 'bkui-vue/lib/icon';
   import { defineComponent } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   export default defineComponent({
     components: {
@@ -20,8 +21,9 @@
       bkTooltips,
     },
     setup() {
+      const { t } = useI18n();
       const config = {
-        content: '提示信息',
+        content: t('提示信息'),
         onShow: () => {
           Message({
             theme: 'success',

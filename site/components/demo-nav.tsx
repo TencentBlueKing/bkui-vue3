@@ -25,6 +25,7 @@
 */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { defineComponent, nextTick, reactive, ref, toRefs, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 
 import { clickoutside } from '@bkui-vue/directives';
@@ -260,8 +261,9 @@ export default defineComponent({
     };
   },
   render() {
+    const { t }  = useI18n();
     return <div class="demo-nav">
-      <h1 class="demo-nav-title">Vue 组件库 <span class="title-mark">3.x</span></h1>
+      <h1 class="demo-nav-title">{t('Vue 组件库') } <span class="title-mark">3.x</span></h1>
       {/* <BkInput class="demo-nav-input" type="search" onInput={this.searchHandler} v-model={this.searchVal}/> */}
       <div class="demo-nav-search-wrapper" v-clickoutside={this.hidePopover}>
         <BKPopover
@@ -301,7 +303,7 @@ export default defineComponent({
                       ))
                       : (
                         <li class="search-dropdown-list-item">
-                          <span class="text">没有找到组件</span>
+                          <span class="text">{ t('没有找到组件') }</span>
                         </li>
                       )
                   }

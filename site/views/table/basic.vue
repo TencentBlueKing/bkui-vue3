@@ -4,6 +4,7 @@
       :columns="columns"
       :data="tableData"
       row-hover="auto"
+      :empty-text="emptyText"
       settings
       @dblclick="handleDblClick"
       @column-sort="handleSortBy"
@@ -12,48 +13,66 @@
 </template>
 
 <script>
-  import { defineComponent } from 'vue';
+  import { defineComponent, reactive, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   import { DATA_COLUMNS, DATA_TABLE } from './options';
+
   export default defineComponent({
     components: {},
-    data() {
-      return {
-        isLoading: false,
-        tableData: [...DATA_TABLE],
-        columns: [...DATA_COLUMNS],
-        settings: {
-          fields: [{
-                     label: '序号',
-                     field: 'index',
-                     disabled: true,
-                   },
-                   {
-                     label: '名称/内网IP',
-                     field: 'ip',
-                   },
-                   {
-                     label: '来源',
-                     field: 'source',
-                   },
-                   {
-                     label: '创建时间',
-                     field: 'create_time',
-                   }],
-          checked: ['ip', 'index'],
-        },
-      };
-    },
-    methods: {
-      handleSortBy(arg) {
+    setup() {
+      const { t } = useI18n();
+
+      const emptyText = ref(t('暂无数据'));
+
+      const isLoading = ref(false);
+      const tableData = ref([...DATA_TABLE]);
+      const columns = ref([...DATA_COLUMNS]);
+      const settings = reactive({
+        fields: [
+          {
+            label: t('序号'),
+            field: 'index',
+            disabled: true,
+          },
+          {
+            label: t('名称/内网IP'),
+            field: 'ip',
+          },
+          {
+            label: t('来源'),
+            field: 'source',
+          },
+          {
+            label: t('创建时间'),
+            field: 'create_time',
+          },
+        ],
+        checked: ['ip', 'index'],
+      });
+
+      const handleSortBy = (...arg) => {
         console.log('handleSortBy', arg);
-      },
-      handleDblClick(...args) {
+      };
+
+
+      const handleDblClick = (...args) => {
         console.log(args);
-      },
+      };
+
+      return {
+        isLoading,
+        emptyText,
+        tableData,
+        columns,
+        settings,
+        handleSortBy,
+        handleDblClick,
+      };
     },
   });
 </script>
+
 <style scoped>
 .row {
   display: flex;

@@ -7,12 +7,13 @@
       type="primary"
       @click="changeRadius"
     >
-      改变值
+      {{ value }}
     </bk-button>
   </div>
 </template>
 <script>
   import { defineComponent, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   import BkButton from '@bkui-vue/button';
   import BkProgress from '@bkui-vue/progress';
@@ -24,12 +25,15 @@
       BkButton,
     },
     setup() {
+      const { t } = useI18n();
       const percent = ref(0);
+      const value = ref(t('改变值'));
       const changeRadius = () => {
         percent.value = Number(Math.random() * 100);
       };
       return {
         percent,
+        value,
         changeRadius,
       };
     },

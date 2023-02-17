@@ -24,6 +24,7 @@
 * IN THE SOFTWARE.
 */
 import { defineComponent } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import { BkSelect } from '@bkui-vue/select';
 
@@ -52,54 +53,55 @@ const propsJson: IPropsTableItem[] = Object.keys(BkSelect.props).map(prop => ({
 }));
 export default defineComponent({
   render() {
+    const { t } = useI18n();
     return (
       <div>
-        <DemoTitle name="Select 下拉选框" desc="将动作或菜单折叠到下拉菜单中，支持单选和多选" />
+        <DemoTitle name={t('Select 下拉选框')} desc={ t('将动作或菜单折叠到下拉菜单中，支持单选和多选') }  />
         <DemoBox
-          title="基础用法"
-          desc="基础单选"
+          title={t('基础用法')}
+          desc={ t('基础单选')}
           componentName="select"
           demoName="select-base-demo">
             <SelectBaseDemo />
         </DemoBox>
         <DemoBox
-          title="尺寸 & 风格"
-          desc="large、default、 small 三种尺寸，normal、simplicity两种风格"
+          title={t('尺寸 & 风格')}
+          desc={ t('large、default、 small 三种尺寸，normal、simplicity两种风格')}
           componentName="select"
           demoName="select-style-demo">
             <SelectStyleDemo />
         </DemoBox>
         <DemoBox
-          title="多选"
-          desc="支持tag形式的多选"
+          title={t('多选')}
+          desc= { t('支持tag形式的多选') }
           componentName="select"
           demoName="select-multi-demo">
             <SelectMultiDemo />
         </DemoBox>
         <DemoBox
-          title="分组"
+          title={t('分组')}
           desc=""
           componentName="select"
           demoName="select-group-demo">
             <SelectGroupDemo />
         </DemoBox>
         <DemoBox
-          title="搜索"
-          desc="远程搜索和本地搜索，注意：动态Options时建议使用value作为key，防止出现option没有销毁问题"
+          title={t('搜索')}
+          desc={t('远程搜索和本地搜索，注意：动态Options时建议使用value作为key，防止出现option没有销毁问题')}
           componentName="select"
           demoName="select-search-demo">
             <SelectSearchDemo />
         </DemoBox>
         <DemoBox
-          title="滚动加载"
-          desc="滚动加载"
+          title={ t('滚动加载') }
+          desc={t('滚动加载')}
           componentName="select"
           demoName="select-scrollloading-demo">
             <SelectScrollLoadingDemo />
         </DemoBox>
         <DemoBox
-          title="自定义创建"
-          desc="自定义创建选项"
+          title={ t('自定义创建')}
+          desc={ t('自定义创建选项') }
           componentName="select"
           demoName="select-allow-create">
             <SelectAllowCreate />
@@ -113,14 +115,14 @@ export default defineComponent({
         </DemoBox>
         <DemoBox
           title="Virtual Select"
-          desc="虚拟滚动只支持list模式数据源"
+          desc={ t('虚拟滚动只支持list模式数据源') }
           componentName="select"
           demoName="select-virtual-render">
             <SelectVirtualRender />
         </DemoBox>
         <DemoBox
-          title="多选模式下自定义tag"
-          desc="多选模式下自定义tag"
+          title={ t('多选模式下自定义tag') }
+          desc={ t('多选模式下自定义tag') }
           componentName="select"
           demoName="select-slot-demo">
             <SelectSlotDemo />

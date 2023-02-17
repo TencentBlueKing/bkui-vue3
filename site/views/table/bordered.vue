@@ -15,28 +15,32 @@
         style="margin-left: 20px;"
         @click="()=>tableData=[]"
       >
-        清空表格数据
+        {{ t('清空表格数据') }}
       </bk-button>
     </div>
     <bk-table
       :columns="columns"
       :data="tableData"
       :border="border"
+      :empty-text="t('暂无数据')"
     />
   </div>
 </template>
 
 <script>
   import { defineComponent } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   import { DATA_COLUMNS, DATA_TABLE } from './options';
   export default defineComponent({
     components: {},
-    data() {
+    setup() {
+      const { t } = useI18n();
       return {
         tableData: [...DATA_TABLE],
         columns: [...DATA_COLUMNS],
         border: ['row'],
+        t,
       };
     },
   });

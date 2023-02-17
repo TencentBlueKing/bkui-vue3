@@ -31,6 +31,7 @@ import {
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
+import i18n from '../../language/i18n';
 import {
   type IPropsTableItem,
 } from '../../typings';
@@ -41,41 +42,42 @@ import DemoFormDescription from './demo/form-description.vue';
 import DemoFormValidator from './demo/form-validator.vue';
 import DemoFormVertical from './demo/form-vertical.vue';
 
+const { t } = i18n.global;
 
 const formProps: IPropsTableItem[] = [
   {
     name: 'form-type',
     type: 'String',
     default: null,
-    desc: '表单模式',
+    desc: t('表单模式'),
     optional: ['default', 'vertical'],
   },
   {
     name: 'label-width',
     type: 'String',
     default: null,
-    desc: '表单域标签的宽度',
+    desc: t('表单域标签的宽度'),
     optional: [],
   },
   {
     name: 'label-position',
     type: 'String',
     default: null,
-    desc: '表单域标签的位置',
+    desc: t('表单域标签的位置'),
     optional: ['left', 'center', 'right'],
   },
   {
     name: 'model',
     type: 'Object',
     default: null,
-    desc: '表单数据',
+    desc: t('表单数据'),
     optional: [],
   },
   {
     name: 'rules',
     type: 'Array',
     default: null,
-    desc: '表单验证规则',
+    desc: t('表单验证规则'),
     optional: [],
   },
 ];
@@ -85,77 +87,77 @@ const formItemProps: IPropsTableItem[] = [
     name: 'label',
     type: 'String',
     default: null,
-    desc: '标签',
+    desc: t('标签'),
     optional: [],
   },
   {
     name: 'label-width',
     type: 'String',
     default: null,
-    desc: '表单域标签的宽度',
+    desc: t('表单域标签的宽度'),
     optional: [],
   },
   {
     name: 'label-position',
     type: 'String',
     default: null,
-    desc: '表单域标签的位置',
+    desc: t('表单域标签的位置'),
     optional: ['left', 'center', 'right'],
   },
   {
     name: 'property',
     type: 'String',
     default: null,
-    desc: '表单域 model 字段',
+    desc: t('表单域 model 字段'),
     optional: [],
   },
   {
     name: 'required',
     type: 'Boolean',
     default: null,
-    desc: '是否必填',
+    desc: t('是否必填'),
     optional: [],
   },
   {
     name: 'max',
     type: 'Number',
     default: null,
-    desc: '验证规则最大值',
+    desc: t('验证规则最大值'),
     optional: [],
   },
   {
     name: 'min',
     type: 'Number',
     default: null,
-    desc: '验证规则最小值',
+    desc: t('验证规则最小值'),
     optional: [],
   },
   {
     name: 'email',
     type: 'String',
     default: null,
-    desc: '验证规则Email',
+    desc: t('验证规则Email'),
     optional: [],
   },
   {
     name: 'rules',
     type: 'Array',
     default: null,
-    desc: '验证规则',
+    desc: t('验证规则'),
     optional: [],
   },
   {
     name: 'auto-check',
     type: 'String',
     default: null,
-    desc: '是否自动验证',
+    desc: t('是否自动验证'),
     optional: [],
   },
   {
     name: 'description',
     type: 'String',
     default: null,
-    desc: '是否自动验证',
+    desc: t('是否自动验证'),
     optional: [],
   },
 ];
@@ -167,49 +169,49 @@ export default defineComponent({
     <div>
       <DemoTitle
           name="Form"
-          desc="由输入框、选择器、单选框、多选框等控件组成"
+          desc={ t('由输入框、选择器、单选框、多选框等控件组成') }
           link="https://www.qq.com/"/>
         <DemoBox
-          title="基础用法"
+          title={t('基础用法')}
           desc=""
           componentName="form"
           demoName="/demo/form">
             <DemoForm />
         </DemoBox>
         <DemoBox
-          title="label 描述"
-          desc="FormItem 组件配置 description"
+          title={t('label 描述') }
+          desc={t('FormItem 组件配置 description') }
           componentName="form"
           demoName="/demo/form-description">
             <DemoFormDescription />
         </DemoBox>
         <DemoBox
-          title="顶部对齐"
+          title={ t('顶部对齐') }
           desc=""
           componentName="form"
           demoName="/demo/form-vertical">
             <DemoFormVertical />
         </DemoBox>
         <DemoBox
-          title="表单验证"
+          title={ t('表单验证') }
           desc=""
           componentName="form"
           demoName="/demo/form-validator">
             <DemoFormValidator />
         </DemoBox>
         <DemoBox
-          title="组合表单组件"
+          title={ t('组合表单组件') }
           desc=""
           componentName="form"
           demoName="/demo/compose-form-item">
             <DemoComposeFormItem />
         </DemoBox>
         <PropsBox
-          title="Form 属性"
+          title={ t('Form 属性') }
           subtitle=""
           propsData={formProps}/>
         <PropsBox
-          title="Form-Item 属性"
+          title={ t('Form-Item 属性') }
           subtitle=""
           propsData={formItemProps}/>
     </div>

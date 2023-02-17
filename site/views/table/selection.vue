@@ -2,6 +2,7 @@
   <bk-table
     :data="tableData"
     :is-row-select-enable="isRowSelectEnable"
+    :empty-text="t('暂无数据')"
   >
     <bk-table-column
       type="selection"
@@ -9,15 +10,15 @@
       :width="100"
     />
     <bk-table-column
-      label="名称/内网IP"
+      :label="t('名称/内网IP')"
       field="ip"
     />
     <bk-table-column
-      label="来源"
+      :label="t('来源')"
       field="source"
     />
     <bk-table-column
-      label="创建时间"
+      :label="t('创建时间')"
       field="create_time"
     />
   </bk-table>
@@ -25,6 +26,7 @@
 
 <script>
   import { defineComponent } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   import { DATA_TABLE } from './options';
   const DATA_ROWS = DATA_TABLE
@@ -37,6 +39,7 @@
       return {
         tableData: DATA_ROWS,
         pagination: { count: DATA_ROWS.length, limit: 10 },
+        t: useI18n().t,
       };
     },
 

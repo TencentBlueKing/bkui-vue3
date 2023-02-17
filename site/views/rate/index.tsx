@@ -25,15 +25,19 @@
 */
 
 import { defineComponent } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
+import i18n from '../../language/i18n';
 import { IPropsTableItem } from '../../typings';
 
 import BaseDemo from './base-demo.vue';
 import EditDemo from './edit-demo.vue';
 import SizeDemo from './size-demo.vue';
+
+const { t } = i18n.global;
 
 const ratePropsJson: IPropsTableItem[] = [
   {
@@ -57,34 +61,38 @@ const ratePropsJson: IPropsTableItem[] = [
     desc: '是否可编辑',
     optional: [],
   },
-];
+].map((item: IPropsTableItem) => {
+  const result =  Object.assign(item, { desc: t(item.desc) });
+  return {
+    ...result,
+  };
+});
+
 
 const rateEventJson: IPropsTableItem[] = [
   {
     name: 'change',
     type: 'Function',
     default: '',
-    desc: '评分发生变化的时候',
+    desc: t('评分发生变化的时候'),
     optional: [],
   },
 ];
 
 export default defineComponent({
-  setup() {
-
-  },
   render() {
+    const { t } = useI18n();
     return (
       <div>
         <DemoTitle
-          name="Rate 评分"
-          desc="评分组件"
+          name={ t('Rate 评分') }
+          desc={ t('评分组件')}
         />
 
         <DemoBox
-          title="基础用法"
+          title={t('基础用法')}
           subtitle=""
-          desc="通过 editable 设置为 false, 让 rate 组件只能查看不能编辑，只有非编辑态可以展示小数"
+          desc={ t('通过 editable 设置为 false, 让 rate 组件只能查看不能编辑，只有非编辑态可以展示小数')}
           componentName="rate"
           demoName="base-demo"
         >
@@ -92,9 +100,9 @@ export default defineComponent({
         </DemoBox>
 
         <DemoBox
-          title="控制组件大小"
+          title={ t('控制组件大小') }
           subtitle=""
-          desc="通过 size 属性控制组件大小"
+          desc={ t('通过 size 属性控制组件大小') }
           componentName="rate"
           demoName="size-demo"
         >
@@ -102,9 +110,9 @@ export default defineComponent({
         </DemoBox>
 
         <DemoBox
-          title="事件"
+          title={ t('事件') }
           subtitle=""
-          desc="通过监听 change 事件来做出响应"
+          desc={ t('通过监听 change 事件来做出响应') }
           componentName="rate"
           demoName="edit-demo"
         >
@@ -112,13 +120,13 @@ export default defineComponent({
         </DemoBox>
 
         <PropsBox
-          title="Rate 属性"
+          title={ t('Rate 属性') }
           subtitle=""
           propsData={ratePropsJson}
         />
 
         <PropsBox
-          title="Rate 事件"
+          title={ t('Rate 事件') }
           subtitle=""
           propsData={rateEventJson}
         />

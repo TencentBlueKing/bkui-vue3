@@ -25,25 +25,28 @@
 */
 import { defineComponent } from 'vue';
 
+import i18n  from '../language/i18n';
 import { IPropsTableItem } from '../typings';
 
 import CommonBox from './common-box';
 
 import './props-box.less';
+
+const { t } = i18n.global;
 type ColumnKey = keyof IPropsTableItem;
 type IColumnMap = Record<ColumnKey, any>;
 const  columnMap: IColumnMap = {
-  name: '参数',
-  desc: '说明',
-  type: '类型',
-  optional: '可选值',
-  default: '默认值',
+  name: t('参数'),
+  desc: t('说明'),
+  type: t('类型'),
+  optional: t('可选值'),
+  default: t('默认值'),
 };
 export default defineComponent({
   props: {
     title: {
       type: String,
-      default: '属性',
+      default: t('属性'),
     },
     subtitle: {
       type: String,

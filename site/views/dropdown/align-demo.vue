@@ -20,12 +20,37 @@
     </bk-dropdown>
   </div>
 </template>
-<script setup>
-  import { ref } from 'vue';
+
+<script>
+  import { defineComponent, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   import BkDropdown from '@bkui-vue/dropdown';
-  const dropdownList = ref(['生产环境', '预发布环境', '测试环境', '正式环境', '开发环境', '调试环境']);
-  const dropdownPlacement = ['auto', 'auto-start', 'auto-end', 'top', 'right', 'bottom', 'left', 'top-start', 'top-end', 'bottom-start', 'bottom-end', 'right-start', 'right-end', 'left-start', 'left-end'];
+
+  export default defineComponent({
+    components: {
+      BkDropdown,
+    },
+    setup() {
+      const { t } = useI18n();
+
+      const dropdownList = ref([
+        t('生产环境'),
+        t('预发布环境'),
+        t('测试环境'),
+        t('正式环境'),
+        t('开发环境'),
+        t('调试环境'),
+      ]);
+
+      const dropdownPlacement = ['auto', 'auto-start', 'auto-end', 'top', 'right', 'bottom', 'left', 'top-start', 'top-end', 'bottom-start', 'bottom-end', 'right-start', 'right-end', 'left-start', 'left-end'];
+
+      return {
+        dropdownList,
+        dropdownPlacement,
+      };
+    },
+  });
 </script>
 
 <style lang="postcss">

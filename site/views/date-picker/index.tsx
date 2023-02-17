@@ -29,6 +29,7 @@ import { defineComponent } from 'vue';
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
+import i18n from '../../language/i18n';
 import { IPropsTableItem } from '../../typings';
 
 import BaseDemo from './base-demo.vue';
@@ -40,33 +41,35 @@ import ShortcutsSlotDemo from './shortcuts-slot-demo.vue';
 import TriggerSlotDemo from './trigger-slot-demo.vue';
 import WithTimeDemo from './with-time-demo.vue';
 
+const { t } = i18n.global;
+
 const menuPropsJson: IPropsTableItem[] = [
   {
     name: 'activeKey',
     type: 'String',
     default: '',
-    desc: '选中的menu的key',
+    desc: t('选中的menu的key'),
     optional: [],
   },
   {
     name: 'OpenedKeys',
     type: 'Array',
     default: [],
-    desc: '打开的submenu key值',
+    desc: t('打开的submenu key值'),
     optional: [],
   },
   {
     name: 'mode',
     type: 'String',
     default: 'vertical',
-    desc: '展示方式',
+    desc: t('展示方式'),
     optional: ['vertical', 'horizontal'],
   },
   {
     name: 'uniqueOpen',
     type: 'Boolean',
     default: 'true',
-    desc: '是否唯一展开一个submenu',
+    desc: t('是否唯一展开一个submenu'),
     optional: [],
   },
 ];
@@ -75,59 +78,59 @@ export default defineComponent({
   render() {
     return (
       <div>
-        <DemoTitle name="DatePicker 日期选择器" desc="日期选择器" />
+        <DemoTitle name={ t('DatePicker 日期选择器') }  desc={ t('日期选择器') } />
           <DemoBox
-            title="基础用法"
-            desc="通过 v-model 或者 value 设置初始值"
+            title={t('基础用法')}
+            desc={t('通过 v-model 或者 value 设置初始值')}
             componentName="date-picker"
             demoName="base-demo">
             <BaseDemo />
           </DemoBox>
           <DemoBox
-            title="开启日期范围"
-            desc="通过设置 type 属性为 daterange 来开启时间设置"
+            title={ t('开启日期范围') }
+            desc={ t('通过设置 type 属性为 daterange 来开启时间设置')}
             componentName="date-picker"
             demoName="range-demo">
             <RangeDemo />
           </DemoBox>
           <DemoBox
-            title="开启时间设置"
-            desc="通过设置 type 属性为 datetime 来开启时间设置"
+            title={ t('开启时间设置') }
+            desc={ t('通过设置 type 属性为 datetime 来开启时间设置') }
             componentName="date-picker"
             demoName="with-time-demo">
             <WithTimeDemo />
           </DemoBox>
           <DemoBox
             title="trigger slot"
-            desc="可以通过 trigger slot 来增加自定义 trigger"
+            desc={ t('可以通过 trigger slot 来增加自定义 trigger')}
             componentName="date-picker"
             demoName="trigger-slot-demo">
             <TriggerSlotDemo />
           </DemoBox>
           <DemoBox
             title="header slot"
-            desc="自定义 header"
+            desc={t('自定义 header')}
             componentName="date-picker"
             demoName="header-slot-demo">
             <HeaderSlotDemo />
           </DemoBox>
           <DemoBox
             title="footer slot"
-            desc="自定义 footer"
+            desc={t('自定义 footer')}
             componentName="date-picker"
             demoName="footer-slot-demo">
             <FooterSlotDemo />
           </DemoBox>
           <DemoBox
             title="shortcuts slot"
-            desc="自定义 shortcuts"
+            desc={ t('自定义 shortcuts')}
             componentName="date-picker"
             demoName="shortcuts-slot-demo">
             <ShortcutsSlotDemo />
           </DemoBox>
         <DemoBox
           title="demo-tsx"
-          desc="自定义插槽 tsx 写法"
+          desc={t('自定义插槽 tsx 写法')}
           componentName="date-picker"
           suffix='.tsx'
           demoName="demo-tsx">

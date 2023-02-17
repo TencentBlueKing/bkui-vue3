@@ -64,6 +64,10 @@ export default defineConfig({
         find: /^@?bkui-vue\/([^/]*)/,
         replacement: resolve(__dirname, '../packages/$1/src'),
       },
+      {
+        find: 'vue-i18n',
+        replacement: 'vue-i18n/dist/vue-i18n.cjs.js',
+      },
     ],
   },
   plugins: [

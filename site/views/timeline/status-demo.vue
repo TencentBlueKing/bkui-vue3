@@ -29,93 +29,95 @@
 </template>
 <script>
   import { defineComponent, reactive } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   export default defineComponent({
     setup() {
+      const { t } = useI18n();
       const state = reactive({
         list: [
           {
-            tag: 'pony审批通过，并附“同意”',
-            content: '由pony上线到蓝鲸市场',
+            tag: t('pony审批通过，并附“同意”'),
+            content: t('由pony上线到蓝鲸市场'),
             color: 'green',
             filled: true,
           },
           {
-            tag: 'tony审批通过，并附“同意”',
+            tag: t('tony审批通过，并附“同意”'),
             content: '<span style="font-size: 12px;">2019-12-15 11:00</span>',
             color: 'green',
             filled: true,
           },
           {
-            tag: 'allen正在审批',
+            tag: t('allen正在审批'),
             content: '<span style="font-size: 12px;">2020-12-15 11:00</span>',
             color: 'blue',
             size: 'large',
           },
           {
-            tag: '步骤3',
+            tag: t('步骤3'),
             content: '<span style="font-size: 12px;">2021-12-15 11:00</span>',
           },
           {
-            tag: '步骤4',
+            tag: t('步骤4'),
             content: '<span style="font-size: 12px;">2022-12-15 11:00</span>',
           },
         ],
 
         list1: [
           {
-            tag: 'pony审批通过，并附“同意”',
-            content: '由pony上线到蓝鲸市场',
+            tag: t('pony审批通过，并附“同意”'),
+            content: t('由pony上线到蓝鲸市场'),
             color: 'green',
             filled: true,
           },
           {
-            tag: 'tony审批通过，并附“同意”',
+            tag: t('tony审批通过，并附“同意”'),
             content: '<span style="font-size: 12px;">2019-12-15 11:00</span>',
             color: 'green',
             filled: true,
           },
           {
-            tag: 'allen审批不通过，并附“不同意”',
+            tag: t('allen审批不通过，并附“不同意”'),
             content: '<span style="font-size: 12px;">2020-12-15 11:00</span>',
             color: 'red',
             size: 'large',
           },
           {
-            tag: '步骤3',
+            tag: t('步骤3'),
             content: '<span style="font-size: 12px;">2021-12-15 11:00</span>',
           },
           {
-            tag: '步骤4',
+            tag: t('步骤4'),
             content: '<span style="font-size: 12px;">2022-12-15 11:00</span>',
           },
         ],
 
         list2: [
           {
-            tag: 'pony审批通过，并附“同意”',
-            content: '由pony上线到蓝鲸市场',
+            tag: t('pony审批通过，并附“同意”'),
+            content: t('由pony上线到蓝鲸市场'),
             color: 'green',
             filled: true,
           },
           {
-            tag: 'tony审批通过，并附“同意”',
+            tag: t('tony审批通过，并附“同意”'),
             content: '<span style="font-size: 12px;">2019-12-15 11:00</span>',
             color: 'blue',
             filled: true,
           },
           {
-            tag: 'allen暂停审批',
+            tag: t('allen暂停审批'),
             content: '<span style="font-size: 12px;">2020-12-15 11:00</span>',
             color: 'yellow',
             size: 'large',
           },
           {
-            tag: '步骤3',
+            tag: t('步骤3'),
             content: '<span style="font-size: 12px;">2021-12-15 11:00</span>',
           },
           {
-            tag: '步骤4',
+            tag: t('步骤4'),
             content: '<span style="font-size: 12px;">2022-12-15 11:00</span>',
           },
         ],

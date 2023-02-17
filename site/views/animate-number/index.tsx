@@ -29,23 +29,26 @@ import { defineComponent } from 'vue';
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
+import i18n from '../../language/i18n';
 import { IPropsTableItem } from '../../typings';
 
 import BaseDemo from './base-demo.vue';
+
+const { t } = i18n.global;
 
 const animateNumberPropsJson: IPropsTableItem[] = [
   {
     name: 'value',
     type: 'Number',
     default: '0',
-    desc: '数字',
+    desc: t('数字'),
     optional: [],
   },
   {
     name: 'digits',
     type: 'Number',
     default: '0',
-    desc: '小数位',
+    desc: t('小数位'),
     optional: [],
   },
 ];
@@ -58,14 +61,14 @@ export default defineComponent({
     return (
       <div>
         <DemoTitle
-          name="AnimateNumber 动态数字"
-          desc="动态数字组件"
+          name={ t('AnimateNumber 动态数字')}
+          desc={ t('动态数字组件') }
         />
 
         <DemoBox
-          title="基础用法"
+          title={ t('基础用法') }
           subtitle=""
-          desc="通过 value 设置初始值, 通过 digits 设置小数位。"
+          desc={ t('通过 value 设置初始值, 通过 digits 设置小数位。') }
           componentName="animate-number"
           demoName="base-demo"
         >
@@ -73,7 +76,7 @@ export default defineComponent({
         </DemoBox>
 
         <PropsBox
-          title="AnimateNumber 属性"
+          title={ t('AnimateNumber 属性')}
           subtitle=""
           propsData={animateNumberPropsJson}
         />

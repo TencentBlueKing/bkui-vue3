@@ -11,19 +11,21 @@
 
 <script>
   import { defineComponent } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
-  import { DATA_COLUMNS } from './options';
-  const DATA_ROWS = new Array(Math.ceil(Math.random() * 9000) + 1000).fill('')
-    .map((_, index) => ({
-      ip: `${index}--192.168.0.x`,
-      source: `${index}_QQ`,
-      status: '创建中',
-      create_time: `2018-05-25 15:02:24.${index}`,
-    }));
+  import { DATA_COLUMNS } from './options';;
 
   export default defineComponent({
     components: {},
-    data() {
+    setup() {
+      const { t } = useI18n();
+      const DATA_ROWS = new Array(Math.ceil(Math.random() * 9000) + 1000).fill('')
+        .map((_, index) => ({
+          ip: `${index}--192.168.0.x`,
+          source: `${index}_QQ`,
+          status: t('创建中'),
+          create_time: `2018-05-25 15:02:24.${index}`,
+        }));
       return {
         tableData: DATA_ROWS,
         columns: DATA_COLUMNS.map(item => ({ ...item })),
