@@ -5,9 +5,12 @@
         theme="primary"
         @click="handleRandomRows"
       >
-        随机1000-9999行数据
+        {{ t('随机1000-9999行数据') }}
       </bk-button>
-      <span style="padding: 0 30px">当前行数：{{ randomRows.length }}</span>
+      <span style="padding: 0 30px">
+        {{ `${t('当前行数')}：` }}
+        {{ randomRows.length }}
+      </span>
     </div>
     <bk-virtual-render
       :list="randomRows"
@@ -34,6 +37,11 @@
 
 <script>
   import { defineComponent } from 'vue';
+
+  import i18n from '../../language/i18n';
+
+  const { t } = i18n.global;
+
   export default defineComponent({
     components: {},
     data() {
@@ -42,40 +50,41 @@
           {
             ip: '192.168.0.1',
             source: 'QQ',
-            status: '创建中',
+            status: t('创建中'),
             create_time: '2018-05-25 15:02:24',
           },
           {
             ip: '192.168.0.2',
-            source: '微信',
-            status: '正常',
+            source: t('微信'),
+            status: t('正常'),
             create_time: '2018-05-25 15:02:24',
           },
           {
             ip: '192.168.0.3',
             source: 'QQ',
-            status: '创建中',
+            status: t('创建中'),
             create_time: '2018-05-25 15:02:24',
           },
           {
             ip: '192.168.0.1',
             source: 'QQ',
-            status: '创建中',
+            status: t('创建中'),
             create_time: '2018-05-25 15:02:24',
           },
           {
             ip: '192.168.0.2',
-            source: '微信',
-            status: '正常',
+            source: t('微信'),
+            status: t('正常'),
             create_time: '2018-05-25 15:02:24',
           },
           {
             ip: '192.168.0.3',
             source: 'QQ',
-            status: '创建中',
+            status: t('创建中'),
             create_time: '2018-05-25 15:02:24',
           },
         ],
+        t,
       };
     },
     created() {
@@ -109,7 +118,7 @@
             .map((_, index) => ({
               ip: `${index}--192.168.0.x`,
               source: `${index}_QQ`,
-              status: '创建中',
+              status: this.t('创建中'),
               create_time: `2018-05-25 15:02:24.${index}`,
             })),
         );

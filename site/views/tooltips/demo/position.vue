@@ -1,19 +1,19 @@
 <template>
   <div class="bk-tooltips-position-top">
     <span
-      v-bk-tooltips="{content: '提示信息', placement: 'top-start'}"
+      v-bk-tooltips="{ content: tips, placement: 'top-start' }"
       class="info mr20"
     >
       <info />
     </span>
     <span
-      v-bk-tooltips="{content: '提示信息', placement: 'top'}"
+      v-bk-tooltips="{ content: tips, placement: 'top' }"
       class="info mr20"
     >
       <info />
     </span>
     <span
-      v-bk-tooltips="{content: '提示信息', placement: 'top-end'}"
+      v-bk-tooltips="{ content: tips, placement: 'top-end' }"
       class="info"
     >
       <info />
@@ -23,7 +23,7 @@
   <div class="bk-tooltips-position-center">
     <div class="bk-tooltips-position-center-left">
       <span
-        v-bk-tooltips="{content: '提示信息', placement: 'left'}"
+        v-bk-tooltips="{ content: tips, placement: 'left' }"
         class="info"
       >
         <info />
@@ -32,7 +32,7 @@
 
     <div class="bk-tooltips-position-center-right">
       <span
-        v-bk-tooltips="{content: '提示信息', placement: 'right'}"
+        v-bk-tooltips="{ content: tips, placement: 'right' }"
         class="info"
       >
         <info />
@@ -42,19 +42,19 @@
 
   <div class="bk-tooltips-position-bottom">
     <span
-      v-bk-tooltips="{content: '提示信息', placement: 'bottom-start'}"
+      v-bk-tooltips="{ content: tips, placement: 'bottom-start' }"
       class="info mr20"
     >
       <info />
     </span>
     <span
-      v-bk-tooltips="{content: '提示信息', placement: 'bottom'}"
+      v-bk-tooltips="{ content: tips, placement: 'bottom' }"
       class="info mr20"
     >
       <info />
     </span>
     <span
-      v-bk-tooltips="{content: '提示信息', placement: 'bottom-end'}"
+      v-bk-tooltips="{ content: tips, placement: 'bottom-end' }"
       class="info"
     >
       <info />
@@ -65,7 +65,8 @@
 <script>
   import { bkTooltips } from 'bkui-vue';
   import { Info } from 'bkui-vue/lib/icon';
-  import { defineComponent } from 'vue';
+  import { defineComponent, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   export default defineComponent({
     components: {
@@ -75,10 +76,15 @@
       bkTooltips,
     },
     setup() {
+      const { t } = useI18n();
+
+      const tips = ref(t('提示信息'));
       const config = {
-        content: '提示信息',
+        content: tips,
       };
+
       return {
+        tips,
         config,
       };
     },
@@ -86,25 +92,25 @@
 </script>
 
 <style lang="postcss">
-  .info {
-    font-size: 18px;
-    color: #3a84ff;
-  }
+.info {
+  font-size: 18px;
+  color: #3a84ff;
+}
 
-  .mr20 {
-    margin-right: 20px;
-  }
+.mr20 {
+  margin-right: 20px;
+}
 
-  .bk-tooltips-position-center {
-    margin: 10px auto;
-  }
+.bk-tooltips-position-center {
+  margin: 10px auto;
+}
 
-  .bk-tooltips-position-center-left {
-    display: inline-block;
-  }
+.bk-tooltips-position-center-left {
+  display: inline-block;
+}
 
-  .bk-tooltips-position-center-right {
-    display: inline-block;
-    margin-left: 58px;
-  }
+.bk-tooltips-position-center-right {
+  display: inline-block;
+  margin-left: 58px;
+}
 </style>

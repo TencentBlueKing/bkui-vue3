@@ -2,16 +2,16 @@
   <div>
     <bk-tag>MagicBox</bk-tag>
     <bk-tag theme="success">
-      企业邮箱
+      {{ t("企业邮箱") }}
     </bk-tag>
     <bk-tag theme="info">
-      腾讯视频
+      {{ t("腾讯视频") }}
     </bk-tag>
     <bk-tag theme="warning">
-      蓝鲸智云
+      {{ t("蓝鲸智云") }}
     </bk-tag>
     <bk-tag theme="danger">
-      企业微信
+      {{ t("企业微信") }}
     </bk-tag>
     <bk-tag
       class="custom-tag"
@@ -20,6 +20,20 @@
     </bk-tag>
   </div>
 </template>
+
+<script>
+  import { defineComponent } from 'vue';
+  import { useI18n } from 'vue-i18n';
+
+  export default defineComponent({
+    setup() {
+      const { t } = useI18n();
+      return {
+        t,
+      };
+    },
+  });
+</script>
 
 <style scoped>
 .custom-tag {

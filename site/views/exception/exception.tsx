@@ -25,6 +25,7 @@
 */
 
 import { defineComponent } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
@@ -66,11 +67,12 @@ const props: IPropsTableItem[] = [
 ];
 export default defineComponent({
   render() {
+    const { t } = useI18n();
     return (
       <div>
-        <DemoTitle name="Exception 异常提示" desc="" />
+        <DemoTitle name={ t('Exception 异常提示') } desc="" />
           <DemoBox
-            title="基础用法"
+            title={t('基础用法')}
             desc="配置 type 为异常类型 403、404、500、building、empty、search-empty，也可以不配置，默认为 404"
             componentName="exception"
             demoName="base-demo">

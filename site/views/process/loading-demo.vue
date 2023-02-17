@@ -8,15 +8,17 @@
 </template>;
 <script>
   import { defineComponent, reactive } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   export default defineComponent({
     setup() {
+      const { t } = useI18n();
       const state = reactive({
         list: [
-          { content: '测试一', description: '这是描述' },
-          { content: '测试二', description: '这是描述2', status: 'loading' },
-          { content: '测试三'  },
-          { content: '测试四' },
+          { content: t('测试一'), description: t('这是描述') },
+          { content: t('测试二'), description: t('这是描述2'), status: 'loading' },
+          { content: t('测试三')  },
+          { content: t('测试四') },
         ],
         curprocess: 2,
       });

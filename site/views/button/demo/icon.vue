@@ -2,13 +2,13 @@
   <div class="basic-button-list">
     <bk-button>
       <plus class="f22" />
-      新增
+      {{ t('新增') }}
     </bk-button>
     <bk-button
       theme="primary"
       class="ml10"
     >
-      下拉
+      {{ t('下拉') }}
       <angle-down class="f22" />
     </bk-button>
     <bk-button
@@ -57,9 +57,28 @@
   </div>
 </template>
 
-<script setup>
+<script>
   import { Loading } from 'bkui-vue';
   import { AngleDown, Plus, Search } from 'bkui-vue/lib/icon';
+  import { defineComponent } from 'vue';
+  import { useI18n } from 'vue-i18n';
+
+  export default defineComponent({
+    name: 'Icon',
+    components: {
+      AngleDown, Plus, Search,
+    },
+    setup() {
+      const { t } = useI18n();
+      return {
+        t,
+        Loading,
+        AngleDown,
+        Plus,
+        Search,
+      };
+    },
+  });
 </script>
 
 <style lang="postcss">

@@ -5,14 +5,18 @@
         theme="primary"
         @click="handleRandomRows"
       >
-        随机1000-9999行数据
+        {{ t('随机1000-9999行数据') }}
       </bk-button>
-      <span style="padding: 0 30px">当前行数：{{ randomRows.length }}</span>
+      <span style="padding: 0 30px">
+        {{ `${t('当前行数')}:` }}
+        {{ randomRows.length }}
+      </span>
     </div>
     <bk-table
       :columns="columns"
       :data="randomRows"
       :border="border"
+      :empty-text="t('暂无数据')"
       virtual-enabled
       settings
       :height="300"
@@ -22,15 +26,20 @@
 
 <script>
   import { defineComponent } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   import { DATA_COLUMNS, DATA_TABLE } from './options';
+
+
   export default defineComponent({
     components: {},
-    data() {
+    setup() {
+      const { t } = useI18n();
       return {
         randomRows: [...DATA_TABLE],
         columns: [...DATA_COLUMNS],
         border: ['row'],
+        t,
       };
     },
     mounted() {
@@ -45,7 +54,7 @@
             .map((_, index) => ({
               ip: `${index}--192.168.0.x`,
               source: `${index}_QQ`,
-              status: '创建中',
+              status: this.t('创建中'),
               create_time: `2018-05-25 15:02:24.${index}`,
             })),
         );

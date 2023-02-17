@@ -5,95 +5,107 @@
     :validate-values="validateValues"
   />
 </template>
-<script setup>
-  import { ref } from 'vue';
-  const data = [
-    {
-      name: '实例状态',
-      id: '1',
-      multiple: true,
-      placeholder: '请选择/请输入',
-      noValidate: true,
-      children: [
+<script>
+  import { defineComponent, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
+  export default defineComponent({
+    setup() {
+      const { t } = useI18n();
+      const data = [
         {
-          name: '创建中',
-          id: '1-2',
+          name: t('实例状态'),
+          id: '1',
+          multiple: true,
+          placeholder: t('请选择/请输入'),
+          noValidate: true,
+          children: [
+            {
+              name: t('创建中'),
+              id: '1-2',
+            },
+            {
+              name: t('运行中'),
+              id: '1-3',
+              disabled: false,
+            },
+            {
+              name: t('已关机'),
+              id: '1-4',
+            },
+          ],
         },
         {
-          name: '运行中',
-          id: '1-3',
-          disabled: false,
+          name: t('实例业务'),
+          id: '2',
+          placeholder: t('输入格式为XXX'),
+          noValidate: false,
+          children: [
+            {
+              name: t('王者荣耀'),
+              id: '2-1',
+              disabled: false,
+            },
+            {
+              name: t('刺激战场'),
+              id: '2-2',
+            },
+            {
+              name: t('绝地求生'),
+              id: '2-3',
+            },
+          ],
+          conditions: [
+            {
+              name: '>',
+              id: '>',
+            },
+            {
+              name: '>=',
+              id: '>=',
+            },
+            {
+              name: '<=',
+              id: '<=',
+            },
+            {
+              name: '<',
+              id: '<',
+            },
+            {
+              name: '=',
+              id: '=',
+            },
+          ],
         },
         {
-          name: '已关机',
-          id: '1-4',
+          name: t('IP地址'),
+          id: '3',
+          disabled: true,
         },
-      ],
+        {
+          name: t('实例名'),
+          id: '4',
+        },
+        {
+          name: t('实例地址'),
+          id: '5',
+        },
+        {
+          name: t('测试六'),
+          id: '6',
+        },
+      ];
+      const value = ref([]);
+      const validateValues = async (item, values) => {
+        console.info(item, values);
+        return !item ? t('格式错误') : true;
+      };
+
+      return {
+        data,
+        value,
+        validateValues,
+      };
     },
-    {
-      name: '实例业务',
-      id: '2',
-      placeholder: '输入格式为XXX',
-      noValidate: false,
-      children: [
-        {
-          name: '王者荣耀',
-          id: '2-1',
-          disabled: false,
-        },
-        {
-          name: '刺激战场',
-          id: '2-2',
-        },
-        {
-          name: '绝地求生',
-          id: '2-3',
-        },
-      ],
-      conditions: [
-        {
-          name: '>',
-          id: '>',
-        },
-        {
-          name: '>=',
-          id: '>=',
-        },
-        {
-          name: '<=',
-          id: '<=',
-        },
-        {
-          name: '<',
-          id: '<',
-        },
-        {
-          name: '=',
-          id: '=',
-        },
-      ],
-    },
-    {
-      name: 'IP地址',
-      id: '3',
-      disabled: true,
-    },
-    {
-      name: '实例名',
-      id: '4',
-    },
-    {
-      name: '实例地址',
-      id: '5',
-    },
-    {
-      name: '测试六',
-      id: '6',
-    },
-  ];
-  const value = ref([]);
-  const validateValues = async (item, values) => {
-    console.info(item, values);
-    return !item ? '格式错误' : true;
-  };
+  });
 </script>

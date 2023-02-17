@@ -5,16 +5,25 @@
   >
     <template #footer>
       <div class="custom-footer">
-        我是自定义 footer
+        {{ t('我是自定义 footer') }}
       </div>
     </template>
   </bk-date-picker>
 </template>
 
-<script setup>
-  import { ref } from 'vue';
-
-  const dateValue = ref(''); // new Date();
+<script>
+  import { defineComponent, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
+  export default defineComponent({
+    setup() {
+      const { t } = useI18n();
+      const dateValue = ref(''); // new Date();
+      return {
+        dateValue,
+        t,
+      };
+    },
+  });
 </script>
 
 <style lang="postcss">

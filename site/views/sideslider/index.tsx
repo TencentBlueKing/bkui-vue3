@@ -25,6 +25,7 @@
 */
 
 import { defineComponent } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
@@ -158,14 +159,15 @@ const SideSliserSlotJson: IPropsTableItem[] = [
 
 export default defineComponent({
   render() {
+    const { t } =  useI18n();
     return (
     <div>
       <DemoTitle
-        name="Sideslider侧栏"
+        name={ t('Sideslider 侧栏') }
         desc="Sideslider组件， 提供一个从两侧滑入的组件，供用户填写/查看更多信息。"
         link="https://www.google.com.hk/"/>
       <DemoBox
-        title="基础用法"
+        title={t('基础用法')}
         subtitle=""
         desc="使用默认配置的组件"
         componentName="sideslider"

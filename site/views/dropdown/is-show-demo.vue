@@ -6,7 +6,7 @@
       @show-change="handleShowChange"
     >
       <bk-button @click="handleShow">
-        点击触发
+        {{ tips }}
       </bk-button>
       <template #content>
         <bk-dropdown-menu>
@@ -21,21 +21,46 @@
     </bk-dropdown>
   </div>
 </template>
-<script setup>
-  import { ref } from 'vue';
+
+<script>
+  import { defineComponent, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   import BkDropdown from '@bkui-vue/dropdown';
   import BkMessage from '@bkui-vue/message';
 
-  const isShow = ref(false);
+  export default defineComponent({
+    components: {
+      BkDropdown,
+    },
+    setup() {
+      const { t } = useI18n();
 
-  const handleShowChange = (val) => {
-    BkMessage(`is-show: ${val}`);
-  };
+      const tips = ref(t('点击触发'));
+      const isShow = ref(false);
+      const dropdownList = ref([
+        t('生产环境'),
+        t('预发布环境'),
+        t('测试环境'),
+        t('正式环境'),
+        t('开发环境'),
+        t('调试环境'),
+      ]);
 
-  const handleShow = () => {
-    isShow.value = !isShow.value;
-  };
+      const handleShowChange = (val) => {
+        BkMessage(`is-show: ${val}`);
+      };
 
-  const dropdownList = ref(['生产环境', '预发布环境', '测试环境', '正式环境', '开发环境', '调试环境']);
+      const handleShow = () => {
+        isShow.value = !isShow.value;
+      };
+      return {
+        tips,
+        isShow,
+        dropdownList,
+        handleShowChange,
+        handleShow,
+      };
+    },
+  });
 </script>

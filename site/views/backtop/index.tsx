@@ -29,63 +29,64 @@ import { defineComponent } from 'vue';
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
+import i18n from '../../language/i18n';
 import { IPropsTableItem } from '../../typings';
 
 import BaseDemo from './base-demo.vue';
+
+const { t } = i18n.global;
 
 const backtopPropsJson: IPropsTableItem[] = [
   {
     name: 'visibilityHeight',
     type: 'Number',
     default: 200,
-    desc: '滚动多少px后，元素可见',
+    desc: t('滚动多少px后，元素可见'),
     optional: [],
   },
   {
     name: 'target',
     type: 'String',
     default: '',
-    desc: '触发滚动的对象',
+    desc: t('触发滚动的对象'),
     optional: [],
   },
   {
     name: 'right',
     type: 'Number',
     default: 40,
-    desc: '控制其显示位置, 距离页面右边距',
+    desc: t('控制其显示位置, 距离页面右边距'),
     optional: [],
   },
   {
     name: 'bottom',
     type: 'Number',
     default: 40,
-    desc: '控制其显示位置, 距离页面底部边距',
+    desc: t('控制其显示位置, 距离页面底部边距'),
     optional: [],
   },
   {
     name: 'extCls',
     type: 'String',
     default: '',
-    desc: '自定义样式',
+    desc: t('自定义样式'),
     optional: [],
   },
 
 ];
 
 export default defineComponent({
-  setup() {
-  },
   render() {
     return (
       <div>
         <DemoTitle
-          name="Backtop 回到顶部"
-          desc="Backtop 回到页面顶部的操作按钮"
+          name={ t('Backtop 回到顶部') }
+          desc={ t('Backtop 回到页面顶部的操作按钮')}
           link="https://www.google.com.hk/"/>
 
         <DemoBox
-          title="基础用法"
-          desc="向下滚动以显示按钮"
+          title={t('基础用法')}
+          desc={t('向下滚动以显示按钮')}
           componentName="backtop"
           demoName="base-demo">
             <BaseDemo></BaseDemo>
@@ -93,7 +94,7 @@ export default defineComponent({
 
         <PropsBox
           style="height: 1000px"
-          title="Backtop 属性"
+          title={t('Backtop 属性')}
           subtitle=""
           propsData={backtopPropsJson}/>
       </div>

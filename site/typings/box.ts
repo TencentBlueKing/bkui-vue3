@@ -24,9 +24,9 @@
 * IN THE SOFTWARE.
 */
 export interface IPropsTableItem {
-  name: string;
-  type: string,
-  default: unknown;
-  desc: string;
-  optional: string[];
+  name?: string;
+  type?: string,
+  default?: unknown;
+  desc?: string;
+  optional?: string[];
 }

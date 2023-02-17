@@ -26,7 +26,10 @@
  */
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 
+import i18n from '../language/i18n';
 import { NavGroupMeta } from '../typings';
+
+const { t } = i18n.global;
 
 /**
  * @description:导航配置
@@ -44,7 +47,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/start'),
     meta: {
       group: NavGroupMeta.Start,
-      navName: '快速上手',
+      navName: t('快速上手'),
     },
   },
   /**
@@ -57,7 +60,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/menu'),
     meta: {
       group: NavGroupMeta.Nav,
-      navName: 'Menu 菜单',
+      navName: t('Menu 菜单'),
     },
   },
   /**
@@ -70,7 +73,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/navigation/index'),
     meta: {
       group: NavGroupMeta.Nav,
-      navName: 'Navigation 导航',
+      navName: t('Navigation 导航'),
     },
   },
   /**
@@ -82,7 +85,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/loading'),
     meta: {
       group: NavGroupMeta.Feedback,
-      navName: 'Loading 加载',
+      navName: t('Loading 加载'),
     },
   },
   /**
@@ -94,7 +97,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/button'),
     meta: {
       group: NavGroupMeta.Base,
-      navName: 'Button 基础按钮',
+      navName: t('Button 基础按钮'),
     },
   },
   /**
@@ -106,7 +109,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/radio'),
     meta: {
       group: NavGroupMeta.Form,
-      navName: 'Radio 单选框',
+      navName: t('Radio 单选框'),
     },
   },
   /**
@@ -118,7 +121,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/checkbox'),
     meta: {
       group: NavGroupMeta.Form,
-      navName: 'Checkbox 多选框',
+      navName: t('Checkbox 多选框'),
     },
   },
   /**
@@ -130,7 +133,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/alert'),
     meta: {
       group: NavGroupMeta.Feedback,
-      navName: 'Alert 警告',
+      navName: t('Alert 警告'),
     },
   },
   /**
@@ -142,7 +145,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/fixed-navbar/index'),
     meta: {
       group: NavGroupMeta.Nav,
-      navName: 'FixedNavbar 悬浮导航',
+      navName: t('FixedNavbar 悬浮导航'),
     },
   },
   /**
@@ -154,7 +157,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/backtop/index'),
     meta: {
       group: NavGroupMeta.Nav,
-      navName: 'BackTop 返回顶部',
+      navName: t('BackTop 返回顶部'),
     },
   },
   /**
@@ -166,7 +169,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/icon/index'),
     meta: {
       group: NavGroupMeta.Base,
-      navName: 'Icon 图标',
+      navName: t('Icon 图标'),
     },
   },
   /**
@@ -178,7 +181,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/exception/exception'),
     meta: {
       group: NavGroupMeta.Feedback,
-      navName: 'Exception 异常提示',
+      navName: t('Exception 异常提示'),
     },
   },
   /**
@@ -190,7 +193,7 @@ const routes: RouteRecordRaw[] = [
   //   component: () => import('../views/pop-components'),
   //   meta: {
   //     group: NavGroupMeta.Feedback,
-  //     navName: 'PopComponents',
+  //     navName:  t('PopComponents',
   //   },
   // },
   /**
@@ -202,7 +205,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/card'),
     meta: {
       group: NavGroupMeta.Feedback,
-      navName: 'Card 卡片',
+      navName: t('Card 卡片'),
     },
   },
   /**
@@ -214,7 +217,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/badge'),
     meta: {
       group: NavGroupMeta.Data,
-      navName: 'Badge 标记',
+      navName: t('Badge 标记'),
     },
   },
   /**
@@ -226,7 +229,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/progress'),
     meta: {
       group: NavGroupMeta.Data,
-      navName: 'Progress 进度条',
+      navName: t('Progress 进度条'),
     },
   },
   /**
@@ -238,7 +241,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/switcher'),
     meta: {
       group: NavGroupMeta.Form,
-      navName: 'Switcher 开关',
+      navName: t('Switcher 开关'),
     },
   },
   /**
@@ -250,7 +253,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/breadcrumb'),
     meta: {
       group: NavGroupMeta.Nav,
-      navName: 'Breadcrumb 面包屑',
+      navName: t('Breadcrumb 面包屑'),
     },
   },
   /**
@@ -262,7 +265,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/link/index'),
     meta: {
       group: NavGroupMeta.Nav,
-      navName: 'Link 文字链接',
+      navName: t('Link 文字链接'),
     },
   },
   /**
@@ -274,7 +277,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/collapse/index'),
     meta: {
       group: NavGroupMeta.Data,
-      navName: 'Collapse 折叠面板',
+      navName: t('Collapse 折叠面板'),
     },
   },
   /**
@@ -286,7 +289,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/steps/index'),
     meta: {
       group: NavGroupMeta.Nav,
-      navName: 'Steps 步骤',
+      navName: t('Steps 步骤'),
     },
   },
   /**
@@ -298,7 +301,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/process/index'),
     meta: {
       group: NavGroupMeta.Nav,
-      navName: 'Process 步骤',
+      navName: t('Process 步骤'),
     },
   },
   /**
@@ -310,7 +313,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/select/select'),
     meta: {
       group: NavGroupMeta.Form,
-      navName: 'Select 下拉选框',
+      navName: t('Select 下拉选框'),
     },
   },
   /**
@@ -322,7 +325,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/timeline/index'),
     meta: {
       group: NavGroupMeta.Nav,
-      navName: 'Timeline 时间轴',
+      navName: t('Timeline 时间轴'),
     },
   },
   /**
@@ -334,7 +337,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/animate-number'),
     meta: {
       group: NavGroupMeta.Data,
-      navName: 'AnimateNumber 动画数字',
+      navName: t('AnimateNumber 动画数字'),
     },
   },
   /**
@@ -346,7 +349,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/rate'),
     meta: {
       group: NavGroupMeta.Data,
-      navName: 'Rate 评分',
+      navName: t('Rate 评分'),
     },
   },
   /**
@@ -358,7 +361,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/swiper'),
     meta: {
       group: NavGroupMeta.Data,
-      navName: 'Swiper 轮播图',
+      navName: t('Swiper 轮播图'),
     },
   },
   /**
@@ -370,7 +373,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/table'),
     meta: {
       group: NavGroupMeta.Data,
-      navName: 'Table 表格',
+      navName: t('Table 表格'),
     },
   },
   /**
@@ -382,7 +385,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/input'),
     meta: {
       group: NavGroupMeta.Form,
-      navName: 'Input 输入框',
+      navName: t('Input 输入框'),
     },
   },
   /**
@@ -394,7 +397,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/dropdown/dropdown'),
     meta: {
       group: NavGroupMeta.Data,
-      navName: 'DropdownMenu 下拉菜单',
+      navName: t('DropdownMenu 下拉菜单'),
     },
   },
   /**
@@ -406,7 +409,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/form'),
     meta: {
       group: NavGroupMeta.Form,
-      navName: 'Form 表单',
+      navName: t('Form 表单'),
     },
   },
   /**
@@ -418,7 +421,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/upload'),
     meta: {
       group: NavGroupMeta.Form,
-      navName: 'Upload 文件上传',
+      navName: t('Upload 文件上传'),
     },
   },
   // {
@@ -427,7 +430,7 @@ const routes: RouteRecordRaw[] = [
   //   component: () => import('../views/popover'),
   //   meta: {
   //     group: NavGroupMeta.Feedback,
-  //     navName: 'Popover 弹出框提示',
+  //     navName:  t('Popover 弹出框提示',
   //   },
   // },
   {
@@ -436,7 +439,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/popover'),
     meta: {
       group: NavGroupMeta.Feedback,
-      navName: 'Popover 弹出框提示',
+      navName: t('Popover 弹出框提示'),
     },
   },
   /**
@@ -448,7 +451,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/message/message'),
     meta: {
       group: NavGroupMeta.Feedback,
-      navName: 'Message 消息提示',
+      navName: t('Message 消息提示'),
     },
   },
   /**
@@ -460,7 +463,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/info-box/index'),
     meta: {
       group: NavGroupMeta.Feedback,
-      navName: 'InfoBox提示框',
+      navName: t('InfoBox提示框'),
     },
   },
   /**
@@ -472,7 +475,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/notify'),
     meta: {
       group: NavGroupMeta.Feedback,
-      navName: 'Notify 通知提示',
+      navName: t('Notify 通知提示'),
     },
   },
   /**
@@ -484,7 +487,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/tooltips'),
     meta: {
       group: NavGroupMeta.Data,
-      navName: 'Tooltips 工具提示',
+      navName: t('Tooltips 工具提示'),
     },
   },
   /**
@@ -496,7 +499,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/tree'),
     meta: {
       group: NavGroupMeta.Data,
-      navName: 'Tree 树',
+      navName: t('Tree 树'),
     },
   },
   /**
@@ -508,7 +511,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/color-picker/color-picker'),
     meta: {
       group: NavGroupMeta.Nav,
-      navName: 'ColorPicker 颜色选择器',
+      navName: t('ColorPicker 颜色选择器'),
     },
   },
   /**
@@ -520,7 +523,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/tag'),
     meta: {
       group: NavGroupMeta.Data,
-      navName: 'Tag 标签',
+      navName: t('Tag 标签'),
     },
   },
   {
@@ -529,7 +532,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/tag-input'),
     meta: {
       group: NavGroupMeta.Form,
-      navName: 'TagInput 标签',
+      navName: t('TagInput 标签'),
     },
   },
   {
@@ -538,7 +541,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/date-picker'),
     meta: {
       group: NavGroupMeta.Nav,
-      navName: 'DatePicker 日期选择器',
+      navName: t('DatePicker 日期选择器'),
     },
   },
   {
@@ -547,7 +550,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/time-picker'),
     meta: {
       group: NavGroupMeta.Nav,
-      navName: 'TimePicker 日期选择器',
+      navName: t('TimePicker 时间选择器'),
     },
   },
   /**
@@ -559,7 +562,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/divider/divider'),
     meta: {
       group: NavGroupMeta.Nav,
-      navName: 'Divider 分割线',
+      navName: t('Divider 分割线'),
     },
   },
   /**
@@ -571,7 +574,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/tab'),
     meta: {
       group: NavGroupMeta.Nav,
-      navName: 'Tab 选项卡',
+      navName: t('Tab 选项卡'),
     },
   },
   /**
@@ -583,7 +586,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/slider/slider'),
     meta: {
       group: NavGroupMeta.Feedback,
-      navName: 'Slider 滑动选择器',
+      navName: t('Slider 滑动选择器'),
     },
   },
   /**
@@ -595,7 +598,7 @@ const routes: RouteRecordRaw[] = [
   	  component: () => import('../views/sideslider'),
   	  meta: {
   	    group: NavGroupMeta.Feedback,
-  	    navName: 'Sideslider 侧栏',
+  	    navName: t('Sideslider 侧栏'),
   	  },
   },
   /**
@@ -607,7 +610,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/transfer'),
     meta: {
       group: NavGroupMeta.Feedback,
-      navName: 'Transfer 穿梭框',
+      navName: t('Transfer 穿梭框'),
     },
   },
   /**
@@ -619,7 +622,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/code-diff'),
     meta: {
       group: NavGroupMeta.Data,
-      navName: 'Diff 差异对比',
+      navName: t('Diff 差异对比'),
     },
   },
   /**
@@ -643,7 +646,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/pagination'),
     meta: {
       group: NavGroupMeta.Data,
-      navName: 'Pagination 分页',
+      navName: t('Pagination 分页'),
     },
   },
   /**
@@ -664,7 +667,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/container'),
     meta: {
       group: NavGroupMeta.Layout,
-      navName: 'Grid 栅格',
+      navName: t('Grid 栅格'),
     },
   },
   {
@@ -681,7 +684,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/dialog/index'),
     meta: {
       group: NavGroupMeta.Feedback,
-      navName: 'Dialog 对话框',
+      navName: t('Dialog 对话框'),
     },
   },
   {
@@ -689,7 +692,7 @@ const routes: RouteRecordRaw[] = [
     name: 'cascader',
     meta: {
       group: NavGroupMeta.Form,
-      navName: 'Cascader 级联选择',
+      navName: t('Cascader 级联选择'),
     },
     component: () => import('../views/cascader/index'),
   },
@@ -698,7 +701,7 @@ const routes: RouteRecordRaw[] = [
     name: 'searchSelect',
     meta: {
       group: NavGroupMeta.Form,
-      navName: 'SearchSelect 查询选择器',
+      navName: t('SearchSelect 查询选择器'),
     },
     component: () => import('../views/search-select/index'),
   },

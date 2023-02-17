@@ -11,13 +11,14 @@
       show-text
       true-value="a"
       false-value="b"
-      on-text="真值"
-      off-text="假值"
+      :on-text="t('真值')"
+      :off-text="t('假值')"
     />
   </div>
 </template>
 <script>
   import { defineComponent, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   import BkSwitcher from '@bkui-vue/switcher';
 
@@ -27,6 +28,7 @@
       BkSwitcher,
     },
     setup() {
+      const { t } = useI18n();
       const demo1 = ref('a');
       const handleChange = (value) => {
         console.log(value);
@@ -34,6 +36,7 @@
       return {
         demo1,
         handleChange,
+        t,
       };
     },
   });

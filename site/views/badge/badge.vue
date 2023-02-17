@@ -1,7 +1,7 @@
 <template>
   <div class="badge-demo">
     <span style="position: relative">
-      未读消息
+      {{ news }}
       <bk-badge
         :count="2"
         theme="danger"
@@ -14,15 +14,22 @@
         theme="danger"
         style=" margin-right: 5px;margin-left: 40px"
       />
-      未读消息
+      {{ news }}
     </span>
   </div>
 </template>
 
 <script>
-  import { defineComponent } from 'vue';
+  import { defineComponent, shallowRef } from 'vue';
+  import { useI18n } from 'vue-i18n';
   export default defineComponent({
-    components: {},
+    setup() {
+      const { t } = useI18n();
+      const news = shallowRef(t('未读消息'));
+      return {
+        news,
+      };
+    },
   });
 </script>
 <style lang="less" scoped>

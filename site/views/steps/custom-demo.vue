@@ -12,15 +12,17 @@
 <script>
   import { Bk } from 'bkui-vue/lib/icon';
   import { defineComponent, reactive } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   export default defineComponent({
     setup() {
+      const { t } = useI18n();
       const state = reactive({
         objectSteps: [
-          { title: '测试一', icon: Bk, description: '这是描述' },
-          { title: '测试二', icon: 2, description: '这是描述2', status: 'error' },
-          { title: '测试三', icon: 3  },
-          { title: '测试四' },
+          { title: t('测试一'), icon: Bk, description: t('这是描述') },
+          { title: t('测试二'), icon: 2, description: t('这是描述2'), status: 'error' },
+          { title: t('测试三'), icon: 3  },
+          { title: t('测试四') },
         ],
         curStep: 1,
         controllable: true,

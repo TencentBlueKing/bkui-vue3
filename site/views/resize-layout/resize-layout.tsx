@@ -24,6 +24,7 @@
 * IN THE SOFTWARE.
 */
 import { defineComponent } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import BkResizeLayout from '@bkui-vue/resize-layout';
 
@@ -47,39 +48,40 @@ const propsJson: IPropsTableItem[] = Object.keys(BkResizeLayout.props).map(prop 
 }));
 export default defineComponent({
   render() {
+    const { t } = useI18n();
     return (
       <div>
-        <DemoTitle name="Resize Layout" desc="通过拉伸侧栏调整布局大小" />
+        <DemoTitle name="Resize Layout" desc={t('通过拉伸侧栏调整布局大小')} />
         <DemoBox
-          title="基础用法"
+          title={t('基础用法')}
           desc=""
           componentName="resize-layout"
           demoName="base-demo">
             <BaseDemo />
         </DemoBox>
         <DemoBox
-          title="最小化"
+          title={t('最小化')}
           desc=""
           componentName="resize-layout"
           demoName="base-demo">
             <AutoMiniMizeDemo />
         </DemoBox>
         <DemoBox
-          title="实时拉伸"
+          title={ t('实时拉伸') }
           desc=""
           componentName="resize-layout"
           demoName="base-demo">
             <ImmediateDemo />
         </DemoBox>
         <DemoBox
-          title="可折叠"
+          title={ t('可折叠') }
           desc=""
           componentName="resize-layout"
           demoName="base-demo">
             <CollapsibleDemo />
         </DemoBox>
         <DemoBox
-          title="多级嵌套"
+          title={ t('多级嵌套') }
           desc=""
           componentName="resize-layout"
           demoName="base-demo">

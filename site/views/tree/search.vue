@@ -7,7 +7,7 @@
     />
     <div class="row">
       <div class="cell">
-        <span>简化配置: <code>search = string</code></span>
+        <span>{{ t("简化配置") }}: <code>search = string</code></span>
         <bk-tree
           :data="treeData"
           label="name"
@@ -16,7 +16,7 @@
         />
       </div>
       <div class="cell">
-        <span>详细配置：<code>search = { SearchOption }</code></span>
+        <span>{{ t("详细配置") }}：<code>search = { SearchOption }</code></span>
         <bk-tree
           :data="treeData"
           label="name"
@@ -25,7 +25,7 @@
         />
       </div>
       <div class="cell">
-        <span>详细配置-自定义搜索条件：<code>search = { SearchOption }</code></span>
+        <span>{{ t("详细配置-自定义搜索条件") }}：<code>search = { SearchOption }</code></span>
         <bk-tree
           :data="treeData"
           label="name"
@@ -39,6 +39,7 @@
 
 <script>
   import { defineComponent } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   import { BASIC_DATA } from './options';
   export default defineComponent({
@@ -47,6 +48,7 @@
       return {
         treeData: [...BASIC_DATA],
         searchVal: '',
+        t: useI18n().t,
       };
     },
     computed: {

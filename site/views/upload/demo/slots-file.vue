@@ -7,7 +7,7 @@
       :files="files"
       :size="5"
       :handle-res-code="handleRes"
-      :tip="'最大上传5(Mb)的文件'"
+      :tip="t('最大上传5(Mb)的文件')"
       :url="'https://jsonplaceholder.typicode.com/posts/'"
     >
       <template #file="{ file }">
@@ -17,46 +17,68 @@
             class="action-link"
             href="javascrip:;"
             @click.stop.prevent="handleRemove(file)"
-          >删除</a>
+          >{{ t('删除') }}</a>
           <a
             v-if="file.status === 'fail'"
             class="action-link"
             href="javascrip:;"
             @click="handleRetry(file)"
-          >重试</a>
+          >{{ t('重试') }}</a>
         </div>
       </template>
     </bk-upload>
   </div>
 </template>
 
-<script setup>
-  import { ref } from 'vue';
+<script>
+  import { defineComponent, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   import BkUpload from '@bkui-vue/upload';
-
-  const uploader = ref(null);
-
-  const files = [
-    {
-      name: 'test.ppt',
+  export default defineComponent({
+    components: {
+      BkUpload,
     },
-  ];
+    setup() {
+      const { t } = useI18n();
 
-  const handleRemove = (file) => {
-    uploader.value?.handleRemove(file);
-  };
+      const uploader = ref(null);
 
-  const handleRetry = (file) => {
-    uploader.value?.handleRetry(file);
-  };
+      const files = [
+        {
+          name: 'test.ppt',
+        },
+      ];
 
-  const handleRes = (response) => {
-    if (response.id) {
-      return true;
-    }
-    return false;
-  };
+      const handleRes = (response) => {
+        if (response.id) {
+          return true;
+        }
+        return false;
+      };
+
+      const handleRemove = (file) => {
+        uploader.value?.handleRemove(file);
+      };
+
+      const handleRetry = (file) => {
+        uploader.value?.handleRetry(file);
+      };
+
+      const handleError = (file, fileList, error) => {
+        console.log(file, fileList, error, 'handleError');
+      };
+
+      return {
+        t,
+        files,
+        handleRemove,
+        handleRetry,
+        handleRes,
+        handleError,
+      };
+    },
+  });
 </script>
 
 <style scoped>

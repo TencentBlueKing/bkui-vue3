@@ -25,6 +25,7 @@
 */
 
 import { defineComponent, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import { CogShape } from '@bkui-vue/icon/';
 import { BkTab, BkTabPanel } from '@bkui-vue/tab';
@@ -32,16 +33,18 @@ import { BkTab, BkTabPanel } from '@bkui-vue/tab';
 export default defineComponent({
   name: 'TabDemo',
   setup() {
+    const { t } = useI18n();
     const active = ref('mission');
     const panels = ref([
-      { name: 'mission', label: '任务报表', count: 10 },
-      { name: 'config', label: '加速配置', count: 20 },
-      { name: 'history', label: '历史版本', count: 30 },
-      { name: 'deleted', label: '已归档加速任务', count: 40 },
+      { name: 'mission', label: t('任务报表'), count: 10 },
+      { name: 'config', label: t('加速配置'), count: 20 },
+      { name: 'history', label: t('历史版本'), count: 30 },
+      { name: 'deleted', label: t('已归档加速任务'), count: 40 },
     ]);
     return {
       active,
       panels,
+      t,
     };
   },
   methods: {
@@ -56,7 +59,7 @@ export default defineComponent({
         .substring(4, 10);
       this.panels.push({
         name,
-        label: `新标签页-${name.substring(0, 4)}`,
+        label: `${this.t('新标签页')}-${name.substring(0, 4)}`,
         count: 50,
       });
       this.active = name;
@@ -90,18 +93,18 @@ export default defineComponent({
     return (
       <div style='text-align:left;'>
         <div class='mt40'>
-          <h2>基础用法</h2>
-          <div class='mb20'>基础的、简洁的标签页。</div>
+          <h2>{ this.t('基础用法') }</h2>
+          <div class='mb20'>{ this.t('基础的、简洁的标签页。') }</div>
           <BkTab
             type='unborder-card'
             v-model={[this.active, 'active']}>
             {panels}
           </BkTab>
-          <button class='mt20' onClick={() => this.changeActive('history')}> 更改为：history</button>
+          <button class='mt20' onClick={() => this.changeActive('history')}> { this.t('更改为：history') }</button>
         </div>
         <div class='mt40'>
-          <h2>选项卡样式</h2>
-          <div class='mb20'>基础的、简洁的标签页。</div>
+          <h2>{ this.t('选项卡样式') }</h2>
+          <div class='mb20'>{ this.t('基础的、简洁的标签页。')}</div>
           <BkTab
             type='card'
             v-model={[this.active, 'active']}>
@@ -109,8 +112,8 @@ export default defineComponent({
           </BkTab>
         </div>
         <div class='mt40'>
-          <h2>卡片样式</h2>
-          <div class='mb20'>基础的、简洁的标签页。</div>
+          <h2>{ this.t('卡片样式') }</h2>
+          <div class='mb20'>{ this.t('基础的、简洁的标签页。') }</div>
           <BkTab
             type='border-card'
             v-model={[this.active, 'active']}>
@@ -118,7 +121,7 @@ export default defineComponent({
           </BkTab>
         </div>
         <div class='mt40'>
-          <h2>垂直居左-基础样式</h2>
+          <h2>{ this.t('垂直居左-基础样式') }</h2>
           <div class='mb20'>left</div>
           <BkTab
             tabPosition='left'
@@ -127,7 +130,7 @@ export default defineComponent({
           </BkTab>
         </div>
         <div class='mt40'>
-          <h2>垂直居右-基础样式</h2>
+          <h2>{ this.t('垂直居右-基础样式') }</h2>
           <div class='mb20'>right</div>
           <BkTab
             onAdd={this.addPanel}
@@ -136,8 +139,8 @@ export default defineComponent({
           </BkTab>
         </div>
         <div class='mt40'>
-          <h2>拖动</h2>
-          <div class='mb20'>排序</div>
+          <h2>{ this.t('拖动') }</h2>
+          <div class='mb20'>{ this.t('排序') }</div>
           <BkTab
             sortable
             v-model={[this.active, 'active']}>
@@ -145,8 +148,8 @@ export default defineComponent({
           </BkTab>
         </div>
         <div class='mt40'>
-          <h2>自定义内容</h2>
-          <div class='mb20'>slot用法</div>
+          <h2>{ this.t('自定义内容') }</h2>
+          <div class='mb20'>{ this.t('slot用法') }</div>
           <BkTab
             addable
             closable
@@ -158,7 +161,7 @@ export default defineComponent({
                 key={index} name={item.name} label={item.label}
                 v-slots={{
                   label: () => (<div>{index}---{item.name}</div>),
-                  panel: () => (<div>tab内容：{index}---{item.name}</div>),
+                  panel: () => (<div>{ `${this.t('tab内容')}:` }{index}---{item.name}</div>),
                 }}/>
             ))}
           </BkTab>

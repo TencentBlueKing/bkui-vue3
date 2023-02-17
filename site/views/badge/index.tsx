@@ -31,9 +31,13 @@ import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import { IPropsTableItem } from '../../typings';
 
+import i18n from './../../language/i18n';
 import Badge from './badge.vue';
 import BadgeDemo from './badge-demo.vue';
 import BadgeDot from './badge-dot.vue';
+
+const { t } = i18n.global;
+
 const menuPropsJson: IPropsTableItem[] = [
   {
     name: 'theme',
@@ -60,14 +64,14 @@ const menuPropsJson: IPropsTableItem[] = [
     name: 'radius',
     type: 'String | Number',
     default: '18px',
-    desc: '配置自定义弧度，以实现多种形状 ',
+    desc: '配置自定义弧度，以实现多种形状',
     optional: [],
   },
   {
     name: 'valLength',
     type: 'Number',
     default: 3,
-    desc: '配置val字符显示长度，最大值建议英文不超过3个字母，中文不超过2个汉字 ',
+    desc: '配置val字符显示长度，最大值建议英文不超过3个字母，中文不超过2个汉字',
     optional: [],
   },
   {
@@ -98,7 +102,12 @@ const menuPropsJson: IPropsTableItem[] = [
     desc: '配置自定义样式类名，传入的类会被加在组件最外层的 DOM `.bk-badge-main` 上',
     optional: [],
   },
-];
+].map((item: IPropsTableItem) => {
+  const result =  Object.assign(item, { desc: t(item.desc) });
+  return {
+    ...result,
+  };
+});
 
 export default defineComponent({
   setup() {
@@ -110,27 +119,28 @@ export default defineComponent({
       <div>
         <DemoTitle
           name="Badge"
-          desc="Badge 组件， 可以出现在任意 DOM 节点角上的数字或状态标记。" />
+          desc={ t('Badge 组件， 可以出现在任意 DOM 节点角上的数字或状态标记')}
+        />
         <DemoBox
-          title="基础用法"
+          title={t('基础用法')}
           subtitle=""
-          desc="用默认配置初始化组件"
+          desc={ t('用默认配置初始化组件') }
           componentName="badge"
           demoName="badge-demo">
             <BadgeDemo/>
           </DemoBox>
         <DemoBox
-          title="不包裹任何元素，独立使用"
+          title={ t('不包裹任何元素，独立使用') }
           subtitle=""
-          desc="可在不包裹任何元素情况下，独立使用 badge"
+          desc={ t('可在不包裹任何元素情况下，独立使用 badge') }
           componentName="badge"
           demoName="badge">
             <Badge />
         </DemoBox>
         <DemoBox
-          title="无内容红点"
+          title={ t('无内容红点')}
           subtitle=""
-          desc="配置参数 dot"
+          desc={ t('配置参数 dot') }
           componentName="badge"
           demoName="badge-dot">
             <BadgeDot/>

@@ -29,29 +29,32 @@ import { defineComponent } from 'vue';
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
+import i18n from '../../language/i18n';
 import { IPropsTableItem } from '../../typings';
 
 import BaseDemo from './base-demo.vue';
+
+const { t } = i18n.global;
 const menuProps: IPropsTableItem[] = [
   {
     name: 'width',
     type: 'String',
     default: '1em',
-    desc: 'svg元素的宽度',
+    desc: t('svg元素的宽度'),
     optional: [],
   },
   {
     name: 'height',
     type: 'String',
     default: [],
-    desc: 'svg元素的高度',
+    desc: t('svg元素的高度'),
     optional: [],
   },
   {
     name: 'fill',
     type: 'String',
     default: 'currentColor',
-    desc: 'svg元素的填充颜色',
+    desc: t('svg元素的填充颜色'),
     optional: [],
   },
 ];
@@ -61,11 +64,12 @@ export default defineComponent({
       <div>
         <DemoTitle
           name="Icon"
-          desc="Icon组件， 可以通过组件的使用方式按需加载。"/>
+          desc={ t('Icon组件， 可以通过组件的使用方式按需加载。') }
+        />
         <DemoBox
-          title="Icon展示"
-          subtitle="这里展示了我们UI所用到的所有Icon, 点击复制使用"
-          desc="点击复制使用Icon组件"
+          title={ t('Icon展示') }
+          subtitle={ t('这里展示了我们UI所用到的所有Icon, 点击复制使用') }
+          desc={ t('点击复制使用Icon组件') }
           componentName="icon"
           demoName="base-demo">
              <BaseDemo/>

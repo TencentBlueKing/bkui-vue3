@@ -3,16 +3,17 @@
     <bk-table
       :data="tableData"
       :settings="settings"
+      :empty-text="t('暂无数据')"
       border="horizontal"
     >
       <bk-table-column
-        label="序号"
+        :label="t('序号')"
         type="index"
         sort
         :width="80"
       />
       <bk-table-column
-        label="名称/内网IP"
+        :label="t('名称/内网IP')"
         prop="ip"
       >
         <template #default="props">
@@ -20,11 +21,11 @@
         </template>
       </bk-table-column>
       <bk-table-column
-        label="来源"
+        :label="t('来源')"
         prop="source"
       />
       <bk-table-column
-        label="创建时间"
+        :label="t('创建时间')"
         prop="create_time"
       />
     </bk-table>
@@ -32,51 +33,62 @@
 </template>
 
 <script>
-  import { defineComponent } from 'vue';
+  import { defineComponent, onMounted, reactive } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   import { DATA_COLUMNS, DATA_TABLE } from './options';
   export default defineComponent({
-    data() {
+    setup() {
+      const { t } = useI18n();
+      const settings = reactive({
+        fields: [],
+        checked: [],
+      });
+
+      const handleSortBy = (...arg) => {
+        console.log('handleSortBy', arg);
+      };
+
+      const handleDblClick = (...args) => {
+        console.log(args);
+      };
+
+      onMounted(() => {
+        setTimeout(() => {
+          settings.checked.push('index');
+          settings.fields.push(...[
+            {
+              label: t('序号'),
+              field: 'index',
+              disabled: true,
+            },
+            {
+              label: t('名称/内网IP'),
+              field: 'ip',
+            },
+            {
+              label: t('来源'),
+              field: 'source',
+            },
+            {
+              label: t('创建时间'),
+              field: 'create_time',
+            },
+          ]);
+        }, 1000);
+      });
+
       return {
         tableData: [...DATA_TABLE],
         columns: [...DATA_COLUMNS],
-        settings: {
-          fields: [],
-          checked: [],
-        },
+        settings,
+        handleSortBy,
+        handleDblClick,
+        t,
       };
     },
-    mounted() {
-      setTimeout(() => {
-        this.settings.checked.push('index');
-        this.settings.fields.push(...[
-          {
-            label: '序号',
-            field: 'index',
-            disabled: true,
-          },
-          {
-            label: '名称/内网IP',
-            field: 'ip',
-          },
-          {
-            label: '来源',
-            field: 'source',
-          },
-          {
-            label: '创建时间',
-            field: 'create_time',
-          },
-        ]);
-      }, 1000);
-    },
     methods: {
-      handleSortBy(arg) {
-        console.log('handleSortBy', arg);
-      },
-      handleDblClick(...args) {
-        console.log(args);
-      },
+
     },
   });
 </script>

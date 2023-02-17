@@ -1,54 +1,65 @@
 <template>
-  <div style=" width: 100%;height: 300px">
+  <div style="width: 100%; height: 300px">
     <bk-table
       :columns="columns"
       :data="tableData"
       height="100%"
       :settings="settings"
+      :empty-text="t('暂无数据')"
       @scroll-bottom="handleScrollBottom"
     />
   </div>
 </template>
 
 <script>
-  import { defineComponent } from 'vue';
+  import { defineComponent, reactive } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   import { DATA_FIX_COLUMNS, DATA_FIX_TABLE } from './options';
   export default defineComponent({
     components: {},
-    data() {
+    setup() {
+      const { t } = useI18n();
+
+      const settings = reactive({
+        checked: ['index'],
+        fields: [
+          {
+            label: t('序号'),
+            field: 'index',
+            disabled: true,
+          },
+          {
+            label: t('名称/内网IP'),
+            field: 'ip',
+          },
+          {
+            label: t('来源'),
+            field: 'source',
+          },
+          {
+            label: t('创建时间'),
+            field: 'create_time',
+          },
+        ],
+      });
+
+      const handleDblClick  = (...args) => {
+        console.log(args);
+      };
+
+      const handleScrollBottom = (args) => {
+        console.log('handleScrollBottom', args);
+      };
+
       return {
         tableData: [...DATA_FIX_TABLE],
         columns: [...DATA_FIX_COLUMNS],
-        settings: {
-          checked: ['index'],
-          fields: [{
-                     label: '序号',
-                     field: 'index',
-                     disabled: true,
-                   },
-                   {
-                     label: '名称/内网IP',
-                     field: 'ip',
-                   },
-                   {
-                     label: '来源',
-                     field: 'source',
-                   },
-                   {
-                     label: '创建时间',
-                     field: 'create_time',
-                   }],
-        },
+        settings,
+        handleDblClick,
+        handleScrollBottom,
+        t,
       };
-    },
-    methods: {
-      handleDblClick(...args) {
-        console.log(args);
-      },
-      handleScrollBottom(args) {
-        console.log('handleScrollBottom', args);
-      },
     },
   });
 </script>

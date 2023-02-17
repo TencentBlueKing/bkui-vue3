@@ -1,7 +1,7 @@
 <template>
   <span
     ref="nodeRef"
-    v-bk-tooltips="{ content: '提示信息', delay: 3000 }"
+    v-bk-tooltips="tips"
     class="bk-tooltips-base"
   >
     <info />
@@ -11,7 +11,8 @@
 <script>
   import { bkTooltips } from 'bkui-vue';
   import { Info } from 'bkui-vue/lib/icon';
-  import { defineComponent } from 'vue';;
+  import { defineComponent, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   export default defineComponent({
     components: {
@@ -19,6 +20,14 @@
     },
     directives: {
       bkTooltips,
+    },
+    setup() {
+      const { t } = useI18n();
+      const tips = ref({ content: t('提示信息'), delay: 3000 });
+
+      return {
+        tips,
+      };
     },
   });
 </script>

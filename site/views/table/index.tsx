@@ -29,6 +29,7 @@ import { defineComponent } from 'vue';
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
+import i18n from '../../language/i18n';
 
 import basic from './basic.vue';
 import basicFilter from './basic-filter.vue';
@@ -50,6 +51,9 @@ import ScrollLoading from './scroll-loading.vue';
 import ScrollLoadingSlot from './scroll-loading-slot.vue';
 import Selection from './selection.vue';
 import virtualRender from './virtual-render.vue';
+
+const { t } = i18n.global;
+
 export default defineComponent({
   components: {
     basic,
@@ -91,7 +95,7 @@ export default defineComponent({
         attrs: {
           title: '基础用法-模板方式调用 bk-column',
           subtitle: '基础用法，用于表单内容的录入',
-          desc: 'props: 支持 `field` 和 `prop`两种配置，配置效果一样',
+          desc: t('props: 支持 `field` 和 `prop`两种配置，配置效果一样'),
           componentName: 'table',
           demoName: 'column-template',
         },
@@ -218,7 +222,7 @@ export default defineComponent({
         attrs: {
           title: '底部加载',
           subtitle: '配置底部加载更多',
-          desc: '配置scroll-loading属性设置表格底部加载样式，结合scroll-end监听表格滚动至底部事件进行分页加载',
+          desc: t('配置scroll-loading属性设置表格底部加载样式，结合scroll-end监听表格滚动至底部事件进行分页加载'),
           componentName: 'table',
           demoName: 'scroll-loading',
         },
@@ -232,7 +236,7 @@ export default defineComponent({
         attrs: {
           title: '底部加载插槽',
           subtitle: '自定义配置底部加载更多,需要设置 scroll-loading = true',
-          desc: '配置scroll-loading属性设置表格底部加载样式，结合scroll-end监听表格滚动至底部事件进行分页加载',
+          desc: t('配置scroll-loading属性设置表格底部加载样式，结合scroll-end监听表格滚动至底部事件进行分页加载'),
           componentName: 'table',
           demoName: 'scroll-loading-slot',
         },
@@ -326,23 +330,38 @@ export default defineComponent({
          */
         component: () => <BasicSpan></BasicSpan>,
       },
-    ];
+    ].map((item) => {
+      if (Object.prototype.hasOwnProperty.call(item, 'attrs')) {
+        const result = Object.assign(item, {
+          attrs: {
+            ...item.attrs,
+            title: item?.attrs?.title?.length > 0 ? t(item.attrs.title) : item.attrs.title,
+            subtitle:
+              item?.attrs?.subtitle?.length > 0 ? t(item.attrs.subtitle) : item.attrs.subtitle,
+            // desc:
+            //   item?.attrs?.desc?.length > 0 ? t(item.attrs.desc) : item.attrs.desc,
+          },
+        });
+        return result;
+      }
+      return item;
+    });
 
     /**
      * eventColumnMap
      * @returns
      */
     const eventColumnMap = {
-      name: '名称',
-      desc: '说明',
-      params: '参数',
+      name: t('名称'),
+      desc: t('说明'),
+      params: t('参数'),
     };
 
     return (
       <div>
         <DemoTitle
           name="Table"
-          desc="Table组件， 为页面和功能提供列表。"
+          desc={t('Table组件， 为页面和功能提供列表')}
           link="https://www.google.com.hk/"/>
           {
             configs.map(cfg => <DemoBox { ...cfg.attrs } optionData={ TABLE_DATA }>

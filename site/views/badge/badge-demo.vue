@@ -31,7 +31,7 @@
     </bk-badge>
     <bk-badge
       position="bottom-right"
-      :count="'数字字符串'"
+      :count="countText"
       :radius="'0px'"
       theme="warning"
       style="margin-right: 40px"
@@ -45,10 +45,18 @@
 
 <script>
   import { Help } from 'bkui-vue/lib/icon';
-  import { defineComponent } from 'vue';
+  import { defineComponent, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
   export default defineComponent({
     components: {
       Help,
+    },
+    setup() {
+      const { t } = useI18n();
+      const countText = ref(t('数字'));
+      return {
+        countText,
+      };
     },
   });
 </script>

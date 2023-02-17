@@ -5,7 +5,7 @@
         theme="primary"
         @click="handleRandomRows"
       >
-        随机数据
+        {{ t('随机数据') }}
       </bk-button>
     </div>
     <div style="height: 400px;">
@@ -22,6 +22,7 @@
 
 <script>
   import { defineComponent } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   import { BASIC_DATA } from './options';
   export default defineComponent({
@@ -29,6 +30,7 @@
     data() {
       return {
         treeData: [...BASIC_DATA],
+        t: useI18n().t,
       };
     },
     methods: {

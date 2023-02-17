@@ -4,7 +4,7 @@
       theme="primary"
       @click="isGray = !isGray"
     >
-      切换{{ !isGray ? '灰色' : '白色' }}背景
+      {{ t('切换') }}{{ t(!isGray ? '灰色' : '白色') }}{{ t('背景') }}
     </bk-button>
   </div>
   <div class="exception-wrap">
@@ -12,22 +12,22 @@
       class="exception-wrap-item exception-part"
       type="403"
       scene="part"
-      title="没有权限"
-      description="你没有相应业务的访问权限，请前往申请相关业务权限"
+      :title="t('没有权限')"
+      :description="t('你没有相应业务的访问权限，请前往申请相关业务权限')"
       :class="{'exception-gray': isGray}"
     >
       <bk-button
         text
         theme="primary"
       >
-        去申请
+        {{ t('去申请') }}
       </bk-button>
     </bk-exception>
     <bk-exception
       class="exception-wrap-item exception-part"
       type="empty"
       scene="part"
-      description="没有数据"
+      :description="t('没有数据')"
       :class="{'exception-gray': isGray}"
     />
   </div>
@@ -36,23 +36,38 @@
       class="exception-wrap-item exception-part"
       type="500"
       scene="part"
-      description="服务维护中"
+      :description="t('服务维护中')"
       :class="{'exception-gray': isGray}"
     />
     <bk-exception
       class="exception-wrap-item exception-part"
       type="search-empty"
       scene="part"
-      description="搜索为空"
+      :description="t('搜索为空')"
       :class="{'exception-gray': isGray}"
     />
   </div>
 </template>
-<script setup>
-  import { ref } from 'vue';
+<script>
+  import { defineComponent, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   import BkException from '@bkui-vue/exception';
-  const isGray = ref(false);
+  export default defineComponent({
+    components: {
+      BkException,
+    },
+    setup() {
+      const { t } = useI18n();
+
+      const isGray = ref(false);
+      return {
+        isGray,
+        t,
+      };
+    },
+  });
+
 
 </script>
 <style>

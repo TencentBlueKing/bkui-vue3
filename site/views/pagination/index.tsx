@@ -29,6 +29,7 @@ import { defineComponent } from 'vue';
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
+import i18n from '../../language/i18n';
 import {
   type IPropsTableItem,
 } from '../../typings';
@@ -36,11 +37,13 @@ import {
 import DemoPagination from './demo/pagination.vue';
 import DemoPaginationSmall from './demo/pagination-small.vue';
 
+const { t } = i18n.global;
+
 const paginationProps: IPropsTableItem[] = [
   {
     name: 'model-value / v-model',
     type: 'String',
-    default: '当前页码',
+    default: t('当前页码'),
     desc: '',
     optional: [],
   },
@@ -55,7 +58,7 @@ const paginationProps: IPropsTableItem[] = [
     name: 'limit',
     type: 'Number',
     default: '',
-    desc: '每页显示条数(须存在于limit-list中) ',
+    desc: '每页显示条数(须存在于limit-list中)',
     optional: [],
   },
   {
@@ -121,7 +124,12 @@ const paginationProps: IPropsTableItem[] = [
     desc: '下一页按钮文案',
     optional: [],
   },
-];
+].map((item: IPropsTableItem) => {
+  const result =  Object.assign(item, { desc: item.desc ? t(item.desc) : item.desc });
+  return {
+    ...result,
+  };
+});
 
 const paginationEvents: IPropsTableItem[] = [
   {
@@ -138,7 +146,12 @@ const paginationEvents: IPropsTableItem[] = [
     desc: '当前分页尺寸变化时的回调',
     optional: [],
   },
-];
+].map((item: IPropsTableItem) => {
+  const result =  Object.assign(item, { desc: t(item.desc) });
+  return {
+    ...result,
+  };
+});
 
 export default defineComponent({
   name: 'Pagination',
@@ -147,28 +160,28 @@ export default defineComponent({
       <div>
         <DemoTitle
           name="Pagination"
-          desc="数据分页"
+          desc={ t('数据分页') }
           link="https://www.qq.com/"/>
         <DemoBox
-          title="基本用法"
+          title={ t('基本用法') }
           desc=""
           componentName="pagination"
           demoName="/demo/pagination">
             <DemoPagination />
         </DemoBox>
         <DemoBox
-          title="小型分页"
+          title={ t('小型分页') }
           desc=""
           componentName="pagination"
           demoName="/demo/pagination-small">
             <DemoPaginationSmall />
         </DemoBox>
         <PropsBox
-          title="Pagination 属性"
+          title={ t('Pagination 属性') }
           subtitle=""
           propsData={paginationProps}/>
         <PropsBox
-          title="Pagination 事件"
+          title= { t('Pagination 事件') }
           subtitle=""
           propsData={paginationEvents}/>
       </div>

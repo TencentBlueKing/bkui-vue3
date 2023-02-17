@@ -29,6 +29,7 @@ import { defineComponent } from 'vue';
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
+import i18n from '../../language/i18n';
 import {
   type IPropsTableItem,
 } from '../../typings';
@@ -43,47 +44,49 @@ import Outline from './demo/outline.vue';
 import Size from './demo/size.vue';
 import Text from './demo/text.vue';
 
+const { t } = i18n.global;
+
 const buttonProps: IPropsTableItem[] = [
   {
     name: 'theme',
     type: 'String',
     default: '',
-    desc: '按钮主题',
+    desc: t('按钮主题'),
     optional: ['priamry', 'success', 'warning', 'danger'],
   },
   {
     name: 'hoverTheme',
     type: 'String',
     default: '',
-    desc: 'mouseHover 按钮样式, 当设置了此属性时，theme 和 text 失效',
+    desc: t('mouseHover 按钮样式, 当设置了此属性时，theme 和 text 失效'),
     optional: ['priamry', 'success', 'warning', 'danger'],
   },
   {
     name: 'disabled',
     type: 'Boolean',
     default: false,
-    desc: '是否不可用',
+    desc: t('是否不可用'),
     optional: [],
   },
   {
     name: 'text',
     type: 'Boolean',
     default: false,
-    desc: '是否为文字按钮',
+    desc: t('是否为文字按钮'),
     optional: [],
   },
   {
     name: 'outline',
     type: 'Boolean',
     default: false,
-    desc: '是否为反色按钮',
+    desc: t('是否为反色按钮'),
     optional: [],
   },
   {
     name: 'size',
     type: 'String',
     default: null,
-    desc: '按钮尺寸大小',
+    desc: t('按钮尺寸大小'),
     optional: ['small', 'large'],
   },
 ];
@@ -93,62 +96,62 @@ const buttonEvents: IPropsTableItem[] = [
     name: 'click',
     type: 'String',
     default: null,
-    desc: '点击时触发事件',
+    desc: t('点击时触发事件'),
     optional: [],
   },
 ];
 
 const demos = [{
-  title: '基础按钮',
-  desc: '基础按钮提供 5 种主题，由 theme 属性来定义，可选的主题有 default, primary, warning, success, danger，默认为 default。',
+  title: t('基础按钮'),
+  desc: `${t('基础按钮提供 5 种主题，由 theme 属性来定义，可选的主题有 default, primary, warning, success, danger，默认为 default')}。`,
   componentName: 'button',
   demoName: 'demo/basic',
   DemoComponent: Basic,
 }, {
-  title: '禁用按钮',
-  desc: '配置 disabled 属性来使按钮禁用',
+  title: t('禁用按钮'),
+  desc: t('配置 disabled 属性来使按钮禁用'),
   componentName: 'button',
   demoName: 'demo/disabled',
   DemoComponent: Disabled,
 }, {
-  title: '图标按钮',
-  desc: '可以在slot自定义icon ，设置loading 的时候，会显示 loading 效果。可以用loading-mode【spin | default 】属性指定Loading效果，',
+  title: t('图标按钮'),
+  desc: t('可以在slot自定义icon ，设置loading 的时候，会显示 loading 效果。可以用loading-mode【spin 或者 default 】属性指定Loading效果'),
   componentName: 'button',
   demoName: 'demo/icon',
   DemoComponent: Icon,
 }, {
-  title: '按钮组',
-  desc: '可以使用 ButtonGroup实现按钮组效果',
+  title: t('按钮组'),
+  desc: t('可以使用 ButtonGroup实现按钮组效果'),
   componentName: 'button',
   demoName: 'demo/group',
   DemoComponent: Group,
 }, {
-  title: '尺寸',
-  desc: '可以使用 size 属性来定义按钮的尺寸，可接受 small large',
+  title: t('尺寸'),
+  desc: t('可以使用 size 属性来定义按钮的尺寸，可接受 small large'),
   componentName: 'button',
   demoName: 'demo/size',
   DemoComponent: Size,
 }, {
-  title: '文字按钮',
-  desc: '通过设置 text 属性来配置文字按钮。文字按钮同样提供 5 种主题，由 theme 属性来定义，可选的主题有 default,primary,warning,success,danger，默认为 default。另外可以使用 disabled 属性来定义按钮是否禁用，它接受一个 Boolean 值',
+  title: t('文字按钮'),
+  desc: t('通过设置 text 属性来配置文字按钮。文字按钮同样提供 5 种主题，由 theme 属性来定义，可选的主题有 default,primary,warning,success,danger，默认为 default。另外可以使用 disabled 属性来定义按钮是否禁用，它接受一个 Boolean 值'),
   componentName: 'button',
   demoName: 'demo/text',
   DemoComponent: Text,
 }, {
-  title: '加载中状态',
-  desc: '可以使用 loading 属性来定义按钮是否显示加载中状态，它接受一个 Boolean 值。同时可以通过loading-mode属性指定loading指示器类型',
+  title: t('加载中状态'),
+  desc: t('可以使用 loading 属性来定义按钮是否显示加载中状态，它接受一个 Boolean 值。同时可以通过loading-mode属性指定loading指示器类型'),
   componentName: 'button',
   demoName: 'demo/loading-button',
   DemoComponent: LoadingButton,
 }, {
-  title: '反色按钮',
-  desc: '通过配置 outline 属性来实现反色按钮的效果',
+  title: t('反色按钮'),
+  desc: t('通过配置 outline 属性来实现反色按钮的效果'),
   componentName: 'button',
   demoName: 'demo/outline',
   DemoComponent: Outline,
 }, {
-  title: 'mousehover 颜色自定义',
-  desc: '提供 4 种 mousehover 颜色主题，由 hover-theme 属性来定义，可选的主题有 primary, warning, success, danger。当设置了 hover-theme 属性时，theme 和 text 失效。',
+  title: t('mousehover 颜色自定义'),
+  desc: t('提供 4 种 mousehover 颜色主题，由 hover-theme 属性来定义，可选的主题有 primary, warning, success, danger。当设置了 hover-theme 属性时，theme 和 text 失效。'),
   componentName: 'button',
   demoName: 'demo/mouse-hover',
   DemoComponent: MouseHover,
@@ -157,13 +160,12 @@ const demos = [{
 
 export default defineComponent({
   name: 'Button',
-
   render() {
     return (
       <div>
         <DemoTitle
           name="Button"
-          desc="常用的操作按钮"
+          desc={ t('常用的操作按钮') }
           link={`${import.meta.env.VITE_APP_BASE_URL ?? ''}/button`}
         />
           {
@@ -174,11 +176,11 @@ export default defineComponent({
             ))
           }
         <PropsBox
-          title="Button 属性"
+          title={ t('Button 属性') }
           subtitle=""
           propsData={buttonProps}/>
         <PropsBox
-          title="Button 事件"
+          title={ t('Button 事件') }
           subtitle=""
           propsData={buttonEvents}/>
       </div>

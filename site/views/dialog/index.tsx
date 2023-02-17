@@ -25,6 +25,7 @@
 */
 
 import { defineComponent } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
@@ -282,11 +283,12 @@ const dialogChangeJson: IPropsTableItem[] = [
 export default defineComponent({
   name: 'SiteDialog',
   render() {
+    const { t } = useI18n();
     return (
       <div>
         <DemoTitle
-          name="Dialog 对话框"
-          desc="对话框"
+          name={ t('Dialog 对话框') }
+          desc={ t('对话框') }
           link="https://www.google.com.hk/"/>
 
         <DemoBox

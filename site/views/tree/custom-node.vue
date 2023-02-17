@@ -1,7 +1,7 @@
 <template>
   <div class="row">
     <div class="cell">
-      <span>自定义节点内容</span>
+      <span>{{ t("自定义节点内容") }}</span>
       <bk-tree
         :data="treeData"
         level-line
@@ -9,12 +9,12 @@
         children="children"
       >
         <template #node="item">
-          <span style="color: #3a84ff;">(自定义节点)：{{ item.name }}</span>
+          <span style="color: #3a84ff;">({{ t("自定义节点") }})：{{ item.name }}</span>
         </template>
       </bk-tree>
     </div>
     <div class="cell">
-      <span>自定义节点展开\收起</span>
+      <span>{{ t("自定义节点展开\收起") }}</span>
       <bk-tree
         :data="treeData"
         level-line
@@ -31,7 +31,7 @@
       </bk-tree>
     </div>
     <div class="cell">
-      <span>自定义节点节点类型</span>
+      <span>{{ t('自定义节点类型') }}</span>
       <bk-tree
         :data="treeData"
         level-line
@@ -46,7 +46,7 @@
       </bk-tree>
     </div>
     <div class="cell">
-      <span>自定义节点后缀</span>
+      <span>{{ t('自定义节点后缀') }}</span>
       <bk-tree
         :data="treeData"
         level-line
@@ -61,9 +61,21 @@
   </div>
 </template>
 
-<script setup>
+<script>
+  import { useI18n } from 'vue-i18n';
+
+  import { defineComponent } from '@vue/runtime-core';
+
   import { BASIC_DATA } from './options';
-  const treeData = [...BASIC_DATA];
+  export default defineComponent({
+    setup() {
+      const { t } = useI18n();
+      return {
+        treeData: [...BASIC_DATA],
+        t,
+      };
+    },
+  });
 </script>
 <style>
 .custom-node {

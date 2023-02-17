@@ -3,36 +3,36 @@
     <div class="mb10">
       <bk-button-group size="small">
         <bk-button
-          :selected="selected === '北京'"
-          @click="handleSelected('北京')"
+          :selected="selected === t('北京')"
+          @click="handleSelected(t('北京'))"
         >
-          北京
+          {{ t('北京') }}
         </bk-button>
         <bk-button
-          :selected="selected === '上海'"
+          :selected="selected === t('上海')"
           disabled
-          @click="handleSelected('上海')"
+          @click="handleSelected(t('上海'))"
         >
-          上海
+          {{ t('上海') }}
         </bk-button>
         <bk-button
-          :selected="selected === '广州'"
-          @click="handleSelected('广州')"
+          :selected="selected === t('广州')"
+          @click="handleSelected(t('广州'))"
         >
-          广州
+          {{ t('广州') }}
         </bk-button>
         <bk-button
-          :selected="selected === '深圳'"
+          :selected="selected === t('深圳')"
           disabled
-          @click="handleSelected('深圳')"
+          @click="handleSelected(t('深圳'))"
         >
-          深圳
+          {{ t('深圳') }}
         </bk-button>
         <bk-button
-          :selected="selected === '其他'"
-          @click="handleSelected('其他')"
+          :selected="selected === t('其他')"
+          @click="handleSelected(t('其他'))"
         >
-          其他
+          {{ t('其他') }}
           <angle-down class="f20" />
         </bk-button>
       </bk-button-group>
@@ -41,35 +41,37 @@
     <div class="mb10">
       <bk-button-group>
         <bk-button
-          :selected="selected === '北京'"
-          @click="handleSelected('北京')"
+          :selected="selected === t('北京')"
+          @click="handleSelected(t('北京'))"
         >
-          北京
+          {{ t('北京') }}
         </bk-button>
         <bk-button
-          :selected="selected === '上海'"
-          @click="handleSelected('上海')"
+          :selected="selected === t('上海')"
+          disabled
+          @click="handleSelected(t('上海'))"
         >
-          上海
+          {{ t('上海') }}
         </bk-button>
         <bk-button
-          :selected="selected === '广州'"
-          @click="handleSelected('广州')"
+          :selected="selected === t('广州')"
+          @click="handleSelected(t('广州'))"
         >
-          广州
+          {{ t('广州') }}
         </bk-button>
         <bk-button
-          :selected="selected === '深圳'"
-          @click="handleSelected('深圳')"
+          :selected="selected === t('深圳')"
+          disabled
+          @click="handleSelected(t('深圳'))"
         >
-          深圳
+          {{ t('深圳') }}
         </bk-button>
         <bk-button
-          :selected="selected === '其他'"
-          @click="handleSelected('其他')"
+          :selected="selected === t('其他')"
+          @click="handleSelected(t('其他'))"
         >
-          其他
-          <angle-down class="f22" />
+          {{ t('其他') }}
+          <angle-down class="f20" />
         </bk-button>
       </bk-button-group>
     </div>
@@ -77,48 +79,61 @@
     <div>
       <bk-button-group size="large">
         <bk-button
-          :selected="selected === '北京'"
-          @click="handleSelected('北京')"
+          :selected="selected === t('北京')"
+          @click="handleSelected(t('北京'))"
         >
-          北京
+          {{ t('北京') }}
         </bk-button>
         <bk-button
-          :selected="selected === '上海'"
-          @click="handleSelected('上海')"
+          :selected="selected === t('上海')"
+          disabled
+          @click="handleSelected(t('上海'))"
         >
-          上海
+          {{ t('上海') }}
         </bk-button>
         <bk-button
-          :selected="selected === '广州'"
-          @click="handleSelected('广州')"
+          :selected="selected === t('广州')"
+          @click="handleSelected(t('广州'))"
         >
-          广州
+          {{ t('广州') }}
         </bk-button>
         <bk-button
-          :selected="selected === '深圳'"
-          @click="handleSelected('深圳')"
+          :selected="selected === t('深圳')"
+          disabled
+          @click="handleSelected(t('深圳'))"
         >
-          深圳
+          {{ t('深圳') }}
         </bk-button>
         <bk-button
-          :selected="selected === '其他'"
-          @click="handleSelected('其他')"
+          :selected="selected === t('其他')"
+          @click="handleSelected(t('其他'))"
         >
-          其他
-          <angle-down class="f24" />
+          {{ t('其他') }}
+          <angle-down class="f20" />
         </bk-button>
       </bk-button-group>
     </div>
   </div>
 </template>
-
-<script setup>
+<script>
   import { AngleDown } from 'bkui-vue/lib/icon';
-  import { ref } from 'vue';
-  const selected = ref('深圳');
-  function handleSelected(v) {
-    selected.value = v;
-  }
+  import { defineComponent, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
+  export default defineComponent({
+    setup() {
+      const selected = ref('深圳');
+      const  handleSelected = (v)  => {
+        selected.value = v;
+      };
+      const { t } = useI18n();
+      return {
+        t,
+        selected,
+        AngleDown,
+        handleSelected,
+      };
+    },
+  });
 </script>
 
 <style lang="postcss">

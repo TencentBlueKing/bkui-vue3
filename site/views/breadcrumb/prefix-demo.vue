@@ -23,9 +23,11 @@
     </bk-breadcrumb>
   </div>
 </template>
+
 <script>
   import { AngleLeft } from 'bkui-vue/lib/icon';
   import { defineComponent, getCurrentInstance, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   import { BkBreadcrumb, BkBreadcrumbItem } from '@bkui-vue/breadcrumb';
 
@@ -37,12 +39,13 @@
       AngleLeft,
     },
     setup() {
+      const { t } = useI18n();
       const separator = ref('/');
       const list = [
-        { title: '首页', link: { path: '/' } },
-        { title: '进度条', link: { path: 'loading' } },
-        { title: '滑块开关', link: { path: 'switcher' } },
-        { title: '面包屑', link: null },
+        { title: t('首页'), link: { path: '/' } },
+        { title: t('进度条'), link: { path: 'loading' } },
+        { title: t('滑块开关'), link: { path: 'switcher' } },
+        { title: t('面包屑'), link: null },
       ];
       const { appContext } = getCurrentInstance();
       const { $router } = appContext.config.globalProperties;

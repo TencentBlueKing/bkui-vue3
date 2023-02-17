@@ -4,7 +4,7 @@
       text
       theme="primary"
     >
-      文字按钮
+      {{ t('文字按钮') }}
     </bk-button>
     <bk-button
       text
@@ -13,20 +13,32 @@
       class="ml10"
       loading
     >
-      加载中
+      {{ t('加载中') }}
     </bk-button>
     <bk-button
       text
       class="ml10"
       disabled
     >
-      禁用状态
+      {{ t('禁用状态') }}
     </bk-button>
   </div>
 </template>
 
-<script setup>
+<script lang="ts">
+  import { defineComponent } from 'vue';
+  import { useI18n } from 'vue-i18n';
+
   // import Loading from '@bkui-vue/loading';
+  export default defineComponent({
+    name: 'Text',
+    setup() {
+      const { t } = useI18n();
+      return {
+        t,
+      };
+    },
+  });
 </script>
 
 <style lang="postcss">

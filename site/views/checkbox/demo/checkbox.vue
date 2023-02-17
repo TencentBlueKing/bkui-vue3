@@ -1,17 +1,28 @@
 <template>
   <bk-checkbox v-model="value">
-    微信
+    {{ t('微信') }}
   </bk-checkbox>
   <div style="margin-top: 10px">
-    选中微信：{{ value }}
+    {{ `${t('选中微信')}：` }}{{ value }}
   </div>
 </template>
-<script setup>
-  import { ref } from 'vue';
+<script>
+  import { defineComponent, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   import { BkCheckbox } from '@bkui-vue/checkbox';;
-
-  const value = ref(true);
+  export default defineComponent({
+    setup() {
+      const { t } = useI18n();
+      const value = ref(true);
+      return {
+        t,
+        value,
+        BkCheckbox,
+      };
+    },
+  });
 
 </script>
+
 

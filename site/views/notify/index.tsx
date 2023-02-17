@@ -25,6 +25,7 @@
 */
 
 import { defineComponent } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
@@ -149,10 +150,11 @@ const demos = [
 
 export default defineComponent({
   render() {
+    const { t } = useI18n();
     return (
       <div>
         <DemoTitle
-          name="Notify 通知提示"
+          name={ t('Notify 通知提示') }
           desc="用来给用户推送通知提示信息，通知可配置为从界面的四个角出现"
           link="https://www.google.com.hk/"/>
           {

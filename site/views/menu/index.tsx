@@ -29,22 +29,25 @@ import { defineComponent } from 'vue';
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
+import i18n from '../../language/i18n';
 import { IPropsTableItem } from '../../typings';
 
 import BaseDemo from './base-demo.vue';
+
+const { t } = i18n.global;
 const menuPropsJson: IPropsTableItem[] = [
   {
     name: 'activeKey',
     type: 'String',
     default: '',
-    desc: '选中的menu的key',
+    desc: t('选中的menu的key'),
     optional: [],
   },
   {
     name: 'OpenedKeys',
     type: 'Array',
     default: [],
-    desc: '打开的submenu key值',
+    desc: t('打开的submenu key值'),
     optional: [],
   },
   // {
@@ -58,36 +61,36 @@ const menuPropsJson: IPropsTableItem[] = [
     name: 'uniqueOpen',
     type: 'Boolean',
     default: 'true',
-    desc: '是否唯一展开一个submenu',
+    desc: t('是否唯一展开一个submenu'),
     optional: [],
   },
 ];
 const eventJson = [
   {
     name: 'update:activeKey',
-    desc: '选择项发生变化时触发',
+    desc: t('选择项发生变化时触发'),
     params: 'key: string, {key: string, parentKey: string}',
   },
   {
     name: 'update:openKeys',
-    desc: '展开menu时触发',
+    desc: t('展开menu时触发'),
     params: 'value: string[]',
   },
   {
     name: 'click',
-    desc: '点击子项时触发',
+    desc: t('点击子项时触发'),
     params: 'key: string',
   },
   {
     name: 'openChange',
-    desc: '展开项发生变化时触发',
+    desc: t('展开项发生变化时触发'),
     params: 'opened: boolean, {key: string, parentKey: string}',
   },
 ];
 const subMenuEventJson = [
   {
     name: 'collapse',
-    desc: '展开变化时触发事件',
+    desc: t('展开变化时触发事件'),
     params: 'collapse: boolean, instance: VNode',
   },
 ];
@@ -96,7 +99,7 @@ const subMenuSlotsJson = [
     name: 'icon',
     type: 'icon slot',
     default: [],
-    desc: 'icon 插槽',
+    desc: t('icon 插槽'),
     params: '--',
   },
 ];
@@ -105,7 +108,7 @@ const menuItemPropsJson = [
     name: 'needIcon',
     type: 'Boolean',
     default: 'true',
-    desc: '是否展示Icon',
+    desc: t('是否展示Icon'),
     optional: [],
   },
 ];
@@ -114,20 +117,20 @@ const menuItemSlotsJson = [
     name: 'icon',
     type: 'icon slot',
     default: [],
-    desc: 'icon 插槽',
+    desc: t('icon 插槽'),
     params: '--',
   },
 ];
 const eventColumnMap = {
-  name: '名称',
-  desc: '说明',
-  params: '参数',
+  name: t('名称'),
+  desc: t('说明'),
+  params: t('参数'),
 };
 const slotColumnMap = {
-  name: '名称',
-  desc: '说明',
-  type: '类型',
-  params: '参数',
+  name: t('名称'),
+  desc: t('说明'),
+  type: t('类型'),
+  params: t('参数'),
 };
 export default defineComponent({
   render() {
@@ -135,22 +138,22 @@ export default defineComponent({
       <div>
         <DemoTitle
           name="Menu"
-          desc="Menu组件， 为页面和功能提供导航的菜单列表。"
+          desc={ t('Menu组件， 为页面和功能提供导航的菜单列表。') }
           link="https://www.google.com.hk/"/>
         <DemoBox
-          title="基础用法"
-          subtitle="Menu组件的基础用法"
-          desc="垂直菜单，子菜单内嵌在菜单区域。"
+          title={t('基础用法')}
+          subtitle={ t('Menu组件的基础用法') }
+          desc={ t('垂直菜单，子菜单内嵌在菜单区域。')}
           componentName="menu"
           demoName="base-demo">
              <BaseDemo/>
           </DemoBox>
-        <PropsBox title='Menu 属性' propsData={menuPropsJson}/>
-        <PropsBox title='Menu 事件' columnMap={eventColumnMap} propsData={eventJson}/>
-        <PropsBox title='SubMenu 事件' columnMap={eventColumnMap} propsData={subMenuEventJson}/>
-        <PropsBox title='SubMenu 插槽' columnMap={slotColumnMap} propsData={subMenuSlotsJson}/>
-        <PropsBox title='MenuItem 属性' propsData={menuItemPropsJson}/>
-        <PropsBox title='MenuItem 插槽' columnMap={slotColumnMap} propsData={menuItemSlotsJson}/>
+        <PropsBox title={ t('Menu 属性') } propsData={menuPropsJson}/>
+        <PropsBox title={ t('Menu 事件') } columnMap={eventColumnMap} propsData={eventJson}/>
+        <PropsBox title={ t('SubMenu 事件') } columnMap={eventColumnMap} propsData={subMenuEventJson}/>
+        <PropsBox title={ t('SubMenu 插槽') } columnMap={slotColumnMap} propsData={subMenuSlotsJson}/>
+        <PropsBox title={ t('MenuItem 属性') } propsData={menuItemPropsJson}/>
+        <PropsBox title={ t('MenuItem 插槽') } columnMap={slotColumnMap} propsData={menuItemSlotsJson}/>
       </div>
     );
   },

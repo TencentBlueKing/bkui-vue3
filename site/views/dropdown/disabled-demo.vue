@@ -5,7 +5,7 @@
       placement="bottom-start"
     >
       <bk-button @click="handleClick">
-        {{ `点击切换disabled(${disabled})状态` }}
+        {{ `${t('点击切换disabled')}(${disabled})${t('状态')}` }}
       </bk-button>
       <template #content>
         <bk-dropdown-menu>
@@ -20,16 +20,40 @@
     </bk-dropdown>
   </div>
 </template>
-<script setup>
-  import { ref } from 'vue';
+
+<script>
+  import { defineComponent, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   import BkDropdown from '@bkui-vue/dropdown';
 
-  const disabled = ref(false);
-  const dropdownList = ref(['生产环境', '预发布环境', '测试环境', '正式环境', '开发环境', '调试环境']);
+  export default defineComponent({
+    components: {
+      BkDropdown,
+    },
+    setup() {
+      const { t } = useI18n();
 
-  const handleClick = () => {
-    disabled.value = !disabled.value;
-  };
+      const disabled = ref(false);
+      const dropdownList = ref([
+        t('生产环境'),
+        t('预发布环境'),
+        t('测试环境'),
+        t('正式环境'),
+        t('开发环境'),
+        t('调试环境'),
+      ]);
+
+      const handleClick = () => {
+        disabled.value = !disabled.value;
+      };
+
+      return {
+        disabled,
+        dropdownList,
+        handleClick,
+        t,
+      };
+    },
+  });
 </script>
-

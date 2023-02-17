@@ -25,6 +25,7 @@
 */
 
 import { defineComponent } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
@@ -197,11 +198,12 @@ const demos = [
 
 export default defineComponent({
   render() {
+    const { t } = useI18n();
     return (
       <div>
         <DemoTitle
-          name="Popover 弹出框提示"
-          desc="当鼠标指向页面元素时给出简单的提示"
+          name={ t('Popover 弹出框提示') }
+          desc={ t('当鼠标指向页面元素时给出简单的提示') }
           link="https://www.google.com.hk/"/>
           {
             demos.map(({ DemoComponent, ...demo }) => (
@@ -210,8 +212,8 @@ export default defineComponent({
               </DemoBox>
             ))
           }
-          <PropsBox title="属性" subtitle="" propsData={props}></PropsBox>
-          <PropsBox title="事件" subtitle="" propsData={events}></PropsBox>
+          <PropsBox title={t('属性')} subtitle="" propsData={props}></PropsBox>
+          <PropsBox title={t('事件')} subtitle="" propsData={events}></PropsBox>
       </div>
     );
   },
