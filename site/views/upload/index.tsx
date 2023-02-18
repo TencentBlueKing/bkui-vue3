@@ -72,7 +72,7 @@ const uploadProps: IPropsTableItem[] = [
     name: 'header',
     type: 'Array / Object',
     default: null,
-    desc: t('请求头 { name: " ", value: " " }'),
+    desc: t('请求头 {\'{\'}\' name: \'\', value: \'\' {\'}\'}'),
     optional: [],
   },
   {
@@ -100,7 +100,7 @@ const uploadProps: IPropsTableItem[] = [
     name: 'size',
     type: 'Number/ Object',
     default: '5(MB)',
-    desc: t('限制上传文件体积 { maxFileSize: 1, maxImgSize: 1 }'),
+    desc: t('限制上传文件体积 {\'{\'} maxFileSize: 1, maxImgSize: 1 {\'}\'}'),
     optional: [],
   },
   {

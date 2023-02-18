@@ -5,7 +5,16 @@
   />
 </template>
 
-<script setup>
-  import { ref } from 'vue';
-  const dateValue = ref('12:12:12');
+<script>
+  import { defineComponent, ref } from 'vue';
+
+  export default defineComponent({
+    setup() {
+      const dateValue = ref('12:12:12');
+
+      return {
+        dateValue,
+      };
+    },
+  });
 </script>
