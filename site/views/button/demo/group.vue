@@ -120,6 +120,9 @@
   import { defineComponent, ref } from 'vue';
   import { useI18n } from 'vue-i18n';
   export default defineComponent({
+    components: {
+      AngleDown,
+    },
     setup() {
       const selected = ref('深圳');
       const  handleSelected = (v)  => {
@@ -129,7 +132,6 @@
       return {
         t,
         selected,
-        AngleDown,
         handleSelected,
       };
     },

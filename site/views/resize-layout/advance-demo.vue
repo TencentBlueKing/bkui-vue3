@@ -1,12 +1,12 @@
 <template>
   <bk-resize-layout
     style="height: 500px;"
-    collapsible="{true}"
+    collapsible
   >
     <template #aside>
       <bk-resize-layout
         placement="top"
-        border="{false}"
+        :border="false"
         style="height: 100%"
       >
         <template #aside>
@@ -20,7 +20,7 @@
     <template #main>
       <bk-resize-layout
         placement="bottom"
-        border="{false}"
+        :border="false"
         style="height: 100%"
       >
         <template #aside>

@@ -66,16 +66,15 @@
   export default defineComponent({
     name: 'Icon',
     components: {
-      AngleDown, Plus, Search,
+      AngleDown,
+      Plus,
+      Search,
+      Loading,
     },
     setup() {
       const { t } = useI18n();
       return {
         t,
-        Loading,
-        AngleDown,
-        Plus,
-        Search,
       };
     },
   });

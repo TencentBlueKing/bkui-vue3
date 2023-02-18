@@ -128,6 +128,9 @@
   import { defineComponent, ref } from 'vue';
   import { useI18n } from 'vue-i18n';
   export default defineComponent({
+    components: {
+      TreeApplicationShape,
+    },
     setup() {
       const { t } = useI18n();
       const collapse = ref(false);
@@ -140,7 +143,6 @@
         collapse,
         navigationType,
         handleCollapse,
-        TreeApplicationShape,
       };
     },
   });

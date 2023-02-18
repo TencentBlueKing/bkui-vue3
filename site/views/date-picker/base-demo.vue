@@ -7,8 +7,19 @@
   />
 </template>
 
-<script setup>
-  import { ref } from 'vue';
-  const dateValue = ref(new Date());
-  const disableDate = date => date && date.valueOf() < Date.now() - 86400;
+<script>
+  import { defineComponent, reactive, ref } from 'vue';
+  export default defineComponent({
+    setup() {
+      const options = reactive({});
+      const dateValue = ref(new Date());
+      const disableDate = date => date && date.valueOf() < Date.now() - 86400;
+
+      return {
+        dateValue,
+        options,
+        disableDate,
+      };
+    },
+  });
 </script>

@@ -35,19 +35,24 @@
         console.log('handleChange', date);
         dateValue.value = date;
       };
+
       const handleOpenChange = (isOpen) => {
         console.error('handleOpenChange');
         console.log(isOpen);
       };
+
       const handleClear = () => {
         console.log('handleClear');
         open.value = false;
       };
+
       const handleOk = () => {
         console.log('handleOK');
         open.value = false;
       };
+
       return {
+        dateValue,
         disableDate,
         handleChange,
         handleOpenChange,
