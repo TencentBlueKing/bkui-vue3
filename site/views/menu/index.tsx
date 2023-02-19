@@ -24,17 +24,21 @@
 * IN THE SOFTWARE.
 */
 
-import { defineComponent } from 'vue';
+import { defineAsyncComponent, defineComponent } from 'vue';
 
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import i18n from '../../language/i18n';
 import { IPropsTableItem } from '../../typings';
+import { getCookie } from '../utils/cookie';
 
-import BaseDemo from './base-demo.vue';
+const lang = getCookie('lang');
+
+const BaseDemo = defineAsyncComponent(() => import(`./demo/${lang}/base-demo.vue`));
 
 const { t } = i18n.global;
+
 const menuPropsJson: IPropsTableItem[] = [
   {
     name: 'activeKey',
@@ -145,7 +149,7 @@ export default defineComponent({
           subtitle={ t('Menu组件的基础用法') }
           desc={ t('垂直菜单，子菜单内嵌在菜单区域。')}
           componentName="menu"
-          demoName="base-demo">
+          demoName={`demo/${lang}/base-demo`}>
              <BaseDemo/>
           </DemoBox>
         <PropsBox title={ t('Menu 属性') } propsData={menuPropsJson}/>

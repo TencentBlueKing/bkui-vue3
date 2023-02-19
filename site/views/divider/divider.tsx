@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 
-import { defineComponent } from 'vue';
+import { defineAsyncComponent, defineComponent } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import { dividerProps } from '../../../packages/divider/src/props';
@@ -33,8 +33,12 @@ import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import { IPropsTableItem } from '../../typings';
 import { resolvePropsToDesData } from '../utils';
+import { getCookie } from '../utils/cookie';
 
-import BaseDemo from './base-demo.vue';
+const lang = getCookie('lang');
+
+const BaseDemo = defineAsyncComponent(() => import(`./demo/${lang}/base-demo.vue`));
+
 const menuPropsJson: IPropsTableItem[] = resolvePropsToDesData(dividerProps);
 export default defineComponent({
   render() {
@@ -49,7 +53,7 @@ export default defineComponent({
           title={t('基础用法')}
           desc={t('基础分割线是没有文字的独立线条，又分为水平分割线和垂直分割线。')}
           componentName="divider"
-          demoName="base-demo"
+          demoName={`demo/${lang}/base-demo`}
         >
           <BaseDemo />
         </DemoBox>

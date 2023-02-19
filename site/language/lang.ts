@@ -39,6 +39,7 @@ interface LANG {
 }
 
 const Common: LANG = {
+  '蓝鲸MagicBox-Vue3组件库': ['BlueKing MagicBox-Vue3 component library'],
   复制成功: ['Copy succeeded'],
   复制失败: ['Copy failed'],
   属性: ['Attributes'],

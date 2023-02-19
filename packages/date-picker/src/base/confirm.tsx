@@ -26,6 +26,7 @@
 
 import type { ExtractPropTypes } from 'vue';
 import { computed, defineComponent, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import BkButton from '@bkui-vue/button';
 
@@ -54,10 +55,11 @@ export default defineComponent({
   props: confirmProps,
   emits: ['pick-clear', 'pick-success', 'pick-toggle-time'],
   setup(props, { emit }) {
+    const { t } = useI18n();
     const labels = computed(() => ({
-      time: props.isTime ? '选择日期' : '选择时间',
-      clear: '清除',
-      ok: '确定',
+      time: t(props.isTime ? '选择日期' : '选择时间'),
+      clear: t('清除'),
+      ok: t('确定'),
     }));
 
     const handleClear = () => {

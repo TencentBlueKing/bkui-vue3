@@ -1,7 +1,6 @@
 <template>
   <bk-time-picker
     :model-value="defaultValue"
-    :placeholder="t('选择时间范围')"
     :type="'timerange'"
   />
 </template>

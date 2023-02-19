@@ -24,16 +24,19 @@
  * IN THE SOFTWARE.
  */
 
-import { defineComponent } from 'vue';
+import { defineAsyncComponent, defineComponent } from 'vue';
 
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import i18n from '../../language/i18n';
 import { IPropsTableItem } from '../../typings';
+import { getCookie } from '../utils/cookie';
 
-import BaseDemo from './base-demo.vue';
-import DisabledDemo from './disable-demo.vue';
+const lang = getCookie('lang');
+
+const BaseDemo = defineAsyncComponent(() => import(`./demo/${lang}/base-demo.vue`));
+const DisabledDemo = defineAsyncComponent(() => import(`./demo/${lang}/disable-demo.vue`));
 
 const { t } = i18n.global;
 
@@ -79,9 +82,14 @@ export default defineComponent({
   render() {
     return (
       <div>
-        <DemoTitle name={ t('Link 文字链接') } desc={ t('Link 文字超链接') } link="https://www.google.com.hk/" />
+        <DemoTitle name={t('Link 文字链接')} desc={t('Link 文字超链接')} link="https://www.google.com.hk/" />
 
-        <DemoBox title={t('基础用法')} desc={t('基础的文字链接用法')} componentName="link" demoName="base-demo">
+        <DemoBox
+          title={t('基础用法')}
+          desc={t('基础的文字链接用法')}
+          componentName="link"
+          demoName={`demo/${lang}/base-demo`}
+        >
           <BaseDemo></BaseDemo>
         </DemoBox>
 
@@ -89,11 +97,11 @@ export default defineComponent({
           title={t('禁用状态和下划线')}
           desc={t('文字链接不可用状态，添加underline实现下划线')}
           componentName="link"
-          demoName="disable-demo"
+          demoName={`demo/${lang}/disable-demo`}
         >
           <DisabledDemo></DisabledDemo>
         </DemoBox>
-        <PropsBox title={ t('Link 属性') } subtitle="" propsData={linkPropsJson} />
+        <PropsBox title={t('Link 属性')} subtitle="" propsData={linkPropsJson} />
       </div>
     );
   },

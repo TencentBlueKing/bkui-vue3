@@ -37,6 +37,10 @@ import './reset.less';
 
 const app = createApp(App);
 
+router.afterEach(() => {
+  document.title = i18n.global.t('蓝鲸MagicBox-Vue3组件库');
+});
+
 app.use(i18n)
   .use(router)
   .use(bkuiVue);

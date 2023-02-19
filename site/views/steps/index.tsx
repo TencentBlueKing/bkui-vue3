@@ -24,23 +24,28 @@
 * IN THE SOFTWARE.
 */
 
-import { defineComponent } from 'vue';
+import { defineAsyncComponent, defineComponent } from 'vue';
 
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import i18n from '../../language/i18n';
 import { type IPropsTableItem } from '../../typings';
+import { getCookie } from '../utils/cookie';
 
-import BaseDemo from './base-demo.vue';
-import ControllableDemo from './controllable-demo.vue';
-import CustomDemo from './custom-demo.vue';
-import DirectionDemo from './direction-demo.vue';
-import SizeDemo from './size-demo.vue';
-import StatusDemo from './status-demo.vue';
-import ThemeDemo from './theme-demo.vue';
+import BaseDemo from './demo/base-demo.vue';
+import ControllableDemo from './demo/controllable-demo.vue';
+import DirectionDemo from './demo/direction-demo.vue';
+import SizeDemo from './demo/size-demo.vue';
+import StatusDemo from './demo/status-demo.vue';
+import ThemeDemo from './demo/theme-demo.vue';
+
+const lang = getCookie('lang');
+
+const CustomDemo = defineAsyncComponent(() => import(`./demo/${lang}/custom-demo.vue`));
 
 const { t } = i18n.global;
+
 const stepsProps: IPropsTableItem[] = [
   {
     name: 'steps',
@@ -130,28 +135,28 @@ export default defineComponent({
           title={t('基础用法')}
           desc={ t('不传值时：默认选中第一个节点，颜色为蓝鲸主题色') }
           componentName="steps"
-          demoName="base-demo">
+          demoName="demo/base-demo">
             <BaseDemo />
         </DemoBox>
         <DemoBox
           title={ t('小尺寸')}
           desc= { t('可以使用 size 属性来定义尺寸，可接受 small') }
           componentName="steps"
-          demoName="size-demo">
+          demoName="demo/size-demo">
             <SizeDemo />
         </DemoBox>
         <DemoBox
           title= { t('设置主题') }
           desc={t('可以通过 theme 属性来定义主题') }
           componentName="steps"
-          demoName="theme-demo">
+          demoName="demo/theme-demo">
             <ThemeDemo />
         </DemoBox>
         <DemoBox
           title={ t('可点击') }
           desc={ t('可以通过 controllable为true 属性来使组件每个步骤可点击') }
           componentName="steps"
-          demoName="controllable-demo">
+          demoName="demo/controllable-demo">
             <ControllableDemo />
         </DemoBox>
 
@@ -159,7 +164,7 @@ export default defineComponent({
           title={ t('垂直方向和实线') }
           desc= { t('可以通过 direction属性来设置组件排列方式，可接受horizontal，vertical，默认为horizontal。指定 line-type 值为 solid 显示为实线') }
           componentName="steps"
-          demoName="direction-demo">
+          demoName="demo/direction-demo">
             <DirectionDemo />
         </DemoBox>
 
@@ -167,7 +172,7 @@ export default defineComponent({
           title= { t('错误和加载中状态') }
           desc= { t('使用 status 属性设置当前步骤状态为错误或加载中，分别对应 error、loading 值，清空则还原为默认状态') }
           componentName="steps"
-          demoName="status-demo">
+          demoName="demo/status-demo">
             <StatusDemo />
         </DemoBox>
 
@@ -175,7 +180,7 @@ export default defineComponent({
           title={ t('自定义步骤内容') }
           desc= { t('配置 steps 参数，具体内容参考下方属性表格') }
           componentName="steps"
-          demoName="custom-demo">
+          demoName={`demo/${lang}/custom-demo`}>
             <CustomDemo />
         </DemoBox>
 

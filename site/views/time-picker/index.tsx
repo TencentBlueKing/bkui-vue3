@@ -76,7 +76,7 @@ export default defineComponent({
           <DemoBox
             title={t('基础用法')}
             desc={ t('通过 v-model 或者 value 设置初始值') }
-            componentName="date-picker"
+            componentName="time-picker"
             demoName="base-demo">
             <BaseDemo />
           </DemoBox>
