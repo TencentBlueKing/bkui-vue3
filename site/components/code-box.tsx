@@ -64,7 +64,7 @@ export default defineComponent({
     return (
       <div class="markdown-body code-box">
         <pre class="hljs">
-          <code innerHTML={code.value} />{props.language}
+          <code innerHTML={code.value} />
         </pre>
       </div>
     );

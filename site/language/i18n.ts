@@ -40,9 +40,7 @@ Object.keys(langMap).forEach((key) => {
   zh[key] = langMap[key][1] || key;
 });
 
-
 const Cookies = VueCookies as any;
-
 
 function localLanguage() {
   const lang = Cookies.get('lang');
