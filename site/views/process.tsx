@@ -40,7 +40,7 @@ export default defineComponent({
       curprocess: 2,
     });
 
-    // 改变当前选中值
+    
     const processChanged = (index: number) => {
       state.curprocess = index;
     };

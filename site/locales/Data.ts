@@ -46,7 +46,7 @@ const Badge: LANG = {
 const Progress: LANG = {
   'Progress 进度条': ['Progress'],
   'Progress 属性': ['Progress Attributes'],
-  'Progress 插槽': ['Progress Slot'],
+  'Progress 插槽': ['Progress Slots'],
   修改进度条主题: ['Modify progress bar subject'],
   'percent 是 0 到 100 之间的数值，提供 4 种主题，由 theme 属性来定义，可选的主题有 primary, warning, success, danger，默认为 primary, 由 color 属性来自定义颜色值。':
     [
@@ -139,9 +139,9 @@ const Collapse: LANG = {
   '配置事件before-enter/after-leave': ['Configure event before-enter/after-leave'],
   tsx使用: ['Tsx use'],
   'Collapse 属性': ['Collapse Attributes'],
-  'Collapse 插槽': ['Collapse Slot'],
+  'Collapse 插槽': ['Collapse Slots'],
   'Collapse-Panel 属性': ['CollapsePanel Attributes'],
-  'CollapsePanel 插槽': ['CollapsePanel Slot'],
+  'CollapsePanel 插槽': ['CollapsePanel Slots'],
   '回调参数 name': ['Callback parameter name'],
   '回调参数（item）': ['Callback parameter (item)'],
   '配置内容隐藏方式，默认是 show，收起时，通过设置 display:none(v-show) 不显示在页面,if 为不渲染组件': [

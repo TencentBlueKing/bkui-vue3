@@ -24,15 +24,18 @@
 * IN THE SOFTWARE.
 */
 
-import { defineComponent } from 'vue';
+import { defineAsyncComponent, defineComponent } from 'vue';
 
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import i18n from '../../language/i18n';
 import { IPropsTableItem } from '../../typings';
+import { getCookie } from '../utils/cookie';
 
-import BaseDemo from './base-demo.vue';
+const lang = getCookie('lang');
+
+const BaseDemo = defineAsyncComponent(() => import(`./demo/${lang}/base-demo.vue`));
 
 const { t } = i18n.global;
 
@@ -105,9 +108,9 @@ export default defineComponent({
           title={t('基础用法')}
           desc={ t('悬浮导航在右侧展示') }
           componentName="fixed-navbar"
-          demoName="base-demo"
+          demoName={`demo/${lang}/base-demo`}
         >
-          <BaseDemo></BaseDemo>
+          <BaseDemo />
         </DemoBox>
 
         <PropsBox
@@ -120,7 +123,6 @@ export default defineComponent({
           title={ t('NavItems 属性') }
           propsData={fixedItemPropsJson}
         />
-
       </>
     );
   },

@@ -24,15 +24,18 @@
  * IN THE SOFTWARE.
  */
 
-import { defineComponent } from 'vue';
+import { defineAsyncComponent, defineComponent } from 'vue';
 
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import i18n from '../../language/i18n';
 import { IPropsTableItem } from '../../typings';
+import { getCookie } from '../utils/cookie';
 
-import BaseDemo from './base-demo.vue';
+const lang = getCookie('lang');
+
+const BaseDemo = defineAsyncComponent(() => import(`./demo/${lang}/base-demo.vue`));
 
 const { t } = i18n.global;
 
@@ -115,7 +118,7 @@ export default defineComponent({
           subtitle={t('点击下面按钮可以切换不同的导航风格')}
           desc={ t('通过属性配置切换不同的导航风格')}
           componentName="navigation"
-          demoName="base-demo"
+          demoName={`demo/${lang}/base-demo`}
         >
           <BaseDemo />
         </DemoBox>

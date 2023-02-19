@@ -36,9 +36,9 @@ const Menu: LANG = {
   'Menu 属性': ['Menu Attributes'],
   'Menu 事件': ['Menu Events'],
   'SubMenu 事件': ['SubMenu Events'],
-  'SubMenu 插槽': ['SubMenu Slot'],
+  'SubMenu 插槽': ['SubMenu Slots'],
   'MenuItem 属性': ['MenuItem Attributes'],
-  'MenuItem 插槽': ['MenuItem Slot'],
+  'MenuItem 插槽': ['MenuItem Slots'],
   选中的menu的key: ['The key of the selected menu'],
   '打开的submenu key值': ['Open submenu key value'],
   是否唯一展开一个submenu: ['Whether to expand a submenu uniquely'],
@@ -119,7 +119,7 @@ const FixedNavbar: LANG = {
   元素点击的回调函数: ['Callback function of element click'],
   用于自定义鼠标悬浮内容的配置: ['Configuration for customizing mouse hover content'],
   联系: ['Contact'],
-  可以通过腾讯蓝鲸QQ联系我们: ['You can contact us through Tencent Blue Whale QQ'],
+  可以通过腾讯蓝鲸QQ联系我们: ['You can contact us through Tencent Blue King QQ'],
 };
 
 const BackTop: LANG = {
@@ -162,7 +162,7 @@ const Breadcrumb: LANG = {
   '开启backRouter并使用默认的icon跳转时，启用 replace 将不会向 history 添加新记录': [
     'When starting backRouter and using the default icon jump, enabling replace will not add new records to the history',
   ],
-  'Breadcrumb 插槽': ['Breadcrumb Slot'],
+  'Breadcrumb 插槽': ['Breadcrumb Slots'],
   'Breadcrumb Item 属性': ['Breadcrumb Item Attributes'],
   默认插槽: ['Default slot'],
   分隔符插槽: ['Separator slot'],
@@ -178,7 +178,7 @@ const Link: LANG = {
   这是危险: ['This is dangerous'],
   这是警告: ['This is a warning'],
   这是成功: ['This is dangerous'],
-  这是主要: ['This is the main'],
+  这是主要: ['This is the primary'],
   基础的文字链接用法: ['Basic text link usage'],
   '文字链接不可用状态，添加underline实现下划线': ['Text link is not available. Add underline to realize underline'],
   文字链接地址: ['Text link address'],
@@ -380,6 +380,8 @@ const DatePicker: LANG = {
   近7天: ['Nearly 7 days'],
   近15天: ['Nearly 15 days'],
   近30天: ['Nearly 30 days'],
+  清除: ['Clear'],
+  选择时间: ['Select time'],
 };
 
 const TimePicker: LANG = {
