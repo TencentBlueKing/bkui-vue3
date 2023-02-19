@@ -34,29 +34,37 @@
 </template>
 
 <script>
-  import { defineComponent } from 'vue';
+  import { defineComponent, ref } from 'vue';
   import { useI18n } from 'vue-i18n';
 
   import { AUTO_CHECKED_DATA, AUTO_OPEN_DATA, BASIC_DATA } from './options';
 
   export default defineComponent({
     components: {},
-    data() {
-      return {
-        treeData: [...BASIC_DATA],
-        autoOpen: [...AUTO_OPEN_DATA],
-        autoCheck: [...AUTO_CHECKED_DATA],
-        selected: null,
-        t: useI18n().t,
-      };
-    },
-    methods: {
-      handleAutoSelect() {
-        const treeData = this.$refs.refAutoSelect.getData();
-        const { length } = treeData.data;
+    setup() {
+      const { t } = useI18n();
+      const refAutoSelect = ref();
+      const selected = ref(null);
+      const treeData = ref([...BASIC_DATA]);
+      const autoOpen = ref([...AUTO_OPEN_DATA]);
+      const autoCheck = ref([...AUTO_CHECKED_DATA]);
+
+      const handleAutoSelect = () => {
+        const treeData = refAutoSelect.value?.getData();
+        const { length } =  treeData.value?.data;
         const randomIndex = Math.floor(Math.random() * length);
-        this.selected = treeData.data[randomIndex];
-      },
+        selected.value = treeData.value?.data[randomIndex];
+      };
+
+      return {
+        refAutoSelect,
+        selected,
+        treeData,
+        autoOpen,
+        autoCheck,
+        handleAutoSelect,
+        t,
+      };
     },
   });
 </script>

@@ -12,6 +12,7 @@
 </template>
 <script>
   import { defineComponent, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   import BkSlider from '@bkui-vue/slider';
 
@@ -21,26 +22,27 @@
       BkSlider,
     },
     setup() {
+      const { t } = useI18n();
       const demo1 = ref(20);
       const customContent = {
         0: {
-          label: '糟糕',
+          label: t('糟糕'),
         },
         20: {
-          label: '一般',
+          label: t('一般'),
         },
         40: {
-          label: '还行',
-          tip: '还行勉勉强强',
+          label: t('还行'),
+          tip: t('还行勉勉强强'),
         },
         60: {
-          label: '满意',
+          label: t('满意'),
         },
         80: {
-          label: '很好',
+          label: t('很好'),
         },
         100: {
-          label: '非常满意',
+          label: t('非常满意'),
         },
       };
       return {

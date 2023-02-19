@@ -26,6 +26,7 @@
 
 /* eslint-disable arrow-body-style */
 import { computed, defineComponent, ref, toRaw, toRefs, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import { ArrowsRight, Error, Search, Transfer } from '@bkui-vue/icon/';
 import BkInput from '@bkui-vue/input';
@@ -206,11 +207,12 @@ export default defineComponent({
     };
   },
   render() {
+    const { t } = useI18n();
     const leftList = this.sortable ? this.selectListSort : this.selectListSearch;
     const rightList = this.sortable ? this.selectedListSort : this.selectedList;
     const getHeaderHtml = (dirct) => {
       const isLeft = dirct === 'left-header';
-      const titleText = isLeft ? `${this.title[0] ?? '源列表'}` : `${this.title[1] ?? '目标列表'}`;
+      const titleText = isLeft ? `${this.title[0] ?? t('源列表')}` : `${this.title[1] ?? t('目标列表')}`;
       const isDisabled = isLeft ? !leftList.length : !rightList.length;
       const headerClick = () => {
         if (isDisabled) return;
@@ -226,13 +228,13 @@ export default defineComponent({
             <span
               class={{ disabled: isDisabled }}
               onClick={() => headerClick()}>
-              {isLeft ? '选择全部' : '清空'}
+              {t(isLeft ? '选择全部' : '清空')}
               </span>
           </div>;
     };
     const getEmptyHtml = (dirct) => {
       const isLeft = dirct === 'left-empty-content';
-      const emptyText = (isLeft ? this.emptyContent[0] : this.emptyContent[1]) ?? (isLeft ? '无数据' : '未选择任何项');
+      const emptyText = (isLeft ? this.emptyContent[0] : this.emptyContent[1]) ?? (t(isLeft ? '暂无数据' : '未选择任何项'));
 
       return this.$slots[dirct]
         ? <div>{this.$slots[dirct]()}</div>
@@ -295,7 +297,7 @@ export default defineComponent({
                 v-model={this.selectSearchQuery}
                 class="transfer-search-input"
                 clearable={true}
-                placeholder={this.searchPlaceholder || '搜索'}>
+                placeholder={this.searchPlaceholder || t('搜索')}>
                 {{
                   prefix: () => (
                     <Search class="icon-search" />

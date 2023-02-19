@@ -22,16 +22,19 @@
 </template>
 
 <script>
-  import { defineComponent } from 'vue';
+  import { defineComponent, ref } from 'vue';
   import { useI18n } from 'vue-i18n';
 
   import { BASIC_DATA } from './options';
   export default defineComponent({
     components: {},
-    data() {
+    setup() {
+      const { t } = useI18n();
+      const treeData = ref([...BASIC_DATA]);
+
       return {
-        treeData: [...BASIC_DATA],
-        t: useI18n().t,
+        treeData,
+        t,
       };
     },
   });

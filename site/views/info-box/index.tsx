@@ -67,14 +67,14 @@ const props: IPropsTableItem[] = [
   {
     name: 'confirmText',
     type: 'String',
-    default: '确定',
+    default: t('确认'),
     desc: '确认按钮文字',
     optional: [],
   },
   {
     name: 'cancelText',
     type: 'String',
-    default: '取消',
+    default: t('取消'),
     desc: '取消按钮文字',
     optional: [],
   },
@@ -269,8 +269,8 @@ export default defineComponent({
         >
           <ConfirmDemo />
         </DemoBox>
-        <PropsBox subtitle={t('InfoBox函数参数（以Dialog为准）')} propsData={props} />
-        <PropsBox subtitle={t('InfoBox函数返回实例')} propsData={infoBox} />
+        <PropsBox title={t('属性')} subtitle={t('InfoBox函数参数（以Dialog为准）')} propsData={props} />
+        <PropsBox title={t('事件')} subtitle={t('InfoBox函数返回实例')} propsData={infoBox} />
       </div>
     );
   },

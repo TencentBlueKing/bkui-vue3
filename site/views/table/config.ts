@@ -39,6 +39,7 @@ export interface ConfigTableItem {
 interface TableItem {
   title?: string;
   subTile?: string;
+  type?: string;
   config?: ConfigTableItem[];
 }
 

@@ -22,14 +22,14 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { defineComponent } from 'vue';
-import { useI18n } from 'vue-i18n';
 
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
+import i18n from '../../language/i18n';
 import { IPropsTableItem } from '../../typings';
 
 import AsyncDemo from './async-demo.vue';
@@ -39,6 +39,8 @@ import FullscreenDemo from './fullscreen-demo.vue';
 import NestedDemo from './nested-demo.vue';
 import SizeDemo from './size-demo.vue';
 import TypeDemo from './type-demo.vue';
+
+const { t } = i18n.global;
 
 const dialogPropsJson: IPropsTableItem[] = [
   {
@@ -51,14 +53,14 @@ const dialogPropsJson: IPropsTableItem[] = [
   {
     name: 'confirmText',
     type: 'String',
-    default: '确定',
+    default: t('确定'),
     desc: '确认按钮文字',
     optional: [],
   },
   {
     name: 'cancelText',
     type: 'String',
-    default: '取消',
+    default: t('取消'),
     desc: '取消按钮文字',
     optional: [],
   },
@@ -177,14 +179,14 @@ const dialogPropsJson: IPropsTableItem[] = [
   {
     name: 'prevText',
     type: 'String',
-    default: '上一步',
+    default: t('上一步'),
     desc: '上一步按钮文字',
     optional: [],
   },
   {
     name: 'nextText',
     type: 'String',
-    default: '下一步',
+    default: t('下一步'),
     desc: '下一步按钮文字',
     optional: [],
   },
@@ -209,7 +211,14 @@ const dialogPropsJson: IPropsTableItem[] = [
     desc: '是否允许多个弹框同时存在',
     optional: [],
   },
-];
+].map((item: IPropsTableItem) => {
+  const result = Object.assign(item, {
+    desc: t(item.desc),
+  });
+  return {
+    ...result,
+  };
+});
 
 const dialogSlotsJson: IPropsTableItem[] = [
   {
@@ -240,7 +249,15 @@ const dialogSlotsJson: IPropsTableItem[] = [
     desc: '工具栏插槽，顶部区域',
     optional: [],
   },
-];
+].map((item: IPropsTableItem) => {
+  const result = Object.assign(item, {
+    desc: t(item.desc),
+  });
+  return {
+    ...result,
+  };
+});
+
 
 const dialogChangeJson: IPropsTableItem[] = [
   {
@@ -278,96 +295,98 @@ const dialogChangeJson: IPropsTableItem[] = [
     desc: '流程型对话框中，点击下一步触发',
     optional: [],
   },
-];
+].map((item: IPropsTableItem) => {
+  const result = Object.assign(item, {
+    desc: t(item.desc),
+  });
+  return {
+    ...result,
+  };
+});
+
 
 export default defineComponent({
   name: 'SiteDialog',
   render() {
-    const { t } = useI18n();
     return (
       <div>
-        <DemoTitle
-          name={ t('Dialog 对话框') }
-          desc={ t('对话框') }
-          link="https://www.google.com.hk/"/>
+        <DemoTitle name={t('Dialog 对话框')} desc={t('对话框')} link="https://www.google.com.hk/" />
 
         <DemoBox
-          title="基本用法"
+          title={t('基本用法')}
           subtitle=""
-          desc="默认配置的对话框。通过 theme 属性配置弹框中不同的主题确认按钮；通过 quickClose 配置是否允许点击遮罩关闭弹框，默认为 true。通过 escClose 配置是否启用 esc 按键关闭弹框，默认为 true。"
+          desc={t('默认配置的对话框。通过 theme 属性配置弹框中不同的主题确认按钮；通过 quickClose 配置是否允许点击遮罩关闭弹框，默认为 true。通过 escClose 配置是否启用 esc 按键关闭弹框，默认为 true。')}
           componentName="dialog"
-          demoName="base-demo">
+          demoName="base-demo"
+        >
           <BaseDemo></BaseDemo>
         </DemoBox>
 
         <DemoBox
-          title="自定义size"
+          title={t('自定义size')}
           subtitle=""
-          desc="对话框分为4个尺寸。通过 size 属性 normal, small, medium, large 进行配置，也可通过 width, height 自定义宽高。"
+          desc={t('对话框分为4个尺寸。通过 size 属性 normal, small, medium, large 进行配置，也可通过 width, height 自定义宽高。')}
           componentName="dialog"
-          demoName="size-demo">
+          demoName="size-demo"
+        >
           <SizeDemo></SizeDemo>
         </DemoBox>
 
         <DemoBox
-          title="自定义内容以及弹框配置"
+          title={t('自定义内容以及弹框配置')}
           subtitle=""
-          desc="通过设置 draggable 属性来设置是否允许弹框拖拽。通过 closeIcon 属性设置是否显示右上角的关闭 icon。"
+          desc={t('通过设置 draggable 属性来设置是否允许弹框拖拽。通过 closeIcon 属性设置是否显示右上角的关闭 icon。')}
           componentName="dialog"
-          demoName="config-demo">
+          demoName="config-demo"
+        >
           <ConfigDemo></ConfigDemo>
         </DemoBox>
 
         <DemoBox
-          title="异步"
+          title={t('异步')}
           subtitle=""
-          desc="通过 loading 属性配置异步关闭效果，开启则需手动设置value来关闭对话框。"
+          desc={t('通过 loading 属性配置异步关闭效果，开启则需手动设置value来关闭对话框。')}
           componentName="dialog"
-          demoName="async-demo">
+          demoName="async-demo"
+        >
           <AsyncDemo></AsyncDemo>
         </DemoBox>
 
         <DemoBox
-          title="全屏弹框"
+          title={t('全屏弹框')}
           subtitle=""
-          desc="通过 fullscreen 属性配置全屏弹框，当设置为全屏弹框时，draggable 配置不生效即弹框不能拖动。"
+          desc={t('通过 fullscreen 属性配置全屏弹框，当设置为全屏弹框时，draggable 配置不生效即弹框不能拖动。')}
           componentName="dialog"
-          demoName="fullscreen-demo">
+          demoName="fullscreen-demo"
+        >
           <FullscreenDemo></FullscreenDemo>
         </DemoBox>
 
         <DemoBox
-          title="对话框类型"
+          title={t('对话框类型')}
           subtitle=""
-          desc="对话框分为4种类型。通过 dialogType 属性 show，operation，confirm，process 进行配置，默认 operation 类型。"
+          desc={t('对话框分为4种类型。通过 dialogType 属性 show，operation，confirm，process 进行配置，默认 operation 类型。')}
           componentName="dialog"
-          demoName="type-demo">
+          demoName="type-demo"
+        >
           <TypeDemo></TypeDemo>
         </DemoBox>
 
         <DemoBox
-          title="嵌套弹框"
+          title={t('嵌套弹框')}
           subtitle=""
-          desc="通过 multi-instance 配置是否嵌套弹框同时存在，默认为 true，多个弹框叠加，设置为 false 只保留最后一个。"
+          desc={t('通过 multi-instance 配置是否嵌套弹框同时存在，默认为 true，多个弹框叠加，设置为 false 只保留最后一个。')}
           componentName="dialog"
-          demoName="nested-demo">
+          demoName="nested-demo"
+        >
           <NestedDemo></NestedDemo>
         </DemoBox>
 
-        <PropsBox
-          title="Dialog 属性"
-          subtitle=""
-          propsData={dialogPropsJson} />
+        <PropsBox title={t('Dialog 属性')} subtitle="" propsData={dialogPropsJson} />
 
-        <PropsBox
-          title="Dialog 插槽"
-          subtitle=""
-          propsData={dialogSlotsJson}/>
+        <PropsBox title={t('Dialog 插槽')} subtitle="" propsData={dialogSlotsJson} />
 
-        <PropsBox
-          title="Dialog 事件"
-          subtitle=""
-          propsData={dialogChangeJson}/>
+        <PropsBox  title={t('Dialog 事件')} subtitle="" propsData={dialogChangeJson} />
       </div>
     );
   },

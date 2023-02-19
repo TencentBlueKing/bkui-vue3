@@ -21,21 +21,18 @@
 </template>
 
 <script>
-  import { defineComponent } from 'vue';
+  import { defineComponent, ref } from 'vue';
   import { useI18n } from 'vue-i18n';
 
   import { BASIC_DATA } from './options';
   export default defineComponent({
-    components: {},
-    data() {
-      return {
-        treeData: [...BASIC_DATA],
-        t: useI18n().t,
-      };
-    },
-    methods: {
-      handleRandomRows() {
-        this.treeData.length = 0;
+    setup() {
+      const { t } = useI18n();
+
+      const treeData = ref([...BASIC_DATA]);
+
+      const handleRandomRows = () => {
+        treeData.value.length = 0;
         function randomChildren(depth = 5) {
           if (depth > 0) {
             const length = Math.ceil(Math.random() * depth);
@@ -43,11 +40,16 @@
               .fill(depth)
               .map((item, index) => ({ name: `depth-${item}-${index}`, children: randomChildren(depth - 1) }));
           }
-
           return [];
         }
-        this.treeData = randomChildren();
-      },
+        treeData.value = randomChildren();
+      };
+
+      return {
+        treeData,
+        handleRandomRows,
+        t,
+      };
     },
   });
 </script>

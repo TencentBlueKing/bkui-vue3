@@ -5,11 +5,11 @@
       :theme="'primary'"
       @click="() => exampleSetting.dialog.isShow = true"
     >
-      嵌套弹框
+      {{ t("嵌套弹框") }}
     </bk-button>
     <bk-dialog
       :is-show="exampleSetting.dialog.isShow"
-      :title="'描述'"
+      :title="t('描述')"
       :size="'medium'"
       :quick-close="false"
       @closed="() => exampleSetting.dialog.isShow = false"
@@ -19,10 +19,10 @@
         class="mr10"
         @click="() => nestedDialog1.isShow = true"
       >
-        打开嵌套弹框
+        {{ t("打开嵌套弹框") }}
       </bk-button>
       <bk-button @click="() => nestedDialog2.isShow = true">
-        打开侧弹框
+        {{ t("打开侧弹框") }}
       </bk-button>
     </bk-dialog>
 
@@ -32,7 +32,7 @@
       @closed="() => nestedDialog1.isShow = false"
       @confirm="() => nestedDialog1.isShow = false"
     >
-      <div>嵌套的弹框内容~</div>
+      <div>{{ t("嵌套的弹框内容~") }}</div>
     </bk-dialog>
 
     <bk-sideslider
@@ -41,7 +41,7 @@
     >
       <div>sideslider</div>
       <bk-button @click="nestedDialog3.isShow = true">
-        打开弹窗
+        {{ t("打开弹窗") }}
       </bk-button>
       <bk-dialog
         :is-show="nestedDialog3.isShow"
@@ -49,34 +49,61 @@
         @closed="() => nestedDialog3.isShow = false"
         @confirm="() => nestedDialog3.isShow = false"
       >
-        <div>嵌套的弹框内容~</div>
+        <div>{{ t("嵌套的弹框内容~") }}</div>
       </bk-dialog>
     </bk-sideslider>
   </div>
 </template>
 
-<script setup>
-  import { ref } from 'vue';
+<script>
+  import { defineComponent, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   import BkButton from '@bkui-vue/button';
   import BkDialog from '@bkui-vue/dialog';
   import BkSideslider from '@bkui-vue/sideslider';
 
-  const exampleSetting = ref({
-    dialog: {
-      isShow: false,
+  export default defineComponent({
+    components: {
+      BkButton,
+      BkDialog,
+      BkSideslider,
     },
-  });
+    setup() {
+      const { t } = useI18n();
+      const exampleSetting = ref({
+        dialog: {
+          isShow: false,
+          confirmText: t('确定'),
+          cancelText: t('取消'),
+        },
+      });
 
-  const nestedDialog1 = ref({
-    isShow: false,
-  });
+      const nestedDialog1 = ref({
+        isShow: false,
+        confirmText: t('确定'),
+        cancelText: t('取消'),
+      });
 
-  const nestedDialog2 = ref({
-    isShow: false,
-  });
+      const nestedDialog2 = ref({
+        isShow: false,
+        confirmText: t('确定'),
+        cancelText: t('取消'),
+      });
 
-  const nestedDialog3 = ref({
-    isShow: false,
+      const nestedDialog3 = ref({
+        isShow: false,
+        confirmText: t('确定'),
+        cancelText: t('取消'),
+      });
+
+      return {
+        exampleSetting,
+        nestedDialog1,
+        nestedDialog2,
+        nestedDialog3,
+        t,
+      };
+    },
   });
 </script>

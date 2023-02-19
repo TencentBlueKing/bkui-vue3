@@ -30,7 +30,7 @@
   import { BASIC_DATA } from './options';
   export default defineComponent({
     components: {},
-    data() {
+    setup() {
       return {
         treeData: [...BASIC_DATA],
       };

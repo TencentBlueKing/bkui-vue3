@@ -11,37 +11,44 @@
     @change="change"
   />
 </template>
+
 <script>
+  import { defineComponent, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
+
   import BkTransfer from '@bkui-vue/transfer';
 
-  export default {
+  export default defineComponent({
     components: {
       BkTransfer,
     },
-    data() {
-      return {
-        targetList: ['code'],
-        list: [
-          { service_code: 'pipeline', service_name: '流水线', disabled: true },
-          { service_code: 'codecc', service_name: '代码检查' },
-          { service_code: 'bcs', service_name: '容器服务' },
-          { service_code: 'artifactory', service_name: '版本仓库' },
-          { service_code: 'ticket', service_name: '凭证管理' },
-          { service_code: 'code', service_name: '代码库', disabled: true },
-          { service_code: 'experience', service_name: '版本体验' },
-          { service_code: 'environment', service_name: '环境管理' },
-          { service_code: 'quality', service_name: '质量红线' },
-          { service_code: 'turbo', service_name: '编译加速' },
-        ],
-      };
-    },
-    methods: {
-      change(sourceList, targetList, targetValueList) {
+    setup() {
+      const { t } = useI18n();
+      const targetList = ref(['code']);
+      const list = ref([
+        { service_code: 'pipeline', service_name: t('流水线'), disabled: true },
+        { service_code: 'codecc', service_name: t('代码检查') },
+        { service_code: 'bcs', service_name: t('容器服务') },
+        { service_code: 'artifactory', service_name: t('版本仓库') },
+        { service_code: 'ticket', service_name: t('凭证管理') },
+        { service_code: 'code', service_name: t('代码库'), disabled: true },
+        { service_code: 'experience', service_name: t('版本体验') },
+        { service_code: 'environment', service_name: t('环境管理') },
+        { service_code: 'quality', service_name: t('质量红线') },
+        { service_code: 'turbo', service_name: t('编译加速') },
+      ]);
+
+      const change = (sourceList, targetList, targetValueList) => {
         console.log(sourceList);
         console.log(targetList);
         console.log(targetValueList);
-        console.log(this.targetList);
-      },
+      };
+
+      return {
+        targetList,
+        list,
+        change,
+      };
     },
-  };
+  });
 </script>

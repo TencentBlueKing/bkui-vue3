@@ -4,14 +4,14 @@
       type="primary"
       @click="handleDefault"
     >
-      {{ t("直接使用") }}
+      {{ t('直接使用') }}
     </bk-button>
     <bk-button
       style="margin-left: 15px"
       type="primary"
       @click="handleDefault2"
     >
-      {{ t("更新infoBox") }}
+      {{ t('更新infoBox') }}
     </bk-button>
   </div>
 </template>
@@ -24,10 +24,15 @@
     setup() {
       const { t } = useI18n();
 
+      const confirmInstance = InfoBox({
+        isShow: false,
+      });
+
       const handleDefault = () => {
         InfoBox({
           title: t('确认要删除？'),
-          title: t('确认要删除？'),
+          confirmText: t('确认'),
+          cancelText: t('取消'),
           dialogType: 'confirm',
           headerAlign: 'center',
           footerAlign: 'center',
@@ -37,10 +42,6 @@
         });
       };
 
-      const confirmInstance = InfoBox({
-        isShow: false,
-      });
-
       const Confirm = (opts) => {
         confirmInstance.update(opts);
         confirmInstance.show(opts);
@@ -49,7 +50,8 @@
       const handleDefault2 = () => {
         Confirm({
           title: t('确认要删除？'),
-          title: t('确认要删除？'),
+          confirmText: t('确认'),
+          cancelText: t('取消'),
           dialogType: 'confirm',
           headerAlign: 'center',
           footerAlign: 'center',

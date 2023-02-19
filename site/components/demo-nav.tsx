@@ -33,10 +33,12 @@ import BkInput from '@bkui-vue/input';
 import BKPopover from '@bkui-vue/popover';
 import { OnFirstUpdateFnType } from '@bkui-vue/shared';
 
+import i18n from '../language/i18n';
 import { NavGroupMeta } from '../typings';
 
 import './demo-nav.less';
 
+const { t } = i18n.global;
 // function useFocus() {
 //   const isFocus = ref(false);
 //   const handleFocus = () => {
@@ -103,14 +105,14 @@ export default defineComponent({
       },
     );
 
-    const getNavGroup = (group: NavGroupMeta) => {
+    const getNavGroup = (group: NavGroupMeta | string) => {
       const list = routes.filter(item => item.meta?.group === group);
       const handleRoute = (routeName) => {
         push({ name: routeName });
       };
       return (
         <div class="nav-group">
-          <div class="nav-group-title">{group}</div>
+          <div class="nav-group-title">{ t(group) }</div>
           <ul class="nav-group-list">
             {
               list.map(item => (

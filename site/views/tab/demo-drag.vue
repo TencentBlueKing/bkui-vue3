@@ -17,30 +17,36 @@
   </div>
 </template>
 <script>
-  import { defineComponent } from 'vue';
+  import { defineComponent, ref } from 'vue';
   import { useI18n } from 'vue-i18n';
 
   export default defineComponent({
     components: {},
-    data() {
+    setup() {
       const { t } = useI18n();
-      return {
-        panels: [
-          { name: 'mission', label: t('任务报表'), count: 10 },
-          { name: 'config', label: t('加速配置'), count: 20 },
-          { name: 'history', label: t('历史版本'), count: 30 },
-          { name: 'deleted', label: t('已归档加速任务'), count: 40 },
-        ],
-        active: 'mission',
-      };
-    },
-    methods: {
-      tabSort(dragStartIndex, index) {
+      const active = ref('mission');
+      const panels = ref([
+        { name: 'mission', label: t('任务报表'), count: 10 },
+        { name: 'config', label: t('加速配置'), count: 20 },
+        { name: 'history', label: t('历史版本'), count: 30 },
+        { name: 'deleted', label: t('已归档加速任务'), count: 40 },
+      ]);
+
+      const tabSort = (dragStartIndex, index) => {
         console.log(dragStartIndex, index);
-      },
-      tabDrag(index, $event) {
+      };
+
+      const tabDrag = (index, $event) => {
         console.log(index, $event);
-      },
+      };
+
+      return {
+        active,
+        panels,
+        tabSort,
+        tabDrag,
+        t,
+      };
     },
   });
 </script>

@@ -40,14 +40,23 @@ Object.keys(langMap).forEach((key) => {
   zh[key] = langMap[key][1] || key;
 });
 
+
 const Cookies = VueCookies as any;
 
-const localLanguage = Cookies.get('lang') || 'zh-cn';
+
+function localLanguage() {
+  const lang = Cookies.get('lang');
+  if (!lang) {
+    Cookies.set('lang', 'zh-cn');
+    return 'zh-cn';
+  }
+  return lang;
+}
 
 const i18n = createI18n({
   silentTranslationWarn: true,
   legacy: false,
-  locale: localLanguage,
+  locale: localLanguage(),
   fallbackLocale: 'zh-cn',
   messages: {
     'zh-cn': zh,

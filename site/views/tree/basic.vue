@@ -15,31 +15,40 @@
 </template>
 
 <script>
-  import { defineComponent } from 'vue';
+  import { defineComponent, ref } from 'vue';
 
   import { BASIC_DATA } from './options';
   export default defineComponent({
     components: {},
-    data() {
-      return {
-        treeData: [...(JSON.parse(JSON.stringify(BASIC_DATA)))],
-      };
-    },
-    methods: {
-      handleNodeClick(item, attrs, event) {
+    setup() {
+      const treeData =  ref([...(JSON.parse(JSON.stringify(BASIC_DATA)))]);
+
+      const handleNodeClick = (item, attrs, event) => {
         console.log('handleNodeClick', item, attrs, event);
-      },
-      handleNodeExpand(item, attrs, event) {
+      };
+
+      const handleNodeExpand = (item, attrs, event) => {
         console.log('handleNodeExpand', item, attrs, event);
         Object.assign(this.treeData[0], { isOpen: true });
-      },
-      handleNodeCollapse(item, attrs, event) {
+      };
+
+      const handleNodeCollapse = (item, attrs, event) => {
         setTimeout(() => {
           Object.assign(this.treeData[0], { isOpen: false });
         });
 
         console.log('handleNodeCollapse', item, attrs, event);
-      },
+      };
+
+      return {
+        treeData,
+        handleNodeClick,
+        handleNodeExpand,
+        handleNodeCollapse,
+      };
+    },
+    methods: {
+
     },
   });
 </script>

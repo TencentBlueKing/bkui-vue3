@@ -17,7 +17,7 @@
   import { BASIC_DATA } from './options';
   export default defineComponent({
     components: {},
-    data() {
+    setup() {
       return {
         treeData: [...(JSON.parse(JSON.stringify(BASIC_DATA)))],
       };
