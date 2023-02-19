@@ -23,42 +23,24 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { createI18n } from 'vue-i18n';
+import VueCookies from 'vue-cookies';
 
-import { getCookie, setCookie } from '../views/utils/cookie';
+const Cookie = VueCookies as any;
 
-import langMap from './lang';
-
-interface LangType {
-  [propName: string]: string;
+export function setCookie(key: string, value: string | number) {
+  Cookie.set(key, value);
 }
 
-const en: LangType = {};
-const zh: LangType = {};
-
-Object.keys(langMap).forEach((key) => {
-  en[key] = langMap[key][0] || key;
-  zh[key] = langMap[key][1] || key;
-});
-
-function localLanguage() {
-  const lang = getCookie('lang');
-  if (!lang) {
-    setCookie('lang', 'zh-cn');
-    return 'zh-cn';
-  }
-  return lang;
+// 默认ts是天，可以传时间戳
+export function setCookieTs(key: string, value: string | number, ts: number) {
+  Cookie.set(key, value, { expires: ts });
 }
 
-const i18n = createI18n({
-  silentTranslationWarn: true,
-  legacy: false,
-  locale: localLanguage(),
-  fallbackLocale: 'zh-cn',
-  messages: {
-    'zh-cn': zh,
-    en,
-  },
-});
+export function getCookie(key: string) {
+  return Cookie.get(key);
+}
 
-export default i18n;
+export function removeCookie(key: string) {
+  Cookie.remove(key);
+}
+
