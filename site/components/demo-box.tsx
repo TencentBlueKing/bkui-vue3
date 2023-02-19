@@ -164,7 +164,6 @@ export default defineComponent({
             <BoxIcon tips='Copy' ref="copyBtn">
               <Copy/>
             </BoxIcon>
-            {this.activeLanguage}
           </div>,
           <div class="eample-code" style={{ display: (this.showCode || this.showConfigData) ? 'block' : 'none' }}>
             <CodeBox code={this.activeCode} language={this.activeLanguage}/>
