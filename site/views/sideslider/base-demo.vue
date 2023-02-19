@@ -1,11 +1,11 @@
 <template>
   <div>
     <bk-button @click="handleOpenSlider">
-      默认配置
+      {{ t('默认配置') }}
     </bk-button>
     <bk-sideslider
       v-model:isShow="isShow"
-      title="我是标题"
+      :title="t('我是标题')"
       quick-close
     />
   </div>
@@ -13,16 +13,19 @@
 
 <script>
   import  { defineComponent, ref  } from 'vue';
+  import { useI18n } from 'vue-i18n';
   export default defineComponent({
     name: 'SiteSideslider',
     setup() {
+      const { t } = useI18n();
       const isShow = ref(false);
       const handleOpenSlider = () => {
         isShow.value = !isShow.value;
       };
       return {
-        handleOpenSlider,
         isShow,
+        handleOpenSlider,
+        t,
       };
     },
   });

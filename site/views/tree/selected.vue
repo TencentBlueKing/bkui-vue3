@@ -27,28 +27,39 @@
 </template>
 
 <script>
-  import { defineComponent } from 'vue';
+  import { defineComponent, ref } from 'vue';
   import { useI18n } from 'vue-i18n';
 
   import { SELECTED_DATA } from './options';
 
   export default defineComponent({
     components: {},
-    data() {
-      return {
-        selectText: '2',
-        selected: ['2'],
-        treeData: SELECTED_DATA,
-        t: useI18n().t,
+    setup() {
+      const { t } = useI18n();
+      const selectText = ref('2');
+      const selected = ref(['2']);
+      const  treeData = ref(SELECTED_DATA);
+
+      const handleSelect = () => {
+        selected.value = [selectText.value];
       };
-    },
-    methods: {
-      handleSelect() {
-        this.selected = [this.selectText];
-      },
-      handleNodeExpand() {},
-      handleNodeClick() {},
-      handleNodeCollapse() {},
+
+      const handleNodeExpand = () => {};
+
+      const handleNodeClick = () => {};
+
+      const handleNodeCollapse = () => {};
+
+      return {
+        selectText,
+        selected,
+        treeData,
+        handleSelect,
+        handleNodeExpand,
+        handleNodeClick,
+        handleNodeCollapse,
+        t,
+      };
     },
   });
 </script>

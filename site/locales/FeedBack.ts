@@ -180,9 +180,12 @@ const Popover: LANG = {
   右下: ['Right Bottom'],
   下左: ['Bottom Left'],
   下右: ['Bottom Right'],
+  'Top Left 文字提示': ['Top Left text prompt'],
+  'Top Center 文字提示': ['Top Center text prompt'],
+  'Top Right 文字提示': ['Top Right text prompt'],
   'trigger click': ['trigger click'],
   'mouse click': ['mouse click'],
-  当鼠标点击: ['When the mouse clicks'],
+  当鼠标点击: ['When the mouse click'],
   '手动设置IsShow = true': ['Manually set IsShow=true'],
   '手动设置IsShow = false': ['Manually set IsShow=false'],
   点击初始化Popover: ['Click to initialize Popover'],
@@ -311,9 +314,328 @@ const Notify: LANG = {
   '用来给用户推送通知提示信息，通知可配置为从界面的四个角出现': [
     'It is used to push notification prompt information to users. The notification can be configured to appear from the four corners of the interface',
   ],
+  默认没有标题: ['No title by default'],
+  通知关闭: ['Notify Close'],
+  通知出现的位置: ['Where the notification appears'],
+  默认配置的通知提示: ['Default configured notification prompt'],
+  '你好！欢迎你使用蓝鲸智云产品': ['Hello! Welcome to use Blue Whale Smart Cloud products'],
+  '你好，你申请的功能权限现已开通，请及时登录查询。如有疑问，请与蓝鲸智云管理人员联系或关注微信公众账号。': [
+    'Hello, the function permission you applied for has been opened. Please log in and check in time. If you have any questions, please contact the Blue Whale Smart Cloud administrator or follow the WeChat public account.',
+  ],
+  左上角: ['top left corner'],
+  右上角: ['top right corner'],
+  左下角: ['bottom left corner'],
+  右下角: ['bottom right corner'],
 };
 
-const Slider: LANG = {};
+const Slider: LANG = {
+  '用于操作反馈的中间态(loading)、成功、失败等': [
+    'Intermediate state (loading), success, failure, etc. for operation feedback',
+  ],
+  'Slider 属性': ['Slider Attributes'],
+  'Slider 事件': ['Slider Events'],
+  刻度: ['Scale'],
+  带输入: ['With input'],
+  垂直: ['Vertical'],
+  自定义: ['Custom'],
+  糟糕: ['Terrible'],
+  一般: ['Commonly'],
+  还行: ['Okay'],
+  还行勉勉强强: ['I\'m still struggling'],
+  满意: ['Satisfied'],
+  很好: ['Good'],
+  非常满意: ['Very satisfied'],
+  '使用 v-model 将变量与 slider 滑杆进行数据绑定，默认最大值 max-value 为 100, 默认最小值为 min-value 0': [
+    'Use v-model to bind variables with slider slider. The default maximum max-value is 100, and the default minimum value is min-value 0',
+  ],
+  '	使用v-model，将指定变量与slider的值进行绑定': [
+    'Use v-model to bind the specified variable with the value of slider',
+  ],
+  自定义类名: ['Custom class name'],
+  是否垂直: ['Vertical or not'],
+  是否禁用: ['Disabled or not'],
+  每一步的距离: ['Distance per step'],
+  是否为分段式: ['Whether it is segmented'],
+  是否显示间断点: ['Show breakpoints or not'],
+  是否显示间断点下的文字: ['Whether to display the text below the breakpoint'],
+  是否显示滑块的tip: ['Whether to display the tip of the slider'],
+  是否显示首尾的文字: ['Whether to display the first and last text'],
+  垂直状态下的高度: ['Height in vertical state'],
+  '是否显示滑块下的问题，不可与showIntervalLabel同时使用': [
+    'Whether to display the problem under the slider. It cannot be used together with showIntervalLabel',
+  ],
+  自定义内容: ['Custom content'],
+  自定义间断点下的文字格式: ['Customize the text format under breakpoints'],
+  自定义滑块下下的文字格式: ['Customize the text format under the slider'],
+  自定义滑块tip格式: ['Custom slider tip format'],
+  鼠标弹起时触发: ['Triggered when the mouse pops up'],
+  是否显示输入框: ['Whether to display the input box'],
+  '使用v-model，将指定变量与slider的值进行绑定': [
+    'Use v-model to bind the specified variable with the value of slider',
+  ],
+};
+
+const SideSlider: LANG = {
+  'Sideslider 属性': ['Sideslider Attributes'],
+  'Sideslider 事件': ['Sideslider Events'],
+  'Sideslider 插槽': ['Sideslider Slots'],
+  'Sideslider组件， 提供一个从两侧滑入的组件，供用户填写/查看更多信息。': [
+    'Sideslider component provides a component that slides in from both sides for users to fill in/view more information.',
+  ],
+  我是标题: ['I am the title'],
+  我是自定义标题: ['I am custom title'],
+  我是自定义内容: ['I am custom content'],
+  设置内容高度1000px: ['Set content height 1000px'],
+  设置内容高度400px: ['Set content height 400px'],
+  自定义标题和内容: ['Customize title and content'],
+  使用默认配置的组件: ['Components with default configuration'],
+  配置title参数和添加slot: ['Configure the title parameter and add slot'],
+  自定义footer: ['Custom footer'],
+  '配置footer插槽，footer插槽内容会随着高度的变化而变化': [
+    'Configure the footer slot. The contents of the footer slot will change with the height',
+  ],
+  '是否显示组件，支持v-model写法': ['Whether to display components and support v-model writing'],
+  自定义组件的标题: ['Title of custom component'],
+  是否支持点击遮罩关闭组件: ['Whether it supports clicking the mask to close components'],
+  是否允许出现遮罩: ['Whether mask is allowed'],
+  组件的宽度: ['Width of component'],
+  组件滑出的方向: ['Direction of component sliding out'],
+  关闭前的钩子函数: ['Hook function before closing'],
+  '	配置自定义样式类名，传入的类会被加在组件最外层的 DOM .bk-sideslider-wrapper 上': [
+    'Configure the custom style class name, and the incoming class will be added to the DOM. bk-sideslider-wrapper at the outermost layer of the component',
+  ],
+  '配置自定义样式类名，传入的类会被加在组件最外层的 DOM .bk-sideslider-wrapper 上': [
+    'Configure the custom style class name, and the incoming class will be added to the DOM. bk-sideslider-wrapper at the outermost layer of the component',
+  ],
+  '控制 sidslider 是否出现在 body 内': ['Control whether the sidslider appears in the body'],
+  '设置侧栏的z-index值，在transfer为true的情况下，改值会自动+1': [
+    'Set the z-index value of the sidebar. When the transfer is true, the value will automatically+1',
+  ],
+  显示组件后的回调函数: ['Display the callback function after the component'],
+  关闭组件后的回调函数: ['Callback function after closing component'],
+  关闭组件后动画结束的回调函数: ['Callback function for ending animation after closing component'],
+  头部插槽: ['Head slot'],
+  底部插槽: ['Bottom slot'],
+};
+
+const Transfer: LANG = {
+  默认配置: ['Default configuration'],
+  普通数组配置: ['Normal array configuration'],
+  自定义选项模板: ['Custom Options Template'],
+  源列表: ['Source list'],
+  目标列表: ['Target list'],
+  流水线: ['Assembly line'],
+  代码库: ['Code base'],
+  代码检查: ['Code check'],
+  容器服务: ['Container service'],
+  版本仓库: ['Version warehouse'],
+  凭证管理: ['Voucher management'],
+  版本体验: ['Version experience'],
+  环境管理: ['Environmental management'],
+  质量红线: ['Quality red line'],
+  编译加速: ['Compilation acceleration'],
+  服务列表: ['Service list'],
+  企业微信列表: ['Enterprise WeChat List'],
+  已选服务: ['Selected services'],
+  已选人员: ['Selected person'],
+  未选择任何项: ['No item selected'],
+  未选择任何服务: ['No service selected'],
+  选择全部: ['Select All'],
+  全部移除: ['Remove All'],
+  左侧列表: ['List on the left'],
+  右侧列表: ['List on the right'],
+  左侧带搜索: ['Left band search'],
+  'Transfer 属性': ['Transfer Attributes'],
+  'Transfer 事件': ['Transfer Events'],
+  'Transfer 插槽': ['Transfer Slots'],
+  '顶部 title': ['Top title'],
+  无数据时显示文案: ['Show copy when there is no data'],
+  '排序所依据的 key': ['Key by which to sort'],
+  '具有唯一标识的 key 值': ['Key value with unique identity'],
+  '配置 slot为 source-option 或 target-option 可自定义 选项 内容。': [
+    'Configure the slot as source-option or target-option to customize the option content.',
+  ],
+  '默认配置 source-list 和 display-key，source-list 为必传 source-list 可以是普通数组(普通数组会自动去重)。当 source-list 为普通数组时，display-key 可不传。':
+    [
+      'The source-list and display-key are configured by default. The source-list is required. The source-list can be a common array (the common array will be automatically de-duplicated). When source-list is a common array, display-key can not be passed.',
+    ],
+  '配置 target-list 以及设置排序': ['Configure target-list and set sorting'],
+  '配置 sortable 以及 sort-key 使得操作数据时数据的排序不变，配置 target-list 设置默认选择的数据。sortable 为 true 时开启排序功能，为 false 时则关闭，sort-key 为排序所依据的 key 值。注意：当 source-list 为普通数组时，开启排序时默认按照值排序，此时不需要传 sort-key。':
+    [
+      'Configure sortable and sort-key to keep the sorting of data unchanged during data operation, and configure target-list to set the data selected by default. When sortable is true, the sorting function is turned on, and when false, it is turned off. sort-key is the key value on which to sort. Note: When source-list is a common array, sorting by value is the default when sorting is enabled. At this time, it is not necessary to pass sort-key.',
+    ],
+  '通过双栏穿梭选择框，利用更大的空间展示更多可选项、已选项的信息。': [
+    'Through the double-column shuttle selection box, use more space to display more optional and selected information.',
+  ],
+  '此时根据值排序；display-key、sort-key、setting-key 不需要传。': [
+    'In this case, sort by value; Display-key, sort-key and setting-key do not need to be transferred.',
+  ],
+  '自定义 header 和无数据时显示内容': ['Customize the header and display the content when there is no data'],
+  '配置 slot 为 left-header 或 right-header 可自定义 header 内容，配置 slot 为 left-empty-content 和 right-empty-content 可自定义数据为空时所显示的内容(注意：当配置了 slot 时，其 title 和 empty-content 配置不会生效)':
+    [
+      'Configure the slot as left-header or right-header to customize the header content, and configure the slot as left-empty-content and right-empty-content to customize the content displayed when the data is empty (note: when the slot is configured, its title and empty-content configuration will not take effect)',
+    ],
+  '是否允许左侧搜索（以display-key来匹配）': ['Allow left search (match with display-key)'],
+  是否设置排序: ['Set sorting'],
+  '穿梭框数据源(必传)': ['Transfer data source (required)'],
+  '已选择的数据（唯一标识 setting-key 的数组），可以使用v-mode:targetList绑定': [
+    'The selected data (an array that uniquely identifies the setting-key) can be bound with v-mode: targetList',
+  ],
+  '配置自定义样式类名，传入的类会被加在组件最外层的 DOM .bk-transfer 上': [
+    'Configure the custom style class name, and the incoming class will be added to the DOM. bk-transfer at the outermost layer of the component',
+  ],
+  '配置 searchable 启用搜索功能': ['Configure searchable to enable search function'],
+  左侧头部插槽: ['Left head slot'],
+  右侧头部插槽: ['Right head slot'],
+  左侧无数据时插槽: ['Slot when there is no data on the left side'],
+  右侧无数据时插槽: ['Slot when there is no data on the right side'],
+  左侧选项卡插槽: ['Left tab slot'],
+  右侧选项卡插槽: ['Right tab slot'],
+  '右侧选择数据改变时触发(sourceList:未选择数据，targetList 表示所选数据；targetValueList表示唯一标识 setting-key 的数组)':
+    [
+      'Triggered when the data selected on the right changes (sourceList: no data selected, targetList represents the selected data; targetValueList represents an array that uniquely identifies setting-key)',
+    ],
+  '可使用v-mode:targetList绑定，也可以单独监听': [
+    'You can use v-mode: targetList binding, or you can listen separately',
+  ],
+};
+
+const Dialog: LANG = {
+  对话框: ['Dialog'],
+  上一步: ['Previous step'],
+  下一步: ['Next step'],
+  上一步按钮文字: ['Previous button text'],
+  下一步按钮文字: ['Next button text'],
+  对话框类型: ['Dialog type'],
+  是否显示弹框: ['Whether to display the pop-up box'],
+  当前步骤: ['Current step'],
+  总步数: ['Total steps'],
+  内容插槽: ['Content slot'],
+  是否允许多个弹框同时存在: ['Whether to allow multiple frames to exist at the same time'],
+  自定义size: ['Custom size'],
+  异步: ['Asynchronous'],
+  异步关闭: ['Asynchronous shutdown'],
+  描述: ['Describe'],
+  这是标题: ['This is the title'],
+  文本标题: ['Text Title'],
+  标题描述: ['Title Description'],
+  自定义宽高: ['Custom width and height'],
+  全屏弹框: ['Full-screen dialog'],
+  全屏弹框标题: ['Full-screen dialog title'],
+  嵌套弹框: ['Nested Box'],
+  打开嵌套弹框: ['Open Nested Box'],
+  打开侧弹框: ['Open the side spring frame'],
+  操作型: ['Operational'],
+  确认型: ['Confirm type'],
+  流程型: ['Process type'],
+  展示型对话框: ['Presentation dialog'],
+  操作型对话框: ['Operational dialog'],
+  确认型对话框: ['Confirmation dialog'],
+  打开弹窗: ['Open dialog'],
+  点击确认按钮时触发: ['Triggered when the Confirm button is clicked'],
+  自定义内容以及弹框配置: ['Customized content and frame configuration'],
+  弹框显示状态变化的回调函数: ['Callback function for status change of pop-up display'],
+  配置按钮文案: ['Configure Button Text'],
+  不允许拖拽: ['Dragging is not allowed'],
+  进度一: ['Progress I'],
+  进度二: ['Progress II'],
+  进度三: ['Progress III'],
+  进度四: ['Progress IV'],
+  描述1: ['Description 1'],
+  描述2: ['Description 2'],
+  进度一的内容: ['Content of Progress I'],
+  进度二的内容: ['Content of Progress II'],
+  进度三的内容: ['Content of Progress III'],
+  进度四的内容: ['Content of Progress IV'],
+  点击确定后: ['After clicking OK'],
+  秒关闭: ['seconds off'],
+  文字个数不超过8个汉字: ['The number of characters shall not exceed 8 Chinese characters'],
+  '嵌套的弹框内容~': ['Nested box contents~'],
+  'Dialog 属性': ['Dialog Attributes'],
+  'Dialog 事件': ['Dialog Events'],
+  'Dialog 插槽': ['Dialog Slots'],
+  '描述-嵌套2': ['Description - Nested 2'],
+  '描述-嵌套3': ['Description - Nested 3'],
+  '工具栏插槽，顶部区域': ['Toolbar slot, top area'],
+  '点击 取消，右上角的关闭 icon 或 按 esc 触发': [
+    'Click Cancel, close icon in the upper right corner or press ESC to trigger',
+  ],
+  '对话框分为4种类型。通过 dialogType 属性 show，operation，confirm，process 进行配置，默认 operation 类型。': [
+    'There are four types of dialog boxes. Configure through the dialogType attribute show, operation, confirm, and process. The default operation type.',
+  ],
+  '流程型对话框中，点击上一步触发': ['In the process dialog box, click Previous to trigger'],
+  '流程型对话框中，点击下一步触发': ['In the process dialog box, click Next to trigger'],
+  '默认配置的对话框。通过 theme 属性配置弹框中不同的主题确认按钮；通过 quickClose 配置是否允许点击遮罩关闭弹框，默认为 true。通过 escClose 配置是否启用 esc 按键关闭弹框，默认为 true。':
+    [
+      'The default configuration dialog box. Configure different theme confirmation buttons in the pop-up box through the theme attribute; Configure whether to allow clicking the mask to close the pop-up box through quickClose. The default value is true. Configure whether to enable the esc button to close the pop-up box through escClose. The default value is true.',
+    ],
+  '对话框分为4个尺寸。通过 size 属性 normal, small, medium, large 进行配置，也可通过 width, height 自定义宽高。': [
+    'The dialog box is divided into four dimensions. It can be configured through the size attributes normal, small, medium, large, and width and height can also be customized through width and height.',
+  ],
+  'primary 主题，点击遮罩不会关闭弹框，esc 按键会关闭弹框': [
+    'Primary theme, clicking the mask will not close the pop-up box, and the esc button will close the pop-up box',
+  ],
+  '通过设置 draggable 属性来设置是否允许弹框拖拽。通过 closeIcon 属性设置是否显示右上角的关闭 icon。': [
+    'Set whether dragging of the pop-up box is allowed by setting the draggable property. Set whether to display the closing icon in the upper right corner through the closeIcon property.',
+  ],
+  '通过 loading 属性配置异步关闭效果，开启则需手动设置value来关闭对话框。': [
+    'Configure the asynchronous closing effect through the loading property. To open it, you need to manually set value to close the dialog box.',
+  ],
+  '通过 fullscreen 属性配置全屏弹框，当设置为全屏弹框时，draggable 配置不生效即弹框不能拖动。': [
+    'The full-screen pop-up is configured through the fullscreen attribute. When it is set to full-screen pop-up, the draggable configuration does not take effect, that is, the pop-up cannot be dragged. "',
+  ],
+  '通过 multi-instance 配置是否嵌套弹框同时存在，默认为 true，多个弹框叠加，设置为 false 只保留最后一个。': [
+    'Configure whether nested frames exist at the same time through multi-instance. The default is true. Multiple frames are superimposed, and only the last one is retained if set to false.',
+  ],
+  '【首部及导言】': ['[First part and introduction]'],
+  '【欢迎您使用腾讯蓝鲸智云软件及服务。】': ['[Welcome to Tencent Blue Whale Smart Cloud software and services.]'],
+  '为使用腾讯蓝鲸智云软件（以下简称本软件）及服务，您应当阅读并遵守《腾讯蓝鲸智云软件许可及服务协议（以下简称本协议），以及《腾讯服务协议》':
+    [
+      'In order to use Tencent Blue Whale Smart Cloud Software (hereinafter referred to as the Software) and services, you should read and abide by Tencent Blue Whale Smart Cloud Software License and Service Agreement (hereinafter referred to as the Agreement) and Tencent Service Agreement',
+    ],
+  '（以下简称本协议），以及《腾讯服务协议》。 请您务必审慎阅读、充分理解各条款内容，特别是免除或者限制责任的条款，以及开通或使用某项服务的单独协议， 并选择接受或不接受。限制、免责条款可能以加粗形式提示您注意。':
+    [
+      '(hereinafter referred to as the Agreement), and Tencent Service Agreement. Please carefully read and fully understand the contents of the terms, especially the terms of exemption or limitation of liability, as well as the separate agreement for opening or using a certain service, and choose to accept or not to accept. Limitations and exclusions may remind you in bold form.',
+    ],
+  '除非您已阅读并接受本协议所有条款，否则您无权下载、安装或使用本软件及相关服务。': [
+    'Unless you have read and accepted all the terms of this agreement, you have no right to download, install or use the software and related services.',
+  ],
+  '您的下载、安装、使用、登录等行为即视为您已阅读并同意上述协议的约束。': [
+    'Your download, installation, use, login and other actions are deemed to be that you have read and agreed to the above agreement.',
+  ],
+  '一、【协议的范围】': ['I. [Scope of Agreement]'],
+  '1.1【协议适用主体范围】': ['1.1 [Scope of applicable subjects of the agreement]'],
+  '1.2【协议关系及冲突条款】': ['1.2 [Agreement relationship and conflict clauses]'],
+  '是其不可分割的组成部分是其不可分割的组成部分。': ['It is an integral part of it.'],
+  '欢迎您使用腾讯蓝鲸智云软件及服务。': ['Welcome to Tencent Blue Whale Smart Cloud software and services.'],
+  '为使用腾讯蓝鲸智云软件（以下简称本软件）及服务，您应当阅读并遵守《腾讯蓝鲸智云软件许可及服务协议》': [
+    'In order to use Tencent Blue Whale Smart Cloud Software (hereinafter referred to as the Software) and services, you should read and abide by the Tencent Blue Whale Smart Cloud Software License and Service Agreement',
+  ],
+  '为使用腾讯蓝鲸智云软件（以下简称本软件）及服务，您应当阅读并遵守《腾讯蓝鲸智云软件许可及服务协议（以下简称本协议），以及《腾讯服务协议》。':
+    [
+      'In order to use Tencent Blue Whale Smart Cloud Software (hereinafter referred to as the Software) and services, you should read and abide by Tencent Blue Whale Smart Cloud Software License and Service Agreement (hereinafter referred to as the Agreement) and Tencent Service Agreement.',
+    ],
+  '以下简称本协议），以及《腾讯服务协议》。请您务必审慎阅读、充分理解各条款内容，': [
+    'Hereinafter referred to as the Agreement), and Tencent Service Agreement. Please read carefully and fully understand the contents of each clause,',
+  ],
+  '特别是免除或者限制责任的条款，以及开通或使用某项服务的单独协议，并选择接受或不接受。': [
+    'In particular, the terms of exemption or limitation of liability, as well as the separate agreement for opening or using a certain service, and choose to accept or not to accept.',
+  ],
+  '限制、免责条款可能以加粗形式提示您注意。': ['Limitation and exemption clauses may remind you in bold form'],
+  '除非您已阅读并接受本协议所有条款，否则您无权下载、安装或使用本软件及相关服务。您的下载、安装、使用、登录等行为即视为您已阅读并同意上述协议的约束。':
+    [
+      'Unless you have read and accepted all the terms of this agreement, you have no right to download, install or use the software and related services. Your download, installation, use, login and other actions are deemed to be that you have read and agreed to the above agreement.',
+    ],
+  '本协议被视为《腾讯服务协议》（链接地址:http://www.qq.com/contract.shtml，若链接地址变更的，': [
+    'This agreement is regarded as Tencent Service Agreement (link address: http://www.qq.com/contract.shtml , if the link address is changed,',
+  ],
+  '本协议是您与腾讯之间关于您下载、安装、使用、复制本软件，以及使用腾讯相关服务所订立的协议。': [
+    'This agreement is the agreement between you and Tencent regarding your download, installation, use, copy of the software and use of Tencent related services.',
+  ],
+  '则以变更后的链接地址所对应的内容为准；其他链接地址变更的情形，均适用前述约定。）的补充协议，': [
+    'Then the content corresponding to the changed link address shall prevail; In other cases where the link address is changed, the above agreement shall apply.) Supplementary agreement,',
+  ],
+};
 
 export default {
   ...Loading,
@@ -325,4 +647,7 @@ export default {
   ...InfoBox,
   ...Notify,
   ...Slider,
+  ...SideSlider,
+  ...Transfer,
+  ...Dialog,
 };

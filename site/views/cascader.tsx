@@ -30,7 +30,7 @@ import BkCascader from '@bkui-vue/cascader';
 
 export default defineComponent({
   name: 'SiteAnimateNumber',
-  data() {
+  setup() {
     return {
       list: [
         {

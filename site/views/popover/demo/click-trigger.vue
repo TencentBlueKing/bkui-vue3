@@ -41,8 +41,8 @@
         isShow.value = val;
       };
 
-      const handleAfterHidden = ({ isShow }) => {
-        isShow.value  = isShow;
+      const handleAfterHidden = (val) => {
+        isShow.value  = val.isShow;
       };
 
       return {

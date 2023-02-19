@@ -27,17 +27,21 @@
 import { propsMixin } from '@bkui-vue/modal';
 import { AlignEnum, alignType, dialogTypeUnion, PropTypes, ThemeEnum } from '@bkui-vue/shared';
 
+import i18n from '../../../site/language/i18n';
+
+const { t } = i18n.global;
+
 const props = {
   ...propsMixin,
   width: PropTypes.oneOfType([String, Number]).def(''),
   height: PropTypes.oneOfType([String, Number]).def(''),
   // 确认按钮文字
-  confirmText: PropTypes.string.def('确定'),
+  confirmText: PropTypes.string.def(t('确定')),
   // 取消按钮文字
-  cancelText: PropTypes.string.def('取消'),
+  cancelText: PropTypes.string.def(t('取消')),
   // 步骤按钮文字
-  prevText: PropTypes.string.def('上一步'),
-  nextText: PropTypes.string.def('下一步'),
+  prevText: PropTypes.string.def(t('上一步')),
+  nextText: PropTypes.string.def(t('下一步')),
   // 当前步骤
   current: PropTypes.number.def(1),
   // 总步数

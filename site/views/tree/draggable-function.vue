@@ -22,16 +22,20 @@
 </template>
 
 <script>
-  import { defineComponent } from 'vue';
+  import { defineComponent, ref } from 'vue';
 
   import { DRAG_TEST_DATA } from './options';
   export default defineComponent({
     components: {},
-    data() {
+    setup() {
+      const treeData = ref([...DRAG_TEST_DATA]);
+      const disableDrag = node => node.disabled;
+      const disableDrop = node => !node.isFolder;
+
       return {
-        treeData: [...DRAG_TEST_DATA],
-        disableDrag: node => node.disabled,
-        disableDrop: node => !node.isFolder,
+        treeData,
+        disableDrag,
+        disableDrop,
       };
     },
   });

@@ -23,19 +23,16 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import { BASIC_DATA } from './options';
 export default defineComponent({
   components: {},
-  data() {
-    return {
-      treeData: [...BASIC_DATA],
-    };
-  },
-  methods: {
-    getPrefixIcon(params, renderType) {
+  setup() {
+    const treeData = ref([...BASIC_DATA]);
+
+    const  getPrefixIcon = (params, renderType) => {
       const { __attr__: {
         hasChildNode,
         isOpen,
@@ -48,7 +45,12 @@ export default defineComponent({
       const rootFont = isRoot ? 'R' : 'C';
       const fontIcon = !isAction ? rootFont : openFont;
       return  <span class="custom-node" style="font-size: 8px; text-align: center;">{fontIcon}</span>;
-    },
+    };
+
+    return {
+      treeData,
+      getPrefixIcon,
+    };
   },
   render() {
     const { t } = useI18n();

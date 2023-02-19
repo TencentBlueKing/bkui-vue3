@@ -18,27 +18,30 @@
 </template>
 
 <script>
-  import { defineComponent } from 'vue';
+  import { defineComponent, ref } from 'vue';
 
   import { DATA_FIX_COLUMNS, DATA_FIX_TABLE } from './options';
   export default defineComponent({
     components: {},
-    data() {
-      return {
-        tableData: [...DATA_FIX_TABLE],
-        columns: [...DATA_FIX_COLUMNS],
-        isScrollLoading: false,
-      };
-    },
-    methods: {
-      handleScrollBottom(arg) {
-        console.log('handleScrollBottom', arg);
-        this.isScrollLoading = true;
+    setup() {
+      const tableData = ref([...DATA_FIX_TABLE]);
+      const  columns = ref([...DATA_FIX_COLUMNS]);
+      const isScrollLoading = ref(false);
 
+      const handleScrollBottom = (arg) => {
+        console.log('handleScrollBottom', arg);
+        isScrollLoading.value = true;
         setTimeout(() => {
-          this.isScrollLoading = false;
+          isScrollLoading.value = false;
         }, 1500);
-      },
+      };
+
+      return {
+        isScrollLoading,
+        tableData,
+        columns,
+        handleScrollBottom,
+      };
     },
   });
 </script>

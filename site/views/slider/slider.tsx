@@ -25,11 +25,11 @@
 */
 
 import { defineComponent } from 'vue';
-import { useI18n } from 'vue-i18n';
 
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
+import i18n from '../../language/i18n';
 import { IPropsTableItem } from '../../typings';
 
 import BaseDemo from './base-demo.vue';
@@ -37,6 +37,8 @@ import CustomDemo from './custom-demo.vue';
 import InputDemo from './input-demo.vue';
 import StepDemo from './step-demo.vue';
 import VerticalDemo from './vertical-demo.vue';
+
+const { t } = i18n.global;
 
 const switcherPropsJson: IPropsTableItem[] = [
   {
@@ -172,14 +174,21 @@ const switcherPropsJson: IPropsTableItem[] = [
     desc: '自定义滑块tip格式',
     optional: [],
   },
-];
+].map((item: IPropsTableItem) => {
+  const result = Object.assign(item, {
+    desc: t(item.desc),
+  });
+  return {
+    ...result,
+  };
+});
 
 const switcherChangeJson: IPropsTableItem[] = [
   {
     name: 'change',
     type: 'Function',
     default: '',
-    desc: '鼠标弹起时触发',
+    desc: t('鼠标弹起时触发'),
     optional: [],
   },
 ];
@@ -189,23 +198,22 @@ export default defineComponent({
 
   },
   render() {
-    const { t } = useI18n();
     return (
       <div>
         <DemoTitle
           name={ t('Slider 滑动选择器') }
-          desc="用于操作反馈的中间态(loading)、成功、失败等"
+          desc={t('用于操作反馈的中间态(loading)、成功、失败等')}
           link="https://www.google.com.hk/"/>
           <DemoBox
             title={t('基础用法')}
             subtitle=""
-            desc="使用 v-model 将变量与 slider 滑杆进行数据绑定，默认最大值 max-value 为 100, 默认最小值为 min-value 0"
+            desc={t('使用 v-model 将变量与 slider 滑杆进行数据绑定，默认最大值 max-value 为 100, 默认最小值为 min-value 0')}
             componentName="slider"
             demoName="base-demo">
             <BaseDemo></BaseDemo>
           </DemoBox>
           <DemoBox
-            title="刻度"
+            title={t('刻度')}
             subtitle=""
             desc=""
             componentName="slider"
@@ -213,7 +221,7 @@ export default defineComponent({
             <StepDemo></StepDemo>
           </DemoBox>
           <DemoBox
-            title="带输入"
+            title={t('带输入')}
             subtitle=""
             desc=""
             componentName="slider"
@@ -221,7 +229,7 @@ export default defineComponent({
             <InputDemo></InputDemo>
           </DemoBox>
           <DemoBox
-            title="垂直"
+            title={t('垂直')}
             subtitle=""
             desc=""
             componentName="slider"
@@ -229,7 +237,7 @@ export default defineComponent({
             <VerticalDemo></VerticalDemo>
           </DemoBox>
           <DemoBox
-            title="自定义"
+            title={t('自定义')}
             subtitle=""
             desc=""
             componentName="slider"
@@ -237,11 +245,11 @@ export default defineComponent({
             <CustomDemo></CustomDemo>
           </DemoBox>
           <PropsBox
-            title="Slider 属性"
+            title={t('Slider 属性')}
             subtitle=""
             propsData={switcherPropsJson}/>
           <PropsBox
-          title="Slider 事件"
+          title={t('Slider 事件')}
           subtitle=""
           propsData={switcherChangeJson}/>
       </div>

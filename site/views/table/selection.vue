@@ -25,37 +25,43 @@
 </template>
 
 <script>
-  import { defineComponent } from 'vue';
+  import { defineComponent, reactive, ref } from 'vue';
   import { useI18n } from 'vue-i18n';
 
   import { DATA_TABLE } from './options';
-  const DATA_ROWS = DATA_TABLE
-    .map(item => ({
-      ...item,
-    }));
+  const DATA_ROWS = DATA_TABLE.map(item => ({
+    ...item,
+  }));
   export default defineComponent({
     components: {},
-    data() {
-      return {
-        tableData: DATA_ROWS,
-        pagination: { count: DATA_ROWS.length, limit: 10 },
-        t: useI18n().t,
-      };
-    },
+    setup() {
+      const { t } = useI18n();
+      const tableData = ref([...DATA_ROWS]);
+      const pagination = reactive({ count: DATA_ROWS.length, limit: 10 });
 
-    methods: {
-      handleSortBy(arg) {
+      const handleSortBy = (arg) => {
         console.log('handleSortBy', arg);
-      },
-      handleDblClick(...args) {
+      };
+
+      const handleDblClick = (...args) => {
         console.log(args);
-      },
-      isRowSelectEnable({ index, isCheckAll }) {
+      };
+
+      const isRowSelectEnable = ({ index, isCheckAll }) => {
         if (isCheckAll) {
           return true;
         }
         return index % 3;
-      },
+      };
+
+      return {
+        tableData,
+        pagination,
+        handleSortBy,
+        handleDblClick,
+        isRowSelectEnable,
+        t,
+      };
     },
   });
 </script>

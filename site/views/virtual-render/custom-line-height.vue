@@ -36,66 +36,56 @@
 </template>
 
 <script>
-  import { defineComponent } from 'vue';
-
-  import i18n from '../../language/i18n';
-
-  const { t } = i18n.global;
+  import { defineComponent, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   export default defineComponent({
-    components: {},
-    data() {
-      return {
-        randomRows: [
-          {
-            ip: '192.168.0.1',
-            source: 'QQ',
-            status: t('创建中'),
-            create_time: '2018-05-25 15:02:24',
-          },
-          {
-            ip: '192.168.0.2',
-            source: t('微信'),
-            status: t('正常'),
-            create_time: '2018-05-25 15:02:24',
-          },
-          {
-            ip: '192.168.0.3',
-            source: 'QQ',
-            status: t('创建中'),
-            create_time: '2018-05-25 15:02:24',
-          },
-          {
-            ip: '192.168.0.1',
-            source: 'QQ',
-            status: t('创建中'),
-            create_time: '2018-05-25 15:02:24',
-          },
-          {
-            ip: '192.168.0.2',
-            source: t('微信'),
-            status: t('正常'),
-            create_time: '2018-05-25 15:02:24',
-          },
-          {
-            ip: '192.168.0.3',
-            source: 'QQ',
-            status: t('创建中'),
-            create_time: '2018-05-25 15:02:24',
-          },
-        ],
-        t,
-      };
-    },
-    created() {
-    // this.handleRandomRows();
-    },
-    methods: {
-      getLineHeight(index) {
-        return 30 + index;
-      },
-      getCellStyle(item) {
-        const lineHeight = this.getLineHeight(item.$index);
+    setup() {
+      const { t } = useI18n();
+
+      const randomRows = ref([
+        {
+          ip: '192.168.0.1',
+          source: 'QQ',
+          status: t('创建中'),
+          create_time: '2018-05-25 15:02:24',
+        },
+        {
+          ip: '192.168.0.2',
+          source: t('微信'),
+          status: t('正常'),
+          create_time: '2018-05-25 15:02:24',
+        },
+        {
+          ip: '192.168.0.3',
+          source: 'QQ',
+          status: t('创建中'),
+          create_time: '2018-05-25 15:02:24',
+        },
+        {
+          ip: '192.168.0.1',
+          source: 'QQ',
+          status: t('创建中'),
+          create_time: '2018-05-25 15:02:24',
+        },
+        {
+          ip: '192.168.0.2',
+          source: t('微信'),
+          status: t('正常'),
+          create_time: '2018-05-25 15:02:24',
+        },
+        {
+          ip: '192.168.0.3',
+          source: 'QQ',
+          status: t('创建中'),
+          create_time: '2018-05-25 15:02:24',
+        },
+      ]);
+
+      const getLineHeight = index => 30 + index;
+
+      const getCellStyle = (item) => {
+        const lineHeight = getLineHeight(item.$index);
         return {
           padding: '2px 10px',
           height: `${lineHeight}px`,
@@ -103,29 +93,39 @@
           display: 'inline-block',
           width: '200px',
         };
-      },
+      };
 
-      getRowStyle(item) {
-        const lineHeight = this.getLineHeight(item.$index);
+      const getRowStyle = (item) => {
+        const lineHeight = getLineHeight(item.$index);
         return {
           height: `${lineHeight}px`,
           lineHeight: `${lineHeight}px`,
           borderBottom: 'solid 1px #ddd',
         };
-      },
-      handleRandomRows() {
-        this.randomRows.splice(
+      };
+
+      const handleRandomRows = () => {
+        randomRows.value.splice(
           0,
-          this.randomRows.length,
+          randomRows.value.length,
           ...new Array(Math.ceil(Math.random() * 900) + 100).fill('')
             .map((_, index) => ({
               ip: `${index}--192.168.0.x`,
               source: `${index}_QQ`,
-              status: this.t('创建中'),
+              status: t('创建中'),
               create_time: `2018-05-25 15:02:24.${index}`,
             })),
         );
-      },
+      };
+
+      return {
+        randomRows,
+        getLineHeight,
+        getCellStyle,
+        getRowStyle,
+        handleRandomRows,
+        t,
+      };
     },
   });
 </script>

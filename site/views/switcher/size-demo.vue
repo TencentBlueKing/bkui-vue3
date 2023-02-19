@@ -9,7 +9,6 @@
       v-model="demo1"
       size="small"
     />
-    <!-- 配置 show-text 时 size 失效 -->
     <bk-switcher
       v-model="demo1"
       size="small"

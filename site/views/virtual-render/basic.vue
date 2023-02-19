@@ -36,93 +36,88 @@
 </template>
 
 <script>
-  import { defineComponent } from 'vue';
-
-  import i18n from '../../language/i18n';
-
-  const { t } = i18n.global;
+  import { defineComponent, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   export default defineComponent({
-    components: {},
-    data() {
-      return {
-        randomRows: [
-          {
-            ip: '192.168.0.1',
-            source: 'QQ',
-            status: t('创建中'),
-            create_time: '2018-05-25 15:02:24',
-          },
-          {
-            ip: '192.168.0.2',
-            source: t('微信'),
-            status: t('正常'),
-            create_time: '2018-05-25 15:02:24',
-          },
-          {
-            ip: '192.168.0.3',
-            source: 'QQ',
-            status: t('创建中'),
-            create_time: '2018-05-25 15:02:24',
-          },
-          {
-            ip: '192.168.0.1',
-            source: 'QQ',
-            status: t('创建中'),
-            create_time: '2018-05-25 15:02:24',
-          },
-          {
-            ip: '192.168.0.2',
-            source: t('微信'),
-            status: t('正常'),
-            create_time: '2018-05-25 15:02:24',
-          },
-          {
-            ip: '192.168.0.3',
-            source: 'QQ',
-            status: t('创建中'),
-            create_time: '2018-05-25 15:02:24',
-          },
-        ],
-        t,
-      };
-    },
-    created() {
-    // this.handleRandomRows();
-    },
-    methods: {
-      getCellStyle() {
-        const lineHeight = 30;
-        return {
-          padding: '2px 10px',
-          height: `${lineHeight}px`,
-          lineHeight: `${lineHeight}px`,
-          display: 'inline-block',
-          width: '200px',
-        };
-      },
+    setup() {
+      const { t } = useI18n();
 
-      getRowStyle() {
-        const lineHeight = 30;
-        return {
-          height: `${lineHeight}px`,
-          lineHeight: `${lineHeight}px`,
-          borderBottom: 'solid 1px #ddd',
-        };
-      },
-      handleRandomRows() {
-        this.randomRows.splice(
+      const lineHeight = ref(30);
+      const randomRows = ref([
+        {
+          ip: '192.168.0.1',
+          source: 'QQ',
+          status: t('创建中'),
+          create_time: '2018-05-25 15:02:24',
+        },
+        {
+          ip: '192.168.0.2',
+          source: t('微信'),
+          status: t('正常'),
+          create_time: '2018-05-25 15:02:24',
+        },
+        {
+          ip: '192.168.0.3',
+          source: 'QQ',
+          status: t('创建中'),
+          create_time: '2018-05-25 15:02:24',
+        },
+        {
+          ip: '192.168.0.1',
+          source: 'QQ',
+          status: t('创建中'),
+          create_time: '2018-05-25 15:02:24',
+        },
+        {
+          ip: '192.168.0.2',
+          source: t('微信'),
+          status: t('正常'),
+          create_time: '2018-05-25 15:02:24',
+        },
+        {
+          ip: '192.168.0.3',
+          source: 'QQ',
+          status: t('创建中'),
+          create_time: '2018-05-25 15:02:24',
+        },
+      ]);
+
+      const getCellStyle = () => ({
+        padding: '2px 10px',
+        height: `${lineHeight.value}px`,
+        lineHeight: `${lineHeight.value}px`,
+        display: 'inline-block',
+        width: '200px',
+      });
+
+      const getRowStyle = () => ({
+        height: `${lineHeight.value}px`,
+        lineHeight: `${lineHeight.value}px`,
+        borderBottom: 'solid 1px #ddd',
+      });
+
+      const handleRandomRows = () => {
+        randomRows.value.splice(
           0,
-          this.randomRows.length,
+          randomRows.value.length,
           ...new Array(Math.ceil(Math.random() * 9000) + 1000).fill('')
             .map((_, index) => ({
               ip: `${index}--192.168.0.x`,
               source: `${index}_QQ`,
-              status: this.t('创建中'),
+              status: t('创建中'),
               create_time: `2018-05-25 15:02:24.${index}`,
             })),
         );
-      },
+      };
+
+      return {
+        randomRows,
+        getCellStyle,
+        getRowStyle,
+        handleRandomRows,
+        t,
+      };
     },
   });
 </script>

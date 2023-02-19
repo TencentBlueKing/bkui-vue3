@@ -87,6 +87,7 @@ const Common: LANG = {
   错误: ['Error'],
   更新: ['Update'],
   警告: ['Warning'],
+  清空: ['Clear'],
 };
 
 const MenuTitle: LANG = {

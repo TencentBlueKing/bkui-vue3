@@ -2,19 +2,19 @@
   <div style="text-align: left">
     <div class="bk-popover-position-top">
       <bk-popover
-        :content="('Top Left 文字提示')"
+        :content="t('Top Left 文字提示')"
         placement="bottom"
       >
         <bk-button>{{ t('上左') }}</bk-button>
       </bk-popover>
       <bk-popover
-        :content="('Top Center 文字提示')"
+        :content="t('Top Center 文字提示')"
         placement="bottom"
       >
         <bk-button>{{ t('上边') }}</bk-button>
       </bk-popover>
       <bk-popover
-        content="Top Right 文字提示"
+        :content="t('Top Right 文字提示')"
         placement="top-end"
       >
         <bk-button>{{ t('上右') }}</bk-button>

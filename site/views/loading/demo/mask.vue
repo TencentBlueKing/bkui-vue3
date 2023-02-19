@@ -2,7 +2,7 @@
   <div>
     <bk-loading
       loading
-      opacity="0.6"
+      :opacity="0.6"
       :z-index="100"
       color="#62ba62"
     >
