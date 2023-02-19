@@ -24,15 +24,13 @@
 * IN THE SOFTWARE.
 */
 import { defineComponent } from 'vue';
-import VueCookies from 'vue-cookies';
 import { useI18n } from 'vue-i18n';
 
 import DemoTitle from '../../components/demo-title';
+import { getCookie } from '../utils/cookie';
 
 import StartMd from './start.md';
 import StartEnMd from './start-en.md';
-
-const Cookies = VueCookies as any;
 
 export default defineComponent({
   render() {
@@ -42,7 +40,7 @@ export default defineComponent({
         <DemoTitle
           name={ t('快速上手') }
           desc= {`${t('本组件库基于Vue3研发，本节介绍如何在项目中结合webpack 一起使用{\'@\'}blueking/bkui-vue。')}` }/>
-          { Cookies.get('lang') === 'zh-cn' ? <StartMd/> : <StartEnMd/> }
+          { getCookie('lang') === 'zh-cn' ? <StartMd/> : <StartEnMd/> }
       </div>
     );
   },
