@@ -24,21 +24,25 @@
  * IN THE SOFTWARE.
  */
 
-import { defineComponent } from 'vue';
+import { defineAsyncComponent, defineComponent } from 'vue';
 
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import i18n from '../../language/i18n';
 import { IPropsTableItem } from '../../typings';
+import { getCookie } from '../utils/cookie';
 
-import BaseDemo from './base-demo.vue';
-import BeforeChangeDemo from './before-change-demo.vue';
-import DisabledDemo from './disabled-demo.vue';
-import SizeDemo from './size-demo.vue';
-import TextDemo from './text-demo.vue';
-import ThemeDemo from './theme-demo.vue';
-import TypeDemo from './type-demo.vue';
+import BaseDemo from './demo/base-demo.vue';
+import BeforeChangeDemo from './demo/before-change-demo.vue';
+import SizeDemo from './demo/size-demo.vue';
+import ThemeDemo from './demo/theme-demo.vue';
+import TypeDemo from './demo/type-demo.vue';
+
+const lang = getCookie('lang');
+
+const DisabledDemo = defineAsyncComponent(() => import(`./demo/${lang}/disabled-demo.vue`));
+const TextDemo = defineAsyncComponent(() => import(`./demo/${lang}/text-demo.vue`));
 
 const { t } = i18n.global;
 
@@ -150,9 +154,9 @@ export default defineComponent({
           subtitle=""
           desc={t('可以通过 value / v-model 属性来定义开关状态，')}
           componentName="switcher"
-          demoName="base-demo"
+          demoName="demo/base-demo"
         >
-          <BaseDemo></BaseDemo>
+          <BaseDemo />
         </DemoBox>
 
         <DemoBox
@@ -160,9 +164,9 @@ export default defineComponent({
           subtitle=""
           desc={t('可以通过 size 属性来定义开关的尺寸，需要更大或更小尺寸时使用 large、small 值配置，不配置即为默认尺寸。当设置 show-text 时将显示为特定尺寸同时 size 将失效。')}
           componentName="switcher"
-          demoName="size-demo"
+          demoName="demo/size-demo"
         >
-          <SizeDemo></SizeDemo>
+          <SizeDemo />
         </DemoBox>
 
         <DemoBox
@@ -170,9 +174,9 @@ export default defineComponent({
           subtitle=""
           desc={t('可以通过 theme 属性来定义开关的主题')}
           componentName="switcher"
-          demoName="theme-demo"
+          demoName="demo/theme-demo"
         >
-          <ThemeDemo></ThemeDemo>
+          <ThemeDemo />
         </DemoBox>
 
         <DemoBox
@@ -180,9 +184,9 @@ export default defineComponent({
           subtitle={t('不可用状态')}
           desc={t('可以使用 disabled 属性来定义开关是否禁用，它接受一个 Boolean 值')}
           componentName="switcher"
-          demoName="disabled-demo"
+          demoName={`demo/${lang}/disabled-demo`}
         >
-          <DisabledDemo></DisabledDemo>
+          <DisabledDemo />
         </DemoBox>
 
         <DemoBox
@@ -190,9 +194,9 @@ export default defineComponent({
           subtitle=""
           desc={t('可以通过 before-change 接收一个函数来做前置状态检测，返回 false状态切换失败；返回true状态切换成功；返回一个promise，resolve状态切换成功，reject状态切换失败')}
           componentName="switcher"
-          demoName="before-change-demo"
+          demoName="demo/before-change-demo"
         >
-          <BeforeChangeDemo></BeforeChangeDemo>
+          <BeforeChangeDemo />
         </DemoBox>
 
         <DemoBox
@@ -200,13 +204,13 @@ export default defineComponent({
           subtitle=""
           desc={t('可以通过 onText/offText 来修改展示的文案自定义文案')}
           componentName="switcher"
-          demoName="text-demo"
+          demoName={`demo/${lang}/text-demo`}
         >
-          <TextDemo></TextDemo>
+          <TextDemo />
         </DemoBox>
 
-        <DemoBox title={t('更多示例')} subtitle="" desc="" componentName="switcher" demoName="type-demo">
-          <TypeDemo></TypeDemo>
+        <DemoBox title={t('更多示例')} subtitle="" desc="" componentName="switcher" demoName="demo/type-demo">
+          <TypeDemo />
         </DemoBox>
 
         <PropsBox title={t('Switcher 属性')} subtitle="" propsData={switcherPropsJson} />

@@ -205,7 +205,7 @@ const LIST: TreeItem[] = [
         name: 'match',
         type: 'Boolean',
         default: 'fuzzy',
-        desc: '匹配方式, 支持模糊匹配（fuzzy） || 完全匹配（full）, 支持自定义匹配函数 (searchValue, itemText, item) => true || false',
+        desc: '匹配方式, 支持模糊匹配（fuzzy） {\'||\'} 完全匹配（full）, 支持自定义匹配函数 (searchValue, itemText, item) => true {\'||\'} false',
         optional: ['fuzzy', 'full'],
       },
       { name: 'resultType', type: 'String', default: 'tree', desc: '搜索结果如何展示', optional: ['tree', 'list'] },

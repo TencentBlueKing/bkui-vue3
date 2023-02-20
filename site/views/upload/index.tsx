@@ -1,48 +1,49 @@
 /*
-* Tencent is pleased to support the open source community by making
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
-*
-* Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
-*
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
-*
-* License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
-*
-* ---------------------------------------------------
-* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
-* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
-* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-* the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-* THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-* IN THE SOFTWARE.
-*/
+ * Tencent is pleased to support the open source community by making
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ *
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ *
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ *
+ * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ *
+ * ---------------------------------------------------
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+ * the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
 
-import { defineComponent } from 'vue';
+import { defineAsyncComponent, defineComponent } from 'vue';
 
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import i18n from '../../language/i18n';
-import {
-  type IPropsTableItem,
-} from '../../typings';
+import { type IPropsTableItem } from '../../typings';
+import { getCookie } from '../utils/cookie';
 
-import AcceptImage from './demo/accept-image.vue';
-import AcceptZip from './demo/accept-zip.vue';
-import Base from './demo/base.vue';
-import Limit from './demo/limit.vue';
-import MaxSize from './demo/max-size.vue';
-import SinglePicture from './demo/single-picture.vue';
-import SlotsFile from './demo/slots-file.vue';
-import ThemeButton from './demo/theme-button.vue';
-import ThemePicture from './demo/theme-picture.vue';
+const lang = getCookie('lang');
+
+const AcceptImage = defineAsyncComponent(() => import(`./demo/${lang}/accept-image.vue`));
+const AcceptZip = defineAsyncComponent(() => import(`./demo/${lang}/accept-zip.vue`));
+const Base = defineAsyncComponent(() => import(`./demo/${lang}/base.vue`));
+const Limit = defineAsyncComponent(() => import(`./demo/${lang}/limit.vue`));
+const MaxSize = defineAsyncComponent(() => import(`./demo/${lang}/max-size.vue`));
+const SinglePicture = defineAsyncComponent(() => import(`./demo/${lang}/single-picture.vue`));
+const SlotsFile = defineAsyncComponent(() => import(`./demo/${lang}/slots-file.vue`));
+const ThemeButton = defineAsyncComponent(() => import(`./demo/${lang}/theme-button.vue`));
+const ThemePicture = defineAsyncComponent(() => import(`./demo/${lang}/theme-picture.vue`));
 
 const { t } = i18n.global;
 
@@ -237,7 +238,7 @@ const uploadEvents: IPropsTableItem[] = [
     type: 'Function',
     default: null,
     desc: t('文件上传成功后，点击删除文件触发的事件'),
-    optional: ['file（删除的哪个文件对象）', 'fileList（删除后的文件列表）'],
+    optional: [t('file（删除的哪个文件对象）'), t('fileList（删除后的文件列表）')],
   },
 ];
 
@@ -278,85 +279,82 @@ export default defineComponent({
   render() {
     return (
       <div>
-        <DemoTitle
-          name="Upload"
-          desc={ t('通过点击或者拖拽上传文件') }>
-        </DemoTitle>
+        <DemoTitle name="Upload" desc={t('通过点击或者拖拽上传文件')}></DemoTitle>
         <DemoBox
           title={t('基础用法')}
-          desc={ t('上传组件提供图片和文件上传的功能，由 accept 属性来定义允许上传的文件类型，默认为 *') }
+          desc={t('上传组件提供图片和文件上传的功能，由 accept 属性来定义允许上传的文件类型，默认为 *')}
           componentName="upload"
-          demoName="/demo/base">
-            <Base />
+          demoName={`demo/${lang}/base`}
+        >
+          <Base />
         </DemoBox>
         <DemoBox
-          title={ t('上传图片') }
-          desc={ t('配置 accept 属性，限制用户只允许上传 jpg、jpeg、png 格式的图片')}
+          title={t('上传图片')}
+          desc={t('配置 accept 属性，限制用户只允许上传 jpg、jpeg、png 格式的图片')}
           componentName="upload"
-          demoName="/demo/accept-image">
-            <AcceptImage />
+          demoName={`demo/${lang}/accept-image`}
+        >
+          <AcceptImage />
         </DemoBox>
         <DemoBox
-          title={ t('上传 zip 文件') }
-          desc={ t('配置 accept 属性，限制用户只允许上传 zip 格式的文件') }
+          title={t('上传 zip 文件')}
+          desc={t('配置 accept 属性，限制用户只允许上传 zip 格式的文件')}
           componentName="upload"
-          demoName="/demo/accept-zip">
-            <AcceptZip />
+          demoName={`demo/${lang}/accept-zip`}
+        >
+          <AcceptZip />
         </DemoBox>
         <DemoBox
-          title={ t('设置文件大小') }
-          desc={ t('配置 size 属性，限制上传文件的大小') }
+          title={t('设置文件大小')}
+          desc={t('配置 size 属性，限制上传文件的大小')}
           componentName="upload"
-          demoName="/demo/max-size">
-            <MaxSize />
+          demoName={`demo/${lang}/max-size`}
+        >
+          <MaxSize />
         </DemoBox>
         <DemoBox
-          title={ t('设置上传文件个数') }
-          desc={ t('配置 limit 属性，设置上传文件个数') }
+          title={t('设置上传文件个数')}
+          desc={t('配置 limit 属性，设置上传文件个数')}
           componentName="upload"
-          demoName="/demo/limit">
-            <Limit />
+          demoName={`demo/${lang}/limit`}
+        >
+          <Limit />
         </DemoBox>
         <DemoBox
-          title={ t('点击按钮上传') }
-          desc={ t('设置 theme 属性为 button') }
+          title={t('点击按钮上传')}
+          desc={t('设置 theme 属性为 button')}
           componentName="upload"
-          demoName="/demo/theme-button">
-            <ThemeButton />
+          demoName={`demo/${lang}/theme-button`}
+        >
+          <ThemeButton />
         </DemoBox>
         <DemoBox
-          title={ t('照片墙') }
-          desc={t('设置 theme 属性为 picture，限制文件类型为图片类型，比如：png，jpeg，jpg') }
+          title={t('照片墙')}
+          desc={t('设置 theme 属性为 picture，限制文件类型为图片类型，比如：png，jpeg，jpg')}
           componentName="upload"
-          demoName="/demo/theme-picture">
-            <ThemePicture />
+          demoName={`demo/${lang}/theme-picture`}
+        >
+          <ThemePicture />
         </DemoBox>
         <DemoBox
-          title={ t('头像上传') }
-          desc={ t('设置 theme 属性为 picture，multiple 属性设置为 false，并限制文件类型为图片类型，比如：png，jpeg，jpg') }
+          title={t('头像上传')}
+          desc={t('设置 theme 属性为 picture，multiple 属性设置为 false，并限制文件类型为图片类型，比如：png，jpeg，jpg')}
           componentName="upload"
-          demoName="/demo/single-picture">
-            <SinglePicture />
+          demoName={`demo/${lang}/single-picture`}
+        >
+          <SinglePicture />
         </DemoBox>
         <DemoBox
-          title={ t('自定义文件列表项') }
-          desc={ t('使用 slot 自定义文件列表项') }
+          title={t('自定义文件列表项')}
+          desc={t('使用 slot 自定义文件列表项')}
           componentName="upload"
-          demoName="/demo/slots-file">
-            <SlotsFile />
+          demoName={`demo/${lang}/slots-file`}
+        >
+          <SlotsFile />
         </DemoBox>
-        <PropsBox
-          title={ t('Upload 属性') }
-          subtitle=""
-          propsData={uploadProps}/>
-        <PropsBox
-          title={ t('Upload 事件') }
-          subtitle=""
-          propsData={uploadEvents}/>
-        <PropsBox
-          title={ t('Upload 插槽')}
-          subtitle=""
-          propsData={uploadSlots}/>
+        <PropsBox title={t('Upload 属性')} subtitle="" propsData={uploadProps} />
+        <PropsBox title={t('Upload 事件')} subtitle="" propsData={uploadEvents} />
+        <PropsBox title={t('Upload 插槽')} subtitle="" propsData={uploadSlots} />
       </div>
     );
   },

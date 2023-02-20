@@ -125,7 +125,7 @@ const Collapse: LANG = {
   ],
   通过配置默认插槽即可自定义标题内容: ['You can customize the title content by configuring the default Slot'],
   自定义title: ['Custom Title'],
-  点击事件: ['Click Event'],
+  点击事件: ['Click Events'],
   设置列表不可点击disabled: ['The Setting List Cannot be disabled'],
   '展开/收起 动画状态改变的回调事件': ['Expand/collapse the callback event of animation state change'],
   '插槽：面板': ['Slots: panels'],
@@ -195,7 +195,7 @@ const Rate: LANG = {
   '通过 size 属性控制组件大小': ['Control component size'],
   '通过监听 change 事件来做出响应': ['Respond by listening for the change event'],
   'Rate 属性': ['Rate Attributes'],
-  'Rate 事件': ['Rate Event'],
+  'Rate 事件': ['Rate Events'],
   分数: ['Score'],
   尺寸: ['Size'],
   是否可编辑: ['Editable or not'],
@@ -216,8 +216,8 @@ const Swiper: LANG = {
     'Transfer data by passing pics or list attributes, and customize display content through default scope slot',
   ],
   'Swiper 属性': ['Swiper Attributes'],
-  'Swiper 事件': ['Swiper Event'],
-  '图片列表，[{ link: String, url: String, color: String, class: String }]': [
+  'Swiper 事件': ['Swiper Events'],
+  '图片列表，[{\'{\'} link: String, url: String, color: String, class: String {\'}\'}]': [
     'Picture list, [{\'{\'} link: String, url: String, color: String, class: String {\'}\'}]',
   ],
   '数据列表，配合 slot 使用': ['Data list, used with slot'],
@@ -267,6 +267,15 @@ const Table: LANG = {
   过滤范围: ['Filter range'],
   排序范围: ['Sort range'],
   空数据: ['Empty data'],
+  表头详细配置说明: ['Detailed configuration description of header'],
+  排序详细配置: ['Sort detailed configuration'],
+  过滤详细配置: ['Filter detailed configuration'],
+  '表格设置详细配置，default：large: 78，medium: 60，small: 42': [
+    'Table setting detailed configuration, default: large: 78, medium: 60, small: 42',
+  ],
+  '配置最多能选择多少个字段，配置该属性后，字段列表将不提供全选功能': [
+    'Configure how many fields can be selected at most. After configuring this attribute, the field list will not provide the function of selecting all',
+  ],
   '过滤为空-试试过滤来源为 Email': ['Filter is empty - try filtering from Email'],
   '通过设置filterScope设置过滤范围为当前页面还是全部数据，如果是all，则过滤完毕会重置分页为首页': [
     'Set the filtering range to the current page or all data by setting the filterScope. If it is all, the paging will be reset to the first page after filtering',
@@ -390,7 +399,10 @@ const Table: LANG = {
     'It is used to select multiple tables and switch the selected status of a row. If the second parameter is used, it is used to set whether this row is selected or not (if selected is true, it is selected)',
   ],
   '用于多选表格，切换所有行的选中状态': ['Used to select multiple tables and switch the selected status of all rows'],
-  '用于可展开表格，切换某一行的展开状态，如果使用了第二个参数，则是设置这一行展开与否（expanded 为 true 则展开）': ['Used to expand a table and switch the expansion status of a row. If the second parameter is used, it is used to set whether the row is expanded or not (if expanded is true, it is expanded)'],
+  '用于可展开表格，切换某一行的展开状态，如果使用了第二个参数，则是设置这一行展开与否（expanded 为 true 则展开）': [
+    'Used to expand a table and switch the expansion status of a row. If the second parameter is used, it is used to set whether the row is expanded or not (if expanded is true, it is expanded)',
+  ],
+  'Table Cell ellipsis tooltip config': ['Table Cell ellipsis tooltip config'],
   '<bk-column />模板使用自定义显示默认插槽': ['<bk-column/>Template uses custom display default slot'],
 };
 
@@ -425,8 +437,8 @@ const DropdownMenu: LANG = {
   'Dropdown 属性': ['Dropdown Attributes'],
   'DropdownMenu 属性': ['DropdownMenu Attributes'],
   'DropdownItem 属性': ['DropdownItem Attributes'],
-  'Dropdown 事件': ['Dropdown Event'],
-  'DropdownItem 事件': ['DropdownItem Event'],
+  'Dropdown 事件': ['Dropdown Events'],
+  'DropdownItem 事件': ['DropdownItem Events'],
   '自定义控制显示与隐藏 trigger = manual 时生效': [
     'Custom control takes effect when trigger=manual is displayed and hidden',
   ],
@@ -586,7 +598,7 @@ const Tree: LANG = {
     'Whether the asynchronous request node is automatically expanded. Optional values: once is only executed once during initialization; Every data update is executed',
   ],
   需要匹配的值: ['Value to match'],
-  '匹配方式, 支持模糊匹配（fuzzy） || 完全匹配（full）, 支持自定义匹配函数 (searchValue, itemText, item) => true || false':
+  '匹配方式, 支持模糊匹配（fuzzy） {\'||\'} 完全匹配（full）, 支持自定义匹配函数 (searchValue, itemText, item) => true {\'||\'} false':
     [
       'Matching method, support fuzzy matching {\'||\'} full matching, support user-defined matching function (searchValue, itemText, item)=>true  {\'||\'} false',
     ],
@@ -687,7 +699,7 @@ const Tree: LANG = {
     [
       'It only takes effect when selection is set. It is used to initialize or update the selected status of row. The internal use logic is: row [selectionKey]. It can be multi-level selection, but multi-level selection only supports row.child.child. For more information, please refer to lodash.get',
     ],
-  '提供自定义判定当前行是否选中, 如果设置了此属性，其他判定均不生效, ({ row, cell, data }) => bool': [
+  '提供自定义判定当前行是否选中, 如果设置了此属性，其他判定均不生效, ({\'{\'} row, cell, data {\'}\'}) => bool': [
     'Provide user-defined judgment to determine whether the current row is selected. If this attribute is set, other judgments will not take effect, ({\'{\'}row, cell, data{\'}\'})=>bool',
   ],
   '为避免不必要的数据修改导致的不可控组件更新,默认组件不会对传入组件的data进行任何修改,设置此属性为true则会对源数据进行同步（如：启用selection，勾选时想要自动同步到源数据）, 目前只会对指定了selectionKey的情况下才会对指定的字段数据进行更新，同时需要指定 rowKey，保证匹配到的row是正确的目标对象':
@@ -697,10 +709,10 @@ const Tree: LANG = {
   '鼠标划过行样式行为,配置`highlight`会高亮当前行，`auto`自行设置样式': [
     'Mouse over line style behavior, configure \'highlight\' to highlight the current line, and \'auto\' to set the style by itself',
   ],
-  '如果只指定了 prop, 没有指定 order, 则默认顺序是 asc, 配置格式：{ column: order }': [
+  '如果只指定了 prop, 没有指定 order, 则默认顺序是 asc, 配置格式：{\'{\'} column: order {\'}\'}': [
     'If only prop is specified and no order is specified, the default order is asc, and the configuration format is {\'{\'}column: order{\'}\'}',
   ],
-  '* 配合 column selection 使用用于配置渲染行数据的勾选框是否可用, 可以直接为 true|false，全部启用或者禁用如果是函数，则返回 true|false({ row, index, isCheckAll }) => boolean':
+  '* 配合 column selection 使用用于配置渲染行数据的勾选框是否可用, 可以直接为 true|false，全部启用或者禁用如果是函数，则返回 true|false({\'{\'} row, index, isCheckAll {\'}\'}) => boolean':
     [
       '*Use with column selection to configure whether the check box for rendering row data is available. It can be directly true | false. If it is a function, it will return true | false ({\'{\'}row, index, isCheckAll{\'}\'})=>boolean',
     ],
@@ -808,7 +820,7 @@ const Pagination: LANG = {
   当前页码变化时的回调: ['Callback when the current page number changes'],
   当前分页尺寸变化时的回调: ['Callback when the current page size changes'],
   'Pagination 属性': ['Pagination Attributes'],
-  'Pagination 事件': ['Pagination Event'],
+  'Pagination 事件': ['Pagination Events'],
   条: ['Strip'],
   每页: ['Each page'],
   共计: ['Total'],
