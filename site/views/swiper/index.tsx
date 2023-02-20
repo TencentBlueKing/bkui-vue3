@@ -57,7 +57,7 @@ const SwipePropsJson: IPropsTableItem[] = [
     name: 'pics',
     type: 'Array',
     default: '[]',
-    desc: '图片列表，[{ link: String, url: String, color: String, class: String }]',
+    desc: '图片列表，[{\'{\'} link: String, url: String, color: String, class: String {\'}\'}]',
     optional: [],
   },
   {

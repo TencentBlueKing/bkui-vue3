@@ -24,27 +24,30 @@
 * IN THE SOFTWARE.
 */
 
-import { defineComponent } from 'vue';
+import { defineAsyncComponent, defineComponent } from 'vue';
 
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import i18n from '../../language/i18n';
 import { IPropsTableItem } from '../../typings';
+import { getCookie } from '../utils/cookie';
 
-import BaseDemo from './base-demo.vue';
-import ClearDemo from './clear-demo.vue';
-import CreateDemo from './create-demo.vue';
-import DisabledDemo from './disabled-demo.vue';
-import ExampleDemo from './example-demo.vue';
-import GroupDemo from './group-demo.vue';
-import ListDisabledDemo from './list-disabled-demo.vue';
-import MatchDemo from './match-demo.vue';
-import MoreDemo from './more-demo.vue';
-import PasteDemo from './paste-demo.vue';
-import SingleDemo from './single-demo.vue';
-import TooltipsDemo from './tooltips-demo.vue';
-import TriggerDemo from './trigger-demo.vue';
+const lang = getCookie('lang');
+
+const BaseDemo = defineAsyncComponent(() => import(`./demo/${lang}/base-demo.vue`));
+const ClearDemo = defineAsyncComponent(() => import(`./demo/${lang}/clear-demo.vue`));
+const CreateDemo = defineAsyncComponent(() => import(`./demo/${lang}/create-demo.vue`));
+const DisabledDemo = defineAsyncComponent(() => import(`./demo/${lang}/disabled-demo.vue`));
+const ExampleDemo = defineAsyncComponent(() => import(`./demo/${lang}/example-demo.vue`));
+const GroupDemo = defineAsyncComponent(() => import(`./demo/${lang}/group-demo.vue`));
+const ListDisabledDemo = defineAsyncComponent(() => import(`./demo/${lang}/list-disabled-demo.vue`));
+const MatchDemo = defineAsyncComponent(() => import(`./demo/${lang}/match-demo.vue`));
+const MoreDemo = defineAsyncComponent(() => import(`./demo/${lang}/more-demo.vue`));
+const PasteDemo = defineAsyncComponent(() => import(`./demo/${lang}/paste-demo.vue`));
+const SingleDemo = defineAsyncComponent(() => import(`./demo/${lang}/single-demo.vue`));
+const TooltipsDemo = defineAsyncComponent(() => import(`./demo/${lang}/tooltips-demo.vue`));
+const TriggerDemo = defineAsyncComponent(() => import(`./demo/${lang}/trigger-demo.vue`));
 
 const { t } = i18n.global;
 
@@ -256,91 +259,97 @@ export default defineComponent({
           title={t('基础用法')}
           desc={t('通过 bk-tag-input 来使用组件，其中 list 属性为下拉选择列表选项')}
           componentName="tag-input"
-          demoName="base-demo">
+          demoName={`demo/${lang}/base-demo`}>
             <BaseDemo />
         </DemoBox>
         <DemoBox
           title={t('触发方式')}
           desc={t('配置 trigger 来设置下拉框的显示方式，有 focus（获焦点时显示）, search（搜索时显示）两种')}
           componentName="tag-input"
-          demoName="trigger-demo">
+          demoName={`demo/${lang}/trigger-demo`}>
             <TriggerDemo />
         </DemoBox>
         <DemoBox
           title={t('hover 时才显示 clear 按钮')}
           desc={t('设置 show-clear-only-hover 为 true，则其 clear 按钮在 hover 时才会显示')}
           componentName="tag-input"
-          demoName="clear-demo">
+          demoName={`demo/${lang}/clear-demo`}
+          >
             <ClearDemo />
         </DemoBox>
         <DemoBox
           title={t('自定义标签')}
           desc={t('设置 allow-create 属性来输入自定义标签，按 Enter 键结束；设置 has-delete-icon 属性可显示标签删除按钮')}
           componentName="tag-input"
-          demoName="create-demo">
+          demoName={`demo/${lang}/create-demo`}
+          >
             <CreateDemo />
         </DemoBox>
         <DemoBox
           title={t('失去焦点自动匹配')}
           desc={t('设置 allow-auto-match 属性当输入内容时失去焦点后，如果完全匹配则自动选中，如果设置 allow-create 属性则创建标签')}
           componentName="tag-input"
-          demoName="match-demo">
+          demoName={`demo/${lang}/match-demo`}
+          >
             <MatchDemo />
         </DemoBox>
         <DemoBox
           title={t('更多自定义配置')}
           desc={t('设置 save-key 属性定义选项的保存 key 值；设置 display-key 属性定义选项展示名称；search-key 属性定义多字段索引；tpl 属性可自定义下拉列表展示')}
           componentName="tag-input"
-          demoName="more-demo">
+          demoName={`demo/${lang}/more-demo`}
+        >
             <MoreDemo />
         </DemoBox>
         <DemoBox
           title={t('分组展示')}
           desc={t('配置 use-group 来启用分组功能， 数据源必须加上 children 的配置')}
           componentName="tag-input"
-          demoName="group-demo">
+          demoName={`demo/${lang}/group-demo`}>
             <GroupDemo />
         </DemoBox>
         <DemoBox
           title={t('设置选中标签 tooltips')}
           desc={t('配置 tooltip-key 定义选中标签 hover 时的显示文案')}
           componentName="tag-input"
-          demoName="tooltips-demo">
+          demoName={`demo/${lang}/tooltips-demo`}>
             <TooltipsDemo />
         </DemoBox>
         <DemoBox
           title={t('列表项禁用')}
           desc={t('设置列表数据源 disabled 属性来禁用列表中的某些项，禁止用户选择')}
           componentName="tag-input"
-          demoName="list-disabled-demo">
+          demoName={`demo/${lang}/list-disabled-demo`}
+          >
             <ListDisabledDemo />
         </DemoBox>
         <DemoBox
           title={t('组件禁用状态')}
           desc={t('设置 disabled 属性来禁用组件')}
           componentName="tag-input"
-          demoName="disabled-demo">
+          demoName={`demo/${lang}/disabled-demo`}
+          >
             <DisabledDemo />
         </DemoBox>
         <DemoBox
           title={t('批量输入') }
           desc={t('粘贴内容默认按“;”来分割内容，设置 paste-fn 方法可以自定义粘贴输出内容')}
           componentName="tag-input"
-          demoName="paste-demo">
+          demoName={`demo/${lang}/paste-demo`}>
             <PasteDemo />
         </DemoBox>
         <DemoBox
           title={t('综合例子(多选)')}
           desc={t('设置 tpl 方法自定义下拉列表展示；设置 tagTpl 方法自定义标签展示，通过 max-data 属性限制最大可选数量')}
           componentName="tag-input"
-          demoName="example-demo">
+          demoName={`demo/${lang}/example-demo`}>
             <ExampleDemo />
         </DemoBox>
         <DemoBox
           title={ t('综合例子(单选)') }
           desc={t('设置 filter-callback 定义过滤方法；设置 create-tag-validator 定义创建标签校验方法') }
           componentName="tag-input"
-          demoName="single-demo">
+          demoName={`demo/${lang}/single-demo`}>
             <SingleDemo />
         </DemoBox>
         <PropsBox propsData={propsJson} subtitle="" />

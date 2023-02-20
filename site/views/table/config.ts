@@ -207,7 +207,7 @@ const LIST: TableItem[] = [
         name: 'is-selected-fn',
         type: 'Function',
         default: 'undefined',
-        desc: '提供自定义判定当前行是否选中, 如果设置了此属性，其他判定均不生效, ({ row, cell, data }) => bool',
+        desc: '提供自定义判定当前行是否选中, 如果设置了此属性，其他判定均不生效, ({\'{\'} row, cell, data {\'}\'}) => bool',
         optional: [],
       },
       {
@@ -228,14 +228,14 @@ const LIST: TableItem[] = [
         name: 'default-sort',
         type: 'Object',
         default: '{}',
-        desc: '如果只指定了 prop, 没有指定 order, 则默认顺序是 asc, 配置格式：{ column: order }',
+        desc: '如果只指定了 prop, 没有指定 order, 则默认顺序是 asc, 配置格式：{\'{\'} column: order {\'}\'}',
         optional: [],
       },
       {
         name: 'isRowSelectEnable',
         type: 'Function|Boolean',
         default: 'true',
-        desc: '* 配合 column selection 使用用于配置渲染行数据的勾选框是否可用, 可以直接为 true|false，全部启用或者禁用如果是函数，则返回 true|false({ row, index, isCheckAll }) => boolean',
+        desc: '* 配合 column selection 使用用于配置渲染行数据的勾选框是否可用, 可以直接为 true|false，全部启用或者禁用如果是函数，则返回 true|false({\'{\'} row, index, isCheckAll {\'}\'}) => boolean',
         optional: [],
       },
       {
@@ -414,14 +414,14 @@ const LIST: TableItem[] = [
       {
         name: 'btnSave',
         type: 'String|Boolean',
-        default: '确定',
+        default: t('确定'),
         desc: '数据过滤的`确定`按钮配置，可配置为String类型，配置不同显示文本；也可以配置为false，禁用确定按钮，当此按钮禁用，单击过滤选项即生效',
         optional: [],
       },
       {
         name: 'btnReset',
         type: 'String|Boolean',
-        default: '重置',
+        default: t('重置'),
         desc: '数据过滤的`重置`按钮配置，可配置为String类型，配置不同显示文本；也可以配置为false，禁用`重置`按钮',
         optional: [],
       },

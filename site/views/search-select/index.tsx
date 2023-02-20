@@ -24,20 +24,23 @@
  * IN THE SOFTWARE.
  */
 
-import { defineComponent } from 'vue';
+import { defineAsyncComponent, defineComponent } from 'vue';
 
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import i18n from '../../language/i18n';
 import { IPropsTableItem } from '../../typings';
+import { getCookie } from '../utils/cookie';
 
-import BaseDemo from './base-demo.vue';
-import MenuDemo from './menu-demo.vue';
-import PlaceholderDemo from './placeholder-demo.vue';
-import RemoteDemo from './remote-demo.vue';
-import ValidateDemo from './validate-demo.vue';
-import ValueBehaviorDemo from './value-behavior.vue';
+const lang = getCookie('lang');
+
+const BaseDemo = defineAsyncComponent(() => import(`./demo/${lang}/base-demo.vue`));
+const MenuDemo = defineAsyncComponent(() => import(`./demo/${lang}/menu-demo.vue`));
+const PlaceholderDemo = defineAsyncComponent(() => import(`./demo/${lang}/placeholder-demo.vue`));
+const RemoteDemo = defineAsyncComponent(() => import(`./demo/${lang}/remote-demo.vue`));
+const ValidateDemo = defineAsyncComponent(() => import(`./demo/${lang}/validate-demo.vue`));
+const ValueBehaviorDemo = defineAsyncComponent(() => import(`./demo/${lang}/value-behavior.vue`));
 
 const { t } = i18n.global;
 
@@ -113,11 +116,12 @@ const propsJson: IPropsTableItem[] = [
     optional: ['all', 'need-key'],
   },
 ].map((item: IPropsTableItem) => {
-  const result =  Object.assign(item, { desc: t(item.desc) });
+  const result = Object.assign(item, { desc: t(item.desc) });
   return {
     ...result,
   };
 });
+
 const slotsJson = [
   {
     name: 'prepend',
@@ -141,11 +145,12 @@ const slotsJson = [
     params: '{list, item, hoverId, multiple, getSearchNode}',
   },
 ].map((item: IPropsTableItem) => {
-  const result =  Object.assign(item, { desc: t(item.desc) });
+  const result = Object.assign(item, { desc: t(item.desc) });
   return {
     ...result,
   };
 });
+
 const eventJson: IPropsTableItem[] = [
   {
     name: 'update:modelValue',
@@ -153,11 +158,12 @@ const eventJson: IPropsTableItem[] = [
     params: '[{id, name, values}]',
   },
 ].map((item: IPropsTableItem) => {
-  const result =  Object.assign(item, { desc: t(item.desc) });
+  const result = Object.assign(item, { desc: t(item.desc) });
   return {
     ...result,
   };
 });
+
 const dataJson: IPropsTableItem[] = [
   {
     name: 'id',
@@ -208,28 +214,32 @@ const dataJson: IPropsTableItem[] = [
     desc: '是否禁用',
   },
 ].map((item: IPropsTableItem) => {
-  const result =  Object.assign(item, { desc: t(item.desc) });
+  const result = Object.assign(item, { desc: t(item.desc) });
   return {
     ...result,
   };
 });
+
 const slotColumnMap = {
   name: t('名称'),
   desc: t('说明'),
   type: t('类型'),
   params: t('参数'),
 };
+
 const eventColumnMap = {
   name: t('名称'),
   desc: t('说明'),
   params: t('参数'),
 };
+
 const dataColumnMap = {
   name: t('名称'),
   type: t('类型'),
   desc: t('说明'),
   default: t('默认值'),
 };
+
 export default defineComponent({
   render() {
     return (
@@ -240,7 +250,7 @@ export default defineComponent({
           subtitle={t('基础使用')}
           desc={t('基础用法')}
           componentName="search-select"
-          demoName="base-demo"
+          demoName={`demo/${lang}/base-demo`}
         >
           <BaseDemo />
         </DemoBox>
@@ -249,7 +259,7 @@ export default defineComponent({
           subtitle={t('通过配置属性 geMenuList 方法 来做到异步获取menu列表 同时配合 data 内子项 async 属性来配置针对不同的选择项是否需要远程获取子列表')}
           desc={t('远程加载子列表')}
           componentName="search-select"
-          demoName="remote-demo"
+          demoName={`demo/${lang}/remote-demo`}
         >
           <RemoteDemo />
         </DemoBox>
@@ -258,7 +268,7 @@ export default defineComponent({
           subtitle={t('通过配置属性 validateValues 方法 来做到对选择的子项进行校验 validateValues 返回校验失败文案 返回true则代表校验成功')}
           desc={t('同时配合子项配置 noValidate 来做到不同的选择项是否触发校验')}
           componentName="search-select"
-          demoName="validate-demo"
+          demoName={`demo/${lang}/validate-demo`}
         >
           <ValidateDemo />
         </DemoBox>
@@ -267,7 +277,7 @@ export default defineComponent({
           subtitle={t('通过配置子选项属性 placeholder 来做到针对每一个选项都有独自的placeholder')}
           desc={t('通过配置子选项属性 placeholder 来做到针对每一个选项都有独自的placeholder')}
           componentName="search-select"
-          demoName="placeholder-demo"
+          demoName={`demo/${lang}/placeholder-demo`}
         >
           <PlaceholderDemo />
         </DemoBox>
@@ -276,7 +286,7 @@ export default defineComponent({
           subtitle={t('通过配置子选项属性 placeholder 来做到针对每一个选项都有独自的placeholder')}
           desc={t('menu 插槽')}
           componentName="search-select"
-          demoName="menu-demo"
+          demoName={`demo/${lang}/menu-demo`}
         >
           <MenuDemo />
         </DemoBox>
@@ -285,7 +295,7 @@ export default defineComponent({
           subtitle={t('改变配置 valueBehevior 值为 need-key  来做到存文本不可生成 value tag')}
           desc={t('valueBehevior 行为')}
           componentName="search-select"
-          demoName="menu-demo"
+          demoName={`demo/${lang}/value-behavior`}
         >
           <ValueBehaviorDemo />
         </DemoBox>

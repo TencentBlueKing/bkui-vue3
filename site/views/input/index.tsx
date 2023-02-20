@@ -1,28 +1,28 @@
 /*
-* Tencent is pleased to support the open source community by making
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
-*
-* Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
-*
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
-*
-* License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
-*
-* ---------------------------------------------------
-* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
-* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
-* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-* the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-* THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-* IN THE SOFTWARE.
-*/
+ * Tencent is pleased to support the open source community by making
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ *
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ *
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ *
+ * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ *
+ * ---------------------------------------------------
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+ * the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
 
 import { defineComponent } from 'vue';
 
@@ -30,9 +30,7 @@ import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import i18n from '../../language/i18n';
-import {
-  type IPropsTableItem,
-} from '../../typings';
+import { type DemoPropsItem, type IPropsTableItem } from '../../typings';
 
 import Basic from './demo/basic.vue';
 import Combine from './demo/combine.vue';
@@ -232,113 +230,129 @@ const inputEvents: IPropsTableItem[] = [
   },
 ];
 // 输入框插槽
-const inputSlots = [{
-  name: 'prefix',
-  type: 'Slot',
-  default: null,
-  desc: t('前置插槽'),
-  optional: [],
-}, {
-  name: 'suffix',
-  type: 'Slot',
-  default: null,
-  desc: t('后置插槽'),
-  optional: [],
-}];
+const inputSlots = [
+  {
+    name: 'prefix',
+    type: 'Slot',
+    default: null,
+    desc: t('前置插槽'),
+    optional: [],
+  },
+  {
+    name: 'suffix',
+    type: 'Slot',
+    default: null,
+    desc: t('后置插槽'),
+    optional: [],
+  },
+];
 
-const demos = [{
-  // '基础输入框',
-  title: t('基础输入框'),
-  desc: t('使用 bk-input 标签配置输入框组件'),
-  componentName: 'input',
-  demoName: 'demo/basic',
-  DemoComponent: Basic,
-}, {
-  // 'hover 时才显示 clear 按钮',
-  title: t('hover 时才显示 clear 按钮'),
-  desc: t('配置show-clear-only-hover为true时，清除按钮在hover时才会显示'),
-  componentName: 'input',
-  demoName: 'demo/hover-clear',
-  DemoComponent: HoverClear,
-}, {
-  // '尺寸',
-  title: t('尺寸'),
-  desc: t('可以使用 size 属性来定义按钮的尺寸，可接受 small large'),
-  componentName: 'input',
-  demoName: 'demo/size',
-  DemoComponent: Size,
-}, {
-  // '数字输入框',
-  title: t('数字输入框'),
-  desc: t('通过配置 type 属性为 number 来设置数字类型输入，通过设置 max，min 设置最大最小值, 设置 precision 保留小数位(初始值会被四舍五入，例如：numberInputValue=4.5，precision=0时，值会被四舍五入为5)。数字输入框时，clearable 配置不生效'),
-  componentName: 'input',
-  demoName: 'demo/number',
-  DemoComponent: Number,
-}, {
-  // '多行文本输入框',
-  title: t('多行文本输入框'),
-  desc: t('通过配置 type 属性为 textarea 来显示多行文本输入框'),
-  componentName: 'input',
-  demoName: 'demo/textarea',
-  DemoComponent: Textarea,
-}, {
-  // '带清空操作输入框',
-  title: t('带清空操作输入框'),
-  desc: t('通过配置 clearable 属性为 true 来启用有文本时允许清空操作'),
-  componentName: 'input',
-  demoName: 'demo/search',
-  DemoComponent: Search,
-}, {
-  // '密码框',
-  title: t('密码框'),
-  desc: t('通过配置 type 属性为 password 来设置密码框；通过配置 password-icon 属性来设置切换显示密码的 icon'),
-  componentName: 'input',
-  demoName: 'demo/password',
-  DemoComponent: Password,
-}, {
-  // '组合型输入框',
-  title: t('组合型输入框'),
-  desc: t('通过配置 slot=prefix, slot=suffix，来让组合输入框'),
-  componentName: 'input',
-  demoName: 'demo/combine',
-  DemoComponent: Combine,
-}, {
-  // '带Icon输入框',
-  title: t('带Icon输入框'),
-  desc: t('通过配置 slot=prefix, slot=suffix，来设置icon'),
-  componentName: 'input',
-  demoName: 'demo/icon',
-  DemoComponent: Icon,
-}, {
-  // '带状态输入框',
-  title: t('带状态输入框'),
-  desc: t('通过配置 disabled, readonly，来让输入框禁用、只读'),
-  componentName: 'input',
-  demoName: 'demo/status',
-  DemoComponent: Status,
-}, {
-  // '事件回调',
-  title: t('事件回调'),
-  desc: t('支持 keyup enter keypress keydown change focus blur 回调事件'),
-  componentName: 'input',
-  demoName: 'demo/event-callback',
-  DemoComponent: EventCallback,
-}, {
-  // 'HTML 原生属性透传',
-  title: t('HTML 原生属性透传'),
-  desc: t('支持 HTML input 标签所有原生属性，设置 password 禁用自动填充功能'),
-  componentName: 'input',
-  demoName: 'demo/native-attrs',
-  DemoComponent: NativeAttrs,
-}, {
-  // '简约风格输入框',
-  title: t('简约风格输入框'),
-  desc: t('通过属性behavior配置简约风格'),
-  componentName: 'input',
-  demoName: 'demo/simple',
-  DemoComponent: Simple,
-}];
-
+const demos: DemoPropsItem[] = [
+  {
+    // '基础输入框',
+    title: t('基础输入框'),
+    desc: t('使用 bk-input 标签配置输入框组件'),
+    componentName: 'input',
+    demoName: 'demo/basic',
+    DemoComponent: Basic,
+  },
+  {
+    // 'hover 时才显示 clear 按钮',
+    title: t('hover 时才显示 clear 按钮'),
+    desc: t('配置show-clear-only-hover为true时，清除按钮在hover时才会显示'),
+    componentName: 'input',
+    demoName: 'demo/hover-clear',
+    DemoComponent: HoverClear,
+  },
+  {
+    // '尺寸',
+    title: t('尺寸'),
+    desc: t('可以使用 size 属性来定义按钮的尺寸，可接受 small large'),
+    componentName: 'input',
+    demoName: 'demo/size',
+    DemoComponent: Size,
+  },
+  {
+    // '数字输入框',
+    title: t('数字输入框'),
+    desc: t('通过配置 type 属性为 number 来设置数字类型输入，通过设置 max，min 设置最大最小值, 设置 precision 保留小数位(初始值会被四舍五入，例如：numberInputValue=4.5，precision=0时，值会被四舍五入为5)。数字输入框时，clearable 配置不生效'),
+    componentName: 'input',
+    demoName: 'demo/number',
+    DemoComponent: Number,
+  },
+  {
+    // '多行文本输入框',
+    title: t('多行文本输入框'),
+    desc: t('通过配置 type 属性为 textarea 来显示多行文本输入框'),
+    componentName: 'input',
+    demoName: 'demo/textarea',
+    DemoComponent: Textarea,
+  },
+  {
+    // '带清空操作输入框',
+    title: t('带清空操作输入框'),
+    desc: t('通过配置 clearable 属性为 true 来启用有文本时允许清空操作'),
+    componentName: 'input',
+    demoName: 'demo/search',
+    DemoComponent: Search,
+  },
+  {
+    // '密码框',
+    title: t('密码框'),
+    desc: t('通过配置 type 属性为 password 来设置密码框；通过配置 password-icon 属性来设置切换显示密码的 icon'),
+    componentName: 'input',
+    demoName: 'demo/password',
+    DemoComponent: Password,
+  },
+  {
+    // '组合型输入框',
+    title: t('组合型输入框'),
+    desc: t('通过配置 slot=prefix, slot=suffix，来让组合输入框'),
+    componentName: 'input',
+    demoName: 'demo/combine',
+    DemoComponent: Combine,
+  },
+  {
+    // '带Icon输入框',
+    title: t('带Icon输入框'),
+    desc: t('通过配置 slot=prefix, slot=suffix，来设置icon'),
+    componentName: 'input',
+    demoName: 'demo/icon',
+    DemoComponent: Icon,
+  },
+  {
+    // '带状态输入框',
+    title: t('带状态输入框'),
+    desc: t('通过配置 disabled, readonly，来让输入框禁用、只读'),
+    componentName: 'input',
+    demoName: 'demo/status',
+    DemoComponent: Status,
+  },
+  {
+    // '事件回调',
+    title: t('事件回调'),
+    desc: t('支持 keyup enter keypress keydown change focus blur 回调事件'),
+    componentName: 'input',
+    demoName: 'demo/event-callback',
+    DemoComponent: EventCallback,
+  },
+  {
+    // 'HTML 原生属性透传',
+    title: t('HTML 原生属性透传'),
+    desc: t('支持 HTML input 标签所有原生属性，设置 password 禁用自动填充功能'),
+    componentName: 'input',
+    demoName: 'demo/native-attrs',
+    DemoComponent: NativeAttrs,
+  },
+  {
+    // '简约风格输入框',
+    title: t('简约风格输入框'),
+    desc: t('通过属性behavior配置简约风格'),
+    componentName: 'input',
+    demoName: 'demo/simple',
+    DemoComponent: Simple,
+  },
+];
 
 export default defineComponent({
   name: 'Input',
@@ -346,30 +360,15 @@ export default defineComponent({
   render() {
     return (
       <div>
-        <DemoTitle
-          name="Input"
-          desc={ t('常用的输入框')}
-          link={`${import.meta.env.VITE_APP_BASE_URL ?? ''}/input`}
-        />
-          {
-            demos.map(({ DemoComponent, ...demo }) => (
-              <DemoBox {...demo}>
-                  <DemoComponent />
-              </DemoBox>
-            ))
-          }
-        <PropsBox
-          title={t('Input 属性')}
-          subtitle=""
-          propsData={inputProps}/>
-        <PropsBox
-          title={t('Input 插槽')}
-          subtitle=""
-          propsData={inputSlots}/>
-        <PropsBox
-          title={t('Input 事件')}
-          subtitle=""
-          propsData={inputEvents}/>
+        <DemoTitle name="Input" desc={t('常用的输入框')} link={`${import.meta.env.VITE_APP_BASE_URL ?? ''}/input`} />
+        {demos.map(({ DemoComponent, ...demo }) => (
+          <DemoBox {...demo}>
+            <DemoComponent />
+          </DemoBox>
+        ))}
+        <PropsBox title={t('Input 属性')} subtitle="" propsData={inputProps} />
+        <PropsBox title={t('Input 插槽')} subtitle="" propsData={inputSlots} />
+        <PropsBox title={t('Input 事件')} subtitle="" propsData={inputEvents} />
       </div>
     );
   },

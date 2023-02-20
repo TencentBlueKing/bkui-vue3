@@ -342,6 +342,7 @@ const Upload: LANG = {
   上传文件: ['Upload File'],
   上传成功: ['Upload succeeded'],
   上传失败: ['Upload failed'],
+  重试: ['Retry'],
   '设置 theme 属性为 button': ['Set the theme Attributes to button'],
   照片墙: ['Photo wall'],
   '设置 theme 属性为 picture，限制文件类型为图片类型，比如：png，jpeg，jpg': [
@@ -367,7 +368,7 @@ const Upload: LANG = {
   ],
   是否支持多选: ['Support multiple selection'],
   后台读取文件的: ['Read files in the background'],
-  '限制上传文件体积 {\'{\'} maxFileSize: 1, maxImgSize: 1 {\'}\'}': ['Limit upload file size { maxFileSize: 1, maxImgSize: 1 }'],
+  '限制上传文件体积 {\'{\'} maxFileSize: 1, maxImgSize: 1 {\'}\'}': ['Limit upload file size {\'{\'} maxFileSize: 1, maxImgSize: 1 {\'}\'}'],
   限制上传文件个数: ['Limit the number of uploaded files'],
   自定义上传属性: ['Custom upload attribute'],
   '是否允许带上 cookie': ['Allow cookies'],
@@ -400,6 +401,8 @@ const Upload: LANG = {
   触发文件选择框的内容: ['Trigger the contents of the file selection box'],
   提示说明文字: ['Prompt text'],
   文件列表项内容: ['File list item content'],
+  'file（删除的哪个文件对象）': ['File (which file object to delete)'],
+  'fileList（删除后的文件列表）': ['FileList (deleted file list)'],
 };
 
 const TagInput: LANG = {

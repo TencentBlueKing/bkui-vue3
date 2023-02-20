@@ -1,40 +1,43 @@
 /*
-* Tencent is pleased to support the open source community by making
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
-*
-* Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
-*
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
-*
-* License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
-*
-* ---------------------------------------------------
-* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
-* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
-* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-* the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-* THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-* IN THE SOFTWARE.
-*/
+ * Tencent is pleased to support the open source community by making
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ *
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ *
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ *
+ * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ *
+ * ---------------------------------------------------
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+ * the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
 
-import { defineComponent } from 'vue';
+import { defineAsyncComponent, defineComponent } from 'vue';
 
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import { IPropsTableItem } from '../../typings';
+import { getCookie } from '../utils/cookie';
 
 import i18n from './../../language/i18n';
-import Badge from './badge.vue';
-import BadgeDemo from './badge-demo.vue';
-import BadgeDot from './badge-dot.vue';
+const lang = getCookie('lang');
+
+const Badge = defineAsyncComponent(() => import(`./demo/${lang}/badge.vue`));
+const BadgeDemo = defineAsyncComponent(() => import(`./demo/${lang}/badge-demo.vue`));
+const BadgeDot = defineAsyncComponent(() => import(`./demo/${lang}/badge-dot.vue`));
 
 const { t } = i18n.global;
 
@@ -103,7 +106,7 @@ const menuPropsJson: IPropsTableItem[] = [
     optional: [],
   },
 ].map((item: IPropsTableItem) => {
-  const result =  Object.assign(item, { desc: t(item.desc) });
+  const result = Object.assign(item, { desc: t(item.desc) });
   return {
     ...result,
   };
@@ -111,41 +114,40 @@ const menuPropsJson: IPropsTableItem[] = [
 
 export default defineComponent({
   setup() {
-    return {
-    };
+    return {};
   },
   render() {
     return (
       <div>
-        <DemoTitle
-          name="Badge"
-          desc={ t('Badge 组件， 可以出现在任意 DOM 节点角上的数字或状态标记')}
-        />
+        <DemoTitle name="Badge" desc={t('Badge 组件， 可以出现在任意 DOM 节点角上的数字或状态标记')} />
         <DemoBox
           title={t('基础用法')}
           subtitle=""
-          desc={ t('用默认配置初始化组件') }
+          desc={t('用默认配置初始化组件')}
           componentName="badge"
-          demoName="badge-demo">
-            <BadgeDemo/>
-          </DemoBox>
-        <DemoBox
-          title={ t('不包裹任何元素，独立使用') }
-          subtitle=""
-          desc={ t('可在不包裹任何元素情况下，独立使用 badge') }
-          componentName="badge"
-          demoName="badge">
-            <Badge />
+          demoName={`demo/${lang}/badge-demo`}
+        >
+          <BadgeDemo />
         </DemoBox>
         <DemoBox
-          title={ t('无内容红点')}
+          title={t('不包裹任何元素，独立使用')}
           subtitle=""
-          desc={ t('配置参数 dot') }
+          desc={t('可在不包裹任何元素情况下，独立使用 badge')}
           componentName="badge"
-          demoName="badge-dot">
-            <BadgeDot/>
+          demoName={`demo/${lang}/badge`}
+        >
+          <Badge />
         </DemoBox>
-        <PropsBox propsData={menuPropsJson}/>
+        <DemoBox
+          title={t('无内容红点')}
+          subtitle=""
+          desc={t('配置参数 dot')}
+          componentName="badge"
+          demoName={`demo/${lang}/badge-dot`}
+        >
+          <BadgeDot />
+        </DemoBox>
+        <PropsBox propsData={menuPropsJson} />
       </div>
     );
   },

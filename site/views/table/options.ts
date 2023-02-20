@@ -173,7 +173,7 @@ export const DATA_COLUMNS1 = [
     sort: false,
   },
   {
-    label: (column, index) => `状态-${index}-${column.field}`,
+    label: (column, index) => `${t('状态')}-${index}-${column.field}`,
     field: 'status',
     sort: true,
   },

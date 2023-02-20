@@ -206,7 +206,7 @@ export default defineComponent({
         : (
           <div class={`${classBlock}__picture-inner`}>
             <Plus class={`${classBlock}__picture-icon`} />
-            <div class={`${classBlock}__picture-text`}>点击上传</div>
+            <div class={`${classBlock}__picture-text`}>{t('点击上传')}</div>
           </div>
         )
       }

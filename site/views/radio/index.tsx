@@ -24,7 +24,7 @@
 * IN THE SOFTWARE.
 */
 
-import { defineComponent } from 'vue';
+import { defineAsyncComponent, defineComponent } from 'vue';
 
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
@@ -33,12 +33,15 @@ import i18n from '../../language/i18n';
 import {
   type IPropsTableItem,
 } from '../../typings';
+import { getCookie } from '../utils/cookie';
 
-import DemoRadio from './demo/radio.vue';
-import DemoRadioButton from './demo/radio-button.vue';
-import DemoRadioChecked from './demo/radio-checked.vue';
-import DemoRadioDisabled from './demo/radio-disabled.vue';
-import DemoRadioGroup from './demo/radio-group.vue';;
+const lang = getCookie('lang');
+
+const DemoRadio = defineAsyncComponent(() => import(`./demo/${lang}/radio.vue`));
+const DemoRadioButton = defineAsyncComponent(() => import(`./demo/${lang}/radio-button.vue`));
+const DemoRadioChecked = defineAsyncComponent(() => import(`./demo/${lang}/radio-checked.vue`));
+const DemoRadioDisabled = defineAsyncComponent(() => import(`./demo/${lang}/radio-disabled.vue`));
+const DemoRadioGroup = defineAsyncComponent(() => import(`./demo/${lang}/radio-group.vue`));
 
 const { t } = i18n.global;
 
@@ -185,28 +188,30 @@ export default defineComponent({
           title={t('基础用法')}
           desc=""
           componentName="radio"
-          demoName="/demo/radio">
+          demoName={`demo/${lang}/radio`}
+          >
             <DemoRadio />
         </DemoBox>
         <DemoBox
           title={ t('单选框组') }
           desc={t('配合 bk-radio-group 使用')}
           componentName="radio"
-          demoName="/demo/radio-group">
+          demoName={`demo/${lang}/radio-group`}
+         >
             <DemoRadioGroup />
         </DemoBox>
         <DemoBox
           title={ t('默认选中') }
           desc=""
           componentName="radio"
-          demoName="/demo/radio-checked">
+          demoName={`demo/${lang}/radio-checked`}>
             <DemoRadioChecked />
         </DemoBox>
         <DemoBox
           title={ t('禁用状态') }
           desc=""
           componentName="radio"
-          demoName="/demo/radio-disabled">
+          demoName={`demo/${lang}/radio-disabled`}>
             <DemoRadioDisabled />
         </DemoBox>
 
@@ -214,7 +219,8 @@ export default defineComponent({
           title={ t('按钮样式') }
           desc=""
           componentName="radio"
-          demoName="/demo/radio-group">
+          demoName={`demo/${lang}/radio-group`}
+        >
             <DemoRadioButton />
         </DemoBox>
         <PropsBox
