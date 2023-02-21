@@ -1,7 +1,7 @@
 <template>
   <div class="row">
     <div class="cell">
-      <span>自定义节点内容</span>
+      <span>Custom node content</span>
       <bk-tree
         :data="treeData"
         level-line
