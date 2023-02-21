@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 
-import { defineComponent } from 'vue';
+import { defineAsyncComponent, defineComponent } from 'vue';
 
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
@@ -34,11 +34,14 @@ import PropsBox from '../../components/props-box';
 // const props = resolvePropsToDesData(propsDialog);
 import i18n from '../../language/i18n';
 import type { IPropsTableItem } from '../../typings';
+import { getCookie } from '../utils/cookie';
 
-import BaseDemo from './base-demo.vue';
-import ConfirmDemo from './confirm-demo.vue';
-import StatusDemo from './status-demo.vue';
-import UpdateDemo from './update-demo.vue';
+const lang = getCookie('blueking_language');
+
+const BaseDemo = defineAsyncComponent(() => import(`./demo/${lang}/base-demo.vue`));
+const ConfirmDemo = defineAsyncComponent(() => import(`./demo/${lang}/confirm-demo.vue`));
+const StatusDemo = defineAsyncComponent(() => import(`./demo/${lang}/status-demo.vue`));
+const UpdateDemo = defineAsyncComponent(() => import(`./demo/${lang}/update-demo.vue`));
 
 const { t } = i18n.global;
 
@@ -244,7 +247,7 @@ export default defineComponent({
           subtitle=""
           desc={t('调用 InfoBox 方法，配置 title, subTitle 等参数')}
           componentName="info-box"
-          demoName="base-demo"
+          demoName={`demo/${lang}/base-demo`}
         >
           <BaseDemo />
         </DemoBox>
@@ -253,11 +256,17 @@ export default defineComponent({
           subtitle=""
           desc={t('配置 type 的值，实现成功，错误，警告，加载中的不同类型')}
           componentName="info-box"
-          demoName="base-demo"
+          demoName={`demo/${lang}/status-demo`}
         >
           <StatusDemo />
         </DemoBox>
-        <DemoBox title={t('更新')} subtitle={t('实例复用')} desc="" componentName="info-box" demoName="base-demo">
+        <DemoBox
+          title={t('更新')}
+          subtitle={t('实例复用')}
+          desc=""
+          componentName="info-box"
+          demoName={`demo/${lang}/update-demo`}
+        >
           <UpdateDemo />
         </DemoBox>
         <DemoBox
@@ -265,7 +274,7 @@ export default defineComponent({
           subtitle={t('confirm 确定按钮')}
           desc={t('对话框分为4种类型。通过 dialogType 属性 设置为 confirm 实现')}
           componentName="info-box"
-          demoName="base-demo"
+          demoName={`demo/${lang}/confirm-demo`}
         >
           <ConfirmDemo />
         </DemoBox>

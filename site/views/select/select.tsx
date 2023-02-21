@@ -34,7 +34,7 @@ import PropsBox from '../../components/props-box';
 import { IPropsTableItem } from '../../typings';
 import { getCookie } from '../utils/cookie';
 
-const lang = getCookie('lang');
+const lang = getCookie('blueking_language');
 
 const SelectBaseDemo = defineAsyncComponent(() => import(`./demo/${lang}/select-base-demo.vue`));
 const SelectGroupDemo = defineAsyncComponent(() => import(`./demo/${lang}/select-group-demo.vue`));

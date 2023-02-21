@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 
-import { defineComponent } from 'vue';
+import { defineAsyncComponent, defineComponent } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import DemoBox from '../../components/demo-box';
@@ -32,11 +32,14 @@ import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import i18n from '../../language/i18n';
 import type { DemoPropsItem, IPropsTableItem } from '../../typings';
+import { getCookie } from '../utils/cookie';
 
-import Base from './demo/base.vue';
-import Close from './demo/close.vue';
-import Position from './demo/position.vue';
-import Theme from './demo/theme.vue';
+const lang = getCookie('blueking_language');
+
+const Base = defineAsyncComponent(() => import(`./demo/${lang}/base.vue`));
+const Close = defineAsyncComponent(() => import(`./demo/${lang}/close.vue`));
+const Position = defineAsyncComponent(() => import(`./demo/${lang}/position.vue`));
+const Theme = defineAsyncComponent(() => import(`./demo/${lang}/theme.vue`));
 
 const { t } = i18n.global;
 
@@ -130,28 +133,28 @@ const demos: DemoPropsItem[] = [
     title: '基础用法',
     desc: '使用默认配置的通知提示',
     componentName: 'notify',
-    demoName: 'demo/base',
+    demoName: `demo/${lang}/base`,
     DemoComponent: Base,
   },
   {
     title: '内置主题',
     desc: '通知提示提供消息、成功、警告、失败四种主题',
     componentName: 'notify',
-    demoName: 'demo/theme',
+    demoName: `demo/${lang}/theme`,
     DemoComponent: Theme,
   },
   {
     title: '通知出现的位置',
     desc: '通知出现可以从 4 个方向出现：左上角、右上角、左下角、右下角',
     componentName: 'notify',
-    demoName: 'demo/position',
+    demoName: `demo/${lang}/position`,
     DemoComponent: Position,
   },
   {
     title: '通知关闭',
     desc: '配置 delay 字段定义通知自动关闭的时间，当值为 0 时不自动关闭。配置 dismissable 字段控制是否显示右侧的手动关闭 icon。',
     componentName: 'notify',
-    demoName: 'demo/close',
+    demoName: `demo/${lang}/close`,
     DemoComponent: Close,
   },
 ].map((item: DemoPropsItem) => {

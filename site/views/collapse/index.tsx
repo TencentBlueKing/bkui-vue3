@@ -33,7 +33,7 @@ import i18n from '../../language/i18n';
 import { type IPropsTableItem } from '../../typings';
 import { getCookie } from '../utils/cookie';
 
-const lang = getCookie('lang');
+const lang = getCookie('blueking_language');
 
 const DemoCollapse = defineAsyncComponent(() => import(`./demo/${lang}/collapse.vue`));
 const DemoCollapseAccordion = defineAsyncComponent(() => import(`./demo/${lang}/collapse-accordion.vue`));

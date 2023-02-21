@@ -39,7 +39,7 @@ const tabPropsJson: IPropsTableItem[] = resolvePropsToDesData(tabProps);
 const tabPanelPropsJson: IPropsTableItem[] = resolvePropsToDesData(tabPanelProps);
 const tabEventPropsJson: IPropsTableItem[] = resolvePropsToDesData(tabEventProps);
 
-const lang = getCookie('lang');
+const lang = getCookie('blueking_language');
 
 const DemoBase = defineAsyncComponent(() => import(`./demo/${lang}/demo-base.vue`));
 const DemoAdd = defineAsyncComponent(() => import(`./demo/${lang}/demo-add.vue`));

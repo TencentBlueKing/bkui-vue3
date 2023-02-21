@@ -24,18 +24,26 @@
  * IN THE SOFTWARE.
  */
 
-import { defineComponent } from 'vue';
+import { defineAsyncComponent, defineComponent } from 'vue';
 
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import i18n from '../../language/i18n';
 import { type IPropsTableItem } from '../../typings';
+import { getCookie } from '../utils/cookie';
 
-import DemoAlert from './demo/alert.vue';
-import DemoAlertClose from './demo/alert-close.vue';
-import DemoAlertCloseText from './demo/alert-close-text.vue';
-import DemoAlertShowIcon from './demo/alert-show-icon.vue';
+// import DemoAlert from './demo/alert.vue';
+// import DemoAlertClose from './demo/alert-close.vue';
+// import DemoAlertCloseText from './demo/alert-close-text.vue';
+// import DemoAlertShowIcon from './demo/alert-show-icon.vue';
+
+const lang = getCookie('blueking_language');
+
+const DemoAlert = defineAsyncComponent(() => import(`./demo/${lang}/alert.vue`));
+const DemoAlertClose = defineAsyncComponent(() => import(`./demo/${lang}/alert-close.vue`));
+const DemoAlertCloseText = defineAsyncComponent(() => import(`./demo/${lang}/alert-close-text.vue`));
+const DemoAlertShowIcon = defineAsyncComponent(() => import(`./demo/${lang}/alert-show-icon.vue`));
 
 const { t } = i18n.global;
 
@@ -112,16 +120,21 @@ export default defineComponent({
           desc={t('展示页面的提示信息')}
           link={`${import.meta.env.VITE_APP_BASE_URL ?? ''}/alert`}
         />
-        <DemoBox title={ t('基本用法')} desc="" componentName="alert" demoName="/demo/alert">
+        <DemoBox title={t('基本用法')} desc="" componentName="alert" demoName={`demo/${lang}/alert`}>
           <DemoAlert />
         </DemoBox>
-        <DemoBox title={t('不显示ICON')} desc="" componentName="alert" demoName="/demo/alert-show-icon">
+        <DemoBox title={t('不显示ICON')} desc="" componentName="alert" demoName={`demo/${lang}/alert-show-icon`}>
           <DemoAlertShowIcon />
         </DemoBox>
-        <DemoBox title={t('可关闭')} desc="" componentName="alert" demoName="/demo/alert-close">
+        <DemoBox title={t('可关闭')} desc="" componentName="alert" demoName={`demo/${lang}/alert-close`}>
           <DemoAlertClose />
         </DemoBox>
-        <DemoBox title={t('自定义关闭按钮文字')} desc="" componentName="alert" demoName="/demo/alert-close-text">
+        <DemoBox
+          title={t('自定义关闭按钮文字')}
+          desc=""
+          componentName="alert"
+          demoName={`demo/${lang}/alert-close-text`}
+        >
           <DemoAlertCloseText />
         </DemoBox>
         <PropsBox title={t('Alert 属性')} subtitle="" propsData={alertProps} />

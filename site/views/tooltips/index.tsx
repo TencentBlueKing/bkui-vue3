@@ -24,18 +24,21 @@
 * IN THE SOFTWARE.
 */
 
-import { defineComponent } from 'vue';
+import { defineAsyncComponent, defineComponent } from 'vue';
 
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import i18n from '../../language/i18n';
-import type { IPropsTableItem } from '../../typings';
+import type { DemoPropsItem, IPropsTableItem } from '../../typings';
+import { getCookie } from '../utils/cookie';
 
-import Base from './demo/base.vue';
-import Callback from './demo/callback.vue';
-import Click from './demo/click.vue';
-import Position from './demo/position.vue';
+const lang = getCookie('blueking_language');
+
+const Base = defineAsyncComponent(() => import(`./demo/${lang}/base.vue`));
+const Callback = defineAsyncComponent(() => import(`./demo/${lang}/callback.vue`));
+const Click = defineAsyncComponent(() => import(`./demo/${lang}/click.vue`));
+const Position = defineAsyncComponent(() => import(`./demo/${lang}/position.vue`));
 
 const { t } = i18n.global;
 
@@ -122,33 +125,33 @@ const events: IPropsTableItem[] = [
   },
 ];
 
-const demos = [
+const demos: DemoPropsItem[] = [
   {
     title: t('基础用法（通过绑定对象来配置）'),
     desc: t('通过指令配置简单的 tooltips'),
     componentName: 'tooltips',
-    demoName: 'demo/base',
+    demoName: `demo/${lang}/base`,
     DemoComponent: Base,
   },
   {
     title: t('不同位置'),
     desc: t('通过 placement 属性展示不同位置的提示'),
     componentName: 'tooltips',
-    demoName: 'demo/position',
+    demoName: `demo/${lang}/position`,
     DemoComponent: Position,
   },
   {
     title: t('点击触发'),
     desc: t('通过给 v-bk-tooltips 配置 trigger 为 click 来设置点击触发 tooltips'),
     componentName: 'tooltips',
-    demoName: 'demo/click',
+    demoName: `demo/${lang}/click`,
     DemoComponent: Click,
   },
   {
     title: t('自定义回调函数'),
     desc: t('自定义显示以及隐藏时的回调函数'),
     componentName: 'tooltips',
-    demoName: 'demo/callback',
+    demoName: `demo/${lang}/callback`,
     DemoComponent: Callback,
   },
 ];

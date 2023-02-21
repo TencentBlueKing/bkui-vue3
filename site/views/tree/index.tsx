@@ -23,31 +23,49 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { defineComponent } from 'vue';
+import { defineAsyncComponent, defineComponent } from 'vue';
 
 // import { treeProps } from '../../../packages/tree/src/props';
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import i18n from '../../language/i18n';
+import { getCookie } from '../utils/cookie';
 
 // import { resolvePropsToDesData } from '../utils/index';
-import async from './async.vue';
-import autoConfig from './auto-config.vue';
-import basic from './basic.vue';
+// import async from './async.vue';
+// import autoConfig from './auto-config.vue';
+// import basic from './basic.vue';
 import configList from './config';
-import customNode from './custom-node.vue';
-import draggable from './draggable.vue';
-import draggableFunction from './draggable-function.vue';
-import ExpandAll from './expand-all.vue';
-import levelLine from './level-line.vue';
-import NodeContentActions from './node-content-action.vue';
+// import customNode from './custom-node.vue';
+// import draggable from './draggable.vue';
+// import draggableFunction from './draggable-function.vue';
+// import ExpandAll from './expand-all.vue';
+// import levelLine from './level-line.vue';
+// import NodeContentActions from './node-content-action.vue';
 import * as TREE_DATA from './options';
-import prefixIcon from './prefix-icon.vue';
-import prefixIconJsx from './prefix-icon-jsx';
-import search from './search.vue';
-import selected from './selected.vue';
-import virtualRender from './virtual-render.vue';
+// import prefixIcon from './prefix-icon.vue';
+// import prefixIconJsx from './prefix-icon-jsx';
+// import search from './search.vue';
+// import selected from './selected.vue';
+// import virtualRender from './virtual-render.vue';
+
+const lang = getCookie('blueking_language');
+
+const async = defineAsyncComponent(() => import(`./demo/${lang}/async.vue`));
+const autoConfig = defineAsyncComponent(() => import(`./demo/${lang}/auto-config.vue`));
+const basic = defineAsyncComponent(() => import(`./demo/${lang}/basic.vue`));
+const customNode = defineAsyncComponent(() => import(`./demo/${lang}/custom-node.vue`));
+const draggable = defineAsyncComponent(() => import(`./demo/${lang}/draggable.vue`));
+const draggableFunction = defineAsyncComponent(() => import(`./demo/${lang}/draggable-function.vue`));
+const ExpandAll = defineAsyncComponent(() => import(`./demo/${lang}/expand-all.vue`));
+const levelLine = defineAsyncComponent(() => import(`./demo/${lang}/level-line.vue`));
+const NodeContentActions = defineAsyncComponent(() => import(`./demo/${lang}/node-content-action.vue`));
+const prefixIcon = defineAsyncComponent(() => import(`./demo/${lang}/prefix-icon.vue`));
+const prefixIconJsx = defineAsyncComponent(() => import(`./demo/${lang}/prefix-icon-jsx`));
+const search = defineAsyncComponent(() => import(`./demo/${lang}/search.vue`));
+const selected = defineAsyncComponent(() => import(`./demo/${lang}/selected.vue`));
+const virtualRender = defineAsyncComponent(() => import(`./demo/${lang}/virtual-render.vue`));
 
 const { t } = i18n.global;
 
@@ -88,7 +106,7 @@ export default defineComponent({
           subtitle: '基础用法，用于表单内容的录入',
           desc: 'props: --',
           componentName: 'tree',
-          demoName: 'basic',
+          demoName: `demo/${lang}/basic`,
         },
         component: () => <basic></basic>,
       },
@@ -98,7 +116,7 @@ export default defineComponent({
           subtitle: '启用虚拟滚动',
           desc: 'props: virtual-render',
           componentName: 'tree',
-          demoName: 'virtual-render',
+          demoName: `demo/${lang}/virtual-render`,
         },
         component: () => <virtual-render></virtual-render>,
       },
@@ -108,7 +126,7 @@ export default defineComponent({
           subtitle: '启用连线',
           desc: 'props: level-line',
           componentName: 'tree',
-          demoName: 'level-line',
+          demoName: `demo/${lang}/level-line`,
         },
         component: () => <level-line></level-line>,
       },
@@ -118,7 +136,7 @@ export default defineComponent({
           subtitle: '自定义节点Icon',
           desc: 'props: prefix-icon',
           componentName: 'tree',
-          demoName: 'prefix-icon',
+          demoName: `demo/${lang}/prefix-icon`,
         },
         component: () => <prefix-icon></prefix-icon>,
       },
@@ -128,7 +146,7 @@ export default defineComponent({
           subtitle: '自定义节点Icon',
           desc: 'props: prefix-icon',
           componentName: 'tree',
-          demoName: 'prefix-icon-jsx',
+          demoName: `demo/${lang}/prefix-icon-jsx`,
           suffix: '.tsx',
         },
         component: () => <prefix-icon-jsx></prefix-icon-jsx>,
@@ -139,7 +157,7 @@ export default defineComponent({
           subtitle: '自定义节点Icon',
           desc: 'props: prefix-icon',
           componentName: 'tree',
-          demoName: 'custom-node',
+          demoName: `demo/${lang}/custom-node`,
         },
         component: () => <custom-node></custom-node>,
       },
@@ -149,7 +167,7 @@ export default defineComponent({
           subtitle: '异步加载节点数据',
           desc: 'props: async',
           componentName: 'tree',
-          demoName: 'async',
+          demoName: `demo/${lang}/async`,
         },
         component: () => <async></async>,
       },
@@ -159,7 +177,7 @@ export default defineComponent({
           subtitle: '默认连线 | 默认选中 | 默认展开',
           desc: 'props: --',
           componentName: 'tree',
-          demoName: 'auto-config',
+          demoName: `demo/${lang}/auto-config`,
         },
         component: () => <auto-config></auto-config>,
       },
@@ -169,7 +187,7 @@ export default defineComponent({
           subtitle: '配置搜索行为',
           desc: 'props: --',
           componentName: 'tree',
-          demoName: 'search',
+          demoName: `demo/${lang}/search`,
         },
         component: () => <search></search>,
       },
@@ -179,7 +197,7 @@ export default defineComponent({
           subtitle: '通过 draggable 属性可让节点变为可拖拽。',
           desc: 'props: draggable',
           componentName: 'tree',
-          demoName: 'draggable',
+          demoName: `demo/${lang}/draggable`,
         },
         component: () => <draggable></draggable>,
       },
@@ -189,7 +207,7 @@ export default defineComponent({
           subtitle: '通过 disableDrag(nodeData)、disableDrop(nodeData) 函数返回值 限制drag与drop,比如目录不能drop',
           desc: 'props: draggable',
           componentName: 'tree',
-          demoName: 'draggable-function',
+          demoName: `demo/${lang}/draggable-function`,
         },
         component: () => <draggableFunction></draggableFunction>,
       },
@@ -199,7 +217,7 @@ export default defineComponent({
           subtitle: '配置搜索行为',
           desc: 'props: --',
           componentName: 'tree',
-          demoName: 'selected',
+          demoName: `demo/${lang}/selected`,
         },
         component: () => <selected></selected>,
       },
@@ -209,7 +227,7 @@ export default defineComponent({
           subtitle: '',
           desc: 'props: expandAll',
           componentName: 'tree',
-          demoName: 'expand-all',
+          demoName: `demo/${lang}/expand-all`,
         },
         component: () => <ExpandAll></ExpandAll>,
       },
@@ -219,7 +237,7 @@ export default defineComponent({
           subtitle: '默认配置：["selected", "expand", "click"]',
           desc: 'props: node-content-action',
           componentName: 'tree',
-          demoName: 'node-content-action',
+          demoName: `demo/${lang}/node-content-action`,
         },
         component: () => <NodeContentActions></NodeContentActions>,
       },

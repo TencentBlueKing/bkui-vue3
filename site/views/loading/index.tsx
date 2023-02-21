@@ -24,7 +24,7 @@
 * IN THE SOFTWARE.
 */
 
-import { defineComponent } from 'vue';
+import { defineAsyncComponent, defineComponent } from 'vue';
 
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
@@ -33,20 +33,24 @@ import i18n from '../../language/i18n';
 import {
   type IPropsTableItem,
 } from '../../typings';
-
-import Basic from './demo/basic.vue';
-import Mask from './demo/mask.vue';
-import Mode from './demo/mode.vue';
-import Size from './demo/size.vue';
-import Theme from './demo/theme.vue';
-import Title from './demo/title.vue';
 // import Number from './demo/number.vue';
 // import Password from './demo/password.vue';
 // import Search from './demo/search.vue';
 // import Simple from './demo/simple.vue';
 // import Size from './demo/size.vue';
 // import Status from './demo/status.vue';
-// import Textarea from './demo/textarea.vue';;
+// import Textarea from './demo/textarea.vue';
+import { getCookie } from '../utils/cookie';
+
+import Basic from './demo/basic.vue';
+import Mask from './demo/mask.vue';
+import Mode from './demo/mode.vue';
+import Size from './demo/size.vue';
+import Theme from './demo/theme.vue';
+
+const lang = getCookie('blueking_language');
+
+const Title = defineAsyncComponent(() => import(`./demo/${lang}/title.vue`));
 
 const { t } = i18n.global;
 
@@ -144,7 +148,7 @@ const demos: DemoPropsTableItem[] = [{
   title: '配置文案',
   desc: '传入 title，值会被渲染到 loading 图标的下方',
   componentName: 'loading',
-  demoName: 'demo/title',
+  demoName: `demo/${lang}/title`,
   DemoComponent: Title,
 }].map((item: DemoPropsTableItem) => {
   const result = Object.assign(item, {

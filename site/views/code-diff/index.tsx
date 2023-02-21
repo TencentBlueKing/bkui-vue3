@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 
-import { defineComponent } from 'vue';
+import { defineAsyncComponent, defineComponent } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import DemoBox from '../../components/demo-box';
@@ -32,14 +32,16 @@ import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import i18n from '../../language/i18n';
 import { type IPropsTableItem } from '../../typings';
+import { getCookie } from '../utils/cookie';
 
-import Basic from './demo/basic.vue';
-import DiffContext from './demo/diff-context.vue';
-import Format from './demo/format.vue';
-import Theme from './demo/theme.vue';
+const lang = getCookie('blueking_language');
+
+const Basic = defineAsyncComponent(() => import(`./demo/${lang}/basic.vue`));
+const DiffContext = defineAsyncComponent(() => import(`./demo/${lang}/diff-context.vue`));
+const Format = defineAsyncComponent(() => import(`./demo/${lang}/format.vue`));
+const Theme = defineAsyncComponent(() => import(`./demo/${lang}/theme.vue`));
 
 const { t } = i18n.global;
-
 
 interface IPropsDiffItem extends IPropsTableItem {
   title: string,
@@ -134,7 +136,7 @@ const demos = [
     title: '基本用法',
     desc: '配置对比内容 old-content 和 new-content',
     componentName: 'code-diff',
-    demoName: 'demo/basic',
+    demoName: `demo/${lang}/basic`,
     DemoComponent: Basic,
   },
   {
@@ -142,7 +144,7 @@ const demos = [
     title: '展示方式配置',
     desc: '配置展示方式format',
     componentName: 'code-diff',
-    demoName: 'demo/format',
+    demoName: `demo/${lang}/format`,
     DemoComponent: Format,
   },
   {
@@ -150,7 +152,7 @@ const demos = [
     title: '暗黑主题配置',
     desc: '配置Theme',
     componentName: 'code-diff',
-    demoName: 'demo/theme',
+    demoName: `demo/${lang}/theme`,
     DemoComponent: Theme,
   },
   {
@@ -158,7 +160,7 @@ const demos = [
     title: '不隐藏行数配置',
     desc: '配置diffContext',
     componentName: 'code-diff',
-    demoName: 'demo/diff-context',
+    demoName: `demo/${lang}/diff-context`,
     DemoComponent: DiffContext,
   },
 ].map((item: IPropsDiffItem) => {

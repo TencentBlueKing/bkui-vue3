@@ -42,9 +42,9 @@ Object.keys(langMap).forEach((key) => {
 });
 
 function localLanguage() {
-  const lang = getCookie('lang');
+  const lang = getCookie('blueking_language');
   if (!lang) {
-    setCookie('lang', 'zh-cn');
+    setCookie('blueking_language', 'zh-cn');
     return 'zh-cn';
   }
   return lang;

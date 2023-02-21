@@ -53,7 +53,7 @@ import * as TABLE_DATA from './options';
 // import Selection from './selection.vue';
 // import virtualRender from './virtual-render.vue';
 
-const lang = getCookie('lang');
+const lang = getCookie('blueking_language');
 
 const BaseDemo = defineAsyncComponent(() => import(`./demo/${lang}/basic.vue`));
 const BasicFilter = defineAsyncComponent(() => import(`./demo/${lang}/basic-filter.vue`));
