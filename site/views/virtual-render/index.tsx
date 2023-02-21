@@ -24,17 +24,20 @@
  * IN THE SOFTWARE.
  */
 
-import { defineComponent } from 'vue';
+import { defineAsyncComponent, defineComponent } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import { virtualRenderProps } from '../../../packages/virtual-render/src/props';
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
+import { getCookie } from '../utils/cookie';
 import { resolvePropsToDesData } from '../utils/index';
 
-import basic from './basic.vue';
-import customLineHeight from './custom-line-height.vue';
+const lang = getCookie('blueking_language');
+
+const basic = defineAsyncComponent(() => import(`./demo/${lang}/basic.vue`));
+const customLineHeight = defineAsyncComponent(() => import(`./demo/${lang}/custom-line-height.vue`));
 
 export default defineComponent({
   components: {
@@ -52,7 +55,7 @@ export default defineComponent({
           subtitle: t('基础用法，用于表单内容的录入'),
           desc: 'props: --',
           componentName: 'virtual-render',
-          demoName: 'basic',
+          demoName: `demo/${lang}/basic`,
         },
         component: () => <basic></basic>,
       },
@@ -62,7 +65,7 @@ export default defineComponent({
           subtitle: t('每行高度不一致，自定义每行高度'),
           desc: 'props: --',
           componentName: 'virtual-render',
-          demoName: 'custom-line-height',
+          demoName: `demo/${lang}/custom-line-height`,
         },
         component: () => <custom-line-height></custom-line-height>,
       },

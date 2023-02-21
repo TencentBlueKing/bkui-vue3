@@ -35,7 +35,7 @@ import {
 } from '../../typings';
 import { getCookie } from '../utils/cookie';
 
-const lang = getCookie('lang');
+const lang = getCookie('blueking_language');
 
 const DemoRadio = defineAsyncComponent(() => import(`./demo/${lang}/radio.vue`));
 const DemoRadioButton = defineAsyncComponent(() => import(`./demo/${lang}/radio-button.vue`));

@@ -24,17 +24,20 @@
  * IN THE SOFTWARE.
  */
 
-import { defineComponent } from 'vue';
+import { defineAsyncComponent, defineComponent } from 'vue';
 
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import i18n from '../../language/i18n';
 import { IPropsTableItem } from '../../typings';
+import { getCookie } from '../utils/cookie';
 
-import BaseDemo from './base-demo.vue';
-import FooterDemo from './footer-demo.vue';
-import TitleDemo from './title-demo.vue';
+const lang = getCookie('blueking_language');
+
+const BaseDemo = defineAsyncComponent(() => import(`./demo/${lang}/base-demo.vue`));
+const FooterDemo = defineAsyncComponent(() => import(`./demo/${lang}/footer-demo.vue`));
+const TitleDemo = defineAsyncComponent(() => import(`./demo/${lang}/title-demo.vue`));
 
 const { t } = i18n.global;
 
@@ -192,7 +195,7 @@ export default defineComponent({
           subtitle=""
           desc={t('使用默认配置的组件')}
           componentName="sideslider"
-          demoName="base-demo"
+          demoName={`demo/${lang}/base-demo`}
         >
           <BaseDemo></BaseDemo>
         </DemoBox>
@@ -201,7 +204,7 @@ export default defineComponent({
           subtitle=""
           desc={t('配置title参数和添加slot')}
           componentName="sideslider"
-          demoName="title-demo"
+          demoName={`demo/${lang}/title-demo`}
         >
           <TitleDemo></TitleDemo>
         </DemoBox>
@@ -210,7 +213,7 @@ export default defineComponent({
           subtitle=""
           desc={t('配置footer插槽，footer插槽内容会随着高度的变化而变化')}
           componentName="sideslider"
-          demoName="footer-demo"
+          demoName={`demo/${lang}/footer-demo`}
         >
           <FooterDemo></FooterDemo>
         </DemoBox>

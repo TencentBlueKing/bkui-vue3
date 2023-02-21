@@ -36,7 +36,7 @@ import { getCookie } from '../utils/cookie';
 import BaseDemo from './demo/base-demo.vue';
 import SizeDemo from './demo/size-demo.vue';
 
-const lang = getCookie('lang');
+const lang = getCookie('blueking_language');
 
 const ChangeDemo = defineAsyncComponent(() => import(`./demo/${lang}/change-demo.vue`));
 const TextDemo = defineAsyncComponent(() => import(`./demo/${lang}/text-demo.vue`));

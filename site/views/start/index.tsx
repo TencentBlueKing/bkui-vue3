@@ -40,7 +40,7 @@ export default defineComponent({
         <DemoTitle
           name={ t('快速上手') }
           desc= {`${t('本组件库基于Vue3研发，本节介绍如何在项目中结合webpack 一起使用{\'@\'}blueking/bkui-vue。')}` }/>
-          { getCookie('lang') === 'zh-cn' ? <StartMd/> : <StartEnMd/> }
+          { getCookie('blueking_language') === 'zh-cn' ? <StartMd/> : <StartEnMd/> }
       </div>
     );
   },

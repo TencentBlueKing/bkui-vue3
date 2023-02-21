@@ -33,7 +33,7 @@ import i18n from '../../language/i18n';
 import { type IPropsTableItem, DemoPropsItem } from '../../typings';
 import { getCookie } from '../utils/cookie';
 
-const lang = getCookie('lang');
+const lang = getCookie('blueking_language');
 
 const { t } = i18n.global;
 

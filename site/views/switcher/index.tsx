@@ -39,7 +39,7 @@ import SizeDemo from './demo/size-demo.vue';
 import ThemeDemo from './demo/theme-demo.vue';
 import TypeDemo from './demo/type-demo.vue';
 
-const lang = getCookie('lang');
+const lang = getCookie('blueking_language');
 
 const DisabledDemo = defineAsyncComponent(() => import(`./demo/${lang}/disabled-demo.vue`));
 const TextDemo = defineAsyncComponent(() => import(`./demo/${lang}/text-demo.vue`));

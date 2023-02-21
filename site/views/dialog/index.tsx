@@ -24,21 +24,24 @@
  * IN THE SOFTWARE.
  */
 
-import { defineComponent } from 'vue';
+import { defineAsyncComponent, defineComponent } from 'vue';
 
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import i18n from '../../language/i18n';
 import { IPropsTableItem } from '../../typings';
+import { getCookie } from '../utils/cookie';
 
-import AsyncDemo from './async-demo.vue';
-import BaseDemo from './base-demo.vue';
-import ConfigDemo from './config-demo.vue';
-import FullscreenDemo from './fullscreen-demo.vue';
-import NestedDemo from './nested-demo.vue';
-import SizeDemo from './size-demo.vue';
-import TypeDemo from './type-demo.vue';
+const lang = getCookie('blueking_language');
+
+const AsyncDemo = defineAsyncComponent(() => import(`./demo/${lang}/async-demo.vue`));
+const BaseDemo = defineAsyncComponent(() => import(`./demo/${lang}/base-demo.vue`));
+const ConfigDemo = defineAsyncComponent(() => import(`./demo/${lang}/config-demo.vue`));
+const FullscreenDemo = defineAsyncComponent(() => import(`./demo/${lang}/fullscreen-demo.vue`));
+const NestedDemo = defineAsyncComponent(() => import(`./demo/${lang}/nested-demo.vue`));
+const SizeDemo = defineAsyncComponent(() => import(`./demo/${lang}/size-demo.vue`));
+const TypeDemo = defineAsyncComponent(() => import(`./demo/${lang}/type-demo.vue`));
 
 const { t } = i18n.global;
 
@@ -258,7 +261,6 @@ const dialogSlotsJson: IPropsTableItem[] = [
   };
 });
 
-
 const dialogChangeJson: IPropsTableItem[] = [
   {
     name: 'closed',
@@ -304,7 +306,6 @@ const dialogChangeJson: IPropsTableItem[] = [
   };
 });
 
-
 export default defineComponent({
   name: 'SiteDialog',
   render() {
@@ -317,9 +318,9 @@ export default defineComponent({
           subtitle=""
           desc={t('默认配置的对话框。通过 theme 属性配置弹框中不同的主题确认按钮；通过 quickClose 配置是否允许点击遮罩关闭弹框，默认为 true。通过 escClose 配置是否启用 esc 按键关闭弹框，默认为 true。')}
           componentName="dialog"
-          demoName="base-demo"
+          demoName={`demo/${lang}/base-demo`}
         >
-          <BaseDemo></BaseDemo>
+          <BaseDemo />
         </DemoBox>
 
         <DemoBox
@@ -327,9 +328,9 @@ export default defineComponent({
           subtitle=""
           desc={t('对话框分为4个尺寸。通过 size 属性 normal, small, medium, large 进行配置，也可通过 width, height 自定义宽高。')}
           componentName="dialog"
-          demoName="size-demo"
+          demoName={`demo/${lang}/size-demo`}
         >
-          <SizeDemo></SizeDemo>
+          <SizeDemo />
         </DemoBox>
 
         <DemoBox
@@ -337,9 +338,9 @@ export default defineComponent({
           subtitle=""
           desc={t('通过设置 draggable 属性来设置是否允许弹框拖拽。通过 closeIcon 属性设置是否显示右上角的关闭 icon。')}
           componentName="dialog"
-          demoName="config-demo"
+          demoName={`demo/${lang}/config-demo`}
         >
-          <ConfigDemo></ConfigDemo>
+          <ConfigDemo />
         </DemoBox>
 
         <DemoBox
@@ -347,9 +348,9 @@ export default defineComponent({
           subtitle=""
           desc={t('通过 loading 属性配置异步关闭效果，开启则需手动设置value来关闭对话框。')}
           componentName="dialog"
-          demoName="async-demo"
+          demoName={`demo/${lang}/async-demo`}
         >
-          <AsyncDemo></AsyncDemo>
+          <AsyncDemo />
         </DemoBox>
 
         <DemoBox
@@ -357,9 +358,9 @@ export default defineComponent({
           subtitle=""
           desc={t('通过 fullscreen 属性配置全屏弹框，当设置为全屏弹框时，draggable 配置不生效即弹框不能拖动。')}
           componentName="dialog"
-          demoName="fullscreen-demo"
+          demoName={`demo/${lang}/fullscreen-demo`}
         >
-          <FullscreenDemo></FullscreenDemo>
+          <FullscreenDemo />
         </DemoBox>
 
         <DemoBox
@@ -367,9 +368,9 @@ export default defineComponent({
           subtitle=""
           desc={t('对话框分为4种类型。通过 dialogType 属性 show，operation，confirm，process 进行配置，默认 operation 类型。')}
           componentName="dialog"
-          demoName="type-demo"
+          demoName={`demo/${lang}/type-demo`}
         >
-          <TypeDemo></TypeDemo>
+          <TypeDemo />
         </DemoBox>
 
         <DemoBox
@@ -377,16 +378,16 @@ export default defineComponent({
           subtitle=""
           desc={t('通过 multi-instance 配置是否嵌套弹框同时存在，默认为 true，多个弹框叠加，设置为 false 只保留最后一个。')}
           componentName="dialog"
-          demoName="nested-demo"
+          demoName={`demo/${lang}/nested-demo`}
         >
-          <NestedDemo></NestedDemo>
+          <NestedDemo />
         </DemoBox>
 
         <PropsBox title={t('Dialog 属性')} subtitle="" propsData={dialogPropsJson} />
 
         <PropsBox title={t('Dialog 插槽')} subtitle="" propsData={dialogSlotsJson} />
 
-        <PropsBox  title={t('Dialog 事件')} subtitle="" propsData={dialogChangeJson} />
+        <PropsBox title={t('Dialog 事件')} subtitle="" propsData={dialogChangeJson} />
       </div>
     );
   },

@@ -33,7 +33,7 @@ import i18n from '../../language/i18n';
 import { IPropsTableItem } from '../../typings';
 import { getCookie } from '../utils/cookie';
 
-const lang = getCookie('lang');
+const lang = getCookie('blueking_language');
 
 const BaseDemo = defineAsyncComponent(() => import(`./demo/${lang}/base-demo.vue`));
 const HeaderSlotDemo = defineAsyncComponent(() => import(`./demo/${lang}/header-slot-demo.vue`));

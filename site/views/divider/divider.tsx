@@ -35,7 +35,7 @@ import { IPropsTableItem } from '../../typings';
 import { resolvePropsToDesData } from '../utils';
 import { getCookie } from '../utils/cookie';
 
-const lang = getCookie('lang');
+const lang = getCookie('blueking_language');
 
 const BaseDemo = defineAsyncComponent(() => import(`./demo/${lang}/base-demo.vue`));
 

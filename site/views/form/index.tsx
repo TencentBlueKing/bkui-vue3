@@ -33,7 +33,7 @@ import i18n from '../../language/i18n';
 import { type IPropsTableItem } from '../../typings';
 import { getCookie } from '../utils/cookie';
 
-const lang = getCookie('lang');
+const lang = getCookie('blueking_language');
 
 const DemoForm = defineAsyncComponent(() => import(`./demo/${lang}/form.vue`));
 const DemoComposeFormItem = defineAsyncComponent(() => import(`./demo/${lang}/compose-form-item.vue`));

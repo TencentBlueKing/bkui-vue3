@@ -1,40 +1,43 @@
 /*
-* Tencent is pleased to support the open source community by making
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
-*
-* Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
-*
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
-*
-* License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
-*
-* ---------------------------------------------------
-* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
-* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
-* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-* the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-* THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-* IN THE SOFTWARE.
-*/
+ * Tencent is pleased to support the open source community by making
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ *
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ *
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ *
+ * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ *
+ * ---------------------------------------------------
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+ * the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
 
-import { defineComponent } from 'vue';
+import { defineAsyncComponent, defineComponent } from 'vue';
 
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
+import i18n from '../../language/i18n';
 import type { IPropsTableItem } from '../../typings';
+import { getCookie } from '../utils/cookie';
 
-import i18n from './../../language/i18n';
-import BaseDemo from './base-demo.vue';
-import CloseDemo from './close-demo.vue';
-import ThemeDemo from './theme-demo.vue';
+const lang = getCookie('blueking_language');
+
+const BaseDemo = defineAsyncComponent(() => import(`./demo/${lang}/base-demo.vue`));
+const CloseDemo = defineAsyncComponent(() => import(`./demo/${lang}/close-demo.vue`));
+const ThemeDemo = defineAsyncComponent(() => import(`./demo/${lang}/theme-demo.vue`));
 
 const { t } = i18n.global;
 
@@ -96,47 +99,50 @@ const props: IPropsTableItem[] = [
     optional: [],
   },
 ].map((item: IPropsTableItem) => {
-  const result =  Object.assign(item, { desc: t(item.desc) });
+  const result = Object.assign(item, { desc: t(item.desc) });
   return {
     ...result,
   };
 });
 
-
 export default defineComponent({
   render() {
     return (
-    <div>
-      <DemoTitle
-        name={ t('Message 消息提示') }
-        desc={  t('用户操作后的消息提示，用于成功、失败、警告等消息提醒。') }
-        link="https://www.google.com.hk/"/>
-      <DemoBox
-        title={ t('基础用法')}
-        subtitle={ t('使用默认配置的消息提示') }
-        desc=""
-        componentName="message"
-        demoName="base-demo">
-          <BaseDemo/>
-      </DemoBox>
-      <DemoBox
-        title={ t('内置主题')}
-        subtitle={ t('消息提醒提供消息、成功、警告、失败四种主题')}
-        desc=""
-        componentName="message"
-        demoName="theme-demo">
-          <ThemeDemo/>
-      </DemoBox>
-      <DemoBox
-        title={ t('消息关闭')}
-        subtitle={ t('配置 delay 字段定义消息自动关闭的时间，当值为 0 时不自动关闭。配置 dismissable 字段控制是否显示右侧的手动关闭 icon。') }
-        desc=""
-        componentName="message"
-        demoName="close-demo">
-          <CloseDemo/>
-      </DemoBox>
+      <div>
+        <DemoTitle
+          name={t('Message 消息提示')}
+          desc={t('用户操作后的消息提示，用于成功、失败、警告等消息提醒。')}
+          link="https://www.google.com.hk/"
+        />
+        <DemoBox
+          title={t('基础用法')}
+          subtitle={t('使用默认配置的消息提示')}
+          desc=""
+          componentName="message"
+          demoName={`demo/${lang}/base-demo`}
+        >
+          <BaseDemo />
+        </DemoBox>
+        <DemoBox
+          title={t('内置主题')}
+          subtitle={t('消息提醒提供消息、成功、警告、失败四种主题')}
+          desc=""
+          componentName="message"
+          demoName={`demo/${lang}/theme-demo`}
+        >
+          <ThemeDemo />
+        </DemoBox>
+        <DemoBox
+          title={t('消息关闭')}
+          subtitle={t('配置 delay 字段定义消息自动关闭的时间，当值为 0 时不自动关闭。配置 dismissable 字段控制是否显示右侧的手动关闭 icon。')}
+          desc=""
+          componentName="message"
+          demoName={`demo/${lang}/close-demo`}
+        >
+          <CloseDemo />
+        </DemoBox>
         <PropsBox subtitle="" propsData={props}></PropsBox>
-    </div>
+      </div>
     );
   },
 });

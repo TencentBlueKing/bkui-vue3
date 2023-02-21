@@ -29,11 +29,11 @@ import { defineAsyncComponent, defineComponent } from 'vue';
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
+import i18n from '../../language/i18n';
 import { IPropsTableItem } from '../../typings';
 import { getCookie } from '../utils/cookie';
 
-import i18n from './../../language/i18n';
-const lang = getCookie('lang');
+const lang = getCookie('blueking_language');
 
 const Badge = defineAsyncComponent(() => import(`./demo/${lang}/badge.vue`));
 const BadgeDemo = defineAsyncComponent(() => import(`./demo/${lang}/badge-demo.vue`));

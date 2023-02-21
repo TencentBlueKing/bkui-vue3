@@ -163,6 +163,7 @@ const QuickStart: LANG = {
   '本组件库基于Vue3研发，本节介绍如何在项目中结合webpack 一起使用{\'@\'}blueking/bkui-vue。': [
     'This component library is based on Vue3 research and development. This section describes how to use {\'@\'}blueking/bkui-vue in combination with webpack in a project.',
   ],
+  没有找到组件: ['Component not found'],
 };
 
 const Lang = {

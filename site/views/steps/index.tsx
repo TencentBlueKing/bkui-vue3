@@ -40,7 +40,7 @@ import SizeDemo from './demo/size-demo.vue';
 import StatusDemo from './demo/status-demo.vue';
 import ThemeDemo from './demo/theme-demo.vue';
 
-const lang = getCookie('lang');
+const lang = getCookie('blueking_language');
 
 const CustomDemo = defineAsyncComponent(() => import(`./demo/${lang}/custom-demo.vue`));
 

@@ -24,21 +24,24 @@
  * IN THE SOFTWARE.
  */
 
-import { defineComponent } from 'vue';
+import { defineAsyncComponent, defineComponent } from 'vue';
 
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import i18n from '../../language/i18n';
 import { IPropsTableItem } from '../../typings';
+import { getCookie } from '../utils/cookie';
 
-import AlignDemo from './align-demo.vue';
-import BaseDemo from './base-demo.vue';
-import DropdownBoundaryBody from './boundary-body-demo.vue';
-import DisabledDemo from './disabled-demo.vue';
-import DropdownMethodsDemo from './dropdown-methods-demo.vue';
-import IsShowDemo from './is-show-demo.vue';
-import TriggerDemo from './trigger-demo.vue';
+const lang = getCookie('blueking_language');
+
+const AlignDemo = defineAsyncComponent(() => import(`./demo/${lang}/align-demo.vue`));
+const BaseDemo = defineAsyncComponent(() => import(`./demo/${lang}/base-demo.vue`));
+const DropdownBoundaryBody = defineAsyncComponent(() => import(`./demo/${lang}/boundary-body-demo.vue`));
+const DisabledDemo = defineAsyncComponent(() => import(`./demo/${lang}/disabled-demo.vue`));
+const DropdownMethodsDemo = defineAsyncComponent(() => import(`./demo/${lang}/dropdown-methods-demo.vue`));
+const IsShowDemo = defineAsyncComponent(() => import(`./demo/${lang}/is-show-demo.vue`));
+const TriggerDemo = defineAsyncComponent(() => import(`./demo/${lang}/trigger-demo.vue`));
 
 const { t } = i18n.global;
 
@@ -156,7 +159,7 @@ export default defineComponent({
           title={t('基础用法')}
           desc={t('slot[name=default] 配置触发对象，slot[name=content] 配置下拉菜单')}
           componentName="dropdown"
-          demoName="base-demo"
+          demoName={`demo/${lang}/base-demo`}
         >
           <BaseDemo />
         </DemoBox>
@@ -164,7 +167,7 @@ export default defineComponent({
           title={t('菜单出现的位置')}
           desc={t('通过配置参数 placement 可以让下拉菜单的位置，默认为 bottom')}
           componentName="dropdown"
-          demoName="align-demo"
+          demoName={`demo/${lang}/align-demo`}
         >
           <AlignDemo />
         </DemoBox>
@@ -172,7 +175,7 @@ export default defineComponent({
           title={t('点击触发')}
           desc={t('通过 trigger=click 设置触发事件类型')}
           componentName="dropdown"
-          demoName="trigger-demo"
+          demoName={`demo/${lang}/trigger-demo`}
         >
           <TriggerDemo />
         </DemoBox>
@@ -180,7 +183,7 @@ export default defineComponent({
           title={t('自定义显示与隐藏')}
           desc={t('通过 isShow 下来菜单的显示与隐藏，trigger=manual下生效')}
           componentName="dropdown"
-          demoName="is-show-demo"
+          demoName={`demo/${lang}/is-show-demo`}
         >
           <IsShowDemo />
         </DemoBox>
@@ -188,7 +191,7 @@ export default defineComponent({
           title={t('禁用状态')}
           desc={t('通过 disabled 来禁用下来弹出')}
           componentName="dropdown"
-          demoName="disabled-demo"
+          demoName={`demo/${lang}/disabled-demo`}
         >
           <DisabledDemo />
         </DemoBox>
@@ -196,7 +199,7 @@ export default defineComponent({
           title={t('回调函数')}
           desc={t('通过 show hide 设置显示与隐藏的回调')}
           componentName="dropdown"
-          demoName="dropdown-methods-demo"
+          demoName={`demo/${lang}/dropdown-methods-demo`}
         >
           <DropdownMethodsDemo />
         </DemoBox>
@@ -204,7 +207,7 @@ export default defineComponent({
           title={t('元素绑定在body下')}
           desc={t('通过 popoverOptions 设置 boundary: \'body\'')}
           componentName="dropdown"
-          demoName="boundary-body-demo"
+          demoName={`demo/${lang}/boundary-body-demo`}
         >
           <DropdownBoundaryBody />
         </DemoBox>
