@@ -5,7 +5,7 @@
     width="400"
   >
     <div>
-      When the mouse passes this text, a bubble box will be displayed
+      当鼠标通过此文本时，将显示一个气泡框
     </div>
   </bk-popover>
 </template>

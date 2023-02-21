@@ -7,7 +7,7 @@
       normal
     </bk-button>
     <bk-dialog
-      :title="t('这是标题')"
+      :title="'这是标题'"
       :theme="'primary'"
       :size="'normal'"
       :is-show="exampleSetting.dialog1.isShow"
@@ -26,7 +26,7 @@
       small
     </bk-button>
     <bk-dialog
-      :title="t('这是标题')"
+      :title="'这是标题'"
       :theme="'primary'"
       :size="'small'"
       :is-show="exampleSetting.dialog2.isShow"
@@ -45,7 +45,7 @@
       medium
     </bk-button>
     <bk-dialog
-      :title="t('这是标题')"
+      :title="'这是标题'"
       :theme="'primary'"
       :size="'medium'"
       :is-show="exampleSetting.dialog3.isShow"
