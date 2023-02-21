@@ -48,7 +48,7 @@ const Menu: LANG = {
   选择项发生变化时触发: ['Triggered when the selection changes'],
   展开变化时触发事件: ['Trigger event when unfolding changes'],
   名称: ['Name'],
-  'icon 插槽': ['icon slot'],
+  'icon 插槽': ['icon Slots'],
   是否展示Icon: ['Whether to display Icon'],
   '垂直菜单，子菜单内嵌在菜单区域。': ['Vertical menu with submenus embedded in the menu area.'],
   数字: ['Number'],
