@@ -262,3 +262,22 @@ export function isElement(obj: any) {
     );
   }
 }
+
+/**
+ * Whether the text content is clipped due to CSS overflow, as in showing `...`.
+ */
+export function hasOverflowEllipsis(element: HTMLElement) {
+  return element.offsetWidth < element.scrollWidth || element.offsetHeight < element.scrollHeight;
+}
+
+/**
+ * Sets the `title` attribute in the event's element target, when the text
+ * content is clipped due to CSS overflow, as in showing `...`.
+ */
+export function maybeShowTooltip(target: HTMLElement, title: string) {
+  if (hasOverflowEllipsis(target)) {
+    target.setAttribute('title', title);
+  } else {
+    target.removeAttribute('title');
+  }
+}
