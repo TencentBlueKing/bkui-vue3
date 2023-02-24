@@ -12,7 +12,7 @@
       name: '实例状态',
       id: '1',
       multiple: true,
-      placeholder: '必须项',
+      placeholder: '请选择/请输入',
       async: true,
       validate: true,
       children: [

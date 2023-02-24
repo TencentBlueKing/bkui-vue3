@@ -1,6 +1,7 @@
 <template>
   <span
-    v-bk-tooltips="'提示信息'"
+    ref="nodeRef"
+    v-bk-tooltips="{ content: '提示信息', delay: 3000 }"
     class="bk-tooltips-base"
   >
     <info />
