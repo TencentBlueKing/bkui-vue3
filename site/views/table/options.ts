@@ -73,6 +73,9 @@ export const DATA_COLUMNS = [
     label: '名称/内网IP',
     field: 'ip',
     width: 100,
+    showOverflowTooltip: {
+      mode: 'auto',
+    },
   },
   {
     label: '来源',
@@ -108,6 +111,9 @@ export const DATA_COLUMNS1 = [
     label: '名称/内网IP',
     field: 'ip',
     width: 100,
+    showOverflowTooltip: {
+      mode: 'auto',
+    },
   },
   {
     label: '来源',
@@ -186,6 +192,11 @@ export const DATA_FIX_COLUMNS = [
     type: 'selection',
     width: 80,
     fixed: true,
+    showOverflowTooltip: {
+      mode: 'static',
+      content: (_column, _row) => 'xxx_uuu',
+      disabled: (_column, _row) => false,
+    },
   },
   {
     label: '序号',
@@ -242,6 +253,9 @@ export const DATE_COL_SPAN = [{
   field: 'ip',
   width: 100,
   colspan: 2,
+  showOverflowTooltip: {
+    mode: 'auto',
+  },
 },
 {
   label: '来源',
