@@ -105,6 +105,11 @@ export default defineComponent({
     //     }
     //   }
     // };
+    const forceUpdate = () => {
+      if (popoverInstance) {
+        popoverInstance?.forceUpdate?.();
+      }
+    };
 
     const destoryDropdown = () => {
       if (popoverInstance && Object.keys(popoverInstance).length !== 0) {
@@ -267,6 +272,7 @@ export default defineComponent({
     return {
       ...toRefs(state),
       refContentRef,
+      forceUpdate,
       updateDropdown,
       destoryDropdown,
     };

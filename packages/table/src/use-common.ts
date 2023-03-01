@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { get as objGet, has as objHas, set as objSet } from 'lodash';
+import { debounce, get as objGet, has as objHas, set as objSet } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import { computed, onMounted, reactive, ref, watch } from 'vue';
 
@@ -170,6 +170,9 @@ export const useClass = (props: TablePropTypes, targetColumns: Column[], root?, 
   };
 
   const updateBorderClass = (root: HTMLElement) => {
+    if (!root) {
+      return;
+    }
     const querySelector = props.virtualEnabled
       ? `.${resolveClassName('virtual-section')}`
       : `.${resolveClassName('table-body-content')}`;
@@ -240,8 +243,8 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
   const updateColGroups = (settings?: Settings) => {
     const checked = settings?.checked || (props.settings as Settings)?.checked || [];
     const settingFields = settings?.fields || (props.settings as Settings)?.fields || [];
-
-    colgroups.splice(0, colgroups.length, ...(getColumns())
+    colgroups.length = 0;
+    colgroups.push(...(getColumns())
       .map(col => ({
         ...col,
         calcWidth: null,
@@ -263,10 +266,13 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
     }
   });
 
-  watch(() => [props.columns, targetColumns], () => {
+  const debounceColUpdate = debounce(() => {
     updateColGroups();
     resetResizeEvents();
     registerResizeEvent();
+  }, 120);
+  watch(() => [props.columns, targetColumns], () => {
+    debounceColUpdate();
   }, { immediate: true, deep: true });
 
   const defSort = props.columns.reduce((out: any, col, index) => {
@@ -471,25 +477,57 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
 
   const neepColspanOrRowspan = computed(() => colgroups.some(col => typeof col.rowspan === 'function' || /^\d$/.test(`${col.rowspan}`) || typeof col.colspan === 'function' || /^\d$/.test(`${col.colspan}`)));
 
+  const needSelection = computed(() => colgroups.some(col => col.type === 'selection'));
+
+  const needExpand = computed(() => colgroups.some(col => col.type === 'expand'));
+
+  const needIndexColumn = computed(() => colgroups.some(col => col.type === 'index'));
+
   const initIndexData = (keepLocalAction = false) => {
     let preRowId = null;
     const skipConfig = {};
-    indexData.splice(0, indexData.length, ...props.data.map((item: any, index: number) => {
-      const rowId = getRowKey(item, props, index);
-      const cfg = neepColspanOrRowspan.value ? getSkipConfig(item, rowId, index, skipConfig, preRowId) : {};
-      preRowId = rowId;
-      return {
-        ...item,
-        [TABLE_ROW_ATTRIBUTE.ROW_INDEX]: index,
-        [TABLE_ROW_ATTRIBUTE.ROW_UID]: rowId,
-        [TABLE_ROW_ATTRIBUTE.ROW_EXPAND]: keepLocalAction ? isRowExpand(rowId) : false,
-        [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: resolveSelection(item, rowId, index),
-        [TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA]: { ...item },
-        [TABLE_ROW_ATTRIBUTE.ROW_SKIP_CFG]: cfg,
-      };
-    }));
 
-    initSelectionAllByData();
+    if (neepColspanOrRowspan.value || needSelection.value || needExpand.value || needIndexColumn.value) {
+      const copyData = props.data.map((item: any, index: number) => {
+        const rowId = getRowKey(item, props, index);
+
+        preRowId = rowId;
+        const target = {
+          ...item,
+          [TABLE_ROW_ATTRIBUTE.ROW_UID]: rowId,
+          [TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA]: { ...item },
+        };
+
+        if (neepColspanOrRowspan.value) {
+          const cfg = getSkipConfig(item, rowId, index, skipConfig, preRowId);
+          Object.assign(target, { [TABLE_ROW_ATTRIBUTE.ROW_SKIP_CFG]: cfg });
+        }
+
+        if (needSelection.value) {
+          Object.assign(target, { [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: resolveSelection(item, rowId, index) });
+        }
+
+        if (needIndexColumn.value) {
+          Object.assign(target, { [TABLE_ROW_ATTRIBUTE.ROW_INDEX]: index });
+        }
+
+        if (needExpand.value) {
+          Object.assign(target, { [TABLE_ROW_ATTRIBUTE.ROW_EXPAND]: keepLocalAction ? isRowExpand(rowId) : false });
+        }
+
+        return target;
+      });
+      indexData.length = 0;
+      indexData.push(...copyData);
+
+      if (needSelection.value) {
+        initSelectionAllByData();
+      }
+      return;
+    }
+
+    indexData.length = 0;
+    indexData.push(...props.data);
   };
 
   /**
@@ -509,23 +547,44 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
   };
 
   const updateIndexData = (selectedAll?: boolean) => {
-    let preRowId = null;
-    const skipConfig = {};
-    indexData.forEach((item: any, index: number) => {
-      const rowId = item[TABLE_ROW_ATTRIBUTE.ROW_UID];
-      const cfg = neepColspanOrRowspan.value ? getSkipConfig(item, rowId, index, skipConfig, preRowId) : {};
-      const isRowCheckEnable = isRowSelectEnable(props, { row: item, index, isCheckAll: false });
+    if (neepColspanOrRowspan.value || needSelection.value || needExpand.value || needIndexColumn.value) {
+      let preRowId = null;
+      const skipConfig = {};
+      indexData.forEach((item: any, index: number) => {
+        const rowId = item[TABLE_ROW_ATTRIBUTE.ROW_UID];
 
-      Object.assign(item, {
-        [TABLE_ROW_ATTRIBUTE.ROW_EXPAND]: isRowExpand(item[TABLE_ROW_ATTRIBUTE.ROW_UID]),
-        [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: isRowChecked(isRowCheckEnable, selectedAll, item, index),
-        [TABLE_ROW_ATTRIBUTE.ROW_SKIP_CFG]: cfg,
+        if (needExpand.value) {
+          Object.assign(item, {
+            [TABLE_ROW_ATTRIBUTE.ROW_EXPAND]: isRowExpand(item[TABLE_ROW_ATTRIBUTE.ROW_UID]),
+          });
+        }
+
+        if (neepColspanOrRowspan.value) {
+          const cfg = getSkipConfig(item, rowId, index, skipConfig, preRowId);
+          preRowId = item[TABLE_ROW_ATTRIBUTE.ROW_UID];
+
+          Object.assign(item, {
+            [TABLE_ROW_ATTRIBUTE.ROW_SKIP_CFG]: cfg,
+          });
+        }
+
+        if (needIndexColumn.value) {
+          Object.assign(item, { [TABLE_ROW_ATTRIBUTE.ROW_INDEX]: index });
+        }
+
+        if (needSelection.value) {
+          const isRowCheckEnable = isRowSelectEnable(props, { row: item, index, isCheckAll: false });
+          Object.assign(item, {
+            [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: isRowChecked(isRowCheckEnable, selectedAll, item, index),
+          });
+        }
       });
-      preRowId = item[TABLE_ROW_ATTRIBUTE.ROW_UID];
-    });
 
-    if (typeof selectedAll !== 'boolean') {
-      initSelectionAllByData();
+      if (needSelection.value && typeof selectedAll !== 'boolean') {
+        initSelectionAllByData();
+      }
+
+      return;
     }
   };
 
@@ -576,6 +635,11 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
 
     return skipCfg[rowId];
   };
+
+  const debounceUpdate = debounce(updateIndexData, 120);
+  watch([neepColspanOrRowspan, needSelection, needExpand, needIndexColumn], () => {
+    debounceUpdate();
+  });
 
   /**
    * 如果设置了数据同步，点击操作更新选中状态到用户数据

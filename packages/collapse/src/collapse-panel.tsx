@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent, h, inject, ref, Transition, watch } from 'vue';
+import { defineComponent, h, inject, Ref, ref, Transition, watch } from 'vue';
 
 import { AngleRight } from '@bkui-vue/icon';
 
@@ -35,13 +35,13 @@ export default defineComponent({
   props,
   emits: ['change', 'update:modelValue', 'after-leave', 'before-enter'],
   setup(props, { emit, slots }) {
-    const localActiveItems = inject<(string | number)[]>('localActiveItems');
+    const localActiveItems = inject<Ref<(string | number)[]>>('localActiveItems');
     const handleItemClick = inject<(value: Partial<{name: string}>) => void>('handleItemClick');
     const isActive = ref(props.modelValue);
     watch(() => props.modelValue, (newVal) => {
       isActive.value = newVal;
     });
-    watch(() => localActiveItems, (newVal) => {
+    watch(localActiveItems, (newVal) => {
       if (newVal?.length) {
         isActive.value = newVal.includes(props.name);
       }

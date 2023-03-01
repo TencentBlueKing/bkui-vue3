@@ -16,7 +16,7 @@
         prop="ip"
       >
         <template #default="props">
-          {{ props?.data.ip }}
+          {{ props?.row.ip }}
         </template>
       </bk-table-column>
       <bk-table-column

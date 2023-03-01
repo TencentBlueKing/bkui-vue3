@@ -63,12 +63,12 @@ export default defineComponent({
       [props.extCls]: props.extCls ?? false,
     }));
 
-    const triggerProps = {
+    const triggerProps = computed(() => ({
       theme: props.theme,
       multiple: props.multiple,
       disabled: props.disabled,
       accept: props.accept,
-    };
+    }));
 
 
     function onRemove(file: UploadFile, fileList: UploadFiles) {
@@ -238,7 +238,7 @@ export default defineComponent({
     return () => (
       <div class={classNames.value}>
         {
-          !isPhotowall.value && <UploadTrigger {...triggerProps} v-slots={slots} onChange={handleFiles} />
+          !isPhotowall.value && <UploadTrigger {...triggerProps.value} v-slots={slots} onChange={handleFiles} />
         }
         {
           slots.tip
@@ -255,7 +255,7 @@ export default defineComponent({
           {{
             innerTrigger: (file: UploadFile) => isPhotowall.value
               && <UploadTrigger
-                {...triggerProps}
+                {...triggerProps.value}
                 file={file}
                 v-slots={slots}
                 onChange={handleFiles}

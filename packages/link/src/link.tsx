@@ -45,6 +45,7 @@ export default defineComponent({
     underline: PropTypes.bool.def(false),
     target: PropTypes.string.def('_self'),
   },
+  emits: ['click'],
   setup(props, { emit }) {
     const handleClick = (event: Event) => {
       if (props.disabled) {
@@ -66,13 +67,13 @@ export default defineComponent({
 
     return (
       <a href={this.href}
-      target={this.target}
-      class={linkClass}
-      onClick={this.handleClick}>
-      <span>
-        {this.$slots.default?.()}
-      </span>
-    </a>
+        target={this.target}
+        class={linkClass}
+        onClick={this.handleClick}>
+        <span>
+          {this.$slots.default?.()}
+        </span>
+      </a>
     );
   },
 });

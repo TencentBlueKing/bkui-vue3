@@ -32,6 +32,7 @@ export default defineComponent({
   props: {
     width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
     height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
+    maxHeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
   },
   setup(props) {
     const resolveValToPix = (val: string | number) => {
@@ -44,6 +45,7 @@ export default defineComponent({
     const style = computed(() => ({
       width: resolveValToPix(props.width),
       height: resolveValToPix(props.height),
+      maxHeight: resolveValToPix(props.maxHeight),
     }));
 
     return {

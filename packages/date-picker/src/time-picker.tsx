@@ -205,15 +205,16 @@ export default defineComponent({
 
     const { proxy } = getCurrentInstance();
 
+    const pickerDropdownRef = ref(null);
+
     watch(() => state.visible, (visible) => {
       if (visible) {
+        pickerDropdownRef.value?.forceUpdate?.();
         nextTick(() => {
           (proxy as any).pickerPanelRef?.timeSpinnerRef?.updateScroll();
         });
       }
     });
-
-    const pickerDropdownRef = ref(null);
 
     watch(() => props.modelValue, (modelValue) => {
       state.internalValue = parseDate(modelValue, props.type, props.multiple, props.format);
