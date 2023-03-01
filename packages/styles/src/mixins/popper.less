@@ -1,4 +1,4 @@
-.bk-popper {
+.@{bk-prefix}-popper {
   display: none;
   padding: 7px 14px;
   font-size: 12px;
@@ -12,19 +12,19 @@
     box-shadow: rgb(220, 222, 229) 0px 0px 6px 0px;
   }
 
-  .bk-popper-arrow,
-  .bk-popper-arrow::before {
+  .@{bk-prefix}-popper-arrow,
+  .@{bk-prefix}-popper-arrow::before {
     position: absolute;
     width: 8px;
     height: 8px;
     background: inherit;
   }
 
-  .bk-popper-arrow {
+  .@{bk-prefix}-popper-arrow {
     visibility: hidden;
   }
 
-  .bk-popper-arrow::before {
+  .@{bk-prefix}-popper-arrow::before {
     content: '';
     visibility: visible;
     transform: rotate(45deg);
@@ -35,18 +35,18 @@
   }
 }
 
-.bk-popper[data-popper-placement^='top'] > .bk-popper-arrow {
+.@{bk-prefix}-popper[data-popper-placement^='top'] > .@{bk-prefix}-popper-arrow {
   bottom: -4px;
 }
 
-.bk-popper[data-popper-placement^='bottom'] > .bk-popper-arrow {
+.@{bk-prefix}-popper[data-popper-placement^='bottom'] > .@{bk-prefix}-popper-arrow {
   top: -4px;
 }
 
-.bk-popper[data-popper-placement^='left'] > .bk-popper-arrow {
+.@{bk-prefix}-popper[data-popper-placement^='left'] > .@{bk-prefix}-popper-arrow {
   right: -4px;
 }
 
-.bk-popper[data-popper-placement^='right'] > .bk-popper-arrow {
+.@{bk-prefix}-popper[data-popper-placement^='right'] > .@{bk-prefix}-popper-arrow {
   left: -4px;
 }

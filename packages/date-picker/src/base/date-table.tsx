@@ -32,6 +32,8 @@ import {
   PropType,
 } from 'vue';
 
+import { resolveClassName } from '@bkui-vue/shared';
+
 import type {
   DatePickerValueType,
   DisabledDateType,
@@ -139,15 +141,15 @@ export default defineComponent({
     };
 
     const getCellCls = cell => [
-      'bk-date-picker-cells-cell',
+      resolveClassName('date-picker-cells-cell'),
       {
-        ['bk-date-picker-cells-cell-selected']: cell.selected || cell.start || cell.end,
-        ['bk-date-picker-cells-cell-disabled']: cell.disabled,
-        ['bk-date-picker-cells-cell-today']: cell.type === 'today',
-        ['bk-date-picker-cells-cell-prev-month']: cell.type === 'prevMonth',
-        ['bk-date-picker-cells-cell-next-month']: cell.type === 'nextMonth',
-        ['bk-date-picker-cells-cell-week-label']: cell.type === 'weekLabel',
-        ['bk-date-picker-cells-cell-range']: cell.range && !cell.start && !cell.end,
+        [resolveClassName('date-picker-cells-cell-selected')]: cell.selected || cell.start || cell.end,
+        [resolveClassName('date-picker-cells-cell-disabled')]: cell.disabled,
+        [resolveClassName('date-picker-cells-cell-today')]: cell.type === 'today',
+        [resolveClassName('date-picker-cells-cell-prev-month')]: cell.type === 'prevMonth',
+        [resolveClassName('date-picker-cells-cell-next-month')]: cell.type === 'nextMonth',
+        [resolveClassName('date-picker-cells-cell-week-label')]: cell.type === 'weekLabel',
+        [resolveClassName('date-picker-cells-cell-range')]: cell.range && !cell.start && !cell.end,
         // [`bk-date-picker-cells-focused`]: clearHours(cell.date) === clearHours(this.focusedDate)
       },
     ];
@@ -161,8 +163,8 @@ export default defineComponent({
   },
   render() {
     return (
-      <div class="bk-date-picker-cells">
-        <div class="bk-date-picker-cells-header">
+      <div class={resolveClassName('date-picker-cells')}>
+        <div class={resolveClassName('date-picker-cells-header')}>
           {
             this.headerDays.map(day => (
               <span>{day}</span>
