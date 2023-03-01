@@ -28,6 +28,7 @@ import type { ExtractPropTypes } from 'vue';
 import { computed, defineComponent, ref } from 'vue';
 
 import BkButton from '@bkui-vue/button';
+import { resolveClassName } from '@bkui-vue/shared';
 
 const confirmProps = {
   showTime: {
@@ -100,14 +101,14 @@ export default defineComponent({
   },
   render() {
     return (
-      <div class="bk-picker-confirm" ref="elRef" onKeydown={this.handleTab}>
+      <div class={resolveClassName('picker-confirm')} ref="elRef" onKeydown={this.handleTab}>
         {
           this.showTime
             ? (
               // <a href="javascript: void(0);" class="bk-picker-confirm-time" disabled onClick={this.handleToggleTime}>
               //   {this.labels.time}
               // </a>
-              <BkButton text class="bk-picker-confirm-time" disabled={this.timeDisabled} onClick={this.handleToggleTime}>
+              <BkButton text class={resolveClassName('picker-confirm-time')} disabled={this.timeDisabled} onClick={this.handleToggleTime}>
                 {this.labels.time}
               </BkButton>
             )
@@ -115,7 +116,7 @@ export default defineComponent({
         }
         {
           this.$slots.confirm?.() ?? (
-            <div class="bk-picker-confirm-action">
+            <div class={resolveClassName('picker-confirm-action')}>
               {
                 this.clearable
                   ? (

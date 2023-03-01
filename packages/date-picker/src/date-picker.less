@@ -1,6 +1,6 @@
 @import '@bkui-vue/styles/themes/themes.less';
 
-.bk-date-picker {
+.@{bk-prefix}-date-picker {
   display: inline-block;
   width: 261px;
   line-height: normal;
@@ -18,10 +18,10 @@
   }
 }
 
-.bk-date-picker-rel {
+.@{bk-prefix}-date-picker-rel {
   position: relative;
 
-  .bk-date-picker-editor {
+  .@{bk-prefix}-date-picker-editor {
     display: block;
     width: 100%;
     height: 32px;
@@ -126,7 +126,7 @@
   }
 }
 
-.bk-date-picker-dropdown {
+.@{bk-prefix}-date-picker-dropdown {
   position: absolute;
   z-index: 900;
   padding: 5px 0 0 0;
@@ -138,13 +138,13 @@
   box-sizing: border-box;
 }
 
-.bk-date-picker .bk-select-dropdown {
+.@{bk-prefix}-date-picker .@{bk-prefix}-select-dropdown {
   max-height: none;
   padding: 0;
   overflow: visible;
 }
 
-.bk-date-picker-footer-wrapper {
+.@{bk-prefix}-date-picker-footer-wrapper {
   clear: both;
   font-size: 14px;
   color: #979ba5;
@@ -152,20 +152,20 @@
   border-top: 1px solid #dcdee5;
 }
 
-.bk-date-picker-top-wrapper {
+.@{bk-prefix}-date-picker-top-wrapper {
   margin-top: -5px;
   clear: both;
   font-size: 14px;
   color: #979ba5;
 }
 
-.bk-picker-panel-body-wrapper {
-  &.bk-picker-panel-with-sidebar {
+.@{bk-prefix}-picker-panel-body-wrapper {
+  &.@{bk-prefix}-picker-panel-with-sidebar {
     padding-right: 140px;
   }
 }
 
-.bk-picker-panel-sidebar {
+.@{bk-prefix}-picker-panel-sidebar {
   position: absolute;
   top: 0;
   right: 0;
@@ -178,7 +178,7 @@
   background-color: #fafbfd;
   border-left: 1px solid #dcdee5;
 
-  .bk-picker-panel-shortcut {
+  .@{bk-prefix}-picker-panel-shortcut {
     /* &:nth-of-type(1) {
           padding-top: 18px;
       }
@@ -196,7 +196,7 @@
     }
   }
 
-  .bk-picker-panel-shortcuts {
+  .@{bk-prefix}-picker-panel-shortcuts {
     height: 100%;
     overflow: auto;
 
@@ -215,11 +215,11 @@
   }
 }
 
-.bk-picker-panel-body {
+.@{bk-prefix}-picker-panel-body {
   float: left;
 }
 
-.bk-picker-confirm {
+.@{bk-prefix}-picker-confirm {
   display: flex;
   height: 42px;
   padding: 0 20px;
@@ -245,7 +245,7 @@
     }
   }
 
-  .bk-picker-confirm-time {
+  .@{bk-prefix}-picker-confirm-time {
     height: 100%;
     margin-right: auto;
     color: #979ba5;
@@ -255,12 +255,12 @@
     }
   }
 
-  .bk-picker-confirm-action {
+  .@{bk-prefix}-picker-confirm-action {
     flex: 1;
   }
 }
 
-.bk-date-picker-header {
+.@{bk-prefix}-date-picker-header {
   height: 46px;
   font-size: 14px;
   font-weight: 700;
@@ -269,7 +269,7 @@
   text-align: center;
   border-bottom: 1px solid #dcdee5;
 
-  .bk-date-picker-header-label {
+  .@{bk-prefix}-date-picker-header-label {
     cursor: pointer;
 
     &:hover {
@@ -290,7 +290,7 @@
 }
 
 
-.bk-date-picker-cells {
+.@{bk-prefix}-date-picker-cells {
   margin: 9px;
   font-size: 12px;
   color: #63656e;
@@ -315,7 +315,7 @@
     }
   }
 
-  .bk-date-picker-cells-header {
+  .@{bk-prefix}-date-picker-cells-header {
     text-align: center;
 
     span {
@@ -330,55 +330,55 @@
   }
 }
 
-.bk-date-picker-cells-cell:hover em {
+.@{bk-prefix}-date-picker-cells-cell:hover em {
   /* background-color: #e1ecff; */
   background-color: #f0f1f5;
 }
 
-.bk-date-picker-cells-focused em {
+.@{bk-prefix}-date-picker-cells-focused em {
   color: #3a84ff;
   box-shadow: 0 0 0 1px #a3c5fd inset;
 }
 
-.bk-date-picker-cells-cell-prev-month em,
-.bk-date-picker-cells-cell-next-month em {
+.@{bk-prefix}-date-picker-cells-cell-prev-month em,
+.@{bk-prefix}-date-picker-cells-cell-next-month em {
   color: #c4c6cc;
 }
 
-.bk-date-picker-cells-cell-prev-month:hover em,
-.bk-date-picker-cells-cell-next-month:hover em {
+.@{bk-prefix}-date-picker-cells-cell-prev-month:hover em,
+.@{bk-prefix}-date-picker-cells-cell-next-month:hover em {
   background: transparent;
 }
 
-span.bk-date-picker-cells-cell-week-label,
-span.bk-date-picker-cells-cell-week-label:hover,
-span.bk-date-picker-cells-cell-disabled,
-span.bk-date-picker-cells-cell-disabled:hover {
+span.@{bk-prefix}-date-picker-cells-cell-week-label,
+span.@{bk-prefix}-date-picker-cells-cell-week-label:hover,
+span.@{bk-prefix}-date-picker-cells-cell-disabled,
+span.@{bk-prefix}-date-picker-cells-cell-disabled:hover {
   color: #c4c6cc;
   cursor: not-allowed;
 }
 
-span.bk-date-picker-cells-cell-week-label em,
-span.bk-date-picker-cells-cell-week-label:hover em,
-span.bk-date-picker-cells-cell-disabled em,
-span.bk-date-picker-cells-cell-disabled:hover em {
+span.@{bk-prefix}-date-picker-cells-cell-week-label em,
+span.@{bk-prefix}-date-picker-cells-cell-week-label:hover em,
+span.@{bk-prefix}-date-picker-cells-cell-disabled em,
+span.@{bk-prefix}-date-picker-cells-cell-disabled:hover em {
   color: inherit;
   cursor: not-allowed;
   background: inherit;
 }
 
-span.bk-date-picker-cells-cell-disabled,
-span.bk-date-picker-cells-cell-disabled:hover {
+span.@{bk-prefix}-date-picker-cells-cell-disabled,
+span.@{bk-prefix}-date-picker-cells-cell-disabled:hover {
   background-color: #f0f1f5;
 }
 
-.bk-date-picker-cells-cell-today em {
+.@{bk-prefix}-date-picker-cells-cell-today em {
   position: relative;
   color: #3a84ff;
   box-shadow: 0 0 0 1px #a3c5fd inset;
 }
 
-.bk-date-picker-cells-cell-range {
+.@{bk-prefix}-date-picker-cells-cell-range {
   position: relative;
 
   &:before {
@@ -400,29 +400,29 @@ span.bk-date-picker-cells-cell-disabled:hover {
   }
 }
 
-.bk-date-picker-cells-cell-selected em,
-.bk-date-picker-cells-cell-selected:hover em {
+.@{bk-prefix}-date-picker-cells-cell-selected em,
+.@{bk-prefix}-date-picker-cells-cell-selected:hover em {
   color: #fff;
   background-color: #3a84ff;
   box-shadow: 0 0 0 1px #3a84ff inset;
 }
 
-span.bk-date-picker-cells-cell-disabled.bk-date-picker-cells-cell-selected em {
+span.@{bk-prefix}-date-picker-cells-cell-disabled.@{bk-prefix}-date-picker-cells-cell-selected em {
   color: #f7f7f7;
   background: #c4c6cc;
 }
 
-.bk-date-picker-cells-cell-today.bk-date-picker-cells-cell-selected em:after {
+.@{bk-prefix}-date-picker-cells-cell-today.@{bk-prefix}-date-picker-cells-cell-selected em:after {
   background: #fff;
 }
 
-.bk-date-picker-cells-cell-today.bk-date-picker-cells-cell-selected em,
-.bk-date-picker-cells-cell-today.bk-date-picker-cells-cell-selected em:hover {
+.@{bk-prefix}-date-picker-cells-cell-today.@{bk-prefix}-date-picker-cells-cell-selected em,
+.@{bk-prefix}-date-picker-cells-cell-today.@{bk-prefix}-date-picker-cells-cell-selected em:hover {
   box-shadow: 0 0 0 1px #3a84ff inset;
 }
 
-.bk-date-picker-cells-year,
-.bk-date-picker-cells-month {
+.@{bk-prefix}-date-picker-cells-year,
+.@{bk-prefix}-date-picker-cells-month {
   margin-top: 7px;
 
   span {
@@ -442,7 +442,7 @@ span.bk-date-picker-cells-cell-disabled.bk-date-picker-cells-cell-selected em {
   }
 }
 
-.bk-picker-panel-icon-btn {
+.@{bk-prefix}-picker-panel-icon-btn {
   display: inline-block;
   width: 20px;
   height: 46px;
@@ -453,106 +453,106 @@ span.bk-date-picker-cells-cell-disabled.bk-date-picker-cells-cell-selected em {
   transition: color .2s ease-in-out;
 }
 
-.bk-picker-panel-icon-btn:hover {
+.@{bk-prefix}-picker-panel-icon-btn:hover {
   color: #2d8cf0;
 }
 
-.bk-picker-panel-icon-btn i {
+.@{bk-prefix}-picker-panel-icon-btn i {
   font-size: 20px;
 }
 
-.bk-date-picker-prev-btn {
+.@{bk-prefix}-date-picker-prev-btn {
   float: left;
 }
 
-.bk-date-picker-prev-btn-arrow-double {
+.@{bk-prefix}-date-picker-prev-btn-arrow-double {
   margin-left: 10px;
 }
 
-.bk-date-picker-prev-btn-arrow-double i:after {
+.@{bk-prefix}-date-picker-prev-btn-arrow-double i:after {
   margin-left: -8px;
 }
 
-.bk-date-picker-next-btn {
+.@{bk-prefix}-date-picker-next-btn {
   float: right;
 }
 
-.bk-date-picker-next-btn-arrow-double {
+.@{bk-prefix}-date-picker-next-btn-arrow-double {
   margin-right: 10px;
 }
 
-.bk-date-picker-next-btn-arrow-double i:after {
+.@{bk-prefix}-date-picker-next-btn-arrow-double i:after {
   margin-left: -8px;
 }
 
-.bk-date-picker-with-range .bk-picker-panel-body {
+.@{bk-prefix}-date-picker-with-range .@{bk-prefix}-picker-panel-body {
   min-width: 532px;
 }
 
-.bk-date-picker-with-range .bk-picker-panel-content {
+.@{bk-prefix}-date-picker-with-range .@{bk-prefix}-picker-panel-content {
   float: left;
 }
 
-.bk-date-picker-with-range .bk-picker-cells-show-week-numbers {
+.@{bk-prefix}-date-picker-with-range .@{bk-prefix}-picker-cells-show-week-numbers {
   min-width: 492px;
 }
 
-.bk-date-picker-transfer {
+.@{bk-prefix}-date-picker-transfer {
   z-index: 1060;
   max-height: none;
 }
 
 
-.bk-fade-down-transition-enter-from,
-.bk-fade-down-transition-leave-to {
+.@{bk-prefix}-fade-down-transition-enter-from,
+.@{bk-prefix}-fade-down-transition-leave-to {
   opacity: 0;
   transform: translateY(-20px);
 }
 
-.bk-fade-down-transition-enter-to,
-.bk-fade-down-transition-leave-from {
+.@{bk-prefix}-fade-down-transition-enter-to,
+.@{bk-prefix}-fade-down-transition-leave-from {
   opacity: 1;
   transform: translateY(0);
 }
 
-.bk-fade-down-transition-enter-active {
+.@{bk-prefix}-fade-down-transition-enter-active {
   transition: transform .3s cubic-bezier(.23, 1, .32, 1), opacity .3s cubic-bezier(.23, 1, .32, 1);
 }
 
-.bk-fade-down-transition-leave-active {
+.@{bk-prefix}-fade-down-transition-leave-active {
   transition: transform .3s cubic-bezier(.23, 1, .32, 1), opacity .3s cubic-bezier(.23, 1, .32, 1);
 }
 
-// .bk-zoom-in-top-enter-active,
-// .bk-zoom-in-top-leave-active {
+// .@{bk-prefix}-zoom-in-top-enter-active,
+// .@{bk-prefix}-zoom-in-top-leave-active {
 //   opacity: 1;
 //   transform: scaleY(1);
 //   transition: transform .3s cubic-bezier(.23, 1, .32, 1),opacity .3s cubic-bezier(.23, 1, .32, 1);
 //   transform-origin: center top
 // }
 
-// .bk-zoom-in-top-enter-active[data-popper-placement^=top],
-// .bk-zoom-in-top-leave-active[data-popper-placement^=top] {
+// .@{bk-prefix}-zoom-in-top-enter-active[data-popper-placement^=top],
+// .@{bk-prefix}-zoom-in-top-leave-active[data-popper-placement^=top] {
 //   transform-origin: center bottom
 // }
 
-// .bk-zoom-in-top-enter-from,
-// .bk-zoom-in-top-leave-active {
+// .@{bk-prefix}-zoom-in-top-enter-from,
+// .@{bk-prefix}-zoom-in-top-leave-active {
 //   opacity: 0;
 //   transform: scaleY(0)
 // }
 
 
-// .bk-zoom-in-bottom-enter-active,
-// .bk-zoom-in-bottom-leave-active {
+// .@{bk-prefix}-zoom-in-bottom-enter-active,
+// .@{bk-prefix}-zoom-in-bottom-leave-active {
 //   opacity: 1;
 //   transform: scaleY(1);
 //   transition: transform .3s cubic-bezier(.23, 1, .32, 1), opacity .3s cubic-bezier(.23, 1, .32, 1);
 //   transform-origin: center bottom;
 // }
 
-// .bk-zoom-in-bottom-enter-from,
-// .bk-zoom-in-bottom-leave-active {
+// .@{bk-prefix}-zoom-in-bottom-enter-from,
+// .@{bk-prefix}-zoom-in-bottom-leave-active {
 //   opacity: 0;
 //   transform: scaleY(0)
 // }

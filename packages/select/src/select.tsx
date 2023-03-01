@@ -48,7 +48,7 @@ import {
   InputBehaviorType,
   off,
   on,
-  PropTypes,
+  PropTypes, resolveClassName,
   SizeEnum,
   TagThemeType,
   useFormItem,
@@ -603,7 +603,7 @@ export default defineComponent({
   },
   render() {
     const selectClass = classes({
-      'bk-select': true,
+      [resolveClassName('select')]: true,
       'popover-show': this.isPopoverShow,
       'is-disabled': this.isDisabled,
       'is-focus': this.isFocus,
@@ -666,7 +666,7 @@ export default defineComponent({
     };
     const renderSelectTrigger = () => (
         <div
-          class="bk-select-trigger"
+          class={resolveClassName('select-trigger')}
           style={{ height: this.autoHeight && this.collapseTags ? '32px' : '' }}
           ref="triggerRef"
           onClick={this.handleTogglePopover}
@@ -676,14 +676,14 @@ export default defineComponent({
         </div>
     );
     const renderSelectContent = () => (
-        <div class="bk-select-content-wrapper" ref="contentRef">
+        <div class={resolveClassName('select-content-wrapper')} ref="contentRef">
           {
             this.filterable && !this.inputSearch && (
-              <div class="bk-select-search-wrapper">
+              <div class={resolveClassName('select-search-wrapper')}>
                 <Search class="icon-search" width={16} height={16} />
                 <input
                   ref="searchRef"
-                  class="bk-select-search-input"
+                  class={resolveClassName('select-search-input')}
                   placeholder={this.searchPlaceholder}
                   v-model={this.searchKey}
                 />
@@ -693,7 +693,7 @@ export default defineComponent({
           {
             !this.isShowSelectContent
             && (
-            <div class="bk-select-empty">
+            <div class={resolveClassName('select-empty')}>
               {
                 this.searchLoading
                 && <Loading class="mr5" theme='primary' loading={true} mode="spin" size="mini"></Loading>
@@ -701,15 +701,15 @@ export default defineComponent({
               <span>{this.curContentText}</span>
             </div>)
           }
-          <div class="bk-select-content">
-            <div class="bk-select-dropdown"
+          <div class={resolveClassName('select-content')}>
+            <div class={resolveClassName('select-dropdown')}
               style={{ maxHeight: `${this.scrollHeight}px` }}
               onScroll={this.handleScroll}
             >
-              <ul class="bk-select-options" v-show={this.isShowSelectContent}>
+              <ul class={resolveClassName('select-options')} v-show={this.isShowSelectContent}>
                 {
                   this.isShowSelectAll && (
-                    <li class="bk-select-option"
+                    <li class={resolveClassName('select-option')}
                       onMouseenter={this.handleSelectedAllOptionMouseEnter}
                       onClick={this.handleToggleAll}>
                       {this.selectAllText}
@@ -739,7 +739,7 @@ export default defineComponent({
                 }
                 {this.$slots.default?.()}
                 {this.scrollLoading && (
-                  <li class="bk-select-options-loading">
+                  <li class={resolveClassName('select-options-loading')}>
                     <Loading class="spinner mr5" theme='primary' loading={true} mode="spin" size="mini"></Loading>
                     <span>{this.loadingText}</span>
                   </li>
@@ -747,7 +747,7 @@ export default defineComponent({
               </ul>
             </div>
             {this.$slots.extension
-              && (<div class="bk-select-extension">{this.$slots.extension()}</div>)}
+              && (<div class={resolveClassName('select-extension')}>{this.$slots.extension()}</div>)}
           </div>
         </div>
     );

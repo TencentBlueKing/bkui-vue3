@@ -36,7 +36,7 @@ import { Close, DownSmall, Eye, Search, Unvisible } from '@bkui-vue/icon';
 import {
   classes,
   InputBehaviorType,
-  PropTypes,
+  PropTypes, resolveClassName,
   useFormItem,
 } from '@bkui-vue/shared';
 
@@ -121,7 +121,7 @@ export default defineComponent({
     const isFocused = ref(false);
     const isCNInput = ref(false);
     const isTextArea = computed(() => props.type === 'textarea');
-    const inputClsPrefix = computed(() => (isTextArea.value ? 'bk-textarea' : 'bk-input'));
+    const inputClsPrefix = computed(() => (isTextArea.value ? resolveClassName('textarea') : resolveClassName('input')));
     const { class: cls, style, ...inputAttrs } = ctx.attrs;
 
     const inputRef = ref();

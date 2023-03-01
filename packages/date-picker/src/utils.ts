@@ -27,6 +27,8 @@
 import { format as dateFnsFormat, toDate } from 'date-fns';
 import type { InjectionKey } from 'vue';
 
+import { resolveClassName } from '@bkui-vue/shared';
+
 import fecha from './fecha';
 import type { IDatePickerCtx, ITimePickerCtx, PickerTypeType } from './interface';
 
@@ -320,9 +322,9 @@ export const timePickerKey: InjectionKey<ITimePickerCtx> = Symbol('time-picker')
 
 export function iconBtnCls(direction, type = '') {
   return [
-    'bk-picker-panel-icon-btn',
-    `bk-date-picker-${direction}-btn`,
-    `bk-date-picker-${direction}-btn-arrow${type}`,
+    resolveClassName('picker-panel-icon-btn'),
+    resolveClassName(`date-picker-${direction}-btn`),
+    resolveClassName(`date-picker-${direction}-btn-arrow${type}`),
   ];
 }
 

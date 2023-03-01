@@ -36,7 +36,7 @@ import {
   watch,
 } from 'vue';
 
-import { capitalize } from '@bkui-vue/shared';
+import { capitalize, resolveClassName } from '@bkui-vue/shared';
 
 import TimeSpinner from '../base/time-spinner';
 import fecha from '../fecha';
@@ -215,16 +215,18 @@ export default defineComponent({
     return (
       <div
         class={[
-          'bk-picker-panel-body-wrapper',
-          'bk-time-picker-with-range',
-          (this.showSeconds) ? 'bk-time-picker-with-seconds' : '',
+          resolveClassName('picker-panel-body-wrapper'),
+          resolveClassName('time-picker-with-range'),
+          (this.showSeconds) ? resolveClassName('time-picker-with-seconds') : '',
         ]}
         onMousedown={(e) => {
           e.preventDefault();
         }}
       >
-        <div class="bk-picker-panel-body" style={{ width: `${this.width * 2}px` }}>
-          <div class="bk-picker-panel-content bk-picker-panel-content-left" style={{ width: `${this.width}px` }}>
+        <div class={resolveClassName('picker-panel-body')} style={{ width: `${this.width * 2}px` }}>
+          <div
+            class={[resolveClassName('picker-panel-content', resolveClassName('picker-panel-content-left'))]}
+            style={{ width: `${this.width}px` }}>
             {
               this.showDate
                 ? (
@@ -246,11 +248,13 @@ export default defineComponent({
               onChange={this.handleStartChange}
               onPick-click={this.handlePickClick} />
           </div>
-          <div class="bk-picker-panel-content bk-picker-panel-content-right" style={{ width: `${this.width}px` }}>
+          <div
+            class={[resolveClassName('picker-panel-content'), resolveClassName('picker-panel-content-right')]}
+            style={{ width: `${this.width}px` }}>
             {
               this.showDate
                 ? (
-                  <div class="bk-time-picker-header">{this.rightDatePanelLabel}</div>
+                  <div class={resolveClassName('time-picker-header')}>{this.rightDatePanelLabel}</div>
                 )
                 : ''
             }
