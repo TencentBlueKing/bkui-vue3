@@ -109,6 +109,7 @@ export default defineComponent({
     enableVirtualRender: PropTypes.bool.def(false), // 是否开启虚拟滚动（List模式下才会生效）
     allowEmptyValues: PropTypes.array.def([]), // 允许的空值作为options选项
     autoFocus: PropTypes.bool.def(false), // 挂载的时候是否自动聚焦输入框
+    keepSearchValue: PropTypes.bool.def(false), // 隐藏popover时是否保留搜索内容
   },
   emits: ['update:modelValue', 'change', 'toggle', 'clear', 'scroll-end', 'focus', 'blur'],
   setup(props, { emit }) {
@@ -139,6 +140,7 @@ export default defineComponent({
       popoverOptions,
       allowEmptyValues,
       autoFocus,
+      keepSearchValue,
     } = toRefs(props);
 
     const formItem = useFormItem();
@@ -278,7 +280,9 @@ export default defineComponent({
       && isPopoverShow.value);
     watch(isPopoverShow, (isShow) => {
       if (!isShow) {
-        searchKey.value = '';
+        if (!keepSearchValue.value) {
+          searchKey.value = '';
+        }
       } else {
         setTimeout(() => {
           focusInput();
