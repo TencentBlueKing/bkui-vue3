@@ -44,7 +44,7 @@ import { optionGroupKey, selectKey, useRegistry } from './common';
 import { OptionInstanceType } from './type';
 
 export default defineComponent({
-  name: 'Group',
+  name: 'OptionGroup',
   props: {
     label: PropTypes.string.def(''),
     disabled: PropTypes.bool.def(false),
