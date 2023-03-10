@@ -88,11 +88,11 @@ export default defineComponent({
     visible: {
       handler(val: boolean) {
         if (val) {
-          // this.bkPopIndexManager = new BKPopIndexManager();
-          bkPopIndexManager.onMaskClick((_e: MouseEvent) => {
-            this.handleClickOutSide();
-          }, this.$el);
           this.$nextTick(() => {
+            // isShow初始化为true的时候，放在nextTick才能获取$el
+            bkPopIndexManager.onMaskClick((_e: MouseEvent) => {
+              this.handleClickOutSide();
+            }, this.$el);
             const hideMaskStyle = {
               'background-color': 'rgba(0,0,0,0)',
             };
