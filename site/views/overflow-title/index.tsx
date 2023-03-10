@@ -93,15 +93,15 @@ export default defineComponent({
         <DemoBox
           title="组件用法"
           desc="组件用法"
-          componentName="link"
+          componentName="overflow-title"
           demoName="base-demo">
           <BaseDemo></BaseDemo>
         </DemoBox>
         <DemoBox
           title="指令用法"
           desc="指令用法"
-          componentName="link"
-          demoName="base-demo">
+          componentName="overflow-title"
+          demoName="directive">
           <Directive></Directive>
         </DemoBox>
 
