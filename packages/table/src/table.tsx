@@ -276,6 +276,10 @@ export default defineComponent({
       display: 'none' as const,
     };
 
+    const footerStyle = computed(() => ({
+      '--footer-height': `${props.paginationHeihgt}px`,
+    }));
+
     const { renderScrollLoading } = useScrollLoading(props, ctx);
     const scrollClass = computed(() => (props.virtualEnabled ? {} : { scrollXName: '', scrollYName: '' }));
 
@@ -315,7 +319,8 @@ export default defineComponent({
           renderScrollLoading()
         }</div>
       </div>
-      <div class={ footerClass.value }>
+      {/* @ts-ignore:next-line */}
+      <div class={ footerClass.value } style={ footerStyle.value }>
         {
           hasFooter.value && tableRender.renderTableFooter(localPagination.value)
         }

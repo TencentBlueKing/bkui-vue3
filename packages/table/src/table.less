@@ -102,9 +102,9 @@
           }
 
           &.expand-cell {
+            display: flex;
             padding: 0;
             text-overflow: unset;
-            display: flex;
             align-items: center;
             justify-content: center;
           }
@@ -230,7 +230,8 @@
   }
 
   .@{bk-prefix}-table-footer {
-    line-height: 40px;
+    height: var(--footer-height);
+    line-height: var(--footer-height);
 
     &.is-hidden {
       display: none;
