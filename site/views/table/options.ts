@@ -61,6 +61,12 @@ export const DATA_TABLE = [
   },
 ];
 
+/**
+ * DATA_COLUMNS
+ *
+ *
+ *
+ */
 export const DATA_COLUMNS = [
   {
     label: '序号',
@@ -97,6 +103,11 @@ export const DATA_COLUMNS = [
   },
 ];
 
+/**
+ * DATA_COLUMNS
+ *
+ *
+ */
 export const DATA_COLUMNS2 = [
   {
     label: '序号',
@@ -165,6 +176,11 @@ export const DATA_COLUMNS2 = [
   },
 ];
 
+/**
+ * DATA_COLUMNS
+ *
+ *
+ */
 export const DATA_COLUMNS1 = [
   {
     label: '序号',
@@ -205,6 +221,11 @@ export const DATA_COLUMNS1 = [
   },
 ];
 
+/**
+ * DATA_COLUMNS
+ *
+ *
+ */
 export const DATA_EXPAND_COLUMNS = [
   {
     type: 'expand',
@@ -243,6 +264,11 @@ export const DATA_EXPAND_COLUMNS = [
   },
 ];
 
+/**
+ * DATA_COLUMNS
+ *
+ *
+ */
 export const DATA_FIX_TABLE = [
   ...(new Array(10).fill('')
     .map((_, index) => ({
@@ -255,6 +281,11 @@ export const DATA_FIX_TABLE = [
     }))),
 ];
 
+/**
+ * DATA_COLUMNS
+ *
+ *
+ */
 export const DATA_FIX_COLUMNS = [
   {
     type: 'selection',
@@ -307,6 +338,11 @@ export const DATA_FIX_COLUMNS = [
   },
 ];
 
+/**
+ * DATA_COLUMNS
+ *
+ *
+ */
 export const DATE_COL_SPAN = [{
   label: '序号',
   type: 'index',
