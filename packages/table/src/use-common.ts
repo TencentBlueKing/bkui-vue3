@@ -139,7 +139,7 @@ export const useClass = (props: TablePropTypes, targetColumns: Column[], root?, 
     const resolveHeight = resolvePropHeight(props.height, autoHeight.value);
     const resolveHeadHeight = getHeadHeight();
     const resolveMinHeight = resolvePropHeight(props.minHeight, autoHeight.value);
-    const resolveFooterHeight = props.pagination && props.data.length ? LINE_HEIGHT : 0;
+    const resolveFooterHeight = props.pagination && props.data.length ? props.paginationHeihgt : 0;
     const contentHeight = resolveHeight - resolveHeadHeight - resolveFooterHeight;
     const height = props.height !== 'auto' ? `${contentHeight}px` : false;
     const minHeight = resolveMinHeight - resolveHeadHeight - resolveFooterHeight;

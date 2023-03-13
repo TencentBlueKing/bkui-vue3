@@ -4,6 +4,7 @@
       :columns="columns"
       :data="tableData"
       :pagination="pagination"
+      :pagination-heihgt="60"
       height="100%"
     />
   </div>

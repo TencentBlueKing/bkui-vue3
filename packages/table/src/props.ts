@@ -242,6 +242,14 @@ export const tableProps = {
   pagination: PropTypes.oneOfType([PropTypes.bool.def(false), PropTypes.object.def({})]).def(false),
 
   /**
+   * 分页组件高度
+   * 在设置了分页配置之后才会生效
+   * 用于配置分页组件的高度，在不同项目中，分页组件高度会影响表格高度计算
+   * 这里设置为可配置项，避免自计算导致的性能问题以及不确定性样式问题
+   */
+  paginationHeihgt: PropTypes.number.def(LINE_HEIGHT),
+
+  /**
    * 是否启用远程分页
    */
   remotePagination: PropTypes.bool.def(false),
