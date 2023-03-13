@@ -109,34 +109,7 @@ export const DATA_COLUMNS = [
  *
  */
 export const DATA_COLUMNS2 = [
-  {
-    label: '序号',
-    type: 'index',
-    sort: true,
-    width: 50,
-    minWidth: 80,
-  },
-  {
-    label: '名称/内网IP',
-    field: 'ip',
-    width: 100,
-    showOverflowTooltip: {
-      mode: 'auto',
-    },
-  },
-  {
-    label: '来源',
-    field: 'source',
-    width: 80,
-    filter: {
-      list: [{ text: 'QQ', value: 'QQ' }, { text: '微信', value: '微信' }, { text: 'Email', value: 'Email' }],
-    },
-  },
-  {
-    label: '创建时间',
-    field: 'create_time',
-    sort: 'custom',
-  },
+  ...DATA_COLUMNS,
   {
     label: '创建时间2',
     field: 'create_time',
@@ -181,45 +154,7 @@ export const DATA_COLUMNS2 = [
  *
  *
  */
-export const DATA_COLUMNS1 = [
-  {
-    label: '序号',
-    type: 'index',
-    sort: {
-      sortScope: 'all',
-    },
-    width: 50,
-    minWidth: 80,
-  },
-  {
-    label: '名称/内网IP',
-    field: 'ip',
-    width: 100,
-    showOverflowTooltip: {
-      mode: 'auto',
-    },
-  },
-  {
-    label: '来源',
-    field: 'source',
-    width: 80,
-    filter: {
-      list: [{ text: 'QQ', value: 'QQ' }, { text: '4_QQ', value: '4_QQ' }, { text: '微信', value: '微信' }, { text: 'Email', value: 'Email' }],
-      filterScope: 'all',
-      match: 'fuzzy',
-    },
-  },
-  {
-    label: '创建时间',
-    field: 'create_time',
-    sort: false,
-  },
-  {
-    label: (column, index) => `状态-${index}-${column.field}`,
-    field: 'status',
-    sort: true,
-  },
-];
+export const DATA_COLUMNS1 = [...DATA_COLUMNS2];
 
 /**
  * DATA_COLUMNS
@@ -232,36 +167,7 @@ export const DATA_EXPAND_COLUMNS = [
     width: 40,
     minWidth: 30,
   },
-  {
-    label: '序号',
-    type: 'index',
-    sort: true,
-    width: 50,
-    minWidth: 80,
-  },
-  {
-    label: '名称/内网IP',
-    field: 'ip',
-    width: 100,
-  },
-  {
-    label: '来源',
-    field: 'source',
-    width: 80,
-    filter: {
-      list: [{ text: 'QQ', value: 'QQ' }, { text: '微信', value: '微信' }, { text: 'Email', value: 'Email' }],
-    },
-  },
-  {
-    label: '创建时间',
-    field: 'create_time',
-    sort: 'custom',
-  },
-  {
-    label: (column, index) => `状态-${index}-${column.field}`,
-    field: 'status',
-    sort: true,
-  },
+  ...DATA_COLUMNS,
 ];
 
 /**
