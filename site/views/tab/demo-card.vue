@@ -1,8 +1,18 @@
 <template>
   <div>
+    <div style="margin-bottom: 15px;">
+      <bk-select v-model="currentType">
+        <bk-option
+          v-for="item in type"
+          :key="item"
+          :label="item"
+          :value="item"
+        />
+      </bk-select>
+    </div>
     <bk-tab
       v-model:active="active"
-      type="card"
+      :type="currentType"
     >
       <bk-tab-panel
         v-for="(item,index) in panels"
@@ -17,8 +27,8 @@
 </template>
 <script>
   import { defineComponent } from 'vue';
+
   export default defineComponent({
-    components: {},
     data() {
       return {
         panels: [
@@ -28,6 +38,8 @@
           { name: 'deleted', label: '已归档加速任务', count: 40 },
         ],
         active: 'mission',
+        currentType: 'card',
+        type: ['card', 'card-tab', 'border-card', 'unborder-card', 'vertical-card'],
       };
     },
   });

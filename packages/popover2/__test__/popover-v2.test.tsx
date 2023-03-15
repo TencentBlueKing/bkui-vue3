@@ -1,4 +1,4 @@
-/*
+/**
  * Tencent is pleased to support the open source community by making
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
  *
@@ -17,14 +17,26 @@
  * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
  * the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
  * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
-/** 弹层出现位置选项 */
-export const PLACEMENT_OPTIONS: string[] = ['auto', 'auto-start', 'auto-end', 'top', 'right', 'bottom', 'left', 'top-start', 'top-end', 'bottom-start', 'bottom-end', 'right-start', 'right-end', 'left-start', 'left-end'];
+ */
 
-/** 弹层触发选项  */
-export const TRIGGER_OPTIONS: string[] = ['hover', 'click', 'manual'];
+import { shallowMount } from '@vue/test-utils';
+
+import Popover from '../src';
+
+describe('Popover.tsx', () => {
+  it('renders correctly', () => {
+    const wrapper = shallowMount(Popover, {
+      slots: {
+        default: () => <span>trigger</span>,
+        content: () => 'content',
+      },
+    });
+    expect(wrapper.classes()).toContain('bk-popover');
+    expect(wrapper.html()).toContain('<span>trigger</span>');
+  });
+});

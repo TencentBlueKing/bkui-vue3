@@ -36,7 +36,9 @@ import {
   VNode,
 } from 'vue';
 
-import { tabProps } from './props';
+import { resolveClassName } from '@bkui-vue/shared';
+
+import { PositionEnum, SortTypeEnum, tabProps, TabTypeEnum } from './props';
 import TabNav from './tab-nav';
 
 export default defineComponent({
@@ -96,20 +98,20 @@ export default defineComponent({
         emit('add-panel', { e });
       },
       tabChange(name: string) {
-      // emit('xxx') 会调用onXxx函数, 所以不必在主动调用onXxx函数了
+        // emit('xxx') 会调用onXxx函数, 所以不必在主动调用onXxx函数了
         emit('change', name);
         emit('tab-change', name);
         emit('update:active', name);
       },
       tabRemove(index: number, panel) {
-      // emit('xxx') 会调用onXxx函数, 所以不必在主动调用onXxx函数了
+        // emit('xxx') 会调用onXxx函数, 所以不必在主动调用onXxx函数了
         emit('remove', index, panel);
         emit('remove-panel', index, panel);
       },
       tabSort(dragTabIndex: number, dropTabIndex: number, sortType: string) {
         const list = panels.value;
         // 如果是插队模式
-        if (sortType === 'insert') {
+        if (sortType === SortTypeEnum.INSERT) {
           if (dragTabIndex < dropTabIndex) {
             list.splice(dropTabIndex + 1, 0, panels[dragTabIndex]);
             list.splice(dragTabIndex, 1);
@@ -130,11 +132,11 @@ export default defineComponent({
         emit('sort-change', dragTabIndex, dropTabIndex, sortType);
       },
       tabDrag(dragTabIndex: number, dragEvent: DragEvent) {
-      // emit('xxx') 会调用onXxx函数, 所以不必在主动调用onXxx函数了
+        // emit('xxx') 会调用onXxx函数, 所以不必在主动调用onXxx函数了
         emit('drag', dragTabIndex, dragEvent);
         emit('on-drag-tab', dragTabIndex, dragEvent);
       },
-    } ;
+    };
 
     return {
       ...methods,
@@ -144,10 +146,16 @@ export default defineComponent({
   },
   render() {
     const getTabBoxClass = () => {
-      if (this.tabPosition === 'top') {
-        return `bk-tab bk-tab--${this.tabPosition} bk-tab--${this.type} ${this.extCls}`;
+      const arr = [resolveClassName('tab'), this.extCls];
+      if (this.tabPosition === PositionEnum.TOP) {
+        arr.push(resolveClassName(`tab--${this.tabPosition}`), resolveClassName(`tab--${this.type}`));
+      } else {
+        arr.push(resolveClassName(`tab--${this.tabPosition}`));
+        if (this.type === TabTypeEnum.CARD_TAB) {
+          arr.push(resolveClassName('tab--vertical-tab'));
+        }
       }
-      return `bk-tab bk-tab--${this.tabPosition}  ${this.extCls}`;
+      return arr;
     };
     const getTabHeader = () => {
       const {
@@ -196,14 +204,14 @@ export default defineComponent({
         return null;
       }
       return (
-        <TabNav v-slots={this.$slots} {...props}/>
+        <TabNav v-slots={this.$slots} {...props} />
       );
     };
 
     return (
       <div class={getTabBoxClass()}>
         {getTabHeader()}
-        <div class='bk-tab-content'>
+        <div class={resolveClassName('tab-content')}>
           {this.$slots.default?.()}
         </div>
       </div>

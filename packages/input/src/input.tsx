@@ -35,9 +35,11 @@ import {
 import { Close, DownSmall, Eye, Search, Unvisible } from '@bkui-vue/icon';
 import {
   classes,
-  PropTypes,
+  InputBehaviorType,
+  PropTypes, resolveClassName,
   useFormItem,
 } from '@bkui-vue/shared';
+
 
 export const inputType = {
   type: PropTypes.string.def('text'),
@@ -53,10 +55,10 @@ export const inputType = {
   max: PropTypes.integer,
   min: PropTypes.integer,
   maxlength: PropTypes.integer,
-  behavior: PropTypes.commonType(['simplicity', 'normal']).def('normal'),
+  behavior: InputBehaviorType(),
   showWordLimit: PropTypes.bool,
   showControl: PropTypes.bool.def(true),
-  showClearOnlyHover: PropTypes.bool.def(false),
+  showClearOnlyHover: PropTypes.bool.def(true),
   precision: PropTypes.number.def(0).validate(val => val >= 0 && val < 20),
   modelValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   size: PropTypes.size(),
@@ -119,7 +121,7 @@ export default defineComponent({
     const isFocused = ref(false);
     const isCNInput = ref(false);
     const isTextArea = computed(() => props.type === 'textarea');
-    const inputClsPrefix = computed(() => (isTextArea.value ? 'bk-textarea' : 'bk-input'));
+    const inputClsPrefix = computed(() => (isTextArea.value ? resolveClassName('textarea') : resolveClassName('input')));
     const { class: cls, style, ...inputAttrs } = ctx.attrs;
 
     const inputRef = ref();
@@ -329,7 +331,11 @@ export default defineComponent({
             {...bindProps.value}
           />
         )}
-        {!isTextArea.value && props.clearable && !!props.modelValue && <Close onClick={clear} class={clearCls.value} />}
+        {!isTextArea.value && props.clearable && !!props.modelValue && (
+          <span class={clearCls.value} onClick={clear}>
+            <Close />
+          </span>
+        )}
         {suffixIcon.value}
         {
           typeof props.maxlength === 'number' && (props.showWordLimit || isTextArea.value) && (

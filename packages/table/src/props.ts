@@ -23,12 +23,12 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-
 import { ExtractPropTypes } from 'vue';
+import { toType } from 'vue-types';
 
 import { PropTypes } from '@bkui-vue/shared';
 
-import { BORDER_OPTION, BORDER_OPTIONS, LINE_HEIGHT, ROW_HOVER, ROW_HOVER_OPTIONS, SORT_OPTION, TABLE_ROW_ATTRIBUTE } from './const';
+import { BORDER_OPTION, LINE_HEIGHT, ROW_HOVER, ROW_HOVER_OPTIONS, SORT_OPTION, TABLE_ROW_ATTRIBUTE } from './const';
 
 export enum SortScope {
   CURRENT = 'current',
@@ -40,40 +40,98 @@ export type ColumnFilterListItem = {
   value?: string;
 };
 
+enum OverflowModeEnum {
+  STATIC =  'static',
+  AUTO = 'auto'
+}
+
+export const overflowModeType = toType<`${OverflowModeEnum}`>('showOverflowTooltipMode', {
+  default: OverflowModeEnum.AUTO,
+});
+
+enum ColumnTypeEnum {
+  SELECTION = 'selection',
+  INDEX = 'index',
+  EXPAND = 'expand',
+  NONE = 'none',
+}
+const columnType = toType<`${ColumnTypeEnum}`>('columnType', {
+  default: ColumnTypeEnum.NONE,
+});
+
+enum FullEnum {
+  FULL = 'full',
+  FUZZY = 'fuzzy',
+}
+
+const fullType = toType<`${FullEnum}`>('full', {
+  default: FullEnum.FULL,
+});
+
+export enum SettingSizeEnum {
+  SMALL = 'small',
+  MEDIUM = 'medium',
+  LARGE = 'large',
+}
+
+export const settingSizeType = toType<`${SettingSizeEnum}`>('columnSize', {
+  default: SettingSizeEnum.SMALL,
+});
+
+enum FixedEnum {
+  LEFT = 'left',
+  RIGHT = 'right',
+}
+
+const fixedType = toType<`${FixedEnum}`>('columnSize', {
+});
+
 export type IOverflowTooltip = {
   content: string | Function,
   disabled?: boolean,
   watchCellResize?: boolean,
-  mode?: string
+  mode?: `${OverflowModeEnum}`
 };
 
 export type ISortOption = {
   [key: string]: SORT_OPTION;
 };
+const sortScopeType = toType<`${SortScope}`>('sortScope', {}).def(SortScope.CURRENT);
+
+enum ColumnPickEnum {
+  MULTI = 'multi',
+  SINGLE = 'single',
+  DISABLED = 'disabled',
+}
+
+enum ResizerWay {
+  DEBOUNCE = 'debounce',
+  THROTTLE = 'throttle'
+}
 
 export const IColumnType = {
   label: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
   field: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
   render: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
   width: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]),
-  minWidth: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]).def(),
+  minWidth: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]).def(80),
   columnKey: PropTypes.string.def(''),
   showOverflowTooltip: PropTypes.oneOfType([PropTypes.bool, PropTypes.shape<IOverflowTooltip>({
     content: PropTypes.string.def(''),
     disabled: PropTypes.bool.def(false),
     watchCellResize: PropTypes.bool.def(true),
-    mode: PropTypes.commonType(['static', 'auto'], 'showOverflowTooltipMode').def('auto'),
+    mode: overflowModeType,
   })]).def(undefined),
-  type: PropTypes.commonType(['selection', 'index', 'expand', 'none'], 'columnType').def('none'),
+  type: columnType,
   resizable: PropTypes.bool.def(true),
   fixed: PropTypes.oneOfType([
     PropTypes.bool,
-    PropTypes.commonType(['left', 'right'], 'fixed'),
+    fixedType,
   ]).def(false),
   sort: PropTypes.oneOfType([
     PropTypes.shape({
       sortFn: PropTypes.func.def(undefined),
-      sortScope: PropTypes.commonType(Object.values(SortScope)).def(SortScope.CURRENT),
+      sortScope: sortScopeType,
       value: PropTypes.string.def(SORT_OPTION.NULL),
     }),
     PropTypes.bool,
@@ -82,8 +140,8 @@ export const IColumnType = {
     PropTypes.shape({
       list: PropTypes.arrayOf(PropTypes.any).def([]),
       filterFn: PropTypes.func.def(undefined),
-      match: PropTypes.commonType(['full', 'fuzzy'], 'full'),
-      filterScope: PropTypes.commonType(Object.values(SortScope)).def(SortScope.CURRENT),
+      match: fullType,
+      filterScope: sortScopeType,
       btnSave: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]).def('确定'),
       btnReset: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]).def('重置'),
     }),
@@ -115,7 +173,7 @@ export const tableProps = {
    * 支持：单列（single），多列（multi），禁用（disabled）
    * 默认：disabled
    */
-  columnPick: PropTypes.commonType(['multi', 'single', 'disabled'], 'columnPick').def('disabled'),
+  columnPick: toType<`${ColumnPickEnum}`>('columnPick', {}).def(ColumnPickEnum.DISABLED),
 
   /**
    * 设置表格高度
@@ -172,7 +230,7 @@ export const tableProps = {
    * 生效规则: 除非单独设置 none,否则会追加每个设置
    */
   border: PropTypes.oneOfType([
-    PropTypes.arrayOf(PropTypes.commonType(BORDER_OPTIONS, 'border')),
+    PropTypes.arrayOf(toType<`${BORDER_OPTION}`>('boderType', {})),
     PropTypes.string,
   ]).def([BORDER_OPTION.ROW]),
 
@@ -182,6 +240,14 @@ export const tableProps = {
    * 设置为 true，启用分页功能，默认值参考分页组件 Pagination
    */
   pagination: PropTypes.oneOfType([PropTypes.bool.def(false), PropTypes.object.def({})]).def(false),
+
+  /**
+   * 分页组件高度
+   * 在设置了分页配置之后才会生效
+   * 用于配置分页组件的高度，在不同项目中，分页组件高度会影响表格高度计算
+   * 这里设置为可配置项，避免自计算导致的性能问题以及不确定性样式问题
+   */
+  paginationHeihgt: PropTypes.number.def(LINE_HEIGHT),
 
   /**
    * 是否启用远程分页
@@ -197,7 +263,7 @@ export const tableProps = {
    * bk-table-setting-content
    */
   settings: PropTypes.oneOfType([
-    PropTypes.shape<Settings>({
+    PropTypes.shape({
       fields: PropTypes.arrayOf(PropTypes.shape<Field>({
         label: PropTypes.string,
         field: PropTypes.string,
@@ -205,7 +271,7 @@ export const tableProps = {
       })),
       checked: PropTypes.arrayOf(PropTypes.string),
       limit: PropTypes.number.def(0),
-      size: PropTypes.size(['small', 'medium', 'large']).def('small'),
+      size: settingSizeType,
       sizeList: PropTypes.shape<SizeItem[]>([]),
       showLineHeight: PropTypes.bool.def(true),
     }), PropTypes.bool]).def(false),
@@ -279,7 +345,7 @@ export const tableProps = {
     content: PropTypes.string.def(''),
     disabled: PropTypes.bool.def(false),
     watchCellResize: PropTypes.bool.def(true),
-    mode: PropTypes.commonType(['static', 'auto'], 'showOverflowTooltipMode').def('auto'),
+    mode: overflowModeType,
   })]).def(false),
 
   /**
@@ -313,6 +379,15 @@ export const tableProps = {
     PropTypes.func.def(() => true),
     PropTypes.bool.def(true),
   ]).def(true),
+
+  /**
+   * 当外层容器尺寸改变时，当前组件用什么方式进行重新计算
+   * 默认为 throttle，按照指定频率重新计算
+   * 可选值：debounce，在指定时间范围内只执行一次重新计算
+   */
+  resizerWay: toType<`${ResizerWay}`>('ResizerWay', {
+    default: ResizerWay.THROTTLE,
+  }),
 };
 
 

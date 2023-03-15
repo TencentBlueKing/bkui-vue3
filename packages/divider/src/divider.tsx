@@ -26,6 +26,8 @@
 
 import {  defineComponent } from 'vue';
 
+import { resolveClassName } from '@bkui-vue/shared';
+
 import { dividerProps } from './props';
 export default defineComponent({
   name: 'Divider',
@@ -43,11 +45,16 @@ export default defineComponent({
     };
     let slots;
     if (this.$slots.default) {
-      slots = <div class={['bk-divider-info', `bk-divider-info-${this.align}`]}>{this.$slots.default()}</div>;
+      slots = (
+        <div
+          class={[resolveClassName('divider-info'), resolveClassName(`divider-info-${this.align}`)]}>
+          {this.$slots.default()}
+        </div>
+      );
     }
 
     return (
-      <div class={['bk-divider', `bk-divider-${this.direction}`]} style={styles()}>
+      <div class={[resolveClassName('divider'), resolveClassName(`divider-${this.direction}`)]} style={styles()}>
         {slots}
       </div>
     );

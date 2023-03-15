@@ -24,7 +24,8 @@
 * IN THE SOFTWARE.
 */
 
-import { get as objGet, throttle } from 'lodash';
+import { debounce, get as objGet, throttle } from 'lodash';
+import ResizeObserver from 'resize-observer-polyfill';
 import { v4 as uuidv4 } from 'uuid';
 
 import { BORDER_OPTION, BORDER_OPTIONS, COL_MIN_WIDTH, SORT_OPTION, TABLE_ROW_ATTRIBUTE } from './const';
@@ -172,6 +173,10 @@ export const resolveColumnWidth = (
   const getMinWidth = (col: GroupColumn, computedWidth: number) => {
     const { minWidth = undefined } = col;
     if (minWidth === undefined) {
+      if (computedWidth < COL_MIN_WIDTH) {
+        return COL_MIN_WIDTH;
+      }
+
       return computedWidth;
     }
 
@@ -247,6 +252,11 @@ export const resolveColumnWidth = (
         const { calcWidth } = colgroups[idx];
         avgWidth = avgWidth - calcWidth;
       });
+    } else {
+      avgColIndexList.forEach((idx) => {
+        const calcWidth = getMinWidth(colgroups[idx], COL_MIN_WIDTH);
+        Object.assign(colgroups[idx], { calcWidth });
+      });
     }
   }
 };
@@ -257,6 +267,7 @@ export const resolveColumnWidth = (
  * @param callbackFn 执行函数
  * @param delay 延迟执行时间，默认 60
  * @param immediate 是否立即执行回调函数
+ * @param resizerWay 执行方式：debounce | throttle
  * @returns "{ start: () => void, stop: () => void }"
  */
 export const observerResize = (
@@ -264,12 +275,17 @@ export const observerResize = (
   callbackFn: () => void,
   delay = 60,
   immediate = false,
+  resizerWay = 'throttle',
 ) => {
-  const callFn = throttle(() => {
+  // 设置判定，避免因计算导致的resize死循环
+  const resolveCallbackFn = () => {
     if (typeof callbackFn === 'function') {
       callbackFn();
     }
-  }, delay);
+  };
+  const execFn = resizerWay === 'debounce' ? debounce(resolveCallbackFn, delay) : throttle(resolveCallbackFn, delay);
+  const callFn = () => Reflect.apply(execFn, this, []);
+
   const resizeObserver = new ResizeObserver(() => {
     callFn();
   });
@@ -283,9 +299,9 @@ export const observerResize = (
     start: () => {
       resizeObserver.observe(root);
     },
-    stop: () => {
-      resizeObserver.disconnect();
+    disconnect: () => {
       resizeObserver.unobserve(root);
+      resizeObserver.disconnect();
     },
   };
 };
@@ -462,8 +478,8 @@ export const getSortFn = (column, sortType) => {
   const fieldName = column.field as string;
   const getVal = (row: any) => getRowText(row, fieldName, column);
   const sortFn0 = (a: any, b: any) => {
-    const val0 = getVal(a);
-    const val1 = getVal(b);
+    const val0 = getVal(a) || '';
+    const val1 = getVal(b) || '';
     if (typeof val0 === 'number' && typeof val1 === 'number') {
       return val0 - val1;
     }
@@ -522,7 +538,7 @@ export const resolveSort = (sort: string | boolean | any) => {
 
 export const isRowSelectEnable = (props, { row, index, isCheckAll }) => {
   if (typeof props.isRowSelectEnable === 'boolean') {
-    return props.isRowSelectEnable;
+    return props.isRowSelectEnable !== false;
   }
 
   if (typeof props.isRowSelectEnable === 'function') {
@@ -530,4 +546,18 @@ export const isRowSelectEnable = (props, { row, index, isCheckAll }) => {
   }
 
   return true;
+};
+
+
+export const getRowId = (row, index, props) => {
+  if (row[TABLE_ROW_ATTRIBUTE.ROW_UID] !== undefined) {
+    return row[TABLE_ROW_ATTRIBUTE.ROW_UID];
+  }
+
+  const key = getRowKey(row, props, index);
+  if (key !== undefined && row[key] !== undefined) {
+    return row[key];
+  }
+
+  return index;
 };

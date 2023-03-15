@@ -29,7 +29,7 @@ import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, provid
 import { debounce, resolveClassName } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
-import { COLUMN_ATTRIBUTE, EMIT_EVENT_TYPES, EMIT_EVENTS, EVENTS, PROVIDE_KEY_INIT_COL, TABLE_ROW_ATTRIBUTE } from './const';
+import { COL_MIN_WIDTH, COLUMN_ATTRIBUTE, EMIT_EVENT_TYPES, EMIT_EVENTS, EVENTS, PROVIDE_KEY_INIT_COL, TABLE_ROW_ATTRIBUTE } from './const';
 import usePagination from './plugins/use-pagination';
 import useScrollLoading from './plugins/use-scroll-loading';
 import { tableProps } from './props';
@@ -74,6 +74,7 @@ export default defineComponent({
       toggleRowSelection,
       getSelection,
       clearSort,
+      updateColGroups,
     } = useInit(props, targetColumns);
 
     const { pageData, localPagination, resolvePageData, watchEffectFn } = usePagination(props, indexData);
@@ -147,19 +148,20 @@ export default defineComponent({
       ctx.emit(EMIT_EVENTS.COLUMN_FILTER, { checked, column: unref(column[COLUMN_ATTRIBUTE.COL_SOURCE_DATA]), index });
     })
       .on(EVENTS.ON_SETTING_CHANGE, (args: any) => {
-        const { checked = [], size, height } = args;
+        const { checked = [], size, height, fields } = args;
         nextTick(() => {
+          updateColGroups({ checked, fields });
           updateBorderClass(root.value);
           const offset = getColumnsWidthOffsetWidth();
-          checked.length && resolveColumnWidth(root.value, colgroups, 20, offset);
+          checked.length && resolveColumnWidth(root.value, colgroups, COL_MIN_WIDTH, offset);
           refVirtualRender.value?.reset?.();
-          ctx.emit(EMIT_EVENTS.SETTING_CHANGE, { checked, size, height });
+          ctx.emit(EMIT_EVENTS.SETTING_CHANGE, { checked, size, height, fields });
         });
       })
       .on(EVENTS.ON_ROW_EXPAND_CLICK, (args: any) => {
         const { row, column, index, rows, e } = args;
         ctx.emit(EMIT_EVENTS.ROW_EXPAND_CLICK, {
-          row: unref(row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA]),
+          row: unref(row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA] || row),
           column: unref(column[COLUMN_ATTRIBUTE.COL_SOURCE_DATA]), index, rows, e,
         });
         setRowExpand(row, !row[TABLE_ROW_ATTRIBUTE.ROW_EXPAND]);
@@ -171,7 +173,7 @@ export default defineComponent({
         } else {
           toggleRowSelection(row, value);
           ctx.emit(EMIT_EVENTS.ROW_SELECT, {
-            row: unref(row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA]),
+            row: unref(row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA] || row),
             index,
             checked: value,
             data: props.data,
@@ -179,7 +181,7 @@ export default defineComponent({
         }
 
         ctx.emit(EMIT_EVENTS.ROW_SELECT_CHANGE, {
-          row: unref(row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA]),
+          row: unref(row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA] || row),
           isAll,
           index,
           checked: value,
@@ -207,6 +209,9 @@ export default defineComponent({
 
     onMounted(() => {
       observerIns = observerResize(root.value, () => {
+        if (!root.value) {
+          return;
+        }
         if (props.height === '100%' || props.height === 'auto') {
           resetTableHeight(root.value);
         }
@@ -214,13 +219,13 @@ export default defineComponent({
         updateBorderClass(root.value);
         const offset = getColumnsWidthOffsetWidth();
         resolveColumnWidth(root.value, colgroups, 20, offset);
-      }, 60, true);
+      }, 180, true, props.resizerWay);
 
       observerIns.start();
     });
 
     onBeforeUnmount(() => {
-      observerIns.stop();
+      observerIns.disconnect();
       observerIns = null;
       tableRender.destroy();
     });
@@ -271,6 +276,10 @@ export default defineComponent({
       display: 'none' as const,
     };
 
+    const footerStyle = computed(() => ({
+      '--footer-height': hasFooter.value ? `${props.paginationHeihgt}px` : '0',
+    }));
+
     const { renderScrollLoading } = useScrollLoading(props, ctx);
     const scrollClass = computed(() => (props.virtualEnabled ? {} : { scrollXName: '', scrollYName: '' }));
 
@@ -294,6 +303,7 @@ export default defineComponent({
         onContentScroll={ handleScrollChanged }
         throttleDelay={0}
         scrollEvent={true}
+        rowKey={props.rowKey}
         enabled={props.virtualEnabled}>
           {
             {
@@ -302,14 +312,16 @@ export default defineComponent({
             }
           }
       </VirtualRender>
-      <div class={ fixedWrapperClass }>
+      {/* @ts-ignore:next-line */}
+      <div class={ fixedWrapperClass } style={ footerStyle.value }>
         { renderFixedColumns(reactiveSchema.scrollTranslateX, tableOffsetRight.value) }
         <div class={ resizeColumnClass } style={ resizeColumnStyle.value }></div>
         <div class={ loadingRowClass }>{
           renderScrollLoading()
         }</div>
       </div>
-      <div class={ footerClass.value }>
+      {/* @ts-ignore:next-line */}
+      <div class={ footerClass.value } style={ footerStyle.value }>
         {
           hasFooter.value && tableRender.renderTableFooter(localPagination.value)
         }

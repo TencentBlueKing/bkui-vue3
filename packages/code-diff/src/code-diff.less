@@ -7,6 +7,33 @@
 .@{bk-prefix}-code-diff {
   position: relative;
 
+  .d2h-files-diff {
+    .d2h-file-side-diff:last-child {
+      .d2h-diff-table {
+        border-left: 1px solid #dcdee5;
+      }
+    }
+  }  
+  
+
+  td {
+    padding: 0;
+  }
+
+  tr {
+    line-height: 18px;
+
+    .d2h-code-line-ctn {
+      vertical-align: top;
+    }
+  }
+
+  .d2h-code-side-linenumber {
+    line-height: 18px;
+    background-color: #fafbfd;
+    border: 0;
+  }
+
   .d2h-file-header {
     display: none;
   }
@@ -75,11 +102,11 @@
   }
 
   .hljs-addition {
-    background-color: #baeeba;
+    background-color: #e9faed;
   }
 
   .hljs-deletion {
-    background-color: #ffc8bd;
+    background-color: #fbe9eb;
   }
 
   .hljs-doctag,
@@ -105,12 +132,20 @@
 
   &.dark {
     color: #abb2bf !important;
-    background: #282c34;
+    background: #1d1d1d;
 
     .hljs {
       color: #abb2bf !important;
-      background: #282c34;
+      background: #1d1d1d;
     }
+
+    .d2h-files-diff {
+      &:last-child {
+        .d2h-diff-table {
+          border-left: 1px solid #313238;
+        }
+      }
+    }  
 
     .d2h-file-side-diff {
       &:nth-child(n + 2) {
@@ -205,8 +240,8 @@
     .d2h-code-side-linenumber {
       font-size: 12px;
       color: #8f8f89;
-      background: #282c34;
-      border: none;
+      background: #212121;
+      border: 0;
     }
 
     .d2h-info {
@@ -223,7 +258,7 @@
     }
 
     .d2h-ins {
-      background: #2d3324 !important;
+      background: #212121 !important;
 
       .hljs {
         background: transparent;

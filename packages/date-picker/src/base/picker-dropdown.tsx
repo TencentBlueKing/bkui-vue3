@@ -37,7 +37,7 @@ import {
   toRefs,
 } from 'vue';
 
-import { BKPopover, bkZIndexManager, IBKPopover } from '@bkui-vue/shared';
+import { BKPopover, bkZIndexManager, IBKPopover, resolveClassName } from '@bkui-vue/shared';
 import type { Placement } from '@popperjs/core';
 
 import type { DatePickerPlacementType } from '../interface';
@@ -105,6 +105,11 @@ export default defineComponent({
     //     }
     //   }
     // };
+    const forceUpdate = () => {
+      if (popoverInstance) {
+        popoverInstance?.forceUpdate?.();
+      }
+    };
 
     const destoryDropdown = () => {
       if (popoverInstance && Object.keys(popoverInstance).length !== 0) {
@@ -267,6 +272,7 @@ export default defineComponent({
     return {
       ...toRefs(state),
       refContentRef,
+      forceUpdate,
       updateDropdown,
       destoryDropdown,
     };
@@ -275,7 +281,7 @@ export default defineComponent({
     return (
       <div
         ref="refContentRef"
-        class={['bk-date-picker-dropdown', this.className, this.extPopoverCls]}
+        class={[resolveClassName('date-picker-dropdown'), this.className, this.extPopoverCls]}
         style={this.styles}
         onClick={this.onClick}
       >

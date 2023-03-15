@@ -24,16 +24,11 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { FunctionalComponent } from 'vue';
+import { defineComponent } from 'vue';
 
-import BkIcon, { IIconBaseProps } from './icon';
-const data = JSON.parse('{"type":"element","name":"svg","attributes":{"xmlns":"http://www.w3.org/2000/svg","viewBox":"0 0 1024 1024","style":"width: 1em; height: 1em; vertical-align: middle;fill: currentColor;overflow: hidden;"},"elements":[{"type":"element","name":"path","attributes":{"d":"M896 176H128a64 64 0 0 0-64 64V784a64 64 0 0 0 64 64H896a64 64 0 0 0 64-64V240A64 64 0 0 0 896 176Zm0 608H128V240H896Z"}},{"type":"element","name":"path","attributes":{"d":"M327.84 649.28h52.64V373.28H337.76A97.12 97.12 0 0 1 304 417.28a150.56 150.56 0 0 1-44.8 25.6v48a182.56 182.56 0 0 0 68.16-40Z"}},{"type":"element","name":"path","attributes":{"d":"M480.64 450.24H533.28V502.88H480.64V450.24z"}},{"type":"element","name":"path","attributes":{"d":"M480.64 596.64H533.28V649.28H480.64V596.64z"}},{"type":"element","name":"path","attributes":{"d":"M669.28 649.28h52.64V373.28H679.2a97.12 97.12 0 0 1-33.28 44 150.56 150.56 0 0 1-44.8 25.6v48a182.56 182.56 0 0 0 68.16-40Z"}}]}');
-const original: FunctionalComponent<IIconBaseProps> = (props, context) => {
-  const p = { ...props, ...context.attrs };
-  return <BkIcon {...p}  data={data} name="original "></BkIcon>;
-};
-
-original.displayName = 'original ';
-original.inheritAttrs = false;
-
-export default original ;
+export default defineComponent({
+  name: 'Popover2',
+  setup() {
+    return () => <code>{ '<bk-popover2></bk-popover2>已经合并为<bk-popover></bk-popover>，请替换为<bk-popover></bk-popover>' }</code>;
+  },
+});

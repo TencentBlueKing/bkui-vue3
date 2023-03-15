@@ -25,18 +25,27 @@
 */
 
 import { defineComponent } from 'vue';
+import { toType } from 'vue-types';
 
 import { classes, PropTypes } from '@bkui-vue/shared';
 
+enum LinkThemeEnum {
+  DANGER = 'danger',
+  SUCCESS = 'success',
+  PRIMARY = 'primary',
+  WARNING = 'warning',
+  DEFAULT = 'default',
+}
 export default defineComponent({
   name: 'Link',
   props: {
-    theme: PropTypes.theme(['danger', 'success', 'primary', 'warning', 'default']).def('default'),
+    theme: toType<`${LinkThemeEnum}`>('linkTheme', {}).def(LinkThemeEnum.DEFAULT),
     href: PropTypes.string.def(''),
     disabled: PropTypes.bool.def(false),
     underline: PropTypes.bool.def(false),
     target: PropTypes.string.def('_self'),
   },
+  emits: ['click'],
   setup(props, { emit }) {
     const handleClick = (event: Event) => {
       if (props.disabled) {
@@ -58,13 +67,13 @@ export default defineComponent({
 
     return (
       <a href={this.href}
-      target={this.target}
-      class={linkClass}
-      onClick={this.handleClick}>
-      <span>
-        {this.$slots.default?.()}
-      </span>
-    </a>
+        target={this.target}
+        class={linkClass}
+        onClick={this.handleClick}>
+        <span>
+          {this.$slots.default?.()}
+        </span>
+      </a>
     );
   },
 });

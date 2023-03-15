@@ -12,7 +12,7 @@
       name: '实例状态',
       id: '1',
       multiple: true,
-      placeholder: '必须项',
+      placeholder: '请选择/请输入',
       async: true,
       validate: true,
       children: [
@@ -60,6 +60,16 @@
   const getMenuList = async (item, keyword) => {
     console.info(item, keyword);
     await new Promise(resolve => setTimeout(resolve, 300));
+    if (!item && keyword) {
+      return [{
+        id: 'sdfds',
+        name: 'sdfsdfds',
+        value: {
+          id: 'sdfsdfsdfsdf',
+          name: `测试${keyword}`,
+        },
+      }];
+    }
     if (!item) return data;
     return data.find(set => set.id === item.id)?.children;
   };

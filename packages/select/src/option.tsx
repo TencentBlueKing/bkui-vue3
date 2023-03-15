@@ -36,7 +36,7 @@ import {
 } from 'vue';
 
 import { Done } from '@bkui-vue/icon';
-import { classes, PropTypes } from '@bkui-vue/shared';
+import { classes, PropTypes, resolveClassName } from '@bkui-vue/shared';
 
 import { optionGroupKey, selectKey } from './common';
 
@@ -97,7 +97,7 @@ export default defineComponent({
       'is-disabled': this.disabled,
       'is-multiple': this.multiple,
       'is-hover': this.isHover,
-      'bk-select-option': true,
+      [resolveClassName('select-option')]: true,
     });
     return (
       <li v-show={this.visible}
@@ -107,7 +107,7 @@ export default defineComponent({
         {
           this.$slots.default?.()
           ?? (
-            <span class="bk-select-option-item" title={this.label}>
+            <span class={resolveClassName('select-option-item')} title={this.label}>
               {this.label}
             </span>
           )
@@ -116,7 +116,7 @@ export default defineComponent({
           this.multiple
             && this.selected
             && this.showSelectedIcon
-            && <Done class="bk-select-selected-icon" width={22} height={22}></Done>
+            && <Done class={resolveClassName('select-selected-icon')} width={22} height={22}></Done>
         }
       </li>
     );

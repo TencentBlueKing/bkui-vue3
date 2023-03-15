@@ -24,25 +24,60 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent, h } from 'vue';
+import { computed, defineComponent, h, onMounted, PropType, ref } from 'vue';
 
-import { PropTypes } from '@bkui-vue/shared';
+import { bkTooltips } from '@bkui-vue/directives';
+import { IOptions } from '@bkui-vue/directives/src/tooltips';
+import { checkOverflow, PropTypes } from '@bkui-vue/shared';
 
 export default defineComponent({
   name: 'TagRender',
+  directives: {
+    bkTooltips,
+  },
   props: {
     node: PropTypes.object,
     displayKey: PropTypes.string,
     tpl: {
       type: Function,
     },
+    hasTips: {
+      type: Boolean,
+      default: false,
+    },
+    tagOverflowTips: {
+      type: Object as PropType<Partial<IOptions>>,
+      default: () => ({}),
+    },
+  },
+  setup(props) {
+    const tagRef = ref();
+    const isOverflow = ref(false);
+    const overflowTips = computed(() => ({
+      boundary: 'window',
+      theme: 'light',
+      distance: 12,
+      content: props.node[props.displayKey],
+      disabled: props.hasTips || !isOverflow.value,
+      ...props.tagOverflowTips,
+    }));
+
+    onMounted(() => {
+      isOverflow.value = checkOverflow(tagRef.value);
+    });
+
+    return {
+      overflowTips,
+      tagRef,
+    };
   },
   render() {
     if (this.tpl) {
       return this.tpl(this.node, h, this);
     }
+
     return (
-      <div class="tag">
+      <div class="tag" ref="tagRef" v-bk-tooltips={this.overflowTips}>
         <span class="text">{this.node[this.displayKey]}</span>
       </div>
     );

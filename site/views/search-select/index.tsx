@@ -35,7 +35,8 @@ import BaseDemo from './base-demo.vue';
 import MenuDemo from './menu-demo.vue';
 import PlaceholderDemo from './placeholder-demo.vue';
 import RemoteDemo from './remote-demo.vue';
-import ValidateDemo from './validate-demo.vue';;
+import ValidateDemo from './validate-demo.vue';
+import ValueBehaviorDemo from './value-behavior.vue';
 const propsJson: IPropsTableItem[] = [
   {
     name: 'data',
@@ -85,6 +86,27 @@ const propsJson: IPropsTableItem[] = [
     default: '',
     desc: '自定义动态验证选择或者输入值 如果返回 校验失败的文本则代表校验失败',
     optional: [],
+  },
+  {
+    name: 'valueSplitCode',
+    type: 'String',
+    default: '|',
+    desc: '多选的值的链接符号',
+    optional: [],
+  },
+  {
+    name: 'uniqueSelect',
+    type: 'Boolean',
+    default: 'false',
+    desc: '是否过滤掉已选择项',
+    optional: [],
+  },
+  {
+    name: 'valueBehavior',
+    type: 'String',
+    default: 'all',
+    desc: '配置纯文本是否可以生成value (all: 可以，need-key: 需要key值)',
+    optional: ['all', 'need-key'],
   },
 ];
 const slotsJson = [
@@ -146,7 +168,7 @@ const dataJson = [
     name: 'async',
     type: 'Boolean',
     default: '--',
-    desc: '是否远程获取子列表 需配合组件属性 getMenuList使用',
+    desc: '是否远程获取子列表 需配合组件属性 getMenuList使用 (默认是true)',
   },
   {
     name: 'noValidate',
@@ -230,6 +252,14 @@ export default defineComponent({
           componentName="search-select"
           demoName="menu-demo">
              <MenuDemo/>
+          </DemoBox>
+          <DemoBox
+          title="配置 valueBehevior 属性定义生成 value 交互行为"
+          subtitle="改变配置 valueBehevior 值为 need-key  来做到存文本不可生成 value tag"
+          desc="valueBehevior 行为"
+          componentName="search-select"
+          demoName="menu-demo">
+             <ValueBehaviorDemo/>
           </DemoBox>
         <PropsBox propsData={propsJson}/>
         <PropsBox title='data数据字段配置' columnMap={dataColumnMap} propsData={dataJson}/>

@@ -70,7 +70,7 @@ export default defineComponent({
       emit('item-click', item);
       emit('update:modelValue', localActiveItems.value);
     };
-    provide('localActiveItems', localActiveItems.value);
+    provide('localActiveItems', localActiveItems);
     provide('handleItemClick', handleItemClick);
     const className = 'bk-collapse-wrapper';
     if (!Array.isArray(props.list) || !props.list.length) {

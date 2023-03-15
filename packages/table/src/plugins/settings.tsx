@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { computed, defineComponent, ref, watch } from 'vue';
+import { computed, defineComponent, ref, unref, watch } from 'vue';
 
 import BkButton from '@bkui-vue/button';
 import BkCheckbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
@@ -32,7 +32,7 @@ import Popover from '@bkui-vue/popover';
 import { PropTypes, resolveClassName } from '@bkui-vue/shared';
 
 import { DEFAULT_SIZE_LIST, LINE_HEIGHT } from '../const';
-import { Field, Settings, SizeItem } from '../props';
+import { Field, Settings, SettingSizeEnum, settingSizeType, SizeItem } from '../props';
 import { resolvePropVal } from '../utils';
 
 export default defineComponent({
@@ -47,7 +47,7 @@ export default defineComponent({
         })),
         checked: PropTypes.arrayOf(PropTypes.string),
         limit: PropTypes.number.def(0),
-        size: PropTypes.size(['small', 'medium', 'large']).def('small'),
+        size: settingSizeType.def(SettingSizeEnum.SMALL),
         sizeList: PropTypes.shape<SizeItem[]>([]),
         showLineHeight: PropTypes.bool.def(true),
       }), PropTypes.bool]).def(false),
@@ -76,6 +76,7 @@ export default defineComponent({
     const checkedFields = ref(localSettings.value.checked || []);
     const className = resolveClassName('table-settings');
     const theme = `light ${className}`;
+    const renderFields = computed(() => localSettings.value.fields || props.columns || []);
 
     const cachedValue = {
       checkAll: checkAll.value,
@@ -91,7 +92,7 @@ export default defineComponent({
         activeHeight: activeHeight.value,
         checkedFields: checkedFields.value,
       });
-      emit('change', { checked: checkedFields.value, size: activeSize.value, height: activeHeight.value });
+      emit('change', { checked: checkedFields.value, size: activeSize.value, height: activeHeight.value, fields: unref(renderFields) });
       isShow.value = false;
     };
 
@@ -154,8 +155,6 @@ export default defineComponent({
     const renderSize = () => sizeList.map(item => <span
       class={getItemClass(item)}
       onClick={() => handleSizeItemClick(item)}>{item.label}</span>);
-
-    const renderFields = computed(() => localSettings.value.fields || props.columns || []);
 
     const indeterminate = computed(() => checkedFields.value.length > 0 && !renderFields.value
       .every((field: any, index: number) => checkedFields.value

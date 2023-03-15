@@ -6,14 +6,13 @@
 @tab-header-bg: #FAFBFD;
 @tab-white: @white-color;
 @tab-gray: @light-gray;
+@tab-card-tab-bg: #F0F1F5;
+@tab-card-tab-divider: #c4c6cc;
 @tab-disable-color: #aaa;
-//.@{bk-prefix}-tab {
-@tab-prefix: bk-tab;
-//.@{tab-prefix} {
-.bk-tab {
+
+.@{bk-prefix}-tab {
   position: relative;
   display: flex;
-  width: 100%;
 
   &--top {
     flex-direction: column;
@@ -29,12 +28,20 @@
     display: flex;
     color: @tab-color;
 
+    .@{bk-prefix}-tab--card-tab &, .@{bk-prefix}-tab--vertical-tab & {
+      background: @tab-card-tab-bg;
+    }
+
+    .@{bk-prefix}-tab--card-tab & {
+      border-radius: 4px 4px 0;
+    }
+
     > div {
       display: flex;
       margin-bottom: -1px;
       flex-wrap: nowrap;
 
-      .@{tab-prefix}--card &, .@{tab-prefix}--border-card & {
+      .@{bk-prefix}-tab--card &, .@{bk-prefix}-tab--border-card &, .@{bk-prefix}-tab--vertical-card & {
         border-right: 1px solid @tab-border;
       }
     }
@@ -45,18 +52,18 @@
 
     &-nav {
 
-      .@{tab-prefix}--top & {
+      .@{bk-prefix}-tab--top & {
         overflow-x: auto;
         overflow-y: visible;
       }
 
-      .@{tab-prefix}--left &, .@{tab-prefix}--right & {
+      .@{bk-prefix}-tab--left &, .@{bk-prefix}-tab--right & {
         overflow-x: visible;
         overflow-y: auto;
       }
 
 
-      .@{tab-prefix}--card &, .@{tab-prefix}--border-card & {
+      .@{bk-prefix}-tab--card &, .@{bk-prefix}-tab--border-card &, .@{bk-prefix}-tab--vertical-card & {
         border-left: 1px solid @tab-border;
       }
 
@@ -87,7 +94,7 @@
 
     &-operation {
       //flex: 0 0 auto;
-      .@{tab-prefix}-header-item {
+      .@{bk-prefix}-tab-header-item {
         padding: 0 12px;
       }
     }
@@ -97,15 +104,19 @@
       margin-left: auto;
     }
 
-    .@{tab-prefix}--left & {
+    .@{bk-prefix}-tab--left & {
       border-right: 1px solid @tab-border;
     }
 
-    .@{tab-prefix}--right & {
+    .@{bk-prefix}-tab--right & {
       border-left: 1px solid @tab-border;
     }
 
-    .@{tab-prefix}--left &, .@{tab-prefix}--right & {
+    .@{bk-prefix}-tab--vertical-tab & {
+      border: 0;
+    }
+
+    .@{bk-prefix}-tab--left &, .@{bk-prefix}-tab--right & {
       flex-direction: column;
 
       > div {
@@ -113,17 +124,20 @@
       }
     }
 
-    .@{tab-prefix}--card & {
+    .@{bk-prefix}-tab--card &, .@{bk-prefix}-tab--vertical-card & {
       border-bottom: 1px solid @tab-border;
     }
 
-    .@{tab-prefix}--border-card & {
-      background: @tab-header-bg;
+    .@{bk-prefix}-tab--border-card & {
       border: solid @tab-border;
       border-width: 1px 1px 1px 0;
     }
 
-    .@{tab-prefix}--unborder-card & {
+    .@{bk-prefix}-tab--border-card & {
+      background: @tab-header-bg;
+    }
+
+    .@{bk-prefix}-tab--unborder-card & {
       border-bottom: 1px solid @tab-border;
     }
 
@@ -137,32 +151,30 @@
       &:hover {
         color: @tab-active;
 
-        .@{tab-prefix}-header-item-close {
+        .@{bk-prefix}-tab-header-item-close {
           display: block;
           margin-left: 5px;
           color: @danger-color;
         }
       }
 
-      .@{tab-prefix}--top & {
+      .@{bk-prefix}-tab--top & {
         padding: 0 20px;
-        //margin: -1px 0;
       }
 
-      .@{tab-prefix}--left &, .@{tab-prefix}--right & {
-        //margin: 0 -1px;
+      .@{bk-prefix}-tab--left &, .@{bk-prefix}-tab--right & {
         padding: 0 12px;
       }
 
-      .@{tab-prefix}--left & {
+      .@{bk-prefix}-tab--left & {
         text-align: right;
       }
 
-      .@{tab-prefix}--card & {
+      .@{bk-prefix}-tab--card &, .@{bk-prefix}-tab--vertical-card & {
         border-top: 1px solid @tab-border;
       }
 
-      .@{tab-prefix}--card &, .@{tab-prefix}--border-card & {
+      .@{bk-prefix}-tab--card &, .@{bk-prefix}-tab--border-card &, .@{bk-prefix}-tab--vertical-card & {
         border-right: 1px solid @tab-border;
         border-bottom: 1px solid @tab-border;
 
@@ -171,7 +183,31 @@
         }
       }
 
-      .@{tab-prefix}-header-operation & {
+      .@{bk-prefix}-tab--card-tab & {
+        position: relative;
+
+        &:not(:first-of-type):before,
+        &:last-of-type:after {
+          position: absolute;
+          top: 50%;
+          left: 0;
+          display: block;
+          width: 1px;
+          height: 16px;
+          margin-top: -8px;
+          background: @tab-card-tab-divider;
+          content: '';
+        }
+
+        &:last-of-type:after {
+          right: 0;
+          left: initial;
+        }
+
+
+      }
+
+      .@{bk-prefix}-tab-header-operation & {
         padding-right: 12px;
         padding-left: 12px;
       }
@@ -187,19 +223,35 @@
     &--active {
       color: @tab-active;
 
-      .@{tab-prefix}--card &, .@{tab-prefix}--border-card & {
+      .@{bk-prefix}-tab--card &, .@{bk-prefix}-tab--border-card &, .@{bk-prefix}-tab--vertical-card & {
+        background: @tab-white;
         border-bottom-color: @tab-white;
       }
 
-      .@{tab-prefix}--unborder-card & {
+      .@{bk-prefix}-tab--unborder-card & {
         border-bottom: 2px solid @tab-active;
       }
 
-      .@{tab-prefix}--left & {
+      .@{bk-prefix}-tab--card-tab &, .@{bk-prefix}-tab--vertical-tab & {
+        background: #fff;
+      }
+
+      .@{bk-prefix}-tab--card-tab & {
+        border-radius: 4px 4px 0 0;
+
+        &:after, &:before, & + .@{bk-prefix}-tab-header-item:before {
+          /* stylelint-disable-next-line declaration-no-important */
+          display: none !important;
+        }
+
+
+      }
+
+      .@{bk-prefix}-tab--left:not(.@{bk-prefix}-tab--vertical-tab) & {
         border-right: 2px solid @tab-active;
       }
 
-      .@{tab-prefix}--right & {
+      .@{bk-prefix}-tab--right:not(.@{bk-prefix}-tab--vertical-tab) & {
         border-left: 2px solid @tab-active;
       }
 
@@ -216,7 +268,7 @@
     flex: 1;
     padding: 10px;
 
-    .@{tab-prefix}--border-card & {
+    .@{bk-prefix}-tab--border-card &, .@{bk-prefix}-tab--vertical-card & {
       border: solid @tab-border;
       border-width: 0 1px 1px;
     }

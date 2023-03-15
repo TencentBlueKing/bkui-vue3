@@ -1,6 +1,7 @@
+@import '@bkui-vue/styles/themes/themes.less';
 @import '@bkui-vue/info-box/info-box.less';
 
-.bk-modal-wrapper {
+.@{bk-prefix}-modal-wrapper {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -9,7 +10,7 @@
   // background: #fff;
   transform: translate(-50%, -50%);
 
-  .bk-modal-outside {
+  .@{bk-prefix}-modal-outside {
     position: fixed;
     top: 0;
     right: 0;
@@ -37,7 +38,7 @@
     height: 720px;
   }
 
-  .bk-modal-body {
+  .@{bk-prefix}-modal-body {
     height: 100%;
     background: #fff;
     box-shadow: 0 4px 12px rgba(0,0,0,.15);

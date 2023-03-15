@@ -33,18 +33,21 @@ export class BKPopIndexManager {
   private popInstanceList: Array<any>;
   private readonly uuidAttrName: string;
   private clickFn: Array<any>;
+  private activePopId: string;
+
   constructor() {
     this.popInstanceList = [];
     this.clickFn = [];
     this.uuidAttrName = 'data-bk-pop-uuid';
+    this.activePopId = null;
     bKMaskManager.setOption({
       onClick: this.onMaskClickFn.bind(this),
     });
   }
 
 
-  public onMaskClick(callFn: (e: MouseEvent) => void) {
-    this.clickFn.push(callFn);
+  public onMaskClick(callFn: (e: MouseEvent) => void, target: HTMLElement) {
+    this.clickFn.push({ fn: callFn, target });
   }
 
   /**
@@ -66,10 +69,20 @@ export class BKPopIndexManager {
     this.popInstanceList.push({ uuid, zIndex, content, showMask, appendStyle });
     showMask && bKMaskManager.backupActiveInstance();
     bKMaskManager.show(content, zIndex, showMask, appendStyle, uuid, transfer);
+    this.activePopId = uuid;
   }
 
+  /**
+   * 销毁指定实例
+   * @param content 指定实例内容
+   * @param transfer
+   */
   public destroy(content?: HTMLElement, transfer = false) {
-    this.clickFn?.pop();
+    const index = this.getActiveClickFnIndex(content);
+    if (index >= 0) {
+      this.clickFn?.splice(index, 1);
+    }
+
     this.hide(content, transfer);
   }
 
@@ -83,14 +96,18 @@ export class BKPopIndexManager {
         const lastItem = this.popInstanceList.pop();
         bKMaskManager.popIndexStore(lastItem.uuid);
         lastItem.remove();
+        this.activePopId = null;
       }
 
       if (this.popInstanceList.length) {
         const activeItem = this.popInstanceList.slice(-1)[0];
         const { zIndex, content, showMask, appendStyle, uuid } = activeItem;
         bKMaskManager.show(content, zIndex, showMask, appendStyle, uuid);
+        this.activePopId = uuid;
       } else {
         bKMaskManager.hide();
+        this.activePopId = null;
+        this.clickFn.length = 0;
       }
     }
   }
@@ -110,6 +127,8 @@ export class BKPopIndexManager {
         bKMaskManager.popIndexStore(uuid);
         if (!this.popInstanceList.length) {
           bKMaskManager.hide(transfer);
+          this.activePopId = null;
+          this.clickFn.length = 0;
         } else {
           this.popHide(false);
         }
@@ -119,8 +138,17 @@ export class BKPopIndexManager {
     }
   }
 
+  private getActiveClickFnIndex = (match: HTMLElement | string) => {
+    const filterFn = target => (typeof match === 'string' ? target.getAttribute(this.uuidAttrName) === match
+      : target === match);
+
+    return this.clickFn.findIndex(({ target }: { fn: () => void, target: HTMLElement }) => filterFn(target));
+  };
+
+  private getActiveClickFn = (match: HTMLElement | string) => this.clickFn[this.getActiveClickFnIndex(match)]?.fn;
+
   private onMaskClickFn(e: MouseEvent) {
-    const fn = this.clickFn?.slice(-1)?.at(0);
+    const fn = this.getActiveClickFn(this.activePopId);
     if (fn) {
       Reflect.apply(fn, this, [e]);
     }

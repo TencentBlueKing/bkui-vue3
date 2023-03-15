@@ -24,13 +24,17 @@
 * IN THE SOFTWARE.
 */
 
-import { inject, InjectionKey, provide, Ref, VNode } from 'vue';
+import { ComputedRef, inject, InjectionKey, provide, Ref, VNode } from 'vue';
 /**
  * @description: 获取menu list方法
  * @param {ISearchItem} item 已选择的key字段 为空则代表当前并未选择key字段
  * @param {string} keyword 已输入的文本
  * @return {*} menu list用于渲染选择弹层列表
  */
+export enum ValueBehavior {
+  ALL = 'all',
+  NEEDKEY = 'need-key'
+}
 export type GetMenuListFunc = (item: ISearchItem, keyword: string) => Promise<ISearchItem[]>;
 export type ValidateValuesFunc = (item: ISearchItem, values: ICommonItem[]) => Promise<string | true>;
 export type MenuSlotParams = {
@@ -46,6 +50,7 @@ export interface ISearchSelectProvider {
   onEditBlur: () => void;
   onValidate: (str: string) => void;
   editKey: Ref<String>;
+  valueSplitCode: ComputedRef<string>
 }
 export const SEARCH_SLECT_PROVIDER_KEY: InjectionKey<ISearchSelectProvider> =  Symbol('SEARCH_SLECT_PROVIDER_KEY');
 export const useSearchSelectProvider = (data: ISearchSelectProvider) => {
@@ -63,6 +68,8 @@ export interface ICommonItem {
   disabled?: boolean;
   realId?: string;
   value?:  Omit<ICommonItem, 'disabled' | 'value'>;
+  // 是否已选中
+  isSelected?: boolean
 }
 export interface ISearchValue extends Omit<ICommonItem, 'disabled' | 'value'> {
   type?: SearchItemType;
@@ -77,8 +84,8 @@ export interface ISearchItem {
   // 是否多选
   multiple?: boolean;
   // 是否远程获取子列表 需配合组件属性 getMenuList使用
-  // false 默认 如果配置了属性 getMenuList 则通过 getMenuList来获取子列表
-  // true 则是直接拿到 children字段来获取子列表
+  // true 默认 如果配置了属性 getMenuList 则通过 getMenuList来获取子列表
+  // false 则是直接拿到 children字段来获取子列表
   async?: boolean;
   // 是校验
   noValidate?: boolean;
@@ -86,6 +93,10 @@ export interface ISearchItem {
   placeholder?: string;
   // disable
   disabled?: boolean;
+  // 选中后立即生成tag
+  value?: ICommonItem
+  // 是否已选中
+  isSelected?: boolean
 }
 export interface IMenuFooterItem {
   id: 'confirm' | 'cancel';
@@ -98,7 +109,7 @@ export class SelectedItem {
   name: string;
   values: ICommonItem[] = [];
   condition: string;
-  constructor(public searchItem: ISearchItem, public type: SearchItemType = 'default') {
+  constructor(public searchItem: ISearchItem, public type: SearchItemType = 'default', public splitCode = '|') {
     this.id = searchItem.id;
     this.name = searchItem.name;
   }
@@ -116,11 +127,11 @@ export class SelectedItem {
   }
   get inputInnerHtml() {
     if (this.isSpecialType()) return this.name;
-    return `${this.keyInnerHtml}${this.values?.map(item => item.name).join('|') || ''}`;
+    return `${this.keyInnerHtml}${this.values?.map(item => item.name).join(this.splitCode) || ''}`;
   }
   get inputInnerText() {
     if (this.isSpecialType()) return this.name;
-    return `${this.keyInnerText}${this.values?.map(item => item.name).join('|') || ''}`;
+    return `${this.keyInnerText}${this.values?.map(item => item.name).join(this.splitCode) || ''}`;
   }
   get keyInnerHtml() {
     if (this.isSpecialType()) return this.name;

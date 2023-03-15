@@ -26,7 +26,7 @@
 
 import { DirectiveBinding, ObjectDirective } from 'vue';
 
-import { bkZIndexManager } from '@bkui-vue/shared';
+import { bkZIndexManager, resolveClassName } from '@bkui-vue/shared';
 import { createPopper, Placement } from '@popperjs/core';
 
 export declare type IOptions = {
@@ -39,6 +39,7 @@ export declare type IOptions = {
   trigger: string;
   distance: number;
   extCls: string,
+  delay: number,
   onShow: () => void;
   onHide: () => void;
 };
@@ -49,17 +50,22 @@ const tooltips: ObjectDirective = {
     const opts = getOpts(binding);
     const { trigger } = opts;
     const popper = renderContent(opts);
+    let delayTimeout = null;
 
     if (trigger === 'hover') {
       let hideTimeout = null;
       el.addEventListener('mouseenter', () => {
-        show(el);
-        clearTimeout(hideTimeout);
+        delayTimeout = setTimeout(() => {
+          show(el);
+          clearTimeout(hideTimeout);
+          clearTimeout(delayTimeout);
+        }, opts.delay);
       });
       popper.addEventListener('mouseenter', () => {
         clearTimeout(hideTimeout);
       });
       el.addEventListener('mouseleave', () => {
+        clearTimeout(delayTimeout);
         hideTimeout = setTimeout(() => {
           hide(el);
         }, 100);
@@ -68,6 +74,7 @@ const tooltips: ObjectDirective = {
         hide(el);
       });
       popper.addEventListener('mouseleave', () => {
+        clearTimeout(delayTimeout);
         hideTimeout = setTimeout(() => {
           hide(el);
         }, 100);
@@ -75,7 +82,10 @@ const tooltips: ObjectDirective = {
     } else if (trigger === 'click') {
       document.body.addEventListener('click', (event) => {
         if (el.contains(event.target as HTMLElement) && !popper.hasAttribute('data-show')) {
-          show(el);
+          delayTimeout = setTimeout(() => {
+            show(el);
+            clearTimeout(delayTimeout);
+          }, opts.delay);
         } else if (popper.hasAttribute('data-show')) {
           hide(el);
         }
@@ -112,6 +122,7 @@ function initOptions(): IOptions {
     placement: 'top',
     distance: 8,
     extCls: '',
+    delay: 0,
     onShow: () => {},
     onHide: () => {},
   };
@@ -142,7 +153,7 @@ function renderContent(opts): HTMLElement {
   const isLight = theme === 'light';
   const zIndex = bkZIndexManager.getPopperIndex();
   const content = document.createElement('div');
-  content.className = `bk-popper ${isLight ? 'light' : 'dark'} ${extCls}`;
+  content.className = `${resolveClassName('popper')} ${isLight ? 'light' : 'dark'} ${extCls}`;
   content.innerText = value;
   content.style.zIndex = String(zIndex);
   if (hasArrow) {
@@ -158,7 +169,7 @@ function renderContent(opts): HTMLElement {
  */
 function renderArrow(): HTMLElement {
   const arrow = document.createElement('div');
-  arrow.className = 'bk-popper-arrow';
+  arrow.className = resolveClassName('popper-arrow');
   arrow.setAttribute('data-popper-arrow', '');
   return arrow;
 }

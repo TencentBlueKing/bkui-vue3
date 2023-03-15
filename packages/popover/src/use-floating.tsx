@@ -108,15 +108,17 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
     const resolveResult = {};
     if (Array.isArray(props.modifiers)) {
       props.modifiers.forEach((m) => {
-        let result = 0;
+        let result;
         if (m.name === 'offset') {
           if (typeof m.options?.offset === 'number') {
             result = m.options?.offset;
           }
 
           if (Array.isArray(m.options?.offset)) {
-            result = m.options?.offset.reduce((o, c) => (o + c), 0);
+            const [mainAxis, crossAxis] = m.options?.offset;
+            result = { mainAxis, crossAxis };
           }
+
           Object.assign(resolveResult, { offset: result });
         }
       });
@@ -290,19 +292,19 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
     // 设置settimeout避免hidePopover导致显示问题
     setTimeout(() => {
       !props.disabled && (localIsShow.value = true);
-    }, 100);
+    }, props.popoverDelay);
   };
 
   const hidePopover = () => {
     popHideTimerId = setTimeout(() => {
       localIsShow.value = false;
-    }, 100);
+    }, props.popoverDelay);
   };
 
   const hanldePopoverShow = () => {
     const elContent = resolveTargetElement(refContent.value?.$el) as HTMLElement;
     elContent.style.setProperty('display', 'block');
-    elContent.style.setProperty('z-index', `${props.zIndex ? props.zIndex : bkZIndexManager.getModalNextIndex()}`);
+    elContent.style.setProperty('z-index', `${props.zIndex ? props.zIndex : bkZIndexManager.getPopperIndex()}`);
     updatePopover();
     ctx.emit('afterShow', { isShow: true });
   };

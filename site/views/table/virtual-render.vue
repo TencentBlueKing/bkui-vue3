@@ -23,13 +23,13 @@
 <script>
   import { defineComponent } from 'vue';
 
-  import { DATA_COLUMNS, DATA_TABLE } from './options';
+  import { DATA_COLUMNS2, DATA_TABLE } from './options';
   export default defineComponent({
     components: {},
     data() {
       return {
         randomRows: [...DATA_TABLE],
-        columns: [...DATA_COLUMNS],
+        columns: [...DATA_COLUMNS2],
         border: ['row'],
       };
     },

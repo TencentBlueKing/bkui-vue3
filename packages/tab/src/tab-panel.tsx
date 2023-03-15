@@ -26,6 +26,8 @@
 
 import { defineComponent, h, VNodeChild } from 'vue';
 
+import { resolveClassName } from '@bkui-vue/shared';
+
 import { tabPanelProps } from './props';
 
 export default defineComponent({
@@ -35,7 +37,7 @@ export default defineComponent({
     const active: boolean = this.name === (this.$parent as any).active;
     const getContent = (): VNodeChild => {
       // 不渲染
-      if (!this.visible || (this.renderDirective === 'if' && !active)) {
+      if (!this.visible || ((this.renderDirective as unknown as string) === 'if' && !active)) {
         return null;
       }
       if (typeof this.panel === 'function') {
@@ -51,7 +53,7 @@ export default defineComponent({
     };
 
     return (
-      <div v-show={active} ref='content' class="bk-tab-panel">
+      <div v-show={active} ref='content' class={resolveClassName('tab-panel')}>
         {getContent()}
       </div>
     );

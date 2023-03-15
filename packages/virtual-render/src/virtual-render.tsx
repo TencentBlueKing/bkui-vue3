@@ -84,6 +84,7 @@ export default defineComponent({
       startIndex: 0,
       endIndex: 0,
       scrollTop: 1,
+      scrollLeft: 0,
       translateY: 0,
       translateX: 0,
       count: 0,
@@ -100,6 +101,7 @@ export default defineComponent({
       // 设置偏移量，避免行高较大时出现卡顿式的滚动
       pagination.translateY = translateY;
       pagination.translateX =  scrollLeft;
+      pagination.scrollLeft = scrollLeft;
       pagination.pos = pos;
       ctx.emit('content-scroll', [event, pagination]);
     };
@@ -171,7 +173,13 @@ export default defineComponent({
     };
 
     /** 映射传入的数组为新的数组，增加 $index属性，用来处理唯一Index */
-    const localList = computed(() => (props.list || []).map((item: any, index) => ({ ...item,  $index: index })));
+    const localList = computed(() => {
+      if (props.rowKey !== undefined) {
+        return props.list;
+      }
+
+      return (props.list || []).map((item: any, index) => ({ ...item,  $index: index }));
+    });
 
     /** 计算出来的当前页数据 */
     const calcList = computed(() => localList.value.slice(

@@ -51,6 +51,8 @@
 */
 import { createApp, createVNode, defineComponent, h, onMounted, ref, shallowRef, VNode } from 'vue';
 
+import { resolveClassName } from '@bkui-vue/shared';
+
 import Dialog from '../../dialog/src/dialog';
 
 export interface ModalFuncProps {
@@ -124,7 +126,7 @@ const InfoBox = (config: ModalFuncProps) => {
         }
         if (children.length) {
           subTitleBox.push(h('div', {
-            class: 'bk-info-sub-title',
+            class: resolveClassName('info-sub-title'),
             style: `text-Align:${modalFuncProps.value.contentAlign || 'center'}`,
           }, children));
         }
@@ -132,7 +134,7 @@ const InfoBox = (config: ModalFuncProps) => {
       };
 
       return () => createVNode(Dialog, {
-        class: 'bk-info-wrapper',
+        class: resolveClassName('info-wrapper'),
         headerAlign: 'center',
         footerAlign: 'center',
         ...modalFuncProps.value,

@@ -25,15 +25,22 @@
 */
 
 import { computed, defineComponent, onMounted, onUnmounted, ref, Transition, watch } from 'vue';
+import { toType } from 'vue-types';
 
 import { Close, Error, Info, Success, Warn } from '@bkui-vue/icon';
 import { bkZIndexManager, PropTypes } from '@bkui-vue/shared';
 
+enum NotifyThemeEnum {
+  PRIMARY = 'primary',
+  WARNING = 'warning',
+  SUCCESS = 'success',
+  ERROR = 'error',
+}
 const notifyProps = {
   id: PropTypes.string.def(''),
   title: PropTypes.string.def(''),
-  message: PropTypes.string.def(''),
-  theme: PropTypes.theme(['primary', 'warning', 'success', 'error']).def('primary'),
+  message: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).def(''),
+  theme: toType<`${NotifyThemeEnum}`>('notifyTheme', {}).def(NotifyThemeEnum.PRIMARY),
   position: PropTypes.position().def('top-right'),
   delay: PropTypes.number.def(5000),
   dismissable: PropTypes.bool.def(true),
@@ -65,6 +72,14 @@ export default defineComponent({
       `bk-notify-${props.theme}`,
       horizontalClass.value,
     ]);
+
+    const renderMessage = computed(() => {
+      if (typeof props.message === 'function') {
+        return props.message();
+      }
+
+      return props.message;
+    });
 
     const visible = ref(false);
 
@@ -98,6 +113,7 @@ export default defineComponent({
       classNames,
       styles,
       visible,
+      renderMessage,
       handleClose,
     };
   },
@@ -121,7 +137,7 @@ export default defineComponent({
           <div class="bk-notify-content">
             <div class="bk-notify-icon">{renderIcon()}</div>
             {this.title ? <div class="bk-notify-content-header">{this.title}</div> : ''}
-            <div class="bk-notify-content-text">{this.message}</div>
+            <div class="bk-notify-content-text">{this.renderMessage}</div>
           </div>
           {this.dismissable && <Error class="bk-notify-icon bk-notify-close" onClick={this.handleClose}></Error>}
         </div>

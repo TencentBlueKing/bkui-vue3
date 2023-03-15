@@ -26,10 +26,10 @@
 import { defineComponent, onBeforeUnmount, onMounted, ref } from 'vue';
 
 import { bkEllipsisInstance } from '@bkui-vue/directives';
-import { isElement, PropTypes  } from '@bkui-vue/shared';
+import { hasOverflowEllipsis, isElement, PropTypes  } from '@bkui-vue/shared';
 
-import { IOverflowTooltip } from '../props';
-import { getElementTextWidth, observerResize } from '../utils';
+import { IOverflowTooltip, overflowModeType } from '../props';
+import { observerResize } from '../utils';
 export default defineComponent({
   name: 'TableCell',
   props: {
@@ -39,7 +39,7 @@ export default defineComponent({
       content: PropTypes.string.def(''),
       disabled: PropTypes.bool.def(false),
       watchCellResize: PropTypes.bool.def(true),
-      mode: PropTypes.string.def('auto'),
+      mode: overflowModeType,
     })]).def(undefined),
     title: PropTypes.string.def(undefined),
   },
@@ -70,30 +70,31 @@ export default defineComponent({
 
       if (typeof showOverflowTooltip === 'object') {
         disabled = showOverflowTooltip.disabled;
+        content = showOverflowTooltip.content || refRoot.value.innerText;
         if (typeof showOverflowTooltip.content === 'function') {
           content = showOverflowTooltip.content(props.column, props.row);
         }
-        content = showOverflowTooltip.content || refRoot.value.innerText;
+
         mode = showOverflowTooltip.mode || 'auto';
+      }
+
+      if (typeof disabled === 'function') {
+        disabled = Reflect.apply(disabled, this, [props.column, props.row]);
       }
 
       return { disabled, content, mode };
     };
 
     const resolveOverflowTooltip = () => {
-      if (!refRoot.value || /selection|index|expand/.test(props.column.type) || !isElement(refRoot.value)) {
+      if (!refRoot.value || !isElement(refRoot.value)) {
         return;
       }
 
-      const { content, mode } = resolveTooltipOption();
-      if (mode === 'auto') {
-        const textWidth = getElementTextWidth(refRoot.value, content);
-        const cellWidth = (refRoot.value as HTMLElement).clientWidth;
-        const computedStyle = window.getComputedStyle(refRoot.value);
-        const paddingWidth = ['padding-left', 'padding-right'].reduce((width, prop) => width + Number(computedStyle.getPropertyValue(prop).replace('px', '')), 0);
-        const cellInnerWidth = cellWidth - paddingWidth;
+      const { mode, disabled } = resolveTooltipOption();
+      isTipsEnabled.value = !disabled;
 
-        isTipsEnabled.value = textWidth > cellInnerWidth;
+      if (mode === 'auto') {
+        isTipsEnabled.value = hasOverflowEllipsis(refRoot.value);
       }
 
       if (mode === 'static') {
@@ -127,11 +128,10 @@ export default defineComponent({
     });
 
     onBeforeUnmount(() => {
-      observerIns?.stop();
       bkEllipsisIns?.destroyInstance(refRoot.value);
     });
 
-    return () => <div class="cell" ref={ refRoot } title={ props.title }>
+    return () => <div class={['cell', props.column.type]} ref={ refRoot } title={ props.title }>
       { slots.default?.() }
     </div>;
   },
