@@ -213,7 +213,7 @@ describe('Select.tsx', () => {
         };
       },
     });
-    expect(wrapper.findAllComponents({ name: 'Group' })).toHaveLength(2);
+    expect(wrapper.findAllComponents({ name: 'OptionGroup' })).toHaveLength(2);
     await wrapper.findComponent({ name: 'Option' }).trigger('click');
     expect(wrapper.findAllComponents('.is-selected.bk-select-option')).toHaveLength(2);
     expect(wrapper.vm.selectValue).toEqual(['test']);
