@@ -676,7 +676,7 @@ export default defineComponent({
           onClick={this.handleTogglePopover}
           onMouseenter={this.setHover}
           onMouseleave={this.cancelHover}>
-          {renderTriggerInput()}
+          { this.$slots.trigger?.({ selected: this.selected }) || renderTriggerInput()}
         </div>
     );
     const renderSelectContent = () => (

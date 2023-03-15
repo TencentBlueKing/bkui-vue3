@@ -19,6 +19,23 @@
         {{ selected.map(item => `${item.label}( ${item.value} )`).join('；') }}
       </template>
     </bk-select>
+    <bk-select
+      v-model="selectedValue"
+      class="bk-select"
+      filterable
+      multiple
+      :input-search="false"
+    >
+      <template #trigger="{ selected }">
+        <span>{{ selected }}</span>
+      </template>
+      <bk-option
+        v-for="(item, index) in datasource"
+        :key="index"
+        :value="item.value"
+        :label="item.label"
+      />
+    </bk-select>
   </div>
 </template>
 <script setup>

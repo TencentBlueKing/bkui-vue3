@@ -119,8 +119,8 @@ export default defineComponent({
             <SelectVirtualRender />
         </DemoBox>
         <DemoBox
-          title="多选模式下自定义tag"
-          desc="多选模式下自定义tag"
+          title="自定义slot"
+          desc="自定义tag和trigger"
           componentName="select"
           demoName="select-slot-demo">
             <SelectSlotDemo />
