@@ -122,7 +122,7 @@ export function useFlatList(props: TagProps) {
       acc[item[saveKey.value]] = item;
       return acc;
     }, {});
-  }, { immediate: true });
+  }, { immediate: true, deep: true });
 
   return {
     flatList,

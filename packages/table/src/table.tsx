@@ -276,6 +276,10 @@ export default defineComponent({
       display: 'none' as const,
     };
 
+    const footerStyle = computed(() => ({
+      '--footer-height': hasFooter.value ? `${props.paginationHeihgt}px` : '0',
+    }));
+
     const { renderScrollLoading } = useScrollLoading(props, ctx);
     const scrollClass = computed(() => (props.virtualEnabled ? {} : { scrollXName: '', scrollYName: '' }));
 
@@ -308,14 +312,16 @@ export default defineComponent({
             }
           }
       </VirtualRender>
-      <div class={ fixedWrapperClass }>
+      {/* @ts-ignore:next-line */}
+      <div class={ fixedWrapperClass } style={ footerStyle.value }>
         { renderFixedColumns(reactiveSchema.scrollTranslateX, tableOffsetRight.value) }
         <div class={ resizeColumnClass } style={ resizeColumnStyle.value }></div>
         <div class={ loadingRowClass }>{
           renderScrollLoading()
         }</div>
       </div>
-      <div class={ footerClass.value }>
+      {/* @ts-ignore:next-line */}
+      <div class={ footerClass.value } style={ footerStyle.value }>
         {
           hasFooter.value && tableRender.renderTableFooter(localPagination.value)
         }
