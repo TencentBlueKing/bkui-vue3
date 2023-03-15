@@ -27,7 +27,7 @@ import { computed } from 'vue';
 
 import { resolveClassName } from '@bkui-vue/shared';
 
-import { COLUMN_ATTRIBUTE, LINE_HEIGHT, SCROLLY_WIDTH } from '../const';
+import { COLUMN_ATTRIBUTE, SCROLLY_WIDTH } from '../const';
 import { GroupColumn } from '../props';
 import { getColumnReactWidth } from '../utils';
 
@@ -35,7 +35,7 @@ import { getColumnReactWidth } from '../utils';
  * 固定列Hooks
  */
 export default (props, colgroups: GroupColumn[], hasScrollY?) => {
-  const footHeight = computed(() => (props.pagination && props.data.length ? LINE_HEIGHT : 0));
+  // const footHeight = computed(() => (props.pagination && props.data.length ? props.paginationHeihgt : 0));
   const resolveColumnClass = (column: GroupColumn, scrollX?, offsetRight?) => ({
     column_fixed: !!column.fixed,
     column_fixed_left: column.fixed !== 'right',
@@ -101,7 +101,7 @@ export default (props, colgroups: GroupColumn[], hasScrollY?) => {
 
   const resolveColumnStyle = (colPos: string) => ({
     width: `${resolveFixOffset[colPos](false)}px`,
-    bottom: `${footHeight.value}px`,
+    bottom: '0px',
   });
 
   const colPosExist = {

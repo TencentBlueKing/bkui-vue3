@@ -26,7 +26,7 @@
 import { defineComponent, getCurrentInstance, inject, ref, toRefs, watch } from 'vue';
 import { PropType } from 'vue-types/dist/types';
 
-import { classes, PropTypes, TagThemeType } from '@bkui-vue/shared';
+import { classes, PropTypes, resolveClassName, TagThemeType } from '@bkui-vue/shared';
 import Tag from '@bkui-vue/tag';
 
 import { selectKey } from './common';
@@ -118,13 +118,13 @@ export default defineComponent({
   },
   render() {
     const selectTagClass = classes({
-      'bk-select-tag': true,
-      'bk-select-tag--default': true,
+      [resolveClassName('select-tag')]: true,
+      [resolveClassName('select-tag--default')]: true,
       'is-disabled': this.disabled,
       'collapse-tag': this.collapseTags,
     });
     const tagWrapperClass = classes({
-      'bk-select-tag-wrapper': true,
+      [resolveClassName('select-tag-wrapper')]: true,
     });
     const inputStyle = {
       display: this.selected.length && !this.filterable ? 'none' : '',
@@ -148,12 +148,12 @@ export default defineComponent({
           }
           {
             !!this.overflowTagIndex && this.collapseTags && (
-              <Tag class="bk-select-overflow-tag">+{this.selected.length - this.overflowTagIndex}</Tag>
+              <Tag class={resolveClassName('select-overflow-tag')}>+{this.selected.length - this.overflowTagIndex}</Tag>
             )
           }
         </span>
         <input
-          class="bk-select-tag-input"
+          class={resolveClassName('select-tag-input')}
           ref="inputRef"
           type="text"
           style={inputStyle}

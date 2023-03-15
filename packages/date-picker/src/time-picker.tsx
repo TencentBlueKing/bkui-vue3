@@ -41,7 +41,7 @@ import {
 
 import { clickoutside } from '@bkui-vue/directives';
 import { Close } from '@bkui-vue/icon';
-import { useFormItem } from '@bkui-vue/shared';
+import { resolveClassName, useFormItem } from '@bkui-vue/shared';
 
 import PickerDropdown from './base/picker-dropdown';
 // import VueTypes, { toType, toValidableType } from 'vue-types';
@@ -597,7 +597,7 @@ export default defineComponent({
         <input
           type="text"
           class={[
-            'bk-date-picker-editor',
+            resolveClassName('date-picker-editor'),
             this.readonly ? 'readonly' : '',
             this.fontSizeCls,
             this.behavior === 'simplicity' ? 'only-bottom-border' : '',
@@ -627,12 +627,12 @@ export default defineComponent({
     return (
       <div
         class={[
-          'bk-date-picker',
+          resolveClassName('date-picker'),
           this.type === 'datetimerange' ? 'long' : '',
           this.longWidthCls,
         ]}
         v-clickoutside={this.handleClose}>
-          <div ref="triggerRef" class="bk-date-picker-rel"
+          <div ref="triggerRef" class={resolveClassName('date-picker-rel')}
             onMouseenter={this.handleInputMouseenter}
             onMouseleave={this.handleInputMouseleave}>
             {this.$slots.trigger?.() ?? defaultTrigger}
@@ -641,7 +641,7 @@ export default defineComponent({
             <Transition name="bk-fade-down-transition">
               <PickerDropdown
                 class={[
-                  this.appendToBody ? 'bk-date-picker-transfer' : '',
+                  this.appendToBody ? resolveClassName('date-picker-transfer') : '',
                 ]}
                 ref="pickerDropdownRef"
                 v-show={this.opened}
@@ -654,7 +654,7 @@ export default defineComponent({
                 {
                   this.hasHeader
                     ? (
-                      <div class={['bk-date-picker-top-wrapper', this.headerSlotCls]} >
+                      <div class={[resolveClassName('date-picker-top-wrapper'), this.headerSlotCls]} >
                         {this.$slots.header?.() ?? null}
                       </div>
                     )
@@ -705,7 +705,7 @@ export default defineComponent({
                 {
                   this.hasFooter
                     ? (
-                      <div class={['bk-date-picker-footer-wrapper', this.footerSlotCls]} >
+                      <div class={[resolveClassName('date-picker-footer-wrapper'), this.footerSlotCls]} >
                         {this.$slots.footer?.() ?? null}
                       </div>
                     )

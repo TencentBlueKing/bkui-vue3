@@ -26,7 +26,7 @@
 
 import { defineComponent, Transition } from 'vue';
 
-import { bkPopIndexManager } from '@bkui-vue/shared';
+import { bkPopIndexManager, resolveClassName } from '@bkui-vue/shared';
 
 import { propsMixin } from './props.mixin';
 
@@ -88,11 +88,11 @@ export default defineComponent({
     visible: {
       handler(val: boolean) {
         if (val) {
-          // this.bkPopIndexManager = new BKPopIndexManager();
-          bkPopIndexManager.onMaskClick((_e: MouseEvent) => {
-            this.handleClickOutSide();
-          }, this.$el);
           this.$nextTick(() => {
+            // isShow初始化为true的时候，放在nextTick才能获取$el
+            bkPopIndexManager.onMaskClick((_e: MouseEvent) => {
+              this.handleClickOutSide();
+            }, this.$el);
             const hideMaskStyle = {
               'background-color': 'rgba(0,0,0,0)',
             };
@@ -126,25 +126,25 @@ export default defineComponent({
   },
   render() {
     const maxHeight = this.maxHeight ? { maxHeight: this.maxHeight } : {};
-    const bodyClass = `bk-modal-body ${this.animateType === 'slide' ? this.direction : ''}`;
+    const bodyClass = `${resolveClassName('modal-body')} ${this.animateType === 'slide' ? this.direction : ''}`;
     return (
-      <div class={['bk-modal-wrapper', this.extCls, this.size, this.fullscreen ? 'fullscreen' : '']}
+      <div class={[resolveClassName('modal-wrapper'), this.extCls, this.size, this.fullscreen ? 'fullscreen' : '']}
         style={[this.compStyle, this.fullscreen ? this.fullscreenStyle : '']}>
         <Transition name={this.animateType}>
         {this.isShow ? <div class={bodyClass}>
-          <div class="bk-modal-header">
+          <div class={resolveClassName('modal-header')}>
             {this.$slots.header?.() ?? ''}
           </div>
-          <div class="bk-modal-content"
+          <div class={resolveClassName('modal-content')}
             style={[this.dialogType === 'show' ? 'padding-bottom: 20px' : '', { ...maxHeight }]}>
             {this.$slots.default?.() ?? ''}
           </div>
           {this.dialogType === 'show' ? '' : (
-            <div class="bk-modal-footer">
+            <div class={resolveClassName('modal-footer')}>
               {this.$slots.footer?.() ?? ''}
             </div>
           )}
-          <div class={['bk-modal-close', this.closeIcon ? '' : 'close-icon']}>
+          <div class={[resolveClassName('modal-close'), this.closeIcon ? '' : 'close-icon']}>
               {this.$slots.close?.() ?? ''}
             </div>
         </div> : ''}

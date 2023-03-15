@@ -26,7 +26,7 @@
 
 import { DirectiveBinding, ObjectDirective } from 'vue';
 
-import { bkZIndexManager } from '@bkui-vue/shared';
+import { bkZIndexManager, resolveClassName } from '@bkui-vue/shared';
 import { createPopper, Placement } from '@popperjs/core';
 
 export declare type IOptions = {
@@ -153,7 +153,7 @@ function renderContent(opts): HTMLElement {
   const isLight = theme === 'light';
   const zIndex = bkZIndexManager.getPopperIndex();
   const content = document.createElement('div');
-  content.className = `bk-popper ${isLight ? 'light' : 'dark'} ${extCls}`;
+  content.className = `${resolveClassName('popper')} ${isLight ? 'light' : 'dark'} ${extCls}`;
   content.innerText = value;
   content.style.zIndex = String(zIndex);
   if (hasArrow) {
@@ -169,7 +169,7 @@ function renderContent(opts): HTMLElement {
  */
 function renderArrow(): HTMLElement {
   const arrow = document.createElement('div');
-  arrow.className = 'bk-popper-arrow';
+  arrow.className = resolveClassName('popper-arrow');
   arrow.setAttribute('data-popper-arrow', '');
   return arrow;
 }

@@ -155,7 +155,7 @@ export default defineComponent({
       nextTick(() => {
         initData();
       });
-    });
+    }, { deep: true });
 
     watch(() => props.modelValue, (val) => {
       if (!shallowCompareArray(tagList.value, val)) {
