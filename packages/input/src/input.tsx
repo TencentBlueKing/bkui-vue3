@@ -261,12 +261,14 @@ export default defineComponent({
       if (props.disabled) return;
       const newVal = handleNumber(props.step);
       ctx.emit(EVENTS.UPDATE, newVal);
+      ctx.emit(EVENTS.CHANGE, newVal);
     }
 
     function handleDec() {
       if (props.disabled) return;
       const newVal = handleNumber(props.step, false);
       ctx.emit(EVENTS.UPDATE, newVal);
+      ctx.emit(EVENTS.CHANGE, newVal);
     }
 
     function getCls(name) {

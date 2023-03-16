@@ -86,7 +86,7 @@ export default defineComponent({
     const handleConfirm = () => {
       emit('update:isShow', false);
       emit('confirm');
-      isModalShow.value = false;
+      // isModalShow.value = false; 影响异步关闭
     };
 
     const hasFooter = computed(() => ['process', 'operation', 'confirm'].includes(props.dialogType));

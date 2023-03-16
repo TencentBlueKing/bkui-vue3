@@ -13,6 +13,7 @@
       :is-loading="exampleSetting.loading"
       @closed="() => exampleSetting.isShow = false"
       @confirm="handleConfirm"
+      @value-change="valueChange"
     >
       <div> 点击确定后 {{ exampleSetting.countdown }} 秒关闭</div>
     </bk-dialog>
@@ -39,12 +40,17 @@
       exampleSetting.value.countdown -= 1;
       if (exampleSetting.value.countdown === 0) {
         exampleSetting.value.isShow = false;
-        exampleSetting.value.loading = false;
-        exampleSetting.value.confirmText = '确定';
-        exampleSetting.value.countdown = 3;
         clearInterval(exampleSetting.value.timer);
       }
     }, 1000);
+  };
+
+  const valueChange = (val) => {
+    if (!val) {
+      clearInterval(exampleSetting.value.timer);
+      exampleSetting.value.loading = false;
+      exampleSetting.value.countdown = 3;
+    }
   };
 </script>
 
