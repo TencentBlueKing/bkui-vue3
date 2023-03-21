@@ -26,12 +26,12 @@
 
 import { mount } from '@vue/test-utils';
 
-import BKTab from '../src';
+import BkOverflowTitle from '../src';
 
-const dividerContent = 'bk-divider is testing';
-describe('Divider.tsx', () => {
+const dividerContent = '文本溢出测试';
+describe('OverflowTitle.tsx', () => {
   it('render test', async () => {
-    const wrapper = await mount(BKTab, {
+    const wrapper = await mount(BkOverflowTitle, {
       slots: {
         default: dividerContent,
       },
