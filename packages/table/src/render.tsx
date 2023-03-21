@@ -42,20 +42,7 @@ import { TablePlugins } from './plugins/index';
 import Settings from './plugins/settings';
 import useFixedColumn from './plugins/use-fixed-column';
 import { Column, GroupColumn, IColumnActive, IReactiveProp, TablePropTypes } from './props';
-import {
-  formatPropAsArray,
-  getColumnReactWidth,
-  getNextSortType,
-  getRowId,
-  getRowText,
-  getSortFn,
-  isColumnHidden,
-  isRowSelectEnable,
-  resolveCellSpan,
-  resolveHeadConfig,
-  resolvePropVal,
-  resolveWidth,
-} from './utils';
+import { formatPropAsArray, getColumnReactWidth, getNextSortType, getRowId, getRowText, getSortFn, isColumnHidden, isRowSelectEnable, resolveCellSpan, resolveHeadConfig, resolvePropVal, resolveWidth } from './utils';
 
 export default class TableRender {
   props: TablePropTypes;
@@ -65,7 +52,6 @@ export default class TableRender {
   uuid: string;
   events: Map<string, any[]>;
   public plugins: TablePlugins;
-
   constructor(props, ctx, reactiveProp: IReactiveProp, colgroups: GroupColumn[]) {
     this.props = props;
     this.context = ctx;
@@ -107,14 +93,14 @@ export default class TableRender {
     return [
       this.props.settings
         ? <Settings class="table-head-settings"
-          settings={this.reactiveProp.settings}
-          columns={this.colgroups}
-          rowHeight={this.props.rowHeight}
-          onChange={handleSettingsChanged} />
+            settings={ this.reactiveProp.settings }
+            columns={this.colgroups}
+            rowHeight={ this.props.rowHeight }
+            onChange={ handleSettingsChanged }/>
         : '',
       <table cellpadding={0} cellspacing={0}>
-        {this.renderColGroup()}
-        {this.renderHeader()}
+        { this.renderColGroup() }
+        { this.renderHeader() }
       </table>,
     ];
   }
@@ -127,22 +113,22 @@ export default class TableRender {
   public renderTableBodySchema(rows: any[]) {
     if (!rows.length) {
       return this.context.slots.empty?.() ?? <BodyEmpty
-        filterList={rows}
-        list={this.props.data}
-        emptyText={this.props.emptyText} />;
+      filterList={rows}
+      list={ this.props.data }
+      emptyText={ this.props.emptyText }/>;
     }
 
     return <table cellpadding={0} cellspacing={0} data-table-uuid={this.uuid}>
-      {this.renderColGroup()}
-      {this.renderTBody(rows)}
+      { this.renderColGroup() }
+      { this.renderTBody(rows) }
     </table>;
   }
 
   public renderTableFooter(options: any) {
-    return <Pagination {...options}
-      modelValue={options.current}
-      onLimitChange={limit => this.handlePageLimitChange(limit)}
-      onChange={current => this.handlePageChange(current)}></Pagination>;
+    return <Pagination { ...options }
+    modelValue={options.current}
+    onLimitChange={ limit => this.handlePageLimitChange(limit) }
+    onChange={ current => this.handlePageChange(current) }></Pagination>;
   }
 
   public getRowHeight = (row?: any, rowIndex?: number) => {
@@ -336,24 +322,20 @@ export default class TableRender {
     const { resolveFixedColumnStyle } = useFixedColumn(this.props, this.colgroups);
     // @ts-ignore:next-line
     return <thead style={rowStyle}>
-    <TableRow>
-      <tr>
-        {
-          this.filterColgroups.map((column: Column, index: number) => (
-            <th
-              colspan={1}
-              rowspan={1}
-              class={this.getHeadColumnClass(column, index)}
-              style={resolveFixedColumnStyle(column)}
-              onClick={() => this.handleColumnHeadClick(index, column)}
-              {...resolveEventListener(column)}>
-              {renderHeadCell(column, index)}
-            </th>
-          ))
-        }
-      </tr>
-    </TableRow>
-    </thead>;
+      <TableRow>
+          <tr>
+          {
+            this.filterColgroups.map((column: Column, index: number) => <th colspan={1} rowspan={1}
+              class={ this.getHeadColumnClass(column, index) }
+              style = { resolveFixedColumnStyle(column) }
+              onClick={ () => this.handleColumnHeadClick(index, column) }
+              { ...resolveEventListener(column) }>
+                { renderHeadCell(column, index) }
+              </th>)
+          }
+          </tr>
+        </TableRow>
+      </thead>;
   }
 
   /**
@@ -412,23 +394,17 @@ export default class TableRender {
                     { 'expand-row': row[TABLE_ROW_ATTRIBUTE.ROW_EXPAND], 'is-last': rowIndex + rowspan >= rowLength },
                   ];
 
-                  return (
-                    <td class={cellClass}
-                      style={cellStyle}
-                      key={cellKey}
-                      colspan={colspan}
-                      rowspan={rowspan}
-                      onClick={e => this.handleCellClick(e, column, index, row, rowIndex)}
-                      onDblclick={e => this.handleCellClick(e, column, index, row, rowIndex)}
-                    >
-                      <TableCell class={tdCtxClass}
-                        column={column}
-                        row={row}
-                        parentSetting={this.props.showOverflowTooltip}>
-                        {this.renderCell(row, column, rowIndex, rows)}
-                      </TableCell>
-                    </td>
-                  );
+                  return <td class={cellClass}
+                    style={cellStyle}
+                    key={cellKey}
+                    colspan={ colspan } rowspan={ rowspan }>
+                    <TableCell class={tdCtxClass}
+                      column={ column }
+                      row={ row }
+                      parentSetting={ this.props.showOverflowTooltip }>
+                      { this.renderCell(row, column, rowIndex, rows) }
+                    </TableCell>
+                  </td>;
                 }
 
                 return null;
@@ -452,17 +428,14 @@ export default class TableRender {
       ];
 
       const rowId = getRowId(row, rowIndex, this.props);
-      const rowKey = `${rowId}_expand`;
-      return (
-        <TableRow key={rowKey}>
-          <tr class={resovledClass}>
-            <td colspan={this.filterColgroups.length} rowspan={1}>
-              {this.context.slots.expandRow?.(row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA] || row)
-                ?? <div class="expand-cell-ctx">Expand Row</div>}
-            </td>
-          </tr>
-        </TableRow>
-      );
+      const rowKey =  `${rowId}_expand`;
+      return <TableRow key={rowKey}>
+        <tr class={resovledClass}>
+          <td colspan={ this.filterColgroups.length } rowspan={1}>
+            { this.context.slots.expandRow?.(row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA] || row) ?? <div class='expand-cell-ctx'>Expand Row</div> }
+          </td>
+        </tr>
+      </TableRow>;
     }
   }
 
@@ -487,18 +460,6 @@ export default class TableRender {
    */
   private handleRowClick(e: MouseEvent, row: any, index: number, rows: any) {
     this.context.emit(EMIT_EVENTS.ROW_CLICK, e, row, index, rows, this);
-  }
-
-  /**
-   * table cell click handle
-   * @param e
-   * @param colum
-   * @param index
-   * @param row
-   * @param rowIndex
-   */
-  private handleCellClick(e: MouseEvent, colum: any, index: number, row: any, rowIndex: number) {
-    this.context.emit(EMIT_EVENTS.CELL_CLICK, e, colum, index, row, rowIndex);
   }
 
   /**
@@ -537,13 +498,10 @@ export default class TableRender {
     const indeterminate = isAll && !!this.reactiveProp.rowActions.get(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_INDETERMINATE);
     const isEnable = isRowSelectEnable(this.props, { row, index, isCheckAll: isAll });
 
-    return (
-      <BkCheckbox
-        onChange={handleChecked}
-        disabled={!isEnable}
-        modelValue={row[TABLE_ROW_ATTRIBUTE.ROW_SELECTION]}
-        indeterminate={indeterminate}/>
-    );
+    return <BkCheckbox onChange={ handleChecked }
+      disabled={ !isEnable }
+      modelValue={ row[TABLE_ROW_ATTRIBUTE.ROW_SELECTION] }
+      indeterminate = { indeterminate }></BkCheckbox>;
   }
 
   private renderExpandColumn(row: any, column: Column, index: number, rows: any[]) {
@@ -555,13 +513,9 @@ export default class TableRender {
       return this.context.slots.expandCell?.({ row, column, index, rows }) ?? this.getExpandCell(row);
     };
 
-    return (
-      <span
-        class="expand-btn-action"
-        onClick={(e: MouseEvent) => this.handleRowExpandClick(row, column, index, rows, e)}>
-        {renderExpandSlot()}
-      </span>
-    );
+    return <span class="expand-btn-action" onClick={ (e: MouseEvent) => this.handleRowExpandClick(row, column, index, rows, e) }>
+      { renderExpandSlot() }
+      </span>;
   }
 
   /**
@@ -595,29 +549,27 @@ export default class TableRender {
    */
   private isColActive(colIndex: number) {
     return this.props.columnPick !== 'disabled'
-      && this.propActiveCols.some((col: IColumnActive) => col.index === colIndex && col.active);
+    && this.propActiveCols.some((col: IColumnActive) => col.index === colIndex && col.active);
   }
 
 
   /**
-   * 渲染表格Col分组
-   * @returns
-   */
+ * 渲染表格Col分组
+ * @returns
+ */
   private renderColGroup() {
-    return (
-      <colgroup>
-        {
-          (this.filterColgroups || []).map((column: GroupColumn, index: number) => {
-            const colCls = classes({
-              active: this.isColActive(index),
-            });
+    return <colgroup>
+      {
+        (this.filterColgroups || []).map((column: GroupColumn, index: number) => {
+          const colCls = classes({
+            active: this.isColActive(index),
+          });
 
-            const width: string | number = `${resolveWidth(getColumnReactWidth(column))}`.replace(/px$/i, '');
-            return <col class={ colCls } width={ width }></col>;
-          })
-        }
-      </colgroup>
-    );
+          const width: string | number = `${resolveWidth(getColumnReactWidth(column))}`.replace(/px$/i, '');
+          return <col class={ colCls } width={ width }></col>;
+        })
+      }
+      </colgroup>;
   }
 
   /**

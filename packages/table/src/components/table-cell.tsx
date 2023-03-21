@@ -131,10 +131,8 @@ export default defineComponent({
       bkEllipsisIns?.destroyInstance(refRoot.value);
     });
 
-    return () => (
-      <div class={['cell', props.column.type]} ref={ refRoot } title={ props.title }>
-        { slots.default?.() }
-      </div>
-    );
+    return () => <div class={['cell', props.column.type]} ref={ refRoot } title={ props.title }>
+      { slots.default?.() }
+    </div>;
   },
 });
