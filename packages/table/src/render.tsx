@@ -42,7 +42,7 @@ import { TablePlugins } from './plugins/index';
 import Settings from './plugins/settings';
 import useFixedColumn from './plugins/use-fixed-column';
 import { Column, GroupColumn, IColumnActive, IReactiveProp, TablePropTypes } from './props';
-import { formatPropAsArray, getColumnReactWidth, getNextSortType, getRowId, getRowText, getSortFn, isColumnHidden, isRowSelectEnable, resolveCellSpan, resolveHeadConfig, resolvePropVal, resolveWidth } from './utils';
+import { formatPropAsArray, getColumnReactWidth, getColumnSourceData, getNextSortType, getRowId, getRowSourceData, getRowText, getSortFn, isColumnHidden, isRowSelectEnable, resolveCellSpan, resolveHeadConfig, resolvePropVal, resolveWidth } from './utils';
 
 export default class TableRender {
   props: TablePropTypes;
@@ -394,10 +394,26 @@ export default class TableRender {
                     { 'expand-row': row[TABLE_ROW_ATTRIBUTE.ROW_EXPAND], 'is-last': rowIndex + rowspan >= rowLength },
                   ];
 
+                  const handleEmit = (event, type: string) => {
+                    const args = {
+                      event,
+                      row: getRowSourceData(row),
+                      column: getColumnSourceData(column),
+                      cell: {
+                        getValue: () => this.renderCell(row, column, rowIndex, rows),
+                      },
+                      rowIndex,
+                      columnIndex: index,
+                    };
+                    this.context.emit(type, args);
+                  };
+
                   return <td class={cellClass}
                     style={cellStyle}
                     key={cellKey}
-                    colspan={ colspan } rowspan={ rowspan }>
+                    colspan={ colspan } rowspan={ rowspan }
+                    onClick={ event =>  handleEmit(event, EMIT_EVENTS.CELL_CLICK)}
+                    onDblclick = { event =>  handleEmit(event, EMIT_EVENTS.CELL_DBL_CLICK)}>
                     <TableCell class={tdCtxClass}
                       column={ column }
                       row={ row }
@@ -432,7 +448,7 @@ export default class TableRender {
       return <TableRow key={rowKey}>
         <tr class={resovledClass}>
           <td colspan={ this.filterColgroups.length } rowspan={1}>
-            { this.context.slots.expandRow?.(row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA] || row) ?? <div class='expand-cell-ctx'>Expand Row</div> }
+            { this.context.slots.expandRow?.(getRowSourceData(row)) ?? <div class='expand-cell-ctx'>Expand Row</div> }
           </td>
         </tr>
       </TableRow>;
