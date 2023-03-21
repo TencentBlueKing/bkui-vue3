@@ -411,12 +411,12 @@ export default class TableRender {
                   return <td class={cellClass}
                     style={cellStyle}
                     key={cellKey}
-                    colspan={ colspan } rowspan={ rowspan }>
+                    colspan={ colspan } rowspan={ rowspan }
+                    onClick={ event =>  handleEmit(event, EMIT_EVENTS.CELL_CLICK)}
+                    onDblclick = { event =>  handleEmit(event, EMIT_EVENTS.CELL_DBL_CLICK)}>
                     <TableCell class={tdCtxClass}
                       column={ column }
                       row={ row }
-                      onClick={ event =>  handleEmit(event, EMIT_EVENTS.CELL_CLICK)}
-                      onDblclick = { event =>  handleEmit(event, EMIT_EVENTS.CELL_DBL_CLICK)}
                       parentSetting={ this.props.showOverflowTooltip }>
                       { this.renderCell(row, column, rowIndex, rows) }
                     </TableCell>

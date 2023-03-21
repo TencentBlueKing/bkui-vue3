@@ -28,7 +28,6 @@ import { defineComponent, onBeforeUnmount, onMounted, ref } from 'vue';
 import { bkEllipsisInstance } from '@bkui-vue/directives';
 import { hasOverflowEllipsis, isElement, PropTypes  } from '@bkui-vue/shared';
 
-import { CELL_EVENT_TYPES, EMIT_EVENTS } from '../const';
 import { IOverflowTooltip, overflowModeType } from '../props';
 import { observerResize } from '../utils';
 // import
@@ -46,9 +45,7 @@ export default defineComponent({
     title: PropTypes.string.def(undefined),
   },
 
-  emits: CELL_EVENT_TYPES,
-
-  setup(props, { slots, emit }) {
+  setup(props, { slots }) {
     const refRoot = ref();
     const isTipsEnabled = ref(false);
 
@@ -135,13 +132,7 @@ export default defineComponent({
       bkEllipsisIns?.destroyInstance(refRoot.value);
     });
 
-    const handleCellEvent = (e: MouseEvent, type) => {
-      emit(type, e);
-    };
-
-    return () => <div class={['cell', props.column.type]} ref={ refRoot } title={ props.title }
-    onClick={ e => handleCellEvent(e, EMIT_EVENTS.NATIVE_CLICK) }
-    onDblclick={ e => handleCellEvent(e, EMIT_EVENTS.NATIVE_DBL_CLICK) }>
+    return () => <div class={['cell', props.column.type]} ref={ refRoot } title={ props.title }>
       { slots.default?.() }
     </div>;
   },
