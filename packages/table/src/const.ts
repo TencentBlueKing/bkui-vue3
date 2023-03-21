@@ -85,7 +85,13 @@ export const enum EMIT_EVENTS {
 
   ROW_SELECT = 'select',
   ROW_SELECT_ALL = 'selectAll',
-  ROW_SELECT_CHANGE = 'selectionChange'
+  ROW_SELECT_CHANGE = 'selectionChange',
+
+  CELL_CLICK = 'cellClick',
+  CELL_DBL_CLICK = 'cellDblclick',
+
+  NATIVE_CLICK = 'click',
+  NATIVE_DBL_CLICK = 'dblclick'
 }
 
 const EMPTY = (..._args) => true;
@@ -109,6 +115,14 @@ export const EMIT_EVENT_TYPES = {
 
   [EMIT_EVENTS.SETTING_CHANGE]: EMPTY,
   [EMIT_EVENTS.SCROLL_BOTTOM]: EMPTY,
+
+  [EMIT_EVENTS.CELL_CLICK]: EMPTY,
+  [EMIT_EVENTS.CELL_DBL_CLICK]: EMPTY,
+};
+
+export const CELL_EVENT_TYPES = {
+  [EMIT_EVENTS.NATIVE_CLICK]: EMPTY,
+  [EMIT_EVENTS.NATIVE_DBL_CLICK]: EMPTY,
 };
 
 /**

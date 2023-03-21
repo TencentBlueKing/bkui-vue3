@@ -27,8 +27,9 @@
 import { debounce, get as objGet, throttle } from 'lodash';
 import ResizeObserver from 'resize-observer-polyfill';
 import { v4 as uuidv4 } from 'uuid';
+import { unref } from 'vue';
 
-import { BORDER_OPTION, BORDER_OPTIONS, COL_MIN_WIDTH, SORT_OPTION, TABLE_ROW_ATTRIBUTE } from './const';
+import { BORDER_OPTION, BORDER_OPTIONS, COL_MIN_WIDTH, COLUMN_ATTRIBUTE, SORT_OPTION, TABLE_ROW_ATTRIBUTE } from './const';
 import { Column, GroupColumn, TablePropTypes } from './props';
 
 
@@ -561,3 +562,7 @@ export const getRowId = (row, index, props) => {
 
   return index;
 };
+
+export const getRowSourceData = row => unref(row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA] || row);
+export const getColumnSourceData = column => unref(column[COLUMN_ATTRIBUTE.COL_SOURCE_DATA] || column);
+

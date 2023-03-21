@@ -30,6 +30,7 @@ import { hasOverflowEllipsis, isElement, PropTypes  } from '@bkui-vue/shared';
 
 import { IOverflowTooltip, overflowModeType } from '../props';
 import { observerResize } from '../utils';
+// import
 export default defineComponent({
   name: 'TableCell',
   props: {
