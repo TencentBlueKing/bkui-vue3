@@ -7,6 +7,7 @@
       settings
       @dblclick="handleDblClick"
       @column-sort="handleSortBy"
+      @cellClick="clickCell"
     />
   </div>
 </template>
@@ -45,6 +46,10 @@
       };
     },
     methods: {
+      clickCell(e, colum, index, row, rowIndex) {
+        console.log(e, colum, index, row, rowIndex);
+        console.log(colum.field, row[colum.field]);
+      },
       handleSortBy(arg) {
         console.log('handleSortBy', arg);
       },

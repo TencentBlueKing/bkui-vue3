@@ -139,6 +139,8 @@ export default [
     subTile: '表格事件',
     type: 'events',
     config: [
+      { name: 'cell-click', desc: '当某个单元格被点击时会触发该事件', params: 'e, colum, index, row, rowIndex' },
+      { name: 'cell-dblclick', desc: '当某个单元格被双击时会触发该事件', params: 'e, colum, index, row, rowIndex' },
       { name: 'row-click', desc: '当某一行被点击时会触发该事件', params: '(event, row, index, rows, this)' },
       { name: 'row-dblclick', desc: '当某一行被双击时会触发该事件', params: '(event, row, index, rows, this)' },
       { name: 'row-expand', desc: '当用户对某一行展开或者关闭的时候会触发该事件', params: '{ row, column, index, rows, e }' },
