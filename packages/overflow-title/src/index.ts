@@ -23,10 +23,20 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import { withInstall } from '@bkui-vue/shared';
 
-export { default as overflowTitle } from '../../overflow-title/src/directive/overflowTitle';
-export { default as mousewheel } from './mousewheel';
-export { default as clickoutside } from './clickoutside';
-export { default as bkTooltips } from './tooltips';
-export { default as bkEllipsis, createInstance as bkEllipsisInstance } from './ellipsis';
-// export { createInstance as bkEllipsisInstance } from './ellipsis';
+import OverflowTitle from './components/OverflowTitle';
+import overflowTitle from './directive/overflowTitle';
+import getActualWidthByCanvas from './utils/getActualWidthByCanvas';
+import getActualWidthByDom from './utils/getActualWidthByDom';
+
+const BkOverflowTitle = withInstall(OverflowTitle);
+export  {
+  getActualWidthByDom,
+  getActualWidthByCanvas,
+  overflowTitle,
+  OverflowTitle,
+};
+export default BkOverflowTitle;
+
+

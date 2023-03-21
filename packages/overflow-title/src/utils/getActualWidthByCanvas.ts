@@ -23,10 +23,16 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import { CSSProperties } from 'vue';
 
-export { default as overflowTitle } from '../../overflow-title/src/directive/overflowTitle';
-export { default as mousewheel } from './mousewheel';
-export { default as clickoutside } from './clickoutside';
-export { default as bkTooltips } from './tooltips';
-export { default as bkEllipsis, createInstance as bkEllipsisInstance } from './ellipsis';
-// export { createInstance as bkEllipsisInstance } from './ellipsis';
+function getActualWidthByCanvas(text: string, options: CSSProperties): number {
+  const { fontSize = 14, fontFamily = 'Microsoft YaHei' } = options;
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  ctx.font = `${fontSize}px ${fontFamily}`;
+  const metrics = ctx.measureText(text);
+  const actual = Math.abs(metrics.actualBoundingBoxLeft) + Math.abs(metrics.actualBoundingBoxRight);
+  return Math.max(metrics.width, actual);
+}
+
+export default getActualWidthByCanvas;
