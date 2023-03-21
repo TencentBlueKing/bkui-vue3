@@ -4,6 +4,7 @@
       v-model="state.tags"
       placeholder="请选择城市"
       :list="state.list"
+      @input="handleInput"
     />
     <p>请输入“州”来体验下搜索效果</p>
   </div>
@@ -26,4 +27,8 @@
       { id: 'haikou', name: '海口' },
     ],
   });
+
+  const handleInput = (val) => {
+    console.log(1, val);
+  };
 </script>
