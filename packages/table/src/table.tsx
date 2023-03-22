@@ -37,6 +37,8 @@ import TableRender from './render';
 import useColumn from './use-column';
 import { useClass, useInit } from './use-common';
 import {
+  getColumnSourceData,
+  getRowSourceData,
   observerResize,
   resolveColumnWidth,
 } from './utils';
@@ -161,8 +163,8 @@ export default defineComponent({
       .on(EVENTS.ON_ROW_EXPAND_CLICK, (args: any) => {
         const { row, column, index, rows, e } = args;
         ctx.emit(EMIT_EVENTS.ROW_EXPAND_CLICK, {
-          row: unref(row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA] || row),
-          column: unref(column[COLUMN_ATTRIBUTE.COL_SOURCE_DATA]), index, rows, e,
+          row: getRowSourceData(row),
+          column: getColumnSourceData(column), index, rows, e,
         });
         setRowExpand(row, !row[TABLE_ROW_ATTRIBUTE.ROW_EXPAND]);
       })
@@ -173,7 +175,7 @@ export default defineComponent({
         } else {
           toggleRowSelection(row, value);
           ctx.emit(EMIT_EVENTS.ROW_SELECT, {
-            row: unref(row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA] || row),
+            row: getRowSourceData(row),
             index,
             checked: value,
             data: props.data,
@@ -181,7 +183,7 @@ export default defineComponent({
         }
 
         ctx.emit(EMIT_EVENTS.ROW_SELECT_CHANGE, {
-          row: unref(row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA] || row),
+          row: getRowSourceData(row),
           isAll,
           index,
           checked: value,
