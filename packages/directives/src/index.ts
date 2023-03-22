@@ -23,8 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-
-export { default as overflowTitle } from '../../overflow-title/src/directive/overflowTitle';
+export { overflowTitle } from '@bkui-vue/overflow-title';
 export { default as mousewheel } from './mousewheel';
 export { default as clickoutside } from './clickoutside';
 export { default as bkTooltips } from './tooltips';
