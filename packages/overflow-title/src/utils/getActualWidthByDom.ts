@@ -23,9 +23,20 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-export { overflowTitle } from '@bkui-vue/overflow-title';
-export { default as mousewheel } from './mousewheel';
-export { default as clickoutside } from './clickoutside';
-export { default as bkTooltips } from './tooltips';
-export { default as bkEllipsis, createInstance as bkEllipsisInstance } from './ellipsis';
-// export { createInstance as bkEllipsisInstance } from './ellipsis';
+import { CSSProperties } from 'vue';
+
+function getActualWidthByDom(text: string, options: CSSProperties, dom: HTMLElement = document.body): number {
+  const { fontSize, fontFamily } = options || {};
+  const tempDom = document.createElement('div');
+  tempDom.style.cssText = `position: absolute;left: -999em;top:-999em;z-index: -1;text-overflow: initial;
+    ${fontSize ? `font-size:${fontSize} ;` : ''}
+    ${fontFamily ? `font-family:${fontFamily} ` : ''}
+  `;
+  tempDom.innerText = text;
+  dom.append(tempDom);
+  const { clientWidth } = tempDom;
+  dom.removeChild(tempDom);
+  return clientWidth;
+}
+
+export default getActualWidthByDom;

@@ -23,9 +23,18 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-export { overflowTitle } from '@bkui-vue/overflow-title';
-export { default as mousewheel } from './mousewheel';
-export { default as clickoutside } from './clickoutside';
-export { default as bkTooltips } from './tooltips';
-export { default as bkEllipsis, createInstance as bkEllipsisInstance } from './ellipsis';
-// export { createInstance as bkEllipsisInstance } from './ellipsis';
+import { PropType } from 'vue';
+export  type TipsType = 'tips' | 'title';
+export  type CalType = 'dom' | 'canvas';
+export default {
+  content: String,
+  type: {
+    type: String as PropType<TipsType>,
+    default: 'title',
+  },
+  calType: {
+    type: String as PropType<CalType>,
+    default: 'dom',
+  },
+  resizeable: Boolean,
+};
