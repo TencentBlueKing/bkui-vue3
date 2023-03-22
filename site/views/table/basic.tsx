@@ -29,6 +29,7 @@ import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'BaseTable',
   render() {
+    // 渲染table
     return (
       <Table
         virtualEnabled={true}
@@ -121,8 +122,6 @@ export default defineComponent({
                   value: '998',
                 },
               ],
-              btnSave: true,
-              btnReset: true,
             },
             width: '',
             minWidth: 0,
@@ -209,8 +208,6 @@ export default defineComponent({
                   value: 36,
                 },
               ],
-              btnSave: true,
-              btnReset: true,
             },
             width: '',
             minWidth: 0,
@@ -318,7 +315,7 @@ export default defineComponent({
             _unique_metric_: '998',
           },
         ]}
-        columnSort={data => console.log(data)}
+        onColumnSort={data => console.log(data)}
       />
     );
   },

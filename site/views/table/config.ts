@@ -141,8 +141,8 @@ export default [
     config: [
       { name: 'row-click', desc: '当某一行被点击时会触发该事件', params: '(event, row, index, rows)' },
       { name: 'row-dblclick', desc: '当某一行被双击时会触发该事件', params: '(event, row, index, rows)' },
-      { name: 'cell-click', desc: '当表格单元格被点击时会触发该事件, cell 提供`getValue`方法，用于获取当前单元格内容', params: '(event, row, cell, column, rowIndex, columnIndex)' },
-      { name: 'cell-dblclick', desc: '当表格单元格被双击时会触发该事件, cell 提供`getValue`方法，用于获取当前单元格内容', params: '(event, row, cell, column, rowIndex, columnIndex)' },
+      { name: 'cell-click', desc: '当表格单元格被点击时会触发该事件, cell 提供`getValue`方法，用于获取当前单元格内容', params: '{event, row, cell, column, rowIndex, columnIndex}' },
+      { name: 'cell-dblclick', desc: '当表格单元格被双击时会触发该事件, cell 提供`getValue`方法，用于获取当前单元格内容', params: '{event, row, cell, column, rowIndex, columnIndex}' },
       { name: 'row-expand', desc: '当用户对某一行展开或者关闭的时候会触发该事件', params: '{ row, column, index, rows, e }' },
       { name: 'page-limit-change', desc: '当用户切换表格每页显示条数时会出发的事件', params: 'limit' },
       { name: 'page-value-change', desc: '当用户切换表格分页时会触发的事件', params: 'current' },
