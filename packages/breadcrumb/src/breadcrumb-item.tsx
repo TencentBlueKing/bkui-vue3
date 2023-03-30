@@ -43,8 +43,8 @@ export default defineComponent({
     const { appContext } = getCurrentInstance();
     const parent = inject<IBreadcrumbProps>('breadcrumb');
     const router = appContext.config.globalProperties.$router;
-    const handleClick = () => {
-      emit('click');
+    const handleClick = (e) => {
+      emit('click', e);
       const { to, replace } = props;
       if (!to || !router) return;
       replace ? router.replace(to) : router.push(to);
