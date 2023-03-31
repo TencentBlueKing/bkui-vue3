@@ -59,8 +59,12 @@ import {
 export const useClass = (props: TablePropTypes, targetColumns: Column[], root?, reactiveProp?, pageData?: any[]) => {
   const { getColumns } = useColumn(props, targetColumns);
   const autoHeight = ref(200);
-  const hasScrollY = ref(undefined);
+  const hasScrollY = ref(false);
   const hasFooter = computed(() => props.pagination && props.data.length);
+  const hasScrollYRef = computed(() => {
+    console.log('--', hasScrollY.value);
+    return hasScrollY.value;
+  });
   const tableClass = computed(() => (classes({
     [resolveClassName('table')]: true,
     'has-footer': hasFooter.value,
@@ -211,6 +215,7 @@ export const useClass = (props: TablePropTypes, targetColumns: Column[], root?, 
     getColumnsWidthOffsetWidth,
     hasFooter,
     hasScrollY,
+    hasScrollYRef,
   };
 };
 

@@ -29,7 +29,7 @@ import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, provid
 import { debounce, resolveClassName } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
-import { COL_MIN_WIDTH, COLUMN_ATTRIBUTE, EMIT_EVENT_TYPES, EMIT_EVENTS, EVENTS, PROVIDE_KEY_INIT_COL, TABLE_ROW_ATTRIBUTE } from './const';
+import { COL_MIN_WIDTH, COLUMN_ATTRIBUTE, EMIT_EVENT_TYPES, EMIT_EVENTS, EVENTS, PROVIDE_KEY_INIT_COL, SCROLLY_WIDTH, TABLE_ROW_ATTRIBUTE } from './const';
 import usePagination from './plugins/use-pagination';
 import useScrollLoading from './plugins/use-scroll-loading';
 import { tableProps } from './props';
@@ -88,13 +88,17 @@ export default defineComponent({
       wrapperStyle,
       contentStyle,
       headStyle,
+      hasScrollYRef,
       updateBorderClass,
       resetTableHeight,
       getColumnsWidthOffsetWidth,
       hasFooter,
     } = useClass(props, targetColumns, root, reactiveSchema, pageData);
 
-    const tableRender = new TableRender(props, ctx, reactiveSchema, colgroups);
+    const styleRef = computed(() => ({
+      hasScrollY: hasScrollYRef.value,
+    }));
+    const tableRender = new TableRender(props, ctx, reactiveSchema, colgroups, styleRef);
 
     const updateOffsetRight = () => {
       const $tableContent = root.value.querySelector('.bk-table-body-content');
@@ -282,6 +286,14 @@ export default defineComponent({
       '--footer-height': hasFooter.value ? `${props.paginationHeihgt}px` : '0',
     }));
 
+    const fixedContainerStyle = computed(() => {
+      console.log('-x-x', hasScrollYRef.value);
+      return {
+        right: hasScrollYRef.value ? `${SCROLLY_WIDTH}px` : 0,
+        ...footerStyle.value,
+      };
+    });
+
     const { renderScrollLoading } = useScrollLoading(props, ctx);
     const scrollClass = computed(() => (props.virtualEnabled ? {} : { scrollXName: '', scrollYName: '' }));
 
@@ -315,7 +327,7 @@ export default defineComponent({
           }
       </VirtualRender>
       {/* @ts-ignore:next-line */}
-      <div class={ fixedWrapperClass } style={ footerStyle.value }>
+      <div class={ fixedWrapperClass } style={ fixedContainerStyle.value }>
         { renderFixedColumns(reactiveSchema.scrollTranslateX, tableOffsetRight.value) }
         <div class={ resizeColumnClass } style={ resizeColumnStyle.value }></div>
         <div class={ loadingRowClass }>{
