@@ -56,7 +56,7 @@ export default (_props, colgroups: GroupColumn[], hasScrollY?) => {
       }, hasScrollY ? SCROLLY_WIDTH : 0),
   };
 
-  const getPreColumnOffset = (fixedPos: string, column: GroupColumn) => {
+  const getPreColumnOffset = (fixedPos: string, column: GroupColumn, offset = 0) => {
     const sourceId = column[COLUMN_ATTRIBUTE.COL_UID];
     const opt = fixedPos === 'right' ? -1 : 1;
     const { length } = colgroups;
@@ -80,19 +80,19 @@ export default (_props, colgroups: GroupColumn[], hasScrollY?) => {
       }
     }
 
-    return preOffset;
+    return preOffset + offset;
   };
 
-  const resolveFixedColumnStyle = (column: GroupColumn) => {
+  const resolveFixedColumnStyle = (column: GroupColumn, hasScrollY = false) => {
     if (!column.fixed) {
       return {};
     }
     const fixedOffset: any = {
       left: 0,
-      right: 0,
+      right: hasScrollY ? SCROLLY_WIDTH : -1,
     };
     const fixedPos = resolveFixColPos(column);
-    fixedOffset[fixedPos] = getPreColumnOffset(fixedPos, column);
+    fixedOffset[fixedPos] = getPreColumnOffset(fixedPos, column, fixedOffset[fixedPos]);
 
     return {
       [fixedPos]: `${fixedOffset[fixedPos]}px`,
