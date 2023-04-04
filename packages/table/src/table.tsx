@@ -286,13 +286,10 @@ export default defineComponent({
       '--footer-height': hasFooter.value ? `${props.paginationHeihgt}px` : '0',
     }));
 
-    const fixedContainerStyle = computed(() => {
-      console.log('-x-x', hasScrollYRef.value);
-      return {
-        right: hasScrollYRef.value ? `${SCROLLY_WIDTH}px` : 0,
-        ...footerStyle.value,
-      };
-    });
+    const fixedContainerStyle = computed(() => ({
+      right: hasScrollYRef.value ? `${SCROLLY_WIDTH}px` : 0,
+      ...footerStyle.value,
+    }));
 
     const { renderScrollLoading } = useScrollLoading(props, ctx);
     const scrollClass = computed(() => (props.virtualEnabled ? {} : { scrollXName: '', scrollYName: '' }));

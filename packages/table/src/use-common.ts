@@ -61,10 +61,7 @@ export const useClass = (props: TablePropTypes, targetColumns: Column[], root?, 
   const autoHeight = ref(200);
   const hasScrollY = ref(false);
   const hasFooter = computed(() => props.pagination && props.data.length);
-  const hasScrollYRef = computed(() => {
-    console.log('--', hasScrollY.value);
-    return hasScrollY.value;
-  });
+  const hasScrollYRef = computed(() => hasScrollY.value);
   const tableClass = computed(() => (classes({
     [resolveClassName('table')]: true,
     'has-footer': hasFooter.value,
