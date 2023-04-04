@@ -455,7 +455,7 @@ export default defineComponent({
           label: handleGetLabelByValue(value),
         }))];
       } else {
-        if (!!modelValue.value || allowEmptyValues.value.includes(modelValue.value)) {
+        if (modelValue.value !== undefined || allowEmptyValues.value.includes(modelValue.value)) {
           selected.value = [{
             value: modelValue.value,
             label: handleGetLabelByValue(modelValue.value),

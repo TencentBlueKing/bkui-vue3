@@ -26,6 +26,7 @@
 
 
 import { v4 as uuidv4 } from 'uuid';
+import { ComputedRef } from 'vue';
 
 import BkCheckbox from '@bkui-vue/checkbox';
 import { DownShape, RightShape } from '@bkui-vue/icon';
@@ -34,7 +35,7 @@ import { classes } from '@bkui-vue/shared';
 
 import TableCell from './components/table-cell';
 import TableRow from './components/table-row';
-import { COLUMN_ATTRIBUTE, EMIT_EVENTS, EVENTS, TABLE_ROW_ATTRIBUTE } from './const';
+import { COLUMN_ATTRIBUTE, EMIT_EVENTS, EVENTS, SCROLLY_WIDTH, TABLE_ROW_ATTRIBUTE } from './const';
 import BodyEmpty from './plugins/body-empty';
 import HeadFilter from './plugins/head-filter';
 import HeadSort from './plugins/head-sort';
@@ -51,8 +52,11 @@ export default class TableRender {
   colgroups: GroupColumn[];
   uuid: string;
   events: Map<string, any[]>;
+  styleRef: ComputedRef<{
+    hasScrollY: boolean;
+  }>;
   public plugins: TablePlugins;
-  constructor(props, ctx, reactiveProp: IReactiveProp, colgroups: GroupColumn[]) {
+  constructor(props, ctx, reactiveProp: IReactiveProp, colgroups: GroupColumn[], styleRef) {
     this.props = props;
     this.context = ctx;
     this.reactiveProp = reactiveProp;
@@ -60,6 +64,7 @@ export default class TableRender {
     this.plugins = new TablePlugins(props, ctx);
     this.uuid = uuidv4();
     this.events = new Map<string, any[]>();
+    this.styleRef = styleRef;
   }
 
   get propActiveCols(): IColumnActive[] {
@@ -320,6 +325,17 @@ export default class TableRender {
       }, {});
 
     const { resolveFixedColumnStyle } = useFixedColumn(this.props, this.colgroups);
+
+    const getScrollFix = () => {
+      if (this.styleRef.value.hasScrollY) {
+        const fixStyle = {
+          width: `${SCROLLY_WIDTH + 2}px`,
+          right: '-1px',
+        };
+        return <th style={ fixStyle } class="column_fixed"></th>;
+      }
+    };
+
     // @ts-ignore:next-line
     return <thead style={rowStyle}>
       <TableRow>
@@ -327,12 +343,13 @@ export default class TableRender {
           {
             this.filterColgroups.map((column: Column, index: number) => <th colspan={1} rowspan={1}
               class={ this.getHeadColumnClass(column, index) }
-              style = { resolveFixedColumnStyle(column) }
+              style = { resolveFixedColumnStyle(column, this.styleRef.value.hasScrollY) }
               onClick={ () => this.handleColumnHeadClick(index, column) }
               { ...resolveEventListener(column) }>
                 { renderHeadCell(column, index) }
               </th>)
           }
+          { getScrollFix() }
           </tr>
         </TableRow>
       </thead>;
