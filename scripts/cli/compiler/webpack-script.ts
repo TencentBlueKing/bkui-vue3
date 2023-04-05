@@ -162,6 +162,9 @@ export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILi
       }) : undefined,
       new webpack.ProgressPlugin(),
     ].filter(Boolean) as any,
+    // experiments: {
+    //   outputModule: true,
+    // },
   });
   return new Promise<void>((resolve, reject) => {
     compiler.run((err: Error | null | undefined, stats: Stats | undefined) => {

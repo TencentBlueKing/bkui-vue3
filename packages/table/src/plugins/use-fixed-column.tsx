@@ -72,10 +72,10 @@ export default (_props, colgroups: GroupColumn[], hasScrollY?) => {
 
       if (curFixedPos === fixedPos && sourceId !== id) {
         const width = getColumnReactWidth(current);
-        preOffset += width;
+        preOffset = preOffset + width;
       }
 
-      if (start === 0 || sourceId === id) {
+      if (sourceId === id) {
         break;
       }
     }
@@ -83,6 +83,12 @@ export default (_props, colgroups: GroupColumn[], hasScrollY?) => {
     return preOffset + offset;
   };
 
+  /**
+   * 用于解析固定列偏移位置
+   * @param column 当前需要计算的列
+   * @param hasScrollY 是否有纵向滚动条
+   * @returns
+   */
   const resolveFixedColumnStyle = (column: GroupColumn, hasScrollY = false) => {
     if (!column.fixed) {
       return {};
@@ -116,6 +122,12 @@ export default (_props, colgroups: GroupColumn[], hasScrollY?) => {
     return { isExist, colPos, column: col };
   }));
 
+  /**
+   * 用于渲染固定列悬浮模块区域
+   * @param scrollX
+   * @param offsetRight
+   * @returns
+   */
   const renderFixedColumns = (scrollX?, offsetRight?) => fixedColumns.value
     .map(({ isExist, colPos, column }) => (isExist ? '' : <div
           class={ resolveColumnClass(column, scrollX, offsetRight) }
