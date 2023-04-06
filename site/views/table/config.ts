@@ -165,6 +165,7 @@ export default [
       { name: 'getSelection', desc: '用于多选表格，获取用户的选择', params: '' },
       { name: 'toggleRowSelection', desc: '用于多选表格，切换某一行的选中状态，如果使用了第二个参数，则是设置这一行选中与否（selected 为 true 则选中）', params: 'row, selected' },
       { name: 'toggleAllSelection', desc: '用于多选表格，切换所有行的选中状态', params: '' },
+      { name: 'scrollTo', desc: '指定滚动位置', params: '({ left = 0, top = 0 })' },
       { name: 'setRowExpand', desc: '用于可展开表格，切换某一行的展开状态，如果使用了第二个参数，则是设置这一行展开与否（expanded 为 true 则展开）', params: 'row, expanded' },
     ],
   },
