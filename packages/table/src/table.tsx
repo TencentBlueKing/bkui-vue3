@@ -213,6 +213,10 @@ export default defineComponent({
       updateOffsetRight();
     };
 
+    const scrollTo = (option = { left: 0, top: 0 }) => {
+      refVirtualRender.value?.scrollTo?.(option);
+    };
+
     onMounted(() => {
       observerIns = observerResize(root.value, () => {
         if (!root.value) {
@@ -243,6 +247,7 @@ export default defineComponent({
       toggleRowSelection,
       getSelection,
       clearSort,
+      scrollTo,
     });
 
     const tableBodyClass = computed(() => ({
