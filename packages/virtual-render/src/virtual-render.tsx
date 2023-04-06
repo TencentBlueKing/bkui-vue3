@@ -235,8 +235,14 @@ export default defineComponent({
       afterListDataReset();
     };
 
+    const scrollTo = (option = { left: 0, top: 0 }) => {
+      const { left, top } = option;
+      refRoot.value.scrollTo(left, top);
+    };
+
     ctx.expose({
       reset,
+      scrollTo,
     });
 
     return () => h(
