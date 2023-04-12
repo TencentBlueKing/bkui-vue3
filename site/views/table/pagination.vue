@@ -4,6 +4,7 @@
       :columns="columns"
       :data="tableData"
       :pagination="pagination"
+      :pagination-heihgt="60"
       height="100%"
     />
   </div>
@@ -12,7 +13,7 @@
 <script>
   import { defineComponent } from 'vue';
 
-  import { DATA_COLUMNS } from './options';
+  import { DATA_FIX_COLUMNS  } from './options';
   const DATA_ROWS = new Array(Math.ceil(Math.random() * 9000) + 1000).fill('')
     .map((_, index) => ({
       ip: `${index}--192.168.0.x`,
@@ -26,7 +27,7 @@
     data() {
       return {
         tableData: DATA_ROWS,
-        columns: DATA_COLUMNS.map(item => ({ ...item })),
+        columns: DATA_FIX_COLUMNS.map(item => ({ ...item })),
         pagination: { count: DATA_ROWS.length, limit: 10 },
       };
     },

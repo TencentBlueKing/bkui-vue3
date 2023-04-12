@@ -102,9 +102,9 @@
           }
 
           &.expand-cell {
+            display: flex;
             padding: 0;
             text-overflow: unset;
-            display: flex;
             align-items: center;
             justify-content: center;
           }
@@ -230,7 +230,8 @@
   }
 
   .@{bk-prefix}-table-footer {
-    line-height: 40px;
+    height: var(--footer-height);
+    line-height: var(--footer-height);
 
     &.is-hidden {
       display: none;
@@ -304,9 +305,9 @@
     position: absolute;
     top: 0;
     right: 0;
-    bottom: 0;
+    bottom: var(--footer-height);
     left: 0;
-    width: 100%;
+    // width: 100%;
     pointer-events: none;
 
     .column_fixed {
@@ -324,6 +325,7 @@
       &.column_fixed_right {
         top: 0;
         right: 0;
+        z-index: 1;
 
         &.shadow {
           box-shadow: 0 0 10px rgb(0 0 0 / 12%);

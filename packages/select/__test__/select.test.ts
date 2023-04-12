@@ -213,7 +213,7 @@ describe('Select.tsx', () => {
         };
       },
     });
-    expect(wrapper.findAllComponents({ name: 'Group' })).toHaveLength(2);
+    expect(wrapper.findAllComponents({ name: 'OptionGroup' })).toHaveLength(2);
     await wrapper.findComponent({ name: 'Option' }).trigger('click');
     expect(wrapper.findAllComponents('.is-selected.bk-select-option')).toHaveLength(2);
     expect(wrapper.vm.selectValue).toEqual(['test']);
@@ -553,6 +553,41 @@ describe('Select.tsx', () => {
     wrapper.vm.seletValue = '';
     await nextTick();
     expect((wrapper.find('input[type="text"]').element as any).value).toBe('');
+    wrapper.unmount();
+  });
+
+  // 空值
+  test('empty value', async () => {
+    const wrapper = await mount({
+      components: {
+        BkSelect,
+        BkOption,
+      },
+      template: `
+        <BkSelect v-model="seletValue">
+          <BkOption v-for="item in options" :value="item.value" :label="item.label"></BkOption>
+        </BkSelect>
+      `,
+      data() {
+        return {
+          seletValue: '',
+          options: [
+            {
+              value: 1,
+              label: 'test1',
+            },
+            {
+              value: 0,
+              label: 'test2',
+            },
+          ],
+        };
+      },
+    });
+    const options = wrapper.findAllComponents({ name: 'Option' });
+    await options[1].trigger('click');
+    await nextTick();
+    expect((wrapper.find('.bk-input--text').element as any).value).toBe('test2');
     wrapper.unmount();
   });
 });

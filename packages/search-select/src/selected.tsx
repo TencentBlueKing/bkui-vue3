@@ -25,10 +25,10 @@
 */
 import { defineComponent, PropType, ref } from 'vue';
 
-import { Close } from '@bkui-vue/icon';
+import { Error } from '@bkui-vue/icon';
 
 import SearchSelectInput from './input';
-import { GetMenuListFunc, ICommonItem, ISearchItem, SearchInputMode, SelectedItem, useSearchSelectInject, ValidateValuesFunc } from './utils';
+import { GetMenuListFunc, ICommonItem, ISearchItem, SearchInputMode, SelectedItem, useSearchSelectInject, ValidateValuesFunc, ValueBehavior } from './utils';
 ;
 export default defineComponent({
   name: 'SearchSelected',
@@ -51,6 +51,7 @@ export default defineComponent({
     },
     getMenuList: Function as PropType<GetMenuListFunc>,
     validateValues: Function as PropType<ValidateValuesFunc>,
+    valueBehavior: String as PropType<ValueBehavior>,
   },
   emits: ['delete'],
   setup(_props, { emit }) {
@@ -105,6 +106,7 @@ export default defineComponent({
             clickOutside={this.handleInputOutside}
             getMenuList={this.getMenuList}
             validateValues={this.validateValues}
+            valueBehavior={this.valueBehavior}
             onAdd={v => this.handleAddSelected(v, index)}
             onFocus={this.handleInputFocus}/>
         </div>
@@ -114,7 +116,7 @@ export default defineComponent({
             <span class="selected-name" onClick={e => this.handleEditSeleted(e, item, index)}>
               {item.inputInnerText}
             </span>
-            <Close class="selected-clear" onClick={() => this.handleDeleteSelected(index)}/>
+            <Error class="selected-clear" onClick={() => this.handleDeleteSelected(index)}/>
           </li>);
     return <>
       {

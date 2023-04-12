@@ -38,13 +38,13 @@ import {
 } from 'vue';
 
 import { AngleUpFill } from '@bkui-vue/icon';
-import { classes, PropTypes } from '@bkui-vue/shared';
+import { classes, PropTypes, resolveClassName } from '@bkui-vue/shared';
 
 import { optionGroupKey, selectKey, useRegistry } from './common';
 import { OptionInstanceType } from './type';
 
 export default defineComponent({
-  name: 'Group',
+  name: 'OptionGroup',
   props: {
     label: PropTypes.string.def(''),
     disabled: PropTypes.bool.def(false),
@@ -97,12 +97,12 @@ export default defineComponent({
   },
   render() {
     const groupClass = classes({
-      'bk-option-group': true,
+      [resolveClassName('option-group')]: true,
       collapsible: this.collapsible,
       disabled: this.disabled,
     });
     const groupLabelClass = classes({
-      'bk-option-group-label': true,
+      [resolveClassName('option-group-label')]: true,
       collapsible: this.collapsible,
     });
     const groupLabelIconClass = classes({
@@ -125,7 +125,7 @@ export default defineComponent({
             )
         }
       </li>
-      <ul class="bk-option-group-content" v-show={!this.groupCollapse}>
+      <ul class={resolveClassName('option-group-content')} v-show={!this.groupCollapse}>
         {this.$slots.default?.()}
       </ul>
     </ul>;

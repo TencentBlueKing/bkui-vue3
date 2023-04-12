@@ -37,7 +37,7 @@ import {
   watch,
 } from 'vue';
 
-import { scrollTop } from '@bkui-vue/shared';
+import { resolveClassName, scrollTop } from '@bkui-vue/shared';
 
 import { timePanelProps } from '../props';
 import { firstUpperCase } from '../utils';
@@ -232,11 +232,11 @@ export default defineComponent({
 
     function getCellCls(cell) {
       return [
-        'bk-time-picker-cells-cell',
+        resolveClassName('time-picker-cells-cell'),
         {
-          ['bk-time-picker-cells-cell-selected']: cell.selected,
-          ['bk-time-picker-cells-cell-focused']: cell.focused,
-          ['bk-time-picker-cells-cell-disabled']: cell.disabled,
+          [resolveClassName('time-picker-cells-cell-selected')]: cell.selected,
+          [resolveClassName('time-picker-cells-cell-focused')]: cell.focused,
+          [resolveClassName('time-picker-cells-cell-disabled')]: cell.disabled,
         },
       ];
     }
@@ -366,17 +366,17 @@ export default defineComponent({
     return (
       <div
         class={[
-          'bk-time-picker-cells',
-          this.showSeconds ? 'bk-time-picker-cells-with-seconds' : '',
+          resolveClassName('time-picker-cells'),
+          this.showSeconds ? resolveClassName('time-picker-cells-with-seconds') : '',
         ]}
       >
-        <div class="bk-time-picker-cells-title-wrapper">
-          <div class={['bk-time-picker-cells-title', this.focusedColumn === 0 ? 'active' : '']} style={this.styles}>时</div>
-          <div class={['bk-time-picker-cells-title', this.focusedColumn === 1 ? 'active' : '']} style={this.styles}>分</div>
-          <div class={['bk-time-picker-cells-title', this.focusedColumn === 2 ? 'active' : '']} v-show={this.showSeconds} style={this.styles}>秒</div>
+        <div class={resolveClassName('time-picker-cells-title-wrapper')}>
+          <div class={[resolveClassName('time-picker-cells-title'), this.focusedColumn === 0 ? 'active' : '']} style={this.styles}>时</div>
+          <div class={[resolveClassName('time-picker-cells-title'), this.focusedColumn === 1 ? 'active' : '']} style={this.styles}>分</div>
+          <div class={[resolveClassName('time-picker-cells-title'), this.focusedColumn === 2 ? 'active' : '']} v-show={this.showSeconds} style={this.styles}>秒</div>
         </div>
-        <div class="bk-time-picker-cells-list" ref="hoursRef" style={this.styles}>
-          <ul class="bk-time-picker-cells-ul">
+        <div class={resolveClassName('time-picker-cells-list')} ref="hoursRef" style={this.styles}>
+          <ul class={resolveClassName('time-picker-cells-ul')}>
             {
               this.hoursList.map(item => (
                 <li class={this.getCellCls(item)} v-show={!item.hide} onClick={() => this.handleClick('hours', item)}>{this.padTime(item.text)}</li>
@@ -384,8 +384,8 @@ export default defineComponent({
             }
           </ul>
         </div>
-        <div class="bk-time-picker-cells-list" ref="minutesRef" style={this.styles}>
-          <ul class="bk-time-picker-cells-ul">
+        <div class={resolveClassName('time-picker-cells-list')} ref="minutesRef" style={this.styles}>
+          <ul class={resolveClassName('time-picker-cells-ul')}>
             {
               this.minutesList.map(item => (
                 <li class={this.getCellCls(item)} v-show={!item.hide} onClick={() => this.handleClick('minutes', item)}>{this.padTime(item.text)}</li>
@@ -393,8 +393,8 @@ export default defineComponent({
             }
           </ul>
         </div>
-        <div class="bk-time-picker-cells-list" v-show={this.showSeconds} ref="secondsRef" style={this.styles}>
-          <ul class="bk-time-picker-cells-ul">
+        <div class={resolveClassName('time-picker-cells-list')} v-show={this.showSeconds} ref="secondsRef" style={this.styles}>
+          <ul class={resolveClassName('time-picker-cells-ul')}>
             {
               this.secondsList.map(item => (
                 <li class={this.getCellCls(item)} v-show={!item.hide} onClick={() => this.handleClick('seconds', item)}>{this.padTime(item.text)}</li>

@@ -59,8 +59,9 @@ import {
 export const useClass = (props: TablePropTypes, targetColumns: Column[], root?, reactiveProp?, pageData?: any[]) => {
   const { getColumns } = useColumn(props, targetColumns);
   const autoHeight = ref(200);
-  const hasScrollY = ref(undefined);
+  const hasScrollY = ref(false);
   const hasFooter = computed(() => props.pagination && props.data.length);
+  const hasScrollYRef = computed(() => hasScrollY.value);
   const tableClass = computed(() => (classes({
     [resolveClassName('table')]: true,
     'has-footer': hasFooter.value,
@@ -139,7 +140,7 @@ export const useClass = (props: TablePropTypes, targetColumns: Column[], root?, 
     const resolveHeight = resolvePropHeight(props.height, autoHeight.value);
     const resolveHeadHeight = getHeadHeight();
     const resolveMinHeight = resolvePropHeight(props.minHeight, autoHeight.value);
-    const resolveFooterHeight = props.pagination && props.data.length ? LINE_HEIGHT : 0;
+    const resolveFooterHeight = props.pagination && props.data.length ? props.paginationHeihgt : 0;
     const contentHeight = resolveHeight - resolveHeadHeight - resolveFooterHeight;
     const height = props.height !== 'auto' ? `${contentHeight}px` : false;
     const minHeight = resolveMinHeight - resolveHeadHeight - resolveFooterHeight;
@@ -170,6 +171,9 @@ export const useClass = (props: TablePropTypes, targetColumns: Column[], root?, 
   };
 
   const updateBorderClass = (root: HTMLElement) => {
+    if (!root) {
+      return;
+    }
     const querySelector = props.virtualEnabled
       ? `.${resolveClassName('virtual-section')}`
       : `.${resolveClassName('table-body-content')}`;
@@ -208,6 +212,7 @@ export const useClass = (props: TablePropTypes, targetColumns: Column[], root?, 
     getColumnsWidthOffsetWidth,
     hasFooter,
     hasScrollY,
+    hasScrollYRef,
   };
 };
 

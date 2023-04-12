@@ -48,7 +48,7 @@ import {
   InputBehaviorType,
   off,
   on,
-  PropTypes,
+  PropTypes, resolveClassName,
   SizeEnum,
   TagThemeType,
   useFormItem,
@@ -109,6 +109,7 @@ export default defineComponent({
     enableVirtualRender: PropTypes.bool.def(false), // 是否开启虚拟滚动（List模式下才会生效）
     allowEmptyValues: PropTypes.array.def([]), // 允许的空值作为options选项
     autoFocus: PropTypes.bool.def(false), // 挂载的时候是否自动聚焦输入框
+    keepSearchValue: PropTypes.bool.def(false), // 隐藏popover时是否保留搜索内容
   },
   emits: ['update:modelValue', 'change', 'toggle', 'clear', 'scroll-end', 'focus', 'blur'],
   setup(props, { emit }) {
@@ -139,6 +140,7 @@ export default defineComponent({
       popoverOptions,
       allowEmptyValues,
       autoFocus,
+      keepSearchValue,
     } = toRefs(props);
 
     const formItem = useFormItem();
@@ -278,7 +280,9 @@ export default defineComponent({
       && isPopoverShow.value);
     watch(isPopoverShow, (isShow) => {
       if (!isShow) {
-        searchKey.value = '';
+        if (!keepSearchValue.value) {
+          searchKey.value = '';
+        }
       } else {
         setTimeout(() => {
           focusInput();
@@ -451,7 +455,7 @@ export default defineComponent({
           label: handleGetLabelByValue(value),
         }))];
       } else {
-        if (!!modelValue.value || allowEmptyValues.value.includes(modelValue.value)) {
+        if (modelValue.value !== undefined || allowEmptyValues.value.includes(modelValue.value)) {
           selected.value = [{
             value: modelValue.value,
             label: handleGetLabelByValue(modelValue.value),
@@ -603,7 +607,7 @@ export default defineComponent({
   },
   render() {
     const selectClass = classes({
-      'bk-select': true,
+      [resolveClassName('select')]: true,
       'popover-show': this.isPopoverShow,
       'is-disabled': this.isDisabled,
       'is-focus': this.isFocus,
@@ -666,24 +670,24 @@ export default defineComponent({
     };
     const renderSelectTrigger = () => (
         <div
-          class="bk-select-trigger"
+          class={resolveClassName('select-trigger')}
           style={{ height: this.autoHeight && this.collapseTags ? '32px' : '' }}
           ref="triggerRef"
           onClick={this.handleTogglePopover}
           onMouseenter={this.setHover}
           onMouseleave={this.cancelHover}>
-          {renderTriggerInput()}
+          { this.$slots.trigger?.({ selected: this.selected }) || renderTriggerInput()}
         </div>
     );
     const renderSelectContent = () => (
-        <div class="bk-select-content-wrapper" ref="contentRef">
+        <div class={resolveClassName('select-content-wrapper')} ref="contentRef">
           {
             this.filterable && !this.inputSearch && (
-              <div class="bk-select-search-wrapper">
+              <div class={resolveClassName('select-search-wrapper')}>
                 <Search class="icon-search" width={16} height={16} />
                 <input
                   ref="searchRef"
-                  class="bk-select-search-input"
+                  class={resolveClassName('select-search-input')}
                   placeholder={this.searchPlaceholder}
                   v-model={this.searchKey}
                 />
@@ -693,7 +697,7 @@ export default defineComponent({
           {
             !this.isShowSelectContent
             && (
-            <div class="bk-select-empty">
+            <div class={resolveClassName('select-empty')}>
               {
                 this.searchLoading
                 && <Loading class="mr5" theme='primary' loading={true} mode="spin" size="mini"></Loading>
@@ -701,15 +705,15 @@ export default defineComponent({
               <span>{this.curContentText}</span>
             </div>)
           }
-          <div class="bk-select-content">
-            <div class="bk-select-dropdown"
+          <div class={resolveClassName('select-content')}>
+            <div class={resolveClassName('select-dropdown')}
               style={{ maxHeight: `${this.scrollHeight}px` }}
               onScroll={this.handleScroll}
             >
-              <ul class="bk-select-options" v-show={this.isShowSelectContent}>
+              <ul class={resolveClassName('select-options')} v-show={this.isShowSelectContent}>
                 {
                   this.isShowSelectAll && (
-                    <li class="bk-select-option"
+                    <li class={resolveClassName('select-option')}
                       onMouseenter={this.handleSelectedAllOptionMouseEnter}
                       onClick={this.handleToggleAll}>
                       {this.selectAllText}
@@ -739,7 +743,7 @@ export default defineComponent({
                 }
                 {this.$slots.default?.()}
                 {this.scrollLoading && (
-                  <li class="bk-select-options-loading">
+                  <li class={resolveClassName('select-options-loading')}>
                     <Loading class="spinner mr5" theme='primary' loading={true} mode="spin" size="mini"></Loading>
                     <span>{this.loadingText}</span>
                   </li>
@@ -747,7 +751,7 @@ export default defineComponent({
               </ul>
             </div>
             {this.$slots.extension
-              && (<div class="bk-select-extension">{this.$slots.extension()}</div>)}
+              && (<div class={resolveClassName('select-extension')}>{this.$slots.extension()}</div>)}
           </div>
         </div>
     );

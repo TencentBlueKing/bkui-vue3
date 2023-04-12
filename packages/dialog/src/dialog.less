@@ -1,16 +1,17 @@
+@import '@bkui-vue/styles/themes/themes.less';
 @import '@bkui-vue/modal/modal.less';
 
-.bk-modal-wrapper {
-  &.bk-dialog-wrapper {
+.@{bk-prefix}-modal-wrapper {
+  &.@{bk-prefix}-dialog-wrapper {
     position: relative;
 
     * {
       box-sizing: border-box;
-      -webkit-tap-highlight-color: rgba(0,0,0,0);
+      -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
     }
 
     &.scroll-able {
-      .bk-modal-content {
+      .@{bk-prefix}-modal-content {
         overflow: auto;
       }
     }
@@ -19,7 +20,7 @@
       position: absolute;
     }
 
-    .bk-dialog-tool {
+    .@{bk-prefix}-dialog-tool {
       position: absolute;
       top: 0;
       right: 0;
@@ -33,18 +34,16 @@
 
     .content-dragging {
       user-select: none;
-      user-select: none;
-      user-select: none;
     }
 
-    .bk-dialog-header {
+    .@{bk-prefix}-dialog-header {
       padding: 24px;
       font-size: 20px;
 
-      .bk-header-icon {
+      .@{bk-prefix}-header-icon {
         text-align: center;
 
-        .bk-info-icon {
+        .@{bk-prefix}-info-icon {
           display: inline-block;
           font-size: 48px;
 
@@ -62,7 +61,7 @@
         }
       }
 
-      .bk-dialog-title {
+      .@{bk-prefix}-dialog-title {
         display: inline-block;
         width: 100%;
         overflow: hidden;
@@ -72,7 +71,7 @@
       }
     }
 
-    .bk-modal-content {
+    .@{bk-prefix}-modal-content {
       height: calc(100% - 79px);
       max-height: calc(100vh - 300px);
       min-height: 100px;
@@ -83,7 +82,7 @@
     }
 
     &.fullscreen {
-      .bk-modal-content {
+      .@{bk-prefix}-modal-content {
         max-height: calc(100vh - 137px);
       }
 
@@ -92,17 +91,17 @@
       }
     }
 
-    .bk-modal-body {
+    .@{bk-prefix}-modal-body {
       padding-bottom: 58px;
     }
 
     &.no-footer {
-      .bk-modal-body {
+      .@{bk-prefix}-modal-body {
         padding-bottom: 0;
       }
     }
 
-    .bk-modal-footer {
+    .@{bk-prefix}-modal-footer {
       position: absolute;
       right: 0;
       bottom: 0;
@@ -113,21 +112,21 @@
       border-top: 1px solid #dcdee5;
       border-radius: 2px;
 
-      .bk-dialog-perv {
+      .@{bk-prefix}-dialog-perv {
         float: left;
         margin-right: 8px;
       }
 
-      .bk-dialog-next {
+      .@{bk-prefix}-dialog-next {
         float: left;
       }
 
-      .bk-dialog-cancel {
+      .@{bk-prefix}-dialog-cancel {
         margin-left: 8px;
       }
     }
 
-    .bk-modal-close {
+    .@{bk-prefix}-modal-close {
       position: absolute;
       top: 5px;
       right: 5px;

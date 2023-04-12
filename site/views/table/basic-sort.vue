@@ -44,6 +44,7 @@
     },
 
     methods: {
+
       handleSortBy(arg) {
         console.log('handleSortBy', arg);
       },

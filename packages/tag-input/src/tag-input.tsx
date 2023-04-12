@@ -64,6 +64,7 @@ export default defineComponent({
     'blur',
     'remove',
     'removeAll',
+    'input',
   ],
   setup(props, { emit }) {
     const formItem = useFormItem();
@@ -155,7 +156,7 @@ export default defineComponent({
       nextTick(() => {
         initData();
       });
-    });
+    }, { deep: true });
 
     watch(() => props.modelValue, (val) => {
       if (!shallowCompareArray(tagList.value, val)) {
@@ -420,6 +421,7 @@ export default defineComponent({
       state.isEdit = true;
       // 重置下拉菜单选中信息
       state.focusItemIndex = allowCreate ? -1 : 0;
+      emit('input', curInputValue.value);
     };
 
     const handleFocus = () => {
