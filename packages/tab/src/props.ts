@@ -40,13 +40,13 @@ export enum PositionEnum {
   RIGHT = 'right',
   TOP = 'top',
 }
-const tabPositionType = toType<`${PositionEnum}`>('position', {}).def(PositionEnum.TOP);
+export const TabPositionType = toType<`${PositionEnum}`>('position', {}).def(PositionEnum.TOP);
 
 export enum SortTypeEnum {
   REPLACE = 'replace',
   INSERT = 'insert',
 }
-const sortTypeUnion = toType<`${SortTypeEnum}`>('sortType', {}).def(SortTypeEnum.REPLACE);
+export const SortTypeUnion = toType<`${SortTypeEnum}`>('sortType', {}).def(SortTypeEnum.REPLACE);
 
 export const tabNavEventProps = {
   tabAdd: {
@@ -98,11 +98,11 @@ export const tabEventProps = {
 export const tabProps = {
   active: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(''),
   type: toType<`${TabTypeEnum}`>('type', {}).def(TabTypeEnum.BORDER_CARD),
-  tabPosition: tabPositionType,
+  tabPosition: TabPositionType,
   closable: Boolean,
   addable: Boolean,
   sortable: Boolean,
-  sortType: sortTypeUnion,
+  sortType: SortTypeUnion,
   labelHeight: PropTypes.number.def(50),
   scrollStep: PropTypes.number.def(200),
   extCls: PropTypes.string.def(''),
@@ -119,11 +119,11 @@ export const tabNavProps = {
     type: Array as PropType<VNode[]>,
     default: () => [],
   },
-  tabPosition: tabPositionType,
+  tabPosition: TabPositionType,
   closable: Boolean,
   addable: Boolean,
   sortable: Boolean,
-  sortType: sortTypeUnion,
+  sortType: SortTypeUnion,
   labelHeight: PropTypes.number.def(50),
   scrollStep: PropTypes.number.def(200),
   validateActive: PropTypes.bool.def(true),
