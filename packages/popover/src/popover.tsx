@@ -26,8 +26,9 @@
 */
 import { computed, defineComponent, onBeforeUnmount, onMounted, ref, Teleport, toRefs, watch } from 'vue';
 
-import { clickoutside } from '@bkui-vue/directives';
 import { RenderType } from '@bkui-vue/shared';
+
+import clickoutside from '../../directives/src/clickoutside';
 
 import Arrow from './arrow';
 import { EMIT_EVENT_TYPES } from './const';
@@ -36,7 +37,6 @@ import { PopoverProps } from './props';
 import Reference from './reference';
 import Root from './root';
 import usePopoverInit from './use-popover-init';
-
 export default defineComponent({
   name: 'Popover',
   components: {

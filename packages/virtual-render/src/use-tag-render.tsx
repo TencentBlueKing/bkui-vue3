@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { h, resolveDirective, withDirectives } from 'vue';
+import { h, ref, resolveDirective, withDirectives } from 'vue';
 
 import { VirtualRenderProps } from './props';
 
@@ -45,6 +45,15 @@ export default (props: VirtualRenderProps, ctx) => {
     onlyScroll: props.scrollEvent,
   };
 
+  const refRoot = ref(null);
+
+  const scrollTo = ({ left = 0, top = 0 }) => {
+    refRoot.value.scrollTo(left, top);
+  };
+
+  ctx.expose({
+    scrollTo,
+  });
 
   return {
     rendAsTag: () => h(
@@ -52,6 +61,7 @@ export default (props: VirtualRenderProps, ctx) => {
       renderAs,
       {
         class: props.className,
+        ref: refRoot,
       },
       [
         ctx.slots.beforeContent?.() ?? '',
