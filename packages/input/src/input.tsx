@@ -373,7 +373,7 @@ export default defineComponent({
               {(props.modelValue ?? '').toString().length}/
               <span>{ceilMaxLength.value}</span>
             </p>
-          )}
+        )}
         {isNumberInput.value && props.showControl && (
           <div class={getCls('number-control')}>
             <DownSmall class={incControlCls.value} onClick={handleInc}/>
