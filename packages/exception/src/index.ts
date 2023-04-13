@@ -25,6 +25,12 @@
 */
 import { withInstall } from '@bkui-vue/shared';
 
-import Component from './exception';
-const BkException = withInstall(Component);
+import Exception, { ExceptionEnum, SceneEnum } from './exception';
+
+const BkException = withInstall(Exception);
+export {
+  Exception,
+  ExceptionEnum,
+  SceneEnum,
+};
 export default BkException;
