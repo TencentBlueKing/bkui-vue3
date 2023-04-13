@@ -40,7 +40,7 @@ export const inputType = {
   clearable: PropTypes.bool,
   disabled: PropTypes.bool,
   readonly: PropTypes.bool,
-  placeholder: PropTypes.string.def('Enter'),
+  placeholder: PropTypes.string.def('请输入'),
   prefixIcon: PropTypes.string,
   suffixIcon: PropTypes.string,
   suffix: PropTypes.string,
@@ -77,13 +77,15 @@ export const enum EVENTS {
   COMPOSITIONUPDATE = 'compositionupdate',
   COMPOSITIONEND = 'compositionend',
 }
-function EventFunction(_value: any, _evt?: KeyboardEvent | Event) {
+
+function EventFunction(_value: any, _evt?: KeyboardEvent|Event) {
   return true;
 }
 
 function CompositionEventFunction(evt: CompositionEvent) {
   return evt;
 }
+
 export const inputEmitEventsType = {
   [EVENTS.UPDATE]: EventFunction,
   [EVENTS.FOCUS]: (evt: FocusEvent) => evt,
@@ -133,16 +135,16 @@ export default defineComponent({
       inputClsPrefix.value,
     ));
     const suffixIconMap = {
-      search: () => <Search />,
-      password: () => <Eye onClick={handleVisibleChange} />,
+      search: () => <Search/>,
+      password: () => <Eye onClick={handleVisibleChange}/>,
     };
     const suffixCls = getCls('suffix-icon');
     const suffixIcon = computed(() => {
       const icon = suffixIconMap[props.type];
       if (pwdVisible.value) {
-        return <Unvisible onClick={handleVisibleChange} class={suffixCls} />;
+        return <Unvisible onClick={handleVisibleChange} class={suffixCls}/>;
       }
-      return icon ? <icon class={suffixCls} /> : null;
+      return icon ? <icon class={suffixCls}/> : null;
     });
     const isNumberInput = computed(() => props.type === 'number');
     const ceilMaxLength = computed(() => Math.floor(props.maxlength));
@@ -206,6 +208,7 @@ export default defineComponent({
         formItem?.validate?.('blur');
       }
     }
+
     // 事件句柄生成器
     function eventHandler(eventName) {
       return (e) => {
@@ -230,6 +233,7 @@ export default defineComponent({
         ctx.emit(eventName, e.target.value, e);
       };
     }
+
     const [
       handleKeyup,
       handleKeydown,
@@ -359,7 +363,7 @@ export default defineComponent({
         )}
         {!isTextArea.value && props.clearable && !!props.modelValue && (
           <span class={clearCls.value} onClick={clear}>
-            <Close />
+            <Close/>
           </span>
         )}
         {suffixIcon.value}
@@ -369,11 +373,11 @@ export default defineComponent({
               {(props.modelValue ?? '').toString().length}/
               <span>{ceilMaxLength.value}</span>
             </p>
-        )}
+          )}
         {isNumberInput.value && props.showControl && (
           <div class={getCls('number-control')}>
-            <DownSmall class={incControlCls.value} onClick={handleInc} />
-            <DownSmall class={decControlCls.value} onClick={handleDec} />
+            <DownSmall class={incControlCls.value} onClick={handleInc}/>
+            <DownSmall class={decControlCls.value} onClick={handleDec}/>
           </div>
         )}
         {ctx.slots?.suffix?.()
