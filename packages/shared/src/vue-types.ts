@@ -71,7 +71,7 @@ export function renderDirectiveType() {
   return toType<`${RenderDirectiveEnum}`>('renderDirective', {
     default: RenderDirectiveEnum.SHOW,
   });
-};
+}
 
 export enum AlignEnum {
   LEFT = 'left',
@@ -82,7 +82,7 @@ export function alignType() {
   return toType<`${AlignEnum}`>('align', {
     default: AlignEnum.LEFT,
   }).def(AlignEnum.LEFT);
-};
+}
 
 export enum ThemeEnum {
   PRIMARY = 'primary',
@@ -112,7 +112,7 @@ export enum PlacementEnum {
 
 export function placementType() {
   return toType<`${PlacementEnum}`>('placement', {}).def(PlacementEnum.BOTTOM);
-};
+}
 
 /** 弹层触发选项  */
 export enum TriggerEnum {
@@ -122,7 +122,7 @@ export enum TriggerEnum {
 }
 export function triggerType() {
   return toType<`${TriggerEnum}`>('trigger', {}).def(TriggerEnum.HOVER);
-};
+}
 
 /** 内容渲染类型：目前是在popover内容渲染时使用 */
 export enum RenderType {
@@ -132,7 +132,7 @@ export enum RenderType {
 
 export function renderType() {
   return toType<`${RenderType}`>('trigger', {}).def(RenderType.AUTO);
-};
+}
 
 export enum DialogTypeEnum {
   SHOW = 'show',
@@ -160,7 +160,7 @@ export enum LineStyleEnum {
 }
 export function lineStyleType() {
   return toType<`${LineStyleEnum}`>('lineType', {}).def(LineStyleEnum.DASHED);
-};
+}
 
 export enum TagThemeEnum {
   SUCCESS = 'success',
@@ -179,7 +179,7 @@ export enum InputBehaviorEnum {
 }
 export function InputBehaviorType() {
   return toType<`${InputBehaviorEnum}`>('behavior', {}).def(InputBehaviorEnum.NORMAL);
-};
+}
 
 export class PropTypes extends propTypesNS {
   static size() {

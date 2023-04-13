@@ -35,19 +35,25 @@ export default defineComponent({
   props,
   emits: ['change', 'update:modelValue', 'after-leave', 'before-enter'],
   setup(props, { emit, slots }) {
-    const localActiveItems = inject<Ref<(string | number)[]>>('localActiveItems');
-    const handleItemClick = inject<(value: Partial<{name: string}>) => void>('handleItemClick');
+    let localActiveItems = null;
+    let handleItemClick = null;
     const isActive = ref(props.modelValue);
     watch(() => props.modelValue, (newVal) => {
       isActive.value = newVal;
     });
-    watch(localActiveItems, (newVal) => {
-      if (newVal?.length) {
-        isActive.value = newVal.includes(props.name);
-      }
-    }, {
-      immediate: true,
-    });
+    // 如果单独使用，避免报 injection "*" not found. 相比getCurrentInstance()?.parent.type.name 方法简洁
+    if (!props.alone) {
+      localActiveItems = inject<Ref<(string|number)[]>>('localActiveItems');
+      handleItemClick = inject<(value: Partial<{ name: string }>) => void>('handleItemClick');
+      watch(localActiveItems, (newVal) => {
+        if (newVal?.length) {
+          isActive.value = newVal.includes(props.name);
+        }
+      }, {
+        immediate: true,
+      });
+    }
+
 
     function clickItem(props) {
       const { disabled, name, itemClick } = props;
@@ -108,8 +114,8 @@ export default defineComponent({
       }
 
       return (
-        <div class='bk-collapse-header'>
-          <span class='bk-collapse-title'>
+        <div class="bk-collapse-header">
+          <span class="bk-collapse-title">
             {title}
           </span>
           {<AngleRight class={`bk-collapse-icon ${(isActive.value && 'rotate-icon') || ''}`}/>}
