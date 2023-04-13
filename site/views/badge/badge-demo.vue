@@ -30,6 +30,17 @@
       </bk-button>
     </bk-badge>
     <bk-badge
+      position="top-right"
+      :count="999"
+      theme="danger"
+      dot
+      style="margin-right: 40px"
+    >
+      <bk-button theme="primary">
+        top-right
+      </bk-button>
+    </bk-badge>
+    <bk-badge
       position="bottom-right"
       :count="'数字字符串'"
       :radius="'0px'"
