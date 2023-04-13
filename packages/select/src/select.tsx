@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
 */
 
-import { merge } from 'lodash';
+import { isEqual, merge } from 'lodash';
 import { PopoverPropTypes } from 'popover/src/props';
 import {
   computed,
@@ -152,7 +152,7 @@ export default defineComponent({
     const selectTagInputRef = ref<SelectTagInputType>();
     const virtualRenderRef = ref();
     const popoverRef = ref();
-    const optionsMap = ref<Map<string, OptionInstanceType>>(new Map());
+    const optionsMap = ref<Map<any, OptionInstanceType>>(new Map());
     const options = computed(() => [...optionsMap.value.values()]);
     const groupsMap = ref<Map<string, GroupInstanceType>>(new Map());
     const selected = ref<ISelected[]>([]);
@@ -444,8 +444,19 @@ export default defineComponent({
       }
     };
     // options存在 > 上一次选择的label > 当前值
-    const handleGetLabelByValue = (value: string) => optionsMap.value?.get(value)?.label
-      || cacheSelectedMap.value[value] || value;
+    const handleGetLabelByValue = (value: string) => {
+      // 处理options value为对象类型，引用类型变更后，回显不对问题
+      let tmpValue = value;
+      if (typeof tmpValue === 'object') {
+        for (const key of optionsMap.value.keys()) {
+          if (isEqual(key, tmpValue)) {
+            tmpValue = key;
+            break;
+          }
+        }
+      }
+      return  optionsMap.value?.get(tmpValue)?.label || cacheSelectedMap.value[tmpValue] || tmpValue;
+    };
     // 设置selected选项
     const handleSetSelectedData = () => {
       // 同步内部value值
