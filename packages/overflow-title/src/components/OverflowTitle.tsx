@@ -31,7 +31,7 @@ import {
   ref, shallowRef,
 } from 'vue';
 
-import BKPopover  from '@bkui-vue/popover';
+import BKPopover from '@bkui-vue/popover';
 import { debounce } from '@bkui-vue/shared';
 import { HTMLAttributes } from '@vue/runtime-dom';
 
@@ -65,7 +65,7 @@ export default defineComponent({
         let textWidth = 0;
 
         if (props.calType === 'dom') {
-          textWidth = getActualWidthByDom(textRef.value.textContent, null, boxRef.value);
+          textWidth = getActualWidthByDom(textRef.value?.textContent, null, boxRef.value);
         } else {
           const { fontSize, fontFamily } = getComputedStyle(boxRef.value);
           textWidth = getActualWidthByCanvas(contentText.value as string, { fontSize, fontFamily });
@@ -73,7 +73,7 @@ export default defineComponent({
         if (textWidth > clientWidth) {
           isShowTips.value = true;
           if (props.type === 'title') {
-            textProps.value = { title: textRef.value.innerText };
+            textProps.value = { title: textRef?.value?.innerText ?? props.content };
           }
         }
       });
@@ -105,7 +105,7 @@ export default defineComponent({
                 ref="textRef"
                 class="text-ov"
                 {...this.textProps}
-                >
+              >
                 {this.contentText}
               </div>
             ),

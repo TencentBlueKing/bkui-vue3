@@ -26,6 +26,9 @@
 import { CSSProperties } from 'vue';
 
 function getActualWidthByDom(text: string, options: CSSProperties, dom: HTMLElement = document.body): number {
+  if (!dom) {
+    return;
+  }
   const { fontSize, fontFamily } = options || {};
   const tempDom = document.createElement('div');
   tempDom.style.cssText = `position: absolute;left: -999em;top:-999em;z-index: -1;text-overflow: initial;
