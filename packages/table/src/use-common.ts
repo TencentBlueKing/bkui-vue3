@@ -371,6 +371,7 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
     });
 
     reactiveSchema.rowActions.set(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_INDETERMINATE, hasChecked && hasUnchecked);
+    reactiveSchema.rowActions.set(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_ALL, hasChecked && !hasUnchecked);
   };
 
   const isSelectionEnable = () => props.columns.some(col => col.type === 'selection');
