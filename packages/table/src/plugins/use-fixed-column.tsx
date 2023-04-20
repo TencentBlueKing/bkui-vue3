@@ -59,14 +59,15 @@ export default (_props, colgroups: GroupColumn[], hasScrollY?) => {
   const getPreColumnOffset = (fixedPos: string, column: GroupColumn, offset = 0) => {
     const sourceId = column[COLUMN_ATTRIBUTE.COL_UID];
     const opt = fixedPos === 'right' ? -1 : 1;
-    const { length } = colgroups;
+    const filterColumns = colgroups.filter(col => !col.isHidden);
+    const { length } = filterColumns;
     let start = fixedPos === 'right' ? length * opt : 1;
     let preOffset = 0;
 
     for (start; ;) {
       start = start + -1 * opt;
       const index = Math.abs(start);
-      const current = colgroups[index];
+      const current = filterColumns[index];
       const curFixedPos = resolveFixColPos(current);
       const id = current[COLUMN_ATTRIBUTE.COL_UID];
 
