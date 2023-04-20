@@ -1229,6 +1229,44 @@
   resolved "https://registry.npmjs.org/@hutson/parse-repository-url/-/parse-repository-url-3.0.2.tgz"
   integrity sha512-H9XAx3hc0BQHY6l+IFSWHDySypcXsvsuLhgYLUGywmJ5pswRVQJUHpOsobnLYp2ZUaUlKiKDrgWWhosOwAEM8Q==
 
+"@intlify/core-base@9.2.2":
+  version "9.2.2"
+  resolved "https://registry.yarnpkg.com/@intlify/core-base/-/core-base-9.2.2.tgz#5353369b05cc9fe35cab95fe20afeb8a4481f939"
+  integrity sha512-JjUpQtNfn+joMbrXvpR4hTF8iJQ2sEFzzK3KIESOx+f+uwIjgw20igOyaIdhfsVVBCds8ZM64MoeNSx+PHQMkA==
+  dependencies:
+    "@intlify/devtools-if" "9.2.2"
+    "@intlify/message-compiler" "9.2.2"
+    "@intlify/shared" "9.2.2"
+    "@intlify/vue-devtools" "9.2.2"
+
+"@intlify/devtools-if@9.2.2":
+  version "9.2.2"
+  resolved "https://registry.yarnpkg.com/@intlify/devtools-if/-/devtools-if-9.2.2.tgz#b13d9ac4b4e2fe6d2e7daa556517a8061fe8bd39"
+  integrity sha512-4ttr/FNO29w+kBbU7HZ/U0Lzuh2cRDhP8UlWOtV9ERcjHzuyXVZmjyleESK6eVP60tGC9QtQW9yZE+JeRhDHkg==
+  dependencies:
+    "@intlify/shared" "9.2.2"
+
+"@intlify/message-compiler@9.2.2":
+  version "9.2.2"
+  resolved "https://registry.yarnpkg.com/@intlify/message-compiler/-/message-compiler-9.2.2.tgz#e42ab6939b8ae5b3d21faf6a44045667a18bba1c"
+  integrity sha512-IUrQW7byAKN2fMBe8z6sK6riG1pue95e5jfokn8hA5Q3Bqy4MBJ5lJAofUsawQJYHeoPJ7svMDyBaVJ4d0GTtA==
+  dependencies:
+    "@intlify/shared" "9.2.2"
+    source-map "0.6.1"
+
+"@intlify/shared@9.2.2":
+  version "9.2.2"
+  resolved "https://registry.yarnpkg.com/@intlify/shared/-/shared-9.2.2.tgz#5011be9ca2b4ab86f8660739286e2707f9abb4a5"
+  integrity sha512-wRwTpsslgZS5HNyM7uDQYZtxnbI12aGiBZURX3BTR9RFIKKRWpllTsgzHWvj3HKm3Y2Sh5LPC1r0PDCKEhVn9Q==
+
+"@intlify/vue-devtools@9.2.2":
+  version "9.2.2"
+  resolved "https://registry.yarnpkg.com/@intlify/vue-devtools/-/vue-devtools-9.2.2.tgz#b95701556daf7ebb3a2d45aa3ae9e6415aed8317"
+  integrity sha512-+dUyqyCHWHb/UcvY1MlIpO87munedm3Gn6E9WWYdWrMuYLcoIoOEVDWSS8xSwtlPU+kA+MEQTP6Q1iI/ocusJg==
+  dependencies:
+    "@intlify/core-base" "9.2.2"
+    "@intlify/shared" "9.2.2"
+
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.1.0"
   resolved "https://registry.npmjs.org/@istanbuljs/load-nyc-config/-/load-nyc-config-1.1.0.tgz"
@@ -2511,6 +2549,18 @@
   resolved "https://registry.npmjs.org/@types/linkify-it/-/linkify-it-3.0.2.tgz"
   integrity sha512-HZQYqbiFVWufzCwexrvh694SOim8z2d+xJl5UNamcvQFejLY/2YUtzXHYi3cHdI7PMlS8ejH2slRAOJQ32aNbA==
 
+"@types/lodash-es@~4.17.7":
+  version "4.17.7"
+  resolved "https://registry.yarnpkg.com/@types/lodash-es/-/lodash-es-4.17.7.tgz#22edcae9f44aff08546e71db8925f05b33c7cc40"
+  integrity sha512-z0ptr6UI10VlU6l5MYhGwS4mC8DZyYer2mCoyysZtSF7p26zOX8UpbrV0YpNYLGS8K4PUFIyEr62IMFFjveSiQ==
+  dependencies:
+    "@types/lodash" "*"
+
+"@types/lodash@*", "@types/lodash@~4.14.194":
+  version "4.14.194"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.194.tgz#b71eb6f7a0ff11bff59fc987134a093029258a76"
+  integrity sha512-r22s9tAS7imvBt2lyHC9B8AGwWnXaYb1tY09oyLkXDs4vArpYJzw09nj8MLx5VfciBPGIb+ZwG0ssYnEPJxn/g==
+
 "@types/markdown-it@^12.2.3":
   version "12.2.3"
   resolved "https://registry.npmjs.org/@types/markdown-it/-/markdown-it-12.2.3.tgz"
@@ -2587,6 +2637,11 @@
   integrity sha512-FvnCJljyxhPM3gkRgWmxmDZyAQSiBQQWLI0A0VFL0K7W1oRUrPJSqNO0NvTnLkBcotdlp3lKvaT0JrnyRDkzOg==
   dependencies:
     "@types/node" "*"
+
+"@types/web-bluetooth@^0.0.16":
+  version "0.0.16"
+  resolved "https://registry.yarnpkg.com/@types/web-bluetooth/-/web-bluetooth-0.0.16.tgz#1d12873a8e49567371f2a75fe3e7f7edca6662d8"
+  integrity sha512-oh8q2Zc32S6gd/j50GowEjKLoOVOwHP/bWVjKJInBwQqdOYMdPrf1oVlelTlyfFK3CKxL1uahMDAr+vy8T7yMQ==
 
 "@types/webpack-bundle-analyzer@~4.4.1":
   version "4.4.1"
@@ -2872,6 +2927,11 @@
   resolved "https://registry.npmjs.org/@vue/devtools-api/-/devtools-api-6.1.4.tgz"
   integrity sha512-IiA0SvDrJEgXvVxjNkHPFfDx6SXw0b/TUkqMcDZWNg9fnCAHbTpoo59YfJ9QLFkwa3raau5vSlRVzMSLDnfdtQ==
 
+"@vue/devtools-api@^6.2.1":
+  version "6.5.0"
+  resolved "https://registry.yarnpkg.com/@vue/devtools-api/-/devtools-api-6.5.0.tgz#98b99425edee70b4c992692628fa1ea2c1e57d07"
+  integrity sha512-o9KfBeaBmCKl10usN4crU53fYtC1r7jJwdGKjPT24t348rHxgfpZ0xL3Xm/gLUYnc0oTp8LAmrxOeLyu6tbk2Q==
+
 "@vue/eslint-config-standard@~6.1.0":
   version "6.1.0"
   resolved "https://registry.npmjs.org/@vue/eslint-config-standard/-/eslint-config-standard-6.1.0.tgz"
@@ -2983,6 +3043,28 @@
     css-tree "^2.0.1"
     source-map "0.5.6"
     tsconfig "^7.0.0"
+
+"@vueuse/core@~10.0.2":
+  version "10.0.2"
+  resolved "https://registry.yarnpkg.com/@vueuse/core/-/core-10.0.2.tgz#d2cd237e19bda278ae8d4f2e4a9e2e8c273bdcef"
+  integrity sha512-/UGc2cXbxbeIFLDSJyHUjI9QZ4CJJkhiJe9TbKNPSofcWmYhhUgJ+7iw9njXTKu/Xc3Z6UeXVR9fosW1+cyrnQ==
+  dependencies:
+    "@types/web-bluetooth" "^0.0.16"
+    "@vueuse/metadata" "10.0.2"
+    "@vueuse/shared" "10.0.2"
+    vue-demi ">=0.14.0"
+
+"@vueuse/metadata@10.0.2":
+  version "10.0.2"
+  resolved "https://registry.yarnpkg.com/@vueuse/metadata/-/metadata-10.0.2.tgz#538bfe28d60335456084e783508361e07ef1e613"
+  integrity sha512-APSjlABrV+Q74c+FR0kFETvcN9W2pAaT3XF3WwqWUuk4srmVxv7DY4WshZxK2KYk1+MVY0Fus6J1Hk/JXVm6Aw==
+
+"@vueuse/shared@10.0.2":
+  version "10.0.2"
+  resolved "https://registry.yarnpkg.com/@vueuse/shared/-/shared-10.0.2.tgz#82a90e22a0809428e0710206bb7761acaa057ddf"
+  integrity sha512-7W2l6qZaFvla3zAeEVo8hNHkNRKCezJa3JjZAKv3K4KsevXobHhVNr+RHaOVNK/6ETpFmtqiK+0pMIADbHjjag==
+  dependencies:
+    vue-demi ">=0.14.0"
 
 "@webassemblyjs/ast@1.11.1":
   version "1.11.1"
@@ -7800,6 +7882,16 @@ locate-path@^6.0.0:
   dependencies:
     p-locate "^5.0.0"
 
+lodash-es@~4.17.21:
+  version "4.17.21"
+  resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.21.tgz#43e626c46e6591b7750beb2b50117390c609e3ee"
+  integrity sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==
+
+lodash-unified@~1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/lodash-unified/-/lodash-unified-1.0.3.tgz#80b1eac10ed2eb02ed189f08614a29c27d07c894"
+  integrity sha512-WK9qSozxXOD7ZJQlpSqOT+om2ZfcT4yO+03FuzAHD0wF6S0l0090LRPDx3vhTTLZ8cFKpBn+IOcVXK6qOcIlfQ==
+
 lodash._reinterpolate@^3.0.0:
   version "3.0.0"
   resolved "https://registry.npmjs.org/lodash._reinterpolate/-/lodash._reinterpolate-3.0.0.tgz"
@@ -10086,7 +10178,7 @@ source-map@0.5.6:
   resolved "https://registry.npmjs.org/source-map/-/source-map-0.5.6.tgz"
   integrity sha1-dc449SvwczxafwwRjYEzSiu19BI=
 
-source-map@^0.6.0, source-map@^0.6.1, source-map@~0.6.0, source-map@~0.6.1:
+source-map@0.6.1, source-map@^0.6.0, source-map@^0.6.1, source-map@~0.6.0, source-map@~0.6.1:
   version "0.6.1"
   resolved "https://registry.npmjs.org/source-map/-/source-map-0.6.1.tgz"
   integrity sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==
@@ -11215,6 +11307,11 @@ vite@~2.9.1:
   optionalDependencies:
     fsevents "~2.3.2"
 
+vue-demi@>=0.14.0:
+  version "0.14.0"
+  resolved "https://registry.yarnpkg.com/vue-demi/-/vue-demi-0.14.0.tgz#dcfd9a9cf9bb62ada1582ec9042372cf67ca6190"
+  integrity sha512-gt58r2ogsNQeVoQ3EhoUAvUsH9xviydl0dWJj7dabBC/2L4uBId7ujtCwDRD0JhkGsV1i0CtfLAeyYKBht9oWg==
+
 vue-eslint-parser@^8.0.0, vue-eslint-parser@^8.0.1, vue-eslint-parser@~8.3.0:
   version "8.3.0"
   resolved "https://registry.npmjs.org/vue-eslint-parser/-/vue-eslint-parser-8.3.0.tgz"
@@ -11227,6 +11324,16 @@ vue-eslint-parser@^8.0.0, vue-eslint-parser@^8.0.1, vue-eslint-parser@~8.3.0:
     esquery "^1.4.0"
     lodash "^4.17.21"
     semver "^7.3.5"
+
+vue-i18n@~9.2.2:
+  version "9.2.2"
+  resolved "https://registry.yarnpkg.com/vue-i18n/-/vue-i18n-9.2.2.tgz#aeb49d9424923c77e0d6441e3f21dafcecd0e666"
+  integrity sha512-yswpwtj89rTBhegUAv9Mu37LNznyu3NpyLQmozF3i1hYOhwpG8RjcjIFIIfnu+2MDZJGSZPXaKWvnQA71Yv9TQ==
+  dependencies:
+    "@intlify/core-base" "9.2.2"
+    "@intlify/shared" "9.2.2"
+    "@intlify/vue-devtools" "9.2.2"
+    "@vue/devtools-api" "^6.2.1"
 
 vue-router@~4.0.14:
   version "4.0.15"
