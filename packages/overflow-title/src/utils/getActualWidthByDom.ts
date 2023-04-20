@@ -27,7 +27,7 @@ import { CSSProperties } from 'vue';
 
 function getActualWidthByDom(text: string, options: CSSProperties, dom: HTMLElement = document.body): number {
   if (!dom) {
-    return;
+    return 0;
   }
   const { fontSize, fontFamily } = options || {};
   const tempDom = document.createElement('div');
