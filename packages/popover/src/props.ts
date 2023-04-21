@@ -62,7 +62,7 @@ export const PopoverProps = {
    * manual： 通过isShow控制显示、隐藏
    */
   // trigger: triggerType(),
-  trigger: PropTypes.oneOfType([triggerType(), PropTypes.string]),
+  trigger: PropTypes.oneOfType([triggerType(), PropTypes.string]).def('hover'),
 
   /**
    * content 渲染方式
