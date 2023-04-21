@@ -15,9 +15,11 @@
 <script setup>
   import BkUpload from '@bkui-vue/upload';
 
+  import babyqImgUrl from '../../../imgs/babyq.png';
+
   const files = [
     {
-      url: '../../imgs/babyq.png',
+      url: babyqImgUrl,
     },
   ];
 
