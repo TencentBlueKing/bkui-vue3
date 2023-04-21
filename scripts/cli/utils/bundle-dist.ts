@@ -23,14 +23,19 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
+
+import glob from 'fast-glob';
 import { existsSync, readdirSync, rmdirSync, statSync, unlinkSync } from 'fs';
-import { resolve } from 'path';
+import { basename, resolve } from 'path';
+import type { OutputOptions, RollupBuild } from 'rollup';
+import { rollup } from 'rollup';
+import esbuild from 'rollup-plugin-esbuild';
 import { build } from 'vite';
 
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
 
-import { COMPONENT_URL, DIST_URL } from '../compiler/helpers';
+import { COMPONENT_URL, DIST_URL, LOCALE_URL } from '../compiler/helpers';
 
 import { replaceThemeTovariable } from './bundle-components';
 
@@ -125,4 +130,52 @@ export const buildDistStyles = async () => {
   });
   resetTheme();
   rmDir(resolve(DIST_URL, './assets'));
+};
+
+function writeBundles(bundle: RollupBuild, options: OutputOptions[]) {
+  return Promise.all(options.map(option => bundle.write(option)));
+}
+
+export const buildDistLocale = async (minify: boolean) => {
+  const files = await glob('**/*.ts', {
+    cwd: resolve(LOCALE_URL),
+    absolute: true,
+  });
+  return Promise.all(files.map(async (file) => {
+    const filename = basename(file, '.ts');
+    const name = filename;
+
+    const bundle = await rollup({
+      input: file,
+      plugins: [
+        esbuild({
+          minify,
+          sourceMap: minify,
+          target: 'es2018',
+        }),
+      ],
+    });
+    await writeBundles(bundle, [
+      {
+        format: 'umd',
+        file: resolve(
+          resolve(DIST_URL, 'locale'),
+          // `${name}.umd${minify ? '.min' : ''}.js`,
+          `${name}.umd.js`,
+        ),
+        exports: 'default',
+        name: `bkuiVueLocale${name}`,
+        sourcemap: minify,
+      },
+      {
+        format: 'esm',
+        file: resolve(
+          resolve(DIST_URL, 'locale'),
+          // `${name}.esm${minify ? '.min' : ''}.js`,
+          `${name}.esm.js`,
+        ),
+        sourcemap: minify,
+      },
+    ]);
+  }));
 };

@@ -34,7 +34,7 @@ export const COMPONENT_URL = resolve(BKUI_DIR, './packages');
 export const DIST_URL =  resolve(BKUI_DIR, './dist');
 export const LIB_URL =  resolve(BKUI_DIR, './lib');
 export const THEME_LESS_URL = resolve(COMPONENT_URL, 'styles/src/themes/themes.less');
-
+export const LOCALE_URL = resolve(COMPONENT_URL, './locale/src/lang');
 
 // 编译转换*.d.ts
 export const compilerLibDir = async (dir: string): Promise<any> => {

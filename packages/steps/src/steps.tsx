@@ -28,7 +28,7 @@ import { defineComponent, ExtractPropTypes, onMounted, ref, watch } from 'vue';
 import { toType } from 'vue-types';
 
 import { Circle, Done, Error } from '@bkui-vue/icon';
-import { classes, directionType, lineStyleType, PropTypes, ThemeEnum } from '@bkui-vue/shared';
+import { classes, directionType, lineStyleType, PropTypes, ThemeEnum, useLocale } from '@bkui-vue/shared';
 
 enum StatusEnum {
   UNKNOWN = '',
@@ -57,6 +57,10 @@ export default defineComponent({
   emits: ['update:curStep', 'click'],
 
   setup(props: StepsPropTypes, { emit }) {
+    const { t, lang } = useLocale();
+    console.error(t('bk.steps.step1'));
+    console.error(lang.value);
+    console.error(44);
     const defaultSteps = ref([]);
 
     const updateSteps = (steps) => {
@@ -84,15 +88,15 @@ export default defineComponent({
     const init = () => {
       defaultSteps.value.splice(0, defaultSteps.value.length, ...[
         {
-          title: '步骤1',
+          title: t('bk.steps.step1'),
           icon: 1,
         },
         {
-          title: '步骤2',
+          title: t('bk.steps.step2'),
           icon: 2,
         },
         {
-          title: '步骤3',
+          title: t('bk.steps.step3'),
           icon: 3,
         },
       ]);

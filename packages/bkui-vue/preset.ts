@@ -26,7 +26,9 @@
 import { App } from 'vue';
 
 import * as components from './components';
-const createInstall = (prefix = 'Bk') => (app: App) => {
+const createInstall = (prefix = 'Bk') => (app: App, ...args) => {
+  console.error(app);
+  console.error(11, args);
   const pre = app.config.globalProperties.bkUIPrefix || prefix;
   Object
     .keys(components).forEach((key) => {

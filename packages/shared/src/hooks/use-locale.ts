@@ -28,8 +28,8 @@ import { get } from 'lodash-unified';
 import type { InjectionKey, Ref } from 'vue';
 import { computed, inject, isRef, ref, unref } from 'vue';
 
-import type { Language } from '@bkui-vue/locale';
-import English from '@bkui-vue/locale/lang/en';
+import { en as English/* , zhCn as Chinese */ } from '@bkui-vue/locale';
+import type { Language } from '@bkui-vue/locale/src';
 import type { MaybeRef } from '@vueuse/core';
 
 export type TranslatorOption = Record<string, string | number>;

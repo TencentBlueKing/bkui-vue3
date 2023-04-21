@@ -24,12 +24,16 @@
 * IN THE SOFTWARE.
 */
 import { Task, TaskRunner } from '../typings/task';
-import { buildDistScript, buildDistStyles } from '../utils/bundle-dist';
+import { buildDistLocale, buildDistScript, buildDistStyles } from '../utils/bundle-dist';
 
 const compileTaskRunner: TaskRunner<undefined> = async () => {
   process.env.NODE_ENV = 'production';
   await buildDistStyles();
   await buildDistScript();
+  await Promise.all([
+    // buildDistLocale(false),
+    buildDistLocale(true),
+  ]);
 };
 
 export default new Task<undefined>('compile dist', compileTaskRunner);
