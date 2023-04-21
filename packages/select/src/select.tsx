@@ -173,8 +173,8 @@ export default defineComponent({
       popoverRef.value?.updatePopover(null, popoverConfig.value);
     });
 
-    // list模式下搜索后的值
-    const filterList = computed(() => (
+    // 虚拟滚动模式下搜索后的值
+    const virtualList = computed(() => (
       isRemoteSearch.value
         ? list.value
         : list.value
@@ -592,7 +592,7 @@ export default defineComponent({
       searchKey,
       isShowSelectAll,
       virtualHeight,
-      filterList,
+      virtualList,
       isCollapseTags,
       popoverConfig,
       focusInput,
@@ -734,7 +734,7 @@ export default defineComponent({
                 {
                   this.enableVirtualRender
                     ? <VirtualRender
-                        list={this.filterList}
+                        list={this.virtualList}
                         height={this.virtualHeight}
                         lineHeight={32}
                         ref="virtualRenderRef">
@@ -749,7 +749,7 @@ export default defineComponent({
                               )),
                           }}
                       </VirtualRender>
-                    : this.filterList
+                    : this.list
                       .map(item => <Option value={item[this.idKey]} label={item[this.displayKey]}></Option>)
                 }
                 {this.$slots.default?.()}

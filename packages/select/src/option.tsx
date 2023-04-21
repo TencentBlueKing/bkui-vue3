@@ -44,7 +44,7 @@ export default defineComponent({
   name: 'Option',
   props: {
     value: PropTypes.any,
-    label: PropTypes.string.def(''),
+    label: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(''),
     disabled: PropTypes.bool.def(false),
   },
   setup(props) {
@@ -107,7 +107,7 @@ export default defineComponent({
         {
           this.$slots.default?.()
           ?? (
-            <span class={resolveClassName('select-option-item')} title={this.label}>
+            <span class={resolveClassName('select-option-item')} title={String(this.label)}>
               {this.label}
             </span>
           )
