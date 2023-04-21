@@ -51,7 +51,7 @@ export const PopoverProps = {
    * 组件显示位置
    */
   // placement: placementType().def(PlacementEnum.TOP),
-  placement: PropTypes.oneOfType([placementType().def(PlacementEnum.TOP), PropTypes.string]),
+  placement: PropTypes.oneOfType([placementType().def(PlacementEnum.TOP), PropTypes.string]).def(PlacementEnum.TOP),
 
   // 'dark', 'light'
   theme: PropTypes.string.def('dark'),
@@ -62,7 +62,7 @@ export const PopoverProps = {
    * manual： 通过isShow控制显示、隐藏
    */
   // trigger: triggerType(),
-  trigger: PropTypes.oneOfType([triggerType(), PropTypes.string]),
+  trigger: PropTypes.oneOfType([triggerType(), PropTypes.string]).def('hover'),
 
   /**
    * content 渲染方式
