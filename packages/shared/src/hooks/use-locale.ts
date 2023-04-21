@@ -28,8 +28,8 @@ import { get } from 'lodash-unified';
 import type { InjectionKey, Ref } from 'vue';
 import { computed, inject, isRef, ref, unref } from 'vue';
 
+import type { Language } from '@bkui-vue/locale';
 import { en as English/* , zhCn as Chinese */ } from '@bkui-vue/locale';
-import type { Language } from '@bkui-vue/locale/src';
 import type { MaybeRef } from '@vueuse/core';
 
 export type TranslatorOption = Record<string, string | number>;
@@ -62,9 +62,11 @@ export const buildLocaleContext = (locale: MaybeRef<Language>): LocaleContext =>
   };
 };
 
-export const localeContextKey: InjectionKey<Ref<Language | undefined>> =  Symbol('localeContextKey');
+export const localeContextKey: InjectionKey<Ref<Language | undefined>> = Symbol('localeContextKey');
 
 export const useLocale = (localeOverrides?: Ref<Language | undefined>) => {
+  console.error(88, inject(localeContextKey));
   const locale = localeOverrides || inject(localeContextKey, ref())!;
+  console.error('useLocale', locale);
   return buildLocaleContext(computed(() => locale.value || English));
 };

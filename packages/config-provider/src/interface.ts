@@ -24,31 +24,15 @@
 * IN THE SOFTWARE.
 */
 
-import { App } from 'vue';
+import { ExtractPropTypes, InjectionKey, PropType, Ref } from 'vue';
 
-import { provideGlobalConfig } from '@bkui-vue/config-provider';
+import type { Language } from '@bkui-vue/locale';
 
-// import type { ConfigProviderContext } from '@bkui-vue/config-provider';
-import * as components from './components';
+export const configProviderProps = {
+  locale: Object as PropType<Language | null>,
+} as const;
 
-const createInstall = (prefix = 'Bk') => (app: App, options?: any) => {
-  const pre = app.config.globalProperties.bkUIPrefix || prefix;
-  Object
-    .keys(components).forEach((key) => {
-      const component = components[key];
-      if ('install' in component) {
-        app.use(component, { prefix: pre });
-      } else {
-        app.component(pre + key, components[key]);
-      }
-    });
-  if (options) {
-    console.error(444, options);
-    provideGlobalConfig(options);
-  }
-};
-export default {
-  createInstall,
-  install: createInstall(),
-  version: '0.0.1',
-};
+export type ConfigProviderProps = ExtractPropTypes<typeof configProviderProps>;
+
+export type ConfigProviderContext = Partial<ConfigProviderProps>;
+export const configProviderContextKey: InjectionKey<Ref<ConfigProviderContext>> = Symbol();

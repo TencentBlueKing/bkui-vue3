@@ -46,10 +46,10 @@ export const compilerLibDir = async (dir: string): Promise<any> => {
         if (!(/\/src$/.test(dir) && !/\/src$/.test(url))) {
           buildDir(url);
         } else {
-          const list =  readdirSync(url).filter(url => /\.d.ts$/.test(join(dir, url)));
+          const list = readdirSync(url).filter(url => /\.d.ts$/.test(join(dir, url)));
           list.forEach((file) => {
             const fileUrl = join(url, file);
-            let chunk =  readFileSync(fileUrl, 'utf-8');
+            let chunk = readFileSync(fileUrl, 'utf-8');
             if (chunk.includes('@bkui-vue')) {
               chunk = chunk.replace('@bkui-vue', fileUrl.split('/src/')[1].replace(/([^/]+)/gmi, '..'));
             }
