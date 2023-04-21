@@ -171,8 +171,8 @@ export default defineComponent({
         {
           file.status !== 'uploading'
           && <div class={`${classBlock}__item-message`} title={file.statusText}>
-            { file.status === 'success' && <span><Done class={`${classBlock}__item-message-success-icon`} />{file.statusText || '上传成功'}</span> }
-            { file.status === 'fail' && <span>{file.statusText || '上传失败'}</span> }
+            { file.status === 'success' && <><Done class={`${classBlock}__item-message-success-icon`} />{file.statusText || '上传成功'}</> }
+            { file.status === 'fail' && <>{file.statusText || '上传失败'}</> }
           </div>
         }
         {
