@@ -123,9 +123,6 @@ export default defineComponent({
       multiple,
       remoteMethod,
       loading,
-      loadingText,
-      noDataText,
-      noMatchText,
       popoverMinWidth,
       showOnInit,
       multipleMode,
@@ -150,19 +147,19 @@ export default defineComponent({
       if (props.noDataText === undefined) {
         return t.value.noData;
       }
-      return noDataText;
+      return props.noDataText;
     });
     const localNoMatchText = computed(() => {
       if (props.noMatchText === undefined) {
         return t.value.noMatchedData;
       }
-      return noMatchText;
+      return props.noMatchText;
     });
     const localLoadingText = computed(() => {
       if (props.loadingText === undefined) {
         return t.value.loading;
       }
-      return loadingText;
+      return props.loadingText;
     });
     const localPlaceholder = computed(() => {
       if (props.placeholder === undefined) {
