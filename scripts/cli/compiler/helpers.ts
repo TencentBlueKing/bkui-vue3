@@ -34,7 +34,7 @@ export const COMPONENT_URL = resolve(BKUI_DIR, './packages');
 export const DIST_URL =  resolve(BKUI_DIR, './dist');
 export const LIB_URL =  resolve(BKUI_DIR, './lib');
 export const THEME_LESS_URL = resolve(COMPONENT_URL, 'styles/src/themes/themes.less');
-
+export const LOCALE_URL = resolve(COMPONENT_URL, './locale/src/lang');
 
 // 编译转换*.d.ts
 export const compilerLibDir = async (dir: string): Promise<any> => {
@@ -46,10 +46,10 @@ export const compilerLibDir = async (dir: string): Promise<any> => {
         if (!(/\/src$/.test(dir) && !/\/src$/.test(url))) {
           buildDir(url);
         } else {
-          const list =  readdirSync(url).filter(url => /\.d.ts$/.test(join(dir, url)));
+          const list = readdirSync(url).filter(url => /\.d.ts$/.test(join(dir, url)));
           list.forEach((file) => {
             const fileUrl = join(url, file);
-            let chunk =  readFileSync(fileUrl, 'utf-8');
+            let chunk = readFileSync(fileUrl, 'utf-8');
             if (chunk.includes('@bkui-vue')) {
               chunk = chunk.replace('@bkui-vue', fileUrl.split('/src/')[1].replace(/([^/]+)/gmi, '..'));
             }

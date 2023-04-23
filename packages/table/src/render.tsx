@@ -24,12 +24,13 @@
 * IN THE SOFTWARE.
 */
 
-
 import { v4 as uuidv4 } from 'uuid';
-import { ComputedRef } from 'vue';
+import type { ComputedRef } from 'vue';
+import { computed } from 'vue';
 
 import BkCheckbox from '@bkui-vue/checkbox';
 import { DownShape, RightShape } from '@bkui-vue/icon';
+import type { Language } from '@bkui-vue/locale';
 import Pagination from '@bkui-vue/pagination';
 import { classes } from '@bkui-vue/shared';
 
@@ -55,8 +56,9 @@ export default class TableRender {
   styleRef: ComputedRef<{
     hasScrollY: boolean;
   }>;
+  t: ComputedRef<Language['table']>;
   public plugins: TablePlugins;
-  constructor(props, ctx, reactiveProp: IReactiveProp, colgroups: GroupColumn[], styleRef) {
+  constructor(props, ctx, reactiveProp: IReactiveProp, colgroups: GroupColumn[], styleRef, t: ComputedRef<Language['table']>) {
     this.props = props;
     this.context = ctx;
     this.reactiveProp = reactiveProp;
@@ -65,6 +67,7 @@ export default class TableRender {
     this.uuid = uuidv4();
     this.events = new Map<string, any[]>();
     this.styleRef = styleRef;
+    this.t = t;
   }
 
   get propActiveCols(): IColumnActive[] {
@@ -116,11 +119,18 @@ export default class TableRender {
    * @returns
    */
   public renderTableBodySchema(rows: any[]) {
+    const localEmptyText = computed(() => {
+      if (this.props.emptyText === undefined) {
+        return this.t.value.emptyText;
+      }
+      return this.props.emptyText;
+    });
+
     if (!rows.length) {
       return this.context.slots.empty?.() ?? <BodyEmpty
       filterList={rows}
       list={ this.props.data }
-      emptyText={ this.props.emptyText }/>;
+      emptyText={ localEmptyText.value }/>;
     }
 
     return <table cellpadding={0} cellspacing={0} data-table-uuid={this.uuid}>

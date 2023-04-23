@@ -38,6 +38,7 @@ import {
   watch,
 } from 'vue';
 
+import { useLocale } from '@bkui-vue/config-provider';
 import { clickoutside } from '@bkui-vue/directives';
 import { AngleUp, Close, Search } from '@bkui-vue/icon';
 import Input from '@bkui-vue/input';
@@ -90,12 +91,12 @@ export default defineComponent({
     behavior: InputBehaviorType(), // 输入框模式
     collapseTags: PropTypes.bool.def(false), // 当以标签形式显示选择结果时，是否合并溢出的结果以数字显示
     autoHeight: PropTypes.bool.def(true), // collapseTags模式下，聚焦时自动展开所有Tag
-    noDataText: PropTypes.string.def('无数据'),
-    noMatchText: PropTypes.string.def('无匹配数据'),
-    loadingText: PropTypes.string.def('加载中...'),
-    placeholder: PropTypes.string.def('请选择'),
-    searchPlaceholder: PropTypes.string.def('请输入关键字'),
-    selectAllText: PropTypes.string.def('全部'),
+    noDataText: PropTypes.string,
+    noMatchText: PropTypes.string,
+    loadingText: PropTypes.string,
+    placeholder: PropTypes.string,
+    searchPlaceholder: PropTypes.string,
+    selectAllText: PropTypes.string,
     scrollLoading: PropTypes.bool.def(false),
     allowCreate: PropTypes.bool.def(false), // 是否运行创建自定义选项
     popoverOptions: PropTypes.object.def({}), // popover属性
@@ -113,6 +114,8 @@ export default defineComponent({
   },
   emits: ['update:modelValue', 'change', 'toggle', 'clear', 'scroll-end', 'focus', 'blur'],
   setup(props, { emit }) {
+    const t = useLocale('select');
+
     const {
       modelValue,
       disabled,
@@ -142,6 +145,43 @@ export default defineComponent({
       autoFocus,
       keepSearchValue,
     } = toRefs(props);
+
+    const localNoDataText = computed(() => {
+      if (props.noDataText === undefined) {
+        return t.value.noData;
+      }
+      return noDataText;
+    });
+    const localNoMatchText = computed(() => {
+      if (props.noMatchText === undefined) {
+        return t.value.noMatchedData;
+      }
+      return noMatchText;
+    });
+    const localLoadingText = computed(() => {
+      if (props.loadingText === undefined) {
+        return t.value.loading;
+      }
+      return loadingText;
+    });
+    const localPlaceholder = computed(() => {
+      if (props.placeholder === undefined) {
+        return t.value.pleaseSelect;
+      }
+      return props.placeholder;
+    });
+    const localSearchPlaceholder = computed(() => {
+      if (props.searchPlaceholder === undefined) {
+        return t.value.enterKeywords;
+      }
+      return props.searchPlaceholder;
+    });
+    const localSelectAllText = computed(() => {
+      if (props.selectAllText === undefined) {
+        return t.value.all;
+      }
+      return props.selectAllText;
+    });
 
     const formItem = useFormItem();
 
@@ -215,13 +255,13 @@ export default defineComponent({
     // 当前空状态时显示文案
     const curContentText = computed(() => {
       if (searchLoading.value) {
-        return loadingText.value;
+        return localLoadingText.value;
       }
       if (isOptionsEmpty.value) {
-        return noDataText.value;
+        return localNoDataText.value;
       }
       if (isSearchEmpty.value) {
-        return noMatchText.value;
+        return localNoMatchText.value;
       }
       return '';
     });
@@ -614,6 +654,10 @@ export default defineComponent({
       handleKeydown,
       handleSelectedAllOptionMouseEnter,
       handlePopoverShow,
+      localLoadingText,
+      localPlaceholder,
+      localSearchPlaceholder,
+      localSelectAllText,
     };
   },
   render() {
@@ -644,7 +688,7 @@ export default defineComponent({
             v-model={this.searchKey}
             selected={this.selected}
             tagTheme={this.tagTheme}
-            placeholder={this.placeholder}
+            placeholder={this.localPlaceholder}
             filterable={this.isInput}
             disabled={this.isDisabled}
             onRemove={this.handleDeleteTag}
@@ -663,7 +707,7 @@ export default defineComponent({
           ref="inputRef"
           type="text"
           modelValue={this.isInput ? this.searchKey : this.selectedLabel.join(',')}
-          placeholder={this.isInput ? (this.selectedLabel.join(',') || this.placeholder) : this.placeholder}
+          placeholder={this.isInput ? (this.selectedLabel.join(',') || this.localPlaceholder) : this.localPlaceholder}
           readonly={!this.isInput}
           selectReadonly={true}
           disabled={this.isDisabled}
@@ -699,7 +743,7 @@ export default defineComponent({
                 <input
                   ref="searchRef"
                   class={resolveClassName('select-search-input')}
-                  placeholder={this.searchPlaceholder}
+                  placeholder={this.localSearchPlaceholder}
                   v-model={this.searchKey}
                 />
               </div>
@@ -727,7 +771,7 @@ export default defineComponent({
                     <li class={resolveClassName('select-option')}
                       onMouseenter={this.handleSelectedAllOptionMouseEnter}
                       onClick={this.handleToggleAll}>
-                      {this.selectAllText}
+                      {this.localSelectAllText}
                     </li>
                   )
                 }
@@ -756,7 +800,7 @@ export default defineComponent({
                 {this.scrollLoading && (
                   <li class={resolveClassName('select-options-loading')}>
                     <Loading class="spinner mr5" theme='primary' loading={true} mode="spin" size="mini"></Loading>
-                    <span>{this.loadingText}</span>
+                    <span>{this.localLoadingText}</span>
                   </li>
                 )}
               </ul>

@@ -32,7 +32,6 @@ import { compileFile, compilerLibDir, COMPONENT_URL, LIB_URL, THEME_LESS_URL, wr
 import { ILibTaskOption, ITaskItem } from '../typings/task';
 import { CompileTask } from '../workers/compile-task';
 
-
 export const compilerDir = async (option: ILibTaskOption): Promise<void> => {
   const list: ITaskItem[] = [];
   const buildDir: any = (dir: string) => {
@@ -61,7 +60,7 @@ export const compileThemeTovariable = async () => {
   await writeFileRecursive(THEME_LESS_URL.replace(/\.(css|less|scss)$/, '.variable.$1'), resource);
   return resource;
 };
-// 替换theme.lss 替换为 css变量
+// 替换theme.less 替换为 css变量
 export const replaceThemeTovariable = async () => {
   const variableThemeText = await compileThemeTovariable();
   const themeText = readFileSync(THEME_LESS_URL);

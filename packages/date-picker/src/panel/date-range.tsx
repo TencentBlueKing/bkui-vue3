@@ -42,6 +42,7 @@ import {
   toRefs,
   watch } from 'vue';
 
+import { useLocale } from '@bkui-vue/config-provider';
 import { AngleDoubleLeft, AngleDoubleRight, AngleLeft, AngleRight } from '@bkui-vue/icon';
 import { resolveClassName } from '@bkui-vue/shared';
 
@@ -139,6 +140,7 @@ export default defineComponent({
   props: dateRangePanelProps,
   emits: ['pick', 'pick-success', 'pick-clear', 'pick-click'],
   setup(props, { slots, emit }) {
+    const t = useLocale('datePicker');
     const [minDate, maxDate] = (props.modelValue as any).map(date => date || initTime());
     const leftPanelDate = props.startDate ? props.startDate : minDate;
 
@@ -514,6 +516,7 @@ export default defineComponent({
       handlePickClick,
 
       timePickerRef,
+      t,
     };
   },
   render() {
@@ -689,9 +692,9 @@ export default defineComponent({
                 this.upToNow
                   ? (() => {
                     if ((this.rangeState.selecting || this.currentView === 'time') && this.upToNowEnable) {
-                      return <span class='up-to-now' onClick={() => this.handleRangePick(new Date(), 'upToNow')}>至今</span>;
+                      return <span class='up-to-now' onClick={() => this.handleRangePick(new Date(), 'upToNow')}>{this.t.toNow}</span>;
                     }
-                    return <span class='up-to-now disabled'>至今</span>;
+                    return <span class='up-to-now disabled'>{this.t.toNow}</span>;
                   })()
                   : ''
               }
