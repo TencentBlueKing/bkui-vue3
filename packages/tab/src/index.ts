@@ -23,21 +23,22 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
-/* import { withInstall } from '@bkui-vue/shared';
-const BkTab = withInstall(Tab);
-const BkTabPanel = withInstall(TabPanel);
-export {
-  BkTab,
-  BkTabPanel,
-};*/
+import { ExtractPropTypes } from 'vue';
+
 import { withInstallProps } from '@bkui-vue/shared';
 
+import { PositionEnum, SortTypeEnum, tabPanelProps, tabProps } from './props';
 import Tab from './tab';
 import TabPanel from './tab-panel';
+
+export type TabProps = Partial<ExtractPropTypes<typeof tabProps>>;
+export type TabPanelProps = Partial<ExtractPropTypes<typeof tabPanelProps>>;
 const BkTab = withInstallProps(Tab, { TabPanel });
 export {
   BkTab,
   TabPanel as BkTabPanel,
+  SortTypeEnum,
+  PositionEnum,
 };
 export default BkTab;
 

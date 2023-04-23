@@ -47,13 +47,15 @@
     &-custom {
       padding-left: 5px;
     }
-    
+
   }
 
   .bk-icon {
     &.icon-loading {
       display: inline-block;
+      margin-left: 5px;
       font-size: @font-size-medium;
+      vertical-align: sub;
       animation: loadingCircle 1s infinite linear;
     }
   }
@@ -82,6 +84,10 @@
     text-align: center;
     background-color: #f0f1f5;
     flex: 1;
+
+    .display {
+      vertical-align: top;
+    }
 
     i {
       display: none;
@@ -178,7 +184,7 @@
         vertical-align: -3px;
       }
     }
-    
+
     &.error {
       color: #fff;
       background: @danger-color;
@@ -189,6 +195,11 @@
 
       >.bk-spin-loading {
         vertical-align: -3px;
+      }
+
+      .icon-error {
+        font-size: 14px;
+        vertical-align: sub;
       }
     }
   }

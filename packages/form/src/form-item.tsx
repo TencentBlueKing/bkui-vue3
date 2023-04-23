@@ -24,7 +24,7 @@
 * IN THE SOFTWARE.
 */
 import { get, isFunction } from 'lodash';
-import type { ExtractPropTypes } from 'vue';
+import type { ComputedRef, ExtractPropTypes } from 'vue';
 import {
   computed,
   defineComponent,
@@ -36,8 +36,10 @@ import {
   toRefs,
 } from 'vue';
 
+import { useLocale } from '@bkui-vue/config-provider';
 import { bkTooltips } from '@bkui-vue/directives';
 import { ExclamationCircleShape } from '@bkui-vue/icon';
+import type { Language } from '@bkui-vue/locale';
 import {
   classes,
   formItemKey,
@@ -50,7 +52,7 @@ import type {
   IFormItemRule,
 } from './type';
 import { getRuleMessage } from './utils';
-import defaultValidator from './validator';;
+import defaultValidator from './validator';
 
 const formItemProps = {
   label: PropTypes.string,
@@ -72,16 +74,15 @@ export type FormItemProps = Readonly<ExtractPropTypes<typeof formItemProps>>;
 
 const hasOwn = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key);
 
-const getRulesFromProps = (props) => {
+const getRulesFromProps = (props, t: ComputedRef<Language['form']>) => {
   const rules: IFormItemRule[] = [];
 
   const label = props.label || '';
-
   if (props.required) {
     rules.push({
       required: true,
       validator: defaultValidator.required,
-      message: `${label}不能为空`,
+      message: `${label} ${t.value.notBeEmpty}`,
       trigger: 'change',
     });
   }
@@ -89,28 +90,28 @@ const getRulesFromProps = (props) => {
     rules.push({
       email: true,
       validator: defaultValidator.email,
-      message: `${label}格式不正确`,
+      message: `${label} ${t.value.incorrectFormat}`,
       trigger: 'change',
     });
   }
   if (Number(props.max) > -1) {
     rules.push({
       validator: value => defaultValidator.max(value, props.max),
-      message: `${label}最大值 ${props.max}`,
+      message: `${label} ${t.value.max} ${props.max}`,
       trigger: 'change',
     });
   }
   if (Number(props.min) > -1) {
     rules.push({
       validator: value => defaultValidator.min(value, props.min),
-      message: `${label}最小值 ${props.min}`,
+      message: `${label} ${t.value.min} ${props.min}`,
       trigger: 'change',
     });
   }
   if (Number(props.maxlength) > -1) {
     rules.push({
       validator: value => defaultValidator.maxlength(value, props.maxlength),
-      message: `${label}最大长度 ${props.maxlength}`,
+      message: `${label} ${t.value.maxLen} ${props.maxlength}`,
       trigger: 'change',
     });
   }
@@ -119,8 +120,9 @@ const getRulesFromProps = (props) => {
 
 const mergeRules: (
   configRules: IFormItemRule[],
-  propRules: IFormItemRule[]
-) => IFormItemRule[] = (configRules, propRules) => {
+  propRules: IFormItemRule[],
+  t: ComputedRef<Language['form']>
+) => IFormItemRule[] = (configRules, propRules, t: ComputedRef<Language['form']>) => {
   let customRequired = false;
   let customEmail = false;
 
@@ -148,7 +150,7 @@ const mergeRules: (
     }
     result.push({
       validator: rulevalidator,
-      message: rule.message || '验证错误',
+      message: rule.message || t.value.verifyError,
       trigger: rule.trigger || 'blur',
     });
     return result;
@@ -195,6 +197,7 @@ export default defineComponent({
   },
   props: formItemProps,
   setup(props, context) {
+    const t = useLocale('form');
     const form = useForm();
     const isForm = Boolean(form);
     const parentFormItem = useFormItem();
@@ -272,7 +275,7 @@ export default defineComponent({
       }
 
       // 合并规则属性配置
-      rules = getTriggerRules(trigger, mergeRules(rules, getRulesFromProps(props)));
+      rules = getTriggerRules(trigger, mergeRules(rules, getRulesFromProps(props, t), t));
 
       // 重新触发验证重置上次的验证状态
       if (rules.length > 0) {

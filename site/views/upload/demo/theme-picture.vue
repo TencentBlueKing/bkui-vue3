@@ -13,14 +13,17 @@
 <script setup>
   import BkUpload from '@bkui-vue/upload';
 
+  import dovImgUlr from '../../../imgs/dov.png';
+  import qqImageUrl from '../../../imgs/qq.png';
+
   const files = [
     {
       name: 'qq',
-      url: '../../imgs/qq.png',
+      url: qqImageUrl,
     },
     {
       name: 'dov',
-      url: '../../imgs/dov.png',
+      url: dovImgUlr,
     },
   ];
 

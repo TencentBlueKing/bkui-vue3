@@ -26,6 +26,7 @@
 
 import type {
   ComponentInternalInstance,
+  ComputedRef,
 } from 'vue';
 import {
   getCurrentInstance,
@@ -34,14 +35,14 @@ import {
   watch,
 } from 'vue';
 
+import type { Language } from '@bkui-vue/locale';
 import BkSelect, { BkOption } from '@bkui-vue/select';
 
 import type {
   IPaginationInstance,
 } from './type';
 
-
-export default () => {
+export default (t: ComputedRef<Language['pagination']>) => {
   const {
     proxy,
   } = getCurrentInstance() as ComponentInternalInstance &  { proxy: IPaginationInstance};
@@ -88,7 +89,7 @@ export default () => {
         {...{
           disabled: proxy.disabled,
         }}>
-        <div>每页</div>
+        <div>{t.value.eachPage}</div>
         <BkSelect
           class="bk-pagination-limit-select"
           clearable={false}
@@ -104,7 +105,7 @@ export default () => {
               key={`${index}_${num}`} />
           ))}
         </BkSelect>
-        <div>条</div>
+        <div>{t.value.strip}</div>
       </div>
     );
   };

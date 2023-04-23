@@ -590,4 +590,52 @@ describe('Select.tsx', () => {
     expect((wrapper.find('.bk-input--text').element as any).value).toBe('test2');
     wrapper.unmount();
   });
+
+  // 绑定对象
+  test('value is object', async () => {
+    const wrapper = await mount({
+      components: {
+        BkSelect,
+        BkOption,
+      },
+      template: `
+        <BkSelect v-model="seletValue">
+          <BkOption v-for="item in options" :value="item.value" :label="item.label"></BkOption>
+        </BkSelect>
+      `,
+      data() {
+        return {
+          seletValue: { b: 456 },
+          options: [
+            {
+              value: { a: 123 },
+              label: 'test1',
+            },
+            {
+              value: { b: 456 },
+              label: 'testObject',
+            },
+            {
+              value: null,
+              label: 'test3',
+            },
+            {
+              value: undefined,
+              label: 'test4',
+            },
+            {
+              value: 1,
+              label: 'test5',
+            },
+          ],
+        };
+      },
+    });
+    const options = wrapper.findAllComponents({ name: 'Option' });
+    await options[1].trigger('click');
+    await nextTick();
+    expect(wrapper.vm.seletValue).toBe({ b: 456 });
+    expect((wrapper.find('.bk-input--text').element as any).value).toBe('testObject');
+    wrapper.unmount();
+  });
 });

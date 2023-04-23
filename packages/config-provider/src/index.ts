@@ -1,4 +1,4 @@
-/*
+/**
  * Tencent is pleased to support the open source community by making
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
  *
@@ -22,28 +22,19 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
-import { createApp } from 'vue';
+import { withInstall } from '@bkui-vue/shared';
 
-import bkuiVue from '../packages/bkui-vue/index';
-import en from '../packages/locale/src/lang/en';
-import zhCn from '../packages/locale/src/lang/zh-cn';
+import Component from './config-provider';
 
-import App from './app';
-import router from './router';
+const BkConfigProvider = withInstall(Component);
+export default BkConfigProvider;
 
-import '../packages/styles/src/index';
-import './reset.less';
-console.error(en);
-console.error(zhCn);
-const app = createApp(App);
-app.use(bkuiVue, {
-  locale: en,
-});
-app.use(router);
+export {
+  useLocale,
+  rootProviderKey,
+  provideGlobalConfig,
+}  from './config-provider';
 
-if (process.env.NODE_ENV === 'development') {
-  (app.config as any).devtools = true;
-}
-app.mount('#app');
+export * from './type';

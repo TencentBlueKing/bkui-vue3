@@ -25,6 +25,7 @@
 */
 import { computed, defineComponent, PropType, VNode } from 'vue';
 
+import { useLocale } from '@bkui-vue/config-provider';
 import { Done } from '@bkui-vue/icon';
 
 import { ICommonItem, IMenuFooterItem } from './utils';;
@@ -52,21 +53,29 @@ export default defineComponent({
     },
     footerBtns: {
       type: Array as PropType<IMenuFooterItem[]>,
-      default: () => [
-        {
-          id: 'confirm',
-          name: '确认',
-        },
-        {
-          id: 'cancel',
-          name: '取消',
-          disabled: false,
-        },
-      ],
+      default: () => [],
     },
   },
   emits: ['selectItem', 'selectCondition', 'footerClick'],
   setup(props, { emit }) {
+    const t = useLocale('searchSelect');
+    const localFooterBtns = computed(() => {
+      if (props.footerBtns === undefined || props.footerBtns.length === 0) {
+        return [
+          {
+            id: 'confirm',
+            name: t.value.ok,
+          },
+          {
+            id: 'cancel',
+            name: t.value.cancel,
+            disabled: false,
+          },
+        ];
+      }
+      return props.footerBtns;
+    });
+
     // events
     function handleClick(item: ICommonItem) {
       emit('selectItem', item);
@@ -118,6 +127,7 @@ export default defineComponent({
       handleClickFooterBtn,
       filterList,
       getSearchNode,
+      localFooterBtns,
     };
   },
   render() {
@@ -160,9 +170,9 @@ export default defineComponent({
         }
       </ul>
       {
-        this.multiple && this.footerBtns?.length && <div class="menu-footer">
+        this.multiple && this.localFooterBtns?.length && <div class="menu-footer">
           {
-            this.footerBtns.map(item => <span
+            this.localFooterBtns.map(item => <span
               class={`menu-footer-btn ${item.disabled ? 'is-disabled' : ''}`}
               key={item.id}
               onClick={() => !item.disabled && this.handleClickFooterBtn(item)}>{item.name}</span>)

@@ -17,16 +17,10 @@
       v-model="selectedValue"
       class="bk-select"
       :input-search="false"
+      :list="datasource"
       multiple
       filterable
-    >
-      <bk-option
-        v-for="(item, index) in datasource"
-        :key="index"
-        :value="item.value"
-        :label="item.label"
-      />
-    </bk-select>
+    />
     <bk-select
       v-model="selectedValue"
       class="bk-select"
