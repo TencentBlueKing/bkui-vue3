@@ -160,7 +160,7 @@ export const tableProps = {
   /**
    * Table 列渲染
    */
-  columns: PropTypes.arrayOf(PropTypes.shape<Column>(IColumnType)).def([]),
+  columns: PropTypes.arrayOf(PropTypes.shape(IColumnType).loose).def([]),
 
   /**
    * 当前选中列
