@@ -27,8 +27,9 @@
 import { defineComponent, ExtractPropTypes, onMounted, ref, watch } from 'vue';
 import { toType } from 'vue-types';
 
+import { useLocale } from '@bkui-vue/config-provider';
 import { Circle, Done, Error } from '@bkui-vue/icon';
-import { classes, directionType, lineStyleType, PropTypes, ThemeEnum, useLocale } from '@bkui-vue/shared';
+import { classes, directionType, lineStyleType, PropTypes, ThemeEnum } from '@bkui-vue/shared';
 
 enum StatusEnum {
   UNKNOWN = '',
@@ -57,10 +58,9 @@ export default defineComponent({
   emits: ['update:curStep', 'click'],
 
   setup(props: StepsPropTypes, { emit }) {
-    const { t, lang } = useLocale();
-    console.error(t('bk.steps.step1'));
-    console.error(lang.value);
-    console.error(44);
+    const t = useLocale('steps');
+    const lang = useLocale('lang');
+
     const defaultSteps = ref([]);
 
     const updateSteps = (steps) => {
@@ -88,15 +88,15 @@ export default defineComponent({
     const init = () => {
       defaultSteps.value.splice(0, defaultSteps.value.length, ...[
         {
-          title: t('bk.steps.step1'),
+          title: t.value.step1,
           icon: 1,
         },
         {
-          title: t('bk.steps.step2'),
+          title: t.value.step2,
           icon: 2,
         },
         {
-          title: t('bk.steps.step3'),
+          title: t.value.step3,
           icon: 3,
         },
       ]);
@@ -104,6 +104,15 @@ export default defineComponent({
         updateSteps(props.steps);
       }
     };
+
+    watch(() => lang.value, () => {
+      init();
+    });
+
+    // const globalConfigData = inject(rootProviderKey);
+    // watch(() => globalConfigData, () => {
+    //   init();
+    // }, { deep: true });
 
     const jumpTo = async (index) => {
       try {

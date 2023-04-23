@@ -26,12 +26,11 @@
 
 import { App } from 'vue';
 
-import { provideGlobalConfig } from '@bkui-vue/config-provider';
+import { ConfigProviderProps, provideGlobalConfig } from '@bkui-vue/config-provider';
 
-// import type { ConfigProviderContext } from '@bkui-vue/config-provider';
 import * as components from './components';
 
-const createInstall = (prefix = 'Bk') => (app: App, options?: any) => {
+const createInstall = (prefix = 'Bk') => (app: App, options?: ConfigProviderProps) => {
   const pre = app.config.globalProperties.bkUIPrefix || prefix;
   Object
     .keys(components).forEach((key) => {
@@ -43,7 +42,6 @@ const createInstall = (prefix = 'Bk') => (app: App, options?: any) => {
       }
     });
   if (options) {
-    console.error(444, options);
     provideGlobalConfig(options);
   }
 };

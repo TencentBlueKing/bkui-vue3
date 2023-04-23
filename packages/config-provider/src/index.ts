@@ -27,12 +27,14 @@
 import { withInstall } from '@bkui-vue/shared';
 
 import Component from './config-provider';
-// export { configProviderProps, configProviderContextKey } from './config-provider';
-// export type { ConfigProviderContext } from './config-provider';
-
-// export * from './interface';
-
-export * from './hooks/use-global-config';
 
 const BkConfigProvider = withInstall(Component);
 export default BkConfigProvider;
+
+export {
+  useLocale,
+  rootProviderKey,
+  provideGlobalConfig,
+}  from './config-provider';
+
+export * from './type';

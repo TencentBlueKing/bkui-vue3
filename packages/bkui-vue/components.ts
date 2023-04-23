@@ -23,6 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+
 export { default as Alert } from '@bkui-vue/alert';
 export { default as AnimateNumber } from '@bkui-vue/animate-number';
 export { default as Affix } from '@bkui-vue/affix';

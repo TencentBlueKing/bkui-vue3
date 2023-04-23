@@ -38,7 +38,6 @@ export * from './token';
 export * from './hooks/use-form';
 export * from './hooks/use-form-item';
 export * from './dom';
-export * from './hooks/use-locale';
 
 export function classes(dynamicCls: object, constCls = ''): string {
   return Object.entries(dynamicCls).filter(entry => entry[1])

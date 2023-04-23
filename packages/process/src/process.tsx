@@ -24,8 +24,9 @@
  * IN THE SOFTWARE.
  */
 
-import { defineComponent, ExtractPropTypes, onMounted, ref } from 'vue';
+import { defineComponent, ExtractPropTypes, onMounted, ref, watch } from 'vue';
 
+import { useLocale } from '@bkui-vue/config-provider';
 import { Circle, Done, Error } from '@bkui-vue/icon';
 import { classes, PropTypes } from '@bkui-vue/shared';
 // import { Error, Circle, Done } from '@bkui-vue/icon';
@@ -47,28 +48,34 @@ export default defineComponent({
   emits: ['update:curProcess', 'click'],
 
   setup(props: ProcessPropType, { emit }) {
+    const t = useLocale('process');
+    const lang = useLocale('lang');
     const defaultProcessList = ref([]);
     const paddingBottom = ref(0);
 
     const init = () => {
       defaultProcessList.value.splice(0, defaultProcessList.value.length, ...[
         {
-          content: '步骤1',
+          content: t.value.step1,
         },
         {
-          content: '步骤2',
+          content: t.value.step2,
         },
         {
-          content: '步骤3',
+          content: t.value.step3,
         },
         {
-          content: '步骤4',
+          content: t.value.step4,
         },
       ]);
       if (props.list?.length) {
         defaultProcessList.value.splice(0, defaultProcessList.value.length, ...props.list);
       }
     };
+
+    watch(() => lang.value, () => {
+      init();
+    });
 
     const jumpTo = async (index) => {
       try {
@@ -108,7 +115,7 @@ export default defineComponent({
       if (index === this.curProcess - 1 && isLoadingStatus(item)) {
         return (<Circle class="bk-icon bk-process-icon icon-loading" />);
       }  if (index === this.curProcess - 1 && isErrorStatus(item)) {
-        return (<Error class="bk-process-icon" />);
+        return (<Error class="bk-process-icon icon-error" />);
       }  if (index === this.curProcess - 1 && isIcon(item)) {
         return (<span class="bk-process-icon-custom">{<item.icon/>}</span>);
       } if (isDone(index)) {
@@ -128,8 +135,10 @@ export default defineComponent({
                 current: isLoadingStatus(item) && index === this.curProcess - 1,
                 error: isErrorStatus(item) && index === this.curProcess - 1 } }
                 >
-            {item[this.displayKey]}
-            {renderIcon(index, item)}
+            <div>
+              <span class="display">{item[this.displayKey]}</span>
+              {renderIcon(index, item)}
+            </div>
           </li>)}
         </ul>
 

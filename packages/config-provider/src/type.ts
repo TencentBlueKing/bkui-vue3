@@ -24,15 +24,16 @@
 * IN THE SOFTWARE.
 */
 
-import { ExtractPropTypes, InjectionKey, PropType, Ref } from 'vue';
+import type { ExtractPropTypes, PropType } from 'vue';
 
 import type { Language } from '@bkui-vue/locale';
 
-export const configProviderProps = {
-  locale: Object as PropType<Language | null>,
-} as const;
+const configProviderProps = {
+  locale: {
+    type: Object as PropType<Language>,
+  },
+};
 
-export type ConfigProviderProps = ExtractPropTypes<typeof configProviderProps>;
+export type ConfigProviderProps = Partial<ExtractPropTypes<typeof configProviderProps>>;
 
-export type ConfigProviderContext = Partial<ConfigProviderProps>;
-export const configProviderContextKey: InjectionKey<Ref<ConfigProviderContext>> = Symbol();
+export default configProviderProps;

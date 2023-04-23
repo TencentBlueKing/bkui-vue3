@@ -23,6 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+
 import ora from 'ora';
 import { parentPort } from 'worker_threads';
 
@@ -47,7 +48,8 @@ async function compileStyleTask({ url, newPath }: ITaskItem) {
     resource: '',
     varCss: '',
   }));
-  css.length && writeFileRecursive(newPath.replace(/\.(css|less|scss)$/, '.css'), css);
+  const isConfigProviderComponent = /config-provider\.less$/.test(url);
+  (css.length || isConfigProviderComponent) && writeFileRecursive(newPath.replace(/\.(css|less|scss)$/, '.css'), css);
   resource.length && writeFileRecursive(newPath, resource);
   varCss.length && writeFileRecursive(newPath.replace(/\.(css|less|scss)$/, '.variable.css'), varCss);
   css.length ? spinner.succeed() : spinner.fail();
