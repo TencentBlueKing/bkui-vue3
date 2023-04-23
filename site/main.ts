@@ -35,8 +35,8 @@ import router from './router';
 
 import '../packages/styles/src/index';
 import './reset.less';
-console.error(en);
-console.error(zhCn);
+console.log(en);
+console.log(zhCn);
 const app = createApp(App);
 app.use(bkuiVue, {
   locale: en,
