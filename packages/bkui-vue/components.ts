@@ -23,6 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+
 export { default as Alert } from '@bkui-vue/alert';
 export { default as AnimateNumber } from '@bkui-vue/animate-number';
 export { default as Affix } from '@bkui-vue/affix';
@@ -84,4 +85,4 @@ export { default as TimePicker } from '@bkui-vue/time-picker';
 export { default as SearchSelect } from '@bkui-vue/search-select';
 export { default as OverflowTitle } from '@bkui-vue/overflow-title';
 export { default as $bkPopover } from '@bkui-vue/plugin-popover';
-
+export { default as ConfigProvider } from '@bkui-vue/config-provider';

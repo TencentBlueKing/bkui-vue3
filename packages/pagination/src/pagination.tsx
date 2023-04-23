@@ -34,6 +34,7 @@ import {
   watch,
 } from 'vue';
 
+import { useLocale } from '@bkui-vue/config-provider';
 import {
   classes,
   PropTypes,
@@ -82,13 +83,14 @@ export default defineComponent({
     'limitChange',
   ],
   setup(props, context) {
+    const t = useLocale('pagination');
     const totalPageNum = ref<number>(0);
     const {
       count,
       limit,
     } = toRefs(props);
 
-    const renderTotal = useTotal();
+    const renderTotal = useTotal(t);
 
     const {
       current: listCurrent,
@@ -103,7 +105,7 @@ export default defineComponent({
     const {
       limit: localLimit,
       render: renderLimit,
-    } = useLimit();
+    } = useLimit(t);
 
     watch([count, localLimit, limit], ([count, localLimit]) => {
       const total = Math.ceil(count / localLimit);

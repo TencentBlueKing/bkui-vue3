@@ -23,6 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+
 import { AsyncResource } from 'async_hooks';
 import { EventEmitter } from 'events';
 import path from 'path';
@@ -95,4 +96,3 @@ export class WorkerPool extends EventEmitter {
     for (const worker of this.workers) worker.terminate();
   }
 }
-

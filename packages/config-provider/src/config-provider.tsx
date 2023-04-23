@@ -24,40 +24,70 @@
 * IN THE SOFTWARE.
 */
 
-import type {
-  ComponentInternalInstance,
-  ComputedRef,
-} from 'vue';
-import { getCurrentInstance } from 'vue';
+import { merge } from 'lodash';
+import type { ComputedRef, UnwrapRef } from 'vue';
+import {
+  computed,
+  defineComponent,
+  inject,
+  provide,
+  reactive,
+  watch } from 'vue';
 
 import type { Language } from '@bkui-vue/locale';
+import { /* en as English, */ zhCn as Chinese } from '@bkui-vue/locale';
 
-import type {
-  PaginationProps,
-} from './pagination';
+import type { ConfigProviderProps } from './type';
+import configProviderTypes from './type';
 
-export default (t: ComputedRef<Language['pagination']>) => ({ isFirst, isLast }) => {
-  const {
-    props,
-  } = getCurrentInstance() as ComponentInternalInstance &  { props: PaginationProps};
+export const defaultRootConfig: UnwrapRef<ConfigProviderProps> = reactive({
+  locale: Chinese,
+});
 
+interface LocaleInterface {
+  [key: string]: any;
+}
 
-  if (!props.showTotalCount) {
-    return null;
-  }
-  return (
-    <div
-      class={{
-        'bk-pagination-total': true,
-        'is-first': isFirst,
-        'is-last': isLast,
-      }}
-      {...{
-        disabled: props.disabled,
-      }}>
-      {t.value.total}
-      <div class="bk-pagination-total-num">{ props.count }</div>
-      {t.value.strip}
-    </div>
+export interface LocalReceiverCtx {
+  locale?: LocaleInterface;
+}
+
+export const rootProviderKey = Symbol('rootProviderData');
+
+export function useLocale<T extends keyof Language>(compName: T): ComputedRef<Language[T]> {
+  const config = inject<LocalReceiverCtx>(
+    rootProviderKey,
+    defaultRootConfig as LocalReceiverCtx,
   );
+  return computed<Language[T]>(() => {
+    const { locale } = config;
+    return locale && compName ? locale[compName] : {};
+  });
+}
+
+export const provideGlobalConfig = (config: ConfigProviderProps) => {
+  const configData = reactive({
+    ...merge(defaultRootConfig, config),
+  });
+
+  Object.keys(config).forEach((key) => {
+    watch(
+      () => config[key],
+      () => {
+        configData[key] = config[key];
+      },
+    );
+  });
+
+  provide(rootProviderKey, configData);
 };
+
+export default defineComponent({
+  name: 'ConfigProvider',
+  inheritAttrs: false,
+  props: configProviderTypes,
+  setup(props, { slots }) {
+    provideGlobalConfig(props);
+    return () => slots.default?.();
+  },
+});

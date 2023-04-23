@@ -28,6 +28,7 @@ import type { ExtractPropTypes } from 'vue';
 import { computed, defineComponent, ref } from 'vue';
 
 import BkButton from '@bkui-vue/button';
+import { useLocale } from '@bkui-vue/config-provider';
 import { resolveClassName } from '@bkui-vue/shared';
 
 const confirmProps = {
@@ -55,10 +56,12 @@ export default defineComponent({
   props: confirmProps,
   emits: ['pick-clear', 'pick-success', 'pick-toggle-time'],
   setup(props, { emit }) {
+    const t = useLocale('datePicker');
+
     const labels = computed(() => ({
-      time: props.isTime ? '选择日期' : '选择时间',
-      clear: '清除',
-      ok: '确定',
+      time: props.isTime ? t.value.selectDate : t.value.selectTime,
+      clear: t.value.clear,
+      ok: t.value.ok,
     }));
 
     const handleClear = () => {

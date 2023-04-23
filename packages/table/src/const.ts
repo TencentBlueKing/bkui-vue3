@@ -24,6 +24,10 @@
 * IN THE SOFTWARE.
 */
 
+import type { ComputedRef } from 'vue';
+
+import type { Language } from '@bkui-vue/locale';
+
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const enum BORDER_OPTION {
   NONE = 'none',
@@ -160,10 +164,15 @@ export const SETTING_SIZE = {
   small: 42,
 };
 
-export const DEFAULT_SIZE_LIST = [
-  { value: 'small', label: '小', height: SETTING_SIZE.small },
-  { value: 'medium', label: '中', height: SETTING_SIZE.medium },
-  { value: 'large', label: '大', height: SETTING_SIZE.large },
+// export const DEFAULT_SIZE_LIST = [
+//   { value: 'small', label: '小', height: SETTING_SIZE.small },
+//   { value: 'medium', label: '中', height: SETTING_SIZE.medium },
+//   { value: 'large', label: '大', height: SETTING_SIZE.large },
+// ];
+export const createDefaultSizeList = (t: ComputedRef<Language['table']>) => [
+  { value: 'small', label: t.value.setting.lineHeight.small, height: SETTING_SIZE.small },
+  { value: 'medium', label: t.value.setting.lineHeight.medium, height: SETTING_SIZE.medium },
+  { value: 'large', label: t.value.setting.lineHeight.large, height: SETTING_SIZE.large },
 ];
 
 /**
