@@ -24,39 +24,7 @@
 * IN THE SOFTWARE.
 */
 
-import { propsMixin } from '@bkui-vue/modal';
-import { AlignEnum, alignType, dialogTypeUnion, PropTypes, ThemeEnum } from '@bkui-vue/shared';
+export { default as en } from './lang/en';
+export { default as zhCn } from './lang/zh-cn';
 
-const props = {
-  ...propsMixin,
-  width: PropTypes.oneOfType([String, Number]).def(''),
-  height: PropTypes.oneOfType([String, Number]).def(''),
-  // 确认按钮文字
-  // confirmText: PropTypes.string.def('确定'),
-  confirmText: PropTypes.string,
-  // 取消按钮文字
-  // cancelText: PropTypes.string.def('取消'),
-  cancelText: PropTypes.string,
-  // 步骤按钮文字
-  // prevText: PropTypes.string.def('上一步'),
-  prevText: PropTypes.string,
-  // nextText: PropTypes.string.def('下一步'),
-  nextText: PropTypes.string,
-  // 当前步骤
-  current: PropTypes.number.def(1),
-  // 总步数
-  totalStep: PropTypes.number,
-  // 弹框的标题
-  title: PropTypes.string.def('title'),
-  // 显示 header 的位置
-  headerAlign: alignType().def(AlignEnum.LEFT),
-  // 显示 footer 的位置
-  footerAlign: alignType().def(AlignEnum.RIGHT),
-  // 颜色 按钮类型
-  theme: PropTypes.theme().def(ThemeEnum.PRIMARY),
-  // 对话框类型
-  dialogType: dialogTypeUnion(),
-  // 按钮loading
-  isLoading: PropTypes.bool.def(false),
-};
-export default props;
+export type { Language } from './lang/en';

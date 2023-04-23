@@ -257,7 +257,8 @@ export const tableProps = {
   /**
    * 空数据展示
    */
-  emptyText: PropTypes.string.def('暂无数据'),
+  // emptyText: PropTypes.string.def('暂无数据'),
+  emptyText: PropTypes.string,
 
   /**
    * bk-table-setting-content

@@ -32,6 +32,7 @@ import {
   PropType,
 } from 'vue';
 
+import { useLocale } from '@bkui-vue/config-provider';
 import { resolveClassName } from '@bkui-vue/shared';
 
 import type {
@@ -74,11 +75,18 @@ export default defineComponent({
   props: dateTableProps,
   emits: ['pick', 'pick-click', 'changeRange'],
   setup(props, { emit }) {
+    const t = useLocale('datePicker');
     const calendar = computed(() => new jsCalendar.Generator({ onlyDays: true, weekStart: 0 }));
 
     const headerDays = computed(() => {
       const translatedDays = [
-        '日', '一', '二', '三', '四', '五', '六',
+        t.value.weekdays.sun,
+        t.value.weekdays.mon,
+        t.value.weekdays.tue,
+        t.value.weekdays.wed,
+        t.value.weekdays.thu,
+        t.value.weekdays.fri,
+        t.value.weekdays.sat,
       ];
       return translatedDays.splice(0, 7 - 0).concat(translatedDays.splice(0, 0));
     });

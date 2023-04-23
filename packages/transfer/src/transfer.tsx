@@ -27,6 +27,7 @@
 /* eslint-disable arrow-body-style */
 import { computed, defineComponent, ref, toRaw, toRefs, watch } from 'vue';
 
+import { useLocale } from '@bkui-vue/config-provider';
 import { ArrowsRight, Error, Search, Transfer } from '@bkui-vue/icon/';
 import BkInput from '@bkui-vue/input';
 
@@ -86,6 +87,7 @@ export default defineComponent({
   props: transferProps,
   emits: ['change', 'update:targetList'],
   setup(props, { emit }) {
+    const t = useLocale('transfer');
     // 区分数据是基础数据数组(false)还是对象数组(true)
     const sourceListType = computed(() => {
       if (Array.isArray(props.sourceList)) {
@@ -203,6 +205,7 @@ export default defineComponent({
       allToRight,
       allToLeft,
       handleItemClick,
+      t,
     };
   },
   render() {
@@ -210,7 +213,7 @@ export default defineComponent({
     const rightList = this.sortable ? this.selectedListSort : this.selectedList;
     const getHeaderHtml = (dirct) => {
       const isLeft = dirct === 'left-header';
-      const titleText = isLeft ? `${this.title[0] ?? '源列表'}` : `${this.title[1] ?? '目标列表'}`;
+      const titleText = isLeft ? `${this.title[0] ?? this.t.sourceList}` : `${this.title[1] ?? this.t.targetList}`;
       const isDisabled = isLeft ? !leftList.length : !rightList.length;
       const headerClick = () => {
         if (isDisabled) return;
@@ -226,13 +229,14 @@ export default defineComponent({
             <span
               class={{ disabled: isDisabled }}
               onClick={() => headerClick()}>
-              {isLeft ? '选择全部' : '清空'}
+              {isLeft ? this.t.selectAll : this.t.removeAll}
               </span>
           </div>;
     };
     const getEmptyHtml = (dirct) => {
       const isLeft = dirct === 'left-empty-content';
-      const emptyText = (isLeft ? this.emptyContent[0] : this.emptyContent[1]) ?? (isLeft ? '无数据' : '未选择任何项');
+      const emptyText = (isLeft ? this.emptyContent[0] : this.emptyContent[1])
+        ?? (isLeft ? this.t.noData : this.t.noSelected);
 
       return this.$slots[dirct]
         ? <div>{this.$slots[dirct]()}</div>
@@ -295,7 +299,7 @@ export default defineComponent({
                 v-model={this.selectSearchQuery}
                 class="transfer-search-input"
                 clearable={true}
-                placeholder={this.searchPlaceholder || '搜索'}>
+                placeholder={this.searchPlaceholder || this.t.search}>
                 {{
                   prefix: () => (
                     <Search class="icon-search" />
