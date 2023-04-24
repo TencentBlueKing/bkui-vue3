@@ -26,6 +26,7 @@
 import { computed, defineComponent, nextTick, reactive, ref } from 'vue';
 
 import BkCheckbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
+import { useLocale } from '@bkui-vue/config-provider';
 import { Funnel } from '@bkui-vue/icon';
 import Popover from '@bkui-vue/popover';
 import { classes, PropTypes, RenderType, resolveClassName } from '@bkui-vue/shared';
@@ -43,6 +44,7 @@ export default defineComponent({
   emits: ['change', 'filterSave'],
 
   setup(props, { emit }) {
+    const t = useLocale('table');
     const { column } = props;
     const state = reactive({
       isOpen: false,
@@ -101,7 +103,7 @@ export default defineComponent({
     };
 
     const handleFilterChange = (btnSaveClick = false) => {
-      const { disabled } = resolveBtnOption(btnSave, '确定');
+      const { disabled } = resolveBtnOption(btnSave, t.value.confirm);
 
       if (disabled || btnSaveClick) {
         if (props.column.filter === 'custom') {
@@ -131,7 +133,7 @@ export default defineComponent({
     const { btnSave, btnReset } = column.filter;
 
     const renderSaveBtn = () => {
-      const { disabled, text } = resolveBtnOption(btnSave, '确定');
+      const { disabled, text } = resolveBtnOption(btnSave, t.value.confirm);
       if (disabled) {
         return <span class='btn-filter-save disabled'>{text}</span>;
       }
@@ -144,7 +146,7 @@ export default defineComponent({
     };
 
     const renderResetBtn = () => {
-      const { disabled, text } = resolveBtnOption(btnReset, '重置');
+      const { disabled, text } = resolveBtnOption(btnReset, t.value.reset);
       if (disabled) {
         return '';
       }
@@ -183,7 +185,7 @@ export default defineComponent({
         </div>);
       }
 
-      return <div class="list-item is-empty">暂无数据</div>;
+      return <div class="list-item is-empty">{t.value.emptyText}</div>;
     };
 
     return () => (

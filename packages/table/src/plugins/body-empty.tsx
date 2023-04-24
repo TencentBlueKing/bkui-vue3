@@ -25,19 +25,29 @@
 */
 import { computed, defineComponent } from 'vue';
 
+import { useLocale } from '@bkui-vue/config-provider';
 import BkException from '@bkui-vue/exception';
 import { PropTypes } from '@bkui-vue/shared';
+
 export default defineComponent({
   name: 'BodyEmpty',
   props: {
     list: PropTypes.array.def([]),
     filterList: PropTypes.array.def([]),
-    emptyText: PropTypes.string.def('暂无数据'),
+    emptyText: PropTypes.string,
   },
   emits: ['change'],
 
   setup(props) {
+    const t = useLocale('table');
+    const localEmptyText = computed(() => {
+      if (props.emptyText === undefined) {
+        return t.value.emptyText;
+      }
+      return props.emptyText;
+    });
+
     const type = computed(() => (props.list.length === 0 ? 'empty' : 'search-empty'));
-    return () => <BkException scene="part" type={type.value} description={props.emptyText} />;
+    return () => <BkException scene="part" type={type.value} description={localEmptyText.value} />;
   },
 });

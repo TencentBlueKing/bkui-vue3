@@ -27,6 +27,7 @@
 import { computed, defineComponent, PropType, ref, toRefs } from 'vue';
 
 import BkButton from '@bkui-vue/button';
+import { useLocale } from '@bkui-vue/config-provider';
 import { Del, Plus, Upload } from '@bkui-vue/icon';
 import BkProgress from '@bkui-vue/progress';
 import { classes } from '@bkui-vue/shared';
@@ -47,6 +48,7 @@ export default defineComponent({
   },
   emits: ['change', 'remove'],
   setup(props, { slots, emit }) {
+    const t = useLocale('upload');
     const { theme, disabled, file, multiple, accept } = toRefs(props);
 
     const classBlock = `${CLASS_PREFIX}-trigger`;
@@ -175,7 +177,7 @@ export default defineComponent({
                 <>
                   <Upload class={`${classBlock}__draggable-icon`} />
                   <div class={`${classBlock}__draggable-text`}>
-                    将文件拖到此处或<span class={`${classBlock}__draggable-upload-link`}>点击上传</span>
+                    {t.value.drapFileOr}<span class={`${classBlock}__draggable-upload-link`}>{t.value.clickUpload}</span>
                   </div>
                 </>
               )
@@ -202,7 +204,7 @@ export default defineComponent({
         : (
           <div class={`${classBlock}__picture-inner`}>
             <Plus class={`${classBlock}__picture-icon`} />
-            <div class={`${classBlock}__picture-text`}>点击上传</div>
+            <div class={`${classBlock}__picture-text`}>{t.value.clickUpload}</div>
           </div>
         )
       }
@@ -233,7 +235,7 @@ export default defineComponent({
 
     const Button = () => (
       <BkButton disabled={disabled.value}>
-        <Upload class={`${classBlock}__button-icon`} /><span class={`${classBlock}__button-text`}>上传文件</span>
+        <Upload class={`${classBlock}__button-icon`} /><span class={`${classBlock}__button-text`}>{t.value.uploadLabel}</span>
       </BkButton>
     );
 

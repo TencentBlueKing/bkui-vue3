@@ -26,6 +26,7 @@
 
 import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, provide, reactive, ref, unref, watch, watchEffect } from 'vue';
 
+import { useLocale } from '@bkui-vue/config-provider';
 import { debounce, resolveClassName } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
@@ -48,6 +49,8 @@ export default defineComponent({
   props: tableProps,
   emits: EMIT_EVENT_TYPES,
   setup(props, ctx) {
+    const t = useLocale('table');
+
     let columnSortFn: any = null;
     let activeSortColumn: any = null;
     let columnFilterFn: any = null;
@@ -97,7 +100,7 @@ export default defineComponent({
     const styleRef = computed(() => ({
       hasScrollY: hasScrollYRef.value,
     }));
-    const tableRender = new TableRender(props, ctx, reactiveSchema, colgroups, styleRef);
+    const tableRender = new TableRender(props, ctx, reactiveSchema, colgroups, styleRef, t);
 
     const updateOffsetRight = () => {
       const $tableContent = root.value.querySelector('.bk-table-body-content');
@@ -349,4 +352,3 @@ export default defineComponent({
     </div>;
   },
 });
-

@@ -26,6 +26,7 @@
 
 import { computed, defineComponent, h, toRefs, TransitionGroup } from 'vue';
 
+import { useLocale } from '@bkui-vue/config-provider';
 import { ArchiveFill, AudioFill, Del, Done, ImageFill, RightTurnLine, TextFill, VideoFill } from '@bkui-vue/icon';
 import BkProgress from '@bkui-vue/progress';
 import { classes } from '@bkui-vue/shared';
@@ -43,6 +44,7 @@ export default defineComponent({
   },
   emits: ['remove', 'retry'],
   setup(props, { slots, emit }) {
+    const t = useLocale('upload');
     const { theme, disabled, multiple } = toRefs(props);
 
     const classBlock = `${CLASS_PREFIX}-list`;
@@ -171,8 +173,8 @@ export default defineComponent({
         {
           file.status !== 'uploading'
           && <div class={`${classBlock}__item-message`} title={file.statusText}>
-            { file.status === 'success' && <span><Done class={`${classBlock}__item-message-success-icon`} />{file.statusText || '上传成功'}</span> }
-            { file.status === 'fail' && <span>{file.statusText || '上传失败'}</span> }
+            { file.status === 'success' && <><Done class={`${classBlock}__item-message-success-icon`} />{file.statusText || t.value.uploadSuccess}</> }
+            { file.status === 'fail' && <>{file.statusText || t.value.uploadFailed}</> }
           </div>
         }
         {

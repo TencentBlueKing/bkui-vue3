@@ -23,10 +23,14 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+
 import { App } from 'vue';
 
+import { ConfigProviderProps, provideGlobalConfig } from '@bkui-vue/config-provider';
+
 import * as components from './components';
-const createInstall = (prefix = 'Bk') => (app: App) => {
+
+const createInstall = (prefix = 'Bk') => (app: App, options?: ConfigProviderProps) => {
   const pre = app.config.globalProperties.bkUIPrefix || prefix;
   Object
     .keys(components).forEach((key) => {
@@ -37,6 +41,9 @@ const createInstall = (prefix = 'Bk') => (app: App) => {
         app.component(pre + key, components[key]);
       }
     });
+  if (options) {
+    provideGlobalConfig(options);
+  }
 };
 export default {
   createInstall,

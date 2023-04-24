@@ -27,7 +27,7 @@
 
 export type TaskRunner<T> = (options?: T) => Promise<void>;
 
-export class Task<TOptions>  {
+export class Task<TOptions> {
   options: TOptions = {} as any;
   // eslint-disable-next-line no-useless-constructor
   constructor(public name: string, public runner: TaskRunner<TOptions>) {}

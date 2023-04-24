@@ -1,7 +1,7 @@
 {
   "name": "bkui-vue",
   "private": true,
-  "version": "0.0.1-beta.393",
+  "version": "0.0.1-beta.404",
   "workspaces": {
     "packages": [
       "packages/!(**.bak)*",
@@ -44,9 +44,11 @@
     "@babel/plugin-transform-runtime": "~7.17.0",
     "@babel/preset-env": "~7.16.11",
     "@babel/preset-typescript": "~7.16.7",
+    "@blueking/magicbox-header": "~1.1.53",
     "@commitlint/cli": "~16.2.3",
     "@commitlint/config-conventional": "~16.2.1",
     "@types/jest": "~27.4.1",
+    "@types/lodash": "~4.14.194",
     "@types/node": "~17.0.23",
     "@types/postcss-less": "~4.0.2",
     "@typescript-eslint/eslint-plugin": "~5.19.0",
@@ -103,6 +105,7 @@
     "vite-plugin-md": "~0.12.4",
     "vue": "^3.2.0",
     "vue-eslint-parser": "~8.3.0",
+    "vue-i18n": "~9.2.2",
     "vue-router": "~4.0.14",
     "vue-types": "~4.1.1"
   },
