@@ -41,7 +41,7 @@ export type ColumnFilterListItem = {
 };
 
 enum OverflowModeEnum {
-  STATIC =  'static',
+  STATIC = 'static',
   AUTO = 'auto'
 }
 
@@ -320,10 +320,10 @@ export const tableProps = {
   selectionKey: PropTypes.string.def(''),
 
   /**
- * 提供自定义判定当前行是否选中
- * 如果设置了此属性，其他判定均不生效
- * ({ row, cell, data }) => bool
- */
+   * 提供自定义判定当前行是否选中
+   * 如果设置了此属性，其他判定均不生效
+   * ({ row, cell, data }) => bool
+   */
   isSelectedFn: PropTypes.func.def(undefined),
 
   /**
@@ -388,6 +388,10 @@ export const tableProps = {
   resizerWay: toType<`${ResizerWay}`>('ResizerWay', {
     default: ResizerWay.THROTTLE,
   }),
+  /**
+   * 是否监表格尺寸变化而响应式重新计算渲染
+   */
+  observerResize: PropTypes.bool.def(true),
 };
 
 
