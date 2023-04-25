@@ -40,16 +40,16 @@ export default (_props, colgroups: GroupColumn[], hasScrollY?) => {
     column_fixed: !!column.fixed,
     column_fixed_left: column.fixed !== 'right',
     column_fixed_right: column.fixed === 'right',
-    shadow: column.fixed === 'right' ? scrollX < offsetRight :  scrollX > 0,
+    shadow: column.fixed === 'right' ? (offsetRight - scrollX) > 2 :  scrollX > 0,
   });
   const resolveFixColPos = (column: GroupColumn) => (column.fixed === 'right' ? 'right' : 'left');
   const resolveFixOffset = {
-    left: (ignoreFirst = true) => colgroups.filter(col =>  col.fixed && col.fixed !== 'right')
+    left: (ignoreFirst = true) => colgroups.filter(col =>  !col.isHidden && col.fixed && col.fixed !== 'right')
       .reduce((offset: number, curr: GroupColumn, index: number) => {
         const outOffset = ignoreFirst && (index === 0) ? offset : (offset + getColumnReactWidth(curr));
         return outOffset;
       }, 0),
-    right: (ignoreFirst = true) => colgroups.filter(col =>  col.fixed === 'right')
+    right: (ignoreFirst = true) => colgroups.filter(col =>  !col.isHidden && col.fixed === 'right')
       .reduce((offset: number, curr: GroupColumn, index: number) => {
         const outOffset = ignoreFirst && (index === 0) ? offset : (offset + getColumnReactWidth(curr));
         return outOffset;
@@ -91,7 +91,7 @@ export default (_props, colgroups: GroupColumn[], hasScrollY?) => {
    * @returns
    */
   const resolveFixedColumnStyle = (column: GroupColumn, hasScrollY = false) => {
-    if (!column.fixed) {
+    if (!column.fixed || column.isHidden) {
       return {};
     }
     const fixedOffset: any = {
@@ -111,34 +111,27 @@ export default (_props, colgroups: GroupColumn[], hasScrollY?) => {
     bottom: '0px',
   });
 
-  const colPosExist = {
-    left: false,
-    right: false,
-  };
+  const fixedColumns = computed(() => {
+    const colPosExist = {
+      left: false,
+      right: false,
+    };
 
-  const fixedColumns = computed(() => colgroups.filter(col => !col.isHidden && col.fixed).map((col) => {
-    const colPos = resolveFixColPos(col);
-    const isExist = colPosExist[colPos];
-    colPosExist[colPos] = true;
-    return { isExist, colPos, column: col };
-  }));
-
-  /**
-   * 用于渲染固定列悬浮模块区域
-   * @param scrollX
-   * @param offsetRight
-   * @returns
-   */
-  const renderFixedColumns = (scrollX?, offsetRight?) => fixedColumns.value
-    .map(({ isExist, colPos, column }) => (isExist ? '' : <div
-          class={ resolveColumnClass(column, scrollX, offsetRight) }
-          style={ resolveColumnStyle(colPos) }></div>));
+    return colgroups.filter(col => !col.isHidden && col.fixed).map((col) => {
+      const colPos = resolveFixColPos(col);
+      const isExist = colPosExist[colPos];
+      colPosExist[colPos] = true;
+      return { isExist, colPos, column: col };
+    });
+  });
 
   const fixedWrapperClass = resolveClassName('table-fixed');
 
   return {
-    renderFixedColumns,
     fixedWrapperClass,
     resolveFixedColumnStyle,
+    fixedColumns,
+    resolveColumnStyle,
+    resolveColumnClass,
   };
 };

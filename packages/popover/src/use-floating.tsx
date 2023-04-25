@@ -107,7 +107,7 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
   const resolveModifiers: any = () => {
     const resolveResult = {};
     if (Array.isArray(props.modifiers)) {
-      props.modifiers.forEach((m) => {
+      props.modifiers.forEach((m: any) => {
         let result;
         if (m.name === 'offset') {
           if (typeof m.options?.offset === 'number') {
@@ -288,17 +288,27 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
   let popHideTimerId = undefined;
   let isMouseenter = false;
 
+  const resolvePopoverDelay = () => {
+    if (Array.isArray(props.popoverDelay)) {
+      return [props.popoverDelay[0], props.popoverDelay.slice(-1)[0]];
+    }
+
+    return [props.popoverDelay, props.popoverDelay];
+  };
+
   const showPopover = () => {
+    const delay = resolvePopoverDelay()[0];
     // 设置settimeout避免hidePopover导致显示问题
     setTimeout(() => {
       !props.disabled && (localIsShow.value = true);
-    }, props.popoverDelay);
+    }, delay);
   };
 
   const hidePopover = () => {
+    const delay = resolvePopoverDelay()[1];
     popHideTimerId = setTimeout(() => {
       localIsShow.value = false;
-    }, props.popoverDelay);
+    }, delay);
   };
 
   const hanldePopoverShow = () => {
