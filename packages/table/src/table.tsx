@@ -69,7 +69,9 @@ export default defineComponent({
       dragOffsetX,
       reactiveSchema,
       indexData,
-      renderFixedColumns,
+      fixedColumns,
+      resolveColumnStyle,
+      resolveColumnClass,
       setRowExpand,
       initIndexData,
       fixedWrapperClass,
@@ -336,7 +338,15 @@ export default defineComponent({
       </VirtualRender>
       {/* @ts-ignore:next-line */}
       <div class={ fixedWrapperClass } style={ fixedContainerStyle.value }>
-        { renderFixedColumns(reactiveSchema.scrollTranslateX, tableOffsetRight.value) }
+        {
+          fixedColumns.value
+            .map(({ isExist, colPos, column }) => {
+              console.log('fixedWrapperClass');
+              return (isExist ? '' : <div
+              class={ resolveColumnClass(column, reactiveSchema.scrollTranslateX, tableOffsetRight.value) }
+              style={ resolveColumnStyle(colPos) }></div>);
+            })
+        }
         <div class={ resizeColumnClass } style={ resizeColumnStyle.value }></div>
         <div class={ loadingRowClass }>{
           renderScrollLoading()
