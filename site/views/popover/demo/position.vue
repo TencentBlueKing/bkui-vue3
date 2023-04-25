@@ -9,7 +9,7 @@
       </bk-popover>
       <bk-popover
         content="Top Center 文字提示"
-        placement="bottom"
+        placement="top"
       >
         <bk-button>上边</bk-button>
       </bk-popover>
