@@ -286,6 +286,7 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
   };
 
   let popHideTimerId = undefined;
+  let popShowTimerId = undefined;
   let isMouseenter = false;
 
   const resolvePopoverDelay = () => {
@@ -299,7 +300,8 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
   const showPopover = () => {
     const delay = resolvePopoverDelay()[0];
     // 设置settimeout避免hidePopover导致显示问题
-    setTimeout(() => {
+    popShowTimerId = setTimeout(() => {
+      popHideTimerId && clearTimeout(popHideTimerId);
       !props.disabled && (localIsShow.value = true);
     }, delay);
   };
@@ -307,6 +309,7 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
   const hidePopover = () => {
     const delay = resolvePopoverDelay()[1];
     popHideTimerId = setTimeout(() => {
+      popShowTimerId && clearTimeout(popShowTimerId);
       localIsShow.value = false;
     }, delay);
   };
