@@ -124,6 +124,13 @@ const props: IPropsTableItem[] = [
     desc: '如果设置了boundary为指定DOM，此配置项生效。是否将弹出内容固定到目标元素位置。例如：boundary = document.body, fixOnBoundary = true，则弹出内容会一直固定到body',
     optional: ['true', 'false'],
   },
+  {
+    name: 'popoverDelay',
+    type: 'number | number[]',
+    default: '100',
+    desc: '用于设置显示隐藏延迟时间，如果设置为数值类型，则表示显示和隐藏都延迟指定数值，如果需要分开设置显示隐藏请设置为数组[showDelay, hideDealy]',
+    optional: [],
+  },
 ];
 
 const events: IPropsTableItem[] = [

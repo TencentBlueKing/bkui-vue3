@@ -118,7 +118,7 @@ export const PopoverProps = {
   /**
    * popover显示和隐藏的延时时间
    */
-  popoverDelay: PropTypes.number.def(100),
+  popoverDelay: PropTypes.oneOfType([PropTypes.number, PropTypes.arrayOf(PropTypes.number)]).def(100),
 
   ...EventProps,
 };

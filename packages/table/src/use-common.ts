@@ -259,6 +259,10 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
       })));
   };
 
+  if (typeof props.settings === 'object') {
+    updateColGroups(props.settings as Settings);
+  }
+
   const { dragOffsetXStyle, dragOffsetX, resetResizeEvents, registerResizeEvent } = useColumnResize(colgroups, true);
   const { activeColumns } = useActiveColumns(props, targetColumns);
 
@@ -667,7 +671,12 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
     }
   };
 
-  const { renderFixedColumns, fixedWrapperClass } = useFixedColumn(props, colgroups, false);
+  const {
+    fixedColumns,
+    resolveColumnStyle,
+    resolveColumnClass,
+    fixedWrapperClass,
+  } = useFixedColumn(props, colgroups, false);
 
   /**
    * 获取已经勾选的数据
@@ -682,9 +691,11 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
     reactiveSchema,
     indexData,
     fixedWrapperClass,
+    fixedColumns,
+    resolveColumnStyle,
+    resolveColumnClass,
     initIndexData,
     updateIndexData,
-    renderFixedColumns,
     setRowExpand,
     updateColGroups,
     clearSelection,
