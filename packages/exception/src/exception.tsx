@@ -42,7 +42,7 @@ import login from './images/login.svg';
 import searchEmpty from './images/search-empty.svg';
 import { TypesMapType } from './typings';
 
-enum ExceptionEnum {
+export enum ExceptionEnum {
   CODE_404 = '404',
   CODE_403 = '403',
   CODE_500 = '500',
@@ -51,7 +51,7 @@ enum ExceptionEnum {
   SEARCH = 'search-empty',
   LOGIN = 'login',
 }
-enum SceneEnum {
+export enum SceneEnum {
   PAGE = 'page',
   PART = 'part',
 }

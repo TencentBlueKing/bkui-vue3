@@ -22,31 +22,25 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
-import {
-  computed,
-  defineComponent,
-  ExtractPropTypes,
-  ref,
-  watch,
-} from 'vue';
+import { computed, defineComponent, ExtractPropTypes, ref, watch } from 'vue';
 
 import { Close, DownSmall, Eye, Search, Unvisible } from '@bkui-vue/icon';
 import {
   classes,
   InputBehaviorType,
-  PropTypes, resolveClassName,
+  PropTypes,
+  resolveClassName,
   useFormItem,
 } from '@bkui-vue/shared';
-
 
 export const inputType = {
   type: PropTypes.string.def('text'),
   clearable: PropTypes.bool,
   disabled: PropTypes.bool,
   readonly: PropTypes.bool,
-  placeholder: PropTypes.string.def('Enter'),
+  placeholder: PropTypes.string.def('请输入'),
   prefixIcon: PropTypes.string,
   suffixIcon: PropTypes.string,
   suffix: PropTypes.string,
@@ -83,13 +77,15 @@ export const enum EVENTS {
   COMPOSITIONUPDATE = 'compositionupdate',
   COMPOSITIONEND = 'compositionend',
 }
-function EventFunction(_value: any, _evt?: KeyboardEvent | Event) {
+
+function EventFunction(_value: any, _evt?: KeyboardEvent|Event) {
   return true;
 }
 
 function CompositionEventFunction(evt: CompositionEvent) {
   return evt;
 }
+
 export const inputEmitEventsType = {
   [EVENTS.UPDATE]: EventFunction,
   [EVENTS.FOCUS]: (evt: FocusEvent) => evt,
@@ -108,7 +104,7 @@ export const inputEmitEventsType = {
 };
 
 // type InputEventUnion = `${EVENTS}`;
-export type InputType = ExtractPropTypes<typeof inputType> ;
+export type InputType = ExtractPropTypes<typeof inputType>;
 
 export default defineComponent({
   name: 'Input',
@@ -121,37 +117,45 @@ export default defineComponent({
     const isFocused = ref(false);
     const isCNInput = ref(false);
     const isTextArea = computed(() => props.type === 'textarea');
-    const inputClsPrefix = computed(() => (isTextArea.value ? resolveClassName('textarea') : resolveClassName('input')));
+    const inputClsPrefix = computed(() => (isTextArea.value
+      ? resolveClassName('textarea')
+      : resolveClassName('input')));
     const { class: cls, style, ...inputAttrs } = ctx.attrs;
 
     const inputRef = ref();
-    const inputCls = computed(() => classes({
-      [`${inputClsPrefix.value}--${props.size}`]: !!props.size,
-      'is-focused': isFocused.value,
-      'is-readonly': props.readonly && !props.selectReadonly,
-      'is-disabled': props.disabled,
-      'is-simplicity': props.behavior === 'simplicity',
-      [`${cls}`]: !!cls,
-    }, inputClsPrefix.value));
+    const inputCls = computed(() => classes(
+      {
+        [`${inputClsPrefix.value}--${props.size}`]: !!props.size,
+        'is-focused': isFocused.value,
+        'is-readonly': props.readonly && !props.selectReadonly,
+        'is-disabled': props.disabled,
+        'is-simplicity': props.behavior === 'simplicity',
+        [`${cls}`]: !!cls,
+      },
+      inputClsPrefix.value,
+    ));
     const suffixIconMap = {
-      search: () => <Search />,
-      password: () => <Eye onClick={handleVisibleChange} />,
+      search: () => <Search/>,
+      password: () => <Eye onClick={handleVisibleChange}/>,
     };
     const suffixCls = getCls('suffix-icon');
     const suffixIcon = computed(() => {
       const icon = suffixIconMap[props.type];
       if (pwdVisible.value) {
-        return <Unvisible onClick={handleVisibleChange} class={suffixCls} />;
+        return <Unvisible onClick={handleVisibleChange} class={suffixCls}/>;
       }
-      return icon ? <icon class={suffixCls} /> : null;
+      return icon ? <icon class={suffixCls}/> : null;
     });
     const isNumberInput = computed(() => props.type === 'number');
     const ceilMaxLength = computed(() => Math.floor(props.maxlength));
     const pwdVisible = ref(false);
-    const clearCls = computed(() => classes({
-      'show-clear-only-hover': props.showClearOnlyHover,
-      [`${inputClsPrefix.value}--clear-icon`]: true,
-    }, suffixCls));
+    const clearCls = computed(() => classes(
+      {
+        'show-clear-only-hover': props.showClearOnlyHover,
+        [`${inputClsPrefix.value}--clear-icon`]: true,
+      },
+      suffixCls,
+    ));
     const incControlCls = computed(() => classes({
       'is-disabled': props.disabled || props.modelValue >= props.max,
     }));
@@ -160,11 +164,14 @@ export default defineComponent({
       'is-disabled': props.disabled || props.modelValue <= props.min,
     }));
 
-    watch(() => props.modelValue, () => {
-      if (props.withValidate) {
-        formItem?.validate?.('change');
-      }
-    });
+    watch(
+      () => props.modelValue,
+      () => {
+        if (props.withValidate) {
+          formItem?.validate?.('change');
+        }
+      },
+    );
 
     ctx.expose({
       focus() {
@@ -189,7 +196,10 @@ export default defineComponent({
     function handleBlur(e) {
       isFocused.value = false;
       ctx.emit(EVENTS.BLUR, e);
-      if (isNumberInput.value && (e.target.value > props.max || e.target.value < props.min)) {
+      if (
+        isNumberInput.value && Number.isInteger(parseInt(e.target.value, 10))
+        && (e.target.value > props.max || e.target.value < props.min)
+      ) {
         const val = e.target.value > props.max ? props.max : props.min;
         ctx.emit(EVENTS.UPDATE, val);
         ctx.emit(EVENTS.CHANGE, val);
@@ -198,21 +208,32 @@ export default defineComponent({
         formItem?.validate?.('blur');
       }
     }
+
     // 事件句柄生成器
     function eventHandler(eventName) {
       return (e) => {
         e.stopPropagation();
-        if (eventName === EVENTS.KEYDOWN && (e.code === 'Enter' || e.key === 'Enter' || e.keyCode === 13)) {
+        if (
+          eventName === EVENTS.KEYDOWN
+          && (e.code === 'Enter' || e.key === 'Enter' || e.keyCode === 13)
+        ) {
           ctx.emit(EVENTS.ENTER, e.target.value, e);
         }
-        if (isCNInput.value && [EVENTS.INPUT, EVENTS.CHANGE].some(e => eventName === e)) return;
+        if (
+          isCNInput.value
+          && [EVENTS.INPUT, EVENTS.CHANGE].some(e => eventName === e)
+        ) return;
         if (eventName === EVENTS.INPUT) {
-          ctx.emit(EVENTS.UPDATE, isNumberInput.value ? +e.target.value : e.target.value);
+          ctx.emit(
+            EVENTS.UPDATE,
+            isNumberInput.value && e.target.value ? +e.target.value : e.target.value,
+          );
         }
 
         ctx.emit(eventName, e.target.value, e);
       };
     }
+
     const [
       handleKeyup,
       handleKeydown,
@@ -246,7 +267,7 @@ export default defineComponent({
       const val: number = parseFloat((props.modelValue ?? 0).toString());
       const factor = Number.isInteger(numStep) ? numStep : 1;
 
-      let newVal = val + (INC ? factor :  -1 * factor);
+      let newVal = val + (INC ? factor : -1 * factor);
       if (Number.isInteger(props.max)) {
         newVal = Math.min(newVal, props.max);
       }
@@ -261,12 +282,14 @@ export default defineComponent({
       if (props.disabled) return;
       const newVal = handleNumber(props.step);
       ctx.emit(EVENTS.UPDATE, newVal);
+      ctx.emit(EVENTS.CHANGE, newVal);
     }
 
     function handleDec() {
       if (props.disabled) return;
       const newVal = handleNumber(props.step, false);
       ctx.emit(EVENTS.UPDATE, newVal);
+      ctx.emit(EVENTS.CHANGE, newVal);
     }
 
     function getCls(name) {
@@ -278,16 +301,18 @@ export default defineComponent({
     }
 
     const bindProps = computed(() => {
-      const val = typeof props.modelValue === 'undefined' || props.modelValue === null ? {} : {
-        value: props.modelValue,
-      };
-      return ({
+      const val = typeof props.modelValue === 'undefined' || props.modelValue === null
+        ? {}
+        : {
+          value: props.modelValue,
+        };
+      return {
         ...val,
         maxlength: props.maxlength,
         placeholder: props.placeholder,
         readonly: props.readonly,
         disabled: props.disabled,
-      });
+      };
     });
     const eventListener = {
       onInput: handleInput,
@@ -302,28 +327,33 @@ export default defineComponent({
       onCompositionend: handleCompositionEnd,
     };
     return () => (
-        <div class={inputCls.value} style={style as any} >
-        {
-          ctx.slots?.prefix?.() ?? (props.prefix && <div class={getCls('prefix-area')}>
-            <span class={getCls('prefix-area--text')}>{props.prefix}</span>
-          </div>)
-        }
+      <div class={inputCls.value} style={style as any}>
+        {ctx.slots?.prefix?.()
+          ?? (props.prefix && (
+            <div class={getCls('prefix-area')}>
+              <span class={getCls('prefix-area--text')}>{props.prefix}</span>
+            </div>
+          ))}
         {isTextArea.value ? (
-            <textarea
-              ref={inputRef}
-              spellcheck={false}
-              {...inputAttrs}
-              {...eventListener}
-              {...bindProps.value}
-              rows={props.rows}
-            />
+          <textarea
+            ref={inputRef}
+            spellcheck={false}
+            {...inputAttrs}
+            {...eventListener}
+            {...bindProps.value}
+            rows={props.rows}
+          />
         ) : (
           <input
             spellcheck={false}
             {...inputAttrs}
             ref={inputRef}
             class={`${inputClsPrefix.value}--text`}
-            type={ pwdVisible.value && props.type === 'password' ? 'text' : props.type}
+            type={
+              pwdVisible.value && props.type === 'password'
+                ? 'text'
+                : props.type
+            }
             step={props.step}
             max={props.max}
             min={props.min}
@@ -333,30 +363,30 @@ export default defineComponent({
         )}
         {!isTextArea.value && props.clearable && !!props.modelValue && (
           <span class={clearCls.value} onClick={clear}>
-            <Close />
+            <Close/>
           </span>
         )}
         {suffixIcon.value}
-        {
-          typeof props.maxlength === 'number' && (props.showWordLimit || isTextArea.value) && (
+        {typeof props.maxlength === 'number'
+          && (props.showWordLimit || isTextArea.value) && (
             <p class={getCls('max-length')}>
-              {(props.modelValue ?? '').toString().length}/<span>{ceilMaxLength.value}</span>
+              {(props.modelValue ?? '').toString().length}/
+              <span>{ceilMaxLength.value}</span>
             </p>
-          )
-        }
-        {
-          isNumberInput.value && props.showControl && (<div class={getCls('number-control')}>
-          <DownSmall class={incControlCls.value} onClick={handleInc} />
-          <DownSmall class={decControlCls.value} onClick={handleDec}/>
-        </div>)
-        }
-        {
-            ctx.slots?.suffix?.() ?? (props.suffix && <div class={getCls('suffix-area')}>
+        )}
+        {isNumberInput.value && props.showControl && (
+          <div class={getCls('number-control')}>
+            <DownSmall class={incControlCls.value} onClick={handleInc}/>
+            <DownSmall class={decControlCls.value} onClick={handleDec}/>
+          </div>
+        )}
+        {ctx.slots?.suffix?.()
+          ?? (props.suffix && (
+            <div class={getCls('suffix-area')}>
               <span class={getCls('suffix-area--text')}>{props.suffix}</span>
-            </div>)
-        }
+            </div>
+          ))}
       </div>
-
     );
   },
 });

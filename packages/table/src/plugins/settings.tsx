@@ -27,11 +27,12 @@ import { computed, defineComponent, ref, unref, watch } from 'vue';
 
 import BkButton from '@bkui-vue/button';
 import BkCheckbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
+import { useLocale } from '@bkui-vue/config-provider';
 import { CloseLine, CogShape } from '@bkui-vue/icon/';
 import Popover from '@bkui-vue/popover';
 import { PropTypes, resolveClassName } from '@bkui-vue/shared';
 
-import { DEFAULT_SIZE_LIST, LINE_HEIGHT } from '../const';
+import { createDefaultSizeList, LINE_HEIGHT } from '../const';
 import { Field, Settings, SettingSizeEnum, settingSizeType, SizeItem } from '../props';
 import { resolvePropVal } from '../utils';
 
@@ -56,7 +57,8 @@ export default defineComponent({
   },
   emits: ['change'],
   setup(props, { emit }) {
-    const defaultSizeList: SizeItem[] = DEFAULT_SIZE_LIST;
+    const t = useLocale('table');
+    const defaultSizeList: SizeItem[] = createDefaultSizeList(t);
     const resolvedColVal = (item, index) => resolvePropVal(item, ['field', 'type'], [item, index]);
 
     const checkAll = ref(false);
@@ -188,18 +190,18 @@ export default defineComponent({
           </span>,
           content: () => <div class="setting-content">
             <div class="setting-head">
-              <span class="head-title">表格设置</span>
+              <span class="head-title">{t.value.setting.title}</span>
               <CloseLine class='icon-close-action' onClick={handleCancelClick}></CloseLine>
             </div>
             <div class="setting-body">
               <div class="setting-body-title">
                 <div>
-                  <span class="field-setting-label">字段显示设置</span>
-                  {isLimit.value ? <span class="limit">（最多{localSettings.value.limit}项）</span> : ''}</div>
+                  <span class="field-setting-label">{t.value.setting.fields.title}</span>
+                  {isLimit.value ? <span class="limit">{t.value.setting.fields.subtitle(localSettings.value.limit)}</span> : ''}</div>
                 {isLimit.value ? '' : <span class="check-all" onClick={handleCheckAllClick}>
-                  <BkCheckbox label="全选"
+                  <BkCheckbox label={t.value.setting.fields.selectAll}
                     indeterminate={Boolean(indeterminate.value)}
-                    modelValue={checkedFields.value.length > 0}>全选</BkCheckbox>
+                    modelValue={checkedFields.value.length > 0}>{t.value.setting.fields.selectAll}</BkCheckbox>
                 </span>
                 }
               </div>
@@ -217,14 +219,14 @@ export default defineComponent({
               {
                 showLineHeight.value
                   ? <div class="setting-body-line-height">
-                    表格行高：{renderSize()}
+                    {t.value.setting.lineHeight.title}：{renderSize()}
                   </div> : ''
               }
 
             </div>
             <div class="setting-footer">
-              <BkButton theme='primary' style={buttonStyle} onClick={handleSaveClick}>确定</BkButton>
-              <BkButton style={buttonStyle} onClick={handleCancelClick}>取消</BkButton>
+              <BkButton theme='primary' style={buttonStyle} onClick={handleSaveClick}>{t.value.setting.options.ok}</BkButton>
+              <BkButton style={buttonStyle} onClick={handleCancelClick}>{t.value.setting.options.cancel}</BkButton>
             </div>
           </div>,
         }

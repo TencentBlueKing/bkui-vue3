@@ -32,12 +32,16 @@ const props = {
   width: PropTypes.oneOfType([String, Number]).def(''),
   height: PropTypes.oneOfType([String, Number]).def(''),
   // 确认按钮文字
-  confirmText: PropTypes.string.def('确定'),
+  // confirmText: PropTypes.string.def('确定'),
+  confirmText: PropTypes.string,
   // 取消按钮文字
-  cancelText: PropTypes.string.def('取消'),
+  // cancelText: PropTypes.string.def('取消'),
+  cancelText: PropTypes.string,
   // 步骤按钮文字
-  prevText: PropTypes.string.def('上一步'),
-  nextText: PropTypes.string.def('下一步'),
+  // prevText: PropTypes.string.def('上一步'),
+  prevText: PropTypes.string,
+  // nextText: PropTypes.string.def('下一步'),
+  nextText: PropTypes.string,
   // 当前步骤
   current: PropTypes.number.def(1),
   // 总步数

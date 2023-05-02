@@ -26,10 +26,11 @@
 import { defineComponent, onBeforeUnmount, onMounted, ref } from 'vue';
 
 import { bkEllipsisInstance } from '@bkui-vue/directives';
-import { hasOverflowEllipsis, isElement, PropTypes  } from '@bkui-vue/shared';
+import { hasOverflowEllipsis, isElement, PropTypes } from '@bkui-vue/shared';
 
 import { IOverflowTooltip, overflowModeType } from '../props';
 import { observerResize } from '../utils';
+// import
 export default defineComponent({
   name: 'TableCell',
   props: {
@@ -42,6 +43,7 @@ export default defineComponent({
       mode: overflowModeType,
     })]).def(undefined),
     title: PropTypes.string.def(undefined),
+    observerResize: PropTypes.bool.def(true),
   },
 
   setup(props, { slots }) {
@@ -57,7 +59,6 @@ export default defineComponent({
     };
 
     const { showOverflowTooltip = false } = resolveSetting();
-    let observerIns = null;
     let bkEllipsisIns = null;
 
     const resolveTooltipOption = () => {
@@ -117,12 +118,16 @@ export default defineComponent({
       if (!disabled) {
         resolveOverflowTooltip();
 
-        if (props.column.showOverflowTooltip?.watchCellResize !== false) {
-          observerIns = observerResize(refRoot.value, () => {
+        if (props.column.showOverflowTooltip?.watchCellResize !== false && props.observerResize) {
+          let  observerIns = observerResize(refRoot.value, () => {
             resolveOverflowTooltip();
           }, 60, true);
 
           observerIns.start();
+          onBeforeUnmount(() => {
+            observerIns.disconnect();
+            observerIns = null;
+          });
         }
       }
     });

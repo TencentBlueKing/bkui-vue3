@@ -702,6 +702,15 @@ const routes: RouteRecordRaw[] = [
     },
     component: () => import('../views/search-select/index'),
   },
+  {
+    path: '/overflow-title',
+    name: 'overflowTitle',
+    meta: {
+      group: NavGroupMeta.Form,
+      navName: 'overflowTitle 文本溢出',
+    },
+    component: () => import('../views/overflow-title/index'),
+  },
 ];
 
 const router = createRouter({

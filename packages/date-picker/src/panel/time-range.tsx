@@ -225,7 +225,10 @@ export default defineComponent({
       >
         <div class={resolveClassName('picker-panel-body')} style={{ width: `${this.width * 2}px` }}>
           <div
-            class={[resolveClassName('picker-panel-content', resolveClassName('picker-panel-content-left'))]}
+            class={[
+              resolveClassName('picker-panel-content'),
+              resolveClassName('picker-panel-content-left')]
+            }
             style={{ width: `${this.width}px` }}>
             {
               this.showDate
@@ -249,7 +252,10 @@ export default defineComponent({
               onPick-click={this.handlePickClick} />
           </div>
           <div
-            class={[resolveClassName('picker-panel-content'), resolveClassName('picker-panel-content-right')]}
+            class={[
+              resolveClassName('picker-panel-content'),
+              resolveClassName('picker-panel-content-right'),
+            ]}
             style={{ width: `${this.width}px` }}>
             {
               this.showDate

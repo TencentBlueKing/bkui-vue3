@@ -59,8 +59,9 @@ import {
 export const useClass = (props: TablePropTypes, targetColumns: Column[], root?, reactiveProp?, pageData?: any[]) => {
   const { getColumns } = useColumn(props, targetColumns);
   const autoHeight = ref(200);
-  const hasScrollY = ref(undefined);
+  const hasScrollY = ref(false);
   const hasFooter = computed(() => props.pagination && props.data.length);
+  const hasScrollYRef = computed(() => hasScrollY.value);
   const tableClass = computed(() => (classes({
     [resolveClassName('table')]: true,
     'has-footer': hasFooter.value,
@@ -211,6 +212,7 @@ export const useClass = (props: TablePropTypes, targetColumns: Column[], root?, 
     getColumnsWidthOffsetWidth,
     hasFooter,
     hasScrollY,
+    hasScrollYRef,
   };
 };
 
@@ -256,6 +258,10 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
         [COLUMN_ATTRIBUTE.COL_SOURCE_DATA]: col,
       })));
   };
+
+  if (typeof props.settings === 'object') {
+    updateColGroups(props.settings as Settings);
+  }
 
   const { dragOffsetXStyle, dragOffsetX, resetResizeEvents, registerResizeEvent } = useColumnResize(colgroups, true);
   const { activeColumns } = useActiveColumns(props, targetColumns);
@@ -369,6 +375,7 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
     });
 
     reactiveSchema.rowActions.set(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_INDETERMINATE, hasChecked && hasUnchecked);
+    reactiveSchema.rowActions.set(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_ALL, hasChecked && !hasUnchecked);
   };
 
   const isSelectionEnable = () => props.columns.some(col => col.type === 'selection');
@@ -664,7 +671,12 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
     }
   };
 
-  const { renderFixedColumns, fixedWrapperClass } = useFixedColumn(props, colgroups, false);
+  const {
+    fixedColumns,
+    resolveColumnStyle,
+    resolveColumnClass,
+    fixedWrapperClass,
+  } = useFixedColumn(props, colgroups, false);
 
   /**
    * 获取已经勾选的数据
@@ -679,9 +691,11 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
     reactiveSchema,
     indexData,
     fixedWrapperClass,
+    fixedColumns,
+    resolveColumnStyle,
+    resolveColumnClass,
     initIndexData,
     updateIndexData,
-    renderFixedColumns,
     setRowExpand,
     updateColGroups,
     clearSelection,

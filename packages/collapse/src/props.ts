@@ -51,8 +51,10 @@ export const propsCollapse = {
   /**
    * 当前激活Index
    */
-  modelValue: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.number).def([]),
-    PropTypes.arrayOf(PropTypes.string).def([]), PropTypes.number.def(-1)]),
+  modelValue: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.number).def([]),
+    PropTypes.arrayOf(PropTypes.string).def([]),
+    PropTypes.number.def(-1)]),
 
   /**
    * 是否使用手风琴效果
@@ -72,6 +74,7 @@ export const propsCollapsePanel = {
   isFormList: PropTypes.bool.def(false),
   renderDirective: renderDirectiveType(),
   modelValue: PropTypes.bool.def(false),
+  alone: PropTypes.bool.def(false),
   ...CollapsePanelEventProps,
 };
 

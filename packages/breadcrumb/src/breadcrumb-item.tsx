@@ -38,12 +38,13 @@ export default defineComponent({
     to: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).def(''),
     replace: PropTypes.bool,
   },
-
-  setup(props, { slots }) {
+  emits: ['click'],
+  setup(props, { emit, slots }) {
     const { appContext } = getCurrentInstance();
     const parent = inject<IBreadcrumbProps>('breadcrumb');
     const router = appContext.config.globalProperties.$router;
-    const handleClick = () => {
+    const handleClick = (e) => {
+      emit('click', e);
       const { to, replace } = props;
       if (!to || !router) return;
       replace ? router.replace(to) : router.push(to);
@@ -73,7 +74,7 @@ export default defineComponent({
         >
           {slots.default?.()}
         </span>
-        { renderSeparator() }
+        {renderSeparator()}
       </span>
     );
   },

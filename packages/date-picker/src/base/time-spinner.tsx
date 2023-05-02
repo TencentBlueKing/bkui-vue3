@@ -37,6 +37,7 @@ import {
   watch,
 } from 'vue';
 
+import { useLocale } from '@bkui-vue/config-provider';
 import { resolveClassName, scrollTop } from '@bkui-vue/shared';
 
 import { timePanelProps } from '../props';
@@ -77,6 +78,7 @@ export default defineComponent({
   },
   emits: ['change', 'pick-click'],
   setup(props, { emit }) {
+    const t = useLocale('datePicker');
     const state = reactive({
       spinerSteps: [1, 1, 1].map((one, i) => Math.abs(props.steps[i]) || one),
       compiled: false,
@@ -360,6 +362,7 @@ export default defineComponent({
       handleClick,
       updateScroll,
       padTime,
+      t,
     };
   },
   render() {
@@ -371,9 +374,9 @@ export default defineComponent({
         ]}
       >
         <div class={resolveClassName('time-picker-cells-title-wrapper')}>
-          <div class={[resolveClassName('time-picker-cells-title'), this.focusedColumn === 0 ? 'active' : '']} style={this.styles}>时</div>
-          <div class={[resolveClassName('time-picker-cells-title'), this.focusedColumn === 1 ? 'active' : '']} style={this.styles}>分</div>
-          <div class={[resolveClassName('time-picker-cells-title'), this.focusedColumn === 2 ? 'active' : '']} v-show={this.showSeconds} style={this.styles}>秒</div>
+          <div class={[resolveClassName('time-picker-cells-title'), this.focusedColumn === 0 ? 'active' : '']} style={this.styles}>{this.t.hour}</div>
+          <div class={[resolveClassName('time-picker-cells-title'), this.focusedColumn === 1 ? 'active' : '']} style={this.styles}>{this.t.min}</div>
+          <div class={[resolveClassName('time-picker-cells-title'), this.focusedColumn === 2 ? 'active' : '']} v-show={this.showSeconds} style={this.styles}>{this.t.sec}</div>
         </div>
         <div class={resolveClassName('time-picker-cells-list')} ref="hoursRef" style={this.styles}>
           <ul class={resolveClassName('time-picker-cells-ul')}>

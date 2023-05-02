@@ -29,7 +29,7 @@ import { array, object } from 'vue-types';
 
 import BkCheckbox from '@bkui-vue/checkbox';
 import { AngleRight, Spinner } from '@bkui-vue/icon';
-import { arrayEqual, PropTypes } from '@bkui-vue/shared';
+import { arrayEqual, PropTypes, resolveClassName } from '@bkui-vue/shared';
 
 import { IData, INode } from './interface';
 
@@ -206,11 +206,11 @@ export default defineComponent({
     const emptyWidth = parseInt(this.panelWidth, 10) > 200 ? this.panelWidth : `${200}px`;
     const searchPanelRender = () => (
       this.suggestions.length ? <ul
-        class="bk-cascader-panel bk-scroll-y"
+        class={[resolveClassName('cascader-panel'), 'bk-scroll-y']}
         style={{ height: this.panelHeight, width: this.panelWidth }}>
           {this.suggestions.map(node => (
             <li class={[
-              'bk-cascader-node',
+              resolveClassName('cascader-node'),
               { 'is-selected': this.isNodeInPath(node) },
               { 'is-disabled': node.isDisabled },
               { 'is-checked': this.isCheckedNode(node, this.checkValue) },
@@ -219,19 +219,19 @@ export default defineComponent({
               {node.pathNames.join(this.separator)}
             </li>
           ))}
-      </ul> : <div class="bk-cascader-search-empty" style={{ width: emptyWidth }}>
+      </ul> : <div class={resolveClassName('cascader-search-empty')} style={{ width: emptyWidth }}>
         <span>暂无搜索结果</span>
       </div>
     );
     return (
-      <div class="bk-cascader-panel-wrapper">
+      <div class={resolveClassName('cascader-panel-wrapper')}>
         {this.isFiltering ? searchPanelRender() : this.menus.list.map(menu => (
-          <ul class="bk-cascader-panel bk-scroll-y"
+          <ul class={[resolveClassName('cascader-panel'), 'bk-scroll-y']}
             style={{ height: this.panelHeight, width: this.panelWidth }}>
             {menu.map(node => (
               <li
                 class={[
-                  'bk-cascader-node',
+                  resolveClassName('cascader-node'),
                   { 'is-selected': this.isNodeInPath(node) },
                   { 'is-disabled': node.isDisabled },
                   { 'is-checked': !node.config.multiple && this.isCheckedNode(node, this.checkValue) },
@@ -243,6 +243,7 @@ export default defineComponent({
                     disabled={node.isDisabled}
                     v-model={node.checked}
                     indeterminate={node.isIndeterminate}
+                    style="margin-right: 20px"
                     onChange={(val: boolean) => this.checkNode(node, val)}></BkCheckbox>
                 )}
                 {this.$slots.default?.({ node, data: node.data })}

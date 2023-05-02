@@ -30,7 +30,7 @@ import { array } from 'vue-types';
 import { clickoutside } from '@bkui-vue/directives';
 import { AngleUp, Close, Error } from '@bkui-vue/icon';
 import BkPopover from '@bkui-vue/popover';
-import { debounce, PropTypes } from '@bkui-vue/shared';
+import { debounce, PropTypes, resolveClassName } from '@bkui-vue/shared';
 
 import { useHover } from '../../select/src/common';
 
@@ -69,12 +69,11 @@ export default defineComponent({
     scrollHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(216),
     scrollWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def('auto'),
   },
-  emits: ['update:modelValue', 'change', 'clear', 'toggle'],
+  emits: ['update:modelValue', 'change', 'clear', 'toggle', 'focus'],
   setup(props, { emit }) {
     const { separator, multiple } = props;
     const { isHover, setHover, cancelHover } = useHover();
     const store = ref(new Store(props));
-    const panelShow = ref(false);
     const selectedText = ref<string | number>('');
     const selectedTags = ref([]);
     const { modelValue } = toRefs(props);
@@ -158,6 +157,7 @@ export default defineComponent({
 
     const popoverChangeEmitter = (val) => {
       emit('toggle', val.isShow);
+      val.isShow && focusEmitter(); // 面板打开，触发focus事件
       /** 面板收起，搜索状态关闭 */
       if (!val.isShow) {
         isFiltering.value = false;
@@ -182,6 +182,10 @@ export default defineComponent({
       !popover?.value.isShow && popover?.value.show();
     });
 
+    const focusEmitter = () => {
+      emit('focus');
+    };
+
     watch(
       () => props.modelValue,
       modelValueChangeHandler, { immediate: true },
@@ -196,7 +200,6 @@ export default defineComponent({
     return {
       store,
       updateValue,
-      panelShow,
       selectedText,
       checkedValue,
       handleClear,
@@ -212,14 +215,15 @@ export default defineComponent({
       suggestions,
       isFiltering,
       searchInputHandler,
+      focusEmitter,
     };
   },
   render() {
     const suffixIcon = () => {
       if (this.clearable && this.isHover) {
-        return <Close class="bk-icon-clear-icon" onClick={this.handleClear}></Close>;
+        return <Close class="icon-clear-icon" onClick={this.handleClear}></Close>;
       }
-      return <AngleUp class="bk-icon-angle-up"></AngleUp>;
+      return <AngleUp class="icon-angle-up"></AngleUp>;
     };
 
     const renderTags = () => {
@@ -230,14 +234,13 @@ export default defineComponent({
         {this.selectedTags.map((tag, index) => (
           <span class="cascader-tag-item">
             <span class="cascader-tag-item-name">{tag.text}</span>
-            <Error class="bk-icon-clear-icon" onClick={(e: Event) => this.removeTag(this.modelValue, index, e)}></Error>
+            <Error class="icon-clear-icon" onClick={(e: Event) => this.removeTag(this.modelValue, index, e)}></Error>
           </span>
         ))}
       </div>;
     };
     return (
-      <div class={['bk-cascader', 'bk-cascader-wrapper', this.extCls, {
-        'bk-is-show-panel': this.panelShow,
+      <div class={[resolveClassName('cascader'), resolveClassName('cascader-wrapper'), this.extCls, {
         'is-unselected': this.modelValue.length === 0,
         'is-hover': this.isHover,
         'is-filterable': this.filterable,
@@ -249,20 +252,20 @@ export default defineComponent({
         {suffixIcon()}
         <BkPopover
           placement="bottom-start"
-          theme="light bk-cascader-popover"
+          theme={`light ${resolveClassName('cascader-popover')}`}
           trigger="click"
           arrow={false}
-          class="bk-cascader-popover-wrapper"
+          class={resolveClassName('cascader-popover-wrapper')}
           ref="popover"
           onAfterHidden={this.popoverChangeEmitter}
           onAfterShow={this.popoverChangeEmitter}
           boundary="body">
           {{
             default: () => (
-              <div class="bk-cascader-name">
+              <div class={resolveClassName('cascader-name')}>
                 {this.multiple && this.selectedTags.length > 0 && renderTags()}
                 {this.filterable
-                  ? <input class="bk-cascader-search-input"
+                  ? <input class={resolveClassName('cascader-search-input')}
                     type="text"
                     onInput={this.searchInputHandler}
                     placeholder={this.placeholder}
@@ -273,7 +276,7 @@ export default defineComponent({
               </div>
             ),
             content: () => (
-              <div class="bk-cascader-popover">
+              <div class={resolveClassName('cascader-popover')}>
                 <CascaderPanel
                   store={this.store}
                   ref="cascaderPanel"
@@ -287,7 +290,7 @@ export default defineComponent({
                   v-slots={{
                     default: scope => (this.$slots.default
                       ? this.$slots.default(scope)
-                      : <span class="bk-cascader-node-name">{scope.node.name}</span>),
+                      : <span class={resolveClassName('cascader-node-name')}>{scope.node.name}</span>),
                   }}>
                 </CascaderPanel>
               </div>

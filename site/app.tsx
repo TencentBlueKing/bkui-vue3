@@ -26,15 +26,30 @@
 import { defineComponent } from 'vue';
 import { RouterView } from 'vue-router';
 
+import header from '@blueking/magicbox-header/index.vue';
+
 import DemoNav from './components/demo-nav';
 
 import './app.less';
+
 export default defineComponent({
   name: 'App',
+  components: {
+    'app-header': header,
+  },
   render() {
     return (
       <div class="page-container">
-        <div class="page-container-header"></div>
+        <div class="page-container-header">
+        <app-header
+          rootDomain="tencent.com"
+          loginUrl="https://login.bk.tencent.com"
+          avatarHost="https://q1.qlogo.cn"
+          lessCodeUrl="https://github.com/TencentBlueKing/bk-lesscode/blob/master/readme.md"
+          designUrl="https://bkdesign.bk.tencent.com/"
+          region="tencent">
+        </app-header>
+        </div>
         <div class="page-container-body">
           <div class="body-nav">
             <DemoNav/>

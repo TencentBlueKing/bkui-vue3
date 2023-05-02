@@ -27,6 +27,7 @@
 import { addListener, removeListener } from 'resize-detector';
 import {  computed, defineComponent, onBeforeUnmount, onMounted, PropType, ref, ShallowRef, shallowRef, watch } from 'vue';
 
+import { useLocale } from '@bkui-vue/config-provider';
 import { clickoutside } from '@bkui-vue/directives';
 import { Close, ExclamationCircleShape, Search } from '@bkui-vue/icon';
 import { debounce } from '@bkui-vue/shared';
@@ -59,7 +60,7 @@ export const SearchSelectProps = {
   },
   conditions: {
     type: Array as PropType<ICommonItem[]>,
-    default: () => [{ id: 'or', name: '或' }, { id: 'and', name: '且' }],
+    default: () => [],
   },
   clearable: {
     type: Boolean,
@@ -91,6 +92,14 @@ export default defineComponent({
   props: SearchSelectProps,
   emits: ['update:modelValue'],
   setup(props, { emit }) {
+    const t = useLocale('searchSelect');
+    const localConditions = computed(() => {
+      if (props.conditions === undefined || props.conditions.length === 0) {
+        return [{ id: 'or', name: t.value.or }, { id: 'and', name: t.value.and }];
+      }
+      return props.conditions;
+    });
+
     // refs
     const inputRef = ref<typeof SearchSelectInput>(null);
     const wrapRef = ref<HTMLDivElement>(null);
@@ -265,6 +274,7 @@ export default defineComponent({
       handleInputOutside,
       handleAddSelected,
       handleDeleteSelected,
+      localConditions,
     };
   },
   render() {
@@ -288,7 +298,7 @@ export default defineComponent({
       <div class="search-container" style={{ maxHeight }}>
         <SearchSelected
           data={this.copyData}
-          conditions={this.conditions}
+          conditions={this.localConditions}
           selectedList={this.selectedList}
           overflowIndex={this.overflowIndex}
           getMenuList={this.getMenuList}
@@ -302,7 +312,7 @@ export default defineComponent({
            data={this.copyData}
            showInputBefore={!this.selectedList.length}
            showCondition={showCondition}
-           conditions={this.conditions}
+           conditions={this.localConditions}
            clickOutside={this.handleInputOutside}
            getMenuList={this.getMenuList}
            validateValues={this.validateValues}

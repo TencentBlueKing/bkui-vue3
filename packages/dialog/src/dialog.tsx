@@ -27,6 +27,7 @@
 import { computed, defineComponent, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
 
 import BkButton from '@bkui-vue/button';
+import { useLocale } from '@bkui-vue/config-provider';
 import { Close, Spinner, Success, Warn } from '@bkui-vue/icon';
 import BkModal from '@bkui-vue/modal';
 import { resolveClassName } from '@bkui-vue/shared';
@@ -42,6 +43,32 @@ export default defineComponent({
   props,
   emits: ['closed', 'update:isShow', 'confirm', 'prev', 'next', 'value-change'],
   setup(props, { emit }) {
+    const t = useLocale('dialog');
+    const localConfirmText = computed(() => {
+      if (props.confirmText === undefined) {
+        return t.value.ok;
+      }
+      return props.confirmText;
+    });
+    const localCancelText = computed(() => {
+      if (props.cancelText === undefined) {
+        return t.value.cancel;
+      }
+      return props.cancelText;
+    });
+    const localPrevText = computed(() => {
+      if (props.prevText === undefined) {
+        return t.value.prev;
+      }
+      return props.prevText;
+    });
+    const localNextText = computed(() => {
+      if (props.nextText === undefined) {
+        return t.value.next;
+      }
+      return props.nextText;
+    });
+
     const data = reactive({
       positionX: 0,
       positionY: 0,
@@ -86,7 +113,7 @@ export default defineComponent({
     const handleConfirm = () => {
       emit('update:isShow', false);
       emit('confirm');
-      isModalShow.value = false;
+      // isModalShow.value = false; 影响异步关闭
     };
 
     const hasFooter = computed(() => ['process', 'operation', 'confirm'].includes(props.dialogType));
@@ -162,6 +189,10 @@ export default defineComponent({
       handleNextStep,
       hasFooter,
       isModalShow,
+      localConfirmText,
+      localCancelText,
+      localPrevText,
+      localNextText,
     };
   },
 
@@ -197,32 +228,32 @@ export default defineComponent({
           this.$slots.footer?.() ?? <>
             {this.current === 1 ? '' : (
               <BkButton class={resolveClassName('dialog-perv')} onClick={this.handlePrevStep}>
-                {this.prevText}
+                {this.localPrevText}
               </BkButton>
             )}
             {this.current === this.totalStep ? '' : (
-              <BkButton class={resolveClassName('dialog-next')} onClick={this.handleNextStep}>{this.nextText}</BkButton>
+              <BkButton class={resolveClassName('dialog-next')} onClick={this.handleNextStep}>{this.localNextText}</BkButton>
             )}
             {this.current === this.totalStep ? (
               <BkButton onClick={this.handleConfirm} theme={this.theme}
-                loading={this.isLoading}>{this.confirmText}</BkButton>
+                loading={this.isLoading}>{this.localConfirmText}</BkButton>
             ) : ''}
             <BkButton class={resolveClassName('dialog-cancel')} onClick={this.handleClose}
-              disabled={this.isLoading}>{this.cancelText}</BkButton>
+              disabled={this.isLoading}>{this.localCancelText}</BkButton>
           </>
         ) : ''}
         {this.dialogType === 'operation' ? (
           this.$slots.footer?.() ?? <>
             <BkButton onClick={this.handleConfirm} theme={this.theme}
-              loading={this.isLoading}>{this.confirmText}</BkButton>
+              loading={this.isLoading}>{this.localConfirmText}</BkButton>
             <BkButton class={resolveClassName('dialog-cancel')} onClick={this.handleClose}
-              disabled={this.isLoading}>{this.cancelText}</BkButton>
+              disabled={this.isLoading}>{this.localCancelText}</BkButton>
           </>
         ) : ''}
         {this.dialogType === 'confirm' ? (
           this.$slots.footer?.() ?? <>
             <BkButton onClick={this.handleConfirm} theme={this.theme}
-              loading={this.isLoading}>{this.confirmText}</BkButton>
+              loading={this.isLoading}>{this.localConfirmText}</BkButton>
           </>
         ) : ''}
       </div>,

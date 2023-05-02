@@ -214,6 +214,7 @@ export const DATA_FIX_COLUMNS = [
     label: '名称/内网IP',
     field: 'ip',
     minWidth: 400,
+    fixed: true,
   },
   {
     label: '来源',

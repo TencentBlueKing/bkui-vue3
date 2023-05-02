@@ -27,14 +27,20 @@
 import { createApp } from 'vue';
 
 import bkuiVue from '../packages/bkui-vue/index';
+import en from '../packages/locale/src/lang/en';
+import zhCn from '../packages/locale/src/lang/zh-cn';
 
 import App from './app';
 import router from './router';
 
 import '../packages/styles/src/index';
 import './reset.less';
+console.log(en);
+console.log(zhCn);
 const app = createApp(App);
-app.use(bkuiVue);
+app.use(bkuiVue, {
+  locale: en,
+});
 app.use(router);
 
 if (process.env.NODE_ENV === 'development') {

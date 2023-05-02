@@ -26,14 +26,17 @@
 
 import type {
   ComponentInternalInstance,
+  ComputedRef,
 } from 'vue';
 import { getCurrentInstance } from 'vue';
+
+import type { Language } from '@bkui-vue/locale';
 
 import type {
   PaginationProps,
 } from './pagination';
 
-export default () => ({ isFirst, isLast }) => {
+export default (t: ComputedRef<Language['pagination']>) => ({ isFirst, isLast }) => {
   const {
     props,
   } = getCurrentInstance() as ComponentInternalInstance &  { props: PaginationProps};
@@ -52,9 +55,9 @@ export default () => ({ isFirst, isLast }) => {
       {...{
         disabled: props.disabled,
       }}>
-      共计
+      {t.value.total}
       <div class="bk-pagination-total-num">{ props.count }</div>
-      条
+      {t.value.strip}
     </div>
   );
 };

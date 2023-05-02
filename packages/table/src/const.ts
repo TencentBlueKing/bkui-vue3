@@ -24,6 +24,10 @@
 * IN THE SOFTWARE.
 */
 
+import type { ComputedRef } from 'vue';
+
+import type { Language } from '@bkui-vue/locale';
+
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const enum BORDER_OPTION {
   NONE = 'none',
@@ -85,7 +89,13 @@ export const enum EMIT_EVENTS {
 
   ROW_SELECT = 'select',
   ROW_SELECT_ALL = 'selectAll',
-  ROW_SELECT_CHANGE = 'selectionChange'
+  ROW_SELECT_CHANGE = 'selectionChange',
+
+  CELL_CLICK = 'cellClick',
+  CELL_DBL_CLICK = 'cellDblclick',
+
+  NATIVE_CLICK = 'click',
+  NATIVE_DBL_CLICK = 'dblclick'
 }
 
 const EMPTY = (..._args) => true;
@@ -109,6 +119,14 @@ export const EMIT_EVENT_TYPES = {
 
   [EMIT_EVENTS.SETTING_CHANGE]: EMPTY,
   [EMIT_EVENTS.SCROLL_BOTTOM]: EMPTY,
+
+  [EMIT_EVENTS.CELL_CLICK]: EMPTY,
+  [EMIT_EVENTS.CELL_DBL_CLICK]: EMPTY,
+};
+
+export const CELL_EVENT_TYPES = {
+  [EMIT_EVENTS.NATIVE_CLICK]: EMPTY,
+  [EMIT_EVENTS.NATIVE_DBL_CLICK]: EMPTY,
 };
 
 /**
@@ -146,10 +164,15 @@ export const SETTING_SIZE = {
   small: 42,
 };
 
-export const DEFAULT_SIZE_LIST = [
-  { value: 'small', label: '小', height: SETTING_SIZE.small },
-  { value: 'medium', label: '中', height: SETTING_SIZE.medium },
-  { value: 'large', label: '大', height: SETTING_SIZE.large },
+// export const DEFAULT_SIZE_LIST = [
+//   { value: 'small', label: '小', height: SETTING_SIZE.small },
+//   { value: 'medium', label: '中', height: SETTING_SIZE.medium },
+//   { value: 'large', label: '大', height: SETTING_SIZE.large },
+// ];
+export const createDefaultSizeList = (t: ComputedRef<Language['table']>) => [
+  { value: 'small', label: t.value.setting.lineHeight.small, height: SETTING_SIZE.small },
+  { value: 'medium', label: t.value.setting.lineHeight.medium, height: SETTING_SIZE.medium },
+  { value: 'large', label: t.value.setting.lineHeight.large, height: SETTING_SIZE.large },
 ];
 
 /**
