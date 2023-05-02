@@ -167,7 +167,7 @@ export default defineComponent({
       const { icon } = step;
 
       if (icon) {
-        return Object.prototype.toString.call(icon) === '[object Object]';
+        return Object.prototype.toString.call(icon) === '[object Object]' || Object.prototype.toString.call(icon) === '[object Function]';
       }
       return typeof step === 'string';
     };
