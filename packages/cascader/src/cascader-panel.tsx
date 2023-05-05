@@ -243,7 +243,7 @@ export default defineComponent({
                     disabled={node.isDisabled}
                     v-model={node.checked}
                     indeterminate={node.isIndeterminate}
-                    style="margin-right: 20px"
+                    style="margin-right: 5px"
                     onChange={(val: boolean) => this.checkNode(node, val)}></BkCheckbox>
                 )}
                 {this.$slots.default?.({ node, data: node.data })}

@@ -112,6 +112,13 @@ const cascaderPropsJson: IPropsTableItem[] = [
     optional: ['true', 'false'],
   },
   {
+    name: 'behavior',
+    type: 'String',
+    default: 'normal',
+    desc: '组件样式，simplicity为简约样式，默认为normal',
+    optional: ['simplicity', 'normal'],
+  },
+  {
     name: 'clearable',
     type: 'Boolean',
     default: 'true',
@@ -145,6 +152,27 @@ const cascaderPropsJson: IPropsTableItem[] = [
     default: 'auto',
     desc: '子版面的宽度',
     optional: [],
+  },
+  {
+    name: 'collapse-tags',
+    type: 'Boolean',
+    default: 'true',
+    desc: '多选是否折叠面板',
+    optional: ['true', 'false'],
+  },
+  {
+    name: 'float-mode',
+    type: 'Boolean',
+    default: 'true',
+    desc: '多选开启漂浮模式，开启漂浮模式展开选择框不会挤占下方空间',
+    optional: ['true', 'false'],
+  },
+  {
+    name: 'limit-one-line',
+    type: 'Boolean',
+    default: 'true',
+    desc: '行内显示，当为ture时，选择的内容将会以Text的形式显示在一行',
+    optional: ['true', 'false'],
   },
   {
     name: 'extCls',
@@ -187,13 +215,13 @@ export default defineComponent({
       <div>
         <DemoTitle
           name='Cascader 级联组件'
-          desc='Breadcrumb组件， 显示当前页面的路径，快速返回之前的任意页面。'
+          desc='Cascader组件， 对有清晰的层级结构的数据集进行逐级查看、选择和使用'
           link='https://www.google.com.hk/' />
 
         <DemoBox
           title='基础用法'
           subtitle='基础数据展示'
-          desc='通过trigger设置`click`或`hover`实现下一级的触发方式; 设置`filterable`属性可以进行搜索。'
+          desc='通过trigger设置`click`或`hover`实现下一级的触发方式; 设置`filterable`属性可以进行搜索。behavior设置为simplicity简约样式'
           componentName='cascader'
           demoName='base-demo'>
           <BaseDemo></BaseDemo>
@@ -209,8 +237,8 @@ export default defineComponent({
         </DemoBox>
         <DemoBox
           title='多选'
-          subtitle='通过multiple开启多选'
-          desc='开启 multiple 属性进行多选，注意此时 v-model 对应的值应是二维数组'
+          subtitle='通过multiple开启多选, float-mode可以开启漂浮模式, limit-one-line将使用文字形式显示'
+          desc='开启 multiple 属性进行多选，注意此时 v-model 对应的值应是二维数组； 漂浮模式下，将不会挤占下方空间;'
           componentName='cascader'
           demoName='checkbox-demo'>
           <CheckboxDemo></CheckboxDemo>
