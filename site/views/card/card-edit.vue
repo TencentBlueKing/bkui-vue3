@@ -7,9 +7,11 @@
         is-edit
         is-collapse
       >
-        <p>卡片内容 1</p>
-        <p>卡片内容 2</p>
-        <p>卡片内容 3</p>
+        <div class="card-content-wrapper">
+          <p>卡片内容 1</p>
+          <p>卡片内容 2</p>
+          <p>卡片内容 3</p>
+        </div>
       </bk-card>
     </div>
   </div>
@@ -27,6 +29,18 @@
     width: 100%;
     padding: 30px;
     margin: 0 auto;
+
+    .card-content-wrapper {
+      padding: 20px 0;
+
+      p {
+        margin: 0;
+
+        &:not(:last-of-type) {
+          margin-bottom: 15px;
+        }
+      }
+    }
 
     .card-demo-item {
       display: inline-block;
