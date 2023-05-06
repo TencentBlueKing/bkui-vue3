@@ -26,6 +26,7 @@
 
 import { defineComponent, ref, watch } from 'vue';
 
+import BKCollapseTransition from '@bkui-vue/collapse-transition';
 import { AngleDown, AngleRight, EditLine } from '@bkui-vue/icon';
 import BkInput from '@bkui-vue/input';
 import { classes, PropTypes } from '@bkui-vue/shared';
@@ -111,12 +112,14 @@ export default defineComponent({
           { (this.$props.isEdit && !this.showInput)
           && <EditLine class={`${wrapperName}-edit`} onClick={this.clickEdit} /> }
       </div> : ''}
-      { this.collapseActive ? <div>
-        <div class={`${wrapperName}-body`}>{this.$slots.default?.() ?? 'Content'}</div>
-        {
-          this.$props.showFooter ? <div class={`${wrapperName}-footer`}>{this.$slots.footer?.() ?? 'Footer'}</div> : ''
-        }
-      </div> : '' }
+      <BKCollapseTransition>
+        <div v-show={this.collapseActive}>
+          <div class={`${wrapperName}-body`}>{this.$slots.default?.() ?? 'Content'}</div>
+          {
+            this.$props.showFooter ? <div class={`${wrapperName}-footer`}>{this.$slots.footer?.() ?? 'Footer'}</div> : ''
+          }
+        </div>
+      </BKCollapseTransition>
     </div>;
   },
 });

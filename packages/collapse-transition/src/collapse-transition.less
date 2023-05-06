@@ -1,0 +1,111 @@
+@import '@bkui-vue/styles/themes/themes.less';
+
+.@{bk-prefix}-collapse-transitioncollapse-transition {
+  transition: .3s height ease-in-out,
+    .3s padding-top ease-in-out,
+    .3s padding-bottom ease-in-out;
+}
+
+.@{bk-prefix}-collapse-transition-leave-active,
+.@{bk-prefix}-collapse-transition-enter-active {
+  transition: .3s max-height ease-in-out,
+    .3s padding-top ease-in-out,
+    .3s padding-bottom ease-in-out;
+}
+
+.horizontal-collapse-transition {
+  transition: .3s width ease-in-out, .3s padding-left ease-in-out, .3s padding-right ease-in-out;
+}
+
+
+.fade-in-linear-enter-active,
+.fade-in-linear-leave-active {
+  transition: opacity 200ms linear;
+}
+
+.fade-in-linear-enter,
+.fade-in-linear-leave,
+.fade-in-linear-leave-active {
+  opacity: 0;
+}
+
+.@{bk-prefix}-fade-in-linear-enter-active,
+.@{bk-prefix}-fade-in-linear-leave-active {
+  transition: opacity 200ms linear;
+}
+.@{bk-prefix}-fade-in-linear-enter,
+.@{bk-prefix}-fade-in-linear-leave,
+.@{bk-prefix}-fade-in-linear-leave-active {
+  opacity: 0;
+}
+
+.@{bk-prefix}-fade-in-enter-active,
+.@{bk-prefix}-fade-in-leave-active {
+  transition: all .3s cubic-bezier(.55,0,.1,1);
+}
+.@{bk-prefix}-fade-in-enter,
+.@{bk-prefix}-fade-in-leave-active {
+  opacity: 0;
+}
+
+.@{bk-prefix}-zoom-in-center-enter-active,
+.@{bk-prefix}-zoom-in-center-leave-active {
+  transition: all .3s cubic-bezier(.55,0,.1,1);
+}
+.@{bk-prefix}-zoom-in-center-enter,
+.@{bk-prefix}-zoom-in-center-leave-active {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.@{bk-prefix}-zoom-in-top-enter-active,
+.@{bk-prefix}-zoom-in-top-leave-active {
+  opacity: 1;
+  transform: scaleY(1);
+  transition: transform 300ms cubic-bezier(.23, 1, .32, 1), opacity 300ms cubic-bezier(.23, 1, .32, 1);
+  transform-origin: center top;
+}
+.@{bk-prefix}-zoom-in-top-enter,
+.@{bk-prefix}-zoom-in-top-leave-active {
+  opacity: 0;
+  transform: scaleY(0);
+}
+
+.@{bk-prefix}-zoom-in-bottom-enter-active,
+.@{bk-prefix}-zoom-in-bottom-leave-active {
+  opacity: 1;
+  transform: scaleY(1);
+  transition: transform 300ms cubic-bezier(.23, 1, .32, 1), opacity 300ms cubic-bezier(.23, 1, .32, 1);
+  transform-origin: center bottom;
+}
+.@{bk-prefix}-zoom-in-bottom-enter,
+.@{bk-prefix}-zoom-in-bottom-leave-active {
+  opacity: 0;
+  transform: scaleY(0);
+}
+
+.@{bk-prefix}-zoom-in-left-enter-active,
+.@{bk-prefix}-zoom-in-left-leave-active {
+  opacity: 1;
+  transform: scale(1, 1);
+  transition: transform 300ms cubic-bezier(.23, 1, .32, 1), opacity 300ms cubic-bezier(.23, 1, .32, 1);
+  transform-origin: top left;
+}
+.@{bk-prefix}-zoom-in-left-enter,
+.@{bk-prefix}-zoom-in-left-leave-active {
+  opacity: 0;
+  transform: scale(.45, .45);
+}
+
+.@{bk-prefix}-list-enter-active,
+.@{bk-prefix}-list-leave-active {
+  transition: all 1s;
+}
+.@{bk-prefix}-list-enter, .@{bk-prefix}-list-leave-active {
+  opacity: 0;
+  transform: translateY(-30px);
+}
+
+.@{bk-prefix}-opacity-transition {
+  transition: opacity .3s cubic-bezier(.55,0,.1,1);
+}
