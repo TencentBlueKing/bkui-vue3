@@ -145,7 +145,7 @@ const InfoBox = (config: Partial<ModalFuncProps>) => {
       }, getContent());
     },
   });
-  const app: any = createApp(dialog).mount(container);
+  let app: any = createApp(dialog).mount(container);
   return {
     show: () => {
       isShow.value = true;
@@ -155,6 +155,10 @@ const InfoBox = (config: Partial<ModalFuncProps>) => {
     },
     update: (config: Partial<ModalFuncProps>) => {
       app.update(config);
+    },
+    destroy: () => {
+      app.unmount();
+      app = null;
     },
   };
 };
