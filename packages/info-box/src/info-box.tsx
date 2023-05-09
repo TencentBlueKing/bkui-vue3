@@ -70,15 +70,16 @@ export interface ModalFuncProps {
   maskClose?: boolean;
   escClose?: boolean;
   closeIcon?: boolean;
-  headerAlign: 'left' | 'center' | 'right'
-  footerAlign: 'left' | 'center' | 'right'
-  contentAlign: 'left' | 'center' | 'right'
+  headerAlign?: 'left' | 'center' | 'right'
+  footerAlign?: 'left' | 'center' | 'right'
+  contentAlign?: 'left' | 'center' | 'right'
+  dialogType?: 'show' | 'operation' | 'confirm'
 }
 
-const InfoBox = (config: ModalFuncProps) => {
+const InfoBox = (config: Partial<ModalFuncProps>) => {
   const container = document.createElement('div');
   const isShow = ref(false);
-  const modalFuncProps = shallowRef<ModalFuncProps>(config);
+  const modalFuncProps = shallowRef<Partial<ModalFuncProps>>(config);
   const dialog = defineComponent({
     name: 'DialogConfirm',
     setup(_props, { expose }) {
@@ -145,18 +146,17 @@ const InfoBox = (config: ModalFuncProps) => {
     },
   });
   const app: any = createApp(dialog).mount(container);
-  const instance = {
+  return {
     show: () => {
       isShow.value = true;
     },
     hide: () => {
       isShow.value = false;
     },
-    update: (config: ModalFuncProps) => {
+    update: (config: Partial<ModalFuncProps>) => {
       app.update(config);
     },
   };
-  return instance;
 };
 
 export default InfoBox;
