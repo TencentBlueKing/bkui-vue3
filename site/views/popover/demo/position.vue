@@ -4,18 +4,21 @@
       <bk-popover
         content="Top Left 文字提示"
         placement="bottom"
+        :popover-delay="[300, 0]"
       >
         <bk-button>上左</bk-button>
       </bk-popover>
       <bk-popover
         content="Top Center 文字提示"
-        placement="bottom"
+        placement="top"
+        :popover-delay="[300, 0]"
       >
         <bk-button>上边</bk-button>
       </bk-popover>
       <bk-popover
         content="Top Right 文字提示"
         placement="top-end"
+        :popover-delay="[300, 0]"
       >
         <bk-button>上右</bk-button>
       </bk-popover>
@@ -25,6 +28,7 @@
       <div class="bk-popover-position-center-left">
         <bk-popover
           placement="left-start"
+          :popover-delay="[300, 0]"
         >
           <bk-button>左上</bk-button>
           <template #content>
@@ -34,7 +38,10 @@
           </template>
         </bk-popover><br><br>
 
-        <bk-popover placement="left">
+        <bk-popover
+          placement="left"
+          :popover-delay="[300, 0]"
+        >
           <bk-button>左边</bk-button>
           <template #content>
             <div>Left</div>
@@ -43,7 +50,10 @@
           </template>
         </bk-popover><br><br>
 
-        <bk-popover placement="left-end">
+        <bk-popover
+          placement="left-end"
+          :popover-delay="[300, 0]"
+        >
           <bk-button>左下</bk-button>
           <template #content>
             <div>Left</div>
@@ -54,7 +64,10 @@
       </div>
 
       <div class="bk-popover-position-center-right">
-        <bk-popover placement="right-start">
+        <bk-popover
+          placement="right-start"
+          :popover-delay="[300, 0]"
+        >
           <bk-button>右上</bk-button>
           <template #content>
             <div>Right</div>
@@ -63,7 +76,10 @@
           </template>
         </bk-popover><br><br>
 
-        <bk-popover placement="right">
+        <bk-popover
+          placement="right"
+          :popover-delay="[300, 0]"
+        >
           <bk-button>右边</bk-button>
           <template #content>
             <div>Right</div>
@@ -72,7 +88,10 @@
           </template>
         </bk-popover><br><br>
 
-        <bk-popover placement="right-end">
+        <bk-popover
+          placement="right-end"
+          :popover-delay="[300, 0]"
+        >
           <bk-button>右下</bk-button>
           <template #content>
             <div>Right</div>

@@ -94,7 +94,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const t = useLocale('searchSelect');
     const localConditions = computed(() => {
-      if (props.conditions === undefined || props.conditions.length === 0) {
+      if (props.conditions === undefined) {
         return [{ id: 'or', name: t.value.or }, { id: 'and', name: t.value.and }];
       }
       return props.conditions;
