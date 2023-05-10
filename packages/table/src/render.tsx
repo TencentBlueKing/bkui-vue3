@@ -318,7 +318,7 @@ export default class TableRender {
       }
 
       const cellText = getHeadCellText(column, index);
-      cells.unshift(cellText);
+      cells.unshift(<span class="head-text">{ cellText }</span>);
 
       const showTitle = typeof cellText === 'string' ? cellText : undefined;
       return <TableCell title={ showTitle } observerResize={this.props.observerResize}>{ cells }</TableCell>;

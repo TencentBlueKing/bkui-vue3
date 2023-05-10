@@ -257,7 +257,9 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
   const createPopInstance = () => {
     const { elReference, elContent } = resolvePopElements();
     cleanup = autoUpdate(elReference, elContent, () => {
-      updatePopover(null, props);
+      if (localIsShow.value) {
+        updatePopover(null, props);
+      }
     });
   };
 

@@ -60,18 +60,23 @@ export default defineComponent({
     const t = useLocale('table');
     const defaultSizeList: SizeItem[] = createDefaultSizeList(t);
     const resolvedColVal = (item, index) => resolvePropVal(item, ['field', 'type'], [item, index]);
-
     const checkAll = ref(false);
     const isShow = ref(false);
-    const localSettings = typeof props.settings === 'boolean' ? ref({
-      fields: props.columns.map((col: any) => ({ ...col, field: col.field || col.type })),
-      checked: [],
-      limit: 0,
-      size: 'small',
-      sizeList: defaultSizeList,
-      showLineHeight: true,
-    }) : ref(props.settings as Settings);
 
+    const localSettings = computed(() => {
+      if (typeof props.settings === 'boolean') {
+        return {
+          fields: props.columns.map((col: any) => ({ ...col, field: col.field || col.type })),
+          checked: [],
+          limit: 0,
+          size: 'small',
+          sizeList: defaultSizeList,
+          showLineHeight: true,
+        };
+      }
+
+      return props.settings;
+    });
     const activeSize = ref(localSettings.value.size || 'small');
     const activeHeight = ref(props.rowHeight);
 
