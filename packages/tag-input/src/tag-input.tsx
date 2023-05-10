@@ -37,6 +37,7 @@ import {
   watch,
 } from 'vue';
 
+import { useLocale } from '@bkui-vue/config-provider';
 import { bkTooltips } from '@bkui-vue/directives';
 import { Close, Error } from '@bkui-vue/icon';
 import BkLoading, { BkLoadingSize } from '@bkui-vue/loading';
@@ -68,6 +69,7 @@ export default defineComponent({
   ],
   setup(props, { emit }) {
     const formItem = useFormItem();
+    const t = useLocale('tagInput');
     const state = reactive({
       isEdit: false,
       isHover: false,
@@ -104,6 +106,7 @@ export default defineComponent({
     const isShowPlaceholder = computed(() => (
       listState.selectedTagList.length === 0 && curInputValue.value === '' && !state.isEdit
     ));
+    const placeholderText = computed(() => props.placeholder || t.value.placeholder);
     // 是否展示清空Icon
     /**
      * 不显示条件：
@@ -869,6 +872,7 @@ export default defineComponent({
       ...toRefs(pageState),
       isShowPlaceholder,
       isShowClear,
+      placeholderText,
       curInputValue,
       renderList,
       showTagClose,
@@ -966,7 +970,7 @@ export default defineComponent({
                     )
                   }
                 </ul>
-                <p class="placeholder" v-show={this.isShowPlaceholder}>{this.placeholder}</p>
+                <p class="placeholder" v-show={this.isShowPlaceholder}>{this.placeholderText}</p>
                 {this.$slots?.suffix?.() ?? (this.isShowClear && <Close class="clear-icon" onClick={this.handleClear} />) }
               </div>
             ),
