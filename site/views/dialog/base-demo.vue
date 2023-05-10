@@ -10,6 +10,7 @@
       :is-show="exampleSetting.dialog.isShow"
       :title="'描述'"
       :theme="'primary'"
+      :show-mask="false"
       quick-close
       @closed="() => exampleSetting.dialog.isShow = false"
       @confirm="() => exampleSetting.dialog.isShow = false"

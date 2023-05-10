@@ -131,7 +131,7 @@ export enum RenderType {
 }
 
 export function renderType() {
-  return toType<`${RenderType}`>('trigger', {}).def(RenderType.AUTO);
+  return toType<`${RenderType}`>('popRenderType', {}).def(RenderType.SHOWN);
 }
 
 export enum DialogTypeEnum {
