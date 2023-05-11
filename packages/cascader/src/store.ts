@@ -77,6 +77,18 @@ class Store {
     return flatNodes(this.nodes, leafOnly);
   }
 
+  /** 根据传入节点设置节点check状态 */
+  setNodesCheck(nodes: Array<string[]>) {
+    this.getFlattedNodes().forEach((node: INode) => {
+      node.checked = false;
+      const checkedNode = nodes.find((nodeValue: string[]) => arrayEqual(node.path, nodeValue));
+      if (checkedNode) {
+        const currentNode = this.getNodeByValue(checkedNode);
+        currentNode.checked = true;
+      }
+    });
+  }
+
   /** 获取多选下，被选中(checked)的节点 */
   getCheckedNodes() {
     return this.getFlattedNodes().filter((node: INode) => node.checked);
