@@ -31,7 +31,7 @@ import {
 
 export default defineComponent({
   name: 'CollapseTransition',
-  setup(props, { slots }) {
+  setup(_props, { slots }) {
     const on = {
       onBeforeEnter(el: RendererElement) {
         if (!el.dataset) el.dataset = {};
