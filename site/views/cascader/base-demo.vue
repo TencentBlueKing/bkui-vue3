@@ -2,6 +2,7 @@
   <div class="cascader-wrapper">
     <bk-cascader
       v-model="area"
+      behavior="simplicity"
       :list="list"
       trigger="click"
     />
@@ -76,7 +77,7 @@
 
 <style lang="less" scoped>
   .cascader-wrapper {
-    .bk-cascader:first-of-type {
+    .bk-cascader-wrapper:not(:last-of-type) {
       margin-bottom: 20px;
     }
   }

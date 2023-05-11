@@ -77,7 +77,7 @@
 
 <style lang="less" scoped>
   .cascader-wrapper {
-    .bk-cascader:first-of-type {
+    .bk-cascader-wrapper:not(:last-of-type) {
       margin-bottom: 20px;
     }
   }
