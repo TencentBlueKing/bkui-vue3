@@ -70,16 +70,13 @@ export const createInstance = (el: HTMLElement, binding: any) => {
     createTimer && clearTimeout(createTimer);
     createTimer = setTimeout(() => {
       const targetOptions = resolveOptions(el, binding);
+      targetOptions.isShow = true;
       targetOptions.content = targetOptions.content || el.innerHTML;
       Object.assign(targetOptions, {
         onContentMouseenter: handleContentEnter,
         onContentMouseleave: handleContentLeave,
       });
       instance = $bkPopover(targetOptions);
-
-      setTimeout(() => {
-        instance.show();
-      });
     }, 100);
   };
 
