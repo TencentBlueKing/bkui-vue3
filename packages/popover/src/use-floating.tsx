@@ -257,7 +257,9 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
   const createPopInstance = () => {
     const { elReference, elContent } = resolvePopElements();
     cleanup = autoUpdate(elReference, elContent, () => {
-      updatePopover(null, props);
+      if (localIsShow.value) {
+        updatePopover(null, props);
+      }
     });
   };
 
@@ -301,8 +303,12 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
     const delay = resolvePopoverDelay()[0];
     // 设置settimeout避免hidePopover导致显示问题
     popShowTimerId = setTimeout(() => {
-      popHideTimerId && clearTimeout(popHideTimerId);
-      !props.disabled && (localIsShow.value = true);
+      if (popHideTimerId) {
+        clearTimeout(popHideTimerId);
+      }
+      if (!props.disabled) {
+        localIsShow.value = true;
+      }
     }, delay);
   };
 

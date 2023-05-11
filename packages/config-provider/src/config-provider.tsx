@@ -44,7 +44,7 @@ export const defaultRootConfig: UnwrapRef<ConfigProviderProps> = reactive({
   locale: Chinese,
 });
 
-interface LocaleInterface {
+export interface LocaleInterface {
   [key: string]: any;
 }
 

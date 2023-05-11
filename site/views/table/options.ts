@@ -79,9 +79,7 @@ export const DATA_COLUMNS = [
     label: '名称/内网IP',
     field: 'ip',
     width: 100,
-    showOverflowTooltip: {
-      mode: 'auto',
-    },
+    showOverflowTooltip: true,
   },
   {
     label: '来源',

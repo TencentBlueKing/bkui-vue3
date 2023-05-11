@@ -48,15 +48,15 @@
           font-size: 48px;
 
           &.success {
-            color: #3fc06d;
+            color: @success-color;
           }
 
           &.warning {
-            color: #ff9c01;
+            color: @warning-color;
           }
 
           &.danger {
-            color: #ea3636;
+            color: @danger-color;
           }
         }
       }
@@ -65,7 +65,7 @@
         display: inline-block;
         width: 100%;
         overflow: hidden;
-        color: #313238;
+        color: @table-head-font-color;
         text-overflow: ellipsis;
         white-space: nowrap;
       }
@@ -78,7 +78,7 @@
       padding: 3px 24px 0;
       font-size: 14px;
       line-height: 1.5;
-      color: #63656e;
+      color: @default-color;
     }
 
     &.fullscreen {
@@ -106,10 +106,10 @@
       right: 0;
       bottom: 0;
       left: 0;
-      height: 58px;
-      padding: 12px 24px;
-      background-color: #fafbfd;
-      border-top: 1px solid #dcdee5;
+      height: 48px;
+      padding: 8px 24px;
+      background-color: @whitesmoke-color;
+      border-top: 1px solid @table-border-color;
       border-radius: 2px;
 
       .@{bk-prefix}-dialog-perv {
@@ -130,24 +130,13 @@
       position: absolute;
       top: 5px;
       right: 5px;
-      width: 26px;
-      height: 26px;
-      font-size: 22px;
-      font-weight: 700;
-      line-height: 23px;
-      color: #979ba5;
-      text-align: center;
+      font-size: 18px;
+      color: @light-gray;
       cursor: pointer;
-      border-radius: 50%;
-      transform: rotate(45deg);
 
       &:hover {
-        background-color: #f0f1f5;
+        color: @gray-color;
       }
-    }
-
-    .close-icon {
-      display: none;
     }
   }
 }

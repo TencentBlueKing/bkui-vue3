@@ -70,6 +70,7 @@ export default defineComponent({
       let { resizerWay } = props;
       let content = refRoot.value.innerText;
       let mode = 'auto';
+      let watchCellResize = true;
       if (typeof showOverflowTooltip === 'boolean') {
         disabled = !showOverflowTooltip;
       }
@@ -82,6 +83,7 @@ export default defineComponent({
           content = showOverflowTooltip.content(props.column, props.row);
         }
 
+        watchCellResize = showOverflowTooltip.watchCellResize;
         mode = showOverflowTooltip.mode || 'auto';
       }
 
@@ -89,7 +91,7 @@ export default defineComponent({
         disabled = Reflect.apply(disabled, this, [props.column, props.row]);
       }
 
-      return { disabled, content, mode, resizerWay };
+      return { disabled, content, mode, resizerWay, watchCellResize };
     };
 
     const resolveOverflowTooltip = () => {
@@ -111,7 +113,11 @@ export default defineComponent({
       if (isTipsEnabled.value) {
         const bindings = ref(resolveTooltipOption());
         if (bkEllipsisIns === null) {
-          bkEllipsisIns = bkEllipsisInstance(refRoot.value, bindings);
+          bkEllipsisIns = bkEllipsisInstance(refRoot.value, {
+            disabled: bindings.value.disabled,
+            content: bindings.value.content,
+            mode: bindings.value.mode,
+          });
         }
       } else {
         bkEllipsisIns?.destroyInstance(refRoot.value);
@@ -120,11 +126,11 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      const { disabled, resizerWay } = resolveTooltipOption();
+      const { disabled, resizerWay, watchCellResize } = resolveTooltipOption();
       if (!disabled) {
         resolveOverflowTooltip();
 
-        if (props.column.showOverflowTooltip?.watchCellResize !== false && props.observerResize) {
+        if (watchCellResize !== false && props.observerResize) {
           let observerIns = observerResize(refRoot.value, () => {
             resolveOverflowTooltip();
           }, 60, true, resizerWay);

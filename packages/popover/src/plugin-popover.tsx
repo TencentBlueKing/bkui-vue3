@@ -30,14 +30,13 @@ import { PopoverPropTypes } from './props';
 import { isAvailableId } from './utils';
 
 export type $Popover = PopoverPropTypes & {
-  target: HTMLElement | HTMLElement | MouseEvent
+  target: HTMLElement | HTMLElement | MouseEvent,
 };
 
 export default function createPopoverComponent(options: $Popover) {
   let $PopoverInstance = null;
   let $PopoverInstanceVm = null;
   let $PopoverInstanceEl: HTMLElement = null;
-
   const resolvedOptions: any = {
     boundary: 'body',
     placement: 'top',
@@ -85,9 +84,7 @@ export default function createPopoverComponent(options: $Popover) {
 
       updateStyle(refProps.value.target as any);
       const show = () => {
-        setTimeout(() => {
-          refReference.value?.show?.();
-        });
+        refReference.value?.show?.();
       };
 
       const hide = () => {
@@ -162,12 +159,9 @@ export default function createPopoverComponent(options: $Popover) {
     getBoundaryDom(resolvedOptions.boundary)
       .append($PopoverInstanceEl);
 
-    setTimeout(() => {
-      $PopoverInstance = createApp(popoverComponent);
-      $PopoverInstanceVm = $PopoverInstance.mount($PopoverInstanceEl);
-    });
+    $PopoverInstance = createApp(popoverComponent);
+    $PopoverInstanceVm = $PopoverInstance.mount($PopoverInstanceEl);
   }
-
 
   function close() {
     if ($PopoverInstance) {

@@ -134,7 +134,12 @@ const zhCn: Language = {
     clickUpload: '点击上传',
     uploadLabel: '上传文件',
   },
-
+  input: {
+    placeholder: '请输入',
+  },
+  tagInput: {
+    placeholder: '请输入并按Enter结束',
+  },
   // exception: {
   //   403: '无业务权限',
   //   404: '页面不存在',
@@ -144,9 +149,7 @@ const zhCn: Language = {
   //   searchEmpty: '搜索为空',
   //   login: '请登入蓝鲸',
   // },
-  // input: {
-  //   input: '请输入',
-  // },
+
   // imageViewer: {
   //   loadFailed: '抱歉，图片加载失败',
   //   quitTips: 'ESC 可以退出全屏',
@@ -156,9 +159,6 @@ const zhCn: Language = {
   // },
   // sideslider: {
   //   title: '标题',
-  // },
-  // tagInput: {
-  //   placeholder: '请输入并按Enter结束',
   // },
   // tree: {
   //   emptyText: '暂无数据',

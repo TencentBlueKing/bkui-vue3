@@ -37,7 +37,7 @@ enum TagInputTriggerEnum {
 }
 const tagProps = () => ({
   modelValue: PropTypes.arrayOf(PropTypes.string).def([]),
-  placeholder: PropTypes.string.def('请输入并按 Enter 结束'),
+  placeholder: PropTypes.string.def(''),
   list: PropTypes.arrayOf(PropTypes.object).def([]),
   disabled: PropTypes.bool.def(false),
   tooltipKey: PropTypes.string.def(''),
