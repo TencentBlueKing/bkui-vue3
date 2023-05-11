@@ -132,7 +132,12 @@ const en = {
     clickUpload: 'Click Upload',
     uploadLabel: 'Upload Files',
   },
-
+  input: {
+    placeholder: 'Please input',
+  },
+  tagInput: {
+    placeholder: 'Please input and press ENTER to finish',
+  },
   // exception: {
   //   403: 'Forbidden',
   //   404: 'Not Found',
@@ -141,9 +146,6 @@ const en = {
   //   empty: 'No Data',
   //   searchEmpty: 'Search Is Empty',
   //   login: 'Please log in to Blueking',
-  // },
-  // input: {
-  //   input: 'Please input',
   // },
   // imageViewer: {
   //   loadFailed: 'Picture failed to load.',
@@ -154,9 +156,6 @@ const en = {
   // },
   // sideslider: {
   //   title: 'Title',
-  // },
-  // tagInput: {
-  //   placeholder: 'Please input and press ENTER to finish',
   // },
   // tree: {
   //   emptyText: 'No Data',
