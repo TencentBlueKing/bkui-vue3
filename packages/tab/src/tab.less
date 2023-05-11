@@ -38,20 +38,17 @@
 
     > div {
       display: flex;
-      margin-bottom: -1px;
+
       flex-wrap: nowrap;
+      margin-bottom: -1px;
 
       .@{bk-prefix}-tab--card &, .@{bk-prefix}-tab--border-card &, .@{bk-prefix}-tab--vertical-card & {
         border-right: 1px solid @tab-border;
       }
     }
 
-    &-navs {
-      flex: 1;
-    }
-
     &-nav {
-
+      position: relative;
       .@{bk-prefix}-tab--top & {
         overflow-x: auto;
         overflow-y: visible;
@@ -228,9 +225,6 @@
         border-bottom-color: @tab-white;
       }
 
-      .@{bk-prefix}-tab--unborder-card & {
-        border-bottom: 2px solid @tab-active;
-      }
 
       .@{bk-prefix}-tab--card-tab &, .@{bk-prefix}-tab--vertical-tab & {
         background: #fff;
@@ -244,9 +238,12 @@
           display: none !important;
         }
 
-
       }
 
+      /* 激活边框，跟随，不再用固定样式
+      //.@{bk-prefix}-tab--unborder-card & {
+      //  border-bottom: 2px solid @tab-active;
+      //}
       .@{bk-prefix}-tab--left:not(.@{bk-prefix}-tab--vertical-tab) & {
         border-right: 2px solid @tab-active;
       }
@@ -254,6 +251,7 @@
       .@{bk-prefix}-tab--right:not(.@{bk-prefix}-tab--vertical-tab) & {
         border-left: 2px solid @tab-active;
       }
+      */
 
     }
 
@@ -262,6 +260,14 @@
       pointer-events: none;
       cursor: not-allowed;
     }
+  }
+
+  &-header-active-bar {
+    position: absolute;
+    width: 0;
+    height: 0;
+    background: @tab-active;
+    transition: all ease-in 300ms;
   }
 
   &-content {
