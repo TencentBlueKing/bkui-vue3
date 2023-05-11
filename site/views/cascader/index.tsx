@@ -40,6 +40,7 @@ import SeparatorDemo from './separator-demo.vue';
 import ShowCompleteName from './show-complete-name.vue';
 import SlotsDemo from './slots-demo.vue';;
 
+// 参数配置数组， 包含多个 IPropsTableItem 的实例对象
 const cascaderPropsJson: IPropsTableItem[] = [
   {
     name: 'v-model',
@@ -112,6 +113,13 @@ const cascaderPropsJson: IPropsTableItem[] = [
     optional: ['true', 'false'],
   },
   {
+    name: 'behavior',
+    type: 'String',
+    default: 'normal',
+    desc: '组件样式，simplicity为简约样式，默认为normal',
+    optional: ['simplicity', 'normal'],
+  },
+  {
     name: 'clearable',
     type: 'Boolean',
     default: 'true',
@@ -147,6 +155,27 @@ const cascaderPropsJson: IPropsTableItem[] = [
     optional: [],
   },
   {
+    name: 'collapse-tags',
+    type: 'Boolean',
+    default: 'true',
+    desc: '多选是否折叠面板',
+    optional: ['true', 'false'],
+  },
+  {
+    name: 'float-mode',
+    type: 'Boolean',
+    default: 'true',
+    desc: '多选开启漂浮模式，开启漂浮模式展开选择框不会挤占下方空间',
+    optional: ['true', 'false'],
+  },
+  {
+    name: 'limit-one-line',
+    type: 'Boolean',
+    default: 'true',
+    desc: '行内显示，当为ture时，选择的内容将会以Text的形式显示在一行',
+    optional: ['true', 'false'],
+  },
+  {
     name: 'extCls',
     type: 'String',
     default: '',
@@ -156,6 +185,7 @@ const cascaderPropsJson: IPropsTableItem[] = [
 
 ];
 
+// 定义 cascaderEventsJson 数组，其中的每个元素表示一个属性项
 const cascaderEventsJson: IPropsTableItem[] = [
   {
     name: 'change',
@@ -185,20 +215,23 @@ export default defineComponent({
   render() {
     return (
       <div>
+        {/* 演示标题 */}
         <DemoTitle
           name='Cascader 级联组件'
-          desc='Breadcrumb组件， 显示当前页面的路径，快速返回之前的任意页面。'
+          desc='Cascader组件， 对有清晰的层级结构的数据集进行逐级查看、选择和使用'
           link='https://www.google.com.hk/' />
 
+        {/* 基础用法 */}
         <DemoBox
           title='基础用法'
           subtitle='基础数据展示'
-          desc='通过trigger设置`click`或`hover`实现下一级的触发方式; 设置`filterable`属性可以进行搜索。'
+          desc='通过trigger设置`click`或`hover`实现下一级的触发方式; 设置`filterable`属性可以进行搜索。behavior设置为simplicity简约样式'
           componentName='cascader'
           demoName='base-demo'>
           <BaseDemo></BaseDemo>
         </DemoBox>
 
+        {/* 任意级可选 */}
         <DemoBox
           title='任意级可选'
           subtitle='通过配置实现任意级可选'
@@ -207,14 +240,18 @@ export default defineComponent({
           demoName='check-any-level-demo'>
           <CheckAnyLevelDemo></CheckAnyLevelDemo>
         </DemoBox>
+
+        {/* 多选 */}
         <DemoBox
           title='多选'
-          subtitle='通过multiple开启多选'
-          desc='开启 multiple 属性进行多选，注意此时 v-model 对应的值应是二维数组'
+          subtitle='通过multiple开启多选, float-mode可以开启漂浮模式, limit-one-line将使用文字形式显示'
+          desc='开启 multiple 属性进行多选，注意此时 v-model 对应的值应是二维数组； 漂浮模式下，将不会挤占下方空间;'
           componentName='cascader'
           demoName='checkbox-demo'>
           <CheckboxDemo></CheckboxDemo>
         </DemoBox>
+
+        {/* 列表别名设置 */}
         <DemoBox
           title='列表别名设置'
           subtitle='id-key name-key适配'
@@ -223,6 +260,8 @@ export default defineComponent({
           demoName='id-key'>
           <IdKey></IdKey>
         </DemoBox>
+
+        {/* 分隔符 */}
         <DemoBox
           title='分隔符'
           subtitle='自定义分隔符'
@@ -232,6 +271,7 @@ export default defineComponent({
           <SeparatorDemo></SeparatorDemo>
         </DemoBox>
 
+        {/* 仅显示最后一级 */}
         <DemoBox title='仅显示最后一级'
           subtitle='可在输入框仅显示最后一级的标签，而非完整路径'
           desc='设置`show-complete-name`属性为`false`，则可以使输入框仅显示最后一级，默认显示完整路径'
@@ -239,6 +279,8 @@ export default defineComponent({
           demoName='show-complete-name'>
           <ShowCompleteName></ShowCompleteName>
         </DemoBox>
+
+        {/* 自定义节点 */}
         <DemoBox
           title='自定义节点'
           subtitle='通过插槽对节点内容实现个性化需求'
@@ -247,6 +289,8 @@ export default defineComponent({
           demoName='slots-demo'>
           <SlotsDemo></SlotsDemo>
         </DemoBox>
+
+        {/* 远程加载 */}
         <DemoBox
           title='远程加载'
           subtitle='远程加载list，异步加载'
@@ -256,10 +300,13 @@ export default defineComponent({
           <RemoteDemo></RemoteDemo>
         </DemoBox>
 
+        {/* Cascader组件属性列表 */}
         <PropsBox
           title='Cascader 属性'
           subtitle=''
           propsData={cascaderPropsJson} />
+
+        {/* Cascader组件事件列表 */}
         <PropsBox
           title='Cascader 事件'
           subtitle=''
@@ -268,3 +315,4 @@ export default defineComponent({
     );
   },
 });
+
