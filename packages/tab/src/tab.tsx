@@ -172,6 +172,8 @@ export default defineComponent({
         changeOnHover,
         changeOnHoverDelay,
         tabPosition,
+        activeBarSize,
+        activeBarColor,
         // function
         tabAdd,
         tabChange,
@@ -193,6 +195,8 @@ export default defineComponent({
         changeOnHover,
         changeOnHoverDelay,
         tabPosition,
+        activeBarSize,
+        activeBarColor,
         // function
         tabAdd,
         tabChange,

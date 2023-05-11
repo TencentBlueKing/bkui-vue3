@@ -24,21 +24,62 @@
  * IN THE SOFTWARE.
 */
 
-import { ComponentInternalInstance, computed, defineComponent, h, ref } from 'vue';
+import {
+  ComponentInternalInstance,
+  computed,
+  CSSProperties,
+  defineComponent,
+  h,
+  ref,
+} from 'vue';
 
 import { Close, Plus } from '@bkui-vue/icon/';
 import { resolveClassName } from '@bkui-vue/shared';
 
-import { tabNavProps } from './props';
+import { PositionEnum, tabNavProps, TabTypeEnum } from './props';
 
 export default defineComponent({
   name: 'TabNav',
   props: tabNavProps,
   setup(props: Record<string, any>) {
+    const activeRef = ref<HTMLElement>(null);
+    const activeBarStyle = computed<CSSProperties>(() => {
+      const initStyle: CSSProperties = { width: 0, height: 0, bottom: 0, left: 0 };
+      if (!activeRef.value) {
+        return initStyle;
+      }
+      if ([PositionEnum.LEFT, PositionEnum.RIGHT].includes(props.tabPosition)) {
+        const { clientHeight, offsetTop } = activeRef.value;
+        const style: CSSProperties = {
+          width: `${props.activeBarSize}px`,
+          height: `${clientHeight}px`,
+          top: `${offsetTop}px`,
+          background: props.activeBarColor,
+        };
+        if (props.tabPosition === PositionEnum.LEFT) {
+          style.right = 0;
+        } else {
+          style.left = 0;
+        }
+        return style;
+      }
+      if (props.type === TabTypeEnum.UNBORDER_CARD) {
+        const { clientWidth, offsetLeft } = activeRef.value;
+        return {
+          width: `${clientWidth}px`,
+          height: `${props.activeBarSize}px`,
+          left: `${offsetLeft}px`,
+          bottom: 0,
+          background: props.activeBarColor,
+        };
+      }
+      return initStyle;
+    });
     const navs = computed(() => {
       if (!Array.isArray(props.panels) || !props.panels.length) {
         return [];
       }
+
       const list = [];
       let hasFindActive = false;
       props.panels.filter((item: ComponentInternalInstance, index: number) => {
@@ -83,7 +124,8 @@ export default defineComponent({
     const dragenterIndex = ref(-1);
     const dragStartIndex = ref(-1);
     const draggingEle = ref('');
-    const  distinctRoots = (el1: string, el2: string) => el1 === el2;
+
+    const distinctRoots = (el1: string, el2: string) => el1 === el2;
     const methods = {
       /**
        * @description  判断拖动的元素是否是在同一个tab。
@@ -129,6 +171,8 @@ export default defineComponent({
     };
     return {
       ...methods,
+      activeRef,
+      activeBarStyle,
       navs,
       dragenterIndex,
       dragStartIndex,
@@ -166,6 +210,7 @@ export default defineComponent({
           onClick={() => this.handleTabChange(name)}
           draggable={getValue(item.sortable, sortable)}
           onDragstart={e => dragstart(index, e)}
+          ref={active === name ? 'activeRef' : ''}
           onDragenter={(e) => {
             e.preventDefault();
             dragenter(index);
@@ -187,7 +232,8 @@ export default defineComponent({
           class={getNavItemClass()}>
           <div>{tabLabel}</div>
           {getValue(item.closable, closable)
-          && (<Close class={resolveClassName('tab-header-item-close')} onClick={(): void => this.handleTabRemove(index, item)} />)}
+            && (<Close class={resolveClassName('tab-header-item-close')}
+                       onClick={(): void => this.handleTabRemove(index, item)}/>)}
         </div>
       );
     });
@@ -196,7 +242,7 @@ export default defineComponent({
       if (typeof this.$slots.add === 'function') {
         list.push(this.$slots.add?.(h));
       } else if (addable) {
-        list.push(<div onClick={this.handleTabAdd}><Plus style="display:flex;" width={26} height={26} /></div>);
+        list.push(<div onClick={this.handleTabAdd}><Plus style="display:flex;" width={26} height={26}/></div>);
       }
       if (list.length) {
         return (
@@ -211,17 +257,25 @@ export default defineComponent({
       }
       return null;
     };
+    const renderActiveBar = () => {
+      if (this.type === TabTypeEnum.UNBORDER_CARD) {
+        return (<div style={this.activeBarStyle} class={resolveClassName('tab-header-active-bar')}/>);
+      }
+      return '';
+    };
     return (
       <div style={{ lineHeight: `${labelHeight}px` }} class={resolveClassName('tab-header')}>
         <div class={resolveClassName('tab-header-nav')}>
           {renderNavs()}
+          {renderActiveBar()}
+          <div style={this.activeBarStyle} class={resolveClassName('tab-header-active-bar')}/>
         </div>
-        { renderSlot()}
+        {renderSlot()}
         {
-          typeof this.$slots.setting === 'function' &&  (
+          typeof this.$slots.setting === 'function' && (
             <div class={resolveClassName('tab-header-setting')}>
-            {this.$slots.setting() }
-          </div>
+              {this.$slots.setting()}
+            </div>
           )
         }
       </div>
