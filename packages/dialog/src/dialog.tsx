@@ -28,7 +28,7 @@ import { computed, defineComponent, onBeforeUnmount, onMounted, reactive, ref, w
 
 import BkButton from '@bkui-vue/button';
 import { useLocale } from '@bkui-vue/config-provider';
-import { Close, Spinner, Success, Warn, Error } from '@bkui-vue/icon';
+import { Close, Error, Spinner, Success, Warn } from '@bkui-vue/icon';
 import BkModal from '@bkui-vue/modal';
 import { resolveClassName } from '@bkui-vue/shared';
 
