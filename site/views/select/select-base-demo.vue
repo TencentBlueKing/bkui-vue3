@@ -16,7 +16,14 @@
       :disabled="item.disabled"
     />
     <template #extension>
-      <i class="bk-icon icon-plus-circle" />新增
+      <bk-input
+        v-if="showEdit"
+        @enter="handleEnter"
+      />
+      <span
+        v-else
+        @click="showEdit = true"
+      ><i class="bk-icon icon-plus-circle" />新增</span>
     </template>
   </bk-select>
 </template>
@@ -53,9 +60,14 @@
       disabled: true,
     },
   ]);
+  const showEdit = ref(false);
   const selectedValue = ref('sleep');
   const handleToggle = (value) => {
     console.log(value);
+  };
+  const handleEnter = (v, e) => {
+    e.stopPropagation();
+    showEdit.value = false;
   };
 </script>
 <style scoped>
