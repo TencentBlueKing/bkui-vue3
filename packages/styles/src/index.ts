@@ -34,6 +34,7 @@ import '@bkui-vue/button/button.less';
 import '@bkui-vue/card/card.less';
 import '@bkui-vue/checkbox/checkbox.less';
 import '@bkui-vue/collapse/collapse.less';
+import '@bkui-vue/collapse-transition/collapse-transition.less';
 import '@bkui-vue/dialog/dialog.less';
 import '@bkui-vue/exception/exception.less';
 import '@bkui-vue/fixed-navbar/fixed-navbar.less';

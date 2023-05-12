@@ -318,10 +318,18 @@ export default class TableRender {
       }
 
       const cellText = getHeadCellText(column, index);
-      cells.unshift(cellText);
+      cells.unshift(<span class="head-text">{ cellText }</span>);
 
       const showTitle = typeof cellText === 'string' ? cellText : undefined;
-      return <TableCell title={ showTitle }>{ cells }</TableCell>;
+      return (
+        <TableCell
+          title={ showTitle }
+          observerResize={this.props.observerResize}
+          resizerWay={this.props.resizerWay}
+        >
+          { cells }
+        </TableCell>
+      );
     };
 
     const resolveEventListener = (col: GroupColumn) => Array.from(col.listeners.keys())
@@ -441,10 +449,13 @@ export default class TableRender {
                     colspan={ colspan } rowspan={ rowspan }
                     onClick={ event =>  handleEmit(event, EMIT_EVENTS.CELL_CLICK)}
                     onDblclick = { event =>  handleEmit(event, EMIT_EVENTS.CELL_DBL_CLICK)}>
-                    <TableCell class={tdCtxClass}
+                    <TableCell
+                      class={tdCtxClass}
                       column={ column }
                       row={ row }
-                      parentSetting={ this.props.showOverflowTooltip }>
+                      parentSetting={ this.props.showOverflowTooltip }
+                      observerResize={this.props.observerResize}
+                    >
                       { this.renderCell(row, column, rowIndex, rows) }
                     </TableCell>
                   </td>;

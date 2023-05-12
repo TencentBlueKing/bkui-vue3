@@ -107,7 +107,7 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
   const resolveModifiers: any = () => {
     const resolveResult = {};
     if (Array.isArray(props.modifiers)) {
-      props.modifiers.forEach((m) => {
+      props.modifiers.forEach((m: any) => {
         let result;
         if (m.name === 'offset') {
           if (typeof m.options?.offset === 'number') {
@@ -257,7 +257,9 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
   const createPopInstance = () => {
     const { elReference, elContent } = resolvePopElements();
     cleanup = autoUpdate(elReference, elContent, () => {
-      updatePopover(null, props);
+      if (localIsShow.value) {
+        updatePopover(null, props);
+      }
     });
   };
 
@@ -286,19 +288,36 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
   };
 
   let popHideTimerId = undefined;
+  let popShowTimerId = undefined;
   let isMouseenter = false;
 
+  const resolvePopoverDelay = () => {
+    if (Array.isArray(props.popoverDelay)) {
+      return [props.popoverDelay[0], props.popoverDelay.slice(-1)[0]];
+    }
+
+    return [props.popoverDelay, props.popoverDelay];
+  };
+
   const showPopover = () => {
+    const delay = resolvePopoverDelay()[0];
     // 设置settimeout避免hidePopover导致显示问题
-    setTimeout(() => {
-      !props.disabled && (localIsShow.value = true);
-    }, props.popoverDelay);
+    popShowTimerId = setTimeout(() => {
+      if (popHideTimerId) {
+        clearTimeout(popHideTimerId);
+      }
+      if (!props.disabled) {
+        localIsShow.value = true;
+      }
+    }, delay);
   };
 
   const hidePopover = () => {
+    const delay = resolvePopoverDelay()[1];
     popHideTimerId = setTimeout(() => {
+      popShowTimerId && clearTimeout(popShowTimerId);
       localIsShow.value = false;
-    }, props.popoverDelay);
+    }, delay);
   };
 
   const hanldePopoverShow = () => {

@@ -24,26 +24,25 @@
  * IN THE SOFTWARE.
 */
 
-import { createApp } from 'vue';
+import { mount } from '@vue/test-utils';
 
-import bkuiVue from '../packages/bkui-vue/index';
-import en from '../packages/locale/src/lang/en';
-import zhCn from '../packages/locale/src/lang/zh-cn';
+import CollapseTransition from '../src';
+describe('CollapseTransition.vue', () => {
+  it('should have correct transition classes applied', async () => {
+    const wrapper = mount(CollapseTransition, {
+      slots: {
+        default: '<div>Test</div>',
+      },
+    });
 
-import App from './app';
-import router from './router';
+    await wrapper.setProps({ appear: true, type: 'fade' });
 
-import '../packages/styles/src/index';
-import './reset.less';
-console.log(en);
-console.log(zhCn);
-const app = createApp(App);
-app.use(bkuiVue, {
-  locale: en,
+    expect(wrapper.findComponent({ ref: 'transition' }).classes()).toContain('fade-enter-active');
+    expect(wrapper.findComponent({ ref: 'transition' }).classes()).toContain('fade-leave-active');
+
+    await wrapper.setProps({ appear: false, type: 'slide-top' });
+
+    expect(wrapper.findComponent({ ref: 'transition' }).classes()).toContain('slide-top-enter-active');
+    expect(wrapper.findComponent({ ref: 'transition' }).classes()).toContain('slide-top-leave-active');
+  });
 });
-app.use(router);
-
-if (process.env.NODE_ENV === 'development') {
-  (app.config as any).devtools = true;
-}
-app.mount('#app');

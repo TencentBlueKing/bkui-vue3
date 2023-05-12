@@ -55,7 +55,6 @@ export default defineComponent({
     let activeSortColumn: any = null;
     let columnFilterFn: any = null;
 
-    let observerIns = null;
     const targetColumns = reactive([]);
     const { initColumns } = useColumn(props, targetColumns);
     provide(PROVIDE_KEY_INIT_COL, initColumns);
@@ -70,7 +69,9 @@ export default defineComponent({
       dragOffsetX,
       reactiveSchema,
       indexData,
-      renderFixedColumns,
+      fixedColumns,
+      resolveColumnStyle,
+      resolveColumnClass,
       setRowExpand,
       initIndexData,
       fixedWrapperClass,
@@ -221,25 +222,29 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      observerIns = observerResize(root.value, () => {
-        if (!root.value) {
-          return;
-        }
-        if (props.height === '100%' || props.height === 'auto') {
-          resetTableHeight(root.value);
-        }
+      if (props.observerResize) {
+        let observerIns = observerResize(root.value, () => {
+          if (!root.value) {
+            return;
+          }
+          if (props.height === '100%' || props.height === 'auto') {
+            resetTableHeight(root.value);
+          }
 
-        updateBorderClass(root.value);
-        const offset = getColumnsWidthOffsetWidth();
-        resolveColumnWidth(root.value, colgroups, 20, offset);
-      }, 180, true, props.resizerWay);
+          updateBorderClass(root.value);
+          const offset = getColumnsWidthOffsetWidth();
+          resolveColumnWidth(root.value, colgroups, 20, offset);
+        }, 180, true, props.resizerWay);
 
-      observerIns.start();
+        observerIns.start();
+        onBeforeUnmount(() => {
+          observerIns.disconnect();
+          observerIns = null;
+        });
+      }
     });
 
     onBeforeUnmount(() => {
-      observerIns.disconnect();
-      observerIns = null;
       tableRender.destroy();
     });
 
@@ -333,7 +338,15 @@ export default defineComponent({
       </VirtualRender>
       {/* @ts-ignore:next-line */}
       <div class={ fixedWrapperClass } style={ fixedContainerStyle.value }>
-        { renderFixedColumns(reactiveSchema.scrollTranslateX, tableOffsetRight.value) }
+        {
+          fixedColumns.value
+            .map(({ isExist, colPos, column }) => {
+              console.log('fixedWrapperClass');
+              return (isExist ? '' : <div
+              class={ resolveColumnClass(column, reactiveSchema.scrollTranslateX, tableOffsetRight.value) }
+              style={ resolveColumnStyle(colPos) }></div>);
+            })
+        }
         <div class={ resizeColumnClass } style={ resizeColumnStyle.value }></div>
         <div class={ loadingRowClass }>{
           renderScrollLoading()

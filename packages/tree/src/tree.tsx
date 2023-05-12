@@ -140,7 +140,7 @@ export default defineComponent({
       }
 
       const emptyType = isSearchActive.value ? 'search-empty' : 'empty';
-      return renderEmpty(emptyType);
+      return ctx.slots.empty?.() ?? renderEmpty(emptyType);
     };
 
     return () => (

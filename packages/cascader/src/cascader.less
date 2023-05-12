@@ -1,4 +1,5 @@
 @import '@bkui-vue/styles/themes/themes.less';
+@import '@bkui-vue/styles/mixins/mixins.less';
 
 .@{bk-prefix}-cascader-popover.bk-pop2-content {
   padding: 0;
@@ -7,24 +8,86 @@
   display: block;
 }
 
+.@{bk-prefix}-cascader-wrapper {
+  position: relative;
+
+  &.float-mode {
+    max-height: @component-size-base;
+  }
+}
+
 .@{bk-prefix}-cascader {
   position: relative;
+  display: block;
   width: 250px;
   font-size: 12px;
   line-height: 30px;
   color: #63656e;
   cursor: pointer;
+  background: #fff;
   border: 1px solid #c4c6cc;
   border-radius: 2px;
   outline: none;
 
-  &.is-hover {
+  &.is-hover:not(.is-disabled) {
     border: 1px solid #979ba5;
   }
 
-  &:focus {
-    border: 1px solid #3a84ff;
+  &.is-disabled {
+    cursor: not-allowed;
+    background-color: @input-disabled-bg;
+    border-color: @disable-color;
+    opacity: 1;
+
+    .bk-cascader-name,
+    input {
+      cursor: not-allowed;
+      background-color: @input-disabled-bg;
+      opacity: 1;
+    }
   }
+
+  &.is-simplicity {
+    background-color: transparent;
+    border-color: transparent;
+    border-bottom-color: @input-border-color;
+
+    &:hover:not(.is-disabled) {
+      background-color: @input-block-color;
+      border-color: transparent;
+      border-bottom-color: @light-gray;
+      box-shadow: none;
+      .@{bk-prefix}-input--text, .@{bk-prefix}-input--suffix-icon {
+        background-color: @input-block-color;
+      }
+    }
+  }
+
+
+  &.is-focus {
+    z-index: 1;
+    border: 1px solid #3a84ff;
+
+    .bk-cascader-name {
+      .cascader-selected-text {
+        white-space: pre-wrap;
+      }
+
+      .cascader-tag-list {
+        height: auto;
+      }
+    }
+
+    &.is-simplicity.is-simplicity {
+      border-color: transparent;
+      border-bottom-color: @primary-color;
+      box-shadow: none;
+      .@{bk-prefix}-input--text, .@{bk-prefix}-input--suffix-icon {
+        background-color: @input-block-color;
+      }
+    }
+  }
+
   &.@{bk-prefix}-is-show-panel {
     .@{bk-prefix}-icon-angle-up {
       transform: rotate(0);
@@ -44,7 +107,9 @@
   &.is-filterable:before {
     display: none;
   }
-  .@{bk-prefix}-icon-angle-up, .@{bk-prefix}-icon-clear-icon {
+
+  .@{bk-prefix}-icon-angle-up,
+  .@{bk-prefix}-icon-clear-icon {
     position: absolute;
     right: 2px;
     display: inline-flex;
@@ -55,6 +120,7 @@
     transition: transform .3s cubic-bezier(.4,0,.2,1);
     align-items: center;
   }
+
   .@{bk-prefix}-icon-clear-icon {
     right: 4px;
     font-size: 14px;
@@ -69,15 +135,17 @@
     width: 100%;
   }
   .@{bk-prefix}-cascader-name {
+    position: static;
     display: block;
     max-width: 100%;
+    max-height: 120px;
     min-height: 30px;
-    padding: 0 36px 0 11px;
-    overflow: hidden;
+    padding: 0 24px 0 11px;
+    overflow-x: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 
-    .bk-cascader-search-input {
+    .@{bk-prefix}-cascader-search-input {
       width: 100%;
       font-size: 12px;
       cursor: text;
@@ -88,17 +156,28 @@
         color: #c3cdd7;
       }
     }
+    
+    .cascader-selected-text {
+      display: block;
+      width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
 
     .cascader-tag-list {
       display: flex;
+      height: @component-size-base;
       min-height: 30px;
       padding-top: 5px;
+      overflow: hidden;
       box-sizing: border-box;
       flex-wrap: wrap;
 
-      .cascader-tag-item {
+      .tag-item {
         position: relative;
         height: 22px;
+        max-width: calc(100% - 50px);
         padding-right: 18px;
         margin: 0 6px 5px 0;
         overflow: hidden;
@@ -111,7 +190,7 @@
           background: #dcdee5;
         }
 
-        .cascader-tag-item-name {
+        .tag-item-name {
           display: inline-block;
           width: 100%;
           padding: 0 5px;
@@ -143,7 +222,7 @@
       display: flex;
       padding: 0 16px;
       overflow: hidden;
-      line-height: 32px;
+      line-height: @component-size-base;
       text-overflow: ellipsis;
       white-space: nowrap;
       cursor: pointer;
@@ -171,18 +250,20 @@
 
       .icon-angle-right {
         position: absolute;
-        top: -1px;
+        top: 50%;
         right: 0;
         font-size: 20px;
         color: @gray-color;
+        transform: translateY(-50%);
       }
 
       .icon-spinner {
         position: absolute;
-        top: -1px;
+        top: 50%;
         right: 5px;
         font-size: 12px;
         color: @gray-color;
+        transform: translateY(-50%);
       }
     }
   }

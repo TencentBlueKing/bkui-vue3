@@ -26,6 +26,7 @@
 
 import { computed, defineComponent, ExtractPropTypes, ref, watch } from 'vue';
 
+import { useLocale } from '@bkui-vue/config-provider';
 import { Close, DownSmall, Eye, Search, Unvisible } from '@bkui-vue/icon';
 import {
   classes,
@@ -40,7 +41,7 @@ export const inputType = {
   clearable: PropTypes.bool,
   disabled: PropTypes.bool,
   readonly: PropTypes.bool,
-  placeholder: PropTypes.string.def('请输入'),
+  placeholder: PropTypes.string.def(''),
   prefixIcon: PropTypes.string,
   suffixIcon: PropTypes.string,
   suffix: PropTypes.string,
@@ -113,7 +114,7 @@ export default defineComponent({
   emits: inputEmitEventsType,
   setup(props, ctx) {
     const formItem = useFormItem();
-
+    const t = useLocale('input');
     const isFocused = ref(false);
     const isCNInput = ref(false);
     const isTextArea = computed(() => props.type === 'textarea');
@@ -309,7 +310,7 @@ export default defineComponent({
       return {
         ...val,
         maxlength: props.maxlength,
-        placeholder: props.placeholder,
+        placeholder: props.placeholder || t.value.placeholder,
         readonly: props.readonly,
         disabled: props.disabled,
       };

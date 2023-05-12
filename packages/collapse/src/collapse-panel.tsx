@@ -23,12 +23,12 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent, h, inject, Ref, ref, Transition, watch } from 'vue';
+import { defineComponent, h, inject, Ref, ref, watch } from 'vue';
 
+import BKCollapseTransition from '@bkui-vue/collapse-transition';
 import { AngleRight } from '@bkui-vue/icon';
 
 import { propsCollapsePanel as props } from './props';
-import { collapseMotion } from './utils';
 
 export default defineComponent({
   name: 'CollapsePanel',
@@ -71,8 +71,6 @@ export default defineComponent({
       }
     }
 
-
-    const transition = ref(collapseMotion(emit));
 
     function getContent() {
       if (props.content) {
@@ -129,11 +127,11 @@ export default defineComponent({
         <div onClick={() => clickItem(props)}>
           {renderHeader()}
         </div>
-        <Transition {...transition.value}>
+        <BKCollapseTransition>
           {
             renderPanel()
           }
-        </Transition>
+        </BKCollapseTransition>
       </div>
     );
   },

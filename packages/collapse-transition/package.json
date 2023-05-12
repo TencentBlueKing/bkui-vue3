@@ -1,0 +1,20 @@
+{
+  "name": "@bkui-vue/collapse-transition",
+  "version": "0.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "license": "MIT",
+  "scripts": {
+    "clean": "rimraf dist && rimraf tsconfig.tsbuildinfo",
+    "prepack": "yarn build",
+    "build": "yarn clean && tsc --build && cp \"./package.json\" ./dist/",
+    "test": "jest --passWithNoTests",
+    "lint": "eslint \"./src/**/*.{ts,tsx}\" --max-warnings=0"
+  },
+  "devDependencies": {
+    "@vue/test-utils": "~2.0.0-rc.12"
+  },
+  "peerDependencies": {
+    "vue": "^3.2.0"
+  }
+}

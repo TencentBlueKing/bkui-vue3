@@ -24,26 +24,13 @@
  * IN THE SOFTWARE.
 */
 
-import { createApp } from 'vue';
+import { App } from 'vue';
 
-import bkuiVue from '../packages/bkui-vue/index';
-import en from '../packages/locale/src/lang/en';
-import zhCn from '../packages/locale/src/lang/zh-cn';
+import CollapseTransition from './collapse-transition';
 
-import App from './app';
-import router from './router';
 
-import '../packages/styles/src/index';
-import './reset.less';
-console.log(en);
-console.log(zhCn);
-const app = createApp(App);
-app.use(bkuiVue, {
-  locale: en,
-});
-app.use(router);
+CollapseTransition.install = (Vue: App) => {
+  Vue.component(CollapseTransition.name, CollapseTransition);
+};
 
-if (process.env.NODE_ENV === 'development') {
-  (app.config as any).devtools = true;
-}
-app.mount('#app');
+export default CollapseTransition;

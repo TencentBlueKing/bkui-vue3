@@ -144,7 +144,13 @@ export class BkMaskManager {
     this.setMaskStyle(style);
     this.mask.style.setProperty('display', 'block');
     this.mask.style.setProperty('z-index', `${localZIndex}`);
+    this.mask.style.setProperty('pointer-events', 'all');
     this.backupMask.style.setProperty('z-index', `${localZIndex - 1}`);
+
+    if (!showMask) {
+      this.mask.style.setProperty('pointer-events', 'none');
+      content?.style.setProperty('pointer-events', 'all');
+    }
 
     if (content) {
       if (transfer) content.style.setProperty('z-index', `${localZIndex + 1}`); // 表明内容不在遮罩下，内容区z-index + 1

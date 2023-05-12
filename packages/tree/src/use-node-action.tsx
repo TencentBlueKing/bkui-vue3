@@ -363,7 +363,7 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
     }
   };
 
-  const resolveNodeAction = (node: any) => {
+  const resolveNodeAction = (node: any): any[] => {
     if (typeof props.nodeContentAction === 'function') {
       return Reflect.apply(props.nodeContentAction, this, [{ node }]);
     }

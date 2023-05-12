@@ -40,8 +40,8 @@ export type ColumnFilterListItem = {
   value?: string;
 };
 
-enum OverflowModeEnum {
-  STATIC =  'static',
+export enum OverflowModeEnum {
+  STATIC = 'static',
   AUTO = 'auto'
 }
 
@@ -49,22 +49,22 @@ export const overflowModeType = toType<`${OverflowModeEnum}`>('showOverflowToolt
   default: OverflowModeEnum.AUTO,
 });
 
-enum ColumnTypeEnum {
+export enum ColumnTypeEnum {
   SELECTION = 'selection',
   INDEX = 'index',
   EXPAND = 'expand',
   NONE = 'none',
 }
-const columnType = toType<`${ColumnTypeEnum}`>('columnType', {
+export const columnType = toType<`${ColumnTypeEnum}`>('columnType', {
   default: ColumnTypeEnum.NONE,
 });
 
-enum FullEnum {
+export enum FullEnum {
   FULL = 'full',
   FUZZY = 'fuzzy',
 }
 
-const fullType = toType<`${FullEnum}`>('full', {
+export const fullType = toType<`${FullEnum}`>('full', {
   default: FullEnum.FULL,
 });
 
@@ -78,13 +78,12 @@ export const settingSizeType = toType<`${SettingSizeEnum}`>('columnSize', {
   default: SettingSizeEnum.SMALL,
 });
 
-enum FixedEnum {
+export enum FixedEnum {
   LEFT = 'left',
   RIGHT = 'right',
 }
 
-const fixedType = toType<`${FixedEnum}`>('columnSize', {
-});
+export const fixedType = toType<`${FixedEnum}`>('columnSize', {});
 
 export type IOverflowTooltip = {
   content: string | Function,
@@ -98,13 +97,13 @@ export type ISortOption = {
 };
 const sortScopeType = toType<`${SortScope}`>('sortScope', {}).def(SortScope.CURRENT);
 
-enum ColumnPickEnum {
+export enum ColumnPickEnum {
   MULTI = 'multi',
   SINGLE = 'single',
   DISABLED = 'disabled',
 }
 
-enum ResizerWay {
+export enum ResizerWay {
   DEBOUNCE = 'debounce',
   THROTTLE = 'throttle'
 }
@@ -114,7 +113,7 @@ export const IColumnType = {
   field: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
   render: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
   width: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]),
-  minWidth: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]).def(80),
+  minWidth: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]).def(30),
   columnKey: PropTypes.string.def(''),
   showOverflowTooltip: PropTypes.oneOfType([PropTypes.bool, PropTypes.shape<IOverflowTooltip>({
     content: PropTypes.string.def(''),
@@ -160,7 +159,7 @@ export const tableProps = {
   /**
    * Table 列渲染
    */
-  columns: PropTypes.arrayOf(PropTypes.shape(IColumnType).loose).def([]),
+  columns: PropTypes.arrayOf(PropTypes.shape<Column>(IColumnType).loose).def([]),
 
   /**
    * 当前选中列
@@ -321,10 +320,10 @@ export const tableProps = {
   selectionKey: PropTypes.string.def(''),
 
   /**
- * 提供自定义判定当前行是否选中
- * 如果设置了此属性，其他判定均不生效
- * ({ row, cell, data }) => bool
- */
+   * 提供自定义判定当前行是否选中
+   * 如果设置了此属性，其他判定均不生效
+   * ({ row, cell, data }) => bool
+   */
   isSelectedFn: PropTypes.func.def(undefined),
 
   /**
@@ -387,8 +386,12 @@ export const tableProps = {
    * 可选值：debounce，在指定时间范围内只执行一次重新计算
    */
   resizerWay: toType<`${ResizerWay}`>('ResizerWay', {
-    default: ResizerWay.THROTTLE,
+    default: ResizerWay.DEBOUNCE,
   }),
+  /**
+   * 是否监表格尺寸变化而响应式重新计算渲染
+   */
+  observerResize: PropTypes.bool.def(true),
 };
 
 

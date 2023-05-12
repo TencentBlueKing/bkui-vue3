@@ -28,7 +28,7 @@ import { computed, defineComponent, onBeforeUnmount, onMounted, reactive, ref, w
 
 import BkButton from '@bkui-vue/button';
 import { useLocale } from '@bkui-vue/config-provider';
-import { Close, Spinner, Success, Warn } from '@bkui-vue/icon';
+import { Close, Error, Spinner, Success, Warn } from '@bkui-vue/icon';
 import BkModal from '@bkui-vue/modal';
 import { resolveClassName } from '@bkui-vue/shared';
 
@@ -257,7 +257,7 @@ export default defineComponent({
           </>
         ) : ''}
       </div>,
-      close: () => <span class={resolveClassName('dialog-close')} onClick={this.handleClose}>+</span>,
+      close: () => <Error onClick={this.handleClose}/>,
     };
 
     const className = `${resolveClassName('dialog-wrapper ')} ${this.scrollable ? 'scroll-able' : ''} ${this.multiInstance ? 'multi-instance' : ''} ${this.hasFooter ? 'has-footer' : 'no-footer'}`;
