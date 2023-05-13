@@ -32,7 +32,7 @@ import { Column, TablePropTypes } from './props';
  * @param targetColumns 解析之后的column配置（主要用来处理通过<bk-column>配置的数据结构）
  */
 export default (props: TablePropTypes, targetColumns: Column[]) => {
-  const initColumns = (column: Column | Column[]) => {
+  const initColumns = (column: Column | Column[], remove = false) => {
     let resolveColumns: Column[] = [];
 
     if (!Array.isArray(column)) {
@@ -41,13 +41,20 @@ export default (props: TablePropTypes, targetColumns: Column[]) => {
       resolveColumns = column;
     }
 
-    resolveColumns.forEach((col) => {
-      const matchCol = targetColumns.find(c => c.label === col.label && c.field === col.field);
-      if (!matchCol) {
-        const unrefCol = unref(col);
-        targetColumns.push(unrefCol);
-      }
-    });
+    if (!remove) {
+      targetColumns.length = 0;
+      targetColumns.push(...(resolveColumns.map(col => unref(col))));
+    } else {
+      resolveColumns.forEach((col) => {
+        const matchColIndex = targetColumns.findIndex(c => c.label === col.label && c.field === col.field);
+        if (remove) {
+          if (matchColIndex >= 0) {
+            targetColumns.splice(matchColIndex, 1);
+          }
+          return;
+        }
+      });
+    }
   };
 
   const getColumns = () => {
