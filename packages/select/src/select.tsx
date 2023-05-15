@@ -677,7 +677,7 @@ export default defineComponent({
             onRemove={this.handleDeleteTag}
             collapseTags={this.isCollapseTags}
             onEnter={this.handleInputEnter}
-            onKeydown={(v, e) => this.handleKeydown(e as KeyboardEvent)}>
+            onKeydown={(_v, e) => this.handleKeydown(e as KeyboardEvent)}>
               {{
                 prefix: () => this.$slots.prefix?.(),
                 default: this.$slots.tag && (() => this.$slots.tag({ selected: this.selected })),
@@ -700,7 +700,7 @@ export default defineComponent({
           withValidate={false}
           onInput={this.handleInputChange}
           onEnter={this.handleInputEnter}
-          onKeydown={(v, e) => this.handleKeydown(e as KeyboardEvent)}>
+          onKeydown={(_v, e) => this.handleKeydown(e as KeyboardEvent)}>
             {{
               prefix: () => this.$slots.prefix?.(),
               suffix: () => suffixIcon(),
