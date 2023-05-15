@@ -21,6 +21,6 @@
 <script setup>
 
   const handleClick = () => {
-    console.error('handleClickhandleClickhandleClickhandleClick');
+    console.log('handleClickhandleClickhandleClickhandleClick');
   };
 </script>
