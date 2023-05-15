@@ -33,6 +33,7 @@ import { IPropsTableItem } from '../../typings';
 
 import BaseDemo from './base-demo.vue';
 import DisabledDemo from './disable-demo.vue';
+import IconDemo from './icon-demo.vue';
 
 const linkPropsJson: IPropsTableItem[] = [
   {
@@ -88,16 +89,25 @@ export default defineComponent({
           desc="基础的文字链接用法"
           componentName="link"
           demoName="base-demo">
-            <BaseDemo></BaseDemo>
-          </DemoBox>
+          <BaseDemo></BaseDemo>
+        </DemoBox>
 
         <DemoBox
           title="禁用状态和下划线"
           desc="文字链接不可用状态，添加underline实现下划线"
           componentName="link"
           demoName="disable-demo">
-            <DisabledDemo></DisabledDemo>
-          </DemoBox>
+          <DisabledDemo></DisabledDemo>
+        </DemoBox>
+
+        <DemoBox
+          title="支持设置图标"
+          desc="在 slot 中直接设置图标"
+          componentName="link"
+          demoName="icon-demo">
+          <IconDemo></IconDemo>
+        </DemoBox>
+
         <PropsBox
           title="Link 属性"
           subtitle=""
