@@ -37,7 +37,7 @@ import DemoRadio from './demo/radio.vue';
 import DemoRadioButton from './demo/radio-button.vue';
 import DemoRadioChecked from './demo/radio-checked.vue';
 import DemoRadioDisabled from './demo/radio-disabled.vue';
-import DemoRadioGroup from './demo/radio-group.vue';;
+import DemoRadioGroup from './demo/radio-group.vue';
 
 const radioProps: IPropsTableItem[] = [
   {
