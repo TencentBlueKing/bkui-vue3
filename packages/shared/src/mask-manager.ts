@@ -69,7 +69,7 @@ export class BkMaskManager {
 
   /** 遮罩样式 **/
   private readonly maskStyle: any = {
-    position: 'absolute',
+    position: 'fixed',
     left: 0,
     top: 0,
     bottom: 0,
