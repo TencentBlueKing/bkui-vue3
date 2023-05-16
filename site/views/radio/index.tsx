@@ -37,7 +37,8 @@ import DemoRadio from './demo/radio.vue';
 import DemoRadioButton from './demo/radio-button.vue';
 import DemoRadioChecked from './demo/radio-checked.vue';
 import DemoRadioDisabled from './demo/radio-disabled.vue';
-import DemoRadioGroup from './demo/radio-group.vue';;
+import DemoRadioGroup from './demo/radio-group.vue';
+import DemoRadioGroupCapsule from './demo/radio-group-capsule.vue';
 
 const radioProps: IPropsTableItem[] = [
   {
@@ -214,6 +215,15 @@ export default defineComponent({
           demoName="/demo/radio-group">
             <DemoRadioButton />
         </DemoBox>
+
+        <DemoBox
+          title="胶囊样式"
+          desc=""
+          componentName="radio"
+          demoName="/demo/radio-group-capsule">
+            <DemoRadioGroupCapsule />
+        </DemoBox>
+
         <PropsBox
           title="Radios 属性"
           subtitle=""

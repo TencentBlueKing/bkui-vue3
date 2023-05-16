@@ -24,14 +24,7 @@
  * IN THE SOFTWARE.
 */
 
-import {
-  ComponentInternalInstance,
-  computed,
-  CSSProperties,
-  defineComponent,
-  h,
-  ref,
-} from 'vue';
+import { ComponentInternalInstance, computed, CSSProperties, defineComponent, h, ref } from 'vue';
 
 import { Close, Plus } from '@bkui-vue/icon/';
 import { resolveClassName } from '@bkui-vue/shared';
@@ -231,13 +224,13 @@ export default defineComponent({
           }}
           class={getNavItemClass()}>
           <div>{tabLabel}</div>
-          {getValue(item.closable, closable)
-            && (<Close class={resolveClassName('tab-header-item-close')}
-                       onClick={(): void => this.handleTabRemove(index, item)}/>)}
+          {getValue(item.closable, closable) ? (
+            <span class={resolveClassName('tab-header--close')} onClick={(): void => this.handleTabRemove(index, item)}><Close/></span>
+          ) : ''}
         </div>
       );
     });
-    const renderSlot = () => {
+    const renderOperation = () => {
       const list = [];
       if (typeof this.$slots.add === 'function') {
         list.push(this.$slots.add?.(h));
@@ -263,21 +256,21 @@ export default defineComponent({
       }
       return '';
     };
+    const setting = typeof this.$slots.setting === 'function' ? (
+      <div class={resolveClassName('tab-header-setting')}>
+        {this.$slots.setting()}
+      </div>
+    ) : null;
+    const operations = renderOperation();
+
     return (
       <div style={{ lineHeight: `${labelHeight}px` }} class={resolveClassName('tab-header')}>
-        <div class={resolveClassName('tab-header-nav')}>
-          {renderNavs()}
+        <div class={[resolveClassName('tab-header-nav'), (operations || setting) ? 'tab-header-auto' : '']}>
           {renderActiveBar()}
-          <div style={this.activeBarStyle} class={resolveClassName('tab-header-active-bar')}/>
+          {renderNavs()}
         </div>
-        {renderSlot()}
-        {
-          typeof this.$slots.setting === 'function' && (
-            <div class={resolveClassName('tab-header-setting')}>
-              {this.$slots.setting()}
-            </div>
-          )
-        }
+        {operations}
+        {setting}
       </div>
     );
   },
