@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent, inject, onUnmounted, reactive } from 'vue';
+import { defineComponent, inject, onUnmounted, reactive, unref } from 'vue';
 
 import { PropTypes } from '@bkui-vue/shared';
 
@@ -57,13 +57,15 @@ export default defineComponent({
     const colList = selfVnode.parent.vnode.children.default() || [];
     const sortColumns = [];
     const reduceColumns = (nodes) => {
+      this.column.render = this.$slots.default ? (args: any) => this.$slots.default?.(args) : undefined;
       nodes.forEach((node: any) => {
         if (node.type?.name === 'TableColumn') {
-          let resolveProp = { ...node.props, field: node.props.prop || node.props.field };
+          const resolveProp = { ...node.props, field: node.props.prop || node.props.field };
           if (resolveProp.label === this.column.label && resolveProp.field === this.column.field) {
-            resolveProp = this.column;
+            sortColumns.push(unref(this.column));
+          } else {
+            sortColumns.push(unref(resolveProp));
           }
-          sortColumns.push(resolveProp);
         }
 
         if (Object.hasOwnProperty.call(node.props || {}, 'key') && node.children?.length) {
@@ -73,6 +75,5 @@ export default defineComponent({
     };
     reduceColumns(colList);
     this.initColumns(sortColumns);
-    this.column.render = this.$slots.default ? (args: any) => this.$slots.default?.(args) : undefined;
   },
 });

@@ -72,6 +72,7 @@ export const createInstance = (el: HTMLElement, binding: any) => {
       const targetOptions = resolveOptions(el, binding);
       targetOptions.isShow = true;
       targetOptions.content = targetOptions.content || el.innerHTML;
+      targetOptions.allowHTML = true;
       Object.assign(targetOptions, {
         onContentMouseenter: handleContentEnter,
         onContentMouseleave: handleContentLeave,

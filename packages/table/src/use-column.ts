@@ -42,8 +42,15 @@ export default (props: TablePropTypes, targetColumns: Column[]) => {
     }
 
     if (!remove) {
+      const resetColumns = resolveColumns.map((col) => {
+        const exist = targetColumns.find(tc => tc.label === col.label && tc.field === col.field);
+        if (exist) {
+          return exist;
+        }
+        return unref(col);
+      });
       targetColumns.length = 0;
-      targetColumns.push(...(resolveColumns.map(col => unref(col))));
+      targetColumns.push(...resetColumns);
     } else {
       resolveColumns.forEach((col) => {
         const matchColIndex = targetColumns.findIndex(c => c.label === col.label && c.field === col.field);

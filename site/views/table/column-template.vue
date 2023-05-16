@@ -5,6 +5,7 @@
   <div class="row">
     <bk-table
       :data="tableData"
+      show-overflow-tooltip
       border="horizontal"
     >
       <bk-table-column
@@ -20,7 +21,9 @@
           prop="ip"
         >
           <template #default="props">
-            {{ props?.row.ip }}
+            <div class="xxlxlxxl">
+              {{ props?.row.ip }}
+            </div>
           </template>
         </bk-table-column>
         <bk-table-column
