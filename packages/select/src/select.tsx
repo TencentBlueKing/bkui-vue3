@@ -29,7 +29,6 @@ import { PopoverPropTypes } from 'popover/src/props';
 import {
   computed,
   defineComponent,
-  onBeforeMount,
   onMounted,
   provide,
   reactive,
@@ -47,9 +46,7 @@ import BKPopover from '@bkui-vue/popover';
 import {
   classes,
   InputBehaviorType,
-  off,
-  on,
-  PropTypes, resolveClassName,
+  PropTypes, RenderType, resolveClassName,
   SizeEnum,
   TagThemeType,
   useFormItem,
@@ -279,6 +276,7 @@ export default defineComponent({
         reference: selectTagInputRef.value,
         offset: 6,
         popoverDelay: 0,
+        renderType: RenderType.AUTO,
       },
       popoverOptions.value,
     ));
@@ -324,7 +322,7 @@ export default defineComponent({
         setTimeout(() => {
           focusInput();
           initActiveOptionValue();
-        }, 0);
+        }, 10);// 等待Popover content出来，options加载完成
       }
     });
 
@@ -514,12 +512,8 @@ export default defineComponent({
       }
     };
     // 处理键盘事件
-    const handleKeydown = (e: any) => {
-      if (
-        !triggerRef.value?.contains(e.target)
-        && !contentRef.value?.contains(e.target)
-        && !customContent.value
-      ) return;
+    const handleKeydown = (e: KeyboardEvent) => {
+      if (!isPopoverShow.value) return;
 
       const availableOptions = options.value.filter(option => !option.disabled && option.visible);
       const index = availableOptions.findIndex(option => option.value === activeOptionValue.value);
@@ -555,12 +549,8 @@ export default defineComponent({
         }
         // 选择选项
         case 'Enter': {
-          if (!isPopoverShow.value) {
-            isPopoverShow.value = true;
-          } else {
-            const option = optionsMap.value.get(activeOptionValue.value);
-            handleOptionSelected(option);
-          }
+          const option = optionsMap.value.get(activeOptionValue.value);
+          handleOptionSelected(option);
           break;
         }
       }
@@ -597,10 +587,6 @@ export default defineComponent({
         showOnInit.value && showPopover();
         autoFocus.value && focusInput();
       });
-      on(document, 'keydown', handleKeydown);
-    });
-    onBeforeMount(() => {
-      off(document, 'keydown', handleKeydown);
     });
 
     return {
@@ -690,7 +676,8 @@ export default defineComponent({
             disabled={this.isDisabled}
             onRemove={this.handleDeleteTag}
             collapseTags={this.isCollapseTags}
-            onEnter={this.handleInputEnter}>
+            onEnter={this.handleInputEnter}
+            onKeydown={(_v, e) => this.handleKeydown(e as KeyboardEvent)}>
               {{
                 prefix: () => this.$slots.prefix?.(),
                 default: this.$slots.tag && (() => this.$slots.tag({ selected: this.selected })),
@@ -712,7 +699,8 @@ export default defineComponent({
           size={this.size}
           withValidate={false}
           onInput={this.handleInputChange}
-          onEnter={this.handleInputEnter}>
+          onEnter={this.handleInputEnter}
+          onKeydown={(_v, e) => this.handleKeydown(e as KeyboardEvent)}>
             {{
               prefix: () => this.$slots.prefix?.(),
               suffix: () => suffixIcon(),

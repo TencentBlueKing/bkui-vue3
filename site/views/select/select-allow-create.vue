@@ -1,21 +1,36 @@
 <template>
-  <bk-select
-    v-model="selectedValue"
-    class="bk-select"
-    filterable
-    multiple
-    allow-create
-    multiple-mode="tag"
-    show-select-all
-  >
-    <bk-option
-      v-for="(item, index) in datasource"
-      :key="index"
-      :value="item.value"
-      :label="item.label"
-      :disabled="item.disabled"
-    />
-  </bk-select>
+  <div style="display: flex;">
+    <bk-select
+      v-model="selectedValue"
+      class="bk-select"
+      filterable
+      multiple
+      allow-create
+      multiple-mode="tag"
+      show-select-all
+    >
+      <bk-option
+        v-for="(item, index) in datasource"
+        :key="index"
+        :value="item.value"
+        :label="item.label"
+        :disabled="item.disabled"
+      />
+    </bk-select>
+    <bk-select
+      class="bk-select"
+      filterable
+      allow-create
+    >
+      <bk-option
+        v-for="(item, index) in datasource"
+        :key="index"
+        :value="item.value"
+        :label="item.label"
+        :disabled="item.disabled"
+      />
+    </bk-select>
+  </div>
 </template>
 <script setup>
   import { ref } from 'vue';
@@ -55,6 +70,7 @@
 <style scoped>
 .bk-select {
   width: 300px;
+  margin-right: 10px;
 }
 </style>
 

@@ -5,10 +5,20 @@
       :list="list"
       multiple
       filterable
+      float-mode
       trigger="click"
     />
     <bk-cascader
       v-model="area"
+      :list="list"
+      multiple
+      filterable
+      float-mode
+      limit-one-line
+      trigger="click"
+    />
+    <bk-cascader
+      v-model="openArea"
       :list="list"
       multiple
       trigger="click"
@@ -71,12 +81,15 @@
     },
   ];
   const area = ref([]);
+  const openArea = ref([]);
 
 </script>
 
 <style lang="less" scoped>
 .cascader-wrapper {
-  .bk-cascader:first-of-type {
+  width: 250px;
+
+  .bk-cascader-wrapper:not(:last-of-type) {
     margin-bottom: 20px;
   }
 }

@@ -35,6 +35,11 @@ export {
   useLocale,
   rootProviderKey,
   provideGlobalConfig,
-}  from './config-provider';
+  defaultRootConfig,
+} from './config-provider';
+export type {
+  LocalReceiverCtx,
+  LocaleInterface,
+} from './config-provider';
 
 export * from './type';

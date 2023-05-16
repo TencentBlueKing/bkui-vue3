@@ -33,6 +33,7 @@ export enum TabTypeEnum {
   BORDER_CARD = 'border-card',
   UNBORDER_CARD = 'unborder-card',
   CARD_TAB = 'card-tab',
+  CARD_GRID = 'card-grid',
 }
 
 export enum PositionEnum {
@@ -40,12 +41,14 @@ export enum PositionEnum {
   RIGHT = 'right',
   TOP = 'top',
 }
+
 export const TabPositionType = toType<`${PositionEnum}`>('position', {}).def(PositionEnum.TOP);
 
 export enum SortTypeEnum {
   REPLACE = 'replace',
   INSERT = 'insert',
 }
+
 export const SortTypeUnion = toType<`${SortTypeEnum}`>('sortType', {}).def(SortTypeEnum.REPLACE);
 
 export const tabNavEventProps = {
@@ -110,11 +113,15 @@ export const tabProps = {
   showHeader: PropTypes.bool.def(true),
   changeOnHover: PropTypes.bool.def(false),
   changeOnHoverDelay: PropTypes.number.def(1000),
+  activeBarSize: PropTypes.number.def(2),
+  activeBarColor: PropTypes.string.def('#3a84ff'),
 };
 
 export const tabNavProps = {
   active: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(''),
-  // panels: PropTypes.arrayOf(PropTypes.any).def([]),
+  type: toType<`${TabTypeEnum}`>('type', {}).def(TabTypeEnum.BORDER_CARD),
+  activeBarColor: PropTypes.string.def('#3a84ff'),
+  activeBarSize: PropTypes.number.def(2),
   panels: {
     type: Array as PropType<VNode[]>,
     default: () => [],

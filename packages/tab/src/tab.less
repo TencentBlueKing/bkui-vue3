@@ -28,6 +28,26 @@
     display: flex;
     color: @tab-color;
 
+    .@{bk-prefix}-tab--left & {
+      border-right: 1px solid @tab-border;
+    }
+
+    .@{bk-prefix}-tab--right & {
+      border-left: 1px solid @tab-border;
+    }
+
+    .@{bk-prefix}-tab--vertical-tab & {
+      border: 0;
+    }
+
+    .@{bk-prefix}-tab--left &, .@{bk-prefix}-tab--right & {
+      flex-direction: column;
+
+      > div {
+        flex-direction: column;
+      }
+    }
+
     .@{bk-prefix}-tab--card-tab &, .@{bk-prefix}-tab--vertical-tab & {
       background: @tab-card-tab-bg;
     }
@@ -36,21 +56,37 @@
       border-radius: 4px 4px 0;
     }
 
+    .@{bk-prefix}-tab--card &, .@{bk-prefix}-tab--vertical-card & {
+      border-bottom: 1px solid @tab-border;
+    }
+
+    .@{bk-prefix}-tab--border-card & {
+      border: solid @tab-border;
+      border-width: 1px 1px 1px 0;
+    }
+
+    .@{bk-prefix}-tab--border-card & {
+      background: @tab-header-bg;
+    }
+
+    .@{bk-prefix}-tab--unborder-card & {
+      border-bottom: 1px solid @tab-border;
+    }
+
+
+
+
     > div {
       display: flex;
-      margin-bottom: -1px;
       flex-wrap: nowrap;
-
-      .@{bk-prefix}-tab--card &, .@{bk-prefix}-tab--border-card &, .@{bk-prefix}-tab--vertical-card & {
-        border-right: 1px solid @tab-border;
+      .@{bk-prefix}-tab--card &, .@{bk-prefix}-tab--vertical-card & ,.@{bk-prefix}-tab--border-card &{
+        margin-bottom: -1px;
       }
     }
 
-    &-navs {
-      flex: 1;
-    }
-
     &-nav {
+      position: relative;
+      //width: 100%;
 
       .@{bk-prefix}-tab--top & {
         overflow-x: auto;
@@ -102,44 +138,9 @@
     &-setting {
       justify-self: flex-end;
       margin-left: auto;
+      white-space: nowrap;
     }
 
-    .@{bk-prefix}-tab--left & {
-      border-right: 1px solid @tab-border;
-    }
-
-    .@{bk-prefix}-tab--right & {
-      border-left: 1px solid @tab-border;
-    }
-
-    .@{bk-prefix}-tab--vertical-tab & {
-      border: 0;
-    }
-
-    .@{bk-prefix}-tab--left &, .@{bk-prefix}-tab--right & {
-      flex-direction: column;
-
-      > div {
-        flex-direction: column;
-      }
-    }
-
-    .@{bk-prefix}-tab--card &, .@{bk-prefix}-tab--vertical-card & {
-      border-bottom: 1px solid @tab-border;
-    }
-
-    .@{bk-prefix}-tab--border-card & {
-      border: solid @tab-border;
-      border-width: 1px 1px 1px 0;
-    }
-
-    .@{bk-prefix}-tab--border-card & {
-      background: @tab-header-bg;
-    }
-
-    .@{bk-prefix}-tab--unborder-card & {
-      border-bottom: 1px solid @tab-border;
-    }
 
     &-item {
       display: flex;
@@ -147,16 +148,6 @@
       cursor: pointer;
       justify-content: center;
       align-items: center;
-
-      &:hover {
-        color: @tab-active;
-
-        .@{bk-prefix}-tab-header-item-close {
-          display: block;
-          margin-left: 5px;
-          color: @danger-color;
-        }
-      }
 
       .@{bk-prefix}-tab--top & {
         padding: 0 20px;
@@ -176,11 +167,10 @@
 
       .@{bk-prefix}-tab--card &, .@{bk-prefix}-tab--border-card &, .@{bk-prefix}-tab--vertical-card & {
         border-right: 1px solid @tab-border;
-        border-bottom: 1px solid @tab-border;
 
-        &:last-of-type {
-          border-right: none;
-        }
+        //&:last-of-type {
+        //  border-right: none;
+        //}
       }
 
       .@{bk-prefix}-tab--card-tab & {
@@ -207,15 +197,28 @@
 
       }
 
+      .@{bk-prefix}-tab--card-grid & {
+        height: 40px;
+        line-height: 40px;
+        background: #EAEBF0;
+        border-radius: 4px 4px 0 0;
+        margin-right: 8px;
+      }
+
       .@{bk-prefix}-tab-header-operation & {
         padding-right: 12px;
         padding-left: 12px;
       }
 
-      &-close {
-        display: none;
-        font-size: 16px;
-        color: @tab-gray;
+
+      &:hover {
+        color: @tab-active;
+
+        .@{bk-prefix}-tab-header--close {
+          display: block;
+          margin-left: 5px;
+          color: @danger-color;
+        }
       }
 
     }
@@ -228,9 +231,6 @@
         border-bottom-color: @tab-white;
       }
 
-      .@{bk-prefix}-tab--unborder-card & {
-        border-bottom: 2px solid @tab-active;
-      }
 
       .@{bk-prefix}-tab--card-tab &, .@{bk-prefix}-tab--vertical-tab & {
         background: #fff;
@@ -244,9 +244,16 @@
           display: none !important;
         }
 
-
       }
 
+      .@{bk-prefix}-tab--card-grid & {
+        background: #FFFFFF;
+      }
+
+      /* 激活边框，跟随，不再用固定样式
+      //.@{bk-prefix}-tab--unborder-card & {
+      //  border-bottom: 2px solid @tab-active;
+      //}
       .@{bk-prefix}-tab--left:not(.@{bk-prefix}-tab--vertical-tab) & {
         border-right: 2px solid @tab-active;
       }
@@ -254,7 +261,14 @@
       .@{bk-prefix}-tab--right:not(.@{bk-prefix}-tab--vertical-tab) & {
         border-left: 2px solid @tab-active;
       }
+      */
 
+    }
+
+    &--close {
+      display: none;
+      font-size: 16px;
+      color: @tab-gray;
     }
 
     &--disabled {
@@ -264,13 +278,28 @@
     }
   }
 
+  &-header-active-bar {
+    position: absolute;
+    width: 0;
+    height: 0;
+    background: @tab-active;
+    transition: all ease-in 300ms;
+  }
+
   &-content {
     flex: 1;
     padding: 10px;
 
+
     .@{bk-prefix}-tab--border-card &, .@{bk-prefix}-tab--vertical-card & {
       border: solid @tab-border;
       border-width: 0 1px 1px;
+    }
+
+    .@{bk-prefix}-tab--card-grid & {
+      background: #FFFFFF;
+      box-shadow: 0 2px 4px 0 #1919290d;
+      border-radius: 0 4px 4px 4px;
     }
   }
 
