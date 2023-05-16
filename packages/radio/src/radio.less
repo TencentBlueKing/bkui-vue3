@@ -5,6 +5,7 @@
   letter-spacing: normal;
 }
 
+
 .@{bk-prefix}-radio {
   display: inline-flex;
   align-items: center;
@@ -86,92 +87,5 @@
   font-weight: normal;
   vertical-align: middle;
   cursor: pointer;
-}
-
-.@{bk-prefix}-radio-button {
-  position: relative;
-  z-index: 1;
-  display: inline-flex;
-  font-weight: normal;
-  letter-spacing: normal;
-  color: @radio-font-color;
-  white-space: nowrap;
-  cursor: pointer;
-  outline: none;
-  opacity: 1;
-  user-select: none;
-
-  &:nth-child(n+2) {
-    margin-left: -1px;
-  }
-
-  &:first-child {
-    .@{bk-prefix}-radio-button-label {
-      border-bottom-left-radius: @border-radius-base;
-      border-top-left-radius: @border-radius-base;
-    }
-  }
-
-  &:last-child {
-    .@{bk-prefix}-radio-button-label {
-      border-top-right-radius: @border-radius-base;
-      border-bottom-right-radius: @border-radius-base;
-    }
-  }
-
-  &.is-checked {
-    z-index: 2;
-
-    .@{bk-prefix}-radio-button-label {
-      color: @radio-active-color;
-      background: @radio-button-checked-bg;
-      border-color: @radio-active-color;
-    }
-  }
-
-  &.is-disabled {
-    z-index: 0;
-    color: @radio-disabled-font-color;
-    cursor: not-allowed;
-
-    .@{bk-prefix}-radio-button-label {
-      cursor: not-allowed;
-      background: @radio-distable-checked-bg;
-      border-color: @radio-disabled-border;
-    }
-  }
-
-  &.is-focused {
-    .@{bk-prefix}-radio-button-label {
-      border-color: @radio-active-color;
-    }
-  }
-}
-
-.@{bk-prefix}-radio-button-input {
-  position: absolute;
-  z-index: -1;
-  outline: none;
-  opacity: 0;
-}
-
-.@{bk-prefix}-radio-button-label {
-  width: 100%;
-  height: @component-size-base;
-  padding: 0 18px;
-  font-size: 12px;
-  font-style: normal;
-  font-weight: normal;
-  line-height: @component-size-base;
-  color: @default-color;
-  text-align: center;
-  vertical-align: middle;
-  cursor: pointer;
-  border: @border-width-base @border-style-base @light-gray;
-  transition: all .3s;
-
-  &:hover {
-    border-color: @radio-hover-border-color;
-  }
 }
 

@@ -33,6 +33,7 @@ export enum TabTypeEnum {
   BORDER_CARD = 'border-card',
   UNBORDER_CARD = 'unborder-card',
   CARD_TAB = 'card-tab',
+  CARD_GRID = 'card-grid',
 }
 
 export enum PositionEnum {
