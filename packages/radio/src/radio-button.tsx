@@ -83,7 +83,7 @@ export default defineComponent({
   },
   render() {
     const radioClass = classes({
-      'bk-radio-button': true,
+      'bk-radio-item': true,
       'is-focused': this.isFocused,
       'is-disabled': this.isDisabled,
       'is-checked': this.isChecked,
@@ -95,7 +95,7 @@ export default defineComponent({
       }
 
       return (
-        <div class="bk-radio-button-label">
+        <div class="bk-radio-item-label">
           {this.$slots.default ? this.$slots.default() : this.label}
         </div>
       );
@@ -106,7 +106,7 @@ export default defineComponent({
         class={radioClass}
         tabindex="0">
         <input
-          class="bk-radio-button-input"
+          class="bk-radio-item-input"
           type="radio"
           tabindex="0"
           value={this.label as any}
