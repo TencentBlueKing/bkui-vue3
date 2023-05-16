@@ -53,7 +53,8 @@ export default defineComponent({
     };
   },
   mounted() {
-    const selfVnode = this._;
+    // @ts-ignore
+    const selfVnode = (this as any)._;
     const colList = selfVnode.parent.vnode.children.default() || [];
     const sortColumns = [];
     const reduceColumns = (nodes) => {
