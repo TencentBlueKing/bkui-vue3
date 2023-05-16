@@ -1,8 +1,11 @@
 <template>
+  <bk-button @click="handleShowSource">
+    Show Button
+  </bk-button>
   <div class="row">
     <bk-table
       :data="tableData"
-      :settings="settings"
+      show-overflow-tooltip
       border="horizontal"
     >
       <bk-table-column
@@ -11,18 +14,23 @@
         sort
         :width="80"
       />
-      <bk-table-column
-        label="名称/内网IP"
-        prop="ip"
-      >
-        <template #default="props">
-          {{ props?.row.ip }}
-        </template>
-      </bk-table-column>
-      <bk-table-column
-        label="来源"
-        prop="source"
-      />
+
+      <template v-if="showZSource">
+        <bk-table-column
+          label="名称/内网IP"
+          prop="ip"
+        >
+          <template #default="props">
+            <div class="xxlxlxxl">
+              {{ props?.row.ip }}
+            </div>
+          </template>
+        </bk-table-column>
+        <bk-table-column
+          label="来源"
+          prop="source"
+        />
+      </template>
       <bk-table-column
         label="创建时间"
         prop="create_time"
@@ -40,6 +48,7 @@
       return {
         tableData: [...DATA_TABLE],
         columns: [...DATA_COLUMNS],
+        showZSource: false,
         settings: {
           fields: [],
           checked: [],
@@ -71,6 +80,9 @@
       }, 1000);
     },
     methods: {
+      handleShowSource() {
+        this.showZSource = !this.showZSource;
+      },
       handleSortBy(arg) {
         console.log('handleSortBy', arg);
       },

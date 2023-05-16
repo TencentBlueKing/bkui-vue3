@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent, inject, onBeforeMount, reactive } from 'vue';
+import { defineComponent, inject, onUnmounted, reactive, unref } from 'vue';
 
 import { PropTypes } from '@bkui-vue/shared';
 
@@ -40,14 +40,40 @@ export default defineComponent({
     ...IColumnType,
     prop: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
   },
-  setup(props: ITableColumn, { slots }) {
-    const initColumns = inject(PROVIDE_KEY_INIT_COL, (_column: Column) => {}, false);
+  setup(props: ITableColumn) {
+    const initColumns = inject(PROVIDE_KEY_INIT_COL, (_column: Column | Column[], _remove = false) => {}, false);
+    const column = reactive({ ...props, field: props.prop || props.field });
 
-    onBeforeMount(() => {
-      const column = reactive({ ...props, field: props.prop || props.field });
-      initColumns(column);
-      column.render = slots.default ? (args: any) => slots.default?.(args) : undefined;
+    onUnmounted(() => {
+      initColumns(column, true);
     });
-    return () => <>{ slots.default?.({ row: {} }) }</>;
+    return {
+      initColumns,
+      column,
+    };
+  },
+  mounted() {
+    const selfVnode = this._;
+    const colList = selfVnode.parent.vnode.children.default() || [];
+    const sortColumns = [];
+    const reduceColumns = (nodes) => {
+      this.column.render = this.$slots.default ? (args: any) => this.$slots.default?.(args) : undefined;
+      nodes.forEach((node: any) => {
+        if (node.type?.name === 'TableColumn') {
+          const resolveProp = { ...node.props, field: node.props.prop || node.props.field };
+          if (resolveProp.label === this.column.label && resolveProp.field === this.column.field) {
+            sortColumns.push(unref(this.column));
+          } else {
+            sortColumns.push(unref(resolveProp));
+          }
+        }
+
+        if (Object.hasOwnProperty.call(node.props || {}, 'key') && node.children?.length) {
+          reduceColumns(node.children);
+        }
+      });
+    };
+    reduceColumns(colList);
+    this.initColumns(sortColumns);
   },
 });

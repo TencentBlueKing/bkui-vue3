@@ -5,6 +5,7 @@
       :data="tableData"
       row-hover="auto"
       settings
+      show-overflow-tooltip
       @dblclick="handleDblClick"
       @column-sort="handleSortBy"
       @cell-click="handleCellClick"
