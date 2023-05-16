@@ -37,7 +37,7 @@ const radioGroupProps = {
   modelValue: PropTypes.oneOfType([String, Number, Boolean]),
   disabled: PropTypes.bool,
   withValidate: PropTypes.bool.def(true),
-  type: PropTypes.oneOf(['button', 'capsule']).def('button'),
+  type: PropTypes.oneOf(['tab', 'capsule']).def('tab'),
 };
 
 export type RadioGroupProps = Readonly<ExtractPropTypes<typeof radioGroupProps>>;
