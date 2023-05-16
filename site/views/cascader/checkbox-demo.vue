@@ -87,6 +87,8 @@
 
 <style lang="less" scoped>
 .cascader-wrapper {
+  width: 250px;
+
   .bk-cascader-wrapper:not(:last-of-type) {
     margin-bottom: 20px;
   }
