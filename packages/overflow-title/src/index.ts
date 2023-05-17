@@ -25,8 +25,8 @@
 */
 import { withInstall } from '@bkui-vue/shared';
 
-import OverflowTitle from './components/OverflowTitle';
-import overflowTitle from './directive/overflowTitle';
+import OverflowTitle from './components/overflow-title';
+import overflowTitle from './directive/overflow-title';
 import getActualWidthByCanvas from './utils/getActualWidthByCanvas';
 import getActualWidthByDom from './utils/getActualWidthByDom';
 

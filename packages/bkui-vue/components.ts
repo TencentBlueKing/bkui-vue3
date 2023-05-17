@@ -86,3 +86,4 @@ export { default as SearchSelect } from '@bkui-vue/search-select';
 export { default as OverflowTitle } from '@bkui-vue/overflow-title';
 export { default as $bkPopover } from '@bkui-vue/plugin-popover';
 export { default as ConfigProvider } from '@bkui-vue/config-provider';
+export { default as PopConfirm } from '@bkui-vue/pop-confirm';

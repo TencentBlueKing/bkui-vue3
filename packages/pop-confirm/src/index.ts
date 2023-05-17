@@ -23,42 +23,8 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { computed, defineComponent } from 'vue';
+import { withInstall } from '@bkui-vue/shared';
 
-import { PropTypes, resolveClassName } from '@bkui-vue/shared';
-
-export default defineComponent({
-  name: 'PopContent',
-  props: {
-    width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
-    height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
-    maxHeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
-    extCls: PropTypes.string.def(''),
-  },
-  setup(props) {
-    const resolveValToPix = (val: string | number) => {
-      if (/^\d+\.?\d*$/.test(`${val}`)) {
-        return `${val}px`;
-      }
-
-      return val;
-    };
-    const style = computed(() => ({
-      width: resolveValToPix(props.width),
-      height: resolveValToPix(props.height),
-      maxHeight: resolveValToPix(props.maxHeight),
-    }));
-
-    return {
-      style,
-    };
-  },
-  render() {
-    const className = [resolveClassName('popover'), resolveClassName('pop2-content'), this.extCls];
-
-    return <div class={ className } tabindex="-1" style={this.style}>
-      { this.$slots.arrow?.() ?? '' }
-      { this.$slots.default?.() ?? '' }
-    </div>;
-  },
-});
+import Component from './pop-confirm';
+const BKPopConfirm = withInstall(Component);
+export default BKPopConfirm;

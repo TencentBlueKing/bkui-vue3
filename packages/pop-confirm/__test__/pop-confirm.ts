@@ -26,15 +26,14 @@
 
 import { mount } from '@vue/test-utils';
 
-import BKTab from '../src';
+import BKPopConfirm from '../src';
 
-const dividerContent = 'bk-tab is testing';
-describe('Tab.tsx', () => {
+const dividerContent = 'bk-pop-confirm is testing';
+describe('popConfirm.tsx', () => {
   it('render test', async () => {
-    const wrapper = await mount(BKTab, {
-      slots: {
-        default: dividerContent,
-      },
+    const wrapper = await mount(BKPopConfirm, {
+      title: 'title',
+      content: '删除操作无法撤回，请谨慎操作！',
     });
     expect(wrapper.text()).toEqual(dividerContent);
   });
