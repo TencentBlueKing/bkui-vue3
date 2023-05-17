@@ -58,9 +58,14 @@ export default defineComponent({
     const colList = selfVnode.parent.vnode.children.default() || [];
     const sortColumns = [];
     const reduceColumns = (nodes) => {
+      if (!Array.isArray(nodes)) {
+        return;
+      }
       this.column.render = this.$slots.default ? (args: any) => this.$slots.default?.(args) : undefined;
       nodes.forEach((node: any) => {
+        let skipValidateKey0 = true;
         if (node.type?.name === 'TableColumn') {
+          skipValidateKey0 = Object.hasOwnProperty.call(node.props || {}, 'key');
           const resolveProp = { ...node.props, field: node.props.prop || node.props.field };
           if (resolveProp.label === this.column.label && resolveProp.field === this.column.field) {
             sortColumns.push(unref(this.column));
@@ -69,12 +74,15 @@ export default defineComponent({
           }
         }
 
-        if (Object.hasOwnProperty.call(node.props || {}, 'key') && node.children?.length) {
+        if (node.children?.length && skipValidateKey0) {
           reduceColumns(node.children);
         }
       });
     };
     reduceColumns(colList);
     this.initColumns(sortColumns);
+  },
+  render() {
+    return this.$slots.default?.({ row: {} });
   },
 });

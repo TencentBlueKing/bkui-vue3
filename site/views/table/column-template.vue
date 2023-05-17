@@ -1,40 +1,20 @@
 <template>
-  <bk-button @click="handleShowSource">
-    Show Button
-  </bk-button>
   <div class="row">
     <bk-table
       :data="tableData"
       show-overflow-tooltip
       border="horizontal"
     >
-      <bk-table-column
-        label="序号"
-        type="index"
-        sort
-        :width="80"
-      />
-
-      <template v-if="showZSource">
+      <template
+        v-for="(col, index) in columns"
+        :key="index"
+      >
         <bk-table-column
-          label="名称/内网IP"
-          prop="ip"
-        >
-          <template #default="props">
-            <div class="xxlxlxxl">
-              {{ props?.row.ip }}
-            </div>
-          </template>
-        </bk-table-column>
-        <bk-table-column
-          label="来源"
-          prop="source"
+          :label="col.label"
+          :type="col.type"
+          :prop="col.field"
         />
       </template>
-      <bk-table-column
-        label="创建时间"
-        prop="create_time"
-      />
     </bk-table>
   </div>
 </template>
