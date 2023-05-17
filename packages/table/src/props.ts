@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 import { ExtractPropTypes } from 'vue';
-import { toType } from 'vue-types';
+import { string, toType } from 'vue-types';
 
 import { PropTypes } from '@bkui-vue/shared';
 
@@ -83,7 +83,7 @@ export enum FixedEnum {
   RIGHT = 'right',
 }
 
-export const fixedType = toType<`${FixedEnum}`>('columnSize', {});
+export const fixedType = string<`${FixedEnum}`>();
 
 export type IOverflowTooltip = {
   content: string | Function,
