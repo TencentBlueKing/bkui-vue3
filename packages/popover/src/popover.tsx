@@ -37,6 +37,7 @@ import { PopoverProps } from './props';
 import Reference from './reference';
 import Root from './root';
 import usePopoverInit from './use-popover-init';
+import { isElement } from './utils';
 export default defineComponent({
   name: 'Popover',
   components: {
@@ -113,7 +114,20 @@ export default defineComponent({
     });
 
     const renderContent = () => {
-      if (props.allowHTML) {
+      if (props.allowHtml) {
+        if (isElement(props.content)) {
+          return h('div', { innerHTML: props.content.innerHTML });
+        }
+
+        if (/^(#|\.)/.test(props.content)) {
+          const target = document.querySelector(props.content);
+          if (isElement(target)) {
+            return h('div', { innerHTML: target.innerHTML });
+          }
+
+          return content;
+        }
+
         return h('div', { innerHTML: props.content });
       }
 
