@@ -2,31 +2,19 @@
   <div class="row">
     <bk-table
       :data="tableData"
-      :settings="settings"
+      show-overflow-tooltip
       border="horizontal"
     >
-      <bk-table-column
-        label="序号"
-        type="index"
-        sort
-        :width="80"
-      />
-      <bk-table-column
-        label="名称/内网IP"
-        prop="ip"
+      <template
+        v-for="(col, index) in columns"
+        :key="index"
       >
-        <template #default="props">
-          {{ props?.row.ip }}
-        </template>
-      </bk-table-column>
-      <bk-table-column
-        label="来源"
-        prop="source"
-      />
-      <bk-table-column
-        label="创建时间"
-        prop="create_time"
-      />
+        <bk-table-column
+          :label="col.label"
+          :type="col.type"
+          :prop="col.field"
+        />
+      </template>
     </bk-table>
   </div>
 </template>
@@ -40,6 +28,7 @@
       return {
         tableData: [...DATA_TABLE],
         columns: [...DATA_COLUMNS],
+        showZSource: false,
         settings: {
           fields: [],
           checked: [],
@@ -71,6 +60,9 @@
       }, 1000);
     },
     methods: {
+      handleShowSource() {
+        this.showZSource = !this.showZSource;
+      },
       handleSortBy(arg) {
         console.log('handleSortBy', arg);
       },

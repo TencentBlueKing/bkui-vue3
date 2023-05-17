@@ -248,6 +248,8 @@ export default defineComponent({
       tableRender.destroy();
     });
 
+    const getRoot = () => root.value;
+
     ctx.expose({
       setRowExpand,
       clearSelection,
@@ -256,6 +258,7 @@ export default defineComponent({
       getSelection,
       clearSort,
       scrollTo,
+      getRoot,
     });
 
     const tableBodyClass = computed(() => ({

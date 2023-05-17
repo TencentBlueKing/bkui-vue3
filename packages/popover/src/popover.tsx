@@ -24,7 +24,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { computed, defineComponent, onBeforeUnmount, onMounted, ref, Teleport, toRefs, watch } from 'vue';
+import { computed, defineComponent, h, onBeforeUnmount, onMounted, ref, Teleport, toRefs, watch } from 'vue';
 
 import { RenderType } from '@bkui-vue/shared';
 
@@ -112,6 +112,14 @@ export default defineComponent({
       return localIsShow.value;
     });
 
+    const renderContent = () => {
+      if (props.allowHTML) {
+        return h('div', { innerHTML: props.content });
+      }
+
+      return content;
+    };
+
     return {
       boundary,
       arrow: props.arrow,
@@ -127,6 +135,7 @@ export default defineComponent({
       show,
       stopHide,
       contentIsShow,
+      renderContent,
     };
   },
 
@@ -136,8 +145,7 @@ export default defineComponent({
         { this.$slots.default?.() ?? <span></span> }
       </Reference>
       <Teleport to={ this.boundary } disabled={ !this.transBoundary }>
-        <Content
-          ref="refContent"
+        <Content ref="refContent"
           data-theme={ this.theme }
           extCls={this.extCls}
           width={ this.width }
@@ -145,7 +153,7 @@ export default defineComponent({
           maxHeight={ this.maxHeight }
           v-clickoutside={this.handleClickOutside}
           v-slots={ { arrow: () => (this.arrow ? <Arrow ref="refArrow">{ this.$slots.arrow?.() }</Arrow> : '') } }>
-          { this.contentIsShow ? this.$slots.content?.() ?? this.content : '' }
+          { this.contentIsShow ? this.$slots.content?.() ?? this.renderContent() : '' }
         </Content>
       </Teleport>
     </Root>;

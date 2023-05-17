@@ -47,6 +47,8 @@ export const PopoverProps = {
   maxHeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
   content: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def(''),
 
+  allowHTML: PropTypes.bool.def(false),
+
   /**
    * 组件显示位置
    */
