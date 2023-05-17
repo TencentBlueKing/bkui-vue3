@@ -23,8 +23,14 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
+// eslint-disable-next-line simple-import-sort/imports
 import { CSSProperties, VNodeChild } from 'vue';
-import { createTypes, toType, VueTypeDef } from 'vue-types';
+import {
+  VueTypeDef,
+  createTypes,
+  string,
+  toType,
+} from 'vue-types';
 
 const propTypesNS = createTypes({});
 
@@ -68,9 +74,7 @@ export enum RenderDirectiveEnum {
 }
 
 export function renderDirectiveType() {
-  return toType<`${RenderDirectiveEnum}`>('renderDirective', {
-    default: RenderDirectiveEnum.SHOW,
-  });
+  return string<`${RenderDirectiveEnum}`>().def(RenderDirectiveEnum.SHOW);
 }
 
 export enum AlignEnum {
@@ -79,9 +83,7 @@ export enum AlignEnum {
   RIGHT = 'right',
 }
 export function alignType() {
-  return toType<`${AlignEnum}`>('align', {
-    default: AlignEnum.LEFT,
-  }).def(AlignEnum.LEFT);
+  return string<`${AlignEnum}`>().def(AlignEnum.LEFT);
 }
 
 export enum ThemeEnum {
@@ -111,7 +113,7 @@ export enum PlacementEnum {
 }
 
 export function placementType() {
-  return toType<`${PlacementEnum}`>('placement', {}).def(PlacementEnum.BOTTOM);
+  return string<`${PlacementEnum}`>().def(PlacementEnum.BOTTOM);
 }
 
 /** 弹层触发选项  */
@@ -121,7 +123,7 @@ export enum TriggerEnum {
   MANUAL = 'manual'
 }
 export function triggerType() {
-  return toType<`${TriggerEnum}`>('trigger', {}).def(TriggerEnum.HOVER);
+  return string<`${TriggerEnum}`>().def(TriggerEnum.HOVER);
 }
 
 /** 内容渲染类型：目前是在popover内容渲染时使用 */
@@ -218,7 +220,6 @@ export class PropTypes extends propTypesNS {
         if (!val || placements.includes(val)) {
           return true;
         }
-        console.error(`invalid placements, ${val}, the placement must be one of 【${placements.join(' | ')}】`);
         return false;
       },
       default: 'top',

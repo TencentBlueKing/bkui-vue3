@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 import { ExtractPropTypes } from 'vue';
-import { toType } from 'vue-types';
+import { string, toType } from 'vue-types';
 
 import { PropTypes } from '@bkui-vue/shared';
 
@@ -166,16 +166,16 @@ export const treeProps = {
      * 支持自定义匹配函数 (searchValue, itemText, item) => true || false
      */
       match: PropTypes.oneOfType([
-        toType<`${TreeSearchMatchEnum}`>('TreeSearchMatchType', {}).def(TreeSearchMatchEnum.FUZZY),
+        string<`${TreeSearchMatchEnum}`>(),
         PropTypes.func,
-      ]),
+      ]).def(TreeSearchMatchEnum.FUZZY),
 
       /**
      * 搜索结果如何展示
      * 显示为 tree || list
      * 默认 tree
      */
-      resultType: toType<`${TreeSearchResultEnum}`>('treeSearchResultType', {}).def(TreeSearchResultEnum.TREE),
+      resultType: string<`${TreeSearchResultEnum}`>().def(TreeSearchResultEnum.TREE),
 
       /**
        * 默认展开所有搜索结果
@@ -190,8 +190,8 @@ export const treeProps = {
   emptyText: PropTypes.string.def('没有数据'),
 
   draggable: PropTypes.bool.def(false),
-  disableDrag: PropTypes.func.def(null),
-  disableDrop: PropTypes.func.def(null),
+  disableDrag: PropTypes.func,
+  disableDrop: PropTypes.func,
 
   /**
    * 节点拖拽时可交换位置（开启拖拽可交换位置后将不支持改变层级）
@@ -217,7 +217,7 @@ export const treeProps = {
   /**
    * 默认选中的节点id，selectable为false时无效
    */
-  selected: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.object]).def(null),
+  selected: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.object]),
 
   /**
    * 是否自动检查当前节点是否有子节点
@@ -256,8 +256,8 @@ type AsyncOption = {
 
 export type SearchOption = {
   value: string | number | boolean,
-  match: string | Function;
-  resultType: string;
+  match?: `${TreeSearchMatchEnum}` | Function,
+  resultType?: `${TreeSearchResultEnum}`;
   openResultNode: boolean;
 };
 
