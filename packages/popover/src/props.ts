@@ -119,7 +119,10 @@ export const PopoverProps = {
    * popover显示和隐藏的延时时间
    */
   popoverDelay: PropTypes.oneOfType([PropTypes.number, PropTypes.arrayOf(PropTypes.number)]).def(100),
-
+  /**
+   * 配置自定义样式类名，传入的类会被加在组件最外层的 DOM
+   */
+  extCls: PropTypes.string.def(''),
   ...EventProps,
 };
 

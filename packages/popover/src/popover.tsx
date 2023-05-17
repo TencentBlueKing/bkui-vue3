@@ -136,9 +136,15 @@ export default defineComponent({
         { this.$slots.default?.() ?? <span></span> }
       </Reference>
       <Teleport to={ this.boundary } disabled={ !this.transBoundary }>
-        <Content ref="refContent" data-theme={ this.theme } width={ this.width } height={ this.height } maxHeight={ this.maxHeight }
-        v-clickoutside={this.handleClickOutside}
-        v-slots={ { arrow: () => (this.arrow ? <Arrow ref="refArrow">{ this.$slots.arrow?.() }</Arrow> : '') } }>
+        <Content
+          ref="refContent"
+          data-theme={ this.theme }
+          extCls={this.extCls}
+          width={ this.width }
+          height={ this.height }
+          maxHeight={ this.maxHeight }
+          v-clickoutside={this.handleClickOutside}
+          v-slots={ { arrow: () => (this.arrow ? <Arrow ref="refArrow">{ this.$slots.arrow?.() }</Arrow> : '') } }>
           { this.contentIsShow ? this.$slots.content?.() ?? this.content : '' }
         </Content>
       </Teleport>
