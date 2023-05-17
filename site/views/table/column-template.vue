@@ -1,4 +1,13 @@
 <template>
+  <bk-button @click="() => handleHideColumn(2)">
+    点击显示列2
+  </bk-button>
+  <bk-button @click="() => handleHideColumn(3)">
+    点击显示列3
+  </bk-button>
+  <bk-button @click="() => handleHideColumn(4)">
+    点击显示列4
+  </bk-button>
   <div class="row">
     <bk-table
       :data="tableData"
@@ -6,7 +15,7 @@
       border="horizontal"
     >
       <template
-        v-for="(col, index) in columns"
+        v-for="(col, index) in showColumns"
         :key="index"
       >
         <bk-table-column
@@ -27,13 +36,18 @@
     data() {
       return {
         tableData: [...DATA_TABLE],
-        columns: [...DATA_COLUMNS],
+        columns: DATA_COLUMNS.map(col => ({ ...col, isShow: true })),
         showZSource: false,
         settings: {
           fields: [],
           checked: [],
         },
       };
+    },
+    computed: {
+      showColumns() {
+        return this.columns.filter(item => item.isShow);
+      },
     },
     mounted() {
       setTimeout(() => {
@@ -60,8 +74,8 @@
       }, 1000);
     },
     methods: {
-      handleShowSource() {
-        this.showZSource = !this.showZSource;
+      handleHideColumn(index) {
+        this.columns[index].isShow = !this.columns[index].isShow;
       },
       handleSortBy(arg) {
         console.log('handleSortBy', arg);

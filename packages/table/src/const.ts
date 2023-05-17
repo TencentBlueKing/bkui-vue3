@@ -180,6 +180,9 @@ export const createDefaultSizeList = (t: ComputedRef<Language['table']>) => [
  */
 export const PROVIDE_KEY_INIT_COL = 'InitColumns';
 
+export const PROVIDE_KEY_TB_CACHE = 'BKTableCahce';
+
+export const BK_COLUMN_UPDATE_DEFINE = 'Bk_COlumn_Update_Define';
 /**
  * 排序可选择项
  */
