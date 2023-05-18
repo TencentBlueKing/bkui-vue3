@@ -26,7 +26,7 @@
 import { defineComponent, h, inject, Ref, ref, watch } from 'vue';
 
 import BKCollapseTransition from '@bkui-vue/collapse-transition';
-import { AngleRight } from '@bkui-vue/icon';
+import * as BkIcon from '@bkui-vue/icon';
 
 import { propsCollapsePanel as props } from './props';
 
@@ -54,7 +54,6 @@ export default defineComponent({
       });
     }
 
-
     function clickItem(props) {
       const { disabled, name, itemClick } = props;
       if (disabled) return;
@@ -70,7 +69,6 @@ export default defineComponent({
         handleItemClick({ name });
       }
     }
-
 
     function getContent() {
       if (props.content) {
@@ -111,12 +109,21 @@ export default defineComponent({
         title = props.title;
       }
 
+      function toCamelCase(str) {
+        const words = str.split('-');
+        const camelCaseWords = words.map((word) => {
+          return word.charAt(0).toUpperCase() + word.slice(1);
+        });
+        return camelCaseWords.join('');
+      }
+
+      const icon = BkIcon[`${toCamelCase(props.icon)}`]
       return (
         <div class="bk-collapse-header">
           <span class="bk-collapse-title">
             {title}
           </span>
-          {<AngleRight class={`bk-collapse-icon ${(isActive.value && 'rotate-icon') || ''}`}/>}
+          { <icon class={`bk-collapse-icon ${(isActive.value && 'rotate-icon') || ''}`}/>}
         </div>
       );
     }
@@ -134,5 +141,5 @@ export default defineComponent({
         </BKCollapseTransition>
       </div>
     );
-  },
+  }
 });
