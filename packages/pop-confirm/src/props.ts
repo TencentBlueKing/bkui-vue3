@@ -53,7 +53,7 @@ export const PopConfirmProps = {
    * 支持 click hover manual
    * manual： 通过isShow控制显示、隐藏
    */
-  trigger: PropTypes.oneOfType([triggerType(), PropTypes.string]).def('hover'),
+  trigger: triggerType(),
   title: PropTypes.string,
   content: PropTypes.string,
   confirmText: PropTypes.string,
