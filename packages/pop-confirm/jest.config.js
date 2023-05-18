@@ -24,18 +24,9 @@
  * IN THE SOFTWARE.
 */
 
-import { mount } from '@vue/test-utils';
+const baseJestConf = require('../../jest.config');
 
-import BKTab from '../src';
-
-const dividerContent = 'bk-tab is testing';
-describe('Tab.tsx', () => {
-  it('render test', async () => {
-    const wrapper = await mount(BKTab, {
-      slots: {
-        default: dividerContent,
-      },
-    });
-    expect(wrapper.text()).toEqual(dividerContent);
-  });
-});
+module.exports = {
+  ...baseJestConf,
+  testRegex: 'packages/radio/__test__/.*\\.test\\.(js|ts|tsx)$',
+};
