@@ -3,14 +3,14 @@
     <div class="bk-popover-position-top">
       <bk-popover
         content="Top Left 文字提示"
-        placement="bottom"
+        placement="top-start"
         :popover-delay="[300, 0]"
       >
         <bk-button>上左</bk-button>
       </bk-popover>
       <bk-popover
         content="Top Center 文字提示"
-        placement="top"
+
         :popover-delay="[300, 0]"
       >
         <bk-button>上边</bk-button>

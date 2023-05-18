@@ -121,6 +121,7 @@ export default defineComponent({
 
     return () => (
       <div class={loadingWrapperCls.value}>
+          {ctx.slots.default?.()}
           {props.loading && (
             [
               ctx.slots.default && <div class="bk-loading-mask" style={maskStyle.value}></div>,
@@ -132,7 +133,6 @@ export default defineComponent({
               </div>,
             ]
           )}
-          {ctx.slots.default?.()}
       </div>
     );
   },
