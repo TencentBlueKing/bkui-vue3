@@ -23,22 +23,18 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { v4 as uuidv4 } from 'uuid';
-
-const CachedConst: any = {};
-
-export const isAvailableId = (query: string) => {
-  const container = document.querySelector(query);
-  return container instanceof HTMLElement;
-};
-
-
-export const getFullscreenUid = () => {
-  if (!CachedConst.fullscreenReferId) {
-    CachedConst.fullscreenReferId = `id_${uuidv4()}`;
+export default class BkTableCache {
+  storage = undefined;
+  constructor() {
+    this.storage = {};
   }
 
-  return CachedConst.fullscreenReferId;
-};
+  queueStack(methodName, fn = () => {}) {
+    this.storage[methodName] && clearTimeout(this.storage[methodName]);
+    this.storage[methodName] = setTimeout(() => fn());
+  }
 
-export const isElement = element => element instanceof Element || element instanceof HTMLDocument;
+  clearQueueStack(methodName) {
+    this.storage[methodName] && clearTimeout(this.storage[methodName]);
+  }
+}

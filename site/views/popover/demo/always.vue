@@ -8,5 +8,4 @@
   >
     <bk-button>总是显示</bk-button>
   </bk-popover>
-  <div id="oooxxxvvv" />
 </template>
