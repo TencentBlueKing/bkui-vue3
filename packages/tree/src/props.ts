@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 import { ExtractPropTypes } from 'vue';
-import { toType } from 'vue-types';
+import { string, toType } from 'vue-types';
 
 import { PropTypes } from '@bkui-vue/shared';
 
@@ -166,16 +166,16 @@ export const treeProps = {
      * 支持自定义匹配函数 (searchValue, itemText, item) => true || false
      */
       match: PropTypes.oneOfType([
-        toType<`${TreeSearchMatchEnum}`>('TreeSearchMatchType', {}).def(TreeSearchMatchEnum.FUZZY),
+        string<`${TreeSearchMatchEnum}`>(),
         PropTypes.func,
-      ]),
+      ]).def(TreeSearchMatchEnum.FUZZY),
 
       /**
      * 搜索结果如何展示
      * 显示为 tree || list
      * 默认 tree
      */
-      resultType: toType<`${TreeSearchResultEnum}`>('treeSearchResultType', {}).def(TreeSearchResultEnum.TREE),
+      resultType: string<`${TreeSearchResultEnum}`>().def(TreeSearchResultEnum.TREE),
 
       /**
        * 默认展开所有搜索结果
@@ -256,8 +256,8 @@ type AsyncOption = {
 
 export type SearchOption = {
   value: string | number | boolean,
-  match: string | Function;
-  resultType: string;
+  match?: `${TreeSearchMatchEnum}` | Function,
+  resultType?: `${TreeSearchResultEnum}`;
   openResultNode: boolean;
 };
 

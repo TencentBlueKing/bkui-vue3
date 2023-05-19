@@ -40,3 +40,5 @@ export const getFullscreenUid = () => {
 
   return CachedConst.fullscreenReferId;
 };
+
+export const isElement = element => element instanceof Element || element instanceof HTMLDocument;
