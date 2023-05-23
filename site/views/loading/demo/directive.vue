@@ -19,8 +19,8 @@
 
 <script setup>
   import { reactive, ref } from 'vue';
-  const loading = ref(false);
-  const title = ref('');
+  const loading = ref(true);
+  const title = ref('loading...');
 
   const loadingConf = reactive({
     loading,
