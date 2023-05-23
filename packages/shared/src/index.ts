@@ -24,20 +24,20 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { App, Plugin } from 'vue';
-export * from './z-index-manager';
-export * from './popover';
-export * from './pop-manager';
-export * from './mask-manager';
+import { App, Directive, Plugin } from 'vue';
+export * from './dom';
 export * from './helper';
-export * from './vue-types';
-export * from './scrollbar-width';
-export * from './utils';
-export * from './token';
-
 export * from './hooks/use-form';
 export * from './hooks/use-form-item';
-export * from './dom';
+export * from './mask-manager';
+export * from './pop-manager';
+export * from './popover';
+export * from './scrollbar-width';
+export * from './token';
+export * from './utils';
+export * from './vue-types';
+export * from './z-index-manager';
+
 
 export function classes(dynamicCls: object, constCls = ''): string {
   return Object.entries(dynamicCls).filter(entry => entry[1])
@@ -58,6 +58,7 @@ export const isEmptyObj: (target: object) => boolean = target => Object.keys(tar
 export interface OriginComponent {
   name: string;
   install?: Plugin;
+  directive?: Directive;
 }
 export const withInstall = <T extends OriginComponent>(
   component: T): T & Plugin  => {
@@ -70,9 +71,14 @@ export const withInstall = <T extends OriginComponent>(
 export const withInstallProps = <T extends OriginComponent, K extends Record<string, unknown>>(
   component: T,
   childComponents: K,
-  isProps = false) => {
+  isProps = false,
+  directive?,
+) => {
   component.install = function (app: App, { prefix } = {}) {
     const pre = app.config.globalProperties.bkUIPrefix || prefix || 'Bk';
+    if (directive) {
+      app.directive(pre + directive.name, directive);
+    }
     app.component(pre + component.name, component);
     !isProps && Object.values(childComponents).forEach((child: any) => {
       app.component(pre + child.name, child);
