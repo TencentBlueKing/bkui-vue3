@@ -26,92 +26,51 @@
 
 import { defineComponent } from 'vue';
 
+import { PopConfirmEvent, PopConfirmProps } from '../../../packages/pop-confirm/src/props';
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
-import { IPropsTableItem } from '../../typings';
+import { resolvePropsToDesData } from '../utils';
 
-import BaseDemo from './base-demo.vue';
-import DisabledDemo from './disable-demo.vue';
-import IconDemo from './icon-demo.vue';
+import DemoBase from './demo-base.vue';
+import DemoSimple from './demo-simple.vue';
+import DemoSlot from './demo-slot.vue';
 
-const linkPropsJson: IPropsTableItem[] = [
-  {
-    name: 'theme',
-    type: 'String',
-    default: 'default',
-    desc: '文字链接主题色',
-    optional: ['danger', 'success', 'primary', 'warning', 'default'],
-  },
-  {
-    name: 'href',
-    type: 'String',
-    default: '',
-    desc: '文字链接地址',
-    optional: [],
-  },
-  {
-    name: 'disabled',
-    type: 'Boolean',
-    default: false,
-    desc: '是否禁用',
-    optional: [],
-  },
-  {
-    name: 'underline',
-    type: 'Boolean',
-    default: false,
-    desc: '是否显示下划线',
-    optional: [],
-  },
-  {
-    name: 'target',
-    type: 'String',
-    default: '_self',
-    desc: 'a标签的target属性，规定在何处打开链接文档',
-    optional: ['_blank', '_self', '_parent', '_top'],
-  },
-
-];
-
+const events = resolvePropsToDesData(PopConfirmEvent);
+const props = resolvePropsToDesData(PopConfirmProps);
 
 export default defineComponent({
   render() {
     return (
       <div>
         <DemoTitle
-          name="Link 文字链接"
-          desc="Link 文字超链接"
+          name="Popover 弹出框提示"
+          desc="bkPopconfirm是基于bkPopover改造而来，继承了bkPopover所有属性，具体请参考bkPopover文档，本文主要列出bkPopconfirm独有或不同的属性。基础样式由标题、正文和按钮构成。"
           link="https://www.google.com.hk/"/>
-
         <DemoBox
           title="基础用法"
-          desc="基础的文字链接用法"
-          componentName="link"
-          demoName="base-demo">
-          <BaseDemo></BaseDemo>
+          desc="由标题+通知文本+按钮组成，例如提交表单，与 confirm 弹出的全屏居中模态对话框相比，在目标元素附近弹出浮层提示，询问用户。"
+          componentName="pop-confirm"
+          demoName="demo-base">
+          <DemoBase/>
         </DemoBox>
-
         <DemoBox
-          title="禁用状态和下划线"
-          desc="文字链接不可用状态，添加underline实现下划线"
-          componentName="link"
-          demoName="disable-demo">
-          <DisabledDemo></DisabledDemo>
+          title="简单样式"
+          desc="由通知文本+按钮组成，比较轻量的交互模态，用于一句话承载的内容也相对较少，在目标元素附近弹出浮层提示，询问用户。"
+          componentName="pop-confirm"
+          demoName="demo-simple">
+          <DemoSimple/>
         </DemoBox>
-
         <DemoBox
-          title="支持设置图标"
-          desc="在 slot 中直接设置图标"
-          componentName="link"
-          demoName="icon-demo">
-          <IconDemo></IconDemo>
+          title="插槽模式"
+          desc="自定义样式"
+          componentName="pop-confirm"
+          demoName="demo-slot">
+          <DemoSlot/>
         </DemoBox>
 
-        <PropsBox
-          title="Link 属性"
-          subtitle=""
-          propsData={linkPropsJson}/>
+        <PropsBox title="属性" subtitle="" propsData={props}></PropsBox>
+        <PropsBox title="事件" subtitle="" propsData={events}></PropsBox>
       </div>
     );
   },

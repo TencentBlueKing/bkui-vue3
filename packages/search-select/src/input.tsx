@@ -183,6 +183,15 @@ export default defineComponent({
           .replace('\u00A0', '\u0020')
           .replace(usingItem.value?.keyInnerText.replace('\u00A0', '\u0020').trim() || '', '')
           .trim();
+        const hasKeyword = text && usingItem.value?.keyInnerText && text
+          .replace('\u00A0', '\u0020')
+          .includes(usingItem.value.keyInnerText.replace('\u00A0', '\u0020').trim());
+        if (hasKeyword && outerText && usingItem.value.values?.length) {
+          keyword.value = outerText;
+          console.info('outerText', outerText);
+          debounceSetMenuList();
+          return;
+        }
         if (outerText || !text?.length) {
           usingItem.value = null;
         }
@@ -251,7 +260,21 @@ export default defineComponent({
         }
         showNoSelectValueError.value = true;
         return;
+      } if (keyword.value) {
+        const value = {
+          id: keyword.value,
+          name: keyword.value,
+        };
+        const res = await validateUsingItemValues(value);
+        if (!res) return;
+        usingItem.value.addValue(value);
+        emit('add', usingItem.value);
+        keyword.value = '';
+        usingItem.value = null;
+        setInputFocus(true);
+        return;
       }
+
       const res = await validateUsingItemValues();
       if (!res) return;
       setSelectedItem();
@@ -266,7 +289,9 @@ export default defineComponent({
       }
       if (usingItem.value?.values.length) {
         // 删除选项
-        if (usingItem.value?.multiple || usingItem.value.isInValueList(usingItem.value.values[0])) {
+        if (usingItem.value?.multiple
+          || usingItem.value.isInValueList(usingItem.value.values[0])
+        || (props.mode === SearchInputMode.EDIT && !keyword.value)) {
           usingItem.value.values.splice(-1, 1);
           keyword.value = '';
           setInputFocus();
@@ -310,7 +335,7 @@ export default defineComponent({
       const res = await validateUsingItemValues(item);
       if (!res) return;
       if (!usingItem.value.multiple)setSelectedItem();
-      if (props.valueBehavior === ValueBehavior.NEEDKEY && usingItem.value.multiple) {
+      if (props.valueBehavior === ValueBehavior.NEEDKEY && usingItem.value?.multiple) {
         setInputFocus();
       }
     }

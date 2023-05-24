@@ -24,60 +24,9 @@
  * IN THE SOFTWARE.
 */
 
-import { resolve } from 'path';
-import { defineConfig } from 'vite';
+const baseJestConf = require('../../jest.config');
 
-import vue from '@vitejs/plugin-vue';
-import vueJsx from '@vitejs/plugin-vue-jsx';
-
-import md from './vite-md';
-const base = process.env.PUBLIC_PATH || '/';
-export default defineConfig({
-  base,
-  resolve: {
-    alias: [
-      // {
-      //   find: '@bkui-vue',
-      //   replacement: resolve(__dirname, '../packages')
-      // },
-      // {
-      //   find: '@',
-      //   replacement: resolve(__dirname, 'src')
-      // }
-      {
-        find: '@site',
-        replacement: resolve(__dirname, '.'),
-      },
-      {
-        find: /^@?bkui-vue\/lib\/icon/,
-        replacement: resolve(__dirname, '../packages/icon/src/index'),
-      },
-      {
-        find: /^bkui-vue$/,
-        replacement: resolve(__dirname, '../packages/bkui-vue/index'),
-      },
-      {
-        find: /^@?bkui-vue\/(icon\/)/,
-        replacement: resolve(__dirname, '../packages/$1'),
-      },
-      {
-        find: /^@?bkui-vue\/([^/]*)/,
-        replacement: resolve(__dirname, '../packages/$1/src'),
-      },
-    ],
-  },
-  plugins: [
-    vueJsx(),
-    vue({
-      include: [/\.vue$/, /\.md$/],
-    }),
-    md,
-  ],
-  server: {
-    host: '0.0.0.0',
-    port: 3000,
-    fs: {
-      strict: false,
-    },
-  },
-});
+module.exports = {
+  ...baseJestConf,
+  testRegex: 'packages/radio/__test__/.*\\.test\\.(js|ts|tsx)$',
+};

@@ -27,7 +27,7 @@ import { computed, createApp, nextTick, ref } from 'vue';
 
 import Popover from './popover';
 import { PopoverPropTypes } from './props';
-import { isAvailableId } from './utils';
+import { isAvailableId, isElement } from './utils';
 
 export type $Popover = PopoverPropTypes & {
   target: HTMLElement | HTMLElement | MouseEvent,
@@ -45,7 +45,7 @@ export default function createPopoverComponent(options: $Popover) {
     trigger: 'manual',
   };
 
-  const isElement = element => element instanceof Element || element instanceof HTMLDocument;
+  // const isElement = element => element instanceof Element || element instanceof HTMLDocument;
 
   const popoverComponent = {
     name: '$popover',

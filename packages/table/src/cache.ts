@@ -23,29 +23,18 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+export default class BkTableCache {
+  storage = undefined;
+  constructor() {
+    this.storage = {};
+  }
 
-import { defineComponent, ref } from 'vue';
+  queueStack(methodName, fn = () => {}) {
+    this.storage[methodName] && clearTimeout(this.storage[methodName]);
+    this.storage[methodName] = setTimeout(() => fn());
+  }
 
-import BkLink from '@bkui-vue/link';
-
-export default defineComponent({
-  name: 'SiteLink',
-  setup() {
-    const checkboxGroupValue =  ref(['选项一']);
-
-    return {
-      checkboxGroupValue,
-    };
-  },
-  render() {
-    return (
-      <div>
-        <BkLink>这是默认</BkLink>
-        <BkLink theme="danger">这是危险</BkLink>
-        <BkLink theme="warning">这是警告</BkLink>
-        <BkLink theme="success">这是成功</BkLink>
-        <BkLink theme="primary">这是主要</BkLink>
-      </div>
-    );
-  },
-});
+  clearQueueStack(methodName) {
+    this.storage[methodName] && clearTimeout(this.storage[methodName]);
+  }
+}

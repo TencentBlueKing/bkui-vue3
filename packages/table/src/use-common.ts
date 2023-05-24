@@ -73,6 +73,8 @@ export const useClass = (props: TablePropTypes, targetColumns: Column[], root?, 
     'has-settings': !!props.settings,
   });
 
+  const resolvedColumns = computed(() => getColumns());
+
   const config = resolveHeadConfig(props);
   const headStyle = computed(() => ({
     '--row-height': `${resolvePropVal(config, 'height', ['thead'])}px`,
@@ -90,9 +92,9 @@ export const useClass = (props: TablePropTypes, targetColumns: Column[], root?, 
   }));
 
   const resolveWidth = () => {
-    const columns = getColumns();
-    if (columns.every((col: Column) => /^\d+\.?\d*(px)?$/ig.test(`${col.width}`))) {
-      const rectWidth = columns.reduce((width: number, col: Column) => width + Number(`${col.width}`.replace(/px/ig, '')), 0);
+    // const columns = getColumns();
+    if (resolvedColumns.value.every((col: Column) => /^\d+\.?\d*(px)?$/ig.test(`${col.width}`))) {
+      const rectWidth = resolvedColumns.value.reduce((width: number, col: Column) => width + Number(`${col.width}`.replace(/px/ig, '')), 0);
       const offset = hasScrollY.value ? SCROLLY_WIDTH : 0;
       return `${rectWidth + offset}px`;
     }
@@ -242,11 +244,13 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
     return minWidth;
   };
 
+  const resolvedColumns = computed(() => getColumns());
+
   const updateColGroups = (settings?: Settings) => {
     const checked = settings?.checked || (props.settings as Settings)?.checked || [];
     const settingFields = settings?.fields || (props.settings as Settings)?.fields || [];
     colgroups.length = 0;
-    colgroups.push(...(getColumns())
+    colgroups.push(...(resolvedColumns.value)
       .map(col => ({
         ...col,
         calcWidth: null,
@@ -277,7 +281,7 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
     resetResizeEvents();
     registerResizeEvent();
   }, 120);
-  watch(() => [props.columns, targetColumns], () => {
+  watch(() => resolvedColumns, () => {
     debounceColUpdate();
   }, { immediate: true, deep: true });
 

@@ -23,61 +23,47 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { unref } from 'vue';
+import { toType } from 'vue-types';
 
-import { Column, TablePropTypes } from './props';
-/**
- * 渲染column settings
- * @param props: TablePropTypes
- * @param targetColumns 解析之后的column配置（主要用来处理通过<bk-column>配置的数据结构）
- */
-export default (props: TablePropTypes, targetColumns: Column[]) => {
-  const initColumns = (column: Column | Column[], remove = false) => {
-    let resolveColumns: Column[] = [];
+import { PlacementEnum, placementType, PropTypes } from '@bkui-vue/shared';
 
-    if (!Array.isArray(column)) {
-      resolveColumns = [column];
-    } else {
-      resolveColumns = column;
-    }
+export enum TriggerEnum {
+  HOVER = 'hover',
+  CLICK = 'click',
+}
 
-    if (!remove) {
-      const resetColumns = resolveColumns.map((col) => {
-        const exist = targetColumns.find(tc => tc.label === col.label && tc.field === col.field);
-        if (exist) {
-          return exist;
-        }
-        return unref(col);
-      });
-      targetColumns.length = 0;
-      targetColumns.push(...resetColumns);
-    } else {
-      resolveColumns.forEach((col) => {
-        const matchColIndex = targetColumns.findIndex(c => c.label === col.label && c.field === col.field);
-        if (remove) {
-          if (matchColIndex >= 0) {
-            targetColumns.splice(matchColIndex, 1);
-          }
-          return;
-        }
-      });
-    }
-  };
+export function triggerType() {
+  return toType<`${TriggerEnum}`>('trigger', {}).def(TriggerEnum.HOVER);
+}
 
-  const getColumns = () => {
-    if (targetColumns?.length) {
-      return targetColumns;
-    }
-
-    if (props.columns?.length) {
-      return props.columns;
-    }
-
-    return [];
-  };
-
-  return {
-    initColumns,
-    getColumns,
-  };
+export const PopConfirmEvent = {
+  confirm: {
+    type: Function,
+    default: (): any => ({}),
+  },
+  cancel: {
+    type: Function,
+    default: (): any => ({}),
+  },
+  // ...TabNavEventProps,
 };
+export const PopConfirmProps = {
+  /**
+   * 触发方式
+   * 支持 click hover manual
+   * manual： 通过isShow控制显示、隐藏
+   */
+  trigger: triggerType(),
+  title: PropTypes.string.def(''),
+  content: PropTypes.string.def(''),
+  confirmText: PropTypes.string.def(''),
+  cancelText: PropTypes.string.def(''),
+  placement: PropTypes.oneOfType([placementType().def(PlacementEnum.TOP), PropTypes.string]).def(PlacementEnum.TOP),
+  theme: PropTypes.string.def('light '),
+  /**
+   * 自定义icon：根据确认框中提示文字的语境来选择 icon的样式，当确认操作存在风险时，可选择带警示的icon来引起用户的注意。
+   */
+  icon: PropTypes.string.def(''),
+  width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
+};
+export default PopConfirmProps;

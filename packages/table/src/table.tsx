@@ -30,7 +30,8 @@ import { useLocale } from '@bkui-vue/config-provider';
 import { debounce, resolveClassName } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
-import { COL_MIN_WIDTH, COLUMN_ATTRIBUTE, EMIT_EVENT_TYPES, EMIT_EVENTS, EVENTS, PROVIDE_KEY_INIT_COL, SCROLLY_WIDTH, TABLE_ROW_ATTRIBUTE } from './const';
+import BkTableCache from './cache';
+import { COL_MIN_WIDTH, COLUMN_ATTRIBUTE, EMIT_EVENT_TYPES, EMIT_EVENTS, EVENTS, PROVIDE_KEY_INIT_COL, PROVIDE_KEY_TB_CACHE, SCROLLY_WIDTH, TABLE_ROW_ATTRIBUTE } from './const';
 import usePagination from './plugins/use-pagination';
 import useScrollLoading from './plugins/use-scroll-loading';
 import { tableProps } from './props';
@@ -54,10 +55,12 @@ export default defineComponent({
     let columnSortFn: any = null;
     let activeSortColumn: any = null;
     let columnFilterFn: any = null;
+    const bkTableCache = new BkTableCache();
 
     const targetColumns = reactive([]);
     const { initColumns } = useColumn(props, targetColumns);
     provide(PROVIDE_KEY_INIT_COL, initColumns);
+    provide(PROVIDE_KEY_TB_CACHE, bkTableCache);
 
     const root = ref();
     const refVirtualRender = ref();
@@ -248,6 +251,8 @@ export default defineComponent({
       tableRender.destroy();
     });
 
+    const getRoot = () => root.value;
+
     ctx.expose({
       setRowExpand,
       clearSelection,
@@ -256,6 +261,7 @@ export default defineComponent({
       getSelection,
       clearSort,
       scrollTo,
+      getRoot,
     });
 
     const tableBodyClass = computed(() => ({
@@ -340,12 +346,9 @@ export default defineComponent({
       <div class={ fixedWrapperClass } style={ fixedContainerStyle.value }>
         {
           fixedColumns.value
-            .map(({ isExist, colPos, column }) => {
-              console.log('fixedWrapperClass');
-              return (isExist ? '' : <div
+            .map(({ isExist, colPos, column }) => (isExist ? '' : <div
               class={ resolveColumnClass(column, reactiveSchema.scrollTranslateX, tableOffsetRight.value) }
-              style={ resolveColumnStyle(colPos) }></div>);
-            })
+              style={ resolveColumnStyle(colPos) }></div>))
         }
         <div class={ resizeColumnClass } style={ resizeColumnStyle.value }></div>
         <div class={ loadingRowClass }>{

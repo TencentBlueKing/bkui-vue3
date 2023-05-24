@@ -45,8 +45,9 @@ export const PopoverProps = {
   width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
   height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
   maxHeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
-  content: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def(''),
+  content: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.any]).def(''),
 
+  allowHtml: PropTypes.bool.def(false),
   /**
    * 组件显示位置
    */
@@ -119,7 +120,10 @@ export const PopoverProps = {
    * popover显示和隐藏的延时时间
    */
   popoverDelay: PropTypes.oneOfType([PropTypes.number, PropTypes.arrayOf(PropTypes.number)]).def(100),
-
+  /**
+   * 配置自定义样式类名，传入的类会被加在组件最外层的 DOM
+   */
+  extCls: PropTypes.string.def(''),
   ...EventProps,
 };
 
