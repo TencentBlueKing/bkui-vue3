@@ -1,32 +1,29 @@
 <template>
+  <bk-button @click="() => handleHideColumn(2)">
+    点击显示列2
+  </bk-button>
+  <bk-button @click="() => handleHideColumn(3)">
+    点击显示列3
+  </bk-button>
+  <bk-button @click="() => handleHideColumn(4)">
+    点击显示列4
+  </bk-button>
   <div class="row">
     <bk-table
       :data="tableData"
-      :settings="settings"
+      show-overflow-tooltip
       border="horizontal"
     >
-      <bk-table-column
-        label="序号"
-        type="index"
-        sort
-        :width="80"
-      />
-      <bk-table-column
-        label="名称/内网IP"
-        prop="ip"
+      <template
+        v-for="(col, index) in showColumns"
+        :key="index"
       >
-        <template #default="props">
-          {{ props?.row.ip }}
-        </template>
-      </bk-table-column>
-      <bk-table-column
-        label="来源"
-        prop="source"
-      />
-      <bk-table-column
-        label="创建时间"
-        prop="create_time"
-      />
+        <bk-table-column
+          :label="col.label"
+          :type="col.type"
+          :prop="col.field"
+        />
+      </template>
     </bk-table>
   </div>
 </template>
@@ -39,12 +36,18 @@
     data() {
       return {
         tableData: [...DATA_TABLE],
-        columns: [...DATA_COLUMNS],
+        columns: DATA_COLUMNS.map(col => ({ ...col, isShow: true })),
+        showZSource: false,
         settings: {
           fields: [],
           checked: [],
         },
       };
+    },
+    computed: {
+      showColumns() {
+        return this.columns.filter(item => item.isShow);
+      },
     },
     mounted() {
       setTimeout(() => {
@@ -71,6 +74,9 @@
       }, 1000);
     },
     methods: {
+      handleHideColumn(index) {
+        this.columns[index].isShow = !this.columns[index].isShow;
+      },
       handleSortBy(arg) {
         console.log('handleSortBy', arg);
       },

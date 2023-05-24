@@ -45,13 +45,14 @@ export const PopoverProps = {
   width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
   height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
   maxHeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
-  content: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def(''),
+  content: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.any]).def(''),
 
+  allowHtml: PropTypes.bool.def(false),
   /**
    * 组件显示位置
    */
   // placement: placementType().def(PlacementEnum.TOP),
-  placement: PropTypes.oneOfType([placementType().def(PlacementEnum.TOP), PropTypes.string]).def(PlacementEnum.TOP),
+  placement: placementType().def(PlacementEnum.TOP),
 
   // 'dark', 'light'
   theme: PropTypes.string.def('dark'),
@@ -62,7 +63,7 @@ export const PopoverProps = {
    * manual： 通过isShow控制显示、隐藏
    */
   // trigger: triggerType(),
-  trigger: PropTypes.oneOfType([triggerType(), PropTypes.string]).def('hover'),
+  trigger: triggerType(),
 
   /**
    * content 渲染方式
@@ -119,7 +120,10 @@ export const PopoverProps = {
    * popover显示和隐藏的延时时间
    */
   popoverDelay: PropTypes.oneOfType([PropTypes.number, PropTypes.arrayOf(PropTypes.number)]).def(100),
-
+  /**
+   * 配置自定义样式类名，传入的类会被加在组件最外层的 DOM
+   */
+  extCls: PropTypes.string.def(''),
   ...EventProps,
 };
 

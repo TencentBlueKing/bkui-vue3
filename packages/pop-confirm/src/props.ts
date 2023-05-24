@@ -23,29 +23,47 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import { toType } from 'vue-types';
 
-import { defineComponent, ref } from 'vue';
+import { PlacementEnum, placementType, PropTypes } from '@bkui-vue/shared';
 
-import BkLink from '@bkui-vue/link';
+export enum TriggerEnum {
+  HOVER = 'hover',
+  CLICK = 'click',
+}
 
-export default defineComponent({
-  name: 'SiteLink',
-  setup() {
-    const checkboxGroupValue =  ref(['选项一']);
+export function triggerType() {
+  return toType<`${TriggerEnum}`>('trigger', {}).def(TriggerEnum.HOVER);
+}
 
-    return {
-      checkboxGroupValue,
-    };
+export const PopConfirmEvent = {
+  confirm: {
+    type: Function,
+    default: (): any => ({}),
   },
-  render() {
-    return (
-      <div>
-        <BkLink>这是默认</BkLink>
-        <BkLink theme="danger">这是危险</BkLink>
-        <BkLink theme="warning">这是警告</BkLink>
-        <BkLink theme="success">这是成功</BkLink>
-        <BkLink theme="primary">这是主要</BkLink>
-      </div>
-    );
+  cancel: {
+    type: Function,
+    default: (): any => ({}),
   },
-});
+  // ...TabNavEventProps,
+};
+export const PopConfirmProps = {
+  /**
+   * 触发方式
+   * 支持 click hover manual
+   * manual： 通过isShow控制显示、隐藏
+   */
+  trigger: triggerType(),
+  title: PropTypes.string,
+  content: PropTypes.string,
+  confirmText: PropTypes.string,
+  cancelText: PropTypes.string,
+  placement: PropTypes.oneOfType([placementType().def(PlacementEnum.TOP), PropTypes.string]).def(PlacementEnum.TOP),
+  theme: PropTypes.string.def('light '),
+  /**
+   * 自定义icon：根据确认框中提示文字的语境来选择 icon的样式，当确认操作存在风险时，可选择带警示的icon来引起用户的注意。
+   */
+  icon: PropTypes.string.def(''),
+  width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
+};
+export default PopConfirmProps;

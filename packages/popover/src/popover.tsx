@@ -24,7 +24,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { computed, defineComponent, onBeforeUnmount, onMounted, ref, Teleport, toRefs, watch } from 'vue';
+import { computed, defineComponent, h, onBeforeUnmount, onMounted, ref, Teleport, toRefs, watch } from 'vue';
 
 import { RenderType } from '@bkui-vue/shared';
 
@@ -37,6 +37,7 @@ import { PopoverProps } from './props';
 import Reference from './reference';
 import Root from './root';
 import usePopoverInit from './use-popover-init';
+import { isElement } from './utils';
 export default defineComponent({
   name: 'Popover',
   components: {
@@ -112,6 +113,27 @@ export default defineComponent({
       return localIsShow.value;
     });
 
+    const renderContent = () => {
+      if (props.allowHtml) {
+        if (isElement(props.content)) {
+          return h('div', { innerHTML: props.content.innerHTML });
+        }
+
+        if (/^(#|\.)/.test(props.content)) {
+          const target = document.querySelector(props.content);
+          if (isElement(target)) {
+            return h('div', { innerHTML: target.innerHTML });
+          }
+
+          return content;
+        }
+
+        return h('div', { innerHTML: props.content });
+      }
+
+      return content;
+    };
+
     return {
       boundary,
       arrow: props.arrow,
@@ -127,6 +149,7 @@ export default defineComponent({
       show,
       stopHide,
       contentIsShow,
+      renderContent,
     };
   },
 
@@ -136,10 +159,15 @@ export default defineComponent({
         { this.$slots.default?.() ?? <span></span> }
       </Reference>
       <Teleport to={ this.boundary } disabled={ !this.transBoundary }>
-        <Content ref="refContent" data-theme={ this.theme } width={ this.width } height={ this.height } maxHeight={ this.maxHeight }
-        v-clickoutside={this.handleClickOutside}
-        v-slots={ { arrow: () => (this.arrow ? <Arrow ref="refArrow">{ this.$slots.arrow?.() }</Arrow> : '') } }>
-          { this.contentIsShow ? this.$slots.content?.() ?? this.content : '' }
+        <Content ref="refContent"
+          data-theme={ this.theme }
+          extCls={this.extCls}
+          width={ this.width }
+          height={ this.height }
+          maxHeight={ this.maxHeight }
+          v-clickoutside={this.handleClickOutside}
+          v-slots={ { arrow: () => (this.arrow ? <Arrow ref="refArrow">{ this.$slots.arrow?.() }</Arrow> : '') } }>
+          { this.contentIsShow ? this.$slots.content?.() ?? this.renderContent() : '' }
         </Content>
       </Teleport>
     </Root>;

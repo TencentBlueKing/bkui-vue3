@@ -23,11 +23,11 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent, inject, onBeforeMount, reactive } from 'vue';
+import { defineComponent, inject, reactive, unref } from 'vue';
 
 import { PropTypes } from '@bkui-vue/shared';
 
-import { PROVIDE_KEY_INIT_COL } from '../const';
+import { BK_COLUMN_UPDATE_DEFINE, PROVIDE_KEY_INIT_COL, PROVIDE_KEY_TB_CACHE } from '../const';
 import { Column, IColumnType } from '../props';
 
 export type ITableColumn = Column & {
@@ -40,14 +40,61 @@ export default defineComponent({
     ...IColumnType,
     prop: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
   },
-  setup(props: ITableColumn, { slots }) {
-    const initColumns = inject(PROVIDE_KEY_INIT_COL, (_column: Column) => {}, false);
+  setup(props: ITableColumn) {
+    const initColumns = inject(PROVIDE_KEY_INIT_COL, (_column: Column | Column[], _remove = false) => {}, false);
+    const bkTableCache = inject(PROVIDE_KEY_TB_CACHE, { queueStack: (_, fn) => fn?.() });
+    const column = reactive({ ...props, field: props.prop || props.field });
+    return {
+      initColumns,
+      bkTableCache,
+      column,
+    };
+  },
+  unmounted() {
+    this.updateColumnDefine();
+  },
+  mounted() {
+    this.updateColumnDefine();
+  },
+  methods: {
+    updateColumnDefine() {
+      const fn = () => {
+        // @ts-ignore
+        const selfVnode = (this as any)._;
+        const colList = selfVnode.parent.vnode.children.default() || [];
+        const sortColumns = [];
+        const reduceColumns = (nodes) => {
+          if (!Array.isArray(nodes)) {
+            return;
+          }
+          this.column.render = this.$slots.default ? (args: any) => this.$slots.default?.(args) : undefined;
+          nodes.forEach((node: any) => {
+            let skipValidateKey0 = true;
+            if (node.type?.name === 'TableColumn') {
+              skipValidateKey0 = Object.hasOwnProperty.call(node.props || {}, 'key');
+              const resolveProp = { ...node.props, field: node.props.prop || node.props.field };
+              if (resolveProp.label === this.column.label && resolveProp.field === this.column.field) {
+                sortColumns.push(unref(this.column));
+              } else {
+                sortColumns.push(unref(resolveProp));
+              }
+            }
 
-    onBeforeMount(() => {
-      const column = reactive({ ...props, field: props.prop || props.field });
-      initColumns(column);
-      column.render = slots.default ? (args: any) => slots.default?.(args) : undefined;
-    });
-    return () => <>{ slots.default?.({ row: {} }) }</>;
+            if (node.children?.length && skipValidateKey0) {
+              reduceColumns(node.children);
+            }
+          });
+        };
+        reduceColumns(colList);
+        this.initColumns(sortColumns);
+      };
+
+      if (typeof this.bkTableCache.queueStack === 'function') {
+        this.bkTableCache.queueStack(BK_COLUMN_UPDATE_DEFINE, fn);
+      }
+    },
+  },
+  render() {
+    return this.$slots.default?.({ row: {} });
   },
 });

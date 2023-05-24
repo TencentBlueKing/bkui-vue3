@@ -415,6 +415,10 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
     fullScreenTarget.value = val;
   };
 
+  watch(() => props.isShow, (val) => {
+    localIsShow.value = val;
+  });
+
   watch(localIsShow, (val) => {
     if (val) {
       hanldePopoverShow();

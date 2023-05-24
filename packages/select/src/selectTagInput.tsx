@@ -48,7 +48,7 @@ export default defineComponent({
     modelValue: PropTypes.any,
     collapseTags: PropTypes.bool.def(false),
   },
-  emits: ['update:modelValue', 'remove', 'enter'],
+  emits: ['update:modelValue', 'remove', 'enter', 'keydown'],
   setup(props, { emit }) {
     const { proxy } = getCurrentInstance();
     const select = inject(selectKey, null);
@@ -83,6 +83,7 @@ export default defineComponent({
           break;
         }
       }
+      emit('keydown', e.target.value, e);
     };
     const getTagDOM = (index?: number) => {
       const tags = [...proxy.$el.querySelectorAll('.bk-tag')];

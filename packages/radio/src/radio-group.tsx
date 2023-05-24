@@ -25,17 +25,9 @@
 */
 
 import type { ExtractPropTypes } from 'vue';
-import {
-  defineComponent,
-  onMounted,
-  provide,
-  watch,
-} from 'vue';
+import { defineComponent, onMounted, provide, watch } from 'vue';
 
-import {
-  PropTypes,
-  useFormItem,
-} from '@bkui-vue/shared';
+import { PropTypes, useFormItem } from '@bkui-vue/shared';
 
 import { radioGroupKey } from './common';
 import type { IRadioGroupContext } from './type';
@@ -45,6 +37,7 @@ const radioGroupProps = {
   modelValue: PropTypes.oneOfType([String, Number, Boolean]),
   disabled: PropTypes.bool,
   withValidate: PropTypes.bool.def(true),
+  type: PropTypes.oneOf(['tab', 'capsule']).def('tab'),
 };
 
 export type RadioGroupProps = Readonly<ExtractPropTypes<typeof radioGroupProps>>;
@@ -108,7 +101,7 @@ export default defineComponent({
   },
   render() {
     return (
-      <div class="bk-radio-group">
+      <div class={['bk-radio-group', `bk-radio-${this.type}`]}>
         {this.$slots?.default()}
       </div>
     );

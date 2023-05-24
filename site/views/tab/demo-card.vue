@@ -39,7 +39,7 @@
         ],
         active: 'mission',
         currentType: 'card',
-        type: ['card', 'card-tab', 'border-card', 'unborder-card', 'vertical-card'],
+        type: ['card', 'card-tab', 'border-card', 'unborder-card', 'vertical-card', 'card-grid'],
       };
     },
   });

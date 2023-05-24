@@ -33,6 +33,7 @@ export default defineComponent({
     width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
     height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
     maxHeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
+    extCls: PropTypes.string.def(''),
   },
   setup(props) {
     const resolveValToPix = (val: string | number) => {
@@ -53,7 +54,7 @@ export default defineComponent({
     };
   },
   render() {
-    const className = [resolveClassName('popover'), resolveClassName('pop2-content')];
+    const className = [resolveClassName('popover'), resolveClassName('pop2-content'), this.extCls];
 
     return <div class={ className } tabindex="-1" style={this.style}>
       { this.$slots.arrow?.() ?? '' }
