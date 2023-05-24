@@ -24,11 +24,12 @@
  * IN THE SOFTWARE.
 */
 
-import { OriginComponent, withInstallProps } from '@bkui-vue/shared';
 
-import { LoadingDirective, vBkloading } from './directive';
+import { withInstallProps } from '@bkui-vue/shared';
+
+import { vBkloading } from './directive';
 import Component, { BkLoadingMode, BkLoadingSize, setDefaultIndicator } from './loading';
-const BkLoading = withInstallProps<OriginComponent, Record<string, unknown>, LoadingDirective>(
+const BkLoading = withInstallProps(
   Component,
   {
     setDefaultIndicator,
