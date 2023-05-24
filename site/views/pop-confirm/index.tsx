@@ -36,8 +36,8 @@ import DemoBase from './demo-base.vue';
 import DemoSimple from './demo-simple.vue';
 import DemoSlot from './demo-slot.vue';
 
-const props = resolvePropsToDesData(PopConfirmEvent);
-const events = resolvePropsToDesData(PopConfirmProps);
+const events = resolvePropsToDesData(PopConfirmEvent);
+const props = resolvePropsToDesData(PopConfirmProps);
 
 export default defineComponent({
   render() {

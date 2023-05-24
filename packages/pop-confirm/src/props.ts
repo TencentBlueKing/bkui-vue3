@@ -54,10 +54,10 @@ export const PopConfirmProps = {
    * manual： 通过isShow控制显示、隐藏
    */
   trigger: triggerType(),
-  title: PropTypes.string,
-  content: PropTypes.string,
-  confirmText: PropTypes.string,
-  cancelText: PropTypes.string,
+  title: PropTypes.string.def(''),
+  content: PropTypes.string.def(''),
+  confirmText: PropTypes.string.def(''),
+  cancelText: PropTypes.string.def(''),
   placement: PropTypes.oneOfType([placementType().def(PlacementEnum.TOP), PropTypes.string]).def(PlacementEnum.TOP),
   theme: PropTypes.string.def('light '),
   /**
