@@ -56,10 +56,16 @@
 .@{bk-prefix}-loading-wrapper {
   position: static;
   vertical-align: middle;
-  &:not(.@{bk-prefix}-nested-loading) {
+  &:not(.@{bk-prefix}-nested-loading):not(.@{bk-prefix}-directive-loading) {
     display: inline-flex;
   }
 
+  &.@{bk-prefix}-directive-loading {
+    width: 100%;
+    height: 100%;
+  }
+
+  &.@{bk-prefix}-directive-loading,
   &.@{bk-prefix}-nested-loading {
     position: relative;
     // width: 100%;

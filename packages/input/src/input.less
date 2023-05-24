@@ -47,12 +47,12 @@
   display: inline-flex;
   width: 100%;
   min-height: 70px;
+  overflow: hidden;
   font-size: @font-size-base;
   line-height: 20px;
   color: @input-color;
   background-color: white;
   border: @border-width-base @border-style-base @input-border-color;
-  border-radius: 2px;
   border-radius: @border-radius-base;
   box-sizing: border-box;
   transition: all .3s;
@@ -61,13 +61,14 @@
 
   > textarea {
     width: 100%;
-    flex: 1;
     padding: 5px 10px;
     line-height: 1.5;
     text-align: left;
     border: 0;
+    border-radius: @border-radius-base;
     outline: none;
     resize: none;
+    flex: 1;
   }
 
   &--max-length {
@@ -228,6 +229,7 @@
     background-color: @input-bg;
     background-image: none;
     border: none;
+    border-radius: @border-radius-base;
     outline: none;
     box-sizing: border-box;
     transition: all .3s;

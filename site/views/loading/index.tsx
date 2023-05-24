@@ -34,6 +34,7 @@ import {
 } from '../../typings';
 
 import Basic from './demo/basic.vue';
+import Directive from './demo/directive.vue';
 import Mask from './demo/mask.vue';
 import Mode from './demo/mode.vue';
 import Size from './demo/size.vue';
@@ -99,6 +100,13 @@ const demos = [{
   componentName: 'loading',
   demoName: 'demo/basic',
   DemoComponent: Basic,
+}, {
+  // '基础输入框',
+  title: '指令用法',
+  desc: '组件提供了自定义指令 v-bkloading，方便对指定 dom 节点添加 loading 效果',
+  componentName: 'loading',
+  demoName: 'demo/directive',
+  DemoComponent: Directive,
 }, {
   title: '配置大小',
   desc: '传入 size，可以配置 loading 效果大小',

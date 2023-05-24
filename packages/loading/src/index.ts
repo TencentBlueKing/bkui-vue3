@@ -26,8 +26,9 @@
 
 import { withInstallProps } from '@bkui-vue/shared';
 
+import { vBkloading } from './directive';
 import Component, { BkLoadingMode, BkLoadingSize, setDefaultIndicator } from './loading';
-const BkLoading = withInstallProps(Component, { setDefaultIndicator, BkLoadingMode, BkLoadingSize }, true);
+const BkLoading = withInstallProps(Component, { setDefaultIndicator, BkLoadingMode, BkLoadingSize }, true, vBkloading);
 export default BkLoading;
 export {
   BkLoading,

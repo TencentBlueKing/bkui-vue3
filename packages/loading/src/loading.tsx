@@ -66,6 +66,7 @@ export const loadingTypes = {
   opacity: PropTypes.number.def(0.9),
   color: PropTypes.string.def('white'),
   zIndex: PropTypes.number.def(1),
+  isDirective: PropTypes.bool.def(false),
 };
 
 export type LoadingTypes = ExtractPropTypes<typeof loadingTypes>;
@@ -101,6 +102,7 @@ export default defineComponent({
     const loadingWrapperCls = computed(() =>  classes({
       'bk-loading-wrapper': props.loading,
       'bk-nested-loading': !!ctx.slots.default,
+      'bk-directive-loading': props.isDirective,
     }));
     const containerCls = computed(() =>  classes({
       [`bk-loading-size-${props.size}`]: !!props.size,
@@ -124,7 +126,7 @@ export default defineComponent({
           {ctx.slots.default?.()}
           {props.loading && (
             [
-              ctx.slots.default && <div class="bk-loading-mask" style={maskStyle.value}></div>,
+              (ctx.slots.default || props.isDirective) && <div class="bk-loading-mask" style={maskStyle.value}></div>,
               <div class={containerCls.value} style={zIndexStyle.value}>
                 {
                   indicator.value
