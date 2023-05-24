@@ -58,7 +58,6 @@ export const isEmptyObj: (target: object) => boolean = target => Object.keys(tar
 export interface OriginComponent {
   name: string;
   install?: Plugin;
-  directive?: Directive;
 }
 export const withInstall = <T extends OriginComponent>(
   component: T): T & Plugin  => {
@@ -68,16 +67,19 @@ export const withInstall = <T extends OriginComponent>(
   };
   return component as T & Plugin;
 };
-export const withInstallProps = <T extends OriginComponent, K extends Record<string, unknown>>(
+export const withInstallProps = <T extends OriginComponent, K extends Record<string, unknown>, D extends Directive>(
   component: T,
   childComponents: K,
   isProps = false,
-  directive?,
+  directive?: {
+    name: string;
+    directive: D;
+  },
 ) => {
   component.install = function (app: App, { prefix } = {}) {
     const pre = app.config.globalProperties.bkUIPrefix || prefix || 'Bk';
     if (directive) {
-      app.directive(pre + directive.name, directive);
+      app.directive(pre + directive.name, directive.directive);
     }
     app.component(pre + component.name, component);
     !isProps && Object.values(childComponents).forEach((child: any) => {
