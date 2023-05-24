@@ -23,17 +23,19 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-// @ts-nocheck
-import { createApp, Directive, DirectiveBinding, h, reactive, UnwrapRef } from 'vue';
+import { App, ComponentPublicInstance, createApp, Directive, DirectiveBinding, h, reactive, UnwrapRef } from 'vue';
 
+import type { LoadingTypes } from './loading';
 import BkLoading from './loading';
 const INSTANCE_KEY = Symbol('vBkLoading');
 
 export type LoadingBinding = UnwrapRef<LoadingTypes>;
+
 export interface BkLoading extends HTMLElement {
   [INSTANCE_KEY]?: {
-    instance: LoadingInstance
+    instance: App<Element>
     options: LoadingTypes
+    vm: ComponentPublicInstance
   }
 }
 
@@ -51,7 +53,7 @@ const createInstance = (
     inline: getBindingProp('inline') ?? false,
     theme: getBindingProp('theme'),
     title: getBindingProp('title') ?? '',
-    size: getBindingProp('size') ?? 'normal',
+    size: getBindingProp('size') ?? '',
     mode: getBindingProp('mode'),
     opacity: getBindingProp('opacity'),
     color: getBindingProp('color') ?? 'white',
@@ -59,8 +61,16 @@ const createInstance = (
     isDirective: true,
   });
   const div = document.createElement('div');
-  div.style = 'position: absolute; left:0; top:0; right:0; bottom:0;';
-  el.style = 'position: relative;';
+  Object.assign(div.style, {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+  });
+  Object.assign(el.style, {
+    position: 'relative',
+  });
   const instance = createApp({
     render: () => h(BkLoading, options),
   });
@@ -83,8 +93,9 @@ const updateOptions = (
   });
 };
 
-export const vBkloading: Directive<BkLoading, LoadingBinding> = {
-  name: 'loading',
+export type LoadingDirective = Directive<BkLoading, LoadingBinding>;
+
+export const vBkloading: LoadingDirective = {
   mounted(el, binding) {
     if (binding.value) {
       createInstance(el, binding);
