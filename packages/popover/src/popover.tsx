@@ -161,6 +161,7 @@ export default defineComponent({
       <Teleport to={ this.boundary } disabled={ !this.transBoundary }>
         <Content ref="refContent"
           data-theme={ this.theme }
+          extCls={this.extCls}
           width={ this.width }
           height={ this.height }
           maxHeight={ this.maxHeight }

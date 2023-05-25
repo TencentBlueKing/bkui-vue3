@@ -54,7 +54,7 @@ export const inputType = {
   showWordLimit: PropTypes.bool,
   showControl: PropTypes.bool.def(true),
   showClearOnlyHover: PropTypes.bool.def(true),
-  precision: PropTypes.number.def(0).validate(val => val >= 0 && val < 20),
+  precision: PropTypes.number.def(0).validate(val => val as number >= 0 && val as number < 20),
   modelValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   size: PropTypes.size(),
   rows: PropTypes.number,
@@ -158,11 +158,11 @@ export default defineComponent({
       suffixCls,
     ));
     const incControlCls = computed(() => classes({
-      'is-disabled': props.disabled || props.modelValue >= props.max,
+      'is-disabled': props.disabled || props.modelValue as number >= props.max,
     }));
 
     const decControlCls = computed(() => classes({
-      'is-disabled': props.disabled || props.modelValue <= props.min,
+      'is-disabled': props.disabled || props.modelValue as number <= props.min,
     }));
 
     watch(
@@ -227,7 +227,7 @@ export default defineComponent({
         if (eventName === EVENTS.INPUT) {
           ctx.emit(
             EVENTS.UPDATE,
-            isNumberInput.value && e.target.value ? +e.target.value : e.target.value,
+            e.target.value,
           );
         }
 

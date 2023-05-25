@@ -91,7 +91,11 @@
 
     &.is-checked {
       .@{bk-prefix}-checkbox-input {
-        background: @disable-color;
+        background: @checkbox-disabled-checked-bg;
+        border-color: @checkbox-disabled-checked-bg;
+        &::after {
+          background: @checkbox-disabled-checked-bg;
+        }
       }
     }
   }

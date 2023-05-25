@@ -28,8 +28,8 @@ import { mount } from '@vue/test-utils';
 
 import BKTab from '../src';
 
-const dividerContent = 'bk-divider is testing';
-describe('Divider.tsx', () => {
+const dividerContent = 'bk-tab is testing';
+describe('Tab.tsx', () => {
   it('render test', async () => {
     const wrapper = await mount(BKTab, {
       slots: {

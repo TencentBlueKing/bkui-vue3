@@ -24,28 +24,17 @@
  * IN THE SOFTWARE.
 */
 
+import { mount } from '@vue/test-utils';
 
-import { withInstallProps } from '@bkui-vue/shared';
+import BKPopConfirm from '../src';
 
-import { vBkloading } from './directive';
-import Component, { BkLoadingMode, BkLoadingSize, setDefaultIndicator } from './loading';
-const BkLoading = withInstallProps(
-  Component,
-  {
-    setDefaultIndicator,
-    BkLoadingMode,
-    BkLoadingSize,
-  },
-  true,
-  {
-    name: 'loading',
-    directive: vBkloading,
-  },
-);
-export default BkLoading;
-export {
-  BkLoading,
-  setDefaultIndicator,
-  BkLoadingMode,
-  BkLoadingSize,
-};
+const dividerContent = 'bk-pop-confirm is testing';
+describe('popConfirm.tsx', () => {
+  it('render test', async () => {
+    const wrapper = await mount(BKPopConfirm, {
+      title: 'title',
+      content: '删除操作无法撤回，请谨慎操作！',
+    });
+    expect(wrapper.text()).toEqual(dividerContent);
+  });
+});

@@ -59,6 +59,10 @@ const zhCn: Language = {
     prev: '上一步',
     next: '下一步',
   },
+  popConfirm: {
+    ok: '确定',
+    cancel: '取消',
+  },
   form: {
     notBeEmpty: '不能为空',
     incorrectFormat: '格式不正确',

@@ -23,42 +23,47 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { computed, defineComponent } from 'vue';
+import { toType } from 'vue-types';
 
-import { PropTypes, resolveClassName } from '@bkui-vue/shared';
+import { PlacementEnum, placementType, PropTypes } from '@bkui-vue/shared';
 
-export default defineComponent({
-  name: 'PopContent',
-  props: {
-    width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
-    height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
-    maxHeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
-    extCls: PropTypes.string.def(''),
+export enum TriggerEnum {
+  HOVER = 'hover',
+  CLICK = 'click',
+}
+
+export function triggerType() {
+  return toType<`${TriggerEnum}`>('trigger', {}).def(TriggerEnum.HOVER);
+}
+
+export const PopConfirmEvent = {
+  confirm: {
+    type: Function,
+    default: (): any => ({}),
   },
-  setup(props) {
-    const resolveValToPix = (val: string | number) => {
-      if (/^\d+\.?\d*$/.test(`${val}`)) {
-        return `${val}px`;
-      }
-
-      return val;
-    };
-    const style = computed(() => ({
-      width: resolveValToPix(props.width),
-      height: resolveValToPix(props.height),
-      maxHeight: resolveValToPix(props.maxHeight),
-    }));
-
-    return {
-      style,
-    };
+  cancel: {
+    type: Function,
+    default: (): any => ({}),
   },
-  render() {
-    const className = [resolveClassName('popover'), resolveClassName('pop2-content'), this.extCls];
-
-    return <div class={ className } tabindex="-1" style={this.style}>
-      { this.$slots.arrow?.() ?? '' }
-      { this.$slots.default?.() ?? '' }
-    </div>;
-  },
-});
+  // ...TabNavEventProps,
+};
+export const PopConfirmProps = {
+  /**
+   * 触发方式
+   * 支持 click hover manual
+   * manual： 通过isShow控制显示、隐藏
+   */
+  trigger: triggerType(),
+  title: PropTypes.string.def(''),
+  content: PropTypes.string.def(''),
+  confirmText: PropTypes.string.def(''),
+  cancelText: PropTypes.string.def(''),
+  placement: PropTypes.oneOfType([placementType().def(PlacementEnum.TOP), PropTypes.string]).def(PlacementEnum.TOP),
+  theme: PropTypes.string.def('light '),
+  /**
+   * 自定义icon：根据确认框中提示文字的语境来选择 icon的样式，当确认操作存在风险时，可选择带警示的icon来引起用户的注意。
+   */
+  icon: PropTypes.string.def(''),
+  width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
+};
+export default PopConfirmProps;

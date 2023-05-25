@@ -706,10 +706,19 @@ const routes: RouteRecordRaw[] = [
     path: '/overflow-title',
     name: 'overflowTitle',
     meta: {
-      group: NavGroupMeta.Form,
+      group: NavGroupMeta.Feedback,
       navName: 'overflowTitle 文本溢出',
     },
     component: () => import('../views/overflow-title/index'),
+  },
+  {
+    path: '/pop-confirm',
+    name: 'popConfirm',
+    meta: {
+      group: NavGroupMeta.Feedback,
+      navName: 'Popconfirm 弹出确认框',
+    },
+    component: () => import('../views/pop-confirm/index'),
   },
 ];
 

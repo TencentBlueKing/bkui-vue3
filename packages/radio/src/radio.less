@@ -37,7 +37,8 @@
 
     &.is-checked {
       .@{bk-prefix}-radio-input {
-        background-color: @radio-distable-checked-bg;
+        background-color: @radio-disabled-checked-bg;
+        border-color: @radio-disabled-checked-bg;
       }
     }
 
@@ -169,7 +170,7 @@
       content: '';
     }
 
-    &:last-of-type &:before {
+    &:last-of-type::before {
       display: none;
     }
   }
@@ -225,7 +226,7 @@
 
     &.is-disabled {
       .@{bk-prefix}-radio-button-label {
-        background: @radio-distable-checked-bg;
+        background: @radio-button-disabled-checked-bg;
         border-color: @radio-disabled-border;
       }
     }

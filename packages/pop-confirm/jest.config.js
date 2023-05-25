@@ -24,28 +24,9 @@
  * IN THE SOFTWARE.
 */
 
+const baseJestConf = require('../../jest.config');
 
-import { withInstallProps } from '@bkui-vue/shared';
-
-import { vBkloading } from './directive';
-import Component, { BkLoadingMode, BkLoadingSize, setDefaultIndicator } from './loading';
-const BkLoading = withInstallProps(
-  Component,
-  {
-    setDefaultIndicator,
-    BkLoadingMode,
-    BkLoadingSize,
-  },
-  true,
-  {
-    name: 'loading',
-    directive: vBkloading,
-  },
-);
-export default BkLoading;
-export {
-  BkLoading,
-  setDefaultIndicator,
-  BkLoadingMode,
-  BkLoadingSize,
+module.exports = {
+  ...baseJestConf,
+  testRegex: 'packages/radio/__test__/.*\\.test\\.(js|ts|tsx)$',
 };

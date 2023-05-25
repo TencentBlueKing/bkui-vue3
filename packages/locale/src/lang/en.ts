@@ -57,6 +57,10 @@ const en = {
     prev: 'prev',
     next: 'next',
   },
+  popConfirm: {
+    ok: 'OK',
+    cancel: 'Cancel',
+  },
   form: {
     notBeEmpty: 'cannot be empty',
     incorrectFormat: 'incorrect format',
