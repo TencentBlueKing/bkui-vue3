@@ -42,5 +42,12 @@
     ],
     "preCI.localCodeCheck.checkerSet.TS": [
       "ts_standard"
+    ],
+    "i18n-ally.localesPaths": [
+      "lib/locale",
+      "packages/locale",
+      "lib/locale/lang",
+      "packages/locale/lang",
+      "packages/locale/src/lang"
     ]
   }
