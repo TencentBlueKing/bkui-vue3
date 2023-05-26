@@ -1,6 +1,5 @@
 <template>
   <div
-    class="row"
     @click="handleTClick"
   >
     <div class="cell">
@@ -70,6 +69,6 @@
 
 .cell {
   flex: 1;
-  margin: 0 5px 0 5px;
+  margin: 0px 5px 20px  5px;
 }
 </style>

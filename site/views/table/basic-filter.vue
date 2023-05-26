@@ -1,5 +1,5 @@
 <template>
-  <div class="row">
+  <div>
     <div class="cell">
       <span class="title">默认过滤</span>
       <bk-table
@@ -80,7 +80,7 @@
 }
 
 .cell {
-  flex: 1;
-  margin: 0 5px 0 5px;
+  margin: 0px 5px 20px  5px;
+
 }
 </style>
