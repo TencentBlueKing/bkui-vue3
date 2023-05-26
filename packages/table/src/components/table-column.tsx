@@ -94,6 +94,6 @@ export default defineComponent({
     },
   },
   render() {
-    return <>{ this.$slots.default?.() }</>;
+    return <>{ this.$slots.default?.({ row: {} }) }</>;
   },
 });
