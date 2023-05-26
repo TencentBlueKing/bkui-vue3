@@ -25,8 +25,7 @@
 */
 
 import { v4 as uuidv4 } from 'uuid';
-import type { ComputedRef } from 'vue';
-import { computed } from 'vue';
+import { computed, ComputedRef, unref  } from 'vue';
 
 import BkCheckbox from '@bkui-vue/checkbox';
 import { DownShape, RightShape } from '@bkui-vue/icon';
@@ -321,8 +320,12 @@ export default class TableRender {
       cells.unshift(<span class="head-text">{ cellText }</span>);
 
       const showTitle = typeof cellText === 'string' ? cellText : undefined;
+
+      const headClass = { 'has-sort': !!column.sort, 'has-filter': !!column.filter };
+
       return (
         <TableCell
+          class={ headClass }
           title={ showTitle }
           observerResize={this.props.observerResize}
           resizerWay={this.props.resizerWay}
@@ -583,6 +586,10 @@ export default class TableRender {
       const cell = getRowText(row, resolvePropVal(column, 'field', [column, row]), column);
       if (typeof column.render === 'function') {
         return this.renderCellCallbackFn(row, column, index, rows);
+      }
+
+      if (typeof cell === 'object') {
+        return JSON.stringify(unref(cell));
       }
 
       return cell;

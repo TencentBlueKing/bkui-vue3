@@ -1,100 +1,108 @@
 <template>
-  <bk-button @click="() => handleHideColumn(2)">
-    点击显示列2
-  </bk-button>
-  <bk-button @click="() => handleHideColumn(3)">
-    点击显示列3
-  </bk-button>
-  <bk-button @click="() => handleHideColumn(4)">
-    点击显示列4
-  </bk-button>
-  <div class="row">
-    <bk-table
-      :data="tableData"
-      show-overflow-tooltip
-      border="horizontal"
-    >
-      <template
-        v-for="(col, index) in showColumns"
+  <section class="x-table-wrapper">
+    <div class="click-span">
+      <span
+        v-for="(val, index) in slotTable"
         :key="index"
-      >
-        <bk-table-column
-          :label="col.label"
-          :type="col.type"
-          :prop="col.field"
-        />
-      </template>
+        :class="val.showLine ? 'click-show' : ''"
+        @click="clickShowLine(index)"
+      >{{ val.label }}</span>
+    </div>
+    {{ dataTable }}
+    -----------------------------
+    {{ renderSlotTable.filter(table => table.showLine) }}
+    <bk-table
+      :data="dataTable"
+    >
+      <bk-table-column
+        v-for="(val, index) in renderSlotTable.filter(table => table.showLine)"
+        :key="index"
+        :label="val.label"
+        :prop="val.prop"
+      />
     </bk-table>
-  </div>
+  </section>
 </template>
 
 <script>
-  import { defineComponent } from 'vue';
+  export default {
+    name: 'PocTable',
 
-  import { DATA_COLUMNS, DATA_TABLE } from './options';
-  export default defineComponent({
+    props: {
+      slotTable: {
+        type: Array,
+        default() {
+          return [
+            { label: '第一列', prop: 'prop1', sortable: false, builtIn: false },
+            { label: '第二列', prop: 'prop2', sortable: false, builtIn: 'table' },
+            { label: '第三列', prop: 'prop3', sortable: false, builtIn: false },
+          ];
+        },
+      },
+      dataTable: {
+        type: Array,
+        default() {
+          return [
+            { prop1: '1-1', prop2: { tp: '123', value: '12314234' }, prop3: '1-3' },
+            { prop1: '2-1', prop2: [{ sorts: [{ label: 'tp', prop: 'tp' }, { label: 'value', prop: 'value' }], data: [{ tp: '123', value: '1234' }] }], prop3: '2-3' },
+            { prop1: '3-1', prop2: [{ tp: '123', value: '12314234' }], prop3: '3-3' },
+          ];
+        },
+      },
+      buttonText: {
+        type: String,
+        default: '',
+      },
+      buttonTheme: {
+        type: String,
+        default: 'primary',
+      },
+    },
     data() {
       return {
-        tableData: [...DATA_TABLE],
-        columns: DATA_COLUMNS.map(col => ({ ...col, isShow: true })),
-        showZSource: false,
-        settings: {
-          fields: [],
-          checked: [],
+        keyword: '',
+        pagination: {
+          current: 1,
+          count: 0,
+          limit: 10,
         },
+        renderSlotTable: [],
       };
     },
-    computed: {
-      showColumns() {
-        return this.columns.filter(item => item.isShow);
+    watch: {
+      slotTable: {
+        handler() {
+          this.renderSlotTable = JSON.parse(JSON.stringify(this.slotTable)).map(res => ({
+            ...res,
+            showLine: true,
+          }));
+        },
+        immediate: true,
+        deep: true,
+      },
+      dataTable(val) {
+        this.pagination.count = val.length;
+        this.pagination.current = 1;
       },
     },
-    mounted() {
-      setTimeout(() => {
-        this.settings.checked.push('index');
-        this.settings.fields.push(...[
-          {
-            label: '序号',
-            field: 'index',
-            disabled: true,
-          },
-          {
-            label: '名称/内网IP',
-            field: 'ip',
-          },
-          {
-            label: '来源',
-            field: 'source',
-          },
-          {
-            label: '创建时间',
-            field: 'create_time',
-          },
-        ]);
-      }, 1000);
+    created() {
+      this.pagination.count = this.dataTable.length;
     },
     methods: {
-      handleHideColumn(index) {
-        this.columns[index].isShow = !this.columns[index].isShow;
+      handlePageChange(page) {
+        this.pagination.current = page;
       },
-      handleSortBy(arg) {
-        console.log('handleSortBy', arg);
+      handlelimitChange(page) {
+        if (this.pagination.limit !== page) {
+          this.pagination.limit = page;
+        }
       },
-      handleDblClick(...args) {
-        console.log(args);
+      handleClick(val) {
+        this.$emit('handle-click', val);
+      },
+      clickShowLine(val) {
+        this.renderSlotTable[val].showLine = !this.renderSlotTable[val].showLine;
       },
     },
-  });
+  };
 </script>
-<style scoped>
-  .row {
-    display: flex;
-    width: 100%;
-  }
-
-  .cell {
-    flex: 1;
-    margin: 0 5px 0 5px;
-  }
-  </style>
-
