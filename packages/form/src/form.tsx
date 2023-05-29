@@ -23,6 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import { isBoolean, isString } from 'lodash';
 import type { ExtractPropTypes } from 'vue';
 import {
   defineComponent,
@@ -45,12 +46,20 @@ export const formProps = {
   rules: PropTypes.object,
 };
 
+const formEvents = {
+  submit: null,
+  validate: (property: string, result: boolean, message: string) => isString(property)
+  && isBoolean(result)
+  && isString(message),
+};
+
 export type FormProps = Readonly<ExtractPropTypes<typeof formProps>>;
+export type FormEvents = typeof formEvents;
 
 export default defineComponent({
   name: 'Form',
   props: formProps,
-  emits: ['submit'],
+  emits: formEvents,
   setup(props, context) {
     // form-item 列表
     let formItemInstanceList: Array<IFormItemContext> = [];
@@ -75,6 +84,7 @@ export default defineComponent({
     };
     provide(formKey, {
       props,
+      emit: context.emit,
       register,
       unregister,
     });
