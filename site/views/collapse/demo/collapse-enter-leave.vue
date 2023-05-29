@@ -1,5 +1,6 @@
 <template>
   <bk-collapse
+    class="bk-collapse-demo"
     v-model="activeIndex"
     :list="list"
     @after-leave="handleAfterLeave"
@@ -23,4 +24,8 @@
     alert('before-enter');
   };
 </script>
-
+<style scoped>
+  .bk-collapse-demo {
+    box-shadow: 0 0 8px 0px #ccc;
+  }
+</style>

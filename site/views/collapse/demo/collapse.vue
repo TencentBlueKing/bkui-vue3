@@ -1,5 +1,6 @@
 <template>
   <bk-collapse
+    class="bk-collapse-demo"
     v-model="activeIndex"
     :list="list"
   />
@@ -15,4 +16,8 @@
     { name: '开放平台', content: '开放的PaaS，具备强大的开发框架和调度引擎，以及完整的运维开发培训体系，助力运维快速转型升级。' },
   ]);
 </script>
-
+<style scoped>
+  .bk-collapse-demo {
+    box-shadow: 0 0 8px 0px #ccc;
+  }
+</style>
