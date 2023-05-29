@@ -80,6 +80,16 @@ const formProps: IPropsTableItem[] = [
   },
 ];
 
+const formEvents: IPropsTableItem[] = [
+  {
+    name: 'validate',
+    type: '(property: string, result: boolean, message: string) => void',
+    default: null,
+    desc: 'Form Item 校验结束后触发',
+    optional: [],
+  },
+];
+
 const formItemProps: IPropsTableItem[] = [
   {
     name: 'label',
@@ -208,6 +218,10 @@ export default defineComponent({
           title="Form 属性"
           subtitle=""
           propsData={formProps}/>
+        <PropsBox
+          title="Form 事件"
+          subtitle=""
+          propsData={formEvents}/>
         <PropsBox
           title="Form-Item 属性"
           subtitle=""
