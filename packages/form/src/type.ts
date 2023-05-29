@@ -23,12 +23,19 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import type { FormProps } from './form';
+
+import { SetupContext } from 'vue';
+
+import type {
+  FormEvents,
+  FormProps,
+} from './form';
 import type { FormItemProps } from './form-item';
 
 
 export interface IFormContext {
   props: FormProps,
+  emit: SetupContext<FormEvents>['emit'],
   register: (IFormItemContext) => void,
   unregister: (IFormItemContext) => void
 }
