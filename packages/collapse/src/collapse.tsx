@@ -75,24 +75,24 @@ export default defineComponent({
     let className = 'bk-collapse-wrapper';
     // 线条样式
     if (props.hasHeaderBorder) {
-      className += ' bk-collapse-header-border'
+      className += ' bk-collapse-header-border';
     }
 
     // hover效果
     if (props.hasHeaderHover) {
-      className += ' bk-collapse-header-hover'
+      className += ' bk-collapse-header-hover';
     }
 
     // 卡片样式
     if (props.useCardTheme) {
-      className += ' bk-collapse-card'
+      className += ' bk-collapse-card';
     }
 
     // 图标位置
     if (props.headerIconAlign === 'left') {
-      className += ' bk-collapse-icon-left'
+      className += ' bk-collapse-icon-left';
     } else {
-      className += ' bk-collapse-icon-right'
+      className += ' bk-collapse-icon-right';
     }
     if (!Array.isArray(props.list) || !props.list.length) {
       return () => createVNode('div', {
