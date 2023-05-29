@@ -111,13 +111,11 @@ export default defineComponent({
 
       function toCamelCase(str) {
         const words = str.split('-');
-        const camelCaseWords = words.map((word) => {
-          return word.charAt(0).toUpperCase() + word.slice(1);
-        });
+        const camelCaseWords = words.map((word: string) => word.charAt(0).toUpperCase() + word.slice(1));
         return camelCaseWords.join('');
       }
 
-      const icon = BkIcon[`${toCamelCase(props.icon)}`]
+      const icon = BkIcon[`${toCamelCase(props.icon)}`];
       return (
         <div class="bk-collapse-header">
           <span class="bk-collapse-title">
@@ -141,5 +139,5 @@ export default defineComponent({
         </BKCollapseTransition>
       </div>
     );
-  }
+  },
 });
