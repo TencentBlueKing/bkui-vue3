@@ -196,6 +196,7 @@ export default defineComponent({
     bkTooltips,
   },
   props: formItemProps,
+
   setup(props, context) {
     const t = useLocale('form');
     const form = useForm();
@@ -289,7 +290,9 @@ export default defineComponent({
         let stepIndex = -1;
         return () => {
           stepIndex = stepIndex + 1;
+          // form-item 验证通过
           if (stepIndex >= rules.length) {
+            form.emit('validate', props.property, true, null);
             return Promise.resolve(true);
           }
           const rule = rules[stepIndex];
@@ -297,25 +300,28 @@ export default defineComponent({
           return Promise.resolve()
             .then(() => {
               const result = rule.validator(value);
-              // 异步验证
+              const errorMessage = getRuleMessage(rule);
+              // 异步验证（validator 返回一个 Promise）
               if (typeof result !== 'boolean'
                 && typeof result.then === 'function') {
                 return result.then((data) => {
                   // 异步验证结果为 false
                   if (data === false) {
-                    return Promise.reject(getRuleMessage(rule));
+                    return Promise.reject(errorMessage);
                   }
                 }).then(() => doValidate(), () => {
                   state.isError = true;
-                  state.errorMessage = getRuleMessage(rule);
+                  state.errorMessage = errorMessage;
+                  form.emit('validate', props.property, false, errorMessage);
                   return Promise.reject(state.errorMessage);
                 });
               }
-              // 验证失败
+              // 同步验证失败
               if (!result) {
                 state.isError = true;
                 // 验证结果返回的是 String 表示验证失败，返回结果作为错误信息
-                state.errorMessage = typeof result === 'string' ? result : getRuleMessage(rule);
+                state.errorMessage = typeof result === 'string' ? result : errorMessage;
+                form.emit('validate', props.property, false, errorMessage);
                 return Promise.reject(state.errorMessage);
               }
               // 下一步
