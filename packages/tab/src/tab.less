@@ -74,12 +74,10 @@
     }
 
 
-
-
     > div {
       display: flex;
       flex-wrap: nowrap;
-      .@{bk-prefix}-tab--card &, .@{bk-prefix}-tab--vertical-card & ,.@{bk-prefix}-tab--border-card &{
+      .@{bk-prefix}-tab--card &, .@{bk-prefix}-tab--vertical-card & ,.@{bk-prefix}-tab--border-card & {
         margin-bottom: -1px;
       }
     }
@@ -199,10 +197,10 @@
 
       .@{bk-prefix}-tab--card-grid & {
         height: 40px;
-        line-height: 40px;
-        background: #EAEBF0;
-        border-radius: 4px 4px 0 0;
         margin-right: 8px;
+        line-height: 40px;
+        background: #eaebf0;
+        border-radius: 4px 4px 0 0;
       }
 
       .@{bk-prefix}-tab-header-operation & {
@@ -247,7 +245,7 @@
       }
 
       .@{bk-prefix}-tab--card-grid & {
-        background: #FFFFFF;
+        background: #fff;
       }
 
       /* 激活边框，跟随，不再用固定样式
@@ -272,9 +270,12 @@
     }
 
     &--disabled {
-      color: @tab-disable-color;
-      pointer-events: none;
       cursor: not-allowed;
+
+      &,
+      &:hover {
+        color: @tab-disable-color;
+      }
     }
   }
 
@@ -297,9 +298,9 @@
     }
 
     .@{bk-prefix}-tab--card-grid & {
-      background: #FFFFFF;
-      box-shadow: 0 2px 4px 0 #1919290d;
+      background: #fff;
       border-radius: 0 4px 4px 4px;
+      box-shadow: 0 2px 4px 0 #1919290d;
     }
   }
 
