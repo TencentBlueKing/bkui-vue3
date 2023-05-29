@@ -1,7 +1,7 @@
 {
   "name": "bkui-vue",
   "private": true,
-  "version": "0.0.1-beta.418",
+  "version": "0.0.1-beta.423",
   "workspaces": {
     "packages": [
       "packages/!(**.bak)*",
@@ -44,7 +44,7 @@
     "@babel/plugin-transform-runtime": "~7.17.0",
     "@babel/preset-env": "~7.16.11",
     "@babel/preset-typescript": "~7.16.7",
-    "@blueking/magicbox-header": "~1.1.54",
+    "@blueking/magicbox-header": "~1.1.57",
     "@commitlint/cli": "~16.2.3",
     "@commitlint/config-conventional": "~16.2.1",
     "@types/jest": "~27.4.1",

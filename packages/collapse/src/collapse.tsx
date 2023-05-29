@@ -72,7 +72,28 @@ export default defineComponent({
     };
     provide('localActiveItems', localActiveItems);
     provide('handleItemClick', handleItemClick);
-    const className = 'bk-collapse-wrapper';
+    let className = 'bk-collapse-wrapper';
+    // 线条样式
+    if (props.hasHeaderBorder) {
+      className += ' bk-collapse-header-border';
+    }
+
+    // hover效果
+    if (props.hasHeaderHover) {
+      className += ' bk-collapse-header-hover';
+    }
+
+    // 卡片样式
+    if (props.useCardTheme) {
+      className += ' bk-collapse-card';
+    }
+
+    // 图标位置
+    if (props.headerIconAlign === 'left') {
+      className += ' bk-collapse-icon-left';
+    } else {
+      className += ' bk-collapse-icon-right';
+    }
     if (!Array.isArray(props.list) || !props.list.length) {
       return () => createVNode('div', {
         class: className,
@@ -89,6 +110,7 @@ export default defineComponent({
     const renderItems = () => collapseData.value.map((item, index) => {
       const name = item[props.idFiled] || index;
       let title = item[props.titleField];
+      const icon = props.headerIcon || 'angle-right';
       if (slots.title) {
         if (typeof slots.title === 'function') {
           title = slots.title(item, index);
@@ -105,6 +127,7 @@ export default defineComponent({
           item-click={handleItemClick}
           disabled={item.disabled}
           name={name}
+          icon={icon}
           isFormList={true}
           title={title}
           content={slots.content?.(item, index) ?? item[props.contentField]}

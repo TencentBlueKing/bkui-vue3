@@ -32,6 +32,10 @@ import PropsBox from '../../components/props-box';
 import { type IPropsTableItem } from '../../typings';
 
 import DemoCollapse from './demo/collapse.vue';
+import DemoCollapseLine from './demo/collapse-line.vue';
+import DemoCollapseCard from './demo/collapse-card.vue';
+import DemoCollapseIcon from './demo/collapse-icon.vue';
+import DemoCollapseIconAlign from './demo/collapse-icon-align.vue';
 import DemoCollapseAccordion from './demo/collapse-accordion.vue';
 import DemoCollapseClick from './demo/collapse-click.vue';
 import DemoCollapseDisabled from './demo/collapse-disabled.vue';
@@ -218,6 +222,34 @@ export default defineComponent({
           componentName="collapse"
           demoName="demo/collapse">
             <DemoCollapse />
+        </DemoBox>
+        <DemoBox
+          title="线条样式"
+          desc="通过配置has-header-border来使用线条样式效果。"
+          componentName="collapse"
+          demoName="demo/collapse-line">
+            <DemoCollapseLine />
+        </DemoBox>
+        <DemoBox
+          title="卡片样式"
+          desc="通过配置use-card-theme来使用卡片样式效果。"
+          componentName="collapse"
+          demoName="demo/collapse-card">
+            <DemoCollapseCard />
+        </DemoBox>
+        <DemoBox
+          title="自定义图标"
+          desc="通过配置header-icon来自定义图标。"
+          componentName="collapse"
+          demoName="demo/collapse-icon">
+            <DemoCollapseIcon />
+        </DemoBox>
+        <DemoBox
+          title="图标位置"
+          desc="通过配置header-icon-align来控制图标位置。"
+          componentName="collapse"
+          demoName="demo/collapse-icon-align">
+            <DemoCollapseIconAlign />
         </DemoBox>
         <DemoBox
           title="是否使用手风琴模式"

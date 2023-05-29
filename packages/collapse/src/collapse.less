@@ -1,62 +1,119 @@
 @import '@bkui-vue/styles/themes/themes.less';
 
-.bk-collapse {
-  &-item {
-    display: flex;
-    flex-direction: column;
-    text-align: left;
+.@{bk-prefix}-collapse-item {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  position: relative;
 
-    &.is-disabled {
-      cursor: not-allowed;
+  &.is-disabled {
+    cursor: not-allowed;
 
-      .bk-collapse-header {
-        color: @disable-color;
-        pointer-events: none;
+    .@{bk-prefix}-collapse-header {
+      color: @disable-color;
+      pointer-events: none;
+    }
+  }
+}
+
+.@{bk-prefix}-collapse-header {
+  position: relative;
+  height: 46px;
+  padding: 0 14px;
+  overflow: hidden;
+  font-size: 14px;
+  line-height: 46px;
+  color: #63656e;
+  text-overflow: ellipsis;
+  cursor: pointer;
+
+  .@{bk-prefix}-collapse-title {
+    margin-left: 26px;
+    color: #313238;
+    font-size: 14px;
+  }
+}
+
+.@{bk-prefix}-collapse-content {
+  padding: 5px 49px;
+  font-size: 12px;
+  line-height: 22px;
+  will-change: all;
+  color: #63656E;
+
+  &.active {
+    display: block;
+  }
+}
+
+.@{bk-prefix}-collapse-icon {
+  position: absolute;
+  top: 13px;
+  transition: all linear .3s;
+
+  &.rotate-icon {
+    transform: rotate(90deg);
+  }
+
+  svg {
+    font-size: 20px;
+  }
+}
+
+.@{bk-prefix}-collapse-transition {
+  transition: all .3s ease-in-out;
+}
+
+.@{bk-prefix}-collapse-header-border {
+  .@{bk-prefix}-collapse-item {
+    &::after {
+      height: 1px;
+      content: '';
+      background-color: #DCDEE5;
+      display: block;
+      position: absolute;
+      bottom: 0;
+      left: 14px;
+      right: 14px;
+    }
+    &:last-child {
+      &::after {
+        display: none;
       }
     }
-
-
   }
+}
 
-  &-header {
-    position: relative;
-    height: 42px;
-    padding: 0 10px;
-    overflow: hidden;
-    font-size: 14px;
-    line-height: 42px;
-    color: #63656e;
-    text-overflow: ellipsis;
-    cursor: pointer;
-
-  }
-
-  &-content {
-    padding: 0 10px;
-    font-size: 13px;
-    will-change: all;
-    color: #979ba5;
-
-    &.active {
-      display: block;
+.@{bk-prefix}-collapse-header-hover {
+  .@{bk-prefix}-collapse-header {
+    &:hover {
+      background-color: #F0F1F5;
     }
   }
+}
 
-  &-icon {
-    position: absolute;
-    right: 10px;
-    transition: all linear .3s;
+.@{bk-prefix}-collapse-card {
+  .@{bk-prefix}-collapse-item {
+    box-shadow: 0 0 8px 0px #ccc;
+    margin-bottom: 10px;
 
-    &.rotate-icon {
-      transform: rotate(90deg);
-    }
-
-    svg {
-      font-size: 20px;
+    &:last-child {
+      margin-bottom: 0;
     }
   }
+}
 
-  &-transition {
-    transition: all .3s ease-in-out;
+.@{bk-prefix}-collapse-icon-right {
+  .@{bk-prefix}-collapse-icon {
+    right: 13px;
+  }
+  .@{bk-prefix}-collapse-title {
+    margin-left: 0;
+  }
+}
+
+.@{bk-prefix}-collapse-icon-left {
+  .@{bk-prefix}-collapse-icon {
+    left: 13px;
   }
 }
