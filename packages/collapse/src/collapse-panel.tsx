@@ -97,7 +97,7 @@ export default defineComponent({
       );
     }
 
-    function renderHeader() {
+    function renderHeader(icon: any) {
       if (slots.header) {
         if (typeof slots.header === 'function') {
           return slots.header(h);
@@ -120,7 +120,7 @@ export default defineComponent({
           <span class="bk-collapse-title">
             {title}
           </span>
-          { <collapseIcon class={`bk-collapse-icon ${(isActive.value && 'rotate-icon') || ''}`}/>}
+          {icon}
         </div>
       </>;
     }
@@ -138,7 +138,7 @@ export default defineComponent({
       <div
         class={`bk-collapse-item ${this.disabled ? 'is-disabled' : ''} ${this.isActive ? 'bk-collapse-item-active' : ''}`}>
         <div onClick={() => this.clickItem()}>
-          {this.renderHeader()}
+          {this.renderHeader(<this.collapseIcon class={`bk-collapse-icon ${(this.isActive && 'rotate-icon') || ''}`}/>)}
         </div>
         <BKCollapseTransition>
           {
