@@ -30,6 +30,7 @@ import {
   computed,
   defineComponent,
   onMounted,
+  PropType,
   provide,
   reactive,
   ref,
@@ -46,7 +47,8 @@ import BKPopover from '@bkui-vue/popover';
 import {
   classes,
   InputBehaviorType,
-  PropTypes, RenderType, resolveClassName,
+  PropTypes, RenderType,
+  resolveClassName,
   SizeEnum,
   TagThemeType,
   useFormItem,
@@ -64,6 +66,7 @@ import {
 import Option from './option';
 import SelectTagInput from './selectTagInput';
 import { GroupInstanceType, ISelected, OptionInstanceType, SelectTagInputType } from './type';
+
 
 export default defineComponent({
   name: 'Select',
@@ -96,7 +99,7 @@ export default defineComponent({
     selectAllText: PropTypes.string,
     scrollLoading: PropTypes.bool.def(false),
     allowCreate: PropTypes.bool.def(false), // 是否运行创建自定义选项
-    popoverOptions: PropTypes.object.def({}), // popover属性
+    popoverOptions: Object as PropType<Partial<PopoverPropTypes>>, // popover属性
     customContent: PropTypes.bool.def(false), // 是否自定义content内容
     list: PropTypes.array.def([]),
     idKey: PropTypes.string.def('value'),
@@ -265,7 +268,8 @@ export default defineComponent({
         ? collapseTags.value && !isPopoverShow.value
         : collapseTags.value
     ));
-    const popoverConfig = computed<Partial<PopoverPropTypes>>(() => merge(
+
+    const popoverConfig = computed(() => merge<Partial<PopoverPropTypes>, Partial<PopoverPropTypes>>(
       {
         theme: 'light bk-select-popover',
         trigger: 'manual',
@@ -677,7 +681,7 @@ export default defineComponent({
             onRemove={this.handleDeleteTag}
             collapseTags={this.isCollapseTags}
             onEnter={this.handleInputEnter}
-            onKeydown={(_v, e) => this.handleKeydown(e as KeyboardEvent)}>
+            onKeydown={(_, e) => this.handleKeydown(e as KeyboardEvent)}>
               {{
                 prefix: () => this.$slots.prefix?.(),
                 default: this.$slots.tag && (() => this.$slots.tag({ selected: this.selected })),
@@ -700,7 +704,7 @@ export default defineComponent({
           withValidate={false}
           onInput={this.handleInputChange}
           onEnter={this.handleInputEnter}
-          onKeydown={(_v, e) => this.handleKeydown(e as KeyboardEvent)}>
+          onKeydown={(_, e) => this.handleKeydown(e as KeyboardEvent)}>
             {{
               prefix: () => this.$slots.prefix?.(),
               suffix: () => suffixIcon(),

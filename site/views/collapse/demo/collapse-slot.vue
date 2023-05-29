@@ -1,10 +1,8 @@
 <template>
   <bk-collapse
-    v-model="activeIndex"
-  >
-    <bk-collapse-panel
-      :name="1"
-    >
+    class="bk-collapse-demo"
+    v-model="activeIndex">
+    <bk-collapse-panel :name="1">
       <span>方案成熟</span>
       <template #content>
         <div>
@@ -12,9 +10,7 @@
         </div>
       </template>
     </bk-collapse-panel>
-    <bk-collapse-panel
-      :name="2"
-    >
+    <bk-collapse-panel>
       <template #header>
         <div style="display: flex;justify-content: space-between;align-items: center">
           <div>覆盖全面</div>
@@ -32,6 +28,9 @@
 <script setup>
   import { ref } from 'vue';
   const activeIndex =  ref([0]);
-
 </script>
-
+<style scoped>
+  .bk-collapse-demo {
+    box-shadow: 0 0 8px 0px #ccc;
+  }
+</style>

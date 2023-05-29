@@ -66,6 +66,8 @@ export const compilerLibDir = async (dir: string): Promise<any> => {
           writeFileSync(url, chunk);
         } else if (chunk.match(/@bkui-vue/gmi)) {
           chunk = chunk.replace(/@bkui-vue/gmi, url.split('/src/')[1].replace(/([^/]+)/gmi, '..'));
+        } else if (/\.\.\/icons\//gmi.test(chunk) && /lib\/icon\/src\/index\.d\.ts$/.test(url)) {
+          chunk = chunk.replace(/\.\.\/icons\//gmi, '../icon/');
         }
         writeFileRecursive(resolve(parse(url).dir, '../', parse(url).base), chunk);
         if (index === files.length - 1) {

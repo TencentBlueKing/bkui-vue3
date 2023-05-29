@@ -60,6 +60,31 @@ export const propsCollapse = {
    * 是否使用手风琴效果
    */
   accordion: PropTypes.bool.def(false),
+
+  /**
+   * 是否使用带线条样式
+   */
+  hasHeaderBorder: PropTypes.bool.def(false),
+
+  /**
+   * 是否使用Hover效果
+   */
+  hasHeaderHover: PropTypes.bool.def(true),
+
+  /**
+   * 自定义图标
+   */
+  headerIcon: PropTypes.string.def(''),
+
+  /**
+   * 是否使用卡片样式
+   */
+  useCardTheme: PropTypes.bool.def(false),
+
+  /**
+   * 图标位置
+   */
+  headerIconAlign: PropTypes.string.def('left'),
 };
 export const CollapsePanelEventProps = {
   itemClick: {
@@ -75,6 +100,7 @@ export const propsCollapsePanel = {
   renderDirective: renderDirectiveType(),
   modelValue: PropTypes.bool.def(false),
   alone: PropTypes.bool.def(false),
+  icon: PropTypes.string.def('angle-right'),
   ...CollapsePanelEventProps,
 };
 

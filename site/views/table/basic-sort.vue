@@ -1,23 +1,21 @@
 <template>
-  <div class="row">
-    <div class="cell">
-      <span class="title">默认排序: sort scope = current</span>
-      <bk-table
-        :columns="columns"
-        :data="tableData"
-        :pagination="pagination"
-        @column-sort="handleSortBy"
-      />
-    </div>
-    <div class="cell">
-      <span class="title">sort scope = all</span>
-      <bk-table
-        :columns="columns1"
-        :data="tableData"
-        :pagination="pagination"
-        @dblclick="handleDblClick"
-      />
-    </div>
+  <div class="cell">
+    <span class="title">默认排序: sort scope = current</span>
+    <bk-table
+      :columns="columns"
+      :data="tableData"
+      :pagination="pagination"
+      @column-sort="handleSortBy"
+    />
+  </div>
+  <div class="cell">
+    <span class="title">sort scope = all</span>
+    <bk-table
+      :columns="columns1"
+      :data="tableData"
+      :pagination="pagination"
+      @dblclick="handleDblClick"
+    />
   </div>
 </template>
 
@@ -62,6 +60,6 @@
 
 .cell {
   flex: 1;
-  margin: 0 5px 0 5px;
+  margin: 0px 5px 20px  5px;
 }
 </style>

@@ -67,17 +67,16 @@ export default defineComponent({
           if (!Array.isArray(nodes)) {
             return;
           }
-          this.column.render = this.$slots.default ? (args: any) => this.$slots.default?.(args) : undefined;
           nodes.forEach((node: any) => {
             let skipValidateKey0 = true;
             if (node.type?.name === 'TableColumn') {
               skipValidateKey0 = Object.hasOwnProperty.call(node.props || {}, 'key');
-              const resolveProp = { ...node.props, field: node.props.prop || node.props.field };
-              if (resolveProp.label === this.column.label && resolveProp.field === this.column.field) {
-                sortColumns.push(unref(this.column));
-              } else {
-                sortColumns.push(unref(resolveProp));
-              }
+              const resolveProp = {
+                ...node.props,
+                field: node.props.prop || node.props.field,
+                render: node.children?.default,
+              };
+              sortColumns.push(unref(resolveProp));
             }
 
             if (node.children?.length && skipValidateKey0) {
@@ -95,6 +94,6 @@ export default defineComponent({
     },
   },
   render() {
-    return this.$slots.default?.({ row: {} });
+    return <>{ this.$slots.default?.({ row: {} }) }</>;
   },
 });
