@@ -81,6 +81,7 @@ export default defineComponent({
       disableClickOutSide: false,
       disableCloseUnderTransfer: false,
       selectionMode: 'date' as SelectionModeType,
+      // selectionMode: onSelectionModeChange(props.type),
       forceInputRerender: 1,
       isFocused: false,
       focusedDate: initialValue[0] || props.startDate || new Date(),
@@ -96,7 +97,9 @@ export default defineComponent({
       onSelectionModeChange,
     });
 
-    function onSelectionModeChange(_type) {
+    onSelectionModeChange(props.type);
+
+    function onSelectionModeChange(_type): SelectionModeType {
       let type = _type;
       if (_type.match(/^date/)) {
         type = 'date';
@@ -684,7 +687,7 @@ export default defineComponent({
                   )
                   : (
                     <DatePanel
-                      ref='pickerPanelRef'
+                      ref="pickerPanelRef"
                       clearable={this.clearable}
                       showTime={this.type === 'datetime' || this.type === 'datetimerange'}
                       confirm={this.isConfirm}

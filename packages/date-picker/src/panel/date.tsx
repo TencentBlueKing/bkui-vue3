@@ -47,6 +47,8 @@ import { resolveClassName } from '@bkui-vue/shared';
 
 import Confirm from '../base/confirm';
 import DateTable from '../base/date-table';
+import MonthTable from '../base/month-table';
+import YearTable from '../base/year-table';
 import type {
   DatePickerShortcutsType,
   DatePickerValueType,
@@ -344,13 +346,13 @@ export default defineComponent({
         <div class={resolveClassName('picker-panel-body')} style="width: 261px;">
           <div class={resolveClassName('date-picker-header')} v-show={this.currentView !== 'time'}>
             <span class={iconBtnCls('prev', '-double')} onClick={() => this.changeYear(-1)}>
-              <AngleDoubleLeft style={{ fontSize: '20px', lineHeight: 1 }}></AngleDoubleLeft>
+              <AngleDoubleLeft style={{ fontSize: '20px', lineHeight: 1, verticalAlign: 'text-bottom' }}></AngleDoubleLeft>
             </span>
             {
               this.pickerTable === 'date-table'
                 ? (
                   <span class={iconBtnCls('prev')} onClick={() => this.changeMonth(-1)} v-show={this.currentView === 'date'}>
-                    <AngleLeft style={{ fontSize: '20px', lineHeight: 1 }}></AngleLeft>
+                    <AngleLeft style={{ fontSize: '20px', lineHeight: 1, verticalAlign: 'text-bottom' }}></AngleLeft>
                   </span>
                 )
                 : ''
@@ -371,19 +373,20 @@ export default defineComponent({
                 : ''
             }
             <span class={iconBtnCls('next', '-double')} onClick={() => this.changeYear(+1)}>
-              <AngleDoubleRight style={{ fontSize: '20px', lineHeight: 1 }}></AngleDoubleRight>
+              <AngleDoubleRight style={{ fontSize: '20px', lineHeight: 1, verticalAlign: 'text-bottom' }}></AngleDoubleRight>
             </span>
             {
               this.pickerTable === 'date-table'
                 ? (
                   <span class={iconBtnCls('next')} onClick={() => this.changeMonth(+1)} v-show={this.currentView === 'date'}>
-                    <AngleRight style={{ fontSize: '20px', lineHeight: 1 }}></AngleRight>
+                    <AngleRight style={{ fontSize: '20px', lineHeight: 1, verticalAlign: 'text-bottom' }}></AngleRight>
                   </span>
                 )
                 : ''
             }
           </div>
           <div class={resolveClassName('picker-panel-content')}>
+            {/* --{this.pickerTable}--{this.dates}--{this.selectionMode} */}
             {
               this.currentView !== 'time'
                 ? (() => {
@@ -397,6 +400,26 @@ export default defineComponent({
                           modelValue={this.dates as DatePickerValueType}
                           focusedDate={this.focusedDate}
                           onPick={this.panelPickerHandlers} />
+                      );
+                    case 'year-table':
+                      return (
+                        <YearTable
+                          tableDate={this.panelDate as Date}
+                          disabledDate={this.disabledDate}
+                          selectionMode={this.selectionMode}
+                          modelValue={this.dates as DatePickerValueType}
+                          focusedDate={this.focusedDate}
+                          onPick={this.panelPickerHandlers}/>
+                      );
+                    case 'month-table':
+                      return (
+                        <MonthTable
+                          tableDate={this.panelDate as Date}
+                          disabledDate={this.disabledDate}
+                          selectionMode={this.selectionMode}
+                          modelValue={this.dates as DatePickerValueType}
+                          focusedDate={this.focusedDate}
+                          onPick={this.panelPickerHandlers}/>
                       );
                     default:
                       return null;

@@ -39,6 +39,7 @@ import RangeDemo from './range-demo.vue';
 import ShortcutsSlotDemo from './shortcuts-slot-demo.vue';
 import TriggerSlotDemo from './trigger-slot-demo.vue';
 import WithTimeDemo from './with-time-demo.vue';
+import YearMonthDemo from './year-month-demo.vue';
 
 const menuPropsJson: IPropsTableItem[] = [
   {
@@ -125,14 +126,21 @@ export default defineComponent({
             demoName="shortcuts-slot-demo">
             <ShortcutsSlotDemo />
           </DemoBox>
-        <DemoBox
-          title="demo-tsx"
-          desc="自定义插槽 tsx 写法"
-          componentName="date-picker"
-          suffix='.tsx'
-          demoName="demo-tsx">
-          <DemoTsx />
-        </DemoBox>
+          <DemoBox
+            title="demo-tsx"
+            desc="自定义插槽 tsx 写法"
+            componentName="date-picker"
+            suffix='.tsx'
+            demoName="demo-tsx">
+            <DemoTsx />
+          </DemoBox>
+          <DemoBox
+            title="年选择器与月选择器"
+            desc="通过 type 属性配置年选择器与月选择器"
+            componentName="date-picker"
+            demoName="year-month-demo">
+            <YearMonthDemo />
+          </DemoBox>
         <PropsBox propsData={menuPropsJson}/>
       </div>
     );

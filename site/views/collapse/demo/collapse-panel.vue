@@ -1,13 +1,15 @@
 <template>
   <div>
     <bk-collapse
+      v-model="activeIndex"
       class="bk-collapse-demo"
-      v-model="activeIndex">
+    >
       <bk-collapse-panel
         v-for="(item,index) in list"
         :key="index"
-        :name="index">
-        <span>{{ index }}-{{ item.name }}}</span>
+        :name="index"
+      >
+        <span>{{ index }}-{{ item.name }}</span>
         <template #content>
           <div>
             {{ item.content }}
