@@ -78,8 +78,8 @@ export const enum EVENTS {
   COMPOSITIONUPDATE = 'compositionupdate',
   COMPOSITIONEND = 'compositionend',
 }
-
-function EventFunction(_value: any, _evt?: KeyboardEvent|Event) {
+function EventFunction(_value: any, _evt?: KeyboardEvent);
+function EventFunction(_value: any, _evt?: Event) {
   return true;
 }
 

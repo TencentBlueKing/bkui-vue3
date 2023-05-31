@@ -105,6 +105,9 @@ export const vBkloading: LoadingDirective = {
     const instance = el[INSTANCE_KEY];
     const { value } = binding;
     updateOptions(value, instance!.options);
+    if (instance?.vm?.$el?.parentNode?.style) {
+      instance.vm.$el.parentNode.style.display = value.loading ? '' : 'none';
+    }
   },
   unmounted(el) {
     const instance = el[INSTANCE_KEY];
