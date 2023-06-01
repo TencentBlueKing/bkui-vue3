@@ -4,13 +4,14 @@
       <bk-popover
         content="Top Left 文字提示"
         placement="top-start"
+        theme="light"
         :popover-delay="[300, 0]"
       >
         <bk-button>上左</bk-button>
       </bk-popover>
       <bk-popover
         content="Top Center 文字提示"
-
+        theme="light"
         :popover-delay="[300, 0]"
       >
         <bk-button>上边</bk-button>
@@ -18,6 +19,7 @@
       <bk-popover
         content="Top Right 文字提示"
         placement="top-end"
+        theme="light"
         :popover-delay="[300, 0]"
       >
         <bk-button>上右</bk-button>
@@ -28,6 +30,7 @@
       <div class="bk-popover-position-center-left">
         <bk-popover
           placement="left-start"
+          theme="light"
           :popover-delay="[300, 0]"
         >
           <bk-button>左上</bk-button>
@@ -40,6 +43,7 @@
 
         <bk-popover
           placement="left"
+          theme="light"
           :popover-delay="[300, 0]"
         >
           <bk-button>左边</bk-button>
@@ -52,6 +56,7 @@
 
         <bk-popover
           placement="left-end"
+          theme="light"
           :popover-delay="[300, 0]"
         >
           <bk-button>左下</bk-button>
@@ -66,6 +71,7 @@
       <div class="bk-popover-position-center-right">
         <bk-popover
           placement="right-start"
+          theme="light"
           :popover-delay="[300, 0]"
         >
           <bk-button>右上</bk-button>
@@ -78,6 +84,7 @@
 
         <bk-popover
           placement="right"
+          theme="light"
           :popover-delay="[300, 0]"
         >
           <bk-button>右边</bk-button>
@@ -90,6 +97,7 @@
 
         <bk-popover
           placement="right-end"
+          theme="light"
           :popover-delay="[300, 0]"
         >
           <bk-button>右下</bk-button>
@@ -106,18 +114,21 @@
       <bk-popover
         content="Bottom Left 文字提示"
         placement="bottom-start"
+        theme="light"
       >
         <bk-button>下左</bk-button>
       </bk-popover>
       <bk-popover
         content="Bottom Center 文字提示"
         placement="bottom"
+        theme="light"
       >
         <bk-button>下边</bk-button>
       </bk-popover>
       <bk-popover
         content="Bottom Right 文字提示"
         placement="bottom-end"
+        theme="light"
       >
         <bk-button>下右</bk-button>
       </bk-popover>

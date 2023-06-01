@@ -9,6 +9,7 @@
     trigger="click"
     :is-show="isShow"
     width="450"
+    theme="light"
     @after-hidden="handleAfterHidden"
   >
     <bk-button>
