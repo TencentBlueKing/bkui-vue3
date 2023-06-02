@@ -323,76 +323,85 @@ export default defineComponent({
       this.multiple ? null :  <span>{this.selectedText}</span>
     );
 
+    const popoverRender = () => (
+      <BkPopover
+        placement="bottom-start"
+        theme={`light ${resolveClassName('cascader-popover')}`}
+        trigger="click"
+        arrow={false}
+        disabled={this.disabled}
+        class={resolveClassName('cascader-popover-wrapper')}
+        ref="popover"
+        onAfterHidden={this.popoverChangeEmitter}
+        onAfterShow={this.popoverChangeEmitter}
+        boundary="body">
+        {{
+          default: () => (
+            this.$slots.trigger
+              ? this.$slots.trigger({ selected: this.modelValue })
+              : <div class={[resolveClassName('cascader-name'), 'bk-scroll-y']}>
+              {this.multiple && this.selectedTags.length > 0 && renderTags()}
+              {this.filterable
+                ? (this.isCollapse || this.selectedTags.length === 0)
+                && <input class={[resolveClassName('cascader-search-input'), {
+                  'is-disabled': this.disabled,
+                }]}
+                    type="text"
+                    onInput={this.searchInputHandler}
+                    placeholder={this.placeholder}
+                    value={this.searchKey}
+                    disabled={this.disabled}
+                    ref="inputRef"
+                  />
+                : textRender()
+              }
+            </div>
+          ),
+          content: () => (
+            <div class={resolveClassName('cascader-popover')}>
+              <CascaderPanel
+                store={this.store}
+                ref="cascaderPanel"
+                width={this.scrollWidth}
+                height={this.scrollHeight}
+                search-key={this.searchKey}
+                separator={this.separator}
+                is-filtering={this.isFiltering}
+                suggestions={this.suggestions}
+                v-model={this.checkedValue}
+                v-slots={{
+                  default: scope => (this.$slots.default
+                    ? this.$slots.default(scope)
+                    : <span class={resolveClassName('cascader-node-name')}>{scope.node.name}</span>),
+                }}>
+              </CascaderPanel>
+            </div>
+          ),
+        }}
+      </BkPopover>
+    );
+
     return (
       <div class={[resolveClassName('cascader-wrapper'), this.floatMode ? 'float-mode' : '']}>
-        <div class={[resolveClassName('cascader'), this.extCls, {
-          'is-unselected': this.modelValue.length === 0,
-          'is-hover': this.isHover,
-          'is-filterable': this.filterable,
-          'is-focus': this.isFocus,
-          'is-disabled': this.disabled,
-          'is-simplicity': this.behavior === 'simplicity',
-        }]}
-          tabindex="0"
-          data-placeholder={this.placeholder}
-          onMouseenter={this.setHover}
-          onMouseleave={this.cancelHover}
-          ref="bkCascaderRef">
-          {suffixIcon()}
-          <BkPopover
-            placement="bottom-start"
-            theme={`light ${resolveClassName('cascader-popover')}`}
-            trigger="click"
-            arrow={false}
-            disabled={this.disabled}
-            class={resolveClassName('cascader-popover-wrapper')}
-            ref="popover"
-            onAfterHidden={this.popoverChangeEmitter}
-            onAfterShow={this.popoverChangeEmitter}
-            boundary="body">
-            {{
-              default: () => (
-                <div class={[resolveClassName('cascader-name'), 'bk-scroll-y']}>
-                  {this.multiple && this.selectedTags.length > 0 && renderTags()}
-                  {this.filterable
-                    ? (this.isCollapse || this.selectedTags.length === 0)
-                    && <input class={[resolveClassName('cascader-search-input'), {
-                      'is-disabled': this.disabled,
-                    }]}
-                        type="text"
-                        onInput={this.searchInputHandler}
-                        placeholder={this.placeholder}
-                        value={this.searchKey}
-                        disabled={this.disabled}
-                        ref="inputRef"
-                      />
-                    : textRender()
-                  }
-                </div>
-              ),
-              content: () => (
-                <div class={resolveClassName('cascader-popover')}>
-                  <CascaderPanel
-                    store={this.store}
-                    ref="cascaderPanel"
-                    width={this.scrollWidth}
-                    height={this.scrollHeight}
-                    search-key={this.searchKey}
-                    separator={this.separator}
-                    is-filtering={this.isFiltering}
-                    suggestions={this.suggestions}
-                    v-model={this.checkedValue}
-                    v-slots={{
-                      default: scope => (this.$slots.default
-                        ? this.$slots.default(scope)
-                        : <span class={resolveClassName('cascader-node-name')}>{scope.node.name}</span>),
-                    }}>
-                  </CascaderPanel>
-                </div>
-              ),
-            }}
-          </BkPopover>
-        </div>
+        { this.$slots.trigger
+          ? popoverRender()
+          : <div class={[resolveClassName('cascader'), this.extCls, {
+            'is-unselected': this.modelValue.length === 0,
+            'is-hover': this.isHover,
+            'is-filterable': this.filterable,
+            'is-focus': this.isFocus,
+            'is-disabled': this.disabled,
+            'is-simplicity': this.behavior === 'simplicity',
+          }]}
+            tabindex="0"
+            data-placeholder={this.placeholder}
+            onMouseenter={this.setHover}
+            onMouseleave={this.cancelHover}
+            ref="bkCascaderRef">
+            {suffixIcon()}
+            {popoverRender()}
+          </div>
+        }
       </div>
     );
   },
