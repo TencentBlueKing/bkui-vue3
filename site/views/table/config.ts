@@ -81,6 +81,7 @@ export default [
       { name: 'filter', type: 'Boolean|String|IFilter', default: 'false', desc: '数据过滤的选项,可以简单设置true开启默认过滤。可以通过详细配置排序方式，请参考IFilter', optional: [] },
       { name: 'colspan', type: 'Number|Function', default: 1, desc: '规定单元格可横跨的列数', optional: [] },
       { name: 'rowspan', type: 'Number|Function', default: 1, desc: '规定单元格可横跨的行数', optional: [] },
+      { name: 'index', type: 'Number', default: undefined, desc: '自定义表格列所在排序', optional: [] },
     ],
   },
   {
