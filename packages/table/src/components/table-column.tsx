@@ -31,7 +31,8 @@ import { BK_COLUMN_UPDATE_DEFINE, PROVIDE_KEY_INIT_COL, PROVIDE_KEY_TB_CACHE } f
 import { Column, IColumnType } from '../props';
 
 export type ITableColumn = Column & {
-  prop?: string | Function
+  prop?: string | Function,
+  index?: number
 };
 
 export default defineComponent({
@@ -39,9 +40,10 @@ export default defineComponent({
   props: {
     ...IColumnType,
     prop: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
+    index: PropTypes.number.def(undefined),
   },
   setup(props: ITableColumn) {
-    const initColumns = inject(PROVIDE_KEY_INIT_COL, (_column: Column | Column[], _remove = false) => {}, false);
+    const initColumns = inject(PROVIDE_KEY_INIT_COL, (_col: ITableColumn | ITableColumn[], _rm = false) => {}, false);
     const bkTableCache = inject(PROVIDE_KEY_TB_CACHE, { queueStack: (_, fn) => fn?.() });
     const column = reactive({ ...props, field: props.prop || props.field });
     return {
@@ -51,13 +53,21 @@ export default defineComponent({
     };
   },
   unmounted() {
-    this.updateColumnDefine();
+    this.updateColumnDefine(true);
   },
   mounted() {
     this.updateColumnDefine();
   },
   methods: {
-    updateColumnDefine() {
+    updateColumnDefine(unmounted = false) {
+      if (this.$props.index !== undefined && typeof this.$props.index === 'number') {
+        this.updateColumnDefineByIndex(unmounted);
+        return;
+      }
+
+      this.updateColumnDefineByParent();
+    },
+    updateColumnDefineByParent() {
       const fn = () => {
         // @ts-ignore
         const selfVnode = (this as any)._;
@@ -91,6 +101,14 @@ export default defineComponent({
       if (typeof this.bkTableCache.queueStack === 'function') {
         this.bkTableCache.queueStack(BK_COLUMN_UPDATE_DEFINE, fn);
       }
+    },
+    updateColumnDefineByIndex(unmounted = false) {
+      const resolveProp = {
+        ...this.$props as Column,
+        field: this.$props.prop || this.$props.field,
+        render: this.$slots.default,
+      };
+      this.initColumns(unref(resolveProp), unmounted);
     },
   },
   render() {
