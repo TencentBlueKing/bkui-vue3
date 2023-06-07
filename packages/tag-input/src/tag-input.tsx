@@ -286,10 +286,10 @@ export default defineComponent({
         displayKey,
         allowCreate,
         trigger,
+        isAsyncList,
       } = props;
       listState.selectedTagList = [];
       listState.localList = flatList.value;
-
 
       if (modelValue.length) {
         const modelValueMap = {};
@@ -306,6 +306,14 @@ export default defineComponent({
         if (!isSingleSelect.value) {
           listState.localList = listState.localList.filter(val => !modelValueMap[val[saveKey]]);
         }
+      }
+
+      if (isAsyncList && curInputValue.value) {
+        filterData(curInputValue.value);
+        if (pageState.curPageList.length) {
+          popoverProps.isShow = true;
+        }
+        return;
       }
 
       // 如果需要首次展示列表，先初始化

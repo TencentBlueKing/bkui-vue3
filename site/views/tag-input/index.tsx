@@ -229,6 +229,13 @@ const propsJson: IPropsTableItem[] = [
     optional: [],
   },
   {
+    name: 'is-async-list',
+    type: 'Boolean',
+    default: '',
+    desc: '如果为 true 则表示将会传入异步 list，配合通过输入后再获取异步 list 传入组件时使用。',
+    optional: [],
+  },
+  {
     name: 'collapse-tags',
     type: 'Boolean',
     default: 'false',
