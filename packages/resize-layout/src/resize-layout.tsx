@@ -213,7 +213,7 @@ export default defineComponent({
       setupAsideListener(!collapsed.value);
       if (collapsed.value) {
         asideRef.value.setAttribute(`data-${cssPropKey.value}`, `${asideRect[cssPropKey.value]}px`);
-        asideRef.value.style[cssPropKey.value] = '5px';
+        asideRef.value.style[cssPropKey.value] = props.collapsible ? '0px' : '5px';
       } else {
         asideContentVisible.value = true;
         asideRef.value.style[cssPropKey.value] = asideRef.value.getAttribute(`data-${cssPropKey.value}`);
@@ -261,8 +261,10 @@ export default defineComponent({
       {
         'bk-resize-layout-collapsed': this.collapsed,
         'bk-resize-layout-border': this.border,
+        'bk-resize-layout-collapsible': this.collapsible,
       },
     ];
+
 
     return (
       <div ref="bkResizeLayoutRef" class={bkResizeLayoutClass}>
@@ -271,12 +273,12 @@ export default defineComponent({
             {this.$slots.aside?.()}
           </div>
           <i class="bk-resize-trigger"
-            v-show={!this.disabled && (!this.collapsed || this.autoMinimize)}
-            style={this.triggerStyle}
-            onMousedown={withModifiers(this.handleMousedown, ['left'])}>
+             v-show={!this.disabled && (!this.collapsed || this.autoMinimize)}
+             style={this.triggerStyle}
+             onMousedown={withModifiers(this.handleMousedown, ['left'])}>
           </i>
           <i class={['bk-resize-proxy', this.placement]}
-            ref="resizeProxyRef" v-show={!this.collapsed || this.autoMinimize}></i>
+             ref="resizeProxyRef" v-show={!this.collapsed || this.autoMinimize}></i>
           {
             this.collapsible
             && (
