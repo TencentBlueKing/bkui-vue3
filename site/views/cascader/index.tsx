@@ -34,11 +34,12 @@ import { IPropsTableItem } from '../../typings';
 import BaseDemo from './base-demo.vue';
 import CheckAnyLevelDemo from './check-any-level-demo.vue';
 import CheckboxDemo from './checkbox-demo.vue';
+import CustomTriggerDemo from './custom-trigger-demo.vue';
 import IdKey from './id-key.vue';
 import RemoteDemo from './remote-demo.vue';
 import SeparatorDemo from './separator-demo.vue';
 import ShowCompleteName from './show-complete-name.vue';
-import SlotsDemo from './slots-demo.vue';;
+import SlotsDemo from './slots-demo.vue';
 
 // 参数配置数组， 包含多个 IPropsTableItem 的实例对象
 const cascaderPropsJson: IPropsTableItem[] = [
@@ -298,6 +299,16 @@ export default defineComponent({
           componentName='cascader'
           demoName='remote-demo'>
           <RemoteDemo></RemoteDemo>
+        </DemoBox>
+
+      {/* 远程加载 */}
+        <DemoBox
+          title='自定义Trigger'
+          subtitle='通过插槽自定义trigger'
+          desc='可以通过`具名插槽#trigger`实现动态具名插槽，更加灵活'
+          componentName='cascader'
+          demoName='custom-trigger-demo'>
+          <CustomTriggerDemo></CustomTriggerDemo>
         </DemoBox>
 
         {/* Cascader组件属性列表 */}

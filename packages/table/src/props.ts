@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { ExtractPropTypes } from 'vue';
+import { ExtractPropTypes, Slot } from 'vue';
 import { string, toType } from 'vue-types';
 
 import { PropTypes } from '@bkui-vue/shared';
@@ -423,7 +423,7 @@ export type Field = {
 export type Column = {
   label: Function | string;
   field?: Function | string;
-  render?: Function | string;
+  render?: Function | string | Slot;
   width?: number | string;
   minWidth?: number | string;
   columnKey?: string;
