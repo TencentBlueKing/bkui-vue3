@@ -29,7 +29,15 @@ import { computed, onMounted, reactive, ref, watch } from 'vue';
 
 import { classes, resolveClassName } from '@bkui-vue/shared';
 
-import { BORDER_OPTION, COL_MIN_WIDTH, COLUMN_ATTRIBUTE, LINE_HEIGHT, SCROLLY_WIDTH, SETTING_SIZE, TABLE_ROW_ATTRIBUTE } from './const';
+import {
+  BORDER_OPTION,
+  COL_MIN_WIDTH,
+  COLUMN_ATTRIBUTE,
+  LINE_HEIGHT,
+  SCROLLY_WIDTH,
+  SETTING_SIZE,
+  TABLE_ROW_ATTRIBUTE,
+} from './const';
 import useActiveColumns from './plugins/use-active-columns';
 import useColumnResize from './plugins/use-column-resize';
 import useFixedColumn from './plugins/use-fixed-column';
@@ -107,6 +115,9 @@ export const useClass = (props: TablePropTypes, targetColumns: Column[], root?, 
     minHeight: resolveNumberOrStringToPix(props.minHeight, 'auto'),
     width: resolveWidth(),
     maxWidth: '100%',
+    // 如果表格已经设置了高度，父容器直接给定高度，先撑开，避免重绘
+    ...(typeof props.height === 'number' ? { height: `${props.height}px` } : null),
+    // height: resolveNumberOrStringToPix(props.height, 'auto')
   }));
 
 
@@ -387,7 +398,7 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
   /**
    * 用于初始化时，根据用户传入数据进行初始化操作
    */
-  const initSelectionAllByData = () =>  {
+  const initSelectionAllByData = () => {
     if (isSelectionEnable()) {
       updateSelectionAll(row => resolveSelectionRow(row));
     }
@@ -464,7 +475,8 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
   /**
    * 判定指定row是否选中
    * @param row 指定row
-   * @param rowId 指定row id
+   * @param _rowId 指定row id
+   * @param index
    * @returns boolean
    */
   const resolveSelection = (row: any, _rowId?: string, index?: number) => resolveSelectionRow(row, () => {
@@ -546,6 +558,7 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
    * @param isRowCheckEnable
    * @param selectedAll
    * @param item
+   * @param index
    * @returns
    */
   const isRowChecked = (isRowCheckEnable, selectedAll, item, index) => {
