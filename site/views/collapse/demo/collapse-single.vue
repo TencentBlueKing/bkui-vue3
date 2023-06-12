@@ -1,6 +1,7 @@
 <template>
   <bk-collapse-panel
-    v-model="active">
+    v-model="active"
+  >
     <span>collapse-panel:方案成熟</span>
     <template #content>
       <div>

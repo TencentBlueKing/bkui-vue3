@@ -1,7 +1,8 @@
 <template>
   <bk-collapse
+    v-model="activeIndex"
     class="bk-collapse-demo"
-    v-model="activeIndex">
+  >
     <bk-collapse-panel :name="1">
       <span>方案成熟</span>
       <template #content>
