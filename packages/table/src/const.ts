@@ -79,6 +79,8 @@ export const enum EMIT_EVENTS {
   ROW_CLICK = 'rowClick',
   ROW_DBL_CLICK = 'rowDblclick',
   ROW_EXPAND_CLICK = 'rowExpand',
+  ROW_MOUSE_ENTER = 'rowMouseEnter',
+  ROW_MOUSE_LEAVE = 'rowMouseLeave',
 
   PAGE_LIMIT_CHANGE = 'pageLimitChange',
   PAGE_VALUE_CHANGE = 'pageValueChange',
