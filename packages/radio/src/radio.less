@@ -192,7 +192,7 @@
   }
 }
 
-.@{bk-prefix}-radio-tab {
+.@{bk-prefix}-radio-tab,.@{bk-prefix}-radio-card {
 
   .@{bk-prefix}-radio-button {
     overflow: hidden;
@@ -251,3 +251,12 @@
 
 }
 
+.@{bk-prefix}-radio-card {
+  display: flex;
+  width: 100%;
+
+  .bk-radio-button {
+    flex: 1;
+    display: block;
+  }
+}
