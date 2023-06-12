@@ -28,6 +28,7 @@ import { defineComponent, reactive, ref, watch } from 'vue';
 import { array, object } from 'vue-types';
 
 import BkCheckbox from '@bkui-vue/checkbox';
+import { useLocale } from '@bkui-vue/config-provider';
 import { AngleRight, Spinner } from '@bkui-vue/icon';
 import { arrayEqual, PropTypes, resolveClassName } from '@bkui-vue/shared';
 
@@ -47,6 +48,8 @@ export default defineComponent({
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
+    const t = useLocale('select');
+
     const { store } = props;
     const menus = reactive({
       list: [props.store.getNodes()],
@@ -151,6 +154,8 @@ export default defineComponent({
       return events;
     };
 
+    const noDataText = t.value.noData;
+
     const isNodeInPath = (node: INode) => {
       const currentLevel = activePath.value[node.level - 1] || {};
       return currentLevel.id === node.id;
@@ -200,6 +205,7 @@ export default defineComponent({
       panelWidth,
       panelHeight,
       searchPanelEvents,
+      noDataText,
     };
   },
   render() {
@@ -228,7 +234,7 @@ export default defineComponent({
         {this.isFiltering ? searchPanelRender() : this.menus.list.map(menu => (
           <ul class={[resolveClassName('cascader-panel'), 'bk-scroll-y']}
             style={{ height: this.panelHeight, width: this.panelWidth }}>
-            {menu.map(node => (
+            {menu.length ? menu.map(node => (
               <li
                 class={[
                   resolveClassName('cascader-node'),
@@ -249,7 +255,7 @@ export default defineComponent({
                 {this.$slots.default?.({ node, data: node.data })}
                 {!node.isLeaf ? this.iconRender(node) : ''}
               </li>
-            ))}
+            )) : <div class={resolveClassName('cascader-panel-empty-wrapper')}>{this.noDataText}</div>}
           </ul>
         ))}
       </div>
