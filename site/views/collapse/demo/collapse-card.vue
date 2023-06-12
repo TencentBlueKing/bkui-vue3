@@ -1,7 +1,7 @@
 <template>
   <bk-collapse
-    use-card-theme
     v-model="activeIndex"
+    use-card-theme
     :list="list"
   />
 </template>

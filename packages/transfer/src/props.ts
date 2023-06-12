@@ -51,4 +51,6 @@ export const transferProps = {
   targetList: PropTypes.arrayOf(PropTypes.any).def([]),
   // 穿梭框无数据时提示文案
   emptyContent: PropTypes.arrayOf(PropTypes.string).def([]),
+  // 支持checkbox多选模式
+  multiple: PropTypes.bool.def(false),
 };

@@ -34,9 +34,10 @@ import { IPropsTableItem } from '../../typings';
 import BaseDemo from './base-demo.vue';
 import CustomHeaderDemo from './custom-header-demo.vue';
 import CustomOptionDemo from './custom-option-demo.vue';
+import MultipleDemo from './multiple-demo.vue';
 import NormalListDemo from './normal-list-demo.vue';
 import SearchDemo from './search-demo.vue';
-import TargetListDemo from './target-list-demo.vue';
+import TargetListDemo from './target-list-demo.vue';;
 
 const transferPropsJson: IPropsTableItem[] = [
   {
@@ -123,7 +124,13 @@ const transferPropsJson: IPropsTableItem[] = [
     desc: '配置自定义样式类名，传入的类会被加在组件最外层的 DOM .bk-transfer 上',
     optional: [],
   },
-
+  {
+    name: 'multiple',
+    type: 'Boolean',
+    default: false,
+    desc: '勾选模式，支持多个内容同时穿梭',
+    optional: [],
+  },
 ];
 
 const transferSlotsJson: IPropsTableItem[] = [
@@ -247,6 +254,14 @@ export default defineComponent({
           componentName="transfer"
           demoName="search-demo">
           <SearchDemo></SearchDemo>
+        </DemoBox>
+        <DemoBox
+          title="勾选模式，支持多选"
+          subtitle=""
+          desc="配置 multiple 启用多选"
+          componentName="transfer"
+          demoName="multiple-demo">
+          <MultipleDemo></MultipleDemo>
         </DemoBox>
         <PropsBox
           title="Transfer 属性"

@@ -29,12 +29,11 @@ import { defineComponent } from 'vue';
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
-import {
-  type IPropsTableItem,
-} from '../../typings';
+import { type IPropsTableItem } from '../../typings';
 
 import DemoRadio from './demo/radio.vue';
 import DemoRadioButton from './demo/radio-button.vue';
+import DemoRadioCard from './demo/radio-card.vue';
 import DemoRadioChecked from './demo/radio-checked.vue';
 import DemoRadioDisabled from './demo/radio-disabled.vue';
 import DemoRadioGroup from './demo/radio-group.vue';
@@ -184,36 +183,44 @@ export default defineComponent({
           desc=""
           componentName="radio"
           demoName="/demo/radio">
-            <DemoRadio />
+          <DemoRadio/>
         </DemoBox>
         <DemoBox
           title="单选框组"
           desc="配合 bk-radio-group 使用"
           componentName="radio"
           demoName="/demo/radio-group">
-            <DemoRadioGroup />
+          <DemoRadioGroup/>
         </DemoBox>
         <DemoBox
           title="默认选中"
           desc=""
           componentName="radio"
           demoName="/demo/radio-checked">
-            <DemoRadioChecked />
+          <DemoRadioChecked/>
         </DemoBox>
         <DemoBox
           title="禁用状态"
           desc=""
           componentName="radio"
           demoName="/demo/radio-disabled">
-            <DemoRadioDisabled />
+          <DemoRadioDisabled/>
         </DemoBox>
 
         <DemoBox
           title="按钮样式"
           desc=""
           componentName="radio"
-          demoName="/demo/radio-group">
-            <DemoRadioButton />
+          demoName="/demo/radio-button">
+          <DemoRadioButton/>
+        </DemoBox>
+
+        <DemoBox
+          title="卡片样式"
+          desc="100%充满父容器，每个子项等分父容器宽度"
+          componentName="radio"
+          demoName="/demo/radio-card">
+          <DemoRadioCard/>
         </DemoBox>
 
         <DemoBox
@@ -221,7 +228,7 @@ export default defineComponent({
           desc=""
           componentName="radio"
           demoName="/demo/radio-group-capsule">
-            <DemoRadioGroupCapsule />
+          <DemoRadioGroupCapsule/>
         </DemoBox>
 
         <PropsBox

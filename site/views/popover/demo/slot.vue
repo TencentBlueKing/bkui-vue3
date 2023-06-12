@@ -1,6 +1,7 @@
 <template>
   <bk-popover
     placement="top"
+    theme="light"
     width="490"
   >
     <bk-button>超长</bk-button>

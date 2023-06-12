@@ -195,12 +195,11 @@ export default defineComponent({
         }
         return classNames.join(' ');
       };
-      // const getValue = (value, value2) => (typeof value === 'boolean' ? value : value2);
-      const getValue = (curentValue, parentValue) => curentValue || parentValue;
+      const getValue = (curentValue, parentValue) => !disabled && (curentValue || parentValue);
       return (
         <div
           key={name}
-          onClick={() => this.handleTabChange(name)}
+          onClick={() => !disabled && this.handleTabChange(name)}
           draggable={getValue(item.sortable, sortable)}
           onDragstart={e => dragstart(index, e)}
           ref={active === name ? 'activeRef' : ''}

@@ -27,6 +27,7 @@
 import { computed, defineComponent, nextTick, ref, toRefs, watch } from 'vue';
 import { array } from 'vue-types';
 
+import { useLocale } from '@bkui-vue/config-provider';
 import { bkTooltips } from '@bkui-vue/directives';
 import { AngleUp, Close, Error } from '@bkui-vue/icon';
 import BkPopover from '@bkui-vue/popover';
@@ -53,7 +54,7 @@ export default defineComponent({
   props: {
     modelValue: PropTypes.arrayOf(PropTypes.oneOfType([array<string>(), String, Number])),
     list: PropTypes.array.def([]),
-    placeholder: PropTypes.string.def('请选择'),
+    placeholder: PropTypes.string.def(''),
     behavior: PropTypes.string.def('normal'),
     filterable: PropTypes.bool.def(false),
     multiple: PropTypes.bool.def(false),
@@ -83,19 +84,41 @@ export default defineComponent({
   },
   emits: ['update:modelValue', 'change', 'clear', 'toggle', 'focus'],
   setup(props, { emit }) {
+    const t = useLocale('select');
+
     const { separator, multiple } = props;
+    // 用useHover自定义hook来处理鼠标hover状态
     const { isHover, setHover, cancelHover } = useHover();
+
     const store = ref(new Store(props));
+
+    // 定义selectedText变量用于记录当前选择的值的文本
     const selectedText = ref<string | number>('');
+
+    // 定义selectedTags变量用于记录多选模式下已选的tag
     const selectedTags = ref([]);
+
     const { modelValue } = toRefs(props);
+
+    // 定义cascaderPanel 引用
     const cascaderPanel = ref();
-    const searchKey = ref<string | number>('');  // 支持搜索时，搜索框绑定变量
-    const suggestions = ref([]); // 搜索功能打开时，面板给出的列表
-    const isFiltering = ref(false); // 是否正在搜索，过滤
+
+    // 定义searchKey变量，支持搜索时，搜索框绑定变量
+    const searchKey = ref<string | number>('');
+
+    // 定义suggestions变量，搜索功能打开时，面板给出的列表
+    const suggestions = ref([]);
+
+    // 定义isFiltering变量，记录是否正在搜索，过滤
+    const isFiltering = ref(false);
+
+    // 定义isEdit变量，记录是否处于编辑状态
     const isEdit = ref(false);
+
+    // 定义isFocus变量，记录是否处于焦点状态
     const isFocus = ref(false);
 
+    // 用computed定义checkedValue变量，用于监听modelValue的变化
     const checkedValue = computed({
       get: () => modelValue.value,
       set: (value: Array<string | number | string[]>) => {
@@ -103,23 +126,29 @@ export default defineComponent({
       },
     });
 
+    // 定义popover变量
     const popover = ref(null);
+
+    // 定义bkCascaderRef和inputRef变量
     const bkCascaderRef = ref(null);
     const inputRef = ref(null);
 
-    /** 根据配置，获取输入框显示的text */
-    const getShowText = (node: INode) =>  (props.showCompleteName
+    // 用computed定义placeholder变量，用于处理props中的placeholder属性
+    const placeholder = computed(() => (props.placeholder ? props.placeholder : t.value.pleaseSelect));
+
+    // 根据配置，获取输入框显示的text
+    const getShowText = (node: INode) => (props.showCompleteName
       ? node.pathNames.join(separator)
       : node.pathNames[node.pathNames.length - 1]);
 
-    /** 更新搜索框的值 */
+    // 更新搜索框的值
     const updateSearchKey = () => {
       searchKey.value = selectedText.value;
     };
 
-    /** 更新选中 */
+    // 更新选中
     const updateValue = (val: Array<string | number | string[]>) => {
-      /** 根据配置更新显示内容 */
+    // 根据配置更新显示内容
       if (multiple) {
         store.value.setNodesCheck(val as Array<string[]>);
         selectedTags.value = store.value.getCheckedNodes().map((node: INode) => ({
@@ -130,7 +159,7 @@ export default defineComponent({
         return;
       }
 
-      /** 根据val的值，设置selectedText显示内容 */
+      // 根据val的值，设置selectedText显示内容
       !props.checkAnyLevel && popover?.value?.hide(); // 非多选，选中后，关闭popover
       if (val.length === 0) {
         selectedText.value = '';
@@ -142,7 +171,7 @@ export default defineComponent({
       updateSearchKey();
     };
 
-    /** 清空所选内容，要stopPropagation防止触发下拉 */
+    // 清空所选内容，要stopPropagation防止触发下拉
     const handleClear = (e: Event) => {
       e.stopPropagation();
       store.value.clearChecked();
@@ -152,6 +181,7 @@ export default defineComponent({
       emit('clear', JSON.parse(JSON.stringify(props.modelValue)));
     };
 
+    // 移除tag
     const removeTag = (value, index, e) => {
       e.stopPropagation();
       const current = JSON.parse(JSON.stringify(value));
@@ -166,20 +196,23 @@ export default defineComponent({
       });
     };
 
+    // modelValue的监听函数
     const modelValueChangeHandler = (value, oldValue) => {
       updateValue(value);
-      /** 派发相关事件 */
+      // 派发相关事件
       emit('update:modelValue', value);
       oldValue !== undefined && emit('change', value); // oldValue = undefined代表初始化，init不派发change事件
       // 如果有过滤搜索，选择后，自动focus到input
       inputRef?.value?.focus();
     };
 
+    // list的监听函数
     const listChangeHandler = () => {
       store.value = new Store(props);
       updateValue(props.modelValue);
     };
 
+    // popover的监听函数
     const popoverChangeEmitter = (val) => {
       emit('toggle', val.isShow);
 
@@ -191,14 +224,14 @@ export default defineComponent({
         val && inputRef.value?.focus();
       });
 
-
       val.isShow && focusEmitter(); // 面板打开，触发focus事件
-      /** 面板收起，搜索状态关闭 */
+      // 面板收起，搜索状态关闭
       if (!val.isShow) {
         isFiltering.value = false;
       }
     };
 
+    // 搜索框输入的处理函数
     const searchInputHandler = debounce(200, (e: InputEvent) => {
       const target = e.target as HTMLInputElement;
       searchKey.value = target.value;
@@ -217,34 +250,36 @@ export default defineComponent({
       !popover?.value.isShow && popover?.value.show();
     });
 
+    // focus事件的处理函数
     const focusEmitter = () => {
       emit('focus');
     };
 
+    // 监听modelValue的变化
     watch(
       () => props.modelValue,
-      modelValueChangeHandler, { immediate: true },
+      modelValueChangeHandler,
+      { immediate: true },
     );
 
+    // 监听list的变化
     watch(
       () => props.list,
       listChangeHandler,
       { deep: true, immediate: true },
     );
 
-    /**
-     * 折叠tag(collapseTags)相关逻辑
-     * @params tagList: string 多选tag的name合集;
-     * @params isCollapse: boolean 是否折叠，当外部传入collapseTags参数且下拉面板打开时，才显示所有tags
-     */
+    // 定义overflowTagIndex变量，用于处理tag的折叠
     const tagList = computed(() => selectedTags.value.map(item => item.text));
     const isCollapse = computed(() => (props.collapseTags ? props.collapseTags && isFocus.value
       : props.collapseTags));
     const isEditMode = computed(() => (props.collapseTags ? props.collapseTags && isEdit.value
       : props.collapseTags));
-
     const { overflowTagIndex } = useTagsOverflow(bkCascaderRef, isEditMode, tagList);
+
+    // 返回组件所需的变量和函数
     return {
+      calcuPlaceholder: placeholder,
       bkCascaderRef,
       inputRef,
       overflowTagIndex,
@@ -273,17 +308,21 @@ export default defineComponent({
     };
   },
   render() {
+    // 定义suffixIcon函数，用于根据不同情况渲染后缀图标
     const suffixIcon = () => {
       if (this.clearable && this.isHover && !this.disabled) {
+        // 当可清空、鼠标悬浮且未禁用时，渲染清空图标
         return <Close class={resolveClassName('icon-clear-icon')}
           onClick={this.handleClear}></Close>;
       }
+      // 否则渲染展开/收起图标
       return <AngleUp class={resolveClassName('icon-angle-up')}></AngleUp>;
     };
 
     // 因为cascader的tag长短不一，在计算时如果overflowIndex为0，会出现直接+n渲染的情况，因此需要对其进行修正
     this.overflowTagIndex = this.overflowTagIndex === 0 ? 1 : this.overflowTagIndex;
 
+    // 根据overflowTagIndex获取需要收起的tag，并生成tooltip
     const collapseTooltip = this.tagList.reduce((acc, cur, curIndex) => {
       if (this.overflowTagIndex !== null && curIndex >= this.overflowTagIndex) {
         acc.push(cur);
@@ -291,13 +330,16 @@ export default defineComponent({
       return acc;
     }, []);
 
+    // 定义renderTags函数，用于渲染选中的tag
     const renderTags = () => {
       if (this.limitOneLine) {
+        // 如果limitOneLine为true，则只显示一行
         return <span class="cascader-selected-text">{this.selectedText}</span>;
       }
       return <div class="cascader-tag-list">
         {this.tagList.map((tag, index) => {
           const isOverflow = !this.isCollapse && this.overflowTagIndex !== null && index >= this.overflowTagIndex;
+          // 根据tag是否超出显示范围，来决定是否渲染
           return (
             <span class="tag-item" style={{ display: isOverflow ? 'none' : '' }} key={tag}>
               <span class="tag-item-name">{tag}</span>
@@ -323,76 +365,86 @@ export default defineComponent({
       this.multiple ? null :  <span>{this.selectedText}</span>
     );
 
+    // 定义popoverRender函数，用于渲染弹出框
+    const popoverRender = () => (
+      <BkPopover
+        placement="bottom-start"
+        theme={`light ${resolveClassName('cascader-popover')}`}
+        trigger="click"
+        arrow={false}
+        disabled={this.disabled}
+        class={resolveClassName('cascader-popover-wrapper')}
+        ref="popover"
+        onAfterHidden={this.popoverChangeEmitter}
+        onAfterShow={this.popoverChangeEmitter}
+        boundary="body">
+        {{
+          default: () => (
+            this.$slots.trigger
+              ? this.$slots.trigger({ selected: this.modelValue })
+              : <div class={[resolveClassName('cascader-name'), 'bk-scroll-y']}>
+              {this.multiple && this.selectedTags.length > 0 && renderTags()}
+              {this.filterable
+                ? (this.isCollapse || this.selectedTags.length === 0)
+                && <input class={[resolveClassName('cascader-search-input'), {
+                  'is-disabled': this.disabled,
+                }]}
+                    type="text"
+                    onInput={this.searchInputHandler}
+                    placeholder={this.calcuPlaceholder}
+                    value={this.searchKey}
+                    disabled={this.disabled}
+                    ref="inputRef"
+                  />
+                : textRender()
+              }
+            </div>
+          ),
+          content: () => (
+            <div class={resolveClassName('cascader-popover')}>
+              <CascaderPanel
+                store={this.store}
+                ref="cascaderPanel"
+                width={this.scrollWidth}
+                height={this.scrollHeight}
+                search-key={this.searchKey}
+                separator={this.separator}
+                is-filtering={this.isFiltering}
+                suggestions={this.suggestions}
+                v-model={this.checkedValue}
+                v-slots={{
+                  default: scope => (this.$slots.default
+                    ? this.$slots.default(scope)
+                    : <span class={resolveClassName('cascader-node-name')}>{scope.node.name}</span>),
+                }}>
+              </CascaderPanel>
+            </div>
+          ),
+        }}
+      </BkPopover>
+    );
+
     return (
       <div class={[resolveClassName('cascader-wrapper'), this.floatMode ? 'float-mode' : '']}>
-        <div class={[resolveClassName('cascader'), this.extCls, {
-          'is-unselected': this.modelValue.length === 0,
-          'is-hover': this.isHover,
-          'is-filterable': this.filterable,
-          'is-focus': this.isFocus,
-          'is-disabled': this.disabled,
-          'is-simplicity': this.behavior === 'simplicity',
-        }]}
-          tabindex="0"
-          data-placeholder={this.placeholder}
-          onMouseenter={this.setHover}
-          onMouseleave={this.cancelHover}
-          ref="bkCascaderRef">
-          {suffixIcon()}
-          <BkPopover
-            placement="bottom-start"
-            theme={`light ${resolveClassName('cascader-popover')}`}
-            trigger="click"
-            arrow={false}
-            disabled={this.disabled}
-            class={resolveClassName('cascader-popover-wrapper')}
-            ref="popover"
-            onAfterHidden={this.popoverChangeEmitter}
-            onAfterShow={this.popoverChangeEmitter}
-            boundary="body">
-            {{
-              default: () => (
-                <div class={[resolveClassName('cascader-name'), 'bk-scroll-y']}>
-                  {this.multiple && this.selectedTags.length > 0 && renderTags()}
-                  {this.filterable
-                    ? (this.isCollapse || this.selectedTags.length === 0)
-                    && <input class={[resolveClassName('cascader-search-input'), {
-                      'is-disabled': this.disabled,
-                    }]}
-                        type="text"
-                        onInput={this.searchInputHandler}
-                        placeholder={this.placeholder}
-                        value={this.searchKey}
-                        disabled={this.disabled}
-                        ref="inputRef"
-                      />
-                    : textRender()
-                  }
-                </div>
-              ),
-              content: () => (
-                <div class={resolveClassName('cascader-popover')}>
-                  <CascaderPanel
-                    store={this.store}
-                    ref="cascaderPanel"
-                    width={this.scrollWidth}
-                    height={this.scrollHeight}
-                    search-key={this.searchKey}
-                    separator={this.separator}
-                    is-filtering={this.isFiltering}
-                    suggestions={this.suggestions}
-                    v-model={this.checkedValue}
-                    v-slots={{
-                      default: scope => (this.$slots.default
-                        ? this.$slots.default(scope)
-                        : <span class={resolveClassName('cascader-node-name')}>{scope.node.name}</span>),
-                    }}>
-                  </CascaderPanel>
-                </div>
-              ),
-            }}
-          </BkPopover>
-        </div>
+        { this.$slots.trigger
+          ? popoverRender()
+          : <div class={[resolveClassName('cascader'), this.extCls, {
+            'is-unselected': this.modelValue.length === 0,
+            'is-hover': this.isHover,
+            'is-filterable': this.filterable,
+            'is-focus': this.isFocus,
+            'is-disabled': this.disabled,
+            'is-simplicity': this.behavior === 'simplicity',
+          }]}
+            tabindex="0"
+            data-placeholder={this.calcuPlaceholder}
+            onMouseenter={this.setHover}
+            onMouseleave={this.cancelHover}
+            ref="bkCascaderRef">
+            {suffixIcon()}
+            {popoverRender()}
+          </div>
+        }
       </div>
     );
   },

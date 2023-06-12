@@ -1,7 +1,7 @@
 <template>
   <bk-collapse
-    class="bk-collapse-demo"
     v-model="activeIndex"
+    class="bk-collapse-demo"
     :list="list"
     accordion
   />

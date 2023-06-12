@@ -567,13 +567,13 @@ export default defineComponent({
             style='width: 261px;'>
             <div class={resolveClassName('date-picker-header')} v-show={this.currentView !== 'time'}>
               <span class={iconBtnCls('prev', '-double')} onClick={() => this.prevYear('left')}>
-                <AngleDoubleLeft style={{ fontSize: '20px', lineHeight: 1 }}></AngleDoubleLeft>
+                <AngleDoubleLeft style={{ fontSize: '20px', lineHeight: 1, verticalAlign: 'text-bottom' }}></AngleDoubleLeft>
               </span>
               {
                 this.leftPickerTable === 'date-table'
                   ? (
                     <span class={iconBtnCls('prev')} onClick={() => this.prevMonth('left')} v-show={this.currentView === 'date'}>
-                      <AngleLeft style={{ fontSize: '20px', lineHeight: 1 }}></AngleLeft>
+                      <AngleLeft style={{ fontSize: '20px', lineHeight: 1, verticalAlign: 'text-bottom' }}></AngleLeft>
                     </span>
                   )
                   : ''
@@ -603,7 +603,7 @@ export default defineComponent({
                 this.splitPanels || this.leftPickerTable !== 'date-table'
                   ? (
                     <span class={iconBtnCls('next', '-double')} onClick={() => this.nextYear('left')}>
-                      <AngleDoubleRight style={{ fontSize: '20px', lineHeight: 1 }}></AngleDoubleRight>
+                      <AngleDoubleRight style={{ fontSize: '20px', lineHeight: 1, verticalAlign: 'text-bottom' }}></AngleDoubleRight>
                     </span>
                   )
                   : ''
@@ -612,7 +612,7 @@ export default defineComponent({
                 this.splitPanels || this.leftPickerTable === 'date-table'
                   ? (
                     <span class={iconBtnCls('next')} onClick={() => this.nextMonth('left')} v-show={this.currentView === 'date'}>
-                      <AngleRight style={{ fontSize: '20px', lineHeight: 1 }}></AngleRight>
+                      <AngleRight style={{ fontSize: '20px', lineHeight: 1, verticalAlign: 'text-bottom' }}></AngleRight>
                     </span>
                   )
                   : ''
@@ -653,7 +653,7 @@ export default defineComponent({
                 this.splitPanels || this.rightPickerTable !== 'date-table'
                   ? (
                     <span class={iconBtnCls('prev', '-double')} onClick={() => this.prevYear('right')}>
-                      <AngleDoubleLeft style={{ fontSize: '20px', lineHeight: 1 }}></AngleDoubleLeft>
+                      <AngleDoubleLeft style={{ fontSize: '20px', lineHeight: 1, verticalAlign: 'text-bottom' }}></AngleDoubleLeft>
                     </span>
                   )
                   : ''
@@ -662,7 +662,7 @@ export default defineComponent({
                 this.splitPanels && this.rightPickerTable === 'date-table'
                   ? (
                     <span class={iconBtnCls('prev', '-double')} onClick={() => this.prevMonth('right')} v-show={this.currentView === 'date'}>
-                      <AngleLeft style={{ fontSize: '20px', lineHeight: 1 }}></AngleLeft>
+                      <AngleLeft style={{ fontSize: '20px', lineHeight: 1, verticalAlign: 'text-bottom' }}></AngleLeft>
                     </span>
                   )
                   : ''
@@ -699,13 +699,13 @@ export default defineComponent({
                   : ''
               }
               <span class={iconBtnCls('next', '-double')} onClick={() => this.nextYear('right')}>
-                <AngleDoubleRight style={{ fontSize: '20px', lineHeight: 1 }}></AngleDoubleRight>
+                <AngleDoubleRight style={{ fontSize: '20px', lineHeight: 1, verticalAlign: 'text-bottom' }}></AngleDoubleRight>
               </span>
               {
                 this.rightPickerTable === 'date-table'
                   ? (
                     <span class={iconBtnCls('next')} onClick={() => this.nextMonth('right')} v-show={this.currentView === 'date'}>
-                      <AngleRight style={{ fontSize: '20px', lineHeight: 1 }}></AngleRight>
+                      <AngleRight style={{ fontSize: '20px', lineHeight: 1, verticalAlign: 'text-bottom' }}></AngleRight>
                     </span>
                   )
                   : ''

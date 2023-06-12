@@ -23,17 +23,16 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { unref } from 'vue';
-
-import { Column, TablePropTypes } from './props';
+import { ITableColumn } from './components/table-column';
+import { TablePropTypes } from './props';
 /**
  * 渲染column settings
  * @param props: TablePropTypes
  * @param targetColumns 解析之后的column配置（主要用来处理通过<bk-column>配置的数据结构）
  */
-export default (props: TablePropTypes, targetColumns: Column[]) => {
-  const initColumns = (column: Column | Column[], remove = false) => {
-    let resolveColumns: Column[] = [];
+export default (props: TablePropTypes, targetColumns: ITableColumn[]) => {
+  const initColumns = (column: ITableColumn | ITableColumn[], remove = false) => {
+    let resolveColumns: ITableColumn[] = [];
 
     if (!Array.isArray(column)) {
       resolveColumns = [column];
@@ -42,15 +41,28 @@ export default (props: TablePropTypes, targetColumns: Column[]) => {
     }
 
     if (!remove) {
-      const resetColumns = resolveColumns.map((col) => {
-        const exist = targetColumns.find(tc => tc.label === col.label && tc.field === col.field);
-        if (exist) {
-          return exist;
+      let needToSort = false;
+      resolveColumns.forEach((col) => {
+        if (col.index !== undefined && col.index >= 0) {
+          needToSort = true;
+          const oldIndex = targetColumns.findIndex(tc => tc.label === col.label && tc.field === col.field);
+          if (oldIndex >= 0) {
+            targetColumns.splice(oldIndex, 1);
+          }
+          targetColumns.push(col);
+        } else {
+          const index = targetColumns.findIndex(tc => tc.label === col.label && tc.field === col.field);
+          if (index >= 0) {
+            targetColumns.splice(index, 1, col);
+          } else {
+            targetColumns.push(col);
+          }
         }
-        return unref(col);
       });
-      targetColumns.length = 0;
-      targetColumns.push(...resetColumns);
+
+      if (needToSort) {
+        targetColumns.sort((col1, col2) => col1.index - col2.index);
+      }
     } else {
       resolveColumns.forEach((col) => {
         const matchColIndex = targetColumns.findIndex(c => c.label === col.label && c.field === col.field);

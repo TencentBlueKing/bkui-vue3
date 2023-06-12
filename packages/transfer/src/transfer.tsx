@@ -27,8 +27,9 @@
 /* eslint-disable arrow-body-style */
 import { computed, defineComponent, ref, toRaw, toRefs, watch } from 'vue';
 
+import BkCheckbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
 import { useLocale } from '@bkui-vue/config-provider';
-import { ArrowsRight, Error, Search, Transfer } from '@bkui-vue/icon/';
+import { AngleLeft, AngleRight, ArrowsRight, Error, Search, Transfer } from '@bkui-vue/icon/';
 import BkInput from '@bkui-vue/input';
 
 import { ArrayType } from './const';
@@ -88,6 +89,8 @@ export default defineComponent({
   emits: ['change', 'update:targetList'],
   setup(props, { emit }) {
     const t = useLocale('transfer');
+    const multipleSelectAllValue = ref({ source: false, target: false });
+    const multipleSelectList = ref({ source: [], target: [] });
     // 区分数据是基础数据数组(false)还是对象数组(true)
     const sourceListType = computed(() => {
       if (Array.isArray(props.sourceList)) {
@@ -133,7 +136,9 @@ export default defineComponent({
     });
 
     watch(() => [selectList, selectedList], () => {
-      handleEmitUpdateTargetList();
+      if (!props.multiple) {
+        handleEmitUpdateTargetList();
+      }
     }, { deep: true });
 
     /** 全选、清空操作过滤禁用选项 */
@@ -193,6 +198,38 @@ export default defineComponent({
         targetList,
       );
     };
+    /**
+     * @desc checkboxGroup 变化事件
+     * @param { string } dirct 左右面板
+     */
+    const handleItemChecked = (dirct) => {
+      const target = dirct === 'source' ? selectList : selectedList;
+      multipleSelectAllValue.value[dirct] = multipleSelectList.value[dirct].length === target.value.length;
+    };
+    /**
+     * @desc checkbox 全选
+     * @param { boolean } value checked
+     * @param { string } dirct 左右面板
+     */
+    const handleAllChecked = (value, dirct) => {
+      const target = dirct === 'source' ? selectList : selectedList;
+      multipleSelectList.value[dirct] = value ? target.value.map(item => item[settingCode.value]) : [];
+    };
+    /**
+     * @desc 多选后点击穿梭事件
+     * @param { string } dirct 左右面板
+     */
+    const handleMultipleChange = (dirct) => {
+      const isLeft = dirct === 'left';
+      const from = isLeft ? selectList : selectedList;
+      const to = isLeft ? selectedList : selectList;
+      const checkeds = multipleSelectList.value[isLeft ? 'source' : 'target'];
+      const items = from.value.filter(val => checkeds.includes(val[settingCode.value]));
+      from.value = from.value.filter(val => !checkeds.includes(val[settingCode.value]));
+      to.value.push(...items);
+      multipleSelectList.value[isLeft ? 'source' : 'target'] = [];
+      handleEmitUpdateTargetList();
+    };
 
     return {
       selectSearchQuery,
@@ -206,15 +243,25 @@ export default defineComponent({
       allToLeft,
       handleItemClick,
       t,
+      handleAllChecked,
+      multipleSelectAllValue,
+      multipleSelectList,
+      handleMultipleChange,
+      handleItemChecked,
     };
   },
   render() {
+    const { multiple } = this.$props;
     const leftList = this.sortable ? this.selectListSort : this.selectListSearch;
     const rightList = this.sortable ? this.selectedListSort : this.selectedList;
     const getHeaderHtml = (dirct) => {
       const isLeft = dirct === 'left-header';
+      const selectField = isLeft ? 'source' : 'target';
       const titleText = isLeft ? `${this.title[0] ?? this.t.sourceList}` : `${this.title[1] ?? this.t.targetList}`;
       const isDisabled = isLeft ? !leftList.length : !rightList.length;
+      // eslint-disable-next-line max-len
+      const isIndeterminate = !!this.multipleSelectList[selectField].length && !this.multipleSelectAllValue[selectField];
+      const selectCount = this.multipleSelectList[selectField].length;
       const headerClick = () => {
         if (isDisabled) return;
         isLeft ? this.allToRight() : this.allToLeft();
@@ -225,12 +272,32 @@ export default defineComponent({
             {this.$slots[dirct]()}
           </div>
         : <div class="header">
-            {`${titleText}（${isLeft ? leftList.length : rightList.length}）`}
-            <span
-              class={{ disabled: isDisabled }}
-              onClick={() => headerClick()}>
-              {isLeft ? this.t.selectAll : this.t.removeAll}
-              </span>
+            {this.multiple
+              ? (
+                <BkCheckbox
+                  class="header-checkbox"
+                  label={titleText}
+                  v-model={this.multipleSelectAllValue[selectField]}
+                  indeterminate={isIndeterminate}
+                  onChange={val => this.handleAllChecked(val, selectField)}
+                />
+              )
+              : <>{`${titleText}（${isLeft ? leftList.length : rightList.length}）`}</>
+            }
+            {this.multiple
+              ? <div class="select-total-count">
+                <span class="select-count">{selectCount}</span>
+                <span class="count-delimiter">/</span>
+                <span class="total-count">{isLeft ? leftList.length : rightList.length}</span>
+              </div>
+              : (
+                <span
+                  class={{ 'select-all': true, disabled: isDisabled }}
+                  onClick={() => headerClick()}>
+                  {isLeft ? this.t.selectAll : this.t.removeAll}
+                </span>
+              )
+            }
           </div>;
     };
     const getEmptyHtml = (dirct) => {
@@ -263,20 +330,33 @@ export default defineComponent({
             title={item[this.displayCode]}>
             {item[this.displayCode]}
           </span>
-          <span class="icon-wrapper">
-            {isLeft ? <ArrowsRight class="bk-icon icon-move" /> : <Error class="bk-icon icon-delete" />}
-          </span>
+          {!multiple && (
+            <span class="icon-wrapper">
+              {isLeft ? <ArrowsRight class="bk-icon icon-move" /> : <Error class="bk-icon icon-delete" />}
+            </span>
+          )}
         </div>
       );
     };
     const getListContentHtml = (dirct) => {
       const isLeft = dirct === 'left';
+      const selectField = dirct === 'left' ? 'source' : 'target';
       const list = isLeft ? leftList : rightList;
       const slotName = isLeft ? 'source-option' : 'target-option';
       const emptySlotName = isLeft ? 'left-empty-content' : 'right-empty-content';
-
-      return list.length
-        ? <ul class={['content', this.searchable && isLeft ? 'is-search' : '']}>
+      const contentMode = multiple
+        ? <BkCheckboxGroup
+            class="content is-flex"
+            v-model={this.multipleSelectList[selectField]}
+            onChange={() => this.handleItemChecked(selectField)}
+            >
+            {list.map((item: any) => <div>
+              <BkCheckbox class="checkbox-item" label={item[this.settingCode]}>
+                {this.$slots[slotName]?.(item) ?? (getDefaultListHtml(item, isLeft))}
+              </BkCheckbox>
+            </div>)}
+          </BkCheckboxGroup>
+        : <ul class={['content', this.searchable && isLeft ? 'is-search' : '']}>
             {list.map(item => (
               <li
                 key={item[this.settingCode]}
@@ -285,7 +365,9 @@ export default defineComponent({
                 {this.$slots[slotName]?.(item) ?? (getDefaultListHtml(item, isLeft))}
               </li>
             ))}
-          </ul>
+          </ul>;
+      return list.length
+        ? contentMode
         : getEmptyHtml(emptySlotName);
     };
 
@@ -309,7 +391,20 @@ export default defineComponent({
           }
           {getListContentHtml('left')}
         </div>
-        <Transfer class="transfer" />
+        {multiple ? (
+          <div class="transfer-button-group">
+            <div
+              class={['transfer-button', { disabled: !this.multipleSelectList.source.length }]}
+              onClick={() => this.handleMultipleChange('left')}>
+              <AngleRight />
+            </div>
+            <div
+              class={['transfer-button', { disabled: !this.multipleSelectList.target.length }]}
+              onClick={() => this.handleMultipleChange('right')}>
+                <AngleLeft />
+            </div>
+          </div>
+        ) : <Transfer class="transfer" />}
         <div class="target-list">
           {getHeaderHtml('right-header')}
           {getListContentHtml('right')}

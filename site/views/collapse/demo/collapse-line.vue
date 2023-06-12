@@ -1,8 +1,8 @@
 <template>
   <bk-collapse
+    v-model="activeIndex"
     has-header-border
     class="bk-collapse-demo"
-    v-model="activeIndex"
     :list="list"
   />
 </template>

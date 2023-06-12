@@ -54,7 +54,13 @@ export default defineComponent({
       });
     }
 
-    function clickItem(props) {
+    function toCamelCase(str) {
+      const words = str.split('-');
+      const camelCaseWords = words.map((word: string) => word.charAt(0).toUpperCase() + word.slice(1));
+      return camelCaseWords.join('');
+    }
+
+    function clickItem() {
       const { disabled, name, itemClick } = props;
       if (disabled) return;
       const data = { name };
@@ -91,7 +97,7 @@ export default defineComponent({
       );
     }
 
-    function renderHeader() {
+    function renderHeader(icon: any) {
       if (slots.header) {
         if (typeof slots.header === 'function') {
           return slots.header(h);
@@ -109,37 +115,37 @@ export default defineComponent({
         title = props.title;
       }
 
-      function toCamelCase(str) {
-        const words = str.split('-');
-        const camelCaseWords = words.map((word) => {
-          return word.charAt(0).toUpperCase() + word.slice(1);
-        });
-        return camelCaseWords.join('');
-      }
-
-      const icon = BkIcon[`${toCamelCase(props.icon)}`]
-      return (
+      return <>
         <div class="bk-collapse-header">
           <span class="bk-collapse-title">
             {title}
           </span>
-          { <icon class={`bk-collapse-icon ${(isActive.value && 'rotate-icon') || ''}`}/>}
+          {icon}
         </div>
-      );
+      </>;
     }
 
-    return () => (
+    return {
+      isActive,
+      collapseIcon: BkIcon[`${toCamelCase(props.icon)}`],
+      clickItem,
+      renderPanel,
+      renderHeader,
+    };
+  },
+  render() {
+    return <>
       <div
-        class={`bk-collapse-item ${props.disabled ? 'is-disabled' : ''} ${isActive.value ? 'bk-collapse-item-active' : ''}`}>
-        <div onClick={() => clickItem(props)}>
-          {renderHeader()}
+        class={`bk-collapse-item ${this.disabled ? 'is-disabled' : ''} ${this.isActive ? 'bk-collapse-item-active' : ''}`}>
+        <div onClick={() => this.clickItem()}>
+          {this.renderHeader(<this.collapseIcon class={`bk-collapse-icon ${(this.isActive && 'rotate-icon') || ''}`}/>)}
         </div>
         <BKCollapseTransition>
           {
-            renderPanel()
+            this.renderPanel()
           }
         </BKCollapseTransition>
       </div>
-    );
-  }
+    </>;
+  },
 });
