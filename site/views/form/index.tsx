@@ -80,6 +80,30 @@ const formProps: IPropsTableItem[] = [
   },
 ];
 
+const formMethods: IPropsTableItem[] = [
+  {
+    name: 'validate',
+    type: 'Function',
+    default: null,
+    desc: '触发表单校验',
+    optional: [],
+  },
+  {
+    name: 'getValidateResult',
+    type: 'Function',
+    default: null,
+    desc: '只获取表单校验结果，不会标记错误表单项',
+    optional: [],
+  },
+  {
+    name: 'clearValidate',
+    type: 'Function',
+    default: null,
+    desc: '触发表单校验',
+    optional: [],
+  },
+];
+
 const formEvents: IPropsTableItem[] = [
   {
     name: 'validate',
@@ -218,6 +242,10 @@ export default defineComponent({
           title="Form 属性"
           subtitle=""
           propsData={formProps}/>
+        <PropsBox
+          title="Form 实例方法"
+          subtitle=""
+          propsData={formMethods}/>
         <PropsBox
           title="Form 事件"
           subtitle=""
