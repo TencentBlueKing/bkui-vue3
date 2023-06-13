@@ -282,7 +282,7 @@ export default defineComponent({
       rules = getTriggerRules(trigger, mergeRules(rules, getRulesFromProps(props, t), t));
 
       // 重新触发验证重置上次的验证状态
-      if (rules.length > 0) {
+      if (rules.length > 0 && showError) {
         state.isError = false;
         state.errorMessage = '';
       }
@@ -295,7 +295,7 @@ export default defineComponent({
           stepIndex = stepIndex + 1;
           // form-item 验证通过
           if (stepIndex >= rules.length) {
-            form.emit('validate', props.property, true, null);
+            form.emit('validate', props.property, true, '');
             return Promise.resolve(true);
           }
           const rule = rules[stepIndex];
