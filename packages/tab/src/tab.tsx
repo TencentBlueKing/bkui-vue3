@@ -53,7 +53,7 @@ export default defineComponent({
     // 新方法
     'add', 'change', 'remove', 'update:active', 'sort', 'drag',
   ],
-  setup(_props: Record<string, any>, { slots, emit }) {
+  setup(_props, { slots, emit }) {
     const isMounted = ref(false);
     const panels = ref([]);
     const instance = getCurrentInstance();
@@ -85,13 +85,20 @@ export default defineComponent({
     };
 
     onMounted(() => {
+      /* 如果是列表模式，直接渲染，比如slot性能更优，待补充
+      if (props.panels?.length) {
+        panels.value = props.panels;
+        return;
+      }
+      */
       setPanelInstances();
       isMounted.value = true;
+      onUpdated(() => {
+        setPanelInstances();
+      });
     });
 
-    onUpdated(() => {
-      setPanelInstances();
-    });
+
     const methods = {
       tabAdd(e: MouseEvent) {
         emit('add', { e });
