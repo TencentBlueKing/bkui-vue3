@@ -105,7 +105,7 @@ export const useClass = (props: TablePropTypes, targetColumns: Column[], root?, 
     if (typeof props.height === 'string') {
       return props.height;
     }
-    return 'auto';
+    return '';
   };
   const resolveWidth = () => {
     // const columns = getColumns();
@@ -198,7 +198,7 @@ export const useClass = (props: TablePropTypes, targetColumns: Column[], root?, 
     const querySelector = props.virtualEnabled
       ? `.${resolveClassName('virtual-section')}`
       : `.${resolveClassName('table-body-content')}`;
-    const rootBody = root.querySelector('.bk-table-body');
+    const rootBody = root.querySelector(`.${resolveClassName('table-body')}`);
 
     hasScrollY.value = hasRootScrollY(rootBody, querySelector, 0);
   };
