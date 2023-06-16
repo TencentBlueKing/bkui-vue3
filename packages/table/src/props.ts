@@ -397,7 +397,7 @@ export const tableProps = {
    */
   observerResize: PropTypes.bool.def(true),
   // 对齐方式
-  align: PropTypes.oneOf(['left', 'center', 'right']).def('left'),
+  align: PropTypes.oneOf(['left', 'center', 'right']).def(''),
   headerAlign: PropTypes.string,
 };
 
