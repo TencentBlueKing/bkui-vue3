@@ -55,6 +55,7 @@ export enum ColumnTypeEnum {
   EXPAND = 'expand',
   NONE = 'none',
 }
+
 export const columnType = toType<`${ColumnTypeEnum}`>('columnType', {
   default: ColumnTypeEnum.NONE,
 });
@@ -148,8 +149,10 @@ export const IColumnType = {
     PropTypes.string]).def(false),
   colspan: PropTypes.oneOfType([PropTypes.func.def(() => 1), PropTypes.number.def(1)]),
   rowspan: PropTypes.oneOfType([PropTypes.func.def(() => 1), PropTypes.number.def(1)]),
+  align: PropTypes.oneOf(['left', 'center', 'right']).def('left'),
+  className: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
 };
-
+export type TableColumnProps = Partial<ExtractPropTypes<typeof IColumnType>>;
 export const tableProps = {
   /**
    * 渲染列表
@@ -159,7 +162,8 @@ export const tableProps = {
   /**
    * Table 列渲染
    */
-  columns: PropTypes.arrayOf(PropTypes.shape<Column>(IColumnType).loose).def([]),
+  // columns: PropTypes.arrayOf(PropTypes.shape<Column>(IColumnType).loose).def([]),
+  columns: PropTypes.arrayOf(PropTypes.shape<Partial<TableColumnProps>>(IColumnType).loose).def([]),
 
   /**
    * 当前选中列
@@ -246,7 +250,7 @@ export const tableProps = {
    * 用于配置分页组件的高度，在不同项目中，分页组件高度会影响表格高度计算
    * 这里设置为可配置项，避免自计算导致的性能问题以及不确定性样式问题
    */
-  paginationHeihgt: PropTypes.number.def(LINE_HEIGHT),
+  paginationHeight: PropTypes.number.def(60),
 
   /**
    * 是否启用远程分页
@@ -392,6 +396,9 @@ export const tableProps = {
    * 是否监表格尺寸变化而响应式重新计算渲染
    */
   observerResize: PropTypes.bool.def(true),
+  // 对齐方式
+  align: PropTypes.oneOf(['left', 'center', 'right']).def(''),
+  headerAlign: PropTypes.string,
 };
 
 
@@ -442,6 +449,8 @@ export type Column = {
   } | boolean | string;
   colspan?: Function | Number;
   rowspan?: Function | Number;
+  className: string | Function
+  align: 'left' | 'center' | 'right',
 };
 
 export type Thead = {
