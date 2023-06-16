@@ -55,11 +55,18 @@ export enum ColumnTypeEnum {
   EXPAND = 'expand',
   NONE = 'none',
 }
-
+export enum TableAlignEnum {
+  LEFT = 'left',
+  RIGHT='right',
+  CENTER = 'center',
+  NONE = ''
+}
 export const columnType = toType<`${ColumnTypeEnum}`>('columnType', {
   default: ColumnTypeEnum.NONE,
 });
-
+export  const TableAlign = toType<`${TableAlignEnum}`>('columnType', {
+  default: TableAlignEnum.NONE,
+});
 export enum FullEnum {
   FULL = 'full',
   FUZZY = 'fuzzy',
@@ -108,7 +115,7 @@ export enum ResizerWay {
   DEBOUNCE = 'debounce',
   THROTTLE = 'throttle'
 }
-export  type TableAlign = 'left'|'center'|'right'
+
 export const IColumnType = {
   label: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
   field: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
@@ -149,7 +156,7 @@ export const IColumnType = {
     PropTypes.string]).def(false),
   colspan: PropTypes.oneOfType([PropTypes.func.def(() => 1), PropTypes.number.def(1)]),
   rowspan: PropTypes.oneOfType([PropTypes.func.def(() => 1), PropTypes.number.def(1)]),
-  align: PropTypes.oneOf(['left', 'center', 'right'] as TableAlign[]).def('left'),
+  align: TableAlign,
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
 };
 
@@ -163,8 +170,7 @@ export const tableProps = {
   /**
    * Table 列渲染
    */
-  // columns: PropTypes.arrayOf(PropTypes.shape<Column>(IColumnType).loose).def([]),
-  columns: PropTypes.arrayOf(PropTypes.shape<Partial<TableColumnProps>>(IColumnType).loose).def([]),
+  columns: PropTypes.arrayOf(PropTypes.shape<Column>(IColumnType).loose).def([]),
 
   /**
    * 当前选中列
@@ -398,8 +404,8 @@ export const tableProps = {
    */
   observerResize: PropTypes.bool.def(true),
   // 对齐方式
-  align: PropTypes.oneOf(['left', 'center', 'right']).def(''),
-  headerAlign: PropTypes.string,
+  align: TableAlign,
+  headerAlign: TableAlign,
 };
 
 
@@ -451,7 +457,7 @@ export type Column = {
   colspan?: Function | Number;
   rowspan?: Function | Number;
   className: string | Function
-  align: TableAlign,
+  align: string,
 };
 
 export type Thead = {
