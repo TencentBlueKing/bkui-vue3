@@ -125,6 +125,16 @@ export default defineComponent({
       }, [] as Array<Promise<any>>))
         .then(() => Promise.resolve(props.model));
     };
+
+    /**
+     * @desc 获取表单的验证的结果（所有表单项验证成功返回 true）
+     * @returns { Promise<Boolean> }
+     */
+    const getValidateResult = () => Promise.all(formItemInstanceList
+      .map(formItem => formItem.validate(undefined, false)))
+      .then(() => true)
+      .catch(() => false);
+
     /**
      * @desc 清除表单验证错误信息
      * @param { string | Array<string> } fields 指定表单字段
@@ -145,9 +155,11 @@ export default defineComponent({
       }
       formItemInstanceList.forEach(formItem => fieldMap[formItem.property] && formItem.clearValidate());
     };
+
     return {
       handleSubmit,
       validate,
+      getValidateResult,
       clearValidate,
     };
   },

@@ -10,6 +10,8 @@
       @column-sort="handleSortBy"
       @cell-click="handleCellClick"
       @cell-dblclick="handleCellDblclick"
+      @row-mouse-enter="handleMouseEnter"
+      @row-mouse-leave="handleMouseLeave"
     />
   </div>
 </template>
@@ -61,6 +63,12 @@
       },
       handleDblClick(...args) {
         console.log(args);
+      },
+      handleMouseEnter(...args) {
+        console.log('mouse-enter', args);
+      },
+      handleMouseLeave(...args) {
+        console.log('mouse-leave', args);
       },
     },
   });

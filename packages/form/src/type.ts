@@ -41,7 +41,7 @@ export interface IFormContext {
 }
 
 export interface IFormItemContext extends FormItemProps {
-  validate: (trigger?: string) => Promise<boolean>,
+  validate: (trigger?: string, showError?: boolean) => Promise<boolean>,
   clearValidate: () => void
 }
 
