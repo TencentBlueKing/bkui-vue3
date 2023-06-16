@@ -85,7 +85,7 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      /* 如果是列表模式，直接渲染，比如slot性能更优，待补充
+      /* 如果是列表模式，直接渲染
       if (props.panels?.length) {
         panels.value = props.panels;
         return;

@@ -130,12 +130,6 @@ export const tabProps = {
   changeOnHoverDelay: PropTypes.number.def(1000),
   activeBarSize: PropTypes.number.def(2),
   activeBarColor: PropTypes.string.def('#3a84ff'),
-  /* 列表模式，待补充
-  panels: {
-    type: Object as PropType<TabPanelProps[]>,
-    default: null,
-  },
-  */
 };
 
 export const tabNavProps = {
