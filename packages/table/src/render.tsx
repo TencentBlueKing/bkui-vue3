@@ -473,6 +473,8 @@ export default class TableRender {
                 class={rowClass}
                 onClick={e => this.handleRowClick(e, row, rowIndex, rows)}
                 onDblclick={e => this.handleRowDblClick(e, row, rowIndex, rows)}
+                onMouseenter={e => this.handleRowEnter(e, row, rowIndex, rows)}
+                onMouseleave={e => this.handleRowLeave(e, row, rowIndex, rows)}
               >
                 {
                   this.filterColGroups.map((column: Column, index: number) => {
@@ -605,6 +607,14 @@ export default class TableRender {
    */
   private handleRowDblClick(e: MouseEvent, row: any, index: number, rows: any) {
     this.context.emit(EMIT_EVENTS.ROW_DBL_CLICK, e, row, index, rows, this);
+  }
+
+  private handleRowEnter(e: MouseEvent, row: any, index: number, rows: any) {
+    this.context.emit(EMIT_EVENTS.ROW_MOUSE_ENTER, e, row, index, rows, this);
+  }
+
+  private handleRowLeave(e: MouseEvent, row: any, index: number, rows: any) {
+    this.context.emit(EMIT_EVENTS.ROW_MOUSE_LEAVE, e, row, index, rows, this);
   }
 
   private getExpandCell(row: any) {
