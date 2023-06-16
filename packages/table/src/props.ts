@@ -108,7 +108,7 @@ export enum ResizerWay {
   DEBOUNCE = 'debounce',
   THROTTLE = 'throttle'
 }
-
+export  type TableAlign = 'left'|'center'|'right'
 export const IColumnType = {
   label: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
   field: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
@@ -149,9 +149,10 @@ export const IColumnType = {
     PropTypes.string]).def(false),
   colspan: PropTypes.oneOfType([PropTypes.func.def(() => 1), PropTypes.number.def(1)]),
   rowspan: PropTypes.oneOfType([PropTypes.func.def(() => 1), PropTypes.number.def(1)]),
-  align: PropTypes.oneOf(['left', 'center', 'right']).def('left'),
+  align: PropTypes.oneOf(['left', 'center', 'right'] as TableAlign[]).def('left'),
   className: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
 };
+
 export type TableColumnProps = Partial<ExtractPropTypes<typeof IColumnType>>;
 export const tableProps = {
   /**
@@ -450,7 +451,7 @@ export type Column = {
   colspan?: Function | Number;
   rowspan?: Function | Number;
   className: string | Function
-  align: 'left' | 'center' | 'right',
+  align: TableAlign,
 };
 
 export type Thead = {
