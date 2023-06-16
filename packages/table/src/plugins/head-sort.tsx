@@ -36,6 +36,7 @@ export default defineComponent({
   props: {
     column: PropTypes.any.def({}),
     defaultSort: PropTypes.oneOf(SORT_OPTIONS).def(SORT_OPTION.NULL),
+    active: PropTypes.bool,
   },
   emits: ['change'],
   setup(props, { emit }) {
@@ -49,8 +50,6 @@ export default defineComponent({
     /**
      * 点击排序事件
      * @param e 鼠标事件
-     * @param column 当前列
-     * @param index 当前列index
      * @param type 排序类型
      */
     const handleSortClick = (e: MouseEvent, type: string) => {
@@ -67,23 +66,28 @@ export default defineComponent({
       if (sortType.value === type) {
         currentSort = SORT_OPTION.NULL;
       }
-
+      const execFn = getSortFn(props.column, currentSort);
       const sort = resolveSort(props.column.sort);
       if (sort?.value === 'custom') {
-        emit('change', sort?.sortFn, currentSort);
+        emit('change', sort?.sortFn ?? execFn, currentSort);
         return;
       }
 
-      const execFn = getSortFn(props.column, currentSort);
       emit('change', execFn, currentSort);
     };
-    return () => <span class={ resolveClassName('head-cell-sort') } onClick={(e: MouseEvent) => handleSortClick(e, SORT_OPTION.NULL)}>
-    <AngleDownFill class={['sort-action', 'sort-asc', sortType.value === SORT_OPTION.ASC ? 'active' : '']}
-      style="align-items: flex-end;"
-      onClick={(e: MouseEvent) => handleSortClick(e, SORT_OPTION.ASC)}/>
-    <AngleUpFill class={['sort-action', 'sort-desc', sortType.value === SORT_OPTION.DESC ? 'active' : '']}
-      style="align-items: flex-start;"
-      onClick={(e: MouseEvent) => handleSortClick(e, SORT_OPTION.DESC)}/>
-  </span>;
+    return () => (
+      <span
+        class={resolveClassName('head-cell-sort')}
+        onClick={(e: MouseEvent) => handleSortClick(e, SORT_OPTION.NULL)}>
+      <AngleDownFill
+        class={['sort-action', 'sort-asc', props.active && sortType.value === SORT_OPTION.ASC ? 'active' : '']}
+        style="align-items: flex-end;"
+        onClick={(e: MouseEvent) => handleSortClick(e, SORT_OPTION.ASC)}/>
+      <AngleUpFill
+        class={['sort-action', 'sort-desc', props.active && sortType.value === SORT_OPTION.DESC ? 'active' : '']}
+        style="align-items: flex-start;"
+        onClick={(e: MouseEvent) => handleSortClick(e, SORT_OPTION.DESC)}/>
+    </span>
+    );
   },
 });

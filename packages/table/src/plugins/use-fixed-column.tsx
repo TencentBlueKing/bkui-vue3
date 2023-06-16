@@ -35,7 +35,7 @@ import { getColumnReactWidth } from '../utils';
  * 固定列Hooks
  */
 export default (_props, colgroups: GroupColumn[], hasScrollY?) => {
-  // const footHeight = computed(() => (props.pagination && props.data.length ? props.paginationHeihgt : 0));
+  // const footHeight = computed(() => (props.pagination && props.data.length ? props.paginationHeight : 0));
   const resolveColumnClass = (column: GroupColumn, scrollX?, offsetRight?) => ({
     column_fixed: !!column.fixed,
     column_fixed_left: column.fixed !== 'right',

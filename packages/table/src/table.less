@@ -90,11 +90,10 @@
         }
 
         .cell {
-          padding: 0 15px;
+          padding: 0 16px;
           overflow: hidden;
           font-size: 12px;
           color: @table-body-font-color;
-          text-align: left;
           text-overflow: ellipsis;
           white-space: nowrap;
 
@@ -121,9 +120,10 @@
           }
         }
 
+
         .expand-btn-action {
           display: flex;
-          padding: 0 15px;
+          padding: 0 16px;
           color: #c4c6cc;
           cursor: pointer;
         }
@@ -146,6 +146,30 @@
           .expand-cell-ctx {
             min-height: 30px;
           }
+        }
+      }
+
+      .left {
+        text-align: left;
+
+        .cell {
+          justify-content: start;
+        }
+      }
+
+      .center {
+        text-align: center;
+
+        .cell {
+          justify-content: center;
+        }
+      }
+
+      .right {
+        text-align: right;
+
+        .cell {
+          justify-content: end;
         }
       }
 
@@ -217,7 +241,6 @@
       right: 1px;
       bottom: 0;
       z-index: 2;
-      display: block;
       display: flex;
       width: calc(var(--row-height));
       font-size: 14px;
@@ -268,6 +291,7 @@
     border-top: 1px solid @table-border-color;
     border-right: 1px solid @table-border-color;
     border-left: 1px solid @table-border-color;
+
     .@{bk-prefix}-table-footer {
       border-bottom: 1px solid @table-border-color;
     }
@@ -276,12 +300,13 @@
 
   &.bordered-horizontal {
     border-top: 1px solid @table-border-color;
+
     .@{bk-prefix}-table-footer {
       border-bottom: 1px solid @table-border-color;
     }
   }
 
-  &.bordered-outer ,
+  &.bordered-outer,
   &.bordered-horizontal {
     .__is-empty {
       .@{bk-prefix}-table-body-content {

@@ -28,12 +28,12 @@ import { ExtractPropTypes } from 'vue';
 import { withInstall } from '@bkui-vue/shared';
 
 import Column from './components/table-column';
-import { IColumnType, tableProps } from './props';
+import { tableProps } from './props';
 import Component from './table';
 
 export type TableProps = Partial<ExtractPropTypes<typeof tableProps>>;
-export type TableColumnProps = Partial<ExtractPropTypes<typeof IColumnType>>;
-export type { Column as TableIColumn, Settings as TableSettings } from './props';
+
+export type { Column as TableIColumn, Settings as TableSettings, TableColumnProps } from './props';
 const BkTable = withInstall(Component);
 export default BkTable;
 
