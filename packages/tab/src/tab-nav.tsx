@@ -26,6 +26,7 @@
 
 import { ComponentInternalInstance, computed, CSSProperties, defineComponent, h, ref } from 'vue';
 
+import { bkTooltips } from '@bkui-vue/directives';
 import { Close, Plus } from '@bkui-vue/icon/';
 import { resolveClassName } from '@bkui-vue/shared';
 
@@ -33,6 +34,9 @@ import { PositionEnum, tabNavProps, TabTypeEnum } from './props';
 
 export default defineComponent({
   name: 'TabNav',
+  directives: {
+    bkTooltips,
+  },
   props: tabNavProps,
   setup(props: Record<string, any>) {
     const activeRef = ref<HTMLElement>(null);
@@ -80,7 +84,7 @@ export default defineComponent({
           return null;
         }
         const {
-          name, label, closable, visible, disabled, sortable,
+          name, label, closable, visible, disabled, sortable, tips,
         } = item.props;
         if (!visible) {
           return false;
@@ -104,7 +108,7 @@ export default defineComponent({
           return label;
         };
         list.push({
-          name, closable, visible, disabled, sortable,
+          name, closable, visible, disabled, sortable, tips,
           tabLabel: renderLabel(label),
         });
         return true;
@@ -221,7 +225,9 @@ export default defineComponent({
             e.preventDefault();
             drop(index, sortType);
           }}
-          class={getNavItemClass()}>
+          class={getNavItemClass()}
+          v-bk-tooltips={{ content: item.tips, disabled: !item.tips }}
+        >
           <div>{tabLabel}</div>
           {getValue(item.closable, closable) ? (
             <span class={resolveClassName('tab-header--close')} onClick={(): void => this.handleTabRemove(index, item)}><Close/></span>
