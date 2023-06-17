@@ -98,7 +98,15 @@ export const useClass = (props: TablePropTypes, targetColumns: Column[], root?, 
     [resolveClassName('table-footer')]: true,
     ['is-hidden']: !props.pagination || !props.data.length,
   }));
-
+  const getTableHeight = (): string => {
+    if (props.height === 'number') {
+      return `${props.height}px`;
+    }
+    if (typeof props.height === 'string') {
+      return props.height;
+    }
+    return '';
+  };
   const resolveWidth = () => {
     // const columns = getColumns();
     if (resolvedColumns.value.every((col: Column) => /^\d+\.?\d*(px)?$/ig.test(`${col.width}`))) {
@@ -115,8 +123,8 @@ export const useClass = (props: TablePropTypes, targetColumns: Column[], root?, 
     minHeight: resolveNumberOrStringToPix(props.minHeight, 'auto'),
     width: resolveWidth(),
     maxWidth: '100%',
-    // 如果表格已经设置了高度，父容器直接给定高度，先撑开，避免重绘
-    ...(typeof props.height === 'number' ? { height: `${props.height}px` } : null),
+    //
+    height: getTableHeight(),
     // height: resolveNumberOrStringToPix(props.height, 'auto')
   }));
 
@@ -190,7 +198,7 @@ export const useClass = (props: TablePropTypes, targetColumns: Column[], root?, 
     const querySelector = props.virtualEnabled
       ? `.${resolveClassName('virtual-section')}`
       : `.${resolveClassName('table-body-content')}`;
-    const rootBody = root.querySelector('.bk-table-body');
+    const rootBody = root.querySelector(`.${resolveClassName('table-body')}`);
 
     hasScrollY.value = hasRootScrollY(rootBody, querySelector, 0);
   };
