@@ -456,8 +456,8 @@ export type Column = {
   } | boolean | string;
   colspan?: Function | Number;
   rowspan?: Function | Number;
-  className: string | Function
-  align: string,
+  className?: string | Function
+  align?: string,
 };
 
 export type Thead = {
