@@ -52,7 +52,7 @@ export const PopoverProps = {
    * 组件显示位置
    */
   // placement: placementType().def(PlacementEnum.TOP),
-  placement: placementType().def(PlacementEnum.TOP),
+  placement: placementType().def(PlacementEnum.TOP_START),
 
   // 'dark', 'light'
   theme: PropTypes.string.def('dark'),
