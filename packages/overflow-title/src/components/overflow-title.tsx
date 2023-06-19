@@ -23,13 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import {
-  computed,
-  defineComponent,
-  onMounted,
-  onUnmounted,
-  ref, shallowRef,
-} from 'vue';
+import { computed, defineComponent, onBeforeUnmount, onMounted, ref, shallowRef } from 'vue';
 
 import BKPopover from '@bkui-vue/popover';
 import { debounce } from '@bkui-vue/shared';
@@ -81,9 +75,9 @@ export default defineComponent({
       if (props.resizeable) {
         const observer = new ResizeObserver(resizeHandler);
         observer.observe(boxRef.value);
-        onUnmounted(() => {
-          observer.unobserve(boxRef.value);
-          observer.disconnect();
+        onBeforeUnmount(() => {
+          boxRef.value && observer?.unobserve(boxRef.value);
+          observer?.disconnect();
         });
       }
     });
@@ -98,7 +92,7 @@ export default defineComponent({
   render() {
     return (
       <div ref="boxRef" class="position-relative">
-        <BKPopover disabled={this.type === 'title'}>
+        <BKPopover disabled={this.type === 'title' || !this.isShowTips}>
           {{
             default: () => (
               <div

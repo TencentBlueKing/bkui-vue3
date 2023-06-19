@@ -55,10 +55,18 @@ export enum ColumnTypeEnum {
   EXPAND = 'expand',
   NONE = 'none',
 }
+export enum TableAlignEnum {
+  LEFT = 'left',
+  RIGHT='right',
+  CENTER = 'center',
+  NONE = ''
+}
 export const columnType = toType<`${ColumnTypeEnum}`>('columnType', {
   default: ColumnTypeEnum.NONE,
 });
-
+export  const TableAlign = toType<`${TableAlignEnum}`>('columnType', {
+  default: TableAlignEnum.NONE,
+});
 export enum FullEnum {
   FULL = 'full',
   FUZZY = 'fuzzy',
@@ -148,8 +156,11 @@ export const IColumnType = {
     PropTypes.string]).def(false),
   colspan: PropTypes.oneOfType([PropTypes.func.def(() => 1), PropTypes.number.def(1)]),
   rowspan: PropTypes.oneOfType([PropTypes.func.def(() => 1), PropTypes.number.def(1)]),
+  align: TableAlign,
+  className: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
 };
 
+export type TableColumnProps = Partial<ExtractPropTypes<typeof IColumnType>>;
 export const tableProps = {
   /**
    * 渲染列表
@@ -246,7 +257,7 @@ export const tableProps = {
    * 用于配置分页组件的高度，在不同项目中，分页组件高度会影响表格高度计算
    * 这里设置为可配置项，避免自计算导致的性能问题以及不确定性样式问题
    */
-  paginationHeihgt: PropTypes.number.def(LINE_HEIGHT),
+  paginationHeight: PropTypes.number.def(60),
 
   /**
    * 是否启用远程分页
@@ -392,6 +403,9 @@ export const tableProps = {
    * 是否监表格尺寸变化而响应式重新计算渲染
    */
   observerResize: PropTypes.bool.def(true),
+  // 对齐方式
+  align: TableAlign,
+  headerAlign: TableAlign,
 };
 
 
@@ -443,6 +457,8 @@ export type Column = {
   colspan?: Function | Number;
   rowspan?: Function | Number;
   textAlign?: String;
+  className?: string | Function
+  align?: string,
 };
 
 export type Thead = {

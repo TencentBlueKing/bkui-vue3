@@ -152,18 +152,18 @@ export default defineComponent({
               <Tag class={resolveClassName('select-overflow-tag')}>+{this.selected.length - this.overflowTagIndex}</Tag>
             )
           }
+          <input
+            class={resolveClassName('select-tag-input')}
+            ref="inputRef"
+            type="text"
+            style={inputStyle}
+            placeholder={!this.selected.length ? this.placeholder : ''}
+            readonly={!this.filterable}
+            disabled={this.disabled}
+            value={!this.filterable ? '' : this.value}
+            onInput={this.handleInput}
+            onKeydown={this.handleKeydown}/>
         </span>
-        <input
-          class={resolveClassName('select-tag-input')}
-          ref="inputRef"
-          type="text"
-          style={inputStyle}
-          placeholder={!this.selected.length ? this.placeholder : ''}
-          readonly={!this.filterable}
-          disabled={this.disabled}
-          value={!this.filterable ? '' : this.value}
-          onInput={this.handleInput}
-          onKeydown={this.handleKeydown}/>
         {this.$slots?.suffix?.()}
       </div>
     );

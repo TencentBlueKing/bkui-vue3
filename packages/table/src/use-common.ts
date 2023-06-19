@@ -29,7 +29,15 @@ import { computed, onMounted, reactive, ref, watch } from 'vue';
 
 import { classes, resolveClassName } from '@bkui-vue/shared';
 
-import { BORDER_OPTION, COL_MIN_WIDTH, COLUMN_ATTRIBUTE, LINE_HEIGHT, SCROLLY_WIDTH, SETTING_SIZE, TABLE_ROW_ATTRIBUTE } from './const';
+import {
+  BORDER_OPTION,
+  COL_MIN_WIDTH,
+  COLUMN_ATTRIBUTE,
+  LINE_HEIGHT,
+  SCROLLY_WIDTH,
+  SETTING_SIZE,
+  TABLE_ROW_ATTRIBUTE,
+} from './const';
 import useActiveColumns from './plugins/use-active-columns';
 import useColumnResize from './plugins/use-column-resize';
 import useFixedColumn from './plugins/use-fixed-column';
@@ -90,7 +98,15 @@ export const useClass = (props: TablePropTypes, targetColumns: Column[], root?, 
     [resolveClassName('table-footer')]: true,
     ['is-hidden']: !props.pagination || !props.data.length,
   }));
-
+  const getTableHeight = (): string => {
+    if (props.height === 'number') {
+      return `${props.height}px`;
+    }
+    if (typeof props.height === 'string') {
+      return props.height;
+    }
+    return '';
+  };
   const resolveWidth = () => {
     // const columns = getColumns();
     if (resolvedColumns.value.every((col: Column) => /^\d+\.?\d*(px)?$/ig.test(`${col.width}`))) {
@@ -107,6 +123,9 @@ export const useClass = (props: TablePropTypes, targetColumns: Column[], root?, 
     minHeight: resolveNumberOrStringToPix(props.minHeight, 'auto'),
     width: resolveWidth(),
     maxWidth: '100%',
+    //
+    height: getTableHeight(),
+    // height: resolveNumberOrStringToPix(props.height, 'auto')
   }));
 
 
@@ -142,7 +161,7 @@ export const useClass = (props: TablePropTypes, targetColumns: Column[], root?, 
     const resolveHeight = resolvePropHeight(props.height, autoHeight.value);
     const resolveHeadHeight = getHeadHeight();
     const resolveMinHeight = resolvePropHeight(props.minHeight, autoHeight.value);
-    const resolveFooterHeight = props.pagination && props.data.length ? props.paginationHeihgt : 0;
+    const resolveFooterHeight = props.pagination && props.data.length ? props.paginationHeight : 0;
     const contentHeight = resolveHeight - resolveHeadHeight - resolveFooterHeight;
     const height = props.height !== 'auto' ? `${contentHeight}px` : false;
     const minHeight = resolveMinHeight - resolveHeadHeight - resolveFooterHeight;
@@ -179,7 +198,7 @@ export const useClass = (props: TablePropTypes, targetColumns: Column[], root?, 
     const querySelector = props.virtualEnabled
       ? `.${resolveClassName('virtual-section')}`
       : `.${resolveClassName('table-body-content')}`;
-    const rootBody = root.querySelector('.bk-table-body');
+    const rootBody = root.querySelector(`.${resolveClassName('table-body')}`);
 
     hasScrollY.value = hasRootScrollY(rootBody, querySelector, 0);
   };
@@ -387,7 +406,7 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
   /**
    * 用于初始化时，根据用户传入数据进行初始化操作
    */
-  const initSelectionAllByData = () =>  {
+  const initSelectionAllByData = () => {
     if (isSelectionEnable()) {
       updateSelectionAll(row => resolveSelectionRow(row));
     }
@@ -464,7 +483,8 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
   /**
    * 判定指定row是否选中
    * @param row 指定row
-   * @param rowId 指定row id
+   * @param _rowId 指定row id
+   * @param index
    * @returns boolean
    */
   const resolveSelection = (row: any, _rowId?: string, index?: number) => resolveSelectionRow(row, () => {
@@ -546,6 +566,7 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
    * @param isRowCheckEnable
    * @param selectedAll
    * @param item
+   * @param index
    * @returns
    */
   const isRowChecked = (isRowCheckEnable, selectedAll, item, index) => {

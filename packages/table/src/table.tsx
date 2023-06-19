@@ -24,26 +24,43 @@
  * IN THE SOFTWARE.
 */
 
-import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, provide, reactive, ref, unref, watch, watchEffect } from 'vue';
+import {
+  computed,
+  defineComponent,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  provide,
+  reactive,
+  ref,
+  unref,
+  watch,
+  watchEffect,
+} from 'vue';
 
 import { useLocale } from '@bkui-vue/config-provider';
 import { debounce, resolveClassName } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
 import BkTableCache from './cache';
-import { COL_MIN_WIDTH, COLUMN_ATTRIBUTE, EMIT_EVENT_TYPES, EMIT_EVENTS, EVENTS, PROVIDE_KEY_INIT_COL, PROVIDE_KEY_TB_CACHE, SCROLLY_WIDTH, TABLE_ROW_ATTRIBUTE } from './const';
+import {
+  COL_MIN_WIDTH,
+  COLUMN_ATTRIBUTE,
+  EMIT_EVENT_TYPES,
+  EMIT_EVENTS,
+  EVENTS,
+  PROVIDE_KEY_INIT_COL,
+  PROVIDE_KEY_TB_CACHE,
+  SCROLLY_WIDTH,
+  TABLE_ROW_ATTRIBUTE,
+} from './const';
 import usePagination from './plugins/use-pagination';
 import useScrollLoading from './plugins/use-scroll-loading';
 import { tableProps } from './props';
 import TableRender from './render';
 import useColumn from './use-column';
 import { useClass, useInit } from './use-common';
-import {
-  getColumnSourceData,
-  getRowSourceData,
-  observerResize,
-  resolveColumnWidth,
-} from './utils';
+import { getColumnSourceData, getRowSourceData, observerResize, resolveColumnWidth } from './utils';
 
 export default defineComponent({
   name: 'Table',
@@ -302,7 +319,7 @@ export default defineComponent({
     };
 
     const footerStyle = computed(() => ({
-      '--footer-height': hasFooter.value ? `${props.paginationHeihgt}px` : '0',
+      '--footer-height': hasFooter.value ? `${props.paginationHeight}px` : '0',
     }));
 
     const fixedContainerStyle = computed(() => ({
@@ -313,55 +330,57 @@ export default defineComponent({
     const { renderScrollLoading } = useScrollLoading(props, ctx);
     const scrollClass = computed(() => (props.virtualEnabled ? {} : { scrollXName: '', scrollYName: '' }));
 
-    return () => <div class={tableClass.value} style={wrapperStyle.value} ref={root}>
-      {
-        // @ts-ignore:next-line
-        <div class={ headClass } style={headStyle.value}>
+    return () => (
+      <div class={tableClass.value} style={wrapperStyle.value} ref={root}>
         {
-          tableRender.renderTableHeadSchema()
+          // @ts-ignore:next-line
+          <div class={headClass} style={headStyle.value}>
+            {
+              tableRender.renderTableHeadSchema()
+            }
+          </div>
         }
-      </div>
-      }
-      <VirtualRender
-        ref={refVirtualRender}
-        lineHeight={tableRender.getRowHeight}
-        class={ tableBodyClass.value }
-        style={ contentStyle }
-        list={ pageData }
-        { ...scrollClass.value }
-        contentClassName={ tableBodyContentClass.value }
-        onContentScroll={ handleScrollChanged }
-        throttleDelay={0}
-        scrollEvent={true}
-        rowKey={props.rowKey}
-        enabled={props.virtualEnabled}>
+        <VirtualRender
+          ref={refVirtualRender}
+          lineHeight={tableRender.getRowHeight}
+          class={tableBodyClass.value}
+          style={contentStyle}
+          list={pageData}
+          {...scrollClass.value}
+          contentClassName={tableBodyContentClass.value}
+          onContentScroll={handleScrollChanged}
+          throttleDelay={0}
+          scrollEvent={true}
+          rowKey={props.rowKey}
+          enabled={props.virtualEnabled}>
           {
             {
               default: (scope: any) => tableRender.renderTableBodySchema(scope.data || props.data),
-              afterSection: () => <div class={ fixedBottomBorder.value }></div>,
+              afterSection: () => <div class={fixedBottomBorder.value}></div>,
             }
           }
-      </VirtualRender>
-      {/* @ts-ignore:next-line */}
-      <div class={ fixedWrapperClass } style={ fixedContainerStyle.value }>
-        {
-          fixedColumns.value
-            .map(({ isExist, colPos, column }) => (isExist ? '' : <div
-              class={ resolveColumnClass(column, reactiveSchema.scrollTranslateX, tableOffsetRight.value) }
-              style={ resolveColumnStyle(colPos) }></div>))
-        }
-        <div class={ resizeColumnClass } style={ resizeColumnStyle.value }></div>
-        <div class={ loadingRowClass }>{
-          renderScrollLoading()
-        }</div>
+        </VirtualRender>
+        {/* @ts-ignore:next-line */}
+        <div class={fixedWrapperClass} style={fixedContainerStyle.value}>
+          {
+            fixedColumns.value
+              .map(({ isExist, colPos, column }) => (isExist ? '' : <div
+                class={resolveColumnClass(column, reactiveSchema.scrollTranslateX, tableOffsetRight.value)}
+                style={resolveColumnStyle(colPos)}></div>))
+          }
+          <div class={resizeColumnClass} style={resizeColumnStyle.value}></div>
+          <div class={loadingRowClass}>{
+            renderScrollLoading()
+          }</div>
+        </div>
+        {/* @ts-ignore:next-line */}
+        <div class={footerClass.value} style={footerStyle.value}>
+          {
+            hasFooter.value && tableRender.renderTableFooter(localPagination.value)
+          }
+        </div>
+        <div style={columnGhostStyle}>{ctx.slots.default?.()}</div>
       </div>
-      {/* @ts-ignore:next-line */}
-      <div class={ footerClass.value } style={ footerStyle.value }>
-        {
-          hasFooter.value && tableRender.renderTableFooter(localPagination.value)
-        }
-      </div>
-      <div style={columnGhostStyle}>{ ctx.slots.default?.() }</div>
-    </div>;
+    );
   },
 });

@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { PropType, VNode } from 'vue';
+import { ExtractPropTypes, PropType, VNode } from 'vue';
 import { toType } from 'vue-types';
 
 import { PropTypes, renderDirectiveType } from '@bkui-vue/shared';
@@ -98,6 +98,21 @@ export const tabEventProps = {
   },
   // ...TabNavEventProps,
 };
+
+export const tabPanelProps = {
+  name: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(''),
+  label: PropTypes.string || PropTypes.func,
+  tips: PropTypes.string,
+  closable: PropTypes.bool,
+  visible: PropTypes.bool.def(true),
+  disabled: PropTypes.bool,
+  sortable: PropTypes.bool,
+  renderDirective: renderDirectiveType(),
+  panel: PropTypes.string || PropTypes.func,
+};
+
+export type TabPanelProps = ExtractPropTypes<typeof tabPanelProps>;
+
 export const tabProps = {
   active: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(''),
   type: toType<`${TabTypeEnum}`>('type', {}).def(TabTypeEnum.BORDER_CARD),
@@ -137,15 +152,4 @@ export const tabNavProps = {
   changeOnHover: PropTypes.bool.def(false),
   changeOnHoverDelay: PropTypes.number.def(1000),
   ...tabNavEventProps,
-};
-
-export const tabPanelProps = {
-  name: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(''),
-  label: PropTypes.string || PropTypes.func,
-  closable: PropTypes.bool,
-  visible: PropTypes.bool.def(true),
-  disabled: PropTypes.bool,
-  sortable: PropTypes.bool,
-  renderDirective: renderDirectiveType(),
-  panel: PropTypes.string || PropTypes.func,
 };

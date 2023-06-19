@@ -57,6 +57,7 @@ const tagProps = () => ({
   allowNextFocus: PropTypes.bool.def(true),
   allowAutoMatch: PropTypes.bool.def(false),
   showClearOnlyHover: PropTypes.bool.def(false),
+  isAsyncList: PropTypes.bool.def(false),
   leftSpace: PropTypes.number.def(0),
   createTagValidator: {
     type: Function as PropType<(tag: any) => boolean>,

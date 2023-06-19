@@ -256,8 +256,11 @@ export default defineComponent({
 
     /**
      * @desc 验证字段
+     *
+     * @param { undefined | string } trigger 验证触发方式
+     * @param { boolean } showError 是否展示错误信息
      */
-    const validate = (trigger?: String): Promise<boolean> => {
+    const validate = (trigger?: string, showError = true): Promise<boolean> => {
       // 没有设置 property 不进行验证
       if (!props.property
       || (isForm && !form.props.model)) {
@@ -279,7 +282,7 @@ export default defineComponent({
       rules = getTriggerRules(trigger, mergeRules(rules, getRulesFromProps(props, t), t));
 
       // 重新触发验证重置上次的验证状态
-      if (rules.length > 0) {
+      if (rules.length > 0 && showError) {
         state.isError = false;
         state.errorMessage = '';
       }
@@ -292,7 +295,7 @@ export default defineComponent({
           stepIndex = stepIndex + 1;
           // form-item 验证通过
           if (stepIndex >= rules.length) {
-            form.emit('validate', props.property, true, null);
+            form.emit('validate', props.property, true, '');
             return Promise.resolve(true);
           }
           const rule = rules[stepIndex];
@@ -310,17 +313,21 @@ export default defineComponent({
                     return Promise.reject(errorMessage);
                   }
                 }).then(() => doValidate(), () => {
-                  state.isError = true;
-                  state.errorMessage = errorMessage;
+                  if (showError) {
+                    state.isError = true;
+                    state.errorMessage = errorMessage;
+                  }
                   form.emit('validate', props.property, false, errorMessage);
                   return Promise.reject(state.errorMessage);
                 });
               }
               // 同步验证失败
               if (!result) {
-                state.isError = true;
-                // 验证结果返回的是 String 表示验证失败，返回结果作为错误信息
-                state.errorMessage = typeof result === 'string' ? result : errorMessage;
+                if (showError) {
+                  state.isError = true;
+                  // 验证结果返回的是 String 表示验证失败，返回结果作为错误信息
+                  state.errorMessage = typeof result === 'string' ? result : errorMessage;
+                }
                 form.emit('validate', props.property, false, errorMessage);
                 return Promise.reject(state.errorMessage);
               }

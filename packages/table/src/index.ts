@@ -23,10 +23,17 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
+import { ExtractPropTypes } from 'vue';
+
 import { withInstall } from '@bkui-vue/shared';
 
 import Column from './components/table-column';
+import { tableProps } from './props';
 import Component from './table';
+
+export type TableProps = Partial<ExtractPropTypes<typeof tableProps>>;
+
+export type { Column as TableIColumn, Settings as TableSettings, TableColumnProps } from './props';
 const BkTable = withInstall(Component);
 export default BkTable;
 
