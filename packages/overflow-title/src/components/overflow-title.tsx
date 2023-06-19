@@ -92,7 +92,7 @@ export default defineComponent({
   render() {
     return (
       <div ref="boxRef" class="position-relative">
-        <BKPopover disabled={this.type === 'title' || !this.isShowTips}>
+        <BKPopover disabled={this.type === 'title' || !this.isShowTips} placement={this.placement}>
           {{
             default: () => (
               <div
