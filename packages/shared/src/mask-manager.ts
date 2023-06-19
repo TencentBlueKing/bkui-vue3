@@ -26,6 +26,32 @@
 
 import { random } from './utils';
 import { bkZIndexManager } from './z-index-manager';
+// eslint-disable-next-line @typescript-eslint/naming-convention
+const DEFAULT_MASK_UUID = function () {};
+DEFAULT_MASK_UUID.prototype.def_val = `__bk_mask_${random(16)}`;
+
+class MaskQueueMaker {
+  private timer = null;
+  private store = [];
+
+  public appendMaker(fn) {
+    this.store.push(fn);
+    this.executeMaker();
+  }
+
+  private executeMaker() {
+    this.timer && cancelAnimationFrame(this.timer);
+    this.timer = requestAnimationFrame(() => {
+      const fn = this.store.pop();
+      if (typeof fn === 'function') {
+        Reflect.apply(fn, this, []);
+        this.executeMaker();
+      }
+    });
+  }
+}
+
+const bkMaskMaker = new MaskQueueMaker();
 
 type BkMaskManagerConfig = {
   multiInstance?: boolean,
@@ -44,10 +70,10 @@ type MaskConfigStore = {
 
 export class BkMaskManager {
   /** 遮罩容器 */
-  private readonly mask: HTMLElement;
+  private mask: HTMLElement;
 
   /** 遮罩备份容器，用于多个组件实例显示，遮罩只显示最后一个 **/
-  private readonly backupMask: HTMLElement;
+  private backupMask: HTMLElement;
 
   /** 是否允许多个遮罩实例 */
   private readonly multiInstance: boolean = false;
@@ -93,9 +119,11 @@ export class BkMaskManager {
     this.multiInstance = multiInstance;
     this.uniqueMaskAttrTag = this.getMaskAttrTag(maskAttrTag);
     this.parentNode = parentNode || document;
-    this.mask = this.getMask();
-    this.backupMask = this.createMask('data-bk-backup-uid');
-    this.setMaskStyle(Object.assign({}, this.maskStyle, maskStyle));
+    bkMaskMaker.appendMaker(() => {
+      this.mask = this.getMask();
+      this.backupMask = this.getBackupMask();
+      this.setMaskStyle(Object.assign({}, this.maskStyle, maskStyle));
+    });
   }
 
   public setOption(option: BkMaskManagerConfig) {
@@ -129,7 +157,9 @@ export class BkMaskManager {
     if (!showMask) {
       if (this.lastUUID) {
         const preStore = this.zIndexStore.get(this.lastUUID);
-        style = preStore.style;
+        if (preStore) {
+          style = preStore?.style;
+        }
       }
     }
 
@@ -213,7 +243,7 @@ export class BkMaskManager {
       return this.createMask();
     }
 
-    let div: HTMLElement | null = this.parentNode.querySelector(`[data-bkmask-uid='${this.uniqueMaskAttrTag}']`);
+    let div: HTMLElement | null = this.parentNode.querySelector(`[data-bk-mask-uid='${this.uniqueMaskAttrTag}']`);
     if (!div) {
       div = this.createMask();
       div.addEventListener('click', (e: MouseEvent) => {
@@ -223,6 +253,16 @@ export class BkMaskManager {
           }
         }
       }, true);
+    }
+
+    return div;
+  }
+
+  private getBackupMask() {
+    const attrName = 'data-bk-backup-uid';
+    let div: HTMLElement | null = this.parentNode.querySelector(`[${attrName}]`);
+    if (!div) {
+      div = this.createMask(attrName);
     }
 
     return div;
@@ -252,7 +292,7 @@ export class BkMaskManager {
    */
   private getMaskAttrTag(tag: string) {
     if (/^(auto|\s+)$/i.test(tag) || tag === null || tag === undefined || tag === '') {
-      return `__bk_mask_${random(16)}`;
+      return DEFAULT_MASK_UUID.prototype.def_val;
     }
 
     return tag;

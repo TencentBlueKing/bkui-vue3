@@ -24,7 +24,8 @@
  * IN THE SOFTWARE.
 */
 
-import { bKMaskManager } from './mask-manager';
+import { isElement } from './helper';
+import { BkMaskManager } from './mask-manager';
 import { random } from './utils';
 import { bkZIndexManager } from './z-index-manager';
 
@@ -34,17 +35,33 @@ export class BKPopIndexManager {
   private readonly uuidAttrName: string;
   private clickFn: Array<any>;
   private activePopId: string;
+  private bKMaskManagerInstance: BkMaskManager;
 
-  constructor() {
+  constructor(options?) {
     this.popInstanceList = [];
     this.clickFn = [];
     this.uuidAttrName = 'data-bk-pop-uuid';
     this.activePopId = null;
-    bKMaskManager.setOption({
+    this.bKMaskManagerInstance = new BkMaskManager({
+      parentNode: this.getParentNode(options?.transfer),
       onClick: this.onMaskClickFn.bind(this),
     });
   }
 
+  public getParentNode(transfer) {
+    if (typeof transfer === 'string') {
+      const target = document.querySelector(transfer) as HTMLElement;
+      if (target) {
+        return target;
+      }
+    }
+
+    if (isElement(transfer)) {
+      return transfer;
+    }
+
+    return document.body;
+  }
 
   public onMaskClick(callFn: (e: MouseEvent) => void, target: HTMLElement) {
     this.clickFn.push({ fn: callFn, target });
@@ -67,8 +84,8 @@ export class BKPopIndexManager {
     const uuid = random(16);
     content.setAttribute(this.uuidAttrName, uuid);
     this.popInstanceList.push({ uuid, zIndex, content, showMask, appendStyle });
-    showMask && bKMaskManager.backupActiveInstance();
-    bKMaskManager.show(content, zIndex, showMask, appendStyle, uuid, transfer);
+    showMask && this.bKMaskManagerInstance.backupActiveInstance();
+    this.bKMaskManagerInstance.show(content, zIndex, showMask, appendStyle, uuid, transfer);
     this.activePopId = uuid;
   }
 
@@ -94,7 +111,7 @@ export class BKPopIndexManager {
     if (this.popInstanceList.length) {
       if (removeLastContent) {
         const lastItem = this.popInstanceList.pop();
-        bKMaskManager.popIndexStore(lastItem.uuid);
+        this.bKMaskManagerInstance.popIndexStore(lastItem.uuid);
         lastItem.remove();
         this.activePopId = null;
       }
@@ -102,10 +119,10 @@ export class BKPopIndexManager {
       if (this.popInstanceList.length) {
         const activeItem = this.popInstanceList.slice(-1)[0];
         const { zIndex, content, showMask, appendStyle, uuid } = activeItem;
-        bKMaskManager.show(content, zIndex, showMask, appendStyle, uuid);
+        this.bKMaskManagerInstance.show(content, zIndex, showMask, appendStyle, uuid);
         this.activePopId = uuid;
       } else {
-        bKMaskManager.hide();
+        this.bKMaskManagerInstance.hide();
         this.activePopId = null;
         this.clickFn.length = 0;
       }
@@ -124,9 +141,9 @@ export class BKPopIndexManager {
       if (itemIndex >= 0) {
         if (!transfer) this.popInstanceList[itemIndex].content.remove();
         this.popInstanceList.splice(itemIndex, 1);
-        bKMaskManager.popIndexStore(uuid);
+        this.bKMaskManagerInstance.popIndexStore(uuid);
         if (!this.popInstanceList.length) {
-          bKMaskManager.hide(transfer);
+          this.bKMaskManagerInstance.hide(transfer);
           this.activePopId = null;
           this.clickFn.length = 0;
         } else {

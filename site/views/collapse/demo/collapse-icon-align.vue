@@ -1,9 +1,9 @@
 <template>
   <bk-collapse
+    v-model="activeIndex"
     has-header-border
     class="bk-collapse-demo"
     header-icon-align="right"
-    v-model="activeIndex"
     :list="list"
   />
 </template>

@@ -442,6 +442,7 @@ export type Column = {
   } | boolean | string;
   colspan?: Function | Number;
   rowspan?: Function | Number;
+  textAlign?: String;
 };
 
 export type Thead = {
