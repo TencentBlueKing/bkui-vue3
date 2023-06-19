@@ -24,8 +24,33 @@
 * IN THE SOFTWARE.
 */
 import { PropType } from 'vue';
+import { string } from 'vue-types';
+
 export  type TipsType = 'tips' | 'title';
 export  type CalType = 'dom' | 'canvas';
+
+export enum PlacementEnum {
+  AUTO = 'auto',
+  AUTO_START = 'auto-start',
+  AUTO_END = 'auto-end',
+  TOP = 'top',
+  RIGHT = 'right',
+  BOTTOM = 'bottom',
+  LEFT = 'left',
+  TOP_START = 'top-start',
+  TOP_END = 'top-end',
+  BOTTOM_START = 'bottom-start',
+  BOTTOM_END = 'bottom-end',
+  RIGHT_START = 'right-start',
+  RIGHT_END = 'right-end',
+  LEFT_START = 'left-start',
+  LEFT_END = 'left-end',
+}
+
+export function placementType() {
+  return string<`${PlacementEnum}`>().def(PlacementEnum.BOTTOM);
+}
+
 export default {
   content: String,
   type: {
@@ -35,6 +60,10 @@ export default {
   calType: {
     type: String as PropType<CalType>,
     default: 'dom',
+  },
+  placement: {
+    type: String as PropType<PlacementEnum>,
+    default: PlacementEnum.TOP,
   },
   resizeable: Boolean,
 };

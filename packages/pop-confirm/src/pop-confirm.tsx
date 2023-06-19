@@ -59,6 +59,7 @@ export default defineComponent({
       return props.icon;
     }
 
+    const icon = renderIcon();
     return () => (
       <BkPopover
         isShow={visible.value}
@@ -75,13 +76,13 @@ export default defineComponent({
                 <>
                   {props.title ? (
                     <div class="bk-pop-confirm-title">
-                      <span class="bk-pop-confirm-icon">{renderIcon()}</span>
+                      {icon ? <span class="bk-pop-confirm-icon">{icon}</span> : ''}
                       <span>{props.title}
                    </span>
                     </div>
                   ) : ''}
                   <div class="bk-pop-confirm-content">
-                    {!props.title ? renderIcon() : ''}
+                    {!props.title ? icon : ''}
                     {props.content}
                   </div>
                 </>
