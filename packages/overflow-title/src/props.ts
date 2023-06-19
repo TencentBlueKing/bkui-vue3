@@ -23,8 +23,9 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { PropType } from 'vue';
 import { string } from 'vue-types';
+
+import { PropTypes } from '@bkui-vue/shared';
 
 export  type TipsType = 'tips' | 'title';
 export  type CalType = 'dom' | 'canvas';
@@ -52,18 +53,10 @@ export function placementType() {
 }
 
 export default {
-  content: String,
-  type: {
-    type: String as PropType<TipsType>,
-    default: 'title',
-  },
-  calType: {
-    type: String as PropType<CalType>,
-    default: 'dom',
-  },
-  placement: {
-    type: String as PropType<PlacementEnum>,
-    default: PlacementEnum.TOP,
-  },
-  resizeable: Boolean,
+  content: PropTypes.string,
+  type: PropTypes.oneOf(['tips', 'title']).def('title'),
+  calType: PropTypes.oneOf(['dom', 'canvas']).def('dom'),
+  boundary: PropTypes.oneOfType([PropTypes.string.def('parent'), PropTypes.instanceOf(HTMLElement)]).def(document.body),
+  placement: placementType().def(PlacementEnum.TOP_START),
+  resizeable: PropTypes.bool,
 };
