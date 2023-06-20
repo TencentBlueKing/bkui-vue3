@@ -26,17 +26,7 @@
 
 import { isEqual, merge } from 'lodash';
 import { PopoverPropTypes } from 'popover/src/props';
-import {
-  computed,
-  defineComponent,
-  onMounted,
-  PropType,
-  provide,
-  reactive,
-  ref,
-  toRefs,
-  watch,
-} from 'vue';
+import { computed, defineComponent, onMounted, PropType, provide, reactive, ref, toRefs, watch } from 'vue';
 
 import { useLocale } from '@bkui-vue/config-provider';
 import { clickoutside } from '@bkui-vue/directives';
@@ -47,7 +37,8 @@ import BKPopover from '@bkui-vue/popover';
 import {
   classes,
   InputBehaviorType,
-  PropTypes, RenderType,
+  PropTypes,
+  RenderType,
   resolveClassName,
   SizeEnum,
   TagThemeType,
@@ -55,14 +46,7 @@ import {
 } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
-import {
-  selectKey,
-  toLowerCase,
-  useHover,
-  usePopover,
-  useRegistry,
-  useRemoteSearch,
-} from './common';
+import { selectKey, toLowerCase, useHover, usePopover, useRegistry, useRemoteSearch } from './common';
 import Option from './option';
 import SelectTagInput from './selectTagInput';
 import { GroupInstanceType, ISelected, OptionInstanceType, SelectTagInputType } from './type';
@@ -110,7 +94,8 @@ export default defineComponent({
     enableVirtualRender: PropTypes.bool.def(false), // 是否开启虚拟滚动（List模式下才会生效）
     allowEmptyValues: PropTypes.array.def([]), // 允许的空值作为options选项
     autoFocus: PropTypes.bool.def(false), // 挂载的时候是否自动聚焦输入框
-    keepSearchValue: PropTypes.bool.def(false), // 隐藏popover时是否保留搜索内容
+    keepSearchValue: PropTypes.bool.def(false), // 隐藏popover时是否保留搜索内容,
+    prefix: PropTypes.string,
   },
   emits: ['update:modelValue', 'change', 'toggle', 'clear', 'scroll-end', 'focus', 'blur'],
   setup(props, { emit }) {
@@ -494,7 +479,7 @@ export default defineComponent({
           }
         }
       }
-      return  optionsMap.value?.get(tmpValue)?.label || cacheSelectedMap.value[tmpValue] || tmpValue;
+      return optionsMap.value?.get(tmpValue)?.label || cacheSelectedMap.value[tmpValue] || tmpValue;
     };
     // 设置selected选项
     const handleSetSelectedData = () => {
@@ -660,8 +645,9 @@ export default defineComponent({
 
     const suffixIcon = () => {
       if (this.loading) {
-        return <Loading loading={true} theme='primary' class="spinner" mode="spin" size="mini"></Loading>;
-      } if (this.clearable && this.isHover && this.selected.length && !this.isDisabled) {
+        return <Loading loading={true} theme="primary" class="spinner" mode="spin" size="mini"></Loading>;
+      }
+      if (this.clearable && this.isHover && this.selected.length && !this.isDisabled) {
         return <Close class="clear-icon" onClick={this.handleClear}></Close>;
       }
       return <AngleUp class="angle-up"></AngleUp>;
@@ -682,11 +668,11 @@ export default defineComponent({
             collapseTags={this.isCollapseTags}
             onEnter={this.handleInputEnter}
             onKeydown={(_, e) => this.handleKeydown(e as KeyboardEvent)}>
-              {{
-                prefix: () => this.$slots.prefix?.(),
-                default: this.$slots.tag && (() => this.$slots.tag({ selected: this.selected })),
-                suffix: () => suffixIcon(),
-              }}
+            {{
+              prefix: () => this.$slots.prefix?.(),
+              default: this.$slots.tag && (() => this.$slots.tag({ selected: this.selected })),
+              suffix: () => suffixIcon(),
+            }}
           </SelectTagInput>
         );
       }
@@ -704,11 +690,13 @@ export default defineComponent({
           withValidate={false}
           onInput={this.handleInputChange}
           onEnter={this.handleInputEnter}
-          onKeydown={(_, e) => this.handleKeydown(e as KeyboardEvent)}>
-            {{
-              prefix: () => this.$slots.prefix?.(),
-              suffix: () => suffixIcon(),
-            }}
+          onKeydown={(_, e) => this.handleKeydown(e as KeyboardEvent)}
+          {...(this.prefix ? { prefix: this.prefix } : null)}
+        >
+          {{
+            ...typeof this.$slots.prefix === 'function' ? { prefix: () => this.$slots.prefix?.() } : null,
+            suffix: () => suffixIcon(),
+          }}
         </Input>
       );
     };
@@ -744,7 +732,7 @@ export default defineComponent({
             <div class={resolveClassName('select-empty')}>
               {
                 this.searchLoading
-                && <Loading class="mr5" theme='primary' loading={true} mode="spin" size="mini"></Loading>
+                && <Loading class="mr5" theme="primary" loading={true} mode="spin" size="mini"></Loading>
               }
               <span>{this.curContentText}</span>
             </div>)
@@ -788,7 +776,7 @@ export default defineComponent({
                 {this.$slots.default?.()}
                 {this.scrollLoading && (
                   <li class={resolveClassName('select-options-loading')}>
-                    <Loading class="spinner mr5" theme='primary' loading={true} mode="spin" size="mini"></Loading>
+                    <Loading class="spinner mr5" theme="primary" loading={true} mode="spin" size="mini"></Loading>
                     <span>{this.localLoadingText}</span>
                   </li>
                 )}
@@ -801,7 +789,8 @@ export default defineComponent({
     );
     return (
       <div class={selectClass}>
-        <BKPopover {...this.popoverConfig}
+        <BKPopover
+          {...this.popoverConfig}
           onClickoutside={this.handleClickOutside}
           onAfterShow={this.handlePopoverShow}
           ref="popoverRef">
