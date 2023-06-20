@@ -78,6 +78,11 @@ export default defineComponent({
             return;
           }
           nodes.forEach((node: any) => {
+            if (Array.isArray(node)) {
+              reduceColumns(node);
+              return;
+            }
+
             let skipValidateKey0 = true;
             if (node.type?.name === 'TableColumn') {
               skipValidateKey0 = Object.hasOwnProperty.call(node.props || {}, 'key');
