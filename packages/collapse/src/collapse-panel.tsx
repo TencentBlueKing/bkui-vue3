@@ -134,18 +134,16 @@ export default defineComponent({
     };
   },
   render() {
-    return <>
-      <div
-        class={`bk-collapse-item ${this.disabled ? 'is-disabled' : ''} ${this.isActive ? 'bk-collapse-item-active' : ''}`}>
-        <div onClick={() => this.clickItem()}>
-          {this.renderHeader(<this.collapseIcon class={`bk-collapse-icon ${(this.isActive && 'rotate-icon') || ''}`}/>)}
-        </div>
-        <BKCollapseTransition>
-          {
-            this.renderPanel()
-          }
-        </BKCollapseTransition>
+    return <div
+      class={`bk-collapse-item ${this.disabled ? 'is-disabled' : ''} ${this.isActive ? 'bk-collapse-item-active' : ''}`}>
+      <div onClick={() => this.clickItem()}>
+        {this.renderHeader(<this.collapseIcon class={`bk-collapse-icon ${(this.isActive && 'rotate-icon') || ''}`}/>)}
       </div>
-    </>;
+      <BKCollapseTransition>
+        {
+          this.renderPanel()
+        }
+      </BKCollapseTransition>
+    </div>;
   },
 });
