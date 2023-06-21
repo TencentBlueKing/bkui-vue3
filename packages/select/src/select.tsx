@@ -667,9 +667,20 @@ export default defineComponent({
             onRemove={this.handleDeleteTag}
             collapseTags={this.isCollapseTags}
             onEnter={this.handleInputEnter}
-            onKeydown={(_, e) => this.handleKeydown(e as KeyboardEvent)}>
+            onKeydown={(_, e) => this.handleKeydown(e as KeyboardEvent)}
+          >
             {{
-              prefix: () => this.$slots.prefix?.(),
+              prefix: () => {
+                if (typeof this.$slots.prefix === 'function') {
+                  return this.$slots.prefix?.();
+                }
+                if (this.prefix) {
+                  return (
+                    <div class="bk-select--prefix-area"><span>{this.prefix}</span></div>
+                  );
+                }
+                return '';
+              },
               default: this.$slots.tag && (() => this.$slots.tag({ selected: this.selected })),
               suffix: () => suffixIcon(),
             }}
@@ -701,34 +712,34 @@ export default defineComponent({
       );
     };
     const renderSelectTrigger = () => (
-        <div
-          class={resolveClassName('select-trigger')}
-          style={{ height: this.autoHeight && this.collapseTags ? '32px' : '' }}
-          ref="triggerRef"
-          onClick={this.handleTogglePopover}
-          onMouseenter={this.setHover}
-          onMouseleave={this.cancelHover}>
-          { this.$slots.trigger?.({ selected: this.selected }) || renderTriggerInput()}
-        </div>
+      <div
+        class={resolveClassName('select-trigger')}
+        style={{ height: this.autoHeight && this.collapseTags ? '32px' : '' }}
+        ref="triggerRef"
+        onClick={this.handleTogglePopover}
+        onMouseenter={this.setHover}
+        onMouseleave={this.cancelHover}>
+        {this.$slots.trigger?.({ selected: this.selected }) || renderTriggerInput()}
+      </div>
     );
     const renderSelectContent = () => (
-        <div class={resolveClassName('select-content-wrapper')} ref="contentRef">
-          {
-            this.filterable && !this.inputSearch && (
-              <div class={resolveClassName('select-search-wrapper')}>
-                <Search class="icon-search" width={16} height={16} />
-                <input
-                  ref="searchRef"
-                  class={resolveClassName('select-search-input')}
-                  placeholder={this.localSearchPlaceholder}
-                  v-model={this.searchKey}
-                />
-              </div>
-            )
-          }
-          {
-            !this.isShowSelectContent
-            && (
+      <div class={resolveClassName('select-content-wrapper')} ref="contentRef">
+        {
+          this.filterable && !this.inputSearch && (
+            <div class={resolveClassName('select-search-wrapper')}>
+              <Search class="icon-search" width={16} height={16}/>
+              <input
+                ref="searchRef"
+                class={resolveClassName('select-search-input')}
+                placeholder={this.localSearchPlaceholder}
+                v-model={this.searchKey}
+              />
+            </div>
+          )
+        }
+        {
+          !this.isShowSelectContent
+          && (
             <div class={resolveClassName('select-empty')}>
               {
                 this.searchLoading
@@ -736,56 +747,56 @@ export default defineComponent({
               }
               <span>{this.curContentText}</span>
             </div>)
-          }
-          <div class={resolveClassName('select-content')}>
-            <div class={resolveClassName('select-dropdown')}
-              style={{ maxHeight: `${this.scrollHeight}px` }}
-              onScroll={this.handleScroll}
-            >
-              <ul class={resolveClassName('select-options')} v-show={this.isShowSelectContent}>
-                {
-                  this.isShowSelectAll && (
-                    <li class={resolveClassName('select-option')}
+        }
+        <div class={resolveClassName('select-content')}>
+          <div class={resolveClassName('select-dropdown')}
+               style={{ maxHeight: `${this.scrollHeight}px` }}
+               onScroll={this.handleScroll}
+          >
+            <ul class={resolveClassName('select-options')} v-show={this.isShowSelectContent}>
+              {
+                this.isShowSelectAll && (
+                  <li class={resolveClassName('select-option')}
                       onMouseenter={this.handleSelectedAllOptionMouseEnter}
                       onClick={this.handleToggleAll}>
-                      {this.localSelectAllText}
-                    </li>
-                  )
-                }
-                {
-                  this.enableVirtualRender
-                    ? <VirtualRender
-                        list={this.virtualList}
-                        height={this.virtualHeight}
-                        lineHeight={32}
-                        ref="virtualRenderRef">
-                          {{
-                            default: ({ data }) => data
-                              .map(item => (
-                                <Option
-                                  key={item[this.idKey]}
-                                  value={item[this.idKey]}
-                                  label={item[this.displayKey]}
-                                />
-                              )),
-                          }}
-                      </VirtualRender>
-                    : this.list
-                      .map(item => <Option value={item[this.idKey]} label={item[this.displayKey]}></Option>)
-                }
-                {this.$slots.default?.()}
-                {this.scrollLoading && (
-                  <li class={resolveClassName('select-options-loading')}>
-                    <Loading class="spinner mr5" theme="primary" loading={true} mode="spin" size="mini"></Loading>
-                    <span>{this.localLoadingText}</span>
+                    {this.localSelectAllText}
                   </li>
-                )}
-              </ul>
-            </div>
-            {this.$slots.extension
-              && (<div class={resolveClassName('select-extension')}>{this.$slots.extension()}</div>)}
+                )
+              }
+              {
+                this.enableVirtualRender
+                  ? <VirtualRender
+                    list={this.virtualList}
+                    height={this.virtualHeight}
+                    lineHeight={32}
+                    ref="virtualRenderRef">
+                    {{
+                      default: ({ data }) => data
+                        .map(item => (
+                          <Option
+                            key={item[this.idKey]}
+                            value={item[this.idKey]}
+                            label={item[this.displayKey]}
+                          />
+                        )),
+                    }}
+                  </VirtualRender>
+                  : this.list
+                    .map(item => <Option value={item[this.idKey]} label={item[this.displayKey]}></Option>)
+              }
+              {this.$slots.default?.()}
+              {this.scrollLoading && (
+                <li class={resolveClassName('select-options-loading')}>
+                  <Loading class="spinner mr5" theme="primary" loading={true} mode="spin" size="mini"></Loading>
+                  <span>{this.localLoadingText}</span>
+                </li>
+              )}
+            </ul>
           </div>
+          {this.$slots.extension
+            && (<div class={resolveClassName('select-extension')}>{this.$slots.extension()}</div>)}
         </div>
+      </div>
     );
     return (
       <div class={selectClass}>

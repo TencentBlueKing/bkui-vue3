@@ -118,11 +118,13 @@ export default defineComponent({
     };
   },
   render() {
+    const prefix = this.$slots?.prefix?.();
     const selectTagClass = classes({
       [resolveClassName('select-tag')]: true,
       [resolveClassName('select-tag--default')]: true,
       'is-disabled': this.disabled,
       'collapse-tag': this.collapseTags,
+      'has-prefix': !!prefix,
     });
     const tagWrapperClass = classes({
       [resolveClassName('select-tag-wrapper')]: true,
@@ -130,6 +132,7 @@ export default defineComponent({
     const inputStyle = {
       display: this.selected.length && !this.filterable ? 'none' : '',
     };
+
     return (
       <div class={selectTagClass}>
         {this.$slots?.prefix?.()}

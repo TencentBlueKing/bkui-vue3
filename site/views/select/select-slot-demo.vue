@@ -43,8 +43,6 @@
           />
         </bk-select>
       </div>
-    </div>
-    <div>
       <div>
         <h4>extension</h4>
         <bk-select
@@ -75,6 +73,8 @@
           </template>
         </bk-select>
       </div>
+    </div>
+    <div>
       <div>
         <h4>prefix</h4>
         <bk-select
@@ -96,13 +96,33 @@
         </bk-select>
       </div>
       <div>
-        <h4>prefix</h4>
+        <h4>prefix(属性)</h4>
         <bk-select
           v-model="selectedValue"
           class="bk-select"
           filterable
           multiple
           :input-search="false"
+          prefix="运动选项"
+        >
+          <bk-option
+            v-for="(item, index) in datasource"
+            :key="index"
+            :value="item.value"
+            :label="item.label"
+          />
+        </bk-select>
+      </div>
+      <div>
+        <h4>prefix(属性)</h4>
+        <bk-select
+          v-model="selectedValue"
+          class="bk-select"
+          filterable
+          multiple
+          show-select-all
+          multiple-mode="tag"
+          collapse-tags
           prefix="运动选项"
         >
           <bk-option
