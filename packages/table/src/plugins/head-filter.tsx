@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { computed, defineComponent, nextTick, reactive, ref } from 'vue';
+import { computed, defineComponent, nextTick, reactive, ref, toRefs } from 'vue';
 
 import BkCheckbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
 import { useLocale } from '@bkui-vue/config-provider';
@@ -46,9 +46,11 @@ export default defineComponent({
   setup(props, { emit }) {
     const t = useLocale('table');
     const { column } = props;
+    const { filter } = toRefs(props.column);
+    const checked = ref(filter.value?.checked ?? []);
     const state = reactive({
       isOpen: false,
-      checked: [],
+      checked: checked.value,
     });
 
     const headClass = computed(() => classes({
@@ -68,21 +70,21 @@ export default defineComponent({
     const handlePopShow = (isOpen: boolean) => {
       state.isOpen = isOpen;
       isOpen
-        && setTimeout(() => {
-          refVirtualRender.value.reset();
-        });
+      && setTimeout(() => {
+        refVirtualRender.value.reset();
+      });
     };
 
     const theme = `light ${resolveClassName('table-head-filter')}`;
     const localData = computed(() => {
-      const { list = [] } = column.filter;
+      const { list = [] } = filter.value;
       return list;
     });
 
     const getRegExp = (searchValue: string | number | boolean, flags = 'ig') => new RegExp(`${searchValue}`.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&'), flags);
 
     const defaultFilterFn = (checked: string[], row: any) => {
-      const { match } = column.filter;
+      const { match } = filter.value;
       const matchText = getRowText(row, resolvePropVal(column, 'field', [column, row]), column);
       if (match === 'full') {
         checked.includes(matchText);
@@ -91,9 +93,9 @@ export default defineComponent({
       return checked.some((str: string) => getRegExp(str, 'img').test(matchText));
     };
 
-    const filterFn =      typeof column.filter.filterFn === 'function'
+    const filterFn = typeof filter.value.filterFn === 'function'
       // eslint-disable-next-line max-len
-      ? (checked: string[], row: any, index: number, data: any[]) => column.filter.filterFn(checked, row, props.column, index, data)
+      ? (checked: string[], row: any, index: number, data: any[]) => filter.value.filterFn(checked, row, props.column, index, data)
       : (checked: string[], row: any) => (checked.length ? defaultFilterFn(checked, row) : true);
 
     const handleBtnSaveClick = () => {
@@ -106,7 +108,7 @@ export default defineComponent({
       const { disabled } = resolveBtnOption(btnSave, t.value.confirm);
 
       if (disabled || btnSaveClick) {
-        if (props.column.filter === 'custom') {
+        if (filter.value === 'custom') {
           emit('change', [...state.checked], null);
           state.isOpen = false;
           return;
@@ -130,16 +132,16 @@ export default defineComponent({
       return { disabled, text };
     };
 
-    const { btnSave, btnReset } = column.filter;
+    const { btnSave, btnReset } = filter.value;
 
     const renderSaveBtn = () => {
       const { disabled, text } = resolveBtnOption(btnSave, t.value.confirm);
       if (disabled) {
-        return <span class='btn-filter-save disabled'>{text}</span>;
+        return <span class="btn-filter-save disabled">{text}</span>;
       }
 
       return (
-        <span class='btn-filter-save' onClick={handleBtnSaveClick}>
+        <span class="btn-filter-save" onClick={handleBtnSaveClick}>
           {text}
         </span>
       );
@@ -174,13 +176,14 @@ export default defineComponent({
     const renderFilterList = (scope) => {
       if (scope.data.length) {
         return scope.data.map((item: any) => <div class="list-item">
-          <BkCheckbox label={item.value}
-            key={ item.$index }
-            immediateEmitChange = {false}
-            checked={ state.checked.includes(item.value) }
-            modelValue={ state.checked.includes(item.value) }
-            onChange={ val => handleValueChange(val, item) }>
-              { `${item.text}` }
+          <BkCheckbox
+            label={item.value}
+            key={item.$index}
+            immediateEmitChange={false}
+            checked={state.checked.includes(item.value)}
+            modelValue={state.checked.includes(item.value)}
+            onChange={val => handleValueChange(val, item)}>
+            {`${item.text}`}
           </BkCheckbox>
         </div>);
       }
@@ -188,11 +191,22 @@ export default defineComponent({
       return <div class="list-item is-empty">{t.value.emptyText}</div>;
     };
 
+    /* 监听过滤筛选值，更新表格
+    onMounted(() => {
+      watch(() => filter.value.checked, (val) => {
+        if (val?.length) {
+          state.checked = val;
+          emit('change', val, filterFn);
+        }
+      }, { immediate: true });
+    });
+    */
+
     return () => (
       <Popover
-        trigger='click'
+        trigger="click"
         isShow={state.isOpen}
-        placement='bottom-start'
+        placement="bottom-start"
         renderType={RenderType.SHOWN}
         arrow={false}
         offset={0}
@@ -201,10 +215,11 @@ export default defineComponent({
         onAfterHidden={() => handlePopShow(false)}
       >
         {{
-          default: () => <Funnel class={headClass.value} />,
+          default: () => <Funnel class={headClass.value}/>,
           content: () => (
             <div class={headFilterContentClass}>
-              <BkCheckboxGroup class='content-list'>
+              <BkCheckboxGroup
+                class="content-list">
                 <VirtualRender
                   lineHeight={32}
                   list={localData.value}
@@ -218,9 +233,9 @@ export default defineComponent({
                   }}
                 </VirtualRender>
               </BkCheckboxGroup>
-              <div class='content-footer'>
+              <div class="content-footer">
                 {renderSaveBtn()}
-                <span class='btn-filter-split'></span>
+                <span class="btn-filter-split"></span>
                 {renderResetBtn()}
               </div>
             </div>

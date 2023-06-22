@@ -121,6 +121,7 @@ export default [
     config: [
       { name: 'filterFn', type: 'Function', default: '--', desc: '自定义过滤函数，参数：(checked, row, props.column, index, data) => boolean。如果要使用远程过滤，为防止默认过滤，请配置此选项为: () => true', optional: [] },
       { name: 'list', type: 'Array[{ value, text }]', default: '[]', desc: '数据过滤的选项，数组格式，数组中的元素需要有 text 和 value 属性。', optional: [] },
+      { name: 'checked', type: 'String[]||Number[]||Boolean[]', default: '[]', desc: '筛选项选中的元素', optional: [] },
       { name: 'match', type: 'String', default: 'full', desc: '过滤匹配模式，默认全量匹配', optional: ['full', 'fuzzy'] },
       { name: 'filterScope', type: 'String', default: 'current', desc: '如果有分页，配置过滤范围为当前页面或者跨页', optional: ['current', 'all'] },
       { name: 'btnSave', type: 'String|Boolean', default: '确定', desc: '数据过滤的`确定`按钮配置，可配置为String类型，配置不同显示文本；也可以配置为false，禁用确定按钮，当此按钮禁用，单击过滤选项即生效', optional: [] },
