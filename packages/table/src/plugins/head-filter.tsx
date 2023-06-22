@@ -113,7 +113,7 @@ export default defineComponent({
           state.isOpen = false;
           return;
         }
-
+        filter.value.checked = state.checked;
         emit('change', [...state.checked], filterFn);
       }
     };
