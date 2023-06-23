@@ -66,6 +66,7 @@ export const SearchSelectProps = {
     type: Boolean,
     default: true,
   },
+  placeholder: String,
   getMenuList: Function as PropType<GetMenuListFunc>,
   validateValues: Function as PropType<ValidateValuesFunc>,
   valueSplitCode: {
@@ -90,7 +91,7 @@ export default defineComponent({
     clickoutside,
   },
   props: SearchSelectProps,
-  emits: ['update:modelValue'],
+  emits: ['update:modelValue', 'search'],
   setup(props, { emit }) {
     const t = useLocale('searchSelect');
     const localConditions = computed(() => {
@@ -254,7 +255,13 @@ export default defineComponent({
     }
     function handleInputFocus(v: boolean) {
       v && (overflowIndex.value = -1);
+      if (v === false) {
+        wrapRef.value.querySelector('.bk-search-select-container')?.scrollTo(0, 0);
+      }
       isFocus.value = v;
+    }
+    function handleClickSearch(e: MouseEvent) {
+      emit('search', e);
     }
     return {
       inputRef,
@@ -274,7 +281,9 @@ export default defineComponent({
       handleInputOutside,
       handleAddSelected,
       handleDeleteSelected,
+      handleClickSearch,
       localConditions,
+      t,
     };
   },
   render() {
@@ -313,6 +322,7 @@ export default defineComponent({
            showInputBefore={!this.selectedList.length}
            showCondition={showCondition}
            conditions={this.localConditions}
+           placeholder={this.placeholder || this.t.pleaseSelect}
            clickOutside={this.handleInputOutside}
            getMenuList={this.getMenuList}
            validateValues={this.validateValues}
@@ -331,7 +341,7 @@ export default defineComponent({
         {
           this.$slots.append
             ? this.$slots.append()
-            : <Search class={`search-nextfix-icon ${this.isFocus ? 'is-focus'  : ''}`}></Search>
+            : <Search onClick={this.handleClickSearch} class={`search-nextfix-icon ${this.isFocus ? 'is-focus'  : ''}`}></Search>
         }
       </div>
     </div>

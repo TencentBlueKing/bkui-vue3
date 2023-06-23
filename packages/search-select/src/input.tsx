@@ -45,6 +45,7 @@ export default defineComponent({
     showInputBefore: Boolean,
     showCondition: Boolean,
     clickOutside: Function,
+    placeholder: String,
     conditions: {
       type: Array as PropType<ICommonItem[]>,
       default: () => [],
@@ -535,7 +536,7 @@ export default defineComponent({
       'input-after': showInputAfter,
     }}
     contenteditable={true}
-    data-placeholder={!inputInnerHtml && !this.keyword ? this.t.pleaseSelect : ''}
+    data-placeholder={!inputInnerHtml && !this.keyword ? this.placeholder  : ''}
     data-tips={placeholder || ''}
     spellcheck="false"
     v-clickoutside={this.handleClickOutside}
