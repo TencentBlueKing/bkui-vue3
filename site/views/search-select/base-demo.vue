@@ -3,6 +3,7 @@
     v-model="value"
     :data="data"
     unique-select
+    placeholder="请选择或输入"
     :value-split-code="'+'"
   />
 </template>
