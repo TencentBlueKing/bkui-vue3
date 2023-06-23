@@ -108,6 +108,13 @@ const propsJson: IPropsTableItem[] = [
     desc: '配置纯文本是否可以生成value (all: 可以，need-key: 需要key值)',
     optional: ['all', 'need-key'],
   },
+  {
+    name: 'placeholder',
+    type: 'String',
+    default: '请选择',
+    desc: 'placeholder',
+    optional: [],
+  },
 ];
 const slotsJson = [
   {
@@ -137,6 +144,11 @@ const eventJson = [
     name: 'update:modelValue',
     desc: '选择项发生变化时触发',
     params: '[{id, name, values}]',
+  },
+  {
+    name: 'search',
+    desc: '点击右侧search Icon 时触发',
+    params: 'event',
   },
 ];
 const dataJson = [
