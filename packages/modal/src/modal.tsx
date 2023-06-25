@@ -40,7 +40,7 @@ export default defineComponent({
     return {
       visible: false,
       closeTimer: null,
-      bkPopIndexManager: null,
+      bkPopIndexManager: new BKPopIndexManager({ ...this.$props }),
     };
   },
   computed: {
@@ -110,7 +110,7 @@ export default defineComponent({
     },
   },
   created() {
-    this.bkPopIndexManager = new  BKPopIndexManager({ ...this.$props });
+    // this.bkPopIndexManager = new BKPopIndexManager({ ...this.$props });
   },
 
   beforeUnmount() {
