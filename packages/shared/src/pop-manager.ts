@@ -33,18 +33,19 @@ export class BKPopIndexManager {
   /** 用来缓存弹出层实例 */
   private popInstanceList: Array<any>;
   private readonly uuidAttrName: string;
-  private clickFn: Array<any>;
-  private activePopId: string;
+  private clickFn?: { fn: (e: MouseEvent) => void, target: HTMLElement };
   private bKMaskManagerInstance: BkMaskManager;
+  private instanceUUID;
 
   constructor(options?) {
     this.popInstanceList = [];
-    this.clickFn = [];
+    this.clickFn = undefined;
+    this.instanceUUID = random(8);
     this.uuidAttrName = 'data-bk-pop-uuid';
-    this.activePopId = null;
     this.bKMaskManagerInstance = new BkMaskManager({
       parentNode: this.getParentNode(options?.transfer),
-      onClick: this.onMaskClickFn.bind(this),
+      popInstance: this,
+      onClick: this.onMaskClickFn,
     });
   }
 
@@ -64,7 +65,7 @@ export class BKPopIndexManager {
   }
 
   public onMaskClick(callFn: (e: MouseEvent) => void, target: HTMLElement) {
-    this.clickFn.push({ fn: callFn, target });
+    this.clickFn = { fn: callFn, target };
   }
 
   /**
@@ -86,7 +87,6 @@ export class BKPopIndexManager {
     this.popInstanceList.push({ uuid, zIndex, content, showMask, appendStyle });
     showMask && this.bKMaskManagerInstance.backupActiveInstance();
     this.bKMaskManagerInstance.show(content, zIndex, showMask, appendStyle, uuid, transfer);
-    this.activePopId = uuid;
   }
 
   /**
@@ -95,11 +95,7 @@ export class BKPopIndexManager {
    * @param transfer
    */
   public destroy(content?: HTMLElement, transfer = false) {
-    const index = this.getActiveClickFnIndex(content);
-    if (index >= 0) {
-      this.clickFn?.splice(index, 1);
-    }
-
+    this.clickFn = undefined;
     this.hide(content, transfer);
   }
 
@@ -113,18 +109,15 @@ export class BKPopIndexManager {
         const lastItem = this.popInstanceList.pop();
         this.bKMaskManagerInstance.popIndexStore(lastItem.uuid);
         lastItem.remove();
-        this.activePopId = null;
       }
 
       if (this.popInstanceList.length) {
         const activeItem = this.popInstanceList.slice(-1)[0];
         const { zIndex, content, showMask, appendStyle, uuid } = activeItem;
         this.bKMaskManagerInstance.show(content, zIndex, showMask, appendStyle, uuid);
-        this.activePopId = uuid;
       } else {
         this.bKMaskManagerInstance.hide();
-        this.activePopId = null;
-        this.clickFn.length = 0;
+        // this.clickFn.length = 0;
       }
     }
   }
@@ -144,8 +137,6 @@ export class BKPopIndexManager {
         this.bKMaskManagerInstance.popIndexStore(uuid);
         if (!this.popInstanceList.length) {
           this.bKMaskManagerInstance.hide(transfer);
-          this.activePopId = null;
-          this.clickFn.length = 0;
         } else {
           this.popHide(false);
         }
@@ -155,17 +146,8 @@ export class BKPopIndexManager {
     }
   }
 
-  private getActiveClickFnIndex = (match: HTMLElement | string) => {
-    const filterFn = target => (typeof match === 'string' ? target.getAttribute(this.uuidAttrName) === match
-      : target === match);
-
-    return this.clickFn.findIndex(({ target }: { fn: () => void, target: HTMLElement }) => filterFn(target));
-  };
-
-  private getActiveClickFn = (match: HTMLElement | string) => this.clickFn[this.getActiveClickFnIndex(match)]?.fn;
-
   private onMaskClickFn(e: MouseEvent) {
-    const fn = this.getActiveClickFn(this.activePopId);
+    const { fn } = this.clickFn;
     if (fn) {
       Reflect.apply(fn, this, [e]);
     }

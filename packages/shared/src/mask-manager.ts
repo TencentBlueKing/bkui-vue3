@@ -24,6 +24,7 @@
  * IN THE SOFTWARE.
 */
 
+import { BKPopIndexManager } from './pop-manager';
 import { random } from './utils';
 import { bkZIndexManager } from './z-index-manager';
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -94,7 +95,8 @@ type BkMaskManagerConfig = {
   maskAttrTag?: string,
   parentNode?: HTMLElement | Document,
   maskStyle?: any,
-  onClick?: (e: MouseEvent) => void
+  onClick?: (e: MouseEvent) => void,
+  popInstance?: BKPopIndexManager
 };
 
 type MaskConfigStore = {
@@ -147,6 +149,8 @@ export class BkMaskManager {
 
   private maskAttrTag = 'auto';
 
+  private popInstance?: BKPopIndexManager;
+
   /**
    * 遮罩管理器
    *
@@ -154,12 +158,13 @@ export class BkMaskManager {
    * @param maskAttrTag 遮罩DOM唯一标志，支持自定义和 auto
    */
   constructor(config?: BkMaskManagerConfig) {
-    const { multiInstance = false, maskAttrTag = 'auto', parentNode = document.body, maskStyle = {}, onClick = null } = config || {};
+    const { multiInstance = false, maskAttrTag = 'auto', parentNode = document.body, maskStyle = {}, onClick = null, popInstance = null } = config || {};
     this.parentNode = parentNode || document;
     this.maskAttrTag = maskAttrTag;
     this.onClick = onClick;
     this.activeInstance = undefined;
     this.multiInstance = multiInstance;
+    this.popInstance = popInstance;
     this.uniqueMaskAttrTag = this.getMaskAttrTag(maskAttrTag);
 
     // 避免多个实例多处初始化，此处会做队列处理
@@ -222,6 +227,7 @@ export class BkMaskManager {
       'pointer-events': 'all',
     });
     this.initInstance(style);
+    this.catchClickEvent();
     this.setMaskStyle(style);
 
     bkMaskMaker.pushMaskStyle(this.parentNode, { ...style });
@@ -246,6 +252,7 @@ export class BkMaskManager {
       content?.remove();
       this.activeInstance?.remove();
     }
+    this.removeClickEvent();
     this.activeInstance = undefined;
     this.popIndexStore(uid);
     const maskList = bkMaskMaker.getMaskStyles(this.parentNode);
@@ -316,19 +323,32 @@ export class BkMaskManager {
     if (!div) {
       isExist = false;
       div = this.createMask();
-      div.addEventListener('click', (e: MouseEvent) => {
-        if (e.target === div) {
-          if (typeof this.onClick === 'function') {
-            Reflect.apply(this.onClick, this, [e]);
-          }
-        }
-      }, true);
     }
 
     return {
       instance: div,
       isExist,
     };
+  }
+
+  private catchClickEvent() {
+    if (this.mask) {
+      this.mask.addEventListener('click', e => this.handleMaskClick(e), true);
+    }
+  }
+
+  private removeClickEvent() {
+    if (this.mask) {
+      this.mask.removeEventListener('click', this.handleMaskClick);
+    }
+  }
+
+  private handleMaskClick(e) {
+    if (e.target === this.mask) {
+      if (typeof this.onClick === 'function') {
+        Reflect.apply(this.onClick, this.popInstance || this, [e]);
+      }
+    }
   }
 
   private getBackupMask() {
