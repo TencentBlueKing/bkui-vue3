@@ -62,7 +62,7 @@ export default defineComponent({
   emits: ['focus', 'add', 'delete'],
   setup(props, { emit, expose }) {
     const t = useLocale('searchSelect');
-    const { getPrefixCls } = usePrefix();
+    const { resolveClassName } = usePrefix();
     const inputRef = ref<HTMLDivElement>(null);
     const popoverRef = ref<HTMLDivElement>(null);
 
@@ -517,7 +517,7 @@ export default defineComponent({
       handleSelectItem,
       handleSelectCondtionItem,
       handleMenuFooterClick,
-      getPrefixCls,
+      resolveClassName,
       t,
     };
   },
@@ -551,7 +551,7 @@ export default defineComponent({
       if (this.showNoSelectValueError) {
         return <div>{this.t.filterQueryMustHasValue}</div>;
       }
-      return this.menuList?.length ? <div ref="popoverRef" class={this.getPrefixCls('search-select-popover')}>
+      return this.menuList?.length ? <div ref="popoverRef" class={this.resolveClassName('search-select-popover')}>
       <SearchSelectMenu
         list={this.menuList}
         keyword={this.keyword}

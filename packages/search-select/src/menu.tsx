@@ -59,7 +59,7 @@ export default defineComponent({
   emits: ['selectItem', 'selectCondition', 'footerClick'],
   setup(props, { emit }) {
     const t = useLocale('searchSelect');
-    const { getPrefixCls } = usePrefix();
+    const { resolveClassName } = usePrefix();
     const localFooterBtns = computed(() => {
       if (props.footerBtns === undefined || props.footerBtns.length === 0) {
         return [
@@ -129,11 +129,11 @@ export default defineComponent({
       filterList,
       getSearchNode,
       localFooterBtns,
-      getPrefixCls,
+      resolveClassName,
     };
   },
   render() {
-    return <div class={this.getPrefixCls('search-select-menu')}>
+    return <div class={this.resolveClassName('search-select-menu')}>
       {
         !!this.conditions?.length
         && <ul class="menu-header">

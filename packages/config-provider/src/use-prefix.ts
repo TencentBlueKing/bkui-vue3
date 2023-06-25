@@ -40,11 +40,11 @@ export function usePrefix() {
     const { prefix } = config;
     return prefix || '';
   });
-  function getPrefixCls(cls: string): string {
+  function resolveClassName(cls: string): string {
     return `${prefix.value}-${cls.replace(new RegExp(`^${defaultRootConfig.prefix}-`), '')}`;
   }
   return {
     prefix,
-    getPrefixCls,
+    resolveClassName,
   };
 }

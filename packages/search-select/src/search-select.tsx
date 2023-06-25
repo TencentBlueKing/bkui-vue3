@@ -94,7 +94,7 @@ export default defineComponent({
   emits: ['update:modelValue', 'search'],
   setup(props, { emit }) {
     const t = useLocale('searchSelect');
-    const { getPrefixCls } = usePrefix();
+    const { resolveClassName } = usePrefix();
     const localConditions = computed(() => {
       if (props.conditions === undefined) {
         return [{ id: 'or', name: t.value.or }, { id: 'and', name: t.value.and }];
@@ -168,10 +168,10 @@ export default defineComponent({
 
     // life hooks
     onMounted(() => {
-      addListener(wrapRef.value.querySelector(`.${getPrefixCls('search-select-container')}`) as HTMLElement, debounceResize);
+      addListener(wrapRef.value.querySelector(`.${resolveClassName('search-select-container')}`) as HTMLElement, debounceResize);
     });
     onBeforeUnmount(() => {
-      removeListener(wrapRef.value.querySelector(`.${getPrefixCls('search-select-container')}`) as HTMLElement, debounceResize);
+      removeListener(wrapRef.value.querySelector(`.${resolveClassName('search-select-container')}`) as HTMLElement, debounceResize);
     });
 
     // edit item
@@ -205,7 +205,7 @@ export default defineComponent({
         overflowIndex.value = -1;
         return;
       }
-      const inputEl = wrapRef.value.querySelector(`.${getPrefixCls('search-select-container')}`);
+      const inputEl = wrapRef.value.querySelector(`.${resolveClassName('search-select-container')}`);
       const maxWidth = wrapRef.value.querySelector('.search-container').clientWidth - SELETED_MARGING_RIGHT - 2;
       const tagList = inputEl.querySelectorAll('.search-container-selected:not(.overflow-selected)');
       let width = 0;
@@ -257,7 +257,7 @@ export default defineComponent({
     function handleInputFocus(v: boolean) {
       v && (overflowIndex.value = -1);
       if (v === false) {
-        wrapRef.value.querySelector(`.${getPrefixCls('search-select-container')}`)?.scrollTo(0, 0);
+        wrapRef.value.querySelector(`.${resolveClassName('search-select-container')}`)?.scrollTo(0, 0);
       }
       isFocus.value = v;
     }
@@ -284,7 +284,7 @@ export default defineComponent({
       handleDeleteSelected,
       handleClickSearch,
       localConditions,
-      getPrefixCls,
+      resolveClassName,
       t,
     };
   },
@@ -297,11 +297,11 @@ export default defineComponent({
     } : {});
     // render
     return <div
-      class={this.getPrefixCls('search-select')}
+      class={this.resolveClassName('search-select')}
       ref="wrapRef">
     <div
       class={{
-        [this.getPrefixCls('search-select-container')]: true,
+        [this.resolveClassName('search-select-container')]: true,
         'is-focus': this.isFocus,
       }}
       onClick={this.handleWrapClick}>
@@ -350,7 +350,7 @@ export default defineComponent({
       </div>
     </div>
     {
-      !!this.validateStr.length && <div class={this.getPrefixCls('search-select-tips')}>
+      !!this.validateStr.length && <div class={this.resolveClassName('search-select-tips')}>
         {
           this.$slots.validate ? this.$slots.validate() : <>
             <ExclamationCircleShape class="select-tips"/>{this.validateStr || ''}
