@@ -41,6 +41,7 @@ import {
 import { EMIT_EVENTS } from './const';
 import { PopoverPropTypes } from './props';
 import usePlatform from './use-platform';
+import { contentAsHTMLElement } from './utils';
 
 /**
  * 解析popover相关配置
@@ -101,6 +102,12 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
     const elContent = resolveTargetElement(refContent.value?.$el);
     const elArrow = props.arrow ? resolveTargetElement(refArrow.value?.$el) : null;
     const root = resolveTargetElement(refRoot.value?.$el);
+
+    const { isElement, content } = contentAsHTMLElement(props.content);
+    if (elContent && isElement && !elContent?.contains(content)) {
+      (elContent as HTMLElement).append(content);
+    }
+
     return { elReference, elContent, elArrow, root };
   };
 
