@@ -23,50 +23,22 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent } from 'vue';
-import { RouterView } from 'vue-router';
 
-import header from '@blueking/magicbox-header/index.vue';
+import { computed, ComputedRef, inject } from 'vue';
 
-// import { provideGlobalConfig } from '../packages/bkui-vue/index';
-import DemoNav from './components/demo-nav';
+import { Language } from '@bkui-vue/locale';
 
-import './app.less';
+import { ConfigProviderProps } from './config-provider';
+import { defaultRootConfig, rootProviderKey } from './token';
 
-export default defineComponent({
-  name: 'App',
-  components: {
-    'app-header': header,
-  },
-  // setup() {
-  //   provideGlobalConfig({
-  //     prefix: 'aabb',
-  //   });
-  // },
-  render() {
-    return (
-      <div class="page-container">
-        {/* <bk-config-provider prefix={'aabb'}> */}
-        <div class="page-container-header">
-        <app-header
-          rootDomain="tencent.com"
-          loginUrl="https://login.bk.tencent.com"
-          avatarHost="https://q1.qlogo.cn"
-          lessCodeUrl="https://github.com/TencentBlueKing/bk-lesscode/blob/master/readme.md"
-          designUrl="https://bkdesign.bk.tencent.com/"
-          region="tencent">
-        </app-header>
-        </div>
-        <div class="page-container-body">
-          <div class="body-nav">
-            <DemoNav/>
-          </div>
-          <div class="body-wrapper">
-            <RouterView/>
-          </div>
-        </div>
-        {/* </bk-config-provider> */}
-      </div>
-    );
-  },
-});
+export function useLocale<T extends keyof Language>(compName: T): ComputedRef<Language[T]> {
+  const config = inject<ConfigProviderProps>(
+    rootProviderKey,
+    defaultRootConfig,
+  );
+  return computed<Language[T]>(() => {
+    const { locale } = config;
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    return locale && compName ? locale[compName] : {} as Language[T];
+  });
+}

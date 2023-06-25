@@ -27,7 +27,7 @@
 import { addListener, removeListener } from 'resize-detector';
 import {  computed, defineComponent, onBeforeUnmount, onMounted, PropType, ref, ShallowRef, shallowRef, watch } from 'vue';
 
-import { useLocale } from '@bkui-vue/config-provider';
+import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { clickoutside } from '@bkui-vue/directives';
 import { Close, ExclamationCircleShape, Search } from '@bkui-vue/icon';
 import { debounce } from '@bkui-vue/shared';
@@ -94,6 +94,7 @@ export default defineComponent({
   emits: ['update:modelValue', 'search'],
   setup(props, { emit }) {
     const t = useLocale('searchSelect');
+    const { resolveClassName } = usePrefix();
     const localConditions = computed(() => {
       if (props.conditions === undefined) {
         return [{ id: 'or', name: t.value.or }, { id: 'and', name: t.value.and }];
@@ -167,10 +168,10 @@ export default defineComponent({
 
     // life hooks
     onMounted(() => {
-      addListener(wrapRef.value.querySelector('.bk-search-select-container') as HTMLElement, debounceResize);
+      addListener(wrapRef.value.querySelector(`.${resolveClassName('search-select-container')}`) as HTMLElement, debounceResize);
     });
     onBeforeUnmount(() => {
-      removeListener(wrapRef.value.querySelector('.bk-search-select-container') as HTMLElement, debounceResize);
+      removeListener(wrapRef.value.querySelector(`.${resolveClassName('search-select-container')}`) as HTMLElement, debounceResize);
     });
 
     // edit item
@@ -204,7 +205,7 @@ export default defineComponent({
         overflowIndex.value = -1;
         return;
       }
-      const inputEl = wrapRef.value.querySelector('.bk-search-select-container');
+      const inputEl = wrapRef.value.querySelector(`.${resolveClassName('search-select-container')}`);
       const maxWidth = wrapRef.value.querySelector('.search-container').clientWidth - SELETED_MARGING_RIGHT - 2;
       const tagList = inputEl.querySelectorAll('.search-container-selected:not(.overflow-selected)');
       let width = 0;
@@ -256,7 +257,7 @@ export default defineComponent({
     function handleInputFocus(v: boolean) {
       v && (overflowIndex.value = -1);
       if (v === false) {
-        wrapRef.value.querySelector('.bk-search-select-container')?.scrollTo(0, 0);
+        wrapRef.value.querySelector(`.${resolveClassName('search-select-container')}`)?.scrollTo(0, 0);
       }
       isFocus.value = v;
     }
@@ -283,6 +284,7 @@ export default defineComponent({
       handleDeleteSelected,
       handleClickSearch,
       localConditions,
+      resolveClassName,
       t,
     };
   },
@@ -294,10 +296,12 @@ export default defineComponent({
       menu: (data: MenuSlotParams) => this.$slots.menu?.(data),
     } : {});
     // render
-    return <div class="bk-search-select" ref="wrapRef">
+    return <div
+      class={this.resolveClassName('search-select')}
+      ref="wrapRef">
     <div
       class={{
-        'bk-search-select-container': true,
+        [this.resolveClassName('search-select-container')]: true,
         'is-focus': this.isFocus,
       }}
       onClick={this.handleWrapClick}>
@@ -346,7 +350,7 @@ export default defineComponent({
       </div>
     </div>
     {
-      !!this.validateStr.length && <div class="bk-search-select-tips">
+      !!this.validateStr.length && <div class={this.resolveClassName('search-select-tips')}>
         {
           this.$slots.validate ? this.$slots.validate() : <>
             <ExclamationCircleShape class="select-tips"/>{this.validateStr || ''}
