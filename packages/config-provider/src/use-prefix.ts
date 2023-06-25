@@ -41,7 +41,7 @@ export function usePrefix() {
     return prefix || '';
   });
   function getPrefixCls(cls: string): string {
-    return `${prefix.value}-${cls}`;
+    return `${prefix.value}-${cls.replace(new RegExp(`^${defaultRootConfig.prefix}-`), '')}`;
   }
   return {
     prefix,

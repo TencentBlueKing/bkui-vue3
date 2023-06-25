@@ -168,10 +168,10 @@ export default defineComponent({
 
     // life hooks
     onMounted(() => {
-      addListener(wrapRef.value.querySelector('.bk-search-select-container') as HTMLElement, debounceResize);
+      addListener(wrapRef.value.querySelector(`.${getPrefixCls('search-select-container')}`) as HTMLElement, debounceResize);
     });
     onBeforeUnmount(() => {
-      removeListener(wrapRef.value.querySelector('.bk-search-select-container') as HTMLElement, debounceResize);
+      removeListener(wrapRef.value.querySelector(`.${getPrefixCls('search-select-container')}`) as HTMLElement, debounceResize);
     });
 
     // edit item
@@ -205,7 +205,7 @@ export default defineComponent({
         overflowIndex.value = -1;
         return;
       }
-      const inputEl = wrapRef.value.querySelector('.bk-search-select-container');
+      const inputEl = wrapRef.value.querySelector(`.${getPrefixCls('search-select-container')}`);
       const maxWidth = wrapRef.value.querySelector('.search-container').clientWidth - SELETED_MARGING_RIGHT - 2;
       const tagList = inputEl.querySelectorAll('.search-container-selected:not(.overflow-selected)');
       let width = 0;
@@ -257,7 +257,7 @@ export default defineComponent({
     function handleInputFocus(v: boolean) {
       v && (overflowIndex.value = -1);
       if (v === false) {
-        wrapRef.value.querySelector('.bk-search-select-container')?.scrollTo(0, 0);
+        wrapRef.value.querySelector(`.${getPrefixCls('search-select-container')}`)?.scrollTo(0, 0);
       }
       isFocus.value = v;
     }
@@ -301,7 +301,7 @@ export default defineComponent({
       ref="wrapRef">
     <div
       class={{
-        'bk-search-select-container': true,
+        [this.getPrefixCls('search-select-container')]: true,
         'is-focus': this.isFocus,
       }}
       onClick={this.handleWrapClick}>
@@ -350,7 +350,7 @@ export default defineComponent({
       </div>
     </div>
     {
-      !!this.validateStr.length && <div class="bk-search-select-tips">
+      !!this.validateStr.length && <div class={this.getPrefixCls('search-select-tips')}>
         {
           this.$slots.validate ? this.$slots.validate() : <>
             <ExclamationCircleShape class="select-tips"/>{this.validateStr || ''}

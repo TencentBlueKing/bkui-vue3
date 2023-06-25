@@ -25,7 +25,7 @@
 */
 import { computed, defineComponent, PropType, VNode } from 'vue';
 
-import { useLocale } from '@bkui-vue/config-provider';
+import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { Done } from '@bkui-vue/icon';
 
 import { ICommonItem, IMenuFooterItem } from './utils';;
@@ -59,6 +59,7 @@ export default defineComponent({
   emits: ['selectItem', 'selectCondition', 'footerClick'],
   setup(props, { emit }) {
     const t = useLocale('searchSelect');
+    const { getPrefixCls } = usePrefix();
     const localFooterBtns = computed(() => {
       if (props.footerBtns === undefined || props.footerBtns.length === 0) {
         return [
@@ -128,10 +129,11 @@ export default defineComponent({
       filterList,
       getSearchNode,
       localFooterBtns,
+      getPrefixCls,
     };
   },
   render() {
-    return <div class='bk-search-select-menu'>
+    return <div class={this.getPrefixCls('search-select-menu')}>
       {
         !!this.conditions?.length
         && <ul class="menu-header">

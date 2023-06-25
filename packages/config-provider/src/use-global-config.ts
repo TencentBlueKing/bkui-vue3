@@ -38,7 +38,7 @@ export const provideGlobalConfig = (config: ConfigProviderProps) => {
   const configData = reactive({
     ...merge(defaultRootConfig, config),
   });
-
+  setPrefixVariable(config.prefix);
   Object.keys(config).forEach((key) => {
     watch(
       () => config[key],

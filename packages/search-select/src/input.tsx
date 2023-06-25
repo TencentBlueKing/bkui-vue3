@@ -25,7 +25,7 @@
 */
 import { defineComponent, nextTick, PropType, Ref, ref, watch, watchEffect } from 'vue';
 
-import { useLocale } from '@bkui-vue/config-provider';
+import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { clickoutside } from '@bkui-vue/directives';
 import Popover from '@bkui-vue/popover';
 import { debounce, random } from '@bkui-vue/shared';
@@ -62,7 +62,7 @@ export default defineComponent({
   emits: ['focus', 'add', 'delete'],
   setup(props, { emit, expose }) {
     const t = useLocale('searchSelect');
-
+    const { getPrefixCls } = usePrefix();
     const inputRef = ref<HTMLDivElement>(null);
     const popoverRef = ref<HTMLDivElement>(null);
 
@@ -517,6 +517,7 @@ export default defineComponent({
       handleSelectItem,
       handleSelectCondtionItem,
       handleMenuFooterClick,
+      getPrefixCls,
       t,
     };
   },
@@ -550,7 +551,7 @@ export default defineComponent({
       if (this.showNoSelectValueError) {
         return <div>{this.t.filterQueryMustHasValue}</div>;
       }
-      return this.menuList?.length ? <div ref="popoverRef" class="bk-search-select-popover">
+      return this.menuList?.length ? <div ref="popoverRef" class={this.getPrefixCls('search-select-popover')}>
       <SearchSelectMenu
         list={this.menuList}
         keyword={this.keyword}

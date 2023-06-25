@@ -33,13 +33,14 @@ import zhCn from '../packages/locale/src/lang/zh-cn';
 import App from './app';
 import router from './router';
 
-import '../packages/styles/src/index';
 import './reset.less';
+import '../packages/styles/src/index';
 console.log(en);
 console.log(zhCn);
 const app = createApp(App);
 app.use(bkuiVue, {
   locale: en,
+  // prefix: 'aabb',
 });
 app.use(router);
 
