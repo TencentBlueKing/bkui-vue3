@@ -29,17 +29,9 @@ import { withInstall } from '@bkui-vue/shared';
 import Component from './config-provider';
 
 const BkConfigProvider = withInstall(Component);
+
 export default BkConfigProvider;
-
-export {
-  useLocale,
-  rootProviderKey,
-  provideGlobalConfig,
-  defaultRootConfig,
-} from './config-provider';
-export type {
-  LocalReceiverCtx,
-  LocaleInterface,
-} from './config-provider';
-
-export * from './type';
+export * from  './use-global-config';
+export * from  './use-locale';
+export * from './use-prefix';
+export type { ConfigProviderProps } from './config-provider';
