@@ -43,7 +43,10 @@ import { optionGroupKey, selectKey } from './common';
 export default defineComponent({
   name: 'Option',
   props: {
-    value: PropTypes.any,
+    value: {
+      type: [String, Number, Object],
+      require: true,
+    },
     label: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(''),
     disabled: PropTypes.bool.def(false),
   },
