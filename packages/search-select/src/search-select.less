@@ -31,7 +31,7 @@
   }
 
   &-container {
-    position: relative;
+    // position: relative;
     display: flex;
     min-height: 30px;
     overflow: hidden;
@@ -66,6 +66,7 @@
     .search-container {
       position: relative;
       display: flex;
+      max-width: calc(100% - 42px);
       min-height: 26px;
       padding: 0 2px;
       margin-top: 4px;
@@ -171,6 +172,9 @@
     }
 
     .search-nextfix {
+      position: absolute;
+      top: 0;
+      right: 0;
       display: flex;
       color: @light-gray;
       align-items: center;

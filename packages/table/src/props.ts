@@ -55,18 +55,21 @@ export enum ColumnTypeEnum {
   EXPAND = 'expand',
   NONE = 'none',
 }
+
 export enum TableAlignEnum {
   LEFT = 'left',
-  RIGHT='right',
+  RIGHT = 'right',
   CENTER = 'center',
   NONE = ''
 }
+
 export const columnType = toType<`${ColumnTypeEnum}`>('columnType', {
   default: ColumnTypeEnum.NONE,
 });
-export  const TableAlign = toType<`${TableAlignEnum}`>('columnType', {
+export const TableAlign = toType<`${TableAlignEnum}`>('columnType', {
   default: TableAlignEnum.NONE,
 });
+
 export enum FullEnum {
   FULL = 'full',
   FUZZY = 'fuzzy',
@@ -148,6 +151,7 @@ export const IColumnType = {
       list: PropTypes.arrayOf(PropTypes.any).def([]),
       filterFn: PropTypes.func.def(undefined),
       match: fullType,
+      checked: PropTypes.arrayOf(PropTypes.any).def([]),
       filterScope: sortScopeType,
       btnSave: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]).def('确定'),
       btnReset: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]).def('重置'),
@@ -453,6 +457,7 @@ export type Column = {
   filter?: {
     list?: any,
     filterFn?: Function;
+    checked?: number[]|boolean[]|string[]
   } | boolean | string;
   colspan?: Function | Number;
   rowspan?: Function | Number;

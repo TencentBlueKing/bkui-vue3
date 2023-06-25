@@ -23,18 +23,40 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { PropType } from 'vue';
+import { string } from 'vue-types';
+
+import { PropTypes } from '@bkui-vue/shared';
+
 export  type TipsType = 'tips' | 'title';
 export  type CalType = 'dom' | 'canvas';
+
+export enum PlacementEnum {
+  AUTO = 'auto',
+  AUTO_START = 'auto-start',
+  AUTO_END = 'auto-end',
+  TOP = 'top',
+  RIGHT = 'right',
+  BOTTOM = 'bottom',
+  LEFT = 'left',
+  TOP_START = 'top-start',
+  TOP_END = 'top-end',
+  BOTTOM_START = 'bottom-start',
+  BOTTOM_END = 'bottom-end',
+  RIGHT_START = 'right-start',
+  RIGHT_END = 'right-end',
+  LEFT_START = 'left-start',
+  LEFT_END = 'left-end',
+}
+
+export function placementType() {
+  return string<`${PlacementEnum}`>().def(PlacementEnum.BOTTOM);
+}
+
 export default {
-  content: String,
-  type: {
-    type: String as PropType<TipsType>,
-    default: 'title',
-  },
-  calType: {
-    type: String as PropType<CalType>,
-    default: 'dom',
-  },
-  resizeable: Boolean,
+  content: PropTypes.string,
+  type: PropTypes.oneOf(['tips', 'title']).def('title'),
+  calType: PropTypes.oneOf(['dom', 'canvas']).def('dom'),
+  boundary: PropTypes.oneOfType([PropTypes.string.def('parent'), PropTypes.instanceOf(HTMLElement)]).def(document.body),
+  placement: placementType().def(PlacementEnum.TOP_START),
+  resizeable: PropTypes.bool,
 };
