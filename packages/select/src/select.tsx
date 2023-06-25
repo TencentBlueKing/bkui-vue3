@@ -211,7 +211,7 @@ export default defineComponent({
     const isDisabled = computed(() => disabled.value || loading.value);
     // modelValue对应的label
     const selectedLabel = computed(() => selected.value
-      .map(item => optionsMap.value?.get(item.value)?.label || item.label || listMap.value[item.value]));
+      .map(item => optionsMap.value?.get(item.value)?.label || listMap.value[item.value] || item.label));
     // 是否全选(todo: 优化)
     const isAllSelected = computed(() => {
       const normalSelectedValues = options.value.reduce<string[]>((pre, option) => {
