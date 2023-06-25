@@ -13,7 +13,7 @@
 <script setup>
   import { onMounted, ref } from 'vue';
   const datasource = ref([]);
-  const selectedValue = ref();
+  const selectedValue = ref(100);
   onMounted(() => {
     console.time();
     datasource.value = new Array(6000).fill('')
