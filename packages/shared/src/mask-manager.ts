@@ -155,12 +155,12 @@ export class BkMaskManager {
    */
   constructor(config?: BkMaskManagerConfig) {
     const { multiInstance = false, maskAttrTag = 'auto', parentNode = document.body, maskStyle = {}, onClick = null } = config || {};
+    this.parentNode = parentNode || document;
     this.maskAttrTag = maskAttrTag;
     this.onClick = onClick;
     this.activeInstance = undefined;
     this.multiInstance = multiInstance;
     this.uniqueMaskAttrTag = this.getMaskAttrTag(maskAttrTag);
-    this.parentNode = parentNode || document;
 
     // 避免多个实例多处初始化，此处会做队列处理
     // 合并重复的处理请求
