@@ -23,48 +23,38 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { v4 as uuidv4 } from 'uuid';
+import { defineComponent, reactive } from 'vue';
 
-const CachedConst: any = {};
+import { DATA_TABLE } from './options';
 
-export const isAvailableId = (query: string) => {
-  const container = document.querySelector(query);
-  return container instanceof HTMLElement;
-};
+export default defineComponent({
+  setup() {
+    return () => {
+      const tableData = reactive([
+        ...DATA_TABLE,
+      ]);
 
-
-export const getFullscreenUid = () => {
-  if (!CachedConst.fullscreenReferId) {
-    CachedConst.fullscreenReferId = `id_${uuidv4()}`;
-  }
-
-  return CachedConst.fullscreenReferId;
-};
-
-export const isElement = element => element instanceof Element || element instanceof HTMLDocument;
-
-export const contentAsHTMLElement = (content) => {
-  if (isElement(content)) {
-    return {
-      isElement: true,
-      content,
-      vNode: undefined,
+      const columns = reactive([
+        {
+          label: '名称/内网IP',
+          field: 'ip',
+        },
+        {
+          label: '来源',
+          field: 'source',
+        },
+        {
+          label: '创建时间',
+          field: 'create_time',
+        },
+      ]);
+      return <div>
+        <bk-table data={ tableData }>
+          {
+            columns.map(column => <bk-table-column label={ column.label } field={ column.field }></bk-table-column>)
+          }
+        </bk-table>
+      </div>;
     };
-  }
-
-  if (/^(#|\.)/.test(content)) {
-    const target = document.querySelector(content);
-    const  isEle = isElement(target);
-    return {
-      isElement: isEle,
-      content: isEle  ? target :  content,
-      vNode: isEle ? undefined : content,
-    };
-  }
-
-  return {
-    isElement: false,
-    content,
-    vNode: content,
-  };
-};
+  },
+});

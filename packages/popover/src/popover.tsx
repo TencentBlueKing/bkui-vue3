@@ -24,7 +24,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { computed, defineComponent, h, onBeforeUnmount, onMounted, ref, Teleport, toRefs, watch } from 'vue';
+import { computed, defineComponent, onBeforeUnmount, onMounted, ref, Teleport, toRefs, watch } from 'vue';
 
 import { RenderType } from '@bkui-vue/shared';
 
@@ -37,7 +37,7 @@ import { PopoverProps } from './props';
 import Reference from './reference';
 import Root from './root';
 import usePopoverInit from './use-popover-init';
-import { isElement } from './utils';
+import { contentAsHTMLElement } from './utils';
 export default defineComponent({
   name: 'Popover',
   components: {
@@ -115,20 +115,8 @@ export default defineComponent({
 
     const renderContent = () => {
       if (props.allowHtml) {
-        if (isElement(props.content)) {
-          return h('div', { innerHTML: props.content.innerHTML });
-        }
-
-        if (/^(#|\.)/.test(props.content)) {
-          const target = document.querySelector(props.content);
-          if (isElement(target)) {
-            return h('div', { innerHTML: target.innerHTML });
-          }
-
-          return content;
-        }
-
-        return h('div', { innerHTML: props.content });
+        const { vNode } = contentAsHTMLElement(props.content);
+        return vNode;
       }
 
       return content;

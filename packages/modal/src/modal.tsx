@@ -26,7 +26,7 @@
 
 import { defineComponent, Transition } from 'vue';
 
-import { bkPopIndexManager, resolveClassName } from '@bkui-vue/shared';
+import { BKPopIndexManager, resolveClassName } from '@bkui-vue/shared';
 
 import { propsMixin } from './props.mixin';
 
@@ -40,6 +40,7 @@ export default defineComponent({
     return {
       visible: false,
       closeTimer: null,
+      bkPopIndexManager: new BKPopIndexManager({ ...this.$props }),
     };
   },
   computed: {
@@ -90,29 +91,32 @@ export default defineComponent({
         if (val) {
           this.$nextTick(() => {
             // isShow初始化为true的时候，放在nextTick才能获取$el
-            bkPopIndexManager.onMaskClick((_e: MouseEvent) => {
+            this.bkPopIndexManager.onMaskClick((_e: MouseEvent) => {
               this.handleClickOutSide();
             }, this.$el);
             const hideMaskStyle = {
               'background-color': 'rgba(0,0,0,0)',
             };
             const appendStyle = this.showMask ? {} : hideMaskStyle;
-            bkPopIndexManager.show(this.$el, this.showMask, appendStyle, this.transfer, this.zIndex);
+            this.bkPopIndexManager.show(this.$el, this.showMask, appendStyle, !!this.transfer, this.zIndex);
             this.$emit('shown');
           });
         } else {
-          bkPopIndexManager?.hide(this.$el, this.transfer);
-          bkPopIndexManager?.destroy();
+          this.bkPopIndexManager?.hide(this.$el, !!this.transfer);
+          this.bkPopIndexManager?.destroy();
         }
       },
       immediate: true,
     },
   },
+  created() {
+    // this.bkPopIndexManager = new BKPopIndexManager({ ...this.$props });
+  },
 
   beforeUnmount() {
     if (this.visible) {
-      bkPopIndexManager?.hide(this.$el);
-      bkPopIndexManager?.destroy();
+      this.bkPopIndexManager?.hide(this.$el);
+      this.bkPopIndexManager?.destroy();
     }
   },
   methods: {

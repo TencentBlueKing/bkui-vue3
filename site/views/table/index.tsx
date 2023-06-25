@@ -36,6 +36,7 @@ import basicSort from './basic-sort.vue';
 import BasicSpan from './basic-span.vue';
 import bordered from './bordered.vue';
 import cellRender from './cell-render';
+import TableTplTsx from './column-template';
 import ColumnTemplate from './column-template.vue';
 import ColumnTplIndex from './column-template-index.vue';
 import configList from './config';
@@ -73,6 +74,7 @@ export default defineComponent({
     Selection,
     BasicSpan,
     ColumnTplIndex,
+    TableTplTsx,
   },
   render() {
     const configs = [
@@ -118,6 +120,21 @@ export default defineComponent({
          * @returns
          */
         component: () => <ColumnTplIndex></ColumnTplIndex>,
+      },
+      {
+        attrs: {
+          title: '自定义Column index渲染',
+          subtitle: 'column.index <bk-table-column></bk-table-column>',
+          desc: '如果需要通过<bk-table-column></bk-table-column>方式渲染列表，但是列是动态可变的，可以通过指定列的index来保证表格列的排序，一般情况组件会自动获取排序，如果是深度定制的表格组件，可以通过指定index保证排序的正确性',
+          componentName: 'table',
+          demoName: 'column-template',
+          suffix: '.tsx',
+        },
+        /**
+         * Table
+         * @returns
+         */
+        component: () => <TableTplTsx></TableTplTsx>,
       },
       {
         attrs: {
