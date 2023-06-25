@@ -120,6 +120,7 @@ export default defineComponent({
       scrollHeight,
       list,
       displayKey,
+      idKey,
       collapseTags,
       autoHeight,
       popoverOptions,
@@ -183,6 +184,10 @@ export default defineComponent({
       return pre;
     }, {}));
     const activeOptionValue = ref<any>(); // 当前悬浮的option
+    const listMap = computed(() => list.value.reduce((pre, item) => {
+      pre[item[idKey.value]] = item[displayKey.value];
+      return pre;
+    }, {}));
 
     watch(modelValue, () => {
       handleSetSelectedData();
@@ -206,7 +211,7 @@ export default defineComponent({
     const isDisabled = computed(() => disabled.value || loading.value);
     // modelValue对应的label
     const selectedLabel = computed(() => selected.value
-      .map(item => optionsMap.value?.get(item.value)?.label || item.label));
+      .map(item => optionsMap.value?.get(item.value)?.label || item.label || listMap.value[item.value]));
     // 是否全选(todo: 优化)
     const isAllSelected = computed(() => {
       const normalSelectedValues = options.value.reduce<string[]>((pre, option) => {
@@ -479,7 +484,10 @@ export default defineComponent({
           }
         }
       }
-      return optionsMap.value?.get(tmpValue)?.label || cacheSelectedMap.value[tmpValue] || tmpValue;
+      return optionsMap.value?.get(tmpValue)?.label
+      || cacheSelectedMap.value[tmpValue]
+      || listMap.value[tmpValue]
+      || tmpValue;
     };
     // 设置selected选项
     const handleSetSelectedData = () => {

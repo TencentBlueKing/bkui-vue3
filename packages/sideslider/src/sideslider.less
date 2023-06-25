@@ -119,14 +119,16 @@
       }
 
       .bk-sideslider-title {
+        display: flex;
         height: 52px;
         padding-left: 30px;
         font-size: 16px;
-        line-height: 52px;
         color: #313238;
+        align-items: center;
 
         &.right {
-          padding: 0px 0px 0px 50px;
+          width: 100%;
+          padding: 0 0 0 30+16px;
         }
       }
     }
@@ -138,7 +140,7 @@
       background: #fff;
       border-top: 1px solid transparent;
       align-items: center;
-      box-shadow: rgb(0 0 0 / 6%) 0px -2px 4px 0px;
+      box-shadow: rgb(0 0 0 / 6%) 0 -2px 4px 0;
     }
   }
 }

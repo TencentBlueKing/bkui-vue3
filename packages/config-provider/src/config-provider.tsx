@@ -23,69 +23,26 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-
-import { merge } from 'lodash';
-import type { ComputedRef, UnwrapRef } from 'vue';
-import {
-  computed,
-  defineComponent,
-  inject,
-  provide,
-  reactive,
-  watch } from 'vue';
+import { defineComponent, ExtractPropTypes, PropType } from 'vue';
 
 import type { Language } from '@bkui-vue/locale';
-import { /* en as English, */ zhCn as Chinese } from '@bkui-vue/locale';
 
-import type { ConfigProviderProps } from './type';
-import configProviderTypes from './type';
-
-export const defaultRootConfig: UnwrapRef<ConfigProviderProps> = reactive({
-  locale: Chinese,
-});
-
-export interface LocaleInterface {
-  [key: string]: any;
-}
-
-export interface LocalReceiverCtx {
-  locale?: LocaleInterface;
-}
-
-export const rootProviderKey = Symbol('rootProviderData');
-
-export function useLocale<T extends keyof Language>(compName: T): ComputedRef<Language[T]> {
-  const config = inject<LocalReceiverCtx>(
-    rootProviderKey,
-    defaultRootConfig as LocalReceiverCtx,
-  );
-  return computed<Language[T]>(() => {
-    const { locale } = config;
-    return locale && compName ? locale[compName] : {};
-  });
-}
-
-export const provideGlobalConfig = (config: ConfigProviderProps) => {
-  const configData = reactive({
-    ...merge(defaultRootConfig, config),
-  });
-
-  Object.keys(config).forEach((key) => {
-    watch(
-      () => config[key],
-      () => {
-        configData[key] = config[key];
-      },
-    );
-  });
-
-  provide(rootProviderKey, configData);
+import { provideGlobalConfig } from './use-global-config';
+export const configProviderProps = {
+  locale: {
+    type: Object as PropType<Language>,
+  },
+  prefix: { // 组件前缀
+    type: String,
+    default: 'bk',
+  },
 };
+export type ConfigProviderProps = Partial<ExtractPropTypes<typeof configProviderProps>>;
 
 export default defineComponent({
   name: 'ConfigProvider',
   inheritAttrs: false,
-  props: configProviderTypes,
+  props: configProviderProps,
   setup(props, { slots }) {
     provideGlobalConfig(props);
     return () => slots.default?.();
