@@ -23,29 +23,9 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-
-import { defineComponent, ExtractPropTypes, PropType } from 'vue';
-
-import type { Language } from '@bkui-vue/locale';
-
-import { provideGlobalConfig } from './use-global-config';
-export const configProviderProps = {
-  locale: {
-    type: Object as PropType<Language>,
-  },
-  prefix: { // 组件前缀
-    type: String,
-    default: 'bk',
-  },
+import { zhCn } from '@bkui-vue/locale';
+export const rootProviderKey = Symbol('rootProviderData');
+export const defaultRootConfig = {
+  locale: zhCn,
+  prefix: 'bk',
 };
-export type ConfigProviderProps = Partial<ExtractPropTypes<typeof configProviderProps>>;
-
-export default defineComponent({
-  name: 'ConfigProvider',
-  inheritAttrs: false,
-  props: configProviderProps,
-  setup(props, { slots }) {
-    provideGlobalConfig(props);
-    return () => slots.default?.();
-  },
-});

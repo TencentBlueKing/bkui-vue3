@@ -27,7 +27,7 @@
 import { addListener, removeListener } from 'resize-detector';
 import {  computed, defineComponent, onBeforeUnmount, onMounted, PropType, ref, ShallowRef, shallowRef, watch } from 'vue';
 
-import { useLocale } from '@bkui-vue/config-provider';
+import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { clickoutside } from '@bkui-vue/directives';
 import { Close, ExclamationCircleShape, Search } from '@bkui-vue/icon';
 import { debounce } from '@bkui-vue/shared';
@@ -94,6 +94,7 @@ export default defineComponent({
   emits: ['update:modelValue', 'search'],
   setup(props, { emit }) {
     const t = useLocale('searchSelect');
+    const { getPrefixCls } = usePrefix();
     const localConditions = computed(() => {
       if (props.conditions === undefined) {
         return [{ id: 'or', name: t.value.or }, { id: 'and', name: t.value.and }];
@@ -283,6 +284,7 @@ export default defineComponent({
       handleDeleteSelected,
       handleClickSearch,
       localConditions,
+      getPrefixCls,
       t,
     };
   },
@@ -294,7 +296,9 @@ export default defineComponent({
       menu: (data: MenuSlotParams) => this.$slots.menu?.(data),
     } : {});
     // render
-    return <div class="bk-search-select" ref="wrapRef">
+    return <div
+      class={this.getPrefixCls('search-select')}
+      ref="wrapRef">
     <div
       class={{
         'bk-search-select-container': true,

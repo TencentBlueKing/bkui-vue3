@@ -24,28 +24,27 @@
 * IN THE SOFTWARE.
 */
 
-import { defineComponent, ExtractPropTypes, PropType } from 'vue';
+import { computed, inject } from 'vue';
 
-import type { Language } from '@bkui-vue/locale';
+import { ConfigProviderProps } from './config-provider';
+import { defaultRootConfig, rootProviderKey } from './token';
 
-import { provideGlobalConfig } from './use-global-config';
-export const configProviderProps = {
-  locale: {
-    type: Object as PropType<Language>,
-  },
-  prefix: { // 组件前缀
-    type: String,
-    default: 'bk',
-  },
-};
-export type ConfigProviderProps = Partial<ExtractPropTypes<typeof configProviderProps>>;
-
-export default defineComponent({
-  name: 'ConfigProvider',
-  inheritAttrs: false,
-  props: configProviderProps,
-  setup(props, { slots }) {
-    provideGlobalConfig(props);
-    return () => slots.default?.();
-  },
-});
+/**
+ *
+ * @returns 组件前缀
+ * @description 获取组件前缀
+ */
+export function usePrefix() {
+  const config = inject<ConfigProviderProps>(rootProviderKey, defaultRootConfig);
+  const prefix = computed<string>(() => {
+    const { prefix } = config;
+    return prefix || '';
+  });
+  function getPrefixCls(cls: string): string {
+    return `${prefix.value}-${cls}`;
+  }
+  return {
+    prefix,
+    getPrefixCls,
+  };
+}
