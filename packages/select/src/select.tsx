@@ -211,7 +211,7 @@ export default defineComponent({
     const isDisabled = computed(() => disabled.value || loading.value);
     // modelValue对应的label
     const selectedLabel = computed(() => selected.value
-      .map(item => optionsMap.value?.get(item.value)?.label || item.label || listMap.value[item.value]));
+      .map(item => optionsMap.value?.get(item.value)?.label || listMap.value[item.value] || item.label));
     // 是否全选(todo: 优化)
     const isAllSelected = computed(() => {
       const normalSelectedValues = options.value.reduce<string[]>((pre, option) => {
@@ -485,8 +485,8 @@ export default defineComponent({
         }
       }
       return optionsMap.value?.get(tmpValue)?.label
-      || cacheSelectedMap.value[tmpValue]
       || listMap.value[tmpValue]
+      || cacheSelectedMap.value[tmpValue]
       || tmpValue;
     };
     // 设置selected选项
@@ -678,17 +678,9 @@ export default defineComponent({
             onKeydown={(_, e) => this.handleKeydown(e as KeyboardEvent)}
           >
             {{
-              prefix: () => {
-                if (typeof this.$slots.prefix === 'function') {
-                  return this.$slots.prefix?.();
-                }
-                if (this.prefix) {
-                  return (
-                    <div class="bk-select--prefix-area"><span>{this.prefix}</span></div>
-                  );
-                }
-                return '';
-              },
+              prefix: this.prefix
+                ? <div class="bk-select--prefix-area"><span>{this.prefix}</span></div>
+                : this.$slots.prefix?.(),
               default: this.$slots.tag && (() => this.$slots.tag({ selected: this.selected })),
               suffix: () => suffixIcon(),
             }}
@@ -779,14 +771,18 @@ export default defineComponent({
                     lineHeight={32}
                     ref="virtualRenderRef">
                     {{
-                      default: ({ data }) => data
-                        .map(item => (
+                      default: ({ data }) => (data.map(item => (
                           <Option
                             key={item[this.idKey]}
                             value={item[this.idKey]}
-                            label={item[this.displayKey]}
-                          />
-                        )),
+                            label={item[this.displayKey]}>
+                            {
+                              {
+                                default: this.$slots.virtualScrollRender?.({ item }),
+                              }
+                            }
+                          </Option>
+                      ))),
                     }}
                   </VirtualRender>
                   : this.list
