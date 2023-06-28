@@ -124,7 +124,7 @@ export default defineComponent({
       [resolveClassName('select-tag--default')]: true,
       'is-disabled': this.disabled,
       'collapse-tag': this.collapseTags,
-      'has-prefix': !!prefix && prefix?.every(item => !!item.children?.length),
+      'has-prefix': !!prefix,
     });
     const tagWrapperClass = classes({
       [resolveClassName('select-tag-wrapper')]: true,
