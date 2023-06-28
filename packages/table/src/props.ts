@@ -457,10 +457,11 @@ export type Column = {
   filter?: {
     list?: any,
     filterFn?: Function;
-    checked?: number[]|boolean[]|string[]
+    checked?: any
   } | boolean | string;
   colspan?: Function | Number;
   rowspan?: Function | Number;
+  textAlign?: String;
   className?: string | Function
   align?: string,
 };

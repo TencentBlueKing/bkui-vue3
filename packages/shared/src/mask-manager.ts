@@ -24,15 +24,79 @@
  * IN THE SOFTWARE.
 */
 
+import { BKPopIndexManager } from './pop-manager';
 import { random } from './utils';
 import { bkZIndexManager } from './z-index-manager';
+// eslint-disable-next-line @typescript-eslint/naming-convention
+const DEFAULT_MASK_UUID = function () {};
+DEFAULT_MASK_UUID.prototype.def_val = `__bk_mask_${random(16)}`;
+
+class MaskQueueMaker {
+  private timer = null;
+  private store = [];
+  private maskMap = new WeakMap();
+
+  public appendMaker(fn) {
+    this.store.push(fn);
+    this.executeMaker();
+  }
+
+  public pushMaskStyle(parentNode, style) {
+    const value = this.getMaskMap(parentNode);
+    if (!value?.styles) {
+      this.setMaskMap(parentNode, { styles: [style], ...(value || {}) });
+    } else {
+      value.styles.push(style);
+    }
+  }
+
+  public getMaskStyles(parentNode) {
+    return this.getMaskMap(parentNode)?.styles || [];
+  }
+
+  public setMaskId(parentNode, id) {
+    const value = this.getMaskMap(parentNode);
+    if (!value) {
+      this.setMaskMap(parentNode, { id, ...(value || {}) });
+    } else {
+      Object.assign(value, { id });
+      this.setMaskMap(parentNode, value);
+    }
+  }
+
+  public getMaskId(parentNode) {
+    return this.getMaskMap(parentNode)?.id;
+  }
+
+  public setMaskMap(key, value) {
+    this.maskMap.set(key, value);
+  }
+
+  public getMaskMap(key) {
+    return this.maskMap.get(key);
+  }
+
+  private executeMaker() {
+    this.timer && cancelAnimationFrame(this.timer);
+    this.timer = requestAnimationFrame(() => {
+      const fn = this.store.pop();
+      if (typeof fn === 'function') {
+        Reflect.apply(fn, this, []);
+        this.executeMaker();
+      }
+    });
+  }
+}
+
+const bkMaskMaker = new MaskQueueMaker();
 
 type BkMaskManagerConfig = {
   multiInstance?: boolean,
   maskAttrTag?: string,
   parentNode?: HTMLElement | Document,
   maskStyle?: any,
-  onClick?: (e: MouseEvent) => void
+  onClick?: (e: MouseEvent) => void,
+  popInstance?: BKPopIndexManager
 };
 
 type MaskConfigStore = {
@@ -44,16 +108,16 @@ type MaskConfigStore = {
 
 export class BkMaskManager {
   /** 遮罩容器 */
-  private readonly mask: HTMLElement;
+  private mask: HTMLElement;
 
   /** 遮罩备份容器，用于多个组件实例显示，遮罩只显示最后一个 **/
-  private readonly backupMask: HTMLElement;
+  private backupMask: HTMLElement;
 
   /** 是否允许多个遮罩实例 */
   private readonly multiInstance: boolean = false;
 
   /** 遮罩控制器唯一标识 */
-  private readonly uniqueMaskAttrTag: string = '';
+  private uniqueMaskAttrTag = '';
 
   /** 设置弹出层父级组件，默认是body */
   private parentNode: HTMLElement | Document = document.body;
@@ -80,6 +144,13 @@ export class BkMaskManager {
 
   private onClick;
 
+  // 用于判定是否已经初始化过当前实例
+  private isInit = false;
+
+  private maskAttrTag = 'auto';
+
+  private popInstance?: BKPopIndexManager;
+
   /**
    * 遮罩管理器
    *
@@ -87,22 +158,29 @@ export class BkMaskManager {
    * @param maskAttrTag 遮罩DOM唯一标志，支持自定义和 auto
    */
   constructor(config?: BkMaskManagerConfig) {
-    const { multiInstance = false, maskAttrTag = 'auto', parentNode = document.body, maskStyle = {}, onClick = null } = config || {};
+    const { multiInstance = false, maskAttrTag = 'auto', parentNode = document.body, maskStyle = {}, onClick = null, popInstance = null } = config || {};
+    this.parentNode = parentNode || document;
+    this.maskAttrTag = maskAttrTag;
     this.onClick = onClick;
     this.activeInstance = undefined;
     this.multiInstance = multiInstance;
+    this.popInstance = popInstance;
     this.uniqueMaskAttrTag = this.getMaskAttrTag(maskAttrTag);
-    this.parentNode = parentNode || document;
-    this.mask = this.getMask();
-    this.backupMask = this.createMask('data-bk-backup-uid');
-    this.setMaskStyle(Object.assign({}, this.maskStyle, maskStyle));
+
+    // 避免多个实例多处初始化，此处会做队列处理
+    // 合并重复的处理请求
+    // 如果当前实例初始化时，仍未执行完队列，则需要进行请求合并
+    bkMaskMaker.appendMaker(() => {
+      this.initInstance(maskStyle);
+    });
   }
 
   public setOption(option: BkMaskManagerConfig) {
-    const { parentNode = document.body, maskStyle = {}, onClick = null } = option || {};
+    const { parentNode = document.body, maskStyle = {}, onClick = null, maskAttrTag = this.maskAttrTag } = option || {};
     this.onClick = onClick;
     this.parentNode = parentNode || document;
     this.setMaskStyle(Object.assign({}, this.maskStyle, maskStyle));
+    this.uniqueMaskAttrTag = this.getMaskAttrTag(maskAttrTag);
   }
 
   /**
@@ -129,7 +207,9 @@ export class BkMaskManager {
     if (!showMask) {
       if (this.lastUUID) {
         const preStore = this.zIndexStore.get(this.lastUUID);
-        style = preStore.style;
+        if (preStore) {
+          style = preStore?.style;
+        }
       }
     }
 
@@ -141,10 +221,17 @@ export class BkMaskManager {
       preUID: this.lastUUID,
     });
 
+    Object.assign(style, {
+      display: 'block',
+      'z-index': `${localZIndex}`,
+      'pointer-events': 'all',
+    });
+    this.initInstance(style);
+    this.catchClickEvent();
     this.setMaskStyle(style);
-    this.mask.style.setProperty('display', 'block');
-    this.mask.style.setProperty('z-index', `${localZIndex}`);
-    this.mask.style.setProperty('pointer-events', 'all');
+
+    bkMaskMaker.pushMaskStyle(this.parentNode, { ...style });
+
     this.backupMask.style.setProperty('z-index', `${localZIndex - 1}`);
 
     if (!showMask) {
@@ -155,19 +242,27 @@ export class BkMaskManager {
     if (content) {
       if (transfer) content.style.setProperty('z-index', `${localZIndex + 1}`); // 表明内容不在遮罩下，内容区z-index + 1
       this.activeInstance = content;
-      if (!transfer) this.appendContentToMask(content); // 表明内容在body下，即在遮罩下
+      this.appendContentToMask(content); // 表明内容在body下，即在遮罩下
     }
   }
 
   public hide(transfer = false, content?: HTMLElement, uuid?: string) {
     const uid = uuid ?? this.lastUUID;
-    this.mask.style.setProperty('display', 'none');
     if (!transfer) {
       content?.remove();
       this.activeInstance?.remove();
     }
+    this.removeClickEvent();
     this.activeInstance = undefined;
     this.popIndexStore(uid);
+    const maskList = bkMaskMaker.getMaskStyles(this.parentNode);
+    maskList?.pop();
+    if (!maskList?.length) {
+      this.mask.style.setProperty('display', 'none');
+    } else {
+      const style = maskList.slice(-1)[0];
+      this.setMaskStyle(style);
+    }
   }
 
   public storeMaskInsCfg(config: MaskConfigStore) {
@@ -204,25 +299,63 @@ export class BkMaskManager {
     return this.activeInstance;
   }
 
+  private initInstance(maskStyle) {
+    if (!this.isInit) {
+      this.isInit = true;
+      const { instance, isExist } = this.getMask();
+      this.mask = instance;
+      this.backupMask = this.getBackupMask();
+      !isExist && this.setMaskStyle(Object.assign({}, this.maskStyle, maskStyle));
+    }
+  }
+
   /**
    * 初始化当前遮罩管理器
    * @returns 当前遮罩容器
    */
-  private getMask(): HTMLElement {
+  private getMask(): { instance: HTMLElement, isExist: boolean } {
     if (this.multiInstance) {
-      return this.createMask();
+      return { instance: this.createMask(), isExist: false };
     }
 
-    let div: HTMLElement | null = this.parentNode.querySelector(`[data-bkmask-uid='${this.uniqueMaskAttrTag}']`);
+    let isExist = true;
+    let div: HTMLElement | null = this.parentNode.querySelector(`[data-bk-mask-uid='${this.uniqueMaskAttrTag}']`);
     if (!div) {
+      isExist = false;
       div = this.createMask();
-      div.addEventListener('click', (e: MouseEvent) => {
-        if (e.target === div) {
-          if (typeof this.onClick === 'function') {
-            Reflect.apply(this.onClick, this, [e]);
-          }
-        }
-      }, true);
+    }
+
+    return {
+      instance: div,
+      isExist,
+    };
+  }
+
+  private catchClickEvent() {
+    if (this.mask) {
+      this.mask.addEventListener('click', e => this.handleMaskClick(e), true);
+    }
+  }
+
+  private removeClickEvent() {
+    if (this.mask) {
+      this.mask.removeEventListener('click', this.handleMaskClick);
+    }
+  }
+
+  private handleMaskClick(e) {
+    if (e.target === this.mask) {
+      if (typeof this.onClick === 'function') {
+        Reflect.apply(this.onClick, this.popInstance || this, [e]);
+      }
+    }
+  }
+
+  private getBackupMask() {
+    const attrName = 'data-bk-backup-uid';
+    let div: HTMLElement | null = this.parentNode.querySelector(`[${attrName}]`);
+    if (!div) {
+      div = this.createMask(attrName);
     }
 
     return div;
@@ -252,7 +385,11 @@ export class BkMaskManager {
    */
   private getMaskAttrTag(tag: string) {
     if (/^(auto|\s+)$/i.test(tag) || tag === null || tag === undefined || tag === '') {
-      return `__bk_mask_${random(16)}`;
+      if (!bkMaskMaker.getMaskId(this.parentNode)) {
+        bkMaskMaker.setMaskId(this.parentNode, `__bk_mask_${random(16)}`);
+      }
+
+      return bkMaskMaker.getMaskId(this.parentNode);
     }
 
     return tag;

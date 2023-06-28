@@ -23,50 +23,38 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent } from 'vue';
-import { RouterView } from 'vue-router';
+import { defineComponent, reactive } from 'vue';
 
-import header from '@blueking/magicbox-header/index.vue';
-
-// import { provideGlobalConfig } from '../packages/bkui-vue/index';
-import DemoNav from './components/demo-nav';
-
-import './app.less';
+import { DATA_TABLE } from './options';
 
 export default defineComponent({
-  name: 'App',
-  components: {
-    'app-header': header,
-  },
-  // setup() {
-  //   provideGlobalConfig({
-  //     prefix: 'aabb',
-  //   });
-  // },
-  render() {
-    return (
-      <div class="page-container">
-        {/* <bk-config-provider prefix={'aabb'}> */}
-        <div class="page-container-header">
-        <app-header
-          rootDomain="tencent.com"
-          loginUrl="https://login.bk.tencent.com"
-          avatarHost="https://q1.qlogo.cn"
-          lessCodeUrl="https://github.com/TencentBlueKing/bk-lesscode/blob/master/readme.md"
-          designUrl="https://bkdesign.bk.tencent.com/"
-          region="tencent">
-        </app-header>
-        </div>
-        <div class="page-container-body">
-          <div class="body-nav">
-            <DemoNav/>
-          </div>
-          <div class="body-wrapper">
-            <RouterView/>
-          </div>
-        </div>
-        {/* </bk-config-provider> */}
-      </div>
-    );
+  setup() {
+    return () => {
+      const tableData = reactive([
+        ...DATA_TABLE,
+      ]);
+
+      const columns = reactive([
+        {
+          label: '名称/内网IP',
+          field: 'ip',
+        },
+        {
+          label: '来源',
+          field: 'source',
+        },
+        {
+          label: '创建时间',
+          field: 'create_time',
+        },
+      ]);
+      return <div>
+        <bk-table data={ tableData }>
+          {
+            columns.map(column => <bk-table-column label={ column.label } field={ column.field }></bk-table-column>)
+          }
+        </bk-table>
+      </div>;
+    };
   },
 });

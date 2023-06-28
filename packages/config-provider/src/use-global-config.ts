@@ -24,16 +24,34 @@
 * IN THE SOFTWARE.
 */
 
-import type { ExtractPropTypes, PropType } from 'vue';
+import { merge } from 'lodash';
+import { computed, ComputedRef, inject, provide, reactive, watch } from 'vue';
 
-import type { Language } from '@bkui-vue/locale';
+import { ConfigProviderProps } from './config-provider';
+import { defaultRootConfig, rootProviderKey } from './token';
 
-export const configProviderProps = {
-  locale: {
-    type: Object as PropType<Language>,
-  },
+export const setPrefixVariable = (prefix: string) => {
+  document.documentElement.style.setProperty('--bk-prefix', prefix || defaultRootConfig.prefix);
 };
 
-export type ConfigProviderProps = Partial<ExtractPropTypes<typeof configProviderProps>>;
+export const provideGlobalConfig = (config: ConfigProviderProps) => {
+  const configData = reactive({
+    ...merge(defaultRootConfig, config),
+  });
+  setPrefixVariable(config.prefix);
+  Object.keys(config).forEach((key) => {
+    watch(
+      () => config[key],
+      () => {
+        if (key === 'prefix') setPrefixVariable(config[key]);
+        configData[key] = config[key];
+      },
+    );
+  });
+  provide(rootProviderKey, configData);
+};
 
-export default configProviderProps;
+export const useGlobalConfig = (): ComputedRef<ConfigProviderProps> => {
+  const config = inject<ConfigProviderProps>(rootProviderKey, defaultRootConfig);
+  return computed(() => config);
+};

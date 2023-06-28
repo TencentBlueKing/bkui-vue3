@@ -80,4 +80,14 @@ export default defineConfig({
       strict: false,
     },
   },
+  // css: {
+  //   preprocessorOptions: {
+  //     less: {
+  //       javascriptEnabled: true,
+  //       modifyVars: {
+  //         'bk-prefix': 'aabb',
+  //       },
+  //     },
+  //   },
+  // },
 });

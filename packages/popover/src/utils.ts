@@ -42,3 +42,29 @@ export const getFullscreenUid = () => {
 };
 
 export const isElement = element => element instanceof Element || element instanceof HTMLDocument;
+
+export const contentAsHTMLElement = (content) => {
+  if (isElement(content)) {
+    return {
+      isElement: true,
+      content,
+      vNode: undefined,
+    };
+  }
+
+  if (/^(#|\.)/.test(content)) {
+    const target = document.querySelector(content);
+    const  isEle = isElement(target);
+    return {
+      isElement: isEle,
+      content: isEle  ? target :  content,
+      vNode: isEle ? undefined : content,
+    };
+  }
+
+  return {
+    isElement: false,
+    content,
+    vNode: content,
+  };
+};
