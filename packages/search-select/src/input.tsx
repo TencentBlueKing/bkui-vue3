@@ -306,6 +306,7 @@ export default defineComponent({
       onValidate('');
     }
     async function handleSelectItem(item: ICommonItem, type?: SearchItemType) {
+      console.info(item, '==========');
       // 快捷选中
       if (item.value?.id) {
         if ((props.valueBehavior === ValueBehavior.NEEDKEY && item.value) || !props.validateValues) {
@@ -346,6 +347,8 @@ export default defineComponent({
     function handleMenuFooterClick(item: IMenuFooterItem) {
       switch (item.id) {
         case 'confirm':
+          if (!usingItem.value?.values.length) return;
+          keyword.value = '';
           handleKeyEnter();
           break;
         case 'cancel':
