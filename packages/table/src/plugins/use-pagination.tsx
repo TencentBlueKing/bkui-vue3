@@ -84,7 +84,7 @@ export default (props: TablePropTypes, indexData: any[]) => {
   const resetStartEndIndex = () => {
     if (!props.pagination || props.remotePagination) {
       startIndex.value = 0;
-      endIndex.value = props.data.length;
+      endIndex.value = indexData.length;
       return;
     }
 
@@ -106,7 +106,7 @@ export default (props: TablePropTypes, indexData: any[]) => {
 
   const filter = (sourceData: any[], filterFn: any) => {
     if (typeof filterFn === 'function') {
-      const filterVals = sourceData.filter((row: any, index: number) => filterFn(row, index, props.data));
+      const filterVals = sourceData.filter((row: any, index: number) => filterFn(row, index, indexData));
       sourceData.length = 0;
       sourceData.push(...filterVals);
     }
@@ -138,7 +138,7 @@ export default (props: TablePropTypes, indexData: any[]) => {
     if (!props.pagination) {
       return;
     }
-    localPagination.value = props.remotePagination ? pagination : { ...pagination, count: props.data.length };
+    localPagination.value = props.remotePagination ? pagination : { ...pagination, count: indexData.length };
     // Object.assign(localPagination, resolved);
   };
 

@@ -23,6 +23,8 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+
+import BtnDemo from './btn-demo.vue';
 export const DATA_TABLE = [
   {
     ip: '192.168.0.1-2018-05-25 15:02:241',
@@ -237,7 +239,10 @@ export const DATA_FIX_COLUMNS = [
   },
   {
     label: '操作',
-    render: () => 'OPTIONS',
+    render: () => {
+      console.log('Edit Change render');
+      return <BtnDemo></BtnDemo>;
+    },
     width: 180,
     fixed: 'right',
   },

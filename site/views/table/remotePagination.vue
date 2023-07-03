@@ -10,14 +10,20 @@
       @page-value-change="handlePageValueChange"
       @page-limit-change="handlePageLimitChange"
       @column-sort="handleColumnSort"
-    />
+    >
+      <!-- <template #prepend>
+        <div>
+          Table Prepend Div
+        </div>
+      </template> -->
+    </bk-table>
   </div>
 </template>
 
 <script>
   import { defineComponent } from 'vue';
 
-  import { DATA_COLUMNS } from './options';
+  import { DATA_FIX_COLUMNS } from './options';
   const DATA_ROWS = new Array(Math.ceil(Math.random() * 9000) + 1000).fill('')
     .map((_, index) => ({
       ip: `${index}--192.168.0.x`,
@@ -31,7 +37,7 @@
     data() {
       return {
         tableData: DATA_ROWS,
-        columns: [...DATA_COLUMNS],
+        columns: [...DATA_FIX_COLUMNS],
         pagination: { count: 0, limit: 20, current: 1 },
       };
     },

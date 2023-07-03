@@ -500,7 +500,6 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
     return false;
   });
 
-
   /**
    * 生成内置index
    */
@@ -517,15 +516,16 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
   const initIndexData = (keepLocalAction = false) => {
     let preRowId = null;
     const skipConfig = {};
+    const resolvedData = props.data.map(d => ({ [TABLE_ROW_ATTRIBUTE.ROW_UID]: uuidv4(), ...d }));
 
     if (neepColspanOrRowspan.value || needSelection.value || needExpand.value || needIndexColumn.value) {
-      const copyData = props.data.map((item: any, index: number) => {
+      const copyData = resolvedData.map((item: any, index: number) => {
         const rowId = getRowKey(item, props, index);
 
         preRowId = rowId;
         const target = {
           ...item,
-          [TABLE_ROW_ATTRIBUTE.ROW_UID]: rowId,
+          [TABLE_ROW_ATTRIBUTE.ROW_UID]: item[TABLE_ROW_ATTRIBUTE.ROW_UID] || rowId,
           [TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA]: { ...item },
         };
 
@@ -558,7 +558,7 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
     }
 
     indexData.length = 0;
-    indexData.push(...props.data);
+    indexData.push(...resolvedData);
   };
 
   /**
