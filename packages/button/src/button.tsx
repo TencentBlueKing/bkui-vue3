@@ -114,7 +114,6 @@ export default defineComponent({
       isHover.value = false;
     };
 
-
     return () => (
       <button
         title={props.title}

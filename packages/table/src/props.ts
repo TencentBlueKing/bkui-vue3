@@ -410,6 +410,13 @@ export const tableProps = {
   // 对齐方式
   align: TableAlign,
   headerAlign: TableAlign,
+
+  /**
+   * 插入至表格第一行之前的内容容器样式
+   * 默认样式为固定在第一行
+   * 需要跟随滚动或者其他样式，可以通过此配置进行覆盖
+   */
+  prependStyle: PropTypes.style().def({}),
 };
 
 

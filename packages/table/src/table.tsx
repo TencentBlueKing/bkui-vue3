@@ -330,6 +330,21 @@ export default defineComponent({
     const { renderScrollLoading } = useScrollLoading(props, ctx);
     const scrollClass = computed(() => (props.virtualEnabled ? {} : { scrollXName: '', scrollYName: '' }));
 
+    const prependStyle = computed(() => ({
+      position: 'sticky' as const,
+      top: 0,
+      zIndex: 2,
+      ...(props.prependStyle || {}),
+    }));
+
+    const renderPrepend = () => {
+      if (ctx.slots.prepend) {
+        return <div style={ prependStyle.value }>{ ctx.slots.prepend() }</div>;
+      }
+
+      return null;
+    };
+
     return () => (
       <div class={tableClass.value} style={wrapperStyle.value} ref={root}>
         {
@@ -355,7 +370,8 @@ export default defineComponent({
           enabled={props.virtualEnabled}>
           {
             {
-              default: (scope: any) => tableRender.renderTableBodySchema(scope.data || props.data),
+              beforeContent: () => renderPrepend(),
+              default: (scope: any) => tableRender.renderTableBodySchema(scope.data || pageData),
               afterSection: () => <div class={fixedBottomBorder.value}></div>,
             }
           }
