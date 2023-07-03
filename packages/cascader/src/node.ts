@@ -38,23 +38,24 @@ function isNodeDisabled(node: INode) {
   return node.data.disabled;
 }
 
+// 定义节点类实现INode接口
 class Node implements INode {
-  data: IData;
-  config: IConfig;
-  parent: INode;
-  level: number;
-  id: string;
-  name: string;
-  loading: boolean;
-  loaded: boolean;
-  checked: boolean;
+  data: IData; // 节点数据
+  config: IConfig; // 配置信息
+  parent: INode; // 父节点
+  level: number; // 节点层级
+  id: string; // 节点ID
+  name: string; // 节点名称
+  loading: boolean; // 是否正在加载
+  loaded: boolean; // 是否已加载
+  checked: boolean; // 是否被选中
   isIndeterminate: boolean; // 是否是半选状态
-  children?: null[];
-  leaf: boolean;
-  pathNodes: INode[];
-  path: string[];
-  pathNames: string[];
-  nodes: INode[];
+  children?: null[]; // 子节点列表
+  leaf: boolean; // 是否是叶子节点
+  pathNodes: INode[]; // 节点路径上的所有节点
+  path: string[]; // 节点路径
+  pathNames: string[]; // 节点路径上的所有节点名称
+  nodes: INode[]; // 节点列表
 
   constructor(node: IData, config: any, parent?: any) {
     this.data = node;
@@ -66,6 +67,7 @@ class Node implements INode {
     this.initState();
   }
 
+  // 初始化节点状态
   initState() {
     const { idKey, nameKey, childrenKey } = this.config;
     this.id = this.data[idKey];
@@ -83,6 +85,7 @@ class Node implements INode {
     this.pathNames = this.pathNodes.map(node => node.name);
   }
 
+  // 判断是否是叶子节点
   get isLeaf() {
     if (this.config.isRemote) {
       const isLeaf = this.leaf || (this.loaded ? !this.children.length : false);
@@ -91,22 +94,24 @@ class Node implements INode {
     return !(Array.isArray(this.children) && this.children?.length !== 0);
   }
 
+  // 判断节点是否被禁用
   get isDisabled() {
     return isNodeDisabled(this);
   }
 
+  // 向子节点广播事件
   broadcast(event: string, checkStatus: boolean) {
     const handlerName = `onParent${capitalize(event)}`;
-
     this.children.forEach((child: INode) => {
       if (child) {
-        // bottom up
+        // 自底向上广播事件
         child.broadcast(event, checkStatus);
         child[handlerName]?.(checkStatus);
       }
     });
   }
 
+  // 向父节点发送事件
   emit(event: string) {
     const { parent } = this;
     const handlerName = `onChild${capitalize(event)}`;
@@ -116,12 +121,14 @@ class Node implements INode {
     }
   }
 
+  // 处理父节点的选中状态变化
   onParentCheck(checked: boolean) {
     if (!this.isDisabled) {
       this.setCheckState(checked);
     }
   }
 
+  // 处理子节点的选中状态变化
   onChildCheck() {
     const { children } = this;
     const validChildren = children.filter((child: INode) => !child.isDisabled);
@@ -132,6 +139,7 @@ class Node implements INode {
     this.setCheckState(checked);
   }
 
+  // 设置节点的选中状态
   setCheckState(checked: boolean) {
     const totalNum = this.children.length;
     const checkedNum = this.children.reduce((c: number, p: INode) => {
@@ -144,18 +152,18 @@ class Node implements INode {
     this.isIndeterminate = checkedNum !== totalNum && checkedNum > 0;
   }
 
+  // 设置节点及其子节点的选中状态
   setNodeCheck(status: boolean) {
-    if (this.checked !== status) {
-      if (this.config.checkAnyLevel) {
-        this.checked = status;
-        return;
-      }
-      this.broadcast('check', status);
-      this.setCheckState(status);
-      this.emit('check');
+    if (this.config.checkAnyLevel) {
+      this.checked = status;
+      return;
     }
+    this.broadcast('check', status);
+    this.setCheckState(status);
+    this.emit('check');
   }
 
+  // 计算节点路径上的所有节点
   calculateNodesPath() {
     const nodes: INode[] = [this];
     let { parent } = this;
@@ -167,5 +175,6 @@ class Node implements INode {
     return nodes;
   }
 }
+
 
 export default Node;
