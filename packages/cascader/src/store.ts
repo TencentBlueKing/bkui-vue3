@@ -56,7 +56,7 @@ class Store {
   /** 清空所有checked */
   clearChecked() {
     this.getFlattedNodes().forEach((node: INode) => {
-      node.checked = false;
+      node.setNodeCheck(false);
       node.isIndeterminate = false;
     });
   }
@@ -65,7 +65,7 @@ class Store {
   removeTag(tag: string[]) {
     this.getFlattedNodes().find((node: INode) => {
       if (arrayEqual(tag, node.path)) {
-        node.checked = false;
+        node.setNodeCheck(false);
         return true;
       }
       return false;
@@ -80,11 +80,11 @@ class Store {
   /** 根据传入节点设置节点check状态 */
   setNodesCheck(nodes: Array<string[]>) {
     this.getFlattedNodes().forEach((node: INode) => {
-      node.checked = false;
+      node.setNodeCheck(false);
       const checkedNode = nodes.find((nodeValue: string[]) => arrayEqual(node.path, nodeValue));
       if (checkedNode) {
         const currentNode = this.getNodeByValue(checkedNode);
-        currentNode.checked = true;
+        currentNode.setNodeCheck(true);
       }
     });
   }
@@ -92,6 +92,11 @@ class Store {
   /** 获取多选下，被选中(checked)的节点 */
   getCheckedNodes() {
     return this.getFlattedNodes().filter((node: INode) => node.checked);
+  }
+
+  /** 获取多选下，被选中(checked),且为叶子节点的节点 */
+  getCheckedLeafNodes() {
+    return this.getFlattedNodes().filter((node: INode) => node.isLeaf && node.checked);
   }
 
   /** 根据值获得node实例 */
