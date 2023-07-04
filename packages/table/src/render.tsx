@@ -471,6 +471,7 @@ export default class TableRender {
                 // @ts-ignore
                 style={rowStyle}
                 class={rowClass}
+                data-key={ rowKey }
                 onClick={e => this.handleRowClick(e, row, rowIndex, rows)}
                 onDblclick={e => this.handleRowDblClick(e, row, rowIndex, rows)}
                 onMouseenter={e => this.handleRowEnter(e, row, rowIndex, rows)}

@@ -63,6 +63,7 @@ export default [
       { name: 'is-row-select-enable', type: 'Function|Boolean', default: 'true', desc: '   * 配合 column selection 使用用于配置渲染行数据的勾选框是否可用, 可以直接为 true|false，全部启用或者禁用如果是函数，则返回 true|false({ row, index, isCheckAll }) => boolean', optional: [] },
       { name: 'resizer-way', type: 'String', default: 'true', desc: '当外层容器尺寸改变时，当前组件用什么方式进行重新计算,默认为 throttle，按照指定频率重新计算,可选值：debounce，在指定时间范围内只执行一次重新计算', optional: ['throttle', 'debounce'] },
       { name: 'pagination-heihgt', type: 'Number', default: '42', desc: '页组件高度。在设置了分页配置之后才会生效, 用于配置分页组件的高度，在不同项目中，分页组件高度会影响表格高度计算, 这里设置为可配置项，避免自计算导致的性能问题以及不确定性样式问题', optional: [] },
+      { name: 'prepend-style', type: 'CSSProperties', default: '{}', desc: '   * 插入至表格第一行之前的内容容器样式，默认样式为固定在第一行，需要跟随滚动或者其他样式，可以通过此配置进行覆盖', optional: [] },
     ],
   },
   {
@@ -181,6 +182,7 @@ export default [
     subTile: '预留插槽',
     type: 'events',
     config: [
+      { name: '#prepend', desc: '插入至表格第一行之前的内容，会被固定在第一行', params: '' },
       { name: '#empty', desc: '自定义空数据-empty插槽', params: '' },
       { name: '#default', desc: '<bk-column />模板使用自定义显示默认插槽', params: '{ cell, data, row, column, index, rows }' },
       { name: '#fixedBottom', desc: '底部加载插槽', params: '' },

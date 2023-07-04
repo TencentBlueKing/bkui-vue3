@@ -72,11 +72,27 @@ export default defineComponent({
         menus.list = menus.list.slice(0, 1);
         activePath.value = [];
       }
-      value.forEach((id: number | string | string[]) => {
+      expandByNodeList(value);
+      checkValue.value = value;
+    };
+
+    const expandByNodeList = (value: Array<number | string | string[]>) => {
+      let targetList = [];
+      // 如果配置了多选，找出最长的序列，即其最远的路径，以展开所有面板
+      if (store.config.multiple) {
+        for (const subArray of (value as Array<string[]>)) {
+          if (subArray.length > targetList.length) {
+            targetList = subArray;
+          }
+        }
+      } else {
+        targetList = value;
+      }
+      // 遍历最长路径的节点，如果节点有children，展开子面板
+      targetList.forEach((id: number | string | string[]) => {
         const node = store.getNodeById(id);
         nodeExpandHandler(node);
       });
-      checkValue.value = value;
     };
 
     /** 节点选中回调
@@ -88,7 +104,9 @@ export default defineComponent({
         return;
       }
       if (node.config.multiple) {
-        checkValue.value = store.getCheckedNodes().map(node => node.path);
+        // 如果checkAnyLevel，返回所有check的节点； 否则只check 叶子节点
+        const targets = store.config.checkAnyLevel ? store.getCheckedNodes() : store.getCheckedLeafNodes();
+        checkValue.value = targets.map(node => node.path); // 如果任意级别可选，当前节点即为所选内容
       } else {
         checkValue.value = node.path;
       }
@@ -205,6 +223,7 @@ export default defineComponent({
       panelWidth,
       panelHeight,
       searchPanelEvents,
+      expandByNodeList,
       noDataText,
     };
   },

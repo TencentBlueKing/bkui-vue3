@@ -53,6 +53,7 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
     getParentNode,
     resolveScopedSlotParam,
     extendNodeAttr,
+    extendNodeScopedData,
   } = useNodeAttribute(flatData, props);
 
   const { registerNextLoop } = initOption;
@@ -458,6 +459,19 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
       .map((index: number) => <span class="node-virtual-line" style={ getNodeLineStyle(maxDeep - index) }></span>);
   };
 
+
+  const renderNodeSlots = (item: any) => {
+    if (ctx.slots.node) {
+      return ctx.slots.node?.(extendNodeAttr(item));
+    }
+
+    if (ctx.slots.default) {
+      return ctx.slots.default?.(extendNodeScopedData(item));
+    }
+
+    return [getLabel(item, props)];
+  };
+
   const renderTreeNode = (item: any) => (
     <div
       data-tree-node={getNodeId(item)}
@@ -481,7 +495,7 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
           }
           <span
             class={ resolveClassName('node-text') }>
-            {ctx.slots.node?.(extendNodeAttr(item)) ?? [getLabel(item, props)]}
+            { renderNodeSlots(item) }
           </span>
           {
             ctx.slots.nodeAppend?.(extendNodeAttr(item))

@@ -148,27 +148,28 @@ export default defineComponent({
 
     // 更新选中
     const updateValue = (val: Array<string | number | string[]>) => {
-    // 根据配置更新显示内容
+      // 更新多选情况下的选中标签
       if (multiple) {
-        store.value.setNodesCheck(val as Array<string[]>);
-        selectedTags.value = store.value.getCheckedNodes().map((node: INode) => ({
-          text: getShowText(node),
-          key: node.id,
-        }));
-        selectedText.value = selectedTags.value.map(item => item.text).join(', ');
+        store.value.setNodesCheck(val as Array<string[]>); // 同步节点选中的状态
+        selectedTags.value = store.value.getCheckedNodes()
+          .filter((node: INode) => store.value.config.checkAnyLevel || node.isLeaf) // 根据 checkAnyLevel 配置过滤选中的节点
+          .map((node: INode) => ({
+            text: getShowText(node), // 获取节点的显示文本
+            key: node.id, // 获取节点的唯一键
+          }));
+        selectedText.value = selectedTags.value.map(item => item.text).join(', '); // 生成选中文本
         return;
       }
 
-      // 根据val的值，设置selectedText显示内容
-      !props.checkAnyLevel && popover?.value?.hide(); // 非多选，选中后，关闭popover
-      if (val.length === 0) {
-        selectedText.value = '';
-      } else {
-        const node = store.value.getNodeByValue(val);
-        if (!node) return;
-        selectedText.value = getShowText(node);
+      // 如果 checkAnyLevel 配置为 false，则隐藏弹出框
+      if (!props.checkAnyLevel) {
+        popover?.value?.hide();
       }
-      updateSearchKey();
+
+      // 获取与选中值对应的节点
+      const node = store.value.getNodeByValue(val);
+      selectedText.value = node ? getShowText(node) : ''; // 获取节点的显示文本，如果节点不存在则赋值为空字符串
+      updateSearchKey(); // 更新搜索关键字
     };
 
     // 清空所选内容，要stopPropagation防止触发下拉
