@@ -105,10 +105,17 @@ export default defineComponent({
       emit('value-change', val);
     });
     // 关闭弹框
-    const handleClose = () => {
-      emit('update:isShow', false);
-      emit('closed');
-      isModalShow.value = false;
+    const handleClose = async () => {
+      let shouldClose = true;
+      if (typeof props.beforeClose === 'function') {
+        shouldClose = await props.beforeClose();
+      }
+
+      if (shouldClose) {
+        emit('update:isShow', false);
+        emit('closed');
+        isModalShow.value = false;
+      }
     };
     const handleConfirm = () => {
       emit('update:isShow', false);
@@ -257,6 +264,7 @@ export default defineComponent({
           </>
         ) : ''}
       </div>,
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       close: () => <Error onClick={this.handleClose}/>,
     };
 

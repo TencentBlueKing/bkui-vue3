@@ -246,6 +246,14 @@ export const treeProps = {
     PropTypes.arrayOf(toType<`${NodeContentActionEnum}`>('nodeContentActionType', {}).def(NodeContentActionEnum.CLICK)),
     PropTypes.func.def(() => ['selected']),
   ]).def(['selected', 'expand', 'click']),
+
+  /**
+   * 是否作用域插槽抛出参数是否保持源数据的引用
+   * 如果设置为true，则作用域插槽参数格式为: { data: node, attributes: {} }
+   * 如果设置为false，则作用域插槽参数格式为: { ...node, ...attributes }
+   * attributes 为节点内置属性，包含节点是否展开，是否选中，是否有子节点等等
+   */
+  keepSlotData: PropTypes.bool.def(false),
 };
 
 type AsyncOption = {

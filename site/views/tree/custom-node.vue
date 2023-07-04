@@ -8,8 +8,8 @@
         label="name"
         children="children"
       >
-        <template #node="item">
-          <span style="color: #3a84ff;">(自定义节点)：{{ item.name }}</span>
+        <template #default="{ data }">
+          <span style="color: #3a84ff;">(自定义节点)：{{ JSON.stringify(data) }}</span>
         </template>
       </bk-tree>
     </div>

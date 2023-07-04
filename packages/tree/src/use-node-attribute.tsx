@@ -159,6 +159,11 @@ export default (flatData, props?: TreePropTypes) => {
     [NODE_ATTRIBUTES.TREE_NODE_ATTR]: resolveScopedSlotParam(item),
   });
 
+  const extendNodeScopedData = (item: any) => ({
+    data: item,
+    attributes: resolveScopedSlotParam(item),
+  });
+
   return {
     getSchemaVal,
     getNodeAttr,
@@ -184,5 +189,6 @@ export default (flatData, props?: TreePropTypes) => {
     setTreeNodeLoading,
     extendNodeAttr,
     getChildNodes,
+    extendNodeScopedData,
   };
 };

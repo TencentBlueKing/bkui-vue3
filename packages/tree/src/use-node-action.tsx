@@ -53,6 +53,7 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
     getParentNode,
     resolveScopedSlotParam,
     extendNodeAttr,
+    extendNodeScopedData,
   } = useNodeAttribute(flatData, props);
 
   const { registerNextLoop } = initOption;
@@ -90,7 +91,7 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
     return null;
   };
 
-  const getLoadingIcon = (item: any) => (ctx.slots.nodeLoading?.(extendNodeAttr(item)) ?? isNodeLoading(item)
+  const getLoadingIcon = (item: any) => (ctx.slots.nodeLoading?.(getScopedSlotData(item)) ?? isNodeLoading(item)
     ? <Spinner></Spinner> : '');
 
 
@@ -101,7 +102,7 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
 */
   const getActionIcon = (item: any) => {
     if (ctx.slots.nodeAction) {
-      return ctx.slots.nodeAction(extendNodeAttr(item));
+      return ctx.slots.nodeAction(getScopedSlotData(item));
     }
 
     let prefixFnVal = null;
@@ -111,7 +112,7 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
     }
 
     if (typeof props.prefixIcon === 'function') {
-      prefixFnVal = props.prefixIcon(extendNodeAttr(item), 'node_action');
+      prefixFnVal = props.prefixIcon(getScopedSlotData(item), 'node_action');
       if (prefixFnVal !== 'default') {
         return renderPrefixVal(prefixFnVal);
       }
@@ -138,13 +139,13 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
     }
 
     if (ctx.slots.nodeType) {
-      return ctx.slots.nodeType(extendNodeAttr(item));
+      return ctx.slots.nodeType(getScopedSlotData(item));
     }
 
     let prefixFnVal = null;
 
     if (typeof props.prefixIcon === 'function') {
-      prefixFnVal = props.prefixIcon(extendNodeAttr(item), 'node_type');
+      prefixFnVal = props.prefixIcon(getScopedSlotData(item), 'node_type');
 
       if (prefixFnVal !== 'default') {
         return renderPrefixVal(prefixFnVal);
@@ -458,6 +459,27 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
       .map((index: number) => <span class="node-virtual-line" style={ getNodeLineStyle(maxDeep - index) }></span>);
   };
 
+
+  const renderNodeSlots = (item: any) => {
+    if (ctx.slots.node) {
+      return ctx.slots.node?.(getScopedSlotData(item));
+    }
+
+    if (ctx.slots.default) {
+      return ctx.slots.default?.(extendNodeScopedData(item));
+    }
+
+    return [getLabel(item, props)];
+  };
+
+  const getScopedSlotData = (item) => {
+    if (props.keepSlotData) {
+      return extendNodeScopedData(item);
+    }
+
+    return extendNodeAttr(item);
+  };
+
   const renderTreeNode = (item: any) => (
     <div
       data-tree-node={getNodeId(item)}
@@ -481,10 +503,10 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
           }
           <span
             class={ resolveClassName('node-text') }>
-            {ctx.slots.node?.(extendNodeAttr(item)) ?? [getLabel(item, props)]}
+            { renderNodeSlots(item) }
           </span>
           {
-            ctx.slots.nodeAppend?.(extendNodeAttr(item))
+            ctx.slots.nodeAppend?.(getScopedSlotData(item))
           }
         </div>
         {
