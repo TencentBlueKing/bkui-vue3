@@ -115,8 +115,9 @@ export default [
     subTile: '预留插槽',
     type: 'events',
     config: [
+      { name: '#default', desc: '默认自定义节点插槽, #default插槽与 #node插槽二选一即可，两者区别为参数格式不同，其他功能一致', params: '{ data: { ...node }, attributes: {} }' },
+      { name: '#node', desc: '自定义节点', params: '{ ...node, ...attributes }' },
       { name: '#nodeType', desc: '节点类型Icon', params: 'node' },
-      { name: '#node', desc: '自定义节点', params: 'node' },
       { name: '#nodeAppend', desc: '自定义节点后面的扩展展示', params: 'node' },
       { name: '#nodeAction', desc: '展开|收起自义定渲染', params: 'node' },
     ],

@@ -53,6 +53,7 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
     getParentNode,
     resolveScopedSlotParam,
     extendNodeAttr,
+    extendNodeScopedData,
   } = useNodeAttribute(flatData, props);
 
   const { registerNextLoop } = initOption;
@@ -481,7 +482,8 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
           }
           <span
             class={ resolveClassName('node-text') }>
-            {ctx.slots.node?.(extendNodeAttr(item)) ?? [getLabel(item, props)]}
+            { ctx.slots.node?.(extendNodeAttr(item)) ?? [getLabel(item, props)] }
+            { ctx.slots.default?.(extendNodeScopedData(item)) }
           </span>
           {
             ctx.slots.nodeAppend?.(extendNodeAttr(item))
