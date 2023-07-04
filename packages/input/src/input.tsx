@@ -197,14 +197,6 @@ export default defineComponent({
     function handleBlur(e) {
       isFocused.value = false;
       ctx.emit(EVENTS.BLUR, e);
-      if (
-        isNumberInput.value && Number.isInteger(parseInt(e.target.value, 10))
-        && (e.target.value > props.max || e.target.value < props.min)
-      ) {
-        const val = e.target.value > props.max ? props.max : props.min;
-        ctx.emit(EVENTS.UPDATE, val);
-        ctx.emit(EVENTS.CHANGE, val);
-      }
       if (props.withValidate) {
         formItem?.validate?.('blur');
       }
@@ -229,6 +221,14 @@ export default defineComponent({
             EVENTS.UPDATE,
             e.target.value,
           );
+        } else if (eventName === EVENTS.CHANGE && isNumberInput.value) {
+          const val = parseInt(e.target.value, 10);
+          if (val > props.max || val < props.min) {
+            const limitVal = val > props.max ? props.max : props.min;
+            ctx.emit(EVENTS.UPDATE, limitVal, e);
+            ctx.emit(eventName, limitVal, e);
+            return;
+          }
         }
 
         ctx.emit(eventName, e.target.value, e);
