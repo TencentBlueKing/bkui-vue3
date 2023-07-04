@@ -53,6 +53,7 @@ export default [
       { name: 'auto-check-children', type: 'Boolean', default: 'true', desc: '仅对 type=selection 的列有效，类型为 Boolean，为 true 则会在数据更新之后保留之前选中的展开收起操作（需指定 row-是否自动检查当前节点是否有子节点, 节点前面的展开收起Icon会根据判定值做改变.如果需要自已控制，请设置为false', optional: [] },
       { name: 'auto-open-parent-node', type: 'Boolean', default: 'true', desc: '如果设置了某一个叶子节点状态为展开，是否自动展开所有父级节点,默认为true，如果设置为false，则每层状态需要自己控制', optional: [] },
       { name: 'expand-all', type: 'Boolean', default: 'false', desc: '默认是否展开所有节点', optional: [] },
+      { name: 'keep-slot-data', type: 'Boolean', default: 'false', desc: '是否作用域插槽抛出参数是否保持源数据的引用，如果设置为true，则作用域插槽参数格式为: { data: node, attributes: {} }，如果设置为false，则作用域插槽参数格式为: { ...node, ...attributes }，attributes 为节点内置属性，包含节点是否展开，是否选中，是否有子节点等等', optional: [] },
       { name: 'node-content-action', type: 'String[]', default: '', desc: '节点内容点击行为，此处配置每个节点除了展开\\收起箭头之外的内容块时的行为.默认为 ["selected", "expand", "click"]，点击内容块为选中当前节点, 如果要禁用所有行为，请设置为空数组 []', optional: ['click', 'selected', 'expand', 'collapse'] },
     ],
   },
