@@ -547,7 +547,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/time-picker'),
     meta: {
       group: NavGroupMeta.Nav,
-      navName: 'TimePicker 日期选择器',
+      navName: 'TimePicker 时间选择器',
     },
   },
   /**
