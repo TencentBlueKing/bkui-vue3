@@ -59,6 +59,7 @@ export interface ModalFuncProps {
   isShow?: boolean;
   width?: string | number;
   type?: 'primary' | 'warning' | 'success' | 'danger';
+  infoType?: 'success' | 'danger' | 'warning' | 'loading';
   title?: string | (() => VNode | string) | VNode;
   subTitle?: string | (() => VNode) | VNode;// 弹窗内容
   confirmText?: string | (() => VNode) | VNode;
