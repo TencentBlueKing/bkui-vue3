@@ -25,7 +25,7 @@
 */
 import { v4 as uuidv4 } from 'uuid';
 
-import { isAvailableId } from './utils';
+import { isAvailableId, isElement } from './utils';
 
 let popContainerId = null;
 let parentNodeReferId = null;
@@ -49,13 +49,21 @@ export default (props, prefix = '#') => {
     };
 
     const resolveCommonBoundary = () => {
-      if (!/^body$/i.test(props.boundary) && typeof props.boundary === 'string') {
-        if (!isAvailableId(props.boundary)) {
-          console.error('props.boundary is not available selector');
-          resolvedBoundary = 'body';
+      if (!/^body$/i.test(props.boundary)) {
+        if (typeof props.boundary === 'string') {
+          if (!isAvailableId(props.boundary)) {
+            console.error('props.boundary is not available selector');
+            resolvedBoundary = 'body';
+            return;
+          }
+          resolvedBoundary = props.boundary;
           return;
         }
-        resolvedBoundary = props.boundary;
+
+        if (isElement(props.boundary)) {
+          resolvedBoundary = props.boundary;
+          return;
+        }
       }
     };
 
