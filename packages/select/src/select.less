@@ -322,6 +322,8 @@
         }
 
         .@{bk-prefix}-select-option {
+          display: flex;
+          align-items: center;
           position: relative;
           height: 32px;
           padding: 0 12px;
@@ -338,6 +340,10 @@
             right: 10px;
             top: 5px
           }
+          .@{bk-prefix}-select-checkbox {
+            margin-right: 6px;
+            pointer-events: none;
+          }
 
           &-item {
             .ellipsis();
@@ -352,7 +358,7 @@
             background-color: #f5f7fa;
           }
 
-          &.is-selected {
+          &.is-selected:not(.is-checkbox) {
             color: #3a84ff;
             background-color: #e1ecff;
           }

@@ -40,10 +40,10 @@ import {
   PropTypes,
   RenderType,
   resolveClassName,
+  SelectedType,
   SizeEnum,
   TagThemeType,
-  useFormItem,
-} from '@bkui-vue/shared';
+  useFormItem } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
 import { selectKey, toLowerCase, useHover, usePopover, useRegistry, useRemoteSearch } from './common';
@@ -96,6 +96,7 @@ export default defineComponent({
     autoFocus: PropTypes.bool.def(false), // 挂载的时候是否自动聚焦输入框
     keepSearchValue: PropTypes.bool.def(false), // 隐藏popover时是否保留搜索内容,
     prefix: PropTypes.string,
+    selectedStyle: SelectedType(),
   },
   emits: ['update:modelValue', 'change', 'toggle', 'clear', 'scroll-end', 'focus', 'blur'],
   setup(props, { emit }) {
@@ -127,6 +128,7 @@ export default defineComponent({
       allowEmptyValues,
       autoFocus,
       keepSearchValue,
+      selectedStyle,
     } = toRefs(props);
 
     const localNoDataText = computed(() => {
@@ -570,6 +572,7 @@ export default defineComponent({
       selected,
       activeOptionValue,
       showSelectedIcon,
+      selectedStyle: selectedStyle as any, // todo 类型推断
       register,
       unregister,
       registerGroup,
