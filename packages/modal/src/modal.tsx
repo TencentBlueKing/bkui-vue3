@@ -45,11 +45,11 @@ export default defineComponent({
   },
   computed: {
     dialogWidth(): String | Number {
-      return /^\d+$/.test(`${this.width}`) ? `${this.width}px` : this.width;
+      return /^\d+\.?\d*$/.test(`${this.width}`) ? `${this.width}px` : this.width;
     },
 
     dialogHeight(): String | Number {
-      return /^\d+$/.test(`${this.height}`) ? `${this.height}px` : this.height;
+      return /^\d+\.?\d*$/.test(`${this.height}`) ? `${this.height}px` : this.height;
     },
 
     compStyle(): any {
