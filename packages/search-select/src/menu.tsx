@@ -23,12 +23,10 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { Checkbox } from 'bkui-vue';
 import { computed, defineComponent, PropType, VNode } from 'vue';
 
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { Done } from '@bkui-vue/icon';
-import { SelectedType, SelectedTypeEnum } from '@bkui-vue/shared';
 
 import { ICommonItem, IMenuFooterItem } from './utils';
 
@@ -58,7 +56,6 @@ export default defineComponent({
       type: Array as PropType<IMenuFooterItem[]>,
       default: () => [],
     },
-    selectedStyle: SelectedType(),
   },
   emits: ['selectItem', 'selectCondition', 'footerClick'],
   setup(props, { emit }) {
@@ -168,19 +165,8 @@ export default defineComponent({
                   getSearchNode: this.getSearchNode,
                 })
                 : <>
-                {
-                  this.multiple
-                    && this.selected.includes(item.id)
-                    && this.selectedStyle === SelectedTypeEnum.CHECKBOX
-                    && <Checkbox />
-                }
                 {this.getSearchNode(item)}
-                {
-                  this.multiple
-                    && this.selected.includes(item.id)
-                    && this.selectedStyle === SelectedTypeEnum.CHECK
-                    && <Done class="is-selected"/>
-                }
+                {this.multiple && this.selected.includes(item.id) && <Done class="is-selected"/>}
               </>
             }
           </li>)
