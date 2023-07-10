@@ -246,3 +246,12 @@ export class PropTypes extends propTypesNS {
     });
   }
 }
+
+export enum SelectedTypeEnum {
+  CHECKBOX = 'checkbox',
+  CHECK = 'check'
+}
+
+export function SelectedType() {
+  return toType<`${SelectedTypeEnum}`>('selectedStyle', {}).def(SelectedTypeEnum.CHECK);
+}
