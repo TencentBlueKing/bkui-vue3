@@ -35,12 +35,12 @@ export class BKPopIndexManager {
   private readonly uuidAttrName: string;
   private clickFn?: { fn: (e: MouseEvent) => void, target: HTMLElement };
   private bKMaskManagerInstance: BkMaskManager;
-  private instanceUUID;
+  // private instanceUUID;
 
   constructor(options?) {
     this.popInstanceList = [];
     this.clickFn = undefined;
-    this.instanceUUID = random(8);
+    // this.instanceUUID = random(8);
     this.uuidAttrName = 'data-bk-pop-uuid';
     this.bKMaskManagerInstance = new BkMaskManager({
       parentNode: this.getParentNode(options?.transfer),
