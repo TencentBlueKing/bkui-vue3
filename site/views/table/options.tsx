@@ -73,9 +73,9 @@ export const DATA_COLUMNS = [
   {
     label: '序号',
     type: 'index',
-    sort: true,
     width: 50,
     minWidth: 80,
+    sort: true,
   },
   {
     label: '名称/内网IP',
@@ -99,6 +99,7 @@ export const DATA_COLUMNS = [
   {
     label: (column, index) => `状态-${index}-${column.field}`,
     field: 'status',
+    render: ({ row }) => `${row.status}-${row.msg}`,
     sort: true,
   },
 ];

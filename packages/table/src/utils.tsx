@@ -566,3 +566,10 @@ export const getRowId = (row, index, props) => {
 export const getRowSourceData = row => unref(row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA] || row);
 export const getColumnSourceData = column => unref(column[COLUMN_ATTRIBUTE.COL_SOURCE_DATA] || column);
 
+export const getRowIndex = (row, index) => {
+  if (Object.prototype.hasOwnProperty.call(row, TABLE_ROW_ATTRIBUTE.ROW_INDEX)) {
+    return row[TABLE_ROW_ATTRIBUTE.ROW_INDEX];
+  }
+
+  return index;
+};
