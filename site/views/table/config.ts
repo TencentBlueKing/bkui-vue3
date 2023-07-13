@@ -112,7 +112,7 @@ export default [
     subTile: '排序详细配置',
     config: [
       { name: 'value', type: 'string', default: 'asc', desc: '排序规则', optional: ['asc', 'desc'] },
-      { name: 'sortFn', type: 'Function', default: '--', desc: '自定义排序函数，返回true | false，函数参考 Array.sort((a,b) => boolean)', optional: [] },
+      { name: 'sortFn', type: 'Function', default: '--', desc: '自定义排序函数(a,b,type) => number，type 值 `asc, desc, null`，函数参考 Array.sort((a,b) => number)', optional: [] },
       { name: 'sortScope', type: 'String', default: 'current', desc: '排序生效范围，针对分页表格，当前排序是当前页生效还是全部数据排序', optional: ['current', 'all'] },
     ],
   },

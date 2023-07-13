@@ -16,7 +16,8 @@
   </div>
 </template>
 
-<script>
+<script lang="jsx">
+  import { random } from 'lodash';
   import { defineComponent } from 'vue';
 
   import { DATA_COLUMNS, DATA_TABLE } from './options';
@@ -25,26 +26,27 @@
     data() {
       return {
         isLoading: false,
-        tableData: [...DATA_TABLE],
+        tableData: DATA_TABLE.map((d, index) => Object.assign({}, d, { msg: index * random(0, 20, true) })),
         columns: [...DATA_COLUMNS],
         settings: {
-          fields: [{
-                     label: '序号',
-                     field: 'index',
-                     disabled: true,
-                   },
-                   {
-                     label: '名称/内网IP',
-                     field: 'ip',
-                   },
-                   {
-                     label: '来源',
-                     field: 'source',
-                   },
-                   {
-                     label: '创建时间',
-                     field: 'create_time',
-                   }],
+          fields: [
+            {
+              label: '序号',
+              field: 'index',
+              disabled: true,
+            },
+            {
+              label: '名称/内网IP',
+              field: 'ip',
+            },
+            {
+              label: '来源',
+              field: 'source',
+            },
+            {
+              label: '创建时间',
+              field: 'create_time',
+            }],
           checked: ['ip', 'index'],
         },
       };
