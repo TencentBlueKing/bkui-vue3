@@ -162,6 +162,7 @@ export default defineComponent({
       if (typeof sortFn === 'function') {
         columnSortFn = sortFn;
         activeSortColumn = column;
+        Object.assign(activeSortColumn, { [COLUMN_ATTRIBUTE.SORT_TYPE]: type });
         resolvePageData(columnFilterFn, columnSortFn, activeSortColumn);
         refVirtualRender.value?.reset?.();
       }

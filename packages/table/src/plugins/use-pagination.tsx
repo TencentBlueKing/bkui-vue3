@@ -25,6 +25,7 @@
 */
 import { reactive, ref } from 'vue';
 
+import { COLUMN_ATTRIBUTE } from '../const';
 import { SortScope, TablePropTypes } from '../props';
 
 /**
@@ -98,9 +99,9 @@ export default (props: TablePropTypes, indexData: any[]) => {
    */
   const pageData = reactive([]);
 
-  const sort = (sourceData: any[], sortFn: any) => {
+  const sort = (sourceData: any[], sortFn: any, activeSortColumn: any) => {
     if (typeof sortFn === 'function') {
-      sourceData.sort(sortFn);
+      sourceData.sort((a, b) => sortFn(a, b, activeSortColumn[COLUMN_ATTRIBUTE.SORT_TYPE]));
     }
   };
 
@@ -116,12 +117,12 @@ export default (props: TablePropTypes, indexData: any[]) => {
     const sourceData = indexData.slice();
     const { sortScope } = activeSortColumn?.sort ?? {};
     if (sortScope === SortScope.ALL) {
-      sort(sourceData, sortFn);
+      sort(sourceData, sortFn, activeSortColumn);
     }
     pageData.length = 0;
     pageData.push(...sourceData.slice(startIndex.value, endIndex.value));
     filter(pageData, filterFn);
-    sort(pageData, sortFn);
+    sort(pageData, sortFn, activeSortColumn);
   };
 
   /**
