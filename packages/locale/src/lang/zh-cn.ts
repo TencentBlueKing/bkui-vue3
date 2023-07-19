@@ -144,6 +144,12 @@ const zhCn: Language = {
   tagInput: {
     placeholder: '请输入并按Enter结束',
   },
+  message: {
+    assistant: '助手',
+    details: '详情',
+    copySuccess: '复制成功',
+    copyFailed: '复制失败',
+  },
   // exception: {
   //   403: '无业务权限',
   //   404: '页面不存在',
