@@ -33,7 +33,9 @@ import type { IPropsTableItem } from '../../typings';
 
 import BaseDemo from './base-demo.vue';
 import CloseDemo from './close-demo.vue';
+import MultiDemo from './multi-demo.vue';
 import ThemeDemo from './theme-demo.vue';
+
 
 const props: IPropsTableItem[] = [
   {
@@ -45,15 +47,15 @@ const props: IPropsTableItem[] = [
   },
   {
     name: 'message',
-    type: 'String',
+    type: 'String | IMessage',
     default: '',
-    desc: '组件显示的文字内容',
+    desc: '组件显示的文字内容，如果需要高阶用法，请查看IMessage说明',
     optional: [],
   },
   {
     name: 'delay',
     type: 'Number',
-    default: '3000',
+    default: '常规模式3000，高阶模式8000',
     desc: '组件延时关闭时间，值为 0 时需要手动关闭',
     optional: [],
   },
@@ -92,7 +94,174 @@ const props: IPropsTableItem[] = [
     desc: '关闭组件时的回调函数, 参数为组件实例',
     optional: [],
   },
+  {
+    name: 'width',
+    type: 'number',
+    default: '常规模式下默认宽度560， 高阶模式默认宽度800',
+    desc: '宽度设置，常规模式下默认宽度560， 高阶模式默认宽度800',
+    optional: [],
+  },
+  {
+    name: 'actions',
+    type: 'IMessageAction[]',
+    default: '',
+    desc: '用于高阶模式下，操作按钮根据产品需求自定义，详细配置请参考高阶配置 IMessageActions',
+    optional: [],
+  },
 ];
+
+const IMessage: IPropsTableItem[] = [
+  {
+    name: 'code',
+    type: 'string | number',
+    default: '',
+    desc: '错误码',
+    optional: [],
+  },
+  {
+    name: 'overview',
+    type: 'string',
+    default: '',
+    desc: '错误概述',
+    optional: [],
+  },
+  {
+    name: 'suggestion',
+    type: 'string',
+    default: '',
+    desc: '操作建议',
+    optional: [],
+  },
+  {
+    name: 'details',
+    type: 'string | Record<string, any> | Array<Record<string, any> | number | boolean>',
+    default: '',
+    desc: '详情',
+    optional: [],
+  },
+  {
+    name: 'assistant',
+    type: 'string',
+    default: '',
+    desc: '助手',
+    optional: [],
+  },
+  {
+    name: 'type',
+    type: 'MessageContentType',
+    default: '',
+    desc: ' 展开详情：数据展示格式，详情分为：Key Value 类详情、JSON 类详情',
+    optional: ['key-value', 'json'],
+  },
+];
+
+const IMessageActions = [
+  {
+    name: 'id',
+    type: 'string | number',
+    default: '',
+    desc: '唯一ID，从给定的 IMessageActionType 中选择。如果是自定义的其他操作，此ID可以自定义，此时将会作为一个新的操作项追加',
+    optional: ['assistant', 'details', 'fix', 'close'],
+  },
+  {
+    name: 'text',
+    type: '() => string | string',
+    default: 'undefined',
+    desc: '需要展示的文本，如果不设置显示默认',
+    optional: [],
+  },
+  {
+    name: 'icon',
+    type: '() => VNode | string | VNode',
+    default: 'undefined',
+    desc: '需要展示的ICON，如果不设置显示默认',
+    optional: [],
+  },
+  {
+    name: 'onClick',
+    type: '(...args) => Boolean | void',
+    default: 'undefined',
+    desc: '鼠标点击事件，如果返回false则阻止默认点击行为; 如果返回其他，默认行为不会阻止',
+    optional: [],
+  },
+  {
+    name: 'render',
+    type: '() => VNode',
+    default: 'undefined',
+    desc: '自定义渲染 & 事件处理; 如果设置了render则整个渲染都需要自己处理，默认渲染将会被阻止, 此时其他配置将失效',
+    optional: [],
+  },
+  {
+    name: 'disabled',
+    type: 'boolean',
+    default: 'undefined',
+    desc: '是否禁用此功能，如果设置为true，则此功能不展示',
+    optional: [],
+  },
+  {
+    name: 'readonly',
+    type: 'boolean',
+    default: 'undefined',
+    desc: '是否只读，如果设置为true，则此功能只做文本展示',
+    optional: [],
+  },
+  {
+    name: 'classList',
+    type: 'string | string[]',
+    default: 'undefined',
+    desc: '需要添加到操作项外层元素的样式列表',
+    optional: [],
+  },
+];
+
+const ISlots = [
+  {
+    name: '#action',
+    type: '',
+    default: '',
+    desc: '操作项插槽，可以覆盖默认操作项列表，完全自定义，如果启用此插槽，IMessageActions 相关配置将不再生效',
+    optional: [],
+  },
+  {
+    name: '#title',
+    type: '',
+    default: '`【message.code】${message.overview} ${message.suggestion}`',
+    desc: '操作项描述，默认格式 【错误码】错误概述 + 操作建议（面向用户）',
+    optional: [],
+  },
+];
+
+const IMessageActionType  = [
+  {
+    name: 'ASSISTANT',
+    type: 'assistant',
+    default: '',
+    desc: '联系助手：默认直接拉起企业微信与助手的聊天，需要在 message.assistant 配置对应的企微群ID',
+    optional: [],
+  },
+  {
+    name: 'DETAILS',
+    type: 'details',
+    default: '',
+    desc: '展开详情：展开面向开发的详情',
+    optional: [],
+  },
+  {
+    name: 'FIX',
+    type: 'fix',
+    default: '',
+    desc: '图钉按钮：点击后，Message 不会自动消失',
+    optional: [],
+  },
+  {
+    name: 'CLOSE',
+    type: 'close',
+    default: '',
+    desc: '关闭：点击关闭，Message 消失',
+    optional: [],
+  },
+];
+
 export default defineComponent({
   render() {
     return (
@@ -125,7 +294,19 @@ export default defineComponent({
         demoName="close-demo">
           <CloseDemo/>
       </DemoBox>
-        <PropsBox subtitle="" propsData={props}></PropsBox>
+      <DemoBox
+        title="高阶用法"
+        subtitle="适用于有更多面向开发信息的场景。"
+        desc=""
+        componentName="message"
+        demoName="close-demo">
+          <MultiDemo/>
+      </DemoBox>
+        <PropsBox title="常规配置" subtitle="适用于查看类页面的同步报错" propsData={props}></PropsBox>
+        <PropsBox title="高阶配置-IMessage" subtitle="适用于有更多面向开发信息的场景。" propsData={IMessage}></PropsBox>
+        <PropsBox title="高阶配置-IMessageAction" subtitle="操作按钮自定义配置" propsData={IMessageActions}></PropsBox>
+        <PropsBox title="高阶配置-IMessageActionType" subtitle="默认操作项说明" propsData={IMessageActionType}></PropsBox>
+        <PropsBox title="高阶配置-Slot" subtitle="自定义插槽" propsData={ISlots}></PropsBox>
     </div>
     );
   },

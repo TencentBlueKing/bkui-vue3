@@ -39,7 +39,7 @@ console.log(en);
 console.log(zhCn);
 const app = createApp(App);
 app.use(bkuiVue, {
-  locale: en,
+  locale: zhCn,
   // prefix: 'aabb',
 });
 app.use(router);

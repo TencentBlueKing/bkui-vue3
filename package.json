@@ -143,6 +143,7 @@
     "@popperjs/core": "~2.11.5",
     "date-fns": "~2.28.0",
     "js-calendar": "~1.2.3",
+    "json-formatter-js": "~2.3.4",
     "lodash": "~4.17.21",
     "tinycolor2": "~1.4.1",
     "vue-types": "~4.1.1"
