@@ -196,7 +196,8 @@ export const DATA_FIX_TABLE = [
 export const DATA_FIX_COLUMNS = [
   {
     type: 'selection',
-    width: 80,
+    width: 20,
+    minWidth: 20,
     fixed: true,
     // showOverflowTooltip: {
     //   mode: 'static',
