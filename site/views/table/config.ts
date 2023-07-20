@@ -25,8 +25,19 @@
 */
 export default [
   {
+    title: 'bk-table 默认设置',
+    subTile: '内置的默认配置属性和默认值（只读），可以通过具体的属性配置进行覆盖',
+    config: [
+      { name: 'LINE_HEIGHT', type: 'Number', default: '42', desc: '默认行高, 用于默认设置,(Table.minHeight = LINE_HEIGHT * 2, Table.rowHeight = LINE_HEIGHT, Table.headHeight = LINE_HEIGHT, Table.thead.height=LINE_HEIGHT)，可以通过具体属性配置进行覆盖', optional: [] },
+      { name: 'SCROLLY_WIDTH', type: 'Number', default: '4', desc: '默认滚动条样式宽度', optional: [] },
+      { name: 'COL_MIN_WIDTH', type: 'Number', default: '80', desc: '默认最小列宽，如果需要调整最小列宽，可以通过column.minWidth进行设置，覆盖默认宽度', optional: [] },
+      { name: 'SETTING_SIZE', type: 'Array', default: 'small', desc: 'Setting 行高默认列表，默认 small (LINE_HEIGHT),如果需要自定义列表，参考 ISettings.sizeList', optional: ['large: 78', 'medium: 60', 'small: LINE_HEIGHT'] },
+      { name: 'ROW_KEY', type: 'string', default: 'UUID', desc: '每行数据的唯一id，如果 没有明确指定 row-key,则会默认内置生成UUID作为唯一标识，在启用服务器端分页或者自定义渲染内置自定义组件的场景下，建议明确设置row-key,以保证在数据更新时能够正确渲染组件内容', optional: [] },
+    ],
+  },
+  {
     title: 'bk-table 属性',
-    subTile: 'LINE_HEIGHT = 42; SCROLLY_WIDTH = 4;',
+    subTile: '',
     config: [
       { name: 'data', type: 'Array', default: '--', desc: '显示的数据', optional: [] },
       { name: 'columns', type: 'IColumn[]', default: '', desc: '表格列的配置描述，具体项参考IColumn', optional: [] },
