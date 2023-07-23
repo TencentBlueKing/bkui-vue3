@@ -65,6 +65,13 @@ const cascaderPropsJson: IPropsTableItem[] = [
     optional: ['true', 'false'],
   },
   {
+    name: 'filter-method',
+    type: 'Function',
+    default: null,
+    desc: '自定义搜索函数，其中第一个参数是 node， 第二个参数是搜索的 key，返回true则会命中搜索节点',
+    optional: [],
+  },
+  {
     name: 'list',
     type: 'Array',
     default: '[]',

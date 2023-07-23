@@ -71,6 +71,7 @@ export default defineComponent({
     separator: PropTypes.string.def('/'),
     limitOneLine: PropTypes.bool.def(false),
     extCls: PropTypes.string.def(''),
+    filterMethod: PropTypes.func.def(null),
     scrollHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(216),
     scrollWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def('auto'),
     collapseTags: {
@@ -83,7 +84,7 @@ export default defineComponent({
     },
   },
   emits: ['update:modelValue', 'change', 'clear', 'toggle', 'focus'],
-  setup(props, { emit }) {
+  setup(props, { emit, slots }) {
     const t = useLocale('select');
 
     const { separator, multiple } = props;
@@ -93,7 +94,7 @@ export default defineComponent({
     const store = ref(new Store(props));
 
     // 定义selectedText变量用于记录当前选择的值的文本
-    const selectedText = ref<string | number>('');
+    const selectedText = ref<string>('');
 
     // 定义selectedTags变量用于记录多选模式下已选的tag
     const selectedTags = ref([]);
@@ -104,7 +105,7 @@ export default defineComponent({
     const cascaderPanel = ref();
 
     // 定义searchKey变量，支持搜索时，搜索框绑定变量
-    const searchKey = ref<string | number>('');
+    const searchKey = ref<string>('');
 
     // 定义suggestions变量，搜索功能打开时，面板给出的列表
     const suggestions = ref([]);
@@ -237,17 +238,28 @@ export default defineComponent({
       const target = e.target as HTMLInputElement;
       searchKey.value = target.value;
       if (searchKey.value === '') {
+        // 如果搜索关键字为空，则取消过滤
         isFiltering.value = false;
         return;
       }
+      // 开始过滤
       isFiltering.value = true;
-      const targetNodes = store.value.getFlattedNodes().filter((node) => {
+      isFiltering.value = true;
+
+      // 筛选方法，如果props中存在filterMethod，则使用props中的方法，否则使用默认方法
+      const filterMethod = props.filterMethod ? props.filterMethod : (node: INode) => {
         if (props.checkAnyLevel) {
+          // 检查是否需要搜索所有层级的节点
           return node.pathNames.join(props.separator).includes(searchKey.value);
         }
+        // 只搜索叶子节点，并且路径中包含搜索关键字
         return node.isLeaf && node.pathNames.join(props.separator).includes(searchKey.value);
-      });
+      };
+
+      // 获取所有节点并进行过滤
+      const targetNodes = store.value.getFlattedNodes().filter((node: INode) => filterMethod(node, searchKey.value));
       suggestions.value = targetNodes;
+      // 如果popover存在且未显示，则显示popover
       !popover?.value.isShow && popover?.value.show();
     });
 
@@ -276,7 +288,12 @@ export default defineComponent({
       : props.collapseTags));
     const isEditMode = computed(() => (props.collapseTags ? props.collapseTags && isEdit.value
       : props.collapseTags));
-    const { overflowTagIndex } = useTagsOverflow(bkCascaderRef, isEditMode, tagList);
+
+
+    // 如果使用了trigger插槽，则不存在bkCascaderRef，做兼容处理
+    const { overflowTagIndex } = slots.trigger
+      ? { overflowTagIndex: null }
+      : useTagsOverflow(bkCascaderRef, isEditMode, tagList);
 
     // 返回组件所需的变量和函数
     return {
