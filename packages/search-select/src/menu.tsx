@@ -28,7 +28,8 @@ import { computed, defineComponent, PropType, VNode } from 'vue';
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { Done } from '@bkui-vue/icon';
 
-import { ICommonItem, IMenuFooterItem } from './utils';;
+import { ICommonItem, IMenuFooterItem } from './utils';
+
 export default defineComponent({
   name: 'SearchSelectMenu',
   props: {
