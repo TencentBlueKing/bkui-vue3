@@ -7,6 +7,7 @@
       normal
     </bk-button>
     <bk-dialog
+      style="height: 1500px;"
       :is-show="exampleSetting1.dialog1.isShow"
       :title="'这是标题'"
       :theme="'primary'"
@@ -17,7 +18,7 @@
       <div>normal</div>
     </bk-dialog>
 
-    <bk-button
+    <!-- <bk-button
       class="mr10"
       @click="() => exampleSetting1.dialog2.isShow = true"
     >
@@ -84,7 +85,7 @@
       @confirm="() => exampleSetting1.dialog5.isShow = false"
     >
       <div>自定义宽高</div>
-    </bk-dialog>
+    </bk-dialog> -->
   </div>
 </template>
 

@@ -37,7 +37,7 @@ import SizeDemo from './size-demo.vue';
 
 const colorPickerPropsJson: IPropsTableItem[] = [
   {
-    name: 'v-model',
+    name: 'model-value / v-model',
     type: 'String',
     default: '#3A84FF',
     desc: '当前选择的RGB颜色值',

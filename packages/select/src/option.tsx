@@ -25,6 +25,7 @@
 */
 
 import { Checkbox } from 'bkui-vue';
+import { isEqual } from 'lodash';
 import {
   computed,
   defineComponent,
@@ -61,7 +62,7 @@ export default defineComponent({
     const { disabled, value } = toRefs(props);
     const select = inject(selectKey, null);
     const group = inject(optionGroupKey, null);
-    const selected = computed<boolean>(() => select?.selected?.some(item => item.value === value.value as string));
+    const selected = computed<boolean>(() => select?.selected?.some(item => isEqual(item.value, value.value)));
     const multiple = computed<boolean>(() => select?.multiple);
     const isHover = computed(() => select?.activeOptionValue === value.value);
     const showSelectedIcon = computed(() => select?.showSelectedIcon && multiple.value);

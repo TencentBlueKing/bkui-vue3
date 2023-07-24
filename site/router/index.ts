@@ -61,6 +61,18 @@ const routes: RouteRecordRaw[] = [
     },
   },
   /**
+   * @description:图钉
+   */
+  {
+    path: '/affix',
+    name: 'affix',
+    component: () => import('../views/affix/index'),
+    meta: {
+      group: NavGroupMeta.Nav,
+      navName: 'Affix 图钉',
+    },
+  },
+  /**
    * @description:导航页
    */
   {

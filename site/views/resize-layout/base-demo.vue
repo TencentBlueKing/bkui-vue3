@@ -9,6 +9,7 @@
     <bk-resize-layout
       style="height: 500px;"
       :placement="radioGroupValue"
+      :initial-divide="'40%'"
     >
       <template #aside>
         <div>aside</div>

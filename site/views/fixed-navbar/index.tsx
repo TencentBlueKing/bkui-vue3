@@ -35,7 +35,7 @@ import BaseDemo from './base-demo.vue';
 
 const fixedNavBarPropsJson: IPropsTableItem[] = [
   {
-    name: 'navItems',
+    name: 'nav-items',
     type: 'Array',
     default: null,
     desc: '需要固定展示的元素',
@@ -49,7 +49,7 @@ const fixedNavBarPropsJson: IPropsTableItem[] = [
     optional: ['top', 'middle', 'bottom'],
   },
   {
-    name: 'extCls',
+    name: 'ext-cls',
     type: 'String',
     default: '',
     desc: '自定义样式',
