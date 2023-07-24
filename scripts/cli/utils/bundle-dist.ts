@@ -95,6 +95,7 @@ export const buildDistScript = async () => await build({
           },
           exports: 'named',
           format: 'umd',
+          name: 'bkuiVue',
         },
       ],
     },

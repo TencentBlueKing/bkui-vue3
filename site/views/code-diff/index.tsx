@@ -40,28 +40,28 @@ import Theme from './demo/theme.vue';
 // 输入框属性列表
 const codeDiffProps: IPropsTableItem[] = [
   {
-    name: 'oldContent',
+    name: 'old-content',
     type: 'String',
     default: '',
     desc: '旧内容',
     optional: [],
   },
   {
-    name: 'newContent',
+    name: 'new-content',
     type: 'String',
     default: '',
     desc: '新内容',
     optional: [],
   },
   {
-    name: 'diffFormat',
+    name: 'diff-format',
     type: 'String',
     default: 'line-by-line',
     desc: '展示方式',
     optional: ['line-by-line', 'side-by-side'],
   },
   {
-    name: 'diffContext',
+    name: 'diff-context',
     type: 'String',
     default: '',
     desc: '不同地方间隔多少行不隐藏	',

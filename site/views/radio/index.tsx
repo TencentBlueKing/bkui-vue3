@@ -44,7 +44,7 @@ const radioProps: IPropsTableItem[] = [
     name: 'model-value / v-model',
     type: 'String',
     default: null,
-    desc: '邦定值',
+    desc: '绑定值',
     optional: [],
   },
   {
@@ -92,7 +92,7 @@ const radioGroupProps: IPropsTableItem[] = [
     name: 'model-value / v-model',
     type: 'String',
     default: null,
-    desc: '邦定值',
+    desc: '绑定值',
     optional: [],
   },
   {
@@ -126,7 +126,7 @@ const radioButtonProps: IPropsTableItem[] = [
     name: 'model-value / v-model',
     type: 'String',
     default: null,
-    desc: '邦定值',
+    desc: '绑定值',
     optional: [],
   },
   {

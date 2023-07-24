@@ -28,6 +28,8 @@ import { computed, defineComponent, inject, provide } from 'vue';
 
 import { PropTypes } from '@bkui-vue/shared';
 
+import { containerKey } from './interface';
+
 const colProps = {
   // 栅格的占位格数，可选值为 0~24 的整数，为 0 时，则为 col 相当于 width: 100%
   span: PropTypes.number.def(1),
@@ -44,7 +46,7 @@ export default defineComponent({
   props: colProps,
   emits: [],
   setup(props, ctx) {
-    const { col, gutter, flex } = inject('containerProps');
+    const { col, gutter, flex } = inject(containerKey);
     const { span, offset, pull, push } = props;
     const realSpan: any = computed(() => span || col);
 

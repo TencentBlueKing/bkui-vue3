@@ -4,6 +4,7 @@
       <bk-card
         title="Card卡片标题"
         is-collapse
+        @edit="editHandler"
       >
         <div class="card-content-wrapper">
           <p>卡片内容 1</p>
@@ -39,17 +40,13 @@
   </div>
 </template>
 
-<script>
+<script setup>
   import { Help, HelpDocumentFill, HelpFill } from 'bkui-vue/lib/icon';
-  import { defineComponent } from 'vue';
-  export default defineComponent({
-    components: {
-      Help,
-      HelpDocumentFill,
-      HelpFill,
-    },
-  });
+  const editHandler = (v) => {
+    console.log(v);
+  };
 </script>
+
 <style lang="less" scoped>
   .card-demo {
     display: flex;

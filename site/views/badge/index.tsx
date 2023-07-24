@@ -64,14 +64,14 @@ const menuPropsJson: IPropsTableItem[] = [
     optional: [],
   },
   {
-    name: 'valLength',
+    name: 'val-length',
     type: 'Number',
     default: 3,
     desc: '配置val字符显示长度，最大值建议英文不超过3个字母，中文不超过2个汉字 ',
     optional: [],
   },
   {
-    name: 'overflowCount',
+    name: 'overflow-count',
     type: 'Number',
     default: '18px',
     desc: '组件显示的最大值，当 count 超过 overflowCount，显示数字 +；仅当设置了 Number 类型的 count 值时生效',
@@ -92,7 +92,7 @@ const menuPropsJson: IPropsTableItem[] = [
     optional: [],
   },
   {
-    name: 'extCls',
+    name: 'ext-cls',
     type: 'String',
     default: '',
     desc: '配置自定义样式类名，传入的类会被加在组件最外层的 DOM `.bk-badge-main` 上',

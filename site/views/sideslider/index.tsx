@@ -37,7 +37,7 @@ import TitleDemo from './title-demo.vue';
 
 const SideSliserPropsJson: IPropsTableItem[] = [
   {
-    name: 'isShow',
+    name: 'is-show',
     type: 'Boolean',
     default: 'false',
     desc: '是否显示组件，支持v-model写法',

@@ -26,11 +26,13 @@
 
 import { computed, defineComponent, inject, provide } from 'vue';
 
+import { containerKey } from './interface';
+
 export default defineComponent({
   name: 'Row',
   emits: [],
   setup(_props, ctx) {
-    const { col, gutter, flex } = inject('containerProps');
+    const { col, gutter, flex } = inject(containerKey);
     provide('containerProps', {
       col,
       gutter,
