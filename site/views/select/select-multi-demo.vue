@@ -16,6 +16,19 @@
     <bk-select
       v-model="selectedValue"
       class="bk-select"
+      multiple
+      selected-style="checkbox"
+    >
+      <bk-option
+        v-for="(item, index) in datasource"
+        :key="index"
+        :value="item.value"
+        :label="item.label"
+      />
+    </bk-select>
+    <bk-select
+      v-model="selectedValue"
+      class="bk-select"
       filterable
       multiple
       show-select-all
@@ -91,4 +104,3 @@
   margin-right: 20px;
 }
 </style>
-

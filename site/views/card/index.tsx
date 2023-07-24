@@ -63,21 +63,21 @@ const menuPropsJson: IPropsTableItem[] = [
     optional: ['left', 'right'],
   },
   {
-    name: 'showHead',
+    name: 'show-head',
     type: 'Boolean',
     default: 'true',
     desc: '是否显示头部',
     optional: ['true', 'false'],
   },
   {
-    name: 'showFoot',
+    name: 'show-foot',
     type: 'Boolean',
     default: 'false',
     desc: '是否显示底部',
     optional: ['true', 'false'],
   },
   {
-    name: 'isEdit',
+    name: 'is-edit',
     type: 'Boolean',
     default: 'false',
     desc: '是否启用编辑标题功能',
@@ -91,7 +91,7 @@ const menuPropsJson: IPropsTableItem[] = [
     optional: ['true', 'false'],
   },
   {
-    name: 'disableHeaderStyle',
+    name: 'disable-header-style',
     type: 'Boolean',
     default: 'false',
     desc: '是否禁用Header的line-height默认样式',

@@ -49,7 +49,7 @@ const overflowComponent: IPropsTableItem[] = [
     optional: ['tips', 'title'],
   },
   {
-    name: 'calType',
+    name: 'cal-type',
     type: 'String',
     default: 'dom',
     desc: '计算文本宽度方式，默认通过dom计算机文本宽度，canvas则通过measureText计算',

@@ -61,14 +61,14 @@ const alertProps: IPropsTableItem[] = [
     optional: ['true', 'false'],
   },
   {
-    name: 'closeText',
+    name: 'close-text',
     type: 'String',
     default: '',
     desc: '自定义关闭按钮文案',
     optional: [],
   },
   {
-    name: 'showIcon',
+    name: 'show-icon',
     type: 'Boolean',
     default: '',
     desc: '是否显示ICON',

@@ -61,7 +61,8 @@ export default defineComponent({
       <div>
         <DemoTitle
           name="Icon"
-          desc="Icon组件， 可以通过组件的使用方式按需加载。"/>
+          desc="Icon组件， 可以通过组件的使用方式按需加载。"
+          designLink="https://bkdesign.bk.tencent.com/design/5"/>
         <DemoBox
           title="Icon展示"
           subtitle="这里展示了我们UI所用到的所有Icon, 点击复制使用"

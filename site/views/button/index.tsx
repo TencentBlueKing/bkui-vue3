@@ -52,7 +52,7 @@ const buttonProps: IPropsTableItem[] = [
     optional: ['priamry', 'success', 'warning', 'danger'],
   },
   {
-    name: 'hoverTheme',
+    name: 'hover-theme',
     type: 'String',
     default: '',
     desc: 'mouseHover 按钮样式, 当设置了此属性时，theme 和 text 失效',
@@ -165,6 +165,7 @@ export default defineComponent({
           name="Button"
           desc="常用的操作按钮"
           link={`${import.meta.env.VITE_APP_BASE_URL ?? ''}/button`}
+          designLink="https://bkdesign.bk.tencent.com/design/9"
         />
           {
             demos.map(({ DemoComponent, ...demo }) => (

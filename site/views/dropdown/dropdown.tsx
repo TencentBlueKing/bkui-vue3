@@ -41,7 +41,7 @@ import TriggerDemo from './trigger-demo.vue';
 
 const dropdowProps: IPropsTableItem[] = [
   {
-    name: 'isShow',
+    name: 'is-show',
     type: 'Boolean',
     desc: '自定义控制显示与隐藏 trigger = manual 时生效',
     optional: ['true', 'false'],
@@ -62,14 +62,14 @@ const dropdowProps: IPropsTableItem[] = [
     default: 'false',
   },
   {
-    name: 'popoverOptions',
+    name: 'popover-options',
     type: 'Object',
     desc: 'Popover组件的配置项',
     optional: [],
     default: '{}',
   },
   {
-    name: 'extCls',
+    name: 'ext-cls',
     type: 'String',
     desc: '配置自定义样式类名，传入的类会被加在组件最外层的 DOM .bk-dropdown 上',
     optional: [],

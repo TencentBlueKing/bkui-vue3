@@ -4,11 +4,11 @@
   "description": "> TODO: description",
   "homepage": "",
   "license": "MIT",
-  "main": "dist/bkui-vue.js",
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
+    "@bkui-vue/affix": "0.0.0",
     "@bkui-vue/alert": "0.0.0",
     "@bkui-vue/backtop": "0.0.0",
     "@bkui-vue/badge": "0.0.0",

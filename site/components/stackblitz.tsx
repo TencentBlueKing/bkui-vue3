@@ -23,8 +23,10 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { PlayShape } from 'bkui-vue/lib/icon';
 import { defineComponent, ref } from 'vue';
+
+// import { PlayShape } from 'bkui-vue/lib/icon';
+import { PlayShape } from '@bkui-vue/icon';
 
 import {
   htmlContent,
