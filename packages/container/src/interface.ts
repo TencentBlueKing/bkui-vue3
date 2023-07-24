@@ -23,56 +23,13 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-/*
-import { Share } from '@bkui-vue/icon';
-*/
-import { defineComponent } from 'vue';
 
-import './demo-title.less';
+import type { InjectionKey } from 'vue';
 
-export default defineComponent({
-  name: 'DemoTitile',
-  props: {
-    name: {
-      type: String,
-      required: true,
-    },
-    desc: {
-      type: String,
-      default: '',
-    },
-    link: {
-      type: String,
-      default: '',
-    },
-    designLink: {
-      type: String,
-      default: '',
-    },
-  },
-  setup() {
-    // const { name } = useRoute();
-    return {
-      // name,
-    };
-  },
-  render() {
-    return <div class="demo-title">
-      <div class="title-name">
-        {this.name}
-        {
-          this.designLink && <a class="design-link" href={this.designLink} target="_blank">
-            设计规范
-          </a>
-        }
-      </div>
-      <div class="title-desc">{this.desc}
-        {/* {
-          this.link && <a class="desc-link" href={this.link}>
-            <Share/>如何使用?
-          </a>
-        } */}
-      </div>
-    </div>;
-  },
-});
+export interface IContainerCtx {
+  col: number,
+  gutter: number,
+  flex: boolean
+};
+
+export const containerKey: InjectionKey<IContainerCtx> = Symbol('containerProps');

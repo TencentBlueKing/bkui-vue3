@@ -34,14 +34,14 @@ import { IPropsTableItem } from '../../typings';
 import BaseDemo from './base-demo.vue';
 const menuPropsJson: IPropsTableItem[] = [
   {
-    name: 'activeKey',
+    name: 'active-key',
     type: 'String',
     default: '',
     desc: '选中的menu的key',
     optional: [],
   },
   {
-    name: 'OpenedKeys',
+    name: 'opened-keys',
     type: 'Array',
     default: [],
     desc: '打开的submenu key值',
@@ -55,7 +55,7 @@ const menuPropsJson: IPropsTableItem[] = [
   //   optional: ['vertical', 'horizontal'],
   // },
   {
-    name: 'uniqueOpen',
+    name: 'unique-open',
     type: 'Boolean',
     default: 'true',
     desc: '是否唯一展开一个submenu',
@@ -102,7 +102,7 @@ const subMenuSlotsJson = [
 ];
 const menuItemPropsJson = [
   {
-    name: 'needIcon',
+    name: 'need-icon',
     type: 'Boolean',
     default: 'true',
     desc: '是否展示Icon',

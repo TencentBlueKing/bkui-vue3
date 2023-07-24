@@ -115,6 +115,7 @@ export default defineComponent({
           name="Grid 栅格"
           desc="通过栅格系统，迅速简便地创建布局。"
           link={`${import.meta.env.VITE_APP_BASE_URL ?? ''}/grid`}
+          designLink="https://bkdesign.bk.tencent.com/design/3"
         />
         <DemoBox
           title="基础布局"
