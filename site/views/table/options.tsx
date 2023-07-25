@@ -24,7 +24,7 @@
 * IN THE SOFTWARE.
 */
 
-import BtnDemo from './btn-demo.vue';
+// import BtnDemo from './btn-demo.vue';
 export const DATA_TABLE = [
   {
     ip: '192.168.0.1-2018-05-25 15:02:241',
@@ -87,6 +87,7 @@ export const DATA_COLUMNS = [
     label: '来源',
     field: 'source',
     width: 80,
+    render: ({ row }) => `${row.status}-${row.source}`,
     filter: {
       list: [{ text: 'QQ', value: 'QQ' }, { text: '微信', value: '微信' }, { text: 'Email', value: 'Email' }],
     },
@@ -241,10 +242,7 @@ export const DATA_FIX_COLUMNS = [
   },
   {
     label: '操作',
-    render: () => {
-      console.log('Edit Change render');
-      return <BtnDemo></BtnDemo>;
-    },
+    render: ({ row }) => <bk-input v-model={ row.status }></bk-input>,
     width: 180,
     fixed: 'right',
   },

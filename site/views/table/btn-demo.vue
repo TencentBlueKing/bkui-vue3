@@ -14,7 +14,6 @@
       };
     },
     unmounted() {
-      console.log('--primary unmounted');
     },
 
     methods: {},
