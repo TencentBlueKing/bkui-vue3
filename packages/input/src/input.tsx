@@ -222,13 +222,16 @@ export default defineComponent({
             e.target.value,
           );
         } else if (eventName === EVENTS.CHANGE && isNumberInput.value) {
-          const val = parseInt(e.target.value, 10);
+          const val = handleNumber(0);
           if (val > props.max || val < props.min) {
             const limitVal = val > props.max ? props.max : props.min;
             ctx.emit(EVENTS.UPDATE, limitVal, e);
             ctx.emit(eventName, limitVal, e);
-            return;
+          } else {
+            ctx.emit(EVENTS.UPDATE, val);
+            ctx.emit(EVENTS.CHANGE, val);
           }
+          return;
         }
 
         ctx.emit(eventName, e.target.value, e);
