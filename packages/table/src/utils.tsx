@@ -371,6 +371,15 @@ export const isRenderScrollBottomLoading = (props: TablePropTypes) => {
 };
 
 export const getRowKey = (item: any, props: TablePropTypes, index: number) => {
+  const val = getRowKeyNull(item, props, index);
+  if (val !== null) {
+    return val;
+  }
+
+  return uuidv4();
+};
+
+export const getRowKeyNull = (item: any, props: TablePropTypes, index: number) => {
   if (typeof props.rowKey === 'string') {
     if (props.rowKey === TABLE_ROW_ATTRIBUTE.ROW_INDEX) {
       return `__ROW_INDEX_${index}`;
@@ -383,7 +392,7 @@ export const getRowKey = (item: any, props: TablePropTypes, index: number) => {
     return Reflect.apply(props.rowKey, this, [item]);
   }
 
-  return uuidv4();
+  return null;
 };
 
 

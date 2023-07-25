@@ -127,6 +127,12 @@ export const virtualRenderProps = {
 
   rowKey: PropTypes.string.def(undefined),
 
+  /**
+   * 数据改变时是否保持之前的状态
+   * 保持滚动条位置、当前渲染区间
+   */
+  keepAlive: PropTypes.bool.def(false),
+
   ...EventProps,
 };
 
