@@ -322,9 +322,8 @@
         }
 
         .@{bk-prefix}-select-option {
-          display: flex;
-          align-items: center;
           position: relative;
+          display: flex;
           height: 32px;
           padding: 0 12px;
           line-height: 32px;
@@ -332,13 +331,14 @@
           text-align: left;
           cursor: pointer;
           user-select: none;
+          align-items: center;
 
           .ellipsis();
 
           .@{bk-prefix}-select-selected-icon {
             position: absolute;
-            right: 10px;
-            top: 5px
+            top: 5px;
+            right: 10px
           }
           .@{bk-prefix}-select-checkbox {
             margin-right: 6px;
