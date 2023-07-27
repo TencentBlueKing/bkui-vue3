@@ -107,7 +107,7 @@ const stepsProps: IPropsTableItem[] = [
 ];
 const stepsEvents: IPropsTableItem[] = [
   {
-    name: 'step-changed',
+    name: 'click',
     type: 'Function',
     default: '回调参数（变化后的步骤 index）',
     desc: '当前步骤变化时的回调',
@@ -123,6 +123,7 @@ export default defineComponent({
           name="Steps步骤条"
           desc="Steps步骤条，用于步骤类的场景组件"
           link={`${import.meta.env.VITE_APP_BASE_URL ?? ''}/steps`}
+          designLink="https://bkdesign.bk.tencent.com/design/148"
         />
         <DemoBox
           title="基础用法"

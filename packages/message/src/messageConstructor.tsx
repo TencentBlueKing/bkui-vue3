@@ -328,7 +328,7 @@ export default defineComponent({
       }
     };
 
-    const fixMesage = (e: MouseEvent, isFix?: boolean) => {
+    const fixMesage = (_e: MouseEvent, isFix?: boolean) => {
       toolOperation.isFix = isFix ?? !toolOperation.isFix;
     };
 

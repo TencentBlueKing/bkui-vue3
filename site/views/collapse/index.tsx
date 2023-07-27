@@ -55,7 +55,7 @@ const collapseProps: IPropsTableItem[] = [
     optional: [],
   },
   {
-    name: '(modelValue)v-model',
+    name: 'model-value / v-model',
     type: '<string|number>[] | string | number',
     default: '--',
     desc: '当前激活面板的key',
@@ -69,21 +69,21 @@ const collapseProps: IPropsTableItem[] = [
     optional: ['true', 'false'],
   },
   {
-    name: 'idFiled',
+    name: 'id-filed',
     type: 'String',
     default: '--',
     desc: '激活面板的唯一标识，不配置默认使用面板的index',
     optional: [],
   },
   {
-    name: 'titleField',
+    name: 'title-field',
     type: 'String',
     default: 'name',
     desc: '面板标题key值',
     optional: [],
   },
   {
-    name: 'contentField',
+    name: 'content-field',
     type: 'String',
     default: 'content',
     desc: '面板内容key值',
@@ -92,7 +92,7 @@ const collapseProps: IPropsTableItem[] = [
 ];
 const collapsePanelProps: IPropsTableItem[] = [
   {
-    name: '(modelValue)v-model',
+    name: 'model-value / v-model',
     type: 'Boolean',
     default: '--',
     desc: '当前面板是否这边(单独使用时才生效)',
@@ -120,7 +120,7 @@ const collapsePanelProps: IPropsTableItem[] = [
     optional: [],
   },
   {
-    name: 'renderDirective',
+    name: 'render-directive',
     type: 'if|show',
     default: 'show',
     desc: '配置内容隐藏方式，默认是 show，收起时，通过设置 display:none(v-show) 不显示在页面,if 为不渲染组件',

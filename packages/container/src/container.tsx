@@ -28,6 +28,8 @@ import { computed, defineComponent, provide } from 'vue';
 
 import { PropTypes } from '@bkui-vue/shared';
 
+import { containerKey } from './interface';
+
 export const containerProps = {
   // 栅格数，默认 24
   col: PropTypes.number.def(24),
@@ -47,7 +49,7 @@ export default defineComponent({
   setup(props, ctx) {
     const { col, gutter, flex, extCls } = props;
 
-    provide('containerProps', {
+    provide(containerKey, {
       col,
       gutter,
       flex,

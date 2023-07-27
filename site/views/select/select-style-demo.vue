@@ -1,75 +1,90 @@
 <template>
   <div class="style-demo">
     <!-- small -->
-    <bk-select
-      v-model="selectedValue"
-      class="bk-select"
-      size="small"
-    >
-      <bk-option
-        v-for="(item, index) in datasource"
-        :key="index"
-        :value="item.value"
-        :label="item.label"
-      />
-    </bk-select>
+    <p>
+      small
+      <bk-select
+        v-model="selectedValue"
+        class="bk-select"
+        size="small"
+      >
+        <bk-option
+          v-for="(item, index) in datasource"
+          :key="index"
+          :value="item.value"
+          :label="item.label"
+        />
+      </bk-select>
+    </p>
     <!-- default -->
-    <bk-select
-      v-model="selectedValue"
-      class="bk-select"
-    >
-      <bk-option
-        v-for="(item, index) in datasource"
-        :key="index"
-        :value="item.value"
-        :label="item.label"
-      />
-    </bk-select>
+    <p>
+      default
+      <bk-select
+        v-model="selectedValue"
+        class="bk-select"
+      >
+        <bk-option
+          v-for="(item, index) in datasource"
+          :key="index"
+          :value="item.value"
+          :label="item.label"
+        />
+      </bk-select>
+    </p>
     <!-- large -->
-    <bk-select
-      v-model="selectedValue"
-      class="bk-select"
-      size="large"
-      multiple
-      filterable
-    >
-      <bk-option
-        v-for="(item, index) in datasource"
-        :key="index"
-        :value="item.value"
-        :label="item.label"
-      />
-    </bk-select>
+    <p>
+      large
+      <bk-select
+        v-model="selectedValue"
+        class="bk-select"
+        size="large"
+        multiple
+        filterable
+      >
+        <bk-option
+          v-for="(item, index) in datasource"
+          :key="index"
+          :value="item.value"
+          :label="item.label"
+        />
+      </bk-select>
+    </p>
     <!-- simplicity small -->
-    <bk-select
-      v-model="selectedValue"
-      class="bk-select"
-      size="small"
-      behavior="simplicity"
-      multiple
-      filterable
-    >
-      <bk-option
-        v-for="(item, index) in datasource"
-        :key="index"
-        :value="item.value"
-        :label="item.label"
-      />
-    </bk-select>
+    <p>
+      simplicity small
+      <bk-select
+        v-model="selectedValue"
+        class="bk-select"
+        size="small"
+        behavior="simplicity"
+        multiple
+        filterable
+      >
+        <bk-option
+          v-for="(item, index) in datasource"
+          :key="index"
+          :value="item.value"
+          :label="item.label"
+        />
+      </bk-select>
+    </p>
     <!-- simplicity large -->
-    <bk-select
-      v-model="selectedValue"
-      class="bk-select"
-      size="large"
-      behavior="simplicity"
-    >
-      <bk-option
-        v-for="(item, index) in datasource"
-        :key="index"
-        :value="item.value"
-        :label="item.label"
-      />
-    </bk-select>
+    <p>
+      simplicity large
+      <bk-select
+        v-model="selectedValue"
+        class="bk-select"
+        size="large"
+        behavior="simplicity"
+      >
+        <bk-option
+          v-for="(item, index) in datasource"
+          :key="index"
+          :value="item.value"
+          :label="item.label"
+        />
+      </bk-select>
+    </p>
   </div>
 </template>
 <script setup>
@@ -117,4 +132,3 @@
   margin-right: 20px;
 }
 </style>
-

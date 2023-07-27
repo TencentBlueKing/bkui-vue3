@@ -23,6 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import { kebabCase } from 'lodash';
 import { defineComponent } from 'vue';
 
 import { BkSelect } from '@bkui-vue/select';
@@ -43,10 +44,8 @@ import SelectStyleDemo from './select-style-demo.vue';
 import SelectTreeDemo from './select-tree-demo.vue';
 import SelectVirtualRender from './select-virtual-render.vue';
 
-;
-
 const propsJson: IPropsTableItem[] = Object.keys(BkSelect.props).map(prop => ({
-  name: prop,
+  name: kebabCase(prop),
   type: BkSelect.props[prop]._vueTypes_name,
   default: BkSelect.props[prop].default,
   desc: '',
@@ -111,7 +110,7 @@ export default defineComponent({
         </DemoBox>
         <DemoBox
           title="多选"
-          desc="支持tag形式的多选"
+          desc="支持 tag 形式的多选，支持打勾以及 checkbox 的多选样式"
           componentName="select"
           demoName="select-multi-demo">
           <SelectMultiDemo/>

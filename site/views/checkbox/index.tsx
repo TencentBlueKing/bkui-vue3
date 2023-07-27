@@ -44,7 +44,7 @@ const checkboxProps: IPropsTableItem[] = [
     name: 'model-value / v-model',
     type: 'String',
     default: null,
-    desc: '邦定值',
+    desc: '绑定值',
     optional: [],
   },
   {
@@ -120,7 +120,7 @@ const checkboxGroupProps: IPropsTableItem[] = [
     name: 'model-value / v-model',
     type: 'Array',
     default: '[]',
-    desc: '邦定值',
+    desc: '绑定值',
     optional: [],
   },
   {

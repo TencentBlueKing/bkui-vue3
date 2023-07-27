@@ -44,14 +44,14 @@ const breadcrumbPropsJson: IPropsTableItem[] = [
     optional: [],
   },
   {
-    name: 'separatorClass',
+    name: 'separator-class',
     type: 'String',
     default: '',
     desc: '图标分隔符 class',
     optional: [],
   },
   {
-    name: 'backRouter',
+    name: 'back-router',
     type: 'String/Object',
     default: '',
     desc: '路由跳转对象，同 vue-router 的 to',
@@ -65,7 +65,7 @@ const breadcrumbPropsJson: IPropsTableItem[] = [
     optional: [],
   },
   {
-    name: 'extCls',
+    name: 'ext-cls',
     type: 'String',
     default: '',
     desc: '自定义样式',
@@ -75,13 +75,6 @@ const breadcrumbPropsJson: IPropsTableItem[] = [
 ];
 
 const breadcrumbSlotJson: IPropsTableItem[] = [
-  {
-    name: 'default',
-    type: 'Function',
-    default: '',
-    desc: '默认插槽',
-    optional: [],
-  },
   {
     name: 'default',
     type: 'Function',

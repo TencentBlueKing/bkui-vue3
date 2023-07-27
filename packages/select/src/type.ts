@@ -24,6 +24,7 @@
 * IN THE SOFTWARE.
 */
 import Popover from '@bkui-vue/popover';
+import { SelectedTypeEnum } from '@bkui-vue/shared';
 
 import Option from './option';
 import Group from './optionGroup';
@@ -41,6 +42,7 @@ export interface ISelectContext {
   selected: ISelected[];
   activeOptionValue: any;
   showSelectedIcon: boolean;
+  selectedStyle: SelectedTypeEnum;
   register(key: any, option: OptionInstanceType): any;
   unregister(key: any): any;
   registerGroup(key: any, option: GroupInstanceType): any;

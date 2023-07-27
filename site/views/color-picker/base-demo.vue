@@ -12,7 +12,7 @@
   </div>
 </template>
 <script setup>
-  import {  ref } from 'vue';
+  import { ref } from 'vue';
 
   import BkColorPicker from '@bkui-vue/color-picker';
   const color1 = ref('');

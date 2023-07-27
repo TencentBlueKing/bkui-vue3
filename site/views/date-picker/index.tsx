@@ -43,32 +43,18 @@ import YearMonthDemo from './year-month-demo.vue';
 
 const menuPropsJson: IPropsTableItem[] = [
   {
-    name: 'activeKey',
-    type: 'String',
+    name: 'model-value / v-model',
+    type: 'String/Array',
     default: '',
-    desc: '选中的menu的key',
-    optional: [],
+    desc: '日历组件的值，可以是 Date 或字符串或数组，只有在 daterange 和 datetimerange 类型时才支持数组',
+    optional: ['Date', 'String', 'Array'],
   },
   {
-    name: 'OpenedKeys',
-    type: 'Array',
-    default: [],
-    desc: '打开的submenu key值',
-    optional: [],
-  },
-  {
-    name: 'mode',
+    name: 'type',
     type: 'String',
-    default: 'vertical',
-    desc: '展示方式',
-    optional: ['vertical', 'horizontal'],
-  },
-  {
-    name: 'uniqueOpen',
-    type: 'Boolean',
-    default: 'true',
-    desc: '是否唯一展开一个submenu',
-    optional: [],
+    default: 'date',
+    desc: '类型',
+    optional: ['date', 'daterange', 'datetime', 'datetimerange', 'month', 'year'],
   },
 ];
 

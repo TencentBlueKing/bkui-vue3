@@ -35,7 +35,7 @@ import BaseDemo from './base-demo.vue';
 
 const backtopPropsJson: IPropsTableItem[] = [
   {
-    name: 'visibilityHeight',
+    name: 'visibility-height',
     type: 'Number',
     default: 200,
     desc: '滚动多少px后，元素可见',
@@ -63,7 +63,7 @@ const backtopPropsJson: IPropsTableItem[] = [
     optional: [],
   },
   {
-    name: 'extCls',
+    name: 'ext-cls',
     type: 'String',
     default: '',
     desc: '自定义样式',
