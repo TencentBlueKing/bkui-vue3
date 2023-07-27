@@ -29,8 +29,6 @@
 import { toDate } from 'date-fns';
 import type { ExtractPropTypes } from 'vue';
 import {
-  // onMounted,
-  // onBeforeUnmount,
   computed,
   defineComponent,
   getCurrentInstance,
@@ -40,7 +38,8 @@ import {
   reactive,
   ref,
   toRefs,
-  watch } from 'vue';
+  watch,
+} from 'vue';
 
 import { useLocale } from '@bkui-vue/config-provider';
 import { AngleDoubleLeft, AngleDoubleRight, AngleLeft, AngleRight } from '@bkui-vue/icon';
@@ -131,6 +130,10 @@ const dateRangePanelProps = {
     type: Object as PropType<Record<string, any>>,
     default: () => ({}),
   },
+  shortcutSelectedIndex: {
+    type: Number,
+    default: -1,
+  },
 } as const;
 
 export type DateRangePanelProps = Readonly<ExtractPropTypes<typeof dateRangePanelProps>>;
@@ -154,6 +157,7 @@ export default defineComponent({
       // 判断 range 中，第一次选的时间是否晚于当前时间
       upToNowEnable: false,
       dates: props.modelValue as any,
+      selectedIndex: props.shortcutSelectedIndex,
       // pickerTable: getTableType(props.selectionMode),
       // dates,
       // panelDate: props.startDate || dates[0] || new Date(),
@@ -364,6 +368,7 @@ export default defineComponent({
       state.rangeState.from = form;
       state.rangeState.to = to;
       state.dates = [form, to];
+      state.selectedIndex = index;
       emit('pick', value, false, 'shortcut', shortcut);
       if (props.shortcutClose) {
         emit('pick-success');
@@ -533,7 +538,7 @@ export default defineComponent({
                 this.shortcuts.map((item, index) => (
                   <div
                     key={index}
-                    class='shortcuts-item'
+                    class={['shortcuts-item', { 'shortcuts-item-active': index === this.selectedIndex }]}
                     onClick={() => this.handleShortcutClick(item, index)}>{item.text}</div>
                 ))
               }
