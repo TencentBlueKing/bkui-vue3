@@ -682,6 +682,7 @@ export default defineComponent({
                       onPick-success={this.onPickSuccess}
                       onSelection-mode-change={this.onSelectionModeChange}
                       v-slots={slots}
+                      shortcutSelectedIndex={this.shortcutSelectedIndex}
                       // v-bind={this.ownPickerProps}
                     />
                   )
