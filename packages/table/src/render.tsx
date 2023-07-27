@@ -48,6 +48,8 @@ import {
   getColumnReactWidth,
   getColumnSourceData,
   getNextSortType,
+  getRowId,
+  getRowKeyNull,
   getRowSourceData,
   getRowText,
   getSortFn,
@@ -56,8 +58,7 @@ import {
   resolveCellSpan,
   resolveHeadConfig,
   resolvePropVal,
-  resolveWidth,
-} from './utils';
+  resolveWidth } from './utils';
 
 export default class TableRender {
   props: TablePropTypes;
@@ -469,6 +470,7 @@ export default class TableRender {
                 // @ts-ignore
                 style={rowStyle}
                 class={rowClass}
+                key={getRowKeyNull(row, this.props, rowIndex)}
                 onClick={e => this.handleRowClick(e, row, rowIndex, rows)}
                 onDblclick={e => this.handleRowDblClick(e, row, rowIndex, rows)}
                 onMouseenter={e => this.handleRowEnter(e, row, rowIndex, rows)}
@@ -541,7 +543,7 @@ export default class TableRender {
                 }
               </tr>
             </TableRow>,
-            this.renderExpandRow(row, rowClass),
+            this.renderExpandRow(row, rowClass, rowIndex),
           ];
         })
       }
@@ -549,7 +551,7 @@ export default class TableRender {
     );
   }
 
-  private renderExpandRow(row: any, rowClass: any[]) {
+  private renderExpandRow(row: any, rowClass: any[], rowIndex) {
     const isExpand = !!row[TABLE_ROW_ATTRIBUTE.ROW_EXPAND];
     if (isExpand) {
       const resovledClass = [
@@ -557,10 +559,10 @@ export default class TableRender {
         { row_expend: true },
       ];
 
-      // const rowId = getRowId(row, rowIndex, this.props);
-      // const rowKey = `${rowId}_expand`;
+      const rowId = getRowId(row, rowIndex, this.props);
+      const rowKey = `${rowId}_expand`;
       return (
-        <TableRow>
+        <TableRow key={ rowKey }>
           <tr class={resovledClass}>
             <td colspan={this.filterColGroups.length} rowspan={1}>
               {this.context.slots.expandRow?.(getRowSourceData(row)) ?? <div class="expand-cell-ctx">Expand Row</div>}
