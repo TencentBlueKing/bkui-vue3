@@ -195,8 +195,18 @@ export default [
     config: [
       { name: '#prepend', desc: '插入至表格第一行之前的内容，会被固定在第一行', params: '' },
       { name: '#empty', desc: '自定义空数据-empty插槽', params: '' },
-      { name: '#default', desc: '<bk-column />模板使用自定义显示默认插槽', params: '{ cell, data, row, column, index, rows }' },
+      { name: '#default', desc: '<bk-column />模板使用自定义显示默认插槽, 这里面参数 data & row 在使用时要注意，data是原始数据，在组件中没有被代理监听，这个数据主要是回传给调用方使用，例如接口调用；如果要绑定数据实现实时更新请使用 row，row是组件内被监听数据，包含一些组件内置属性和方法', params: '{ cell, data, row, column, index, rows }' },
       { name: '#fixedBottom', desc: '底部加载插槽', params: '' },
+    ],
+  },
+  {
+    title: 'Q & A',
+    subTile: '常见问题汇总',
+    type: 'QA',
+    config: [
+      { name: '使用自定义渲染 render | <bk-column /> slot 数据不更新', desc: '在插槽或者render函数渲染中，请检查自定义渲染使用的是否是 data，data 是列表原始数据，组件内没有做代理监听，不会进行双向数据更新，提供此属性主要是有些场景需要使用原始数据进行操作，这里请用row进行数据绑定' },
+      { name: '数据不更新，没有使用自定义渲染', desc: '建议设置table.rowKey, 默认不设置rowKey时，表格会根据数据变化自动更新,设置rowKey后组件会在传递的数据中每行查找对应的数据作为key值，设置到table tr上面，当数据行变化时会被监听并更新' },
+      { name: '每列最小宽度问题', desc: '表格列有设置默认宽度 COL_MIN_WIDTH = 80，可以通过 column.minWidth修正，具体参考 column min-width 设置' },
     ],
   },
 ];
