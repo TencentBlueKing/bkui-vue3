@@ -332,6 +332,7 @@ export default defineComponent({
     const scrollClass = computed(() => (props.virtualEnabled ? {} : { scrollXName: '', scrollYName: '' }));
 
     const prependStyle = computed(() => ({
+      '--prepend-left': `${reactiveSchema.scrollTranslateX}px`,
       position: 'sticky' as const,
       top: 0,
       zIndex: 2,
@@ -340,7 +341,7 @@ export default defineComponent({
 
     const renderPrepend = () => {
       if (ctx.slots.prepend) {
-        return <div style={ prependStyle.value }>{ ctx.slots.prepend() }</div>;
+        return <div style={ prependStyle.value } class="prepend-row">{ ctx.slots.prepend() }</div>;
       }
 
       return null;
