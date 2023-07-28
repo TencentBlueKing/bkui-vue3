@@ -374,6 +374,16 @@ export default defineComponent({
       params: '参数',
     };
 
+    const QAColumMap = {
+      name: '问题',
+      desc: '说明',
+    };
+
+
+    const renderMap = {
+      QA: QAColumMap,
+      events: eventColumnMap,
+    };
     return (
       <div>
         <DemoTitle
@@ -389,16 +399,11 @@ export default defineComponent({
           }
         {
           configList.map(cfg => <div>
-            {
-              cfg.type === 'events'
-                ? <PropsBox
-                    title={ cfg.title }
-                     columnMap={ eventColumnMap }
-                     subtitle={ cfg.subTile }
-                     propsData={ cfg.config }/>
-                : <PropsBox title={ cfg.title } subtitle={ cfg.subTile }
-                     propsData={ cfg.config }/>
-            }
+            <PropsBox
+              title={ cfg.title }
+               columnMap={ renderMap[cfg.type] }
+               subtitle={ cfg.subTile }
+               propsData={ cfg.config }/>
           </div>)
         }
       </div>

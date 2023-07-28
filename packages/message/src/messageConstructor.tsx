@@ -27,7 +27,7 @@
 import { useLocale } from 'bkui-vue';
 import ClipboardJS from 'clipboard';
 import JSONFormatter from 'json-formatter-js';
-import { computed, defineComponent, onMounted, onUnmounted, reactive, ref, Transition, VNode, watch } from 'vue';
+import { computed, defineComponent, isVNode, onMounted, onUnmounted, reactive, ref, Transition, VNode, watch } from 'vue';
 import { toType } from 'vue-types';
 
 import {
@@ -208,7 +208,7 @@ export default defineComponent({
         return props.delay;
       }
 
-      if (typeof props.message === 'object') {
+      if (typeof props.message === 'object' && !isVNode(props.message)) {
         return advanceDelay;
       }
 
@@ -220,7 +220,7 @@ export default defineComponent({
         return /^\d+\.?\d*$/.test(`${props.width}`) ? `${props.width}px` : props.width;
       }
 
-      if (typeof props.message === 'object') {
+      if (typeof props.message === 'object' && !isVNode(props.message)) {
         return `${advanceWidth}px`;
       }
 
@@ -315,6 +315,7 @@ export default defineComponent({
       if (
         toolOperation.isDetailShow
         && typeof props.message === 'object'
+        && !isVNode(props.message)
         && (props.message.type === MessageContentType.JSON || !props.message.type)
       ) {
         const targetJson = parseJson(props.message.details);
@@ -541,7 +542,7 @@ export default defineComponent({
     };
 
     const renderMessage = () => {
-      if (typeof this.message === 'object') {
+      if (typeof this.message === 'object' && !isVNode(this.message)) {
         return (
           <div class='bk-message-content multi'>
             <div class='overview'>
