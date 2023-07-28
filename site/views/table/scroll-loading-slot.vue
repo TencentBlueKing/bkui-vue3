@@ -7,6 +7,9 @@
       scroll-loading
       @scroll-bottom="handleScrollBottom"
     >
+      <template #prepend>
+        <div>HEAD ROW TITLE</div>
+      </template>
       <template #fixedBottom>
         <bk-loading
           :loading="isScrollLoading"
