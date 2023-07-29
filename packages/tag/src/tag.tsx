@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
 */
 
-import { computed, defineComponent } from 'vue';
+import { computed, defineComponent, SlotsType } from 'vue';
 import { toType } from 'vue-types';
 
 import { Error } from '@bkui-vue/icon';
@@ -48,7 +48,11 @@ export default defineComponent({
     extCls: PropTypes.string.def(''),
   },
   emits: ['change', 'close'],
-  slots: ['icon'],
+  // slots: ['icon'],
+  slots: Object as SlotsType<{
+    default?: () => HTMLElement,
+    icon?: () => HTMLElement,
+  }>,
   setup(props, { emit }) {
     const wrapperCls = computed(() => classes({
       'bk-tag-closable': props.closable,

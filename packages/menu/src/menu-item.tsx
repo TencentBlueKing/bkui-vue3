@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
 */
 
-import { computed, defineComponent, getCurrentInstance, onBeforeUnmount } from 'vue';
+import { computed, defineComponent, getCurrentInstance, onBeforeUnmount, SlotsType } from 'vue';
 
 import { useMenuInject, useMenuPathInject } from './utils';
 
@@ -37,7 +37,11 @@ export default defineComponent({
     },
   },
   emits: ['click'],
-  slots: ['icon'],
+  // slots: ['icon'],
+  slots: Object as SlotsType<{
+    default?: () => HTMLElement,
+    icon?: () => HTMLElement,
+  }>,
   setup(props, { slots, emit }) {
     const { registerMenuInfo, unregisterMenuInfo, activeKey, handleActiveChange } = useMenuInject();
     const instance = getCurrentInstance();

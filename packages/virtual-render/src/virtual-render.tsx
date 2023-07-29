@@ -33,15 +33,16 @@ import {
   type SetupContext,
   computed,
   defineComponent,
+  // EmitsOptions,
   h,
   nextTick,
   onMounted,
   reactive,
   ref,
   resolveDirective,
+  SlotsType,
   watch,
-  withDirectives,
-} from 'vue';
+  withDirectives } from 'vue';
 
 import { resolveClassName } from '@bkui-vue/shared';
 
@@ -58,7 +59,13 @@ export default defineComponent({
     bkVirtualRender: virtualRender,
   },
   props: virtualRenderProps,
-  emits: ['content-scroll'],
+  emits: ['content-scroll' as string],
+  slots: Object as SlotsType<{
+    default?: any,
+    beforeContent?: any,
+    afterContent?: any,
+    afterSection?: any,
+  }>,
   setup(props: VirtualRenderProps, ctx: SetupContext) {
     const { renderAs, contentAs } = props;
 

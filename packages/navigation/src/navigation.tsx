@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent, onBeforeUnmount, PropType, reactive, ref } from 'vue';
+import { defineComponent, onBeforeUnmount, PropType, reactive, ref, SlotsType } from 'vue';
 
 import { CollapseLeft } from '@bkui-vue/icon';
 
@@ -80,7 +80,15 @@ export default defineComponent({
   name: 'Navigation',
   props: NavigationProps,
   emits: ['leave', 'toggle', 'hover', 'toggle-click'],
-  slots: ['header', 'menu', 'footer', 'side-icon', 'side-header'],
+  // slots: ['header', 'menu', 'footer', 'side-icon', 'side-header'],
+  slots: Object as SlotsType<{
+    default?: () => HTMLElement,
+    header?: () => HTMLElement,
+    menu?: () => HTMLElement,
+    footer?: () => HTMLElement,
+    'side-icon'?: () => HTMLElement,
+    'side-header'?: () => HTMLElement,
+  }>,
   setup(props, { emit }) {
     const defaultHeaderTitle = ref(props.headerTitle);
     const nav = reactive({
