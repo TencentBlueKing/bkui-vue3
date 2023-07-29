@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
 */
 
-import { computed, defineComponent, getCurrentInstance, onBeforeUnmount, ref, Transition } from 'vue';
+import { computed, defineComponent, getCurrentInstance, onBeforeUnmount, ref, SlotsType, Transition } from 'vue';
 
 import { AngleDown, TreeApplicationShape } from '@bkui-vue/icon/';
 
@@ -40,7 +40,11 @@ export default defineComponent({
   name: 'Submenu',
   props: subMenuProps,
   emits: ['collapse'],
-  slots: ['icon'],
+  // slots: ['icon'],
+  slots: Object as SlotsType<{
+    default?: () => HTMLElement,
+    icon?: () => HTMLElement,
+  }>,
   setup(props, { slots, emit }) {
     const { registerMenuInfo, unregisterMenuInfo, openedKeys,
       handleOpenChange, collapse, activeKey, menuStore } = useMenuInject();
