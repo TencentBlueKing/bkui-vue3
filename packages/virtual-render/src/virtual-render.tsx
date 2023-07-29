@@ -180,7 +180,7 @@ export default defineComponent({
     /** 列表数据重置之后的处理事项 */
     const afterListDataReset = (scrollToOpt = { left: 0, top: 0 }) => {
       const el = refRoot.value?.parentNode as HTMLElement;
-      console.log('afterListDataReset pagination', pagination);
+
       computedVirtualIndex(props.lineHeight, handleScrollCallback, pagination, el, null);
 
       if (scrollToOpt && refRoot.value) {
