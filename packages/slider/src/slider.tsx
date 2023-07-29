@@ -257,7 +257,7 @@ export default defineComponent({
         console.error('min should not be greater than max.');
         return;
       }
-      const val = props.modelValue;
+      const val = props.modelValue as number[];
       if (props.range && Array.isArray(val)) {
         if (val[1] < props.minValue) {
           emit('update:modelValue', [props.minValue, props.minValue]);
