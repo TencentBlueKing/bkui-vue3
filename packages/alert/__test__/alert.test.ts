@@ -56,7 +56,7 @@ describe('Alert', () => {
     const closeText = '关闭';
     const wrapper = mount({
       components,
-      template: `<Alert title="这是一个 alter" closeText="${closeText}" />`,
+      template: `<Alert title="这是一个 alter" closable closeText="${closeText}" />`,
     });
 
     expect(wrapper.find('.bk-alert-close').text()).toMatch(closeText);

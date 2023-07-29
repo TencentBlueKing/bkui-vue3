@@ -33,6 +33,7 @@ import {
   provide,
   reactive,
   ref,
+  SlotsType,
   Teleport,
   toRefs,
   Transition,
@@ -63,7 +64,14 @@ export default defineComponent({
     ...timePanelProps,
   },
   emits: ['open-change', 'input', 'change', 'update:modelValue', 'clear', 'shortcut-change', 'pick-success'],
-  slots: ['header'],
+  // slots: ['header'],
+  slots: Object as SlotsType<{
+    header?: () => any,
+    trigger?: () => any,
+    footer?: () => any,
+    shortcuts?: (arg?: { change: Function }) => any,
+    confirm?: {},
+  }>,
   setup(props, { slots, emit }) {
     const formItem = useFormItem();
     const isRange = props.type.includes('range');
