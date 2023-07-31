@@ -34,6 +34,7 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
     getSourceNodeByUID,
     getNodeParentIdById,
     getParentNodeData,
+    extendNodeAttr,
     getNodeAttr,
     getNodePath,
     isRootNode,
@@ -68,7 +69,8 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
   const handleTreeNodeDragover = (e: DragEvent) => {
     e.preventDefault();
     const targetNode = getTargetTreeNode(e);
-    const data = getNodeByTargetTreeNode(targetNode);
+    const data = extendNodeAttr(getNodeByTargetTreeNode(targetNode));
+
     ctx.emit(EVENTS.NODE_DRAG_OVER, e, targetNode, data);
     if (isNeedCheckDroppable.value && props?.disableDrop(data)) {
       e.dataTransfer.effectAllowed = 'move';
@@ -100,7 +102,7 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
     e.stopPropagation();
     const targetNode = getTargetTreeNode(e);
     targetNode.classList.remove('bk-tree-drop-active', 'bk-tree-drop-disabled');
-    const data = getNodeByTargetTreeNode(targetNode);
+    const data = extendNodeAttr(getNodeByTargetTreeNode(targetNode));
     if (isNeedCheckDroppable.value && props.disableDrop(data)) {
       return;
     }

@@ -155,12 +155,12 @@ export default (flatData, props?: TreePropTypes) => {
   });
 
   const extendNodeAttr = (item: any) => ({
-    ...item,
+    ...getNodeAttr(item, NODE_ATTRIBUTES.SOURCE_ITEM),
     [NODE_ATTRIBUTES.TREE_NODE_ATTR]: resolveScopedSlotParam(item),
   });
 
   const extendNodeScopedData = (item: any) => ({
-    data: item,
+    data: getNodeAttr(item, NODE_ATTRIBUTES.SOURCE_ITEM),
     attributes: resolveScopedSlotParam(item),
   });
 
