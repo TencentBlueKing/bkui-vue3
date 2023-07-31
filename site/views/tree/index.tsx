@@ -45,7 +45,7 @@ import NodeContentActions from './node-content-action.vue';
 import * as TREE_DATA from './options';
 import prefixIcon from './prefix-icon.vue';
 import prefixIconJsx from './prefix-icon-jsx';
-import search from './search.vue';
+import Search from './search.vue';
 import selected from './selected.vue';
 import virtualRender from './virtual-render.vue';
 
@@ -59,7 +59,7 @@ export default defineComponent({
     prefixIconJsx,
     autoConfig,
     customNode,
-    search,
+    Search,
     draggable,
     draggableFunction,
     selected,
@@ -169,7 +169,7 @@ export default defineComponent({
           componentName: 'tree',
           demoName: 'search',
         },
-        component: () => <search></search>,
+        component: () => <Search></Search>,
       },
       {
         attrs: {

@@ -161,7 +161,7 @@ export default (props: TreePropTypes) => {
               isOpened = isNodeOpend(uuid, item, parent);
             }
 
-            Object.assign(item, { [NODE_ATTRIBUTES.UUID]: uuid });
+            // Object.assign(item, { [NODE_ATTRIBUTES.UUID]: uuid });
             const isChecked = props.showCheckbox && getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_CHECKED);
             if (isChecked) {
               checkedList.push(uuid);
@@ -182,11 +182,13 @@ export default (props: TreePropTypes) => {
               [NODE_ATTRIBUTES.IS_CACHED]: getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_CACHED),
               [NODE_ATTRIBUTES.IS_ASYNC]: getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_ASYNC),
               [NODE_ATTRIBUTES.IS_LOADING]: getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_LOADING),
+              [NODE_ATTRIBUTES.SOURCE_ITEM]: item,
               [children]: null,
             });
             order += 1;
             outputData.push({
-              ...(JSON.parse(JSON.stringify(item, (k: string, v: any) => (k === props.children ? null : v)))),
+              [NODE_ATTRIBUTES.UUID]: uuid,
+              [props.label]: item[props.label],
               [NODE_ATTRIBUTES.IS_OPEN]: isOpened,
               [children]: null,
             });
