@@ -227,7 +227,8 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
 
     if (fireEmit) {
       const emitEvent: string = isItemOpen(item) ? EVENTS.NODE_EXPAND : EVENTS.NODE_COLLAPSE;
-      ctx.emit(emitEvent, item, resolveScopedSlotParam(item), getSchemaVal(item[NODE_ATTRIBUTES.UUID]), e);
+      const source = getNodeAttr(item, NODE_ATTRIBUTES.SOURCE_ITEM);
+      ctx.emit(emitEvent, source, resolveScopedSlotParam(item), getSchemaVal(item[NODE_ATTRIBUTES.UUID]), e);
     }
   };
 
@@ -404,7 +405,8 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
 
     if (nodeActions.includes('click')) {
       const eventName: string = EVENTS.NODE_CLICK;
-      ctx.emit(eventName, item, resolveScopedSlotParam(item), getSchemaVal(item[NODE_ATTRIBUTES.UUID]), e);
+      const source = getNodeAttr(item, NODE_ATTRIBUTES.SOURCE_ITEM);
+      ctx.emit(eventName, source, resolveScopedSlotParam(item), getSchemaVal(item[NODE_ATTRIBUTES.UUID]), e);
     }
   };
 
