@@ -7,7 +7,7 @@
   position: relative;
   min-height: @min-height;
 
-  .bk-tag-input-trigger {
+  .@{bk-prefix}-tag-input-trigger {
     position: relative;
     display: flex;
     min-height: @min-height;
@@ -116,12 +116,12 @@
   }
 }
 
-.bk-tag-input-popover-content {
-  &.bk-popover {
+.@{bk-prefix}-tag-input-popover-content {
+  &.@{bk-prefix}-popover {
     padding: 0;
   }
   
-  .bk-selector-list {
+  .@{bk-prefix}-selector-list {
     min-width: 150px;
 
     .outside-ul {
@@ -147,7 +147,7 @@
       }
     }
 
-    .bk-selector-group-item {
+    .@{bk-prefix}-selector-group-item {
       list-style: none;
 
       .group-name {
@@ -158,13 +158,13 @@
       }
     }
 
-    .bk-selector-group-list-item {
+    .@{bk-prefix}-selector-group-list-item {
       padding: 0;
       margin: 0;
       list-style: none;
     }
 
-    .bk-selector-list-item {
+    .@{bk-prefix}-selector-list-item {
       position: relative;
       width: 100%;
       cursor: pointer;
@@ -180,7 +180,7 @@
         border-bottom: @light-gray;
       }
 
-      &.bk-selector-selected {
+      &.@{bk-prefix}-selector-selected {
         background-color: #f4f6fa;
 
         .selected-icon {
@@ -188,7 +188,7 @@
         }
       }
 
-      &.bk-selector-actived {
+      &.@{bk-prefix}-selector-actived {
         background-color: #f4f6fa;
       }
 
@@ -228,14 +228,14 @@
         white-space: nowrap;
       }
 
-      .bk-selector-tools {
+      .@{bk-prefix}-selector-tools {
         position: absolute;
         top: 10px;
         right: 0;
         display: none;
         font-size: 12px;
 
-        .bk-selector-list-icon {
+        .@{bk-prefix}-selector-list-icon {
           margin-right: 14px;
         }
       }
