@@ -45,7 +45,7 @@ export const PopoverProps = {
   width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
   height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
   maxHeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
-  content: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.any]).def(''),
+  content: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def(''),
 
   allowHtml: PropTypes.bool.def(false),
   /**
