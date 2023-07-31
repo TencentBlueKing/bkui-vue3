@@ -127,8 +127,8 @@ export const IColumnType = {
   minWidth: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]).def(30),
   columnKey: PropTypes.string.def(''),
   showOverflowTooltip: PropTypes.oneOfType([PropTypes.bool, PropTypes.shape<IOverflowTooltip>({
-    content: PropTypes.string.def(''),
-    disabled: PropTypes.bool.def(false),
+    content: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
+    disabled: PropTypes.oneOfType([PropTypes.bool, PropTypes.func]),
     watchCellResize: PropTypes.bool.def(true),
     mode: overflowModeType,
   })]).def(undefined),

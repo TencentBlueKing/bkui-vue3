@@ -33,10 +33,10 @@ const resolveOptions = (el: HTMLElement, binding: DirectiveBinding) => {
     content: '',
     target: el,
   };
-  if (typeof binding.value === 'object') {
-    Object.assign(options, binding.value);
+  if (typeof binding === 'object') {
+    Object.assign(options, binding);
   } else {
-    options.content = binding.value;
+    options.content = binding;
   }
 
   return options;
@@ -46,6 +46,7 @@ export const createInstance = (el: HTMLElement, binding: any) => {
   let instance = null;
   let createTimer = null;
   let hidePopTimer = null;
+  // const cache = {};
   const options = resolveOptions(el, binding);
   const { disabled } = options;
   if (disabled || instance) {
@@ -95,12 +96,12 @@ export const createInstance = (el: HTMLElement, binding: any) => {
   el.addEventListener('mouseenter', handleMouseEnter);
   el.addEventListener('mouseleave', handleMouseLeave);
 
-  Object.assign(binding, {
-    __cached: {
-      handleMouseEnter,
-      handleMouseLeave,
-    },
-  });
+  // Object.assign(cache, {
+  //   __cached: {
+  //     handleMouseEnter,
+  //     handleMouseLeave,
+  //   },
+  // });
 
   const destroyInstance = (element?: HTMLElement) => {
     handleMouseLeave();
@@ -118,14 +119,14 @@ const ellipsis: ObjectDirective = {
   mounted(el: HTMLElement, binding: DirectiveBinding) {
     createInstance(el, binding);
   },
-  beforeUnmount(el: HTMLElement, binding: any) {
-    if (binding.__cached) {
-      const { handleMouseEnter, handleMouseLeave } = binding.__cached;
-      el.removeEventListener('mouseenter', handleMouseEnter);
-      el.removeEventListener('mouseleave', handleMouseLeave);
-      binding.__cached = null;
-    }
-  },
+  // beforeUnmount(el: HTMLElement, binding: any) {
+  //   if (binding.cache) {
+  //     const { handleMouseEnter, handleMouseLeave } = binding.__cached;
+  //     el.removeEventListener('mouseenter', handleMouseEnter);
+  //     el.removeEventListener('mouseleave', handleMouseLeave);
+  //     binding.__cached = null;
+  //   }
+  // },
 };
 
 export default ellipsis;

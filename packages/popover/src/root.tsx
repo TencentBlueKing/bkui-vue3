@@ -30,6 +30,7 @@ import { PropTypes } from '@bkui-vue/shared';
 export default defineComponent({
   props: {
     class: PropTypes.string.def(''),
+    mode: PropTypes.string.def(''),
   },
   render() {
     return <>
