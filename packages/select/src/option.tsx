@@ -24,7 +24,6 @@
  * IN THE SOFTWARE.
 */
 
-import { Checkbox } from 'bkui-vue';
 import { isEqual } from 'lodash';
 import {
   computed,
@@ -37,6 +36,7 @@ import {
   toRefs,
 } from 'vue';
 
+import Checkbox from '@bkui-vue/checkbox';
 import { Done } from '@bkui-vue/icon';
 import { classes, PropTypes, resolveClassName, SelectedTypeEnum } from '@bkui-vue/shared';
 

@@ -24,12 +24,12 @@
  * IN THE SOFTWARE.
  */
 
-import { useLocale } from 'bkui-vue';
 import ClipboardJS from 'clipboard';
 import JSONFormatter from 'json-formatter-js';
 import { computed, defineComponent, isVNode, onMounted, onUnmounted, reactive, ref, Transition, VNode, watch } from 'vue';
 import { toType } from 'vue-types';
 
+import { useLocale } from '@bkui-vue/config-provider';
 import {
   AngleDoubleDownLine,
   AngleDoubleUpLine,
