@@ -73,7 +73,7 @@ export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILi
       },
     },
     optimization: {
-      minimize: false,
+      minimize: true,
     },
     module: {
       rules: [
