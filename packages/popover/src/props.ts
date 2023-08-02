@@ -25,9 +25,8 @@
  */
 import { ExtractPropTypes } from 'vue';
 
-import { placementType, PropTypes } from '@bkui-vue/shared';
+import { PlacementEnum, placementType, PropTypes, renderType, triggerType  } from '@bkui-vue/shared';
 
-import { PlacementEnum, renderType, triggerType } from './../../shared/src/vue-types';
 const EventProps = {
   onAfterHidden: Function,
   onAfterShow: Function,
