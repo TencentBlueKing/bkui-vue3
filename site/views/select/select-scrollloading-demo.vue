@@ -9,8 +9,8 @@
     <bk-option
       v-for="(item) in datasource"
       :key="item.value"
-      :value="item.value"
-      :label="item.label"
+      :id="item.value"
+      :name="item.label"
       :disabled="item.disabled"
     />
   </bk-select>

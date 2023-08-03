@@ -9,8 +9,8 @@
       <bk-option
         v-for="(item, index) in datasource"
         :key="index"
-        :value="item.value"
-        :label="item.label"
+        :id="item.value"
+        :name="item.label"
       />
     </bk-select>
     <bk-select
@@ -22,8 +22,8 @@
       <bk-option
         v-for="(item, index) in datasource"
         :key="index"
-        :value="item.value"
-        :label="item.label"
+        :id="item.value"
+        :name="item.label"
       />
     </bk-select>
     <bk-select
@@ -37,8 +37,8 @@
       <bk-option
         v-for="(item, index) in datasource"
         :key="index"
-        :value="item.value"
-        :label="item.label"
+        :id="item.value"
+        :name="item.label"
       />
     </bk-select>
     <bk-select
@@ -53,8 +53,8 @@
       <bk-option
         v-for="(item, index) in datasource"
         :key="index"
-        :value="item.value"
-        :label="item.label"
+        :id="item.value"
+        :name="item.label"
       />
     </bk-select>
   </div>
