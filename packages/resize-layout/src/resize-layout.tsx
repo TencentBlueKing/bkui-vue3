@@ -86,7 +86,7 @@ export default defineComponent({
       const rect = bkResizeLayoutRef.value.getBoundingClientRect();
       limitMax.value = vertical.value ? rect.width : rect.height;
     };
-    const observer = new ResizeObserver(setMaxLimit);
+    let observer = new ResizeObserver(setMaxLimit);
 
     const updateResizeProxyStyle = () => {
       resizeProxyRef.value.style.visibility = 'visible';
@@ -234,7 +234,10 @@ export default defineComponent({
       observer.observe(bkResizeLayoutRef.value);
     });
     onBeforeUnmount(() => {
-      observer.unobserve(bkResizeLayoutRef.value);
+      if (bkResizeLayoutRef.value) {
+        observer.unobserve(bkResizeLayoutRef.value);
+        observer = null;
+      }
     });
     return {
       collapsed,
