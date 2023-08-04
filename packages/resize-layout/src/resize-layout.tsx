@@ -234,7 +234,7 @@ export default defineComponent({
       observer.observe(bkResizeLayoutRef.value);
     });
     onBeforeUnmount(() => {
-      observer.unobserve(bkResizeLayoutRef.value);
+      bkResizeLayoutRef?.value && observer.unobserve(bkResizeLayoutRef.value);
     });
     return {
       collapsed,
