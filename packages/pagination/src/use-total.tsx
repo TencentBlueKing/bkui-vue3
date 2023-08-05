@@ -30,6 +30,7 @@ import type {
 } from 'vue';
 import { getCurrentInstance } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import type { Language } from '@bkui-vue/locale';
 
 import type {
@@ -45,10 +46,13 @@ export default (t: ComputedRef<Language['pagination']>) => ({ isFirst, isLast })
   if (!props.showTotalCount) {
     return null;
   }
+
+  const { resolveClassName } = usePrefix();
+
   return (
     <div
       class={{
-        'bk-pagination-total': true,
+        [`${resolveClassName('pagination-total')}`]: true,
         'is-first': isFirst,
         'is-last': isLast,
       }}
@@ -56,7 +60,7 @@ export default (t: ComputedRef<Language['pagination']>) => ({ isFirst, isLast })
         disabled: props.disabled,
       }}>
       {t.value.total}
-      <div class="bk-pagination-total-num">{ props.count }</div>
+      <div class={`${resolveClassName('pagination-total-num')}`}>{ props.count }</div>
       {t.value.strip}
     </div>
   );

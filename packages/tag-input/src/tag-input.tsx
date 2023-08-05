@@ -37,7 +37,7 @@ import {
   watch,
 } from 'vue';
 
-import { useLocale } from '@bkui-vue/config-provider';
+import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { bkTooltips } from '@bkui-vue/directives';
 import { Close, Error } from '@bkui-vue/icon';
 import BkLoading, { BkLoadingSize } from '@bkui-vue/loading';
@@ -87,6 +87,8 @@ export default defineComponent({
       ...props.popoverProps,
     });
 
+    const { resolveClassName } = usePrefix();
+
     // 分页处理
     const { maxResult } = toRefs(props);
     const { pageState, initPage, pageChange } = usePage(maxResult);
@@ -120,7 +122,7 @@ export default defineComponent({
         && listState.selectedTagList.length !== 0
         && (props.showClearOnlyHover ? state.isHover : true));
     const triggerClass = computed(() => ({
-      'bk-tag-input-trigger': true,
+      [`${resolveClassName('tag-input-trigger')}`]: true,
       active: state.isEdit,
       disabled: props.disabled,
     }));
@@ -230,7 +232,8 @@ export default defineComponent({
     // 获取选中元素节点
     const getSelectedTagNodes = (): HTMLElement[] => {
       const nodes = Array.from(tagListRef.value?.childNodes || []) as HTMLElement[];
-      return nodes.filter((node: HTMLElement) => ![Node.TEXT_NODE, Node.COMMENT_NODE].includes(node.nodeType));
+      return nodes.filter((node: HTMLElement) => ![Node.TEXT_NODE as number, Node.COMMENT_NODE as number]
+        .includes(node.nodeType));
     };
 
     /**
@@ -242,7 +245,7 @@ export default defineComponent({
 
       if (e?.target) {
         const { className } = e.target as HTMLElement;
-        if ((className.indexOf('bk-tag-input-trigger') > -1) || (className.indexOf('tag-list') > -1)) {
+        if ((className.indexOf(`${resolveClassName('tag-input-trigger')}`) > -1) || (className.indexOf('tag-list') > -1)) {
           // 如果没点在节点上，重置input位置（在最后插入input）
           tagListRef.value.appendChild(tagInputItemRef.value);
         }
@@ -352,13 +355,13 @@ export default defineComponent({
 
     const activeClass = (data, index: number) => {
       const style = {
-        'bk-selector-actived': false,
-        'bk-selector-selected': tagList.value.includes(data[props.saveKey]),
+        [`${resolveClassName('selector-actived')}`]: true,
+        [`${resolveClassName('selector-selected')}`]: tagList.value.includes(data[props.saveKey]),
       };
       if (props.useGroup) {
-        style['bk-selector-actived'] = data.__index__ === state.focusItemIndex;
+        style[`${resolveClassName('selector-actived')}`] = data.__index__ === state.focusItemIndex;
       } else {
-        style['bk-selector-actived'] = index === state.focusItemIndex;
+        style[`${resolveClassName('selector-actived')}`] = index === state.focusItemIndex;
       }
 
       return style;
@@ -551,7 +554,7 @@ export default defineComponent({
       };
 
       nextTick(() => {
-        const activeObj = selectorListRef.value.querySelector('.bk-selector-actived');
+        const activeObj = selectorListRef.value.querySelector(`.${resolveClassName('selector-actived')}`);
         if (!activeObj) {
           return;
         }
@@ -899,18 +902,19 @@ export default defineComponent({
       tagFocus,
       handleKeydown,
       handlePaste,
+      resolveClassName,
     };
   },
   render() {
     return (
       <div
-        class="bk-tag-input"
+        class={`${this.resolveClassName('tag-input')}`}
         ref="bkTagSelectorRef"
         onClick={this.focusInputTrigger}
         onMouseenter={() => this.isHover = true}
         onMouseleave={() => this.isHover = false}>
         <BKPopover
-          theme="light bk-tag-input-popover-content"
+          theme={`light ${this.resolveClassName('tag-input-popover-content')}`}
           trigger="manual"
           placement="bottom-start"
           arrow={false}
@@ -978,16 +982,16 @@ export default defineComponent({
               </div>
             ),
             content: () => (
-              <div class="bk-selector-list">
+              <div class={`${this.resolveClassName('selector-list')}`}>
                 <ul ref="selectorListRef" style={{ 'max-height': `${this.contentMaxHeight}px` }} class="outside-ul">
                   {
                     this.renderList.map((group, index) => (this.useGroup ? (
-                          <li class="bk-selector-group-item">
+                          <li class={`${this.resolveClassName('selector-group-item')}`}>
                             <span class="group-name">{group.name} ({group.children.length})</span>
-                            <ul class="bk-selector-group-list-item">
+                            <ul class={`${this.resolveClassName('selector-group-list-item')}`}>
                               {
                                 group.children.map((item, index: number) => (
-                                  <li class={['bk-selector-list-item', { disabled: item.disabled }, this.activeClass(item, index)]}
+                                  <li class={[`${this.resolveClassName('selector-list-item')}`, { disabled: item.disabled }, this.activeClass(item, index)]}
                                     onClick={this.handleTagSelected.bind(this, item, 'select')}>
                                     <ListTagRender node={item}
                                       displayKey={this.displayKey}
@@ -1000,7 +1004,7 @@ export default defineComponent({
                             </ul>
                           </li>
                     ) : (
-                          <li class={['bk-selector-list-item', { disabled: group.disabled }, this.activeClass(group, index)]}
+                          <li class={[`${this.resolveClassName('selector-list-item')}`, { disabled: group.disabled }, this.activeClass(group, index)]}
                             onClick={this.handleTagSelected.bind(this, group, 'select')}>
                             <ListTagRender node={group}
                               displayKey={this.displayKey}
@@ -1012,7 +1016,7 @@ export default defineComponent({
                   }
                   {
                     this.isPageLoading
-                      ? <li class="bk-selector-list-item loading"><BkLoading theme="primary" size={BkLoadingSize.Small} /></li>
+                      ? <li class={`${this.resolveClassName('selector-list-item')} loading`}><BkLoading theme="primary" size={BkLoadingSize.Small} /></li>
                       : null
                   }
                 </ul>

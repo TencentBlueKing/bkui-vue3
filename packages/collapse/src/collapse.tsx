@@ -26,6 +26,8 @@
 
 import { computed, createVNode, defineComponent, provide, ref, renderSlot, watch } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
+
 import CollapsePanel from './collapse-panel';
 import { propsCollapse as props } from './props';
 
@@ -72,27 +74,30 @@ export default defineComponent({
     };
     provide('localActiveItems', localActiveItems);
     provide('handleItemClick', handleItemClick);
-    let className = 'bk-collapse-wrapper';
+
+    const { resolveClassName } = usePrefix();
+
+    let className = resolveClassName('collapse-wrapper');
     // 线条样式
     if (props.hasHeaderBorder) {
-      className += ' bk-collapse-header-border';
+      className += ` ${resolveClassName('collapse-header-border')}`;
     }
 
     // hover效果
     if (props.hasHeaderHover) {
-      className += ' bk-collapse-header-hover';
+      className += ` ${resolveClassName('collapse-header-hover')}`;
     }
 
     // 卡片样式
     if (props.useCardTheme) {
-      className += ' bk-collapse-card';
+      className += ` ${resolveClassName('collapse-card')}`;
     }
 
     // 图标位置
     if (props.headerIconAlign === 'left') {
-      className += ' bk-collapse-icon-left';
+      className += ` ${resolveClassName('collapse-icon-left')}`;
     } else {
-      className += ' bk-collapse-icon-right';
+      className += ` ${resolveClassName('collapse-icon-right')}`;
     }
     if (!Array.isArray(props.list) || !props.list.length) {
       return () => createVNode('div', {

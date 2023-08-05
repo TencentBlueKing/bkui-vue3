@@ -29,6 +29,7 @@ import { computed, defineComponent, inject, provide } from 'vue';
 import { PropTypes } from '@bkui-vue/shared';
 
 import { containerKey } from './interface';
+import { usePrefix } from '@bkui-vue/config-provider';
 
 const colProps = {
   // 栅格的占位格数，可选值为 0~24 的整数，为 0 时，则为 col 相当于 width: 100%
@@ -69,8 +70,10 @@ export default defineComponent({
       left: push ? formatPercentage(push / col) : null,
     }));
 
+    const { resolveClassName } = usePrefix();
+
     return () => (
-      <div class="bk-grid-col" style={style.value}>
+      <div class={`${resolveClassName('grid-col')}`} style={style.value}>
         {ctx.slots.default?.()}
       </div>
     );

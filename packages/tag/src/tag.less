@@ -36,7 +36,7 @@
 
 @themeSelectors: success, info, warning, danger;
 
-.bk-tag {
+.@{bk-prefix}-tag {
   display: inline-flex;
   align-items: center;
   height: 22px;
@@ -57,17 +57,17 @@
     @bgHoverColor: 'tag-@{value}-hover-bg-color';
     @filledBgColor: 'tag-filled-@{value}-bg-color';
     @filledBgHoverColor: 'tag-filled-@{value}-hover-bg-color';
-    &.bk-tag-@{value} {
+    &.@{bk-prefix}-tag-@{value} {
       color: @@color;
       border-color: @@borderColor;
       background-color: @@bgColor;
-      &.bk-tag-filled {
+      &.@{bk-prefix}-tag-filled {
         background-color: @@filledBgColor;
         &:hover {
           background-color: @@filledBgHoverColor;
         }
       }
-      &:hover:not(.bk-tag-filled) {
+      &:hover:not(.@{bk-prefix}-tag-filled) {
         background-color: @@bgHoverColor;
       }
     }
@@ -77,7 +77,7 @@
     background-color: #dcdee5;
   }
 
-  &.bk-tag-filled {
+  &.@{bk-prefix}-tag-filled {
     color: @tag-base-color;
     background-color: @tag-filled-bg-color;
 
@@ -86,13 +86,14 @@
     }
   }
 
-  &.bk-tag-stroke {
+  &.@{bk-prefix}-tag-stroke {
     padding: 0 9px;
     line-height: 20px;
     border-style: solid;
     border-width: 1px;
 
-    &:not(.bk-tag-success, .bk-tag-warning, .bk-tag-info, .bk-tag-danger) {
+    // &:not(.bk-tag-success, .bk-tag-warning, .bk-tag-info, .bk-tag-danger) {
+    :not(.@{bk-prefix}-tag-success):not(.@{bk-prefix}-tag-warning):not(.@{bk-prefix}-tag-info):not(.@{bk-prefix}-tag-danger) {
       background-color: @tag-stroke-bg-color;
 
       &:hover {
@@ -101,11 +102,11 @@
     }
   }
 
-  &.bk-tag-closable {
+  &.@{bk-prefix}-tag-closable {
     padding: 0 4px 0 10px;
   }
 
-  &.bk-tag-checkable {
+  &.@{bk-prefix}-tag-checkable {
     cursor: pointer;
     background: none;
 
@@ -114,7 +115,7 @@
     }
   }
 
-  &.bk-tag-check {
+  &.@{bk-prefix}-tag-check {
     color: @tag-base-color;
     background: @tag-info-color;
 
@@ -125,21 +126,21 @@
     }
   }
 
-  .bk-tag-text {
+  .@{bk-prefix}-tag-text {
     flex: 1;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  .bk-tag-icon {
+  .@{bk-prefix}-tag-icon {
     flex-shrink: 0;
     margin-right: 4px;
     font-size: 14px;
     line-height: 0;
   }
 
-  .bk-tag-close {
+  .@{bk-prefix}-tag-close {
     flex-shrink: 0;
     margin-left: 4px;
     font-size: 12px;

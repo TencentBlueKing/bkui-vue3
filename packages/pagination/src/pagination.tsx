@@ -34,7 +34,7 @@ import {
   watch,
 } from 'vue';
 
-import { useLocale } from '@bkui-vue/config-provider';
+import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import {
   classes,
   PropTypes,
@@ -128,18 +128,21 @@ export default defineComponent({
       context.emit('limitChange', localLimit);
     });
 
+    const { resolveClassName } = usePrefix();
+
     return {
       totalPageNum,
       renderTotal,
       renderList,
       renderLimit,
       renderSmallList,
+      resolveClassName,
     };
   },
   render() {
     const paginationClass = classes({
-      'bk-pagination': true,
-      [`bk-pagination--${this.size}`]: true,
+      [`${this.resolveClassName('pagination')}`]: true,
+      [`${this.resolveClassName(`pagination--${this.size}`)}`]: true,
       [`is-align-${this.align}`]: true,
     });
     const layoutMap = {

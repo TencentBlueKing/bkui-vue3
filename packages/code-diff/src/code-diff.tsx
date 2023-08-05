@@ -29,6 +29,7 @@ import * as Diff2Html from 'diff2html';
 import { computed, defineComponent, ExtractPropTypes, nextTick, onMounted, ref, watch } from 'vue';
 import { number, string } from 'vue-types';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import { classes, ElementType, PropTypes, stringEnum } from '@bkui-vue/shared';
 
 const diffFormats = ['side-by-side', 'line-by-line'] as const;
@@ -68,11 +69,12 @@ export default defineComponent({
   props: codeDiffProps,
   emits: [],
   setup(props) {
+    const { resolveClassName } = usePrefix();
     const diffBox = ref(null);
     const diffHtml = ref('');
     const diffBoxCls = computed(() => classes({
       dark: props.theme === themesEnum.dark,
-    }, 'hljs bk-code-diff'));
+    }, `hljs ${resolveClassName('code-diff')}`));
 
     /**
      * 高亮语法节点

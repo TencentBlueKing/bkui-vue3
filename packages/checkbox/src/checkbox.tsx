@@ -29,10 +29,10 @@ import {
   defineComponent,
 } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import {
   classes,
   PropTypes,
-  resolveClassName,
   SizeEnum,
 } from '@bkui-vue/shared';
 
@@ -80,6 +80,8 @@ export default defineComponent({
       handleChange,
     } = useCheckbox();
 
+    const { resolveClassName } = usePrefix();
+
     return {
       inputRef,
       isFocus,
@@ -90,11 +92,12 @@ export default defineComponent({
       handleFocus,
       handleChange,
       size: props.size,
+      resolveClassName,
     };
   },
   render() {
     const checkboxClass = classes({
-      'bk-checkbox': true,
+      [`${this.resolveClassName('checkbox')}`]: true,
       'is-focused': this.isFocus,
       'is-checked': this.isChecked,
       'is-disabled': this.isDisabled,
@@ -107,7 +110,7 @@ export default defineComponent({
       }
 
       return (
-        <span class="bk-checkbox-label">
+        <span class={`${this.resolveClassName('checkbox-label')}`}>
           {this.$slots.default ? this.$slots.default() : this.label}
         </span>
       );
@@ -115,12 +118,12 @@ export default defineComponent({
 
     return (
       <label class={checkboxClass}>
-        <span class={[resolveClassName('checkbox-input'), this.size]}>
+        <span class={[this.resolveClassName('checkbox-input'), this.size]}>
           <input
             ref="inputRef"
             role="checkbox"
             type="checkbox"
-            class="bk-checkbox-original"
+            class={`${this.resolveClassName('checkbox-original')}`}
             disabled={this.isDisabled}
             checked={this.isChecked}
             onChange={this.handleChange} />

@@ -1,6 +1,6 @@
 @import '@bkui-vue/styles/themes/themes.less';
 
-.bk-sideslider {
+.@{bk-prefix}-sideslider {
   position: fixed;
   top: 0;
   right: 0;
@@ -13,7 +13,7 @@
 /* slide过渡动画 */
 .slide-enter-active,
 .slide-leave-active,
-.bk-modal-body {
+.@{bk-prefix}-modal-body {
   transform: translateX(0);
   transition: transform .25s;
 }
@@ -49,8 +49,8 @@
   }
 }
 
-.bk-modal-wrapper {
-  &.bk-sideslider-wrapper {
+.@{bk-prefix}-modal-wrapper {
+  &.@{bk-prefix}-sideslider-wrapper {
     position: absolute;
     top: 0;
     bottom: 0;
@@ -60,18 +60,18 @@
     //box-shadow: -5px 0 8px -5px rgb(0 0 0 / 20%);
 
     &.scroll-able {
-      .bk-modal-content {
+      .@{bk-prefix}-modal-content {
         overflow: auto;
       }
     }
 
-    .bk-sideslider-header {
+    .@{bk-prefix}-sideslider-header {
       width: 100%;
       height: 52px;
       background: #fff;
       border-bottom: 1px solid #dcdee5;
 
-      .bk-sideslider-close {
+      .@{bk-prefix}-sideslider-close {
         position: absolute;
         top: 0;
         width: 30px;
@@ -118,7 +118,7 @@
 
       }
 
-      .bk-sideslider-title {
+      .@{bk-prefix}-sideslider-title {
         display: flex;
         height: 52px;
         padding-left: 30px;
@@ -133,7 +133,7 @@
       }
     }
 
-    .bk-sideslider-footer {
+    .@{bk-prefix}-sideslider-footer {
       display: flex;
       width: 100%;
       height: 54px;

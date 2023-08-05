@@ -35,6 +35,7 @@ import {
   watch,
 } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import type { Language } from '@bkui-vue/locale';
 import BkSelect, { BkOption } from '@bkui-vue/select';
 
@@ -75,6 +76,8 @@ export default (t: ComputedRef<Language['pagination']>) => {
     localLimit.value = limit;
   };
 
+  const { resolveClassName } = usePrefix();
+
   const render = ({ isFirst, isLast }) => {
     if (!proxy.showLimit) {
       return null;
@@ -82,7 +85,7 @@ export default (t: ComputedRef<Language['pagination']>) => {
     return (
       <div
         class={{
-          'bk-pagination-limit': true,
+          [resolveClassName('pagination-limit')]: true,
           'is-first': isFirst,
           'is-last': isLast,
         }}
@@ -91,7 +94,7 @@ export default (t: ComputedRef<Language['pagination']>) => {
         }}>
         <div>{t.value.eachPage}</div>
         <BkSelect
-          class="bk-pagination-limit-select"
+          class={`${resolveClassName('pagination-limit-select')}`}
           clearable={false}
           size="small"
           withValidate={false}
@@ -100,8 +103,10 @@ export default (t: ComputedRef<Language['pagination']>) => {
           disabled={proxy.disabled}>
           {proxy.limitList.map((num, index) => (
             <BkOption
-              value={num}
-              label={`${num}`}
+              // value={num}
+              // label={`${num}`}
+              id={num}
+              name={`${num}`}
               key={`${index}_${num}`} />
           ))}
         </BkSelect>

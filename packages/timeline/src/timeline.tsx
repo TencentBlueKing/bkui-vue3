@@ -26,6 +26,7 @@
 
 import { defineComponent, ExtractPropTypes, onMounted, ref, watch } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import { classes, PropTypes } from '@bkui-vue/shared';
 
 const timelineProps = {
@@ -96,9 +97,12 @@ export default defineComponent({
       updateTimelines(props.list);
     }, { deep: true });
 
+    const { resolveClassName } = usePrefix();
+
     return {
       defaultTimelines,
       titleSelect,
+      resolveClassName,
     };
   },
 
@@ -113,7 +117,7 @@ export default defineComponent({
 
 
     const makeClass = (item) => {
-      const timelineClsPrefix = 'bk-timeline';
+      const timelineClsPrefix = this.resolveClassName('timeline');
       const dotColors = ['blue', 'red', 'green', 'yellow', 'gray'];
       const timelineThemeCls: string = item.type ? `${timelineClsPrefix}-${item.type}` : `${timelineClsPrefix}-default`;
       const timelineSizeCls: string = item.size ? `${timelineClsPrefix}-${item.size}` : '';
@@ -126,20 +130,20 @@ export default defineComponent({
 
     const getContent = item => (
       this.$slots.content
-        ? <div class="bk-timeline-content">{this.$slots.content(item)}</div>
-        : <div class="bk-timeline-content" v-html={item.content} />
+        ? <div class={`${this.resolveClassName('timeline-content')}`}>{this.$slots.content(item)}</div>
+        : <div class={`${this.resolveClassName('timeline-content')}`} v-html={item.content} />
     );
 
     return (
-      <ul class={['bk-timeline', this.extCls]}>
+      <ul class={[`${this.resolveClassName('timeline')}`, this.extCls]}>
         {
-        this.defaultTimelines.map(item => <li class={['bk-timeline-dot', makeClass(item)]}>
+        this.defaultTimelines.map(item => <li class={[`${this.resolveClassName('timeline-dot')}`, makeClass(item)]}>
           {isIcon(item)
-            ? <div class="bk-timeline-icon" style={{ border: item.border ? `2px solid ${item.color}` : '0px', borderRadius: item.border ? '50%' : '0' }}>
-                <span class="bk-timeline-icon-inner">{typeof item.icon === 'function' ? <item.icon/> : item.icon}</span>
+            ? <div class={`${this.resolveClassName('timeline-icon')}`} style={{ border: item.border ? `2px solid ${item.color}` : '0px', borderRadius: item.border ? '50%' : '0' }}>
+                <span class={`${this.resolveClassName('timeline-icon-inner')}`}>{typeof item.icon === 'function' ? <item.icon/> : item.icon}</span>
               </div> : ''}
-              <div class="bk-timeline-section">
-                {<div class="bk-timeline-title" onClick={() => {
+              <div class={`${this.resolveClassName('timeline-section')}`}>
+                {<div class={`${this.resolveClassName('timeline-title')}`} onClick={() => {
                   this.titleSelect(item);
                 }}>{this.$slots.default?.(item) ?? <span v-html={item.tag}></span>}</div>}
                 {item.content ? getContent(item) : ''}

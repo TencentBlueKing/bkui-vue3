@@ -27,6 +27,7 @@
 import type { ExtractPropTypes } from 'vue';
 import { defineComponent, onMounted, provide, watch } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import { PropTypes, useFormItem } from '@bkui-vue/shared';
 
 import { radioGroupKey } from './common';
@@ -97,11 +98,15 @@ export default defineComponent({
       });
     });
 
-    return {};
+    const { resolveClassName } = usePrefix();
+
+    return {
+      resolveClassName,
+    };
   },
   render() {
     return (
-      <div class={['bk-radio-group', `bk-radio-${this.type}`]}>
+      <div class={[`${this.resolveClassName('radio-group')}`, `${this.resolveClassName(`radio-${this.type}`)}`]}>
         {this.$slots?.default()}
       </div>
     );

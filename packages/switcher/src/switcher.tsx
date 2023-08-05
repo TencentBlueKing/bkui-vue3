@@ -25,6 +25,7 @@
 */
 import { computed, defineComponent, ref, watch } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import { SwitcherLoading } from '@bkui-vue/icon';
 import {
   PropTypes,
@@ -52,6 +53,7 @@ export default defineComponent({
   emits: ['update:modelValue', 'change'],
   setup(props, { emit }) {
     const formItem = useFormItem();
+    const { resolveClassName } = usePrefix();
 
     const isLoading = ref(false);
 
@@ -64,20 +66,20 @@ export default defineComponent({
     const classObject = computed(() => {
       const cls = {
         [props.extCls]: !!props.extCls,
-        'bk-switcher': true,
-        'bk-switcher-outline': props.isOutline,
-        'bk-switcher-square': props.isSquare,
+        [`${resolveClassName('switcher')}`]: true,
+        [`${resolveClassName('switcher-outline')}`]: props.isOutline,
+        [`${resolveClassName('switcher-square')}`]: props.isSquare,
         'show-label': props.showText,
         'is-disabled': props.disabled,
         'is-checked': isChecked.value,
         'is-unchecked': !isChecked.value,
         'is-loading': isLoading.value,
-        'bk-primary': props.theme === 'primary',
+        [`${resolveClassName('primary')}`]: props.theme === 'primary',
       };
 
       // 显示文本则size无效，使用固定尺寸
       if (props.size && !props.showText) {
-        const sizeStr = `bk-switcher-${props.size}`;
+        const sizeStr = `${resolveClassName(`bswitcher-${props.size}`)}`;
         cls[sizeStr] = true;
       }
       return cls;
@@ -136,7 +138,7 @@ export default defineComponent({
     return () => (
       <div class={classObject.value} onClick={handleChange} tabindex="0" onKeydown={handleKeydown}>
           {
-            isLoading.value ? <SwitcherLoading class="bk-switcher-loading"></SwitcherLoading> : ''
+            isLoading.value ? <SwitcherLoading class={`${resolveClassName('switcher-loading')}`}></SwitcherLoading> : ''
           }
           {
             props.showText ? <span class="switcher-text">

@@ -6,7 +6,7 @@
   box-sizing: border-box;
 }
 
-.bk-process {
+.@{bk-prefix}-process {
   position: relative;
   display: flex;
 
@@ -16,7 +16,7 @@
     }
   }
 
-  .bk-process-toggle {
+  .@{bk-prefix}-process-toggle {
     position: relative;
     left: 15px;
     width: 24px;
@@ -37,7 +37,7 @@
     }
   }
 
-  .bk-process-icon {
+  .@{bk-prefix}-process-icon {
     &-done {
       display: inline-block;
       font-size: 22px;
@@ -50,7 +50,7 @@
 
   }
 
-  .bk-icon {
+  .@{bk-prefix}-icon {
     &.icon-loading {
       display: inline-block;
       margin-left: 5px;
@@ -133,7 +133,7 @@
       content: '';
     }
 
-    .bk-process-step {
+    .@{bk-prefix}-process-step {
       font-size: 12px;
       // color: $fnMainColor;
 
@@ -180,7 +180,7 @@
         border-color: transparent transparent transparent @primary-color;
       }
 
-      >.bk-spin-loading {
+      >.@{bk-prefix}-spin-loading {
         vertical-align: -3px;
       }
     }
@@ -193,7 +193,7 @@
         border-color: transparent transparent transparent @danger-color;
       }
 
-      >.bk-spin-loading {
+      >.@{bk-prefix}-spin-loading {
         vertical-align: -3px;
       }
 

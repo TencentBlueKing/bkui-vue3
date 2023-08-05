@@ -28,6 +28,7 @@ import tinycolor from 'tinycolor2';
 import { computed, defineComponent, ExtractPropTypes, nextTick, ref, watch } from 'vue';
 
 import { classes, PropTypes } from '@bkui-vue/shared';
+import { usePrefix } from '@bkui-vue/config-provider';
 
 import { clamp } from '../utils';
 
@@ -55,10 +56,12 @@ export default defineComponent({
 
     const colors = computed(() => getColorsFromRecommend(props.recommend));
 
+    const { resolveClassName } = usePrefix();
+
     const getColorClass = (color, index) => (classes({
-      'bk-color-picker-empty': color === '',
-      'bk-color-picker-recommend-selected-color': isFocused.value && selectedIndex.value === index,
-    }, 'bk-color-picker-recommend-color'));
+      [`${resolveClassName('color-picker-empty')}`]: color === '',
+      [`${resolveClassName('color-picker-recommend-selected-color')}`]: isFocused.value && selectedIndex.value === index,
+    }, `${resolveClassName('color-picker-recommend-color')}`));
 
     const handleKeydown = (e) => {
       if (e.code === 'Tab') {
@@ -130,7 +133,7 @@ export default defineComponent({
 
     return () => (
       <div tabindex="0"
-        class="bk-color-picker-recommend"
+        class={`${resolveClassName('color-picker-recommend')} `}
         onFocus={() => (isFocused.value = true)}
         onBlur={() => (isFocused.value = false)}
         onKeydown={handleKeydown}>
@@ -139,8 +142,8 @@ export default defineComponent({
             class={getColorClass(color, index)}
             onClick={() => selectColor(index)}>
             {selectedIndex.value === index ? (
-              <div class="bk-color-picker-pointer">
-                <div class="bk-color-picker-circle"></div>
+              <div class={`${resolveClassName('color-picker-pointer')}`}>
+                <div class={`${resolveClassName('color-picker-circle')}`}></div>
               </div>
             ) : undefined}
           </div>

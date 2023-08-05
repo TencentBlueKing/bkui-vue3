@@ -28,6 +28,7 @@ import _ from 'lodash';
 import { defineComponent } from 'vue';
 import { toType } from 'vue-types';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import {
   classes,
   PropTypes,
@@ -75,18 +76,19 @@ export default defineComponent({
       'search-empty': searchEmpty,
       login,
     };
+    const { resolveClassName } = usePrefix();
 
     const renderImg = () => {
       if (_.isFunction(slots.type)) {
         return (
-          <div class="bk-exception-img">
+          <div class={`${resolveClassName('exception-img')}`}>
             {slots.type()}
           </div>
         );
       }
       const imgSrc = images[props.type] ? images[props.type] : empty;
       return (
-        <div class="bk-exception-img">
+        <div class={`${resolveClassName('exception-img')}`}>
           <img class="exception-image" src={imgSrc} alt="type" />
         </div>
       );
@@ -95,12 +97,12 @@ export default defineComponent({
     const renderTitle = () => {
       if (_.isFunction(slots.title)) {
         return (
-          <div class="bk-exception-title">{slots.title()}</div>
+          <div class={`${resolveClassName('exception-title')}`}>{slots.title()}</div>
         );
       }
       if (props.title) {
         return (
-          <div class="bk-exception-title">{props.title}</div>
+          <div class={`${resolveClassName('exception-title')}`}>{props.title}</div>
         );
       }
       return null;
@@ -109,12 +111,12 @@ export default defineComponent({
     const renderDescription = () => {
       if (_.isFunction(slots.description)) {
         return (
-          <div class="bk-exception-description">{slots.description()}</div>
+          <div class={`${resolveClassName('exception-description')}`}>{slots.description()}</div>
         );
       }
       if (props.description) {
         return (
-          <div class="bk-exception-description">{props.description}</div>
+          <div class={`${resolveClassName('exception-description')}`}>{props.description}</div>
         );
       }
       return null;
@@ -123,7 +125,7 @@ export default defineComponent({
     const renderFooter = () => {
       if (_.isFunction(slots.default)) {
         return (
-          <div class="bk-exception-footer">{slots.default()}</div>
+          <div class={`${resolveClassName('exception-footer')}`}>{slots.default()}</div>
         );
       }
       return null;
@@ -131,8 +133,8 @@ export default defineComponent({
 
     return () => {
       const rootClass = classes({
-        'bk-exception': true,
-        [`bk-exception-${props.scene}`]: true,
+        [`${resolveClassName('exception')}`]: true,
+        [`${resolveClassName(`exception-${props.scene}`)}`]: true,
       });
       return (
         <div class={rootClass}>

@@ -25,6 +25,8 @@
 */
 import { defineComponent, PropType, SlotsType } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
+
 import { BkNavigationType } from './navigation';
 const TitleProps = {
   sideTitle: {
@@ -44,13 +46,14 @@ export default defineComponent({
     'side-icon'?: () => HTMLElement,
   }>,
   setup(props, { slots }) {
+    const { resolveClassName } = usePrefix();
     return () => (
-      <div class="bk-navigation-title"  style={{ borderBottomWidth: props.navigationType === 'left-right' ? '0' : '1px' }}>
+      <div class={`${resolveClassName('navigation-title')}`}  style={{ borderBottomWidth: props.navigationType === 'left-right' ? '0' : '1px' }}>
         {
           slots.default?.() || [
             <span class="title-icon">
               {
-                 slots['side-icon']?.() || <i class="bk-icon icon-rtx"></i>
+                 slots['side-icon']?.() || <i class={`${resolveClassName('icon')} icon-rtx`}></i>
               }
             </span>,
             <span class="title-desc">{ props.sideTitle }</span>,
