@@ -28,6 +28,7 @@ import {
   h,
 } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 const isCustomComponent = node => node.__v_isVNode;
 
 export default defineComponent({
@@ -38,6 +39,12 @@ export default defineComponent({
       default: '#FAFBFD',
     },
     tailBackgroundColor: String,
+  },
+  setup() {
+    const { resolveClassName } = usePrefix();
+    return {
+      resolveClassName,
+    };
   },
   render() {
     if (!this.$slots.default) {
@@ -71,7 +78,7 @@ export default defineComponent({
         if (!headChildren.props) {
           headChildren.props = {};
         }
-        let headChildClass = 'bk-compose-form-item-head';
+        let headChildClass = `${this.resolveClassName('compose-form-item-head')}`;
         if (headChildren.props.class) {
           headChildClass += ` ${headChildren.props.class}`;
         }
@@ -85,7 +92,7 @@ export default defineComponent({
         if (!tailChildren.props) {
           tailChildren.props = {};
         }
-        let tailChildStaticClass = 'bk-compose-form-item-tail';
+        let tailChildStaticClass = `${this.resolveClassName('compose-form-item-tail')}`;
         if (tailChildren.props.class) {
           tailChildStaticClass += ` ${tailChildren.props.class}`;
         }
@@ -98,7 +105,7 @@ export default defineComponent({
       }
     }
     return h('div', {
-      class: 'bk-compose-form-item',
+      class: `${this.resolveClassName('compose-form-item')}`,
     }, childrenArr);
   },
 });

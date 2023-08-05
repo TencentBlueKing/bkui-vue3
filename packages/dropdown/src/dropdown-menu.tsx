@@ -26,6 +26,7 @@
 
 import { computed, defineComponent } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import { PropTypes } from '@bkui-vue/shared';
 
 export default defineComponent({
@@ -35,8 +36,9 @@ export default defineComponent({
     extCls: PropTypes.string,
   },
   setup(props: any) {
+    const { resolveClassName } = usePrefix();
     const wrapperCLasses = computed(() => [
-      'bk-dropdown-menu',
+      resolveClassName('dropdown-menu'),
       props.extCls,
     ]);
     return {

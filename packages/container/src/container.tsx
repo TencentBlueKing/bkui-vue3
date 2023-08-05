@@ -27,7 +27,7 @@
 import { computed, defineComponent, provide } from 'vue';
 
 import { PropTypes } from '@bkui-vue/shared';
-
+import { usePrefix } from '@bkui-vue/config-provider';
 import { containerKey } from './interface';
 
 export const containerProps = {
@@ -55,7 +55,9 @@ export default defineComponent({
       flex,
     });
 
-    const classes: any = computed(() => (extCls ? `bk-grid-container ${extCls}` : 'bk-grid-container'));
+    const { resolveClassName } = usePrefix();
+
+    const classes: any = computed(() => (extCls ? `${resolveClassName('grid-container')} ${extCls}` : `${resolveClassName('grid-container')}`));
 
     const style: any = computed(() => {
       const { margin } = props;

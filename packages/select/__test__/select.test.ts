@@ -605,7 +605,7 @@ describe('Select.tsx', () => {
       `,
       data() {
         return {
-          seletValue: {d:'xxxx'},
+          seletValue: { d: 'xxxx' },
           options: [
             {
               value: { a: 123 },
@@ -624,7 +624,7 @@ describe('Select.tsx', () => {
               label: 'test4',
             },
             {
-              value: {d: 'xxxx'},
+              value: { d: 'xxxx' },
               label: 'test5',
             },
           ],
@@ -632,7 +632,7 @@ describe('Select.tsx', () => {
       },
     });
     const options = wrapper.findAllComponents({ name: 'Option' });
-    expect(options[4].vm.selected).toBe(true)
+    expect(options[4].vm.selected).toBe(true);
     await options[1].trigger('click');
     await nextTick();
     expect(wrapper.vm.seletValue).toEqual({ b: 456 });

@@ -26,6 +26,7 @@
 
 import { defineComponent, h } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import { PropTypes } from '@bkui-vue/shared';
 
 export default defineComponent({
@@ -40,6 +41,7 @@ export default defineComponent({
     },
   },
   render() {
+    const { resolveClassName } = usePrefix();
     const highlightKeyword = (value: string): string => {
       if (this.searchKeyword) {
         const keywordReg = new RegExp(`(${this.searchKeyword})`, 'i');
@@ -53,7 +55,7 @@ export default defineComponent({
     }
     const displayText = this.node[this.displayKey];
     return (
-      <div class="bk-selector-node">
+      <div class={`${resolveClassName('selector-node')}`}>
         <span class="text" innerHTML={highlightKeyword(displayText)}>{displayText}</span>
       </div>
     );

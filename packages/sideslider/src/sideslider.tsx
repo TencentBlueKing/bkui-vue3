@@ -27,6 +27,7 @@
 import { defineComponent } from 'vue';
 
 import BkButton from '@bkui-vue/button';
+import { usePrefix } from '@bkui-vue/config-provider';
 import BkModal from '@bkui-vue/modal';
 
 const { propsMixin } = BkModal;
@@ -87,14 +88,17 @@ export default defineComponent({
         emit('hidden');
       }, 200);
     };
+
+    const { resolveClassName } = usePrefix();
+
     return () => {
       const dialogSlot = {
         header: () => <>
-          <div class="bk-sideslider-header">
-            <div class={`bk-sideslider-close ${props.direction}`} onClick={ () => {
+          <div class={`${resolveClassName('sideslider-header')}`}>
+            <div class={`${resolveClassName('sideslider-close')} ${props.direction}`} onClick={ () => {
               handleClose();
             } }></div>
-            <div class={`bk-sideslider-title ${props.direction}`}>
+            <div class={`${resolveClassName('sideslider-title')} ${props.direction}`}>
               {slots.header?.() ?? props.title}
             </div>
           </div>
@@ -103,7 +107,7 @@ export default defineComponent({
         footer: () => {
           if (slots.footer) {
             return (
-              <div class="bk-sideslider-footer">
+              <div class={`${resolveClassName('sideslider-footer')}`}>
                 {slots.footer()}
               </div>
             );
@@ -112,7 +116,7 @@ export default defineComponent({
           return null;
         },
       };
-      const className = `bk-sideslider-wrapper ${props.scrollable ? 'scroll-able' : ''} ${props.extCls}`;
+      const className = `${resolveClassName('sideslider-wrapper')} ${props.scrollable ? 'scroll-able' : ''} ${props.extCls}`;
       const maxHeight = slots.footer ? 'calc(100vh - 106px)' : 'calc(100vh - 52px)';
 
       return (

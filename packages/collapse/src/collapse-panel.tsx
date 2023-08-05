@@ -26,6 +26,7 @@
 import { defineComponent, h, inject, Ref, ref, watch } from 'vue';
 
 import BKCollapseTransition from '@bkui-vue/collapse-transition';
+import { usePrefix } from '@bkui-vue/config-provider';
 import * as BkIcon from '@bkui-vue/icon';
 
 import { propsCollapsePanel as props } from './props';
@@ -53,6 +54,8 @@ export default defineComponent({
         immediate: true,
       });
     }
+
+    const { resolveClassName } = usePrefix();
 
     function toCamelCase(str) {
       const words = str.split('-');
@@ -91,7 +94,7 @@ export default defineComponent({
         return '';
       }
       return (
-        <div v-show={isActive.value} class={`bk-collapse-content ${(isActive.value && 'active') || ''}`}>
+        <div v-show={isActive.value} class={`${resolveClassName('collapse-content')} ${(isActive.value && 'active') || ''}`}>
           {getContent()}
         </div>
       );
@@ -116,8 +119,8 @@ export default defineComponent({
       }
 
       return <>
-        <div class="bk-collapse-header">
-          <span class="bk-collapse-title">
+        <div class={`${resolveClassName('collapse-header')}`}>
+          <span class={`${resolveClassName('collapse-title')}`}>
             {title}
           </span>
           {icon}
@@ -131,13 +134,14 @@ export default defineComponent({
       clickItem,
       renderPanel,
       renderHeader,
+      resolveClassName,
     };
   },
   render() {
     return <div
-      class={`bk-collapse-item ${this.disabled ? 'is-disabled' : ''} ${this.isActive ? 'bk-collapse-item-active' : ''}`}>
+      class={`${this.resolveClassName('collapse-item')} ${this.disabled ? 'is-disabled' : ''} ${this.isActive ? `${this.resolveClassName('collapse-item-active')}` : ''}`}>
       <div onClick={() => this.clickItem()}>
-        {this.renderHeader(<this.collapseIcon class={`bk-collapse-icon ${(this.isActive && 'rotate-icon') || ''}`}/>)}
+        {this.renderHeader(<this.collapseIcon class={`${this.resolveClassName('collapse-icon')} ${(this.isActive && 'rotate-icon') || ''}`}/>)}
       </div>
       <BKCollapseTransition>
         {

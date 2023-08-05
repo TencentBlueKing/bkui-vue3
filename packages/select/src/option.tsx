@@ -60,14 +60,10 @@ export default defineComponent({
     });
 
     const { disabled, id, name } = toRefs(props);
-    const optionName = computed(() => {
-      // 兼容label
-      return name.value !== undefined ? name.value : attrs.label as string
-    })
-    const optionID = computed(() => {
-      // 兼容value
-      return id.value !== undefined ? id.value : attrs.value
-    })
+    // 兼容label
+    const optionName = computed(() => (name.value !== undefined ? name.value : attrs.label as string));
+    // 兼容value
+    const optionID = computed(() => (id.value !== undefined ? id.value : attrs.value));
     const select = inject(selectKey, null);
     const group = inject(optionGroupKey, null);
     const selected = computed<boolean>(() => select?.selected?.some(item => isEqual(item.value, optionID.value)));

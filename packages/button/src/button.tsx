@@ -26,9 +26,9 @@
 
 import { computed, defineComponent, ExtractPropTypes, PropType, ref } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import BkLoading, { BkLoadingMode, BkLoadingSize } from '@bkui-vue/loading';
 import { classes, ElementType, PropTypes } from '@bkui-vue/shared';
-
 
 type IButtonNativeType = PropType<'button' | 'submit' | 'reset'>;
 const btnSizes = ['', 'small', 'large'] as const;
@@ -67,7 +67,8 @@ export default defineComponent({
   setup(props, { slots, emit }) {
     const isHover = ref(false);
     const showSlot = slots.default ?? false;
-    const btnClsPrefix = 'bk-button';
+    const { resolveClassName } = usePrefix();
+    const btnClsPrefix = resolveClassName('button');
     const isText = computed(() => props.text && !props.hoverTheme);
     const btnCls = computed(() => {
       const hoverTheme = props.hoverTheme

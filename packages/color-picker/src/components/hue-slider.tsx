@@ -32,6 +32,7 @@ import {
 } from 'vue';
 
 import { PropTypes } from '@bkui-vue/shared';
+import { usePrefix } from '@bkui-vue/config-provider';
 
 import { clamp, getTouches } from '../utils';
 
@@ -118,22 +119,22 @@ export default defineComponent({
       }
     };
 
+    const { resolveClassName } = usePrefix();
+
     return () => (
       <div ref={containerRef}
       tabindex="0"
-      class="bk-color-picker-hue"
+      class={`${resolveClassName('color-picker-hue')}`}
       onKeydown={handleArrowKeydown}
       onMousedown={(e: MouseEvent) => {
         e.stopPropagation();
         e.preventDefault();
         handleMouseDown(e);
       }}>
-      <div class="bk-color-picker-hue-pointer" style={pointerStyle.value}>
-        <div class="bk-color-picker-hue-rectangle"></div>
+      <div class={`${resolveClassName('color-picker-hue-pointer')}`} style={pointerStyle.value}>
+        <div class={`${resolveClassName('color-picker-hue-rectangle')}`}></div>
       </div>
     </div>
     );
   },
 });
-
-

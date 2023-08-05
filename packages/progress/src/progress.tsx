@@ -25,6 +25,7 @@
 */
 import { defineComponent } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import { classes, PropTypes, ThemeEnum } from '@bkui-vue/shared';
 
 import Circle from './circle';
@@ -60,8 +61,9 @@ export default defineComponent({
 
   },
   setup() {
+    const { resolveClassName } = usePrefix();
     return {
-
+      resolveClassName,
     };
   },
   methods: {
@@ -111,7 +113,7 @@ export default defineComponent({
     }
 
     const progressProps = {
-      class: classes({ extCls: !!this.extCls }, `bk-progress bk-progress-${this.type}`),
+      class: classes({ extCls: !!this.extCls }, `${this.resolveClassName('progress')} ${this.resolveClassName(`progress-${this.type}`)}`),
     };
     return <div {...progressProps}>{progress}</div>;
   },
