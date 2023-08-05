@@ -31,7 +31,7 @@ import Group from './optionGroup';
 import SelectTagInput from './selectTagInput';
 
 export interface OptionInstanceType extends InstanceType<typeof Option> {
-  value: string;
+  optionID: string;
 }
 export type GroupInstanceType = InstanceType<typeof Group>;
 export type PopoverInstanceType = InstanceType<typeof Popover>;

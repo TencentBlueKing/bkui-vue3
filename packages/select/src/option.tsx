@@ -45,26 +45,34 @@ import { optionGroupKey, selectKey } from './common';
 export default defineComponent({
   name: 'Option',
   props: {
-    value: {
+    id: {
       type: [String, Number, Object],
       require: true,
     },
-    label: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(''),
+    name: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     disabled: PropTypes.bool.def(false),
   },
-  setup(props) {
+  setup(props, { attrs }) {
     const { proxy } = getCurrentInstance() as any;
 
     const states = reactive({
       visible: true,
     });
 
-    const { disabled, value } = toRefs(props);
+    const { disabled, id, name } = toRefs(props);
+    const optionName = computed(() => {
+      // 兼容label
+      return name.value !== undefined ? name.value : attrs.label as string
+    })
+    const optionID = computed(() => {
+      // 兼容value
+      return id.value !== undefined ? id.value : attrs.value
+    })
     const select = inject(selectKey, null);
     const group = inject(optionGroupKey, null);
-    const selected = computed<boolean>(() => select?.selected?.some(item => isEqual(item.value, value.value)));
+    const selected = computed<boolean>(() => select?.selected?.some(item => isEqual(item.value, optionID.value)));
     const multiple = computed<boolean>(() => select?.multiple);
-    const isHover = computed(() => select?.activeOptionValue === value.value);
+    const isHover = computed(() => select?.activeOptionValue === optionID.value);
     const showSelectedIcon = computed(() => select?.showSelectedIcon && multiple.value);
     const selectedStyle = computed(() => select?.selectedStyle);
 
@@ -74,17 +82,17 @@ export default defineComponent({
     };
 
     const handleMouseEnter = () => {
-      select.activeOptionValue = value.value;
+      select.activeOptionValue = optionID.value;
     };
 
     onBeforeMount(() => {
-      select?.register(value.value, proxy);
-      group?.register(value.value, proxy);
+      select?.register(optionID.value, proxy);
+      group?.register(optionID.value, proxy);
     });
 
     onBeforeUnmount(() => {
-      select?.unregister(value.value);
-      group?.unregister(value.value);
+      select?.unregister(optionID.value);
+      group?.unregister(optionID.value);
     });
 
     return {
@@ -94,6 +102,8 @@ export default defineComponent({
       isHover,
       showSelectedIcon,
       selectedStyle,
+      optionName,
+      optionID,
       handleOptionClick,
       handleMouseEnter,
     };
@@ -120,8 +130,8 @@ export default defineComponent({
         {
           this.$slots.default?.()
           ?? (
-            <span class={resolveClassName('select-option-item')} title={String(this.label)}>
-              {this.label}
+            <span class={resolveClassName('select-option-item')} title={String(this.optionName)}>
+              {this.optionName}
             </span>
           )
         }
