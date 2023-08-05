@@ -213,12 +213,12 @@ export default defineComponent({
     const isDisabled = computed(() => disabled.value || loading.value);
     // modelValue对应的label
     const selectedLabel = computed(() => selected.value
-      .map(item => optionsMap.value?.get(item.value)?.label || listMap.value[item.value] || item.label));
+      .map(item => optionsMap.value?.get(item.value)?.optionName || listMap.value[item.value] || item.label));
     // 是否全选(todo: 优化)
     const isAllSelected = computed(() => {
       const normalSelectedValues = options.value.reduce<string[]>((pre, option) => {
         if (!option.disabled) {
-          pre.push(option.value);
+          pre.push(option.optionID);
         }
         return pre;
       }, []);
@@ -329,14 +329,14 @@ export default defineComponent({
       if (option && !option.disabled && option.visible) {
         activeOptionValue.value = firstSelected?.value;
       } else {
-        activeOptionValue.value = options.value.find(option => !option.disabled && option.visible)?.value;
+        activeOptionValue.value = options.value.find(option => !option.disabled && option.visible)?.optionID;
       }
     };
     // 默认搜索方法
     const defaultSearchMethod = (value) => {
       if (!filterable.value) return;
       options.value.forEach((option) => {
-        option.visible = toLowerCase(String(option.label))?.includes(toLowerCase(value));
+        option.visible = toLowerCase(String(option.optionName))?.includes(toLowerCase(value));
       });
     };
     const { searchKey, searchLoading } = useRemoteSearch(
@@ -369,7 +369,7 @@ export default defineComponent({
       const value = String(val);
       if (!allowCreate.value
         || !value
-        || (filterable.value && options.value.find(data => toLowerCase(String(data.label)) === toLowerCase(value)))
+        || (filterable.value && options.value.find(data => toLowerCase(String(data.optionName)) === toLowerCase(value)))
       ) return; // 开启搜索后，正好匹配到自定义选项，则不进行创建操作
 
       const data = optionsMap.value.get(value);
@@ -396,23 +396,23 @@ export default defineComponent({
 
       if (multiple.value) {
         // 多选
-        const index = selected.value.findIndex(item => item.value === option.value);
+        const index = selected.value.findIndex(item => item.value === option.optionID);
         if (index > -1) {
           selected.value.splice(index, 1);
         } else {
           selected.value.push({
-            value: option.value,
-            label: option.label || option.value,
+            value: option.optionID,
+            label: option.optionName || option.optionID,
           });
         }
         emitChange(selected.value.map(item => item.value));
       } else {
         // 单选
         selected.value = [{
-          label: option.label || option.value,
-          value: option.value,
+          label: option.optionName || option.optionID,
+          value: option.optionID,
         }];
-        emitChange(option.value);
+        emitChange(option.optionID);
         hidePopover();
       }
       focusInput();
@@ -448,10 +448,10 @@ export default defineComponent({
         selected.value = [];
       } else {
         options.value.forEach((option) => {
-          if (option.disabled || selected.value.find(item => item.value === option.value)) return;
+          if (option.disabled || selected.value.find(item => item.value === option.optionID)) return;
           selected.value.push({
-            value: option.value,
-            label: option.label || option.value,
+            value: option.optionID,
+            label: option.optionName || option.optionID,
           });
         });
       }
@@ -486,7 +486,7 @@ export default defineComponent({
           }
         }
       }
-      return optionsMap.value?.get(tmpValue)?.label
+      return optionsMap.value?.get(tmpValue)?.optionName
       || listMap.value[tmpValue]
       || cacheSelectedMap.value[tmpValue]
       || tmpValue;
@@ -515,7 +515,7 @@ export default defineComponent({
       if (!isPopoverShow.value) return;
 
       const availableOptions = options.value.filter(option => !option.disabled && option.visible);
-      const index = availableOptions.findIndex(option => option.value === activeOptionValue.value);
+      const index = availableOptions.findIndex(option => option.optionID === activeOptionValue.value);
       if (!availableOptions.length || index === -1) return;
 
       switch (e.code) {
@@ -523,14 +523,14 @@ export default defineComponent({
         case 'ArrowDown': {
           e.preventDefault();// 阻止滚动屏幕
           const nextIndex = index >= (availableOptions.length - 1) ? 0 : index + 1;
-          activeOptionValue.value = availableOptions[nextIndex]?.value;
+          activeOptionValue.value = availableOptions[nextIndex]?.optionID;
           break;
         }
         // 上一个option
         case 'ArrowUp': {
           e.preventDefault();// 阻止滚动屏幕
           const preIndex = index === 0 ? availableOptions.length - 1 : index - 1;
-          activeOptionValue.value = availableOptions[preIndex]?.value;
+          activeOptionValue.value = availableOptions[preIndex]?.optionID;
           break;
         }
         // 删除选项
@@ -777,8 +777,8 @@ export default defineComponent({
                       default: ({ data }) => (data.map(item => (
                           <Option
                             key={item[this.idKey]}
-                            value={item[this.idKey]}
-                            label={item[this.displayKey]}>
+                            id={item[this.idKey]}
+                            name={item[this.displayKey]}>
                             {
                               {
                                 default: this.$slots.virtualScrollRender?.({ item }),
@@ -789,7 +789,7 @@ export default defineComponent({
                     }}
                   </VirtualRender>
                   : this.list
-                    .map(item => <Option value={item[this.idKey]} label={item[this.displayKey]}></Option>)
+                    .map(item => <Option id={item[this.idKey]} name={item[this.displayKey]}></Option>)
               }
               {this.$slots.default?.()}
               {this.scrollLoading && (
