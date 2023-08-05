@@ -35,6 +35,7 @@ import {
   watch,
 } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import {
   AngleLeft,
   AngleRight,
@@ -147,16 +148,17 @@ export default () => {
     localCurrent.value = Math.min(proxy.totalPageNum, localCurrent.value + PAGE_ITEMS_NUM);
   };
 
+  const { resolveClassName } = usePrefix();
 
   const render = ({ isFirst, isLast }) => (
     <div class={{
-      'bk-pagination-list': true,
+      [`${resolveClassName('pagination-list')}`]: true,
       'is-first': isFirst,
       'is-last': isLast,
     }}>
       <div
         class={{
-          'bk-pagination-list-pre': true,
+          [`${resolveClassName('pagination-list-pre')}`]: true,
           'is-disabled': isPagePreDisabled.value,
         }}
         onClick={handlePrePage}>
@@ -164,7 +166,7 @@ export default () => {
       </div>
       <div
         class={{
-          'bk-pagination-list-item': true,
+          [`${resolveClassName('pagination-list-item')}`]: true,
           'is-active': localCurrent.value === 1,
         }}
         key="1"
@@ -175,7 +177,7 @@ export default () => {
         showPreBatch.value
         && <div
             key="pre-batch"
-            class="bk-pagination-list-pre-batch"
+            class={`${resolveClassName('pagination-list-pre-batch')}`}
             onClick={handlePreBatch}>
             <Ellipsis />
           </div>
@@ -183,7 +185,7 @@ export default () => {
       {list.value.map(num => (
         <div
           class={{
-            'bk-pagination-list-item': true,
+            [`${resolveClassName('pagination-list-item')}`]: true,
             'is-active': localCurrent.value === num,
           }}
           key={num}
@@ -195,7 +197,7 @@ export default () => {
         showNextBatch.value
         && <div
             key="next-batch"
-            class="bk-pagination-list-next-batch"
+            class={`${resolveClassName('pagination-list-next-batch')}`}
             onClick={handleNextBatch}>
             <Ellipsis />
           </div>
@@ -204,7 +206,7 @@ export default () => {
         proxy.totalPageNum > 1
         && <div
             class={{
-              'bk-pagination-list-item': true,
+              [`${resolveClassName('pagination-list-item')}`]: true,
               'is-active': localCurrent.value === proxy.totalPageNum,
             }}
             key="last"
@@ -214,7 +216,7 @@ export default () => {
       }
       <div
         class={{
-          'bk-pagination-list-pre': true,
+          [`${resolveClassName('pagination-list-pre')}`]: true,
           'is-disabled': isPageNextDisabled.value,
         }}
         onClick={handleNextPage}>

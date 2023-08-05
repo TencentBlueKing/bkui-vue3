@@ -27,7 +27,7 @@
 import { defineComponent, ExtractPropTypes, onMounted, ref, watch } from 'vue';
 import { toType } from 'vue-types';
 
-import { useLocale } from '@bkui-vue/config-provider';
+import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { Circle, Done, Error } from '@bkui-vue/icon';
 import { classes, directionType, lineStyleType, PropTypes, ThemeEnum } from '@bkui-vue/shared';
 
@@ -142,20 +142,23 @@ export default defineComponent({
       updateCurStep(props.curStep);
     }, { deep: true });
 
+    const { resolveClassName } = usePrefix();
+
     return {
       defaultSteps,
       jumpTo,
+      resolveClassName,
     };
   },
 
   render() {
-    const stepsClsPrefix = 'bk-steps';
+    const stepsClsPrefix = this.resolveClassName('steps');
     const stepsThemeCls: string = this.theme ? `${stepsClsPrefix}-${this.theme}` : '';
     const stepsSizeCls: string = this.size ? `${stepsClsPrefix}-${this.size}` : '';
     const stepsCls: string = classes({
       [`${this.extCls}`]: !!this.extCls,
-      [`bk-steps-${this.direction}`]: this.direction,
-      [`bk-steps-${this.lineType}`]: this.lineType,
+      [`${this.resolveClassName(`steps-${this.direction}`)}`]: this.direction,
+      [`${this.resolveClassName(`steps-${this.lineType}`)}`]: this.lineType,
     }, `${stepsThemeCls} ${stepsClsPrefix} ${stepsSizeCls}`);
 
 
@@ -180,17 +183,17 @@ export default defineComponent({
       return (!isNaN(step.icon));
     };
 
-    const isLoadingStatus =  step => step.status === 'loading';
+    const isLoadingStatus = step => step.status === 'loading';
 
     const isErrorStatus = step => step.status === 'error';
 
     const renderIcon = (index, step) => {
       if ((isCurrent(index) && this.status === 'loading') || isLoadingStatus(step)) {
-        return (<Circle class="bk-icon bk-steps-icon icon-loading" />);
+        return (<Circle class={`${this.resolveClassName('icon')} ${this.resolveClassName('steps-icon')} icon-loading`} />);
       }  if ((isCurrent(index) && this.status === 'error') || isErrorStatus(step)) {
-        return (<Error class="bk-steps-icon" />);
+        return (<Error class={`${this.resolveClassName('steps-icon')}`} />);
       } if (isDone(index)) {
-        return (<Done class="bk-steps-icon" />);
+        return (<Done class={`${this.resolveClassName('steps-icon')}`} />);
       }
       return (<span>{isNumberIcon(index, step) ? index + 1 : <step.icon/>}</span>);
     };
@@ -199,16 +202,20 @@ export default defineComponent({
       <div class={stepsCls}>
         {
           this.defaultSteps.map((step, index) => <div class={
-          ['bk-step',
-            !step.title ? 'bk-step-no-content' : '',
+          [this.resolveClassName('steps'),
+            !step.title ? this.resolveClassName('step-no-content') : '',
             isDone(index) ? 'done' : '',
             isCurrent(index) ? 'current' : '',
             (isCurrent(index) && this.status === 'error') ? 'isError' : '',
-            step.status && isCurrent(index) ? [`bk-step-${step.status}`] : '',
+            step.status && isCurrent(index) ? [`${this.resolveClassName(`step-${step.status}`)}`] : '',
           ]
         }>
           <span
-            class={['bk-step-indicator', `bk-step-${iconType(step) ? 'icon' : 'number'}`, `bk-step-icon${step.status}`]}
+            class={[
+              `${this.resolveClassName('step-indicator')}`,
+              `${this.resolveClassName(`step-${iconType(step) ? 'icon' : 'number'}`)}`,
+              `${this.resolveClassName(`step-icon${step.status}`)}`,
+            ]}
             style={{ cursor: this.controllable ? 'pointer' : '' }}
             onClick={() => {
               this.jumpTo(index + 1);
@@ -217,16 +224,16 @@ export default defineComponent({
           </span>
           {
             step.title
-              ? <div class="bk-step-content">
+              ? <div class={`${this.resolveClassName('step-content')}`}>
               <div
-                class="bk-step-title" style={{ cursor: this.controllable ? 'pointer' : '' }}
+                class={`${this.resolveClassName('step-title')}`} style={{ cursor: this.controllable ? 'pointer' : '' }}
                 onClick={() => {
                   this.jumpTo(index + 1);
                 }}>
                 {step.title}
               </div>
               {step.description
-              && (<div class="bk-step-description" title={step.description}>
+              && (<div class={`${this.resolveClassName('step-description')}`} title={step.description}>
                 {step.description}
               </div>)}
             </div>

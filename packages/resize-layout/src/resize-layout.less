@@ -8,18 +8,18 @@
   }
 
   &-collapsed {
-    & > .bk-resize-layout-aside {
-      .bk-resize-layout-aside-content {
+    & > .@{bk-prefix}-resize-layout-aside {
+      .@{bk-prefix}-resize-layout-aside-content {
         overflow: hidden;
       }
 
-      .bk-resize-collapse:before {
+      .@{bk-prefix}-resize-collapse:before {
         display: inline-block;
         transform: rotate(180deg);
       }
     }
 
-    &.bk-resize-layout-collapsible .bk-resize-layout-aside {
+    &.@{bk-prefix}-resize-layout-collapsible .@{bk-prefix}-resize-layout-aside {
       &:after {
         display: none;;
       }
@@ -30,7 +30,7 @@
   &-left {
     flex-direction: row;
 
-    & > .bk-resize-layout-aside {
+    & > .@{bk-prefix}-resize-layout-aside {
       border-right: 1px solid #dcdee5;
 
       &:after {
@@ -39,7 +39,7 @@
         transform: translate3d(0, -50%, 0);
       }
 
-      .bk-resize-trigger {
+      .@{bk-prefix}-resize-trigger {
         top: 0;
         left: 100%;
         width: 5px;
@@ -47,7 +47,7 @@
         cursor: col-resize;
       }
 
-      .bk-resize-collapse {
+      .@{bk-prefix}-resize-collapse {
         top: 50%;
         left: 100%;
         transform: translateY(-50%);
@@ -58,7 +58,7 @@
   &-right {
     flex-direction: row-reverse;
 
-    & > .bk-resize-layout-aside {
+    & > .@{bk-prefix}-resize-layout-aside {
       border-left: 1px solid #dcdee5;
 
       &:after {
@@ -67,7 +67,7 @@
         transform: translate3d(0, -50%, 0);
       }
 
-      .bk-resize-trigger {
+      .@{bk-prefix}-resize-trigger {
         top: 0;
         right: 100%;
         width: 5px;
@@ -75,7 +75,7 @@
         cursor: col-resize;
       }
 
-      .bk-resize-collapse {
+      .@{bk-prefix}-resize-collapse {
         top: 50%;
         right: 100%;
         transform: translateY(-50%) rotate(180deg);
@@ -86,7 +86,7 @@
   &-top {
     flex-direction: column;
 
-    & > .bk-resize-layout-aside {
+    & > .@{bk-prefix}-resize-layout-aside {
       border-bottom: 1px solid #dcdee5;
 
       &:after {
@@ -95,7 +95,7 @@
         transform: translate3d(-50%, 0, 0) rotate(90deg);
       }
 
-      .bk-resize-trigger {
+      .@{bk-prefix}-resize-trigger {
         top: 100%;
         left: 0;
         width: 100%;
@@ -103,7 +103,7 @@
         cursor: row-resize;
       }
 
-      .bk-resize-collapse {
+      .@{bk-prefix}-resize-collapse {
         top: 100%;
         left: 50%;
         margin-top: 8px;
@@ -115,7 +115,7 @@
   &-bottom {
     flex-direction: column-reverse;
 
-    & > .bk-resize-layout-aside {
+    & > .@{bk-prefix}-resize-layout-aside {
       border-top: 1px solid #dcdee5;
 
       &:after {
@@ -124,7 +124,7 @@
         transform: translate3d(-50%, 0, 0) rotate(90deg);
       }
 
-      .bk-resize-trigger {
+      .@{bk-prefix}-resize-trigger {
         bottom: 100%;
         left: 0;
         width: 100%;
@@ -132,7 +132,7 @@
         cursor: row-resize;
       }
 
-      .bk-resize-collapse {
+      .@{bk-prefix}-resize-collapse {
         bottom: 100%;
         left: 50%;
         margin-bottom: 8px;
@@ -141,7 +141,7 @@
     }
   }
 
-  & > .bk-resize-layout-aside {
+  & > .@{bk-prefix}-resize-layout-aside {
     position: relative;
 
     &:after {
@@ -154,19 +154,19 @@
       box-shadow: 0 4px 0 0 currentColor, 0 8px 0 0 currentColor, 0 -4px 0 0 currentColor, 0 -8px 0 0 currentColor;
     }
 
-    .bk-resize-layout-aside-content {
+    .@{bk-prefix}-resize-layout-aside-content {
       width: 100%;
       height: 100%;
       overflow: hidden;
     }
 
-    .bk-resize-trigger {
+    .@{bk-prefix}-resize-trigger {
       position: absolute;
       z-index: 3;
       background-color: transparent;
     }
 
-    .bk-resize-proxy {
+    .@{bk-prefix}-resize-proxy {
       position: absolute;
       z-index: 9999;
       pointer-events: none;
@@ -187,7 +187,7 @@
       }
     }
 
-    .bk-resize-collapse {
+    .@{bk-prefix}-resize-collapse {
       position: absolute;
       z-index: 2;
       width: 16px;
@@ -207,12 +207,12 @@
     }
   }
 
-  & > .bk-resize-layout-main {
+  & > .@{bk-prefix}-resize-layout-main {
     flex: 1;
     overflow: hidden;
   }
 
-  .bk-resize-mask {
+  .@{bk-prefix}-resize-mask {
     position: fixed;
     top: 0;
     right: 0;

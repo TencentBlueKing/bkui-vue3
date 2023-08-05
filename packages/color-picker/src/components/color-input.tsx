@@ -35,7 +35,7 @@ import {
 import { PropTypes } from '@bkui-vue/shared';
 
 import InputContainer from './input-container';
-
+import { usePrefix } from '@bkui-vue/config-provider';
 const colorPickerProps = {
   colorObj: PropTypes.object.isRequired,
 };
@@ -119,12 +119,14 @@ export default defineComponent({
       return result;
     };
 
+    const { resolveClassName } = usePrefix();
+
     return () => (
-      <div class="bk-color-picker-input">
-        <div class="bk-color-picker-input-hex">
+      <div class={`${resolveClassName('color-picker-input')}`}>
+        <div class={`${resolveClassName('color-picker-input-hex')}`}>
           <InputContainer info={hex} onInput={handleInput}></InputContainer>
         </div>
-        <div class="bk-color-picker-input-rgba">
+        <div class={`${resolveClassName('color-picker-input-rgba')}`}>
           <InputContainer info={r} onInput={handleInput}></InputContainer>
           <InputContainer info={g} onInput={handleInput}></InputContainer>
           <InputContainer info={b} onInput={handleInput}></InputContainer>
@@ -134,4 +136,3 @@ export default defineComponent({
     );
   },
 });
-

@@ -25,7 +25,7 @@
 */
 
 import { computed, defineComponent, inject, provide } from 'vue';
-
+import { usePrefix } from '@bkui-vue/config-provider';
 import { containerKey } from './interface';
 
 export default defineComponent({
@@ -39,12 +39,14 @@ export default defineComponent({
       flex,
     });
 
+    const { resolveClassName } = usePrefix();
+
     const style: any = computed(() => {
       const o = flex ? { display: ['-webkit-box', '-ms-flexbox', 'flex'] } : {};
       return { ...o, 'margin-right': `-${gutter / 2}px`, 'margin-left': `-${gutter / 2}px` };
     });
     return () => (
-      <div class="bk-grid-row" style={style.value}>
+      <div class={`${resolveClassName('grid-row')}`} style={style.value}>
         {ctx.slots.default?.()}
       </div>
     );

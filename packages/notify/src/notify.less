@@ -13,7 +13,7 @@
   border-radius: 2px;
   box-shadow: 0 3px 6px 0 rgb(0 0 0 / 15%);
 
-  .bk-notify-icon {
+  .@{bk-prefix}-notify-icon {
     position: absolute;
     top: 24px;
     margin-right: 5px;
@@ -33,7 +33,7 @@
     color: @danger-color;
   }
 
-  .bk-notify-icon.bk-notify-close {
+  .@{bk-prefix}-notify-icon.@{bk-prefix}-notify-close {
     top: 8px;
     right: 12px;
     margin-right: 0;
@@ -46,7 +46,7 @@
     }
   }
 
-  .bk-notify-content-header {
+  .@{bk-prefix}-notify-content-header {
     display: inline-block;
     padding-left: 23px;
     margin-top: 0;
@@ -56,19 +56,19 @@
     color: #313238;
   }
 
-  .bk-notify-content-text {
+  .@{bk-prefix}-notify-content-text {
     display: inline-block;
     padding-left: 23px;
   }
 }
 
-.bk-notify-fade-enter-active,
-.bk-notify-fade-leave-active {
+.@{bk-prefix}-notify-fade-enter-active,
+.@{bk-prefix}-notify-fade-leave-active {
   transition: transform .3s linear, opacity .2s linear;
 }
 
-.bk-notify-fade-enter-from,
-.bk-notify-fade-leave-to {
+.@{bk-prefix}-notify-fade-enter-from,
+.@{bk-prefix}-notify-fade-leave-to {
   opacity: 0;
 
   &.right {
