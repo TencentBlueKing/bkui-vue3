@@ -26,7 +26,7 @@
 
 import { defineComponent } from 'vue';
 
-import { tabEventProps, tabPanelProps, tabProps } from '../../../packages/tab/src/props';
+import { tabPanelProps, tabProps } from '../../../packages/tab/src/props';
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
@@ -45,7 +45,39 @@ import DemoPosition from './demo-position.vue';
 
 const tabPropsJson: IPropsTableItem[] = resolvePropsToDesData(tabProps);
 const tabPanelPropsJson: IPropsTableItem[] = resolvePropsToDesData(tabPanelProps);
-const tabEventPropsJson: IPropsTableItem[] = resolvePropsToDesData(tabEventProps);
+// const tabEventPropsJson: IPropsTableItem[] = resolvePropsToDesData(tabEventProps);
+const tabEventPropsJson = [
+  {
+    name: 'add',
+    desc: '切换事件',
+    params: '{ e: MouseEvent }',
+  },
+  {
+    name: 'change',
+    desc: '切换事件',
+    params: 'name',
+  },
+  {
+    name: 'remove',
+    desc: '移除事件',
+    params: 'index, panel',
+  },
+  {
+    name: 'sort',
+    desc: '排序事件',
+    params: 'dragTabIndex, dropTabIndex, sortType',
+  },
+  {
+    name: 'drag',
+    desc: '拖拽事件',
+    params: 'dragTabIndex, dragEvent',
+  },
+];
+const eventColumnMap = {
+  name: '名称',
+  desc: '说明',
+  params: '参数',
+};
 export default defineComponent({
   render() {
     return (
@@ -116,7 +148,7 @@ export default defineComponent({
           <DemoJsx/>
         </DemoBox>
         <PropsBox title="tab 属性" propsData={tabPropsJson}/>
-        <PropsBox title="tab 事件" propsData={tabEventPropsJson}/>
+        <PropsBox title="tab 事件" columnMap={eventColumnMap} propsData={tabEventPropsJson}/>
         <PropsBox title="tab-Panel 属性" propsData={tabPanelPropsJson}/>
       </div>
     );
