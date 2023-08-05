@@ -26,6 +26,8 @@
 
 import { defineComponent } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
+
 export default defineComponent({
   name: 'MenuGroup',
   props: {
@@ -35,8 +37,9 @@ export default defineComponent({
     },
   },
   setup(props, { slots }) {
+    const { resolveClassName } = usePrefix();
     return () => (
-      <div class="bk-menu-group">
+      <div class={`${resolveClassName('menu-group')}`}>
         <div class="group-name">{props.name}</div>
         <ul class="group-wrap">
           {slots.default?.()}

@@ -26,6 +26,7 @@
 
 import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, ref, toRefs, withModifiers } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import { AngleLeft, AngleRight } from '@bkui-vue/icon';
 import { PropTypes } from '@bkui-vue/shared';
 
@@ -239,6 +240,9 @@ export default defineComponent({
         observer = null;
       }
     });
+
+    const { resolveClassName } = usePrefix();
+
     return {
       collapsed,
       asideContentVisible,
@@ -255,32 +259,33 @@ export default defineComponent({
       asideStyle,
       handleMousedown,
       setCollapse,
+      resolveClassName,
     };
   },
   render() {
     const bkResizeLayoutClass = [
-      'bk-resize-layout',
-      `bk-resize-layout-${this.placement}`,
+      `${this.resolveClassName('resize-layout')}`,
+      `${this.resolveClassName(`bk-resize-layout-${this.placement}`)}`,
       {
-        'bk-resize-layout-collapsed': this.collapsed,
-        'bk-resize-layout-border': this.border,
-        'bk-resize-layout-collapsible': this.collapsible,
+        [`${this.resolveClassName('resize-layout-collapsed')}`]: this.collapsed,
+        [`${this.resolveClassName('resize-layout-border')}`]: this.border,
+        [`${this.resolveClassName('resize-layout-collapsible')}`]: this.collapsible,
       },
     ];
 
 
     return (
       <div ref="bkResizeLayoutRef" class={bkResizeLayoutClass}>
-        <aside class="bk-resize-layout-aside" ref="asideRef" style={this.asideStyle}>
-          <div class="bk-resize-layout-aside-content" v-show={this.asideContentVisible}>
+        <aside class={`${this.resolveClassName('resize-layout-aside')}`} ref="asideRef" style={this.asideStyle}>
+          <div class={`${this.resolveClassName('resize-layout-aside-content')}`} v-show={this.asideContentVisible}>
             {this.$slots.aside?.()}
           </div>
-          <i class="bk-resize-trigger"
+          <i class={`${this.resolveClassName('resize-trigger')}`}
              v-show={!this.disabled && (!this.collapsed || this.autoMinimize)}
              style={this.triggerStyle}
              onMousedown={withModifiers(this.handleMousedown, ['left'])}>
           </i>
-          <i class={['bk-resize-proxy', this.placement]}
+          <i class={[`${this.resolveClassName('resize-proxy')}`, this.placement]}
              ref="resizeProxyRef" v-show={!this.collapsed || this.autoMinimize}></i>
           {
             this.collapsible
@@ -288,16 +293,16 @@ export default defineComponent({
               this.$slots['collapse-trigger']?.()
               || (
                 this.collapsed
-                  ? <AngleRight class="bk-resize-collapse" onClick={this.setCollapse}></AngleRight>
-                  : <AngleLeft class="bk-resize-collapse" onClick={this.setCollapse}></AngleLeft>
+                  ? <AngleRight class={`${this.resolveClassName('resize-collapse')}`} onClick={this.setCollapse}></AngleRight>
+                  : <AngleLeft class={`${this.resolveClassName('resize-collapse')}`} onClick={this.setCollapse}></AngleLeft>
               )
             )
           }
         </aside>
-        <main class="bk-resize-layout-main">
+        <main class={`${this.resolveClassName('resize-layout-main')}`}>
           {this.$slots.main?.()}
         </main>
-        <div class="bk-resize-mask" ref="resizeMaskRef"></div>
+        <div class={`${this.resolveClassName('resize-mask')}`} ref="resizeMaskRef"></div>
       </div>
     );
   },

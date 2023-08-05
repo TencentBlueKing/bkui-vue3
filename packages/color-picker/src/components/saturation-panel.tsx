@@ -27,7 +27,7 @@
 import { computed, defineComponent, ExtractPropTypes, ref } from 'vue';
 
 import { PropTypes } from '@bkui-vue/shared';
-
+import { usePrefix } from '@bkui-vue/config-provider';
 import { clamp, getTouches } from '../utils';
 
 const colorPickerProps = {
@@ -118,10 +118,12 @@ export default defineComponent({
       emit('change', { h, s, v, a });
     };
 
+    const { resolveClassName } = usePrefix();
+
     return () => (
       <div ref={containerRef}
         tabindex="0"
-        class="bk-color-picker-saturation"
+        class={`${resolveClassName('color-picker-saturation')}`}
         style={backgroundStyle.value}
         onKeydown={handleArrowKeydown}
         onMousedown={(e) => {
@@ -130,11 +132,11 @@ export default defineComponent({
         }}
       >
         {/* 从左到右饱和度 saturation 增大 */}
-        <div class="bk-color-picker-saturation-white"></div>
+        <div class={`${resolveClassName('color-picker-saturation-white')}`}></div>
         {/* 从上到下明度 value(brightness) 减小 */}
-        <div class="bk-color-picker-saturation-black"></div>
-        <div class="bk-color-picker-pointer" style={pointerStyle.value}>
-          <div class="bk-color-picker-circle"></div>
+        <div class={`${resolveClassName('color-picker-saturation-black')}`}></div>
+        <div class={`${resolveClassName('color-picker-pointer')}`} style={pointerStyle.value}>
+          <div class={`${resolveClassName('color-picker-circle')}`}></div>
         </div>
       </div>
     );

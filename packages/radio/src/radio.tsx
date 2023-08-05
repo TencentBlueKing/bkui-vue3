@@ -27,6 +27,7 @@
 import type { ExtractPropTypes } from 'vue';
 import { defineComponent } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import {
   classes,
   PropTypes,
@@ -70,6 +71,8 @@ export default defineComponent({
       handleChange,
     } = useRadio();
 
+    const { resolveClassName } = usePrefix();
+
     return {
       isFocused,
       isChecked,
@@ -78,11 +81,12 @@ export default defineComponent({
       handleBlur,
       handleFocus,
       handleChange,
+      resolveClassName,
     };
   },
   render() {
     const radioClass = classes({
-      'bk-radio': true,
+      [`${this.resolveClassName('radio')}`]: true,
       'is-focused': this.isFocused,
       'is-disabled': this.isDisabled,
       'is-checked': this.isChecked,
@@ -94,7 +98,7 @@ export default defineComponent({
       }
 
       return (
-        <span class="bk-radio-label">
+        <span class={`${this.resolveClassName('radio-label')}`}>
           {this.$slots.default ? this.$slots.default() : this.label}
         </span>
       );
@@ -105,7 +109,7 @@ export default defineComponent({
         class={radioClass}
         tabindex="0">
         <input
-          class="bk-radio-input"
+          class={`${this.resolveClassName('radio-input')}`}
           type="radio"
           tabindex="0"
           value={this.label as string}

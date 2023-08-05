@@ -27,6 +27,7 @@
 import { merge } from 'lodash';
 import { defineComponent, ref } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import BKPopover, { PopoverPropTypes } from '@bkui-vue/popover';
 import { classes,  placementType, PropTypes, triggerType } from '@bkui-vue/shared';
 
@@ -65,20 +66,22 @@ export default defineComponent({
     };
 
     const popoverRef = ref(null);
+    const { resolveClassName } = usePrefix();
 
     return {
       afterShow,
       afterHidden,
       popoverRef,
+      resolveClassName,
     };
   },
   render() {
     const wrapperClasses = classes({
-      'bk-dropdown': true,
+      [`${this.resolveClassName('dropdown')}`]: true,
     }, this.$props.extCls);
     /** popover 基础配置 */
     const basePopoverOptions: Partial<PopoverPropTypes> = {
-      theme: 'light bk-dropdown-popover',
+      theme: `light ${this.resolveClassName('dropdown-popover')}`,
       trigger: this.trigger,
       arrow: false,
       placement: this.placement,
@@ -93,10 +96,10 @@ export default defineComponent({
         onAfterHidden={this.afterHidden} >
         {{
           default: () => (
-            <div class="bk-dropdown-reference"> {this.$slots.default?.()} </div>
+            <div class={`${this.resolveClassName('dropdown-reference')}`}> {this.$slots.default?.()} </div>
           ),
           content: () => (
-            <div class="bk-dropdown-content"> { this.$slots.content?.()} </div>
+            <div class={`${this.resolveClassName('dropdown-content')}`}> { this.$slots.content?.()} </div>
           ),
         }}
       </BKPopover>

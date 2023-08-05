@@ -28,7 +28,7 @@
 import { computed, defineComponent, ref, toRaw, toRefs, watch } from 'vue';
 
 import BkCheckbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
-import { useLocale } from '@bkui-vue/config-provider';
+import { useLocale, usePrefix  } from '@bkui-vue/config-provider';
 import { AngleLeft, AngleRight, ArrowsRight, Error, Search, Transfer } from '@bkui-vue/icon/';
 import BkInput from '@bkui-vue/input';
 
@@ -231,6 +231,8 @@ export default defineComponent({
       handleEmitUpdateTargetList();
     };
 
+    const { resolveClassName } = usePrefix();
+
     return {
       selectSearchQuery,
       selectListSearch,
@@ -248,8 +250,10 @@ export default defineComponent({
       multipleSelectList,
       handleMultipleChange,
       handleItemChecked,
+      resolveClassName,
     };
   },
+
   render() {
     const { multiple } = this.$props;
     const leftList = this.sortable ? this.selectListSort : this.selectListSearch;
@@ -332,7 +336,7 @@ export default defineComponent({
           </span>
           {!multiple && (
             <span class="icon-wrapper">
-              {isLeft ? <ArrowsRight class="bk-icon icon-move" /> : <Error class="bk-icon icon-delete" />}
+              {isLeft ? <ArrowsRight class={`${this.resolveClassName('icon')} icon-move`} /> : <Error class={`${this.resolveClassName('icon')} icon-delete`} />}
             </span>
           )}
         </div>
@@ -372,7 +376,7 @@ export default defineComponent({
     };
 
     return (
-      <div class={['bk-transfer', this.extCls]}>
+      <div class={[`${this.resolveClassName('transfer')}`, this.extCls]}>
         <div class="source-list">
           {getHeaderHtml('left-header')}
           {

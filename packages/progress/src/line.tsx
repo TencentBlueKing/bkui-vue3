@@ -24,8 +24,11 @@
 * IN THE SOFTWARE.
 */
 
+import { usePrefix } from '@bkui-vue/config-provider';
+
 /** 进度条直线*/
 const Line = (_: any, { attrs, slots }) => {
+  const { resolveClassName } = usePrefix();
   const { percent, strokeWidth, size, color, titleStyle, showText, textInside, theme } = attrs;
   const percentStyle = {
     height: `${strokeWidth}px`,
@@ -50,8 +53,8 @@ const Line = (_: any, { attrs, slots }) => {
 
   return (
     <div class="progress-outer">
-      <div class={`bk-progress-${size || 'normal'} progress-bar`} style={percentStyle}>
-          <div style={barStyle} class={{ 'progress-inner': true, [`bk-${theme}`]: true }}>
+      <div class={`${resolveClassName(`progress-${size || 'normal'}`)} progress-bar`} style={percentStyle}>
+          <div style={barStyle} class={{ 'progress-inner': true, [`${resolveClassName(`${theme}`)}`]: true }}>
           <div class="inner-text" style={titleStyle}>
             {
               showDefault()

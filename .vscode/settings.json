@@ -6,6 +6,7 @@
       "html",
       "vue"
     ],
+    "eslint.enable": true,
     "eslint.alwaysShowStatus": true,
     "editor.codeActionsOnSave": {
       "source.fixAll": true
@@ -19,7 +20,7 @@
     "editor.rulers": [
       120
     ],
-    "editor.selectionHighlight": false,
+    "editor.selectionHighlight": true,
     "stylelint.validate": [
       "css",
       "less",
