@@ -1,3 +1,5 @@
+/* eslint-disable codecc/comment-ratio */
+
 /*
 * Tencent is pleased to support the open source community by making
 * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
@@ -23,6 +25,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+
 import { defineComponent } from 'vue';
 
 import DemoBox from '../../components/demo-box';
@@ -373,7 +376,7 @@ const selectExpose = [
     desc: '显示Popover弹窗',
     optional: [],
   }
-]
+];
 const optionProps = [
   {
     name: 'id',
@@ -396,7 +399,7 @@ const optionProps = [
     desc: '是否禁用',
     optional: [],
   }
-]
+];
 const optionSlot = [
   {
     name: 'default',
@@ -405,7 +408,7 @@ const optionSlot = [
     desc: '默认插槽',
     optional: [],
   }
-]
+];
 export default defineComponent({
   render() {
     return (
