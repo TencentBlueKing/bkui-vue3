@@ -46,10 +46,10 @@ export type RadioGroupProps = Readonly<ExtractPropTypes<typeof radioGroupProps>>
 export default defineComponent({
   name: 'RadioGroup',
   props: radioGroupProps,
-  emits: [
-    'change',
-    'update:modelValue',
-  ],
+  emits: {
+    'update:modelValue': (value: RadioGroupProps['modelValue']) => value !== undefined,
+    change: (value: RadioGroupProps['modelValue']) => value !== undefined,
+  },
   setup(props, context) {
     const formItem = useFormItem();
     const radioInstanceList = [];

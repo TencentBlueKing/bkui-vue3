@@ -62,6 +62,12 @@
       >
         提交
       </bk-button>
+      <bk-button
+        style="margin-left: 8px;"
+        @click="handleReset"
+      >
+        重置
+      </bk-button>
     </bk-form-item>
   </bk-form>
 </template>
@@ -93,6 +99,10 @@
 
   const submit = () => {
     formRef.value.validate();
+  };
+
+  const handleReset = () => {
+    formRef.value.clearValidate();
   };
 
 </script>

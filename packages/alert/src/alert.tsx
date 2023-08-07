@@ -26,11 +26,17 @@
 
 import { defineComponent, reactive } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import {
   CloseLine,
   InfoLine,
 } from '@bkui-vue/icon';
-import { classes, PropTypes, TagThemeEnum, TagThemeType } from '@bkui-vue/shared';
+import {
+  classes,
+  PropTypes,
+  TagThemeEnum,
+  TagThemeType,
+} from '@bkui-vue/shared';
 
 export default defineComponent({
   name: 'Alert',
@@ -42,15 +48,17 @@ export default defineComponent({
     closeText: PropTypes.string,
     showIcon: PropTypes.bool.def(true),
   },
-  emits: ['close'],
+  emits: {
+    close: (event: Event) => event,
+  },
   setup(_props, context) {
     const state = reactive({
       visible: true,
     });
 
-    const handleClose = () => {
+    const handleClose = (event: Event) => {
       state.visible = false;
-      context.emit('close');
+      context.emit('close', event);
     };
 
     return {
@@ -63,27 +71,29 @@ export default defineComponent({
       return null;
     }
 
+    const { resolveClassName } = usePrefix();
+
     const renderCloseText = Boolean(this.closeText);
     const closeButtonClasses: string = classes({
-      'bk-alert-close': true,
+      [resolveClassName('alert-close')]: true,
       'close-text': renderCloseText,
-      'bk-alert-close-icon': !renderCloseText,
+      [resolveClassName('alert-close-icon')]: !renderCloseText,
     });
 
     const typeClass: string = classes({
-      'bk-alert': true,
-      [`bk-alert-${this.theme}`]: true,
+      [resolveClassName('alert')]: true,
+      [resolveClassName(`alert-${this.theme}`)]: true,
     });
 
     return (
       <div class={typeClass}>
-        <div class="bk-alert-wraper">
-            {this.showIcon && <InfoLine class="bk-alert-icon-info" />}
-            <div class="bk-alert-content">
-                <div class="bk-alert-title">
+        <div class={resolveClassName('alert-wraper')}>
+            {this.showIcon && <InfoLine class={resolveClassName('alert-icon-info')} />}
+            <div class={resolveClassName('alert-content')}>
+                <div class={resolveClassName('alert-title')}>
                   {this.$slots.title ? this.$slots.title() : this.title}
                 </div>
-                <div class="bk-alert-description">
+                <div class={resolveClassName('alert-description')}>
                   {this.$slots.default?.()}
                 </div>
             </div>
