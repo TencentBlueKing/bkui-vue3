@@ -24,6 +24,7 @@
  * IN THE SOFTWARE.
 */
 
+import { isEqual } from 'lodash';
 import {
   computed,
   defineComponent,
@@ -35,35 +36,41 @@ import {
   toRefs,
 } from 'vue';
 
+import Checkbox from '@bkui-vue/checkbox';
 import { Done } from '@bkui-vue/icon';
-import { classes, PropTypes, resolveClassName } from '@bkui-vue/shared';
+import { classes, PropTypes, resolveClassName, SelectedTypeEnum } from '@bkui-vue/shared';
 
 import { optionGroupKey, selectKey } from './common';
 
 export default defineComponent({
   name: 'Option',
   props: {
-    value: {
+    id: {
       type: [String, Number, Object],
       require: true,
     },
-    label: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(''),
+    name: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     disabled: PropTypes.bool.def(false),
   },
-  setup(props) {
+  setup(props, { attrs }) {
     const { proxy } = getCurrentInstance() as any;
 
     const states = reactive({
       visible: true,
     });
 
-    const { disabled, value } = toRefs(props);
+    const { disabled, id, name } = toRefs(props);
+    // 兼容label
+    const optionName = computed(() => (name.value !== undefined ? name.value : attrs.label as string));
+    // 兼容value
+    const optionID = computed(() => (id.value !== undefined ? id.value : attrs.value));
     const select = inject(selectKey, null);
     const group = inject(optionGroupKey, null);
-    const selected = computed<boolean>(() => select?.selected?.some(item => item.value === value.value as string));
+    const selected = computed<boolean>(() => select?.selected?.some(item => isEqual(item.value, optionID.value)));
     const multiple = computed<boolean>(() => select?.multiple);
-    const isHover = computed(() => select?.activeOptionValue === value.value);
-    const showSelectedIcon = computed(() => select?.showSelectedIcon);
+    const isHover = computed(() => select?.activeOptionValue === optionID.value);
+    const showSelectedIcon = computed(() => select?.showSelectedIcon && multiple.value);
+    const selectedStyle = computed(() => select?.selectedStyle);
 
     const handleOptionClick = () => {
       if (disabled.value) return;
@@ -71,17 +78,17 @@ export default defineComponent({
     };
 
     const handleMouseEnter = () => {
-      select.activeOptionValue = value.value;
+      select.activeOptionValue = optionID.value;
     };
 
     onBeforeMount(() => {
-      select?.register(value.value, proxy);
-      group?.register(value.value, proxy);
+      select?.register(optionID.value, proxy);
+      group?.register(optionID.value, proxy);
     });
 
     onBeforeUnmount(() => {
-      select?.unregister(value.value);
-      group?.unregister(value.value);
+      select?.unregister(optionID.value);
+      group?.unregister(optionID.value);
     });
 
     return {
@@ -90,6 +97,9 @@ export default defineComponent({
       multiple,
       isHover,
       showSelectedIcon,
+      selectedStyle,
+      optionName,
+      optionID,
       handleOptionClick,
       handleMouseEnter,
     };
@@ -100,6 +110,7 @@ export default defineComponent({
       'is-disabled': this.disabled,
       'is-multiple': this.multiple,
       'is-hover': this.isHover,
+      'is-checkbox': this.selectedStyle === SelectedTypeEnum.CHECKBOX,
       [resolveClassName('select-option')]: true,
     });
     return (
@@ -108,17 +119,22 @@ export default defineComponent({
         onClick={this.handleOptionClick}
         onMouseenter={this.handleMouseEnter}>
         {
+          this.showSelectedIcon
+            && this.selectedStyle === SelectedTypeEnum.CHECKBOX
+            && <Checkbox class={resolveClassName('select-checkbox')} modelValue={this.selected} />
+        }
+        {
           this.$slots.default?.()
           ?? (
-            <span class={resolveClassName('select-option-item')} title={String(this.label)}>
-              {this.label}
+            <span class={resolveClassName('select-option-item')} title={String(this.optionName)}>
+              {this.optionName}
             </span>
           )
         }
         {
-          this.multiple
+          this.showSelectedIcon
             && this.selected
-            && this.showSelectedIcon
+            && this.selectedStyle === SelectedTypeEnum.CHECK
             && <Done class={resolveClassName('select-selected-icon')} width={22} height={22}></Done>
         }
       </li>

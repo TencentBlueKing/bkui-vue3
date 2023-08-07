@@ -9,8 +9,21 @@
       <bk-option
         v-for="(item, index) in datasource"
         :key="index"
-        :value="item.value"
-        :label="item.label"
+        :id="item.value"
+        :name="item.label"
+      />
+    </bk-select>
+    <bk-select
+      v-model="selectedValue"
+      class="bk-select"
+      multiple
+      selected-style="checkbox"
+    >
+      <bk-option
+        v-for="(item, index) in datasource"
+        :key="index"
+        :id="item.value"
+        :name="item.label"
       />
     </bk-select>
     <bk-select
@@ -24,8 +37,8 @@
       <bk-option
         v-for="(item, index) in datasource"
         :key="index"
-        :value="item.value"
-        :label="item.label"
+        :id="item.value"
+        :name="item.label"
       />
     </bk-select>
     <bk-select
@@ -40,8 +53,8 @@
       <bk-option
         v-for="(item, index) in datasource"
         :key="index"
-        :value="item.value"
-        :label="item.label"
+        :id="item.value"
+        :name="item.label"
       />
     </bk-select>
   </div>
@@ -91,4 +104,3 @@
   margin-right: 20px;
 }
 </style>
-

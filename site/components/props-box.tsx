@@ -33,7 +33,7 @@ import './props-box.less';
 type ColumnKey = keyof IPropsTableItem;
 type IColumnMap = Record<ColumnKey, any>;
 const  columnMap: IColumnMap = {
-  name: '参数',
+  name: '名称',
   desc: '说明',
   type: '类型',
   optional: '可选值',

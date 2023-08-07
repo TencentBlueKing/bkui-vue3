@@ -25,8 +25,19 @@
 */
 export default [
   {
+    title: 'bk-table 默认设置',
+    subTile: '内置的默认配置属性和默认值（只读），可以通过具体的属性配置进行覆盖',
+    config: [
+      { name: 'LINE_HEIGHT', type: 'Number', default: '42', desc: '默认行高, 用于默认设置,(Table.minHeight = LINE_HEIGHT * 2, Table.rowHeight = LINE_HEIGHT, Table.headHeight = LINE_HEIGHT, Table.thead.height=LINE_HEIGHT)，可以通过具体属性配置进行覆盖', optional: [] },
+      { name: 'SCROLLY_WIDTH', type: 'Number', default: '4', desc: '默认滚动条样式宽度', optional: [] },
+      { name: 'COL_MIN_WIDTH', type: 'Number', default: '80', desc: '默认最小列宽，如果需要调整最小列宽，可以通过column.minWidth进行设置，覆盖默认宽度', optional: [] },
+      { name: 'SETTING_SIZE', type: 'Array', default: 'small', desc: 'Setting 行高默认列表，默认 small (LINE_HEIGHT),如果需要自定义列表，参考 ISettings.sizeList', optional: ['large: 78', 'medium: 60', 'small: LINE_HEIGHT'] },
+      { name: 'ROW_KEY', type: 'string', default: 'UUID', desc: '每行数据的唯一id，如果 没有明确指定 row-key,则会默认内置生成UUID作为唯一标识，在启用服务器端分页或者自定义渲染内置自定义组件的场景下，建议明确设置row-key,以保证在数据更新时能够正确渲染组件内容', optional: [] },
+    ],
+  },
+  {
     title: 'bk-table 属性',
-    subTile: 'LINE_HEIGHT = 42; SCROLLY_WIDTH = 4;',
+    subTile: '',
     config: [
       { name: 'data', type: 'Array', default: '--', desc: '显示的数据', optional: [] },
       { name: 'columns', type: 'IColumn[]', default: '', desc: '表格列的配置描述，具体项参考IColumn', optional: [] },
@@ -112,7 +123,7 @@ export default [
     subTile: '排序详细配置',
     config: [
       { name: 'value', type: 'string', default: 'asc', desc: '排序规则', optional: ['asc', 'desc'] },
-      { name: 'sortFn', type: 'Function', default: '--', desc: '自定义排序函数，返回true | false，函数参考 Array.sort((a,b) => boolean)', optional: [] },
+      { name: 'sortFn', type: 'Function', default: '--', desc: '自定义排序函数(a,b,type) => number，type 值 `asc, desc, null`，函数参考 Array.sort((a,b) => number)', optional: [] },
       { name: 'sortScope', type: 'String', default: 'current', desc: '排序生效范围，针对分页表格，当前排序是当前页生效还是全部数据排序', optional: ['current', 'all'] },
     ],
   },
@@ -184,8 +195,18 @@ export default [
     config: [
       { name: '#prepend', desc: '插入至表格第一行之前的内容，会被固定在第一行', params: '' },
       { name: '#empty', desc: '自定义空数据-empty插槽', params: '' },
-      { name: '#default', desc: '<bk-column />模板使用自定义显示默认插槽', params: '{ cell, data, row, column, index, rows }' },
+      { name: '#default', desc: '<bk-column />模板使用自定义显示默认插槽, 这里面参数 data & row 在使用时要注意，data是原始数据，在组件中没有被代理监听，这个数据主要是回传给调用方使用，例如接口调用；如果要绑定数据实现实时更新请使用 row，row是组件内被监听数据，包含一些组件内置属性和方法', params: '{ cell, data, row, column, index, rows }' },
       { name: '#fixedBottom', desc: '底部加载插槽', params: '' },
+    ],
+  },
+  {
+    title: 'Q & A',
+    subTile: '常见问题汇总',
+    type: 'QA',
+    config: [
+      { name: '使用自定义渲染 render | <bk-column /> slot 数据不更新', desc: '在插槽或者render函数渲染中，请检查自定义渲染使用的是否是 data，data 是列表原始数据，组件内没有做代理监听，不会进行双向数据更新，提供此属性主要是有些场景需要使用原始数据进行操作，这里请用row进行数据绑定' },
+      { name: '数据不更新，没有使用自定义渲染', desc: '建议设置table.rowKey, 默认不设置rowKey时，表格会根据数据变化自动更新,设置rowKey后组件会在传递的数据中每行查找对应的数据作为key值，设置到table tr上面，当数据行变化时会被监听并更新' },
+      { name: '每列最小宽度问题', desc: '表格列有设置默认宽度 COL_MIN_WIDTH = 80，可以通过 column.minWidth修正，具体参考 column min-width 设置' },
     ],
   },
 ];

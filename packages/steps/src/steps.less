@@ -26,7 +26,7 @@
   }
 }
 
-.bk-steps {
+.@{bk-prefix}-steps {
   display: flex;
   width: 100%;
   font-size: 0;
@@ -41,7 +41,7 @@
     border-radius: 7px;
   }
 
-  .bk-icon {
+  .@{bk-prefix}-icon {
     font-size: 24px;
     line-height: 24px;
 
@@ -52,7 +52,7 @@
     }
   }
 
-  .bk-step {
+  .@{bk-prefix}-step {
     position: relative;
     margin-right: 8px;
     overflow: hidden;
@@ -60,7 +60,7 @@
     white-space: nowrap;
     flex: 1;
 
-    .bk-step-indicator {
+    .@{bk-prefix}-step-indicator {
       z-index: 1;
       display: inline-flex;
       width: 24px;
@@ -78,22 +78,22 @@
       align-items: center;
       justify-content: center;
 
-      // .bk-steps-icon {
+      // .@{bk-prefix}-steps-icon {
       //   color: @white-color;
       // }
     }
 
-    .bk-step-number {
+    .@{bk-prefix}-step-number {
       font-family: arial;
       font-size: 14px;
     }
 
-    .bk-step-content {
+    .@{bk-prefix}-step-content {
       display: inline-block;
       vertical-align: top;
     }
 
-    .bk-step-title {
+    .@{bk-prefix}-step-title {
       position: relative;
       display: inline-block;
       padding-right: 8px;
@@ -104,7 +104,7 @@
       .after-line();
     }
 
-    .bk-step-description {
+    .@{bk-prefix}-step-description {
       max-width: 140px;
       font-size: 12px;
       color: #979ba5;
@@ -112,8 +112,8 @@
 
     }
 
-    &.bk-step-no-content {
-      .bk-step-indicator {
+    &.@{bk-prefix}-step-no-content {
+      .@{bk-prefix}-step-indicator {
         margin-right: 0;
 
         .after-line();
@@ -129,7 +129,7 @@
       margin-right: 0;
       flex: none;
 
-      .bk-step-title {
+      .@{bk-prefix}-step-title {
         padding-right: 0;
 
         &::after {
@@ -139,56 +139,56 @@
     }
 
     &.done {
-      .bk-step-title,
-      .bk-step-description {
+      .@{bk-prefix}-step-title,
+      .@{bk-prefix}-step-description {
         color: @default-color;
       }
 
-      .bk-steps-icon {
+      .@{bk-prefix}-steps-icon {
         margin-bottom: 3px;
         font-size: 22px;
       }
 
-      .bk-step-iconerror {
-        .bk-steps-icon {
+      .@{bk-prefix}-step-iconerror {
+        .@{bk-prefix}-steps-icon {
           font-size: 14px;
         }
       }
     }
 
     &.current {
-      .bk-step-number,
-      .bk-step-icon,
-      .bk-step-text {
+      .@{bk-prefix}-step-number,
+      .@{bk-prefix}-step-icon,
+      .@{bk-prefix}-step-text {
         border-width: 2px;
       }
 
-      .bk-step-title,
-      .bk-step-description {
+      .@{bk-prefix}-step-title,
+      .@{bk-prefix}-step-description {
         color: @default-color;
       }
 
-      &.bk-step-error {
-        .bk-step-indicator {
+      &.@{bk-prefix}-step-error {
+        .@{bk-prefix}-step-indicator {
           background-color: @danger-color;
           border-color: @danger-color;
         }
 
-        .bk-step-title,
-        .bk-step-description {
+        .@{bk-prefix}-step-title,
+        .@{bk-prefix}-step-description {
           color: @danger-color;
         }
       }
     }
 
     &.isError {
-      .bk-step-indicator {
+      .@{bk-prefix}-step-indicator {
         background-color: @danger-color !important;
         border-color: @danger-color !important;
       }
 
-      .bk-step-content {
-        .bk-step-title {
+      .@{bk-prefix}-step-content {
+        .@{bk-prefix}-step-title {
           color: @danger-color !important;
         }
       }
@@ -199,33 +199,33 @@
   each(@themeSelectors, {
   @color: '@{value}-color';
   &-@{value} {
-    .bk-step {
+    .@{bk-prefix}-step {
       &.done {
-        .bk-step-number,
-        .bk-step-icon,
-        .bk-step-text {
+        .@{bk-prefix}-step-number,
+        .@{bk-prefix}-step-icon,
+        .@{bk-prefix}-step-text {
           color: @@color;
           border-color: @@color;
         }
-          
-            
-        .bk-step-title,
-        .bk-step-indicator {
+
+
+        .@{bk-prefix}-step-title,
+        .@{bk-prefix}-step-indicator {
           &::after {
             background-image: linear-gradient(to right, @@color 50%, transparent 0%);
           }
         }
-          
-            
+
+
         &::after {
           background-image: linear-gradient(@@color 50%, transparent 0%);
         }
       }
-          
+
       &.current {
-        .bk-step-number,
-        .bk-step-icon,
-        .bk-step-text {
+        .@{bk-prefix}-step-number,
+        .@{bk-prefix}-step-icon,
+        .@{bk-prefix}-step-text {
           color: #fff;
           background-color: @@color;
           border-color: @@color;
@@ -236,9 +236,9 @@
 })
 
   &-dashed {
-    .bk-step {
-      .bk-step-title,
-      .bk-step-indicator {
+    .@{bk-prefix}-step {
+      .@{bk-prefix}-step-title,
+      .@{bk-prefix}-step-indicator {
         &::after {
           background-image: linear-gradient(to right, @light-gray 50%, transparent 0%);
           background-position: bottom;
@@ -250,9 +250,9 @@
   }
 
   &-solid {
-    .bk-step {
-      .bk-step-title,
-      .bk-step-indicator {
+    .@{bk-prefix}-step {
+      .@{bk-prefix}-step-title,
+      .@{bk-prefix}-step-indicator {
         &::after {
           background-color: @light-gray;
         }
@@ -264,12 +264,12 @@
     flex-direction: column;
     height: 100%;
 
-    .bk-step {
+    .@{bk-prefix}-step {
       margin-right: 0;
       margin-bottom: 8px;
 
-      .bk-step-title,
-      .bk-step-indicator {
+      .@{bk-prefix}-step-title,
+      .@{bk-prefix}-step-indicator {
         &::after {
           display: none;
         }
@@ -288,7 +288,7 @@
         content: '';
       }
 
-      .bk-step-title {
+      .@{bk-prefix}-step-title {
         display: flex;
         height: 100%;
         margin-top: 0;
@@ -300,23 +300,23 @@
 
 
   &-small {
-    .bk-step {
-      .bk-step-indicator {
+    .@{bk-prefix}-step {
+      .@{bk-prefix}-step-indicator {
         width: 20px;
         height: 20px;
         line-height: 20px;
       }
 
-      .bk-step-title {
+      .@{bk-prefix}-step-title {
         font-size: 12px;
         line-height: 20px;
       }
 
-      .bk-step-number {
+      .@{bk-prefix}-step-number {
         font-size: 12px;
       }
 
-      .bk-step-icon {
+      .@{bk-prefix}-step-icon {
         font-size: 14px;
         line-height: 14px;
       }
@@ -326,14 +326,14 @@
         left: 10px;
       }
 
-      .bk-step-title {
+      .@{bk-prefix}-step-title {
         &::after {
           top: 10px;
         }
       }
 
-      &.bk-step-no-content {
-        .bk-step-indicator {
+      &.@{bk-prefix}-step-no-content {
+        .@{bk-prefix}-step-indicator {
           &::after {
             top: 8px;
             left: 28px;

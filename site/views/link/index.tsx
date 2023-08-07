@@ -82,7 +82,8 @@ export default defineComponent({
         <DemoTitle
           name="Link 文字链接"
           desc="Link 文字超链接"
-          link="https://www.google.com.hk/"/>
+          link="https://www.google.com.hk/"
+          designLink="https://bkdesign.bk.tencent.com/design/143"/>
 
         <DemoBox
           title="基础用法"

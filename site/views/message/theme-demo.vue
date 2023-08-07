@@ -29,6 +29,7 @@
 
 <script setup>
   import { Message } from 'bkui-vue';
+  import { h } from 'vue';
 
   const handlePrimary = () => {
     Message({
@@ -39,7 +40,7 @@
   const handleSuccess = () => {
     Message({
       theme: 'success',
-      message: '恭喜！你提交的申请已经审核通过，请及时跟进了解下一步操作方式',
+      message: h('div', '恭喜！你提交的申请已经审核通过，请及时跟进了解下一步操作方式'),
     });
   };
   const handleWarning = () => {

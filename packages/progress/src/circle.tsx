@@ -24,8 +24,11 @@
 * IN THE SOFTWARE.
 */
 
+import { usePrefix } from '@bkui-vue/config-provider';
+
 /** 环形进度和仪表盘 */
 const Circle = (_: any, { attrs, slots }) => {
+  const { resolveClassName } = usePrefix();
   const {
     width,
     percent,
@@ -96,7 +99,7 @@ const Circle = (_: any, { attrs, slots }) => {
     'stroke-linecap': strokeLinecap,
     'stroke-width': (percent > 0 && circleStrokeWidth) || 0,
     'fill-opacity': '0',
-    class: `process-circle-path bk-${theme}-circle-trail`,
+    class: `process-circle-path ${resolveClassName(`${theme}-circle-trail`)}`,
     style: pathStyle,
   };
 

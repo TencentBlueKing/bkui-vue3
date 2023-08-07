@@ -36,6 +36,10 @@
       border-radius: 10px;
       box-shadow: inset 0 0 6px rgba(204, 204, 204, .3);
     }
+
+    .prepend-row {
+      transform: translateX(var(--prepend-left));
+    }
   }
 
   .@{bk-prefix}-fixed-bottom-border {
@@ -119,6 +123,7 @@
           }
 
           &.selection {
+            padding: 0;
             text-align: center;
           }
 

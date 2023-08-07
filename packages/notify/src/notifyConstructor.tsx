@@ -27,6 +27,7 @@
 import { computed, defineComponent, onMounted, onUnmounted, ref, Transition, watch } from 'vue';
 import { toType } from 'vue-types';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import { Close, Error, Info, Success, Warn } from '@bkui-vue/icon';
 import { bkZIndexManager, PropTypes } from '@bkui-vue/shared';
 
@@ -67,9 +68,11 @@ export default defineComponent({
       zIndex,
     }));
 
+    const { resolveClassName } = usePrefix();
+
     const classNames = computed(() => [
-      'bk-notify',
-      `bk-notify-${props.theme}`,
+      resolveClassName('notify'),
+      resolveClassName(`notify-${props.theme}`),
       horizontalClass.value,
     ]);
 
@@ -115,6 +118,7 @@ export default defineComponent({
       visible,
       renderMessage,
       handleClose,
+      resolveClassName,
     };
   },
   render() {
@@ -134,12 +138,12 @@ export default defineComponent({
           v-show={this.visible}
           class={this.classNames}
           style={this.styles}>
-          <div class="bk-notify-content">
-            <div class="bk-notify-icon">{renderIcon()}</div>
-            {this.title ? <div class="bk-notify-content-header">{this.title}</div> : ''}
-            <div class="bk-notify-content-text">{this.renderMessage}</div>
+          <div class={`${this.resolveClassName('notify-content')}`}>
+            <div class={`${this.resolveClassName('notify-icon')}`}>{renderIcon()}</div>
+            {this.title ? <div class={`${this.resolveClassName('notify-content-header')}`}>{this.title}</div> : ''}
+            <div class={`${this.resolveClassName('notify-content-text')}`}>{this.renderMessage}</div>
           </div>
-          {this.dismissable && <Error class="bk-notify-icon bk-notify-close" onClick={this.handleClose}></Error>}
+          {this.dismissable && <Error class={`${this.resolveClassName('notify-icon')} ${this.resolveClassName('notify-close')}`} onClick={this.handleClose}></Error>}
         </div>
       </Transition>
     );

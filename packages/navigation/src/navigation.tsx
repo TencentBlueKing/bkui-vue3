@@ -24,8 +24,9 @@
  * IN THE SOFTWARE.
 */
 
-import { defineComponent, onBeforeUnmount, PropType, reactive, ref } from 'vue';
+import { defineComponent, onBeforeUnmount, PropType, reactive, ref, SlotsType } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import { CollapseLeft } from '@bkui-vue/icon';
 
 import NavigationTitle from './navigation-title';
@@ -80,7 +81,15 @@ export default defineComponent({
   name: 'Navigation',
   props: NavigationProps,
   emits: ['leave', 'toggle', 'hover', 'toggle-click'],
-  slots: ['header', 'menu', 'footer', 'side-icon', 'side-header'],
+  // slots: ['header', 'menu', 'footer', 'side-icon', 'side-header'],
+  slots: Object as SlotsType<{
+    default?: () => HTMLElement,
+    header?: () => HTMLElement,
+    menu?: () => HTMLElement,
+    footer?: () => HTMLElement,
+    'side-icon'?: () => HTMLElement,
+    'side-header'?: () => HTMLElement,
+  }>,
   setup(props, { emit }) {
     const defaultHeaderTitle = ref(props.headerTitle);
     const nav = reactive({
@@ -129,6 +138,9 @@ export default defineComponent({
       emit('toggle', nav.hover);
       emit('toggle-click', nav.hover);
     };
+
+    const { resolveClassName } = usePrefix();
+
     return {
       defaultHeaderTitle,
       nav,
@@ -136,13 +148,14 @@ export default defineComponent({
       handleMouseOver,
       handleMouseLeave,
       handleClick,
+      resolveClassName,
     };
   },
   render() {
-    return <div class="bk-navigation">
+    return <div class={`${this.resolveClassName('navigation')}`}>
       {
         this.navigationType === 'top-bottom' && <div
-            class="bk-navigation-header"
+            class={`${this.resolveClassName('navigation-header')}`}
             style={{ flexBasis: `${this.headHeight}px` }}>
             <NavigationTitle sideTitle={this.sideTitle}>
               {
@@ -159,9 +172,9 @@ export default defineComponent({
             </div>
         </div>
       }
-      <div class="bk-navigation-wrapper">
+      <div class={`${this.resolveClassName('navigation-wrapper')}`}>
         {
-          this.needMenu &&  <div class="navigation-nav"
+          this.needMenu && <div class="navigation-nav"
                       style={{ width: !this.nav.click ? `${this.navWidth}px` : `${this.hoverWidth}px` }}>
                       <div class="nav-slider"
                       onMouseenter={this.handleMouseOver}

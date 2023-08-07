@@ -197,14 +197,6 @@ export default defineComponent({
     function handleBlur(e) {
       isFocused.value = false;
       ctx.emit(EVENTS.BLUR, e);
-      if (
-        isNumberInput.value && Number.isInteger(parseInt(e.target.value, 10))
-        && (e.target.value > props.max || e.target.value < props.min)
-      ) {
-        const val = e.target.value > props.max ? props.max : props.min;
-        ctx.emit(EVENTS.UPDATE, val);
-        ctx.emit(EVENTS.CHANGE, val);
-      }
       if (props.withValidate) {
         formItem?.validate?.('blur');
       }
@@ -229,6 +221,11 @@ export default defineComponent({
             EVENTS.UPDATE,
             e.target.value,
           );
+        } else if (eventName === EVENTS.CHANGE && isNumberInput.value && e.target.value !== '') {
+          const val = handleNumber(e.target.value, 0);
+          ctx.emit(EVENTS.UPDATE, val, e);
+          ctx.emit(eventName, val, e);
+          return;
         }
 
         ctx.emit(eventName, e.target.value, e);
@@ -262,10 +259,10 @@ export default defineComponent({
       handleInput(e);
     }
 
-    function handleNumber(step: number, INC = true) {
-      const numStep = parseInt(String(step), 10);
+    function handleNumber(modelValue: number, step: number, INC = true) {
+      const numStep = Number(step);
       const precision = Number.isInteger(props.precision) ? props.precision : 0;
-      const val: number = parseFloat((props.modelValue ?? 0).toString());
+      const val = Number(modelValue);
       const factor = Number.isInteger(numStep) ? numStep : 1;
 
       let newVal = val + (INC ? factor : -1 * factor);
@@ -281,14 +278,14 @@ export default defineComponent({
 
     function handleInc() {
       if (props.disabled) return;
-      const newVal = handleNumber(props.step);
+      const newVal = handleNumber(props.modelValue as number, props.step);
       ctx.emit(EVENTS.UPDATE, newVal);
       ctx.emit(EVENTS.CHANGE, newVal);
     }
 
     function handleDec() {
       if (props.disabled) return;
-      const newVal = handleNumber(props.step, false);
+      const newVal = handleNumber(props.modelValue as number, props.step, false);
       ctx.emit(EVENTS.UPDATE, newVal);
       ctx.emit(EVENTS.CHANGE, newVal);
     }

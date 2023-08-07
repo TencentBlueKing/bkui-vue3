@@ -26,7 +26,7 @@
 import hljs from 'highlight.js';
 import type MarkdownIt from 'markdown-it';
 import markdownItContainer from 'markdown-it-container';
-import md from 'vite-plugin-md';
+import md from 'vite-plugin-vue-markdown';
 
 const tipsList = ['info', 'tip', 'warning', 'danger'];
 const createTips = (cls: string) =>  ({

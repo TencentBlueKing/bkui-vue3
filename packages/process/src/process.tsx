@@ -26,7 +26,7 @@
 
 import { defineComponent, ExtractPropTypes, onMounted, ref, watch } from 'vue';
 
-import { useLocale } from '@bkui-vue/config-provider';
+import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { Circle, Done, Error } from '@bkui-vue/icon';
 import { classes, PropTypes } from '@bkui-vue/shared';
 // import { Error, Circle, Done } from '@bkui-vue/icon';
@@ -90,15 +90,18 @@ export default defineComponent({
 
     onMounted(init);
 
+    const { resolveClassName } = usePrefix();
+
     return {
       defaultProcessList,
       paddingBottom,
       jumpTo,
+      resolveClassName,
     };
   },
 
   render() {
-    const processClsPrefix = 'bk-process';
+    const processClsPrefix = this.resolveClassName('process');
     const processCls: string = classes({
       [`${this.extCls}`]: !!this.extCls,
     }, `${processClsPrefix}`);
@@ -113,13 +116,13 @@ export default defineComponent({
 
     const renderIcon = (index, item) => {
       if (index === this.curProcess - 1 && isLoadingStatus(item)) {
-        return (<Circle class="bk-icon bk-process-icon icon-loading" />);
+        return (<Circle class={`${this.resolveClassName('icon')} ${this.resolveClassName('process-icon')} icon-loading`} />);
       }  if (index === this.curProcess - 1 && isErrorStatus(item)) {
-        return (<Error class="bk-process-icon icon-error" />);
+        return (<Error class={`${this.resolveClassName('process-icon')} icon-error`} />);
       }  if (index === this.curProcess - 1 && isIcon(item)) {
-        return (<span class="bk-process-icon-custom">{<item.icon/>}</span>);
+        return (<span class={`${this.resolveClassName('process-icon-custom')}`}>{<item.icon/>}</span>);
       } if (isDone(index)) {
-        return (<Done class="bk-process-icon-done" />);
+        return (<Done class={`${this.resolveClassName('process-icon-done')}`} />);
       }
       // return (<span class="number">{<item.icon/>}</span>);
     };

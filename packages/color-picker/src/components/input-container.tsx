@@ -30,6 +30,7 @@ import {
 } from 'vue';
 
 import { classes, PropTypes } from '@bkui-vue/shared';
+import { usePrefix } from '@bkui-vue/config-provider';
 
 const inputContainerProps = {
   info: PropTypes.object.isRequired,
@@ -52,20 +53,22 @@ export default defineComponent({
       const { value } = e.target;
       emit('input', key, value);
     };
+
+    const { resolveClassName } = usePrefix();
+
     const colorPickerCls = computed(() => classes({
       error: props.info.error,
-    }, 'bk-color-picker-input-value'));
+    }, `${resolveClassName('color-picker-input-value')}`));
 
     return () => (
-      <div class="bk-color-picker-input-part">
+      <div class={`${resolveClassName('color-picker-input-part')}`}>
       <input type={props.info.name === 'HEX' ? 'text' : 'number'}
         class={colorPickerCls.value}
         value={props.info.value}
         onKeydown={handleTab}
         onInput={handleInput}/>
-      <span class="bk-color-picker-input-text">{props.info.name}</span>
+      <span class={`${resolveClassName('color-picker-input-text')}`}>{props.info.name}</span>
     </div>
     );
   },
 });
-

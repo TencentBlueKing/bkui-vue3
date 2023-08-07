@@ -23,6 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import { kebabCase } from 'lodash';
 import { defineComponent } from 'vue';
 
 import BkResizeLayout from '@bkui-vue/resize-layout';
@@ -39,7 +40,7 @@ import CollapsibleDemo from './collapsible-demo.vue';
 import ImmediateDemo from './immediate-demo.vue';
 
 const propsJson: IPropsTableItem[] = Object.keys(BkResizeLayout.props).map(prop => ({
-  name: prop,
+  name: kebabCase(prop),
   type: BkResizeLayout.props[prop]._vueTypes_name,
   default: BkResizeLayout.props[prop].default,
   desc: '',
@@ -61,28 +62,28 @@ export default defineComponent({
           title="最小化"
           desc=""
           componentName="resize-layout"
-          demoName="base-demo">
+          demoName="auto-minimize-demo">
             <AutoMiniMizeDemo />
         </DemoBox>
         <DemoBox
           title="实时拉伸"
           desc=""
           componentName="resize-layout"
-          demoName="base-demo">
+          demoName="immediate-demo">
             <ImmediateDemo />
         </DemoBox>
         <DemoBox
           title="可折叠"
           desc=""
           componentName="resize-layout"
-          demoName="base-demo">
+          demoName="collapsible-demo">
             <CollapsibleDemo />
         </DemoBox>
         <DemoBox
           title="多级嵌套"
           desc=""
           componentName="resize-layout"
-          demoName="base-demo">
+          demoName="advance-demo">
             <AdvanceDemo />
         </DemoBox>
         <PropsBox propsData={propsJson} subtitle="" />

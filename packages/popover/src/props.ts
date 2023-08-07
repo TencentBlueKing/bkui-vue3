@@ -25,9 +25,8 @@
  */
 import { ExtractPropTypes } from 'vue';
 
-import { placementType, PropTypes } from '@bkui-vue/shared';
+import { PlacementEnum, placementType, PropTypes, renderType, triggerType  } from '@bkui-vue/shared';
 
-import { PlacementEnum, renderType, triggerType } from './../../shared/src/vue-types';
 const EventProps = {
   onAfterHidden: Function,
   onAfterShow: Function,
@@ -45,7 +44,7 @@ export const PopoverProps = {
   width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
   height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
   maxHeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
-  content: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.any]).def(''),
+  content: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def(''),
 
   allowHtml: PropTypes.bool.def(false),
   /**

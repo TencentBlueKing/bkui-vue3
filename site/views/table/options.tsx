@@ -24,7 +24,7 @@
 * IN THE SOFTWARE.
 */
 
-import BtnDemo from './btn-demo.vue';
+// import BtnDemo from './btn-demo.vue';
 export const DATA_TABLE = [
   {
     ip: '192.168.0.1-2018-05-25 15:02:241',
@@ -73,9 +73,9 @@ export const DATA_COLUMNS = [
   {
     label: '序号',
     type: 'index',
-    sort: true,
     width: 50,
     minWidth: 80,
+    sort: true,
   },
   {
     label: '名称/内网IP',
@@ -87,6 +87,7 @@ export const DATA_COLUMNS = [
     label: '来源',
     field: 'source',
     width: 80,
+    render: ({ row }) => `${row.status}-${row.source}`,
     filter: {
       list: [{ text: 'QQ', value: 'QQ' }, { text: '微信', value: '微信' }, { text: 'Email', value: 'Email' }],
     },
@@ -99,6 +100,7 @@ export const DATA_COLUMNS = [
   {
     label: (column, index) => `状态-${index}-${column.field}`,
     field: 'status',
+    render: ({ row }) => `${row.status}-${row.msg}`,
     sort: true,
   },
 ];
@@ -195,13 +197,14 @@ export const DATA_FIX_TABLE = [
 export const DATA_FIX_COLUMNS = [
   {
     type: 'selection',
-    width: 80,
+    width: 20,
+    minWidth: 20,
     fixed: true,
-    // showOverflowTooltip: {
-    //   mode: 'static',
-    //   content: (_column, _row) => 'xxx_uuu',
-    //   disabled: (_column, _row) => false,
-    // },
+    showOverflowTooltip: {
+      mode: 'static',
+      content: (_column, _row) => 'xxx_uuu',
+      disabled: (_column, _row) => false,
+    },
   },
   {
     label: '序号',
@@ -239,10 +242,7 @@ export const DATA_FIX_COLUMNS = [
   },
   {
     label: '操作',
-    render: () => {
-      console.log('Edit Change render');
-      return <BtnDemo></BtnDemo>;
-    },
+    render: ({ row }) => <bk-input v-model={ row.status }></bk-input>,
     width: 180,
     fixed: 'right',
   },

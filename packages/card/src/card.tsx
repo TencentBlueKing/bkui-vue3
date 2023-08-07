@@ -27,6 +27,7 @@
 import { defineComponent, ref, watch } from 'vue';
 
 import BKCollapseTransition from '@bkui-vue/collapse-transition';
+import { usePrefix } from '@bkui-vue/config-provider';
 import { AngleDown, AngleRight, EditLine } from '@bkui-vue/icon';
 import BkInput from '@bkui-vue/input';
 import { classes, PropTypes } from '@bkui-vue/shared';
@@ -74,6 +75,10 @@ export default defineComponent({
     watch(() => props.title, (val) => {
       renderTitle.value = val;
     }, { immediate: true });
+
+    const { resolveClassName } = usePrefix();
+    const wrapperClsName = resolveClassName('card');
+
     return {
       collapseActive,
       showInput,
@@ -81,27 +86,27 @@ export default defineComponent({
       handleCollapse,
       saveEdit,
       clickEdit,
+      wrapperClsName,
     };
   },
   render() {
-    const wrapperName = 'bk-card';
     const cardClass = classes({
-      [`${wrapperName}`]: true,
-      [`${wrapperName}-border-none`]: !this.$props.border,
+      [`${this.wrapperClsName}`]: true,
+      [`${this.wrapperClsName}-border-none`]: !this.$props.border,
     }, '');
     const headClass = classes({
-      [`${wrapperName}-head`]: true,
-      [`${wrapperName}-head-${this.$props.position}`]: this.$props.isCollapse && this.$props.position,
+      [`${this.wrapperClsName}-head`]: true,
+      [`${this.wrapperClsName}-head-${this.$props.position}`]: this.$props.isCollapse && this.$props.position,
       ['no-line-height']: this.$props.disableHeaderStyle,
       ['collapse']: !this.collapseActive,
     }, '');
 
     const defaultHeader = <div class="title" title={this.renderTitle}>
-      { this.showInput ? <BkInput class={`${wrapperName}-input`} v-model={this.renderTitle}
+      { this.showInput ? <BkInput class={`${this.wrapperClsName}-input`} v-model={this.renderTitle}
         onBlur={this.saveEdit} /> : this.renderTitle}
     </div>;
 
-    const defaultIcon = <span class={`${wrapperName}-icon`} onClick={this.handleCollapse}>
+    const defaultIcon = <span class={`${this.wrapperClsName}-icon`} onClick={this.handleCollapse}>
       { this.collapseActive ? <AngleDown /> : <AngleRight /> }
     </span>;
 
@@ -110,13 +115,13 @@ export default defineComponent({
           { this.$props.isCollapse && (this.$slots.icon?.() ?? defaultIcon)}
           {this.$slots.header?.() ?? defaultHeader}
           { (this.$props.isEdit && !this.showInput)
-          && <EditLine class={`${wrapperName}-edit`} onClick={this.clickEdit} /> }
+          && <EditLine class={`${this.wrapperClsName}-edit`} onClick={this.clickEdit} /> }
       </div> : ''}
       <BKCollapseTransition>
         <div v-show={this.collapseActive}>
-          <div class={`${wrapperName}-body`}>{this.$slots.default?.() ?? 'Content'}</div>
+          <div class={`${this.wrapperClsName}-body`}>{this.$slots.default?.() ?? 'Content'}</div>
           {
-            this.$props.showFooter ? <div class={`${wrapperName}-footer`}>{this.$slots.footer?.() ?? 'Footer'}</div> : ''
+            this.$props.showFooter ? <div class={`${this.wrapperClsName}-footer`}>{this.$slots.footer?.() ?? 'Footer'}</div> : ''
           }
         </div>
       </BKCollapseTransition>

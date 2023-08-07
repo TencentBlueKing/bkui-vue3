@@ -24,7 +24,12 @@
  * IN THE SOFTWARE.
 */
 
-import { withInstallProps } from '@bkui-vue/shared';
+import {
+  formItemKey,
+  formKey,
+  useFormItem,
+  withInstallProps,
+} from '@bkui-vue/shared';
 
 import ComposeFormItem from './compose-form-item';
 import Form, { formProps } from './form';
@@ -40,6 +45,9 @@ export {
   BkForm,
   FormItem as BkFormItem,
   ComposeFormItem as BkComposeFormItem,
+  formItemKey,
+  formKey,
+  useFormItem,
 };
 
 export type {

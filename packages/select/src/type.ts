@@ -24,13 +24,14 @@
 * IN THE SOFTWARE.
 */
 import Popover from '@bkui-vue/popover';
+import { SelectedTypeEnum } from '@bkui-vue/shared';
 
 import Option from './option';
 import Group from './optionGroup';
 import SelectTagInput from './selectTagInput';
 
 export interface OptionInstanceType extends InstanceType<typeof Option> {
-  value: string;
+  optionID: string;
 }
 export type GroupInstanceType = InstanceType<typeof Group>;
 export type PopoverInstanceType = InstanceType<typeof Popover>;
@@ -41,6 +42,7 @@ export interface ISelectContext {
   selected: ISelected[];
   activeOptionValue: any;
   showSelectedIcon: boolean;
+  selectedStyle: SelectedTypeEnum;
   register(key: any, option: OptionInstanceType): any;
   unregister(key: any): any;
   registerGroup(key: any, option: GroupInstanceType): any;

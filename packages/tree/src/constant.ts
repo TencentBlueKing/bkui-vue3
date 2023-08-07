@@ -69,6 +69,7 @@ export const enum NODE_ATTRIBUTES {
   IS_ASYNC = '__is_async',
   IS_LOADING = '__is_loading',
   TREE_NODE_ATTR = '__attr__',
+  SOURCE_ITEM = '__source_item__',
 }
 
 export const NODE_SOURCE_ATTRS = {

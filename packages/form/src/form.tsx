@@ -30,6 +30,7 @@ import {
   provide,
 } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import {
   classes,
   formKey,
@@ -156,17 +157,20 @@ export default defineComponent({
       formItemInstanceList.forEach(formItem => fieldMap[formItem.property] && formItem.clearValidate());
     };
 
+    const { resolveClassName } = usePrefix();
+
     return {
       handleSubmit,
       validate,
       getValidateResult,
       clearValidate,
+      resolveClassName,
     };
   },
   render() {
     const formClasses = classes({
-      'bk-form': true,
-      [`bk-form--${this.formType}`]: true,
+      [`${this.resolveClassName('form')}`]: true,
+      [`${this.resolveClassName(`form--${this.formType}`)}`]: true,
     });
     return (
       <form

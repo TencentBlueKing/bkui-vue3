@@ -187,6 +187,13 @@ const props: IPropsTableItem[] = [
     desc: '是否可拖拽',
     optional: [],
   },
+  {
+    name: 'infoType',
+    type: 'String',
+    default: '',
+    desc: '实现成功，错误，警告，加载中的不同Icon提示的弹窗类型',
+    optional: ['success', 'danger', 'warning', 'loading'],
+  },
 ];
 const infoBox: IPropsTableItem[] = [
   {
@@ -230,7 +237,7 @@ export default defineComponent({
         <DemoBox
           title='各种状态'
           subtitle=''
-          desc='配置 type 的值，实现成功，错误，警告，加载中的不同类型'
+          desc='配置 infoType 的值，实现成功，错误，警告，加载中的不同类型'
           componentName='info-box'
           demoName='base-demo'>
           <StatusDemo/>

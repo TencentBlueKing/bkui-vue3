@@ -36,14 +36,14 @@ import SlotDemo from './slot-demo.vue';
 
 const swiperPropsJson: IPropsTableItem[] = [
   {
-    name: 'isLoop',
+    name: 'is-loop',
     type: 'Boolean',
     default: 'true',
     desc: '是否自动轮询',
     optional: [],
   },
   {
-    name: 'loopTime',
+    name: 'loop-time',
     type: 'Number',
     default: '8000',
     desc: '自动轮询间隔时间',

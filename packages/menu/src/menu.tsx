@@ -26,6 +26,8 @@
 
 import { computed, defineComponent, PropType, ref, watch, watchEffect } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
+
 import { IMenuInfo, MenuMode, useMenuProvider } from './utils';
 export const menuProps = {
   activeKey: String,
@@ -113,9 +115,10 @@ export default defineComponent({
       openedKeys,
       menuStore,
     });
+    const { resolveClassName } = usePrefix();
     return () => (
       <div class={{
-        'bk-menu': true,
+        [`${resolveClassName('menu')}`]: true,
         'is-collapse': collapse.value,
       }}>
         {slots.default?.()}

@@ -142,6 +142,12 @@ const en = {
   tagInput: {
     placeholder: 'Please input and press ENTER to finish',
   },
+  message: {
+    assistant: 'Assistant',
+    details: 'Details',
+    copySuccess: 'Successfully',
+    copyFailed: 'Copy Failed',
+  },
   // exception: {
   //   403: 'Forbidden',
   //   404: 'Not Found',

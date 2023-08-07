@@ -61,6 +61,18 @@ const routes: RouteRecordRaw[] = [
     },
   },
   /**
+   * @description:图钉
+   */
+  {
+    path: '/affix',
+    name: 'affix',
+    component: () => import('../views/affix/index'),
+    meta: {
+      group: NavGroupMeta.Nav,
+      navName: 'Affix 图钉',
+    },
+  },
+  /**
    * @description:导航页
    */
   {
@@ -547,7 +559,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/time-picker'),
     meta: {
       group: NavGroupMeta.Nav,
-      navName: 'TimePicker 日期选择器',
+      navName: 'TimePicker 时间选择器',
     },
   },
   /**

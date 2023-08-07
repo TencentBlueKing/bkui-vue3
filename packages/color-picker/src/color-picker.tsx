@@ -38,6 +38,7 @@ import {
 } from 'vue';
 import { toType } from 'vue-types';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import { clickoutside } from '@bkui-vue/directives';
 import { AngleUp } from '@bkui-vue/icon';
 import {
@@ -96,12 +97,15 @@ export default defineComponent({
     const saturationPanelRef = ref<any>(null);
     const referenceRef = ref<any>(null);
 
+    const { resolveClassName } = usePrefix();
+
     const colorPickerCls = computed(() => classes({
-      [`bk-color-picker-${props.size}`]: props.size,
-      'bk-color-picker-show-dropdown': showDropdown.value,
-      'bk-color-picker-show-value': props.showValue,
-      'bk-color-picker-disabled': props.disabled || props.readonly,
-    }, `bk-color-picker ${props.extCls}`));
+      // [`bk-color-picker-${props.size}`]: props.size,
+      [`${resolveClassName(`color-picker-${props.size}`)}`]: props.size,
+      [`${resolveClassName('color-picker-show-dropdown')}`]: showDropdown.value,
+      [`${resolveClassName('color-picker-show-value')}`]: props.showValue,
+      [`${resolveClassName('color-picker-disabled')}`]: props.disabled || props.readonly,
+    }, `${resolveClassName('color-picker')} ${props.extCls}`));
 
     // 是否渲染预设值
     const isRenderRecommend = computed(() => Boolean(props.recommend === true
@@ -161,7 +165,8 @@ export default defineComponent({
       dropRef.value?.updateDropdown();
       // 展开后默认聚焦于 HEX 输入框，setTimeout 等 transfer 出现
       setTimeout(() => {
-        const hexInput = dropRef.value.$el.querySelector('.bk-color-picker-input-hex .bk-color-picker-input-value');
+        // const hexInput = dropRef.value.$el.querySelector('.bk-color-picker-input-hex .bk-color-picker-input-value');
+        const hexInput = dropRef.value.$el.querySelector(`.${resolveClassName('color-picker-input-hex')} .${resolveClassName('color-picker-input-value')}`);
         hexInput.select();
       }, 100);
     };
@@ -268,21 +273,21 @@ export default defineComponent({
         onKeydown={handleTriggerKeydown}
         v-clickoutside={hideDropDown}
         onClick={toggleDropdown}>
-        <div class="bk-color-picker-color">
+        <div class={`${resolveClassName('color-picker-color')}`}>
           {/* 如果传入的色值为空字符串或者没有传值默认白色背景 + 中间一个叉 */}
           <span
-            class={`bk-color-picker-color-square ${
-              !colorStr.value && 'bk-color-picker-empty'
+            class={`${resolveClassName('color-picker-color-square')} ${
+              !colorStr.value && `${resolveClassName('color-picker-empty')}`
             }`}
             style={`background: ${colorStr.value || '#FFF'}`}
           ></span>
         </div>
         {props.showValue ? (
-          <div class="bk-color-picker-text">
+          <div class={`${resolveClassName('color-picker-text')}`}>
             <span>{colorStr.value}</span>
           </div>
         ) : undefined}
-        <div class="bk-color-picker-icon">
+        <div class={`${resolveClassName('color-picker-icon')}`}>
           <AngleUp class="icon-angle-down"></AngleUp>
         </div>
           <Transition name="bk-fade-down-transition">
@@ -290,8 +295,8 @@ export default defineComponent({
               ref={dropRef}
               v-show={showDropdown.value}
               triggerRef={referenceRef.value}>
-                <div class="bk-color-dropdown-container">
-                  <div class="bk-color-picker-dropdown"
+                <div class={`${resolveClassName('color-dropdown-container')}`}>
+                  <div class={`${resolveClassName('color-picker-dropdown')}`}
                     onClick={(e) => {
                       e.stopPropagation();
                     }}
@@ -318,7 +323,7 @@ export default defineComponent({
                     ></ColorInput>
                     {/* 预设值 */}
                     {isRenderRecommend.value ? (
-                      <div class="bk-color-picker-recommend-container">
+                      <div class={`${resolveClassName('color-picker-recommend-container')}`}>
                         <RecommendColors
                           colorObj={colorObj}
                           recommend={props.recommend}
@@ -335,4 +340,3 @@ export default defineComponent({
     );
   },
 });
-

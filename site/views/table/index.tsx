@@ -40,6 +40,7 @@ import TableTplTsx from './column-template';
 import ColumnTemplate from './column-template.vue';
 import ColumnTplIndex from './column-template-index.vue';
 import configList from './config';
+import CustomHead from './custom-head.vue';
 import DataEmpty from './data-empty.vue';
 import event from './event.vue';
 import Expand from './expand.vue';
@@ -75,6 +76,7 @@ export default defineComponent({
     BasicSpan,
     ColumnTplIndex,
     TableTplTsx,
+    CustomHead,
   },
   render() {
     const configs = [
@@ -149,6 +151,19 @@ export default defineComponent({
          * @returns
          */
         component: () => <bordered></bordered>,
+      }, {
+        attrs: {
+          title: '自定义头部',
+          subtitle: 'custom head',
+          desc: 'props: border',
+          componentName: 'table',
+          demoName: 'custom-head',
+        },
+        /**
+         * Table
+         * @returns
+         */
+        component: () => <CustomHead></CustomHead>,
       },
       {
         attrs: {
@@ -374,6 +389,16 @@ export default defineComponent({
       params: '参数',
     };
 
+    const QAColumMap = {
+      name: '问题',
+      desc: '说明',
+    };
+
+
+    const renderMap = {
+      QA: QAColumMap,
+      events: eventColumnMap,
+    };
     return (
       <div>
         <DemoTitle
@@ -389,16 +414,11 @@ export default defineComponent({
           }
         {
           configList.map(cfg => <div>
-            {
-              cfg.type === 'events'
-                ? <PropsBox
-                    title={ cfg.title }
-                     columnMap={ eventColumnMap }
-                     subtitle={ cfg.subTile }
-                     propsData={ cfg.config }/>
-                : <PropsBox title={ cfg.title } subtitle={ cfg.subTile }
-                     propsData={ cfg.config }/>
-            }
+            <PropsBox
+              title={ cfg.title }
+               columnMap={ renderMap[cfg.type] }
+               subtitle={ cfg.subTile }
+               propsData={ cfg.config }/>
           </div>)
         }
       </div>

@@ -33,15 +33,16 @@ import {
   type SetupContext,
   computed,
   defineComponent,
+  // EmitsOptions,
   h,
   nextTick,
   onMounted,
   reactive,
   ref,
   resolveDirective,
+  SlotsType,
   watch,
-  withDirectives,
-} from 'vue';
+  withDirectives } from 'vue';
 
 import { resolveClassName } from '@bkui-vue/shared';
 
@@ -58,7 +59,13 @@ export default defineComponent({
     bkVirtualRender: virtualRender,
   },
   props: virtualRenderProps,
-  emits: ['content-scroll'],
+  emits: ['content-scroll' as string],
+  slots: Object as SlotsType<{
+    default?: any,
+    beforeContent?: any,
+    afterContent?: any,
+    afterSection?: any,
+  }>,
   setup(props: VirtualRenderProps, ctx: SetupContext) {
     const { renderAs, contentAs } = props;
 
@@ -114,8 +121,14 @@ export default defineComponent({
     });
 
     watch(() => props.list, () => {
+      let scrollToOpt = { left: 0, top: 0 };
+      scrollToOpt = { left: pagination.scrollLeft, top: pagination.scrollTop };
+
       handleChangeListConfig();
       afterListDataReset();
+      if (props.keepAlive) {
+        scrollTo(scrollToOpt);
+      }
     }, { deep: true });
 
     watch(() => props.lineHeight, () => {
@@ -140,6 +153,7 @@ export default defineComponent({
     const handleListChanged = (list: any[]) => {
       listLength.value = Math.ceil((list || []).length / props.groupItemCount);
       pagination.count = listLength.value;
+
       pagination.startIndex = 0;
       pagination.endIndex = 0;
       pagination.translateY = 0;
@@ -164,11 +178,13 @@ export default defineComponent({
     };
 
     /** 列表数据重置之后的处理事项 */
-    const afterListDataReset = (scrollTop = true) => {
+    const afterListDataReset = (scrollToOpt = { left: 0, top: 0 }) => {
       const el = refRoot.value?.parentNode as HTMLElement;
+
       computedVirtualIndex(props.lineHeight, handleScrollCallback, pagination, el, null);
-      if (scrollTop && refRoot.value) {
-        refRoot.value.scrollTo(0, 0);
+
+      if (scrollToOpt && refRoot.value) {
+        scrollTo(scrollToOpt);
       }
     };
 
@@ -230,6 +246,10 @@ export default defineComponent({
       throttleDelay: props.throttleDelay,
     };
 
+    /**
+     * 重置当前配置
+     * @param keepLastPostion
+     */
     const reset = () => {
       handleChangeListConfig();
       afterListDataReset();

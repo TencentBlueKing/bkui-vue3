@@ -11,8 +11,8 @@
     <bk-option
       v-for="(item, index) in datasource"
       :key="index"
-      :value="item.value"
-      :label="item.label"
+      :id="item.value"
+      :name="item.label"
       :disabled="item.disabled"
     />
   </bk-select>
@@ -25,11 +25,11 @@
       label: '爬山',
     },
     {
-      value: 'running',
+      value: {a: 123 },
       label: '跑步',
     },
     {
-      value: 'unknow',
+      value: { b: 456 },
       label: '未知',
     },
     {
@@ -51,7 +51,7 @@
     },
   ]);
 
-  const selectedValue = ref('sleep');
+  const selectedValue = ref({b: 456});
 
 
 </script>

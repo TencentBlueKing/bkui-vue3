@@ -49,6 +49,7 @@ import {
   getColumnSourceData,
   getNextSortType,
   getRowId,
+  getRowKeyNull,
   getRowSourceData,
   getRowText,
   getSortFn,
@@ -57,8 +58,7 @@ import {
   resolveCellSpan,
   resolveHeadConfig,
   resolvePropVal,
-  resolveWidth,
-} from './utils';
+  resolveWidth } from './utils';
 
 export default class TableRender {
   props: TablePropTypes;
@@ -464,14 +464,13 @@ export default class TableRender {
             `hover-${this.props.rowHover}`,
           ];
 
-          const rowKey = getRowId(row, rowIndex, this.props);
           return [
-            <TableRow key={rowKey}>
+            <TableRow>
               <tr
                 // @ts-ignore
                 style={rowStyle}
                 class={rowClass}
-                data-key={ rowKey }
+                key={getRowKeyNull(row, this.props, rowIndex)}
                 onClick={e => this.handleRowClick(e, row, rowIndex, rows)}
                 onDblclick={e => this.handleRowDblClick(e, row, rowIndex, rows)}
                 onMouseenter={e => this.handleRowEnter(e, row, rowIndex, rows)}
@@ -488,7 +487,6 @@ export default class TableRender {
                       'expand-cell': column.type === 'expand',
                     };
 
-                    const cellKey = `__CELL_${rowIndex}_${index}`;
                     const { colspan, rowspan } = resolveCellSpan(column, index, row, rowIndex);
                     const skipRowKey = TABLE_ROW_ATTRIBUTE.ROW_SKIP_CFG;
                     const columnIdKey = column[COLUMN_ATTRIBUTE.COL_UID];
@@ -524,7 +522,6 @@ export default class TableRender {
                         <td
                           class={cellClass}
                           style={cellStyle}
-                          key={cellKey}
                           colspan={colspan} rowspan={rowspan}
                           onClick={event => handleEmit(event, EMIT_EVENTS.CELL_CLICK)}
                           onDblclick={event => handleEmit(event, EMIT_EVENTS.CELL_DBL_CLICK)}>
@@ -554,7 +551,7 @@ export default class TableRender {
     );
   }
 
-  private renderExpandRow(row: any, rowClass: any[], rowIndex: number) {
+  private renderExpandRow(row: any, rowClass: any[], rowIndex) {
     const isExpand = !!row[TABLE_ROW_ATTRIBUTE.ROW_EXPAND];
     if (isExpand) {
       const resovledClass = [
@@ -565,7 +562,7 @@ export default class TableRender {
       const rowId = getRowId(row, rowIndex, this.props);
       const rowKey = `${rowId}_expand`;
       return (
-        <TableRow key={rowKey}>
+        <TableRow key={ rowKey }>
           <tr class={resovledClass}>
             <td colspan={this.filterColGroups.length} rowspan={1}>
               {this.context.slots.expandRow?.(getRowSourceData(row)) ?? <div class="expand-cell-ctx">Expand Row</div>}

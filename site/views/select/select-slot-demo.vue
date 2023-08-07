@@ -15,8 +15,8 @@
           <bk-option
             v-for="(item, index) in datasource"
             :key="index"
-            :value="item.value"
-            :label="item.label"
+            :id="item.value"
+            :name="item.label"
           />
           <template #tag="{selected}">
             {{ selected.map(item => `${item.label}( ${item.value} )`).join('；') }}
@@ -38,8 +38,8 @@
           <bk-option
             v-for="(item, index) in datasource"
             :key="index"
-            :value="item.value"
-            :label="item.label"
+            :id="item.value"
+            :name="item.label"
           />
         </bk-select>
       </div>
@@ -57,8 +57,8 @@
           <bk-option
             v-for="(item, index) in datasource"
             :key="index"
-            :value="item.value"
-            :label="item.label"
+            :id="item.value"
+            :name="item.label"
             :disabled="item.disabled"
           />
           <template #extension>
@@ -90,8 +90,8 @@
           <bk-option
             v-for="(item, index) in datasource"
             :key="index"
-            :value="item.value"
-            :label="item.label"
+            :id="item.value"
+            :name="item.label"
           />
         </bk-select>
       </div>
@@ -108,8 +108,8 @@
           <bk-option
             v-for="(item, index) in datasource"
             :key="index"
-            :value="item.value"
-            :label="item.label"
+            :id="item.value"
+            :name="item.label"
           />
         </bk-select>
       </div>
@@ -128,8 +128,8 @@
           <bk-option
             v-for="(item, index) in datasource"
             :key="index"
-            :value="item.value"
-            :label="item.label"
+            :id="item.value"
+            :name="item.label"
           />
         </bk-select>
       </div>

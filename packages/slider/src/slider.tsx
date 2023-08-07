@@ -46,7 +46,7 @@ export const off = (element: Element | Window, event: string, handler) => {
 export default defineComponent({
   name: 'Slider',
   props: {
-    modelValue: PropTypes.oneOfType([PropTypes.array, PropTypes.number]),
+    modelValue: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.number), PropTypes.number]),
     extCls: { type: String, default: '' }, // 自定义class
     vertical: { type: Boolean, default: false }, // 是否为垂直模式
     height: { type: String, default: '200px' }, // 滑动选择器高度 vertical为true时使用
@@ -257,7 +257,7 @@ export default defineComponent({
         console.error('min should not be greater than max.');
         return;
       }
-      const val = props.modelValue;
+      const val = props.modelValue as number[];
       if (props.range && Array.isArray(val)) {
         if (val[1] < props.minValue) {
           emit('update:modelValue', [props.minValue, props.minValue]);
@@ -325,10 +325,10 @@ export default defineComponent({
       }
     };
     const secondInputChange = (v: number | string) => {
-      if (v === '' || typeof v === 'number') {
+      if (v === '') {
         return;
       }
-      const val = parseFloat(v);
+      const val = parseFloat(v.toString());
       if (val < props.minValue) {
         secondInput.value = props.minValue;
         secondValue.value = props.minValue;

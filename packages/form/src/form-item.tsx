@@ -36,7 +36,7 @@ import {
   toRefs,
 } from 'vue';
 
-import { useLocale } from '@bkui-vue/config-provider';
+import { useLocale, usePrefix  } from '@bkui-vue/config-provider';
 import { bkTooltips } from '@bkui-vue/directives';
 import { ExclamationCircleShape } from '@bkui-vue/icon';
 import type { Language } from '@bkui-vue/locale';
@@ -365,6 +365,8 @@ export default defineComponent({
       }
     });
 
+    const { resolveClassName } = usePrefix();
+
     return {
       ...toRefs(state),
       isShowLabel,
@@ -373,11 +375,12 @@ export default defineComponent({
       isFormTypeVertical,
       validate,
       clearValidate,
+      resolveClassName,
     };
   },
   render() {
     const itemClassees = classes({
-      'bk-form-item': true,
+      [`${this.resolveClassName('form-item')}`]: true,
       'is-error': this.isError,
       'is-required': this.required,
     });
@@ -390,7 +393,7 @@ export default defineComponent({
         return (
           <span
             class={{
-              'bk-form-label-description': Boolean(this.description),
+              [`${this.resolveClassName('form-label-description')}`]: Boolean(this.description),
             }}
             v-bk-tooltips={this.description}>
             {this.label}
@@ -407,14 +410,14 @@ export default defineComponent({
       if (this.errorDisplayType === 'tooltips') {
         return (
           <div
-            class="bk-form-error-tips"
+            class={`${this.resolveClassName('form-error-tips')}`}
             v-bk-tooltips={this.errorMessage}>
             <ExclamationCircleShape />
           </div>
         );
       }
       return (
-          <div class="bk-form-error">
+          <div class={`${this.resolveClassName('form-error')}`}>
               {this.$slots.error
                 ? this.$slots.error(this.errorMessage)
                 : this.errorMessage}
@@ -427,7 +430,7 @@ export default defineComponent({
         {
           this.isShowLabel && (
             <div
-              class="bk-form-label"
+              class={`${this.resolveClassName('form-label')}`}
               style={this.labelStyles}>
                 {renderLabel()}
                 {this.isFormTypeVertical && this.$slots.labelAppend?.()}
@@ -435,7 +438,7 @@ export default defineComponent({
           )
         }
         <div
-          class="bk-form-content"
+          class={`${this.resolveClassName('form-content')}`}
           style={this.contentStyles}>
           {this.$slots.default?.()}
           {renderError()}

@@ -24,10 +24,11 @@
  * IN THE SOFTWARE.
 */
 
-import { computed, defineComponent, getCurrentInstance, onBeforeUnmount } from 'vue';
+import { computed, defineComponent, getCurrentInstance, onBeforeUnmount, SlotsType } from 'vue';
+
+import { usePrefix } from '@bkui-vue/config-provider';
 
 import { useMenuInject, useMenuPathInject } from './utils';
-
 export default defineComponent({
   name: 'MenuItem',
   props: {
@@ -37,7 +38,11 @@ export default defineComponent({
     },
   },
   emits: ['click'],
-  slots: ['icon'],
+  // slots: ['icon'],
+  slots: Object as SlotsType<{
+    default?: () => HTMLElement,
+    icon?: () => HTMLElement,
+  }>,
   setup(props, { slots, emit }) {
     const { registerMenuInfo, unregisterMenuInfo, activeKey, handleActiveChange } = useMenuInject();
     const instance = getCurrentInstance();
@@ -54,9 +59,12 @@ export default defineComponent({
       emit('click', e);
     };
     onBeforeUnmount(() => unregisterMenuInfo(key));
+
+    const { resolveClassName } = usePrefix();
+
     return () => (
       <li class={{
-        'bk-menu-item': true,
+        [`${resolveClassName('menu-item')}`]: true,
         'is-active': isActive.value,
       }}
       onClick={handleClick}>

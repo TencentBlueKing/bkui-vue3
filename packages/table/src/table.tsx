@@ -162,8 +162,9 @@ export default defineComponent({
       if (typeof sortFn === 'function') {
         columnSortFn = sortFn;
         activeSortColumn = column;
+        Object.assign(activeSortColumn, { [COLUMN_ATTRIBUTE.SORT_TYPE]: type });
         resolvePageData(columnFilterFn, columnSortFn, activeSortColumn);
-        refVirtualRender.value?.reset?.();
+        // refVirtualRender.value?.reset?.();
       }
 
       ctx.emit(EMIT_EVENTS.COLUMN_SORT, { column: unref(column[COLUMN_ATTRIBUTE.COL_SOURCE_DATA]), index, type });
@@ -172,7 +173,7 @@ export default defineComponent({
       if (typeof filterFn === 'function') {
         columnFilterFn = filterFn;
         resolvePageData(columnFilterFn, columnSortFn, activeSortColumn);
-        refVirtualRender.value?.reset?.();
+        // refVirtualRender.value?.reset?.();
       }
 
       ctx.emit(EMIT_EVENTS.COLUMN_FILTER, { checked, column: unref(column[COLUMN_ATTRIBUTE.COL_SOURCE_DATA]), index });
@@ -184,7 +185,7 @@ export default defineComponent({
           updateBorderClass(root.value);
           const offset = getColumnsWidthOffsetWidth();
           checked.length && resolveColumnWidth(root.value, colgroups, COL_MIN_WIDTH, offset);
-          refVirtualRender.value?.reset?.();
+          // refVirtualRender.value?.reset?.();
           ctx.emit(EMIT_EVENTS.SETTING_CHANGE, { checked, size, height, fields });
         });
       })
@@ -331,6 +332,7 @@ export default defineComponent({
     const scrollClass = computed(() => (props.virtualEnabled ? {} : { scrollXName: '', scrollYName: '' }));
 
     const prependStyle = computed(() => ({
+      '--prepend-left': `${reactiveSchema.scrollTranslateX}px`,
       position: 'sticky' as const,
       top: 0,
       zIndex: 2,
@@ -339,7 +341,7 @@ export default defineComponent({
 
     const renderPrepend = () => {
       if (ctx.slots.prepend) {
-        return <div style={ prependStyle.value }>{ ctx.slots.prepend() }</div>;
+        return <div style={ prependStyle.value } class="prepend-row">{ ctx.slots.prepend() }</div>;
       }
 
       return null;
@@ -367,7 +369,8 @@ export default defineComponent({
           throttleDelay={0}
           scrollEvent={true}
           rowKey={props.rowKey}
-          enabled={props.virtualEnabled}>
+          enabled={props.virtualEnabled}
+          keepAlive={true}>
           {
             {
               beforeContent: () => renderPrepend(),

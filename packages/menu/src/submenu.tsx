@@ -24,8 +24,9 @@
  * IN THE SOFTWARE.
 */
 
-import { computed, defineComponent, getCurrentInstance, onBeforeUnmount, ref, Transition } from 'vue';
+import { computed, defineComponent, getCurrentInstance, onBeforeUnmount, ref, SlotsType, Transition } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import { AngleDown, TreeApplicationShape } from '@bkui-vue/icon/';
 
 import { collapseMotion, useMenuInject, useMenuPathInject, useMenuPathProvider } from './utils';
@@ -40,7 +41,11 @@ export default defineComponent({
   name: 'Submenu',
   props: subMenuProps,
   emits: ['collapse'],
-  slots: ['icon'],
+  // slots: ['icon'],
+  slots: Object as SlotsType<{
+    default?: () => HTMLElement,
+    icon?: () => HTMLElement,
+  }>,
   setup(props, { slots, emit }) {
     const { registerMenuInfo, unregisterMenuInfo, openedKeys,
       handleOpenChange, collapse, activeKey, menuStore } = useMenuInject();
@@ -63,10 +68,13 @@ export default defineComponent({
       handleOpenChange(key, !isShow.value);
       emit('collapse', !isShow.value, instance);
     };
+
+    const { resolveClassName } = usePrefix();
+
     return () => (
       <li
         class={{
-          'bk-menu-submenu': true,
+          [`${resolveClassName('menu-submenu')}`]: true,
           'is-opened': isShow.value,
         }}
       >

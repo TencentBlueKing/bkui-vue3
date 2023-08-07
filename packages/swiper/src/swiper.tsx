@@ -35,6 +35,7 @@ import {
   watch,
 } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import { PropTypes } from '@bkui-vue/shared';
 
 interface IRenderData {
@@ -77,6 +78,8 @@ export default defineComponent({
     const loopId: Ref<number> = ref(0);
     let resizeObserver;
 
+    const { resolveClassName } = usePrefix();
+
     // 计算属性
     const computedRenderDataList = computed<IRenderData[]>(() => (list.value?.length > 0 ? list.value : pics.value));
     const computedSwiperTranslateStyle = computed(() => ({
@@ -108,8 +111,8 @@ export default defineComponent({
     };
 
     const getRenderItemClass = renderData => [
-      'bk-swiper-img',
-      { 'bk-swiper-link': renderData.link },
+      `${resolveClassName('swiper-img')}`,
+      { [`${resolveClassName('swiper-link')}`]: renderData.link },
       renderData.class,
     ];
 
@@ -119,7 +122,7 @@ export default defineComponent({
     });
 
     const getRenderIndexStyle = index => ({
-      'bk-current-index': swiperIndex.value === index,
+      [`${resolveClassName('current-index')}`]: swiperIndex.value === index,
     });
 
     const startLoop = () => {
@@ -190,18 +193,18 @@ export default defineComponent({
     // render
     return () => (
       <section
-        class="bk-swiper-home"
+        class={`${resolveClassName('swiper-home')}`}
         ref={swiperRef}
         style={computedSwiperRenderStyle.value}
       >
         <hgroup
           style={computedSwiperTranslateStyle.value}
-          class="bk-transition bk-swiper-main"
+          class={`${resolveClassName('transition')} ${resolveClassName('swiper-main')}`}
         >
           {
             computedRenderDataList.value.map(renderData => (
               <h3
-                class="bk-swiper-card"
+                class={`${resolveClassName('swiper-card')}`}
                 style={computedSwiperRenderStyle.value}
               >
                 {
@@ -218,7 +221,7 @@ export default defineComponent({
             ))
           }
         </hgroup>
-        <ul class="bk-swiper-index">
+        <ul class={`${resolveClassName('swiper-index')}`}>
           {
             computedRenderDataList.value.map((_, index) => (
               <li
@@ -230,16 +233,16 @@ export default defineComponent({
           }
         </ul>
         <span
-          class="bk-swiper-nav bk-nav-prev"
+          class={`${resolveClassName('swiper-nav')} ${resolveClassName('nav-prev')}`}
           onClick={() => changeIndex(swiperIndex.value - 1)}
         >
-          <i class="bk-swiper-nav-icon"></i>
+          <i class={`${resolveClassName('swiper-nav-icon')}`}></i>
         </span>
         <span
-          class="bk-swiper-nav bk-nav-next"
+          class={`${resolveClassName('swiper-nav')} ${resolveClassName('nav-next')}}`}
           onClick={() => changeIndex(swiperIndex.value + 1)}
         >
-          <i class="bk-swiper-nav-icon"></i>
+          <i class={`${resolveClassName('swiper-nav-icon')}`}></i>
         </span>
       </section>
     );

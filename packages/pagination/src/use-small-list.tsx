@@ -35,6 +35,7 @@ import {
   watch,
 } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import {
   AngleLeft,
   AngleRight,
@@ -162,11 +163,13 @@ export default () => {
     handlePageEditorBlur();
   };
 
+  const { resolveClassName } = usePrefix();
+
   const render = () => (
     <div class="bk-pagination-small-list">
       <div
         class={{
-          'bk-pagination-btn-pre': true,
+          [`${resolveClassName('pagination-btn-pre')}`]: true,
           'is-disabled': isPagePreDisabled.value,
         }}
         onClick={handlePrePage}>
@@ -182,12 +185,12 @@ export default () => {
         {{
           default: () => (
             <div class={{
-              'bk-pagination-picker': true,
+              [`${resolveClassName('pagination-picker')}`]: true,
               'is-focused': isFocused.value,
             }}>
               <span
                 ref={inputRef}
-                class="bk-pagination-editor"
+                class={`${resolveClassName('pagination-editor')}`}
                 contenteditable
                 spellcheck="false"
                 onFocus={handlePageEditorFocus}
@@ -197,11 +200,11 @@ export default () => {
                 {localCurrent.value}
               </span>
               <span>/</span>
-              <span class="bk-pagination-small-list-total">{proxy.totalPageNum}</span>
+              <span class={`${resolveClassName('pagination-small-list-total')}`}>{proxy.totalPageNum}</span>
             </div>
           ),
           content: () => (
-            <div class="bk-pagination-picker-list">
+            <div class={`${resolveClassName('pagination-picker-list')}`}>
               {list.value.map(item => (
                 <div
                   class={{
@@ -219,7 +222,7 @@ export default () => {
       </BkPopover2>
       <div
         class={{
-          'bk-pagination-btn-next': true,
+          [`${resolveClassName('pagination-btn-next')}`]: true,
           'is-disabled': isPageNextDisabled.value,
         }}
         onClick={handleNextPage}>

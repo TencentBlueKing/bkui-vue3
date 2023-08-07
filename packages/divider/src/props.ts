@@ -23,9 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { AlignEnum, PropTypes } from '@bkui-vue/shared';
-
-import { alignType, directionType, lineStyleType } from './../../shared/src/vue-types';
+import { AlignEnum, alignType, directionType, lineStyleType, PropTypes } from '@bkui-vue/shared';
 
 export const dividerProps = {
   direction: directionType(),

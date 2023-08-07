@@ -37,7 +37,7 @@ import SizeDemo from './size-demo.vue';
 
 const ratePropsJson: IPropsTableItem[] = [
   {
-    name: 'modelValue',
+    name: 'model-value / v-model',
     type: 'Number',
     default: '0',
     desc: '分数',

@@ -45,6 +45,10 @@ export default defineComponent({
       type: String,
       default: '',
     },
+    designLink: {
+      type: String,
+      default: '',
+    },
   },
   setup() {
     // const { name } = useRoute();
@@ -54,7 +58,14 @@ export default defineComponent({
   },
   render() {
     return <div class="demo-title">
-      <div class="title-name">{this.name}</div>
+      <div class="title-name">
+        {this.name}
+        {
+          this.designLink && <a class="design-link" href={this.designLink} target="_blank">
+            设计规范
+          </a>
+        }
+      </div>
       <div class="title-desc">{this.desc}
         {/* {
           this.link && <a class="desc-link" href={this.link}>
