@@ -1,5 +1,17 @@
 @import '@bkui-vue/styles/themes/themes.less';
 
+@keyframes form-error-appear-animation {
+  from {
+    opacity: 0;
+    transform: translateY(-30%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .@{bk-prefix}-form {
   text-align: left;
 
@@ -9,7 +21,7 @@
       float: unset;
       width: auto;
       padding-right: 0;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       line-height: 20px;
       text-align: left;
     }
@@ -42,6 +54,7 @@
     .@{bk-prefix}-date-picker-editor,
     .@{bk-prefix}-tag-input {
       border-color: #ea3636;
+      transition: all .15s;
     }
   }
 
@@ -86,6 +99,7 @@
   line-height: 1;
   color: #ea3636;
   text-align: left;
+  animation: form-error-appear-animation .15s;
 }
 .@{bk-prefix}-form-error-tips {
   position: absolute;
