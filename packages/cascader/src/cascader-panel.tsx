@@ -269,7 +269,7 @@ export default defineComponent({
                     v-model={node.checked}
                     indeterminate={node.isIndeterminate}
                     style="margin-right: 5px"
-                    onChange={(val: boolean) => this.checkNode(node, val)}></BkCheckbox>
+                    onChange={(val: string | boolean | number) => this.checkNode(node, !!val)}></BkCheckbox>
                 )}
                 {this.$slots.default?.({ node, data: node.data })}
                 {!node.isLeaf ? this.iconRender(node) : ''}
