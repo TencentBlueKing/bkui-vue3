@@ -202,7 +202,7 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
       size='small'
       modelValue={ isNodeItemChecked(item) }
       indeterminate={ isIndeterminate(item) }
-      onChange={ (val: boolean) => handleNodeItemCheckboxChange(item, val) }>
+      onChange={ (val: string | boolean | number) => handleNodeItemCheckboxChange(item, !!val) }>
     </BkCheckbox>;
   };
 
