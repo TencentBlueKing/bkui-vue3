@@ -52,10 +52,10 @@ export type RadioButtonProps = Readonly<ExtractPropTypes<typeof radioButtonProps
 export default defineComponent({
   name: 'RadioButton',
   props: radioButtonProps,
-  emits: [
-    'change',
-    'update:modelValue',
-  ],
+  emits: {
+    'update:modelValue': (value: RadioButtonProps['modelValue']) => value !== undefined,
+    change: (value: RadioButtonProps['modelValue']) => value !== undefined,
+  },
   setup() {
     const [
       isFocused,

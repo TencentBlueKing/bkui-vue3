@@ -194,6 +194,23 @@ const formItemProps: IPropsTableItem[] = [
   },
 ];
 
+const formItemSlots: IPropsTableItem[] = [
+  {
+    name: 'label',
+    type: '() => string',
+    default: null,
+    desc: '自定义表单项 label',
+    optional: [],
+  },
+  {
+    name: 'error',
+    type: '(message: string) => string',
+    default: null,
+    desc: '自定义表单项验证错误信息',
+    optional: [],
+  },
+];
+
 export default defineComponent({
   name: 'Form',
   render() {
@@ -254,6 +271,10 @@ export default defineComponent({
           title="Form-Item 属性"
           subtitle=""
           propsData={formItemProps}/>
+        <PropsBox
+          title="Form-Item Slot"
+          subtitle=""
+          propsData={formItemSlots}/>
     </div>
     );
   },

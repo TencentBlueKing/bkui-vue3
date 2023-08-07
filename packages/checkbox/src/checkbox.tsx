@@ -59,10 +59,10 @@ export type CheckboxProps = Readonly<ExtractPropTypes<typeof checkboxProps>>;
 export default defineComponent({
   name: 'Checkbox',
   props: checkboxProps,
-  emits: [
-    'update:modelValue',
-    'change',
-  ],
+  emits: {
+    'update:modelValue': (value: CheckboxProps['modelValue']) => value !== undefined,
+    change: (value: CheckboxProps['modelValue']) => value !== undefined,
+  },
   setup(props) {
     const [
       isFocus,

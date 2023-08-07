@@ -34,6 +34,7 @@ import {
   provide,
   reactive,
   toRefs,
+  Transition,
 } from 'vue';
 
 import { useLocale, usePrefix  } from '@bkui-vue/config-provider';
@@ -82,7 +83,7 @@ const getRulesFromProps = (props, t: ComputedRef<Language['form']>) => {
     rules.push({
       required: true,
       validator: defaultValidator.required,
-      message: `${label} ${t.value.notBeEmpty}`,
+      message: `${label}${t.value.notBeEmpty}`,
       trigger: 'change',
     });
   }
@@ -90,28 +91,28 @@ const getRulesFromProps = (props, t: ComputedRef<Language['form']>) => {
     rules.push({
       email: true,
       validator: defaultValidator.email,
-      message: `${label} ${t.value.incorrectFormat}`,
+      message: `${label}${t.value.incorrectFormat}`,
       trigger: 'change',
     });
   }
   if (Number(props.max) > -1) {
     rules.push({
       validator: value => defaultValidator.max(value, props.max),
-      message: `${label} ${t.value.max} ${props.max}`,
+      message: `${label}${t.value.max} ${props.max}`,
       trigger: 'change',
     });
   }
   if (Number(props.min) > -1) {
     rules.push({
       validator: value => defaultValidator.min(value, props.min),
-      message: `${label} ${t.value.min} ${props.min}`,
+      message: `${label}${t.value.min} ${props.min}`,
       trigger: 'change',
     });
   }
   if (Number(props.maxlength) > -1) {
     rules.push({
       validator: value => defaultValidator.maxlength(value, props.maxlength),
-      message: `${label} ${t.value.maxLen} ${props.maxlength}`,
+      message: `${label}${t.value.maxLen} ${props.maxlength}`,
       trigger: 'change',
     });
   }
@@ -417,11 +418,11 @@ export default defineComponent({
         );
       }
       return (
-          <div class={`${this.resolveClassName('form-error')}`}>
-              {this.$slots.error
-                ? this.$slots.error(this.errorMessage)
-                : this.errorMessage}
-              </div>
+        <div class={`${this.resolveClassName('form-error')}`}>
+          {this.$slots.error
+            ? this.$slots.error(this.errorMessage)
+            : this.errorMessage}
+        </div>
       );
     };
 
