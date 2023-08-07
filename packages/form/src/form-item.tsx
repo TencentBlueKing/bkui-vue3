@@ -34,7 +34,6 @@ import {
   provide,
   reactive,
   toRefs,
-  Transition,
 } from 'vue';
 
 import { useLocale, usePrefix  } from '@bkui-vue/config-provider';
