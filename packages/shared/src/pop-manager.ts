@@ -147,9 +147,11 @@ export class BKPopIndexManager {
   }
 
   private onMaskClickFn(e: MouseEvent) {
-    const { fn } = this.clickFn;
-    if (fn) {
-      Reflect.apply(fn, this, [e]);
+    if (this.clickFn) {
+      const { fn } = this.clickFn;
+      if (fn) {
+        Reflect.apply(fn, this, [e]);
+      }
     }
   }
 }
