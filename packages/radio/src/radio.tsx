@@ -51,10 +51,10 @@ export type RadioProps = Readonly<ExtractPropTypes<typeof radioProps>>;
 export default defineComponent({
   name: 'Radio',
   props: radioProps,
-  emits: [
-    'change',
-    'update:modelValue',
-  ],
+  emits: {
+    'update:modelValue': (value: RadioProps['modelValue']) => value !== undefined,
+    change: (value: RadioProps['modelValue']) => value !== undefined,
+  },
   setup() {
     const [
       isFocused,
