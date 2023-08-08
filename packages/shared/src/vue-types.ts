@@ -24,6 +24,7 @@
  * IN THE SOFTWARE.
 */
 // eslint-disable-next-line simple-import-sort/imports
+import { Switcher } from 'bkui-vue';
 import { CSSProperties, VNodeChild } from 'vue';
 import {
   VueTypeDef,
@@ -179,6 +180,38 @@ export enum InputBehaviorEnum {
   SIMPLICITY = 'simplicity',
   NORMAL = 'normal'
 }
+
+export enum ProgressStrokeLineCapEnum {
+  BUTT = 'butt',
+  SQUARE = 'square',
+  ROUNDE = 'round'
+}
+
+export enum ProgressEnum {
+  LINE = 'line',
+  CIRCLE = 'circle',
+  DASHBOARD = 'dashboard'
+}
+
+export enum SwitcherThemeEnum {
+  SUCCESS = 'success',
+  PRIMARY = 'primary'
+}
+
+export function SwitcherThemeType() {
+  return toType<`${SwitcherThemeEnum}`>('switcherTheme', {}).def(SwitcherThemeEnum.SUCCESS);
+}
+
+
+export function ProgressStrokeLineCapType() {
+  return toType<`${ProgressStrokeLineCapEnum}`>('progressStrokeLineCap', {}).def(ProgressStrokeLineCapEnum.ROUNDE);
+}
+
+
+export function ProgressType() {
+  return toType<`${ProgressEnum}`>('progress', {}).def(ProgressEnum.LINE);
+}
+
 export function InputBehaviorType() {
   return toType<`${InputBehaviorEnum}`>('behavior', {}).def(InputBehaviorEnum.NORMAL);
 }

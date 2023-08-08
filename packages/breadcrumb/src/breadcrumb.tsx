@@ -24,35 +24,40 @@
 * IN THE SOFTWARE.
 */
 
-import { defineComponent, getCurrentInstance, onMounted, provide } from 'vue';
+import { defineComponent, getCurrentInstance, onMounted, provide, ExtractPropTypes } from 'vue';
 
 import { ArrowsLeft } from '@bkui-vue/icon';
 import { classes, PropTypes } from '@bkui-vue/shared';
+import { usePrefix } from '@bkui-vue/config-provider';
 
 import { IBreadcrumbProps } from './props';
+
+export const breadcrumbType = {
+  extCls: PropTypes.string,
+  separator: PropTypes.string.def('/'),
+  separatorClass: PropTypes.string,
+  replace: PropTypes.bool,
+  backRouter: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).def(''),
+}
+
+export type BreadcrumbType = ExtractPropTypes<typeof breadcrumbType>;
 
 
 export default defineComponent({
   name: 'Breadcrumb',
-  props: {
-    extCls: PropTypes.string,
-    separator: PropTypes.string.def('/'),
-    separatorClass: PropTypes.string,
-    replace: PropTypes.bool,
-    backRouter: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).def(''),
-
-  },
+  props: breadcrumbType,
   setup(props, { slots }) {
+    const { resolveClassName } = usePrefix();
     const { proxy, appContext } = getCurrentInstance();
 
     provide<IBreadcrumbProps>('breadcrumb', props);
     onMounted(() => {
-      const items = proxy.$el.querySelectorAll('.bk-breadcrumb-item');
+      const items = proxy.$el.querySelectorAll(resolveClassName('breadcrumb-item'));
       if (items.length) {
         items[items.length - 1].setAttribute('aria-current', 'page');
       }
     });
-    const classCtx = classes({ 'bk-breadcrumb': true }, `${props.extCls || ''}`);
+    const classCtx = classes({ [resolveClassName('breadcrumb')]: true }, `${props.extCls || ''}`);
 
     const goBack = () => {
       const { backRouter, replace } = props;
@@ -64,14 +69,14 @@ export default defineComponent({
       <div class={classCtx} aria-label="Breadcrumb" role="navigation">
         {
           !slots.prefix && props.backRouter
-            ? <div class="bk-breadcrumb-goback">
+            ? <div class={resolveClassName('breadcrumb-goback')}>
                 <ArrowsLeft onClick={goBack}></ArrowsLeft>
               </div>
             : ''
         }
         {
           slots.prefix
-            ? <div class="bk-breadcrumb-goback">{slots.prefix()}</div>
+            ? <div class={resolveClassName('breadcrumb-goback')}>{slots.prefix()}</div>
             : ''
         }
         {slots.default?.()}

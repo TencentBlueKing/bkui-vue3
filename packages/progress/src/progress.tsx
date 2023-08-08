@@ -23,43 +23,44 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent } from 'vue';
+import { defineComponent, ExtractPropTypes } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-import { classes, PropTypes, ThemeEnum } from '@bkui-vue/shared';
+import { classes, PropTypes, ThemeEnum, ProgressType, ProgressStrokeLineCapType } from '@bkui-vue/shared';
 
 import Circle from './circle';
 import Line from './line';
 
-export type ValidatorFunction<T> = (value: T) => boolean;
+
+export const progressType = {
+  extCls: PropTypes.string,
+  type: ProgressType(),
+  percent: PropTypes.number.def(0),
+  theme: PropTypes.theme().def(ThemeEnum.PRIMARY),
+  size: PropTypes.size(),
+  width: PropTypes.number.def(126),
+  strokeWidth: PropTypes.number,
+  strokeLinecap: ProgressStrokeLineCapType(),
+  textInside: PropTypes.bool.def(false),
+  showText: PropTypes.bool.def(true),
+  color: PropTypes.string,
+  bgColor: PropTypes.string,
+  fixed: PropTypes.number
+    .validate((value: any) => value >= 0 && value <= 20)
+    .def(0),
+  format: PropTypes.func.def((percent: number): string => `${percent}%`),
+  titleStyle: PropTypes.object.def({
+    fontSize: '16px',
+    verticalAlign: 'middle',
+  }),
+}
+
+export type ProgressType = ExtractPropTypes<typeof progressType>;
+
 
 export default defineComponent({
   name: 'Progress',
-  props: {
-    extCls: PropTypes.string,
-    type: PropTypes.string
-      .validate((value: any) => ['line', 'circle', 'dashboard'].includes(value))
-      .def('line'),
-    percent: PropTypes.number.def(0),
-    theme: PropTypes.theme().def(ThemeEnum.PRIMARY),
-    size: PropTypes.size(),
-    width: PropTypes.number.def(126),
-    strokeWidth: PropTypes.number,
-    strokeLinecap: PropTypes.string.def('round'),
-    textInside: PropTypes.bool.def(false),
-    showText: PropTypes.bool.def(true),
-    color: PropTypes.string,
-    bgColor: PropTypes.string,
-    fixed: PropTypes.number
-      .validate((value: any) => value >= 0 && value <= 20)
-      .def(0),
-    format: PropTypes.func.def((percent: number): string => `${percent}%`),
-    titleStyle: PropTypes.object.def({
-      fontSize: '16px',
-      verticalAlign: 'middle',
-    }),
-
-  },
+  props: progressType,
   setup() {
     const { resolveClassName } = usePrefix();
     return {

@@ -24,42 +24,61 @@
 * IN THE SOFTWARE.
 */
 
-import { defineComponent, getCurrentInstance, inject } from 'vue';
+import { defineComponent, getCurrentInstance, inject, ExtractPropTypes } from 'vue';
 
 import { classes, PropTypes } from '@bkui-vue/shared';
 
 import { IBreadcrumbProps } from './props';
 
+import { usePrefix } from '@bkui-vue/config-provider';
+
+export const breadcrumbItemType = {
+  extCls: PropTypes.string,
+  to: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).def(''),
+  replace: PropTypes.bool,
+}
+
+export type BreadcrumbItemType = ExtractPropTypes<typeof breadcrumbItemType>;
+
+export const enum EVENTS {
+  CLICK = 'click',
+}
+
+function CompositionEventFunction(evt: CompositionEvent) {
+  return evt;
+}
+
+const breadcrumbItemEmitEventsType = {
+  [EVENTS.CLICK]: CompositionEventFunction,
+};
+
 
 export default defineComponent({
   name: 'BreadcrumbItem',
-  props: {
-    extCls: PropTypes.string,
-    to: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).def(''),
-    replace: PropTypes.bool,
-  },
-  emits: ['click'],
+  props: breadcrumbItemType,
+  emits: breadcrumbItemEmitEventsType,
   setup(props, { emit, slots }) {
+    const { resolveClassName } = usePrefix();
     const { appContext } = getCurrentInstance();
     const parent = inject<IBreadcrumbProps>('breadcrumb');
     const router = appContext.config.globalProperties.$router;
     const handleClick = (e) => {
-      emit('click', e);
+      emit(EVENTS.CLICK, e);
       const { to, replace } = props;
       if (!to || !router) return;
       replace ? router.replace(to) : router.push(to);
     };
-    const classCtx = classes({ 'bk-breadcrumb-item': true }, `${props.extCls || ''}`);
+    const classCtx = classes({ [resolveClassName('breadcrumb-item')]: true }, `${props.extCls || ''}`);
 
     const renderSeparator = () => {
       if (slots.separator) {
         return slots.separator();
       }
       if (parent.separatorClass) {
-        return <i class={`bk-breadcrumb-separator ${parent.separatorClass}`} />;
+        return <i class={`${resolveClassName('breadcrumb-separator')} ${parent.separatorClass}`} />;
       }
       if (parent.separator) {
-        return <span class="bk-breadcrumb-separator" role="presentation">{parent?.separator}</span>;
+        return <span class={resolveClassName('breadcrumb-separator')} role="presentation">{parent?.separator}</span>;
       }
       return null;
     };
@@ -68,7 +87,7 @@ export default defineComponent({
       <span class={classCtx}>
         <span
           ref="link"
-          class={`bk-breadcrumb-item-inner ${props.to ? 'is-link' : ''}`}
+          class={`${resolveClassName('breadcrumb-item-inner')} ${props.to ? 'is-link' : ''}`}
           role="link"
           onClick={handleClick}
         >
