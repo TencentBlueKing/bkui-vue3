@@ -74,6 +74,8 @@ export default defineComponent({
     filterMethod: PropTypes.func.def(null),
     scrollHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(216),
     scrollWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def('auto'),
+    customTextFillback: PropTypes.func.def(null),
+    customTagsFillback: PropTypes.func.def(null),
     collapseTags: {
       type: Boolean,
       default: true,
@@ -136,6 +138,14 @@ export default defineComponent({
 
     // 用computed定义placeholder变量，用于处理props中的placeholder属性
     const placeholder = computed(() => (props.placeholder ? props.placeholder : t.value.pleaseSelect));
+
+    const displayText = computed(() => {
+      if (props.customTextFillback) {
+        return props.customTextFillback(props.modelValue, store.value.getFlattedNodes());
+      }
+      return selectedText.value;
+    });
+
 
     // 根据配置，获取输入框显示的text
     const getShowText = (node: INode) => (props.showCompleteName
@@ -283,7 +293,9 @@ export default defineComponent({
     );
 
     // 定义overflowTagIndex变量，用于处理tag的折叠
-    const tagList = computed(() => selectedTags.value.map(item => item.text));
+    const tagList = computed(() => (props.customTagsFillback
+      ? props.customTagsFillback(props.modelValue, store.value.getFlattedNodes())
+      : selectedTags.value.map(item => item.text)));
     const isCollapse = computed(() => (props.collapseTags ? props.collapseTags && isFocus.value
       : props.collapseTags));
     const isEditMode = computed(() => (props.collapseTags ? props.collapseTags && isEdit.value
@@ -323,6 +335,7 @@ export default defineComponent({
       focusEmitter,
       tagList,
       isEdit,
+      displayText,
     };
   },
   render() {
@@ -352,7 +365,7 @@ export default defineComponent({
     const renderTags = () => {
       if (this.limitOneLine) {
         // 如果limitOneLine为true，则只显示一行
-        return <span class="cascader-selected-text">{this.selectedText}</span>;
+        return <span class="cascader-selected-text">{this.displayText}</span>;
       }
       return <div class="cascader-tag-list">
         {this.tagList.map((tag, index) => {
@@ -380,7 +393,7 @@ export default defineComponent({
 
     const textRender = () => (
       // 多选时， text被tagRender填充，不需要进行text渲染
-      this.multiple ? null :  <span>{this.selectedText}</span>
+      this.multiple ? null :  <span>{this.displayText}</span>
     );
 
     // 定义popoverRender函数，用于渲染弹出框
