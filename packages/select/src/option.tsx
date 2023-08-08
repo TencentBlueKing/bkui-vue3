@@ -121,7 +121,7 @@ export default defineComponent({
         {
           this.showSelectedIcon
             && this.selectedStyle === SelectedTypeEnum.CHECKBOX
-            && <Checkbox class={resolveClassName('select-checkbox')} modelValue={this.selected} />
+            && <Checkbox disabled={this.disabled} class={resolveClassName('select-checkbox')} modelValue={this.selected} />
         }
         {
           this.$slots.default?.()
