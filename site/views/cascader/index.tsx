@@ -34,12 +34,13 @@ import { IPropsTableItem } from '../../typings';
 import BaseDemo from './base-demo.vue';
 import CheckAnyLevelDemo from './check-any-level-demo.vue';
 import CheckboxDemo from './checkbox-demo.vue';
+import CustomFillback from './custom-fillback.vue';
 import CustomTriggerDemo from './custom-trigger-demo.vue';
 import IdKey from './id-key.vue';
 import RemoteDemo from './remote-demo.vue';
 import SeparatorDemo from './separator-demo.vue';
 import ShowCompleteName from './show-complete-name.vue';
-import SlotsDemo from './slots-demo.vue';
+import SlotsDemo from './slots-demo.vue';;
 
 // 参数配置数组， 包含多个 IPropsTableItem 的实例对象
 const cascaderPropsJson: IPropsTableItem[] = [
@@ -184,6 +185,20 @@ const cascaderPropsJson: IPropsTableItem[] = [
     optional: ['true', 'false'],
   },
   {
+    name: 'custom-text-fillback',
+    type: 'Function',
+    default: 'null',
+    desc: '自定义 text 填充回调, 参数为{modelValue, nodes}返回自定义填充后的文本, 返回值必须为 string',
+    optional: [],
+  },
+  {
+    name: 'custom-tags-fillback',
+    type: 'Function',
+    default: 'null',
+    desc: '自定义多选时 tags 填充回调, 参数为{modelValue, nodes}返回自定义填充后的tag数据, 返回值必须为数组 string[]',
+    optional: [],
+  },
+  {
     name: 'extCls',
     type: 'String',
     default: '',
@@ -308,7 +323,7 @@ export default defineComponent({
           <RemoteDemo></RemoteDemo>
         </DemoBox>
 
-      {/* 远程加载 */}
+      {/* 自定义Trigger */}
         <DemoBox
           title='自定义Trigger'
           subtitle='通过插槽自定义trigger'
@@ -316,6 +331,16 @@ export default defineComponent({
           componentName='cascader'
           demoName='custom-trigger-demo'>
           <CustomTriggerDemo></CustomTriggerDemo>
+        </DemoBox>
+
+        {/* 自定义填充回调 */}
+        <DemoBox
+          title='自定义填充回调'
+          subtitle='通过custom-text-fillback函数实现自定义text填充; 如果是多选使用tag，则使用custom-tags-fillback函数'
+          desc='默认填充时，如果绑定数据不在列表中，会造成无法填充，此时可以通过自定义填充回调实现自定义填充'
+          componentName='cascader'
+          demoName='custom-fillback'>
+          <CustomFillback></CustomFillback>
         </DemoBox>
 
         {/* Cascader组件属性列表 */}

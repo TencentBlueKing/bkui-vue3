@@ -318,6 +318,15 @@ export default defineComponent({
           }
           menuHoverId.value = '';
           return;
+        } else {
+          usingItem.value = new SelectedItem({ ...item, id: item.realId ?? item.id }, type, valueSplitCode.value);
+          usingItem.value.addValue(item.value)
+          const res = await validateUsingItemValues(item);
+          if (!res) return;
+          setSelectedItem(usingItem.value);
+          menuHoverId.value = '';
+          setInputFocus(true);
+          return;
         }
       }
       if (!usingItem.value || !inputRef?.value?.innerText) {
@@ -336,7 +345,7 @@ export default defineComponent({
       usingItem.value.addValue(item);
       const res = await validateUsingItemValues(item);
       if (!res) return;
-      if (!usingItem.value.multiple)setSelectedItem();
+      if (!usingItem.value.multiple) setSelectedItem();
       if (props.valueBehavior === ValueBehavior.NEEDKEY && usingItem.value?.multiple) {
         setInputFocus();
       }
