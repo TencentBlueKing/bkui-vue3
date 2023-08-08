@@ -24,6 +24,7 @@
         :key="index"
         :id="item.value"
         :name="item.label"
+        :disabled="item.disabled"
       />
     </bk-select>
     <bk-select
