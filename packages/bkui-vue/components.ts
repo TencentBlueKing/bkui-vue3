@@ -54,7 +54,6 @@ export { default as Steps } from '@bkui-vue/steps';
 export { default as Switcher } from '@bkui-vue/switcher';
 export type { TableSettings, TableIColumn,  TableProps, TableColumnProps } from '@bkui-vue/table';
 export { default as Table } from '@bkui-vue/table';
-export { default as TableColumn } from '@bkui-vue/table-column';
 export { default as Tag } from '@bkui-vue/tag';
 export { default as TagInput } from '@bkui-vue/tag-input';
 export { default as Divider } from '@bkui-vue/divider';
