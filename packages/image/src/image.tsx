@@ -31,8 +31,6 @@ import { Spinner } from '@bkui-vue/icon';
 import { ImageViewer } from './index';
 import { propsImage as props } from './props';
 
-import './image-viewer.less';
-
 export default defineComponent({
   name: 'Image',
   props,
