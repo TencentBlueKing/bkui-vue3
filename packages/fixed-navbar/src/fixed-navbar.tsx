@@ -26,8 +26,8 @@
 
 import { defineComponent } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import { bkZIndexManager, PropTypes } from '@bkui-vue/shared';
-
 
 interface INavItem {
   icon: string,
@@ -60,8 +60,10 @@ export default defineComponent({
       item.action();
     };
 
+    const { resolveClassName } = usePrefix();
+
     return () => (
-      props.modelValue && <div class={`bk-fixed-navbar ${props.extCls} ${props.position}`}
+      props.modelValue && <div class={`${resolveClassName('fixed-navbar')} ${props.extCls} ${props.position}`}
         style={{ zIndex }}>
         { navConfig.map(item => <div class="fixed-navbar-item"
           onClick={handleClick.bind(this, item)}>

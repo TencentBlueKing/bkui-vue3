@@ -25,7 +25,8 @@
 */
 import { computed, defineComponent } from 'vue';
 
-import { PropTypes, resolveClassName } from '@bkui-vue/shared';
+import { usePrefix } from '@bkui-vue/config-provider';
+import { PropTypes } from '@bkui-vue/shared';
 
 export default defineComponent({
   name: 'PopContent',
@@ -49,12 +50,15 @@ export default defineComponent({
       maxHeight: resolveValToPix(props.maxHeight),
     }));
 
+    const { resolveClassName } = usePrefix();
+
     return {
       style,
+      resolveClassName,
     };
   },
   render() {
-    const className = [resolveClassName('popover'), resolveClassName('pop2-content'), this.extCls];
+    const className = [this.resolveClassName('popover'), this.resolveClassName('pop2-content'), this.extCls];
 
     return <div class={ className } tabindex="-1" style={this.style}>
       { this.$slots.arrow?.() ?? '' }

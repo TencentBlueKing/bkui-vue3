@@ -1,8 +1,10 @@
-.bk-rate-stars {
+@import '@bkui-vue/styles/themes/themes.less';
+
+.@{bk-prefix}-rate-stars {
   padding: 0;
   margin: 0;
 
-  .bk-is-edit {
+  .@{bk-prefix}-is-edit {
     cursor: pointer;
   }
 
@@ -12,13 +14,13 @@
     content: '';
   }
 
-  .bk-rate-star {
+  .@{bk-prefix}-rate-star {
     float: left;
     margin-right: 3px;
     enable-background: new 0 0 64 64;
     fill: #c5c7d1;
 
-    &.bk-is-select {
+    &.@{bk-prefix}-is-select {
       fill: #ffb848;
     }
 

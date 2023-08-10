@@ -32,8 +32,7 @@ import {
   PropType,
 } from 'vue';
 
-import { useLocale } from '@bkui-vue/config-provider';
-import { resolveClassName } from '@bkui-vue/shared';
+import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 
 import type {
   DatePickerValueType,
@@ -148,6 +147,8 @@ export default defineComponent({
       emit('changeRange', newDate);
     };
 
+    const { resolveClassName } = usePrefix();
+
     const getCellCls = cell => [
       resolveClassName('date-picker-cells-cell'),
       {
@@ -167,12 +168,13 @@ export default defineComponent({
       getCellCls,
       handleClick,
       handleMouseMove,
+      resolveClassName,
     };
   },
   render() {
     return (
-      <div class={resolveClassName('date-picker-cells')}>
-        <div class={resolveClassName('date-picker-cells-header')}>
+      <div class={this.resolveClassName('date-picker-cells')}>
+        <div class={this.resolveClassName('date-picker-cells-header')}>
           {
             this.headerDays.map(day => (
               <span>{day}</span>
