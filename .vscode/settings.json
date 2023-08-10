@@ -21,34 +21,4 @@
       120
     ],
     "editor.selectionHighlight": true,
-    "stylelint.validate": [
-      "css",
-      "less",
-      "postcss",
-      "vue",
-      "scss",
-      "sass"
-    ],
-    "preCI.localCodeCheck.filter.whitePath": "",
-    "preCI.localCodeCheck.filter.skipPath": ".*/\\.codecc/.*",
-    "preCI.localCodeCheck.preCommit": "none",
-    "preCI.localCodeCheck.prePush": "none",
-    "preCI.pipeline.yamlFilePath": "build.yml",
-    "preCI.localCodeCheck.toolType": "binary",
-    "preCI.localCodeCheck.checkerSet.Other": [
-      "standard_scc"
-    ],
-    "preCI.localCodeCheck.checkerSet.JS": [
-      "standard_js"
-    ],
-    "preCI.localCodeCheck.checkerSet.TS": [
-      "ts_standard"
-    ],
-    "i18n-ally.localesPaths": [
-      "lib/locale",
-      "packages/locale",
-      "lib/locale/lang",
-      "packages/locale/lang",
-      "packages/locale/src/lang"
-    ]
   }

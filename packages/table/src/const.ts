@@ -164,6 +164,19 @@ export const SCROLLY_WIDTH = 6;
  */
 export const LINE_HEIGHT = 42;
 
+export enum IHeadColor {
+  DEF1 = 'def1',
+  DEF2 = 'def2',
+}
+
+/**
+ * 根据表格的使用场景，表头支持颜色自定义，默认提供的选项：FAFBFD、F0F1F5，尽量一个项目选用同一种颜色。
+ */
+export const DEF_COLOR = {
+  [IHeadColor.DEF1]: '#FAFBFD',
+  [IHeadColor.DEF2]: '#F0F1F5',
+};
+
 export const SETTING_SIZE = {
   large: 78,
   medium: 60,
@@ -189,6 +202,13 @@ export const PROVIDE_KEY_INIT_COL = 'InitColumns';
 export const PROVIDE_KEY_TB_CACHE = 'BKTableCahce';
 
 export const BK_COLUMN_UPDATE_DEFINE = 'Bk_COlumn_Update_Define';
+
+/**
+ * 表格底部高度
+ * 分页组件
+ */
+export const TB_FOOT_HEIGHT = 60;
+
 /**
  * 排序可选择项
  */

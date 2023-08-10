@@ -316,6 +316,7 @@ export default class TableRender {
     const rowStyle: CSSProperties = {
       // @ts-ignore:next-line
       '--row-height': `${resolvePropVal(config, 'height', ['thead'])}px`,
+      backgroundColor: this.props.thead.color,
     };
 
     const getHeadCellText = (column, index) => {

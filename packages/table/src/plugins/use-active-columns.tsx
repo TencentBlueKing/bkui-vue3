@@ -25,6 +25,7 @@
 */
 import {  reactive, watchEffect  } from 'vue';
 
+import { ITableColumn } from '../components/table-column';
 import { Column, IColumnActive, TablePropTypes } from '../props';
 import useColumn from '../use-column';
 import { resolveNumberToNumArray } from '../utils';
@@ -53,16 +54,16 @@ export const resolveActiveColumns = (props: TablePropTypes) => {
  */
 export default (props: TablePropTypes, targetColumns: Column[]) => {
   let activeColumns = reactive([]);
-  const { getColumns } = useColumn(props, targetColumns);
+  const { getColumns } = useColumn(props, targetColumns as ITableColumn[]);
   if (props.columnPick === 'disabled') {
     return { activeColumns };
   }
 
   const activeCols = reactive(resolveActiveColumns(props));
-  const getActiveColumns = () => getColumns().map((_column: Column, index: number) => ({
+  const getActiveColumns = () => getColumns().map((col, index) => ({
     index,
+    _column: col,
     active: activeCols.some((colIndex: number) => colIndex === index),
-    _column,
   }));
 
   watchEffect(() => {
