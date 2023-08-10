@@ -38,9 +38,10 @@ import {
   Transition,
   watch } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import { clickoutside } from '@bkui-vue/directives';
 import { Close } from '@bkui-vue/icon';
-import { resolveClassName, useFormItem } from '@bkui-vue/shared';
+import { useFormItem } from '@bkui-vue/shared';
 
 import PickerDropdown from './base/picker-dropdown';
 // import VueTypes, { toType, toValidableType } from 'vue-types';
@@ -80,6 +81,8 @@ export default defineComponent({
         initialValue = shortcut.value();
       }
     }
+
+    const { resolveClassName } = usePrefix();
 
     const state = reactive({
       showClose: false,
@@ -564,6 +567,7 @@ export default defineComponent({
       onPickSuccess,
 
       handleToggleTime,
+      resolveClassName,
     };
   },
   render() {
@@ -599,7 +603,7 @@ export default defineComponent({
         <input
           type='text'
           class={[
-            resolveClassName('date-picker-editor'),
+            this.resolveClassName('date-picker-editor'),
             this.readonly ? 'readonly' : '',
             this.fontSizeCls,
             this.behavior === 'simplicity' ? 'only-bottom-border' : '',
@@ -636,21 +640,21 @@ export default defineComponent({
     return (
       <div
         class={[
-          resolveClassName('date-picker'),
+          this.resolveClassName('date-picker'),
           this.type === 'datetimerange' ? 'long' : '',
           this.longWidthCls,
         ]}
         v-clickoutside={this.handleClose}>
-        <div ref='triggerRef' class={resolveClassName('date-picker-rel')}
+        <div ref='triggerRef' class={this.resolveClassName('date-picker-rel')}
              onMouseenter={this.handleInputMouseenter}
              onMouseleave={this.handleInputMouseleave}>
           {this.$slots.trigger?.() ?? defaultTrigger}
         </div>
         <Teleport to='body' disabled={!this.appendToBody}>
-          <Transition name={resolveClassName('fade-down-transition')}>
+          <Transition name={this.resolveClassName('fade-down-transition')}>
             <PickerDropdown
               class={[
-                this.appendToBody ? resolveClassName('date-picker-transfer') : '',
+                this.appendToBody ? this.resolveClassName('date-picker-transfer') : '',
               ]}
               ref='pickerDropdownRef'
               v-show={this.opened}
@@ -662,7 +666,7 @@ export default defineComponent({
               {
                 this.hasHeader
                   ? (
-                    <div class={[resolveClassName('date-picker-top-wrapper'), this.headerSlotCls]}>
+                    <div class={[this.resolveClassName('date-picker-top-wrapper'), this.headerSlotCls]}>
                       {this.$slots.header?.() ?? null}
                     </div>
                   )
@@ -720,7 +724,7 @@ export default defineComponent({
               {
                 this.hasFooter
                   ? (
-                    <div class={[resolveClassName('date-picker-footer-wrapper'), this.footerSlotCls]}>
+                    <div class={[this.resolveClassName('date-picker-footer-wrapper'), this.footerSlotCls]}>
                       {this.$slots.footer?.() ?? null}
                     </div>
                   )

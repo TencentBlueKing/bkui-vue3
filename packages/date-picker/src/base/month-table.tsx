@@ -27,7 +27,7 @@
 import type { ExtractPropTypes } from 'vue';
 import { computed, defineComponent, PropType } from 'vue';
 
-import { resolveClassName } from '@bkui-vue/shared';
+import { usePrefix } from '@bkui-vue/config-provider';
 
 import type { DatePickerValueType } from '../interface';
 import { clearHours } from '../utils';
@@ -114,6 +114,8 @@ export default defineComponent({
 
     const tCell = nr => (String(nr).length > 1 ? nr : `0${nr}`);
 
+    const { resolveClassName } = usePrefix();
+
     const getCellCls = cell => [
       resolveClassName('date-picker-cells-cell'),
       {
@@ -149,13 +151,14 @@ export default defineComponent({
       getCellCls,
       handleClick,
       handleMouseMove,
+      resolveClassName,
     };
   },
   render() {
     return (
       <div class={[
-        resolveClassName('date-picker-cells'),
-        resolveClassName('date-picker-cells-month'),
+        this.resolveClassName('date-picker-cells'),
+        this.resolveClassName('date-picker-cells-month'),
       ]}>
         {
           this.cells.map(cell => (

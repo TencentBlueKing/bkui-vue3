@@ -26,8 +26,8 @@
 import { h, nextTick } from 'vue';
 
 import BkCheckbox from '@bkui-vue/checkbox';
+import { usePrefix } from '@bkui-vue/config-provider';
 import { DownShape, Folder, FolderShapeOpen, RightShape, Spinner, TextFile } from '@bkui-vue/icon';
-import { resolveClassName } from '@bkui-vue/shared';
 
 import { EVENTS, NODE_ATTRIBUTES } from './constant';
 import { TreePropTypes } from './props';
@@ -55,6 +55,8 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
     extendNodeAttr,
     extendNodeScopedData,
   } = useNodeAttribute(flatData, props);
+
+  const { resolveClassName } = usePrefix();
 
   const { registerNextLoop } = initOption;
 

@@ -51,7 +51,7 @@
 */
 import { createApp, createVNode, defineComponent, h, onMounted, ref, shallowRef, VNode } from 'vue';
 
-import { resolveClassName } from '@bkui-vue/shared';
+import { usePrefix } from '@bkui-vue/config-provider';
 
 import Dialog from '../../dialog/src/dialog';
 
@@ -109,6 +109,8 @@ const InfoBox = (config: Partial<ModalFuncProps>) => {
       }
 
       expose({ update });
+
+      const { resolveClassName } = usePrefix();
 
       const getContent = () => {
         const children = [];

@@ -325,6 +325,7 @@ export default defineComponent({
           usingItem.value = null;
           return;
         };
+
         setSelectedItem(usingItem.value);
         menuHoverId.value = '';
         setInputFocus(true);

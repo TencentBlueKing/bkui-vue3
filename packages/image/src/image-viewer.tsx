@@ -26,6 +26,7 @@
 import { throttle } from 'lodash';
 import { computed, CSSProperties, defineComponent, effectScope, ref, shallowRef, Teleport, Transition } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import { bkTooltips } from '@bkui-vue/directives';
 import { AngleLeft, AngleRight, Close } from '@bkui-vue/icon';
 import { bkZIndexManager } from '@bkui-vue/shared';
@@ -255,23 +256,26 @@ export default defineComponent({
       document.addEventListener('mouseup', mouseup);
       e.preventDefault();
     }
+
+    const { resolveClassName } = usePrefix();
+
     return () => (
       <Teleport to='body'>
         <Transition>
-          <div tabindex='-1' ref='wrapper' class='bk-image-viewer-wrapper' style={wrapStyles.value}>
+          <div tabindex='-1' ref='wrapper' class={`${resolveClassName('image-viewer-wrapper')}`} style={wrapStyles.value}>
             <div
-              class='bk-image-viewer-mask'
+              class={`${resolveClassName('image-viewer-mask')}`}
               onClick={() => {
                 props.maskClose && hide();
               }}/>
             {
               props.isShowTitle && props.urlList.length ? (
-                <div class='bk-image-viewer-header'>
+                <div class={`${resolveClassName('image-viewer-header')}`}>
                   <div>{currentName}</div>
                   <div class='tc '>{index.value + 1}/{props.urlList.length}</div>
                   <div class='quit-box tr'>
                     <div class='quit-tips mr10'>ESC 可以退出全屏</div>
-                    <div class='bk-image-viewer-close' onClick={hide}>
+                    <div class={`${resolveClassName('image-viewer-close')}`} onClick={hide}>
                       <Close/>
                     </div>
                   </div>
@@ -282,32 +286,32 @@ export default defineComponent({
               <>
                 <div
                   onClick={prev}
-                  class={`bk-image-viewer-btn bk-image-viewer-prev ${!props.loops && isFirst ? 'is-disabled' : ''}`}>
+                  class={`${resolveClassName('image-viewer-btn')} ${resolveClassName('image-viewer-prev')} ${!props.loops && isFirst ? 'is-disabled' : ''}`}>
                   <AngleLeft/>
                 </div>
                 <div
                   onClick={next}
-                  class={`bk-image-viewer-btn bk-image-viewer-prev ${!props.loops && isLast ? 'is-disabled' : ''}`}>
+                  class={`${resolveClassName('image-viewer-btn')} ${resolveClassName('image-viewer-prev')} ${!props.loops && isLast ? 'is-disabled' : ''}`}>
                   <AngleRight/>
                 </div>
-                <div class="bk-image-viewer-actions-inner">
+                <div class={`${resolveClassName('image-viewer-actions-inner')}`}>
                   <AngleLeft v-bk-tooltips="{content: '提示信息', placement: 'top'}" onClick={() => handleActions('zoomOut')}/>
                   <i
                     class=""
                     v-bk-tooltips="{content: '提示信息', placement: 'top'}"
                     onClick={() => handleActions('zoomOut')} />
                   <i
-                    class="bk-icon icon-narrow-line"
+                    class={`${resolveClassName('icon')} icon-narrow-line`}
                     v-bk-tooltips="{content: '提示信息', placement: 'top'}"
                     onClick={() => handleActions('zoomOut')} />
 
                 </div>
               </>
             ) : ''}
-            <div class={`bk-image-viewer-canvas ${props.isShowTitle ? 'bk-image-viewer-has-header' : ''}`}>
+            <div class={`${resolveClassName('image-viewer-canvas')} ${props.isShowTitle ? resolveClassName('image-viewer-has-header') : ''}`}>
               {error.value ? (
-                <div class="bk-image-viewer-error">
-                  <div><i class="bk-icon icon-image-fail"></i></div>
+                <div class={`${resolveClassName('image-viewer-error')}`}>
+                  <div><i class={`${resolveClassName('icon')} icon-image-fail`}></i></div>
                   <div>抱歉，图片加载失败</div>
                 </div>
               ) : (
@@ -318,7 +322,7 @@ export default defineComponent({
                   return <img
                     key={i}
                     ref={el => (imgRefs[i] = el as HTMLImageElement)}
-                    class="bk-image-viewer-img"
+                    class={`${resolveClassName('image-viewer-img')}`}
                     style={imgStyle.value}
                     src={url}
                     onLoad={handleImgLoad}

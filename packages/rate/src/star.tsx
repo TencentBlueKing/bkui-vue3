@@ -26,6 +26,7 @@
 
 import { computed, defineComponent } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import { classes, PropTypes } from '@bkui-vue/shared';
 
 export default defineComponent({
@@ -57,10 +58,12 @@ export default defineComponent({
       emit('changeHover', rate);
     };
 
+    const { resolveClassName } = usePrefix();
+
     const starClass = index => classes({
-      'bk-is-select': index < Math.floor(displayRate.value),
-      'bk-is-edit': props.editable,
-      'bk-rate-star': true,
+      [`${resolveClassName('is-select')}`]: index < Math.floor(displayRate.value),
+      [`${resolveClassName('is-edit')}`]: props.editable,
+      [`${resolveClassName('rate-star')}`]: true,
     });
 
     const displayRate = computed(() => props.hoverRate || props.rate);
@@ -72,7 +75,7 @@ export default defineComponent({
     };
 
     return () => (
-      <p class="bk-rate-stars">
+      <p class={`${resolveClassName('rate-stars')}`}>
         {
           Array(props.max).fill(1)
             .map((_, index) => (

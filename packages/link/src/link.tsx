@@ -27,6 +27,7 @@
 import { defineComponent } from 'vue';
 import { toType } from 'vue-types';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import { classes, PropTypes } from '@bkui-vue/shared';
 
 enum LinkThemeEnum {
@@ -55,15 +56,18 @@ export default defineComponent({
       emit('click', event);
     };
 
+    const { resolveClassName } = usePrefix();
+
     return {
       handleClick,
+      resolveClassName,
     };
   },
   render() {
     const linkClass = classes({
       'is-disabled': this.disabled,
       'has-underline': this.underline,
-    }, `${this.theme} bk-link`);
+    }, `${this.theme} ${this.resolveClassName('link')}`);
 
     return (
       <a href={this.href}
