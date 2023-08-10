@@ -166,7 +166,7 @@ export enum ResizerWay {
 
 export const IColumnType = toType<Column>('IColumnType', {});
 
-export const ITableSettings = toType<Settings>('ITableSettings', {});
+export const ITableSettings = toType<Settings>('ITableSettingXXXXXXXXX', {});
 
 /**
  * 配置自定义行高选项
@@ -248,8 +248,11 @@ export type IReactiveProp = {
   scrollTranslateY: Number,
   scrollTranslateX: Number,
   pos: Record<string, any>,
-  settings: any,
-  setting: any,
+  settings: Settings | boolean,
+  setting: {
+    size: string,
+    height: Number
+  },
   defaultSort: Record<string, any>
 };
 

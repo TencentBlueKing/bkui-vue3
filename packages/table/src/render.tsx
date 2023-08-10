@@ -63,7 +63,7 @@ import {
 export default class TableRender {
   props: TablePropTypes;
   context;
-  reactiveProp: any;
+  reactiveProp: IReactiveProp;
   colgroups: GroupColumn[];
   uuid: string;
   events: Map<string, any[]>;
