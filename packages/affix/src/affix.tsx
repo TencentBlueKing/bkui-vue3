@@ -27,6 +27,7 @@
 import { throttle } from 'lodash';
 import { computed, defineComponent, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import { classes, PropTypes } from '@bkui-vue/shared';
 const on = (() => {
   if (document.addEventListener) {
@@ -86,9 +87,11 @@ export default defineComponent({
         handleScroll();
       });
     });
+
+    const { resolveClassName } = usePrefix();
     const affix = ref(false);
     const pointClass = computed(() => classes({
-      'bk-affix': affix.value,
+      [`${resolveClassName('affix')}`]: affix.value,
     }));
     const offsetType = computed(() => (props.offsetBottom >= 0 ? 'bottom' : 'top'));
     const setTargetLoop = () => {

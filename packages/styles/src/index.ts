@@ -80,3 +80,5 @@ import '@bkui-vue/time-picker/time-picker.less';
 import '@bkui-vue/search-select/search-select.less';
 import '@bkui-vue/config-provider/config-provider.less';
 import '@bkui-vue/pop-confirm/pop-confirm.less';
+import '@bkui-vue/image/image.less';
+import '@bkui-vue/image/image-viewer.less';

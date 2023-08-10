@@ -306,7 +306,6 @@ export default defineComponent({
       onValidate('');
     }
     async function handleSelectItem(item: ICommonItem, type?: SearchItemType) {
-      console.info(item, '==========');
       // 快捷选中
       if (item.value?.id) {
         if ((props.valueBehavior === ValueBehavior.NEEDKEY && item.value) || !props.validateValues) {
@@ -319,6 +318,18 @@ export default defineComponent({
           menuHoverId.value = '';
           return;
         }
+        usingItem.value = new SelectedItem({ ...item, id: item.realId ?? item.id }, type, valueSplitCode.value);
+        usingItem.value.addValue(item.value);
+        const res = await validateUsingItemValues(item.value);
+        if (!res) {
+          usingItem.value = null;
+          return;
+        };
+
+        setSelectedItem(usingItem.value);
+        menuHoverId.value = '';
+        setInputFocus(true);
+        return;
       }
       if (!usingItem.value || !inputRef?.value?.innerText) {
         usingItem.value = new SelectedItem(item, type, valueSplitCode.value);
@@ -336,7 +347,7 @@ export default defineComponent({
       usingItem.value.addValue(item);
       const res = await validateUsingItemValues(item);
       if (!res) return;
-      if (!usingItem.value.multiple)setSelectedItem();
+      if (!usingItem.value.multiple) setSelectedItem();
       if (props.valueBehavior === ValueBehavior.NEEDKEY && usingItem.value?.multiple) {
         setInputFocus();
       }

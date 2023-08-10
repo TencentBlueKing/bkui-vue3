@@ -26,7 +26,8 @@
 
 import { defineComponent, Transition } from 'vue';
 
-import { BKPopIndexManager, resolveClassName } from '@bkui-vue/shared';
+import { usePrefix } from '@bkui-vue/config-provider';
+import { BKPopIndexManager } from '@bkui-vue/shared';
 
 import { propsMixin } from './props.mixin';
 
@@ -138,6 +139,7 @@ export default defineComponent({
     },
   },
   render() {
+    const { resolveClassName } = usePrefix();
     const maxHeight = this.maxHeight ? { maxHeight: this.maxHeight } : {};
     const bodyClass = `${resolveClassName('modal-body')} ${this.animateType === 'slide' ? this.direction : ''}`;
     return (

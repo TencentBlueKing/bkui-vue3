@@ -25,8 +25,9 @@
 */
 import { defineComponent, ref, watch } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import { AngleDownFill, AngleUpFill } from '@bkui-vue/icon/';
-import { PropTypes, resolveClassName } from '@bkui-vue/shared';
+import { PropTypes } from '@bkui-vue/shared';
 
 import { SORT_OPTION, SORT_OPTIONS } from '../const';
 import { Column, IColumnType, ISortShape } from '../props';
@@ -47,6 +48,8 @@ export default defineComponent({
   },
   emits: ['change'],
   setup(props: IHeadSortPropType, { emit }) {
+    const { resolveClassName } = usePrefix();
+
     const defSort = (props.column?.sort as ISortShape)?.value || props.defaultSort || SORT_OPTION.NULL;
     const sortType = ref(defSort);
 

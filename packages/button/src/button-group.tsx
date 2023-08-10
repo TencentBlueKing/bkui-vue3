@@ -26,6 +26,7 @@
 
 import { computed, defineComponent } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import { classes, PropTypes } from '@bkui-vue/shared';
 
 export default defineComponent({
@@ -34,9 +35,10 @@ export default defineComponent({
     size: PropTypes.size(),
   },
   setup(props, ctx) {
+    const { resolveClassName } = usePrefix();
     const btnGroupCls = computed(() => classes({
-      [`bk-button-group-${props.size}`]: !!props.size,
-    }, 'bk-button-group'));
+      [`${resolveClassName(`button-group-${props.size}`)}`]: !!props.size,
+    }, `${resolveClassName('button-group')}`));
 
     return () => (
       <div class={btnGroupCls.value}>

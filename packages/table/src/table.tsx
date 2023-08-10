@@ -38,8 +38,8 @@ import {
   watchEffect,
 } from 'vue';
 
-import { useLocale } from '@bkui-vue/config-provider';
-import { debounce, resolveClassName } from '@bkui-vue/shared';
+import { useLocale, usePrefix } from '@bkui-vue/config-provider';
+import { debounce } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
 import BkTableCache from './cache';
@@ -120,13 +120,15 @@ export default defineComponent({
       hasFooter,
     } = useClass(props, targetColumns, root, reactiveSchema, pageData);
 
+    const { resolveClassName } = usePrefix();
+
     const styleRef = computed(() => ({
       hasScrollY: hasScrollYRef.value,
     }));
     const tableRender = new TableRender(props, ctx, reactiveSchema, colgroups, styleRef, t);
 
     const updateOffsetRight = () => {
-      const $tableContent = root.value.querySelector('.bk-table-body-content');
+      const $tableContent = root.value.querySelector(`.${resolveClassName('table-body-content')}`);
       const $table = $tableContent.querySelector('table');
       if ($table) {
         const $tableScrollWidth = $table.scrollWidth;

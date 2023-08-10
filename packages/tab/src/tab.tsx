@@ -36,7 +36,7 @@ import {
   VNode,
 } from 'vue';
 
-import { resolveClassName } from '@bkui-vue/shared';
+import { usePrefix } from '@bkui-vue/config-provider';
 
 import { PositionEnum, SortTypeEnum, tabProps, TabTypeEnum } from './props';
 import TabNav from './tab-nav';
@@ -145,21 +145,24 @@ export default defineComponent({
       },
     };
 
+    const { resolveClassName } = usePrefix();
+
     return {
       ...methods,
       isMounted,
       panels,
+      resolveClassName,
     };
   },
   render() {
     const getTabBoxClass = () => {
-      const arr = [resolveClassName('tab'), this.extCls];
+      const arr = [this.resolveClassName('tab'), this.extCls];
       if (this.tabPosition === PositionEnum.TOP) {
-        arr.push(resolveClassName(`tab--${this.tabPosition}`), resolveClassName(`tab--${this.type}`));
+        arr.push(this.resolveClassName(`tab--${this.tabPosition}`), this.resolveClassName(`tab--${this.type}`));
       } else {
-        arr.push(resolveClassName(`tab--${this.tabPosition}`));
+        arr.push(this.resolveClassName(`tab--${this.tabPosition}`));
         if (this.type === TabTypeEnum.CARD_TAB) {
-          arr.push(resolveClassName('tab--vertical-tab'));
+          arr.push(this.resolveClassName('tab--vertical-tab'));
         }
       }
       return arr;
@@ -222,7 +225,7 @@ export default defineComponent({
     return (
       <div class={getTabBoxClass()}>
         {getTabHeader()}
-        <div class={resolveClassName('tab-content')}>
+        <div class={this.resolveClassName('tab-content')}>
           {this.$slots.default?.()}
         </div>
       </div>

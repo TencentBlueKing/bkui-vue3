@@ -27,11 +27,11 @@
 import { computed, defineComponent, nextTick, ref, toRefs, watch } from 'vue';
 import { array } from 'vue-types';
 
-import { useLocale } from '@bkui-vue/config-provider';
+import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { bkTooltips } from '@bkui-vue/directives';
 import { AngleUp, Close, Error } from '@bkui-vue/icon';
 import BkPopover from '@bkui-vue/popover';
-import { debounce, PropTypes, resolveClassName } from '@bkui-vue/shared';
+import { debounce, PropTypes } from '@bkui-vue/shared';
 import Tag from '@bkui-vue/tag';
 
 import { useHover } from '../../select/src/common';
@@ -74,6 +74,8 @@ export default defineComponent({
     filterMethod: PropTypes.func.def(null),
     scrollHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(216),
     scrollWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def('auto'),
+    customTextFillback: PropTypes.func.def(null),
+    customTagsFillback: PropTypes.func.def(null),
     collapseTags: {
       type: Boolean,
       default: true,
@@ -136,6 +138,14 @@ export default defineComponent({
 
     // 用computed定义placeholder变量，用于处理props中的placeholder属性
     const placeholder = computed(() => (props.placeholder ? props.placeholder : t.value.pleaseSelect));
+
+    const displayText = computed(() => {
+      if (props.customTextFillback) {
+        return props.customTextFillback(props.modelValue, store.value.getFlattedNodes());
+      }
+      return selectedText.value;
+    });
+
 
     // 根据配置，获取输入框显示的text
     const getShowText = (node: INode) => (props.showCompleteName
@@ -283,7 +293,9 @@ export default defineComponent({
     );
 
     // 定义overflowTagIndex变量，用于处理tag的折叠
-    const tagList = computed(() => selectedTags.value.map(item => item.text));
+    const tagList = computed(() => (props.customTagsFillback
+      ? props.customTagsFillback(props.modelValue, store.value.getFlattedNodes())
+      : selectedTags.value.map(item => item.text)));
     const isCollapse = computed(() => (props.collapseTags ? props.collapseTags && isFocus.value
       : props.collapseTags));
     const isEditMode = computed(() => (props.collapseTags ? props.collapseTags && isEdit.value
@@ -294,6 +306,8 @@ export default defineComponent({
     const { overflowTagIndex } = slots.trigger
       ? { overflowTagIndex: null }
       : useTagsOverflow(bkCascaderRef, isEditMode, tagList);
+
+    const { resolveClassName } = usePrefix();
 
     // 返回组件所需的变量和函数
     return {
@@ -323,6 +337,8 @@ export default defineComponent({
       focusEmitter,
       tagList,
       isEdit,
+      displayText,
+      resolveClassName,
     };
   },
   render() {
@@ -330,11 +346,11 @@ export default defineComponent({
     const suffixIcon = () => {
       if (this.clearable && this.isHover && !this.disabled) {
         // 当可清空、鼠标悬浮且未禁用时，渲染清空图标
-        return <Close class={resolveClassName('icon-clear-icon')}
+        return <Close class={this.resolveClassName('icon-clear-icon')}
           onClick={this.handleClear}></Close>;
       }
       // 否则渲染展开/收起图标
-      return <AngleUp class={resolveClassName('icon-angle-up')}></AngleUp>;
+      return <AngleUp class={this.resolveClassName('icon-angle-up')}></AngleUp>;
     };
 
     // 因为cascader的tag长短不一，在计算时如果overflowIndex为0，会出现直接+n渲染的情况，因此需要对其进行修正
@@ -352,7 +368,7 @@ export default defineComponent({
     const renderTags = () => {
       if (this.limitOneLine) {
         // 如果limitOneLine为true，则只显示一行
-        return <span class="cascader-selected-text">{this.selectedText}</span>;
+        return <span class="cascader-selected-text">{this.displayText}</span>;
       }
       return <div class="cascader-tag-list">
         {this.tagList.map((tag, index) => {
@@ -361,7 +377,7 @@ export default defineComponent({
           return (
             <span class="tag-item" style={{ display: isOverflow ? 'none' : '' }} key={tag}>
               <span class="tag-item-name">{tag}</span>
-              <Error class={resolveClassName('icon-clear-icon')}
+              <Error class={this.resolveClassName('icon-clear-icon')}
                 onClick={(e: Event) => {
                   e.stopPropagation();
                   this.removeTag(this.modelValue, index, e);
@@ -380,18 +396,18 @@ export default defineComponent({
 
     const textRender = () => (
       // 多选时， text被tagRender填充，不需要进行text渲染
-      this.multiple ? null :  <span>{this.selectedText}</span>
+      this.multiple ? null :  <span>{this.displayText}</span>
     );
 
     // 定义popoverRender函数，用于渲染弹出框
     const popoverRender = () => (
       <BkPopover
         placement="bottom-start"
-        theme={`light ${resolveClassName('cascader-popover')}`}
+        theme={`light ${this.resolveClassName('cascader-popover')}`}
         trigger="click"
         arrow={false}
         disabled={this.disabled}
-        class={resolveClassName('cascader-popover-wrapper')}
+        class={this.resolveClassName('cascader-popover-wrapper')}
         ref="popover"
         onAfterHidden={this.popoverChangeEmitter}
         onAfterShow={this.popoverChangeEmitter}
@@ -400,11 +416,11 @@ export default defineComponent({
           default: () => (
             this.$slots.trigger
               ? this.$slots.trigger({ selected: this.modelValue })
-              : <div class={[resolveClassName('cascader-name'), 'bk-scroll-y']}>
+              : <div class={[this.resolveClassName('cascader-name'), this.resolveClassName('scroll-y')]}>
               {this.multiple && this.selectedTags.length > 0 && renderTags()}
               {this.filterable
                 ? (this.isCollapse || this.selectedTags.length === 0)
-                && <input class={[resolveClassName('cascader-search-input'), {
+                && <input class={[this.resolveClassName('cascader-search-input'), {
                   'is-disabled': this.disabled,
                 }]}
                     type="text"
@@ -419,7 +435,7 @@ export default defineComponent({
             </div>
           ),
           content: () => (
-            <div class={resolveClassName('cascader-popover')}>
+            <div class={this.resolveClassName('cascader-popover')}>
               <CascaderPanel
                 store={this.store}
                 ref="cascaderPanel"
@@ -433,7 +449,7 @@ export default defineComponent({
                 v-slots={{
                   default: scope => (this.$slots.default
                     ? this.$slots.default(scope)
-                    : <span class={resolveClassName('cascader-node-name')}>{scope.node.name}</span>),
+                    : <span class={this.resolveClassName('cascader-node-name')}>{scope.node.name}</span>),
                 }}>
               </CascaderPanel>
             </div>
@@ -443,10 +459,10 @@ export default defineComponent({
     );
 
     return (
-      <div class={[resolveClassName('cascader-wrapper'), this.floatMode ? 'float-mode' : '']}>
+      <div class={[this.resolveClassName('cascader-wrapper'), this.floatMode ? 'float-mode' : '']}>
         { this.$slots.trigger
           ? popoverRender()
-          : <div class={[resolveClassName('cascader'), this.extCls, {
+          : <div class={[this.resolveClassName('cascader'), this.extCls, {
             'is-unselected': this.modelValue.length === 0,
             'is-hover': this.isHover,
             'is-filterable': this.filterable,

@@ -25,12 +25,11 @@
 */
 import { computed, defineComponent, ref, watch } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import { Spinner } from '@bkui-vue/icon';
 
 import { ImageViewer } from './index';
 import { propsImage as props } from './props';
-
-import './image-viewer.less';
 
 export default defineComponent({
   name: 'Image',
@@ -62,10 +61,13 @@ export default defineComponent({
       hasError.value = false;
       imageSrc.value = props.src;
     }
+
+    const { resolveClassName } = usePrefix();
+
     return () => {
       function getContent() {
         if (loading.value) {
-          return <div class="bk-image-placeholder"><Spinner/></div>;
+          return <div class={`${resolveClassName('image-placeholder')}`}><Spinner/></div>;
         }
         if (hasError.value) {
           if (slots.error) {
@@ -75,9 +77,9 @@ export default defineComponent({
             return  slots.error;
           }
           return  (
-            <div class="bk-image-placeholder">
+            <div class={`${resolveClassName('image-placeholder')}`}>
               {props.fallback ? (<img src={props.fallback} alt='图片加载错误'/>) : ''}
-              <i v-else class="bk-icon icon-image-fail"></i>
+              <i v-else class={`${resolveClassName('icon')} icon-image-fail`}></i>
             </div>
           );
         }
@@ -85,7 +87,7 @@ export default defineComponent({
         return (<img src={props.src} onClick={clickHandler} style={{ objectFit: fit }}/>);
       }
       return (
-        <div class="bk-image">
+        <div class={`${resolveClassName('image')}`}>
           {getContent()}
           {preview.value && isShowViewer.value ? (
             <ImageViewer

@@ -1,5 +1,5 @@
 {
-  "name": "@bkui-vue/images",
+  "name": "@bkui-vue/image",
   "version": "0.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

@@ -35,9 +35,9 @@ import {
   watch,
 } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import { AngleUp } from '@bkui-vue/icon';
 import { bkZIndexManager, PropTypes } from '@bkui-vue/shared';
-
 
 export default defineComponent({
   name: 'Backtop',
@@ -89,18 +89,20 @@ export default defineComponent({
       container.value!.removeEventListener('scroll', scrollHandler);
     });
 
+    const { resolveClassName } = usePrefix();
+
     return () => (
       <Transition name="bk-fade">
         { visible.value
           ? <div
-            class={`bk-backtop ${props.extCls}`}
+            class={`${resolveClassName('backtop')} ${props.extCls}`}
             style={{
               right: styleRight,
               bottom: styleBottom,
               zIndex: zIndex.value,
             }}
             onClick={scrollTop}>
-            {slots.default?.() ?? <AngleUp class="bk-backtop-icon"></AngleUp>}
+            {slots.default?.() ?? <AngleUp class={`${resolveClassName('backtop-icon')}`}></AngleUp>}
           </div>
           : ''
         }

@@ -25,7 +25,7 @@
 */
 import { computed } from 'vue';
 
-import { resolveClassName } from '@bkui-vue/shared';
+import { usePrefix } from '@bkui-vue/config-provider';
 
 import { COLUMN_ATTRIBUTE, SCROLLY_WIDTH } from '../const';
 import { GroupColumn, TablePropTypes } from '../props';
@@ -126,6 +126,7 @@ export default (props: TablePropTypes, colgroups: GroupColumn[], hasScrollY?) =>
     });
   });
 
+  const { resolveClassName } = usePrefix();
   const fixedWrapperClass = resolveClassName('table-fixed');
 
   return {
