@@ -26,11 +26,11 @@
 
 import { computed, defineComponent, nextTick, onMounted, ref, watch } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import Input from '@bkui-vue/input';
 import { PropTypes } from '@bkui-vue/shared';
 
 import SliderButton from './slider-button';
-
 
 export const on = (element: Element | Window, event: string, handler) => {
   if (element && event && handler) {
@@ -352,27 +352,29 @@ export default defineComponent({
       return '1';
     };
 
+    const { resolveClassName } = usePrefix();
+
     const renderDom = () => (
-      <div class={ ['bk-slider', props.extCls] }>
+      <div class={ [`${resolveClassName('slider')}`, props.extCls] }>
         { slots.start?.() }
-        <div class="bk-slider-runway"
+        <div class={`${resolveClassName('slider-runway')}`}
           ref={slider}
           style={runwayStyle.value}
           onClick={setButtonPos}>
-          <div class={['bk-slider-bar', props.vertical ? 'vertical' : 'horizontal', { disable: props.disable }]}
+          <div class={[`${resolveClassName('slider-bar')}`, props.vertical ? 'vertical' : 'horizontal', { disable: props.disable }]}
             style={barStyle.value}></div>
             {props.showInterval ? intervals.value.map((interval, index) => (
               <div key={index}
-                class={['bk-slider-interval', { vertical: props.vertical }]}
+                class={[`${resolveClassName('slider-interval')}`, { vertical: props.vertical }]}
                 style={getIntervalStyle(interval)}></div>
             )) : undefined}
             {props.customContent ? customList.value.map((custom, index) => (
               <div key={index}
-              class={['bk-slider-interval', { vertical: props.vertical }]}
+              class={[`${resolveClassName('slider-interval')}`, { vertical: props.vertical }]}
               style={getIntervalStyle(custom.percent)}></div>
             )) : undefined}
             {(props.showBetweenLabel || props.showIntervalLabel || props.customContent)
-              ? <div class={['bk-slider-labels', props.vertical ? 'vertical' : 'horizontal']}>
+              ? <div class={[`${resolveClassName('slider-labels')}`, props.vertical ? 'vertical' : 'horizontal']}>
                 {(function () {
                   if (props.showBetweenLabel) {
                     return [
@@ -388,7 +390,7 @@ export default defineComponent({
                   if (props.showIntervalLabel) {
                     return (
                       intervalLabels.value.map((intervalLabel, index) => (
-                        <div class={['bk-slider-label', props.vertical ? 'vertical' : 'horizontal']}
+                        <div class={[`${resolveClassName('slider-label')}`, props.vertical ? 'vertical' : 'horizontal']}
                           key={index}
                           style={getIntervalStyle(intervalLabel.stepWidth)}>
                             {intervalLabel.stepLabel}
@@ -399,7 +401,7 @@ export default defineComponent({
                   if (props.customContent) {
                     return (
                       customList.value.map((item, index) => (
-                        <div class={['bk-slider-label', props.vertical ? 'vertical' : 'horizontal']}
+                        <div class={[`${resolveClassName('slider-label')}`, props.vertical ? 'vertical' : 'horizontal']}
                         key={index}
                         style={getIntervalStyle(item.percent)}>
                           {item.label}
@@ -424,7 +426,7 @@ export default defineComponent({
               onEmitChange={emitChange}
               onResetSize={resetSize}></SliderButton> : undefined}
         </div>
-        {(props.showInput && !props.vertical) ? <div class="bk-slider-input">
+        {(props.showInput && !props.vertical) ? <div class={`${resolveClassName('slider-input')}`}>
           <div class="input-item">
             <Input type="number"
               modelValue={firstInput.value}

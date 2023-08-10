@@ -32,6 +32,7 @@ import {
   watch,
 } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import {
   classes,
   PropTypes,
@@ -39,7 +40,6 @@ import {
 } from '@bkui-vue/shared';
 
 import star from './star';
-
 export default defineComponent({
   name: 'Rate',
 
@@ -57,6 +57,7 @@ export default defineComponent({
   emits: ['change', 'update:modelValue'],
 
   setup(props, { emit }) {
+    const { resolveClassName } = usePrefix();
     const formItem = useFormItem();
     const hoverRate: Ref<number> = ref(0);
 
@@ -72,7 +73,7 @@ export default defineComponent({
     };
 
     const rateClass = classes({
-      'bk-rate': true,
+      [`${resolveClassName('rate')}`]: true,
     });
 
     const sizeMap = {
@@ -115,7 +116,7 @@ export default defineComponent({
             <star
               rate={5}
               style={starStyle.value}
-              class="bk-score-real"
+              class={`${resolveClassName('score-real')}`}
               editable={false}
               {...commonAttrs}
             ></star>,

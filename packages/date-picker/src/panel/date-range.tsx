@@ -41,9 +41,8 @@ import {
   watch,
 } from 'vue';
 
-import { useLocale } from '@bkui-vue/config-provider';
+import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { AngleDoubleLeft, AngleDoubleRight, AngleLeft, AngleRight } from '@bkui-vue/icon';
-import { resolveClassName } from '@bkui-vue/shared';
 
 import Confirm from '../base/confirm';
 import DateTable from '../base/date-table';
@@ -490,6 +489,8 @@ export default defineComponent({
 
     const timePickerRef = ref(null);
 
+    const { resolveClassName } = usePrefix();
+
     return {
       ...toRefs(state),
       isTime,
@@ -522,6 +523,7 @@ export default defineComponent({
 
       timePickerRef,
       t,
+      resolveClassName,
     };
   },
   render() {
@@ -533,7 +535,7 @@ export default defineComponent({
       } else {
         if (this.shortcuts.length) {
           inner = (
-            <div class={resolveClassName('picker-panel-shortcuts')}>
+            <div class={this.resolveClassName('picker-panel-shortcuts')}>
               {
                 this.shortcuts.map((item, index) => (
                   <div
@@ -546,15 +548,15 @@ export default defineComponent({
           );
         }
       }
-      shortcuts = <div class={resolveClassName('picker-panel-sidebar')}>{inner}</div>;
+      shortcuts = <div class={this.resolveClassName('picker-panel-sidebar')}>{inner}</div>;
     }
 
     return (
       <div
         class={[
-          resolveClassName('picker-panel-body-wrapper'),
-          resolveClassName('date-picker-with-range'),
-          (this.shortcuts.length || this.$slots.shortcuts) ? resolveClassName('picker-panel-with-sidebar') : '',
+          this.resolveClassName('picker-panel-body-wrapper'),
+          this.resolveClassName('date-picker-with-range'),
+          (this.shortcuts.length || this.$slots.shortcuts) ? this.resolveClassName('picker-panel-with-sidebar') : '',
         ]}
         onMousedown={(e: MouseEvent) => {
           e.preventDefault();
@@ -562,15 +564,15 @@ export default defineComponent({
       >
         <div
           class={[
-            resolveClassName('picker-panel-body'),
-            this.showTime ? resolveClassName('picker-panel-body-time') : resolveClassName('picker-panel-body-date'),
+            this.resolveClassName('picker-panel-body'),
+            this.showTime ? this.resolveClassName('picker-panel-body-time') : this.resolveClassName('picker-panel-body-date'),
           ]}>
           {/* left panel */}
           <div
-            class={[resolveClassName('picker-panel-content'), resolveClassName('picker-panel-content-left')]}
+            class={[this.resolveClassName('picker-panel-content'), this.resolveClassName('picker-panel-content-left')]}
             v-show={!this.isTime}
             style='width: 261px;'>
-            <div class={resolveClassName('date-picker-header')} v-show={this.currentView !== 'time'}>
+            <div class={this.resolveClassName('date-picker-header')} v-show={this.currentView !== 'time'}>
               <span class={iconBtnCls('prev', '-double')} onClick={() => this.prevYear('left')}>
                 <AngleDoubleLeft style={{ fontSize: '20px', lineHeight: 1, verticalAlign: 'text-bottom' }}></AngleDoubleLeft>
               </span>
@@ -588,14 +590,14 @@ export default defineComponent({
                   ? (
                     <span>
                       <span
-                        class={resolveClassName('date-picker-header-label')}
+                        class={this.resolveClassName('date-picker-header-label')}
                         v-show={this.leftShowLabelFirst}
                         onClick={() => this.leftDatePanelLabel.labels[0].handler}>
                         {this.leftDatePanelLabel.labels[0].label}
                       </span>
                       {this.leftDatePanelView === 'date' ? ` ${this.leftDatePanelLabel.separator} ` : ' '}
                       <span
-                        class={resolveClassName('date-picker-header-label')}
+                        class={this.resolveClassName('date-picker-header-label')}
                         v-show={this.leftShowLabelSecond}
                         onClick={() => this.leftDatePanelLabel.labels[1].handler}>
                         {this.leftDatePanelLabel.labels[1].label}
@@ -650,10 +652,10 @@ export default defineComponent({
           </div>
           {/* right panel */}
           <div
-            class={[resolveClassName('picker-panel-content'), resolveClassName('picker-panel-content-right')]}
+            class={[this.resolveClassName('picker-panel-content'), this.resolveClassName('picker-panel-content-right')]}
             v-show={!this.isTime}
             style='width: 261px;'>
-            <div class={resolveClassName('date-picker-header')} v-show={this.currentView !== 'time'}>
+            <div class={this.resolveClassName('date-picker-header')} v-show={this.currentView !== 'time'}>
               {
                 this.splitPanels || this.rightPickerTable !== 'date-table'
                   ? (
@@ -677,14 +679,14 @@ export default defineComponent({
                   ? (
                     <span>
                       <span
-                        class={resolveClassName('date-picker-header-label')}
+                        class={this.resolveClassName('date-picker-header-label')}
                         v-show={this.rightShowLabelFirst}
                         onClick={() => this.rightDatePanelLabel.labels[0].handler}>
                         {this.rightDatePanelLabel.labels[0].label}
                       </span>
                       {this.rightDatePanelView === 'date' ? ` ${this.rightDatePanelLabel.separator} ` : ' '}
                       <span
-                        class={resolveClassName('date-picker-header-label')}
+                        class={this.resolveClassName('date-picker-header-label')}
                         v-show={this.rightShowLabelSecond}
                         onClick={() => this.rightDatePanelLabel.labels[1].handler}>
                         {this.rightDatePanelLabel.labels[1].label}

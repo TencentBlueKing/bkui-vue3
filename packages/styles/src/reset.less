@@ -1,3 +1,5 @@
+@import '@bkui-vue/styles/themes/themes.less';
+
 .scroll-bar-style {
   &::-webkit-scrollbar {
     width: 4px;
@@ -326,12 +328,12 @@ optgroup {
 /**
 * BK-Scroll-Style
 */
-.bk-scroll-y {
+.@{bk-prefix}-scroll-y {
   overflow-y: auto;
   .scroll-bar-style();
 }
 
-.bk-scroll-x {
+.@{bk-prefix}-scroll-x {
   overflow-x: auto;
   .scroll-bar-style();
 }

@@ -37,8 +37,9 @@ import {
 } from 'vue';
 
 import Checkbox from '@bkui-vue/checkbox';
+import { usePrefix } from '@bkui-vue/config-provider';
 import { Done } from '@bkui-vue/icon';
-import { classes, PropTypes, resolveClassName, SelectedTypeEnum } from '@bkui-vue/shared';
+import { classes, PropTypes, SelectedTypeEnum } from '@bkui-vue/shared';
 
 import { optionGroupKey, selectKey } from './common';
 
@@ -91,6 +92,8 @@ export default defineComponent({
       group?.unregister(optionID.value);
     });
 
+    const { resolveClassName } = usePrefix();
+
     return {
       ...toRefs(states),
       selected,
@@ -102,6 +105,7 @@ export default defineComponent({
       optionID,
       handleOptionClick,
       handleMouseEnter,
+      resolveClassName,
     };
   },
   render() {
@@ -111,7 +115,7 @@ export default defineComponent({
       'is-multiple': this.multiple,
       'is-hover': this.isHover,
       'is-checkbox': this.selectedStyle === SelectedTypeEnum.CHECKBOX,
-      [resolveClassName('select-option')]: true,
+      [this.resolveClassName('select-option')]: true,
     });
     return (
       <li v-show={this.visible}
@@ -121,12 +125,12 @@ export default defineComponent({
         {
           this.showSelectedIcon
             && this.selectedStyle === SelectedTypeEnum.CHECKBOX
-            && <Checkbox disabled={this.disabled} class={resolveClassName('select-checkbox')} modelValue={this.selected} />
+            && <Checkbox disabled={this.disabled} class={this.resolveClassName('select-checkbox')} modelValue={this.selected} />
         }
         {
           this.$slots.default?.()
           ?? (
-            <span class={resolveClassName('select-option-item')} title={String(this.optionName)}>
+            <span class={this.resolveClassName('select-option-item')} title={String(this.optionName)}>
               {this.optionName}
             </span>
           )
@@ -135,7 +139,7 @@ export default defineComponent({
           this.showSelectedIcon
             && this.selected
             && this.selectedStyle === SelectedTypeEnum.CHECK
-            && <Done class={resolveClassName('select-selected-icon')} width={22} height={22}></Done>
+            && <Done class={this.resolveClassName('select-selected-icon')} width={22} height={22}></Done>
         }
       </li>
     );

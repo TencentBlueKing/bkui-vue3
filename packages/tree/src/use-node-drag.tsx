@@ -25,6 +25,8 @@
 */
 import { computed, onMounted, onUnmounted } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
+
 import { EVENTS, NODE_ATTRIBUTES } from './constant';
 import { TreePropTypes } from './props';
 import useNodeAttribute from './use-node-attribute';
@@ -39,6 +41,7 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
     getNodePath,
     isRootNode,
   } = useNodeAttribute(flatData, props);
+  const { resolveClassName } = usePrefix();
   const isNeedCheckDraggable = computed(() => typeof props.disableDrag === 'function');
   const isNeedCheckDroppable = computed(() => typeof props.disableDrop === 'function');
   const getTargetTreeNode = (e: MouseEvent) => {
@@ -59,7 +62,7 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
     const targetNode = getTargetTreeNode(e);
     const data = getNodeByTargetTreeNode(targetNode);
     if (data.draggable === false || (isNeedCheckDraggable.value && props.disableDrag(data))) {
-      targetNode.classList.add('bk-tree-drag-disabled');
+      targetNode.classList.add(`${resolveClassName('tree-drag-disabled')}`);
       return;
     }
     targetNode.setAttribute('draggable', 'true');
@@ -75,10 +78,10 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
     if (isNeedCheckDroppable.value && props?.disableDrop(data)) {
       e.dataTransfer.effectAllowed = 'move';
       e.dataTransfer.dropEffect = 'none';
-      targetNode.classList.add('bk-tree-drop-disabled');
+      targetNode.classList.add(`${resolveClassName('tree-drop-disabled')}`);
       return;
     }
-    targetNode.classList.add('bk-tree-drop-active');
+    targetNode.classList.add(`${resolveClassName('tree-drop-active')}`);
     const sourceNodeId = e.dataTransfer.getData('node-id');
     const targetNodeId = targetNode.getAttribute('data-tree-node');
 
@@ -101,7 +104,7 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
     e.preventDefault();
     e.stopPropagation();
     const targetNode = getTargetTreeNode(e);
-    targetNode.classList.remove('bk-tree-drop-active', 'bk-tree-drop-disabled');
+    targetNode.classList.remove(`${resolveClassName('tree-drop-active')}`, `${resolveClassName('tree-drop-disabled')}`);
     const data = extendNodeAttr(getNodeByTargetTreeNode(targetNode));
     if (isNeedCheckDroppable.value && props.disableDrop(data)) {
       return;
@@ -172,7 +175,7 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
   const handleTreeNodeDragLeave = (e: DragEvent) => {
     e.preventDefault();
     const targetNode = getTargetTreeNode(e);
-    targetNode.classList.remove('bk-tree-drop-active', 'bk-tree-drop-disabled');
+    targetNode.classList.remove(`${resolveClassName('tree-drop-active')}`, `${resolveClassName('tree-drop-disabled')}`);
     ctx.emit(EVENTS.NODE_DRAG_LEAVE, e, targetNode);
   };
 

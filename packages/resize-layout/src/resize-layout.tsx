@@ -265,7 +265,7 @@ export default defineComponent({
   render() {
     const bkResizeLayoutClass = [
       `${this.resolveClassName('resize-layout')}`,
-      `${this.resolveClassName(`bk-resize-layout-${this.placement}`)}`,
+      `${this.resolveClassName(`resize-layout-${this.placement}`)}`,
       {
         [`${this.resolveClassName('resize-layout-collapsed')}`]: this.collapsed,
         [`${this.resolveClassName('resize-layout-border')}`]: this.border,

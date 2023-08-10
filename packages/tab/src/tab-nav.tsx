@@ -26,9 +26,9 @@
 
 import { ComponentInternalInstance, computed, CSSProperties, defineComponent, h, ref } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import { bkTooltips } from '@bkui-vue/directives';
 import { Close, Plus } from '@bkui-vue/icon/';
-import { resolveClassName } from '@bkui-vue/shared';
 
 import { PositionEnum, tabNavProps, TabTypeEnum } from './props';
 
@@ -166,6 +166,9 @@ export default defineComponent({
         props.tabRemove(index, panel);
       },
     };
+
+    const { resolveClassName } = usePrefix();
+
     return {
       ...methods,
       activeRef,
@@ -177,6 +180,7 @@ export default defineComponent({
       guid: Math.random().toString(16)
         .substr(4) + Math.random().toString(16)
         .substr(4),
+      resolveClassName,
     };
   },
   render() {
@@ -190,12 +194,12 @@ export default defineComponent({
       }
       const { name, disabled, tabLabel } = item;
       const getNavItemClass = () => {
-        const classNames = [resolveClassName('tab-header-item')];
+        const classNames = [this.resolveClassName('tab-header-item')];
         if (disabled) {
-          classNames.push(resolveClassName('tab-header--disabled'));
+          classNames.push(this.resolveClassName('tab-header--disabled'));
         }
         if (active === name) {
-          classNames.push(resolveClassName('tab-header--active'));
+          classNames.push(this.resolveClassName('tab-header--active'));
         }
         return classNames.join(' ');
       };
@@ -230,7 +234,7 @@ export default defineComponent({
         >
           <div>{tabLabel}</div>
           {getValue(item.closable, closable) ? (
-            <span class={resolveClassName('tab-header--close')} onClick={(): void => this.handleTabRemove(index, item)}><Close/></span>
+            <span class={this.resolveClassName('tab-header--close')} onClick={(): void => this.handleTabRemove(index, item)}><Close/></span>
           ) : ''}
         </div>
       );
@@ -244,10 +248,10 @@ export default defineComponent({
       }
       if (list.length) {
         return (
-          <div class={resolveClassName('tab-header-operation')}>
+          <div class={this.resolveClassName('tab-header-operation')}>
             {
               list.map((item, index) => (
-                <div class={resolveClassName('tab-header-item')} key={index}>{item}</div>
+                <div class={this.resolveClassName('tab-header-item')} key={index}>{item}</div>
               ))
             }
           </div>
@@ -257,20 +261,20 @@ export default defineComponent({
     };
     const renderActiveBar = () => {
       if (this.type === TabTypeEnum.UNBORDER_CARD) {
-        return (<div style={this.activeBarStyle} class={resolveClassName('tab-header-active-bar')}/>);
+        return (<div style={this.activeBarStyle} class={this.resolveClassName('tab-header-active-bar')}/>);
       }
       return '';
     };
     const setting = typeof this.$slots.setting === 'function' ? (
-      <div class={resolveClassName('tab-header-setting')}>
+      <div class={this.resolveClassName('tab-header-setting')}>
         {this.$slots.setting()}
       </div>
     ) : null;
     const operations = renderOperation();
 
     return (
-      <div style={{ lineHeight: `${labelHeight}px` }} class={resolveClassName('tab-header')}>
-        <div class={[resolveClassName('tab-header-nav'), (operations || setting) ? 'tab-header-auto' : '']}>
+      <div style={{ lineHeight: `${labelHeight}px` }} class={this.resolveClassName('tab-header')}>
+        <div class={[this.resolveClassName('tab-header-nav'), (operations || setting) ? 'tab-header-auto' : '']}>
           {renderActiveBar()}
           {renderNavs()}
         </div>

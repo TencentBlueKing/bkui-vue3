@@ -36,7 +36,8 @@ import {
   watch,
 } from 'vue';
 
-import { capitalize, resolveClassName } from '@bkui-vue/shared';
+import { usePrefix } from '@bkui-vue/config-provider';
+import { capitalize } from '@bkui-vue/shared';
 
 import TimeSpinner from '../base/time-spinner';
 import fecha from '../fecha';
@@ -197,6 +198,8 @@ export default defineComponent({
       timeSpinnerEndRef?.value?.updateScroll();
     }
 
+    const { resolveClassName } = usePrefix();
+
     return {
       ...toRefs(state),
       showSeconds,
@@ -209,31 +212,32 @@ export default defineComponent({
 
       timeSpinnerRef,
       timeSpinnerEndRef,
+      resolveClassName,
     };
   },
   render() {
     return (
       <div
         class={[
-          resolveClassName('picker-panel-body-wrapper'),
-          resolveClassName('time-picker-with-range'),
-          (this.showSeconds) ? resolveClassName('time-picker-with-seconds') : '',
+          this.resolveClassName('picker-panel-body-wrapper'),
+          this.resolveClassName('time-picker-with-range'),
+          (this.showSeconds) ? this.resolveClassName('time-picker-with-seconds') : '',
         ]}
         onMousedown={(e) => {
           e.preventDefault();
         }}
       >
-        <div class={resolveClassName('picker-panel-body')} style={{ width: `${this.width * 2}px` }}>
+        <div class={this.resolveClassName('picker-panel-body')} style={{ width: `${this.width * 2}px` }}>
           <div
             class={[
-              resolveClassName('picker-panel-content'),
-              resolveClassName('picker-panel-content-left')]
+              this.resolveClassName('picker-panel-content'),
+              this.resolveClassName('picker-panel-content-left')]
             }
             style={{ width: `${this.width}px` }}>
             {
               this.showDate
                 ? (
-                  <div class="bk-time-picker-header">{this.leftDatePanelLabel}</div>
+                  <div class={`${this.resolveClassName('time-picker-header')}`}>{this.leftDatePanelLabel}</div>
                 )
                 : ''
             }
@@ -253,14 +257,14 @@ export default defineComponent({
           </div>
           <div
             class={[
-              resolveClassName('picker-panel-content'),
-              resolveClassName('picker-panel-content-right'),
+              this.resolveClassName('picker-panel-content'),
+              this.resolveClassName('picker-panel-content-right'),
             ]}
             style={{ width: `${this.width}px` }}>
             {
               this.showDate
                 ? (
-                  <div class={resolveClassName('time-picker-header')}>{this.rightDatePanelLabel}</div>
+                  <div class={this.resolveClassName('time-picker-header')}>{this.rightDatePanelLabel}</div>
                 )
                 : ''
             }

@@ -25,11 +25,12 @@
 */
 import { defineComponent } from 'vue';
 
-import { resolveClassName } from '@bkui-vue/shared';
+import { usePrefix } from '@bkui-vue/config-provider';
 
 export default defineComponent({
   name: 'PopArrow',
   render() {
+    const { resolveClassName } = usePrefix();
     const arrowClassName = resolveClassName('pop2-arrow');
     return <div class={arrowClassName}></div>;
   },

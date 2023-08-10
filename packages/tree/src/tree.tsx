@@ -25,7 +25,7 @@
 */
 import { computed, defineComponent, ref, watch } from 'vue';
 
-import { resolveClassName } from '@bkui-vue/shared';
+import { usePrefix } from '@bkui-vue/config-provider';
 import VirtualRender from '@bkui-vue/virtual-render';
 
 import { NODE_ATTRIBUTES, TreeEmitEventsType } from './constant';
@@ -142,6 +142,8 @@ export default defineComponent({
       const emptyType = isSearchActive.value ? 'search-empty' : 'empty';
       return ctx.slots.empty?.() ?? renderEmpty(emptyType);
     };
+
+    const { resolveClassName } = usePrefix();
 
     return () => (
       <VirtualRender class={resolveClassName('tree')}

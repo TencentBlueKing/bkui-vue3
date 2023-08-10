@@ -26,7 +26,7 @@
 
 import {  defineComponent } from 'vue';
 
-import { resolveClassName } from '@bkui-vue/shared';
+import { usePrefix } from '@bkui-vue/config-provider';
 
 import { dividerProps } from './props';
 export default defineComponent({
@@ -43,6 +43,7 @@ export default defineComponent({
         borderBottom: `${this.width}px ${this.type} ${this.color}`,
       };
     };
+    const { resolveClassName } = usePrefix();
     let slots;
     if (this.$slots.default) {
       slots = (

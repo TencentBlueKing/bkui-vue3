@@ -1,4 +1,5 @@
 @import '@bkui-vue/styles/themes/themes.less';
+
 .@{bk-prefix}-divider {
   position: relative;
   background: @light-gray;
@@ -22,7 +23,7 @@
       transform: translateX(-50%) translateY(-50%)
     }
 
-    .bk-divider-horizontal {
+    .@{bk-prefix}-divider-horizontal {
       &-left {
         left: 2em;
       }
@@ -32,7 +33,7 @@
       }
     }
 
-    .bk-divider-vertical & {
+    .@{bk-prefix}-divider-vertical & {
       padding: 20px 0;
     }
   }
@@ -45,8 +46,6 @@
     margin: 0 8px;
     vertical-align: middle;
   }
-
-
 }
 
 

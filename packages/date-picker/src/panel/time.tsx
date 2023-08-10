@@ -37,7 +37,8 @@ import {
   watch,
 } from 'vue';
 
-import { capitalize, resolveClassName } from '@bkui-vue/shared';
+import { usePrefix } from '@bkui-vue/config-provider';
+import { capitalize } from '@bkui-vue/shared';
 
 import TimeSpinner from '../base/time-spinner';
 import fecha from '../fecha';
@@ -163,6 +164,8 @@ export default defineComponent({
       emit('pick-click');
     }
 
+    const { resolveClassName } = usePrefix();
+
     return {
       ...toRefs(state),
       visibleDate,
@@ -174,22 +177,23 @@ export default defineComponent({
 
       handlePickClick,
       handleChange,
+      resolveClassName,
     };
   },
   render() {
     return (
-      <div class={resolveClassName('picker-panel-body-wrapper')} onMousedown={(e) => {
+      <div class={this.resolveClassName('picker-panel-body-wrapper')} onMousedown={(e) => {
         e.preventDefault();
       }}>
-        <div class={resolveClassName('picker-panel-body')} style={{ width: `${this.width}px` }}>
+        <div class={this.resolveClassName('picker-panel-body')} style={{ width: `${this.width}px` }}>
           {
             this.showDate
               ? (
-                <div class={resolveClassName('time-picker-header')}>{this.visibleDate}</div>
+                <div class={this.resolveClassName('time-picker-header')}>{this.visibleDate}</div>
               )
               : ''
           }
-          <div class={resolveClassName('picker-panel-content')}>
+          <div class={this.resolveClassName('picker-panel-content')}>
             <TimeSpinner
               ref="timeSpinnerRef"
               showSeconds={this.showSeconds}
