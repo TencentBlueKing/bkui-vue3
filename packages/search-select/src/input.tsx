@@ -320,7 +320,7 @@ export default defineComponent({
         }
         usingItem.value = new SelectedItem({ ...item, id: item.realId ?? item.id }, type, valueSplitCode.value);
         usingItem.value.addValue(item.value);
-        const res = await validateUsingItemValues(item);
+        const res = await validateUsingItemValues(item.value);
         if (!res) {
           usingItem.value = null;
           return;
