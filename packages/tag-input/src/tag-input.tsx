@@ -136,7 +136,7 @@ export default defineComponent({
     // 选中标签 save key 列表
     const tagList = computed(() => listState.selectedTagList.map(tag => tag[props.saveKey]));
     // 扁平化 list
-    const { flatList, saveKeyMap, flatListInit } = useFlatList(props);
+    const { flatList, saveKeyMap } = useFlatList(props);
     // 下拉框渲染列表
     const renderList = computed(() => {
       if (props.useGroup) {
@@ -323,10 +323,6 @@ export default defineComponent({
       if (trigger === 'focus') {
         filterData();
       }
-    };
-    const reload = () => {
-      flatListInit();
-      initData();
     };
 
     // 过滤数据
@@ -895,7 +891,6 @@ export default defineComponent({
       triggerClass,
       overflowTagIndex,
       localCollapseTags,
-      reload,
       focusInputTrigger,
       activeClass,
       handleInput,

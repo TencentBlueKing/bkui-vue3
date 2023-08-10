@@ -98,7 +98,8 @@ export function useFlatList(props: TagProps) {
   const flatList = ref([]);
   const saveKeyMap = ref({});
 
-  const flatListInit = () => {
+
+  watch([useGroup, saveKey, displayKey, list], () => {
     flatList.value = [];
     let formatList: any = markRaw(list.value);
     if (useGroup.value) {
@@ -121,15 +122,11 @@ export function useFlatList(props: TagProps) {
       acc[item[saveKey.value]] = item;
       return acc;
     }, {});
-  };
-
-
-  watch([useGroup, saveKey, displayKey, list], flatListInit, { immediate: true });
+  }, { immediate: true, deep: true });
 
   return {
     flatList,
     saveKeyMap,
-    flatListInit,
   };
 }
 
