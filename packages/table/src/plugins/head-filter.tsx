@@ -26,10 +26,10 @@
 import { computed, defineComponent, nextTick, reactive, ref, toRefs } from 'vue';
 
 import BkCheckbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
-import { useLocale } from '@bkui-vue/config-provider';
+import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { Funnel } from '@bkui-vue/icon';
 import Popover from '@bkui-vue/popover';
-import { classes, PropTypes, RenderType, resolveClassName } from '@bkui-vue/shared';
+import { classes, PropTypes, RenderType } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
 import { LINE_HEIGHT } from '../const';
@@ -44,6 +44,7 @@ export default defineComponent({
   emits: ['change', 'filterSave'],
 
   setup(props, { emit }) {
+    const { resolveClassName } = usePrefix();
     const t = useLocale('table');
     const { column } = props;
     const { filter } = toRefs(props.column);

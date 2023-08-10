@@ -28,7 +28,7 @@ import { isEqual, merge } from 'lodash';
 import { PopoverPropTypes } from 'popover/src/props';
 import { computed, defineComponent, onMounted, PropType, provide, reactive, ref, toRefs, watch } from 'vue';
 
-import { useLocale } from '@bkui-vue/config-provider';
+import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { clickoutside } from '@bkui-vue/directives';
 import { AngleUp, Close, Search } from '@bkui-vue/icon';
 import Input from '@bkui-vue/input';
@@ -39,7 +39,6 @@ import {
   InputBehaviorType,
   PropTypes,
   RenderType,
-  resolveClassName,
   SelectedType,
   SizeEnum,
   TagThemeType,
@@ -101,7 +100,7 @@ export default defineComponent({
   emits: ['update:modelValue', 'change', 'toggle', 'clear', 'scroll-end', 'focus', 'blur'],
   setup(props, { emit }) {
     const t = useLocale('select');
-
+    const { resolveClassName } = usePrefix();
     const {
       modelValue,
       disabled,
@@ -263,7 +262,7 @@ export default defineComponent({
 
     const popoverConfig = computed(() => merge<Partial<PopoverPropTypes>, Partial<PopoverPropTypes>>(
       {
-        theme: 'light bk-select-popover',
+        theme: `light ${resolveClassName('select-popover')}`,
         trigger: 'manual',
         width: popperWidth.value,
         arrow: false,
@@ -641,11 +640,12 @@ export default defineComponent({
       localPlaceholder,
       localSearchPlaceholder,
       localSelectAllText,
+      resolveClassName,
     };
   },
   render() {
     const selectClass = classes({
-      [resolveClassName('select')]: true,
+      [`${this.resolveClassName('select')}`]: true,
       'popover-show': this.isPopoverShow,
       'is-disabled': this.isDisabled,
       'is-focus': this.isFocus,
@@ -682,7 +682,7 @@ export default defineComponent({
           >
             {{
               prefix: this.prefix
-                ? <div class="bk-select--prefix-area"><span>{this.prefix}</span></div>
+                ? <div class={`${this.resolveClassName('select--prefix-area')}`}><span>{this.prefix}</span></div>
                 : this.$slots.prefix?.(),
               default: this.$slots.tag && (() => this.$slots.tag({ selected: this.selected })),
               suffix: () => suffixIcon(),
@@ -716,7 +716,7 @@ export default defineComponent({
     };
     const renderSelectTrigger = () => (
       <div
-        class={resolveClassName('select-trigger')}
+        class={this.resolveClassName('select-trigger')}
         style={{ height: this.autoHeight && this.collapseTags ? '32px' : '' }}
         ref="triggerRef"
         onClick={this.handleTogglePopover}
@@ -726,14 +726,14 @@ export default defineComponent({
       </div>
     );
     const renderSelectContent = () => (
-      <div class={resolveClassName('select-content-wrapper')} ref="contentRef">
+      <div class={this.resolveClassName('select-content-wrapper')} ref="contentRef">
         {
           this.filterable && !this.inputSearch && (
-            <div class={resolveClassName('select-search-wrapper')}>
+            <div class={this.resolveClassName('select-search-wrapper')}>
               <Search class="icon-search" width={16} height={16}/>
               <input
                 ref="searchRef"
-                class={resolveClassName('select-search-input')}
+                class={this.resolveClassName('select-search-input')}
                 placeholder={this.localSearchPlaceholder}
                 v-model={this.searchKey}
               />
@@ -743,7 +743,7 @@ export default defineComponent({
         {
           !this.isShowSelectContent
           && (
-            <div class={resolveClassName('select-empty')}>
+            <div class={this.resolveClassName('select-empty')}>
               {
                 this.searchLoading
                 && <Loading class="mr5" theme="primary" loading={true} mode="spin" size="mini"></Loading>
@@ -751,15 +751,15 @@ export default defineComponent({
               <span>{this.curContentText}</span>
             </div>)
         }
-        <div class={resolveClassName('select-content')}>
-          <div class={resolveClassName('select-dropdown')}
+        <div class={this.resolveClassName('select-content')}>
+          <div class={this.resolveClassName('select-dropdown')}
                style={{ maxHeight: `${this.scrollHeight}px` }}
                onScroll={this.handleScroll}
           >
-            <ul class={resolveClassName('select-options')} v-show={this.isShowSelectContent}>
+            <ul class={this.resolveClassName('select-options')} v-show={this.isShowSelectContent}>
               {
                 this.isShowSelectAll && (
-                  <li class={resolveClassName('select-option')}
+                  <li class={this.resolveClassName('select-option')}
                       onMouseenter={this.handleSelectedAllOptionMouseEnter}
                       onClick={this.handleToggleAll}>
                     {this.localSelectAllText}
@@ -793,7 +793,7 @@ export default defineComponent({
               }
               {this.$slots.default?.()}
               {this.scrollLoading && (
-                <li class={resolveClassName('select-options-loading')}>
+                <li class={this.resolveClassName('select-options-loading')}>
                   <Loading class="spinner mr5" theme="primary" loading={true} mode="spin" size="mini"></Loading>
                   <span>{this.localLoadingText}</span>
                 </li>
@@ -801,7 +801,7 @@ export default defineComponent({
             </ul>
           </div>
           {this.$slots.extension
-            && (<div class={resolveClassName('select-extension')}>{this.$slots.extension()}</div>)}
+            && (<div class={this.resolveClassName('select-extension')}>{this.$slots.extension()}</div>)}
         </div>
       </div>
     );

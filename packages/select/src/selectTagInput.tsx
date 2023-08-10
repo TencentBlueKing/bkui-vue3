@@ -26,12 +26,12 @@
 import { defineComponent, getCurrentInstance, inject, ref, toRefs, watch } from 'vue';
 import { PropType } from 'vue-types/dist/types';
 
-import { classes, PropTypes, resolveClassName, TagThemeType } from '@bkui-vue/shared';
+import { usePrefix } from '@bkui-vue/config-provider';
+import { classes, PropTypes, TagThemeType } from '@bkui-vue/shared';
 import Tag from '@bkui-vue/tag';
 
 import { selectKey } from './common';
 import { ISelected } from './type';
-
 
 export default defineComponent({
   name: 'SelectTagInput',
@@ -50,6 +50,7 @@ export default defineComponent({
   },
   emits: ['update:modelValue', 'remove', 'enter', 'keydown'],
   setup(props, { emit }) {
+    const { resolveClassName } = usePrefix();
     const { proxy } = getCurrentInstance();
     const select = inject(selectKey, null);
     const { modelValue, collapseTags, selected } = toRefs(props);
@@ -86,7 +87,7 @@ export default defineComponent({
       emit('keydown', e.target.value, e);
     };
     const getTagDOM = (index?: number) => {
-      const tags = [...proxy.$el.querySelectorAll('.bk-tag')];
+      const tags = [...proxy.$el.querySelectorAll(`.${resolveClassName('tag')}`)];
       return typeof index === 'number' ? tags[index] : tags;
     };
     // 计算出现换行的索引
@@ -115,19 +116,20 @@ export default defineComponent({
       focus,
       handleInput,
       handleKeydown,
+      resolveClassName,
     };
   },
   render() {
     const prefix = this.$slots?.prefix?.();
     const selectTagClass = classes({
-      [resolveClassName('select-tag')]: true,
-      [resolveClassName('select-tag--default')]: true,
+      [this.resolveClassName('select-tag')]: true,
+      [this.resolveClassName('select-tag--default')]: true,
       'is-disabled': this.disabled,
       'collapse-tag': this.collapseTags,
       'has-prefix': !!prefix,
     });
     const tagWrapperClass = classes({
-      [resolveClassName('select-tag-wrapper')]: true,
+      [this.resolveClassName('select-tag-wrapper')]: true,
     });
     const inputStyle = {
       display: this.selected.length && !this.filterable ? 'none' : '',
@@ -152,11 +154,11 @@ export default defineComponent({
           }
           {
             !!this.overflowTagIndex && this.collapseTags && (
-              <Tag class={resolveClassName('select-overflow-tag')}>+{this.selected.length - this.overflowTagIndex}</Tag>
+              <Tag class={this.resolveClassName('select-overflow-tag')}>+{this.selected.length - this.overflowTagIndex}</Tag>
             )
           }
           <input
-            class={resolveClassName('select-tag-input')}
+            class={this.resolveClassName('select-tag-input')}
             ref="inputRef"
             type="text"
             style={inputStyle}

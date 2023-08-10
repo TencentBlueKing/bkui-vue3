@@ -29,7 +29,7 @@ import JSONFormatter from 'json-formatter-js';
 import { computed, defineComponent, isVNode, onMounted, onUnmounted, reactive, ref, Transition, VNode, watch } from 'vue';
 import { toType } from 'vue-types';
 
-import { useLocale } from '@bkui-vue/config-provider';
+import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import {
   AngleDoubleDownLine,
   AngleDoubleUpLine,
@@ -194,7 +194,8 @@ export default defineComponent({
   emits: ['destroy'],
   setup(props, { emit, slots }) {
     const t = useLocale('message');
-    const classNames = computed(() => ['bk-message', `bk-message-${props.theme}`, `${props.extCls}`]);
+    const { resolveClassName } = usePrefix();
+    const classNames = computed(() => [`${resolveClassName('message')}`, `${resolveClassName(`message-${props.theme}`)}`, `${props.extCls}`]);
     const zIndex = bkZIndexManager.getMessageNextIndex();
 
     const singleLineWidth = 560;
@@ -384,7 +385,7 @@ export default defineComponent({
       [IMessageActionType.CLOSE]: {
         id: IMessageActionType.CLOSE,
         classList: 'normal-color',
-        icon: () => props.dismissable && <Error class='bk-message-close' onClick={close} />,
+        icon: () => props.dismissable && <Error class={`${resolveClassName('message-close')}`} onClick={close} />,
         onClick: close,
       },
     }));
@@ -515,6 +516,7 @@ export default defineComponent({
       toolOperation,
       copyStatus,
       t,
+      resolveClassName,
     };
   },
   render() {
@@ -544,10 +546,10 @@ export default defineComponent({
     const renderMessage = () => {
       if (typeof this.message === 'object' && !isVNode(this.message)) {
         return (
-          <div class='bk-message-content multi'>
+          <div class={`${this.resolveClassName('message-content')} multi`}>
             <div class='overview'>
               <div class='left-content'>
-                <div class='bk-message-icon'>{renderIcon()}</div>
+                <div class={`${this.resolveClassName('message-icon')}`}>{renderIcon()}</div>
                 <div class='describe'>
                   {this.$slots.title?.()
                     ?? `【${this.message.code}】${this.message.overview} ${this.message.suggestion}`}
@@ -575,11 +577,11 @@ export default defineComponent({
 
       return (
         <>
-          <div class='bk-message-content'>
-            <div class='bk-message-icon'>{renderIcon()}</div>
+          <div class={`${this.resolveClassName('message-content')}`}>
+            <div class={`${this.resolveClassName('message-icon')}`}>{renderIcon()}</div>
             {this.message}
           </div>
-          {this.dismissable && <Error class='bk-message-close' onClick={this.close} />}
+          {this.dismissable && <Error class={`${this.resolveClassName('message-close')}`} onClick={this.close} />}
         </>
       );
     };

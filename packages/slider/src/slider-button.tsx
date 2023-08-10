@@ -26,6 +26,7 @@
 
 import { computed, defineComponent, PropType, ref } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import BkPopover from '@bkui-vue/popover';
 import { PlacementEnum } from '@bkui-vue/shared';
 
@@ -153,8 +154,11 @@ export default defineComponent({
         oldValue.value = props.modelValue;
       }
     };
+
+    const { resolveClassName } = usePrefix();
+
     const renderDom = () => (
-      <div class={['bk-slider-button', props.params.vertical ? 'vertical' : 'horizontal', { grabbing: dragging.value }]}
+      <div class={[`${resolveClassName('slider-button')}`, props.params.vertical ? 'vertical' : 'horizontal', { grabbing: dragging.value }]}
         ref={button}
         tabindex="0"
         style={wrapperStyle.value}

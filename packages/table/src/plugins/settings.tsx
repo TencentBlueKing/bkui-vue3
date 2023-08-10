@@ -27,10 +27,10 @@ import { computed, defineComponent, ref, unref, watch } from 'vue';
 
 import BkButton from '@bkui-vue/button';
 import BkCheckbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
-import { useLocale } from '@bkui-vue/config-provider';
+import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { CloseLine, CogShape } from '@bkui-vue/icon/';
 import Popover from '@bkui-vue/popover';
-import { PropTypes, resolveClassName } from '@bkui-vue/shared';
+import { PropTypes } from '@bkui-vue/shared';
 
 import { createDefaultSizeList, LINE_HEIGHT } from '../const';
 import { Field, Settings, SettingSizeEnum, settingSizeType, SizeItem } from '../props';
@@ -57,6 +57,7 @@ export default defineComponent({
   },
   emits: ['change'],
   setup(props, { emit }) {
+    const { resolveClassName } = usePrefix();
     const t = useLocale('table');
     const defaultSizeList: SizeItem[] = createDefaultSizeList(t);
     const resolvedColVal = (item, index) => resolvePropVal(item, ['field', 'type'], [item, index]);

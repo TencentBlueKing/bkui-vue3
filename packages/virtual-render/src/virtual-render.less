@@ -1,11 +1,11 @@
 @import '@bkui-vue/styles/themes/themes.less';
 @import '@bkui-vue/styles/mixins/scroll.less';
 
-.bk-virtual-render {
+.@{bk-prefix}-virtual-render {
   position: relative;
-  
-  .bk-virtual-content,
-  &.bk-virtual-content {
+
+  .@{bk-prefix}-virtual-content,
+  &.@{bk-prefix}-virtual-content {
     position: absolute;
     top: 0;
     bottom: 0;
@@ -14,9 +14,8 @@
     height: 100%;
   }
 
-  .bk-virtual-section {
+  .@{bk-prefix}-virtual-section {
     width: 1px;
     background: transparent;
   }
 }
- 

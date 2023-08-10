@@ -25,9 +25,7 @@
 */
 import { defineComponent, RendererElement, Transition } from 'vue';
 
-import {
-  resolveClassName,
-} from '@bkui-vue/shared';
+import { usePrefix } from '@bkui-vue/config-provider';
 
 export default defineComponent({
   name: 'CollapseTransition',
@@ -80,10 +78,11 @@ export default defineComponent({
         el.style.paddingBottom = el.dataset.oldPaddingBottom;
       },
     };
-    return { on, slots };
+    const { resolveClassName } = usePrefix();
+    return { on, slots, resolveClassName };
   },
   render() {
-    const name = resolveClassName('collapse-transition');
+    const name = this.resolveClassName('collapse-transition');
     return (
       <Transition name={name} {...this.on}>
         {this.slots.default ? this.slots.default() : null}

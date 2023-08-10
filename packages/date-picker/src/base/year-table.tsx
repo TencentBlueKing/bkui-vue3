@@ -27,7 +27,7 @@
 import type { ExtractPropTypes } from 'vue';
 import { computed, defineComponent, PropType } from 'vue';
 
-import { resolveClassName } from '@bkui-vue/shared';
+import { usePrefix } from '@bkui-vue/config-provider';
 
 import type { DatePickerValueType } from '../interface';
 import { clearHours } from '../utils';
@@ -112,6 +112,8 @@ export default defineComponent({
       return cells;
     });
 
+    const { resolveClassName } = usePrefix();
+
     const getCellCls = cell => [
       resolveClassName('date-picker-cells-cell'),
       {
@@ -147,14 +149,15 @@ export default defineComponent({
       getCellCls,
       handleClick,
       handleMouseMove,
+      resolveClassName,
     };
   },
   render() {
     return (
       // <div>123</div>
       <div class={[
-        resolveClassName('date-picker-cells'),
-        resolveClassName('date-picker-cells-year'),
+        this.resolveClassName('date-picker-cells'),
+        this.resolveClassName('date-picker-cells-year'),
       ]}>
         {
           this.cells.map(cell => (
@@ -164,7 +167,7 @@ export default defineComponent({
               <em>{cell.date.getFullYear()}</em>
             </span>
             // <div
-            //   class={resolveClassName('picker-panel-shortcut')}
+            //   class={this.resolveClassName('picker-panel-shortcut')}
             //   onClick={() => this.handleShortcutClick(shortcut)}>
             //   {shortcut.text}
             // </div>
