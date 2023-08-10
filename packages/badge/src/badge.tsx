@@ -26,8 +26,8 @@
 
 import { computed, defineComponent } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import { classes, PropTypes } from '@bkui-vue/shared';
-
 export default defineComponent({
   name: 'Badge',
   props: {
@@ -88,23 +88,27 @@ export default defineComponent({
        */
       emit('leave');
     };
+
+    const { resolveClassName } = usePrefix();
+
     return {
       numberCount,
       handleHover,
       handleLeave,
       radiusStyle,
+      resolveClassName,
     };
   },
   render() {
     const wrapperClasses = classes({
-      'bk-badge-main': true,
+      [`${this.resolveClassName('badge-main')}`]: true,
     }, this.$props.extCls);
     const badgeClass = classes({
-      [`bk-badge bk-${this.$props.theme}`]: !!this.$props.theme,
+      [`${this.resolveClassName('badge')} ${this.resolveClassName(this.$props.theme)}`]: !!this.$props.theme,
       ['pinned ']: this.$slots.default,
       ['dot']: this.$props.dot,
       [`${this.$props.position}`]: this.$slots.default,
-      ['bk-badge-icon is-icon']: this.$slots.icon,
+      [`${this.resolveClassName('badge-icon')} is-icon`]: this.$slots.icon,
     }, '');
     const number = !this.$props.dot ? <span>{this.numberCount}</span> : '';
 

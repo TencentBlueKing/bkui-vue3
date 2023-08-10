@@ -32,6 +32,7 @@ import {
   watch,
 } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import {
   PropTypes,
   useFormItem,
@@ -44,7 +45,6 @@ import type {
   ICheckboxGroupContext,
   ICheckboxInstance,
 } from './type';
-
 const checkboxGroupProps = {
   name: PropTypes.string.def(''),
   modelValue: PropTypes.array,
@@ -110,11 +110,15 @@ export default defineComponent({
       });
     });
 
-    return {};
+    const { resolveClassName } = usePrefix();
+
+    return {
+      resolveClassName,
+    };
   },
   render() {
     return  (
-      <div class="bk-checkbox-group">
+      <div class={`${this.resolveClassName('checkbox-group')}`}>
         {this.$slots?.default()}
       </div>
     );

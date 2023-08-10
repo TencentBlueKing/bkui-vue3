@@ -166,7 +166,7 @@ export default () => {
   const { resolveClassName } = usePrefix();
 
   const render = () => (
-    <div class="bk-pagination-small-list">
+    <div class={`${resolveClassName('pagination-small-list')}`}>
       <div
         class={{
           [`${resolveClassName('pagination-btn-pre')}`]: true,

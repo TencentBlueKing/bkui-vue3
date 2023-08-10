@@ -26,13 +26,12 @@
 
 import { computed, defineComponent, ExtractPropTypes, ref, watch } from 'vue';
 
-import { useLocale } from '@bkui-vue/config-provider';
+import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { Close, DownSmall, Eye, Search, Unvisible } from '@bkui-vue/icon';
 import {
   classes,
   InputBehaviorType,
   PropTypes,
-  resolveClassName,
   useFormItem,
 } from '@bkui-vue/shared';
 
@@ -113,6 +112,7 @@ export default defineComponent({
   props: inputType,
   emits: inputEmitEventsType,
   setup(props, ctx) {
+    const { resolveClassName } = usePrefix();
     const formItem = useFormItem();
     const t = useLocale('input');
     const isFocused = ref(false);

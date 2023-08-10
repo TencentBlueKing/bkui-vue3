@@ -42,8 +42,8 @@ import {
   watch,
 } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import { AngleDoubleLeft, AngleDoubleRight, AngleLeft, AngleRight } from '@bkui-vue/icon';
-import { resolveClassName } from '@bkui-vue/shared';
 
 import Confirm from '../base/confirm';
 import DateTable from '../base/date-table';
@@ -290,6 +290,8 @@ export default defineComponent({
       emit('pick-click');
     }
 
+    const { resolveClassName } = usePrefix();
+
     return {
       ...toRefs(state),
       panelPickerHandlers,
@@ -312,6 +314,7 @@ export default defineComponent({
       handlePickClick,
 
       timePickerRef,
+      resolveClassName,
     };
   },
 
@@ -319,8 +322,8 @@ export default defineComponent({
     return (
       <div
         class={[
-          resolveClassName('picker-panel-body-wrapper'),
-          (this.shortcuts.length || this.hasShortcuts) ? resolveClassName('picker-panel-with-sidebar') : '',
+          this.resolveClassName('picker-panel-body-wrapper'),
+          (this.shortcuts.length || this.hasShortcuts) ? this.resolveClassName('picker-panel-with-sidebar') : '',
         ]}
         onMousedown={(e: MouseEvent) => {
           e.preventDefault();
@@ -329,11 +332,11 @@ export default defineComponent({
         {
           this.shortcuts.length
             ? (
-              <div class="bk-picker-panel-sidebar">
+              <div class={`${this.resolveClassName('picker-panel-sidebar')}`}>
                 {
                   this.shortcuts.map(shortcut => (
                     <div
-                      class={resolveClassName('picker-panel-shortcut')}
+                      class={this.resolveClassName('picker-panel-shortcut')}
                       onClick={() => this.handleShortcutClick(shortcut)}>
                       {shortcut.text}
                     </div>
@@ -343,8 +346,8 @@ export default defineComponent({
             )
             : ''
         }
-        <div class={resolveClassName('picker-panel-body')} style="width: 261px;">
-          <div class={resolveClassName('date-picker-header')} v-show={this.currentView !== 'time'}>
+        <div class={this.resolveClassName('picker-panel-body')} style="width: 261px;">
+          <div class={this.resolveClassName('date-picker-header')} v-show={this.currentView !== 'time'}>
             <span class={iconBtnCls('prev', '-double')} onClick={() => this.changeYear(-1)}>
               <AngleDoubleLeft style={{ fontSize: '20px', lineHeight: 1, verticalAlign: 'text-bottom' }}></AngleDoubleLeft>
             </span>
@@ -361,11 +364,11 @@ export default defineComponent({
               this.datePanelLabel && Object.keys(this.datePanelLabel).length > 0
                 ? (
                   <span>
-                    <span class={resolveClassName('date-picker-header-label')} v-show={this.showLabelFirst} onClick={() => this.datePanelLabel.labels[0].handler}>
+                    <span class={this.resolveClassName('date-picker-header-label')} v-show={this.showLabelFirst} onClick={() => this.datePanelLabel.labels[0].handler}>
                       {this.datePanelLabel.labels[0].label}
                     </span>
                     {this.currentView === 'date' ? ` ${this.datePanelLabel.separator} ` : ' '}
-                    <span class={resolveClassName('date-picker-header-label')} v-show={this.showLabelSecond} onClick={() => this.datePanelLabel.labels[1].handler}>
+                    <span class={this.resolveClassName('date-picker-header-label')} v-show={this.showLabelSecond} onClick={() => this.datePanelLabel.labels[1].handler}>
                       {this.datePanelLabel.labels[1].label}
                     </span>
                   </span>
@@ -385,7 +388,7 @@ export default defineComponent({
                 : ''
             }
           </div>
-          <div class={resolveClassName('picker-panel-content')}>
+          <div class={this.resolveClassName('picker-panel-content')}>
             {/* --{this.pickerTable}--{this.dates}--{this.selectionMode} */}
             {
               this.currentView !== 'time'
@@ -459,7 +462,7 @@ export default defineComponent({
         {
           this.hasShortcuts
             ? (
-              <div class={resolveClassName('picker-panel-sidebar')}>
+              <div class={this.resolveClassName('picker-panel-sidebar')}>
                 {this.$slots.shortcuts?.() ?? null}
               </div>
             )

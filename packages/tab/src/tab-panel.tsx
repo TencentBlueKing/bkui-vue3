@@ -26,7 +26,7 @@
 
 import { defineComponent, h, VNodeChild } from 'vue';
 
-import { resolveClassName } from '@bkui-vue/shared';
+import { usePrefix } from '@bkui-vue/config-provider';
 
 import { tabPanelProps } from './props';
 
@@ -51,6 +51,8 @@ export default defineComponent({
       }
       return null;
     };
+
+    const { resolveClassName } = usePrefix();
 
     return (
       <div v-show={active} ref='content' class={resolveClassName('tab-panel')}>

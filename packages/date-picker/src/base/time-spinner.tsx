@@ -37,8 +37,8 @@ import {
   watch,
 } from 'vue';
 
-import { useLocale } from '@bkui-vue/config-provider';
-import { resolveClassName, scrollTop } from '@bkui-vue/shared';
+import { useLocale, usePrefix } from '@bkui-vue/config-provider';
+import { scrollTop } from '@bkui-vue/shared';
 
 import { timePanelProps } from '../props';
 import { firstUpperCase } from '../utils';
@@ -232,6 +232,8 @@ export default defineComponent({
       return domRef.value;
     }
 
+    const { resolveClassName } = usePrefix();
+
     function getCellCls(cell) {
       return [
         resolveClassName('time-picker-cells-cell'),
@@ -363,23 +365,24 @@ export default defineComponent({
       updateScroll,
       padTime,
       t,
+      resolveClassName,
     };
   },
   render() {
     return (
       <div
         class={[
-          resolveClassName('time-picker-cells'),
-          this.showSeconds ? resolveClassName('time-picker-cells-with-seconds') : '',
+          this.resolveClassName('time-picker-cells'),
+          this.showSeconds ? this.resolveClassName('time-picker-cells-with-seconds') : '',
         ]}
       >
-        <div class={resolveClassName('time-picker-cells-title-wrapper')}>
-          <div class={[resolveClassName('time-picker-cells-title'), this.focusedColumn === 0 ? 'active' : '']} style={this.styles}>{this.t.hour}</div>
-          <div class={[resolveClassName('time-picker-cells-title'), this.focusedColumn === 1 ? 'active' : '']} style={this.styles}>{this.t.min}</div>
-          <div class={[resolveClassName('time-picker-cells-title'), this.focusedColumn === 2 ? 'active' : '']} v-show={this.showSeconds} style={this.styles}>{this.t.sec}</div>
+        <div class={this.resolveClassName('time-picker-cells-title-wrapper')}>
+          <div class={[this.resolveClassName('time-picker-cells-title'), this.focusedColumn === 0 ? 'active' : '']} style={this.styles}>{this.t.hour}</div>
+          <div class={[this.resolveClassName('time-picker-cells-title'), this.focusedColumn === 1 ? 'active' : '']} style={this.styles}>{this.t.min}</div>
+          <div class={[this.resolveClassName('time-picker-cells-title'), this.focusedColumn === 2 ? 'active' : '']} v-show={this.showSeconds} style={this.styles}>{this.t.sec}</div>
         </div>
-        <div class={resolveClassName('time-picker-cells-list')} ref="hoursRef" style={this.styles}>
-          <ul class={resolveClassName('time-picker-cells-ul')}>
+        <div class={this.resolveClassName('time-picker-cells-list')} ref="hoursRef" style={this.styles}>
+          <ul class={this.resolveClassName('time-picker-cells-ul')}>
             {
               this.hoursList.map(item => (
                 <li class={this.getCellCls(item)} v-show={!item.hide} onClick={() => this.handleClick('hours', item)}>{this.padTime(item.text)}</li>
@@ -387,8 +390,8 @@ export default defineComponent({
             }
           </ul>
         </div>
-        <div class={resolveClassName('time-picker-cells-list')} ref="minutesRef" style={this.styles}>
-          <ul class={resolveClassName('time-picker-cells-ul')}>
+        <div class={this.resolveClassName('time-picker-cells-list')} ref="minutesRef" style={this.styles}>
+          <ul class={this.resolveClassName('time-picker-cells-ul')}>
             {
               this.minutesList.map(item => (
                 <li class={this.getCellCls(item)} v-show={!item.hide} onClick={() => this.handleClick('minutes', item)}>{this.padTime(item.text)}</li>
@@ -396,8 +399,8 @@ export default defineComponent({
             }
           </ul>
         </div>
-        <div class={resolveClassName('time-picker-cells-list')} v-show={this.showSeconds} ref="secondsRef" style={this.styles}>
-          <ul class={resolveClassName('time-picker-cells-ul')}>
+        <div class={this.resolveClassName('time-picker-cells-list')} v-show={this.showSeconds} ref="secondsRef" style={this.styles}>
+          <ul class={this.resolveClassName('time-picker-cells-ul')}>
             {
               this.secondsList.map(item => (
                 <li class={this.getCellCls(item)} v-show={!item.hide} onClick={() => this.handleClick('seconds', item)}>{this.padTime(item.text)}</li>

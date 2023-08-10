@@ -25,8 +25,9 @@
 */
 import { defineComponent, ref, watch } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import { AngleDownFill, AngleUpFill } from '@bkui-vue/icon/';
-import { PropTypes, resolveClassName } from '@bkui-vue/shared';
+import { PropTypes } from '@bkui-vue/shared';
 
 import { SORT_OPTION, SORT_OPTIONS } from '../const';
 import { getNextSortType, getSortFn, resolveSort } from '../utils';
@@ -40,6 +41,7 @@ export default defineComponent({
   },
   emits: ['change'],
   setup(props, { emit }) {
+    const { resolveClassName } = usePrefix();
     const defSort = props.column?.sort?.value || props.defaultSort || SORT_OPTION.NULL;
     const sortType = ref(defSort);
 

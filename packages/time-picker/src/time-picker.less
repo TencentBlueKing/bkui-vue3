@@ -1,6 +1,6 @@
 @import '@bkui-vue/styles/themes/themes.less';
 
-.bk-time-picker-header {
+.@{bk-prefix}-time-picker-header {
   height: 46px;
   font-size: 14px;
   font-weight: 700;
@@ -10,7 +10,7 @@
   border-bottom: 1px solid #dcdee5;
 }
 
-.bk-time-picker-cells {
+.@{bk-prefix}-time-picker-cells {
   &:after {
     position: absolute;
     right: 0;
@@ -30,8 +30,8 @@
   }
 }
 
-.bk-time-picker-cells-with-seconds .bk-time-picker-cells-title-wrapper .bk-time-picker-cells-title:nth-of-type(1):before,
-.bk-time-picker-cells-with-seconds .bk-time-picker-cells-title-wrapper .bk-time-picker-cells-title:nth-of-type(2):before {
+.@{bk-prefix}-time-picker-cells-with-seconds .@{bk-prefix}-time-picker-cells-title-wrapper .@{bk-prefix}-time-picker-cells-title:nth-of-type(1):before,
+.@{bk-prefix}-time-picker-cells-with-seconds .@{bk-prefix}-time-picker-cells-title-wrapper .@{bk-prefix}-time-picker-cells-title:nth-of-type(2):before {
   position: absolute;
   top: 55px;
   left: 85px;
@@ -43,8 +43,8 @@
   content: '';
 }
 
-.bk-time-picker-cells-with-seconds .bk-time-picker-cells-title-wrapper .bk-time-picker-cells-title:nth-of-type(1):after,
-.bk-time-picker-cells-with-seconds .bk-time-picker-cells-title-wrapper .bk-time-picker-cells-title:nth-of-type(2):after {
+.@{bk-prefix}-time-picker-cells-with-seconds .@{bk-prefix}-time-picker-cells-title-wrapper .@{bk-prefix}-time-picker-cells-title:nth-of-type(1):after,
+.@{bk-prefix}-time-picker-cells-with-seconds .@{bk-prefix}-time-picker-cells-title-wrapper .@{bk-prefix}-time-picker-cells-title:nth-of-type(2):after {
   position: absolute;
   top: calc(55px + 5px);
   left: 85px;
@@ -56,13 +56,13 @@
   content: '';
 }
 
-.bk-time-picker-cells-title-wrapper {
+.@{bk-prefix}-time-picker-cells-title-wrapper {
   width: 100%;
   height: 42px;
   line-height: 42px;
 }
 
-.bk-time-picker-cells-title-wrapper .bk-time-picker-cells-title {
+.@{bk-prefix}-time-picker-cells-title-wrapper .@{bk-prefix}-time-picker-cells-title {
   position: relative;
   float: left;
   width: 33.33%;
@@ -73,11 +73,11 @@
   list-style: none
 }
 
-.bk-time-picker-cells-title-wrapper .bk-time-picker-cells-title.active {
+.@{bk-prefix}-time-picker-cells-title-wrapper .@{bk-prefix}-time-picker-cells-title.active {
   color: #3a84ff;
 }
 
-.bk-time-picker-cells-title-wrapper .bk-time-picker-cells-title:nth-of-type(1):before {
+.@{bk-prefix}-time-picker-cells-title-wrapper .@{bk-prefix}-time-picker-cells-title:nth-of-type(1):before {
   position: absolute;
   top: 55px;
   left: 133px;
@@ -89,7 +89,7 @@
   content: '';
 }
 
-.bk-time-picker-cells-title-wrapper .bk-time-picker-cells-title:nth-of-type(1):after {
+.@{bk-prefix}-time-picker-cells-title-wrapper .@{bk-prefix}-time-picker-cells-title:nth-of-type(1):after {
   position: absolute;
   top: calc(55px + 5px);
   left: 133px;
@@ -101,7 +101,7 @@
   content: '';
 }
 
-.bk-time-picker-cells-list {
+.@{bk-prefix}-time-picker-cells-list {
   position: relative;
   float: left;
   width: 33.33%;
@@ -109,38 +109,38 @@
   overflow: hidden
 }
 
-.bk-time-picker-cells-list:hover {
+.@{bk-prefix}-time-picker-cells-list:hover {
   overflow-y: auto;
 }
 
-.bk-time-picker-cells-list:first-child {
+.@{bk-prefix}-time-picker-cells-list:first-child {
   border-radius: 2px 0 0 2px;
 }
 
-.bk-time-picker-cells-list:last-child {
+.@{bk-prefix}-time-picker-cells-list:last-child {
   border-radius: 0 2px 2px 0;
 }
 
-.bk-time-picker-cells-list::-webkit-scrollbar {
+.@{bk-prefix}-time-picker-cells-list::-webkit-scrollbar {
   width: 0;
   height: 0;
   background-color: rgba(204, 204, 204, 0);
 }
 
-.bk-time-picker-cells-list::-webkit-scrollbar-thumb {
+.@{bk-prefix}-time-picker-cells-list::-webkit-scrollbar-thumb {
   width: 0;
   height: 0;
   background-color: transparent;
 }
 
-.bk-time-picker-cells-list .bk-time-picker-cells-ul {
+.@{bk-prefix}-time-picker-cells-list .@{bk-prefix}-time-picker-cells-ul {
   width: 100%;
   padding: 0 0 160px 0;
   margin: 0;
   list-style: none;
 }
 
-.bk-time-picker-cells-list .bk-time-picker-cells-ul .bk-time-picker-cells-cell {
+.@{bk-prefix}-time-picker-cells-list .@{bk-prefix}-time-picker-cells-ul .@{bk-prefix}-time-picker-cells-cell {
   position: relative;
   width: 100%;
   height: 32px;
@@ -162,27 +162,27 @@
   user-select: none
 }
 
-.bk-time-picker-cells-list .bk-time-picker-cells-ul .bk-time-picker-cells-cell:hover {
+.@{bk-prefix}-time-picker-cells-list .@{bk-prefix}-time-picker-cells-ul .@{bk-prefix}-time-picker-cells-cell:hover {
   color: #3a84ff;
 }
 
-.bk-time-picker-cells-list .bk-time-picker-cells-ul .bk-time-picker-cells-cell-disabled {
+.@{bk-prefix}-time-picker-cells-list .@{bk-prefix}-time-picker-cells-ul .@{bk-prefix}-time-picker-cells-cell-disabled {
   color: #c4c6cc;
   cursor: not-allowed
 }
 
-.bk-time-picker-cells-list .bk-time-picker-cells-ul .bk-time-picker-cells-cell-disabled:hover {
+.@{bk-prefix}-time-picker-cells-list .@{bk-prefix}-time-picker-cells-ul .@{bk-prefix}-time-picker-cells-cell-disabled:hover {
   color: #c4c6cc;
   cursor: not-allowed;
   background-color: #fff;
 }
 
-.bk-time-picker-cells-list .bk-time-picker-cells-ul .bk-time-picker-cells-cell-selected,
-.bk-time-picker-cells-list .bk-time-picker-cells-ul .bk-time-picker-cells-cell-selected:hover {
+.@{bk-prefix}-time-picker-cells-list .@{bk-prefix}-time-picker-cells-ul .@{bk-prefix}-time-picker-cells-cell-selected,
+.@{bk-prefix}-time-picker-cells-list .@{bk-prefix}-time-picker-cells-ul .@{bk-prefix}-time-picker-cells-cell-selected:hover {
   color: #3a84ff;
 }
 
-.bk-time-picker-header {
+.@{bk-prefix}-time-picker-header {
   height: 46px;
   font-size: 14px;
   font-weight: 700;
@@ -192,12 +192,12 @@
   border-bottom: 1px solid #dcdee5;
 }
 
-.bk-time-picker-with-range .bk-picker-panel-content {
+.@{bk-prefix}-time-picker-with-range .@{bk-prefix}-picker-panel-content {
   position: relative;
   float: left;
 }
 
-.bk-time-picker-with-range .bk-picker-panel-content:after {
+.@{bk-prefix}-time-picker-with-range .@{bk-prefix}-picker-panel-content:after {
   position: absolute;
   top: 45px;
   right: -1px;
@@ -209,52 +209,52 @@
   content: '';
 }
 
-.bk-time-picker-with-range .bk-picker-panel-content-right {
+.@{bk-prefix}-time-picker-with-range .@{bk-prefix}-picker-panel-content-right {
   float: right;
 }
 
-.bk-time-picker-with-range .bk-picker-panel-content-right:after {
+.@{bk-prefix}-time-picker-with-range .@{bk-prefix}-picker-panel-content-right:after {
   right: auto;
   left: 0;
 }
 
-.bk-time-picker-with-range .bk-time-picker-cells-list:first-child {
+.@{bk-prefix}-time-picker-with-range .@{bk-prefix}-time-picker-cells-list:first-child {
   border-radius: 0;
 }
 
-.bk-time-picker-with-range .bk-time-picker-cells-list:last-child {
+.@{bk-prefix}-time-picker-with-range .@{bk-prefix}-time-picker-cells-list:last-child {
   border-radius: 0;
 }
 
-.bk-picker-panel-content .bk-picker-panel-content .bk-time-picker-cells {
+.@{bk-prefix}-picker-panel-content .@{bk-prefix}-picker-panel-content .@{bk-prefix}-time-picker-cells {
   min-width: 216px;
 }
 
-.bk-picker-panel-content .bk-picker-panel-content .bk-time-picker-cells-with-seconds {
+.@{bk-prefix}-picker-panel-content .@{bk-prefix}-picker-panel-content .@{bk-prefix}-time-picker-cells-with-seconds {
   min-width: 216px;
 }
 
-.bk-picker-panel-content .bk-picker-panel-content .bk-time-picker-cells-with-seconds .bk-time-picker-cells-list {
+.@{bk-prefix}-picker-panel-content .@{bk-prefix}-picker-panel-content .@{bk-prefix}-time-picker-cells-with-seconds .@{bk-prefix}-time-picker-cells-list {
   width: 72px;
 }
 
-.bk-picker-panel-content .bk-picker-panel-content .bk-time-picker-cells-with-seconds .bk-time-picker-cells-list ul li {
+.@{bk-prefix}-picker-panel-content .@{bk-prefix}-picker-panel-content .@{bk-prefix}-time-picker-cells-with-seconds .@{bk-prefix}-time-picker-cells-list ul li {
   padding: 0;
 }
 
-.bk-picker-panel-content .bk-picker-panel-content .bk-time-picker-cells-list {
+.@{bk-prefix}-picker-panel-content .@{bk-prefix}-picker-panel-content .@{bk-prefix}-time-picker-cells-list {
   width: 108px;
   max-height: 200px;
 }
 
-.bk-picker-panel-content .bk-picker-panel-content .bk-time-picker-cells-list:first-child {
+.@{bk-prefix}-picker-panel-content .@{bk-prefix}-picker-panel-content .@{bk-prefix}-time-picker-cells-list:first-child {
   border-radius: 0;
 }
 
-.bk-picker-panel-content .bk-picker-panel-content .bk-time-picker-cells-list:last-child {
+.@{bk-prefix}-picker-panel-content .@{bk-prefix}-picker-panel-content .@{bk-prefix}-time-picker-cells-list:last-child {
   border-radius: 0;
 }
 
-.bk-picker-panel-content .bk-picker-panel-content .bk-time-picker-cells-list ul {
+.@{bk-prefix}-picker-panel-content .@{bk-prefix}-picker-panel-content .@{bk-prefix}-time-picker-cells-list ul {
   padding: 0 0 168px 0;
 }
