@@ -46,13 +46,11 @@ import BkTableCache from './cache';
 import {
   COL_MIN_WIDTH,
   COLUMN_ATTRIBUTE,
-  EMIT_EVENT_TYPES,
-  EMIT_EVENTS,
-  EVENTS,
   PROVIDE_KEY_INIT_COL,
   PROVIDE_KEY_TB_CACHE,
   TABLE_ROW_ATTRIBUTE,
 } from './const';
+import { EMIT_EVENT_TYPES, EMIT_EVENTS, EVENTS } from './events';
 import usePagination from './plugins/use-pagination';
 import useScrollLoading from './plugins/use-scroll-loading';
 import { tableProps } from './props';

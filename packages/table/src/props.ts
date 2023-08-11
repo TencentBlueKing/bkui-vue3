@@ -262,7 +262,6 @@ export type Colgroups = Column & {
   listeners: Map<string, Function>,
 };
 
-
 export const tableProps = {
   /**
    * 渲染列表

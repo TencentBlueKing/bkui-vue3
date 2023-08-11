@@ -25,7 +25,7 @@
 */
 
 import { v4 as uuidv4 } from 'uuid';
-import { computed, ComputedRef, CSSProperties, Ref, ref, unref } from 'vue';
+import { computed, ComputedRef, CSSProperties, Ref, ref, SetupContext, unref } from 'vue';
 
 import BkCheckbox from '@bkui-vue/checkbox';
 import { DownShape, RightShape } from '@bkui-vue/icon';
@@ -35,7 +35,8 @@ import { classes } from '@bkui-vue/shared';
 
 import TableCell from './components/table-cell';
 import TableRow from './components/table-row';
-import { COLUMN_ATTRIBUTE, EMIT_EVENTS, EVENTS, SCROLLY_WIDTH, TABLE_ROW_ATTRIBUTE } from './const';
+import { COLUMN_ATTRIBUTE, SCROLLY_WIDTH, TABLE_ROW_ATTRIBUTE } from './const';
+import { EMIT_EVENTS, EVENTS } from './events';
 import { TablePlugins } from './plugins';
 import BodyEmpty from './plugins/body-empty';
 import HeadFilter from './plugins/head-filter';
@@ -62,7 +63,7 @@ import {
 
 export default class TableRender {
   props: TablePropTypes;
-  context;
+  context: SetupContext;
   reactiveProp: IReactiveProp;
   colgroups: GroupColumn[];
   uuid: string;
