@@ -74,7 +74,14 @@ export const PopoverProps = {
 
   padding: PropTypes.number.def(5),
 
-  offset: PropTypes.oneOfType([PropTypes.number, PropTypes.shape<IAxesOffsets>({})]).def(6),
+  offset: PropTypes.oneOfType([
+    PropTypes.number,
+    PropTypes.shape<IAxesOffsets>({
+      mainAxis: PropTypes.number,
+      crossAxis: PropTypes.number,
+      alignmentAxis: PropTypes.number,
+    }),
+  ]).def(6),
 
   /**
    * 弹出内容绑定元素
