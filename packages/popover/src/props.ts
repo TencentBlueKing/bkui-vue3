@@ -115,7 +115,7 @@ export const PopoverProps = {
   /**
    * 自定义 reference
    */
-  reference: PropTypes.any.def(null),
+  reference: PropTypes.any,
 
   /**
    * 兼容v1版本遗留配置
