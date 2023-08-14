@@ -28,7 +28,7 @@ import { defineComponent, ExtractPropTypes, inject, reactive, unref } from 'vue'
 import { PropTypes } from '@bkui-vue/shared';
 
 import { BK_COLUMN_UPDATE_DEFINE, PROVIDE_KEY_INIT_COL, PROVIDE_KEY_TB_CACHE } from '../const';
-import { columnType, fixedType, IFilterShapeType, IOverflowTooltipPropType, ISortShapeType, TableAlign } from '../props';
+import { columnType, fixedType, IFilterShapeType, IOverflowTooltipPropType, ISortType, TableAlign } from '../props';
 
 const TableColumnProp = {
   label: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
@@ -44,7 +44,7 @@ const TableColumnProp = {
     PropTypes.bool,
     fixedType,
   ]).def(false),
-  sort: ISortShapeType,
+  sort: ISortType,
   filter: IFilterShapeType,
   colspan: PropTypes.oneOfType([PropTypes.func.def(() => 1), PropTypes.number.def(1)]),
   rowspan: PropTypes.oneOfType([PropTypes.func.def(() => 1), PropTypes.number.def(1)]),
