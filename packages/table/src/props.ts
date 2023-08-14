@@ -133,14 +133,6 @@ export type ISortShape = {
 
 export type ISortPropShape = ISortShape | boolean | string;
 
-export const IFilterShapeType = toType<IFilterShape>('IFilterShapeType', {}).def({
-  list: [],
-  checked: [],
-  match: FullEnum.FULL,
-  filterScope: SortScope.CURRENT,
-  btnSave: '确定',
-  btnReset: '重置',
-});
 
 export type IFilterShape = {
   list: any[],
@@ -339,10 +331,7 @@ export const tableProps = {
     height: LINE_HEIGHT,
     isShow: true,
   }),
-  /**
-   * 是否为斑马纹 Table
-   */
-  stripe: PropTypes.bool.def(false),
+
   /**
    * 是否启用虚拟渲染 & 滚动
    * 当数据量很大时，启用虚拟渲染可以解决压面卡顿问题
