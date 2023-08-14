@@ -232,7 +232,10 @@ export const tableProps = {
     isShow: PropTypes.bool.def(true),
     cellFn: PropTypes.func.def(undefined),
   }),
-
+  /**
+   * 是否为斑马纹 Table
+   */
+  stripe: PropTypes.bool.def(false),
   /**
    * 是否启用虚拟渲染 & 滚动
    * 当数据量很大时，启用虚拟渲染可以解决压面卡顿问题
