@@ -33,7 +33,7 @@ import Component from './table';
 
 export type TableProps = Partial<ExtractPropTypes<typeof tableProps>>;
 
-export type { Column as TableIColumn, Settings as TableSettings, TableColumnProps } from './props';
+export type { Column as TableIColumn, Settings as TableSettings } from './props';
 const BkTable = withInstallProps(Component, {
   Column,
 });
