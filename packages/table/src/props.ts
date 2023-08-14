@@ -123,38 +123,30 @@ export type ISortOption = {
   [key: string]: SORT_OPTION;
 };
 
-export const ISortShapeType = toType<ISortShape>('ISortShapeType', {}).def({
-  sortScope: SortScope.CURRENT,
-});
-
-export const ISortType = toType<ISortShape>('ISortShapeType', {}).def(false);
+export const ISortType = toType<ISortPropShape>('ISortPropShape', {}).def(false);
 
 export type ISortShape = {
   sortFn?: Function,
   sortScope?: SortScope,
   value?: SORT_OPTION,
-} | boolean | string;
+};
 
-export const IFilterShapeType = toType<IFilterShape>('IFilterShapeType', {}).def({
-  list: [],
-  checked: [],
-  match: FullEnum.FULL,
-  filterScope: SortScope.CURRENT,
-  btnSave: '确定',
-  btnReset: '重置',
-});
+export type ISortPropShape = ISortShape | boolean | string;
+
 
 export type IFilterShape = {
-  list: Record<string, string>[],
+  list: any[],
   filterFn?: Function,
   match?: FullEnum,
-  checked?: Record<string, string>[],
+  checked?: any[],
   filterScope?: SortScope,
   btnSave?: boolean | string,
   btnReset?: boolean | string,
-} | boolean | string;
+};
 
-export const IFilterType = toType<IFilterShape>('IFilterShape', {}).def(false);
+export type IFilterPropShape = IFilterShape | boolean | string;
+
+export const IFilterType = toType<IFilterPropShape>('IFilterPropShape', {}).def(false);
 
 export enum ColumnPickEnum {
   MULTI = 'multi',
@@ -339,10 +331,7 @@ export const tableProps = {
     height: LINE_HEIGHT,
     isShow: true,
   }),
-  /**
-   * 是否为斑马纹 Table
-   */
-  stripe: PropTypes.bool.def(false),
+
   /**
    * 是否启用虚拟渲染 & 滚动
    * 当数据量很大时，启用虚拟渲染可以解决压面卡顿问题
