@@ -29,8 +29,8 @@ import {
   ExtractPropTypes,
 } from 'vue';
 
-import { classes, PropTypes } from '@bkui-vue/shared';
 import { usePrefix } from '@bkui-vue/config-provider';
+import { classes, PropTypes } from '@bkui-vue/shared';
 
 const inputContainerProps = {
   info: PropTypes.object.isRequired,

@@ -32,10 +32,10 @@ import {
   watch,
 } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import { PropTypes } from '@bkui-vue/shared';
 
 import InputContainer from './input-container';
-import { usePrefix } from '@bkui-vue/config-provider';
 const colorPickerProps = {
   colorObj: PropTypes.object.isRequired,
 };

@@ -27,8 +27,8 @@
 import tinycolor from 'tinycolor2';
 import { computed, defineComponent, ExtractPropTypes, nextTick, ref, watch } from 'vue';
 
-import { classes, PropTypes } from '@bkui-vue/shared';
 import { usePrefix } from '@bkui-vue/config-provider';
+import { classes, PropTypes } from '@bkui-vue/shared';
 
 import { clamp } from '../utils';
 
