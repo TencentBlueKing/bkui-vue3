@@ -150,7 +150,7 @@ export type IFilterShape = {
   filterScope?: SortScope,
   btnSave?: boolean | string,
   btnReset?: boolean | string,
-} | boolean | string;
+};
 
 export type IFilterPropShape = IFilterShape | boolean | string;
 
