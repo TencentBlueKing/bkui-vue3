@@ -33,9 +33,9 @@ export const enum EMIT_EVENTS {
   CONTENT_AfterShow = 'afterShow',
 }
 
-export const EVENT_SHOW_HIDE_FN = (_args: { isShow: boolean }) => {};
-export const EVENT_COMMON_FN = (_e: MouseEvent) => {};
-export const EVENT_CLICK_OUTSIDE_FN = (_args: { isShow: boolean, event: MouseEvent }) => {};
+export const EVENT_SHOW_HIDE_FN = (_args: { isShow: boolean }) => true;
+export const EVENT_COMMON_FN = (e: MouseEvent) => e;
+export const EVENT_CLICK_OUTSIDE_FN = (_args: { isShow: boolean, event: MouseEvent }) => true;
 
 export const EMIT_EVENT_TYPES = {
   [EMIT_EVENTS.CLICK_OUTSIDE]: EVENT_CLICK_OUTSIDE_FN,

@@ -54,7 +54,7 @@ export const EVENT_MOUSE_FN = (
   _index: number,
   _rows: Record<string, any>[],
   _this: any,
-) => {};
+) => true;
 
 export const EVENT_EXPAND_FN = (_args: {
   row: Record<string, any>,
@@ -62,19 +62,19 @@ export const EVENT_EXPAND_FN = (_args: {
   index: Number,
   rows: Record<string, any>[],
   e: MouseEvent
-}) => {};
+}) => true;
 
 export const EVENT_ROW_SELECT_FN = (_args: {
   row: Record<string, any>,
   index: Number,
   checked: string,
   data: Array<Record<string, any>>,
-}) => {};
+}) => true;
 
 export const EVENT_ROW_SELECT_ALL_FN = (_args: {
   checked: string,
   data: Array<Record<string, any>>,
-}) => {};
+}) => true;
 
 export const EVENT_ROW_SELECT_CHANGE_FN = (_args: {
   row: Record<string, any>,
@@ -82,7 +82,7 @@ export const EVENT_ROW_SELECT_CHANGE_FN = (_args: {
   checked: string,
   data: Array<Record<string, any>>,
   isAll: boolean
-}) => {};
+}) => true;
 
 export const EVENT_PAGE_FN = (_arg: number) => {};
 export const EVENT_SETTING_FN = (_args: {
@@ -90,7 +90,7 @@ export const EVENT_SETTING_FN = (_args: {
   size: string,
   height: number,
   fields: Array<Record<string, any>>
-}) => {};
+}) => true;
 
 export const EVENT_CELL_FN = (_args: {
   event: MouseEvent,
@@ -101,7 +101,7 @@ export const EVENT_CELL_FN = (_args: {
   },
   rowIndex: number,
   columnIndex: number,
-}) => {};
+}) => true;
 
 export const EVENT_SCROLL_FN = (_args: {
   translateX: number,
@@ -109,7 +109,7 @@ export const EVENT_SCROLL_FN = (_args: {
   scrollTop: number,
   scrollLeft: number,
   bottom: number,
-}) => {};
+}) => true;
 
 export const EMIT_EVENT_TYPES = {
   [EMIT_EVENTS.COLUMN_PICK]: EVENT_COL_PICK,

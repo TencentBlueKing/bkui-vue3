@@ -379,7 +379,7 @@ export const tableProps = {
   /**
    * bk-table-setting-content
    */
-  settings: PropTypes.oneOfType([ITableSettings, PropTypes.bool]).def(false),
+  settings: PropTypes.oneOfType([ITableSettings.def({}), PropTypes.bool.def(false)]).def(false),
 
   /**
    * 行的 class 的回调方法，也可以使用一个固定的 Object 为所有行设置一样的 Style
