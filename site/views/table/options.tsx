@@ -76,6 +76,7 @@ export const DATA_COLUMNS = [
     width: 50,
     minWidth: 80,
     sort: true,
+    className: 'custom-class',
   },
   {
     label: '名称/内网IP',
