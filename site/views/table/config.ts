@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*
 * Tencent is pleased to support the open source community by making
 * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
@@ -38,10 +39,10 @@ export default [
   {
     title: 'bk-table 属性',
     subTile: '',
-    config: [ //stripe
+    config: [
       { name: 'data', type: 'Array', default: '--', desc: '显示的数据', optional: [] },
       { name: 'columns', type: 'IColumn[]', default: '', desc: '表格列的配置描述，具体项参考IColumn', optional: [] },
-      { name: 'stripe', type: 'Boolean', default: 'false', desc: '是否为斑马纹 Table', optional: [`true`, `false`] },
+      { name: 'stripe', type: 'Boolean', default: 'false', desc: '是否为斑马纹 Table', optional: ['true', 'false'] },
       { name: 'active-column', type: 'Number|Array', default: '--', desc: '当前选中列,当设置选中多列时（columnPick = multi），配置为数组[index1, index2, index3]，只能选中单列时，可以为数值或者数组[index]', optional: [] },
       { name: 'column-pick', type: 'String', default: '禁用（disabled）', desc: '表格列选中方式,支持：', optional: ['单列（single）', '多列（multi）', '禁用（disabled）'] },
       { name: 'height', type: 'Number|String', default: 'auto', desc: '设置表格高度,auto 根据行数自动填充高度, 100%，依赖初始化时父级容器高度', optional: [] },
@@ -115,7 +116,7 @@ export default [
     subTile: '表头详细配置说明',
     config: [
       { name: 'height', type: 'Number', default: 'LINE_HEIGHT', desc: 'Thead行高，可以为固定数值类型', optional: [] },
-      { name: 'color', type: 'string', default: 'IHeadColor.DEF1', desc: '根据表格的使用场景，表头支持颜色自定义，默认提供的选项：def1: #FAFBFD、def2: #F0F1F5，尽量一个项目选用同一种颜色。支持自定义颜色，可传入自定义颜色值', optional: [`def1`, `def2`] },
+      { name: 'color', type: 'string', default: 'IHeadColor.DEF1', desc: '根据表格的使用场景，表头支持颜色自定义，默认提供的选项：def1: #FAFBFD、def2: #F0F1F5，尽量一个项目选用同一种颜色。支持自定义颜色，可传入自定义颜色值', optional: ['def1', 'def2'] },
       { name: 'isShow', type: 'Boolean', default: 'true', desc: '是否显示Head', optional: [] },
       { name: 'cellFn', type: 'Function', default: 'undefined', desc: '自定义当前列渲染函数', optional: [] },
     ],
