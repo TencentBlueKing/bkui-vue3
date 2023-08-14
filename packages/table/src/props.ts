@@ -123,17 +123,15 @@ export type ISortOption = {
   [key: string]: SORT_OPTION;
 };
 
-export const ISortShapeType = toType<ISortShape>('ISortShapeType', {}).def({
-  sortScope: SortScope.CURRENT,
-});
-
-export const ISortType = toType<ISortShape>('ISortShapeType', {}).def(false);
+export const ISortType = toType<ISortPropShape>('ISortPropShape', {}).def(false);
 
 export type ISortShape = {
   sortFn?: Function,
   sortScope?: SortScope,
   value?: SORT_OPTION,
-} | boolean | string;
+};
+
+export type ISortPropShape = ISortShape | boolean | string;
 
 export const IFilterShapeType = toType<IFilterShape>('IFilterShapeType', {}).def({
   list: [],
@@ -145,16 +143,18 @@ export const IFilterShapeType = toType<IFilterShape>('IFilterShapeType', {}).def
 });
 
 export type IFilterShape = {
-  list: Record<string, string>[],
+  list: any[],
   filterFn?: Function,
   match?: FullEnum,
-  checked?: Record<string, string>[],
+  checked?: any[],
   filterScope?: SortScope,
   btnSave?: boolean | string,
   btnReset?: boolean | string,
 } | boolean | string;
 
-export const IFilterType = toType<IFilterShape>('IFilterShape', {}).def(false);
+export type IFilterPropShape = IFilterShape | boolean | string;
+
+export const IFilterType = toType<IFilterPropShape>('IFilterPropShape', {}).def(false);
 
 export enum ColumnPickEnum {
   MULTI = 'multi',
