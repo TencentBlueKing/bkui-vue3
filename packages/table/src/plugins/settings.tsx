@@ -33,26 +33,14 @@ import Popover from '@bkui-vue/popover';
 import { PropTypes } from '@bkui-vue/shared';
 
 import { createDefaultSizeList, LINE_HEIGHT } from '../const';
-import { Field, Settings, SettingSizeEnum, settingSizeType, SizeItem } from '../props';
+import { IColumnType, ITableSettings, Settings, SizeItem } from '../props';
 import { resolvePropVal } from '../utils';
 
 export default defineComponent({
   name: 'Settings',
   props: {
-    settings: PropTypes.oneOfType([
-      PropTypes.shape<Settings>({
-        fields: PropTypes.arrayOf(PropTypes.shape<Field>({
-          label: PropTypes.string,
-          field: PropTypes.string,
-          disabled: PropTypes.bool,
-        })),
-        checked: PropTypes.arrayOf(PropTypes.string),
-        limit: PropTypes.number.def(0),
-        size: settingSizeType.def(SettingSizeEnum.SMALL),
-        sizeList: PropTypes.shape<SizeItem[]>([]),
-        showLineHeight: PropTypes.bool.def(true),
-      }), PropTypes.bool]).def(false),
-    columns: PropTypes.array.def([]),
+    settings: ITableSettings,
+    columns: PropTypes.arrayOf(IColumnType).def([]),
     rowHeight: PropTypes.number.def(LINE_HEIGHT),
   },
   emits: ['change'],
@@ -60,7 +48,7 @@ export default defineComponent({
     const { resolveClassName } = usePrefix();
     const t = useLocale('table');
     const defaultSizeList: SizeItem[] = createDefaultSizeList(t);
-    const resolvedColVal = (item, index) => resolvePropVal(item, ['field', 'type'], [item, index]);
+    const resolvedColVal = (item, index) => resolvePropVal(item, ['id', 'field', 'type'], [item, index]);
     const checkAll = ref(false);
     const isShow = ref(false);
 
@@ -217,7 +205,7 @@ export default defineComponent({
                     <BkCheckbox checked={checkedFields.value.includes(resolvedColVal(item, index))}
                       label={resolvedColVal(item, index)}
                       disabled={isItemReadonly(item, index)}>
-                      {resolvePropVal(item, 'label', [item, index])}
+                      {resolvePropVal(item, ['name', 'label'], [item, index])}
                     </BkCheckbox>
                   </div>)
                 }

@@ -33,22 +33,26 @@ import { classes, PropTypes, RenderType } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
 import { LINE_HEIGHT } from '../const';
+import { Column, IColumnType, IFilterShape } from '../props';
 import { getRowText, resolvePropVal } from '../utils';
-
+type IHeadFilterPropType = {
+  column: Column,
+  height: number,
+};
 export default defineComponent({
   name: 'HeadFilter',
   props: {
-    column: PropTypes.any.def({}),
+    column: IColumnType,
     height: PropTypes.number.def(LINE_HEIGHT),
   },
   emits: ['change', 'filterSave'],
 
-  setup(props, { emit }) {
+  setup(props: IHeadFilterPropType, { emit }) {
     const { resolveClassName } = usePrefix();
     const t = useLocale('table');
     const { column } = props;
     const { filter } = toRefs(props.column);
-    const checked = ref(filter.value?.checked ?? []);
+    const checked = ref((filter.value as IFilterShape)?.checked ?? []);
     const state = reactive({
       isOpen: false,
       checked: checked.value,
@@ -78,14 +82,14 @@ export default defineComponent({
 
     const theme = `light ${resolveClassName('table-head-filter')}`;
     const localData = computed(() => {
-      const { list = [] } = filter.value;
+      const { list = [] } = filter.value as IFilterShape;
       return list;
     });
 
     const getRegExp = (searchValue: string | number | boolean, flags = 'ig') => new RegExp(`${searchValue}`.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&'), flags);
 
     const defaultFilterFn = (checked: string[], row: any) => {
-      const { match } = filter.value;
+      const { match } = filter.value as IFilterShape;
       const matchText = getRowText(row, resolvePropVal(column, 'field', [column, row]), column);
       if (match === 'full') {
         checked.includes(matchText);
@@ -94,9 +98,9 @@ export default defineComponent({
       return checked.some((str: string) => getRegExp(str, 'img').test(matchText));
     };
 
-    const filterFn = typeof filter.value.filterFn === 'function'
+    const filterFn = typeof (filter.value as IFilterShape).filterFn === 'function'
       // eslint-disable-next-line max-len
-      ? (checked: string[], row: any, index: number, data: any[]) => filter.value.filterFn(checked, row, props.column, index, data)
+      ? (checked: string[], row: any, index: number, data: any[]) => (filter.value as IFilterShape).filterFn(checked, row, props.column, index, data)
       : (checked: string[], row: any) => (checked.length ? defaultFilterFn(checked, row) : true);
 
     const handleBtnSaveClick = () => {
@@ -114,7 +118,7 @@ export default defineComponent({
           state.isOpen = false;
           return;
         }
-        filter.value.checked = state.checked;
+        (filter.value as IFilterShape).checked = state.checked;
         emit('change', [...state.checked], filterFn);
       }
     };
@@ -133,7 +137,7 @@ export default defineComponent({
       return { disabled, text };
     };
 
-    const { btnSave, btnReset } = filter.value;
+    const { btnSave, btnReset } = filter.value as IFilterShape;
 
     const renderSaveBtn = () => {
       const { disabled, text } = resolveBtnOption(btnSave, t.value.confirm);

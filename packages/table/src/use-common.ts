@@ -29,6 +29,7 @@ import { computed, onMounted, reactive, ref, watch } from 'vue';
 
 import { classes, resolveClassName } from '@bkui-vue/shared';
 
+import { ITableColumn } from './components/table-column';
 import {
   BORDER_OPTION,
   COL_MIN_WIDTH,
@@ -64,7 +65,13 @@ import {
  * @param reactiveProp 组件内部定义的响应式对象
  * @param pageData 当前页数据
  */
-export const useClass = (props: TablePropTypes, targetColumns: Column[], root?, reactiveProp?, pageData?: any[]) => {
+export const useClass = (
+  props: TablePropTypes,
+  targetColumns: ITableColumn[],
+  root?,
+  reactiveProp?,
+  pageData?: any[],
+) => {
   const { getColumns } = useColumn(props, targetColumns);
   const autoHeight = ref(200);
   const hasScrollY = ref(false);
@@ -81,7 +88,18 @@ export const useClass = (props: TablePropTypes, targetColumns: Column[], root?, 
     'has-settings': !!props.settings,
   });
 
-  const resolvedColumns = computed(() => getColumns());
+  const resolvedColumns = computed(() => getColumns() as Column[]);
+
+  const offsetXVarStyle = computed(() => ({
+    '--var-scroll-left': `${reactiveProp.scrollTranslateX}px`,
+    '--var-scroll-top': `${reactiveProp.scrollTranslateY}px`,
+  }));
+
+  const headOffsetXVarStyle = computed(() => ({
+    '--var-scroll-left': `${reactiveProp.scrollTranslateX}px`,
+    '--var-scroll-top': '0px',
+    right: hasScrollYRef.value ? `${SCROLLY_WIDTH - 2}px` : '0px',
+  }));
 
   const config = resolveHeadConfig(props);
   const headStyle = computed(() => ({
@@ -228,6 +246,8 @@ export const useClass = (props: TablePropTypes, targetColumns: Column[], root?, 
     wrapperStyle,
     contentStyle,
     headStyle,
+    offsetXVarStyle,
+    headOffsetXVarStyle,
     resetTableHeight,
     updateBorderClass,
     getColumnsWidthOffsetWidth,
@@ -243,7 +263,7 @@ export const useClass = (props: TablePropTypes, targetColumns: Column[], root?, 
  * @param props: TablePropTypes
  * @param targetColumns 解析之后的column配置（主要用来处理通过<bk-column>配置的数据结构）
  */
-export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
+export const useInit = (props: TablePropTypes, targetColumns: ITableColumn[]) => {
   const colgroups: Colgroups[] = reactive([]);
   const { getColumns } = useColumn(props, targetColumns);
 
@@ -287,7 +307,7 @@ export const useInit = (props: TablePropTypes, targetColumns: Column[]) => {
   }
 
   const { dragOffsetXStyle, dragOffsetX, resetResizeEvents, registerResizeEvent } = useColumnResize(colgroups, true);
-  const { activeColumns } = useActiveColumns(props, targetColumns);
+  const { activeColumns } = useActiveColumns(props, targetColumns as Column[]);
 
   watch(() => [props.settings], () => {
     if (((props.settings as Settings)?.checked || []).length) {
