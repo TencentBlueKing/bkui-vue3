@@ -39,7 +39,7 @@ import { resolvePropVal } from '../utils';
 export default defineComponent({
   name: 'Settings',
   props: {
-    settings: PropTypes.oneOfType([ITableSettings, PropTypes.bool]).def(false),
+    settings: ITableSettings,
     columns: PropTypes.arrayOf(IColumnType).def([]),
     rowHeight: PropTypes.number.def(LINE_HEIGHT),
   },

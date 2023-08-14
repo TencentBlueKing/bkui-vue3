@@ -29,7 +29,7 @@ import { toType } from 'vue-types';
 import { bkEllipsisInstance } from '@bkui-vue/directives';
 import { hasOverflowEllipsis, isElement, PropTypes } from '@bkui-vue/shared';
 
-import { IOverflowTooltipType, ResizerWay } from '../props';
+import { IOverflowTooltipPropType, ResizerWay } from '../props';
 import { observerResize } from '../utils';
 // import
 export default defineComponent({
@@ -37,7 +37,7 @@ export default defineComponent({
   props: {
     column: PropTypes.any.def({}),
     row: PropTypes.any.def({}),
-    parentSetting: PropTypes.oneOfType([PropTypes.bool, IOverflowTooltipType]).def(false),
+    parentSetting: IOverflowTooltipPropType,
     title: PropTypes.string.def(undefined),
     observerResize: PropTypes.bool.def(true),
     resizerWay: toType<`${ResizerWay}`>('ResizerWay', {

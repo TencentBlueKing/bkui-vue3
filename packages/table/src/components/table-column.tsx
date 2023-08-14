@@ -28,7 +28,7 @@ import { defineComponent, ExtractPropTypes, inject, reactive, unref } from 'vue'
 import { PropTypes } from '@bkui-vue/shared';
 
 import { BK_COLUMN_UPDATE_DEFINE, PROVIDE_KEY_INIT_COL, PROVIDE_KEY_TB_CACHE } from '../const';
-import { columnType, fixedType, IFilterShapeType, IOverflowTooltipType, ISortShapeType, TableAlign } from '../props';
+import { columnType, fixedType, IFilterShapeType, IOverflowTooltipPropType, ISortShapeType, TableAlign } from '../props';
 
 const TableColumnProp = {
   label: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
@@ -37,7 +37,7 @@ const TableColumnProp = {
   width: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]),
   minWidth: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]).def(30),
   columnKey: PropTypes.string.def(''),
-  showOverflowTooltip: PropTypes.oneOfType([PropTypes.bool, IOverflowTooltipType]).def(false),
+  showOverflowTooltip: IOverflowTooltipPropType,
   type: columnType,
   resizable: PropTypes.bool.def(true),
   fixed: PropTypes.oneOfType([

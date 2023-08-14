@@ -103,6 +103,15 @@ export type IOverflowTooltip = {
   mode?: `${OverflowModeEnum}`
 };
 
+export type IOverflowTooltipProp = {
+  content: string | Function,
+  disabled?: boolean,
+  watchCellResize?: boolean,
+  mode?: `${OverflowModeEnum}`
+} | boolean;
+
+export const IOverflowTooltipPropType = toType<IOverflowTooltipProp>('IOverflowTooltipPropType', {}).def(false);
+
 export const IOverflowTooltipType = toType<IOverflowTooltip>('IOverflowTooltipType', {}).def({
   content: '',
   disabled: false,
@@ -118,18 +127,15 @@ export const ISortShapeType = toType<ISortShape>('ISortShapeType', {}).def({
   sortScope: SortScope.CURRENT,
 });
 
-export const ISortType = PropTypes.oneOfType([
-  ISortShapeType,
-  PropTypes.bool,
-  PropTypes.string]).def(false);
+export const ISortType = toType<ISortShape>('ISortShapeType', {}).def(false);
 
 export type ISortShape = {
   sortFn?: Function,
   sortScope?: SortScope,
   value?: SORT_OPTION,
-};
+} | boolean | string;
 
-export const IFilterShapeType = toType<IFilterShape>('', {}).def({
+export const IFilterShapeType = toType<IFilterShape>('IFilterShapeType', {}).def({
   list: [],
   checked: [],
   match: FullEnum.FULL,
@@ -146,12 +152,9 @@ export type IFilterShape = {
   filterScope?: SortScope,
   btnSave?: boolean | string,
   btnReset?: boolean | string,
-};
+} | boolean | string;
 
-export const IFilterType = PropTypes.oneOfType([
-  IFilterShapeType,
-  PropTypes.bool,
-  PropTypes.string]).def(false);
+export const IFilterType = toType<IFilterShape>('IFilterShape', {}).def(false);
 
 export enum ColumnPickEnum {
   MULTI = 'multi',
@@ -166,7 +169,7 @@ export enum ResizerWay {
 
 export const IColumnType = toType<Column>('IColumnType', {});
 
-export const ITableSettings = toType<Settings>('ITableSettingXXXXXXXXX', {});
+export const ITableSettings = toType<ISettingPropType>('ITableSettingPropType', {}).def(false);
 
 /**
  * 配置自定义行高选项
@@ -185,6 +188,8 @@ export type Settings = {
   sizeList?: SizeItem[];
   showLineHeight?: boolean;
 };
+
+export type ISettingPropType = Settings | boolean;
 
 
 export type Field = {
@@ -379,7 +384,7 @@ export const tableProps = {
   /**
    * bk-table-setting-content
    */
-  settings: PropTypes.oneOfType([ITableSettings.def({}), PropTypes.bool.def(false)]).def(false),
+  settings: ITableSettings,
 
   /**
    * 行的 class 的回调方法，也可以使用一个固定的 Object 为所有行设置一样的 Style
@@ -446,7 +451,7 @@ export const tableProps = {
    * 当内容过长被隐藏时显示 tooltip, 此处为全局配置, 如果只配置此处，整个table都启用
    * column内部可以单个配置覆盖此配置
    */
-  showOverflowTooltip: PropTypes.oneOfType([PropTypes.bool, IOverflowTooltipType]).def(false),
+  showOverflowTooltip: IOverflowTooltipPropType,
 
   /**
    * 为避免不必要的数据修改导致的不可控组件更新

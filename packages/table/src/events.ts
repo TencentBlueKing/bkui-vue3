@@ -43,10 +43,10 @@ export const enum EMIT_EVENTS {
   NATIVE_DBL_CLICK = 'dblclick'
 }
 
-export const EVENT_COL_PICK = (_cols: IColumnActive[]) => {};
-export const EVENT_COL_FILTER = (_args: { checked: string[], column: Column, index: number }) => {};
-export const EVENT_COL_FILTER_SAVE = (_args: { column: Column, values: Record<string, any>[] }) => {};
-export const EVENT_COL_SORT = (_args: { column: Column, index: number, type: SORT_OPTION }) => {};
+export const EVENT_COL_PICK = (_cols: IColumnActive[]) => true;
+export const EVENT_COL_FILTER = (_args: { checked: string[], column: Column, index: number }) => true;
+export const EVENT_COL_FILTER_SAVE = (_args: { column: Column, values: Record<string, any>[] }) => true;
+export const EVENT_COL_SORT = (_args: { column: Column, index: number, type: SORT_OPTION }) => true;
 
 export const EVENT_MOUSE_FN = (
   _e: MouseEvent,
@@ -84,7 +84,7 @@ export const EVENT_ROW_SELECT_CHANGE_FN = (_args: {
   isAll: boolean
 }) => true;
 
-export const EVENT_PAGE_FN = (_arg: number) => {};
+export const EVENT_PAGE_FN = (_arg: number) => true;
 export const EVENT_SETTING_FN = (_args: {
   checked: string[],
   size: string,
