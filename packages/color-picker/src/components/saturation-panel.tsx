@@ -26,8 +26,9 @@
 
 import { computed, defineComponent, ExtractPropTypes, ref } from 'vue';
 
-import { PropTypes } from '@bkui-vue/shared';
 import { usePrefix } from '@bkui-vue/config-provider';
+import { PropTypes } from '@bkui-vue/shared';
+
 import { clamp, getTouches } from '../utils';
 
 const colorPickerProps = {
