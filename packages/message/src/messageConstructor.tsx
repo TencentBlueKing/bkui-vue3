@@ -164,18 +164,11 @@ export type IMessage = {
   type: MessageContentType;
 };
 
-const IMessageType = {
-  code: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  overview: PropTypes.string,
-  suggestion: PropTypes.string,
-  details: PropTypes.string,
-  assistant: PropTypes.string,
-  type: toType<MessageContentType>('MessageContentType', {}),
-};
+export type IMessageProp = IMessage | string;
 
 const messageProps = {
   id: PropTypes.string.def(''),
-  message: PropTypes.oneOfType([PropTypes.shape<IMessage>(IMessageType).loose, PropTypes.string]),
+  message: toType<IMessageProp>('IMessage', {}),
   theme: toType<`${MessageThemeEnum}`>('messageTheme', {}).def(MessageThemeEnum.PRIMARY),
   delay: PropTypes.number,
   dismissable: PropTypes.bool.def(true),
@@ -185,7 +178,7 @@ const messageProps = {
   onClose: PropTypes.func,
   getContainer: PropTypes.instanceOf(HTMLElement),
   width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-  actions: PropTypes.shape<IMessageActions>([]),
+  actions: toType<IMessageActions>('IMessageAction', {}),
 };
 
 export default defineComponent({

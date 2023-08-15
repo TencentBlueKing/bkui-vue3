@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 /*
 * Tencent is pleased to support the open source community by making
 * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
@@ -23,23 +24,23 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-const EMPTY = (..._args) => true;
-
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const enum EMIT_EVENTS {
-  SHOW = 'show',
-  HIDE = 'hide',
   CLICK_OUTSIDE = 'clickoutside',
   CONTENT_MOUSEENTER = 'contentMouseenter',
   CONTENT_MOUSELEAVE = 'contentMouseleave',
-  STOP_HIDE = 'stopHide'
+  CONTENT_AfterHidden = 'afterHidden',
+  CONTENT_AfterShow = 'afterShow',
 }
-export const EMIT_EVENT_TYPES = {
-  [EMIT_EVENTS.SHOW]: EMPTY,
-  [EMIT_EVENTS.HIDE]: EMPTY,
-  [EMIT_EVENTS.CLICK_OUTSIDE]: EMPTY,
-  [EMIT_EVENTS.CONTENT_MOUSEENTER]: EMPTY,
-  [EMIT_EVENTS.CONTENT_MOUSELEAVE]: EMPTY,
-  [EMIT_EVENTS.STOP_HIDE]: EMPTY,
-};
 
+export const EVENT_SHOW_HIDE_FN = (_args: { isShow: boolean }) => true;
+export const EVENT_COMMON_FN = (e: MouseEvent) => e;
+export const EVENT_CLICK_OUTSIDE_FN = (_args: { isShow: boolean, event: MouseEvent }) => true;
+
+export const EMIT_EVENT_TYPES = {
+  [EMIT_EVENTS.CLICK_OUTSIDE]: EVENT_CLICK_OUTSIDE_FN,
+  [EMIT_EVENTS.CONTENT_MOUSEENTER]: EVENT_COMMON_FN,
+  [EMIT_EVENTS.CONTENT_MOUSELEAVE]: EVENT_COMMON_FN,
+  [EMIT_EVENTS.CONTENT_AfterHidden]: EVENT_SHOW_HIDE_FN,
+  [EMIT_EVENTS.CONTENT_AfterShow]: EVENT_SHOW_HIDE_FN,
+};

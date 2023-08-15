@@ -28,7 +28,7 @@ import { string, toType } from 'vue-types';
 
 import { PropTypes } from '@bkui-vue/shared';
 
-import { BORDER_OPTION, LINE_HEIGHT, ROW_HOVER, ROW_HOVER_OPTIONS, SORT_OPTION, TABLE_ROW_ATTRIBUTE } from './const';
+import { BORDER_OPTION, COL_MIN_WIDTH, IHeadColor, LINE_HEIGHT, ROW_HOVER, ROW_HOVER_OPTIONS, SORT_OPTION, TABLE_ROW_ATTRIBUTE, TB_FOOT_HEIGHT } from './const';
 
 export enum SortScope {
   CURRENT = 'current',
@@ -45,7 +45,7 @@ export enum OverflowModeEnum {
   AUTO = 'auto'
 }
 
-export const overflowModeType = toType<`${OverflowModeEnum}`>('showOverflowTooltipMode', {
+export const EnumOverflowModeType = toType<`${OverflowModeEnum}`>('showOverflowTooltipMode', {
   default: OverflowModeEnum.AUTO,
 });
 
@@ -103,10 +103,50 @@ export type IOverflowTooltip = {
   mode?: `${OverflowModeEnum}`
 };
 
+export type IOverflowTooltipProp = {
+  content: string | Function,
+  disabled?: boolean,
+  watchCellResize?: boolean,
+  mode?: `${OverflowModeEnum}`
+} | boolean;
+
+export const IOverflowTooltipPropType = toType<IOverflowTooltipProp>('IOverflowTooltipPropType', {}).def(false);
+
+export const IOverflowTooltipType = toType<IOverflowTooltip>('IOverflowTooltipType', {}).def({
+  content: '',
+  disabled: false,
+  watchCellResize: true,
+  mode: OverflowModeEnum.AUTO,
+});
+
 export type ISortOption = {
   [key: string]: SORT_OPTION;
 };
-const sortScopeType = toType<`${SortScope}`>('sortScope', {}).def(SortScope.CURRENT);
+
+export const ISortType = toType<ISortPropShape>('ISortPropShape', {}).def(false);
+
+export type ISortShape = {
+  sortFn?: Function,
+  sortScope?: SortScope,
+  value?: SORT_OPTION,
+};
+
+export type ISortPropShape = ISortShape | boolean | string;
+
+
+export type IFilterShape = {
+  list: any[],
+  filterFn?: Function,
+  match?: FullEnum,
+  checked?: any[],
+  filterScope?: SortScope,
+  btnSave?: boolean | string,
+  btnReset?: boolean | string,
+};
+
+export type IFilterPropShape = IFilterShape | boolean | string;
+
+export const IFilterType = toType<IFilterPropShape>('IFilterPropShape', {}).def(false);
 
 export enum ColumnPickEnum {
   MULTI = 'multi',
@@ -119,52 +159,106 @@ export enum ResizerWay {
   THROTTLE = 'throttle'
 }
 
-export const IColumnType = {
-  label: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
-  field: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
-  render: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
-  width: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]),
-  minWidth: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]).def(30),
-  columnKey: PropTypes.string.def(''),
-  showOverflowTooltip: PropTypes.oneOfType([PropTypes.bool, PropTypes.shape<IOverflowTooltip>({
-    content: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
-    disabled: PropTypes.oneOfType([PropTypes.bool, PropTypes.func]),
-    watchCellResize: PropTypes.bool.def(true),
-    mode: overflowModeType,
-  })]).def(undefined),
-  type: columnType,
-  resizable: PropTypes.bool.def(true),
-  fixed: PropTypes.oneOfType([
-    PropTypes.bool,
-    fixedType,
-  ]).def(false),
-  sort: PropTypes.oneOfType([
-    PropTypes.shape({
-      sortFn: PropTypes.func.def(undefined),
-      sortScope: sortScopeType,
-      value: PropTypes.string.def(SORT_OPTION.NULL),
-    }),
-    PropTypes.bool,
-    PropTypes.string]).def(false),
-  filter: PropTypes.oneOfType([
-    PropTypes.shape({
-      list: PropTypes.arrayOf(PropTypes.any).def([]),
-      filterFn: PropTypes.func.def(undefined),
-      match: fullType,
-      checked: PropTypes.arrayOf(PropTypes.any).def([]),
-      filterScope: sortScopeType,
-      btnSave: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]).def('确定'),
-      btnReset: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]).def('重置'),
-    }),
-    PropTypes.bool,
-    PropTypes.string]).def(false),
-  colspan: PropTypes.oneOfType([PropTypes.func.def(() => 1), PropTypes.number.def(1)]),
-  rowspan: PropTypes.oneOfType([PropTypes.func.def(() => 1), PropTypes.number.def(1)]),
-  align: TableAlign,
-  className: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
+export const IColumnType = toType<Column>('IColumnType', {});
+
+export const ITableSettings = toType<ISettingPropType>('ITableSettingPropType', {}).def(false);
+
+/**
+ * 配置自定义行高选项
+ */
+export type SizeItem = {
+  value?: string;
+  label?: string;
+  height?: number;
 };
 
-export type TableColumnProps = Partial<ExtractPropTypes<typeof IColumnType>>;
+export type Settings = {
+  fields?: Field[],
+  checked?: string[];
+  limit?: number;
+  size?: string;
+  sizeList?: SizeItem[];
+  showLineHeight?: boolean;
+};
+
+export type ISettingPropType = Settings | boolean;
+
+
+export type Field = {
+  label: string;
+  field?: string;
+  disabled?: boolean;
+  id?: string;
+  name?: string;
+};
+
+export type Column = {
+  label: Function | string;
+  field?: Function | string;
+  render?: Function | string | Slot;
+  width?: number | string;
+  minWidth?: number | string;
+  columnKey?: string;
+  showOverflowTooltip?: boolean | IOverflowTooltip;
+  type?: string;
+  fixed?: string | boolean;
+  resizable?: boolean;
+  sort?: ISortShape | boolean | string;
+  filter?: IFilterShape | boolean | string;
+  colspan?: Function | Number;
+  rowspan?: Function | Number;
+  textAlign?: String;
+  className?: string | Function
+  align?: string,
+  prop?: string,
+  index?: Number,
+};
+
+
+export const IColumnProp = toType<Column>('IColumnPropType', {}).def({ label: undefined, minWidth: COL_MIN_WIDTH });
+
+export type Thead = {
+  height?: Number,
+  isShow?: boolean,
+  cellFn?: Function,
+  color?: IHeadColor | string
+};
+
+export type Columns = ReadonlyArray<Column>;
+export type TablePropTypes = Readonly<ExtractPropTypes<typeof tableProps>>;
+
+export type GroupColumn = {
+  calcWidth?: number;
+  resizeWidth?: number;
+  isHidden?: boolean;
+  listeners?: Map<string, any>;
+} & Column;
+
+export type IColumnActive = {
+  index: number;
+  active: boolean;
+};
+
+export type IReactiveProp = {
+  activeColumns: IColumnActive[],
+  rowActions: Record<string, any>,
+  scrollTranslateY: Number,
+  scrollTranslateX: Number,
+  pos: Record<string, any>,
+  settings: Settings | boolean,
+  setting: {
+    size: string,
+    height: Number
+  },
+  defaultSort: Record<string, any>
+};
+
+export type Colgroups = Column & {
+  calcWidth: number,
+  resizeWidth: number,
+  listeners: Map<string, Function>,
+};
+
 export const tableProps = {
   /**
    * 渲染列表
@@ -174,7 +268,7 @@ export const tableProps = {
   /**
    * Table 列渲染
    */
-  columns: PropTypes.arrayOf(PropTypes.shape<Column>(IColumnType).loose).def([]),
+  columns: PropTypes.arrayOf(IColumnType).def([]),
 
   /**
    * 当前选中列
@@ -195,6 +289,11 @@ export const tableProps = {
    * 100%，依赖初始化时父级容器高度
    */
   height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def('auto'),
+
+  /**
+   * 是否为斑马纹 Table
+   */
+  stripe: PropTypes.bool.def(false),
 
   /**
    * 设置表格最小高度
@@ -227,15 +326,12 @@ export const tableProps = {
   /**
    * table header config
    */
-  thead: PropTypes.shape<Thead>({
-    height: PropTypes.number.def(LINE_HEIGHT),
-    isShow: PropTypes.bool.def(true),
-    cellFn: PropTypes.func.def(undefined),
+  thead: toType<Thead>('ITheadType', {}).def({
+    color: IHeadColor.DEF1,
+    height: LINE_HEIGHT,
+    isShow: true,
   }),
-  /**
-   * 是否为斑马纹 Table
-   */
-  stripe: PropTypes.bool.def(false),
+
   /**
    * 是否启用虚拟渲染 & 滚动
    * 当数据量很大时，启用虚拟渲染可以解决压面卡顿问题
@@ -264,7 +360,7 @@ export const tableProps = {
    * 用于配置分页组件的高度，在不同项目中，分页组件高度会影响表格高度计算
    * 这里设置为可配置项，避免自计算导致的性能问题以及不确定性样式问题
    */
-  paginationHeight: PropTypes.number.def(60),
+  paginationHeight: PropTypes.number.def(TB_FOOT_HEIGHT),
 
   /**
    * 是否启用远程分页
@@ -280,19 +376,7 @@ export const tableProps = {
   /**
    * bk-table-setting-content
    */
-  settings: PropTypes.oneOfType([
-    PropTypes.shape({
-      fields: PropTypes.arrayOf(PropTypes.shape<Field>({
-        label: PropTypes.string,
-        field: PropTypes.string,
-        disabled: PropTypes.bool,
-      })),
-      checked: PropTypes.arrayOf(PropTypes.string),
-      limit: PropTypes.number.def(0),
-      size: settingSizeType,
-      sizeList: PropTypes.shape<SizeItem[]>([]),
-      showLineHeight: PropTypes.bool.def(true),
-    }), PropTypes.bool]).def(false),
+  settings: ITableSettings,
 
   /**
    * 行的 class 的回调方法，也可以使用一个固定的 Object 为所有行设置一样的 Style
@@ -359,12 +443,7 @@ export const tableProps = {
    * 当内容过长被隐藏时显示 tooltip, 此处为全局配置, 如果只配置此处，整个table都启用
    * column内部可以单个配置覆盖此配置
    */
-  showOverflowTooltip: PropTypes.oneOfType([PropTypes.bool, PropTypes.shape<IOverflowTooltip>({
-    content: PropTypes.string.def(''),
-    disabled: PropTypes.bool.def(false),
-    watchCellResize: PropTypes.bool.def(true),
-    mode: overflowModeType,
-  })]).def(false),
+  showOverflowTooltip: IOverflowTooltipPropType,
 
   /**
    * 为避免不必要的数据修改导致的不可控组件更新
@@ -422,93 +501,3 @@ export const tableProps = {
   prependStyle: PropTypes.style().def({}),
 };
 
-
-/**
- * 配置自定义行高选项
- */
-export type SizeItem = {
-  value?: string;
-  label?: string;
-  height?: number;
-};
-
-export type Settings = {
-  fields?: Field[],
-  checked?: string[];
-  limit?: number;
-  size?: string;
-  sizeList?: SizeItem[];
-  showLineHeight?: boolean;
-};
-
-export type Field = {
-  label: string;
-  field?: string;
-  disabled?: boolean;
-};
-
-
-export type Column = {
-  label: Function | string;
-  field?: Function | string;
-  render?: Function | string | Slot;
-  width?: number | string;
-  minWidth?: number | string;
-  columnKey?: string;
-  showOverflowTooltip?: boolean | IOverflowTooltip;
-  type?: string;
-  fixed?: string | boolean;
-  resizable?: boolean;
-  sort?: {
-    sortFn?: Function;
-    sortScope?: string;
-    value?: string;
-  } | boolean | string;
-  filter?: {
-    list?: any,
-    filterFn?: Function;
-    checked?: any
-  } | boolean | string;
-  colspan?: Function | Number;
-  rowspan?: Function | Number;
-  textAlign?: String;
-  className?: string | Function
-  align?: string,
-};
-
-export type Thead = {
-  height?: Number,
-  isShow?: boolean,
-  cellFn?: Function
-};
-
-export type GroupColumn = {
-  calcWidth?: number;
-  resizeWidth?: number;
-  isHidden?: boolean;
-  listeners?: Map<string, any>;
-} & Column;
-
-export type Columns = ReadonlyArray<Column>;
-export type TablePropTypes = Readonly<ExtractPropTypes<typeof tableProps>>;
-export type IColumnActive = {
-  index: number;
-  active: boolean;
-};
-
-export type IReactiveProp = {
-  activeColumns: IColumnActive[],
-  rowActions: Record<string, any>,
-  scrollTranslateY: Number,
-  scrollTranslateX: Number,
-  pos: Record<string, any>,
-  settings: any,
-  setting: any,
-  defaultSort: Record<string, any>
-};
-
-export type Colgroups = Column & {
-  calcWidth: number,
-  resizeWidth: number,
-  listeners: Map<string, Function>,
-};

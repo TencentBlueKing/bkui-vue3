@@ -23,25 +23,42 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent, inject, reactive, unref } from 'vue';
+import { defineComponent, ExtractPropTypes, inject, reactive, unref } from 'vue';
 
 import { PropTypes } from '@bkui-vue/shared';
 
 import { BK_COLUMN_UPDATE_DEFINE, PROVIDE_KEY_INIT_COL, PROVIDE_KEY_TB_CACHE } from '../const';
-import { Column, IColumnType } from '../props';
+import { columnType, fixedType, IFilterType, IOverflowTooltipPropType, ISortType, TableAlign } from '../props';
 
-export type ITableColumn = Column & {
-  prop?: string | Function,
-  index?: number
+const TableColumnProp = {
+  label: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
+  field: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
+  render: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
+  width: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]),
+  minWidth: PropTypes.oneOfType([PropTypes.number.def(undefined), PropTypes.string.def('auto')]).def(30),
+  columnKey: PropTypes.string.def(''),
+  showOverflowTooltip: IOverflowTooltipPropType,
+  type: columnType,
+  resizable: PropTypes.bool.def(true),
+  fixed: PropTypes.oneOfType([
+    PropTypes.bool,
+    fixedType,
+  ]).def(false),
+  sort: ISortType,
+  filter: IFilterType,
+  colspan: PropTypes.oneOfType([PropTypes.func.def(() => 1), PropTypes.number.def(1)]),
+  rowspan: PropTypes.oneOfType([PropTypes.func.def(() => 1), PropTypes.number.def(1)]),
+  align: TableAlign,
+  className: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
+  prop: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
+  index: PropTypes.number.def(undefined),
 };
+
+export type ITableColumn = Partial<ExtractPropTypes<typeof TableColumnProp>>;;
 
 export default defineComponent({
   name: 'TableColumn',
-  props: {
-    ...IColumnType,
-    prop: PropTypes.oneOfType([PropTypes.func.def(() => ''), PropTypes.string.def('')]),
-    index: PropTypes.number.def(undefined),
-  },
+  props: TableColumnProp,
   setup(props: ITableColumn) {
     const initColumns = inject(PROVIDE_KEY_INIT_COL, (_col: ITableColumn | ITableColumn[], _rm = false) => {}, false);
     const bkTableCache = inject(PROVIDE_KEY_TB_CACHE, { queueStack: (_, fn) => fn?.() });
@@ -109,7 +126,7 @@ export default defineComponent({
     },
     updateColumnDefineByIndex(unmounted = false) {
       const resolveProp = {
-        ...this.$props as Column,
+        ...this.$props,
         field: this.$props.prop || this.$props.field,
         render: this.$slots.default,
       };
