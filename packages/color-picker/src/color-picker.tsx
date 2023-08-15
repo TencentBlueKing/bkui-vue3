@@ -267,7 +267,7 @@ export default defineComponent({
         onKeydown={handleTriggerKeydown}
         v-clickoutside={hideDropDown}
         onClick={toggleDropdown}>
-        {typeof slots.trigger === 'function' ? slots.trigger({ value: colorStr.value, isShow: props.showValue }) : (
+        {typeof slots.trigger === 'function' ? slots.trigger({ value: colorStr.value, isShowDropdown: showDropdown.value }) : (
           <>
             <div class={`${resolveClassName('color-picker-color')}`}>
               {/* 如果传入的色值为空字符串或者没有传值默认白色背景 + 中间一个叉 */}

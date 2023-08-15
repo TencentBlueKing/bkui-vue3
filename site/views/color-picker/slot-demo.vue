@@ -4,10 +4,10 @@
       v-model="color1"
       :show-value="false"
     >
-      <template #trigger="{value,isShow}">
+      <template #trigger="{value,isShowDropdown}">
         <div>
          <div>value:<span>{{value}}</span></div>
-         <div>isShow:<span>{{String(isShow)}}</span></div>
+         <div>isShowDropdown:<span>{{String(isShowDropdown)}}</span></div>
         </div>
       </template>
     </bk-color-picker>
