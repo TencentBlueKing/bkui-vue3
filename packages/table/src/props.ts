@@ -133,15 +133,6 @@ export type ISortShape = {
 
 export type ISortPropShape = ISortShape | boolean | string;
 
-export const IFilterShapeType = toType<IFilterShape>('IFilterShapeType', {}).def({
-  list: [],
-  checked: [],
-  match: FullEnum.FULL,
-  filterScope: SortScope.CURRENT,
-  btnSave: '确定',
-  btnReset: '重置',
-});
-
 export type IFilterShape = {
   list: any[],
   filterFn?: Function,
@@ -167,7 +158,10 @@ export enum ResizerWay {
   THROTTLE = 'throttle'
 }
 
-export const IColumnType = toType<Column>('IColumnType', {});
+export const IColumnType = toType<Column>('IColumnType', {}).def({
+  width: '100%',
+  label: () => '',
+});
 
 export const ITableSettings = toType<ISettingPropType>('ITableSettingPropType', {}).def(false);
 
@@ -200,10 +194,31 @@ export type Field = {
   name?: string;
 };
 
+export type LabelFunctionString = (_column, _index) => string | string;
+export const LabelFunctionStringType = toType<LabelFunctionString>('LabelFunctionStringType', {});
+
+export type RenderFunctionString = ({ cell, data, row, column, index, rows }) => any;
+export const RenderFunctionStringType = toType<RenderFunctionString>('RenderFunctionStringType', {});
+
+export type SpanFunctionString = ({ column, colIndex, row, rowIndex }) => number | Number;
+export const SpanFunctionStringType = toType<SpanFunctionString>('SpanFunctionStringType', {});
+
+export type RowClassFunctionString = (row: any) => string | string;
+export const RowClassFunctionStringType = toType<RowClassFunctionString>('RowClassFunctionStringType', {});
+
+export type RowHeightFunctionNumber = (_type: string, _row: any, _rowIndex: number, _size?) => number | number;
+export const RowHeightFunctionNumberType = toType<RowHeightFunctionNumber>('RowHeightFunctionNumberType', {});
+
+type FunctionNumber = Function | number;
+export const FunctionNumberType = toType<FunctionNumber>('FunctionNumberType', {});
+
+type StringNumber = string | number;
+export const StringNumberType = toType<StringNumber>('StringNumberType', {});
+
 export type Column = {
-  label: Function | string;
-  field?: Function | string;
-  render?: Function | string | Slot;
+  label: LabelFunctionString;
+  field?: LabelFunctionString;
+  render?: RenderFunctionString;
   width?: number | string;
   minWidth?: number | string;
   columnKey?: string;
@@ -213,12 +228,12 @@ export type Column = {
   resizable?: boolean;
   sort?: ISortShape | boolean | string;
   filter?: IFilterShape | boolean | string;
-  colspan?: Function | Number;
-  rowspan?: Function | Number;
-  textAlign?: String;
-  className?: string | Function
+  colspan?: SpanFunctionString;
+  rowspan?: SpanFunctionString;
+  textAlign?: string;
+  className?: RowClassFunctionString;
   align?: string,
-  prop?: string,
+  prop?: LabelFunctionString,
   index?: Number,
 };
 
@@ -267,6 +282,7 @@ export type Colgroups = Column & {
   listeners: Map<string, Function>,
 };
 
+
 export const tableProps = {
   /**
    * 渲染列表
@@ -296,7 +312,7 @@ export const tableProps = {
    * 默认：auto 根据行数自动填充高度
    * 100%，依赖初始化时父级容器高度
    */
-  height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def('auto'),
+  height: StringNumberType.def('auto'),
 
   /**
    * 是否为斑马纹 Table
@@ -307,19 +323,19 @@ export const tableProps = {
    * 设置表格最小高度
    * 默认：300
    */
-  minHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(LINE_HEIGHT * 2),
+  minHeight: StringNumberType.def(LINE_HEIGHT * 2),
 
   /**
    * 设置表格最d大高度
    * 默认：auto，依赖外层高度
    */
-  maxHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def('auto'),
+  maxHeight: StringNumberType.def('auto'),
 
   /**
    * 行高，可以为固定数值类型
    * 可以是函数，返回当前行的高度，返回值为数值类型
    */
-  rowHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.func]).def(LINE_HEIGHT),
+  rowHeight: RowHeightFunctionNumberType.def(() => LINE_HEIGHT),
 
   /**
    * Thead行高，可以为固定数值类型
