@@ -59,7 +59,8 @@ import {
   resolveCellSpan,
   resolveHeadConfig,
   resolvePropVal,
-  resolveWidth } from './utils';
+  resolveWidth,
+} from './utils';
 
 export default class TableRender {
   props: TablePropTypes;
@@ -464,6 +465,7 @@ export default class TableRender {
           const rowClass = [
             ...formatPropAsArray(this.props.rowClass, [row, rowIndex, this]),
             `hover-${this.props.rowHover}`,
+            rowIndex % 2 === 1 && this.props.stripe ? 'stripe-row' : '',
           ];
 
           return [
@@ -575,12 +577,12 @@ export default class TableRender {
     }
   }
 
-  private getColumnClass = (column: Column, colIndex: number) => ({
+  private getColumnClass = (column: Column, colIndex: number) => ([{
     [`${this.uuid}-column-${colIndex}`]: true,
     column_fixed: !!column.fixed,
     column_fixed_left: !!column.fixed,
     column_fixed_right: column.fixed === 'right',
-  });
+  }, column.className]);
 
   private getHeadColumnClass = (column: Column, colIndex: number) => ({
     ...this.getColumnClass(column, colIndex),

@@ -121,6 +121,9 @@ export default defineComponent({
     // 定义isFocus变量，记录是否处于焦点状态
     const isFocus = ref(false);
 
+    // 定义isShowPanel变量，用于标致面板显示
+    const isShowPanel = ref(false);
+
     // 用computed定义checkedValue变量，用于监听modelValue的变化
     const checkedValue = computed({
       get: () => modelValue.value,
@@ -226,6 +229,8 @@ export default defineComponent({
 
     // popover的监听函数
     const popoverChangeEmitter = (val) => {
+      isShowPanel.value = val.isShow;
+
       emit('toggle', val.isShow);
 
       isEdit.value = val.isShow;
@@ -339,6 +344,7 @@ export default defineComponent({
       isEdit,
       displayText,
       resolveClassName,
+      isShowPanel,
     };
   },
   render() {
@@ -415,7 +421,7 @@ export default defineComponent({
         {{
           default: () => (
             this.$slots.trigger
-              ? this.$slots.trigger({ selected: this.modelValue })
+              ? this.$slots.trigger({ selected: this.modelValue, isShow: this.isShowPanel })
               : <div class={[this.resolveClassName('cascader-name'), this.resolveClassName('scroll-y')]}>
               {this.multiple && this.selectedTags.length > 0 && renderTags()}
               {this.filterable

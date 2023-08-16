@@ -52,7 +52,7 @@ export { default as Select } from '@bkui-vue/select';
 export { default as Sideslider } from '@bkui-vue/sideslider';
 export { default as Steps } from '@bkui-vue/steps';
 export { default as Switcher } from '@bkui-vue/switcher';
-export type { TableSettings, TableIColumn,  TableProps, TableColumnProps } from '@bkui-vue/table';
+export type { TableSettings, TableIColumn,  TableProps } from '@bkui-vue/table';
 export { default as Table } from '@bkui-vue/table';
 export { default as Tag } from '@bkui-vue/tag';
 export { default as TagInput } from '@bkui-vue/tag-input';

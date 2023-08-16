@@ -327,7 +327,7 @@ export default defineComponent({
         <DemoBox
           title='自定义Trigger'
           subtitle='通过插槽自定义trigger'
-          desc='可以通过`具名插槽#trigger`实现动态具名插槽，更加灵活'
+          desc='可以通过`具名插槽#trigger`实现动态具名插槽，更加灵活。作用域插槽暴露出两个属性：selected 和 isShow, 分别用于设置当前选中值和是否显示下拉框， 具体使用方法如下'
           componentName='cascader'
           demoName='custom-trigger-demo'>
           <CustomTriggerDemo></CustomTriggerDemo>
