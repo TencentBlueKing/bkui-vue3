@@ -6,8 +6,8 @@
       :list="list"
       trigger="click"
     >
-      <template #trigger="{ selected }">
-        <span>{{ selected }}</span>
+      <template #trigger="{ selected, isShow }">
+        <span>selected: {{ selected }} {{ isShow }}</span>
       </template>
     </bk-cascader>
   </div>
