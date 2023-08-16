@@ -26,18 +26,18 @@
 </script>
 
 <style lang="postcss" scoped>
-  .input-icon {
-    display: block;
-    padding-left: 10px;
-    font-size: 16px;
-    color: #c4c6cc;
-    align-self: center;
+.input-icon {
+  display: flex;
+  padding-left: 8px;
+  font-size: 16px;
+  color: #c4c6cc;
+  align-items: center;
+  justify-content: center;
+}
 
-  }
-
-  .suffix-icon {
-    padding-right: 10px;
-  }
+.suffix-icon {
+  padding-right: 8px;
+}
 </style>
 
 

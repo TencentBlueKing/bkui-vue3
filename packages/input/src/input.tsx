@@ -23,10 +23,10 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-
-import { computed, defineComponent, ExtractPropTypes, ref, watch } from 'vue';
+import { computed, defineComponent, ExtractPropTypes, onMounted, ref, watch } from 'vue';
 
 import { useLocale } from '@bkui-vue/config-provider';
+import { bkTooltips } from '@bkui-vue/directives';
 import { Close, DownSmall, Eye, Search, Unvisible } from '@bkui-vue/icon';
 import {
   classes,
@@ -60,7 +60,9 @@ export const inputType = {
   rows: PropTypes.number,
   selectReadonly: PropTypes.bool.def(false), // selectReadonly select组件使用，readonly属性，但是组件样式属于正常输入框样式
   withValidate: PropTypes.bool.def(true),
+  overMaxLengthLimit: PropTypes.bool.def(false),
 };
+
 
 export const enum EVENTS {
   UPDATE = 'update:modelValue',
@@ -78,8 +80,8 @@ export const enum EVENTS {
   COMPOSITIONUPDATE = 'compositionupdate',
   COMPOSITIONEND = 'compositionend',
 }
-function EventFunction(_value: any, _evt?: KeyboardEvent);
-function EventFunction(_value: any, _evt?: Event) {
+function EventFunction(_value: any, _evt: KeyboardEvent);
+function EventFunction(_value: any, _evt: Event) {
   return true;
 }
 
@@ -109,6 +111,9 @@ export type InputType = ExtractPropTypes<typeof inputType>;
 
 export default defineComponent({
   name: 'Input',
+  directives: {
+    bkTooltips,
+  },
   inheritAttrs: false,
   props: inputType,
   emits: inputEmitEventsType,
@@ -135,17 +140,18 @@ export default defineComponent({
       },
       inputClsPrefix.value,
     ));
+    const isOverflow = ref(false);
     const suffixIconMap = {
-      search: () => <Search/>,
-      password: () => <Eye onClick={handleVisibleChange}/>,
+      search: () => <Search />,
+      password: () => <Eye onClick={handleVisibleChange} />,
     };
     const suffixCls = getCls('suffix-icon');
     const suffixIcon = computed(() => {
       const icon = suffixIconMap[props.type];
       if (pwdVisible.value) {
-        return <Unvisible onClick={handleVisibleChange} class={suffixCls}/>;
+        return <Unvisible onClick={handleVisibleChange} class={suffixCls} />;
       }
-      return icon ? <icon class={suffixCls}/> : null;
+      return icon ? <icon class={suffixCls} /> : null;
     });
     const isNumberInput = computed(() => props.type === 'number');
     const ceilMaxLength = computed(() => Math.floor(props.maxlength));
@@ -157,6 +163,11 @@ export default defineComponent({
       },
       suffixCls,
     ));
+    const maxLengthCls = computed(() => classes({
+      [getCls('max-length')]: true,
+      'is-over-limit': (ceilMaxLength.value - (props.modelValue ?? '').toString().length) < 0,
+    }));
+    const modelValueLength = computed(() => (props.modelValue ?? '').toString().length);
     const incControlCls = computed(() => classes({
       'is-disabled': props.disabled || props.modelValue as number >= props.max,
     }));
@@ -165,14 +176,26 @@ export default defineComponent({
       'is-disabled': props.disabled || props.modelValue as number <= props.min,
     }));
 
+    const tooltips = computed(() => (isOverflow.value ? {
+      content: props.modelValue,
+      sameWidth: true,
+    } : {
+      disabled: true,
+    }));
+
     watch(
       () => props.modelValue,
       () => {
         if (props.withValidate) {
           formItem?.validate?.('change');
         }
+        isOverflow.value = inputRef.value?.scrollWidth > inputRef.value?.clientWidth;
       },
     );
+
+    onMounted(() => {
+      isOverflow.value = inputRef.value?.scrollWidth > inputRef.value?.clientWidth;
+    });
 
     ctx.expose({
       focus() {
@@ -184,8 +207,8 @@ export default defineComponent({
     function clear() {
       if (props.disabled) return;
       const resetVal = isNumberInput.value ? props.min : '';
-      ctx.emit(EVENTS.UPDATE, resetVal);
-      ctx.emit(EVENTS.CHANGE, resetVal);
+      ctx.emit(EVENTS.UPDATE, resetVal, null);
+      ctx.emit(EVENTS.CHANGE, resetVal, null);
       ctx.emit(EVENTS.CLEAR);
     }
 
@@ -220,6 +243,7 @@ export default defineComponent({
           ctx.emit(
             EVENTS.UPDATE,
             e.target.value,
+            e,
           );
         } else if (eventName === EVENTS.CHANGE && isNumberInput.value && e.target.value !== '') {
           const val = handleNumber(e.target.value, 0);
@@ -276,18 +300,18 @@ export default defineComponent({
       return +newVal.toFixed(precision);
     }
 
-    function handleInc() {
+    function handleInc(e) {
       if (props.disabled) return;
       const newVal = handleNumber(props.modelValue as number, props.step);
-      ctx.emit(EVENTS.UPDATE, newVal);
-      ctx.emit(EVENTS.CHANGE, newVal);
+      ctx.emit(EVENTS.UPDATE, newVal, e);
+      ctx.emit(EVENTS.CHANGE, newVal, e);
     }
 
-    function handleDec() {
+    function handleDec(e) {
       if (props.disabled) return;
       const newVal = handleNumber(props.modelValue as number, props.step, false);
-      ctx.emit(EVENTS.UPDATE, newVal);
-      ctx.emit(EVENTS.CHANGE, newVal);
+      ctx.emit(EVENTS.UPDATE, newVal, e);
+      ctx.emit(EVENTS.CHANGE, newVal, e);
     }
 
     function getCls(name) {
@@ -306,7 +330,7 @@ export default defineComponent({
         };
       return {
         ...val,
-        maxlength: props.maxlength,
+        maxlength: !props.overMaxLengthLimit && props.maxlength,
         placeholder: props.placeholder || t.value.placeholder,
         readonly: props.readonly,
         disabled: props.disabled,
@@ -325,7 +349,7 @@ export default defineComponent({
       onCompositionend: handleCompositionEnd,
     };
     return () => (
-      <div class={inputCls.value} style={style as any}>
+      <div class={inputCls.value} style={style as any} v-bk-tooltips={tooltips.value}>
         {ctx.slots?.prefix?.()
           ?? (props.prefix && (
             <div class={getCls('prefix-area')}>
@@ -361,21 +385,29 @@ export default defineComponent({
         )}
         {!isTextArea.value && props.clearable && !!props.modelValue && (
           <span class={clearCls.value} onClick={clear}>
-            <Close/>
+            <Close />
           </span>
         )}
         {suffixIcon.value}
         {typeof props.maxlength === 'number'
           && (props.showWordLimit || isTextArea.value) && (
-            <p class={getCls('max-length')}>
-              {(props.modelValue ?? '').toString().length}/
-              <span>{ceilMaxLength.value}</span>
+            <p class={maxLengthCls.value}>
+              {
+                props.overMaxLengthLimit ? (
+                  ceilMaxLength.value - modelValueLength.value
+                ) : (
+                  <>
+                    {modelValueLength.value} / <span>{ceilMaxLength.value}</span>
+                  </>
+                )
+              }
             </p>
+
         )}
         {isNumberInput.value && props.showControl && (
           <div class={getCls('number-control')}>
-            <DownSmall class={incControlCls.value} onClick={handleInc}/>
-            <DownSmall class={decControlCls.value} onClick={handleDec}/>
+            <DownSmall class={incControlCls.value} onClick={handleInc} />
+            <DownSmall class={decControlCls.value} onClick={handleDec} />
           </div>
         )}
         {ctx.slots?.suffix?.()

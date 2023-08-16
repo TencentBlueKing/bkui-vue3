@@ -140,6 +140,14 @@ const inputProps: IPropsTableItem[] = [
     optional: [],
   },
   {
+    name: 'over-max-length-limit',
+    type: 'Boolean',
+    default: null,
+    desc: '超出最大字数限制后是否可以继续输入，结合maxlength使用',
+    optional: [],
+  },
+
+  {
     name: 'behavior',
     type: 'String',
     default: 'normal',
@@ -347,25 +355,25 @@ export default defineComponent({
           desc="常用的输入框"
           link={`${import.meta.env.VITE_APP_BASE_URL ?? ''}/input`}
         />
-          {
-            demos.map(({ DemoComponent, ...demo }) => (
-              <DemoBox {...demo}>
-                  <DemoComponent />
-              </DemoBox>
-            ))
-          }
+        {
+          demos.map(({ DemoComponent, ...demo }) => (
+            <DemoBox {...demo}>
+              <DemoComponent />
+            </DemoBox>
+          ))
+        }
         <PropsBox
           title="Input 属性"
           subtitle=""
-          propsData={inputProps}/>
+          propsData={inputProps} />
         <PropsBox
           title="Input 插槽"
           subtitle=""
-          propsData={inputSlots}/>
+          propsData={inputSlots} />
         <PropsBox
           title="Input 事件"
           subtitle=""
-          propsData={inputEvents}/>
+          propsData={inputEvents} />
       </div>
     );
   },
