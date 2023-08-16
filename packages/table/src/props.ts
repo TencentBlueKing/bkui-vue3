@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { ExtractPropTypes, Slot } from 'vue';
+import { ExtractPropTypes } from 'vue';
 import { string, toType } from 'vue-types';
 
 import { PropTypes } from '@bkui-vue/shared';
@@ -207,7 +207,7 @@ export type RowClassFunctionString = (row: any) => string | string;
 export const RowClassFunctionStringType = toType<RowClassFunctionString>('RowClassFunctionStringType', {});
 
 export type RowHeightFunctionNumber = (_type: string, _row: any, _rowIndex: number, _size?) => number | number;
-export const RowHeightFunctionNumberType = toType<RowHeightFunctionNumber>('RowHeightFunctionNumberType', {});
+export const RowHeightFunctionNumberType = PropTypes.oneOfType([PropTypes.func, PropTypes.number]);
 
 type FunctionNumber = Function | number;
 export const FunctionNumberType = toType<FunctionNumber>('FunctionNumberType', {});
