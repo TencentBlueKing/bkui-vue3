@@ -100,7 +100,6 @@ export default defineComponent({
     const { resolveClassName } = usePrefix();
 
     const colorPickerCls = computed(() => classes({
-      // [`bk-color-picker-${props.size}`]: props.size,
       [`${resolveClassName(`color-picker-${props.size}`)}`]: props.size,
       [`${resolveClassName('color-picker-show-dropdown')}`]: showDropdown.value,
       [`${resolveClassName('color-picker-show-value')}`]: props.showValue,
@@ -165,7 +164,6 @@ export default defineComponent({
       dropRef.value?.updateDropdown();
       // 展开后默认聚焦于 HEX 输入框，setTimeout 等 transfer 出现
       setTimeout(() => {
-        // const hexInput = dropRef.value.$el.querySelector('.bk-color-picker-input-hex .bk-color-picker-input-value');
         const hexInput = dropRef.value.$el.querySelector(`.${resolveClassName('color-picker-input-hex')} .${resolveClassName('color-picker-input-value')}`);
         hexInput.select();
       }, 100);

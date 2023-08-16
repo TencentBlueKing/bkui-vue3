@@ -42,6 +42,26 @@
     }
   }
 
+  .@{bk-prefix}-table-body-content {
+    &.@{bk-prefix}-stripe {
+      table {
+        tbody {
+          tr {
+            &:nth-child(even) {
+              td {
+                background-color: #FAFBFD;
+              }
+            }
+
+            td {
+              border-bottom: none;
+            }
+          }
+        }
+      }
+    }
+  }
+
   .@{bk-prefix}-fixed-bottom-border {
     position: sticky;
     bottom: 0;
@@ -82,6 +102,7 @@
         width: 100%;
         height: 100%;
         padding-bottom: 20px;
+        position: relative;
       }
 
     }
@@ -97,6 +118,7 @@
         height: var(--row-height);
         min-width: 30px;
         clear: both;
+        background-color: #fff;
 
         &.expand-row {
           .expand-btn-action {
@@ -147,7 +169,6 @@
         &.column_fixed {
           position: sticky;
           z-index: 1;
-          background: #fff;
 
           &.column_fixed_left {
             left: 0;
@@ -278,6 +299,16 @@
         height: 1rem;
       }
     }
+
+    .@{bk-prefix}-table-fixed {
+      .column_fixed {
+        &.column_fixed_right {
+          &.shadow {
+            box-shadow: -2px 2px 10px 0px rgba(0, 0, 0, 0.12);
+          }
+        }
+      }
+    }
   }
 
   .@{bk-prefix}-table-footer {
@@ -358,13 +389,14 @@
     position: absolute;
     top: 0;
     right: 0;
-    bottom: var(--footer-height);
+    bottom: 0;
     left: 0;
     // width: 100%;
     pointer-events: none;
 
     .column_fixed {
       position: absolute;
+      transform: translate(var(--var-scroll-left),  var(--var-scroll-top));
 
       &.column_fixed_left {
         top: 0;
@@ -414,5 +446,9 @@
     .is-last {
       margin-left: auto;
     }
+  }
+
+  .stripe-row {
+    background: #FAFBFD;
   }
 }

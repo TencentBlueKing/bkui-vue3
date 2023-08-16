@@ -37,7 +37,8 @@ import {
   toRefs,
 } from 'vue';
 
-import { BKPopover, bkZIndexManager, IBKPopover, resolveClassName } from '@bkui-vue/shared';
+import { usePrefix } from '@bkui-vue/config-provider';
+import { BKPopover, bkZIndexManager, IBKPopover } from '@bkui-vue/shared';
 import type { Placement } from '@popperjs/core';
 
 import type { DatePickerPlacementType } from '../interface';
@@ -268,6 +269,7 @@ export default defineComponent({
     const state = reactive({
       styles,
     });
+    const { resolveClassName } = usePrefix();
 
     return {
       ...toRefs(state),
@@ -275,13 +277,14 @@ export default defineComponent({
       forceUpdate,
       updateDropdown,
       destoryDropdown,
+      resolveClassName,
     };
   },
   render() {
     return (
       <div
         ref="refContentRef"
-        class={[resolveClassName('date-picker-dropdown'), this.className, this.extPopoverCls]}
+        class={[this.resolveClassName('date-picker-dropdown'), this.className, this.extPopoverCls]}
         style={this.styles}
         onClick={this.onClick}
       >

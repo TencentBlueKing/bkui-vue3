@@ -26,6 +26,7 @@
 
 import { computed, defineComponent, ExtractPropTypes, PropType, VNode } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import { classes, PropTypes } from '@bkui-vue/shared';
 
 export enum BkLoadingMode {
@@ -75,8 +76,9 @@ export default defineComponent({
   name: 'Loading',
   props: loadingTypes,
   setup(props: LoadingTypes, ctx) {
+    const { resolveClassName } = usePrefix();
     const dotIndicator = (
-      <div class="bk-normal-indicator">
+      <div class={`${resolveClassName('normal-indicator')}`}>
         {
           [1, 2, 3, 4].map(i => (
             <span class={`dot dot-${i}`}></span>
@@ -84,7 +86,7 @@ export default defineComponent({
         }
       </div>
     );
-    const spinIndicator = <div class="bk-spin-indicator">
+    const spinIndicator = <div class={`${resolveClassName('spin-indicator')}`}>
       {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
         <span class={`oval oval-${i}`}></span>
       ))}
@@ -100,14 +102,14 @@ export default defineComponent({
     }));
 
     const loadingWrapperCls = computed(() =>  classes({
-      'bk-loading-wrapper': props.loading,
-      'bk-nested-loading': !!ctx.slots.default,
-      'bk-directive-loading': props.isDirective,
+      [`${resolveClassName('loading-wrapper')}`]: props.loading,
+      [`${resolveClassName('nested-loading')}`]: !!ctx.slots.default,
+      [`${resolveClassName('directive-loading')}`]: props.isDirective,
     }));
     const containerCls = computed(() =>  classes({
-      [`bk-loading-size-${props.size}`]: !!props.size,
-      [`bk-loading-${props.theme}`]: !!props.theme,
-    }, 'bk-loading-indicator'));
+      [`${resolveClassName(`loading-size-${props.size}`)}`]: !!props.size,
+      [`${resolveClassName(`loading-${props.theme}`)}`]: !!props.theme,
+    }, resolveClassName('loading-indicator')));
     const hasTitle = computed(() => !!props.title);
 
 
@@ -126,12 +128,12 @@ export default defineComponent({
           {ctx.slots.default?.()}
           {props.loading && (
             [
-              (ctx.slots.default || props.isDirective) && <div class="bk-loading-mask" style={maskStyle.value}></div>,
+              (ctx.slots.default || props.isDirective) && <div class={`${resolveClassName('loading-mask')}`} style={maskStyle.value}></div>,
               <div class={containerCls.value} style={zIndexStyle.value}>
                 {
                   indicator.value
                 }
-                {hasTitle.value && <div class="bk-loading-title">{props.title}</div>}
+                {hasTitle.value && <div class={`${resolveClassName('loading-title')}`}>{props.title}</div>}
               </div>,
             ]
           )}

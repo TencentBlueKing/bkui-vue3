@@ -25,16 +25,16 @@
 */
 import { computed } from 'vue';
 
-import { resolveClassName } from '@bkui-vue/shared';
+import { usePrefix } from '@bkui-vue/config-provider';
 
 import { COLUMN_ATTRIBUTE, SCROLLY_WIDTH } from '../const';
-import { GroupColumn } from '../props';
+import { GroupColumn, TablePropTypes } from '../props';
 import { getColumnReactWidth } from '../utils';
 
 /**
  * 固定列Hooks
  */
-export default (_props, colgroups: GroupColumn[], hasScrollY?) => {
+export default (props: TablePropTypes, colgroups: GroupColumn[], hasScrollY?) => {
   // const footHeight = computed(() => (props.pagination && props.data.length ? props.paginationHeight : 0));
   const resolveColumnClass = (column: GroupColumn, scrollX?, offsetRight?) => ({
     column_fixed: !!column.fixed,
@@ -96,7 +96,7 @@ export default (_props, colgroups: GroupColumn[], hasScrollY?) => {
     }
     const fixedOffset: any = {
       left: 0,
-      right: hasScrollY ? SCROLLY_WIDTH : -1,
+      right: hasScrollY ? SCROLLY_WIDTH : 0,
     };
     const fixedPos = resolveFixColPos(column);
     fixedOffset[fixedPos] = getPreColumnOffset(fixedPos, column, fixedOffset[fixedPos]);
@@ -108,6 +108,7 @@ export default (_props, colgroups: GroupColumn[], hasScrollY?) => {
 
   const resolveColumnStyle = (colPos: string) => ({
     width: `${resolveFixOffset[colPos](false)}px`,
+    backgroundColor: props.thead.color,
     bottom: '0px',
   });
 
@@ -125,6 +126,7 @@ export default (_props, colgroups: GroupColumn[], hasScrollY?) => {
     });
   });
 
+  const { resolveClassName } = usePrefix();
   const fixedWrapperClass = resolveClassName('table-fixed');
 
   return {

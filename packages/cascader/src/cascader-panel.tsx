@@ -28,9 +28,9 @@ import { defineComponent, reactive, ref, watch } from 'vue';
 import { array, object } from 'vue-types';
 
 import BkCheckbox from '@bkui-vue/checkbox';
-import { useLocale } from '@bkui-vue/config-provider';
+import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { AngleRight, Spinner } from '@bkui-vue/icon';
-import { arrayEqual, PropTypes, resolveClassName } from '@bkui-vue/shared';
+import { arrayEqual, PropTypes } from '@bkui-vue/shared';
 
 import { IData, INode } from './interface';
 
@@ -210,6 +210,8 @@ export default defineComponent({
       },
     );
 
+    const { resolveClassName } = usePrefix();
+
     return {
       menus,
       activePath,
@@ -225,17 +227,18 @@ export default defineComponent({
       searchPanelEvents,
       expandByNodeList,
       noDataText,
+      resolveClassName,
     };
   },
   render() {
     const emptyWidth = parseInt(this.panelWidth, 10) > 200 ? this.panelWidth : `${200}px`;
     const searchPanelRender = () => (
       this.suggestions.length ? <ul
-        class={[resolveClassName('cascader-panel'), 'bk-scroll-y']}
+        class={[this.resolveClassName('cascader-panel'), this.resolveClassName('scroll-y')]}
         style={{ height: this.panelHeight, width: this.panelWidth }}>
           {this.suggestions.map(node => (
             <li class={[
-              resolveClassName('cascader-node'),
+              this.resolveClassName('cascader-node'),
               { 'is-selected': this.isNodeInPath(node) },
               { 'is-disabled': node.isDisabled },
               { 'is-checked': this.isCheckedNode(node, this.checkValue) },
@@ -244,19 +247,19 @@ export default defineComponent({
               {node.pathNames.join(this.separator)}
             </li>
           ))}
-      </ul> : <div class={resolveClassName('cascader-search-empty')} style={{ width: emptyWidth }}>
+      </ul> : <div class={this.resolveClassName('cascader-search-empty')} style={{ width: emptyWidth }}>
         <span>暂无搜索结果</span>
       </div>
     );
     return (
-      <div class={resolveClassName('cascader-panel-wrapper')}>
+      <div class={this.resolveClassName('cascader-panel-wrapper')}>
         {this.isFiltering ? searchPanelRender() : this.menus.list.map(menu => (
-          <ul class={[resolveClassName('cascader-panel'), 'bk-scroll-y']}
+          <ul class={[this.resolveClassName('cascader-panel'), this.resolveClassName('scroll-y')]}
             style={{ height: this.panelHeight, width: this.panelWidth }}>
             {menu.length ? menu.map(node => (
               <li
                 class={[
-                  resolveClassName('cascader-node'),
+                  this.resolveClassName('cascader-node'),
                   { 'is-selected': this.isNodeInPath(node) },
                   { 'is-disabled': node.isDisabled },
                   { 'is-checked': !node.config.multiple && this.isCheckedNode(node, this.checkValue) },
@@ -274,7 +277,7 @@ export default defineComponent({
                 {this.$slots.default?.({ node, data: node.data })}
                 {!node.isLeaf ? this.iconRender(node) : ''}
               </li>
-            )) : <div class={resolveClassName('cascader-panel-empty-wrapper')}>{this.noDataText}</div>}
+            )) : <div class={this.resolveClassName('cascader-panel-empty-wrapper')}>{this.noDataText}</div>}
           </ul>
         ))}
       </div>

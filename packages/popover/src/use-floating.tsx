@@ -332,13 +332,13 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
     elContent.style.setProperty('display', 'block');
     elContent.style.setProperty('z-index', `${props.zIndex ? props.zIndex : bkZIndexManager.getPopperIndex()}`);
     updatePopover();
-    ctx.emit('afterShow', { isShow: true });
+    ctx.emit(EMIT_EVENTS.CONTENT_AfterShow, { isShow: true });
   };
 
   const handlePopoverHide = () => {
     const elContent = resolveTargetElement(refContent.value?.$el);
     elContent.style.setProperty('display', 'none');
-    ctx.emit('afterHidden', { isShow: false });
+    ctx.emit(EMIT_EVENTS.CONTENT_AfterHidden, { isShow: false });
   };
 
   const triggerPopover = () => {
@@ -353,7 +353,7 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
     triggerPopover();
   };
 
-  const handlePopContentMouseEnter = () => {
+  const handlePopContentMouseEnter = (e: MouseEvent) => {
     if (props.trigger !== 'hover') {
       return;
     }
@@ -364,14 +364,14 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
       popHideTimerId = undefined;
     }
 
-    emitPopContentMouseEnter();
+    emitPopContentMouseEnter(e);
   };
 
-  const handlePopContentMouseLeave = () => {
+  const handlePopContentMouseLeave = (e: MouseEvent) => {
     if (isMouseenter) {
       hidePopover();
       isMouseenter = false;
-      emitPopContentMouseLeave();
+      emitPopContentMouseLeave(e);
     }
   };
 
@@ -380,15 +380,15 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
    * 抛出相关事件，方便后续操作
    * 例如：鼠标移入内容区域，则取消弹出内容隐藏操作
    */
-  const emitPopContentMouseEnter = () => {
-    ctx.emit(EMIT_EVENTS.CONTENT_MOUSEENTER);
+  const emitPopContentMouseEnter = (e: MouseEvent) => {
+    ctx.emit(EMIT_EVENTS.CONTENT_MOUSEENTER, e);
   };
 
   /**
    * 弹出内容鼠标移出事件
    */
-  const emitPopContentMouseLeave = () => {
-    ctx.emit(EMIT_EVENTS.CONTENT_MOUSELEAVE);
+  const emitPopContentMouseLeave = (e: MouseEvent) => {
+    ctx.emit(EMIT_EVENTS.CONTENT_MOUSELEAVE, e);
   };
 
   const resolveTriggerEvents = () => {

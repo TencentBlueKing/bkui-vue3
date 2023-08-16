@@ -37,8 +37,9 @@ import {
   toRefs,
 } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import { AngleUpFill } from '@bkui-vue/icon';
-import { classes, PropTypes, resolveClassName } from '@bkui-vue/shared';
+import { classes, PropTypes } from '@bkui-vue/shared';
 
 import { optionGroupKey, selectKey, useRegistry } from './common';
 import { OptionInstanceType } from './type';
@@ -89,20 +90,23 @@ export default defineComponent({
       select?.unregisterGroup(instance.uid);
     });
 
+    const { resolveClassName } = usePrefix();
+
     return {
       ...toRefs(states),
       groupLabel,
       handleToggleCollapse,
+      resolveClassName,
     };
   },
   render() {
     const groupClass = classes({
-      [resolveClassName('option-group')]: true,
+      [this.resolveClassName('option-group')]: true,
       collapsible: this.collapsible,
       disabled: this.disabled,
     });
     const groupLabelClass = classes({
-      [resolveClassName('option-group-label')]: true,
+      [this.resolveClassName('option-group-label')]: true,
       collapsible: this.collapsible,
     });
     const groupLabelIconClass = classes({
@@ -125,7 +129,7 @@ export default defineComponent({
             )
         }
       </li>
-      <ul class={resolveClassName('option-group-content')} v-show={!this.groupCollapse}>
+      <ul class={this.resolveClassName('option-group-content')} v-show={!this.groupCollapse}>
         {this.$slots.default?.()}
       </ul>
     </ul>;

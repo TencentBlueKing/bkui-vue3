@@ -27,10 +27,9 @@
 import { computed, defineComponent, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
 
 import BkButton from '@bkui-vue/button';
-import { useLocale } from '@bkui-vue/config-provider';
+import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { Close, Error, Spinner, Success, Warn } from '@bkui-vue/icon';
 import BkModal from '@bkui-vue/modal';
-import { resolveClassName } from '@bkui-vue/shared';
 
 import props from './props';
 
@@ -186,6 +185,9 @@ export default defineComponent({
         document.onmouseup = null;
       };
     };
+
+    const { resolveClassName } = usePrefix();
+
     return {
       data,
       handleClose,
@@ -200,52 +202,53 @@ export default defineComponent({
       localCancelText,
       localPrevText,
       localNextText,
+      resolveClassName,
     };
   },
 
   render() {
     const renderIcon = () => {
       const iconMap = {
-        loading: <Spinner class={[resolveClassName('info-icon'), 'primary']}></Spinner>,
-        warning: <Warn class={[resolveClassName('info-icon'), 'warning']}></Warn>,
-        success: <Success class={[resolveClassName('info-icon'), 'success']}></Success>,
-        danger: <Close class={[resolveClassName('info-icon'), 'danger']}></Close>,
+        loading: <Spinner class={[this.resolveClassName('info-icon'), 'primary']}></Spinner>,
+        warning: <Warn class={[this.resolveClassName('info-icon'), 'warning']}></Warn>,
+        success: <Success class={[this.resolveClassName('info-icon'), 'success']}></Success>,
+        danger: <Close class={[this.resolveClassName('info-icon'), 'danger']}></Close>,
       };
       return iconMap[this.infoType];
     };
 
     const dialogSlot = {
       header: () => [
-        <div class={[resolveClassName('dialog-tool'), this.fullscreen || !this.draggable ? '' : 'move', this.draggable ? 'content-dragging' : '']}
+        <div class={[this.resolveClassName('dialog-tool'), this.fullscreen || !this.draggable ? '' : 'move', this.draggable ? 'content-dragging' : '']}
           onMousedown={this.moveHandler}>
           {this.$slots.tools?.() ?? ''}
         </div>,
-        <div class={resolveClassName('dialog-header')}>
-          <div class={resolveClassName('header-icon')}>
+        <div class={this.resolveClassName('dialog-header')}>
+          <div class={this.resolveClassName('header-icon')}>
             {this.infoType ? renderIcon() : <slot name="info-icon" />}
           </div>
-          <span class={resolveClassName('dialog-title')} style={`text-align: ${this.headerAlign}`}>
+          <span class={this.resolveClassName('dialog-title')} style={`text-align: ${this.headerAlign}`}>
             {this.$slots.header?.() ?? this.title}
           </span>
         </div>,
       ],
       default: () => this.$slots.default?.() ?? 'default',
-      footer: () => <div class={resolveClassName('dialog-footer')} style={`text-align: ${this.footerAlign}`}>
+      footer: () => <div class={this.resolveClassName('dialog-footer')} style={`text-align: ${this.footerAlign}`}>
         {this.dialogType === 'process' ? (
           this.$slots.footer?.() ?? <>
             {this.current === 1 ? '' : (
-              <BkButton class={resolveClassName('dialog-perv')} onClick={this.handlePrevStep}>
+              <BkButton class={this.resolveClassName('dialog-perv')} onClick={this.handlePrevStep}>
                 {this.localPrevText}
               </BkButton>
             )}
             {this.current === this.totalStep ? '' : (
-              <BkButton class={resolveClassName('dialog-next')} onClick={this.handleNextStep}>{this.localNextText}</BkButton>
+              <BkButton class={this.resolveClassName('dialog-next')} onClick={this.handleNextStep}>{this.localNextText}</BkButton>
             )}
             {this.current === this.totalStep ? (
               <BkButton onClick={this.handleConfirm} theme={this.theme}
                 loading={this.isLoading}>{this.localConfirmText}</BkButton>
             ) : ''}
-            <BkButton class={resolveClassName('dialog-cancel')} onClick={this.handleClose}
+            <BkButton class={this.resolveClassName('dialog-cancel')} onClick={this.handleClose}
               disabled={this.isLoading}>{this.localCancelText}</BkButton>
           </>
         ) : ''}
@@ -253,7 +256,7 @@ export default defineComponent({
           this.$slots.footer?.() ?? <>
             <BkButton onClick={this.handleConfirm} theme={this.theme}
               loading={this.isLoading}>{this.localConfirmText}</BkButton>
-            <BkButton class={resolveClassName('dialog-cancel')} onClick={this.handleClose}
+            <BkButton class={this.resolveClassName('dialog-cancel')} onClick={this.handleClose}
               disabled={this.isLoading}>{this.localCancelText}</BkButton>
           </>
         ) : ''}
@@ -268,7 +271,7 @@ export default defineComponent({
       close: () => <Error onClick={this.handleClose}/>,
     };
 
-    const className = `${resolveClassName('dialog-wrapper ')} ${this.scrollable ? 'scroll-able' : ''} ${this.multiInstance ? 'multi-instance' : ''} ${this.hasFooter ? 'has-footer' : 'no-footer'}`;
+    const className = `${this.resolveClassName('dialog-wrapper ')} ${this.scrollable ? 'scroll-able' : ''} ${this.multiInstance ? 'multi-instance' : ''} ${this.hasFooter ? 'has-footer' : 'no-footer'}`;
     return <BkModal {...this.$props} class={className}
       onClose={this.handleClose}
       isShow={this.isModalShow}

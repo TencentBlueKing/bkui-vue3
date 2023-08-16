@@ -84,7 +84,7 @@ export default defineComponent({
         attrs: {
           title: '基础用法',
           subtitle: '基础用法，用于表单内容的录入',
-          desc: 'props: --',
+          desc: '通过 stripe 设置是否为斑马纹',
           componentName: 'table',
           demoName: 'basic',
         },

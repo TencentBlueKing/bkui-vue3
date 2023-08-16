@@ -26,7 +26,7 @@
 import { defineComponent, ref } from 'vue';
 
 import BkButton from '@bkui-vue/button';
-import { useLocale } from '@bkui-vue/config-provider';
+import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import BkPopover from '@bkui-vue/popover';
 
 import props from './props';
@@ -60,6 +60,9 @@ export default defineComponent({
     }
 
     const icon = renderIcon();
+
+    const { resolveClassName } = usePrefix();
+
     return () => (
       <BkPopover
         isShow={visible.value}
@@ -67,27 +70,27 @@ export default defineComponent({
         theme={props.theme}
         width={props.width}
         onAfterShow={() => visible.value = true}
-        extCls="bk-pop-confirm-box">
+        extCls={`${resolveClassName('pop-confirm-box')}`}>
         {{
           default: () => slots.default(),
           content: () => (
-            <div class="bk-pop-confirm">
+            <div class={`${resolveClassName('pop-confirm')}`}>
               {typeof slots.content === 'function' ? slots.content() : (
                 <>
                   {props.title ? (
-                    <div class="bk-pop-confirm-title">
-                      {icon ? <span class="bk-pop-confirm-icon">{icon}</span> : ''}
+                    <div class={`${resolveClassName('pop-confirm-title')}`}>
+                      {icon ? <span class={`${resolveClassName('pop-confirm-icon')}`}>{icon}</span> : ''}
                       <span>{props.title}
                    </span>
                     </div>
                   ) : ''}
-                  <div class="bk-pop-confirm-content">
+                  <div class={`${resolveClassName('pop-confirm-content')}`}>
                     {!props.title ? icon : ''}
                     {props.content}
                   </div>
                 </>
               )}
-              <div class="bk-pop-confirm-footer">
+              <div class={`${resolveClassName('pop-confirm-footer')}`}>
                 <BkButton onClick={ensure} size="small" theme="primary">{t.value.ok}</BkButton>
                 <BkButton onClick={cancel} size="small">{t.value.cancel}</BkButton>
               </div>

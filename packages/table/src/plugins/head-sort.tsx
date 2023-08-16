@@ -25,22 +25,32 @@
 */
 import { defineComponent, ref, watch } from 'vue';
 
+import { usePrefix } from '@bkui-vue/config-provider';
 import { AngleDownFill, AngleUpFill } from '@bkui-vue/icon/';
-import { PropTypes, resolveClassName } from '@bkui-vue/shared';
+import { PropTypes } from '@bkui-vue/shared';
 
 import { SORT_OPTION, SORT_OPTIONS } from '../const';
+import { Column, IColumnType, ISortShape } from '../props';
 import { getNextSortType, getSortFn, resolveSort } from '../utils';
+
+type IHeadSortPropType = {
+  column: Column,
+  defaultSort: SORT_OPTION,
+  active: boolean
+};
 
 export default defineComponent({
   name: 'HeadSort',
   props: {
-    column: PropTypes.any.def({}),
+    column: IColumnType,
     defaultSort: PropTypes.oneOf(SORT_OPTIONS).def(SORT_OPTION.NULL),
     active: PropTypes.bool,
   },
   emits: ['change'],
-  setup(props, { emit }) {
-    const defSort = props.column?.sort?.value || props.defaultSort || SORT_OPTION.NULL;
+  setup(props: IHeadSortPropType, { emit }) {
+    const { resolveClassName } = usePrefix();
+
+    const defSort = (props.column?.sort as ISortShape)?.value || props.defaultSort || SORT_OPTION.NULL;
     const sortType = ref(defSort);
 
     watch(() => [props.defaultSort], ([val]) => {

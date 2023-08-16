@@ -27,9 +27,9 @@ import { ExtractPropTypes } from 'vue';
 
 import { PlacementEnum, placementType, PropTypes, renderType, triggerType  } from '@bkui-vue/shared';
 
-const EventProps = {
-  onAfterHidden: Function,
-  onAfterShow: Function,
+export const EventProps = {
+  onAfterHidden: () => {},
+  onAfterShow: () => {},
 };
 type IAxesOffsets = {
   mainAxis?: number;
@@ -74,7 +74,14 @@ export const PopoverProps = {
 
   padding: PropTypes.number.def(5),
 
-  offset: PropTypes.oneOfType([PropTypes.number, PropTypes.shape<IAxesOffsets>({})]).def(6),
+  offset: PropTypes.oneOfType([
+    PropTypes.number,
+    PropTypes.shape<IAxesOffsets>({
+      mainAxis: PropTypes.number,
+      crossAxis: PropTypes.number,
+      alignmentAxis: PropTypes.number,
+    }),
+  ]).def(6),
 
   /**
    * 弹出内容绑定元素
@@ -108,7 +115,7 @@ export const PopoverProps = {
   /**
    * 自定义 reference
    */
-  reference: PropTypes.any.def(null),
+  reference: PropTypes.any,
 
   /**
    * 兼容v1版本遗留配置
@@ -123,7 +130,7 @@ export const PopoverProps = {
    * 配置自定义样式类名，传入的类会被加在组件最外层的 DOM
    */
   extCls: PropTypes.string.def(''),
-  ...EventProps,
+  // ...EventProps,
 };
 
 export type PopoverPropTypes = Readonly<ExtractPropTypes<typeof PopoverProps>>;

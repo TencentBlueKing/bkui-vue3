@@ -26,8 +26,9 @@
 
 import { computed, defineComponent, provide } from 'vue';
 
-import { PropTypes } from '@bkui-vue/shared';
 import { usePrefix } from '@bkui-vue/config-provider';
+import { PropTypes } from '@bkui-vue/shared';
+
 import { containerKey } from './interface';
 
 export const containerProps = {

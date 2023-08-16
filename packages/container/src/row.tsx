@@ -25,7 +25,9 @@
 */
 
 import { computed, defineComponent, inject, provide } from 'vue';
+
 import { usePrefix } from '@bkui-vue/config-provider';
+
 import { containerKey } from './interface';
 
 export default defineComponent({

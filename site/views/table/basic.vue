@@ -3,9 +3,9 @@
     <bk-table
       :columns="columns"
       :data="tableData"
-      row-hover="auto"
-      settings
+      :settings="settings"
       show-overflow-tooltip
+      stripe
       @dblclick="handleDblClick"
       @column-sort="handleSortBy"
       @cell-click="handleCellClick"
@@ -31,21 +31,21 @@
         settings: {
           fields: [
             {
-              label: '序号',
-              field: 'index',
+              name: '序号',
+              id: 'index',
               disabled: true,
             },
             {
-              label: '名称/内网IP',
-              field: 'ip',
+              name: '名称/内网IP',
+              id: 'ip',
             },
             {
-              label: '来源',
-              field: 'source',
+              name: '来源',
+              id: 'source',
             },
             {
-              label: '创建时间',
-              field: 'create_time',
+              name: '创建时间',
+              id: 'create_time',
             }],
           checked: ['ip', 'index'],
         },

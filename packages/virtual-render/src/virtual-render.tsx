@@ -42,9 +42,10 @@ import {
   resolveDirective,
   SlotsType,
   watch,
-  withDirectives } from 'vue';
+  withDirectives,
+} from 'vue';
 
-import { resolveClassName } from '@bkui-vue/shared';
+import { usePrefix } from '@bkui-vue/config-provider';
 
 import {
   type VirtualRenderProps,
@@ -225,6 +226,8 @@ export default defineComponent({
         display: isHidden ? 'none' : 'block',
       };
     });
+
+    const { resolveClassName } = usePrefix();
 
     /** 外层样式列表 */
     const wrapperClass = computed(() => [

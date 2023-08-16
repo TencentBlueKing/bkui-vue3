@@ -25,7 +25,7 @@
 */
 
 import { v4 as uuidv4 } from 'uuid';
-import { computed, ComputedRef, CSSProperties, Ref, ref, unref } from 'vue';
+import { computed, ComputedRef, CSSProperties, Ref, ref, SetupContext, unref } from 'vue';
 
 import BkCheckbox from '@bkui-vue/checkbox';
 import { DownShape, RightShape } from '@bkui-vue/icon';
@@ -35,7 +35,8 @@ import { classes } from '@bkui-vue/shared';
 
 import TableCell from './components/table-cell';
 import TableRow from './components/table-row';
-import { COLUMN_ATTRIBUTE, EMIT_EVENTS, EVENTS, SCROLLY_WIDTH, TABLE_ROW_ATTRIBUTE } from './const';
+import { COLUMN_ATTRIBUTE, SCROLLY_WIDTH, TABLE_ROW_ATTRIBUTE } from './const';
+import { EMIT_EVENTS, EVENTS } from './events';
 import { TablePlugins } from './plugins';
 import BodyEmpty from './plugins/body-empty';
 import HeadFilter from './plugins/head-filter';
@@ -58,12 +59,13 @@ import {
   resolveCellSpan,
   resolveHeadConfig,
   resolvePropVal,
-  resolveWidth } from './utils';
+  resolveWidth,
+} from './utils';
 
 export default class TableRender {
   props: TablePropTypes;
-  context;
-  reactiveProp: any;
+  context: SetupContext;
+  reactiveProp: IReactiveProp;
   colgroups: GroupColumn[];
   uuid: string;
   events: Map<string, any[]>;
@@ -316,6 +318,7 @@ export default class TableRender {
     const rowStyle: CSSProperties = {
       // @ts-ignore:next-line
       '--row-height': `${resolvePropVal(config, 'height', ['thead'])}px`,
+      backgroundColor: this.props.thead.color,
     };
 
     const getHeadCellText = (column, index) => {
@@ -462,6 +465,7 @@ export default class TableRender {
           const rowClass = [
             ...formatPropAsArray(this.props.rowClass, [row, rowIndex, this]),
             `hover-${this.props.rowHover}`,
+            rowIndex % 2 === 1 && this.props.stripe ? 'stripe-row' : '',
           ];
 
           return [
@@ -573,12 +577,12 @@ export default class TableRender {
     }
   }
 
-  private getColumnClass = (column: Column, colIndex: number) => ({
+  private getColumnClass = (column: Column, colIndex: number) => ([{
     [`${this.uuid}-column-${colIndex}`]: true,
     column_fixed: !!column.fixed,
     column_fixed_left: !!column.fixed,
     column_fixed_right: column.fixed === 'right',
-  });
+  }, column.className]);
 
   private getHeadColumnClass = (column: Column, colIndex: number) => ({
     ...this.getColumnClass(column, colIndex),

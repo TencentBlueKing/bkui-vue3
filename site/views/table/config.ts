@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*
 * Tencent is pleased to support the open source community by making
 * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
@@ -41,6 +42,7 @@ export default [
     config: [
       { name: 'data', type: 'Array', default: '--', desc: '显示的数据', optional: [] },
       { name: 'columns', type: 'IColumn[]', default: '', desc: '表格列的配置描述，具体项参考IColumn', optional: [] },
+      { name: 'stripe', type: 'Boolean', default: 'false', desc: '是否为斑马纹 Table', optional: ['true', 'false'] },
       { name: 'active-column', type: 'Number|Array', default: '--', desc: '当前选中列,当设置选中多列时（columnPick = multi），配置为数组[index1, index2, index3]，只能选中单列时，可以为数值或者数组[index]', optional: [] },
       { name: 'column-pick', type: 'String', default: '禁用（disabled）', desc: '表格列选中方式,支持：', optional: ['单列（single）', '多列（multi）', '禁用（disabled）'] },
       { name: 'height', type: 'Number|String', default: 'auto', desc: '设置表格高度,auto 根据行数自动填充高度, 100%，依赖初始化时父级容器高度', optional: [] },
@@ -75,6 +77,7 @@ export default [
       { name: 'resizer-way', type: 'String', default: 'true', desc: '当外层容器尺寸改变时，当前组件用什么方式进行重新计算,默认为 throttle，按照指定频率重新计算,可选值：debounce，在指定时间范围内只执行一次重新计算', optional: ['throttle', 'debounce'] },
       { name: 'pagination-heihgt', type: 'Number', default: '42', desc: '页组件高度。在设置了分页配置之后才会生效, 用于配置分页组件的高度，在不同项目中，分页组件高度会影响表格高度计算, 这里设置为可配置项，避免自计算导致的性能问题以及不确定性样式问题', optional: [] },
       { name: 'prepend-style', type: 'CSSProperties', default: '{}', desc: '   * 插入至表格第一行之前的内容容器样式，默认样式为固定在第一行，需要跟随滚动或者其他样式，可以通过此配置进行覆盖', optional: [] },
+      { name: 'stripe', type: 'Boolean', default: 'false', desc: '是否为斑马纹 Table', optional: [] },
     ],
   },
   {
@@ -114,6 +117,7 @@ export default [
     subTile: '表头详细配置说明',
     config: [
       { name: 'height', type: 'Number', default: 'LINE_HEIGHT', desc: 'Thead行高，可以为固定数值类型', optional: [] },
+      { name: 'color', type: 'string', default: 'IHeadColor.DEF1', desc: '根据表格的使用场景，表头支持颜色自定义，默认提供的选项：def1: #FAFBFD、def2: #F0F1F5，尽量一个项目选用同一种颜色。支持自定义颜色，可传入自定义颜色值', optional: ['def1', 'def2'] },
       { name: 'isShow', type: 'Boolean', default: 'true', desc: '是否显示Head', optional: [] },
       { name: 'cellFn', type: 'Function', default: 'undefined', desc: '自定义当前列渲染函数', optional: [] },
     ],
@@ -207,6 +211,8 @@ export default [
       { name: '使用自定义渲染 render | <bk-column /> slot 数据不更新', desc: '在插槽或者render函数渲染中，请检查自定义渲染使用的是否是 data，data 是列表原始数据，组件内没有做代理监听，不会进行双向数据更新，提供此属性主要是有些场景需要使用原始数据进行操作，这里请用row进行数据绑定' },
       { name: '数据不更新，没有使用自定义渲染', desc: '建议设置table.rowKey, 默认不设置rowKey时，表格会根据数据变化自动更新,设置rowKey后组件会在传递的数据中每行查找对应的数据作为key值，设置到table tr上面，当数据行变化时会被监听并更新' },
       { name: '每列最小宽度问题', desc: '表格列有设置默认宽度 COL_MIN_WIDTH = 80，可以通过 column.minWidth修正，具体参考 column min-width 设置' },
+      { name: '如何自定义Head颜色', desc: '通过 thead.color 可以改变颜色设置，详情可参考 IThead 设置' },
+      { name: '如何自定义Head VNode', desc: '有两种方式可以自定义Head，Column.label支持函数返回VNode，针对单独列可以选择此方式进行自定义渲染，也可以通过 `thead.cellFn` 渲染head，此时是针对全部列，需要自行判定，如果同时设置了 `thead.cellFn` 和 `column.label`都为渲染函数，`thead.cellFn`优先级更高，会覆盖column.label设置' },
     ],
   },
 ];

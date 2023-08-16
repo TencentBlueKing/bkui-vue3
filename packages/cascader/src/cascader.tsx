@@ -27,11 +27,11 @@
 import { computed, defineComponent, nextTick, ref, toRefs, watch } from 'vue';
 import { array } from 'vue-types';
 
-import { useLocale } from '@bkui-vue/config-provider';
+import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { bkTooltips } from '@bkui-vue/directives';
 import { AngleUp, Close, Error } from '@bkui-vue/icon';
 import BkPopover from '@bkui-vue/popover';
-import { debounce, PropTypes, resolveClassName } from '@bkui-vue/shared';
+import { debounce, PropTypes } from '@bkui-vue/shared';
 import Tag from '@bkui-vue/tag';
 
 import { useHover } from '../../select/src/common';
@@ -71,11 +71,11 @@ export default defineComponent({
     separator: PropTypes.string.def('/'),
     limitOneLine: PropTypes.bool.def(false),
     extCls: PropTypes.string.def(''),
-    filterMethod: PropTypes.func.def(null),
+    filterMethod: PropTypes.func,
     scrollHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(216),
     scrollWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def('auto'),
-    customTextFillback: PropTypes.func.def(null),
-    customTagsFillback: PropTypes.func.def(null),
+    customTextFillback: PropTypes.func,
+    customTagsFillback: PropTypes.func,
     collapseTags: {
       type: Boolean,
       default: true,
@@ -120,6 +120,9 @@ export default defineComponent({
 
     // 定义isFocus变量，记录是否处于焦点状态
     const isFocus = ref(false);
+
+    // 定义isShowPanel变量，用于标致面板显示
+    const isShowPanel = ref(false);
 
     // 用computed定义checkedValue变量，用于监听modelValue的变化
     const checkedValue = computed({
@@ -226,6 +229,8 @@ export default defineComponent({
 
     // popover的监听函数
     const popoverChangeEmitter = (val) => {
+      isShowPanel.value = val.isShow;
+
       emit('toggle', val.isShow);
 
       isEdit.value = val.isShow;
@@ -307,6 +312,8 @@ export default defineComponent({
       ? { overflowTagIndex: null }
       : useTagsOverflow(bkCascaderRef, isEditMode, tagList);
 
+    const { resolveClassName } = usePrefix();
+
     // 返回组件所需的变量和函数
     return {
       calcuPlaceholder: placeholder,
@@ -336,6 +343,8 @@ export default defineComponent({
       tagList,
       isEdit,
       displayText,
+      resolveClassName,
+      isShowPanel,
     };
   },
   render() {
@@ -343,11 +352,11 @@ export default defineComponent({
     const suffixIcon = () => {
       if (this.clearable && this.isHover && !this.disabled) {
         // 当可清空、鼠标悬浮且未禁用时，渲染清空图标
-        return <Close class={resolveClassName('icon-clear-icon')}
+        return <Close class={this.resolveClassName('icon-clear-icon')}
           onClick={this.handleClear}></Close>;
       }
       // 否则渲染展开/收起图标
-      return <AngleUp class={resolveClassName('icon-angle-up')}></AngleUp>;
+      return <AngleUp class={this.resolveClassName('icon-angle-up')}></AngleUp>;
     };
 
     // 因为cascader的tag长短不一，在计算时如果overflowIndex为0，会出现直接+n渲染的情况，因此需要对其进行修正
@@ -374,7 +383,7 @@ export default defineComponent({
           return (
             <span class="tag-item" style={{ display: isOverflow ? 'none' : '' }} key={tag}>
               <span class="tag-item-name">{tag}</span>
-              <Error class={resolveClassName('icon-clear-icon')}
+              <Error class={this.resolveClassName('icon-clear-icon')}
                 onClick={(e: Event) => {
                   e.stopPropagation();
                   this.removeTag(this.modelValue, index, e);
@@ -400,11 +409,11 @@ export default defineComponent({
     const popoverRender = () => (
       <BkPopover
         placement="bottom-start"
-        theme={`light ${resolveClassName('cascader-popover')}`}
+        theme={`light ${this.resolveClassName('cascader-popover')}`}
         trigger="click"
         arrow={false}
         disabled={this.disabled}
-        class={resolveClassName('cascader-popover-wrapper')}
+        class={this.resolveClassName('cascader-popover-wrapper')}
         ref="popover"
         onAfterHidden={this.popoverChangeEmitter}
         onAfterShow={this.popoverChangeEmitter}
@@ -412,12 +421,12 @@ export default defineComponent({
         {{
           default: () => (
             this.$slots.trigger
-              ? this.$slots.trigger({ selected: this.modelValue })
-              : <div class={[resolveClassName('cascader-name'), 'bk-scroll-y']}>
+              ? this.$slots.trigger({ selected: this.modelValue, isShow: this.isShowPanel })
+              : <div class={[this.resolveClassName('cascader-name'), this.resolveClassName('scroll-y')]}>
               {this.multiple && this.selectedTags.length > 0 && renderTags()}
               {this.filterable
                 ? (this.isCollapse || this.selectedTags.length === 0)
-                && <input class={[resolveClassName('cascader-search-input'), {
+                && <input class={[this.resolveClassName('cascader-search-input'), {
                   'is-disabled': this.disabled,
                 }]}
                     type="text"
@@ -432,7 +441,7 @@ export default defineComponent({
             </div>
           ),
           content: () => (
-            <div class={resolveClassName('cascader-popover')}>
+            <div class={this.resolveClassName('cascader-popover')}>
               <CascaderPanel
                 store={this.store}
                 ref="cascaderPanel"
@@ -446,7 +455,7 @@ export default defineComponent({
                 v-slots={{
                   default: scope => (this.$slots.default
                     ? this.$slots.default(scope)
-                    : <span class={resolveClassName('cascader-node-name')}>{scope.node.name}</span>),
+                    : <span class={this.resolveClassName('cascader-node-name')}>{scope.node.name}</span>),
                 }}>
               </CascaderPanel>
             </div>
@@ -456,10 +465,10 @@ export default defineComponent({
     );
 
     return (
-      <div class={[resolveClassName('cascader-wrapper'), this.floatMode ? 'float-mode' : '']}>
+      <div class={[this.resolveClassName('cascader-wrapper'), this.floatMode ? 'float-mode' : '']}>
         { this.$slots.trigger
           ? popoverRender()
-          : <div class={[resolveClassName('cascader'), this.extCls, {
+          : <div class={[this.resolveClassName('cascader'), this.extCls, {
             'is-unselected': this.modelValue.length === 0,
             'is-hover': this.isHover,
             'is-filterable': this.filterable,
