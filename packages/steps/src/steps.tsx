@@ -161,7 +161,6 @@ export default defineComponent({
       [`${this.resolveClassName(`steps-${this.lineType}`)}`]: this.lineType,
     }, `${stepsThemeCls} ${stepsClsPrefix} ${stepsSizeCls}`);
 
-
     const isDone = index => this.curStep > (index + 1) || this.defaultSteps[index].status === 'done';
 
     const isCurrent = index => this.curStep === (index + 1);
@@ -202,7 +201,7 @@ export default defineComponent({
       <div class={stepsCls}>
         {
           this.defaultSteps.map((step, index) => <div class={
-          [this.resolveClassName('steps'),
+          [this.resolveClassName('step'),
             !step.title ? this.resolveClassName('step-no-content') : '',
             isDone(index) ? 'done' : '',
             isCurrent(index) ? 'current' : '',
