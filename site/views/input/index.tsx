@@ -41,7 +41,7 @@ import Icon from './demo/icon.vue';
 import NativeAttrs from './demo/native-attrs.vue';
 import Number from './demo/number.vue';
 import Password from './demo/password.vue';
-import Search from './demo/search.vue';
+import Clearable from './demo/clearable.vue';
 import Simple from './demo/simple.vue';
 import Size from './demo/size.vue';
 import Status from './demo/status.vue';
@@ -290,8 +290,8 @@ const demos = [{
   title: '带清空操作输入框',
   desc: '通过配置 clearable 属性为 true 来启用有文本时允许清空操作',
   componentName: 'input',
-  demoName: 'demo/search',
-  DemoComponent: Search,
+  demoName: 'demo/clearable',
+  DemoComponent: Clearable,
 }, {
   // '密码框',
   title: '密码框',

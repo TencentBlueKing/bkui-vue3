@@ -143,7 +143,8 @@ export default defineComponent({
     const isOverflow = ref(false);
     const suffixIconMap = {
       search: () => <Search />,
-      password: () => <Eye onClick={handleVisibleChange} />,
+      // TODO: eye icon 有点偏小，需要调整
+      password: () => <Eye style={{ fontSize: '18px' }} onClick={handleVisibleChange} />,
     };
     const suffixCls = getCls('suffix-icon');
     const suffixIcon = computed(() => {
@@ -176,7 +177,7 @@ export default defineComponent({
       'is-disabled': props.disabled || props.modelValue as number <= props.min,
     }));
 
-    const tooltips = computed(() => (isOverflow.value ? {
+    const tooltips = computed(() => ((isOverflow.value && props.modelValue) ? {
       content: props.modelValue,
       sameWidth: true,
     } : {
@@ -189,7 +190,6 @@ export default defineComponent({
         if (props.withValidate) {
           formItem?.validate?.('change');
         }
-        isOverflow.value = inputRef.value?.scrollWidth > inputRef.value?.clientWidth;
       },
     );
 
@@ -219,6 +219,7 @@ export default defineComponent({
 
     function handleBlur(e) {
       isFocused.value = false;
+      isOverflow.value = inputRef.value?.scrollWidth > inputRef.value?.clientWidth;
       ctx.emit(EVENTS.BLUR, e);
       if (props.withValidate) {
         formItem?.validate?.('blur');
