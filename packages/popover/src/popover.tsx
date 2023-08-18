@@ -142,9 +142,17 @@ export default defineComponent({
   },
 
   render() {
+    const renderReferSlot = (slot) => {
+      console.log('renderReferSlot', slot);
+      if (typeof slot[0]?.children === 'string') {
+        return <span>{ slot }</span>;
+      }
+
+      return slot;
+    };
     return <Root ref="refRoot">
       <Reference ref="refDefaultReference">
-        { this.$slots.default?.() ?? <span></span> }
+        { renderReferSlot(this.$slots.default?.() ?? <span></span>) }
       </Reference>
       <Teleport to={ this.boundary } disabled={ !this.transBoundary }>
         <Content ref="refContent"
