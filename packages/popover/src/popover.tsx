@@ -143,7 +143,6 @@ export default defineComponent({
 
   render() {
     const renderReferSlot = (slot) => {
-      console.log('renderReferSlot', slot);
       if (typeof slot[0]?.children === 'string') {
         return <span>{ slot }</span>;
       }
