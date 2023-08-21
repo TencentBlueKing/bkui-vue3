@@ -227,28 +227,29 @@ export default defineComponent({
         <DemoTitle
           name="Tree"
           desc="Tree组件， 为页面和功能提供列表。"
-          link="https://www.google.com.hk/"/>
+          designLink="https://bkdesign.bk.tencent.com/design/111"/>
           {
             configs.map(cfg => <DemoBox { ...cfg.attrs } optionData={ { ...TREE_DATA } }>
-                 {
-                   cfg.component()
-                 }
-              </DemoBox>)
+              {
+                cfg.component()
+              }
+              </DemoBox>
+            )
           }
-                  {
-          configList.map(cfg => <div>
-            {
-              cfg.type === 'events'
-                ? <PropsBox
-                    title={ cfg.title }
-                     columnMap={ eventColumnMap }
-                     subtitle={ cfg.subTile }
-                     propsData={ cfg.config }/>
-                : <PropsBox title={ cfg.title } subtitle={ cfg.subTile }
-                     propsData={ cfg.config }/>
-            }
-          </div>)
-        }
+          {
+            configList.map(cfg => <div>
+              {
+                cfg.type === 'events'
+                  ? <PropsBox
+                      title={ cfg.title }
+                      columnMap={ eventColumnMap }
+                      subtitle={ cfg.subTile }
+                      propsData={ cfg.config }/>
+                  : <PropsBox title={ cfg.title } subtitle={ cfg.subTile }
+                      propsData={ cfg.config }/>
+              }
+            </div>)
+          }
         {/* <PropsBox propsData={propsJson}/> */}
       </div>
     );

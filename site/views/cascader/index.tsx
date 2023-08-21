@@ -242,7 +242,7 @@ export default defineComponent({
         <DemoTitle
           name='Cascader 级联组件'
           desc='Cascader组件， 对有清晰的层级结构的数据集进行逐级查看、选择和使用'
-          link='https://www.google.com.hk/' />
+          designLink="https://bkdesign.bk.tencent.com/design/114" />
 
         {/* 基础用法 */}
         <DemoBox

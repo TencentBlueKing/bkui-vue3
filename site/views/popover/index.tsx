@@ -343,17 +343,17 @@ export default defineComponent({
         <DemoTitle
           name="Popover 弹出框提示"
           desc="当鼠标指向页面元素时给出简单的提示"
-          link="https://www.google.com.hk/"/>
-          {
-            demos.map(({ DemoComponent, ...demo }) => (
-              <DemoBox {...demo}>
-                <DemoComponent />
-              </DemoBox>
-            ))
-          }
-          <PropsBox title="属性" subtitle="" propsData={props}></PropsBox>
-          <PropsBox title="事件" subtitle="" propsData={events}></PropsBox>
-          <PropsBox title="方法" subtitle="" propsData={methods}></PropsBox>
+          designLink="https://bkdesign.bk.tencent.com/design/116"/>
+        {
+          demos.map(({ DemoComponent, ...demo }) => (
+            <DemoBox {...demo}>
+              <DemoComponent />
+            </DemoBox>
+          ))
+        }
+        <PropsBox title="属性" subtitle="" propsData={props}></PropsBox>
+        <PropsBox title="事件" subtitle="" propsData={events}></PropsBox>
+        <PropsBox title="方法" subtitle="" propsData={methods}></PropsBox>
       </div>
     );
   },

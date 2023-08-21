@@ -154,15 +154,15 @@ export default defineComponent({
         <DemoTitle
           name="Notify 通知提示"
           desc="用来给用户推送通知提示信息，通知可配置为从界面的四个角出现"
-          link="https://www.google.com.hk/"/>
-          {
-            demos.map(({ DemoComponent, ...demo }) => (
-              <DemoBox {...demo}>
-                <DemoComponent />
-              </DemoBox>
-            ))
-          }
-          <PropsBox subtitle="" propsData={props}></PropsBox>
+          designLink="https://bkdesign.bk.tencent.com/design/142"/>
+        {
+          demos.map(({ DemoComponent, ...demo }) => (
+            <DemoBox {...demo}>
+              <DemoComponent />
+            </DemoBox>
+          ))
+        }
+        <PropsBox subtitle="" propsData={props}></PropsBox>
       </div>
     );
   },

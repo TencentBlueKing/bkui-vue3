@@ -177,7 +177,7 @@ export default defineComponent({
         <DemoTitle
           name="Radio"
           desc="表单-单选框，在一组选项中进行单选"
-          link="https://www.qq.com/"/>
+          designLink="https://bkdesign.bk.tencent.com/design/128" />
         <DemoBox
           title="基础用法"
           desc=""

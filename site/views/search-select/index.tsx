@@ -224,7 +224,8 @@ export default defineComponent({
       <div>
         <DemoTitle
           name="Search Select"
-          desc="Search Select组件， 为页面和模块提供方便的搜索选择功能。"/>
+          desc="Search Select组件， 为页面和模块提供方便的搜索选择功能。"
+          designLink="https://bkdesign.bk.tencent.com/design/70"/>
         <DemoBox
           title="基础用法"
           subtitle="基础使用"

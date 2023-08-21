@@ -42,6 +42,7 @@ export default defineComponent({
     settings: ITableSettings,
     columns: PropTypes.arrayOf(IColumnType).def([]),
     rowHeight: PropTypes.number.def(LINE_HEIGHT),
+    // rowHeight: RowHeightFunctionNumberType.def(() => LINE_HEIGHT),
   },
   emits: ['change'],
   setup(props, { emit }) {

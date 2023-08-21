@@ -150,19 +150,19 @@ export default defineComponent({
           name="Loading"
           desc="覆盖正在加载数据的组件一个 loading 层"
           link={`${import.meta.env.VITE_APP_BASE_URL ?? ''}/loading`}
+          designLink="https://bkdesign.bk.tencent.com/design/138"
         />
-          {
-            demos.map(({ DemoComponent, ...demo }) => (
-              <DemoBox {...demo}>
-                  <DemoComponent />
-              </DemoBox>
-            ))
-          }
+        {
+          demos.map(({ DemoComponent, ...demo }) => (
+            <DemoBox {...demo}>
+                <DemoComponent />
+            </DemoBox>
+          ))
+        }
         <PropsBox
           title="Loading 属性"
           subtitle=""
           propsData={loadingProps}/>
-
       </div>
     );
   },

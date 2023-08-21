@@ -104,34 +104,35 @@ export default defineComponent({
         <DemoTitle
           name="Alert"
           desc="展示页面的提示信息"
-          link={`${import.meta.env.VITE_APP_BASE_URL ?? ''}/alert`} />
+          link={`${import.meta.env.VITE_APP_BASE_URL ?? ''}/alert`}
+          designLink="https://bkdesign.bk.tencent.com/design/46"/>
         <DemoBox
           title="基本用法"
           desc=""
           componentName="alert"
           demoName="/demo/alert">
-            <DemoAlert />
+          <DemoAlert />
         </DemoBox>
         <DemoBox
           title="不显示ICON"
           desc=""
           componentName="alert"
           demoName="/demo/alert-show-icon">
-            <DemoAlertShowIcon />
+          <DemoAlertShowIcon />
         </DemoBox>
         <DemoBox
           title="可关闭"
           desc=""
           componentName="alert"
           demoName="/demo/alert-close">
-            <DemoAlertClose />
+          <DemoAlertClose />
         </DemoBox>
         <DemoBox
           title="自定义关闭按钮文字"
           desc=""
           componentName="alert"
           demoName="/demo/alert-close-text">
-            <DemoAlertCloseText />
+          <DemoAlertCloseText />
         </DemoBox>
         <PropsBox
           title="Alert 属性"

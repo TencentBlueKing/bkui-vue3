@@ -148,7 +148,7 @@ export default defineComponent({
         <DemoTitle
           name="Pagination"
           desc="数据分页"
-          link="https://www.qq.com/"/>
+          designLink="https://bkdesign.bk.tencent.com/design/55"/>
         <DemoBox
           title="基本用法"
           desc=""
