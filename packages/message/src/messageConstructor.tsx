@@ -273,9 +273,13 @@ export default defineComponent({
           copyStatus.value = theme;
           if (target) {
             const { offsetLeft, offsetWidth, offsetTop } = e.trigger;
+            const msgTree = e.trigger.closest('.message-tree');
+            const msgTreeScrollTop = msgTree ? msgTree.scrollTop : 0;
             target.classList.remove(...['success', 'error', 'is-hidden']);
             target.classList.add(...[theme, 'is-show']);
-            target.style.setProperty('transform', `translate(${offsetLeft + offsetWidth / 2 - 41}px, ${offsetTop - 40}px`);
+            const transX = offsetLeft + offsetWidth / 2 - 41;
+            const transY = offsetTop - msgTreeScrollTop - 40;
+            target.style.setProperty('transform', `translate(${transX}px, ${transY}px`);
             copyStatusTimer && clearTimeout(copyStatusTimer);
             copyStatusTimer = setTimeout(() => {
               target.classList.remove(...['is-show']);
