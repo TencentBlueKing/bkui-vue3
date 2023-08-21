@@ -269,14 +269,14 @@ export default defineComponent({
       <DemoTitle
         name="Message 消息提示"
         desc="用户操作后的消息提示，用于成功、失败、警告等消息提醒。"
-        link="https://www.google.com.hk/"/>
+        designLink="https://bkdesign.bk.tencent.com/design/47"/>
       <DemoBox
         title="基础用法"
         subtitle="使用默认配置的消息提示"
         desc=""
         componentName="message"
         demoName="base-demo">
-          <BaseDemo/>
+        <BaseDemo/>
       </DemoBox>
       <DemoBox
         title="内置主题"
@@ -284,7 +284,7 @@ export default defineComponent({
         desc=""
         componentName="message"
         demoName="theme-demo">
-          <ThemeDemo/>
+        <ThemeDemo/>
       </DemoBox>
       <DemoBox
         title="消息关闭"
@@ -292,7 +292,7 @@ export default defineComponent({
         desc=""
         componentName="message"
         demoName="close-demo">
-          <CloseDemo/>
+        <CloseDemo/>
       </DemoBox>
       <DemoBox
         title="高阶用法"
@@ -300,13 +300,13 @@ export default defineComponent({
         desc=""
         componentName="message"
         demoName="close-demo">
-          <MultiDemo/>
+        <MultiDemo/>
       </DemoBox>
-        <PropsBox title="常规配置" subtitle="适用于查看类页面的同步报错" propsData={props}></PropsBox>
-        <PropsBox title="高阶配置-IMessage" subtitle="适用于有更多面向开发信息的场景。" propsData={IMessage}></PropsBox>
-        <PropsBox title="高阶配置-IMessageAction" subtitle="操作按钮自定义配置" propsData={IMessageActions}></PropsBox>
-        <PropsBox title="高阶配置-IMessageActionType" subtitle="默认操作项说明" propsData={IMessageActionType}></PropsBox>
-        <PropsBox title="高阶配置-Slot" subtitle="自定义插槽" propsData={ISlots}></PropsBox>
+      <PropsBox title="常规配置" subtitle="适用于查看类页面的同步报错" propsData={props}></PropsBox>
+      <PropsBox title="高阶配置-IMessage" subtitle="适用于有更多面向开发信息的场景。" propsData={IMessage}></PropsBox>
+      <PropsBox title="高阶配置-IMessageAction" subtitle="操作按钮自定义配置" propsData={IMessageActions}></PropsBox>
+      <PropsBox title="高阶配置-IMessageActionType" subtitle="默认操作项说明" propsData={IMessageActionType}></PropsBox>
+      <PropsBox title="高阶配置-Slot" subtitle="自定义插槽" propsData={ISlots}></PropsBox>
     </div>
     );
   },

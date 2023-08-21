@@ -1,7 +1,7 @@
 {
   "name": "bkui-vue",
   "private": true,
-  "version": "0.0.2-beta.11",
+  "version": "0.0.2-beta.14",
   "workspaces": {
     "packages": [
       "packages/!(**.bak)*",
