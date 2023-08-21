@@ -200,6 +200,12 @@ const dataJson = [
     default: '--',
     desc: '是否禁用',
   },
+   {
+    name: 'onlyRecommendChildren',
+    type: 'Boolean',
+    default: 'false',
+    desc: '添加推荐选项字符时 是否只匹配children数据',
+  },
 ];
 const slotColumnMap = {
   name: '名称',
