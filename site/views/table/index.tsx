@@ -404,21 +404,22 @@ export default defineComponent({
         <DemoTitle
           name="Table"
           desc="Table组件， 为页面和功能提供列表。"
-          link="https://www.google.com.hk/"/>
-          {
-            configs.map(cfg => <DemoBox { ...cfg.attrs } optionData={ TABLE_DATA }>
-                 {
-                   cfg.component()
-                 }
-              </DemoBox>)
-          }
+          designLink="https://bkdesign.bk.tencent.com/design/35"/>
+        {
+          configs.map(cfg => <DemoBox { ...cfg.attrs } optionData={ TABLE_DATA }>
+            {
+              cfg.component()
+            }
+            </DemoBox>
+          )
+        }
         {
           configList.map(cfg => <div>
             <PropsBox
               title={ cfg.title }
-               columnMap={ renderMap[cfg.type] }
-               subtitle={ cfg.subTile }
-               propsData={ cfg.config }/>
+              columnMap={ renderMap[cfg.type] }
+              subtitle={ cfg.subTile }
+              propsData={ cfg.config }/>
           </div>)
         }
       </div>

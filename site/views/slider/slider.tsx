@@ -39,8 +39,10 @@ import VerticalDemo from './vertical-demo.vue';
 
 const switcherPropsJson: IPropsTableItem[] = [
   {
-    name: 'value',
-    type: 'number/array' as any,
+    // name: 'value',
+    // type: 'number/array' as any,
+    name: 'model-value / v-model',
+    type: 'Number/Array',
     default: '0',
     desc: '使用v-model，将指定变量与slider的值进行绑定',
     optional: [],
@@ -193,52 +195,52 @@ export default defineComponent({
         <DemoTitle
           name="Slider 滑动选择器"
           desc="用于操作反馈的中间态(loading)、成功、失败等"
-          link="https://www.google.com.hk/"/>
-          <DemoBox
-            title="基础用法"
-            subtitle=""
-            desc="使用 v-model 将变量与 slider 滑杆进行数据绑定，默认最大值 max-value 为 100, 默认最小值为 min-value 0"
-            componentName="slider"
-            demoName="base-demo">
-            <BaseDemo></BaseDemo>
-          </DemoBox>
-          <DemoBox
-            title="刻度"
-            subtitle=""
-            desc=""
-            componentName="slider"
-            demoName="step-demo">
-            <StepDemo></StepDemo>
-          </DemoBox>
-          <DemoBox
-            title="带输入"
-            subtitle=""
-            desc=""
-            componentName="slider"
-            demoName="input-demo">
-            <InputDemo></InputDemo>
-          </DemoBox>
-          <DemoBox
-            title="垂直"
-            subtitle=""
-            desc=""
-            componentName="slider"
-            demoName="vertical-demo">
-            <VerticalDemo></VerticalDemo>
-          </DemoBox>
-          <DemoBox
-            title="自定义"
-            subtitle=""
-            desc=""
-            componentName="slider"
-            demoName="custom-demo">
-            <CustomDemo></CustomDemo>
-          </DemoBox>
-          <PropsBox
-            title="Slider 属性"
-            subtitle=""
-            propsData={switcherPropsJson}/>
-          <PropsBox
+          designLink="https://bkdesign.bk.tencent.com/design/139"/>
+        <DemoBox
+          title="基础用法"
+          subtitle=""
+          desc="使用 v-model 将变量与 slider 滑杆进行数据绑定，默认最大值 max-value 为 100, 默认最小值为 min-value 0"
+          componentName="slider"
+          demoName="base-demo">
+          <BaseDemo></BaseDemo>
+        </DemoBox>
+        <DemoBox
+          title="刻度"
+          subtitle=""
+          desc=""
+          componentName="slider"
+          demoName="step-demo">
+          <StepDemo></StepDemo>
+        </DemoBox>
+        <DemoBox
+          title="带输入"
+          subtitle=""
+          desc=""
+          componentName="slider"
+          demoName="input-demo">
+          <InputDemo></InputDemo>
+        </DemoBox>
+        <DemoBox
+          title="垂直"
+          subtitle=""
+          desc=""
+          componentName="slider"
+          demoName="vertical-demo">
+          <VerticalDemo></VerticalDemo>
+        </DemoBox>
+        <DemoBox
+          title="自定义"
+          subtitle=""
+          desc=""
+          componentName="slider"
+          demoName="custom-demo">
+          <CustomDemo></CustomDemo>
+        </DemoBox>
+        <PropsBox
+          title="Slider 属性"
+          subtitle=""
+          propsData={switcherPropsJson}/>
+        <PropsBox
           title="Slider 事件"
           subtitle=""
           propsData={switcherChangeJson}/>

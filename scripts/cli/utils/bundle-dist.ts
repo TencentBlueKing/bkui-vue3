@@ -56,51 +56,98 @@ function rmDir(dirPath: string) {
     rmdirSync(dirPath);
   }
 }
-export const buildDistScript = async () => await build({
-  resolve: {
-    alias: [
-      {
-        find: /^@bkui-vue\/(icon\/)/,
-        replacement: resolve(COMPONENT_URL, './$1'),
-      },
-      {
-        find: /^@bkui-vue\/([^/]*)/,
-        replacement: resolve(COMPONENT_URL, './$1/src'),
-      },
-    ],
-  },
-  plugins: [vueJsx(), vue()],
-  build: {
-    outDir: DIST_URL,
-    minify: true,
-    lib: {
-      entry,
-      name: 'bkuiVue',
-      fileName: format => `index.${format}.js`,
-    },
-    rollupOptions: {
-      external: ['vue'],
-      output: [
+export const buildDistScript = async () => await Promise.all([
+  build({
+    resolve: {
+      alias: [
         {
-          format: 'cjs',
-          exports: 'named',
+          find: /^@bkui-vue\/(icon\/)/,
+          replacement: resolve(COMPONENT_URL, './$1'),
         },
         {
-          format: 'esm',
-          exports: 'named',
-        },
-        {
-          globals: {
-            vue: 'Vue',
-          },
-          exports: 'named',
-          format: 'umd',
-          name: 'bkuiVue',
+          find: /^@bkui-vue\/([^/]*)/,
+          replacement: resolve(COMPONENT_URL, './$1/src'),
         },
       ],
     },
-  },
-});
+    plugins: [vueJsx(), vue()],
+    build: {
+      outDir: DIST_URL,
+      minify: false,
+      lib: {
+        entry,
+        name: 'bkuiVue',
+        fileName: format => `index.${format}.source.js`,
+      },
+      rollupOptions: {
+        external: ['vue'],
+        output: [
+          {
+            format: 'cjs',
+            exports: 'named',
+          },
+          {
+            format: 'esm',
+            exports: 'named',
+          },
+          {
+            globals: {
+              vue: 'Vue',
+            },
+            exports: 'named',
+            format: 'umd',
+            name: 'bkuiVue',
+          },
+        ],
+      },
+    },
+  }),
+  build({
+    resolve: {
+      alias: [
+        {
+          find: /^@bkui-vue\/(icon\/)/,
+          replacement: resolve(COMPONENT_URL, './$1'),
+        },
+        {
+          find: /^@bkui-vue\/([^/]*)/,
+          replacement: resolve(COMPONENT_URL, './$1/src'),
+        },
+      ],
+    },
+    plugins: [vueJsx(), vue()],
+    build: {
+      outDir: DIST_URL,
+      minify: true,
+      lib: {
+        entry,
+        name: 'bkuiVue',
+        fileName: format => `index.${format}.js`,
+      },
+      rollupOptions: {
+        external: ['vue'],
+        output: [
+          {
+            format: 'cjs',
+            exports: 'named',
+          },
+          {
+            format: 'esm',
+            exports: 'named',
+          },
+          {
+            globals: {
+              vue: 'Vue',
+            },
+            exports: 'named',
+            format: 'umd',
+            name: 'bkuiVue',
+          },
+        ],
+      },
+    },
+  })
+]);
 
 export const buildDistStyles = async () => {
   const resetTheme = await replaceThemeTovariable();
