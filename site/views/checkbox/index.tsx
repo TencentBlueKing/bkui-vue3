@@ -151,13 +151,13 @@ export default defineComponent({
         <DemoTitle
           name="Checkbox"
           desc="表单-多选框，在一组选项中进行多选"
-          link="https://www.qq.com/"/>
+          designLink="https://bkdesign.bk.tencent.com/design/146"/>
         <DemoBox
           title="基础用法"
           desc="单独使用：选中时值为true"
           componentName="checkbox"
           demoName="/demo/checkbox">
-            <DemoCheckbox />
+          <DemoCheckbox />
         </DemoBox>
         <DemoBox
           title="多选框组"

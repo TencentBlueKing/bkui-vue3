@@ -426,15 +426,16 @@ export default defineComponent({
           const isMatched = item.name.toLocaleLowerCase().includes(keyword.value.toLocaleLowerCase());
           if (isMatched) {
             list.push(item);
+            const filterList = [];
             item.children?.forEach((child) => {
-              list.push({
+              filterList.push({
                 ...item,
                 realId: item.id,
                 id: random(10),
                 value: child,
               });
             });
-            list.push({
+            !filterList.length && !item.onlyRecommendChildren && filterList.push({
               ...item,
               realId: item.id,
               id: random(10),
@@ -443,10 +444,12 @@ export default defineComponent({
                 name: keyword.value,
               },
             });
+            list.push(...filterList);
           } else {
+            const filterList = [];
             item.children?.forEach((child) => {
               if (child.name.toLocaleLowerCase().includes(keyword.value.toLocaleLowerCase())) {
-                list.push({
+                filterList.push({
                   ...item,
                   realId: item.id,
                   id: random(10),
@@ -454,13 +457,14 @@ export default defineComponent({
                 });
               }
             });
-            list.push({
+            !filterList.length && !item.onlyRecommendChildren && filterList.push({
               ...item,
               value: {
                 id: keyword.value,
                 name: keyword.value,
               },
             });
+            list.push(...filterList);
           }
         });
       }  else if (usingItem.value.type === 'condition') {

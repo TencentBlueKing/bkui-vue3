@@ -110,7 +110,8 @@ export default defineComponent({
       <div>
         <DemoTitle
           name="Badge"
-          desc="Badge 组件， 可以出现在任意 DOM 节点角上的数字或状态标记。" />
+          desc="Badge 组件， 可以出现在任意 DOM 节点角上的数字或状态标记。"
+          designLink="https://bkdesign.bk.tencent.com/design/37"/>
         <DemoBox
           title="基础用法"
           subtitle=""

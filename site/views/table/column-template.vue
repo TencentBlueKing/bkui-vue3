@@ -1,7 +1,6 @@
 <template>
   <section>
     <bk-table
-      stripe
       :data="tableData"
     >
       <template

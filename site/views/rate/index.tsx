@@ -79,6 +79,7 @@ export default defineComponent({
         <DemoTitle
           name="Rate 评分"
           desc="评分组件"
+          designLink="https://bkdesign.bk.tencent.com/design/147"
         />
 
         <DemoBox
@@ -86,8 +87,7 @@ export default defineComponent({
           subtitle=""
           desc="通过 editable 设置为 false, 让 rate 组件只能查看不能编辑，只有非编辑态可以展示小数"
           componentName="rate"
-          demoName="base-demo"
-        >
+          demoName="base-demo">
           <BaseDemo></BaseDemo>
         </DemoBox>
 
@@ -106,8 +106,7 @@ export default defineComponent({
           subtitle=""
           desc="通过监听 change 事件来做出响应"
           componentName="rate"
-          demoName="edit-demo"
-        >
+          demoName="edit-demo">
           <EditDemo></EditDemo>
         </DemoBox>
 

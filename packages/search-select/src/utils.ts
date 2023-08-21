@@ -97,6 +97,8 @@ export interface ISearchItem {
   value?: ICommonItem
   // 是否已选中
   isSelected?: boolean
+  // 添加推荐选项字符时 是否只匹配children数据
+  onlyRecommendChildren?: boolean;
 }
 export interface IMenuFooterItem {
   id: 'confirm' | 'cancel';

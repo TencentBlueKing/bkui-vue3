@@ -41,7 +41,7 @@ import Icon from './demo/icon.vue';
 import NativeAttrs from './demo/native-attrs.vue';
 import Number from './demo/number.vue';
 import Password from './demo/password.vue';
-import Search from './demo/search.vue';
+import Clearable from './demo/clearable.vue';
 import Simple from './demo/simple.vue';
 import Size from './demo/size.vue';
 import Status from './demo/status.vue';
@@ -139,6 +139,14 @@ const inputProps: IPropsTableItem[] = [
     desc: '是否显示输入字数统计，只在 type = "text" 或 type = "textarea" 时有效',
     optional: [],
   },
+  {
+    name: 'over-max-length-limit',
+    type: 'Boolean',
+    default: null,
+    desc: '超出最大字数限制后是否可以继续输入，结合maxlength使用',
+    optional: [],
+  },
+
   {
     name: 'behavior',
     type: 'String',
@@ -282,8 +290,8 @@ const demos = [{
   title: '带清空操作输入框',
   desc: '通过配置 clearable 属性为 true 来启用有文本时允许清空操作',
   componentName: 'input',
-  demoName: 'demo/search',
-  DemoComponent: Search,
+  demoName: 'demo/clearable',
+  DemoComponent: Clearable,
 }, {
   // '密码框',
   title: '密码框',
@@ -346,26 +354,27 @@ export default defineComponent({
           name="Input"
           desc="常用的输入框"
           link={`${import.meta.env.VITE_APP_BASE_URL ?? ''}/input`}
+          designLink="https://bkdesign.bk.tencent.com/design/14"
         />
-          {
-            demos.map(({ DemoComponent, ...demo }) => (
-              <DemoBox {...demo}>
-                  <DemoComponent />
-              </DemoBox>
-            ))
-          }
+        {
+          demos.map(({ DemoComponent, ...demo }) => (
+            <DemoBox {...demo}>
+              <DemoComponent />
+            </DemoBox>
+          ))
+        }
         <PropsBox
           title="Input 属性"
           subtitle=""
-          propsData={inputProps}/>
+          propsData={inputProps} />
         <PropsBox
           title="Input 插槽"
           subtitle=""
-          propsData={inputSlots}/>
+          propsData={inputSlots} />
         <PropsBox
           title="Input 事件"
           subtitle=""
-          propsData={inputEvents}/>
+          propsData={inputEvents} />
       </div>
     );
   },
