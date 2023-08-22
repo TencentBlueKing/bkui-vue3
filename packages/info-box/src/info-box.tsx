@@ -105,7 +105,7 @@ const InfoBox = (config: Partial<ModalFuncProps>) => {
       };
 
       function update(newValue: ModalFuncProps) {
-        modalFuncProps.value = newValue;
+        modalFuncProps.value = { ...modalFuncProps.value, ...newValue };
       }
 
       expose({ update });
@@ -141,6 +141,8 @@ const InfoBox = (config: Partial<ModalFuncProps>) => {
         class: resolveClassName('info-wrapper'),
         headerAlign: 'center',
         footerAlign: 'center',
+        transfer: true,
+        fullscreen: false,
         ...modalFuncProps.value,
         isShow: isShow.value,
         onClosed,
