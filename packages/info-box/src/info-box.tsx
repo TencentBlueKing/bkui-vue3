@@ -142,7 +142,7 @@ const InfoBox = (config: Partial<ModalFuncProps>) => {
         headerAlign: 'center',
         footerAlign: 'center',
         transfer: true,
-        fullscreen: true,
+        fullscreen: false,
         ...modalFuncProps.value,
         isShow: isShow.value,
         onClosed,

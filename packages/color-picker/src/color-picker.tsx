@@ -41,7 +41,11 @@ import { toType } from 'vue-types';
 import { usePrefix } from '@bkui-vue/config-provider';
 import { clickoutside } from '@bkui-vue/directives';
 import { AngleUp } from '@bkui-vue/icon';
-import { classes, PropTypes, useFormItem } from '@bkui-vue/shared';
+import {
+  classes,
+  PropTypes,
+  useFormItem,
+} from '@bkui-vue/shared';
 
 import PickerDropdown from '../../date-picker/src/base/picker-dropdown';
 
