@@ -86,9 +86,9 @@ export default defineComponent({
   },
   props: colorPickerProps,
   emits: ['update:modelValue', 'change'],
-  setup(props, { emit }) {
+  setup(props, { emit, slots }) {
     const formItem = useFormItem();
-    const showDropdown =  ref(false);
+    const showDropdown = ref(false);
     // 当前颜色的色值，如果为空字符串显示：默认白色背景 + 中间一个叉
     const colorStr = ref('');
     // 储存当前颜色的相关信息
@@ -271,69 +271,73 @@ export default defineComponent({
         onKeydown={handleTriggerKeydown}
         v-clickoutside={hideDropDown}
         onClick={toggleDropdown}>
-        <div class={`${resolveClassName('color-picker-color')}`}>
-          {/* 如果传入的色值为空字符串或者没有传值默认白色背景 + 中间一个叉 */}
-          <span
-            class={`${resolveClassName('color-picker-color-square')} ${
-              !colorStr.value && `${resolveClassName('color-picker-empty')}`
-            }`}
-            style={`background: ${colorStr.value || '#FFF'}`}
-          ></span>
-        </div>
-        {props.showValue ? (
-          <div class={`${resolveClassName('color-picker-text')}`}>
-            <span>{colorStr.value}</span>
-          </div>
-        ) : undefined}
-        <div class={`${resolveClassName('color-picker-icon')}`}>
-          <AngleUp class="icon-angle-down"></AngleUp>
-        </div>
-          <Transition name="bk-fade-down-transition">
-            <PickerDropdown
-              ref={dropRef}
-              v-show={showDropdown.value}
-              triggerRef={referenceRef.value}>
-                <div class={`${resolveClassName('color-dropdown-container')}`}>
-                  <div class={`${resolveClassName('color-picker-dropdown')}`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
-                    onMousedown={(e) => {
-                      e.stopPropagation();
-                    }}
-                    onKeydown={handleDropdownKeydown}>
-                    {/* 饱和度面板 */}
-                    <SaturationPanel
-                      ref={saturationPanelRef}
+        {typeof slots.trigger === 'function' ? slots.trigger({ value: colorStr.value, isShowDropdown: showDropdown.value }) : (
+          <>
+            <div class={`${resolveClassName('color-picker-color')}`}>
+              {/* 如果传入的色值为空字符串或者没有传值默认白色背景 + 中间一个叉 */}
+              <span
+                class={`${resolveClassName('color-picker-color-square')} ${
+                  !colorStr.value && `${resolveClassName('color-picker-empty')}`
+                }`}
+                style={`background: ${colorStr.value || '#FFF'}`}
+              ></span>
+            </div>
+            {props.showValue ? (
+              <div class={`${resolveClassName('color-picker-text')}`}>
+                <span>{colorStr.value}</span>
+              </div>
+            ) : undefined}
+            <div class={`${resolveClassName('color-picker-icon')}`}>
+              <AngleUp class="icon-angle-down"></AngleUp>
+            </div>
+          </>
+        )}
+        <Transition name="bk-fade-down-transition">
+          <PickerDropdown
+            ref={dropRef}
+            v-show={showDropdown.value}
+            triggerRef={referenceRef.value}>
+            <div class={`${resolveClassName('color-dropdown-container')}`}>
+              <div class={`${resolveClassName('color-picker-dropdown')}`}
+                   onClick={(e) => {
+                     e.stopPropagation();
+                   }}
+                   onMousedown={(e) => {
+                     e.stopPropagation();
+                   }}
+                   onKeydown={handleDropdownKeydown}>
+                {/* 饱和度面板 */}
+                <SaturationPanel
+                  ref={saturationPanelRef}
+                  colorObj={colorObj}
+                  onChange={handleColorChange}
+                ></SaturationPanel>
+                {/* 色彩条 */}
+                <HueSlider
+                  colorObj={colorObj}
+                  onChange={handleColorChange}
+                ></HueSlider>
+                {/* 色彩值 */}
+                <ColorInput
+                  colorObj={colorObj}
+                  onTab={handleTabInput}
+                  onChange={handleColorChange}
+                ></ColorInput>
+                {/* 预设值 */}
+                {isRenderRecommend.value ? (
+                  <div class={`${resolveClassName('color-picker-recommend-container')}`}>
+                    <RecommendColors
                       colorObj={colorObj}
+                      recommend={props.recommend}
+                      onTab={handleTabRecommend}
                       onChange={handleColorChange}
-                    ></SaturationPanel>
-                    {/* 色彩条 */}
-                    <HueSlider
-                      colorObj={colorObj}
-                      onChange={handleColorChange}
-                    ></HueSlider>
-                    {/* 色彩值 */}
-                    <ColorInput
-                      colorObj={colorObj}
-                      onTab={handleTabInput}
-                      onChange={handleColorChange}
-                    ></ColorInput>
-                    {/* 预设值 */}
-                    {isRenderRecommend.value ? (
-                      <div class={`${resolveClassName('color-picker-recommend-container')}`}>
-                        <RecommendColors
-                          colorObj={colorObj}
-                          recommend={props.recommend}
-                          onTab={handleTabRecommend}
-                          onChange={handleColorChange}
-                        ></RecommendColors>
-                      </div>
-                    ) : undefined}
+                    ></RecommendColors>
                   </div>
-                </div>
-            </PickerDropdown>
-          </Transition>
+                ) : undefined}
+              </div>
+            </div>
+          </PickerDropdown>
+        </Transition>
       </div>
     );
   },

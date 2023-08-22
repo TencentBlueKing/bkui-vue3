@@ -36,6 +36,7 @@
     {
       name: '实例业务',
       id: '2',
+      onlyRecommendChildren: true,
       children: [
         {
           name: '王者荣耀',
