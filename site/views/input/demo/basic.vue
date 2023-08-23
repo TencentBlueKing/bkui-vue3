@@ -1,11 +1,12 @@
 <template>
   <div>
-    <bk-input />
+    <bk-input v-model="xxxx" />
   </div>
 </template>
 
 <script setup>
-
+  import { ref } from 'vue'
+  const xxxx = ref('helloworld')
 </script>
 
 <style lang="postcss">

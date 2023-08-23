@@ -277,8 +277,8 @@ export default defineComponent({
       <div>
         <DemoTitle
           name="Upload"
-          desc="通过点击或者拖拽上传文件">
-        </DemoTitle>
+          desc="通过点击或者拖拽上传文件"
+          designLink="https://bkdesign.bk.tencent.com/design/41" />
         <DemoBox
           title="基础用法"
           desc="上传组件提供图片和文件上传的功能，由 accept 属性来定义允许上传的文件类型，默认为 *"

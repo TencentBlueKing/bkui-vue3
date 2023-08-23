@@ -4,8 +4,6 @@
     class="bk-select"
     filterable
     auto-focus
-    no-data-text="sdsd"
-    no-match-text="kkk"
     @toggle="handleToggle"
   >
     <bk-option

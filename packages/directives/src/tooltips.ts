@@ -27,7 +27,7 @@
 import { DirectiveBinding, ObjectDirective } from 'vue';
 
 import { bkZIndexManager, resolveClassName } from '@bkui-vue/shared';
-import { createPopper, Placement } from '@popperjs/core';
+import { createPopper, ModifierPhases, Placement } from '@popperjs/core';
 
 export declare type IOptions = {
   arrow: boolean,
@@ -40,6 +40,7 @@ export declare type IOptions = {
   distance: number;
   extCls: string,
   delay: number,
+  sameWidth: boolean,
   onShow: () => void;
   onHide: () => void;
 };
@@ -122,6 +123,7 @@ function initOptions(): IOptions {
     placement: 'top',
     distance: 8,
     extCls: '',
+    sameWidth: false,
     delay: 0,
     onShow: () => {},
     onHide: () => {},
@@ -182,7 +184,7 @@ function renderArrow(): HTMLElement {
  */
 function createPopperInstance(el: HTMLElement, popper: HTMLElement) {
   const { opts } = nodeList.get(el);
-  const { placement, distance, showOnInit } = opts;
+  const { placement, distance, showOnInit, sameWidth } = opts;
   const popperInstance = createPopper(el, popper, {
     placement,
     modifiers: [
@@ -192,6 +194,21 @@ function createPopperInstance(el: HTMLElement, popper: HTMLElement) {
           offset: [0, distance],
         },
       },
+      ...(sameWidth ? [{
+        name: 'sameWidth',
+        enabled: true,
+        phase: 'beforeWrite' as ModifierPhases,
+        requires: ['computeStyles'],
+        fn: ({ state }) => {
+          state.styles.popper.width = `${state.rects.reference.width}px`;
+        },
+        effect: ({ state }: any) => {
+          state.elements.popper.style.overflowWrap = 'break-word';
+          state.elements.popper.style.width = `${
+            state.elements.reference.offsetWidth
+          }px`;
+        },
+      }] : []),
     ],
   });
 

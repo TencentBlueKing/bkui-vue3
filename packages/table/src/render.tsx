@@ -121,7 +121,7 @@ export default class TableRender {
           class="table-head-settings"
           settings={this.reactiveProp.settings}
           columns={this.colgroups}
-          rowHeight={this.props.rowHeight}
+          rowHeight={this.props.rowHeight as unknown as number}
           onChange={handleSettingsChanged}/>
         : '',
       <table cellpadding={0} cellspacing={0}>

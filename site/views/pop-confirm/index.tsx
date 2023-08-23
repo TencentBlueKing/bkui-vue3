@@ -46,7 +46,7 @@ export default defineComponent({
         <DemoTitle
           name="Popover 弹出框提示"
           desc="bkPopconfirm是基于bkPopover改造而来，继承了bkPopover所有属性，具体请参考bkPopover文档，本文主要列出bkPopconfirm独有或不同的属性。基础样式由标题、正文和按钮构成。"
-          link="https://www.google.com.hk/"/>
+          designLink="https://bkdesign.bk.tencent.com/design/45"/>
         <DemoBox
           title="基础用法"
           desc="由标题+通知文本+按钮组成，例如提交表单，与 confirm 弹出的全屏居中模态对话框相比，在目标元素附近弹出浮层提示，询问用户。"

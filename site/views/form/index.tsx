@@ -217,64 +217,64 @@ export default defineComponent({
     return (
     <div>
       <DemoTitle
-          name="Form"
-          desc="由输入框、选择器、单选框、多选框等控件组成"
-          link="https://www.qq.com/"/>
-        <DemoBox
-          title="基础用法"
-          desc=""
-          componentName="form"
-          demoName="/demo/form">
-            <DemoForm />
-        </DemoBox>
-        <DemoBox
-          title="label 描述"
-          desc="FormItem 组件配置 description"
-          componentName="form"
-          demoName="/demo/form-description">
-            <DemoFormDescription />
-        </DemoBox>
-        <DemoBox
-          title="顶部对齐"
-          desc=""
-          componentName="form"
-          demoName="/demo/form-vertical">
-            <DemoFormVertical />
-        </DemoBox>
-        <DemoBox
-          title="表单验证"
-          desc=""
-          componentName="form"
-          demoName="/demo/form-validator">
-            <DemoFormValidator />
-        </DemoBox>
-        <DemoBox
-          title="组合表单组件"
-          desc=""
-          componentName="form"
-          demoName="/demo/compose-form-item">
-            <DemoComposeFormItem />
-        </DemoBox>
-        <PropsBox
-          title="Form 属性"
-          subtitle=""
-          propsData={formProps}/>
-        <PropsBox
-          title="Form 实例方法"
-          subtitle=""
-          propsData={formMethods}/>
-        <PropsBox
-          title="Form 事件"
-          subtitle=""
-          propsData={formEvents}/>
-        <PropsBox
-          title="Form-Item 属性"
-          subtitle=""
-          propsData={formItemProps}/>
-        <PropsBox
-          title="Form-Item Slot"
-          subtitle=""
-          propsData={formItemSlots}/>
+        name="Form"
+        desc="由输入框、选择器、单选框、多选框等控件组成"
+        designLink="https://bkdesign.bk.tencent.com/design/33" />
+      <DemoBox
+        title="基础用法"
+        desc=""
+        componentName="form"
+        demoName="/demo/form">
+          <DemoForm />
+      </DemoBox>
+      <DemoBox
+        title="label 描述"
+        desc="FormItem 组件配置 description"
+        componentName="form"
+        demoName="/demo/form-description">
+          <DemoFormDescription />
+      </DemoBox>
+      <DemoBox
+        title="顶部对齐"
+        desc=""
+        componentName="form"
+        demoName="/demo/form-vertical">
+          <DemoFormVertical />
+      </DemoBox>
+      <DemoBox
+        title="表单验证"
+        desc=""
+        componentName="form"
+        demoName="/demo/form-validator">
+          <DemoFormValidator />
+      </DemoBox>
+      <DemoBox
+        title="组合表单组件"
+        desc=""
+        componentName="form"
+        demoName="/demo/compose-form-item">
+          <DemoComposeFormItem />
+      </DemoBox>
+      <PropsBox
+        title="Form 属性"
+        subtitle=""
+        propsData={formProps}/>
+      <PropsBox
+        title="Form 实例方法"
+        subtitle=""
+        propsData={formMethods}/>
+      <PropsBox
+        title="Form 事件"
+        subtitle=""
+        propsData={formEvents}/>
+      <PropsBox
+        title="Form-Item 属性"
+        subtitle=""
+        propsData={formItemProps}/>
+      <PropsBox
+        title="Form-Item Slot"
+        subtitle=""
+        propsData={formItemSlots}/>
     </div>
     );
   },
