@@ -43,11 +43,7 @@ class MaskQueueMaker {
 
   public pushMaskStyle(parentNode, style) {
     const value = this.getMaskMap(parentNode);
-    if (!value?.styles) {
-      this.setMaskMap(parentNode, { styles: [style], ...(value || {}) });
-    } else {
-      value.styles.push(style);
-    }
+    this.setMaskMap(parentNode, { styles: [style], ...(value || {}) });
   }
 
   public getMaskStyles(parentNode) {
@@ -302,9 +298,10 @@ export class BkMaskManager {
   private initInstance(maskStyle) {
     if (!this.isInit) {
       this.isInit = true;
+      this.backupMask = this.getBackupMask();
       const { instance, isExist } = this.getMask();
       this.mask = instance;
-      this.backupMask = this.getBackupMask();
+
       !isExist && this.setMaskStyle(Object.assign({}, this.maskStyle, maskStyle));
     }
   }

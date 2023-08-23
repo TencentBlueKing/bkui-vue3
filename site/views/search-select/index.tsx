@@ -200,7 +200,7 @@ const dataJson = [
     default: '--',
     desc: '是否禁用',
   },
-   {
+  {
     name: 'onlyRecommendChildren',
     type: 'Boolean',
     default: 'false',

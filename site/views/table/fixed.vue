@@ -20,26 +20,6 @@
       return {
         tableData: [...DATA_FIX_TABLE],
         columns: [...DATA_FIX_COLUMNS],
-        settings: {
-          checked: ['index'],
-          fields: [{
-                     label: '序号',
-                     field: 'index',
-                     disabled: true,
-                   },
-                   {
-                     label: '名称/内网IP',
-                     field: 'ip',
-                   },
-                   {
-                     label: '来源',
-                     field: 'source',
-                   },
-                   {
-                     label: '创建时间',
-                     field: 'create_time',
-                   }],
-        },
       };
     },
     methods: {
