@@ -90,17 +90,6 @@ export const useClass = (
 
   const resolvedColumns = computed(() => getColumns() as Column[]);
 
-  const offsetXVarStyle = computed(() => ({
-    '--var-scroll-left': `${reactiveProp.scrollTranslateX}px`,
-    '--var-scroll-top': `${reactiveProp.scrollTranslateY}px`,
-  }));
-
-  const headOffsetXVarStyle = computed(() => ({
-    '--var-scroll-left': `${reactiveProp.scrollTranslateX}px`,
-    '--var-scroll-top': '0px',
-    right: hasScrollYRef.value ? `${SCROLLY_WIDTH - 2}px` : '0px',
-  }));
-
   const config = resolveHeadConfig(props);
   const headStyle = computed(() => ({
     '--row-height': `${resolvePropVal(config, 'height', ['thead'])}px`,
@@ -246,8 +235,6 @@ export const useClass = (
     wrapperStyle,
     contentStyle,
     headStyle,
-    offsetXVarStyle,
-    headOffsetXVarStyle,
     resetTableHeight,
     updateBorderClass,
     getColumnsWidthOffsetWidth,

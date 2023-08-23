@@ -91,6 +91,7 @@ export const DATA_COLUMNS = [
     render: ({ row }) => `${row.status}-${row.source}`,
     filter: {
       list: [{ text: 'QQ', value: 'QQ' }, { text: '微信', value: '微信' }, { text: 'Email', value: 'Email' }],
+      checked: ['QQ']
     },
   },
   {
