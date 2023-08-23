@@ -105,6 +105,7 @@ export default defineComponent({
     });
     // 关闭弹框
     const handleClose = async () => {
+      console.log('dialog handleClose');
       let shouldClose = true;
       if (typeof props.beforeClose === 'function') {
         shouldClose = await props.beforeClose();

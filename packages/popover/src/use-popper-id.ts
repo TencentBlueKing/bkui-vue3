@@ -52,7 +52,7 @@ export default (props, prefix = '#') => {
       if (!/^body$/i.test(props.boundary)) {
         if (typeof props.boundary === 'string') {
           if (!isAvailableId(props.boundary)) {
-            // console.error('props.boundary is not available selector');pviews/search-select/index.tsx
+            // console.error('props.boundary is not available selector');
             resolvedBoundary = 'body';
             return;
           }
