@@ -389,7 +389,6 @@ export class BkMaskManager {
       return;
     }
 
-    console.log('handleMaskClick');
     const events = getMaskEvent(this.mask);
     if (events.length) {
       const { event } = events.pop();
