@@ -583,7 +583,7 @@ export default class TableRender {
     column_fixed: !!column.fixed,
     column_fixed_left: !!column.fixed,
     column_fixed_right: column.fixed === 'right',
-    [column.className]: true,
+    [`${column.className}`]: true,
   });
 
   private getHeadColumnClass = (column: Column, colIndex: number) => ({
