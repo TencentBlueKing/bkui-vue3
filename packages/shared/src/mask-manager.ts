@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { BKPopIndexManager } from './pop-manager';
 import { random } from './utils';
@@ -30,6 +30,26 @@ import { bkZIndexManager } from './z-index-manager';
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const DEFAULT_MASK_UUID = function () {};
 DEFAULT_MASK_UUID.prototype.def_val = `__bk_mask_${random(16)}`;
+
+const MaskEventMap = new WeakMap();
+
+const getMaskEvent = (mask) => {
+  if (MaskEventMap.has(mask)) {
+    return MaskEventMap.get(mask);
+  }
+
+  return [];
+};
+
+const setMaskEvent = (mask, event, args?, content?, instanceId?) => {
+  const maskEvent = getMaskEvent(mask);
+  if (maskEvent.some(evet => evet.instanceId === instanceId)) {
+    return;
+  }
+
+  maskEvent.push({ event, args, content, instanceId });
+  MaskEventMap.set(mask, maskEvent);
+};
 
 class MaskQueueMaker {
   private timer = null;
@@ -87,19 +107,19 @@ class MaskQueueMaker {
 const bkMaskMaker = new MaskQueueMaker();
 
 type BkMaskManagerConfig = {
-  multiInstance?: boolean,
-  maskAttrTag?: string,
-  parentNode?: HTMLElement | Document,
-  maskStyle?: any,
-  onClick?: (e: MouseEvent) => void,
-  popInstance?: BKPopIndexManager
+  multiInstance?: boolean;
+  maskAttrTag?: string;
+  parentNode?: HTMLElement | Document;
+  maskStyle?: any;
+  onClick?: (e: MouseEvent) => void;
+  popInstance?: BKPopIndexManager;
 };
 
 type MaskConfigStore = {
-  zIndex: number,
-  style: any,
-  uuid?: string,
-  preUID?: string
+  zIndex: number;
+  style: any;
+  uuid?: string;
+  preUID?: string;
 };
 
 export class BkMaskManager {
@@ -138,14 +158,10 @@ export class BkMaskManager {
     'background-color': 'rgba(0,0,0,.6)',
   };
 
-  private onClick;
-
   // 用于判定是否已经初始化过当前实例
   private isInit = false;
 
   private maskAttrTag = 'auto';
-
-  private popInstance?: BKPopIndexManager;
 
   /**
    * 遮罩管理器
@@ -154,13 +170,16 @@ export class BkMaskManager {
    * @param maskAttrTag 遮罩DOM唯一标志，支持自定义和 auto
    */
   constructor(config?: BkMaskManagerConfig) {
-    const { multiInstance = false, maskAttrTag = 'auto', parentNode = document.body, maskStyle = {}, onClick = null, popInstance = null } = config || {};
+    const {
+      multiInstance = false,
+      maskAttrTag = 'auto',
+      parentNode = document.body,
+      maskStyle = {},
+    } = config || {};
     this.parentNode = parentNode || document;
     this.maskAttrTag = maskAttrTag;
-    this.onClick = onClick;
     this.activeInstance = undefined;
     this.multiInstance = multiInstance;
-    this.popInstance = popInstance;
     this.uniqueMaskAttrTag = this.getMaskAttrTag(maskAttrTag);
 
     // 避免多个实例多处初始化，此处会做队列处理
@@ -172,8 +191,11 @@ export class BkMaskManager {
   }
 
   public setOption(option: BkMaskManagerConfig) {
-    const { parentNode = document.body, maskStyle = {}, onClick = null, maskAttrTag = this.maskAttrTag } = option || {};
-    this.onClick = onClick;
+    const {
+      parentNode = document.body,
+      maskStyle = {},
+      maskAttrTag = this.maskAttrTag,
+    } = option || {};
     this.parentNode = parentNode || document;
     this.setMaskStyle(Object.assign({}, this.maskStyle, maskStyle));
     this.uniqueMaskAttrTag = this.getMaskAttrTag(maskAttrTag);
@@ -188,12 +210,20 @@ export class BkMaskManager {
    * @param transfer 是否显示将内容加入遮罩下
    */
   public show(
-    content?: HTMLElement, zIndex?: number, showMask = true, appendStyle = {}, uuid: string | null = null,
+    content?: HTMLElement,
+    zIndex?: number,
+    showMask = true,
+    appendStyle = {},
+    uuid: string | null = null,
     transfer = false,
+    onMaskClick?,
+    instanceId?,
   ) {
     const uid = uuid ?? random(16);
     // @ts-ignore
-    const localZIndex: number = /-?\d+/.test(`${zIndex}`) ? zIndex : bkZIndexManager.getModalNextIndex();
+    const localZIndex: number = /-?\d+/.test(`${zIndex}`)
+      ? zIndex
+      : bkZIndexManager.getModalNextIndex();
     let style = Object.assign({}, this.maskStyle, appendStyle || {});
 
     /**
@@ -223,7 +253,10 @@ export class BkMaskManager {
       'pointer-events': 'all',
     });
     this.initInstance(style);
-    this.catchClickEvent();
+    if (onMaskClick) {
+      this.catchClickEvent(content, onMaskClick, instanceId);
+    }
+
     this.setMaskStyle(style);
 
     bkMaskMaker.pushMaskStyle(this.parentNode, { ...style });
@@ -274,7 +307,7 @@ export class BkMaskManager {
     if (this.zIndexStore.has(uuid)) {
       const rmIns = this.zIndexStore.get(uuid);
       this.lastUUID = rmIns.preUID;
-      return this.zIndexStore.delete(uuid);;
+      return this.zIndexStore.delete(uuid);
     }
 
     this.lastUUID = null;
@@ -288,11 +321,21 @@ export class BkMaskManager {
   }
 
   public backupContentElement(content?: HTMLElement) {
-    content && this.backupMask.append(content);
+    content && this.backupMask?.append(content);
   }
 
   public getActiveContentInstance() {
     return this.activeInstance;
+  }
+
+  public removeClickEvent() {
+    // if (this.mask) {
+    //   const events = getMaskEvent(this.mask);
+    //   if (!events.length) {
+    //     console.log('removeEventListener handleMaskClick');
+    //     this.mask.removeEventListener('click', this.handleMaskClick);
+    //   }
+    // }
   }
 
   private initInstance(maskStyle) {
@@ -302,7 +345,8 @@ export class BkMaskManager {
       const { instance, isExist } = this.getMask();
       this.mask = instance;
 
-      !isExist && this.setMaskStyle(Object.assign({}, this.maskStyle, maskStyle));
+      !isExist
+        && this.setMaskStyle(Object.assign({}, this.maskStyle, maskStyle));
     }
   }
 
@@ -310,7 +354,7 @@ export class BkMaskManager {
    * 初始化当前遮罩管理器
    * @returns 当前遮罩容器
    */
-  private getMask(): { instance: HTMLElement, isExist: boolean } {
+  private getMask(): { instance: HTMLElement; isExist: boolean } {
     if (this.multiInstance) {
       return { instance: this.createMask(), isExist: false };
     }
@@ -320,6 +364,11 @@ export class BkMaskManager {
     if (!div) {
       isExist = false;
       div = this.createMask();
+      div.addEventListener(
+        'click',
+        e => this.handleMaskClick(e),
+        true,
+      );
     }
 
     return {
@@ -328,22 +377,24 @@ export class BkMaskManager {
     };
   }
 
-  private catchClickEvent() {
+  private catchClickEvent(content, onMaskClick, instanceId) {
     if (this.mask) {
-      this.mask.addEventListener('click', e => this.handleMaskClick(e), true);
+      setMaskEvent(this.mask, onMaskClick, [], content, instanceId);
     }
   }
 
-  private removeClickEvent() {
-    if (this.mask) {
-      this.mask.removeEventListener('click', this.handleMaskClick);
-    }
-  }
 
   private handleMaskClick(e) {
-    if (e.target === this.mask) {
-      if (typeof this.onClick === 'function') {
-        Reflect.apply(this.onClick, this.popInstance || this, [e]);
+    if (e.target !== this.mask) {
+      return;
+    }
+
+    const events = getMaskEvent(this.mask);
+    if (events.length) {
+      const { event } = events.pop();
+      if (typeof event === 'function') {
+        event(e);
+        // Reflect.apply(event, this, [e, ...(args || [])]);
       }
     }
   }
@@ -381,7 +432,12 @@ export class BkMaskManager {
    * @returns string 返回唯一标识
    */
   private getMaskAttrTag(tag: string) {
-    if (/^(auto|\s+)$/i.test(tag) || tag === null || tag === undefined || tag === '') {
+    if (
+      /^(auto|\s+)$/i.test(tag)
+      || tag === null
+      || tag === undefined
+      || tag === ''
+    ) {
       if (!bkMaskMaker.getMaskId(this.parentNode)) {
         bkMaskMaker.setMaskId(this.parentNode, `__bk_mask_${random(16)}`);
       }
@@ -398,4 +454,3 @@ export class BkMaskManager {
 }
 
 export const bKMaskManager = new BkMaskManager({});
-
