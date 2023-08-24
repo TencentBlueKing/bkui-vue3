@@ -205,7 +205,7 @@ export default defineComponent({
         <DemoTitle
           name="Transfer 穿梭框"
           desc="通过双栏穿梭选择框，利用更大的空间展示更多可选项、已选项的信息。"
-          link="https://www.google.com.hk/"
+          designLink="https://bkdesign.bk.tencent.com/design/125"
         />
         <DemoBox
           title="基础用法"

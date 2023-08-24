@@ -299,16 +299,6 @@
         height: 1rem;
       }
     }
-
-    .@{bk-prefix}-table-fixed {
-      .column_fixed {
-        &.column_fixed_right {
-          &.shadow {
-            box-shadow: -2px 2px 10px 0px rgba(0, 0, 0, 0.12);
-          }
-        }
-      }
-    }
   }
 
   .@{bk-prefix}-table-footer {
@@ -389,14 +379,13 @@
     position: absolute;
     top: 0;
     right: 0;
-    bottom: 0;
+    bottom: var(--footer-height);
     left: 0;
     // width: 100%;
     pointer-events: none;
 
     .column_fixed {
       position: absolute;
-      transform: translate(var(--var-scroll-left),  var(--var-scroll-top));
 
       &.column_fixed_left {
         top: 0;

@@ -96,7 +96,7 @@ export default (props: TablePropTypes, colgroups: GroupColumn[], hasScrollY?) =>
     }
     const fixedOffset: any = {
       left: 0,
-      right: hasScrollY ? SCROLLY_WIDTH : 0,
+      right: hasScrollY ? SCROLLY_WIDTH : -1,
     };
     const fixedPos = resolveFixColPos(column);
     fixedOffset[fixedPos] = getPreColumnOffset(fixedPos, column, fixedOffset[fixedPos]);

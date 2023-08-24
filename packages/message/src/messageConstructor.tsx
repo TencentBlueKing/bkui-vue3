@@ -256,37 +256,50 @@ export default defineComponent({
     };
 
     let copyStatusTimer;
-    const isInstallClipboardJS = ref(false);
     const copyStatus = ref(null);
 
-    const copyMessage = (_e: MouseEvent) => {
-      if (isInstallClipboardJS.value) {
-        return;
-      }
-
+    const copyMessage = () => {
       const copyInstance = new ClipboardJS(refCopyMsgDiv.value as HTMLElement, {
         text: () => (props.message as any).details,
       });
 
+      registerCopyCallback(copyInstance);
+    };
+
+    const registerCopyCallback = (copyInstance, complete?) => {
       ['success', 'error'].forEach((theme) => {
-        copyInstance.on(theme, () => {
+        copyInstance.on(theme, (e) => {
           const target = refCopyStatus.value as HTMLElement;
           copyStatus.value = theme;
           if (target) {
+            const { offsetLeft, offsetWidth, offsetTop } = e.trigger;
+            const msgTree = e.trigger.closest('.message-tree');
+            const msgTreeScrollTop = msgTree ? msgTree.scrollTop : 0;
             target.classList.remove(...['success', 'error', 'is-hidden']);
             target.classList.add(...[theme, 'is-show']);
+            const transX = offsetLeft + offsetWidth / 2 - 41;
+            const transY = offsetTop - msgTreeScrollTop - 40;
+            target.style.setProperty('transform', `translate(${transX}px, ${transY}px`);
             copyStatusTimer && clearTimeout(copyStatusTimer);
             copyStatusTimer = setTimeout(() => {
               target.classList.remove(...['is-show']);
               target.classList.add(...['is-hidden']);
             }, 2000);
           }
-        });
-        isInstallClipboardJS.value = true;
-        setTimeout(() => {
-          (refCopyMsgDiv.value as HTMLElement).click();
+
+          if (typeof complete === 'function') {
+            complete();
+          }
         });
       });
+    };
+
+    const copyValueItem = () => {
+      const copyInstance = new ClipboardJS(refJsonContent.value.querySelectorAll('span.copy-value'), {
+        text: trigger => trigger.innerHTML,
+      });
+
+      registerCopyCallback(copyInstance);
     };
 
     const parseJson = (value) => {
@@ -310,16 +323,26 @@ export default defineComponent({
         toolOperation.isDetailShow
         && typeof props.message === 'object'
         && !isVNode(props.message)
-        && (props.message.type === MessageContentType.JSON || !props.message.type)
       ) {
-        const targetJson = parseJson(props.message.details);
-        const formatter = new JSONFormatter(targetJson);
-        setTimeout(() => {
-          if (refJsonContent.value) {
-            refJsonContent.value.innerHTML = '';
-            refJsonContent.value.append(formatter.render());
-          }
-        });
+        if ((props.message.type === MessageContentType.JSON || !props.message.type)) {
+          const targetJson = parseJson(props.message.details);
+          const formatter = new JSONFormatter(targetJson);
+
+          setTimeout(() => {
+            if (refJsonContent.value) {
+              refJsonContent.value.innerHTML = '';
+              refJsonContent.value.append(formatter.render());
+            }
+            copyMessage();
+          });
+        }
+
+        if (props.message.type === MessageContentType.KEY_VALUE) {
+          setTimeout(() => {
+            copyMessage();
+            copyValueItem();
+          });
+        }
       }
     };
 
@@ -510,6 +533,7 @@ export default defineComponent({
       copyStatus,
       t,
       resolveClassName,
+      copyValueItem,
     };
   },
   render() {
@@ -530,7 +554,7 @@ export default defineComponent({
         return keys.map(key => (
           <div class='message-row'>
             <label>{key}</label>
-            {target[key]}
+            <span class="copy-value">{target[key]}</span>
           </div>
         ));
       }
@@ -552,13 +576,13 @@ export default defineComponent({
             </div>
             {this.toolOperation.isDetailShow && (
               <div class='message-detail'>
-                <div class='message-copy' ref="refCopyMsgDiv" onClick={this.copyMessage}>
+                <div class='message-copy' ref="refCopyMsgDiv">
                   <CopyShape></CopyShape>
-                  <div class="copy-status" ref="refCopyStatus">
-                    <div class="inner">
-                      { renderIcon(this.copyStatus) }
-                      { this.copyStatus === 'success' ? this.t.copySuccess : this.t.copyFailed }
-                    </div>
+                </div>
+                <div class="copy-status" ref="refCopyStatus">
+                  <div class="inner">
+                    { renderIcon(this.copyStatus) }
+                    { this.copyStatus === 'success' ? this.t.copySuccess : this.t.copyFailed }
                   </div>
                 </div>
                 <div ref='refJsonContent' class="message-tree">{renderMsgDetail(this.message)}</div>

@@ -11,7 +11,6 @@
       :is-show="exampleSetting.dialog.isShow"
       :title="'描述'"
       :size="'medium'"
-      :quick-close="false"
       transfer="#dialog_container"
       @closed="() => exampleSetting.dialog.isShow = false"
       @confirm="() => exampleSetting.dialog.isShow = false"
@@ -29,7 +28,6 @@
 
     <bk-dialog
       :is-show="nestedDialog1.isShow"
-      :quick-close="false"
       transfer="#dialog_container"
       @closed="() => nestedDialog1.isShow = false"
       @confirm="() => nestedDialog1.isShow = false"
@@ -48,7 +46,6 @@
       </bk-button>
       <bk-dialog
         :is-show="nestedDialog3.isShow"
-        :quick-close="false"
         transfer="#dialog_container"
         @closed="() => nestedDialog3.isShow = false"
         @confirm="() => nestedDialog3.isShow = false"

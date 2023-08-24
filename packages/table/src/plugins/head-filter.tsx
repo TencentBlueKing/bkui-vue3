@@ -52,7 +52,7 @@ export default defineComponent({
     const t = useLocale('table');
     const { column } = props;
     const { filter } = toRefs(props.column);
-    const checked = ref((filter.value as IFilterShape)?.checked ?? []);
+    const checked = computed(() => (filter.value as IFilterShape)?.checked ?? []);
     const state = reactive({
       isOpen: false,
       checked: checked.value,

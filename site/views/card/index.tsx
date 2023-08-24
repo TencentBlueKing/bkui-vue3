@@ -110,23 +110,24 @@ export default defineComponent({
       <div>
         <DemoTitle
           name="Card"
-          desc="Card 卡片是一种容器，可以将信息聚合展示。" />
+          desc="Card 卡片是一种容器，可以将信息聚合展示。"
+          designLink="https://bkdesign.bk.tencent.com/design/38"/>
         <DemoBox
           title="基础用法"
           subtitle=""
           desc="通过配置footer插槽，自定义 Card 中底部内容 的展示。同理使用header插槽， 可自定义 Card 中顶部内容展示"
           componentName="card"
           demoName="card-demo">
-            <CardDemo />
+          <CardDemo />
         </DemoBox>
-          <DemoBox
+        <DemoBox
           title="编辑标题"
           subtitle=""
           desc="通过配置isEdit属性为true即可开启标题功能，enter或失焦保存"
           componentName="card"
           demoName="card-edit">
-            <CardEdit />
-          </DemoBox>
+          <CardEdit />
+        </DemoBox>
         <PropsBox propsData={menuPropsJson}/>
       </div>
     );

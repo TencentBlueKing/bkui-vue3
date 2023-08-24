@@ -121,7 +121,7 @@ export default class TableRender {
           class="table-head-settings"
           settings={this.reactiveProp.settings}
           columns={this.colgroups}
-          rowHeight={this.props.rowHeight}
+          rowHeight={this.props.rowHeight as unknown as number}
           onChange={handleSettingsChanged}/>
         : '',
       <table cellpadding={0} cellspacing={0}>
@@ -401,21 +401,22 @@ export default class TableRender {
         <TableRow>
           <tr>
             {
-              this.filterColGroups.map((column: Column, index: number) => (
-                <th
-                  colspan={1}
-                  rowspan={1}
-                  class={[
-                    this.getHeadColumnClass(column, index),
-                    this.getColumnCustomClass(column),
-                    column.align || this.props.headerAlign || this.props.align,
-                  ]}
-                  style={resolveFixedColumnStyle(column, this.styleRef.value.hasScrollY)}
-                  onClick={() => this.handleColumnHeadClick(index, column)}
-                  {...resolveEventListener(column)}>
-                  {renderHeadCell(column, index)}
-                </th>
-              ))
+              this.filterColGroups.map((column: Column, index: number) => {
+                console.log('getHeadColumnClass', column, index, this.getHeadColumnClass(column, index));
+                return <th
+                colspan={1}
+                rowspan={1}
+                class={[
+                  this.getHeadColumnClass(column, index),
+                  this.getColumnCustomClass(column),
+                  column.align || this.props.headerAlign || this.props.align,
+                ]}
+                style={resolveFixedColumnStyle(column, this.styleRef.value.hasScrollY)}
+                onClick={() => this.handleColumnHeadClick(index, column)}
+                {...resolveEventListener(column)}>
+                {renderHeadCell(column, index)}
+              </th>;
+              })
             }
             {getScrollFix()}
           </tr>
@@ -577,12 +578,13 @@ export default class TableRender {
     }
   }
 
-  private getColumnClass = (column: Column, colIndex: number) => ([{
+  private getColumnClass = (column: Column, colIndex: number) => ({
     [`${this.uuid}-column-${colIndex}`]: true,
     column_fixed: !!column.fixed,
     column_fixed_left: !!column.fixed,
     column_fixed_right: column.fixed === 'right',
-  }, column.className]);
+    [`${column.className}`]: true,
+  });
 
   private getHeadColumnClass = (column: Column, colIndex: number) => ({
     ...this.getColumnClass(column, colIndex),
