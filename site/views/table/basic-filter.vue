@@ -2,6 +2,7 @@
   <div>
     <div class="cell">
       <span class="title">默认过滤</span>
+      <bk-button @click="handleClear">清理过滤条件</bk-button>
       <bk-table
         :columns="columns"
         :data="tableData"
@@ -64,6 +65,9 @@
       }, 1000);
     },
     methods: {
+      handleClear() {
+        this.columns[2].filter.checked.length = 0;
+      },
       handleSortBy(arg) {
         console.log('handleSortBy', arg);
       },

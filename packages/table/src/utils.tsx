@@ -511,7 +511,7 @@ export const getNextSortType = (sortType: string) => {
     [SORT_OPTION.DESC]: 2,
   };
 
-  if (sortType === undefined) {
+  if (steps[sortType] === undefined) {
     return SORT_OPTION.NULL;
   }
 

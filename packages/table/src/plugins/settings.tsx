@@ -45,7 +45,7 @@ export default defineComponent({
     // rowHeight: RowHeightFunctionNumberType.def(() => LINE_HEIGHT),
   },
   emits: ['change'],
-  setup(props, { emit }) {
+  setup(props, { emit, slots }) {
     const { resolveClassName } = usePrefix();
     const t = useLocale('table');
     const defaultSizeList: SizeItem[] = createDefaultSizeList(t);
@@ -211,6 +211,9 @@ export default defineComponent({
                   </div>)
                 }
               </BkCheckboxGroup>
+              {
+                slots.default?.()
+              }
               {
                 showLineHeight.value
                   ? <div class="setting-body-line-height">
