@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { computed, defineComponent, nextTick, reactive, ref, toRefs } from 'vue';
+import { computed, defineComponent, nextTick, reactive, ref, toRefs, watch } from 'vue';
 
 import BkCheckbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
@@ -53,10 +53,19 @@ export default defineComponent({
     const { column } = props;
     const { filter } = toRefs(props.column);
     const checked = computed(() => (filter.value as IFilterShape)?.checked ?? []);
+
     const state = reactive({
       isOpen: false,
       checked: checked.value,
     });
+
+    watch(() => filter.value, () => {
+      state.checked = checked.value;
+      // nextTick(() => {
+      //   handleBtnSaveClick();
+      // });
+    }, { immediate: true, deep: true });
+
 
     const headClass = computed(() => classes({
       [resolveClassName('table-head-action')]: true,
