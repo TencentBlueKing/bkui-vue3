@@ -51,6 +51,10 @@ const setMaskEvent = (mask, event, args?, content?, instanceId?) => {
   MaskEventMap.set(mask, maskEvent);
 };
 
+const setMaskEventIns = (mask, maskEvent) => {
+  MaskEventMap.set(mask, maskEvent);
+};
+
 class MaskQueueMaker {
   private timer = null;
   private store = [];
@@ -199,6 +203,17 @@ export class BkMaskManager {
     this.parentNode = parentNode || document;
     this.setMaskStyle(Object.assign({}, this.maskStyle, maskStyle));
     this.uniqueMaskAttrTag = this.getMaskAttrTag(maskAttrTag);
+  }
+
+  public destroyEvent(id) {
+    if (this.mask) {
+      const events = getMaskEvent(this.mask) || [];
+      const index = events.findIndex(evt => evt.instanceId === id);
+      if (index >= 0) {
+        events.splice(index, 1);
+        setMaskEventIns(this.mask, events);
+      }
+    }
   }
 
   /**
@@ -391,10 +406,9 @@ export class BkMaskManager {
 
     const events = getMaskEvent(this.mask);
     if (events.length) {
-      const { event } = events.pop();
+      const { event } = events.slice(-1)[0];
       if (typeof event === 'function') {
         event(e);
-        // Reflect.apply(event, this, [e, ...(args || [])]);
       }
     }
   }

@@ -5,7 +5,6 @@
       :columns="columns"
       :data="tableData"
       :pagination="pagination"
-      @column-sort="handleSortBy"
     />
   </div>
   <div class="cell">
@@ -14,7 +13,7 @@
       :columns="columns1"
       :data="tableData"
       :pagination="pagination"
-      @dblclick="handleDblClick"
+      @column-sort="handleSortBy"
     />
   </div>
 </template>
