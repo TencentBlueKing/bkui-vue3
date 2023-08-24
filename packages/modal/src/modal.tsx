@@ -93,7 +93,6 @@ export default defineComponent({
         if (val) {
           this.$nextTick(() => {
             // isShow初始化为true的时候，放在nextTick才能获取$el
-            // this.bkPopIndexManager.onMaskClick(, this.$el);
             const hideMaskStyle = {
               'background-color': 'rgba(0,0,0,0)',
             };
@@ -111,15 +110,13 @@ export default defineComponent({
             this.$emit('shown');
           });
         } else {
+          this.bkPopIndexManager?.removeLastEvent();
           this.bkPopIndexManager?.hide(this.$el, !!this.transfer);
           this.bkPopIndexManager?.destroy();
         }
       },
       immediate: true,
     },
-  },
-  created() {
-    // this.bkPopIndexManager = new BKPopIndexManager({ ...this.$props });
   },
   mounted() {
     const popConfig = {

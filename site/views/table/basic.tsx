@@ -318,7 +318,7 @@ export default defineComponent({
           },
         ]}
         onColumnSort={data => console.log(data)}
-      />
+      ></Table>
     );
   },
 });

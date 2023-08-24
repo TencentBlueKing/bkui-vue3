@@ -122,7 +122,7 @@ export default class TableRender {
           settings={this.reactiveProp.settings}
           columns={this.colgroups}
           rowHeight={this.props.rowHeight as unknown as number}
-          onChange={handleSettingsChanged}/>
+          onChange={handleSettingsChanged}>{ this.context.slots.setting?.() }</Settings>
         : '',
       <table cellpadding={0} cellspacing={0}>
         {this.renderColGroup()}
@@ -401,9 +401,7 @@ export default class TableRender {
         <TableRow>
           <tr>
             {
-              this.filterColGroups.map((column: Column, index: number) => {
-                console.log('getHeadColumnClass', column, index, this.getHeadColumnClass(column, index));
-                return <th
+              this.filterColGroups.map((column: Column, index: number) => <th
                 colspan={1}
                 rowspan={1}
                 class={[
@@ -415,8 +413,7 @@ export default class TableRender {
                 onClick={() => this.handleColumnHeadClick(index, column)}
                 {...resolveEventListener(column)}>
                 {renderHeadCell(column, index)}
-              </th>;
-              })
+              </th>)
             }
             {getScrollFix()}
           </tr>
