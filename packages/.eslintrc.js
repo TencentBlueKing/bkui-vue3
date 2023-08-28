@@ -38,7 +38,7 @@ module.exports = {
     project: 'tsconfig.json',
   },
   plugins: [
-    // 'codecc',
+    'codecc',
     'simple-import-sort',
   ],
   env: {
