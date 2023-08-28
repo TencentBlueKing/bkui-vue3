@@ -5809,6 +5809,13 @@ eslint-plugin-codecc@~0.2.0:
   resolved "https://registry.yarnpkg.com/eslint-plugin-codecc/-/eslint-plugin-codecc-0.2.0.tgz#a5cc642a23338c2f363c71f48cae2891cb5535f7"
   integrity sha512-7Dd5Z8p5bNSBM8vvVQxWvcmUJPFIXsgfK9s2WrOq6TKGELzsBACBCThpSXC427loy/3I5xTsRRy89jTlnFz5Hw==
 
+eslint-plugin-codecc@~0.3.0:
+  version "0.3.0"
+  resolved "https://mirrors.tencent.com/npm/eslint-plugin-codecc/-/eslint-plugin-codecc-0.3.0.tgz#4293f0ae45e9e9cada37f43f4c4589709d69ef47"
+  integrity sha512-JTMdeWbdTN0KF4ZOv3Rc60rUWGt9U5CcYHBwQn25upAo5MMxdMihuwtX2osnOj3fByb0TbrqHAoTDpA4q5umRQ==
+  dependencies:
+    eslint-utils "^3.0.0"
+
 eslint-plugin-es@^3.0.0:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/eslint-plugin-es/-/eslint-plugin-es-3.0.1.tgz#75a7cdfdccddc0589934aeeb384175f221c57893"
