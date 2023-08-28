@@ -22,31 +22,45 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { isElement } from './helper';
 import { BkMaskManager } from './mask-manager';
 import { random } from './utils';
 import { bkZIndexManager } from './z-index-manager';
 
+const popInstanceStore = new WeakMap();
+
 export class BKPopIndexManager {
   /** 用来缓存弹出层实例 */
-  private popInstanceList: Array<any>;
   private readonly uuidAttrName: string;
-  private clickFn?: { fn: (e: MouseEvent) => void, target: HTMLElement };
+  private clickFn?: { fn: (e: MouseEvent) => void; target: HTMLElement };
   private bKMaskManagerInstance: BkMaskManager;
-  // private instanceUUID;
+  private transfer: HTMLElement;
+  private uniqId: string;
 
   constructor(options?) {
-    this.popInstanceList = [];
     this.clickFn = undefined;
-    // this.instanceUUID = random(8);
     this.uuidAttrName = 'data-bk-pop-uuid';
+
+    this.uniqId = random(16);
+    this.transfer = this.getParentNode(options?.transfer);
     this.bKMaskManagerInstance = new BkMaskManager({
       parentNode: this.getParentNode(options?.transfer),
       popInstance: this,
       onClick: this.onMaskClickFn,
     });
+  }
+
+  get popInstanceList(): any[] {
+    if (!popInstanceStore.has(this.transfer)) {
+      popInstanceStore.set(this.transfer, []);
+    }
+    return popInstanceStore.get(this.transfer);
+  }
+
+  set popInstanceList(val) {
+    popInstanceStore.set(this.transfer, val);
   }
 
   public getParentNode(transfer) {
@@ -76,17 +90,37 @@ export class BKPopIndexManager {
    * @param transfer 是否显示在body内（即是否显示在div#app内，默认为false）
    * @returns
    */
-  public show(content?: HTMLElement, showMask = true, appendStyle = {}, transfer = false, zindex = undefined) {
+  public show(
+    content?: HTMLElement,
+    showMask = true,
+    appendStyle = {},
+    transfer = false,
+    zindex = undefined,
+    onMaskClick?,
+  ) {
     if (!content) {
       console.warn('pop show error: content is null or undefined');
       return;
     }
-    const zIndex = typeof zindex === 'number' ? zindex : bkZIndexManager.getModalNextIndex();
+    const zIndex =      typeof zindex === 'number' ? zindex : bkZIndexManager.getModalNextIndex();
     const uuid = random(16);
     content.setAttribute(this.uuidAttrName, uuid);
+    if (this.popInstanceList.length > 0) {
+      showMask
+        && this.bKMaskManagerInstance.backupContentElement(this.popInstanceList.slice(-1)[0].content);
+    }
+
     this.popInstanceList.push({ uuid, zIndex, content, showMask, appendStyle });
-    showMask && this.bKMaskManagerInstance.backupActiveInstance();
-    this.bKMaskManagerInstance.show(content, zIndex, showMask, appendStyle, uuid, transfer);
+    this.bKMaskManagerInstance.show(
+      content,
+      zIndex,
+      showMask,
+      appendStyle,
+      uuid,
+      transfer,
+      onMaskClick,
+      this.uniqId,
+    );
   }
 
   /**
@@ -114,7 +148,13 @@ export class BKPopIndexManager {
       if (this.popInstanceList.length) {
         const activeItem = this.popInstanceList.slice(-1)[0];
         const { zIndex, content, showMask, appendStyle, uuid } = activeItem;
-        this.bKMaskManagerInstance.show(content, zIndex, showMask, appendStyle, uuid);
+        this.bKMaskManagerInstance.show(
+          content,
+          zIndex,
+          showMask,
+          appendStyle,
+          uuid,
+        );
       } else {
         this.bKMaskManagerInstance.hide();
         // this.clickFn.length = 0;
@@ -144,6 +184,12 @@ export class BKPopIndexManager {
     } else {
       content?.remove();
     }
+
+    this.bKMaskManagerInstance.removeClickEvent();
+  }
+
+  public removeLastEvent() {
+    this.bKMaskManagerInstance.destroyEvent(this.uniqId);
   }
 
   private onMaskClickFn(e: MouseEvent) {

@@ -79,7 +79,7 @@ export default defineComponent({
 
       // 显示文本则size无效，使用固定尺寸
       if (props.size && !props.showText) {
-        const sizeStr = `${resolveClassName(`bswitcher-${props.size}`)}`;
+        const sizeStr = `${resolveClassName(`switcher-${props.size}`)}`;
         cls[sizeStr] = true;
       }
       return cls;

@@ -48,6 +48,7 @@ import {
   COLUMN_ATTRIBUTE,
   PROVIDE_KEY_INIT_COL,
   PROVIDE_KEY_TB_CACHE,
+  SCROLLY_WIDTH,
   TABLE_ROW_ATTRIBUTE,
 } from './const';
 import { EMIT_EVENT_TYPES, EMIT_EVENTS, EVENTS } from './events';
@@ -110,8 +111,6 @@ export default defineComponent({
       contentStyle,
       headStyle,
       hasScrollYRef,
-      offsetXVarStyle,
-      headOffsetXVarStyle,
       updateBorderClass,
       resetTableHeight,
       getColumnsWidthOffsetWidth,
@@ -250,7 +249,7 @@ export default defineComponent({
             return;
           }
           if (props.height === '100%' || props.height === 'auto') {
-            // resetTableHeight(root.value);
+            resetTableHeight(root.value);
           }
 
           updateBorderClass(root.value);
@@ -325,6 +324,11 @@ export default defineComponent({
       '--footer-height': hasFooter.value ? `${props.paginationHeight}px` : '0',
     }));
 
+    const fixedContainerStyle = computed(() => ({
+      right: hasScrollYRef.value ? `${SCROLLY_WIDTH}px` : 0,
+      ...footerStyle.value,
+    }));
+
     const { renderScrollLoading } = useScrollLoading(props, ctx);
     const scrollClass = computed(() => (props.virtualEnabled ? {} : { scrollXName: '', scrollYName: '' }));
 
@@ -335,20 +339,6 @@ export default defineComponent({
       zIndex: 2,
       ...(props.prependStyle || {}),
     }));
-
-    const renderFixedColumns = () => fixedColumns.value
-      .map(({ isExist, colPos, column }) => (isExist ? '' : <div
-      class={resolveColumnClass(column, reactiveSchema.scrollTranslateX, tableOffsetRight.value)}
-      style={resolveColumnStyle(colPos)}></div>));
-
-    const renderBodyAppend = () => <>
-      <div class={fixedBottomBorder.value}></div>
-      <div class={fixedWrapperClass} style={ offsetXVarStyle.value }>
-        { renderFixedColumns() }
-        <div class={resizeColumnClass} style={resizeColumnStyle.value}></div>
-        <div class={loadingRowClass}>{ renderScrollLoading() }</div>
-      </div>
-    </>;
 
     const renderPrepend = () => {
       if (ctx.slots.prepend) {
@@ -364,10 +354,7 @@ export default defineComponent({
           // @ts-ignore:next-line
           <div class={headClass} style={headStyle.value}>
             {
-              [
-                tableRender.renderTableHeadSchema(),
-                <div class={fixedWrapperClass} style={ headOffsetXVarStyle.value }>{ renderFixedColumns() }</div>,
-              ]
+              tableRender.renderTableHeadSchema()
             }
           </div>
         }
@@ -389,10 +376,23 @@ export default defineComponent({
             {
               beforeContent: () => renderPrepend(),
               default: (scope: any) => tableRender.renderTableBodySchema(scope.data || pageData),
-              afterSection: () => renderBodyAppend(),
+              afterSection: () => <div class={fixedBottomBorder.value}></div>,
             }
           }
         </VirtualRender>
+        {/* @ts-ignore:next-line */}
+        <div class={fixedWrapperClass} style={fixedContainerStyle.value}>
+          {
+            fixedColumns.value
+              .map(({ isExist, colPos, column }) => (isExist ? '' : <div
+                class={resolveColumnClass(column, reactiveSchema.scrollTranslateX, tableOffsetRight.value)}
+                style={resolveColumnStyle(colPos)}></div>))
+          }
+          <div class={resizeColumnClass} style={resizeColumnStyle.value}></div>
+          <div class={loadingRowClass}>{
+            renderScrollLoading()
+          }</div>
+        </div>
         {/* @ts-ignore:next-line */}
         <div class={footerClass.value} style={footerStyle.value}>
           {

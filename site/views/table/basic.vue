@@ -12,7 +12,12 @@
       @cell-dblclick="handleCellDblclick"
       @row-mouse-enter="handleMouseEnter"
       @row-mouse-leave="handleMouseLeave"
-    />
+    >
+    <template #setting>
+      <h1>Setting Content Slot</h1>
+    </template>
+    </bk-table>
+
   </div>
 </template>
 

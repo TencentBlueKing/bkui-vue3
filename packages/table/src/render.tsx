@@ -122,7 +122,7 @@ export default class TableRender {
           settings={this.reactiveProp.settings}
           columns={this.colgroups}
           rowHeight={this.props.rowHeight as unknown as number}
-          onChange={handleSettingsChanged}/>
+          onChange={handleSettingsChanged}>{ this.context.slots.setting?.() }</Settings>
         : '',
       <table cellpadding={0} cellspacing={0}>
         {this.renderColGroup()}
@@ -401,21 +401,19 @@ export default class TableRender {
         <TableRow>
           <tr>
             {
-              this.filterColGroups.map((column: Column, index: number) => (
-                <th
-                  colspan={1}
-                  rowspan={1}
-                  class={[
-                    this.getHeadColumnClass(column, index),
-                    this.getColumnCustomClass(column),
-                    column.align || this.props.headerAlign || this.props.align,
-                  ]}
-                  style={resolveFixedColumnStyle(column, this.styleRef.value.hasScrollY)}
-                  onClick={() => this.handleColumnHeadClick(index, column)}
-                  {...resolveEventListener(column)}>
-                  {renderHeadCell(column, index)}
-                </th>
-              ))
+              this.filterColGroups.map((column: Column, index: number) => <th
+                colspan={1}
+                rowspan={1}
+                class={[
+                  this.getHeadColumnClass(column, index),
+                  this.getColumnCustomClass(column),
+                  column.align || this.props.headerAlign || this.props.align,
+                ]}
+                style={resolveFixedColumnStyle(column, this.styleRef.value.hasScrollY)}
+                onClick={() => this.handleColumnHeadClick(index, column)}
+                {...resolveEventListener(column)}>
+                {renderHeadCell(column, index)}
+              </th>)
             }
             {getScrollFix()}
           </tr>
@@ -577,12 +575,13 @@ export default class TableRender {
     }
   }
 
-  private getColumnClass = (column: Column, colIndex: number) => ([{
+  private getColumnClass = (column: Column, colIndex: number) => ({
     [`${this.uuid}-column-${colIndex}`]: true,
     column_fixed: !!column.fixed,
     column_fixed_left: !!column.fixed,
     column_fixed_right: column.fixed === 'right',
-  }, column.className]);
+    [`${column.className}`]: true,
+  });
 
   private getHeadColumnClass = (column: Column, colIndex: number) => ({
     ...this.getColumnClass(column, colIndex),

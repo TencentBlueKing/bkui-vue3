@@ -57,51 +57,51 @@ function rmDir(dirPath: string) {
   }
 }
 export const buildDistScript = async () => await Promise.all([
-  build({
-    resolve: {
-      alias: [
-        {
-          find: /^@bkui-vue\/(icon\/)/,
-          replacement: resolve(COMPONENT_URL, './$1'),
-        },
-        {
-          find: /^@bkui-vue\/([^/]*)/,
-          replacement: resolve(COMPONENT_URL, './$1/src'),
-        },
-      ],
-    },
-    plugins: [vueJsx(), vue()],
-    build: {
-      outDir: DIST_URL,
-      minify: false,
-      lib: {
-        entry,
-        name: 'bkuiVue',
-        fileName: format => `index.${format}.source.js`,
-      },
-      rollupOptions: {
-        external: ['vue'],
-        output: [
-          {
-            format: 'cjs',
-            exports: 'named',
-          },
-          {
-            format: 'esm',
-            exports: 'named',
-          },
-          {
-            globals: {
-              vue: 'Vue',
-            },
-            exports: 'named',
-            format: 'umd',
-            name: 'bkuiVue',
-          },
-        ],
-      },
-    },
-  }),
+  // build({
+  //   resolve: {
+  //     alias: [
+  //       {
+  //         find: /^@bkui-vue\/(icon\/)/,
+  //         replacement: resolve(COMPONENT_URL, './$1'),
+  //       },
+  //       {
+  //         find: /^@bkui-vue\/([^/]*)/,
+  //         replacement: resolve(COMPONENT_URL, './$1/src'),
+  //       },
+  //     ],
+  //   },
+  //   plugins: [vueJsx(), vue()],
+  //   build: {
+  //     outDir: DIST_URL,
+  //     minify: false,
+  //     lib: {
+  //       entry,
+  //       name: 'bkuiVue',
+  //       fileName: format => `index.${format}.source.js`,
+  //     },
+  //     rollupOptions: {
+  //       external: ['vue'],
+  //       output: [
+  //         {
+  //           format: 'cjs',
+  //           exports: 'named',
+  //         },
+  //         {
+  //           format: 'esm',
+  //           exports: 'named',
+  //         },
+  //         {
+  //           globals: {
+  //             vue: 'Vue',
+  //           },
+  //           exports: 'named',
+  //           format: 'umd',
+  //           name: 'bkuiVue',
+  //         },
+  //       ],
+  //     },
+  //   },
+  // }),
   build({
     resolve: {
       alias: [

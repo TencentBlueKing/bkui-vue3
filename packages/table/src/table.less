@@ -49,7 +49,7 @@
           tr {
             &:nth-child(even) {
               td {
-                background-color: #fafbfd;
+                background-color: #FAFBFD;
               }
             }
 
@@ -98,11 +98,11 @@
       align-items: center;
 
       .@{bk-prefix}-table-body-content {
-        position: relative;
         display: flex;
         width: 100%;
         height: 100%;
         padding-bottom: 20px;
+        position: relative;
       }
 
     }
@@ -118,6 +118,7 @@
         height: var(--row-height);
         min-width: 30px;
         clear: both;
+        background-color: #fff;
 
         &.expand-row {
           .expand-btn-action {
@@ -236,8 +237,6 @@
       tbody {
         tr {
           td {
-            background-color: #fff;
-
             &.empty-cell {
               padding-bottom: 30px;
             }
@@ -298,16 +297,6 @@
         display: flex;
         width: 1rem;
         height: 1rem;
-      }
-    }
-
-    .@{bk-prefix}-table-fixed {
-      .column_fixed {
-        &.column_fixed_right {
-          &.shadow {
-            box-shadow: -2px 2px 10px 0px rgba(0, 0, 0, .12);
-          }
-        }
       }
     }
   }
@@ -390,14 +379,13 @@
     position: absolute;
     top: 0;
     right: 0;
-    bottom: 0;
+    bottom: var(--footer-height);
     left: 0;
     // width: 100%;
     pointer-events: none;
 
     .column_fixed {
       position: absolute;
-      transform: translate(var(--var-scroll-left),  var(--var-scroll-top));
 
       &.column_fixed_left {
         top: 0;
@@ -450,6 +438,6 @@
   }
 
   .stripe-row {
-    background: #fafbfd;
+    background: #FAFBFD;
   }
 }
