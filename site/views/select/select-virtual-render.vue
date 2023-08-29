@@ -9,6 +9,7 @@
       multiple
       :input-search="false"
       multiple-mode="tag"
+      show-select-all
     />
 
     <bk-select
