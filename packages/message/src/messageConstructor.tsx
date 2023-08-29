@@ -42,7 +42,7 @@ import {
   Info,
   Success,
   Warn,
-  WeixinPro } from '@bkui-vue/icon';
+} from '@bkui-vue/icon';
 import { bkZIndexManager, isElement, PropTypes } from '@bkui-vue/shared';
 
 enum MessageThemeEnum {

@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
-import { computed, defineComponent, ref, watch, watchEffect } from 'vue';
+import { computed, defineComponent, ref, watch } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import VirtualRender from '@bkui-vue/virtual-render';
@@ -101,7 +101,7 @@ export default defineComponent({
     } = useNodeAction(props, ctx, flatData, renderData, schemaValues, { registerNextLoop });
 
     const root = ref();
-    const isScrolling = ref(false);
+    // const isScrolling = ref(false);
 
     /**
      * 设置指定节点是否选中
@@ -137,10 +137,10 @@ export default defineComponent({
     };
 
     const getData = () => flatData;
-    const treeScroll: {
-      scrollLeft?: number,
-      scrollTop?: number
-    } = {};
+    // const treeScroll: {
+    //   scrollLeft?: number,
+    //   scrollTop?: number
+    // } = {};
 
 
     ctx.expose({
@@ -171,13 +171,13 @@ export default defineComponent({
     };
 
     const { resolveClassName } = usePrefix();
-    const handleContentScroll = (args) => {
-      if (isScrolling.value) {
-        return;
-      }
-      Object.assign(treeScroll, args[1] || {});
-      console.log('handleContentScroll', treeScroll);
-    };
+    // const handleContentScroll = (args) => {
+    //   if (isScrolling.value) {
+    //     return;
+    //   }
+    //   Object.assign(treeScroll, args[1] || {});
+    //   console.log('handleContentScroll', treeScroll);
+    // };
 
     return () => (
       <VirtualRender class={resolveClassName('tree')}
