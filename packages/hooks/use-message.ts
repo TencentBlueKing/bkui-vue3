@@ -66,9 +66,30 @@ const Message = (constructor: any, options: any) => {
   const container = document.createElement('div');
   const vm = createVNode(constructor, opts);
 
+  // const updateModalPosition = () => {
+  //   let offsetTop = 30;
+  //   instances[position].forEach((vm) => {
+  //     offsetTop += (vm.el.offsetHeight || 0) + spacing;
+  //     vm.props.offsetY = offsetTop;
+  //   });
+  // };
+
   vm.props.onDestroy = (id: string) => {
     close(id, position, spacing, userOnClose);
     render(null, container);
+  };
+
+  vm.props.onDetail = (_isShow: boolean, id: string) => {
+    instances[position].forEach((item) => {
+      if (item.props.id !== id) {
+        item.component?.exposed?.setDetailsShow(null, false);
+      }
+    });
+
+    // setTimeout(() => {
+    //   console.log('updateModalPosition');
+    //   updateModalPosition();
+    // });
   };
 
   render(vm, container);

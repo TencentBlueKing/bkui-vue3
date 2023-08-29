@@ -44,6 +44,7 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
   const { resolveClassName } = usePrefix();
   const isNeedCheckDraggable = computed(() => typeof props.disableDrag === 'function');
   const isNeedCheckDroppable = computed(() => typeof props.disableDrop === 'function');
+  let dragNodeId = '';
   const getTargetTreeNode = (e: MouseEvent) => {
     const target = (e.target as HTMLElement);
     return target.closest('[data-tree-node]') as HTMLElement;
@@ -82,7 +83,9 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
       return;
     }
     targetNode.classList.add(`${resolveClassName('tree-drop-active')}`);
-    const sourceNodeId = e.dataTransfer.getData('node-id');
+    let sourceNodeId = e.dataTransfer.getData('node-id');
+    sourceNodeId = dragNodeId;
+
     const targetNodeId = targetNode.getAttribute('data-tree-node');
 
     const transferEffect = isNodeSortable(sourceNodeId, targetNodeId) ? 'move' : 'none';
@@ -95,7 +98,9 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
     e.dataTransfer.dropEffect = 'move';
     const targetNode = getTargetTreeNode(e);
     e.dataTransfer.setData('text/plain', '');
-    e.dataTransfer.setData('node-id', targetNode.getAttribute('data-tree-node'));
+    const nodeId = targetNode.getAttribute('data-tree-node');
+    dragNodeId = nodeId;
+    e.dataTransfer.setData('node-id', nodeId);
     ctx.emit(EVENTS.NODE_DRAG_START, e, targetNode);
   };
 
@@ -109,9 +114,8 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
     if (isNeedCheckDroppable.value && props.disableDrop(data)) {
       return;
     }
-    const sourceNodeId = e.dataTransfer.getData('node-id');
+    const sourceNodeId = dragNodeId; // e.dataTransfer.getData('node-id');
     const targetNodeId = targetNode.getAttribute('data-tree-node');
-
     Reflect.apply(props.dragSort ? dragSortData : dragAsChildNode, this, [sourceNodeId, targetNodeId]);
     ctx.emit(EVENTS.NODE_DROP, e, targetNode, data);
   };

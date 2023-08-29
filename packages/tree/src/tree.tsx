@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
-import { computed, defineComponent, ref, watch } from 'vue';
+import { computed, defineComponent, ref, watch, watchEffect } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import VirtualRender from '@bkui-vue/virtual-render';
@@ -100,6 +100,9 @@ export default defineComponent({
       asyncNodeClick,
     } = useNodeAction(props, ctx, flatData, renderData, schemaValues, { registerNextLoop });
 
+    const root = ref();
+    const isScrolling = ref(false);
+
     /**
      * 设置指定节点是否选中
      * @param item Node item | Node Id
@@ -111,9 +114,34 @@ export default defineComponent({
 
     onSelected((newData: any) => {
       setSelect(newData, true, props.autoOpenParentNode);
+      scrollRending();
     });
 
+    const scrollRending = () => {
+      // isScrolling.value = true;
+      // // root.value.scrollTo({
+      // //   left: 0,
+      // //   top: 0,
+      // // });
+
+      // setTimeout(() => {
+      //   // root.value.scrollTo({
+      //   //   left: treeScroll?.scrollLeft,
+      //   //   top: treeScroll?.scrollTop,
+      //   // });
+
+      //   setTimeout(() => {
+      //     isScrolling.value = false;
+      //   });
+      // });
+    };
+
     const getData = () => flatData;
+    const treeScroll: {
+      scrollLeft?: number,
+      scrollTop?: number
+    } = {};
+
 
     ctx.expose({
       handleTreeNodeClick,
@@ -131,7 +159,6 @@ export default defineComponent({
       getData,
     });
 
-    const root = ref();
     const { renderEmpty } = useEmpty(props, ctx);
     useNodeDrag(props, ctx, root, flatData);
     const renderTreeContent = (scopedData: any[]) => {
@@ -144,6 +171,13 @@ export default defineComponent({
     };
 
     const { resolveClassName } = usePrefix();
+    const handleContentScroll = (args) => {
+      if (isScrolling.value) {
+        return;
+      }
+      Object.assign(treeScroll, args[1] || {});
+      console.log('handleContentScroll', treeScroll);
+    };
 
     return () => (
       <VirtualRender class={resolveClassName('tree')}
@@ -151,6 +185,8 @@ export default defineComponent({
         list={renderData.value}
         lineHeight={props.lineHeight}
         enabled={props.virtualRender}
+        rowKey={NODE_ATTRIBUTES.UUID}
+        keepAlive={true}
         contentClassName={resolveClassName('container')}
         throttleDelay={0}
         ref={root}>
