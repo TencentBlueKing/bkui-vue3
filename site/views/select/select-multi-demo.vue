@@ -8,8 +8,8 @@
     >
       <bk-option
         v-for="(item, index) in datasource"
-        :key="index"
         :id="item.value"
+        :key="index"
         :name="item.label"
       />
     </bk-select>
@@ -21,8 +21,8 @@
     >
       <bk-option
         v-for="(item, index) in datasource"
-        :key="index"
         :id="item.value"
+        :key="index"
         :name="item.label"
         :disabled="item.disabled"
       />
@@ -37,31 +37,25 @@
     >
       <bk-option
         v-for="(item, index) in datasource"
-        :key="index"
         :id="item.value"
+        :key="index"
         :name="item.label"
       />
     </bk-select>
     <bk-select
-      v-model="selectedValue"
+      v-model="listValue"
       class="bk-select"
       filterable
       multiple
       show-select-all
       multiple-mode="tag"
       collapse-tags
-    >
-      <bk-option
-        v-for="(item, index) in datasource"
-        :key="index"
-        :id="item.value"
-        :name="item.label"
-      />
-    </bk-select>
+      :list="datasourceList"
+    />
   </div>
 </template>
 <script setup>
-  import { ref } from 'vue';
+  import { onBeforeMount, ref } from 'vue';
   const datasource = ref([
     {
       value: 'climbing',
@@ -94,6 +88,19 @@
     },
   ]);
   const selectedValue = ref(['dancing', 'bike']);
+
+  const listValue = ref([1, 2, 3, 4, 5, 6, 7, 8]);
+  const datasourceList = ref([]);
+
+  onBeforeMount(() => {
+    new Array(100).fill(0)
+      .forEach((item, index) => {
+        datasourceList.value.push({
+          value: index,
+          label: `list-${index}`,
+        });
+      });
+  });
 </script>
 <style scoped>
 .demo {
