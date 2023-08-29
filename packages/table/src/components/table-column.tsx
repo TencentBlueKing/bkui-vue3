@@ -140,7 +140,7 @@ export default defineComponent({
         field: this.$props.prop || this.$props.field,
         render: this.$slots.default,
       };
-      this.initColumns(unref(resolveProp) as Column, unmounted);
+      this.initColumns(unref(resolveProp) as unknown as Column, unmounted);
     },
   },
   render() {

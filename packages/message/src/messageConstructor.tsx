@@ -26,7 +26,7 @@
 
 import ClipboardJS from 'clipboard';
 import JSONFormatter from 'json-formatter-js';
-import { computed, defineComponent, isVNode, onMounted, onUnmounted, reactive, ref, Transition, VNode, watch } from 'vue';
+import { computed, defineComponent, isVNode, onMounted, onUnmounted, reactive, ref, StyleValue, Transition, VNode, watch } from 'vue';
 import { toType } from 'vue-types';
 
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
@@ -626,7 +626,7 @@ export default defineComponent({
         <div
           v-show={this.visible}
           class={this.classNames}
-          style={this.styles}
+          style={this.styles as StyleValue}
           onMouseenter={this.handleMouseenter}
           onMouseleave={this.handleMouseleave}
         >
