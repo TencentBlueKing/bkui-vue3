@@ -266,7 +266,7 @@ export default defineComponent({
 
       state.isEdit = true;
 
-      nextTick(() => {
+      setTimeout(() => {
         tagInputRef.value?.focus();
         if (props.trigger === 'focus' && listState.localList.length !== 0) {
           filterData();
@@ -276,7 +276,7 @@ export default defineComponent({
             popoverProps.isShow = true;
           }
         }
-      });
+      }, 200);
     };
 
     /**
