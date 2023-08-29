@@ -217,7 +217,7 @@ export type Field = {
   name?: string;
 };
 
-export type LabelFunctionString = (_column, _index) => string | string;
+export type LabelFunctionString = ((_column, _index) => string | JSX.Element) | string;
 export const LabelFunctionStringType = toType<LabelFunctionString>(
   'LabelFunctionStringType',
   {},
@@ -230,7 +230,7 @@ export type RenderFunctionString = ({
   column,
   index,
   rows,
-}) => any;
+}) => string | JSX.Element;
 export const RenderFunctionStringType = toType<RenderFunctionString>(
   'RenderFunctionStringType',
   {},
@@ -247,18 +247,18 @@ export const SpanFunctionStringType = toType<SpanFunctionString>(
   {},
 );
 
-export type RowClassFunctionString = (row: any) => string | string;
+export type RowClassFunctionString = ((row: any) => string) | string;
 export const RowClassFunctionStringType = toType<RowClassFunctionString>(
   'RowClassFunctionStringType',
   {},
 );
 
-export type RowHeightFunctionNumber = (
+export type RowHeightFunctionNumber = ((
   _type: string,
   _row: any,
   _rowIndex: number,
   _size?
-) => number | number;
+) => number) | number;
 export const RowHeightFunctionNumberType = toType<RowHeightFunctionNumber>(
   'RowHeightFunctionNumberType',
   {},

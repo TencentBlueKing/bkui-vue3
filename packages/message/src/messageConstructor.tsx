@@ -33,6 +33,7 @@ import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import {
   AngleDoubleDownLine,
   AngleDoubleUpLine,
+  Assistant,
   Close,
   CopyShape,
   Error,
@@ -41,7 +42,6 @@ import {
   Info,
   Success,
   Warn,
-  WeixinPro,
 } from '@bkui-vue/icon';
 import { bkZIndexManager, isElement, PropTypes } from '@bkui-vue/shared';
 
@@ -178,14 +178,16 @@ const messageProps = {
   onClose: PropTypes.func,
   getContainer: PropTypes.instanceOf(HTMLElement),
   width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  minWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(100),
+  maxWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def('100%'),
   actions: toType<IMessageActions>('IMessageAction', {}),
 };
 
 export default defineComponent({
   name: 'Message',
   props: messageProps,
-  emits: ['destroy'],
-  setup(props, { emit, slots }) {
+  emits: ['destroy', 'detail'],
+  setup(props, { emit, slots, expose }) {
     const t = useLocale('message');
     const { resolveClassName } = usePrefix();
     const classNames = computed(() => [`${resolveClassName('message')}`, `${resolveClassName(`message-${props.theme}`)}`, `${props.extCls}`]);
@@ -209,25 +211,35 @@ export default defineComponent({
       return singleLineDelay;
     });
 
+    const getPropNumberAsStringValue = key => (typeof props[key] === 'number' ? `${props[key]}px` : props[key]);
+
     const contentWidth = computed(() => {
+      const isAdvance = typeof props.message === 'object' && !isVNode(props.message);
+      if (/%$/.test(`${props.width}`) || /auto/ig.test(`${props.width}`)) {
+        return {
+          width: props.width,
+          maxWidth: getPropNumberAsStringValue('maxWidth'),
+          minWidth: getPropNumberAsStringValue('minWidth'),
+        };
+      }
+
       if (/^\d+/.test(`${props.width}`)) {
         return /^\d+\.?\d*$/.test(`${props.width}`) ? `${props.width}px` : props.width;
       }
 
-      if (typeof props.message === 'object' && !isVNode(props.message)) {
-        return `${advanceWidth}px`;
+      if (isAdvance) {
+        return { width: `${advanceWidth}px` };
       }
 
-      return `${singleLineWidth}px`;
+      return { width: `${singleLineWidth}px` };
     });
 
     const isGetContainer = computed<boolean>(() => props.getContainer && isElement(props.getContainer));
-    const styles = computed(() => ({
+    const styles = computed(() => Object.assign({
       top: `${props.offsetY}px`,
       zIndex,
       position: (isGetContainer.value ? 'absolute' : 'fixed') as 'absolute' | 'fixed',
-      width: contentWidth.value,
-    }));
+    }, contentWidth.value));
 
     const refJsonContent = ref(null);
     const refCopyStatus = ref(null);
@@ -343,6 +355,8 @@ export default defineComponent({
             copyValueItem();
           });
         }
+
+        emit('detail', toolOperation.isDetailShow, props.id);
       }
     };
 
@@ -382,7 +396,7 @@ export default defineComponent({
     const defActionList = computed(() => ({
       [IMessageActionType.ASSISTANT]: {
         id: IMessageActionType.ASSISTANT,
-        icon: () => <WeixinPro></WeixinPro>,
+        icon: () => <Assistant></Assistant>,
         text: () => t.value.assistant,
         onClick: (e: MouseEvent) => handleHeplerClick(e),
       },
@@ -513,6 +527,10 @@ export default defineComponent({
 
       return slots.action?.() ?? renderActionList();
     };
+
+    expose({
+      setDetailsShow,
+    });
 
     return {
       classNames,

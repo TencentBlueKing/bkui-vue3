@@ -39,6 +39,7 @@ export { default as AngleUp } from '../icons/angle-up';
 export { default as ArchiveFill } from '../icons/archive-fill';
 export { default as ArrowsLeft } from '../icons/arrows-left';
 export { default as ArrowsRight } from '../icons/arrows-right';
+export { default as Assistant } from '../icons/assistant';
 export { default as AudioFill } from '../icons/audio-fill';
 export { default as Bk } from '../icons/bk';
 export { default as Circle } from '../icons/circle';

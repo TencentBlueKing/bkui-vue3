@@ -133,6 +133,11 @@ export const virtualRenderProps = {
    */
   keepAlive: PropTypes.bool.def(false),
 
+  /**
+   * 数据监听改变时，是否自动重置位置到[0, 0]
+   */
+  autoReset: PropTypes.bool.def(true),
+
   ...EventProps,
 };
 

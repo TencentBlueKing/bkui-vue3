@@ -109,13 +109,19 @@ export default (flatData, props?: TreePropTypes) => {
      * @param path
      * @returns
      */
-  const getSourceNodeByPath = (path: string) => {
+  const getSourceNodeByPath = (path: string, uid?: string) => {
     const paths = path.split('-');
 
-    return  paths.reduce((pre: any, nodeIndex: string) => {
+    const target =  paths.reduce((pre: any, nodeIndex: string) => {
       const index = Number(nodeIndex);
       return  Array.isArray(pre) ? pre[index] : pre[props.children][index];
     }, props.data);
+
+    if (uid) {
+      Object.assign(target, { [NODE_ATTRIBUTES.UUID]: uid });
+    }
+
+    return target;
   };
 
   const getChildNodes = (node: any) => {
@@ -127,7 +133,7 @@ export default (flatData, props?: TreePropTypes) => {
       );
   };
 
-  const getSourceNodeByUID = (uid: string) => getSourceNodeByPath(getNodePath({ [NODE_ATTRIBUTES.UUID]: uid }));
+  const getSourceNodeByUID = (uid: string) => getSourceNodeByPath(getNodePath({ [NODE_ATTRIBUTES.UUID]: uid }), uid);
 
   const getParentNodeData = (uid: string) => {
     if (isRootNode({ [NODE_ATTRIBUTES.UUID]: uid })) {
