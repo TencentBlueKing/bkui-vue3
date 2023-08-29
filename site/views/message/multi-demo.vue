@@ -17,6 +17,19 @@
       @click="handleAdvanceShow('json')"
     >
       JSON显示
+    </bk-button>&nbsp;&nbsp;
+    <bk-button
+      type="primary"
+      @click="handleAdvanceDisabledShow('json')"
+    >
+      自定义工具列表-不显示助手操作
+    </bk-button>
+    &nbsp;&nbsp;
+    <bk-button
+      type="primary"
+      @click="handleAdvanceCustomShow('json')"
+    >
+      自定义工具列表-只读-自定义Text
     </bk-button>
   </div>
 </template>
@@ -34,7 +47,7 @@
         type,
         details: `{
               "code": "UNAUTHENTICATED",
-              "message": "用户未登录或登录态失效，请使用登录链接重新登录 (UNAUTHORIZED)用户未登录或登录态失效，请使用登录链接重新登录 (UNAUTHORIZED)用户未登录或登录态失效，请使用登录链接重新登录 (UNAUTHORIZED)用户未登录或登录态失效，请使用登录链接重新登录 (UNAUTHORIZED)用户未登录或登录态失效，请使用登录链接重新登录 (UNAUTHORIZED)用户未登录或登录态失效，请使用登录链接重新登录 (UNAUTHORIZED)用户未登录或登录态失效，请使用登录链接重新登录 (UNAUTHORIZED)用户未登录或登录态失效，请使用登录链接重新登录 (UNAUTHORIZED)用户未登录或登录态失效，请使用登录链接重新登录 (UNAUTHORIZED)用户未登录或登录态失效，请使用登录链接重新登录 (UNAUTHORIZED)",
+              "message": "用户未登录或登录态失效",
               "code1": "UNAUTHENTICATED",
               "message1": "用户未登录或登录态失效，请使用登录链接重新登录 (UNAUTHORIZED)",
               "code2": "UNAUTHENTICATED",
@@ -61,6 +74,51 @@
               "message91": "用户未登录或登录态失效，请使用登录链接重新登录 (UNAUTHORIZED)",
               "code101": "UNAUTHENTICATED",
               "message101": "用户未登录或登录态失效，请使用登录链接重新登录 (UNAUTHORIZED)"
+            }`,
+        assistant: '',
+      },
+    };
+    Message(messageConfig);
+  };
+
+  const  handleAdvanceDisabledShow = (type) => {
+    const messageConfig = {
+      theme: 'error',
+      actions: [{
+        id: 'assistant',
+        disabled: true
+      }],
+      message: {
+        code: 10086,
+        overview: '算法载入失败。',
+        suggestion: '请确认文件内容是否正确，并和所选框架匹配。请确认文件内容是否正确，并和所选框架匹配。请确认文件内容是否正确，并和所选框架匹配。请确认文件内容是否正确，并和所选框架匹配。请确认文件内容是否正确，并和所选框架匹配。请确认文件内容是否正确，并和所选框架匹配。请确认文件内容是否正确，并和所选框架匹配。请确认文件内容是否正确，并和所选框架匹配。请确认文件内容是否正确，并和所选框架匹配。请确认文件内容是否正确，并和所选框架匹配。请确认文件内容是否正确，并和所选框架匹配。请确认文件内容是否正确，并和所选框架匹配。请确认文件内容是否正确，并和所选框架匹配。请确认文件内容是否正确，并和所选框架匹配。请确认文件内容是否正确，并和所选框架匹配。',
+        type,
+        details: `{
+              "code": "UNAUTHENTICATED"
+            }`,
+        assistant: '',
+      },
+    };
+    Message(messageConfig);
+  };
+
+  const  handleAdvanceCustomShow = (type) => {
+    const messageConfig = {
+      theme: 'error',
+      actions: [
+      {
+        id: 'fix',
+        text: 'FIX',
+        onClick: () => { alert('On Click') }
+      }
+    ],
+      message: {
+        code: 10086,
+        overview: '算法载入失败。',
+        suggestion: '请确认文件内容是否正确，并和所选框架匹配。请确认文件内容是否正确，并和所选框架匹配。请确认文件内容是否正确，并和所选框架匹配。请确认文件内容是否正确，并和所选框架匹配。请确认文件内容是否正确，并和所选框架匹配。请确认文件内容是否正确，并和所选框架匹配。请确认文件内容是否正确，并和所选框架匹配。请确认文件内容是否正确，并和所选框架匹配。请确认文件内容是否正确，并和所选框架匹配。请确认文件内容是否正确，并和所选框架匹配。请确认文件内容是否正确，并和所选框架匹配。请确认文件内容是否正确，并和所选框架匹配。请确认文件内容是否正确，并和所选框架匹配。请确认文件内容是否正确，并和所选框架匹配。请确认文件内容是否正确，并和所选框架匹配。',
+        type,
+        details: `{
+              "code": "UNAUTHENTICATED"
             }`,
         assistant: '',
       },
