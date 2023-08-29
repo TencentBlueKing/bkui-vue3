@@ -114,7 +114,7 @@ export default defineComponent({
       ctx.emit('content-scroll', [event, pagination]);
     };
 
-    const quequeScroll = [];
+    // const quequeScroll = [];
 
     onMounted(() => {
       nextTick(() => {
@@ -126,8 +126,6 @@ export default defineComponent({
     watch(() => props.list, () => {
       let scrollToOpt = { left: 0, top: 0 };
       scrollToOpt = { left: pagination.scrollLeft, top: pagination.scrollTop };
-      quequeScroll.push(scrollToOpt);
-      console.log('handleChangeListConfig', scrollToOpt);
       handleChangeListConfig();
       afterListDataReset();
       if (props.keepAlive) {
