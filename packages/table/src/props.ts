@@ -109,21 +109,16 @@ export enum FixedEnum {
 
 export const fixedType = string<`${FixedEnum}`>();
 
-export type IOverflowTooltip = {
-  content: string | Function;
-  disabled?: boolean;
-  watchCellResize?: boolean;
-  mode?: `${OverflowModeEnum}`;
-};
-
-export type IOverflowTooltipProp =
-  | {
+export type IOverflowTooltipProp = {
     content: string | Function;
     disabled?: boolean;
     watchCellResize?: boolean;
     mode?: `${OverflowModeEnum}`;
-  }
-  | boolean;
+    popoverOption?: any;
+    resizerWay?: ResizerWay;
+  } | boolean;
+
+export type IOverflowTooltip = IOverflowTooltipProp;
 
 export const IOverflowTooltipPropType = toType<IOverflowTooltipProp>(
   'IOverflowTooltipPropType',
@@ -273,10 +268,19 @@ export const FunctionNumberType = toType<FunctionNumber>(
 type StringNumber = string | number;
 export const StringNumberType = toType<StringNumber>('StringNumberType', {});
 
+/**
+ * 表格字段解释说明
+ */
+export type IColumnExplain = {
+  content: LabelFunctionString,
+  head: LabelFunctionString | boolean
+} | boolean
+
 export type Column = {
   label: LabelFunctionString;
   field?: LabelFunctionString;
   render?: RenderFunctionString;
+  renderHead?: RenderFunctionString;
   width?: number | string;
   minWidth?: number | string;
   columnKey?: string;
@@ -293,6 +297,7 @@ export type Column = {
   align?: string;
   prop?: LabelFunctionString;
   index?: Number;
+  explain?: IColumnExplain;
 };
 
 export const IColumnProp = toType<Column>('IColumnPropType', {}).def({

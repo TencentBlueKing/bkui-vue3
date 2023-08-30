@@ -81,8 +81,8 @@
     background: @table-bg-color;
 
     &::-webkit-scrollbar {
-      width: 4px;
-      height: 4px;
+      width: 5px;
+      height: 8px;
     }
 
     &::-webkit-scrollbar-thumb {
@@ -135,6 +135,11 @@
 
           &.has-sort {
             cursor: pointer;
+          }
+
+          &.explain {
+            text-decoration-style: dashed;
+            text-decoration-line: underline;
           }
 
           .head-text {

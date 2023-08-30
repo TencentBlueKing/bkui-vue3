@@ -41,6 +41,10 @@ import { Column, GroupColumn, TablePropTypes } from './props';
  * @returns
  */
 export const resolvePropVal = (prop: any, key: string | string[], args: any[]) => {
+  if (prop === undefined || prop === null) {
+    return undefined;
+  }
+
   if (typeof key === 'string') {
     if (Object.prototype.hasOwnProperty.call(prop, key)) {
       if (typeof prop[key] === 'function') {
