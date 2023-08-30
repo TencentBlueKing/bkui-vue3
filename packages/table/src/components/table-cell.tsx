@@ -52,7 +52,7 @@ export default defineComponent({
     const isTipsEnabled = ref(false);
 
     const cellStyle = computed(() => ({
-      textAlign: props.column.textAlign,
+      textAlign: props.column.textAlign as any,
     }));
 
     const resolveSetting = () => {
