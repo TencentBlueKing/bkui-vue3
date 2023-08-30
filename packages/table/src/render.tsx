@@ -403,7 +403,7 @@ export default class TableRender {
             {
               this.filterColGroups.map((column: Column, index: number) => {
                 const headStyle = Object.assign({}, resolveFixedColumnStyle(column, this.styleRef.value.hasScrollY), {
-                  backgroundColor: DEF_COLOR[this.props.thead?.color ?? IHeadColor.def1],
+                  backgroundColor: DEF_COLOR[this.props.thead?.color ?? IHeadColor.DEF1],
                 });
                 return <th
                 colspan={1}

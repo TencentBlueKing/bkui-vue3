@@ -24,6 +24,7 @@
 * IN THE SOFTWARE.
 */
 
+
 import { defineComponent } from 'vue';
 
 import DemoBox from '../../components/demo-box';
@@ -34,6 +35,7 @@ import {
 } from '../../typings';
 
 import Basic from './demo/basic.vue';
+import Clearable from './demo/clearable.vue';
 import Combine from './demo/combine.vue';
 import EventCallback from './demo/event-callback.vue';
 import HoverClear from './demo/hover-clear.vue';
@@ -41,11 +43,11 @@ import Icon from './demo/icon.vue';
 import NativeAttrs from './demo/native-attrs.vue';
 import Number from './demo/number.vue';
 import Password from './demo/password.vue';
-import Clearable from './demo/clearable.vue';
 import Simple from './demo/simple.vue';
 import Size from './demo/size.vue';
 import Status from './demo/status.vue';
-import Textarea from './demo/textarea.vue';;
+import Textarea from './demo/textarea.vue';
+;
 // 输入框属性列表
 const inputProps: IPropsTableItem[] = [
   {
@@ -142,11 +144,17 @@ const inputProps: IPropsTableItem[] = [
   {
     name: 'over-max-length-limit',
     type: 'Boolean',
-    default: null,
+    default: false,
     desc: '超出最大字数限制后是否可以继续输入，结合maxlength使用',
     optional: [],
   },
-
+  {
+    name: 'show-overflow-tooltips',
+    type: 'Boolean',
+    default: true,
+    desc: '文本超出长度是否显示tooltips',
+    optional: [],
+  },
   {
     name: 'behavior',
     type: 'String',

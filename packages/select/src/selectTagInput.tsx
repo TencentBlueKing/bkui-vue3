@@ -23,7 +23,8 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent, getCurrentInstance, inject, ref, toRefs, watch } from 'vue';
+import { debounce } from 'lodash';
+import { defineComponent, inject, onBeforeUnmount, onMounted, ref, toRefs, watch } from 'vue';
 import { PropType } from 'vue-types/dist/types';
 
 import { usePrefix } from '@bkui-vue/config-provider';
@@ -51,7 +52,6 @@ export default defineComponent({
   emits: ['update:modelValue', 'remove', 'enter', 'keydown'],
   setup(props, { emit }) {
     const { resolveClassName } = usePrefix();
-    const { proxy } = getCurrentInstance();
     const select = inject(selectKey, null);
     const { modelValue, collapseTags, selected } = toRefs(props);
     const value = ref(modelValue.value);
@@ -86,9 +86,11 @@ export default defineComponent({
       }
       emit('keydown', e.target.value, e);
     };
+    const tagsRefs = ref([]);
+    const collapseTagRef = ref();
     const getTagDOM = (index?: number) => {
-      const tags = [...proxy.$el.querySelectorAll(`.${resolveClassName('tag')}`)];
-      return typeof index === 'number' ? tags[index] : tags;
+      const tagDomList = tagsRefs.value.map(item => item?.$el).filter(item => !!item);
+      return typeof index === 'number' ? tagDomList[index] : tagDomList;
     };
     // 计算出现换行的索引
     const calcOverflow = () => {
@@ -97,6 +99,7 @@ export default defineComponent({
       overflowTagIndex.value = null;
       setTimeout(() => {
         const tags = getTagDOM();
+        // 出现换行的Index位置
         const tagIndexInSecondRow = tags.findIndex((currentTag, index) => {
           if (!index) {
             return false;
@@ -105,9 +108,32 @@ export default defineComponent({
           return previousTag.offsetTop !== currentTag.offsetTop;
         });
         overflowTagIndex.value = tagIndexInSecondRow > 0 ? tagIndexInSecondRow : null;
+        // 剩余位置能否放下数字tag
+        if (tags[overflowTagIndex.value]?.offsetTop !== collapseTagRef.value?.offsetTop && overflowTagIndex.value > 1) {
+          overflowTagIndex.value -= 1;
+        }
       });
     };
+
+    // 监听Dom元素变化
+    const debounceFn = debounce(calcOverflow, 150);
+    const tagWrapperRef = ref();
+    const resizeObserver = new ResizeObserver(() => {
+      debounceFn();
+    });
+
+    onMounted(() => {
+      tagWrapperRef.value && resizeObserver.observe(tagWrapperRef.value);
+    });
+
+    onBeforeUnmount(() => {
+      tagWrapperRef.value && resizeObserver.unobserve(tagWrapperRef.value);
+    });
+
     return {
+      collapseTagRef,
+      tagWrapperRef,
+      tagsRefs,
       select,
       overflowTagIndex,
       value,
@@ -136,9 +162,9 @@ export default defineComponent({
     };
 
     return (
-      <div class={selectTagClass}>
+      <div class={selectTagClass} ref="tagWrapperRef">
         {this.$slots?.prefix?.()}
-        <span class={tagWrapperClass}>
+        <div class={tagWrapperClass}>
           {
             this.$slots.default?.() ?? this.selected.map((item, index) => (
               <Tag
@@ -147,16 +173,20 @@ export default defineComponent({
                 style={{
                   display: this.collapseTags && this.overflowTagIndex && index >= this.overflowTagIndex ? 'none' : '',
                 }}
+                ref={el => this.tagsRefs[index] = el}
                 onClose={() => this.handleRemoveTag(item.value)}>
                 {this.select?.handleGetLabelByValue(item.value)}
               </Tag>
             ))
           }
-          {
-            !!this.overflowTagIndex && this.collapseTags && (
-              <Tag class={this.resolveClassName('select-overflow-tag')}>+{this.selected.length - this.overflowTagIndex}</Tag>
-            )
-          }
+          <Tag
+            class={this.resolveClassName('select-overflow-tag')}
+            style={{
+              display: !!this.overflowTagIndex && this.collapseTags ? '' : 'none',
+            }}
+            ref="collapseTagRef">
+            +{this.selected.length - this.overflowTagIndex}
+          </Tag>
           <input
             class={this.resolveClassName('select-tag-input')}
             ref="inputRef"
@@ -168,7 +198,7 @@ export default defineComponent({
             value={!this.filterable ? '' : this.value}
             onInput={this.handleInput}
             onKeydown={this.handleKeydown}/>
-        </span>
+        </div>
         {this.$slots?.suffix?.()}
       </div>
     );

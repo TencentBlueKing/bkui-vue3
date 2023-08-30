@@ -84,7 +84,7 @@ export default defineComponent({
     allowCreate: PropTypes.bool.def(false), // 是否运行创建自定义选项
     popoverOptions: Object as PropType<Partial<PopoverPropTypes>>, // popover属性
     customContent: PropTypes.bool.def(false), // 是否自定义content内容
-    list: PropTypes.array.def([]),
+    list: PropTypes.arrayOf(PropTypes.any).def([]),
     idKey: PropTypes.string.def('value'),
     displayKey: PropTypes.string.def('label'),
     withValidate: PropTypes.bool.def(true),
@@ -447,10 +447,17 @@ export default defineComponent({
         selected.value = [];
       } else {
         options.value.forEach((option) => {
-          if (option.disabled || selected.value.find(item => item.value === option.optionID)) return;
+          if (option.disabled || (option.optionID in cacheSelectedMap.value)) return;
           selected.value.push({
             value: option.optionID,
             label: option.optionName || option.optionID,
+          });
+        });
+        list.value?.forEach((item) => {
+          if (item.disabled || (item[idKey.value] in cacheSelectedMap.value)) return;
+          selected.value.push({
+            value: item[idKey.value],
+            label: item[displayKey.value],
           });
         });
       }

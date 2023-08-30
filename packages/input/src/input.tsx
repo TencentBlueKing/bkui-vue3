@@ -1,28 +1,29 @@
 /*
- * Tencent is pleased to support the open source community by making
- * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
- *
- * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
- *
- * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
- *
- * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
- *
- * ---------------------------------------------------
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
- * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
- * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
- * the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
- * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
- * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE.
- */
+* Tencent is pleased to support the open source community by making
+* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+*
+* Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+*
+* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+*
+* License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+*
+* ---------------------------------------------------
+* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+* the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+* THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+* IN THE SOFTWARE.
+*/
+
 import { computed, defineComponent, ExtractPropTypes, onMounted, ref, watch } from 'vue';
 
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
@@ -34,6 +35,12 @@ import {
   PropTypes,
   useFormItem,
 } from '@bkui-vue/shared';
+
+
+// export interface Autosize {
+//   maxRows: number
+//   minRows: number
+// }
 
 export const inputType = {
   type: PropTypes.string.def('text'),
@@ -60,6 +67,9 @@ export const inputType = {
   selectReadonly: PropTypes.bool.def(false), // selectReadonly select组件使用，readonly属性，但是组件样式属于正常输入框样式
   withValidate: PropTypes.bool.def(true),
   overMaxLengthLimit: PropTypes.bool.def(false),
+  showOverflowTooltips: PropTypes.bool.def(true),
+  // autosize: PropTypes.any,
+  // autosize: PropTypes.oneOfType([PropTypes.bool]),
 };
 
 
@@ -84,6 +94,10 @@ function EventFunction(_value: any, _evt: Event) {
   return true;
 }
 
+function PastEventFunction(_value: any, _e: ClipboardEvent) {
+  return true;
+};
+
 function CompositionEventFunction(evt: CompositionEvent) {
   return evt;
 }
@@ -99,7 +113,7 @@ export const inputEmitEventsType = {
   [EVENTS.KEYDOWN]: EventFunction,
   [EVENTS.KEYUP]: EventFunction,
   [EVENTS.ENTER]: EventFunction,
-  [EVENTS.PASTE]: EventFunction,
+  [EVENTS.PASTE]: PastEventFunction,
   [EVENTS.COMPOSITIONSTART]: CompositionEventFunction,
   [EVENTS.COMPOSITIONUPDATE]: CompositionEventFunction,
   [EVENTS.COMPOSITIONEND]: CompositionEventFunction,
@@ -141,6 +155,20 @@ export default defineComponent({
       inputClsPrefix.value,
     ));
     const isOverflow = ref(false);
+    // const textareaAutoSize = computed(() => {
+    //   console.log(props.modelValue, typeof props.autosize, inputRef.value?.scrollHeight);
+    //   // const LINE_HEIGHT = 26;
+    //   if (typeof props.autosize === 'boolean') {
+    //     return {
+    //       height: `${inputRef.value?.scrollHeight}px`,
+    //     };
+    //   } if (typeof props.autosize === 'object') {
+    //     return {
+    //       height: `${inputRef.value?.scrollHeight}px`,
+    //     };
+    //   }
+    //   return null;
+    // });
     const suffixIconMap = {
       search: () => <Search />,
       // TODO: eye icon 有点偏小，需要调整
@@ -177,7 +205,7 @@ export default defineComponent({
       'is-disabled': props.disabled || props.modelValue as number <= props.min,
     }));
 
-    const tooltips = computed(() => ((isOverflow.value && props.modelValue) ? {
+    const tooltips = computed(() => ((props.showOverflowTooltips && isOverflow.value && props.modelValue) ? {
       content: props.modelValue,
       sameWidth: true,
     } : {
@@ -194,7 +222,7 @@ export default defineComponent({
     );
 
     onMounted(() => {
-      isOverflow.value = inputRef.value?.scrollWidth > inputRef.value?.clientWidth;
+      isOverflow.value = detectOverflow();
     });
 
     ctx.expose({
@@ -203,6 +231,10 @@ export default defineComponent({
       },
       clear,
     });
+
+    function detectOverflow() {
+      return inputRef.value?.scrollWidth > (inputRef.value?.clientWidth + 2);
+    }
 
     function clear() {
       if (props.disabled) return;
@@ -219,7 +251,7 @@ export default defineComponent({
 
     function handleBlur(e) {
       isFocused.value = false;
-      isOverflow.value = inputRef.value?.scrollWidth > inputRef.value?.clientWidth;
+      isOverflow.value = detectOverflow();
       ctx.emit(EVENTS.BLUR, e);
       if (props.withValidate) {
         formItem?.validate?.('blur');
@@ -365,6 +397,7 @@ export default defineComponent({
             {...eventListener}
             {...bindProps.value}
             rows={props.rows}
+            // style={{ height: textareaAutoSize.value?.height ?? 'auto' }}
           />
         ) : (
           <input
