@@ -41,6 +41,10 @@ import { Column, GroupColumn, TablePropTypes } from './props';
  * @returns
  */
 export const resolvePropVal = (prop: any, key: string | string[], args: any[]) => {
+  if (prop === undefined || prop === null) {
+    return undefined;
+  }
+
   if (typeof key === 'string') {
     if (Object.prototype.hasOwnProperty.call(prop, key)) {
       if (typeof prop[key] === 'function') {
@@ -511,7 +515,7 @@ export const getNextSortType = (sortType: string) => {
     [SORT_OPTION.DESC]: 2,
   };
 
-  if (sortType === undefined) {
+  if (steps[sortType] === undefined) {
     return SORT_OPTION.NULL;
   }
 

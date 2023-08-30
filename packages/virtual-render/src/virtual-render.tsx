@@ -114,6 +114,8 @@ export default defineComponent({
       ctx.emit('content-scroll', [event, pagination]);
     };
 
+    // const quequeScroll = [];
+
     onMounted(() => {
       nextTick(() => {
         handleListChanged(props.list);
@@ -124,7 +126,6 @@ export default defineComponent({
     watch(() => props.list, () => {
       let scrollToOpt = { left: 0, top: 0 };
       scrollToOpt = { left: pagination.scrollLeft, top: pagination.scrollTop };
-
       handleChangeListConfig();
       afterListDataReset();
       if (props.keepAlive) {
@@ -184,7 +185,7 @@ export default defineComponent({
 
       computedVirtualIndex(props.lineHeight, handleScrollCallback, pagination, el, null);
 
-      if (scrollToOpt && refRoot.value) {
+      if (scrollToOpt && refRoot.value && props.autoReset) {
         scrollTo(scrollToOpt);
       }
     };

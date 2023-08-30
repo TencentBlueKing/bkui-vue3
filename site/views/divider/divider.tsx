@@ -39,7 +39,10 @@ export default defineComponent({
   render() {
     return (
       <div>
-        <DemoTitle name="Divider 分割线" desc="分割线是一个呈线状的轻量化组件，起到分割、组织、细化的作用，用于有逻辑的组织元素内容和页面结构。" />
+        <DemoTitle
+          name="Divider 分割线"
+          desc="分割线是一个呈线状的轻量化组件，起到分割、组织、细化的作用，用于有逻辑的组织元素内容和页面结构。"
+          designLink="https://bkdesign.bk.tencent.com/design/150" />
           <DemoBox
             title="基础用法"
             desc="基础分割线是没有文字的独立线条，又分为水平分割线和垂直分割线。"

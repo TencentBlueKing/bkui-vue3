@@ -24,7 +24,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { throttle } from 'lodash';
+import { isElement, throttle } from 'lodash';
 import { computed, ref } from 'vue';
 
 import { GroupColumn } from '../props';;
@@ -82,6 +82,15 @@ export default (colgroups: GroupColumn[], immediate = true) => {
     updateOffsetX(e)();
   };
 
+  const setChildrenNodeCursor = (root: HTMLElement, cursor: string) => {
+    if (isElement(root)) {
+      root.style?.setProperty('cursor', cursor);
+      if (root.childNodes?.length > 0) {
+        root.childNodes.forEach(node => setChildrenNodeCursor(node as HTMLElement, cursor));
+      }
+    }
+  };
+
   const handler = {
     [EVENTS.MOUSE_DOWN]: (e: MouseEvent, column: GroupColumn) => {
       if (!isInDragSection) {
@@ -119,9 +128,9 @@ export default (colgroups: GroupColumn[], immediate = true) => {
         const rect = target.getBoundingClientRect();
         if (rect.width > 12 && rect.right - e.pageX < 8) {
           isInDragSection = true;
-          target.style.setProperty('cursor', 'col-resize');
+          setChildrenNodeCursor(target, 'col-resize');
         } else {
-          target.style.setProperty('cursor', '');
+          setChildrenNodeCursor(target, '');
           isInDragSection = false;
         }
       }
@@ -129,7 +138,7 @@ export default (colgroups: GroupColumn[], immediate = true) => {
     [EVENTS.MOUSE_OUT]: (e: MouseEvent, _column: GroupColumn) => {
       const target = e.target as HTMLElement;
       if (!isDraging) {
-        target.style.setProperty('cursor', '');
+        setChildrenNodeCursor(target, '');
       }
     },
   };

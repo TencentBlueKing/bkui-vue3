@@ -83,14 +83,19 @@ export const DATA_COLUMNS = [
     field: 'ip',
     width: 100,
     showOverflowTooltip: true,
+    sort: true,
+    explain: {
+      content: '当表格中的字段或数据需要做解释说明时，可增加 [下划线] 提示，hover 可查看解释说明的 tooltips',
+      head: '当表格中的字段或数据需要做解释说明时，可增加 [下划线] 提示，hover 可查看解释说明的 tooltips',
+    }
   },
   {
     label: '来源',
     field: 'source',
     width: 80,
-    render: ({ row }) => `${row.status}-${row.source}`,
     filter: {
       list: [{ text: 'QQ', value: 'QQ' }, { text: '微信', value: '微信' }, { text: 'Email', value: 'Email' }],
+      checked: ['QQ']
     },
   },
   {
@@ -223,6 +228,7 @@ export const DATA_FIX_COLUMNS = [
   {
     label: '来源',
     field: 'source',
+    filter: true,
     minWidth: 280,
   },
   {

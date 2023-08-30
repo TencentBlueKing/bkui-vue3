@@ -14,8 +14,8 @@
         >
           <bk-option
             v-for="(item, index) in datasource"
-            :key="index"
             :id="item.value"
+            :key="index"
             :name="item.label"
           />
           <template #tag="{selected}">
@@ -37,8 +37,8 @@
           </template>
           <bk-option
             v-for="(item, index) in datasource"
-            :key="index"
             :id="item.value"
+            :key="index"
             :name="item.label"
           />
         </bk-select>
@@ -50,14 +50,12 @@
           class="bk-select"
           filterable
           auto-focus
-          no-data-text="sdsd"
-          no-match-text="kkk"
           @toggle="handleToggle"
         >
           <bk-option
             v-for="(item, index) in datasource"
-            :key="index"
             :id="item.value"
+            :key="index"
             :name="item.label"
             :disabled="item.disabled"
           />
@@ -89,8 +87,8 @@
           </template>
           <bk-option
             v-for="(item, index) in datasource"
-            :key="index"
             :id="item.value"
+            :key="index"
             :name="item.label"
           />
         </bk-select>
@@ -107,8 +105,8 @@
         >
           <bk-option
             v-for="(item, index) in datasource"
-            :key="index"
             :id="item.value"
+            :key="index"
             :name="item.label"
           />
         </bk-select>
@@ -124,11 +122,12 @@
           multiple-mode="tag"
           collapse-tags
           prefix="运动选项"
+          :auto-height="false"
         >
           <bk-option
             v-for="(item, index) in datasource"
-            :key="index"
             :id="item.value"
+            :key="index"
             :name="item.label"
           />
         </bk-select>

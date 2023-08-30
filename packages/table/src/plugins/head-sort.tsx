@@ -87,8 +87,7 @@ export default defineComponent({
     };
     return () => (
       <span
-        class={resolveClassName('head-cell-sort')}
-        onClick={(e: MouseEvent) => handleSortClick(e, SORT_OPTION.NULL)}>
+        class={resolveClassName('head-cell-sort')}>
       <AngleDownFill
         class={['sort-action', 'sort-asc', props.active && sortType.value === SORT_OPTION.ASC ? 'active' : '']}
         style="align-items: flex-end;"

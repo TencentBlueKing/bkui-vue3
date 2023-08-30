@@ -200,6 +200,12 @@ const dataJson = [
     default: '--',
     desc: '是否禁用',
   },
+  {
+    name: 'onlyRecommendChildren',
+    type: 'Boolean',
+    default: 'false',
+    desc: '添加推荐选项字符时 是否只匹配children数据',
+  },
 ];
 const slotColumnMap = {
   name: '名称',
@@ -224,7 +230,8 @@ export default defineComponent({
       <div>
         <DemoTitle
           name="Search Select"
-          desc="Search Select组件， 为页面和模块提供方便的搜索选择功能。"/>
+          desc="Search Select组件， 为页面和模块提供方便的搜索选择功能。"
+          designLink="https://bkdesign.bk.tencent.com/design/70"/>
         <DemoBox
           title="基础用法"
           subtitle="基础使用"

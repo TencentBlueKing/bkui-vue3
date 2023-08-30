@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { defineComponent, Transition } from 'vue';
 
@@ -78,7 +78,8 @@ export default defineComponent({
           this.closeTimer = null;
           this.visible = val;
         } else {
-          this.closeTimer = setTimeout(() => { // 直接设为false会失去离开的动画效果，这里延迟设置
+          this.closeTimer = setTimeout(() => {
+            // 直接设为false会失去离开的动画效果，这里延迟设置
             this.$emit('hidden'); // 为false直接触发hidden事件，在上层有200ms的延时
             this.visible = val;
           }, 250);
@@ -92,26 +93,30 @@ export default defineComponent({
         if (val) {
           this.$nextTick(() => {
             // isShow初始化为true的时候，放在nextTick才能获取$el
-            this.bkPopIndexManager.onMaskClick((_e: MouseEvent) => {
-              this.handleClickOutSide();
-            }, this.$el);
             const hideMaskStyle = {
               'background-color': 'rgba(0,0,0,0)',
             };
             const appendStyle = this.showMask ? {} : hideMaskStyle;
-            this.bkPopIndexManager.show(this.$el, this.showMask, appendStyle, !!this.transfer, this.zIndex);
+            this.bkPopIndexManager.show(
+              this.$el,
+              this.showMask,
+              appendStyle,
+              !!this.transfer,
+              this.zIndex,
+              (_e: MouseEvent) => {
+                this.handleClickOutSide();
+              },
+            );
             this.$emit('shown');
           });
         } else {
+          this.bkPopIndexManager?.removeLastEvent();
           this.bkPopIndexManager?.hide(this.$el, !!this.transfer);
           this.bkPopIndexManager?.destroy();
         }
       },
       immediate: true,
     },
-  },
-  created() {
-    // this.bkPopIndexManager = new BKPopIndexManager({ ...this.$props });
   },
   mounted() {
     const popConfig = {
@@ -143,26 +148,32 @@ export default defineComponent({
     const maxHeight = this.maxHeight ? { maxHeight: this.maxHeight } : {};
     const bodyClass = `${resolveClassName('modal-body')} ${this.animateType === 'slide' ? this.direction : ''}`;
     return (
-      <div class={[resolveClassName('modal-wrapper'), this.extCls, this.size, this.fullscreen ? 'fullscreen' : '']}
-        style={[this.compStyle, this.fullscreen ? this.fullscreenStyle : '']}>
+      <div
+        class={[resolveClassName('modal-wrapper'), this.extCls, this.size, this.fullscreen ? 'fullscreen' : '']}
+        style={[this.compStyle, this.fullscreen ? this.fullscreenStyle : '']}
+      >
         <Transition name={this.animateType}>
-        {this.isShow ? <div class={bodyClass}>
-          <div class={resolveClassName('modal-header')}>
-            {this.$slots.header?.() ?? ''}
-          </div>
-          <div class={resolveClassName('modal-content')}
-            style={[this.dialogType === 'show' ? 'padding-bottom: 20px' : '', { ...maxHeight }]}>
-            {this.$slots.default?.() ?? ''}
-          </div>
-          {this.dialogType === 'show' ? '' : (
-            <div class={resolveClassName('modal-footer')}>
-              {this.$slots.footer?.() ?? ''}
+          {this.isShow ? (
+            <div class={bodyClass}>
+              <div class={resolveClassName('modal-header')}>{this.$slots.header?.() ?? ''}</div>
+              <div
+                class={resolveClassName('modal-content')}
+                style={[this.dialogType === 'show' ? 'padding-bottom: 20px' : '', { ...maxHeight }]}
+              >
+                {this.$slots.default?.() ?? ''}
+              </div>
+              {this.dialogType === 'show' ? (
+                ''
+              ) : (
+                <div class={resolveClassName('modal-footer')}>{this.$slots.footer?.() ?? ''}</div>
+              )}
+              <div class={[resolveClassName('modal-close'), this.closeIcon ? '' : 'close-icon']}>
+                {this.$slots.close?.() ?? ''}
+              </div>
             </div>
+          ) : (
+            ''
           )}
-          <div class={[resolveClassName('modal-close'), this.closeIcon ? '' : 'close-icon']}>
-              {this.$slots.close?.() ?? ''}
-            </div>
-        </div> : ''}
         </Transition>
       </div>
     );

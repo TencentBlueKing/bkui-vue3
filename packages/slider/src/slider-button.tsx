@@ -164,19 +164,30 @@ export default defineComponent({
         style={wrapperStyle.value}
         onClick={(event: MouseEvent) => event.stopPropagation()}
         onMousedown={onButtonDown}>
-          {Boolean(tip.value.content)
-            ? <BkPopover
-              content={tip.value.content}
-              theme={'dark'}
-              placement={tip.value.placement}
-              boundary={document.body}>
+        {
+          Boolean(tip.value.content)
+            ? <>
+              <BkPopover
+                content={tip.value.content}
+                theme={'dark'}
+                placement={tip.value.placement}
+                boundary={document.body}>
+                <div class={['slider-button', { 'slider-button-disable': props.params.disable }]}></div>
+              </BkPopover>
+            </>
+            : <>
               <div class={['slider-button', { 'slider-button-disable': props.params.disable }]}></div>
-            </BkPopover>
-            : <div class={['slider-button', { 'slider-button-disable': props.params.disable }]}></div>}
-          {props.params.showButtonLabel && !props.params.showIntervalLabel
-            ? <div class={['slider-button-label', props.params.vertical ? 'vertical' : 'horizontal']}>
-              {buttonLabel.value}
-            </div> : undefined}
+            </>
+        }
+        {
+          props.params.showButtonLabel && !props.params.showIntervalLabel
+            ? <>
+              <div class={['slider-button-label', props.params.vertical ? 'vertical' : 'horizontal']}>
+                {buttonLabel.value}
+              </div>
+            </>
+            : null
+        }
       </div>
     );
     return {

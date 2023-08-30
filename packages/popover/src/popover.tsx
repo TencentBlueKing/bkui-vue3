@@ -50,7 +50,6 @@ export default defineComponent({
   emits: EMIT_EVENT_TYPES,
 
   setup(props, ctx) {
-    const { content, theme, disableTeleport } = props;
     const { reference } = toRefs(props);
     const refDefaultReference = ref();
     const refContent = ref();
@@ -96,7 +95,7 @@ export default defineComponent({
     onMounted(onMountedFn);
     onBeforeUnmount(onUnmountedFn);
 
-    const transBoundary = computed(() => !disableTeleport);
+    const transBoundary = computed(() => !props.disableTeleport);
     const show = () => {
       showFn();
     };
@@ -119,7 +118,7 @@ export default defineComponent({
         return vNode;
       }
 
-      return content;
+      return props.content;
     };
 
     return {
@@ -128,8 +127,8 @@ export default defineComponent({
       refDefaultReference,
       refContent,
       refArrow,
-      content,
-      theme,
+      content: props.content,
+      theme: props.theme,
       transBoundary,
       handleClickOutside,
       updatePopover,
@@ -142,9 +141,16 @@ export default defineComponent({
   },
 
   render() {
+    const renderReferSlot = (slot) => {
+      if (typeof slot[0]?.children === 'string') {
+        return <span>{ slot }</span>;
+      }
+
+      return slot;
+    };
     return <Root ref="refRoot">
       <Reference ref="refDefaultReference">
-        { this.$slots.default?.() ?? <span></span> }
+        { renderReferSlot(this.$slots.default?.() ?? <span></span>) }
       </Reference>
       <Teleport to={ this.boundary } disabled={ !this.transBoundary }>
         <Content ref="refContent"

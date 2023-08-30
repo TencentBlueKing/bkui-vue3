@@ -287,7 +287,7 @@ export default defineComponent({
         <DemoTitle
           name="Dialog 对话框"
           desc="对话框"
-          link="https://www.google.com.hk/"/>
+          designLink="https://bkdesign.bk.tencent.com/design/29"/>
 
         <DemoBox
           title="基本用法"

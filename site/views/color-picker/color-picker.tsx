@@ -34,6 +34,7 @@ import { IPropsTableItem } from '../../typings';
 import BaseDemo from './base-demo.vue';
 import PresetDemo from './preset-demo.vue';
 import SizeDemo from './size-demo.vue';
+import SlotDemo from './slot-demo.vue';
 
 const colorPickerPropsJson: IPropsTableItem[] = [
   {
@@ -104,6 +105,15 @@ const colorPickerChangePropsJson: IPropsTableItem[] = [
     optional: [],
   },
 ];
+const optionSlotJson = [
+  {
+    name: 'trigger',
+    type: 'Slot',
+    default: null,
+    desc: '选项插槽',
+    optional: [],
+  },
+];
 
 export default defineComponent({
   setup() {
@@ -132,6 +142,13 @@ export default defineComponent({
             demoName="size-demo">
             <SizeDemo></SizeDemo>
           </DemoBox>
+          <DemoBox
+            title="自定义slot"
+            desc="trigger slot "
+            componentName="color-picker"
+            demoName="size-demo">
+            <SlotDemo></SlotDemo>
+          </DemoBox>
 
           <DemoBox
             title="颜色预设"
@@ -148,6 +165,11 @@ export default defineComponent({
           <PropsBox
             title="BkColorPicker 事件"
             propsData={colorPickerChangePropsJson}/>
+
+          <PropsBox
+            title="插槽"
+            subtitle=""
+            propsData={optionSlotJson}/>
       </div>
     );
   },

@@ -82,7 +82,7 @@ export default defineComponent({
   render() {
     return (
       <div>
-        <DemoTitle name="Tab 选项卡" desc="选项卡切换组件。"/>
+        <DemoTitle name="Tab 选项卡" desc="选项卡切换组件。" designLink="https://bkdesign.bk.tencent.com/design/80"/>
         <DemoBox
           title="基础用法"
           desc="基础的、简洁的标签页。"

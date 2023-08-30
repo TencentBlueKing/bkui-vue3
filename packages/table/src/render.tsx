@@ -35,7 +35,7 @@ import { classes } from '@bkui-vue/shared';
 
 import TableCell from './components/table-cell';
 import TableRow from './components/table-row';
-import { COLUMN_ATTRIBUTE, SCROLLY_WIDTH, TABLE_ROW_ATTRIBUTE } from './const';
+import { COLUMN_ATTRIBUTE, DEF_COLOR, IHeadColor, SCROLLY_WIDTH, TABLE_ROW_ATTRIBUTE } from './const';
 import { EMIT_EVENTS, EVENTS } from './events';
 import { TablePlugins } from './plugins';
 import BodyEmpty from './plugins/body-empty';
@@ -121,8 +121,8 @@ export default class TableRender {
           class="table-head-settings"
           settings={this.reactiveProp.settings}
           columns={this.colgroups}
-          rowHeight={this.props.rowHeight}
-          onChange={handleSettingsChanged}/>
+          rowHeight={this.props.rowHeight as unknown as number}
+          onChange={handleSettingsChanged}>{ this.context.slots.setting?.() }</Settings>
         : '',
       <table cellpadding={0} cellspacing={0}>
         {this.renderColGroup()}
@@ -326,6 +326,10 @@ export default class TableRender {
         return cellFn(column, index);
       }
 
+      if (typeof column.renderHead === 'function') {
+        return column.renderHead(column, index);
+      }
+
       return resolvePropVal(column, 'label', [column, index]);
     };
 
@@ -366,6 +370,8 @@ export default class TableRender {
           title={showTitle}
           observerResize={this.props.observerResize}
           resizerWay={this.props.resizerWay}
+          isHead={true}
+          headExplain={ resolvePropVal(column.explain, 'head', [column]) }
         >
           {cells}
         </TableCell>
@@ -401,21 +407,24 @@ export default class TableRender {
         <TableRow>
           <tr>
             {
-              this.filterColGroups.map((column: Column, index: number) => (
-                <th
-                  colspan={1}
-                  rowspan={1}
-                  class={[
-                    this.getHeadColumnClass(column, index),
-                    this.getColumnCustomClass(column),
-                    column.align || this.props.headerAlign || this.props.align,
-                  ]}
-                  style={resolveFixedColumnStyle(column, this.styleRef.value.hasScrollY)}
-                  onClick={() => this.handleColumnHeadClick(index, column)}
-                  {...resolveEventListener(column)}>
-                  {renderHeadCell(column, index)}
-                </th>
-              ))
+              this.filterColGroups.map((column: Column, index: number) => {
+                const headStyle = Object.assign({}, resolveFixedColumnStyle(column, this.styleRef.value.hasScrollY), {
+                  backgroundColor: DEF_COLOR[this.props.thead?.color ?? IHeadColor.DEF1],
+                });
+                return <th
+                colspan={1}
+                rowspan={1}
+                class={[
+                  this.getHeadColumnClass(column, index),
+                  this.getColumnCustomClass(column),
+                  column.align || this.props.headerAlign || this.props.align,
+                ]}
+                style={ headStyle }
+                onClick={() => this.handleColumnHeadClick(index, column)}
+                {...resolveEventListener(column)}>
+                {renderHeadCell(column, index)}
+              </th>;
+              })
             }
             {getScrollFix()}
           </tr>
@@ -577,12 +586,13 @@ export default class TableRender {
     }
   }
 
-  private getColumnClass = (column: Column, colIndex: number) => ([{
+  private getColumnClass = (column: Column, colIndex: number) => ({
     [`${this.uuid}-column-${colIndex}`]: true,
     column_fixed: !!column.fixed,
     column_fixed_left: !!column.fixed,
     column_fixed_right: column.fixed === 'right',
-  }, column.className]);
+    [`${column.className}`]: true,
+  });
 
   private getHeadColumnClass = (column: Column, colIndex: number) => ({
     ...this.getColumnClass(column, colIndex),

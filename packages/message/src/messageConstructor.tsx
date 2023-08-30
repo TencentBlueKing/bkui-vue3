@@ -26,13 +26,14 @@
 
 import ClipboardJS from 'clipboard';
 import JSONFormatter from 'json-formatter-js';
-import { computed, defineComponent, isVNode, onMounted, onUnmounted, reactive, ref, Transition, VNode, watch } from 'vue';
+import { computed, defineComponent, isVNode, onMounted, onUnmounted, reactive, ref, StyleValue, Transition, VNode, watch } from 'vue';
 import { toType } from 'vue-types';
 
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import {
   AngleDoubleDownLine,
   AngleDoubleUpLine,
+  Assistant,
   Close,
   CopyShape,
   Error,
@@ -41,7 +42,6 @@ import {
   Info,
   Success,
   Warn,
-  WeixinPro,
 } from '@bkui-vue/icon';
 import { bkZIndexManager, isElement, PropTypes } from '@bkui-vue/shared';
 
@@ -178,14 +178,16 @@ const messageProps = {
   onClose: PropTypes.func,
   getContainer: PropTypes.instanceOf(HTMLElement),
   width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  minWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(100),
+  maxWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def('100%'),
   actions: toType<IMessageActions>('IMessageAction', {}),
 };
 
 export default defineComponent({
   name: 'Message',
   props: messageProps,
-  emits: ['destroy'],
-  setup(props, { emit, slots }) {
+  emits: ['destroy', 'detail'],
+  setup(props, { emit, slots, expose }) {
     const t = useLocale('message');
     const { resolveClassName } = usePrefix();
     const classNames = computed(() => [`${resolveClassName('message')}`, `${resolveClassName(`message-${props.theme}`)}`, `${props.extCls}`]);
@@ -209,25 +211,35 @@ export default defineComponent({
       return singleLineDelay;
     });
 
+    const getPropNumberAsStringValue = key => (typeof props[key] === 'number' ? `${props[key]}px` : props[key]);
+
     const contentWidth = computed(() => {
+      const isAdvance = typeof props.message === 'object' && !isVNode(props.message);
+      if (/%$/.test(`${props.width}`) || /auto/ig.test(`${props.width}`)) {
+        return {
+          width: props.width,
+          maxWidth: getPropNumberAsStringValue('maxWidth'),
+          minWidth: getPropNumberAsStringValue('minWidth'),
+        };
+      }
+
       if (/^\d+/.test(`${props.width}`)) {
         return /^\d+\.?\d*$/.test(`${props.width}`) ? `${props.width}px` : props.width;
       }
 
-      if (typeof props.message === 'object' && !isVNode(props.message)) {
-        return `${advanceWidth}px`;
+      if (isAdvance) {
+        return { width: `${advanceWidth}px` };
       }
 
-      return `${singleLineWidth}px`;
+      return { width: `${singleLineWidth}px` };
     });
 
     const isGetContainer = computed<boolean>(() => props.getContainer && isElement(props.getContainer));
-    const styles = computed(() => ({
+    const styles = computed(() => Object.assign({
       top: `${props.offsetY}px`,
       zIndex,
       position: (isGetContainer.value ? 'absolute' : 'fixed') as 'absolute' | 'fixed',
-      width: contentWidth.value,
-    }));
+    }, contentWidth.value));
 
     const refJsonContent = ref(null);
     const refCopyStatus = ref(null);
@@ -256,37 +268,50 @@ export default defineComponent({
     };
 
     let copyStatusTimer;
-    const isInstallClipboardJS = ref(false);
     const copyStatus = ref(null);
 
-    const copyMessage = (_e: MouseEvent) => {
-      if (isInstallClipboardJS.value) {
-        return;
-      }
-
+    const copyMessage = () => {
       const copyInstance = new ClipboardJS(refCopyMsgDiv.value as HTMLElement, {
         text: () => (props.message as any).details,
       });
 
+      registerCopyCallback(copyInstance);
+    };
+
+    const registerCopyCallback = (copyInstance, complete?) => {
       ['success', 'error'].forEach((theme) => {
-        copyInstance.on(theme, () => {
+        copyInstance.on(theme, (e) => {
           const target = refCopyStatus.value as HTMLElement;
           copyStatus.value = theme;
           if (target) {
+            const { offsetLeft, offsetWidth, offsetTop } = e.trigger;
+            const msgTree = e.trigger.closest('.message-tree');
+            const msgTreeScrollTop = msgTree ? msgTree.scrollTop : 0;
             target.classList.remove(...['success', 'error', 'is-hidden']);
             target.classList.add(...[theme, 'is-show']);
+            const transX = offsetLeft + offsetWidth / 2 - 41;
+            const transY = offsetTop - msgTreeScrollTop - 40;
+            target.style.setProperty('transform', `translate(${transX}px, ${transY}px`);
             copyStatusTimer && clearTimeout(copyStatusTimer);
             copyStatusTimer = setTimeout(() => {
               target.classList.remove(...['is-show']);
               target.classList.add(...['is-hidden']);
             }, 2000);
           }
-        });
-        isInstallClipboardJS.value = true;
-        setTimeout(() => {
-          (refCopyMsgDiv.value as HTMLElement).click();
+
+          if (typeof complete === 'function') {
+            complete();
+          }
         });
       });
+    };
+
+    const copyValueItem = () => {
+      const copyInstance = new ClipboardJS(refJsonContent.value.querySelectorAll('span.copy-value'), {
+        text: trigger => trigger.innerHTML,
+      });
+
+      registerCopyCallback(copyInstance);
     };
 
     const parseJson = (value) => {
@@ -310,16 +335,28 @@ export default defineComponent({
         toolOperation.isDetailShow
         && typeof props.message === 'object'
         && !isVNode(props.message)
-        && (props.message.type === MessageContentType.JSON || !props.message.type)
       ) {
-        const targetJson = parseJson(props.message.details);
-        const formatter = new JSONFormatter(targetJson);
-        setTimeout(() => {
-          if (refJsonContent.value) {
-            refJsonContent.value.innerHTML = '';
-            refJsonContent.value.append(formatter.render());
-          }
-        });
+        if ((props.message.type === MessageContentType.JSON || !props.message.type)) {
+          const targetJson = parseJson(props.message.details);
+          const formatter = new JSONFormatter(targetJson);
+
+          setTimeout(() => {
+            if (refJsonContent.value) {
+              refJsonContent.value.innerHTML = '';
+              refJsonContent.value.append(formatter.render());
+            }
+            copyMessage();
+          });
+        }
+
+        if (props.message.type === MessageContentType.KEY_VALUE) {
+          setTimeout(() => {
+            copyMessage();
+            copyValueItem();
+          });
+        }
+
+        emit('detail', toolOperation.isDetailShow, props.id);
       }
     };
 
@@ -359,7 +396,7 @@ export default defineComponent({
     const defActionList = computed(() => ({
       [IMessageActionType.ASSISTANT]: {
         id: IMessageActionType.ASSISTANT,
-        icon: () => <WeixinPro></WeixinPro>,
+        icon: () => <Assistant></Assistant>,
         text: () => t.value.assistant,
         onClick: (e: MouseEvent) => handleHeplerClick(e),
       },
@@ -491,6 +528,10 @@ export default defineComponent({
       return slots.action?.() ?? renderActionList();
     };
 
+    expose({
+      setDetailsShow,
+    });
+
     return {
       classNames,
       styles,
@@ -510,6 +551,7 @@ export default defineComponent({
       copyStatus,
       t,
       resolveClassName,
+      copyValueItem,
     };
   },
   render() {
@@ -530,7 +572,7 @@ export default defineComponent({
         return keys.map(key => (
           <div class='message-row'>
             <label>{key}</label>
-            {target[key]}
+            <span class="copy-value">{target[key]}</span>
           </div>
         ));
       }
@@ -552,13 +594,13 @@ export default defineComponent({
             </div>
             {this.toolOperation.isDetailShow && (
               <div class='message-detail'>
-                <div class='message-copy' ref="refCopyMsgDiv" onClick={this.copyMessage}>
+                <div class='message-copy' ref="refCopyMsgDiv">
                   <CopyShape></CopyShape>
-                  <div class="copy-status" ref="refCopyStatus">
-                    <div class="inner">
-                      { renderIcon(this.copyStatus) }
-                      { this.copyStatus === 'success' ? this.t.copySuccess : this.t.copyFailed }
-                    </div>
+                </div>
+                <div class="copy-status" ref="refCopyStatus">
+                  <div class="inner">
+                    { renderIcon(this.copyStatus) }
+                    { this.copyStatus === 'success' ? this.t.copySuccess : this.t.copyFailed }
                   </div>
                 </div>
                 <div ref='refJsonContent' class="message-tree">{renderMsgDetail(this.message)}</div>
@@ -584,7 +626,7 @@ export default defineComponent({
         <div
           v-show={this.visible}
           class={this.classNames}
-          style={this.styles}
+          style={this.styles as StyleValue}
           onMouseenter={this.handleMouseenter}
           onMouseleave={this.handleMouseleave}
         >

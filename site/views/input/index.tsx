@@ -362,6 +362,7 @@ export default defineComponent({
           name="Input"
           desc="常用的输入框"
           link={`${import.meta.env.VITE_APP_BASE_URL ?? ''}/input`}
+          designLink="https://bkdesign.bk.tencent.com/design/14"
         />
         {
           demos.map(({ DemoComponent, ...demo }) => (
