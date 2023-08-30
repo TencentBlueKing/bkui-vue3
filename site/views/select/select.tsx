@@ -74,7 +74,7 @@ const propsJson: IPropsTableItem[] = [
     optional: [
       'default',
       'small',
-      'large'
+      'large',
     ],
   },
   {
@@ -284,7 +284,7 @@ const propsJson: IPropsTableItem[] = [
     name: 'enableVirtualRender',
     type: 'boolean',
     default: 'false',
-    desc: '是否启用虚拟滚动',
+    desc: '是否启用虚拟滚动（只支持List模式）',
     optional: ['true', 'false'],
   },
   {
@@ -375,7 +375,7 @@ const selectExpose = [
     default: '',
     desc: '显示Popover弹窗',
     optional: [],
-  }
+  },
 ];
 const optionProps = [
   {
@@ -398,7 +398,7 @@ const optionProps = [
     default: 'false',
     desc: '是否禁用',
     optional: [],
-  }
+  },
 ];
 const optionSlot = [
   {
@@ -407,7 +407,7 @@ const optionSlot = [
     default: '',
     desc: '默认插槽',
     optional: [],
-  }
+  },
 ];
 export default defineComponent({
   render() {

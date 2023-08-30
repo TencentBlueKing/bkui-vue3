@@ -1,29 +1,40 @@
 <template>
-  <bk-select
-    v-model="selectedValue"
-    class="bk-select"
-    filterable
-    auto-focus
-    @toggle="handleToggle"
-  >
-    <bk-option
-      v-for="(item, index) in datasource"
-      :key="index"
-      :id="item.value"
-      :name="item.label"
-      :disabled="item.disabled"
+  <div style="display: flex">
+    <bk-select
+      v-model="selectedValue"
+      class="bk-select"
+      filterable
+      auto-focus
+      @toggle="handleToggle"
+    >
+      <bk-option
+        v-for="(item, index) in datasource"
+        :id="item.value"
+        :key="index"
+        :name="item.label"
+        :disabled="item.disabled"
+      />
+    </bk-select>
+    <bk-select
+      v-model="listValue"
+      class="bk-select"
+      style="margin-left: 10px;"
+      filterable
+      auto-focus
+      :list="datasourceList"
+      @toggle="handleToggle"
     />
-  </bk-select>
+  </div>
 </template>
 <script setup>
-  import { ref } from 'vue';
+  import { onBeforeMount, ref } from 'vue';
   const datasource = ref([
     {
       value: 'climbing',
       label: '爬山',
     },
     {
-      value: {a: 123 },
+      value: { a: 123 },
       label: '跑步',
     },
     {
@@ -49,9 +60,20 @@
     },
   ]);
 
-  const selectedValue = ref({b: 456});
+  const selectedValue = ref({ b: 456 });
 
+  const listValue = ref(1);
+  const datasourceList = ref([]);
 
+  onBeforeMount(() => {
+    new Array(100).fill(0)
+      .forEach((item, index) => {
+        datasourceList.value.push({
+          value: index,
+          label: `list-${index}`,
+        });
+      });
+  });
 </script>
 <style scoped>
 .bk-select {
