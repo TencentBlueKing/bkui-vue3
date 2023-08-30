@@ -35,6 +35,9 @@ const resolveOptions = (el: HTMLElement, binding: DirectiveBinding) => {
   };
   if (typeof binding === 'object') {
     Object.assign(options, binding);
+    if (Object.prototype.hasOwnProperty.call(binding, 'popoverOption')) {
+      Object.assign(options, binding['popoverOption']);
+    }
   } else {
     options.content = binding;
   }
@@ -46,7 +49,6 @@ export const createInstance = (el: HTMLElement, binding: any) => {
   let instance = null;
   let createTimer = null;
   let hidePopTimer = null;
-  // const cache = {};
   const options = resolveOptions(el, binding);
   const { disabled } = options;
   if (disabled || instance) {
@@ -68,6 +70,7 @@ export const createInstance = (el: HTMLElement, binding: any) => {
   };
 
   const handleMouseEnter = () => {
+    handleContentLeave();
     createTimer && clearTimeout(createTimer);
     createTimer = setTimeout(() => {
       const targetOptions = resolveOptions(el, binding);
@@ -79,7 +82,7 @@ export const createInstance = (el: HTMLElement, binding: any) => {
         onContentMouseleave: handleContentLeave,
       });
       instance = $bkPopover(targetOptions);
-    }, 100);
+    }, 300);
   };
 
   const handleMouseLeave = () => {
@@ -96,13 +99,6 @@ export const createInstance = (el: HTMLElement, binding: any) => {
   el.addEventListener('mouseenter', handleMouseEnter);
   el.addEventListener('mouseleave', handleMouseLeave);
 
-  // Object.assign(cache, {
-  //   __cached: {
-  //     handleMouseEnter,
-  //     handleMouseLeave,
-  //   },
-  // });
-
   const destroyInstance = (element?: HTMLElement) => {
     handleMouseLeave();
     (element ?? el)?.removeEventListener('mouseenter', handleMouseEnter);
@@ -118,15 +114,7 @@ export const createInstance = (el: HTMLElement, binding: any) => {
 const ellipsis: ObjectDirective = {
   mounted(el: HTMLElement, binding: DirectiveBinding) {
     createInstance(el, binding);
-  },
-  // beforeUnmount(el: HTMLElement, binding: any) {
-  //   if (binding.cache) {
-  //     const { handleMouseEnter, handleMouseLeave } = binding.__cached;
-  //     el.removeEventListener('mouseenter', handleMouseEnter);
-  //     el.removeEventListener('mouseleave', handleMouseLeave);
-  //     binding.__cached = null;
-  //   }
-  // },
+  }
 };
 
 export default ellipsis;

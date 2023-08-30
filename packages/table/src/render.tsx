@@ -326,6 +326,10 @@ export default class TableRender {
         return cellFn(column, index);
       }
 
+      if (typeof column.renderHead === 'function') {
+        return column.renderHead(column, index);
+      }
+
       return resolvePropVal(column, 'label', [column, index]);
     };
 
@@ -366,6 +370,8 @@ export default class TableRender {
           title={showTitle}
           observerResize={this.props.observerResize}
           resizerWay={this.props.resizerWay}
+          isHead={true}
+          headExplain={ resolvePropVal(column.explain, 'head', [column]) }
         >
           {cells}
         </TableCell>

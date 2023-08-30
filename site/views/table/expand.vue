@@ -1,12 +1,12 @@
 <template>
-  <div
-    @click="handleTClick"
-  >
+  <div>
     <div class="cell">
+      <bk-button @click="handleSetAllRowExpand">展开|收起所有</bk-button>
       <bk-table
         :columns="columns"
         :data="tableData"
         @row-expand="handleRowExpand"
+        ref="refTable1"
       >
         <template #expandRow="row">
           <div style="height: 80px">
@@ -43,9 +43,14 @@
       return {
         tableData: [...DATA_TABLE],
         columns: [...DATA_EXPAND_COLUMNS],
+        isExpand: false
       };
     },
     methods: {
+      handleSetAllRowExpand() {
+        this.isExpand = !this.isExpand;
+        this.$refs.refTable1.setAllRowExpand(this.isExpand);
+      },
       handleRowExpand({ row, column, index, rows, e }) {
         // 可以通过自定义逻辑，阻止事件冒泡
         e.stopPropagation();
@@ -53,10 +58,6 @@
         e.preventDefault();
 
         console.log('handleRowExpand', row, column, index, rows);
-      },
-
-      handleTClick() {
-        console.log('handleTClick');
       },
     },
   });
