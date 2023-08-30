@@ -188,6 +188,10 @@ export class BKPopIndexManager {
     this.bKMaskManagerInstance.removeClickEvent();
   }
 
+  public removeLastEvent() {
+    this.bKMaskManagerInstance.destroyEvent(this.uniqId);
+  }
+
   private onMaskClickFn(e: MouseEvent) {
     if (this.clickFn) {
       const { fn } = this.clickFn;

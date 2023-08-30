@@ -1,12 +1,16 @@
 <template>
   <div>
     <div class="cell">
-      <span class="title">默认过滤</span>
+      <span class="title" style="margin-right: 20px;">默认过滤</span>
+      <bk-button @click="handleClear" style="margin-right: 20px;">清理过滤条件</bk-button>
+      <bk-button @click="handleAdd" style="margin-right: 20px;">添加过滤</bk-button>
+      <bk-input v-model="filterValue" style="width: 120px;"></bk-input>
       <bk-table
-        :columns="columns"
+        style="margin-top: 20px;"
+        :columns="columns1"
         :data="tableData"
-        @dblclick="handleDblClick"
-        @column-sort="handleSortBy"
+        :pagination="pagination"
+        :pagination-heihgt="60"
       />
     </div>
     <div
@@ -14,12 +18,14 @@
       style="height: 300px;"
     >
       <span class="title">自定义过滤</span>
-      <bk-table
+      <!-- <bk-table
         :columns="columns1"
         :data="tableData"
         height="100%"
+        :pagination="pagination"
+        :pagination-heihgt="60"
         @dblclick="handleDblClick"
-      />
+      /> -->
     </div>
   </div>
 </template>
@@ -27,14 +33,23 @@
 <script>
   import { defineComponent } from 'vue';
 
-  import { DATA_COLUMNS, DATA_COLUMNS1, DATA_TABLE } from './options';
+  import { DATA_FIX_COLUMNS, DATA_COLUMNS1, DATA_TABLE } from './options';
+  const DATA_ROWS = new Array(Math.ceil(Math.random() * 9000) + 1000).fill('')
+    .map((_, index) => ({
+      ip: `${index}--192.168.0.x`,
+      source: ['QQ', 'WeiXin', 'Email', 'Telphone'][index % 4],
+      status: '创建中',
+      create_time: `2018-05-25 15:02:24.${index}`,
+    }));
   export default defineComponent({
     components: {},
     data() {
       return {
-        tableData: [...DATA_TABLE],
-        columns: [...DATA_COLUMNS],
+        tableData: DATA_ROWS,
+        columns: DATA_FIX_COLUMNS.map(item => ({ ...item })),
         columns1: [...DATA_COLUMNS1],
+        pagination: { count: DATA_ROWS.length, limit: 10 },
+        filterValue: '',
         settings: {
           fields: [],
           checked: [],
@@ -64,6 +79,12 @@
       }, 1000);
     },
     methods: {
+      handleAdd() {
+        this.columns1[2].filter.checked = [this.filterValue];
+      },
+      handleClear() {
+        this.columns1[2].filter.checked.length = 0;
+      },
       handleSortBy(arg) {
         console.log('handleSortBy', arg);
       },

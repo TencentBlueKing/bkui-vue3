@@ -202,6 +202,7 @@ export default [
       { name: '#empty', desc: '自定义空数据-empty插槽', params: '' },
       { name: '#default', desc: '<bk-column />模板使用自定义显示默认插槽, 这里面参数 data & row 在使用时要注意，data是原始数据，在组件中没有被代理监听，这个数据主要是回传给调用方使用，例如接口调用；如果要绑定数据实现实时更新请使用 row，row是组件内被监听数据，包含一些组件内置属性和方法', params: '{ cell, data, row, column, index, rows }' },
       { name: '#fixedBottom', desc: '底部加载插槽', params: '' },
+      { name: '#setting', desc: '表格设置中间自定义插槽', params: '' },
     ],
   },
   {

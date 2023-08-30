@@ -35,7 +35,7 @@ import { classes } from '@bkui-vue/shared';
 
 import TableCell from './components/table-cell';
 import TableRow from './components/table-row';
-import { COLUMN_ATTRIBUTE, SCROLLY_WIDTH, TABLE_ROW_ATTRIBUTE } from './const';
+import { COLUMN_ATTRIBUTE, DEF_COLOR, IHeadColor, SCROLLY_WIDTH, TABLE_ROW_ATTRIBUTE } from './const';
 import { EMIT_EVENTS, EVENTS } from './events';
 import { TablePlugins } from './plugins';
 import BodyEmpty from './plugins/body-empty';
@@ -122,7 +122,7 @@ export default class TableRender {
           settings={this.reactiveProp.settings}
           columns={this.colgroups}
           rowHeight={this.props.rowHeight as unknown as number}
-          onChange={handleSettingsChanged}/>
+          onChange={handleSettingsChanged}>{ this.context.slots.setting?.() }</Settings>
         : '',
       <table cellpadding={0} cellspacing={0}>
         {this.renderColGroup()}
@@ -402,7 +402,9 @@ export default class TableRender {
           <tr>
             {
               this.filterColGroups.map((column: Column, index: number) => {
-                console.log('getHeadColumnClass', column, index, this.getHeadColumnClass(column, index));
+                const headStyle = Object.assign({}, resolveFixedColumnStyle(column, this.styleRef.value.hasScrollY), {
+                  backgroundColor: DEF_COLOR[this.props.thead?.color ?? IHeadColor.DEF1],
+                });
                 return <th
                 colspan={1}
                 rowspan={1}
@@ -411,7 +413,7 @@ export default class TableRender {
                   this.getColumnCustomClass(column),
                   column.align || this.props.headerAlign || this.props.align,
                 ]}
-                style={resolveFixedColumnStyle(column, this.styleRef.value.hasScrollY)}
+                style={ headStyle }
                 onClick={() => this.handleColumnHeadClick(index, column)}
                 {...resolveEventListener(column)}>
                 {renderHeadCell(column, index)}
