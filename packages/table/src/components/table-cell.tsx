@@ -124,7 +124,8 @@ export default defineComponent({
       }
 
       return refRoot.value;
-    }
+    };
+    
     const resolveOverflowTooltip = () => {
       const target = getEllipsisTarget();
       if (!target || !isElement(target)) {
@@ -182,10 +183,10 @@ export default defineComponent({
 
     const hasExplain = props.headExplain || props.column.explain;
     return () => <div class={['cell', props.column.type, hasExplain ? 'explain' : '']}
-      style={ cellStyle.value }
-      ref={ refRoot }
-      title={ props.title }>
-      { slots.default?.() }
+      style={cellStyle.value}
+      ref={refRoot}
+      title={props.title}>
+      {slots.default?.()}
     </div>;
   },
 });

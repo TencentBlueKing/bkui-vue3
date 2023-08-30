@@ -110,13 +110,13 @@ export enum FixedEnum {
 export const fixedType = string<`${FixedEnum}`>();
 
 export type IOverflowTooltipProp = {
-    content: string | Function;
-    disabled?: boolean;
-    watchCellResize?: boolean;
-    mode?: `${OverflowModeEnum}`;
-    popoverOption?: any;
-    resizerWay?: ResizerWay;
-  } | boolean;
+  content: string | Function;
+  disabled?: boolean;
+  watchCellResize?: boolean;
+  mode?: `${OverflowModeEnum}`;
+  popoverOption?: any;
+  resizerWay?: ResizerWay;
+} | boolean;
 
 export type IOverflowTooltip = IOverflowTooltipProp;
 
@@ -273,9 +273,9 @@ export const StringNumberType = toType<StringNumber>('StringNumberType', {});
  * 表格字段解释说明
  */
 export type IColumnExplain = {
-  content: LabelFunctionString,
-  head: LabelFunctionString | boolean
-} | boolean
+  content: LabelFunctionString;
+  head: LabelFunctionString | boolean;
+} | boolean;
 
 export type Column = {
   label: LabelFunctionString;
