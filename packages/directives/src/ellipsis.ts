@@ -36,7 +36,7 @@ const resolveOptions = (el: HTMLElement, binding: DirectiveBinding) => {
   if (typeof binding === 'object') {
     Object.assign(options, binding);
     if (Object.prototype.hasOwnProperty.call(binding, 'popoverOption')) {
-      Object.assign(options, binding['popoverOption']);
+      Object.assign(options, (binding as any).popoverOption);
     }
   } else {
     options.content = binding;
