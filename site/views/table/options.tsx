@@ -75,7 +75,9 @@ export const DATA_COLUMNS = [
     type: 'index',
     width: 50,
     minWidth: 80,
-    sort: true,
+    sort: {
+      value: 'desc'
+    },
     className: 'custom-class',
   },
   {
