@@ -1,10 +1,12 @@
 <template>
   <bk-popover
+    disable-outside-click
+    :offset="16"
     placement="top"
     theme="light"
     width="490"
   >
-    <bk-button>超长</bk-button>
+  超长
     <template #content>
       <div>
         今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错 今天天气不错

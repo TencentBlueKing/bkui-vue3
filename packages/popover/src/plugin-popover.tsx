@@ -41,8 +41,8 @@ export default function createPopoverComponent(options: $Popover) {
     boundary: 'body',
     placement: 'top',
     autoVisibility: false,
-    ...options,
     trigger: 'manual',
+    ...options,
   };
 
   // const isElement = element => element instanceof Element || element instanceof HTMLDocument;
