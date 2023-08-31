@@ -109,11 +109,6 @@ export const SETTING_SIZE = {
   small: 42,
 };
 
-// export const DEFAULT_SIZE_LIST = [
-//   { value: 'small', label: '小', height: SETTING_SIZE.small },
-//   { value: 'medium', label: '中', height: SETTING_SIZE.medium },
-//   { value: 'large', label: '大', height: SETTING_SIZE.large },
-// ];
 export const createDefaultSizeList = (t: ComputedRef<Language['table']>) => [
   { value: 'small', label: t.value.setting.lineHeight.small, height: SETTING_SIZE.small },
   { value: 'medium', label: t.value.setting.lineHeight.medium, height: SETTING_SIZE.medium },

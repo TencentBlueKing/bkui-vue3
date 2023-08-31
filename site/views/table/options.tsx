@@ -75,7 +75,9 @@ export const DATA_COLUMNS = [
     type: 'index',
     width: 50,
     minWidth: 80,
-    sort: true,
+    sort: {
+      value: 'desc'
+    },
     className: 'custom-class',
   },
   {
@@ -83,6 +85,11 @@ export const DATA_COLUMNS = [
     field: 'ip',
     width: 100,
     showOverflowTooltip: true,
+    sort: true,
+    explain: {
+      content: '当表格中的字段或数据需要做解释说明时，可增加 [下划线] 提示，hover 可查看解释说明的 tooltips',
+      head: '当表格中的字段或数据需要做解释说明时，可增加 [下划线] 提示，hover 可查看解释说明的 tooltips',
+    }
   },
   {
     label: '来源',

@@ -29,17 +29,19 @@ import { toType } from 'vue-types';
 import { bkEllipsisInstance } from '@bkui-vue/directives';
 import { hasOverflowEllipsis, isElement, PropTypes } from '@bkui-vue/shared';
 
-import { IOverflowTooltipPropType, ResizerWay } from '../props';
-import { observerResize } from '../utils';
+import { IColumnType, IOverflowTooltipPropType, ResizerWay } from '../props';
+import { observerResize, resolvePropVal } from '../utils';
 // import
 export default defineComponent({
   name: 'TableCell',
   props: {
-    column: PropTypes.any.def({}),
+    column: IColumnType,
     row: PropTypes.any.def({}),
     parentSetting: IOverflowTooltipPropType,
     title: PropTypes.string.def(undefined),
     observerResize: PropTypes.bool.def(true),
+    isHead: PropTypes.bool.def(false),
+    headExplain: PropTypes.string,
     resizerWay: toType<`${ResizerWay}`>('ResizerWay', {
       default: ResizerWay.DEBOUNCE,
     }),
@@ -50,7 +52,7 @@ export default defineComponent({
     const isTipsEnabled = ref(false);
 
     const cellStyle = computed(() => ({
-      textAlign: props.column.textAlign,
+      textAlign: props.column.textAlign as any,
     }));
 
     const resolveSetting = () => {
@@ -90,11 +92,43 @@ export default defineComponent({
         disabled = Reflect.apply(disabled, this, [props.column, props.row]);
       }
 
+      if (props.isHead) {
+        disabled = false;
+        mode = 'auto';
+        content = getEllipsisTarget()?.innerHTML;
+
+        if (props.headExplain) {
+          mode = 'static';
+          content = props.headExplain;
+        }
+      }
+
+      /**
+       * 当表格中的字段或数据需要做解释说明时，可增加 [下划线] 提示，hover 可查看解释说明的 tooltips
+       */
+      if (props.column.explain) {
+        disabled = false;
+        mode = 'static';
+
+        if (typeof props.column.explain === 'object') {
+          content = resolvePropVal(props.column.explain, 'content', [props.column, props.row]);
+        }
+      }
+
       return { disabled, content, mode, resizerWay, watchCellResize };
     };
 
+    const getEllipsisTarget = () => {
+      if (props.isHead) {
+        return refRoot.value?.querySelector?.('.head-text');
+      }
+
+      return refRoot.value;
+    };
+    
     const resolveOverflowTooltip = () => {
-      if (!refRoot.value || !isElement(refRoot.value)) {
+      const target = getEllipsisTarget();
+      if (!target || !isElement(target)) {
         return;
       }
 
@@ -102,7 +136,7 @@ export default defineComponent({
       isTipsEnabled.value = !disabled;
 
       if (mode === 'auto') {
-        isTipsEnabled.value = hasOverflowEllipsis(refRoot.value);
+        isTipsEnabled.value = hasOverflowEllipsis(target);
       }
 
       if (mode === 'static') {
@@ -112,14 +146,14 @@ export default defineComponent({
       if (isTipsEnabled.value) {
         const bindings = ref(resolveTooltipOption());
         if (bkEllipsisIns === null) {
-          bkEllipsisIns = bkEllipsisInstance(refRoot.value, {
+          bkEllipsisIns = bkEllipsisInstance(target, {
             disabled: bindings.value.disabled,
             content: bindings.value.content,
             mode: bindings.value.mode,
           });
         }
       } else {
-        bkEllipsisIns?.destroyInstance(refRoot.value);
+        bkEllipsisIns?.destroyInstance(target);
         bkEllipsisIns = null;
       }
     };
@@ -147,11 +181,12 @@ export default defineComponent({
       bkEllipsisIns?.destroyInstance(refRoot.value);
     });
 
-    return () => <div class={['cell', props.column.type]}
-      style={ cellStyle.value }
-      ref={ refRoot }
-      title={ props.title }>
-      { slots.default?.() }
+    const hasExplain = props.headExplain || props.column.explain;
+    return () => <div class={['cell', props.column.type, hasExplain ? 'explain' : '']}
+      style={cellStyle.value}
+      ref={refRoot}
+      title={props.title}>
+      {slots.default?.()}
     </div>;
   },
 });
