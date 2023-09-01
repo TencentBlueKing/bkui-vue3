@@ -364,13 +364,35 @@ export default defineComponent({
       toolOperation.isFix = isFix ?? !toolOperation.isFix;
     };
 
+    const addMouseKeyEvent = (remove = false) => {
+      const isAdvance = typeof props.message === 'object' && !isVNode(props.message);
+      if (!isAdvance) {
+        return;
+      }
+
+      if (remove) {
+        document.removeEventListener('keydown', handleMouseKeyEvent);
+        return;
+      }
+
+      document.addEventListener('keydown', handleMouseKeyEvent);
+    };
+
+    const handleMouseKeyEvent = (e) => {
+      if (e.altKey && e.keyCode === 80) {
+        fixMesage(e);
+      }
+    };
+
     onMounted(() => {
       timerDelay.value && startTimer();
       visible.value = true;
+      addMouseKeyEvent();
     });
 
     onUnmounted(() => {
       clearTimeout(timer);
+      addMouseKeyEvent(true);
     });
 
     watch(visible, () => {
