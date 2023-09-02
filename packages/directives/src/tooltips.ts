@@ -24,7 +24,7 @@
 * IN THE SOFTWARE.
 */
 
-import { DirectiveBinding, ObjectDirective } from 'vue';
+import { DirectiveBinding, h, ObjectDirective, render, VNode } from 'vue';
 
 import { bkZIndexManager, resolveClassName } from '@bkui-vue/shared';
 import { createPopper, ModifierPhases, Placement } from '@popperjs/core';
@@ -33,7 +33,7 @@ export declare type IOptions = {
   arrow: boolean,
   disabled: boolean,
   placement: Placement;
-  content: string;
+  content: string | VNode;
   showOnInit: boolean;
   theme: string;
   trigger: string;
@@ -150,6 +150,19 @@ function getOpts(binding: DirectiveBinding) {
  * @param opts
  * @returns
  */
+
+function renderContext(value: string, content: HTMLElement) {
+  if (typeof value === 'string') {
+    content.innerText = value;
+  } else {
+    // 如果 content 是 Vue 组件的实例，则挂载它
+    const container = document.createElement('div');
+    const vnode = h(value);
+    render(vnode, container);
+    content.innerHTML = container.innerHTML;
+  }
+}
+
 function renderContent(opts): HTMLElement {
   const { content: value, arrow: hasArrow, theme, extCls } = opts;
   const isLight = theme === 'light';
@@ -158,6 +171,8 @@ function renderContent(opts): HTMLElement {
   content.className = `${resolveClassName('popper')} ${isLight ? 'light' : 'dark'} ${extCls}`;
   content.innerText = value;
   content.style.zIndex = String(zIndex);
+  renderContext(value, content);
+
   if (hasArrow) {
     const arrow = renderArrow();
     content.appendChild(arrow);
@@ -224,7 +239,7 @@ function show(el: HTMLElement) {
   const { popper, opts } = nodeList.get(el);
   const { disabled, content, arrow: hasArrow, onShow } = opts;
   if (disabled) return;
-  popper.innerText = content;
+  renderContext(content, popper);
   if (hasArrow) {
     const arrow = renderArrow();
     popper.appendChild(arrow);

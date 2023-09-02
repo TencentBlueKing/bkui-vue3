@@ -31,6 +31,7 @@ import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import type { IPropsTableItem } from '../../typings';
 
+import DemoJsx from './demo/base';
 import Base from './demo/base.vue';
 import Callback from './demo/callback.vue';
 import Click from './demo/click.vue';
@@ -122,7 +123,7 @@ const events: IPropsTableItem[] = [
 const demos = [
   {
     title: '基础用法（通过绑定对象来配置）',
-    desc: '通过指令配置简单的 tooltips',
+    desc: '通过指令配置简单的 tooltips，通过配置 delay 属性来设置显示的延迟',
     componentName: 'tooltips',
     demoName: 'demo/base',
     DemoComponent: Base,
@@ -161,10 +162,18 @@ export default defineComponent({
         {
           demos.map(({ DemoComponent, ...demo }) => (
             <DemoBox {...demo}>
-              <DemoComponent />
+              <DemoComponent/>
             </DemoBox>
           ))
         }
+        <DemoBox
+          title="tsx用法"
+          desc="tsx 写法,content 为Vnode"
+          componentName="tooltips"
+          suffix=".tsx"
+          demoName="demo/base">
+          <DemoJsx/>
+        </DemoBox>
         <PropsBox title="属性" subtitle="" propsData={props}></PropsBox>
         <PropsBox title="事件" subtitle="" propsData={events}></PropsBox>
       </div>
