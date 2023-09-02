@@ -91,6 +91,7 @@ export default defineComponent({
       resolveColumnStyle,
       resolveColumnClass,
       setRowExpand,
+      setAllRowExpand,
       initIndexData,
       fixedWrapperClass,
       clearSelection,
@@ -273,6 +274,7 @@ export default defineComponent({
 
     ctx.expose({
       setRowExpand,
+      setAllRowExpand,
       clearSelection,
       toggleAllSelection,
       toggleRowSelection,

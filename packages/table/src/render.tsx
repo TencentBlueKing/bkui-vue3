@@ -35,7 +35,7 @@ import { classes } from '@bkui-vue/shared';
 
 import TableCell from './components/table-cell';
 import TableRow from './components/table-row';
-import { COLUMN_ATTRIBUTE, DEF_COLOR, IHeadColor, SCROLLY_WIDTH, TABLE_ROW_ATTRIBUTE } from './const';
+import { COLUMN_ATTRIBUTE, DEF_COLOR, IHeadColor, SCROLLY_WIDTH, SORT_OPTION, TABLE_ROW_ATTRIBUTE } from './const';
 import { EMIT_EVENTS, EVENTS } from './events';
 import { TablePlugins } from './plugins';
 import BodyEmpty from './plugins/body-empty';
@@ -43,7 +43,7 @@ import HeadFilter from './plugins/head-filter';
 import HeadSort from './plugins/head-sort';
 import Settings from './plugins/settings';
 import useFixedColumn from './plugins/use-fixed-column';
-import { Column, GroupColumn, IColumnActive, IReactiveProp, TablePropTypes } from './props';
+import { Column, GroupColumn, IColumnActive, IReactiveProp, ISortShape, TablePropTypes } from './props';
 import {
   formatPropAsArray,
   getColumnReactWidth,
@@ -279,7 +279,7 @@ export default class TableRender {
       this.emitEvent(EVENTS.ON_SORT_BY_CLICK, [{ sortFn, column, index, type }]);
     };
 
-    const nextSort = this.reactiveProp.defaultSort[columnName];
+    const nextSort = this.reactiveProp.defaultSort[columnName] || (column.sort as ISortShape).value || SORT_OPTION.NULL;
     return (
       <HeadSort
         column={column}
@@ -326,6 +326,10 @@ export default class TableRender {
         return cellFn(column, index);
       }
 
+      if (typeof column.renderHead === 'function') {
+        return column.renderHead(column, index);
+      }
+
       return resolvePropVal(column, 'label', [column, index]);
     };
 
@@ -366,6 +370,8 @@ export default class TableRender {
           title={showTitle}
           observerResize={this.props.observerResize}
           resizerWay={this.props.resizerWay}
+          isHead={true}
+          headExplain={ resolvePropVal(column.explain, 'head', [column]) }
         >
           {cells}
         </TableCell>

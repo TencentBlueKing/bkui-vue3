@@ -18,14 +18,14 @@
       style="height: 300px;"
     >
       <span class="title">自定义过滤</span>
-      <!-- <bk-table
+      <bk-table
         :columns="columns1"
         :data="tableData"
         height="100%"
         :pagination="pagination"
         :pagination-heihgt="60"
         @dblclick="handleDblClick"
-      /> -->
+      />
     </div>
   </div>
 </template>
