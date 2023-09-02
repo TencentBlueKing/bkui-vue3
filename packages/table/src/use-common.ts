@@ -359,6 +359,16 @@ export const useInit = (props: TablePropTypes, targetColumns: ITableColumn[]) =>
     updateIndexData();
   };
 
+  const setAllRowExpand = (expand = undefined) => {
+    indexData.forEach((item: any) => {
+      const rowId = item[TABLE_ROW_ATTRIBUTE.ROW_UID];
+      const isExpand = typeof expand === 'boolean' ? expand : !isRowExpand(rowId);
+      reactiveSchema.rowActions.set(rowId, Object.assign({}, reactiveSchema.rowActions.get(rowId) ?? {}, { isExpand }));
+    });
+
+    updateIndexData();
+  };
+
   /**
    * 判定是否全选
    * @returns
@@ -729,6 +739,7 @@ export const useInit = (props: TablePropTypes, targetColumns: ITableColumn[]) =>
     initIndexData,
     updateIndexData,
     setRowExpand,
+    setAllRowExpand,
     updateColGroups,
     clearSelection,
     toggleAllSelection,

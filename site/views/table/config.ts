@@ -31,7 +31,7 @@ export default [
     config: [
       { name: 'LINE_HEIGHT', type: 'Number', default: '42', desc: '默认行高, 用于默认设置,(Table.minHeight = LINE_HEIGHT * 2, Table.rowHeight = LINE_HEIGHT, Table.headHeight = LINE_HEIGHT, Table.thead.height=LINE_HEIGHT)，可以通过具体属性配置进行覆盖', optional: [] },
       { name: 'SCROLLY_WIDTH', type: 'Number', default: '4', desc: '默认滚动条样式宽度', optional: [] },
-      { name: 'COL_MIN_WIDTH', type: 'Number', default: '80', desc: '默认最小列宽，如果需要调整最小列宽，可以通过column.minWidth进行设置，覆盖默认宽度', optional: [] },
+      { name: 'COL_MIN_WIDTH', type: 'Number', default: '30', desc: '默认最小列宽，如果需要调整最小列宽，可以通过column.minWidth进行设置，覆盖默认宽度', optional: [] },
       { name: 'SETTING_SIZE', type: 'Array', default: 'small', desc: 'Setting 行高默认列表，默认 small (LINE_HEIGHT),如果需要自定义列表，参考 ISettings.sizeList', optional: ['large: 78', 'medium: 60', 'small: LINE_HEIGHT'] },
       { name: 'ROW_KEY', type: 'string', default: 'UUID', desc: '每行数据的唯一id，如果 没有明确指定 row-key,则会默认内置生成UUID作为唯一标识，在启用服务器端分页或者自定义渲染内置自定义组件的场景下，建议明确设置row-key,以保证在数据更新时能够正确渲染组件内容', optional: [] },
     ],
@@ -99,7 +99,16 @@ export default [
       { name: 'colspan', type: 'Number|Function', default: 1, desc: '规定单元格可横跨的列数', optional: [] },
       { name: 'rowspan', type: 'Number|Function', default: 1, desc: '规定单元格可横跨的行数', optional: [] },
       { name: 'index', type: 'Number', default: undefined, desc: '自定义表格列所在排序', optional: [] },
-      { name: 'align', type: 'left|center|right|‘’', default: '--', desc: '列齐方式', optional: [] },
+      { name: 'align', type: 'left|center|right|""', default: '--', desc: '列齐方式', optional: [] },
+      { name: 'explain', type: 'Boolean | IColumnExplain', default: 'false', desc: '解释说明: 当表格中的字段或数据需要做解释说明时，可增加 [下划线] 提示，hover 可查看解释说明的 tooltips', optional: [] },
+    ],
+  },
+  {
+    title: 'IColumnExplain',
+    subTile: 'Table Column IColumnExplain config',
+    config: [
+      { name: 'content', type: 'String|Function', default: 'Cell innerText', desc: '当表格中的字段或数据需要做解释说明时，hover 可查看解释说明的 tooltips content', optional: [] },
+      { name: 'head', type: 'Boolean|String|Function', default: 'Cell innerHTML', desc: '当表格中Head需要做解释说明时, hover 可查看解释说明的 tooltips content', optional: [] },
     ],
   },
   {
@@ -190,6 +199,7 @@ export default [
       { name: 'toggleAllSelection', desc: '用于多选表格，切换所有行的选中状态', params: '' },
       { name: 'scrollTo', desc: '指定滚动位置', params: '({ left = 0, top = 0 })' },
       { name: 'setRowExpand', desc: '用于可展开表格，切换某一行的展开状态，如果使用了第二个参数，则是设置这一行展开与否（expanded 为 true 则展开）', params: 'row, expanded' },
+      { name: 'setAllRowExpand', desc: '用于可展开表格，切换当前页所有展开状态，参数设置展开与否（expanded 为 true 则展开）', params: 'expanded' },
     ],
   },
   {
@@ -213,7 +223,7 @@ export default [
       { name: '使用自定义渲染 render | <bk-column /> slot 数据不更新', desc: '在插槽或者render函数渲染中，请检查自定义渲染使用的是否是 data，data 是列表原始数据，组件内没有做代理监听，不会进行双向数据更新，提供此属性主要是有些场景需要使用原始数据进行操作，这里请用row进行数据绑定' },
       { name: '使用插槽 #expandRow没显示展开收起操作列', desc: '展开收起操作列需要手动添加到，增加一列配置，<column type="expand"></column>，只有增加此配置，才会渲染' },
       { name: '数据不更新，没有使用自定义渲染', desc: '建议设置table.rowKey, 默认不设置rowKey时，表格会根据数据变化自动更新,设置rowKey后组件会在传递的数据中每行查找对应的数据作为key值，设置到table tr上面，当数据行变化时会被监听并更新' },
-      { name: '每列最小宽度问题', desc: '表格列有设置默认宽度 COL_MIN_WIDTH = 80，可以通过 column.minWidth修正，具体参考 column min-width 设置' },
+      { name: '每列最小宽度问题', desc: '表格列有设置默认宽度 COL_MIN_WIDTH = 30，可以通过 column.minWidth修正，具体参考 column min-width 设置' },
       { name: '如何自定义Head颜色', desc: '通过 thead.color 可以改变颜色设置，详情可参考 IThead 设置' },
       { name: '如何自定义Head VNode', desc: '有两种方式可以自定义Head，Column.label支持函数返回VNode，针对单独列可以选择此方式进行自定义渲染，也可以通过 `thead.cellFn` 渲染head，此时是针对全部列，需要自行判定，如果同时设置了 `thead.cellFn` 和 `column.label`都为渲染函数，`thead.cellFn`优先级更高，会覆盖column.label设置' },
     ],

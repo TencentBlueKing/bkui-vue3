@@ -142,7 +142,7 @@ export default defineComponent({
 
   render() {
     const renderReferSlot = (slot) => {
-      if (typeof slot[0]?.children === 'string') {
+      if (Symbol.for('v-txt') === slot[0].type) {
         return <span>{ slot }</span>;
       }
 

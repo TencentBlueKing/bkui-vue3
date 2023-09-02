@@ -33,7 +33,7 @@ import Popover from '@bkui-vue/popover';
 import { PropTypes } from '@bkui-vue/shared';
 
 import { createDefaultSizeList, LINE_HEIGHT } from '../const';
-import { IColumnType, ITableSettings, Settings, SizeItem } from '../props';
+import { IColumnType, ITableSettings, RowHeightFunctionNumberType, Settings, SizeItem } from '../props';
 import { resolvePropVal } from '../utils';
 
 export default defineComponent({
@@ -41,8 +41,7 @@ export default defineComponent({
   props: {
     settings: ITableSettings,
     columns: PropTypes.arrayOf(IColumnType).def([]),
-    rowHeight: PropTypes.number.def(LINE_HEIGHT),
-    // rowHeight: RowHeightFunctionNumberType.def(() => LINE_HEIGHT),
+    rowHeight: RowHeightFunctionNumberType.def(() => LINE_HEIGHT),
   },
   emits: ['change'],
   setup(props, { emit, slots }) {
