@@ -46,6 +46,8 @@ export const PopoverProps = {
   maxHeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
   content: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def(''),
 
+  target: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(HTMLElement), PropTypes.instanceOf(PointerEvent)]),
+
   allowHtml: PropTypes.bool.def(false),
   /**
    * 组件显示位置
@@ -130,7 +132,17 @@ export const PopoverProps = {
    * 配置自定义样式类名，传入的类会被加在组件最外层的 DOM
    */
   extCls: PropTypes.string.def(''),
-  // ...EventProps,
+
+  /**
+   * 自定义Content组件渲染，point-event延迟渲染时间
+   * 避免子组件point-event渲染时触发popover鼠标事件
+   */
+  componentEventDelay: PropTypes.number.def(300),
+
+  /**
+   * 或略其他判定条件，强制监听clickoutside & 执行hide
+   */
+  forceClickoutside: PropTypes.bool.def(false),
 };
 
 export type PopoverPropTypes = Readonly<ExtractPropTypes<typeof PopoverProps>>;

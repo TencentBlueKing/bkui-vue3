@@ -71,6 +71,10 @@ export const DATA_TABLE = [
  */
 export const DATA_COLUMNS = [
   {
+    type: 'selection',
+    width: 50
+  },
+  {
     label: '序号',
     type: 'index',
     width: 50,

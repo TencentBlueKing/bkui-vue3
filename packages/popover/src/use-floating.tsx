@@ -42,6 +42,7 @@ import { EMIT_EVENTS } from './const';
 import { PopoverPropTypes } from './props';
 import usePlatform from './use-platform';
 import { contentAsHTMLElement } from './utils';
+import { isElement } from 'lodash';
 
 /**
  * 解析popover相关配置
@@ -50,7 +51,7 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
   const localIsShow = ref(false);
   const fullScreenTarget = ref();
   const isElementFullScreen = () => {
-    const elReference = resolveTargetElement(refReference.value?.$el);
+    const elReference = resolveReferElement();
     if (document.fullscreenElement?.shadowRoot) {
       return document.fullscreenElement.shadowRoot.contains(elReference);
     }
@@ -98,7 +99,7 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
    * @returns
    */
   const resolvePopElements = () => {
-    const elReference = resolveTargetElement(refReference.value?.$el);
+    const elReference = resolveReferElement();
     const elContent = resolveTargetElement(refContent.value?.$el);
     const elArrow = props.arrow ? resolveTargetElement(refArrow.value?.$el) : null;
     const root = resolveTargetElement(refRoot.value?.$el);
@@ -110,6 +111,10 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
 
     return { elReference, elContent, elArrow, root };
   };
+
+  const resolveReferElement = () => {
+    return resolveTargetElement(props.target) || resolveTargetElement(refReference.value?.$el);
+  }
 
   const resolveModifiers: any = () => {
     const resolveResult = {};
@@ -199,6 +204,20 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
       return target;
     }
 
+    if (typeof target === 'string') {
+      const targetEl = document.querySelector(target);
+      if (isElement(targetEl)) {
+        return targetEl;
+      }
+
+      return null;
+    }
+
+
+    if (target instanceof PointerEvent) {
+      return resolveTargetElement(target.target);
+    }
+
     return null;
   };
 
@@ -271,7 +290,7 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
   };
 
 
-  const updatePopover = (virtualEl = null, props = {}) => {
+  const updatePopover = (virtualEl = null, props = {}, callFn?) => {
     const { elReference, elContent, elArrow } = resolvePopElements();
     const targetEl = virtualEl || elReference;
     if (!targetEl || !elContent) return;
@@ -291,6 +310,10 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
 
       updatePopContentStyle(elContent, x, y, middlewareData);
       updateArrowStyle(elArrow, resolvedPlacement, middlewareData);
+
+      if (typeof callFn === 'function') {
+        callFn();
+      }
     });
   };
 
@@ -327,11 +350,12 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
     }, delay);
   };
 
-  const hanldePopoverShow = () => {
+  const handlePopoverShow = () => {
     const elContent = resolveTargetElement(refContent.value?.$el) as HTMLElement;
     elContent.style.setProperty('display', 'block');
     elContent.style.setProperty('z-index', `${props.zIndex ? props.zIndex : bkZIndexManager.getPopperIndex()}`);
     updatePopover();
+
     ctx.emit(EMIT_EVENTS.CONTENT_AfterShow, { isShow: true });
   };
 
@@ -428,7 +452,7 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
 
   watch(localIsShow, (val) => {
     if (val) {
-      hanldePopoverShow();
+      handlePopoverShow();
     } else {
       handlePopoverHide();
     }
