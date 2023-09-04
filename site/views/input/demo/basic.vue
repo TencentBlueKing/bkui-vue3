@@ -1,12 +1,14 @@
 <template>
   <div>
-    <bk-input v-model="xxxx" />
+    <bk-input
+      v-model="xxxx"
+    />
   </div>
 </template>
 
 <script setup>
-  import { ref } from 'vue'
-  const xxxx = ref('helloworld')
+  import { ref } from 'vue';
+  const xxxx = ref('helloworld');
 </script>
 
 <style lang="postcss">
