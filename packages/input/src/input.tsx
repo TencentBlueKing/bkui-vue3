@@ -218,6 +218,7 @@ export default defineComponent({
         if (props.withValidate) {
           formItem?.validate?.('change');
         }
+        // isOverflow.value = detectOverflow();
       },
     );
 
@@ -233,6 +234,7 @@ export default defineComponent({
     });
 
     function detectOverflow() {
+      console.log(inputRef.value?.scrollWidth, inputRef.value?.clientWidth);
       return inputRef.value?.scrollWidth > (inputRef.value?.clientWidth + 2);
     }
 
