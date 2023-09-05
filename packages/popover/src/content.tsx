@@ -57,10 +57,10 @@ export default defineComponent({
     watch(() => props.visible, () => {
       if (props.visible) {
         setTimeout(() => {
-          (refContent.value as HTMLElement)?.style.setProperty('pointer-events', 'all');
+          (refContent.value as HTMLElement)?.style.setProperty('pointer-events', 'inherit');
         }, props.eventDelay ?? 300);
       }
-    });
+    }, { immediate: true });
 
     const { resolveClassName } = usePrefix();
 
