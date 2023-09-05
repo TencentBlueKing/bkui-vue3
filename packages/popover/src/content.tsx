@@ -54,11 +54,15 @@ export default defineComponent({
 
     const refContent = ref(null);
 
+    const resetPointerEvent = () => {
+      setTimeout(() => {
+        (refContent.value as HTMLElement)?.style.setProperty('pointer-events', 'inherit');
+      }, props.eventDelay ?? 300);
+    };
+
     watch(() => props.visible, () => {
       if (props.visible) {
-        setTimeout(() => {
-          (refContent.value as HTMLElement)?.style.setProperty('pointer-events', 'inherit');
-        }, props.eventDelay ?? 300);
+        resetPointerEvent();
       }
     }, { immediate: true });
 
@@ -67,7 +71,8 @@ export default defineComponent({
     return {
       style,
       refContent,
-      resolveClassName
+      resolveClassName,
+      resetPointerEvent
     };
   },
   render() {
@@ -75,6 +80,7 @@ export default defineComponent({
 
     const resolveContentStyle = (slot) => {
       if (Fragment === slot?.[0]?.type) {
+        this.resetPointerEvent();
         return Object.assign({}, this.style, { 'pointer-events': 'none' as const });
       }
 
