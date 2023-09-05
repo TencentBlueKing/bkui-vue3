@@ -10,20 +10,20 @@
  *
  * ---------------------------------------------------
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
- * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * documentation files (the 'Software'), to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
  * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
  *
  * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
  * the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
  * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { ExtractPropTypes } from "vue";
+import { ExtractPropTypes } from 'vue';
 
 import {
   PlacementEnum,
@@ -31,7 +31,7 @@ import {
   PropTypes,
   renderType,
   triggerType,
-} from "@bkui-vue/shared";
+} from '@bkui-vue/shared';
 
 export const EventProps = {
   onAfterHidden: () => {},
@@ -47,12 +47,12 @@ export const PopoverProps = {
   isShow: PropTypes.bool.def(false),
   always: PropTypes.bool.def(false),
   disabled: PropTypes.bool.def(false),
-  width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def("auto"),
-  height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def("auto"),
+  width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
+  height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
   maxHeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def(
-    "auto"
+    'auto'
   ),
-  content: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def(""),
+  content: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def(''),
 
   target: PropTypes.oneOfType([
     PropTypes.string,
@@ -68,7 +68,7 @@ export const PopoverProps = {
   placement: placementType().def(PlacementEnum.TOP_START),
 
   // 'dark', 'light'
-  theme: PropTypes.string.def("dark"),
+  theme: PropTypes.string.def('dark'),
 
   /**
    * 触发方式
@@ -101,7 +101,7 @@ export const PopoverProps = {
    * 弹出内容绑定元素
    */
   boundary: PropTypes.oneOfType([
-    PropTypes.string.def("parent"),
+    PropTypes.string.def('parent'),
     PropTypes.instanceOf(HTMLElement),
   ]),
 
@@ -149,7 +149,7 @@ export const PopoverProps = {
   /**
    * 配置自定义样式类名，传入的类会被加在组件最外层的 DOM
    */
-  extCls: PropTypes.string.def(""),
+  extCls: PropTypes.string.def(''),
 
   /**
    * 自定义Content组件渲染，point-event延迟渲染时间

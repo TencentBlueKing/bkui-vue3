@@ -23,13 +23,11 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { computed, createApp, nextTick, ref } from 'vue';
+import { computed, createApp, nextTick, ref, reactive } from 'vue';
 
 import Popover from './popover';
-import { PopoverPropTypes } from './props';
+import { PopoverPropTypes, PopoverProps } from './props';
 import { isAvailableId, isElement } from './utils';
-import { PopoverProps } from './props';
-import { reactive } from 'vue';
 
 export type $Popover = PopoverPropTypes & {
   target: HTMLElement | HTMLElement | MouseEvent,
