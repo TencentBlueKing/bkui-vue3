@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { computed, createApp, nextTick, ref, reactive } from 'vue';
+import { createApp, nextTick, ref, reactive } from 'vue';
 
 import Popover from './popover';
 import { PopoverPropTypes, PopoverProps } from './props';
@@ -74,11 +74,6 @@ export default function createPopoverComponent(options: $Popover) {
         refReference.value?.stopHide?.();
       };
 
-      const attrs = computed(() => {
-        return Object.keys(refProps)
-          .reduce((out: any, curKey: string) => ({ ...out, [curKey]: refProps[curKey] }), {});
-      });
-
       const updateTarget = (target: MouseEvent | HTMLElement) => {
         refProps.target = target as any;
         nextTick(() => {
@@ -101,13 +96,12 @@ export default function createPopoverComponent(options: $Popover) {
         stopHide,
       });
 
-      return () => <Popover { ...attrs.value } ref={refReference}
+      return () => <Popover { ...refProps } ref={refReference}
         onContentMouseenter={ handleContentMouseenter }
         onContentMouseleave={ handleContentMouseleave }>
       </Popover>;
     },
   };
-
 
   function getBoundaryDom(boundary) {
     if (/^body$/i.test(boundary)) {
