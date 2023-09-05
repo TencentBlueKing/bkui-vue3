@@ -41,6 +41,7 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
     showPopover,
     hidePopover,
     updatePopover,
+    cleanup,
     resolveTriggerEvents,
     resolvePopElements,
     isElementFullScreen,
@@ -49,6 +50,12 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
     getFullscreenRoot,
     stopHide,
   } = useFloating(props, ctx, { refReference, refContent, refArrow, refRoot });
+
+
+  const resetPopover = () => {
+    cleanup?.();
+    createPopInstance();
+  }
 
   const showFn = () => {
     showPopover();
@@ -190,6 +197,7 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
     updateBoundary,
     initPopInstance,
     updatePopover,
+    resetPopover,
     showPopover,
     hidePopover,
     showFn,
