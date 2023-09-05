@@ -89,6 +89,7 @@ export default defineComponent({
     footer?: () => HTMLElement,
     'side-icon'?: () => HTMLElement,
     'side-header'?: () => HTMLElement,
+    'side-footer'?: () => HTMLElement,
   }>,
   setup(props, { emit }) {
     const defaultHeaderTitle = ref(props.headerTitle);
@@ -202,11 +203,13 @@ export default defineComponent({
                         }
                       </div>
                       <div class="nav-slider-footer">
-                        <div class={{ 'is-left': this.navigationType !== 'top-bottom', 'footer-icon': true }}
-                            onClick={this.handleClick}>
-                              <CollapseLeft class="footer-icon-svg" style={{ transform: this.nav.click ? 'rotate(180deg)' : 'rotate(0deg)' }}/>
+                        <div class={{ 'is-left': this.navigationType !== 'top-bottom', 'footer-icon': true }} onClick={this.handleClick}>
+                          <CollapseLeft class="footer-icon-svg" style={{ transform: this.nav.click ? 'rotate(180deg)' : 'rotate(0deg)' }}/>
                         </div>
                     </div>
+                    {
+                      this.$slots['side-footer']?.()
+                    }
                 </div>
           </div>
         }

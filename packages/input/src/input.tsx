@@ -218,6 +218,8 @@ export default defineComponent({
         if (props.withValidate) {
           formItem?.validate?.('change');
         }
+        // TODO: 值变化时实时检测是否溢出
+        // isOverflow.value = detectOverflow();
       },
     );
 
