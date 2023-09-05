@@ -293,8 +293,16 @@ export default defineComponent({
               this.$slots['collapse-trigger']?.()
               || (
                 this.collapsed
-                  ? <AngleRight class={`${this.resolveClassName('resize-collapse')}`} onClick={this.setCollapse}></AngleRight>
-                  : <AngleLeft class={`${this.resolveClassName('resize-collapse')}`} onClick={this.setCollapse}></AngleLeft>
+                  ? <AngleRight
+                    width={26}
+                    height={26}
+                    class={`${this.resolveClassName('resize-collapse')}`}
+                    onClick={this.setCollapse} />
+                  : <AngleLeft
+                    width={26}
+                    height={26}
+                    class={`${this.resolveClassName('resize-collapse')}`}
+                    onClick={this.setCollapse} />
               )
             )
           }
