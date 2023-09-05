@@ -137,6 +137,7 @@ export default defineComponent({
       stopHide,
       contentIsShow,
       renderContent,
+      localIsShow
     };
   },
 
@@ -154,7 +155,7 @@ export default defineComponent({
       </Reference>
       <Teleport to={ this.boundary } disabled={ !this.transBoundary }>
         <Content ref="refContent"
-          visible={ this.contentIsShow }
+          visible={ this.localIsShow }
           data-theme={ this.theme }
           extCls={this.extCls}
           width={ this.width }

@@ -67,6 +67,13 @@ const rateEventJson: IPropsTableItem[] = [
     desc: '评分发生变化的时候',
     optional: [],
   },
+  {
+    name: 'hover-change',
+    type: 'Function',
+    default: '',
+    desc: '鼠标hover评分的时候',
+    optional: [],
+  },
 ];
 
 export default defineComponent({
