@@ -214,17 +214,27 @@ export default defineComponent({
     const getPropNumberAsStringValue = key => (typeof props[key] === 'number' ? `${props[key]}px` : props[key]);
 
     const contentWidth = computed(() => {
+      const minMaxWidth = {
+        maxWidth: getPropNumberAsStringValue('maxWidth'),
+        minWidth: getPropNumberAsStringValue('minWidth'),
+      };
+
       const isAdvance = typeof props.message === 'object' && !isVNode(props.message);
       if (/%$/.test(`${props.width}`) || /auto/ig.test(`${props.width}`)) {
         return {
           width: props.width,
-          maxWidth: getPropNumberAsStringValue('maxWidth'),
-          minWidth: getPropNumberAsStringValue('minWidth'),
+          ...minMaxWidth,
         };
       }
 
       if (/^\d+/.test(`${props.width}`)) {
-        return /^\d+\.?\d*$/.test(`${props.width}`) ? `${props.width}px` : props.width;
+        return /^\d+\.?\d*$/.test(`${props.width}`) ? {
+          width: `${props.width}px`,
+          ...minMaxWidth,
+        } : {
+          width: props.width,
+          ...minMaxWidth,
+        };
       }
 
       if (isAdvance) {
