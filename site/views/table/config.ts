@@ -91,7 +91,7 @@ export default [
       { name: 'width', type: 'Number|String', default: 'auto', desc: '对应列的宽度', optional: [] },
       { name: 'minWidth', type: 'Number|String', default: 'auto', desc: '对应列的最小宽度，与 width 的区别是 width 是固定的，min-width 会把剩余宽度按比例分配给设置了 min-width 的列', optional: [] },
       { name: 'show-overflow-tooltip', type: 'Boolean|IOverflowTooltip', default: 'false', desc: '表格cell内容超长时，是否自动展示tooltip，默认值为false，可以通过设置为true开启，如果需要自定义content请设置为对象，具体参考 IOverflowTooltip', optional: [] },
-      { name: 'type', type: 'String', default: 'none', desc: '对应列的类型。如果设置了 index 则显示该行的索引（从 1 开始计算）；如果设置了 expand 则显示为一个可展开的按钮', optional: ['index', 'expand', 'none'] },
+      { name: 'type', type: 'String', default: 'none', desc: '对应列的类型。如果设置了 index 则显示该行的索引（从 1 开始计算）；如果设置了 expand 则显示为一个可展开的按钮', optional: ['index', 'selection', 'expand', 'none'] },
       { name: 'resizable', type: 'Boolean', default: 'true', desc: '对应列是否可以通过拖动改变宽度', optional: [] },
       { name: 'fixed', type: 'String', default: 'false', desc: '列是否固定在左侧或者右侧，true 表示固定在左侧', optional: ['left', 'right'] },
       { name: 'sort', type: 'Boolean|ISort|String', default: 'false', desc: '对应列是否可以排序，可以简单设置true开启默认排序，也可以通过详细配置排序方式，请参考ISort', optional: [] },
