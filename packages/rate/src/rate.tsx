@@ -54,7 +54,7 @@ export default defineComponent({
     withValidate: PropTypes.bool.def(true),
   },
 
-  emits: ['change', 'update:modelValue'],
+  emits: ['change', 'hover-change', 'update:modelValue'],
 
   setup(props, { emit }) {
     const { resolveClassName } = usePrefix();
@@ -70,6 +70,8 @@ export default defineComponent({
 
     const changeHover = (val) => {
       hoverRate.value = val;
+
+      emit('hover-change', val);
     };
 
     const rateClass = classes({
