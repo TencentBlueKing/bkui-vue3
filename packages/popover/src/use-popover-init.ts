@@ -172,7 +172,8 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
 
   const handleClickOutside = (_e: MouseEvent) => {
     ctx.emit(EMIT_EVENTS.CLICK_OUTSIDE, { isShow: localIsShow.value, event: _e });
-    if (props.disableOutsideClick || props.always || props.disabled || props.trigger === 'manual') {
+    const needExec = props.disableOutsideClick || props.always || props.disabled || props.trigger === 'manual';
+    if (!props.forceClickoutside && needExec) {
       return;
     }
 

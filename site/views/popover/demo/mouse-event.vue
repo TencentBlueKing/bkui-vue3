@@ -1,6 +1,5 @@
 <template>
   <bk-button
-    v-bk-ellipsis="'xxccxcxc'"
     @click="handlePopMsgBtn"
   >
     点击初始化Popover
@@ -8,11 +7,8 @@
   <bk-button @click="handleShowPop">
     show
   </bk-button>
-  <bk-button
-    @click="handleHidePop"
-    @mousemove="handleMouseMove"
-  >
-    close
+  <bk-button @click="handleHidePop">
+    hide
   </bk-button>
 </template>
 <script>
@@ -36,16 +32,19 @@
           target: e,
           content: 'create mode 100644 packages/icon/icons/left-turn-line.tsx',
         });
+
+        this.popInstance?.show();
       },
-      handleShowPop() {
+      handleShowPop(e) {
+        this.popInstance?.update(e);
         this.popInstance?.show();
       },
       handleHidePop() {
-        this.popInstance?.close();
+        this.popInstance?.hide();
       },
-      handleMouseMove(e) {
-        this.popInstance?.update(e);
-      },
+      // handleMouseMove(e) {
+      //   this.popInstance?.update(e);
+      // },
     },
   });
 </script>

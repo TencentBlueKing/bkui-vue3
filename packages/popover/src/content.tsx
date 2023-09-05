@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { computed, defineComponent } from 'vue';
+import { computed, defineComponent, ref, Fragment, watch } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import { PropTypes } from '@bkui-vue/shared';
@@ -35,6 +35,8 @@ export default defineComponent({
     height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
     maxHeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
     extCls: PropTypes.string.def(''),
+    visible: PropTypes.bool.def(false),
+    eventDelay: PropTypes.number.def(300)
   },
   setup(props) {
     const resolveValToPix = (val: string | number) => {
@@ -50,17 +52,37 @@ export default defineComponent({
       maxHeight: resolveValToPix(props.maxHeight),
     }));
 
+    const refContent = ref(null);
+
+    watch(() => props.visible, () => {
+      if (props.visible) {
+        setTimeout(() => {
+          (refContent.value as HTMLElement)?.style.setProperty('pointer-events', 'all');
+        }, props.eventDelay ?? 300);
+      }
+    });
+
     const { resolveClassName } = usePrefix();
 
     return {
       style,
-      resolveClassName,
+      refContent,
+      resolveClassName
     };
   },
   render() {
     const className = [this.resolveClassName('popover'), this.resolveClassName('pop2-content'), this.extCls];
 
-    return <div class={ className } tabindex="-1" style={this.style}>
+    const resolveContentStyle = (slot) => {
+      if (Fragment === slot?.[0]?.type) {
+        return Object.assign({}, this.style, { 'pointer-events': 'none' as const });
+      }
+
+      return this.style;
+    };
+
+    const style = resolveContentStyle(this.$slots.default?.());
+    return <div class={ className } tabindex="-1" style={ style } ref="refContent">
       { this.$slots.arrow?.() ?? '' }
       { this.$slots.default?.() ?? '' }
     </div>;

@@ -24,7 +24,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { computed, defineComponent, onBeforeUnmount, onMounted, ref, Teleport, toRefs, watch } from 'vue';
+import { computed, defineComponent, onBeforeUnmount, onMounted, ref, Teleport, toRefs, watch, Text } from 'vue';
 
 import { RenderType } from '@bkui-vue/shared';
 
@@ -142,7 +142,7 @@ export default defineComponent({
 
   render() {
     const renderReferSlot = (slot) => {
-      if (Symbol.for('v-txt') === slot[0].type) {
+      if (Text === slot?.[0]?.type) {
         return <span>{ slot }</span>;
       }
 
@@ -154,11 +154,13 @@ export default defineComponent({
       </Reference>
       <Teleport to={ this.boundary } disabled={ !this.transBoundary }>
         <Content ref="refContent"
+          visible={ this.contentIsShow }
           data-theme={ this.theme }
           extCls={this.extCls}
           width={ this.width }
           height={ this.height }
           maxHeight={ this.maxHeight }
+          eventDelay={ this.componentEventDelay }
           v-clickoutside={this.handleClickOutside}
           v-slots={ { arrow: () => (this.arrow ? <Arrow ref="refArrow">{ this.$slots.arrow?.() }</Arrow> : '') } }>
           { this.contentIsShow ? this.$slots.content?.() ?? this.renderContent() : '' }

@@ -231,12 +231,12 @@ export const RenderFunctionStringType = toType<RenderFunctionString>(
   {},
 );
 
-export type SpanFunctionString = ({
+export type SpanFunctionString = (({
   column,
   colIndex,
   row,
   rowIndex,
-}) => number | Number;
+}) => number) | Number;
 export const SpanFunctionStringType = toType<SpanFunctionString>(
   'SpanFunctionStringType',
   {},
@@ -266,7 +266,7 @@ export const FunctionNumberType = toType<FunctionNumber>(
 );
 
 type StringNumber = string | number;
-export const StringNumberType = toType<StringNumber>('StringNumberType', {});
+export const StringNumberType = (val: number | string) => toType<StringNumber>('StringNumberType', {}).def(val);
 
 
 /**
@@ -380,7 +380,7 @@ export const tableProps = {
    * 默认：auto 根据行数自动填充高度
    * 100%，依赖初始化时父级容器高度
    */
-  height: StringNumberType.def('auto'),
+  height: StringNumberType('auto'),
 
   /**
    * 是否为斑马纹 Table
@@ -391,19 +391,19 @@ export const tableProps = {
    * 设置表格最小高度
    * 默认：300
    */
-  minHeight: StringNumberType.def(LINE_HEIGHT * 2),
+  minHeight: StringNumberType(LINE_HEIGHT * 2),
 
   /**
    * 设置表格最d大高度
    * 默认：auto，依赖外层高度
    */
-  maxHeight: StringNumberType.def('auto'),
+  maxHeight: StringNumberType('auto'),
 
   /**
    * 行高，可以为固定数值类型
    * 可以是函数，返回当前行的高度，返回值为数值类型
    */
-  rowHeight: RowHeightFunctionNumberType.def(() => LINE_HEIGHT),
+  rowHeight: RowHeightFunctionNumberType.def(LINE_HEIGHT),
 
   /**
    * Thead行高，可以为固定数值类型

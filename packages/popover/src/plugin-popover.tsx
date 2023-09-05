@@ -23,10 +23,10 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { computed, createApp, nextTick, ref } from 'vue';
+import { computed, createApp, nextTick, ref, reactive } from 'vue';
 
 import Popover from './popover';
-import { PopoverPropTypes } from './props';
+import { PopoverPropTypes, PopoverProps } from './props';
 import { isAvailableId, isElement } from './utils';
 
 export type $Popover = PopoverPropTypes & {
@@ -40,49 +40,28 @@ export default function createPopoverComponent(options: $Popover) {
   const resolvedOptions: any = {
     boundary: 'body',
     placement: 'top',
-    autoVisibility: false,
+    autoVisibility: true,
+    isShow: false,
     trigger: 'manual',
     ...options,
   };
 
-  // const isElement = element => element instanceof Element || element instanceof HTMLDocument;
-
   const popoverComponent = {
     name: '$popover',
     setup(_, { expose }) {
-      const refProps = ref(resolvedOptions);
-      const refReference = ref();
-      const referStyle = ref({
-        position: 'absolute' as const,
-        pointerEvents: 'none' as const,
-        left: 0,
-        top: 0,
-        width: 'auto',
-        height: 'auto',
-        transform: '',
-      });
 
-      const updateStyle = (target: HTMLElement | HTMLElement | MouseEvent) => {
-        if (isElement(target)) {
-          const { x, y, width, height } = (target as HTMLElement).getBoundingClientRect();
-          Object.assign(referStyle.value, {
-            width: `${width}px`,
-            height: `${height}px`,
-            transform: `translate3d(${x}px,${y}px,0)`,
-          });
+      const formatOptions = (): any => {
+        return Object.keys(PopoverProps).reduce((result: any, key) => {
+          if (Object.prototype.hasOwnProperty.call(resolvedOptions, key)) {
+            Object.assign(result, { [key]: resolvedOptions[key] });
+          }
 
-          return;
-        }
-
-        const { clientX, clientY } = target as MouseEvent;
-        Object.assign(referStyle.value, {
-          transform: `translate3d(${clientX}px,${clientY}px,0)`,
-          width: '10px',
-          height: '10px',
-        });
+          return result;
+        }, { target: resolvedOptions.target });
       };
 
-      updateStyle(refProps.value.target as any);
+      const refProps = reactive(formatOptions());
+      const refReference = ref();
       const show = () => {
         refReference.value?.show?.();
       };
@@ -96,16 +75,12 @@ export default function createPopoverComponent(options: $Popover) {
       };
 
       const attrs = computed(() => {
-        const excludeKeys = ['target'];
-        return Object.keys(refProps.value)
-          .filter((key: string) => !excludeKeys.includes(key))
-          .reduce((out: any, curKey: string) => ({ ...out, [curKey]: refProps.value[curKey] }), {});
+        return Object.keys(refProps)
+          .reduce((out: any, curKey: string) => ({ ...out, [curKey]: refProps[curKey] }), {});
       });
 
       const updateTarget = (target: MouseEvent | HTMLElement) => {
-        refProps.value.target = target as any;
-        updateStyle(target);
-        refReference.value?.updatePopover?.();
+        refProps.target = target as any;
         nextTick(() => {
           refReference.value?.updatePopover?.();
         });
@@ -129,7 +104,6 @@ export default function createPopoverComponent(options: $Popover) {
       return () => <Popover { ...attrs.value } ref={refReference}
         onContentMouseenter={ handleContentMouseenter }
         onContentMouseleave={ handleContentMouseleave }>
-        <span style={ referStyle.value }></span>
       </Popover>;
     },
   };

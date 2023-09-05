@@ -4,6 +4,7 @@
       :columns="columns"
       :data="tableData"
       @row-click="handleRowClick"
+      @select="handleRowSelect"
     />
     <span>on row click: {{ `index: ${ activeRowInfo.index }` }}</span>
   </div>
@@ -23,6 +24,9 @@
       };
     },
     methods: {
+      handleRowSelect(arg) {
+        console.log('handleRowSelect', arg);
+      },
       handleRowClick(e, row, index, rows, source) {
         Object.assign(this.activeRowInfo, { e, row, index, rows, source });
         console.log('active row', this.activeRowInfo);
