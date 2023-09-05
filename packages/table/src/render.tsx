@@ -162,6 +162,7 @@ export default class TableRender {
   public renderTableFooter(options: any) {
     return (
       <Pagination
+        style="width: 100%;"
         {...options}
         modelValue={options.current}
         onLimitChange={limit => this.handlePageLimitChange(limit)}
