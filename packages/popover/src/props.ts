@@ -23,9 +23,15 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { ExtractPropTypes } from 'vue';
+import { ExtractPropTypes } from "vue";
 
-import { PlacementEnum, placementType, PropTypes, renderType, triggerType  } from '@bkui-vue/shared';
+import {
+  PlacementEnum,
+  placementType,
+  PropTypes,
+  renderType,
+  triggerType,
+} from "@bkui-vue/shared";
 
 export const EventProps = {
   onAfterHidden: () => {},
@@ -41,12 +47,18 @@ export const PopoverProps = {
   isShow: PropTypes.bool.def(false),
   always: PropTypes.bool.def(false),
   disabled: PropTypes.bool.def(false),
-  width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
-  height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
-  maxHeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
-  content: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def(''),
+  width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def("auto"),
+  height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def("auto"),
+  maxHeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def(
+    "auto"
+  ),
+  content: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def(""),
 
-  target: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(HTMLElement), PropTypes.instanceOf(PointerEvent)]),
+  target: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.instanceOf(HTMLElement),
+    PropTypes.instanceOf(PointerEvent),
+  ]),
 
   allowHtml: PropTypes.bool.def(false),
   /**
@@ -56,7 +68,7 @@ export const PopoverProps = {
   placement: placementType().def(PlacementEnum.TOP_START),
 
   // 'dark', 'light'
-  theme: PropTypes.string.def('dark'),
+  theme: PropTypes.string.def("dark"),
 
   /**
    * 触发方式
@@ -88,7 +100,10 @@ export const PopoverProps = {
   /**
    * 弹出内容绑定元素
    */
-  boundary: PropTypes.oneOfType([PropTypes.string.def('parent'), PropTypes.instanceOf(HTMLElement)]),
+  boundary: PropTypes.oneOfType([
+    PropTypes.string.def("parent"),
+    PropTypes.instanceOf(HTMLElement),
+  ]),
 
   zIndex: PropTypes.number.def(undefined),
 
@@ -127,11 +142,14 @@ export const PopoverProps = {
   /**
    * popover显示和隐藏的延时时间
    */
-  popoverDelay: PropTypes.oneOfType([PropTypes.number, PropTypes.arrayOf(PropTypes.number)]).def(100),
+  popoverDelay: PropTypes.oneOfType([
+    PropTypes.number,
+    PropTypes.arrayOf(PropTypes.number),
+  ]).def(100),
   /**
    * 配置自定义样式类名，传入的类会被加在组件最外层的 DOM
    */
-  extCls: PropTypes.string.def(''),
+  extCls: PropTypes.string.def(""),
 
   /**
    * 自定义Content组件渲染，point-event延迟渲染时间

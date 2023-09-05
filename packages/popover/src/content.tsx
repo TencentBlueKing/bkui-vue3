@@ -80,7 +80,7 @@ export default defineComponent({
       }
 
       return this.style;
-    }
+    };
 
     const style = resolveContentStyle(this.$slots.default?.());
     return <div class={ className } tabindex="-1" style={ style } ref="refContent">

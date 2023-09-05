@@ -60,41 +60,10 @@ export default function createPopoverComponent(options: $Popover) {
 
           return result;
         }, { target: resolvedOptions.target });
-      }
+      };
 
       const refProps = reactive(formatOptions());
       const refReference = ref();
-      // const referStyle = ref({
-      //   position: 'absolute' as const,
-      //   pointerEvents: 'none' as const,
-      //   left: 0,
-      //   top: 0,
-      //   width: 'auto',
-      //   height: 'auto',
-      //   transform: '',
-      // });
-
-      // const updateStyle = (target: HTMLElement | HTMLElement | MouseEvent) => {
-      //   if (isElement(target)) {
-      //     const { x, y, width, height } = (target as HTMLElement).getBoundingClientRect();
-      //     Object.assign(referStyle.value, {
-      //       width: `${width}px`,
-      //       height: `${height}px`,
-      //       transform: `translate3d(${x}px,${y}px,0)`,
-      //     });
-
-      //     return;
-      //   }
-
-      //   const { clientX, clientY } = target as MouseEvent;
-      //   Object.assign(referStyle.value, {
-      //     transform: `translate3d(${clientX}px,${clientY}px,0)`,
-      //     width: '10px',
-      //     height: '10px',
-      //   });
-      // };
-
-      // updateStyle(refProps.target as any);
       const show = () => {
         refReference.value?.show?.();
       };
@@ -114,8 +83,6 @@ export default function createPopoverComponent(options: $Popover) {
 
       const updateTarget = (target: MouseEvent | HTMLElement) => {
         refProps.target = target as any;
-        // updateStyle(target);
-        // refReference.value?.updatePopover?.();
         nextTick(() => {
           refReference.value?.updatePopover?.();
         });

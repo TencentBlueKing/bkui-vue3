@@ -114,7 +114,7 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
 
   const resolveReferElement = () => {
     return resolveTargetElement(props.target) || resolveTargetElement(refReference.value?.$el);
-  }
+  };
 
   const resolveModifiers: any = () => {
     const resolveResult = {};
