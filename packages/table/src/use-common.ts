@@ -75,6 +75,7 @@ export const useClass = (
   const { getColumns } = useColumn(props, targetColumns);
   const autoHeight = ref(200);
   const fixHeight = ref(200);
+  const maxFixHeight = ref(200);
   const headHeight = ref(LINE_HEIGHT);
   const hasScrollY = ref(false);
   const hasFooter = computed(() => props.pagination && props.data.length);
@@ -117,7 +118,6 @@ export const useClass = (
     return '';
   };
   const resolveWidth = () => {
-    // const columns = getColumns();
     if (resolvedColumns.value.every((col: Column) => /^\d+\.?\d*(px)?$/ig.test(`${col.width}`))) {
       const rectWidth = resolvedColumns.value.reduce((width: number, col: Column) => width + Number(`${col.width}`.replace(/px/ig, '')), 0);
       const offset = hasScrollY.value ? SCROLLY_WIDTH : 0;
@@ -162,11 +162,22 @@ export const useClass = (
     maxHeight: '',
   });
 
-  const getHeadHeight = () => (props.showHead ? resolvePropHeight(props.headHeight, LINE_HEIGHT) : 0);
+  const getHeadHeight = (rootEl?) => {
+    if (props.showHead) {
+      if (!rootEl) {
+        return resolvePropHeight(props.headHeight, LINE_HEIGHT) ?? 0;
+      }
+      const selector = resolveClassName('table-head');
+      const head = rootEl.querySelector(selector) as HTMLElement;
+      return head?.offsetHeight ?? resolvePropHeight(props.headHeight, LINE_HEIGHT) ?? 0;
+    }
 
-  const resolveContentStyle = () => {
+    return 0;
+  }
+
+  const resolveContentStyle = (rootEl) => {
     const resolveHeight = resolvePropHeight(props.height, autoHeight.value);
-    headHeight.value = getHeadHeight();
+    headHeight.value = getHeadHeight(rootEl);
     const resolveMinHeight = resolvePropHeight(props.minHeight, autoHeight.value);
     const resolveFooterHeight = props.pagination && props.data.length ? props.paginationHeight : 0;
     const contentHeight = resolveHeight - headHeight.value - resolveFooterHeight;
@@ -191,12 +202,18 @@ export const useClass = (
 
   const resetTableHeight = (rootEl: HTMLElement) => {
     if (rootEl) {
+      const headHeight = getHeadHeight(rootEl);
       const { height } = rootEl.parentElement.getBoundingClientRect();
       autoHeight.value = height;
-      const tableBody = rootEl.querySelector('.bk-table-body-content > table') as HTMLElement;
+      const contentselector = `.${resolveClassName('table-body-content')} > table`;
+      const bodySelector = `.${resolveClassName('table-body')}`;
 
-      resolveContentStyle();
-      fixHeight.value = (tableBody?.offsetHeight ?? height) + headHeight.value;
+      const tableBody = rootEl.querySelector(bodySelector) as HTMLElement;
+      const tableBodyContent = rootEl.querySelector(contentselector) as HTMLElement;
+
+      resolveContentStyle(rootEl);
+      maxFixHeight.value = (tableBody?.offsetHeight ?? height) + headHeight;
+      fixHeight.value = (tableBodyContent?.offsetHeight ?? height) + headHeight;
       updateBorderClass(rootEl);
     }
   };
@@ -239,6 +256,7 @@ export const useClass = (
     contentStyle,
     headStyle,
     fixHeight,
+    maxFixHeight,
     resetTableHeight,
     updateBorderClass,
     getColumnsWidthOffsetWidth,
