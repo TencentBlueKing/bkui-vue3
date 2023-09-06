@@ -167,13 +167,14 @@ export const useClass = (
       if (!rootEl) {
         return resolvePropHeight(props.headHeight, LINE_HEIGHT) ?? 0;
       }
+
       const selector = resolveClassName('table-head');
       const head = rootEl.querySelector(selector) as HTMLElement;
       return head?.offsetHeight ?? resolvePropHeight(props.headHeight, LINE_HEIGHT) ?? 0;
     }
 
     return 0;
-  }
+  };
 
   const resolveContentStyle = (rootEl) => {
     const resolveHeight = resolvePropHeight(props.height, autoHeight.value);
