@@ -1,3 +1,4 @@
+import { toType } from 'vue-types';
 /*
  * Tencent is pleased to support the open source community by making
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
@@ -43,6 +44,8 @@ type IAxesOffsets = {
   alignmentAxis?: number | null;
 };
 
+type IContent = string | number | JSX.Element | HTMLElement;
+
 export const PopoverProps = {
   isShow: PropTypes.bool.def(false),
   always: PropTypes.bool.def(false),
@@ -52,7 +55,7 @@ export const PopoverProps = {
   maxHeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def(
     'auto'
   ),
-  content: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def(''),
+  content: toType<IContent>('IContent', {}).def(''),
 
   target: PropTypes.oneOfType([
     PropTypes.string,

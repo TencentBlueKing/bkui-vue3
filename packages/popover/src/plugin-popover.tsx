@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { createApp, nextTick, ref, reactive } from 'vue';
+import { createApp, ref, reactive } from 'vue';
 
 import Popover from './popover';
 import { PopoverPropTypes, PopoverProps } from './props';
@@ -44,12 +44,12 @@ export default function createPopoverComponent(options: $Popover) {
     isShow: false,
     trigger: 'manual',
     ...options,
+    allowHtml: true
   };
 
   const popoverComponent = {
     name: '$popover',
     setup(_, { expose }) {
-
       const formatOptions = (): any => {
         return Object.keys(PopoverProps).reduce((result: any, key) => {
           if (Object.prototype.hasOwnProperty.call(resolvedOptions, key)) {
@@ -75,10 +75,8 @@ export default function createPopoverComponent(options: $Popover) {
       };
 
       const updateTarget = (target: MouseEvent | HTMLElement) => {
-        refProps.target = target as any;
-        nextTick(() => {
-          refReference.value?.updatePopover?.();
-        });
+        refProps.target = target;
+        refReference.value?.resetPopover?.();
       };
 
       const handleContentMouseenter = () => {
