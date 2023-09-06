@@ -120,7 +120,7 @@ export type IOverflowTooltipProp = {
 
 export type IOverflowTooltip = IOverflowTooltipProp;
 
-export const IOverflowTooltipPropType = toType<IOverflowTooltipProp>('IOverflowTooltipPropType',{
+export const IOverflowTooltipPropType = toType<IOverflowTooltipProp>('IOverflowTooltipPropType', {
   default: false,
   type: [Boolean, Object]
 });
