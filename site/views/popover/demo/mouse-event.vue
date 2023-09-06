@@ -7,17 +7,23 @@
   <bk-button @click="handleShowPop">
     show
   </bk-button>
+  <bk-button @click="handleShowPop">
+    show 2
+  </bk-button>
   <bk-button @click="handleHidePop">
     hide
   </bk-button>
+  <div ref="refContentTable" style="width: 400px;"><ContentTable></ContentTable></div>
 </template>
 <script>
   import { defineComponent } from 'vue';
 
   import { bkEllipsis } from '@bkui-vue/directives';
   import { $bkPopover } from '@bkui-vue/popover';
+  import ContentTable from '../../table/column-template.vue';
 
   export default defineComponent({
+    components: { ContentTable },
     directives: {
       bkEllipsis,
     },
@@ -28,9 +34,10 @@
     },
     methods: {
       handlePopMsgBtn(e) {
+        this.popInstance?.close();
         this.popInstance = $bkPopover({
           target: e,
-          content: 'create mode 100644 packages/icon/icons/left-turn-line.tsx',
+          content: this.$refs.refContentTable,
         });
 
         this.popInstance?.show();
