@@ -51,8 +51,7 @@ export default function createPopoverComponent(options: $Popover) {
     name: '$popover',
     setup(_, { expose }) {
       const formatOptions = (): any => {
-        return Object.keys(PopoverProps)
-        .reduce((result: any, key) => {
+        return Object.keys(PopoverProps).reduce((result: any, key) => {
           if (Object.prototype.hasOwnProperty.call(resolvedOptions, key)) {
             Object.assign(result, { [key]: resolvedOptions[key] });
           }

@@ -55,7 +55,7 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
   const resetPopover = () => {
     cleanup?.();
     createPopInstance();
-  }
+  };
 
   const showFn = () => {
     showPopover();
