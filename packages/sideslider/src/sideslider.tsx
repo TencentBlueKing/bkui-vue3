@@ -66,7 +66,6 @@ export default defineComponent({
 
   setup(props, { slots, emit }) {
     const handleClose = async () => {
-      console.log('slider handleClose');
       let shouldClose = true;
       if (typeof props.beforeClose === 'function') {
         shouldClose = await props.beforeClose();

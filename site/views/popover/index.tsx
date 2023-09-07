@@ -227,6 +227,15 @@ const props: IPropsTableItem[] = [
     desc: '配置自定义样式类名，传入的类会被加在组件最外层的 DOM',
     optional: [],
   },
+  {
+    name: 'componentEventDelay',
+    type: 'number',
+    default: '',
+    desc: `* 自定义Content组件渲染，point-event延迟渲染时间
+    * 避免子组件point-event渲染时触发popover鼠标事件
+    * 如果设置为0，则不启用此设置`,
+    optional: [],
+  },
 ];
 
 const events: IPropsTableItem[] = [
@@ -283,6 +292,18 @@ const methods: IPropsTableItem[] = [
     optional: [],
   }
 ];
+
+const qaData: IPropsTableItem[] = [
+  {
+    name: 'hover事件弹出 table 组件闪退',
+    desc: '设置 componentEventDelay = number(大于0的数值， 300 - 500), 避免子组件point-event渲染时触发popover鼠标事件',
+  }
+];
+
+const QAColumMap = {
+  name: '问题',
+  desc: '说明',
+};
 
 const demos = [
   {
@@ -354,6 +375,7 @@ export default defineComponent({
         <PropsBox title="属性" subtitle="" propsData={props}></PropsBox>
         <PropsBox title="事件" subtitle="" propsData={events}></PropsBox>
         <PropsBox title="方法" subtitle="" propsData={methods}></PropsBox>
+        <PropsBox title="Q & A" subtitle="" columnMap={ QAColumMap } propsData={qaData}></PropsBox>
       </div>
     );
   },

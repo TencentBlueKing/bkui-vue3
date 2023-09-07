@@ -25,8 +25,8 @@
 */
 export interface IPropsTableItem {
   name: string;
-  type: string,
-  default: unknown;
+  type?: string,
+  default?: unknown;
   desc: string;
-  optional: string[];
+  optional?: string[];
 }

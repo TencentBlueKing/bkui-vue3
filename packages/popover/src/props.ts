@@ -157,8 +157,9 @@ export const PopoverProps = {
   /**
    * 自定义Content组件渲染，point-event延迟渲染时间
    * 避免子组件point-event渲染时触发popover鼠标事件
+   * 如果设置为0，则不启用此设置
    */
-  componentEventDelay: PropTypes.number.def(300),
+  componentEventDelay: PropTypes.number.def(0),
 
   /**
    * 或略其他判定条件，强制监听clickoutside & 执行hide
