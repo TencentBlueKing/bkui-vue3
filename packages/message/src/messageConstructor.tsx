@@ -280,9 +280,22 @@ export default defineComponent({
     let copyStatusTimer;
     const copyStatus = ref(null);
 
+    const parseToString = (value) => {
+      let targetStr = value;
+      if (typeof value === 'object') {
+        try {
+          targetStr = JSON.stringify(value);
+        } catch (e) {
+          console.error(`JSON.stringify Error: ${e}`);
+        }
+      }
+
+      return targetStr;
+    };
+
     const copyMessage = () => {
       const copyInstance = new ClipboardJS(refCopyMsgDiv.value as HTMLElement, {
-        text: () => (props.message as any).details,
+        text: () => parseToString((props.message as any).details),
       });
 
       registerCopyCallback(copyInstance);
@@ -324,7 +337,7 @@ export default defineComponent({
       registerCopyCallback(copyInstance);
     };
 
-    const parseJson = (value) => {
+    const parseToJson = (value) => {
       let targetJson = value;
       if (typeof value === 'string') {
         try {
@@ -347,7 +360,7 @@ export default defineComponent({
         && !isVNode(props.message)
       ) {
         if ((props.message.type === MessageContentType.JSON || !props.message.type)) {
-          const targetJson = parseJson(props.message.details);
+          const targetJson = parseToJson(props.message.details);
           const formatter = new JSONFormatter(targetJson);
 
           setTimeout(() => {
@@ -572,7 +585,7 @@ export default defineComponent({
       setDetailsShow,
       fixMesage,
       copyMessage,
-      parseJson,
+      parseToJson,
       handleMouseenter,
       handleMouseleave,
       renderMessageActions,
@@ -599,7 +612,7 @@ export default defineComponent({
 
     const renderMsgDetail = (msg: IMessage) => {
       if (msg.type === MessageContentType.KEY_VALUE) {
-        const target = this.parseJson(msg.details || {});
+        const target = this.parseToJson(msg.details || {});
         const keys = Object.keys(target);
         return keys.map(key => (
           <div class='message-row'>
