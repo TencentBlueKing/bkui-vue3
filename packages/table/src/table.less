@@ -14,7 +14,6 @@
   position: relative;
   height: auto;
   overflow: hidden;
-  // border-bottom: 1px solid @table-border-color;
 
   &.has-scroll-y {
     .@{bk-prefix}-table-head {
@@ -219,7 +218,7 @@
 
         th {
           font-weight: 400;
-
+          background-color: var(--background-color);
           .cell {
             display: flex;
             align-items: center;
@@ -230,6 +229,7 @@
           &.active,
           &:hover {
             background: @table-row-active-bg-color;
+            cursor: pointer;
           }
 
           &.column_fixed {
@@ -388,7 +388,7 @@
     top: 0;
     right: 0;
     bottom: var(--footer-height);
-    max-height: calc(100% - var(--footer-height));
+    max-height: var(--fix-max-height);
     left: 0;
     height: var(--fix-height);
     pointer-events: none;
