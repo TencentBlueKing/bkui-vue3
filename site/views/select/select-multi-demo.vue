@@ -34,6 +34,7 @@
       multiple
       show-select-all
       multiple-mode="tag"
+      @tag-remove="tagRemove"
     >
       <bk-option
         v-for="(item, index) in datasource"
@@ -91,6 +92,10 @@
 
   const listValue = ref([1, 2, 3, 4, 5, 6, 7, 8]);
   const datasourceList = ref([]);
+
+  const tagRemove = (val) => {
+    console.log(val);
+  };
 
   onBeforeMount(() => {
     new Array(100).fill(0)
