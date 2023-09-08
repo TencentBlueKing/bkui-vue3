@@ -88,16 +88,16 @@ export default defineComponent({
       }
 
       if (typeof showOverflowTooltip === 'object') {
-        disabled = showOverflowTooltip.disabled;
-        popoverOption = showOverflowTooltip.popoverOption;
-        resizerWay = showOverflowTooltip.resizerWay || 'debounce';
-        content = showOverflowTooltip.content || refRoot.value.innerText;
-        if (typeof showOverflowTooltip.content === 'function') {
-          content = showOverflowTooltip.content(props.column, props.row);
+        disabled = (showOverflowTooltip as any).disabled;
+        popoverOption = (showOverflowTooltip as any).popoverOption;
+        resizerWay = (showOverflowTooltip as any).resizerWay || 'debounce';
+        content = (showOverflowTooltip as any).content || refRoot.value.innerText;
+        if (typeof (showOverflowTooltip as any).content === 'function') {
+          content = (showOverflowTooltip as any).content(props.column, props.row);
         }
 
-        watchCellResize = showOverflowTooltip.watchCellResize;
-        mode = showOverflowTooltip.mode || 'auto';
+        watchCellResize = (showOverflowTooltip as any).watchCellResize;
+        mode = (showOverflowTooltip as any).mode || 'auto';
       }
 
       if (typeof disabled === 'function') {
