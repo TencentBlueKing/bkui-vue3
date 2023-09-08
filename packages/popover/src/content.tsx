@@ -34,6 +34,7 @@ export default defineComponent({
     width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
     height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
     maxHeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
+    maxWidth: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
     extCls: PropTypes.string.def(''),
     visible: PropTypes.bool.def(false),
     eventDelay: PropTypes.number.def(0)
@@ -50,6 +51,7 @@ export default defineComponent({
       width: resolveValToPix(props.width),
       height: resolveValToPix(props.height),
       maxHeight: resolveValToPix(props.maxHeight),
+      maxWidth: resolveValToPix(props.maxWidth),
     }));
 
     const refContent = ref(null);

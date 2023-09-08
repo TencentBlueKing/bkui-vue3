@@ -105,6 +105,13 @@ const props: IPropsTableItem[] = [
     optional: [],
   },
   {
+    name: 'maxWidth',
+    type: 'Number, String',
+    default: 'auto',
+    desc: '提示框的内容容器的最大宽度',
+    optional: [],
+  },
+  {
     name: 'always',
     type: 'Boolean',
     default: 'false',

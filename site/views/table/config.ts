@@ -113,12 +113,13 @@ export default [
   },
   {
     title: 'IOverflowTooltip',
-    subTile: 'Table Cell ellipsis tooltip config',
+    subTile: 'Table Cell ellipsis tooltip config, 此配置是可以继承的，table上面配置项会默认应用到所有Column， Column如有需要只需要修改差异配置即可。同样的配置Column上面的配置优先级会高于Table上面配置',
     config: [
       { name: 'content', type: 'String|Function', default: 'Cell innerText', desc: 'tooltip展示内容，可以为回调函数，回调参数 (column, row) => string', optional: [] },
       { name: 'disabled', type: 'Boolean', default: 'false', desc: '是否展示tooltip', optional: ['true', 'false'] },
       { name: 'mode', type: 'String', default: 'auto', desc: '渲染模式，可选项 auto|static, auto模式会自动计算文本宽度和表格单元宽度，只有当文本宽度超出tip才会激活，如果是static模式，则会一直激活状态', optional: ['auto', 'static'] },
       { name: 'watchCellResize', type: 'Boolean', default: 'true', desc: '是否监听当前cell尺寸变化, 动态添加tooltip, 【如果需要提升性能，请禁用此功能】', optional: ['true', 'false'] },
+      { name: 'popoverOption', type: 'Object', default: '{}', desc: '文本溢出弹出popover配置，具体可参考 popover组件配置项', optional: [] },
     ],
   },
   {

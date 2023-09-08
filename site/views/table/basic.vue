@@ -4,7 +4,7 @@
       :columns="columns"
       :data="tableData"
       :settings="settings"
-      show-overflow-tooltip
+      :show-overflow-tooltip="overflowTooltip"
       stripe
       @dblclick="handleDblClick"
       @column-sort="handleSortBy"
@@ -33,6 +33,11 @@
         isLoading: false,
         tableData: DATA_TABLE.map((d, index) => Object.assign({}, d, { msg: index * random(0, 20, true) })),
         columns: [...DATA_COLUMNS],
+        overflowTooltip: {
+          popoverOption: {
+            maxWidth: 400
+          }
+        },
         settings: {
           fields: [
             {

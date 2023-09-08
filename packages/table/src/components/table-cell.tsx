@@ -57,7 +57,17 @@ export default defineComponent({
 
     const resolveSetting = () => {
       if (/boolean|object/.test(typeof props.column.showOverflowTooltip) && props.column.showOverflowTooltip !== null) {
-        return props.column;
+        const result = { showOverflowTooltip: {} };
+        if (props.parentSetting !== null && typeof props.parentSetting === 'object') {
+          result.showOverflowTooltip = props.parentSetting;
+          Object.assign(result.showOverflowTooltip, { disabled: !props.column.showOverflowTooltip });
+
+          if (typeof props.column.showOverflowTooltip === 'object') {
+            Object.assign(result.showOverflowTooltip, props.column.showOverflowTooltip);
+          }
+        }
+
+        return result;
       }
 
       return { showOverflowTooltip: props.parentSetting };
@@ -70,6 +80,7 @@ export default defineComponent({
       let disabled = true;
       let { resizerWay } = props;
       let content = refRoot.value.innerText;
+      let popoverOption = {};
       let mode = 'auto';
       let watchCellResize = true;
       if (typeof showOverflowTooltip === 'boolean') {
@@ -78,6 +89,7 @@ export default defineComponent({
 
       if (typeof showOverflowTooltip === 'object') {
         disabled = showOverflowTooltip.disabled;
+        popoverOption = showOverflowTooltip.popoverOption;
         resizerWay = showOverflowTooltip.resizerWay || 'debounce';
         content = showOverflowTooltip.content || refRoot.value.innerText;
         if (typeof showOverflowTooltip.content === 'function') {
@@ -115,7 +127,7 @@ export default defineComponent({
         }
       }
 
-      return { disabled, content, mode, resizerWay, watchCellResize };
+      return { disabled, content, mode, resizerWay, watchCellResize, popoverOption };
     };
 
     const getEllipsisTarget = () => {
@@ -125,7 +137,7 @@ export default defineComponent({
 
       return refRoot.value;
     };
-    
+
     const resolveOverflowTooltip = () => {
       const target = getEllipsisTarget();
       if (!target || !isElement(target)) {
@@ -150,6 +162,7 @@ export default defineComponent({
             disabled: bindings.value.disabled,
             content: bindings.value.content,
             mode: bindings.value.mode,
+            popoverOption: bindings.value.popoverOption
           });
         }
       } else {

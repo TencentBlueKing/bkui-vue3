@@ -372,6 +372,8 @@ export default class TableRender {
           observerResize={this.props.observerResize}
           resizerWay={this.props.resizerWay}
           isHead={true}
+          column={column}
+          parentSetting={this.props.showOverflowTooltip}
           headExplain={ resolvePropVal(column.explain, 'head', [column]) }
         >
           {cells}
