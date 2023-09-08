@@ -97,7 +97,7 @@ export default defineComponent({
     prefix: PropTypes.string,
     selectedStyle: SelectedType(),
   },
-  emits: ['update:modelValue', 'change', 'toggle', 'clear', 'scroll-end', 'focus', 'blur'],
+  emits: ['update:modelValue', 'change', 'toggle', 'clear', 'scroll-end', 'focus', 'blur', 'tag-remove'],
   setup(props, { emit }) {
     const t = useLocale('select');
     const { resolveClassName } = usePrefix();
@@ -478,6 +478,7 @@ export default defineComponent({
       if (index > -1) {
         selected.value.splice(index, 1);
         emitChange(selected.value.map(item => item.value));
+        emit('tag-remove', val);
       }
     };
     // options存在 > 上一次选择的label > 当前值
