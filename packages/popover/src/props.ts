@@ -52,9 +52,8 @@ export const PopoverProps = {
   disabled: PropTypes.bool.def(false),
   width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
   height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
-  maxHeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def(
-    'auto'
-  ),
+  maxWidth: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
+  maxHeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
   content: toType<IContent>('IContent', {}).def(''),
 
   target: PropTypes.oneOfType([
