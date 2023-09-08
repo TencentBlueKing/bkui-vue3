@@ -162,6 +162,7 @@ export default defineComponent({
           extCls={this.extCls}
           width={ this.width }
           height={ this.height }
+          maxWidth={ this.maxWidth }
           maxHeight={ this.maxHeight }
           eventDelay={ this.componentEventDelay }
           v-clickoutside={this.handleClickOutside}
