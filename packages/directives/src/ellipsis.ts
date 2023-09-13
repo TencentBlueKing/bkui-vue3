@@ -96,13 +96,13 @@ export const createInstance = (el: HTMLElement, binding: any) => {
     }, 120);
   };
 
-  el.addEventListener("mouseenter", handleMouseEnter);
-  el.addEventListener("mouseleave", handleMouseLeave);
+  el.addEventListener('mouseenter', handleMouseEnter);
+  el.addEventListener('mouseleave', handleMouseLeave);
 
   const destroyInstance = (element?: HTMLElement) => {
     handleMouseLeave();
-    (element ?? el)?.removeEventListener("mouseenter", handleMouseEnter);
-    (element ?? el)?.removeEventListener("mouseleave", handleMouseLeave);
+    (element ?? el)?.removeEventListener('mouseenter', handleMouseEnter);
+    (element ?? el)?.removeEventListener('mouseleave', handleMouseLeave);
   };
 
   return {
