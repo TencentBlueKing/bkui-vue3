@@ -30,10 +30,10 @@ import $bkPopover from "@bkui-vue/plugin-popover";
 
 const resolveOptions = (el: HTMLElement, binding: DirectiveBinding) => {
   const options: any = {
-    content: "",
+    content: '',
     target: el,
   };
-  if (typeof binding === "object") {
+  if (typeof binding === 'object') {
     Object.assign(options, binding);
     if (Object.prototype.hasOwnProperty.call(binding, "popoverOption")) {
       Object.assign(options, (binding as any).popoverOption);
