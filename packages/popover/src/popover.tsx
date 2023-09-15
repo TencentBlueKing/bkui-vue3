@@ -24,7 +24,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { computed, defineComponent, onBeforeUnmount, onMounted, ref, Teleport, toRefs, watch, Text } from 'vue';
+import { computed, defineComponent, onBeforeUnmount, onMounted, ref, Teleport, Text, toRefs, watch } from 'vue';
 
 import { RenderType } from '@bkui-vue/shared';
 
@@ -139,7 +139,7 @@ export default defineComponent({
       stopHide,
       contentIsShow,
       renderContent,
-      localIsShow
+      localIsShow,
     };
   },
 

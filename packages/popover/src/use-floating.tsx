@@ -23,6 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
+import { isElement } from 'lodash';
 import { computed, ref, watch } from 'vue';
 
 import { bkZIndexManager } from '@bkui-vue/shared';
@@ -42,7 +43,6 @@ import { EMIT_EVENTS } from './const';
 import { PopoverPropTypes } from './props';
 import usePlatform from './use-platform';
 import { contentAsHTMLElement } from './utils';
-import { isElement } from 'lodash';
 
 /**
  * 解析popover相关配置
@@ -112,9 +112,7 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
     return { elReference, elContent, elArrow, root };
   };
 
-  const resolveReferElement = () => {
-    return resolveTargetElement(props.target) || resolveTargetElement(refReference.value?.$el);
-  };
+  const resolveReferElement = () => resolveTargetElement(props.target) || resolveTargetElement(refReference.value?.$el);
 
   const resolveModifiers: any = () => {
     const resolveResult = {};
