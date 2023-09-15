@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { computed, defineComponent, ref, Fragment, nextTick } from 'vue';
+import { computed, defineComponent, Fragment, nextTick, ref } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import { PropTypes } from '@bkui-vue/shared';
@@ -37,7 +37,7 @@ export default defineComponent({
     maxWidth: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
     extCls: PropTypes.string.def(''),
     visible: PropTypes.bool.def(false),
-    eventDelay: PropTypes.number.def(0)
+    eventDelay: PropTypes.number.def(0),
   },
   setup(props) {
     const resolveValToPix = (val: string | number) => {
@@ -83,7 +83,7 @@ export default defineComponent({
       refContent,
       resolveClassName,
       resetPointerEvent,
-      setContentPointerEvent
+      setContentPointerEvent,
     };
   },
   render() {

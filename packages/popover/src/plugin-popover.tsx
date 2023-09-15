@@ -1,36 +1,36 @@
 /*
-* Tencent is pleased to support the open source community by making
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
-*
-* Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
-*
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
-*
-* License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
-*
-* ---------------------------------------------------
-* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
-* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
-* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-* the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-* THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-* IN THE SOFTWARE.
-*/
-import { createApp, ref, reactive } from 'vue';
+ * Tencent is pleased to support the open source community by making
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ *
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ *
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ *
+ * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ *
+ * ---------------------------------------------------
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+ * the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
+import { createApp, reactive, ref } from 'vue';
 
 import Popover from './popover';
-import { PopoverPropTypes, PopoverProps } from './props';
+import { PopoverProps, PopoverPropTypes } from './props';
 import { isAvailableId, isElement } from './utils';
 
 export type $Popover = PopoverPropTypes & {
-  target: HTMLElement | HTMLElement | MouseEvent,
+  target: HTMLElement | HTMLElement | MouseEvent;
 };
 
 export default function createPopoverComponent(options: $Popover) {
@@ -44,21 +44,22 @@ export default function createPopoverComponent(options: $Popover) {
     isShow: false,
     trigger: 'manual',
     ...options,
-    allowHtml: true
+    allowHtml: true,
   };
 
   const popoverComponent = {
     name: '$popover',
     setup(_, { expose }) {
-      const formatOptions = (): any => {
-        return Object.keys(PopoverProps).reduce((result: any, key) => {
+      const formatOptions = (): any => Object.keys(PopoverProps).reduce(
+        (result: any, key) => {
           if (Object.prototype.hasOwnProperty.call(resolvedOptions, key)) {
             Object.assign(result, { [key]: resolvedOptions[key] });
           }
 
           return result;
-        }, { target: resolvedOptions.target });
-      };
+        },
+        { target: resolvedOptions.target },
+      );
 
       const refProps = reactive(formatOptions());
       const refReference = ref();
@@ -94,10 +95,14 @@ export default function createPopoverComponent(options: $Popover) {
         stopHide,
       });
 
-      return () => <Popover { ...refProps } ref={refReference}
-        onContentMouseenter={ handleContentMouseenter }
-        onContentMouseleave={ handleContentMouseleave }>
-      </Popover>;
+      return () => (
+        <Popover
+          {...refProps}
+          ref={refReference}
+          onContentMouseenter={handleContentMouseenter}
+          onContentMouseleave={handleContentMouseleave}
+        ></Popover>
+      );
     },
   };
 
@@ -122,8 +127,7 @@ export default function createPopoverComponent(options: $Popover) {
 
   if ($PopoverInstance === null) {
     $PopoverInstanceEl = document.createElement('div');
-    getBoundaryDom(resolvedOptions.boundary)
-      .append($PopoverInstanceEl);
+    getBoundaryDom(resolvedOptions.boundary).append($PopoverInstanceEl);
 
     $PopoverInstance = createApp(popoverComponent);
     $PopoverInstanceVm = $PopoverInstance.mount($PopoverInstanceEl);
@@ -136,7 +140,7 @@ export default function createPopoverComponent(options: $Popover) {
       $PopoverInstance = null;
       $PopoverInstanceEl.remove();
     }
-  };
+  }
 
   function show() {
     ($PopoverInstanceVm as any)?.show();
@@ -144,7 +148,7 @@ export default function createPopoverComponent(options: $Popover) {
 
   function update(e: MouseEvent) {
     ($PopoverInstanceVm as any)?.updateTarget(e);
-  };
+  }
 
   function hide() {
     ($PopoverInstanceVm as any)?.hide();

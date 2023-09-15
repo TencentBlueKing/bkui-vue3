@@ -1,4 +1,3 @@
-import { toType } from 'vue-types';
 /*
  * Tencent is pleased to support the open source community by making
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
@@ -25,6 +24,7 @@ import { toType } from 'vue-types';
  * IN THE SOFTWARE.
  */
 import { ExtractPropTypes } from 'vue';
+import { toType } from 'vue-types';
 
 import {
   PlacementEnum,
