@@ -88,6 +88,7 @@ const en = {
     cancel: 'Cancel',
     or: 'Or',
     and: 'And',
+    logical: 'Logical:',
   },
   select: {
     noData: 'No data',

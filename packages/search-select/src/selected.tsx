@@ -28,7 +28,7 @@ import { defineComponent, PropType, ref } from 'vue';
 import { Error } from '@bkui-vue/icon';
 
 import SearchSelectInput from './input';
-import { GetMenuListFunc, ICommonItem, ISearchItem, SearchInputMode, SelectedItem, useSearchSelectInject, ValidateValuesFunc, ValueBehavior } from './utils';
+import { GetMenuListFunc, ICommonItem, ISearchItem, SearchInputMode, SearchLogical, SelectedItem, useSearchSelectInject, ValidateValuesFunc, ValueBehavior } from './utils';
 ;
 export default defineComponent({
   name: 'SearchSelected',
@@ -56,7 +56,7 @@ export default defineComponent({
   emits: ['delete'],
   setup(_props, { emit }) {
     const inputRef = ref<typeof SearchSelectInput>(null);
-    const { onEditClick, onEditEnter, onEditBlur, editKey, valueSplitCode } = useSearchSelectInject();
+    const { onEditClick, onEditEnter, onEditBlur, editKey } = useSearchSelectInject();
     function handleDeleteSelected(index: number) {
       emit('delete', index);
     }
@@ -78,8 +78,9 @@ export default defineComponent({
       return true;
     }
     function copySeletedItem(item: SelectedItem): SelectedItem {
-      const newItem = new SelectedItem(item.searchItem, item.type, valueSplitCode.value);
+      const newItem = new SelectedItem(item.searchItem, item.type);
       newItem.values = item.values.slice();
+      newItem.logical = item.logical || SearchLogical.OR;
       return newItem;
     }
     return {
