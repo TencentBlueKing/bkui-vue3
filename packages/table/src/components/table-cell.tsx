@@ -192,7 +192,7 @@ export default defineComponent({
             },
             60,
             true,
-            resizerWay
+            resizerWay,
           );
           observerIns.start();
           onBeforeUnmount(() => {
