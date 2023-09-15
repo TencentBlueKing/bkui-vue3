@@ -122,7 +122,7 @@ export type IOverflowTooltip = IOverflowTooltipProp;
 
 export const IOverflowTooltipPropType = toType<IOverflowTooltipProp>('IOverflowTooltipPropType', {
   default: false,
-  type: [Boolean, Object]
+  type: [Boolean, Object],
 });
 
 export type ISortOption = {
@@ -131,7 +131,7 @@ export type ISortOption = {
 
 export const ISortType = toType<ISortPropShape>('ISortPropShape', {
   default: false,
-  type: [Boolean, String, Object]
+  type: [Boolean, String, Object],
 });
 
 export type ISortShape = {
@@ -156,7 +156,7 @@ export type IFilterPropShape = IFilterShape | boolean | string;
 
 export const IFilterType = toType<IFilterPropShape>('IFilterPropShape', {
   default: false,
-  type: [Boolean, Object]
+  type: [Boolean, Object],
 });
 
 export enum ColumnPickEnum {
@@ -175,14 +175,14 @@ export const IColumnType = toType<Column>('IColumnType', {
     width: '100%',
     label: '',
   },
-  type: [Object]
+  type: [Object],
 });
 
 export const ITableSettings = toType<ISettingPropType>(
   'ITableSettingPropType',
   {
     default: false,
-    type: [Boolean, Object]
+    type: [Boolean, Object],
   },
 );
 
@@ -306,9 +306,9 @@ export type Column = {
 export const IColumnProp = toType<Column>('IColumnPropType', {
   default: {
     label: undefined,
-    minWidth: COL_MIN_WIDTH
+    minWidth: COL_MIN_WIDTH,
   },
-  type: [Object]
+  type: [Object],
 });
 
 export type Thead = {
