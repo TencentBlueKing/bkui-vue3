@@ -90,6 +90,7 @@ const zhCn: Language = {
     cancel: '取消',
     or: '或',
     and: '且',
+    logical: '逻辑：',
   },
   select: {
     noData: '无数据',
