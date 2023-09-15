@@ -25,10 +25,12 @@
 */
 import { computed, defineComponent, PropType, VNode } from 'vue';
 
+import Checkbox from '@bkui-vue/checkbox';
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
-import { Done } from '@bkui-vue/icon';
+import Radio from '@bkui-vue/radio';
 
-import { ICommonItem, IMenuFooterItem } from './utils';
+// import { Done } from '@bkui-vue/icon';
+import { ICommonItem, IMenuFooterItem, SearchLogical } from './utils';
 
 export default defineComponent({
   name: 'SearchSelectMenu',
@@ -56,8 +58,16 @@ export default defineComponent({
       type: Array as PropType<IMenuFooterItem[]>,
       default: () => [],
     },
+    showLogical: {
+      type: Boolean,
+      default: true,
+    },
+    logical: {
+      type: String as PropType<SearchLogical>,
+      default: SearchLogical.OR,
+    },
   },
-  emits: ['selectItem', 'selectCondition', 'footerClick'],
+  emits: ['selectItem', 'selectCondition', 'footerClick', 'update:logical'],
   setup(props, { emit }) {
     const t = useLocale('searchSelect');
     const { resolveClassName } = usePrefix();
@@ -123,17 +133,70 @@ export default defineComponent({
         item.value.name,
       ];
     };
+    function handleSelectedChange(e: MouseEvent, item: ICommonItem) {
+      e.stopPropagation();
+      e.preventDefault();
+      handleClick(item);
+    }
+    function handleLogicalChange(value: string | number | boolean) {
+      emit('update:logical', value);
+    }
     return {
       handleClick,
       handleClickCondition,
       handleClickFooterBtn,
+      handleSelectedChange,
+      handleLogicalChange,
       filterList,
       getSearchNode,
       localFooterBtns,
       resolveClassName,
+      t,
     };
   },
   render() {
+    const listMenu = <ul class='menu-content'>
+      {
+        this.list?.map(item => <li
+          class={`menu-item ${item.disabled ? 'is-disabled' : ''} ${this.hoverId === item.id && !item.disabled ? 'is-hover' : ''}`}
+          key={item.id}
+          id={item.id}
+          tabindex='-1'
+          onClick={() => !item.disabled && this.handleClick(item)}>
+          {
+            this.$slots.default
+              ? this.$slots.default({
+                item,
+                list: this.list,
+                multiple: !!this.multiple,
+                hoverId: this.hoverId,
+                getSearchNode: this.getSearchNode,
+              })
+              : <>
+              {
+              this.multiple && <span onClick={e => this.handleSelectedChange(e, item)}>
+                  <Checkbox
+                    modelValue={this.selected.includes(item.id)}
+                    class="is-selected"/>
+                </span>
+              }
+              {this.getSearchNode(item)}
+            </>
+          }
+        </li>)
+      }
+    </ul>;
+    const getListMenu = () => {
+      if (!this.showLogical || !this.multiple) return listMenu;
+      return <div class="menu-content-wrapper">
+        {listMenu}
+        <div class='menu-condition'>
+          <div class='menu-condition-title'>{this.t.logical}</div>
+          <Radio modelValue={this.logical} onChange={this.handleLogicalChange} label='|'>{this.t.or} |</Radio>
+          <Radio modelValue={this.logical} onChange={this.handleLogicalChange} label='&'>{this.t.and} &</Radio>
+        </div>
+      </div>;
+    };
     return <div class={this.resolveClassName('search-select-menu')}>
       {
         !!this.conditions?.length
@@ -147,32 +210,8 @@ export default defineComponent({
           }
         </ul>
       }
-      <ul class='menu-content'>
-        {
-          this.list?.map(item => <li
-            class={`menu-item ${item.disabled ? 'is-disabled' : ''} ${this.hoverId === item.id && !item.disabled ? 'is-hover' : ''}`}
-            key={item.id}
-            id={item.id}
-            tabindex='-1'
-            onClick={() => !item.disabled && this.handleClick(item)}>
-            {
-              this.$slots.default
-                ? this.$slots.default({
-                  item,
-                  list: this.list,
-                  multiple: !!this.multiple,
-                  hoverId: this.hoverId,
-                  getSearchNode: this.getSearchNode,
-                })
-                : <>
-                {this.getSearchNode(item)}
-                {this.multiple && this.selected.includes(item.id) && <Done class="is-selected"/>}
-              </>
-            }
-          </li>)
-        }
-      </ul>
-      {
+      {getListMenu()}
+      {/* {
         this.multiple && this.localFooterBtns?.length && <div class="menu-footer">
           {
             this.localFooterBtns.map(item => <span
@@ -181,7 +220,7 @@ export default defineComponent({
               onClick={() => !item.disabled && this.handleClickFooterBtn(item)}>{item.name}</span>)
           }
         </div>
-      }
+      } */}
     </div>;
   },
 });

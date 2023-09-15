@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { defineComponent, nextTick, PropType, Ref, ref, watch, watchEffect } from 'vue';
+import { computed, defineComponent, nextTick, PropType, Ref, ref, watch, watchEffect } from 'vue';
 
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { clickoutside } from '@bkui-vue/directives';
@@ -31,7 +31,7 @@ import Popover from '@bkui-vue/popover';
 import { debounce, random } from '@bkui-vue/shared';
 
 import SearchSelectMenu from './menu';
-import { GetMenuListFunc, ICommonItem, IMenuFooterItem, ISearchItem, MenuSlotParams, SearchInputMode, SearchItemType, SelectedItem, useSearchSelectInject, ValidateValuesFunc, ValueBehavior } from './utils';
+import { GetMenuListFunc, ICommonItem, IMenuFooterItem, ISearchItem, MenuSlotParams, SearchInputMode, SearchItemType, SearchLogical, SelectedItem, useSearchSelectInject, ValidateValuesFunc, ValueBehavior } from './utils';
 export default defineComponent({
   name: 'SearchSelectInput',
   directives: {
@@ -81,7 +81,10 @@ export default defineComponent({
     const menuList: Ref<ISearchItem[]> = ref([]);
 
 
-    const { editKey, onValidate, valueSplitCode } = useSearchSelectInject();
+    const { editKey, onValidate } = useSearchSelectInject();
+
+    const valueLoagic = computed(() => usingItem.value?.logical || SearchLogical.OR);
+
     watch(editKey, () => {
       if (props.mode === SearchInputMode.DEFAULT && editKey.value) {
         showPopover.value = false;
@@ -158,6 +161,11 @@ export default defineComponent({
     }
     function handleClickOutside(e: MouseEvent) {
       if (!popoverRef.value?.contains(e.target as Node) && props.clickOutside?.(e.target, popoverRef.value)) {
+        if (usingItem.value?.values?.length && usingItem.value?.multiple) {
+          keyword.value = '';
+          handleKeyEnter();
+          return;
+        }
         showPopover.value = false;
         isFocus.value = false;
         emit('focus', isFocus.value);
@@ -172,7 +180,7 @@ export default defineComponent({
       let text = (event.target as HTMLDivElement).innerText;
       if (/(\r|\n)/gm.test(text) || /\s{2}/gm.test(text)) {
         event.preventDefault();
-        text = text.replace(/(\r|\n)/gm, valueSplitCode.value).replace(/\s{2}/gm, '');
+        text = text.replace(/(\r|\n)/gm, ` ${valueLoagic.value} `).replace(/\s{2}/gm, '');
         inputRef.value.innerText = text;
         setInputFocus();
         keyword.value = text
@@ -234,7 +242,7 @@ export default defineComponent({
         };
         const res = await validateUsingItemValues(value);
         if (!res) return;
-        emit('add', new SelectedItem(value, 'text', valueSplitCode.value));
+        emit('add', new SelectedItem(value, 'text'));
         keyword.value = '';
         setMenuList();
         return;
@@ -242,8 +250,8 @@ export default defineComponent({
       const { values } = usingItem.value;
       if (!values?.length) {
         if (keyword.value?.length) {
-          if (keyword.value.includes(valueSplitCode.value)) {
-            const valueList = keyword.value.split(valueSplitCode.value);
+          if (keyword.value.includes(valueLoagic.value)) {
+            const valueList = keyword.value.split(valueLoagic.value);
             const res = await validateUsingItemValues({ id: keyword.value, name: keyword.value });
             if (!res) return;
             valueList.forEach(v => usingItem.value.addValue({ id: v, name: v }));
@@ -309,7 +317,7 @@ export default defineComponent({
       // 快捷选中
       if (item.value?.id) {
         if ((props.valueBehavior === ValueBehavior.NEEDKEY && item.value) || !props.validateValues) {
-          const seleted = new SelectedItem({ ...item, id: item.realId ?? item.id }, type, valueSplitCode.value);
+          const seleted = new SelectedItem({ ...item, id: item.realId ?? item.id }, type);
           seleted.addValue(item.value);
           setSelectedItem(seleted);
           if (props.valueBehavior === ValueBehavior.NEEDKEY && menuHoverId.value) {
@@ -318,7 +326,7 @@ export default defineComponent({
           menuHoverId.value = '';
           return;
         }
-        usingItem.value = new SelectedItem({ ...item, id: item.realId ?? item.id }, type, valueSplitCode.value);
+        usingItem.value = new SelectedItem({ ...item, id: item.realId ?? item.id }, type);
         usingItem.value.addValue(item.value);
         const res = await validateUsingItemValues(item.value);
         if (!res) {
@@ -332,7 +340,7 @@ export default defineComponent({
         return;
       }
       if (!usingItem.value || !inputRef?.value?.innerText) {
-        usingItem.value = new SelectedItem(item, type, valueSplitCode.value);
+        usingItem.value = new SelectedItem(item, type);
         keyword.value = '';
         const isCondition = type === 'condition';
         isCondition && setSelectedItem();
@@ -340,7 +348,7 @@ export default defineComponent({
         setInputFocus(props.valueBehavior === ValueBehavior.NEEDKEY && !!menuHoverId.value);
         return;
       } if (usingItem.value?.type === 'condition') {
-        usingItem.value = new SelectedItem(item, type, valueSplitCode.value);
+        usingItem.value = new SelectedItem(item, type);
         setSelectedItem();
         return;
       }
@@ -508,6 +516,11 @@ export default defineComponent({
       }
     }
 
+    function handleLogicalChange(logical: SearchLogical) {
+      if (!usingItem.value) return;
+      usingItem.value.logical = logical;
+    }
+
     // expose
     expose({
       handleInputFocus,
@@ -531,6 +544,7 @@ export default defineComponent({
       handleClickOutside,
       handleInputFocus,
       handleInputChange,
+      handleLogicalChange,
       handleInputKeyup,
       handleSelectItem,
       handleSelectCondtionItem,
@@ -577,6 +591,9 @@ export default defineComponent({
         hoverId={this.menuHoverId}
         selected={values?.map(item => item.id) || []}
         conditions={showCondition ? this.conditions : []}
+        logical={this.usingItem?.logical}
+        showLogical={this.usingItem?.showLogical}
+        onUpdate:logical={this.handleLogicalChange}
         onSelectItem={this.handleSelectItem}
         onSelectCondition={this.handleSelectCondtionItem}
         onFooterClick={this.handleMenuFooterClick}

@@ -34,7 +34,7 @@ import { debounce } from '@bkui-vue/shared';
 
 import SearchSelectInput from './input';
 import SearchSelected from './selected';
-import { GetMenuListFunc, ICommonItem, ISearchItem, ISearchValue,  MenuSlotParams,  SearchItemType,  SelectedItem, useSearchSelectProvider, ValidateValuesFunc, ValueBehavior } from './utils';
+import { GetMenuListFunc, ICommonItem, ISearchItem, ISearchValue,  MenuSlotParams,  SearchItemType,  SearchLogical,  SelectedItem, useSearchSelectProvider, ValidateValuesFunc, ValueBehavior } from './utils';
 const INPUT_PADDING_WIDTH = 40;
 const SELETED_MARGING_RIGHT = 6;
 export const SearchSelectProps = {
@@ -69,10 +69,6 @@ export const SearchSelectProps = {
   placeholder: String,
   getMenuList: Function as PropType<GetMenuListFunc>,
   validateValues: Function as PropType<ValidateValuesFunc>,
-  valueSplitCode: {
-    type: String,
-    default: '|',
-  },
   uniqueSelect: {
     type: Boolean,
     default: false,
@@ -113,7 +109,6 @@ export default defineComponent({
     const debounceResize = debounce(32, handleResize);
     const editKey = ref('');
     const validateStr = ref('');
-    const splitCode = computed(() => props.valueSplitCode);
     const copyData: ShallowRef<ISearchItem[]> = shallowRef([]);
     watch(() => props.data, () => {
       copyData.value = JSON.parse(JSON.stringify(props.data));
@@ -139,6 +134,7 @@ export default defineComponent({
           const seleted = selectedList.value.find(set => set.id === item.id && set.name === item.name);
           if (seleted?.toValueKey() === JSON.stringify(item)) {
             seleted.values = item.values || [];
+            seleted.logical = item.logical || SearchLogical.OR;
             list.push(seleted);
           } else {
             let searchItem = props.data.find(set => set.id === item.id);
@@ -150,8 +146,9 @@ export default defineComponent({
             if (!searchItem && !item.values?.length) {
               searchType = 'text';
             }
-            const newSelected = new SelectedItem(searchItem || item, searchType, splitCode.value);
+            const newSelected = new SelectedItem(searchItem || item, searchType);
             newSelected.values = item.values || [];
+            newSelected.logical = item.logical || SearchLogical.OR;
             list.push(newSelected);
           }
         });
@@ -181,7 +178,6 @@ export default defineComponent({
       onEditBlur,
       onValidate,
       editKey,
-      valueSplitCode: splitCode,
     });
     function onEditClick(item: SelectedItem, index: number) {
       editKey.value = `${item.id}_${index}`;
@@ -272,7 +268,6 @@ export default defineComponent({
       selectedList,
       overflowIndex,
       validateStr,
-      splitCode,
       onEditClick,
       onEditEnter,
       handleWrapClick,
