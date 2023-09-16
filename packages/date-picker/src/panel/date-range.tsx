@@ -56,6 +56,8 @@ import type {
 import { formatDateLabels, iconBtnCls, initTime, timePickerKey } from '../utils';
 
 import TimeRange from './time-range';
+// import MonthTable from '../base/month-table';
+// import YearTable from '../base/year-table';
 
 const dateRangePanelProps = {
   modelValue: {
@@ -140,7 +142,7 @@ export type DateRangePanelProps = Readonly<ExtractPropTypes<typeof dateRangePane
 export default defineComponent({
   name: 'DateRangePanel',
   props: dateRangePanelProps,
-  emits: ['pick', 'pick-success', 'pick-clear', 'pick-click'],
+  emits: ['pick', 'pick-success', 'pick-clear', 'pick-click', 'pick-first'],
   setup(props, { slots, emit }) {
     const t = useLocale('datePicker');
     const [minDate, maxDate] = (props.modelValue as any).map(date => date || initTime());
@@ -303,6 +305,10 @@ export default defineComponent({
      * handleRangePick
      */
     const handleRangePick = (val, type) => {
+      if (!state.rangeState.selecting) {
+        emit('pick-first', val, state.currentView);
+      }
+      // debugger;
       if (state.rangeState.selecting || state.currentView === 'time') {
         if (state.currentView === 'time') {
           state.dates = val;
