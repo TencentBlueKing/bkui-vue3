@@ -58,7 +58,7 @@ export default defineComponent({
     clickoutside,
   },
   props: datePickerProps,
-  emits: ['open-change', 'input', 'change', 'update:modelValue', 'clear', 'shortcut-change', 'pick-success'],
+  emits: ['open-change', 'input', 'change', 'update:modelValue', 'clear', 'shortcut-change', 'pick-success', 'pick-first'],
   // slots: ['header'],
   slots: Object as SlotsType<{
     header?: () => any,
@@ -531,6 +531,10 @@ export default defineComponent({
       pickerPanelRef.value.handleToggleTime?.();
     };
 
+    const onPickFirst = (val, type) => {
+      emit('pick-first', val, type);
+    };
+
     return {
       ...toRefs(state),
       panel,
@@ -565,6 +569,7 @@ export default defineComponent({
       handleClear,
       onPick,
       onPickSuccess,
+      onPickFirst,
 
       handleToggleTime,
       resolveClassName,
@@ -694,6 +699,8 @@ export default defineComponent({
                       onSelection-mode-change={this.onSelectionModeChange}
                       v-slots={slots}
                       shortcutSelectedIndex={this.shortcutSelectedIndex}
+                      onPick-first={this.onPickFirst}
+
                       // v-bind={this.ownPickerProps}
                     />
                   )
