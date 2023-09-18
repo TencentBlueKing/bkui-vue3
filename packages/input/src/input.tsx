@@ -71,7 +71,6 @@ export const inputType = {
   showOverflowTooltips: PropTypes.bool.def(true),
   resize: PropTypes.bool.def(true),
   autosize: PropTypes.oneOfType([PropTypes.bool, PropTypes.any]).def(false),
-  // autosize: PropTypes.oneOfType([PropTypes.bool]),
 };
 
 
@@ -166,10 +165,6 @@ export default defineComponent({
       if (props.autosize) {
         const textareaStyle = calcTextareaHeight(inputRef.value, props.autosize?.minRows, props.autosize?.maxRows);
 
-        // If the scrollbar is displayed, the height of the textarea needs more space than the calculated height.
-        // If set textarea height in this case, the scrollbar will not hide.
-        // So we need to hide scrollbar first, and reset it in next tick.
-        // see https://github.com/element-plus/element-plus/issues/8825
         textareaCalcStyle.value = {
           overflowY: 'hidden',
           ...textareaStyle,
