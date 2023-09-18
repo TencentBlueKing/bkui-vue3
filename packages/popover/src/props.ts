@@ -24,6 +24,7 @@
  * IN THE SOFTWARE.
  */
 import { ExtractPropTypes } from 'vue';
+import { toType } from 'vue-types';
 
 import {
   PlacementEnum,
@@ -43,16 +44,17 @@ type IAxesOffsets = {
   alignmentAxis?: number | null;
 };
 
+type IContent = string | number | JSX.Element | HTMLElement;
+
 export const PopoverProps = {
   isShow: PropTypes.bool.def(false),
   always: PropTypes.bool.def(false),
   disabled: PropTypes.bool.def(false),
   width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
   height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
-  maxHeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def(
-    'auto'
-  ),
-  content: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def(''),
+  maxWidth: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
+  maxHeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
+  content: toType<IContent>('IContent', {}).def(''),
 
   target: PropTypes.oneOfType([
     PropTypes.string,
@@ -154,8 +156,9 @@ export const PopoverProps = {
   /**
    * 自定义Content组件渲染，point-event延迟渲染时间
    * 避免子组件point-event渲染时触发popover鼠标事件
+   * 如果设置为0，则不启用此设置
    */
-  componentEventDelay: PropTypes.number.def(300),
+  componentEventDelay: PropTypes.number.def(0),
 
   /**
    * 或略其他判定条件，强制监听clickoutside & 执行hide

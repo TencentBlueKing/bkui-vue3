@@ -323,6 +323,43 @@ const propsJson: IPropsTableItem[] = [
     optional: ['checkbox', 'check'],
   },
 ];
+const eventJson = [
+  {
+    name: 'change',
+    desc: '选中值发生变化时触发',
+    params: 'value',
+  },
+  {
+    name: 'toggle',
+    desc: '下拉框出现/隐藏时触发',
+    params: 'value',
+  },
+  {
+    name: 'clear',
+    desc: '清空选项',
+    params: '--',
+  },
+  {
+    name: 'scroll-end',
+    desc: '列表滚动到底部时触发',
+    params: '--',
+  },
+  {
+    name: 'focus',
+    desc: '当 input 获得焦点时触发',
+    params: '--',
+  },
+  {
+    name: 'blur',
+    desc: '当 input 失去焦点时触发',
+    params: '--',
+  },
+  {
+    name: 'tag-remove',
+    desc: '多选模式下移除tag时触发',
+    params: 'value',
+  },
+];
 // 输入框插槽
 const selectSlots = [
   {
@@ -485,6 +522,7 @@ export default defineComponent({
           <SelectSlotDemo/>
         </DemoBox>
         <PropsBox propsData={propsJson} subtitle=""/>
+        <PropsBox propsData={eventJson} title="Select 事件"/>
         <PropsBox
           title="Select 插槽"
           subtitle=""

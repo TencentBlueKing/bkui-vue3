@@ -12,6 +12,7 @@
     style="width: 100%;"
     type="datetimerange"
     @change="handleChange"
+    @pick-first="handlePickFirst"
   >
     <template #footer>
       <div class="custom-footer">
@@ -45,4 +46,8 @@
     // datePickerRef.value.pickerPanelRef.handleToggleTime();
     datePickerRef.value.handleToggleTime();
   };
+
+  const handlePickFirst = (type, val) => {
+    console.error(123, type, val);
+  }
 </script>

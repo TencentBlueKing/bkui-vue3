@@ -120,26 +120,19 @@ export type IOverflowTooltipProp = {
 
 export type IOverflowTooltip = IOverflowTooltipProp;
 
-export const IOverflowTooltipPropType = toType<IOverflowTooltipProp>(
-  'IOverflowTooltipPropType',
-  {},
-).def(false);
-
-export const IOverflowTooltipType = toType<IOverflowTooltip>(
-  'IOverflowTooltipType',
-  {},
-).def({
-  content: '',
-  disabled: false,
-  watchCellResize: true,
-  mode: OverflowModeEnum.AUTO,
+export const IOverflowTooltipPropType = toType<IOverflowTooltipProp>('IOverflowTooltipPropType', {
+  default: false,
+  type: [Boolean, Object],
 });
 
 export type ISortOption = {
   [key: string]: SORT_OPTION;
 };
 
-export const ISortType = toType<ISortPropShape>('ISortPropShape', {}).def(false);
+export const ISortType = toType<ISortPropShape>('ISortPropShape', {
+  default: false,
+  type: [Boolean, String, Object],
+});
 
 export type ISortShape = {
   sortFn?: Function;
@@ -161,7 +154,10 @@ export type IFilterShape = {
 
 export type IFilterPropShape = IFilterShape | boolean | string;
 
-export const IFilterType = toType<IFilterPropShape>('IFilterPropShape', {}).def(false);
+export const IFilterType = toType<IFilterPropShape>('IFilterPropShape', {
+  default: false,
+  type: [Boolean, Object],
+});
 
 export enum ColumnPickEnum {
   MULTI = 'multi',
@@ -174,15 +170,21 @@ export enum ResizerWay {
   THROTTLE = 'throttle',
 }
 
-export const IColumnType = toType<Column>('IColumnType', {}).def({
-  width: '100%',
-  label: () => '',
+export const IColumnType = toType<Column>('IColumnType', {
+  default: {
+    width: '100%',
+    label: '',
+  },
+  type: [Object],
 });
 
 export const ITableSettings = toType<ISettingPropType>(
   'ITableSettingPropType',
-  {},
-).def(false);
+  {
+    default: false,
+    type: [Boolean, Object],
+  },
+);
 
 /**
  * 配置自定义行高选项
@@ -301,9 +303,12 @@ export type Column = {
   explain?: IColumnExplain;
 };
 
-export const IColumnProp = toType<Column>('IColumnPropType', {}).def({
-  label: undefined,
-  minWidth: COL_MIN_WIDTH,
+export const IColumnProp = toType<Column>('IColumnPropType', {
+  default: {
+    label: undefined,
+    minWidth: COL_MIN_WIDTH,
+  },
+  type: [Object],
 });
 
 export type Thead = {

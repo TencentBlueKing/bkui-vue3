@@ -23,7 +23,7 @@
 * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
 */
-import { computed, defineComponent, ref, Fragment, watch } from 'vue';
+import { computed, defineComponent, Fragment, nextTick, ref } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import { PropTypes } from '@bkui-vue/shared';
@@ -34,9 +34,10 @@ export default defineComponent({
     width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
     height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
     maxHeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
+    maxWidth: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
     extCls: PropTypes.string.def(''),
     visible: PropTypes.bool.def(false),
-    eventDelay: PropTypes.number.def(300)
+    eventDelay: PropTypes.number.def(0),
   },
   setup(props) {
     const resolveValToPix = (val: string | number) => {
@@ -50,24 +51,39 @@ export default defineComponent({
       width: resolveValToPix(props.width),
       height: resolveValToPix(props.height),
       maxHeight: resolveValToPix(props.maxHeight),
+      maxWidth: resolveValToPix(props.maxWidth),
     }));
 
     const refContent = ref(null);
+    const refTimer = ref(null);
 
-    watch(() => props.visible, () => {
-      if (props.visible) {
-        setTimeout(() => {
-          (refContent.value as HTMLElement)?.style.setProperty('pointer-events', 'all');
-        }, props.eventDelay ?? 300);
+    const resetPointerEvent = () => {
+      if (props.eventDelay === 0) {
+        return;
       }
-    });
+
+      refTimer.value && clearTimeout(refTimer.value);
+      refTimer.value = setTimeout(() => {
+        setContentPointerEvent('unset');
+      }, props.eventDelay ?? 300);
+    };
+
+    const setContentPointerEvent = (val: string) => {
+      if (props.eventDelay === 0) {
+        return;
+      }
+
+      (refContent.value as HTMLElement)?.style.setProperty('pointer-events', val);
+    };
 
     const { resolveClassName } = usePrefix();
 
     return {
       style,
       refContent,
-      resolveClassName
+      resolveClassName,
+      resetPointerEvent,
+      setContentPointerEvent,
     };
   },
   render() {
@@ -75,7 +91,10 @@ export default defineComponent({
 
     const resolveContentStyle = (slot) => {
       if (Fragment === slot?.[0]?.type) {
-        return Object.assign({}, this.style, { 'pointer-events': 'none' as const });
+        nextTick(() => {
+          this.setContentPointerEvent('none');
+          this.resetPointerEvent();
+        });
       }
 
       return this.style;

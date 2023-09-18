@@ -113,6 +113,7 @@ export default defineComponent({
       headStyle,
       hasScrollYRef,
       fixHeight,
+      maxFixHeight,
       updateBorderClass,
       resetTableHeight,
       getColumnsWidthOffsetWidth,
@@ -330,6 +331,7 @@ export default defineComponent({
     const fixedContainerStyle = computed(() => ({
       right: hasScrollYRef.value ? `${SCROLLY_WIDTH}px` : 0,
       '--fix-height': `${fixHeight.value}px`,
+      '--fix-max-height': `${maxFixHeight.value}px`,
       ...footerStyle.value,
     }));
 

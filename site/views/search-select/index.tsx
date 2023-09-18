@@ -88,13 +88,6 @@ const propsJson: IPropsTableItem[] = [
     optional: [],
   },
   {
-    name: 'value-split-code',
-    type: 'String',
-    default: '|',
-    desc: '多选的值的链接符号',
-    optional: [],
-  },
-  {
     name: 'uniqueSelect',
     type: 'Boolean',
     default: 'false',
@@ -205,6 +198,16 @@ const dataJson = [
     type: 'Boolean',
     default: 'false',
     desc: '添加推荐选项字符时 是否只匹配children数据',
+  }, {
+    name: 'logical',
+    type: 'SearchLogical',
+    default: '|',
+    desc: '多选值时,值与值之间的逻辑符号 (| 或者 &)',
+  }, {
+    name: 'showLogicalPanel',
+    type: 'Boolean',
+    default: 'false',
+    desc: '是否显示逻辑符号选项列表 默认不显示 仅在多选时生效',
   },
 ];
 const slotColumnMap = {

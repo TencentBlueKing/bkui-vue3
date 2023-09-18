@@ -15,6 +15,7 @@
       placeholder: '请选择/请输入',
       async: true,
       validate: true,
+      showLogicalPanel: true,
       children: [
         {
           name: '创建中',

@@ -24,7 +24,7 @@
 * IN THE SOFTWARE.
 */
 
-import { ComputedRef, inject, InjectionKey, provide, Ref, VNode } from 'vue';
+import { inject, InjectionKey, provide, Ref, VNode } from 'vue';
 /**
  * @description: 获取menu list方法
  * @param {ISearchItem} item 已选择的key字段 为空则代表当前并未选择key字段
@@ -50,7 +50,6 @@ export interface ISearchSelectProvider {
   onEditBlur: () => void;
   onValidate: (str: string) => void;
   editKey: Ref<String>;
-  valueSplitCode: ComputedRef<string>
 }
 export const SEARCH_SLECT_PROVIDER_KEY: InjectionKey<ISearchSelectProvider> =  Symbol('SEARCH_SLECT_PROVIDER_KEY');
 export const useSearchSelectProvider = (data: ISearchSelectProvider) => {
@@ -70,10 +69,11 @@ export interface ICommonItem {
   value?:  Omit<ICommonItem, 'disabled' | 'value'>;
   // 是否已选中
   isSelected?: boolean
+  logical?: SearchLogical
 }
 export interface ISearchValue extends Omit<ICommonItem, 'disabled' | 'value'> {
   type?: SearchItemType;
-  values?: Omit<ICommonItem, 'disabled'>[];
+  values?: Omit<ICommonItem, 'disabled' | 'logical'>[];
 }
 
 export interface ISearchItem {
@@ -99,7 +99,15 @@ export interface ISearchItem {
   isSelected?: boolean
   // 添加推荐选项字符时 是否只匹配children数据
   onlyRecommendChildren?: boolean;
+  // 多选值时 逻辑符号
+  logical?: SearchLogical
+  // 是否显示逻辑符号选项列表 默认不显示 仅在多选时生效
+  showLogicalPanel?: boolean
 }
+export enum SearchLogical {
+  AND = '&',
+  OR = '|'
+};
 export interface IMenuFooterItem {
   id: 'confirm' | 'cancel';
   name: string;
@@ -111,9 +119,11 @@ export class SelectedItem {
   name: string;
   values: ICommonItem[] = [];
   condition: string;
-  constructor(public searchItem: ISearchItem, public type: SearchItemType = 'default', public splitCode = '|') {
+  logical: SearchLogical;
+  constructor(public searchItem: ISearchItem, public type: SearchItemType = 'default') {
     this.id = searchItem.id;
     this.name = searchItem.name;
+    this.logical = searchItem.logical || SearchLogical.OR;
   }
   get multiple() {
     return !!this.searchItem.multiple;
@@ -129,11 +139,11 @@ export class SelectedItem {
   }
   get inputInnerHtml() {
     if (this.isSpecialType()) return this.name;
-    return `${this.keyInnerHtml}${this.values?.map(item => item.name).join(this.splitCode) || ''}`;
+    return `${this.keyInnerHtml}${this.values?.map(item => item.name).join(` ${this.logical} `) || ''}`;
   }
   get inputInnerText() {
     if (this.isSpecialType()) return this.name;
-    return `${this.keyInnerText}${this.values?.map(item => item.name).join(this.splitCode) || ''}`;
+    return `${this.keyInnerText}${this.values?.map(item => item.name).join(` ${this.logical} `) || ''}`;
   }
   get keyInnerHtml() {
     if (this.isSpecialType()) return this.name;
@@ -142,6 +152,9 @@ export class SelectedItem {
   get keyInnerText() {
     if (this.isSpecialType()) return this.name;
     return this.name ? `${this.name}: `  : '';
+  }
+  get showLogical() {
+    return !!this.searchItem.showLogicalPanel;
   }
   isSpecialType() {
     return ['text', 'condition'].includes(this.type);
@@ -165,6 +178,9 @@ export class SelectedItem {
     };
     if (this.values?.length) {
       value.values = this.values.map(item => ({ id: item.id, name: item.name }));
+      if (this.multiple && this.logical !== SearchLogical.OR) {
+        value.logical = this.logical;
+      }
     }
     if (this.type && this.type !== 'default') {
       value.type = this.type;

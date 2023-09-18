@@ -162,6 +162,7 @@ export default class TableRender {
   public renderTableFooter(options: any) {
     return (
       <Pagination
+        style="width: 100%;"
         {...options}
         modelValue={options.current}
         onLimitChange={limit => this.handlePageLimitChange(limit)}
@@ -371,6 +372,8 @@ export default class TableRender {
           observerResize={this.props.observerResize}
           resizerWay={this.props.resizerWay}
           isHead={true}
+          column={column}
+          parentSetting={this.props.showOverflowTooltip}
           headExplain={ resolvePropVal(column.explain, 'head', [column]) }
         >
           {cells}
@@ -409,7 +412,7 @@ export default class TableRender {
             {
               this.filterColGroups.map((column: Column, index: number) => {
                 const headStyle = Object.assign({}, resolveFixedColumnStyle(column, this.styleRef.value.hasScrollY), {
-                  backgroundColor: DEF_COLOR[this.props.thead?.color ?? IHeadColor.DEF1],
+                  '--background-color': DEF_COLOR[this.props.thead?.color ?? IHeadColor.DEF1],
                 });
                 return <th
                 colspan={1}

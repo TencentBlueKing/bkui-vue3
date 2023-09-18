@@ -17,9 +17,10 @@
       placeholder: '必须项',
       async: true,
       validate: true,
+      showLogicalPanel: true,
       children: [
         {
-          name: 'redis 创 建 中 ',
+          name: '创建中',
           id: '1-2',
         },
         {
@@ -30,6 +31,19 @@
         {
           name: '已关机',
           id: '1-4',
+        },
+        {
+          name: '王者荣耀',
+          id: '2-1',
+          disabled: false,
+        },
+        {
+          name: '刺激战场',
+          id: '2-2',
+        },
+        {
+          name: '绝地求生',
+          id: '2-3',
         },
       ],
     },
@@ -65,11 +79,11 @@
   ]);
   const value = ref([
     {
-      id: '1',
-      name: '实例状态',
+      id: '2',
+      name: '实例业务',
       values: [{
-        name: '创建中',
-        id: '1-2',
+        name: '王者荣耀',
+        id: '2-1',
       }],
     },
   ]);

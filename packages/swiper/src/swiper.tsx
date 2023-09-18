@@ -239,7 +239,7 @@ export default defineComponent({
           <i class={`${resolveClassName('swiper-nav-icon')}`}></i>
         </span>
         <span
-          class={`${resolveClassName('swiper-nav')} ${resolveClassName('nav-next')}}`}
+          class={`${resolveClassName('swiper-nav')} ${resolveClassName('nav-next')}`}
           onClick={() => changeIndex(swiperIndex.value + 1)}
         >
           <i class={`${resolveClassName('swiper-nav-icon')}`}></i>
