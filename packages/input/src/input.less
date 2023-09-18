@@ -45,13 +45,13 @@
 }
 
 .@{bk-prefix}-textarea {
+  --textarea-line-height: 20px;
   .placeholder();
   display: inline-flex;
   width: 100%;
-  min-height: 70px;
   overflow: hidden;
   font-size: @font-size-base;
-  line-height: 20px;
+  line-height: var(--textarea-line-height);
   color: @input-color;
   background-color: white;
   border: @border-width-base @border-style-base @input-border-color;
@@ -59,7 +59,11 @@
   box-sizing: border-box;
   transition: all .3s;
   flex-direction: column;
-  resize: both;
+
+  &.resizable {
+    resize: both;
+  }
+
   .disabled();
 
   >textarea {
@@ -71,7 +75,6 @@
     border-radius: @border-radius-base;
     outline: none;
     resize: none;
-    flex: 1;
   }
 
   &--max-length {
