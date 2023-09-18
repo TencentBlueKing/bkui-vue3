@@ -26,6 +26,7 @@
 
 
 import { computed, defineComponent, ExtractPropTypes, nextTick, onBeforeUnmount, onMounted, ref, watch  } from 'vue';
+import { bool, object, oneOfType } from 'vue-types';
 
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { bkTooltips } from '@bkui-vue/directives';
@@ -41,7 +42,6 @@ import { calcTextareaHeight } from './util';
 
 
 export type InputAutoSize = { minRows?: number; maxRows?: number };
-
 
 export const inputType = {
   type: PropTypes.string.def('text'),
@@ -70,9 +70,8 @@ export const inputType = {
   overMaxLengthLimit: PropTypes.bool.def(false),
   showOverflowTooltips: PropTypes.bool.def(true),
   resize: PropTypes.bool.def(true),
-  autosize: PropTypes.oneOfType([PropTypes.bool, PropTypes.any]).def(false),
+  autosize: oneOfType<boolean | InputAutoSize>([bool, object<InputAutoSize>]).def(false),
 };
-
 
 export const enum EVENTS {
   UPDATE = 'update:modelValue',
@@ -163,7 +162,9 @@ export default defineComponent({
 
       console.log(props.autosize, props, 123);
       if (props.autosize) {
-        const textareaStyle = calcTextareaHeight(inputRef.value, props.autosize?.minRows, props.autosize?.maxRows);
+        const minRows = (props.autosize as InputAutoSize)?.minRows;
+        const maxRows = (props.autosize as InputAutoSize)?.maxRows;
+        const textareaStyle = calcTextareaHeight(inputRef.value, minRows, maxRows);
 
         textareaCalcStyle.value = {
           overflowY: 'hidden',
