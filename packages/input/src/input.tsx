@@ -24,7 +24,8 @@
 * IN THE SOFTWARE.
 */
 
-import { computed, defineComponent, ExtractPropTypes, onMounted, ref, watch } from 'vue';
+
+import { computed, defineComponent, ExtractPropTypes, nextTick, onBeforeUnmount, onMounted, ref, watch  } from 'vue';
 
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { bkTooltips } from '@bkui-vue/directives';
@@ -36,11 +37,11 @@ import {
   useFormItem,
 } from '@bkui-vue/shared';
 
+import { calcTextareaHeight } from './util';
 
-// export interface Autosize {
-//   maxRows: number
-//   minRows: number
-// }
+
+export type InputAutoSize = { minRows?: number; maxRows?: number };
+
 
 export const inputType = {
   type: PropTypes.string.def('text'),
@@ -68,7 +69,8 @@ export const inputType = {
   withValidate: PropTypes.bool.def(true),
   overMaxLengthLimit: PropTypes.bool.def(false),
   showOverflowTooltips: PropTypes.bool.def(true),
-  // autosize: PropTypes.any,
+  resize: PropTypes.bool.def(true),
+  autosize: PropTypes.oneOfType([PropTypes.bool, PropTypes.any]).def(false),
   // autosize: PropTypes.oneOfType([PropTypes.bool]),
 };
 
@@ -146,6 +148,7 @@ export default defineComponent({
     const inputCls = computed(() => classes(
       {
         [`${inputClsPrefix.value}--${props.size}`]: !!props.size,
+        resizable: props.resize,
         'is-focused': isFocused.value,
         'is-readonly': props.readonly && !props.selectReadonly,
         'is-disabled': props.disabled,
@@ -155,20 +158,47 @@ export default defineComponent({
       inputClsPrefix.value,
     ));
     const isOverflow = ref(false);
-    // const textareaAutoSize = computed(() => {
-    //   console.log(props.modelValue, typeof props.autosize, inputRef.value?.scrollHeight);
-    //   // const LINE_HEIGHT = 26;
-    //   if (typeof props.autosize === 'boolean') {
-    //     return {
-    //       height: `${inputRef.value?.scrollHeight}px`,
-    //     };
-    //   } if (typeof props.autosize === 'object') {
-    //     return {
-    //       height: `${inputRef.value?.scrollHeight}px`,
-    //     };
-    //   }
-    //   return null;
-    // });
+    const textareaCalcStyle = ref({});
+    const resizeTextarea = () => {
+      if (!isTextArea.value) return;
+
+      console.log(props.autosize, props, 123);
+      if (props.autosize) {
+        const textareaStyle = calcTextareaHeight(inputRef.value, props.autosize?.minRows, props.autosize?.maxRows);
+
+        // If the scrollbar is displayed, the height of the textarea needs more space than the calculated height.
+        // If set textarea height in this case, the scrollbar will not hide.
+        // So we need to hide scrollbar first, and reset it in next tick.
+        // see https://github.com/element-plus/element-plus/issues/8825
+        textareaCalcStyle.value = {
+          overflowY: 'hidden',
+          ...textareaStyle,
+        };
+
+        nextTick(() => {
+          textareaCalcStyle.value = textareaStyle;
+        });
+      } else {
+        textareaCalcStyle.value = {
+          minHeight: calcTextareaHeight(inputRef.value).minHeight,
+        };
+      }
+    };
+
+    const createOnceInitResize = (resizeTextarea: () => void) => {
+      let isInit = false;
+      return () => {
+        if (isInit || !props.autosize) return;
+        const isElHidden = inputRef.value?.offsetParent === null;
+        if (!isElHidden) {
+          resizeTextarea();
+          isInit = true;
+        }
+      };
+    };
+
+    const onceInitSizeTextarea = createOnceInitResize(resizeTextarea);
+
     const suffixIconMap = {
       search: () => <Search />,
       // TODO: eye icon 有点偏小，需要调整
@@ -212,12 +242,25 @@ export default defineComponent({
       disabled: true,
     }));
 
+    const resizeObserver = new ResizeObserver(() => {
+      onceInitSizeTextarea();
+    });
+
+    watch(
+      () => props.type,
+      async () => {
+        await nextTick();
+        resizeTextarea();
+      },
+    );
+
     watch(
       () => props.modelValue,
       () => {
         if (props.withValidate) {
           formItem?.validate?.('change');
         }
+        nextTick(() => resizeTextarea());
         // TODO: 值变化时实时检测是否溢出
         // isOverflow.value = detectOverflow();
       },
@@ -225,6 +268,12 @@ export default defineComponent({
 
     onMounted(() => {
       isOverflow.value = detectOverflow();
+      resizeObserver.observe(inputRef.value);
+      nextTick(resizeTextarea);
+    });
+
+    onBeforeUnmount(() => {
+      resizeObserver.disconnect();
     });
 
     ctx.expose({
@@ -399,7 +448,7 @@ export default defineComponent({
             {...eventListener}
             {...bindProps.value}
             rows={props.rows}
-            // style={{ height: textareaAutoSize.value?.height ?? 'auto' }}
+            style={textareaCalcStyle.value}
           />
         ) : (
           <input
