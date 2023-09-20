@@ -219,6 +219,20 @@
         th {
           font-weight: 400;
           background-color: var(--background-color);
+          position: relative;
+
+          &.col-resize-hover {
+            &::after {
+              content: '';
+              position: absolute;
+              right: 0;
+              top: 0;
+              bottom: 0;
+              width: 6px;
+              transform: translateX(50%);
+              background-color: #3785FF;
+            }
+          }
           .cell {
             display: flex;
             align-items: center;
@@ -278,6 +292,16 @@
   .@{bk-prefix}-table-head {
     position: relative;
     transform: translateX(var(--scroll-head-left));
+
+    .col-resize-drag {
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 6px;
+      transform: translateX(-50%);
+      background-color: #3785FF;
+    }
 
     .table-head-settings {
       position: absolute;
