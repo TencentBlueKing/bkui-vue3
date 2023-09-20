@@ -122,7 +122,7 @@ export default class TableRender {
           settings={this.reactiveProp.settings}
           columns={this.colgroups}
           rowHeight={this.props.rowHeight as unknown as number}
-          onChange={handleSettingsChanged}>{ this.context.slots.setting?.() }</Settings>
+          onChange={handleSettingsChanged}>{this.context.slots.setting?.()}</Settings>
         : '',
       <table cellpadding={0} cellspacing={0}>
         {this.renderColGroup()}
@@ -148,7 +148,7 @@ export default class TableRender {
       return this.context.slots.empty?.() ?? <BodyEmpty
         filterList={rows}
         list={this.props.data}
-        emptyText={localEmptyText.value}/>;
+        emptyText={localEmptyText.value} />;
     }
 
     return (
@@ -166,7 +166,7 @@ export default class TableRender {
         {...options}
         modelValue={options.current}
         onLimitChange={limit => this.handlePageLimitChange(limit)}
-        onChange={current => this.handlePageChange(current)}/>
+        onChange={current => this.handlePageChange(current)} />
     );
   }
 
@@ -286,7 +286,7 @@ export default class TableRender {
         column={column}
         defaultSort={nextSort}
         active={this.activeSortIndex.value === index}
-        onChange={handleSortClick}/>
+        onChange={handleSortClick} />
     );
   }
 
@@ -305,7 +305,7 @@ export default class TableRender {
         column={column}
         height={this.props.headHeight}
         onChange={handleFilterChange}
-        onFilterSave={filterSave}/>
+        onFilterSave={filterSave} />
     );
   }
 
@@ -374,7 +374,7 @@ export default class TableRender {
           isHead={true}
           column={column}
           parentSetting={this.props.showOverflowTooltip}
-          headExplain={ resolvePropVal(column.explain, 'head', [column]) }
+          headExplain={resolvePropVal(column.explain, 'head', [column])}
         >
           {cells}
         </TableCell>
@@ -407,31 +407,31 @@ export default class TableRender {
     return (
       <>
         <thead style={rowStyle}>
-        <TableRow>
-          <tr>
-            {
-              this.filterColGroups.map((column: Column, index: number) => {
-                const headStyle = Object.assign({}, resolveFixedColumnStyle(column, this.styleRef.value.hasScrollY), {
-                  '--background-color': DEF_COLOR[this.props.thead?.color ?? IHeadColor.DEF1],
-                });
-                return <th
-                colspan={1}
-                rowspan={1}
-                class={[
-                  this.getHeadColumnClass(column, index),
-                  this.getColumnCustomClass(column),
-                  column.align || this.props.headerAlign || this.props.align,
-                ]}
-                style={ headStyle }
-                onClick={() => this.handleColumnHeadClick(index, column)}
-                {...resolveEventListener(column)}>
-                {renderHeadCell(column, index)}
-              </th>;
-              })
-            }
-            {getScrollFix()}
-          </tr>
-        </TableRow>
+          <TableRow>
+            <tr>
+              {
+                this.filterColGroups.map((column: Column, index: number) => {
+                  const headStyle = Object.assign({}, resolveFixedColumnStyle(column, this.styleRef.value.hasScrollY), {
+                    '--background-color': DEF_COLOR[this.props.thead?.color ?? IHeadColor.DEF1],
+                  });
+                  return <th
+                    colspan={1}
+                    rowspan={1}
+                    class={[
+                      this.getHeadColumnClass(column, index),
+                      this.getColumnCustomClass(column),
+                      column.align || this.props.headerAlign || this.props.align,
+                    ]}
+                    style={headStyle}
+                    onClick={() => this.handleColumnHeadClick(index, column)}
+                    {...resolveEventListener(column)}>
+                    {renderHeadCell(column, index)}
+                  </th>;
+                })
+              }
+              {getScrollFix()}
+            </tr>
+          </TableRow>
         </thead>
       </>
     );
@@ -465,104 +465,104 @@ export default class TableRender {
     const rowLength = rows.length;
     return (
       <tbody>
-      {
-        rows.map((row: any, rowIndex: number) => {
-          const rowStyle = [
-            ...formatPropAsArray(this.props.rowStyle, [row, rowIndex, this]),
-            {
-              '--row-height': `${this.getRowHeight(row, rowIndex)}px`,
-            },
-          ];
+        {
+          rows.map((row: any, rowIndex: number) => {
+            const rowStyle = [
+              ...formatPropAsArray(this.props.rowStyle, [row, rowIndex, this]),
+              {
+                '--row-height': `${this.getRowHeight(row, rowIndex)}px`,
+              },
+            ];
 
-          const rowClass = [
-            ...formatPropAsArray(this.props.rowClass, [row, rowIndex, this]),
-            `hover-${this.props.rowHover}`,
-            rowIndex % 2 === 1 && this.props.stripe ? 'stripe-row' : '',
-          ];
+            const rowClass = [
+              ...formatPropAsArray(this.props.rowClass, [row, rowIndex, this]),
+              `hover-${this.props.rowHover}`,
+              rowIndex % 2 === 1 && this.props.stripe ? 'stripe-row' : '',
+            ];
 
-          return [
-            <TableRow>
-              <tr
-                // @ts-ignore
-                style={rowStyle}
-                class={rowClass}
-                key={getRowKeyNull(row, this.props, rowIndex)}
-                onClick={e => this.handleRowClick(e, row, rowIndex, rows)}
-                onDblclick={e => this.handleRowDblClick(e, row, rowIndex, rows)}
-                onMouseenter={e => this.handleRowEnter(e, row, rowIndex, rows)}
-                onMouseleave={e => this.handleRowLeave(e, row, rowIndex, rows)}
-              >
-                {
-                  this.filterColGroups.map((column: Column, index: number) => {
-                    const cellStyle = [
-                      resolveFixedColumnStyle(column),
-                      ...formatPropAsArray(this.props.cellStyle, [column, index, row, rowIndex, this]),
-                    ];
-
-                    const tdCtxClass = {
-                      'expand-cell': column.type === 'expand',
-                    };
-
-                    const { colspan, rowspan } = resolveCellSpan(column, index, row, rowIndex);
-                    const skipRowKey = TABLE_ROW_ATTRIBUTE.ROW_SKIP_CFG;
-                    const columnIdKey = column[COLUMN_ATTRIBUTE.COL_UID];
-                    const { skipRow = false, skipCol = false } = row[skipRowKey]?.[columnIdKey] ?? {};
-
-                    if (!skipRow && !skipCol) {
-                      const cellClass = [
-                        this.getColumnClass(column, index),
-                        this.getColumnCustomClass(column, row),
-                        column.align || this.props.align,
-                        ...formatPropAsArray(this.props.cellClass, [column, index, row, rowIndex, this]),
-                        {
-                          'expand-row': row[TABLE_ROW_ATTRIBUTE.ROW_EXPAND],
-                          'is-last': rowIndex + rowspan >= rowLength,
-                        },
+            return [
+              <TableRow>
+                <tr
+                  // @ts-ignore
+                  style={rowStyle}
+                  class={rowClass}
+                  key={getRowKeyNull(row, this.props, rowIndex)}
+                  onClick={e => this.handleRowClick(e, row, rowIndex, rows)}
+                  onDblclick={e => this.handleRowDblClick(e, row, rowIndex, rows)}
+                  onMouseenter={e => this.handleRowEnter(e, row, rowIndex, rows)}
+                  onMouseleave={e => this.handleRowLeave(e, row, rowIndex, rows)}
+                >
+                  {
+                    this.filterColGroups.map((column: Column, index: number) => {
+                      const cellStyle = [
+                        resolveFixedColumnStyle(column),
+                        ...formatPropAsArray(this.props.cellStyle, [column, index, row, rowIndex, this]),
                       ];
 
-                      const handleEmit = (event, type: string) => {
-                        const args = {
-                          event,
-                          row: getRowSourceData(row),
-                          column: getColumnSourceData(column),
-                          cell: {
-                            getValue: () => this.renderCell(row, column, rowIndex, rows),
-                          },
-                          rowIndex,
-                          columnIndex: index,
-                        };
-                        this.context.emit(type, args);
+                      const tdCtxClass = {
+                        'expand-cell': column.type === 'expand',
                       };
 
-                      return (
-                        <td
-                          class={cellClass}
-                          style={cellStyle}
-                          colspan={colspan} rowspan={rowspan}
-                          onClick={event => handleEmit(event, EMIT_EVENTS.CELL_CLICK)}
-                          onDblclick={event => handleEmit(event, EMIT_EVENTS.CELL_DBL_CLICK)}>
-                          <TableCell
-                            class={tdCtxClass}
-                            column={column}
-                            row={row}
-                            parentSetting={this.props.showOverflowTooltip}
-                            observerResize={this.props.observerResize}
-                          >
-                            {this.renderCell(row, column, rowIndex, rows)}
-                          </TableCell>
-                        </td>
-                      );
-                    }
+                      const { colspan, rowspan } = resolveCellSpan(column, index, row, rowIndex);
+                      const skipRowKey = TABLE_ROW_ATTRIBUTE.ROW_SKIP_CFG;
+                      const columnIdKey = column[COLUMN_ATTRIBUTE.COL_UID];
+                      const { skipRow = false, skipCol = false } = row[skipRowKey]?.[columnIdKey] ?? {};
 
-                    return null;
-                  })
-                }
-              </tr>
-            </TableRow>,
-            this.renderExpandRow(row, rowClass, rowIndex),
-          ];
-        })
-      }
+                      if (!skipRow && !skipCol) {
+                        const cellClass = [
+                          this.getColumnClass(column, index),
+                          this.getColumnCustomClass(column, row),
+                          column.align || this.props.align,
+                          ...formatPropAsArray(this.props.cellClass, [column, index, row, rowIndex, this]),
+                          {
+                            'expand-row': row[TABLE_ROW_ATTRIBUTE.ROW_EXPAND],
+                            'is-last': rowIndex + rowspan >= rowLength,
+                          },
+                        ];
+
+                        const handleEmit = (event, type: string) => {
+                          const args = {
+                            event,
+                            row: getRowSourceData(row),
+                            column: getColumnSourceData(column),
+                            cell: {
+                              getValue: () => this.renderCell(row, column, rowIndex, rows),
+                            },
+                            rowIndex,
+                            columnIndex: index,
+                          };
+                          this.context.emit(type, args);
+                        };
+
+                        return (
+                          <td
+                            class={cellClass}
+                            style={cellStyle}
+                            colspan={colspan} rowspan={rowspan}
+                            onClick={event => handleEmit(event, EMIT_EVENTS.CELL_CLICK)}
+                            onDblclick={event => handleEmit(event, EMIT_EVENTS.CELL_DBL_CLICK)}>
+                            <TableCell
+                              class={tdCtxClass}
+                              column={column}
+                              row={row}
+                              parentSetting={this.props.showOverflowTooltip}
+                              observerResize={this.props.observerResize}
+                            >
+                              {this.renderCell(row, column, rowIndex, rows)}
+                            </TableCell>
+                          </td>
+                        );
+                      }
+
+                      return null;
+                    })
+                  }
+                </tr>
+              </TableRow>,
+              this.renderExpandRow(row, rowClass, rowIndex),
+            ];
+          })
+        }
       </tbody>
     );
   }
@@ -578,7 +578,7 @@ export default class TableRender {
       const rowId = getRowId(row, rowIndex, this.props);
       const rowKey = `${rowId}_expand`;
       return (
-        <TableRow key={ rowKey }>
+        <TableRow key={rowKey}>
           <tr class={resovledClass}>
             <td colspan={this.filterColGroups.length} rowspan={1}>
               {this.context.slots.expandRow?.(getRowSourceData(row)) ?? <div class="expand-cell-ctx">Expand Row</div>}
@@ -662,7 +662,7 @@ export default class TableRender {
         onChange={handleChecked}
         disabled={!isEnable}
         modelValue={row[TABLE_ROW_ATTRIBUTE.ROW_SELECTION]}
-        indeterminate={indeterminate}/>
+        indeterminate={indeterminate} />
     );
   }
 
@@ -679,7 +679,7 @@ export default class TableRender {
       <span
         class="expand-btn-action"
         onClick={(e: MouseEvent) => this.handleRowExpandClick(row, column, index, rows, e)}>
-      {renderExpandSlot()}
+        {renderExpandSlot()}
       </span>
     );
   }
