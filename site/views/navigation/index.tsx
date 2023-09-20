@@ -32,7 +32,7 @@ import PropsBox from '../../components/props-box';
 import { IPropsTableItem } from '../../typings';
 
 import BaseDemo from './base-demo.vue';
-const menuProps: IPropsTableItem[] = [
+const navgationProps: IPropsTableItem[] = [
   {
     name: 'nav-width',
     type: 'Number | String',
@@ -97,6 +97,55 @@ const menuProps: IPropsTableItem[] = [
     optional: ['left-right', 'top-bottom'],
   },
 ];
+const navgationSlotsJson = [
+  {
+    name: 'default',
+    default: [],
+    desc: 'default 内容插槽',
+    params: '--',
+  },
+  {
+    name: 'header',
+    default: [],
+    desc: 'header 插槽',
+    params: '--',
+  },
+  {
+    name: 'footer',
+    default: [],
+    desc: 'footer 插槽',
+    params: '--',
+  },
+  {
+    name: 'menu',
+    default: [],
+    desc: '左侧menu 插槽',
+    params: '--',
+  },
+  {
+    name: 'side-icon',
+    default: [],
+    desc: '左侧header Icon 插槽',
+    params: '--',
+  },
+  {
+    name: 'side-header',
+    default: [],
+    desc: '左侧header 插槽',
+    params: '--',
+  },
+  {
+    name: 'side-footer',
+    default: [],
+    desc: '左侧footer 插槽',
+    params: '--',
+  },
+];
+const slotColumnMap = {
+  name: '名称',
+  desc: '说明',
+  params: '参数',
+};
 export default defineComponent({
   render() {
     return (
@@ -113,7 +162,8 @@ export default defineComponent({
           demoName="base-demo">
              <BaseDemo/>
           </DemoBox>
-        <PropsBox propsData={menuProps}/>
+        <PropsBox propsData={navgationProps}/>
+        <PropsBox title='SubMenu 插槽' columnMap={slotColumnMap} propsData={navgationSlotsJson}/>
       </div>
     );
   },

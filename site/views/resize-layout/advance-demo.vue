@@ -1,7 +1,7 @@
 <template>
   <bk-resize-layout
     style="height: 500px;"
-    collapsible="{true}"
+    collapsible
   >
     <template #aside>
       <bk-resize-layout

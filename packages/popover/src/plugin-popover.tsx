@@ -23,10 +23,10 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { createApp, ref, reactive } from 'vue';
+import { createApp, reactive, ref } from 'vue';
 
 import Popover from './popover';
-import { PopoverPropTypes, PopoverProps } from './props';
+import { PopoverProps, PopoverPropTypes } from './props';
 import { isAvailableId, isElement } from './utils';
 
 export type $Popover = PopoverPropTypes & {
@@ -50,18 +50,16 @@ export default function createPopoverComponent(options: $Popover) {
   const popoverComponent = {
     name: '$popover',
     setup(_, { expose }) {
-      const formatOptions = (): any => {
-        return Object.keys(PopoverProps).reduce(
-          (result: any, key) => {
-            if (Object.prototype.hasOwnProperty.call(resolvedOptions, key)) {
-              Object.assign(result, { [key]: resolvedOptions[key] });
-            }
+      const formatOptions = (): any => Object.keys(PopoverProps).reduce(
+        (result: any, key) => {
+          if (Object.prototype.hasOwnProperty.call(resolvedOptions, key)) {
+            Object.assign(result, { [key]: resolvedOptions[key] });
+          }
 
-            return result;
-          },
-          { target: resolvedOptions.target }
-        );
-      };
+          return result;
+        },
+        { target: resolvedOptions.target },
+      );
 
       const refProps = reactive(formatOptions());
       const refReference = ref();

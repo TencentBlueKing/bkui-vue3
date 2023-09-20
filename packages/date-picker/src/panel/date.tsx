@@ -364,11 +364,11 @@ export default defineComponent({
               this.datePanelLabel && Object.keys(this.datePanelLabel).length > 0
                 ? (
                   <span>
-                    <span class={this.resolveClassName('date-picker-header-label')} v-show={this.showLabelFirst} onClick={() => this.datePanelLabel.labels[0].handler}>
+                    <span class={this.resolveClassName('date-picker-header-label')} v-show={this.showLabelFirst} onClick={() => this.datePanelLabel.labels[0].handler()}>
                       {this.datePanelLabel.labels[0].label}
                     </span>
                     {this.currentView === 'date' ? ` ${this.datePanelLabel.separator} ` : ' '}
-                    <span class={this.resolveClassName('date-picker-header-label')} v-show={this.showLabelSecond} onClick={() => this.datePanelLabel.labels[1].handler}>
+                    <span class={this.resolveClassName('date-picker-header-label')} v-show={this.showLabelSecond} onClick={() => this.datePanelLabel.labels[1].handler()}>
                       {this.datePanelLabel.labels[1].label}
                     </span>
                   </span>
