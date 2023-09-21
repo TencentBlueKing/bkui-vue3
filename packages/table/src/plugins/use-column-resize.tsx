@@ -107,8 +107,6 @@ export default (colgroups: GroupColumn[], immediate = true) => {
       const targetTable = (e.target as HTMLElement).closest('table');
       dragStartOffsetX = startX - targetTable.getBoundingClientRect().left;
 
-      const target = (e.target as HTMLElement).closest('th');
-      target.classList.remove('col-resize-hover');
       document.addEventListener('mouseup', handleMouseUp);
       document.addEventListener('mousemove', handleMouseMove);
     },
@@ -126,6 +124,7 @@ export default (colgroups: GroupColumn[], immediate = true) => {
 
       if (!isDraging) {
         if (!target) {
+          target.classList.remove('col-resize-hover');
           return;
         }
 
@@ -142,7 +141,7 @@ export default (colgroups: GroupColumn[], immediate = true) => {
       }
     },
     [EVENTS.MOUSE_OUT]: (e: MouseEvent, _column: GroupColumn) => {
-      const target = e.target as HTMLElement;
+      const target = (e.target as HTMLElement).closest('th');
       if (!isDraging) {
         setChildrenNodeCursor(target, '');
         target.classList.remove('col-resize-hover');
