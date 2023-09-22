@@ -24,7 +24,9 @@
 * IN THE SOFTWARE.
 */
 import { ITableColumn } from './components/table-column';
-import { TablePropTypes } from './props';
+import { SORT_OPTION } from './const';
+import { IColSortBehavior, ISortShape, TablePropTypes } from './props';
+
 /**
  * 渲染column settings
  * @param props: TablePropTypes
@@ -76,6 +78,7 @@ export default (props: TablePropTypes, targetColumns: ITableColumn[]) => {
     }
   };
 
+
   const getColumns = () => {
     if (targetColumns?.length) {
       return targetColumns;
@@ -88,8 +91,17 @@ export default (props: TablePropTypes, targetColumns: ITableColumn[]) => {
     return [];
   };
 
+  const getActiveColumn = () => {
+    if (props.colSortBehavior === IColSortBehavior.independent) {
+      const filters = [SORT_OPTION.ASC, SORT_OPTION.DESC];
+      return getColumns().filter(col => filters.includes((col.sort as ISortShape)?.value))?.[0];
+    }
+    return null;
+  };
+
   return {
     initColumns,
     getColumns,
+    getActiveColumn,
   };
 };

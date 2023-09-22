@@ -353,6 +353,19 @@ export type Colgroups = Column & {
   listeners: Map<string, Function>;
 };
 
+export enum IColSortBehavior {
+  /**
+   * 列排序是相互依赖的
+   */
+  interdependent = 'interdependent',
+
+  /**
+   * 列排序是独立的
+   */
+  independent = 'independent'
+}
+
+
 export const tableProps = {
   /**
    * 渲染列表
@@ -607,4 +620,12 @@ export const tableProps = {
    * 需要跟随滚动或者其他样式，可以通过此配置进行覆盖
    */
   prependStyle: PropTypes.style().def({}),
+
+  /**
+   * 列排序行为
+   * independent：列与列之间的排序是独立的，互斥的
+   * interdependent：列排序是相互影响、依赖的
+   *
+   */
+  colSortBehavior: toType<IColSortBehavior>('IColSortBehavior', { default: IColSortBehavior.independent }),
 };
