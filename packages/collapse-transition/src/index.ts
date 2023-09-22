@@ -24,13 +24,11 @@
  * IN THE SOFTWARE.
 */
 
-import { App } from 'vue';
+import { withInstall } from '@bkui-vue/shared';
 
 import CollapseTransition from './collapse-transition';
 
 
-CollapseTransition.install = (Vue: App) => {
-  Vue.component(CollapseTransition.name, CollapseTransition);
-};
+const BKCollapseTransition = withInstall(CollapseTransition);;
 
-export default CollapseTransition;
+export default BKCollapseTransition;
