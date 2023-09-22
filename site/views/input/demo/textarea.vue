@@ -7,7 +7,7 @@
     <bk-input
       v-model="val"
       type="textarea"
-      rows="6"
+      :rows="6"
       :over-max-length-limit="overMaxLengthLimit"
       :maxlength="255"
     />

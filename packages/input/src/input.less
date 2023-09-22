@@ -38,15 +38,15 @@
 
 }
 
-.placeholder() {
+.placeholder(@fontSize: @font-size-base) {
   ::placeholder {
     color: @light-gray;
+    font-size: @fontSize;
   }
 }
 
 .@{bk-prefix}-textarea {
   --textarea-line-height: 20px;
-  .placeholder();
   display: inline-flex;
   width: 100%;
   overflow: hidden;
@@ -59,6 +59,7 @@
   box-sizing: border-box;
   transition: all .3s;
   flex-direction: column;
+  .placeholder();
 
   &.resizable {
     resize: both;
@@ -81,7 +82,7 @@
     padding-right: @input-horizontal-padding;
     margin: 0;
     margin-left: auto;
-    font-size: 12px;
+    font-size: @font-size-base;
     text-align: right;
     transform: scale(.8);
     justify-content: flex-end;
@@ -166,6 +167,7 @@
 
   &--large {
     .component-size(@component-size-large, @font-size-medium);
+    .placeholder(@font-size-medium);
 
     .@{bk-prefix}-input--max-length {
       font-size: @font-size-large;
@@ -285,9 +287,7 @@
       appearance: none;
     }
 
-    &::placeholder {
-      color: @light-gray;
-    }
+
   }
 
   &--number-control {

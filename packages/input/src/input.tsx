@@ -26,7 +26,6 @@
 
 
 import { computed, defineComponent, ExtractPropTypes, nextTick, onBeforeUnmount, onMounted, ref, watch  } from 'vue';
-import { bool, object, oneOfType } from 'vue-types';
 
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { bkTooltips } from '@bkui-vue/directives';
@@ -70,7 +69,7 @@ export const inputType = {
   overMaxLengthLimit: PropTypes.bool.def(false),
   showOverflowTooltips: PropTypes.bool.def(true),
   resize: PropTypes.bool.def(true),
-  autosize: oneOfType<boolean | InputAutoSize>([bool, object<InputAutoSize>]).def(false),
+  autosize: PropTypes.oneOfType<Boolean | InputAutoSize>([Boolean, Object]).def(false),
 };
 
 export const enum EVENTS {
@@ -160,7 +159,6 @@ export default defineComponent({
     const resizeTextarea = () => {
       if (!isTextArea.value) return;
 
-      console.log(props.autosize, props, 123);
       if (props.autosize) {
         const minRows = (props.autosize as InputAutoSize)?.minRows;
         const maxRows = (props.autosize as InputAutoSize)?.maxRows;
@@ -265,7 +263,7 @@ export default defineComponent({
     onMounted(() => {
       isOverflow.value = detectOverflow();
       resizeObserver.observe(inputRef.value);
-      nextTick(resizeTextarea);
+      nextTick(() => resizeTextarea());
     });
 
     onBeforeUnmount(() => {
