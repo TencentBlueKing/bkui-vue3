@@ -26,6 +26,8 @@
 import { string } from 'vue-types';
 
 import { PropTypes } from '@bkui-vue/shared';
+import { PropType } from 'vue/dist/vue';
+import { PopoverPropTypes } from '@bkui-vue/popover';
 
 export  type TipsType = 'tips' | 'title';
 export  type CalType = 'dom' | 'canvas';
@@ -59,4 +61,5 @@ export default {
   boundary: PropTypes.oneOfType([PropTypes.string.def('parent'), PropTypes.instanceOf(HTMLElement)]).def(document.body),
   placement: placementType().def(PlacementEnum.TOP_START),
   resizeable: PropTypes.bool,
+  popoverOptions: Object as PropType<Partial<PopoverPropTypes>>, // popover属性
 };
