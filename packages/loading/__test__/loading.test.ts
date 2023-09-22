@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { Help, HelpFill } from '@bkui-vue/icon';
 import { mount } from '@vue/test-utils';
@@ -69,12 +69,15 @@ describe('BkLoading.tsx', () => {
       },
       slots: {
         // eslint-disable-next-line max-len
-        default: '<div style="height: 300px; width: 300px; display: flex; align-items: center; justify-content: center;">content</div>',
+        default:
+          '<div style="height: 300px; width: 300px; display: flex; align-items: center; justify-content: center;">content</div>',
       },
     });
 
     expect(wrapper.classes('bk-nested-loading')).toBe(false);
-    expect(wrapper.html()).toEqual('<div style="height: 300px; width: 300px; display: flex; align-items: center; justify-content: center;">content</div>');
+    expect(wrapper.html()).toEqual(
+      '<div style="height: 300px; width: 300px; display: flex; align-items: center; justify-content: center;">content</div>',
+    );
   });
 
   it('renders loading with title', () => {

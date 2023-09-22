@@ -22,12 +22,12 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 import SparkMD5 from 'spark-md5';
 
 import { isNullOrUndef } from '@bkui-vue/shared';
 
-import type { UploadProgressEvent, UploadRequestHandler, UploadRequestOptions } from './upload.type';;
+import type { UploadProgressEvent, UploadRequestHandler, UploadRequestOptions } from './upload.type';
 
 function getRes(xhr: XMLHttpRequest): XMLHttpRequestResponseType {
   const res = xhr.responseText || xhr.response;
@@ -42,8 +42,7 @@ function getRes(xhr: XMLHttpRequest): XMLHttpRequestResponseType {
   }
 }
 
-
-export const ajaxUpload: UploadRequestHandler = (option) => {
+export const ajaxUpload: UploadRequestHandler = option => {
   if (typeof XMLHttpRequest === 'undefined') {
     throw new Error('XMLHttpRequest is undefined');
   }
@@ -52,7 +51,7 @@ export const ajaxUpload: UploadRequestHandler = (option) => {
   const { action } = option;
 
   if (xhr.upload) {
-    xhr.upload.addEventListener('progress', (event) => {
+    xhr.upload.addEventListener('progress', event => {
       const progressEvent = event as unknown as UploadProgressEvent;
       progressEvent.percent = event.total > 0 ? (event.loaded / event.total) * 100 : 0;
       option.onProgress(progressEvent);
@@ -66,7 +65,7 @@ export const ajaxUpload: UploadRequestHandler = (option) => {
     if (!Array.isArray(appendData)) {
       appendData = [appendData];
     }
-    appendData.forEach((data) => {
+    appendData.forEach(data => {
       for (const [key, value] of Object.entries(data)) {
         if (Array.isArray(value)) formData.append(key, ...value);
         else formData.append(key, value);
@@ -79,7 +78,7 @@ export const ajaxUpload: UploadRequestHandler = (option) => {
     if (!Array.isArray(appendData)) {
       appendData = [appendData];
     }
-    appendData.forEach((item) => {
+    appendData.forEach(item => {
       if (Array.isArray(item.value)) formData.append(item.name, ...item.value);
       else formData.append(item.name, item.value);
     });
@@ -110,7 +109,7 @@ export const ajaxUpload: UploadRequestHandler = (option) => {
 
   if (option.header) {
     if (Array.isArray(option.header)) {
-      option.header.forEach((head) => {
+      option.header.forEach(head => {
         const headerKey = head.name;
         const headerVal = head.value;
         xhr.setRequestHeader(headerKey, headerVal);
@@ -136,11 +135,10 @@ export const ajaxUpload: UploadRequestHandler = (option) => {
   return xhr;
 };
 
-
 // 该方法用于在不同的浏览器使用不同的方式
 const blobSlice = File.prototype.slice || (File.prototype as any).mozSlice || (File.prototype as any).webkitSlice;
 
-export const ajaxSliceUpload: UploadRequestHandler = async (option) => {
+export const ajaxSliceUpload: UploadRequestHandler = async option => {
   const chunkSize = option.chunkSize * 1024 * 1024;
   const { file } = option;
   if (!file) {
@@ -202,7 +200,7 @@ const sliceSend = (
         if (!Array.isArray(appendData)) {
           appendData = [appendData];
         }
-        appendData.forEach((data) => {
+        appendData.forEach(data => {
           for (const [key, value] of Object.entries(data)) {
             if (Array.isArray(value)) formData.append(key, ...value);
             else formData.append(key, value);
@@ -215,7 +213,7 @@ const sliceSend = (
         if (!Array.isArray(appendData)) {
           appendData = [appendData];
         }
-        appendData.forEach((item) => {
+        appendData.forEach(item => {
           if (Array.isArray(item.value)) formData.append(item.name, ...item.value);
           else formData.append(item.name, item.value);
         });
@@ -242,10 +240,14 @@ const sliceSend = (
         }
       };
 
-      xhr.upload.addEventListener('progress', (event) => {
-        const progressEvent = event as unknown as UploadProgressEvent;
-        option.onProgress(progressEvent, i);
-      }, false);
+      xhr.upload.addEventListener(
+        'progress',
+        event => {
+          const progressEvent = event as unknown as UploadProgressEvent;
+          option.onProgress(progressEvent, i);
+        },
+        false,
+      );
 
       if (option.withCredentials && 'withCredentials' in xhr) {
         xhr.withCredentials = true;
@@ -255,7 +257,7 @@ const sliceSend = (
 
       if (option.header) {
         if (Array.isArray(option.header)) {
-          option.header.forEach((head) => {
+          option.header.forEach(head => {
             const headerKey = head.name;
             const headerVal = head.value;
             xhr.setRequestHeader(headerKey, headerVal);
@@ -285,36 +287,37 @@ const sliceSend = (
 };
 
 // SparkMD5分片文件
-const hashFile = (file: File, chunkSize: number) => new Promise((resolve, reject) => {
-  const chunks = Math.ceil(file.size / chunkSize);
-  let currentChunk = 0;
-  const spark = new SparkMD5.ArrayBuffer();
-  const fileReader = new FileReader();
-  function loadNext() {
-    const start = currentChunk * chunkSize;
-    const end = start + chunkSize >= file.size ? file.size : start + chunkSize;
-    fileReader.readAsArrayBuffer(blobSlice.call(file, start, end));
-  }
-  fileReader.onload = (e) => {
-    spark.append(e.target.result); // Append array buffer
-    currentChunk += 1;
-    if (currentChunk < chunks) {
-      loadNext();
-    } else {
-      const result = spark.end();
-      // 如果单纯的使用result 作为hash值的时候, 如果文件内容相同，而名称不同的时候
-      // 想保留两个文件无法保留。所以把文件名称加上。
-      const sparkMd5 = new SparkMD5();
-      sparkMd5.append(result);
-      sparkMd5.append(file.name);
-      const hexHash = sparkMd5.end();
-      resolve(hexHash);
+const hashFile = (file: File, chunkSize: number) =>
+  new Promise((resolve, reject) => {
+    const chunks = Math.ceil(file.size / chunkSize);
+    let currentChunk = 0;
+    const spark = new SparkMD5.ArrayBuffer();
+    const fileReader = new FileReader();
+    function loadNext() {
+      const start = currentChunk * chunkSize;
+      const end = start + chunkSize >= file.size ? file.size : start + chunkSize;
+      fileReader.readAsArrayBuffer(blobSlice.call(file, start, end));
     }
-  };
-  fileReader.onerror = () => {
-    reject(new Error('File slcie failed'));
-  };
-  loadNext();
-}).catch((err) => {
-  console.log(err);
-});
+    fileReader.onload = e => {
+      spark.append(e.target.result); // Append array buffer
+      currentChunk += 1;
+      if (currentChunk < chunks) {
+        loadNext();
+      } else {
+        const result = spark.end();
+        // 如果单纯的使用result 作为hash值的时候, 如果文件内容相同，而名称不同的时候
+        // 想保留两个文件无法保留。所以把文件名称加上。
+        const sparkMd5 = new SparkMD5();
+        sparkMd5.append(result);
+        sparkMd5.append(file.name);
+        const hexHash = sparkMd5.end();
+        resolve(hexHash);
+      }
+    };
+    fileReader.onerror = () => {
+      reject(new Error('File slcie failed'));
+    };
+    loadNext();
+  }).catch(err => {
+    console.log(err);
+  });

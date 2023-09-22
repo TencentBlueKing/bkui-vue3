@@ -1,28 +1,28 @@
 /*
-* Tencent is pleased to support the open source community by making
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
-*
-* Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
-*
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
-*
-* License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
-*
-* ---------------------------------------------------
-* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
-* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
-* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-* the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-* THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-* IN THE SOFTWARE.
-*/
+ * Tencent is pleased to support the open source community by making
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ *
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ *
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ *
+ * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ *
+ * ---------------------------------------------------
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+ * the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
 import { h, nextTick } from 'vue';
 
 import BkCheckbox from '@bkui-vue/checkbox';
@@ -67,17 +67,19 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
    * @param item
    * @returns
    */
-  const getRootIcon = (item: any) => (isItemOpen(item)
-    ? <FolderShapeOpen class={ [resolveClassName('tree-icon'), resolveClassName('node-prefix')] } />
-    : <Folder class={ [resolveClassName('tree-icon'), resolveClassName('node-prefix')] } />);
-
+  const getRootIcon = (item: any) =>
+    isItemOpen(item) ? (
+      <FolderShapeOpen class={[resolveClassName('tree-icon'), resolveClassName('node-prefix')]} />
+    ) : (
+      <Folder class={[resolveClassName('tree-icon'), resolveClassName('node-prefix')]} />
+    );
 
   /**
-* 渲染动态设置的节点样式
-* @param val
-* @returns
-*/
-  const renderPrefixVal = (val: string | { node: string, className: string, text: string, style: any } | any) => {
+   * 渲染动态设置的节点样式
+   * @param val
+   * @returns
+   */
+  const renderPrefixVal = (val: string | { node: string; className: string; text: string; style: any } | any) => {
     if (typeof val === 'string') {
       return val;
     }
@@ -93,15 +95,14 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
     return null;
   };
 
-  const getLoadingIcon = (item: any) => (ctx.slots.nodeLoading?.(getScopedSlotData(item)) ?? isNodeLoading(item)
-    ? <Spinner></Spinner> : '');
-
+  const getLoadingIcon = (item: any) =>
+    ctx.slots.nodeLoading?.(getScopedSlotData(item)) ?? isNodeLoading(item) ? <Spinner></Spinner> : '';
 
   /**
-* 根据节点状态获取节点操作Icon
-* @param item
-* @returns
-*/
+   * 根据节点状态获取节点操作Icon
+   * @param item
+   * @returns
+   */
   const getActionIcon = (item: any) => {
     if (ctx.slots.nodeAction) {
       return ctx.slots.nodeAction(getScopedSlotData(item));
@@ -122,8 +123,11 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
 
     if (prefixFnVal === 'default' || (typeof props.prefixIcon === 'boolean' && props.prefixIcon)) {
       if (hasChildNode(item) || item.async || !props.autoCheckChildren) {
-        return isItemOpen(item) ? <DownShape class={resolveClassName('node-prefix')}/>
-          : <RightShape class={resolveClassName('node-prefix')} />;
+        return isItemOpen(item) ? (
+          <DownShape class={resolveClassName('node-prefix')} />
+        ) : (
+          <RightShape class={resolveClassName('node-prefix')} />
+        );
       }
     }
 
@@ -131,10 +135,10 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
   };
 
   /**
-* 获取节点类型Icon
-* @param item
-* @returns
-*/
+   * 获取节点类型Icon
+   * @param item
+   * @returns
+   */
   const getNodePrefixIcon = (item: any) => {
     if (!props.showNodeTypeIcon) {
       return null;
@@ -155,8 +159,11 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
     }
 
     if (prefixFnVal === 'default' || (typeof props.prefixIcon === 'boolean' && props.prefixIcon)) {
-      return isRootNode(item) || hasChildNode(item) ? getRootIcon(item)
-        : <TextFile class={ [resolveClassName('tree-icon'), resolveClassName('node-prefix')] } />;
+      return isRootNode(item) || hasChildNode(item) ? (
+        getRootIcon(item)
+      ) : (
+        <TextFile class={[resolveClassName('tree-icon'), resolveClassName('node-prefix')]} />
+      );
     }
 
     return null;
@@ -181,46 +188,53 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
 
   const handleNodeItemCheckboxChange = (item: any, value: boolean) => {
     setNodeAttr(item, NODE_ATTRIBUTES.IS_CHECKED, !!value);
-    deepUpdateChildNode(item,  NODE_ATTRIBUTES.IS_CHECKED, !!value);
+    deepUpdateChildNode(item, NODE_ATTRIBUTES.IS_CHECKED, !!value);
     updateParentChecked(item, value);
-    ctx.emit(EVENTS.NODE_CHECKED, schemaValues.value.filter((t: any) => isNodeChecked(t))
-      .map((n: any) => n[NODE_ATTRIBUTES.UUID]));
+    ctx.emit(
+      EVENTS.NODE_CHECKED,
+      schemaValues.value.filter((t: any) => isNodeChecked(t)).map((n: any) => n[NODE_ATTRIBUTES.UUID]),
+    );
   };
 
-  const isIndeterminate = (item: any) => isNodeChecked(item)  && !schemaValues.value
-    .filter(node => getNodePath(node)?.startsWith(getNodePath(item)))
-    .every(filterNode => isNodeChecked(filterNode));
+  const isIndeterminate = (item: any) =>
+    isNodeChecked(item) &&
+    !schemaValues.value
+      .filter(node => getNodePath(node)?.startsWith(getNodePath(item)))
+      .every(filterNode => isNodeChecked(filterNode));
 
-  const isNodeItemChecked = (item: any) => isNodeChecked(item) || schemaValues.value
-    .filter(node => getNodePath(node)?.startsWith(getNodePath(item)))
-    .some(filterNode => isNodeChecked(filterNode));
+  const isNodeItemChecked = (item: any) =>
+    isNodeChecked(item) ||
+    schemaValues.value
+      .filter(node => getNodePath(node)?.startsWith(getNodePath(item)))
+      .some(filterNode => isNodeChecked(filterNode));
 
   const getCheckboxRender = (item: any) => {
     if (!props.showCheckbox) {
       return null;
     }
 
-    return <BkCheckbox
-      size='small'
-      modelValue={ isNodeItemChecked(item) }
-      indeterminate={ isIndeterminate(item) }
-      onChange={ (val: string | boolean | number) => handleNodeItemCheckboxChange(item, !!val) }>
-    </BkCheckbox>;
+    return (
+      <BkCheckbox
+        size='small'
+        modelValue={isNodeItemChecked(item)}
+        indeterminate={isIndeterminate(item)}
+        onChange={(val: string | boolean | number) => handleNodeItemCheckboxChange(item, !!val)}
+      ></BkCheckbox>
+    );
   };
 
-
   /**
-* 设置指定节点是否展开
-* @param item
-* @param isOpen
-*/
+   * 设置指定节点是否展开
+   * @param item
+   * @param isOpen
+   */
   const setNodeOpened = (item: any, isOpen = null, e: MouseEvent = null, fireEmit = true) => {
     const newVal = isOpen === null ? !isItemOpen(item) : !!isOpen;
 
     /**
-  * 在收起节点时需要重置当前节点的所有叶子节点状态为 __isOpen = false
-  * 如果是需要点击当前节点展开所有叶子节点此处也可以打开
-  */
+     * 在收起节点时需要重置当前节点的所有叶子节点状态为 __isOpen = false
+     * 如果是需要点击当前节点展开所有叶子节点此处也可以打开
+     */
     if (!newVal) {
       deepUpdateChildNode(item, NODE_ATTRIBUTES.IS_OPEN, newVal);
     }
@@ -235,12 +249,12 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
   };
 
   /**
-     * 设置指定节点行为 checked isOpen
-     * @param args
-     * @param action
-     * @param value
-     * @returns
-     */
+   * 设置指定节点行为 checked isOpen
+   * @param args
+   * @param action
+   * @param value
+   * @returns
+   */
   const setNodeAction = (args: any | any[], action: string, value: any) => {
     if (Array.isArray(args)) {
       args.forEach((node: any) => setNodeAttr(resolveNodeItem(node), action, value));
@@ -251,12 +265,12 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
   };
 
   /**
-     * 指定节点展开
-     * @param item 节点数据 | Node Id
-     * @param isOpen 是否展开
-     * @param autoOpenParents 如果是 isOpen = true，是否自动设置所有父级展开
-     * @returns
-     */
+   * 指定节点展开
+   * @param item 节点数据 | Node Id
+   * @param isOpen 是否展开
+   * @param autoOpenParents 如果是 isOpen = true，是否自动设置所有父级展开
+   * @returns
+   */
   const setOpen = (item: any[] | any, isOpen = true, autoOpenParents = false) => {
     const resolvedItem = resolveNodeItem(item);
     if (resolvedItem[NODE_ATTRIBUTES.IS_NULL]) {
@@ -327,9 +341,9 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
     }
 
     if (
-      !props.selectable
-      || (typeof props.selectable === 'function' && !props.selectable(uuid))
-      || (props.disabledFolderSelectable && uuid?.is_folder === true)
+      !props.selectable ||
+      (typeof props.selectable === 'function' && !props.selectable(uuid)) ||
+      (props.disabledFolderSelectable && uuid?.is_folder === true)
     ) {
       console.warn('props.selectable is false or undefined, please set selectable with true');
       return;
@@ -455,14 +469,21 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
     });
 
     const maxDeep = getNodeAttr(node, NODE_ATTRIBUTES.DEPTH) + 1;
-    return new Array(maxDeep).fill('')
-      .map((_, index: number) => index)
-      .filter((depth: number) => filterNextNode(depth, node))
-      .filter((depth: number) => depth > 0)
-    // @ts-ignore:next-line
-      .map((index: number) => <span class="node-virtual-line" style={ getNodeLineStyle(maxDeep - index) }></span>);
+    return (
+      new Array(maxDeep)
+        .fill('')
+        .map((_, index: number) => index)
+        .filter((depth: number) => filterNextNode(depth, node))
+        .filter((depth: number) => depth > 0)
+        // @ts-ignore:next-line
+        .map((index: number) => (
+          <span
+            class='node-virtual-line'
+            style={getNodeLineStyle(maxDeep - index)}
+          ></span>
+        ))
+    );
   };
-
 
   const renderNodeSlots = (item: any) => {
     if (ctx.slots.node) {
@@ -476,7 +497,7 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
     return [getLabel(item, props)];
   };
 
-  const getScopedSlotData = (item) => {
+  const getScopedSlotData = item => {
     if (props.keepSlotData) {
       return extendNodeScopedData(item);
     }
@@ -488,34 +509,25 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
     <div
       data-tree-node={getNodeId(item)}
       key={getNodeId(item)}
-      class={ getNodeRowClass(item, flatData.schema) }>
+      class={getNodeRowClass(item, flatData.schema)}
+    >
       <div
-        class={getNodeItemClass(item, flatData.schema, props) }
+        class={getNodeItemClass(item, flatData.schema, props)}
         style={getNodeItemStyle(item, props, flatData)}
-        onClick={(e: MouseEvent) => handleNodeContentClick(item, e)}>
+        onClick={(e: MouseEvent) => handleNodeContentClick(item, e)}
+      >
         <div
-          class={ [resolveClassName('node-action')] }
-          onClick={(e: MouseEvent) => handleNodeActionClick(e, item)}>
-          { getActionIcon(item) }
+          class={[resolveClassName('node-action')]}
+          onClick={(e: MouseEvent) => handleNodeActionClick(e, item)}
+        >
+          {getActionIcon(item)}
         </div>
-        <div class={ resolveClassName('node-content') } >
-          {
-            [
-              getCheckboxRender(item),
-              getNodePrefixIcon(item),
-            ]
-          }
-          <span
-            class={ resolveClassName('node-text') }>
-            { renderNodeSlots(item) }
-          </span>
-          {
-            ctx.slots.nodeAppend?.(getScopedSlotData(item))
-          }
+        <div class={resolveClassName('node-content')}>
+          {[getCheckboxRender(item), getNodePrefixIcon(item)]}
+          <span class={resolveClassName('node-text')}>{renderNodeSlots(item)}</span>
+          {ctx.slots.nodeAppend?.(getScopedSlotData(item))}
         </div>
-        {
-          getVirtualLines(item)
-        }
+        {getVirtualLines(item)}
       </div>
     </div>
   );

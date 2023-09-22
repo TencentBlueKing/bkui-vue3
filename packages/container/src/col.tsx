@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { computed, defineComponent, inject, provide } from 'vue';
 
@@ -43,6 +43,7 @@ const colProps = {
 };
 
 export default defineComponent({
+  // eslint-disable-next-line vue/no-reserved-component-names
   name: 'Col',
   props: colProps,
   emits: [],
@@ -73,7 +74,10 @@ export default defineComponent({
     const { resolveClassName } = usePrefix();
 
     return () => (
-      <div class={`${resolveClassName('grid-col')}`} style={style.value}>
+      <div
+        class={`${resolveClassName('grid-col')}`}
+        style={style.value}
+      >
         {ctx.slots.default?.()}
       </div>
     );

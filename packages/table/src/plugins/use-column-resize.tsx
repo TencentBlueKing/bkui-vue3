@@ -62,20 +62,19 @@ export default (colgroups: GroupColumn[], immediate = true) => {
     dragColumn = null;
 
     const targetTable = (e.target as HTMLElement).closest('table');
-    targetTable
-      .querySelectorAll('th')
-      .forEach((th: HTMLElement) => th.style.setProperty('user-select', 'inherit'));
+    targetTable.querySelectorAll('th').forEach((th: HTMLElement) => th.style.setProperty('user-select', 'inherit'));
   };
 
-  const updateOffsetX = (e: MouseEvent) => throttle(() => {
-    const diff = e.clientX - startX;
-    const resolveWidth = (dragColumn.resizeWidth ?? dragColumn.calcWidth) + diff;
-    const minWidth = Number(dragColumn.minWidth);
+  const updateOffsetX = (e: MouseEvent) =>
+    throttle(() => {
+      const diff = e.clientX - startX;
+      const resolveWidth = (dragColumn.resizeWidth ?? dragColumn.calcWidth) + diff;
+      const minWidth = Number(dragColumn.minWidth);
 
-    if (minWidth < resolveWidth) {
-      dragOffsetX.value = e.clientX - startX + dragStartOffsetX;
-    }
-  }, 60);
+      if (minWidth < resolveWidth) {
+        dragOffsetX.value = e.clientX - startX + dragStartOffsetX;
+      }
+    }, 60);
 
   const handleMouseMove = (e: MouseEvent) => {
     const bodyStyle = document.body.style;
@@ -152,7 +151,7 @@ export default (colgroups: GroupColumn[], immediate = true) => {
   const getEventName = (event: string) => `${pluginName}_${event}`;
 
   const registerResizeEvent = () => {
-    colgroups.forEach((col) => {
+    colgroups.forEach(col => {
       if (col.resizable !== false) {
         Object.keys(handler).forEach((event: string) => {
           const name = getEventName(event);
@@ -167,7 +166,7 @@ export default (colgroups: GroupColumn[], immediate = true) => {
   };
 
   const resetResizeEvents = () => {
-    colgroups.forEach((col) => {
+    colgroups.forEach(col => {
       Object.keys(handler).forEach((event: string) => {
         const name = getEventName(event);
         if (col.listeners.has(name)) {
@@ -182,14 +181,17 @@ export default (colgroups: GroupColumn[], immediate = true) => {
     registerResizeEvent();
   }
 
-  const dragOffsetXStyle = computed(() => ({
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    width: '1px',
-    'background-color': '#3785FF',
-  } as const));
+  const dragOffsetXStyle = computed(
+    () =>
+      ({
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        left: 0,
+        width: '1px',
+        'background-color': '#3785FF',
+      }) as const,
+  );
 
   return {
     registerResizeEvent,

@@ -1,4 +1,3 @@
-
 /*
  * Tencent is pleased to support the open source community by making
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
@@ -23,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { defineComponent, reactive, ref } from 'vue';
 
@@ -80,58 +79,80 @@ export default defineComponent({
   render() {
     return (
       <div>
-        <div style="margin: 100px auto; display: flex; justify-content: space-between; padding: 200px 50px; flex-wrap: wrap;">
-          {
-            this.dropdownList.map(item => (
-              <BkDropdown
-                trigger={item.trigger} placement={item.placement} disabled={this.disabled} extCls={this.extCls}>
-                {{
-                  default: () => <BkButton>{Object.keys(item).map(key =>  `${key}: ${item[key]}`)
-                    .join(' - ')}</BkButton>,
-                  content: () => (
-                    <BkDropdownMenu>
-                      {
-                        this.menuList.map((item, index) => (
-                          <BkDropdownItem
-                            key={item + index}
-                            onClick={() => this.handleClickItem(item, index)}>{item + index}</BkDropdownItem>
-                        ))
-                      }
-                    </BkDropdownMenu>
-                  ),
-                }}
-              </BkDropdown>
-            ))
-          }
+        <div style='margin: 100px auto; display: flex; justify-content: space-between; padding: 200px 50px; flex-wrap: wrap;'>
+          {this.dropdownList.map(item => (
+            <BkDropdown
+              trigger={item.trigger}
+              placement={item.placement}
+              disabled={this.disabled}
+              extCls={this.extCls}
+            >
+              {{
+                default: () => (
+                  <BkButton>
+                    {Object.keys(item)
+                      .map(key => `${key}: ${item[key]}`)
+                      .join(' - ')}
+                  </BkButton>
+                ),
+                content: () => (
+                  <BkDropdownMenu>
+                    {this.menuList.map((item, index) => (
+                      <BkDropdownItem
+                        key={item + index}
+                        onClick={() => this.handleClickItem(item, index)}
+                      >
+                        {item + index}
+                      </BkDropdownItem>
+                    ))}
+                  </BkDropdownMenu>
+                ),
+              }}
+            </BkDropdown>
+          ))}
           <BkButton onClick={this.handleChangeDisabled}>{`disabled: ${this.disabled}`}</BkButton>
-          <BkDropdown trigger='manual' isShow={this.isShow} disabled={this.disabled} onShowChange={val => this.isShow = val}>
+          <BkDropdown
+            trigger='manual'
+            isShow={this.isShow}
+            disabled={this.disabled}
+            onShowChange={val => (this.isShow = val)}
+          >
             {{
               default: () => <BkButton onClick={this.handleTestIsShow}>test isShow</BkButton>,
               content: () => (
                 <BkDropdownMenu>
-                  {
-                    this.menuList.map((item, index) => (
-                      <BkDropdownItem
-                        key={item + index}
-                        onClick={() => this.handleClickItem(item, index)}>{item + index}</BkDropdownItem>
-                    ))
-                  }
+                  {this.menuList.map((item, index) => (
+                    <BkDropdownItem
+                      key={item + index}
+                      onClick={() => this.handleClickItem(item, index)}
+                    >
+                      {item + index}
+                    </BkDropdownItem>
+                  ))}
                 </BkDropdownMenu>
               ),
             }}
           </BkDropdown>
-          <BkDropdown trigger='click' disabled={this.disabled}>
+          <BkDropdown
+            trigger='click'
+            disabled={this.disabled}
+          >
             {{
-              default: () => <div style="padding: 20px;"><span>click me</span></div>,
+              default: () => (
+                <div style='padding: 20px;'>
+                  <span>click me</span>
+                </div>
+              ),
               content: () => (
                 <BkDropdownMenu>
-                  {
-                    this.menuList.map((item, index) => (
-                      <BkDropdownItem
-                        key={item + index}
-                        onClick={() => this.handleClickItem(item, index)}>{item + index}</BkDropdownItem>
-                    ))
-                  }
+                  {this.menuList.map((item, index) => (
+                    <BkDropdownItem
+                      key={item + index}
+                      onClick={() => this.handleClickItem(item, index)}
+                    >
+                      {item + index}
+                    </BkDropdownItem>
+                  ))}
                 </BkDropdownMenu>
               ),
             }}

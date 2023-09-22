@@ -22,15 +22,10 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { CSSProperties, VNodeChild } from 'vue';
-import {
-  createTypes,
-  string,
-  toType,
-  VueTypeDef,
-} from 'vue-types';
+import { createTypes, string, toType, VueTypeDef } from 'vue-types';
 
 const propTypesNS = createTypes({});
 
@@ -38,7 +33,8 @@ export type VueNode = VNodeChild | JSX.Element;
 
 // 将一个数组转化为一个有限集合 e.g. const arr = [1,2,3] as const; type UnionType = ElementType<typeof arr>;
 export type ElementType<T extends ReadonlyArray<unknown>> = T extends ReadonlyArray<infer ElementType>
-  ? ElementType : never;
+  ? ElementType
+  : never;
 
 // 用于创建字符串列表映射至 `K: V` 的函数
 export function stringEnum<T extends string>(o: Array<T>): { [K in T]: K } {
@@ -50,22 +46,23 @@ export function stringEnum<T extends string>(o: Array<T>): { [K in T]: K } {
 
 type UnionToIntersection<T> = (T extends any ? (v: T) => void : never) extends (v: infer V) => void ? V : never;
 type LastOf<T> = UnionToIntersection<T extends any ? () => T : never> extends () => infer R ? R : never;
-type Push<T extends any[], V> = [ ...T, V];
+type Push<T extends any[], V> = [...T, V];
 
-export type UnionToArrayType<T, L = LastOf<T>, N = [T] extends [never]
-  ? true : false> = N extends true ? [] : Push<UnionToArrayType<Exclude<T, L>>, L>;
+export type UnionToArrayType<T, L = LastOf<T>, N = [T] extends [never] ? true : false> = N extends true
+  ? []
+  : Push<UnionToArrayType<Exclude<T, L>>, L>;
 
 export enum SizeEnum {
   SMALL = 'small',
   LARGE = 'large',
-  DEFAULT = 'default'
+  DEFAULT = 'default',
 }
 
 export enum Placements {
   Top = 'top',
   Left = 'left',
   Right = 'right',
-  Bottom = 'bottom'
+  Bottom = 'bottom',
 }
 
 export enum RenderDirectiveEnum {
@@ -90,7 +87,7 @@ export enum ThemeEnum {
   PRIMARY = 'primary',
   WARNING = 'warning',
   SUCCESS = 'success',
-  DANGER = 'danger'
+  DANGER = 'danger',
 }
 
 /** 弹层出现位置选项 */
@@ -120,7 +117,7 @@ export function placementType() {
 export enum TriggerEnum {
   HOVER = 'hover',
   CLICK = 'click',
-  MANUAL = 'manual'
+  MANUAL = 'manual',
 }
 export function triggerType() {
   return string<`${TriggerEnum}`>().def(TriggerEnum.HOVER);
@@ -129,7 +126,7 @@ export function triggerType() {
 /** 内容渲染类型：目前是在popover内容渲染时使用 */
 export enum RenderType {
   AUTO = 'auto', // 自动配置，默认值，不加干涉，调用方控制
-  SHOWN = 'shown' // 默认不渲染，只有在popover弹出之后才会渲染
+  SHOWN = 'shown', // 默认不渲染，只有在popover弹出之后才会渲染
 }
 
 export function renderType() {
@@ -150,7 +147,7 @@ export function dialogTypeUnion() {
 
 export enum DirectionEnum {
   HORIZONTAL = 'horizontal',
-  VERTICAL = 'vertical'
+  VERTICAL = 'vertical',
 }
 export function directionType() {
   return toType<`${DirectionEnum}`>('direction', {}).def(DirectionEnum.HORIZONTAL);
@@ -158,7 +155,7 @@ export function directionType() {
 
 export enum LineStyleEnum {
   DASHED = 'dashed',
-  SOLID = 'solid'
+  SOLID = 'solid',
 }
 export function lineStyleType() {
   return toType<`${LineStyleEnum}`>('lineType', {}).def(LineStyleEnum.DASHED);
@@ -177,35 +174,33 @@ export function TagThemeType() {
 
 export enum InputBehaviorEnum {
   SIMPLICITY = 'simplicity',
-  NORMAL = 'normal'
+  NORMAL = 'normal',
 }
 
 export enum ProgressStrokeLineCapEnum {
   BUTT = 'butt',
   SQUARE = 'square',
-  ROUNDE = 'round'
+  ROUNDE = 'round',
 }
 
 export enum ProgressEnum {
   LINE = 'line',
   CIRCLE = 'circle',
-  DASHBOARD = 'dashboard'
+  DASHBOARD = 'dashboard',
 }
 
 export enum SwitcherThemeEnum {
   SUCCESS = 'success',
-  PRIMARY = 'primary'
+  PRIMARY = 'primary',
 }
 
 export function SwitcherThemeType() {
   return toType<`${SwitcherThemeEnum}`>('switcherTheme', {}).def(SwitcherThemeEnum.SUCCESS);
 }
 
-
 export function ProgressStrokeLineCapType() {
   return toType<`${ProgressStrokeLineCapEnum}`>('progressStrokeLineCap', {}).def(ProgressStrokeLineCapEnum.ROUNDE);
 }
-
 
 export function ProgressType() {
   return toType<`${ProgressEnum}`>('progress', {}).def(ProgressEnum.LINE);
@@ -264,7 +259,7 @@ export class PropTypes extends propTypesNS {
     });
   }
 
-  static position(positions: string[] = ['top-left', 'top-right', 'bottom-left', 'bottom-right']): VueTypeDef<string>  {
+  static position(positions: string[] = ['top-left', 'top-right', 'bottom-left', 'bottom-right']): VueTypeDef<string> {
     return toType('positions', {
       type: String,
       validator: (val: string) => {
@@ -281,7 +276,7 @@ export class PropTypes extends propTypesNS {
 
 export enum SelectedTypeEnum {
   CHECKBOX = 'checkbox',
-  CHECK = 'check'
+  CHECK = 'check',
 }
 
 export function SelectedType() {

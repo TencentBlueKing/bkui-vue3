@@ -1,28 +1,28 @@
 /*
-* Tencent is pleased to support the open source community by making
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
-*
-* Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
-*
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
-*
-* License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
-*
-* ---------------------------------------------------
-* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
-* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
-* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-* the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-* THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-* IN THE SOFTWARE.
-*/
+ * Tencent is pleased to support the open source community by making
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ *
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ *
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ *
+ * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ *
+ * ---------------------------------------------------
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+ * the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
 import { computed } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
@@ -40,20 +40,27 @@ export default (props: TablePropTypes, colgroups: GroupColumn[], hasScrollY?) =>
     column_fixed: !!column.fixed,
     column_fixed_left: column.fixed !== 'right',
     column_fixed_right: column.fixed === 'right',
-    shadow: column.fixed === 'right' ? (offsetRight - scrollX) > 2 :  scrollX > 0,
+    shadow: column.fixed === 'right' ? offsetRight - scrollX > 2 : scrollX > 0,
   });
   const resolveFixColPos = (column: GroupColumn) => (column.fixed === 'right' ? 'right' : 'left');
   const resolveFixOffset = {
-    left: (ignoreFirst = true) => colgroups.filter(col =>  !col.isHidden && col.fixed && col.fixed !== 'right')
-      .reduce((offset: number, curr: GroupColumn, index: number) => {
-        const outOffset = ignoreFirst && (index === 0) ? offset : (offset + getColumnReactWidth(curr));
-        return outOffset;
-      }, 0),
-    right: (ignoreFirst = true) => colgroups.filter(col =>  !col.isHidden && col.fixed === 'right')
-      .reduce((offset: number, curr: GroupColumn, index: number) => {
-        const outOffset = ignoreFirst && (index === 0) ? offset : (offset + getColumnReactWidth(curr));
-        return outOffset;
-      }, hasScrollY ? SCROLLY_WIDTH : 0),
+    left: (ignoreFirst = true) =>
+      colgroups
+        .filter(col => !col.isHidden && col.fixed && col.fixed !== 'right')
+        .reduce((offset: number, curr: GroupColumn, index: number) => {
+          const outOffset = ignoreFirst && index === 0 ? offset : offset + getColumnReactWidth(curr);
+          return outOffset;
+        }, 0),
+    right: (ignoreFirst = true) =>
+      colgroups
+        .filter(col => !col.isHidden && col.fixed === 'right')
+        .reduce(
+          (offset: number, curr: GroupColumn, index: number) => {
+            const outOffset = ignoreFirst && index === 0 ? offset : offset + getColumnReactWidth(curr);
+            return outOffset;
+          },
+          hasScrollY ? SCROLLY_WIDTH : 0,
+        ),
   };
 
   const getPreColumnOffset = (fixedPos: string, column: GroupColumn, offset = 0) => {
@@ -64,7 +71,7 @@ export default (props: TablePropTypes, colgroups: GroupColumn[], hasScrollY?) =>
     let start = fixedPos === 'right' ? length * opt : 1;
     let preOffset = 0;
 
-    for (start; ;) {
+    for (start; ; ) {
       start = start + -1 * opt;
       const index = Math.abs(start);
       const current = filterColumns[index];
@@ -118,12 +125,14 @@ export default (props: TablePropTypes, colgroups: GroupColumn[], hasScrollY?) =>
       right: false,
     };
 
-    return colgroups.filter(col => !col.isHidden && col.fixed).map((col) => {
-      const colPos = resolveFixColPos(col);
-      const isExist = colPosExist[colPos];
-      colPosExist[colPos] = true;
-      return { isExist, colPos, column: col };
-    });
+    return colgroups
+      .filter(col => !col.isHidden && col.fixed)
+      .map(col => {
+        const colPos = resolveFixColPos(col);
+        const isExist = colPosExist[colPos];
+        colPosExist[colPos] = true;
+        return { isExist, colPos, column: col };
+      });
   });
 
   const { resolveClassName } = usePrefix();

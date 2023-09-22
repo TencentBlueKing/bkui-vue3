@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { mount } from '@vue/test-utils';
 
@@ -50,15 +50,17 @@ describe('AnimateNumber.tsx', () => {
       },
     });
     // test render value
-    await (() => new Promise((resolve) => {
-      setTimeout(resolve, 2000);
-    }))();
+    await (() =>
+      new Promise(resolve => {
+        setTimeout(resolve, 2000);
+      }))();
     expect(wrapper.text()).toBe('20');
     // test change value
     await wrapper.find('.add-button').trigger('click');
-    await (() => new Promise((resolve) => {
-      setTimeout(resolve, 2000);
-    }))();
+    await (() =>
+      new Promise(resolve => {
+        setTimeout(resolve, 2000);
+      }))();
     expect(wrapper.text()).toBe('40');
   });
 });

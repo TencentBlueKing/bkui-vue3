@@ -22,22 +22,12 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
-import {
-  type Ref,
-  computed,
-  defineComponent,
-  ref,
-  watch,
-} from 'vue';
+import { computed, defineComponent, type Ref, ref, watch } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-import {
-  classes,
-  PropTypes,
-  useFormItem,
-} from '@bkui-vue/shared';
+import { classes, PropTypes, useFormItem } from '@bkui-vue/shared';
 
 import star from './star';
 export default defineComponent({
@@ -61,14 +51,14 @@ export default defineComponent({
     const formItem = useFormItem();
     const hoverRate: Ref<number> = ref(0);
 
-    const chooseRate = (val) => {
+    const chooseRate = val => {
       if (!props.editable) return;
 
       emit('update:modelValue', val);
       emit('change', val);
     };
 
-    const changeHover = (val) => {
+    const changeHover = val => {
       hoverRate.value = val;
 
       emit('hover-change', val);
@@ -96,25 +86,28 @@ export default defineComponent({
       height: rateSize.height,
     };
 
-    watch(() => props.modelValue, () => {
-      if (props.withValidate) {
-        formItem?.validate?.('change');
-      }
-    });
+    watch(
+      () => props.modelValue,
+      () => {
+        if (props.withValidate) {
+          formItem?.validate?.('change');
+        }
+      },
+    );
 
     return () => (
       <p class={rateClass}>
-        {
-          props.editable ? (
-            <star
-              rate={props.modelValue}
-              hover-rate={hoverRate.value}
-              onChooseRate={chooseRate}
-              onChangeHover={changeHover}
-              onMouseleave={() => changeHover(0)}
-              {...commonAttrs}
-            ></star>
-          ) : [
+        {props.editable ? (
+          <star
+            rate={props.modelValue}
+            hover-rate={hoverRate.value}
+            onChooseRate={chooseRate}
+            onChangeHover={changeHover}
+            onMouseleave={() => changeHover(0)}
+            {...commonAttrs}
+          ></star>
+        ) : (
+          [
             <star
               rate={5}
               style={starStyle.value}
@@ -128,7 +121,7 @@ export default defineComponent({
               {...commonAttrs}
             ></star>,
           ]
-        }
+        )}
       </p>
     );
   },

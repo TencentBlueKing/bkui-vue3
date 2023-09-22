@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import glob from 'fast-glob';
 import { existsSync, readdirSync, rmdirSync, statSync, unlinkSync } from 'fs';
@@ -44,7 +44,7 @@ const entry = resolve(COMPONENT_URL, './bkui-vue/dist.index.ts');
 function rmDir(dirPath: string) {
   if (existsSync(dirPath)) {
     const files = readdirSync(dirPath);
-    files.forEach((file) => {
+    files.forEach(file => {
       const nextFilePath = `${dirPath}/${file}`;
       const states = statSync(nextFilePath);
       if (states.isDirectory()) {
@@ -56,98 +56,99 @@ function rmDir(dirPath: string) {
     rmdirSync(dirPath);
   }
 }
-export const buildDistScript = async () => await Promise.all([
-  // build({
-  //   resolve: {
-  //     alias: [
-  //       {
-  //         find: /^@bkui-vue\/(icon\/)/,
-  //         replacement: resolve(COMPONENT_URL, './$1'),
-  //       },
-  //       {
-  //         find: /^@bkui-vue\/([^/]*)/,
-  //         replacement: resolve(COMPONENT_URL, './$1/src'),
-  //       },
-  //     ],
-  //   },
-  //   plugins: [vueJsx(), vue()],
-  //   build: {
-  //     outDir: DIST_URL,
-  //     minify: false,
-  //     lib: {
-  //       entry,
-  //       name: 'bkuiVue',
-  //       fileName: format => `index.${format}.source.js`,
-  //     },
-  //     rollupOptions: {
-  //       external: ['vue'],
-  //       output: [
-  //         {
-  //           format: 'cjs',
-  //           exports: 'named',
-  //         },
-  //         {
-  //           format: 'esm',
-  //           exports: 'named',
-  //         },
-  //         {
-  //           globals: {
-  //             vue: 'Vue',
-  //           },
-  //           exports: 'named',
-  //           format: 'umd',
-  //           name: 'bkuiVue',
-  //         },
-  //       ],
-  //     },
-  //   },
-  // }),
-  build({
-    resolve: {
-      alias: [
-        {
-          find: /^@bkui-vue\/(icon\/)/,
-          replacement: resolve(COMPONENT_URL, './$1'),
-        },
-        {
-          find: /^@bkui-vue\/([^/]*)/,
-          replacement: resolve(COMPONENT_URL, './$1/src'),
-        },
-      ],
-    },
-    plugins: [vueJsx(), vue()],
-    build: {
-      outDir: DIST_URL,
-      minify: true,
-      lib: {
-        entry,
-        name: 'bkuiVue',
-        fileName: format => `index.${format}.js`,
-      },
-      rollupOptions: {
-        external: ['vue'],
-        output: [
+export const buildDistScript = async () =>
+  await Promise.all([
+    // build({
+    //   resolve: {
+    //     alias: [
+    //       {
+    //         find: /^@bkui-vue\/(icon\/)/,
+    //         replacement: resolve(COMPONENT_URL, './$1'),
+    //       },
+    //       {
+    //         find: /^@bkui-vue\/([^/]*)/,
+    //         replacement: resolve(COMPONENT_URL, './$1/src'),
+    //       },
+    //     ],
+    //   },
+    //   plugins: [vueJsx(), vue()],
+    //   build: {
+    //     outDir: DIST_URL,
+    //     minify: false,
+    //     lib: {
+    //       entry,
+    //       name: 'bkuiVue',
+    //       fileName: format => `index.${format}.source.js`,
+    //     },
+    //     rollupOptions: {
+    //       external: ['vue'],
+    //       output: [
+    //         {
+    //           format: 'cjs',
+    //           exports: 'named',
+    //         },
+    //         {
+    //           format: 'esm',
+    //           exports: 'named',
+    //         },
+    //         {
+    //           globals: {
+    //             vue: 'Vue',
+    //           },
+    //           exports: 'named',
+    //           format: 'umd',
+    //           name: 'bkuiVue',
+    //         },
+    //       ],
+    //     },
+    //   },
+    // }),
+    build({
+      resolve: {
+        alias: [
           {
-            format: 'cjs',
-            exports: 'named',
+            find: /^@bkui-vue\/(icon\/)/,
+            replacement: resolve(COMPONENT_URL, './$1'),
           },
           {
-            format: 'esm',
-            exports: 'named',
-          },
-          {
-            globals: {
-              vue: 'Vue',
-            },
-            exports: 'named',
-            format: 'umd',
-            name: 'bkuiVue',
+            find: /^@bkui-vue\/([^/]*)/,
+            replacement: resolve(COMPONENT_URL, './$1/src'),
           },
         ],
       },
-    },
-  })
-]);
+      plugins: [vueJsx(), vue()],
+      build: {
+        outDir: DIST_URL,
+        minify: true,
+        lib: {
+          entry,
+          name: 'bkuiVue',
+          fileName: format => `index.${format}.js`,
+        },
+        rollupOptions: {
+          external: ['vue'],
+          output: [
+            {
+              format: 'cjs',
+              exports: 'named',
+            },
+            {
+              format: 'esm',
+              exports: 'named',
+            },
+            {
+              globals: {
+                vue: 'Vue',
+              },
+              exports: 'named',
+              format: 'umd',
+              name: 'bkuiVue',
+            },
+          ],
+        },
+      },
+    }),
+  ]);
 
 export const buildDistStyles = async () => {
   const resetTheme = await replaceThemeTovariable();
@@ -189,41 +190,43 @@ export const buildDistLocale = async (minify: boolean) => {
     cwd: resolve(LOCALE_URL),
     absolute: true,
   });
-  return Promise.all(files.map(async (file) => {
-    const filename = basename(file, '.ts');
-    const name = filename;
+  return Promise.all(
+    files.map(async file => {
+      const filename = basename(file, '.ts');
+      const name = filename;
 
-    const bundle = await rollup({
-      input: file,
-      plugins: [
-        esbuild({
-          minify,
-          sourceMap: minify,
-          target: 'es2018',
-        }),
-      ],
-    });
-    await writeBundles(bundle, [
-      {
-        format: 'umd',
-        file: resolve(
-          resolve(DIST_URL, 'locale'),
-          // `${name}.umd${minify ? '.min' : ''}.js`,
-          `${name}.umd.js`,
-        ),
-        exports: 'default',
-        name: `bkuiVueLocale${name}`,
-        sourcemap: minify,
-      },
-      {
-        format: 'esm',
-        file: resolve(
-          resolve(DIST_URL, 'locale'),
-          // `${name}.esm${minify ? '.min' : ''}.js`,
-          `${name}.esm.js`,
-        ),
-        sourcemap: minify,
-      },
-    ]);
-  }));
+      const bundle = await rollup({
+        input: file,
+        plugins: [
+          esbuild({
+            minify,
+            sourceMap: minify,
+            target: 'es2018',
+          }),
+        ],
+      });
+      await writeBundles(bundle, [
+        {
+          format: 'umd',
+          file: resolve(
+            resolve(DIST_URL, 'locale'),
+            // `${name}.umd${minify ? '.min' : ''}.js`,
+            `${name}.umd.js`,
+          ),
+          exports: 'default',
+          name: `bkuiVueLocale${name}`,
+          sourcemap: minify,
+        },
+        {
+          format: 'esm',
+          file: resolve(
+            resolve(DIST_URL, 'locale'),
+            // `${name}.esm${minify ? '.min' : ''}.js`,
+            `${name}.esm.js`,
+          ),
+          sourcemap: minify,
+        },
+      ]);
+    }),
+  );
 };

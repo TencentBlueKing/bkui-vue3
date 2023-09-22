@@ -68,4 +68,3 @@ describe('Slider.tsx', () => {
     expect(wrapper.find('.bk-slider-bar').attributes('style')).toBe('width: 15%; left: 5%;');
   });
 });
-

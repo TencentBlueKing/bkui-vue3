@@ -22,13 +22,20 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { lstatSync, readdirSync, readFileSync, unlinkSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
-import {  compileTheme } from '../compiler/compile-style';
-import { compileFile, compilerLibDir, COMPONENT_URL, LIB_URL, THEME_LESS_URL, writeFileRecursive } from '../compiler/helpers';
+import { compileTheme } from '../compiler/compile-style';
+import {
+  compileFile,
+  compilerLibDir,
+  COMPONENT_URL,
+  LIB_URL,
+  THEME_LESS_URL,
+  writeFileRecursive,
+} from '../compiler/helpers';
 import { ILibTaskOption, ITaskItem } from '../typings/task';
 import { CompileTask } from '../workers/compile-task';
 
@@ -36,10 +43,10 @@ export const compilerDir = async (option: ILibTaskOption): Promise<void> => {
   const list: ITaskItem[] = [];
   const buildDir: any = (dir: string) => {
     const files = readdirSync(dir);
-    files.forEach((file) => {
+    files.forEach(file => {
       const url = join(dir, file);
       if (/(node_modules|__test__|\.test\.*)/.test(url)) {
-        return ;
+        return;
       }
       if (lstatSync(url).isDirectory()) {
         buildDir(url);
@@ -52,7 +59,6 @@ export const compilerDir = async (option: ILibTaskOption): Promise<void> => {
   const taskInstance = new CompileTask(list, option);
   taskInstance.start();
 };
-
 
 // 将theme.less 转换为 css变量
 export const compileThemeTovariable = async () => {

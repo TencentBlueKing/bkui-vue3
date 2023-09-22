@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { computed, defineComponent, PropType, ref, watch, watchEffect } from 'vue';
 
@@ -42,12 +42,7 @@ export const menuProps = {
 export default defineComponent({
   name: 'Menu',
   props: menuProps,
-  emits: [
-    'update:activeKey',
-    'update:openKeys',
-    'click',
-    'openChange',
-  ],
+  emits: ['update:activeKey', 'update:openKeys', 'click', 'openChange'],
   setup(props, { slots, emit, expose }) {
     const activeKey = ref<string>('');
     const openedKeys = ref<string[]>([]);
@@ -73,15 +68,19 @@ export default defineComponent({
         immediate: true,
       },
     );
-    watch(() => props.openedKeys, (keys = openedKeys.value) => {
-      openedKeys.value = keys;
-    }, { immediate: true });
+    watch(
+      () => props.openedKeys,
+      (keys = openedKeys.value) => {
+        openedKeys.value = keys;
+      },
+      { immediate: true },
+    );
     const registerMenuInfo = (key: string, info: IMenuInfo) => {
-      menuStore.value = { ... menuStore.value, [key]: info };
+      menuStore.value = { ...menuStore.value, [key]: info };
     };
     const unregisterMenuInfo = (key: string) => {
       delete menuStore.value[key];
-      menuStore.value = { ... menuStore.value };
+      menuStore.value = { ...menuStore.value };
     };
     const handleOpenChange = (key: string, opened: boolean) => {
       if (opened) {
@@ -117,10 +116,12 @@ export default defineComponent({
     });
     const { resolveClassName } = usePrefix();
     return () => (
-      <div class={{
-        [`${resolveClassName('menu')}`]: true,
-        'is-collapse': collapse.value,
-      }}>
+      <div
+        class={{
+          [`${resolveClassName('menu')}`]: true,
+          'is-collapse': collapse.value,
+        }}
+      >
         {slots.default?.()}
       </div>
     );

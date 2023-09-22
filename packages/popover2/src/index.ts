@@ -30,4 +30,3 @@ import popover from './popover';
 const BkPopover2 = withInstall(popover);
 
 export default BkPopover2;
-

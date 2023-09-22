@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { computed, defineComponent, getCurrentInstance, onBeforeUnmount, ref, SlotsType, Transition } from 'vue';
 
@@ -43,12 +43,12 @@ export default defineComponent({
   emits: ['collapse'],
   // slots: ['icon'],
   slots: Object as SlotsType<{
-    default?: () => HTMLElement,
-    icon?: () => HTMLElement,
+    default?: () => HTMLElement;
+    icon?: () => HTMLElement;
   }>,
   setup(props, { slots, emit }) {
-    const { registerMenuInfo, unregisterMenuInfo, openedKeys,
-      handleOpenChange, collapse, activeKey, menuStore } = useMenuInject();
+    const { registerMenuInfo, unregisterMenuInfo, openedKeys, handleOpenChange, collapse, activeKey, menuStore } =
+      useMenuInject();
     const { parentInfo } = useMenuPathInject();
     const instance = getCurrentInstance();
     const key = instance.vnode.key?.toString?.() || String(instance.uid);
@@ -85,10 +85,8 @@ export default defineComponent({
           }}
           onClick={handleCollapse}
         >
-          <span class="submenu-header-icon">
-            {slots.icon?.() || <TreeApplicationShape class="menu-icon" />}
-          </span>
-          <span class="submenu-header-content">{props.title}</span>
+          <span class='submenu-header-icon'>{slots.icon?.() || <TreeApplicationShape class='menu-icon' />}</span>
+          <span class='submenu-header-content'>{props.title}</span>
           <AngleDown
             class={{
               'submenu-header-collapse': true,
@@ -97,7 +95,10 @@ export default defineComponent({
           />
         </div>
         <Transition {...transition.value}>
-          <ul class="submenu-list" v-show={isShow.value}>
+          <ul
+            class='submenu-list'
+            v-show={isShow.value}
+          >
             {slots.default?.()}
           </ul>
         </Transition>

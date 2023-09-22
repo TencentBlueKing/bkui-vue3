@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { computed, defineComponent, ExtractPropTypes, PropType, VNode } from 'vue';
 
@@ -79,18 +79,18 @@ export default defineComponent({
     const { resolveClassName } = usePrefix();
     const dotIndicator = (
       <div class={`${resolveClassName('normal-indicator')}`}>
-        {
-          [1, 2, 3, 4].map(i => (
-            <span class={`dot dot-${i}`}></span>
-          ))
-        }
+        {[1, 2, 3, 4].map(i => (
+          <span class={`dot dot-${i}`}></span>
+        ))}
       </div>
     );
-    const spinIndicator = <div class={`${resolveClassName('spin-indicator')}`}>
-      {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
-        <span class={`oval oval-${i}`}></span>
-      ))}
-    </div>;
+    const spinIndicator = (
+      <div class={`${resolveClassName('spin-indicator')}`}>
+        {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
+          <span class={`oval oval-${i}`}></span>
+        ))}
+      </div>
+    );
 
     const zIndexStyle = computed(() => ({
       zIndex: props.zIndex,
@@ -101,23 +101,30 @@ export default defineComponent({
       ...zIndexStyle.value,
     }));
 
-    const loadingWrapperCls = computed(() =>  classes({
-      [`${resolveClassName('loading-wrapper')}`]: props.loading,
-      [`${resolveClassName('nested-loading')}`]: !!ctx.slots.default,
-      [`${resolveClassName('directive-loading')}`]: props.isDirective,
-    }));
-    const containerCls = computed(() =>  classes({
-      [`${resolveClassName(`loading-size-${props.size}`)}`]: !!props.size,
-      [`${resolveClassName(`loading-${props.theme}`)}`]: !!props.theme,
-    }, resolveClassName('loading-indicator')));
+    const loadingWrapperCls = computed(() =>
+      classes({
+        [`${resolveClassName('loading-wrapper')}`]: props.loading,
+        [`${resolveClassName('nested-loading')}`]: !!ctx.slots.default,
+        [`${resolveClassName('directive-loading')}`]: props.isDirective,
+      }),
+    );
+    const containerCls = computed(() =>
+      classes(
+        {
+          [`${resolveClassName(`loading-size-${props.size}`)}`]: !!props.size,
+          [`${resolveClassName(`loading-${props.theme}`)}`]: !!props.theme,
+        },
+        resolveClassName('loading-indicator'),
+      ),
+    );
     const hasTitle = computed(() => !!props.title);
-
 
     const indicator = computed(() => {
       const isSpinMode = props.mode === BkLoadingMode.Spin;
       if (typeof props.indicator === 'function') {
         return <props.indicator />;
-      } if (typeof defaultIndicator === 'function') {
+      }
+      if (typeof defaultIndicator === 'function') {
         return <defaultIndicator />;
       }
       return isSpinMode ? spinIndicator : dotIndicator;
@@ -125,18 +132,22 @@ export default defineComponent({
 
     return () => (
       <div class={loadingWrapperCls.value}>
-          {ctx.slots.default?.()}
-          {props.loading && (
-            [
-              (ctx.slots.default || props.isDirective) && <div class={`${resolveClassName('loading-mask')}`} style={maskStyle.value}></div>,
-              <div class={containerCls.value} style={zIndexStyle.value}>
-                {
-                  indicator.value
-                }
-                {hasTitle.value && <div class={`${resolveClassName('loading-title')}`}>{props.title}</div>}
-              </div>,
-            ]
-          )}
+        {ctx.slots.default?.()}
+        {props.loading && [
+          (ctx.slots.default || props.isDirective) && (
+            <div
+              class={`${resolveClassName('loading-mask')}`}
+              style={maskStyle.value}
+            ></div>
+          ),
+          <div
+            class={containerCls.value}
+            style={zIndexStyle.value}
+          >
+            {indicator.value}
+            {hasTitle.value && <div class={`${resolveClassName('loading-title')}`}>{props.title}</div>}
+          </div>,
+        ]}
       </div>
     );
   },

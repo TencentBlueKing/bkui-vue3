@@ -22,21 +22,13 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { defineComponent, reactive } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-import {
-  CloseLine,
-  InfoLine,
-} from '@bkui-vue/icon';
-import {
-  classes,
-  PropTypes,
-  TagThemeEnum,
-  TagThemeType,
-} from '@bkui-vue/shared';
+import { CloseLine, InfoLine } from '@bkui-vue/icon';
+import { classes, PropTypes, TagThemeEnum, TagThemeType } from '@bkui-vue/shared';
 
 export default defineComponent({
   name: 'Alert',
@@ -88,25 +80,21 @@ export default defineComponent({
     return (
       <div class={typeClass}>
         <div class={resolveClassName('alert-wraper')}>
-            {this.showIcon && <InfoLine class={resolveClassName('alert-icon-info')} />}
-            <div class={resolveClassName('alert-content')}>
-                <div class={resolveClassName('alert-title')}>
-                  {this.$slots.title ? this.$slots.title() : this.title}
-                </div>
-                <div class={resolveClassName('alert-description')}>
-                  {this.$slots.default?.()}
-                </div>
-            </div>
-            {
-              this.closable
-              && <span
-                class={closeButtonClasses}
-                onClick={this.handleClose}>
-                {this.closeText ? this.closeText : <CloseLine />}
-              </span>
-            }
+          {this.showIcon && <InfoLine class={resolveClassName('alert-icon-info')} />}
+          <div class={resolveClassName('alert-content')}>
+            <div class={resolveClassName('alert-title')}>{this.$slots.title ? this.$slots.title() : this.title}</div>
+            <div class={resolveClassName('alert-description')}>{this.$slots.default?.()}</div>
+          </div>
+          {this.closable && (
+            <span
+              class={closeButtonClasses}
+              onClick={this.handleClose}
+            >
+              {this.closeText ? this.closeText : <CloseLine />}
+            </span>
+          )}
         </div>
-    </div>
+      </div>
     );
   },
 });

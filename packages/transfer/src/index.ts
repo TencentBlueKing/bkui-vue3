@@ -28,6 +28,5 @@ import { withInstall } from '@bkui-vue/shared';
 
 import Component from './transfer';
 
-
 const Transfer = withInstall(Component);
 export default Transfer;

@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { defineComponent } from 'vue';
 
@@ -285,87 +285,98 @@ export default defineComponent({
     return (
       <div>
         <DemoTitle
-          name="Dialog 对话框"
-          desc="对话框"
-          designLink="https://bkdesign.bk.tencent.com/design/29"/>
+          name='Dialog 对话框'
+          desc='对话框'
+          designLink='https://bkdesign.bk.tencent.com/design/29'
+        />
 
         <DemoBox
-          title="基本用法"
-          subtitle=""
-          desc="默认配置的对话框。通过 theme 属性配置弹框中不同的主题确认按钮；通过 quickClose 配置是否允许点击遮罩关闭弹框，默认为 true。通过 escClose 配置是否启用 esc 按键关闭弹框，默认为 true。"
-          componentName="dialog"
-          demoName="base-demo">
+          title='基本用法'
+          subtitle=''
+          desc='默认配置的对话框。通过 theme 属性配置弹框中不同的主题确认按钮；通过 quickClose 配置是否允许点击遮罩关闭弹框，默认为 true。通过 escClose 配置是否启用 esc 按键关闭弹框，默认为 true。'
+          componentName='dialog'
+          demoName='base-demo'
+        >
           <BaseDemo></BaseDemo>
         </DemoBox>
 
         <DemoBox
-          title="自定义size"
-          subtitle=""
-          desc="对话框分为4个尺寸。通过 size 属性 normal, small, medium, large 进行配置，也可通过 width, height 自定义宽高。"
-          componentName="dialog"
-          demoName="size-demo">
+          title='自定义size'
+          subtitle=''
+          desc='对话框分为4个尺寸。通过 size 属性 normal, small, medium, large 进行配置，也可通过 width, height 自定义宽高。'
+          componentName='dialog'
+          demoName='size-demo'
+        >
           <SizeDemo></SizeDemo>
         </DemoBox>
 
         <DemoBox
-          title="自定义内容以及弹框配置"
-          subtitle=""
-          desc="通过设置 draggable 属性来设置是否允许弹框拖拽。通过 closeIcon 属性设置是否显示右上角的关闭 icon。"
-          componentName="dialog"
-          demoName="config-demo">
+          title='自定义内容以及弹框配置'
+          subtitle=''
+          desc='通过设置 draggable 属性来设置是否允许弹框拖拽。通过 closeIcon 属性设置是否显示右上角的关闭 icon。'
+          componentName='dialog'
+          demoName='config-demo'
+        >
           <ConfigDemo></ConfigDemo>
         </DemoBox>
 
         <DemoBox
-          title="异步"
-          subtitle=""
-          desc="通过 loading 属性配置异步关闭效果，开启则需手动设置value来关闭对话框。"
-          componentName="dialog"
-          demoName="async-demo">
+          title='异步'
+          subtitle=''
+          desc='通过 loading 属性配置异步关闭效果，开启则需手动设置value来关闭对话框。'
+          componentName='dialog'
+          demoName='async-demo'
+        >
           <AsyncDemo></AsyncDemo>
         </DemoBox>
 
         <DemoBox
-          title="全屏弹框"
-          subtitle=""
-          desc="通过 fullscreen 属性配置全屏弹框，当设置为全屏弹框时，draggable 配置不生效即弹框不能拖动。"
-          componentName="dialog"
-          demoName="fullscreen-demo">
+          title='全屏弹框'
+          subtitle=''
+          desc='通过 fullscreen 属性配置全屏弹框，当设置为全屏弹框时，draggable 配置不生效即弹框不能拖动。'
+          componentName='dialog'
+          demoName='fullscreen-demo'
+        >
           <FullscreenDemo></FullscreenDemo>
         </DemoBox>
 
         <DemoBox
-          title="对话框类型"
-          subtitle=""
-          desc="对话框分为4种类型。通过 dialogType 属性 show，operation，confirm，process 进行配置，默认 operation 类型。"
-          componentName="dialog"
-          demoName="type-demo">
+          title='对话框类型'
+          subtitle=''
+          desc='对话框分为4种类型。通过 dialogType 属性 show，operation，confirm，process 进行配置，默认 operation 类型。'
+          componentName='dialog'
+          demoName='type-demo'
+        >
           <TypeDemo></TypeDemo>
         </DemoBox>
 
         <DemoBox
-          title="嵌套弹框"
-          subtitle=""
-          desc="通过 multi-instance 配置是否嵌套弹框同时存在，默认为 true，多个弹框叠加，设置为 false 只保留最后一个。"
-          componentName="dialog"
-          demoName="nested-demo">
+          title='嵌套弹框'
+          subtitle=''
+          desc='通过 multi-instance 配置是否嵌套弹框同时存在，默认为 true，多个弹框叠加，设置为 false 只保留最后一个。'
+          componentName='dialog'
+          demoName='nested-demo'
+        >
           <NestedDemo></NestedDemo>
         </DemoBox>
 
         <PropsBox
-          title="Dialog 属性"
-          subtitle=""
-          propsData={dialogPropsJson} />
+          title='Dialog 属性'
+          subtitle=''
+          propsData={dialogPropsJson}
+        />
 
         <PropsBox
-          title="Dialog 插槽"
-          subtitle=""
-          propsData={dialogSlotsJson}/>
+          title='Dialog 插槽'
+          subtitle=''
+          propsData={dialogSlotsJson}
+        />
 
         <PropsBox
-          title="Dialog 事件"
-          subtitle=""
-          propsData={dialogChangeJson}/>
+          title='Dialog 事件'
+          subtitle=''
+          propsData={dialogChangeJson}
+        />
       </div>
     );
   },
