@@ -1,28 +1,28 @@
 /*
-* Tencent is pleased to support the open source community by making
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
-*
-* Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
-*
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
-*
-* License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
-*
-* ---------------------------------------------------
-* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
-* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
-* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-* the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-* THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-* IN THE SOFTWARE.
-*/
+ * Tencent is pleased to support the open source community by making
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ *
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ *
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ *
+ * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ *
+ * ---------------------------------------------------
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+ * the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
 
 import type { ExtractPropTypes, PropType } from 'vue';
 import {
@@ -124,7 +124,7 @@ export default defineComponent({
       const disabledHMS = disabled.map((preDisabled, j) => {
         const slot = slots[j];
         const toDisable = preDisabled;
-        for (let i = 0; i < slot; i += (props.steps[j] || 1)) {
+        for (let i = 0; i < slot; i += props.steps[j] || 1) {
           const hms: number[] = timeSlots.value.map((slot, x) => (x === j ? i : slot));
           const testDateTime = mergeDateHMS(state.date, ...hms);
           if (props.disabledDate(testDateTime, true)) {
@@ -139,11 +139,14 @@ export default defineComponent({
       }, {});
     });
 
-    watch(() => props.value, (dates) => {
-      let newVal: any = dates[0] || initTime();
-      newVal = new Date(newVal);
-      state.date = newVal;
-    });
+    watch(
+      () => props.value,
+      dates => {
+        let newVal: any = dates[0] || initTime();
+        newVal = new Date(newVal);
+        state.date = newVal;
+      },
+    );
 
     onMounted(() => {
       if (parentProvide && parentProvide.parentName === 'DatePanel') {
@@ -182,20 +185,20 @@ export default defineComponent({
   },
   render() {
     return (
-      <div class={this.resolveClassName('picker-panel-body-wrapper')} onMousedown={(e) => {
-        e.preventDefault();
-      }}>
-        <div class={this.resolveClassName('picker-panel-body')} style={{ width: `${this.width}px` }}>
-          {
-            this.showDate
-              ? (
-                <div class={this.resolveClassName('time-picker-header')}>{this.visibleDate}</div>
-              )
-              : ''
-          }
+      <div
+        class={this.resolveClassName('picker-panel-body-wrapper')}
+        onMousedown={e => {
+          e.preventDefault();
+        }}
+      >
+        <div
+          class={this.resolveClassName('picker-panel-body')}
+          style={{ width: `${this.width}px` }}
+        >
+          {this.showDate ? <div class={this.resolveClassName('time-picker-header')}>{this.visibleDate}</div> : ''}
           <div class={this.resolveClassName('picker-panel-content')}>
             <TimeSpinner
-              ref="timeSpinnerRef"
+              ref='timeSpinnerRef'
               showSeconds={this.showSeconds}
               steps={this.steps}
               hours={this.timeSlots[0]}
@@ -206,7 +209,8 @@ export default defineComponent({
               disabledSeconds={this.disabledHMS.disabledSeconds}
               hideDisabledOptions={this.hideDisabledOptions}
               onPick-click={this.handlePickClick}
-              onChange={this.handleChange} />
+              onChange={this.handleChange}
+            />
           </div>
         </div>
       </div>

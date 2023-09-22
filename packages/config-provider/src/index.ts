@@ -31,7 +31,7 @@ import Component from './config-provider';
 const BkConfigProvider = withInstall(Component);
 
 export default BkConfigProvider;
-export * from  './use-global-config';
-export * from  './use-locale';
+export * from './use-global-config';
+export * from './use-locale';
 export * from './use-prefix';
 export type { ConfigProviderProps } from './config-provider';

@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 import { FunctionalComponent, h, HTMLAttributes } from 'vue';
 export interface IIconBaseProps extends HTMLAttributes {
   width?: number | string;
@@ -33,11 +33,7 @@ export interface IBkIconProps extends IIconBaseProps {
   data: any;
   name: string;
 }
-function generate(
-  node: any,
-  key: string,
-  rootAttrs?: string,
-): any {
+function generate(node: any, key: string, rootAttrs?: string): any {
   return h(
     node.name,
     {
@@ -50,14 +46,7 @@ function generate(
 }
 
 const bkIcon: FunctionalComponent<IBkIconProps> = (props, context) => {
-  const {
-    data,
-    name,
-    width,
-    height,
-    fill,
-    ...restProps
-  } = { ...context.attrs, ...props };
+  const { data, name, width, height, fill, ...restProps } = { ...context.attrs, ...props };
   const rootAttrs = `width: ${width}; height: ${height}; fill: ${fill}`;
   const iconBoxStyle = {
     display: 'inline-flex',
@@ -65,7 +54,10 @@ const bkIcon: FunctionalComponent<IBkIconProps> = (props, context) => {
     'justify-content': 'center',
   };
   return (
-    <span style={iconBoxStyle} {...restProps} >
+    <span
+      style={iconBoxStyle}
+      {...restProps}
+    >
       {generate(data, name, rootAttrs)}
     </span>
   );

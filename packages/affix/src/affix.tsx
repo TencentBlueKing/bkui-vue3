@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { throttle } from 'lodash';
 import { computed, defineComponent, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
@@ -90,9 +90,11 @@ export default defineComponent({
 
     const { resolveClassName } = usePrefix();
     const affix = ref(false);
-    const pointClass = computed(() => classes({
-      [`${resolveClassName('affix')}`]: affix.value,
-    }));
+    const pointClass = computed(() =>
+      classes({
+        [`${resolveClassName('affix')}`]: affix.value,
+      }),
+    );
     const offsetType = computed(() => (props.offsetBottom >= 0 ? 'bottom' : 'top'));
     const setTargetLoop = () => {
       if (offsetType.value === 'top') {
@@ -109,7 +111,7 @@ export default defineComponent({
       handleScroll();
     }, 100);
     // 获取元素到浏览器边缘的距离
-    const getOffset = (element) => {
+    const getOffset = element => {
       const rect = element.value.getBoundingClientRect();
       const rect2 = targetEl.value === window ? { top: 0, left: 0 } : targetEl.value.getBoundingClientRect();
       const clientTop = targetEl.value.clientTop || 0;
@@ -120,11 +122,14 @@ export default defineComponent({
       };
     };
     const handleScroll = () => {
-      const rect = targetEl.value === window ? {
-        top: 0,
-        left: 0,
-        bottom: window.innerHeight,
-      } : targetEl.value.getBoundingClientRect();
+      const rect =
+        targetEl.value === window
+          ? {
+              top: 0,
+              left: 0,
+              bottom: window.innerHeight,
+            }
+          : targetEl.value.getBoundingClientRect();
       const elOffset = getOffset(root);
       const windowHeight = targetEl.value === window ? targetEl.value.innerHeight : targetEl.value.clientHeight;
       const elHeight = point.value.offsetHeight;
@@ -147,7 +152,11 @@ export default defineComponent({
         emit('change', false);
       }
       // Fixed Bottom
-      if ((elOffset.top + props.offsetBottom + elHeight) > windowHeight && offsetType.value === 'bottom' && !affix.value) {
+      if (
+        elOffset.top + props.offsetBottom + elHeight > windowHeight &&
+        offsetType.value === 'bottom' &&
+        !affix.value
+      ) {
         affix.value = true;
         styles.value = {
           bottom: `${window.innerHeight - rect.bottom + props.offsetBottom}px`,
@@ -158,7 +167,11 @@ export default defineComponent({
           on(window, 'scroll', setTargetLoop);
         }
         emit('change', true);
-      } else if ((elOffset.top + props.offsetBottom + elHeight) < windowHeight && offsetType.value === 'bottom' && affix.value) {
+      } else if (
+        elOffset.top + props.offsetBottom + elHeight < windowHeight &&
+        offsetType.value === 'bottom' &&
+        affix.value
+      ) {
         affix.value = false;
         styles.value = null;
         emit('change', false);
@@ -169,11 +182,16 @@ export default defineComponent({
       off(targetEl.value, 'resize', listenScroll);
       off(window, 'scroll', setTargetLoop);
     });
-    return () => <div ref={root}>
-        <div ref={point} class={pointClass.value} style={offsetStyles.value}>
+    return () => (
+      <div ref={root}>
+        <div
+          ref={point}
+          class={pointClass.value}
+          style={offsetStyles.value}
+        >
           {slots.default?.()}
         </div>
-    </div>;
+      </div>
+    );
   },
 });
-

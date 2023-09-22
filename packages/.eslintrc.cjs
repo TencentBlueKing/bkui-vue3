@@ -23,30 +23,20 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 */
-
 module.exports = {
   root: true,
   extends: [
     'plugin:vue/vue3-recommended',
     'eslint-config-tencent',
   ],
-  // parser: 'vue-eslint-parser',
   parserOptions: {
     parser: '@typescript-eslint/parser',
-    ecmaFeatures: {
-      jsx: true,
-    },
-    ecmaVersion: 'latest',
+    ecmaVersion: 2019,
     sourceType: 'module',
     tsconfigRootDir: __dirname,
-    // project: 'tsconfig.json',
-    // extraFileExtensions: 'vue',
+    project: 'tsconfig.json',
   },
-  plugins: [
-    'codecc',
-    'simple-import-sort',
-    'vue',
-  ],
+  plugins: ['vue', 'codecc', 'simple-import-sort', 'prettier'],
   env: {
     es6: true,
     node: true,
@@ -55,15 +45,57 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['*.ts', '*.tsx'],
-      extends: ['eslint-config-tencent/ts'],
+      files: ['*.js'],
+      parser: '@typescript-eslint/parser',
+      extends: ['plugin:prettier/recommended'],
+      parserOptions: {
+        tsconfigRootDir: __dirname,
+        project: './tsconfig.eslint.json',
+      },
+      rules: {
+        '@typescript-eslint/no-misused-promises': [
+          'error',
+          {
+            checksVoidReturn: false,
+            checksVoidReturn: false,
+            checksSpreads: false,
+          },
+        ],
+        'max-len': [
+          'error',
+          {
+            code: 120,
+            ignoreStrings: true,
+            ignoreUrls: true,
+            ignoreRegExpLiterals: true,
+            ignoreTemplateLiterals: true,
+          },
+        ],
+        'prettier/prettier': 'error',
+      },
     },
     {
-      files: ['*.vue'],
-      parser: 'vue-eslint-parser',
+      files: ['*.ts', '*.tsx'],
+      extends: ['eslint-config-tencent/ts', 'plugin:prettier/recommended'],
       rules: {
         indent: 'off',
-        'codecc/license': 'off',
+        '@typescript-eslint/indent': 'off',
+        'prettier/prettier': 'error',
+        '@typescript-eslint/no-misused-promises': [
+          'error',
+          {
+            checksVoidReturn: false,
+            checksVoidReturn: false,
+            checksSpreads: false,
+          },
+        ],
+      },
+      parser: '@typescript-eslint/parser',
+      parserOptions: {
+        ecmaVersion: 2018,
+        tsconfigRootDir: __dirname,
+        sourceType: 'module',
+        project: './tsconfig.eslint.json',
       },
     },
     {

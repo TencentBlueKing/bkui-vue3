@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { readFile } from 'fs/promises';
 import { render } from 'less';
@@ -32,19 +32,15 @@ import postcssLess from 'postcss-less';
 import LessResolvePathPlugin from '../utils/less-plugin';
 import { transformCssImport } from '../utils/postcss-plugin';
 export const compileStyle = async (url: string) => {
-  const resource =  await readFile(url, 'utf-8');
-  const varResource = resource.replace(/\/themes\/themes\.less/gmi, '/themes/themes.variable.less');
+  const resource = await readFile(url, 'utf-8');
+  const varResource = resource.replace(/\/themes\/themes\.less/gim, '/themes/themes.variable.less');
   const { css } = await render(resource, {
     filename: url,
-    plugins: [
-      new LessResolvePathPlugin(),
-    ],
+    plugins: [new LessResolvePathPlugin()],
   });
   const { css: varCss } = await render(varResource, {
     filename: url,
-    plugins: [
-      new LessResolvePathPlugin(),
-    ],
+    plugins: [new LessResolvePathPlugin()],
   });
   const ret = await postcss([transformCssImport(url)]).process(resource, { syntax: postcssLess });
   return { css, varCss, resource: ret.css };
@@ -53,8 +49,8 @@ export const compileStyle = async (url: string) => {
 export const compileTheme = async (url: string) => {
   const resource = await readFile(url, 'utf-8');
   return `:root {
-    ${resource.replace(/@([^:]+):([^;]+);/gmi, '--$1:$2;').replace(/@([^;]+);/gmi, 'var(--$1);')}
+    ${resource.replace(/@([^:]+):([^;]+);/gim, '--$1:$2;').replace(/@([^;]+);/gim, 'var(--$1);')}
   }
-  ${resource.replace(/@([^:]+):([^;]+);/gmi, '@$1: var(--$1);').replace('var(--bk-prefix)', 'bk')}
+  ${resource.replace(/@([^:]+):([^;]+);/gim, '@$1: var(--$1);').replace('var(--bk-prefix)', 'bk')}
   `;
 };

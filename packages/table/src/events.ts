@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 /* eslint-disable @typescript-eslint/naming-convention */
 import { SORT_OPTION } from './const';
@@ -35,7 +35,7 @@ export const enum EVENTS {
   ON_SETTING_CHANGE = 'onSettingChange',
 
   ON_ROW_EXPAND_CLICK = 'onRowExpandClick',
-  ON_ROW_CHECK = 'onRowCheck'
+  ON_ROW_CHECK = 'onRowCheck',
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -66,13 +66,13 @@ export const enum EMIT_EVENTS {
   CELL_DBL_CLICK = 'cellDblclick',
 
   NATIVE_CLICK = 'click',
-  NATIVE_DBL_CLICK = 'dblclick'
+  NATIVE_DBL_CLICK = 'dblclick',
 }
 
 export const EVENT_COL_PICK = (_cols: IColumnActive[]) => true;
-export const EVENT_COL_FILTER = (_args: { checked: string[], column: Column, index: number }) => true;
-export const EVENT_COL_FILTER_SAVE = (_args: { column: Column, values: Record<string, any>[] }) => true;
-export const EVENT_COL_SORT = (_args: { column: Column, index: number, type: SORT_OPTION }) => true;
+export const EVENT_COL_FILTER = (_args: { checked: string[]; column: Column; index: number }) => true;
+export const EVENT_COL_FILTER_SAVE = (_args: { column: Column; values: Record<string, any>[] }) => true;
+export const EVENT_COL_SORT = (_args: { column: Column; index: number; type: SORT_OPTION }) => true;
 
 export const EVENT_MOUSE_FN = (
   _e: MouseEvent,
@@ -83,58 +83,55 @@ export const EVENT_MOUSE_FN = (
 ) => true;
 
 export const EVENT_EXPAND_FN = (_args: {
-  row: Record<string, any>,
-  column: Column,
-  index: Number,
-  rows: Record<string, any>[],
-  e: MouseEvent
+  row: Record<string, any>;
+  column: Column;
+  index: Number;
+  rows: Record<string, any>[];
+  e: MouseEvent;
 }) => true;
 
 export const EVENT_ROW_SELECT_FN = (_args: {
-  row: Record<string, any>,
-  index: Number,
-  checked: string,
-  data: Array<Record<string, any>>,
+  row: Record<string, any>;
+  index: Number;
+  checked: string;
+  data: Array<Record<string, any>>;
 }) => true;
 
-export const EVENT_ROW_SELECT_ALL_FN = (_args: {
-  checked: string,
-  data: Array<Record<string, any>>,
-}) => true;
+export const EVENT_ROW_SELECT_ALL_FN = (_args: { checked: string; data: Array<Record<string, any>> }) => true;
 
 export const EVENT_ROW_SELECT_CHANGE_FN = (_args: {
-  row: Record<string, any>,
-  index: Number,
-  checked: string,
-  data: Array<Record<string, any>>,
-  isAll: boolean
+  row: Record<string, any>;
+  index: Number;
+  checked: string;
+  data: Array<Record<string, any>>;
+  isAll: boolean;
 }) => true;
 
 export const EVENT_PAGE_FN = (_arg: number) => true;
 export const EVENT_SETTING_FN = (_args: {
-  checked: string[],
-  size: string,
-  height: number,
-  fields: Array<Record<string, any>>
+  checked: string[];
+  size: string;
+  height: number;
+  fields: Array<Record<string, any>>;
 }) => true;
 
 export const EVENT_CELL_FN = (_args: {
-  event: MouseEvent,
-  row: Record<string, any>,
-  column: Column,
+  event: MouseEvent;
+  row: Record<string, any>;
+  column: Column;
   cell: {
-    getValue: () => string,
-  },
-  rowIndex: number,
-  columnIndex: number,
+    getValue: () => string;
+  };
+  rowIndex: number;
+  columnIndex: number;
 }) => true;
 
 export const EVENT_SCROLL_FN = (_args: {
-  translateX: number,
-  translateY: number,
-  scrollTop: number,
-  scrollLeft: number,
-  bottom: number,
+  translateX: number;
+  translateY: number;
+  scrollTop: number;
+  scrollLeft: number;
+  bottom: number;
 }) => true;
 
 export const EMIT_EVENT_TYPES = {

@@ -22,17 +22,14 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import _ from 'lodash';
 import { defineComponent } from 'vue';
 import { toType } from 'vue-types';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-import {
-  classes,
-  PropTypes,
-} from '@bkui-vue/shared';
+import { classes, PropTypes } from '@bkui-vue/shared';
 
 import permissions from './images/403.svg';
 import notFound from './images/404.svg';
@@ -80,53 +77,43 @@ export default defineComponent({
 
     const renderImg = () => {
       if (_.isFunction(slots.type)) {
-        return (
-          <div class={`${resolveClassName('exception-img')}`}>
-            {slots.type()}
-          </div>
-        );
+        return <div class={`${resolveClassName('exception-img')}`}>{slots.type()}</div>;
       }
       const imgSrc = images[props.type] ? images[props.type] : empty;
       return (
         <div class={`${resolveClassName('exception-img')}`}>
-          <img class="exception-image" src={imgSrc} alt="type" />
+          <img
+            class='exception-image'
+            src={imgSrc}
+            alt='type'
+          />
         </div>
       );
     };
 
     const renderTitle = () => {
       if (_.isFunction(slots.title)) {
-        return (
-          <div class={`${resolveClassName('exception-title')}`}>{slots.title()}</div>
-        );
+        return <div class={`${resolveClassName('exception-title')}`}>{slots.title()}</div>;
       }
       if (props.title) {
-        return (
-          <div class={`${resolveClassName('exception-title')}`}>{props.title}</div>
-        );
+        return <div class={`${resolveClassName('exception-title')}`}>{props.title}</div>;
       }
       return null;
     };
 
     const renderDescription = () => {
       if (_.isFunction(slots.description)) {
-        return (
-          <div class={`${resolveClassName('exception-description')}`}>{slots.description()}</div>
-        );
+        return <div class={`${resolveClassName('exception-description')}`}>{slots.description()}</div>;
       }
       if (props.description) {
-        return (
-          <div class={`${resolveClassName('exception-description')}`}>{props.description}</div>
-        );
+        return <div class={`${resolveClassName('exception-description')}`}>{props.description}</div>;
       }
       return null;
     };
 
     const renderFooter = () => {
       if (_.isFunction(slots.default)) {
-        return (
-          <div class={`${resolveClassName('exception-footer')}`}>{slots.default()}</div>
-        );
+        return <div class={`${resolveClassName('exception-footer')}`}>{slots.default()}</div>;
       }
       return null;
     };

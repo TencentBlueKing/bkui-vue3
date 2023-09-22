@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { computed, defineComponent, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
 
@@ -34,6 +34,7 @@ import BkModal from '@bkui-vue/modal';
 import props from './props';
 
 export default defineComponent({
+  // eslint-disable-next-line vue/no-reserved-component-names
   name: 'Dialog',
   components: {
     BkModal,
@@ -87,22 +88,25 @@ export default defineComponent({
         removeEventListener('keydown', escCloseHandler);
       }
     });
-    watch(() => props.isShow, (val: Boolean) => {
-      if (!val) {
-        setTimeout(() => {
-          data.moveStyle = {
-            top: '50%',
-            left: '50%',
-          };
-          data.positionX = 0;
-          data.positionY = 0;
-          isModalShow.value = false;
-        }, 250);
-      } else {
-        isModalShow.value = true;
-      }
-      emit('value-change', val);
-    });
+    watch(
+      () => props.isShow,
+      (val: Boolean) => {
+        if (!val) {
+          setTimeout(() => {
+            data.moveStyle = {
+              top: '50%',
+              left: '50%',
+            };
+            data.positionX = 0;
+            data.positionY = 0;
+            isModalShow.value = false;
+          }, 250);
+        } else {
+          isModalShow.value = true;
+        }
+        emit('value-change', val);
+      },
+    );
     // 关闭弹框
     const handleClose = async () => {
       let shouldClose = true;
@@ -124,7 +128,7 @@ export default defineComponent({
 
     const hasFooter = computed(() => ['process', 'operation', 'confirm'].includes(props.dialogType));
     // 按 esc 关闭弹框
-    const escCloseHandler = (e) => {
+    const escCloseHandler = e => {
       if (props.isShow && props.closeIcon) {
         if (e.keyCode === 27) {
           handleClose();
@@ -141,7 +145,7 @@ export default defineComponent({
     };
 
     // 拖拽事件
-    const moveHandler = (e) => {
+    const moveHandler = e => {
       if (props.fullscreen) {
         return false;
       }
@@ -160,19 +164,19 @@ export default defineComponent({
         disX = e.clientX - odiv.offsetLeft;
         disY = e.clientY - odiv.offsetTop;
       }
-      document.onmousemove = (e) => {
+      document.onmousemove = e => {
         const boxLeft = window.innerWidth - parentWidth;
         const boxTop = window.innerHeight - parentHeight;
         let left = e.clientX - disX;
         let top = e.clientY - disY;
-        if ((boxLeft / 2) - left <= 0) {
+        if (boxLeft / 2 - left <= 0) {
           left = boxLeft / 2;
-        } else if ((boxLeft / 2) + left <= 0) {
+        } else if (boxLeft / 2 + left <= 0) {
           left = -boxLeft / 2;
         }
-        if ((boxTop / 2) - top <= 0) {
+        if (boxTop / 2 - top <= 0) {
           top = boxTop / 2;
-        } else if ((boxTop / 2) + top <= 0) {
+        } else if (boxTop / 2 + top <= 0) {
           top = -boxTop / 2;
         }
         data.positionX = left;
@@ -219,64 +223,130 @@ export default defineComponent({
 
     const dialogSlot = {
       header: () => [
-        <div class={[this.resolveClassName('dialog-tool'), this.fullscreen || !this.draggable ? '' : 'move', this.draggable ? 'content-dragging' : '']}
-          onMousedown={this.moveHandler}>
+        <div
+          class={[
+            this.resolveClassName('dialog-tool'),
+            this.fullscreen || !this.draggable ? '' : 'move',
+            this.draggable ? 'content-dragging' : '',
+          ]}
+          onMousedown={this.moveHandler}
+        >
           {this.$slots.tools?.() ?? ''}
         </div>,
         <div class={this.resolveClassName('dialog-header')}>
           <div class={this.resolveClassName('header-icon')}>
-            {this.infoType ? renderIcon() : <slot name="info-icon" />}
+            {this.infoType ? renderIcon() : <slot name='info-icon' />}
           </div>
-          <span class={this.resolveClassName('dialog-title')} style={`text-align: ${this.headerAlign}`}>
+          <span
+            class={this.resolveClassName('dialog-title')}
+            style={`text-align: ${this.headerAlign}`}
+          >
             {this.$slots.header?.() ?? this.title}
           </span>
         </div>,
       ],
       default: () => this.$slots.default?.() ?? 'default',
-      footer: () => <div class={this.resolveClassName('dialog-footer')} style={`text-align: ${this.footerAlign}`}>
-        {this.dialogType === 'process' ? (
-          this.$slots.footer?.() ?? <>
-            {this.current === 1 ? '' : (
-              <BkButton class={this.resolveClassName('dialog-perv')} onClick={this.handlePrevStep}>
-                {this.localPrevText}
-              </BkButton>
-            )}
-            {this.current === this.totalStep ? '' : (
-              <BkButton class={this.resolveClassName('dialog-next')} onClick={this.handleNextStep}>{this.localNextText}</BkButton>
-            )}
-            {this.current === this.totalStep ? (
-              <BkButton onClick={this.handleConfirm} theme={this.theme}
-                loading={this.isLoading}>{this.localConfirmText}</BkButton>
-            ) : ''}
-            <BkButton class={this.resolveClassName('dialog-cancel')} onClick={this.handleClose}
-              disabled={this.isLoading}>{this.localCancelText}</BkButton>
-          </>
-        ) : ''}
-        {this.dialogType === 'operation' ? (
-          this.$slots.footer?.() ?? <>
-            <BkButton onClick={this.handleConfirm} theme={this.theme}
-              loading={this.isLoading}>{this.localConfirmText}</BkButton>
-            <BkButton class={this.resolveClassName('dialog-cancel')} onClick={this.handleClose}
-              disabled={this.isLoading}>{this.localCancelText}</BkButton>
-          </>
-        ) : ''}
-        {this.dialogType === 'confirm' ? (
-          this.$slots.footer?.() ?? <>
-            <BkButton onClick={this.handleConfirm} theme={this.theme}
-              loading={this.isLoading}>{this.localConfirmText}</BkButton>
-          </>
-        ) : ''}
-      </div>,
+      footer: () => (
+        <div
+          class={this.resolveClassName('dialog-footer')}
+          style={`text-align: ${this.footerAlign}`}
+        >
+          {this.dialogType === 'process'
+            ? this.$slots.footer?.() ?? (
+                <>
+                  {this.current === 1 ? (
+                    ''
+                  ) : (
+                    <BkButton
+                      class={this.resolveClassName('dialog-perv')}
+                      onClick={this.handlePrevStep}
+                    >
+                      {this.localPrevText}
+                    </BkButton>
+                  )}
+                  {this.current === this.totalStep ? (
+                    ''
+                  ) : (
+                    <BkButton
+                      class={this.resolveClassName('dialog-next')}
+                      onClick={this.handleNextStep}
+                    >
+                      {this.localNextText}
+                    </BkButton>
+                  )}
+                  {this.current === this.totalStep ? (
+                    <BkButton
+                      onClick={this.handleConfirm}
+                      theme={this.theme}
+                      loading={this.isLoading}
+                    >
+                      {this.localConfirmText}
+                    </BkButton>
+                  ) : (
+                    ''
+                  )}
+                  <BkButton
+                    class={this.resolveClassName('dialog-cancel')}
+                    onClick={this.handleClose}
+                    disabled={this.isLoading}
+                  >
+                    {this.localCancelText}
+                  </BkButton>
+                </>
+              )
+            : ''}
+          {this.dialogType === 'operation'
+            ? this.$slots.footer?.() ?? (
+                <>
+                  <BkButton
+                    onClick={this.handleConfirm}
+                    theme={this.theme}
+                    loading={this.isLoading}
+                  >
+                    {this.localConfirmText}
+                  </BkButton>
+                  <BkButton
+                    class={this.resolveClassName('dialog-cancel')}
+                    onClick={this.handleClose}
+                    disabled={this.isLoading}
+                  >
+                    {this.localCancelText}
+                  </BkButton>
+                </>
+              )
+            : ''}
+          {this.dialogType === 'confirm'
+            ? this.$slots.footer?.() ?? (
+                <>
+                  <BkButton
+                    onClick={this.handleConfirm}
+                    theme={this.theme}
+                    loading={this.isLoading}
+                  >
+                    {this.localConfirmText}
+                  </BkButton>
+                </>
+              )
+            : ''}
+        </div>
+      ),
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      close: () => <Error onClick={this.handleClose}/>,
+      close: () => <Error onClick={this.handleClose} />,
     };
 
-    const className = `${this.resolveClassName('dialog-wrapper ')} ${this.scrollable ? 'scroll-able' : ''} ${this.multiInstance ? 'multi-instance' : ''} ${this.hasFooter ? 'has-footer' : 'no-footer'}`;
-    return <BkModal {...this.$props} class={className}
-      onClose={this.handleClose}
-      isShow={this.isModalShow}
-      style={this.data.moveStyle}>
-      {dialogSlot}
-    </BkModal>;
+    const className = `${this.resolveClassName('dialog-wrapper ')} ${this.scrollable ? 'scroll-able' : ''} ${
+      this.multiInstance ? 'multi-instance' : ''
+    } ${this.hasFooter ? 'has-footer' : 'no-footer'}`;
+    return (
+      <BkModal
+        {...this.$props}
+        class={className}
+        onClose={this.handleClose}
+        isShow={this.isModalShow}
+        style={this.data.moveStyle}
+      >
+        {dialogSlot}
+      </BkModal>
+    );
   },
 });

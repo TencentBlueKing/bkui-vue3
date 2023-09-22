@@ -602,13 +602,13 @@ const routes: RouteRecordRaw[] = [
    * @description:侧边栏
    */
   {
-  	  path: '/sideslider',
-  	  name: 'sideslider',
-  	  component: () => import('../views/sideslider'),
-  	  meta: {
-  	    group: NavGroupMeta.Feedback,
-  	    navName: 'Sideslider 侧栏',
-  	  },
+    path: '/sideslider',
+    name: 'sideslider',
+    component: () => import('../views/sideslider'),
+    meta: {
+      group: NavGroupMeta.Feedback,
+      navName: 'Sideslider 侧栏',
+    },
   },
   /**
    * @description:穿梭框

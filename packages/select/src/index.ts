@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 import { withInstallProps } from '@bkui-vue/shared';
 
 import Option from './option';
@@ -30,8 +30,4 @@ import OptionGroup from './optionGroup';
 import Component from './select';
 const BkSelect = withInstallProps(Component, { Option, Group: OptionGroup });
 export default BkSelect;
-export {
-  BkSelect,
-  Option as BkOption,
-  OptionGroup as BkOptionGroup,
-};
+export { BkSelect, Option as BkOption, OptionGroup as BkOptionGroup };

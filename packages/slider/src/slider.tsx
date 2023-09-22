@@ -85,8 +85,8 @@ export default defineComponent({
 
     // 小数点后最大位数
     const precision = computed(() => {
-      const precisions = [props.minValue, props.maxValue, props.step].map((item) => {
-        const decimal = (`${item}`).split('.')[1];
+      const precisions = [props.minValue, props.maxValue, props.step].map(item => {
+        const decimal = `${item}`.split('.')[1];
         return decimal ? decimal.length : 0;
       });
       return Math.max.apply(null, precisions);
@@ -94,21 +94,26 @@ export default defineComponent({
     /* 当前滑块的最小值与最大值 */
     const rangeMinValue = computed(() => Math.min(firstValue.value, secondValue.value));
     const rangeMaxValue = computed(() => Math.max(firstValue.value, secondValue.value));
-    const barSize = computed(() => (props.range
-      ? `${100 * (rangeMaxValue.value - rangeMinValue.value) / (props.maxValue - props.minValue)}%`
-      : `${100 * (firstValue.value - props.minValue) / (props.maxValue - props.minValue)}%`));
-    const barStart = computed(() => (props.range
-      ? `${100 * (rangeMinValue.value - props.minValue) / (props.maxValue - props.minValue)}%`
-      : '0%'));
+    const barSize = computed(() =>
+      props.range
+        ? `${(100 * (rangeMaxValue.value - rangeMinValue.value)) / (props.maxValue - props.minValue)}%`
+        : `${(100 * (firstValue.value - props.minValue)) / (props.maxValue - props.minValue)}%`,
+    );
+    const barStart = computed(() =>
+      props.range ? `${(100 * (rangeMinValue.value - props.minValue)) / (props.maxValue - props.minValue)}%` : '0%',
+    );
     /* 当前滑动区域的位置与长度 */
-    const barStyle = computed(() => (props.vertical
-      ? {
-        height: barSize.value,
-        bottom: barStart.value,
-      } : {
-        width: barSize.value,
-        left: barStart.value,
-      }));
+    const barStyle = computed(() =>
+      props.vertical
+        ? {
+            height: barSize.value,
+            bottom: barStart.value,
+          }
+        : {
+            width: barSize.value,
+            left: barStart.value,
+          },
+    );
     /* 断点 */
     const intervals = computed(() => {
       if (!props.showInterval || props.minValue > props.maxValue) return [];
@@ -117,18 +122,23 @@ export default defineComponent({
         return [];
       }
       const stopCount = (props.maxValue - props.minValue) / props.step;
-      const stepWidth = 100 * props.step / (props.maxValue - props.minValue);
+      const stepWidth = (100 * props.step) / (props.maxValue - props.minValue);
       const result = [];
       for (let i = 1; i < stopCount; i++) {
         result.push(i * stepWidth);
       }
       if (props.range) {
         // eslint-disable-next-line max-len
-        return result.filter(step => step < 100 * (rangeMinValue.value - props.minValue) / (props.maxValue - props.minValue)
-                  || step > 100 * (rangeMaxValue.value - props.minValue) / (props.maxValue - props.minValue));
+        return result.filter(
+          step =>
+            step < (100 * (rangeMinValue.value - props.minValue)) / (props.maxValue - props.minValue) ||
+            step > (100 * (rangeMaxValue.value - props.minValue)) / (props.maxValue - props.minValue),
+        );
       }
       // eslint-disable-next-line max-len
-      return result.filter(step => step > 100 * (firstValue.value - props.minValue) / (props.maxValue - props.minValue));
+      return result.filter(
+        step => step > (100 * (firstValue.value - props.minValue)) / (props.maxValue - props.minValue),
+      );
     });
     /* 可滑动区域的样式 */
     const runwayStyle = computed(() => (props.vertical ? { height: props.height, width: '4px' } : {}));
@@ -139,7 +149,7 @@ export default defineComponent({
         console.warn('WARNNING:step should not be 0');
         return [];
       }
-      const stepWidth = 100 * props.step / (props.maxValue - props.minValue);
+      const stepWidth = (100 * props.step) / (props.maxValue - props.minValue);
       const result = [];
       for (let i = props.minValue, j = 0; i <= props.maxValue; i += props.step, j++) {
         const item = {
@@ -160,13 +170,13 @@ export default defineComponent({
       return Object.keys(props.customContent)
         .sort((a, b) => Number(a) - Number(b))
         .filter(value => Number(value) >= props.minValue && Number(value) <= props.maxValue)
-        .map((item) => {
+        .map(item => {
           const { tip } = props.customContent[item];
           const { label } = props.customContent[item];
           return {
             tip: tip || label || '',
             label: label || '',
-            percent: (Number(item) - props.minValue) / (props.maxValue - props.minValue) * 100,
+            percent: ((Number(item) - props.minValue) / (props.maxValue - props.minValue)) * 100,
           };
         });
     });
@@ -188,21 +198,30 @@ export default defineComponent({
     }));
 
     // 监听
-    watch(() => props.modelValue, () => {
-      setValues();
-    });
-    watch(() => firstValue.value, (val) => {
-      if (props.range) {
+    watch(
+      () => props.modelValue,
+      () => {
+        setValues();
+      },
+    );
+    watch(
+      () => firstValue.value,
+      val => {
+        if (props.range) {
+          emit('update:modelValue', [rangeMinValue.value, rangeMaxValue.value]);
+        } else {
+          emit('update:modelValue', val);
+        }
+        firstInput.value = val;
+      },
+    );
+    watch(
+      () => secondValue.value,
+      val => {
         emit('update:modelValue', [rangeMinValue.value, rangeMaxValue.value]);
-      } else {
-        emit('update:modelValue', val);
-      }
-      firstInput.value = val;
-    });
-    watch(() => secondValue.value, (val) => {
-      emit('update:modelValue', [rangeMinValue.value, rangeMaxValue.value]);
-      secondInput.value = val;
-    });
+        secondInput.value = val;
+      },
+    );
     /* 初始化 */
     onMounted(() => {
       if (props.range) {
@@ -237,10 +256,10 @@ export default defineComponent({
       resetSize();
       if (props.vertical) {
         const offsetBottom = slider.value?.getBoundingClientRect().bottom;
-        setPosition((offsetBottom - event.clientY) / sliderSize.value * 100);
+        setPosition(((offsetBottom - event.clientY) / sliderSize.value) * 100);
       } else {
         const offsetLeft = slider.value?.getBoundingClientRect().left;
-        setPosition((event.clientX - offsetLeft) / sliderSize.value * 100);
+        setPosition(((event.clientX - offsetLeft) / sliderSize.value) * 100);
       }
       emitChange();
     };
@@ -293,14 +312,15 @@ export default defineComponent({
       emit('change', props.range ? [rangeMinValue.value, rangeMaxValue.value] : props.modelValue);
     };
     /* 断点样式 */
-    const getIntervalStyle = (position: number) => (props.vertical ? { bottom: `${position}%` } : { left: `${position}%` });
+    const getIntervalStyle = (position: number) =>
+      props.vertical ? { bottom: `${position}%` } : { left: `${position}%` };
     /* 设置滑块位置 */
     const setPosition = (percent: number) => {
       if (!props.range) {
         firstbutton.value.setPosition(percent);
         return;
       }
-      const targetValue = props.minValue + percent * (props.maxValue - props.minValue) / 100;
+      const targetValue = props.minValue + (percent * (props.maxValue - props.minValue)) / 100;
       // 绝对值
       if (Math.abs(rangeMinValue.value - targetValue) < Math.abs(rangeMaxValue.value - targetValue)) {
         curButtonRef.value = firstValue.value < secondValue.value ? firstbutton.value : secondbutton.value;
@@ -309,7 +329,7 @@ export default defineComponent({
       }
       curButtonRef.value.setPosition(percent);
     };
-    const firstInputChange = (v) => {
+    const firstInputChange = v => {
       if (v === '') {
         return;
       }
@@ -355,100 +375,130 @@ export default defineComponent({
     const { resolveClassName } = usePrefix();
 
     const renderDom = () => (
-      <div class={ [`${resolveClassName('slider')}`, props.extCls] }>
-        { slots.start?.() }
-        <div class={`${resolveClassName('slider-runway')}`}
+      <div class={[`${resolveClassName('slider')}`, props.extCls]}>
+        {slots.start?.()}
+        <div
+          class={`${resolveClassName('slider-runway')}`}
           ref={slider}
           style={runwayStyle.value}
-          onClick={setButtonPos}>
-          <div class={[`${resolveClassName('slider-bar')}`, props.vertical ? 'vertical' : 'horizontal', { disable: props.disable }]}
-            style={barStyle.value}></div>
-            {props.showInterval ? intervals.value.map((interval, index) => (
-              <div key={index}
-                class={[`${resolveClassName('slider-interval')}`, { vertical: props.vertical }]}
-                style={getIntervalStyle(interval)}></div>
-            )) : undefined}
-            {props.customContent ? customList.value.map((custom, index) => (
-              <div key={index}
-              class={[`${resolveClassName('slider-interval')}`, { vertical: props.vertical }]}
-              style={getIntervalStyle(custom.percent)}></div>
-            )) : undefined}
-            {(props.showBetweenLabel || props.showIntervalLabel || props.customContent)
-              ? <div class={[`${resolveClassName('slider-labels')}`, props.vertical ? 'vertical' : 'horizontal']}>
-                {(function () {
-                  if (props.showBetweenLabel) {
-                    return [
-                    <div class="label-start"
-                      style={[{ opacity: betweenLabelStyle('start') }]}>
+          onClick={setButtonPos}
+        >
+          <div
+            class={[
+              `${resolveClassName('slider-bar')}`,
+              props.vertical ? 'vertical' : 'horizontal',
+              { disable: props.disable },
+            ]}
+            style={barStyle.value}
+          ></div>
+          {props.showInterval
+            ? intervals.value.map((interval, index) => (
+                <div
+                  key={index}
+                  class={[`${resolveClassName('slider-interval')}`, { vertical: props.vertical }]}
+                  style={getIntervalStyle(interval)}
+                ></div>
+              ))
+            : undefined}
+          {props.customContent
+            ? customList.value.map((custom, index) => (
+                <div
+                  key={index}
+                  class={[`${resolveClassName('slider-interval')}`, { vertical: props.vertical }]}
+                  style={getIntervalStyle(custom.percent)}
+                ></div>
+              ))
+            : undefined}
+          {props.showBetweenLabel || props.showIntervalLabel || props.customContent ? (
+            <div class={[`${resolveClassName('slider-labels')}`, props.vertical ? 'vertical' : 'horizontal']}>
+              {(function () {
+                if (props.showBetweenLabel) {
+                  return [
+                    <div
+                      class='label-start'
+                      style={[{ opacity: betweenLabelStyle('start') }]}
+                    >
                       {props.formatterLabel(props.minValue)}
                     </div>,
-                    <div class="label-end"
-                      style={[{ opacity: betweenLabelStyle('end') }]}>
+                    <div
+                      class='label-end'
+                      style={[{ opacity: betweenLabelStyle('end') }]}
+                    >
                       {props.formatterLabel(props.maxValue)}
-                    </div>];
-                  }
-                  if (props.showIntervalLabel) {
-                    return (
-                      intervalLabels.value.map((intervalLabel, index) => (
-                        <div class={[`${resolveClassName('slider-label')}`, props.vertical ? 'vertical' : 'horizontal']}
-                          key={index}
-                          style={getIntervalStyle(intervalLabel.stepWidth)}>
-                            {intervalLabel.stepLabel}
-                          </div>
-                      ))
-                    );
-                  }
-                  if (props.customContent) {
-                    return (
-                      customList.value.map((item, index) => (
-                        <div class={[`${resolveClassName('slider-label')}`, props.vertical ? 'vertical' : 'horizontal']}
-                        key={index}
-                        style={getIntervalStyle(item.percent)}>
-                          {item.label}
-                        </div>
-                      ))
-                    );
-                  }
-                  return undefined;
-                }())}</div>
-              : undefined}
+                    </div>,
+                  ];
+                }
+                if (props.showIntervalLabel) {
+                  return intervalLabels.value.map((intervalLabel, index) => (
+                    <div
+                      class={[`${resolveClassName('slider-label')}`, props.vertical ? 'vertical' : 'horizontal']}
+                      key={index}
+                      style={getIntervalStyle(intervalLabel.stepWidth)}
+                    >
+                      {intervalLabel.stepLabel}
+                    </div>
+                  ));
+                }
+                if (props.customContent) {
+                  return customList.value.map((item, index) => (
+                    <div
+                      class={[`${resolveClassName('slider-label')}`, props.vertical ? 'vertical' : 'horizontal']}
+                      key={index}
+                      style={getIntervalStyle(item.percent)}
+                    >
+                      {item.label}
+                    </div>
+                  ));
+                }
+                return undefined;
+              })()}
+            </div>
+          ) : undefined}
+          <SliderButton
+            v-model={firstValue.value}
+            ref={firstbutton}
+            params={buttonParms.value}
+            onEmitChange={emitChange}
+            onResetSize={resetSize}
+          ></SliderButton>
+          {props.range ? (
             <SliderButton
-              v-model={firstValue.value}
-              ref={firstbutton}
-              params={buttonParms.value}
-              onEmitChange={emitChange}
-              onResetSize={resetSize}></SliderButton>
-            { props.range
-              ? <SliderButton
               v-model={secondValue.value}
               ref={secondbutton}
               params={buttonParms.value}
               onEmitChange={emitChange}
-              onResetSize={resetSize}></SliderButton> : undefined}
+              onResetSize={resetSize}
+            ></SliderButton>
+          ) : undefined}
         </div>
-        {(props.showInput && !props.vertical) ? <div class={`${resolveClassName('slider-input')}`}>
-          <div class="input-item">
-            <Input type="number"
-              modelValue={firstInput.value}
-              max={props.maxValue}
-              min={props.minValue}
-              onChange={firstInputChange}>
-
-              </Input>
-          </div>
-          {showSecondInput.value && secondValue.value ? [
-            <div class="input-center">～</div>,
-            <div class="input-item">
-              <Input type="number"
-                modelValue={secondInput.value}
+        {props.showInput && !props.vertical ? (
+          <div class={`${resolveClassName('slider-input')}`}>
+            <div class='input-item'>
+              <Input
+                type='number'
+                modelValue={firstInput.value}
                 max={props.maxValue}
                 min={props.minValue}
-                onChange={secondInputChange}
-                ></Input>
-            </div>,
-          ] : undefined}
-        </div> : undefined }
-        { slots.end?.() }
+                onChange={firstInputChange}
+              ></Input>
+            </div>
+            {showSecondInput.value && secondValue.value
+              ? [
+                  <div class='input-center'>～</div>,
+                  <div class='input-item'>
+                    <Input
+                      type='number'
+                      modelValue={secondInput.value}
+                      max={props.maxValue}
+                      min={props.minValue}
+                      onChange={secondInputChange}
+                    ></Input>
+                  </div>,
+                ]
+              : undefined}
+          </div>
+        ) : undefined}
+        {slots.end?.()}
       </div>
     );
 

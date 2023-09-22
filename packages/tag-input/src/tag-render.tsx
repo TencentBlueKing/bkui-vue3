@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { computed, defineComponent, h, onMounted, PropType, ref } from 'vue';
 
@@ -77,8 +77,12 @@ export default defineComponent({
     }
 
     return (
-      <div class="tag" ref="tagRef" v-bk-tooltips={this.overflowTips}>
-        <span class="text">{this.node[this.displayKey]}</span>
+      <div
+        class='tag'
+        ref='tagRef'
+        v-bk-tooltips={this.overflowTips}
+      >
+        <span class='text'>{this.node[this.displayKey]}</span>
       </div>
     );
   },
