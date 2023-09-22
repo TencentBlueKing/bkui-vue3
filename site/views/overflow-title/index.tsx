@@ -62,6 +62,27 @@ const overflowComponent: IPropsTableItem[] = [
     desc: '是否监听文本内容变化',
     optional: [],
   },
+  {
+    name: 'boundary',
+    type: 'String, HTMLElement',
+    default: 'document.body',
+    desc: 'popover弹出内容绑定元素，可以被popoverOptions覆盖',
+    optional: [],
+  },
+  {
+    name: 'placement',
+    type: 'String,',
+    default: 'top-start',
+    desc: 'popover组件显示位置，可以被popoverOptions覆盖',
+    optional: [],
+  },
+  {
+    name: 'popoverOptions',
+    type: 'Object',
+    default: '--',
+    desc: 'Popover组件的配置项,type为title无效',
+    optional: [],
+  },
 ];
 
 const overflowDirective: IPropsTableItem[] = [
