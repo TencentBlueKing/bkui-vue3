@@ -22,24 +22,15 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import type { ExtractPropTypes } from 'vue';
-import {
-  defineComponent,
-} from 'vue';
+import { defineComponent } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-import {
-  classes,
-  PropTypes,
-  SizeEnum,
-} from '@bkui-vue/shared';
+import { classes, PropTypes, SizeEnum } from '@bkui-vue/shared';
 
-import {
-  useCheckbox,
-  useFocus,
-} from './common';
+import { useCheckbox, useFocus } from './common';
 
 export const checkboxProps = {
   modelValue: PropTypes.oneOfType([String, Number, Boolean]),
@@ -64,21 +55,9 @@ export default defineComponent({
     change: (value: CheckboxProps['modelValue']) => value !== undefined,
   },
   setup(props) {
-    const [
-      isFocus,
-      {
-        blur: handleBlur,
-        focus: handleFocus,
-      },
-    ] = useFocus();
+    const [isFocus, { blur: handleBlur, focus: handleFocus }] = useFocus();
 
-    const {
-      inputRef,
-      isChecked,
-      isDisabled,
-      setChecked,
-      handleChange,
-    } = useCheckbox();
+    const { inputRef, isChecked, isDisabled, setChecked, handleChange } = useCheckbox();
 
     const { resolveClassName } = usePrefix();
 
@@ -120,13 +99,14 @@ export default defineComponent({
       <label class={checkboxClass}>
         <span class={[this.resolveClassName('checkbox-input'), this.size]}>
           <input
-            ref="inputRef"
-            role="checkbox"
-            type="checkbox"
+            ref='inputRef'
+            role='checkbox'
+            type='checkbox'
             class={`${this.resolveClassName('checkbox-original')}`}
             disabled={this.isDisabled}
             checked={this.isChecked}
-            onChange={this.handleChange} />
+            onChange={this.handleChange}
+          />
         </span>
         {renderLabel()}
       </label>

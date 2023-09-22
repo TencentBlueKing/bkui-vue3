@@ -26,7 +26,19 @@
 
 import ClipboardJS from 'clipboard';
 import JSONFormatter from 'json-formatter-js';
-import { computed, defineComponent, isVNode, onMounted, onUnmounted, reactive, ref, StyleValue, Transition, VNode, watch } from 'vue';
+import {
+  computed,
+  defineComponent,
+  isVNode,
+  onMounted,
+  onUnmounted,
+  reactive,
+  ref,
+  StyleValue,
+  Transition,
+  VNode,
+  watch,
+} from 'vue';
 import { toType } from 'vue-types';
 
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
@@ -190,7 +202,11 @@ export default defineComponent({
   setup(props, { emit, slots, expose }) {
     const t = useLocale('message');
     const { resolveClassName } = usePrefix();
-    const classNames = computed(() => [`${resolveClassName('message')}`, `${resolveClassName(`message-${props.theme}`)}`, `${props.extCls}`]);
+    const classNames = computed(() => [
+      `${resolveClassName('message')}`,
+      `${resolveClassName(`message-${props.theme}`)}`,
+      `${props.extCls}`,
+    ]);
     const zIndex = bkZIndexManager.getMessageNextIndex();
 
     const singleLineWidth = 560;
@@ -220,7 +236,7 @@ export default defineComponent({
       };
 
       const isAdvance = typeof props.message === 'object' && !isVNode(props.message);
-      if (/%$/.test(`${props.width}`) || /auto/ig.test(`${props.width}`)) {
+      if (/%$/.test(`${props.width}`) || /auto/gi.test(`${props.width}`)) {
         return {
           width: props.width,
           ...minMaxWidth,
@@ -228,13 +244,15 @@ export default defineComponent({
       }
 
       if (/^\d+/.test(`${props.width}`)) {
-        return /^\d+\.?\d*$/.test(`${props.width}`) ? {
-          width: `${props.width}px`,
-          ...minMaxWidth,
-        } : {
-          width: props.width,
-          ...minMaxWidth,
-        };
+        return /^\d+\.?\d*$/.test(`${props.width}`)
+          ? {
+              width: `${props.width}px`,
+              ...minMaxWidth,
+            }
+          : {
+              width: props.width,
+              ...minMaxWidth,
+            };
       }
 
       if (isAdvance) {
@@ -245,11 +263,16 @@ export default defineComponent({
     });
 
     const isGetContainer = computed<boolean>(() => props.getContainer && isElement(props.getContainer));
-    const styles = computed(() => Object.assign({
-      top: `${props.offsetY}px`,
-      zIndex,
-      position: (isGetContainer.value ? 'absolute' : 'fixed') as 'absolute' | 'fixed',
-    }, contentWidth.value));
+    const styles = computed(() =>
+      Object.assign(
+        {
+          top: `${props.offsetY}px`,
+          zIndex,
+          position: (isGetContainer.value ? 'absolute' : 'fixed') as 'absolute' | 'fixed',
+        },
+        contentWidth.value,
+      ),
+    );
 
     const refJsonContent = ref(null);
     const refCopyStatus = ref(null);
@@ -280,7 +303,7 @@ export default defineComponent({
     let copyStatusTimer;
     const copyStatus = ref(null);
 
-    const parseToString = (value) => {
+    const parseToString = value => {
       let targetStr = value;
       if (typeof value === 'object') {
         try {
@@ -302,8 +325,8 @@ export default defineComponent({
     };
 
     const registerCopyCallback = (copyInstance, complete?) => {
-      ['success', 'error'].forEach((theme) => {
-        copyInstance.on(theme, (e) => {
+      ['success', 'error'].forEach(theme => {
+        copyInstance.on(theme, e => {
           const target = refCopyStatus.value as HTMLElement;
           copyStatus.value = theme;
           if (target) {
@@ -337,7 +360,7 @@ export default defineComponent({
       registerCopyCallback(copyInstance);
     };
 
-    const parseToJson = (value) => {
+    const parseToJson = value => {
       let targetJson = value;
       if (typeof value === 'string') {
         try {
@@ -354,12 +377,8 @@ export default defineComponent({
       toolOperation.isDetailShow = isShow ?? !toolOperation.isDetailShow;
       fixMesage(e, toolOperation.isDetailShow);
 
-      if (
-        toolOperation.isDetailShow
-        && typeof props.message === 'object'
-        && !isVNode(props.message)
-      ) {
-        if ((props.message.type === MessageContentType.JSON || !props.message.type)) {
+      if (toolOperation.isDetailShow && typeof props.message === 'object' && !isVNode(props.message)) {
+        if (props.message.type === MessageContentType.JSON || !props.message.type) {
           const targetJson = parseToJson(props.message.details);
           const formatter = new JSONFormatter(targetJson);
 
@@ -401,7 +420,7 @@ export default defineComponent({
       document.addEventListener('keydown', handleMouseKeyEvent);
     };
 
-    const handleMouseKeyEvent = (e) => {
+    const handleMouseKeyEvent = e => {
       if (e.altKey && e.keyCode === 80) {
         fixMesage(e);
       }
@@ -460,7 +479,13 @@ export default defineComponent({
       [IMessageActionType.CLOSE]: {
         id: IMessageActionType.CLOSE,
         classList: 'normal-color',
-        icon: () => props.dismissable && <Error class={`${resolveClassName('message-close')}`} onClick={close} />,
+        icon: () =>
+          props.dismissable && (
+            <Error
+              class={`${resolveClassName('message-close')}`}
+              onClick={close}
+            />
+          ),
         onClick: close,
       },
     }));
@@ -474,7 +499,7 @@ export default defineComponent({
 
     const actionList = computed(() => {
       if (props.actions?.length > 0) {
-        const resultList = props.actions.map((action) => {
+        const resultList = props.actions.map(action => {
           const id = action.id.toLocaleLowerCase();
           const defAction: IMessageAction = defActionList.value[id];
           const defClickFn = defAction?.onClick;
@@ -551,24 +576,28 @@ export default defineComponent({
         }
       };
 
-      const renderActionList = () => actionList.value.map((action) => {
-        if (action.disabled) {
-          return null;
-        }
+      const renderActionList = () =>
+        actionList.value.map(action => {
+          if (action.disabled) {
+            return null;
+          }
 
-        if (typeof action.render === 'function') {
-          return Reflect.apply(action.render, this, []);
-        }
+          if (typeof action.render === 'function') {
+            return Reflect.apply(action.render, this, []);
+          }
 
-        const classList = Array.isArray(action.classList) ? action.classList.join(' ') : action.classList;
+          const classList = Array.isArray(action.classList) ? action.classList.join(' ') : action.classList;
 
-        return (
-            <span class={['tool', action.id, classList]} onClick={e => handleActionClick(e, action)}>
+          return (
+            <span
+              class={['tool', action.id, classList]}
+              onClick={e => handleActionClick(e, action)}
+            >
               {renderIcon(action)}
               {renderText(action)}
             </span>
-        );
-      });
+          );
+        });
 
       return slots.action?.() ?? renderActionList();
     };
@@ -617,7 +646,7 @@ export default defineComponent({
         return keys.map(key => (
           <div class='message-row'>
             <label>{key}</label>
-            <span class="copy-value">{target[key]}</span>
+            <span class='copy-value'>{target[key]}</span>
           </div>
         ));
       }
@@ -631,24 +660,35 @@ export default defineComponent({
               <div class='left-content'>
                 <div class={`${this.resolveClassName('message-icon')}`}>{renderIcon()}</div>
                 <div class='describe'>
-                  {this.$slots.title?.()
-                    ?? `【${this.message.code}】${this.message.overview} ${this.message.suggestion}`}
+                  {this.$slots.title?.() ??
+                    `【${this.message.code}】${this.message.overview} ${this.message.suggestion}`}
                 </div>
               </div>
               <div class='tools'>{this.renderMessageActions()}</div>
             </div>
             {this.toolOperation.isDetailShow && (
               <div class='message-detail'>
-                <div class='message-copy' ref="refCopyMsgDiv">
+                <div
+                  class='message-copy'
+                  ref='refCopyMsgDiv'
+                >
                   <CopyShape></CopyShape>
                 </div>
-                <div class="copy-status" ref="refCopyStatus">
-                  <div class="inner">
-                    { renderIcon(this.copyStatus) }
-                    { this.copyStatus === 'success' ? this.t.copySuccess : this.t.copyFailed }
+                <div
+                  class='copy-status'
+                  ref='refCopyStatus'
+                >
+                  <div class='inner'>
+                    {renderIcon(this.copyStatus)}
+                    {this.copyStatus === 'success' ? this.t.copySuccess : this.t.copyFailed}
                   </div>
                 </div>
-                <div ref='refJsonContent' class="message-tree">{renderMsgDetail(this.message)}</div>
+                <div
+                  ref='refJsonContent'
+                  class='message-tree'
+                >
+                  {renderMsgDetail(this.message)}
+                </div>
               </div>
             )}
           </div>
@@ -661,7 +701,12 @@ export default defineComponent({
             <div class={`${this.resolveClassName('message-icon')}`}>{renderIcon()}</div>
             {this.message}
           </div>
-          {this.dismissable && <Error class={`${this.resolveClassName('message-close')}`} onClick={this.close} />}
+          {this.dismissable && (
+            <Error
+              class={`${this.resolveClassName('message-close')}`}
+              onClick={this.close}
+            />
+          )}
         </>
       );
     };

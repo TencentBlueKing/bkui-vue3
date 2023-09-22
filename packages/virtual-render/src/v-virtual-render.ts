@@ -82,12 +82,17 @@ export function computedVirtualIndex(lineHeight, callback, pagination, el, event
     targetEndIndex = endValue.startIndex + targetStartIndex + 1;
   }
 
-  if (elScrollTop !== scrollTop
-      || targetStartIndex !== startIndex
-      || targetEndIndex !== endIndex
-      || scrollLeft !== elScrollLeft) {
+  if (
+    elScrollTop !== scrollTop ||
+    targetStartIndex !== startIndex ||
+    targetEndIndex !== endIndex ||
+    scrollLeft !== elScrollLeft
+  ) {
     const bottom = el.scrollHeight - el.offsetHeight - el.scrollTop;
-    typeof callback === 'function' && callback(event, targetStartIndex, targetEndIndex, elScrollTop, translateY, elScrollLeft, { bottom: bottom >= 0 ? bottom : 0 });
+    typeof callback === 'function' &&
+      callback(event, targetStartIndex, targetEndIndex, elScrollTop, translateY, elScrollLeft, {
+        bottom: bottom >= 0 ? bottom : 0,
+      });
   }
 }
 

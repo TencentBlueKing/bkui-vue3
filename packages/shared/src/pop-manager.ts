@@ -102,25 +102,15 @@ export class BKPopIndexManager {
       console.warn('pop show error: content is null or undefined');
       return;
     }
-    const zIndex =      typeof zindex === 'number' ? zindex : bkZIndexManager.getModalNextIndex();
+    const zIndex = typeof zindex === 'number' ? zindex : bkZIndexManager.getModalNextIndex();
     const uuid = random(16);
     content.setAttribute(this.uuidAttrName, uuid);
     if (this.popInstanceList.length > 0) {
-      showMask
-        && this.bKMaskManagerInstance.backupContentElement(this.popInstanceList.slice(-1)[0].content);
+      showMask && this.bKMaskManagerInstance.backupContentElement(this.popInstanceList.slice(-1)[0].content);
     }
 
     this.popInstanceList.push({ uuid, zIndex, content, showMask, appendStyle });
-    this.bKMaskManagerInstance.show(
-      content,
-      zIndex,
-      showMask,
-      appendStyle,
-      uuid,
-      transfer,
-      onMaskClick,
-      this.uniqId,
-    );
+    this.bKMaskManagerInstance.show(content, zIndex, showMask, appendStyle, uuid, transfer, onMaskClick, this.uniqId);
   }
 
   /**
@@ -148,13 +138,7 @@ export class BKPopIndexManager {
       if (this.popInstanceList.length) {
         const activeItem = this.popInstanceList.slice(-1)[0];
         const { zIndex, content, showMask, appendStyle, uuid } = activeItem;
-        this.bKMaskManagerInstance.show(
-          content,
-          zIndex,
-          showMask,
-          appendStyle,
-          uuid,
-        );
+        this.bKMaskManagerInstance.show(content, zIndex, showMask, appendStyle, uuid);
       } else {
         this.bKMaskManagerInstance.hide();
         // this.clickFn.length = 0;

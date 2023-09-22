@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { isEqual } from 'lodash';
 import {
@@ -62,7 +62,7 @@ export default defineComponent({
 
     const { disabled, id, name } = toRefs(props);
     // 兼容label
-    const optionName = computed(() => (name.value !== undefined ? name.value : attrs.label as string));
+    const optionName = computed(() => (name.value !== undefined ? name.value : (attrs.label as string)));
     // 兼容value
     const optionID = computed(() => (id.value !== undefined ? id.value : attrs.value));
     const select = inject(selectKey, null);
@@ -118,29 +118,34 @@ export default defineComponent({
       [this.resolveClassName('select-option')]: true,
     });
     return (
-      <li v-show={this.visible}
+      <li
+        v-show={this.visible}
         class={selectItemClass}
         onClick={this.handleOptionClick}
-        onMouseenter={this.handleMouseEnter}>
-        {
-          this.showSelectedIcon
-            && this.selectedStyle === SelectedTypeEnum.CHECKBOX
-            && <Checkbox disabled={this.disabled} class={this.resolveClassName('select-checkbox')} modelValue={this.selected} />
-        }
-        {
-          this.$slots.default?.()
-          ?? (
-            <span class={this.resolveClassName('select-option-item')} title={String(this.optionName)}>
-              {this.optionName}
-            </span>
-          )
-        }
-        {
-          this.showSelectedIcon
-            && this.selected
-            && this.selectedStyle === SelectedTypeEnum.CHECK
-            && <Done class={this.resolveClassName('select-selected-icon')} width={22} height={22}></Done>
-        }
+        onMouseenter={this.handleMouseEnter}
+      >
+        {this.showSelectedIcon && this.selectedStyle === SelectedTypeEnum.CHECKBOX && (
+          <Checkbox
+            disabled={this.disabled}
+            class={this.resolveClassName('select-checkbox')}
+            modelValue={this.selected}
+          />
+        )}
+        {this.$slots.default?.() ?? (
+          <span
+            class={this.resolveClassName('select-option-item')}
+            title={String(this.optionName)}
+          >
+            {this.optionName}
+          </span>
+        )}
+        {this.showSelectedIcon && this.selected && this.selectedStyle === SelectedTypeEnum.CHECK && (
+          <Done
+            class={this.resolveClassName('select-selected-icon')}
+            width={22}
+            height={22}
+          ></Done>
+        )}
       </li>
     );
   },

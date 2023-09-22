@@ -37,3 +37,4 @@ package-lock.json
 themes.variable.less
 .history
 .codecc
+.vscode

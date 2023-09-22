@@ -22,23 +22,13 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
-import type {
-  ExtractPropTypes,
-} from 'vue';
-import {
-  defineComponent,
-  ref,
-  toRefs,
-  watch,
-} from 'vue';
+import type { ExtractPropTypes } from 'vue';
+import { defineComponent, ref, toRefs, watch } from 'vue';
 
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
-import {
-  classes,
-  PropTypes,
-} from '@bkui-vue/shared';
+import { classes, PropTypes } from '@bkui-vue/shared';
 
 import useLimit from './use-limit';
 import useList from './use-list';
@@ -76,55 +66,42 @@ export type PaginationProps = Readonly<ExtractPropTypes<typeof paginationProps>>
 export default defineComponent({
   name: 'Pagination',
   props: paginationProps,
-  emits: [
-    'update:modelValue',
-    'change',
-    'update:limit',
-    'limitChange',
-  ],
+  emits: ['update:modelValue', 'change', 'update:limit', 'limitChange'],
   setup(props, context) {
     const t = useLocale('pagination');
     const totalPageNum = ref<number>(0);
-    const {
-      count,
-      limit,
-    } = toRefs(props);
+    const { count, limit } = toRefs(props);
 
     const renderTotal = useTotal(t);
 
-    const {
-      current: listCurrent,
-      render: renderList,
-    } = useList();
+    const { current: listCurrent, render: renderList } = useList();
 
-    const {
-      current: smallListCurrent,
-      render: renderSmallList,
-    } = useSmallList();
+    const { current: smallListCurrent, render: renderSmallList } = useSmallList();
 
-    const {
-      limit: localLimit,
-      render: renderLimit,
-    } = useLimit(t);
+    const { limit: localLimit, render: renderLimit } = useLimit(t);
 
-    watch([count, localLimit, limit], ([count, localLimit]) => {
-      const total = Math.ceil(count / localLimit);
-      totalPageNum.value =  total < 1 ? 1 : total;
-    }, {
-      immediate: true,
-    });
-    watch(listCurrent, (listCurrent) => {
+    watch(
+      [count, localLimit, limit],
+      ([count, localLimit]) => {
+        const total = Math.ceil(count / localLimit);
+        totalPageNum.value = total < 1 ? 1 : total;
+      },
+      {
+        immediate: true,
+      },
+    );
+    watch(listCurrent, listCurrent => {
       context.emit('update:modelValue', listCurrent);
       context.emit('change', listCurrent);
     });
-    watch(smallListCurrent, (smallListCurrent) => {
+    watch(smallListCurrent, smallListCurrent => {
       if (!props.small) {
         return;
       }
       context.emit('update:modelValue', smallListCurrent);
       context.emit('change', smallListCurrent);
     });
-    watch(localLimit, (localLimit) => {
+    watch(localLimit, localLimit => {
       context.emit('limitChange', localLimit);
     });
 
@@ -153,10 +130,12 @@ export default defineComponent({
 
     return (
       <div class={paginationClass}>
-        {this.layout.map((layout, index) => layoutMap[layout]({
-          isFirst: index === 0,
-          isLast: index === this.layout.length - 1,
-        }))}
+        {this.layout.map((layout, index) =>
+          layoutMap[layout]({
+            isFirst: index === 0,
+            isLast: index === this.layout.length - 1,
+          }),
+        )}
       </div>
     );
   },

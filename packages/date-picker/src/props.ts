@@ -35,13 +35,21 @@ import type {
   PickerTypeType,
 } from './interface';
 
-
 export const datePickerProps = {
   type: {
     type: String as PropType<PickerTypeType>,
     default: 'date',
     validator(value) {
-      const validList: PickerTypeType[] = ['year', 'month', 'date', 'daterange', 'datetime', 'datetimerange', 'time', 'timerange'];
+      const validList: PickerTypeType[] = [
+        'year',
+        'month',
+        'date',
+        'daterange',
+        'datetime',
+        'datetimerange',
+        'time',
+        'timerange',
+      ];
       if (validList.indexOf(value) < 0) {
         console.error(`type property is not valid: '${value}'`);
         return false;
@@ -96,10 +104,20 @@ export const datePickerProps = {
   placement: {
     type: String as PropType<DatePickerPlacementType>,
     default: 'bottom-start',
-    validator: (value) => {
+    validator: value => {
       const validList: DatePickerPlacementType[] = [
-        'top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end',
-        'left', 'left-start', 'left-end', 'right', 'right-start', 'right-end',
+        'top',
+        'top-start',
+        'top-end',
+        'bottom',
+        'bottom-start',
+        'bottom-end',
+        'left',
+        'left-start',
+        'left-end',
+        'right',
+        'right-start',
+        'right-end',
       ];
       if (validList.indexOf(value) < 0) {
         console.error(`placement property is not valid: '${value}'`);

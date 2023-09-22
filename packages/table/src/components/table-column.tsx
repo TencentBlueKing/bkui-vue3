@@ -100,7 +100,7 @@ export default defineComponent({
         const selfVnode = (this as any)._;
         const colList = selfVnode.parent.vnode.children.default() || [];
         const sortColumns = [];
-        const reduceColumns = (nodes) => {
+        const reduceColumns = nodes => {
           if (!Array.isArray(nodes)) {
             return;
           }

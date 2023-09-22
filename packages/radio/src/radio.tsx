@@ -22,21 +22,15 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import type { ExtractPropTypes } from 'vue';
 import { defineComponent } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-import {
-  classes,
-  PropTypes,
-} from '@bkui-vue/shared';
+import { classes, PropTypes } from '@bkui-vue/shared';
 
-import {
-  useFocus,
-  useRadio,
-} from './common';
+import { useFocus, useRadio } from './common';
 
 const radioProps = {
   name: PropTypes.string.def(''),
@@ -56,20 +50,9 @@ export default defineComponent({
     change: (value: RadioProps['modelValue']) => value !== undefined,
   },
   setup() {
-    const [
-      isFocused,
-      {
-        blur: handleBlur,
-        focus: handleFocus,
-      },
-    ] = useFocus();
+    const [isFocused, { blur: handleBlur, focus: handleFocus }] = useFocus();
 
-    const  {
-      isChecked,
-      isDisabled,
-      setChecked,
-      handleChange,
-    } = useRadio();
+    const { isChecked, isDisabled, setChecked, handleChange } = useRadio();
 
     const { resolveClassName } = usePrefix();
 
@@ -107,18 +90,20 @@ export default defineComponent({
     return (
       <label
         class={radioClass}
-        tabindex="0">
+        tabindex='0'
+      >
         <input
           class={`${this.resolveClassName('radio-input')}`}
-          type="radio"
-          tabindex="0"
+          type='radio'
+          tabindex='0'
           value={this.label as string}
           checked={this.isChecked}
           disabled={this.isDisabled}
           onFocus={this.handleFocus}
           onBlur={this.handleBlur}
-          onChange={this.handleChange} />
-          {renderLabel()}
+          onChange={this.handleChange}
+        />
+        {renderLabel()}
       </label>
     );
   },

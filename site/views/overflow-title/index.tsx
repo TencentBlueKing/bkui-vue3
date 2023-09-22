@@ -1,28 +1,28 @@
 /*
-* Tencent is pleased to support the open source community by making
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
-*
-* Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
-*
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
-*
-* License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
-*
-* ---------------------------------------------------
-* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
-* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
-* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-* the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-* THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-* IN THE SOFTWARE.
-*/
+ * Tencent is pleased to support the open source community by making
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ *
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ *
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ *
+ * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ *
+ * ---------------------------------------------------
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+ * the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
 import { defineComponent } from 'vue';
 
 import DemoBox from '../../components/demo-box';
@@ -86,33 +86,38 @@ export default defineComponent({
     return (
       <div>
         <DemoTitle
-          name="overflowTitle 文件溢出处理"
-          desc="overflowTitle 文本溢出，通过title 或者tooltips展示全部内容."
-          link="#/overflowTitle" />
+          name='overflowTitle 文件溢出处理'
+          desc='overflowTitle 文本溢出，通过title 或者tooltips展示全部内容.'
+          link='#/overflowTitle'
+        />
 
         <DemoBox
-          title="组件用法"
-          desc="组件用法"
-          componentName="overflow-title"
-          demoName="base-demo">
+          title='组件用法'
+          desc='组件用法'
+          componentName='overflow-title'
+          demoName='base-demo'
+        >
           <BaseDemo></BaseDemo>
         </DemoBox>
         <DemoBox
-          title="指令用法"
-          desc="指令用法"
-          componentName="overflow-title"
-          demoName="directive">
+          title='指令用法'
+          desc='指令用法'
+          componentName='overflow-title'
+          demoName='directive'
+        >
           <Directive></Directive>
         </DemoBox>
 
         <PropsBox
-          title="overflowTitle 组件属性"
-          subtitle=""
-          propsData={overflowComponent} />
+          title='overflowTitle 组件属性'
+          subtitle=''
+          propsData={overflowComponent}
+        />
         <PropsBox
-          title="overflowTitle 指令属性(计算父元素宽度)"
-          subtitle=""
-          propsData={overflowDirective} />
+          title='overflowTitle 指令属性(计算父元素宽度)'
+          subtitle=''
+          propsData={overflowDirective}
+        />
       </div>
     );
   },

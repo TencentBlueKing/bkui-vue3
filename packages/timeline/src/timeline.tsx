@@ -33,7 +33,6 @@ const timelineProps = {
   list: PropTypes.array.def([]),
   titleAble: PropTypes.bool.def(false),
   extCls: PropTypes.string,
-
 };
 
 export type TimelinePropTypes = ExtractPropTypes<typeof timelineProps>;
@@ -46,9 +45,9 @@ export default defineComponent({
   setup(props: TimelinePropTypes, { emit }) {
     const defaultTimelines = ref([]);
 
-    const updateTimelines = (timelines) => {
+    const updateTimelines = timelines => {
       const defaults = [];
-      timelines.forEach((timeline) => {
+      timelines.forEach(timeline => {
         defaults.push({
           tag: timeline.tag,
           content: timeline.content,
@@ -64,26 +63,30 @@ export default defineComponent({
     };
 
     const init = () => {
-      defaultTimelines.value.splice(0, defaultTimelines.value.length, ...[
-        {
-          tag: '步骤1',
-          content: '内容1',
-        },
-        {
-          tag: '步骤2',
-          content: '内容2',
-        },
-        {
-          tag: '步骤3',
-          content: '内容3',
-        },
-      ]);
+      defaultTimelines.value.splice(
+        0,
+        defaultTimelines.value.length,
+        ...[
+          {
+            tag: '步骤1',
+            content: '内容1',
+          },
+          {
+            tag: '步骤2',
+            content: '内容2',
+          },
+          {
+            tag: '步骤3',
+            content: '内容3',
+          },
+        ],
+      );
       if (props.list?.length) {
         updateTimelines(props.list);
       }
     };
 
-    const titleSelect = (item) => {
+    const titleSelect = item => {
       try {
         emit('select', item);
       } catch (e) {
@@ -93,9 +96,13 @@ export default defineComponent({
 
     onMounted(init);
 
-    watch(() => props.list, () => {
-      updateTimelines(props.list);
-    }, { deep: true });
+    watch(
+      () => props.list,
+      () => {
+        updateTimelines(props.list);
+      },
+      { deep: true },
+    );
 
     const { resolveClassName } = usePrefix();
 
@@ -107,7 +114,7 @@ export default defineComponent({
   },
 
   render() {
-    const isIcon = (timeline) => {
+    const isIcon = timeline => {
       const { icon } = timeline;
       if (icon) {
         return typeof icon === 'object' || typeof icon === 'function';
@@ -115,43 +122,67 @@ export default defineComponent({
       return false;
     };
 
-
-    const makeClass = (item) => {
+    const makeClass = item => {
       const timelineClsPrefix = this.resolveClassName('timeline');
       const dotColors = ['blue', 'red', 'green', 'yellow', 'gray'];
       const timelineThemeCls: string = item.type ? `${timelineClsPrefix}-${item.type}` : `${timelineClsPrefix}-default`;
       const timelineSizeCls: string = item.size ? `${timelineClsPrefix}-${item.size}` : '';
       const timelineFilledCls: string = item.filled ? `${timelineClsPrefix}-filled` : '';
-      const timelinesColorsCls: string = (item.color && dotColors.includes(item.color)) ? `${timelineClsPrefix}-${item.color}` : '';
-      const timelineCustomIcon: string = (isIcon(item)) ? `${timelineClsPrefix}-custom` : '';
-      const timelinesCls: string = classes({}, `${timelineClsPrefix} ${timelineThemeCls} ${timelineSizeCls} ${timelinesColorsCls} ${timelineFilledCls} ${timelineCustomIcon}`);
+      const timelinesColorsCls: string =
+        item.color && dotColors.includes(item.color) ? `${timelineClsPrefix}-${item.color}` : '';
+      const timelineCustomIcon: string = isIcon(item) ? `${timelineClsPrefix}-custom` : '';
+      const timelinesCls: string = classes(
+        {},
+        `${timelineClsPrefix} ${timelineThemeCls} ${timelineSizeCls} ${timelinesColorsCls} ${timelineFilledCls} ${timelineCustomIcon}`,
+      );
       return timelinesCls;
     };
 
-    const getContent = item => (
-      this.$slots.content
-        ? <div class={`${this.resolveClassName('timeline-content')}`}>{this.$slots.content(item)}</div>
-        : <div class={`${this.resolveClassName('timeline-content')}`} v-html={item.content} />
-    );
+    const getContent = item =>
+      this.$slots.content ? (
+        <div class={`${this.resolveClassName('timeline-content')}`}>{this.$slots.content(item)}</div>
+      ) : (
+        <div
+          class={`${this.resolveClassName('timeline-content')}`}
+          v-html={item.content}
+        />
+      );
 
     return (
       <ul class={[`${this.resolveClassName('timeline')}`, this.extCls]}>
-        {
-        this.defaultTimelines.map(item => <li class={[`${this.resolveClassName('timeline-dot')}`, makeClass(item)]}>
-          {isIcon(item)
-            ? <div class={`${this.resolveClassName('timeline-icon')}`} style={{ border: item.border ? `2px solid ${item.color}` : '0px', borderRadius: item.border ? '50%' : '0' }}>
-                <span class={`${this.resolveClassName('timeline-icon-inner')}`}>{typeof item.icon === 'function' ? <item.icon/> : item.icon}</span>
-              </div> : ''}
-              <div class={`${this.resolveClassName('timeline-section')}`}>
-                {<div class={`${this.resolveClassName('timeline-title')}`} onClick={() => {
-                  this.titleSelect(item);
-                }}>{this.$slots.default?.(item) ?? <span v-html={item.tag}></span>}</div>}
-                {item.content ? getContent(item) : ''}
+        {this.defaultTimelines.map(item => (
+          <li class={[`${this.resolveClassName('timeline-dot')}`, makeClass(item)]}>
+            {isIcon(item) ? (
+              <div
+                class={`${this.resolveClassName('timeline-icon')}`}
+                style={{
+                  border: item.border ? `2px solid ${item.color}` : '0px',
+                  borderRadius: item.border ? '50%' : '0',
+                }}
+              >
+                <span class={`${this.resolveClassName('timeline-icon-inner')}`}>
+                  {typeof item.icon === 'function' ? <item.icon /> : item.icon}
+                </span>
               </div>
-        </li>)
-          }
+            ) : (
+              ''
+            )}
+            <div class={`${this.resolveClassName('timeline-section')}`}>
+              {
+                <div
+                  class={`${this.resolveClassName('timeline-title')}`}
+                  onClick={() => {
+                    this.titleSelect(item);
+                  }}
+                >
+                  {this.$slots.default?.(item) ?? <span v-html={item.tag}></span>}
+                </div>
+              }
+              {item.content ? getContent(item) : ''}
+            </div>
+          </li>
+        ))}
       </ul>
     );
   },
-
 });

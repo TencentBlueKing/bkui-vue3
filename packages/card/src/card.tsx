@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { defineComponent, ref, watch } from 'vue';
 
@@ -68,13 +68,21 @@ export default defineComponent({
       showInput.value = !showInput.value;
       emit('edit', renderTitle);
     };
-    watch(() => props.collapseStatus, (val) => {
-      props.isCollapse && (collapseActive.value = val);
-    }, { immediate: true });
+    watch(
+      () => props.collapseStatus,
+      val => {
+        props.isCollapse && (collapseActive.value = val);
+      },
+      { immediate: true },
+    );
 
-    watch(() => props.title, (val) => {
-      renderTitle.value = val;
-    }, { immediate: true });
+    watch(
+      () => props.title,
+      val => {
+        renderTitle.value = val;
+      },
+      { immediate: true },
+    );
 
     const { resolveClassName } = usePrefix();
     const wrapperClsName = resolveClassName('card');
@@ -90,41 +98,76 @@ export default defineComponent({
     };
   },
   render() {
-    const cardClass = classes({
-      [`${this.wrapperClsName}`]: true,
-      [`${this.wrapperClsName}-border-none`]: !this.$props.border,
-    }, '');
-    const headClass = classes({
-      [`${this.wrapperClsName}-head`]: true,
-      [`${this.wrapperClsName}-head-${this.$props.position}`]: this.$props.isCollapse && this.$props.position,
-      ['no-line-height']: this.$props.disableHeaderStyle,
-      ['collapse']: !this.collapseActive,
-    }, '');
+    const cardClass = classes(
+      {
+        [`${this.wrapperClsName}`]: true,
+        [`${this.wrapperClsName}-border-none`]: !this.$props.border,
+      },
+      '',
+    );
+    const headClass = classes(
+      {
+        [`${this.wrapperClsName}-head`]: true,
+        [`${this.wrapperClsName}-head-${this.$props.position}`]: this.$props.isCollapse && this.$props.position,
+        ['no-line-height']: this.$props.disableHeaderStyle,
+        ['collapse']: !this.collapseActive,
+      },
+      '',
+    );
 
-    const defaultHeader = <div class="title" title={this.renderTitle}>
-      { this.showInput ? <BkInput class={`${this.wrapperClsName}-input`} v-model={this.renderTitle}
-        onBlur={this.saveEdit} /> : this.renderTitle}
-    </div>;
+    const defaultHeader = (
+      <div
+        class='title'
+        title={this.renderTitle}
+      >
+        {this.showInput ? (
+          <BkInput
+            class={`${this.wrapperClsName}-input`}
+            v-model={this.renderTitle}
+            onBlur={this.saveEdit}
+          />
+        ) : (
+          this.renderTitle
+        )}
+      </div>
+    );
 
-    const defaultIcon = <span class={`${this.wrapperClsName}-icon`} onClick={this.handleCollapse}>
-      { this.collapseActive ? <AngleDown /> : <AngleRight /> }
-    </span>;
+    const defaultIcon = (
+      <span
+        class={`${this.wrapperClsName}-icon`}
+        onClick={this.handleCollapse}
+      >
+        {this.collapseActive ? <AngleDown /> : <AngleRight />}
+      </span>
+    );
 
-    return <div class={cardClass}>
-      { this.$props.showHeader ? <div class={headClass}>
-          { this.$props.isCollapse && (this.$slots.icon?.() ?? defaultIcon)}
-          {this.$slots.header?.() ?? defaultHeader}
-          { (this.$props.isEdit && !this.showInput)
-          && <EditLine class={`${this.wrapperClsName}-edit`} onClick={this.clickEdit} /> }
-      </div> : ''}
-      <BKCollapseTransition>
-        <div v-show={this.collapseActive}>
-          <div class={`${this.wrapperClsName}-body`}>{this.$slots.default?.() ?? 'Content'}</div>
-          {
-            this.$props.showFooter ? <div class={`${this.wrapperClsName}-footer`}>{this.$slots.footer?.() ?? 'Footer'}</div> : ''
-          }
-        </div>
-      </BKCollapseTransition>
-    </div>;
+    return (
+      <div class={cardClass}>
+        {this.$props.showHeader ? (
+          <div class={headClass}>
+            {this.$props.isCollapse && (this.$slots.icon?.() ?? defaultIcon)}
+            {this.$slots.header?.() ?? defaultHeader}
+            {this.$props.isEdit && !this.showInput && (
+              <EditLine
+                class={`${this.wrapperClsName}-edit`}
+                onClick={this.clickEdit}
+              />
+            )}
+          </div>
+        ) : (
+          ''
+        )}
+        <BKCollapseTransition>
+          <div v-show={this.collapseActive}>
+            <div class={`${this.wrapperClsName}-body`}>{this.$slots.default?.() ?? 'Content'}</div>
+            {this.$props.showFooter ? (
+              <div class={`${this.wrapperClsName}-footer`}>{this.$slots.footer?.() ?? 'Footer'}</div>
+            ) : (
+              ''
+            )}
+          </div>
+        </BKCollapseTransition>
+      </div>
+    );
   },
 });

@@ -29,6 +29,5 @@
     "sourceMap": true,
     "noEmitOnError": true,
   },
-  "include": ["./**/*.ts", "./**/*.tsx"],
-  "exclude": ["node_modules", "./**/*.js"]
+  "include": ["./**/*.ts", "./**/*.tsx", "./**/*.js"]
 }

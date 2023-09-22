@@ -33,7 +33,8 @@ describe('tree.tsx', () => {
     const wrapper = await mount(BKTree, {
       props: {
         data: [
-          { label: 'Node-0',
+          {
+            label: 'Node-0',
             children: [
               { label: 'Node-0-0', children: [] },
               { label: 'Node-0-1', children: [] },
@@ -55,5 +56,3 @@ describe('tree.tsx', () => {
     });
   });
 });
-
-

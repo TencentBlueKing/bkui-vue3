@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import ResizeObserver from 'resize-observer-polyfill';
 import { nextTick } from 'vue';
@@ -217,7 +217,7 @@ describe('Select.tsx', () => {
     await wrapper.findComponent({ name: 'Option' }).trigger('click');
     expect(wrapper.findAllComponents('.is-selected.bk-select-option')).toHaveLength(2);
     expect(wrapper.vm.selectValue).toEqual(['test']);
-    const option =  wrapper.findAllComponents({ name: 'Option' })[5];
+    const option = wrapper.findAllComponents({ name: 'Option' })[5];
     await option.trigger('click');
     expect(wrapper.vm.selectValue).toHaveLength(0);
     wrapper.unmount();
@@ -342,7 +342,7 @@ describe('Select.tsx', () => {
   });
 
   // 搜索功能
-  test('select search', (done) => {
+  test('select search', done => {
     const wrapper = mount({
       components: {
         BkSelect,
@@ -389,7 +389,7 @@ describe('Select.tsx', () => {
   });
 
   // 下拉框搜索测试
-  test('select input search', (done) => {
+  test('select input search', done => {
     const wrapper = mount({
       components: {
         BkSelect,
@@ -440,8 +440,7 @@ describe('Select.tsx', () => {
     const wrapper = await mount(BkSelect, {
       props: {
         enableVirtualRender: true,
-        list: new Array(1000000).fill('')
-          .map((_, index) => ({ value: index, label: `测试数据${index}` })),
+        list: new Array(1000000).fill('').map((_, index) => ({ value: index, label: `测试数据${index}` })),
       },
     });
     expect(wrapper.findAllComponents(BkOption).length).toBeLessThan(10);

@@ -38,9 +38,9 @@ export * from './utils';
 export * from './vue-types';
 export * from './z-index-manager';
 
-
 export function classes(dynamicCls: object, constCls = ''): string {
-  return Object.entries(dynamicCls).filter(entry => entry[1])
+  return Object.entries(dynamicCls)
+    .filter(entry => entry[1])
     .map(entry => entry[0])
     .join(' ')
     .concat(constCls ? ` ${constCls}` : '');
@@ -48,19 +48,17 @@ export function classes(dynamicCls: object, constCls = ''): string {
 
 export const EMPTY_OBJ = Object.create({});
 
-export const noop = () => { };
+export const noop = () => {};
 
 export const renderEmptyVNode = () => null;
 
 export const isEmptyObj: (target: object) => boolean = target => Object.keys(target).length < 1;
 
-
 export interface OriginComponent {
   name: string;
   install?: Plugin;
 }
-export const withInstall = <T extends OriginComponent>(
-  component: T): T & Plugin  => {
+export const withInstall = <T extends OriginComponent>(component: T): T & Plugin => {
   component.install = function (app: App, { prefix } = {}) {
     const pre = app.config.globalProperties.bkUIPrefix || prefix || 'Bk';
     app.component(pre + component.name, component);
@@ -82,11 +80,12 @@ export const withInstallProps = <T extends OriginComponent, K extends Record<str
       app.directive(pre + directive.name, directive.directive);
     }
     app.component(pre + component.name, component);
-    !isProps && Object.values(childComponents).forEach((child: any) => {
-      app.component(pre + child.name, child);
-    });
+    !isProps &&
+      Object.values(childComponents).forEach((child: any) => {
+        app.component(pre + child.name, child);
+      });
   };
-  Object.keys(childComponents).forEach((key) => {
+  Object.keys(childComponents).forEach(key => {
     component[key] = childComponents[key];
   });
   return component as T & Plugin & Readonly<typeof childComponents>;
@@ -112,16 +111,16 @@ export function debounce(delay = 300, fn: Function, immediate = false) {
   let result: any;
   const debounced = function (this: any) {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const ctx = this;// 当前上下文
+    const ctx = this; // 当前上下文
     // eslint-disable-next-line prefer-rest-params
-    const args = arguments;// fn的参数
+    const args = arguments; // fn的参数
 
     // 取消之前的延时调用
     if (timeout) clearTimeout(timeout);
     if (immediate) {
       const applyImmediate = !timeout; // 是否执行过
       timeout = setTimeout(() => {
-        timeout = null;// 标志是否执行过，与clearTimeout有区别，clearTimeout之后timeout不为null而是一个系统分配的队列ID
+        timeout = null; // 标志是否执行过，与clearTimeout有区别，clearTimeout之后timeout不为null而是一个系统分配的队列ID
       }, delay);
       if (applyImmediate) result = fn.apply(ctx, args); // 立即调用
     } else {
@@ -146,13 +145,15 @@ export function debounce(delay = 300, fn: Function, immediate = false) {
  * @returns object 去除属性之后的对象
  */
 export function filterProperty(data: object, filter: string[]) {
-  return JSON.parse(JSON.stringify(data, (key: string, value: any) => {
-    if (filter.includes(key)) {
-      return undefined;
-    }
-    return value;
-  }));
-};
+  return JSON.parse(
+    JSON.stringify(data, (key: string, value: any) => {
+      if (filter.includes(key)) {
+        return undefined;
+      }
+      return value;
+    }),
+  );
+}
 
 export function arrayEqual(arr1: Array<string | number | string[]> = [], arr2: Array<string | number | string[]> = []) {
   if (arr1.length !== arr2.length) {

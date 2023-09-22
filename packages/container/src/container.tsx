@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { computed, defineComponent, provide } from 'vue';
 
@@ -58,7 +58,9 @@ export default defineComponent({
 
     const { resolveClassName } = usePrefix();
 
-    const classes: any = computed(() => (extCls ? `${resolveClassName('grid-container')} ${extCls}` : `${resolveClassName('grid-container')}`));
+    const classes: any = computed(() =>
+      extCls ? `${resolveClassName('grid-container')} ${extCls}` : `${resolveClassName('grid-container')}`,
+    );
 
     const style: any = computed(() => {
       const { margin } = props;
@@ -66,7 +68,10 @@ export default defineComponent({
     });
 
     return () => (
-      <div class={classes.value} style={style.value}>
+      <div
+        class={classes.value}
+        style={style.value}
+      >
         {ctx.slots.default?.()}
       </div>
     );

@@ -1,41 +1,40 @@
-
 /*
-* Tencent is pleased to support the open source community by making
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
-*
-* Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
-*
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
-*
-* License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
-*
-* ---------------------------------------------------
-* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
-* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
-* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-* the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-* THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-* IN THE SOFTWARE.
-*/
+ * Tencent is pleased to support the open source community by making
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ *
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ *
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ *
+ * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ *
+ * ---------------------------------------------------
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+ * the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
 import { isElement, throttle } from 'lodash';
 import { computed, ref } from 'vue';
 
-import { GroupColumn } from '../props';;
+import { GroupColumn } from '../props';
 
 export default (colgroups: GroupColumn[], immediate = true) => {
   const pluginName = 'HeadColumnResize';
   const enum EVENTS {
     MOUSE_MOVE = 'onMousemove',
     MOUSE_OUT = 'onMouseout',
-    MOUSE_DOWN ='onMousedown'
-  };
+    MOUSE_DOWN = 'onMousedown',
+  }
   let isInDragSection = false;
   let isMouseDown = false;
   let isDraging = false;
@@ -66,15 +65,16 @@ export default (colgroups: GroupColumn[], immediate = true) => {
     targetTable.querySelectorAll('th').forEach((th: HTMLElement) => th.style.setProperty('user-select', 'inherit'));
   };
 
-  const updateOffsetX = (e: MouseEvent) => throttle(() => {
-    const diff = e.clientX - startX;
-    const resolveWidth = (dragColumn.resizeWidth ?? dragColumn.calcWidth) + diff;
-    const minWidth = Number(dragColumn.minWidth);
+  const updateOffsetX = (e: MouseEvent) =>
+    throttle(() => {
+      const diff = e.clientX - startX;
+      const resolveWidth = (dragColumn.resizeWidth ?? dragColumn.calcWidth) + diff;
+      const minWidth = Number(dragColumn.minWidth);
 
-    if (minWidth < resolveWidth) {
-      dragOffsetX.value = e.clientX - startX + dragStartOffsetX;
-    }
-  }, 60);
+      if (minWidth < resolveWidth) {
+        dragOffsetX.value = e.clientX - startX + dragStartOffsetX;
+      }
+    }, 60);
 
   const handleMouseMove = (e: MouseEvent) => {
     const bodyStyle = document.body.style;
@@ -146,7 +146,7 @@ export default (colgroups: GroupColumn[], immediate = true) => {
   const getEventName = (event: string) => `${pluginName}_${event}`;
 
   const registerResizeEvent = () => {
-    colgroups.forEach((col) => {
+    colgroups.forEach(col => {
       if (col.resizable !== false) {
         Object.keys(handler).forEach((event: string) => {
           const name = getEventName(event);
@@ -161,7 +161,7 @@ export default (colgroups: GroupColumn[], immediate = true) => {
   };
 
   const resetResizeEvents = () => {
-    colgroups.forEach((col) => {
+    colgroups.forEach(col => {
       Object.keys(handler).forEach((event: string) => {
         const name = getEventName(event);
         if (col.listeners.has(name)) {
@@ -176,14 +176,17 @@ export default (colgroups: GroupColumn[], immediate = true) => {
     registerResizeEvent();
   }
 
-  const dragOffsetXStyle = computed(() => ({
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    width: '1px',
-    'background-color': '#ebeef5',
-  } as const));
+  const dragOffsetXStyle = computed(
+    () =>
+      ({
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        left: 0,
+        width: '1px',
+        'background-color': '#ebeef5',
+      }) as const,
+  );
 
   return {
     registerResizeEvent,

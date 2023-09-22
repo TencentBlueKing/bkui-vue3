@@ -22,27 +22,31 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { Help, HelpDocumentFill, HelpFill } from '@bkui-vue/icon';
 import { mount } from '@vue/test-utils';
 
 import Card from '../src';
-const mountTpl = (template: string) => mount({
-  components: {
-    bkCard: Card,
-    Help,
-    HelpDocumentFill,
-    HelpFill,
-  },
-  template,
-}, {
-  global: {
-    provide: {
-      card: {},
+const mountTpl = (template: string) =>
+  mount(
+    {
+      components: {
+        bkCard: Card,
+        Help,
+        HelpDocumentFill,
+        HelpFill,
+      },
+      template,
     },
-  },
-});
+    {
+      global: {
+        provide: {
+          card: {},
+        },
+      },
+    },
+  );
 describe('Card.tsx', () => {
   it('showHeader', async () => {
     const wrapper = await mount(Card, {

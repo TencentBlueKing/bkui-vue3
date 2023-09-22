@@ -1,28 +1,28 @@
 /*
-* Tencent is pleased to support the open source community by making
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
-*
-* Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
-*
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
-*
-* License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
-*
-* ---------------------------------------------------
-* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
-* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
-* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-* the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-* THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-* IN THE SOFTWARE.
-*/
+ * Tencent is pleased to support the open source community by making
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ *
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ *
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ *
+ * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ *
+ * ---------------------------------------------------
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+ * the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
 
 import type { ExtractPropTypes } from 'vue';
 import { computed, defineComponent, PropType } from 'vue';
@@ -93,7 +93,8 @@ export default defineComponent({
 
       const tableYear = props.tableDate.getFullYear();
       const selectedDays = (dates.value as any[])
-        .filter(Boolean).map(date => clearHours(new Date(date.getFullYear(), date.getMonth(), 1)));
+        .filter(Boolean)
+        .map(date => clearHours(new Date(date.getFullYear(), date.getMonth(), 1)));
       const focusedDate = clearHours(new Date(props.focusedDate.getFullYear(), props.focusedDate.getMonth(), 1));
 
       for (let i = 0; i < 12; i++) {
@@ -101,9 +102,8 @@ export default defineComponent({
         cell.date = new Date(tableYear, i, 1);
         cell.text = tCell(i + 1);
         const day = clearHours(cell.date);
-        cell.disabled = typeof props.disabledDate === 'function'
-          && props.disabledDate(cell.date)
-          && props.selectionMode === 'month';
+        cell.disabled =
+          typeof props.disabledDate === 'function' && props.disabledDate(cell.date) && props.selectionMode === 'month';
         cell.selected = selectedDays.includes(day);
         cell.focused = day === focusedDate;
         cells.push(cell);
@@ -125,7 +125,7 @@ export default defineComponent({
       },
     ];
 
-    const handleClick = (cell) => {
+    const handleClick = cell => {
       if (cell.disabled || cell.type === 'weekLabel') {
         return;
       }
@@ -135,7 +135,7 @@ export default defineComponent({
       emit('pick-click');
     };
 
-    const handleMouseMove = (cell) => {
+    const handleMouseMove = cell => {
       if (!props.rangeState.selecting) {
         return;
       }
@@ -156,19 +156,16 @@ export default defineComponent({
   },
   render() {
     return (
-      <div class={[
-        this.resolveClassName('date-picker-cells'),
-        this.resolveClassName('date-picker-cells-month'),
-      ]}>
-        {
-          this.cells.map(cell => (
-            <span class={this.getCellCls(cell)}
-              onClick={() => this.handleClick(cell)}
-              onMouseenter={() => this.handleMouseMove(cell)}>
-              <em>{cell.text}</em>
-            </span>
-          ))
-        }
+      <div class={[this.resolveClassName('date-picker-cells'), this.resolveClassName('date-picker-cells-month')]}>
+        {this.cells.map(cell => (
+          <span
+            class={this.getCellCls(cell)}
+            onClick={() => this.handleClick(cell)}
+            onMouseenter={() => this.handleMouseMove(cell)}
+          >
+            <em>{cell.text}</em>
+          </span>
+        ))}
       </div>
     );
   },

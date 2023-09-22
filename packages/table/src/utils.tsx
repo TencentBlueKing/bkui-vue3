@@ -1,37 +1,43 @@
 /*
-* Tencent is pleased to support the open source community by making
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
-*
-* Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
-*
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
-*
-* License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
-*
-* ---------------------------------------------------
-* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
-* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
-* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-* the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-* THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-* IN THE SOFTWARE.
-*/
+ * Tencent is pleased to support the open source community by making
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ *
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ *
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ *
+ * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ *
+ * ---------------------------------------------------
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+ * the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
 
 import { debounce, get as objGet, throttle } from 'lodash';
 import ResizeObserver from 'resize-observer-polyfill';
 import { v4 as uuidv4 } from 'uuid';
 import { unref } from 'vue';
 
-import { BORDER_OPTION, BORDER_OPTIONS, COL_MIN_WIDTH, COLUMN_ATTRIBUTE, SORT_OPTION, TABLE_ROW_ATTRIBUTE } from './const';
+import {
+  BORDER_OPTION,
+  BORDER_OPTIONS,
+  COL_MIN_WIDTH,
+  COLUMN_ATTRIBUTE,
+  SORT_OPTION,
+  TABLE_ROW_ATTRIBUTE,
+} from './const';
 import { Column, GroupColumn, TablePropTypes } from './props';
-
 
 /**
  * 解析Prop值 | 可能为多种类型 & 函数返回的场景
@@ -58,7 +64,8 @@ export const resolvePropVal = (prop: any, key: string | string[], args: any[]) =
   }
 
   if (Array.isArray(key)) {
-    return key.map((_key: string) => resolvePropVal(prop, _key, args))
+    return key
+      .map((_key: string) => resolvePropVal(prop, _key, args))
       .filter((val: any) => val !== undefined)
       .at(0);
   }
@@ -109,12 +116,16 @@ export const resolveWidth = (propWidth: string | number) => resolveNumberOrStrin
  * @param offset 偏移量
  * @returns 标准化px string
  */
-export const resolveNumberOrStringToPix = (val: string | number, defaultValue: string | number = '100%', offset = null) => {
+export const resolveNumberOrStringToPix = (
+  val: string | number,
+  defaultValue: string | number = '100%',
+  offset = null,
+) => {
   let target: string | number = '';
-  if (/^auto|null|undefined$/ig.test(`${val}`)) {
+  if (/^auto|null|undefined$/gi.test(`${val}`)) {
     target = defaultValue;
   } else {
-    target = (/^\d+\.?\d+$/.test(`${val}`) ? `${val}px` : val);
+    target = /^\d+\.?\d+$/.test(`${val}`) ? `${val}px` : val;
   }
 
   if (offset) {
@@ -139,8 +150,7 @@ export const resolvePropBorderToClassStr = (val: string | string[]) => {
     defaultVal.push(...val.filter((str: string) => BORDER_OPTIONS.includes(str as BORDER_OPTION)));
   }
 
-  return [...new Set(defaultVal)].map((item: string) => `bordered-${item}`)
-    .join(' ');;
+  return [...new Set(defaultVal)].map((item: string) => `bordered-${item}`).join(' ');
 };
 
 /**
@@ -152,7 +162,8 @@ export const resolvePropBorderToClassStr = (val: string | string[]) => {
  * @param orders 获取宽度顺序
  * @returns
  */
-export const getColumnReactWidth = (colmun: GroupColumn, orders = ['resizeWidth', 'calcWidth', 'width']) => colmun[orders[0]] ?? colmun[orders[1]] ?? colmun[orders[2]];
+export const getColumnReactWidth = (colmun: GroupColumn, orders = ['resizeWidth', 'calcWidth', 'width']) =>
+  colmun[orders[0]] ?? colmun[orders[1]] ?? colmun[orders[2]];
 
 /**
  * 根据Props Column配置计算并设置列宽度
@@ -191,7 +202,7 @@ export const resolveColumnWidth = (
     }
 
     if (/^\d+\.?\d*%$/.test(`${minWidth}`)) {
-      calcMinWidth = Number(minWidth) * availableWidth / 100;
+      calcMinWidth = (Number(minWidth) * availableWidth) / 100;
     }
 
     if (/^\d+\.?\d*px$/i.test(`${minWidth}`)) {
@@ -234,7 +245,7 @@ export const resolveColumnWidth = (
         let perWidth = autoWidth;
         if (avgWidth > 0) {
           const percent = Number(colWidth.replace('%', ''));
-          perWidth = avgWidth * percent / 100;
+          perWidth = (avgWidth * percent) / 100;
         }
 
         resolveColNumberWidth(col, perWidth);
@@ -258,7 +269,7 @@ export const resolveColumnWidth = (
         avgWidth = avgWidth - calcWidth;
       });
     } else {
-      avgColIndexList.forEach((idx) => {
+      avgColIndexList.forEach(idx => {
         const calcWidth = getMinWidth(colgroups[idx], COL_MIN_WIDTH);
         Object.assign(colgroups[idx], { calcWidth });
       });
@@ -329,13 +340,13 @@ export const resolveHeadConfig = (props: TablePropTypes) => {
 };
 
 /**
-   * 获取当前行指定列的内容
-   * @param row 当前行
-   * @param key 指定列名
-   * @param column 列配置
-   * @param index 当前行Index
-   * @returns
-   */
+ * 获取当前行指定列的内容
+ * @param row 当前行
+ * @param key 指定列名
+ * @param column 列配置
+ * @param index 当前行Index
+ * @returns
+ */
 export const getRowText = (row: any, key: string, column: Column) => {
   if (column.type === 'index') {
     return row[TABLE_ROW_ATTRIBUTE.ROW_INDEX] + 1;
@@ -399,12 +410,11 @@ export const getRowKeyNull = (item: any, props: TablePropTypes, index: number) =
   return null;
 };
 
-
-export const hasRootScrollY =  (root, querySelector: string, offsetHeight = 0) => {
+export const hasRootScrollY = (root, querySelector: string, offsetHeight = 0) => {
   if (root) {
     const tableBody = root.querySelector(querySelector) as HTMLElement;
     if (tableBody) {
-      return  tableBody.offsetHeight > (root.offsetHeight - offsetHeight);
+      return tableBody.offsetHeight > root.offsetHeight - offsetHeight;
     }
   }
 
@@ -420,15 +430,15 @@ export const getColumnClass = (column: Column, colIndex = 0, uuid: string = null
 
 export const getElementTextWidth = (element: HTMLElement, text?: string) => {
   /**
-  * Uses canvas.measureText to compute and return the width of the given text of given font in pixels.
-  *
-  * @param {String} text The text to be rendered.
-  * @param {String} font The css font descriptor that text is to be rendered with (e.g. "bold 14px verdana").
-  *
-  * @see https://stackoverflow.com/questions/118241/calculate-text-width-with-javascript/21015393#21015393
-  */
+   * Uses canvas.measureText to compute and return the width of the given text of given font in pixels.
+   *
+   * @param {String} text The text to be rendered.
+   * @param {String} font The css font descriptor that text is to be rendered with (e.g. "bold 14px verdana").
+   *
+   * @see https://stackoverflow.com/questions/118241/calculate-text-width-with-javascript/21015393#21015393
+   */
   function getTextWidth(text, font) {
-  // re-use canvas object for better performance
+    // re-use canvas object for better performance
     const canvas = (getTextWidth as any).canvas || ((getTextWidth as any).canvas = document.createElement('canvas'));
     const context = canvas.getContext('2d');
     context.font = font;
@@ -451,10 +461,12 @@ export const getElementTextWidth = (element: HTMLElement, text?: string) => {
   return getTextWidth(text || element?.innerHTML, getCanvasFont(element));
 };
 
-
 export const isColumnHidden = (settingFields, column, checked) => {
-  const isSettingField = (col: Column) => settingFields.some(field => field.field === resolvePropVal(col, ['field', 'type'], [col]));
-  return isSettingField(column) && checked.length && !checked.includes(resolvePropVal(column, ['field', 'type'], [column]));
+  const isSettingField = (col: Column) =>
+    settingFields.some(field => field.field === resolvePropVal(col, ['field', 'type'], [col]));
+  return (
+    isSettingField(column) && checked.length && !checked.includes(resolvePropVal(column, ['field', 'type'], [column]))
+  );
 };
 
 export const resolveColumnSpan = (column: Column, colIndex: number, row: any, rowIndex: number, key: string) => {
@@ -481,7 +493,7 @@ export const skipThisColumn = (columns: Column[], colIndex: number, row: any, ro
   for (let i = colIndex; i > 0; i--) {
     const colspan = resolveColumnSpan(columns[i], i, row, rowIndex, 'colspan');
     if (colspan > 1) {
-      skip = (colspan - 1 + i) >= colIndex;
+      skip = colspan - 1 + i >= colIndex;
       break;
     }
   }
@@ -500,11 +512,10 @@ export const getSortFn = (column, sortType) => {
 
     return String.prototype.localeCompare.call(val0, val1);
   };
-  const sortFn = typeof (column.sort as any)?.sortFn === 'function'
-    ? (column.sort as any)?.sortFn : sortFn0;
+  const sortFn = typeof (column.sort as any)?.sortFn === 'function' ? (column.sort as any)?.sortFn : sortFn0;
 
-  return  sortType === SORT_OPTION.NULL
-    ? (() => true)
+  return sortType === SORT_OPTION.NULL
+    ? () => true
     : (_a, _b) => sortFn(_a, _b) * (sortType === SORT_OPTION.DESC ? -1 : 1);
 };
 
@@ -549,7 +560,6 @@ export const resolveSort = (sort: string | boolean | any) => {
   return null;
 };
 
-
 export const isRowSelectEnable = (props, { row, index, isCheckAll }) => {
   if (typeof props.isRowSelectEnable === 'boolean') {
     return props.isRowSelectEnable !== false;
@@ -561,7 +571,6 @@ export const isRowSelectEnable = (props, { row, index, isCheckAll }) => {
 
   return true;
 };
-
 
 export const getRowId = (row, index, props) => {
   if (row[TABLE_ROW_ATTRIBUTE.ROW_UID] !== undefined) {

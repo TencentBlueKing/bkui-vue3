@@ -1,37 +1,35 @@
 /*
-* Tencent is pleased to support the open source community by making
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
-*
-* Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
-*
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
-*
-* License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
-*
-* ---------------------------------------------------
-* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
-* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
-* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-* the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-* THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-* IN THE SOFTWARE.
-*/
+ * Tencent is pleased to support the open source community by making
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ *
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ *
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ *
+ * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ *
+ * ---------------------------------------------------
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+ * the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
 
 import { defineComponent } from 'vue';
 
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
-import {
-  type IPropsTableItem,
-} from '../../typings';
+import { type IPropsTableItem } from '../../typings';
 
 import AcceptImage from './demo/accept-image.vue';
 import AcceptZip from './demo/accept-zip.vue';
@@ -276,84 +274,97 @@ export default defineComponent({
     return (
       <div>
         <DemoTitle
-          name="Upload"
-          desc="通过点击或者拖拽上传文件"
-          designLink="https://bkdesign.bk.tencent.com/design/41" />
+          name='Upload'
+          desc='通过点击或者拖拽上传文件'
+          designLink='https://bkdesign.bk.tencent.com/design/41'
+        />
         <DemoBox
-          title="基础用法"
-          desc="上传组件提供图片和文件上传的功能，由 accept 属性来定义允许上传的文件类型，默认为 *"
-          componentName="upload"
-          demoName="/demo/base">
-            <Base />
+          title='基础用法'
+          desc='上传组件提供图片和文件上传的功能，由 accept 属性来定义允许上传的文件类型，默认为 *'
+          componentName='upload'
+          demoName='/demo/base'
+        >
+          <Base />
         </DemoBox>
         <DemoBox
-          title="上传图片"
-          desc="配置 accept 属性，限制用户只允许上传 jpg、jpeg、png 格式的图片"
-          componentName="upload"
-          demoName="/demo/accept-image">
-            <AcceptImage />
+          title='上传图片'
+          desc='配置 accept 属性，限制用户只允许上传 jpg、jpeg、png 格式的图片'
+          componentName='upload'
+          demoName='/demo/accept-image'
+        >
+          <AcceptImage />
         </DemoBox>
         <DemoBox
-          title="上传 zip 文件"
-          desc="配置 accept 属性，限制用户只允许上传 zip 格式的文件"
-          componentName="upload"
-          demoName="/demo/accept-zip">
-            <AcceptZip />
+          title='上传 zip 文件'
+          desc='配置 accept 属性，限制用户只允许上传 zip 格式的文件'
+          componentName='upload'
+          demoName='/demo/accept-zip'
+        >
+          <AcceptZip />
         </DemoBox>
         <DemoBox
-          title="设置文件大小"
-          desc="配置 size 属性，限制上传文件的大小"
-          componentName="upload"
-          demoName="/demo/max-size">
-            <MaxSize />
+          title='设置文件大小'
+          desc='配置 size 属性，限制上传文件的大小'
+          componentName='upload'
+          demoName='/demo/max-size'
+        >
+          <MaxSize />
         </DemoBox>
         <DemoBox
-          title="设置上传文件个数"
-          desc="配置 limit 属性，设置上传文件个数"
-          componentName="upload"
-          demoName="/demo/limit">
-            <Limit />
+          title='设置上传文件个数'
+          desc='配置 limit 属性，设置上传文件个数'
+          componentName='upload'
+          demoName='/demo/limit'
+        >
+          <Limit />
         </DemoBox>
         <DemoBox
-          title="点击按钮上传"
-          desc="设置 theme 属性为 button"
-          componentName="upload"
-          demoName="/demo/theme-button">
-            <ThemeButton />
+          title='点击按钮上传'
+          desc='设置 theme 属性为 button'
+          componentName='upload'
+          demoName='/demo/theme-button'
+        >
+          <ThemeButton />
         </DemoBox>
         <DemoBox
-          title="照片墙"
-          desc="设置 theme 属性为 picture，限制文件类型为图片类型，比如：png，jpeg，jpg"
-          componentName="upload"
-          demoName="/demo/theme-picture">
-            <ThemePicture />
+          title='照片墙'
+          desc='设置 theme 属性为 picture，限制文件类型为图片类型，比如：png，jpeg，jpg'
+          componentName='upload'
+          demoName='/demo/theme-picture'
+        >
+          <ThemePicture />
         </DemoBox>
         <DemoBox
-          title="头像上传"
-          desc="设置 theme 属性为 picture，multiple 属性设置为 false，并限制文件类型为图片类型，比如：png，jpeg，jpg"
-          componentName="upload"
-          demoName="/demo/single-picture">
-            <SinglePicture />
+          title='头像上传'
+          desc='设置 theme 属性为 picture，multiple 属性设置为 false，并限制文件类型为图片类型，比如：png，jpeg，jpg'
+          componentName='upload'
+          demoName='/demo/single-picture'
+        >
+          <SinglePicture />
         </DemoBox>
         <DemoBox
-          title="自定义文件列表项"
-          desc="使用 slot 自定义文件列表项"
-          componentName="upload"
-          demoName="/demo/slots-file">
-            <SlotsFile />
+          title='自定义文件列表项'
+          desc='使用 slot 自定义文件列表项'
+          componentName='upload'
+          demoName='/demo/slots-file'
+        >
+          <SlotsFile />
         </DemoBox>
         <PropsBox
-          title="Upload 属性"
-          subtitle=""
-          propsData={uploadProps}/>
+          title='Upload 属性'
+          subtitle=''
+          propsData={uploadProps}
+        />
         <PropsBox
-          title="Upload 事件"
-          subtitle=""
-          propsData={uploadEvents}/>
+          title='Upload 事件'
+          subtitle=''
+          propsData={uploadEvents}
+        />
         <PropsBox
-          title="Upload 插槽"
-          subtitle=""
-          propsData={uploadSlots}/>
+          title='Upload 插槽'
+          subtitle=''
+          propsData={uploadSlots}
+        />
       </div>
     );
   },

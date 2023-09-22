@@ -1,28 +1,28 @@
 /*
-* Tencent is pleased to support the open source community by making
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
-*
-* Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
-*
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
-*
-* License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
-*
-* ---------------------------------------------------
-* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
-* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
-* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-* the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-* THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-* IN THE SOFTWARE.
-*/
+ * Tencent is pleased to support the open source community by making
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ *
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ *
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ *
+ * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ *
+ * ---------------------------------------------------
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+ * the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
 import { defineComponent, ref, watch } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
@@ -34,9 +34,9 @@ import { Column, IColumnType, ISortShape } from '../props';
 import { getNextSortType, getSortFn, resolveSort } from '../utils';
 
 type IHeadSortPropType = {
-  column: Column,
-  defaultSort: SORT_OPTION,
-  active: boolean
+  column: Column;
+  defaultSort: SORT_OPTION;
+  active: boolean;
 };
 
 export default defineComponent({
@@ -53,9 +53,12 @@ export default defineComponent({
     const defSort = (props.column?.sort as ISortShape)?.value || props.defaultSort || SORT_OPTION.NULL;
     const sortType = ref(defSort);
 
-    watch(() => [props.defaultSort], ([val]) => {
-      sortType.value = val;
-    });
+    watch(
+      () => [props.defaultSort],
+      ([val]) => {
+        sortType.value = val;
+      },
+    );
 
     /**
      * 点击排序事件
@@ -86,17 +89,18 @@ export default defineComponent({
       emit('change', execFn, currentSort);
     };
     return () => (
-      <span
-        class={resolveClassName('head-cell-sort')}>
-      <AngleDownFill
-        class={['sort-action', 'sort-asc', sortType.value === SORT_OPTION.ASC ? 'active' : '']}
-        style="align-items: flex-end;"
-        onClick={(e: MouseEvent) => handleSortClick(e, SORT_OPTION.ASC)}/>
-      <AngleUpFill
-        class={['sort-action', 'sort-desc', sortType.value === SORT_OPTION.DESC ? 'active' : '']}
-        style="align-items: flex-start;"
-        onClick={(e: MouseEvent) => handleSortClick(e, SORT_OPTION.DESC)}/>
-    </span>
+      <span class={resolveClassName('head-cell-sort')}>
+        <AngleDownFill
+          class={['sort-action', 'sort-asc', sortType.value === SORT_OPTION.ASC ? 'active' : '']}
+          style='align-items: flex-end;'
+          onClick={(e: MouseEvent) => handleSortClick(e, SORT_OPTION.ASC)}
+        />
+        <AngleUpFill
+          class={['sort-action', 'sort-desc', sortType.value === SORT_OPTION.DESC ? 'active' : '']}
+          style='align-items: flex-start;'
+          onClick={(e: MouseEvent) => handleSortClick(e, SORT_OPTION.DESC)}
+        />
+      </span>
     );
   },
 });

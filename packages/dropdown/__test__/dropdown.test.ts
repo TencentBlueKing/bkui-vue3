@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { mount } from '@vue/test-utils';
 
@@ -32,14 +32,15 @@ import BkDropdownMenu from '../src/dropdown-menu';
 const SLEEP_TIME = 50;
 const sleep = (time = SLEEP_TIME) => new Promise(resolve => setTimeout(resolve, time));
 
-const Mount = async (config: any) => await mount({
-  components: {
-    [BkDropdown.name]: BkDropdown,
-    [BkDropdownMenu.name]: BkDropdownMenu,
-    [BkDropdownItem.name]: BkDropdownItem,
-  },
-  ...config,
-});
+const Mount = async (config: any) =>
+  await mount({
+    components: {
+      [BkDropdown.name]: BkDropdown,
+      [BkDropdownMenu.name]: BkDropdownMenu,
+      [BkDropdownItem.name]: BkDropdownItem,
+    },
+    ...config,
+  });
 
 const DROPDOWN_TEXT = 'test dropdown';
 

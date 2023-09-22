@@ -1,28 +1,28 @@
 /*
-* Tencent is pleased to support the open source community by making
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
-*
-* Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
-*
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
-*
-* License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
-*
-* ---------------------------------------------------
-* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
-* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
-* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-* the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-* THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-* IN THE SOFTWARE.
-*/
+ * Tencent is pleased to support the open source community by making
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ *
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ *
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ *
+ * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ *
+ * ---------------------------------------------------
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+ * the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
 
 // import BtnDemo from './btn-demo.vue';
 export const DATA_TABLE = [
@@ -76,7 +76,7 @@ export const DATA_COLUMNS = [
     width: 50,
     minWidth: 80,
     sort: {
-      value: 'desc'
+      value: 'desc',
     },
     className: 'custom-class',
   },
@@ -89,15 +89,19 @@ export const DATA_COLUMNS = [
     explain: {
       content: '当表格中的字段或数据需要做解释说明时，可增加 [下划线] 提示，hover 可查看解释说明的 tooltips',
       head: '当表格中的字段或数据需要做解释说明时，可增加 [下划线] 提示，hover 可查看解释说明的 tooltips',
-    }
+    },
   },
   {
     label: '来源',
     field: 'source',
     width: 80,
     filter: {
-      list: [{ text: 'QQ', value: 'QQ' }, { text: '微信', value: '微信' }, { text: 'Email', value: 'Email' }],
-      checked: ['QQ']
+      list: [
+        { text: 'QQ', value: 'QQ' },
+        { text: '微信', value: '微信' },
+        { text: 'Email', value: 'Email' },
+      ],
+      checked: ['QQ'],
     },
   },
   {
@@ -186,15 +190,14 @@ export const DATA_EXPAND_COLUMNS = [
  *
  */
 export const DATA_FIX_TABLE = [
-  ...(new Array(10).fill('')
-    .map((_, index) => ({
-      ip: `192.168.0.${index} 192.168.${index}.255 ${index}.168.255.255 192.${index}.0.255`,
-      source: `source ${index}`,
-      status: '创建中',
-      create_by: `user ${index}`,
-      create_time: `2018-05-25 15:02:${index}`,
-      update_time: `2018-05-25 15:02:${index}`,
-    }))),
+  ...new Array(10).fill('').map((_, index) => ({
+    ip: `192.168.0.${index} 192.168.${index}.255 ${index}.168.255.255 192.${index}.0.255`,
+    source: `source ${index}`,
+    status: '创建中',
+    create_by: `user ${index}`,
+    create_time: `2018-05-25 15:02:${index}`,
+    update_time: `2018-05-25 15:02:${index}`,
+  })),
 ];
 
 /**
@@ -251,7 +254,7 @@ export const DATA_FIX_COLUMNS = [
   },
   {
     label: '操作',
-    render: ({ row }) => <bk-input v-model={ row.status }></bk-input>,
+    render: ({ row }) => <bk-input v-model={row.status}></bk-input>,
     width: 180,
     fixed: 'right',
   },
@@ -262,40 +265,46 @@ export const DATA_FIX_COLUMNS = [
  *
  *
  */
-export const DATE_COL_SPAN = [{
-  label: '序号',
-  type: 'index',
-  sort: {
-    value: 'asc',
+export const DATE_COL_SPAN = [
+  {
+    label: '序号',
+    type: 'index',
+    sort: {
+      value: 'asc',
+    },
+    width: 50,
+    minWidth: 80,
   },
-  width: 50,
-  minWidth: 80,
-},
-{
-  label: '名称/内网IP',
-  field: 'ip',
-  width: 100,
-  colspan: 2,
-  showOverflowTooltip: {
-    mode: 'auto',
+  {
+    label: '名称/内网IP',
+    field: 'ip',
+    width: 100,
+    colspan: 2,
+    showOverflowTooltip: {
+      mode: 'auto',
+    },
   },
-},
-{
-  label: '来源',
-  field: 'source',
-  width: 80,
-  filter: {
-    list: [{ text: 'Resolving deltas: 100% (16/16), completed with 15 local objects', value: 'QQ' }, { text: 'create mode 100644 site/views/search-select/value-behavior.vue', value: '微信' }, { text: 'Writing objects: 100% (19/19), 2.19 KiB | 1.09 MiB/s, done.', value: 'Email' }],
+  {
+    label: '来源',
+    field: 'source',
+    width: 80,
+    filter: {
+      list: [
+        { text: 'Resolving deltas: 100% (16/16), completed with 15 local objects', value: 'QQ' },
+        { text: 'create mode 100644 site/views/search-select/value-behavior.vue', value: '微信' },
+        { text: 'Writing objects: 100% (19/19), 2.19 KiB | 1.09 MiB/s, done.', value: 'Email' },
+      ],
+    },
   },
-},
-{
-  label: '创建时间',
-  field: 'create_time',
-  rowspan: 3,
-  sort: 'custom',
-},
-{
-  label: (column, index) => `状态-${index}-${column.field}`,
-  field: 'status',
-  sort: true,
-}];
+  {
+    label: '创建时间',
+    field: 'create_time',
+    rowspan: 3,
+    sort: 'custom',
+  },
+  {
+    label: (column, index) => `状态-${index}-${column.field}`,
+    field: 'status',
+    sort: true,
+  },
+];

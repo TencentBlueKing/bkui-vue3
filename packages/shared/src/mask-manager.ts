@@ -33,7 +33,7 @@ DEFAULT_MASK_UUID.prototype.def_val = `__bk_mask_${random(16)}`;
 
 const MaskEventMap = new WeakMap();
 
-const getMaskEvent = (mask) => {
+const getMaskEvent = mask => {
   if (MaskEventMap.has(mask)) {
     return MaskEventMap.get(mask);
   }
@@ -174,12 +174,7 @@ export class BkMaskManager {
    * @param maskAttrTag 遮罩DOM唯一标志，支持自定义和 auto
    */
   constructor(config?: BkMaskManagerConfig) {
-    const {
-      multiInstance = false,
-      maskAttrTag = 'auto',
-      parentNode = document.body,
-      maskStyle = {},
-    } = config || {};
+    const { multiInstance = false, maskAttrTag = 'auto', parentNode = document.body, maskStyle = {} } = config || {};
     this.parentNode = parentNode || document;
     this.maskAttrTag = maskAttrTag;
     this.activeInstance = undefined;
@@ -195,11 +190,7 @@ export class BkMaskManager {
   }
 
   public setOption(option: BkMaskManagerConfig) {
-    const {
-      parentNode = document.body,
-      maskStyle = {},
-      maskAttrTag = this.maskAttrTag,
-    } = option || {};
+    const { parentNode = document.body, maskStyle = {}, maskAttrTag = this.maskAttrTag } = option || {};
     this.parentNode = parentNode || document;
     this.setMaskStyle(Object.assign({}, this.maskStyle, maskStyle));
     this.uniqueMaskAttrTag = this.getMaskAttrTag(maskAttrTag);
@@ -236,9 +227,7 @@ export class BkMaskManager {
   ) {
     const uid = uuid ?? random(16);
     // @ts-ignore
-    const localZIndex: number = /-?\d+/.test(`${zIndex}`)
-      ? zIndex
-      : bkZIndexManager.getModalNextIndex();
+    const localZIndex: number = /-?\d+/.test(`${zIndex}`) ? zIndex : bkZIndexManager.getModalNextIndex();
     let style = Object.assign({}, this.maskStyle, appendStyle || {});
 
     /**
@@ -360,8 +349,7 @@ export class BkMaskManager {
       const { instance, isExist } = this.getMask();
       this.mask = instance;
 
-      !isExist
-        && this.setMaskStyle(Object.assign({}, this.maskStyle, maskStyle));
+      !isExist && this.setMaskStyle(Object.assign({}, this.maskStyle, maskStyle));
     }
   }
 
@@ -379,11 +367,7 @@ export class BkMaskManager {
     if (!div) {
       isExist = false;
       div = this.createMask();
-      div.addEventListener(
-        'click',
-        e => this.handleMaskClick(e),
-        true,
-      );
+      div.addEventListener('click', e => this.handleMaskClick(e), true);
     }
 
     return {
@@ -397,7 +381,6 @@ export class BkMaskManager {
       setMaskEvent(this.mask, onMaskClick, [], content, instanceId);
     }
   }
-
 
   private handleMaskClick(e) {
     if (e.target !== this.mask) {
@@ -446,12 +429,7 @@ export class BkMaskManager {
    * @returns string 返回唯一标识
    */
   private getMaskAttrTag(tag: string) {
-    if (
-      /^(auto|\s+)$/i.test(tag)
-      || tag === null
-      || tag === undefined
-      || tag === ''
-    ) {
+    if (/^(auto|\s+)$/i.test(tag) || tag === null || tag === undefined || tag === '') {
       if (!bkMaskMaker.getMaskId(this.parentNode)) {
         bkMaskMaker.setMaskId(this.parentNode, `__bk_mask_${random(16)}`);
       }

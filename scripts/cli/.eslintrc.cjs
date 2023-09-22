@@ -22,7 +22,8 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/module.exports = {
+*/
+module.exports = {
   root: true,
   extends: [
     'eslint-config-tencent',
@@ -34,18 +35,67 @@
     tsconfigRootDir: __dirname,
     project: 'tsconfig.json',
   },
-  plugins: [
-    'codecc',
-    'simple-import-sort',
-  ],
+  plugins: ['codecc', 'simple-import-sort', 'prettier'],
   env: {
     es6: true,
     node: true,
+    jest: true,
+    browser: true,
   },
   overrides: [
     {
+      files: ['*.js'],
+      parser: '@typescript-eslint/parser',
+      extends: ['plugin:prettier/recommended'],
+      parserOptions: {
+        tsconfigRootDir: __dirname,
+        project: './tsconfig.json',
+      },
+      rules: {
+        '@typescript-eslint/no-misused-promises': [
+          'error',
+          {
+            checksVoidReturn: false,
+            checksVoidReturn: false,
+            checksSpreads: false,
+          },
+        ],
+        'max-len': [
+          'error',
+          {
+            code: 120,
+            ignoreStrings: true,
+            ignoreUrls: true,
+            ignoreRegExpLiterals: true,
+            ignoreTemplateLiterals: true,
+          },
+        ],
+        'prettier/prettier': 'error',
+      },
+    },
+    {
       files: ['*.ts', '*.tsx'],
-      extends: ['eslint-config-tencent/ts'],
+      extends: ['eslint-config-tencent/ts', 'plugin:prettier/recommended'],
+      rules: {
+        indent: 'off',
+        '@typescript-eslint/indent': 'off',
+        'prettier/prettier': 'error',
+        '@typescript-eslint/no-misused-promises': [
+          'error',
+          {
+            checksVoidReturn: false,
+            checksVoidReturn: false,
+            checksSpreads: false,
+          },
+        ],
+      },
+      parser: '@typescript-eslint/parser',
+      parserOptions: {
+        ecmaVersion: 2018,
+        tsconfigRootDir: __dirname,
+        sourceType: 'module',
+        project: './tsconfig.json',
+      },
     },
     {
       files: [
@@ -109,6 +159,6 @@
         ignoreRegExpLiterals: true,
         ignoreTemplateLiterals: true,
       },
-    ],
+    ]
   },
 };

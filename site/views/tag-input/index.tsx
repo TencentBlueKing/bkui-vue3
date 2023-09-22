@@ -1,28 +1,28 @@
 /*
-* Tencent is pleased to support the open source community by making
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
-*
-* Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
-*
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
-*
-* License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
-*
-* ---------------------------------------------------
-* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
-* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
-* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-* the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-* THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-* IN THE SOFTWARE.
-*/
+ * Tencent is pleased to support the open source community by making
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ *
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ *
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ *
+ * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ *
+ * ---------------------------------------------------
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+ * the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
 
 import { defineComponent } from 'vue';
 
@@ -254,99 +254,118 @@ export default defineComponent({
   render() {
     return (
       <div>
-        <DemoTitle name="TagInput 标签输入框" desc="常用于对标签列表的填写、关键字的输入" />
+        <DemoTitle
+          name='TagInput 标签输入框'
+          desc='常用于对标签列表的填写、关键字的输入'
+        />
         <DemoBox
-          title="基础用法"
-          desc="通过 bk-tag-input 来使用组件，其中 list 属性为下拉选择列表选项"
-          componentName="tag-input"
-          demoName="base-demo">
-            <BaseDemo />
+          title='基础用法'
+          desc='通过 bk-tag-input 来使用组件，其中 list 属性为下拉选择列表选项'
+          componentName='tag-input'
+          demoName='base-demo'
+        >
+          <BaseDemo />
         </DemoBox>
         <DemoBox
-          title="触发方式"
-          desc="配置 trigger 来设置下拉框的显示方式，有 focus（获焦点时显示）, search（搜索时显示）两种"
-          componentName="tag-input"
-          demoName="trigger-demo">
-            <TriggerDemo />
+          title='触发方式'
+          desc='配置 trigger 来设置下拉框的显示方式，有 focus（获焦点时显示）, search（搜索时显示）两种'
+          componentName='tag-input'
+          demoName='trigger-demo'
+        >
+          <TriggerDemo />
         </DemoBox>
         <DemoBox
-          title="hover 时才显示 clear 按钮"
-          desc="设置 show-clear-only-hover 为 true，则其 clear 按钮在 hover 时才会显示"
-          componentName="tag-input"
-          demoName="clear-demo">
-            <ClearDemo />
+          title='hover 时才显示 clear 按钮'
+          desc='设置 show-clear-only-hover 为 true，则其 clear 按钮在 hover 时才会显示'
+          componentName='tag-input'
+          demoName='clear-demo'
+        >
+          <ClearDemo />
         </DemoBox>
         <DemoBox
-          title="自定义标签"
-          desc="设置 allow-create 属性来输入自定义标签，按 Enter 键结束；设置 has-delete-icon 属性可显示标签删除按钮"
-          componentName="tag-input"
-          demoName="create-demo">
-            <CreateDemo />
+          title='自定义标签'
+          desc='设置 allow-create 属性来输入自定义标签，按 Enter 键结束；设置 has-delete-icon 属性可显示标签删除按钮'
+          componentName='tag-input'
+          demoName='create-demo'
+        >
+          <CreateDemo />
         </DemoBox>
         <DemoBox
-          title="失去焦点自动匹配"
-          desc="设置 allow-auto-match 属性当输入内容时失去焦点后，如果完全匹配则自动选中，如果设置 allow-create 属性则创建标签"
-          componentName="tag-input"
-          demoName="match-demo">
-            <MatchDemo />
+          title='失去焦点自动匹配'
+          desc='设置 allow-auto-match 属性当输入内容时失去焦点后，如果完全匹配则自动选中，如果设置 allow-create 属性则创建标签'
+          componentName='tag-input'
+          demoName='match-demo'
+        >
+          <MatchDemo />
         </DemoBox>
         <DemoBox
-          title="更多自定义配置"
-          desc="设置 save-key 属性定义选项的保存 key 值；设置 display-key 属性定义选项展示名称；search-key 属性定义多字段索引；tpl 属性可自定义下拉列表展示"
-          componentName="tag-input"
-          demoName="more-demo">
-            <MoreDemo />
+          title='更多自定义配置'
+          desc='设置 save-key 属性定义选项的保存 key 值；设置 display-key 属性定义选项展示名称；search-key 属性定义多字段索引；tpl 属性可自定义下拉列表展示'
+          componentName='tag-input'
+          demoName='more-demo'
+        >
+          <MoreDemo />
         </DemoBox>
         <DemoBox
-          title="分组展示"
-          desc="配置 use-group 来启用分组功能， 数据源必须加上 children 的配置"
-          componentName="tag-input"
-          demoName="group-demo">
-            <GroupDemo />
+          title='分组展示'
+          desc='配置 use-group 来启用分组功能， 数据源必须加上 children 的配置'
+          componentName='tag-input'
+          demoName='group-demo'
+        >
+          <GroupDemo />
         </DemoBox>
         <DemoBox
-          title="设置选中标签 tooltips"
-          desc="配置 tooltip-key 定义选中标签 hover 时的显示文案"
-          componentName="tag-input"
-          demoName="tooltips-demo">
-            <TooltipsDemo />
+          title='设置选中标签 tooltips'
+          desc='配置 tooltip-key 定义选中标签 hover 时的显示文案'
+          componentName='tag-input'
+          demoName='tooltips-demo'
+        >
+          <TooltipsDemo />
         </DemoBox>
         <DemoBox
-          title="列表项禁用"
-          desc="设置列表数据源 disabled 属性来禁用列表中的某些项，禁止用户选择"
-          componentName="tag-input"
-          demoName="list-disabled-demo">
-            <ListDisabledDemo />
+          title='列表项禁用'
+          desc='设置列表数据源 disabled 属性来禁用列表中的某些项，禁止用户选择'
+          componentName='tag-input'
+          demoName='list-disabled-demo'
+        >
+          <ListDisabledDemo />
         </DemoBox>
         <DemoBox
-          title="组件禁用状态"
-          desc="设置 disabled 属性来禁用组件"
-          componentName="tag-input"
-          demoName="disabled-demo">
-            <DisabledDemo />
+          title='组件禁用状态'
+          desc='设置 disabled 属性来禁用组件'
+          componentName='tag-input'
+          demoName='disabled-demo'
+        >
+          <DisabledDemo />
         </DemoBox>
         <DemoBox
-          title="批量输入"
-          desc="粘贴内容默认按“;”来分割内容，设置 paste-fn 方法可以自定义粘贴输出内容"
-          componentName="tag-input"
-          demoName="paste-demo">
-            <PasteDemo />
+          title='批量输入'
+          desc='粘贴内容默认按“;”来分割内容，设置 paste-fn 方法可以自定义粘贴输出内容'
+          componentName='tag-input'
+          demoName='paste-demo'
+        >
+          <PasteDemo />
         </DemoBox>
         <DemoBox
-          title="综合例子(多选)"
-          desc="设置 tpl 方法自定义下拉列表展示；设置 tagTpl 方法自定义标签展示，通过 max-data 属性限制最大可选数量"
-          componentName="tag-input"
-          demoName="example-demo">
-            <ExampleDemo />
+          title='综合例子(多选)'
+          desc='设置 tpl 方法自定义下拉列表展示；设置 tagTpl 方法自定义标签展示，通过 max-data 属性限制最大可选数量'
+          componentName='tag-input'
+          demoName='example-demo'
+        >
+          <ExampleDemo />
         </DemoBox>
         <DemoBox
-          title="综合例子(单选)"
-          desc="设置 filter-callback 定义过滤方法；设置 create-tag-validator 定义创建标签校验方法"
-          componentName="tag-input"
-          demoName="single-demo">
-            <SingleDemo />
+          title='综合例子(单选)'
+          desc='设置 filter-callback 定义过滤方法；设置 create-tag-validator 定义创建标签校验方法'
+          componentName='tag-input'
+          demoName='single-demo'
+        >
+          <SingleDemo />
         </DemoBox>
-        <PropsBox propsData={propsJson} subtitle="" />
+        <PropsBox
+          propsData={propsJson}
+          subtitle=''
+        />
       </div>
     );
   },

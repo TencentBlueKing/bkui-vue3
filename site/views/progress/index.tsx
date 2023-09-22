@@ -1,28 +1,28 @@
 /*
-* Tencent is pleased to support the open source community by making
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
-*
-* Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
-*
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
-*
-* License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
-*
-* ---------------------------------------------------
-* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
-* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
-* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-* the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-* THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-* IN THE SOFTWARE.
-*/
+ * Tencent is pleased to support the open source community by making
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ *
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ *
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ *
+ * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ *
+ * ---------------------------------------------------
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+ * the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
 
 import { defineComponent, ref } from 'vue';
 
@@ -133,7 +133,7 @@ const progressPropsJson: IPropsTableItem[] = [
   {
     name: 'title-style',
     type: 'Object',
-    default: '{ fontSize: \'16px\', verticalAlign: \'middle\' }',
+    default: "{ fontSize: '16px', verticalAlign: 'middle' }",
     desc: '设置文案样式',
     optional: [],
   },
@@ -174,71 +174,80 @@ export default defineComponent({
     return (
       <div>
         <DemoTitle
-          name="Progress 进度条"
-          desc="进度条"
-          designLink="https://bkdesign.bk.tencent.com/design/141"/>
+          name='Progress 进度条'
+          desc='进度条'
+          designLink='https://bkdesign.bk.tencent.com/design/141'
+        />
 
         <DemoBox
-          title="基础用法"
-          subtitle="修改进度条主题"
-          desc="percent 是 0 到 100 之间的数值，提供 4 种主题，由 theme 属性来定义，可选的主题有 primary, warning, success, danger，默认为 primary, 由 color 属性来自定义颜色值。"
-          componentName="progress"
-          demoName="base-demo">
+          title='基础用法'
+          subtitle='修改进度条主题'
+          desc='percent 是 0 到 100 之间的数值，提供 4 种主题，由 theme 属性来定义，可选的主题有 primary, warning, success, danger，默认为 primary, 由 color 属性来自定义颜色值。'
+          componentName='progress'
+          demoName='base-demo'
+        >
           <BaseDemo></BaseDemo>
         </DemoBox>
 
         <DemoBox
-          title="大小设置"
-          subtitle=""
-          desc="可以使用 size 属性来配置进度条的尺寸，可接受 small large，也可配置strokeWidth线宽"
-          componentName="progress"
-          demoName="size-demo">
+          title='大小设置'
+          subtitle=''
+          desc='可以使用 size 属性来配置进度条的尺寸，可接受 small large，也可配置strokeWidth线宽'
+          componentName='progress'
+          demoName='size-demo'
+        >
           <SizeDemo></SizeDemo>
         </DemoBox>
 
         <DemoBox
-          title="文案内显"
-          subtitle=""
-          desc="Progress 组件可通过 show-text 来控制文案是否显示， 通过 text-inside 属性来将进度条描述置于进度条内部, titleStyle 属性来调整百分数显示的样式 format 过滤文案展示"
-          componentName="progress"
-          demoName="text-demo">
+          title='文案内显'
+          subtitle=''
+          desc='Progress 组件可通过 show-text 来控制文案是否显示， 通过 text-inside 属性来将进度条描述置于进度条内部, titleStyle 属性来调整百分数显示的样式 format 过滤文案展示'
+          componentName='progress'
+          demoName='text-demo'
+        >
           <TextDemo></TextDemo>
         </DemoBox>
 
         <DemoBox
-          title="动态值"
-          subtitle=""
-          desc="通过改变 percent 改变进度"
-          componentName="progress"
-          demoName="change-demo">
+          title='动态值'
+          subtitle=''
+          desc='通过改变 percent 改变进度'
+          componentName='progress'
+          demoName='change-demo'
+        >
           <ChangeDemo></ChangeDemo>
         </DemoBox>
 
         <DemoBox
-          title="环形/仪表盘"
-          subtitle=""
-          desc="通过改变 type 修改进度条形状， line 默认线性 circle 圆形 dashboard 仪表盘"
-          componentName="progress"
-          demoName="type-demo">
+          title='环形/仪表盘'
+          subtitle=''
+          desc='通过改变 type 修改进度条形状， line 默认线性 circle 圆形 dashboard 仪表盘'
+          componentName='progress'
+          demoName='type-demo'
+        >
           <TypeDemo></TypeDemo>
         </DemoBox>
 
         <DemoBox
-          title="环形/仪表盘大小颜色配置"
-          subtitle=""
-          desc="通过改变 color 修改进度颜色，bgColor修改背景颜色 width 修改大小 strokeWidth修改线宽"
-          componentName="progress"
-          demoName="type-size-demo">
+          title='环形/仪表盘大小颜色配置'
+          subtitle=''
+          desc='通过改变 color 修改进度颜色，bgColor修改背景颜色 width 修改大小 strokeWidth修改线宽'
+          componentName='progress'
+          demoName='type-size-demo'
+        >
           <TypeSizeDemo></TypeSizeDemo>
         </DemoBox>
         <PropsBox
-          title="Progress 属性"
-          subtitle=""
-          propsData={progressPropsJson}/>
+          title='Progress 属性'
+          subtitle=''
+          propsData={progressPropsJson}
+        />
         <PropsBox
-          subtitle="可以自定义文案"
-          title="Progress 插槽"
-          propsData={progressSlotJson}/>
+          subtitle='可以自定义文案'
+          title='Progress 插槽'
+          propsData={progressSlotJson}
+        />
       </div>
     );
   },
