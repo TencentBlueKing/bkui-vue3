@@ -93,9 +93,10 @@ export default defineComponent({
     return (
       <div ref="boxRef" class="position-relative">
         <BKPopover
-          disabled={this.type === 'title' || !this.isShowTips}
           placement={this.placement}
           boundary={this.boundary || document.body}
+          {...props.popoverOptions}
+          disabled={this.type === 'title' || !this.isShowTips}
         >
           {{
             default: () => (
