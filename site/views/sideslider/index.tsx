@@ -1,28 +1,28 @@
 /*
-* Tencent is pleased to support the open source community by making
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
-*
-* Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
-*
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
-*
-* License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
-*
-* ---------------------------------------------------
-* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
-* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
-* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-* the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-* THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-* IN THE SOFTWARE.
-*/
+ * Tencent is pleased to support the open source community by making
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ *
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ *
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ *
+ * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ *
+ * ---------------------------------------------------
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+ * the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
 
 import { defineComponent } from 'vue';
 
@@ -159,39 +159,55 @@ const SideSliserSlotJson: IPropsTableItem[] = [
 export default defineComponent({
   render() {
     return (
-    <div>
-      <DemoTitle
-        name="Sideslider侧栏"
-        desc="Sideslider组件， 提供一个从两侧滑入的组件，供用户填写/查看更多信息。"
-        link="https://www.google.com.hk/"/>
-      <DemoBox
-        title="基础用法"
-        subtitle=""
-        desc="使用默认配置的组件"
-        componentName="sideslider"
-        demoName="base-demo">
-        <BaseDemo></BaseDemo>
-      </DemoBox>
-      <DemoBox
-        title="自定义标题和内容"
-        subtitle=""
-        desc="配置title参数和添加slot"
-        componentName="sideslider"
-        demoName="title-demo">
-        <TitleDemo></TitleDemo>
-      </DemoBox>
-      <DemoBox
-        title="自定义footer"
-        subtitle=""
-        desc="配置footer插槽，footer插槽内容会随着高度的变化而变化"
-        componentName="sideslider"
-        demoName="footer-demo">
-        <FooterDemo></FooterDemo>
-      </DemoBox>
-      <PropsBox title="Sideslider 属性" subtitle="" propsData={SideSliserPropsJson}/>
-      <PropsBox title="Sideslider 事件" subtitle="" propsData={SideSliserEventJson}/>
-      <PropsBox title="Sideslider 插槽" subtitle="" propsData={SideSliserSlotJson}/>
-    </div>
+      <div>
+        <DemoTitle
+          name='Sideslider侧栏'
+          desc='Sideslider组件， 提供一个从两侧滑入的组件，供用户填写/查看更多信息。'
+          link='https://www.google.com.hk/'
+        />
+        <DemoBox
+          title='基础用法'
+          subtitle=''
+          desc='使用默认配置的组件'
+          componentName='sideslider'
+          demoName='base-demo'
+        >
+          <BaseDemo></BaseDemo>
+        </DemoBox>
+        <DemoBox
+          title='自定义标题和内容'
+          subtitle=''
+          desc='配置title参数和添加slot'
+          componentName='sideslider'
+          demoName='title-demo'
+        >
+          <TitleDemo></TitleDemo>
+        </DemoBox>
+        <DemoBox
+          title='自定义footer'
+          subtitle=''
+          desc='配置footer插槽，footer插槽内容会随着高度的变化而变化'
+          componentName='sideslider'
+          demoName='footer-demo'
+        >
+          <FooterDemo></FooterDemo>
+        </DemoBox>
+        <PropsBox
+          title='Sideslider 属性'
+          subtitle=''
+          propsData={SideSliserPropsJson}
+        />
+        <PropsBox
+          title='Sideslider 事件'
+          subtitle=''
+          propsData={SideSliserEventJson}
+        />
+        <PropsBox
+          title='Sideslider 插槽'
+          subtitle=''
+          propsData={SideSliserSlotJson}
+        />
+      </div>
     );
   },
 });

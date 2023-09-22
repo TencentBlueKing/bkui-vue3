@@ -24,7 +24,4 @@
  * IN THE SOFTWARE.
  */
 
-
-describe('column.tsx', () => {
-
-});
+describe('column.tsx', () => {});

@@ -24,7 +24,6 @@
  * IN THE SOFTWARE.
  */
 
-
 import { mount } from '@vue/test-utils';
 
 import BKTable from '../src/table';
@@ -113,7 +112,7 @@ const columns = [
   },
 ];
 describe('table.tsx', () => {
-  it('renders single active when passed', (done) => {
+  it('renders single active when passed', done => {
     const containerHeight = 500;
     const wrapper = mount(BKTable, {
       props: {
@@ -121,7 +120,6 @@ describe('table.tsx', () => {
         columns,
         activeColumn: [0],
         columnPick: 'single',
-
       },
     });
     jest.spyOn(wrapper.vm.$el, 'offsetHeight', 'get').mockImplementation(() => containerHeight);

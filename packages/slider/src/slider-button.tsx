@@ -33,21 +33,20 @@ import { PlacementEnum } from '@bkui-vue/shared';
 import { off, on } from './slider';
 
 interface Params {
-  vertical: boolean,
-  showTip: boolean,
-  disable: boolean,
-  maxValue: number,
-  minValue: number,
-  step: number,
-  precision: number,
-  showButtonLabel: boolean,
-  formatterButtonLabel: Function,
-  showIntervalLabel: boolean,
-  customContent: { [propName: string]: { label?: string, tip?: string } },
-  sliderSize: number,
-  formatterTipLabel: Function,
+  vertical: boolean;
+  showTip: boolean;
+  disable: boolean;
+  maxValue: number;
+  minValue: number;
+  step: number;
+  precision: number;
+  showButtonLabel: boolean;
+  formatterButtonLabel: Function;
+  showIntervalLabel: boolean;
+  customContent: { [propName: string]: { label?: string; tip?: string } };
+  sliderSize: number;
+  formatterTipLabel: Function;
 }
-
 export default defineComponent({
   name: 'SliderButton',
   props: {
@@ -80,9 +79,12 @@ export default defineComponent({
       }
       return { content: '', placement };
     });
-    const currentPosition = computed(() => `${(props.modelValue - props.params.minValue) / (props.params.maxValue - props.params.minValue) * 100}%`);
-    const wrapperStyle = computed(() => (props.params.vertical
-      ? { bottom: currentPosition.value } : { left: currentPosition.value }));
+    const currentPosition = computed(
+      () => `${((props.modelValue - props.params.minValue) / (props.params.maxValue - props.params.minValue)) * 100}%`,
+    );
+    const wrapperStyle = computed(() =>
+      props.params.vertical ? { bottom: currentPosition.value } : { left: currentPosition.value },
+    );
     const buttonLabel = computed(() => props.params.formatterButtonLabel(props.modelValue));
 
     const onButtonDown = (event: MouseEvent) => {
@@ -112,10 +114,10 @@ export default defineComponent({
         let diff = 0;
         if (props.params.vertical) {
           currentY.value = event.clientY;
-          diff = (startY.value - currentY.value) / props.params.sliderSize * 100;
+          diff = ((startY.value - currentY.value) / props.params.sliderSize) * 100;
         } else {
           currentX.value = event.clientX;
-          diff = (currentX.value - startX.value) / props.params.sliderSize * 100;
+          diff = ((currentX.value - startX.value) / props.params.sliderSize) * 100;
         }
         newPosition.value = startPosition.value + diff;
         setPosition(newPosition.value);
@@ -146,8 +148,8 @@ export default defineComponent({
       }
       const lengthPerStep = 100 / ((props.params.maxValue - props.params.minValue) / props.params.step);
       const steps = Math.round(position / lengthPerStep);
-      let value = steps * lengthPerStep
-        * (props.params.maxValue - props.params.minValue) * 0.01 + props.params.minValue;
+      let value =
+        steps * lengthPerStep * (props.params.maxValue - props.params.minValue) * 0.01 + props.params.minValue;
       value = parseFloat(value.toFixed(props.params.precision));
       emit('update:modelValue', value);
       if (!dragging.value && props.modelValue !== oldValue.value) {
@@ -158,36 +160,41 @@ export default defineComponent({
     const { resolveClassName } = usePrefix();
 
     const renderDom = () => (
-      <div class={[`${resolveClassName('slider-button')}`, props.params.vertical ? 'vertical' : 'horizontal', { grabbing: dragging.value }]}
+      <div
+        class={[
+          `${resolveClassName('slider-button')}`,
+          props.params.vertical ? 'vertical' : 'horizontal',
+          { grabbing: dragging.value },
+        ]}
         ref={button}
-        tabindex="0"
+        tabindex='0'
         style={wrapperStyle.value}
         onClick={(event: MouseEvent) => event.stopPropagation()}
-        onMousedown={onButtonDown}>
-        {
-          Boolean(tip.value.content)
-            ? <>
-              <BkPopover
-                content={tip.value.content}
-                theme={'dark'}
-                placement={tip.value.placement}
-                boundary={document.body}>
-                <div class={['slider-button', { 'slider-button-disable': props.params.disable }]}></div>
-              </BkPopover>
-            </>
-            : <>
+        onMousedown={onButtonDown}
+      >
+        {Boolean(tip.value.content) ? (
+          <>
+            <BkPopover
+              content={tip.value.content}
+              theme={'dark'}
+              placement={tip.value.placement}
+              boundary={document.body}
+            >
               <div class={['slider-button', { 'slider-button-disable': props.params.disable }]}></div>
-            </>
-        }
-        {
-          props.params.showButtonLabel && !props.params.showIntervalLabel
-            ? <>
-              <div class={['slider-button-label', props.params.vertical ? 'vertical' : 'horizontal']}>
-                {buttonLabel.value}
-              </div>
-            </>
-            : null
-        }
+            </BkPopover>
+          </>
+        ) : (
+          <>
+            <div class={['slider-button', { 'slider-button-disable': props.params.disable }]}></div>
+          </>
+        )}
+        {props.params.showButtonLabel && !props.params.showIntervalLabel ? (
+          <>
+            <div class={['slider-button-label', props.params.vertical ? 'vertical' : 'horizontal']}>
+              {buttonLabel.value}
+            </div>
+          </>
+        ) : null}
       </div>
     );
     return {

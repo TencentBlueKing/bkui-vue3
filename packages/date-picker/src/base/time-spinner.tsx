@@ -1,41 +1,32 @@
 /*
-* Tencent is pleased to support the open source community by making
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
-*
-* Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
-*
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
-*
-* License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
-*
-* ---------------------------------------------------
-* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
-* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
-* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-* the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-* THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-* IN THE SOFTWARE.
-*/
+ * Tencent is pleased to support the open source community by making
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ *
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ *
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ *
+ * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ *
+ * ---------------------------------------------------
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+ * the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
 
 import { debounce } from 'lodash';
 import type { ExtractPropTypes, PropType } from 'vue';
-import {
-  computed,
-  defineComponent,
-  nextTick,
-  onMounted,
-  reactive,
-  ref,
-  toRefs,
-  watch,
-} from 'vue';
+import { computed, defineComponent, nextTick, onMounted, reactive, ref, toRefs, watch } from 'vue';
 
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { scrollTop } from '@bkui-vue/shared';
@@ -182,36 +173,57 @@ export default defineComponent({
       width: props.showSeconds ? '33.33%' : '50%',
     }));
 
-    watch(() => props.hours, (val) => {
-      if (!state.compiled) {
-        return;
-      }
-      scroll('hours', hoursList.value.findIndex(obj => obj.text === val));
-    });
-
-    watch(() => props.minutes, (val) => {
-      if (!state.compiled) {
-        return;
-      }
-      scroll('minutes', minutesList.value.findIndex(obj => obj.text === val));
-    });
-
-    watch(() => props.seconds, (val) => {
-      if (!state.compiled) {
-        return;
-      }
-      scroll('seconds', minutesList.value.findIndex(obj => obj.text === val));
-    });
-
-    watch(() => state.focusedTime, (updated, old) => {
-      timeParts.forEach((part, i) => {
-        if (updated[i] === old[i] || typeof updated[i] === 'undefined') {
+    watch(
+      () => props.hours,
+      val => {
+        if (!state.compiled) {
           return;
         }
-        const valueIndex = this[`${part}List`].findIndex(obj => obj.text === updated[i]);
-        scroll(part, valueIndex);
-      });
-    });
+        scroll(
+          'hours',
+          hoursList.value.findIndex(obj => obj.text === val),
+        );
+      },
+    );
+
+    watch(
+      () => props.minutes,
+      val => {
+        if (!state.compiled) {
+          return;
+        }
+        scroll(
+          'minutes',
+          minutesList.value.findIndex(obj => obj.text === val),
+        );
+      },
+    );
+
+    watch(
+      () => props.seconds,
+      val => {
+        if (!state.compiled) {
+          return;
+        }
+        scroll(
+          'seconds',
+          minutesList.value.findIndex(obj => obj.text === val),
+        );
+      },
+    );
+
+    watch(
+      () => state.focusedTime,
+      (updated, old) => {
+        timeParts.forEach((part, i) => {
+          if (updated[i] === old[i] || typeof updated[i] === 'undefined') {
+            return;
+          }
+          const valueIndex = this[`${part}List`].findIndex(obj => obj.text === updated[i]);
+          scroll(part, valueIndex);
+        });
+      },
+    );
 
     onMounted(() => {
       nextTick(() => {
@@ -246,11 +258,15 @@ export default defineComponent({
     }
 
     function bindWheelEvent() {
-      const bindFunction = (type) => {
+      const bindFunction = type => {
         const domRef = getDomRef(type);
-        domRef.addEventListener('wheel', debounce(() => {
-          handleWheel(type);
-        }, 32), { passive: true });
+        domRef.addEventListener(
+          'wheel',
+          debounce(() => {
+            handleWheel(type);
+          }, 32),
+          { passive: true },
+        );
       };
       bindFunction('hours');
       bindFunction('minutes');
@@ -270,9 +286,10 @@ export default defineComponent({
     function handleWheel(type) {
       const domRef = getDomRef(type);
       const value = Math.min(
-        Math.round((domRef.scrollTop - (scrollBarHeight(type) * 0.5 - 10) / typeItemHeight(type) + 3)
-            / typeItemHeight(type)),
-        (type === 'hours' ? 23 : 59),
+        Math.round(
+          (domRef.scrollTop - (scrollBarHeight(type) * 0.5 - 10) / typeItemHeight(type) + 3) / typeItemHeight(type),
+        ),
+        type === 'hours' ? 23 : 59,
       );
       let list;
       if (type === 'hours') {
@@ -317,7 +334,7 @@ export default defineComponent({
       let ret: number = index;
       if (disabled.length && props.hideDisabledOptions) {
         let count = 0;
-        disabled.forEach(item => (item <= index ? count += 1 : ''));
+        disabled.forEach(item => (item <= index ? (count += 1) : ''));
         ret -= count;
       }
       return ret;
@@ -325,7 +342,7 @@ export default defineComponent({
 
     function updateScroll() {
       nextTick(() => {
-        timeParts.forEach((type) => {
+        timeParts.forEach(type => {
           const domRef = getDomRef(type);
           let list;
           if (type === 'hours') {
@@ -377,35 +394,76 @@ export default defineComponent({
         ]}
       >
         <div class={this.resolveClassName('time-picker-cells-title-wrapper')}>
-          <div class={[this.resolveClassName('time-picker-cells-title'), this.focusedColumn === 0 ? 'active' : '']} style={this.styles}>{this.t.hour}</div>
-          <div class={[this.resolveClassName('time-picker-cells-title'), this.focusedColumn === 1 ? 'active' : '']} style={this.styles}>{this.t.min}</div>
-          <div class={[this.resolveClassName('time-picker-cells-title'), this.focusedColumn === 2 ? 'active' : '']} v-show={this.showSeconds} style={this.styles}>{this.t.sec}</div>
+          <div
+            class={[this.resolveClassName('time-picker-cells-title'), this.focusedColumn === 0 ? 'active' : '']}
+            style={this.styles}
+          >
+            {this.t.hour}
+          </div>
+          <div
+            class={[this.resolveClassName('time-picker-cells-title'), this.focusedColumn === 1 ? 'active' : '']}
+            style={this.styles}
+          >
+            {this.t.min}
+          </div>
+          <div
+            class={[this.resolveClassName('time-picker-cells-title'), this.focusedColumn === 2 ? 'active' : '']}
+            v-show={this.showSeconds}
+            style={this.styles}
+          >
+            {this.t.sec}
+          </div>
         </div>
-        <div class={this.resolveClassName('time-picker-cells-list')} ref="hoursRef" style={this.styles}>
+        <div
+          class={this.resolveClassName('time-picker-cells-list')}
+          ref='hoursRef'
+          style={this.styles}
+        >
           <ul class={this.resolveClassName('time-picker-cells-ul')}>
-            {
-              this.hoursList.map(item => (
-                <li class={this.getCellCls(item)} v-show={!item.hide} onClick={() => this.handleClick('hours', item)}>{this.padTime(item.text)}</li>
-              ))
-            }
+            {this.hoursList.map(item => (
+              <li
+                class={this.getCellCls(item)}
+                v-show={!item.hide}
+                onClick={() => this.handleClick('hours', item)}
+              >
+                {this.padTime(item.text)}
+              </li>
+            ))}
           </ul>
         </div>
-        <div class={this.resolveClassName('time-picker-cells-list')} ref="minutesRef" style={this.styles}>
+        <div
+          class={this.resolveClassName('time-picker-cells-list')}
+          ref='minutesRef'
+          style={this.styles}
+        >
           <ul class={this.resolveClassName('time-picker-cells-ul')}>
-            {
-              this.minutesList.map(item => (
-                <li class={this.getCellCls(item)} v-show={!item.hide} onClick={() => this.handleClick('minutes', item)}>{this.padTime(item.text)}</li>
-              ))
-            }
+            {this.minutesList.map(item => (
+              <li
+                class={this.getCellCls(item)}
+                v-show={!item.hide}
+                onClick={() => this.handleClick('minutes', item)}
+              >
+                {this.padTime(item.text)}
+              </li>
+            ))}
           </ul>
         </div>
-        <div class={this.resolveClassName('time-picker-cells-list')} v-show={this.showSeconds} ref="secondsRef" style={this.styles}>
+        <div
+          class={this.resolveClassName('time-picker-cells-list')}
+          v-show={this.showSeconds}
+          ref='secondsRef'
+          style={this.styles}
+        >
           <ul class={this.resolveClassName('time-picker-cells-ul')}>
-            {
-              this.secondsList.map(item => (
-                <li class={this.getCellCls(item)} v-show={!item.hide} onClick={() => this.handleClick('seconds', item)}>{this.padTime(item.text)}</li>
-              ))
-            }
+            {this.secondsList.map(item => (
+              <li
+                class={this.getCellCls(item)}
+                v-show={!item.hide}
+                onClick={() => this.handleClick('seconds', item)}
+              >
+                {this.padTime(item.text)}
+              </li>
+            ))}
           </ul>
         </div>
       </div>

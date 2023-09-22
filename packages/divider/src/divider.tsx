@@ -22,9 +22,9 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
-import {  defineComponent } from 'vue';
+import { defineComponent } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 
@@ -47,15 +47,17 @@ export default defineComponent({
     let slots;
     if (this.$slots.default) {
       slots = (
-        <div
-          class={[resolveClassName('divider-info'), resolveClassName(`divider-info-${this.align}`)]}>
+        <div class={[resolveClassName('divider-info'), resolveClassName(`divider-info-${this.align}`)]}>
           {this.$slots.default()}
         </div>
       );
     }
 
     return (
-      <div class={[resolveClassName('divider'), resolveClassName(`divider-${this.direction}`)]} style={styles()}>
+      <div
+        class={[resolveClassName('divider'), resolveClassName(`divider-${this.direction}`)]}
+        style={styles()}
+      >
         {slots}
       </div>
     );

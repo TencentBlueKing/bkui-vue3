@@ -30,7 +30,6 @@
  * Copyright © 2012-2019 Tencent BlueKing. All Rights Reserved. 蓝鲸智云 版权所有
  */
 import {
-  type SetupContext,
   computed,
   defineComponent,
   // EmitsOptions,
@@ -40,6 +39,7 @@ import {
   reactive,
   ref,
   resolveDirective,
+  type SetupContext,
   SlotsType,
   watch,
   withDirectives,
@@ -47,10 +47,7 @@ import {
 
 import { usePrefix } from '@bkui-vue/config-provider';
 
-import {
-  type VirtualRenderProps,
-  virtualRenderProps,
-} from './props';
+import { type VirtualRenderProps, virtualRenderProps } from './props';
 import useTagRender from './use-tag-render';
 import virtualRender, { computedVirtualIndex } from './v-virtual-render';
 
@@ -62,10 +59,10 @@ export default defineComponent({
   props: virtualRenderProps,
   emits: ['content-scroll' as string],
   slots: Object as SlotsType<{
-    default?: any,
-    beforeContent?: any,
-    afterContent?: any,
-    afterSection?: any,
+    default?: any;
+    beforeContent?: any;
+    afterContent?: any;
+    afterSection?: any;
   }>,
   setup(props: VirtualRenderProps, ctx: SetupContext) {
     const { renderAs, contentAs } = props;
@@ -108,7 +105,7 @@ export default defineComponent({
 
       // 设置偏移量，避免行高较大时出现卡顿式的滚动
       pagination.translateY = translateY;
-      pagination.translateX =  scrollLeft;
+      pagination.translateX = scrollLeft;
       pagination.scrollLeft = scrollLeft;
       pagination.pos = pos;
       ctx.emit('content-scroll', [event, pagination]);
@@ -123,20 +120,27 @@ export default defineComponent({
       });
     });
 
-    watch(() => props.list, () => {
-      let scrollToOpt = { left: 0, top: 0 };
-      scrollToOpt = { left: pagination.scrollLeft, top: pagination.scrollTop };
-      handleChangeListConfig();
-      afterListDataReset();
-      if (props.keepAlive) {
-        scrollTo(scrollToOpt);
-      }
-    }, { deep: true });
+    watch(
+      () => props.list,
+      () => {
+        let scrollToOpt = { left: 0, top: 0 };
+        scrollToOpt = { left: pagination.scrollLeft, top: pagination.scrollTop };
+        handleChangeListConfig();
+        afterListDataReset();
+        if (props.keepAlive) {
+          scrollTo(scrollToOpt);
+        }
+      },
+      { deep: true },
+    );
 
-    watch(() => props.lineHeight, () => {
-      handleChangeListConfig();
-      afterListDataReset();
-    });
+    watch(
+      () => props.lineHeight,
+      () => {
+        handleChangeListConfig();
+        afterListDataReset();
+      },
+    );
 
     const handleChangeListConfig = () => {
       /** 数据改变时激活当前表单，使其渲染DOM */
@@ -196,20 +200,26 @@ export default defineComponent({
         return props.list;
       }
 
-      return (props.list || []).map((item: any, index) => ({ ...item,  $index: index }));
+      return (props.list || []).map((item: any, index) => ({ ...item, $index: index }));
     });
 
     /** 计算出来的当前页数据 */
-    const calcList = computed(() => localList.value.slice(
-      pagination.startIndex * props.groupItemCount,
-      (pagination.endIndex + props.preloadItemCount) * props.groupItemCount,
-    ));
+    const calcList = computed(() =>
+      localList.value.slice(
+        pagination.startIndex * props.groupItemCount,
+        (pagination.endIndex + props.preloadItemCount) * props.groupItemCount,
+      ),
+    );
 
     /** 展示列表内容区域样式 */
-    const innerContentStyle = computed(() => (props.scrollPosition === 'content' ? ({
-      top: `${pagination.scrollTop + props.scrollOffsetTop}px`,
-      transform: `translateY(-${pagination.translateY}px)`,
-    }) : ({})));
+    const innerContentStyle = computed(() =>
+      props.scrollPosition === 'content'
+        ? {
+            top: `${pagination.scrollTop + props.scrollOffsetTop}px`,
+            transform: `translateY(-${pagination.translateY}px)`,
+          }
+        : {},
+    );
 
     /** 虚拟渲染外层容器样式 */
     const wrapperStyle = computed(() => ({
@@ -236,12 +246,14 @@ export default defineComponent({
       props.scrollXName,
       props.scrollYName,
       ...resolvePropClassName(props.className),
-      props.scrollPosition === 'container' ? resolveClassName('virtual-content') : '']);
+      props.scrollPosition === 'container' ? resolveClassName('virtual-content') : '',
+    ]);
 
     /** 内容区域样式列表 */
     const innerClass = computed(() => [
       props.scrollPosition === 'content' ? resolveClassName('virtual-content') : '',
-      ...resolvePropClassName(props.contentClassName)]);
+      ...resolvePropClassName(props.contentClassName),
+    ]);
     const vVirtualRender = resolveDirective('bkVirtualRender');
     const dirModifier = {
       lineHeight: props.lineHeight,
@@ -269,43 +281,42 @@ export default defineComponent({
       scrollTo,
     });
 
-    return () => h(
-      // @ts-ignore:next-line
-      renderAs || 'div',
-      {
-        ref: refRoot,
-        class: wrapperClass.value,
-        style: wrapperStyle.value,
-      },
-      [
-        ctx.slots.beforeContent?.() ?? '',
-        withDirectives(h(
-          contentAs || 'div',
-          {
-            class: innerClass.value,
-            style: {
-              ...innerContentStyle.value,
-              ...props.contentStyle,
-            },
-          },
-          [
-            ctx.slots.default?.({
-              data: calcList.value,
-            }) ?? '',
-          ],
-        ), [
-          [
-            vVirtualRender,
-            dirModifier,
-          ],
-        ]),
-        ctx.slots.afterContent?.() ?? '',
-        h('div', {
-          class: [resolveClassName('virtual-section')],
-          style: innerStyle.value,
-        }),
-        ctx.slots.afterSection?.() ?? '',
-      ],
-    );
+    return () =>
+      h(
+        // @ts-ignore:next-line
+        renderAs || 'div',
+        {
+          ref: refRoot,
+          class: wrapperClass.value,
+          style: wrapperStyle.value,
+        },
+        [
+          ctx.slots.beforeContent?.() ?? '',
+          withDirectives(
+            h(
+              contentAs || 'div',
+              {
+                class: innerClass.value,
+                style: {
+                  ...innerContentStyle.value,
+                  ...props.contentStyle,
+                },
+              },
+              [
+                ctx.slots.default?.({
+                  data: calcList.value,
+                }) ?? '',
+              ],
+            ),
+            [[vVirtualRender, dirModifier]],
+          ),
+          ctx.slots.afterContent?.() ?? '',
+          h('div', {
+            class: [resolveClassName('virtual-section')],
+            style: innerStyle.value,
+          }),
+          ctx.slots.afterSection?.() ?? '',
+        ],
+      );
   },
 });

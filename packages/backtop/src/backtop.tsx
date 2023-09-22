@@ -22,18 +22,10 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { throttle } from 'lodash';
-import {
-  type Ref,
-  defineComponent,
-  onBeforeUnmount,
-  onMounted,
-  ref,
-  Transition,
-  watch,
-} from 'vue';
+import { defineComponent, onBeforeUnmount, onMounted, type Ref, ref, Transition, watch } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import { AngleUp } from '@bkui-vue/icon';
@@ -68,9 +60,12 @@ export default defineComponent({
       });
     };
 
-    watch(() => visible, () => {
-      zIndex.value = bkZIndexManager.getModalNextIndex();
-    });
+    watch(
+      () => visible,
+      () => {
+        zIndex.value = bkZIndexManager.getModalNextIndex();
+      },
+    );
 
     onMounted(() => {
       container.value = document;
@@ -92,20 +87,22 @@ export default defineComponent({
     const { resolveClassName } = usePrefix();
 
     return () => (
-      <Transition name="bk-fade">
-        { visible.value
-          ? <div
+      <Transition name='bk-fade'>
+        {visible.value ? (
+          <div
             class={`${resolveClassName('backtop')} ${props.extCls}`}
             style={{
               right: styleRight,
               bottom: styleBottom,
               zIndex: zIndex.value,
             }}
-            onClick={scrollTop}>
+            onClick={scrollTop}
+          >
             {slots.default?.() ?? <AngleUp class={`${resolveClassName('backtop-icon')}`}></AngleUp>}
           </div>
-          : ''
-        }
+        ) : (
+          ''
+        )}
       </Transition>
     );
   },

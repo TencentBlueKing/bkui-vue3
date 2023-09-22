@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { computed, defineComponent, PropType, ref, toRefs } from 'vue';
 
@@ -59,19 +59,23 @@ export default defineComponent({
     const isPicture = computed<boolean>(() => theme.value === EThemes.PICTURE);
     const isSinglePicture = computed<boolean>(() => isPicture.value && !multiple.value);
 
-    const acceptTypes = computed(() => (isPicture.value && !accept.value ? 'image/png,image/jpeg,image/jpg' : accept.value));
+    const acceptTypes = computed(() =>
+      isPicture.value && !accept.value ? 'image/png,image/jpeg,image/jpg' : accept.value,
+    );
 
     const inputEl = ref(null);
 
-    const classNames = computed(() => classes({
-      [classBlock]: true,
-      [`${classBlock}--${theme.value}`]: true,
-      [`${classBlock}--single-picture`]: isSinglePicture.value,
-      [`${classBlock}--has-file`]: file.value ?? false,
-      [`${classBlock}--${file.value?.status}`]: file.value ?? false,
-      [`${classBlock}--dragover`]: dragover.value,
-      [`${classBlock}--disabled`]: disabled.value,
-    }));
+    const classNames = computed(() =>
+      classes({
+        [classBlock]: true,
+        [`${classBlock}--${theme.value}`]: true,
+        [`${classBlock}--single-picture`]: isSinglePicture.value,
+        [`${classBlock}--has-file`]: file.value ?? false,
+        [`${classBlock}--${file.value?.status}`]: file.value ?? false,
+        [`${classBlock}--dragover`]: dragover.value,
+        [`${classBlock}--disabled`]: disabled.value,
+      }),
+    );
 
     const invoke = () => {
       inputEl.value.value = null;
@@ -96,7 +100,7 @@ export default defineComponent({
         return;
       }
 
-      if ((e.code === 'Enter' || e.code === 'Space')) {
+      if (e.code === 'Enter' || e.code === 'Space') {
         invoke();
       }
 
@@ -127,7 +131,7 @@ export default defineComponent({
           return;
         }
 
-        const filesFiltered = files.filter((file) => {
+        const filesFiltered = files.filter(file => {
           const { type, name } = file;
           const extension = name.includes('.') ? `.${name.split('.').pop()}` : '';
           const baseType = type.replace(/\/.*$/, '');
@@ -135,7 +139,7 @@ export default defineComponent({
             .split(',')
             .map(type => type.trim())
             .filter(type => type)
-            .some((acceptedType) => {
+            .some(acceptedType => {
               if (acceptedType.startsWith('.')) {
                 return extension === acceptedType;
               }
@@ -170,72 +174,73 @@ export default defineComponent({
           onDragover={handleDragover}
           onDragleave={handleDragleave}
         >
-          {
-            slots.default
-              ? slots.default()
-              : (
-                <>
-                  <Upload class={`${classBlock}__draggable-icon`} />
-                  <div class={`${classBlock}__draggable-text`}>
-                    {t.value.drapFileOr}<span class={`${classBlock}__draggable-upload-link`}>{t.value.clickUpload}</span>
-                  </div>
-                </>
-              )
-          }
+          {slots.default ? (
+            slots.default()
+          ) : (
+            <>
+              <Upload class={`${classBlock}__draggable-icon`} />
+              <div class={`${classBlock}__draggable-text`}>
+                {t.value.drapFileOr}
+                <span class={`${classBlock}__draggable-upload-link`}>{t.value.clickUpload}</span>
+              </div>
+            </>
+          )}
         </div>
       );
     };
 
-    const Picture = () => (
-      <>
-      {
-        isSinglePicture.value && props.file
-          ? SinglePicture(props.file)
-          : DefaultPicture()
-      }
-      </>
-    );
+    const Picture = () => <>{isSinglePicture.value && props.file ? SinglePicture(props.file) : DefaultPicture()}</>;
 
     const DefaultPicture = () => (
       <>
-      {
-      slots.default
-        ? slots.default()
-        : (
+        {slots.default ? (
+          slots.default()
+        ) : (
           <div class={`${classBlock}__picture-inner`}>
             <Plus class={`${classBlock}__picture-icon`} />
             <div class={`${classBlock}__picture-text`}>{t.value.clickUpload}</div>
           </div>
-        )
-      }
+        )}
       </>
     );
 
-    const SinglePicture = (file: UploadFile) => ([
-      <img v-show={file.status !== 'uploading'} src={file.url} class={`${classBlock}__picture-thumbnail`} alt="" />,
-      <>{
-        file.status === 'uploading' && <BkProgress
-        class={`${classBlock}__picture-progress`}
-        type="circle"
-        color="#3a84ff"
-        bgColor="#333"
-        width={50}
-        titleStyle={{ color: '#fff' }}
-        percent={file.percentage}
-        />
-      }</>,
-      <>{
-        !props.disabled && <div class={`${classBlock}__picture-actions`}>
-          {/* { file.status !== 'uploading' && <Upload class="action-icon" /> } */}
-          <Del class="action-icon" onClick={e => handleRemove(file, e)} />
-        </div>
-      }
+    const SinglePicture = (file: UploadFile) => [
+      <img
+        v-show={file.status !== 'uploading'}
+        src={file.url}
+        class={`${classBlock}__picture-thumbnail`}
+        alt=''
+      />,
+      <>
+        {file.status === 'uploading' && (
+          <BkProgress
+            class={`${classBlock}__picture-progress`}
+            type='circle'
+            color='#3a84ff'
+            bgColor='#333'
+            width={50}
+            titleStyle={{ color: '#fff' }}
+            percent={file.percentage}
+          />
+        )}
       </>,
-    ]);
+      <>
+        {!props.disabled && (
+          <div class={`${classBlock}__picture-actions`}>
+            {/* { file.status !== 'uploading' && <Upload class="action-icon" /> } */}
+            <Del
+              class='action-icon'
+              onClick={e => handleRemove(file, e)}
+            />
+          </div>
+        )}
+      </>,
+    ];
 
     const Button = () => (
       <BkButton disabled={disabled.value}>
-        <Upload class={`${classBlock}__button-icon`} /><span class={`${classBlock}__button-text`}>{t.value.uploadLabel}</span>
+        <Upload class={`${classBlock}__button-icon`} />
+        <span class={`${classBlock}__button-text`}>{t.value.uploadLabel}</span>
       </BkButton>
     );
 
@@ -248,24 +253,20 @@ export default defineComponent({
     return () => (
       <div
         class={classNames.value}
-        tabindex="0"
+        tabindex='0'
         onClick={handleClick}
         onKeydown={handleKeydown}
       >
-        {
-          slots.trigger
-            ? [slots.trigger(), slots?.default?.()]
-            : Trigger()
-        }
+        {slots.trigger ? [slots.trigger(), slots?.default?.()] : Trigger()}
         <input
           ref={inputEl}
           class={`${classBlock}__input-file`}
-          tabindex="-1"
+          tabindex='-1'
           onChange={handleFileChange}
           accept={acceptTypes.value}
           multiple={multiple.value}
           disabled={disabled.value}
-          type="file"
+          type='file'
         />
       </div>
     );

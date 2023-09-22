@@ -1,28 +1,28 @@
 /*
-* Tencent is pleased to support the open source community by making
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
-*
-* Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
-*
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
-*
-* License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
-*
-* ---------------------------------------------------
-* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
-* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
-* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-* the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-* THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-* IN THE SOFTWARE.
-*/
+ * Tencent is pleased to support the open source community by making
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ *
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ *
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ *
+ * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ *
+ * ---------------------------------------------------
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+ * the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
 
 import tinycolor from 'tinycolor2';
 import {
@@ -41,11 +41,7 @@ import { toType } from 'vue-types';
 import { usePrefix } from '@bkui-vue/config-provider';
 import { clickoutside } from '@bkui-vue/directives';
 import { AngleUp } from '@bkui-vue/icon';
-import {
-  classes,
-  PropTypes,
-  useFormItem,
-} from '@bkui-vue/shared';
+import { classes, PropTypes, useFormItem } from '@bkui-vue/shared';
 
 import PickerDropdown from '../../date-picker/src/base/picker-dropdown';
 
@@ -59,7 +55,6 @@ enum ColorPickSizeEnum {
   UNKNOWN = '',
   SMALL = 'small',
   LARGE = 'large',
-
 }
 const colorPickerProps = {
   modelValue: PropTypes.string.def(''),
@@ -99,31 +94,40 @@ export default defineComponent({
 
     const { resolveClassName } = usePrefix();
 
-    const colorPickerCls = computed(() => classes({
-      [`${resolveClassName(`color-picker-${props.size}`)}`]: props.size,
-      [`${resolveClassName('color-picker-show-dropdown')}`]: showDropdown.value,
-      [`${resolveClassName('color-picker-show-value')}`]: props.showValue,
-      [`${resolveClassName('color-picker-disabled')}`]: props.disabled || props.readonly,
-    }, `${resolveClassName('color-picker')} ${props.extCls}`));
+    const colorPickerCls = computed(() =>
+      classes(
+        {
+          [`${resolveClassName(`color-picker-${props.size}`)}`]: props.size,
+          [`${resolveClassName('color-picker-show-dropdown')}`]: showDropdown.value,
+          [`${resolveClassName('color-picker-show-value')}`]: props.showValue,
+          [`${resolveClassName('color-picker-disabled')}`]: props.disabled || props.readonly,
+        },
+        `${resolveClassName('color-picker')} ${props.extCls}`,
+      ),
+    );
 
     // 是否渲染预设值
-    const isRenderRecommend = computed(() => Boolean(props.recommend === true
-       || (Array.isArray(props.recommend) && props.recommend.length)));
+    const isRenderRecommend = computed(() =>
+      Boolean(props.recommend === true || (Array.isArray(props.recommend) && props.recommend.length)),
+    );
 
     onBeforeMount(() => {
       // 1. 组件初始化时，如果计算的色值和传入的值不一样，显示计算的色值
       changeColorFromProps({ isCreated: true });
     });
 
-    watch(() => props.modelValue, () => {
-      // 2. 如果组件绑定值被外部修改，自动根据绑定至更新组件色值
-      changeColorFromProps();
-      if (props.withValidate) {
-        formItem?.validate?.('change');
-      }
-    });
+    watch(
+      () => props.modelValue,
+      () => {
+        // 2. 如果组件绑定值被外部修改，自动根据绑定至更新组件色值
+        changeColorFromProps();
+        if (props.withValidate) {
+          formItem?.validate?.('change');
+        }
+      },
+    );
 
-    const handleTriggerKeydown = (e) => {
+    const handleTriggerKeydown = e => {
       if (e.code === 'Enter' || e.code === 'NumpadEnter') {
         toggleDropdown();
       } else if (e.code === 'Escape') {
@@ -131,7 +135,7 @@ export default defineComponent({
       }
     };
 
-    const handleDropdownKeydown = (e) => {
+    const handleDropdownKeydown = e => {
       if (props.transfer) {
         handleTriggerKeydown(e);
       }
@@ -145,7 +149,7 @@ export default defineComponent({
     };
 
     // 如果未开启预设则此 tab 事件为颜色选择器最后一个表单 tab 事件，重新聚焦于饱和度面板
-    const handleTabInput = (e) => {
+    const handleTabInput = e => {
       if (!isRenderRecommend.value) {
         e.preventDefault();
         saturationPanelRef.value.$el.focus();
@@ -153,7 +157,7 @@ export default defineComponent({
     };
 
     // 颜色选择器最后一个表单 tab 事件，重新聚焦于饱和度面板
-    const handleTabRecommend = (e) => {
+    const handleTabRecommend = e => {
       e.preventDefault();
 
       saturationPanelRef.value.$el.focus();
@@ -164,7 +168,9 @@ export default defineComponent({
       dropRef.value?.updateDropdown();
       // 展开后默认聚焦于 HEX 输入框，setTimeout 等 transfer 出现
       setTimeout(() => {
-        const hexInput = dropRef.value.$el.querySelector(`.${resolveClassName('color-picker-input-hex')} .${resolveClassName('color-picker-input-value')}`);
+        const hexInput = dropRef.value.$el.querySelector(
+          `.${resolveClassName('color-picker-input-hex')} .${resolveClassName('color-picker-input-value')}`,
+        );
         hexInput.select();
       }, 100);
     };
@@ -174,7 +180,6 @@ export default defineComponent({
         nextTick(() => referenceRef.value.focus());
         showDropdown.value = false;
         dropRef.value?.destoryDropdown();
-
 
         // 3. 关闭组件时如果绑定值与组件内部选择的值不一致（比如既没有使用 v-model 也没有监听 change 事件）显示绑定值
         changeColorFromProps();
@@ -191,7 +196,7 @@ export default defineComponent({
       if (props.modelValue === '') {
         // 颜色选择器有色值，用户手动修改为空字符串；或用户关闭组件时绑定的value为空字符串（没有使用组件传递的值）
         if (colorStr.value !== '') {
-          colorStr.value  = '';
+          colorStr.value = '';
           Object.assign(colorObj, whiteColorObj);
           emit('update:modelValue', colorStr.value);
         }
@@ -201,7 +206,6 @@ export default defineComponent({
       // 根据 props 计算色值
       const propsColorObj = formatColor(props.modelValue);
       const propsColorStr = propsColorObj.rgba.a === 1 ? propsColorObj.hex : toRGBAString(propsColorObj.rgba);
-
 
       // 根据 props 计算的色值和组件内部色值不一致，有几种情况
       if (propsColorStr !== colorStr.value) {
@@ -215,12 +219,14 @@ export default defineComponent({
             emit('change', '');
           } else {
             // 到了这里，说明传入的色值已经计算出来了，是合法的，但可能存在格式上的偏差，如用户传入 #fff 计算得 #FFFFFF
-            colorStr.value = propsColorStr.toLowerCase() === props.modelValue.toLowerCase()
-              ? props.modelValue // 如果只是大小写不一致，显示用户传入的字符
-              : propsColorStr; // 其它格式上的不一致，以本组件计算值为准
+            colorStr.value =
+              propsColorStr.toLowerCase() === props.modelValue.toLowerCase()
+                ? props.modelValue // 如果只是大小写不一致，显示用户传入的字符
+                : propsColorStr; // 其它格式上的不一致，以本组件计算值为准
             Object.assign(colorObj, propsColorObj);
           }
-        } else { // 实例挂载之后
+        } else {
+          // 实例挂载之后
           // 用户在实例挂载之后在组件外面修改色值 组件内部只是跟着 props 变化色值 并不触发 change 事件
           if (!isValid) {
             colorStr.value = '';
@@ -240,10 +246,10 @@ export default defineComponent({
      * 组件内部选择颜色处理
      * @param {String|Object} val - hex,rgba,hsla,hsva
      */
-    const handleColorChange = (val) => {
+    const handleColorChange = val => {
       // 组件内拿到的色值都是合法的，空字符串特殊处理
       if (val === '') {
-        colorStr.value  = '';
+        colorStr.value = '';
         Object.assign(colorObj, whiteColorObj);
         emit('update:modelValue', '');
         emit('change', '');
@@ -252,7 +258,7 @@ export default defineComponent({
 
       const handleColorObj = formatColor(val);
       const handleColorStr = handleColorObj.rgba.a === 1 ? handleColorObj.hex : toRGBAString(handleColorObj.rgba);
-      colorStr.value  = handleColorStr;
+      colorStr.value = handleColorStr;
       Object.assign(colorObj, handleColorObj);
       emit('update:modelValue', colorStr.value);
       emit('change', handleColorStr);
@@ -262,16 +268,18 @@ export default defineComponent({
       showDropdown.value = false;
     };
 
-
     return () => (
       <div
         ref={referenceRef}
-        tabindex="0"
+        tabindex='0'
         class={colorPickerCls.value}
         onKeydown={handleTriggerKeydown}
         v-clickoutside={hideDropDown}
-        onClick={toggleDropdown}>
-        {typeof slots.trigger === 'function' ? slots.trigger({ value: colorStr.value, isShowDropdown: showDropdown.value }) : (
+        onClick={toggleDropdown}
+      >
+        {typeof slots.trigger === 'function' ? (
+          slots.trigger({ value: colorStr.value, isShowDropdown: showDropdown.value })
+        ) : (
           <>
             <div class={`${resolveClassName('color-picker-color')}`}>
               {/* 如果传入的色值为空字符串或者没有传值默认白色背景 + 中间一个叉 */}
@@ -288,24 +296,27 @@ export default defineComponent({
               </div>
             ) : undefined}
             <div class={`${resolveClassName('color-picker-icon')}`}>
-              <AngleUp class="icon-angle-down"></AngleUp>
+              <AngleUp class='icon-angle-down'></AngleUp>
             </div>
           </>
         )}
-        <Transition name="bk-fade-down-transition">
+        <Transition name='bk-fade-down-transition'>
           <PickerDropdown
             ref={dropRef}
             v-show={showDropdown.value}
-            triggerRef={referenceRef.value}>
+            triggerRef={referenceRef.value}
+          >
             <div class={`${resolveClassName('color-dropdown-container')}`}>
-              <div class={`${resolveClassName('color-picker-dropdown')}`}
-                   onClick={(e) => {
-                     e.stopPropagation();
-                   }}
-                   onMousedown={(e) => {
-                     e.stopPropagation();
-                   }}
-                   onKeydown={handleDropdownKeydown}>
+              <div
+                class={`${resolveClassName('color-picker-dropdown')}`}
+                onClick={e => {
+                  e.stopPropagation();
+                }}
+                onMousedown={e => {
+                  e.stopPropagation();
+                }}
+                onKeydown={handleDropdownKeydown}
+              >
                 {/* 饱和度面板 */}
                 <SaturationPanel
                   ref={saturationPanelRef}

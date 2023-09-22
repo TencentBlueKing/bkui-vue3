@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { defineComponent } from 'vue';
 
@@ -40,10 +40,8 @@ export default defineComponent({
     const { resolveClassName } = usePrefix();
     return () => (
       <div class={`${resolveClassName('menu-group')}`}>
-        <div class="group-name">{props.name}</div>
-        <ul class="group-wrap">
-          {slots.default?.()}
-        </ul>
+        <div class='group-name'>{props.name}</div>
+        <ul class='group-wrap'>{slots.default?.()}</ul>
       </div>
     );
   },

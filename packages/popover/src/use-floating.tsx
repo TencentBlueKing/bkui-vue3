@@ -1,28 +1,28 @@
 /*
-* Tencent is pleased to support the open source community by making
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
-*
-* Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
-*
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
-*
-* License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
-*
-* ---------------------------------------------------
-* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
-* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
-* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-* the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-* THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-* IN THE SOFTWARE.
-*/
+ * Tencent is pleased to support the open source community by making
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ *
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ *
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ *
+ * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ *
+ * ---------------------------------------------------
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+ * the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
 import { isElement } from 'lodash';
 import { computed, ref, watch } from 'vue';
 
@@ -37,7 +37,8 @@ import {
   inline,
   offset,
   Placement,
-  shift } from '@floating-ui/dom';
+  shift,
+} from '@floating-ui/dom';
 
 import { EMIT_EVENTS } from './const';
 import { PopoverPropTypes } from './props';
@@ -64,7 +65,7 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
    * @param selector
    * @returns
    */
-  const getFullscreenRoot = (selector) => {
+  const getFullscreenRoot = selector => {
     if (isElementFullScreen()) {
       if (document.fullscreenElement.shadowRoot) {
         return document.fullscreenElement.shadowRoot.querySelector(selector);
@@ -85,7 +86,7 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
    */
   const compTheme = computed(() => {
     const themes = props.theme?.split(/\s+/) ?? [];
-    themes.sort((a: string, b: string) => Number(themeList.includes(b)) - (Number(themeList.includes(a))));
+    themes.sort((a: string, b: string) => Number(themeList.includes(b)) - Number(themeList.includes(a)));
     const systemThemes = themes;
     const customThemes = themes.filter((item: string) => !themeList.includes(item));
     return { systemThemes, customThemes };
@@ -140,10 +141,7 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
   const resolvePopOptions = (elArrow, props) => {
     const modifiers = resolveModifiers();
 
-    const middleware = [
-      offset(modifiers.offset || props.offset),
-      shift({ padding: props.padding }),
-    ];
+    const middleware = [offset(modifiers.offset || props.offset), shift({ padding: props.padding })];
     const options = {
       placement: props.placement as Placement,
       middleware,
@@ -171,11 +169,7 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
      * 全屏模式下面，需要自定义当前元素的一个platform
      */
     if (isElementFullScreen() || props.isVirtualEl) {
-      const  {
-        getElementRects,
-        getDimensions,
-        getClippingRect,
-      } = usePlatform(fullScreenTarget.value);
+      const { getElementRects, getDimensions, getClippingRect } = usePlatform(fullScreenTarget.value);
 
       Object.assign(options, {
         platform: {
@@ -210,7 +204,6 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
 
       return null;
     }
-
 
     if (target instanceof PointerEvent) {
       return resolveTargetElement(target.target);
@@ -287,7 +280,6 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
     });
   };
 
-
   const updatePopover = (virtualEl = null, props = {}, callFn?) => {
     const { elReference, elContent, elArrow } = resolvePopElements();
     const targetEl = virtualEl || elReference;
@@ -295,7 +287,9 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
     const options = resolvePopOptions(elArrow, props);
     computePosition(targetEl, elContent, options).then(({ x, y, placement, middlewareData }) => {
       const oldClass = elContent.className;
-      elContent.className = `${oldClass.replace(contentClass, '')} ${contentClass}`.replace(/\s+/mg, ' ').replace(/^\s+|\s+$/g, '');
+      elContent.className = `${oldClass.replace(contentClass, '')} ${contentClass}`
+        .replace(/\s+/gm, ' ')
+        .replace(/^\s+|\s+$/g, '');
       Object.keys(customTheme).forEach((key: string) => {
         elContent.setAttribute(key, customTheme[key]);
       });
@@ -444,11 +438,14 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
     fullScreenTarget.value = val;
   };
 
-  watch(() => props.isShow, (val) => {
-    localIsShow.value = val;
-  });
+  watch(
+    () => props.isShow,
+    val => {
+      localIsShow.value = val;
+    },
+  );
 
-  watch(localIsShow, (val) => {
+  watch(localIsShow, val => {
     if (val) {
       handlePopoverShow();
     } else {

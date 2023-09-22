@@ -96,8 +96,7 @@ const getStringOrFuncStr = (item: any, props: TreePropTypes, key: string, args: 
  */
 export const getLabel = (item: any, props: TreePropTypes) => getStringOrFuncStr(item, props, 'label');
 
-
-const getSchemaVal = (schema: Map<string, any>, uuid: string) => ((schema as Map<string, any>).get(uuid) || {});
+const getSchemaVal = (schema: Map<string, any>, uuid: string) => (schema as Map<string, any>).get(uuid) || {};
 
 const getNodeAttr = (schema: Map<string, any>, uuid: string, key: string) => getSchemaVal(schema, uuid)?.[key];
 
@@ -109,7 +108,9 @@ const getNodeAttr = (schema: Map<string, any>, uuid: string, key: string) => get
  */
 export const getTreeStyle = (item: any, props: TreePropTypes) => {
   // 处理Props回调函数，参数 [tree] 表示 levelLine 回调参数第二个，此次渲染请求为Tree外层样式
-  const levelLine: any = getPropsOneOfBoolValueWithDefault(props, 'levelLine', item, DEFAULT_LEVLE_LINE, null, ['tree']);
+  const levelLine: any = getPropsOneOfBoolValueWithDefault(props, 'levelLine', item, DEFAULT_LEVLE_LINE, null, [
+    'tree',
+  ]);
   return {
     '--level-line': levelLine,
     '--lineHeight': `${props.lineHeight}px`,
@@ -125,16 +126,16 @@ export const getTreeStyle = (item: any, props: TreePropTypes) => {
  * @returns
  */
 export const getNodeItemStyle: any = (item: any, props: TreePropTypes, flatData: any = {}) => {
-  const {  schema } = flatData;
+  const { schema } = flatData;
   const depth = getNodeAttr(schema as Map<string, any>, item[NODE_ATTRIBUTES.UUID], NODE_ATTRIBUTES.DEPTH);
   return {
     '--depth': depth,
     ...(typeof props.levelLine === 'function'
       ? {
-        '--level-line': getPropsOneOfBoolValueWithDefault(props, 'levelLine', item, DEFAULT_LEVLE_LINE, null, [
-          'node',
-        ]),
-      }
+          '--level-line': getPropsOneOfBoolValueWithDefault(props, 'levelLine', item, DEFAULT_LEVLE_LINE, null, [
+            'node',
+          ]),
+        }
       : {}),
   };
 };
@@ -196,7 +197,7 @@ export const assignTreeNode = (path: string, treeData: any[], childKey: string, 
   const paths = path.split('-');
   const targetNode = paths.reduce((pre: any, nodeIndex: string) => {
     const index = Number(nodeIndex);
-    return  Array.isArray(pre) ? pre[index] : pre[childKey][index];
+    return Array.isArray(pre) ? pre[index] : pre[childKey][index];
   }, treeData);
 
   Object.assign(targetNode, assignVal || {});
@@ -207,7 +208,7 @@ export const resolveNodeItem = (node: any) => {
     return { __IS_NULL: true };
   }
 
-  if (typeof node === 'string' || typeof node === 'number' ||  typeof node === 'symbol') {
+  if (typeof node === 'string' || typeof node === 'number' || typeof node === 'symbol') {
     return { [NODE_ATTRIBUTES.UUID]: node };
   }
 

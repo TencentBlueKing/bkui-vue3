@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { computed, defineComponent } from 'vue';
 
@@ -54,7 +54,7 @@ export default defineComponent({
         valueText += '';
         const output = [];
         let count = 0;
-        valueText.split('').forEach((char) => {
+        valueText.split('').forEach(char => {
           if (count < Number(props.valLength)) {
             count += /[\u4e00-\u9fa5]/.test(char) ? 2 : 1;
             output.push(char);
@@ -63,11 +63,7 @@ export default defineComponent({
 
         return output.join('');
       }
-      return (
-        (props.count as number) > (props.overflowCount as number)
-          ? `${props.overflowCount}+`
-          : props.count
-      );
+      return (props.count as number) > (props.overflowCount as number) ? `${props.overflowCount}+` : props.count;
     });
     const radiusStyle = computed(() => {
       const isRadius = props.radius !== undefined && /^\d+(%|px|em|rem|vh|vw)?$/.test(props.radius);
@@ -100,27 +96,40 @@ export default defineComponent({
     };
   },
   render() {
-    const wrapperClasses = classes({
-      [`${this.resolveClassName('badge-main')}`]: true,
-    }, this.$props.extCls);
-    const badgeClass = classes({
-      [`${this.resolveClassName('badge')} ${this.resolveClassName(this.$props.theme)}`]: !!this.$props.theme,
-      ['pinned ']: this.$slots.default,
-      ['dot']: this.$props.dot,
-      [`${this.$props.position}`]: this.$slots.default,
-      [`${this.resolveClassName('badge-icon')} is-icon`]: this.$slots.icon,
-    }, '');
+    const wrapperClasses = classes(
+      {
+        [`${this.resolveClassName('badge-main')}`]: true,
+      },
+      this.$props.extCls,
+    );
+    const badgeClass = classes(
+      {
+        [`${this.resolveClassName('badge')} ${this.resolveClassName(this.$props.theme)}`]: !!this.$props.theme,
+        ['pinned ']: this.$slots.default,
+        ['dot']: this.$props.dot,
+        [`${this.$props.position}`]: this.$slots.default,
+        [`${this.resolveClassName('badge-icon')} is-icon`]: this.$slots.icon,
+      },
+      '',
+    );
     const number = !this.$props.dot ? <span>{this.numberCount}</span> : '';
 
-    return <div class={wrapperClasses}>
-      {this.$slots.default?.() ?? ''}
-      {
-        !this.$props.visible ? <span class={badgeClass} style={this.radiusStyle}
-          onMouseenter={this.handleHover}
-          onMouseleave={this.handleLeave}>
-          {this.$slots.icon?.() ?? number}
-        </span> : ''
-      }
-    </div>;
+    return (
+      <div class={wrapperClasses}>
+        {this.$slots.default?.() ?? ''}
+        {!this.$props.visible ? (
+          <span
+            class={badgeClass}
+            style={this.radiusStyle}
+            onMouseenter={this.handleHover}
+            onMouseleave={this.handleLeave}
+          >
+            {this.$slots.icon?.() ?? number}
+          </span>
+        ) : (
+          ''
+        )}
+      </div>
+    );
   },
 });

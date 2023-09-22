@@ -22,12 +22,12 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import useMessage from './../../hooks/use-message';
 import NotifyConstructor from './notifyConstructor';
 
-const Notify = (options) => {
+const Notify = options => {
   useMessage(NotifyConstructor, options);
 };
 

@@ -116,7 +116,7 @@ class BKZIndexManager {
    * @param config 配置项
    */
   public setDefaultZIndex(config: any) {
-    Object.keys(config || {}).forEach((key) => {
+    Object.keys(config || {}).forEach(key => {
       if (Object.prototype.hasOwnProperty.call(this.storageLayerIndexValue.__proto__, key)) {
         Object.assign(this.storageLayerIndexValue.__proto__, { [key]: config[key] });
       }
@@ -130,7 +130,7 @@ class BKZIndexManager {
    * @param config 配置项
    */
   public resetZIndex(config: any) {
-    Object.keys(config || {}).forEach((key) => {
+    Object.keys(config || {}).forEach(key => {
       if (Object.prototype.hasOwnProperty.call(this.storageLayerIndexValue, key)) {
         Object.assign(this.storageLayerIndexValue, { [key]: config[key] });
       }
@@ -142,13 +142,14 @@ class BKZIndexManager {
    */
   private copyDefaultValue() {
     const properties = Object.keys(BKLAYERD_INDEX_EFAULT_VALUE).reduce(
-      (props, key: string) => Object.assign(props, {
-        [key]: {
-          value: BKLAYERD_INDEX_EFAULT_VALUE[key as BKLAYERTYPE],
-          writable: true,
-          configurable: true,
-        },
-      }),
+      (props, key: string) =>
+        Object.assign(props, {
+          [key]: {
+            value: BKLAYERD_INDEX_EFAULT_VALUE[key as BKLAYERTYPE],
+            writable: true,
+            configurable: true,
+          },
+        }),
       {},
     );
     this.storageLayerIndexValue = Object.create(BKLAYERD_INDEX_EFAULT_VALUE, properties);

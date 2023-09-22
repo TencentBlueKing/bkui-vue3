@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { mount } from '@vue/test-utils';
 
@@ -219,27 +219,20 @@ describe('TagInput.tsx', () => {
   it('render with tpl', async () => {
     const tpl = (node, highlightKeyword, h) => {
       const innerHTML = `${highlightKeyword(node.name)} (${node.id})`;
-      return h(
-        'div',
-        { class: 'bk-selector-node' },
-        [
-          h('span', {
-            class: 'text',
-            innerHTML,
-          }),
-        ],
-      );
+      return h('div', { class: 'bk-selector-node' }, [
+        h('span', {
+          class: 'text',
+          innerHTML,
+        }),
+      ]);
     };
-    const tagTpl = (node, h) => h(
-      'div',
-      { class: 'tag' },
-      [
+    const tagTpl = (node, h) =>
+      h('div', { class: 'tag' }, [
         h('span', {
           class: 'text',
           innerHTML: `<span style="text-decoration: underline;">${node.name}</span> (${node.id})`,
         }),
-      ],
-    );
+      ]);
     const wrapper = await mount(TagInput, {
       props: {
         list,
@@ -255,7 +248,7 @@ describe('TagInput.tsx', () => {
   });
 
   it('render with custom tag', async () => {
-    const separator =  '|';
+    const separator = '|';
     const wrapper = await mount(TagInput, {
       props: {
         list,
@@ -328,10 +321,11 @@ describe('TagInput.tsx', () => {
   });
 
   it('render with filter-callback prop', async () => {
-    const filterCallback = (searchValue, searchKey, list) => list.filter((data) => {
-      if (!searchValue) return list;
-      return (data.id.indexOf(searchValue) > -1) || (data[searchKey].indexOf(searchValue) > -1);
-    });
+    const filterCallback = (searchValue, searchKey, list) =>
+      list.filter(data => {
+        if (!searchValue) return list;
+        return data.id.indexOf(searchValue) > -1 || data[searchKey].indexOf(searchValue) > -1;
+      });
     const wrapper = await mount(TagInput, {
       props: {
         list,

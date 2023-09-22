@@ -22,85 +22,104 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { mount } from '@vue/test-utils';
 
 import Timeline from '../src/index';
 
-const Mount = (template: string) => mount({
-  components: {
-    BkTimeline: Timeline,
-  },
-  template,
-}, {
-  global: {
-    provide: {
-      Timeline: {},
+const Mount = (template: string) =>
+  mount(
+    {
+      components: {
+        BkTimeline: Timeline,
+      },
+      template,
     },
-  },
-});
+    {
+      global: {
+        provide: {
+          Timeline: {},
+        },
+      },
+    },
+  );
 
 describe('Timeline.tsx', () => {
   it('test timeline icon', async () => {
     const wrapper = await mount(Timeline, {
-      props: { list: [{
-        tag: '步骤1',
-        content: '内容1',
+      props: {
+        list: [
+          {
+            tag: '步骤1',
+            content: '内容1',
+          },
+          {
+            tag: '步骤2',
+            content: '内容2',
+          },
+        ],
       },
-      {
-        tag: '步骤2',
-        content: '内容2',
-      }] },
     });
     expect(wrapper.findAll('.bk-timeline-icon').length).toEqual(0);
   });
 
   it('test timeline default', async () => {
     const wrapper = await mount(Timeline, {
-      props: { list: [{
-        tag: '步骤1',
-        content: '内容1',
+      props: {
+        list: [
+          {
+            tag: '步骤1',
+            content: '内容1',
+          },
+          {
+            tag: '步骤2',
+            content: '内容2',
+          },
+        ],
       },
-      {
-        tag: '步骤2',
-        content: '内容2',
-      }] },
     });
     expect(wrapper.findAll('.bk-timeline-default').length).toEqual(2);
   });
 
   it('test theme', async () => {
     const wrapper = await mount(Timeline, {
-      props: { list: [{
-        tag: '步骤1',
-        content: '内容1',
-        type: 'warning',
+      props: {
+        list: [
+          {
+            tag: '步骤1',
+            content: '内容1',
+            type: 'warning',
+          },
+          {
+            tag: '步骤2',
+            content: '内容2',
+            type: 'success',
+          },
+        ],
       },
-      {
-        tag: '步骤2',
-        content: '内容2',
-        type: 'success',
-      }] },
     });
     expect(wrapper.findAll('.bk-timeline-success').length).toEqual(1);
     expect(wrapper.findAll('.bk-timeline-warning').length).toEqual(1);
   });
 
-
   it('test timeline size', async () => {
     const wrapper = await mount(Timeline, {
-      props: { list: [{
-        tag: '步骤1',
-        content: '内容1',
-        type: 'warning',
-        size: 'large',
+      props: {
+        list: [
+          {
+            tag: '步骤1',
+            content: '内容1',
+            type: 'warning',
+            size: 'large',
+          },
+          {
+            tag: '步骤2',
+            content: '内容2',
+            type: 'success',
+          },
+        ],
       },
-      {
-        tag: '步骤2',
-        content: '内容2',
-        type: 'success',
-      }] },
     });
     expect(wrapper.findAll('.bk-timeline-large').length).toEqual(1);
     expect(wrapper.find('.bk-timeline-large').exists()).toBe(true);
@@ -108,18 +127,22 @@ describe('Timeline.tsx', () => {
 
   it('test timeline filled', async () => {
     const wrapper = await mount(Timeline, {
-      props: { list: [{
-        tag: '步骤1',
-        content: '内容1',
-        type: 'warning',
-        size: 'large',
-        filled: true,
+      props: {
+        list: [
+          {
+            tag: '步骤1',
+            content: '内容1',
+            type: 'warning',
+            size: 'large',
+            filled: true,
+          },
+          {
+            tag: '步骤2',
+            content: '内容2',
+            type: 'success',
+          },
+        ],
       },
-      {
-        tag: '步骤2',
-        content: '内容2',
-        type: 'success',
-      }] },
     });
     expect(wrapper.findAll('.bk-timeline-filled').length).toEqual(1);
     expect(wrapper.find('.bk-timeline-filled').exists()).toBe(true);
@@ -127,20 +150,24 @@ describe('Timeline.tsx', () => {
 
   it('test timeline color', async () => {
     const wrapper = await mount(Timeline, {
-      props: { list: [{
-        tag: '步骤1',
-        content: '内容1',
-        type: 'warning',
-        size: 'large',
-        filled: true,
-        color: 'green',
+      props: {
+        list: [
+          {
+            tag: '步骤1',
+            content: '内容1',
+            type: 'warning',
+            size: 'large',
+            filled: true,
+            color: 'green',
+          },
+          {
+            tag: '步骤2',
+            content: '内容2',
+            type: 'success',
+            color: 'yellow',
+          },
+        ],
       },
-      {
-        tag: '步骤2',
-        content: '内容2',
-        type: 'success',
-        color: 'yellow',
-      }] },
     });
     expect(wrapper.findAll('.bk-timeline-green').length).toEqual(1);
     expect(wrapper.findAll('.bk-timeline-yellow').length).toEqual(1);

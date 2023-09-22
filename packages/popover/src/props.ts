@@ -26,13 +26,7 @@
 import { ExtractPropTypes } from 'vue';
 import { toType } from 'vue-types';
 
-import {
-  PlacementEnum,
-  placementType,
-  PropTypes,
-  renderType,
-  triggerType,
-} from '@bkui-vue/shared';
+import { PlacementEnum, placementType, PropTypes, renderType, triggerType } from '@bkui-vue/shared';
 
 export const EventProps = {
   onAfterHidden: () => {},
@@ -102,10 +96,7 @@ export const PopoverProps = {
   /**
    * 弹出内容绑定元素
    */
-  boundary: PropTypes.oneOfType([
-    PropTypes.string.def('parent'),
-    PropTypes.instanceOf(HTMLElement),
-  ]),
+  boundary: PropTypes.oneOfType([PropTypes.string.def('parent'), PropTypes.instanceOf(HTMLElement)]),
 
   zIndex: PropTypes.number.def(undefined),
 
@@ -144,10 +135,7 @@ export const PopoverProps = {
   /**
    * popover显示和隐藏的延时时间
    */
-  popoverDelay: PropTypes.oneOfType([
-    PropTypes.number,
-    PropTypes.arrayOf(PropTypes.number),
-  ]).def(100),
+  popoverDelay: PropTypes.oneOfType([PropTypes.number, PropTypes.arrayOf(PropTypes.number)]).def(100),
   /**
    * 配置自定义样式类名，传入的类会被加在组件最外层的 DOM
    */

@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { ComponentInternalInstance, computed, CSSProperties, defineComponent, h, ref } from 'vue';
 
@@ -83,9 +83,7 @@ export default defineComponent({
         if (!item.props) {
           return null;
         }
-        const {
-          name, label, closable, visible, disabled, sortable, tips,
-        } = item.props;
+        const { name, label, closable, visible, disabled, sortable, tips } = item.props;
         if (!visible) {
           return false;
         }
@@ -108,7 +106,12 @@ export default defineComponent({
           return label;
         };
         list.push({
-          name, closable, visible, disabled, sortable, tips,
+          name,
+          closable,
+          visible,
+          disabled,
+          sortable,
+          tips,
           tabLabel: renderLabel(label),
         });
         return true;
@@ -177,83 +180,97 @@ export default defineComponent({
       dragenterIndex,
       dragStartIndex,
       draggingEle,
-      guid: Math.random().toString(16)
-        .substr(4) + Math.random().toString(16)
-        .substr(4),
+      guid: Math.random().toString(16).substr(4) + Math.random().toString(16).substr(4),
       resolveClassName,
     };
   },
   render() {
-    const {
-      active, closable, addable, sortable, sortType, labelHeight,
-      dragstart, dragenter, dragend, drop,
-    } = this;
-    const renderNavs = () => this.navs.map((item, index) => {
-      if (!item) {
-        return null;
-      }
-      const { name, disabled, tabLabel } = item;
-      const getNavItemClass = () => {
-        const classNames = [this.resolveClassName('tab-header-item')];
-        if (disabled) {
-          classNames.push(this.resolveClassName('tab-header--disabled'));
+    const { active, closable, addable, sortable, sortType, labelHeight, dragstart, dragenter, dragend, drop } = this;
+    const renderNavs = () =>
+      this.navs.map((item, index) => {
+        if (!item) {
+          return null;
         }
-        if (active === name) {
-          classNames.push(this.resolveClassName('tab-header--active'));
-        }
-        return classNames.join(' ');
-      };
-      const getValue = (curentValue, parentValue) => !disabled && (curentValue || parentValue);
-      return (
-        <div
-          key={name}
-          onClick={() => !disabled && this.handleTabChange(name)}
-          draggable={getValue(item.sortable, sortable)}
-          onDragstart={e => dragstart(index, e)}
-          ref={active === name ? 'activeRef' : ''}
-          onDragenter={(e) => {
-            e.preventDefault();
-            dragenter(index);
-          }}
-          onDragleave={(e) => {
-            e.preventDefault();
-          }}
-          onDragover={(e) => {
-            e.preventDefault();
-          }}
-          onDragend={(e) => {
-            e.preventDefault();
-            dragend();
-          }}
-          onDrop={(e) => {
-            e.preventDefault();
-            drop(index, sortType);
-          }}
-          class={getNavItemClass()}
-          v-bk-tooltips={{ content: item.tips, disabled: !item.tips }}
-        >
-          <div>{tabLabel}</div>
-          {getValue(item.closable, closable) ? (
-            <span class={this.resolveClassName('tab-header--close')} onClick={(): void => this.handleTabRemove(index, item)}><Close/></span>
-          ) : ''}
-        </div>
-      );
-    });
+        const { name, disabled, tabLabel } = item;
+        const getNavItemClass = () => {
+          const classNames = [this.resolveClassName('tab-header-item')];
+          if (disabled) {
+            classNames.push(this.resolveClassName('tab-header--disabled'));
+          }
+          if (active === name) {
+            classNames.push(this.resolveClassName('tab-header--active'));
+          }
+          return classNames.join(' ');
+        };
+        const getValue = (curentValue, parentValue) => !disabled && (curentValue || parentValue);
+        return (
+          <div
+            key={name}
+            onClick={() => !disabled && this.handleTabChange(name)}
+            draggable={getValue(item.sortable, sortable)}
+            onDragstart={e => dragstart(index, e)}
+            ref={active === name ? 'activeRef' : ''}
+            onDragenter={e => {
+              e.preventDefault();
+              dragenter(index);
+            }}
+            onDragleave={e => {
+              e.preventDefault();
+            }}
+            onDragover={e => {
+              e.preventDefault();
+            }}
+            onDragend={e => {
+              e.preventDefault();
+              dragend();
+            }}
+            onDrop={e => {
+              e.preventDefault();
+              drop(index, sortType);
+            }}
+            class={getNavItemClass()}
+            v-bk-tooltips={{ content: item.tips, disabled: !item.tips }}
+          >
+            <div>{tabLabel}</div>
+            {getValue(item.closable, closable) ? (
+              <span
+                class={this.resolveClassName('tab-header--close')}
+                onClick={(): void => this.handleTabRemove(index, item)}
+              >
+                <Close />
+              </span>
+            ) : (
+              ''
+            )}
+          </div>
+        );
+      });
     const renderOperation = () => {
       const list = [];
       if (typeof this.$slots.add === 'function') {
         list.push(this.$slots.add?.(h));
       } else if (addable) {
-        list.push(<div onClick={this.handleTabAdd}><Plus style="display:flex;" width={26} height={26}/></div>);
+        list.push(
+          <div onClick={this.handleTabAdd}>
+            <Plus
+              style='display:flex;'
+              width={26}
+              height={26}
+            />
+          </div>,
+        );
       }
       if (list.length) {
         return (
           <div class={this.resolveClassName('tab-header-operation')}>
-            {
-              list.map((item, index) => (
-                <div class={this.resolveClassName('tab-header-item')} key={index}>{item}</div>
-              ))
-            }
+            {list.map((item, index) => (
+              <div
+                class={this.resolveClassName('tab-header-item')}
+                key={index}
+              >
+                {item}
+              </div>
+            ))}
           </div>
         );
       }
@@ -261,20 +278,27 @@ export default defineComponent({
     };
     const renderActiveBar = () => {
       if (this.type === TabTypeEnum.UNBORDER_CARD) {
-        return (<div style={this.activeBarStyle} class={this.resolveClassName('tab-header-active-bar')}/>);
+        return (
+          <div
+            style={this.activeBarStyle}
+            class={this.resolveClassName('tab-header-active-bar')}
+          />
+        );
       }
       return '';
     };
-    const setting = typeof this.$slots.setting === 'function' ? (
-      <div class={this.resolveClassName('tab-header-setting')}>
-        {this.$slots.setting()}
-      </div>
-    ) : null;
+    const setting =
+      typeof this.$slots.setting === 'function' ? (
+        <div class={this.resolveClassName('tab-header-setting')}>{this.$slots.setting()}</div>
+      ) : null;
     const operations = renderOperation();
 
     return (
-      <div style={{ lineHeight: `${labelHeight}px` }} class={this.resolveClassName('tab-header')}>
-        <div class={[this.resolveClassName('tab-header-nav'), (operations || setting) ? 'tab-header-auto' : '']}>
+      <div
+        style={{ lineHeight: `${labelHeight}px` }}
+        class={this.resolveClassName('tab-header')}
+      >
+        <div class={[this.resolveClassName('tab-header-nav'), operations || setting ? 'tab-header-auto' : '']}>
           {renderActiveBar()}
           {renderNavs()}
         </div>

@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 import { withInstallProps } from '@bkui-vue/shared';
 
 import Component from './radio';
@@ -30,8 +30,4 @@ import RadioButton from './radio-button';
 import RadioGroup from './radio-group';
 const BkRadio = withInstallProps(Component, { Group: RadioGroup, Button: RadioButton });
 export default BkRadio;
-export {
-  BkRadio,
-  RadioGroup as BkRadioGroup,
-  RadioButton as BkRadioButton,
-};
+export { BkRadio, RadioGroup as BkRadioGroup, RadioButton as BkRadioButton };

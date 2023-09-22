@@ -1,28 +1,28 @@
 /*
-* Tencent is pleased to support the open source community by making
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
-*
-* Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
-*
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
-*
-* License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
-*
-* ---------------------------------------------------
-* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
-* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
-* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-* the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-* THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-* IN THE SOFTWARE.
-*/
+ * Tencent is pleased to support the open source community by making
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ *
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ *
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ *
+ * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ *
+ * ---------------------------------------------------
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+ * the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
 
 import { defineComponent } from 'vue';
 
@@ -212,136 +212,156 @@ export default defineComponent({
     return (
       <div>
         <DemoTitle
-          name="Collapse 折叠面板"
-          desc=""
+          name='Collapse 折叠面板'
+          desc=''
           link={`${import.meta.env.VITE_APP_BASE_URL ?? ''}/collapse`}
         />
         <DemoBox
-          title="基础用法"
-          desc="v-model绑定默认激活的item项，idFiled作为唯一标识符,如果不填写默认为当前的item的index， list配置列表。"
-          componentName="collapse"
-          demoName="demo/collapse">
-            <DemoCollapse />
+          title='基础用法'
+          desc='v-model绑定默认激活的item项，idFiled作为唯一标识符,如果不填写默认为当前的item的index， list配置列表。'
+          componentName='collapse'
+          demoName='demo/collapse'
+        >
+          <DemoCollapse />
         </DemoBox>
         <DemoBox
-          title="线条样式"
-          desc="通过配置has-header-border来使用线条样式效果。"
-          componentName="collapse"
-          demoName="demo/collapse-line">
-            <DemoCollapseLine />
+          title='线条样式'
+          desc='通过配置has-header-border来使用线条样式效果。'
+          componentName='collapse'
+          demoName='demo/collapse-line'
+        >
+          <DemoCollapseLine />
         </DemoBox>
         <DemoBox
-          title="卡片样式"
-          desc="通过配置use-card-theme来使用卡片样式效果。"
-          componentName="collapse"
-          demoName="demo/collapse-card">
-            <DemoCollapseCard />
+          title='卡片样式'
+          desc='通过配置use-card-theme来使用卡片样式效果。'
+          componentName='collapse'
+          demoName='demo/collapse-card'
+        >
+          <DemoCollapseCard />
         </DemoBox>
         <DemoBox
-          title="自定义图标"
-          desc="通过配置header-icon来自定义图标。"
-          componentName="collapse"
-          demoName="demo/collapse-icon">
-            <DemoCollapseIcon />
+          title='自定义图标'
+          desc='通过配置header-icon来自定义图标。'
+          componentName='collapse'
+          demoName='demo/collapse-icon'
+        >
+          <DemoCollapseIcon />
         </DemoBox>
         <DemoBox
-          title="图标位置"
-          desc="通过配置header-icon-align来控制图标位置。"
-          componentName="collapse"
-          demoName="demo/collapse-icon-align">
-            <DemoCollapseIconAlign />
+          title='图标位置'
+          desc='通过配置header-icon-align来控制图标位置。'
+          componentName='collapse'
+          demoName='demo/collapse-icon-align'
+        >
+          <DemoCollapseIconAlign />
         </DemoBox>
         <DemoBox
-          title="是否使用手风琴模式"
-          desc="可以配置参数 accordion 来确定是否使用手风琴模式"
-          componentName="collapse"
-          demoName="demo/collapse-accordion">
-            <DemoCollapseAccordion />
+          title='是否使用手风琴模式'
+          desc='可以配置参数 accordion 来确定是否使用手风琴模式'
+          componentName='collapse'
+          demoName='demo/collapse-accordion'
+        >
+          <DemoCollapseAccordion />
         </DemoBox>
         <DemoBox
-          title="插槽：自定义面板标题"
-          desc="通过配置默认插槽即可自定义标题内容"
-          componentName="collapse"
-          demoName="demo/collapse-title">
-            <DemoCollapseTitle />
+          title='插槽：自定义面板标题'
+          desc='通过配置默认插槽即可自定义标题内容'
+          componentName='collapse'
+          demoName='demo/collapse-title'
+        >
+          <DemoCollapseTitle />
         </DemoBox>
 
         <DemoBox
-          title="点击事件"
-          desc="通过配置默认插槽即可自定义标题内容"
-          componentName="collapse"
-          demoName="demo/collapse-click">
-            <DemoCollapseClick />
+          title='点击事件'
+          desc='通过配置默认插槽即可自定义标题内容'
+          componentName='collapse'
+          demoName='demo/collapse-click'
+        >
+          <DemoCollapseClick />
         </DemoBox>
         <DemoBox
-          title="设置列表不可点击disabled"
-          desc="通过配置list字段disabled即可"
-          componentName="collapse"
-          demoName="demo/collapse-disabled">
-            <DemoCollapseDisabled />
+          title='设置列表不可点击disabled'
+          desc='通过配置list字段disabled即可'
+          componentName='collapse'
+          demoName='demo/collapse-disabled'
+        >
+          <DemoCollapseDisabled />
         </DemoBox>
         <DemoBox
-          title="展开/收起 动画状态改变的回调事件"
-          desc="配置事件before-enter/after-leave"
-          componentName="collapse"
-          demoName="demo/collapse-enter-leave">
-            <DemoCollapseEnterLeave />
+          title='展开/收起 动画状态改变的回调事件'
+          desc='配置事件before-enter/after-leave'
+          componentName='collapse'
+          demoName='demo/collapse-enter-leave'
+        >
+          <DemoCollapseEnterLeave />
         </DemoBox>
         <DemoBox
-          title="collapse-panel"
-          desc="collapse-panel"
-          componentName="collapse"
-          demoName="demo/collapse-panel">
-            <DemoCollapsePanel />
+          title='collapse-panel'
+          desc='collapse-panel'
+          componentName='collapse'
+          demoName='demo/collapse-panel'
+        >
+          <DemoCollapsePanel />
         </DemoBox>
         <DemoBox
-          title="插槽：面板"
-          desc="传统用法，通过CollapsePanel配置内如"
-          componentName="collapse"
-          demoName="demo/collapse-slot">
+          title='插槽：面板'
+          desc='传统用法，通过CollapsePanel配置内如'
+          componentName='collapse'
+          demoName='demo/collapse-slot'
+        >
           <DemoCollapseSlot />
         </DemoBox>
         <DemoBox
-          title="collapse-panel单独使用"
-          desc="单个collapse-panel使用"
-          componentName="collapse"
-          demoName="demo/collapse-single">
+          title='collapse-panel单独使用'
+          desc='单个collapse-panel使用'
+          componentName='collapse'
+          demoName='demo/collapse-single'
+        >
           <DemoCollapseSingle />
         </DemoBox>
         <DemoBox
-          title="collapse jsx"
-          desc="tsx使用"
-          componentName="collapse"
+          title='collapse jsx'
+          desc='tsx使用'
+          componentName='collapse'
           suffix='.tsx'
-          demoName="demo/collapse-jsx">
+          demoName='demo/collapse-jsx'
+        >
           <CollapseJsx />
         </DemoBox>
 
         <PropsBox
-          title="Collapse 属性"
-          subtitle=""
-          propsData={collapseProps}/>
+          title='Collapse 属性'
+          subtitle=''
+          propsData={collapseProps}
+        />
         <PropsBox
-          title="Collapse-Panel 属性"
-          subtitle=""
-          propsData={collapsePanelProps}/>
+          title='Collapse-Panel 属性'
+          subtitle=''
+          propsData={collapsePanelProps}
+        />
 
         <PropsBox
-          title="Collapse 插槽"
-          subtitle=""
-          propsData={collapseSlots}/>
+          title='Collapse 插槽'
+          subtitle=''
+          propsData={collapseSlots}
+        />
         <PropsBox
-          title="CollapsePanel 插槽"
-          subtitle=""
-          propsData={collapsePanelSlots}/>
+          title='CollapsePanel 插槽'
+          subtitle=''
+          propsData={collapsePanelSlots}
+        />
         <PropsBox
-          title="Collapse Events"
-          subtitle=""
-          propsData={collapseEvents}/>
+          title='Collapse Events'
+          subtitle=''
+          propsData={collapseEvents}
+        />
         <PropsBox
-          title="CollapsePanel Attributes"
-          subtitle=""
-          propsData={collapsePanelEvents}/>
+          title='CollapsePanel Attributes'
+          subtitle=''
+          propsData={collapsePanelEvents}
+        />
       </div>
     );
   },

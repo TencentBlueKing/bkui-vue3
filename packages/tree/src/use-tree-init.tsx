@@ -1,29 +1,28 @@
-
 /*
-* Tencent is pleased to support the open source community by making
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
-*
-* Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
-*
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
-*
-* License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
-*
-* ---------------------------------------------------
-* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
-* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
-* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-* the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-* THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-* IN THE SOFTWARE.
-*/
+ * Tencent is pleased to support the open source community by making
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ *
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ *
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ *
+ * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ *
+ * ---------------------------------------------------
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+ * the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
 
 import { v4 as uuidv4 } from 'uuid';
 import { computed, onMounted, reactive, watch } from 'vue';
@@ -34,10 +33,10 @@ import useNodeAsync from './use-node-async';
 
 export default (props: TreePropTypes) => {
   /**
- * 扁平化当前数据
- * @param arrData
- * @returns
- */
+   * 扁平化当前数据
+   * @param arrData
+   * @returns
+   */
   const getFlatdata = (props: TreePropTypes, treeData: Array<any> = undefined, cachedSchema: any[] = []) => {
     const { data, children } = props;
     const checkedList = [];
@@ -77,7 +76,6 @@ export default (props: TreePropTypes) => {
 
       return uid || item[NODE_ATTRIBUTES.UUID] || uuidv4();
     }
-
 
     const cachedDefaultVal = {
       [NODE_ATTRIBUTES.IS_OPEN]: () => !!props.expandAll,
@@ -166,7 +164,7 @@ export default (props: TreePropTypes) => {
             if (isChecked) {
               checkedList.push(uuid);
             }
-            schema.set(uuid,  {
+            schema.set(uuid, {
               [NODE_ATTRIBUTES.DEPTH]: depth,
               [NODE_ATTRIBUTES.INDEX]: i,
               [NODE_ATTRIBUTES.UUID]: uuid,
@@ -249,7 +247,6 @@ export default (props: TreePropTypes) => {
     nextLoopEvents.set(key, event);
   };
 
-
   const resolveEventOption = (event: any) => {
     if (typeof event === 'function') {
       return {
@@ -303,44 +300,50 @@ export default (props: TreePropTypes) => {
     });
   };
 
-
   /**
-     * 监听组件配置Data改变
-     */
-  watch(() => [props.data], (newData) => {
-    const formatData = getFlatdata(props, newData, schemaValues.value);
-    flatData.data = formatData[0] as Array<any>;
-    flatData.schema = formatData[1] as any;
-    if (props.async?.callback && props.async?.deepAutoOpen === 'every') {
-      deepAutoOpen();
-    }
+   * 监听组件配置Data改变
+   */
+  watch(
+    () => [props.data],
+    newData => {
+      const formatData = getFlatdata(props, newData, schemaValues.value);
+      flatData.data = formatData[0] as Array<any>;
+      flatData.schema = formatData[1] as any;
+      if (props.async?.callback && props.async?.deepAutoOpen === 'every') {
+        deepAutoOpen();
+      }
 
-    /**
-     * 执行缓存下来的周期函数
-     * 保证data改变之后执行相关操作
-     */
-    executeNextEvent();
-  }, {
-    deep: true,
-  });
-
+      /**
+       * 执行缓存下来的周期函数
+       * 保证data改变之后执行相关操作
+       */
+      executeNextEvent();
+    },
+    {
+      deep: true,
+    },
+  );
 
   if (props.selectable) {
     onMounted(() => {
-      watch(() => props.selected, (newData) => {
-        // console.log('watch selected changed');
-        afterSelectWatch.length = 0;
-        afterSelectEvents.forEach((event: () => void) => {
-          Reflect.apply(event, this, [newData]);
+      watch(
+        () => props.selected,
+        newData => {
+          // console.log('watch selected changed');
+          afterSelectWatch.length = 0;
+          afterSelectEvents.forEach((event: () => void) => {
+            Reflect.apply(event, this, [newData]);
 
-          /**
-           * selected设置生效有可能会在props.data 改变之前
-           * 此时需要缓存当前执行函数，保证在watch data change 之后执行
-           */
-          afterSelectWatch.push(() => Reflect.apply(event, this, [newData]));
-        });
-        registerNextLoop('afterSelectWatch', afterSelectWatch);
-      }, { immediate: true });
+            /**
+             * selected设置生效有可能会在props.data 改变之前
+             * 此时需要缓存当前执行函数，保证在watch data change 之后执行
+             */
+            afterSelectWatch.push(() => Reflect.apply(event, this, [newData]));
+          });
+          registerNextLoop('afterSelectWatch', afterSelectWatch);
+        },
+        { immediate: true },
+      );
     });
   }
 

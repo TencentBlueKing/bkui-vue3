@@ -22,10 +22,20 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { addListener, removeListener } from 'resize-detector';
-import {  computed, defineComponent, onBeforeUnmount, onMounted, PropType, ref, ShallowRef, shallowRef, watch } from 'vue';
+import {
+  computed,
+  defineComponent,
+  onBeforeUnmount,
+  onMounted,
+  PropType,
+  ref,
+  ShallowRef,
+  shallowRef,
+  watch,
+} from 'vue';
 
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { clickoutside } from '@bkui-vue/directives';
@@ -34,7 +44,19 @@ import { debounce } from '@bkui-vue/shared';
 
 import SearchSelectInput from './input';
 import SearchSelected from './selected';
-import { GetMenuListFunc, ICommonItem, ISearchItem, ISearchValue,  MenuSlotParams,  SearchItemType,  SearchLogical,  SelectedItem, useSearchSelectProvider, ValidateValuesFunc, ValueBehavior } from './utils';
+import {
+  GetMenuListFunc,
+  ICommonItem,
+  ISearchItem,
+  ISearchValue,
+  MenuSlotParams,
+  SearchItemType,
+  SearchLogical,
+  SelectedItem,
+  useSearchSelectProvider,
+  ValidateValuesFunc,
+  ValueBehavior,
+} from './utils';
 const INPUT_PADDING_WIDTH = 40;
 const SELETED_MARGING_RIGHT = 6;
 export const SearchSelectProps = {
@@ -93,7 +115,10 @@ export default defineComponent({
     const { resolveClassName } = usePrefix();
     const localConditions = computed(() => {
       if (props.conditions === undefined) {
-        return [{ id: 'or', name: t.value.or }, { id: 'and', name: t.value.and }];
+        return [
+          { id: 'or', name: t.value.or },
+          { id: 'and', name: t.value.and },
+        ];
       }
       return props.conditions;
     });
@@ -110,27 +135,31 @@ export default defineComponent({
     const editKey = ref('');
     const validateStr = ref('');
     const copyData: ShallowRef<ISearchItem[]> = shallowRef([]);
-    watch(() => props.data, () => {
-      copyData.value = JSON.parse(JSON.stringify(props.data));
-      copyData.value?.forEach((item) => {
-        item.isSelected = props.uniqueSelect && !!props.modelValue.some(set => set.id === item.id);
-      });
-    }, {
-      immediate: true,
-    });
+    watch(
+      () => props.data,
+      () => {
+        copyData.value = JSON.parse(JSON.stringify(props.data));
+        copyData.value?.forEach(item => {
+          item.isSelected = props.uniqueSelect && !!props.modelValue.some(set => set.id === item.id);
+        });
+      },
+      {
+        immediate: true,
+      },
+    );
     // effects
     watch(
       () => props.modelValue,
       (v: ISearchValue[]) => {
         if (!v?.length) {
           selectedList.value = [];
-          copyData.value?.forEach((item) => {
+          copyData.value?.forEach(item => {
             item.isSelected = false;
           });
           return;
         }
         const list = [];
-        v.forEach((item) => {
+        v.forEach(item => {
           const seleted = selectedList.value.find(set => set.id === item.id && set.name === item.name);
           if (seleted?.toValueKey() === JSON.stringify(item)) {
             seleted.values = item.values || [];
@@ -153,7 +182,7 @@ export default defineComponent({
           }
         });
         selectedList.value = list;
-        copyData.value?.forEach((item) => {
+        copyData.value?.forEach(item => {
           item.isSelected = props.uniqueSelect && !!list.some(set => set.id === item.id);
         });
       },
@@ -165,10 +194,16 @@ export default defineComponent({
 
     // life hooks
     onMounted(() => {
-      addListener(wrapRef.value.querySelector(`.${resolveClassName('search-select-container')}`) as HTMLElement, debounceResize);
+      addListener(
+        wrapRef.value.querySelector(`.${resolveClassName('search-select-container')}`) as HTMLElement,
+        debounceResize,
+      );
     });
     onBeforeUnmount(() => {
-      removeListener(wrapRef.value.querySelector(`.${resolveClassName('search-select-container')}`) as HTMLElement, debounceResize);
+      removeListener(
+        wrapRef.value.querySelector(`.${resolveClassName('search-select-container')}`) as HTMLElement,
+        debounceResize,
+      );
     });
 
     // edit item
@@ -185,7 +220,10 @@ export default defineComponent({
     function onEditEnter(item: SelectedItem, index: number) {
       const list = selectedList.value.slice();
       list.splice(index, 1, item);
-      emit('update:modelValue', list.map(item => item.toValue()));
+      emit(
+        'update:modelValue',
+        list.map(item => item.toValue()),
+      );
       editKey.value = '';
     }
     function onEditBlur() {
@@ -216,7 +254,7 @@ export default defineComponent({
         width += el ? el.clientWidth + SELETED_MARGING_RIGHT : 0;
         if (width >= maxWidth - INPUT_PADDING_WIDTH) {
           index = i;
-        };
+        }
         i += 1;
       }
       if (index === tagList.length - 1 && width <= maxWidth) {
@@ -242,13 +280,19 @@ export default defineComponent({
       const list = selectedList.value.slice();
       list.push(item);
       onValidate('');
-      emit('update:modelValue', list.map(item => item.toValue()));
+      emit(
+        'update:modelValue',
+        list.map(item => item.toValue()),
+      );
     }
     function handleDeleteSelected(index?: number) {
       const list = selectedList.value.slice();
       list.splice(typeof index === 'number' ? index : selectedList.value.length - 1, 1);
       onValidate('');
-      emit('update:modelValue', list.map(item => item.toValue()));
+      emit(
+        'update:modelValue',
+        list.map(item => item.toValue()),
+      );
     }
     function handleInputFocus(v: boolean) {
       v && (overflowIndex.value = -1);
@@ -284,75 +328,94 @@ export default defineComponent({
     };
   },
   render() {
-    // vars
-    const maxHeight = `${!this.shrink || this.isFocus ?  this.maxHeight : this.minHeight}px`;
+    const maxHeight = `${!this.shrink || this.isFocus ? this.maxHeight : this.minHeight}px`;
     const showCondition = !!this.selectedList.length && this.selectedList.slice(-1)[0].type !== 'condition';
-    const menuSlots = Object.assign({}, this.$slots.menu ? {
-      menu: (data: MenuSlotParams) => this.$slots.menu?.(data),
-    } : {});
+    const menuSlots = Object.assign(
+      {},
+      this.$slots.menu
+        ? {
+            menu: (data: MenuSlotParams) => this.$slots.menu?.(data),
+          }
+        : {},
+    );
     // render
-    return <div
-      class={this.resolveClassName('search-select')}
-      ref="wrapRef">
-    <div
-      class={{
-        [this.resolveClassName('search-select-container')]: true,
-        'is-focus': this.isFocus,
-      }}
-      onClick={this.handleWrapClick}>
-      <div class="search-prefix">
-        {this.$slots.prepend?.()}
-      </div>
-      <div class="search-container" style={{ maxHeight }}>
-        <SearchSelected
-          data={this.copyData}
-          conditions={this.localConditions}
-          selectedList={this.selectedList}
-          overflowIndex={this.overflowIndex}
-          getMenuList={this.getMenuList}
-          validateValues={this.validateValues}
-          valueBehavior={this.valueBehavior}
-          onDelete={this.handleDeleteSelected}
-          v-slots={{ ...menuSlots }}/>
-        <div class="search-container-input">
-          <SearchSelectInput
-           ref="inputRef"
-           data={this.copyData}
-           showInputBefore={!this.selectedList.length}
-           showCondition={showCondition}
-           conditions={this.localConditions}
-           placeholder={this.placeholder || this.t.pleaseSelect}
-           clickOutside={this.handleInputOutside}
-           getMenuList={this.getMenuList}
-           validateValues={this.validateValues}
-           valueBehavior={this.valueBehavior}
-           onAdd={this.handleAddSelected}
-           onDelete={this.handleDeleteSelected}
-           onFocus={this.handleInputFocus}
-           v-slots={{ ...menuSlots }}/>
+    return (
+      <div
+        class={this.resolveClassName('search-select')}
+        ref='wrapRef'
+      >
+        <div
+          class={{
+            [this.resolveClassName('search-select-container')]: true,
+            'is-focus': this.isFocus,
+          }}
+          onClick={this.handleWrapClick}
+        >
+          <div class='search-prefix'>{this.$slots.prepend?.()}</div>
+          <div
+            class='search-container'
+            style={{ maxHeight }}
+          >
+            <SearchSelected
+              data={this.copyData}
+              conditions={this.localConditions}
+              selectedList={this.selectedList}
+              overflowIndex={this.overflowIndex}
+              getMenuList={this.getMenuList}
+              validateValues={this.validateValues}
+              valueBehavior={this.valueBehavior}
+              onDelete={this.handleDeleteSelected}
+              v-slots={{ ...menuSlots }}
+            />
+            <div class='search-container-input'>
+              <SearchSelectInput
+                ref='inputRef'
+                data={this.copyData}
+                showInputBefore={!this.selectedList.length}
+                showCondition={showCondition}
+                conditions={this.localConditions}
+                placeholder={this.placeholder || this.t.pleaseSelect}
+                clickOutside={this.handleInputOutside}
+                getMenuList={this.getMenuList}
+                validateValues={this.validateValues}
+                valueBehavior={this.valueBehavior}
+                onAdd={this.handleAddSelected}
+                onDelete={this.handleDeleteSelected}
+                onFocus={this.handleInputFocus}
+                v-slots={{ ...menuSlots }}
+              />
+            </div>
+          </div>
+          <div class='search-nextfix'>
+            {this.clearable && !!this.selectedList.length && (
+              <Close
+                class='search-clear'
+                onClick={this.handleClearAll}
+              />
+            )}
+            {this.$slots.append ? (
+              this.$slots.append()
+            ) : (
+              <Search
+                onClick={this.handleClickSearch}
+                class={`search-nextfix-icon ${this.isFocus ? 'is-focus' : ''}`}
+              ></Search>
+            )}
+          </div>
         </div>
+        {!!this.validateStr.length && (
+          <div class={this.resolveClassName('search-select-tips')}>
+            {this.$slots.validate ? (
+              this.$slots.validate()
+            ) : (
+              <>
+                <ExclamationCircleShape class='select-tips' />
+                {this.validateStr || ''}
+              </>
+            )}
+          </div>
+        )}
       </div>
-      <div class="search-nextfix">
-        { this.clearable && (!!this.selectedList.length) && <Close
-          class="search-clear"
-          onClick={this.handleClearAll}/>
-        }
-        {
-          this.$slots.append
-            ? this.$slots.append()
-            : <Search onClick={this.handleClickSearch} class={`search-nextfix-icon ${this.isFocus ? 'is-focus'  : ''}`}></Search>
-        }
-      </div>
-    </div>
-    {
-      !!this.validateStr.length && <div class={this.resolveClassName('search-select-tips')}>
-        {
-          this.$slots.validate ? this.$slots.validate() : <>
-            <ExclamationCircleShape class="select-tips"/>{this.validateStr || ''}
-          </>
-        }
-      </div>
-    }
-  </div>;
+    );
   },
 });

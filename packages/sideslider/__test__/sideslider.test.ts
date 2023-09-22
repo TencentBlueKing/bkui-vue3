@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { mount } from '@vue/test-utils';
 
@@ -70,6 +70,8 @@ describe('Sideslider.tsx', () => {
       components,
       template: '<BkSideslider ref="slider" width="500px"></BkSideslider>',
     });
-    expect(wrapper.html()).toContain('<div class="bk-modal-wrapper normal bk-sideslider-wrapper scroll-able" style="width: 500px; height: 100%; display: none; right: 0px;">');
+    expect(wrapper.html()).toContain(
+      '<div class="bk-modal-wrapper normal bk-sideslider-wrapper scroll-able" style="width: 500px; height: 100%; display: none; right: 0px;">',
+    );
   });
 });
