@@ -38,20 +38,20 @@
 
 }
 
-.placeholder() {
+.placeholder(@fontSize: @font-size-base) {
   ::placeholder {
     color: @light-gray;
+    font-size: @fontSize;
   }
 }
 
 .@{bk-prefix}-textarea {
-  .placeholder();
+  --textarea-line-height: 20px;
   display: inline-flex;
   width: 100%;
-  min-height: 70px;
   overflow: hidden;
   font-size: @font-size-base;
-  line-height: 20px;
+  line-height: var(--textarea-line-height);
   color: @input-color;
   background-color: white;
   border: @border-width-base @border-style-base @input-border-color;
@@ -59,7 +59,12 @@
   box-sizing: border-box;
   transition: all .3s;
   flex-direction: column;
-  resize: both;
+  .placeholder();
+
+  &.resizable {
+    resize: both;
+  }
+
   .disabled();
 
   >textarea {
@@ -71,14 +76,13 @@
     border-radius: @border-radius-base;
     outline: none;
     resize: none;
-    flex: 1;
   }
 
   &--max-length {
     padding-right: @input-horizontal-padding;
     margin: 0;
     margin-left: auto;
-    font-size: 12px;
+    font-size: @font-size-base;
     text-align: right;
     transform: scale(.8);
     justify-content: flex-end;
@@ -163,6 +167,7 @@
 
   &--large {
     .component-size(@component-size-large, @font-size-medium);
+    .placeholder(@font-size-medium);
 
     .@{bk-prefix}-input--max-length {
       font-size: @font-size-large;
@@ -282,9 +287,7 @@
       appearance: none;
     }
 
-    &::placeholder {
-      color: @light-gray;
-    }
+
   }
 
   &--number-control {

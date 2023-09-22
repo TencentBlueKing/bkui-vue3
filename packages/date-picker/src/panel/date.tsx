@@ -381,7 +381,7 @@ export default defineComponent({
                 <span
                   class={this.resolveClassName('date-picker-header-label')}
                   v-show={this.showLabelFirst}
-                  onClick={() => this.datePanelLabel.labels[0].handler}
+                  onClick={() => this.datePanelLabel.labels[0].handler()}
                 >
                   {this.datePanelLabel.labels[0].label}
                 </span>
@@ -389,7 +389,7 @@ export default defineComponent({
                 <span
                   class={this.resolveClassName('date-picker-header-label')}
                   v-show={this.showLabelSecond}
-                  onClick={() => this.datePanelLabel.labels[1].handler}
+                  onClick={() => this.datePanelLabel.labels[1].handler()}
                 >
                   {this.datePanelLabel.labels[1].label}
                 </span>

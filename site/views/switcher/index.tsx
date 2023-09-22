@@ -48,6 +48,13 @@ const switcherPropsJson: IPropsTableItem[] = [
     optional: [],
   },
   {
+    name: 'theme',
+    type: 'String',
+    default: 'success',
+    desc: '主题',
+    optional: ['primary', 'success'],
+  },
+  {
     name: 'disabled',
     type: 'Boolean',
     default: 'false',

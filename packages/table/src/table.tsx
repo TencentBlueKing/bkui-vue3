@@ -329,6 +329,12 @@ export default defineComponent({
       left: `${dragOffsetX.value - reactiveSchema.scrollTranslateX}px`,
     }));
 
+    const resizeHeadColStyle = computed(() => ({
+      ...dragOffsetXStyle.value,
+      width: '6px',
+      left: `${dragOffsetX.value - reactiveSchema.scrollTranslateX}px`,
+    }));
+
     const loadingRowClass = {
       'scroll-loading': true,
       _bottom: true,
@@ -396,6 +402,10 @@ export default defineComponent({
             style={headStyle.value}
           >
             {tableRender.renderTableHeadSchema()}
+            <div
+              class='col-resize-drag'
+              style={resizeHeadColStyle.value}
+            ></div>
           </div>
         }
         <VirtualRender

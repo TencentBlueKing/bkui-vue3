@@ -23,31 +23,54 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { computed, defineComponent, ref, watch } from 'vue';
+import { computed, defineComponent, ExtractPropTypes, ref, watch } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import { SwitcherLoading } from '@bkui-vue/icon';
-import { PropTypes, useFormItem } from '@bkui-vue/shared';
+import { PropTypes, SwitcherThemeType, useFormItem } from '@bkui-vue/shared';
+
+export const switcherType = {
+  theme: SwitcherThemeType(),
+  size: PropTypes.size(),
+  disabled: PropTypes.bool,
+  showText: PropTypes.bool,
+  isOutline: PropTypes.bool,
+  onText: PropTypes.string.def('ON'),
+  offText: PropTypes.string.def('OFF'),
+  isSquare: PropTypes.bool,
+  extCls: PropTypes.string,
+  beforeChange: PropTypes.func.def(undefined),
+  trueValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool]).def(true),
+  falseValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool]).def(false),
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool]).def(false),
+  modelValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool]).def(false),
+  withValidate: PropTypes.bool.def(true),
+};
+
+export const enum EVENTS {
+  UPDATE = 'update:modelValue',
+  CHANGE = 'change',
+}
+
+export type SwitcherType = ExtractPropTypes<typeof switcherType>;
+
+function EventFunction(value: SwitcherType['modelValue']) {
+  return value;
+}
+
+function ChangeFunction(value: boolean) {
+  return !!value;
+}
+
+const switcherEmitEventsType = {
+  [EVENTS.UPDATE]: EventFunction,
+  [EVENTS.CHANGE]: ChangeFunction,
+};
+
 export default defineComponent({
   name: 'Switcher',
-  props: {
-    theme: PropTypes.theme(),
-    size: PropTypes.size(),
-    disabled: PropTypes.bool,
-    showText: PropTypes.bool,
-    isOutline: PropTypes.bool,
-    onText: PropTypes.string.def('ON'),
-    offText: PropTypes.string.def('OFF'),
-    isSquare: PropTypes.bool,
-    extCls: PropTypes.string,
-    beforeChange: PropTypes.func.def(undefined),
-    trueValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool]).def(true),
-    falseValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool]).def(false),
-    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool]).def(false),
-    modelValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool]).def(false),
-    withValidate: PropTypes.bool.def(true),
-  },
-  emits: ['update:modelValue', 'change'],
+  props: switcherType,
+  emits: switcherEmitEventsType,
   setup(props, { emit }) {
     const formItem = useFormItem();
     const { resolveClassName } = usePrefix();
@@ -109,8 +132,8 @@ export default defineComponent({
       const lastChecked = !isChecked.value;
 
       const trigger = () => {
-        emit('update:modelValue', lastValue);
-        emit('change', lastChecked);
+        emit(EVENTS.UPDATE, lastValue);
+        emit(EVENTS.CHANGE, lastChecked);
       };
 
       let goodJob: any = true;

@@ -89,6 +89,7 @@ export default defineComponent({
     };
     let observer = new ResizeObserver(setMaxLimit);
 
+    // 更新 resizeProxyRef 的样式
     const updateResizeProxyStyle = () => {
       resizeProxyRef.value.style.visibility = 'visible';
       switch (placement.value) {
@@ -107,6 +108,7 @@ export default defineComponent({
       }
     };
 
+    // 更新遮罩的样式
     const updateResizeMaskStyle = () => {
       resizeMaskRef.value.style.display = 'block';
       resizeMaskRef.value.style.cursor = vertical.value ? 'col-resize' : 'row-resize';
@@ -115,6 +117,7 @@ export default defineComponent({
     const getRealValue = current =>
       Math.min(max.value, Math.max(min.value, current), limitMax.value - triggerWidth.value);
 
+    // mousedown 事件处理
     const handleMousedown = event => {
       emit('before-resize', event);
       const asideRect = asideRef.value.getBoundingClientRect();

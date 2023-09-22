@@ -118,10 +118,12 @@ export default (colgroups: GroupColumn[], immediate = true) => {
 
       if (isDraging) {
         target.style.setProperty('user-select', 'none');
+        target.classList.remove('col-resize-hover');
       }
 
       if (!isDraging) {
         if (!target) {
+          target.classList.remove('col-resize-hover');
           return;
         }
 
@@ -129,16 +131,19 @@ export default (colgroups: GroupColumn[], immediate = true) => {
         if (rect.width > 12 && rect.right - e.pageX < 8) {
           isInDragSection = true;
           setChildrenNodeCursor(target, 'col-resize');
+          target.classList.add('col-resize-hover');
         } else {
           setChildrenNodeCursor(target, '');
+          target.classList.remove('col-resize-hover');
           isInDragSection = false;
         }
       }
     },
     [EVENTS.MOUSE_OUT]: (e: MouseEvent, _column: GroupColumn) => {
-      const target = e.target as HTMLElement;
+      const target = (e.target as HTMLElement).closest('th');
       if (!isDraging) {
         setChildrenNodeCursor(target, '');
+        target.classList.remove('col-resize-hover');
       }
     },
   };
@@ -184,7 +189,7 @@ export default (colgroups: GroupColumn[], immediate = true) => {
         bottom: 0,
         left: 0,
         width: '1px',
-        'background-color': '#ebeef5',
+        'background-color': '#3785FF',
       }) as const,
   );
 

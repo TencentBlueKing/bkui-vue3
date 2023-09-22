@@ -31,6 +31,7 @@ import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import { type IPropsTableItem } from '../../typings';
 
+import AutoSize from './demo/autosize.vue';
 import Basic from './demo/basic.vue';
 import Clearable from './demo/clearable.vue';
 import Combine from './demo/combine.vue';
@@ -149,6 +150,13 @@ const inputProps: IPropsTableItem[] = [
     type: 'Boolean',
     default: true,
     desc: '文本超出长度是否显示tooltips',
+    optional: [],
+  },
+  {
+    name: 'autosize',
+    type: 'Boolean, Object',
+    default: false,
+    desc: '设置文本框 autosize 属性使得根据内容自动调整的高度。 你可以给 autosize 提供一个包含有最大行数和最小行数的对象，让输入框自动调整。',
     optional: [],
   },
   {
@@ -299,6 +307,14 @@ const demos = [
     DemoComponent: Textarea,
   },
   {
+    // '自适应高度文本输入框',
+    title: '自适应高度文本输入框',
+    desc: '通过配置 type 属性为 textarea 来显示多行文本输入框',
+    componentName: 'input',
+    demoName: 'demo/autosize',
+    DemoComponent: AutoSize,
+  },
+  {
     // '带清空操作输入框',
     title: '带清空操作输入框',
     desc: '通过配置 clearable 属性为 true 来启用有文本时允许清空操作',
@@ -363,6 +379,113 @@ const demos = [
     DemoComponent: Simple,
   },
 ];
+
+// const demos = [
+//   {
+//     // '基础输入框',
+//     title: '基础输入框',
+//     desc: '使用 bk-input 标签配置输入框组件',
+//     componentName: 'input',
+//     demoName: 'demo/basic',
+//     DemoComponent: Basic,
+//   },
+//   {
+//     // 'hover 时才显示 clear 按钮',
+//     title: 'hover 时才显示 clear 按钮',
+//     desc: '配置show-clear-only-hover为true时，清除按钮在hover时才会显示',
+//     componentName: 'input',
+//     demoName: 'demo/hover-clear',
+//     DemoComponent: HoverClear,
+//   },
+//   {
+//     // '尺寸',
+//     title: '尺寸',
+//     desc: '可以使用 size 属性来定义按钮的尺寸，可接受 small large',
+//     componentName: 'input',
+//     demoName: 'demo/size',
+//     DemoComponent: Size,
+//   },
+//   {
+//     // '数字输入框',
+//     title: '数字输入框',
+//     desc: '通过配置 type 属性为 number 来设置数字类型输入，通过设置 max，min 设置最大最小值, 设置 precision 保留小数位(初始值会被四舍五入，例如：numberInputValue=4.5，precision=0时，值会被四舍五入为5)。数字输入框时，clearable 配置不生效',
+//     componentName: 'input',
+//     demoName: 'demo/number',
+//     DemoComponent: Number,
+//   },
+//   {
+//     // '多行文本输入框',
+//     title: '多行文本输入框',
+//     desc: '通过配置 type 属性为 textarea 来显示多行文本输入框',
+//     componentName: 'input',
+//     demoName: 'demo/textarea',
+//     DemoComponent: Textarea,
+//   },
+//   {
+//     // '带清空操作输入框',
+//     title: '带清空操作输入框',
+//     desc: '通过配置 clearable 属性为 true 来启用有文本时允许清空操作',
+//     componentName: 'input',
+//     demoName: 'demo/clearable',
+//     DemoComponent: Clearable,
+//   },
+//   {
+//     // '密码框',
+//     title: '密码框',
+//     desc: '通过配置 type 属性为 password 来设置密码框；通过配置 password-icon 属性来设置切换显示密码的 icon',
+//     componentName: 'input',
+//     demoName: 'demo/password',
+//     DemoComponent: Password,
+//   },
+//   {
+//     // '组合型输入框',
+//     title: '组合型输入框',
+//     desc: '通过配置 slot=prefix, slot=suffix，来让组合输入框',
+//     componentName: 'input',
+//     demoName: 'demo/combine',
+//     DemoComponent: Combine,
+//   },
+//   {
+//     // '带Icon输入框',
+//     title: '带Icon输入框',
+//     desc: '通过配置 slot=prefix, slot=suffix，来设置icon',
+//     componentName: 'input',
+//     demoName: 'demo/icon',
+//     DemoComponent: Icon,
+//   },
+//   {
+//     // '带状态输入框',
+//     title: '带状态输入框',
+//     desc: '通过配置 disabled, readonly，来让输入框禁用、只读',
+//     componentName: 'input',
+//     demoName: 'demo/status',
+//     DemoComponent: Status,
+//   },
+//   {
+//     // '事件回调',
+//     title: '事件回调',
+//     desc: '支持 keyup enter keypress keydown change focus blur 回调事件',
+//     componentName: 'input',
+//     demoName: 'demo/event-callback',
+//     DemoComponent: EventCallback,
+//   },
+//   {
+//     // 'HTML 原生属性透传',
+//     title: 'HTML 原生属性透传',
+//     desc: '支持 HTML input 标签所有原生属性，设置 password 禁用自动填充功能',
+//     componentName: 'input',
+//     demoName: 'demo/native-attrs',
+//     DemoComponent: NativeAttrs,
+//   },
+//   {
+//     // '简约风格输入框',
+//     title: '简约风格输入框',
+//     desc: '通过属性behavior配置简约风格',
+//     componentName: 'input',
+//     demoName: 'demo/simple',
+//     DemoComponent: Simple,
+//   },
+// ];
 
 export default defineComponent({
   name: 'Input',
