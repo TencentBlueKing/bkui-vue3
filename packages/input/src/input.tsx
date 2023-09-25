@@ -1,45 +1,37 @@
 /*
-* Tencent is pleased to support the open source community by making
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
-*
-* Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
-*
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
-*
-* License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
-*
-* ---------------------------------------------------
-* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
-* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
-* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-* the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-* THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-* IN THE SOFTWARE.
-*/
+ * Tencent is pleased to support the open source community by making
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ *
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ *
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ *
+ * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ *
+ * ---------------------------------------------------
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+ * the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
 
-
-import { computed, defineComponent, ExtractPropTypes, nextTick, onBeforeUnmount, onMounted, ref, watch  } from 'vue';
-import { bool, object, oneOfType } from 'vue-types';
+import { computed, defineComponent, ExtractPropTypes, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { bkTooltips } from '@bkui-vue/directives';
 import { Close, DownSmall, Eye, Search, Unvisible } from '@bkui-vue/icon';
-import {
-  classes,
-  InputBehaviorType,
-  PropTypes,
-  useFormItem,
-} from '@bkui-vue/shared';
+import { classes, InputBehaviorType, PropTypes, useFormItem } from '@bkui-vue/shared';
 
 import { calcTextareaHeight } from './util';
-
 
 export type InputAutoSize = { minRows?: number; maxRows?: number };
 
@@ -61,7 +53,7 @@ export const inputType = {
   showWordLimit: PropTypes.bool,
   showControl: PropTypes.bool.def(true),
   showClearOnlyHover: PropTypes.bool.def(true),
-  precision: PropTypes.number.def(0).validate(val => val as number >= 0 && val as number < 20),
+  precision: PropTypes.number.def(0).validate(val => (val as number) >= 0 && (val as number) < 20),
   modelValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   size: PropTypes.size(),
   rows: PropTypes.number,
@@ -70,7 +62,7 @@ export const inputType = {
   overMaxLengthLimit: PropTypes.bool.def(false),
   showOverflowTooltips: PropTypes.bool.def(true),
   resize: PropTypes.bool.def(true),
-  autosize: oneOfType<boolean | InputAutoSize>([bool, object<InputAutoSize>]).def(false),
+  autosize: PropTypes.oneOfType<Boolean | InputAutoSize>([Boolean, Object]).def(false),
 };
 
 export const enum EVENTS {
@@ -96,7 +88,7 @@ function EventFunction(_value: any, _evt: Event) {
 
 function PastEventFunction(_value: any, _e: ClipboardEvent) {
   return true;
-};
+}
 
 function CompositionEventFunction(evt: CompositionEvent) {
   return evt;
@@ -137,30 +129,31 @@ export default defineComponent({
     const isFocused = ref(false);
     const isCNInput = ref(false);
     const isTextArea = computed(() => props.type === 'textarea');
-    const inputClsPrefix = computed(() => (isTextArea.value
-      ? resolveClassName('textarea')
-      : resolveClassName('input')));
+    const inputClsPrefix = computed(() =>
+      isTextArea.value ? resolveClassName('textarea') : resolveClassName('input'),
+    );
     const { class: cls, style, ...inputAttrs } = ctx.attrs;
 
     const inputRef = ref();
-    const inputCls = computed(() => classes(
-      {
-        [`${inputClsPrefix.value}--${props.size}`]: !!props.size,
-        resizable: props.resize,
-        'is-focused': isFocused.value,
-        'is-readonly': props.readonly && !props.selectReadonly,
-        'is-disabled': props.disabled,
-        'is-simplicity': props.behavior === 'simplicity',
-        [`${cls}`]: !!cls,
-      },
-      inputClsPrefix.value,
-    ));
+    const inputCls = computed(() =>
+      classes(
+        {
+          [`${inputClsPrefix.value}--${props.size}`]: !!props.size,
+          resizable: props.resize,
+          'is-focused': isFocused.value,
+          'is-readonly': props.readonly && !props.selectReadonly,
+          'is-disabled': props.disabled,
+          'is-simplicity': props.behavior === 'simplicity',
+          [`${cls}`]: !!cls,
+        },
+        inputClsPrefix.value,
+      ),
+    );
     const isOverflow = ref(false);
     const textareaCalcStyle = ref({});
     const resizeTextarea = () => {
       if (!isTextArea.value) return;
 
-      console.log(props.autosize, props, 123);
       if (props.autosize) {
         const minRows = (props.autosize as InputAutoSize)?.minRows;
         const maxRows = (props.autosize as InputAutoSize)?.maxRows;
@@ -198,45 +191,67 @@ export default defineComponent({
     const suffixIconMap = {
       search: () => <Search />,
       // TODO: eye icon 有点偏小，需要调整
-      password: () => <Eye style={{ fontSize: '18px' }} onClick={handleVisibleChange} />,
+      password: () => (
+        <Eye
+          style={{ fontSize: '18px' }}
+          onClick={handleVisibleChange}
+        />
+      ),
     };
     const suffixCls = getCls('suffix-icon');
     const suffixIcon = computed(() => {
       const icon = suffixIconMap[props.type];
       if (pwdVisible.value) {
-        return <Unvisible onClick={handleVisibleChange} class={suffixCls} />;
+        return (
+          <Unvisible
+            onClick={handleVisibleChange}
+            class={suffixCls}
+          />
+        );
       }
       return icon ? <icon class={suffixCls} /> : null;
     });
     const isNumberInput = computed(() => props.type === 'number');
     const ceilMaxLength = computed(() => Math.floor(props.maxlength));
     const pwdVisible = ref(false);
-    const clearCls = computed(() => classes(
-      {
-        'show-clear-only-hover': props.showClearOnlyHover,
-        [`${inputClsPrefix.value}--clear-icon`]: true,
-      },
-      suffixCls,
-    ));
-    const maxLengthCls = computed(() => classes({
-      [getCls('max-length')]: true,
-      'is-over-limit': (ceilMaxLength.value - (props.modelValue ?? '').toString().length) < 0,
-    }));
+    const clearCls = computed(() =>
+      classes(
+        {
+          'show-clear-only-hover': props.showClearOnlyHover,
+          [`${inputClsPrefix.value}--clear-icon`]: true,
+        },
+        suffixCls,
+      ),
+    );
+    const maxLengthCls = computed(() =>
+      classes({
+        [getCls('max-length')]: true,
+        'is-over-limit': ceilMaxLength.value - (props.modelValue ?? '').toString().length < 0,
+      }),
+    );
     const modelValueLength = computed(() => (props.modelValue ?? '').toString().length);
-    const incControlCls = computed(() => classes({
-      'is-disabled': props.disabled || props.modelValue as number >= props.max,
-    }));
+    const incControlCls = computed(() =>
+      classes({
+        'is-disabled': props.disabled || (props.modelValue as number) >= props.max,
+      }),
+    );
 
-    const decControlCls = computed(() => classes({
-      'is-disabled': props.disabled || props.modelValue as number <= props.min,
-    }));
+    const decControlCls = computed(() =>
+      classes({
+        'is-disabled': props.disabled || (props.modelValue as number) <= props.min,
+      }),
+    );
 
-    const tooltips = computed(() => ((props.showOverflowTooltips && isOverflow.value && props.modelValue) ? {
-      content: props.modelValue,
-      sameWidth: true,
-    } : {
-      disabled: true,
-    }));
+    const tooltips = computed(() =>
+      props.showOverflowTooltips && isOverflow.value && props.modelValue
+        ? {
+            content: props.modelValue,
+            sameWidth: true,
+          }
+        : {
+            disabled: true,
+          },
+    );
 
     const resizeObserver = new ResizeObserver(() => {
       onceInitSizeTextarea();
@@ -265,7 +280,7 @@ export default defineComponent({
     onMounted(() => {
       isOverflow.value = detectOverflow();
       resizeObserver.observe(inputRef.value);
-      nextTick(resizeTextarea);
+      nextTick(() => resizeTextarea());
     });
 
     onBeforeUnmount(() => {
@@ -280,7 +295,7 @@ export default defineComponent({
     });
 
     function detectOverflow() {
-      return inputRef.value?.scrollWidth > (inputRef.value?.clientWidth + 2);
+      return inputRef.value?.scrollWidth > inputRef.value?.clientWidth + 2;
     }
 
     function clear() {
@@ -307,24 +322,14 @@ export default defineComponent({
 
     // 事件句柄生成器
     function eventHandler(eventName) {
-      return (e) => {
+      return e => {
         e.stopPropagation();
-        if (
-          eventName === EVENTS.KEYDOWN
-          && (e.code === 'Enter' || e.key === 'Enter' || e.keyCode === 13)
-        ) {
+        if (eventName === EVENTS.KEYDOWN && (e.code === 'Enter' || e.key === 'Enter' || e.keyCode === 13)) {
           ctx.emit(EVENTS.ENTER, e.target.value, e);
         }
-        if (
-          isCNInput.value
-          && [EVENTS.INPUT, EVENTS.CHANGE].some(e => eventName === e)
-        ) return;
+        if (isCNInput.value && [EVENTS.INPUT, EVENTS.CHANGE].some(e => eventName === e)) return;
         if (eventName === EVENTS.INPUT) {
-          ctx.emit(
-            EVENTS.UPDATE,
-            e.target.value,
-            e,
-          );
+          ctx.emit(EVENTS.UPDATE, e.target.value, e);
         } else if (eventName === EVENTS.CHANGE && isNumberInput.value && e.target.value !== '') {
           const val = handleNumber(e.target.value, 0);
           ctx.emit(EVENTS.UPDATE, val, e);
@@ -336,14 +341,7 @@ export default defineComponent({
       };
     }
 
-    const [
-      handleKeyup,
-      handleKeydown,
-      handleKeyPress,
-      handlePaste,
-      handleChange,
-      handleInput,
-    ] = [
+    const [handleKeyup, handleKeydown, handleKeyPress, handlePaste, handleChange, handleInput] = [
       EVENTS.KEYUP,
       EVENTS.KEYDOWN,
       EVENTS.KEYPRESS,
@@ -403,11 +401,12 @@ export default defineComponent({
     }
 
     const bindProps = computed(() => {
-      const val = typeof props.modelValue === 'undefined' || props.modelValue === null
-        ? {}
-        : {
-          value: props.modelValue,
-        };
+      const val =
+        typeof props.modelValue === 'undefined' || props.modelValue === null
+          ? {}
+          : {
+              value: props.modelValue,
+            };
       return {
         ...val,
         maxlength: !props.overMaxLengthLimit && props.maxlength,
@@ -429,9 +428,13 @@ export default defineComponent({
       onCompositionend: handleCompositionEnd,
     };
     return () => (
-      <div class={inputCls.value} style={style as any} v-bk-tooltips={tooltips.value}>
-        {ctx.slots?.prefix?.()
-          ?? (props.prefix && (
+      <div
+        class={inputCls.value}
+        style={style as any}
+        v-bk-tooltips={tooltips.value}
+      >
+        {ctx.slots?.prefix?.() ??
+          (props.prefix && (
             <div class={getCls('prefix-area')}>
               <span class={getCls('prefix-area--text')}>{props.prefix}</span>
             </div>
@@ -452,11 +455,7 @@ export default defineComponent({
             {...inputAttrs}
             ref={inputRef}
             class={`${inputClsPrefix.value}--text`}
-            type={
-              pwdVisible.value && props.type === 'password'
-                ? 'text'
-                : props.type
-            }
+            type={pwdVisible.value && props.type === 'password' ? 'text' : props.type}
             step={props.step}
             max={props.max}
             min={props.min}
@@ -465,34 +464,39 @@ export default defineComponent({
           />
         )}
         {!isTextArea.value && props.clearable && !!props.modelValue && (
-          <span class={clearCls.value} onClick={clear}>
+          <span
+            class={clearCls.value}
+            onClick={clear}
+          >
             <Close />
           </span>
         )}
         {suffixIcon.value}
-        {typeof props.maxlength === 'number'
-          && (props.showWordLimit || isTextArea.value) && (
-            <p class={maxLengthCls.value}>
-              {
-                props.overMaxLengthLimit ? (
-                  ceilMaxLength.value - modelValueLength.value
-                ) : (
-                  <>
-                    {modelValueLength.value} / <span>{ceilMaxLength.value}</span>
-                  </>
-                )
-              }
-            </p>
-
+        {typeof props.maxlength === 'number' && (props.showWordLimit || isTextArea.value) && (
+          <p class={maxLengthCls.value}>
+            {props.overMaxLengthLimit ? (
+              ceilMaxLength.value - modelValueLength.value
+            ) : (
+              <>
+                {modelValueLength.value} / <span>{ceilMaxLength.value}</span>
+              </>
+            )}
+          </p>
         )}
         {isNumberInput.value && props.showControl && (
           <div class={getCls('number-control')}>
-            <DownSmall class={incControlCls.value} onClick={handleInc} />
-            <DownSmall class={decControlCls.value} onClick={handleDec} />
+            <DownSmall
+              class={incControlCls.value}
+              onClick={handleInc}
+            />
+            <DownSmall
+              class={decControlCls.value}
+              onClick={handleDec}
+            />
           </div>
         )}
-        {ctx.slots?.suffix?.()
-          ?? (props.suffix && (
+        {ctx.slots?.suffix?.() ??
+          (props.suffix && (
             <div class={getCls('suffix-area')}>
               <span class={getCls('suffix-area--text')}>{props.suffix}</span>
             </div>

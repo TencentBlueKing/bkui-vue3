@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, ref, toRefs, withModifiers } from 'vue';
 
@@ -114,13 +114,11 @@ export default defineComponent({
       resizeMaskRef.value.style.cursor = vertical.value ? 'col-resize' : 'row-resize';
     };
 
-    const getRealValue = current => Math.min(
-      max.value,
-      Math.max(min.value, current), limitMax.value - triggerWidth.value,
-    );
+    const getRealValue = current =>
+      Math.min(max.value, Math.max(min.value, current), limitMax.value - triggerWidth.value);
 
     // mousedown 事件处理
-    const handleMousedown = (event) => {
+    const handleMousedown = event => {
       emit('before-resize', event);
       const asideRect = asideRef.value.getBoundingClientRect();
       state.value = Object.freeze({
@@ -140,10 +138,10 @@ export default defineComponent({
       document.onselectstart = () => false;
       document.ondragstart = () => false;
 
-      const resizingCallback = (value) => {
+      const resizingCallback = value => {
         emit('resizing', value);
       };
-      const handleMouseMove = (event) => {
+      const handleMouseMove = event => {
         let delta;
         switch (placement.value) {
           case 'top':
@@ -206,7 +204,7 @@ export default defineComponent({
       });
     };
 
-    const setCollapse = (collapse) => {
+    const setCollapse = collapse => {
       collapsed.value = typeof collapse === 'boolean' ? collapse : !collapsed.value;
       setupAsideAnimation();
       emit('collapse-change', collapsed.value);
@@ -224,7 +222,7 @@ export default defineComponent({
       }
     };
 
-    const setupAsideListener = (visible) => {
+    const setupAsideListener = visible => {
       const removeClass = () => {
         asideContentVisible.value = visible;
         asideRef.value.style.transition = '';
@@ -276,44 +274,56 @@ export default defineComponent({
       },
     ];
 
-
     return (
-      <div ref="bkResizeLayoutRef" class={bkResizeLayoutClass}>
-        <aside class={`${this.resolveClassName('resize-layout-aside')}`} ref="asideRef" style={this.asideStyle}>
-          <div class={`${this.resolveClassName('resize-layout-aside-content')}`} v-show={this.asideContentVisible}>
+      <div
+        ref='bkResizeLayoutRef'
+        class={bkResizeLayoutClass}
+      >
+        <aside
+          class={`${this.resolveClassName('resize-layout-aside')}`}
+          ref='asideRef'
+          style={this.asideStyle}
+        >
+          <div
+            class={`${this.resolveClassName('resize-layout-aside-content')}`}
+            v-show={this.asideContentVisible}
+          >
             {this.$slots.aside?.()}
           </div>
-          <i class={`${this.resolveClassName('resize-trigger')}`}
-             v-show={!this.disabled && (!this.collapsed || this.autoMinimize)}
-             style={this.triggerStyle}
-             onMousedown={withModifiers(this.handleMousedown, ['left'])}>
-          </i>
-          <i class={[`${this.resolveClassName('resize-proxy')}`, this.placement]}
-             ref="resizeProxyRef" v-show={!this.collapsed || this.autoMinimize}></i>
-          {
-            this.collapsible
-            && (
-              this.$slots['collapse-trigger']?.()
-              || (
-                this.collapsed
-                  ? <AngleRight
-                    width={26}
-                    height={26}
-                    class={`${this.resolveClassName('resize-collapse')}`}
-                    onClick={this.setCollapse} />
-                  : <AngleLeft
-                    width={26}
-                    height={26}
-                    class={`${this.resolveClassName('resize-collapse')}`}
-                    onClick={this.setCollapse} />
-              )
-            )
-          }
+          <i
+            class={`${this.resolveClassName('resize-trigger')}`}
+            v-show={!this.disabled && (!this.collapsed || this.autoMinimize)}
+            style={this.triggerStyle}
+            onMousedown={withModifiers(this.handleMousedown, ['left'])}
+          ></i>
+          <i
+            class={[`${this.resolveClassName('resize-proxy')}`, this.placement]}
+            ref='resizeProxyRef'
+            v-show={!this.collapsed || this.autoMinimize}
+          ></i>
+          {this.collapsible &&
+            (this.$slots['collapse-trigger']?.() ||
+              (this.collapsed ? (
+                <AngleRight
+                  width={26}
+                  height={26}
+                  class={`${this.resolveClassName('resize-collapse')}`}
+                  onClick={this.setCollapse}
+                />
+              ) : (
+                <AngleLeft
+                  width={26}
+                  height={26}
+                  class={`${this.resolveClassName('resize-collapse')}`}
+                  onClick={this.setCollapse}
+                />
+              )))}
         </aside>
-        <main class={`${this.resolveClassName('resize-layout-main')}`}>
-          {this.$slots.main?.()}
-        </main>
-        <div class={`${this.resolveClassName('resize-mask')}`} ref="resizeMaskRef"></div>
+        <main class={`${this.resolveClassName('resize-layout-main')}`}>{this.$slots.main?.()}</main>
+        <div
+          class={`${this.resolveClassName('resize-mask')}`}
+          ref='resizeMaskRef'
+        ></div>
       </div>
     );
   },

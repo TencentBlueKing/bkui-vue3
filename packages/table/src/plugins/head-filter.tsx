@@ -36,8 +36,8 @@ import { LINE_HEIGHT } from '../const';
 import { Column, IColumnType, IFilterShape } from '../props';
 import { getRowText, resolvePropVal } from '../utils';
 type IHeadFilterPropType = {
-  column: Column,
-  height: number,
+  column: Column;
+  height: number;
 };
 export default defineComponent({
   name: 'HeadFilter',
@@ -59,21 +59,26 @@ export default defineComponent({
       checked: checked.value,
     });
 
-    watch(() => filter.value, () => {
-      state.checked = checked.value;
-      // nextTick(() => {
-      //   handleBtnSaveClick();
-      // });
-    }, { immediate: true, deep: true });
+    watch(
+      () => filter.value,
+      () => {
+        state.checked = checked.value;
+        // nextTick(() => {
+        //   handleBtnSaveClick();
+        // });
+      },
+      { immediate: true, deep: true },
+    );
 
-
-    const headClass = computed(() => classes({
-      [resolveClassName('table-head-action')]: true,
-      'column-filter': true,
-      '--row-height': `${props.height}px`,
-      active: state.checked.length,
-      opened: state.isOpen,
-    }));
+    const headClass = computed(() =>
+      classes({
+        [resolveClassName('table-head-action')]: true,
+        'column-filter': true,
+        '--row-height': `${props.height}px`,
+        active: state.checked.length,
+        opened: state.isOpen,
+      }),
+    );
 
     const headFilterContentClass = classes({
       [resolveClassName('table-head-filter')]: true,
@@ -83,10 +88,10 @@ export default defineComponent({
 
     const handlePopShow = (isOpen: boolean) => {
       state.isOpen = isOpen;
-      isOpen
-      && setTimeout(() => {
-        refVirtualRender.value.reset();
-      });
+      isOpen &&
+        setTimeout(() => {
+          refVirtualRender.value.reset();
+        });
     };
 
     const theme = `light ${resolveClassName('table-head-filter')}`;
@@ -95,7 +100,8 @@ export default defineComponent({
       return list;
     });
 
-    const getRegExp = (searchValue: string | number | boolean, flags = 'ig') => new RegExp(`${searchValue}`.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&'), flags);
+    const getRegExp = (searchValue: string | number | boolean, flags = 'ig') =>
+      new RegExp(`${searchValue}`.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&'), flags);
 
     const defaultFilterFn = (checked: string[], row: any) => {
       const { match } = filter.value as IFilterShape;
@@ -107,10 +113,12 @@ export default defineComponent({
       return checked.some((str: string) => getRegExp(str, 'img').test(matchText));
     };
 
-    const filterFn = typeof (filter.value as IFilterShape).filterFn === 'function'
-      // eslint-disable-next-line max-len
-      ? (checked: string[], row: any, index: number, data: any[]) => (filter.value as IFilterShape).filterFn(checked, row, props.column, index, data)
-      : (checked: string[], row: any) => (checked.length ? defaultFilterFn(checked, row) : true);
+    const filterFn =
+      typeof (filter.value as IFilterShape).filterFn === 'function'
+        ? // eslint-disable-next-line max-len
+          (checked: string[], row: any, index: number, data: any[]) =>
+            (filter.value as IFilterShape).filterFn(checked, row, props.column, index, data)
+        : (checked: string[], row: any) => (checked.length ? defaultFilterFn(checked, row) : true);
 
     const handleBtnSaveClick = () => {
       handleFilterChange(true);
@@ -151,11 +159,14 @@ export default defineComponent({
     const renderSaveBtn = () => {
       const { disabled, text } = resolveBtnOption(btnSave, t.value.confirm);
       if (disabled) {
-        return <span class="btn-filter-save disabled">{text}</span>;
+        return <span class='btn-filter-save disabled'>{text}</span>;
       }
 
       return (
-        <span class="btn-filter-save" onClick={handleBtnSaveClick}>
+        <span
+          class='btn-filter-save'
+          onClick={handleBtnSaveClick}
+        >
           {text}
         </span>
       );
@@ -168,7 +179,10 @@ export default defineComponent({
       }
 
       return (
-        <span class={['btn-filter-reset', state.checked.length ? '' : 'disable']} onClick={handleBtnResetClick}>
+        <span
+          class={['btn-filter-reset', state.checked.length ? '' : 'disable']}
+          onClick={handleBtnResetClick}
+        >
           {text}
         </span>
       );
@@ -187,22 +201,25 @@ export default defineComponent({
       handleFilterChange();
     };
 
-    const renderFilterList = (scope) => {
+    const renderFilterList = scope => {
       if (scope.data.length) {
-        return scope.data.map((item: any) => <div class="list-item">
-          <BkCheckbox
-            label={item.value}
-            key={item.$index}
-            immediateEmitChange={false}
-            checked={state.checked.includes(item.value)}
-            modelValue={state.checked.includes(item.value)}
-            onChange={val => handleValueChange(val, item)}>
-            {`${item.text}`}
-          </BkCheckbox>
-        </div>);
+        return scope.data.map((item: any) => (
+          <div class='list-item'>
+            <BkCheckbox
+              label={item.value}
+              key={item.$index}
+              immediateEmitChange={false}
+              checked={state.checked.includes(item.value)}
+              modelValue={state.checked.includes(item.value)}
+              onChange={val => handleValueChange(val, item)}
+            >
+              {`${item.text}`}
+            </BkCheckbox>
+          </div>
+        ));
       }
 
-      return <div class="list-item is-empty">{t.value.emptyText}</div>;
+      return <div class='list-item is-empty'>{t.value.emptyText}</div>;
     };
 
     /* 监听过滤筛选值，更新表格
@@ -218,9 +235,9 @@ export default defineComponent({
 
     return () => (
       <Popover
-        trigger="click"
+        trigger='click'
         isShow={state.isOpen}
-        placement="bottom-start"
+        placement='bottom-start'
         renderType={RenderType.SHOWN}
         arrow={false}
         offset={0}
@@ -229,27 +246,26 @@ export default defineComponent({
         onAfterHidden={() => handlePopShow(false)}
       >
         {{
-          default: () => <Funnel class={headClass.value}/>,
+          default: () => <Funnel class={headClass.value} />,
           content: () => (
             <div class={headFilterContentClass}>
-              <BkCheckboxGroup
-                class="content-list">
+              <BkCheckboxGroup class='content-list'>
                 <VirtualRender
                   lineHeight={32}
                   list={localData.value}
                   throttleDelay={0}
                   scrollEvent={true}
                   ref={refVirtualRender}
-                  className="content-items"
+                  className='content-items'
                 >
                   {{
                     default: renderFilterList,
                   }}
                 </VirtualRender>
               </BkCheckboxGroup>
-              <div class="content-footer">
+              <div class='content-footer'>
                 {renderSaveBtn()}
-                <span class="btn-filter-split"></span>
+                <span class='btn-filter-split'></span>
                 {renderResetBtn()}
               </div>
             </div>

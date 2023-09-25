@@ -77,10 +77,20 @@ export const virtualRenderProps = {
   width: PropTypes.oneOfType([PropTypes.string.def('100%'), PropTypes.number]).def('100%'),
 
   /** 最外层元素ClassName */
-  className: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.string), PropTypes.object, PropTypes.arrayOf(PropTypes.object), PropTypes.string]).def(''),
+  className: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.string),
+    PropTypes.object,
+    PropTypes.arrayOf(PropTypes.object),
+    PropTypes.string,
+  ]).def(''),
 
   /** 内层层元素ClassName */
-  contentClassName: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.string), PropTypes.object, PropTypes.arrayOf(PropTypes.object), PropTypes.string]).def(''),
+  contentClassName: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.string),
+    PropTypes.object,
+    PropTypes.arrayOf(PropTypes.object),
+    PropTypes.string,
+  ]).def(''),
 
   /** 内层元素样式 */
   contentStyle: PropTypes.object.def({}),

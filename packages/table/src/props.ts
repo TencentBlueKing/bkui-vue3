@@ -55,12 +55,9 @@ export enum OverflowModeEnum {
   AUTO = 'auto',
 }
 
-export const EnumOverflowModeType = toType<`${OverflowModeEnum}`>(
-  'showOverflowTooltipMode',
-  {
-    default: OverflowModeEnum.AUTO,
-  },
-);
+export const EnumOverflowModeType = toType<`${OverflowModeEnum}`>('showOverflowTooltipMode', {
+  default: OverflowModeEnum.AUTO,
+});
 
 export enum ColumnTypeEnum {
   SELECTION = 'selection',
@@ -109,14 +106,16 @@ export enum FixedEnum {
 
 export const fixedType = string<`${FixedEnum}`>();
 
-export type IOverflowTooltipProp = {
-  content: string | Function;
-  disabled?: boolean;
-  watchCellResize?: boolean;
-  mode?: `${OverflowModeEnum}`;
-  popoverOption?: any;
-  resizerWay?: ResizerWay;
-} | boolean;
+export type IOverflowTooltipProp =
+  | {
+      content: string | Function;
+      disabled?: boolean;
+      watchCellResize?: boolean;
+      mode?: `${OverflowModeEnum}`;
+      popoverOption?: any;
+      resizerWay?: ResizerWay;
+    }
+  | boolean;
 
 export type IOverflowTooltip = IOverflowTooltipProp;
 
@@ -178,13 +177,10 @@ export const IColumnType = toType<Column>('IColumnType', {
   type: [Object],
 });
 
-export const ITableSettings = toType<ISettingPropType>(
-  'ITableSettingPropType',
-  {
-    default: false,
-    type: [Boolean, Object],
-  },
-);
+export const ITableSettings = toType<ISettingPropType>('ITableSettingPropType', {
+  default: false,
+  type: [Boolean, Object],
+});
 
 /**
  * 配置自定义行高选项
@@ -215,69 +211,35 @@ export type Field = {
 };
 
 export type LabelFunctionString = ((_column, _index) => string | JSX.Element) | string;
-export const LabelFunctionStringType = toType<LabelFunctionString>(
-  'LabelFunctionStringType',
-  {},
-);
+export const LabelFunctionStringType = toType<LabelFunctionString>('LabelFunctionStringType', {});
 
-export type RenderFunctionString = ({
-  cell,
-  data,
-  row,
-  column,
-  index,
-  rows,
-}) => string | JSX.Element;
-export const RenderFunctionStringType = toType<RenderFunctionString>(
-  'RenderFunctionStringType',
-  {},
-);
+export type RenderFunctionString = ({ cell, data, row, column, index, rows }) => string | JSX.Element;
+export const RenderFunctionStringType = toType<RenderFunctionString>('RenderFunctionStringType', {});
 
-export type SpanFunctionString = (({
-  column,
-  colIndex,
-  row,
-  rowIndex,
-}) => number) | Number;
-export const SpanFunctionStringType = toType<SpanFunctionString>(
-  'SpanFunctionStringType',
-  {},
-);
+export type SpanFunctionString = (({ column, colIndex, row, rowIndex }) => number) | Number;
+export const SpanFunctionStringType = toType<SpanFunctionString>('SpanFunctionStringType', {});
 
 export type RowClassFunctionString = ((row: any) => string) | string;
-export const RowClassFunctionStringType = toType<RowClassFunctionString>(
-  'RowClassFunctionStringType',
-  {},
-);
+export const RowClassFunctionStringType = toType<RowClassFunctionString>('RowClassFunctionStringType', {});
 
-export type RowHeightFunctionNumber = ((
-  _type: string,
-  _row: any,
-  _rowIndex: number,
-  _size?
-) => number) | number;
-export const RowHeightFunctionNumberType = toType<RowHeightFunctionNumber>(
-  'RowHeightFunctionNumberType',
-  {},
-);
+export type RowHeightFunctionNumber = ((_type: string, _row: any, _rowIndex: number, _size?) => number) | number;
+export const RowHeightFunctionNumberType = toType<RowHeightFunctionNumber>('RowHeightFunctionNumberType', {});
 
 type FunctionNumber = Function | number;
-export const FunctionNumberType = toType<FunctionNumber>(
-  'FunctionNumberType',
-  {},
-);
+export const FunctionNumberType = toType<FunctionNumber>('FunctionNumberType', {});
 
 type StringNumber = string | number;
 export const StringNumberType = (val: number | string) => toType<StringNumber>('StringNumberType', {}).def(val);
 
-
 /**
  * 表格字段解释说明
  */
-export type IColumnExplain = {
-  content: LabelFunctionString;
-  head: LabelFunctionString | boolean;
-} | boolean;
+export type IColumnExplain =
+  | {
+      content: LabelFunctionString;
+      head: LabelFunctionString | boolean;
+    }
+  | boolean;
 
 export type Column = {
   label: LabelFunctionString;
@@ -381,10 +343,7 @@ export const tableProps = {
    * 当前选中列
    * 当设置选中多列时（columnPick = multi），配置为数组[index1, index2, index3]，只能选中单列时，可以为数值或者数组[index]
    */
-  activeColumn: PropTypes.oneOfType([
-    PropTypes.number.def(-1),
-    PropTypes.arrayOf(PropTypes.number.def(-1)),
-  ]),
+  activeColumn: PropTypes.oneOfType([PropTypes.number.def(-1), PropTypes.arrayOf(PropTypes.number.def(-1))]),
 
   /**
    * 表格列选中方式
@@ -452,20 +411,16 @@ export const tableProps = {
    * 表格边框显示设置，可以是一个组合
    * 生效规则: 除非单独设置 none,否则会追加每个设置
    */
-  border: PropTypes.oneOfType([
-    PropTypes.arrayOf(toType<`${BORDER_OPTION}`>('boderType', {})),
-    PropTypes.string,
-  ]).def([BORDER_OPTION.ROW]),
+  border: PropTypes.oneOfType([PropTypes.arrayOf(toType<`${BORDER_OPTION}`>('boderType', {})), PropTypes.string]).def([
+    BORDER_OPTION.ROW,
+  ]),
 
   /**
    * 分页配置
    * 默认值为false，不启用分页
    * 设置为 true，启用分页功能，默认值参考分页组件 Pagination
    */
-  pagination: PropTypes.oneOfType([
-    PropTypes.bool.def(false),
-    PropTypes.object.def({}),
-  ]).def(false),
+  pagination: PropTypes.oneOfType([PropTypes.bool.def(false), PropTypes.object.def({})]).def(false),
 
   /**
    * 分页组件高度
@@ -494,38 +449,22 @@ export const tableProps = {
   /**
    * 行的 class 的回调方法，也可以使用一个固定的 Object 为所有行设置一样的 Style
    */
-  rowClass: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.object,
-    PropTypes.func,
-  ]).def({}),
+  rowClass: PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.func]).def({}),
 
   /**
    * 行的 style 的回调方法，也可以使用一个固定的 Object 为所有行设置一样的 Style
    */
-  rowStyle: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.object,
-    PropTypes.func,
-  ]).def({}),
+  rowStyle: PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.func]).def({}),
 
   /**
    * 单元格的 style 的回调方法，也可以使用一个固定的 Object 为所有单元格设置一样的 Style
    */
-  cellStyle: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.object,
-    PropTypes.func,
-  ]).def({}),
+  cellStyle: PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.func]).def({}),
 
   /**
    * 单元格的 className 的回调方法，也可以使用字符串为所有单元格设置一个固定的 className
    */
-  cellClass: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.object,
-    PropTypes.func,
-  ]).def({}),
+  cellClass: PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.func]).def({}),
 
   /**
    * 表格底部loading加载效果，可以配合表格scroll-bottom事件使用
@@ -593,10 +532,7 @@ export const tableProps = {
    * 如果是函数，则返回 true|false
    * ({ row, index, isCheckAll }) => boolean
    */
-  isRowSelectEnable: PropTypes.oneOfType([
-    PropTypes.func.def(() => true),
-    PropTypes.bool.def(true),
-  ]).def(true),
+  isRowSelectEnable: PropTypes.oneOfType([PropTypes.func.def(() => true), PropTypes.bool.def(true)]).def(true),
 
   /**
    * 当外层容器尺寸改变时，当前组件用什么方式进行重新计算

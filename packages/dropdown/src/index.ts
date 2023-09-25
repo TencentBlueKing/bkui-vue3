@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { withInstallProps } from '@bkui-vue/shared';
 
@@ -31,8 +31,4 @@ import DropdownItem from './dropdown-item';
 import DropdownMenu from './dropdown-menu';
 const BkDropdown = withInstallProps(Dropdown, { DropdownMenu, DropdownItem });
 export default BkDropdown;
-export {
-  BkDropdown,
-  DropdownMenu as BkDropdownMenu,
-  DropdownItem as BkDropdownItem,
-};
+export { BkDropdown, DropdownMenu as BkDropdownMenu, DropdownItem as BkDropdownItem };

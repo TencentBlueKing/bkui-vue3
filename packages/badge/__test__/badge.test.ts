@@ -22,27 +22,31 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import Button from '@bkui-vue/button';
 import { Help } from '@bkui-vue/icon';
 import { mount } from '@vue/test-utils';
 
 import Badge from '../src/index';
-const mountTpl = (template: string) => mount({
-  components: {
-    bkBadge: Badge,
-    Help,
-    bkButton: Button,
-  },
-  template,
-}, {
-  global: {
-    provide: {
-      badge: {},
+const mountTpl = (template: string) =>
+  mount(
+    {
+      components: {
+        bkBadge: Badge,
+        Help,
+        bkButton: Button,
+      },
+      template,
     },
-  },
-});
+    {
+      global: {
+        provide: {
+          badge: {},
+        },
+      },
+    },
+  );
 describe('Badge.tsx', () => {
   it('theme', async () => {
     const theme = 'danger';

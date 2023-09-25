@@ -61,6 +61,7 @@ const buttonProps = {
 export type ButtonPropTypes = ExtractPropTypes<typeof buttonProps>;
 
 export default defineComponent({
+  // eslint-disable-next-line vue/no-reserved-component-names
   name: 'Button',
   props: buttonProps,
   emits: ['click', 'mouseover'],
@@ -71,21 +72,22 @@ export default defineComponent({
     const btnClsPrefix = resolveClassName('button');
     const isText = computed(() => props.text && !props.hoverTheme);
     const btnCls = computed(() => {
-      const hoverTheme = props.hoverTheme
-        ? `${btnClsPrefix}-hover-${props.hoverTheme}`
-        : '';
+      const hoverTheme = props.hoverTheme ? `${btnClsPrefix}-hover-${props.hoverTheme}` : '';
       const btnThemeCls = props.theme ? `${btnClsPrefix}-${props.theme}` : '';
       const themeCls = props.hoverTheme ? '' : btnThemeCls;
-      return classes({
-        'is-disabled': props.disabled,
-        'is-outline': props.outline,
-        'is-text': isText.value,
-        'is-loading': props.loading,
-        'is-selected': props.selected,
-        // 'is-circle': props.circle,
-        [`${btnClsPrefix}-${props.size}`]: props.size && btnSizes.includes(props.size),
-        'no-slot': !showSlot,
-      }, `${themeCls} ${btnClsPrefix} ${hoverTheme}`);
+      return classes(
+        {
+          'is-disabled': props.disabled,
+          'is-outline': props.outline,
+          'is-text': isText.value,
+          'is-loading': props.loading,
+          'is-selected': props.selected,
+          // 'is-circle': props.circle,
+          [`${btnClsPrefix}-${props.size}`]: props.size && btnSizes.includes(props.size),
+          'no-slot': !showSlot,
+        },
+        `${themeCls} ${btnClsPrefix} ${hoverTheme}`,
+      );
     });
     const loadingTheme = computed(() => {
       if (props.text || props.outline || props.hoverTheme) {
@@ -95,8 +97,9 @@ export default defineComponent({
       }
       return !props.theme ? undefined : 'white';
     });
-    const loadingSize = computed(() => (
-      (isText.value || props.size === BkLoadingSize.Small) ? BkLoadingSize.Mini : BkLoadingSize.Small));
+    const loadingSize = computed(() =>
+      isText.value || props.size === BkLoadingSize.Small ? BkLoadingSize.Mini : BkLoadingSize.Small,
+    );
     const handleClick = (e: MouseEvent) => {
       if (props.loading) return;
       /**
@@ -125,24 +128,20 @@ export default defineComponent({
         onMouseover={handleMouseOver}
         onMouseleave={handleMouseout}
       >
-        {
-          props.loading && (
-            <BkLoading
-              loading
-              class={`${btnClsPrefix}-loading`}
-              mode={props.loadingMode}
-              size={loadingSize.value}
-              {
-                ...(loadingTheme.value ? {
+        {props.loading && (
+          <BkLoading
+            loading
+            class={`${btnClsPrefix}-loading`}
+            mode={props.loadingMode}
+            size={loadingSize.value}
+            {...(loadingTheme.value
+              ? {
                   theme: loadingTheme.value,
-                } : {})
-              }
-            />
-          )
-        }
-        {
-          slots.default && <span class={`${btnClsPrefix}-text`}>{slots.default?.()}</span>
-        }
+                }
+              : {})}
+          />
+        )}
+        {slots.default && <span class={`${btnClsPrefix}-text`}>{slots.default?.()}</span>}
       </button>
     );
   },

@@ -22,19 +22,13 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { mount } from '@vue/test-utils';
 
 import Swiper from '../src/swiper';
 
-const list = [
-  'text1',
-  'text2',
-  'text3',
-  'text4',
-  'text5',
-];
+const list = ['text1', 'text2', 'text3', 'text4', 'text5'];
 
 describe('swiper.tsx', () => {
   it('prop test', async () => {
@@ -63,7 +57,7 @@ describe('swiper.tsx', () => {
     const itemList = wrapper.findAll('.bk-swiper-card');
     expect(itemList.length).toBe(5);
     // check loop-time prop
-    await new Promise((resolve) => {
+    await new Promise(resolve => {
       setTimeout(() => {
         const indexList = wrapper.find('.bk-swiper-index').findAll('li');
         expect(indexList[1].classes()).toContain('bk-current-index');
@@ -105,7 +99,7 @@ describe('swiper.tsx', () => {
     // check slot
     expect(itemList[0].text()).toBe('text1');
     // check is-loop prop
-    await new Promise((resolve) => {
+    await new Promise(resolve => {
       setTimeout(() => {
         const indexList = wrapper.find('.bk-swiper-index').findAll('li');
         expect(indexList[0].classes()).toContain('bk-current-index');

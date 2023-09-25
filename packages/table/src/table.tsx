@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import {
   computed,
@@ -140,14 +140,18 @@ export default defineComponent({
       }
     };
 
-    watch(() => [props.data, props.pagination, props.height, props.maxHeight, props.minHeight], () => {
-      initIndexData(props.reserveExpand);
-      watchEffectFn(columnFilterFn, columnSortFn, activeSortColumn);
-      nextTick(() => {
-        resetTableHeight(root.value);
-        updateBorderClass(root.value);
-      });
-    }, { immediate: true, deep: true });
+    watch(
+      () => [props.data, props.pagination, props.height, props.maxHeight, props.minHeight],
+      () => {
+        initIndexData(props.reserveExpand);
+        watchEffectFn(columnFilterFn, columnSortFn, activeSortColumn);
+        nextTick(() => {
+          resetTableHeight(root.value);
+          updateBorderClass(root.value);
+        });
+      },
+      { immediate: true, deep: true },
+    );
 
     /**
      * 保证每次计算宽度正确
@@ -179,16 +183,21 @@ export default defineComponent({
       }
 
       ctx.emit(EMIT_EVENTS.COLUMN_SORT, { column: unref(column[COLUMN_ATTRIBUTE.COL_SOURCE_DATA]), index, type });
-    }).on(EVENTS.ON_FILTER_CLICK, (args: any) => {
-      const { filterFn, checked, column, index } = args;
-      if (typeof filterFn === 'function') {
-        columnFilterFn = filterFn;
-        resolvePageData(columnFilterFn, columnSortFn, activeSortColumn);
-        // refVirtualRender.value?.reset?.();
-      }
-
-      ctx.emit(EMIT_EVENTS.COLUMN_FILTER, { checked, column: unref(column[COLUMN_ATTRIBUTE.COL_SOURCE_DATA]), index });
     })
+      .on(EVENTS.ON_FILTER_CLICK, (args: any) => {
+        const { filterFn, checked, column, index } = args;
+        if (typeof filterFn === 'function') {
+          columnFilterFn = filterFn;
+          resolvePageData(columnFilterFn, columnSortFn, activeSortColumn);
+          // refVirtualRender.value?.reset?.();
+        }
+
+        ctx.emit(EMIT_EVENTS.COLUMN_FILTER, {
+          checked,
+          column: unref(column[COLUMN_ATTRIBUTE.COL_SOURCE_DATA]),
+          index,
+        });
+      })
       .on(EVENTS.ON_SETTING_CHANGE, (args: any) => {
         const { checked = [], size, height, fields } = args;
         nextTick(() => {
@@ -204,7 +213,10 @@ export default defineComponent({
         const { row, column, index, rows, e } = args;
         ctx.emit(EMIT_EVENTS.ROW_EXPAND_CLICK, {
           row: getRowSourceData(row),
-          column: getColumnSourceData(column), index, rows, e,
+          column: getColumnSourceData(column),
+          index,
+          rows,
+          e,
         });
         setRowExpand(row, !row[TABLE_ROW_ATTRIBUTE.ROW_EXPAND]);
       })
@@ -231,7 +243,6 @@ export default defineComponent({
         });
       });
 
-
     const handleScrollChanged = (args: any[]) => {
       const preBottom = reactiveSchema.pos.bottom ?? 0;
       const pagination = args[1];
@@ -241,9 +252,13 @@ export default defineComponent({
       reactiveSchema.pos = pos;
       const { bottom } = pos;
       if (bottom <= 2 && preBottom > bottom) {
-        debounce(60, () => {
-          ctx.emit(EMIT_EVENTS.SCROLL_BOTTOM, { ...pos, translateX, translateY });
-        }, true)();
+        debounce(
+          60,
+          () => {
+            ctx.emit(EMIT_EVENTS.SCROLL_BOTTOM, { ...pos, translateX, translateY });
+          },
+          true,
+        )();
       }
 
       updateOffsetRight();
@@ -255,18 +270,24 @@ export default defineComponent({
 
     onMounted(() => {
       if (props.observerResize) {
-        let observerIns = observerResize(root.value, () => {
-          if (!root.value) {
-            return;
-          }
-          if (props.height === '100%' || props.height === 'auto') {
-            resetTableHeight(root.value);
-          }
+        let observerIns = observerResize(
+          root.value,
+          () => {
+            if (!root.value) {
+              return;
+            }
+            if (props.height === '100%' || props.height === 'auto') {
+              resetTableHeight(root.value);
+            }
 
-          updateBorderClass(root.value);
-          const offset = getColumnsWidthOffsetWidth();
-          resolveColumnWidth(root.value, colgroups, 20, offset);
-        }, 180, true, props.resizerWay);
+            updateBorderClass(root.value);
+            const offset = getColumnsWidthOffsetWidth();
+            resolveColumnWidth(root.value, colgroups, 20, offset);
+          },
+          180,
+          true,
+          props.resizerWay,
+        );
 
         observerIns.start();
         onBeforeUnmount(() => {
@@ -362,21 +383,36 @@ export default defineComponent({
 
     const renderPrepend = () => {
       if (ctx.slots.prepend) {
-        return <div style={prependStyle.value} class="prepend-row">{ctx.slots.prepend()}</div>;
+        return (
+          <div
+            style={prependStyle.value}
+            class='prepend-row'
+          >
+            {ctx.slots.prepend()}
+          </div>
+        );
       }
 
       return null;
     };
 
     return () => (
-      <div class={tableClass.value} style={wrapperStyle.value} ref={root}>
+      <div
+        class={tableClass.value}
+        style={wrapperStyle.value}
+        ref={root}
+      >
         {
           // @ts-ignore:next-line
-          <div class={headClass} style={headStyle.value}>
-            {
-              tableRender.renderTableHeadSchema()
-            }
-            <div class="col-resize-drag" style={resizeHeadColStyle.value}></div>
+          <div
+            class={headClass}
+            style={headStyle.value}
+          >
+            {tableRender.renderTableHeadSchema()}
+            <div
+              class='col-resize-drag'
+              style={resizeHeadColStyle.value}
+            ></div>
           </div>
         }
         <VirtualRender
@@ -392,33 +428,41 @@ export default defineComponent({
           scrollEvent={true}
           rowKey={props.rowKey}
           enabled={props.virtualEnabled}
-          keepAlive={true}>
-          {
-            {
-              beforeContent: () => renderPrepend(),
-              default: (scope: any) => tableRender.renderTableBodySchema(scope.data || pageData),
-              afterSection: () => <div class={fixedBottomBorder.value}></div>,
-            }
-          }
+          keepAlive={true}
+        >
+          {{
+            beforeContent: () => renderPrepend(),
+            default: (scope: any) => tableRender.renderTableBodySchema(scope.data || pageData),
+            afterSection: () => <div class={fixedBottomBorder.value}></div>,
+          }}
         </VirtualRender>
         {/* @ts-ignore:next-line */}
-        <div class={fixedWrapperClass} style={fixedContainerStyle.value}>
-          {
-            fixedColumns.value
-              .map(({ isExist, colPos, column }) => (isExist ? '' : <div
+        <div
+          class={fixedWrapperClass}
+          style={fixedContainerStyle.value}
+        >
+          {fixedColumns.value.map(({ isExist, colPos, column }) =>
+            isExist ? (
+              ''
+            ) : (
+              <div
                 class={resolveColumnClass(column, reactiveSchema.scrollTranslateX, tableOffsetRight.value)}
-                style={resolveColumnStyle(colPos)}></div>))
-          }
-          <div class={resizeColumnClass} style={resizeColumnStyle.value}></div>
-          <div class={loadingRowClass}>{
-            renderScrollLoading()
-          }</div>
+                style={resolveColumnStyle(colPos)}
+              ></div>
+            ),
+          )}
+          <div
+            class={resizeColumnClass}
+            style={resizeColumnStyle.value}
+          ></div>
+          <div class={loadingRowClass}>{renderScrollLoading()}</div>
         </div>
         {/* @ts-ignore:next-line */}
-        <div class={footerClass.value} style={footerStyle.value}>
-          {
-            hasFooter.value && tableRender.renderTableFooter(localPagination.value)
-          }
+        <div
+          class={footerClass.value}
+          style={footerStyle.value}
+        >
+          {hasFooter.value && tableRender.renderTableFooter(localPagination.value)}
         </div>
         <div style={columnGhostStyle}>{ctx.slots.default?.()}</div>
       </div>

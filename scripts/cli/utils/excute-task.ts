@@ -22,21 +22,22 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import chalk from 'chalk';
 
 import { Task } from '../typings/task';
 
-export default <T>(task: Task<T>) => async (options?: T) => {
-  console.log(chalk.yellow(`Running ${chalk.bold(task.name)} task`));
-  task.setOptions(options);
-  try {
-    console.group();
-    await task.exec();
-    console.groupEnd();
-  } catch (e) {
-    console.trace(e);
-    process.exit(1);
-  }
-};
+export default <T>(task: Task<T>) =>
+  async (options?: T) => {
+    console.log(chalk.yellow(`Running ${chalk.bold(task.name)} task`));
+    task.setOptions(options);
+    try {
+      console.group();
+      await task.exec();
+      console.groupEnd();
+    } catch (e) {
+      console.trace(e);
+      process.exit(1);
+    }
+  };

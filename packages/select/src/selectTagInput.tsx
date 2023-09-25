@@ -1,28 +1,28 @@
 /*
-* Tencent is pleased to support the open source community by making
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
-*
-* Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
-*
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
-*
-* License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
-*
-* ---------------------------------------------------
-* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
-* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
-* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-* the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-* THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-* IN THE SOFTWARE.
-*/
+ * Tencent is pleased to support the open source community by making
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ *
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ *
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ *
+ * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ *
+ * ---------------------------------------------------
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+ * the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
 import { debounce } from 'lodash';
 import { defineComponent, inject, onBeforeUnmount, onMounted, ref, toRefs, watch } from 'vue';
 import { PropType } from 'vue-types/dist/types';
@@ -56,7 +56,7 @@ export default defineComponent({
     const { modelValue, collapseTags, selected } = toRefs(props);
     const value = ref(modelValue.value);
     const inputRef = ref<HTMLElement>();
-    const overflowTagIndex = ref<number|null>(null);
+    const overflowTagIndex = ref<number | null>(null);
 
     watch(modelValue, () => {
       value.value = modelValue.value;
@@ -74,10 +74,10 @@ export default defineComponent({
     const focus = () => {
       inputRef.value?.focus();
     };
-    const handleInput = (e) => {
+    const handleInput = e => {
       emit('update:modelValue', e.target.value);
     };
-    const handleKeydown = (e) => {
+    const handleKeydown = e => {
       switch (e.code) {
         case 'Enter': {
           emit('enter', e.target.value, e);
@@ -162,42 +162,47 @@ export default defineComponent({
     };
 
     return (
-      <div class={selectTagClass} ref="tagWrapperRef">
+      <div
+        class={selectTagClass}
+        ref='tagWrapperRef'
+      >
         {this.$slots?.prefix?.()}
         <div class={tagWrapperClass}>
-          {
-            this.$slots.default?.() ?? this.selected.map((item, index) => (
+          {this.$slots.default?.() ??
+            this.selected.map((item, index) => (
               <Tag
                 closable
                 theme={this.tagTheme}
                 style={{
                   display: this.collapseTags && this.overflowTagIndex && index >= this.overflowTagIndex ? 'none' : '',
                 }}
-                ref={el => this.tagsRefs[index] = el}
-                onClose={() => this.handleRemoveTag(item.value)}>
+                ref={el => (this.tagsRefs[index] = el)}
+                onClose={() => this.handleRemoveTag(item.value)}
+              >
                 {this.select?.handleGetLabelByValue(item.value)}
               </Tag>
-            ))
-          }
+            ))}
           <Tag
             class={this.resolveClassName('select-overflow-tag')}
             style={{
               display: !!this.overflowTagIndex && this.collapseTags ? '' : 'none',
             }}
-            ref="collapseTagRef">
+            ref='collapseTagRef'
+          >
             +{this.selected.length - this.overflowTagIndex}
           </Tag>
           <input
             class={this.resolveClassName('select-tag-input')}
-            ref="inputRef"
-            type="text"
+            ref='inputRef'
+            type='text'
             style={inputStyle}
             placeholder={!this.selected.length ? this.placeholder : ''}
             readonly={!this.filterable}
             disabled={this.disabled}
             value={!this.filterable ? '' : this.value}
             onInput={this.handleInput}
-            onKeydown={this.handleKeydown}/>
+            onKeydown={this.handleKeydown}
+          />
         </div>
         {this.$slots?.suffix?.()}
       </div>

@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { mount } from '@vue/test-utils';
 
@@ -42,7 +42,7 @@ describe('FixedNavbar.tsx', () => {
     const positions = ['middle', 'top', 'bottom'];
     const { validator } = FixedNavbar.props.position;
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    positions.forEach(async (position) => {
+    positions.forEach(async position => {
       const wrapper = await mount(FixedNavbar, {
         props: {
           position,
@@ -58,11 +58,13 @@ describe('FixedNavbar.tsx', () => {
     const handleClick = () => true;
     const wrapper = await mount(FixedNavbar, {
       props: {
-        navItems: [{
-          text: 'test',
-          icon: 'icon',
-          action: handleClick,
-        }],
+        navItems: [
+          {
+            text: 'test',
+            icon: 'icon',
+            action: handleClick,
+          },
+        ],
       },
     });
 

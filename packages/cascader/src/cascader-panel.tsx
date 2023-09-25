@@ -80,7 +80,7 @@ export default defineComponent({
       let targetList = [];
       // 如果配置了多选，找出最长的序列，即其最远的路径，以展开所有面板
       if (store.config.multiple) {
-        for (const subArray of (value as Array<string[]>)) {
+        for (const subArray of value as Array<string[]>) {
           if (subArray.length > targetList.length) {
             targetList = subArray;
           }
@@ -193,7 +193,8 @@ export default defineComponent({
       nodeCheckHandler(node);
     };
 
-    const iconRender = node => (node.loading ? <Spinner class="icon-spinner"></Spinner> : <AngleRight class="icon-angle-right"></AngleRight>);
+    const iconRender = node =>
+      node.loading ? <Spinner class='icon-spinner'></Spinner> : <AngleRight class='icon-angle-right'></AngleRight>;
 
     watch(
       () => props.modelValue,
@@ -205,7 +206,7 @@ export default defineComponent({
 
     watch(
       () => props.store,
-      (value) => {
+      value => {
         menus.list = [value.getNodes()];
       },
     );
@@ -232,54 +233,72 @@ export default defineComponent({
   },
   render() {
     const emptyWidth = parseInt(this.panelWidth, 10) > 200 ? this.panelWidth : `${200}px`;
-    const searchPanelRender = () => (
-      this.suggestions.length ? <ul
-        class={[this.resolveClassName('cascader-panel'), this.resolveClassName('scroll-y')]}
-        style={{ height: this.panelHeight, width: this.panelWidth }}>
+    const searchPanelRender = () =>
+      this.suggestions.length ? (
+        <ul
+          class={[this.resolveClassName('cascader-panel'), this.resolveClassName('scroll-y')]}
+          style={{ height: this.panelHeight, width: this.panelWidth }}
+        >
           {this.suggestions.map(node => (
-            <li class={[
-              this.resolveClassName('cascader-node'),
-              { 'is-selected': this.isNodeInPath(node) },
-              { 'is-disabled': node.isDisabled },
-              { 'is-checked': this.isCheckedNode(node, this.checkValue) },
-            ]}
-            {...this.searchPanelEvents(node)}>
+            <li
+              class={[
+                this.resolveClassName('cascader-node'),
+                { 'is-selected': this.isNodeInPath(node) },
+                { 'is-disabled': node.isDisabled },
+                { 'is-checked': this.isCheckedNode(node, this.checkValue) },
+              ]}
+              {...this.searchPanelEvents(node)}
+            >
               {node.pathNames.join(this.separator)}
             </li>
           ))}
-      </ul> : <div class={this.resolveClassName('cascader-search-empty')} style={{ width: emptyWidth }}>
-        <span>暂无搜索结果</span>
-      </div>
-    );
+        </ul>
+      ) : (
+        <div
+          class={this.resolveClassName('cascader-search-empty')}
+          style={{ width: emptyWidth }}
+        >
+          <span>暂无搜索结果</span>
+        </div>
+      );
     return (
       <div class={this.resolveClassName('cascader-panel-wrapper')}>
-        {this.isFiltering ? searchPanelRender() : this.menus.list.map(menu => (
-          <ul class={[this.resolveClassName('cascader-panel'), this.resolveClassName('scroll-y')]}
-            style={{ height: this.panelHeight, width: this.panelWidth }}>
-            {menu.length ? menu.map(node => (
-              <li
-                class={[
-                  this.resolveClassName('cascader-node'),
-                  { 'is-selected': this.isNodeInPath(node) },
-                  { 'is-disabled': node.isDisabled },
-                  { 'is-checked': !node.config.multiple && this.isCheckedNode(node, this.checkValue) },
-                ]}
-                {...Object.assign(this.nodeEvent(node), node.config.multiple ? {} : {})}
+        {this.isFiltering
+          ? searchPanelRender()
+          : this.menus.list.map(menu => (
+              <ul
+                class={[this.resolveClassName('cascader-panel'), this.resolveClassName('scroll-y')]}
+                style={{ height: this.panelHeight, width: this.panelWidth }}
               >
-                {node.config.multiple && (
-                  <BkCheckbox
-                    disabled={node.isDisabled}
-                    v-model={node.checked}
-                    indeterminate={node.isIndeterminate}
-                    style="margin-right: 5px"
-                    onChange={(val: string | boolean | number) => this.checkNode(node, !!val)}></BkCheckbox>
+                {menu.length ? (
+                  menu.map(node => (
+                    <li
+                      class={[
+                        this.resolveClassName('cascader-node'),
+                        { 'is-selected': this.isNodeInPath(node) },
+                        { 'is-disabled': node.isDisabled },
+                        { 'is-checked': !node.config.multiple && this.isCheckedNode(node, this.checkValue) },
+                      ]}
+                      {...Object.assign(this.nodeEvent(node), node.config.multiple ? {} : {})}
+                    >
+                      {node.config.multiple && (
+                        <BkCheckbox
+                          disabled={node.isDisabled}
+                          v-model={node.checked}
+                          indeterminate={node.isIndeterminate}
+                          style='margin-right: 5px'
+                          onChange={(val: string | boolean | number) => this.checkNode(node, !!val)}
+                        ></BkCheckbox>
+                      )}
+                      {this.$slots.default?.({ node, data: node.data })}
+                      {!node.isLeaf ? this.iconRender(node) : ''}
+                    </li>
+                  ))
+                ) : (
+                  <div class={this.resolveClassName('cascader-panel-empty-wrapper')}>{this.noDataText}</div>
                 )}
-                {this.$slots.default?.({ node, data: node.data })}
-                {!node.isLeaf ? this.iconRender(node) : ''}
-              </li>
-            )) : <div class={this.resolveClassName('cascader-panel-empty-wrapper')}>{this.noDataText}</div>}
-          </ul>
-        ))}
+              </ul>
+            ))}
       </div>
     );
   },

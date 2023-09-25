@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 /* eslint-disable no-param-reassign, no-multi-assign */
 
@@ -37,7 +37,8 @@ const twoDigits = /\d\d?/;
 const threeDigits = /\d{3}/;
 const fourDigits = /\d{4}/;
 // eslint-disable-next-line max-len
-const word = /[0-9]*['a-z\u00A0-\u05FF\u0700-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+|[\u0600-\u06FF\\/]+(\s*?[\u0600-\u06FF]+){1,2}/i;
+const word =
+  /[0-9]*['a-z\u00A0-\u05FF\u0700-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+|[\u0600-\u06FF\\/]+(\s*?[\u0600-\u06FF]+){1,2}/i;
 const noop = function () {};
 
 function shorten(arr, sLen) {
@@ -67,8 +68,18 @@ function pad(_val, len = 2) {
 
 const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const monthNames = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
 ];
 
 const monthNamesShort = shorten(monthNames, 3);
@@ -171,59 +182,95 @@ const formatFlags = {
 };
 
 const parseFlags: any = {
-  d: [twoDigits, (d, v) => {
-    d.day = v;
-  }],
-  M: [twoDigits, (d, v) => {
-    d.month = v - 1;
-  }],
-  yy: [twoDigits, (d, v) => {
-    const da = new Date();
-    const cent = +(`${da.getFullYear()}`).substr(0, 2);
-    d.year = `${v > 68 ? cent - 1 : cent}${v}`;
-  }],
-  h: [twoDigits, (d, v) => {
-    d.hour = v;
-  }],
-  m: [twoDigits, (d, v) => {
-    d.minute = v;
-  }],
-  s: [twoDigits, (d, v) => {
-    d.second = v;
-  }],
-  yyyy: [fourDigits, (d, v) => {
-    d.year = v;
-  }],
-  S: [/\d/, (d, v) => {
-    d.millisecond = v * 100;
-  }],
-  SS: [/\d{2}/, (d, v) => {
-    d.millisecond = v * 10;
-  }],
-  SSS: [threeDigits, (d, v) => {
-    d.millisecond = v;
-  }],
+  d: [
+    twoDigits,
+    (d, v) => {
+      d.day = v;
+    },
+  ],
+  M: [
+    twoDigits,
+    (d, v) => {
+      d.month = v - 1;
+    },
+  ],
+  yy: [
+    twoDigits,
+    (d, v) => {
+      const da = new Date();
+      const cent = +`${da.getFullYear()}`.substr(0, 2);
+      d.year = `${v > 68 ? cent - 1 : cent}${v}`;
+    },
+  ],
+  h: [
+    twoDigits,
+    (d, v) => {
+      d.hour = v;
+    },
+  ],
+  m: [
+    twoDigits,
+    (d, v) => {
+      d.minute = v;
+    },
+  ],
+  s: [
+    twoDigits,
+    (d, v) => {
+      d.second = v;
+    },
+  ],
+  yyyy: [
+    fourDigits,
+    (d, v) => {
+      d.year = v;
+    },
+  ],
+  S: [
+    /\d/,
+    (d, v) => {
+      d.millisecond = v * 100;
+    },
+  ],
+  SS: [
+    /\d{2}/,
+    (d, v) => {
+      d.millisecond = v * 10;
+    },
+  ],
+  SSS: [
+    threeDigits,
+    (d, v) => {
+      d.millisecond = v;
+    },
+  ],
   D: [twoDigits, noop],
   ddd: [word, noop],
   MMM: [word, monthUpdate('monthNamesShort')],
   MMMM: [word, monthUpdate('monthNames')],
-  a: [word, (d, v, i18n) => {
-    const val = v.toLowerCase();
-    if (val === i18n.amPm[0]) {
-      d.isPm = false;
-    } else if (val === i18n.amPm[1]) {
-      d.isPm = true;
-    }
-  }],
-  ZZ: [/[\\+\\-]\d\d:?\d\d/, (d, v) => {
-    const parts = (`${v}`).match(/([\\+\\-]|\d\d)/gi);
-    let minutes;
+  a: [
+    word,
+    (d, v, i18n) => {
+      const val = v.toLowerCase();
+      if (val === i18n.amPm[0]) {
+        d.isPm = false;
+      } else if (val === i18n.amPm[1]) {
+        d.isPm = true;
+      }
+    },
+  ],
+  ZZ: [
+    /[\\+\\-]\d\d:?\d\d/,
+    (d, v) => {
+      const parts = `${v}`.match(/([\\+\\-]|\d\d)/gi);
+      let minutes;
 
-    if (parts) {
-      minutes = +(parts[1] as any * 60) + parseInt(parts[2], 10);
-      d.timezoneOffset = parts[0] === '+' ? minutes : -minutes;
-    }
-  }],
+      if (parts) {
+        minutes = +((parts[1] as any) * 60) + parseInt(parts[2], 10);
+        d.timezoneOffset = parts[0] === '+' ? minutes : -minutes;
+      }
+    },
+  ],
 };
 
 parseFlags.DD = parseFlags.D;
@@ -293,14 +340,14 @@ fecha.parse = (dateStr, format, i18nSettings) => {
 
   let isValid = true;
   const dateInfo: any = {};
-  format.replace(token, ($0) => {
+  format.replace(token, $0 => {
     if (parseFlags[$0]) {
       const info = parseFlags[$0];
       const index = dateStr.search(info[0]);
       if (!~index) {
         isValid = false;
       } else {
-        dateStr.replace(info[0], (result) => {
+        dateStr.replace(info[0], result => {
           info[1](dateInfo, result, i18n);
           dateStr = dateStr.substr(index + result.length);
           return result;
@@ -325,15 +372,17 @@ fecha.parse = (dateStr, format, i18nSettings) => {
   let date;
   if (dateInfo.timezoneOffset !== null && dateInfo.timezoneOffset !== undefined) {
     dateInfo.minute = +(dateInfo.minute || 0) - +dateInfo.timezoneOffset;
-    date = new Date(Date.UTC(
-      dateInfo.year || today.getFullYear(),
-      dateInfo.month || 0,
-      dateInfo.day || 1,
-      dateInfo.hour || 0,
-      dateInfo.minute || 0,
-      dateInfo.second || 0,
-      dateInfo.millisecond || 0,
-    ));
+    date = new Date(
+      Date.UTC(
+        dateInfo.year || today.getFullYear(),
+        dateInfo.month || 0,
+        dateInfo.day || 1,
+        dateInfo.hour || 0,
+        dateInfo.minute || 0,
+        dateInfo.second || 0,
+        dateInfo.millisecond || 0,
+      ),
+    );
   } else {
     date = new Date(
       dateInfo.year || today.getFullYear(),

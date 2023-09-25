@@ -1,28 +1,28 @@
 /*
-* Tencent is pleased to support the open source community by making
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
-*
-* Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
-*
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
-*
-* License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
-*
-* ---------------------------------------------------
-* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
-* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
-* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-* the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-* THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-* IN THE SOFTWARE.
-*/
+ * Tencent is pleased to support the open source community by making
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ *
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ *
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ *
+ * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ *
+ * ---------------------------------------------------
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+ * the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
 
 import { defineComponent } from 'vue';
 
@@ -40,7 +40,7 @@ import IdKey from './id-key.vue';
 import RemoteDemo from './remote-demo.vue';
 import SeparatorDemo from './separator-demo.vue';
 import ShowCompleteName from './show-complete-name.vue';
-import SlotsDemo from './slots-demo.vue';;
+import SlotsDemo from './slots-demo.vue';
 
 // 参数配置数组， 包含多个 IPropsTableItem 的实例对象
 const cascaderPropsJson: IPropsTableItem[] = [
@@ -205,7 +205,6 @@ const cascaderPropsJson: IPropsTableItem[] = [
     desc: '自定义样式',
     optional: [],
   },
-
 ];
 
 // 定义 cascaderEventsJson 数组，其中的每个元素表示一个属性项
@@ -233,7 +232,6 @@ const cascaderEventsJson: IPropsTableItem[] = [
   },
 ];
 
-
 export default defineComponent({
   render() {
     return (
@@ -242,7 +240,8 @@ export default defineComponent({
         <DemoTitle
           name='Cascader 级联组件'
           desc='Cascader组件， 对有清晰的层级结构的数据集进行逐级查看、选择和使用'
-          designLink="https://bkdesign.bk.tencent.com/design/114" />
+          designLink='https://bkdesign.bk.tencent.com/design/114'
+        />
 
         {/* 基础用法 */}
         <DemoBox
@@ -250,7 +249,8 @@ export default defineComponent({
           subtitle='基础数据展示'
           desc='通过trigger设置`click`或`hover`实现下一级的触发方式; 设置`filterable`属性可以进行搜索。behavior设置为simplicity简约样式'
           componentName='cascader'
-          demoName='base-demo'>
+          demoName='base-demo'
+        >
           <BaseDemo></BaseDemo>
         </DemoBox>
 
@@ -260,7 +260,8 @@ export default defineComponent({
           subtitle='通过配置实现任意级可选'
           desc='设置`check-any-level`为true，可以将非叶子节点作为可选级'
           componentName='cascader'
-          demoName='check-any-level-demo'>
+          demoName='check-any-level-demo'
+        >
           <CheckAnyLevelDemo></CheckAnyLevelDemo>
         </DemoBox>
 
@@ -270,7 +271,8 @@ export default defineComponent({
           subtitle='通过multiple开启多选, float-mode可以开启漂浮模式, limit-one-line将使用文字形式显示'
           desc='开启 multiple 属性进行多选，注意此时 v-model 对应的值应是二维数组； 漂浮模式下，将不会挤占下方空间;'
           componentName='cascader'
-          demoName='checkbox-demo'>
+          demoName='checkbox-demo'
+        >
           <CheckboxDemo></CheckboxDemo>
         </DemoBox>
 
@@ -280,7 +282,8 @@ export default defineComponent({
           subtitle='id-key name-key适配'
           desc='列表id指定的key值，默认为id,若需要改为其他key值，在这里传入即可,列表name指定的key值，默认为name,若需要改为其他key值，在这里传入即可'
           componentName='cascader'
-          demoName='id-key'>
+          demoName='id-key'
+        >
           <IdKey></IdKey>
         </DemoBox>
 
@@ -290,16 +293,19 @@ export default defineComponent({
           subtitle='自定义分隔符'
           desc='设置`separator`属性实现自定义分隔符'
           componentName='cascader'
-          demoName='separator-demo'>
+          demoName='separator-demo'
+        >
           <SeparatorDemo></SeparatorDemo>
         </DemoBox>
 
         {/* 仅显示最后一级 */}
-        <DemoBox title='仅显示最后一级'
+        <DemoBox
+          title='仅显示最后一级'
           subtitle='可在输入框仅显示最后一级的标签，而非完整路径'
           desc='设置`show-complete-name`属性为`false`，则可以使输入框仅显示最后一级，默认显示完整路径'
           componentName='cascader'
-          demoName='show-complete-name'>
+          demoName='show-complete-name'
+        >
           <ShowCompleteName></ShowCompleteName>
         </DemoBox>
 
@@ -309,7 +315,8 @@ export default defineComponent({
           subtitle='通过插槽对节点内容实现个性化需求'
           desc='可以通过`scoped slot`对级联选择器的备选项的节点内容进行自定义，scoped slot传入node表示当前节点的 Node 的数据,data代表原数据'
           componentName='cascader'
-          demoName='slots-demo'>
+          demoName='slots-demo'
+        >
           <SlotsDemo></SlotsDemo>
         </DemoBox>
 
@@ -319,17 +326,19 @@ export default defineComponent({
           subtitle='远程加载list，异步加载'
           desc='可以通过`is-remote`开启动态加载，并通过`remote-method`来设置加载数据源的方法。注意远程拉取数据格式需要遵循list的要求'
           componentName='cascader'
-          demoName='remote-demo'>
+          demoName='remote-demo'
+        >
           <RemoteDemo></RemoteDemo>
         </DemoBox>
 
-      {/* 自定义Trigger */}
+        {/* 自定义Trigger */}
         <DemoBox
           title='自定义Trigger'
           subtitle='通过插槽自定义trigger'
           desc='可以通过`具名插槽#trigger`实现动态具名插槽，更加灵活。作用域插槽暴露出两个属性：selected 和 isShow, 分别用于设置当前选中值和是否显示下拉框， 具体使用方法如下'
           componentName='cascader'
-          demoName='custom-trigger-demo'>
+          demoName='custom-trigger-demo'
+        >
           <CustomTriggerDemo></CustomTriggerDemo>
         </DemoBox>
 
@@ -339,7 +348,8 @@ export default defineComponent({
           subtitle='通过custom-text-fillback函数实现自定义text填充; 如果是多选使用tag，则使用custom-tags-fillback函数'
           desc='默认填充时，如果绑定数据不在列表中，会造成无法填充，此时可以通过自定义填充回调实现自定义填充'
           componentName='cascader'
-          demoName='custom-fillback'>
+          demoName='custom-fillback'
+        >
           <CustomFillback></CustomFillback>
         </DemoBox>
 
@@ -347,15 +357,16 @@ export default defineComponent({
         <PropsBox
           title='Cascader 属性'
           subtitle=''
-          propsData={cascaderPropsJson} />
+          propsData={cascaderPropsJson}
+        />
 
         {/* Cascader组件事件列表 */}
         <PropsBox
           title='Cascader 事件'
           subtitle=''
-          propsData={cascaderEventsJson} />
+          propsData={cascaderEventsJson}
+        />
       </div>
     );
   },
 });
-

@@ -1,28 +1,28 @@
 /*
-* Tencent is pleased to support the open source community by making
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
-*
-* Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
-*
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
-*
-* License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
-*
-* ---------------------------------------------------
-* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
-* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
-* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-* the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-* THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-* IN THE SOFTWARE.
-*/
+ * Tencent is pleased to support the open source community by making
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ *
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ *
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ *
+ * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ *
+ * ---------------------------------------------------
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+ * the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
 
 import { inject, InjectionKey, provide, Ref, VNode } from 'vue';
 /**
@@ -33,7 +33,7 @@ import { inject, InjectionKey, provide, Ref, VNode } from 'vue';
  */
 export enum ValueBehavior {
   ALL = 'all',
-  NEEDKEY = 'need-key'
+  NEEDKEY = 'need-key',
 }
 export type GetMenuListFunc = (item: ISearchItem, keyword: string) => Promise<ISearchItem[]>;
 export type ValidateValuesFunc = (item: ISearchItem, values: ICommonItem[]) => Promise<string | true>;
@@ -42,7 +42,7 @@ export type MenuSlotParams = {
   list: ISearchItem[];
   hoverId: string;
   multiple: boolean;
-  getSearchNode: (str: string) => string | (string | VNode)[]
+  getSearchNode: (str: string) => string | (string | VNode)[];
 };
 export interface ISearchSelectProvider {
   onEditClick: (item: SelectedItem, index: number) => void;
@@ -51,7 +51,7 @@ export interface ISearchSelectProvider {
   onValidate: (str: string) => void;
   editKey: Ref<String>;
 }
-export const SEARCH_SLECT_PROVIDER_KEY: InjectionKey<ISearchSelectProvider> =  Symbol('SEARCH_SLECT_PROVIDER_KEY');
+export const SEARCH_SLECT_PROVIDER_KEY: InjectionKey<ISearchSelectProvider> = Symbol('SEARCH_SLECT_PROVIDER_KEY');
 export const useSearchSelectProvider = (data: ISearchSelectProvider) => {
   provide(SEARCH_SLECT_PROVIDER_KEY, data);
 };
@@ -59,17 +59,17 @@ export const useSearchSelectInject = () => inject(SEARCH_SLECT_PROVIDER_KEY);
 
 export enum SearchInputMode {
   'DEFAULT' = 'default',
-  'EDIT' = 'edit'
+  'EDIT' = 'edit',
 }
 export interface ICommonItem {
   id: string;
   name: string;
   disabled?: boolean;
   realId?: string;
-  value?:  Omit<ICommonItem, 'disabled' | 'value'>;
+  value?: Omit<ICommonItem, 'disabled' | 'value'>;
   // 是否已选中
-  isSelected?: boolean
-  logical?: SearchLogical
+  isSelected?: boolean;
+  logical?: SearchLogical;
 }
 export interface ISearchValue extends Omit<ICommonItem, 'disabled' | 'value'> {
   type?: SearchItemType;
@@ -94,20 +94,20 @@ export interface ISearchItem {
   // disable
   disabled?: boolean;
   // 选中后立即生成tag
-  value?: ICommonItem
+  value?: ICommonItem;
   // 是否已选中
-  isSelected?: boolean
+  isSelected?: boolean;
   // 添加推荐选项字符时 是否只匹配children数据
   onlyRecommendChildren?: boolean;
   // 多选值时 逻辑符号
-  logical?: SearchLogical
+  logical?: SearchLogical;
   // 是否显示逻辑符号选项列表 默认不显示 仅在多选时生效
-  showLogicalPanel?: boolean
+  showLogicalPanel?: boolean;
 }
 export enum SearchLogical {
   AND = '&',
-  OR = '|'
-};
+  OR = '|',
+}
 export interface IMenuFooterItem {
   id: 'confirm' | 'cancel';
   name: string;
@@ -120,7 +120,10 @@ export class SelectedItem {
   values: ICommonItem[] = [];
   condition: string;
   logical: SearchLogical;
-  constructor(public searchItem: ISearchItem, public type: SearchItemType = 'default') {
+  constructor(
+    public searchItem: ISearchItem,
+    public type: SearchItemType = 'default',
+  ) {
     this.id = searchItem.id;
     this.name = searchItem.name;
     this.logical = searchItem.logical || SearchLogical.OR;
@@ -147,11 +150,11 @@ export class SelectedItem {
   }
   get keyInnerHtml() {
     if (this.isSpecialType()) return this.name;
-    return this.name ? `${this.name}:\u00A0`  : '';
+    return this.name ? `${this.name}:\u00A0` : '';
   }
   get keyInnerText() {
     if (this.isSpecialType()) return this.name;
-    return this.name ? `${this.name}: `  : '';
+    return this.name ? `${this.name}: ` : '';
   }
   get showLogical() {
     return !!this.searchItem.showLogicalPanel;

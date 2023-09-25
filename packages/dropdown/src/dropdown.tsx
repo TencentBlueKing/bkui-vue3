@@ -22,15 +22,14 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { merge } from 'lodash';
 import { defineComponent, ref } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import BKPopover, { PopoverPropTypes } from '@bkui-vue/popover';
-import { classes,  placementType, PropTypes, triggerType } from '@bkui-vue/shared';
-
+import { classes, placementType, PropTypes, triggerType } from '@bkui-vue/shared';
 
 export default defineComponent({
   name: 'Dropdown',
@@ -76,9 +75,12 @@ export default defineComponent({
     };
   },
   render() {
-    const wrapperClasses = classes({
-      [`${this.resolveClassName('dropdown')}`]: true,
-    }, this.$props.extCls);
+    const wrapperClasses = classes(
+      {
+        [`${this.resolveClassName('dropdown')}`]: true,
+      },
+      this.$props.extCls,
+    );
     /** popover 基础配置 */
     const basePopoverOptions: Partial<PopoverPropTypes> = {
       theme: `light ${this.resolveClassName('dropdown-popover')}`,
@@ -89,20 +91,24 @@ export default defineComponent({
       disabled: this.disabled,
     };
     const popoverOptions: Partial<PopoverPropTypes> = merge(basePopoverOptions, this.popoverOptions);
-    return <div class={wrapperClasses}>
-      <BKPopover ref="popoverRef"
-        { ...popoverOptions }
-        onAfterShow={this.afterShow}
-        onAfterHidden={this.afterHidden} >
-        {{
-          default: () => (
-            <div class={`${this.resolveClassName('dropdown-reference')}`}> {this.$slots.default?.()} </div>
-          ),
-          content: () => (
-            <div class={`${this.resolveClassName('dropdown-content')}`}> { this.$slots.content?.()} </div>
-          ),
-        }}
-      </BKPopover>
-    </div>;
+    return (
+      <div class={wrapperClasses}>
+        <BKPopover
+          ref='popoverRef'
+          {...popoverOptions}
+          onAfterShow={this.afterShow}
+          onAfterHidden={this.afterHidden}
+        >
+          {{
+            default: () => (
+              <div class={`${this.resolveClassName('dropdown-reference')}`}> {this.$slots.default?.()} </div>
+            ),
+            content: () => (
+              <div class={`${this.resolveClassName('dropdown-content')}`}> {this.$slots.content?.()} </div>
+            ),
+          }}
+        </BKPopover>
+      </div>
+    );
   },
 });

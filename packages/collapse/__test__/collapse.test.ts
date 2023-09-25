@@ -32,7 +32,10 @@ describe('collapse.tsx', () => {
   it('renders slot default when passed', async () => {
     const wrapper = await mount(Collapse, {
       props: {
-        list: [{ name: 'Title1', content: 'neirong1' }, { name: 'Title2', content: '内容2' }],
+        list: [
+          { name: 'Title1', content: 'neirong1' },
+          { name: 'Title2', content: '内容2' },
+        ],
       },
     });
     expect(wrapper.classes()).toContain('bk-collapse-wrapper');
@@ -46,7 +49,10 @@ describe('collapse accordion', () => {
   it('renders only one content when accordion is true', async () => {
     const wrapper = await mount(Collapse, {
       props: {
-        list: [{ name: 'Title1', content: 'neirong1' }, { name: 'Title2', content: '内容2' }],
+        list: [
+          { name: 'Title1', content: 'neirong1' },
+          { name: 'Title2', content: '内容2' },
+        ],
         accordion: true,
         modelValue: [0],
       },
@@ -59,7 +65,11 @@ describe('collapse accordion', () => {
   it('renders all active content when accordion is false', async () => {
     const wrapper = await mount(Collapse, {
       props: {
-        list: [{ name: 'Title1', content: 'neirong1' }, { name: 'Title2', content: '内容2' }, { name: 'Title3', content: '内容3' }],
+        list: [
+          { name: 'Title1', content: 'neirong1' },
+          { name: 'Title2', content: '内容2' },
+          { name: 'Title3', content: '内容3' },
+        ],
         accordion: false,
         modelValue: [0, 2],
       },
@@ -72,7 +82,11 @@ describe('collapse accordion', () => {
   it('titleField', async () => {
     const wrapper = await mount(BkCollapse, {
       props: {
-        list: [{ title: 'Title1', content: 'neirong1' }, { title: 'Title2', content: '内容2' }, { title: 'Title3', content: '内容3' }],
+        list: [
+          { title: 'Title1', content: 'neirong1' },
+          { title: 'Title2', content: '内容2' },
+          { title: 'Title3', content: '内容3' },
+        ],
         accordion: false,
         modelValue: [0],
         titleField: 'title',
@@ -83,7 +97,11 @@ describe('collapse accordion', () => {
   it('contentField', async () => {
     const wrapper = await mount(BkCollapse, {
       props: {
-        list: [{ name: 'Title1', contentField: 'neirong1' }, { name: 'Title2', contentField: '内容2' }, { name: 'Title3', contentField: '内容3' }],
+        list: [
+          { name: 'Title1', contentField: 'neirong1' },
+          { name: 'Title2', contentField: '内容2' },
+          { name: 'Title3', contentField: '内容3' },
+        ],
         accordion: false,
         modelValue: [0],
         contentField: 'contentField',
@@ -94,7 +112,11 @@ describe('collapse accordion', () => {
   it('idFiled', async () => {
     const wrapper = await mount(BkCollapse, {
       props: {
-        list: [{ name: 'Title1', contentField: 'neirong1' }, { name: 'Title2', contentField: '内容2' }, { name: 'Title3', contentField: '内容3' }],
+        list: [
+          { name: 'Title1', contentField: 'neirong1' },
+          { name: 'Title2', contentField: '内容2' },
+          { name: 'Title3', contentField: '内容3' },
+        ],
         accordion: false,
         modelValue: ['Title1'],
         idFiled: 'name',
@@ -105,7 +127,11 @@ describe('collapse accordion', () => {
   it('content Slots', async () => {
     const wrapper = await mount(BkCollapse, {
       props: {
-        list: [{ name: 'Title1', contentField: 'neirong1' }, { name: 'Title2', contentField: '内容2' }, { name: 'Title3', contentField: '内容3' }],
+        list: [
+          { name: 'Title1', contentField: 'neirong1' },
+          { name: 'Title2', contentField: '内容2' },
+          { name: 'Title3', contentField: '内容3' },
+        ],
         accordion: false,
       },
       slots: {

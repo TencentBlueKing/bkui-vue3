@@ -1,28 +1,28 @@
 /*
-* Tencent is pleased to support the open source community by making
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
-*
-* Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
-*
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
-*
-* License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
-*
-* ---------------------------------------------------
-* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
-* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
-* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-* the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-* THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-* IN THE SOFTWARE.
-*/
+ * Tencent is pleased to support the open source community by making
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ *
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ *
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ *
+ * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ *
+ * ---------------------------------------------------
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+ * the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
 import { nextTick } from 'vue';
 
 import { mount } from '@vue/test-utils';
@@ -31,18 +31,22 @@ import Switcher from '../src/index';
 
 jest.useFakeTimers();
 /** 传入template 其他配置*/
-const Mount = (config: any) => mount({
-  components: {
-    'bk-switcher': Switcher,
-  },
-  ...config,
-}, {});
+const Mount = (config: any) =>
+  mount(
+    {
+      components: {
+        'bk-switcher': Switcher,
+      },
+      ...config,
+    },
+    {},
+  );
 
 describe('Switcher.tsx', () => {
   /*
-  * switcher render with default checked
-  * 测试默认选中态
-  */
+   * switcher render with default checked
+   * 测试默认选中态
+   */
   test('switcher render with default checked', () => {
     const wrapper = Mount({
       template: '<bk-switcher :value="value"></bk-switcher>',
@@ -55,9 +59,9 @@ describe('Switcher.tsx', () => {
     expect(wrapper.classes()).toContain('is-checked');
   });
   /*
-  * value correctly update
-  * 测试点击选中态
-  */
+   * value correctly update
+   * 测试点击选中态
+   */
   test('value correctly update', async () => {
     const wrapper = Mount({
       template: `
@@ -76,9 +80,9 @@ describe('Switcher.tsx', () => {
   });
 
   /*
-  * change event
-  * 测试动态选中态
-  */
+   * change event
+   * 测试动态选中态
+   */
   test('change event', async () => {
     const wrapper = Mount({
       template: `
@@ -107,9 +111,9 @@ describe('Switcher.tsx', () => {
   });
 
   /*
-  * switcher render with default disabled
-  * 测试disabled
-  */
+   * switcher render with default disabled
+   * 测试disabled
+   */
   test('switcher render with default disabled', () => {
     const wrapper = Mount({
       template: '<bk-switcher :value="value" :disabled="disabled"></bk-switcher>',
@@ -125,9 +129,9 @@ describe('Switcher.tsx', () => {
   });
 
   /*
-  * disabled switch should not respond to user click
-  * 测试 disabled 点击
-  */
+   * disabled switch should not respond to user click
+   * 测试 disabled 点击
+   */
   test('disabled switch should not respond to user click', async () => {
     const wrapper = Mount({
       template: `
@@ -145,9 +149,9 @@ describe('Switcher.tsx', () => {
     expect(vm.value).toEqual(true);
   });
   /*
-  * expand switch value
-  * 测试 自定义真假值
-  */
+   * expand switch value
+   * 测试 自定义真假值
+   */
   test('expand switch value', async () => {
     const wrapper = Mount({
       template: `
@@ -171,9 +175,9 @@ describe('Switcher.tsx', () => {
   });
 
   /*
-  * switcher size test
-  * 测试 size 属性
-  */
+   * switcher size test
+   * 测试 size 属性
+   */
   test('switcher size test', () => {
     const wrapper = Mount({
       template: '<bk-switcher :size="size"></bk-switcher>',
@@ -197,9 +201,9 @@ describe('Switcher.tsx', () => {
   });
 
   /*
-  * switcher theme test
-  * 测试 theme 属性
-  */
+   * switcher theme test
+   * 测试 theme 属性
+   */
   test('switcher theme test', () => {
     const wrapper = Mount({
       template: '<bk-switcher :theme="theme"></bk-switcher>',
@@ -212,9 +216,9 @@ describe('Switcher.tsx', () => {
     expect(wrapper.classes()).toContain('primary');
   });
   /*
-  * switcher ext-cls test
-  * 测试 ext-cls 属性
-  */
+   * switcher ext-cls test
+   * 测试 ext-cls 属性
+   */
   test('switcher ext-cls test', () => {
     const wrapper = Mount({
       template: '<bk-switcher :extCls="extCls"></bk-switcher>',
@@ -228,9 +232,9 @@ describe('Switcher.tsx', () => {
   });
 
   /*
-  * switcher is-outline,is-square  test
-  * 测试 is-outline,is-square 属性
-  */
+   * switcher is-outline,is-square  test
+   * 测试 is-outline,is-square 属性
+   */
   test('switcher is-outline,is-square  test', () => {
     const wrapper = Mount({
       template: '<bk-switcher :isOutline="isOutline" :isSquare="isSquare"></bk-switcher>',
@@ -245,9 +249,9 @@ describe('Switcher.tsx', () => {
     expect(wrapper.classes()).toContain('bk-switcher-square');
   });
   /*
-  * switcher show-text  test
-  * 测试 show-text 属性
-  */
+   * switcher show-text  test
+   * 测试 show-text 属性
+   */
   test('switcher show-text  test', () => {
     const wrapper1 = Mount({
       template: '<bk-switcher :showText="showText"></bk-switcher>',
@@ -271,9 +275,9 @@ describe('Switcher.tsx', () => {
     expect(wrapper2.find('.switcher-text').exists()).toBe(true);
   });
   /*
-  * switcher on-text,off-text  test
-  * 测试 on-text,off-text 属性
-  */
+   * switcher on-text,off-text  test
+   * 测试 on-text,off-text 属性
+   */
   test('switcher on-text,off-text  test', () => {
     const noCheck = Mount({
       template: '<bk-switcher :value="value" :showText="showText"></bk-switcher>',
@@ -331,9 +335,9 @@ describe('Switcher.tsx', () => {
     expect(noCheck1Text.text()).toContain('关');
   });
   /*
-  * switcher preCheck  test
-  * 测试 preCheck 属性
-  */
+   * switcher preCheck  test
+   * 测试 preCheck 属性
+   */
   test('preCheck function return promise', async () => {
     const wrapper = Mount({
       template: `
@@ -349,7 +353,7 @@ describe('Switcher.tsx', () => {
       },
       methods: {
         preCheck(lastValue: any) {
-          return new Promise((resolve) => {
+          return new Promise(resolve => {
             setTimeout(() => {
               resolve(lastValue);
             }, 3000);

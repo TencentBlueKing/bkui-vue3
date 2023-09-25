@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { h } from 'vue';
 
@@ -36,15 +36,13 @@ describe('Container.tsx', () => {
       col: 5,
       slots: {
         default: [
-          h(BkRow, {}, {
-            default: [
-              h(BkCol),
-              h(BkCol),
-              h(BkCol),
-              h(BkCol),
-              h(BkCol),
-            ],
-          }),
+          h(
+            BkRow,
+            {},
+            {
+              default: [h(BkCol), h(BkCol), h(BkCol), h(BkCol), h(BkCol)],
+            },
+          ),
         ],
       },
     });
@@ -59,15 +57,13 @@ describe('Container.tsx', () => {
       },
       slots: {
         default: [
-          h(BkRow, {}, {
-            default: [
-              h(BkCol),
-              h(BkCol),
-              h(BkCol),
-              h(BkCol),
-              h(BkCol),
-            ],
-          }),
+          h(
+            BkRow,
+            {},
+            {
+              default: [h(BkCol), h(BkCol), h(BkCol), h(BkCol), h(BkCol)],
+            },
+          ),
         ],
       },
     });
@@ -81,9 +77,7 @@ describe('Container.tsx', () => {
         extCls: 'test',
       },
       slots: {
-        default: [
-          h(BkRow),
-        ],
+        default: [h(BkRow)],
       },
     });
 
@@ -96,9 +90,7 @@ describe('Container.tsx', () => {
         flex: true,
       },
       slots: {
-        default: [
-          h(BkRow),
-        ],
+        default: [h(BkRow)],
       },
     });
 

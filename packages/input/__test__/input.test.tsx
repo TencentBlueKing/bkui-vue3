@@ -22,8 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
-
+ */
 
 import { mount } from '@vue/test-utils';
 
@@ -32,7 +31,7 @@ describe('Input', () => {
   it('renders correctly', () => {
     const wrapper = mount({
       render() {
-        return <Input/>;
+        return <Input />;
       },
     });
     expect(wrapper.classes()).toContain('bk-input');
@@ -57,7 +56,7 @@ describe('Input', () => {
         return (
           <Input prefix={prefix}>
             {{
-              prefix: () => <span class="bk-input-prefix">{prefix}</span>,
+              prefix: () => <span class='bk-input-prefix'>{prefix}</span>,
             }}
           </Input>
         );
@@ -83,9 +82,9 @@ describe('Input', () => {
     const wrapper = mount({
       render() {
         return (
-          <Input >
+          <Input>
             {{
-              suffix: () => <span class="bk-input-suffix">{suffix}</span>,
+              suffix: () => <span class='bk-input-suffix'>{suffix}</span>,
             }}
           </Input>
         );
@@ -116,7 +115,10 @@ describe('Input', () => {
     const wrapper = mount({
       render() {
         return (
-          <Input type="search" modelValue="hello"></Input>
+          <Input
+            type='search'
+            modelValue='hello'
+          ></Input>
         );
       },
     });
@@ -173,12 +175,10 @@ describe('Input', () => {
     wrapper.find('input').setValue(val);
     expect(wrapper.find('input').element.value).toBe(val);
 
-
     expect(wrapper.emitted()).toHaveProperty('input');
     expect(wrapper.emitted().change[0][0]).toBe(val);
     expect(wrapper.emitted()['update:modelValue'][0][0]).toBe(val);
   });
-
 
   it('renders with password type', async () => {
     const wrapper = mount(Input, {

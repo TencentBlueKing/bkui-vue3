@@ -22,12 +22,11 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { computed, defineComponent, onBeforeUnmount, onMounted, Ref, ref, watch } from 'vue';
 
 import { PropTypes } from '@bkui-vue/shared';
-
 
 export default defineComponent({
   name: 'AnimateNumber',
@@ -46,7 +45,7 @@ export default defineComponent({
 
       const dis = Math.abs(endValue - startValue);
       const isPositive = endValue - startValue > 0 ? 1 : -1;
-      const ticDis = Math.ceil((dis / 30) * (10 ** props.digits)) / (10 ** props.digits);
+      const ticDis = Math.ceil((dis / 30) * 10 ** props.digits) / 10 ** props.digits;
       const ticTimes = Math.ceil(dis / ticDis);
       // 算出每次计算需要间隔的时间，保证动画的流畅
       const gapTime = 25 / ticTimes;
@@ -59,7 +58,7 @@ export default defineComponent({
           return;
         }
 
-        tweeningValue.value += (ticDis * isPositive);
+        tweeningValue.value += ticDis * isPositive;
 
         const isUnDone = isPositive === 1 ? tweeningValue.value < endValue : tweeningValue.value > endValue;
         if (isUnDone) {
@@ -73,9 +72,12 @@ export default defineComponent({
       animate();
     };
 
-    watch(() => props.value, (newValue, oldValue) => {
-      tween(oldValue, newValue);
-    });
+    watch(
+      () => props.value,
+      (newValue, oldValue) => {
+        tween(oldValue, newValue);
+      },
+    );
 
     onMounted(() => {
       tween(0, props.value);
@@ -85,10 +87,6 @@ export default defineComponent({
       cancelAnimationFrame(rafId);
     });
 
-    return () => (
-      <span>
-        {formatValue.value}
-      </span>
-    );
+    return () => <span>{formatValue.value}</span>;
   },
 });
