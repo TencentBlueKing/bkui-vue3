@@ -8,7 +8,6 @@
 }
 
 .disabled() {
-
   &.is-disabled,
   &.is-readonly {
     background-color: @input-disabled-bg;
@@ -40,8 +39,8 @@
 
 .placeholder(@fontSize: @font-size-base) {
   ::placeholder {
-    color: @light-gray;
     font-size: @fontSize;
+    color: @light-gray;
   }
 }
 
@@ -246,8 +245,11 @@
   &--text {
     width: 100%;
     padding: 0 @input-horizontal-padding;
+    overflow: hidden;
     line-height: 1;
     color: @input-color;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     background-color: @input-bg;
     background-image: none;
     border: none;
@@ -256,9 +258,6 @@
     box-sizing: border-box;
     transition: all .3s;
     flex: 1;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
 
     //Chrome
     &[type='search']::-webkit-search-decoration,
