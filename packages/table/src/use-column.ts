@@ -78,7 +78,6 @@ export default (props: TablePropTypes, targetColumns: ITableColumn[]) => {
     }
   };
 
-
   const getColumns = () => {
     if (targetColumns?.length) {
       return targetColumns;
@@ -94,6 +93,7 @@ export default (props: TablePropTypes, targetColumns: ITableColumn[]) => {
   const getActiveColumn = () => {
     if (props.colSortBehavior === IColSortBehavior.independent) {
       const filters = [SORT_OPTION.ASC, SORT_OPTION.DESC];
+      // @ts-ignore
       return getColumns().filter(col => filters.includes((col.sort as ISortShape)?.value))?.[0];
     }
     return null;
