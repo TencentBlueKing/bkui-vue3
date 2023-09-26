@@ -12,8 +12,6 @@
       v-model="val1"
       :autosize="autoSizeConf"
       type="textarea"
-      :over-max-length-limit="overMaxLengthLimit"
-      :maxlength="255"
     />
   </div>
 </template>

@@ -49,6 +49,7 @@ export const inputType = {
   max: PropTypes.integer,
   min: PropTypes.integer,
   maxlength: PropTypes.integer,
+  maxcharacter: PropTypes.integer,
   behavior: InputBehaviorType(),
   showWordLimit: PropTypes.bool,
   showControl: PropTypes.bool.def(true),
@@ -115,6 +116,7 @@ export const inputEmitEventsType = {
 export type InputType = ExtractPropTypes<typeof inputType>;
 
 export default defineComponent({
+  // eslint-disable-next-line vue/no-reserved-component-names
   name: 'Input',
   directives: {
     bkTooltips,
@@ -135,6 +137,13 @@ export default defineComponent({
     const { class: cls, style, ...inputAttrs } = ctx.attrs;
 
     const inputRef = ref();
+    const innerInputValue = ref<{ value?: string | number }>(
+      typeof props.modelValue === 'undefined' || props.modelValue === null
+        ? {}
+        : {
+            value: props.modelValue,
+          },
+    );
     const inputCls = computed(() =>
       classes(
         {
@@ -212,7 +221,7 @@ export default defineComponent({
       return icon ? <icon class={suffixCls} /> : null;
     });
     const isNumberInput = computed(() => props.type === 'number');
-    const ceilMaxLength = computed(() => Math.floor(props.maxlength));
+    const ceilMaxLength = computed(() => Math.floor(props.maxlength ?? props.maxcharacter ?? 0));
     const pwdVisible = ref(false);
     const clearCls = computed(() =>
       classes(
@@ -226,10 +235,36 @@ export default defineComponent({
     const maxLengthCls = computed(() =>
       classes({
         [getCls('max-length')]: true,
-        'is-over-limit': ceilMaxLength.value - (props.modelValue ?? '').toString().length < 0,
+        'is-over-limit': ceilMaxLength.value - modelValueLength.value < 0,
       }),
     );
-    const modelValueLength = computed(() => (props.modelValue ?? '').toString().length);
+    const getValueLimits = (val: string) => {
+      if (typeof props.maxcharacter === 'number') {
+        return val.split('').reduce(
+          (limit, char, index) => {
+            limit.len += char.charCodeAt(0) > 255 ? 2 : 1;
+            if (limit.len > props.maxcharacter && limit.pos === -1) {
+              limit.pos = index;
+            }
+            return limit;
+          },
+          {
+            len: 0,
+            pos: -1,
+          },
+        );
+      }
+      return {
+        len: val.length,
+        pos: -1,
+      };
+    };
+
+    const modelValueLength = computed(() => {
+      const modelValue = (props.modelValue ?? '') as string;
+      return getValueLimits(modelValue).len;
+    });
+
     const incControlCls = computed(() =>
       classes({
         'is-disabled': props.disabled || (props.modelValue as number) >= props.max,
@@ -253,6 +288,10 @@ export default defineComponent({
           },
     );
 
+    const showMaxLimit = computed(() => {
+      return typeof props.maxlength === 'number' || typeof props.maxcharacter === 'number';
+    });
+
     const resizeObserver = new ResizeObserver(() => {
       onceInitSizeTextarea();
     });
@@ -267,10 +306,13 @@ export default defineComponent({
 
     watch(
       () => props.modelValue,
-      () => {
+      val => {
         if (props.withValidate) {
           formItem?.validate?.('change');
         }
+        innerInputValue.value = {
+          value: val,
+        };
         nextTick(() => resizeTextarea());
         // TODO: 值变化时实时检测是否溢出
         // isOverflow.value = detectOverflow();
@@ -324,9 +366,23 @@ export default defineComponent({
     function eventHandler(eventName) {
       return e => {
         e.stopPropagation();
-        if (eventName === EVENTS.KEYDOWN && (e.code === 'Enter' || e.key === 'Enter' || e.keyCode === 13)) {
-          ctx.emit(EVENTS.ENTER, e.target.value, e);
+        if (showMaxLimit.value && !props.overMaxLengthLimit) {
+          const limit = getValueLimits(e.target.value);
+          if (
+            limit.len >= ceilMaxLength.value &&
+            (eventName === EVENTS.KEYDOWN || eventName === EVENTS.INPUT) &&
+            !isCNInput.value
+          ) {
+            const val = limit.pos > 0 ? e.target.value.slice(0, limit.pos) : e.target.value;
+            innerInputValue.value = {
+              value: val,
+            };
+            ctx.emit(EVENTS.UPDATE, val, e);
+            ctx.emit(EVENTS.INPUT, val, e);
+            return;
+          }
         }
+
         if (isCNInput.value && [EVENTS.INPUT, EVENTS.CHANGE].some(e => eventName === e)) return;
         if (eventName === EVENTS.INPUT) {
           ctx.emit(EVENTS.UPDATE, e.target.value, e);
@@ -336,7 +392,6 @@ export default defineComponent({
           ctx.emit(eventName, val, e);
           return;
         }
-
         ctx.emit(eventName, e.target.value, e);
       };
     }
@@ -401,14 +456,7 @@ export default defineComponent({
     }
 
     const bindProps = computed(() => {
-      const val =
-        typeof props.modelValue === 'undefined' || props.modelValue === null
-          ? {}
-          : {
-              value: props.modelValue,
-            };
       return {
-        ...val,
         maxlength: !props.overMaxLengthLimit && props.maxlength,
         placeholder: props.placeholder || t.value.placeholder,
         readonly: props.readonly,
@@ -448,6 +496,7 @@ export default defineComponent({
             {...bindProps.value}
             rows={props.rows}
             style={textareaCalcStyle.value}
+            {...innerInputValue.value}
           />
         ) : (
           <input
@@ -461,6 +510,7 @@ export default defineComponent({
             min={props.min}
             {...eventListener}
             {...bindProps.value}
+            {...innerInputValue.value}
           />
         )}
         {!isTextArea.value && props.clearable && !!props.modelValue && (
@@ -472,7 +522,7 @@ export default defineComponent({
           </span>
         )}
         {suffixIcon.value}
-        {typeof props.maxlength === 'number' && (props.showWordLimit || isTextArea.value) && (
+        {showMaxLimit.value && (props.showWordLimit || isTextArea.value) && (
           <p class={maxLengthCls.value}>
             {props.overMaxLengthLimit ? (
               ceilMaxLength.value - modelValueLength.value
