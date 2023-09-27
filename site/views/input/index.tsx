@@ -38,6 +38,7 @@ import Combine from './demo/combine.vue';
 import EventCallback from './demo/event-callback.vue';
 import HoverClear from './demo/hover-clear.vue';
 import Icon from './demo/icon.vue';
+import MaxLength from './demo/max-length.vue';
 import NativeAttrs from './demo/native-attrs.vue';
 import Number from './demo/number.vue';
 import Password from './demo/password.vue';
@@ -315,6 +316,18 @@ const demos = [
     DemoComponent: AutoSize,
   },
   {
+    // '自适应高度文本输入框',
+    title: '带长度限制的输入框',
+    desc: `
+      使用 maxlength 设置输入框的长度限度，一个中文等于一个计数长度。
+      使用 maxcharacter 设置输入框的长度限度，一个中文汉字表示两个字符长度。
+      使用 overMaxLengthLimit 设置是否允许在输入内容已经超出限制时继续输入。
+    `,
+    componentName: 'input',
+    demoName: 'demo/max-length',
+    DemoComponent: MaxLength,
+  },
+  {
     // '带清空操作输入框',
     title: '带清空操作输入框',
     desc: '通过配置 clearable 属性为 true 来启用有文本时允许清空操作',
@@ -489,7 +502,6 @@ const demos = [
 
 export default defineComponent({
   name: 'Input',
-
   render() {
     return (
       <div>
