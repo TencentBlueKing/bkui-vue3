@@ -1,38 +1,35 @@
 /*
-* Tencent is pleased to support the open source community by making
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
-*
-* Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
-*
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
-*
-* License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
-*
-* ---------------------------------------------------
-* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
-* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
-* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-* the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-* THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-* IN THE SOFTWARE.
-*/
-
+ * Tencent is pleased to support the open source community by making
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ *
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ *
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ *
+ * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ *
+ * ---------------------------------------------------
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+ * the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
 
 import { defineComponent } from 'vue';
 
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
-import {
-  type IPropsTableItem,
-} from '../../typings';
+import { type IPropsTableItem } from '../../typings';
 
 import AutoSize from './demo/autosize.vue';
 import Basic from './demo/basic.vue';
@@ -41,6 +38,7 @@ import Combine from './demo/combine.vue';
 import EventCallback from './demo/event-callback.vue';
 import HoverClear from './demo/hover-clear.vue';
 import Icon from './demo/icon.vue';
+import MaxLength from './demo/max-length.vue';
 import NativeAttrs from './demo/native-attrs.vue';
 import Number from './demo/number.vue';
 import Password from './demo/password.vue';
@@ -48,7 +46,6 @@ import Simple from './demo/simple.vue';
 import Size from './demo/size.vue';
 import Status from './demo/status.vue';
 import Textarea from './demo/textarea.vue';
-;
 // 输入框属性列表
 const inputProps: IPropsTableItem[] = [
   {
@@ -252,152 +249,288 @@ const inputEvents: IPropsTableItem[] = [
   },
 ];
 // 输入框插槽
-const inputSlots = [{
-  name: 'prefix',
-  type: 'Slot',
-  default: null,
-  desc: '前置插槽',
-  optional: [],
-}, {
-  name: 'suffix',
-  type: 'Slot',
-  default: null,
-  desc: '后置插槽',
-  optional: [],
-}];
+const inputSlots = [
+  {
+    name: 'prefix',
+    type: 'Slot',
+    default: null,
+    desc: '前置插槽',
+    optional: [],
+  },
+  {
+    name: 'suffix',
+    type: 'Slot',
+    default: null,
+    desc: '后置插槽',
+    optional: [],
+  },
+];
 
-const demos = [{
-  // '基础输入框',
-  title: '基础输入框',
-  desc: '使用 bk-input 标签配置输入框组件',
-  componentName: 'input',
-  demoName: 'demo/basic',
-  DemoComponent: Basic,
-}, {
-  // 'hover 时才显示 clear 按钮',
-  title: 'hover 时才显示 clear 按钮',
-  desc: '配置show-clear-only-hover为true时，清除按钮在hover时才会显示',
-  componentName: 'input',
-  demoName: 'demo/hover-clear',
-  DemoComponent: HoverClear,
-}, {
-  // '尺寸',
-  title: '尺寸',
-  desc: '可以使用 size 属性来定义按钮的尺寸，可接受 small large',
-  componentName: 'input',
-  demoName: 'demo/size',
-  DemoComponent: Size,
-}, {
-  // '数字输入框',
-  title: '数字输入框',
-  desc: '通过配置 type 属性为 number 来设置数字类型输入，通过设置 max，min 设置最大最小值, 设置 precision 保留小数位(初始值会被四舍五入，例如：numberInputValue=4.5，precision=0时，值会被四舍五入为5)。数字输入框时，clearable 配置不生效',
-  componentName: 'input',
-  demoName: 'demo/number',
-  DemoComponent: Number,
-}, {
-  // '多行文本输入框',
-  title: '多行文本输入框',
-  desc: '通过配置 type 属性为 textarea 来显示多行文本输入框',
-  componentName: 'input',
-  demoName: 'demo/textarea',
-  DemoComponent: Textarea,
-},, {
-  // '自适应高度文本输入框',
+const demos = [
+  {
+    // '基础输入框',
+    title: '基础输入框',
+    desc: '使用 bk-input 标签配置输入框组件',
+    componentName: 'input',
+    demoName: 'demo/basic',
+    DemoComponent: Basic,
+  },
+  {
+    // 'hover 时才显示 clear 按钮',
+    title: 'hover 时才显示 clear 按钮',
+    desc: '配置show-clear-only-hover为true时，清除按钮在hover时才会显示',
+    componentName: 'input',
+    demoName: 'demo/hover-clear',
+    DemoComponent: HoverClear,
+  },
+  {
+    // '尺寸',
+    title: '尺寸',
+    desc: '可以使用 size 属性来定义按钮的尺寸，可接受 small large',
+    componentName: 'input',
+    demoName: 'demo/size',
+    DemoComponent: Size,
+  },
+  {
+    // '数字输入框',
+    title: '数字输入框',
+    desc: '通过配置 type 属性为 number 来设置数字类型输入，通过设置 max，min 设置最大最小值, 设置 precision 保留小数位(初始值会被四舍五入，例如：numberInputValue=4.5，precision=0时，值会被四舍五入为5)。数字输入框时，clearable 配置不生效',
+    componentName: 'input',
+    demoName: 'demo/number',
+    DemoComponent: Number,
+  },
+  {
+    // '多行文本输入框',
+    title: '多行文本输入框',
+    desc: '通过配置 type 属性为 textarea 来显示多行文本输入框',
+    componentName: 'input',
+    demoName: 'demo/textarea',
+    DemoComponent: Textarea,
+  },
+  {
+    // '自适应高度文本输入框',
     title: '自适应高度文本输入框',
     desc: '通过配置 type 属性为 textarea 来显示多行文本输入框',
     componentName: 'input',
     demoName: 'demo/autosize',
     DemoComponent: AutoSize,
-  }, {
-  // '带清空操作输入框',
+  },
+  {
+    // '自适应高度文本输入框',
+    title: '带长度限制的输入框',
+    desc: `
+      使用 maxlength 设置输入框的长度限度，一个中文等于一个计数长度。
+      使用 maxcharacter 设置输入框的长度限度，一个中文汉字表示两个字符长度。
+      使用 overMaxLengthLimit 设置是否允许在输入内容已经超出限制时继续输入。
+    `,
+    componentName: 'input',
+    demoName: 'demo/max-length',
+    DemoComponent: MaxLength,
+  },
+  {
+    // '带清空操作输入框',
     title: '带清空操作输入框',
     desc: '通过配置 clearable 属性为 true 来启用有文本时允许清空操作',
     componentName: 'input',
     demoName: 'demo/clearable',
     DemoComponent: Clearable,
-  }, {
-  // '密码框',
+  },
+  {
+    // '密码框',
     title: '密码框',
     desc: '通过配置 type 属性为 password 来设置密码框；通过配置 password-icon 属性来设置切换显示密码的 icon',
     componentName: 'input',
     demoName: 'demo/password',
     DemoComponent: Password,
-  }, {
-  // '组合型输入框',
+  },
+  {
+    // '组合型输入框',
     title: '组合型输入框',
     desc: '通过配置 slot=prefix, slot=suffix，来让组合输入框',
     componentName: 'input',
     demoName: 'demo/combine',
     DemoComponent: Combine,
-  }, {
-  // '带Icon输入框',
+  },
+  {
+    // '带Icon输入框',
     title: '带Icon输入框',
     desc: '通过配置 slot=prefix, slot=suffix，来设置icon',
     componentName: 'input',
     demoName: 'demo/icon',
     DemoComponent: Icon,
-  }, {
-  // '带状态输入框',
+  },
+  {
+    // '带状态输入框',
     title: '带状态输入框',
     desc: '通过配置 disabled, readonly，来让输入框禁用、只读',
     componentName: 'input',
     demoName: 'demo/status',
     DemoComponent: Status,
-  }, {
-  // '事件回调',
+  },
+  {
+    // '事件回调',
     title: '事件回调',
     desc: '支持 keyup enter keypress keydown change focus blur 回调事件',
     componentName: 'input',
     demoName: 'demo/event-callback',
     DemoComponent: EventCallback,
-  }, {
-  // 'HTML 原生属性透传',
+  },
+  {
+    // 'HTML 原生属性透传',
     title: 'HTML 原生属性透传',
     desc: '支持 HTML input 标签所有原生属性，设置 password 禁用自动填充功能',
     componentName: 'input',
     demoName: 'demo/native-attrs',
     DemoComponent: NativeAttrs,
-  }, {
-  // '简约风格输入框',
+  },
+  {
+    // '简约风格输入框',
     title: '简约风格输入框',
     desc: '通过属性behavior配置简约风格',
     componentName: 'input',
     demoName: 'demo/simple',
     DemoComponent: Simple,
-  }];
+  },
+];
 
+// const demos = [
+//   {
+//     // '基础输入框',
+//     title: '基础输入框',
+//     desc: '使用 bk-input 标签配置输入框组件',
+//     componentName: 'input',
+//     demoName: 'demo/basic',
+//     DemoComponent: Basic,
+//   },
+//   {
+//     // 'hover 时才显示 clear 按钮',
+//     title: 'hover 时才显示 clear 按钮',
+//     desc: '配置show-clear-only-hover为true时，清除按钮在hover时才会显示',
+//     componentName: 'input',
+//     demoName: 'demo/hover-clear',
+//     DemoComponent: HoverClear,
+//   },
+//   {
+//     // '尺寸',
+//     title: '尺寸',
+//     desc: '可以使用 size 属性来定义按钮的尺寸，可接受 small large',
+//     componentName: 'input',
+//     demoName: 'demo/size',
+//     DemoComponent: Size,
+//   },
+//   {
+//     // '数字输入框',
+//     title: '数字输入框',
+//     desc: '通过配置 type 属性为 number 来设置数字类型输入，通过设置 max，min 设置最大最小值, 设置 precision 保留小数位(初始值会被四舍五入，例如：numberInputValue=4.5，precision=0时，值会被四舍五入为5)。数字输入框时，clearable 配置不生效',
+//     componentName: 'input',
+//     demoName: 'demo/number',
+//     DemoComponent: Number,
+//   },
+//   {
+//     // '多行文本输入框',
+//     title: '多行文本输入框',
+//     desc: '通过配置 type 属性为 textarea 来显示多行文本输入框',
+//     componentName: 'input',
+//     demoName: 'demo/textarea',
+//     DemoComponent: Textarea,
+//   },
+//   {
+//     // '带清空操作输入框',
+//     title: '带清空操作输入框',
+//     desc: '通过配置 clearable 属性为 true 来启用有文本时允许清空操作',
+//     componentName: 'input',
+//     demoName: 'demo/clearable',
+//     DemoComponent: Clearable,
+//   },
+//   {
+//     // '密码框',
+//     title: '密码框',
+//     desc: '通过配置 type 属性为 password 来设置密码框；通过配置 password-icon 属性来设置切换显示密码的 icon',
+//     componentName: 'input',
+//     demoName: 'demo/password',
+//     DemoComponent: Password,
+//   },
+//   {
+//     // '组合型输入框',
+//     title: '组合型输入框',
+//     desc: '通过配置 slot=prefix, slot=suffix，来让组合输入框',
+//     componentName: 'input',
+//     demoName: 'demo/combine',
+//     DemoComponent: Combine,
+//   },
+//   {
+//     // '带Icon输入框',
+//     title: '带Icon输入框',
+//     desc: '通过配置 slot=prefix, slot=suffix，来设置icon',
+//     componentName: 'input',
+//     demoName: 'demo/icon',
+//     DemoComponent: Icon,
+//   },
+//   {
+//     // '带状态输入框',
+//     title: '带状态输入框',
+//     desc: '通过配置 disabled, readonly，来让输入框禁用、只读',
+//     componentName: 'input',
+//     demoName: 'demo/status',
+//     DemoComponent: Status,
+//   },
+//   {
+//     // '事件回调',
+//     title: '事件回调',
+//     desc: '支持 keyup enter keypress keydown change focus blur 回调事件',
+//     componentName: 'input',
+//     demoName: 'demo/event-callback',
+//     DemoComponent: EventCallback,
+//   },
+//   {
+//     // 'HTML 原生属性透传',
+//     title: 'HTML 原生属性透传',
+//     desc: '支持 HTML input 标签所有原生属性，设置 password 禁用自动填充功能',
+//     componentName: 'input',
+//     demoName: 'demo/native-attrs',
+//     DemoComponent: NativeAttrs,
+//   },
+//   {
+//     // '简约风格输入框',
+//     title: '简约风格输入框',
+//     desc: '通过属性behavior配置简约风格',
+//     componentName: 'input',
+//     demoName: 'demo/simple',
+//     DemoComponent: Simple,
+//   },
+// ];
 
 export default defineComponent({
   name: 'Input',
-
   render() {
     return (
       <div>
         <DemoTitle
-          name="Input"
-          desc="常用的输入框"
+          name='Input'
+          desc='常用的输入框'
           link={`${import.meta.env.VITE_APP_BASE_URL ?? ''}/input`}
-          designLink="https://bkdesign.bk.tencent.com/design/14"
+          designLink='https://bkdesign.bk.tencent.com/design/14'
         />
-        {
-          demos.map(({ DemoComponent, ...demo }) => (
-            <DemoBox {...demo}>
-              <DemoComponent />
-            </DemoBox>
-          ))
-        }
+        {demos.map(({ DemoComponent, ...demo }) => (
+          <DemoBox {...demo}>
+            <DemoComponent />
+          </DemoBox>
+        ))}
         <PropsBox
-          title="Input 属性"
-          subtitle=""
-          propsData={inputProps} />
+          title='Input 属性'
+          subtitle=''
+          propsData={inputProps}
+        />
         <PropsBox
-          title="Input 插槽"
-          subtitle=""
-          propsData={inputSlots} />
+          title='Input 插槽'
+          subtitle=''
+          propsData={inputSlots}
+        />
         <PropsBox
-          title="Input 事件"
-          subtitle=""
-          propsData={inputEvents} />
+          title='Input 事件'
+          subtitle=''
+          propsData={inputEvents}
+        />
       </div>
     );
   },

@@ -1,28 +1,28 @@
 /*
-* Tencent is pleased to support the open source community by making
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
-*
-* Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
-*
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
-*
-* License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
-*
-* ---------------------------------------------------
-* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
-* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
-* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-* the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-* THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-* IN THE SOFTWARE.
-*/
+ * Tencent is pleased to support the open source community by making
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ *
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ *
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ *
+ * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ *
+ * ---------------------------------------------------
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+ * the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
 import { debounce, get as objGet, has as objHas, set as objSet } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import { computed, onMounted, reactive, ref, watch } from 'vue';
@@ -80,11 +80,16 @@ export const useClass = (
   const hasScrollY = ref(false);
   const hasFooter = computed(() => props.pagination && props.data.length);
   const hasScrollYRef = computed(() => hasScrollY.value);
-  const tableClass = computed(() => (classes({
-    [resolveClassName('table')]: true,
-    'has-footer': hasFooter.value,
-    'has-scroll-y': hasScrollY.value || props.virtualEnabled,
-  }, resolvePropBorderToClassStr(props.border))));
+  const tableClass = computed(() =>
+    classes(
+      {
+        [resolveClassName('table')]: true,
+        'has-footer': hasFooter.value,
+        'has-scroll-y': hasScrollY.value || props.virtualEnabled,
+      },
+      resolvePropBorderToClassStr(props.border),
+    ),
+  );
 
   const headClass = classes({
     [resolveClassName('table-head')]: true,
@@ -104,10 +109,12 @@ export const useClass = (
     [resolveClassName('table-body')]: true,
   };
 
-  const footerClass = computed(() => classes({
-    [resolveClassName('table-footer')]: true,
-    ['is-hidden']: !props.pagination || !props.data.length,
-  }));
+  const footerClass = computed(() =>
+    classes({
+      [resolveClassName('table-footer')]: true,
+      ['is-hidden']: !props.pagination || !props.data.length,
+    }),
+  );
   const getTableHeight = (): string => {
     if (props.height === 'number') {
       return `${props.height}px`;
@@ -118,8 +125,11 @@ export const useClass = (
     return '';
   };
   const resolveWidth = () => {
-    if (resolvedColumns.value.every((col: Column) => /^\d+\.?\d*(px)?$/ig.test(`${col.width}`))) {
-      const rectWidth = resolvedColumns.value.reduce((width: number, col: Column) => width + Number(`${col.width}`.replace(/px/ig, '')), 0);
+    if (resolvedColumns.value.every((col: Column) => /^\d+\.?\d*(px)?$/gi.test(`${col.width}`))) {
+      const rectWidth = resolvedColumns.value.reduce(
+        (width: number, col: Column) => width + Number(`${col.width}`.replace(/px/gi, '')),
+        0,
+      );
       const offset = hasScrollY.value ? SCROLLY_WIDTH : 0;
       return `${rectWidth + offset}px`;
     }
@@ -135,20 +145,19 @@ export const useClass = (
     height: getTableHeight(),
   }));
 
-
   const resolvePropHeight = (height: Number | string, defaultValue: number) => {
     const strHeight = String(height);
     if (/^\d+\.?\d*$/.test(strHeight)) {
       return Number(strHeight);
     }
 
-    if (/^\d+\.?\d*px$/ig.test(strHeight)) {
+    if (/^\d+\.?\d*px$/gi.test(strHeight)) {
       return Number(strHeight.replace('px', ''));
     }
 
-    if (/^\d+\.?\d*%$/ig.test(strHeight) && typeof defaultValue === 'number') {
+    if (/^\d+\.?\d*%$/gi.test(strHeight) && typeof defaultValue === 'number') {
       const percent = Number(strHeight.replace('%', ''));
-      return defaultValue * percent / 100;
+      return (defaultValue * percent) / 100;
     }
 
     return defaultValue;
@@ -176,7 +185,7 @@ export const useClass = (
     return 0;
   };
 
-  const resolveContentStyle = (rootEl) => {
+  const resolveContentStyle = rootEl => {
     const resolveHeight = resolvePropHeight(props.height, autoHeight.value);
     headHeight.value = getHeadHeight(rootEl);
     const resolveMinHeight = resolvePropHeight(props.minHeight, autoHeight.value);
@@ -185,9 +194,8 @@ export const useClass = (
     const height = props.height !== 'auto' ? `${contentHeight}px` : false;
     const minHeight = resolveMinHeight - headHeight.value - resolveFooterHeight;
     const resolveMaxHeight = resolvePropHeight(props.maxHeight, undefined);
-    const maxHeight = typeof resolveMaxHeight === 'number'
-      ? `${resolveMaxHeight - headHeight.value - resolveFooterHeight}px`
-      : false;
+    const maxHeight =
+      typeof resolveMaxHeight === 'number' ? `${resolveMaxHeight - headHeight.value - resolveFooterHeight}px` : false;
 
     Object.assign(contentStyle, {
       display: pageData?.length ? 'block' : false,
@@ -267,7 +275,6 @@ export const useClass = (
   };
 };
 
-
 /**
  * 渲染初始化数据 settings
  * @param props: TablePropTypes
@@ -299,8 +306,8 @@ export const useInit = (props: TablePropTypes, targetColumns: ITableColumn[]) =>
     const checked = settings?.checked || (props.settings as Settings)?.checked || [];
     const settingFields = settings?.fields || (props.settings as Settings)?.fields || [];
     colgroups.length = 0;
-    colgroups.push(...(resolvedColumns.value)
-      .map(col => ({
+    colgroups.push(
+      ...resolvedColumns.value.map(col => ({
         ...col,
         calcWidth: null,
         resizeWidth: null,
@@ -309,7 +316,8 @@ export const useInit = (props: TablePropTypes, targetColumns: ITableColumn[]) =>
         isHidden: isColumnHidden(settingFields, col, checked),
         [COLUMN_ATTRIBUTE.COL_UID]: uuidv4(),
         [COLUMN_ATTRIBUTE.COL_SOURCE_DATA]: col,
-      })));
+      })),
+    );
   };
 
   if (typeof props.settings === 'object') {
@@ -319,20 +327,27 @@ export const useInit = (props: TablePropTypes, targetColumns: ITableColumn[]) =>
   const { dragOffsetXStyle, dragOffsetX, resetResizeEvents, registerResizeEvent } = useColumnResize(colgroups, true);
   const { activeColumns } = useActiveColumns(props, targetColumns as Column[]);
 
-  watch(() => [props.settings], () => {
-    if (((props.settings as Settings)?.checked || []).length) {
-      updateColGroups();
-    }
-  });
+  watch(
+    () => [props.settings],
+    () => {
+      if (((props.settings as Settings)?.checked || []).length) {
+        updateColGroups();
+      }
+    },
+  );
 
   const debounceColUpdate = debounce(() => {
     updateColGroups();
     resetResizeEvents();
     registerResizeEvent();
   }, 120);
-  watch(() => resolvedColumns, () => {
-    debounceColUpdate();
-  }, { immediate: true, deep: true });
+  watch(
+    () => resolvedColumns,
+    () => {
+      debounceColUpdate();
+    },
+    { immediate: true, deep: true },
+  );
 
   const defSort = props.columns.reduce((out: any, col, index) => {
     const columnName = resolvePropVal(col, ['field', 'type'], [col, index]);
@@ -424,7 +439,7 @@ export const useInit = (props: TablePropTypes, targetColumns: ITableColumn[]) =>
     let hasUnchecked = false;
     let hasChecked = false;
 
-    indexData.forEach((row) => {
+    indexData.forEach(row => {
       const isSelected = validateFn(row);
       // 判定是否有未选中数据
       if (!hasUnchecked && !isSelected) {
@@ -527,25 +542,34 @@ export const useInit = (props: TablePropTypes, targetColumns: ITableColumn[]) =>
    * @param index
    * @returns boolean
    */
-  const resolveSelection = (row: any, _rowId?: string, index?: number) => resolveSelectionRow(row, () => {
-    const rowId = _rowId === undefined ? row[TABLE_ROW_ATTRIBUTE.ROW_UID] : _rowId;
-    if (isRowSelectEnable(props, { row, index, isCheckAll: false }) && isSelectionAll()) {
-      return true;
-    }
+  const resolveSelection = (row: any, _rowId?: string, index?: number) =>
+    resolveSelectionRow(row, () => {
+      const rowId = _rowId === undefined ? row[TABLE_ROW_ATTRIBUTE.ROW_UID] : _rowId;
+      if (isRowSelectEnable(props, { row, index, isCheckAll: false }) && isSelectionAll()) {
+        return true;
+      }
 
-    if (reactiveSchema.rowActions.has(rowId)) {
-      return reactiveSchema.rowActions.get(rowId)?.isSelected;
-    }
+      if (reactiveSchema.rowActions.has(rowId)) {
+        return reactiveSchema.rowActions.get(rowId)?.isSelected;
+      }
 
-    return false;
-  });
+      return false;
+    });
 
   /**
    * 生成内置index
    */
   const indexData = reactive([]);
 
-  const neepColspanOrRowspan = computed(() => colgroups.some(col => typeof col.rowspan === 'function' || /^\d$/.test(`${col.rowspan}`) || typeof col.colspan === 'function' || /^\d$/.test(`${col.colspan}`)));
+  const neepColspanOrRowspan = computed(() =>
+    colgroups.some(
+      col =>
+        typeof col.rowspan === 'function' ||
+        /^\d$/.test(`${col.rowspan}`) ||
+        typeof col.colspan === 'function' ||
+        /^\d$/.test(`${col.colspan}`),
+    ),
+  );
 
   const needSelection = computed(() => colgroups.some(col => col.type === 'selection'));
 
@@ -736,12 +760,11 @@ export const useInit = (props: TablePropTypes, targetColumns: ITableColumn[]) =>
     }
   };
 
-  const {
-    fixedColumns,
-    resolveColumnStyle,
-    resolveColumnClass,
-    fixedWrapperClass,
-  } = useFixedColumn(props, colgroups, false);
+  const { fixedColumns, resolveColumnStyle, resolveColumnClass, fixedWrapperClass } = useFixedColumn(
+    props,
+    colgroups,
+    false,
+  );
 
   /**
    * 获取已经勾选的数据

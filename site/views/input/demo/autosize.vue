@@ -10,13 +10,8 @@
     />
     <bk-input
       v-model="val1"
-      :autosize="{
-        minRows: 2,
-        maxRows: 6
-      }"
+      :autosize="autoSizeConf"
       type="textarea"
-      :over-max-length-limit="overMaxLengthLimit"
-      :maxlength="255"
     />
   </div>
 </template>
@@ -25,6 +20,10 @@
   import { ref } from 'vue';
   const val = ref('');
   const val1 = ref('');
+  const autoSizeConf = {
+    minRows: 2,
+    maxRows: 6,
+  };
   const overMaxLengthLimit = ref(false);
 </script>
 

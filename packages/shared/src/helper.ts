@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 /* eslint-disable no-underscore-dangle */
 /**
@@ -72,9 +72,7 @@ export function isObject(value: any) {
  * @returns {boolean}
  */
 const isNumberFinite = (value: any) => (typeof value === 'number' || value instanceof Number) && isFinite(+value);
-export {
-  isNumberFinite as isFinite,
-};
+export { isNumberFinite as isFinite };
 
 /**
  * Returns `value` if finite, else returns `defaultValue`.
@@ -96,7 +94,6 @@ export function valueOrDefault(value: any, defaultValue: any) {
   return typeof value === 'undefined' ? defaultValue : value;
 }
 
-
 /**
  * Returns true if the `a0` and `a1` arrays have the same content, else returns false.
  * @param {Array} a0 - The array to compare
@@ -105,7 +102,10 @@ export function valueOrDefault(value: any, defaultValue: any) {
  * @private
  */
 export function elementsEqual(a0: any, a1: any) {
-  let i; let ilen; let v0; let v1;
+  let i;
+  let ilen;
+  let v0;
+  let v1;
 
   if (!a0 || !a1 || a0.length !== a1.length) {
     return false;
@@ -244,7 +244,6 @@ export function mergerIfFn(key: string, target: any, source: any) {
   }
 }
 
-
 /**
  * 检查当前元素是否为Html元素
  * @param obj
@@ -255,10 +254,10 @@ export function isElement(obj: any) {
     return obj instanceof HTMLElement;
   } catch (e) {
     return (
-      typeof obj === 'object'
-        && obj.nodeType === 1
-        && typeof obj.style === 'object'
-        && typeof obj.ownerDocument === 'object'
+      typeof obj === 'object' &&
+      obj.nodeType === 1 &&
+      typeof obj.style === 'object' &&
+      typeof obj.ownerDocument === 'object'
     );
   }
 }

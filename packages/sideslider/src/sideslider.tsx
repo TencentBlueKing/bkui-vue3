@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { defineComponent } from 'vue';
 
@@ -56,13 +56,7 @@ export default defineComponent({
     },
   },
 
-  emits: [
-    'closed',
-    'update:isShow',
-    'shown',
-    'hidden',
-    'animation-end',
-  ],
+  emits: ['closed', 'update:isShow', 'shown', 'hidden', 'animation-end'],
 
   setup(props, { slots, emit }) {
     const handleClose = async () => {
@@ -73,17 +67,20 @@ export default defineComponent({
       if (shouldClose) {
         emit('update:isShow', false);
         emit('closed');
-        setTimeout(() => { // 有动画，推迟发布事件
+        setTimeout(() => {
+          // 有动画，推迟发布事件
           emit('animation-end');
         }, 250);
       }
     };
-    const handleShown = () => { // 有动画，推迟发布事件
+    const handleShown = () => {
+      // 有动画，推迟发布事件
       setTimeout(() => {
         emit('shown');
       }, 200);
     };
-    const handleHidden = () => { // 有动画，推迟发布事件
+    const handleHidden = () => {
+      // 有动画，推迟发布事件
       setTimeout(() => {
         emit('hidden');
       }, 200);
@@ -93,30 +90,33 @@ export default defineComponent({
 
     return () => {
       const dialogSlot = {
-        header: () => <>
-          <div class={`${resolveClassName('sideslider-header')}`}>
-            <div class={`${resolveClassName('sideslider-close')} ${props.direction}`} onClick={ () => {
-              handleClose();
-            } }></div>
-            <div class={`${resolveClassName('sideslider-title')} ${props.direction}`}>
-              {slots.header?.() ?? props.title}
+        header: () => (
+          <>
+            <div class={`${resolveClassName('sideslider-header')}`}>
+              <div
+                class={`${resolveClassName('sideslider-close')} ${props.direction}`}
+                onClick={() => {
+                  handleClose();
+                }}
+              ></div>
+              <div class={`${resolveClassName('sideslider-title')} ${props.direction}`}>
+                {slots.header?.() ?? props.title}
+              </div>
             </div>
-          </div>
-        </>,
+          </>
+        ),
         default: () => slots.default?.() ?? 'Content',
         footer: () => {
           if (slots.footer) {
-            return (
-              <div class={`${resolveClassName('sideslider-footer')}`}>
-                {slots.footer()}
-              </div>
-            );
+            return <div class={`${resolveClassName('sideslider-footer')}`}>{slots.footer()}</div>;
           }
 
           return null;
         },
       };
-      const className = `${resolveClassName('sideslider-wrapper')} ${props.scrollable ? 'scroll-able' : ''} ${props.extCls}`;
+      const className = `${resolveClassName('sideslider-wrapper')} ${props.scrollable ? 'scroll-able' : ''} ${
+        props.extCls
+      }`;
       const maxHeight = slots.footer ? 'calc(100vh - 106px)' : 'calc(100vh - 52px)';
 
       return (
@@ -127,7 +127,8 @@ export default defineComponent({
           style={`${props.direction}: 0;`}
           onHidden={handleHidden}
           onShown={handleShown}
-          onClose={handleClose}>
+          onClose={handleClose}
+        >
           {dialogSlot}
         </BkModal>
       );

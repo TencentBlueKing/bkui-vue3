@@ -1,46 +1,41 @@
 /*
-* Tencent is pleased to support the open source community by making
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
-*
-* Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
-*
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
-*
-* License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
-*
-* ---------------------------------------------------
-* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
-* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
-* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-* the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-* THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-* IN THE SOFTWARE.
-*/
+ * Tencent is pleased to support the open source community by making
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ *
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ *
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ *
+ * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ *
+ * ---------------------------------------------------
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+ * the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
 
-import {
-  defineComponent,
-} from 'vue';
+import { defineComponent } from 'vue';
 
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
-import {
-  type IPropsTableItem,
-} from '../../typings';
+import { type IPropsTableItem } from '../../typings';
 
 import DemoComposeFormItem from './demo/compose-form-item.vue';
 import DemoForm from './demo/form.vue';
 import DemoFormDescription from './demo/form-description.vue';
 import DemoFormValidator from './demo/form-validator.vue';
 import DemoFormVertical from './demo/form-vertical.vue';
-
 
 const formProps: IPropsTableItem[] = [
   {
@@ -215,67 +210,78 @@ export default defineComponent({
   name: 'Form',
   render() {
     return (
-    <div>
-      <DemoTitle
-        name="Form"
-        desc="由输入框、选择器、单选框、多选框等控件组成"
-        designLink="https://bkdesign.bk.tencent.com/design/33" />
-      <DemoBox
-        title="基础用法"
-        desc=""
-        componentName="form"
-        demoName="/demo/form">
+      <div>
+        <DemoTitle
+          name='Form'
+          desc='由输入框、选择器、单选框、多选框等控件组成'
+          designLink='https://bkdesign.bk.tencent.com/design/33'
+        />
+        <DemoBox
+          title='基础用法'
+          desc=''
+          componentName='form'
+          demoName='/demo/form'
+        >
           <DemoForm />
-      </DemoBox>
-      <DemoBox
-        title="label 描述"
-        desc="FormItem 组件配置 description"
-        componentName="form"
-        demoName="/demo/form-description">
+        </DemoBox>
+        <DemoBox
+          title='label 描述'
+          desc='FormItem 组件配置 description'
+          componentName='form'
+          demoName='/demo/form-description'
+        >
           <DemoFormDescription />
-      </DemoBox>
-      <DemoBox
-        title="顶部对齐"
-        desc=""
-        componentName="form"
-        demoName="/demo/form-vertical">
+        </DemoBox>
+        <DemoBox
+          title='顶部对齐'
+          desc=''
+          componentName='form'
+          demoName='/demo/form-vertical'
+        >
           <DemoFormVertical />
-      </DemoBox>
-      <DemoBox
-        title="表单验证"
-        desc=""
-        componentName="form"
-        demoName="/demo/form-validator">
+        </DemoBox>
+        <DemoBox
+          title='表单验证'
+          desc=''
+          componentName='form'
+          demoName='/demo/form-validator'
+        >
           <DemoFormValidator />
-      </DemoBox>
-      <DemoBox
-        title="组合表单组件"
-        desc=""
-        componentName="form"
-        demoName="/demo/compose-form-item">
+        </DemoBox>
+        <DemoBox
+          title='组合表单组件'
+          desc=''
+          componentName='form'
+          demoName='/demo/compose-form-item'
+        >
           <DemoComposeFormItem />
-      </DemoBox>
-      <PropsBox
-        title="Form 属性"
-        subtitle=""
-        propsData={formProps}/>
-      <PropsBox
-        title="Form 实例方法"
-        subtitle=""
-        propsData={formMethods}/>
-      <PropsBox
-        title="Form 事件"
-        subtitle=""
-        propsData={formEvents}/>
-      <PropsBox
-        title="Form-Item 属性"
-        subtitle=""
-        propsData={formItemProps}/>
-      <PropsBox
-        title="Form-Item Slot"
-        subtitle=""
-        propsData={formItemSlots}/>
-    </div>
+        </DemoBox>
+        <PropsBox
+          title='Form 属性'
+          subtitle=''
+          propsData={formProps}
+        />
+        <PropsBox
+          title='Form 实例方法'
+          subtitle=''
+          propsData={formMethods}
+        />
+        <PropsBox
+          title='Form 事件'
+          subtitle=''
+          propsData={formEvents}
+        />
+        <PropsBox
+          title='Form-Item 属性'
+          subtitle=''
+          propsData={formItemProps}
+        />
+        <PropsBox
+          title='Form-Item Slot'
+          subtitle=''
+          propsData={formItemSlots}
+        />
+      </div>
     );
   },
 });

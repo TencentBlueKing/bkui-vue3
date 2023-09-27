@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import type { PropType } from 'vue';
 
@@ -55,7 +55,7 @@ export default {
   },
   files: {
     type: Array as PropType<UploadFile[]>,
-    default: () => ([] as UploadFile[]),
+    default: () => [] as UploadFile[],
   },
   name: {
     type: String,
@@ -140,15 +140,10 @@ export default {
   },
   customRequest: Function as PropType<UploadRequestHandler>,
   beforeUpload: {
-    type: Function as PropType<(
-      file: UploadRawFile
-    ) => Promise<boolean> | boolean>,
+    type: Function as PropType<(file: UploadRawFile) => Promise<boolean> | boolean>,
   },
   beforeRemove: {
-    type: Function as PropType<(
-      file: UploadFile,
-      uploadFiles: UploadFile[]
-    ) => Promise<boolean> | boolean>,
+    type: Function as PropType<(file: UploadFile, uploadFiles: UploadFile[]) => Promise<boolean> | boolean>,
   },
   sliceUpload: {
     type: Boolean,

@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import ejs from 'ejs';
 import { appendFile, existsSync, lstatSync, mkdirSync, readdir, readFileSync, unlinkSync } from 'fs';
@@ -76,7 +76,7 @@ const <%=iconName%>: FunctionalComponent<IIconBaseProps> = (props, context) => {
 export default <%=iconName%>;
 `.toString();
 
-const indexTemplate = 'export { default as <%=iconName%> } from \'../icons/<%=fileName%>\';\n';
+const indexTemplate = "export { default as <%=iconName%> } from '../icons/<%=fileName%>';\n";
 const compileDirUrl = resolve(__dirname, '../src/svg');
 
 const cleaner = new Svgo({
@@ -238,10 +238,9 @@ const transformSvg = async (url: string) => {
     });
     let xmlDom = JSON.parse(xmlJson);
     if (text.includes('linearGradient')) {
-      xmlDom.elements[0].attributes.style = ''
-      + 'width: 1em; height: 1em; vertical-align: middle;fill: currentColor;overflow: hidden;';
-      const str = JSON.stringify(xmlDom).split('\\n\\t')
-        .join('');
+      xmlDom.elements[0].attributes.style =
+        '' + 'width: 1em; height: 1em; vertical-align: middle;fill: currentColor;overflow: hidden;';
+      const str = JSON.stringify(xmlDom).split('\\n\\t').join('');
       return JSON.parse(str);
     }
     // 转换图形
@@ -259,28 +258,26 @@ const transformSvg = async (url: string) => {
     if (!(viewBoxList && viewBoxList.length === 4)) {
       return xmlDom;
     }
-    const [,, x, y] = viewBoxList;
+    const [, , x, y] = viewBoxList;
     const svgViewBox = {
       xScale: 1024 / (Math.min(x, y) || 1024),
       yScale: 1024 / (Math.min(x, y) || 1024),
     };
     xmlDom.elements[0].attributes.viewBox = `0 0 ${svgViewBox.xScale * x} ${svgViewBox.yScale * y}`;
-    xmlDom.elements[0].attributes.style = ''
-      + 'width: 1em; height: 1em; vertical-align: middle;fill: currentColor;overflow: hidden;';
+    xmlDom.elements[0].attributes.style =
+      '' + 'width: 1em; height: 1em; vertical-align: middle;fill: currentColor;overflow: hidden;';
     const tranformPath = (elements: any[]) => {
-      elements.forEach((item) => {
+      elements.forEach(item => {
         if (item.name === 'path') {
           const itemTransform = item.attributes.transform;
           if (itemTransform) {
             // eslint-disable-next-line no-param-reassign
-            item.attributes.d = svgpath(item.attributes.d).transform(itemTransform)
-              .toString();
+            item.attributes.d = svgpath(item.attributes.d).transform(itemTransform).toString();
             // eslint-disable-next-line no-param-reassign
             delete item.attributes.transform;
           }
           // eslint-disable-next-line no-param-reassign
-          item.attributes.d = svgpath(item.attributes.d).scale(svgViewBox.xScale, svgViewBox.yScale)
-            .toString();
+          item.attributes.d = svgpath(item.attributes.d).scale(svgViewBox.xScale, svgViewBox.yScale).toString();
           // 去除全背景
           if (item.attributes.d === 'M0 0L0 1024 1024 1024 1024 0z') {
             // eslint-disable-next-line no-param-reassign
@@ -307,37 +304,36 @@ const writeFileRecursive = async (url: string, content: string) => {
     root = '/';
     filepath = filepath.slice(1);
   } else if (filepath[1] === ':') {
-    root = filepath.slice(0, 3);   // c:\
+    root = filepath.slice(0, 3); // c:\
     filepath = filepath.slice(3);
   }
 
-  const folders = filepath.split('/').slice(0, -1);  // remove last item, file
-  folders.reduce(
-    (acc, folder) => {
-      const folderPath = `${acc + folder}/`;
-      if (!existsSync(folderPath)) {
-        mkdirSync(folderPath);
-      }
-      return folderPath;
-    },
-    root,
-  );
+  const folders = filepath.split('/').slice(0, -1); // remove last item, file
+  folders.reduce((acc, folder) => {
+    const folderPath = `${acc + folder}/`;
+    if (!existsSync(folderPath)) {
+      mkdirSync(folderPath);
+    }
+    return folderPath;
+  }, root);
   if (existsSync(url)) unlinkSync(url);
   await promisify(appendFile)(url, content, 'utf-8');
 };
 // 编译指定目录
 const compilerDir = async (dir: string): Promise<any> => {
   const files = await promisify(readdir)(dir);
-  return await Promise.all(files.map((file: string) => {
-    const url = join(dir, file);
-    if (!/\.svg$/.test(url)) {
-      return '';
-    }
-    if (lstatSync(url).isDirectory()) {
-      return compilerDir(url);
-    }
-    return compileFile(url);
-  }));
+  return await Promise.all(
+    files.map((file: string) => {
+      const url = join(dir, file);
+      if (!/\.svg$/.test(url)) {
+        return '';
+      }
+      if (lstatSync(url).isDirectory()) {
+        return compilerDir(url);
+      }
+      return compileFile(url);
+    }),
+  );
 };
 // 将ejs转换后的charcode转换为utf-8
 const decodeHtmlEntity = function (x: string) {
@@ -350,7 +346,9 @@ const decodeSvgName = function (x: string) {
 
 const compileFile = async (url: string) => {
   const urlInfo = parse(url);
-  const { elements: [svgInfo] } = await transformSvg(url);
+  const {
+    elements: [svgInfo],
+  } = await transformSvg(url);
   const iconName = decodeSvgName(urlInfo.name).replace(/^([A-Z]{1})/, (_, dec) => dec.toLowerCase());
   const str = ejs.render(renderTemplate, { iconName, svgInfo: JSON.stringify(svgInfo), license }, {});
   await writeFileRecursive(resolve(__dirname, `../icons/${urlInfo.name}.tsx`), decodeHtmlEntity(str as string));
@@ -360,13 +358,15 @@ const compileFile = async (url: string) => {
   };
 };
 
-type SvgObj = ({iconName: string; fileName: string} | string)[];
+type SvgObj = ({ iconName: string; fileName: string } | string)[];
 
 const compileSvg = async () => {
   const bkIconStr = readFileSync(resolve(__dirname, '../src/components/icon.tsx'), 'utf-8');
   await writeFileRecursive(resolve(__dirname, '../icons/icon.tsx'), bkIconStr);
-  const data: SvgObj =  await compilerDir(compileDirUrl);
-  let indexStr = data.filter(data => data !== '').map(item => ejs.render(indexTemplate, item, {}))
+  const data: SvgObj = await compilerDir(compileDirUrl);
+  let indexStr = data
+    .filter(data => data !== '')
+    .map(item => ejs.render(indexTemplate, item, {}))
     .join('');
   indexStr = `${license}\n${indexStr}`;
   await writeFileRecursive(resolve(__dirname, '../src/index.tsx'), indexStr);

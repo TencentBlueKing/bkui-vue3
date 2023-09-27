@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 interface IRectAttrs {
   width: number | string;
@@ -37,7 +37,7 @@ interface ICircleAttrs {
   cy: number | string;
   rx: number | string;
   ry: number | string;
-  r:  number | string;
+  r: number | string;
 }
 interface ILineAttrs {
   x1: number | string;
@@ -128,13 +128,7 @@ const poly = (attrs: IPolyAttrs) => {
 
 const toPathString = (d: string[] | string) => (Array.isArray(d) ? d.join(' ') : '');
 
-const convertShapeToPath = (
-  node: Record<string, any>,
-  {
-    nodeName = 'name',
-    nodeAttrs = 'attributes',
-  } = {},
-) => {
+const convertShapeToPath = (node: Record<string, any>, { nodeName = 'name', nodeAttrs = 'attributes' } = {}) => {
   const name = node[nodeName];
   const attributes = node[nodeAttrs];
   let d;

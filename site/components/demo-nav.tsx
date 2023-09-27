@@ -1,28 +1,28 @@
 /*
-* Tencent is pleased to support the open source community by making
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
-*
-* Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
-*
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
-*
-* License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
-*
-* ---------------------------------------------------
-* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
-* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
-* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-* the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-* THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-* IN THE SOFTWARE.
-*/
+ * Tencent is pleased to support the open source community by making
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ *
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ *
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ *
+ * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ *
+ * ---------------------------------------------------
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+ * the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { defineComponent, nextTick, reactive, ref, toRefs, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -80,7 +80,10 @@ export default defineComponent({
       renderList: [],
     });
 
-    const { push, options: { routes } } = useRouter();
+    const {
+      push,
+      options: { routes },
+    } = useRouter();
     const curRoute = useRoute();
 
     const { navListRef, scroll } = navListScrollToView();
@@ -104,22 +107,21 @@ export default defineComponent({
 
     const getNavGroup = (group: NavGroupMeta) => {
       const list = routes.filter(item => item.meta?.group === group);
-      const handleRoute = (routeName) => {
+      const handleRoute = routeName => {
         push({ name: routeName });
       };
       return (
-        <div class="nav-group">
-          <div class="nav-group-title">{group}</div>
-          <ul class="nav-group-list">
-            {
-              list.map(item => (
-                <li
-                  class={`nav-item ${item.name === curRoute.name ? 'item-active' : ''}`}
-                  onClick={() => handleRoute(item.name)}>
-                    {item.meta?.navName || item.name}
-                </li>
-              ))
-            }
+        <div class='nav-group'>
+          <div class='nav-group-title'>{group}</div>
+          <ul class='nav-group-list'>
+            {list.map(item => (
+              <li
+                class={`nav-item ${item.name === curRoute.name ? 'item-active' : ''}`}
+                onClick={() => handleRoute(item.name)}
+              >
+                {item.meta?.navName || item.name}
+              </li>
+            ))}
           </ul>
         </div>
       );
@@ -233,12 +235,12 @@ export default defineComponent({
 
     const popperWidth = ref<string | number>(220);
     // 初始化PopoverWidth
-    const onPopoverFirstUpdate: OnFirstUpdateFnType = (instance) => {
+    const onPopoverFirstUpdate: OnFirstUpdateFnType = instance => {
       const { reference } = instance.elements;
       popperWidth.value = (reference as HTMLElement).offsetWidth;
     };
 
-    const handleChooseCom = (e) => {
+    const handleChooseCom = e => {
       const item = state.renderList[state.selectIndex];
       if (!item) return;
 
@@ -260,63 +262,79 @@ export default defineComponent({
     };
   },
   render() {
-    return <div class="demo-nav">
-      <h1 class="demo-nav-title">Vue 组件库 <span class="title-mark">3.x</span></h1>
-      {/* <BkInput class="demo-nav-input" type="search" onInput={this.searchHandler} v-model={this.searchVal}/> */}
-      <div class="demo-nav-search-wrapper" v-clickoutside={this.hidePopover}>
-        <BKPopover
-          theme="light"
-          trigger="manual"
-          width={this.popperWidth}
-          arrow={false}
-          placement="bottom-start"
-          offset={2}
-          isShow={this.isPopoverShow}
-          disableTeleport
+    return (
+      <div class='demo-nav'>
+        <h1 class='demo-nav-title'>
+          Vue 组件库 <span class='title-mark'>3.x</span>
+        </h1>
+        {/* <BkInput class="demo-nav-input" type="search" onInput={this.searchHandler} v-model={this.searchVal}/> */}
+        <div
+          class='demo-nav-search-wrapper'
+          v-clickoutside={this.hidePopover}
         >
-          {{
-            default: () => (
-              <div class="demo-nav-popover">
-                <BkInput class="demo-nav-input" type="search" clearable={true} v-model={this.searchVal}
-                onInput={this.searchHandler}
-                onClear={this.hidePopover}
-                onKeydown={this.keyupHandler}
-                onEnter={this.handleChooseCom} />
-              </div>
-            ),
-            content: () => (
-              <div class="search-dropdown-list">
-                <ul ref="searchListContainerRef" style={{ maxHeight: `${this.contentMaxHeight}px` }} class="outside-ul">
-                  {
-                    this.renderList.length
-                      ? this.renderList.map((item, index) => (
-                        <li class={[
-                          'search-dropdown-list-item',
-                          this.selectIndex === index ? 'cur' : '',
-                        ]} onClick={() => this.changeRouter(item, true)}>
-                          <span class="text" v-html={
-                            item.name.replace(new RegExp(`(${this.searchVal})`, 'i'), '<em>$1</em>')
-                          }></span>
+          <BKPopover
+            theme='light'
+            trigger='manual'
+            width={this.popperWidth}
+            arrow={false}
+            placement='bottom-start'
+            offset={2}
+            isShow={this.isPopoverShow}
+            disableTeleport
+          >
+            {{
+              default: () => (
+                <div class='demo-nav-popover'>
+                  <BkInput
+                    class='demo-nav-input'
+                    type='search'
+                    clearable={true}
+                    v-model={this.searchVal}
+                    onInput={this.searchHandler}
+                    onClear={this.hidePopover}
+                    onKeydown={this.keyupHandler}
+                    onEnter={this.handleChooseCom}
+                  />
+                </div>
+              ),
+              content: () => (
+                <div class='search-dropdown-list'>
+                  <ul
+                    ref='searchListContainerRef'
+                    style={{ maxHeight: `${this.contentMaxHeight}px` }}
+                    class='outside-ul'
+                  >
+                    {this.renderList.length ? (
+                      this.renderList.map((item, index) => (
+                        <li
+                          class={['search-dropdown-list-item', this.selectIndex === index ? 'cur' : '']}
+                          onClick={() => this.changeRouter(item, true)}
+                        >
+                          <span
+                            class='text'
+                            v-html={item.name.replace(new RegExp(`(${this.searchVal})`, 'i'), '<em>$1</em>')}
+                          ></span>
                         </li>
                       ))
-                      : (
-                        <li class="search-dropdown-list-item">
-                          <span class="text">没有找到组件</span>
-                        </li>
-                      )
-                  }
-                </ul>
-              </div>
-            ),
-          }}
-        </BKPopover>
-      </div>
+                    ) : (
+                      <li class='search-dropdown-list-item'>
+                        <span class='text'>没有找到组件</span>
+                      </li>
+                    )}
+                  </ul>
+                </div>
+              ),
+            }}
+          </BKPopover>
+        </div>
 
-      <div class="demo-nav-list" ref="navListRef">
-        {
-          Object.values(NavGroupMeta).map(group => this.getNavGroup(group))
-        }
+        <div
+          class='demo-nav-list'
+          ref='navListRef'
+        >
+          {Object.values(NavGroupMeta).map(group => this.getNavGroup(group))}
+        </div>
       </div>
-    </div>;
+    );
   },
 });

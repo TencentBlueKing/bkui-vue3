@@ -42,8 +42,14 @@ export default defineComponent({
   render() {
     return (
       <div>
-        <BkPopover content={this.tips} theme='dark'>
-          <div class={`box-icon ${this.active ? 'is-active' : ''}`} onClick={() => this.$emit('click')}>
+        <BkPopover
+          content={this.tips}
+          theme='dark'
+        >
+          <div
+            class={`box-icon ${this.active ? 'is-active' : ''}`}
+            onClick={() => this.$emit('click')}
+          >
             {this.$slots.default?.()}
           </div>
         </BkPopover>

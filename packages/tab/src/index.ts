@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 import { ExtractPropTypes } from 'vue';
 
 import { withInstallProps } from '@bkui-vue/shared';
@@ -34,11 +34,5 @@ import TabPanel from './tab-panel';
 export type TabProps = Partial<ExtractPropTypes<typeof tabProps>>;
 export type TabPanelProps = Partial<ExtractPropTypes<typeof tabPanelProps>>;
 const BkTab = withInstallProps(Tab, { TabPanel });
-export {
-  BkTab,
-  TabPanel as BkTabPanel,
-  SortTypeEnum,
-  PositionEnum,
-};
+export { BkTab, TabPanel as BkTabPanel, SortTypeEnum, PositionEnum };
 export default BkTab;
-

@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { computed, defineComponent, h, toRefs, TransitionGroup } from 'vue';
 
@@ -52,16 +52,18 @@ export default defineComponent({
     const isPhotowall = computed<boolean>(() => theme.value === EThemes.PICTURE);
     const isSinglePhoto = computed<boolean>(() => isPhotowall.value && !multiple.value);
 
-    const classNames = computed(() => classes({
-      [classBlock]: true,
-      [`${classBlock}--${theme.value}`]: true,
-      [`${classBlock}--disabled`]: disabled.value,
-    }));
+    const classNames = computed(() =>
+      classes({
+        [classBlock]: true,
+        [`${classBlock}--${theme.value}`]: true,
+        [`${classBlock}--disabled`]: disabled.value,
+      }),
+    );
 
     function formatSize(value: number) {
       const uints = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
       const index = Math.floor(Math.log(value) / Math.log(1024));
-      const size = value / (1024 ** index);
+      const size = value / 1024 ** index;
       return `${size.toFixed(2)}${uints[index]}`;
     }
 
@@ -75,67 +77,73 @@ export default defineComponent({
 
     const Photowall = () => (
       <TransitionGroup name={`${classBlock}__item`}>
-        {
-          props.files.map((file) => {
-            const classNames = classes({
-              [`${classBlock}__item`]: true,
-              [`${classBlock}__item-picture`]: true,
-              [`${classBlock}__item--${file.status}`]: true,
-            });
-            return (
-              <li key={file.uid} class={classNames}>
-                {
-                  slots?.file
-                    ? slots.file({ file })
-                    : PhotoItem(file)
-                }
-              </li>
-            );
-          })
-        }
+        {props.files.map(file => {
+          const classNames = classes({
+            [`${classBlock}__item`]: true,
+            [`${classBlock}__item-picture`]: true,
+            [`${classBlock}__item--${file.status}`]: true,
+          });
+          return (
+            <li
+              key={file.uid}
+              class={classNames}
+            >
+              {slots?.file ? slots.file({ file }) : PhotoItem(file)}
+            </li>
+          );
+        })}
       </TransitionGroup>
     );
 
-    const PhotoItem = (file: UploadFile) => ([
-      <img v-show={file.status !== 'uploading'} src={file.url} class={`${classBlock}__picture-item-thumbnail`} alt="" />,
-      <>{
-        file.status === 'uploading' && <BkProgress
-        class={`${classBlock}__picture-item-progress`}
-        type="circle"
-        color="#3a84ff"
-        bgColor="#333"
-        width={50}
-        titleStyle={{ color: '#fff' }}
-        percent={file.percentage}
-        />
-      }</>,
-      <>{
-        !disabled.value && <div class={`${classBlock}__picture-item-actions`}>
-          {/* <Eye class="action-icon" /> */}
-          <Del class="action-icon" onClick={e => handleRemove(file, e)} />
-        </div>
-      }</>,
-    ]);
+    const PhotoItem = (file: UploadFile) => [
+      <img
+        v-show={file.status !== 'uploading'}
+        src={file.url}
+        class={`${classBlock}__picture-item-thumbnail`}
+        alt=''
+      />,
+      <>
+        {file.status === 'uploading' && (
+          <BkProgress
+            class={`${classBlock}__picture-item-progress`}
+            type='circle'
+            color='#3a84ff'
+            bgColor='#333'
+            width={50}
+            titleStyle={{ color: '#fff' }}
+            percent={file.percentage}
+          />
+        )}
+      </>,
+      <>
+        {!disabled.value && (
+          <div class={`${classBlock}__picture-item-actions`}>
+            {/* <Eye class="action-icon" /> */}
+            <Del
+              class='action-icon'
+              onClick={e => handleRemove(file, e)}
+            />
+          </div>
+        )}
+      </>,
+    ];
 
     const Normal = () => (
       <TransitionGroup name={`${classBlock}__item`}>
-        {
-          props.files.map((file) => {
-            const classNames = classes({
-              [`${classBlock}__item`]: true,
-              [`${classBlock}__item--${file.status}`]: true,
-            });
-            return (
-              <li key={file.uid} class={classNames}>
-                {
-                  slots?.file
-                    ? slots.file({ file })
-                    : NormalItem(file)
-                }
-              </li>
-            );
-          })
-        }
+        {props.files.map(file => {
+          const classNames = classes({
+            [`${classBlock}__item`]: true,
+            [`${classBlock}__item--${file.status}`]: true,
+          });
+          return (
+            <li
+              key={file.uid}
+              class={classNames}
+            >
+              {slots?.file ? slots.file({ file }) : NormalItem(file)}
+            </li>
+          );
+        })}
       </TransitionGroup>
     );
 
@@ -160,64 +168,91 @@ export default defineComponent({
       return h(icon, { class: `${classBlock}__item-file-icon` });
     };
 
-    const NormalItem = (file: UploadFile) => ([
+    const NormalItem = (file: UploadFile) => [
       <div class={`${classBlock}__item-icon`}>
-        {
-          file.isPic
-            ? <img src={file.url} class={`${classBlock}__item-thumbnail`} alt="" />
-            : FileIcon(file)
-        }
+        {file.isPic ? (
+          <img
+            src={file.url}
+            class={`${classBlock}__item-thumbnail`}
+            alt=''
+          />
+        ) : (
+          FileIcon(file)
+        )}
       </div>,
       <div class={`${classBlock}__item-summary`}>
-        <div class={`${classBlock}__item-name`} title={file.name}>{file.name}</div>
-        {
-          file.status !== 'uploading'
-          && <div class={`${classBlock}__item-message`} title={file.statusText}>
-            { file.status === 'success' && <><Done class={`${classBlock}__item-message-success-icon`} />{file.statusText || t.value.uploadSuccess}</> }
-            { file.status === 'fail' && <>{file.statusText || t.value.uploadFailed}</> }
+        <div
+          class={`${classBlock}__item-name`}
+          title={file.name}
+        >
+          {file.name}
+        </div>
+        {file.status !== 'uploading' && (
+          <div
+            class={`${classBlock}__item-message`}
+            title={file.statusText}
+          >
+            {file.status === 'success' && (
+              <>
+                <Done class={`${classBlock}__item-message-success-icon`} />
+                {file.statusText || t.value.uploadSuccess}
+              </>
+            )}
+            {file.status === 'fail' && <>{file.statusText || t.value.uploadFailed}</>}
           </div>
-        }
-        {
-          file.status === 'uploading' && <BkProgress
-          class={`${classBlock}__item-progress`}
-          showText={false}
-          percent={file.percentage} size="small"
+        )}
+        {file.status === 'uploading' && (
+          <BkProgress
+            class={`${classBlock}__item-progress`}
+            showText={false}
+            percent={file.percentage}
+            size='small'
           />
-        }
-        {
-          file.status !== 'fail'
-          && <div class={`${classBlock}__item-speed`}>
-            <span v-show={file.size} class={`${classBlock}__item-speed-size`}>{formatSize(file.size)}</span>
+        )}
+        {file.status !== 'fail' && (
+          <div class={`${classBlock}__item-speed`}>
+            <span
+              v-show={file.size}
+              class={`${classBlock}__item-speed-size`}
+            >
+              {formatSize(file.size)}
+            </span>
             {/* <span v-show={file.status === 'uploading'} class={`${classBlock}__item-speed-rate`}></span> */}
-            <span v-show={file.status === 'uploading'} class={`${classBlock}__item-speed-percentage`}>{file.percentage}%</span>
+            <span
+              v-show={file.status === 'uploading'}
+              class={`${classBlock}__item-speed-percentage`}
+            >
+              {file.percentage}%
+            </span>
           </div>
-        }
-        {
-          !disabled.value
-          && <div class={`${classBlock}__item-actions`}>
-            { file.status === 'fail' && <RightTurnLine class={`${classBlock}__item-retry-icon`} onClick={e => handleRetry(file, e)} /> }
-            <Del class={`${classBlock}__item-del-icon`} onClick={e => handleRemove(file, e)} />
+        )}
+        {!disabled.value && (
+          <div class={`${classBlock}__item-actions`}>
+            {file.status === 'fail' && (
+              <RightTurnLine
+                class={`${classBlock}__item-retry-icon`}
+                onClick={e => handleRetry(file, e)}
+              />
+            )}
+            <Del
+              class={`${classBlock}__item-del-icon`}
+              onClick={e => handleRemove(file, e)}
+            />
           </div>
-        }
+        )}
       </div>,
-    ]);
+    ];
 
     return () => (
       <>
-      {
-        isSinglePhoto.value
-          ? (slots?.innerTrigger && slots?.innerTrigger(props.files?.[0]))
-          : <ul class={classNames.value}>
-              {
-                isPhotowall.value
-                  ? Photowall()
-                  : Normal()
-              }
-              {
-                slots?.innerTrigger && slots?.innerTrigger()
-              }
+        {isSinglePhoto.value ? (
+          slots?.innerTrigger && slots?.innerTrigger(props.files?.[0])
+        ) : (
+          <ul class={classNames.value}>
+            {isPhotowall.value ? Photowall() : Normal()}
+            {slots?.innerTrigger && slots?.innerTrigger()}
           </ul>
-      }
+        )}
       </>
     );
   },

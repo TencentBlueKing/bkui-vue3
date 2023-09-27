@@ -22,15 +22,17 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
-
+ */
 
 export type TaskRunner<T> = (options?: T) => Promise<void>;
 
 export class Task<TOptions> {
   options: TOptions = {} as any;
   // eslint-disable-next-line no-useless-constructor
-  constructor(public name: string, public runner: TaskRunner<TOptions>) {}
+  constructor(
+    public name: string,
+    public runner: TaskRunner<TOptions>,
+  ) {}
   setName = (name: string) => {
     this.name = name;
   };
@@ -38,13 +40,13 @@ export class Task<TOptions> {
     this.runner = runner;
   };
   setOptions = (options?: TOptions) => {
-    this.options = options || {} as any;
+    this.options = options || ({} as any);
   };
   exec = () => this.runner(this.options);
 }
 
 export interface ILibTaskOption {
-  analyze: boolean
+  analyze: boolean;
 }
 
 export interface ITaskItem {

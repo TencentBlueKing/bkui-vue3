@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import {
   Component,
@@ -49,9 +49,18 @@ export default defineComponent({
   props: tabProps,
   emits: [
     // 兼容老方法
-    'add-panel', 'tab-change', 'remove-panel', 'sort-change', 'on-drag-tab',
+    'add-panel',
+    'tab-change',
+    'remove-panel',
+    'sort-change',
+    'on-drag-tab',
     // 新方法
-    'add', 'change', 'remove', 'update:active', 'sort', 'drag',
+    'add',
+    'change',
+    'remove',
+    'update:active',
+    'sort',
+    'drag',
   ],
   setup(_props, { slots, emit }) {
     const isMounted = ref(false);
@@ -60,7 +69,7 @@ export default defineComponent({
     // 动态插入tabPanel
     const getPaneInstanceFromSlot = (vnode: VNode, panelInstanceList: ComponentInternalInstance[] = []) => {
       const { children } = vnode;
-      ((children || []) as Array<VNode>).forEach((node) => {
+      ((children || []) as Array<VNode>).forEach(node => {
         let { type } = node;
         type = (type as Component).name || type;
         if (type === 'TabPanel' && node.component) {
@@ -97,7 +106,6 @@ export default defineComponent({
         setPanelInstances();
       });
     });
-
 
     const methods = {
       tabAdd(e: MouseEvent) {
@@ -218,16 +226,17 @@ export default defineComponent({
         return null;
       }
       return (
-        <TabNav v-slots={this.$slots} {...props} />
+        <TabNav
+          v-slots={this.$slots}
+          {...props}
+        />
       );
     };
 
     return (
       <div class={getTabBoxClass()}>
         {getTabHeader()}
-        <div class={this.resolveClassName('tab-content')}>
-          {this.$slots.default?.()}
-        </div>
+        <div class={this.resolveClassName('tab-content')}>{this.$slots.default?.()}</div>
       </div>
     );
   },

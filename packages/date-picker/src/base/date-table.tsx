@@ -1,43 +1,36 @@
 /*
-* Tencent is pleased to support the open source community by making
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
-*
-* Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
-*
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
-*
-* License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
-*
-* ---------------------------------------------------
-* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
-* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
-* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-* the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-* THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-* IN THE SOFTWARE.
-*/
+ * Tencent is pleased to support the open source community by making
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ *
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ *
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ *
+ * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ *
+ * ---------------------------------------------------
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+ * the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
 
 import jsCalendar from 'js-calendar';
 import type { ExtractPropTypes } from 'vue';
-import {
-  computed,
-  defineComponent,
-  PropType,
-} from 'vue';
+import { computed, defineComponent, PropType } from 'vue';
 
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 
-import type {
-  DatePickerValueType,
-  DisabledDateType,
-} from '../interface';
+import type { DatePickerValueType, DisabledDateType } from '../interface';
 import { clearHours, isInRange } from '../utils';
 
 const dateTableProps = {
@@ -108,26 +101,28 @@ export default defineComponent({
       const isRange = props.selectionMode === 'range';
       const disableTestFn = typeof props.disabledDate === 'function' && props.disabledDate;
 
-      return calendar.value(tableYear, tableMonth, (cell) => {
-        if (cell.date instanceof Date) {
-          cell.date.setTime(cell.date.getTime() + cell.date.getTimezoneOffset() * 60000);
-        }
+      return calendar
+        .value(tableYear, tableMonth, cell => {
+          if (cell.date instanceof Date) {
+            cell.date.setTime(cell.date.getTime() + cell.date.getTimezoneOffset() * 60000);
+          }
 
-        const time = cell.date && clearHours(cell.date);
-        const dateIsInCurrentMonth = cell.date && tableMonth === cell.date.getMonth();
-        return {
-          ...cell,
-          type: time === today ? 'today' : cell.type,
-          selected: dateIsInCurrentMonth && selectedDays.includes(time),
-          disabled: (cell.date && disableTestFn) && disableTestFn(new Date(time)),
-          range: dateIsInCurrentMonth && isRange && isInRange(time, rangeStart, rangeEnd),
-          start: dateIsInCurrentMonth && isRange && time === minDay,
-          end: dateIsInCurrentMonth && isRange && time === maxDay,
-        };
-      }).cells.slice(0);
+          const time = cell.date && clearHours(cell.date);
+          const dateIsInCurrentMonth = cell.date && tableMonth === cell.date.getMonth();
+          return {
+            ...cell,
+            type: time === today ? 'today' : cell.type,
+            selected: dateIsInCurrentMonth && selectedDays.includes(time),
+            disabled: cell.date && disableTestFn && disableTestFn(new Date(time)),
+            range: dateIsInCurrentMonth && isRange && isInRange(time, rangeStart, rangeEnd),
+            start: dateIsInCurrentMonth && isRange && time === minDay,
+            end: dateIsInCurrentMonth && isRange && time === maxDay,
+          };
+        })
+        .cells.slice(0);
     });
 
-    const handleClick = (cell) => {
+    const handleClick = cell => {
       if (cell.disabled || cell.type === 'weekLabel') {
         return;
       }
@@ -136,7 +131,7 @@ export default defineComponent({
       emit('pick', newDate);
       emit('pick-click');
     };
-    const handleMouseMove = (cell) => {
+    const handleMouseMove = cell => {
       if (!props.rangeState.selecting) {
         return;
       }
@@ -175,23 +170,19 @@ export default defineComponent({
     return (
       <div class={this.resolveClassName('date-picker-cells')}>
         <div class={this.resolveClassName('date-picker-cells-header')}>
-          {
-            this.headerDays.map(day => (
-              <span>{day}</span>
-            ))
-          }
+          {this.headerDays.map(day => (
+            <span>{day}</span>
+          ))}
         </div>
-        {
-          this.cells.map(cell => (
-            <span
-              class={this.getCellCls(cell)}
-              onClick={() => this.handleClick(cell)}
-              onMouseenter={() => this.handleMouseMove(cell)}
-            >
-              <em>{cell.desc}</em>
-            </span>
-          ))
-        }
+        {this.cells.map(cell => (
+          <span
+            class={this.getCellCls(cell)}
+            onClick={() => this.handleClick(cell)}
+            onMouseenter={() => this.handleMouseMove(cell)}
+          >
+            <em>{cell.desc}</em>
+          </span>
+        ))}
       </div>
     );
   },

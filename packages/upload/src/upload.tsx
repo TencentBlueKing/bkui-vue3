@@ -22,9 +22,9 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
-import { computed, defineComponent, onBeforeUnmount, shallowRef  } from 'vue';
+import { computed, defineComponent, onBeforeUnmount, shallowRef } from 'vue';
 
 import { classes } from '@bkui-vue/shared';
 
@@ -55,13 +55,15 @@ export default defineComponent({
     const isPhotowall = computed<boolean>(() => props.theme === EThemes.PICTURE);
     const isSinglePhoto = computed<boolean>(() => isPhotowall.value && !props.multiple);
 
-    const classNames = computed(() => classes({
-      [CLASS_PREFIX]: true,
-      [`${CLASS_PREFIX}--${props.theme}`]: true,
-      [`${CLASS_PREFIX}--disabled`]: props.disabled,
-      [`${CLASS_PREFIX}--single-picture`]: isSinglePhoto.value,
-      [props.extCls]: props.extCls ?? false,
-    }));
+    const classNames = computed(() =>
+      classes({
+        [CLASS_PREFIX]: true,
+        [`${CLASS_PREFIX}--${props.theme}`]: true,
+        [`${CLASS_PREFIX}--disabled`]: props.disabled,
+        [`${CLASS_PREFIX}--single-picture`]: isSinglePhoto.value,
+        [props.extCls]: props.extCls ?? false,
+      }),
+    );
 
     const triggerProps = computed(() => ({
       theme: props.theme,
@@ -70,20 +72,15 @@ export default defineComponent({
       accept: props.accept,
     }));
 
-
     function onRemove(file: UploadFile, fileList: UploadFiles) {
       abort(file);
       emit('delete', file, fileList);
     }
 
-    const {
-      fileList,
-      handlePreprocess,
-      handleRemove,
-      handleProgress,
-      handleSuccess,
-      handleError,
-    } = useFileHandler(props, { onRemove });
+    const { fileList, handlePreprocess, handleRemove, handleProgress, handleSuccess, handleError } = useFileHandler(
+      props,
+      { onRemove },
+    );
 
     function handleFiles(files: File[]) {
       if (!files.length) {
@@ -114,7 +111,7 @@ export default defineComponent({
           upload(rawFile, sendFiles);
         }
       }
-    };
+    }
 
     function handleRetry(file: UploadFile) {
       send(file.raw);
@@ -170,7 +167,7 @@ export default defineComponent({
         sliceUrl,
         mergeUrl,
         chunkSize,
-        onProgress: (event) => {
+        onProgress: event => {
           handleProgress(event, file);
           emit('progress', event, file, fileList.value);
         },
@@ -187,7 +184,7 @@ export default defineComponent({
 
           delete requests.value[uid];
         },
-        onError: (err) => {
+        onError: err => {
           handleError(err, file);
           emit('error', file, fileList.value, err);
           delete requests.value[uid];
@@ -215,7 +212,7 @@ export default defineComponent({
       if (file) {
         reqs = { [file.uid]: requests.value[file.uid] };
       }
-      Object.keys(reqs).forEach((uid) => {
+      Object.keys(reqs).forEach(uid => {
         if (reqs[uid] instanceof XMLHttpRequest) {
           const xhr = reqs[uid] as XMLHttpRequest;
           xhr?.abort();
@@ -237,29 +234,33 @@ export default defineComponent({
 
     return () => (
       <div class={classNames.value}>
-        {
-          !isPhotowall.value && <UploadTrigger {...triggerProps.value} v-slots={slots} onChange={handleFiles} />
-        }
-        {
-          slots.tip
-            ? slots.tip()
-            : props.tip && <div class={`${CLASS_PREFIX}__tip`}>{props.tip}</div>
-        }
+        {!isPhotowall.value && (
+          <UploadTrigger
+            {...triggerProps.value}
+            v-slots={slots}
+            onChange={handleFiles}
+          />
+        )}
+        {slots.tip ? slots.tip() : props.tip && <div class={`${CLASS_PREFIX}__tip`}>{props.tip}</div>}
         <UploadList
           files={fileList.value}
           theme={props.theme}
           disabled={props.disabled}
           multiple={props.multiple}
           onRemove={handleRemove}
-          onRetry={handleRetry}>
+          onRetry={handleRetry}
+        >
           {{
-            innerTrigger: (file: UploadFile) => isPhotowall.value
-              && <UploadTrigger
-                {...triggerProps.value}
-                file={file}
-                v-slots={slots}
-                onChange={handleFiles}
-                onRemove={handleRemove} />,
+            innerTrigger: (file: UploadFile) =>
+              isPhotowall.value && (
+                <UploadTrigger
+                  {...triggerProps.value}
+                  file={file}
+                  v-slots={slots}
+                  onChange={handleFiles}
+                  onRemove={handleRemove}
+                />
+              ),
             file: slots.file,
           }}
         </UploadList>

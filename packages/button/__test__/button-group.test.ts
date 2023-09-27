@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { h } from 'vue';
 
@@ -33,19 +33,14 @@ describe('BkButtonGroup.tsx', () => {
   it('renders slot default when passed', async () => {
     const wrapper = await mount(BkButtonGroup, {
       slots: {
-        default: [
-          h(BkButton),
-          h(BkButton),
-        ],
-
+        default: [h(BkButton), h(BkButton)],
       },
     });
     expect(wrapper.findAllComponents(BkButton).length).toEqual(2);
   });
 
   it('renders without slot', async () => {
-    const wrapper = await mount(BkButtonGroup, {
-    });
+    const wrapper = await mount(BkButtonGroup, {});
     expect(wrapper.html()).toMatch('');
   });
 

@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { defineComponent } from 'vue';
 import { toType } from 'vue-types';
@@ -64,19 +64,22 @@ export default defineComponent({
     };
   },
   render() {
-    const linkClass = classes({
-      'is-disabled': this.disabled,
-      'has-underline': this.underline,
-    }, `${this.theme} ${this.resolveClassName('link')}`);
+    const linkClass = classes(
+      {
+        'is-disabled': this.disabled,
+        'has-underline': this.underline,
+      },
+      `${this.theme} ${this.resolveClassName('link')}`,
+    );
 
     return (
-      <a href={this.href}
+      <a
+        href={this.href}
         target={this.target}
         class={linkClass}
-        onClick={this.handleClick}>
-        <span>
-          {this.$slots.default?.()}
-        </span>
+        onClick={this.handleClick}
+      >
+        <span>{this.$slots.default?.()}</span>
       </a>
     );
   },

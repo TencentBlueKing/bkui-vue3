@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { computed, defineComponent, nextTick, ref, toRefs, watch } from 'vue';
 import { array } from 'vue-types';
@@ -80,7 +80,8 @@ export default defineComponent({
       type: Boolean,
       default: true,
     },
-    floatMode: {   // 当floatMode为true时为漂浮模式,不会挤占空间
+    floatMode: {
+      // 当floatMode为true时为漂浮模式,不会挤占空间
       type: Boolean,
       default: false,
     },
@@ -149,11 +150,9 @@ export default defineComponent({
       return selectedText.value;
     });
 
-
     // 根据配置，获取输入框显示的text
-    const getShowText = (node: INode) => (props.showCompleteName
-      ? node.pathNames.join(separator)
-      : node.pathNames[node.pathNames.length - 1]);
+    const getShowText = (node: INode) =>
+      props.showCompleteName ? node.pathNames.join(separator) : node.pathNames[node.pathNames.length - 1];
 
     // 更新搜索框的值
     const updateSearchKey = () => {
@@ -165,7 +164,8 @@ export default defineComponent({
       // 更新多选情况下的选中标签
       if (multiple) {
         store.value.setNodesCheck(val as Array<string[]>); // 同步节点选中的状态
-        selectedTags.value = store.value.getCheckedNodes()
+        selectedTags.value = store.value
+          .getCheckedNodes()
           .filter((node: INode) => store.value.config.checkAnyLevel || node.isLeaf) // 根据 checkAnyLevel 配置过滤选中的节点
           .map((node: INode) => ({
             text: getShowText(node), // 获取节点的显示文本
@@ -204,7 +204,10 @@ export default defineComponent({
       isEdit.value = true; // 删除时也在编辑态，触发overflowTagIndex的计算
       store.value.removeTag(tag);
       updateValue(current);
-      emit('update:modelValue', store.value.getCheckedNodes().map((node: INode) => node.path));
+      emit(
+        'update:modelValue',
+        store.value.getCheckedNodes().map((node: INode) => node.path),
+      );
       // 计算过后，关闭编辑状态
       setTimeout(() => {
         isEdit.value = isFocus.value;
@@ -228,7 +231,7 @@ export default defineComponent({
     };
 
     // popover的监听函数
-    const popoverChangeEmitter = (val) => {
+    const popoverChangeEmitter = val => {
       isShowPanel.value = val.isShow;
 
       emit('toggle', val.isShow);
@@ -262,14 +265,16 @@ export default defineComponent({
       isFiltering.value = true;
 
       // 筛选方法，如果props中存在filterMethod，则使用props中的方法，否则使用默认方法
-      const filterMethod = props.filterMethod ? props.filterMethod : (node: INode) => {
-        if (props.checkAnyLevel) {
-          // 检查是否需要搜索所有层级的节点
-          return node.pathNames.join(props.separator).includes(searchKey.value);
-        }
-        // 只搜索叶子节点，并且路径中包含搜索关键字
-        return node.isLeaf && node.pathNames.join(props.separator).includes(searchKey.value);
-      };
+      const filterMethod = props.filterMethod
+        ? props.filterMethod
+        : (node: INode) => {
+            if (props.checkAnyLevel) {
+              // 检查是否需要搜索所有层级的节点
+              return node.pathNames.join(props.separator).includes(searchKey.value);
+            }
+            // 只搜索叶子节点，并且路径中包含搜索关键字
+            return node.isLeaf && node.pathNames.join(props.separator).includes(searchKey.value);
+          };
 
       // 获取所有节点并进行过滤
       const targetNodes = store.value.getFlattedNodes().filter((node: INode) => filterMethod(node, searchKey.value));
@@ -284,28 +289,19 @@ export default defineComponent({
     };
 
     // 监听modelValue的变化
-    watch(
-      () => props.modelValue,
-      modelValueChangeHandler,
-      { immediate: true },
-    );
+    watch(() => props.modelValue, modelValueChangeHandler, { immediate: true });
 
     // 监听list的变化
-    watch(
-      () => props.list,
-      listChangeHandler,
-      { deep: true, immediate: true },
-    );
+    watch(() => props.list, listChangeHandler, { deep: true, immediate: true });
 
     // 定义overflowTagIndex变量，用于处理tag的折叠
-    const tagList = computed(() => (props.customTagsFillback
-      ? props.customTagsFillback(props.modelValue, store.value.getFlattedNodes())
-      : selectedTags.value.map(item => item.text)));
-    const isCollapse = computed(() => (props.collapseTags ? props.collapseTags && isFocus.value
-      : props.collapseTags));
-    const isEditMode = computed(() => (props.collapseTags ? props.collapseTags && isEdit.value
-      : props.collapseTags));
-
+    const tagList = computed(() =>
+      props.customTagsFillback
+        ? props.customTagsFillback(props.modelValue, store.value.getFlattedNodes())
+        : selectedTags.value.map(item => item.text),
+    );
+    const isCollapse = computed(() => (props.collapseTags ? props.collapseTags && isFocus.value : props.collapseTags));
+    const isEditMode = computed(() => (props.collapseTags ? props.collapseTags && isEdit.value : props.collapseTags));
 
     // 如果使用了trigger插槽，则不存在bkCascaderRef，做兼容处理
     const { overflowTagIndex } = slots.trigger
@@ -352,8 +348,12 @@ export default defineComponent({
     const suffixIcon = () => {
       if (this.clearable && this.isHover && !this.disabled) {
         // 当可清空、鼠标悬浮且未禁用时，渲染清空图标
-        return <Close class={this.resolveClassName('icon-clear-icon')}
-          onClick={this.handleClear}></Close>;
+        return (
+          <Close
+            class={this.resolveClassName('icon-clear-icon')}
+            onClick={this.handleClear}
+          ></Close>
+        );
       }
       // 否则渲染展开/收起图标
       return <AngleUp class={this.resolveClassName('icon-angle-up')}></AngleUp>;
@@ -374,77 +374,92 @@ export default defineComponent({
     const renderTags = () => {
       if (this.limitOneLine) {
         // 如果limitOneLine为true，则只显示一行
-        return <span class="cascader-selected-text">{this.displayText}</span>;
+        return <span class='cascader-selected-text'>{this.displayText}</span>;
       }
-      return <div class="cascader-tag-list">
-        {this.tagList.map((tag, index) => {
-          const isOverflow = !this.isCollapse && this.overflowTagIndex !== null && index >= this.overflowTagIndex;
-          // 根据tag是否超出显示范围，来决定是否渲染
-          return (
-            <span class="tag-item" style={{ display: isOverflow ? 'none' : '' }} key={tag}>
-              <span class="tag-item-name">{tag}</span>
-              <Error class={this.resolveClassName('icon-clear-icon')}
-                onClick={(e: Event) => {
-                  e.stopPropagation();
-                  this.removeTag(this.modelValue, index, e);
-                }}></Error>
-            </span>
-          );
-        })}
-        {
-
-          this.overflowTagIndex !== null && !this.isCollapse && (
-            <Tag style="margin-top: 0" v-bk-tooltips={collapseTooltip.join(', ')}>+{this.selectedTags.length - this.overflowTagIndex}</Tag>
-          )
-        }
-      </div>;
+      return (
+        <div class='cascader-tag-list'>
+          {this.tagList.map((tag, index) => {
+            const isOverflow = !this.isCollapse && this.overflowTagIndex !== null && index >= this.overflowTagIndex;
+            // 根据tag是否超出显示范围，来决定是否渲染
+            return (
+              <span
+                class='tag-item'
+                style={{ display: isOverflow ? 'none' : '' }}
+                key={tag}
+              >
+                <span class='tag-item-name'>{tag}</span>
+                <Error
+                  class={this.resolveClassName('icon-clear-icon')}
+                  onClick={(e: Event) => {
+                    e.stopPropagation();
+                    this.removeTag(this.modelValue, index, e);
+                  }}
+                ></Error>
+              </span>
+            );
+          })}
+          {this.overflowTagIndex !== null && !this.isCollapse && (
+            <Tag
+              style='margin-top: 0'
+              v-bk-tooltips={collapseTooltip.join(', ')}
+            >
+              +{this.selectedTags.length - this.overflowTagIndex}
+            </Tag>
+          )}
+        </div>
+      );
     };
 
-    const textRender = () => (
+    const textRender = () =>
       // 多选时， text被tagRender填充，不需要进行text渲染
-      this.multiple ? null :  <span>{this.displayText}</span>
-    );
+      this.multiple ? null : <span>{this.displayText}</span>;
 
     // 定义popoverRender函数，用于渲染弹出框
     const popoverRender = () => (
       <BkPopover
-        placement="bottom-start"
+        placement='bottom-start'
         theme={`light ${this.resolveClassName('cascader-popover')}`}
-        trigger="click"
+        trigger='click'
         arrow={false}
         disabled={this.disabled}
         class={this.resolveClassName('cascader-popover-wrapper')}
-        ref="popover"
+        ref='popover'
         onAfterHidden={this.popoverChangeEmitter}
         onAfterShow={this.popoverChangeEmitter}
-        boundary="body">
+        boundary='body'
+      >
         {{
-          default: () => (
-            this.$slots.trigger
-              ? this.$slots.trigger({ selected: this.modelValue, isShow: this.isShowPanel })
-              : <div class={[this.resolveClassName('cascader-name'), this.resolveClassName('scroll-y')]}>
-              {this.multiple && this.selectedTags.length > 0 && renderTags()}
-              {this.filterable
-                ? (this.isCollapse || this.selectedTags.length === 0)
-                && <input class={[this.resolveClassName('cascader-search-input'), {
-                  'is-disabled': this.disabled,
-                }]}
-                    type="text"
-                    onInput={this.searchInputHandler}
-                    placeholder={this.calcuPlaceholder}
-                    value={this.searchKey}
-                    disabled={this.disabled}
-                    ref="inputRef"
-                  />
-                : textRender()
-              }
-            </div>
-          ),
+          default: () =>
+            this.$slots.trigger ? (
+              this.$slots.trigger({ selected: this.modelValue, isShow: this.isShowPanel })
+            ) : (
+              <div class={[this.resolveClassName('cascader-name'), this.resolveClassName('scroll-y')]}>
+                {this.multiple && this.selectedTags.length > 0 && renderTags()}
+                {this.filterable
+                  ? (this.isCollapse || this.selectedTags.length === 0) && (
+                      <input
+                        class={[
+                          this.resolveClassName('cascader-search-input'),
+                          {
+                            'is-disabled': this.disabled,
+                          },
+                        ]}
+                        type='text'
+                        onInput={this.searchInputHandler}
+                        placeholder={this.calcuPlaceholder}
+                        value={this.searchKey}
+                        disabled={this.disabled}
+                        ref='inputRef'
+                      />
+                    )
+                  : textRender()}
+              </div>
+            ),
           content: () => (
             <div class={this.resolveClassName('cascader-popover')}>
               <CascaderPanel
                 store={this.store}
-                ref="cascaderPanel"
+                ref='cascaderPanel'
                 width={this.scrollWidth}
                 height={this.scrollHeight}
                 search-key={this.searchKey}
@@ -453,11 +468,14 @@ export default defineComponent({
                 suggestions={this.suggestions}
                 v-model={this.checkedValue}
                 v-slots={{
-                  default: scope => (this.$slots.default
-                    ? this.$slots.default(scope)
-                    : <span class={this.resolveClassName('cascader-node-name')}>{scope.node.name}</span>),
-                }}>
-              </CascaderPanel>
+                  default: scope =>
+                    this.$slots.default ? (
+                      this.$slots.default(scope)
+                    ) : (
+                      <span class={this.resolveClassName('cascader-node-name')}>{scope.node.name}</span>
+                    ),
+                }}
+              ></CascaderPanel>
             </div>
           ),
         }}
@@ -466,25 +484,32 @@ export default defineComponent({
 
     return (
       <div class={[this.resolveClassName('cascader-wrapper'), this.floatMode ? 'float-mode' : '']}>
-        { this.$slots.trigger
-          ? popoverRender()
-          : <div class={[this.resolveClassName('cascader'), this.extCls, {
-            'is-unselected': this.modelValue.length === 0,
-            'is-hover': this.isHover,
-            'is-filterable': this.filterable,
-            'is-focus': this.isFocus,
-            'is-disabled': this.disabled,
-            'is-simplicity': this.behavior === 'simplicity',
-          }]}
-            tabindex="0"
+        {this.$slots.trigger ? (
+          popoverRender()
+        ) : (
+          <div
+            class={[
+              this.resolveClassName('cascader'),
+              this.extCls,
+              {
+                'is-unselected': this.modelValue.length === 0,
+                'is-hover': this.isHover,
+                'is-filterable': this.filterable,
+                'is-focus': this.isFocus,
+                'is-disabled': this.disabled,
+                'is-simplicity': this.behavior === 'simplicity',
+              },
+            ]}
+            tabindex='0'
             data-placeholder={this.calcuPlaceholder}
             onMouseenter={this.setHover}
             onMouseleave={this.cancelHover}
-            ref="bkCascaderRef">
+            ref='bkCascaderRef'
+          >
             {suffixIcon()}
             {popoverRender()}
           </div>
-        }
+        )}
       </div>
     );
   },

@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { computed, defineComponent, SlotsType } from 'vue';
 import { toType } from 'vue-types';
@@ -51,19 +51,24 @@ export default defineComponent({
   emits: ['change', 'close'],
   // slots: ['icon'],
   slots: Object as SlotsType<{
-    default?: () => HTMLElement,
-    icon?: () => HTMLElement,
+    default?: () => HTMLElement;
+    icon?: () => HTMLElement;
   }>,
   setup(props, { emit }) {
     const { resolveClassName } = usePrefix();
-    const wrapperCls = computed(() => classes({
-      [`${resolveClassName('tag-closable')}`]: props.closable,
-      [`${resolveClassName('tag-checkable')}`]: props.checkable,
-      [`${resolveClassName('tag-check')}`]: props.checked,
-      [`${resolveClassName(`tag-${props.type}`)}`]: props.type,
-      [`${resolveClassName(`tag-${props.theme}`)}`]: props.theme,
-      [props.extCls]: !!props.extCls,
-    }, resolveClassName('tag')));
+    const wrapperCls = computed(() =>
+      classes(
+        {
+          [`${resolveClassName('tag-closable')}`]: props.closable,
+          [`${resolveClassName('tag-checkable')}`]: props.checkable,
+          [`${resolveClassName('tag-check')}`]: props.checked,
+          [`${resolveClassName(`tag-${props.type}`)}`]: props.type,
+          [`${resolveClassName(`tag-${props.theme}`)}`]: props.theme,
+          [props.extCls]: !!props.extCls,
+        },
+        resolveClassName('tag'),
+      ),
+    );
     const wrapperStyle = computed(() => ({
       borderRadius: props.radius,
     }));
@@ -94,10 +99,21 @@ export default defineComponent({
   },
   render() {
     return (
-      <div class={this.wrapperCls} style={this.wrapperStyle} onClick={this.handleClick}>
-        { this.$slots.icon ? <span class={`${this.resolveClassName('tag-icon')}`}>{this.$slots.icon()}</span> : '' }
-        <span class={`${this.resolveClassName('tag-text')}`}>{ this.$slots.default?.() }</span>
-        { this.closable ? <Error class={`${this.resolveClassName('tag-close')}`} onClick={this.handleClose} /> : '' }
+      <div
+        class={this.wrapperCls}
+        style={this.wrapperStyle}
+        onClick={this.handleClick}
+      >
+        {this.$slots.icon ? <span class={`${this.resolveClassName('tag-icon')}`}>{this.$slots.icon()}</span> : ''}
+        <span class={`${this.resolveClassName('tag-text')}`}>{this.$slots.default?.()}</span>
+        {this.closable ? (
+          <Error
+            class={`${this.resolveClassName('tag-close')}`}
+            onClick={this.handleClose}
+          />
+        ) : (
+          ''
+        )}
       </div>
     );
   },

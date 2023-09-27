@@ -106,10 +106,7 @@ export const treeProps = {
    * 当前节点标识图标
    * 默认 true
    */
-  prefixIcon: PropTypes.oneOfType([
-    PropTypes.func.def(() => {}),
-    PropTypes.bool.def(false),
-  ]).def(true),
+  prefixIcon: PropTypes.oneOfType([PropTypes.func.def(() => {}), PropTypes.bool.def(false)]).def(true),
 
   /**
    * 异步加载节点数据配置
@@ -150,31 +147,24 @@ export const treeProps = {
    */
   search: PropTypes.oneOfType([
     PropTypes.shape<SearchOption>({
-    /**
-     * 需要匹配的值
-     * */
-      value: PropTypes.oneOfType([
-        PropTypes.number,
-        PropTypes.string,
-        PropTypes.bool,
-      ]).def(''),
+      /**
+       * 需要匹配的值
+       * */
+      value: PropTypes.oneOfType([PropTypes.number, PropTypes.string, PropTypes.bool]).def(''),
 
       /**
-     * 匹配方式
-     * 支持模糊匹配（fuzzy） || 完全匹配（full）
-     * 默认 模糊匹配（fuzzy）
-     * 支持自定义匹配函数 (searchValue, itemText, item) => true || false
-     */
-      match: PropTypes.oneOfType([
-        string<`${TreeSearchMatchEnum}`>(),
-        PropTypes.func,
-      ]).def(TreeSearchMatchEnum.FUZZY),
+       * 匹配方式
+       * 支持模糊匹配（fuzzy） || 完全匹配（full）
+       * 默认 模糊匹配（fuzzy）
+       * 支持自定义匹配函数 (searchValue, itemText, item) => true || false
+       */
+      match: PropTypes.oneOfType([string<`${TreeSearchMatchEnum}`>(), PropTypes.func]).def(TreeSearchMatchEnum.FUZZY),
 
       /**
-     * 搜索结果如何展示
-     * 显示为 tree || list
-     * 默认 tree
-     */
+       * 搜索结果如何展示
+       * 显示为 tree || list
+       * 默认 tree
+       */
       resultType: string<`${TreeSearchResultEnum}`>().def(TreeSearchResultEnum.TREE),
 
       /**
@@ -257,14 +247,14 @@ export const treeProps = {
 };
 
 type AsyncOption = {
-  callback: (item, cb) => Promise<any>,
-  cache: Boolean,
-  deepAutoOpen?: string
+  callback: (item, cb) => Promise<any>;
+  cache: Boolean;
+  deepAutoOpen?: string;
 };
 
 export type SearchOption = {
-  value: string | number | boolean,
-  match?: `${TreeSearchMatchEnum}` | Function,
+  value: string | number | boolean;
+  match?: `${TreeSearchMatchEnum}` | Function;
   resultType?: `${TreeSearchResultEnum}`;
   openResultNode: boolean;
 };

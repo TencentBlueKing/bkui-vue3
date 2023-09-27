@@ -32,4 +32,3 @@ export const dividerProps = {
   width: PropTypes.number.def(1),
   type: lineStyleType(),
 };
-

@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { createPatch } from 'diff';
 import * as Diff2Html from 'diff2html';
@@ -37,7 +37,27 @@ const CodeDiffFormat = stringEnum([...diffFormats]);
 export type DiffFormatType = ElementType<typeof diffFormats>;
 
 export const LANGUAGES = [
-  'css', 'java', 'javascript', 'json', 'scss', 'less', 'stylus', 'shell', 'bash', 'cpp', 'go', 'xml', 'python', 'typescript', 'sql', 'ruby', 'vim', 'php', 'perl', 'powershell', 'makefile',
+  'css',
+  'java',
+  'javascript',
+  'json',
+  'scss',
+  'less',
+  'stylus',
+  'shell',
+  'bash',
+  'cpp',
+  'go',
+  'xml',
+  'python',
+  'typescript',
+  'sql',
+  'ruby',
+  'vim',
+  'php',
+  'perl',
+  'powershell',
+  'makefile',
 ] as const;
 export type LanguagesUnion = ElementType<typeof LANGUAGES>;
 
@@ -54,7 +74,6 @@ export const codeDiffProps = {
   theme: string<ThemesUnion>().def('light'),
   language: string<LanguagesUnion>().def('javascript'),
   hljs: PropTypes.any.isRequired,
-
 };
 
 // TODO: 感觉像是highlight.js的问题, 一些关键字无法显示高亮
@@ -72,9 +91,14 @@ export default defineComponent({
     const { resolveClassName } = usePrefix();
     const diffBox = ref(null);
     const diffHtml = ref('');
-    const diffBoxCls = computed(() => classes({
-      dark: props.theme === themesEnum.dark,
-    }, `hljs ${resolveClassName('code-diff')}`));
+    const diffBoxCls = computed(() =>
+      classes(
+        {
+          dark: props.theme === themesEnum.dark,
+        },
+        `hljs ${resolveClassName('code-diff')}`,
+      ),
+    );
 
     /**
      * 高亮语法节点
@@ -82,7 +106,7 @@ export default defineComponent({
     function highlightElement() {
       nextTick(() => {
         if (diffBox.value) {
-          diffBox.value.querySelectorAll(`.lang-${props.language}`).forEach((item) => {
+          diffBox.value.querySelectorAll(`.lang-${props.language}`).forEach(item => {
             props.hljs.highlightElement(item);
           });
         }
@@ -94,22 +118,18 @@ export default defineComponent({
      * @param language 语法类型
      */
     function generateDiffHTML(diffContext, language) {
-      const dd = createPatch(
-        '',
-        props.oldContent,
-        props.newContent,
-        '',
-        '',
-        {
-          context: diffContext,
-        },
-      );
+      const dd = createPatch('', props.oldContent, props.newContent, '', '', {
+        context: diffContext,
+      });
 
-      diffHtml.value = changeCodeCls(Diff2Html.html(dd, {
-        drawFileList: false,
-        matching: 'lines',
-        outputFormat: props.diffFormat,
-      }), language);
+      diffHtml.value = changeCodeCls(
+        Diff2Html.html(dd, {
+          drawFileList: false,
+          matching: 'lines',
+          outputFormat: props.diffFormat,
+        }),
+        language,
+      );
       highlightElement();
     }
 
@@ -117,13 +137,20 @@ export default defineComponent({
       generateDiffHTML(props.diffContext, props.language);
     });
 
-    watch(() => [props.diffContext, props.language], (newVal) => {
-      const [newContext, newLanguage] = newVal;
-      generateDiffHTML(newContext, newLanguage);
-    });
+    watch(
+      () => [props.diffContext, props.language],
+      newVal => {
+        const [newContext, newLanguage] = newVal;
+        generateDiffHTML(newContext, newLanguage);
+      },
+    );
 
     return () => (
-      <div ref={diffBox} class={diffBoxCls.value} v-html={diffHtml.value}></div>
+      <div
+        ref={diffBox}
+        class={diffBoxCls.value}
+        v-html={diffHtml.value}
+      ></div>
     );
   },
 });

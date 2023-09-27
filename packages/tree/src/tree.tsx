@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 import { computed, defineComponent, ref, watch } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
@@ -36,11 +36,7 @@ import useNodeAttribute from './use-node-attribute';
 import useNodeDrag from './use-node-drag';
 import useSearch from './use-search';
 import useTreeInit from './use-tree-init';
-import {
-  getLabel,
-  getTreeStyle,
-  resolveNodeItem,
-} from './util';
+import { getLabel, getTreeStyle, resolveNodeItem } from './util';
 
 export type TreePropTypes = defineTypes;
 export default defineComponent({
@@ -76,9 +72,13 @@ export default defineComponent({
 
     const filterFn = (item: any) => {
       if (isSearchActive.value) {
-        const treeUiFilter = () => (isTreeUI ? schemaValues.value
-          .some((schema: any) => schema[NODE_ATTRIBUTES.PATH]?.startsWith(getNodePath(item))
-            && schema[NODE_ATTRIBUTES.IS_MATCH]) : false);
+        const treeUiFilter = () =>
+          isTreeUI
+            ? schemaValues.value.some(
+                (schema: any) =>
+                  schema[NODE_ATTRIBUTES.PATH]?.startsWith(getNodePath(item)) && schema[NODE_ATTRIBUTES.IS_MATCH],
+              )
+            : false;
 
         return getNodeAttr(item, NODE_ATTRIBUTES.IS_MATCH) || treeUiFilter();
       }
@@ -87,18 +87,10 @@ export default defineComponent({
     };
 
     // 计算当前需要渲染的节点信息
-    const renderData = computed(() => flatData.data
-      .filter(item => checkNodeIsOpen(item) && filterFn(item)));
+    const renderData = computed(() => flatData.data.filter(item => checkNodeIsOpen(item) && filterFn(item)));
 
-    const {
-      renderTreeNode,
-      handleTreeNodeClick,
-      setNodeOpened,
-      setOpen,
-      setNodeAction,
-      setSelect,
-      asyncNodeClick,
-    } = useNodeAction(props, ctx, flatData, renderData, schemaValues, { registerNextLoop });
+    const { renderTreeNode, handleTreeNodeClick, setNodeOpened, setOpen, setNodeAction, setSelect, asyncNodeClick } =
+      useNodeAction(props, ctx, flatData, renderData, schemaValues, { registerNextLoop });
 
     const root = ref();
     // const isScrolling = ref(false);
@@ -123,13 +115,11 @@ export default defineComponent({
       // //   left: 0,
       // //   top: 0,
       // // });
-
       // setTimeout(() => {
       //   // root.value.scrollTo({
       //   //   left: treeScroll?.scrollLeft,
       //   //   top: treeScroll?.scrollTop,
       //   // });
-
       //   setTimeout(() => {
       //     isScrolling.value = false;
       //   });
@@ -141,7 +131,6 @@ export default defineComponent({
     //   scrollLeft?: number,
     //   scrollTop?: number
     // } = {};
-
 
     ctx.expose({
       handleTreeNodeClick,
@@ -180,7 +169,8 @@ export default defineComponent({
     // };
 
     return () => (
-      <VirtualRender class={resolveClassName('tree')}
+      <VirtualRender
+        class={resolveClassName('tree')}
         style={getTreeStyle(null, props)}
         list={renderData.value}
         lineHeight={props.lineHeight}
@@ -189,12 +179,11 @@ export default defineComponent({
         keepAlive={true}
         contentClassName={resolveClassName('container')}
         throttleDelay={0}
-        ref={root}>
-        {
-          {
-            default: (scoped: any) => renderTreeContent(scoped.data || []),
-          }
-        }
+        ref={root}
+      >
+        {{
+          default: (scoped: any) => renderTreeContent(scoped.data || []),
+        }}
       </VirtualRender>
     );
   },

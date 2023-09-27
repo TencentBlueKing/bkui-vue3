@@ -1,28 +1,28 @@
 /*
-* Tencent is pleased to support the open source community by making
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
-*
-* Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
-*
-* 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
-*
-* License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
-*
-* ---------------------------------------------------
-* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
-* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
-* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-* the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-* THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-* IN THE SOFTWARE.
-*/
+ * Tencent is pleased to support the open source community by making
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ *
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ *
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ *
+ * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ *
+ * ---------------------------------------------------
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+ * the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
 import { throttle } from 'lodash';
 import { computed, CSSProperties, defineComponent, effectScope, ref, shallowRef, Teleport, Transition } from 'vue';
 
@@ -33,11 +33,7 @@ import { bkZIndexManager } from '@bkui-vue/shared';
 
 import { propsImageViever as props } from './props';
 
-export type ViewerAction =
-  | 'zoomIn'
-  | 'zoomOut'
-  | 'clockwise'
-  | 'anticlockwise';
+export type ViewerAction = 'zoomIn' | 'zoomOut' | 'clockwise' | 'anticlockwise';
 
 export default defineComponent({
   name: 'ImageViewer',
@@ -79,15 +75,15 @@ export default defineComponent({
       switch (deg % 360) {
         case 90:
         case -270:
-          ;[translateX, translateY] = [translateY, -translateX];
+          [translateX, translateY] = [translateY, -translateX];
           break;
         case 180:
         case -180:
-          ;[translateX, translateY] = [-translateX, -translateY];
+          [translateX, translateY] = [-translateX, -translateY];
           break;
         case 270:
         case -90:
-          ;[translateX, translateY] = [-translateY, translateX];
+          [translateX, translateY] = [-translateY, translateX];
           break;
       }
 
@@ -240,7 +236,6 @@ export default defineComponent({
       const startX = e.pageX;
       const startY = e.pageY;
 
-
       const mousemove = throttle((ev: MouseEvent) => {
         transform.value = {
           ...transform.value,
@@ -262,56 +257,85 @@ export default defineComponent({
     return () => (
       <Teleport to='body'>
         <Transition>
-          <div tabindex='-1' ref='wrapper' class={`${resolveClassName('image-viewer-wrapper')}`} style={wrapStyles.value}>
+          <div
+            tabindex='-1'
+            ref='wrapper'
+            class={`${resolveClassName('image-viewer-wrapper')}`}
+            style={wrapStyles.value}
+          >
             <div
               class={`${resolveClassName('image-viewer-mask')}`}
               onClick={() => {
                 props.maskClose && hide();
-              }}/>
-            {
-              props.isShowTitle && props.urlList.length ? (
-                <div class={`${resolveClassName('image-viewer-header')}`}>
-                  <div>{currentName}</div>
-                  <div class='tc '>{index.value + 1}/{props.urlList.length}</div>
-                  <div class='quit-box tr'>
-                    <div class='quit-tips mr10'>ESC 可以退出全屏</div>
-                    <div class={`${resolveClassName('image-viewer-close')}`} onClick={hide}>
-                      <Close/>
-                    </div>
+              }}
+            />
+            {props.isShowTitle && props.urlList.length ? (
+              <div class={`${resolveClassName('image-viewer-header')}`}>
+                <div>{currentName}</div>
+                <div class='tc '>
+                  {index.value + 1}/{props.urlList.length}
+                </div>
+                <div class='quit-box tr'>
+                  <div class='quit-tips mr10'>ESC 可以退出全屏</div>
+                  <div
+                    class={`${resolveClassName('image-viewer-close')}`}
+                    onClick={hide}
+                  >
+                    <Close />
                   </div>
                 </div>
-              ) : ''
-            }
+              </div>
+            ) : (
+              ''
+            )}
             {!isSingle.value ? (
               <>
                 <div
                   onClick={prev}
-                  class={`${resolveClassName('image-viewer-btn')} ${resolveClassName('image-viewer-prev')} ${!props.loops && isFirst ? 'is-disabled' : ''}`}>
-                  <AngleLeft/>
+                  class={`${resolveClassName('image-viewer-btn')} ${resolveClassName('image-viewer-prev')} ${
+                    !props.loops && isFirst ? 'is-disabled' : ''
+                  }`}
+                >
+                  <AngleLeft />
                 </div>
                 <div
                   onClick={next}
-                  class={`${resolveClassName('image-viewer-btn')} ${resolveClassName('image-viewer-prev')} ${!props.loops && isLast ? 'is-disabled' : ''}`}>
-                  <AngleRight/>
+                  class={`${resolveClassName('image-viewer-btn')} ${resolveClassName('image-viewer-prev')} ${
+                    !props.loops && isLast ? 'is-disabled' : ''
+                  }`}
+                >
+                  <AngleRight />
                 </div>
                 <div class={`${resolveClassName('image-viewer-actions-inner')}`}>
-                  <AngleLeft v-bk-tooltips="{content: '提示信息', placement: 'top'}" onClick={() => handleActions('zoomOut')}/>
-                  <i
-                    class=""
+                  <AngleLeft
                     v-bk-tooltips="{content: '提示信息', placement: 'top'}"
-                    onClick={() => handleActions('zoomOut')} />
+                    onClick={() => handleActions('zoomOut')}
+                  />
+                  <i
+                    class=''
+                    v-bk-tooltips="{content: '提示信息', placement: 'top'}"
+                    onClick={() => handleActions('zoomOut')}
+                  />
                   <i
                     class={`${resolveClassName('icon')} icon-narrow-line`}
                     v-bk-tooltips="{content: '提示信息', placement: 'top'}"
-                    onClick={() => handleActions('zoomOut')} />
-
+                    onClick={() => handleActions('zoomOut')}
+                  />
                 </div>
               </>
-            ) : ''}
-            <div class={`${resolveClassName('image-viewer-canvas')} ${props.isShowTitle ? resolveClassName('image-viewer-has-header') : ''}`}>
+            ) : (
+              ''
+            )}
+            <div
+              class={`${resolveClassName('image-viewer-canvas')} ${
+                props.isShowTitle ? resolveClassName('image-viewer-has-header') : ''
+              }`}
+            >
               {error.value ? (
                 <div class={`${resolveClassName('image-viewer-error')}`}>
-                  <div><i class={`${resolveClassName('icon')} icon-image-fail`}></i></div>
+                  <div>
+                    <i class={`${resolveClassName('icon')} icon-image-fail`}></i>
+                  </div>
                   <div>抱歉，图片加载失败</div>
                 </div>
               ) : (
@@ -319,20 +343,21 @@ export default defineComponent({
                   if (i === index.value) {
                     return '';
                   }
-                  return <img
-                    key={i}
-                    ref={el => (imgRefs[i] = el as HTMLImageElement)}
-                    class={`${resolveClassName('image-viewer-img')}`}
-                    style={imgStyle.value}
-                    src={url}
-                    onLoad={handleImgLoad}
-                    onError={handleImgError}
-                    onMousedown={handleMouseDown}
-                  />;
+                  return (
+                    <img
+                      key={i}
+                      ref={el => (imgRefs[i] = el as HTMLImageElement)}
+                      class={`${resolveClassName('image-viewer-img')}`}
+                      style={imgStyle.value}
+                      src={url}
+                      onLoad={handleImgLoad}
+                      onError={handleImgError}
+                      onMousedown={handleMouseDown}
+                    />
+                  );
                 })
               )}
             </div>
-
           </div>
         </Transition>
       </Teleport>

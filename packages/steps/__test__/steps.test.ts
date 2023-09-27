@@ -22,24 +22,28 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { mount } from '@vue/test-utils';
 
 import Steps from '../src/index';
 
-const Mount = (template: string) => mount({
-  components: {
-    BkSteps: Steps,
-  },
-  template,
-}, {
-  global: {
-    provide: {
-      Steps: {},
+const Mount = (template: string) =>
+  mount(
+    {
+      components: {
+        BkSteps: Steps,
+      },
+      template,
     },
-  },
-});
+    {
+      global: {
+        provide: {
+          Steps: {},
+        },
+      },
+    },
+  );
 
 describe('Steps.tsx', () => {
   it('test curStep', async () => {
@@ -112,7 +116,6 @@ describe('Steps.tsx', () => {
     expect(wrapper.findAll('.bk-steps-test').length).toEqual(1);
     expect(wrapper.find('.bk-steps-test').exists()).toBe(true);
   });
-
 
   it('test steps', async () => {
     const steps = [

@@ -22,24 +22,28 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { mount } from '@vue/test-utils';
 
 import Process from '../src/';
 
-const Mount = (template: string) => mount({
-  components: {
-    BkProcess: Process,
-  },
-  template,
-}, {
-  global: {
-    provide: {
-      Steps: {},
+const Mount = (template: string) =>
+  mount(
+    {
+      components: {
+        BkProcess: Process,
+      },
+      template,
     },
-  },
-});
+    {
+      global: {
+        provide: {
+          Steps: {},
+        },
+      },
+    },
+  );
 describe('Process.tsx', () => {
   it('test curStep', async () => {
     const wrapper = await mount(Process, {
@@ -47,7 +51,6 @@ describe('Process.tsx', () => {
     });
     expect(wrapper.findAll('.done').length).toEqual(0);
   });
-
 
   it('test controllable', async () => {
     const controllable = true;
@@ -66,7 +69,6 @@ describe('Process.tsx', () => {
     expect(wrapper.findAll('.bk-process-test').length).toEqual(1);
     expect(wrapper.find('.bk-process-test').exists()).toBe(true);
   });
-
 
   it('test steps', async () => {
     const steps = [

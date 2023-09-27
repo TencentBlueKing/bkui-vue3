@@ -22,7 +22,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
-*/
+ */
 
 import { defineComponent, h, VNodeChild } from 'vue';
 
@@ -55,7 +55,11 @@ export default defineComponent({
     const { resolveClassName } = usePrefix();
 
     return (
-      <div v-show={active} ref='content' class={resolveClassName('tab-panel')}>
+      <div
+        v-show={active}
+        ref='content'
+        class={resolveClassName('tab-panel')}
+      >
         {getContent()}
       </div>
     );
