@@ -48,7 +48,7 @@
           tr {
             &:nth-child(even) {
               td {
-                background-color: #fafbfd;
+                background-color: #FAFBFD;
               }
             }
 
@@ -97,11 +97,11 @@
       align-items: center;
 
       .@{bk-prefix}-table-body-content {
-        position: relative;
         display: flex;
         width: 100%;
         height: 100%;
         padding-bottom: 20px;
+        position: relative;
       }
 
     }
@@ -217,25 +217,24 @@
         background-color: @table-head-bg-color;
 
         th {
-          position: relative;
           font-weight: 400;
           background-color: var(--background-color);
+          position: relative;
 
           &.col-resize-hover {
             &::after {
-              position: absolute;
-              top: 0;
-              right: 0;
-              bottom: 0;
-              z-index: 1;
-              width: 6px;
-              pointer-events: none;
-              background-color: #3785ff;
               content: '';
+              position: absolute;
+              right: 0;
+              top: 0;
+              bottom: 0;
+              width: 6px;
               transform: translateX(50%);
+              background-color: #3785FF;
+              z-index: 1;
+              pointer-events: none;
             }
           }
-
           .cell {
             display: flex;
             align-items: center;
@@ -245,8 +244,8 @@
 
           &.active,
           &:hover {
-            cursor: pointer;
             background: @table-row-active-bg-color;
+            cursor: pointer;
           }
 
           &.column_fixed {
@@ -298,13 +297,13 @@
 
     .col-resize-drag {
       position: absolute;
-      top: 0;
       right: 0;
+      top: 0;
       bottom: 0;
-      z-index: 1;
       width: 6px;
-      background-color: #3785ff;
       transform: translateX(-50%);
+      background-color: #3785FF;
+      z-index: 1;
     }
 
     .table-head-settings {
@@ -336,9 +335,9 @@
   }
 
   .@{bk-prefix}-table-footer {
-    display: flex;
-    width: 100%;
     height: var(--footer-height);
+    width: 100%;
+    display: flex;
     align-items: center;
 
     &.is-hidden {
@@ -416,9 +415,9 @@
     top: 0;
     right: 0;
     bottom: var(--footer-height);
+    max-height: var(--fix-max-height);
     left: 0;
     height: var(--fix-height);
-    max-height: var(--fix-max-height);
     pointer-events: none;
 
     .column_fixed {
@@ -475,6 +474,6 @@
   }
 
   .stripe-row {
-    background: #fafbfd;
+    background: #FAFBFD;
   }
 }
