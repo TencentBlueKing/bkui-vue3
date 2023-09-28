@@ -69,6 +69,7 @@ const colorPickerProps = {
   recommend: PropTypes.oneOfType([PropTypes.array.def(() => []), PropTypes.bool.def(true)]).def(true),
   extCls: PropTypes.string.def(''),
   withValidate: PropTypes.bool.def(true),
+  recommendEmpty: PropTypes.bool.def(true),
 };
 const whiteColorObj = formatColor('#FFFFFF');
 
@@ -340,6 +341,7 @@ export default defineComponent({
                     <RecommendColors
                       colorObj={colorObj}
                       recommend={props.recommend}
+                      recommendEmpty={props.recommendEmpty}
                       onTab={handleTabRecommend}
                       onChange={handleColorChange}
                     ></RecommendColors>
