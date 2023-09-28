@@ -97,6 +97,7 @@ export default defineComponent({
         <BKPopover
           placement={this.placement}
           boundary={this.boundary || document.body}
+          popoverDelay={[200, 0]}
           {...props.popoverOptions}
           disabled={this.type === 'title' || !this.isShowTips}
         >

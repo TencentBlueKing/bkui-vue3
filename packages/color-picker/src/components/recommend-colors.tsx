@@ -35,6 +35,7 @@ import { clamp } from '../utils';
 const colorPickerProps = {
   colorObj: PropTypes.object.isRequired,
   recommend: PropTypes.oneOfType([PropTypes.array.def(() => []), PropTypes.bool.def(true)]).isRequired,
+  recommendEmpty: PropTypes.bool.def(true),
 };
 
 export type ColorPickerPropTypes = ExtractPropTypes<typeof colorPickerProps>;
@@ -118,8 +119,7 @@ export default defineComponent({
      */
     const getColorsFromRecommend = recommend => {
       if (recommend === true) {
-        return [
-          '',
+        const list = [
           '#ff4500',
           '#ff8c00',
           '#ffd700',
@@ -133,7 +133,11 @@ export default defineComponent({
           '#494949',
           '#9B9B9B',
           '#ffffff',
-        ];
+        ]
+        if (props.recommendEmpty) {
+          list.unshift('');
+        }
+        return list;
       }
       if (Array.isArray(recommend)) {
         // 如果预设值是无效的，这里按空字符串处理以显示提示用户，应该输入正确的色值
