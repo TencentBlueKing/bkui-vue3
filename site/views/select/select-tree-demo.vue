@@ -9,6 +9,7 @@
       :data="treeData"
       label="name"
       children="children"
+      style="color: #63656e;"
       @node-click="handleNodeClick"
     />
   </bk-select>
