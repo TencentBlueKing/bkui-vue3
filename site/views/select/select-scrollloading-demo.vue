@@ -8,8 +8,8 @@
   >
     <bk-option
       v-for="(item) in datasource"
-      :key="item.value"
       :id="item.value"
+      :key="item.value"
       :name="item.label"
       :disabled="item.disabled"
     />

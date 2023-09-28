@@ -13,8 +13,8 @@
       >
         <bk-option
           v-for="(item, index) in datasource"
-          :key="index"
           :id="item.value"
+          :key="index"
           :name="item.label"
         />
       </bk-option-group>

@@ -1,3 +1,5 @@
+/* eslint-disable vue/no-reserved-component-names */
+
 /*
  * Tencent is pleased to support the open source community by making
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
@@ -708,10 +710,10 @@ export default defineComponent({
           <div class={`${this.resolveClassName('select--prefix-area')}`}>
             <span>{this.prefix}</span>
           </div>
-        )
+        );
       }
-      return this.$slots.prefix ? () => this.$slots.prefix?.() : undefined
-    }
+      return this.$slots.prefix ? () => this.$slots.prefix?.() : undefined;
+    };
 
     const renderTriggerInput = () => {
       if (this.multipleMode === 'tag') {
@@ -842,7 +844,7 @@ export default defineComponent({
                           name={item[this.displayKey]}
                         >
                           {{
-                            default: this.$slots.virtualScrollRender 
+                            default: this.$slots.virtualScrollRender
                               ? () => this.$slots.virtualScrollRender?.({ item })
                               : undefined,
                           }}

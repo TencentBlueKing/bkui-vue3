@@ -61,32 +61,50 @@
           />
           <template #extension>
             <div class="custom-extension">
-              <div style="display: flex; align-items: center;" v-if="showEdit">
+              <div
+                v-if="showEdit"
+                style="display: flex; align-items: center;"
+              >
                 <bk-input
-                  size="small"
                   ref="inputRef"
                   v-model="optionName"
+                  size="small"
                   @enter="addOption"
                 />
-                <Done 
+                <done
                   style="font-size: 22px;color: #2DCB56;cursor: pointer;margin-left: 6px;"
-                  @click="addOption"/>
-                <Error 
+                  @click="addOption"
+                />
+                <error
                   style="font-size: 16px;color: #C4C6CC;cursor: pointer;margin-left: 2px;"
-                  @click="showEdit = false"/>
+                  @click="showEdit = false"
+                />
               </div>
               <div
                 v-else
                 style="display: flex; align-items: center;justify-content: center;"
               >
-                <span style="display: flex; align-items: center;cursor: pointer;" @click="handleShowEdit">
-                  <plus style="font-size: 20px;"/>
+                <span
+                  style="display: flex; align-items: center;cursor: pointer;"
+                  @click="handleShowEdit"
+                >
+                  <plus style="font-size: 20px;" />
                   新增
                 </span>
                 <span style="display: flex; align-items: center;position: absolute; right: 12px;">
-                  <bk-divider direction="vertical" type="solid" />
-                  <Spinner style="font-size: 14px;color: #3A84FF;" v-if="isLoading"/>
-                  <RightTurnLine style="font-size: 14px;cursor: pointer;" v-else @click="refresh"/>
+                  <bk-divider
+                    direction="vertical"
+                    type="solid"
+                  />
+                  <spinner
+                    v-if="isLoading"
+                    style="font-size: 14px;color: #3A84FF;"
+                  />
+                  <right-turn-line
+                    v-else
+                    style="font-size: 14px;cursor: pointer;"
+                    @click="refresh"
+                  />
                 </span>
               </div>
             </div>
@@ -158,8 +176,8 @@
   </div>
 </template>
 <script setup>
+  import { Done, Error, Plus, RightTurnLine, Spinner } from 'bkui-vue/lib/icon';
   import { ref } from 'vue';
-  import { Plus, Done, Error, RightTurnLine, Spinner } from 'bkui-vue/lib/icon';
 
   const datasource = ref([
     {
@@ -193,32 +211,32 @@
   const handleToggle = (value) => {
     console.log(value);
   };
-  const inputRef = ref()
+  const inputRef = ref();
   const handleShowEdit = () => {
-    showEdit.value = true
+    showEdit.value = true;
     setTimeout(() => {
-      inputRef.value.focus()
-    })
-  }
-  const optionName = ref('')
+      inputRef.value.focus();
+    });
+  };
+  const optionName = ref('');
   const addOption = () => {
     if (optionName.value.trim()) {
       datasource.value.push({
         value: Math.random() + optionName.value,
-        label: optionName.value
-      })
-      optionName.value = ''
+        label: optionName.value,
+      });
+      optionName.value = '';
     }
     showEdit.value = false;
   };
 
-  const isLoading = ref(false)
+  const isLoading = ref(false);
   const refresh = () => {
-    isLoading.value = true
+    isLoading.value = true;
     setTimeout(() => {
-      isLoading.value = false
-    }, 2000)
-  }
+      isLoading.value = false;
+    }, 2000);
+  };
 </script>
 <style lang="postcss" scoped>
 
