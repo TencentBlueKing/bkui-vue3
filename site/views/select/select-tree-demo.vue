@@ -15,7 +15,7 @@
   </bk-select>
 </template>
 <script setup>
-  import { ref } from '@vue/runtime-dom';
+  import { ref } from 'vue';
 
   const data = ref([]);
   const treeData = ref([
