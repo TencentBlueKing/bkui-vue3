@@ -44,7 +44,10 @@ export type CheckboxGroupProps = Readonly<ExtractPropTypes<typeof checkboxGroupP
 export default defineComponent({
   name: 'CheckboxGroup',
   props: checkboxGroupProps,
-  emits: ['change', 'update:modelValue'],
+  emits: {
+    'update:modelValue': (value: unknown[]) => value !== undefined,
+    change: (value: unknown[]) => value !== undefined,
+  },
   setup(props, context) {
     const formItem = useFormItem();
 
