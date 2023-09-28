@@ -133,7 +133,7 @@ export default defineComponent({
           '#494949',
           '#9B9B9B',
           '#ffffff',
-        ]
+        ];
         if (props.recommendEmpty) {
           list.unshift('');
         }

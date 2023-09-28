@@ -287,7 +287,7 @@ export default defineComponent({
                           v-model={node.checked}
                           indeterminate={node.isIndeterminate}
                           style='margin-right: 5px'
-                          onChange={(val: string | boolean | number) => this.checkNode(node, !!val)}
+                          onChange={(val: unknown) => this.checkNode(node, !!val)}
                         ></BkCheckbox>
                       )}
                       {this.$slots.default?.({ node, data: node.data })}
