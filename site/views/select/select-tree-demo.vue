@@ -9,12 +9,13 @@
       :data="treeData"
       label="name"
       children="children"
+      style="color: #63656e;"
       @node-click="handleNodeClick"
     />
   </bk-select>
 </template>
 <script setup>
-  import { ref } from '@vue/runtime-dom';
+  import { ref } from 'vue';
 
   const data = ref([]);
   const treeData = ref([

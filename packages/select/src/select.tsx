@@ -1,3 +1,5 @@
+/* eslint-disable vue/no-reserved-component-names */
+
 /*
  * Tencent is pleased to support the open source community by making
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
@@ -702,6 +704,17 @@ export default defineComponent({
       return <AngleUp class='angle-up'></AngleUp>;
     };
 
+    const renderPrefix = () => {
+      if (this.prefix) {
+        return () => (
+          <div class={`${this.resolveClassName('select--prefix-area')}`}>
+            <span>{this.prefix}</span>
+          </div>
+        );
+      }
+      return this.$slots.prefix ? () => this.$slots.prefix?.() : undefined;
+    };
+
     const renderTriggerInput = () => {
       if (this.multipleMode === 'tag') {
         return (
@@ -719,13 +732,7 @@ export default defineComponent({
             onKeydown={(_, e) => this.handleKeydown(e as KeyboardEvent)}
           >
             {{
-              prefix: this.prefix ? (
-                <div class={`${this.resolveClassName('select--prefix-area')}`}>
-                  <span>{this.prefix}</span>
-                </div>
-              ) : (
-                this.$slots.prefix?.()
-              ),
+              prefix: renderPrefix(),
               default: this.$slots.tag && (() => this.$slots.tag({ selected: this.selected })),
               suffix: () => suffixIcon(),
             }}
@@ -837,7 +844,9 @@ export default defineComponent({
                           name={item[this.displayKey]}
                         >
                           {{
-                            default: this.$slots.virtualScrollRender?.({ item }),
+                            default: this.$slots.virtualScrollRender
+                              ? () => this.$slots.virtualScrollRender?.({ item })
+                              : undefined,
                           }}
                         </Option>
                       )),
