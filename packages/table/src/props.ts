@@ -210,10 +210,10 @@ export type Field = {
   name?: string;
 };
 
-export type LabelFunctionString = ((_column, _index) => string | JSX.Element) | string;
+export type LabelFunctionString = ((_column, _index) => string | number | boolean | JSX.Element) | string | number | boolean;
 export const LabelFunctionStringType = toType<LabelFunctionString>('LabelFunctionStringType', {});
 
-export type RenderFunctionString = ({ cell, data, row, column, index, rows }) => string | JSX.Element;
+export type RenderFunctionString = ({ cell, data, row, column, index, rows }) => string | number | boolean | JSX.Element;
 export const RenderFunctionStringType = toType<RenderFunctionString>('RenderFunctionStringType', {});
 
 export type SpanFunctionString = (({ column, colIndex, row, rowIndex }) => number) | Number;
