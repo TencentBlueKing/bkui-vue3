@@ -60,14 +60,36 @@
             :disabled="item.disabled"
           />
           <template #extension>
-            <bk-input
-              v-if="showEdit"
-              @enter="handleEnter"
-            />
-            <span
-              v-else
-              @click="showEdit = true"
-            ><i class="bk-icon icon-plus-circle" />新增</span>
+            <div class="custom-extension">
+              <div style="display: flex; align-items: center;" v-if="showEdit">
+                <bk-input
+                  size="small"
+                  ref="inputRef"
+                  v-model="optionName"
+                  @enter="addOption"
+                />
+                <Done 
+                  style="font-size: 22px;color: #2DCB56;cursor: pointer;margin-left: 6px;"
+                  @click="addOption"/>
+                <Error 
+                  style="font-size: 16px;color: #C4C6CC;cursor: pointer;margin-left: 2px;"
+                  @click="showEdit = false"/>
+              </div>
+              <div
+                v-else
+                style="display: flex; align-items: center;justify-content: center;"
+              >
+                <span style="display: flex; align-items: center;cursor: pointer;" @click="handleShowEdit">
+                  <plus style="font-size: 20px;"/>
+                  新增
+                </span>
+                <span style="display: flex; align-items: center;position: absolute; right: 12px;">
+                  <bk-divider direction="vertical" type="solid" />
+                  <Spinner style="font-size: 14px;color: #3A84FF;" v-if="isLoading"/>
+                  <RightTurnLine style="font-size: 14px;cursor: pointer;" v-else @click="refresh"/>
+                </span>
+              </div>
+            </div>
           </template>
         </bk-select>
       </div>
@@ -137,6 +159,7 @@
 </template>
 <script setup>
   import { ref } from 'vue';
+  import { Plus, Done, Error, RightTurnLine, Spinner } from 'bkui-vue/lib/icon';
 
   const datasource = ref([
     {
@@ -170,12 +193,34 @@
   const handleToggle = (value) => {
     console.log(value);
   };
-  const handleEnter = (v, e) => {
-    e.stopPropagation();
+  const inputRef = ref()
+  const handleShowEdit = () => {
+    showEdit.value = true
+    setTimeout(() => {
+      inputRef.value.focus()
+    })
+  }
+  const optionName = ref('')
+  const addOption = () => {
+    if (optionName.value.trim()) {
+      datasource.value.push({
+        value: Math.random() + optionName.value,
+        label: optionName.value
+      })
+      optionName.value = ''
+    }
     showEdit.value = false;
   };
+
+  const isLoading = ref(false)
+  const refresh = () => {
+    isLoading.value = true
+    setTimeout(() => {
+      isLoading.value = false
+    }, 2000)
+  }
 </script>
-<style scoped>
+<style lang="postcss" scoped>
 
 .demo >div {
   display: flex;
@@ -185,6 +230,11 @@
 .bk-select {
   width: 300px;
   margin-right: 20px;
+}
+.custom-extension {
+  width: 100%;
+  color: #63656E;
+  padding: 0 12px;
 }
 </style>
 
