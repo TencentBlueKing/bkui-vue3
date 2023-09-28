@@ -46,8 +46,8 @@ export default defineComponent({
   name: 'Radio',
   props: radioProps,
   emits: {
-    'update:modelValue': (value: RadioProps['modelValue']) => value !== undefined,
-    change: (value: RadioProps['modelValue']) => value !== undefined,
+    'update:modelValue': (value: unknown) => value !== undefined,
+    change: (value: unknown) => value !== undefined,
   },
   setup() {
     const [isFocused, { blur: handleBlur, focus: handleFocus }] = useFocus();
