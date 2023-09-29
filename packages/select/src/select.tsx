@@ -842,7 +842,9 @@ export default defineComponent({
                           key={item[this.idKey]}
                           id={item[this.idKey]}
                           name={item[this.displayKey]}
-                          v-slots={this.$slots?.optionRender ? { default: this.$slots?.optionRender?.({ item }) } : null}
+                          v-slots={
+                            this.$slots?.optionRender ? { default: this.$slots?.optionRender?.({ item }) } : null
+                          }
                         >
                         </Option>
                       )),
