@@ -173,6 +173,43 @@
         </bk-select>
       </div>
     </div>
+    <div>
+      <div>
+        <h4>optionRender</h4>
+        <bk-select
+          v-model="selectedValue"
+          class="bk-select"
+          filterable
+          multiple
+          :list="datasource"
+          idKey="value"
+          displayKey="label"
+          :input-search="false"
+          enable-virtualRender
+        >
+          <template #optionRender="{ item }">
+            <span>{{item.label}}</span>
+          </template>
+        </bk-select>
+      </div>
+      <div>
+        <h4>optionRender</h4>
+        <bk-select
+          v-model="selectedValue2"
+          class="bk-select"
+          filterable
+          :list="datasource"
+          idKey="value"
+          displayKey="label"
+          :input-search="false"
+        >
+          <template #optionRender="{ item }">
+            <span>{{item.label}}</span>
+            <span>({{item.value}})</span>
+          </template>
+        </bk-select>
+      </div>
+    </div>
   </div>
 </template>
 <script setup>
@@ -206,6 +243,7 @@
     },
   ]);
   const selectedValue = ref([1, 2, 3, 4]);
+  const selectedValue2 = ref(1);
 
   const showEdit = ref(false);
   const handleToggle = (value) => {

@@ -811,7 +811,7 @@ export default defineComponent({
         )}
         <div class={this.resolveClassName('select-content')}>
           <div
-            class={this.resolveClassName('select-dropdown')}
+            class={this.enableVirtualRender ? '' : this.resolveClassName('select-dropdown')}
             style={{ maxHeight: `${this.scrollHeight}px` }}
             onScroll={this.handleScroll}
           >
@@ -842,12 +842,8 @@ export default defineComponent({
                           key={item[this.idKey]}
                           id={item[this.idKey]}
                           name={item[this.displayKey]}
+                          v-slots={this.$slots?.optionRender ? { default: this.$slots?.optionRender?.({ item }) } : null}
                         >
-                          {{
-                            default: this.$slots.virtualScrollRender
-                              ? () => this.$slots.virtualScrollRender?.({ item })
-                              : undefined,
-                          }}
                         </Option>
                       )),
                   }}
@@ -857,6 +853,7 @@ export default defineComponent({
                   <Option
                     id={item[this.idKey]}
                     name={item[this.displayKey]}
+                    v-slots={this.$slots?.optionRender ? { default: this.$slots?.optionRender?.({ item }) } : null}
                   ></Option>
                 ))
               )}
