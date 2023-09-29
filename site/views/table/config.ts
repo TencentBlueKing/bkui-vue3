@@ -57,6 +57,7 @@ export default [
       { name: 'pagination', type: 'Boolean|Object', default: 'false', desc: '分页配置, 默认值为false，不启用分页; 设置为 true，启用分页功能，默认值参考分页组件 Pagination', optional: [] },
       { name: 'remote-pagination', type: 'Boolean', default: 'false', desc: '是否启用远程分页', optional: [] },
       { name: 'empty-text', type: 'String', default: '暂无数据', desc: '空数据展示', optional: [] },
+      { name: 'empty-cell-text', type: 'String', default: '', desc: '单元格空数据展示', optional: [] },
       { name: 'settings', type: 'Object|Boolean', default: 'false', desc: 'bk-table-setting-content,用于设置表格行高、显示列...，详细参考ISettings', optional: [] },
       { name: 'row-class', type: 'String|Function', default: '', desc: '行的 class 的回调方法，也可以使用一个固定的 Object 为所有行设置一样的 Style', optional: [] },
       { name: 'row-class', type: 'String|Object|Function', default: '{}', desc: '行的 class 的回调方法，也可以使用一个固定的 Object 为所有行设置一样的 Style', optional: [] },
