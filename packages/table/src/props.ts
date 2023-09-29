@@ -440,6 +440,10 @@ export const tableProps = {
    */
   // emptyText: PropTypes.string.def('暂无数据'),
   emptyText: PropTypes.string,
+  /**
+   * 单元格数据为空展示
+   */
+  emptyCellText: PropTypes.oneOfType([PropTypes.string, PropTypes.func.def(() => '')]).def(''),
 
   /**
    * bk-table-setting-content
