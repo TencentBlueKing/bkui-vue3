@@ -836,18 +836,17 @@ export default defineComponent({
                   ref='virtualRenderRef'
                 >
                   {{
-                    default: ({ data }) =>
-                      data.map(item => (
+                    default: ({ data }) => {
+                      const optionRender = this.$slots?.optionRender || this.$slots?.virtualScrollRender;
+                      return data.map(item => (
                         <Option
                           key={item[this.idKey]}
                           id={item[this.idKey]}
                           name={item[this.displayKey]}
-                          v-slots={
-                            this.$slots?.optionRender ? { default: this.$slots?.optionRender?.({ item }) } : null
-                          }
-                        >
-                        </Option>
-                      )),
+                          v-slots={typeof optionRender === 'function' ? { default: optionRender({ item }) } : null}
+                        />
+                      ));
+                    },
                   }}
                 </VirtualRender>
               ) : (
@@ -856,7 +855,7 @@ export default defineComponent({
                     id={item[this.idKey]}
                     name={item[this.displayKey]}
                     v-slots={this.$slots?.optionRender ? { default: this.$slots?.optionRender?.({ item }) } : null}
-                  ></Option>
+                  />
                 ))
               )}
               {this.$slots.default?.()}
