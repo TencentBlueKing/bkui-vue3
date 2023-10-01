@@ -42,6 +42,7 @@ import ColumnTplIndex from './column-template-index.vue';
 import configList from './config';
 import CustomHead from './custom-head.vue';
 import DataEmpty from './data-empty.vue';
+import DataEmptyCell from './data-empty-cell.vue';
 import event from './event.vue';
 import Expand from './expand.vue';
 import filterScope from './filter-scope.vue';
@@ -53,6 +54,7 @@ import ScrollLoading from './scroll-loading.vue';
 import ScrollLoadingSlot from './scroll-loading-slot.vue';
 import Selection from './selection.vue';
 import virtualRender from './virtual-render.vue';
+import flexLayout from './flex-layout.vue';
 
 export default defineComponent({
   components: {
@@ -64,6 +66,7 @@ export default defineComponent({
     pagination,
     RemotePagination,
     DataEmpty,
+    DataEmptyCell,
     fixed,
     ScrollLoading,
     ScrollLoadingSlot,
@@ -77,6 +80,7 @@ export default defineComponent({
     ColumnTplIndex,
     TableTplTsx,
     CustomHead,
+    flexLayout,
   },
   render() {
     const configs = [
@@ -226,6 +230,20 @@ export default defineComponent({
       },
       {
         attrs: {
+          title: 'flex 布局，中间自适应',
+          subtitle: '虚拟滚动暂不建议开启',
+          desc: 'props: is-flex',
+          componentName: 'table',
+          demoName: 'flex-layout',
+        },
+        /**
+         * Table
+         * @returns
+         */
+        component: () => <flex-layout></flex-layout>,
+      },
+      {
+        attrs: {
           title: 'Pagination - Remote',
           subtitle: '分页配置: remote-pagination = true',
           desc: 'props: pagination',
@@ -251,6 +269,20 @@ export default defineComponent({
          * @returns
          */
         component: () => <data-empty></data-empty>,
+      },
+      {
+        attrs: {
+          title: '单元格空数据展示',
+          subtitle: '',
+          desc: 'props: --',
+          componentName: 'table',
+          demoName: 'data-empty-cell',
+        },
+        /**
+         * Table
+         * @returns
+         */
+        component: () => <data-empty-cell></data-empty-cell>,
       },
       {
         attrs: {
