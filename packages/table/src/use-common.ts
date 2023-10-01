@@ -86,6 +86,7 @@ export const useClass = (
         [resolveClassName('table')]: true,
         'has-footer': hasFooter.value,
         'has-scroll-y': hasScrollY.value || props.virtualEnabled,
+        [resolveClassName('table-flex')]: props.isFlex,
       },
       resolvePropBorderToClassStr(props.border),
     ),

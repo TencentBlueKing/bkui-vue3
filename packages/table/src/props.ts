@@ -578,4 +578,8 @@ export const tableProps = {
    *
    */
   colSortBehavior: toType<IColSortBehavior>('IColSortBehavior', { default: IColSortBehavior.independent }),
+  /**
+   * 是否采用flex布局表格（开启虚拟滚动无效）
+   */
+  isFlex: PropTypes.bool.def(false),
 };

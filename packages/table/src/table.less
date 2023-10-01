@@ -15,6 +15,16 @@
   height: auto;
   overflow: hidden;
 
+  &-flex {
+    display: flex;
+    flex-direction: column;
+    max-height: 100%;
+    .@{bk-prefix}-table-body {
+      flex: 1;
+      overflow: auto;
+    }
+  }
+
   &.has-scroll-y {
     .@{bk-prefix}-table-head {
       padding-right: 4px;
@@ -26,7 +36,7 @@
     overflow: auto;
 
     &::-webkit-scrollbar {
-      width: 6px;
+      width: 5px;
       height: 6px;
     }
 
@@ -81,7 +91,7 @@
 
     &::-webkit-scrollbar {
       width: 5px;
-      height: 8px;
+      height: 5px;
     }
 
     &::-webkit-scrollbar-thumb {
