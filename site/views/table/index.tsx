@@ -47,6 +47,7 @@ import event from './event.vue';
 import Expand from './expand.vue';
 import filterScope from './filter-scope.vue';
 import fixed from './fixed.vue';
+import flexLayout from './flex-layout.vue';
 import * as TABLE_DATA from './options';
 import pagination from './pagination.vue';
 import RemotePagination from './remotePagination.vue';
@@ -54,7 +55,6 @@ import ScrollLoading from './scroll-loading.vue';
 import ScrollLoadingSlot from './scroll-loading-slot.vue';
 import Selection from './selection.vue';
 import virtualRender from './virtual-render.vue';
-import flexLayout from './flex-layout.vue';
 
 export default defineComponent({
   components: {
