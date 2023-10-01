@@ -15,6 +15,15 @@
   height: auto;
   overflow: hidden;
 
+  &-flex {
+    display: flex;
+    flex-direction: column;
+    .@{bk-prefix}-table-body {
+      flex: 1;
+      overflow: auto;
+    }
+  }
+
   &.has-scroll-y {
     .@{bk-prefix}-table-head {
       padding-right: 4px;
