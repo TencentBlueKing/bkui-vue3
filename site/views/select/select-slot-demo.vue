@@ -176,6 +176,7 @@
     <div>
       <div>
         <h4>optionRender</h4>
+        只用使用list 列表才会有效。
         <bk-select
           v-model="selectedValue"
           class="bk-select"
