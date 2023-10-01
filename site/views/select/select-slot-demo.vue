@@ -183,13 +183,13 @@
           filterable
           multiple
           :list="datasource"
-          idKey="value"
-          displayKey="label"
+          id-key="value"
+          display-key="label"
           :input-search="false"
-          enable-virtualRender
+          enable-virtual-render
         >
           <template #optionRender="{ item }">
-            <span>{{item.label}}</span>
+            <span>{{ item.label }}</span>
           </template>
         </bk-select>
       </div>
@@ -200,13 +200,13 @@
           class="bk-select"
           filterable
           :list="datasource"
-          idKey="value"
-          displayKey="label"
+          id-key="value"
+          display-key="label"
           :input-search="false"
         >
           <template #optionRender="{ item }">
-            <span>{{item.label}}</span>
-            <span>({{item.value}})</span>
+            <span>{{ item.label }}</span>
+            <span>({{ item.value }})</span>
           </template>
         </bk-select>
       </div>
