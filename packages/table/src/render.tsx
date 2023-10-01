@@ -732,7 +732,7 @@ export default class TableRender {
     const defaultFn = () => {
       const key = resolvePropVal(column, 'field', [column, row]);
       const cell = getRowText(row, key, column);
-      if (!cell) {
+      if (!cell && !['number', 'boolean'].includes(typeof cell)) {
         const { emptyCellText } = this.props;
         if (emptyCellText) {
           if (typeof emptyCellText === 'function') {
@@ -747,6 +747,9 @@ export default class TableRender {
 
       if (typeof cell === 'object') {
         return JSON.stringify(unref(cell));
+      }
+      if (typeof cell === 'boolean') {
+        return String(cell);
       }
 
       return cell;
