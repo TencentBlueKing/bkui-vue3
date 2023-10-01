@@ -733,8 +733,8 @@ export default class TableRender {
       const key = resolvePropVal(column, 'field', [column, row]);
       const cell = getRowText(row, key, column);
       if (!cell) {
-        const emptyCellText = this.props.emptyCellText;
-        if (emptyCellText){
+        const { emptyCellText } = this.props;
+        if (emptyCellText) {
           if (typeof emptyCellText === 'function') {
             return emptyCellText(row, column, index, rows);
           }
