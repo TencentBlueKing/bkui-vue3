@@ -144,6 +144,7 @@ export const useClass = (
     width: resolveWidth(),
     maxWidth: '100%',
     height: getTableHeight(),
+    maxHeight: props.maxHeight,
   }));
 
   const resolvePropHeight = (height: Number | string, defaultValue: number) => {
