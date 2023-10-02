@@ -13,14 +13,13 @@
       @cell-dblclick="handleCellDblclick"
       @row-mouse-enter="handleMouseEnter"
       @row-mouse-leave="handleMouseLeave"
-    >
-    </bk-table>
-
+    />
   </div>
 </template>
 
 <script lang="jsx">
   import { defineComponent } from 'vue';
+
   import { DATA_COLUMNS } from './options';
   const DATA_TABLE = [
     {
@@ -67,8 +66,8 @@
         columns: [...DATA_COLUMNS],
         overflowTooltip: {
           popoverOption: {
-            maxWidth: 400
-          }
+            maxWidth: 400,
+          },
         },
         settings: {
           fields: [
