@@ -732,7 +732,13 @@ export default class TableRender {
     const defaultFn = () => {
       const key = resolvePropVal(column, 'field', [column, row]);
       const cell = getRowText(row, key, column);
-      if (!cell && !['number', 'boolean'].includes(typeof cell)) {
+      if (typeof column.render === 'function') {
+        return this.renderCellCallbackFn(row, column, index, rows);
+      }
+      if (typeof cell === 'boolean') {
+        return String(cell);
+      }
+      if (!cell && typeof cell !== 'number') {
         const { emptyCellText } = this.props;
         if (emptyCellText) {
           if (typeof emptyCellText === 'function') {
@@ -741,17 +747,9 @@ export default class TableRender {
           return emptyCellText;
         }
       }
-      if (typeof column.render === 'function') {
-        return this.renderCellCallbackFn(row, column, index, rows);
-      }
-
       if (typeof cell === 'object') {
         return JSON.stringify(unref(cell));
       }
-      if (typeof cell === 'boolean') {
-        return String(cell);
-      }
-
       return cell;
     };
 
