@@ -73,9 +73,9 @@ export const useClass = (
   pageData?: any[],
 ) => {
   const { getColumns } = useColumn(props, targetColumns);
-  const autoHeight = ref(200);
-  const fixHeight = ref(200);
-  const maxFixHeight = ref(200);
+  const autoHeight = ref(LINE_HEIGHT * 10);
+  const fixHeight = ref(LINE_HEIGHT * 10);
+  const maxFixHeight = ref(LINE_HEIGHT * 10);
   const headHeight = ref(LINE_HEIGHT);
   const hasScrollY = ref(false);
   const hasFooter = computed(() => props.pagination && props.data.length);
@@ -197,7 +197,7 @@ export const useClass = (
     const minHeight = resolveMinHeight - headHeight.value - resolveFooterHeight;
     const resolveMaxHeight = resolvePropHeight(props.maxHeight, undefined);
     const maxHeight =
-      typeof resolveMaxHeight === 'number' ? `${resolveMaxHeight - headHeight.value - resolveFooterHeight}px` : false;
+      typeof resolveMaxHeight === 'number' ? `${resolveMaxHeight - headHeight.value - resolveFooterHeight}px` : height;
 
     Object.assign(contentStyle, {
       display: pageData?.length ? 'block' : false,
@@ -214,8 +214,8 @@ export const useClass = (
   const resetTableHeight = (rootEl: HTMLElement) => {
     if (rootEl) {
       const headHeight = getHeadHeight(rootEl);
-      const { height } = rootEl.parentElement.getBoundingClientRect();
-      autoHeight.value = height;
+      // const { height } = rootEl.parentElement.getBoundingClientRect();
+      // autoHeight.value = height;
       const contentselector = `.${resolveClassName('table-body-content')} > table`;
       const bodySelector = `.${resolveClassName('table-body')}`;
 
@@ -223,8 +223,8 @@ export const useClass = (
       const tableBodyContent = rootEl.querySelector(contentselector) as HTMLElement;
 
       resolveContentStyle(rootEl);
-      maxFixHeight.value = (tableBody?.offsetHeight ?? height) + headHeight;
-      fixHeight.value = (tableBodyContent?.offsetHeight ?? height) + headHeight;
+      maxFixHeight.value = (tableBody?.offsetHeight ?? LINE_HEIGHT * 10) + headHeight;
+      fixHeight.value = (tableBodyContent?.offsetHeight ?? LINE_HEIGHT * 10) + headHeight;
       updateBorderClass(rootEl);
     }
   };

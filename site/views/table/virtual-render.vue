@@ -41,7 +41,7 @@
         this.randomRows.splice(
           0,
           this.randomRows.length,
-          ...new Array(Math.ceil(Math.random() * 9000) + 1000).fill('')
+          ...new Array(Math.ceil(Math.random() * 90) + 10).fill('')
             .map((_, index) => ({
               ip: `${index}--192.168.0.x`,
               source: `${index}_QQ`,
