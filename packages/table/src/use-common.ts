@@ -228,7 +228,7 @@ export const useClass = (
 
     const maxHeight = getMaxheight(resolveHeight, () => {
       const resolveMaxHeight = resolvePropHeight(props.maxHeight);
-      return resolveContentHeight(resolveMaxHeight, headHeight.value, resolveFooterHeight)
+      return resolveContentHeight(resolveMaxHeight, headHeight.value, resolveFooterHeight);
     });
 
     contentStyle.display = pageData?.length ? 'block' : false;
