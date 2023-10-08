@@ -207,7 +207,7 @@ export const useClass = (
     }
 
     return resolveHeight;
-  }
+  };
 
   const getMaxheight = (resolveHeight, maxHeightFn) => {
     if (/^\d+\.?\d*$/.test(resolveHeight)) {
@@ -215,7 +215,7 @@ export const useClass = (
     }
 
     return maxHeightFn();
-  }
+  };
 
   const resolveContentStyle = rootEl => {
     const resolveHeight = resolvePropHeight(props.height);

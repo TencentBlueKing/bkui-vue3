@@ -59,7 +59,7 @@ export default (props: VirtualRenderProps, ctx) => {
       display: 'inline-block',
       maxHeight: height,
       ...props.wrapperStyle
-    }
+    };
   });
 
   ctx.expose({

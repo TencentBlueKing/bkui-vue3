@@ -231,7 +231,7 @@ export default defineComponent({
         maxHeight: height,
         ...(props.scrollPosition === 'container' ? innerContentStyle.value : {}),
         ...props.wrapperStyle
-      }
+      };
     });
 
     /** 虚拟渲染区域内置占位区域样式，用来撑起总高度，出现滚动条 */
