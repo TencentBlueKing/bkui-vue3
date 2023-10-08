@@ -215,19 +215,24 @@ export default defineComponent({
     const innerContentStyle = computed(() =>
       props.scrollPosition === 'content'
         ? {
-            top: `${pagination.scrollTop + props.scrollOffsetTop}px`,
-            transform: `translateY(-${pagination.translateY}px)`,
-          }
+          top: `${pagination.scrollTop + props.scrollOffsetTop}px`,
+          transform: `translateY(-${pagination.translateY}px)`,
+        }
         : {},
     );
 
     /** 虚拟渲染外层容器样式 */
-    const wrapperStyle = computed(() => ({
-      height: typeof props.height === 'number' ? `${props.height}px` : props.height,
-      width: typeof props.width === 'number' ? `${props.width}px` : props.width,
-      display: 'inline-block',
-      ...(props.scrollPosition === 'container' ? innerContentStyle.value : {}),
-    }));
+    const wrapperStyle = computed(() => {
+      const height = typeof props.height === 'number' ? `${props.height}px` : props.height;
+      return {
+        height,
+        width: typeof props.width === 'number' ? `${props.width}px` : props.width,
+        display: 'inline-block',
+        maxHeight: height,
+        ...(props.scrollPosition === 'container' ? innerContentStyle.value : {}),
+        ...props.wrapperStyle
+      }
+    });
 
     /** 虚拟渲染区域内置占位区域样式，用来撑起总高度，出现滚动条 */
     const innerStyle = computed(() => {

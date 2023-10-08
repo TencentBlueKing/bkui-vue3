@@ -4,6 +4,7 @@
       :columns="columns"
       :data="tableData"
       :settings="settings"
+      :max-height="maxHeight"
       :show-overflow-tooltip="overflowTooltip"
       stripe
       @dblclick="handleDblClick"
@@ -13,11 +14,10 @@
       @row-mouse-enter="handleMouseEnter"
       @row-mouse-leave="handleMouseLeave"
     >
-    <template #setting>
-      <h1>Setting Content Slot</h1>
-    </template>
+      <template #setting>
+        <h1>Setting Content Slot</h1>
+      </template>
     </bk-table>
-
   </div>
 </template>
 
@@ -25,13 +25,14 @@
   import { random } from 'lodash';
   import { defineComponent } from 'vue';
 
-  import { DATA_COLUMNS, DATA_TABLE } from './options';
+  import { DATA_COLUMNS, DATA_TABLE, DATA_FIX_TABLE } from './options';
   export default defineComponent({
     components: {},
     data() {
       return {
+        maxHeight: 300,
         isLoading: false,
-        tableData: DATA_TABLE.map((d, index) => Object.assign({}, d, { msg: index * random(0, 20, true) })),
+        tableData: DATA_FIX_TABLE.map((d, index) => Object.assign({}, d, { msg: index * random(0, 20, true) })),
         columns: [...DATA_COLUMNS],
         overflowTooltip: {
           popoverOption: {

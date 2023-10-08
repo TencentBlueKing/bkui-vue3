@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { h, ref, resolveDirective, withDirectives } from 'vue';
+import { computed, h, ref, resolveDirective, withDirectives } from 'vue';
 
 import { VirtualRenderProps } from './props';
 
@@ -50,6 +50,18 @@ export default (props: VirtualRenderProps, ctx) => {
     refRoot.value.scrollTo(left, top);
   };
 
+  /** 虚拟渲染外层容器样式 */
+  const wrapperStyle = computed(() => {
+    const height = typeof props.height === 'number' ? `${props.height}px` : props.height;
+    return {
+      height,
+      width: typeof props.width === 'number' ? `${props.width}px` : props.width,
+      display: 'inline-block',
+      maxHeight: height,
+      ...props.wrapperStyle
+    }
+  });
+
   ctx.expose({
     scrollTo,
   });
@@ -61,6 +73,7 @@ export default (props: VirtualRenderProps, ctx) => {
         renderAs,
         {
           class: props.className,
+          style: wrapperStyle.value,
           ref: refRoot,
         },
         [
