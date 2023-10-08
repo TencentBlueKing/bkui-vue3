@@ -144,31 +144,40 @@ export const useClass = (
     width: resolveWidth(),
     maxWidth: '100%',
     height: getTableHeight(),
-    maxHeight: props.maxHeight,
+    // maxHeight: props.maxHeight,
   }));
 
-  const resolvePropHeight = (height: Number | string, defaultValue: number) => {
+  const resolvePropHeight = (height: number | string, parentHeight?: number) => {
     const strHeight = String(height);
     if (/^\d+\.?\d*$/.test(strHeight)) {
-      return Number(strHeight);
+      return parseFloat(strHeight);
     }
 
     if (/^\d+\.?\d*px$/gi.test(strHeight)) {
-      return Number(strHeight.replace('px', ''));
+      return parseFloat(strHeight.replace('px', ''));
     }
 
-    if (/^\d+\.?\d*%$/gi.test(strHeight) && typeof defaultValue === 'number') {
-      const percent = Number(strHeight.replace('%', ''));
-      return (defaultValue * percent) / 100;
+    if (/^\d+\.?\d*%$/gi.test(strHeight)) {
+      if (typeof parentHeight === 'number') {
+        const percent = parseFloat(strHeight.replace('%', ''));
+        return (parentHeight * percent) / 100;
+      }
+
+      return strHeight;
     }
 
-    return defaultValue;
+    return parentHeight ?? height;
   };
 
   /** 表格外层容器样式 */
-  const contentStyle = reactive({
+  const contentStyle: {
+    display: string | boolean,
+    minHeight: string | number,
+    height: string | number,
+    maxHeight: string | number,
+  } = reactive({
     display: '',
-    'min-height': '',
+    minHeight: '',
     height: '',
     maxHeight: '',
   });
@@ -187,24 +196,45 @@ export const useClass = (
     return 0;
   };
 
-  const resolveContentStyle = rootEl => {
-    const resolveHeight = resolvePropHeight(props.height, autoHeight.value);
-    headHeight.value = getHeadHeight(rootEl);
-    const resolveMinHeight = resolvePropHeight(props.minHeight, autoHeight.value);
-    const resolveFooterHeight = props.pagination && props.data.length ? props.paginationHeight : 0;
-    const contentHeight = resolveHeight - headHeight.value - resolveFooterHeight;
-    const height = props.height !== 'auto' ? `${contentHeight}px` : false;
-    const minHeight = resolveMinHeight - headHeight.value - resolveFooterHeight;
-    const resolveMaxHeight = resolvePropHeight(props.maxHeight, undefined);
-    const maxHeight =
-      typeof resolveMaxHeight === 'number' ? `${resolveMaxHeight - headHeight.value - resolveFooterHeight}px` : height;
+  const resolveContentHeight = (resolveHeight, headHeight, resolveFooterHeight) => {
+    if (/%$/.test(`${resolveHeight}`)) {
+      return `calc(${resolveHeight} - ${headHeight + resolveFooterHeight}px)`;
+    }
 
-    Object.assign(contentStyle, {
-      display: pageData?.length ? 'block' : false,
-      'min-height': `${minHeight}px`,
-      height,
-      maxHeight,
+    if (typeof resolveHeight === 'number') {
+      const target = resolveHeight - headHeight - resolveFooterHeight;
+      return `${target > 0 ? target : 0}px`;
+    }
+
+    return resolveHeight;
+  }
+
+  const getMaxheight = (resolveHeight, maxHeightFn) => {
+    if (/^\d+\.?\d*$/.test(resolveHeight)) {
+      return `${resolveHeight}px`;
+    }
+
+    return maxHeightFn();
+  }
+
+  const resolveContentStyle = rootEl => {
+    const resolveHeight = resolvePropHeight(props.height);
+    headHeight.value = getHeadHeight(rootEl) as number;
+    const resolveMinHeight = resolvePropHeight(props.minHeight, autoHeight.value) as number;
+    const resolveFooterHeight = props.pagination && props.data.length ? props.paginationHeight : 0;
+    const contentHeight = resolveContentHeight(resolveHeight, headHeight.value, resolveFooterHeight);
+
+    const minHeight = resolveMinHeight - headHeight.value - resolveFooterHeight;
+
+    const maxHeight = getMaxheight(resolveHeight, () => {
+      const resolveMaxHeight = resolvePropHeight(props.maxHeight);
+      return resolveContentHeight(resolveMaxHeight, headHeight.value, resolveFooterHeight)
     });
+
+    contentStyle.display = pageData?.length ? 'block' : false;
+    contentStyle.minHeight = `${minHeight}px`;
+    contentStyle.height = contentHeight;
+    contentStyle.maxHeight = maxHeight;
   };
 
   onMounted(() => {
@@ -214,8 +244,6 @@ export const useClass = (
   const resetTableHeight = (rootEl: HTMLElement) => {
     if (rootEl) {
       const headHeight = getHeadHeight(rootEl);
-      // const { height } = rootEl.parentElement.getBoundingClientRect();
-      // autoHeight.value = height;
       const contentselector = `.${resolveClassName('table-body-content')} > table`;
       const bodySelector = `.${resolveClassName('table-body')}`;
 
@@ -223,8 +251,8 @@ export const useClass = (
       const tableBodyContent = rootEl.querySelector(contentselector) as HTMLElement;
 
       resolveContentStyle(rootEl);
-      maxFixHeight.value = (tableBody?.offsetHeight ?? LINE_HEIGHT * 10) + headHeight;
-      fixHeight.value = (tableBodyContent?.offsetHeight ?? LINE_HEIGHT * 10) + headHeight;
+      maxFixHeight.value = (tableBody?.offsetHeight ?? LINE_HEIGHT * 10) + (headHeight as number);
+      fixHeight.value = (tableBodyContent?.offsetHeight ?? LINE_HEIGHT * 10) + (headHeight as number);
       updateBorderClass(rootEl);
     }
   };
