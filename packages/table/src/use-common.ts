@@ -207,7 +207,7 @@ export const useClass = (
     }
 
     return resolveHeight;
-  }
+  };
 
   const getMaxheight = (resolveHeight, maxHeightFn) => {
     if (/^\d+\.?\d*$/.test(resolveHeight)) {
@@ -215,7 +215,7 @@ export const useClass = (
     }
 
     return maxHeightFn();
-  }
+  };
 
   const resolveContentStyle = rootEl => {
     const resolveHeight = resolvePropHeight(props.height);
@@ -228,7 +228,7 @@ export const useClass = (
 
     const maxHeight = getMaxheight(resolveHeight, () => {
       const resolveMaxHeight = resolvePropHeight(props.maxHeight);
-      return resolveContentHeight(resolveMaxHeight, headHeight.value, resolveFooterHeight)
+      return resolveContentHeight(resolveMaxHeight, headHeight.value, resolveFooterHeight);
     });
 
     contentStyle.display = pageData?.length ? 'block' : false;
