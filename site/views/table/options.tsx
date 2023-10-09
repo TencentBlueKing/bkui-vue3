@@ -254,7 +254,7 @@ export const DATA_FIX_COLUMNS = [
   },
   {
     label: '操作',
-    render: ({ row }) => <bk-input v-model={row.status}></bk-input>,
+    render: ({ data }) => <bk-input v-model={data.status}></bk-input>,
     width: 180,
     fixed: 'right',
   },
