@@ -337,8 +337,7 @@ export const useInit = (props: TablePropTypes, targetColumns: ITableColumn[]) =>
     const settingFields = settings?.fields || (props.settings as Settings)?.fields || [];
     colgroups.length = 0;
     colgroups.push(
-      ...resolvedColumns.value.map(col => ({
-        ...col,
+      ...resolvedColumns.value.map(col => Object.assign({}, col, {
         calcWidth: null,
         resizeWidth: null,
         minWidth: resolveMinWidth(col),
@@ -383,7 +382,7 @@ export const useInit = (props: TablePropTypes, targetColumns: ITableColumn[]) =>
     const columnName = resolvePropVal(col, ['field', 'type'], [col, index]);
     const sort = resolveSort(col.sort);
     if (sort) {
-      return { ...(out || {}), [columnName]: sort?.value };
+      return Object.assign({}, (out || {}), { [columnName]: sort?.value });
     }
     return out;
   }, null);
@@ -608,51 +607,49 @@ export const useInit = (props: TablePropTypes, targetColumns: ITableColumn[]) =>
   const needIndexColumn = computed(() => colgroups.some(col => col.type === 'index'));
 
   const initIndexData = (keepLocalAction = false) => {
-    let preRowId = null;
-    const skipConfig = {};
-    const resolvedData = props.data.map(d => ({ [TABLE_ROW_ATTRIBUTE.ROW_UID]: uuidv4(), ...d }));
+    indexData.length = 0;
+    const resolvedData = props.data.map(d => {
+      const target = Object.assign({}, d, ({
+        [TABLE_ROW_ATTRIBUTE.ROW_UID]: uuidv4(),
+        [TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA]: d
+      }));
+      indexData.push(target);
+      return target;
+    });
 
     if (neepColspanOrRowspan.value || needSelection.value || needExpand.value || needIndexColumn.value) {
-      const copyData = resolvedData.map((item: any, index: number) => {
+      let preRowId = null;
+      const skipConfig = {};
+      indexData.length = 0;
+      resolvedData.forEach((item: any, index: number) => {
         const rowId = getRowKey(item, props, index);
-
         preRowId = rowId;
-        const target = {
-          ...item,
-          [TABLE_ROW_ATTRIBUTE.ROW_UID]: item[TABLE_ROW_ATTRIBUTE.ROW_UID] || rowId,
-          [TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA]: { ...item },
-        };
 
         if (neepColspanOrRowspan.value) {
           const cfg = getSkipConfig(item, rowId, index, skipConfig, preRowId);
-          Object.assign(target, { [TABLE_ROW_ATTRIBUTE.ROW_SKIP_CFG]: cfg });
+          Object.assign(item, { [TABLE_ROW_ATTRIBUTE.ROW_SKIP_CFG]: cfg });
         }
 
         if (needSelection.value) {
-          Object.assign(target, { [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: resolveSelection(item, rowId, index) });
+          Object.assign(item, { [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: resolveSelection(item, rowId, index) });
         }
 
         if (needIndexColumn.value) {
-          Object.assign(target, { [TABLE_ROW_ATTRIBUTE.ROW_INDEX]: index });
+          Object.assign(item, { [TABLE_ROW_ATTRIBUTE.ROW_INDEX]: index });
         }
 
         if (needExpand.value) {
-          Object.assign(target, { [TABLE_ROW_ATTRIBUTE.ROW_EXPAND]: keepLocalAction ? isRowExpand(rowId) : false });
+          Object.assign(item, { [TABLE_ROW_ATTRIBUTE.ROW_EXPAND]: keepLocalAction ? isRowExpand(rowId) : false });
         }
-
-        return target;
+        indexData.push(item);
       });
-      indexData.length = 0;
-      indexData.push(...copyData);
+
 
       if (needSelection.value) {
         initSelectionAllByData();
       }
       return;
     }
-
-    indexData.length = 0;
-    indexData.push(...resolvedData);
   };
 
   /**
@@ -756,7 +753,7 @@ export const useInit = (props: TablePropTypes, targetColumns: ITableColumn[]) =>
         skipColumnNum = colspan - 1;
       }
 
-      Object.assign(skipCfg[rowId], { ...target });
+      Object.assign(skipCfg[rowId], target);
     });
 
     return skipCfg[rowId];

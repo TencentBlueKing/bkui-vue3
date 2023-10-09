@@ -679,7 +679,7 @@ export default class TableRender {
     const cell = getRowText(row, resolvePropVal(column, 'field', [column, row]), column);
     const attrIndex = row[TABLE_ROW_ATTRIBUTE.ROW_INDEX];
     const rowIndex = typeof attrIndex === 'number' ? attrIndex : index;
-    const data = this.props.data[rowIndex];
+    const data = row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA] ?? this.props.data[rowIndex];
     return (column.render as Function)({ cell, data, row, column, index, rows });
   }
 
