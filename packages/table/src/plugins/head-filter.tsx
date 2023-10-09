@@ -116,13 +116,13 @@ export default defineComponent({
     const filterFn =
       typeof (filter.value as IFilterShape).filterFn === 'function'
         ? // eslint-disable-next-line max-len
-          (checked: string[], row: any, index: number, data: any[]) =>
-            (filter.value as IFilterShape).filterFn(checked, row, props.column, index, data)
+        (checked: string[], row: any, index: number, data: any[]) =>
+          (filter.value as IFilterShape).filterFn(checked, row, props.column, index, data)
         : (checked: string[], row: any) => (checked.length ? defaultFilterFn(checked, row) : true);
 
     const handleBtnSaveClick = () => {
       handleFilterChange(true);
-      emit('filterSave', [...state.checked]);
+      emit('filterSave', state.checked);
       state.isOpen = false;
     };
 
@@ -131,12 +131,12 @@ export default defineComponent({
 
       if (disabled || btnSaveClick) {
         if (filter.value === 'custom') {
-          emit('change', [...state.checked], null);
+          emit('change', state.checked, null);
           state.isOpen = false;
           return;
         }
         (filter.value as IFilterShape).checked = state.checked;
-        emit('change', [...state.checked], filterFn);
+        emit('change', state.checked, filterFn);
       }
     };
 
