@@ -116,6 +116,7 @@ export default defineComponent({
           // </a>
           <BkButton
             text
+            theme='primary'
             class={this.resolveClassName('picker-confirm-time')}
             disabled={this.timeDisabled}
             onClick={this.handleToggleTime}
