@@ -5,7 +5,6 @@
       class="bk-select"
       filterable
       auto-focus
-      @toggle="handleToggle"
     >
       <bk-option
         v-for="(item, index) in datasource"
@@ -22,7 +21,6 @@
       filterable
       auto-focus
       :list="datasourceList"
-      @toggle="handleToggle"
     />
   </div>
 </template>

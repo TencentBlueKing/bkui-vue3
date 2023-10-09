@@ -135,7 +135,7 @@ export default defineComponent({
       e.preventDefault();
       handleClick(item);
     }
-    function handleLogicalChange(value: string | number | boolean) {
+    function handleLogicalChange(value: unknown) {
       emit('update:logical', value);
     }
     return {

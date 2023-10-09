@@ -190,7 +190,7 @@ export const DATA_EXPAND_COLUMNS = [
  *
  */
 export const DATA_FIX_TABLE = [
-  ...new Array(10).fill('').map((_, index) => ({
+  ...new Array(100).fill('').map((_, index) => ({
     ip: `192.168.0.${index} 192.168.${index}.255 ${index}.168.255.255 192.${index}.0.255`,
     source: `source ${index}`,
     status: '创建中',
@@ -254,7 +254,7 @@ export const DATA_FIX_COLUMNS = [
   },
   {
     label: '操作',
-    render: ({ row }) => <bk-input v-model={row.status}></bk-input>,
+    render: ({ data }) => <bk-input v-model={data.status}></bk-input>,
     width: 180,
     fixed: 'right',
   },

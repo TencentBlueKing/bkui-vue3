@@ -1,3 +1,5 @@
+/* eslint-disable vue/no-reserved-component-names */
+
 /*
  * Tencent is pleased to support the open source community by making
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
@@ -702,6 +704,17 @@ export default defineComponent({
       return <AngleUp class='angle-up'></AngleUp>;
     };
 
+    const renderPrefix = () => {
+      if (this.prefix) {
+        return () => (
+          <div class={`${this.resolveClassName('select--prefix-area')}`}>
+            <span>{this.prefix}</span>
+          </div>
+        );
+      }
+      return this.$slots.prefix ? () => this.$slots.prefix?.() : undefined;
+    };
+
     const renderTriggerInput = () => {
       if (this.multipleMode === 'tag') {
         return (
@@ -719,13 +732,7 @@ export default defineComponent({
             onKeydown={(_, e) => this.handleKeydown(e as KeyboardEvent)}
           >
             {{
-              prefix: this.prefix ? (
-                <div class={`${this.resolveClassName('select--prefix-area')}`}>
-                  <span>{this.prefix}</span>
-                </div>
-              ) : (
-                this.$slots.prefix?.()
-              ),
+              prefix: renderPrefix(),
               default: this.$slots.tag && (() => this.$slots.tag({ selected: this.selected })),
               suffix: () => suffixIcon(),
             }}
@@ -804,7 +811,7 @@ export default defineComponent({
         )}
         <div class={this.resolveClassName('select-content')}>
           <div
-            class={this.resolveClassName('select-dropdown')}
+            class={this.enableVirtualRender ? '' : this.resolveClassName('select-dropdown')}
             style={{ maxHeight: `${this.scrollHeight}px` }}
             onScroll={this.handleScroll}
           >
@@ -829,18 +836,17 @@ export default defineComponent({
                   ref='virtualRenderRef'
                 >
                   {{
-                    default: ({ data }) =>
-                      data.map(item => (
+                    default: ({ data }) => {
+                      const optionRender = this.$slots?.optionRender || this.$slots?.virtualScrollRender;
+                      return data.map(item => (
                         <Option
                           key={item[this.idKey]}
                           id={item[this.idKey]}
                           name={item[this.displayKey]}
-                        >
-                          {{
-                            default: this.$slots.virtualScrollRender?.({ item }),
-                          }}
-                        </Option>
-                      )),
+                          v-slots={typeof optionRender === 'function' ? { default: optionRender({ item }) } : null}
+                        />
+                      ));
+                    },
                   }}
                 </VirtualRender>
               ) : (
@@ -848,7 +854,8 @@ export default defineComponent({
                   <Option
                     id={item[this.idKey]}
                     name={item[this.displayKey]}
-                  ></Option>
+                    v-slots={this.$slots?.optionRender ? { default: this.$slots?.optionRender?.({ item }) } : null}
+                  />
                 ))
               )}
               {this.$slots.default?.()}

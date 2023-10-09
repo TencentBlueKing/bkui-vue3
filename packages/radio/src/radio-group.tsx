@@ -47,8 +47,8 @@ export default defineComponent({
   name: 'RadioGroup',
   props: radioGroupProps,
   emits: {
-    'update:modelValue': (value: RadioGroupProps['modelValue']) => value !== undefined,
-    change: (value: RadioGroupProps['modelValue']) => value !== undefined,
+    'update:modelValue': (value: any) => value !== undefined,
+    change: (value: any) => value !== undefined,
   },
   setup(props, context) {
     const formItem = useFormItem();

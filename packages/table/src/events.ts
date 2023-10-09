@@ -71,39 +71,22 @@ export const enum EMIT_EVENTS {
 
 export const EVENT_COL_PICK = (_cols: IColumnActive[]) => true;
 export const EVENT_COL_FILTER = (_args: { checked: string[]; column: Column; index: number }) => true;
-export const EVENT_COL_FILTER_SAVE = (_args: { column: Column; values: Record<string, any>[] }) => true;
+export const EVENT_COL_FILTER_SAVE = (_args: { column: Column; values: any[] }) => true;
 export const EVENT_COL_SORT = (_args: { column: Column; index: number; type: SORT_OPTION }) => true;
 
-export const EVENT_MOUSE_FN = (
-  _e: MouseEvent,
-  _row: Record<string, any>,
-  _index: number,
-  _rows: Record<string, any>[],
-  _this: any,
-) => true;
+export const EVENT_MOUSE_FN = (_e: MouseEvent, _row: any, _index: number, _rows: any[], _this: any) => true;
 
-export const EVENT_EXPAND_FN = (_args: {
-  row: Record<string, any>;
-  column: Column;
-  index: Number;
-  rows: Record<string, any>[];
-  e: MouseEvent;
-}) => true;
+export const EVENT_EXPAND_FN = (_args: { row: any; column: Column; index: Number; rows: any[]; e: MouseEvent }) => true;
 
-export const EVENT_ROW_SELECT_FN = (_args: {
-  row: Record<string, any>;
-  index: Number;
-  checked: string;
-  data: Array<Record<string, any>>;
-}) => true;
+export const EVENT_ROW_SELECT_FN = (_args: { row: any; index: Number; checked: string; data: any[] }) => true;
 
-export const EVENT_ROW_SELECT_ALL_FN = (_args: { checked: string; data: Array<Record<string, any>> }) => true;
+export const EVENT_ROW_SELECT_ALL_FN = (_args: { checked: string; data: any[] }) => true;
 
 export const EVENT_ROW_SELECT_CHANGE_FN = (_args: {
-  row: Record<string, any>;
+  row: any;
   index: Number;
   checked: string;
-  data: Array<Record<string, any>>;
+  data: any[];
   isAll: boolean;
 }) => true;
 
@@ -117,7 +100,7 @@ export const EVENT_SETTING_FN = (_args: {
 
 export const EVENT_CELL_FN = (_args: {
   event: MouseEvent;
-  row: Record<string, any>;
+  row: any;
   column: Column;
   cell: {
     getValue: () => string;

@@ -148,6 +148,8 @@ export const virtualRenderProps = {
    */
   autoReset: PropTypes.bool.def(true),
 
+  wrapperStyle: PropTypes.any.def({}),
+
   ...EventProps,
 };
 

@@ -679,7 +679,7 @@ export default class TableRender {
     const cell = getRowText(row, resolvePropVal(column, 'field', [column, row]), column);
     const attrIndex = row[TABLE_ROW_ATTRIBUTE.ROW_INDEX];
     const rowIndex = typeof attrIndex === 'number' ? attrIndex : index;
-    const data = this.props.data[rowIndex];
+    const data = row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA] ?? this.props.data[rowIndex];
     return (column.render as Function)({ cell, data, row, column, index, rows });
   }
 
@@ -730,15 +730,26 @@ export default class TableRender {
    */
   private renderCell(row: any, column: Column, index: number, rows: any[]) {
     const defaultFn = () => {
-      const cell = getRowText(row, resolvePropVal(column, 'field', [column, row]), column);
+      const key = resolvePropVal(column, 'field', [column, row]);
+      const cell = getRowText(row, key, column);
       if (typeof column.render === 'function') {
         return this.renderCellCallbackFn(row, column, index, rows);
       }
-
+      if (typeof cell === 'boolean') {
+        return String(cell);
+      }
+      if (!cell && typeof cell !== 'number') {
+        const { emptyCellText } = this.props;
+        if (emptyCellText) {
+          if (typeof emptyCellText === 'function') {
+            return emptyCellText(row, column, index, rows);
+          }
+          return emptyCellText;
+        }
+      }
       if (typeof cell === 'object') {
         return JSON.stringify(unref(cell));
       }
-
       return cell;
     };
 

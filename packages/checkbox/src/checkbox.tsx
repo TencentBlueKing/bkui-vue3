@@ -51,8 +51,8 @@ export default defineComponent({
   name: 'Checkbox',
   props: checkboxProps,
   emits: {
-    'update:modelValue': (value: CheckboxProps['modelValue']) => value !== undefined,
-    change: (value: CheckboxProps['modelValue']) => value !== undefined,
+    'update:modelValue': (value: any) => value !== undefined,
+    change: (value: any) => value !== undefined,
   },
   setup(props) {
     const [isFocus, { blur: handleBlur, focus: handleFocus }] = useFocus();

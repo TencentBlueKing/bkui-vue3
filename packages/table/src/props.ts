@@ -108,13 +108,13 @@ export const fixedType = string<`${FixedEnum}`>();
 
 export type IOverflowTooltipProp =
   | {
-      content: string | Function;
-      disabled?: boolean;
-      watchCellResize?: boolean;
-      mode?: `${OverflowModeEnum}`;
-      popoverOption?: any;
-      resizerWay?: ResizerWay;
-    }
+    content: string | Function;
+    disabled?: boolean;
+    watchCellResize?: boolean;
+    mode?: `${OverflowModeEnum}`;
+    popoverOption?: any;
+    resizerWay?: ResizerWay;
+  }
   | boolean;
 
 export type IOverflowTooltip = IOverflowTooltipProp;
@@ -210,10 +210,21 @@ export type Field = {
   name?: string;
 };
 
-export type LabelFunctionString = ((_column, _index) => string | JSX.Element) | string;
+export type LabelFunctionString =
+  | ((_column, _index) => string | number | boolean | JSX.Element)
+  | string
+  | number
+  | boolean;
 export const LabelFunctionStringType = toType<LabelFunctionString>('LabelFunctionStringType', {});
 
-export type RenderFunctionString = ({ cell, data, row, column, index, rows }) => string | JSX.Element;
+export type RenderFunctionString = ({
+  cell,
+  data,
+  row,
+  column,
+  index,
+  rows,
+}) => string | number | boolean | JSX.Element;
 export const RenderFunctionStringType = toType<RenderFunctionString>('RenderFunctionStringType', {});
 
 export type SpanFunctionString = (({ column, colIndex, row, rowIndex }) => number) | Number;
@@ -236,9 +247,9 @@ export const StringNumberType = (val: number | string) => toType<StringNumber>('
  */
 export type IColumnExplain =
   | {
-      content: LabelFunctionString;
-      head: LabelFunctionString | boolean;
-    }
+    content: LabelFunctionString;
+    head: LabelFunctionString | boolean;
+  }
   | boolean;
 
 export type Column = {
@@ -314,6 +325,18 @@ export type Colgroups = Column & {
   resizeWidth: number;
   listeners: Map<string, Function>;
 };
+
+export enum IColSortBehavior {
+  /**
+   * 列排序是相互依赖的
+   */
+  interdependent = 'interdependent',
+
+  /**
+   * 列排序是独立的
+   */
+  independent = 'independent',
+}
 
 export const tableProps = {
   /**
@@ -427,6 +450,10 @@ export const tableProps = {
    */
   // emptyText: PropTypes.string.def('暂无数据'),
   emptyText: PropTypes.string,
+  /**
+   * 单元格数据为空展示
+   */
+  emptyCellText: PropTypes.oneOfType([PropTypes.string, PropTypes.func.def(() => '')]).def(''),
 
   /**
    * bk-table-setting-content
@@ -529,10 +556,12 @@ export const tableProps = {
   resizerWay: toType<`${ResizerWay}`>('ResizerWay', {
     default: ResizerWay.DEBOUNCE,
   }),
+
   /**
    * 是否监表格尺寸变化而响应式重新计算渲染
    */
   observerResize: PropTypes.bool.def(true),
+
   // 对齐方式
   align: TableAlign,
   headerAlign: TableAlign,
@@ -543,4 +572,17 @@ export const tableProps = {
    * 需要跟随滚动或者其他样式，可以通过此配置进行覆盖
    */
   prependStyle: PropTypes.style().def({}),
+
+  /**
+   * 列排序行为
+   * independent：列与列之间的排序是独立的，互斥的
+   * interdependent：列排序是相互影响、依赖的
+   *
+   */
+  colSortBehavior: toType<IColSortBehavior>('IColSortBehavior', { default: IColSortBehavior.independent }),
+
+  /**
+   * 是否采用flex布局表格
+   */
+  isFlex: PropTypes.bool.def(true),
 };

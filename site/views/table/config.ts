@@ -57,6 +57,7 @@ export default [
       { name: 'pagination', type: 'Boolean|Object', default: 'false', desc: '分页配置, 默认值为false，不启用分页; 设置为 true，启用分页功能，默认值参考分页组件 Pagination', optional: [] },
       { name: 'remote-pagination', type: 'Boolean', default: 'false', desc: '是否启用远程分页', optional: [] },
       { name: 'empty-text', type: 'String', default: '暂无数据', desc: '空数据展示', optional: [] },
+      { name: 'empty-cell-text', type: 'String', default: '', desc: '单元格空数据展示', optional: [] },
       { name: 'settings', type: 'Object|Boolean', default: 'false', desc: 'bk-table-setting-content,用于设置表格行高、显示列...，详细参考ISettings', optional: [] },
       { name: 'row-class', type: 'String|Function', default: '', desc: '行的 class 的回调方法，也可以使用一个固定的 Object 为所有行设置一样的 Style', optional: [] },
       { name: 'row-class', type: 'String|Object|Function', default: '{}', desc: '行的 class 的回调方法，也可以使用一个固定的 Object 为所有行设置一样的 Style', optional: [] },
@@ -78,6 +79,11 @@ export default [
       { name: 'pagination-heihgt', type: 'Number', default: '42', desc: '页组件高度。在设置了分页配置之后才会生效, 用于配置分页组件的高度，在不同项目中，分页组件高度会影响表格高度计算, 这里设置为可配置项，避免自计算导致的性能问题以及不确定性样式问题', optional: [] },
       { name: 'prepend-style', type: 'CSSProperties', default: '{}', desc: '   * 插入至表格第一行之前的内容容器样式，默认样式为固定在第一行，需要跟随滚动或者其他样式，可以通过此配置进行覆盖', optional: [] },
       { name: 'stripe', type: 'Boolean', default: 'false', desc: '是否为斑马纹 Table', optional: [] },
+      {
+        name: 'colSortBehavior', type: 'string', default: 'independent', desc: ` * 列排序行为
+      * independent：列与列之间的排序是独立的，互斥的
+      * interdependent：列排序是相互影响、依赖的`, optional: ['independent', 'interdependent']
+      },
     ],
   },
   {

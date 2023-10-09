@@ -73,9 +73,9 @@ export const useClass = (
   pageData?: any[],
 ) => {
   const { getColumns } = useColumn(props, targetColumns);
-  const autoHeight = ref(200);
-  const fixHeight = ref(200);
-  const maxFixHeight = ref(200);
+  const autoHeight = ref(LINE_HEIGHT * 10);
+  const fixHeight = ref(LINE_HEIGHT * 10);
+  const maxFixHeight = ref(LINE_HEIGHT * 10);
   const headHeight = ref(LINE_HEIGHT);
   const hasScrollY = ref(false);
   const hasFooter = computed(() => props.pagination && props.data.length);
@@ -86,6 +86,7 @@ export const useClass = (
         [resolveClassName('table')]: true,
         'has-footer': hasFooter.value,
         'has-scroll-y': hasScrollY.value || props.virtualEnabled,
+        [resolveClassName('table-flex')]: props.isFlex,
       },
       resolvePropBorderToClassStr(props.border),
     ),
@@ -143,30 +144,40 @@ export const useClass = (
     width: resolveWidth(),
     maxWidth: '100%',
     height: getTableHeight(),
+    // maxHeight: props.maxHeight,
   }));
 
-  const resolvePropHeight = (height: Number | string, defaultValue: number) => {
+  const resolvePropHeight = (height: number | string, parentHeight?: number) => {
     const strHeight = String(height);
     if (/^\d+\.?\d*$/.test(strHeight)) {
-      return Number(strHeight);
+      return parseFloat(strHeight);
     }
 
     if (/^\d+\.?\d*px$/gi.test(strHeight)) {
-      return Number(strHeight.replace('px', ''));
+      return parseFloat(strHeight.replace('px', ''));
     }
 
-    if (/^\d+\.?\d*%$/gi.test(strHeight) && typeof defaultValue === 'number') {
-      const percent = Number(strHeight.replace('%', ''));
-      return (defaultValue * percent) / 100;
+    if (/^\d+\.?\d*%$/gi.test(strHeight)) {
+      if (typeof parentHeight === 'number') {
+        const percent = parseFloat(strHeight.replace('%', ''));
+        return (parentHeight * percent) / 100;
+      }
+
+      return strHeight;
     }
 
-    return defaultValue;
+    return parentHeight ?? height;
   };
 
   /** 表格外层容器样式 */
-  const contentStyle = reactive({
+  const contentStyle: {
+    display: string | boolean,
+    minHeight: string | number,
+    height: string | number,
+    maxHeight: string | number,
+  } = reactive({
     display: '',
-    'min-height': '',
+    minHeight: '',
     height: '',
     maxHeight: '',
   });
@@ -185,24 +196,45 @@ export const useClass = (
     return 0;
   };
 
-  const resolveContentStyle = rootEl => {
-    const resolveHeight = resolvePropHeight(props.height, autoHeight.value);
-    headHeight.value = getHeadHeight(rootEl);
-    const resolveMinHeight = resolvePropHeight(props.minHeight, autoHeight.value);
-    const resolveFooterHeight = props.pagination && props.data.length ? props.paginationHeight : 0;
-    const contentHeight = resolveHeight - headHeight.value - resolveFooterHeight;
-    const height = props.height !== 'auto' ? `${contentHeight}px` : false;
-    const minHeight = resolveMinHeight - headHeight.value - resolveFooterHeight;
-    const resolveMaxHeight = resolvePropHeight(props.maxHeight, undefined);
-    const maxHeight =
-      typeof resolveMaxHeight === 'number' ? `${resolveMaxHeight - headHeight.value - resolveFooterHeight}px` : false;
+  const resolveContentHeight = (resolveHeight, headHeight, resolveFooterHeight) => {
+    if (/%$/.test(`${resolveHeight}`)) {
+      return `calc(${resolveHeight} - ${headHeight + resolveFooterHeight}px)`;
+    }
 
-    Object.assign(contentStyle, {
-      display: pageData?.length ? 'block' : false,
-      'min-height': `${minHeight}px`,
-      height,
-      maxHeight,
+    if (typeof resolveHeight === 'number') {
+      const target = resolveHeight - headHeight - resolveFooterHeight;
+      return `${target > 0 ? target : 0}px`;
+    }
+
+    return resolveHeight;
+  };
+
+  const getMaxheight = (resolveHeight, maxHeightFn) => {
+    if (/^\d+\.?\d*$/.test(resolveHeight)) {
+      return `${resolveHeight}px`;
+    }
+
+    return maxHeightFn();
+  };
+
+  const resolveContentStyle = rootEl => {
+    const resolveHeight = resolvePropHeight(props.height);
+    headHeight.value = getHeadHeight(rootEl) as number;
+    const resolveMinHeight = resolvePropHeight(props.minHeight, autoHeight.value) as number;
+    const resolveFooterHeight = props.pagination && props.data.length ? props.paginationHeight : 0;
+    const contentHeight = resolveContentHeight(resolveHeight, headHeight.value, resolveFooterHeight);
+
+    const minHeight = resolveMinHeight - headHeight.value - resolveFooterHeight;
+
+    const maxHeight = getMaxheight(resolveHeight, () => {
+      const resolveMaxHeight = resolvePropHeight(props.maxHeight);
+      return resolveContentHeight(resolveMaxHeight, headHeight.value, resolveFooterHeight);
     });
+
+    contentStyle.display = pageData?.length ? 'block' : false;
+    contentStyle.minHeight = `${minHeight}px`;
+    contentStyle.height = contentHeight;
+    contentStyle.maxHeight = maxHeight;
   };
 
   onMounted(() => {
@@ -212,8 +244,6 @@ export const useClass = (
   const resetTableHeight = (rootEl: HTMLElement) => {
     if (rootEl) {
       const headHeight = getHeadHeight(rootEl);
-      const { height } = rootEl.parentElement.getBoundingClientRect();
-      autoHeight.value = height;
       const contentselector = `.${resolveClassName('table-body-content')} > table`;
       const bodySelector = `.${resolveClassName('table-body')}`;
 
@@ -221,8 +251,8 @@ export const useClass = (
       const tableBodyContent = rootEl.querySelector(contentselector) as HTMLElement;
 
       resolveContentStyle(rootEl);
-      maxFixHeight.value = (tableBody?.offsetHeight ?? height) + headHeight;
-      fixHeight.value = (tableBodyContent?.offsetHeight ?? height) + headHeight;
+      maxFixHeight.value = (tableBody?.offsetHeight ?? LINE_HEIGHT * 10) + (headHeight as number);
+      fixHeight.value = (tableBodyContent?.offsetHeight ?? LINE_HEIGHT * 10) + (headHeight as number);
       updateBorderClass(rootEl);
     }
   };
@@ -307,8 +337,7 @@ export const useInit = (props: TablePropTypes, targetColumns: ITableColumn[]) =>
     const settingFields = settings?.fields || (props.settings as Settings)?.fields || [];
     colgroups.length = 0;
     colgroups.push(
-      ...resolvedColumns.value.map(col => ({
-        ...col,
+      ...resolvedColumns.value.map(col => Object.assign({}, col, {
         calcWidth: null,
         resizeWidth: null,
         minWidth: resolveMinWidth(col),
@@ -353,7 +382,7 @@ export const useInit = (props: TablePropTypes, targetColumns: ITableColumn[]) =>
     const columnName = resolvePropVal(col, ['field', 'type'], [col, index]);
     const sort = resolveSort(col.sort);
     if (sort) {
-      return { ...(out || {}), [columnName]: sort?.value };
+      return Object.assign({}, (out || {}), { [columnName]: sort?.value });
     }
     return out;
   }, null);
@@ -578,51 +607,49 @@ export const useInit = (props: TablePropTypes, targetColumns: ITableColumn[]) =>
   const needIndexColumn = computed(() => colgroups.some(col => col.type === 'index'));
 
   const initIndexData = (keepLocalAction = false) => {
-    let preRowId = null;
-    const skipConfig = {};
-    const resolvedData = props.data.map(d => ({ [TABLE_ROW_ATTRIBUTE.ROW_UID]: uuidv4(), ...d }));
+    indexData.length = 0;
+    const resolvedData = props.data.map(d => {
+      const target = Object.assign({}, d, ({
+        [TABLE_ROW_ATTRIBUTE.ROW_UID]: uuidv4(),
+        [TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA]: d
+      }));
+      indexData.push(target);
+      return target;
+    });
 
     if (neepColspanOrRowspan.value || needSelection.value || needExpand.value || needIndexColumn.value) {
-      const copyData = resolvedData.map((item: any, index: number) => {
+      let preRowId = null;
+      const skipConfig = {};
+      indexData.length = 0;
+      resolvedData.forEach((item: any, index: number) => {
         const rowId = getRowKey(item, props, index);
-
         preRowId = rowId;
-        const target = {
-          ...item,
-          [TABLE_ROW_ATTRIBUTE.ROW_UID]: item[TABLE_ROW_ATTRIBUTE.ROW_UID] || rowId,
-          [TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA]: { ...item },
-        };
 
         if (neepColspanOrRowspan.value) {
           const cfg = getSkipConfig(item, rowId, index, skipConfig, preRowId);
-          Object.assign(target, { [TABLE_ROW_ATTRIBUTE.ROW_SKIP_CFG]: cfg });
+          Object.assign(item, { [TABLE_ROW_ATTRIBUTE.ROW_SKIP_CFG]: cfg });
         }
 
         if (needSelection.value) {
-          Object.assign(target, { [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: resolveSelection(item, rowId, index) });
+          Object.assign(item, { [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: resolveSelection(item, rowId, index) });
         }
 
         if (needIndexColumn.value) {
-          Object.assign(target, { [TABLE_ROW_ATTRIBUTE.ROW_INDEX]: index });
+          Object.assign(item, { [TABLE_ROW_ATTRIBUTE.ROW_INDEX]: index });
         }
 
         if (needExpand.value) {
-          Object.assign(target, { [TABLE_ROW_ATTRIBUTE.ROW_EXPAND]: keepLocalAction ? isRowExpand(rowId) : false });
+          Object.assign(item, { [TABLE_ROW_ATTRIBUTE.ROW_EXPAND]: keepLocalAction ? isRowExpand(rowId) : false });
         }
-
-        return target;
+        indexData.push(item);
       });
-      indexData.length = 0;
-      indexData.push(...copyData);
+
 
       if (needSelection.value) {
         initSelectionAllByData();
       }
       return;
     }
-
-    indexData.length = 0;
-    indexData.push(...resolvedData);
   };
 
   /**
@@ -726,7 +753,7 @@ export const useInit = (props: TablePropTypes, targetColumns: ITableColumn[]) =>
         skipColumnNum = colspan - 1;
       }
 
-      Object.assign(skipCfg[rowId], { ...target });
+      Object.assign(skipCfg[rowId], target);
     });
 
     return skipCfg[rowId];

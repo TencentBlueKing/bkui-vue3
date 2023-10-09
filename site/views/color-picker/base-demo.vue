@@ -7,7 +7,12 @@
     />
     <bk-color-picker
       v-model="color1"
+      class="color-picker"
       :show-value="false"
+    />
+    <bk-color-picker
+      v-model="color1"
+      :recommend-empty="false"
     />
   </div>
 </template>

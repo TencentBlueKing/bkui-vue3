@@ -47,8 +47,8 @@ export default defineComponent({
   name: 'RadioButton',
   props: radioButtonProps,
   emits: {
-    'update:modelValue': (value: RadioButtonProps['modelValue']) => value !== undefined,
-    change: (value: RadioButtonProps['modelValue']) => value !== undefined,
+    'update:modelValue': (value: any) => value !== undefined,
+    change: (value: any) => value !== undefined,
   },
   setup() {
     const [isFocused, { blur: handleBlur, focus: handleFocus }] = useFocus();

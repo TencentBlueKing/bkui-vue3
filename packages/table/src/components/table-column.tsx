@@ -70,9 +70,9 @@ export default defineComponent({
   name: 'TableColumn',
   props: TableColumnProp,
   setup(props: ITableColumn) {
-    const initColumns = inject(PROVIDE_KEY_INIT_COL, (_col: Column | Column[], _rm = false) => {}, false);
+    const initColumns = inject(PROVIDE_KEY_INIT_COL, (_col: Column | Column[], _rm = false) => { }, false);
     const bkTableCache = inject(PROVIDE_KEY_TB_CACHE, { queueStack: (_, fn) => fn?.() });
-    const column = reactive({ ...props, field: props.prop || props.field });
+    const column = reactive(Object.assign({}, props, { field: props.prop || props.field }));
     return {
       initColumns,
       bkTableCache,
@@ -113,11 +113,10 @@ export default defineComponent({
             let skipValidateKey0 = true;
             if (node.type?.name === 'TableColumn') {
               skipValidateKey0 = Object.hasOwnProperty.call(node.props || {}, 'key');
-              const resolveProp = {
-                ...node.props,
+              const resolveProp = Object.assign({}, node.props, {
                 field: node.props.prop || node.props.field,
                 render: node.children?.default,
-              };
+              });
               sortColumns.push(unref(resolveProp));
             }
 
@@ -135,11 +134,10 @@ export default defineComponent({
       }
     },
     updateColumnDefineByIndex(unmounted = false) {
-      const resolveProp = {
-        ...this.$props,
+      const resolveProp = Object.assign({}, this.$props, {
         field: this.$props.prop || this.$props.field,
         render: this.$slots.default,
-      };
+      });
       this.initColumns(unref(resolveProp) as unknown as Column, unmounted);
     },
   },

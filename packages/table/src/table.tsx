@@ -49,16 +49,17 @@ import {
   PROVIDE_KEY_INIT_COL,
   PROVIDE_KEY_TB_CACHE,
   SCROLLY_WIDTH,
+  SORT_OPTION,
   TABLE_ROW_ATTRIBUTE,
 } from './const';
 import { EMIT_EVENT_TYPES, EMIT_EVENTS, EVENTS } from './events';
 import usePagination from './plugins/use-pagination';
 import useScrollLoading from './plugins/use-scroll-loading';
-import { tableProps } from './props';
+import { IColSortBehavior, tableProps } from './props';
 import TableRender from './render';
 import useColumn from './use-column';
 import { useClass, useInit } from './use-common';
-import { getColumnSourceData, getRowSourceData, observerResize, resolveColumnWidth } from './utils';
+import { getColumnSourceData, getRowSourceData, observerResize, resolveColumnWidth, resolvePropVal } from './utils';
 
 export default defineComponent({
   name: 'Table',
@@ -68,14 +69,16 @@ export default defineComponent({
     const t = useLocale('table');
 
     let columnSortFn: any = null;
-    let activeSortColumn: any = null;
     let columnFilterFn: any = null;
     const bkTableCache = new BkTableCache();
 
     const targetColumns = reactive([]);
-    const { initColumns } = useColumn(props, targetColumns);
+    const { initColumns, getActiveColumn } = useColumn(props, targetColumns);
     provide(PROVIDE_KEY_INIT_COL, initColumns);
     provide(PROVIDE_KEY_TB_CACHE, bkTableCache);
+
+    let activeSortColumn: any = getActiveColumn();
+
 
     const root = ref();
     const refVirtualRender = ref();
@@ -164,19 +167,23 @@ export default defineComponent({
     /**
      * 监听Table 派发的相关事件
      */
-    tableRender
-      .on(EVENTS.ON_SORT_BY_CLICK, (args: any) => {
-        const { sortFn, column, index, type } = args;
-        if (typeof sortFn === 'function') {
-          columnSortFn = sortFn;
-          activeSortColumn = column;
-          Object.assign(activeSortColumn, { [COLUMN_ATTRIBUTE.SORT_TYPE]: type });
-          resolvePageData(columnFilterFn, columnSortFn, activeSortColumn);
-          // refVirtualRender.value?.reset?.();
+    tableRender.on(EVENTS.ON_SORT_BY_CLICK, (args: any) => {
+      const { sortFn, column, index, type } = args;
+      if (typeof sortFn === 'function') {
+        columnSortFn = sortFn;
+        if (props.colSortBehavior === IColSortBehavior.independent) {
+          if (activeSortColumn !== column) {
+            const columnName = resolvePropVal(activeSortColumn, ['field', 'type'], [activeSortColumn]);
+            Object.assign(reactiveSchema.defaultSort, { [columnName]: SORT_OPTION.NULL });
+          }
         }
+        activeSortColumn = column;
+        Object.assign(activeSortColumn, { [COLUMN_ATTRIBUTE.SORT_TYPE]: type });
+        resolvePageData(columnFilterFn, columnSortFn, activeSortColumn);
+      }
 
-        ctx.emit(EMIT_EVENTS.COLUMN_SORT, { column: unref(column[COLUMN_ATTRIBUTE.COL_SOURCE_DATA]), index, type });
-      })
+      ctx.emit(EMIT_EVENTS.COLUMN_SORT, { column: unref(column[COLUMN_ATTRIBUTE.COL_SOURCE_DATA]), index, type });
+    })
       .on(EVENTS.ON_FILTER_CLICK, (args: any) => {
         const { filterFn, checked, column, index } = args;
         if (typeof filterFn === 'function') {
@@ -374,6 +381,7 @@ export default defineComponent({
       ...(props.prependStyle || {}),
     }));
 
+
     const renderPrepend = () => {
       if (ctx.slots.prepend) {
         return (
@@ -411,8 +419,9 @@ export default defineComponent({
         <VirtualRender
           ref={refVirtualRender}
           lineHeight={tableRender.getRowHeight}
+          height={contentStyle.height}
           class={tableBodyClass.value}
-          style={contentStyle}
+          wrapperStyle={contentStyle}
           list={pageData}
           {...scrollClass.value}
           contentClassName={tableBodyContentClass.value}

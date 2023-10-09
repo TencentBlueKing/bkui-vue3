@@ -4,8 +4,8 @@
       :columns="columns"
       :data="tableData"
       :settings="settings"
-      :max-height="maxHeight"
       :show-overflow-tooltip="overflowTooltip"
+      empty-cell-text="--"
       stripe
       @dblclick="handleDblClick"
       @column-sort="handleSortBy"
@@ -13,31 +13,61 @@
       @cell-dblclick="handleCellDblclick"
       @row-mouse-enter="handleMouseEnter"
       @row-mouse-leave="handleMouseLeave"
-    >
-      <template #setting>
-        <h1>Setting Content Slot</h1>
-      </template>
-    </bk-table>
+    />
   </div>
 </template>
 
 <script lang="jsx">
-  import { random } from 'lodash';
   import { defineComponent } from 'vue';
 
-  import { DATA_COLUMNS, DATA_TABLE, DATA_FIX_TABLE } from './options';
+  import { DATA_COLUMNS } from './options';
+  const DATA_TABLE = [
+    {
+      ip: '192.168.0.1-2018-05-25 15:02:241',
+      source: false,
+      status: '创建中',
+      create_time: '2018-05-25 15:02:241',
+    },
+    {
+      ip: '192.168.0.2',
+      source: null,
+      status: '正常',
+      create_time: undefined,
+      selected: false,
+    },
+    {
+      ip: '192.168.0.3',
+      source: 'QQ',
+      status: '',
+      create_time: '2018-05-25 15:02:243',
+      selected: null,
+    },
+    {
+      ip: '192.168.0.3',
+      source: 0,
+      status: '',
+      create_time: '2018-05-25 15:02:244',
+      selected: true,
+    },
+    {
+      ip: '192.168.0.3',
+      source: 'QQ',
+      status: '创建中',
+      create_time: '2018-05-25 15:02:24',
+      selected: false,
+    },
+  ];
   export default defineComponent({
     components: {},
     data() {
       return {
-        maxHeight: 300,
         isLoading: false,
-        tableData: DATA_FIX_TABLE.map((d, index) => Object.assign({}, d, { msg: index * random(0, 20, true) })),
+        tableData: DATA_TABLE,
         columns: [...DATA_COLUMNS],
         overflowTooltip: {
           popoverOption: {
-            maxWidth: 400
-          }
+            maxWidth: 400,
+          },
         },
         settings: {
           fields: [
