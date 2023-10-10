@@ -167,9 +167,7 @@ export default defineComponent({
               ) : (
                 <div class={resolveClassName('modal-footer')}>{this.$slots.footer?.() ?? ''}</div>
               )}
-              <div class={[resolveClassName('modal-close'), this.closeIcon ? '' : 'close-icon']}>
-                {this.$slots.close?.() ?? ''}
-              </div>
+              {this.closeIcon && <div class={resolveClassName('modal-close')}>{this.$slots.close?.() ?? ''}</div>}
             </div>
           ) : (
             ''
