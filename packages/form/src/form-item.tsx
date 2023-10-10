@@ -375,7 +375,7 @@ export default defineComponent({
 
     const renderLabel = () => {
       if (this.$slots.label) {
-        return this.$slots.label();
+        return <span>{this.$slots.label()}</span>;
       }
       if (this.description) {
         return (
@@ -389,7 +389,7 @@ export default defineComponent({
           </span>
         );
       }
-      return this.label;
+      return <span>{this.label}</span>;
     };
 
     const renderError = () => {
