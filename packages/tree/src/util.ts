@@ -30,6 +30,7 @@ import { NODE_ATTRIBUTES } from './constant';
 import { TreePropTypes } from './props';
 
 const DEFAULT_LEVLE_LINE = '1px dashed #c3cdd7';
+export type IFlatData = { data: any[], schema: WeakMap<Object, any> };
 
 /**
  * 获取配置项可为Bool|String|Function类型，如果为Bool则配置默认值
@@ -96,10 +97,6 @@ const getStringOrFuncStr = (item: any, props: TreePropTypes, key: string, args: 
  */
 export const getLabel = (item: any, props: TreePropTypes) => getStringOrFuncStr(item, props, 'label');
 
-const getSchemaVal = (schema: Map<string, any>, uuid: string) => (schema as Map<string, any>).get(uuid) || {};
-
-const getNodeAttr = (schema: Map<string, any>, uuid: string, key: string) => getSchemaVal(schema, uuid)?.[key];
-
 /**
  * 根据Props获取Tree样式设置
  * @param item
@@ -125,17 +122,17 @@ export const getTreeStyle = (item: any, props: TreePropTypes) => {
  * @param props
  * @returns
  */
-export const getNodeItemStyle: any = (item: any, props: TreePropTypes, flatData: any = {}) => {
+export const getNodeItemStyle: any = (item: any, props: TreePropTypes, flatData: IFlatData) => {
   const { schema } = flatData;
-  const depth = getNodeAttr(schema as Map<string, any>, item[NODE_ATTRIBUTES.UUID], NODE_ATTRIBUTES.DEPTH);
+  const depth = schema.get(item)?.[NODE_ATTRIBUTES.DEPTH];
   return {
     '--depth': depth,
     ...(typeof props.levelLine === 'function'
       ? {
-          '--level-line': getPropsOneOfBoolValueWithDefault(props, 'levelLine', item, DEFAULT_LEVLE_LINE, null, [
-            'node',
-          ]),
-        }
+        '--level-line': getPropsOneOfBoolValueWithDefault(props, 'levelLine', item, DEFAULT_LEVLE_LINE, null, [
+          'node',
+        ]),
+      }
       : {}),
   };
 };
@@ -145,9 +142,9 @@ export const getNodeItemStyle: any = (item: any, props: TreePropTypes, flatData:
  * @param item
  * @returns
  */
-export const getNodeItemClass = (item: any, schema: any, props: TreePropTypes) => {
+export const getNodeItemClass = (item: any, schema: WeakMap<Object, any>, props: TreePropTypes) => {
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  const { __is_root, __is_open } = getSchemaVal(schema as Map<string, any>, item[NODE_ATTRIBUTES.UUID]) || {};
+  const { __is_root, __is_open } = schema.get(item) || {};
   return {
     'is-root': __is_root,
     'bk-tree-node': true,
@@ -162,9 +159,9 @@ export const getNodeItemClass = (item: any, schema: any, props: TreePropTypes) =
  * @param item
  * @returns
  */
-export const getNodeRowClass = (item: any, schema: any) => {
+export const getNodeRowClass = (item: any, schema: WeakMap<Object, any>) => {
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  const { __is_checked, __is_selected } = getSchemaVal(schema as Map<string, any>, item[NODE_ATTRIBUTES.UUID]) || {};
+  const { __is_checked, __is_selected } = schema.get(item) || {};
   return {
     'is-checked': __is_checked,
     'is-selected': __is_selected,
@@ -208,14 +205,17 @@ export const resolveNodeItem = (node: any) => {
     return { __IS_NULL: true };
   }
 
-  if (typeof node === 'string' || typeof node === 'number' || typeof node === 'symbol') {
-    return { [NODE_ATTRIBUTES.UUID]: node };
-  }
-
-  if (Object.prototype.hasOwnProperty.call(node, NODE_ATTRIBUTES.UUID)) {
-    return node;
-  }
-
-  console.error('setNodeAction Error: node id cannot found');
   return node;
+};
+
+export const resolvePropIsMatched = (node, prop, id) => {
+  if (Array.isArray(prop)) {
+    return prop.some(item => resolvePropIsMatched(node, item, id));
+  }
+
+  if (typeof prop === 'string' || typeof prop === 'number') {
+    return prop === id;
+  }
+
+  return node === prop;
 };
