@@ -225,7 +225,8 @@ export default (props: TreePropTypes) => {
               [NODE_ATTRIBUTES.IS_ASYNC]: getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_ASYNC),
               [NODE_ATTRIBUTES.IS_LOADING]: getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_LOADING),
               [NODE_ATTRIBUTES.IS_INDETERMINATE]: false
-            })
+            });
+
             order += 1;
             outputData.push(item);
 

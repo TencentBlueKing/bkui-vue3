@@ -30,6 +30,7 @@ import { NODE_ATTRIBUTES } from './constant';
 import { TreePropTypes } from './props';
 
 const DEFAULT_LEVLE_LINE = '1px dashed #c3cdd7';
+export type IFlatData = { data: any[], schema: WeakMap<Object, any> }
 
 /**
  * 获取配置项可为Bool|String|Function类型，如果为Bool则配置默认值
@@ -121,7 +122,7 @@ export const getTreeStyle = (item: any, props: TreePropTypes) => {
  * @param props
  * @returns
  */
-export const getNodeItemStyle: any = (item: any, props: TreePropTypes, flatData: { data: any[], schema: WeakMap<Object, any> }) => {
+export const getNodeItemStyle: any = (item: any, props: TreePropTypes, flatData: IFlatData) => {
   const { schema } = flatData;
   const depth = schema.get(item)?.[NODE_ATTRIBUTES.DEPTH];
   return {
@@ -217,4 +218,4 @@ export const resolvePropIsMatched = (node, prop, id) => {
   }
 
   return node === prop;
-}
+};

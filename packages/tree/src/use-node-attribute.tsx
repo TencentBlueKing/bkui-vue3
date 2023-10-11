@@ -71,7 +71,7 @@ export default (flatData: {
     };
 
     setNodeAttr(getNodeById(id), attr, val, id);
-  }
+  };
 
   const getNodePath = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.PATH);
   const getNodeId = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.UUID);
@@ -86,7 +86,7 @@ export default (flatData: {
   const getNodeAttrById = (id: string, attr: string) => {
     const target = flatData.data.find((item) => getNodeId(item) === id);
     return getNodeAttr(target, attr);
-  }
+  };
 
   const isRootNode = (node: any | string) => {
     if (typeof node === 'string') {
@@ -100,12 +100,12 @@ export default (flatData: {
   const getNodeParentIdById = (id: string) => {
     const target = flatData.data.find((item) => getNodeId(item) === id);
     return getNodeParentId(target);
-  }
+  };
 
   const getNodePathById = (id: string) => {
     const target = flatData.data.find((item) => getNodeId(item) === id);
     return getNodePath(target);
-  }
+  };
 
 
 

@@ -33,11 +33,11 @@ import { EVENTS, NODE_ATTRIBUTES } from './constant';
 import { TreePropTypes } from './props';
 import useNodeAsync from './use-node-async';
 import useNodeAttribute from './use-node-attribute';
-import { getLabel, getNodeItemClass, getNodeItemStyle, getNodeRowClass, resolveNodeItem } from './util';
+import { IFlatData, getLabel, getNodeItemClass, getNodeItemStyle, getNodeRowClass, resolveNodeItem } from './util';
 export default (
   props: TreePropTypes,
   ctx,
-  flatData: { data: any[]; schema: WeakMap<Object, any> },
+  flatData: IFlatData,
   _renderData,
   initOption,
 ) => {
