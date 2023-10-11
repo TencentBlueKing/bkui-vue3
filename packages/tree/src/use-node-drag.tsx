@@ -34,11 +34,11 @@ import useNodeAttribute from './use-node-attribute';
 export default (props: TreePropTypes, ctx, root?, flatData?) => {
   const {
     getSourceNodeByUID,
-    getNodeParentIdById,
     getParentNodeData,
+    getNodeParentIdById,
     extendNodeAttr,
-    getNodeAttr,
-    getNodePath,
+    getNodeAttrById,
+    getNodePathById,
     isRootNode,
   } = useNodeAttribute(flatData, props);
   const { resolveClassName } = usePrefix();
@@ -121,8 +121,8 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
   };
 
   const isNodeSortable = (sourceId: string, targetId: string) => {
-    const sourcePath: string = getNodePath({ [NODE_ATTRIBUTES.UUID]: sourceId });
-    const targetPath: string = getNodePath({ [NODE_ATTRIBUTES.UUID]: targetId });
+    const sourcePath: string = getNodePathById(sourceId);
+    const targetPath: string = getNodePathById(targetId);
     // if (!sourcePath || targetPath) {
     //   return false;
     // }
@@ -147,8 +147,8 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
     const sourceNodeParent = getParentNodeData(sourceId);
     const targetNodeParent = getParentNodeData(targetId);
 
-    const sourceNodeIndex = getNodeAttr({ [NODE_ATTRIBUTES.UUID]: sourceId }, NODE_ATTRIBUTES.INDEX);
-    const targetNodeIndex = getNodeAttr({ [NODE_ATTRIBUTES.UUID]: targetId }, NODE_ATTRIBUTES.INDEX);
+    const sourceNodeIndex = getNodeAttrById(sourceId, NODE_ATTRIBUTES.INDEX);
+    const targetNodeIndex = getNodeAttrById(targetId, NODE_ATTRIBUTES.INDEX);
 
     sourceNodeParent?.[props.children].splice(sourceNodeIndex, 1, targetNodeData);
     targetNodeParent?.[props.children].splice(targetNodeIndex, 1, sourceNodeData);
@@ -159,13 +159,13 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
     const targetNodeData = getSourceNodeByUID(targetNodeId);
 
     let parentNode = null;
-    if (isRootNode({ [NODE_ATTRIBUTES.UUID]: sourceNodeId })) {
+    if (isRootNode(sourceNodeId)) {
       parentNode = props.data;
     } else {
       const sourceNodeParentId = getNodeParentIdById(sourceNodeId);
       if (sourceNodeParentId !== undefined && sourceNodeParentId !== null) {
         parentNode = getSourceNodeByUID(sourceNodeParentId);
-        const sourceNodeIndex = getNodeAttr({ [NODE_ATTRIBUTES.UUID]: sourceNodeId }, NODE_ATTRIBUTES.INDEX);
+        const sourceNodeIndex = getNodeAttrById(sourceNodeId, NODE_ATTRIBUTES.INDEX);
         parentNode?.[props.children].splice(sourceNodeIndex, 1);
       }
     }
