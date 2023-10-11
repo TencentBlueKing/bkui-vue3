@@ -54,7 +54,7 @@ export const enum NODE_ATTRIBUTES {
   DEPTH = '__depth',
   INDEX = '__index',
   UUID = '__uuid',
-  PARENT_ID = '__parent_id',
+  PARENT = '__parent',
   HAS_CHILD = '__has_child',
   PATH = '__path',
   IS_ROOT = '__is_root',
@@ -69,7 +69,7 @@ export const enum NODE_ATTRIBUTES {
   IS_ASYNC = '__is_async',
   IS_LOADING = '__is_loading',
   TREE_NODE_ATTR = '__attr__',
-  SOURCE_ITEM = '__source_item__',
+  IS_INDETERMINATE = '__is_indeterminate',
 }
 
 export const NODE_SOURCE_ATTRS = {

@@ -44,7 +44,7 @@ export default defineComponent({
   props: treeProps,
   emits: TreeEmitEventsType,
   setup(props, ctx) {
-    const { flatData, schemaValues, onSelected, registerNextLoop } = useTreeInit(props);
+    const { flatData, onSelected, registerNextLoop } = useTreeInit(props);
     const {
       setNodeAttr,
       checkNodeIsOpen,
@@ -74,10 +74,10 @@ export default defineComponent({
       if (isSearchActive.value) {
         const treeUiFilter = () =>
           isTreeUI
-            ? schemaValues.value.some(
-                (schema: any) =>
-                  schema[NODE_ATTRIBUTES.PATH]?.startsWith(getNodePath(item)) && schema[NODE_ATTRIBUTES.IS_MATCH],
-              )
+            ? flatData.data.some(
+              (data: any) =>
+                getNodePath(data)?.startsWith(getNodePath(item)) && getNodeAttr(item, NODE_ATTRIBUTES.IS_MATCH),
+            )
             : false;
 
         return getNodeAttr(item, NODE_ATTRIBUTES.IS_MATCH) || treeUiFilter();
@@ -90,7 +90,7 @@ export default defineComponent({
     const renderData = computed(() => flatData.data.filter(item => checkNodeIsOpen(item) && filterFn(item)));
 
     const { renderTreeNode, handleTreeNodeClick, setNodeOpened, setOpen, setNodeAction, setSelect, asyncNodeClick } =
-      useNodeAction(props, ctx, flatData, renderData, schemaValues, { registerNextLoop });
+      useNodeAction(props, ctx, flatData, renderData, { registerNextLoop });
 
     const root = ref();
     // const isScrolling = ref(false);
@@ -106,31 +106,10 @@ export default defineComponent({
 
     onSelected((newData: any) => {
       setSelect(newData, true, props.autoOpenParentNode);
-      scrollRending();
     });
 
-    const scrollRending = () => {
-      // isScrolling.value = true;
-      // // root.value.scrollTo({
-      // //   left: 0,
-      // //   top: 0,
-      // // });
-      // setTimeout(() => {
-      //   // root.value.scrollTo({
-      //   //   left: treeScroll?.scrollLeft,
-      //   //   top: treeScroll?.scrollTop,
-      //   // });
-      //   setTimeout(() => {
-      //     isScrolling.value = false;
-      //   });
-      // });
-    };
 
     const getData = () => flatData;
-    // const treeScroll: {
-    //   scrollLeft?: number,
-    //   scrollTop?: number
-    // } = {};
 
     ctx.expose({
       handleTreeNodeClick,

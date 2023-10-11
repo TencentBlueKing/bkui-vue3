@@ -106,7 +106,7 @@ export const treeProps = {
    * 当前节点标识图标
    * 默认 true
    */
-  prefixIcon: PropTypes.oneOfType([PropTypes.func.def(() => {}), PropTypes.bool.def(false)]).def(true),
+  prefixIcon: PropTypes.oneOfType([PropTypes.func.def(() => { }), PropTypes.bool.def(false)]).def(true),
 
   /**
    * 异步加载节点数据配置
@@ -199,6 +199,8 @@ export const treeProps = {
    */
   showCheckbox: PropTypes.bool.def(false),
 
+  checked: PropTypes.arrayOf(PropTypes.any).def([]),
+
   /**
    * 是否显示节点类型Icon
    */
@@ -207,7 +209,7 @@ export const treeProps = {
   /**
    * 默认选中的节点id，selectable为false时无效
    */
-  selected: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.object]),
+  selected: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.object]).def([]),
 
   /**
    * 是否自动检查当前节点是否有子节点
