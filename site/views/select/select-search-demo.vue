@@ -55,12 +55,14 @@
       multiple
       filterable
       :remote-method="remoteMethod"
+      allow-create
     >
       <bk-option
-        v-for="(item) in list"
+        v-for="(item, index) in list"
         :id="item.value"
         :key="item.value"
         :name="item.label"
+        :order="index"
       />
     </bk-select>
   </div>
