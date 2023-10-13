@@ -12,9 +12,9 @@
 @warning-background-color: #fff4e2;
 @warning-icon-color: #ff9c01;
 
-@error-border-color: #ffd2d2;
-@error-background-color: #ffeded;
-@error-icon-color: #ea3636;
+@danger-border-color: #ffd2d2;
+@danger-background-color: #ffeded;
+@danger-icon-color: #ea3636;
 
 .@{bk-prefix}-alert {
   position: relative;
@@ -67,14 +67,24 @@
   }
 }
 
-.@{bk-prefix}-alert-error {
-  background-color: @error-background-color;
-  border-color: @error-border-color;
+.@{bk-prefix}-alert-danger {
+  background-color: @danger-background-color;
+  border-color: @danger-border-color;
 
   .@{bk-prefix}-alert-icon-info {
-    color: @error-icon-color;
+    color: @danger-icon-color;
   }
 }
+// 兼容历史 prop theme 的配置 error 调整为danger
+.@{bk-prefix}-alert-error {
+  background-color: @danger-background-color;
+  border-color: @danger-border-color;
+
+  .@{bk-prefix}-alert-icon-info {
+    color: @danger-icon-color;
+  }
+}
+// 兼容历史 prop theme 的配置 error 调整为danger
 
 .@{bk-prefix}-alert-content {
   display: flex;
