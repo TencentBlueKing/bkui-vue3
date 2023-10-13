@@ -213,7 +213,8 @@ export default (
     updateParentChecked(item, value);
     ctx.emit(
       EVENTS.NODE_CHECKED,
-      flatData.data.filter((t: any) => isNodeChecked(t)).map((n: any) => n[NODE_ATTRIBUTES.UUID]),
+      flatData.data.filter((t: any) => isNodeChecked(t)),
+      flatData.data.filter((t: any) => isIndeterminate(t)),
     );
   };
 
