@@ -30,6 +30,7 @@ import { computed, ComputedRef, inject, provide, reactive, watch } from 'vue';
 import { ConfigProviderProps } from './config-provider';
 import { defaultRootConfig, rootProviderKey } from './token';
 
+export { defaultRootConfig, rootProviderKey };
 export const setPrefixVariable = (prefix: string) => {
   document.documentElement.style.setProperty('--bk-prefix', prefix || defaultRootConfig.prefix);
 };
