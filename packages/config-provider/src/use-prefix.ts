@@ -29,6 +29,7 @@ import { computed, inject } from 'vue';
 import { ConfigProviderProps } from './config-provider';
 import { defaultRootConfig, rootProviderKey } from './token';
 
+export { defaultRootConfig, rootProviderKey };
 /**
  *
  * @returns 组件前缀
