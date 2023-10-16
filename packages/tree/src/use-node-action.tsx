@@ -33,12 +33,19 @@ import { EVENTS, NODE_ATTRIBUTES } from './constant';
 import { TreePropTypes } from './props';
 import useNodeAsync from './use-node-async';
 import useNodeAttribute from './use-node-attribute';
-import { getLabel, getNodeItemClass, getNodeItemStyle, getNodeRowClass, resolveNodeItem } from './util';
-export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, initOption) => {
+import { IFlatData, getLabel, getNodeItemClass, getNodeItemStyle, getNodeRowClass, resolveNodeItem } from './util';
+export default (
+  props: TreePropTypes,
+  ctx,
+  flatData: IFlatData,
+  _renderData,
+  initOption,
+) => {
   // const checkedNodes = [];
   let selectedNodeId = props.selected;
   const {
     setNodeAttr,
+    setNodeAttrById,
     getNodePath,
     getSchemaVal,
     getNodeAttr,
@@ -172,41 +179,48 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
   const updateParentChecked = (item: any, isChecked) => {
     const parent = getParentNode(item);
     if (parent) {
-      setNodeAttr(parent, NODE_ATTRIBUTES.IS_CHECKED, isChecked);
+      const isNeedChecked = isChecked ? isChecked : (getChildNodes(parent) || [])
+        .some((node: any) => isNodeChecked(node));
+
+      setNodeAttr(parent, NODE_ATTRIBUTES.IS_CHECKED, isNeedChecked);
+
+      setNodeAttr(parent, NODE_ATTRIBUTES.IS_INDETERMINATE, (getChildNodes(parent) || [])
+        .some((node: any) => !isNodeChecked(node)));
+
       if (!isRootNode(parent)) {
         updateParentChecked(parent, isChecked);
       }
     }
   };
 
-  const deepUpdateChildNode = (node: any, attr: string, value: any) => {
-    getChildNodes(node).forEach((id: string) => {
-      setNodeAttr({ [NODE_ATTRIBUTES.UUID]: id }, attr, value);
-      deepUpdateChildNode({ [NODE_ATTRIBUTES.UUID]: id }, attr, value);
+  const deepUpdateChildNode = (node: any, attr: string | string[], value: any | any[]) => {
+    getChildNodes(node).forEach((chid: any) => {
+      if (Array.isArray(attr)) {
+        attr.forEach((val, index) => {
+          setNodeAttr(chid, val, value[index]);
+        });
+      } else {
+        setNodeAttr(chid, attr, value);
+      }
+
+      deepUpdateChildNode(chid, attr, value);
     });
   };
 
   const handleNodeItemCheckboxChange = (item: any, value: boolean) => {
     setNodeAttr(item, NODE_ATTRIBUTES.IS_CHECKED, !!value);
-    deepUpdateChildNode(item, NODE_ATTRIBUTES.IS_CHECKED, !!value);
+    deepUpdateChildNode(item, [NODE_ATTRIBUTES.IS_CHECKED, NODE_ATTRIBUTES.IS_INDETERMINATE], [!!value, false]);
     updateParentChecked(item, value);
     ctx.emit(
       EVENTS.NODE_CHECKED,
-      schemaValues.value.filter((t: any) => isNodeChecked(t)).map((n: any) => n[NODE_ATTRIBUTES.UUID]),
+      flatData.data.filter((t: any) => isNodeChecked(t)),
+      flatData.data.filter((t: any) => isIndeterminate(t)),
     );
   };
 
   const isIndeterminate = (item: any) =>
-    isNodeChecked(item) &&
-    !schemaValues.value
-      .filter(node => getNodePath(node)?.startsWith(getNodePath(item)))
-      .every(filterNode => isNodeChecked(filterNode));
+    isNodeChecked(item) && getNodeAttr(item, NODE_ATTRIBUTES.IS_INDETERMINATE);
 
-  const isNodeItemChecked = (item: any) =>
-    isNodeChecked(item) ||
-    schemaValues.value
-      .filter(node => getNodePath(node)?.startsWith(getNodePath(item)))
-      .some(filterNode => isNodeChecked(filterNode));
 
   const getCheckboxRender = (item: any) => {
     if (!props.showCheckbox) {
@@ -216,7 +230,7 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
     return (
       <BkCheckbox
         size='small'
-        modelValue={isNodeItemChecked(item)}
+        modelValue={isNodeChecked(item)}
         indeterminate={isIndeterminate(item)}
         onChange={(val: unknown) => handleNodeItemCheckboxChange(item, !!val)}
       ></BkCheckbox>
@@ -243,8 +257,7 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
 
     if (fireEmit) {
       const emitEvent: string = isItemOpen(item) ? EVENTS.NODE_EXPAND : EVENTS.NODE_COLLAPSE;
-      const source = getNodeAttr(item, NODE_ATTRIBUTES.SOURCE_ITEM);
-      ctx.emit(emitEvent, source, resolveScopedSlotParam(item), getSchemaVal(item[NODE_ATTRIBUTES.UUID]), e);
+      ctx.emit(emitEvent, item, resolveScopedSlotParam(item), getSchemaVal(item), e);
     }
   };
 
@@ -281,8 +294,8 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
       if (isOpen) {
         setNodeAction(resolvedItem, NODE_ATTRIBUTES.IS_OPEN, true);
         if (!isRootNode(resolvedItem)) {
-          const parentId = getNodeAttr(resolvedItem, NODE_ATTRIBUTES.PARENT_ID);
-          setOpen(parentId, true, true);
+          const parent = getParentNode(resolvedItem);
+          setOpen(parent, true, true);
         }
       } else {
         setNodeOpened(resolvedItem, false, null, false);
@@ -329,31 +342,36 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
     handleTreeNodeClick(node, e);
   };
 
-  const setSelect = (uuid: any, selected = true, autoOpen = true) => {
-    const nodeList = Array.isArray(uuid) ? uuid : [uuid];
+  const setSelect = (nodes: any, selected = true, autoOpen = true) => {
+    const nodeList = Array.isArray(nodes) ? nodes : [nodes];
     if (!nodeList.length) {
       return;
     }
 
-    const resolvedItem = resolveNodeItem(nodeList[0]);
+    let resolvedItem = resolveNodeItem(nodeList[0]);
+    if (typeof resolvedItem === 'string' || typeof resolvedItem === 'number' || typeof resolvedItem === 'symbol') {
+      resolvedItem = flatData.data.find(item => getNodeId(item) === resolvedItem)
+        ?? { [NODE_ATTRIBUTES.IS_NULL]: true };
+    }
+
     if (resolvedItem[NODE_ATTRIBUTES.IS_NULL]) {
       return;
     }
 
     if (
       !props.selectable ||
-      (typeof props.selectable === 'function' && !props.selectable(uuid)) ||
-      (props.disabledFolderSelectable && uuid?.is_folder === true)
+      (typeof props.selectable === 'function' && !props.selectable(nodes)) ||
+      (props.disabledFolderSelectable && resolvedItem.is_folder === true)
     ) {
       console.warn('props.selectable is false or undefined, please set selectable with true');
       return;
     }
     if (selectedNodeId !== null && selectedNodeId !== undefined) {
-      setNodeAttr({ [NODE_ATTRIBUTES.UUID]: selectedNodeId }, NODE_ATTRIBUTES.IS_SELECTED, !selected);
+      setNodeAttrById(selectedNodeId, NODE_ATTRIBUTES.IS_SELECTED, !selected);
     }
 
     if (props.selected && props.selected !== selectedNodeId) {
-      setNodeAttr({ [NODE_ATTRIBUTES.UUID]: props.selected }, NODE_ATTRIBUTES.IS_SELECTED, !selected);
+      setNodeAttrById(props.selected, NODE_ATTRIBUTES.IS_SELECTED, !selected);
     }
 
     setNodeAttr(resolvedItem, NODE_ATTRIBUTES.IS_SELECTED, selected);
@@ -421,8 +439,7 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
 
     if (nodeActions.includes('click')) {
       const eventName: string = EVENTS.NODE_CLICK;
-      const source = getNodeAttr(item, NODE_ATTRIBUTES.SOURCE_ITEM);
-      ctx.emit(eventName, source, resolveScopedSlotParam(item), getSchemaVal(item[NODE_ATTRIBUTES.UUID]), e);
+      ctx.emit(eventName, item, resolveScopedSlotParam(item), getSchemaVal(item), e);
     }
   };
 
@@ -451,7 +468,7 @@ export default (props: TreePropTypes, ctx, flatData, _renderData, schemaValues, 
     const nextLevel = parseInt(lastLevel, 10);
     paths.push(`${nextLevel + 1}`);
     const nextNodePath = paths.join('-');
-    return schemaValues.value.some((val: any) => val[NODE_ATTRIBUTES.PATH] === nextNodePath);
+    return flatData.data.some((val: any) => getNodePath(val) === nextNodePath);
   };
 
   /**

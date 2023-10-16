@@ -33,11 +33,12 @@
   appearance: none;
   align-items: center;
   justify-content: center;
-  
+
   each(@themeSelectors, {
     @color: '@{value}-color';
     @hoverColor: 'button-@{value}-hover-color';
     @activeColor: 'button-@{value}-active-color';
+
     &.@{bk-prefix}-button-@{value} {
       background-color: @@color;
       color: @white-color;
@@ -64,22 +65,31 @@
           border-color: @@hoverColor;
           color: @white-color;
         }
+
+        &:active {
+          background-color: @@activeColor;
+          border-color: @@activeColor;
+          color: @white-color;
+        }
       }
 
       &.is-text {
         color: @@color;
         background-color: transparent;
         border: none;
+
         &:not(.is-disabled):hover {
           color: @@hoverColor;
         }
       }
+
       &.is-disabled {
         &:not(.is-text) {
           background-color: @disable-color;
           color: @white-color;
           border-color: @disable-color;
         }
+
         color: @disable-color;
         cursor: not-allowed;
       }
@@ -92,81 +102,83 @@
         color: @white-color;
       }
     }
-  })
 
-  
-    each(@sizeSelectors, {
-    @sizeBtnHeight: '@{value}BtnHeight';
-    @sizeBtnPadding: '@{value}BtnPadding';
-    @sizeBtnFontSize: '@{value}BtnFontSize';
-    &.@{bk-prefix}-button-@{value} {
-      height: @@sizeBtnHeight;
-      padding: @@sizeBtnPadding;
-      font-size: @@sizeBtnFontSize;
+  }) each(@sizeSelectors, {
+  @sizeBtnHeight: '@{value}BtnHeight';
+  @sizeBtnPadding: '@{value}BtnPadding';
+  @sizeBtnFontSize: '@{value}BtnFontSize';
+
+  &.@{bk-prefix}-button-@{value} {
+    height: @@sizeBtnHeight;
+    padding: @@sizeBtnPadding;
+    font-size: @@sizeBtnFontSize;
+  }
+});
+
+.@{bk-prefix}-button-text {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+}
+
+&.is-loading {
+  position: relative;
+
+  .@{bk-prefix}-button-loading {
+    &:not(:last-child) {
+      position: absolute;
     }
-  });
+  }
 
   .@{bk-prefix}-button-text {
-    display: inline-flex;
-    align-items: center;
-    line-height: 1;
+    visibility: hidden;
   }
+}
 
-  &.is-loading {
-    position: relative;
-    .@{bk-prefix}-button-loading {
-      &:not(:last-child) {
-        position: absolute;
-      }
-    }
-    .@{bk-prefix}-button-text {
-      visibility: hidden;
-    }
-  }
+&:hover {
+  border-color: @button-default-hover-border-color;
+}
 
-  &:hover {
-    border-color: @button-default-hover-border-color;
-  }
+&:active {
+  color: @primary-color;
+  border-color: @primary-color;
+}
 
-  &:active {
-    color: @primary-color;
-    border-color: @primary-color;
-  }
+&.is-text {
+  height: auto;
+  padding: 0;
+  font-size: inherit;
+  color: @default-color;
+  text-decoration: none;
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+  outline: none;
+}
 
-  &.is-text {
-    height: auto;
-    padding: 0;
-    font-size: inherit;
-    color: @default-color;
-    text-decoration: none;
-    cursor: pointer;
-    background-color: transparent;
-    border: none;
-    outline: none;
-  }
+&.is-disabled {
+  color: @disable-color;
+  cursor: not-allowed;
+  border-color: @disable-color;
+}
 
-  &.is-disabled {
-    color: @disable-color;
-    cursor: not-allowed;
-    border-color: @disable-color;
-  }
-
-  // &.is-circle {
-  //   padding: 8px;
-  //   line-height: 1;
-  //   border-radius: 50%;
-  // }
+// &.is-circle {
+//   padding: 8px;
+//   line-height: 1;
+//   border-radius: 50%;
+// }
 }
 
 
 .@{bk-prefix}-button-group {
   display: inline-block;
   font-size: 0;
-  
+
   each(@sizeSelectors, {
     @sizeBtnHeight: '@{value}BtnHeight';
     @sizeBtnPadding: '@{value}BtnPadding';
     @sizeBtnFontSize: '@{value}BtnFontSize';
+
     &.@{bk-prefix}-button-group-@{value} {
       .@{bk-prefix}-button {
         height: @@sizeBtnHeight;
@@ -174,52 +186,51 @@
         font-size: @@sizeBtnFontSize;
       }
     }
-  })
-;
+  });
 
-  .@{bk-prefix}-button {
-    height: @btnHeight;
-    margin: 0 0 0 -1px;
-    border-radius: 0;
+.@{bk-prefix}-button {
+  height: @btnHeight;
+  margin: 0 0 0 -1px;
+  border-radius: 0;
 
-    &:not(.is-disabled) {
-      color: @default-color;
-      background-color: @white-color;
-      border-color: @light-gray;
-    }
-
-    &.is-disabled {
-      color: @light-gray;
-    }
-    
-    &:first-child {
-      border-radius: @btnBorderRadius 0 0 @btnBorderRadius;
-    }
-
-    &:last-child {
-      border-radius: 0 @btnBorderRadius @btnBorderRadius 0;
-    }
-
-    &:only-child {
-      border-radius: @btnBorderRadius;
-    }
-
-    &:hover:not(.is-disabled),
-    &.is-selected:not(.is-disabled) {
-      position: relative;
-      z-index: 1;
-      color: @primary-color;
-      background-color: @white-color;
-      border-color: @primary-color;
-    }
-
-    &.is-selected:not(.is-disabled) {
-      background-color: @button-selected-bg-color;
-    }
-
-    &.is-selected.is-disabled {
-      background-color: @button-disabled-selected-bg-color;
-    }
-
+  &:not(.is-disabled) {
+    color: @default-color;
+    background-color: @white-color;
+    border-color: @light-gray;
   }
+
+  &.is-disabled {
+    color: @light-gray;
+  }
+
+  &:first-child {
+    border-radius: @btnBorderRadius 0 0 @btnBorderRadius;
+  }
+
+  &:last-child {
+    border-radius: 0 @btnBorderRadius @btnBorderRadius 0;
+  }
+
+  &:only-child {
+    border-radius: @btnBorderRadius;
+  }
+
+  &:hover:not(.is-disabled),
+  &.is-selected:not(.is-disabled) {
+    position: relative;
+    z-index: 1;
+    color: @primary-color;
+    background-color: @white-color;
+    border-color: @primary-color;
+  }
+
+  &.is-selected:not(.is-disabled) {
+    background-color: @button-selected-bg-color;
+  }
+
+  &.is-selected.is-disabled {
+    background-color: @button-disabled-selected-bg-color;
+  }
+
+}
 }

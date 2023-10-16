@@ -336,7 +336,7 @@ export const isPercentPixOrNumber = (val: string | number) => /^\d+\.?\d*(px|%)?
  */
 export const resolveHeadConfig = (props: TablePropTypes) => {
   const { showHead, headHeight, thead = {} } = props;
-  return Object.assign({}, { isShow: showHead, height: headHeight }, { ...thead });
+  return Object.assign({}, { isShow: showHead, height: headHeight }, thead);
 };
 
 /**

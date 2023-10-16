@@ -382,8 +382,11 @@ export default defineComponent({
             return;
           }
         }
+        if (eventName === EVENTS.KEYDOWN && (e.code === 'Enter' || e.key === 'Enter' || e.keyCode === 13)) {
+          ctx.emit(EVENTS.ENTER, e.target.value, e);
+        }
 
-        if (isCNInput.value && [EVENTS.INPUT, EVENTS.CHANGE].some(e => eventName === e)) return;
+        if (isCNInput.value && [EVENTS.INPUT, EVENTS.CHANGE, EVENTS.KEYDOWN].some(e => eventName === e)) return;
         if (eventName === EVENTS.INPUT) {
           ctx.emit(EVENTS.UPDATE, e.target.value, e);
         } else if (eventName === EVENTS.CHANGE && isNumberInput.value && e.target.value !== '') {

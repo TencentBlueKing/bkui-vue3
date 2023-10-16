@@ -108,13 +108,13 @@ export const fixedType = string<`${FixedEnum}`>();
 
 export type IOverflowTooltipProp =
   | {
-      content: string | Function;
-      disabled?: boolean;
-      watchCellResize?: boolean;
-      mode?: `${OverflowModeEnum}`;
-      popoverOption?: any;
-      resizerWay?: ResizerWay;
-    }
+    content: string | Function;
+    disabled?: boolean;
+    watchCellResize?: boolean;
+    mode?: `${OverflowModeEnum}`;
+    popoverOption?: any;
+    resizerWay?: ResizerWay;
+  }
   | boolean;
 
 export type IOverflowTooltip = IOverflowTooltipProp;
@@ -247,9 +247,9 @@ export const StringNumberType = (val: number | string) => toType<StringNumber>('
  */
 export type IColumnExplain =
   | {
-      content: LabelFunctionString;
-      head: LabelFunctionString | boolean;
-    }
+    content: LabelFunctionString;
+    head: LabelFunctionString | boolean;
+  }
   | boolean;
 
 export type Column = {
@@ -556,10 +556,12 @@ export const tableProps = {
   resizerWay: toType<`${ResizerWay}`>('ResizerWay', {
     default: ResizerWay.DEBOUNCE,
   }),
+
   /**
    * 是否监表格尺寸变化而响应式重新计算渲染
    */
   observerResize: PropTypes.bool.def(true),
+
   // 对齐方式
   align: TableAlign,
   headerAlign: TableAlign,
@@ -578,8 +580,9 @@ export const tableProps = {
    *
    */
   colSortBehavior: toType<IColSortBehavior>('IColSortBehavior', { default: IColSortBehavior.independent }),
+
   /**
-   * 是否采用flex布局表格（开启虚拟滚动无效）
+   * 是否采用flex布局表格
    */
-  isFlex: PropTypes.bool.def(false),
+  isFlex: PropTypes.bool.def(true),
 };

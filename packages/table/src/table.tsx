@@ -381,6 +381,7 @@ export default defineComponent({
       ...(props.prependStyle || {}),
     }));
 
+
     const renderPrepend = () => {
       if (ctx.slots.prepend) {
         return (
@@ -418,8 +419,9 @@ export default defineComponent({
         <VirtualRender
           ref={refVirtualRender}
           lineHeight={tableRender.getRowHeight}
+          height={contentStyle.height}
           class={tableBodyClass.value}
-          style={contentStyle}
+          wrapperStyle={contentStyle}
           list={pageData}
           {...scrollClass.value}
           contentClassName={tableBodyContentClass.value}
