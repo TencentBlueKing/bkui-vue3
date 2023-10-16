@@ -43,7 +43,7 @@ import HeadFilter from './plugins/head-filter';
 import HeadSort from './plugins/head-sort';
 import Settings from './plugins/settings';
 import useFixedColumn from './plugins/use-fixed-column';
-import { Column, GroupColumn, IColumnActive, IReactiveProp, ISortShape, TablePropTypes } from './props';
+import { Column, GroupColumn, IColumnActive, ISortShape, Settings as ISettings, TablePropTypes } from './props';
 import {
   formatPropAsArray,
   getColumnReactWidth,
@@ -61,12 +61,13 @@ import {
   resolvePropVal,
   resolveWidth,
 } from './utils';
+import { ITableFormatData, ITableResponse } from './use-data';
+import { NODE_ATTRIBUTES } from 'tree/src/constant';
 
 export default class TableRender {
   props: TablePropTypes;
   context: SetupContext;
-  reactiveProp: IReactiveProp;
-  colgroups: GroupColumn[];
+  tableResp: ITableResponse;
   uuid: string;
   events: Map<string, any[]>;
   styleRef: ComputedRef<{
@@ -79,15 +80,13 @@ export default class TableRender {
   constructor(
     props,
     ctx,
-    reactiveProp: IReactiveProp,
-    colgroups: GroupColumn[],
+    tableResp: ITableResponse,
     styleRef,
     t: ComputedRef<Language['table']>,
   ) {
     this.props = props;
     this.context = ctx;
-    this.reactiveProp = reactiveProp;
-    this.colgroups = colgroups;
+    this.tableResp = tableResp;
     this.plugins = new TablePlugins(props, ctx);
     this.uuid = uuidv4();
     this.events = new Map<string, any[]>();
@@ -96,8 +95,16 @@ export default class TableRender {
     this.activeSortIndex = ref(-1);
   }
 
-  get propActiveCols(): IColumnActive[] {
-    return this.reactiveProp.activeColumns;
+  get propActiveCols(): Column[] {
+    return this.columns.filter(col => this.tableResp.isActiveColumn(col));
+  }
+
+  get formatData(): ITableFormatData {
+    return this.tableResp.formatData;
+  }
+
+  get columns(): Column[] {
+    return this.formatData.columns;
   }
 
   /**
@@ -111,13 +118,11 @@ export default class TableRender {
 
     const handleSettingsChanged = (arg: any) => {
       const { checked = [], size, height } = arg;
-      this.reactiveProp.setting.size = size;
-      this.reactiveProp.setting.height = height;
-      const settingFields = (this.props.settings as any)?.fields || [];
+      this.formatData.settings.size = size;
+      this.formatData.settings.height = height;
+
       if (checked.length) {
-        this.colgroups.forEach((col: GroupColumn) => {
-          col.isHidden = isColumnHidden(settingFields, col, checked);
-        });
+        this.tableResp.setColumnAttributeBySettings(this.props.settings as ISettings, checked);
       }
       this.emitEvent(EVENTS.ON_SETTING_CHANGE, [arg]);
     };
@@ -126,8 +131,8 @@ export default class TableRender {
       this.props.settings ? (
         <Settings
           class='table-head-settings'
-          settings={this.reactiveProp.settings}
-          columns={this.colgroups}
+          settings={this.props.settings}
+          columns={this.columns}
           rowHeight={this.props.rowHeight as unknown as number}
           onChange={handleSettingsChanged}
         >
@@ -248,23 +253,23 @@ export default class TableRender {
     this.context.emit(EMIT_EVENTS.PAGE_VALUE_CHANGE, current);
   }
 
-  /**
-   * 指定列选中状态
-   * @param index 指定选中的列Index
-   * @param single 是否重置其他列，当只允许选中一列的情况下需要先重置
-   */
-  private setColumnActive(index: number, single = false) {
-    const col = this.propActiveCols.find((item: IColumnActive) => item.index === index);
-    Object.assign(col, { active: !col.active });
+  // /**
+  //  * 指定列选中状态
+  //  * @param index 指定选中的列Index
+  //  * @param single 是否重置其他列，当只允许选中一列的情况下需要先重置
+  //  */
+  // private setColumnActive(index: number, single = false) {
+  //   const col = this.propActiveCols.find((item: IColumnActive) => item.index === index);
+  //   Object.assign(col, { active: !col.active });
 
-    if (single) {
-      this.propActiveCols
-        .filter((item: IColumnActive) => item.index !== index && item.active)
-        .forEach((col: IColumnActive) => {
-          Object.assign(col, { active: false });
-        });
-    }
-  }
+  //   if (single) {
+  //     this.propActiveCols
+  //       .filter((item: IColumnActive) => item.index !== index && item.active)
+  //       .forEach((col: IColumnActive) => {
+  //         Object.assign(col, { active: false });
+  //       });
+  //   }
+  // }
 
   /**
    * 点击选中一列事件
@@ -272,15 +277,15 @@ export default class TableRender {
    * @param column 当前选中列
    */
   private handleColumnHeadClick(index: number, column: Column) {
-    if (this.props.columnPick !== 'disabled') {
-      this.setColumnActive(index, this.props.columnPick === 'single');
-      this.context.emit(EMIT_EVENTS.COLUMN_PICK, this.propActiveCols);
-    }
+    // if (this.props.columnPick !== 'disabled') {
+    //   this.setColumnActive(index, this.props.columnPick === 'single');
+    //   this.context.emit(EMIT_EVENTS.COLUMN_PICK, this.propActiveCols);
+    // }
 
     if (column.sort && !column.filter) {
       const columnName = resolvePropVal(column, ['field', 'type'], [column, index]);
       const nextSort = getNextSortType(this.reactiveProp.defaultSort[columnName]);
-      Object.assign(this.reactiveProp.defaultSort, { [columnName]: nextSort });
+      // Object.assign(this.reactiveProp.defaultSort, { [columnName]: nextSort });
       const sortFn = getSortFn(column, nextSort);
       this.activeSortIndex.value = index;
       this.emitEvent(EVENTS.ON_SORT_BY_CLICK, [{ sortFn, column, index, type: nextSort }]);
@@ -294,19 +299,20 @@ export default class TableRender {
    * @returns
    */
   private getSortCell(column: Column, index: number) {
-    const columnName = resolvePropVal(column, ['field', 'type'], [column, index]);
     /**
      * 点击排序事件
      * @param sortFn 排序函数
      * @param type 排序类型
      */
     const handleSortClick = (sortFn: any, type: string) => {
-      Object.assign(this.reactiveProp.defaultSort, { [columnName]: type });
-      this.activeSortIndex.value = index;
+      this.tableResp.setColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_TYPE, type);
+      this.tableResp.setColumnSortActive(column, true);
+
       this.emitEvent(EVENTS.ON_SORT_BY_CLICK, [{ sortFn, column, index, type }]);
     };
 
-    const nextSort = this.reactiveProp.defaultSort[columnName] || (column.sort as ISortShape).value || SORT_OPTION.NULL;
+    const nextSort = this.tableResp.getColumnAttributeValue(column, COLUMN_ATTRIBUTE.COL_SORT_TYPE) as SORT_OPTION;
+
     return (
       <HeadSort
         column={column}
@@ -633,7 +639,7 @@ export default class TableRender {
 
   private getHeadColumnClass = (column: Column, colIndex: number) => ({
     ...this.getColumnClass(column, colIndex),
-    active: this.isColActive(colIndex),
+    // active: this.isColActive(colIndex),
   });
 
   /**
@@ -677,9 +683,7 @@ export default class TableRender {
 
   private renderCellCallbackFn(row: any, column: Column, index: number, rows: any[]) {
     const cell = getRowText(row, resolvePropVal(column, 'field', [column, row]), column);
-    const attrIndex = row[TABLE_ROW_ATTRIBUTE.ROW_INDEX];
-    const rowIndex = typeof attrIndex === 'number' ? attrIndex : index;
-    const data = row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA] ?? this.props.data[rowIndex];
+    const data = row;
     return (column.render as Function)({ cell, data, row, column, index, rows });
   }
 
@@ -688,14 +692,14 @@ export default class TableRender {
       this.emitEvent(EVENTS.ON_ROW_CHECK, [{ row, index, isAll, value }]);
     };
 
-    const indeterminate = isAll && !!this.reactiveProp.rowActions.get(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_INDETERMINATE);
+    const indeterminate = isAll && !this.tableResp.isCheckedAll && this.tableResp.hasCheckedRow;
     const isEnable = isRowSelectEnable(this.props, { row, index, isCheckAll: isAll });
 
     return (
       <BkCheckbox
         onChange={handleChecked}
         disabled={!isEnable}
-        modelValue={row[TABLE_ROW_ATTRIBUTE.ROW_SELECTION]}
+        modelValue={this.formatData.columnSchema.get(row)?.[TABLE_ROW_ATTRIBUTE.ROW_SELECTION]}
         indeterminate={indeterminate}
       />
     );
@@ -766,12 +770,12 @@ export default class TableRender {
    * @param colIndex 指定列Index
    * @returns
    */
-  private isColActive(colIndex: number) {
-    return (
-      this.props.columnPick !== 'disabled' &&
-      this.propActiveCols.some((col: IColumnActive) => col.index === colIndex && col.active)
-    );
-  }
+  // private isColActive(colIndex: number) {
+  //   return (
+  //     this.props.columnPick !== 'disabled' &&
+  //     this.propActiveCols.some((col: IColumnActive) => col.index === colIndex && col.active)
+  //   );
+  // }
 
   /**
    * 渲染表格Col分组
@@ -780,9 +784,9 @@ export default class TableRender {
   private renderColGroup() {
     return (
       <colgroup>
-        {(this.filterColGroups || []).map((column: GroupColumn, index: number) => {
+        {(this.filterColGroups || []).map((column: GroupColumn, _index: number) => {
           const colCls = classes({
-            active: this.isColActive(index),
+            // active: this.isColActive(index),
           });
 
           const width: string | number = `${resolveWidth(getColumnReactWidth(column))}`.replace(/px$/i, '');
@@ -801,13 +805,13 @@ export default class TableRender {
    * 过滤当前可渲染的列
    */
   private get filterColGroups() {
-    return this.colgroups.filter((col: GroupColumn) => !col.isHidden);
+    return this.formatData.columns.filter((col: GroupColumn) => !this.tableResp.getColumnAttributeValue(col, COLUMN_ATTRIBUTE.IS_HIDDEN));
   }
 
   /**
    * 当前Table Setting
    */
-  private get setting() {
-    return this.reactiveProp.setting;
-  }
+  // private get setting() {
+  //   return this.reactiveProp.setting;
+  // }
 }

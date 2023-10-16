@@ -12,6 +12,7 @@
       <bk-tree
         :data="treeData"
         virtual-render
+        show-checkbox
         level-line
         label="name"
         children="children"

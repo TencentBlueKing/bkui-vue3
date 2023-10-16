@@ -37,7 +37,7 @@ import {
   SORT_OPTION,
   TABLE_ROW_ATTRIBUTE,
 } from './const';
-import { Column, GroupColumn, TablePropTypes } from './props';
+import { Column, GroupColumn, ISortPropShape, TablePropTypes } from './props';
 
 /**
  * 解析Prop值 | 可能为多种类型 & 函数返回的场景
@@ -356,6 +356,16 @@ export const getRowText = (row: any, key: string, column: Column) => {
 };
 
 /**
+ * 获取当前行指定列的值
+ * @param row 当前行
+ * @param key 指定列名
+ * @returns
+ */
+export const getRowValue = (row: any, key: string) => {
+  return objGet(row, key);
+}
+
+/**
  * 格式化prop配置为标准数组格式
  * @param prop prop对象值
  * @param args 如果是function参数
@@ -533,7 +543,7 @@ export const getNextSortType = (sortType: string) => {
   return Object.keys(steps)[(steps[sortType] + 1) % 3];
 };
 
-export const resolveSort = (sort: string | boolean | any) => {
+export const resolveSort = (sort: ISortPropShape) => {
   if (typeof sort === 'string') {
     return {
       value: sort,
@@ -595,3 +605,13 @@ export const getRowIndex = (row, index) => {
 
   return index;
 };
+
+export const resolveColumnSortProp = (col: Column, props: TablePropTypes) => {
+  const { value, sortFn, sortScope } = resolveSort(col.sort ?? props.defaultSort) ?? {};
+  return {
+    type: value,
+    fn: sortFn,
+    scope: sortScope,
+    active: false
+  }
+}

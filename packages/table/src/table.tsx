@@ -32,6 +32,7 @@ import {
   onMounted,
   provide,
   reactive,
+  Ref,
   ref,
   unref,
   watch,
@@ -58,8 +59,9 @@ import useScrollLoading from './plugins/use-scroll-loading';
 import { IColSortBehavior, tableProps } from './props';
 import TableRender from './render';
 import useColumn from './use-column';
-import { useClass, useInit } from './use-common';
+import { useClass } from './use-common';
 import { getColumnSourceData, getRowSourceData, observerResize, resolveColumnWidth, resolvePropVal } from './utils';
+import useData, { ITableResponse } from './use-data';
 
 export default defineComponent({
   name: 'Table',
@@ -71,6 +73,7 @@ export default defineComponent({
     let columnSortFn: any = null;
     let columnFilterFn: any = null;
     const bkTableCache = new BkTableCache();
+    const TableSchema: ITableResponse = useData(props);
 
     const targetColumns = reactive([]);
     const { initColumns, getActiveColumn } = useColumn(props, targetColumns);
@@ -79,33 +82,12 @@ export default defineComponent({
 
     let activeSortColumn: any = getActiveColumn();
 
-
-    const root = ref();
+    const root: Ref<HTMLElement> = ref();
+    const head: Ref<HTMLElement> = ref();
     const refVirtualRender = ref();
     // scrollX 右侧距离
     const tableOffsetRight = ref(0);
-    const {
-      colgroups,
-      dragOffsetXStyle,
-      dragOffsetX,
-      reactiveSchema,
-      indexData,
-      fixedColumns,
-      resolveColumnStyle,
-      resolveColumnClass,
-      setRowExpand,
-      setAllRowExpand,
-      initIndexData,
-      fixedWrapperClass,
-      clearSelection,
-      toggleAllSelection,
-      toggleRowSelection,
-      getSelection,
-      clearSort,
-      updateColGroups,
-    } = useInit(props, targetColumns);
 
-    const { pageData, localPagination, resolvePageData, watchEffectFn } = usePagination(props, indexData);
     const {
       tableClass,
       headClass,
@@ -121,14 +103,14 @@ export default defineComponent({
       resetTableHeight,
       getColumnsWidthOffsetWidth,
       hasFooter,
-    } = useClass(props, targetColumns, root, reactiveSchema, pageData);
+    } = useClass(props, targetColumns, root, TableSchema, TableSchema.pageData);
 
     const { resolveClassName } = usePrefix();
 
     const styleRef = computed(() => ({
       hasScrollY: hasScrollYRef.value,
     }));
-    const tableRender = new TableRender(props, ctx, reactiveSchema, colgroups, styleRef, t);
+    const tableRender = new TableRender(props, ctx, TableSchema, styleRef, t);
 
     const updateOffsetRight = () => {
       const $tableContent = root.value.querySelector(`.${resolveClassName('table-body-content')}`);
@@ -143,8 +125,9 @@ export default defineComponent({
     watch(
       () => [props.data, props.pagination, props.height, props.maxHeight, props.minHeight],
       () => {
-        initIndexData(props.reserveExpand);
-        watchEffectFn(columnFilterFn, columnSortFn, activeSortColumn);
+        TableSchema.formatDataSchema(props.data);
+        TableSchema.watchEffectFn(columnFilterFn, columnSortFn, activeSortColumn);
+
         nextTick(() => {
           resetTableHeight(root.value);
           updateBorderClass(root.value);
@@ -152,6 +135,10 @@ export default defineComponent({
       },
       { immediate: true, deep: true },
     );
+
+    watch(() => [targetColumns], () => {
+      TableSchema.formatColumns(targetColumns);
+    });
 
     /**
      * 保证每次计算宽度正确
@@ -171,15 +158,8 @@ export default defineComponent({
       const { sortFn, column, index, type } = args;
       if (typeof sortFn === 'function') {
         columnSortFn = sortFn;
-        if (props.colSortBehavior === IColSortBehavior.independent) {
-          if (activeSortColumn !== column) {
-            const columnName = resolvePropVal(activeSortColumn, ['field', 'type'], [activeSortColumn]);
-            Object.assign(reactiveSchema.defaultSort, { [columnName]: SORT_OPTION.NULL });
-          }
-        }
         activeSortColumn = column;
-        Object.assign(activeSortColumn, { [COLUMN_ATTRIBUTE.SORT_TYPE]: type });
-        resolvePageData(columnFilterFn, columnSortFn, activeSortColumn);
+        TableSchema.resolvePageData(columnFilterFn, columnSortFn, column, type);
       }
 
       ctx.emit(EMIT_EVENTS.COLUMN_SORT, { column: unref(column[COLUMN_ATTRIBUTE.COL_SOURCE_DATA]), index, type });
@@ -188,7 +168,7 @@ export default defineComponent({
         const { filterFn, checked, column, index } = args;
         if (typeof filterFn === 'function') {
           columnFilterFn = filterFn;
-          resolvePageData(columnFilterFn, columnSortFn, activeSortColumn);
+          TableSchema.resolvePageData(columnFilterFn, columnSortFn, column, TableSchema.getColumnAttributeValue(column, COLUMN_ATTRIBUTE.COL_SORT_TYPE) as string);
           // refVirtualRender.value?.reset?.();
         }
 
@@ -201,7 +181,7 @@ export default defineComponent({
       .on(EVENTS.ON_SETTING_CHANGE, (args: any) => {
         const { checked = [], size, height, fields } = args;
         nextTick(() => {
-          updateColGroups({ checked, fields });
+          // updateColGroups({ checked, fields });
           updateBorderClass(root.value);
           const offset = getColumnsWidthOffsetWidth();
           checked.length && resolveColumnWidth(root.value, colgroups, COL_MIN_WIDTH, offset);
@@ -212,22 +192,22 @@ export default defineComponent({
       .on(EVENTS.ON_ROW_EXPAND_CLICK, (args: any) => {
         const { row, column, index, rows, e } = args;
         ctx.emit(EMIT_EVENTS.ROW_EXPAND_CLICK, {
-          row: getRowSourceData(row),
-          column: getColumnSourceData(column),
+          row,
+          column,
           index,
           rows,
           e,
         });
-        setRowExpand(row, !row[TABLE_ROW_ATTRIBUTE.ROW_EXPAND]);
+        TableSchema.setRowExpand(row, TableSchema.getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_EXPAND));
       })
       .on(EVENTS.ON_ROW_CHECK, ({ row, isAll, index, value }) => {
         if (isAll) {
-          toggleAllSelection(value);
+          TableSchema.toggleAllSelection();
           ctx.emit(EMIT_EVENTS.ROW_SELECT_ALL, { checked: value, data: props.data });
         } else {
-          toggleRowSelection(row, value);
+          TableSchema.toggleRowSelection(row);
           ctx.emit(EMIT_EVENTS.ROW_SELECT, {
-            row: getRowSourceData(row),
+            row,
             index,
             checked: value,
             data: props.data,
@@ -247,8 +227,8 @@ export default defineComponent({
       const preBottom = reactiveSchema.pos.bottom ?? 0;
       const pagination = args[1];
       const { translateX, translateY, pos = {} } = pagination;
-      reactiveSchema.scrollTranslateY = translateY;
-      reactiveSchema.scrollTranslateX = translateX;
+      TableSchema.formatData.scrollTranslateY = translateY;
+      TableSchema.formatData.scrollTranslateX = translateX;
       reactiveSchema.pos = pos;
       const { bottom } = pos;
       if (bottom <= 2 && preBottom > bottom) {
@@ -304,11 +284,11 @@ export default defineComponent({
     const getRoot = () => root.value;
 
     ctx.expose({
-      setRowExpand,
-      setAllRowExpand,
-      clearSelection,
-      toggleAllSelection,
-      toggleRowSelection,
+      setRowExpand: TableSchema.setRowExpand,
+      setAllRowExpand: TableSchema.setAllRowExpand,
+      clearSelection: TableSchema.clearSelection,
+      toggleAllSelection: TableSchema.toggleAllSelection,
+      toggleRowSelection: TableSchema.toggleRowSelection,
       getSelection,
       clearSort,
       scrollTo,
@@ -317,7 +297,7 @@ export default defineComponent({
 
     const tableBodyClass = computed(() => ({
       ...contentClass,
-      '__is-empty': !pageData.length,
+      '__is-empty': !TableSchema.pageData.length,
     }));
 
     const tableBodyContentClass = computed(() => ({
@@ -374,7 +354,7 @@ export default defineComponent({
     const scrollClass = computed(() => (props.virtualEnabled ? {} : { scrollXName: '', scrollYName: '' }));
 
     const prependStyle = computed(() => ({
-      '--prepend-left': `${reactiveSchema.scrollTranslateX}px`,
+      '--prepend-left': `${TableSchema.formatData.scrollTranslateX}px`,
       position: 'sticky' as const,
       top: 0,
       zIndex: 2,
@@ -408,6 +388,7 @@ export default defineComponent({
           <div
             class={headClass}
             style={headStyle.value}
+            ref={head}
           >
             {tableRender.renderTableHeadSchema()}
             <div
@@ -422,7 +403,7 @@ export default defineComponent({
           height={contentStyle.height}
           class={tableBodyClass.value}
           wrapperStyle={contentStyle}
-          list={pageData}
+          list={TableSchema.pageData}
           {...scrollClass.value}
           contentClassName={tableBodyContentClass.value}
           onContentScroll={handleScrollChanged}
@@ -434,7 +415,7 @@ export default defineComponent({
         >
           {{
             beforeContent: () => renderPrepend(),
-            default: (scope: any) => tableRender.renderTableBodySchema(scope.data || pageData),
+            default: (scope: any) => tableRender.renderTableBodySchema(scope.data || TableSchema.pageData),
             afterSection: () => <div class={fixedBottomBorder.value}></div>,
           }}
         </VirtualRender>
@@ -448,7 +429,7 @@ export default defineComponent({
               ''
             ) : (
               <div
-                class={resolveColumnClass(column, reactiveSchema.scrollTranslateX, tableOffsetRight.value)}
+                class={resolveColumnClass(column, TableSchema.formatData.scrollTranslateX, tableOffsetRight.value)}
                 style={resolveColumnStyle(colPos)}
               ></div>
             ),
@@ -464,7 +445,7 @@ export default defineComponent({
           class={footerClass.value}
           style={footerStyle.value}
         >
-          {hasFooter.value && tableRender.renderTableFooter(localPagination.value)}
+          {hasFooter.value && tableRender.renderTableFooter(TableSchema.localPagination.value)}
         </div>
         <div style={columnGhostStyle}>{ctx.slots.default?.()}</div>
       </div>

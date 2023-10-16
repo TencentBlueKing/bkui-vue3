@@ -24,11 +24,11 @@
  * IN THE SOFTWARE.
  */
 import { isElement, throttle } from 'lodash';
-import { computed, ref } from 'vue';
+import { Ref, computed, ref } from 'vue';
 
 import { GroupColumn } from '../props';
 
-export default (colgroups: GroupColumn[], immediate = true) => {
+export default (colgroups: GroupColumn[], immediate = true, head: Ref<HTMLElement>) => {
   const pluginName = 'HeadColumnResize';
   const enum EVENTS {
     MOUSE_MOVE = 'onMousemove',
@@ -61,8 +61,8 @@ export default (colgroups: GroupColumn[], immediate = true) => {
     dragOffsetX.value = -1000;
     dragColumn = null;
 
-    const targetTable = (e.target as HTMLElement).closest('table');
-    targetTable.querySelectorAll('th').forEach((th: HTMLElement) => th.style.setProperty('user-select', 'inherit'));
+    const targetTable = head.value?.querySelector('table');
+    targetTable?.querySelectorAll('th').forEach((th: HTMLElement) => th.style.setProperty('user-select', 'inherit'));
   };
 
   const updateOffsetX = (e: MouseEvent) =>

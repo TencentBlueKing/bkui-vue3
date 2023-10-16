@@ -32,7 +32,7 @@ import { CloseLine, CogShape } from '@bkui-vue/icon/';
 import Popover from '@bkui-vue/popover';
 import { PropTypes } from '@bkui-vue/shared';
 
-import { createDefaultSizeList, LINE_HEIGHT } from '../const';
+import { createDefaultSizeList, LINE_HEIGHT, SETTING_SIZE } from '../const';
 import { IColumnType, ITableSettings, RowHeightFunctionNumberType, Settings, SizeItem } from '../props';
 import { resolvePropVal } from '../utils';
 
@@ -58,7 +58,7 @@ export default defineComponent({
           fields: props.columns.map((col: any) => ({ ...col, field: col.field || col.type })),
           checked: [],
           limit: 0,
-          size: 'small',
+          size: SETTING_SIZE.small,
           sizeList: defaultSizeList,
           showLineHeight: true,
         };
