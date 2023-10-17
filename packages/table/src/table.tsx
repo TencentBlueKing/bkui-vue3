@@ -29,14 +29,11 @@ import {
   defineComponent,
   nextTick,
   onBeforeUnmount,
-  onMounted,
   provide,
   reactive,
   Ref,
   ref,
-  unref,
   watch,
-  watchEffect,
 } from 'vue';
 
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
@@ -45,23 +42,21 @@ import VirtualRender from '@bkui-vue/virtual-render';
 
 import BkTableCache from './cache';
 import {
-  COL_MIN_WIDTH,
-  COLUMN_ATTRIBUTE,
   PROVIDE_KEY_INIT_COL,
   PROVIDE_KEY_TB_CACHE,
   SCROLLY_WIDTH,
-  SORT_OPTION,
-  TABLE_ROW_ATTRIBUTE,
 } from './const';
 import { EMIT_EVENT_TYPES, EMIT_EVENTS, EVENTS } from './events';
-import usePagination from './plugins/use-pagination';
 import useScrollLoading from './plugins/use-scroll-loading';
-import { IColSortBehavior, tableProps } from './props';
+import { Column, tableProps } from './props';
 import TableRender from './render';
 import useColumn from './use-column';
 import { useClass } from './use-common';
-import { getColumnSourceData, getRowSourceData, observerResize, resolveColumnWidth, resolvePropVal } from './utils';
+import { getRowSourceData } from './utils';
 import useData, { ITableResponse } from './use-data';
+import useFixedColumn from './plugins/use-fixed-column';
+import useColumnResize from './plugins/use-column-resize';
+import { ITableColumn } from './components/table-column';
 
 export default defineComponent({
   name: 'Table',
@@ -70,23 +65,23 @@ export default defineComponent({
   setup(props, ctx) {
     const t = useLocale('table');
 
-    let columnSortFn: any = null;
-    let columnFilterFn: any = null;
-    const bkTableCache = new BkTableCache();
-    const TableSchema: ITableResponse = useData(props);
-
-    const targetColumns = reactive([]);
-    const { initColumns, getActiveColumn } = useColumn(props, targetColumns);
-    provide(PROVIDE_KEY_INIT_COL, initColumns);
-    provide(PROVIDE_KEY_TB_CACHE, bkTableCache);
-
-    let activeSortColumn: any = getActiveColumn();
-
     const root: Ref<HTMLElement> = ref();
     const head: Ref<HTMLElement> = ref();
     const refVirtualRender = ref();
     // scrollX 右侧距离
     const tableOffsetRight = ref(0);
+
+    const bkTableCache = new BkTableCache();
+    const targetColumns = reactive([]);
+    const { initColumns, getColumns } = useColumn(props, targetColumns);
+    const columns = getColumns();
+    const TableSchema: ITableResponse = useData(props);
+
+    const { dragOffsetX, dragOffsetXStyle, registerResizeEvent } = useColumnResize(TableSchema, false, head);
+
+
+    provide(PROVIDE_KEY_INIT_COL, initColumns);
+    provide(PROVIDE_KEY_TB_CACHE, bkTableCache);
 
     const {
       tableClass,
@@ -100,10 +95,16 @@ export default defineComponent({
       fixHeight,
       maxFixHeight,
       updateBorderClass,
-      resetTableHeight,
-      getColumnsWidthOffsetWidth,
+      // resetTableHeight,
       hasFooter,
-    } = useClass(props, targetColumns, root, TableSchema, TableSchema.pageData);
+    } = useClass(props, columns as ITableColumn[], root, TableSchema, TableSchema.pageData);
+
+    const {
+      fixedWrapperClass,
+      fixedColumns,
+      resolveColumnStyle,
+      resolveColumnClass,
+    } = useFixedColumn(props, TableSchema);
 
     const { resolveClassName } = usePrefix();
 
@@ -122,84 +123,24 @@ export default defineComponent({
       }
     };
 
-    watch(
-      () => [props.data, props.pagination, props.height, props.maxHeight, props.minHeight],
-      () => {
-        TableSchema.formatDataSchema(props.data);
-        TableSchema.watchEffectFn(columnFilterFn, columnSortFn, activeSortColumn);
+    watch(() => [props.data, columns], () => {
+      TableSchema.formatDataSchema(props.data);
+      TableSchema.resolvePageData();
+      TableSchema.formatColumns(columns as Column[]);
+      registerResizeEvent();
+    }, { immediate: true });
 
-        nextTick(() => {
-          resetTableHeight(root.value);
-          updateBorderClass(root.value);
-        });
-      },
-      { immediate: true, deep: true },
-    );
-
-    watch(() => [targetColumns], () => {
-      TableSchema.formatColumns(targetColumns);
-    });
-
-    /**
-     * 保证每次计算宽度正确
-     */
-    watchEffect(() => {
-      if (root?.value instanceof HTMLElement) {
-        const offset = getColumnsWidthOffsetWidth();
-        resolveColumnWidth(root.value, colgroups, 20, offset);
-        updateOffsetRight();
-      }
-    });
 
     /**
      * 监听Table 派发的相关事件
      */
-    tableRender.on(EVENTS.ON_SORT_BY_CLICK, (args: any) => {
-      const { sortFn, column, index, type } = args;
-      if (typeof sortFn === 'function') {
-        columnSortFn = sortFn;
-        activeSortColumn = column;
-        TableSchema.resolvePageData(columnFilterFn, columnSortFn, column, type);
-      }
-
-      ctx.emit(EMIT_EVENTS.COLUMN_SORT, { column: unref(column[COLUMN_ATTRIBUTE.COL_SOURCE_DATA]), index, type });
+    tableRender.on(EVENTS.ON_SETTING_CHANGE, (args: any) => {
+      const { checked = [], size, height, fields } = args;
+      nextTick(() => {
+        updateBorderClass(root.value);
+        ctx.emit(EMIT_EVENTS.SETTING_CHANGE, { checked, size, height, fields });
+      });
     })
-      .on(EVENTS.ON_FILTER_CLICK, (args: any) => {
-        const { filterFn, checked, column, index } = args;
-        if (typeof filterFn === 'function') {
-          columnFilterFn = filterFn;
-          TableSchema.resolvePageData(columnFilterFn, columnSortFn, column, TableSchema.getColumnAttributeValue(column, COLUMN_ATTRIBUTE.COL_SORT_TYPE) as string);
-          // refVirtualRender.value?.reset?.();
-        }
-
-        ctx.emit(EMIT_EVENTS.COLUMN_FILTER, {
-          checked,
-          column: unref(column[COLUMN_ATTRIBUTE.COL_SOURCE_DATA]),
-          index,
-        });
-      })
-      .on(EVENTS.ON_SETTING_CHANGE, (args: any) => {
-        const { checked = [], size, height, fields } = args;
-        nextTick(() => {
-          // updateColGroups({ checked, fields });
-          updateBorderClass(root.value);
-          const offset = getColumnsWidthOffsetWidth();
-          checked.length && resolveColumnWidth(root.value, colgroups, COL_MIN_WIDTH, offset);
-          // refVirtualRender.value?.reset?.();
-          ctx.emit(EMIT_EVENTS.SETTING_CHANGE, { checked, size, height, fields });
-        });
-      })
-      .on(EVENTS.ON_ROW_EXPAND_CLICK, (args: any) => {
-        const { row, column, index, rows, e } = args;
-        ctx.emit(EMIT_EVENTS.ROW_EXPAND_CLICK, {
-          row,
-          column,
-          index,
-          rows,
-          e,
-        });
-        TableSchema.setRowExpand(row, TableSchema.getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_EXPAND));
-      })
       .on(EVENTS.ON_ROW_CHECK, ({ row, isAll, index, value }) => {
         if (isAll) {
           TableSchema.toggleAllSelection();
@@ -224,12 +165,12 @@ export default defineComponent({
       });
 
     const handleScrollChanged = (args: any[]) => {
-      const preBottom = reactiveSchema.pos.bottom ?? 0;
+      const preBottom = TableSchema.formatData.layout.bottom ?? 0;
       const pagination = args[1];
       const { translateX, translateY, pos = {} } = pagination;
-      TableSchema.formatData.scrollTranslateY = translateY;
-      TableSchema.formatData.scrollTranslateX = translateX;
-      reactiveSchema.pos = pos;
+      TableSchema.formatData.layout.translateY = translateY;
+      TableSchema.formatData.layout.translateX = translateX;
+      Object.assign(TableSchema.formatData.layout, pos || {});
       const { bottom } = pos;
       if (bottom <= 2 && preBottom > bottom) {
         debounce(
@@ -248,35 +189,6 @@ export default defineComponent({
       refVirtualRender.value?.scrollTo?.(option);
     };
 
-    onMounted(() => {
-      if (props.observerResize) {
-        let observerIns = observerResize(
-          root.value,
-          () => {
-            if (!root.value) {
-              return;
-            }
-            if (props.height === '100%' || props.height === 'auto') {
-              resetTableHeight(root.value);
-            }
-
-            updateBorderClass(root.value);
-            const offset = getColumnsWidthOffsetWidth();
-            resolveColumnWidth(root.value, colgroups, 20, offset);
-          },
-          180,
-          true,
-          props.resizerWay,
-        );
-
-        observerIns.start();
-        onBeforeUnmount(() => {
-          observerIns.disconnect();
-          observerIns = null;
-        });
-      }
-    });
-
     onBeforeUnmount(() => {
       tableRender.destroy();
     });
@@ -290,7 +202,7 @@ export default defineComponent({
       toggleAllSelection: TableSchema.toggleAllSelection,
       toggleRowSelection: TableSchema.toggleRowSelection,
       getSelection,
-      clearSort,
+      // clearSort,
       scrollTo,
       getRoot,
     });
@@ -313,13 +225,13 @@ export default defineComponent({
 
     const resizeColumnStyle = computed(() => ({
       ...dragOffsetXStyle.value,
-      left: `${dragOffsetX.value - reactiveSchema.scrollTranslateX}px`,
+      left: `${dragOffsetX.value - TableSchema.formatData.layout.translateX}px`,
     }));
 
     const resizeHeadColStyle = computed(() => ({
       ...dragOffsetXStyle.value,
       width: '6px',
-      left: `${dragOffsetX.value - reactiveSchema.scrollTranslateX}px`,
+      left: `${dragOffsetX.value - TableSchema.formatData.layout.translateX}px`,
     }));
 
     const loadingRowClass = {
@@ -354,7 +266,7 @@ export default defineComponent({
     const scrollClass = computed(() => (props.virtualEnabled ? {} : { scrollXName: '', scrollYName: '' }));
 
     const prependStyle = computed(() => ({
-      '--prepend-left': `${TableSchema.formatData.scrollTranslateX}px`,
+      '--prepend-left': `${TableSchema.formatData.layout.translateX}px`,
       position: 'sticky' as const,
       top: 0,
       zIndex: 2,
@@ -429,7 +341,7 @@ export default defineComponent({
               ''
             ) : (
               <div
-                class={resolveColumnClass(column, TableSchema.formatData.scrollTranslateX, tableOffsetRight.value)}
+                class={resolveColumnClass(column, TableSchema.formatData.layout.translateX, tableOffsetRight.value)}
                 style={resolveColumnStyle(colPos)}
               ></div>
             ),

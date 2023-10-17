@@ -35,7 +35,7 @@ import { classes } from '@bkui-vue/shared';
 
 import TableCell from './components/table-cell';
 import TableRow from './components/table-row';
-import { COLUMN_ATTRIBUTE, DEF_COLOR, IHeadColor, SCROLLY_WIDTH, SORT_OPTION, TABLE_ROW_ATTRIBUTE } from './const';
+import { CHECK_ALL_OBJ, COLUMN_ATTRIBUTE, DEF_COLOR, IHeadColor, SCROLLY_WIDTH, SORT_OPTION, TABLE_ROW_ATTRIBUTE } from './const';
 import { EMIT_EVENTS, EVENTS } from './events';
 import { TablePlugins } from './plugins';
 import BodyEmpty from './plugins/body-empty';
@@ -43,10 +43,9 @@ import HeadFilter from './plugins/head-filter';
 import HeadSort from './plugins/head-sort';
 import Settings from './plugins/settings';
 import useFixedColumn from './plugins/use-fixed-column';
-import { Column, GroupColumn, IColumnActive, ISortShape, Settings as ISettings, TablePropTypes } from './props';
+import { Column, Settings as ISettings, TablePropTypes } from './props';
 import {
   formatPropAsArray,
-  getColumnReactWidth,
   getColumnSourceData,
   getNextSortType,
   getRowId,
@@ -54,15 +53,14 @@ import {
   getRowSourceData,
   getRowText,
   getSortFn,
-  isColumnHidden,
   isRowSelectEnable,
   resolveCellSpan,
   resolveHeadConfig,
+  resolveNumberOrStringToPix,
   resolvePropVal,
   resolveWidth,
 } from './utils';
 import { ITableFormatData, ITableResponse } from './use-data';
-import { NODE_ATTRIBUTES } from 'tree/src/constant';
 
 export default class TableRender {
   props: TablePropTypes;
@@ -95,15 +93,11 @@ export default class TableRender {
     this.activeSortIndex = ref(-1);
   }
 
-  get propActiveCols(): Column[] {
-    return this.columns.filter(col => this.tableResp.isActiveColumn(col));
-  }
-
   get formatData(): ITableFormatData {
     return this.tableResp.formatData;
   }
 
-  get columns(): Column[] {
+  get columns() {
     return this.formatData.columns;
   }
 
@@ -132,7 +126,7 @@ export default class TableRender {
         <Settings
           class='table-head-settings'
           settings={this.props.settings}
-          columns={this.columns}
+          columns={this.columns as Column[]}
           rowHeight={this.props.rowHeight as unknown as number}
           onChange={handleSettingsChanged}
         >
@@ -201,9 +195,9 @@ export default class TableRender {
   }
 
   public getRowHeight = (row?: any, rowIndex?: number) => {
-    const { size, height } = this.setting;
+    const { size, height } = this.formatData.settings;
     if (height !== null && height !== undefined) {
-      return resolvePropVal(this.setting, 'height', ['tbody', row, rowIndex, size]);
+      return resolvePropVal(this.formatData.settings, 'height', ['tbody', row, rowIndex, size]);
     }
 
     return resolvePropVal(this.props, 'rowHeight', ['tbody', row, rowIndex]);
@@ -253,12 +247,12 @@ export default class TableRender {
     this.context.emit(EMIT_EVENTS.PAGE_VALUE_CHANGE, current);
   }
 
-  // /**
-  //  * 指定列选中状态
-  //  * @param index 指定选中的列Index
-  //  * @param single 是否重置其他列，当只允许选中一列的情况下需要先重置
-  //  */
-  // private setColumnActive(index: number, single = false) {
+  /**
+   * 指定列选中状态
+   * @param index 指定选中的列Index
+   * @param single 是否重置其他列，当只允许选中一列的情况下需要先重置
+   */
+  // private setColumnActive(column: Column, single = false) {
   //   const col = this.propActiveCols.find((item: IColumnActive) => item.index === index);
   //   Object.assign(col, { active: !col.active });
 
@@ -283,12 +277,14 @@ export default class TableRender {
     // }
 
     if (column.sort && !column.filter) {
-      const columnName = resolvePropVal(column, ['field', 'type'], [column, index]);
-      const nextSort = getNextSortType(this.reactiveProp.defaultSort[columnName]);
-      // Object.assign(this.reactiveProp.defaultSort, { [columnName]: nextSort });
+      const type = this.tableResp.getColumnAttributeValue(column, COLUMN_ATTRIBUTE.COL_SORT_TYPE) as string;
+      const nextSort = getNextSortType(type);
+
       const sortFn = getSortFn(column, nextSort);
-      this.activeSortIndex.value = index;
-      this.emitEvent(EVENTS.ON_SORT_BY_CLICK, [{ sortFn, column, index, type: nextSort }]);
+      this.tableResp.setColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_TYPE, nextSort);
+      this.tableResp.setColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_FN, sortFn);
+      this.tableResp.sortData(column);
+      this.context.emit(EMIT_EVENTS.COLUMN_SORT, { column: unref(column), index, type: nextSort });
     }
   }
 
@@ -306,18 +302,17 @@ export default class TableRender {
      */
     const handleSortClick = (sortFn: any, type: string) => {
       this.tableResp.setColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_TYPE, type);
-      this.tableResp.setColumnSortActive(column, true);
-
-      this.emitEvent(EVENTS.ON_SORT_BY_CLICK, [{ sortFn, column, index, type }]);
+      this.tableResp.setColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_FN, sortFn);
+      this.tableResp.sortData(column);
+      this.context.emit(EMIT_EVENTS.COLUMN_SORT, { column, index, type });
     };
 
     const nextSort = this.tableResp.getColumnAttributeValue(column, COLUMN_ATTRIBUTE.COL_SORT_TYPE) as SORT_OPTION;
 
     return (
       <HeadSort
-        column={column}
+        column={column as Column}
         defaultSort={nextSort}
-        active={this.activeSortIndex.value === index}
         onChange={handleSortClick}
       />
     );
@@ -326,7 +321,9 @@ export default class TableRender {
   private getFilterCell(column: Column, index: number) {
     const handleFilterChange = (checked: any[], filterFn: Function) => {
       const filterFn0 = (row: any, index: number) => filterFn(checked, row, index);
-      this.emitEvent(EVENTS.ON_FILTER_CLICK, [{ filterFn: filterFn0, checked, column, index }]);
+      this.tableResp.setColumnAttribute(column, COLUMN_ATTRIBUTE.COL_FILTER_FN, filterFn0);
+      this.tableResp.filter();
+      this.context.emit(EMIT_EVENTS.COLUMN_FILTER, { checked, column: unref(column), index });
     };
 
     const filterSave = (values: any[]) => {
@@ -335,7 +332,7 @@ export default class TableRender {
 
     return (
       <HeadFilter
-        column={column}
+        column={column as Column}
         height={this.props.headHeight}
         onChange={handleFilterChange}
         onFilterSave={filterSave}
@@ -376,14 +373,7 @@ export default class TableRender {
      */
     const renderHeadCell = (column: Column, index: number) => {
       if (column.type === 'selection') {
-        const selectAll = this.reactiveProp.rowActions.get(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_ALL);
-        return this.renderCheckboxColumn(
-          {
-            [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: !!selectAll,
-          },
-          0,
-          true,
-        );
+        return this.renderCheckboxColumn(CHECK_ALL_OBJ, 0, true);
       }
 
       const cells = [];
@@ -409,7 +399,7 @@ export default class TableRender {
           observerResize={this.props.observerResize}
           resizerWay={this.props.resizerWay}
           isHead={true}
-          column={column}
+          column={column as Column}
           parentSetting={this.props.showOverflowTooltip}
           headExplain={resolvePropVal(column.explain, 'head', [column])}
         >
@@ -418,17 +408,24 @@ export default class TableRender {
       );
     };
 
-    const resolveEventListener = (col: GroupColumn) =>
-      Array.from(col.listeners.keys()).reduce((handle: any, key: string) => {
+    const resolveEventListener = (col: Column) => {
+      const listeners = this.tableResp.getColumnAttributeValue(col, COLUMN_ATTRIBUTE.LISTENERS) as Map<string, any>;
+
+      if (!listeners) {
+        return {};
+      }
+
+      return Array.from(listeners?.keys()).reduce((handle: any, key: string) => {
         const eventName = key.split('_').slice(-1)[0];
         return Object.assign(handle, {
           [eventName]: (e: MouseEvent) => {
-            col.listeners.get(key).forEach((fn: Function) => Reflect.apply(fn, this, [e, col, this]));
+            listeners.get(key).forEach((fn: Function) => Reflect.apply(fn, this, [e, col, this]));
           },
         });
       }, {});
+    }
 
-    const { resolveFixedColumnStyle } = useFixedColumn(this.props, this.colgroups);
+    const { resolveFixedColumnStyle } = useFixedColumn(this.props, this.tableResp);
 
     const getScrollFix = () => {
       if (this.styleRef.value.hasScrollY) {
@@ -450,7 +447,7 @@ export default class TableRender {
         <thead style={rowStyle}>
           <TableRow>
             <tr>
-              {this.filterColGroups.map((column: Column, index: number) => {
+              {this.filterColGroups.map((column, index: number) => {
                 const headStyle = Object.assign({}, resolveFixedColumnStyle(column, this.styleRef.value.hasScrollY), {
                   '--background-color': DEF_COLOR[this.props.thead?.color ?? IHeadColor.DEF1],
                 });
@@ -467,7 +464,7 @@ export default class TableRender {
                     onClick={() => this.handleColumnHeadClick(index, column)}
                     {...resolveEventListener(column)}
                   >
-                    {renderHeadCell(column, index)}
+                    {renderHeadCell(column as Column, index)}
                   </th>
                 );
               })}
@@ -503,7 +500,7 @@ export default class TableRender {
    * @returns
    */
   private renderTBody(rows: any[]) {
-    const { resolveFixedColumnStyle } = useFixedColumn(this.props, this.colgroups);
+    const { resolveFixedColumnStyle } = useFixedColumn(this.props, this.tableResp);
     const rowLength = rows.length;
     return (
       <tbody>
@@ -678,11 +675,12 @@ export default class TableRender {
   }
 
   private handleRowExpandClick(row: any, column: Column, index: number, rows: any[], e: MouseEvent) {
-    this.emitEvent(EVENTS.ON_ROW_EXPAND_CLICK, [{ row, column, index, rows, e }]);
+    this.tableResp.setRowExpand(row, this.tableResp.getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_EXPAND));
+    this.context.emit(EMIT_EVENTS.ROW_EXPAND_CLICK, { row, column, index, rows, e, });
   }
 
   private renderCellCallbackFn(row: any, column: Column, index: number, rows: any[]) {
-    const cell = getRowText(row, resolvePropVal(column, 'field', [column, row]), column);
+    const cell = getRowText(row, resolvePropVal(column, 'field', [column, row]));
     const data = row;
     return (column.render as Function)({ cell, data, row, column, index, rows });
   }
@@ -700,7 +698,7 @@ export default class TableRender {
         onChange={handleChecked}
         disabled={!isEnable}
         modelValue={this.formatData.columnSchema.get(row)?.[TABLE_ROW_ATTRIBUTE.ROW_SELECTION]}
-        indeterminate={indeterminate}
+        indeterminate={indeterminate.value}
       />
     );
   }
@@ -734,8 +732,14 @@ export default class TableRender {
    */
   private renderCell(row: any, column: Column, index: number, rows: any[]) {
     const defaultFn = () => {
+
+      const type = resolvePropVal(column, 'type', [column, row]);
+      if (type === 'index') {
+        return this.tableResp.getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_INDEX);
+      }
+
       const key = resolvePropVal(column, 'field', [column, row]);
-      const cell = getRowText(row, key, column);
+      const cell = getRowText(row, key);
       if (typeof column.render === 'function') {
         return this.renderCellCallbackFn(row, column, index, rows);
       }
@@ -784,16 +788,20 @@ export default class TableRender {
   private renderColGroup() {
     return (
       <colgroup>
-        {(this.filterColGroups || []).map((column: GroupColumn, _index: number) => {
+        {(this.filterColGroups || []).map((column: Column, _index: number) => {
           const colCls = classes({
             // active: this.isColActive(index),
           });
 
-          const width: string | number = `${resolveWidth(getColumnReactWidth(column))}`.replace(/px$/i, '');
+          const width: string | number = `${resolveWidth(this.tableResp.getColumnOrderWidth(column))}`
+            .replace(/px$/i, '');
+
+          const minWidth = this.tableResp.getColumnAttributeValue(column, COLUMN_ATTRIBUTE.COL_MIN_WIDTH);
           return (
             <col
               class={colCls}
               width={width}
+              style={{ minWidth: resolveNumberOrStringToPix(minWidth as string, 'auto') }}
             ></col>
           );
         })}
@@ -805,13 +813,6 @@ export default class TableRender {
    * 过滤当前可渲染的列
    */
   private get filterColGroups() {
-    return this.formatData.columns.filter((col: GroupColumn) => !this.tableResp.getColumnAttributeValue(col, COLUMN_ATTRIBUTE.IS_HIDDEN));
+    return this.formatData.columns.filter((col: Column) => !this.tableResp.getColumnAttributeValue(col, COLUMN_ATTRIBUTE.IS_HIDDEN));
   }
-
-  /**
-   * 当前Table Setting
-   */
-  // private get setting() {
-  //   return this.reactiveProp.setting;
-  // }
 }

@@ -26,9 +26,14 @@
 import { isElement, throttle } from 'lodash';
 import { Ref, computed, ref } from 'vue';
 
-import { GroupColumn } from '../props';
+import { Column } from '../props';
+import { ITableResponse } from '../use-data';
+import { COLUMN_ATTRIBUTE } from '../const';
 
-export default (colgroups: GroupColumn[], immediate = true, head: Ref<HTMLElement>) => {
+export default (tableResp: ITableResponse, immediate = true, head: Ref<HTMLElement>) => {
+  const { formatData, getColumnAttributeValue, getColumnOrderWidth, setColumnAttribute } = tableResp;
+  const getColListener = (col: Column) => getColumnAttributeValue(col, COLUMN_ATTRIBUTE.LISTENERS) as Map<string, any>;
+
   const pluginName = 'HeadColumnResize';
   const enum EVENTS {
     MOUSE_MOVE = 'onMousemove',
@@ -39,9 +44,10 @@ export default (colgroups: GroupColumn[], immediate = true, head: Ref<HTMLElemen
   let isMouseDown = false;
   let isDraging = false;
   let startX = 0;
-  let dragColumn: GroupColumn = null;
+  let dragColumn: Column = null;
   let dragStartOffsetX = 0;
   const dragOffsetX = ref(-1000);
+  const ORDER_LIST = [COLUMN_ATTRIBUTE.RESIZE_WIDTH, COLUMN_ATTRIBUTE.CALC_WIDTH];
 
   const handleMouseUp = (e: MouseEvent) => {
     isMouseDown = false;
@@ -50,9 +56,10 @@ export default (colgroups: GroupColumn[], immediate = true, head: Ref<HTMLElemen
     bodyStyle.cursor = '';
 
     const diff = e.clientX - startX;
-    const resolveWidth = (dragColumn.resizeWidth ?? dragColumn.calcWidth) + diff;
+
+    const resolveWidth = getColumnOrderWidth(dragColumn, ORDER_LIST) + diff;
     const minWidth = Number(dragColumn.minWidth);
-    dragColumn.resizeWidth = resolveWidth > minWidth ? resolveWidth : minWidth;
+    setColumnAttribute(dragColumn, COLUMN_ATTRIBUTE.RESIZE_WIDTH, resolveWidth > minWidth ? resolveWidth : minWidth);
 
     document.removeEventListener('mouseup', handleMouseUp);
     document.removeEventListener('mousemove', handleMouseMove);
@@ -68,7 +75,7 @@ export default (colgroups: GroupColumn[], immediate = true, head: Ref<HTMLElemen
   const updateOffsetX = (e: MouseEvent) =>
     throttle(() => {
       const diff = e.clientX - startX;
-      const resolveWidth = (dragColumn.resizeWidth ?? dragColumn.calcWidth) + diff;
+      const resolveWidth = getColumnOrderWidth(dragColumn, ORDER_LIST) + diff;
       const minWidth = Number(dragColumn.minWidth);
 
       if (minWidth < resolveWidth) {
@@ -92,7 +99,7 @@ export default (colgroups: GroupColumn[], immediate = true, head: Ref<HTMLElemen
   };
 
   const handler = {
-    [EVENTS.MOUSE_DOWN]: (e: MouseEvent, column: GroupColumn) => {
+    [EVENTS.MOUSE_DOWN]: (e: MouseEvent, column: Column) => {
       if (!isInDragSection) {
         return;
       }
@@ -109,7 +116,7 @@ export default (colgroups: GroupColumn[], immediate = true, head: Ref<HTMLElemen
       document.addEventListener('mouseup', handleMouseUp);
       document.addEventListener('mousemove', handleMouseMove);
     },
-    [EVENTS.MOUSE_MOVE]: (e: MouseEvent, _column: GroupColumn) => {
+    [EVENTS.MOUSE_MOVE]: (e: MouseEvent, _column: Column) => {
       if (isMouseDown && !isDraging) {
         isDraging = true;
       }
@@ -139,7 +146,7 @@ export default (colgroups: GroupColumn[], immediate = true, head: Ref<HTMLElemen
         }
       }
     },
-    [EVENTS.MOUSE_OUT]: (e: MouseEvent, _column: GroupColumn) => {
+    [EVENTS.MOUSE_OUT]: (e: MouseEvent, _column: Column) => {
       const target = (e.target as HTMLElement).closest('th');
       if (!isDraging) {
         setChildrenNodeCursor(target, '');
@@ -151,26 +158,29 @@ export default (colgroups: GroupColumn[], immediate = true, head: Ref<HTMLElemen
   const getEventName = (event: string) => `${pluginName}_${event}`;
 
   const registerResizeEvent = () => {
-    colgroups.forEach(col => {
+    formatData.columns.forEach(col => {
       if (col.resizable !== false) {
+        const target = getColListener(col);
         Object.keys(handler).forEach((event: string) => {
           const name = getEventName(event);
-          if (!col.listeners.has(name)) {
-            col.listeners.set(name, []);
+
+          if (!target?.has(name)) {
+            target.set(name, []);
           }
 
-          col.listeners.get(name).push(handler[event]);
+          target.get(name).push(handler[event]);
         });
       }
     });
   };
 
   const resetResizeEvents = () => {
-    colgroups.forEach(col => {
+    formatData.columns.forEach(col => {
+      const target = getColListener(col);
       Object.keys(handler).forEach((event: string) => {
         const name = getEventName(event);
-        if (col.listeners.has(name)) {
-          const listeners = col.listeners.get(name);
+        if (target?.has(name)) {
+          const listeners = target.get(name);
           listeners.length = 0;
         }
       });

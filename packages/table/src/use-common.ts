@@ -89,8 +89,8 @@ export const useClass = (
   const config = resolveHeadConfig(props);
   const headStyle = computed(() => ({
     '--row-height': `${resolvePropVal(config, 'height', ['thead'])}px`,
-    '--scroll-head-left': `-${TableSchema.formatData.scrollTranslateX}px`,
-    '--scroll-left': `${TableSchema.formatData.scrollTranslateX}px`,
+    '--scroll-head-left': `-${TableSchema.formatData.layout.translateX}px`,
+    '--scroll-left': `${TableSchema.formatData.layout.translateY}px`,
   }));
 
   const contentClass = {

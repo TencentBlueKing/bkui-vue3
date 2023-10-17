@@ -59,16 +59,9 @@ export default defineComponent({
       checked: checked.value,
     });
 
-    watch(
-      () => filter.value,
-      () => {
-        state.checked = checked.value;
-        // nextTick(() => {
-        //   handleBtnSaveClick();
-        // });
-      },
-      { immediate: true, deep: true },
-    );
+    watch(() => filter.value, () => {
+      state.checked = checked.value;
+    }, { immediate: true, deep: true });
 
     const headClass = computed(() =>
       classes({
@@ -105,9 +98,9 @@ export default defineComponent({
 
     const defaultFilterFn = (checked: string[], row: any) => {
       const { match } = filter.value as IFilterShape;
-      const matchText = getRowText(row, resolvePropVal(column, 'field', [column, row]), column);
+      const matchText = getRowText(row, resolvePropVal(column, 'field', [column, row]));
       if (match === 'full') {
-        checked.includes(matchText);
+        return checked.includes(matchText);
       }
 
       return checked.some((str: string) => getRegExp(str, 'img').test(matchText));

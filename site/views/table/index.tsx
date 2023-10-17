@@ -98,318 +98,318 @@ export default defineComponent({
          */
         component: () => <basic></basic>,
       },
-      {
-        attrs: {
-          title: '基础用法-模板方式调用 bk-column',
-          subtitle: '基础用法，用于表单内容的录入',
-          desc: 'props: 支持 `field` 和 `prop`两种配置，配置效果一样',
-          componentName: 'table',
-          demoName: 'column-template',
-        },
-        /**
-         * Table
-         * @returns
-         */
-        component: () => <ColumnTemplate></ColumnTemplate>,
-      },
-      {
-        attrs: {
-          title: '自定义Column index渲染',
-          subtitle: 'column.index <bk-table-column></bk-table-column>',
-          desc: '如果需要通过<bk-table-column></bk-table-column>方式渲染列表，但是列是动态可变的，可以通过指定列的index来保证表格列的排序，一般情况组件会自动获取排序，如果是深度定制的表格组件，可以通过指定index保证排序的正确性',
-          componentName: 'table',
-          demoName: 'column-template-index',
-          suffix: '.vue',
-        },
-        /**
-         * Table
-         * @returns
-         */
-        component: () => <ColumnTplIndex></ColumnTplIndex>,
-      },
-      {
-        attrs: {
-          title: '自定义Column index渲染',
-          subtitle: 'column.index <bk-table-column></bk-table-column>',
-          desc: '如果需要通过<bk-table-column></bk-table-column>方式渲染列表，但是列是动态可变的，可以通过指定列的index来保证表格列的排序，一般情况组件会自动获取排序，如果是深度定制的表格组件，可以通过指定index保证排序的正确性',
-          componentName: 'table',
-          demoName: 'column-template',
-          suffix: '.tsx',
-        },
-        /**
-         * Table
-         * @returns
-         */
-        component: () => <TableTplTsx></TableTplTsx>,
-      },
-      {
-        attrs: {
-          title: '设置边框',
-          subtitle: '设置边框显示样式',
-          desc: 'props: border',
-          componentName: 'table',
-          demoName: 'bordered',
-        },
-        /**
-         * Table
-         * @returns
-         */
-        component: () => <bordered></bordered>,
-      },
-      {
-        attrs: {
-          title: '自定义头部',
-          subtitle: 'custom head',
-          desc: 'props: border',
-          componentName: 'table',
-          demoName: 'custom-head',
-        },
-        /**
-         * Table
-         * @returns
-         */
-        component: () => <CustomHead></CustomHead>,
-      },
-      {
-        attrs: {
-          title: '启用虚拟滚动-渲染大数据表格',
-          subtitle: '大数据模式启用虚拟滚动',
-          desc: 'props: virtual-enabled',
-          componentName: 'table',
-          demoName: 'virtual-render',
-        },
-        /**
-         * Table
-         * @returns
-         */
-        component: () => <virtual-render></virtual-render>,
-      },
-      {
-        attrs: {
-          title: '自定义Column渲染',
-          subtitle: '自定义Column渲染',
-          desc: 'props: column.render',
-          componentName: 'table',
-          demoName: 'cell-render',
-          suffix: '.tsx',
-        },
-        /**
-         * Table
-         * @returns
-         */
-        component: () => <cell-render></cell-render>,
-      },
+      // {
+      //   attrs: {
+      //     title: '基础用法-模板方式调用 bk-column',
+      //     subtitle: '基础用法，用于表单内容的录入',
+      //     desc: 'props: 支持 `field` 和 `prop`两种配置，配置效果一样',
+      //     componentName: 'table',
+      //     demoName: 'column-template',
+      //   },
+      //   /**
+      //    * Table
+      //    * @returns
+      //    */
+      //   component: () => <ColumnTemplate></ColumnTemplate>,
+      // },
+      // {
+      //   attrs: {
+      //     title: '自定义Column index渲染',
+      //     subtitle: 'column.index <bk-table-column></bk-table-column>',
+      //     desc: '如果需要通过<bk-table-column></bk-table-column>方式渲染列表，但是列是动态可变的，可以通过指定列的index来保证表格列的排序，一般情况组件会自动获取排序，如果是深度定制的表格组件，可以通过指定index保证排序的正确性',
+      //     componentName: 'table',
+      //     demoName: 'column-template-index',
+      //     suffix: '.vue',
+      //   },
+      //   /**
+      //    * Table
+      //    * @returns
+      //    */
+      //   component: () => <ColumnTplIndex></ColumnTplIndex>,
+      // },
+      // {
+      //   attrs: {
+      //     title: '自定义Column index渲染',
+      //     subtitle: 'column.index <bk-table-column></bk-table-column>',
+      //     desc: '如果需要通过<bk-table-column></bk-table-column>方式渲染列表，但是列是动态可变的，可以通过指定列的index来保证表格列的排序，一般情况组件会自动获取排序，如果是深度定制的表格组件，可以通过指定index保证排序的正确性',
+      //     componentName: 'table',
+      //     demoName: 'column-template',
+      //     suffix: '.tsx',
+      //   },
+      //   /**
+      //    * Table
+      //    * @returns
+      //    */
+      //   component: () => <TableTplTsx></TableTplTsx>,
+      // },
+      // {
+      //   attrs: {
+      //     title: '设置边框',
+      //     subtitle: '设置边框显示样式',
+      //     desc: 'props: border',
+      //     componentName: 'table',
+      //     demoName: 'bordered',
+      //   },
+      //   /**
+      //    * Table
+      //    * @returns
+      //    */
+      //   component: () => <bordered></bordered>,
+      // },
+      // {
+      //   attrs: {
+      //     title: '自定义头部',
+      //     subtitle: 'custom head',
+      //     desc: 'props: border',
+      //     componentName: 'table',
+      //     demoName: 'custom-head',
+      //   },
+      //   /**
+      //    * Table
+      //    * @returns
+      //    */
+      //   component: () => <CustomHead></CustomHead>,
+      // },
+      // {
+      //   attrs: {
+      //     title: '启用虚拟滚动-渲染大数据表格',
+      //     subtitle: '大数据模式启用虚拟滚动',
+      //     desc: 'props: virtual-enabled',
+      //     componentName: 'table',
+      //     demoName: 'virtual-render',
+      //   },
+      //   /**
+      //    * Table
+      //    * @returns
+      //    */
+      //   component: () => <virtual-render></virtual-render>,
+      // },
+      // {
+      //   attrs: {
+      //     title: '自定义Column渲染',
+      //     subtitle: '自定义Column渲染',
+      //     desc: 'props: column.render',
+      //     componentName: 'table',
+      //     demoName: 'cell-render',
+      //     suffix: '.tsx',
+      //   },
+      //   /**
+      //    * Table
+      //    * @returns
+      //    */
+      //   component: () => <cell-render></cell-render>,
+      // },
 
-      {
-        attrs: {
-          title: 'Events',
-          subtitle: '自定义Column渲染',
-          desc: 'props: column.render',
-          componentName: 'table',
-          demoName: 'event',
-        },
-        /**
-         * Table
-         * @returns
-         */
-        component: () => <event></event>,
-      },
-      {
-        attrs: {
-          title: 'Pagination - Local',
-          subtitle: '分页配置',
-          desc: 'props: pagination',
-          componentName: 'table',
-          demoName: 'pagination',
-        },
-        /**
-         * Table
-         * @returns
-         */
-        component: () => <pagination></pagination>,
-      },
-      {
-        attrs: {
-          title: 'flex 布局，中间自适应',
-          subtitle: '虚拟滚动暂不建议开启',
-          desc: 'props: is-flex',
-          componentName: 'table',
-          demoName: 'flex-layout',
-        },
-        /**
-         * Table
-         * @returns
-         */
-        component: () => <flex-layout></flex-layout>,
-      },
-      {
-        attrs: {
-          title: 'Pagination - Remote',
-          subtitle: '分页配置: remote-pagination = true',
-          desc: 'props: pagination',
-          componentName: 'table',
-          demoName: 'remotePagination',
-        },
-        /**
-         * Table
-         * @returns
-         */
-        component: () => <RemotePagination></RemotePagination>,
-      },
-      {
-        attrs: {
-          title: 'Empty - 空数据提示',
-          subtitle: '',
-          desc: 'props: --',
-          componentName: 'table',
-          demoName: 'data-empty',
-        },
-        /**
-         * Table
-         * @returns
-         */
-        component: () => <data-empty></data-empty>,
-      },
-      {
-        attrs: {
-          title: '单元格空数据展示',
-          subtitle: '',
-          desc: 'props: --',
-          componentName: 'table',
-          demoName: 'data-empty-cell',
-        },
-        /**
-         * Table
-         * @returns
-         */
-        component: () => <data-empty-cell></data-empty-cell>,
-      },
-      {
-        attrs: {
-          title: '固定列',
-          subtitle: '横纵内容过多时，可选择固定列',
-          desc: 'props: column - fixed',
-          componentName: 'table',
-          demoName: 'fixed',
-        },
-        /**
-         * Table
-         * @returns
-         */
-        component: () => <fixed></fixed>,
-      },
-      {
-        attrs: {
-          title: '底部加载',
-          subtitle: '配置底部加载更多',
-          desc: '配置scroll-loading属性设置表格底部加载样式，结合scroll-end监听表格滚动至底部事件进行分页加载',
-          componentName: 'table',
-          demoName: 'scroll-loading',
-        },
-        /**
-         * Table
-         * @returns
-         */
-        component: () => <ScrollLoading></ScrollLoading>,
-      },
-      {
-        attrs: {
-          title: '底部加载插槽',
-          subtitle: '自定义配置底部加载更多,需要设置 scroll-loading = true',
-          desc: '配置scroll-loading属性设置表格底部加载样式，结合scroll-end监听表格滚动至底部事件进行分页加载',
-          componentName: 'table',
-          demoName: 'scroll-loading-slot',
-        },
-        /**
-         * Table
-         * @returns
-         */
-        component: () => <ScrollLoadingSlot></ScrollLoadingSlot>,
-      },
-      {
-        attrs: {
-          title: '折叠功能',
-          subtitle: '结合slot expandRow',
-          desc: '',
-          componentName: 'table',
-          demoName: 'expand',
-        },
-        /**
-         * Table
-         * @returns
-         */
-        component: () => <Expand></Expand>,
-      },
-      {
-        attrs: {
-          title: '自定义过滤配置',
-          subtitle: '自定义保存 & 重置按钮',
-          desc: '',
-          componentName: 'table',
-          demoName: 'basic-filter',
-        },
-        /**
-         * Table
-         * @returns
-         */
-        component: () => <basicFilter></basicFilter>,
-      },
-      {
-        attrs: {
-          title: '过滤范围',
-          subtitle: '通过设置filterScope设置过滤范围为当前页面还是全部数据，如果是all，则过滤完毕会重置分页为首页',
-          desc: '',
-          componentName: 'table',
-          demoName: 'filter-scope',
-        },
-        /**
-         * Table
-         * @returns
-         */
-        component: () => <filterScope></filterScope>,
-      },
-      {
-        attrs: {
-          title: '排序范围',
-          subtitle: '通过设置sortScope设置排序范围为当前页面还是全部数据',
-          desc: '',
-          componentName: 'table',
-          demoName: 'basic-sort',
-        },
-        /**
-         * basicSort
-         * @returns
-         */
-        component: () => <basicSort></basicSort>,
-      },
-      {
-        attrs: {
-          title: 'Selection',
-          subtitle: '内置选择功能',
-          desc: '',
-          componentName: 'table',
-          demoName: 'selection',
-        },
-        /**
-         * basicSort
-         * @returns
-         */
-        component: () => <Selection></Selection>,
-      },
-      {
-        attrs: {
-          title: '表格合并',
-          subtitle: 'colspan & rowspan',
-          desc: '',
-          componentName: 'table',
-          demoName: 'basic-span',
-        },
-        /**
-         * basicSort
-         * @returns
-         */
-        component: () => <BasicSpan></BasicSpan>,
-      },
+      // {
+      //   attrs: {
+      //     title: 'Events',
+      //     subtitle: '自定义Column渲染',
+      //     desc: 'props: column.render',
+      //     componentName: 'table',
+      //     demoName: 'event',
+      //   },
+      //   /**
+      //    * Table
+      //    * @returns
+      //    */
+      //   component: () => <event></event>,
+      // },
+      // {
+      //   attrs: {
+      //     title: 'Pagination - Local',
+      //     subtitle: '分页配置',
+      //     desc: 'props: pagination',
+      //     componentName: 'table',
+      //     demoName: 'pagination',
+      //   },
+      //   /**
+      //    * Table
+      //    * @returns
+      //    */
+      //   component: () => <pagination></pagination>,
+      // },
+      // {
+      //   attrs: {
+      //     title: 'flex 布局，中间自适应',
+      //     subtitle: '虚拟滚动暂不建议开启',
+      //     desc: 'props: is-flex',
+      //     componentName: 'table',
+      //     demoName: 'flex-layout',
+      //   },
+      //   /**
+      //    * Table
+      //    * @returns
+      //    */
+      //   component: () => <flex-layout></flex-layout>,
+      // },
+      // {
+      //   attrs: {
+      //     title: 'Pagination - Remote',
+      //     subtitle: '分页配置: remote-pagination = true',
+      //     desc: 'props: pagination',
+      //     componentName: 'table',
+      //     demoName: 'remotePagination',
+      //   },
+      //   /**
+      //    * Table
+      //    * @returns
+      //    */
+      //   component: () => <RemotePagination></RemotePagination>,
+      // },
+      // {
+      //   attrs: {
+      //     title: 'Empty - 空数据提示',
+      //     subtitle: '',
+      //     desc: 'props: --',
+      //     componentName: 'table',
+      //     demoName: 'data-empty',
+      //   },
+      //   /**
+      //    * Table
+      //    * @returns
+      //    */
+      //   component: () => <data-empty></data-empty>,
+      // },
+      // {
+      //   attrs: {
+      //     title: '单元格空数据展示',
+      //     subtitle: '',
+      //     desc: 'props: --',
+      //     componentName: 'table',
+      //     demoName: 'data-empty-cell',
+      //   },
+      //   /**
+      //    * Table
+      //    * @returns
+      //    */
+      //   component: () => <data-empty-cell></data-empty-cell>,
+      // },
+      // {
+      //   attrs: {
+      //     title: '固定列',
+      //     subtitle: '横纵内容过多时，可选择固定列',
+      //     desc: 'props: column - fixed',
+      //     componentName: 'table',
+      //     demoName: 'fixed',
+      //   },
+      //   /**
+      //    * Table
+      //    * @returns
+      //    */
+      //   component: () => <fixed></fixed>,
+      // },
+      // {
+      //   attrs: {
+      //     title: '底部加载',
+      //     subtitle: '配置底部加载更多',
+      //     desc: '配置scroll-loading属性设置表格底部加载样式，结合scroll-end监听表格滚动至底部事件进行分页加载',
+      //     componentName: 'table',
+      //     demoName: 'scroll-loading',
+      //   },
+      //   /**
+      //    * Table
+      //    * @returns
+      //    */
+      //   component: () => <ScrollLoading></ScrollLoading>,
+      // },
+      // {
+      //   attrs: {
+      //     title: '底部加载插槽',
+      //     subtitle: '自定义配置底部加载更多,需要设置 scroll-loading = true',
+      //     desc: '配置scroll-loading属性设置表格底部加载样式，结合scroll-end监听表格滚动至底部事件进行分页加载',
+      //     componentName: 'table',
+      //     demoName: 'scroll-loading-slot',
+      //   },
+      //   /**
+      //    * Table
+      //    * @returns
+      //    */
+      //   component: () => <ScrollLoadingSlot></ScrollLoadingSlot>,
+      // },
+      // {
+      //   attrs: {
+      //     title: '折叠功能',
+      //     subtitle: '结合slot expandRow',
+      //     desc: '',
+      //     componentName: 'table',
+      //     demoName: 'expand',
+      //   },
+      //   /**
+      //    * Table
+      //    * @returns
+      //    */
+      //   component: () => <Expand></Expand>,
+      // },
+      // {
+      //   attrs: {
+      //     title: '自定义过滤配置',
+      //     subtitle: '自定义保存 & 重置按钮',
+      //     desc: '',
+      //     componentName: 'table',
+      //     demoName: 'basic-filter',
+      //   },
+      //   /**
+      //    * Table
+      //    * @returns
+      //    */
+      //   component: () => <basicFilter></basicFilter>,
+      // },
+      // {
+      //   attrs: {
+      //     title: '过滤范围',
+      //     subtitle: '通过设置filterScope设置过滤范围为当前页面还是全部数据，如果是all，则过滤完毕会重置分页为首页',
+      //     desc: '',
+      //     componentName: 'table',
+      //     demoName: 'filter-scope',
+      //   },
+      //   /**
+      //    * Table
+      //    * @returns
+      //    */
+      //   component: () => <filterScope></filterScope>,
+      // },
+      // {
+      //   attrs: {
+      //     title: '排序范围',
+      //     subtitle: '通过设置sortScope设置排序范围为当前页面还是全部数据',
+      //     desc: '',
+      //     componentName: 'table',
+      //     demoName: 'basic-sort',
+      //   },
+      //   /**
+      //    * basicSort
+      //    * @returns
+      //    */
+      //   component: () => <basicSort></basicSort>,
+      // },
+      // {
+      //   attrs: {
+      //     title: 'Selection',
+      //     subtitle: '内置选择功能',
+      //     desc: '',
+      //     componentName: 'table',
+      //     demoName: 'selection',
+      //   },
+      //   /**
+      //    * basicSort
+      //    * @returns
+      //    */
+      //   component: () => <Selection></Selection>,
+      // },
+      // {
+      //   attrs: {
+      //     title: '表格合并',
+      //     subtitle: 'colspan & rowspan',
+      //     desc: '',
+      //     componentName: 'table',
+      //     demoName: 'basic-span',
+      //   },
+      //   /**
+      //    * basicSort
+      //    * @returns
+      //    */
+      //   component: () => <BasicSpan></BasicSpan>,
+      // },
     ];
 
     /**
