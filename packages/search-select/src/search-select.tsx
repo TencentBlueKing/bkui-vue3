@@ -96,7 +96,7 @@ export const SearchSelectProps = {
     default: false,
   },
   valueBehavior: {
-    type: String as PropType<ValueBehavior.ALL | ValueBehavior.NEEDKEY>,
+    type: String as PropType<`${ValueBehavior}`>,
     default: ValueBehavior.ALL,
     validator(v: ValueBehavior) {
       return [ValueBehavior.ALL, ValueBehavior.NEEDKEY].includes(v);
@@ -363,7 +363,7 @@ export default defineComponent({
               overflowIndex={this.overflowIndex}
               getMenuList={this.getMenuList}
               validateValues={this.validateValues}
-              valueBehavior={this.valueBehavior}
+              valueBehavior={this.valueBehavior as ValueBehavior}
               onDelete={this.handleDeleteSelected}
               v-slots={{ ...menuSlots }}
             />
@@ -378,7 +378,7 @@ export default defineComponent({
                 clickOutside={this.handleInputOutside}
                 getMenuList={this.getMenuList}
                 validateValues={this.validateValues}
-                valueBehavior={this.valueBehavior}
+                valueBehavior={this.valueBehavior as ValueBehavior}
                 onAdd={this.handleAddSelected}
                 onDelete={this.handleDeleteSelected}
                 onFocus={this.handleInputFocus}
