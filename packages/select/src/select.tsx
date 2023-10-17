@@ -317,19 +317,19 @@ export default defineComponent({
       { popoverMinWidth: popoverMinWidth.value },
       triggerRef,
     );
-    watch(isPopoverShow, () => {
-      emit('toggle', isPopoverShow.value);
-    });
     // 输入框是否可以输入内容
     const isInput = computed(
       () => ((filterable.value && inputSearch.value) || allowCreate.value) && isPopoverShow.value,
     );
     watch(isPopoverShow, isShow => {
+      emit('toggle', isPopoverShow.value);
       if (!isShow) {
         if (!keepSearchValue.value) {
           searchKey.value = '';
         }
+        document.removeEventListener('keydown', handleDocumentKeydown);
       } else {
+        document.addEventListener('keydown', handleDocumentKeydown, {capture: true});
         setTimeout(() => {
           focusInput();
           initActiveOptionValue();
@@ -380,12 +380,17 @@ export default defineComponent({
     // allow create(创建自定义选项)
     const handleCreateCustomOption = (val: string | number) => {
       const value = String(val);
-      if (
-        !allowCreate.value ||
-        !value ||
-        (filterable.value && options.value.find(data => toLowerCase(String(data.optionName)) === toLowerCase(value)))
-      )
-        return; // 开启搜索后，正好匹配到自定义选项，则不进行创建操作
+      if (!allowCreate.value || !value) return;
+
+      const matchedOption = options.value.find(
+        data => toLowerCase(String(data.optionName)) === toLowerCase(value),
+      );
+      if (filterable.value && matchedOption) {
+        // 开启搜索后，正好匹配到自定义选项，则不进行创建操作
+        handleOptionSelected(matchedOption);
+        searchKey.value = '';
+        return;
+      }
 
       const data = optionsMap.value.get(value);
       if (data) return; // 已经存在相同值的option时不能创建
@@ -540,7 +545,7 @@ export default defineComponent({
       }
     };
     // 处理键盘事件
-    const handleKeydown = (e: KeyboardEvent) => {
+    const handleDocumentKeydown = (e: KeyboardEvent) => {
       if (!isPopoverShow.value) return;
 
       const availableOptions = options.value.filter(option => !option.disabled && option.visible);
@@ -574,21 +579,9 @@ export default defineComponent({
         // 选择选项
         case 'Enter': {
           const { value } = e.target as HTMLInputElement;
-          if (allowCreate.value && value) {
-            const matchedOption = options.value.find(
-              data => toLowerCase(String(data.optionName)) === toLowerCase(value),
-            );
-            if (filterable.value && matchedOption) {
-              // 开启搜索后，正好匹配到自定义选项，则不进行创建操作
-              handleOptionSelected(matchedOption);
-            } else {
-              // 自定义创建
-              handleCreateCustomOption(value);
-            }
-          } else {
-            const option = optionsMap.value.get(activeOptionValue.value);
-            handleOptionSelected(option);
-          }
+          if (allowCreate.value && value) return;
+          const option = optionsMap.value.get(activeOptionValue.value);
+          handleOptionSelected(option);
           break;
         }
       }
@@ -675,7 +668,6 @@ export default defineComponent({
       handleScroll,
       handleDeleteTag,
       handleInputChange,
-      handleKeydown,
       handleSelectedAllOptionMouseEnter,
       handlePopoverShow,
       localLoadingText,
@@ -683,6 +675,7 @@ export default defineComponent({
       localSearchPlaceholder,
       localSelectAllText,
       resolveClassName,
+      handleCreateCustomOption,
     };
   },
   render() {
@@ -743,7 +736,7 @@ export default defineComponent({
             disabled={this.isDisabled}
             onRemove={this.handleDeleteTag}
             collapseTags={this.isCollapseTags}
-            onKeydown={(_, e) => this.handleKeydown(e as KeyboardEvent)}
+            onEnter={this.handleCreateCustomOption}
           >
             {{
               prefix: renderPrefix(),
@@ -766,7 +759,7 @@ export default defineComponent({
           size={this.size}
           withValidate={false}
           onInput={this.handleInputChange}
-          onKeydown={(_, e) => this.handleKeydown(e as KeyboardEvent)}
+          onEnter={this.handleCreateCustomOption}
           {...(this.prefix ? { prefix: this.prefix } : null)}
         >
           {{

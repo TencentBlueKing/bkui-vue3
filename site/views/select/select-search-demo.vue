@@ -41,6 +41,7 @@
       class="bk-select"
       multiple
       filterable
+      allow-create
       multiple-mode="tag"
     >
       <bk-option
@@ -55,7 +56,7 @@
       multiple
       filterable
       :remote-method="remoteMethod"
-      allow-create
+      multiple-mode="tag"
     >
       <bk-option
         v-for="(item, index) in list"
