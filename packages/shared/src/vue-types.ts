@@ -162,6 +162,7 @@ export function lineStyleType() {
 }
 
 export enum TagThemeEnum {
+  UNKNOWN = '',
   SUCCESS = 'success',
   INFO = 'info',
   WARNING = 'warning',
