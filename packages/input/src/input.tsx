@@ -64,6 +64,7 @@ export const inputType = {
   showOverflowTooltips: PropTypes.bool.def(true),
   resize: PropTypes.bool.def(true),
   autosize: PropTypes.oneOfType<Boolean | InputAutoSize>([Boolean, Object]).def(false),
+  stopPropagation: PropTypes.bool.def(true),
 };
 
 export const enum EVENTS {
@@ -365,7 +366,7 @@ export default defineComponent({
     // 事件句柄生成器
     function eventHandler(eventName) {
       return e => {
-        e.stopPropagation();
+        props.stopPropagation && e.stopPropagation();
         if (showMaxLimit.value && !props.overMaxLengthLimit) {
           const limit = getValueLimits(e.target.value);
           if (
