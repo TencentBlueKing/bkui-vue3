@@ -179,9 +179,11 @@ export default defineComponent({
     const virtualRenderRef = ref();
     const popoverRef = ref();
     const optionsMap = ref<Map<any, OptionInstanceType>>(new Map());
-    const options = computed(() => [...optionsMap.value.values()].sort((cur, next) => {
-      return cur.order - next.order;
-    }));
+    const options = computed(() =>
+      [...optionsMap.value.values()].sort((cur, next) => {
+        return cur.order - next.order;
+      }),
+    );
     const groupsMap = ref<Map<string, GroupInstanceType>>(new Map());
     const selected = ref<ISelected[]>([]);
     const cacheSelectedMap = computed<Record<string, string>>(() =>
@@ -571,9 +573,11 @@ export default defineComponent({
         }
         // 选择选项
         case 'Enter': {
-          const value = (e.target as HTMLInputElement).value;
+          const { value } = e.target as HTMLInputElement;
           if (allowCreate.value && value) {
-            const matchedOption = options.value.find(data => toLowerCase(String(data.optionName)) === toLowerCase(value));
+            const matchedOption = options.value.find(
+              data => toLowerCase(String(data.optionName)) === toLowerCase(value),
+            );
             if (filterable.value && matchedOption) {
               // 开启搜索后，正好匹配到自定义选项，则不进行创建操作
               handleOptionSelected(matchedOption);
