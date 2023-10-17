@@ -329,7 +329,7 @@ export default defineComponent({
         }
         document.removeEventListener('keydown', handleDocumentKeydown);
       } else {
-        document.addEventListener('keydown', handleDocumentKeydown, {capture: true});
+        document.addEventListener('keydown', handleDocumentKeydown);
         setTimeout(() => {
           focusInput();
           initActiveOptionValue();
@@ -758,6 +758,7 @@ export default defineComponent({
           behavior={this.behavior}
           size={this.size}
           withValidate={false}
+          stopPropagation={false}
           onInput={this.handleInputChange}
           onEnter={this.handleCreateCustomOption}
           {...(this.prefix ? { prefix: this.prefix } : null)}

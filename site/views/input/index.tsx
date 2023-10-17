@@ -167,6 +167,12 @@ const inputProps: IPropsTableItem[] = [
     desc: '简约风格设置(simplicity:简约 normal:正常 type=textarea时不生效)',
     optional: ['simplicity', 'normal'],
   },
+  {
+    name: 'stopPropagation',
+    type: 'Boolean',
+    default: true,
+    desc: '是否阻止事件冒泡'
+  }
 ];
 // 输入框事件列表
 const inputEvents: IPropsTableItem[] = [
