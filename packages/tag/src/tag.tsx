@@ -40,7 +40,7 @@ enum TagStrokeType {
 export default defineComponent({
   name: 'Tag',
   props: {
-    theme: TagThemeType(),
+    theme: TagThemeType().def(''),
     closable: PropTypes.bool.def(false),
     type: toType<`${TagStrokeType}`>('tagStorkeType', {}).def(TagStrokeType.UNKNOWN),
     checkable: PropTypes.bool.def(false),

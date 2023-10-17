@@ -96,7 +96,7 @@ export const SearchSelectProps = {
     default: false,
   },
   valueBehavior: {
-    type: String as PropType<ValueBehavior>,
+    type: String as PropType<ValueBehavior.ALL | ValueBehavior.NEEDKEY>,
     default: ValueBehavior.ALL,
     validator(v: ValueBehavior) {
       return [ValueBehavior.ALL, ValueBehavior.NEEDKEY].includes(v);
