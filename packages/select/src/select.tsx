@@ -179,7 +179,11 @@ export default defineComponent({
     const virtualRenderRef = ref();
     const popoverRef = ref();
     const optionsMap = ref<Map<any, OptionInstanceType>>(new Map());
-    const options = computed(() => [...optionsMap.value.values()]);
+    const options = computed(() =>
+      [...optionsMap.value.values()].sort((cur, next) => {
+        return cur.order - next.order;
+      }),
+    );
     const groupsMap = ref<Map<string, GroupInstanceType>>(new Map());
     const selected = ref<ISelected[]>([]);
     const cacheSelectedMap = computed<Record<string, string>>(() =>
@@ -374,7 +378,7 @@ export default defineComponent({
       searchKey.value = value;
     };
     // allow create(创建自定义选项)
-    const handleInputEnter = (val: string | number, e: Event) => {
+    const handleCreateCustomOption = (val: string | number) => {
       const value = String(val);
       if (
         !allowCreate.value ||
@@ -386,8 +390,6 @@ export default defineComponent({
       const data = optionsMap.value.get(value);
       if (data) return; // 已经存在相同值的option时不能创建
 
-      // todo 优化交互方式
-      e.stopPropagation(); // 阻止触发 handleKeyup enter 事件
       if (multiple.value) {
         selected.value.push({
           value,
@@ -543,8 +545,8 @@ export default defineComponent({
 
       const availableOptions = options.value.filter(option => !option.disabled && option.visible);
       const index = availableOptions.findIndex(option => option.optionID === activeOptionValue.value);
-      if (!availableOptions.length || index === -1) return;
 
+      // todo v-for循环时组件创建属性不固定
       switch (e.code) {
         // 下一个option
         case 'ArrowDown': {
@@ -571,8 +573,22 @@ export default defineComponent({
         }
         // 选择选项
         case 'Enter': {
-          const option = optionsMap.value.get(activeOptionValue.value);
-          handleOptionSelected(option);
+          const { value } = e.target as HTMLInputElement;
+          if (allowCreate.value && value) {
+            const matchedOption = options.value.find(
+              data => toLowerCase(String(data.optionName)) === toLowerCase(value),
+            );
+            if (filterable.value && matchedOption) {
+              // 开启搜索后，正好匹配到自定义选项，则不进行创建操作
+              handleOptionSelected(matchedOption);
+            } else {
+              // 自定义创建
+              handleCreateCustomOption(value);
+            }
+          } else {
+            const option = optionsMap.value.get(activeOptionValue.value);
+            handleOptionSelected(option);
+          }
           break;
         }
       }
@@ -659,7 +675,6 @@ export default defineComponent({
       handleScroll,
       handleDeleteTag,
       handleInputChange,
-      handleInputEnter,
       handleKeydown,
       handleSelectedAllOptionMouseEnter,
       handlePopoverShow,
@@ -728,7 +743,6 @@ export default defineComponent({
             disabled={this.isDisabled}
             onRemove={this.handleDeleteTag}
             collapseTags={this.isCollapseTags}
-            onEnter={this.handleInputEnter}
             onKeydown={(_, e) => this.handleKeydown(e as KeyboardEvent)}
           >
             {{
@@ -752,7 +766,6 @@ export default defineComponent({
           size={this.size}
           withValidate={false}
           onInput={this.handleInputChange}
-          onEnter={this.handleInputEnter}
           onKeydown={(_, e) => this.handleKeydown(e as KeyboardEvent)}
           {...(this.prefix ? { prefix: this.prefix } : null)}
         >
