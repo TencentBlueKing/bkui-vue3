@@ -71,7 +71,7 @@ export default (props: TablePropTypes, tableResp: ITableResponse, hasScrollY?) =
     let start = fixedPos === 'right' ? length * opt : 1;
     let preOffset = 0;
 
-    for (start; ;) {
+    for (start; ; ) {
       start = start + -1 * opt;
       const index = Math.abs(start);
       const current = filterColumns[index];

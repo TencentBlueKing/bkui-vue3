@@ -24,11 +24,11 @@
  * IN THE SOFTWARE.
  */
 import { isElement, throttle } from 'lodash';
-import { Ref, computed, ref } from 'vue';
+import { computed, Ref, ref } from 'vue';
 
+import { COLUMN_ATTRIBUTE } from '../const';
 import { Column } from '../props';
 import { ITableResponse } from '../use-attributes';
-import { COLUMN_ATTRIBUTE } from '../const';
 
 export default (tableResp: ITableResponse, immediate = true, head: Ref<HTMLElement>) => {
   const { formatData, getColumnAttribute, getColumnOrderWidth, setColumnAttribute } = tableResp;
@@ -53,7 +53,7 @@ export default (tableResp: ITableResponse, immediate = true, head: Ref<HTMLEleme
     e.stopImmediatePropagation();
     e.stopPropagation();
     e.preventDefault();
-  }
+  };
 
   const handleMouseUp = (e: MouseEvent) => {
     stopDefaultEvent(e);

@@ -166,8 +166,9 @@ export default (props: TreePropTypes) => {
     }
 
     function loopUpdateCheckedEvent(target, _attrName, _attrValue, node) {
-      target[NODE_ATTRIBUTES.IS_INDETERMINATE] = (node[props.children] || [])
-        .some(child => !(treeSchema.get(child)?.[NODE_ATTRIBUTES.IS_CHECKED] ?? false));
+      target[NODE_ATTRIBUTES.IS_INDETERMINATE] = (node[props.children] || []).some(
+        child => !(treeSchema.get(child)?.[NODE_ATTRIBUTES.IS_CHECKED] ?? false),
+      );
 
       return true;
     }
@@ -224,7 +225,7 @@ export default (props: TreePropTypes) => {
               [NODE_ATTRIBUTES.IS_CACHED]: getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_CACHED),
               [NODE_ATTRIBUTES.IS_ASYNC]: getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_ASYNC),
               [NODE_ATTRIBUTES.IS_LOADING]: getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_LOADING),
-              [NODE_ATTRIBUTES.IS_INDETERMINATE]: false
+              [NODE_ATTRIBUTES.IS_INDETERMINATE]: false,
             });
 
             order += 1;
@@ -261,7 +262,6 @@ export default (props: TreePropTypes) => {
     schema: formatData[1] as WeakMap<Object, any>,
     levelLineSchema: {},
   });
-
 
   const { asyncNodeClick, deepAutoOpen } = useNodeAsync(props, flatData);
 

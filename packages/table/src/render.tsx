@@ -35,7 +35,15 @@ import { classes } from '@bkui-vue/shared';
 
 import TableCell from './components/table-cell';
 import TableRow from './components/table-row';
-import { CHECK_ALL_OBJ, COLUMN_ATTRIBUTE, DEF_COLOR, IHeadColor, SCROLLY_WIDTH, SORT_OPTION, TABLE_ROW_ATTRIBUTE } from './const';
+import {
+  CHECK_ALL_OBJ,
+  COLUMN_ATTRIBUTE,
+  DEF_COLOR,
+  IHeadColor,
+  SCROLLY_WIDTH,
+  SORT_OPTION,
+  TABLE_ROW_ATTRIBUTE,
+} from './const';
 import { EMIT_EVENTS, EVENTS } from './events';
 import { TablePlugins } from './plugins';
 import BodyEmpty from './plugins/body-empty';
@@ -44,6 +52,7 @@ import HeadSort from './plugins/head-sort';
 import Settings from './plugins/settings';
 import useFixedColumn from './plugins/use-fixed-column';
 import { Column, Settings as ISettings, TablePropTypes } from './props';
+import { ITableFormatData, ITableResponse } from './use-attributes';
 import {
   formatPropAsArray,
   getNextSortType,
@@ -57,7 +66,6 @@ import {
   resolvePropVal,
   resolveWidth,
 } from './utils';
-import { ITableFormatData, ITableResponse } from './use-attributes';
 
 export default class TableRender {
   props: TablePropTypes;
@@ -72,13 +80,7 @@ export default class TableRender {
   activeSortIndex: Ref<number>;
   public plugins: TablePlugins;
 
-  constructor(
-    props,
-    ctx,
-    tableResp: ITableResponse,
-    styleRef,
-    t: ComputedRef<Language['table']>,
-  ) {
+  constructor(props, ctx, tableResp: ITableResponse, styleRef, t: ComputedRef<Language['table']>) {
     this.props = props;
     this.context = ctx;
     this.tableResp = tableResp;
@@ -262,9 +264,12 @@ export default class TableRender {
   //   }
   // }
 
-  private getSortFnByColumn (column: Column, fn, a, b) {
+  private getSortFnByColumn(column: Column, fn, a, b) {
     if (column.type === 'index') {
-      return fn(this.tableResp.getRowAttribute(a, TABLE_ROW_ATTRIBUTE.ROW_INDEX), this.tableResp.getRowAttribute(b, TABLE_ROW_ATTRIBUTE.ROW_INDEX));
+      return fn(
+        this.tableResp.getRowAttribute(a, TABLE_ROW_ATTRIBUTE.ROW_INDEX),
+        this.tableResp.getRowAttribute(b, TABLE_ROW_ATTRIBUTE.ROW_INDEX),
+      );
     }
 
     return fn(a, b);
@@ -309,7 +314,7 @@ export default class TableRender {
      * @param sortFn 排序函数
      * @param type 排序类型
      */
-    const handleSortClick = (sortFn: ((a, b) => number | boolean), type: string) => {
+    const handleSortClick = (sortFn: (a, b) => number | boolean, type: string) => {
       const fn = (a, b) => this.getSortFnByColumn(column, sortFn, a, b);
       this.tableResp.setColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_TYPE, type);
       this.tableResp.setColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_FN, fn);
@@ -433,7 +438,7 @@ export default class TableRender {
           },
         });
       }, {});
-    }
+    };
 
     const { resolveFixedColumnStyle } = useFixedColumn(this.props, this.tableResp);
 
@@ -568,11 +573,15 @@ export default class TableRender {
                     ];
 
                     const handleEmit = (event, type: string) => {
-                      const args = { event, row, column,
+                      const args = {
+                        event,
+                        row,
+                        column,
                         cell: {
                           getValue: () => this.renderCell(row, column, rowIndex, rows),
                         },
-                        rowIndex, columnIndex: index,
+                        rowIndex,
+                        columnIndex: index,
                       };
                       this.context.emit(type, args);
                     };
@@ -681,7 +690,7 @@ export default class TableRender {
 
   private handleRowExpandClick(row: any, column: Column, index: number, rows: any[], e: MouseEvent) {
     this.tableResp.setRowExpand(row, !this.tableResp.getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_EXPAND));
-    this.context.emit(EMIT_EVENTS.ROW_EXPAND_CLICK, { row, column, index, rows, e, });
+    this.context.emit(EMIT_EVENTS.ROW_EXPAND_CLICK, { row, column, index, rows, e });
   }
 
   private renderCellCallbackFn(row: any, column: Column, index: number, rows: any[]) {
@@ -745,7 +754,6 @@ export default class TableRender {
    */
   private renderCell(row: any, column: Column, index: number, rows: any[]) {
     const defaultFn = () => {
-
       const type = resolvePropVal(column, 'type', [column, row]);
       if (type === 'index') {
         return this.tableResp.getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_INDEX);
@@ -806,8 +814,10 @@ export default class TableRender {
             // active: this.isColActive(index),
           });
 
-          const width: string | number = `${resolveWidth(this.tableResp.getColumnOrderWidth(column))}`
-            .replace(/px$/i, '');
+          const width: string | number = `${resolveWidth(this.tableResp.getColumnOrderWidth(column))}`.replace(
+            /px$/i,
+            '',
+          );
 
           const minWidth = this.tableResp.getColumnAttribute(column, COLUMN_ATTRIBUTE.COL_MIN_WIDTH);
           return (
@@ -826,6 +836,8 @@ export default class TableRender {
    * 过滤当前可渲染的列
    */
   private get filterColGroups() {
-    return this.formatData.columns.filter((col: Column) => !this.tableResp.getColumnAttribute(col, COLUMN_ATTRIBUTE.IS_HIDDEN));
+    return this.formatData.columns.filter(
+      (col: Column) => !this.tableResp.getColumnAttribute(col, COLUMN_ATTRIBUTE.IS_HIDDEN),
+    );
   }
 }

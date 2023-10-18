@@ -24,9 +24,9 @@
  * IN THE SOFTWARE.
  */
 import { reactive, ref } from 'vue';
+import { computed } from 'vue';
 
 import { Column, SortScope, TablePropTypes } from '../props';
-import { computed } from 'vue';
 
 /**
  * 处理 Prop中的分页配置
@@ -148,6 +148,6 @@ export default (props: TablePropTypes) => {
     localPagination,
     resolvePageData,
     multiFilter,
-    sort
+    sort,
   };
 };

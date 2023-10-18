@@ -158,7 +158,7 @@ export const SORT_OPTIONS = [SORT_OPTION.ASC, SORT_OPTION.DESC, SORT_OPTION.NULL
  */
 export const COL_MIN_WIDTH = 80;
 
-export type ICHECK_ALL_OBJ = {}
+export type ICHECK_ALL_OBJ = {};
 
 /**
  * 全选对象

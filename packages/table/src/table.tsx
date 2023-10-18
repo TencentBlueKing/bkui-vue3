@@ -24,38 +24,24 @@
  * IN THE SOFTWARE.
  */
 
-import {
-  computed,
-  defineComponent,
-  nextTick,
-  onBeforeUnmount,
-  provide,
-  reactive,
-  Ref,
-  ref,
-  watch,
-} from 'vue';
+import { computed, defineComponent, nextTick, onBeforeUnmount, provide, reactive, Ref, ref, watch } from 'vue';
 
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { debounce } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
 import BkTableCache from './cache';
-import {
-  PROVIDE_KEY_INIT_COL,
-  PROVIDE_KEY_TB_CACHE,
-  SCROLLY_WIDTH,
-} from './const';
+import { ITableColumn } from './components/table-column';
+import { PROVIDE_KEY_INIT_COL, PROVIDE_KEY_TB_CACHE, SCROLLY_WIDTH } from './const';
 import { EMIT_EVENT_TYPES, EMIT_EVENTS, EVENTS } from './events';
+import useColumnResize from './plugins/use-column-resize';
+import useFixedColumn from './plugins/use-fixed-column';
 import useScrollLoading from './plugins/use-scroll-loading';
 import { Column, tableProps } from './props';
 import TableRender from './render';
+import useData, { ITableResponse } from './use-attributes';
 import useColumn from './use-column';
 import { useClass } from './use-common';
-import useData, { ITableResponse } from './use-attributes';
-import useFixedColumn from './plugins/use-fixed-column';
-import useColumnResize from './plugins/use-column-resize';
-import { ITableColumn } from './components/table-column';
 
 export default defineComponent({
   name: 'Table',
@@ -78,7 +64,6 @@ export default defineComponent({
 
     const { dragOffsetX, dragOffsetXStyle, registerResizeEvent } = useColumnResize(TableSchema, false, head);
 
-
     provide(PROVIDE_KEY_INIT_COL, initColumns);
     provide(PROVIDE_KEY_TB_CACHE, bkTableCache);
 
@@ -97,12 +82,10 @@ export default defineComponent({
       hasFooter,
     } = useClass(props, columns as ITableColumn[], root, TableSchema, TableSchema.pageData);
 
-    const {
-      fixedWrapperClass,
-      fixedColumns,
-      resolveColumnStyle,
-      resolveColumnClass,
-    } = useFixedColumn(props, TableSchema);
+    const { fixedWrapperClass, fixedColumns, resolveColumnStyle, resolveColumnClass } = useFixedColumn(
+      props,
+      TableSchema,
+    );
 
     const { resolveClassName } = usePrefix();
 
@@ -121,13 +104,16 @@ export default defineComponent({
       }
     };
 
-    watch(() => [props.data, columns], () => {
-      TableSchema.formatDataSchema(props.data);
-      TableSchema.resolvePageData();
-      TableSchema.formatColumns(columns as Column[]);
-      registerResizeEvent();
-    }, { immediate: true });
-
+    watch(
+      () => [props.data, columns],
+      () => {
+        TableSchema.formatDataSchema(props.data);
+        TableSchema.resolvePageData();
+        TableSchema.formatColumns(columns as Column[]);
+        registerResizeEvent();
+      },
+      { immediate: true },
+    );
 
     /**
      * 监听Table 派发的相关事件
@@ -249,7 +235,6 @@ export default defineComponent({
       ...(props.prependStyle || {}),
     }));
 
-
     const renderPrepend = () => {
       if (ctx.slots.prepend) {
         return (
@@ -322,7 +307,10 @@ export default defineComponent({
               ></div>
             ),
           )}
-          <div class={resizeColumnClass} style={resizeColumnStyle.value}></div>
+          <div
+            class={resizeColumnClass}
+            style={resizeColumnStyle.value}
+          ></div>
           <div class={loadingRowClass}>{renderScrollLoading()}</div>
         </div>
         {/* @ts-ignore:next-line */}

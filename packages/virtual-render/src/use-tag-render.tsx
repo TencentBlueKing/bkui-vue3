@@ -58,7 +58,7 @@ export default (props: VirtualRenderProps, ctx) => {
       width: typeof props.width === 'number' ? `${props.width}px` : props.width,
       display: 'inline-block',
       maxHeight: height,
-      ...props.wrapperStyle
+      ...props.wrapperStyle,
     };
   });
 

@@ -108,13 +108,13 @@ export const fixedType = string<`${FixedEnum}`>();
 
 export type IOverflowTooltipProp =
   | {
-    content: string | Function;
-    disabled?: (col: Column, row: any) => boolean | boolean;
-    watchCellResize?: boolean;
-    mode?: `${OverflowModeEnum}`;
-    popoverOption?: any;
-    resizerWay?: ResizerWay;
-  }
+      content: string | Function;
+      disabled?: (col: Column, row: any) => boolean | boolean;
+      watchCellResize?: boolean;
+      mode?: `${OverflowModeEnum}`;
+      popoverOption?: any;
+      resizerWay?: ResizerWay;
+    }
   | boolean;
 
 export type IOverflowTooltip = IOverflowTooltipProp;
@@ -247,9 +247,9 @@ export const StringNumberType = (val: number | string) => toType<StringNumber>('
  */
 export type IColumnExplain =
   | {
-    content: LabelFunctionString;
-    head: LabelFunctionString | boolean;
-  }
+      content: LabelFunctionString;
+      head: LabelFunctionString | boolean;
+    }
   | boolean;
 
 export type Column = {

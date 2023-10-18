@@ -215,9 +215,9 @@ export default defineComponent({
     const innerContentStyle = computed(() =>
       props.scrollPosition === 'content'
         ? {
-          top: `${pagination.scrollTop + props.scrollOffsetTop}px`,
-          transform: `translateY(-${pagination.translateY}px)`,
-        }
+            top: `${pagination.scrollTop + props.scrollOffsetTop}px`,
+            transform: `translateY(-${pagination.translateY}px)`,
+          }
         : {},
     );
 
@@ -230,7 +230,7 @@ export default defineComponent({
         display: 'inline-block',
         maxHeight: height,
         ...(props.scrollPosition === 'container' ? innerContentStyle.value : {}),
-        ...props.wrapperStyle
+        ...props.wrapperStyle,
       };
     });
 

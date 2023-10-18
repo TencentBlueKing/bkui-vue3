@@ -30,7 +30,7 @@ import { NODE_ATTRIBUTES } from './constant';
 import { TreePropTypes } from './props';
 
 const DEFAULT_LEVLE_LINE = '1px dashed #c3cdd7';
-export type IFlatData = { data: any[], schema: WeakMap<Object, any> };
+export type IFlatData = { data: any[]; schema: WeakMap<Object, any> };
 
 /**
  * 获取配置项可为Bool|String|Function类型，如果为Bool则配置默认值
@@ -129,10 +129,10 @@ export const getNodeItemStyle: any = (item: any, props: TreePropTypes, flatData:
     '--depth': depth,
     ...(typeof props.levelLine === 'function'
       ? {
-        '--level-line': getPropsOneOfBoolValueWithDefault(props, 'levelLine', item, DEFAULT_LEVLE_LINE, null, [
-          'node',
-        ]),
-      }
+          '--level-line': getPropsOneOfBoolValueWithDefault(props, 'levelLine', item, DEFAULT_LEVLE_LINE, null, [
+            'node',
+          ]),
+        }
       : {}),
   };
 };

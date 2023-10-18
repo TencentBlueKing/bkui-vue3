@@ -25,15 +25,13 @@
  */
 
 import { computed, onMounted, reactive, ref } from 'vue';
-import { classes, resolveClassName } from '@bkui-vue/shared';
-import { ITableColumn } from './components/table-column';
-import {
-  BORDER_OPTION,
-  LINE_HEIGHT,
-  SCROLLY_WIDTH,
-} from './const';
 
+import { classes, resolveClassName } from '@bkui-vue/shared';
+
+import { ITableColumn } from './components/table-column';
+import { BORDER_OPTION, LINE_HEIGHT, SCROLLY_WIDTH } from './const';
 import { Column, TablePropTypes } from './props';
+import { ITableResponse } from './use-attributes';
 import useColumn from './use-column';
 import {
   hasRootScrollY,
@@ -42,7 +40,6 @@ import {
   resolvePropBorderToClassStr,
   resolvePropVal,
 } from './utils';
-import { ITableResponse } from './use-attributes';
 
 /**
  * 渲染class settings
@@ -158,10 +155,10 @@ export const useClass = (
 
   /** 表格外层容器样式 */
   const contentStyle: {
-    display: string | boolean,
-    minHeight: string | number,
-    height: string | number,
-    maxHeight: string | number,
+    display: string | boolean;
+    minHeight: string | number;
+    height: string | number;
+    maxHeight: string | number;
   } = reactive({
     display: '',
     minHeight: '',

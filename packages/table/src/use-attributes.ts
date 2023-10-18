@@ -1,60 +1,101 @@
-import { computed, reactive } from "vue";
-import { Column, IColSortBehavior, Settings, SortScope, TablePropTypes } from "./props";
+/*
+ * Tencent is pleased to support the open source community by making
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ *
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ *
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ *
+ * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ *
+ * ---------------------------------------------------
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+ * the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
 import { v4 as uuidv4 } from 'uuid';
-import { CHECK_ALL_OBJ, COLUMN_ATTRIBUTE, COL_MIN_WIDTH, ICHECK_ALL_OBJ, SETTING_SIZE, SORT_OPTION, TABLE_ROW_ATTRIBUTE } from "./const";
-import { getRowId, getRowValue, isColumnHidden, resolveCellSpan, resolveColumnSortProp } from "./utils";
-import usePagination from "./plugins/use-pagination";
+import { computed, reactive } from 'vue';
+
+import {
+  CHECK_ALL_OBJ,
+  COL_MIN_WIDTH,
+  COLUMN_ATTRIBUTE,
+  ICHECK_ALL_OBJ,
+  SETTING_SIZE,
+  SORT_OPTION,
+  TABLE_ROW_ATTRIBUTE,
+} from './const';
+import usePagination from './plugins/use-pagination';
+import { Column, IColSortBehavior, Settings, SortScope, TablePropTypes } from './props';
+import { getRowId, getRowValue, isColumnHidden, resolveCellSpan, resolveColumnSortProp } from './utils';
 
 export type ITableFormatData = {
-  data: any[],
-  dataSchema: WeakMap<object, any>,
-  columnSchema: WeakMap<object, any>,
-  columns: Column[],
+  data: any[];
+  dataSchema: WeakMap<object, any>;
+  columnSchema: WeakMap<object, any>;
+  columns: Column[];
   settings: {
-    size: string,
-    height: number
-  },
+    size: string;
+    height: number;
+  };
   layout: {
-    bottom: number,
-    translateX: number,
-    translateY: number
-  }
-}
+    bottom: number;
+    translateX: number;
+    translateY: number;
+  };
+};
 
 export type ITableResponse = {
-  formatColumns: (columns: Column[]) => void,
-  formatDataSchema: (data: any[]) => void,
-  setRowSelection: (row: any, isSelected: boolean) => void,
-  setRowExpand: (row: any, isExpand: boolean) => void,
-  setRowIndex: (row: any, index: number) => void,
-  setColumnAttribute: (col: Column, attrName: string, attrValue: ((...args) => boolean | number | void | string) | string | boolean | number) => void,
-  setColumnAttributeBySettings: (settings: Settings, checkedVal?: string[]) => void,
-  setAllColumnAttribute: (attrName: string, attrValue: ((...args) => boolean | number | void | string) | string | boolean | number) => void,
-  getColumnAttribute: (col: Column, attributeName: string) => string | boolean | Record<string, any>,
-  getColumnId: (col: Column) => string,
-  getColumnOrderWidth: (column: Column, orders?: string[]) => number,
-  isActiveColumn: (col: Column) => boolean,
-  isHiddenColumn: (col: Column) => boolean,
-  resolvePageData: (filterFn?: any, sortFn?: any, column?: Column, type?: string, sortScope?: SortScope) => void,
-  toggleRowSelection: (row: any) => void,
-  toggleAllSelection: (value?: boolean) => void,
-  setAllRowExpand: (value?: boolean) => void,
-  clearSelection: () => void,
-  clearColumnSort: (reset?: boolean) => void,
-  setColumnSortActive: (column: Column, active: boolean) => void,
-  getRowAttribute: (row: any | ICHECK_ALL_OBJ, attrName: string) => any,
-  getRowSelection: () => any[],
-  resolveColumnWidth: (root: HTMLElement, autoWidth?, offsetWidth?) => void,
-  filter: () => void,
-  sortData: (column: Column) => void,
-  isCheckedAll: () => boolean,
-  hasCheckedRow: () => boolean,
-  setRowSelectionAll: (val: boolean) => void,
-  setRowIndeterminate: () => void,
-  pageData: any[],
-  localPagination: any,
-  formatData: ITableFormatData,
-}
+  formatColumns: (columns: Column[]) => void;
+  formatDataSchema: (data: any[]) => void;
+  setRowSelection: (row: any, isSelected: boolean) => void;
+  setRowExpand: (row: any, isExpand: boolean) => void;
+  setRowIndex: (row: any, index: number) => void;
+  setColumnAttribute: (
+    col: Column,
+    attrName: string,
+    attrValue: ((...args) => boolean | number | void | string) | string | boolean | number,
+  ) => void;
+  setColumnAttributeBySettings: (settings: Settings, checkedVal?: string[]) => void;
+  setAllColumnAttribute: (
+    attrName: string,
+    attrValue: ((...args) => boolean | number | void | string) | string | boolean | number,
+  ) => void;
+  getColumnAttribute: (col: Column, attributeName: string) => string | boolean | Record<string, any>;
+  getColumnId: (col: Column) => string;
+  getColumnOrderWidth: (column: Column, orders?: string[]) => number;
+  isActiveColumn: (col: Column) => boolean;
+  isHiddenColumn: (col: Column) => boolean;
+  resolvePageData: (filterFn?: any, sortFn?: any, column?: Column, type?: string, sortScope?: SortScope) => void;
+  toggleRowSelection: (row: any) => void;
+  toggleAllSelection: (value?: boolean) => void;
+  setAllRowExpand: (value?: boolean) => void;
+  clearSelection: () => void;
+  clearColumnSort: (reset?: boolean) => void;
+  setColumnSortActive: (column: Column, active: boolean) => void;
+  getRowAttribute: (row: any | ICHECK_ALL_OBJ, attrName: string) => any;
+  getRowSelection: () => any[];
+  resolveColumnWidth: (root: HTMLElement, autoWidth?, offsetWidth?) => void;
+  filter: () => void;
+  sortData: (column: Column) => void;
+  isCheckedAll: () => boolean;
+  hasCheckedRow: () => boolean;
+  setRowSelectionAll: (val: boolean) => void;
+  setRowIndeterminate: () => void;
+  pageData: any[];
+  localPagination: any;
+  formatData: ITableFormatData;
+};
 
 export default (props: TablePropTypes): ITableResponse => {
   const { size } = props.settings as Settings;
@@ -67,13 +108,13 @@ export default (props: TablePropTypes): ITableResponse => {
     columnSchema: new WeakMap(),
     settings: {
       size,
-      height
+      height,
     },
     layout: {
       bottom: 0,
       translateX: 0,
-      translateY: 0
-    }
+      translateY: 0,
+    },
   });
 
   const { pageData, localPagination, resolvePageData, multiFilter, sort } = usePagination(props);
@@ -138,7 +179,6 @@ export default (props: TablePropTypes): ITableResponse => {
     multiFilter(filterFnList);
   };
 
-
   /**
    * 按照指定列排序
    * @param column
@@ -176,7 +216,10 @@ export default (props: TablePropTypes): ITableResponse => {
    * @param attributeName
    * @param value
    */
-  const setAllColumnAttribute = (attributeName: string | string[], value: string | number | boolean | ((...args: any[]) => boolean | number | void | string)) => {
+  const setAllColumnAttribute = (
+    attributeName: string | string[],
+    value: string | number | boolean | ((...args: any[]) => boolean | number | void | string),
+  ) => {
     const attrNames = Array.isArray(attributeName) ? attributeName : [attributeName];
     const values = Array.isArray(value) ? value : [value];
     formatData.columns.forEach(col => {
@@ -211,7 +254,6 @@ export default (props: TablePropTypes): ITableResponse => {
     return pageData.every(row => getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_SELECTION));
   };
 
-
   /**
    * 是否有选中的数据
    */
@@ -234,13 +276,13 @@ export default (props: TablePropTypes): ITableResponse => {
   const ORDER_LIST = [COLUMN_ATTRIBUTE.RESIZE_WIDTH, COLUMN_ATTRIBUTE.CALC_WIDTH, COLUMN_ATTRIBUTE.WIDTH];
 
   /**
- * 获取当前列实际宽度
- * width props中设置的默认宽度
- * calcWidth 计算后的宽度
- * resizeWidth 拖拽重置之后的宽度
- * @param colmun 当前列配置
- * @param orders 获取宽度顺序
- * @returns
+   * 获取当前列实际宽度
+   * width props中设置的默认宽度
+   * calcWidth 计算后的宽度
+   * resizeWidth 拖拽重置之后的宽度
+   * @param colmun 当前列配置
+   * @param orders 获取宽度顺序
+   * @returns
    */
   const getColumnOrderWidth = (col: Column, orders = ORDER_LIST): number => {
     const target = formatData.columnSchema.get(col) ?? {};
@@ -269,7 +311,11 @@ export default (props: TablePropTypes): ITableResponse => {
    * @param attrName 设置属性
    * @param attrValue 属性值
    */
-  const setColumnAttribute = (col: Column, attrName: string, attrValue: ((...args) => boolean | number | void | string) | string | boolean | number) => {
+  const setColumnAttribute = (
+    col: Column,
+    attrName: string,
+    attrValue: ((...args) => boolean | number | void | string) | string | boolean | number,
+  ) => {
     const target = formatData.columnSchema.get(col);
     if (target && Object.prototype.hasOwnProperty.call(target, attrName)) {
       target[attrName] = attrValue;
@@ -298,7 +344,7 @@ export default (props: TablePropTypes): ITableResponse => {
    * 判定当前行是否选中
    * @param row
    */
-  const isRowSelected = (row) => {
+  const isRowSelected = row => {
     if (!props.isRowSelectEnable) {
       return false;
     }
@@ -325,10 +371,11 @@ export default (props: TablePropTypes): ITableResponse => {
    */
   const neepColspanOrRowspan = computed(() =>
     formatData.columns.some(
-      col => typeof col.rowspan === 'function'
-        || /^\d$/.test(`${col.rowspan}`)
-        || typeof col.colspan === 'function'
-        || /^\d$/.test(`${col.colspan}`),
+      col =>
+        typeof col.rowspan === 'function' ||
+        /^\d$/.test(`${col.rowspan}`) ||
+        typeof col.colspan === 'function' ||
+        /^\d$/.test(`${col.colspan}`),
     ),
   );
 
@@ -342,7 +389,7 @@ export default (props: TablePropTypes): ITableResponse => {
    */
   const getSkipConfig = (row: any, rowId: string, rowIndex: number, skipCfg: any, preRowId: string) => {
     if (!neepColspanOrRowspan.value) {
-      return {}
+      return {};
     }
 
     let skipColumnNum = 0;
@@ -413,8 +460,8 @@ export default (props: TablePropTypes): ITableResponse => {
           [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: isRowSelected(row),
           [TABLE_ROW_ATTRIBUTE.ROW_UID]: rowId,
           [TABLE_ROW_ATTRIBUTE.ROW_SKIP_CFG]: cfg,
-          [TABLE_ROW_ATTRIBUTE.ROW_INDEX]: (index + 1),
-          [TABLE_ROW_ATTRIBUTE.ROW_SELECTION_INDETERMINATE]: false
+          [TABLE_ROW_ATTRIBUTE.ROW_INDEX]: index + 1,
+          [TABLE_ROW_ATTRIBUTE.ROW_SELECTION_INDETERMINATE]: false,
         });
       }
 
@@ -423,13 +470,13 @@ export default (props: TablePropTypes): ITableResponse => {
       const target = formatData.dataSchema.get(row);
       rowId = target[TABLE_ROW_ATTRIBUTE.ROW_UID];
       target[TABLE_ROW_ATTRIBUTE.ROW_SKIP_CFG] = cfg;
-      target[TABLE_ROW_ATTRIBUTE.ROW_INDEX] = (index + 1);
+      target[TABLE_ROW_ATTRIBUTE.ROW_INDEX] = index + 1;
       preRowId = preRowId;
     });
 
     formatData.dataSchema.set(CHECK_ALL_OBJ, {
       [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: false,
-      [TABLE_ROW_ATTRIBUTE.ROW_SELECTION_INDETERMINATE]: false
+      [TABLE_ROW_ATTRIBUTE.ROW_SELECTION_INDETERMINATE]: false,
     });
   };
 
@@ -450,7 +497,6 @@ export default (props: TablePropTypes): ITableResponse => {
     setRowAttribute(CHECK_ALL_OBJ, TABLE_ROW_ATTRIBUTE.ROW_SELECTION_INDETERMINATE, !checkedAll && hasCheckedRow());
   };
 
-
   /**
    * 设置列属性
    * @param row
@@ -461,7 +507,7 @@ export default (props: TablePropTypes): ITableResponse => {
     const target = formatData.dataSchema.get(row);
     if (target && Object.prototype.hasOwnProperty.call(target, attrName)) {
       target[attrName] = attrValue;
-    };
+    }
   };
 
   /**
@@ -497,7 +543,7 @@ export default (props: TablePropTypes): ITableResponse => {
   };
 
   const toggleRowSelection = (row: any) => {
-    setRowSelection(row, !getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_SELECTION))
+    setRowSelection(row, !getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_SELECTION));
   };
 
   const toggleAllSelection = (value?: boolean) => {
@@ -510,7 +556,7 @@ export default (props: TablePropTypes): ITableResponse => {
     pageData.forEach(row => setRowSelection(row, val));
     formatData.dataSchema.set(CHECK_ALL_OBJ, {
       [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: val,
-      [TABLE_ROW_ATTRIBUTE.ROW_SELECTION_INDETERMINATE]: false
+      [TABLE_ROW_ATTRIBUTE.ROW_SELECTION_INDETERMINATE]: false,
     });
   };
 
@@ -523,11 +569,11 @@ export default (props: TablePropTypes): ITableResponse => {
   };
 
   /**
- * 根据Props Column配置计算并设置列宽度
- * @param root 当前根元素
- * @param autoWidth 自动填充宽度
- * @param offsetWidth 需要减掉的偏移量（滚动条|外层边框）
- */
+   * 根据Props Column配置计算并设置列宽度
+   * @param root 当前根元素
+   * @param autoWidth 自动填充宽度
+   * @param offsetWidth 需要减掉的偏移量（滚动条|外层边框）
+   */
   const resolveColumnWidth = (root: HTMLElement, autoWidth = COL_MIN_WIDTH, offsetWidth = 0) => {
     const { width } = root.getBoundingClientRect() || {};
     const availableWidth = width - offsetWidth;
@@ -665,6 +711,6 @@ export default (props: TablePropTypes): ITableResponse => {
     hasCheckedRow,
     pageData,
     localPagination,
-    formatData
-  }
-}
+    formatData,
+  };
+};

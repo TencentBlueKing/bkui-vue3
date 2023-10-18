@@ -33,14 +33,8 @@ import { EVENTS, NODE_ATTRIBUTES } from './constant';
 import { TreePropTypes } from './props';
 import useNodeAsync from './use-node-async';
 import useNodeAttribute from './use-node-attribute';
-import { IFlatData, getLabel, getNodeItemClass, getNodeItemStyle, getNodeRowClass, resolveNodeItem } from './util';
-export default (
-  props: TreePropTypes,
-  ctx,
-  flatData: IFlatData,
-  _renderData,
-  initOption,
-) => {
+import { getLabel, getNodeItemClass, getNodeItemStyle, getNodeRowClass, IFlatData, resolveNodeItem } from './util';
+export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, initOption) => {
   // const checkedNodes = [];
   let selectedNodeId = props.selected;
   const {
@@ -179,13 +173,17 @@ export default (
   const updateParentChecked = (item: any, isChecked) => {
     const parent = getParentNode(item);
     if (parent) {
-      const isNeedChecked = isChecked ? isChecked : (getChildNodes(parent) || [])
-        .some((node: any) => isNodeChecked(node));
+      const isNeedChecked = isChecked
+        ? isChecked
+        : (getChildNodes(parent) || []).some((node: any) => isNodeChecked(node));
 
       setNodeAttr(parent, NODE_ATTRIBUTES.IS_CHECKED, isNeedChecked);
 
-      setNodeAttr(parent, NODE_ATTRIBUTES.IS_INDETERMINATE, (getChildNodes(parent) || [])
-        .some((node: any) => !isNodeChecked(node)));
+      setNodeAttr(
+        parent,
+        NODE_ATTRIBUTES.IS_INDETERMINATE,
+        (getChildNodes(parent) || []).some((node: any) => !isNodeChecked(node)),
+      );
 
       if (!isRootNode(parent)) {
         updateParentChecked(parent, isChecked);
@@ -218,9 +216,7 @@ export default (
     );
   };
 
-  const isIndeterminate = (item: any) =>
-    isNodeChecked(item) && getNodeAttr(item, NODE_ATTRIBUTES.IS_INDETERMINATE);
-
+  const isIndeterminate = (item: any) => isNodeChecked(item) && getNodeAttr(item, NODE_ATTRIBUTES.IS_INDETERMINATE);
 
   const getCheckboxRender = (item: any) => {
     if (!props.showCheckbox) {
@@ -350,8 +346,9 @@ export default (
 
     let resolvedItem = resolveNodeItem(nodeList[0]);
     if (typeof resolvedItem === 'string' || typeof resolvedItem === 'number' || typeof resolvedItem === 'symbol') {
-      resolvedItem = flatData.data.find(item => getNodeId(item) === resolvedItem)
-        ?? { [NODE_ATTRIBUTES.IS_NULL]: true };
+      resolvedItem = flatData.data.find(item => getNodeId(item) === resolvedItem) ?? {
+        [NODE_ATTRIBUTES.IS_NULL]: true,
+      };
     }
 
     if (resolvedItem[NODE_ATTRIBUTES.IS_NULL]) {

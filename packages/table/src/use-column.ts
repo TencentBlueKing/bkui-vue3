@@ -23,10 +23,11 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
+import { reactive } from 'vue';
+
 import { ITableColumn } from './components/table-column';
 import { SORT_OPTION } from './const';
-import { IColSortBehavior, ISortShape, TablePropTypes, Column } from './props';
-import { reactive } from 'vue';
+import { Column, IColSortBehavior, ISortShape, TablePropTypes } from './props';
 
 /**
  * 渲染column settings

@@ -28,12 +28,7 @@ import { debounce, get as objGet, throttle } from 'lodash';
 import ResizeObserver from 'resize-observer-polyfill';
 import { v4 as uuidv4 } from 'uuid';
 
-import {
-  BORDER_OPTION,
-  BORDER_OPTIONS,
-  SORT_OPTION,
-  TABLE_ROW_ATTRIBUTE,
-} from './const';
+import { BORDER_OPTION, BORDER_OPTIONS, SORT_OPTION, TABLE_ROW_ATTRIBUTE } from './const';
 import { Column, ISortPropShape, TablePropTypes } from './props';
 
 /**
@@ -150,7 +145,6 @@ export const resolvePropBorderToClassStr = (val: string | string[]) => {
   return [...new Set(defaultVal)].map((item: string) => `bordered-${item}`).join(' ');
 };
 
-
 /**
  * 监听目标元素的Resize事件
  * @param root 目标元素
@@ -237,7 +231,7 @@ export const getRowText = (row: any, key: string) => {
  */
 export const getRowValue = (row: any, key: string) => {
   return objGet(row, key);
-}
+};
 
 /**
  * 格式化prop配置为标准数组格式
@@ -465,13 +459,12 @@ export const getRowId = (row, defVal, props) => {
   return defVal;
 };
 
-
 export const resolveColumnSortProp = (col: Column, props: TablePropTypes) => {
   const { value, sortFn, sortScope } = resolveSort(col.sort ?? props.defaultSort) ?? {};
   return {
     type: value,
     fn: sortFn,
     scope: sortScope,
-    active: false
-  }
-}
+    active: false,
+  };
+};

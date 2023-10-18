@@ -59,9 +59,13 @@ export default defineComponent({
       checked: checked.value,
     });
 
-    watch(() => filter.value, () => {
-      state.checked = checked.value;
-    }, { immediate: true, deep: true });
+    watch(
+      () => filter.value,
+      () => {
+        state.checked = checked.value;
+      },
+      { immediate: true, deep: true },
+    );
 
     const headClass = computed(() =>
       classes({
@@ -109,8 +113,8 @@ export default defineComponent({
     const filterFn =
       typeof (filter.value as IFilterShape).filterFn === 'function'
         ? // eslint-disable-next-line max-len
-        (checked: string[], row: any, index: number, data: any[]) =>
-          (filter.value as IFilterShape).filterFn(checked, row, props.column, index, data)
+          (checked: string[], row: any, index: number, data: any[]) =>
+            (filter.value as IFilterShape).filterFn(checked, row, props.column, index, data)
         : (checked: string[], row: any) => (checked.length ? defaultFilterFn(checked, row) : true);
 
     const handleBtnSaveClick = () => {
