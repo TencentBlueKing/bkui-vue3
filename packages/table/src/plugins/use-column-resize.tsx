@@ -27,12 +27,12 @@ import { isElement, throttle } from 'lodash';
 import { Ref, computed, ref } from 'vue';
 
 import { Column } from '../props';
-import { ITableResponse } from '../use-data';
+import { ITableResponse } from '../use-attributes';
 import { COLUMN_ATTRIBUTE } from '../const';
 
 export default (tableResp: ITableResponse, immediate = true, head: Ref<HTMLElement>) => {
-  const { formatData, getColumnAttributeValue, getColumnOrderWidth, setColumnAttribute } = tableResp;
-  const getColListener = (col: Column) => getColumnAttributeValue(col, COLUMN_ATTRIBUTE.LISTENERS) as Map<string, any>;
+  const { formatData, getColumnAttribute, getColumnOrderWidth, setColumnAttribute } = tableResp;
+  const getColListener = (col: Column) => getColumnAttribute(col, COLUMN_ATTRIBUTE.LISTENERS) as Map<string, any>;
 
   const pluginName = 'HeadColumnResize';
   const enum EVENTS {
@@ -49,7 +49,15 @@ export default (tableResp: ITableResponse, immediate = true, head: Ref<HTMLEleme
   const dragOffsetX = ref(-1000);
   const ORDER_LIST = [COLUMN_ATTRIBUTE.RESIZE_WIDTH, COLUMN_ATTRIBUTE.CALC_WIDTH];
 
+  const stopDefaultEvent = (e: MouseEvent) => {
+    e.stopImmediatePropagation();
+    e.stopPropagation();
+    e.preventDefault();
+  }
+
   const handleMouseUp = (e: MouseEvent) => {
+    stopDefaultEvent(e);
+
     isMouseDown = false;
     isDraging = false;
     const bodyStyle = document.body.style;
@@ -58,9 +66,10 @@ export default (tableResp: ITableResponse, immediate = true, head: Ref<HTMLEleme
     const diff = e.clientX - startX;
 
     const resolveWidth = getColumnOrderWidth(dragColumn, ORDER_LIST) + diff;
-    const minWidth = Number(dragColumn.minWidth);
+    const minWidth = getColumnOrderWidth(dragColumn, [COLUMN_ATTRIBUTE.COL_MIN_WIDTH]);
     setColumnAttribute(dragColumn, COLUMN_ATTRIBUTE.RESIZE_WIDTH, resolveWidth > minWidth ? resolveWidth : minWidth);
 
+    setTimeout(() => tableResp.setAllColumnAttribute(COLUMN_ATTRIBUTE.COL_IS_DRAG, false));
     document.removeEventListener('mouseup', handleMouseUp);
     document.removeEventListener('mousemove', handleMouseMove);
 
@@ -76,7 +85,7 @@ export default (tableResp: ITableResponse, immediate = true, head: Ref<HTMLEleme
     throttle(() => {
       const diff = e.clientX - startX;
       const resolveWidth = getColumnOrderWidth(dragColumn, ORDER_LIST) + diff;
-      const minWidth = Number(dragColumn.minWidth);
+      const minWidth = getColumnOrderWidth(dragColumn, [COLUMN_ATTRIBUTE.COL_MIN_WIDTH]);
 
       if (minWidth < resolveWidth) {
         dragOffsetX.value = e.clientX - startX + dragStartOffsetX;
@@ -87,6 +96,7 @@ export default (tableResp: ITableResponse, immediate = true, head: Ref<HTMLEleme
     const bodyStyle = document.body.style;
     bodyStyle.setProperty('cursor', '');
     updateOffsetX(e)();
+    stopDefaultEvent(e);
   };
 
   const setChildrenNodeCursor = (root: HTMLElement, cursor: string) => {
@@ -104,6 +114,7 @@ export default (tableResp: ITableResponse, immediate = true, head: Ref<HTMLEleme
         return;
       }
       isMouseDown = true;
+      tableResp.setColumnAttribute(column, COLUMN_ATTRIBUTE.COL_IS_DRAG, true);
       const bodyStyle = document.body.style;
       bodyStyle.setProperty('cursor', 'col-resize');
 
@@ -112,6 +123,7 @@ export default (tableResp: ITableResponse, immediate = true, head: Ref<HTMLEleme
 
       const targetTable = (e.target as HTMLElement).closest('table');
       dragStartOffsetX = startX - targetTable.getBoundingClientRect().left;
+      updateOffsetX(e)();
 
       document.addEventListener('mouseup', handleMouseUp);
       document.addEventListener('mousemove', handleMouseMove);
@@ -122,7 +134,6 @@ export default (tableResp: ITableResponse, immediate = true, head: Ref<HTMLEleme
       }
 
       const target = (e.target as HTMLElement).closest('th');
-
       if (isDraging) {
         target.style.setProperty('user-select', 'none');
         target.classList.remove('col-resize-hover');

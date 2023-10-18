@@ -42,7 +42,7 @@ import {
   resolvePropBorderToClassStr,
   resolvePropVal,
 } from './utils';
-import { ITableResponse } from './use-data';
+import { ITableResponse } from './use-attributes';
 
 /**
  * 渲染class settings
@@ -90,7 +90,7 @@ export const useClass = (
   const headStyle = computed(() => ({
     '--row-height': `${resolvePropVal(config, 'height', ['thead'])}px`,
     '--scroll-head-left': `-${TableSchema.formatData.layout.translateX}px`,
-    '--scroll-left': `${TableSchema.formatData.layout.translateY}px`,
+    '--scroll-left': `${TableSchema.formatData.layout.translateX}px`,
   }));
 
   const contentClass = {

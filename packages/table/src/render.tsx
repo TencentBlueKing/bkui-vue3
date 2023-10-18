@@ -46,11 +46,8 @@ import useFixedColumn from './plugins/use-fixed-column';
 import { Column, Settings as ISettings, TablePropTypes } from './props';
 import {
   formatPropAsArray,
-  getColumnSourceData,
   getNextSortType,
-  getRowId,
   getRowKeyNull,
-  getRowSourceData,
   getRowText,
   getSortFn,
   isRowSelectEnable,
@@ -60,7 +57,7 @@ import {
   resolvePropVal,
   resolveWidth,
 } from './utils';
-import { ITableFormatData, ITableResponse } from './use-data';
+import { ITableFormatData, ITableResponse } from './use-attributes';
 
 export default class TableRender {
   props: TablePropTypes;
@@ -265,6 +262,14 @@ export default class TableRender {
   //   }
   // }
 
+  private getSortFnByColumn (column: Column, fn, a, b) {
+    if (column.type === 'index') {
+      return fn(this.tableResp.getRowAttribute(a, TABLE_ROW_ATTRIBUTE.ROW_INDEX), this.tableResp.getRowAttribute(b, TABLE_ROW_ATTRIBUTE.ROW_INDEX));
+    }
+
+    return fn(a, b);
+  }
+
   /**
    * 点击选中一列事件
    * @param index 当前选中列Index
@@ -276,11 +281,15 @@ export default class TableRender {
     //   this.context.emit(EMIT_EVENTS.COLUMN_PICK, this.propActiveCols);
     // }
 
+    if (this.tableResp.getColumnAttribute(column, COLUMN_ATTRIBUTE.COL_IS_DRAG)) {
+      return;
+    }
+
     if (column.sort && !column.filter) {
-      const type = this.tableResp.getColumnAttributeValue(column, COLUMN_ATTRIBUTE.COL_SORT_TYPE) as string;
+      const type = this.tableResp.getColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_TYPE) as string;
       const nextSort = getNextSortType(type);
 
-      const sortFn = getSortFn(column, nextSort);
+      const sortFn = (a, b) => this.getSortFnByColumn(column, getSortFn(column, nextSort), a, b);
       this.tableResp.setColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_TYPE, nextSort);
       this.tableResp.setColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_FN, sortFn);
       this.tableResp.sortData(column);
@@ -300,14 +309,15 @@ export default class TableRender {
      * @param sortFn 排序函数
      * @param type 排序类型
      */
-    const handleSortClick = (sortFn: any, type: string) => {
+    const handleSortClick = (sortFn: ((a, b) => number | boolean), type: string) => {
+      const fn = (a, b) => this.getSortFnByColumn(column, sortFn, a, b);
       this.tableResp.setColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_TYPE, type);
-      this.tableResp.setColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_FN, sortFn);
+      this.tableResp.setColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_FN, fn);
       this.tableResp.sortData(column);
       this.context.emit(EMIT_EVENTS.COLUMN_SORT, { column, index, type });
     };
 
-    const nextSort = this.tableResp.getColumnAttributeValue(column, COLUMN_ATTRIBUTE.COL_SORT_TYPE) as SORT_OPTION;
+    const nextSort = this.tableResp.getColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_TYPE) as SORT_OPTION;
 
     return (
       <HeadSort
@@ -373,7 +383,7 @@ export default class TableRender {
      */
     const renderHeadCell = (column: Column, index: number) => {
       if (column.type === 'selection') {
-        return this.renderCheckboxColumn(CHECK_ALL_OBJ, 0, true);
+        return this.renderCheckboxColumn(CHECK_ALL_OBJ, null, true);
       }
 
       const cells = [];
@@ -409,7 +419,7 @@ export default class TableRender {
     };
 
     const resolveEventListener = (col: Column) => {
-      const listeners = this.tableResp.getColumnAttributeValue(col, COLUMN_ATTRIBUTE.LISTENERS) as Map<string, any>;
+      const listeners = this.tableResp.getColumnAttribute(col, COLUMN_ATTRIBUTE.LISTENERS) as Map<string, any>;
 
       if (!listeners) {
         return {};
@@ -541,9 +551,9 @@ export default class TableRender {
                   };
 
                   const { colspan, rowspan } = resolveCellSpan(column, index, row, rowIndex);
-                  const skipRowKey = TABLE_ROW_ATTRIBUTE.ROW_SKIP_CFG;
-                  const columnIdKey = column[COLUMN_ATTRIBUTE.COL_UID];
-                  const { skipRow = false, skipCol = false } = row[skipRowKey]?.[columnIdKey] ?? {};
+                  const skipOption = this.tableResp.getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_SKIP_CFG);
+                  const columnIdKey = this.tableResp.getColumnAttribute(column, COLUMN_ATTRIBUTE.COL_UID);
+                  const { skipRow = false, skipCol = false } = skipOption?.[columnIdKey as string] ?? {};
 
                   if (!skipRow && !skipCol) {
                     const cellClass = [
@@ -552,21 +562,17 @@ export default class TableRender {
                       column.align || this.props.align,
                       ...formatPropAsArray(this.props.cellClass, [column, index, row, rowIndex, this]),
                       {
-                        'expand-row': row[TABLE_ROW_ATTRIBUTE.ROW_EXPAND],
+                        'expand-row': this.tableResp.getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_EXPAND),
                         'is-last': rowIndex + rowspan >= rowLength,
                       },
                     ];
 
                     const handleEmit = (event, type: string) => {
-                      const args = {
-                        event,
-                        row: getRowSourceData(row),
-                        column: getColumnSourceData(column),
+                      const args = { event, row, column,
                         cell: {
                           getValue: () => this.renderCell(row, column, rowIndex, rows),
                         },
-                        rowIndex,
-                        columnIndex: index,
+                        rowIndex, columnIndex: index,
                       };
                       this.context.emit(type, args);
                     };
@@ -604,12 +610,12 @@ export default class TableRender {
     );
   }
 
-  private renderExpandRow(row: any, rowClass: any[], rowIndex) {
-    const isExpand = !!row[TABLE_ROW_ATTRIBUTE.ROW_EXPAND];
+  private renderExpandRow(row: any, rowClass: any[], _rowIndex?) {
+    const isExpand = this.tableResp.getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_EXPAND);
     if (isExpand) {
       const resovledClass = [...rowClass, { row_expend: true }];
 
-      const rowId = getRowId(row, rowIndex, this.props);
+      const rowId = this.tableResp.getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_UID);
       const rowKey = `${rowId}_expand`;
       return (
         <TableRow key={rowKey}>
@@ -618,7 +624,7 @@ export default class TableRender {
               colspan={this.filterColGroups.length}
               rowspan={1}
             >
-              {this.context.slots.expandRow?.(getRowSourceData(row)) ?? <div class='expand-cell-ctx'>Expand Row</div>}
+              {this.context.slots.expandRow?.(row) ?? <div class='expand-cell-ctx'>Expand Row</div>}
             </td>
           </tr>
         </TableRow>
@@ -636,7 +642,6 @@ export default class TableRender {
 
   private getHeadColumnClass = (column: Column, colIndex: number) => ({
     ...this.getColumnClass(column, colIndex),
-    // active: this.isColActive(colIndex),
   });
 
   /**
@@ -670,12 +675,12 @@ export default class TableRender {
   }
 
   private getExpandCell(row: any) {
-    const isExpand = !!row[TABLE_ROW_ATTRIBUTE.ROW_EXPAND];
+    const isExpand = this.tableResp.getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_EXPAND);
     return isExpand ? <DownShape></DownShape> : <RightShape></RightShape>;
   }
 
   private handleRowExpandClick(row: any, column: Column, index: number, rows: any[], e: MouseEvent) {
-    this.tableResp.setRowExpand(row, this.tableResp.getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_EXPAND));
+    this.tableResp.setRowExpand(row, !this.tableResp.getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_EXPAND));
     this.context.emit(EMIT_EVENTS.ROW_EXPAND_CLICK, { row, column, index, rows, e, });
   }
 
@@ -685,20 +690,28 @@ export default class TableRender {
     return (column.render as Function)({ cell, data, row, column, index, rows });
   }
 
-  private renderCheckboxColumn(row: any, index: number, isAll = false) {
+  private renderCheckboxColumn(row: any, index: number | null, isAll = false) {
     const handleChecked = value => {
-      this.emitEvent(EVENTS.ON_ROW_CHECK, [{ row, index, isAll, value }]);
+      if (isAll) {
+        this.tableResp.setRowSelectionAll(value);
+        this.context.emit(EMIT_EVENTS.ROW_SELECT_ALL, { checked: value, data: this.props.data });
+        return;
+      }
+
+      this.tableResp.setRowSelection(row, value);
+      this.context.emit(EMIT_EVENTS.ROW_SELECT, { row, index, checked: value, data: this.props.data });
     };
 
-    const indeterminate = isAll && !this.tableResp.isCheckedAll && this.tableResp.hasCheckedRow;
+    const indeterminate = this.tableResp.getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_SELECTION_INDETERMINATE);
+    const isChecked = this.tableResp.getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_SELECTION);
     const isEnable = isRowSelectEnable(this.props, { row, index, isCheckAll: isAll });
 
     return (
       <BkCheckbox
         onChange={handleChecked}
         disabled={!isEnable}
-        modelValue={this.formatData.columnSchema.get(row)?.[TABLE_ROW_ATTRIBUTE.ROW_SELECTION]}
-        indeterminate={indeterminate.value}
+        modelValue={isChecked}
+        indeterminate={indeterminate as boolean}
       />
     );
   }
@@ -796,7 +809,7 @@ export default class TableRender {
           const width: string | number = `${resolveWidth(this.tableResp.getColumnOrderWidth(column))}`
             .replace(/px$/i, '');
 
-          const minWidth = this.tableResp.getColumnAttributeValue(column, COLUMN_ATTRIBUTE.COL_MIN_WIDTH);
+          const minWidth = this.tableResp.getColumnAttribute(column, COLUMN_ATTRIBUTE.COL_MIN_WIDTH);
           return (
             <col
               class={colCls}
@@ -813,6 +826,6 @@ export default class TableRender {
    * 过滤当前可渲染的列
    */
   private get filterColGroups() {
-    return this.formatData.columns.filter((col: Column) => !this.tableResp.getColumnAttributeValue(col, COLUMN_ATTRIBUTE.IS_HIDDEN));
+    return this.formatData.columns.filter((col: Column) => !this.tableResp.getColumnAttribute(col, COLUMN_ATTRIBUTE.IS_HIDDEN));
   }
 }

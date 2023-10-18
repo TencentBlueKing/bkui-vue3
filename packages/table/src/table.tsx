@@ -52,8 +52,7 @@ import { Column, tableProps } from './props';
 import TableRender from './render';
 import useColumn from './use-column';
 import { useClass } from './use-common';
-import { getRowSourceData } from './utils';
-import useData, { ITableResponse } from './use-data';
+import useData, { ITableResponse } from './use-attributes';
 import useFixedColumn from './plugins/use-fixed-column';
 import useColumnResize from './plugins/use-column-resize';
 import { ITableColumn } from './components/table-column';
@@ -95,7 +94,6 @@ export default defineComponent({
       fixHeight,
       maxFixHeight,
       updateBorderClass,
-      // resetTableHeight,
       hasFooter,
     } = useClass(props, columns as ITableColumn[], root, TableSchema, TableSchema.pageData);
 
@@ -140,29 +138,7 @@ export default defineComponent({
         updateBorderClass(root.value);
         ctx.emit(EMIT_EVENTS.SETTING_CHANGE, { checked, size, height, fields });
       });
-    })
-      .on(EVENTS.ON_ROW_CHECK, ({ row, isAll, index, value }) => {
-        if (isAll) {
-          TableSchema.toggleAllSelection();
-          ctx.emit(EMIT_EVENTS.ROW_SELECT_ALL, { checked: value, data: props.data });
-        } else {
-          TableSchema.toggleRowSelection(row);
-          ctx.emit(EMIT_EVENTS.ROW_SELECT, {
-            row,
-            index,
-            checked: value,
-            data: props.data,
-          });
-        }
-
-        ctx.emit(EMIT_EVENTS.ROW_SELECT_CHANGE, {
-          row: getRowSourceData(row),
-          isAll,
-          index,
-          checked: value,
-          data: props.data,
-        });
-      });
+    });
 
     const handleScrollChanged = (args: any[]) => {
       const preBottom = TableSchema.formatData.layout.bottom ?? 0;
@@ -201,8 +177,8 @@ export default defineComponent({
       clearSelection: TableSchema.clearSelection,
       toggleAllSelection: TableSchema.toggleAllSelection,
       toggleRowSelection: TableSchema.toggleRowSelection,
-      getSelection,
-      // clearSort,
+      getSelection: TableSchema.getRowSelection,
+      clearSort: TableSchema.clearColumnSort,
       scrollTo,
       getRoot,
     });
@@ -346,10 +322,7 @@ export default defineComponent({
               ></div>
             ),
           )}
-          <div
-            class={resizeColumnClass}
-            style={resizeColumnStyle.value}
-          ></div>
+          <div class={resizeColumnClass} style={resizeColumnStyle.value}></div>
           <div class={loadingRowClass}>{renderScrollLoading()}</div>
         </div>
         {/* @ts-ignore:next-line */}

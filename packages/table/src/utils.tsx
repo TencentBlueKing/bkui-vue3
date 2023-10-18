@@ -27,12 +27,10 @@
 import { debounce, get as objGet, throttle } from 'lodash';
 import ResizeObserver from 'resize-observer-polyfill';
 import { v4 as uuidv4 } from 'uuid';
-import { unref } from 'vue';
 
 import {
   BORDER_OPTION,
   BORDER_OPTIONS,
-  COLUMN_ATTRIBUTE,
   SORT_OPTION,
   TABLE_ROW_ATTRIBUTE,
 } from './const';
@@ -224,6 +222,10 @@ export const resolveHeadConfig = (props: TablePropTypes) => {
  * @returns
  */
 export const getRowText = (row: any, key: string) => {
+  if (typeof row === 'string' || typeof row === 'number' || typeof row === 'boolean') {
+    return row;
+  }
+
   return objGet(row, key);
 };
 
@@ -397,7 +399,7 @@ export const getSortFn = (column, sortType) => {
   const sortFn = typeof (column.sort as any)?.sortFn === 'function' ? (column.sort as any)?.sortFn : sortFn0;
 
   return sortType === SORT_OPTION.NULL
-    ? () => true
+    ? (_a, _b) => true
     : (_a, _b) => sortFn(_a, _b) * (sortType === SORT_OPTION.DESC ? -1 : 1);
 };
 
@@ -454,29 +456,15 @@ export const isRowSelectEnable = (props, { row, index, isCheckAll }) => {
   return true;
 };
 
-export const getRowId = (row, index, props) => {
-  if (row[TABLE_ROW_ATTRIBUTE.ROW_UID] !== undefined) {
-    return row[TABLE_ROW_ATTRIBUTE.ROW_UID];
-  }
-
-  const key = getRowKey(row, props, index);
+export const getRowId = (row, defVal, props) => {
+  const key = getRowKey(row, props, defVal);
   if (key !== undefined && row[key] !== undefined) {
     return row[key];
   }
 
-  return index;
+  return defVal;
 };
 
-export const getRowSourceData = row => unref(row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA] || row);
-export const getColumnSourceData = column => unref(column[COLUMN_ATTRIBUTE.COL_SOURCE_DATA] || column);
-
-export const getRowIndex = (row, index) => {
-  if (Object.prototype.hasOwnProperty.call(row, TABLE_ROW_ATTRIBUTE.ROW_INDEX)) {
-    return row[TABLE_ROW_ATTRIBUTE.ROW_INDEX];
-  }
-
-  return index;
-};
 
 export const resolveColumnSortProp = (col: Column, props: TablePropTypes) => {
   const { value, sortFn, sortScope } = resolveSort(col.sort ?? props.defaultSort) ?? {};

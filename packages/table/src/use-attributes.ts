@@ -1,8 +1,8 @@
-import { Ref, computed, reactive } from "vue";
+import { computed, reactive } from "vue";
 import { Column, IColSortBehavior, Settings, SortScope, TablePropTypes } from "./props";
 import { v4 as uuidv4 } from 'uuid';
-import { CHECK_ALL_OBJ, COLUMN_ATTRIBUTE, COL_MIN_WIDTH, SETTING_SIZE, TABLE_ROW_ATTRIBUTE } from "./const";
-import { getRowValue, isColumnHidden, resolveCellSpan, resolveColumnSortProp } from "./utils";
+import { CHECK_ALL_OBJ, COLUMN_ATTRIBUTE, COL_MIN_WIDTH, ICHECK_ALL_OBJ, SETTING_SIZE, SORT_OPTION, TABLE_ROW_ATTRIBUTE } from "./const";
+import { getRowId, getRowValue, isColumnHidden, resolveCellSpan, resolveColumnSortProp } from "./utils";
 import usePagination from "./plugins/use-pagination";
 
 export type ITableFormatData = {
@@ -29,7 +29,8 @@ export type ITableResponse = {
   setRowIndex: (row: any, index: number) => void,
   setColumnAttribute: (col: Column, attrName: string, attrValue: ((...args) => boolean | number | void | string) | string | boolean | number) => void,
   setColumnAttributeBySettings: (settings: Settings, checkedVal?: string[]) => void,
-  getColumnAttributeValue: (col: Column, attributeName: string) => string | boolean | Record<string, any>,
+  setAllColumnAttribute: (attrName: string, attrValue: ((...args) => boolean | number | void | string) | string | boolean | number) => void,
+  getColumnAttribute: (col: Column, attributeName: string) => string | boolean | Record<string, any>,
   getColumnId: (col: Column) => string,
   getColumnOrderWidth: (column: Column, orders?: string[]) => number,
   isActiveColumn: (col: Column) => boolean,
@@ -39,16 +40,20 @@ export type ITableResponse = {
   toggleAllSelection: (value?: boolean) => void,
   setAllRowExpand: (value?: boolean) => void,
   clearSelection: () => void,
+  clearColumnSort: (reset?: boolean) => void,
   setColumnSortActive: (column: Column, active: boolean) => void,
-  getRowAttribute: (row: any, attrName: string) => any,
+  getRowAttribute: (row: any | ICHECK_ALL_OBJ, attrName: string) => any,
+  getRowSelection: () => any[],
   resolveColumnWidth: (root: HTMLElement, autoWidth?, offsetWidth?) => void,
   filter: () => void,
   sortData: (column: Column) => void,
+  isCheckedAll: () => boolean,
+  hasCheckedRow: () => boolean,
+  setRowSelectionAll: (val: boolean) => void,
+  setRowIndeterminate: () => void,
   pageData: any[],
   localPagination: any,
   formatData: ITableFormatData,
-  isCheckedAll: Ref<boolean>,
-  hasCheckedRow: Ref<boolean>,
 }
 
 export default (props: TablePropTypes): ITableResponse => {
@@ -92,6 +97,10 @@ export default (props: TablePropTypes): ITableResponse => {
   const checked = (props.settings as Settings)?.checked || [];
   const settingFields = (props.settings as Settings)?.fields || [];
 
+  /**
+   * Format columns
+   * @param columns
+   */
   const formatColumns = (columns: Column[]) => {
     formatData.columns.length = 0;
     formatData.columns = columns;
@@ -112,13 +121,14 @@ export default (props: TablePropTypes): ITableResponse => {
           [COLUMN_ATTRIBUTE.COL_FILTER_SCOPE]: undefined,
           [COLUMN_ATTRIBUTE.COL_SORT_SCOPE]: scope,
           [COLUMN_ATTRIBUTE.COL_SORT_ACTIVE]: active,
+          [COLUMN_ATTRIBUTE.COL_IS_DRAG]: false,
           [COLUMN_ATTRIBUTE.COL_UID]: uuidv4(),
         });
       }
     });
-  }
+  };
 
-  const getColumnFilterFn = (col: Column) => getColumnAttributeValue(col, COLUMN_ATTRIBUTE.COL_FILTER_FN);
+  const getColumnFilterFn = (col: Column) => getColumnAttribute(col, COLUMN_ATTRIBUTE.COL_FILTER_FN);
 
   const filter = () => {
     const filterFnList = formatData.columns
@@ -129,45 +139,89 @@ export default (props: TablePropTypes): ITableResponse => {
   };
 
 
+  /**
+   * 按照指定列排序
+   * @param column
+   */
   const sortData = (column: Column) => {
-    const fn = getColumnAttributeValue(column, COLUMN_ATTRIBUTE.COL_SORT_FN);
-    const type = getColumnAttributeValue(column, COLUMN_ATTRIBUTE.COL_SORT_TYPE);
-    const scope = getColumnAttributeValue(column, COLUMN_ATTRIBUTE.COL_SORT_SCOPE);
+    const fn = getColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_FN);
+    const type = getColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_TYPE);
+    const scope = getColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_SCOPE);
+
+    if (type === SORT_OPTION.NULL) {
+      resolvePageData();
+      return;
+    }
+
     sort(pageData, fn, column, type, scope);
   };
 
+  /**
+   * 清理列排序
+   * @param reset 是否重置表格数据
+   */
+  const clearColumnSort = (reset = false) => {
+    formatData.columns.forEach(col => {
+      setColumnAttribute(col, COLUMN_ATTRIBUTE.COL_SORT_ACTIVE, false);
+      setColumnAttribute(col, COLUMN_ATTRIBUTE.COL_FILTER_FN, undefined);
+    });
+
+    if (reset) {
+      resolvePageData();
+    }
+  };
+
+  /**
+   * 遍历所有列 & 设置列属性
+   * @param attributeName
+   * @param value
+   */
+  const setAllColumnAttribute = (attributeName: string | string[], value: string | number | boolean | ((...args: any[]) => boolean | number | void | string)) => {
+    const attrNames = Array.isArray(attributeName) ? attributeName : [attributeName];
+    const values = Array.isArray(value) ? value : [value];
+    formatData.columns.forEach(col => {
+      attrNames.forEach((name, index) => {
+        setColumnAttribute(col, name, values[index]);
+      });
+    });
+  };
+
+  /**
+   * 设置指定列是否激活排序
+   * @param column
+   * @param active
+   */
   const setColumnSortActive = (column: Column, active: boolean) => {
     if (props.colSortBehavior === IColSortBehavior.independent) {
       formatData.columns.forEach(col => {
-        formatData.columnSchema.get(col)[COLUMN_ATTRIBUTE.COL_SORT_ACTIVE] = false;
+        setColumnAttribute(col, COLUMN_ATTRIBUTE.COL_SORT_ACTIVE, false);
       });
     }
-
-    formatData.columnSchema.get(column)[COLUMN_ATTRIBUTE.COL_SORT_ACTIVE] = active;
+    setColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_ACTIVE, active);
   };
 
   /**
    * 是否数据全选
    */
-  const isCheckedAll = computed(() => {
+  const isCheckedAll = () => {
     if (props.acrossAll) {
       return formatData.data.every(row => getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_SELECTION));
     }
 
     return pageData.every(row => getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_SELECTION));
-  });
+  };
 
 
   /**
    * 是否有选中的数据
    */
-  const hasCheckedRow = computed(() => {
+  const hasCheckedRow = () => {
     if (props.acrossAll) {
       return formatData.data.some(row => getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_SELECTION));
     }
 
     return pageData.some(row => getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_SELECTION));
-  });
+  };
 
   /**
    * 当前列是否激活状态
@@ -175,7 +229,7 @@ export default (props: TablePropTypes): ITableResponse => {
    */
   const isActiveColumn = (col: Column) => {
     return formatData.columnSchema.get(col)?.[COLUMN_ATTRIBUTE.IS_HIDDEN] ?? false;
-  }
+  };
 
   const ORDER_LIST = [COLUMN_ATTRIBUTE.RESIZE_WIDTH, COLUMN_ATTRIBUTE.CALC_WIDTH, COLUMN_ATTRIBUTE.WIDTH];
 
@@ -191,7 +245,7 @@ export default (props: TablePropTypes): ITableResponse => {
   const getColumnOrderWidth = (col: Column, orders = ORDER_LIST): number => {
     const target = formatData.columnSchema.get(col) ?? {};
     return target[orders[0]] ?? target[orders[1]] ?? target[orders[2]];
-  }
+  };
 
   /**
    * 指定列是否展示状态
@@ -199,7 +253,7 @@ export default (props: TablePropTypes): ITableResponse => {
    */
   const isHiddenColumn = (col: Column) => {
     return formatData.columnSchema.get(col)?.[COLUMN_ATTRIBUTE.IS_HIDDEN] ?? false;
-  }
+  };
 
   /**
    * 获取列所在ID
@@ -207,7 +261,7 @@ export default (props: TablePropTypes): ITableResponse => {
    */
   const getColumnId = (col: Column) => {
     return formatData.columnSchema.get(col)?.[COLUMN_ATTRIBUTE.COL_UID];
-  }
+  };
 
   /**
    * 设置表格列属性
@@ -220,7 +274,7 @@ export default (props: TablePropTypes): ITableResponse => {
     if (target && Object.prototype.hasOwnProperty.call(target, attrName)) {
       target[attrName] = attrValue;
     }
-  }
+  };
 
   const setColumnAttributeBySettings = (settings: Settings, checkedVal?: string[]) => {
     const checked = checkedVal || settings.checked || [];
@@ -229,16 +283,16 @@ export default (props: TablePropTypes): ITableResponse => {
     formatData.columns.forEach(col => {
       setColumnAttribute(col, COLUMN_ATTRIBUTE.IS_HIDDEN, isColumnHidden(settingFields, col, checked));
     });
-  }
+  };
 
   /**
    * 获取列配置属性值
    * @param col
    * @param attributeName
    */
-  const getColumnAttributeValue = (col: Column, attributeName: string) => {
+  const getColumnAttribute = (col: Column | ICHECK_ALL_OBJ, attributeName: string) => {
     return formatData.columnSchema.get(col)?.[attributeName];
-  }
+  };
 
   /**
    * 判定当前行是否选中
@@ -264,21 +318,28 @@ export default (props: TablePropTypes): ITableResponse => {
     }
 
     return false;
-  }
+  };
 
   /**
    * 判定是否需要合并行或者列配置
    */
   const neepColspanOrRowspan = computed(() =>
     formatData.columns.some(
-      col =>
-        typeof col.rowspan === 'function' ||
-        /^\d$/.test(`${col.rowspan}`) ||
-        typeof col.colspan === 'function' ||
-        /^\d$/.test(`${col.colspan}`),
+      col => typeof col.rowspan === 'function'
+        || /^\d$/.test(`${col.rowspan}`)
+        || typeof col.colspan === 'function'
+        || /^\d$/.test(`${col.colspan}`),
     ),
   );
 
+  /**
+   * 计算Colspan || Rowspan 配置项
+   * @param row
+   * @param rowId
+   * @param rowIndex
+   * @param skipCfg
+   * @param preRowId
+   */
   const getSkipConfig = (row: any, rowId: string, rowIndex: number, skipCfg: any, preRowId: string) => {
     if (!neepColspanOrRowspan.value) {
       return {}
@@ -293,7 +354,7 @@ export default (props: TablePropTypes): ITableResponse => {
 
     formatData.columns.forEach((column, index) => {
       const { colspan, rowspan } = resolveCellSpan(column, index, row, rowIndex);
-      const colId = column[COLUMN_ATTRIBUTE.COL_UID];
+      const colId = getColumnAttribute(column, COLUMN_ATTRIBUTE.COL_UID);
       const preRowColSkipLen = preRowConfig[colId]?.skipRowLen ?? 0;
       const target = {
         [colId]: {
@@ -331,6 +392,10 @@ export default (props: TablePropTypes): ITableResponse => {
     return skipCfg[rowId];
   };
 
+  /**
+   * 格式化传入数据配置
+   * @param data
+   */
   const formatDataSchema = (data: any[]) => {
     formatData.data.length = 0;
     formatData.data = data;
@@ -339,7 +404,7 @@ export default (props: TablePropTypes): ITableResponse => {
     const skipConfig = {};
 
     (data || []).forEach((row, index) => {
-      let rowId = uuidv4();
+      let rowId = getRowId(row, uuidv4(), props);
       const cfg = getSkipConfig(row, rowId, index, skipConfig, preRowId);
 
       if (!formatData.dataSchema.has(row)) {
@@ -349,6 +414,7 @@ export default (props: TablePropTypes): ITableResponse => {
           [TABLE_ROW_ATTRIBUTE.ROW_UID]: rowId,
           [TABLE_ROW_ATTRIBUTE.ROW_SKIP_CFG]: cfg,
           [TABLE_ROW_ATTRIBUTE.ROW_INDEX]: (index + 1),
+          [TABLE_ROW_ATTRIBUTE.ROW_SELECTION_INDETERMINATE]: false
         });
       }
 
@@ -362,9 +428,28 @@ export default (props: TablePropTypes): ITableResponse => {
     });
 
     formatData.dataSchema.set(CHECK_ALL_OBJ, {
-      [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: false
+      [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: false,
+      [TABLE_ROW_ATTRIBUTE.ROW_SELECTION_INDETERMINATE]: false
     });
   };
+
+  /**
+   * 设置是否全选状态
+   * @param val
+   */
+  const setRowSelectionAll = (val: boolean) => {
+    toggleAllSelection(val);
+  };
+
+  /**
+   * 设置全选状态是否半选
+   */
+  const setRowIndeterminate = () => {
+    const checkedAll = isCheckedAll();
+    setRowAttribute(CHECK_ALL_OBJ, TABLE_ROW_ATTRIBUTE.ROW_SELECTION, checkedAll);
+    setRowAttribute(CHECK_ALL_OBJ, TABLE_ROW_ATTRIBUTE.ROW_SELECTION_INDETERMINATE, !checkedAll && hasCheckedRow());
+  };
+
 
   /**
    * 设置列属性
@@ -377,7 +462,7 @@ export default (props: TablePropTypes): ITableResponse => {
     if (target && Object.prototype.hasOwnProperty.call(target, attrName)) {
       target[attrName] = attrValue;
     };
-  }
+  };
 
   /**
    * 设置当前行是否选中
@@ -386,11 +471,17 @@ export default (props: TablePropTypes): ITableResponse => {
    */
   const setRowSelection = (row: any, isSelected: boolean) => {
     setRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_SELECTION, isSelected);
-  }
+    setRowIndeterminate();
+  };
 
+  /**
+   * 设置Row Index
+   * @param row
+   * @param index
+   */
   const setRowIndex = (row: any, index: number) => {
     setRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_INDEX, index);
-  }
+  };
 
   /**
    *  设置当前行是否展开
@@ -399,41 +490,37 @@ export default (props: TablePropTypes): ITableResponse => {
    */
   const setRowExpand = (row: any, isExpand: boolean) => {
     setRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_EXPAND, isExpand);
-  }
+  };
 
-  const getRowAttribute = (row: any, attrName: string) => {
+  const getRowAttribute = (row: any | ICHECK_ALL_OBJ, attrName: string) => {
     return formatData.dataSchema.get(row)?.[attrName];
-  }
+  };
 
   const toggleRowSelection = (row: any) => {
     setRowSelection(row, !getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_SELECTION))
-  }
-
-  const getTargetSelectionValue = () => {
-    if (isCheckedAll.value) {
-      return false;
-    }
-
-    return true;
-  }
+  };
 
   const toggleAllSelection = (value?: boolean) => {
-    const val = value ?? getTargetSelectionValue();
+    const val = value ?? !isCheckedAll();
     if (props.acrossAll) {
       formatData.data.forEach(row => setRowSelection(row, val));
       return;
     }
 
     pageData.forEach(row => setRowSelection(row, val));
-  }
+    formatData.dataSchema.set(CHECK_ALL_OBJ, {
+      [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: val,
+      [TABLE_ROW_ATTRIBUTE.ROW_SELECTION_INDETERMINATE]: false
+    });
+  };
 
   const clearSelection = () => {
     formatData.data.forEach(row => setRowSelection(row, false));
-  }
+  };
 
   const setAllRowExpand = (value?: boolean) => {
     formatData.data.forEach(row => setRowExpand(row, value ?? true));
-  }
+  };
 
   /**
  * 根据Props Column配置计算并设置列宽度
@@ -451,7 +538,7 @@ export default (props: TablePropTypes): ITableResponse => {
     const avgColIndexList = [];
 
     const getMinWidth = (col: Column, computedWidth: number) => {
-      const minWidth = getColumnAttributeValue(col, COLUMN_ATTRIBUTE.COL_MIN_WIDTH);
+      const minWidth = getColumnAttribute(col, COLUMN_ATTRIBUTE.COL_MIN_WIDTH);
       if (minWidth === undefined) {
         if (computedWidth < COL_MIN_WIDTH) {
           return COL_MIN_WIDTH;
@@ -529,7 +616,7 @@ export default (props: TablePropTypes): ITableResponse => {
         avgColIndexList.forEach((idx, index) => {
           autoAvgWidth = avgWidth / (avgColIndexList.length - index);
           resolveColNumberWidth(formatData.columns[idx], autoAvgWidth, false);
-          const calcWidth = getColumnAttributeValue(formatData.columns[idx], COLUMN_ATTRIBUTE.CALC_WIDTH);
+          const calcWidth = getColumnAttribute(formatData.columns[idx], COLUMN_ATTRIBUTE.CALC_WIDTH);
           avgWidth = avgWidth - calcWidth;
         });
       } else {
@@ -541,6 +628,10 @@ export default (props: TablePropTypes): ITableResponse => {
     }
   };
 
+  /**
+   * 获取选中行数据
+   */
+  const getRowSelection = () => formatData.data.filter(row => getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_SELECTION));
 
   return {
     formatColumns,
@@ -551,9 +642,13 @@ export default (props: TablePropTypes): ITableResponse => {
     setColumnAttribute,
     setColumnAttributeBySettings,
     setColumnSortActive,
-    getColumnAttributeValue,
+    setRowSelectionAll,
+    setRowIndeterminate,
+    setAllColumnAttribute,
+    getColumnAttribute,
     getColumnId,
     getColumnOrderWidth,
+    getRowSelection,
     resolveColumnWidth,
     isActiveColumn,
     isHiddenColumn,
@@ -561,6 +656,7 @@ export default (props: TablePropTypes): ITableResponse => {
     toggleAllSelection,
     setAllRowExpand,
     clearSelection,
+    clearColumnSort,
     toggleRowSelection,
     getRowAttribute,
     filter,
