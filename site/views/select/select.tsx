@@ -331,6 +331,12 @@ const propsJson: IPropsTableItem[] = [
     desc: '多选时ICON样式',
     optional: ['checkbox', 'check'],
   },
+  {
+    name: 'filterOption',
+    type: 'boolean/function',
+    default: 'true',
+    desc: '是否根据输入项进行筛选。当其为一个函数时，会接收 searchValue option 两个参数，当 option 符合筛选条件时，应返回 true，反之则返回 false'
+  }
 ];
 const eventJson = [
   {
