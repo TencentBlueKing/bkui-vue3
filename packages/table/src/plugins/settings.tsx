@@ -55,7 +55,7 @@ export default defineComponent({
     const localSettings = computed(() => {
       if (typeof props.settings === 'boolean') {
         return {
-          fields: props.columns.map((col: any) => ({ ...col, field: col.field || col.type })),
+          fields: props.columns.map((col: any) => Object.assign({}, col, { field: col.field || col.type })),
           checked: [],
           limit: 0,
           size: SETTING_SIZE.small,
