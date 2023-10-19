@@ -153,7 +153,7 @@ export default defineComponent({
           'is-readonly': props.readonly && !props.selectReadonly,
           'is-disabled': props.disabled,
           'is-simplicity': props.behavior === 'simplicity',
-          [`${cls}`]: !!cls,
+          [`${ctx.attrs.class}`]: !!ctx.attrs.class,
         },
         inputClsPrefix.value,
       ),
@@ -196,25 +196,23 @@ export default defineComponent({
     };
 
     const onceInitSizeTextarea = createOnceInitResize(resizeTextarea);
-
+    const suffixCls = getCls('suffix-icon');
     const suffixIconMap = {
       search: () => <Search />,
-      // TODO: eye icon 有点偏小，需要调整
       password: () => (
-        <Eye
-          style={{ fontSize: '18px' }}
+        <Unvisible
           onClick={handleVisibleChange}
+          class={suffixCls}
         />
       ),
     };
-    const suffixCls = getCls('suffix-icon');
     const suffixIcon = computed(() => {
       const icon = suffixIconMap[props.type];
       if (pwdVisible.value) {
         return (
-          <Unvisible
-            onClick={handleVisibleChange}
+          <Eye
             class={suffixCls}
+            onClick={handleVisibleChange}
           />
         );
       }
