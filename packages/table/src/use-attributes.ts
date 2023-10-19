@@ -50,6 +50,7 @@ export type ITableFormatData = {
   };
   layout: {
     bottom: number;
+    hasScrollY: boolean,
     translateX: number;
     translateY: number;
   };
@@ -112,6 +113,7 @@ export default (props: TablePropTypes): ITableResponse => {
       height,
     },
     layout: {
+      hasScrollY: false,
       bottom: 0,
       translateX: 0,
       translateY: 0,

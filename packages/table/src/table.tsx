@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 
-import { computed, defineComponent, nextTick, onBeforeUnmount, provide, reactive, Ref, ref, watch } from 'vue';
+import { computed, defineComponent, onBeforeUnmount, provide, reactive, Ref, ref, watch } from 'vue';
 
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { debounce } from '@bkui-vue/shared';
@@ -32,8 +32,8 @@ import VirtualRender from '@bkui-vue/virtual-render';
 
 import BkTableCache from './cache';
 import { ITableColumn } from './components/table-column';
-import { PROVIDE_KEY_INIT_COL, PROVIDE_KEY_TB_CACHE, SCROLLY_WIDTH } from './const';
-import { EMIT_EVENT_TYPES, EMIT_EVENTS, EVENTS } from './events';
+import { PROVIDE_KEY_INIT_COL, PROVIDE_KEY_TB_CACHE } from './const';
+import { EMIT_EVENT_TYPES, EMIT_EVENTS } from './events';
 import useColumnResize from './plugins/use-column-resize';
 import useFixedColumn from './plugins/use-fixed-column';
 import useScrollLoading from './plugins/use-scroll-loading';
@@ -62,7 +62,7 @@ export default defineComponent({
     const columns = getColumns();
     const TableSchema: ITableResponse = useData(props);
 
-    const { dragOffsetX, dragOffsetXStyle, registerResizeEvent } = useColumnResize(TableSchema, false, head);
+    const { resizeColumnStyle, resizeHeadColStyle, registerResizeEvent } = useColumnResize(TableSchema, false, head);
 
     provide(PROVIDE_KEY_INIT_COL, initColumns);
     provide(PROVIDE_KEY_TB_CACHE, bkTableCache);
@@ -70,17 +70,24 @@ export default defineComponent({
     const {
       tableClass,
       headClass,
-      contentClass,
       footerClass,
       wrapperStyle,
       contentStyle,
       headStyle,
       hasScrollYRef,
-      fixHeight,
-      maxFixHeight,
-      updateBorderClass,
       hasFooter,
+      footerStyle,
+      tableBodyClass,
+      fixedBottomBorder,
+      resizeColumnClass,
+      tableBodyContentClass,
+      loadingRowClass,
+      columnGhostStyle,
+      fixedContainerStyle,
+      scrollClass,
+      prependStyle
     } = useClass(props, columns as ITableColumn[], root, TableSchema, TableSchema.pageData);
+    const { renderScrollLoading } = useScrollLoading(props, ctx);
 
     const { fixedWrapperClass, fixedColumns, resolveColumnStyle, resolveColumnClass } = useFixedColumn(
       props,
@@ -115,17 +122,6 @@ export default defineComponent({
       },
       { immediate: true, deep: true },
     );
-
-    /**
-     * 监听Table 派发的相关事件
-     */
-    tableRender.on(EVENTS.ON_SETTING_CHANGE, (args: any) => {
-      const { checked = [], size, height, fields } = args;
-      nextTick(() => {
-        updateBorderClass(root.value);
-        ctx.emit(EMIT_EVENTS.SETTING_CHANGE, { checked, size, height, fields });
-      });
-    });
 
     const handleScrollChanged = (args: any[]) => {
       const preBottom = TableSchema.formatData.layout.bottom ?? 0;
@@ -169,72 +165,6 @@ export default defineComponent({
       scrollTo,
       getRoot,
     });
-
-    const tableBodyClass = computed(() => ({
-      ...contentClass,
-      '__is-empty': !TableSchema.pageData.length,
-    }));
-
-    const tableBodyContentClass = computed(() => ({
-      [resolveClassName('table-body-content')]: true,
-      [resolveClassName('stripe')]: props.stripe,
-      'with-virtual-render': props.virtualEnabled,
-    }));
-
-    const resizeColumnClass = {
-      column_drag_line: true,
-      'offset-x': true,
-    };
-
-    const resizeColumnStyle = computed(() => ({
-      ...dragOffsetXStyle.value,
-      left: `${dragOffsetX.value - TableSchema.formatData.layout.translateX}px`,
-    }));
-
-    const resizeHeadColStyle = computed(() => ({
-      ...dragOffsetXStyle.value,
-      width: '6px',
-      left: `${dragOffsetX.value - TableSchema.formatData.layout.translateX}px`,
-    }));
-
-    const loadingRowClass = {
-      'scroll-loading': true,
-      _bottom: true,
-    };
-
-    const fixedBottomBorder = computed(() => ({
-      [resolveClassName('fixed-bottom-border')]: true,
-      '_is-empty': !props.data.length,
-    }));
-
-    const columnGhostStyle = {
-      zIndex: -1,
-      width: 0,
-      height: 0,
-      display: 'none' as const,
-    };
-
-    const footerStyle = computed(() => ({
-      '--footer-height': hasFooter.value ? `${props.paginationHeight}px` : '0',
-    }));
-
-    const fixedContainerStyle = computed(() => ({
-      right: hasScrollYRef.value ? `${SCROLLY_WIDTH}px` : 0,
-      '--fix-height': `${fixHeight.value}px`,
-      '--fix-max-height': `${maxFixHeight.value}px`,
-      ...footerStyle.value,
-    }));
-
-    const { renderScrollLoading } = useScrollLoading(props, ctx);
-    const scrollClass = computed(() => (props.virtualEnabled ? {} : { scrollXName: '', scrollYName: '' }));
-
-    const prependStyle = computed(() => ({
-      '--prepend-left': `${TableSchema.formatData.layout.translateX}px`,
-      position: 'sticky' as const,
-      top: 0,
-      zIndex: 2,
-      ...(props.prependStyle || {}),
-    }));
 
     const renderPrepend = () => {
       if (ctx.slots.prepend) {
@@ -292,7 +222,10 @@ export default defineComponent({
             default: (scope: any) => tableRender.renderTableBodySchema(scope.data || TableSchema.pageData),
             afterSection: () => [
               <div class={fixedBottomBorder.value}></div>,
-              <div class={resizeColumnClass} style={resizeColumnStyle.value} ></div>
+              <div
+                class={resizeColumnClass}
+                style={resizeColumnStyle.value}
+              ></div>,
             ],
           }}
         </VirtualRender>

@@ -270,6 +270,62 @@ export const useClass = (
     return offsetWidth;
   };
 
+
+  const tableBodyClass = computed(() => ({
+    ...contentClass,
+    '__is-empty': !TableSchema.pageData.length,
+  }));
+
+  const tableBodyContentClass = computed(() => ({
+    [resolveClassName('table-body-content')]: true,
+    [resolveClassName('stripe')]: props.stripe,
+    'with-virtual-render': props.virtualEnabled,
+  }));
+
+  const resizeColumnClass = {
+    column_drag_line: true,
+    'offset-x': true,
+  };
+
+  const loadingRowClass = {
+    'scroll-loading': true,
+    _bottom: true,
+  };
+
+  const fixedBottomBorder = computed(() => ({
+    [resolveClassName('fixed-bottom-border')]: true,
+    '_is-empty': !props.data.length,
+  }));
+
+
+  const columnGhostStyle = {
+    zIndex: -1,
+    width: 0,
+    height: 0,
+    display: 'none' as const,
+  };
+
+  const footerStyle = computed(() => ({
+    '--footer-height': hasFooter.value ? `${props.paginationHeight}px` : '0',
+  }));
+
+  const fixedContainerStyle = computed(() => ({
+    right: hasScrollYRef.value ? `${SCROLLY_WIDTH}px` : 0,
+    '--fix-height': `${fixHeight.value}px`,
+    '--fix-max-height': `${maxFixHeight.value}px`,
+    ...footerStyle.value,
+  }));
+
+  const scrollClass = computed(() => (props.virtualEnabled ? {} : { scrollXName: '', scrollYName: '' }));
+
+  const prependStyle = computed(() => ({
+    '--prepend-left': `${TableSchema.formatData.layout.translateX}px`,
+    position: 'sticky' as const,
+    top: 0,
+    zIndex: 2,
+    ...(props.prependStyle || {}),
+  }));
+
   return {
     tableClass,
     headClass,
@@ -286,5 +342,15 @@ export const useClass = (
     hasFooter,
     hasScrollY,
     hasScrollYRef,
+    tableBodyClass,
+    tableBodyContentClass,
+    resizeColumnClass,
+    loadingRowClass,
+    fixedBottomBorder,
+    columnGhostStyle,
+    fixedContainerStyle,
+    scrollClass,
+    prependStyle,
+    footerStyle
   };
 };

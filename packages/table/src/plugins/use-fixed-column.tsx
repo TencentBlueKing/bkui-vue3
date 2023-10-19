@@ -29,7 +29,7 @@ import { usePrefix } from '@bkui-vue/config-provider';
 
 import { SCROLLY_WIDTH } from '../const';
 import { Column, TablePropTypes } from '../props';
-import { ITableResponse } from '../use-data';
+import { ITableResponse } from '../use-attributes';
 
 /**
  * 固定列Hooks

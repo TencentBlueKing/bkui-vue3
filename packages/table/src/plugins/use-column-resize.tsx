@@ -114,7 +114,10 @@ export default (tableResp: ITableResponse, immediate = true, head: Ref<HTMLEleme
         return;
       }
       isMouseDown = true;
+      const target = (e.target as HTMLElement).closest('th');
       tableResp.setColumnAttribute(column, COLUMN_ATTRIBUTE.COL_IS_DRAG, true);
+      tableResp.setColumnAttribute(column, COLUMN_ATTRIBUTE.CALC_WIDTH, target.scrollWidth);
+
       const bodyStyle = document.body.style;
       bodyStyle.setProperty('cursor', 'col-resize');
 
@@ -202,22 +205,35 @@ export default (tableResp: ITableResponse, immediate = true, head: Ref<HTMLEleme
     registerResizeEvent();
   }
 
-  const dragOffsetXStyle = computed(
-    () =>
-      ({
-        position: 'absolute',
-        top: 0,
-        bottom: 0,
-        left: 0,
-        width: '1px',
-        'background-color': '#3785FF',
-      }) as const,
-  );
+  const dragOffsetXStyle = {
+    position: 'absolute' as const,
+    top: 0,
+    bottom: 0,
+    left: 0,
+    width: '1px',
+    backgroundColor: '#3785FF',
+    transform: 'translateX(-50%)'
+  };
+
+  const layout = computed(() => tableResp.formatData.layout);
+
+  const resizeColumnStyle = computed(() => ({
+    ...dragOffsetXStyle,
+    transform: `translate(${dragOffsetX.value - layout.value.translateX + 3}px, ${ layout.value.translateY }px)`,
+  }));
+
+  const resizeHeadColStyle = computed(() => ({
+    ...dragOffsetXStyle,
+    width: '6px',
+    transform: `translateX(${dragOffsetX.value - layout.value.translateX}px)`,
+  }));
 
   return {
     registerResizeEvent,
     resetResizeEvents,
     dragOffsetX,
     dragOffsetXStyle,
+    resizeColumnStyle,
+    resizeHeadColStyle
   };
 };

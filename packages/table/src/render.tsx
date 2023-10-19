@@ -44,7 +44,7 @@ import {
   SORT_OPTION,
   TABLE_ROW_ATTRIBUTE,
 } from './const';
-import { EMIT_EVENTS, EVENTS } from './events';
+import { EMIT_EVENTS } from './events';
 import { TablePlugins } from './plugins';
 import BodyEmpty from './plugins/body-empty';
 import HeadFilter from './plugins/head-filter';
@@ -110,14 +110,15 @@ export default class TableRender {
     }
 
     const handleSettingsChanged = (arg: any) => {
-      const { checked = [], size, height } = arg;
+      const { checked = [], size, height, fields } = arg;
       this.formatData.settings.size = size;
       this.formatData.settings.height = height;
 
       if (checked.length) {
         this.tableResp.setColumnAttributeBySettings(this.props.settings as ISettings, checked);
       }
-      this.emitEvent(EVENTS.ON_SETTING_CHANGE, [arg]);
+
+      this.context.emit(EMIT_EVENTS.SETTING_CHANGE, { checked, size, height, fields });
     };
 
     return [
@@ -221,20 +222,6 @@ export default class TableRender {
     this.events = null;
   }
 
-  /**
-   * 派发事件
-   * @param eventName
-   * @param args
-   */
-  private emitEvent(eventName: string, args: any[]) {
-    if (this.events.has(eventName)) {
-      this.events.get(eventName).forEach((event: any) => {
-        if (typeof event === 'function') {
-          Reflect.apply(event, this, args);
-        }
-      });
-    }
-  }
 
   private handlePageLimitChange(limit: number) {
     Object.assign(this.props.pagination, { limit });
