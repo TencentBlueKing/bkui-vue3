@@ -125,7 +125,7 @@ export const useClass = (
   /** 表格外层容器样式 */
   const wrapperStyle = computed(() => ({
     minHeight: resolveNumberOrStringToPix(props.minHeight, 'auto'),
-    width: resolveWidth(),
+    width: resolveWidth() || '100%',
     maxWidth: '100%',
     height: getTableHeight(),
     // maxHeight: props.maxHeight,

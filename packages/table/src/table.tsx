@@ -108,11 +108,12 @@ export default defineComponent({
       () => [props.data, columns],
       () => {
         TableSchema.formatDataSchema(props.data);
+        TableSchema.resetStartEndIndex();
         TableSchema.resolvePageData();
         TableSchema.formatColumns(columns as Column[]);
         registerResizeEvent();
       },
-      { immediate: true },
+      { immediate: true, deep: true },
     );
 
     /**
@@ -289,7 +290,10 @@ export default defineComponent({
           {{
             beforeContent: () => renderPrepend(),
             default: (scope: any) => tableRender.renderTableBodySchema(scope.data || TableSchema.pageData),
-            afterSection: () => <div class={fixedBottomBorder.value}></div>,
+            afterSection: () => [
+              <div class={fixedBottomBorder.value}></div>,
+              <div class={resizeColumnClass} style={resizeColumnStyle.value} ></div>
+            ],
           }}
         </VirtualRender>
         {/* @ts-ignore:next-line */}
@@ -307,10 +311,7 @@ export default defineComponent({
               ></div>
             ),
           )}
-          <div
-            class={resizeColumnClass}
-            style={resizeColumnStyle.value}
-          ></div>
+
           <div class={loadingRowClass}>{renderScrollLoading()}</div>
         </div>
         {/* @ts-ignore:next-line */}

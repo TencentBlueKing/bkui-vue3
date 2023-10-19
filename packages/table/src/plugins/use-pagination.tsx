@@ -147,6 +147,7 @@ export default (props: TablePropTypes) => {
     indexData,
     localPagination,
     resolvePageData,
+    resetStartEndIndex,
     multiFilter,
     sort,
   };

@@ -77,6 +77,7 @@ export type ITableResponse = {
   isActiveColumn: (col: Column) => boolean;
   isHiddenColumn: (col: Column) => boolean;
   resolvePageData: (filterFn?: any, sortFn?: any, column?: Column, type?: string, sortScope?: SortScope) => void;
+  resetStartEndIndex: () => void;
   toggleRowSelection: (row: any) => void;
   toggleAllSelection: (value?: boolean) => void;
   setAllRowExpand: (value?: boolean) => void;
@@ -117,7 +118,7 @@ export default (props: TablePropTypes): ITableResponse => {
     },
   });
 
-  const { pageData, localPagination, resolvePageData, multiFilter, sort } = usePagination(props);
+  const { pageData, localPagination, resolvePageData, multiFilter, sort, resetStartEndIndex } = usePagination(props);
 
   const resolveMinWidth = (col: Column) => {
     if (/^\d+/.test(`${col.minWidth}`)) {
@@ -144,7 +145,7 @@ export default (props: TablePropTypes): ITableResponse => {
    */
   const formatColumns = (columns: Column[]) => {
     formatData.columns.length = 0;
-    formatData.columns = columns;
+    formatData.columns.push(...columns);
 
     (columns || []).forEach(col => {
       if (!formatData.columnSchema.has(col)) {
@@ -445,7 +446,7 @@ export default (props: TablePropTypes): ITableResponse => {
    */
   const formatDataSchema = (data: any[]) => {
     formatData.data.length = 0;
-    formatData.data = data;
+    formatData.data.push(...data);
 
     let preRowId = null;
     const skipConfig = {};
@@ -699,6 +700,7 @@ export default (props: TablePropTypes): ITableResponse => {
     isActiveColumn,
     isHiddenColumn,
     resolvePageData,
+    resetStartEndIndex,
     toggleAllSelection,
     setAllRowExpand,
     clearSelection,
