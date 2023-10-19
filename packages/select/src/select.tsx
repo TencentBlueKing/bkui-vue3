@@ -262,7 +262,7 @@ export default defineComponent({
     const filterOptionFunc = computed(() => {
       if (typeof filterOption.value === 'function') return filterOption.value;
 
-      return () => filterOption.value
+      return () => filterOption.value;
     });
     // 是否显示select下拉内容
     const isShowSelectContent = computed(

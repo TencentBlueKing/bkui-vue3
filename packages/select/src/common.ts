@@ -153,9 +153,9 @@ export function toLowerCase(value = '') {
 
 export function isInViewPort (el: HTMLElement, client: HTMLElement) {
   if (!el || !client) return true;
-  
+
   const { top: elTop, bottom: elBottom } = el.getBoundingClientRect();
   const { top: clientTop, bottom: clientBottom } = client.getBoundingClientRect();
 
-  return elTop >= clientTop && elBottom <= clientBottom
+  return elTop >= clientTop && elBottom <= clientBottom;
 }
