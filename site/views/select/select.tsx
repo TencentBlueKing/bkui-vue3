@@ -44,6 +44,19 @@ import SelectStyleDemo from './select-style-demo.vue';
 import SelectTreeDemo from './select-tree-demo.vue';
 import SelectVirtualRender from './select-virtual-render.vue';
 
+const eventColumnMap = {
+  name: '名称',
+  desc: '说明',
+  params: '参数',
+};
+
+const slotColumnMap = {
+  name: '名称',
+  desc: '说明',
+  type: '类型',
+  params: '参数',
+};
+
 const propsJson: IPropsTableItem[] = [
   {
     name: 'modelValue / v-model',
@@ -355,6 +368,16 @@ const eventJson = [
     desc: '多选模式下移除tag时触发',
     params: 'value',
   },
+  {
+    name: 'select',
+    desc: '被选中时调用',
+    params: 'value',
+  },
+  {
+    name: 'deselect',
+    desc: '取消选中时调用',
+    params: 'value',
+  },
 ];
 // 输入框插槽
 const selectSlots = [
@@ -537,11 +560,13 @@ export default defineComponent({
         />
         <PropsBox
           propsData={eventJson}
+          columnMap={eventColumnMap}
           title='Select 事件'
         />
         <PropsBox
           title='Select 插槽'
           subtitle=''
+          columnMap={slotColumnMap}
           propsData={selectSlots}
         />
         <PropsBox
