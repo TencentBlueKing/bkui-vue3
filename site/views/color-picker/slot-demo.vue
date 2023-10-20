@@ -6,8 +6,8 @@
     >
       <template #trigger="{value,isShowDropdown}">
         <div>
-         <div>value:<span>{{value}}</span></div>
-         <div>isShowDropdown:<span>{{String(isShowDropdown)}}</span></div>
+          <div>value:<span>{{ value }}</span></div>
+          <div>isShowDropdown:<span>{{ String(isShowDropdown) }}</span></div>
         </div>
       </template>
     </bk-color-picker>

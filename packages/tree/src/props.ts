@@ -106,7 +106,7 @@ export const treeProps = {
    * 当前节点标识图标
    * 默认 true
    */
-  prefixIcon: PropTypes.oneOfType([PropTypes.func.def(() => { }), PropTypes.bool.def(false)]).def(true),
+  prefixIcon: PropTypes.oneOfType([PropTypes.func.def(() => {}), PropTypes.bool.def(false)]).def(true),
 
   /**
    * 异步加载节点数据配置

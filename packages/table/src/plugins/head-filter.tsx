@@ -59,13 +59,12 @@ export default defineComponent({
       checked: checked.value,
     });
 
+    const maxHeight = computed(() => (filter.value as IFilterShape)?.maxHeight ?? LINE_HEIGHT * 15);
+
     watch(
       () => filter.value,
       () => {
         state.checked = checked.value;
-        // nextTick(() => {
-        //   handleBtnSaveClick();
-        // });
       },
       { immediate: true, deep: true },
     );
@@ -105,9 +104,9 @@ export default defineComponent({
 
     const defaultFilterFn = (checked: string[], row: any) => {
       const { match } = filter.value as IFilterShape;
-      const matchText = getRowText(row, resolvePropVal(column, 'field', [column, row]), column);
+      const matchText = getRowText(row, resolvePropVal(column, 'field', [column, row]));
       if (match === 'full') {
-        checked.includes(matchText);
+        return checked.includes(matchText);
       }
 
       return checked.some((str: string) => getRegExp(str, 'img').test(matchText));
@@ -116,8 +115,8 @@ export default defineComponent({
     const filterFn =
       typeof (filter.value as IFilterShape).filterFn === 'function'
         ? // eslint-disable-next-line max-len
-        (checked: string[], row: any, index: number, data: any[]) =>
-          (filter.value as IFilterShape).filterFn(checked, row, props.column, index, data)
+          (checked: string[], row: any, index: number, data: any[]) =>
+            (filter.value as IFilterShape).filterFn(checked, row, props.column, index, data)
         : (checked: string[], row: any) => (checked.length ? defaultFilterFn(checked, row) : true);
 
     const handleBtnSaveClick = () => {
@@ -251,6 +250,7 @@ export default defineComponent({
             <div class={headFilterContentClass}>
               <BkCheckboxGroup class='content-list'>
                 <VirtualRender
+                  maxHeight={maxHeight.value}
                   lineHeight={32}
                   list={localData.value}
                   throttleDelay={0}

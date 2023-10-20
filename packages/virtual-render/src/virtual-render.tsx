@@ -121,7 +121,7 @@ export default defineComponent({
     });
 
     watch(
-      () => props.list,
+      () => [props.lineHeight, props.list],
       () => {
         let scrollToOpt = { left: 0, top: 0 };
         scrollToOpt = { left: pagination.scrollLeft, top: pagination.scrollTop };
@@ -132,14 +132,6 @@ export default defineComponent({
         }
       },
       { deep: true },
-    );
-
-    watch(
-      () => props.lineHeight,
-      () => {
-        handleChangeListConfig();
-        afterListDataReset();
-      },
     );
 
     const handleChangeListConfig = () => {
@@ -177,6 +169,7 @@ export default defineComponent({
           innerHeight.value = fnValue;
         } else {
           innerHeight.value = props.lineHeight * listLength.value;
+          console.log('innerHeight', props.lineHeight, innerHeight.value);
         }
       } else {
         innerHeight.value = props.abosuteHeight as number;
@@ -215,9 +208,9 @@ export default defineComponent({
     const innerContentStyle = computed(() =>
       props.scrollPosition === 'content'
         ? {
-          top: `${pagination.scrollTop + props.scrollOffsetTop}px`,
-          transform: `translateY(-${pagination.translateY}px)`,
-        }
+            top: `${pagination.scrollTop + props.scrollOffsetTop}px`,
+            transform: `translateY(-${pagination.translateY}px)`,
+          }
         : {},
     );
 
@@ -228,9 +221,9 @@ export default defineComponent({
         height,
         width: typeof props.width === 'number' ? `${props.width}px` : props.width,
         display: 'inline-block',
-        maxHeight: height,
+        maxHeight: props.maxHeight ?? height,
         ...(props.scrollPosition === 'container' ? innerContentStyle.value : {}),
-        ...props.wrapperStyle
+        ...props.wrapperStyle,
       };
     });
 
@@ -260,12 +253,12 @@ export default defineComponent({
       ...resolvePropClassName(props.contentClassName),
     ]);
     const vVirtualRender = resolveDirective('bkVirtualRender');
-    const dirModifier = {
+    const dirModifier = computed(() => ({
       lineHeight: props.lineHeight,
       handleScrollCallback,
       pagination,
       throttleDelay: props.throttleDelay,
-    };
+    }));
 
     /**
      * 重置当前配置
@@ -313,7 +306,7 @@ export default defineComponent({
                 }) ?? '',
               ],
             ),
-            [[vVirtualRender, dirModifier]],
+            [[vVirtualRender, dirModifier.value]],
           ),
           ctx.slots.afterContent?.() ?? '',
           h('div', {

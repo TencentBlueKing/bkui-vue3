@@ -75,9 +75,9 @@ export default defineComponent({
         const treeUiFilter = () =>
           isTreeUI
             ? flatData.data.some(
-              (data: any) =>
-                getNodePath(data)?.startsWith(getNodePath(item)) && getNodeAttr(item, NODE_ATTRIBUTES.IS_MATCH),
-            )
+                (data: any) =>
+                  getNodePath(data)?.startsWith(getNodePath(item)) && getNodeAttr(item, NODE_ATTRIBUTES.IS_MATCH),
+              )
             : false;
 
         return getNodeAttr(item, NODE_ATTRIBUTES.IS_MATCH) || treeUiFilter();
@@ -107,7 +107,6 @@ export default defineComponent({
     onSelected((newData: any) => {
       setSelect(newData, true, props.autoOpenParentNode);
     });
-
 
     const getData = () => flatData;
 

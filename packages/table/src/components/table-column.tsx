@@ -70,7 +70,7 @@ export default defineComponent({
   name: 'TableColumn',
   props: TableColumnProp,
   setup(props: ITableColumn) {
-    const initColumns = inject(PROVIDE_KEY_INIT_COL, (_col: Column | Column[], _rm = false) => { }, false);
+    const initColumns = inject(PROVIDE_KEY_INIT_COL, (_col: Column | Column[], _rm = false) => {}, false);
     const bkTableCache = inject(PROVIDE_KEY_TB_CACHE, { queueStack: (_, fn) => fn?.() });
     const column = reactive(Object.assign({}, props, { field: props.prop || props.field }));
     return {

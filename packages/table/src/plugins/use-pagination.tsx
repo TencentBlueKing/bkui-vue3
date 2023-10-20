@@ -24,9 +24,9 @@
  * IN THE SOFTWARE.
  */
 import { reactive, ref } from 'vue';
+import { computed } from 'vue';
 
-import { COLUMN_ATTRIBUTE } from '../const';
-import { SortScope, TablePropTypes } from '../props';
+import { Column, SortScope, TablePropTypes } from '../props';
 
 /**
  * 处理 Prop中的分页配置
@@ -54,9 +54,10 @@ export const resolvePaginationOption = (propPagination: any, defVal: any) => {
   return {};
 };
 
-export default (props: TablePropTypes, indexData: any[]) => {
+export default (props: TablePropTypes) => {
   const startIndex = ref(0);
   const endIndex = ref(0);
+  const indexData = computed(() => props.data);
 
   // 当前分页缓存，用于支持内置前端分页，用户无需接收change事件来自行处理数据分割
   let pagination = reactive({
@@ -84,7 +85,7 @@ export default (props: TablePropTypes, indexData: any[]) => {
   const resetStartEndIndex = () => {
     if (!props.pagination || props.remotePagination) {
       startIndex.value = 0;
-      endIndex.value = indexData.length;
+      endIndex.value = indexData.value.length;
       return;
     }
 
@@ -98,54 +99,56 @@ export default (props: TablePropTypes, indexData: any[]) => {
    */
   const pageData = reactive([]);
 
-  const sort = (sourceData: any[], sortFn: any, activeSortColumn: any) => {
+  const sort = (sourceData: any[], sortFn: any, column: Column, type: string, sortScope: SortScope) => {
     if (typeof sortFn === 'function') {
-      sourceData.sort((a, b) => sortFn(a, b, activeSortColumn[COLUMN_ATTRIBUTE.SORT_TYPE]));
+      sourceData.sort((a, b) => sortFn(a, b, type, column, sortScope));
     }
   };
 
-  const filter = (sourceData: any[], filterFn: any) => {
+  const filter = (sourceData: any[], filterFn: (row, index, data) => void) => {
     if (typeof filterFn === 'function') {
-      const filterVals = sourceData.filter((row: any, index: number) => filterFn(row, index, indexData));
+      const filterVals = sourceData.filter((row: any, index: number) => filterFn(row, index, indexData.value));
       sourceData.length = 0;
       sourceData.push(...filterVals);
     }
+
+    return sourceData;
   };
 
-  const resolvePageData = (filterFn: any, sortFn: any, activeSortColumn: any) => {
-    const sourceData = indexData.slice();
-    const { sortScope } = activeSortColumn?.sort ?? {};
-    if (sortScope === SortScope.ALL) {
-      sort(sourceData, sortFn, activeSortColumn);
-    }
+  const resolvePageData = (filterFn?: any, sortFn?: any, column?: Column, type?: string, sortScope?) => {
+    const sourceData = indexData.value.slice();
+
     pageData.length = 0;
     pageData.push(...sourceData.slice(startIndex.value, endIndex.value));
     filter(pageData, filterFn);
-    sort(pageData, sortFn, activeSortColumn);
+    sort(pageData, sortFn, column, type, sortScope);
   };
 
-  /**
-   * 根据Pagination配置的改变重新计算startIndex & endIndex
-   */
-  const watchEffectFn = (filterFn: any, sortFn: any, activeSortColumn: any) => {
-    pagination = resolvePaginationOption(props.pagination, pagination);
-    resolveLocalPagination();
-    resetStartEndIndex();
-    resolvePageData(filterFn, sortFn, activeSortColumn);
+  const multiFilter = (filterFnList: ((row, index, data) => void)[]) => {
+    const sourceData = indexData.value.slice();
+    const target = filterFnList.reduce((result, fn) => filter(result, fn), sourceData);
+    pageData.length = 0;
+    pageData.push(...target);
   };
 
   const resolveLocalPagination = () => {
     if (!props.pagination) {
       return;
     }
-    localPagination.value = props.remotePagination ? pagination : { ...pagination, count: indexData.length };
-    // Object.assign(localPagination, resolved);
+    localPagination.value = props.remotePagination ? pagination : { ...pagination, count: indexData.value.length };
   };
+
+  resolveLocalPagination();
+  resetStartEndIndex();
+  resolvePageData();
 
   return {
     pageData,
+    indexData,
     localPagination,
     resolvePageData,
-    watchEffectFn,
+    resetStartEndIndex,
+    multiFilter,
+    sort,
   };
 };

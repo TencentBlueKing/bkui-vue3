@@ -23,11 +23,11 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
+import { PropType } from 'vue/dist/vue';
 import { string } from 'vue-types';
 
-import { PropTypes } from '@bkui-vue/shared';
-import { PropType } from 'vue/dist/vue';
 import { PopoverPropTypes } from '@bkui-vue/popover';
+import { PropTypes } from '@bkui-vue/shared';
 
 export type TipsType = 'tips' | 'title';
 export type CalType = 'dom' | 'canvas';
