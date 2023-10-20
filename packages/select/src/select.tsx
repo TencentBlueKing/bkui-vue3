@@ -48,7 +48,7 @@ import {
 } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
-import { selectKey, toLowerCase, useHover, usePopover, useRegistry, useRemoteSearch, isInViewPort } from './common';
+import { isInViewPort, selectKey, toLowerCase, useHover, usePopover, useRegistry, useRemoteSearch } from './common';
 import Option from './option';
 import SelectTagInput from './selectTagInput';
 import { GroupInstanceType, ISelected, OptionInstanceType, SelectTagInputType } from './type';
@@ -101,9 +101,20 @@ export default defineComponent({
     filterOption: {
       type: [Boolean, Function],
       default: true,
-    },// 配置当前options的过滤规则
+    }, // 配置当前options的过滤规则
   },
-  emits: ['update:modelValue', 'change', 'toggle', 'clear', 'scroll-end', 'focus', 'blur', 'tag-remove', 'select', 'deselect'],
+  emits: [
+    'update:modelValue',
+    'change',
+    'toggle',
+    'clear',
+    'scroll-end',
+    'focus',
+    'blur',
+    'tag-remove',
+    'select',
+    'deselect',
+  ],
   setup(props, { emit }) {
     const t = useLocale('select');
     const { resolveClassName } = usePrefix();
@@ -225,8 +236,9 @@ export default defineComponent({
       isRemoteSearch.value
         ? list.value
         : list.value.filter(
-            item => filterOptionFunc.value(searchKey.value, item)
-              && toLowerCase(String(item[displayKey.value]))?.includes(toLowerCase(searchKey.value)),
+            item =>
+              filterOptionFunc.value(searchKey.value, item) &&
+              toLowerCase(String(item[displayKey.value]))?.includes(toLowerCase(searchKey.value)),
           ),
     );
     // select组件是否禁用
@@ -369,8 +381,9 @@ export default defineComponent({
         });
       } else {
         options.value.forEach(option => {
-          option.visible = filterOptionFunc.value(value, {...option.$props})
-            && toLowerCase(String(option.optionName))?.includes(toLowerCase(value));
+          option.visible =
+            filterOptionFunc.value(value, { ...option.$props }) &&
+            toLowerCase(String(option.optionName))?.includes(toLowerCase(value));
         });
       }
     };
@@ -402,9 +415,7 @@ export default defineComponent({
       const value = String(val);
       if (!allowCreate.value || !value) return;
 
-      const matchedOption = options.value.find(
-        data => toLowerCase(String(data.optionName)) === toLowerCase(value),
-      );
+      const matchedOption = options.value.find(data => toLowerCase(String(data.optionName)) === toLowerCase(value));
       if (filterable.value && matchedOption) {
         // 开启搜索后，正好匹配到自定义选项，则不进行创建操作
         handleOptionSelected(matchedOption);
