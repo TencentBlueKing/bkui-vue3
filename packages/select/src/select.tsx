@@ -382,9 +382,7 @@ export default defineComponent({
       const value = String(val);
       if (!allowCreate.value || !value) return;
 
-      const matchedOption = options.value.find(
-        data => toLowerCase(String(data.optionName)) === toLowerCase(value),
-      );
+      const matchedOption = options.value.find(data => toLowerCase(String(data.optionName)) === toLowerCase(value));
       if (filterable.value && matchedOption) {
         // 开启搜索后，正好匹配到自定义选项，则不进行创建操作
         handleOptionSelected(matchedOption);
