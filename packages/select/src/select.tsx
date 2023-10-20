@@ -48,7 +48,7 @@ import {
 } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
-import { selectKey, toLowerCase, useHover, usePopover, useRegistry, useRemoteSearch } from './common';
+import { selectKey, toLowerCase, useHover, usePopover, useRegistry, useRemoteSearch, isInViewPort } from './common';
 import Option from './option';
 import SelectTagInput from './selectTagInput';
 import { GroupInstanceType, ISelected, OptionInstanceType, SelectTagInputType } from './type';
@@ -98,8 +98,12 @@ export default defineComponent({
     keepSearchValue: PropTypes.bool.def(false), // 隐藏popover时是否保留搜索内容,
     prefix: PropTypes.string,
     selectedStyle: SelectedType(),
+    filterOption: {
+      type: [Boolean, Function],
+      default: true,
+    },// 配置当前options的过滤规则
   },
-  emits: ['update:modelValue', 'change', 'toggle', 'clear', 'scroll-end', 'focus', 'blur', 'tag-remove'],
+  emits: ['update:modelValue', 'change', 'toggle', 'clear', 'scroll-end', 'focus', 'blur', 'tag-remove', 'select', 'deselect'],
   setup(props, { emit }) {
     const t = useLocale('select');
     const { resolveClassName } = usePrefix();
@@ -130,6 +134,7 @@ export default defineComponent({
       autoFocus,
       keepSearchValue,
       selectedStyle,
+      filterOption,
     } = toRefs(props);
 
     const localNoDataText = computed(() => {
@@ -220,7 +225,8 @@ export default defineComponent({
       isRemoteSearch.value
         ? list.value
         : list.value.filter(
-            item => toLowerCase(String(item[displayKey.value]))?.includes(toLowerCase(searchKey.value)),
+            item => filterOptionFunc.value(searchKey.value, item)
+              && toLowerCase(String(item[displayKey.value]))?.includes(toLowerCase(searchKey.value)),
           ),
     );
     // select组件是否禁用
@@ -252,6 +258,12 @@ export default defineComponent({
     const isSearchEmpty = computed(() => options.value.length && options.value.every(option => !option.visible));
     // 是否远程搜索
     const isRemoteSearch = computed(() => filterable.value && typeof remoteMethod.value === 'function');
+    // options过滤函数
+    const filterOptionFunc = computed(() => {
+      if (typeof filterOption.value === 'function') return filterOption.value;
+
+      return () => filterOption.value;
+    });
     // 是否显示select下拉内容
     const isShowSelectContent = computed(
       () => !(searchLoading.value || isOptionsEmpty.value || isSearchEmpty.value) || customContent.value,
@@ -350,9 +362,17 @@ export default defineComponent({
     // 默认搜索方法
     const defaultSearchMethod = value => {
       if (!filterable.value) return;
-      options.value.forEach(option => {
-        option.visible = toLowerCase(String(option.optionName))?.includes(toLowerCase(value));
-      });
+
+      if (!value) {
+        options.value.forEach(option => {
+          option.visible = true;
+        });
+      } else {
+        options.value.forEach(option => {
+          option.visible = filterOptionFunc.value(value, {...option.$props})
+            && toLowerCase(String(option.optionName))?.includes(toLowerCase(value));
+        });
+      }
     };
     const { searchKey, searchLoading } = useRemoteSearch(
       isRemoteSearch.value ? remoteMethod.value : defaultSearchMethod,
@@ -417,13 +437,16 @@ export default defineComponent({
         const index = selected.value.findIndex(item => item.value === option.optionID);
         if (index > -1) {
           selected.value.splice(index, 1);
+          emitChange(selected.value.map(item => item.value));
+          emit('deselect', option.optionID);
         } else {
           selected.value.push({
             value: option.optionID,
             label: option.optionName || option.optionID,
           });
+          emitChange(selected.value.map(item => item.value));
+          emit('select', option.optionID);
         }
-        emitChange(selected.value.map(item => item.value));
       } else {
         // 单选
         selected.value = [
@@ -433,6 +456,7 @@ export default defineComponent({
           },
         ];
         emitChange(option.optionID);
+        emit('select', option.optionID);
         hidePopover();
       }
       focusInput();
@@ -554,17 +578,19 @@ export default defineComponent({
       // todo v-for循环时组件创建属性不固定
       switch (e.code) {
         // 下一个option
+        case 'ArrowUp':
         case 'ArrowDown': {
           e.preventDefault(); // 阻止滚动屏幕
-          const nextIndex = index >= availableOptions.length - 1 ? 0 : index + 1;
-          activeOptionValue.value = availableOptions[nextIndex]?.optionID;
-          break;
-        }
-        // 上一个option
-        case 'ArrowUp': {
-          e.preventDefault(); // 阻止滚动屏幕
-          const preIndex = index === 0 ? availableOptions.length - 1 : index - 1;
-          activeOptionValue.value = availableOptions[preIndex]?.optionID;
+          let activeIndex = 0;
+          if (e.code === 'ArrowDown') {
+            activeIndex = index >= availableOptions.length - 1 ? 0 : index + 1;
+          } else {
+            activeIndex = index === 0 ? availableOptions.length - 1 : index - 1;
+          }
+          if (!isInViewPort(availableOptions[activeIndex]?.$el, contentRef.value)) {
+            availableOptions[activeIndex]?.$el?.scrollIntoView();
+          }
+          activeOptionValue.value = availableOptions[activeIndex]?.optionID;
           break;
         }
         // 删除选项
