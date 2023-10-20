@@ -10,7 +10,7 @@
     </div>
   </div>
 </template>
-<script >
+<script>
 
   import { overflowTitle } from 'bkui-vue';
   import { defineComponent } from 'vue';

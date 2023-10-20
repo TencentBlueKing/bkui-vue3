@@ -58,9 +58,9 @@ export default defineComponent({
     const targetColumns = reactive([]);
     const { initColumns, getColumns } = useColumn(props, targetColumns);
     const columns = getColumns();
-    const TableSchema: ITableResponse = useData(props);
+    const tableSchema: ITableResponse = useData(props);
 
-    const { resizeColumnStyle, resizeHeadColStyle, registerResizeEvent } = useColumnResize(TableSchema, false, head);
+    const { resizeColumnStyle, resizeHeadColStyle, registerResizeEvent } = useColumnResize(tableSchema, false, head);
 
     provide(PROVIDE_KEY_INIT_COL, initColumns);
     provide(PROVIDE_KEY_TB_CACHE, bkTableCache);
@@ -83,13 +83,13 @@ export default defineComponent({
       columnGhostStyle,
       fixedContainerStyle,
       scrollClass,
-      prependStyle
-    } = useClass(props, columns as ITableColumn[], root, TableSchema, TableSchema.pageData);
+      prependStyle,
+    } = useClass(props, columns as ITableColumn[], root, tableSchema, tableSchema.pageData);
     const { renderScrollLoading } = useScrollLoading(props, ctx);
 
     const { fixedWrapperClass, fixedColumns, resolveColumnStyle, resolveColumnClass } = useFixedColumn(
       props,
-      TableSchema,
+      tableSchema,
     );
 
     const { resolveClassName } = usePrefix();
@@ -98,7 +98,12 @@ export default defineComponent({
       hasScrollY: hasScrollYRef.value,
     }));
 
-    const { renderTableBodySchema, renderTableFooter, renderTableHeadSchema } = useRender(props, ctx as SetupContext<any>, TableSchema, styleRef);
+    const { renderTableBodySchema, renderTableFooter, renderTableHeadSchema } = useRender(
+      props,
+      ctx as SetupContext<any>,
+      tableSchema,
+      styleRef,
+    );
 
     const updateOffsetRight = () => {
       const $tableContent = root.value.querySelector(`.${resolveClassName('table-body-content')}`);
@@ -113,22 +118,22 @@ export default defineComponent({
     watch(
       () => [props.data, columns],
       () => {
-        TableSchema.formatDataSchema(props.data);
-        TableSchema.resetStartEndIndex();
-        TableSchema.resolvePageData();
-        TableSchema.formatColumns(columns as Column[]);
+        tableSchema.formatDataSchema(props.data);
+        tableSchema.resetStartEndIndex();
+        tableSchema.resolvePageData();
+        tableSchema.formatColumns(columns as Column[]);
         registerResizeEvent();
       },
       { immediate: true, deep: true },
     );
 
     const handleScrollChanged = (args: any[]) => {
-      const preBottom = TableSchema.formatData.layout.bottom ?? 0;
+      const preBottom = tableSchema.formatData.layout.bottom ?? 0;
       const pagination = args[1];
       const { translateX, translateY, pos = {} } = pagination;
-      TableSchema.formatData.layout.translateY = translateY;
-      TableSchema.formatData.layout.translateX = translateX;
-      Object.assign(TableSchema.formatData.layout, pos || {});
+      tableSchema.formatData.layout.translateY = translateY;
+      tableSchema.formatData.layout.translateX = translateX;
+      Object.assign(tableSchema.formatData.layout, pos || {});
       const { bottom } = pos;
       if (bottom <= 2 && preBottom > bottom) {
         debounce(
@@ -150,13 +155,13 @@ export default defineComponent({
     const getRoot = () => root.value;
 
     ctx.expose({
-      setRowExpand: TableSchema.setRowExpand,
-      setAllRowExpand: TableSchema.setAllRowExpand,
-      clearSelection: TableSchema.clearSelection,
-      toggleAllSelection: TableSchema.toggleAllSelection,
-      toggleRowSelection: TableSchema.toggleRowSelection,
-      getSelection: TableSchema.getRowSelection,
-      clearSort: TableSchema.clearColumnSort,
+      setRowExpand: tableSchema.setRowExpand,
+      setAllRowExpand: tableSchema.setAllRowExpand,
+      clearSelection: tableSchema.clearSelection,
+      toggleAllSelection: tableSchema.toggleAllSelection,
+      toggleRowSelection: tableSchema.toggleRowSelection,
+      getSelection: tableSchema.getRowSelection,
+      clearSort: tableSchema.clearColumnSort,
       scrollTo,
       getRoot,
     });
@@ -198,11 +203,11 @@ export default defineComponent({
         }
         <VirtualRender
           ref={refVirtualRender}
-          lineHeight={TableSchema.formatData.settings.height}
+          lineHeight={tableSchema.formatData.settings.height}
           height={contentStyle.height}
           class={tableBodyClass.value}
           wrapperStyle={contentStyle}
-          list={TableSchema.pageData}
+          list={tableSchema.pageData}
           {...scrollClass.value}
           contentClassName={tableBodyContentClass.value}
           onContentScroll={handleScrollChanged}
@@ -234,7 +239,7 @@ export default defineComponent({
               ''
             ) : (
               <div
-                class={resolveColumnClass(column, TableSchema.formatData.layout.translateX, tableOffsetRight.value)}
+                class={resolveColumnClass(column, tableSchema.formatData.layout.translateX, tableOffsetRight.value)}
                 style={resolveColumnStyle(colPos)}
               ></div>
             ),
@@ -247,7 +252,7 @@ export default defineComponent({
           class={footerClass.value}
           style={footerStyle.value}
         >
-          {hasFooter.value && renderTableFooter(TableSchema.localPagination.value)}
+          {hasFooter.value && renderTableFooter(tableSchema.localPagination.value)}
         </div>
         <div style={columnGhostStyle}>{ctx.slots.default?.()}</div>
       </div>

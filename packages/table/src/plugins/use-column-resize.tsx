@@ -212,14 +212,14 @@ export default (tableResp: ITableResponse, immediate = true, head: Ref<HTMLEleme
     left: 0,
     width: '1px',
     backgroundColor: '#3785FF',
-    transform: 'translateX(-50%)'
+    transform: 'translateX(-50%)',
   };
 
   const layout = computed(() => tableResp.formatData.layout);
 
   const resizeColumnStyle = computed(() => ({
     ...dragOffsetXStyle,
-    transform: `translate(${dragOffsetX.value - layout.value.translateX + 3}px, ${ layout.value.translateY }px)`,
+    transform: `translate(${dragOffsetX.value - layout.value.translateX + 3}px, ${layout.value.translateY}px)`,
   }));
 
   const resizeHeadColStyle = computed(() => ({
@@ -234,6 +234,6 @@ export default (tableResp: ITableResponse, immediate = true, head: Ref<HTMLEleme
     dragOffsetX,
     dragOffsetXStyle,
     resizeColumnStyle,
-    resizeHeadColStyle
+    resizeHeadColStyle,
   };
 };

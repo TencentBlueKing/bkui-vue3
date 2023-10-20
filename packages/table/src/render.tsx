@@ -222,7 +222,6 @@ export default class TableRender {
     this.events = null;
   }
 
-
   private handlePageLimitChange(limit: number) {
     Object.assign(this.props.pagination, { limit });
     this.context.emit(EMIT_EVENTS.PAGE_LIMIT_CHANGE, limit);

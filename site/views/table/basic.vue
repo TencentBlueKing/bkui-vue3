@@ -15,70 +15,70 @@
 </template>
 
 <script lang="jsx">
-import { random } from 'lodash';
-import { defineComponent } from 'vue';
+  import { random } from 'lodash';
+  import { defineComponent } from 'vue';
 
-import { DATA_COLUMNS, DATA_TABLE, DATA_FIX_TABLE } from './options';
-export default defineComponent({
-  components: {},
-  data() {
-    return {
-      maxHeight: 300,
-      isLoading: false,
-      tableData: DATA_TABLE,
-      columns: [...DATA_COLUMNS],
-      overflowTooltip: {
-        popoverOption: {
-          maxWidth: 400,
+  import { DATA_COLUMNS, DATA_FIX_TABLE, DATA_TABLE } from './options';
+  export default defineComponent({
+    components: {},
+    data() {
+      return {
+        maxHeight: 300,
+        isLoading: false,
+        tableData: DATA_TABLE,
+        columns: [...DATA_COLUMNS],
+        overflowTooltip: {
+          popoverOption: {
+            maxWidth: 400,
+          },
         },
+        settings: {
+          fields: [
+            {
+              name: '序号',
+              id: 'index',
+              disabled: true,
+            },
+            {
+              name: '名称/内网IP',
+              id: 'ip',
+            },
+            {
+              name: '来源',
+              id: 'source',
+            },
+            {
+              name: '创建时间',
+              id: 'create_time',
+            },
+          ],
+          checked: ['ip', 'index'],
+        },
+      };
+    },
+    methods: {
+      handleCellClick(arg) {
+        const { cell, row, column } = arg;
+        console.log('handleCellClick', cell, row, column, cell.getValue());
       },
-      settings: {
-        fields: [
-          {
-            name: '序号',
-            id: 'index',
-            disabled: true,
-          },
-          {
-            name: '名称/内网IP',
-            id: 'ip',
-          },
-          {
-            name: '来源',
-            id: 'source',
-          },
-          {
-            name: '创建时间',
-            id: 'create_time',
-          },
-        ],
-        checked: ['ip', 'index'],
+      handleCellDblclick(arg) {
+        const { cell, row, column } = arg;
+        console.log('handleCellDblclick', cell, row, column, cell.getValue());
       },
-    };
-  },
-  methods: {
-    handleCellClick(arg) {
-      const { cell, row, column } = arg;
-      console.log('handleCellClick', cell, row, column, cell.getValue());
+      handleSortBy(arg) {
+        console.log('handleSortBy', arg);
+      },
+      handleDblClick(...args) {
+        console.log(args);
+      },
+      handleMouseEnter(...args) {
+        console.log('mouse-enter', args);
+      },
+      handleMouseLeave(...args) {
+        console.log('mouse-leave', args);
+      },
     },
-    handleCellDblclick(arg) {
-      const { cell, row, column } = arg;
-      console.log('handleCellDblclick', cell, row, column, cell.getValue());
-    },
-    handleSortBy(arg) {
-      console.log('handleSortBy', arg);
-    },
-    handleDblClick(...args) {
-      console.log(args);
-    },
-    handleMouseEnter(...args) {
-      console.log('mouse-enter', args);
-    },
-    handleMouseLeave(...args) {
-      console.log('mouse-leave', args);
-    },
-  },
-});
+  });
 </script>
 <style scoped>
 .row {

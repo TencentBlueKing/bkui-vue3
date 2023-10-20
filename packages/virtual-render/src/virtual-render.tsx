@@ -168,7 +168,6 @@ export default defineComponent({
           }
           innerHeight.value = fnValue;
         } else {
-
           innerHeight.value = props.lineHeight * listLength.value;
           console.log('innerHeight', props.lineHeight, innerHeight.value);
         }
@@ -255,11 +254,11 @@ export default defineComponent({
     ]);
     const vVirtualRender = resolveDirective('bkVirtualRender');
     const dirModifier = computed(() => ({
-        lineHeight: props.lineHeight,
-        handleScrollCallback,
-        pagination,
-        throttleDelay: props.throttleDelay,
-      }));
+      lineHeight: props.lineHeight,
+      handleScrollCallback,
+      pagination,
+      throttleDelay: props.throttleDelay,
+    }));
 
     /**
      * 重置当前配置

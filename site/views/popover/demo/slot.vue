@@ -10,11 +10,11 @@
     超长
     <template #content>
       <div>
-        <ContentTable></ContentTable>
+        <content-table />
       </div>
     </template>
   </bk-popover>
 </template>
 <script setup>
-import ContentTable from "../../table/column-template.vue";
+  import ContentTable from '../../table/column-template.vue';
 </script>

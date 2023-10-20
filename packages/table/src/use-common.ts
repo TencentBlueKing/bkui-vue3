@@ -270,7 +270,6 @@ export const useClass = (
     return offsetWidth;
   };
 
-
   const tableBodyClass = computed(() => ({
     ...contentClass,
     '__is-empty': !TableSchema.pageData.length,
@@ -296,7 +295,6 @@ export const useClass = (
     [resolveClassName('fixed-bottom-border')]: true,
     '_is-empty': !props.data.length,
   }));
-
 
   const columnGhostStyle = {
     zIndex: -1,
@@ -351,6 +349,6 @@ export const useClass = (
     fixedContainerStyle,
     scrollClass,
     prependStyle,
-    footerStyle
+    footerStyle,
   };
 };

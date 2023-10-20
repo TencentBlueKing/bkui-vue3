@@ -50,7 +50,7 @@ export type ITableFormatData = {
   };
   layout: {
     bottom: number;
-    hasScrollY: boolean,
+    hasScrollY: boolean;
     translateX: number;
     translateY: number;
   };

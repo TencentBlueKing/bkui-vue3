@@ -59,7 +59,7 @@ export default defineComponent({
       checked: checked.value,
     });
 
-    const maxHeight = computed(() => (filter.value as IFilterShape)?.maxHeight ?? LINE_HEIGHT * 15)
+    const maxHeight = computed(() => (filter.value as IFilterShape)?.maxHeight ?? LINE_HEIGHT * 15);
 
     watch(
       () => filter.value,

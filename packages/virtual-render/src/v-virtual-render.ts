@@ -125,17 +125,16 @@ class VisibleRender {
       this.wrapper,
       e,
     );
-  };
+  }
 
   public executeThrottledRender(e) {
     throttle(this.render.bind(this), this.delay)(e);
-  };
+  }
 
   public setBinding(binding) {
     this.binding = binding;
   }
 }
-
 
 let instance: VisibleRender = null;
 

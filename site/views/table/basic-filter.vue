@@ -1,10 +1,26 @@
 <template>
   <div>
     <div class="cell">
-      <span class="title" style="margin-right: 20px;">默认过滤</span>
-      <bk-button @click="handleClear" style="margin-right: 20px;">清理过滤条件</bk-button>
-      <bk-button @click="handleAdd" style="margin-right: 20px;">添加过滤</bk-button>
-      <bk-input v-model="filterValue" style="width: 120px;"></bk-input>
+      <span
+        class="title"
+        style="margin-right: 20px;"
+      >默认过滤</span>
+      <bk-button
+        style="margin-right: 20px;"
+        @click="handleClear"
+      >
+        清理过滤条件
+      </bk-button>
+      <bk-button
+        style="margin-right: 20px;"
+        @click="handleAdd"
+      >
+        添加过滤
+      </bk-button>
+      <bk-input
+        v-model="filterValue"
+        style="width: 120px;"
+      />
       <bk-table
         style="margin-top: 20px;"
         :columns="columns1"
@@ -33,7 +49,7 @@
 <script>
   import { defineComponent } from 'vue';
 
-  import { DATA_FIX_COLUMNS, DATA_COLUMNS1, DATA_TABLE } from './options';
+  import { DATA_COLUMNS1, DATA_FIX_COLUMNS, DATA_TABLE } from './options';
   const DATA_ROWS = new Array(Math.ceil(Math.random() * 9000) + 1000).fill('')
     .map((_, index) => ({
       ip: `${index}--192.168.0.x`,

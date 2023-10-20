@@ -24,6 +24,7 @@
  * IN THE SOFTWARE.
  */
 
+import { useLocale } from 'bkui-vue';
 import { v4 as uuidv4 } from 'uuid';
 import { computed, CSSProperties, SetupContext, unref } from 'vue';
 
@@ -64,10 +65,8 @@ import {
   resolvePropVal,
   resolveWidth,
 } from './utils';
-import { useLocale } from 'bkui-vue';
 
 export default (props: TablePropTypes, context: SetupContext<any>, tableResp: ITableResponse, styleRef) => {
-
   const t = useLocale('table');
 
   const uuid = uuidv4();
@@ -78,17 +77,17 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
 
   const settings = computed(() => formatData.value.settings);
 
-    /**
+  /**
    * 过滤当前可渲染的列
    */
-    const filterColGroups = computed(() => columns.value.filter(
-      (col: Column) => !tableResp.getColumnAttribute(col, COLUMN_ATTRIBUTE.IS_HIDDEN),
-    ));
+  const filterColGroups = computed(() =>
+    columns.value.filter((col: Column) => !tableResp.getColumnAttribute(col, COLUMN_ATTRIBUTE.IS_HIDDEN)),
+  );
 
   /**
    * 渲染Table Head
    */
-  const renderTableHeadSchema = () =>  {
+  const renderTableHeadSchema = () => {
     const { isShow = true } = resolveHeadConfig(props);
     if (!isShow) {
       return null;
@@ -128,14 +127,14 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
         {renderHeader()}
       </table>,
     ];
-  }
+  };
 
   /**
    * 渲染Table主体
    * @param rows 表格数据
    * @returns
    */
-  const renderTableBodySchema = (rows: any[]) =>  {
+  const renderTableBodySchema = (rows: any[]) => {
     const localEmptyText = computed(() => {
       if (props.emptyText === undefined) {
         return t.value.emptyText;
@@ -165,9 +164,9 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
         {renderTBody(rows)}
       </table>
     );
-  }
+  };
 
-  const renderTableFooter = (options: any) =>  {
+  const renderTableFooter = (options: any) => {
     return (
       <Pagination
         style='width: 100%;'
@@ -177,7 +176,7 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
         onChange={current => handlePageChange(current)}
       />
     );
-  }
+  };
 
   const getRowHeight = (row?: any, rowIndex?: number) => {
     const { size, height } = settings.value;
@@ -188,16 +187,15 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
     return resolvePropVal(props, 'rowHeight', ['tbody', row, rowIndex]);
   };
 
-
-  const handlePageLimitChange = (limit: number) =>  {
+  const handlePageLimitChange = (limit: number) => {
     Object.assign(props.pagination, { limit });
     context.emit(EMIT_EVENTS.PAGE_LIMIT_CHANGE, limit);
-  }
+  };
 
-  const handlePageChange = (current: number) =>  {
+  const handlePageChange = (current: number) => {
     Object.assign(props.pagination, { current, value: current });
     context.emit(EMIT_EVENTS.PAGE_VALUE_CHANGE, current);
-  }
+  };
 
   const getSortFnByColumn = (column: Column, fn, a, b) => {
     if (column.type === 'index') {
@@ -208,14 +206,14 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
     }
 
     return fn(a, b);
-  }
+  };
 
   /**
    * 点击选中一列事件
    * @param index 当前选中列Index
    * @param column 当前选中列
    */
-  const handleColumnHeadClick = (index: number, column: Column) =>  {
+  const handleColumnHeadClick = (index: number, column: Column) => {
     if (tableResp.getColumnAttribute(column, COLUMN_ATTRIBUTE.COL_IS_DRAG)) {
       return;
     }
@@ -230,7 +228,7 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
       tableResp.sortData(column);
       context.emit(EMIT_EVENTS.COLUMN_SORT, { column: unref(column), index, type: nextSort });
     }
-  }
+  };
 
   /**
    * 获取排序设置表头
@@ -238,7 +236,7 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
    * @param index 排序列所在index
    * @returns
    */
-  const getSortCell = (column: Column, index: number) =>  {
+  const getSortCell = (column: Column, index: number) => {
     /**
      * 点击排序事件
      * @param sortFn 排序函数
@@ -261,9 +259,9 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
         onChange={handleSortClick}
       />
     );
-  }
+  };
 
-  const getFilterCell = (column: Column, index: number) =>  {
+  const getFilterCell = (column: Column, index: number) => {
     const handleFilterChange = (checked: any[], filterFn: Function) => {
       const filterFn0 = (row: any, index: number) => filterFn(checked, row, index);
       tableResp.setColumnAttribute(column, COLUMN_ATTRIBUTE.COL_FILTER_FN, filterFn0);
@@ -283,13 +281,13 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
         onFilterSave={filterSave}
       />
     );
-  }
+  };
 
   /**
    * 渲染Table Header
    * @returns
    */
-  const renderHeader = () =>  {
+  const renderHeader = () => {
     const config = resolveHeadConfig(props);
     const { cellFn } = config;
     const rowStyle: CSSProperties = {
@@ -419,7 +417,7 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
         </thead>
       </>
     );
-  }
+  };
 
   /**
    * 获取用户自定义class
@@ -438,13 +436,13 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
       }
     }
     return '';
-  }
+  };
 
   /**
    * 渲染Table Body
    * @returns
    */
-  const renderTBody = (rows: any[]) =>  {
+  const renderTBody = (rows: any[]) => {
     const { resolveFixedColumnStyle } = useFixedColumn(props, tableResp);
     const rowLength = rows.length;
     return (
@@ -478,7 +476,7 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
                 {filterColGroups.value.map((column: Column, index: number) => {
                   const cellStyle = [
                     resolveFixedColumnStyle(column),
-                    ...formatPropAsArray(props.cellStyle, [column, index, row, rowIndex] ),
+                    ...formatPropAsArray(props.cellStyle, [column, index, row, rowIndex]),
                   ];
 
                   const tdCtxClass = {
@@ -495,7 +493,7 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
                       getColumnClass(column, index),
                       getColumnCustomClass(column, row),
                       column.align || props.align,
-                      ...formatPropAsArray(props.cellClass, [column, index, row, rowIndex] ),
+                      ...formatPropAsArray(props.cellClass, [column, index, row, rowIndex]),
                       {
                         'expand-row': tableResp.getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_EXPAND),
                         'is-last': rowIndex + rowspan >= rowLength,
@@ -547,7 +545,7 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
         })}
       </tbody>
     );
-  }
+  };
 
   const renderExpandRow = (row: any, rowClass: any[], _rowIndex?) => {
     const isExpand = tableResp.getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_EXPAND);
@@ -569,7 +567,7 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
         </TableRow>
       );
     }
-  }
+  };
 
   const getColumnClass = (column: Column, colIndex: number) => ({
     [`${uuid}-column-${colIndex}`]: true,
@@ -590,9 +588,9 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
    * @param index
    * @param rows
    */
-  const handleRowClick = (e: MouseEvent, row: any, index: number, rows: any) =>  {
+  const handleRowClick = (e: MouseEvent, row: any, index: number, rows: any) => {
     context.emit(EMIT_EVENTS.ROW_CLICK, e, row, index, rows);
-  }
+  };
 
   /**
    * table row click handle
@@ -601,33 +599,33 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
    * @param index
    * @param rows
    */
-  const handleRowDblClick = (e: MouseEvent, row: any, index: number, rows: any) =>  {
-    context.emit(EMIT_EVENTS.ROW_DBL_CLICK, e, row, index, rows) ;
-  }
+  const handleRowDblClick = (e: MouseEvent, row: any, index: number, rows: any) => {
+    context.emit(EMIT_EVENTS.ROW_DBL_CLICK, e, row, index, rows);
+  };
 
-  const handleRowEnter = (e: MouseEvent, row: any, index: number, rows: any) =>  {
-    context.emit(EMIT_EVENTS.ROW_MOUSE_ENTER, e, row, index, rows) ;
-  }
+  const handleRowEnter = (e: MouseEvent, row: any, index: number, rows: any) => {
+    context.emit(EMIT_EVENTS.ROW_MOUSE_ENTER, e, row, index, rows);
+  };
 
-  const handleRowLeave = (e: MouseEvent, row: any, index: number, rows: any) =>  {
-    context.emit(EMIT_EVENTS.ROW_MOUSE_LEAVE, e, row, index, rows) ;
-  }
+  const handleRowLeave = (e: MouseEvent, row: any, index: number, rows: any) => {
+    context.emit(EMIT_EVENTS.ROW_MOUSE_LEAVE, e, row, index, rows);
+  };
 
-  const getExpandCell = (row: any) =>  {
+  const getExpandCell = (row: any) => {
     const isExpand = tableResp.getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_EXPAND);
     return isExpand ? <DownShape></DownShape> : <RightShape></RightShape>;
-  }
+  };
 
-  const handleRowExpandClick = (row: any, column: Column, index: number, rows: any[], e: MouseEvent) =>  {
+  const handleRowExpandClick = (row: any, column: Column, index: number, rows: any[], e: MouseEvent) => {
     tableResp.setRowExpand(row, !tableResp.getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_EXPAND));
     context.emit(EMIT_EVENTS.ROW_EXPAND_CLICK, { row, column, index, rows, e });
-  }
+  };
 
-  const renderCellCallbackFn = (row: any, column: Column, index: number, rows: any[]) =>  {
+  const renderCellCallbackFn = (row: any, column: Column, index: number, rows: any[]) => {
     const cell = getRowText(row, resolvePropVal(column, 'field', [column, row]));
     const data = row;
     return (column.render as Function)({ cell, data, row, column, index, rows });
-  }
+  };
 
   const renderCheckboxColumn = (row: any, index: number | null, isAll = false) => {
     const handleChecked = value => {
@@ -653,9 +651,9 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
         indeterminate={indeterminate as boolean}
       />
     );
-  }
+  };
 
-  const renderExpandColumn = (row: any, column: Column, index: number, rows: any[]) =>  {
+  const renderExpandColumn = (row: any, column: Column, index: number, rows: any[]) => {
     const renderExpandSlot = () => {
       if (typeof column.render === 'function') {
         return renderCellCallbackFn(row, column, index, rows);
@@ -672,7 +670,7 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
         {renderExpandSlot()}
       </span>
     );
-  }
+  };
 
   /**
    * 渲染表格Cell内容
@@ -682,7 +680,7 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
    * @param rows 当前列
    * @returns
    */
-  const renderCell = (row: any, column: Column, index: number, rows: any[]) =>  {
+  const renderCell = (row: any, column: Column, index: number, rows: any[]) => {
     const defaultFn = () => {
       const type = resolvePropVal(column, 'type', [column, row]);
       if (type === 'index') {
@@ -718,7 +716,7 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
     };
 
     return renderFn[column.type]?.(row, column, index, rows) ?? defaultFn();
-  }
+  };
 
   /**
    * 判定指定列是否为选中状态
@@ -736,7 +734,7 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
    * 渲染表格Col分组
    * @returns
    */
-  const renderColGroup = () =>  {
+  const renderColGroup = () => {
     return (
       <colgroup>
         {(filterColGroups.value || []).map((column: Column, _index: number) => {
@@ -744,10 +742,7 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
             // active: isColActive(index),
           });
 
-          const width: string | number = `${resolveWidth(tableResp.getColumnOrderWidth(column))}`.replace(
-            /px$/i,
-            '',
-          );
+          const width: string | number = `${resolveWidth(tableResp.getColumnOrderWidth(column))}`.replace(/px$/i, '');
 
           const minWidth = tableResp.getColumnAttribute(column, COLUMN_ATTRIBUTE.COL_MIN_WIDTH);
           return (
@@ -760,11 +755,11 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
         })}
       </colgroup>
     );
-  }
+  };
 
   return {
     renderTableHeadSchema,
     renderTableBodySchema,
-    renderTableFooter
-  }
-}
+    renderTableFooter,
+  };
+};
