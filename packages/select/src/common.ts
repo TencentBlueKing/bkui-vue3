@@ -151,7 +151,7 @@ export function toLowerCase(value = '') {
   return String(value).trim().toLowerCase();
 }
 
-export function isInViewPort (el: HTMLElement, client: HTMLElement) {
+export function isInViewPort(el: HTMLElement, client: HTMLElement) {
   if (!el || !client) return true;
 
   const { top: elTop, bottom: elBottom } = el.getBoundingClientRect();
