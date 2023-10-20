@@ -45,8 +45,8 @@ export default defineComponent({
   name: 'CheckboxGroup',
   props: checkboxGroupProps,
   emits: {
-    'update:modelValue': (value: unknown[]) => value !== undefined,
-    change: (value: unknown[]) => value !== undefined,
+    'update:modelValue': (value: any[]) => value !== undefined,
+    change: (value: any[]) => value !== undefined,
   },
   setup(props, context) {
     const formItem = useFormItem();

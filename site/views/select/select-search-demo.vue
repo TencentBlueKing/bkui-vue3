@@ -41,6 +41,7 @@
       class="bk-select"
       multiple
       filterable
+      allow-create
       multiple-mode="tag"
     >
       <bk-option
@@ -55,12 +56,14 @@
       multiple
       filterable
       :remote-method="remoteMethod"
+      multiple-mode="tag"
     >
       <bk-option
-        v-for="(item) in list"
+        v-for="(item, index) in list"
         :id="item.value"
         :key="item.value"
         :name="item.label"
+        :order="index"
       />
     </bk-select>
   </div>

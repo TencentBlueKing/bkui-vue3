@@ -64,6 +64,7 @@ export const inputType = {
   showOverflowTooltips: PropTypes.bool.def(true),
   resize: PropTypes.bool.def(true),
   autosize: PropTypes.oneOfType<Boolean | InputAutoSize>([Boolean, Object]).def(false),
+  stopPropagation: PropTypes.bool.def(true),
 };
 
 export const enum EVENTS {
@@ -153,7 +154,7 @@ export default defineComponent({
           'is-readonly': props.readonly && !props.selectReadonly,
           'is-disabled': props.disabled,
           'is-simplicity': props.behavior === 'simplicity',
-          [`${cls}`]: !!cls,
+          [`${ctx.attrs.class}`]: !!ctx.attrs.class,
         },
         inputClsPrefix.value,
       ),
@@ -196,25 +197,23 @@ export default defineComponent({
     };
 
     const onceInitSizeTextarea = createOnceInitResize(resizeTextarea);
-
+    const suffixCls = getCls('suffix-icon');
     const suffixIconMap = {
       search: () => <Search />,
-      // TODO: eye icon 有点偏小，需要调整
       password: () => (
-        <Eye
-          style={{ fontSize: '18px' }}
+        <Unvisible
           onClick={handleVisibleChange}
+          class={suffixCls}
         />
       ),
     };
-    const suffixCls = getCls('suffix-icon');
     const suffixIcon = computed(() => {
       const icon = suffixIconMap[props.type];
       if (pwdVisible.value) {
         return (
-          <Unvisible
-            onClick={handleVisibleChange}
+          <Eye
             class={suffixCls}
+            onClick={handleVisibleChange}
           />
         );
       }
@@ -365,7 +364,7 @@ export default defineComponent({
     // 事件句柄生成器
     function eventHandler(eventName) {
       return e => {
-        e.stopPropagation();
+        props.stopPropagation && e.stopPropagation();
         if (showMaxLimit.value && !props.overMaxLengthLimit) {
           const limit = getValueLimits(e.target.value);
           if (
@@ -382,8 +381,11 @@ export default defineComponent({
             return;
           }
         }
+        if (eventName === EVENTS.KEYDOWN && (e.code === 'Enter' || e.key === 'Enter' || e.keyCode === 13)) {
+          ctx.emit(EVENTS.ENTER, e.target.value, e);
+        }
 
-        if (isCNInput.value && [EVENTS.INPUT, EVENTS.CHANGE].some(e => eventName === e)) return;
+        if (isCNInput.value && [EVENTS.INPUT, EVENTS.CHANGE, EVENTS.KEYDOWN].some(e => eventName === e)) return;
         if (eventName === EVENTS.INPUT) {
           ctx.emit(EVENTS.UPDATE, e.target.value, e);
         } else if (eventName === EVENTS.CHANGE && isNumberInput.value && e.target.value !== '') {

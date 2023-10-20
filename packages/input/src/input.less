@@ -8,6 +8,7 @@
 }
 
 .disabled() {
+
   &.is-disabled,
   &.is-readonly {
     background-color: @input-disabled-bg;
@@ -62,6 +63,16 @@
 
   &.resizable {
     resize: both;
+  }
+
+  ::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: #DCDEE5;
   }
 
   .disabled();
@@ -148,6 +159,11 @@
     align-items: center;
     align-self: center;
     flex-shrink: 0;
+    cursor: pointer;
+
+    &:hover {
+      color: #313238;
+    }
 
     &.show-clear-only-hover {
       display: none;
