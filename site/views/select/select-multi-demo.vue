@@ -5,6 +5,8 @@
       class="bk-select"
       multiple
       show-select-all
+      @select="handleSelect"
+      @deselect="handleDeselect"
     >
       <bk-option
         v-for="(item, index) in datasource"
@@ -95,6 +97,14 @@
 
   const tagRemove = (val) => {
     console.log(val);
+  };
+
+  const handleSelect = (v) => {
+    console.log('select', v);
+  };
+
+  const handleDeselect = (v) => {
+    console.log('deselect', v);
   };
 
   onBeforeMount(() => {
