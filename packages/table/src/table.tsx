@@ -24,9 +24,9 @@
  * IN THE SOFTWARE.
  */
 
-import { computed, defineComponent, onBeforeUnmount, provide, reactive, Ref, ref, watch } from 'vue';
+import { computed, defineComponent, provide, reactive, Ref, ref, SetupContext, watch } from 'vue';
 
-import { useLocale, usePrefix } from '@bkui-vue/config-provider';
+import { usePrefix } from '@bkui-vue/config-provider';
 import { debounce } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
@@ -38,18 +38,16 @@ import useColumnResize from './plugins/use-column-resize';
 import useFixedColumn from './plugins/use-fixed-column';
 import useScrollLoading from './plugins/use-scroll-loading';
 import { Column, tableProps } from './props';
-import TableRender from './render';
 import useData, { ITableResponse } from './use-attributes';
 import useColumn from './use-column';
 import { useClass } from './use-common';
+import useRender from './use-render';
 
 export default defineComponent({
   name: 'Table',
   props: tableProps,
   emits: EMIT_EVENT_TYPES,
   setup(props, ctx) {
-    const t = useLocale('table');
-
     const root: Ref<HTMLElement> = ref();
     const head: Ref<HTMLElement> = ref();
     const refVirtualRender = ref();
@@ -99,7 +97,8 @@ export default defineComponent({
     const styleRef = computed(() => ({
       hasScrollY: hasScrollYRef.value,
     }));
-    const tableRender = new TableRender(props, ctx, TableSchema, styleRef, t);
+
+    const { renderTableBodySchema, renderTableFooter, renderTableHeadSchema } = useRender(props, ctx as SetupContext<any>, TableSchema, styleRef);
 
     const updateOffsetRight = () => {
       const $tableContent = root.value.querySelector(`.${resolveClassName('table-body-content')}`);
@@ -148,10 +147,6 @@ export default defineComponent({
       refVirtualRender.value?.scrollTo?.(option);
     };
 
-    onBeforeUnmount(() => {
-      tableRender.destroy();
-    });
-
     const getRoot = () => root.value;
 
     ctx.expose({
@@ -194,7 +189,7 @@ export default defineComponent({
             style={headStyle.value}
             ref={head}
           >
-            {tableRender.renderTableHeadSchema()}
+            {renderTableHeadSchema()}
             <div
               class='col-resize-drag'
               style={resizeHeadColStyle.value}
@@ -203,7 +198,7 @@ export default defineComponent({
         }
         <VirtualRender
           ref={refVirtualRender}
-          lineHeight={tableRender.getRowHeight}
+          lineHeight={TableSchema.formatData.settings.height}
           height={contentStyle.height}
           class={tableBodyClass.value}
           wrapperStyle={contentStyle}
@@ -219,7 +214,7 @@ export default defineComponent({
         >
           {{
             beforeContent: () => renderPrepend(),
-            default: (scope: any) => tableRender.renderTableBodySchema(scope.data || TableSchema.pageData),
+            default: (scope: any) => renderTableBodySchema(scope.data),
             afterSection: () => [
               <div class={fixedBottomBorder.value}></div>,
               <div
@@ -252,7 +247,7 @@ export default defineComponent({
           class={footerClass.value}
           style={footerStyle.value}
         >
-          {hasFooter.value && tableRender.renderTableFooter(TableSchema.localPagination.value)}
+          {hasFooter.value && renderTableFooter(TableSchema.localPagination.value)}
         </div>
         <div style={columnGhostStyle}>{ctx.slots.default?.()}</div>
       </div>

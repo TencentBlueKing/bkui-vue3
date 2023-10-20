@@ -59,6 +59,8 @@ export default defineComponent({
       checked: checked.value,
     });
 
+    const maxHeight = computed(() => (filter.value as IFilterShape)?.maxHeight ?? LINE_HEIGHT * 15)
+
     watch(
       () => filter.value,
       () => {
@@ -248,6 +250,7 @@ export default defineComponent({
             <div class={headFilterContentClass}>
               <BkCheckboxGroup class='content-list'>
                 <VirtualRender
+                  maxHeight={maxHeight.value}
                   lineHeight={32}
                   list={localData.value}
                   throttleDelay={0}
