@@ -291,11 +291,11 @@ export default defineComponent({
       if (searchLoading.value) {
         return localLoadingText.value;
       }
+      if (isSearchEmpty.value || (list.value.length && !virtualList.value.length)) {
+        return localNoMatchText.value;
+      }
       if (isOptionsEmpty.value) {
         return localNoDataText.value;
-      }
-      if (isSearchEmpty.value) {
-        return localNoMatchText.value;
       }
       return '';
     });
@@ -887,7 +887,11 @@ export default defineComponent({
                           key={item[this.idKey]}
                           id={item[this.idKey]}
                           name={item[this.displayKey]}
-                          v-slots={typeof optionRender === 'function' ? { default: optionRender({ item }) } : null}
+                          v-slots={
+                            typeof optionRender === 'function' 
+                              ? { default: () => optionRender({ item }) }
+                              : null
+                          }
                         />
                       ));
                     },
@@ -898,7 +902,11 @@ export default defineComponent({
                   <Option
                     id={item[this.idKey]}
                     name={item[this.displayKey]}
-                    v-slots={this.$slots?.optionRender ? { default: this.$slots?.optionRender?.({ item }) } : null}
+                    v-slots={
+                      this.$slots?.optionRender 
+                      ? { default: () => this.$slots?.optionRender?.({ item }) } 
+                      : null
+                    }
                   />
                 ))
               )}
