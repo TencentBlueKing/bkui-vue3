@@ -23,8 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { reactive, ref } from 'vue';
-import { computed } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 
 import { Column, SortScope, TablePropTypes } from '../props';
 
@@ -137,6 +136,16 @@ export default (props: TablePropTypes) => {
     }
     localPagination.value = props.remotePagination ? pagination : { ...pagination, count: indexData.value.length };
   };
+  if (props.remotePagination) {
+    watch(
+      () => props.pagination,
+      () => {
+        pagination = resolvePaginationOption(props.pagination, pagination);
+        localPagination.value = pagination;
+      },
+      { deep: true },
+    );
+  }
 
   resolveLocalPagination();
   resetStartEndIndex();
