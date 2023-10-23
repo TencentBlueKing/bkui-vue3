@@ -44,6 +44,19 @@ import SelectStyleDemo from './select-style-demo.vue';
 import SelectTreeDemo from './select-tree-demo.vue';
 import SelectVirtualRender from './select-virtual-render.vue';
 
+const eventColumnMap = {
+  name: '名称',
+  desc: '说明',
+  params: '参数',
+};
+
+const slotColumnMap = {
+  name: '名称',
+  desc: '说明',
+  type: '类型',
+  params: '参数',
+};
+
 const propsJson: IPropsTableItem[] = [
   {
     name: 'modelValue / v-model',
@@ -318,6 +331,12 @@ const propsJson: IPropsTableItem[] = [
     desc: '多选时ICON样式',
     optional: ['checkbox', 'check'],
   },
+  {
+    name: 'filterOption',
+    type: 'boolean/function',
+    default: 'true',
+    desc: '是否根据输入项进行筛选。当其为一个函数时，会接收 searchValue option 两个参数，当 option 符合筛选条件时，应返回 true，反之则返回 false',
+  },
 ];
 const eventJson = [
   {
@@ -353,6 +372,16 @@ const eventJson = [
   {
     name: 'tag-remove',
     desc: '多选模式下移除tag时触发',
+    params: 'value',
+  },
+  {
+    name: 'select',
+    desc: '被选中时调用',
+    params: 'value',
+  },
+  {
+    name: 'deselect',
+    desc: '取消选中时调用',
     params: 'value',
   },
 ];
@@ -537,11 +566,13 @@ export default defineComponent({
         />
         <PropsBox
           propsData={eventJson}
+          columnMap={eventColumnMap}
           title='Select 事件'
         />
         <PropsBox
           title='Select 插槽'
           subtitle=''
+          columnMap={slotColumnMap}
           propsData={selectSlots}
         />
         <PropsBox
