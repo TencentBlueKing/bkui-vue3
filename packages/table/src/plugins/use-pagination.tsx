@@ -149,6 +149,7 @@ export default (props: TablePropTypes) => {
     localPagination.value = props.remotePagination ? pagination : { ...pagination, count: indexData.value.length };
   };
 
+
   resetStartEndIndex();
   resolvePageData();
 

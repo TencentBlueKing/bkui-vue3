@@ -29,7 +29,7 @@ import ResizeObserver from 'resize-observer-polyfill';
 import { v4 as uuidv4 } from 'uuid';
 
 import { BORDER_OPTION, BORDER_OPTIONS, SORT_OPTION, TABLE_ROW_ATTRIBUTE } from './const';
-import { Column, ISortPropShape, TablePropTypes } from './props';
+import { Column, GroupColumn, ISortPropShape, TablePropTypes } from './props';
 
 /**
  * 解析Prop值 | 可能为多种类型 & 函数返回的场景
@@ -144,6 +144,18 @@ export const resolvePropBorderToClassStr = (val: string | string[]) => {
 
   return [...new Set(defaultVal)].map((item: string) => `bordered-${item}`).join(' ');
 };
+
+/**
+ * 获取当前列实际宽度
+ * width props中设置的默认宽度
+ * calcWidth 计算后的宽度
+ * resizeWidth 拖拽重置之后的宽度
+ * @param colmun 当前列配置
+ * @param orders 获取宽度顺序
+ * @returns
+ */
+export const getColumnReactWidth = (colmun: GroupColumn, orders = ['resizeWidth', 'calcWidth', 'width']) =>
+  colmun[orders[0]] ?? colmun[orders[1]] ?? colmun[orders[2]];
 
 /**
  * 监听目标元素的Resize事件
