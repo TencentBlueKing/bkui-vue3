@@ -24,20 +24,21 @@
  * IN THE SOFTWARE.
  */
 import { v4 as uuidv4 } from 'uuid';
-import { computed, reactive } from 'vue';
+import { reactive } from 'vue';
 
 import {
   CHECK_ALL_OBJ,
   COL_MIN_WIDTH,
   COLUMN_ATTRIBUTE,
-  ICheckAllEmptyObject,
+  IEmptyObject,
+  NEED_COL_ROW_SPAN,
   SETTING_SIZE,
   SORT_OPTION,
   TABLE_ROW_ATTRIBUTE,
 } from './const';
 import usePagination from './plugins/use-pagination';
 import { Column, IColSortBehavior, Settings, SortScope, TablePropTypes } from './props';
-import { getRowId, getRowValue, isColumnHidden, resolveCellSpan, resolveColumnSortProp } from './utils';
+import { getRowId, getRowValue, isColumnHidden, resolveColumnSortProp, resolveColumnSpan } from './utils';
 
 export type ITableFormatData = {
   data: any[];
@@ -85,7 +86,7 @@ export type ITableResponse = {
   clearSelection: () => void;
   clearColumnSort: (reset?: boolean) => void;
   setColumnSortActive: (column: Column, active: boolean) => void;
-  getRowAttribute: (row: any | ICheckAllEmptyObject, attrName: string) => any;
+  getRowAttribute: (row: any | IEmptyObject, attrName: string) => any;
   getRowSelection: () => any[];
   resolveColumnWidth: (root: HTMLElement, autoWidth?, offsetWidth?) => void;
   filter: () => void;
@@ -148,8 +149,14 @@ export default (props: TablePropTypes): ITableResponse => {
   const formatColumns = (columns: Column[]) => {
     formatData.columns.length = 0;
     formatData.columns.push(...columns);
+    let skipColNum = 0;
+    const needColSpan = neepColspanOrRowspan(['colspan']);
+    (columns || []).forEach((col, index) => {
+      const { skipCol, skipColumnNum, skipColLen } = needColSpan
+        ? getColumnSpanConfig(col, index, skipColNum)
+        : { skipCol: false, skipColumnNum: 0, skipColLen: 0 };
 
-    (columns || []).forEach(col => {
+      skipColNum = skipColumnNum;
       if (!formatData.columnSchema.has(col)) {
         const { type, fn, scope, active } = resolveColumnSortProp(col, props);
         formatData.columnSchema.set(col, {
@@ -166,10 +173,37 @@ export default (props: TablePropTypes): ITableResponse => {
           [COLUMN_ATTRIBUTE.COL_SORT_SCOPE]: scope,
           [COLUMN_ATTRIBUTE.COL_SORT_ACTIVE]: active,
           [COLUMN_ATTRIBUTE.COL_IS_DRAG]: false,
+          [COLUMN_ATTRIBUTE.COL_SPAN]: { skipCol, skipColumnNum, skipColLen },
           [COLUMN_ATTRIBUTE.COL_UID]: uuidv4(),
         });
       }
+
+      Object.assign(formatData.columnSchema.get(col), {
+        [COLUMN_ATTRIBUTE.COL_SPAN]: { skipCol, skipColumnNum, skipColLen },
+      });
     });
+  };
+
+  const getColumnSpanConfig = (col: Column, index: number, skipColNum: number) => {
+    let skipColumnNum = skipColNum;
+    const colspan = resolveColumnSpan(col, index, null, null, 'colspan');
+    const target = {
+      skipCol: false,
+      skipColLen: 0,
+    };
+
+    if (skipColumnNum > 0) {
+      target.skipColLen = skipColumnNum;
+      target.skipCol = true;
+      skipColumnNum = skipColumnNum - 1;
+    }
+
+    if (colspan > 1) {
+      target.skipColLen = colspan;
+      skipColumnNum = colspan - 1;
+    }
+
+    return { ...target, skipColumnNum };
   };
 
   const getColumnFilterFn = (col: Column) => getColumnAttribute(col, COLUMN_ATTRIBUTE.COL_FILTER_FN);
@@ -339,7 +373,7 @@ export default (props: TablePropTypes): ITableResponse => {
    * @param col
    * @param attributeName
    */
-  const getColumnAttribute = (col: Column | ICheckAllEmptyObject, attributeName: string) => {
+  const getColumnAttribute = (col: Column | IEmptyObject, attributeName: string) => {
     return formatData.columnSchema.get(col)?.[attributeName];
   };
 
@@ -372,75 +406,8 @@ export default (props: TablePropTypes): ITableResponse => {
   /**
    * 判定是否需要合并行或者列配置
    */
-  const neepColspanOrRowspan = computed(() =>
-    formatData.columns.some(
-      col =>
-        typeof col.rowspan === 'function' ||
-        /^\d$/.test(`${col.rowspan}`) ||
-        typeof col.colspan === 'function' ||
-        /^\d$/.test(`${col.colspan}`),
-    ),
-  );
-
-  /**
-   * 计算Colspan || Rowspan 配置项
-   * @param row
-   * @param rowId
-   * @param rowIndex
-   * @param skipCfg
-   * @param preRowId
-   */
-  const getSkipConfig = (row: any, rowId: string, rowIndex: number, skipCfg: any, preRowId: string) => {
-    if (!neepColspanOrRowspan.value) {
-      return {};
-    }
-
-    let skipColumnNum = 0;
-    const preRowConfig = skipCfg[preRowId] ?? {};
-
-    if (!skipCfg[rowId]) {
-      skipCfg[rowId] = {};
-    }
-
-    formatData.columns.forEach((column, index) => {
-      const { colspan, rowspan } = resolveCellSpan(column, index, row, rowIndex);
-      const colId = getColumnAttribute(column, COLUMN_ATTRIBUTE.COL_UID);
-      const preRowColSkipLen = preRowConfig[colId]?.skipRowLen ?? 0;
-      const target = {
-        [colId]: {
-          skipRowLen: 0,
-          skipRow: false,
-          skipCol: false,
-          skipColLen: 0,
-        },
-      };
-
-      if (skipColumnNum > 0) {
-        target[colId].skipColLen = skipColumnNum;
-        target[colId].skipCol = true;
-        skipColumnNum = skipColumnNum - 1;
-      }
-
-      if (preRowColSkipLen > 1) {
-        target[colId].skipRowLen = preRowColSkipLen - 1;
-        target[colId].skipRow = true;
-      } else {
-        if (rowspan > 1) {
-          target[colId].skipRowLen = rowspan;
-          target[colId].skipRow = false;
-        }
-      }
-
-      if (colspan > 1) {
-        target[colId].skipColLen = colspan;
-        skipColumnNum = colspan - 1;
-      }
-
-      Object.assign(skipCfg[rowId], target);
-    });
-
-    return skipCfg[rowId];
-  };
+  const neepColspanOrRowspan = (attrs = ['rowspan', 'colspan']) =>
+    formatData.columns.some(col => attrs.some(name => typeof col[name] === 'function' || /^\d$/.test(`${col[name]}`)));
 
   /**
    * 格式化传入数据配置
@@ -449,20 +416,14 @@ export default (props: TablePropTypes): ITableResponse => {
   const formatDataSchema = (data: any[]) => {
     formatData.data.length = 0;
     formatData.data.push(...data);
-
-    let preRowId = null;
-    const skipConfig = {};
-
     (data || []).forEach((row, index) => {
       let rowId = getRowId(row, uuidv4(), props);
-      const cfg = getSkipConfig(row, rowId, index, skipConfig, preRowId);
 
       if (!formatData.dataSchema.has(row)) {
         formatData.dataSchema.set(row, {
           [TABLE_ROW_ATTRIBUTE.ROW_EXPAND]: false,
           [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: isRowSelected(row),
           [TABLE_ROW_ATTRIBUTE.ROW_UID]: rowId,
-          [TABLE_ROW_ATTRIBUTE.ROW_SKIP_CFG]: cfg,
           [TABLE_ROW_ATTRIBUTE.ROW_INDEX]: index + 1,
           [TABLE_ROW_ATTRIBUTE.ROW_SELECTION_INDETERMINATE]: false,
         });
@@ -472,14 +433,16 @@ export default (props: TablePropTypes): ITableResponse => {
       // ROW_EXPAND & ROW_SELECTION & ROW_UID 不做更新
       const target = formatData.dataSchema.get(row);
       rowId = target[TABLE_ROW_ATTRIBUTE.ROW_UID];
-      target[TABLE_ROW_ATTRIBUTE.ROW_SKIP_CFG] = cfg;
       target[TABLE_ROW_ATTRIBUTE.ROW_INDEX] = index + 1;
-      preRowId = preRowId;
     });
 
     formatData.dataSchema.set(CHECK_ALL_OBJ, {
       [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: false,
       [TABLE_ROW_ATTRIBUTE.ROW_SELECTION_INDETERMINATE]: false,
+    });
+
+    formatData.dataSchema.set(NEED_COL_ROW_SPAN, {
+      [TABLE_ROW_ATTRIBUTE.ROW_SPAN]: neepColspanOrRowspan(['rowspan']),
     });
   };
 
@@ -541,7 +504,7 @@ export default (props: TablePropTypes): ITableResponse => {
     setRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_EXPAND, isExpand);
   };
 
-  const getRowAttribute = (row: any | ICheckAllEmptyObject, attrName: string) => {
+  const getRowAttribute = (row: any | IEmptyObject, attrName: string) => {
     return formatData.dataSchema.get(row)?.[attrName];
   };
 

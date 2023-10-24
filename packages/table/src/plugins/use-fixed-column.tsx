@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { computed } from 'vue';
+import { reactive, Ref } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 
@@ -34,7 +34,7 @@ import { ITableResponse } from '../use-attributes';
 /**
  * 固定列Hooks
  */
-export default (props: TablePropTypes, tableResp: ITableResponse, hasScrollY?) => {
+export default (props: TablePropTypes, tableResp: ITableResponse, hasScrollY?, head?: Ref<HTMLElement>) => {
   const { formatData, isHiddenColumn, getColumnId, getColumnOrderWidth } = tableResp;
   const resolveColumnClass = (column: Column, scrollX?, offsetRight?) => ({
     column_fixed: !!column.fixed,
@@ -42,13 +42,26 @@ export default (props: TablePropTypes, tableResp: ITableResponse, hasScrollY?) =
     column_fixed_right: column.fixed === 'right',
     shadow: column.fixed === 'right' ? offsetRight - scrollX > 2 : scrollX > 0,
   });
+  const getColumnWidth = (col: Column) => {
+    const width = getColumnOrderWidth(col);
+    if (/^\d+/.test(`${width}`)) {
+      return width;
+    }
+
+    const id = tableResp.getColumnId(col);
+    const query = `[data-id="${id}"]`;
+    const target = (head?.value?.querySelector(query) as HTMLElement) ?? { offsetWidth: 0 };
+    return target?.offsetWidth ?? 0;
+  };
+
   const resolveFixColPos = (column: Column) => (column.fixed === 'right' ? 'right' : 'left');
   const resolveFixOffset = {
     left: (ignoreFirst = true) =>
       formatData.columns
         .filter(col => !isHiddenColumn(col) && col.fixed && col.fixed !== 'right')
         .reduce((offset: number, curr: Column, index: number) => {
-          const outOffset = ignoreFirst && index === 0 ? offset : offset + getColumnOrderWidth(curr);
+          const colWidth = getColumnWidth(curr);
+          const outOffset = ignoreFirst && index === 0 ? offset : offset + colWidth;
           return outOffset;
         }, 0),
     right: (ignoreFirst = true) =>
@@ -56,7 +69,7 @@ export default (props: TablePropTypes, tableResp: ITableResponse, hasScrollY?) =
         .filter(col => !isHiddenColumn(col) && col.fixed === 'right')
         .reduce(
           (offset: number, curr: Column, index: number) => {
-            const outOffset = ignoreFirst && index === 0 ? offset : offset + getColumnOrderWidth(curr);
+            const outOffset = ignoreFirst && index === 0 ? offset : offset + getColumnWidth(curr);
             return outOffset;
           },
           hasScrollY ? SCROLLY_WIDTH : 0,
@@ -119,21 +132,34 @@ export default (props: TablePropTypes, tableResp: ITableResponse, hasScrollY?) =
     bottom: '0px',
   });
 
-  const fixedColumns = computed(() => {
+  const fixedColumns = reactive([]);
+
+  const resolveFixedColumns = tableOffsetRight => {
     const colPosExist = {
       left: false,
       right: false,
     };
 
-    return formatData.columns
-      .filter(col => !isHiddenColumn(col) && col.fixed)
-      .map(col => {
-        const colPos = resolveFixColPos(col);
+    const result = formatData.columns
+      .filter(column => !isHiddenColumn(column) && column.fixed)
+      .map(column => {
+        const colPos = resolveFixColPos(column);
         const isExist = colPosExist[colPos];
         colPosExist[colPos] = true;
-        return { isExist, colPos, column: col };
+        const className = resolveColumnClass(column, tableResp.formatData.layout.translateX, tableOffsetRight);
+        const style = resolveColumnStyle(colPos);
+        return { isExist, colPos, column, className, style };
       });
-  });
+    fixedColumns.length = 0;
+    fixedColumns.push(...result);
+  };
+
+  const updateFixClass = tableOffsetRight => {
+    fixedColumns.forEach(item => {
+      const className = resolveColumnClass(item.column, tableResp.formatData.layout.translateX, tableOffsetRight);
+      Object.assign(item.className, className);
+    });
+  };
 
   const { resolveClassName } = usePrefix();
   const fixedWrapperClass = resolveClassName('table-fixed');
@@ -141,8 +167,10 @@ export default (props: TablePropTypes, tableResp: ITableResponse, hasScrollY?) =
   return {
     fixedWrapperClass,
     resolveFixedColumnStyle,
+    resolveFixedColumns,
     fixedColumns,
     resolveColumnStyle,
     resolveColumnClass,
+    updateFixClass,
   };
 };

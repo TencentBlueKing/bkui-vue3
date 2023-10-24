@@ -94,15 +94,23 @@ export function computedVirtualIndex(lineHeight, callback, pagination, el, event
         bottom: bottom >= 0 ? bottom : 0,
       });
   }
+
+  return {
+    targetStartIndex,
+    targetEndIndex,
+    elScrollTop,
+    translateY,
+    elScrollLeft,
+  };
 }
 
-class VisibleRender {
+export class VisibleRender {
   private binding;
   private wrapper;
   private delay;
   constructor(binding, el) {
     this.binding = binding;
-    this.wrapper = el.parentNode;
+    this.wrapper = el;
     const { throttleDelay } = binding.value;
     this.delay = throttleDelay;
   }
@@ -129,6 +137,14 @@ class VisibleRender {
 
   public executeThrottledRender(e) {
     throttle(this.render.bind(this), this.delay)(e);
+  }
+
+  public install() {
+    this.wrapper.addEventListener('scroll', this.executeThrottledRender.bind(this));
+  }
+
+  public uninstall() {
+    this.wrapper.removeListener('scroll', this.executeThrottledRender.bind(this));
   }
 
   public setBinding(binding) {
