@@ -34,6 +34,7 @@ import {
   defineComponent,
   // EmitsOptions,
   h,
+  nextTick,
   onMounted,
   onUnmounted,
   reactive,
@@ -42,7 +43,6 @@ import {
   SlotsType,
   watch,
 } from 'vue';
-import { nextTick } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 
