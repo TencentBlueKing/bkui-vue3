@@ -5,6 +5,7 @@
       class="bk-select"
       multiple
       filterable
+      :filterOption="filterOption"
     >
       <bk-option
         v-for="(item, index) in datasource"
@@ -20,6 +21,7 @@
       :list="datasource"
       multiple
       filterable
+      :filterOption="filterOption"
     />
     <bk-select
       v-model="selectedValue"
@@ -118,6 +120,9 @@
       }, 1000);
     };
   });
+  const filterOption = (input, options) => {
+    return options.name?.includes(input);
+  };
 </script>
 <style scoped>
 .demo {

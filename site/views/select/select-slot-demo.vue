@@ -49,7 +49,6 @@
           v-model="selectedValue"
           class="bk-select"
           filterable
-          auto-focus
           @toggle="handleToggle"
         >
           <bk-option
