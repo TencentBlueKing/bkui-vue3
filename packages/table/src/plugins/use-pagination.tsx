@@ -23,8 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { reactive, ref } from 'vue';
-import { computed } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 
 import { Column, SortScope, TablePropTypes } from '../props';
 
@@ -67,7 +66,18 @@ export default (props: TablePropTypes) => {
     align: 'right',
     layout: ['total', 'limit', 'list'],
   });
-  pagination = resolvePaginationOption(props.pagination, pagination);
+
+  watch(
+    () => [props.pagination],
+    () => {
+      pagination = resolvePaginationOption(props.pagination, pagination);
+      resolveLocalPagination();
+    },
+    {
+      immediate: true,
+      deep: true,
+    },
+  );
 
   /**
    * 分页配置
@@ -122,6 +132,7 @@ export default (props: TablePropTypes) => {
     pageData.push(...sourceData.slice(startIndex.value, endIndex.value));
     filter(pageData, filterFn);
     sort(pageData, sortFn, column, type, sortScope);
+    resolveLocalPagination();
   };
 
   const multiFilter = (filterFnList: ((row, index, data) => void)[]) => {
@@ -138,7 +149,6 @@ export default (props: TablePropTypes) => {
     localPagination.value = props.remotePagination ? pagination : { ...pagination, count: indexData.value.length };
   };
 
-  resolveLocalPagination();
   resetStartEndIndex();
   resolvePageData();
 

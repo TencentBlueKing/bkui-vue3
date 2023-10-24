@@ -44,6 +44,7 @@ import { useClass } from './use-common';
 import useRender from './use-render';
 
 export default defineComponent({
+  // eslint-disable-next-line vue/no-reserved-component-names
   name: 'Table',
   props: tableProps,
   emits: EMIT_EVENT_TYPES,

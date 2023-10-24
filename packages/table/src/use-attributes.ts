@@ -30,7 +30,7 @@ import {
   CHECK_ALL_OBJ,
   COL_MIN_WIDTH,
   COLUMN_ATTRIBUTE,
-  ICHECK_ALL_OBJ,
+  ICheckAllEmptyObject,
   SETTING_SIZE,
   SORT_OPTION,
   TABLE_ROW_ATTRIBUTE,
@@ -85,7 +85,7 @@ export type ITableResponse = {
   clearSelection: () => void;
   clearColumnSort: (reset?: boolean) => void;
   setColumnSortActive: (column: Column, active: boolean) => void;
-  getRowAttribute: (row: any | ICHECK_ALL_OBJ, attrName: string) => any;
+  getRowAttribute: (row: any | ICheckAllEmptyObject, attrName: string) => any;
   getRowSelection: () => any[];
   resolveColumnWidth: (root: HTMLElement, autoWidth?, offsetWidth?) => void;
   filter: () => void;
@@ -339,7 +339,7 @@ export default (props: TablePropTypes): ITableResponse => {
    * @param col
    * @param attributeName
    */
-  const getColumnAttribute = (col: Column | ICHECK_ALL_OBJ, attributeName: string) => {
+  const getColumnAttribute = (col: Column | ICheckAllEmptyObject, attributeName: string) => {
     return formatData.columnSchema.get(col)?.[attributeName];
   };
 
@@ -541,7 +541,7 @@ export default (props: TablePropTypes): ITableResponse => {
     setRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_EXPAND, isExpand);
   };
 
-  const getRowAttribute = (row: any | ICHECK_ALL_OBJ, attrName: string) => {
+  const getRowAttribute = (row: any | ICheckAllEmptyObject, attrName: string) => {
     return formatData.dataSchema.get(row)?.[attrName];
   };
 
