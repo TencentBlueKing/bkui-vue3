@@ -370,7 +370,7 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
       }, {});
     };
 
-    const { resolveFixedColumnStyle } = useFixedColumn(props, tableResp, styleRef.value.hasScrollY, head);
+    const { resolveFixedColumnStyle } = useFixedColumn(props, tableResp, head);
 
     const getScrollFix = () => {
       if (styleRef.value.hasScrollY) {
@@ -486,7 +486,7 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
       </tbody>
     );
   };
-  const { resolveFixedColumnStyle } = useFixedColumn(props, tableResp, styleRef.value.hasScrollY, head);
+  const { resolveFixedColumnStyle } = useFixedColumn(props, tableResp, head);
   const getRowRender = (row: any, rowIndex: number, preRow: any, rows, rowSpanMap, needRowSpan) => {
     const rowLength = rows.length;
     const rowStyle = [

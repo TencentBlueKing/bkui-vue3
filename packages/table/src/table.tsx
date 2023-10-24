@@ -91,7 +91,6 @@ export default defineComponent({
     const { fixedWrapperClass, fixedColumns, resolveFixedColumns, updateFixClass } = useFixedColumn(
       props,
       tableSchema,
-      hasScrollYRef,
       head,
     );
 

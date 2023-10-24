@@ -23,10 +23,10 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { computed, h, ref, resolveDirective, withDirectives } from 'vue';
+import { computed, h, onMounted, onUnmounted, ref } from 'vue';
 
 import { VirtualRenderProps } from './props';
-
+import { VisibleRender } from './v-virtual-render';
 export default (props: VirtualRenderProps, ctx) => {
   const { renderAs, contentAs } = props;
 
@@ -35,14 +35,14 @@ export default (props: VirtualRenderProps, ctx) => {
     ctx.emit('content-scroll', [event, { translateY, translateX: scrollLeft, pos }]);
   };
 
-  const vVirtualRender = resolveDirective('bkVirtualRender');
-  const dirModifier = {
+  let instance = null;
+  const binding = computed(() => ({
     lineHeight: props.lineHeight,
     handleScrollCallback,
     pagination: {},
     throttleDelay: props.throttleDelay,
     onlyScroll: props.scrollEvent,
-  };
+  }));
 
   const refRoot = ref(null);
 
@@ -66,6 +66,15 @@ export default (props: VirtualRenderProps, ctx) => {
     scrollTo,
   });
 
+  onMounted(() => {
+    instance = new VisibleRender(binding, refRoot.value);
+    instance.install();
+  });
+
+  onUnmounted(() => {
+    instance?.uninstall();
+  });
+
   return {
     rendAsTag: () =>
       h(
@@ -78,20 +87,17 @@ export default (props: VirtualRenderProps, ctx) => {
         },
         [
           ctx.slots.beforeContent?.() ?? '',
-          withDirectives(
-            h(
-              contentAs,
-              {
-                class: props.contentClassName,
-                style: props.contentStyle,
-              },
-              [
-                ctx.slots.default?.({
-                  data: props.list,
-                }) ?? '',
-              ],
-            ),
-            [[vVirtualRender, dirModifier]],
+          h(
+            contentAs,
+            {
+              class: props.contentClassName,
+              style: props.contentStyle,
+            },
+            [
+              ctx.slots.default?.({
+                data: props.list,
+              }) ?? '',
+            ],
           ),
           ctx.slots.afterContent?.() ?? '',
           ctx.slots.afterSection?.() ?? '',

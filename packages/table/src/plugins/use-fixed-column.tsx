@@ -34,7 +34,7 @@ import { ITableResponse } from '../use-attributes';
 /**
  * 固定列Hooks
  */
-export default (props: TablePropTypes, tableResp: ITableResponse, hasScrollY?, head?: Ref<HTMLElement>) => {
+export default (props: TablePropTypes, tableResp: ITableResponse, head?: Ref<HTMLElement>) => {
   const { formatData, isHiddenColumn, getColumnId, getColumnOrderWidth } = tableResp;
   const resolveColumnClass = (column: Column, scrollX?, offsetRight?) => ({
     column_fixed: !!column.fixed,
@@ -67,13 +67,10 @@ export default (props: TablePropTypes, tableResp: ITableResponse, hasScrollY?, h
     right: (ignoreFirst = true) =>
       formatData.columns
         .filter(col => !isHiddenColumn(col) && col.fixed === 'right')
-        .reduce(
-          (offset: number, curr: Column, index: number) => {
-            const outOffset = ignoreFirst && index === 0 ? offset : offset + getColumnWidth(curr);
-            return outOffset;
-          },
-          hasScrollY ? SCROLLY_WIDTH : 0,
-        ),
+        .reduce((offset: number, curr: Column, index: number) => {
+          const outOffset = ignoreFirst && index === 0 ? offset : offset + getColumnWidth(curr);
+          return outOffset;
+        }, 0),
   };
 
   const getPreColumnOffset = (fixedPos: string, column: Column, offset = 0) => {
