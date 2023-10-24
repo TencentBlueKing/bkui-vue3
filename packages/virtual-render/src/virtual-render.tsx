@@ -35,6 +35,7 @@ import {
   // EmitsOptions,
   h,
   onMounted,
+  onUnmounted,
   reactive,
   ref,
   type SetupContext,
@@ -113,7 +114,7 @@ export default defineComponent({
       pagination.translateY = translateY;
       pagination.translateX = scrollLeft;
       pagination.scrollLeft = scrollLeft;
-      pagination.pos = pos;
+      Object.assign(pagination.pos, pos || {});
       if (event) {
         ctx.emit('content-scroll', [event, pagination]);
       }
@@ -122,6 +123,18 @@ export default defineComponent({
     onMounted(() => {
       instance = new VisibleRender(binding, refRoot.value);
       instance.install();
+    });
+
+    onUnmounted(() => {
+      instance?.uninstall();
+    });
+
+    const resolveHeight = computed(() => {
+      if (/^\d+(\.\d*)?(px)?$/.test(`${props.height}`)) {
+        return Number(`${props.height}`.replace(/px$/, ''));
+      }
+
+      return props.height;
     });
 
     watch(
@@ -181,6 +194,7 @@ export default defineComponent({
         pagination,
         el,
         null,
+        resolveHeight.value,
       );
 
       handleScrollCallback(null, targetStartIndex, targetEndIndex, elScrollTop, translateY, elScrollLeft, {});
