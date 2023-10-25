@@ -40,6 +40,7 @@ import { contentAsHTMLElement } from './utils';
 export default defineComponent({
   name: 'Popover',
   components: {
+    // eslint-disable-next-line vue/no-reserved-component-names
     Content,
     Arrow,
     Root,
