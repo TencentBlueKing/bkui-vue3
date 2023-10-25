@@ -85,6 +85,7 @@ export default (
   const getNodeParentId = (node: any) => getNodeAttr(getNodeAttr(node, NODE_ATTRIBUTES.PARENT), NODE_ATTRIBUTES.UUID);
   const isNodeLoading = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.IS_LOADING);
   const getParentNode = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.PARENT);
+  const isMatchedNode = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.IS_MATCH);
 
   const getNodeAttrById = (id: string, attr: string) => {
     const target = flatData.data.find(item => getNodeId(item) === id);
@@ -130,6 +131,10 @@ export default (
     }
 
     return false;
+  };
+
+  const getParentNodeAttr = (node: any, attrName: string) => {
+    return getNodeAttr(getNodeAttr(node, NODE_ATTRIBUTES.PARENT), attrName);
   };
 
   const isParentNodeOpened = (node: any) => isItemOpen(getNodeAttr(node, NODE_ATTRIBUTES.PARENT));
@@ -213,6 +218,7 @@ export default (
     getNodePathById,
     getNodeAttrById,
     getNodeParentIdById,
+    getParentNodeAttr,
     getParentNode,
     setNodeAttr,
     setNodeAttrById,
@@ -227,7 +233,7 @@ export default (
     checkNodeIsOpen,
     getSourceNodeByPath,
     getSourceNodeByUID,
-    // deleteNodeSchema,
+    isMatchedNode,
     resolveScopedSlotParam,
     setTreeNodeLoading,
     extendNodeAttr,
