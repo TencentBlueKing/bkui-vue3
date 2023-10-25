@@ -81,18 +81,6 @@ export default (props: TablePropTypes) => {
     localPagination.value = props.remotePagination ? pagination : { ...pagination, count: indexData.value.length };
   };
 
-  watch(
-    () => [props.pagination],
-    () => {
-      pagination = resolvePaginationOption(props.pagination, pagination);
-      resolveLocalPagination();
-    },
-    {
-      immediate: true,
-      deep: true,
-    },
-  );
-
   /**
    * 重置当前分页开始位置 & 结束位置
    * 如果未启用分页，则开始位置为0，结束位置为 data.length
@@ -148,8 +136,24 @@ export default (props: TablePropTypes) => {
     pageData.push(...target);
   };
 
-  resetStartEndIndex();
-  resolvePageData();
+  const handlePaginationChange = () => {
+    pagination = resolvePaginationOption(props.pagination, pagination);
+    resolveLocalPagination();
+    resetStartEndIndex();
+    resolvePageData();
+  };
+
+  handlePaginationChange();
+
+  watch(
+    () => [props.pagination],
+    () => {
+      handlePaginationChange();
+    },
+    {
+      deep: true,
+    },
+  );
 
   return {
     pageData,
