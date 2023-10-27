@@ -88,6 +88,12 @@ export const treeProps = {
   lineHeight: PropTypes.number.def(32),
 
   /**
+   * 设置树形组件高度
+   * 在设置 virtualRender=true时，请指定高度，避免组件自动计算高度导致多次渲染
+   */
+  height: PropTypes.number,
+
+  /**
    * 设置层级连线
    */
   levelLine: PropTypes.oneOfType([
@@ -168,9 +174,9 @@ export const treeProps = {
       resultType: string<`${TreeSearchResultEnum}`>().def(TreeSearchResultEnum.TREE),
 
       /**
-       * 默认展开所有搜索结果
+       * 是否显示匹配项的子节点
        */
-      openResultNode: PropTypes.bool,
+      showChildNodes: PropTypes.bool.def(true),
     }),
     PropTypes.string,
     PropTypes.number,
@@ -258,7 +264,7 @@ export type SearchOption = {
   value: string | number | boolean;
   match?: `${TreeSearchMatchEnum}` | Function;
   resultType?: `${TreeSearchResultEnum}`;
-  openResultNode: boolean;
+  showChildNodes?: boolean;
 };
 
 export type TreePropTypes = Readonly<ExtractPropTypes<typeof treeProps>>;

@@ -1,16 +1,19 @@
 <template>
   <div style="width: 100%;overflow: hidden;">
-    <div style="padding: 15px 0;">
+    <div style="padding: 15px 0;display: flex;">
       <bk-button
         theme="primary"
         @click="handleRandomRows"
       >
         随机数据
       </bk-button>
+      <bk-input v-model="search.value" style="width: 400px;margin-left: 20px;" type="search"></bk-input>
     </div>
     <div style="height: 400px;">
       <bk-tree
         :data="treeData"
+        :height="400"
+        :search="search"
         virtual-render
         show-checkbox
         level-line
@@ -30,6 +33,10 @@
     data() {
       return {
         treeData: [...BASIC_DATA],
+        search: {
+          value: '',
+          showChildNodes: true
+        }
       };
     },
     methods: {
@@ -48,6 +55,11 @@
         this.treeData = randomChildren();
       },
     },
+    mounted() {
+      setTimeout(() => {
+        this.handleRandomRows();
+      }, 500);
+    }
   });
 </script>
 

@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 
-import { computed, defineComponent, provide, reactive, Ref, ref, SetupContext, watch } from 'vue';
+import { computed, defineComponent, nextTick, provide, reactive, Ref, ref, SetupContext, watch } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import { debounce } from '@bkui-vue/shared';
@@ -44,6 +44,7 @@ import { useClass } from './use-common';
 import useRender from './use-render';
 
 export default defineComponent({
+  // eslint-disable-next-line vue/no-reserved-component-names
   name: 'Table',
   props: tableProps,
   emits: EMIT_EVENT_TYPES,
@@ -87,9 +88,10 @@ export default defineComponent({
     } = useClass(props, columns as ITableColumn[], root, tableSchema, tableSchema.pageData);
     const { renderScrollLoading } = useScrollLoading(props, ctx);
 
-    const { fixedWrapperClass, fixedColumns, resolveColumnStyle, resolveColumnClass } = useFixedColumn(
+    const { fixedWrapperClass, fixedColumns, resolveFixedColumns, updateFixClass } = useFixedColumn(
       props,
       tableSchema,
+      head,
     );
 
     const { resolveClassName } = usePrefix();
@@ -103,6 +105,7 @@ export default defineComponent({
       ctx as SetupContext<any>,
       tableSchema,
       styleRef,
+      head,
     );
 
     const updateOffsetRight = () => {
@@ -118,11 +121,15 @@ export default defineComponent({
     watch(
       () => [props.data, columns],
       () => {
+        tableSchema.formatColumns(columns as Column[]);
         tableSchema.formatDataSchema(props.data);
         tableSchema.resetStartEndIndex();
         tableSchema.resolvePageData();
-        tableSchema.formatColumns(columns as Column[]);
         registerResizeEvent();
+        nextTick(() => {
+          updateOffsetRight();
+          resolveFixedColumns(tableOffsetRight.value);
+        });
       },
       { immediate: true, deep: true },
     );
@@ -146,6 +153,7 @@ export default defineComponent({
       }
 
       updateOffsetRight();
+      updateFixClass(tableOffsetRight.value);
     };
 
     const scrollTo = (option = { left: 0, top: 0 }) => {
@@ -211,7 +219,7 @@ export default defineComponent({
           {...scrollClass.value}
           contentClassName={tableBodyContentClass.value}
           onContentScroll={handleScrollChanged}
-          throttleDelay={0}
+          throttleDelay={120}
           scrollEvent={true}
           rowKey={props.rowKey}
           enabled={props.virtualEnabled}
@@ -234,13 +242,13 @@ export default defineComponent({
           class={fixedWrapperClass}
           style={fixedContainerStyle.value}
         >
-          {fixedColumns.value.map(({ isExist, colPos, column }) =>
+          {fixedColumns.map(({ isExist, className, style }) =>
             isExist ? (
               ''
             ) : (
               <div
-                class={resolveColumnClass(column, tableSchema.formatData.layout.translateX, tableOffsetRight.value)}
-                style={resolveColumnStyle(colPos)}
+                class={className}
+                style={style}
               ></div>
             ),
           )}

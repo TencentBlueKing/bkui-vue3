@@ -56,6 +56,13 @@ export const resolvePaginationOption = (propPagination: any, defVal: any) => {
 export default (props: TablePropTypes) => {
   const startIndex = ref(0);
   const endIndex = ref(0);
+  /**
+   * 分页配置
+   * 用于配置分页组件
+   * pagination 为Prop传入配置
+   * 方便兼容内置分页功能，此处需要单独处理count
+   */
+  const localPagination = ref(null);
   const indexData = computed(() => props.data);
 
   // 当前分页缓存，用于支持内置前端分页，用户无需接收change事件来自行处理数据分割
@@ -66,15 +73,13 @@ export default (props: TablePropTypes) => {
     align: 'right',
     layout: ['total', 'limit', 'list'],
   });
-  pagination = resolvePaginationOption(props.pagination, pagination);
 
-  /**
-   * 分页配置
-   * 用于配置分页组件
-   * pagination 为Prop传入配置
-   * 方便兼容内置分页功能，此处需要单独处理count
-   */
-  const localPagination = ref(null);
+  const resolveLocalPagination = () => {
+    if (!props.pagination) {
+      return;
+    }
+    localPagination.value = props.remotePagination ? pagination : { ...pagination, count: indexData.value.length };
+  };
 
   /**
    * 重置当前分页开始位置 & 结束位置
@@ -121,6 +126,7 @@ export default (props: TablePropTypes) => {
     pageData.push(...sourceData.slice(startIndex.value, endIndex.value));
     filter(pageData, filterFn);
     sort(pageData, sortFn, column, type, sortScope);
+    resolveLocalPagination();
   };
 
   const multiFilter = (filterFnList: ((row, index, data) => void)[]) => {
@@ -130,26 +136,24 @@ export default (props: TablePropTypes) => {
     pageData.push(...target);
   };
 
-  const resolveLocalPagination = () => {
-    if (!props.pagination) {
-      return;
-    }
-    localPagination.value = props.remotePagination ? pagination : { ...pagination, count: indexData.value.length };
+  const handlePaginationChange = () => {
+    pagination = resolvePaginationOption(props.pagination, pagination);
+    resolveLocalPagination();
+    resetStartEndIndex();
+    resolvePageData();
   };
-  if (props.remotePagination) {
-    watch(
-      () => props.pagination,
-      () => {
-        pagination = resolvePaginationOption(props.pagination, pagination);
-        localPagination.value = pagination;
-      },
-      { deep: true },
-    );
-  }
 
-  resolveLocalPagination();
-  resetStartEndIndex();
-  resolvePageData();
+  handlePaginationChange();
+
+  watch(
+    () => [props.pagination],
+    () => {
+      handlePaginationChange();
+    },
+    {
+      deep: true,
+    },
+  );
 
   return {
     pageData,

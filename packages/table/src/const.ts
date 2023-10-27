@@ -70,6 +70,7 @@ export const TABLE_ROW_ATTRIBUTE = {
   ROW_SELECTION_INDETERMINATE: 'row_selection_indeterminate',
   ROW_SOURCE_DATA: 'row_source_data',
   ROW_SKIP_CFG: 'row_skip_config',
+  ROW_SPAN: 'row_span',
 };
 
 export const COLUMN_ATTRIBUTE = {
@@ -83,6 +84,7 @@ export const COLUMN_ATTRIBUTE = {
   COL_FILTER_FN: 'col_filter_fn',
   COL_FILTER_SCOPE: 'col_filter_scope',
   COL_IS_DRAG: 'col_is_drag',
+  COL_SPAN: 'col_span',
   WIDTH: 'width',
   CALC_WIDTH: 'calcWidth',
   RESIZE_WIDTH: 'resizeWidth',
@@ -158,9 +160,14 @@ export const SORT_OPTIONS = [SORT_OPTION.ASC, SORT_OPTION.DESC, SORT_OPTION.NULL
  */
 export const COL_MIN_WIDTH = 80;
 
-export type ICheckAllEmptyObject = {};
+export type IEmptyObject = {};
 
 /**
  * 全选对象
  */
-export const CHECK_ALL_OBJ: ICheckAllEmptyObject = {};
+export const CHECK_ALL_OBJ: IEmptyObject = {};
+
+/**
+ * 是否设置了colspan或者rowspan
+ */
+export const NEED_COL_ROW_SPAN: IEmptyObject = {};

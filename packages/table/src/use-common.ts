@@ -57,7 +57,7 @@ export const useClass = (
   pageData?: any[],
 ) => {
   const { getColumns } = useColumn(props, targetColumns);
-  const autoHeight = ref(LINE_HEIGHT * 10);
+  // const autoHeight = ref(LINE_HEIGHT * 10);
   const fixHeight = ref(LINE_HEIGHT * 10);
   const maxFixHeight = ref(LINE_HEIGHT * 10);
   const headHeight = ref(LINE_HEIGHT);
@@ -204,11 +204,11 @@ export const useClass = (
   const resolveContentStyle = rootEl => {
     const resolveHeight = resolvePropHeight(props.height);
     headHeight.value = getHeadHeight(rootEl) as number;
-    const resolveMinHeight = resolvePropHeight(props.minHeight, autoHeight.value) as number;
+    // const resolveMinHeight = resolvePropHeight(props.minHeight, autoHeight.value) as number;
     const resolveFooterHeight = props.pagination && props.data.length ? props.paginationHeight : 0;
     const contentHeight = resolveContentHeight(resolveHeight, headHeight.value, resolveFooterHeight);
 
-    const minHeight = resolveMinHeight - headHeight.value - resolveFooterHeight;
+    // const minHeight = resolveMinHeight - headHeight.value - resolveFooterHeight;
 
     const maxHeight = getMaxheight(resolveHeight, () => {
       const resolveMaxHeight = resolvePropHeight(props.maxHeight);
@@ -216,7 +216,7 @@ export const useClass = (
     });
 
     contentStyle.display = pageData?.length ? 'block' : false;
-    contentStyle.minHeight = `${minHeight}px`;
+    contentStyle.minHeight = contentHeight;
     contentStyle.height = contentHeight;
     contentStyle.maxHeight = maxHeight;
   };

@@ -40,6 +40,7 @@ import {
   COLUMN_ATTRIBUTE,
   DEF_COLOR,
   IHeadColor,
+  NEED_COL_ROW_SPAN,
   SCROLLY_WIDTH,
   SORT_OPTION,
   TABLE_ROW_ATTRIBUTE,
@@ -60,13 +61,14 @@ import {
   getSortFn,
   isRowSelectEnable,
   resolveCellSpan,
+  resolveColumnSpan,
   resolveHeadConfig,
   resolveNumberOrStringToPix,
   resolvePropVal,
   resolveWidth,
 } from './utils';
 
-export default (props: TablePropTypes, context: SetupContext<any>, tableResp: ITableResponse, styleRef) => {
+export default (props: TablePropTypes, context: SetupContext<any>, tableResp: ITableResponse, styleRef, head) => {
   const t = useLocale('table');
 
   const uuid = uuidv4();
@@ -368,7 +370,7 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
       }, {});
     };
 
-    const { resolveFixedColumnStyle } = useFixedColumn(props, tableResp);
+    const { resolveFixedColumnStyle } = useFixedColumn(props, tableResp, head);
 
     const getScrollFix = () => {
       if (styleRef.value.hasScrollY) {
@@ -398,6 +400,7 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
                   <th
                     colspan={1}
                     rowspan={1}
+                    data-id={tableResp.getColumnId(column)}
                     class={[
                       getHeadColumnClass(column, index),
                       getColumnCustomClass(column),
@@ -438,113 +441,151 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
     return '';
   };
 
+  const getRowSpanConfig = (row: any, index, preRow: any, col: Column, store: WeakMap<Object, any>) => {
+    if (!store.has(row)) {
+      store.set(row, new WeakMap());
+    }
+
+    if (!store.get(row).has(col)) {
+      store.get(row).set(col, { skipRowLen: 0, skipRow: false });
+    }
+
+    let { skipRowLen = 0 } = store.get(preRow)?.get(col) ?? {};
+    let skipRow = false;
+    const rowspan = resolveColumnSpan(col, null, row, index, 'rowspan');
+
+    if (skipRowLen > 1) {
+      skipRowLen = skipRowLen - 1;
+      skipRow = true;
+    } else {
+      if (rowspan > 1) {
+        skipRowLen = rowspan;
+        skipRow = false;
+      }
+    }
+
+    Object.assign(store.get(row).get(col), { skipRowLen, skipRow });
+    return { skipRowLen, skipRow };
+  };
   /**
    * 渲染Table Body
    * @returns
    */
   const renderTBody = (rows: any[]) => {
-    const { resolveFixedColumnStyle } = useFixedColumn(props, tableResp);
-    const rowLength = rows.length;
+    let preRow = {};
+    const rowSpanMap = new WeakMap();
+    const needRowSpan = tableResp.getRowAttribute(NEED_COL_ROW_SPAN, TABLE_ROW_ATTRIBUTE.ROW_SPAN);
+
     return (
       <tbody>
         {rows.map((row: any, rowIndex: number) => {
-          const rowStyle = [
-            ...formatPropAsArray(props.rowStyle, [row, rowIndex]),
-            {
-              '--row-height': `${getRowHeight(row, rowIndex)}px`,
-            },
-          ];
-
-          const rowClass = [
-            ...formatPropAsArray(props.rowClass, [row, rowIndex]),
-            `hover-${props.rowHover}`,
-            rowIndex % 2 === 1 && props.stripe ? 'stripe-row' : '',
-          ];
-
-          return [
-            <TableRow>
-              <tr
-                // @ts-ignore
-                style={rowStyle}
-                class={rowClass}
-                key={getRowKeyNull(row, props, rowIndex)}
-                onClick={e => handleRowClick(e, row, rowIndex, rows)}
-                onDblclick={e => handleRowDblClick(e, row, rowIndex, rows)}
-                onMouseenter={e => handleRowEnter(e, row, rowIndex, rows)}
-                onMouseleave={e => handleRowLeave(e, row, rowIndex, rows)}
-              >
-                {filterColGroups.value.map((column: Column, index: number) => {
-                  const cellStyle = [
-                    resolveFixedColumnStyle(column),
-                    ...formatPropAsArray(props.cellStyle, [column, index, row, rowIndex]),
-                  ];
-
-                  const tdCtxClass = {
-                    'expand-cell': column.type === 'expand',
-                  };
-
-                  const { colspan, rowspan } = resolveCellSpan(column, index, row, rowIndex);
-                  const skipOption = tableResp.getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_SKIP_CFG);
-                  const columnIdKey = tableResp.getColumnAttribute(column, COLUMN_ATTRIBUTE.COL_UID);
-                  const { skipRow = false, skipCol = false } = skipOption?.[columnIdKey as string] ?? {};
-
-                  if (!skipRow && !skipCol) {
-                    const cellClass = [
-                      getColumnClass(column, index),
-                      getColumnCustomClass(column, row),
-                      column.align || props.align,
-                      ...formatPropAsArray(props.cellClass, [column, index, row, rowIndex]),
-                      {
-                        'expand-row': tableResp.getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_EXPAND),
-                        'is-last': rowIndex + rowspan >= rowLength,
-                      },
-                    ];
-
-                    const handleEmit = (event, type: string) => {
-                      const args = {
-                        event,
-                        row,
-                        column,
-                        cell: {
-                          getValue: () => renderCell(row, column, rowIndex, rows),
-                        },
-                        rowIndex,
-                        columnIndex: index,
-                      };
-                      context.emit(type, args);
-                    };
-
-                    return (
-                      <td
-                        class={cellClass}
-                        style={cellStyle}
-                        colspan={colspan}
-                        rowspan={rowspan}
-                        onClick={event => handleEmit(event, EMIT_EVENTS.CELL_CLICK)}
-                        onDblclick={event => handleEmit(event, EMIT_EVENTS.CELL_DBL_CLICK)}
-                      >
-                        <TableCell
-                          class={tdCtxClass}
-                          column={column}
-                          row={row}
-                          parentSetting={props.showOverflowTooltip}
-                          observerResize={props.observerResize}
-                        >
-                          {renderCell(row, column, rowIndex, rows)}
-                        </TableCell>
-                      </td>
-                    );
-                  }
-
-                  return null;
-                })}
-              </tr>
-            </TableRow>,
-            renderExpandRow(row, rowClass, rowIndex),
-          ];
+          const result = getRowRender(row, rowIndex, preRow, rows, rowSpanMap, needRowSpan);
+          preRow = row;
+          return result;
         })}
       </tbody>
     );
+  };
+  const { resolveFixedColumnStyle } = useFixedColumn(props, tableResp, head);
+  const getRowRender = (row: any, rowIndex: number, preRow: any, rows, rowSpanMap, needRowSpan) => {
+    const rowLength = rows.length;
+    const rowStyle = [
+      ...formatPropAsArray(props.rowStyle, [row, rowIndex]),
+      {
+        '--row-height': `${getRowHeight(row, rowIndex)}px`,
+      },
+    ];
+
+    const rowClass = [
+      ...formatPropAsArray(props.rowClass, [row, rowIndex]),
+      `hover-${props.rowHover}`,
+      rowIndex % 2 === 1 && props.stripe ? 'stripe-row' : '',
+    ];
+    return [
+      <TableRow>
+        <tr
+          // @ts-ignore
+          style={rowStyle}
+          class={rowClass}
+          key={getRowKeyNull(row, props, rowIndex)}
+          onClick={e => handleRowClick(e, row, rowIndex, rows)}
+          onDblclick={e => handleRowDblClick(e, row, rowIndex, rows)}
+          onMouseenter={e => handleRowEnter(e, row, rowIndex, rows)}
+          onMouseleave={e => handleRowLeave(e, row, rowIndex, rows)}
+        >
+          {filterColGroups.value.map((column: Column, index: number) => {
+            const cellStyle = [
+              resolveFixedColumnStyle(column),
+              ...formatPropAsArray(props.cellStyle, [column, index, row, rowIndex]),
+            ];
+
+            const { colspan, rowspan } = resolveCellSpan(column, index, row, rowIndex);
+            const { skipCol } = tableResp.getColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SPAN) as {
+              skipCol: boolean;
+            };
+
+            const { skipRow } = needRowSpan
+              ? getRowSpanConfig(row, index, preRow, column, rowSpanMap)
+              : { skipRow: false };
+
+            const tdCtxClass = {
+              'expand-cell': column.type === 'expand',
+            };
+
+            if (!skipRow && !skipCol) {
+              const cellClass = [
+                getColumnClass(column, index),
+                getColumnCustomClass(column, row),
+                column.align || props.align,
+                ...formatPropAsArray(props.cellClass, [column, index, row, rowIndex]),
+                {
+                  'expand-row': tableResp.getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_EXPAND),
+                  'is-last': rowIndex + rowspan >= rowLength,
+                },
+              ];
+
+              const handleEmit = (event, type: string) => {
+                const args = {
+                  event,
+                  row,
+                  column,
+                  cell: {
+                    getValue: () => renderCell(row, column, rowIndex, rows),
+                  },
+                  rowIndex,
+                  columnIndex: index,
+                };
+                context.emit(type, args);
+              };
+
+              return (
+                <td
+                  class={cellClass}
+                  style={cellStyle}
+                  colspan={colspan}
+                  rowspan={rowspan}
+                  onClick={event => handleEmit(event, EMIT_EVENTS.CELL_CLICK)}
+                  onDblclick={event => handleEmit(event, EMIT_EVENTS.CELL_DBL_CLICK)}
+                >
+                  <TableCell
+                    class={tdCtxClass}
+                    column={column}
+                    row={row}
+                    parentSetting={props.showOverflowTooltip}
+                    observerResize={props.observerResize}
+                  >
+                    {renderCell(row, column, rowIndex, rows)}
+                  </TableCell>
+                </td>
+              );
+            }
+
+            return null;
+          })}
+        </tr>
+      </TableRow>,
+      renderExpandRow(row, rowClass, rowIndex),
+    ];
   };
 
   const renderExpandRow = (row: any, rowClass: any[], _rowIndex?) => {
@@ -570,11 +611,11 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
   };
 
   const getColumnClass = (column: Column, colIndex: number) => ({
-    [`${uuid}-column-${colIndex}`]: true,
+    [`${uuid}-column-${colIndex}`]: false,
     column_fixed: !!column.fixed,
     column_fixed_left: !!column.fixed,
     column_fixed_right: column.fixed === 'right',
-    [`${column.className}`]: true,
+    ...(column.className ? { [`${column.className}`]: true } : {}),
   });
 
   const getHeadColumnClass = (column: Column, colIndex: number) => ({

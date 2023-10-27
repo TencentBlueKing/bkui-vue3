@@ -36,20 +36,19 @@ import {
   h,
   nextTick,
   onMounted,
+  onUnmounted,
   reactive,
   ref,
-  resolveDirective,
   type SetupContext,
   SlotsType,
   watch,
-  withDirectives,
 } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 
 import { type VirtualRenderProps, virtualRenderProps } from './props';
 import useTagRender from './use-tag-render';
-import virtualRender, { computedVirtualIndex } from './v-virtual-render';
+import virtualRender, { computedVirtualIndex, VisibleRender } from './v-virtual-render';
 
 export default defineComponent({
   name: 'VirtualRender',
@@ -84,7 +83,15 @@ export default defineComponent({
       return rendAsTag;
     }
 
+    const binding = computed(() => ({
+      lineHeight: props.lineHeight,
+      handleScrollCallback,
+      pagination,
+      throttleDelay: props.throttleDelay,
+    }));
+
     const refRoot = ref(null);
+    let instance = null;
     const pagination = reactive({
       startIndex: 0,
       endIndex: 0,
@@ -107,29 +114,37 @@ export default defineComponent({
       pagination.translateY = translateY;
       pagination.translateX = scrollLeft;
       pagination.scrollLeft = scrollLeft;
-      pagination.pos = pos;
-      ctx.emit('content-scroll', [event, pagination]);
+      Object.assign(pagination.pos, pos || {});
+      if (event) {
+        ctx.emit('content-scroll', [event, pagination]);
+      }
     };
 
-    // const quequeScroll = [];
-
     onMounted(() => {
-      nextTick(() => {
-        handleListChanged(props.list);
-        afterListDataReset();
-      });
+      instance = new VisibleRender(binding, refRoot.value);
+      instance.install();
+    });
+
+    onUnmounted(() => {
+      instance?.uninstall();
+    });
+
+    const resolveHeight = computed(() => {
+      if (/^\d+(\.\d*)?(px)?$/.test(`${props.height}`)) {
+        return Number(`${props.height}`.replace(/px$/, ''));
+      }
+
+      return props.height;
     });
 
     watch(
-      () => [props.lineHeight, props.list],
+      () => [props.lineHeight, props.height, props.list],
       () => {
-        let scrollToOpt = { left: 0, top: 0 };
-        scrollToOpt = { left: pagination.scrollLeft, top: pagination.scrollTop };
+        instance?.setBinding(binding);
         handleChangeListConfig();
-        afterListDataReset();
-        if (props.keepAlive) {
-          scrollTo(scrollToOpt);
-        }
+        nextTick(() => {
+          afterListDataReset();
+        });
       },
       { deep: true },
     );
@@ -152,11 +167,6 @@ export default defineComponent({
       listLength.value = Math.ceil((list || []).length / props.groupItemCount);
       pagination.count = listLength.value;
 
-      pagination.startIndex = 0;
-      pagination.endIndex = 0;
-      pagination.translateY = 0;
-      pagination.scrollTop = 0;
-
       const isAuto = typeof props.abosuteHeight === 'string' && props.abosuteHeight === 'auto';
       if (isAuto) {
         if (typeof props.lineHeight === 'function') {
@@ -169,7 +179,6 @@ export default defineComponent({
           innerHeight.value = fnValue;
         } else {
           innerHeight.value = props.lineHeight * listLength.value;
-          console.log('innerHeight', props.lineHeight, innerHeight.value);
         }
       } else {
         innerHeight.value = props.abosuteHeight as number;
@@ -177,14 +186,18 @@ export default defineComponent({
     };
 
     /** 列表数据重置之后的处理事项 */
-    const afterListDataReset = (scrollToOpt = { left: 0, top: 0 }) => {
-      const el = refRoot.value?.parentNode as HTMLElement;
+    const afterListDataReset = (_scrollToOpt = { left: 0, top: 0 }) => {
+      const el = refRoot.value as HTMLElement;
+      const { targetStartIndex, targetEndIndex, elScrollTop, translateY, elScrollLeft } = computedVirtualIndex(
+        props.lineHeight,
+        handleScrollCallback,
+        pagination,
+        el,
+        null,
+        resolveHeight.value,
+      );
 
-      computedVirtualIndex(props.lineHeight, handleScrollCallback, pagination, el, null);
-
-      if (scrollToOpt && refRoot.value && props.autoReset) {
-        scrollTo(scrollToOpt);
-      }
+      handleScrollCallback(null, targetStartIndex, targetEndIndex, elScrollTop, translateY, elScrollLeft, {});
     };
 
     /** 映射传入的数组为新的数组，增加 $index属性，用来处理唯一Index */
@@ -252,13 +265,6 @@ export default defineComponent({
       props.scrollPosition === 'content' ? resolveClassName('virtual-content') : '',
       ...resolvePropClassName(props.contentClassName),
     ]);
-    const vVirtualRender = resolveDirective('bkVirtualRender');
-    const dirModifier = computed(() => ({
-      lineHeight: props.lineHeight,
-      handleScrollCallback,
-      pagination,
-      throttleDelay: props.throttleDelay,
-    }));
 
     /**
      * 重置当前配置
@@ -290,23 +296,20 @@ export default defineComponent({
         },
         [
           ctx.slots.beforeContent?.() ?? '',
-          withDirectives(
-            h(
-              contentAs || 'div',
-              {
-                class: innerClass.value,
-                style: {
-                  ...innerContentStyle.value,
-                  ...props.contentStyle,
-                },
+          h(
+            contentAs || 'div',
+            {
+              class: innerClass.value,
+              style: {
+                ...innerContentStyle.value,
+                ...props.contentStyle,
               },
-              [
-                ctx.slots.default?.({
-                  data: calcList.value,
-                }) ?? '',
-              ],
-            ),
-            [[vVirtualRender, dirModifier.value]],
+            },
+            [
+              ctx.slots.default?.({
+                data: calcList.value,
+              }) ?? '',
+            ],
           ),
           ctx.slots.afterContent?.() ?? '',
           h('div', {

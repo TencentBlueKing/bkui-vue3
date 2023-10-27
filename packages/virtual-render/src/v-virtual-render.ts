@@ -55,14 +55,14 @@ function getMatchedIndex(
   return { startIndex, height, diffHeight };
 }
 
-export function computedVirtualIndex(lineHeight, callback, pagination, el, event) {
+export function computedVirtualIndex(lineHeight, callback, pagination, el, event, height) {
   if (!el) {
     return;
   }
   const elScrollTop = el.scrollTop;
   const elScrollLeft = el.scrollLeft;
   const { scrollTop, count, groupItemCount, startIndex, endIndex, scrollLeft } = pagination;
-  const { offsetHeight } = el;
+  const offsetHeight = /^\d+(\.\d*)?$/.test(height) ? height : el.offsetHeight;
 
   let targetStartIndex = 0;
   let targetEndIndex = 0;
@@ -94,15 +94,23 @@ export function computedVirtualIndex(lineHeight, callback, pagination, el, event
         bottom: bottom >= 0 ? bottom : 0,
       });
   }
+
+  return {
+    targetStartIndex,
+    targetEndIndex,
+    elScrollTop,
+    translateY,
+    elScrollLeft,
+  };
 }
 
-class VisibleRender {
+export class VisibleRender {
   private binding;
   private wrapper;
   private delay;
   constructor(binding, el) {
     this.binding = binding;
-    this.wrapper = el.parentNode;
+    this.wrapper = el;
     const { throttleDelay } = binding.value;
     this.delay = throttleDelay;
   }
@@ -118,17 +126,27 @@ class VisibleRender {
     }
 
     const { startIndex, endIndex, groupItemCount, count, scrollTop, scrollLeft } = pagination;
+    const { height } = this.binding;
     computedVirtualIndex(
       lineHeight,
       handleScrollCallback,
       { scrollTop, startIndex, endIndex, groupItemCount, count, scrollLeft },
       this.wrapper,
       e,
+      height,
     );
   }
 
   public executeThrottledRender(e) {
     throttle(this.render.bind(this), this.delay)(e);
+  }
+
+  public install() {
+    this.wrapper?.addEventListener('scroll', this.executeThrottledRender.bind(this));
+  }
+
+  public uninstall() {
+    this.wrapper?.removeListener?.('scroll', this.executeThrottledRender.bind(this));
   }
 
   public setBinding(binding) {
