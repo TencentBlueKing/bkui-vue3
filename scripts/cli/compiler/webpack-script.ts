@@ -70,8 +70,11 @@ export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILi
       //   return `${pathData.chunk.runtime}`;
       // },
       library: {
-        type: 'umd',
+        type: 'module',
       },
+    },
+    experiments: {
+      outputModule: true,
     },
     optimization: {
       minimize: true,
@@ -166,7 +169,7 @@ export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILi
   return new Promise<void>((resolve, reject) => {
     compiler.run((err: Error | null | undefined, stats: Stats | undefined) => {
       if (err) {
-        console.info(err);
+        console.log(err);
         reject(err.message);
         return;
       }
