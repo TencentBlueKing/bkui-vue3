@@ -16,7 +16,7 @@
 
   import { DATA_FIX_COLUMNS } from './options';
 
-  const tableData = new Array(Math.ceil(Math.random() * 9000) + 1000).fill('')
+  const tableData = new Array(Math.ceil(Math.random() * 100) + 100).fill('')
     .map((_, index) => ({
       ip: `${index}--192.168.0.x`,
       source: `${index}_QQ`,
