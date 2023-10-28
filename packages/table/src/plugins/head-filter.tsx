@@ -35,6 +35,7 @@ import VirtualRender from '@bkui-vue/virtual-render';
 import { LINE_HEIGHT } from '../const';
 import { Column, IColumnType, IFilterShape } from '../props';
 import { getRowText, resolvePropVal } from '../utils';
+
 type IHeadFilterPropType = {
   column: Column;
   height: number;
@@ -60,6 +61,7 @@ export default defineComponent({
     });
 
     const maxHeight = computed(() => (filter.value as IFilterShape)?.maxHeight ?? LINE_HEIGHT * 15);
+    const height = computed(() => (filter.value as IFilterShape)?.height || '100%');
 
     watch(
       () => filter.value,
@@ -251,6 +253,7 @@ export default defineComponent({
               <BkCheckboxGroup class='content-list'>
                 <VirtualRender
                   maxHeight={maxHeight.value}
+                  height={height.value}
                   lineHeight={32}
                   list={localData.value}
                   throttleDelay={0}

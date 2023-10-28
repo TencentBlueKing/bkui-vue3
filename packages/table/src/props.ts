@@ -149,6 +149,7 @@ export type IFilterShape = {
   filterScope?: SortScope;
   btnSave?: boolean | string;
   btnReset?: boolean | string;
+  height?: number;
   maxHeight?: number;
 };
 

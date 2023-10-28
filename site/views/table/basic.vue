@@ -15,18 +15,23 @@
 </template>
 
 <script lang="jsx">
-  import { random } from 'lodash';
   import { defineComponent } from 'vue';
 
-  import { DATA_COLUMNS, DATA_FIX_TABLE, DATA_TABLE } from './options';
+  import { DATA_COLUMNS, DATA_TABLE } from './options';
+  const columns = [...DATA_COLUMNS];
+  /* const list = new Array(50).fill(null).map((_, index) => ({
+    text: `选项${index}`,
+    value: `选项${index}`,
+  }));
+  columns[2].filter.list = list;*/
   export default defineComponent({
     components: {},
     data() {
       return {
-        maxHeight: 300,
+        maxHeight: 200,
         isLoading: false,
         tableData: DATA_TABLE,
-        columns: [...DATA_COLUMNS],
+        columns,
         overflowTooltip: {
           popoverOption: {
             maxWidth: 400,

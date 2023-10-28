@@ -63,7 +63,6 @@ export function computedVirtualIndex(lineHeight, callback, pagination, el, event
   const elScrollLeft = el.scrollLeft;
   const { scrollTop, count, groupItemCount, startIndex, endIndex, scrollLeft } = pagination;
   const offsetHeight = /^\d+(\.\d*)?$/.test(height) ? height : el.offsetHeight;
-
   let targetStartIndex = 0;
   let targetEndIndex = 0;
   let translateY = 0;
