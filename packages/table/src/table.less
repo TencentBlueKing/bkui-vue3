@@ -88,6 +88,7 @@
   .@{bk-prefix}-table-head,
   .@{bk-prefix}-table-body {
     background: @table-bg-color;
+    transform: translateZ(0);
 
     &::-webkit-scrollbar {
       width: 5px;
@@ -121,6 +122,7 @@
       border-collapse: collapse;
       table-layout: fixed;
       align-self: flex-start;
+      transform: translateZ(0);
 
       th,
       td {
