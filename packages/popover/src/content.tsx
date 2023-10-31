@@ -104,7 +104,6 @@ export default defineComponent({
     return (
       <div
         class={className}
-        tabindex='-1'
         style={style}
         ref='refContent'
       >
