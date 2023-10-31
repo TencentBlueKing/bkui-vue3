@@ -26,7 +26,7 @@
 
 import { useLocale } from 'bkui-vue';
 import { v4 as uuidv4 } from 'uuid';
-import { computed, CSSProperties, SetupContext, unref } from 'vue';
+import { computed, CSSProperties, ref, SetupContext, unref } from 'vue';
 
 import BkCheckbox from '@bkui-vue/checkbox';
 import { DownShape, RightShape } from '@bkui-vue/icon';
@@ -51,7 +51,7 @@ import HeadFilter from './plugins/head-filter';
 import HeadSort from './plugins/head-sort';
 import Settings from './plugins/settings';
 import useFixedColumn from './plugins/use-fixed-column';
-import { Column, Settings as ISettings, TablePropTypes } from './props';
+import { Column, IColSortBehavior, Settings as ISettings, TablePropTypes } from './props';
 import { ITableResponse } from './use-attributes';
 import {
   formatPropAsArray,
@@ -78,6 +78,7 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
   const columns = computed(() => formatData.value.columns);
 
   const settings = computed(() => formatData.value.settings);
+  const activeSortIndex = ref(null);
 
   /**
    * 过滤当前可渲染的列
@@ -249,16 +250,19 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
       tableResp.setColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_TYPE, type);
       tableResp.setColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_FN, fn);
       tableResp.sortData(column);
+      activeSortIndex.value = index;
       context.emit(EMIT_EVENTS.COLUMN_SORT, { column, index, type });
     };
 
     const nextSort = tableResp.getColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_TYPE) as SORT_OPTION;
-
+    const active = props.colSortBehavior === IColSortBehavior.independent ? activeSortIndex.value === index : true;
+    // 如果是独立的，则只高亮当前排序
     return (
       <HeadSort
         column={column as Column}
-        defaultSort={nextSort}
+        defaultSort={active ? nextSort : SORT_OPTION.NULL}
         onChange={handleSortClick}
+        active={active}
       />
     );
   };

@@ -138,7 +138,7 @@ export default defineComponent({
     });
 
     watch(
-      () => [props.lineHeight, props.height, props.list],
+      () => [props.lineHeight, props.height, props.list, props.maxHeight],
       () => {
         instance?.setBinding(binding);
         handleChangeListConfig();
@@ -187,17 +187,19 @@ export default defineComponent({
 
     /** 列表数据重置之后的处理事项 */
     const afterListDataReset = (_scrollToOpt = { left: 0, top: 0 }) => {
-      const el = refRoot.value as HTMLElement;
-      const { targetStartIndex, targetEndIndex, elScrollTop, translateY, elScrollLeft } = computedVirtualIndex(
-        props.lineHeight,
-        handleScrollCallback,
-        pagination,
-        el,
-        null,
-        resolveHeight.value,
-      );
+      nextTick(() => {
+        const el = refRoot.value as HTMLElement;
+        const { targetStartIndex, targetEndIndex, elScrollTop, translateY, elScrollLeft } = computedVirtualIndex(
+          props.lineHeight,
+          handleScrollCallback,
+          pagination,
+          el,
+          null,
+          resolveHeight.value,
+        );
 
-      handleScrollCallback(null, targetStartIndex, targetEndIndex, elScrollTop, translateY, elScrollLeft, {});
+        handleScrollCallback(null, targetStartIndex, targetEndIndex, elScrollTop, translateY, elScrollLeft, {});
+      });
     };
 
     /** 映射传入的数组为新的数组，增加 $index属性，用来处理唯一Index */
