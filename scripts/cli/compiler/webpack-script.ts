@@ -72,12 +72,15 @@ export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILi
       library: {
         type: 'module',
       },
+      environment: {
+        module: true,
+      },
     },
     experiments: {
       outputModule: true,
     },
     optimization: {
-      minimize: true,
+      minimize: false,
     },
     module: {
       rules: [
@@ -100,7 +103,7 @@ export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILi
               },
             },
           ],
-          exclude: /node_modules/,
+          // exclude: /node_modules/,
         },
         {
           test: /\.(png|jpe?g|gif|svg)$/,
@@ -127,14 +130,25 @@ export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILi
         },
       ],
     },
+    externalsType: 'module',
     externals: [
-      '@popperjs/core',
-      'date-fns',
-      'js-calendar',
-      'lodash',
-      'vue',
-      'highlight.js',
-      'vue-types',
+      {
+        vue: 'vue',
+        '@popperjs/core': '@popperjs/core',
+        'date-fns': 'date-fns',
+        'js-calendar': 'js-calendar',
+        lodash: 'lodash',
+        // vue: 'vue',
+        'highlight.js': 'highlight.js',
+        'vue-types': 'vue-types',
+      },
+      // '@popperjs/core',
+      // 'date-fns',
+      // 'js-calendar',
+      // 'lodash',
+      // // 'vue',
+      // 'highlight.js',
+      // 'vue-types',
       ({ request, context }, cb) => {
         const prefix = '@bkui-vue/';
         // if (request?.includes('@babel/')) {
