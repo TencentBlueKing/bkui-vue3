@@ -47,6 +47,7 @@ export default (props: TreePropTypes) => {
       if (`${refSearch.value}`.length === 0) {
         return false;
       }
+
       return matchFn(regMatch, [refSearch.value, itemValue, item]);
     }
 

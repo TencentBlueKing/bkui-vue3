@@ -89,12 +89,7 @@ export default defineComponent({
           matchedNodePath.push(getNodePath(item));
         }
 
-        setNodeAttribute(
-          item,
-          [NODE_ATTRIBUTES.IS_OPEN, NODE_ATTRIBUTES.IS_MATCH],
-          [isMatch, isMatch],
-          isTreeUI.value && isMatch,
-        );
+        setNodeAttribute(item, [NODE_ATTRIBUTES.IS_MATCH], [isMatch], isTreeUI.value && isMatch);
       });
     });
 
