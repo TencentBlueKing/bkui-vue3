@@ -156,6 +156,8 @@ export default [
       { name: 'checked', type: 'String[]||Number[]||Boolean[]', default: '[]', desc: '筛选项选中的元素', optional: [] },
       { name: 'match', type: 'String', default: 'full', desc: '过滤匹配模式，默认全量匹配', optional: ['full', 'fuzzy'] },
       { name: 'filterScope', type: 'String', default: 'current', desc: '如果有分页，配置过滤范围为当前页面或者跨页', optional: ['current', 'all'] },
+      { name: 'maxHeight', type: 'Number||String', default: '--', desc: '设置下拉框滚动列表的最大高度，默认15行', optional: [] },
+      { name: 'height', type: 'Number||String', default: '--', desc: '设置下拉框滚动列表的高度（不推荐设置）', optional: [] },
       { name: 'btnSave', type: 'String|Boolean', default: '确定', desc: '数据过滤的`确定`按钮配置，可配置为String类型，配置不同显示文本；也可以配置为false，禁用确定按钮，当此按钮禁用，单击过滤选项即生效', optional: [] },
       { name: 'btnReset', type: 'String|Boolean', default: '重置', desc: '数据过滤的`重置`按钮配置，可配置为String类型，配置不同显示文本；也可以配置为false，禁用`重置`按钮', optional: [] },
     ],

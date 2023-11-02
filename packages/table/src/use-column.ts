@@ -23,9 +23,11 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
+import { reactive } from 'vue';
+
 import { ITableColumn } from './components/table-column';
 import { SORT_OPTION } from './const';
-import { IColSortBehavior, ISortShape, TablePropTypes } from './props';
+import { Column, IColSortBehavior, ISortShape, TablePropTypes } from './props';
 
 /**
  * 渲染column settings
@@ -33,7 +35,9 @@ import { IColSortBehavior, ISortShape, TablePropTypes } from './props';
  * @param targetColumns 解析之后的column配置（主要用来处理通过<bk-column>配置的数据结构）
  */
 export default (props: TablePropTypes, targetColumns: ITableColumn[]) => {
-  const initColumns = (column: ITableColumn | ITableColumn[], remove = false) => {
+  const resolvedColumns = reactive(props.columns ?? []);
+
+  const initColumns = (column: ITableColumn[], remove = false) => {
     let resolveColumns: ITableColumn[] = [];
 
     if (!Array.isArray(column)) {
@@ -76,18 +80,13 @@ export default (props: TablePropTypes, targetColumns: ITableColumn[]) => {
         }
       });
     }
+
+    resolvedColumns.length = 0;
+    resolvedColumns.push(...(resolveColumns as Column[]));
   };
 
   const getColumns = () => {
-    if (targetColumns?.length) {
-      return targetColumns;
-    }
-
-    if (props.columns?.length) {
-      return props.columns;
-    }
-
-    return [];
+    return resolvedColumns;
   };
 
   const getActiveColumn = () => {

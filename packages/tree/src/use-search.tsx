@@ -30,7 +30,7 @@ import { SearchOption, TreePropTypes } from './props';
 
 export default (props: TreePropTypes) => {
   const refSearch = toRef(props, 'search');
-  const { openResultNode = false, resultType = 'tree' } = (props.search ?? {}) as SearchOption;
+  const { resultType = 'tree', showChildNodes = true } = (props.search ?? {}) as SearchOption;
 
   const isCommonType = (val: any) => ['string', 'number', 'boolean'].includes(typeof val);
   const exactMath = (matchValue: any, itemValue: any) => matchValue === itemValue;
@@ -44,6 +44,10 @@ export default (props: TreePropTypes) => {
     }
 
     if (isCommonType(refSearch.value)) {
+      if (`${refSearch.value}`.length === 0) {
+        return false;
+      }
+
       return matchFn(regMatch, [refSearch.value, itemValue, item]);
     }
 
@@ -51,29 +55,36 @@ export default (props: TreePropTypes) => {
     const defultMatch = match === 'fuzzy' ? regMatch : exactMath;
     const matchCallback = typeof match === 'function' ? match : defultMatch;
     if (`${value}`.length === 0) {
-      return true;
+      return false;
     }
 
     return matchFn(matchCallback, [value, itemValue, item]);
   };
 
-  const isSearchActive = computed(
-    () =>
-      refSearch.value !== false &&
-      (isCommonType(refSearch.value) ? `${refSearch.value}`.length > 0 : typeof refSearch.value === 'object'),
-  );
+  const isSearchActive = computed(() => {
+    if (refSearch.value === false) {
+      return false;
+    }
+
+    if (isCommonType(refSearch.value)) {
+      return `${refSearch.value}`.length > 0;
+    }
+
+    const { value = '' } = refSearch.value as SearchOption;
+    return `${value}`.length > 0;
+  });
   /**
    * 索索结果展示为Tree
    */
-  const isTreeUI = resultType === 'tree';
+  const isTreeUI = computed(() => resultType === 'tree');
 
   return {
     searchFn,
     refSearch,
     isSearchActive,
     isSearchDisabled,
-    openResultNode,
     resultType,
     isTreeUI,
+    showChildNodes,
   };
 };

@@ -64,6 +64,9 @@ export const virtualRenderProps = {
   /** 整体最小高度 */
   minHeight: PropTypes.number.def(30),
 
+  /** 整体最大高度 */
+  maxHeight: PropTypes.number,
+
   /**
    * 整体高度
    * 可设置具体值，如果设置为 100%，则组件会自动计算外层DOM元素offsetHeight，用于计算可渲染行数
