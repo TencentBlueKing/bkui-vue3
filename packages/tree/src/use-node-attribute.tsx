@@ -145,7 +145,7 @@ export default (
    * @param item
    * @returns
    */
-  const checkNodeIsOpen = (node: any) => isRootNode(node) || isParentNodeOpened(node);
+  const checkNodeIsOpen = (node: any) => isRootNode(node) || isItemOpen(node) || isParentNodeOpened(node);
 
   /**
    * 根据节点path返回源数据中节点信息
