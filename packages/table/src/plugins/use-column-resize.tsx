@@ -24,11 +24,16 @@
  * IN THE SOFTWARE.
  */
 import { isElement, throttle } from 'lodash';
-import { computed, ref } from 'vue';
+import { computed, Ref, ref } from 'vue';
 
-import { GroupColumn } from '../props';
+import { COLUMN_ATTRIBUTE } from '../const';
+import { Column } from '../props';
+import { ITableResponse } from '../use-attributes';
 
-export default (colgroups: GroupColumn[], immediate = true) => {
+export default (tableResp: ITableResponse, immediate = true, head: Ref<HTMLElement>) => {
+  const { formatData, getColumnAttribute, getColumnOrderWidth, setColumnAttribute } = tableResp;
+  const getColListener = (col: Column) => getColumnAttribute(col, COLUMN_ATTRIBUTE.LISTENERS) as Map<string, any>;
+
   const pluginName = 'HeadColumnResize';
   const enum EVENTS {
     MOUSE_MOVE = 'onMousemove',
@@ -39,21 +44,32 @@ export default (colgroups: GroupColumn[], immediate = true) => {
   let isMouseDown = false;
   let isDraging = false;
   let startX = 0;
-  let dragColumn: GroupColumn = null;
+  let dragColumn: Column = null;
   let dragStartOffsetX = 0;
   const dragOffsetX = ref(-1000);
+  const ORDER_LIST = [COLUMN_ATTRIBUTE.RESIZE_WIDTH, COLUMN_ATTRIBUTE.CALC_WIDTH];
+
+  const stopDefaultEvent = (e: MouseEvent) => {
+    e.stopImmediatePropagation();
+    e.stopPropagation();
+    e.preventDefault();
+  };
 
   const handleMouseUp = (e: MouseEvent) => {
+    stopDefaultEvent(e);
+
     isMouseDown = false;
     isDraging = false;
     const bodyStyle = document.body.style;
     bodyStyle.cursor = '';
 
     const diff = e.clientX - startX;
-    const resolveWidth = (dragColumn.resizeWidth ?? dragColumn.calcWidth) + diff;
-    const minWidth = Number(dragColumn.minWidth);
-    dragColumn.resizeWidth = resolveWidth > minWidth ? resolveWidth : minWidth;
 
+    const resolveWidth = getColumnOrderWidth(dragColumn, ORDER_LIST) + diff;
+    const minWidth = getColumnOrderWidth(dragColumn, [COLUMN_ATTRIBUTE.COL_MIN_WIDTH]);
+    setColumnAttribute(dragColumn, COLUMN_ATTRIBUTE.RESIZE_WIDTH, resolveWidth > minWidth ? resolveWidth : minWidth);
+
+    setTimeout(() => tableResp.setAllColumnAttribute(COLUMN_ATTRIBUTE.COL_IS_DRAG, false));
     document.removeEventListener('mouseup', handleMouseUp);
     document.removeEventListener('mousemove', handleMouseMove);
 
@@ -61,15 +77,15 @@ export default (colgroups: GroupColumn[], immediate = true) => {
     dragOffsetX.value = -1000;
     dragColumn = null;
 
-    const targetTable = (e.target as HTMLElement).closest('table');
-    targetTable.querySelectorAll('th').forEach((th: HTMLElement) => th.style.setProperty('user-select', 'inherit'));
+    const targetTable = head.value?.querySelector('table');
+    targetTable?.querySelectorAll('th').forEach((th: HTMLElement) => th.style.setProperty('user-select', 'inherit'));
   };
 
   const updateOffsetX = (e: MouseEvent) =>
     throttle(() => {
       const diff = e.clientX - startX;
-      const resolveWidth = (dragColumn.resizeWidth ?? dragColumn.calcWidth) + diff;
-      const minWidth = Number(dragColumn.minWidth);
+      const resolveWidth = getColumnOrderWidth(dragColumn, ORDER_LIST) + diff;
+      const minWidth = getColumnOrderWidth(dragColumn, [COLUMN_ATTRIBUTE.COL_MIN_WIDTH]);
 
       if (minWidth < resolveWidth) {
         dragOffsetX.value = e.clientX - startX + dragStartOffsetX;
@@ -80,6 +96,7 @@ export default (colgroups: GroupColumn[], immediate = true) => {
     const bodyStyle = document.body.style;
     bodyStyle.setProperty('cursor', '');
     updateOffsetX(e)();
+    stopDefaultEvent(e);
   };
 
   const setChildrenNodeCursor = (root: HTMLElement, cursor: string) => {
@@ -92,11 +109,15 @@ export default (colgroups: GroupColumn[], immediate = true) => {
   };
 
   const handler = {
-    [EVENTS.MOUSE_DOWN]: (e: MouseEvent, column: GroupColumn) => {
+    [EVENTS.MOUSE_DOWN]: (e: MouseEvent, column: Column) => {
       if (!isInDragSection) {
         return;
       }
       isMouseDown = true;
+      const target = (e.target as HTMLElement).closest('th');
+      tableResp.setColumnAttribute(column, COLUMN_ATTRIBUTE.COL_IS_DRAG, true);
+      tableResp.setColumnAttribute(column, COLUMN_ATTRIBUTE.CALC_WIDTH, target.scrollWidth);
+
       const bodyStyle = document.body.style;
       bodyStyle.setProperty('cursor', 'col-resize');
 
@@ -105,17 +126,17 @@ export default (colgroups: GroupColumn[], immediate = true) => {
 
       const targetTable = (e.target as HTMLElement).closest('table');
       dragStartOffsetX = startX - targetTable.getBoundingClientRect().left;
+      updateOffsetX(e)();
 
       document.addEventListener('mouseup', handleMouseUp);
       document.addEventListener('mousemove', handleMouseMove);
     },
-    [EVENTS.MOUSE_MOVE]: (e: MouseEvent, _column: GroupColumn) => {
+    [EVENTS.MOUSE_MOVE]: (e: MouseEvent, _column: Column) => {
       if (isMouseDown && !isDraging) {
         isDraging = true;
       }
 
       const target = (e.target as HTMLElement).closest('th');
-
       if (isDraging) {
         target.style.setProperty('user-select', 'none');
         target.classList.remove('col-resize-hover');
@@ -139,7 +160,7 @@ export default (colgroups: GroupColumn[], immediate = true) => {
         }
       }
     },
-    [EVENTS.MOUSE_OUT]: (e: MouseEvent, _column: GroupColumn) => {
+    [EVENTS.MOUSE_OUT]: (e: MouseEvent, _column: Column) => {
       const target = (e.target as HTMLElement).closest('th');
       if (!isDraging) {
         setChildrenNodeCursor(target, '');
@@ -151,26 +172,29 @@ export default (colgroups: GroupColumn[], immediate = true) => {
   const getEventName = (event: string) => `${pluginName}_${event}`;
 
   const registerResizeEvent = () => {
-    colgroups.forEach(col => {
+    formatData.columns.forEach(col => {
       if (col.resizable !== false) {
+        const target = getColListener(col);
         Object.keys(handler).forEach((event: string) => {
           const name = getEventName(event);
-          if (!col.listeners.has(name)) {
-            col.listeners.set(name, []);
+
+          if (!target?.has(name)) {
+            target.set(name, []);
           }
 
-          col.listeners.get(name).push(handler[event]);
+          target.get(name).push(handler[event]);
         });
       }
     });
   };
 
   const resetResizeEvents = () => {
-    colgroups.forEach(col => {
+    formatData.columns.forEach(col => {
+      const target = getColListener(col);
       Object.keys(handler).forEach((event: string) => {
         const name = getEventName(event);
-        if (col.listeners.has(name)) {
-          const listeners = col.listeners.get(name);
+        if (target?.has(name)) {
+          const listeners = target.get(name);
           listeners.length = 0;
         }
       });
@@ -181,22 +205,35 @@ export default (colgroups: GroupColumn[], immediate = true) => {
     registerResizeEvent();
   }
 
-  const dragOffsetXStyle = computed(
-    () =>
-      ({
-        position: 'absolute',
-        top: 0,
-        bottom: 0,
-        left: 0,
-        width: '1px',
-        'background-color': '#3785FF',
-      }) as const,
-  );
+  const dragOffsetXStyle = {
+    position: 'absolute' as const,
+    top: 0,
+    bottom: 0,
+    left: 0,
+    width: '1px',
+    backgroundColor: '#3785FF',
+    transform: 'translateX(-50%)',
+  };
+
+  const layout = computed(() => tableResp.formatData.layout);
+
+  const resizeColumnStyle = computed(() => ({
+    ...dragOffsetXStyle,
+    transform: `translate(${dragOffsetX.value - layout.value.translateX + 3}px, ${layout.value.translateY}px)`,
+  }));
+
+  const resizeHeadColStyle = computed(() => ({
+    ...dragOffsetXStyle,
+    width: '6px',
+    transform: `translateX(${dragOffsetX.value - layout.value.translateX}px)`,
+  }));
 
   return {
     registerResizeEvent,
     resetResizeEvents,
     dragOffsetX,
     dragOffsetXStyle,
+    resizeColumnStyle,
+    resizeHeadColStyle,
   };
 };

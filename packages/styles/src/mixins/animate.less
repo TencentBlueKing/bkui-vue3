@@ -1,3 +1,5 @@
+@import '../themes/themes.less';
+
 @keyframes loading-scale-animate {
   0% {
     transform: scale(1);
@@ -13,15 +15,17 @@
     background-color: transparent;
   }
 }
-
-.bk-fade-transtion {
-  .bk-fade-enter-active,
-  .bk-fade-leave-active {
+.fade-transition() {
+  .@{bk-prefix}-fade-enter-active,
+  .@{bk-prefix}-fade-leave-active {
     transition: all .3s cubic-bezier(.55, 0, .1, 1);
   }
 
-  .bk-fade-enter,
-  .bk-fade-leave-to {
+  .@{bk-prefix}-fade-enter,
+  .@{bk-prefix}-fade-leave-to {
     opacity: 0;
   }
+}
+.@{bk-prefix}-transition {
+  .fade-transition();
 }

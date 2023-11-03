@@ -121,7 +121,7 @@
     };
   });
   const filterOption = (input, options) => {
-    return options.name.includes(input);
+    return options.name?.includes(input);
   };
 </script>
 <style scoped>

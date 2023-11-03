@@ -149,6 +149,8 @@ export type IFilterShape = {
   filterScope?: SortScope;
   btnSave?: boolean | string;
   btnReset?: boolean | string;
+  height?: number;
+  maxHeight?: number;
 };
 
 export type IFilterPropShape = IFilterShape | boolean | string;
@@ -333,7 +335,7 @@ export enum IColSortBehavior {
   interdependent = 'interdependent',
 
   /**
-   * 列排序是独立的
+   * 列与列之间的排序是独立的，互斥的
    */
   independent = 'independent',
 }
@@ -446,6 +448,11 @@ export const tableProps = {
   remotePagination: PropTypes.bool.def(false),
 
   /**
+   * 是否支持跨页全选
+   */
+  acrossAll: PropTypes.bool.def(false),
+
+  /**
    * 空数据展示
    */
   // emptyText: PropTypes.string.def('暂无数据'),
@@ -497,6 +504,14 @@ export const tableProps = {
    * 内部使用逻辑为：row[selectionKey]，可以为多级选择，但是多级选择只支持 row.child.child
    */
   selectionKey: PropTypes.string.def(''),
+
+  /**
+   * 默认选中行
+   * 仅对设置了selection的情况下生效
+   * 值可以为 [key1, key2, key3, ...] 或者 [row1, row2, row3, ...]
+   * 如果设置为key，则 selectionKey 必须设置，内部匹配逻辑为：row[selectionKey] === key
+   */
+  checked: PropTypes.array.def([]),
 
   /**
    * 提供自定义判定当前行是否选中

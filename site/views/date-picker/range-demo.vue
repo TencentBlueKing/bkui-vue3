@@ -49,5 +49,5 @@
 
   const handlePickFirst = (type, val) => {
     console.error(123, type, val);
-  }
+  };
 </script>

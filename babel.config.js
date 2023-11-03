@@ -3,7 +3,7 @@ module.exports = {
     ['@babel/preset-env', {
       targets:
       {
-        node: 'current',
+        esmodules: true,
         browsers: [
           'defaults',
           'not ie <= 11',

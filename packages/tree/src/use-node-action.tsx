@@ -33,14 +33,8 @@ import { EVENTS, NODE_ATTRIBUTES } from './constant';
 import { TreePropTypes } from './props';
 import useNodeAsync from './use-node-async';
 import useNodeAttribute from './use-node-attribute';
-import { IFlatData, getLabel, getNodeItemClass, getNodeItemStyle, getNodeRowClass, resolveNodeItem } from './util';
-export default (
-  props: TreePropTypes,
-  ctx,
-  flatData: IFlatData,
-  _renderData,
-  initOption,
-) => {
+import { getLabel, getNodeItemClass, getNodeItemStyle, getNodeRowClass, IFlatData, resolveNodeItem } from './util';
+export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, initOption) => {
   // const checkedNodes = [];
   let selectedNodeId = props.selected;
   const {
@@ -179,13 +173,17 @@ export default (
   const updateParentChecked = (item: any, isChecked) => {
     const parent = getParentNode(item);
     if (parent) {
-      const isNeedChecked = isChecked ? isChecked : (getChildNodes(parent) || [])
-        .some((node: any) => isNodeChecked(node));
+      const isNeedChecked = isChecked
+        ? isChecked
+        : (getChildNodes(parent) || []).some((node: any) => isNodeChecked(node));
 
       setNodeAttr(parent, NODE_ATTRIBUTES.IS_CHECKED, isNeedChecked);
 
-      setNodeAttr(parent, NODE_ATTRIBUTES.IS_INDETERMINATE, (getChildNodes(parent) || [])
-        .some((node: any) => !isNodeChecked(node)));
+      setNodeAttr(
+        parent,
+        NODE_ATTRIBUTES.IS_INDETERMINATE,
+        (getChildNodes(parent) || []).some((node: any) => !isNodeChecked(node)),
+      );
 
       if (!isRootNode(parent)) {
         updateParentChecked(parent, isChecked);
@@ -218,9 +216,7 @@ export default (
     );
   };
 
-  const isIndeterminate = (item: any) =>
-    isNodeChecked(item) && getNodeAttr(item, NODE_ATTRIBUTES.IS_INDETERMINATE);
-
+  const isIndeterminate = (item: any) => isNodeChecked(item) && getNodeAttr(item, NODE_ATTRIBUTES.IS_INDETERMINATE);
 
   const getCheckboxRender = (item: any) => {
     if (!props.showCheckbox) {
@@ -285,23 +281,44 @@ export default (
    * @returns
    */
   const setOpen = (item: any[] | any, isOpen = true, autoOpenParents = false) => {
-    const resolvedItem = resolveNodeItem(item);
+    setNodeAttribute(item, NODE_ATTRIBUTES.IS_OPEN, isOpen, autoOpenParents && isOpen);
+  };
+
+  /**
+   * 递归处理当前节点以及父级节点属性值
+   * @param node 指定节点
+   * @param attrName 属性名称
+   * @param value 属性值
+   * @param loopParent 是否需要递归更新父级
+   */
+  const setNodeAttribute = (
+    node: any,
+    attrName: string | string[],
+    value: string | number | boolean | (string | number | boolean)[],
+    loopParent = false,
+  ) => {
+    const resolvedItem = resolveNodeItem(node);
     if (resolvedItem[NODE_ATTRIBUTES.IS_NULL]) {
       return;
     }
 
-    if (autoOpenParents) {
-      if (isOpen) {
-        setNodeAction(resolvedItem, NODE_ATTRIBUTES.IS_OPEN, true);
-        if (!isRootNode(resolvedItem)) {
-          const parent = getParentNode(resolvedItem);
-          setOpen(parent, true, true);
-        }
-      } else {
-        setNodeOpened(resolvedItem, false, null, false);
+    const attrNames = Array.isArray(attrName) ? attrName : [attrName];
+    const values = Array.isArray(value) ? value : [value];
+
+    if (loopParent) {
+      attrNames.forEach((name, index) => setNodeAction(resolvedItem, name, values[index]));
+
+      if (!isRootNode(resolvedItem)) {
+        const parent = getParentNode(resolvedItem);
+        attrNames.forEach((name, index) => {
+          const parentVal = getNodeAttr(parent, name);
+          if (parentVal !== value) {
+            setNodeAttribute(parent, name, values[index], loopParent);
+          }
+        });
       }
     } else {
-      setNodeAction(resolvedItem, NODE_ATTRIBUTES.IS_OPEN, isOpen);
+      attrNames.forEach((name, index) => setNodeAction(resolvedItem, name, values[index]));
     }
   };
 
@@ -310,7 +327,7 @@ export default (
    * @param item
    */
   const handleTreeNodeClick = (item: any, e: MouseEvent) => {
-    const isOpen = isNodeOpened(item);
+    const isOpen = isItemOpen(item);
     if (isOpen) {
       setNodeOpened(item, false, e);
       return;
@@ -350,8 +367,9 @@ export default (
 
     let resolvedItem = resolveNodeItem(nodeList[0]);
     if (typeof resolvedItem === 'string' || typeof resolvedItem === 'number' || typeof resolvedItem === 'symbol') {
-      resolvedItem = flatData.data.find(item => getNodeId(item) === resolvedItem)
-        ?? { [NODE_ATTRIBUTES.IS_NULL]: true };
+      resolvedItem = flatData.data.find(item => getNodeId(item) === resolvedItem) ?? {
+        [NODE_ATTRIBUTES.IS_NULL]: true,
+      };
     }
 
     if (resolvedItem[NODE_ATTRIBUTES.IS_NULL]) {
@@ -522,15 +540,20 @@ export default (
     return extendNodeAttr(item);
   };
 
-  const renderTreeNode = (item: any) => (
+  /**
+   * 渲染节点函数
+   * @param item 当前节点
+   * @param showTree 是否展示为树形结构
+   */
+  const renderTreeNode = (item: any, showTree = true) => (
     <div
       data-tree-node={getNodeId(item)}
       key={getNodeId(item)}
       class={getNodeRowClass(item, flatData.schema)}
     >
       <div
-        class={getNodeItemClass(item, flatData.schema, props)}
-        style={getNodeItemStyle(item, props, flatData)}
+        class={getNodeItemClass(item, flatData.schema, props, showTree)}
+        style={getNodeItemStyle(item, props, flatData, showTree)}
         onClick={(e: MouseEvent) => handleNodeContentClick(item, e)}
       >
         <div
@@ -544,7 +567,7 @@ export default (
           <span class={resolveClassName('node-text')}>{renderNodeSlots(item)}</span>
           {ctx.slots.nodeAppend?.(getScopedSlotData(item))}
         </div>
-        {getVirtualLines(item)}
+        {showTree && getVirtualLines(item)}
       </div>
     </div>
   );
@@ -558,5 +581,6 @@ export default (
     setNodeOpened,
     setSelect,
     setOpen,
+    setNodeAttribute,
   };
 };
