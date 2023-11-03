@@ -213,7 +213,6 @@ export default defineComponent({
         class={['cell', props.column.type, hasExplain ? 'explain' : '']}
         style={cellStyle.value}
         ref={refRoot}
-        title={props.title}
       >
         {slots.default?.()}
       </div>

@@ -682,6 +682,7 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
 
       tableResp.setRowSelection(row, value);
       context.emit(EMIT_EVENTS.ROW_SELECT, { row, index, checked: value, data: props.data });
+      context.emit(EMIT_EVENTS.ROW_SELECT_CHANGE, { row, index, checked: value, data: props.data });
     };
 
     const indeterminate = tableResp.getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_SELECTION_INDETERMINATE);
