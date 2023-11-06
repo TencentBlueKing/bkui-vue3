@@ -209,7 +209,7 @@ export const initTime = () => {
  * @return {boolean} 判断结果
  */
 export const isAllEmptyArr = (arr: any[]): boolean =>
-  arr.every(item => !item || (typeof item === 'string' && item.trim() === ''));
+  arr?.every(item => !item || (typeof item === 'string' && item.trim() === ''));
 
 export const keyValueMapper = {
   40: 'up',
