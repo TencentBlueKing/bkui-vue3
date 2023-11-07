@@ -68,7 +68,7 @@ export default defineComponent({
   // slots: ['header'],
   slots: Object as SlotsType<{
     header?: () => any;
-    trigger?: () => any;
+    trigger?: (displayValue: string) => any;
     footer?: () => any;
     shortcuts?: (arg?: { change: Function }) => any;
     confirm?: {};
@@ -700,7 +700,7 @@ export default defineComponent({
           onMouseenter={this.handleInputMouseenter}
           onMouseleave={this.handleInputMouseleave}
         >
-          {this.$slots.trigger?.() ?? defaultTrigger}
+          {this.$slots.trigger?.(this.displayValue) ?? defaultTrigger}
         </div>
         <Teleport
           to='body'

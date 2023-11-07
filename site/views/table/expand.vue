@@ -1,12 +1,14 @@
 <template>
   <div>
     <div class="cell">
-      <bk-button @click="handleSetAllRowExpand">展开|收起所有</bk-button>
+      <bk-button @click="handleSetAllRowExpand">
+        展开|收起所有
+      </bk-button>
       <bk-table
+        ref="refTable1"
         :columns="columns"
         :data="tableData"
         @row-expand="handleRowExpand"
-        ref="refTable1"
       >
         <template #expandRow="row">
           <div style="height: 80px">
@@ -43,7 +45,7 @@
       return {
         tableData: [...DATA_TABLE],
         columns: [...DATA_EXPAND_COLUMNS],
-        isExpand: false
+        isExpand: false,
       };
     },
     methods: {

@@ -1,16 +1,19 @@
 <template>
   <div style="width: 100%; overflow: auto">
+    <bk-input v-model="search.value" style="width: 400px;margin-left: 20px;" type="search"></bk-input>
     <div class="row">
       <div class="column">
         <div class="attr-tag">
-          node-content-action = ['selected', 'click', 'expand'] | (默认配置)
+          node-content-action = ['selected', 'click', 'expand', 'collapse'] | (默认配置)
         </div>
         <div class="cell">
           <bk-tree
             :data="treeData"
+            :search="search"
             label="name"
             children="children"
-            :node-content-action="['selected', 'click', 'expand']"
+            expand-all
+            :node-content-action="['selected', 'click', 'expand', 'collapse']"
           />
         </div>
       </div>
@@ -21,6 +24,7 @@
         <div class="cell">
           <bk-tree
             :data="treeData"
+            :search="search"
             label="name"
             :node-content-action="['selected', 'click']"
             children="children"
@@ -34,6 +38,7 @@
         <div class="cell">
           <bk-tree
             :data="treeData"
+            :search="search"
             label="name"
             :node-content-action="[]"
             children="children"
@@ -52,7 +57,11 @@
     components: {},
     data() {
       return {
-        treeData: [...JSON.parse(JSON.stringify(BASIC_DATA))],
+        treeData: BASIC_DATA,
+        search: {
+          value: '',
+          showChildNodes: true
+        }
       };
     },
   });

@@ -13,13 +13,19 @@
   <bk-button @click="handleHidePop">
     hide
   </bk-button>
-  <div ref="refContentTable" style="width: 400px;"><ContentTable></ContentTable></div>
+  <div
+    ref="refContentTable"
+    style="width: 400px;"
+  >
+    <content-table />
+  </div>
 </template>
 <script>
   import { defineComponent } from 'vue';
 
   import { bkEllipsis } from '@bkui-vue/directives';
   import { $bkPopover } from '@bkui-vue/popover';
+
   import ContentTable from '../../table/column-template.vue';
 
   export default defineComponent({

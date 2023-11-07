@@ -23,41 +23,22 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import debounce from 'lodash/debounce';
-import objGet from 'lodash/get';
-import objHas from 'lodash/has';
-import objSet from 'lodash/set';
-import { v4 as uuidv4 } from 'uuid';
-import { computed, onMounted, reactive, ref, watch } from 'vue';
+
+import { computed, onMounted, reactive, ref } from 'vue';
 
 import { classes, resolveClassName } from '@bkui-vue/shared';
 
 import { ITableColumn } from './components/table-column';
-import {
-  BORDER_OPTION,
-  COL_MIN_WIDTH,
-  COLUMN_ATTRIBUTE,
-  LINE_HEIGHT,
-  SCROLLY_WIDTH,
-  SETTING_SIZE,
-  TABLE_ROW_ATTRIBUTE,
-} from './const';
-import useActiveColumns from './plugins/use-active-columns';
-import useColumnResize from './plugins/use-column-resize';
-import useFixedColumn from './plugins/use-fixed-column';
-import { Colgroups, Column, Settings, TablePropTypes } from './props';
+import { BORDER_OPTION, LINE_HEIGHT, SCROLLY_WIDTH } from './const';
+import { Column, TablePropTypes } from './props';
+import { ITableResponse } from './use-attributes';
 import useColumn from './use-column';
 import {
-  getRowKey,
   hasRootScrollY,
-  isColumnHidden,
-  isRowSelectEnable,
-  resolveCellSpan,
   resolveHeadConfig,
   resolveNumberOrStringToPix,
   resolvePropBorderToClassStr,
   resolvePropVal,
-  resolveSort,
 } from './utils';
 
 /**
@@ -65,18 +46,18 @@ import {
  * @param props: TablePropTypes
  * @param targetColumns 解析之后的column配置（主要用来处理通过<bk-column>配置的数据结构）
  * @param root root element
- * @param reactiveProp 组件内部定义的响应式对象
+ * @param TableSchema 组件内部定义的响应式对象
  * @param pageData 当前页数据
  */
 export const useClass = (
   props: TablePropTypes,
   targetColumns: ITableColumn[],
   root?,
-  reactiveProp?,
+  TableSchema?: ITableResponse,
   pageData?: any[],
 ) => {
   const { getColumns } = useColumn(props, targetColumns);
-  const autoHeight = ref(LINE_HEIGHT * 10);
+  // const autoHeight = ref(LINE_HEIGHT * 10);
   const fixHeight = ref(LINE_HEIGHT * 10);
   const maxFixHeight = ref(LINE_HEIGHT * 10);
   const headHeight = ref(LINE_HEIGHT);
@@ -105,8 +86,8 @@ export const useClass = (
   const config = resolveHeadConfig(props);
   const headStyle = computed(() => ({
     '--row-height': `${resolvePropVal(config, 'height', ['thead'])}px`,
-    '--scroll-head-left': `-${reactiveProp.scrollTranslateX}px`,
-    '--scroll-left': `${reactiveProp.scrollTranslateX}px`,
+    '--scroll-head-left': `-${TableSchema.formatData.layout.translateX}px`,
+    '--scroll-left': `${TableSchema.formatData.layout.translateX}px`,
   }));
 
   const contentClass = {
@@ -144,7 +125,7 @@ export const useClass = (
   /** 表格外层容器样式 */
   const wrapperStyle = computed(() => ({
     minHeight: resolveNumberOrStringToPix(props.minHeight, 'auto'),
-    width: resolveWidth(),
+    width: resolveWidth() || '100%',
     maxWidth: '100%',
     height: getTableHeight(),
     // maxHeight: props.maxHeight,
@@ -223,11 +204,11 @@ export const useClass = (
   const resolveContentStyle = rootEl => {
     const resolveHeight = resolvePropHeight(props.height);
     headHeight.value = getHeadHeight(rootEl) as number;
-    const resolveMinHeight = resolvePropHeight(props.minHeight, autoHeight.value) as number;
+    // const resolveMinHeight = resolvePropHeight(props.minHeight, autoHeight.value) as number;
     const resolveFooterHeight = props.pagination && props.data.length ? props.paginationHeight : 0;
     const contentHeight = resolveContentHeight(resolveHeight, headHeight.value, resolveFooterHeight);
 
-    const minHeight = resolveMinHeight - headHeight.value - resolveFooterHeight;
+    // const minHeight = resolveMinHeight - headHeight.value - resolveFooterHeight;
 
     const maxHeight = getMaxheight(resolveHeight, () => {
       const resolveMaxHeight = resolvePropHeight(props.maxHeight);
@@ -235,7 +216,7 @@ export const useClass = (
     });
 
     contentStyle.display = pageData?.length ? 'block' : false;
-    contentStyle.minHeight = `${minHeight}px`;
+    contentStyle.minHeight = contentHeight;
     contentStyle.height = contentHeight;
     contentStyle.maxHeight = maxHeight;
   };
@@ -289,6 +270,60 @@ export const useClass = (
     return offsetWidth;
   };
 
+  const tableBodyClass = computed(() => ({
+    ...contentClass,
+    '__is-empty': !TableSchema.pageData.length,
+  }));
+
+  const tableBodyContentClass = computed(() => ({
+    [resolveClassName('table-body-content')]: true,
+    [resolveClassName('stripe')]: props.stripe,
+    'with-virtual-render': props.virtualEnabled,
+  }));
+
+  const resizeColumnClass = {
+    column_drag_line: true,
+    'offset-x': true,
+  };
+
+  const loadingRowClass = {
+    'scroll-loading': true,
+    _bottom: true,
+  };
+
+  const fixedBottomBorder = computed(() => ({
+    [resolveClassName('fixed-bottom-border')]: true,
+    '_is-empty': !props.data.length,
+  }));
+
+  const columnGhostStyle = {
+    zIndex: -1,
+    width: 0,
+    height: 0,
+    display: 'none' as const,
+  };
+
+  const footerStyle = computed(() => ({
+    '--footer-height': hasFooter.value ? `${props.paginationHeight}px` : '0',
+  }));
+
+  const fixedContainerStyle = computed(() => ({
+    right: hasScrollYRef.value ? `${SCROLLY_WIDTH}px` : 0,
+    '--fix-height': `${fixHeight.value}px`,
+    '--fix-max-height': `${maxFixHeight.value}px`,
+    ...footerStyle.value,
+  }));
+
+  const scrollClass = computed(() => (props.virtualEnabled ? {} : { scrollXName: '', scrollYName: '' }));
+
+  const prependStyle = computed(() => ({
+    '--prepend-left': `${TableSchema.formatData.layout.translateX}px`,
+    position: 'sticky' as const,
+    top: 0,
+    zIndex: 2,
+    ...(props.prependStyle || {}),
+  }));
+
   return {
     tableClass,
     headClass,
@@ -305,523 +340,15 @@ export const useClass = (
     hasFooter,
     hasScrollY,
     hasScrollYRef,
-  };
-};
-
-/**
- * 渲染初始化数据 settings
- * @param props: TablePropTypes
- * @param targetColumns 解析之后的column配置（主要用来处理通过<bk-column>配置的数据结构）
- */
-export const useInit = (props: TablePropTypes, targetColumns: ITableColumn[]) => {
-  const colgroups: Colgroups[] = reactive([]);
-  const { getColumns } = useColumn(props, targetColumns);
-
-  const resolveMinWidth = (col: Column) => {
-    if (/^\d+/.test(`${col.minWidth}`)) {
-      return col.minWidth;
-    }
-
-    let minWidth = COL_MIN_WIDTH;
-    if (col.sort) {
-      minWidth = minWidth + 18;
-    }
-
-    if (col.filter) {
-      minWidth = minWidth + 28;
-    }
-    return minWidth;
-  };
-
-  const resolvedColumns = computed(() => getColumns());
-
-  const updateColGroups = (settings?: Settings) => {
-    const checked = settings?.checked || (props.settings as Settings)?.checked || [];
-    const settingFields = settings?.fields || (props.settings as Settings)?.fields || [];
-    colgroups.length = 0;
-    colgroups.push(
-      ...resolvedColumns.value.map(col =>
-        Object.assign({}, col, {
-          calcWidth: null,
-          resizeWidth: null,
-          minWidth: resolveMinWidth(col),
-          listeners: new Map(),
-          isHidden: isColumnHidden(settingFields, col, checked),
-          [COLUMN_ATTRIBUTE.COL_UID]: uuidv4(),
-          [COLUMN_ATTRIBUTE.COL_SOURCE_DATA]: col,
-        }),
-      ),
-    );
-  };
-
-  if (typeof props.settings === 'object') {
-    updateColGroups(props.settings as Settings);
-  }
-
-  const { dragOffsetXStyle, dragOffsetX, resetResizeEvents, registerResizeEvent } = useColumnResize(colgroups, true);
-  const { activeColumns } = useActiveColumns(props, targetColumns as Column[]);
-
-  watch(
-    () => [props.settings],
-    () => {
-      if (((props.settings as Settings)?.checked || []).length) {
-        updateColGroups();
-      }
-    },
-  );
-
-  const debounceColUpdate = debounce(() => {
-    updateColGroups();
-    resetResizeEvents();
-    registerResizeEvent();
-  }, 120);
-  watch(
-    () => resolvedColumns,
-    () => {
-      debounceColUpdate();
-    },
-    { immediate: true, deep: true },
-  );
-
-  const defSort = props.columns.reduce((out: any, col, index) => {
-    const columnName = resolvePropVal(col, ['field', 'type'], [col, index]);
-    const sort = resolveSort(col.sort);
-    if (sort) {
-      return Object.assign({}, out || {}, { [columnName]: sort?.value });
-    }
-    return out;
-  }, null);
-
-  const reactiveSchema = reactive({
-    rowActions: new Map(),
-    scrollTranslateY: 0,
-    scrollTranslateX: 0,
-    pos: {
-      bottom: 1,
-    },
-    activeColumns,
-    settings: props.settings,
-    setting: {
-      size: (props.settings as Settings)?.size,
-      height: SETTING_SIZE[(props.settings as Settings)?.size],
-    },
-    defaultSort: defSort || props.defaultSort,
-  });
-
-  const isRowExpand = (rowId: any) => {
-    if (reactiveSchema.rowActions.has(rowId)) {
-      return reactiveSchema.rowActions.get(rowId)?.isExpand;
-    }
-
-    return false;
-  };
-
-  const clearSort = () => {
-    if (Array.isArray(reactiveSchema.defaultSort)) {
-      reactiveSchema.defaultSort.splice(0);
-    }
-
-    reactiveSchema.defaultSort = defSort || props.defaultSort;
-  };
-
-  const setRowExpand = (row: any, expand = undefined) => {
-    const rowId = row[TABLE_ROW_ATTRIBUTE.ROW_UID];
-    const isExpand = typeof expand === 'boolean' ? expand : !isRowExpand(rowId);
-    reactiveSchema.rowActions.set(rowId, Object.assign({}, reactiveSchema.rowActions.get(rowId) ?? {}, { isExpand }));
-    updateIndexData();
-  };
-
-  const setAllRowExpand = (expand = undefined) => {
-    indexData.forEach((item: any) => {
-      const rowId = item[TABLE_ROW_ATTRIBUTE.ROW_UID];
-      const isExpand = typeof expand === 'boolean' ? expand : !isRowExpand(rowId);
-      reactiveSchema.rowActions.set(rowId, Object.assign({}, reactiveSchema.rowActions.get(rowId) ?? {}, { isExpand }));
-    });
-
-    updateIndexData();
-  };
-
-  /**
-   * 判定是否全选
-   * @returns
-   */
-  const isSelectionAll = () => {
-    if (reactiveSchema.rowActions.has(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_ALL)) {
-      return reactiveSchema.rowActions.get(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_ALL);
-    }
-
-    // 如果设置了selectionKey，则根据用户传入数据判定
-    if (!!props.selectionKey) {
-      return indexData.every((row: any) => resolveSelectionRow(row));
-    }
-
-    return false;
-  };
-
-  const validateSelectionFn = (row: any) => {
-    const rowId = row[TABLE_ROW_ATTRIBUTE.ROW_UID];
-    const { isSelected = false } = reactiveSchema.rowActions.get(rowId) || {};
-    return isSelected;
-  };
-
-  /**
-   * 根据每行勾选状态更新全选checkbox勾选状态
-   * 此方法在toggleRowSelection触发，所以必定有一行是被选中或者被取消勾选
-   * 更新全选、半选状态
-   */
-  const updateSelectionAll = (validateFn = validateSelectionFn) => {
-    let hasUnchecked = false;
-    let hasChecked = false;
-
-    indexData.forEach(row => {
-      const isSelected = validateFn(row);
-      // 判定是否有未选中数据
-      if (!hasUnchecked && !isSelected) {
-        hasUnchecked = true;
-      }
-
-      // 判定是否有选定数据
-      if (!hasChecked && isSelected) {
-        hasChecked = true;
-      }
-    });
-
-    reactiveSchema.rowActions.set(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_INDETERMINATE, hasChecked && hasUnchecked);
-    reactiveSchema.rowActions.set(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_ALL, hasChecked && !hasUnchecked);
-  };
-
-  const isSelectionEnable = () => props.columns.some(col => col.type === 'selection');
-
-  /**
-   * 用于初始化时，根据用户传入数据进行初始化操作
-   */
-  const initSelectionAllByData = () => {
-    if (isSelectionEnable()) {
-      updateSelectionAll(row => resolveSelectionRow(row));
-    }
-  };
-
-  /**
-   * 用于多选表格，切换所有行的选中状态
-   * @param checked 是否选中
-   * @param update 是否触发更新表格数据, 如果是初始化时根据用户数据初始化全选状态，此时不需要update，如果是通过页面点击操作全选，则需要update
-   */
-  const toggleAllSelection = (checked = undefined) => {
-    const isChecked = typeof checked === 'boolean' ? checked : !isSelectionAll();
-    reactiveSchema.rowActions.set(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_ALL, isChecked);
-    reactiveSchema.rowActions.set(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_INDETERMINATE, false);
-    indexData.forEach((row: any, index) => {
-      if (isRowSelectEnable(props, { row, index, isCheckAll: false })) {
-        const rowId = row[TABLE_ROW_ATTRIBUTE.ROW_UID];
-        const target = Object.assign({}, reactiveSchema.rowActions.get(rowId) ?? {}, { isSelected: isChecked });
-        reactiveSchema.rowActions.set(rowId, target);
-      }
-    });
-
-    updateSelectionAll();
-    updateIndexData(isChecked);
-    asyncSelection(null, checked, true);
-  };
-
-  const clearSelection = () => {
-    toggleAllSelection(false);
-  };
-
-  /**
-   * 用于多选表格，切换某一行的选中状态，如果使用了第二个参数，则是设置这一行选中与否（selected 为 true 则选中）
-   * @param row
-   * @param selected
-   */
-  const toggleRowSelection = (row: any, selected: boolean) => {
-    const rowId = row[TABLE_ROW_ATTRIBUTE.ROW_UID];
-    if (rowId) {
-      const isSelected = typeof selected === 'boolean' ? selected : !resolveSelection(row, rowId);
-      const target = Object.assign({}, reactiveSchema.rowActions.get(rowId) ?? {}, { isSelected });
-      reactiveSchema.rowActions.set(rowId, target);
-
-      // 如果是取消勾选，则全选状态取消
-      if (!selected) {
-        reactiveSchema.rowActions.set(TABLE_ROW_ATTRIBUTE.ROW_SELECTION_ALL, false);
-      }
-
-      // 根据每行勾选状态更新全选checkbox勾选状态
-      updateSelectionAll();
-      updateIndexData();
-      asyncSelection(row, selected, false);
-    }
-  };
-
-  /**
-   * 通过table data 判定指定row是否选中
-   * @param row 指定row
-   * @param thenFn 如果table data没有满足判定条件，后续判定逻辑函数，返回 boolean
-   * @returns Boolean
-   */
-  const resolveSelectionRow = (row: any, thenFn = row => validateSelectionFn(row)) => {
-    if (typeof props.isSelectedFn === 'function') {
-      return Reflect.apply(props.isSelectedFn, this, [{ row, data: props.data }]);
-    }
-
-    if (typeof props.selectionKey === 'string' && props.selectionKey.length) {
-      return objGet(row, props.selectionKey);
-    }
-
-    return thenFn(row);
-  };
-
-  /**
-   * 判定指定row是否选中
-   * @param row 指定row
-   * @param _rowId 指定row id
-   * @param index
-   * @returns boolean
-   */
-  const resolveSelection = (row: any, _rowId?: string, index?: number) =>
-    resolveSelectionRow(row, () => {
-      const rowId = _rowId === undefined ? row[TABLE_ROW_ATTRIBUTE.ROW_UID] : _rowId;
-      if (isRowSelectEnable(props, { row, index, isCheckAll: false }) && isSelectionAll()) {
-        return true;
-      }
-
-      if (reactiveSchema.rowActions.has(rowId)) {
-        return reactiveSchema.rowActions.get(rowId)?.isSelected;
-      }
-
-      return false;
-    });
-
-  /**
-   * 生成内置index
-   */
-  const indexData = reactive([]);
-
-  const neepColspanOrRowspan = computed(() =>
-    colgroups.some(
-      col =>
-        typeof col.rowspan === 'function' ||
-        /^\d$/.test(`${col.rowspan}`) ||
-        typeof col.colspan === 'function' ||
-        /^\d$/.test(`${col.colspan}`),
-    ),
-  );
-
-  const needSelection = computed(() => colgroups.some(col => col.type === 'selection'));
-
-  const needExpand = computed(() => colgroups.some(col => col.type === 'expand'));
-
-  const needIndexColumn = computed(() => colgroups.some(col => col.type === 'index'));
-
-  const initIndexData = (keepLocalAction = false) => {
-    indexData.length = 0;
-    const resolvedData = props.data.map(d => {
-      const target = Object.assign({}, d, {
-        [TABLE_ROW_ATTRIBUTE.ROW_UID]: uuidv4(),
-        [TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA]: d,
-      });
-      indexData.push(target);
-      return target;
-    });
-
-    if (neepColspanOrRowspan.value || needSelection.value || needExpand.value || needIndexColumn.value) {
-      let preRowId = null;
-      const skipConfig = {};
-      indexData.length = 0;
-      resolvedData.forEach((item: any, index: number) => {
-        const rowId = getRowKey(item, props, index);
-        preRowId = rowId;
-
-        if (neepColspanOrRowspan.value) {
-          const cfg = getSkipConfig(item, rowId, index, skipConfig, preRowId);
-          Object.assign(item, { [TABLE_ROW_ATTRIBUTE.ROW_SKIP_CFG]: cfg });
-        }
-
-        if (needSelection.value) {
-          Object.assign(item, { [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: resolveSelection(item, rowId, index) });
-        }
-
-        if (needIndexColumn.value) {
-          Object.assign(item, { [TABLE_ROW_ATTRIBUTE.ROW_INDEX]: index });
-        }
-
-        if (needExpand.value) {
-          Object.assign(item, { [TABLE_ROW_ATTRIBUTE.ROW_EXPAND]: keepLocalAction ? isRowExpand(rowId) : false });
-        }
-        indexData.push(item);
-      });
-
-      if (needSelection.value) {
-        initSelectionAllByData();
-      }
-      return;
-    }
-  };
-
-  /**
-   * 判定当前行是否选中
-   * @param isRowCheckEnable
-   * @param selectedAll
-   * @param item
-   * @param index
-   * @returns
-   */
-  const isRowChecked = (isRowCheckEnable, selectedAll, item, index) => {
-    const isChecked = resolveSelection(item, item[TABLE_ROW_ATTRIBUTE.ROW_UID], index);
-    if (isRowCheckEnable) {
-      return typeof selectedAll === 'boolean' ? selectedAll : isChecked;
-    }
-
-    return isChecked;
-  };
-
-  const updateIndexData = (selectedAll?: boolean) => {
-    if (neepColspanOrRowspan.value || needSelection.value || needExpand.value || needIndexColumn.value) {
-      let preRowId = null;
-      const skipConfig = {};
-      indexData.forEach((item: any, index: number) => {
-        const rowId = item[TABLE_ROW_ATTRIBUTE.ROW_UID];
-
-        if (needExpand.value) {
-          Object.assign(item, {
-            [TABLE_ROW_ATTRIBUTE.ROW_EXPAND]: isRowExpand(item[TABLE_ROW_ATTRIBUTE.ROW_UID]),
-          });
-        }
-
-        if (neepColspanOrRowspan.value) {
-          const cfg = getSkipConfig(item, rowId, index, skipConfig, preRowId);
-          preRowId = item[TABLE_ROW_ATTRIBUTE.ROW_UID];
-
-          Object.assign(item, {
-            [TABLE_ROW_ATTRIBUTE.ROW_SKIP_CFG]: cfg,
-          });
-        }
-
-        if (needIndexColumn.value) {
-          Object.assign(item, { [TABLE_ROW_ATTRIBUTE.ROW_INDEX]: index });
-        }
-
-        if (needSelection.value) {
-          const isRowCheckEnable = isRowSelectEnable(props, { row: item, index, isCheckAll: false });
-          Object.assign(item, {
-            [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: isRowChecked(isRowCheckEnable, selectedAll, item, index),
-          });
-        }
-      });
-
-      if (needSelection.value && typeof selectedAll !== 'boolean') {
-        initSelectionAllByData();
-      }
-
-      return;
-    }
-  };
-
-  const getSkipConfig = (row: any, rowId: string, rowIndex: number, skipCfg: any, preRowId: string) => {
-    let skipColumnNum = 0;
-    const preRowConfig = skipCfg[preRowId] ?? {};
-
-    if (!skipCfg[rowId]) {
-      skipCfg[rowId] = {};
-    }
-
-    colgroups.forEach((column, index) => {
-      const { colspan, rowspan } = resolveCellSpan(column, index, row, rowIndex);
-      const colId = column[COLUMN_ATTRIBUTE.COL_UID];
-      const preRowColSkipLen = preRowConfig[colId]?.skipRowLen ?? 0;
-      const target = {
-        [colId]: {
-          skipRowLen: 0,
-          skipRow: false,
-          skipCol: false,
-          skipColLen: 0,
-        },
-      };
-
-      if (skipColumnNum > 0) {
-        target[colId].skipColLen = skipColumnNum;
-        target[colId].skipCol = true;
-        skipColumnNum = skipColumnNum - 1;
-      }
-
-      if (preRowColSkipLen > 1) {
-        target[colId].skipRowLen = preRowColSkipLen - 1;
-        target[colId].skipRow = true;
-      } else {
-        if (rowspan > 1) {
-          target[colId].skipRowLen = rowspan;
-          target[colId].skipRow = false;
-        }
-      }
-
-      if (colspan > 1) {
-        target[colId].skipColLen = colspan;
-        skipColumnNum = colspan - 1;
-      }
-
-      Object.assign(skipCfg[rowId], target);
-    });
-
-    return skipCfg[rowId];
-  };
-
-  const debounceUpdate = debounce(updateIndexData, 120);
-  watch([neepColspanOrRowspan, needSelection, needExpand, needIndexColumn], () => {
-    debounceUpdate();
-  });
-
-  /**
-   * 如果设置了数据同步，点击操作更新选中状态到用户数据
-   * @param row 当前操作行
-   * @param value 选中状态
-   * @param all 是否全选
-   */
-  const asyncSelection = (row: any, value: boolean, all = false) => {
-    if (props.asyncData && props.rowKey) {
-      if (all) {
-        props.data.forEach((item: any) => {
-          if (objHas(item, props.selectionKey)) {
-            objSet(item, props.selectionKey, !!value);
-          }
-        });
-      } else {
-        if (objHas(row, props.selectionKey)) {
-          const target = props.data.find((item: any) => objGet(item, props.rowKey) === objGet(row, props.rowKey));
-          objSet(target, props.selectionKey, !!value);
-        }
-      }
-    }
-  };
-
-  const { fixedColumns, resolveColumnStyle, resolveColumnClass, fixedWrapperClass } = useFixedColumn(
-    props,
-    colgroups,
-    false,
-  );
-
-  /**
-   * 获取已经勾选的数据
-   * @returns
-   */
-  const getSelection = () => indexData.filter(row => resolveSelection(row));
-
-  return {
-    colgroups,
-    dragOffsetXStyle,
-    dragOffsetX,
-    reactiveSchema,
-    indexData,
-    fixedWrapperClass,
-    fixedColumns,
-    resolveColumnStyle,
-    resolveColumnClass,
-    initIndexData,
-    updateIndexData,
-    setRowExpand,
-    setAllRowExpand,
-    updateColGroups,
-    clearSelection,
-    toggleAllSelection,
-    toggleRowSelection,
-    getSelection,
-    clearSort,
+    tableBodyClass,
+    tableBodyContentClass,
+    resizeColumnClass,
+    loadingRowClass,
+    fixedBottomBorder,
+    columnGhostStyle,
+    fixedContainerStyle,
+    scrollClass,
+    prependStyle,
+    footerStyle,
   };
 };

@@ -30,7 +30,7 @@ import { NODE_ATTRIBUTES } from './constant';
 import { TreePropTypes } from './props';
 
 const DEFAULT_LEVLE_LINE = '1px dashed #c3cdd7';
-export type IFlatData = { data: any[], schema: WeakMap<Object, any> };
+export type IFlatData = { data: any[]; schema: WeakMap<Object, any> };
 
 /**
  * 获取配置项可为Bool|String|Function类型，如果为Bool则配置默认值
@@ -122,19 +122,23 @@ export const getTreeStyle = (item: any, props: TreePropTypes) => {
  * @param props
  * @returns
  */
-export const getNodeItemStyle: any = (item: any, props: TreePropTypes, flatData: IFlatData) => {
+export const getNodeItemStyle: any = (item: any, props: TreePropTypes, flatData: IFlatData, showTree = true) => {
   const { schema } = flatData;
   const depth = schema.get(item)?.[NODE_ATTRIBUTES.DEPTH];
-  return {
-    '--depth': depth,
-    ...(typeof props.levelLine === 'function'
-      ? {
-        '--level-line': getPropsOneOfBoolValueWithDefault(props, 'levelLine', item, DEFAULT_LEVLE_LINE, null, [
-          'node',
-        ]),
-      }
-      : {}),
-  };
+  if (showTree) {
+    return {
+      '--depth': depth,
+      ...(typeof props.levelLine === 'function'
+        ? {
+            '--level-line': getPropsOneOfBoolValueWithDefault(props, 'levelLine', item, DEFAULT_LEVLE_LINE, null, [
+              'node',
+            ]),
+          }
+        : {}),
+    };
+  }
+
+  return {};
 };
 
 /**
@@ -142,7 +146,7 @@ export const getNodeItemStyle: any = (item: any, props: TreePropTypes, flatData:
  * @param item
  * @returns
  */
-export const getNodeItemClass = (item: any, schema: WeakMap<Object, any>, props: TreePropTypes) => {
+export const getNodeItemClass = (item: any, schema: WeakMap<Object, any>, props: TreePropTypes, showTree = true) => {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   const { __is_root, __is_open } = schema.get(item) || {};
   return {
@@ -150,7 +154,7 @@ export const getNodeItemClass = (item: any, schema: WeakMap<Object, any>, props:
     'bk-tree-node': true,
     'is-open': __is_open,
     'is-virtual-render': props.virtualRender,
-    'level-line': props.levelLine,
+    'level-line': props.levelLine && showTree,
   };
 };
 

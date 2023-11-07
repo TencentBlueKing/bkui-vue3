@@ -112,7 +112,7 @@ export default defineComponent({
 
     const disabledHMS = computed<IDisabledHMS>(() => {
       const disabledTypes = ['disabledHours', 'disabledMinutes', 'disabledSeconds'];
-      if (props.disabledDate === (() => false || !props.value[0])) {
+      if (props.disabledDate === (() => !props.value[0])) {
         const disabled = disabledTypes.reduce((obj, type) => {
           obj[type] = this[type];
           return obj;

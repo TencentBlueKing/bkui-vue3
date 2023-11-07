@@ -88,6 +88,7 @@
   .@{bk-prefix}-table-head,
   .@{bk-prefix}-table-body {
     background: @table-bg-color;
+    transform: translateZ(0);
 
     &::-webkit-scrollbar {
       width: 5px;
@@ -121,6 +122,7 @@
       border-collapse: collapse;
       table-layout: fixed;
       align-self: flex-start;
+      transform: translateZ(0);
 
       th,
       td {
@@ -304,6 +306,7 @@
   .@{bk-prefix}-table-head {
     position: relative;
     transform: translateX(var(--scroll-head-left));
+    z-index: 2;
 
     .col-resize-drag {
       position: absolute;
@@ -432,6 +435,7 @@
 
     .column_fixed {
       position: absolute;
+      z-index: 2;
 
       &.column_fixed_left {
         top: 0;
@@ -445,7 +449,6 @@
       &.column_fixed_right {
         top: 0;
         right: 0;
-        z-index: 1;
 
         &.shadow {
           box-shadow: 0 0 10px rgb(0 0 0 / 12%);
