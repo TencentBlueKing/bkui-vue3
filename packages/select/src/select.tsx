@@ -26,7 +26,8 @@
  * IN THE SOFTWARE.
  */
 
-import { isEqual, merge } from 'lodash';
+import isEqual from 'lodash/isEqual';
+import merge from 'lodash/merge';
 import { PopoverPropTypes } from 'popover/src/props';
 import { computed, defineComponent, onMounted, PropType, provide, reactive, ref, toRefs, watch } from 'vue';
 
@@ -888,9 +889,7 @@ export default defineComponent({
                           id={item[this.idKey]}
                           name={item[this.displayKey]}
                           v-slots={
-                            typeof optionRender === 'function' 
-                              ? { default: () => optionRender({ item }) }
-                              : null
+                            typeof optionRender === 'function' ? { default: () => optionRender({ item }) } : null
                           }
                         />
                       ));
@@ -903,9 +902,7 @@ export default defineComponent({
                     id={item[this.idKey]}
                     name={item[this.displayKey]}
                     v-slots={
-                      this.$slots?.optionRender 
-                      ? { default: () => this.$slots?.optionRender?.({ item }) } 
-                      : null
+                      this.$slots?.optionRender ? { default: () => this.$slots?.optionRender?.({ item }) } : null
                     }
                   />
                 ))

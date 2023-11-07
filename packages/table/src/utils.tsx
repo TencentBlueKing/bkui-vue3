@@ -24,7 +24,9 @@
  * IN THE SOFTWARE.
  */
 
-import { debounce, get as objGet, throttle } from 'lodash';
+import debounce from 'lodash/debounce';
+import objGet from 'lodash/get';
+import throttle from 'lodash/throttle';
 import ResizeObserver from 'resize-observer-polyfill';
 import { v4 as uuidv4 } from 'uuid';
 import { unref } from 'vue';

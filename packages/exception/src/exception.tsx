@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 
-import { isFunction } from 'lodash';
+import isFunction from 'lodash/isFunction';
 import { defineComponent } from 'vue';
 import { toType } from 'vue-types';
 

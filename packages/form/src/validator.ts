@@ -24,8 +24,8 @@
  * IN THE SOFTWARE.
  */
 
-import { isDate, isEmpty } from 'lodash';
-
+import isDate from 'lodash/isDate';
+import isEmpty from 'lodash/isEmpty';
 export default {
   required: (value: any): boolean => {
     if (typeof value === 'number' || typeof value === 'boolean' || isDate(value)) {

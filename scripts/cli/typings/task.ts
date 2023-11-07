@@ -54,3 +54,7 @@ export interface ITaskItem {
   url: string;
   newPath: string;
 }
+
+export interface IReleaseTaskOption {
+  tag: string;
+}

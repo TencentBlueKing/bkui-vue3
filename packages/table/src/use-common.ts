@@ -23,7 +23,10 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { debounce, get as objGet, has as objHas, set as objSet } from 'lodash';
+import debounce from 'lodash/debounce';
+import objGet from 'lodash/get';
+import objHas from 'lodash/has';
+import objSet from 'lodash/set';
 import { v4 as uuidv4 } from 'uuid';
 import { computed, onMounted, reactive, ref, watch } from 'vue';
 
@@ -171,10 +174,10 @@ export const useClass = (
 
   /** 表格外层容器样式 */
   const contentStyle: {
-    display: string | boolean,
-    minHeight: string | number,
-    height: string | number,
-    maxHeight: string | number,
+    display: string | boolean;
+    minHeight: string | number;
+    height: string | number;
+    maxHeight: string | number;
   } = reactive({
     display: '',
     minHeight: '',
@@ -337,15 +340,17 @@ export const useInit = (props: TablePropTypes, targetColumns: ITableColumn[]) =>
     const settingFields = settings?.fields || (props.settings as Settings)?.fields || [];
     colgroups.length = 0;
     colgroups.push(
-      ...resolvedColumns.value.map(col => Object.assign({}, col, {
-        calcWidth: null,
-        resizeWidth: null,
-        minWidth: resolveMinWidth(col),
-        listeners: new Map(),
-        isHidden: isColumnHidden(settingFields, col, checked),
-        [COLUMN_ATTRIBUTE.COL_UID]: uuidv4(),
-        [COLUMN_ATTRIBUTE.COL_SOURCE_DATA]: col,
-      })),
+      ...resolvedColumns.value.map(col =>
+        Object.assign({}, col, {
+          calcWidth: null,
+          resizeWidth: null,
+          minWidth: resolveMinWidth(col),
+          listeners: new Map(),
+          isHidden: isColumnHidden(settingFields, col, checked),
+          [COLUMN_ATTRIBUTE.COL_UID]: uuidv4(),
+          [COLUMN_ATTRIBUTE.COL_SOURCE_DATA]: col,
+        }),
+      ),
     );
   };
 
@@ -382,7 +387,7 @@ export const useInit = (props: TablePropTypes, targetColumns: ITableColumn[]) =>
     const columnName = resolvePropVal(col, ['field', 'type'], [col, index]);
     const sort = resolveSort(col.sort);
     if (sort) {
-      return Object.assign({}, (out || {}), { [columnName]: sort?.value });
+      return Object.assign({}, out || {}, { [columnName]: sort?.value });
     }
     return out;
   }, null);
@@ -609,10 +614,10 @@ export const useInit = (props: TablePropTypes, targetColumns: ITableColumn[]) =>
   const initIndexData = (keepLocalAction = false) => {
     indexData.length = 0;
     const resolvedData = props.data.map(d => {
-      const target = Object.assign({}, d, ({
+      const target = Object.assign({}, d, {
         [TABLE_ROW_ATTRIBUTE.ROW_UID]: uuidv4(),
-        [TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA]: d
-      }));
+        [TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA]: d,
+      });
       indexData.push(target);
       return target;
     });
@@ -643,7 +648,6 @@ export const useInit = (props: TablePropTypes, targetColumns: ITableColumn[]) =>
         }
         indexData.push(item);
       });
-
 
       if (needSelection.value) {
         initSelectionAllByData();

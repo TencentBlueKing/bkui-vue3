@@ -132,23 +132,13 @@ export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILi
     },
     externalsType: 'module',
     externals: [
-      {
-        vue: 'vue',
-        '@popperjs/core': '@popperjs/core',
-        'date-fns': 'date-fns',
-        'js-calendar': 'js-calendar',
-        lodash: 'lodash',
-        // vue: 'vue',
-        'highlight.js': 'highlight.js',
-        'vue-types': 'vue-types',
-      },
-      // '@popperjs/core',
-      // 'date-fns',
-      // 'js-calendar',
-      // 'lodash',
-      // // 'vue',
-      // 'highlight.js',
-      // 'vue-types',
+      '@popperjs/core',
+      'date-fns',
+      'js-calendar',
+      /^lodash\/.*/,
+      'vue',
+      'highlight.js',
+      'vue-types',
       ({ request, context }, cb) => {
         const prefix = '@bkui-vue/';
         // if (request?.includes('@babel/')) {
@@ -176,9 +166,6 @@ export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILi
         : undefined,
       new webpack.ProgressPlugin(),
     ].filter(Boolean) as any,
-    // experiments: {
-    //   outputModule: true,
-    // },
   });
   return new Promise<void>((resolve, reject) => {
     compiler.run((err: Error | null | undefined, stats: Stats | undefined) => {
