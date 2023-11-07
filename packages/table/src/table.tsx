@@ -84,6 +84,7 @@ export default defineComponent({
       fixedContainerStyle,
       scrollClass,
       prependStyle,
+      resetTableHeight,
     } = useClass(props, columns as ITableColumn[], root, tableSchema, tableSchema.pageData);
     const { renderScrollLoading } = useScrollLoading(props, ctx);
 
@@ -131,6 +132,13 @@ export default defineComponent({
         });
       },
       { immediate: true, deep: true },
+    );
+
+    watch(
+      () => [props.height, props.maxHeight, props.minHeight],
+      () => {
+        resetTableHeight(root.value);
+      },
     );
 
     const handleScrollChanged = (args: any[]) => {

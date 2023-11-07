@@ -45,7 +45,7 @@ export default async function () {
   fs.writeFileSync(packagePath, `${JSON.stringify(packageData, null, 2)}\n`);
   try {
     childProcess.execSync(
-      `cd ${BKUI_DIR} && npm publish --access=public --unsafe-perm --registry https://registry.npmjs.org --tag table-refactor`,
+      `cd ${BKUI_DIR} && npm publish --access=public --unsafe-perm --registry https://registry.npmjs.org`,
       {
         stdio: [0, 1, 2],
       },
