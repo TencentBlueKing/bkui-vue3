@@ -10,13 +10,8 @@
         :data="tableData"
         @row-expand="handleRowExpand"
       >
-        <template #expandRow="row">
-          <div style="height: 80px">
-            <div>ip: {{ row.ip }}</div>
-            <div>source: {{ row.source }}</div>
-            <div>status: {{ row.status }}</div>
-            <div>create_time: {{ row.create_time }}</div>
-          </div>
+        <template #expandContent="row">
+          <span>Content</span>
         </template>
       </bk-table>
     </div>
