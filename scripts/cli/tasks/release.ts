@@ -23,12 +23,12 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { Task, TaskRunner } from '../typings/task';
+import { IReleaseTaskOption, Task, TaskRunner } from '../typings/task';
 import release from '../utils/release';
 
-const compileTaskRunner: TaskRunner<undefined> = async () => {
+const compileTaskRunner: TaskRunner<IReleaseTaskOption> = async (options?: IReleaseTaskOption) => {
   process.env.NODE_ENV = 'production';
-  await release();
+  await release(options);
 };
 
-export default new Task('prepare release', compileTaskRunner);
+export default new Task<IReleaseTaskOption>('prepare release', compileTaskRunner);

@@ -30,7 +30,7 @@
  * Copyright © 2012-2019 Tencent BlueKing. All Rights Reserved. 蓝鲸智云 版权所有
  */
 
-import { throttle } from 'lodash';
+import throttle from 'lodash/throttle';
 
 function getMatchedIndex(
   maxCount: number,

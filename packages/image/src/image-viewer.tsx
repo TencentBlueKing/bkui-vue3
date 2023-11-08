@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { throttle } from 'lodash';
+import throttle from 'lodash/throttle';
 import { computed, CSSProperties, defineComponent, effectScope, ref, shallowRef, Teleport, Transition } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';

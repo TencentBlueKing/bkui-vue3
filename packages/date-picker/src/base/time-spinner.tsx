@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 
-import { debounce } from 'lodash';
+import debounce from 'lodash/debounce';
 import type { ExtractPropTypes, PropType } from 'vue';
 import { computed, defineComponent, nextTick, onMounted, reactive, ref, toRefs, watch } from 'vue';
 

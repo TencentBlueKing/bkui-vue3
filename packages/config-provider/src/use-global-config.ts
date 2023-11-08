@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 
-import { merge } from 'lodash';
+import merge from 'lodash/merge';
 import { computed, ComputedRef, inject, provide, reactive, watch } from 'vue';
 
 import { ConfigProviderProps } from './config-provider';
