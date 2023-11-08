@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 
-import _ from 'lodash';
+import isFunction from 'lodash/isFunction';
 import { defineComponent } from 'vue';
 import { toType } from 'vue-types';
 
@@ -76,7 +76,7 @@ export default defineComponent({
     const { resolveClassName } = usePrefix();
 
     const renderImg = () => {
-      if (_.isFunction(slots.type)) {
+      if (isFunction(slots.type)) {
         return <div class={`${resolveClassName('exception-img')}`}>{slots.type()}</div>;
       }
       const imgSrc = images[props.type] ? images[props.type] : empty;
@@ -92,7 +92,7 @@ export default defineComponent({
     };
 
     const renderTitle = () => {
-      if (_.isFunction(slots.title)) {
+      if (isFunction(slots.title)) {
         return <div class={`${resolveClassName('exception-title')}`}>{slots.title()}</div>;
       }
       if (props.title) {
@@ -102,7 +102,7 @@ export default defineComponent({
     };
 
     const renderDescription = () => {
-      if (_.isFunction(slots.description)) {
+      if (isFunction(slots.description)) {
         return <div class={`${resolveClassName('exception-description')}`}>{slots.description()}</div>;
       }
       if (props.description) {
@@ -112,7 +112,7 @@ export default defineComponent({
     };
 
     const renderFooter = () => {
-      if (_.isFunction(slots.default)) {
+      if (isFunction(slots.default)) {
         return <div class={`${resolveClassName('exception-footer')}`}>{slots.default()}</div>;
       }
       return null;

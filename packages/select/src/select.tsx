@@ -26,7 +26,8 @@
  * IN THE SOFTWARE.
  */
 
-import { isEqual, merge } from 'lodash';
+import isEqual from 'lodash/isEqual';
+import merge from 'lodash/merge';
 import { PopoverPropTypes } from 'popover/src/props';
 import { computed, defineComponent, onMounted, PropType, provide, reactive, ref, toRefs, watch } from 'vue';
 

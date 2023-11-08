@@ -1,7 +1,6 @@
 {
   "name": "bkui-vue",
-  "private": true,
-  "version": "0.0.2-beta.79",
+  "version": "0.0.2-beta.81",
   "workspaces": {
     "packages": [
       "packages/!(**.bak)*",
@@ -12,8 +11,17 @@
     "lib",
     "dist"
   ],
+  "packageManager": "yarn@1.22.10",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/",
+    "unsafe-perm": true
+  },
   "scripts": {
-    "preinstall": "npx only-allow yarn -y",
+    "prepublishOnly": "npm run build",
     "prepare": "husky install",
     "dev": "vite serve site --force",
     "build": "run-s build:dist build:lib",
@@ -21,7 +29,7 @@
     "build:dist": "rimraf dist && lerna run --stream --scope cli dist",
     "build:lib": "rimraf lib && lerna run --stream --scope cli lib",
     "help:release": "lerna run --stream --scope cli release",
-    "release": "run-s build help:release",
+    "release": "yarn build && yarn help:release",
     "analyze:lib": "rimraf lib && lerna run --stream --scope cli lib -- -a",
     "generate:icon": "lerna run --scope @bkui-vue/icon build",
     "changelog": "conventional-changelog -c .changelog.config.js -p angular -i CHANGELOG.md -s -l",
@@ -103,6 +111,7 @@
     "ts-jest": "~29.1.1",
     "ts-node": "~10.9.1",
     "typescript": "~4.9.5",
+    "uuid": "~9.0.1",
     "vite": "~4.4.7",
     "vite-plugin-vue-markdown": "~0.23.7",
     "vue": "~3.3.4",
