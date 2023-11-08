@@ -57,8 +57,7 @@ export default defineComponent({
 
     const bkTableCache = new BkTableCache();
     const targetColumns = reactive([]);
-    const { initColumns, getColumns } = useColumn(props, targetColumns);
-    const columns = getColumns();
+    const { initColumns, columns } = useColumn(props, targetColumns);
     const tableSchema: ITableResponse = useData(props);
 
     const { resizeColumnStyle, resizeHeadColStyle, registerResizeEvent } = useColumnResize(tableSchema, false, head);

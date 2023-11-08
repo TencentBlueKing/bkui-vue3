@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { reactive } from 'vue';
+import { reactive, watch } from 'vue';
 
 import { ITableColumn } from './components/table-column';
 import { SORT_OPTION } from './const';
@@ -85,6 +85,14 @@ export default (props: TablePropTypes, targetColumns: ITableColumn[]) => {
     resolvedColumns.push(...(resolveColumns as Column[]));
   };
 
+  watch(
+    () => [props.columns],
+    () => {
+      resolvedColumns.length = 0;
+      resolvedColumns.push(...props.columns);
+    },
+  );
+
   const getColumns = () => {
     return resolvedColumns;
   };
@@ -102,5 +110,6 @@ export default (props: TablePropTypes, targetColumns: ITableColumn[]) => {
     initColumns,
     getColumns,
     getActiveColumn,
+    columns: resolvedColumns,
   };
 };
