@@ -1,6 +1,7 @@
 <template>
   <bk-time-picker
     v-model="dateValue"
+    format="HH:mm"
     clearable
   />
 </template>
