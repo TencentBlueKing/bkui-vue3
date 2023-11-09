@@ -123,7 +123,10 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
     }
 
     if (prefixFnVal === 'default' || (typeof props.prefixIcon === 'boolean' && props.prefixIcon)) {
-      if (hasChildNode(item) || item.async || !props.autoCheckChildren) {
+      const autoCheckChild =
+        typeof props.autoCheckChildren === 'function' ? props.autoCheckChildren(item) : props.autoCheckChildren;
+
+      if (hasChildNode(item) || item.async || !autoCheckChild) {
         return isItemOpen(item) ? (
           <DownShape class={resolveClassName('node-prefix')} />
         ) : (

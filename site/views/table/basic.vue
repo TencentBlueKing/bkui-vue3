@@ -1,6 +1,7 @@
 <template>
   <div class="row">
     <bk-table
+
       :columns="columns"
       :data="tableData"
       :settings="settings"
@@ -31,6 +32,7 @@
         maxHeight: 200,
         isLoading: false,
         tableData: DATA_TABLE,
+
         columns,
         overflowTooltip: {
           popoverOption: {
