@@ -416,13 +416,21 @@ export default (props: TablePropTypes): ITableResponse => {
   const formatDataSchema = (data: any[]) => {
     formatData.data.length = 0;
     formatData.data.push(...data);
+    let hasSelectedRow = false;
+    let hasUnSelectedRow = false;
     (data || []).forEach((row, index) => {
       let rowId = getRowId(row, uuidv4(), props);
+      const isSelected = isRowSelected(row);
+      if (isSelected) {
+        hasSelectedRow = true;
+      } else {
+        hasUnSelectedRow = true;
+      }
 
       if (!formatData.dataSchema.has(row)) {
         formatData.dataSchema.set(row, {
           [TABLE_ROW_ATTRIBUTE.ROW_EXPAND]: false,
-          [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: isRowSelected(row),
+          [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: isSelected,
           [TABLE_ROW_ATTRIBUTE.ROW_UID]: rowId,
           [TABLE_ROW_ATTRIBUTE.ROW_INDEX]: index + 1,
           [TABLE_ROW_ATTRIBUTE.ROW_SELECTION_INDETERMINATE]: false,
@@ -437,8 +445,8 @@ export default (props: TablePropTypes): ITableResponse => {
     });
 
     formatData.dataSchema.set(CHECK_ALL_OBJ, {
-      [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: false,
-      [TABLE_ROW_ATTRIBUTE.ROW_SELECTION_INDETERMINATE]: false,
+      [TABLE_ROW_ATTRIBUTE.ROW_SELECTION]: hasSelectedRow,
+      [TABLE_ROW_ATTRIBUTE.ROW_SELECTION_INDETERMINATE]: hasSelectedRow && hasUnSelectedRow,
     });
 
     formatData.dataSchema.set(NEED_COL_ROW_SPAN, {
