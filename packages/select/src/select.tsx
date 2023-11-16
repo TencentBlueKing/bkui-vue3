@@ -100,8 +100,7 @@ export default defineComponent({
     prefix: PropTypes.string,
     selectedStyle: SelectedType(),
     filterOption: {
-      type: [Boolean, Function],
-      default: true,
+      type: Function,
     }, // 配置当前options的过滤规则
   },
   emits: [
@@ -240,11 +239,12 @@ export default defineComponent({
     const virtualList = computed(() =>
       isRemoteSearch.value
         ? list.value
-        : list.value.filter(
-            item =>
-              filterOptionFunc.value(searchKey.value, item) &&
-              toLowerCase(String(item[displayKey.value]))?.includes(toLowerCase(searchKey.value)),
-          ),
+        : list.value.filter(item => {
+            if (hasFilterOptionFunc.value) {
+              return !!filterOption.value(searchKey.value, item);
+            }
+            return toLowerCase(String(item[displayKey.value]))?.includes(toLowerCase(searchKey.value));
+          }),
     );
     // select组件是否禁用
     const isDisabled = computed(() => disabled.value || loading.value);
@@ -276,10 +276,10 @@ export default defineComponent({
     // 是否远程搜索
     const isRemoteSearch = computed(() => filterable.value && typeof remoteMethod.value === 'function');
     // options过滤函数
-    const filterOptionFunc = computed(() => {
-      if (typeof filterOption.value === 'function') return filterOption.value;
+    const hasFilterOptionFunc = computed(() => {
+      if (filterOption.value && typeof filterOption.value === 'function') return true;
 
-      return () => filterOption.value;
+      return false;
     });
     // 是否显示select下拉内容
     const isShowSelectContent = computed(
@@ -386,9 +386,11 @@ export default defineComponent({
         });
       } else {
         options.value.forEach(option => {
-          option.visible =
-            filterOptionFunc.value(value, { ...option.$props, ...option.$attrs }) &&
-            toLowerCase(String(option.optionName))?.includes(toLowerCase(value));
+          if (hasFilterOptionFunc.value) {
+            option.visible = !!filterOption.value(value, { ...option.$props, ...option.$attrs });
+          } else {
+            option.visible = toLowerCase(String(option.optionName))?.includes(toLowerCase(value));
+          }
         });
       }
     };
