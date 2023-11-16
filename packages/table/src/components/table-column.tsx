@@ -87,7 +87,7 @@ export default defineComponent({
   },
   methods: {
     updateColumnDefine(unmounted = false) {
-      if (this.$props.index !== undefined && typeof this.$props.index === 'number') {
+      if (unmounted) {
         this.updateColumnDefineByIndex(unmounted);
         return;
       }
@@ -99,7 +99,9 @@ export default defineComponent({
         // @ts-ignore
         const selfVnode = (this as any)._;
         const colList = selfVnode.parent.vnode.children.default() || [];
+
         const sortColumns = [];
+        let index = 0;
         const reduceColumns = nodes => {
           if (!Array.isArray(nodes)) {
             return;
@@ -116,8 +118,10 @@ export default defineComponent({
               const resolveProp = Object.assign({}, node.props, {
                 field: node.props.prop || node.props.field,
                 render: node.children?.default,
+                index,
               });
               sortColumns.push(unref(resolveProp));
+              index = index + 1;
             }
 
             if (node.children?.length && skipValidateKey0) {
@@ -138,7 +142,7 @@ export default defineComponent({
         field: this.$props.prop || this.$props.field,
         render: this.$slots.default,
       });
-      this.initColumns(unref(resolveProp) as unknown as Column, unmounted);
+      this.initColumns(resolveProp as Column, unmounted);
     },
   },
   render() {

@@ -201,7 +201,7 @@ export const DATA_COLUMNS1 = [...DATA_COLUMNS2];
 export const DATA_EXPAND_COLUMNS = [
   {
     type: 'expand',
-    width: 40,
+    width: 140,
     minWidth: 30,
   },
   ...DATA_COLUMNS,
