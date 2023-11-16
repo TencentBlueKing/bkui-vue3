@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 
-import { merge } from 'lodash';
+import merge from 'lodash/merge';
 import { defineComponent, ref } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';

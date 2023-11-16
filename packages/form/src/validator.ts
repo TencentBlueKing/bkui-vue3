@@ -24,14 +24,14 @@
  * IN THE SOFTWARE.
  */
 
-import _ from 'lodash';
-
+import isDate from 'lodash/isDate';
+import isEmpty from 'lodash/isEmpty';
 export default {
   required: (value: any): boolean => {
-    if (typeof value === 'number' || typeof value === 'boolean' || _.isDate(value)) {
+    if (typeof value === 'number' || typeof value === 'boolean' || isDate(value)) {
       return true;
     }
-    return !_.isEmpty(value);
+    return !isEmpty(value);
   },
   min: (value: number, min: number): boolean => value >= min,
   max: (value: number, max: number): boolean => max >= value,

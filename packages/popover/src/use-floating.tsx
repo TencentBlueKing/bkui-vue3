@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { isElement } from 'lodash';
+import isElement from 'lodash/isElement';
 import { computed, ref, watch } from 'vue';
 
 import { bkZIndexManager } from '@bkui-vue/shared';
