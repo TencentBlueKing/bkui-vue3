@@ -37,7 +37,7 @@
     data() {
       return {
         tableData: DATA_ROWS,
-        checked: [DATA_ROWS[0], DATA_ROWS[1]],
+        checked: DATA_ROWS,
         pagination: { count: DATA_ROWS.length, limit: 10 },
       };
     },

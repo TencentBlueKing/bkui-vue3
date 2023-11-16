@@ -47,42 +47,27 @@ export default (props: TablePropTypes, targetColumns: ITableColumn[]) => {
     }
 
     if (!remove) {
-      let needToSort = false;
       resolveColumns.forEach(col => {
-        if (col.index !== undefined && col.index >= 0) {
-          needToSort = true;
-          const oldIndex = targetColumns.findIndex(tc => tc.label === col.label && tc.field === col.field);
-          if (oldIndex >= 0) {
-            targetColumns.splice(oldIndex, 1);
-          }
-          targetColumns.push(col);
+        const index = targetColumns.findIndex(tc => tc.label === col.label && tc.field === col.field);
+        if (index >= 0) {
+          Object.assign(targetColumns[index], col);
         } else {
-          const index = targetColumns.findIndex(tc => tc.label === col.label && tc.field === col.field);
-          if (index >= 0) {
-            targetColumns.splice(index, 1, col);
-          } else {
-            targetColumns.push(col);
-          }
+          targetColumns.push(col);
         }
       });
 
-      if (needToSort) {
-        targetColumns.sort((col1, col2) => col1.index - col2.index);
-      }
+      targetColumns.sort((col1, col2) => col1.index - col2.index);
     } else {
       resolveColumns.forEach(col => {
         const matchColIndex = targetColumns.findIndex(c => c.label === col.label && c.field === col.field);
-        if (remove) {
-          if (matchColIndex >= 0) {
-            targetColumns.splice(matchColIndex, 1);
-          }
-          return;
+        if (matchColIndex >= 0) {
+          targetColumns.splice(matchColIndex, 1);
         }
       });
     }
 
     resolvedColumns.length = 0;
-    resolvedColumns.push(...(resolveColumns as Column[]));
+    resolvedColumns.push(...(targetColumns as Column[]));
   };
 
   watch(
