@@ -239,8 +239,16 @@ export default defineComponent({
 
     const Button = () => (
       <BkButton disabled={disabled.value}>
-        <Upload class={`${classBlock}__button-icon`} />
-        <span class={`${classBlock}__button-text`}>{t.value.uploadLabel}</span>
+        <>
+          {slots.default ? (
+            slots.default()
+          ) : (
+            <>
+              <Upload class={`${classBlock}__button-icon`} />
+              <span class={`${classBlock}__button-text`}>{t.value.uploadLabel}</span>
+            </>
+          )}
+        </>
       </BkButton>
     );
 
