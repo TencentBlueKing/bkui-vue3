@@ -87,8 +87,8 @@ export default defineComponent({
   },
   methods: {
     updateColumnDefine(unmounted = false) {
-      if (this.$props.index !== undefined && typeof this.$props.index === 'number') {
-        this.updateColumnDefineByIndex(unmounted);
+      if (unmounted) {
+        this.unmountColumn();
         return;
       }
 
@@ -99,7 +99,9 @@ export default defineComponent({
         // @ts-ignore
         const selfVnode = (this as any)._;
         const colList = selfVnode.parent.vnode.children.default() || [];
+
         const sortColumns = [];
+        let index = 0;
         const reduceColumns = nodes => {
           if (!Array.isArray(nodes)) {
             return;
@@ -113,11 +115,12 @@ export default defineComponent({
             let skipValidateKey0 = true;
             if (node.type?.name === 'TableColumn') {
               skipValidateKey0 = Object.hasOwnProperty.call(node.props || {}, 'key');
-              const resolveProp = Object.assign({}, node.props, {
+              const resolveProp = Object.assign({ index }, node.props, {
                 field: node.props.prop || node.props.field,
                 render: node.children?.default,
               });
               sortColumns.push(unref(resolveProp));
+              index = index + 1;
             }
 
             if (node.children?.length && skipValidateKey0) {
@@ -133,12 +136,12 @@ export default defineComponent({
         this.bkTableCache.queueStack(BK_COLUMN_UPDATE_DEFINE, fn);
       }
     },
-    updateColumnDefineByIndex(unmounted = false) {
+    unmountColumn() {
       const resolveProp = Object.assign({}, this.$props, {
         field: this.$props.prop || this.$props.field,
         render: this.$slots.default,
       });
-      this.initColumns(unref(resolveProp) as unknown as Column, unmounted);
+      this.initColumns(resolveProp as Column, true);
     },
   },
   render() {
