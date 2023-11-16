@@ -83,7 +83,7 @@ export interface UploadProgressEvent extends ProgressEvent {
 
 export interface APIResponse {
   code: number;
-  data: unknown;
+  data: any;
   message?: string;
 }
 
