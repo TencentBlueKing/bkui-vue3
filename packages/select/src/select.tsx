@@ -775,13 +775,12 @@ export default defineComponent({
             onRemove={this.handleDeleteTag}
             collapseTags={this.isCollapseTags}
             onEnter={this.handleCreateCustomOption}
-          >
-            {{
+            v-slots={{
               prefix: renderPrefix(),
               default: this.$slots.tag && (() => this.$slots.tag({ selected: this.selected })),
               suffix: () => suffixIcon(),
             }}
-          </SelectTagInput>
+          ></SelectTagInput>
         );
       }
       return (
@@ -800,12 +799,11 @@ export default defineComponent({
           onInput={this.handleInputChange}
           onEnter={this.handleCreateCustomOption}
           {...(this.prefix ? { prefix: this.prefix } : null)}
-        >
-          {{
+          v-slots={{
             ...(typeof this.$slots.prefix === 'function' ? { prefix: () => this.$slots.prefix?.() } : null),
             suffix: () => suffixIcon(),
           }}
-        </Input>
+        ></Input>
       );
     };
     const renderSelectTrigger = () => (
@@ -935,12 +933,11 @@ export default defineComponent({
           onClickoutside={this.handleClickOutside}
           onAfterShow={this.handlePopoverShow}
           ref='popoverRef'
-        >
-          {{
+          v-slots={{
             default: () => renderSelectTrigger(),
             content: () => renderSelectContent(),
           }}
-        </BKPopover>
+        ></BKPopover>
       </div>
     );
   },
