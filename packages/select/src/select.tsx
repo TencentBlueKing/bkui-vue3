@@ -217,6 +217,10 @@ export default defineComponent({
       }, {}),
     );
 
+    watch([optionsMap, list], () => {
+      handleSetSelectedData();
+    });
+
     watch(
       modelValue,
       () => {
