@@ -387,7 +387,7 @@ export default defineComponent({
       } else {
         options.value.forEach(option => {
           option.visible =
-            filterOptionFunc.value(value, { ...option.$props }) &&
+            filterOptionFunc.value(value, { ...option.$props, ...option.$attrs }) &&
             toLowerCase(String(option.optionName))?.includes(toLowerCase(value));
         });
       }
