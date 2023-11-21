@@ -233,13 +233,14 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
     }
 
     return (
-      <BkCheckbox
-        size='small'
-        modelValue={isNodeChecked(item)}
-        indeterminate={isIndeterminate(item)}
-        onClick={handleNodeCheckboxClick}
-        onChange={(val, event) => handleNodeItemCheckboxChange(item, !!val, event)}
-      ></BkCheckbox>
+      <span onClick={handleNodeCheckboxClick}>
+        <BkCheckbox
+          size='small'
+          modelValue={isNodeChecked(item)}
+          indeterminate={isIndeterminate(item)}
+          onChange={(val, event) => handleNodeItemCheckboxChange(item, !!val, event)}
+        ></BkCheckbox>
+      </span>
     );
   };
 
