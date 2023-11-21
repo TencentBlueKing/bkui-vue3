@@ -208,7 +208,11 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
     });
   };
 
-  const handleNodeItemCheckboxChange = (item: any, value: boolean) => {
+  const handleNodeItemCheckboxChange = (item: any, value: boolean, event: Event) => {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    event.stopPropagation();
+
     setNodeAttr(item, NODE_ATTRIBUTES.IS_CHECKED, !!value);
     deepUpdateChildNode(item, [NODE_ATTRIBUTES.IS_CHECKED, NODE_ATTRIBUTES.IS_INDETERMINATE], [!!value, false]);
     updateParentChecked(item, value);
@@ -217,6 +221,8 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
       flatData.data.filter((t: any) => isNodeChecked(t)),
       flatData.data.filter((t: any) => isIndeterminate(t)),
     );
+
+    handleNodeContentClick(item, event as MouseEvent);
   };
 
   const isIndeterminate = (item: any) => isNodeChecked(item) && getNodeAttr(item, NODE_ATTRIBUTES.IS_INDETERMINATE);
@@ -227,12 +233,14 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
     }
 
     return (
-      <BkCheckbox
-        size='small'
-        modelValue={isNodeChecked(item)}
-        indeterminate={isIndeterminate(item)}
-        onChange={(val: unknown) => handleNodeItemCheckboxChange(item, !!val)}
-      ></BkCheckbox>
+      <span onClick={handleNodeCheckboxClick}>
+        <BkCheckbox
+          size='small'
+          modelValue={isNodeChecked(item)}
+          indeterminate={isIndeterminate(item)}
+          onChange={(val, event) => handleNodeItemCheckboxChange(item, !!val, event)}
+        ></BkCheckbox>
+      </span>
     );
   };
 
@@ -332,7 +340,7 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
   const handleTreeNodeClick = (item: any, e: MouseEvent) => {
     const isOpen = isItemOpen(item);
     if (isOpen) {
-      setNodeOpened(item, false, e);
+      setNodeOpened(item, false, e, true);
       return;
     }
 
@@ -341,10 +349,10 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
       if (getNodeAttr(item, NODE_ATTRIBUTES.IS_LOADING)) {
         registerNextLoop('setNodeOpenedAfterLoading', {
           type: 'once',
-          fn: () => setNodeOpened(item, true, e),
+          fn: () => setNodeOpened(item, true, e, true),
         });
       } else {
-        setNodeOpened(item, true, e);
+        setNodeOpened(item, true, e, true);
       }
     });
   };
@@ -541,6 +549,11 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
     }
 
     return extendNodeAttr(item);
+  };
+
+  const handleNodeCheckboxClick = (event: MouseEvent) => {
+    event.stopImmediatePropagation();
+    event.stopPropagation();
   };
 
   /**

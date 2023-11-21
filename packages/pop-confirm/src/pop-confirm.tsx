@@ -100,13 +100,13 @@ export default defineComponent({
                   size='small'
                   theme='primary'
                 >
-                  {t.value.ok}
+                  {props.confirmText || t.value.ok}
                 </BkButton>
                 <BkButton
                   onClick={cancel}
                   size='small'
                 >
-                  {t.value.cancel}
+                  {props.cancelText || t.value.cancel}
                 </BkButton>
               </div>
             </div>
