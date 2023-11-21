@@ -119,6 +119,13 @@ export default defineComponent({
 
     const getData = () => flatData;
 
+    watch(
+      () => [props.checked],
+      () => {
+        setChecked(props.checked, true);
+      },
+    );
+
     ctx.expose({
       handleTreeNodeClick,
       isNodeChecked,
