@@ -5,6 +5,7 @@
       class="bk-select"
       filterable
       auto-focus
+      @select="handleSelect"
     >
       <bk-option
         v-for="(item, index) in datasource"
@@ -19,7 +20,7 @@
       class="bk-select"
       style="margin-left: 10px;"
       filterable
-      auto-focus
+      multiple
       :list="datasourceList"
     />
   </div>
@@ -62,6 +63,10 @@
 
   const listValue = ref(1);
   const datasourceList = ref([]);
+
+  const handleSelect = (v) => {
+    console.log(v);
+  };
 
   onBeforeMount(() => {
     new Array(100).fill(0)

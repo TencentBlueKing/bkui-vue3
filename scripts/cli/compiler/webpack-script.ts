@@ -70,11 +70,17 @@ export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILi
       //   return `${pathData.chunk.runtime}`;
       // },
       library: {
-        type: 'umd',
+        type: 'module',
+      },
+      environment: {
+        module: true,
       },
     },
+    experiments: {
+      outputModule: true,
+    },
     optimization: {
-      minimize: true,
+      minimize: false,
     },
     module: {
       rules: [
@@ -97,7 +103,7 @@ export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILi
               },
             },
           ],
-          exclude: /node_modules/,
+          // exclude: /node_modules/,
         },
         {
           test: /\.(png|jpe?g|gif|svg)$/,
@@ -124,11 +130,12 @@ export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILi
         },
       ],
     },
+    externalsType: 'module',
     externals: [
       '@popperjs/core',
       'date-fns',
       'js-calendar',
-      'lodash',
+      /^lodash\/.*/,
       'vue',
       'highlight.js',
       'vue-types',
@@ -159,14 +166,11 @@ export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILi
         : undefined,
       new webpack.ProgressPlugin(),
     ].filter(Boolean) as any,
-    // experiments: {
-    //   outputModule: true,
-    // },
   });
   return new Promise<void>((resolve, reject) => {
     compiler.run((err: Error | null | undefined, stats: Stats | undefined) => {
       if (err) {
-        console.info(err);
+        console.log(err);
         reject(err.message);
         return;
       }

@@ -48,9 +48,12 @@ export const run = async () => {
     });
   program
     .command('release')
+    .option('-t, --tag <tag>', 'release tag')
     .description('release bkui check')
-    .action(async () => {
-      await excuteTask(releaseTask)();
+    .action(async cmd => {
+      await excuteTask(releaseTask)({
+        tag: cmd.tag,
+      });
     });
   program.on('command:*', () => {
     console.error('Invalid command. Please check bkui-vue package.json', program.args.join(' '));

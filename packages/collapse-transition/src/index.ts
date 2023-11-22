@@ -28,7 +28,6 @@ import { withInstall } from '@bkui-vue/shared';
 
 import CollapseTransition from './collapse-transition';
 
-
-const BKCollapseTransition = withInstall(CollapseTransition);;
+const BKCollapseTransition = withInstall(CollapseTransition);
 
 export default BKCollapseTransition;

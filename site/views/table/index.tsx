@@ -33,6 +33,7 @@ import PropsBox from '../../components/props-box';
 import basic from './basic.vue';
 import basicFilter from './basic-filter.vue';
 import basicSort from './basic-sort.vue';
+import basicSortBehavior from './basic-sort-behavior.vue';
 import BasicSpan from './basic-span.vue';
 import bordered from './bordered.vue';
 import cellRender from './cell-render';
@@ -81,23 +82,24 @@ export default defineComponent({
     TableTplTsx,
     CustomHead,
     flexLayout,
+    basicSortBehavior,
   },
   render() {
     const configs = [
-      {
-        attrs: {
-          title: '基础用法',
-          subtitle: '基础用法，用于表单内容的录入',
-          desc: '通过 stripe 设置是否为斑马纹',
-          componentName: 'table',
-          demoName: 'basic',
-        },
-        /**
-         * Table
-         * @returns
-         */
-        component: () => <basic></basic>,
-      },
+      // {
+      //   attrs: {
+      //     title: '基础用法',
+      //     subtitle: '基础用法，用于表单内容的录入',
+      //     desc: '通过 stripe 设置是否为斑马纹',
+      //     componentName: 'table',
+      //     demoName: 'basic',
+      //   },
+      //   /**
+      //    * Table
+      //    * @returns
+      //    */
+      //   component: () => <basic></basic>,
+      // },
       {
         attrs: {
           title: '基础用法-模板方式调用 bk-column',
@@ -381,6 +383,20 @@ export default defineComponent({
          * @returns
          */
         component: () => <basicSort></basicSort>,
+      },
+      {
+        attrs: {
+          title: '列排序行为',
+          subtitle: '* independent：列与列之间的排序是独立的，互斥的 * interdependent：列排序是相互影响、依赖的',
+          desc: '',
+          componentName: 'table',
+          demoName: 'basic-sort-behavior',
+        },
+        /**
+         * basicSort
+         * @returns
+         */
+        component: () => <basicSortBehavior></basicSortBehavior>,
       },
       {
         attrs: {

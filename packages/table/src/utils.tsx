@@ -24,20 +24,14 @@
  * IN THE SOFTWARE.
  */
 
-import { debounce, get as objGet, throttle } from 'lodash';
+import debounce from 'lodash/debounce';
+import objGet from 'lodash/get';
+import throttle from 'lodash/throttle';
 import ResizeObserver from 'resize-observer-polyfill';
 import { v4 as uuidv4 } from 'uuid';
-import { unref } from 'vue';
 
-import {
-  BORDER_OPTION,
-  BORDER_OPTIONS,
-  COL_MIN_WIDTH,
-  COLUMN_ATTRIBUTE,
-  SORT_OPTION,
-  TABLE_ROW_ATTRIBUTE,
-} from './const';
-import { Column, GroupColumn, TablePropTypes } from './props';
+import { BORDER_OPTION, BORDER_OPTIONS, SORT_OPTION, TABLE_ROW_ATTRIBUTE } from './const';
+import { Column, GroupColumn, ISortPropShape, TablePropTypes } from './props';
 
 /**
  * 解析Prop值 | 可能为多种类型 & 函数返回的场景
@@ -166,118 +160,6 @@ export const getColumnReactWidth = (colmun: GroupColumn, orders = ['resizeWidth'
   colmun[orders[0]] ?? colmun[orders[1]] ?? colmun[orders[2]];
 
 /**
- * 根据Props Column配置计算并设置列宽度
- * @param root 当前根元素
- * @param colgroups Columns配置
- * @param autoWidth 自动填充宽度
- * @param offsetWidth 需要减掉的偏移量（滚动条|外层边框）
- */
-export const resolveColumnWidth = (
-  root: HTMLElement,
-  colgroups: GroupColumn[],
-  autoWidth = COL_MIN_WIDTH,
-  offsetWidth = 0,
-) => {
-  const { width } = root.getBoundingClientRect() || {};
-  const availableWidth = width - offsetWidth;
-  // 可用来平均的宽度
-  let avgWidth = availableWidth;
-
-  // 需要平均宽度的列数
-  const avgColIndexList = [];
-
-  const getMinWidth = (col: GroupColumn, computedWidth: number) => {
-    const { minWidth = undefined } = col;
-    if (minWidth === undefined) {
-      if (computedWidth < COL_MIN_WIDTH) {
-        return COL_MIN_WIDTH;
-      }
-
-      return computedWidth;
-    }
-
-    let calcMinWidth = computedWidth;
-    if (/^\d+\.?\d*$/.test(`${minWidth}`)) {
-      calcMinWidth = Number(minWidth);
-    }
-
-    if (/^\d+\.?\d*%$/.test(`${minWidth}`)) {
-      calcMinWidth = (Number(minWidth) * availableWidth) / 100;
-    }
-
-    if (/^\d+\.?\d*px$/i.test(`${minWidth}`)) {
-      calcMinWidth = Number(`${minWidth}`.replace(/px/i, ''));
-    }
-
-    return calcMinWidth;
-  };
-
-  /**
-   * 根据Props Column配置计算并设置列宽度
-   * @param col 当前Column设置
-   * @param numWidth 计算宽度
-   * @param resetAvgWidth 是否重置可用宽度
-   */
-  const resolveColNumberWidth = (col: GroupColumn, numWidth: number, resetAvgWidth = true) => {
-    const minWidth = getMinWidth(col, numWidth);
-    const computedWidth = numWidth < minWidth ? minWidth : numWidth;
-    Object.assign(col, { calcWidth: computedWidth });
-    if (resetAvgWidth) {
-      avgWidth = avgWidth - computedWidth;
-      if (avgWidth < 0) {
-        avgWidth = 0;
-      }
-    }
-  };
-
-  colgroups.forEach((col: GroupColumn, index: number) => {
-    if (!col.isHidden) {
-      const order = ['resizeWidth', 'width'];
-      const colWidth = String(getColumnReactWidth(col, order));
-      let isAutoWidthCol = true;
-      if (/^\d+\.?\d*(px)?$/.test(colWidth)) {
-        const numWidth = Number(colWidth.replace('px', ''));
-        resolveColNumberWidth(col, numWidth);
-        isAutoWidthCol = false;
-      }
-
-      if (/^\d+\.?\d*%$/.test(colWidth)) {
-        let perWidth = autoWidth;
-        if (avgWidth > 0) {
-          const percent = Number(colWidth.replace('%', ''));
-          perWidth = (avgWidth * percent) / 100;
-        }
-
-        resolveColNumberWidth(col, perWidth);
-        isAutoWidthCol = false;
-      }
-
-      if (isAutoWidthCol) {
-        avgColIndexList.push(index);
-      }
-    }
-  });
-
-  // 自适应宽度计算
-  if (avgColIndexList.length > 0) {
-    let autoAvgWidth = autoWidth;
-    if (avgWidth > 0) {
-      avgColIndexList.forEach((idx, index) => {
-        autoAvgWidth = avgWidth / (avgColIndexList.length - index);
-        resolveColNumberWidth(colgroups[idx], autoAvgWidth, false);
-        const { calcWidth } = colgroups[idx];
-        avgWidth = avgWidth - calcWidth;
-      });
-    } else {
-      avgColIndexList.forEach(idx => {
-        const calcWidth = getMinWidth(colgroups[idx], COL_MIN_WIDTH);
-        Object.assign(colgroups[idx], { calcWidth });
-      });
-    }
-  }
-};
-
-/**
  * 监听目标元素的Resize事件
  * @param root 目标元素
  * @param callbackFn 执行函数
@@ -347,11 +229,21 @@ export const resolveHeadConfig = (props: TablePropTypes) => {
  * @param index 当前行Index
  * @returns
  */
-export const getRowText = (row: any, key: string, column: Column) => {
-  if (column.type === 'index') {
-    return row[TABLE_ROW_ATTRIBUTE.ROW_INDEX] + 1;
+export const getRowText = (row: any, key: string) => {
+  if (typeof row === 'string' || typeof row === 'number' || typeof row === 'boolean') {
+    return row;
   }
 
+  return objGet(row, key);
+};
+
+/**
+ * 获取当前行指定列的值
+ * @param row 当前行
+ * @param key 指定列名
+ * @returns
+ */
+export const getRowValue = (row: any, key: string) => {
   return objGet(row, key);
 };
 
@@ -502,7 +394,7 @@ export const skipThisColumn = (columns: Column[], colIndex: number, row: any, ro
 
 export const getSortFn = (column, sortType) => {
   const fieldName = column.field as string;
-  const getVal = (row: any) => getRowText(row, fieldName, column);
+  const getVal = (row: any) => getRowText(row, fieldName);
   const sortFn0 = (a: any, b: any) => {
     const val0 = getVal(a) || '';
     const val1 = getVal(b) || '';
@@ -515,7 +407,7 @@ export const getSortFn = (column, sortType) => {
   const sortFn = typeof (column.sort as any)?.sortFn === 'function' ? (column.sort as any)?.sortFn : sortFn0;
 
   return sortType === SORT_OPTION.NULL
-    ? () => true
+    ? (_a, _b) => true
     : (_a, _b) => sortFn(_a, _b) * (sortType === SORT_OPTION.DESC ? -1 : 1);
 };
 
@@ -533,7 +425,7 @@ export const getNextSortType = (sortType: string) => {
   return Object.keys(steps)[(steps[sortType] + 1) % 3];
 };
 
-export const resolveSort = (sort: string | boolean | any) => {
+export const resolveSort = (sort: ISortPropShape) => {
   if (typeof sort === 'string') {
     return {
       value: sort,
@@ -572,26 +464,21 @@ export const isRowSelectEnable = (props, { row, index, isCheckAll }) => {
   return true;
 };
 
-export const getRowId = (row, index, props) => {
-  if (row[TABLE_ROW_ATTRIBUTE.ROW_UID] !== undefined) {
-    return row[TABLE_ROW_ATTRIBUTE.ROW_UID];
-  }
-
-  const key = getRowKey(row, props, index);
+export const getRowId = (row, defVal, props) => {
+  const key = getRowKey(row, props, defVal);
   if (key !== undefined && row[key] !== undefined) {
     return row[key];
   }
 
-  return index;
+  return defVal;
 };
 
-export const getRowSourceData = row => unref(row[TABLE_ROW_ATTRIBUTE.ROW_SOURCE_DATA] || row);
-export const getColumnSourceData = column => unref(column[COLUMN_ATTRIBUTE.COL_SOURCE_DATA] || column);
-
-export const getRowIndex = (row, index) => {
-  if (Object.prototype.hasOwnProperty.call(row, TABLE_ROW_ATTRIBUTE.ROW_INDEX)) {
-    return row[TABLE_ROW_ATTRIBUTE.ROW_INDEX];
-  }
-
-  return index;
+export const resolveColumnSortProp = (col: Column, props: TablePropTypes) => {
+  const { value, sortFn, sortScope } = resolveSort(col.sort ?? props.defaultSort) ?? {};
+  return {
+    type: value,
+    fn: sortFn,
+    scope: sortScope,
+    active: false,
+  };
 };

@@ -23,9 +23,10 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { computed, defineComponent, ref, watch } from 'vue';
+import { computed, defineComponent, reactive, ref, watch } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
+import { debounce } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
 import { NODE_ATTRIBUTES, TreeEmitEventsType } from './constant';
@@ -45,55 +46,63 @@ export default defineComponent({
   emits: TreeEmitEventsType,
   setup(props, ctx) {
     const { flatData, onSelected, registerNextLoop } = useTreeInit(props);
-    const {
-      setNodeAttr,
-      checkNodeIsOpen,
-      getNodeAttr,
-      getNodePath,
-      isRootNode,
-      isNodeOpened,
-      isNodeChecked,
-      isNodeMatched,
-      hasChildNode,
-    } = useNodeAttribute(flatData, props);
+    const { checkNodeIsOpen, isRootNode, isNodeOpened, isNodeChecked, isNodeMatched, hasChildNode, getNodePath } =
+      useNodeAttribute(flatData, props);
 
-    const { searchFn, isSearchActive, refSearch, openResultNode, isTreeUI, isSearchDisabled } = useSearch(props);
-    if (!isSearchDisabled) {
-      watch([refSearch], () => {
-        flatData.data.forEach((item: any) => {
-          const isMatch = searchFn(getLabel(item, props), item);
-          setNodeAttr(item, NODE_ATTRIBUTES.IS_MATCH, isMatch);
-          if (openResultNode) {
-            setOpen(item, true, true);
-          }
-        });
-      });
-    }
+    const { searchFn, isSearchActive, refSearch, isSearchDisabled, isTreeUI, showChildNodes } = useSearch(props);
+    const matchedNodePath = reactive([]);
 
     const filterFn = (item: any) => {
       if (isSearchActive.value) {
-        const treeUiFilter = () =>
-          isTreeUI
-            ? flatData.data.some(
-              (data: any) =>
-                getNodePath(data)?.startsWith(getNodePath(item)) && getNodeAttr(item, NODE_ATTRIBUTES.IS_MATCH),
-            )
-            : false;
+        if (showChildNodes) {
+          return (
+            checkNodeIsOpen(item) &&
+            (isNodeMatched(item) || matchedNodePath.some(path => (getNodePath(item) ?? '').indexOf(path) === 0))
+          );
+        }
 
-        return getNodeAttr(item, NODE_ATTRIBUTES.IS_MATCH) || treeUiFilter();
+        return checkNodeIsOpen(item) && isNodeMatched(item);
       }
 
-      return true;
+      return checkNodeIsOpen(item);
     };
 
     // 计算当前需要渲染的节点信息
-    const renderData = computed(() => flatData.data.filter(item => checkNodeIsOpen(item) && filterFn(item)));
+    const renderData = computed(() => flatData.data.filter(item => filterFn(item)));
 
-    const { renderTreeNode, handleTreeNodeClick, setNodeOpened, setOpen, setNodeAction, setSelect, asyncNodeClick } =
-      useNodeAction(props, ctx, flatData, renderData, { registerNextLoop });
+    const {
+      renderTreeNode,
+      handleTreeNodeClick,
+      setNodeOpened,
+      setOpen,
+      setNodeAction,
+      setSelect,
+      asyncNodeClick,
+      setNodeAttribute,
+    } = useNodeAction(props, ctx, flatData, renderData, { registerNextLoop });
 
+    const handleSearch = debounce(120, () => {
+      matchedNodePath.length = 0;
+      flatData.data.forEach((item: any) => {
+        const isMatch = searchFn(getLabel(item, props), item);
+        if (isMatch) {
+          matchedNodePath.push(getNodePath(item));
+        }
+
+        setNodeAttribute(item, [NODE_ATTRIBUTES.IS_MATCH], [isMatch], isTreeUI.value && isMatch);
+      });
+    });
+
+    if (!isSearchDisabled) {
+      watch(
+        [refSearch],
+        () => {
+          handleSearch();
+        },
+        { deep: true, immediate: true },
+      );
+    }
     const root = ref();
-    // const isScrolling = ref(false);
 
     /**
      * 设置指定节点是否选中
@@ -108,8 +117,14 @@ export default defineComponent({
       setSelect(newData, true, props.autoOpenParentNode);
     });
 
-
     const getData = () => flatData;
+
+    watch(
+      () => [props.checked],
+      () => {
+        setChecked(props.checked, true);
+      },
+    );
 
     ctx.expose({
       handleTreeNodeClick,
@@ -131,7 +146,7 @@ export default defineComponent({
     useNodeDrag(props, ctx, root, flatData);
     const renderTreeContent = (scopedData: any[]) => {
       if (scopedData.length) {
-        return scopedData.map(renderTreeNode);
+        return scopedData.map(d => renderTreeNode(d, !isSearchActive.value || isTreeUI.value));
       }
 
       const emptyType = isSearchActive.value ? 'search-empty' : 'empty';
@@ -139,13 +154,6 @@ export default defineComponent({
     };
 
     const { resolveClassName } = usePrefix();
-    // const handleContentScroll = (args) => {
-    //   if (isScrolling.value) {
-    //     return;
-    //   }
-    //   Object.assign(treeScroll, args[1] || {});
-    //   console.log('handleContentScroll', treeScroll);
-    // };
 
     return () => (
       <VirtualRender
@@ -153,6 +161,7 @@ export default defineComponent({
         style={getTreeStyle(null, props)}
         list={renderData.value}
         lineHeight={props.lineHeight}
+        height={props.height}
         enabled={props.virtualRender}
         rowKey={NODE_ATTRIBUTES.UUID}
         keepAlive={true}

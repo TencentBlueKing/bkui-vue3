@@ -1,20 +1,17 @@
 <template>
   <div>
     <div class="cell">
-      <bk-button @click="handleSetAllRowExpand">展开|收起所有</bk-button>
+      <bk-button @click="handleSetAllRowExpand">
+        展开|收起所有
+      </bk-button>
       <bk-table
+        ref="refTable1"
         :columns="columns"
         :data="tableData"
         @row-expand="handleRowExpand"
-        ref="refTable1"
       >
-        <template #expandRow="row">
-          <div style="height: 80px">
-            <div>ip: {{ row.ip }}</div>
-            <div>source: {{ row.source }}</div>
-            <div>status: {{ row.status }}</div>
-            <div>create_time: {{ row.create_time }}</div>
-          </div>
+        <template #expandContent="row">
+          <span>Content</span>
         </template>
       </bk-table>
     </div>
@@ -43,7 +40,7 @@
       return {
         tableData: [...DATA_TABLE],
         columns: [...DATA_EXPAND_COLUMNS],
-        isExpand: false
+        isExpand: false,
       };
     },
     methods: {

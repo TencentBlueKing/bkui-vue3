@@ -30,7 +30,7 @@
  * Copyright © 2012-2019 Tencent BlueKing. All Rights Reserved. 蓝鲸智云 版权所有
  */
 
-import { throttle } from 'lodash';
+import throttle from 'lodash/throttle';
 
 function getMatchedIndex(
   maxCount: number,
@@ -55,15 +55,14 @@ function getMatchedIndex(
   return { startIndex, height, diffHeight };
 }
 
-export function computedVirtualIndex(lineHeight, callback, pagination, el, event) {
+export function computedVirtualIndex(lineHeight, callback, pagination, el, event, height) {
   if (!el) {
     return;
   }
   const elScrollTop = el.scrollTop;
   const elScrollLeft = el.scrollLeft;
   const { scrollTop, count, groupItemCount, startIndex, endIndex, scrollLeft } = pagination;
-  const { offsetHeight } = el;
-
+  const offsetHeight = /^\d+(\.\d*)?$/.test(height) ? height : el.offsetHeight;
   let targetStartIndex = 0;
   let targetEndIndex = 0;
   let translateY = 0;
@@ -94,50 +93,86 @@ export function computedVirtualIndex(lineHeight, callback, pagination, el, event
         bottom: bottom >= 0 ? bottom : 0,
       });
   }
+
+  return {
+    targetStartIndex,
+    targetEndIndex,
+    elScrollTop,
+    translateY,
+    elScrollLeft,
+  };
 }
 
-function visibleRender(e, wrapper: HTMLElement, binding) {
-  const { lineHeight = 30, handleScrollCallback, pagination = {}, onlyScroll } = binding.value;
-  if (onlyScroll) {
-    const elScrollTop = wrapper.scrollTop;
-    const elScrollLeft = wrapper.scrollLeft;
-    const bottom = wrapper.scrollHeight - wrapper.offsetHeight - wrapper.scrollTop;
-    handleScrollCallback(e, null, null, elScrollTop, elScrollTop, elScrollLeft, { bottom: bottom >= 0 ? bottom : 0 });
-    return;
+export class VisibleRender {
+  private binding;
+  private wrapper;
+  private delay;
+  constructor(binding, el) {
+    this.binding = binding;
+    this.wrapper = el;
+    const { throttleDelay } = binding.value;
+    this.delay = throttleDelay;
   }
 
-  const { startIndex, endIndex, groupItemCount, count, scrollTop, scrollLeft } = pagination;
-  computedVirtualIndex(
-    lineHeight,
-    handleScrollCallback,
-    { scrollTop, startIndex, endIndex, groupItemCount, count, scrollLeft },
-    wrapper,
-    e,
-  );
+  public render(e) {
+    const { lineHeight = 30, handleScrollCallback, pagination = {}, onlyScroll } = this.binding.value;
+    if (onlyScroll) {
+      const elScrollTop = this.wrapper.scrollTop;
+      const elScrollLeft = this.wrapper.scrollLeft;
+      const bottom = this.wrapper.scrollHeight - this.wrapper.offsetHeight - this.wrapper.scrollTop;
+      handleScrollCallback(e, null, null, elScrollTop, elScrollTop, elScrollLeft, { bottom: bottom >= 0 ? bottom : 0 });
+      return;
+    }
+
+    const { startIndex, endIndex, groupItemCount, count, scrollTop, scrollLeft } = pagination;
+    const { height } = this.binding;
+    computedVirtualIndex(
+      lineHeight,
+      handleScrollCallback,
+      { scrollTop, startIndex, endIndex, groupItemCount, count, scrollLeft },
+      this.wrapper,
+      e,
+      height,
+    );
+  }
+
+  public executeThrottledRender(e) {
+    throttle(this.render.bind(this), this.delay)(e);
+  }
+
+  public install() {
+    this.wrapper?.addEventListener('scroll', this.executeThrottledRender.bind(this));
+  }
+
+  public uninstall() {
+    this.wrapper?.removeListener?.('scroll', this.executeThrottledRender.bind(this));
+  }
+
+  public setBinding(binding) {
+    this.binding = binding;
+  }
 }
 
-const throttledRender = (delay = 60) => throttle((e, wrapper, binding) => visibleRender(e, wrapper, binding), delay);
-// const debounceRender = (delay = 60) => debounce((e, wrapper, binding) => visibleRender(e, wrapper, binding), delay);
-const executeThrottledRender = (e, wrapper, binding, delay = 60) => {
-  Reflect.apply(throttledRender(delay), this, [e, wrapper, binding]);
-};
+let instance: VisibleRender = null;
 
 export default {
   mounted(el, binding) {
     const wrapper = el.parentNode;
-    const { throttleDelay } = binding.value;
-    wrapper.addEventListener('scroll', (e: MouseEvent) => {
-      // @ts-ignore:next-line
-      executeThrottledRender(e, wrapper, binding, throttleDelay);
-    });
+    instance = new VisibleRender(binding, el);
+    wrapper.addEventListener('scroll', instance.executeThrottledRender.bind(instance));
   },
+
+  updated(_el, binding) {
+    instance?.setBinding(binding);
+  },
+
   unbind(el) {
     if (el) {
       const wrapper = el.parentNode;
-      if (!wrapper) {
+      if (!wrapper || !instance) {
         return;
       }
-      wrapper.removeEventListener('scroll', throttledRender);
+      wrapper.removeEventListener('scroll', instance.executeThrottledRender);
     }
   },
 };

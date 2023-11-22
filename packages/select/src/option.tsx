@@ -26,7 +26,7 @@
  * IN THE SOFTWARE.
  */
 
-import { isEqual } from 'lodash';
+import isEqual from 'lodash/isEqual';
 import {
   computed,
   defineComponent,
@@ -54,7 +54,7 @@ export default defineComponent({
     },
     name: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     disabled: PropTypes.bool.def(false),
-    order: PropTypes.number.def(0)
+    order: PropTypes.number.def(0),
   },
   setup(props, { attrs }) {
     const { proxy } = getCurrentInstance() as any;

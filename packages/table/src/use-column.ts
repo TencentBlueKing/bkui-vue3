@@ -23,9 +23,11 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
+import { reactive, watch } from 'vue';
+
 import { ITableColumn } from './components/table-column';
 import { SORT_OPTION } from './const';
-import { IColSortBehavior, ISortShape, TablePropTypes } from './props';
+import { Column, IColSortBehavior, ISortShape, TablePropTypes } from './props';
 
 /**
  * 渲染column settings
@@ -33,7 +35,9 @@ import { IColSortBehavior, ISortShape, TablePropTypes } from './props';
  * @param targetColumns 解析之后的column配置（主要用来处理通过<bk-column>配置的数据结构）
  */
 export default (props: TablePropTypes, targetColumns: ITableColumn[]) => {
-  const initColumns = (column: ITableColumn | ITableColumn[], remove = false) => {
+  const resolvedColumns = reactive(props.columns ?? []);
+
+  const initColumns = (column: ITableColumn[], remove = false) => {
     let resolveColumns: ITableColumn[] = [];
 
     if (!Array.isArray(column)) {
@@ -43,51 +47,39 @@ export default (props: TablePropTypes, targetColumns: ITableColumn[]) => {
     }
 
     if (!remove) {
-      let needToSort = false;
       resolveColumns.forEach(col => {
-        if (col.index !== undefined && col.index >= 0) {
-          needToSort = true;
-          const oldIndex = targetColumns.findIndex(tc => tc.label === col.label && tc.field === col.field);
-          if (oldIndex >= 0) {
-            targetColumns.splice(oldIndex, 1);
-          }
-          targetColumns.push(col);
+        const index = targetColumns.findIndex(tc => tc.label === col.label && tc.field === col.field);
+        if (index >= 0) {
+          Object.assign(targetColumns[index], col);
         } else {
-          const index = targetColumns.findIndex(tc => tc.label === col.label && tc.field === col.field);
-          if (index >= 0) {
-            targetColumns.splice(index, 1, col);
-          } else {
-            targetColumns.push(col);
-          }
+          targetColumns.push(col);
         }
       });
 
-      if (needToSort) {
-        targetColumns.sort((col1, col2) => col1.index - col2.index);
-      }
+      targetColumns.sort((col1, col2) => col1.index - col2.index);
     } else {
       resolveColumns.forEach(col => {
         const matchColIndex = targetColumns.findIndex(c => c.label === col.label && c.field === col.field);
-        if (remove) {
-          if (matchColIndex >= 0) {
-            targetColumns.splice(matchColIndex, 1);
-          }
-          return;
+        if (matchColIndex >= 0) {
+          targetColumns.splice(matchColIndex, 1);
         }
       });
     }
+
+    resolvedColumns.length = 0;
+    resolvedColumns.push(...(targetColumns as Column[]));
   };
 
+  watch(
+    () => [props.columns],
+    () => {
+      resolvedColumns.length = 0;
+      resolvedColumns.push(...props.columns);
+    },
+  );
+
   const getColumns = () => {
-    if (targetColumns?.length) {
-      return targetColumns;
-    }
-
-    if (props.columns?.length) {
-      return props.columns;
-    }
-
-    return [];
+    return resolvedColumns;
   };
 
   const getActiveColumn = () => {
@@ -103,5 +95,6 @@ export default (props: TablePropTypes, targetColumns: ITableColumn[]) => {
     initColumns,
     getColumns,
     getActiveColumn,
+    columns: resolvedColumns,
   };
 };

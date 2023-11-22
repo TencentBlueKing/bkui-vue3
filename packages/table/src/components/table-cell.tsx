@@ -88,7 +88,7 @@ export default defineComponent({
     const resolveTooltipOption = () => {
       let disabled = true;
       let { resizerWay } = props;
-      let content = refRoot.value.innerText;
+      let content = () => refRoot.value.innerText;
       let popoverOption = {};
       let mode = 'auto';
       let watchCellResize = true;
@@ -100,9 +100,9 @@ export default defineComponent({
         disabled = (showOverflowTooltip as any).disabled;
         popoverOption = (showOverflowTooltip as any).popoverOption;
         resizerWay = (showOverflowTooltip as any).resizerWay || 'debounce';
-        content = (showOverflowTooltip as any).content || refRoot.value.innerText;
+        content = () => (showOverflowTooltip as any).content || refRoot.value.innerText;
         if (typeof (showOverflowTooltip as any).content === 'function') {
-          content = (showOverflowTooltip as any).content(props.column, props.row);
+          content = () => (showOverflowTooltip as any).content(props.column, props.row);
         }
 
         watchCellResize = (showOverflowTooltip as any).watchCellResize;
@@ -116,11 +116,11 @@ export default defineComponent({
       if (props.isHead) {
         disabled = false;
         mode = 'auto';
-        content = getEllipsisTarget()?.innerHTML;
+        content = () => getEllipsisTarget()?.innerHTML;
 
         if (props.headExplain) {
           mode = 'static';
-          content = props.headExplain;
+          content = () => props.headExplain;
         }
       }
 
@@ -132,7 +132,7 @@ export default defineComponent({
         mode = 'static';
 
         if (typeof props.column.explain === 'object') {
-          content = resolvePropVal(props.column.explain, 'content', [props.column, props.row]);
+          content = () => resolvePropVal(props.column.explain, 'content', [props.column, props.row]);
         }
       }
 
@@ -213,7 +213,6 @@ export default defineComponent({
         class={['cell', props.column.type, hasExplain ? 'explain' : '']}
         style={cellStyle.value}
         ref={refRoot}
-        title={props.title}
       >
         {slots.default?.()}
       </div>

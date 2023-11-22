@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 
-import { debounce } from 'lodash';
+import debounce from 'lodash/debounce';
 import type { ExtractPropTypes, PropType } from 'vue';
 import { computed, defineComponent, nextTick, onMounted, reactive, ref, toRefs, watch } from 'vue';
 
@@ -257,13 +257,40 @@ export default defineComponent({
       ];
     }
 
+    const wheelStart = ref(true);
+    const wheelEnd = ref(false);
+    const wheelTimer = ref(null);
+
+    function stopWheel(domRef) {
+      if (wheelEnd.value === true) {
+        // console.log('滚轮停止了');
+        wheelStart.value = true;
+        wheelEnd.value = false;
+        domRef.scrollTop = 32 * Math.round(domRef.scrollTop / 32);
+      }
+    }
+
     function bindWheelEvent() {
       const bindFunction = type => {
         const domRef = getDomRef(type);
         domRef.addEventListener(
           'wheel',
           debounce(() => {
-            handleWheel(type);
+            if (wheelStart.value === true) {
+              // console.log('滚动了');
+              wheelStart.value = false;
+              wheelEnd.value = true;
+              // 这里写开始滚动时调用的方法
+              handleWheel(type);
+              wheelTimer.value = setTimeout(() => {
+                stopWheel(domRef);
+              }, 400);
+            } else {
+              clearTimeout(wheelTimer);
+              wheelTimer.value = setTimeout(() => {
+                stopWheel(domRef);
+              }, 400);
+            }
           }, 32),
           { passive: true },
         );

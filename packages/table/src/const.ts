@@ -63,20 +63,33 @@ export const BORDER_OPTIONS = [
  * Table Row Attributes
  */
 export const TABLE_ROW_ATTRIBUTE = {
-  ROW_INDEX: '__$table_row_index',
-  ROW_UID: '__$uuid',
-  ROW_EXPAND: '__row_expand',
-  ROW_SELECTION: '__row_selection',
-  ROW_SELECTION_ALL: '__row_selection_all',
-  ROW_SELECTION_INDETERMINATE: '__row_selection_indeterminate',
-  ROW_SOURCE_DATA: '__row_source_data',
-  ROW_SKIP_CFG: '__row_skip_config',
+  ROW_INDEX: 'row_index',
+  ROW_UID: 'row_id',
+  ROW_EXPAND: 'row_expand',
+  ROW_SELECTION: 'row_selection',
+  ROW_SELECTION_INDETERMINATE: 'row_selection_indeterminate',
+  ROW_SOURCE_DATA: 'row_source_data',
+  ROW_SKIP_CFG: 'row_skip_config',
+  ROW_SPAN: 'row_span',
 };
 
 export const COLUMN_ATTRIBUTE = {
-  COL_UID: '__col_$uuid',
-  COL_SOURCE_DATA: '__col_source_data',
-  SORT_TYPE: '__sort_type',
+  COL_UID: 'col_$uuid',
+  COL_SOURCE_DATA: 'col_source_data',
+  COL_MIN_WIDTH: 'col_min_width',
+  COL_SORT_ACTIVE: 'col_sort_active',
+  COL_SORT_TYPE: 'col_sort_type',
+  COL_SORT_FN: 'col_sort_fn',
+  COL_SORT_SCOPE: 'col_sort_scope',
+  COL_FILTER_FN: 'col_filter_fn',
+  COL_FILTER_SCOPE: 'col_filter_scope',
+  COL_IS_DRAG: 'col_is_drag',
+  COL_SPAN: 'col_span',
+  WIDTH: 'width',
+  CALC_WIDTH: 'calcWidth',
+  RESIZE_WIDTH: 'resizeWidth',
+  LISTENERS: 'listeners',
+  IS_HIDDEN: 'isHidden',
 };
 
 /**
@@ -146,3 +159,15 @@ export const SORT_OPTIONS = [SORT_OPTION.ASC, SORT_OPTION.DESC, SORT_OPTION.NULL
  * 列宽最小设置
  */
 export const COL_MIN_WIDTH = 80;
+
+export type IEmptyObject = {};
+
+/**
+ * 全选对象
+ */
+export const CHECK_ALL_OBJ: IEmptyObject = {};
+
+/**
+ * 是否设置了colspan或者rowspan
+ */
+export const NEED_COL_ROW_SPAN: IEmptyObject = {};

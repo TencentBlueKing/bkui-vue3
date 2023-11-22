@@ -118,10 +118,10 @@ export default [
       },
       {
         name: 'auto-check-children',
-        type: 'Boolean',
+        type: 'Boolean|Function',
         default: 'true',
-        desc: '仅对 type=selection 的列有效，类型为 Boolean，为 true 则会在数据更新之后保留之前选中的展开收起操作（需指定 row-是否自动检查当前节点是否有子节点, 节点前面的展开收起Icon会根据判定值做改变.如果需要自已控制，请设置为false',
-        optional: [],
+        desc: '是否自动检查是否存在子节点，如果需要自动检查则设置为True，如无需检测，一直保持展开收起状态Icon则设置为False,如若需要自己动态控制，可以设置为回调函数，返回值为布尔类型',
+        optional: ['true', 'false', '(node) => boolean'],
       },
       {
         name: 'auto-open-parent-node',
@@ -144,6 +144,13 @@ export default [
         default: '',
         desc: '节点内容点击行为，此处配置每个节点除了展开\\收起箭头之外的内容块时的行为.默认为 ["selected", "expand", "click"]，点击内容块为选中当前节点, 如果要禁用所有行为，请设置为空数组 []',
         optional: ['click', 'selected', 'expand', 'collapse'],
+      },
+      {
+        name: 'show-node-type-icon',
+        type: 'Boolean',
+        default: 'true',
+        desc: '是否展示节点类型Icon（默认根节点是文件夹icon，子节点为文件icon）',
+        optional: ['true', 'false'],
       },
     ],
   },

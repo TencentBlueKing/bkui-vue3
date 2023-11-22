@@ -1,6 +1,6 @@
 <template>
   <div class="cell">
-    <span class="title">默认排序: sort scope = current</span>
+    <span class="title">默认排序:  col-sort-behavior = independent</span>
     <bk-table
       :columns="columns"
       :data="tableData"
@@ -8,12 +8,12 @@
     />
   </div>
   <div class="cell">
-    <span class="title">sort scope = all</span>
+    <span class="title">col-sort-behavior = interdependent</span>
     <bk-table
       :columns="columns1"
       :data="tableData"
       :pagination="pagination"
-      @column-sort="handleSortBy"
+      col-sort-behavior="interdependent"
     />
   </div>
 </template>

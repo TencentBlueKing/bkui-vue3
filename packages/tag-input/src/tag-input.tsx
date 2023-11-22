@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 
-import { debounce } from 'lodash';
+import debounce from 'lodash/debounce';
 import { computed, defineComponent, nextTick, onMounted, reactive, type Ref, ref, toRefs, watch } from 'vue';
 
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';

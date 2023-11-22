@@ -3,15 +3,7 @@ module.exports = {
     ['@babel/preset-env', {
       targets:
       {
-        node: 'current',
-        browsers: [
-          'defaults',
-          'not ie <= 11',
-          'not edge <= 50',
-          'not chrome <= 50',
-          'not safari <= 11',
-          'not firefox <= 50',
-        ],
+        esmodules: true,
       },
     }],
     '@babel/preset-typescript',

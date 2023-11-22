@@ -52,7 +52,7 @@ export function useRegistry<T>(data: Ref<Map<any, T>>) {
   const register = (key: any, item: T) => {
     if (!item) return;
     if (data.value.has(key)) {
-      console.warn(`repeat ${key}`, item);
+      // console.warn(`repeat ${key}`, item);
       return;
     }
     return data.value.set(key, item);
@@ -149,4 +149,13 @@ export function toLowerCase(value = '') {
   if (!value) return value;
 
   return String(value).trim().toLowerCase();
+}
+
+export function isInViewPort(el: HTMLElement, client: HTMLElement) {
+  if (!el || !client) return true;
+
+  const { top: elTop, bottom: elBottom } = el.getBoundingClientRect();
+  const { top: clientTop, bottom: clientBottom } = client.getBoundingClientRect();
+
+  return elTop >= clientTop && elBottom <= clientBottom;
 }

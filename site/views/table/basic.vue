@@ -1,18 +1,12 @@
 <template>
   <div class="row">
     <bk-table
+
       :columns="columns"
       :data="tableData"
       :settings="settings"
       :max-height="maxHeight"
-      :show-overflow-tooltip="overflowTooltip"
       stripe
-      @dblclick="handleDblClick"
-      @column-sort="handleSortBy"
-      @cell-click="handleCellClick"
-      @cell-dblclick="handleCellDblclick"
-      @row-mouse-enter="handleMouseEnter"
-      @row-mouse-leave="handleMouseLeave"
     >
       <template #setting>
         <h1>Setting Content Slot</h1>
@@ -22,22 +16,28 @@
 </template>
 
 <script lang="jsx">
-  import { random } from 'lodash';
   import { defineComponent } from 'vue';
 
-  import { DATA_COLUMNS, DATA_TABLE, DATA_FIX_TABLE } from './options';
+  import { DATA_COLUMNS, DATA_TABLE } from './options';
+  const columns = [...DATA_COLUMNS];
+  /* const list = new Array(50).fill(null).map((_, index) => ({
+    text: `选项${index}`,
+    value: `选项${index}`,
+  }));
+  columns[2].filter.list = list;*/
   export default defineComponent({
     components: {},
     data() {
       return {
-        maxHeight: 300,
+        maxHeight: 200,
         isLoading: false,
-        tableData: DATA_FIX_TABLE.map((d, index) => Object.assign({}, d, { msg: index * random(0, 20, true) })),
-        columns: [...DATA_COLUMNS],
+        tableData: DATA_TABLE,
+
+        columns,
         overflowTooltip: {
           popoverOption: {
-            maxWidth: 400
-          }
+            maxWidth: 400,
+          },
         },
         settings: {
           fields: [
@@ -57,7 +57,8 @@
             {
               name: '创建时间',
               id: 'create_time',
-            }],
+            },
+          ],
           checked: ['ip', 'index'],
         },
       };

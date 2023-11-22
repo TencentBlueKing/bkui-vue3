@@ -2,6 +2,7 @@
   <bk-table
     :data="tableData"
     :is-row-select-enable="isRowSelectEnable"
+    :checked="checked"
   >
     <bk-table-column
       type="selection"
@@ -36,6 +37,7 @@
     data() {
       return {
         tableData: DATA_ROWS,
+        checked: DATA_ROWS,
         pagination: { count: DATA_ROWS.length, limit: 10 },
       };
     },
