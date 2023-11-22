@@ -4,14 +4,13 @@
       v-model="val"
       class="mb10"
       autocomplete="true"
-      autofocus="true"
+      autofocus
     />
     <bk-input
       v-model="val"
       class="mb10"
       type="password"
       autocomplete="false"
-      autofocus="true"
     />
   </div>
 </template>
