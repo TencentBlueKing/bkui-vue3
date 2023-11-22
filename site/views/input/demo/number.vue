@@ -16,6 +16,8 @@
       :min="1"
       :max="100"
       clearable
+      @change="handleChange"
+      @enter="handleEnter"
     />
     <bk-input
       v-model="val"
@@ -32,7 +34,7 @@
 
 <script setup>
   import { ref } from 'vue';
-  const val = ref(100);
+  const val = ref(0);
 </script>
 
 <style lang="less">

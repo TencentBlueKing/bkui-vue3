@@ -322,6 +322,10 @@ export default defineComponent({
       isOverflow.value = detectOverflow();
       resizeObserver.observe(inputRef.value);
       nextTick(() => resizeTextarea());
+      // Hack: 修复autofocus属性失效问题 原生autofocus属性只在页面加载时生效
+      if (Object.prototype.hasOwnProperty.call(ctx.attrs, 'autofocus')) {
+        inputRef.value?.focus?.();
+      }
     });
 
     onBeforeUnmount(() => {
@@ -382,7 +386,7 @@ export default defineComponent({
           }
         }
         if (eventName === EVENTS.KEYDOWN && (e.code === 'Enter' || e.key === 'Enter' || e.keyCode === 13)) {
-          ctx.emit(EVENTS.ENTER, e.target.value, e);
+          ctx.emit(EVENTS.ENTER, isNumberInput.value ? handleNumber(e.target.value, 0) : e.target.value, e);
         }
 
         if (isCNInput.value && [EVENTS.INPUT, EVENTS.CHANGE, EVENTS.KEYDOWN].some(e => eventName === e)) return;
@@ -422,8 +426,11 @@ export default defineComponent({
       const numStep = Number(step);
       const precision = Number.isInteger(props.precision) ? props.precision : 0;
       const val = Number(modelValue);
-      const factor = Number.isInteger(numStep) ? numStep : 1;
 
+      const factor = Number.isInteger(numStep) ? numStep : 1;
+      if (Number.isNaN(val)) {
+        return Number.isInteger(props.min) ? props.min : 0;
+      }
       let newVal = val + (INC ? factor : -1 * factor);
       if (Number.isInteger(props.max)) {
         newVal = Math.min(newVal, props.max);
