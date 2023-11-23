@@ -220,13 +220,13 @@ export default (tableResp: ITableResponse, immediate = true, head: Ref<HTMLEleme
 
   const resizeColumnStyle = computed(() => ({
     ...dragOffsetXStyle,
-    transform: `translate(${dragOffsetX.value - layout.value.translateX + 3}px, ${layout.value.translateY}px)`,
+    transform: `translate(${dragOffsetX.value + 3}px, ${layout.value.translateY}px)`,
   }));
 
   const resizeHeadColStyle = computed(() => ({
     ...dragOffsetXStyle,
     width: '6px',
-    transform: `translateX(${dragOffsetX.value - layout.value.translateX}px)`,
+    transform: `translateX(${dragOffsetX.value}px)`,
   }));
 
   return {
