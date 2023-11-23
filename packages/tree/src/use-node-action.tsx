@@ -33,7 +33,15 @@ import { EVENTS, NODE_ATTRIBUTES } from './constant';
 import { TreePropTypes } from './props';
 import useNodeAsync from './use-node-async';
 import useNodeAttribute from './use-node-attribute';
-import { getLabel, getNodeItemClass, getNodeItemStyle, getNodeRowClass, IFlatData, resolveNodeItem } from './util';
+import {
+  getLabel,
+  getNodeItemClass,
+  getNodeItemStyle,
+  getNodeRowClass,
+  IFlatData,
+  resolveNodeItem,
+  showCheckbox,
+} from './util';
 export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, initOption) => {
   // const checkedNodes = [];
   let selectedNodeId = props.selected;
@@ -228,7 +236,7 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
   const isIndeterminate = (item: any) => isNodeChecked(item) && getNodeAttr(item, NODE_ATTRIBUTES.IS_INDETERMINATE);
 
   const getCheckboxRender = (item: any) => {
-    if (!props.showCheckbox) {
+    if (!showCheckbox(props, extendNodeScopedData(item))) {
       return null;
     }
 

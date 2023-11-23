@@ -50,5 +50,6 @@
     "lib/locale/lang",
     "packages/locale/lang",
     "packages/locale/src/lang"
-  ]
+  ],
+  "bk-code-ai.enable": false
 }

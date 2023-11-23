@@ -86,20 +86,20 @@ export default defineComponent({
   },
   render() {
     const configs = [
-      // {
-      //   attrs: {
-      //     title: '基础用法',
-      //     subtitle: '基础用法，用于表单内容的录入',
-      //     desc: '通过 stripe 设置是否为斑马纹',
-      //     componentName: 'table',
-      //     demoName: 'basic',
-      //   },
-      //   /**
-      //    * Table
-      //    * @returns
-      //    */
-      //   component: () => <basic></basic>,
-      // },
+      {
+        attrs: {
+          title: '基础用法',
+          subtitle: '基础用法，用于表单内容的录入',
+          desc: '通过 stripe 设置是否为斑马纹',
+          componentName: 'table',
+          demoName: 'basic',
+        },
+        /**
+         * Table
+         * @returns
+         */
+        component: () => <basic></basic>,
+      },
       {
         attrs: {
           title: '基础用法-模板方式调用 bk-column',

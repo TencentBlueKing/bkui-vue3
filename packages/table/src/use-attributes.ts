@@ -178,10 +178,14 @@ export default (props: TablePropTypes): ITableResponse => {
         });
       }
 
+      console.log('resolveMinWidth', resolveMinWidth(col), col);
       Object.assign(formatData.columnSchema.get(col), {
         [COLUMN_ATTRIBUTE.COL_SPAN]: { skipCol, skipColumnNum, skipColLen },
+        [COLUMN_ATTRIBUTE.COL_MIN_WIDTH]: resolveMinWidth(col),
       });
     });
+
+    console.log('formatColumns', columns, formatData.columnSchema);
   };
 
   const getColumnSpanConfig = (col: Column, index: number, skipColNum: number) => {
