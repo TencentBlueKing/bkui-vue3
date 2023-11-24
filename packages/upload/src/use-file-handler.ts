@@ -28,6 +28,7 @@ import { computed, ref, watch } from 'vue';
 
 import {
   EUploadStatus,
+  SuccessResponse,
   UploadFile,
   UploadHanderHooks,
   UploadProgressEvent,
@@ -144,7 +145,7 @@ export default (props: UploadProps, hooks: UploadHanderHooks) => {
     file.response = res;
   }
 
-  async function handleSuccess(res: unknown, rawFile: UploadRawFile) {
+  async function handleSuccess(res: SuccessResponse, rawFile: UploadRawFile) {
     const file = findFile(rawFile);
     if (!file) return;
 

@@ -5,7 +5,7 @@
       class="bk-select"
       multiple
       filterable
-      :filterOption="filterOption"
+      :filter-option="filterOption"
     >
       <bk-option
         v-for="(item, index) in datasource"
@@ -18,10 +18,11 @@
       v-model="selectedValue"
       class="bk-select"
       :input-search="false"
-      :list="datasource"
+      :list="searchList"
       multiple
       filterable
-      :filterOption="filterOption"
+      :filter-option="filterOption"
+      :remote-method="searchDataSource"
     />
     <bk-select
       v-model="selectedValue"
@@ -71,7 +72,7 @@
   </div>
 </template>
 <script setup>
-  import { ref } from 'vue';
+  import { onMounted, ref } from 'vue';
   const datasource = ref([
     {
       value: 'climbing',
@@ -120,9 +121,18 @@
       }, 1000);
     };
   });
-  const filterOption = (input, options) => {
-    return options.name?.includes(input);
+  const filterOption = (input, options) => options.name?.includes(input);
+
+  const searchList = ref();
+  const searchDataSource = (key) => {
+    searchList.value = datasource.value.filter(item => item.label.includes(key));
   };
+
+  onMounted(() => {
+    setTimeout(() => {
+      searchList.value = JSON.parse(JSON.stringify(datasource.value));
+    }, 1000);
+  });
 </script>
 <style scoped>
 .demo {

@@ -1,5 +1,5 @@
 <template>
-  <div style=" width: 100%;height: 300px">
+  <div>
     <bk-table
       :columns="columns"
       :data="remoteData"

@@ -83,12 +83,12 @@ export const useCheckbox = () => {
   });
 
   // 触发更新
-  const triggerChange = () => {
+  const triggerChange = (event?: Event) => {
     // 单独使用时状态切换返回 trueLabel、falseLabel
     const nextValue = isChecked.value ? props.trueLabel : props.falseLabel;
 
     emit('update:modelValue', nextValue);
-    emit('change', nextValue);
+    emit('change', nextValue, event);
     // 更新 checkbox-group
     // 配合 checkbox-group 使用时返回 props.label
     if (isGroup) {
@@ -150,7 +150,7 @@ export const useCheckbox = () => {
     }
     const $targetInput = event.target as HTMLInputElement;
     isChecked.value = $targetInput.checked;
-    triggerChange();
+    triggerChange(event);
   };
 
   onMounted(() => {

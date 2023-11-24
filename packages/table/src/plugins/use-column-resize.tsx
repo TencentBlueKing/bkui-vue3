@@ -23,8 +23,9 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { isElement, throttle } from 'lodash';
-import { computed, Ref, ref } from 'vue';
+import isElement from 'lodash/isElement';
+import throttle from 'lodash/throttle';
+import { computed, type Ref, ref } from 'vue';
 
 import { COLUMN_ATTRIBUTE } from '../const';
 import { Column } from '../props';
@@ -219,13 +220,13 @@ export default (tableResp: ITableResponse, immediate = true, head: Ref<HTMLEleme
 
   const resizeColumnStyle = computed(() => ({
     ...dragOffsetXStyle,
-    transform: `translate(${dragOffsetX.value - layout.value.translateX + 3}px, ${layout.value.translateY}px)`,
+    transform: `translate(${dragOffsetX.value + 3}px, ${layout.value.translateY}px)`,
   }));
 
   const resizeHeadColStyle = computed(() => ({
     ...dragOffsetXStyle,
     width: '6px',
-    transform: `translateX(${dragOffsetX.value - layout.value.translateX}px)`,
+    transform: `translateX(${dragOffsetX.value}px)`,
   }));
 
   return {

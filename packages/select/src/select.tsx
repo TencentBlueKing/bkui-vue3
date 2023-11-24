@@ -26,7 +26,8 @@
  * IN THE SOFTWARE.
  */
 
-import { isEqual, merge } from 'lodash';
+import isEqual from 'lodash/isEqual';
+import merge from 'lodash/merge';
 import { PopoverPropTypes } from 'popover/src/props';
 import { computed, defineComponent, onMounted, PropType, provide, reactive, ref, toRefs, watch } from 'vue';
 
@@ -99,8 +100,7 @@ export default defineComponent({
     prefix: PropTypes.string,
     selectedStyle: SelectedType(),
     filterOption: {
-      type: [Boolean, Function],
-      default: true,
+      type: Function,
     }, // 配置当前options的过滤规则
   },
   emits: [
@@ -216,6 +216,10 @@ export default defineComponent({
       }, {}),
     );
 
+    watch([optionsMap, list], () => {
+      handleSetSelectedData();
+    });
+
     watch(
       modelValue,
       () => {
@@ -235,11 +239,12 @@ export default defineComponent({
     const virtualList = computed(() =>
       isRemoteSearch.value
         ? list.value
-        : list.value.filter(
-            item =>
-              filterOptionFunc.value(searchKey.value, item) &&
-              toLowerCase(String(item[displayKey.value]))?.includes(toLowerCase(searchKey.value)),
-          ),
+        : list.value.filter(item => {
+            if (hasFilterOptionFunc.value) {
+              return !!filterOption.value(searchKey.value, item);
+            }
+            return toLowerCase(String(item[displayKey.value]))?.includes(toLowerCase(searchKey.value));
+          }),
     );
     // select组件是否禁用
     const isDisabled = computed(() => disabled.value || loading.value);
@@ -271,10 +276,10 @@ export default defineComponent({
     // 是否远程搜索
     const isRemoteSearch = computed(() => filterable.value && typeof remoteMethod.value === 'function');
     // options过滤函数
-    const filterOptionFunc = computed(() => {
-      if (typeof filterOption.value === 'function') return filterOption.value;
+    const hasFilterOptionFunc = computed(() => {
+      if (filterOption.value && typeof filterOption.value === 'function') return true;
 
-      return () => filterOption.value;
+      return false;
     });
     // 是否显示select下拉内容
     const isShowSelectContent = computed(
@@ -381,9 +386,11 @@ export default defineComponent({
         });
       } else {
         options.value.forEach(option => {
-          option.visible =
-            filterOptionFunc.value(value, { ...option.$props }) &&
-            toLowerCase(String(option.optionName))?.includes(toLowerCase(value));
+          if (hasFilterOptionFunc.value) {
+            option.visible = !!filterOption.value(value, { ...option.$props, ...option.$attrs });
+          } else {
+            option.visible = toLowerCase(String(option.optionName))?.includes(toLowerCase(value));
+          }
         });
       }
     };
@@ -774,13 +781,12 @@ export default defineComponent({
             onRemove={this.handleDeleteTag}
             collapseTags={this.isCollapseTags}
             onEnter={this.handleCreateCustomOption}
-          >
-            {{
+            v-slots={{
               prefix: renderPrefix(),
               default: this.$slots.tag && (() => this.$slots.tag({ selected: this.selected })),
               suffix: () => suffixIcon(),
             }}
-          </SelectTagInput>
+          ></SelectTagInput>
         );
       }
       return (
@@ -799,12 +805,11 @@ export default defineComponent({
           onInput={this.handleInputChange}
           onEnter={this.handleCreateCustomOption}
           {...(this.prefix ? { prefix: this.prefix } : null)}
-        >
-          {{
+          v-slots={{
             ...(typeof this.$slots.prefix === 'function' ? { prefix: () => this.$slots.prefix?.() } : null),
             suffix: () => suffixIcon(),
           }}
-        </Input>
+        ></Input>
       );
     };
     const renderSelectTrigger = () => (
@@ -934,12 +939,11 @@ export default defineComponent({
           onClickoutside={this.handleClickOutside}
           onAfterShow={this.handlePopoverShow}
           ref='popoverRef'
-        >
-          {{
+          v-slots={{
             default: () => renderSelectTrigger(),
             content: () => renderSelectContent(),
           }}
-        </BKPopover>
+        ></BKPopover>
       </div>
     );
   },

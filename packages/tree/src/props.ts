@@ -203,7 +203,7 @@ export const treeProps = {
   /**
    * 是否支持多选
    */
-  showCheckbox: PropTypes.bool.def(false),
+  showCheckbox: PropTypes.oneOfType([PropTypes.bool, PropTypes.func]).def(false),
 
   checked: PropTypes.arrayOf(PropTypes.any).def([]),
 
@@ -222,7 +222,7 @@ export const treeProps = {
    * 节点前面的展开收起Icon会根据判定值做改变
    * 如果需要自已控制，请设置为false
    */
-  autoCheckChildren: PropTypes.bool.def(true),
+  autoCheckChildren: PropTypes.oneOfType([PropTypes.bool, PropTypes.func]).def(true),
 
   /**
    * 如果设置了某一个叶子节点状态为展开，是否自动展开所有父级节点

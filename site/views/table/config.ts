@@ -59,7 +59,6 @@ export default [
       { name: 'empty-text', type: 'String', default: '暂无数据', desc: '空数据展示', optional: [] },
       { name: 'empty-cell-text', type: 'String', default: '', desc: '单元格空数据展示', optional: [] },
       { name: 'settings', type: 'Object|Boolean', default: 'false', desc: 'bk-table-setting-content,用于设置表格行高、显示列...，详细参考ISettings', optional: [] },
-      { name: 'row-class', type: 'String|Function', default: '', desc: '行的 class 的回调方法，也可以使用一个固定的 Object 为所有行设置一样的 Style', optional: [] },
       { name: 'row-class', type: 'String|Object|Function', default: '{}', desc: '行的 class 的回调方法，也可以使用一个固定的 Object 为所有行设置一样的 Style', optional: [] },
       { name: 'align', type: 'left|center|right|‘’', default: '--', desc: '表格单元格对齐方式', optional: [] },
       { name: 'header-align', type: 'left|center|right|‘’', default: '--', desc: '表头对齐方式', optional: [] },
@@ -218,6 +217,8 @@ export default [
     config: [
       { name: '#prepend', desc: '插入至表格第一行之前的内容，会被固定在第一行', params: '' },
       { name: '#expandRow', desc: '展开收起一行', params: 'row' },
+      { name: '#expandCell', desc: '自定义展开收起单元格', params: '{ row, column, index, rows }' },
+      { name: '#expandContent', desc: '自定义展开收起单元格内容（展开收起ICON内置）', params: '{ row }' },
       { name: '#empty', desc: '自定义空数据-empty插槽', params: '' },
       { name: '#default', desc: '<bk-column />模板使用自定义显示默认插槽, 这里面参数 data & row 在使用时要注意，data是原始数据，在组件中没有被代理监听，这个数据主要是回传给调用方使用，例如接口调用；如果要绑定数据实现实时更新请使用 row，row是组件内被监听数据，包含一些组件内置属性和方法', params: '{ cell, data, row, column, index, rows }' },
       { name: '#fixedBottom', desc: '底部加载插槽', params: '' },

@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 
-import { throttle } from 'lodash';
+import throttle from 'lodash/throttle';
 import { defineComponent, onBeforeUnmount, onMounted, type Ref, ref, Transition, watch } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';

@@ -5,6 +5,7 @@
       :data="tableData"
       :pagination="pagination"
       :pagination-heihgt="60"
+      show-overflow-tooltip
       height="100%"
     />
   </div>
@@ -20,6 +21,7 @@
     .map((_, index) => ({
       ip: `${index}--192.168.0.x`,
       source: `${index}_QQ`,
+      create_by: `user-admin-${index}`,
       status: '创建中',
       create_time: `2018-05-25 15:02:24.${index}`,
     }));

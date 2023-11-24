@@ -24,11 +24,11 @@
  * IN THE SOFTWARE.
  */
 
-import { useLocale } from 'bkui-vue';
 import { v4 as uuidv4 } from 'uuid';
 import { computed, CSSProperties, ref, SetupContext, unref } from 'vue';
 
 import BkCheckbox from '@bkui-vue/checkbox';
+import { useLocale } from '@bkui-vue/config-provider';
 import { DownShape, RightShape } from '@bkui-vue/icon';
 import Pagination from '@bkui-vue/pagination';
 import { classes } from '@bkui-vue/shared';
@@ -491,7 +491,7 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
     );
   };
   const { resolveFixedColumnStyle } = useFixedColumn(props, tableResp, head);
-  const getRowRender = (row: any, rowIndex: number, preRow: any, rows, rowSpanMap, needRowSpan) => {
+  const getRowRender = (row: any, rowIndex: number, preRow: any, rows, rowSpanMap, needRowSpan, isChild = false) => {
     const rowLength = rows.length;
     const rowStyle = [
       ...formatPropAsArray(props.rowStyle, [row, rowIndex]),
@@ -528,9 +528,8 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
               skipCol: boolean;
             };
 
-            const { skipRow } = needRowSpan
-              ? getRowSpanConfig(row, index, preRow, column, rowSpanMap)
-              : { skipRow: false };
+            const { skipRow } =
+              needRowSpan && !isChild ? getRowSpanConfig(row, index, preRow, column, rowSpanMap) : { skipRow: false };
 
             const tdCtxClass = {
               'expand-cell': column.type === 'expand',
@@ -554,7 +553,7 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
                   row,
                   column,
                   cell: {
-                    getValue: () => renderCell(row, column, rowIndex, rows),
+                    getValue: () => renderCell(row, column, rowIndex, rows, isChild),
                   },
                   rowIndex,
                   columnIndex: index,
@@ -578,7 +577,7 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
                     parentSetting={props.showOverflowTooltip}
                     observerResize={props.observerResize}
                   >
-                    {renderCell(row, column, rowIndex, rows)}
+                    {renderCell(row, column, rowIndex, rows, isChild)}
                   </TableCell>
                 </td>
               );
@@ -599,6 +598,10 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
 
       const rowId = tableResp.getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_UID);
       const rowKey = `${rowId}_expand`;
+      if (Array.isArray(row.children)) {
+        return row.children.map((child, childIndex) => getRowRender(child, childIndex, {}, row, {}, false, true));
+      }
+
       return (
         <TableRow key={rowKey}>
           <tr class={resovledClass}>
@@ -658,7 +661,9 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
 
   const getExpandCell = (row: any) => {
     const isExpand = tableResp.getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_EXPAND);
-    return isExpand ? <DownShape></DownShape> : <RightShape></RightShape>;
+    const icon = isExpand ? <DownShape></DownShape> : <RightShape></RightShape>;
+
+    return <span>{[icon, context.slots.expandContent?.(row) ?? '']}</span>;
   };
 
   const handleRowExpandClick = (row: any, column: Column, index: number, rows: any[], e: MouseEvent) => {
@@ -726,7 +731,7 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
    * @param rows 当前列
    * @returns
    */
-  const renderCell = (row: any, column: Column, index: number, rows: any[]) => {
+  const renderCell = (row: any, column: Column, index: number, rows: any[], isChild = false) => {
     const defaultFn = () => {
       const type = resolvePropVal(column, 'type', [column, row]);
       if (type === 'index') {
@@ -757,7 +762,7 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
     };
 
     const renderFn = {
-      expand: (row, column, index, rows) => renderExpandColumn(row, column, index, rows),
+      expand: (row, column, index, rows) => (isChild ? '' : renderExpandColumn(row, column, index, rows)),
       selection: (row, _column, index, _rows) => renderCheckboxColumn(row, index),
     };
 

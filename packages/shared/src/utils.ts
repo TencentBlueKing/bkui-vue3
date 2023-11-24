@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { throttle } from 'lodash';
+import throttle from 'lodash/throttle';
 const lowerStr = 'abcdefghijklmnopqrstuvwxyz0123456789';
 /**
  * 生成n位长度的字符串

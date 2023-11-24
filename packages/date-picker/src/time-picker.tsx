@@ -739,6 +739,8 @@ export default defineComponent({
                   disabledHours={this.ownPickerProps.disabledHours}
                   disabledMinutes={this.ownPickerProps.disabledMinutes}
                   disabledSeconds={this.ownPickerProps.disabledSeconds}
+                  allowCrossDay={this.allowCrossDayProp}
+                  format={this.format}
                 />
               ) : (
                 <TimePanel
@@ -758,6 +760,7 @@ export default defineComponent({
                   disabledHours={this.ownPickerProps.disabledHours}
                   disabledMinutes={this.ownPickerProps.disabledMinutes}
                   disabledSeconds={this.ownPickerProps.disabledSeconds}
+                  format={this.format}
                 />
               )}
               {this.hasFooter ? (
