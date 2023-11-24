@@ -1,11 +1,10 @@
 <template>
   <div class="row">
     <bk-table
-
+      :max-height="maxHeight"
       :columns="columns"
       :data="tableData"
       :settings="settings"
-      :max-height="maxHeight"
       stripe
     >
       <template #setting>
@@ -29,10 +28,9 @@
     components: {},
     data() {
       return {
-        maxHeight: 200,
+        maxHeight: 300,
         isLoading: false,
         tableData: DATA_TABLE,
-
         columns,
         overflowTooltip: {
           popoverOption: {
@@ -84,6 +82,12 @@
       handleMouseLeave(...args) {
         console.log('mouse-leave', args);
       },
+    },
+    mounted() {
+      // setTimeout(() => {
+      //   console.log('mounted');
+      //   this.maxHeight = 200;
+      // }, 1000);
     },
   });
 </script>
