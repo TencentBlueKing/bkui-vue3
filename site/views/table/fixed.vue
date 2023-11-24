@@ -1,10 +1,10 @@
 <template>
-  <div style=" width: 100%;height: 300px">
+  <div >
     <bk-table
       :columns="columns"
       :data="tableData"
-      height="100%"
       :settings="settings"
+      :max-height="maxHeight"
       @scroll-bottom="handleScrollBottom"
     />
   </div>
@@ -18,8 +18,9 @@
     components: {},
     data() {
       return {
-        tableData: [...DATA_FIX_TABLE],
+        tableData: DATA_FIX_TABLE,
         columns: [...DATA_FIX_COLUMNS],
+        maxHeight: 300
       };
     },
     methods: {
@@ -30,5 +31,14 @@
         console.log('handleScrollBottom', args);
       },
     },
+    mounted() {
+      // setTimeout(() => {
+      //   this.maxHeight = 300;
+      //   console.log('table maxHeight', this.maxHeight);
+      //   this.tableData.length = 0;
+      //   this.tableData = [];
+      //   this.tableData.push(...DATA_FIX_TABLE.slice(0, 100))
+      // }, 3000)
+    }
   });
 </script>
