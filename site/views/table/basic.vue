@@ -28,7 +28,7 @@
     components: {},
     data() {
       return {
-        maxHeight: 50,
+        maxHeight: 300,
         isLoading: false,
         tableData: DATA_TABLE,
         columns,
@@ -84,10 +84,10 @@
       },
     },
     mounted() {
-      setTimeout(() => {
-        console.log('mounted');
-        this.maxHeight = 200;
-      }, 1000);
+      // setTimeout(() => {
+      //   console.log('mounted');
+      //   this.maxHeight = 200;
+      // }, 1000);
     },
   });
 </script>

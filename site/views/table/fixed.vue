@@ -18,9 +18,9 @@
     components: {},
     data() {
       return {
-        tableData: DATA_FIX_TABLE.slice(0, 10),
+        tableData: DATA_FIX_TABLE,
         columns: [...DATA_FIX_COLUMNS],
-        maxHeight: 100
+        maxHeight: 300
       };
     },
     methods: {
@@ -32,13 +32,13 @@
       },
     },
     mounted() {
-      setTimeout(() => {
-        this.maxHeight = 300;
-        console.log('table maxHeight', this.maxHeight);
-        this.tableData.length = 0;
-        this.tableData = [];
-        this.tableData.push(...DATA_FIX_TABLE.slice(0, 100))
-      }, 3000)
+      // setTimeout(() => {
+      //   this.maxHeight = 300;
+      //   console.log('table maxHeight', this.maxHeight);
+      //   this.tableData.length = 0;
+      //   this.tableData = [];
+      //   this.tableData.push(...DATA_FIX_TABLE.slice(0, 100))
+      // }, 3000)
     }
   });
 </script>
