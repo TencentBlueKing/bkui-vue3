@@ -239,14 +239,22 @@ function createPopperInstance(el: HTMLElement, popper: HTMLElement) {
  */
 function show(el: HTMLElement) {
   const { popper, opts } = nodeList.get(el);
-  const { disabled, content, arrow: hasArrow, onShow } = opts;
+  const { disabled, content, arrow: hasArrow, onShow, boundary } = opts;
   if (disabled) return;
   renderContext(content, popper);
   if (hasArrow) {
     const arrow = renderArrow();
     popper.appendChild(arrow);
   }
-  document.body.appendChild(popper);
+  let container = document.body;
+  if (boundary) {
+    if (boundary === 'parent') {
+      container = el.parentElement;
+    } else if (boundary instanceof HTMLElement) {
+      container = boundary;
+    }
+  }
+  container.appendChild(popper);
   const popperInstance = createPopperInstance(el, popper);
   onShow();
 

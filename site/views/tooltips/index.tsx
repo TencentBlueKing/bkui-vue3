@@ -33,6 +33,7 @@ import type { IPropsTableItem } from '../../typings';
 
 import DemoJsx from './demo/base';
 import Base from './demo/base.vue';
+import Boundary from './demo/boundary.vue';
 import Callback from './demo/callback.vue';
 import Click from './demo/click.vue';
 import Position from './demo/position.vue';
@@ -67,6 +68,13 @@ const props: IPropsTableItem[] = [
       'left-start',
       'left-end',
     ],
+  },
+  {
+    name: 'boundary',
+    type: 'Element',
+    default: 'document.body',
+    desc: '弹窗插入位置',
+    optional: ['parent'],
   },
   {
     name: 'showOnInit',
@@ -150,6 +158,13 @@ const demos = [
     componentName: 'tooltips',
     demoName: 'demo/position',
     DemoComponent: Position,
+  },
+  {
+    title: '插入不同位置',
+    desc: '通过 boundary 属性控制弹窗插入位置',
+    componentName: 'tooltips',
+    demoName: 'demo/boundary',
+    DemoComponent: Boundary,
   },
   {
     title: '点击触发',
