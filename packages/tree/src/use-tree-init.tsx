@@ -63,6 +63,10 @@ export default (props: TreePropTypes) => {
         const target = treeSchema.get(node);
         if (Object.prototype.hasOwnProperty.call(target, attrName)) {
           if (typeof callFn === 'function' && Reflect.apply(callFn, self, [target, attrName, attrValue, node])) {
+            if (target[attrName] === attrValue) {
+              return;
+            }
+
             Object.assign(target, { [attrName]: attrValue });
             loopUpdateNodeAttr(target[NODE_ATTRIBUTES.PARENT], attrName, attrValue, callFn);
           }

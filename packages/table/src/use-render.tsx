@@ -25,7 +25,7 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
-import { computed, CSSProperties, ref, SetupContext, unref } from 'vue';
+import { computed, CSSProperties, nextTick, ref, SetupContext, unref } from 'vue';
 
 import BkCheckbox from '@bkui-vue/checkbox';
 import { useLocale } from '@bkui-vue/config-provider';
@@ -68,7 +68,15 @@ import {
   resolveWidth,
 } from './utils';
 
-export default (props: TablePropTypes, context: SetupContext<any>, tableResp: ITableResponse, styleRef, head) => {
+export default (
+  props: TablePropTypes,
+  context: SetupContext<any>,
+  tableResp: ITableResponse,
+  styleRef,
+  head,
+  root,
+  resetTableHeight,
+) => {
   const t = useLocale('table');
 
   const uuid = uuidv4();
@@ -103,6 +111,9 @@ export default (props: TablePropTypes, context: SetupContext<any>, tableResp: IT
 
       if (checked.length) {
         tableResp.setColumnAttributeBySettings(props.settings as ISettings, checked);
+        nextTick(() => {
+          resetTableHeight(root.value);
+        });
       }
 
       context.emit(EMIT_EVENTS.SETTING_CHANGE, { checked, size, height, fields });
