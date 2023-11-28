@@ -55,21 +55,23 @@ function getMatchedIndex(
   return { startIndex, height, diffHeight };
 }
 
-export function computedVirtualIndex(lineHeight, callback, pagination, el, event, height) {
-  if (!el) {
+export function computedVirtualIndex(lineHeight, callback, pagination, _el, event) {
+  if (!event.target) {
     return;
   }
-  const elScrollTop = el.scrollTop;
-  const elScrollLeft = el.scrollLeft;
-  const { scrollTop, count, groupItemCount, startIndex, endIndex, scrollLeft } = pagination;
-  const offsetHeight = /^\d+(\.\d*)?$/.test(height) ? height : el.offsetHeight;
+  const elScrollTop = event.target.scrollTop;
+  const elScrollLeft = event.target.scrollLeft;
+  const elScrollHeight = event.target.scrollHeight;
+  const elOffsetHeight = event.target.offsetHeight;
+
+  const { count, groupItemCount } = pagination;
   let targetStartIndex = 0;
   let targetEndIndex = 0;
   let translateY = 0;
 
   if (typeof lineHeight === 'number') {
     targetStartIndex = Math.floor(elScrollTop / lineHeight);
-    targetEndIndex = Math.ceil(offsetHeight / lineHeight) + targetStartIndex;
+    targetEndIndex = Math.ceil(elOffsetHeight / lineHeight) + targetStartIndex;
     translateY = elScrollTop % lineHeight;
   }
 
@@ -77,22 +79,15 @@ export function computedVirtualIndex(lineHeight, callback, pagination, el, event
     const startValue = getMatchedIndex(count, elScrollTop, groupItemCount, lineHeight);
     targetStartIndex = startValue.startIndex > 0 ? startValue.startIndex : 0;
     translateY = startValue.diffHeight;
-    const endValue = getMatchedIndex(count, offsetHeight, groupItemCount, lineHeight);
-    targetEndIndex = endValue.startIndex + targetStartIndex + 1;
+    const endValue = getMatchedIndex(count, elOffsetHeight, groupItemCount, lineHeight);
+    targetEndIndex = endValue.startIndex + targetStartIndex;
   }
 
-  if (
-    elScrollTop !== scrollTop ||
-    targetStartIndex !== startIndex ||
-    targetEndIndex !== endIndex ||
-    scrollLeft !== elScrollLeft
-  ) {
-    const bottom = el.scrollHeight - el.offsetHeight - el.scrollTop;
-    typeof callback === 'function' &&
-      callback(event, targetStartIndex, targetEndIndex, elScrollTop, translateY, elScrollLeft, {
-        bottom: bottom >= 0 ? bottom : 0,
-      });
-  }
+  const bottom = elScrollHeight - elOffsetHeight - elScrollTop;
+  typeof callback === 'function' &&
+    callback(event, targetStartIndex, targetEndIndex, elScrollTop, translateY, elScrollLeft, {
+      bottom: bottom >= 0 ? bottom : 0,
+    });
 
   return {
     targetStartIndex,
@@ -125,14 +120,12 @@ export class VisibleRender {
     }
 
     const { startIndex, endIndex, groupItemCount, count, scrollTop, scrollLeft } = pagination;
-    const { height } = this.binding;
     computedVirtualIndex(
       lineHeight,
       handleScrollCallback,
       { scrollTop, startIndex, endIndex, groupItemCount, count, scrollLeft },
       this.wrapper,
       e,
-      height,
     );
   }
 

@@ -106,6 +106,8 @@ export default defineComponent({
       tableSchema,
       styleRef,
       head,
+      root,
+      resetTableHeight,
     );
 
     const updateOffsetRight = () => {

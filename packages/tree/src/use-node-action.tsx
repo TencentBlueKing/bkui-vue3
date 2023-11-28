@@ -522,7 +522,7 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
       '--depth': dpth,
     });
 
-    const maxDeep = getNodeAttr(node, NODE_ATTRIBUTES.DEPTH) + 1;
+    const maxDeep = (getNodeAttr(node, NODE_ATTRIBUTES.DEPTH) ?? 0) + 1;
     return (
       new Array(maxDeep)
         .fill('')
