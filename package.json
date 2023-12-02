@@ -1,6 +1,6 @@
 {
   "name": "bkui-vue",
-  "version": "0.0.2-beta.91",
+  "version": "0.0.2-beta.98",
   "workspaces": {
     "packages": [
       "packages/!(**.bak)*",
@@ -52,7 +52,7 @@
     "@babel/plugin-transform-runtime": "~7.22.9",
     "@babel/preset-env": "~7.22.9",
     "@babel/preset-typescript": "~7.22.5",
-    "@blueking/magicbox-header": "~1.1.60",
+    "@blueking/magicbox-header": "~1.1.61",
     "@commitlint/cli": "~16.2.3",
     "@commitlint/config-conventional": "~16.2.1",
     "@types/jest": "~29.5.3",
@@ -89,6 +89,7 @@
     "jest-environment-jsdom": "~29.6.2",
     "jest-transform-stub": "~2.0.0",
     "lerna": "~4.0.0",
+    "less": "~4.2.0",
     "less-loader": "~10.2.0",
     "lint-staged": "~12.3.7",
     "markdown-it-container": "~3.0.0",

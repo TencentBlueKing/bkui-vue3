@@ -1021,10 +1021,10 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@blueking/magicbox-header@~1.1.60":
-  version "1.1.60"
-  resolved "https://registry.yarnpkg.com/@blueking/magicbox-header/-/magicbox-header-1.1.60.tgz#cc7ccb3f37c59e9406c786820031cd84b1ebf45a"
-  integrity sha512-urlhYMB53R4QHRwJJ898TjZOuQ2e4I4Y827kYgciQTFqDFnWWap5VItVGATaoVE70yAt77qbwSfQ/1Uans1ipA==
+"@blueking/magicbox-header@~1.1.61":
+  version "1.1.61"
+  resolved "https://registry.yarnpkg.com/@blueking/magicbox-header/-/magicbox-header-1.1.61.tgz#ae805f44d362d0b45d23a9c7e88ca038464da932"
+  integrity sha512-6GuEwsdGvVMUhNT90SkP79SiwIOWXhQyCQnfbO3mvBcoOVWVtWeve0rKPFoNa9KztzemkOLZQ6U8KN4K9BhAnA==
 
 "@commitlint/cli@~16.2.3":
   version "16.2.4"
@@ -8194,6 +8194,23 @@ less@~4.1.1:
   version "4.1.3"
   resolved "https://registry.yarnpkg.com/less/-/less-4.1.3.tgz#175be9ddcbf9b250173e0a00b4d6920a5b770246"
   integrity sha512-w16Xk/Ta9Hhyei0Gpz9m7VS8F28nieJaL/VyShID7cYvP6IL5oHeL6p4TXSDJqZE/lNv0oJ2pGVjJsRkfwm5FA==
+  dependencies:
+    copy-anything "^2.0.1"
+    parse-node-version "^1.0.1"
+    tslib "^2.3.0"
+  optionalDependencies:
+    errno "^0.1.1"
+    graceful-fs "^4.1.2"
+    image-size "~0.5.0"
+    make-dir "^2.1.0"
+    mime "^1.4.1"
+    needle "^3.1.0"
+    source-map "~0.6.0"
+
+less@~4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/less/-/less-4.2.0.tgz#cbefbfaa14a4cd388e2099b2b51f956e1465c450"
+  integrity sha512-P3b3HJDBtSzsXUl0im2L7gTO5Ubg8mEN6G8qoTS77iXxXX4Hvu4Qj540PZDvQ8V6DmX6iXo98k7Md0Cm1PrLaA==
   dependencies:
     copy-anything "^2.0.1"
     parse-node-version "^1.0.1"

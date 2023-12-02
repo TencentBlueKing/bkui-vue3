@@ -106,6 +106,8 @@ export default defineComponent({
       tableSchema,
       styleRef,
       head,
+      root,
+      resetTableHeight,
     );
 
     const updateOffsetRight = () => {
@@ -129,6 +131,13 @@ export default defineComponent({
         nextTick(() => {
           updateOffsetRight();
           resolveFixedColumns(tableOffsetRight.value);
+
+          /**
+           * 确保在所有数据渲染完毕再执行fix column计算
+           */
+          nextTick(() => {
+            resetTableHeight(root.value);
+          });
         });
       },
       { immediate: true, deep: true },
@@ -137,7 +146,9 @@ export default defineComponent({
     watch(
       () => [props.height, props.maxHeight, props.minHeight],
       () => {
-        resetTableHeight(root.value);
+        nextTick(() => {
+          resetTableHeight(root.value);
+        });
       },
     );
 
