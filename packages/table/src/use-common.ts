@@ -310,7 +310,6 @@ export const useClass = (
   const fixedContainerStyle = computed(() => ({
     right: hasScrollYRef.value ? `${SCROLLY_WIDTH}px` : 0,
     '--fix-height': `${fixHeight.value}px`,
-    '--fix-max-height': `${maxFixHeight.value}px`,
     ...footerStyle.value,
   }));
 
