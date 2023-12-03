@@ -1,7 +1,6 @@
 <template>
   <div class="row">
     <bk-table
-      :max-height="maxHeight"
       :columns="columns"
       :data="tableData"
       :settings="settings"
@@ -19,11 +18,7 @@
 
   import { DATA_COLUMNS, DATA_TABLE } from './options';
   const columns = [...DATA_COLUMNS];
-  /* const list = new Array(50).fill(null).map((_, index) => ({
-    text: `选项${index}`,
-    value: `选项${index}`,
-  }));
-  columns[2].filter.list = list;*/
+
   export default defineComponent({
     components: {},
     data() {
@@ -83,12 +78,7 @@
         console.log('mouse-leave', args);
       },
     },
-    mounted() {
-      // setTimeout(() => {
-      //   console.log('mounted');
-      //   this.maxHeight = 200;
-      // }, 1000);
-    },
+
   });
 </script>
 <style scoped>
