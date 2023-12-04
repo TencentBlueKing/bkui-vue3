@@ -171,8 +171,8 @@ const inputProps: IPropsTableItem[] = [
     name: 'stopPropagation',
     type: 'Boolean',
     default: true,
-    desc: '是否阻止事件冒泡'
-  }
+    desc: '是否阻止事件冒泡',
+  },
 ];
 // 输入框事件列表
 const inputEvents: IPropsTableItem[] = [

@@ -3,6 +3,8 @@
     :data="tableData"
     :is-row-select-enable="isRowSelectEnable"
     :checked="checked"
+    @selection-change="handleSelectionChange"
+    @select-all="handleSelectAll"
   >
     <bk-table-column
       type="selection"
@@ -43,6 +45,12 @@
     },
 
     methods: {
+      handleSelectAll(args) {
+        console.log('handleSelectAll', args);
+      },
+      handleSelectionChange(val) {
+        console.log('handleSelectionChange', val);
+      },
       handleSortBy(arg) {
         console.log('handleSortBy', arg);
       },

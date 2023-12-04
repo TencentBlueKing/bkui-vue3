@@ -1,6 +1,10 @@
 <template>
   <div style="width: 100%; overflow: auto">
-    <bk-input v-model="search.value" style="width: 400px;margin-left: 20px;" type="search"></bk-input>
+    <bk-input
+      v-model="search.value"
+      style="width: 400px;margin-left: 20px;"
+      type="search"
+    />
     <div class="row">
       <div class="column">
         <div class="attr-tag">
@@ -60,8 +64,8 @@
         treeData: BASIC_DATA,
         search: {
           value: '',
-          showChildNodes: true
-        }
+          showChildNodes: true,
+        },
       };
     },
   });

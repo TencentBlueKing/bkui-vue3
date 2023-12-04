@@ -7,24 +7,29 @@
       >
         随机数据
       </bk-button>
-      <span style="padding: 4px;"></span>
+      <span style="padding: 4px;" />
       <bk-button
         theme="primary"
         @click="() => handleHeightChange(100)"
       >
         设置高度 +
       </bk-button>
-      <span style="padding: 4px;"></span>
+      <span style="padding: 4px;" />
       <bk-button
         theme="primary"
         @click="() => handleHeightChange(-100)"
       >
         设置高度 -
       </bk-button>
-      <bk-input v-model="search.value" style="width: 400px;margin-left: 20px;" type="search"></bk-input>
+      <bk-input
+        v-model="search.value"
+        style="width: 400px;margin-left: 20px;"
+        type="search"
+      />
     </div>
     <div :style="{ height: `${height}px` }">
       <bk-tree
+        ref="refTree"
         :expand-all="true"
         :data="treeData"
         :search="search"
@@ -33,7 +38,6 @@
         level-line
         label="name"
         children="children"
-        ref="refTree"
       />
     </div>
   </div>
@@ -51,9 +55,14 @@
         height: 500,
         search: {
           value: '',
-          showChildNodes: true
-        }
+          showChildNodes: true,
+        },
       };
+    },
+    mounted() {
+      setTimeout(() => {
+        this.handleRandomRows();
+      }, 500);
     },
     methods: {
       handleRandomRows() {
@@ -73,13 +82,8 @@
       handleHeightChange(value) {
         this.height = this.height + value;
         this.$refs.refTree.reset();
-      }
+      },
     },
-    mounted() {
-      setTimeout(() => {
-        this.handleRandomRows();
-      }, 500);
-    }
   });
 </script>
 
