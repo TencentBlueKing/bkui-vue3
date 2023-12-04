@@ -147,7 +147,6 @@ export default defineComponent({
       () => [props.height, props.maxHeight, props.minHeight],
       () => {
         nextTick(() => {
-          console.log('props.minHeight');
           resetTableHeight(root.value);
         });
       },
