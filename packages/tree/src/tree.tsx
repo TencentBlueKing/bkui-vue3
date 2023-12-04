@@ -147,7 +147,7 @@ export default defineComponent({
       reset,
     });
 
-    const { renderEmpty } = useEmpty(props, ctx);
+    const { renderEmpty } = useEmpty(props);
     useNodeDrag(props, ctx, root, flatData);
     const renderTreeContent = (scopedData: any[]) => {
       if (scopedData.length) {
