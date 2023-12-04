@@ -588,7 +588,7 @@ export default defineComponent({
     };
     // 处理键盘事件
     const handleDocumentKeydown = (e: KeyboardEvent) => {
-      if (!isPopoverShow.value) return;
+      if (!isPopoverShow.value || enableVirtualRender.value) return;
 
       const availableOptions = options.value.filter(option => !option.disabled && option.visible);
       const index = availableOptions.findIndex(option => option.optionID === activeOptionValue.value);
