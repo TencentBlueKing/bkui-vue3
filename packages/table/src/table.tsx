@@ -111,6 +111,10 @@ export default defineComponent({
     );
 
     const updateOffsetRight = () => {
+      if (!root?.value) {
+        return;
+      }
+
       const $tableContent = root.value.querySelector(`.${resolveClassName('table-body-content')}`);
       const $table = $tableContent.querySelector('table');
       if ($table) {
