@@ -31,9 +31,9 @@
         use-shortcut-text
         format="yyyy-MM-dd HH:mm:ss"
         :shortcuts="shortcutsRange"
-        @change="handleChange2"
-
         :open="open2"
+
+        @change="handleChange2"
         @clear="handleClear2"
         @pick-success="handleOk2"
         @open-change="handleOpenChange2"

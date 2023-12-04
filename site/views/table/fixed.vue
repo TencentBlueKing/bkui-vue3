@@ -1,5 +1,5 @@
 <template>
-  <div >
+  <div>
     <bk-table
       :columns="columns"
       :data="tableData"
@@ -20,16 +20,8 @@
       return {
         tableData: DATA_FIX_TABLE,
         columns: [...DATA_FIX_COLUMNS],
-        maxHeight: 300
+        maxHeight: 300,
       };
-    },
-    methods: {
-      handleDblClick(...args) {
-        console.log(args);
-      },
-      handleScrollBottom(args) {
-        console.log('handleScrollBottom', args);
-      },
     },
     mounted() {
       // setTimeout(() => {
@@ -39,6 +31,14 @@
       //   this.tableData = [];
       //   this.tableData.push(...DATA_FIX_TABLE.slice(0, 100))
       // }, 3000)
-    }
+    },
+    methods: {
+      handleDblClick(...args) {
+        console.log(args);
+      },
+      handleScrollBottom(args) {
+        console.log('handleScrollBottom', args);
+      },
+    },
   });
 </script>
