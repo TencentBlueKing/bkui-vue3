@@ -97,6 +97,7 @@ const en = {
     pleaseSelect: 'Please select',
     enterKeywords: 'Please enter keywords',
     all: 'All',
+    selectAll: 'Select all',
   },
   table: {
     emptyText: 'No Data',

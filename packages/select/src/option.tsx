@@ -75,10 +75,23 @@ export default defineComponent({
     const isHover = computed(() => select?.activeOptionValue === optionID.value);
     const showSelectedIcon = computed(() => select?.showSelectedIcon && multiple.value);
     const selectedStyle = computed(() => select?.selectedStyle);
+    const isShowAll = computed(() => select?.isShowAll);
+    const allOptionId = computed(() => select?.allOptionId);
+    const isDisabled = computed(() => {
+      if (!isShowAll.value || optionID.value === allOptionId.value) return disabled.value;
+      // 全部选项需要禁用掉其他选项
+      const exitAllOptionId = select?.selected?.some(item => isEqual(item.value, allOptionId.value));
+      return disabled.value || (isShowAll.value && exitAllOptionId);
+    });
 
     const handleOptionClick = () => {
-      if (disabled.value) return;
-      select?.handleOptionSelected(proxy);
+      if (isDisabled.value) return;
+      if (isShowAll.value && allOptionId.value === optionID.value) {
+        // 全部选项
+        select?.handleToggleAll();
+      } else {
+        select?.handleOptionSelected(proxy);
+      }
     };
 
     const handleMouseEnter = () => {
@@ -106,6 +119,7 @@ export default defineComponent({
       selectedStyle,
       optionName,
       optionID,
+      isDisabled,
       handleOptionClick,
       handleMouseEnter,
       resolveClassName,
@@ -114,7 +128,7 @@ export default defineComponent({
   render() {
     const selectItemClass = classes({
       'is-selected': this.selected,
-      'is-disabled': this.disabled,
+      'is-disabled': this.isDisabled,
       'is-multiple': this.multiple,
       'is-hover': this.isHover,
       'is-checkbox': this.selectedStyle === SelectedTypeEnum.CHECKBOX,
@@ -129,7 +143,7 @@ export default defineComponent({
       >
         {this.showSelectedIcon && this.selectedStyle === SelectedTypeEnum.CHECKBOX && (
           <Checkbox
-            disabled={this.disabled}
+            disabled={this.isDisabled}
             class={this.resolveClassName('select-checkbox')}
             modelValue={this.selected}
           />

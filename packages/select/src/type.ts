@@ -43,12 +43,15 @@ export interface ISelectContext {
   activeOptionValue: any;
   showSelectedIcon: boolean;
   selectedStyle: SelectedTypeEnum;
+  isShowAll: Boolean;
+  allOptionId: any;
   register(key: any, option: OptionInstanceType): any;
   unregister(key: any): any;
   registerGroup(key: any, option: GroupInstanceType): any;
   unregisterGroup(key: any): any;
   handleOptionSelected(option: OptionInstanceType): void;
   handleGetLabelByValue(value: any): string | number;
+  handleToggleAll(): void;
 }
 
 export interface IOptionGroupContext {
