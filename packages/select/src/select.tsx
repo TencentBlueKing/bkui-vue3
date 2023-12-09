@@ -31,6 +31,7 @@ import merge from 'lodash/merge';
 import { PopoverPropTypes } from 'popover/src/props';
 import { computed, defineComponent, onMounted, PropType, provide, reactive, ref, toRefs, watch } from 'vue';
 
+import Checkbox from '@bkui-vue/checkbox';
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { clickoutside } from '@bkui-vue/directives';
 import { AngleUp, Close, Search } from '@bkui-vue/icon';
@@ -69,6 +70,8 @@ export default defineComponent({
     filterable: PropTypes.bool.def(false), // 是否支持搜索
     remoteMethod: PropTypes.func,
     scrollHeight: PropTypes.number.def(200),
+    showAll: PropTypes.bool.def(false), // 全部
+    allOptionId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]), // 全部选项ID
     showSelectAll: PropTypes.bool.def(false), // 全选
     popoverMinWidth: PropTypes.number.def(0), // popover最小宽度
     showOnInit: PropTypes.bool.def(false), // 是否默认显示popover
@@ -134,6 +137,8 @@ export default defineComponent({
       inputSearch,
       enableVirtualRender,
       showSelectAll,
+      showAll,
+      allOptionId,
       scrollHeight,
       list,
       displayKey,
@@ -289,6 +294,7 @@ export default defineComponent({
     const isShowSelectAll = computed(
       () => multiple.value && showSelectAll.value && (!searchKey.value || !filterable.value),
     );
+    const isShowAll = computed(() => multiple.value && showAll.value);
     // 虚拟滚动高度 12 上下边距，32 显示全选时的高度
     const virtualHeight = computed(() => scrollHeight.value - 12 - (isShowSelectAll.value ? 32 : 0));
     // 当前空状态时显示文案
@@ -501,11 +507,11 @@ export default defineComponent({
       emit('clear', multiple.value ? [] : '');
       hidePopover();
     };
-    // 全选/取消全选
     const handleSelectedAllOptionMouseEnter = () => {
       activeOptionValue.value = '';
     };
-    const handleToggleAll = () => {
+    // 全选/取消全选
+    const handleToggleSelectAll = () => {
       if (isAllSelected.value) {
         selected.value = [];
       } else {
@@ -523,6 +529,24 @@ export default defineComponent({
             label: item[displayKey.value],
           });
         });
+      }
+      emitChange(selected.value.map(item => item.value));
+      focusInput();
+    };
+    // 全部/取消全部
+    const handleToggleAll = () => {
+      if (!isShowAll.value) return;
+
+      const index = selected.value.findIndex(item => item.value === allOptionId.value);
+      if (index > -1) {
+        selected.value = [];
+      } else {
+        selected.value = [
+          {
+            value: allOptionId.value as string,
+            label: t.value.all,
+          },
+        ];
       }
       emitChange(selected.value.map(item => item.value));
       focusInput();
@@ -650,6 +674,8 @@ export default defineComponent({
         selected,
         activeOptionValue,
         showSelectedIcon,
+        isShowAll,
+        allOptionId,
         selectedStyle: selectedStyle as any, // todo 类型推断
         register,
         unregister,
@@ -657,6 +683,7 @@ export default defineComponent({
         unregisterGroup,
         handleOptionSelected,
         handleGetLabelByValue,
+        handleToggleAll,
       }),
     );
 
@@ -669,6 +696,7 @@ export default defineComponent({
     });
 
     return {
+      t,
       selected,
       isInput,
       options,
@@ -692,11 +720,13 @@ export default defineComponent({
       curContentText,
       isGroup,
       searchKey,
+      isShowAll,
       isShowSelectAll,
       virtualHeight,
       virtualList,
       isCollapseTags,
       popoverConfig,
+      isAllSelected,
       focusInput,
       setHover,
       cancelHover,
@@ -706,7 +736,7 @@ export default defineComponent({
       handleClear,
       hidePopover,
       showPopover,
-      handleToggleAll,
+      handleToggleSelectAll,
       handleOptionSelected,
       handleClickOutside,
       handleScroll,
@@ -765,6 +795,38 @@ export default defineComponent({
         );
       }
       return this.$slots.prefix ? () => this.$slots.prefix?.() : undefined;
+    };
+
+    // 全选
+    const renderSelectAll = () => {
+      if (!this.isShowSelectAll) return;
+      return (
+        <li
+          class={this.resolveClassName('select-option')}
+          onMouseenter={this.handleSelectedAllOptionMouseEnter}
+          onClick={this.handleToggleSelectAll}
+        >
+          {this.selectedStyle === 'checkbox' && (
+            <Checkbox
+              class={this.resolveClassName('select-checkbox')}
+              modelValue={this.isAllSelected}
+              indeterminate={!this.isAllSelected && !!this.selected.length}
+            />
+          )}
+          {this.t.selectAll}
+        </li>
+      );
+    };
+    // 全部
+    const renderAll = () => {
+      // 全选和全部是互斥的，只能选一个
+      if (this.isShowSelectAll || !this.isShowAll) return;
+      return (
+        <Option
+          id={this.allOptionId}
+          name={this.t.all}
+        />
+      );
     };
 
     const renderTriggerInput = () => {
@@ -868,15 +930,8 @@ export default defineComponent({
               class={this.resolveClassName('select-options')}
               v-show={this.isShowSelectContent}
             >
-              {this.isShowSelectAll && (
-                <li
-                  class={this.resolveClassName('select-option')}
-                  onMouseenter={this.handleSelectedAllOptionMouseEnter}
-                  onClick={this.handleToggleAll}
-                >
-                  {this.localSelectAllText}
-                </li>
-              )}
+              {renderSelectAll()}
+              {renderAll()}
               {this.enableVirtualRender ? (
                 <VirtualRender
                   list={this.virtualList}
@@ -932,6 +987,7 @@ export default defineComponent({
         </div>
       </div>
     );
+
     return (
       <div class={selectClass}>
         <BKPopover

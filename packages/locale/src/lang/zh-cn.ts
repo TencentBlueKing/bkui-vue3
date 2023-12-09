@@ -99,6 +99,7 @@ const zhCn: Language = {
     pleaseSelect: '请选择',
     enterKeywords: '请输入关键字',
     all: '全部',
+    selectAll: '全选',
   },
   table: {
     emptyText: '暂无数据',
