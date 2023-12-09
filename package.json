@@ -1,6 +1,7 @@
 {
   "name": "bkui-vue",
-  "version": "0.0.2-beta.103",
+  "version": "0.0.2-beta.106",
+  "private": true,
   "workspaces": {
     "packages": [
       "packages/!(**.bak)*",
@@ -21,7 +22,8 @@
     "unsafe-perm": true
   },
   "scripts": {
-    "prepublishOnly": "npm run build",
+    "prepublishOnly": "npm run build && node scripts/pre-publish.js",
+    "postpublish": "node scripts/post-publish.js",
     "prepare": "husky install",
     "dev": "vite serve site --force",
     "build": "run-s build:dist build:lib",
