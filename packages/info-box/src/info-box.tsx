@@ -58,6 +58,8 @@ import Dialog from '../../dialog/src/dialog';
 export interface ModalFuncProps {
   isShow?: boolean;
   width?: string | number;
+  height?: string | number;
+  'ext-cls': string | string[];
   type?: 'primary' | 'warning' | 'success' | 'danger';
   infoType?: 'success' | 'danger' | 'warning' | 'loading';
   title?: string | (() => VNode | string) | VNode;
@@ -75,6 +77,8 @@ export interface ModalFuncProps {
   footerAlign?: 'left' | 'center' | 'right';
   contentAlign?: 'left' | 'center' | 'right';
   dialogType?: 'show' | 'operation' | 'confirm';
+  showMask?: boolean;
+  quickClose?: boolean;
 }
 
 const InfoBox = (config: Partial<ModalFuncProps>) => {

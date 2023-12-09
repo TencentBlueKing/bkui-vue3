@@ -25,13 +25,13 @@
  */
 import BkException from '@bkui-vue/exception';
 
-export default (props, { slots }) => ({
+export default props => ({
   renderEmpty: (type: '404' | '403' | '500' | 'building' | 'empty' | 'search-empty' | 'login') => (
     <BkException
       scene='part'
       type={type}
     >
-      {slots.default?.() ?? props.emptyText}
+      {props.emptyText}
     </BkException>
   ),
 });

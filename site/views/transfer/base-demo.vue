@@ -1,6 +1,6 @@
 <template>
   <bk-transfer
-    v-model:targetList="targetList"
+    v-model="targetList"
     :source-list="list"
     :display-key="'service_name'"
     sort-key="service_name"

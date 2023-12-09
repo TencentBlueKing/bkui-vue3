@@ -588,7 +588,7 @@ export default defineComponent({
     };
     // 处理键盘事件
     const handleDocumentKeydown = (e: KeyboardEvent) => {
-      if (!isPopoverShow.value) return;
+      if (!isPopoverShow.value || enableVirtualRender.value) return;
 
       const availableOptions = options.value.filter(option => !option.disabled && option.visible);
       const index = availableOptions.findIndex(option => option.optionID === activeOptionValue.value);
@@ -623,7 +623,7 @@ export default defineComponent({
         // 选择选项
         case 'Enter': {
           const { value } = e.target as HTMLInputElement;
-          if (allowCreate.value && value) return;
+          if ((allowCreate.value && value) || e.target === searchRef.value) return;
           const option = optionsMap.value.get(activeOptionValue.value);
           handleOptionSelected(option);
           break;

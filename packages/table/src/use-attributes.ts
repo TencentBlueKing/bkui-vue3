@@ -180,6 +180,7 @@ export default (props: TablePropTypes): ITableResponse => {
 
       Object.assign(formatData.columnSchema.get(col), {
         [COLUMN_ATTRIBUTE.COL_SPAN]: { skipCol, skipColumnNum, skipColLen },
+        [COLUMN_ATTRIBUTE.COL_MIN_WIDTH]: resolveMinWidth(col),
       });
     });
   };

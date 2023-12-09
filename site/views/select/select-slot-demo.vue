@@ -222,10 +222,23 @@
             v-for="(item, index) in datasource"
             :id="item.value"
             :key="index"
-            :name="item.label">
-            <div style="width: 100%;" @click.prevent.stop>
-              <bk-input style="width: 100px;" v-if="editOption === item.value" @enter="addOptions"></bk-input>
-              <div @click="handleEditOption(item.value)" v-else>{{ item.label }}</div>
+            :name="item.label"
+          >
+            <div
+              style="width: 100%;"
+              @click.prevent.stop
+            >
+              <bk-input
+                v-if="editOption === item.value"
+                style="width: 100px;"
+                @enter="addOptions"
+              />
+              <div
+                v-else
+                @click="handleEditOption(item.value)"
+              >
+                {{ item.label }}
+              </div>
             </div>
           </bk-option>
         </bk-select>
@@ -297,17 +310,17 @@
     }, 2000);
   };
 
-  const editOption = ref('')
+  const editOption = ref('');
   const handleEditOption = (value) => {
-    editOption.value = value
-  }
+    editOption.value = value;
+  };
   const addOptions = (value) => {
     datasource.value.push({
       value,
-      label: value
-    })
-    editOption.value = ''
-  }
+      label: value,
+    });
+    editOption.value = '';
+  };
 </script>
 <style lang="postcss" scoped>
 

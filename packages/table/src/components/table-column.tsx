@@ -94,6 +94,12 @@ export default defineComponent({
 
       this.updateColumnDefineByParent();
     },
+    copyProps(props: ITableColumn) {
+      return Object.keys(props ?? {}).reduce((result, key) => {
+        const target = key.replace(/-(\w)/g, (_, letter) => letter.toUpperCase());
+        return Object.assign(result, { [target]: props[key] });
+      }, {});
+    },
     updateColumnDefineByParent() {
       const fn = () => {
         // @ts-ignore
@@ -115,7 +121,7 @@ export default defineComponent({
             let skipValidateKey0 = true;
             if (node.type?.name === 'TableColumn') {
               skipValidateKey0 = Object.hasOwnProperty.call(node.props || {}, 'key');
-              const resolveProp = Object.assign({ index }, node.props, {
+              const resolveProp = Object.assign({ index }, this.copyProps(node.props), {
                 field: node.props.prop || node.props.field,
                 render: node.children?.default,
               });
@@ -137,11 +143,11 @@ export default defineComponent({
       }
     },
     unmountColumn() {
-      const resolveProp = Object.assign({}, this.$props, {
+      const resolveProp = Object.assign({}, this.copyProps(this.$props), {
         field: this.$props.prop || this.$props.field,
         render: this.$slots.default,
       });
-      this.initColumns(resolveProp as Column, true);
+      this.initColumns(resolveProp as any, true);
     },
   },
   render() {
