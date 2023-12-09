@@ -20,6 +20,8 @@
       class="bk-select"
       multiple
       selected-style="checkbox"
+      show-all
+      allOptionId="all"
     >
       <bk-option
         v-for="(item, index) in datasource"
