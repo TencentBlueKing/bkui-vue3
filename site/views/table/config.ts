@@ -192,8 +192,8 @@ export default [
       { name: 'column-filter', desc: '当表格的筛选条件发生变化的时候会触发该事件', params: '{ checked, column, index }' },
       { name: 'column-pick', desc: '当表格的选中一列的时候会触发该事件,(prop column-pick启用)', params: 'column[]' },
       { name: 'select-all', desc: '当用户手动勾选全选 Checkbox 时触发的事件', params: '{ checked, data }' },
-      { name: 'select', desc: '当用户手动勾选数据行的 Checkbox 时触发的事件', params: '{ row, index, checked, data }' },
-      { name: 'selection-change', desc: '当选择项发生变化时会触发该事件', params: '{ row, isAll, index, checked, data }' },
+      { name: 'select', desc: '当用户手动勾选数据行的 Checkbox 时触发的事件，此事件等同于`selection-change`事件', params: '{ row, index, checked, data }' },
+      { name: 'selection-change', desc: '当行选择项发生变化时会触发该事件，全选操作不会触发此事件，全选操作请监听`select-all`事件', params: '{ row, index, checked, data }' },
     ],
   },
   {

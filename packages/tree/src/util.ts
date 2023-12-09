@@ -223,3 +223,11 @@ export const resolvePropIsMatched = (node, prop, id) => {
 
   return node === prop;
 };
+
+export const showCheckbox = (props: TreePropTypes, node?: any) => {
+  if (typeof props.showCheckbox === 'function') {
+    return props.showCheckbox(node);
+  }
+
+  return props.showCheckbox;
+};

@@ -7,12 +7,31 @@
       >
         随机数据
       </bk-button>
-      <bk-input v-model="search.value" style="width: 400px;margin-left: 20px;" type="search"></bk-input>
+      <span style="padding: 4px;" />
+      <bk-button
+        theme="primary"
+        @click="() => handleHeightChange(100)"
+      >
+        设置高度 +
+      </bk-button>
+      <span style="padding: 4px;" />
+      <bk-button
+        theme="primary"
+        @click="() => handleHeightChange(-100)"
+      >
+        设置高度 -
+      </bk-button>
+      <bk-input
+        v-model="search.value"
+        style="width: 400px;margin-left: 20px;"
+        type="search"
+      />
     </div>
-    <div style="height: 400px;">
+    <div :style="{ height: `${height}px` }">
       <bk-tree
+        ref="refTree"
+        :expand-all="true"
         :data="treeData"
-        :height="400"
         :search="search"
         virtual-render
         show-checkbox
@@ -33,11 +52,17 @@
     data() {
       return {
         treeData: [...BASIC_DATA],
+        height: 500,
         search: {
           value: '',
-          showChildNodes: true
-        }
+          showChildNodes: true,
+        },
       };
+    },
+    mounted() {
+      setTimeout(() => {
+        this.handleRandomRows();
+      }, 500);
     },
     methods: {
       handleRandomRows() {
@@ -54,12 +79,11 @@
         }
         this.treeData = randomChildren();
       },
+      handleHeightChange(value) {
+        this.height = this.height + value;
+        this.$refs.refTree.reset();
+      },
     },
-    mounted() {
-      setTimeout(() => {
-        this.handleRandomRows();
-      }, 500);
-    }
   });
 </script>
 

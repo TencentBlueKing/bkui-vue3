@@ -126,6 +126,10 @@ export default defineComponent({
       },
     );
 
+    const reset = () => {
+      root.value?.reset();
+    };
+
     ctx.expose({
       handleTreeNodeClick,
       isNodeChecked,
@@ -140,9 +144,10 @@ export default defineComponent({
       setSelect,
       asyncNodeClick,
       getData,
+      reset,
     });
 
-    const { renderEmpty } = useEmpty(props, ctx);
+    const { renderEmpty } = useEmpty(props);
     useNodeDrag(props, ctx, root, flatData);
     const renderTreeContent = (scopedData: any[]) => {
       if (scopedData.length) {

@@ -104,17 +104,24 @@ export default defineComponent({
       groupItemCount: props.groupItemCount,
     });
 
+    const calcList = ref([]);
+
     /** 指令触发Scroll事件，计算当前startIndex & endIndex & scrollTop & translateY */
     const handleScrollCallback = (event, startIndex, endIndex, scrollTop, translateY, scrollLeft, pos) => {
-      pagination.startIndex = startIndex;
-      pagination.endIndex = endIndex;
-      pagination.scrollTop = scrollTop;
-
-      // 设置偏移量，避免行高较大时出现卡顿式的滚动
-      pagination.translateY = translateY;
-      pagination.translateX = scrollLeft;
-      pagination.scrollLeft = scrollLeft;
-      Object.assign(pagination.pos, pos || {});
+      const translateX = scrollLeft;
+      Object.assign(pagination, { startIndex, endIndex, scrollTop, translateX, translateY, scrollLeft, pos });
+      let start = pagination.startIndex * props.groupItemCount;
+      let end = (pagination.endIndex + props.preloadItemCount) * props.groupItemCount;
+      const total = localList.value.length;
+      if (total < end) {
+        const contentLength = end - start;
+        calcList.value = localList.value.slice(start, total);
+        end = total + 1;
+        start = end - contentLength;
+        start = start < 0 ? 0 : start;
+      }
+      const value = localList.value.slice(start, end + 10);
+      calcList.value = value;
       if (event) {
         ctx.emit('content-scroll', [event, pagination]);
       }
@@ -127,14 +134,6 @@ export default defineComponent({
 
     onUnmounted(() => {
       instance?.uninstall();
-    });
-
-    const resolveHeight = computed(() => {
-      if (/^\d+(\.\d*)?(px)?$/.test(`${props.height}`)) {
-        return Number(`${props.height}`.replace(/px$/, ''));
-      }
-
-      return props.height;
     });
 
     watch(
@@ -187,18 +186,9 @@ export default defineComponent({
 
     /** 列表数据重置之后的处理事项 */
     const afterListDataReset = (_scrollToOpt = { left: 0, top: 0 }) => {
+      const el = refRoot.value as HTMLElement;
       nextTick(() => {
-        const el = refRoot.value as HTMLElement;
-        const { targetStartIndex, targetEndIndex, elScrollTop, translateY, elScrollLeft } = computedVirtualIndex(
-          props.lineHeight,
-          handleScrollCallback,
-          pagination,
-          el,
-          null,
-          resolveHeight.value,
-        );
-
-        handleScrollCallback(null, targetStartIndex, targetEndIndex, elScrollTop, translateY, elScrollLeft, {});
+        computedVirtualIndex(props.lineHeight, handleScrollCallback, pagination, el, { target: el });
       });
     };
 
@@ -210,14 +200,6 @@ export default defineComponent({
 
       return (props.list || []).map((item: any, index) => ({ ...item, $index: index }));
     });
-
-    /** 计算出来的当前页数据 */
-    const calcList = computed(() =>
-      localList.value.slice(
-        pagination.startIndex * props.groupItemCount,
-        (pagination.endIndex + props.preloadItemCount) * props.groupItemCount,
-      ),
-    );
 
     /** 展示列表内容区域样式 */
     const innerContentStyle = computed(() =>

@@ -203,7 +203,7 @@ export const treeProps = {
   /**
    * 是否支持多选
    */
-  showCheckbox: PropTypes.bool.def(false),
+  showCheckbox: PropTypes.oneOfType([PropTypes.bool, PropTypes.func]).def(false),
 
   checked: PropTypes.arrayOf(PropTypes.any).def([]),
 

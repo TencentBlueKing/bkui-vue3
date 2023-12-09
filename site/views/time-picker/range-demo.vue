@@ -4,7 +4,7 @@
     :placeholder="'选择时间范围'"
     :type="'timerange'"
     format="HH:mm"
-    allowCrossDay
+    allow-cross-day
   />
 </template>
 

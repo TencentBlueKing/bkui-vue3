@@ -30,7 +30,7 @@ import { onMounted, reactive, watch } from 'vue';
 import { NODE_ATTRIBUTES, NODE_SOURCE_ATTRS } from './constant';
 import { TreePropTypes } from './props';
 import useNodeAsync from './use-node-async';
-import { resolvePropIsMatched } from './util';
+import { resolvePropIsMatched, showCheckbox } from './util';
 
 export default (props: TreePropTypes) => {
   /**
@@ -63,6 +63,10 @@ export default (props: TreePropTypes) => {
         const target = treeSchema.get(node);
         if (Object.prototype.hasOwnProperty.call(target, attrName)) {
           if (typeof callFn === 'function' && Reflect.apply(callFn, self, [target, attrName, attrValue, node])) {
+            if (target[attrName] === attrValue) {
+              return;
+            }
+
             Object.assign(target, { [attrName]: attrValue });
             loopUpdateNodeAttr(target[NODE_ATTRIBUTES.PARENT], attrName, attrValue, callFn);
           }
@@ -152,8 +156,9 @@ export default (props: TreePropTypes) => {
       return isItemOpened && isParentOpened;
     }
 
-    function isCheckedNode(node, uuid) {
-      if (!props.showCheckbox) {
+    function isCheckedNode(node, uuid, attributes) {
+      const isChecked = showCheckbox(props, { data: node, attributes });
+      if (!isChecked) {
         return false;
       }
 
@@ -204,12 +209,7 @@ export default (props: TreePropTypes) => {
               isOpened = isNodeOpend(uuid, item, parent);
             }
 
-            const isChecked = isCheckedNode(item, uuid);
-            if (isChecked) {
-              checkedList.push(item);
-            }
-
-            treeSchema.set(item, {
+            const attributes = {
               [NODE_ATTRIBUTES.DEPTH]: depth,
               [NODE_ATTRIBUTES.INDEX]: i,
               [NODE_ATTRIBUTES.UUID]: uuid,
@@ -221,15 +221,21 @@ export default (props: TreePropTypes) => {
               [NODE_ATTRIBUTES.IS_SELECTED]: isCachedTreeNodeSelected(uuid, item),
               [NODE_ATTRIBUTES.IS_MATCH]: getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_MATCH),
               [NODE_ATTRIBUTES.IS_OPEN]: isOpened,
-              [NODE_ATTRIBUTES.IS_CHECKED]: isChecked,
+              [NODE_ATTRIBUTES.IS_CHECKED]: undefined,
               [NODE_ATTRIBUTES.IS_CACHED]: getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_CACHED),
               [NODE_ATTRIBUTES.IS_ASYNC]: getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_ASYNC),
               [NODE_ATTRIBUTES.IS_LOADING]: getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_LOADING),
               [NODE_ATTRIBUTES.IS_INDETERMINATE]: false,
-            });
+            };
 
-            order += 1;
+            attributes[NODE_ATTRIBUTES.IS_CHECKED] = isCheckedNode(item, uuid, attributes);
+            if (attributes[NODE_ATTRIBUTES.IS_CHECKED]) {
+              checkedList.push(item);
+            }
+
+            treeSchema.set(item, attributes);
             outputData.push(item);
+            order += 1;
 
             if (Object.prototype.hasOwnProperty.call(item, children)) {
               flatten(item[children] || [], depth + 1, item, currentPath);
@@ -239,7 +245,7 @@ export default (props: TreePropTypes) => {
       }
     }
     flatten(treeData ?? data);
-    if (props.showCheckbox) {
+    if (props.showCheckbox !== false) {
       checkedList?.forEach((value: any) => {
         loopUpdateNodeAttr(value, NODE_ATTRIBUTES.IS_CHECKED, true, loopUpdateCheckedEvent);
       });
