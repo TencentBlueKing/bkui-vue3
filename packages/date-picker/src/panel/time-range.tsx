@@ -76,8 +76,8 @@ export default defineComponent({
     const parentProvide = inject(timePickerKey);
 
     const showSeconds = computed(() => !(props.format || '').match(/mm$/));
-    const leftDatePanelLabel = computed(() => fecha.format(parentProvide.dates[0], props.format));
-    const rightDatePanelLabel = computed(() => fecha.format(parentProvide.dates[1], props.format));
+    const leftDatePanelLabel = computed(() => fecha.format(dateStart, props.format));
+    const rightDatePanelLabel = computed(() => fecha.format(dateEnd, props.format));
 
     watch(
       () => props.value,
@@ -89,7 +89,10 @@ export default defineComponent({
     );
 
     onMounted(() => {
-      if (parentProvide && parentProvide.parentName === 'DatePanel') {
+      if (
+        parentProvide &&
+        (parentProvide.parentName === 'DatePanel' || parentProvide.parentName === 'DateRangePanel')
+      ) {
         state.showDate = true;
       }
     });
