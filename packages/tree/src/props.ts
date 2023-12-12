@@ -176,7 +176,7 @@ export const treeProps = {
       /**
        * 是否显示匹配项的子节点
        */
-      showChildNodes: PropTypes.bool.def(true),
+      showChildNodes: PropTypes.bool.def(false),
     }),
     PropTypes.string,
     PropTypes.number,
