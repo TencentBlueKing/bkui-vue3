@@ -91,13 +91,13 @@
            * 默认 tree
            */
           resultType: 'tree',
+          showChildNodes: false
         };
       },
     },
     methods: {
       searchFn(searchValue, itemvalue, item) {
-        const match = searchValue === '' || searchValue === itemvalue;
-        console.log('search fn', searchValue, item, match);
+        const match = new RegExp(searchValue, 'i').test(itemvalue);
         return match;
       },
     },
