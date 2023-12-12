@@ -100,7 +100,9 @@ const tooltips: ObjectDirective = {
     });
   },
   updated(el: HTMLElement, binding: DirectiveBinding) {
-    nodeList.get(el).opts = getOpts(binding);
+    if (nodeList.get(el)) {
+      nodeList.get(el).opts = getOpts(binding);
+    }
   },
   unmounted(el) {
     hide(el);
