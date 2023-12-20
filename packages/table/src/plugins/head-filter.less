@@ -7,6 +7,7 @@
   color: #c4c6cc;
   cursor: pointer;
   align-items: center;
+
   &:last-of-type {
     margin-right: -10px;
   }
@@ -69,42 +70,9 @@
 
       .content-footer {
         display: flex;
-        height: 42px;
-        padding: 0 10px;
+        padding: 12px;
         border-top: solid 1px #dcdee5;
-        justify-content: center;
         align-items: center;
-
-        span {
-          display: inline-flex;
-          height: 100%;
-          padding: 6px 12px;
-          font-size: 14px;
-          line-height: 22px;
-          color: @primary-color;
-          cursor: pointer;
-          align-items: center;
-
-          &.disabled {
-            color: transparent;
-            cursor: auto;
-          }
-
-          &.btn-filter-split {
-            width: 1px;
-            height: calc(100% - 12px);
-            padding: 6px 0;
-            cursor: default;
-            background: #f0f1f5;
-          }
-
-          &.btn-filter-reset {
-            &.disable {
-              color: @gray-color;
-              cursor: not-allowed;
-            }
-          }
-        }
       }
     }
   }

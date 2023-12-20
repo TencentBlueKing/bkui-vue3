@@ -25,6 +25,7 @@
  */
 import { computed, defineComponent, nextTick, reactive, ref, toRefs, watch } from 'vue';
 
+import BkButton from '@bkui-vue/button';
 import BkCheckbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { Funnel } from '@bkui-vue/icon';
@@ -164,12 +165,14 @@ export default defineComponent({
       }
 
       return (
-        <span
-          class='btn-filter-save'
+        <BkButton
+          theme='primary'
+          size='small'
+          style='width: 56px; margin-right: 8px;'
           onClick={handleBtnSaveClick}
         >
           {text}
-        </span>
+        </BkButton>
       );
     };
 
@@ -180,12 +183,14 @@ export default defineComponent({
       }
 
       return (
-        <span
-          class={['btn-filter-reset', state.checked.length ? '' : 'disable']}
+        <BkButton
+          style='width: 56px;'
+          size='small'
+          disabled={state.checked.length === 0}
           onClick={handleBtnResetClick}
         >
           {text}
-        </span>
+        </BkButton>
       );
     };
 
@@ -268,7 +273,6 @@ export default defineComponent({
               </BkCheckboxGroup>
               <div class='content-footer'>
                 {renderSaveBtn()}
-                <span class='btn-filter-split'></span>
                 {renderResetBtn()}
               </div>
             </div>
