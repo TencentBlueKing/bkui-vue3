@@ -71,8 +71,9 @@ export default defineComponent({
     const sizeMap = {
       small: { width: 12, height: 12 },
       large: { width: 18, height: 18 },
+      huge: { width: 24, height: 24 },
     };
-    const rateSize = sizeMap[props.size] || { width: 15, height: 16 };
+    const rateSize = sizeMap[props.size] || { width: 16, height: 16 };
 
     const starStyle = computed(() => {
       const integer = Math.floor(props.modelValue);

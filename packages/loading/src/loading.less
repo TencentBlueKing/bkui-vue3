@@ -7,24 +7,28 @@
 @ovalHeight: 8px;
 @ovalGap: 20px;
 @titleMarginTop: 8px;
+@spinOvalGap: 24px;
 
 @miniDotSize: 3px;
 @miniDotGap: 3px;
 @miniOvalWidth: 2px;
 @miniOvalHeight: 3px;
 @miniOvalGap: 8px;
+@miniSpinOvalGap: 8px;
 
 @smallDotSize: 6px;
 @smallDotGap: 6px;
 @smallOvalWidth: 4px;
 @smallOvalHeight: 5px;
 @smallOvalGap: 11px;
+@smallSpinOvalGap: 16px;
 
 @largeDotSize: 20px;
 @largeDotGap: 12px;
 @largeOvalWidth: 8px;
 @largeOvalHeight: 12px;
 @largeOvalGap: 26px;
+@largeSpinOvalGap: 34px;
 
 .create-rotate(@time, @deg) {
   transform: rotate(@deg);
@@ -108,7 +112,7 @@
     animation-duration: 1.2s;
     animation-iteration-count: infinite;
     animation-name: fade;
-    transform-origin: center @ovalGap;
+    transform-origin: center @spinOvalGap;
   }
 
   .@{bk-prefix}-loading-mask {
@@ -129,7 +133,7 @@
         .loading-theme(@value);
       }
     })
-    
+
       each(@selectors, {
       .dot-@{index} {
         background-color: @value;
@@ -155,8 +159,8 @@
       position: relative;
       display: inline-flex;
       justify-content: center;
-      width: 2 * @ovalGap;
-      height: 2 * @ovalGap;
+      width: 2 * @spinOvalGap;
+      height: 2 * @spinOvalGap;
     }
 
     each(@sizeSelectors, {
@@ -165,11 +169,12 @@
     @sizedOvalWidth: '@{value}OvalWidth';
     @sizedOvalHeight: '@{value}OvalHeight';
     @sizedOvalGap: '@{value}OvalGap';
-  
+    @sizedSpinOvalGap: '@{value}SpinOvalGap';
+
     &.@{bk-prefix}-loading-size-@{value} {
       .@{bk-prefix}-spin-indicator  {
-        height: 2 * @@sizedOvalGap;
-        width: 2 * @@sizedOvalGap;
+        height: 2 * @@sizedSpinOvalGap;
+        width: 2 * @@sizedSpinOvalGap;
       }
       .dot {
         width: @@sizedDotSize;
@@ -183,12 +188,12 @@
         width: @@sizedOvalWidth;
         height: @@sizedOvalHeight;
         border-radius: @@sizedOvalHeight;
-        transform-origin: center @@sizedOvalGap;
+        transform-origin: center @@sizedSpinOvalGap;
       }
       .@{bk-prefix}-loading-title {
         font-size: if(@value = small, @font-size-base, @font-size-medium);
       }
-    } 
+    }
   })
     .@{bk-prefix}-loading-title {
       margin-top: @titleMarginTop;

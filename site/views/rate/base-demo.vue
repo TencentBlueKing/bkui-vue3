@@ -2,6 +2,7 @@
   <bk-rate
     :model-value="disableRate"
     :editable="false"
+    size="default"
   />
 </template>
 

@@ -2,13 +2,13 @@
   <div>
     <bk-input
       v-model="val"
-      class="mb10"
+      class="mb8"
       autocomplete="true"
       autofocus
     />
     <bk-input
       v-model="val"
-      class="mb10"
+      class="mb8"
       type="password"
       autocomplete="false"
     />
@@ -19,3 +19,9 @@
   import { ref } from 'vue';
   const val = ref('');
 </script>
+
+<style lang="postcss" scoped>
+.mb8 {
+  margin-bottom: 8px;
+}
+</style>

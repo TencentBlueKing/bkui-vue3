@@ -213,7 +213,7 @@ export function InputBehaviorType() {
 
 export class PropTypes extends propTypesNS {
   static size() {
-    const defaultList = ['small', 'default', 'large'] as const;
+    const defaultList = ['small', 'default', 'large', 'huge'] as const;
     type CommonSizeEnum = ElementType<typeof defaultList>;
     return toType<CommonSizeEnum>('Size', {
       validator: (val: CommonSizeEnum) => {

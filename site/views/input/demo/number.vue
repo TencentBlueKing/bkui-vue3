@@ -2,7 +2,7 @@
   <div>
     <bk-input
       v-model="val"
-      class="mb10"
+      class="mb8"
       type="number"
       size="small"
       :min="1"
@@ -11,7 +11,7 @@
     />
     <bk-input
       v-model="val1"
-      class="mb10"
+      class="mb8"
       type="number"
       :min="1"
       :max="100"
@@ -21,7 +21,7 @@
     />
     <bk-input
       v-model="val"
-      class="mb10"
+      class="mb8"
       disabled
       type="number"
       size="large"
@@ -41,5 +41,8 @@
 <style lang="less">
   .mb10 {
     margin-bottom: 10px;
+  }
+  .mb8 {
+    margin-bottom: 8px;
   }
 </style>
