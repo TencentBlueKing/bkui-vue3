@@ -43,7 +43,7 @@
         type="textarea"
       />
     </bk-form-item>
-    <bk-form-item>
+    <bk-form-item style="margin-top: 32px;">
       <bk-button theme="primary">
         提交
       </bk-button>

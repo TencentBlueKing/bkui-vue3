@@ -1,7 +1,7 @@
 <template>
   <div style="width: 100%">
     <div class="mb10">
-      <bk-progress :percent="0" />
+      <bk-progress :percent="0" size="small" />
     </div>
     <div class="mb10">
       <bk-progress :percent="28" />
@@ -10,12 +10,14 @@
       <bk-progress
         :theme="'warning'"
         :percent="46"
+        size="large"
       />
     </div>
     <div class="mb10">
       <bk-progress
         :theme="'danger'"
         :percent="73"
+        size="huge"
       />
     </div>
     <div class="mb10">

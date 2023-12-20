@@ -48,7 +48,7 @@ const ratePropsJson: IPropsTableItem[] = [
     type: 'String',
     default: 'default',
     desc: '尺寸',
-    optional: ['small', 'default', 'large'],
+    optional: ['small', 'default', 'large', 'huge'],
   },
   {
     name: 'editable',
