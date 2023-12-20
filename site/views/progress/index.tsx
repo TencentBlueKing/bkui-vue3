@@ -65,7 +65,7 @@ const progressPropsJson: IPropsTableItem[] = [
     type: 'String',
     default: '',
     desc: '线性进度条大小',
-    optional: ['small', 'large'],
+    optional: ['small', 'large', 'huge'],
   },
   {
     name: 'width',
@@ -192,7 +192,7 @@ export default defineComponent({
         <DemoBox
           title='大小设置'
           subtitle=''
-          desc='可以使用 size 属性来配置进度条的尺寸，可接受 small large，也可配置strokeWidth线宽'
+          desc='可以使用 size 属性来配置进度条的尺寸，可接受 small large huge，也可配置strokeWidth线宽'
           componentName='progress'
           demoName='size-demo'
         >

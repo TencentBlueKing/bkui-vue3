@@ -367,7 +367,9 @@ export class BkMaskManager {
     if (!div) {
       isExist = false;
       div = this.createMask();
-      div.addEventListener('click', e => this.handleMaskClick(e), true);
+
+      // 选中 sideslider content 中的内容，将光标移动到 mask 处再松开鼠标，此时也会触发 mask 的 click，因此改为 mousedown
+      div.addEventListener('mousedown', e => this.handleMaskClick(e), true);
     }
 
     return {

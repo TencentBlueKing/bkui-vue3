@@ -26,7 +26,8 @@
 
 import { computed, onMounted, reactive, ref } from 'vue';
 
-import { classes, resolveClassName } from '@bkui-vue/shared';
+import { usePrefix } from '@bkui-vue/config-provider';
+import { classes } from '@bkui-vue/shared';
 
 import { ITableColumn } from './components/table-column';
 import { BORDER_OPTION, LINE_HEIGHT, SCROLLY_WIDTH } from './const';
@@ -56,6 +57,7 @@ export const useClass = (
   TableSchema?: ITableResponse,
   pageData?: any[],
 ) => {
+  const { resolveClassName } = usePrefix();
   const { getColumns } = useColumn(props, targetColumns);
   // const autoHeight = ref(LINE_HEIGHT * 10);
   const fixHeight = ref(LINE_HEIGHT * 10);

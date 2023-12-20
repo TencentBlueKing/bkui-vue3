@@ -325,7 +325,7 @@ export default defineComponent({
           placement: 'bottom-start',
           isShow: isPopoverShow.value,
           reference: selectTagInputRef.value,
-          offset: 6,
+          offset: 4,
           popoverDelay: 0,
           renderType: RenderType.AUTO,
         },

@@ -34,7 +34,7 @@ export default defineComponent({
 
   props: {
     rate: PropTypes.number.def(0),
-    width: PropTypes.number.def(15),
+    width: PropTypes.number.def(16),
     height: PropTypes.number.def(16),
     editable: PropTypes.bool.def(true),
     hoverRate: PropTypes.number.def(0),
