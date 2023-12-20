@@ -15,4 +15,7 @@
   .mb10 {
     margin-bottom: 10px;
   }
+  .mb8 {
+    margin-bottom: 8px;
+  }
 </style>

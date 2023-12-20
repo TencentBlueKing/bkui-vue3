@@ -1,7 +1,7 @@
 <template>
   <div>
     <bk-input
-      class="mb10"
+      class="mb8"
     >
       <template #prefix>
         <span class="input-icon">
@@ -10,7 +10,7 @@
       </template>
     </bk-input>
 
-    <bk-input class="mb10">
+    <bk-input class="mb8">
       <template #suffix>
         <span class="input-icon suffix-icon">
           <info-line />
@@ -26,6 +26,9 @@
 </script>
 
 <style lang="postcss" scoped>
+.mb8 {
+  margin-bottom: 8px;
+}
 .input-icon {
   display: flex;
   padding-left: 8px;
