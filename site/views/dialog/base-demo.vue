@@ -16,7 +16,10 @@
       @confirm="() => exampleSetting.dialog.isShow = false"
     >
       <div>primary 主题，点击遮罩不会关闭弹框，esc 按键会关闭弹框</div>
-      <bk-button @click="() => exampleSetting.dialog.isShow2 = true">
+      <bk-button
+        style="margin-top: 8px;"
+        @click="() => exampleSetting.dialog.isShow2 = true"
+      >
         Show-2
       </bk-button>
       <bk-dialog
