@@ -31,7 +31,7 @@
     margin: 0 auto;
 
     .card-content-wrapper {
-      padding: 20px 0;
+      padding: 16px 0 24px 0;
 
       p {
         margin: 0;
