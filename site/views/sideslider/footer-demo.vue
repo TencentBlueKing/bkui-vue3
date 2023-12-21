@@ -12,14 +12,17 @@
         <div :style="{height: `${contentHeight}px`}" />
       </template>
       <template #footer>
-        <div style="padding-left: 20px;">
+        <div style="padding-left: 24px;">
           <bk-button
             theme="primary"
             @click="contentHeight = 1000"
           >
             设置内容高度1000px
           </bk-button>
-          <bk-button @click="contentHeight = 400">
+          <bk-button
+            style="margin-left: 8px;"
+            @click="contentHeight = 400"
+          >
             设置内容高度400px
           </bk-button>
         </div>
