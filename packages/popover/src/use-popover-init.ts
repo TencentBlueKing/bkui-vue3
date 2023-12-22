@@ -110,7 +110,8 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
   const updateBoundary = () => {
     const { elReference, root } = resolvePopElements();
     if (isFullscreen.value) {
-      boundary.value = fullScreenTarget?.value;
+      const { parentNode } = elReference || root || {};
+      boundary.value = fullScreenTarget?.value || parentNode;
       return;
     }
 
@@ -149,6 +150,7 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
     if (!document.fullscreenElement) {
       clearFullscreenTag();
     }
+
     updateFullscreen(e.target);
     updateBoundary();
     updatePopover(null, props);
