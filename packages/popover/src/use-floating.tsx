@@ -42,7 +42,7 @@ import {
 
 import { EMIT_EVENTS } from './const';
 import { PopoverPropTypes } from './props';
-import usePlatform from './use-platform';
+// import usePlatform from './use-platform';
 import { contentAsHTMLElement } from './utils';
 
 /**
@@ -153,10 +153,10 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
 
     if (isAutoPlacementAvailable()) {
       middleware.push(autoPlacement());
-    } else {
-      middleware.unshift(inline());
-      middleware.push(flip());
     }
+
+    middleware.unshift(inline());
+    middleware.push(flip());
 
     if (isHideMiddlewareAvailable()) {
       options.middleware.push(hide());
@@ -168,18 +168,18 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
      * 在弹出的全屏元素中，元素相对位置有别于document下面元素
      * 全屏模式下面，需要自定义当前元素的一个platform
      */
-    if (isElementFullScreen() || props.isVirtualEl) {
-      const { getElementRects, getDimensions, getClippingRect } = usePlatform(fullScreenTarget.value);
+    // if (isElementFullScreen() || props.isVirtualEl) {
+    //   const { getElementRects, getDimensions, getClippingRect } = usePlatform(fullScreenTarget.value);
 
-      Object.assign(options, {
-        platform: {
-          ...(props?.platform ?? {}),
-          getElementRects,
-          getDimensions,
-          getClippingRect,
-        },
-      });
-    }
+    //   Object.assign(options, {
+    //     platform: {
+    //       ...(props?.platform ?? {}),
+    //       getElementRects,
+    //       getDimensions,
+    //       getClippingRect,
+    //     },
+    //   });
+    // }
     return options;
   };
 
