@@ -1,5 +1,8 @@
 <template>
-  <div style="text-align: left">
+  <div
+
+    style="text-align: left"
+  >
     <div class="bk-popover-position-top">
       <bk-popover
         content="Top Left 文字提示"
@@ -110,10 +113,14 @@
       </div>
     </div>
 
-    <div class="bk-popover-position-bottom">
+    <div
+      class="bk-popover-position-bottom"
+    >
       <bk-popover
+        trigger="click"
+        boundary="#fullscreenId"
         content="Bottom Left 文字提示"
-        placement="bottom-start"
+        placement="bottom"
         theme="light"
       >
         <bk-button>下左</bk-button>
@@ -135,6 +142,7 @@
     </div>
   </div>
 </template>
+
 
 <style lang="postcss">
   .bk-popover-position-top,
