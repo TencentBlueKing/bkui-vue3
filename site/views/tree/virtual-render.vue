@@ -1,6 +1,6 @@
 <template>
   <div style="width: 100%;overflow: hidden;">
-    <div style="padding: 15px 0;display: flex;">
+    <div style="display: flex;padding: 15px 0;">
       <bk-button
         theme="primary"
         @click="handleRandomRows"
