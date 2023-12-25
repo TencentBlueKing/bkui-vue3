@@ -40,14 +40,28 @@ import useTreeInit from './use-tree-init';
 import { getLabel, getTreeStyle, resolveNodeItem } from './util';
 
 export type TreePropTypes = defineTypes;
+
+export type ITreeScrollTopOption = {
+  id?: string;
+  index?: number;
+};
+
 export default defineComponent({
   name: 'Tree',
   props: treeProps,
   emits: TreeEmitEventsType,
   setup(props, ctx) {
     const { flatData, onSelected, registerNextLoop } = useTreeInit(props);
-    const { checkNodeIsOpen, isRootNode, isNodeOpened, isNodeChecked, isNodeMatched, hasChildNode, getNodePath } =
-      useNodeAttribute(flatData, props);
+    const {
+      checkNodeIsOpen,
+      isRootNode,
+      isNodeOpened,
+      isNodeChecked,
+      isNodeMatched,
+      hasChildNode,
+      getNodePath,
+      getNodeId,
+    } = useNodeAttribute(flatData, props);
 
     const { searchFn, isSearchActive, refSearch, isSearchDisabled, isTreeUI, showChildNodes } = useSearch(props);
     const matchedNodePath = reactive([]);
@@ -130,6 +144,44 @@ export default defineComponent({
       root.value?.reset();
     };
 
+    /**
+     * 将制定元素滚动到顶部
+     * @param option
+     */
+    const scrollToTop = (option?: ITreeScrollTopOption) => {
+      if (option === undefined || option === null) {
+        root.value.fixToTop({ index: 1 });
+        return;
+      }
+
+      if (props.nodeKey && Object.prototype.hasOwnProperty.call(option, props.nodeKey)) {
+        root.value.fixToTop({
+          index: renderData.value.findIndex(node => node[props.nodeKey] === option[props.nodeKey]) + 1,
+        });
+        return;
+      }
+
+      if (option.id !== undefined && option.id !== null) {
+        root.value.fixToTop({
+          index: renderData.value.findIndex(node => node[props.nodeKey] === option.id) + 1,
+        });
+        return;
+      }
+
+      if (option.index >= 0) {
+        root.value.fixToTop({ index: option.index });
+        return;
+      }
+
+      const id = getNodeId(option);
+      if (id) {
+        root.value.fixToTop({
+          index: renderData.value.findIndex(node => getNodeId(node) === id) + 1,
+        });
+        return;
+      }
+    };
+
     ctx.expose({
       handleTreeNodeClick,
       isNodeChecked,
@@ -142,6 +194,7 @@ export default defineComponent({
       setNodeAction,
       setNodeOpened,
       setSelect,
+      scrollToTop,
       asyncNodeClick,
       getData,
       reset,

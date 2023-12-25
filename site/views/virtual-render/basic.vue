@@ -7,9 +7,13 @@
       >
         随机1000-9999行数据
       </bk-button>
+      <bk-button @click="handleFixToTop">
+        fixToTop: index = {{ Math.ceil(randomRows.length / 2) }}
+      </bk-button>
       <span style="padding: 0 30px">当前行数：{{ randomRows.length }}</span>
     </div>
     <bk-virtual-render
+      ref="refFixToTop"
       :list="randomRows"
       :line-height="30"
       :height="300"
@@ -113,6 +117,9 @@
               create_time: `2018-05-25 15:02:24.${index}`,
             })),
         );
+      },
+      handleFixToTop() {
+        this.$refs.refFixToTop.fixToTop({ index: Math.ceil(this.randomRows.length / 2) });
       },
     },
   });
