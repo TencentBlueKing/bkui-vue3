@@ -117,8 +117,6 @@
       class="bk-popover-position-bottom"
     >
       <bk-popover
-        trigger="click"
-        boundary="#fullscreenId"
         content="Bottom Left 文字提示"
         placement="bottom"
         theme="light"
