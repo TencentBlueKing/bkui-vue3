@@ -32,7 +32,7 @@
 
 import throttle from 'lodash/throttle';
 
-function getMatchedIndex(
+export function getMatchedIndex(
   maxCount: number,
   maxHeight: number,
   groupItemCount: number,
