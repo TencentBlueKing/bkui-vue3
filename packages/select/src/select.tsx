@@ -368,9 +368,18 @@ export default defineComponent({
         setTimeout(() => {
           focusInput();
           initActiveOptionValue();
+          scrollActiveOptionIntoView();
         }, 10); // 等待Popover content出来，options加载完成
       }
     });
+    // 滚动到当前选中的options中
+    const scrollActiveOptionIntoView = () => {
+      const optionsDom = contentRef.value?.querySelectorAll?.('.is-selected');
+      optionsDom[0]?.scrollIntoView({
+        block: 'center',
+        behavior: 'smooth',
+      });
+    };
 
     // 初始化当前悬浮的option项
     const initActiveOptionValue = () => {
