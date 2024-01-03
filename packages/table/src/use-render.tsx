@@ -106,11 +106,9 @@ export default (
 
     const handleSettingsChanged = (arg: any) => {
       const { checked = [], size, height, fields } = arg;
-      tableResp.formatData.settings.size = size;
-      tableResp.formatData.settings.height = height;
-
+      tableResp.updateSettings(arg);
+      tableResp.setColumnAttributeBySettings(props.settings as ISettings, checked);
       if (checked.length) {
-        tableResp.setColumnAttributeBySettings(props.settings as ISettings, checked);
         nextTick(() => {
           resetTableHeight(root.value);
         });
@@ -125,7 +123,6 @@ export default (
           class='table-head-settings'
           settings={props.settings}
           columns={columns.value as Column[]}
-          rowHeight={props.rowHeight as unknown as number}
           onChange={handleSettingsChanged}
         >
           {context.slots.setting?.()}
