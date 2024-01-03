@@ -354,8 +354,9 @@ export const getElementTextWidth = (element: HTMLElement, text?: string) => {
 };
 
 export const isColumnHidden = (settingFields, column, checked) => {
+  const getFieldValue = field => field.field ?? field.id;
   const isSettingField = (col: Column) =>
-    settingFields.some(field => field.field === resolvePropVal(col, ['field', 'type'], [col]));
+    settingFields.some(field => getFieldValue(field) === resolvePropVal(col, ['field', 'type'], [col]));
   return (
     isSettingField(column) && checked.length && !checked.includes(resolvePropVal(column, ['field', 'type'], [column]))
   );
