@@ -127,7 +127,6 @@ export default class TableRender {
           class='table-head-settings'
           settings={this.props.settings}
           columns={this.columns as Column[]}
-          rowHeight={this.props.rowHeight as unknown as number}
           onChange={handleSettingsChanged}
         >
           {this.context.slots.setting?.()}
