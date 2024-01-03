@@ -37,7 +37,7 @@ import {
   TABLE_ROW_ATTRIBUTE,
 } from './const';
 import usePagination from './plugins/use-pagination';
-import { Column, IColSortBehavior, Settings, SortScope, TablePropTypes } from './props';
+import { Column, Field, IColSortBehavior, Settings, SortScope, TablePropTypes } from './props';
 import { getRowId, getRowValue, isColumnHidden, resolveColumnSortProp, resolveColumnSpan } from './utils';
 
 export type ITableFormatData = {
@@ -48,6 +48,8 @@ export type ITableFormatData = {
   settings: {
     size: string;
     height: number;
+    fields: Field[];
+    checked: string[];
   };
   layout: {
     bottom: number;
@@ -95,24 +97,25 @@ export type ITableResponse = {
   hasCheckedRow: () => boolean;
   setRowSelectionAll: (val: boolean) => void;
   setRowIndeterminate: () => void;
+  updateSettings: (settings?: Settings, rowHeight?: number) => void;
   pageData: any[];
   localPagination: any;
   formatData: ITableFormatData;
 };
 
 export default (props: TablePropTypes): ITableResponse => {
-  const { size } = props.settings as Settings;
-  const height = SETTING_SIZE[size] || SETTING_SIZE.small;
+  const getDefaultSettings = () => {
+    const { size, fields = [], checked = [] } = props.settings as Settings;
+    const height = SETTING_SIZE[size] ?? props.rowHeight ?? SETTING_SIZE.small;
+    return { size, height, fields, checked };
+  };
 
   const formatData: ITableFormatData = reactive({
     data: [...props.data],
     dataSchema: new WeakMap(),
     columns: [...props.columns],
     columnSchema: new WeakMap(),
-    settings: {
-      size,
-      height,
-    },
+    settings: getDefaultSettings(),
     layout: {
       hasScrollY: false,
       bottom: 0,
@@ -122,6 +125,19 @@ export default (props: TablePropTypes): ITableResponse => {
   });
 
   const { pageData, localPagination, resolvePageData, multiFilter, sort, resetStartEndIndex } = usePagination(props);
+
+  const updateSettings = (settings?: Settings, rowHeight?: number) => {
+    if (settings) {
+      const { size, fields = [], checked = [] } = settings;
+      const height = rowHeight ?? SETTING_SIZE[size] ?? props.rowHeight ?? SETTING_SIZE.small;
+      Object.assign(formatData.settings, { size, height, fields, checked });
+      return;
+    }
+
+    if (rowHeight) {
+      formatData.settings.height = rowHeight;
+    }
+  };
 
   const resolveMinWidth = (col: Column) => {
     if (/^\d+/.test(`${col.minWidth}`)) {
@@ -138,9 +154,6 @@ export default (props: TablePropTypes): ITableResponse => {
     }
     return minWidth;
   };
-
-  const checked = (props.settings as Settings)?.checked || [];
-  const settingFields = (props.settings as Settings)?.fields || [];
 
   /**
    * Format columns
@@ -165,7 +178,7 @@ export default (props: TablePropTypes): ITableResponse => {
           [COLUMN_ATTRIBUTE.COL_MIN_WIDTH]: resolveMinWidth(col),
           [COLUMN_ATTRIBUTE.LISTENERS]: new Map(),
           [COLUMN_ATTRIBUTE.WIDTH]: col.width,
-          [COLUMN_ATTRIBUTE.IS_HIDDEN]: isColumnHidden(settingFields, col, checked),
+          [COLUMN_ATTRIBUTE.IS_HIDDEN]: isColumnHidden(formatData.settings.fields, col, formatData.settings.checked),
           [COLUMN_ATTRIBUTE.COL_SORT_TYPE]: type,
           [COLUMN_ATTRIBUTE.COL_SORT_FN]: fn,
           [COLUMN_ATTRIBUTE.COL_FILTER_FN]: undefined,
@@ -685,6 +698,7 @@ export default (props: TablePropTypes): ITableResponse => {
     sortData,
     isCheckedAll,
     hasCheckedRow,
+    updateSettings,
     pageData,
     localPagination,
     formatData,
