@@ -32,8 +32,8 @@ import { CloseLine, CogShape } from '@bkui-vue/icon/';
 import Popover from '@bkui-vue/popover';
 import { PropTypes } from '@bkui-vue/shared';
 
-import { createDefaultSizeList, LINE_HEIGHT, SETTING_SIZE } from '../const';
-import { IColumnType, ITableSettings, RowHeightFunctionNumberType, Settings, SizeItem } from '../props';
+import { createDefaultSizeList, SETTING_SIZE } from '../const';
+import { IColumnType, ITableSettings, Settings, SizeItem } from '../props';
 import { resolvePropVal } from '../utils';
 
 export default defineComponent({
@@ -41,7 +41,6 @@ export default defineComponent({
   props: {
     settings: ITableSettings,
     columns: PropTypes.arrayOf(IColumnType).def([]),
-    rowHeight: RowHeightFunctionNumberType.def(LINE_HEIGHT),
   },
   emits: ['change'],
   setup(props, { emit, slots }) {
@@ -58,7 +57,7 @@ export default defineComponent({
           fields: props.columns.map((col: any) => Object.assign({}, col, { field: col.field || col.type })),
           checked: [],
           limit: 0,
-          size: SETTING_SIZE.small,
+          size: 'small',
           sizeList: defaultSizeList,
           showLineHeight: true,
         };
@@ -67,7 +66,7 @@ export default defineComponent({
       return props.settings;
     });
     const activeSize = ref(localSettings.value.size || 'small');
-    const activeHeight = ref(props.rowHeight);
+    const activeHeight = ref(SETTING_SIZE.small);
 
     const checkedFields = ref(localSettings.value.checked || []);
     const className = resolveClassName('table-settings');
