@@ -18,6 +18,7 @@
     </bk-form-item>
     <bk-form-item
       label="性别"
+      property="sex"
       required
     >
       <bk-radio-group>
@@ -85,6 +86,7 @@
   const formRef = ref('');
   const formData = ref({
     name: '',
+    sex: '',
     school: '',
   });
   const rules = {

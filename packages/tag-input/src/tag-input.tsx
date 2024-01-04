@@ -1006,6 +1006,7 @@ export default defineComponent({
                                 tpl={this.tpl}
                                 searchKey={this.searchKey}
                                 searchKeyword={this.curInputValue}
+                                disabled={item.disabled}
                               />
                             </li>
                           ))}
@@ -1026,6 +1027,7 @@ export default defineComponent({
                           tpl={this.tpl}
                           searchKey={this.searchKey}
                           searchKeyword={this.curInputValue}
+                          disabled={group.disabled}
                         />
                       </li>
                     ),

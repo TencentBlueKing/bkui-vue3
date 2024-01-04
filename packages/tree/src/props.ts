@@ -80,7 +80,7 @@ export const treeProps = {
   /**
    * 相邻级节点间的水平缩进，单位为像素
    */
-  indent: PropTypes.number.def(18),
+  indent: PropTypes.number.def(16),
 
   /**
    * 设置行高

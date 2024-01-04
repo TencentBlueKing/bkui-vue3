@@ -39,11 +39,12 @@ export default defineComponent({
     tpl: {
       type: Function,
     },
+    disabled: PropTypes.bool.def(false),
   },
   render() {
     const { resolveClassName } = usePrefix();
     const highlightKeyword = (value: string): string => {
-      if (this.searchKeyword) {
+      if (this.searchKeyword && !this.disabled) {
         const keywordReg = new RegExp(`(${this.searchKeyword})`, 'i');
         return value.replace(keywordReg, '<strong class="highlight-text">$1</strong>');
       }

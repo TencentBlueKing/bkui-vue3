@@ -53,6 +53,7 @@ export default defineComponent({
         <DemoTitle
           name='Resize Layout'
           desc='通过拉伸侧栏调整布局大小'
+          designLink='https://bkdesign.bk.tencent.com/design/156'
         />
         <DemoBox
           title='基础用法'

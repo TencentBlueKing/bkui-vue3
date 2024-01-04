@@ -32,7 +32,7 @@
         id = id + 1;
         return {
           id,
-          name: `Option - ${id}`,
+          name: `Option${id}`,
           leaf: level >= 2, // 为了更准确渲染，尽量通过`leaf`字段，告知是否是叶子节点；
         };
       });

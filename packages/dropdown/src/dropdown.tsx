@@ -101,7 +101,10 @@ export default defineComponent({
         >
           {{
             default: () => (
-              <div class={`${this.resolveClassName('dropdown-reference')}`}> {this.$slots.default?.()} </div>
+              <div class={[`${this.resolveClassName('dropdown-reference')}`, this.disabled ? 'disabled' : '']}>
+                {' '}
+                {this.$slots.default?.()}{' '}
+              </div>
             ),
             content: () => (
               <div class={`${this.resolveClassName('dropdown-content')}`}> {this.$slots.content?.()} </div>
