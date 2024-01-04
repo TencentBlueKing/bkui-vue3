@@ -394,7 +394,7 @@ export default defineComponent({
           {props.showInterval
             ? intervals.value.map((interval, index) => {
                 if (index === 0 || index === intervals.value.length - 1) {
-                  return <div>asdads</div>;
+                  return null;
                 }
                 return (
                   <div
