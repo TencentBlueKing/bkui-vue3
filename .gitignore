@@ -40,3 +40,6 @@ themes.variable.less
 .vscode
 .husky/pre-push
 .husky/pre-push-bkcodeai
+
+
+pre-*-bkcodeai
