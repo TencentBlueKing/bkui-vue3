@@ -336,6 +336,10 @@ export default defineComponent({
       focus() {
         inputRef.value.focus();
       },
+      blur() {
+        inputRef.value.blur();
+        isFocused.value = false;
+      },
       clear,
     });
 
