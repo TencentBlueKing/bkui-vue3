@@ -141,7 +141,7 @@
     &.done {
       .@{bk-prefix}-step-title,
       .@{bk-prefix}-step-description {
-        color: @default-color;
+        color: #9EA2AB;
       }
 
       .@{bk-prefix}-steps-icon {
@@ -152,6 +152,16 @@
       .@{bk-prefix}-step-iconerror {
         .@{bk-prefix}-steps-icon {
           font-size: 14px;
+        }
+      }
+
+      &:has(+ .current.is-error),
+      &:has(+ .current.@{bk-prefix}-step-error) {
+        .@{bk-prefix}-step-title,
+        .@{bk-prefix}-step-indicator {
+          &::after {
+            background-image: linear-gradient(to right, @danger-color 50%, transparent 0%);
+          }
         }
       }
     }
@@ -181,7 +191,7 @@
       }
     }
 
-    &.isError {
+    &.is-error {
       .@{bk-prefix}-step-indicator {
         background-color: @danger-color !important;
         border-color: @danger-color !important;
