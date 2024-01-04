@@ -44,7 +44,7 @@ export default [
         optional: [],
       },
       { name: 'children', type: 'String', default: 'children', desc: '子节点 Key, 用于读取子节点', optional: [] },
-      { name: 'indent', type: 'Number', default: '18', desc: '相邻级节点间的水平缩进，单位为像素', optional: [] },
+      { name: 'indent', type: 'Number', default: '16', desc: '相邻级节点间的水平缩进，单位为像素', optional: [] },
       { name: 'line-height', type: 'Number', default: '32', desc: '设置行高', optional: [] },
       {
         name: 'level-line',
