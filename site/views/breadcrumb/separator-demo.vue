@@ -3,6 +3,7 @@
     <div style="margin-bottom: 10px">
       分割符：<bk-input
         v-model="separator"
+        clearable
         style="width: 200px"
       />
     </div>
@@ -21,7 +22,7 @@
         </template>
       </bk-breadcrumb-item>
       <bk-breadcrumb-item>
-        <bk-input clearable />
+        <a href="https://magicbox.bk.tencent.com/static_api/v3/main/index.html" target="_blank">MagicBox</a>
       </bk-breadcrumb-item>
     </bk-breadcrumb>
   </div>
@@ -47,8 +48,12 @@
         { title: '滑块开关', link: { path: 'switcher' } },
         { title: '面包屑', link: null },
       ];
+      const list1 = [
+        { title: 'MagicBox', link: null }
+      ];
       return {
         list,
+        list1,
         separator,
       };
     },

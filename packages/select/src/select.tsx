@@ -95,7 +95,7 @@ export default defineComponent({
     displayKey: PropTypes.string.def('label'),
     withValidate: PropTypes.bool.def(true),
     showSelectedIcon: PropTypes.bool.def(true), // 多选时是否显示勾选ICON
-    inputSearch: PropTypes.bool.def(true), // 是否采用输入框支持搜索的方式
+    inputSearch: PropTypes.bool.def(false), // 是否采用输入框支持搜索的方式
     enableVirtualRender: PropTypes.bool.def(false), // 是否开启虚拟滚动（List模式下才会生效）
     allowEmptyValues: PropTypes.array.def([]), // 允许的空值作为options选项
     autoFocus: PropTypes.bool.def(false), // 挂载的时候是否自动聚焦输入框
@@ -345,6 +345,7 @@ export default defineComponent({
     const handleBlur = () => {
       if (!isFocus.value) return;
       isFocus.value = false;
+      blurInput();
       emit('blur');
     };
 
@@ -368,9 +369,18 @@ export default defineComponent({
         setTimeout(() => {
           focusInput();
           initActiveOptionValue();
+          scrollActiveOptionIntoView();
         }, 10); // 等待Popover content出来，options加载完成
       }
     });
+    // 滚动到当前选中的options中
+    const scrollActiveOptionIntoView = () => {
+      const optionsDom = contentRef.value?.querySelectorAll?.('.is-selected');
+      optionsDom[0]?.scrollIntoView({
+        block: 'center',
+        behavior: 'smooth',
+      });
+    };
 
     // 初始化当前悬浮的option项
     const initActiveOptionValue = () => {
@@ -471,6 +481,7 @@ export default defineComponent({
           emitChange(selected.value.map(item => item.value));
           emit('select', option.optionID);
         }
+        focusInput();
       } else {
         // 单选
         selected.value = [
@@ -482,8 +493,8 @@ export default defineComponent({
         emitChange(option.optionID);
         emit('select', option.optionID);
         hidePopover();
+        handleBlur();
       }
-      focusInput();
     };
     // 聚焦输入框
     const focusInput = () => {
@@ -496,6 +507,16 @@ export default defineComponent({
           } else {
             inputRef.value?.focus();
           }
+        }
+      }, 0);
+    };
+    // 失焦输入框
+    const blurInput = () => {
+      setTimeout(() => {
+        if (multipleMode.value === 'tag') {
+          selectTagInputRef.value?.blur();
+        } else {
+          inputRef.value?.blur();
         }
       }, 0);
     };

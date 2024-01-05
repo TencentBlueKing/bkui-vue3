@@ -139,9 +139,11 @@
     }
 
     &.done {
-      .@{bk-prefix}-step-title,
-      .@{bk-prefix}-step-description {
+      .@{bk-prefix}-step-title {
         color: @default-color;
+      }
+      .@{bk-prefix}-step-description {
+        color: #979ba5;
       }
 
       .@{bk-prefix}-steps-icon {
@@ -152,6 +154,16 @@
       .@{bk-prefix}-step-iconerror {
         .@{bk-prefix}-steps-icon {
           font-size: 14px;
+        }
+      }
+
+      &:has(+ .current.is-error),
+      &:has(+ .current.@{bk-prefix}-step-error) {
+        .@{bk-prefix}-step-title,
+        .@{bk-prefix}-step-indicator {
+          &::after {
+            background-image: linear-gradient(to right, @danger-color 50%, transparent 0%);
+          }
         }
       }
     }
@@ -181,7 +193,7 @@
       }
     }
 
-    &.isError {
+    &.is-error {
       .@{bk-prefix}-step-indicator {
         background-color: @danger-color !important;
         border-color: @danger-color !important;
@@ -286,6 +298,15 @@
         background-repeat: repeat-y;
         background-size: 1px 6px;
         content: '';
+      }
+
+      &.done {
+        &:has(+ .current.is-error),
+        &:has(+ .current.@{bk-prefix}-step-error) {
+          &::after {
+            background-image: linear-gradient(@danger-color 50%, transparent 0%);
+          }
+        }
       }
 
       .@{bk-prefix}-step-title {
