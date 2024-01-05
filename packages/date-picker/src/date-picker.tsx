@@ -116,6 +116,9 @@ export default defineComponent({
       timeEnterMode: true,
       shortcut,
       onSelectionModeChange,
+
+      // for 编辑时，mouseleave 事件中缓存的 value
+      tmpValue: initialValue,
     });
 
     onSelectionModeChange(props.type);
@@ -346,6 +349,8 @@ export default defineComponent({
       //   return;
       // }
       state.showClose = false;
+      emitChange(props.type);
+      state.internalValue = state.tmpValue;
     };
 
     const emitChange = type => {
@@ -376,6 +381,20 @@ export default defineComponent({
         state.internalValue = newDate;
       } else {
         state.forceInputRerender = state.forceInputRerender + 1;
+      }
+    };
+
+    const handleInputInput = e => {
+      const isArrayValue = props.type.includes('range') || props.multiple;
+      const oldValue = visualValue.value;
+      const newValue = e.target.value;
+      const newDate = parseDate(newValue, props.type, props.multiple, props.format);
+      const valueToTest = isArrayValue ? newDate : newDate[0];
+      const isDisabled = props.disabledDate?.(valueToTest);
+      const isValidDate = newDate.reduce((valid, date) => valid && date instanceof Date, true);
+
+      if (newValue !== oldValue && !isDisabled && isValidDate) {
+        state.tmpValue = newDate;
       }
     };
 
@@ -591,6 +610,7 @@ export default defineComponent({
       handleBlur,
       handleKeydown,
       handleInputChange,
+      handleInputInput,
       handleClear,
       onPick,
       onPickSuccess,
@@ -685,6 +705,7 @@ export default defineComponent({
           onBlur={this.handleBlur}
           onKeydown={this.handleKeydown}
           onChange={this.handleInputChange}
+          onInput={this.handleInputInput}
         />
         {this.clearable && this.showClose ? (
           <Close
