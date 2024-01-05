@@ -74,6 +74,9 @@ export default defineComponent({
     const focus = () => {
       inputRef.value?.focus();
     };
+    const blur = () => {
+      inputRef.value?.blur();
+    };
     const handleInput = e => {
       emit('update:modelValue', e.target.value);
     };
@@ -140,6 +143,7 @@ export default defineComponent({
       inputRef,
       handleRemoveTag,
       focus,
+      blur,
       handleInput,
       handleKeydown,
       resolveClassName,
