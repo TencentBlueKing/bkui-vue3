@@ -139,9 +139,11 @@
     }
 
     &.done {
-      .@{bk-prefix}-step-title,
+      .@{bk-prefix}-step-title {
+        color: @default-color;
+      }
       .@{bk-prefix}-step-description {
-        color: #9EA2AB;
+        color: #979ba5;
       }
 
       .@{bk-prefix}-steps-icon {
@@ -296,6 +298,15 @@
         background-repeat: repeat-y;
         background-size: 1px 6px;
         content: '';
+      }
+
+      &.done {
+        &:has(+ .current.is-error),
+        &:has(+ .current.@{bk-prefix}-step-error) {
+          &::after {
+            background-image: linear-gradient(@danger-color 50%, transparent 0%);
+          }
+        }
       }
 
       .@{bk-prefix}-step-title {
