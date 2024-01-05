@@ -38,7 +38,14 @@ import {
 } from './const';
 import usePagination from './plugins/use-pagination';
 import { Column, Field, IColSortBehavior, Settings, SortScope, TablePropTypes } from './props';
-import { getRowId, getRowValue, isColumnHidden, resolveColumnSortProp, resolveColumnSpan } from './utils';
+import {
+  getRowId,
+  getRowValue,
+  isColumnHidden,
+  isRowSelectEnable,
+  resolveColumnSortProp,
+  resolveColumnSpan,
+} from './utils';
 
 export type ITableFormatData = {
   data: any[];
@@ -294,15 +301,23 @@ export default (props: TablePropTypes): ITableResponse => {
     setColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_ACTIVE, active);
   };
 
+  const isRowChecked = (row: any, index: number) => {
+    if (isRowSelectEnable(props, { row, index })) {
+      return getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_SELECTION);
+    }
+
+    return true;
+  };
+
   /**
    * 是否数据全选
    */
   const isCheckedAll = () => {
     if (props.acrossAll) {
-      return formatData.data.every(row => getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_SELECTION));
+      return formatData.data.every((row, index) => isRowChecked(row, index));
     }
 
-    return pageData.every(row => getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_SELECTION));
+    return pageData.every((row, index) => isRowChecked(row, index));
   };
 
   /**
@@ -504,7 +519,14 @@ export default (props: TablePropTypes): ITableResponse => {
    * @param isSelected
    */
   const setRowSelection = (row: any, isSelected: boolean) => {
-    setRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_SELECTION, isSelected);
+    let value = isSelected;
+    if (typeof props.isSelectedFn === 'function') {
+      value = props.isSelectedFn({ row });
+    }
+
+    if (isRowSelectEnable(props, { row })) {
+      setRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_SELECTION, value);
+    }
     setRowIndeterminate();
   };
 
@@ -531,6 +553,11 @@ export default (props: TablePropTypes): ITableResponse => {
   };
 
   const toggleRowSelection = (row: any) => {
+    if (typeof props.isSelectedFn === 'function') {
+      setRowSelection(row, props.isSelectedFn({ row }));
+      return;
+    }
+
     setRowSelection(row, !getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_SELECTION));
   };
 

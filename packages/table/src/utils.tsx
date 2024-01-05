@@ -453,7 +453,10 @@ export const resolveSort = (sort: ISortPropShape) => {
   return null;
 };
 
-export const isRowSelectEnable = (props, { row, index, isCheckAll }) => {
+export const isRowSelectEnable = (
+  props,
+  { row, index, isCheckAll }: { row: any; index?: number; isCheckAll?: boolean },
+) => {
   if (typeof props.isRowSelectEnable === 'boolean') {
     return props.isRowSelectEnable !== false;
   }
