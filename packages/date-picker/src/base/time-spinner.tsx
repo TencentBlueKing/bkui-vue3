@@ -284,12 +284,12 @@ export default defineComponent({
               handleWheel(type);
               wheelTimer.value = setTimeout(() => {
                 stopWheel(domRef);
-              }, 400);
+              }, 0);
             } else {
               clearTimeout(wheelTimer);
               wheelTimer.value = setTimeout(() => {
                 stopWheel(domRef);
-              }, 400);
+              }, 100);
             }
           }, 32),
           { passive: true },
