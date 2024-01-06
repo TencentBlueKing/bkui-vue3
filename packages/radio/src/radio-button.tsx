@@ -53,12 +53,13 @@ export default defineComponent({
   setup() {
     const [isFocused, { blur: handleBlur, focus: handleFocus }] = useFocus();
 
-    const { isChecked, isDisabled, setChecked, handleChange } = useRadio();
+    const { size, isChecked, isDisabled, setChecked, handleChange } = useRadio();
 
     const { resolveClassName } = usePrefix();
 
     return {
       isFocused,
+      size,
       isChecked,
       isDisabled,
       setChecked,
@@ -71,6 +72,7 @@ export default defineComponent({
   render() {
     const radioClass = classes({
       [`${this.resolveClassName('radio-button')}`]: true,
+      [`${this.resolveClassName('radio-button')}-${this.size}`]: true,
       'is-focused': this.isFocused,
       'is-disabled': this.isDisabled,
       'is-checked': this.isChecked,
