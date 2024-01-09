@@ -51,6 +51,7 @@ import HeadFilter from './plugins/head-filter';
 import HeadSort from './plugins/head-sort';
 import Settings from './plugins/settings';
 import useFixedColumn from './plugins/use-fixed-column';
+import useHeadCell from './plugins/use-head-cell';
 import { Column, IColSortBehavior, Settings as ISettings, TablePropTypes } from './props';
 import { ITableResponse } from './use-attributes';
 import {
@@ -236,6 +237,7 @@ export default (
       const sortFn = (a, b) => getSortFnByColumn(column, getSortFn(column, nextSort), a, b);
       tableResp.setColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_TYPE, nextSort);
       tableResp.setColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_FN, sortFn);
+      activeSortIndex.value = index;
       tableResp.sortData(column);
       context.emit(EMIT_EVENTS.COLUMN_SORT, { column: unref(column), index, type: nextSort });
     }
@@ -248,6 +250,9 @@ export default (
    * @returns
    */
   const getSortCell = (column: Column, index: number) => {
+    const active = props.colSortBehavior === IColSortBehavior.independent ? activeSortIndex.value === index : true;
+    const nextSort = tableResp.getColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_TYPE) as SORT_OPTION;
+
     /**
      * 点击排序事件
      * @param sortFn 排序函数
@@ -262,17 +267,19 @@ export default (
       context.emit(EMIT_EVENTS.COLUMN_SORT, { column, index, type });
     };
 
-    const nextSort = tableResp.getColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_TYPE) as SORT_OPTION;
-    const active = props.colSortBehavior === IColSortBehavior.independent ? activeSortIndex.value === index : true;
+    const refSortCell = ref(null);
+
     // 如果是独立的，则只高亮当前排序
-    return (
+    return [
+      refSortCell,
       <HeadSort
+        ref={refSortCell}
         column={column as Column}
         defaultSort={active ? nextSort : SORT_OPTION.NULL}
         onChange={handleSortClick}
         active={active}
-      />
-    );
+      />,
+    ];
   };
 
   const getFilterCell = (column: Column, index: number) => {
@@ -330,12 +337,15 @@ export default (
      */
     const renderHeadCell = (column: Column, index: number) => {
       if (column.type === 'selection') {
-        return renderCheckboxColumn(CHECK_ALL_OBJ, null, true);
+        return [renderCheckboxColumn(CHECK_ALL_OBJ, null, true)];
       }
 
       const cells = [];
+      let refSortCell = null;
       if (column.sort) {
-        cells.push(getSortCell(column, index));
+        const [refCell, cell] = getSortCell(column, index);
+        refSortCell = refCell;
+        cells.push(cell);
       }
 
       if (column.filter) {
@@ -349,7 +359,7 @@ export default (
 
       const headClass = { 'has-sort': !!column.sort, 'has-filter': !!column.filter };
 
-      return (
+      return [
         <TableCell
           class={headClass}
           title={showTitle}
@@ -361,8 +371,9 @@ export default (
           headExplain={resolvePropVal(column.explain, 'head', [column])}
         >
           {cells}
-        </TableCell>
-      );
+        </TableCell>,
+        refSortCell,
+      ];
     };
 
     const resolveEventListener = (col: Column) => {
@@ -405,26 +416,43 @@ export default (
           <TableRow>
             <tr>
               {filterColGroups.value.map((column, index: number) => {
+                const { getTH } = useHeadCell(props, context, column, tableResp);
                 const headStyle = Object.assign({}, resolveFixedColumnStyle(column, styleRef.value.hasScrollY), {
                   '--background-color': DEF_COLOR[props.thead?.color ?? IHeadColor.DEF1],
                 });
-                return (
-                  <th
-                    colspan={1}
-                    rowspan={1}
-                    data-id={tableResp.getColumnId(column)}
-                    class={[
-                      getHeadColumnClass(column, index),
-                      getColumnCustomClass(column),
-                      column.align || props.headerAlign || props.align,
-                    ]}
-                    style={headStyle}
-                    onClick={() => handleColumnHeadClick(index, column)}
-                    {...resolveEventListener(column)}
-                  >
-                    {renderHeadCell(column as Column, index)}
-                  </th>
-                );
+
+                // const [cell, refSortCell] = renderHeadCell(column as Column, index);
+
+                // const handleColCellClick = () => {
+                //   handleColumnHeadClick(index, column);
+                //   refSortCell.value?.setNextSortType?.(
+                //     tableResp.getColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_TYPE),
+                //   );
+                // };
+
+                const classList = [
+                  getHeadColumnClass(column, index),
+                  getColumnCustomClass(column),
+                  column.align || props.headerAlign || props.align,
+                ];
+                return getTH(classList, headStyle, index);
+                // return (
+                //   <th
+                //     colspan={1}
+                //     rowspan={1}
+                //     data-id={tableResp.getColumnId(column)}
+                //     class={[
+                //       getHeadColumnClass(column, index),
+                //       getColumnCustomClass(column),
+                //       column.align || props.headerAlign || props.align,
+                //     ]}
+                //     style={headStyle}
+                //     onClick={() => handleColCellClick()}
+                //     {...resolveEventListener(column)}
+                //   >
+                //     {cell}
+                //   </th>
+                // );
               })}
               {getScrollFix()}
             </tr>

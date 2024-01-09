@@ -88,6 +88,7 @@ export type ITableResponse = {
   isActiveColumn: (col: Column) => boolean;
   isHiddenColumn: (col: Column) => boolean;
   resolvePageData: (filterFn?: any, sortFn?: any, column?: Column, type?: string, sortScope?: SortScope) => void;
+  resolveByDefColumns: () => void;
   resetStartEndIndex: () => void;
   toggleRowSelection: (row: any) => void;
   toggleAllSelection: (value?: boolean) => void;
@@ -131,7 +132,15 @@ export default (props: TablePropTypes): ITableResponse => {
     },
   });
 
-  const { pageData, localPagination, resolvePageData, multiFilter, sort, resetStartEndIndex } = usePagination(props);
+  const {
+    pageData,
+    localPagination,
+    resolvePageData,
+    resolvePageDataBySortList,
+    multiFilter,
+    sort,
+    resetStartEndIndex,
+  } = usePagination(props);
 
   const updateSettings = (settings?: Settings, rowHeight?: number) => {
     if (settings) {
@@ -179,6 +188,19 @@ export default (props: TablePropTypes): ITableResponse => {
       skipColNum = skipColumnNum;
       if (!formatData.columnSchema.has(col)) {
         const { type, fn, scope, active } = resolveColumnSortProp(col, props);
+
+        const getSortFn = col => {
+          if (col.type === 'index') {
+            return (a, b) =>
+              fn?.(
+                formatData.dataSchema.get(a)?.[TABLE_ROW_ATTRIBUTE.ROW_INDEX],
+                formatData.dataSchema.get(b)?.[TABLE_ROW_ATTRIBUTE.ROW_INDEX],
+              );
+          }
+
+          return fn;
+        };
+
         formatData.columnSchema.set(col, {
           [COLUMN_ATTRIBUTE.CALC_WIDTH]: undefined,
           [COLUMN_ATTRIBUTE.RESIZE_WIDTH]: undefined,
@@ -187,7 +209,7 @@ export default (props: TablePropTypes): ITableResponse => {
           [COLUMN_ATTRIBUTE.WIDTH]: col.width,
           [COLUMN_ATTRIBUTE.IS_HIDDEN]: isColumnHidden(formatData.settings.fields, col, formatData.settings.checked),
           [COLUMN_ATTRIBUTE.COL_SORT_TYPE]: type,
-          [COLUMN_ATTRIBUTE.COL_SORT_FN]: fn,
+          [COLUMN_ATTRIBUTE.COL_SORT_FN]: getSortFn(col),
           [COLUMN_ATTRIBUTE.COL_FILTER_FN]: undefined,
           [COLUMN_ATTRIBUTE.COL_FILTER_SCOPE]: undefined,
           [COLUMN_ATTRIBUTE.COL_SORT_SCOPE]: scope,
@@ -693,6 +715,20 @@ export default (props: TablePropTypes): ITableResponse => {
    * 获取选中行数据
    */
   const getRowSelection = () => formatData.data.filter(row => getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_SELECTION));
+  const resolveByDefColumns = () => {
+    const multiSortColumns = [];
+    formatData.columns.forEach(column => {
+      const schema = formatData.columnSchema.get(column);
+      if (
+        typeof schema?.[COLUMN_ATTRIBUTE.COL_SORT_FN] === 'function' &&
+        !(schema?.[COLUMN_ATTRIBUTE.IS_HIDDEN] ?? true)
+      ) {
+        multiSortColumns.push({ column, schema });
+      }
+    });
+
+    resolvePageDataBySortList(multiSortColumns);
+  };
 
   return {
     formatColumns,
@@ -714,6 +750,7 @@ export default (props: TablePropTypes): ITableResponse => {
     isActiveColumn,
     isHiddenColumn,
     resolvePageData,
+    resolveByDefColumns,
     resetStartEndIndex,
     toggleAllSelection,
     setAllRowExpand,

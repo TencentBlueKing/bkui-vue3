@@ -47,10 +47,10 @@ export default defineComponent({
     active: PropTypes.bool,
   },
   emits: ['change'],
-  setup(props: IHeadSortPropType, { emit }) {
+  setup(props: IHeadSortPropType, { emit, expose }) {
     const { resolveClassName } = usePrefix();
 
-    const defSort = (props.column?.sort as ISortShape)?.value || props.defaultSort || SORT_OPTION.NULL;
+    const defSort = (props.column?.sort as ISortShape)?.value ?? props.defaultSort ?? SORT_OPTION.NULL;
     const sortType = ref(defSort);
 
     watch(
@@ -59,6 +59,10 @@ export default defineComponent({
         sortType.value = val;
       },
     );
+
+    const setNextSortType = (type: SORT_OPTION) => {
+      sortType.value = type;
+    };
 
     /**
      * 点击排序事件
@@ -80,7 +84,7 @@ export default defineComponent({
         currentSort = SORT_OPTION.NULL;
       }
       const execFn = getSortFn(props.column, currentSort);
-      const sort = resolveSort(props.column.sort);
+      const sort = resolveSort(props.column.sort, props.column);
       if (sort?.value === 'custom') {
         emit('change', sort?.sortFn ?? execFn, currentSort);
         return;
@@ -88,6 +92,11 @@ export default defineComponent({
 
       emit('change', execFn, currentSort);
     };
+
+    expose({
+      setNextSortType,
+    });
+
     return () => (
       <span class={resolveClassName('head-cell-sort')}>
         <AngleDownFill
