@@ -293,6 +293,7 @@ export default defineComponent({
 
     const resizeObserver = new ResizeObserver(() => {
       onceInitSizeTextarea();
+      setOverflow();
     });
 
     watch(
@@ -313,13 +314,12 @@ export default defineComponent({
           value: val,
         };
         nextTick(() => resizeTextarea());
-        // TODO: 值变化时实时检测是否溢出
-        // isOverflow.value = detectOverflow();
+        setOverflow();
       },
     );
 
     onMounted(() => {
-      isOverflow.value = detectOverflow();
+      setOverflow();
       resizeObserver.observe(inputRef.value);
       nextTick(() => resizeTextarea());
       // Hack: 修复autofocus属性失效问题 原生autofocus属性只在页面加载时生效
@@ -347,6 +347,10 @@ export default defineComponent({
       return inputRef.value?.scrollWidth > inputRef.value?.clientWidth + 2;
     }
 
+    function setOverflow() {
+      isOverflow.value = detectOverflow();
+    }
+
     function clear() {
       if (props.disabled) return;
       const resetVal = isNumberInput.value ? props.min : '';
@@ -362,7 +366,6 @@ export default defineComponent({
 
     function handleBlur(e) {
       isFocused.value = false;
-      isOverflow.value = detectOverflow();
       ctx.emit(EVENTS.BLUR, e);
       if (props.withValidate) {
         formItem?.validate?.('blur');

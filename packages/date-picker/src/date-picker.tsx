@@ -275,6 +275,13 @@ export default defineComponent({
       },
     );
 
+    watch(
+      () => state.internalValue,
+      v => {
+        state.tmpValue = v;
+      },
+    );
+
     onMounted(() => {
       // 如果是 date-picker 那么 time-picker 就是回车模式
       if (props.type.indexOf('date') > -1) {
@@ -342,6 +349,7 @@ export default defineComponent({
       if (visualValue?.value) {
         state.showClose = true;
       }
+      state.internalValue = state.tmpValue;
     };
 
     const handleInputMouseleave = _e => {
@@ -349,7 +357,6 @@ export default defineComponent({
       //   return;
       // }
       state.showClose = false;
-      emitChange(props.type);
       state.internalValue = state.tmpValue;
     };
 
