@@ -124,13 +124,22 @@ export default defineComponent({
       }
     };
 
+    const isFirstLoad = ref(true);
+
     watch(
       () => [props.data, columns],
       () => {
         tableSchema.formatColumns(columns as Column[]);
         tableSchema.formatDataSchema(props.data);
         tableSchema.resetStartEndIndex();
-        tableSchema.resolvePageData();
+
+        if (isFirstLoad.value) {
+          tableSchema.resolveByDefColumns();
+          isFirstLoad.value = false;
+        } else {
+          tableSchema.resolvePageData();
+        }
+
         registerResizeEvent();
         nextTick(() => {
           updateOffsetRight();

@@ -28,6 +28,7 @@
       source: `${index}_QQ`,
       status: '创建中',
       create_time: `2018-05-25 15:02:24.${index}`,
+      priority: index,
     }));
   export default defineComponent({
     components: {},

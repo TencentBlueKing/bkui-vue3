@@ -25,6 +25,7 @@
  */
 import { computed, reactive, ref, watch } from 'vue';
 
+import { COLUMN_ATTRIBUTE } from '../const';
 import { Column, SortScope, TablePropTypes } from '../props';
 
 /**
@@ -109,6 +110,23 @@ export default (props: TablePropTypes) => {
     }
   };
 
+  /**
+   * 初始化排序动作
+   * @param data
+   * @param sortColumns
+   */
+  const multiSort = (data: any[], sortColumns: { column: Column; schema: any }[]) => {
+    sortColumns.forEach(item => {
+      sort(
+        data,
+        item.schema[COLUMN_ATTRIBUTE.COL_SORT_FN],
+        item.column,
+        item.schema[COLUMN_ATTRIBUTE.COL_SORT_TYPE],
+        item.schema[COLUMN_ATTRIBUTE.COL_SORT_SCOPE],
+      );
+    });
+  };
+
   const filter = (sourceData: any[], filterFn: (row, index, data) => void) => {
     if (typeof filterFn === 'function') {
       const filterVals = sourceData.filter((row: any, index: number) => filterFn(row, index, indexData.value));
@@ -119,14 +137,22 @@ export default (props: TablePropTypes) => {
     return sourceData;
   };
 
-  const resolvePageData = (filterFn?: any, sortFn?: any, column?: Column, type?: string, sortScope?) => {
+  const resolvePageData = (filterFn?: any, sortFn?: any, column?: Column, type?: string, sortScope?, multiCol?) => {
     const sourceData = indexData.value.slice();
+
+    if (multiCol?.length) {
+      multiSort(sourceData, multiCol);
+    }
 
     pageData.length = 0;
     pageData.push(...sourceData.slice(startIndex.value, endIndex.value));
     filter(pageData, filterFn);
     sort(pageData, sortFn, column, type, sortScope);
     resolveLocalPagination();
+  };
+
+  const resolvePageDataBySortList = (multiCol?) => {
+    resolvePageData(null, null, null, null, null, multiCol);
   };
 
   const multiFilter = (filterFnList: ((row, index, data) => void)[]) => {
@@ -160,6 +186,7 @@ export default (props: TablePropTypes) => {
     indexData,
     localPagination,
     resolvePageData,
+    resolvePageDataBySortList,
     resetStartEndIndex,
     multiFilter,
     sort,
