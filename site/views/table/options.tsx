@@ -133,6 +133,11 @@ export const DATA_COLUMNS = [
     sort: 'custom',
   },
   {
+    label: '优先级',
+    field: 'priority',
+    sort: true,
+  },
+  {
     label: (column, index) => `状态-${index}-${column.field}`,
     field: 'status',
     render: ({ row }) => `${row.status}-${row.msg}`,
