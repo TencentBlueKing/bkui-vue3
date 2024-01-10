@@ -88,6 +88,7 @@ export default (props, context: SetupContext<any>, column: Column, tableResp: IT
       const sortFn = (a, b) => getSortFnByColumn(column, getSortFn(column, nextSort.value), a, b);
       tableResp.setColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_TYPE, nextSort.value);
       tableResp.setColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_FN, sortFn);
+      tableResp.setColumnSortActive(column, true);
       tableResp.sortData(column);
       context.emit(EMIT_EVENTS.COLUMN_SORT, { column: unref(column), index, type: nextSort.value });
     }
