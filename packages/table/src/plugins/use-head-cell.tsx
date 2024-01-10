@@ -23,14 +23,14 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { ref, SetupContext, unref } from 'vue';
+import { computed, ref, SetupContext, unref } from 'vue';
 
 import BkCheckbox from '@bkui-vue/checkbox';
 
 import TableCell from '../components/table-cell';
 import { CHECK_ALL_OBJ, COLUMN_ATTRIBUTE, SORT_OPTION, TABLE_ROW_ATTRIBUTE } from '../const';
 import { EMIT_EVENTS } from '../events';
-import { Column, IColSortBehavior } from '../props';
+import { Column } from '../props';
 import { ITableResponse } from '../use-attributes';
 import { getNextSortType, getSortFn, isRowSelectEnable, resolveHeadConfig, resolvePropVal } from '../utils';
 
@@ -39,7 +39,9 @@ import HeadSort from './head-sort';
 
 export default (props, context: SetupContext<any>, column: Column, tableResp: ITableResponse) => {
   const nextSort = ref(tableResp.formatData.columnSchema.get(column)?.[COLUMN_ATTRIBUTE.COL_SORT_TYPE]);
-  const activeSortIndex = ref(-1);
+  const active = computed(() => {
+    return tableResp.formatData.columnSchema.get(column)?.[COLUMN_ATTRIBUTE.COL_SORT_ACTIVE] ?? false;
+  });
 
   const resolveEventListener = (col: Column) => {
     const listeners = tableResp.getColumnAttribute(col, COLUMN_ATTRIBUTE.LISTENERS) as Map<string, any>;
@@ -86,7 +88,6 @@ export default (props, context: SetupContext<any>, column: Column, tableResp: IT
       const sortFn = (a, b) => getSortFnByColumn(column, getSortFn(column, nextSort.value), a, b);
       tableResp.setColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_TYPE, nextSort.value);
       tableResp.setColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_FN, sortFn);
-      activeSortIndex.value = index;
       tableResp.sortData(column);
       context.emit(EMIT_EVENTS.COLUMN_SORT, { column: unref(column), index, type: nextSort.value });
     }
@@ -130,8 +131,6 @@ export default (props, context: SetupContext<any>, column: Column, tableResp: IT
    * @returns
    */
   const getSortCell = (column: Column, index: number) => {
-    const active = props.colSortBehavior === IColSortBehavior.independent ? activeSortIndex.value === index : true;
-
     /**
      * 点击排序事件
      * @param sortFn 排序函数
@@ -142,7 +141,7 @@ export default (props, context: SetupContext<any>, column: Column, tableResp: IT
       tableResp.setColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_TYPE, type);
       tableResp.setColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_FN, fn);
       tableResp.sortData(column);
-      // activeSortIndex.value = index;
+      tableResp.setColumnSortActive(column, true);
       context.emit(EMIT_EVENTS.COLUMN_SORT, { column, index, type });
     };
 
@@ -150,9 +149,9 @@ export default (props, context: SetupContext<any>, column: Column, tableResp: IT
     return (
       <HeadSort
         column={column as Column}
-        defaultSort={active ? nextSort.value : SORT_OPTION.NULL}
+        defaultSort={active.value ? nextSort.value : SORT_OPTION.NULL}
         onChange={handleSortClick}
-        active={active}
+        active={active.value}
       />
     );
   };
