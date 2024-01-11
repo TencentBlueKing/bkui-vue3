@@ -3,7 +3,6 @@
     <bk-table
       :columns="columns"
       :data="tableData"
-      :settings="settings"
       :max-height="maxHeight"
       @scroll-bottom="handleScrollBottom"
     />

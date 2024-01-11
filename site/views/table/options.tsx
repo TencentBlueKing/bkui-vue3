@@ -32,6 +32,7 @@ export const DATA_TABLE = [
     status: '创建中',
     create_time: '2018-05-25 15:02:241',
     selected: false,
+    priority: 1,
     children: [
       {
         ip: '192.168.0.2',
@@ -60,6 +61,7 @@ export const DATA_TABLE = [
     ip: '192.168.0.2',
     source: '微信',
     status: '正常',
+    priority: 3,
     create_time: '2018-05-25 15:02:242',
     selected: false,
   },
@@ -67,6 +69,7 @@ export const DATA_TABLE = [
     ip: '192.168.0.3',
     source: 'QQ',
     status: '创建中',
+    priority: 2,
     create_time: '2018-05-25 15:02:243',
     selected: false,
   },
@@ -74,6 +77,7 @@ export const DATA_TABLE = [
     ip: '192.168.0.3',
     source: 'QQ',
     status: '创建中',
+    priority: 6,
     create_time: '2018-05-25 15:02:244',
     selected: true,
   },
@@ -81,6 +85,7 @@ export const DATA_TABLE = [
     ip: '192.168.0.3',
     source: 'QQ',
     status: '创建中',
+    priority: 5,
     create_time: '2018-05-25 15:02:24',
     selected: false,
   },
@@ -131,6 +136,11 @@ export const DATA_COLUMNS = [
     label: '创建时间',
     field: 'create_time',
     sort: 'custom',
+  },
+  {
+    label: '优先级',
+    field: 'priority',
+    sort: true,
   },
   {
     label: (column, index) => `状态-${index}-${column.field}`,

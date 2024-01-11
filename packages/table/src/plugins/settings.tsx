@@ -52,18 +52,21 @@ export default defineComponent({
     const isShow = ref(false);
 
     const localSettings = computed(() => {
+      const deafultSettings = {
+        fields: props.columns.map((col: any) => Object.assign({}, col, { field: col.field || col.type })),
+        checked: [],
+        limit: 0,
+        size: 'small',
+        sizeList: defaultSizeList,
+        showLineHeight: true,
+        trigger: 'manual',
+      };
+
       if (typeof props.settings === 'boolean') {
-        return {
-          fields: props.columns.map((col: any) => Object.assign({}, col, { field: col.field || col.type })),
-          checked: [],
-          limit: 0,
-          size: 'small',
-          sizeList: defaultSizeList,
-          showLineHeight: true,
-        };
+        return deafultSettings;
       }
 
-      return props.settings;
+      return Object.assign({}, deafultSettings, props.settings);
     });
     const activeSize = ref(localSettings.value.size || 'small');
     const activeHeight = ref(SETTING_SIZE.small);
@@ -105,7 +108,9 @@ export default defineComponent({
     };
 
     const handleSettingClick = () => {
-      isShow.value = true;
+      if (localSettings.value.trigger === 'manual') {
+        isShow.value = true;
+      }
     };
 
     const handleCheckAllClick = (e: MouseEvent) => {
@@ -163,12 +168,9 @@ export default defineComponent({
       ));
 
     const indeterminate = computed(
-      () =>
-        checkedFields.value.length > 0 &&
-        !renderFields.value.every((field: any, index: number) =>
-          checkedFields.value.includes(resolvePropVal(field, 'field', [field, index])),
-        ),
+      () => checkedFields.value.length > 0 && checkedFields.value.length < renderFields.value.length,
     );
+
     const showLineHeight = computed(() =>
       typeof localSettings.value.showLineHeight === 'boolean' ? localSettings.value.showLineHeight : true,
     );
@@ -203,7 +205,7 @@ export default defineComponent({
     return () =>
       props.settings ? (
         <Popover
-          trigger='manual'
+          trigger={localSettings.value.trigger ?? ('manual' as any)}
           isShow={isShow.value}
           placement='bottom-end'
           arrow={true}

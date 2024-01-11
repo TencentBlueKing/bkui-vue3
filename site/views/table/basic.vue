@@ -33,6 +33,7 @@
           },
         },
         settings: {
+          trigger: 'click',
           fields: [
             {
               name: '序号',

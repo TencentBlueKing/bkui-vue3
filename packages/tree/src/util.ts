@@ -115,7 +115,7 @@ export const getTreeStyle = (item: any, props: TreePropTypes) => {
     '--offset-left': `${props.offsetLeft}px`,
   };
 };
-console.log(11);
+
 /**
  * 获取节点样式配置
  * @param item

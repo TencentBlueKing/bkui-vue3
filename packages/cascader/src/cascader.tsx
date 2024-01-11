@@ -356,7 +356,7 @@ export default defineComponent({
         );
       }
       // 否则渲染展开/收起图标
-      return <AngleUp class={this.resolveClassName('icon-angle-up')}></AngleUp>;
+      return <AngleUp class={[this.resolveClassName('icon-angle-up'), this.isShowPanel ? 'active' : '']}></AngleUp>;
     };
 
     // 因为cascader的tag长短不一，在计算时如果overflowIndex为0，会出现直接+n渲染的情况，因此需要对其进行修正
@@ -422,6 +422,7 @@ export default defineComponent({
         trigger='click'
         arrow={false}
         disabled={this.disabled}
+        offset={4}
         class={this.resolveClassName('cascader-popover-wrapper')}
         ref='popover'
         onAfterHidden={this.popoverChangeEmitter}
