@@ -246,9 +246,9 @@ export default defineComponent({
         ? list.value
         : list.value.filter(item => {
             if (hasFilterOptionFunc.value) {
-              return !!filterOption.value(searchKey.value, item);
+              return !!filterOption.value(curSearchValue.value, item);
             }
-            return toLowerCase(String(item[displayKey.value]))?.includes(toLowerCase(searchKey.value));
+            return toLowerCase(String(item[displayKey.value]))?.includes(toLowerCase(curSearchValue.value));
           }),
     );
     // select组件是否禁用
@@ -292,7 +292,7 @@ export default defineComponent({
     );
     // 是否显示全选
     const isShowSelectAll = computed(
-      () => multiple.value && showSelectAll.value && (!searchKey.value || !filterable.value),
+      () => multiple.value && showSelectAll.value && (!curSearchValue.value || !filterable.value),
     );
     const isShowAll = computed(() => multiple.value && showAll.value);
     // 虚拟滚动高度 12 上下边距，32 显示全选时的高度
@@ -361,7 +361,7 @@ export default defineComponent({
       emit('toggle', isPopoverShow.value);
       if (!isShow) {
         if (!keepSearchValue.value) {
-          searchKey.value = '';
+          searchValue.value = '';
         }
         document.removeEventListener('keydown', handleDocumentKeydown);
       } else {
@@ -410,7 +410,7 @@ export default defineComponent({
         });
       }
     };
-    const { searchKey, searchLoading } = useRemoteSearch(
+    const { searchValue, customOptionName, curSearchValue, searchLoading } = useRemoteSearch(
       isRemoteSearch.value ? remoteMethod.value : defaultSearchMethod,
       initActiveOptionValue,
     );
@@ -428,21 +428,25 @@ export default defineComponent({
       handleFocus();
       togglePopover();
     };
-    // 搜索
+    // 自定义创建
     const handleInputChange = value => {
       if (!filterable.value) return;
-      searchKey.value = value;
+      customOptionName.value = value;
     };
     // allow create(创建自定义选项)
-    const handleCreateCustomOption = (val: string | number) => {
+    const handleCreateCustomOption = (val: string | number, e: KeyboardEvent) => {
       const value = String(val);
       if (!allowCreate.value || !value) return;
+
+      // 阻止触发鼠标事件
+      e.stopPropagation();
+      e.preventDefault();
 
       const matchedOption = options.value.find(data => toLowerCase(String(data.optionName)) === toLowerCase(value));
       if (filterable.value && matchedOption) {
         // 开启搜索后，正好匹配到自定义选项，则不进行创建操作
         handleOptionSelected(matchedOption);
-        searchKey.value = '';
+        customOptionName.value = '';
         return;
       }
 
@@ -460,7 +464,7 @@ export default defineComponent({
         emitChange(value);
         hidePopover();
       }
-      searchKey.value = '';
+      customOptionName.value = '';
     };
     // Option点击事件
     const handleOptionSelected = (option: OptionInstanceType) => {
@@ -658,7 +662,12 @@ export default defineComponent({
         }
         // 删除选项
         case 'Backspace': {
-          if (!multiple.value || !selected.value.length || searchKey.value.length || e.target === searchRef.value)
+          if (
+            !multiple.value ||
+            !selected.value.length ||
+            customOptionName.value.length ||
+            e.target === searchRef.value
+          )
             return; // 单选和下拉搜索不支持回退键删除
 
           selected.value.pop();
@@ -740,7 +749,8 @@ export default defineComponent({
       isShowSelectContent,
       curContentText,
       isGroup,
-      searchKey,
+      searchValue,
+      customOptionName,
       isShowAll,
       isShowSelectAll,
       virtualHeight,
@@ -855,7 +865,7 @@ export default defineComponent({
         return (
           <SelectTagInput
             ref='selectTagInputRef'
-            v-model={this.searchKey}
+            v-model={this.customOptionName}
             selected={this.selected}
             tagTheme={this.tagTheme}
             placeholder={this.localPlaceholder}
@@ -876,7 +886,7 @@ export default defineComponent({
         <Input
           ref='inputRef'
           type='text'
-          modelValue={this.isInput ? this.searchKey : this.selectedLabel.join(',')}
+          modelValue={this.isInput ? this.customOptionName : this.selectedLabel.join(',')}
           placeholder={this.isInput ? this.selectedLabel.join(',') || this.localPlaceholder : this.localPlaceholder}
           readonly={!this.isInput}
           selectReadonly={true}
@@ -923,7 +933,7 @@ export default defineComponent({
               ref='searchRef'
               class={this.resolveClassName('select-search-input')}
               placeholder={this.localSearchPlaceholder}
-              v-model={this.searchKey}
+              v-model={this.searchValue}
             />
           </div>
         )}
