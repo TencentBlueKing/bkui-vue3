@@ -434,15 +434,16 @@ export default defineComponent({
         // this.dispatch('bk-form-item', 'form-blur')
         state.isEdit = false;
 
-        if (isSingleSelect.value) {
-          const [oldValue] = listState.tagListCache;
-          // 如果是单选，且input不为空，即保留了上次的结果则恢复
-          if (inputValue && inputValue === oldValue && listState.selectedTagListCache.length) {
-            addTag(listState.selectedTagListCache[0], 'select');
-          } else {
-            handleChange('remove');
+        if (props.allowAutoMatch && inputValue) {
+          if (isSingleSelect.value) {
+            const [oldValue] = listState.tagListCache;
+            // 如果是单选，且input不为空，即保留了上次的结果则恢复
+            if (inputValue === oldValue && listState.selectedTagListCache.length) {
+              addTag(listState.selectedTagListCache[0], 'select');
+            } else {
+              handleChange('remove');
+            }
           }
-        } else if (props.allowAutoMatch && inputValue) {
           // 如果匹配，则自动选则
           const matchItem = pageState.curPageList.find(item => {
             if (Array.isArray(props.searchKey)) {
@@ -451,6 +452,7 @@ export default defineComponent({
             }
             return item[props.searchKey] === inputValue;
           });
+
           if (matchItem) {
             handleTagSelected(matchItem, 'select');
           } else if (props.allowCreate) {
@@ -458,6 +460,7 @@ export default defineComponent({
             handleTagSelected(inputValue, 'custom');
           }
         }
+
         popoverProps.isShow = false;
         emit('blur', inputValue, tagList.value);
         formItem?.validate?.('blur');
