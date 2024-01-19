@@ -104,7 +104,7 @@
     }
   })
 
-  each(@sizeSelectors, {
+    each(@sizeSelectors, {
     @sizeBtnHeight: '@{value}BtnHeight';
     @sizeBtnPadding: '@{value}BtnPadding';
     @sizeBtnFontSize: '@{value}BtnFontSize';
@@ -161,16 +161,17 @@
     color: @disable-color;
     cursor: not-allowed;
     border-color: @disable-color;
+
     &:not(.is-text) {
       background-color: @disable-bg-color;
     }
   }
 
-// &.is-circle {
-//   padding: 8px;
-//   line-height: 1;
-//   border-radius: 50%;
-// }
+  // &.is-circle {
+  //   padding: 8px;
+  //   line-height: 1;
+  //   border-radius: 50%;
+  // }
 }
 
 
