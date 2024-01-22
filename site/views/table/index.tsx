@@ -438,13 +438,13 @@ export default defineComponent({
       params: '参数',
     };
 
-    const QAColumMap = {
+    const qAColumMap = {
       name: '问题',
       desc: '说明',
     };
 
     const renderMap = {
-      QA: QAColumMap,
+      QA: qAColumMap,
       events: eventColumnMap,
     };
     return (

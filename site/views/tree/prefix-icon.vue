@@ -54,7 +54,7 @@
    * @param {} renderType 当前渲染类型（node_action: 用来标识当前节点状态，展开 | 收起, node_type：节点类型，文件、文件夹）
    */
   // eslint-disable-next-line no-unused-vars
-  const getPrefixIcon = (item, renderType) => 'default';
+  const getPrefixIcon = () => 'default';
 
   // eslint-disable-next-line no-unused-vars
   const getPrefixIcon2 = (item, renderType) => {

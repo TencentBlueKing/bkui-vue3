@@ -18,9 +18,9 @@
 
   import BkColorPicker from '@bkui-vue/color-picker';
   const color1 = ref('');
-  const change = (v) => {
-    console.log(v);
-  };
+  // const change = (v) => {
+  //   console.log(v);
+  // };
 </script>
 
 <style lang="postcss" scoped>
