@@ -348,7 +348,9 @@ export default defineComponent({
     }
 
     function setOverflow() {
-      isOverflow.value = detectOverflow();
+      setTimeout(() => {
+        isOverflow.value = detectOverflow();
+      });
     }
 
     function clear() {
