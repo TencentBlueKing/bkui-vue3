@@ -49,7 +49,7 @@
 <script>
   import { defineComponent } from 'vue';
 
-  import { DATA_COLUMNS1, DATA_FIX_COLUMNS, DATA_TABLE } from './options';
+  import { DATA_COLUMNS1, DATA_FIX_COLUMNS } from './options';
   const DATA_ROWS = new Array(Math.ceil(Math.random() * 100) + 100)
     .fill('')
     .map((_, index) => ({

@@ -10,7 +10,7 @@
         :data="tableData"
         @row-expand="handleRowExpand"
       >
-        <template #expandContent="row">
+        <template #expandContent>
           <span>Content</span>
         </template>
       </bk-table>

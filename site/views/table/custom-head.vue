@@ -24,7 +24,9 @@
     computed: {
       columns() {
         return [{
-          label: () => <div style="display: flex; align-items: center;">
+          label: () => {
+            /* eslint-disable */
+            return <div style="display: flex; align-items: center;">
             <label>自定义组件：</label>
             <bk-select
               v-model={ this.dynamicColumn }
@@ -35,8 +37,9 @@
                   .map(col =>  <bk-option key={ col.field } value={ col.field } label={ col.field }>
                   </bk-option>)
               }
-          </bk-select>
-          </div>,
+            </bk-select>
+          </div>
+          },
           field: this.dynamicColumn,
           sort: true,
         }, {

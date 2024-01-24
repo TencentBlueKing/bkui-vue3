@@ -454,7 +454,6 @@ export default (
     column_fixed: !!column.fixed,
     column_fixed_left: !!column.fixed,
     column_fixed_right: column.fixed === 'right',
-    ...(column.className ? { [`${column.className}`]: true } : {}),
   });
 
   const getHeadColumnClass = (column: Column, colIndex: number) => ({
