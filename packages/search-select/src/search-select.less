@@ -11,7 +11,7 @@
   z-index: 9;
   height: @component-size-base;
   overflow: inherit;
-  
+
   .focus {
     color: @search-select-focus-color;
     background: #fff !important;
@@ -24,7 +24,7 @@
     line-height: 20px;
     word-break: break-all;
     flex: 1 1 auto;
-  
+
     &:focus {
       outline: none;
     }
@@ -252,7 +252,7 @@
     display: flex;
     flex-direction: column;
   }
-  
+
   .menu-item-mixin {
     display: flex;
     align-items: center;
@@ -261,16 +261,16 @@
     padding: 0 8px;
     flex: 0 0 32px;
     outline: none;
-  
+
     &:hover {
       cursor: pointer;
       background-color: #f5f7fa;
     }
   }
-  
+
   .menu-disabled-mixin {
     color: @light-gray;
-  
+
     &:hover {
       cursor: not-allowed;
       background-color: white;
@@ -335,7 +335,7 @@
         display: inline-flex;
         color: @primary-color;
       }
-  
+
       .is-selected {
         display: flex;
         width: 22px;
@@ -401,5 +401,5 @@
 }
 
 .@{search-select-name}-popover {
-  margin: -7px -14px;
+  margin: -12px;
 }
