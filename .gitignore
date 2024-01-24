@@ -38,5 +38,8 @@ themes.variable.less
 .history
 .codecc
 .vscode
+.husky/pre-push
+.husky/pre-push-bkcodeai
+
 
 pre-*-bkcodeai
