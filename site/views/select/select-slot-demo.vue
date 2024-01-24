@@ -216,7 +216,7 @@
           class="bk-select"
           filterable
           :input-search="false"
-          :multiple="true"
+          multiple
         >
           <bk-option
             v-for="(item, index) in datasource"

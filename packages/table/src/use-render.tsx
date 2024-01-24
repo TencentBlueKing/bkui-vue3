@@ -35,14 +35,7 @@ import { classes } from '@bkui-vue/shared';
 
 import TableCell from './components/table-cell';
 import TableRow from './components/table-row';
-import {
-  COLUMN_ATTRIBUTE,
-  DEF_COLOR,
-  IHeadColor,
-  NEED_COL_ROW_SPAN,
-  SCROLLY_WIDTH,
-  TABLE_ROW_ATTRIBUTE,
-} from './const';
+import { COLUMN_ATTRIBUTE, DEF_COLOR, IHeadColor, NEED_COL_ROW_SPAN, TABLE_ROW_ATTRIBUTE } from './const';
 import { EMIT_EVENTS } from './events';
 import BodyEmpty from './plugins/body-empty';
 import Settings from './plugins/settings';
@@ -217,20 +210,20 @@ export default (
 
     const { resolveFixedColumnStyle } = useFixedColumn(props, tableResp, head);
 
-    const getScrollFix = () => {
-      if (styleRef.value.hasScrollY) {
-        const fixStyle = {
-          width: `${SCROLLY_WIDTH + 2}px`,
-          right: '-1px',
-        };
-        return (
-          <th
-            style={fixStyle}
-            class='column_fixed'
-          ></th>
-        );
-      }
-    };
+    // const getScrollFix = () => {
+    //   if (styleRef.value.hasScrollY) {
+    //     const fixStyle = {
+    //       width: `${SCROLLY_WIDTH + 2}px`,
+    //       right: '-1px',
+    //     };
+    //     return (
+    //       <th
+    //         style={fixStyle}
+    //         class='column_fixed'
+    //       ></th>
+    //     );
+    //   }
+    // };
 
     return (
       <>
@@ -250,7 +243,7 @@ export default (
                 ];
                 return getTH(classList, headStyle, index);
               })}
-              {getScrollFix()}
+              {/* {getScrollFix()} */}
             </tr>
           </TableRow>
         </thead>
@@ -454,7 +447,6 @@ export default (
     column_fixed: !!column.fixed,
     column_fixed_left: !!column.fixed,
     column_fixed_right: column.fixed === 'right',
-    ...(column.className ? { [`${column.className}`]: true } : {}),
   });
 
   const getHeadColumnClass = (column: Column, colIndex: number) => ({

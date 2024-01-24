@@ -7,6 +7,7 @@
       v-model:isShow="isShow"
       title="我是标题"
       quick-close
+      transfer
     />
   </div>
 </template>
