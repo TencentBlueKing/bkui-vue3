@@ -25,6 +25,7 @@
       columns() {
         return [{
           label: () => {
+            /* eslint-disable */
             return <div style="display: flex; align-items: center;">
             <label>自定义组件：</label>
             <bk-select

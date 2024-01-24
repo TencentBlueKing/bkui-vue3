@@ -106,7 +106,7 @@ export const DATA_COLUMNS = [
     sort: {
       value: 'desc',
     },
-    className: 'custom-class',
+    className: () => 'custom-class',
   },
   {
     label: '名称/内网IP',
