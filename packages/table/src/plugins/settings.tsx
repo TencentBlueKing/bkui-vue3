@@ -108,9 +108,7 @@ export default defineComponent({
     };
 
     const handleSettingClick = () => {
-      if (localSettings.value.trigger === 'manual') {
-        isShow.value = true;
-      }
+      isShow.value = true;
     };
 
     const handleCheckAllClick = (e: MouseEvent) => {
