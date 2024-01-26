@@ -52,6 +52,7 @@ import flexLayout from './flex-layout.vue';
 import * as TABLE_DATA from './options';
 import pagination from './pagination.vue';
 import RemotePagination from './remotePagination.vue';
+import ScrollHorizontal from './scroll-horizontal.vue';
 import ScrollLoading from './scroll-loading.vue';
 import ScrollLoadingSlot from './scroll-loading-slot.vue';
 import Selection from './selection.vue';
@@ -83,6 +84,7 @@ export default defineComponent({
     CustomHead,
     flexLayout,
     basicSortBehavior,
+    ScrollHorizontal,
   },
   render() {
     const configs = [
@@ -99,6 +101,20 @@ export default defineComponent({
          * @returns
          */
         component: () => <basic></basic>,
+      },
+      {
+        attrs: {
+          title: '基础用法: min-width',
+          subtitle: 'min-width',
+          desc: '通过 min-width 设置最小列宽',
+          componentName: 'table',
+          demoName: 'scroll-horizontal',
+        },
+        /**
+         * Table
+         * @returns
+         */
+        component: () => <ScrollHorizontal></ScrollHorizontal>,
       },
       {
         attrs: {
