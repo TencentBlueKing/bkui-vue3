@@ -308,7 +308,6 @@
   .@{bk-prefix}-table-head {
     position: relative;
     z-index: 2;
-    transform: translateX(var(--scroll-head-left));
     scrollbar-gutter: stable;
     overflow: hidden;
 
@@ -321,6 +320,10 @@
       width: 6px;
       background-color: #3785ff;
       transform: translateX(-50%);
+    }
+
+    thead {
+      transform: translateX(var(--scroll-head-left));
     }
 
     .table-head-settings {
