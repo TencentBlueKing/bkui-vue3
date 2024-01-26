@@ -63,50 +63,67 @@ export default defineComponent({
 
     const { resolveClassName } = usePrefix();
 
-    return () => (
+    const popoverRef = ref(null);
+
+    return {
+      popoverRef,
+      visible,
+      t,
+      icon,
+      resolveClassName,
+      ensure,
+      cancel,
+    };
+  },
+
+  render() {
+    return (
       <BkPopover
-        isShow={visible.value}
-        trigger={props.trigger}
-        theme={props.theme}
-        width={props.width}
-        onAfterShow={() => (visible.value = true)}
-        extCls={`${resolveClassName('pop-confirm-box')}`}
+        ref='popoverRef'
+        isShow={this.visible}
+        trigger={this.trigger}
+        theme={this.theme}
+        width={this.width}
+        onAfterShow={() => (this.visible = true)}
+        extCls={`${this.resolveClassName('pop-confirm-box')}`}
       >
         {{
-          default: () => slots.default(),
+          default: () => this.$slots.default(),
           content: () => (
-            <div class={`${resolveClassName('pop-confirm')}`}>
-              {typeof slots.content === 'function' ? (
-                slots.content()
+            <div class={`${this.resolveClassName('pop-confirm')}`}>
+              {typeof this.$slots.content === 'function' ? (
+                this.$slots.content()
               ) : (
                 <>
-                  {props.title ? (
-                    <div class={`${resolveClassName('pop-confirm-title')}`}>
-                      {icon ? <span class={`${resolveClassName('pop-confirm-icon')}`}>{icon}</span> : ''}
-                      <span>{props.title}</span>
+                  {this.title ? (
+                    <div class={`${this.resolveClassName('pop-confirm-title')}`}>
+                      {this.icon ? <span class={`${this.resolveClassName('pop-confirm-icon')}`}>{this.icon}</span> : ''}
+                      <span>{this.title}</span>
                     </div>
                   ) : (
                     ''
                   )}
-                  <div class={`${resolveClassName('pop-confirm-content')}`}>
-                    {!props.title ? icon : ''}
-                    {props.content}
+                  <div class={`${this.resolveClassName('pop-confirm-content')}`}>
+                    {!this.title ? this.icon : ''}
+                    {this.content}
                   </div>
                 </>
               )}
-              <div class={`${resolveClassName('pop-confirm-footer')}`}>
+              <div class={`${this.resolveClassName('pop-confirm-footer')}`}>
                 <BkButton
-                  onClick={ensure}
+                  onClick={this.ensure}
                   size='small'
                   theme='primary'
+                  loading={this.loading}
                 >
-                  {props.confirmText || t.value.ok}
+                  {this.confirmText || this.t.ok}
                 </BkButton>
                 <BkButton
-                  onClick={cancel}
+                  onClick={this.cancel}
                   size='small'
+                  disabled={this.loading}
                 >
-                  {props.cancelText || t.value.cancel}
+                  {this.cancelText || this.t.cancel}
                 </BkButton>
               </div>
             </div>

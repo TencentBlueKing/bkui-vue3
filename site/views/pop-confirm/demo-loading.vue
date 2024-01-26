@@ -6,6 +6,7 @@
       content="删除操作无法撤回，请谨慎操作！"
       width="288"
       trigger="click"
+      loading
       @confirm="ensure"
     >
       <bk-button>删除</bk-button>
