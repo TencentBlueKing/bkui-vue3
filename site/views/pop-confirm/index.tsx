@@ -33,7 +33,6 @@ import PropsBox from '../../components/props-box';
 import { resolvePropsToDesData } from '../utils';
 
 import DemoBase from './demo-base.vue';
-import DemoLoading from './demo-loading.vue';
 import DemoSimple from './demo-simple.vue';
 import DemoSlot from './demo-slot.vue';
 
@@ -56,14 +55,6 @@ export default defineComponent({
           demoName='demo-base'
         >
           <DemoBase />
-        </DemoBox>
-        <DemoBox
-          title='loading'
-          desc='loading 属性'
-          componentName='pop-confirm'
-          demoName='demo-loading'
-        >
-          <DemoLoading />
         </DemoBox>
         <DemoBox
           title='简单样式'
