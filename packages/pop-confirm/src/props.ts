@@ -65,5 +65,6 @@ export const PopConfirmProps = {
    */
   icon: PropTypes.string.def(''),
   width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
+  loading: PropTypes.bool.def(false),
 };
 export default PopConfirmProps;
