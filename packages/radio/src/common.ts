@@ -72,6 +72,7 @@ export const useRadio = () => {
   const isGroup = !isEmptyObj(radioGroup);
 
   const isChecked = ref<boolean>(false);
+  const size = ref('default');
 
   // 禁用状态
   const isDisabled = computed<boolean>(() => {
@@ -83,6 +84,7 @@ export const useRadio = () => {
 
   // 响应modelValue
   if (isGroup) {
+    size.value = radioGroup.props.size;
     watch(
       () => radioGroup.props.modelValue,
       modelValue => {
@@ -148,6 +150,7 @@ export const useRadio = () => {
   });
 
   return {
+    size,
     isChecked,
     isDisabled,
     setChecked,
