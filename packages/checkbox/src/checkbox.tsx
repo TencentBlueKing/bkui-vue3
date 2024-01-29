@@ -59,7 +59,7 @@ export default defineComponent({
   setup(props) {
     const [isFocus, { blur: handleBlur, focus: handleFocus }] = useFocus();
 
-    const { inputRef, isChecked, isPreChecking, isDisabled, setChecked, handleChange } = useCheckbox();
+    const { inputRef, isChecked, isPrechecking, isDisabled, setChecked, handleChange } = useCheckbox();
 
     const { resolveClassName } = usePrefix();
 
@@ -67,7 +67,7 @@ export default defineComponent({
       inputRef,
       isFocus,
       isChecked,
-      isPreChecking,
+      isPrechecking,
       isDisabled,
       setChecked,
       handleBlur,
@@ -85,7 +85,7 @@ export default defineComponent({
       'is-checked': this.isChecked,
       'is-disabled': this.isDisabled,
       'is-indeterminated': this.indeterminate,
-      'is-checking': this.isPreChecking,
+      'is-prechecking': this.isPrechecking,
     });
 
     const renderLabel = () => {
@@ -108,13 +108,13 @@ export default defineComponent({
             role='checkbox'
             type='checkbox'
             class={`${this.resolveClassName('checkbox-original')}`}
-            disabled={this.isDisabled || this.isPreChecking}
+            disabled={this.isDisabled || this.isPrechecking}
             checked={this.isChecked}
             onChange={this.handleChange}
           />
         </span>
         {renderLabel()}
-        {this.isPreChecking && <Loading class={`${this.resolveClassName('checkbox-checking')}`} />}
+        {this.isPrechecking && <Loading class={`${this.resolveClassName('checkbox-checking')}`} />}
       </label>
     );
   },

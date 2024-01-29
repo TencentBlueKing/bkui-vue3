@@ -73,7 +73,7 @@ export const useCheckbox = () => {
 
   const inputRef = ref();
   const isChecked = ref<boolean>(props.checked);
-  const isPreChecking = ref(false);
+  const isPrechecking = ref(false);
 
   // 禁用状态
   const isDisabled = computed<boolean>(() => {
@@ -147,10 +147,10 @@ export const useCheckbox = () => {
   // 值更新
   const handleChange = (event: Event) => {
     const $targetInput = event.target as HTMLInputElement;
-    if (isDisabled.value || isPreChecking.value) {
+    if (isDisabled.value || isPrechecking.value) {
       return;
     }
-    isPreChecking.value = true;
+    isPrechecking.value = true;
     const nextValue = $targetInput.checked;
     Promise.resolve(props.beforeChange ? props.beforeChange(nextValue) : true)
       .then(result => {
@@ -165,7 +165,7 @@ export const useCheckbox = () => {
         $targetInput.checked = isChecked.value;
       })
       .finally(() => {
-        isPreChecking.value = false;
+        isPrechecking.value = false;
       });
   };
 
@@ -184,7 +184,7 @@ export const useCheckbox = () => {
   return {
     inputRef,
     isChecked,
-    isPreChecking,
+    isPrechecking,
     isDisabled,
     setChecked,
     handleChange,
