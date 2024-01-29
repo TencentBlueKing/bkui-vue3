@@ -88,7 +88,7 @@ export default defineComponent({
   },
   emits: ['update:modelValue', 'change', 'clear', 'toggle', 'focus'],
   setup(props, { emit, slots }) {
-    const t = useLocale('select');
+    const t = useLocale('cascader');
 
     const { separator, multiple } = props;
     // 用useHover自定义hook来处理鼠标hover状态

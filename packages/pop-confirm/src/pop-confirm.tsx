@@ -114,14 +114,12 @@ export default defineComponent({
                   onClick={this.ensure}
                   size='small'
                   theme='primary'
-                  loading={this.loading}
                 >
                   {this.confirmText || this.t.ok}
                 </BkButton>
                 <BkButton
                   onClick={this.cancel}
                   size='small'
-                  disabled={this.loading}
                 >
                   {this.cancelText || this.t.cancel}
                 </BkButton>

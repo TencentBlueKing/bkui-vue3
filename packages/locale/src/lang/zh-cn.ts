@@ -152,6 +152,11 @@ const zhCn: Language = {
     copySuccess: '复制成功',
     copyFailed: '复制失败',
   },
+  cascader: {
+    pleaseSelect: '请选择',
+    noData: '无数据',
+    emptyText: '暂无搜索结果',
+  },
   // exception: {
   //   403: '无业务权限',
   //   404: '页面不存在',
