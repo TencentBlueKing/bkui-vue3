@@ -9,7 +9,6 @@
 .@{bk-prefix}-radio {
   display: inline-flex;
   align-items: center;
-  font-size: @font-size-base;
   font-weight: normal;
   letter-spacing: normal;
   color: @radio-font-color;
@@ -20,6 +19,11 @@
 
   & ~ .@{bk-prefix}-radio {
     margin-left: 24px;
+  }
+  &.@{bk-prefix}-radio-small {
+    .@{bk-prefix}-radio-label {
+      font-size: @font-size-base;
+    }
   }
 
   &.is-checked {
@@ -83,7 +87,7 @@
 
 .@{bk-prefix}-radio-label {
   margin-left: 6px;
-  font-size: 12px;
+  font-size: @font-size-medium;
   font-style: normal;
   font-weight: normal;
   vertical-align: middle;
@@ -104,7 +108,37 @@
   opacity: 1;
   user-select: none;
 
-  &-input {
+  @sizeSelectors: small, large;
+
+  @btnHeight: @component-size-base;
+  @btnPadding: @component-size-base-padding;
+  @btnBorderRadius: @border-radius-base;
+
+  @smallBtnHeight: @component-size-small;
+  @smallBtnPadding: @component-size-small-padding;
+  @smallBtnFontSize: @font-size-base;
+
+  @largeBtnHeight: @component-size-large;
+  @largeBtnPadding: @component-size-large-padding;
+  @largeBtnFontSize: @font-size-large;
+
+  each(@sizeSelectors, {
+    @sizeBtnHeight: '@{value}BtnHeight';
+    @sizeBtnPadding: '@{value}BtnPadding';
+    @sizeBtnFontSize: '@{value}BtnFontSize';
+
+    &.@{bk-prefix}-radio-button-@{value}{
+      .@{bk-prefix}-radio-button-label{
+        height: @@sizeBtnHeight;
+        padding: @@sizeBtnPadding;
+        font-size: @@sizeBtnFontSize;
+        line-height: @@sizeBtnHeight;
+      }
+    }
+  });
+
+
+  .@{bk-prefix}-radio-button-input {
     position: absolute;
     z-index: -1;
     width: 100%;
@@ -117,8 +151,8 @@
 
   .@{bk-prefix}-radio-button-label {
     width: 100%;
-    padding: 0 18px;
-    font-size: 12px;
+    padding: @btnPadding;
+    font-size: @font-size-base;
     font-style: normal;
     font-weight: normal;
     line-height: @component-size-base;
@@ -148,7 +182,6 @@
     }
   }
 }
-
 
 .@{bk-prefix}-radio-capsule {
   padding: 4px;
@@ -192,7 +225,8 @@
   }
 }
 
-.@{bk-prefix}-radio-tab,.@{bk-prefix}-radio-card {
+.@{bk-prefix}-radio-tab,
+.@{bk-prefix}-radio-card {
 
   .@{bk-prefix}-radio-button {
     overflow: hidden;

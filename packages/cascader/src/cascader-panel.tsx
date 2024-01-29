@@ -48,7 +48,7 @@ export default defineComponent({
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
-    const t = useLocale('select');
+    const t = useLocale('cascader');
 
     const { store } = props;
     const menus = reactive({
@@ -173,6 +173,7 @@ export default defineComponent({
     };
 
     const noDataText = t.value.noData;
+    const { emptyText } = t.value;
 
     const isNodeInPath = (node: INode) => {
       const currentLevel = activePath.value[node.level - 1] || {};
@@ -228,6 +229,7 @@ export default defineComponent({
       searchPanelEvents,
       expandByNodeList,
       noDataText,
+      emptyText,
       resolveClassName,
     };
   },
@@ -258,7 +260,7 @@ export default defineComponent({
           class={this.resolveClassName('cascader-search-empty')}
           style={{ width: emptyWidth }}
         >
-          <span>暂无搜索结果</span>
+          <span>{this.noDataText}</span>
         </div>
       );
     return (
