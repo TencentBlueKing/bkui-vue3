@@ -36,6 +36,7 @@ import DemoCheckboxChecked from './demo/checkbox-checked.vue';
 import DemoCheckboxDisabled from './demo/checkbox-disabled.vue';
 import DemoCheckboxGroup from './demo/checkbox-group.vue';
 import DemoCheckboxIndeterminate from './demo/checkbox-indeterminate.vue';
+import DemoCheckboxPrechecked from './demo/checkbox-prechecked.vue';
 
 const checkboxProps: IPropsTableItem[] = [
   {
@@ -183,6 +184,14 @@ export default defineComponent({
           demoName='/demo/checkbox-disabled'
         >
           <DemoCheckboxDisabled />
+        </DemoBox>
+        <DemoBox
+          title='前置校验'
+          desc='配置 before-change'
+          componentName='checkbox'
+          demoName='/demo/checkbox-prechecked'
+        >
+          <DemoCheckboxPrechecked />
         </DemoBox>
         <DemoBox
           title='半选'

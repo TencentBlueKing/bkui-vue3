@@ -1,5 +1,7 @@
 <template>
-  <bk-checkbox v-model="value">
+  <bk-checkbox
+    v-model="value"
+  >
     微信
   </bk-checkbox>
   <div style="margin-top: 10px">
@@ -9,7 +11,8 @@
 <script setup>
   import { ref } from 'vue';
 
-  import { BkCheckbox } from '@bkui-vue/checkbox';;
+  import { BkCheckbox } from '@bkui-vue/checkbox';
+  ;
 
   const value = ref(true);
 
