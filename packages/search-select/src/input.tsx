@@ -311,7 +311,7 @@ export default defineComponent({
       if (!usingItem.value && !keyword.value) {
         emit('delete');
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        nextTick(setMenuList);
+        setTimeout(setMenuList, 16);
         return;
       }
       if (usingItem.value?.values.length) {
@@ -421,9 +421,9 @@ export default defineComponent({
     }
     function setInputFocus(refleshMenuList = false) {
       if (refleshMenuList) {
-        nextTick().then(() => {
+        setTimeout(() => {
           setMenuList();
-        });
+        }, 16);
       }
       isFocus.value = true;
       showPopover.value = true;
