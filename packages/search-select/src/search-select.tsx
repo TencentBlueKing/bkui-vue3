@@ -182,7 +182,8 @@ export default defineComponent({
           }
         });
         selectedList.value = list;
-        copyData.value?.forEach(item => {
+        copyData.value = JSON.parse(JSON.stringify(props.data || []));
+        copyData.value.forEach(item => {
           item.isSelected = props.uniqueSelect && !!list.some(set => set.id === item.id);
         });
       },
