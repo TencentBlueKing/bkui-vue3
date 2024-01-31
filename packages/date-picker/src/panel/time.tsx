@@ -43,7 +43,7 @@ import { capitalize } from '@bkui-vue/shared';
 import TimeSpinner from '../base/time-spinner';
 import fecha from '../fecha';
 // import type { DatePickerValueType } from '../interface';
-import { IDisabledHMS } from '../interface';
+import { IDisabledHMS, SelectionModeType } from '../interface';
 import { datePickerProps, timePanelProps } from '../props';
 import { initTime, mergeDateHMS, timePickerKey } from '../utils';
 
@@ -68,6 +68,17 @@ const timeProps = {
   confirm: {
     type: Boolean,
     default: false,
+  },
+  selectionMode: {
+    type: String as PropType<SelectionModeType>,
+    default: 'date',
+    validator(v) {
+      if (['year', 'month', 'date', 'time'].indexOf(v) < 0) {
+        console.error(`selectionMode property is not valid: '${v}'`);
+        return false;
+      }
+      return true;
+    },
   },
 };
 
@@ -159,7 +170,8 @@ export default defineComponent({
       Object.keys(date).forEach(type => newDate[`set${capitalize(type)}`](date[type]));
 
       if (isEmit) {
-        emit('pick', newDate, true, 'time');
+        // pick 参数：dates, visible, type, isUseShortCut
+        emit('pick', newDate, true, props.selectionMode);
       }
     }
 
