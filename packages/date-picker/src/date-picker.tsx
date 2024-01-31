@@ -85,11 +85,12 @@ export default defineComponent({
     let initialValue = isAllEmptyArr(initialArr)
       ? emptyArray
       : parseDate(props.value || props.modelValue, props.type, props.multiple, props.format);
+
     let shortcut = null;
     if (props.shortcutSelectedIndex !== -1) {
       shortcut = props.shortcuts[props.shortcutSelectedIndex] || null;
       if (shortcut) {
-        initialValue = shortcut.value();
+        initialValue = [shortcut.value()];
       }
     }
 
