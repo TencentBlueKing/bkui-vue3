@@ -32,6 +32,7 @@ import { capitalize } from '@bkui-vue/shared';
 
 import TimeSpinner from '../base/time-spinner';
 import fecha from '../fecha';
+import { SelectionModeType } from '../interface';
 import { datePickerProps, timePanelProps } from '../props';
 import { initTime, timePickerKey } from '../utils';
 
@@ -52,6 +53,17 @@ const timeRangeProps = {
   allowCrossDay: {
     type: Boolean,
     default: false,
+  },
+  selectionMode: {
+    type: String as PropType<SelectionModeType>,
+    default: 'date',
+    validator(v) {
+      if (['year', 'month', 'date', 'time'].indexOf(v) < 0) {
+        console.error(`selectionMode property is not valid: '${v}'`);
+        return false;
+      }
+      return true;
+    },
   },
 };
 
@@ -175,7 +187,8 @@ export default defineComponent({
       }
 
       if (isEmit) {
-        emit('pick', [dateStart, dateEnd], true, 'time');
+        // pick 参数：dates, visible, type, isUseShortCut
+        emit('pick', [dateStart, dateEnd], true, props.selectionMode);
       }
     }
 

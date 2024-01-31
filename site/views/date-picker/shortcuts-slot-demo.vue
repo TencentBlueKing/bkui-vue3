@@ -2,6 +2,18 @@
   <div>
     <div>
       <bk-date-picker
+        v-model="dateValue"
+        type="datetime"
+        use-shortcut-text
+        format="yyyy-MM-dd HH:mm:ss"
+        :shortcuts="dateShortCut"
+        :shortcut-selected-index="4"
+        @change="change"
+      />
+    </div>
+
+    <div style="margin-top: 20px;">
+      <bk-date-picker
         v-model="defaultValue"
         type="datetimerange"
         use-shortcut-text
@@ -27,7 +39,7 @@
     </div>
     <div style="margin-top: 20px;">
       <bk-date-picker
-        v-model="dateValue"
+        v-model="dateValue1"
         @change="change"
       >
         <template #shortcuts>
@@ -42,11 +54,54 @@
 
 <script setup>
   import { reactive, ref } from 'vue';
-  const defaultValue = reactive(['2022-07-21 12:02:26', '2022-08-20 12:02:26']);
+  const defaultValue = reactive(['2022-07-21 12:02:26']);
   const dateValue = ref(new Date());
+  const dateValue1 = ref(new Date());
   const change = (value, type) => {
     console.log(value, type);
   };
+
+  function getLastMillisecondOfDate(ts) {
+    const date = new Date(ts);
+    date.setHours(0, 0, 0, 0);
+    return date;
+  }
+
+  const now = new Date();
+
+  const dateShortCut = [
+    {
+      text: '今天',
+      value: () => getLastMillisecondOfDate(now.getTime()),
+      short: 'now/d',
+    },
+    {
+      text: '昨天',
+      value: () => getLastMillisecondOfDate(now.getTime() - 1 * 24 * 60 * 60 * 1000),
+      short: 'now-1d/d',
+    },
+    {
+      text: '前天',
+      value: () => getLastMillisecondOfDate(now.getTime() - 2 * 24 * 60 * 60 * 1000),
+      short: 'now-2d/d',
+    },
+    {
+      text: '一星期前',
+      value: () => getLastMillisecondOfDate(now.getTime() - 7 * 24 * 60 * 60 * 1000),
+      short: 'now-7d/d',
+    },
+    {
+      text: '一个月前',
+      value: () => getLastMillisecondOfDate(now.getTime() - 30 * 24 * 60 * 60 * 1000),
+      short: 'now-1M/d',
+    },
+    {
+      text: '一年前',
+      value: () => getLastMillisecondOfDate(now.getTime() - 365 * 24 * 60 * 60 * 1000),
+      short: 'now-1y/d',
+    },
+  ];
+
   const shortcutsRange = reactive([
     {
       text: '今天',
