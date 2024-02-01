@@ -16,7 +16,7 @@
   user-select: none;
 
   & ~ .@{bk-prefix}-checkbox {
-    margin-left: 30px;
+    margin-left: 24px;
   }
 
   &.is-checked {
@@ -100,6 +100,13 @@
       }
     }
   }
+
+  &.is-prechecking {
+    position: relative;
+    .@{bk-prefix}-checkbox-input {
+      visibility: hidden;
+    }
+  }
 }
 
 .@{bk-prefix}-checkbox-input {
@@ -130,4 +137,11 @@
   display: inline-block;
   margin-left: 6px;
   vertical-align: middle;
+}
+
+.@{bk-prefix}-checkbox-checking {
+  position: absolute;
+  font-size: 16px;
+  color: #3a84ff;
+  animation: loading 1s linear infinite;
 }

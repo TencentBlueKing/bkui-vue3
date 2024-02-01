@@ -354,8 +354,9 @@ export const getElementTextWidth = (element: HTMLElement, text?: string) => {
 };
 
 export const isColumnHidden = (settingFields, column, checked) => {
+  const getFieldValue = field => field.field ?? field.id;
   const isSettingField = (col: Column) =>
-    settingFields.some(field => field.field === resolvePropVal(col, ['field', 'type'], [col]));
+    settingFields.some(field => getFieldValue(field) === resolvePropVal(col, ['field', 'type'], [col]));
   return (
     isSettingField(column) && checked.length && !checked.includes(resolvePropVal(column, ['field', 'type'], [column]))
   );
@@ -396,8 +397,8 @@ export const getSortFn = (column, sortType) => {
   const fieldName = column.field as string;
   const getVal = (row: any) => getRowText(row, fieldName);
   const sortFn0 = (a: any, b: any) => {
-    const val0 = getVal(a) || '';
-    const val1 = getVal(b) || '';
+    const val0 = getVal(a) ?? '';
+    const val1 = getVal(b) ?? '';
     if (typeof val0 === 'number' && typeof val1 === 'number') {
       return val0 - val1;
     }
@@ -413,19 +414,19 @@ export const getSortFn = (column, sortType) => {
 
 export const getNextSortType = (sortType: string) => {
   const steps = {
-    [SORT_OPTION.NULL]: 0,
+    [SORT_OPTION.NULL]: 3,
     [SORT_OPTION.ASC]: 1,
     [SORT_OPTION.DESC]: 2,
   };
 
   if (steps[sortType] === undefined) {
-    return SORT_OPTION.NULL;
+    return SORT_OPTION.ASC;
   }
 
   return Object.keys(steps)[(steps[sortType] + 1) % 3];
 };
 
-export const resolveSort = (sort: ISortPropShape) => {
+export const resolveSort = (sort: ISortPropShape, column) => {
   if (typeof sort === 'string') {
     return {
       value: sort,
@@ -439,20 +440,23 @@ export const resolveSort = (sort: ISortPropShape) => {
   }
 
   if (typeof sort === 'object' && sort !== null) {
-    if (typeof sort.sortFn) {
+    if (typeof sort.sortFn === 'function') {
       return {
         value: 'custom',
         ...sort,
       };
     }
 
-    return sort;
+    return Object.assign({}, { sortFn: getSortFn(column, sort.value ?? SORT_OPTION.NULL) }, sort);
   }
 
   return null;
 };
 
-export const isRowSelectEnable = (props, { row, index, isCheckAll }) => {
+export const isRowSelectEnable = (
+  props,
+  { row, index, isCheckAll }: { row: any; index?: number; isCheckAll?: boolean },
+) => {
   if (typeof props.isRowSelectEnable === 'boolean') {
     return props.isRowSelectEnable !== false;
   }
@@ -474,11 +478,11 @@ export const getRowId = (row, defVal, props) => {
 };
 
 export const resolveColumnSortProp = (col: Column, props: TablePropTypes) => {
-  const { value, sortFn, sortScope } = resolveSort(col.sort ?? props.defaultSort) ?? {};
+  const { value, sortFn, sortScope } = resolveSort(col.sort ?? props.defaultSort, col) ?? {};
   return {
     type: value,
     fn: sortFn,
     scope: sortScope,
-    active: false,
+    active: !!col.sort,
   };
 };

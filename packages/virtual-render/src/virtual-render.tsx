@@ -47,6 +47,7 @@ import {
 import { usePrefix } from '@bkui-vue/config-provider';
 
 import { type VirtualRenderProps, virtualRenderProps } from './props';
+import useFixTop from './use-fix-top';
 import useTagRender from './use-tag-render';
 import virtualRender, { computedVirtualIndex, VisibleRender } from './v-virtual-render';
 
@@ -135,18 +136,6 @@ export default defineComponent({
     onUnmounted(() => {
       instance?.uninstall();
     });
-
-    watch(
-      () => [props.lineHeight, props.height, props.list, props.maxHeight],
-      () => {
-        instance?.setBinding(binding);
-        handleChangeListConfig();
-        nextTick(() => {
-          afterListDataReset();
-        });
-      },
-      { deep: true },
-    );
 
     const handleChangeListConfig = () => {
       /** 数据改变时激活当前表单，使其渲染DOM */
@@ -259,14 +248,24 @@ export default defineComponent({
       afterListDataReset();
     };
 
-    const scrollTo = (option = { left: 0, top: 0 }) => {
-      const { left, top } = option;
-      refRoot.value.scrollTo(left, top);
-    };
+    const { scrollTo, fixToTop } = useFixTop(props, refRoot);
+
+    watch(
+      () => [props.lineHeight, props.height, props.list, props.maxHeight],
+      () => {
+        instance?.setBinding(binding);
+        handleChangeListConfig();
+        nextTick(() => {
+          afterListDataReset();
+        });
+      },
+      { deep: true, immediate: true },
+    );
 
     ctx.expose({
       reset,
       scrollTo,
+      fixToTop,
     });
 
     return () =>

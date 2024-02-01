@@ -25,15 +25,15 @@
  */
 import { computed, defineComponent, ref, unref, watch } from 'vue';
 
-import BkButton from '@bkui-vue/button';
-import BkCheckbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
+import Button from '@bkui-vue/button';
+import Checkbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { CloseLine, CogShape } from '@bkui-vue/icon/';
 import Popover from '@bkui-vue/popover';
 import { PropTypes } from '@bkui-vue/shared';
 
-import { createDefaultSizeList, LINE_HEIGHT, SETTING_SIZE } from '../const';
-import { IColumnType, ITableSettings, RowHeightFunctionNumberType, Settings, SizeItem } from '../props';
+import { createDefaultSizeList, SETTING_SIZE } from '../const';
+import { IColumnType, ITableSettings, Settings, SizeItem } from '../props';
 import { resolvePropVal } from '../utils';
 
 export default defineComponent({
@@ -41,7 +41,6 @@ export default defineComponent({
   props: {
     settings: ITableSettings,
     columns: PropTypes.arrayOf(IColumnType).def([]),
-    rowHeight: RowHeightFunctionNumberType.def(LINE_HEIGHT),
   },
   emits: ['change'],
   setup(props, { emit, slots }) {
@@ -53,21 +52,24 @@ export default defineComponent({
     const isShow = ref(false);
 
     const localSettings = computed(() => {
+      const deafultSettings = {
+        fields: props.columns.map((col: any) => Object.assign({}, col, { field: col.field || col.type })),
+        checked: [],
+        limit: 0,
+        size: 'small',
+        sizeList: defaultSizeList,
+        showLineHeight: true,
+        trigger: 'manual',
+      };
+
       if (typeof props.settings === 'boolean') {
-        return {
-          fields: props.columns.map((col: any) => Object.assign({}, col, { field: col.field || col.type })),
-          checked: [],
-          limit: 0,
-          size: SETTING_SIZE.small,
-          sizeList: defaultSizeList,
-          showLineHeight: true,
-        };
+        return deafultSettings;
       }
 
-      return props.settings;
+      return Object.assign({}, deafultSettings, props.settings);
     });
     const activeSize = ref(localSettings.value.size || 'small');
-    const activeHeight = ref(props.rowHeight);
+    const activeHeight = ref(SETTING_SIZE.small);
 
     const checkedFields = ref(localSettings.value.checked || []);
     const className = resolveClassName('table-settings');
@@ -164,12 +166,9 @@ export default defineComponent({
       ));
 
     const indeterminate = computed(
-      () =>
-        checkedFields.value.length > 0 &&
-        !renderFields.value.every((field: any, index: number) =>
-          checkedFields.value.includes(resolvePropVal(field, 'field', [field, index])),
-        ),
+      () => checkedFields.value.length > 0 && checkedFields.value.length < renderFields.value.length,
     );
+
     const showLineHeight = computed(() =>
       typeof localSettings.value.showLineHeight === 'boolean' ? localSettings.value.showLineHeight : true,
     );
@@ -204,7 +203,7 @@ export default defineComponent({
     return () =>
       props.settings ? (
         <Popover
-          trigger='manual'
+          trigger={localSettings.value.trigger ?? ('manual' as any)}
           isShow={isShow.value}
           placement='bottom-end'
           arrow={true}
@@ -245,13 +244,13 @@ export default defineComponent({
                         class='check-all'
                         onClick={handleCheckAllClick}
                       >
-                        <BkCheckbox
+                        <Checkbox
                           label={t.value.setting.fields.selectAll}
                           indeterminate={Boolean(indeterminate.value)}
                           modelValue={checkedFields.value.length > 0}
                         >
                           {t.value.setting.fields.selectAll}
-                        </BkCheckbox>
+                        </Checkbox>
                       </span>
                     )}
                   </div>
@@ -261,13 +260,13 @@ export default defineComponent({
                   >
                     {renderFields.value.map((item: any, index: number) => (
                       <div class='field-item'>
-                        <BkCheckbox
+                        <Checkbox
                           checked={checkedFields.value.includes(resolvedColVal(item, index))}
                           label={resolvedColVal(item, index)}
                           disabled={isItemReadonly(item, index)}
                         >
                           {resolvePropVal(item, ['name', 'label'], [item, index])}
-                        </BkCheckbox>
+                        </Checkbox>
                       </div>
                     ))}
                   </BkCheckboxGroup>
@@ -281,19 +280,19 @@ export default defineComponent({
                   )}
                 </div>
                 <div class='setting-footer'>
-                  <BkButton
+                  <Button
                     theme='primary'
                     style={buttonStyle}
                     onClick={handleSaveClick}
                   >
                     {t.value.setting.options.ok}
-                  </BkButton>
-                  <BkButton
+                  </Button>
+                  <Button
                     style={buttonStyle}
                     onClick={handleCancelClick}
                   >
                     {t.value.setting.options.cancel}
-                  </BkButton>
+                  </Button>
                 </div>
               </div>
             ),

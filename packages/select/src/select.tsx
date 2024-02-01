@@ -37,7 +37,7 @@ import { clickoutside } from '@bkui-vue/directives';
 import { AngleUp, Close, Search } from '@bkui-vue/icon';
 import Input from '@bkui-vue/input';
 import Loading from '@bkui-vue/loading';
-import BKPopover from '@bkui-vue/popover';
+import Popover from '@bkui-vue/popover';
 import {
   classes,
   InputBehaviorType,
@@ -95,7 +95,7 @@ export default defineComponent({
     displayKey: PropTypes.string.def('label'),
     withValidate: PropTypes.bool.def(true),
     showSelectedIcon: PropTypes.bool.def(true), // 多选时是否显示勾选ICON
-    inputSearch: PropTypes.bool.def(true), // 是否采用输入框支持搜索的方式
+    inputSearch: PropTypes.bool.def(false), // 是否采用输入框支持搜索的方式
     enableVirtualRender: PropTypes.bool.def(false), // 是否开启虚拟滚动（List模式下才会生效）
     allowEmptyValues: PropTypes.array.def([]), // 允许的空值作为options选项
     autoFocus: PropTypes.bool.def(false), // 挂载的时候是否自动聚焦输入框
@@ -246,9 +246,9 @@ export default defineComponent({
         ? list.value
         : list.value.filter(item => {
             if (hasFilterOptionFunc.value) {
-              return !!filterOption.value(searchKey.value, item);
+              return !!filterOption.value(curSearchValue.value, item);
             }
-            return toLowerCase(String(item[displayKey.value]))?.includes(toLowerCase(searchKey.value));
+            return toLowerCase(String(item[displayKey.value]))?.includes(toLowerCase(curSearchValue.value));
           }),
     );
     // select组件是否禁用
@@ -292,7 +292,7 @@ export default defineComponent({
     );
     // 是否显示全选
     const isShowSelectAll = computed(
-      () => multiple.value && showSelectAll.value && (!searchKey.value || !filterable.value),
+      () => multiple.value && showSelectAll.value && (!curSearchValue.value || !filterable.value),
     );
     const isShowAll = computed(() => multiple.value && showAll.value);
     // 虚拟滚动高度 12 上下边距，32 显示全选时的高度
@@ -325,7 +325,7 @@ export default defineComponent({
           placement: 'bottom-start',
           isShow: isPopoverShow.value,
           reference: selectTagInputRef.value,
-          offset: 6,
+          offset: 4,
           popoverDelay: 0,
           renderType: RenderType.AUTO,
         },
@@ -345,6 +345,7 @@ export default defineComponent({
     const handleBlur = () => {
       if (!isFocus.value) return;
       isFocus.value = false;
+      blurInput();
       emit('blur');
     };
 
@@ -360,7 +361,7 @@ export default defineComponent({
       emit('toggle', isPopoverShow.value);
       if (!isShow) {
         if (!keepSearchValue.value) {
-          searchKey.value = '';
+          searchValue.value = '';
         }
         document.removeEventListener('keydown', handleDocumentKeydown);
       } else {
@@ -368,9 +369,18 @@ export default defineComponent({
         setTimeout(() => {
           focusInput();
           initActiveOptionValue();
+          scrollActiveOptionIntoView();
         }, 10); // 等待Popover content出来，options加载完成
       }
     });
+    // 滚动到当前选中的options中
+    const scrollActiveOptionIntoView = () => {
+      const optionsDom = contentRef.value?.querySelectorAll?.('.is-selected');
+      optionsDom[0]?.scrollIntoView({
+        block: 'center',
+        behavior: 'smooth',
+      });
+    };
 
     // 初始化当前悬浮的option项
     const initActiveOptionValue = () => {
@@ -400,7 +410,7 @@ export default defineComponent({
         });
       }
     };
-    const { searchKey, searchLoading } = useRemoteSearch(
+    const { searchValue, customOptionName, curSearchValue, searchLoading } = useRemoteSearch(
       isRemoteSearch.value ? remoteMethod.value : defaultSearchMethod,
       initActiveOptionValue,
     );
@@ -418,21 +428,25 @@ export default defineComponent({
       handleFocus();
       togglePopover();
     };
-    // 搜索
+    // 自定义创建
     const handleInputChange = value => {
       if (!filterable.value) return;
-      searchKey.value = value;
+      customOptionName.value = value;
     };
     // allow create(创建自定义选项)
-    const handleCreateCustomOption = (val: string | number) => {
+    const handleCreateCustomOption = (val: string | number, e: KeyboardEvent) => {
       const value = String(val);
       if (!allowCreate.value || !value) return;
+
+      // 阻止触发鼠标事件
+      e.stopPropagation();
+      e.preventDefault();
 
       const matchedOption = options.value.find(data => toLowerCase(String(data.optionName)) === toLowerCase(value));
       if (filterable.value && matchedOption) {
         // 开启搜索后，正好匹配到自定义选项，则不进行创建操作
         handleOptionSelected(matchedOption);
-        searchKey.value = '';
+        customOptionName.value = '';
         return;
       }
 
@@ -450,7 +464,7 @@ export default defineComponent({
         emitChange(value);
         hidePopover();
       }
-      searchKey.value = '';
+      customOptionName.value = '';
     };
     // Option点击事件
     const handleOptionSelected = (option: OptionInstanceType) => {
@@ -471,6 +485,7 @@ export default defineComponent({
           emitChange(selected.value.map(item => item.value));
           emit('select', option.optionID);
         }
+        focusInput();
       } else {
         // 单选
         selected.value = [
@@ -482,8 +497,8 @@ export default defineComponent({
         emitChange(option.optionID);
         emit('select', option.optionID);
         hidePopover();
+        handleBlur();
       }
-      focusInput();
     };
     // 聚焦输入框
     const focusInput = () => {
@@ -496,6 +511,16 @@ export default defineComponent({
           } else {
             inputRef.value?.focus();
           }
+        }
+      }, 0);
+    };
+    // 失焦输入框
+    const blurInput = () => {
+      setTimeout(() => {
+        if (multipleMode.value === 'tag') {
+          selectTagInputRef.value?.blur();
+        } else {
+          inputRef.value?.blur();
         }
       }, 0);
     };
@@ -637,7 +662,12 @@ export default defineComponent({
         }
         // 删除选项
         case 'Backspace': {
-          if (!multiple.value || !selected.value.length || searchKey.value.length || e.target === searchRef.value)
+          if (
+            !multiple.value ||
+            !selected.value.length ||
+            customOptionName.value.length ||
+            e.target === searchRef.value
+          )
             return; // 单选和下拉搜索不支持回退键删除
 
           selected.value.pop();
@@ -719,7 +749,8 @@ export default defineComponent({
       isShowSelectContent,
       curContentText,
       isGroup,
-      searchKey,
+      searchValue,
+      customOptionName,
       isShowAll,
       isShowSelectAll,
       virtualHeight,
@@ -834,7 +865,7 @@ export default defineComponent({
         return (
           <SelectTagInput
             ref='selectTagInputRef'
-            v-model={this.searchKey}
+            v-model={this.customOptionName}
             selected={this.selected}
             tagTheme={this.tagTheme}
             placeholder={this.localPlaceholder}
@@ -855,7 +886,7 @@ export default defineComponent({
         <Input
           ref='inputRef'
           type='text'
-          modelValue={this.isInput ? this.searchKey : this.selectedLabel.join(',')}
+          modelValue={this.isInput ? this.customOptionName : this.selectedLabel.join(',')}
           placeholder={this.isInput ? this.selectedLabel.join(',') || this.localPlaceholder : this.localPlaceholder}
           readonly={!this.isInput}
           selectReadonly={true}
@@ -902,7 +933,7 @@ export default defineComponent({
               ref='searchRef'
               class={this.resolveClassName('select-search-input')}
               placeholder={this.localSearchPlaceholder}
-              v-model={this.searchKey}
+              v-model={this.searchValue}
             />
           </div>
         )}
@@ -990,7 +1021,7 @@ export default defineComponent({
 
     return (
       <div class={selectClass}>
-        <BKPopover
+        <Popover
           {...this.popoverConfig}
           onClickoutside={this.handleClickOutside}
           onAfterShow={this.handlePopoverShow}
@@ -999,7 +1030,7 @@ export default defineComponent({
             default: () => renderSelectTrigger(),
             content: () => renderSelectContent(),
           }}
-        ></BKPopover>
+        ></Popover>
       </div>
     );
   },

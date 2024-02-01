@@ -8,7 +8,9 @@
     >
       <bk-button>删除</bk-button>
       <template #content>
-        <div>测试将同时删除该结果数据下的所有样本曲线,</div>
+        <div style="margin-bottom: 16px;">
+          测试将同时删除该结果数据下的所有样本曲线
+        </div>
       </template>
     </bk-pop-confirm>
   </div>

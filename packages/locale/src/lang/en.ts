@@ -150,6 +150,11 @@ const en = {
     copySuccess: 'Successfully',
     copyFailed: 'Copy Failed',
   },
+  cascader: {
+    pleaseSelect: 'Please Select',
+    noData: 'No data',
+    emptyText: 'No Data',
+  },
   // exception: {
   //   403: 'Forbidden',
   //   404: 'Not Found',

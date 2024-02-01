@@ -2,35 +2,35 @@
   <div>
     <bk-input
       v-model="xxxx"
-      class="mb10"
+      class="mb8"
       size="small"
     />
     <bk-input
       v-model="prefix"
       size="small"
-      class="mb10"
+      class="mb8"
       type="url"
       prefix="https://"
     />
     <bk-input
       v-model="normal"
-      class="mb10"
+      class="mb8"
     />
     <bk-input
       v-model="suffix"
-      class="mb10"
+      class="mb8"
       type="url"
       suffix="@qq.com"
     />
     <bk-input
       v-model="search"
       size="large"
-      class="mb10"
+      class="mb8"
       type="search"
     />
     <bk-input
       v-model="large"
-      class="mb10"
+      class="mb8"
       size="large"
     />
   </div>
@@ -45,3 +45,8 @@
   const search = ref('');
   const large = ref('');
 </script>
+<style lang="postcss" scoped>
+.mb8 {
+  margin-bottom: 8px;
+}
+</style>

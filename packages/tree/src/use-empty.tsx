@@ -23,15 +23,15 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import BkException from '@bkui-vue/exception';
+import Exception from '@bkui-vue/exception';
 
 export default props => ({
   renderEmpty: (type: '404' | '403' | '500' | 'building' | 'empty' | 'search-empty' | 'login') => (
-    <BkException
+    <Exception
       scene='part'
       type={type}
     >
       {props.emptyText}
-    </BkException>
+    </Exception>
   ),
 });

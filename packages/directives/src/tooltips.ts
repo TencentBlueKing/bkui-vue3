@@ -44,7 +44,7 @@ export declare type IOptions = {
   onShow: () => void;
   onHide: () => void;
 };
-const nodeList = new Map();
+const nodeList = new WeakMap();
 
 const tooltips: ObjectDirective = {
   beforeMount(el: HTMLElement, binding: DirectiveBinding) {
@@ -100,7 +100,9 @@ const tooltips: ObjectDirective = {
     });
   },
   updated(el: HTMLElement, binding: DirectiveBinding) {
-    nodeList.get(el).opts = getOpts(binding);
+    if (nodeList.get(el)) {
+      nodeList.get(el).opts = getOpts(binding);
+    }
   },
   unmounted(el) {
     hide(el);

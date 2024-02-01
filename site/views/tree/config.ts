@@ -44,7 +44,7 @@ export default [
         optional: [],
       },
       { name: 'children', type: 'String', default: 'children', desc: '子节点 Key, 用于读取子节点', optional: [] },
-      { name: 'indent', type: 'Number', default: '18', desc: '相邻级节点间的水平缩进，单位为像素', optional: [] },
+      { name: 'indent', type: 'Number', default: '16', desc: '相邻级节点间的水平缩进，单位为像素', optional: [] },
       { name: 'line-height', type: 'Number', default: '32', desc: '设置行高', optional: [] },
       {
         name: 'level-line',
@@ -230,7 +230,7 @@ export default [
       { name: 'isNodeMatched', desc: '判定指定节点是否匹配成功', params: 'row, expanded' },
       { name: 'hasChildNode', desc: '判定指定节点是否有子节点', params: 'row, expanded' },
       { name: 'setOpen', desc: '指定节点展开', params: '(item: any[] | any, isOpen = true, autoOpenParents = false)' },
-      { name: 'setChecked', desc: '设置指定节点是否选中', params: '(item: any[] | any, checked = true)' },
+      { name: 'setChecked', desc: '设置指定节点是否勾选', params: '(item: any[] | any, checked = true)' },
       {
         name: 'setNodeAction',
         desc: '设置指定节点行为 checked isOpen',

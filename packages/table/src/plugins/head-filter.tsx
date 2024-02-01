@@ -25,7 +25,8 @@
  */
 import { computed, defineComponent, nextTick, reactive, ref, toRefs, watch } from 'vue';
 
-import BkCheckbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
+import Button from '@bkui-vue/button';
+import Checkbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { Funnel } from '@bkui-vue/icon';
 import Popover from '@bkui-vue/popover';
@@ -164,12 +165,14 @@ export default defineComponent({
       }
 
       return (
-        <span
-          class='btn-filter-save'
+        <Button
+          theme='primary'
+          size='small'
+          style='width: 56px; margin-right: 8px;'
           onClick={handleBtnSaveClick}
         >
           {text}
-        </span>
+        </Button>
       );
     };
 
@@ -180,12 +183,14 @@ export default defineComponent({
       }
 
       return (
-        <span
-          class={['btn-filter-reset', state.checked.length ? '' : 'disable']}
+        <Button
+          style='width: 56px;'
+          size='small'
+          disabled={state.checked.length === 0}
           onClick={handleBtnResetClick}
         >
           {text}
-        </span>
+        </Button>
       );
     };
 
@@ -206,7 +211,7 @@ export default defineComponent({
       if (scope.data.length) {
         return scope.data.map((item: any) => (
           <div class='list-item'>
-            <BkCheckbox
+            <Checkbox
               label={item.value}
               key={item.$index}
               immediateEmitChange={false}
@@ -215,7 +220,7 @@ export default defineComponent({
               onChange={val => handleValueChange(val, item)}
             >
               {`${item.text}`}
-            </BkCheckbox>
+            </Checkbox>
           </div>
         ));
       }
@@ -268,7 +273,6 @@ export default defineComponent({
               </BkCheckboxGroup>
               <div class='content-footer'>
                 {renderSaveBtn()}
-                <span class='btn-filter-split'></span>
                 {renderResetBtn()}
               </div>
             </div>

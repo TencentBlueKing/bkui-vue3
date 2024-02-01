@@ -276,20 +276,23 @@ export default defineComponent({
         domRef.addEventListener(
           'wheel',
           debounce(() => {
+            // handleWheel(type);
+
             if (wheelStart.value === true) {
               // console.log('滚动了');
               wheelStart.value = false;
               wheelEnd.value = true;
               // 这里写开始滚动时调用的方法
-              handleWheel(type);
               wheelTimer.value = setTimeout(() => {
+                handleWheel(type);
                 stopWheel(domRef);
-              }, 400);
+              }, 200);
             } else {
-              clearTimeout(wheelTimer);
+              clearTimeout(wheelTimer.value);
               wheelTimer.value = setTimeout(() => {
+                handleWheel(type);
                 stopWheel(domRef);
-              }, 400);
+              }, 300);
             }
           }, 32),
           { passive: true },

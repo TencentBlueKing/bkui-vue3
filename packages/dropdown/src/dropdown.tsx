@@ -28,7 +28,7 @@ import merge from 'lodash/merge';
 import { defineComponent, ref } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-import BKPopover, { PopoverPropTypes } from '@bkui-vue/popover';
+import Popover, { PopoverPropTypes } from '@bkui-vue/popover';
 import { classes, placementType, PropTypes, triggerType } from '@bkui-vue/shared';
 
 export default defineComponent({
@@ -93,7 +93,7 @@ export default defineComponent({
     const popoverOptions: Partial<PopoverPropTypes> = merge(basePopoverOptions, this.popoverOptions);
     return (
       <div class={wrapperClasses}>
-        <BKPopover
+        <Popover
           ref='popoverRef'
           {...popoverOptions}
           onAfterShow={this.afterShow}
@@ -101,13 +101,16 @@ export default defineComponent({
         >
           {{
             default: () => (
-              <div class={`${this.resolveClassName('dropdown-reference')}`}> {this.$slots.default?.()} </div>
+              <div class={[`${this.resolveClassName('dropdown-reference')}`, this.disabled ? 'disabled' : '']}>
+                {' '}
+                {this.$slots.default?.()}{' '}
+              </div>
             ),
             content: () => (
               <div class={`${this.resolveClassName('dropdown-content')}`}> {this.$slots.content?.()} </div>
             ),
           }}
-        </BKPopover>
+        </Popover>
       </div>
     );
   },

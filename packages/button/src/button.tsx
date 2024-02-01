@@ -27,7 +27,7 @@
 import { computed, defineComponent, ExtractPropTypes, PropType, ref } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-import BkLoading, { BkLoadingMode, BkLoadingSize } from '@bkui-vue/loading';
+import Loading, { BkLoadingMode, BkLoadingSize } from '@bkui-vue/loading';
 import { classes, ElementType, PropTypes } from '@bkui-vue/shared';
 
 type IButtonNativeType = PropType<'button' | 'submit' | 'reset'>;
@@ -129,7 +129,7 @@ export default defineComponent({
         onMouseleave={handleMouseout}
       >
         {props.loading && (
-          <BkLoading
+          <Loading
             loading
             class={`${btnClsPrefix}-loading`}
             mode={props.loadingMode}

@@ -200,6 +200,7 @@ export type Settings = {
   size?: string;
   sizeList?: SizeItem[];
   showLineHeight?: boolean;
+  trigger: 'manual';
 };
 
 export type ISettingPropType = Settings | boolean;

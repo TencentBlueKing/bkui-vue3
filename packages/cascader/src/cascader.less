@@ -1,7 +1,7 @@
 @import '@bkui-vue/styles/themes/themes.less';
 @import '@bkui-vue/styles/mixins/mixins.less';
 
-.@{bk-prefix}-cascader-popover.@{bk-prefix}-pop2-content {
+.@{bk-prefix}-cascader-popover.@{bk-prefix}-pop2-content.bk-popover {
   padding: 0;
 }
 .@{bk-prefix}-cascader-popover-wrapper {
@@ -87,10 +87,8 @@
     }
   }
 
-  &.@{bk-prefix}-is-show-panel {
-    .@{bk-prefix}-icon-angle-up {
-      transform: rotate(0);
-    }
+  .@{bk-prefix}-icon-angle-up.active {
+    transform: rotate(0);
   }
 
   &.is-unselected:before {
@@ -209,7 +207,7 @@
   box-shadow: 0px 2px 6px 0px rgba(0,0,0,.10);
   .@{bk-prefix}-cascader-panel {
     min-width: 160px;
-    padding: 6px 0;
+    padding: 4px 0;
     background: @white-color;
     border-right: 1px solid @cascader-panel-border-color;
 

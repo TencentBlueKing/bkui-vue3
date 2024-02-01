@@ -27,10 +27,10 @@
 /* eslint-disable arrow-body-style */
 import { computed, defineComponent, ref, toRaw, toRefs, watch } from 'vue';
 
-import BkCheckbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
+import Checkbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { AngleLeft, AngleRight, ArrowsRight, Error, Search, Transfer } from '@bkui-vue/icon/';
-import BkInput from '@bkui-vue/input';
+import Input from '@bkui-vue/input';
 
 import { ArrayType } from './const';
 import { transferProps } from './props';
@@ -291,7 +291,7 @@ export default defineComponent({
       ) : (
         <div class='header'>
           {this.multiple ? (
-            <BkCheckbox
+            <Checkbox
               class='header-checkbox'
               label={titleText}
               v-model={this.multipleSelectAllValue[selectField]}
@@ -373,12 +373,12 @@ export default defineComponent({
         >
           {list.map((item: any) => (
             <div>
-              <BkCheckbox
+              <Checkbox
                 class='checkbox-item'
                 label={item[this.settingCode]}
               >
                 {this.$slots[slotName]?.(item) ?? getDefaultListHtml(item, isLeft)}
-              </BkCheckbox>
+              </Checkbox>
             </div>
           ))}
         </BkCheckboxGroup>
@@ -403,7 +403,7 @@ export default defineComponent({
         <div class='source-list'>
           {getHeaderHtml('left-header')}
           {this.searchable && (
-            <BkInput
+            <Input
               v-model={this.selectSearchQuery}
               class='transfer-search-input'
               clearable={true}
@@ -412,7 +412,7 @@ export default defineComponent({
               {{
                 prefix: () => <Search class='icon-search' />,
               }}
-            </BkInput>
+            </Input>
           )}
           {getListContentHtml('left')}
         </div>

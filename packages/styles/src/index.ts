@@ -82,3 +82,4 @@ import '@bkui-vue/config-provider/config-provider.less';
 import '@bkui-vue/pop-confirm/pop-confirm.less';
 import '@bkui-vue/image/image.less';
 import '@bkui-vue/image/image-viewer.less';
+import '@bkui-vue/overflow-title/overflow-title.less';

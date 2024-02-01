@@ -26,14 +26,12 @@
 import type { HTMLAttributes } from 'vue';
 import { computed, defineComponent, onBeforeUnmount, onMounted, ref, shallowRef } from 'vue';
 
-import BKPopover from '@bkui-vue/popover';
+import Popover from '@bkui-vue/popover';
 import { debounce } from '@bkui-vue/shared';
 
 import props from '../props';
 import getActualWidthByCanvas from '../utils/getActualWidthByCanvas';
 import getActualWidthByDom from '../utils/getActualWidthByDom';
-
-import '../overflow.less';
 
 export default defineComponent({
   name: 'OverflowTitle',
@@ -94,7 +92,7 @@ export default defineComponent({
         ref='boxRef'
         class='position-relative'
       >
-        <BKPopover
+        <Popover
           placement={this.placement}
           boundary={this.boundary || document.body}
           popoverDelay={[200, 0]}
@@ -113,7 +111,7 @@ export default defineComponent({
             ),
             content: () => this.contentText,
           }}
-        </BKPopover>
+        </Popover>
       </div>
     );
   },

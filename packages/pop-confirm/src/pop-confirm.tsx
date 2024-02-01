@@ -25,15 +25,14 @@
  */
 import { defineComponent, ref } from 'vue';
 
-import BkButton from '@bkui-vue/button';
+import Button from '@bkui-vue/button';
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
-import BkPopover from '@bkui-vue/popover';
+import Popover from '@bkui-vue/popover';
 
 import props from './props';
 
 export default defineComponent({
   name: 'PopConfirm',
-  components: { BkPopover, BkButton },
   props,
   emits: ['confirm', 'cancel'],
   setup(props, { emit, slots }) {
@@ -63,56 +62,71 @@ export default defineComponent({
 
     const { resolveClassName } = usePrefix();
 
-    return () => (
-      <BkPopover
-        isShow={visible.value}
-        trigger={props.trigger}
-        theme={props.theme}
-        width={props.width}
-        onAfterShow={() => (visible.value = true)}
-        extCls={`${resolveClassName('pop-confirm-box')}`}
+    const popoverRef = ref(null);
+
+    return {
+      popoverRef,
+      visible,
+      t,
+      icon,
+      resolveClassName,
+      ensure,
+      cancel,
+    };
+  },
+
+  render() {
+    return (
+      <Popover
+        ref='popoverRef'
+        isShow={this.visible}
+        trigger={this.trigger}
+        theme={this.theme}
+        width={this.width}
+        onAfterShow={() => (this.visible = true)}
+        extCls={`${this.resolveClassName('pop-confirm-box')}`}
       >
         {{
-          default: () => slots.default(),
+          default: () => this.$slots.default(),
           content: () => (
-            <div class={`${resolveClassName('pop-confirm')}`}>
-              {typeof slots.content === 'function' ? (
-                slots.content()
+            <div class={`${this.resolveClassName('pop-confirm')}`}>
+              {typeof this.$slots.content === 'function' ? (
+                this.$slots.content()
               ) : (
                 <>
-                  {props.title ? (
-                    <div class={`${resolveClassName('pop-confirm-title')}`}>
-                      {icon ? <span class={`${resolveClassName('pop-confirm-icon')}`}>{icon}</span> : ''}
-                      <span>{props.title}</span>
+                  {this.title ? (
+                    <div class={`${this.resolveClassName('pop-confirm-title')}`}>
+                      {this.icon ? <span class={`${this.resolveClassName('pop-confirm-icon')}`}>{this.icon}</span> : ''}
+                      <span>{this.title}</span>
                     </div>
                   ) : (
                     ''
                   )}
-                  <div class={`${resolveClassName('pop-confirm-content')}`}>
-                    {!props.title ? icon : ''}
-                    {props.content}
+                  <div class={`${this.resolveClassName('pop-confirm-content')}`}>
+                    {!this.title ? this.icon : ''}
+                    {this.content}
                   </div>
                 </>
               )}
-              <div class={`${resolveClassName('pop-confirm-footer')}`}>
-                <BkButton
-                  onClick={ensure}
+              <div class={`${this.resolveClassName('pop-confirm-footer')}`}>
+                <Button
+                  onClick={this.ensure}
                   size='small'
                   theme='primary'
                 >
-                  {props.confirmText || t.value.ok}
-                </BkButton>
-                <BkButton
-                  onClick={cancel}
+                  {this.confirmText || this.t.ok}
+                </Button>
+                <Button
+                  onClick={this.cancel}
                   size='small'
                 >
-                  {props.cancelText || t.value.cancel}
-                </BkButton>
+                  {this.cancelText || this.t.cancel}
+                </Button>
               </div>
             </div>
           ),
         }}
-      </BkPopover>
+      </Popover>
     );
   },
 });

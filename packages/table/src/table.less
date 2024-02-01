@@ -34,6 +34,7 @@
   .@{bk-prefix}-table-body {
     position: relative;
     overflow: auto;
+    scrollbar-gutter: stable;
 
     &::-webkit-scrollbar {
       width: 5px;
@@ -307,7 +308,8 @@
   .@{bk-prefix}-table-head {
     position: relative;
     z-index: 2;
-    transform: translateX(var(--scroll-head-left));
+    scrollbar-gutter: stable;
+    overflow: hidden;
 
     .col-resize-drag {
       position: absolute;
@@ -318,6 +320,10 @@
       width: 6px;
       background-color: #3785ff;
       transform: translateX(-50%);
+    }
+
+    thead {
+      transform: translateX(var(--scroll-head-left));
     }
 
     .table-head-settings {
@@ -342,8 +348,8 @@
 
       > span {
         display: flex;
-        width: 1rem;
-        height: 1rem;
+        width: 1em;
+        height: 1em;
       }
     }
   }

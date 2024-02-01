@@ -9,7 +9,7 @@
   "eslint.enable": true,
   "eslint.alwaysShowStatus": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll": true
+    "source.fixAll": "explicit"
   },
   "editor.detectIndentation": false,
   "editor.tabSize": 2,
@@ -51,5 +51,5 @@
     "packages/locale/lang",
     "packages/locale/src/lang"
   ],
-  "bk-code-ai.enable": false
+  "bk-code-ai.enable": true
 }

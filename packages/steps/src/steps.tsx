@@ -228,7 +228,7 @@ export default defineComponent({
               !step.title ? this.resolveClassName('step-no-content') : '',
               isDone(index) ? 'done' : '',
               isCurrent(index) ? 'current' : '',
-              isCurrent(index) && this.status === 'error' ? 'isError' : '',
+              isCurrent(index) && this.status === 'error' ? 'is-error' : '',
               step.status && isCurrent(index) ? [`${this.resolveClassName(`step-${step.status}`)}`] : '',
             ]}
           >

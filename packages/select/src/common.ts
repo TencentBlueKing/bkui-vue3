@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { customRef, InjectionKey, onBeforeUnmount, onMounted, Ref, ref, watch } from 'vue';
+import { computed, customRef, InjectionKey, onBeforeUnmount, onMounted, Ref, ref, watch } from 'vue';
 
 import { observerResize } from '@bkui-vue/shared';
 
@@ -126,12 +126,16 @@ export function usePopover(config: IPopoverConfig, triggerRef: Ref<HTMLElement>)
 }
 
 export function useRemoteSearch(method: Function, callBack?: Function) {
-  const searchKey = useDebouncedRef<string>('');
+  const customOptionName = useDebouncedRef<string>(''); // 自定义创建选项（自定义创建也会触发搜索）
+  const searchValue = useDebouncedRef<string>('');
+  const curSearchValue = computed(() => {
+    return searchValue.value || customOptionName.value;
+  });
   const searchLoading = ref(false);
-  watch(searchKey, async () => {
+  watch(curSearchValue, async () => {
     try {
       searchLoading.value = true;
-      await method(searchKey.value);
+      await method(curSearchValue.value);
       searchLoading.value = false;
     } catch (err) {
       console.error(err);
@@ -140,7 +144,9 @@ export function useRemoteSearch(method: Function, callBack?: Function) {
     }
   });
   return {
-    searchKey,
+    customOptionName,
+    searchValue,
+    curSearchValue,
     searchLoading,
   };
 }

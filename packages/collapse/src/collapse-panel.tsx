@@ -25,7 +25,7 @@
  */
 import { defineComponent, h, inject, Ref, ref, watch } from 'vue';
 
-import BKCollapseTransition from '@bkui-vue/collapse-transition';
+import CollapseTransition from '@bkui-vue/collapse-transition';
 import { usePrefix } from '@bkui-vue/config-provider';
 import * as BkIcon from '@bkui-vue/icon';
 
@@ -161,7 +161,7 @@ export default defineComponent({
             />,
           )}
         </div>
-        <BKCollapseTransition>{this.renderPanel()}</BKCollapseTransition>
+        <CollapseTransition>{this.renderPanel()}</CollapseTransition>
       </div>
     );
   },

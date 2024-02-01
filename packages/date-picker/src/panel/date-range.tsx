@@ -306,6 +306,7 @@ export default defineComponent({
      * handleConfirm
      */
     const handleConfirm = (visible, type) => {
+      // pick 参数：dates, visible, type, isUseShortCut
       emit('pick', state.dates, visible, type || props.type);
     };
 
@@ -335,7 +336,7 @@ export default defineComponent({
             selecting: false,
           };
         }
-        handleConfirm(false, type || 'date');
+        handleConfirm(false, type || props.selectionMode);
       } else {
         state.upToNowEnable = new Date(val).getTime() < new Date().getTime();
         state.rangeState = {
@@ -383,6 +384,7 @@ export default defineComponent({
       state.rangeState.to = to;
       state.dates = [form, to];
       state.selectedIndex = index;
+      // pick 参数：dates, visible, type, isUseShortCut
       emit('pick', value, false, 'shortcut', shortcut);
       if (props.shortcutClose) {
         emit('pick-success');
@@ -812,6 +814,7 @@ export default defineComponent({
           {this.isTime ? (
             <TimeRange
               ref='timePickerRef'
+              selectionMode={this.selectionMode}
               value={this.dates as any}
               format={this.format}
               disabledDate={this.disabledDate}

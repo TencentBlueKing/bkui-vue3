@@ -20,24 +20,26 @@
       <bk-progress
         text-inside
         type="circle"
-        :width="150"
-        :stroke-width="10"
+        :width="48"
         :percent="10"
-        color="#f56c6c"
+        :stroke-width="8"
+        color="#f56c1c"
       />
       <bk-progress
         text-inside
         type="circle"
-        :width="100"
+        :width="88"
         :percent="10"
         color="#ff9c01"
+        :stroke-width="10"
       />
       <bk-progress
         text-inside
         type="circle"
-        :width="50"
+        :width="128"
+        :stroke-width="12"
         :percent="10"
-        color="#f56c1c"
+        color="#f56c6c"
       />
     </div>
   </div>

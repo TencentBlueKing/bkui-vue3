@@ -25,7 +25,7 @@
  */
 import { h, nextTick } from 'vue';
 
-import BkCheckbox from '@bkui-vue/checkbox';
+import Checkbox from '@bkui-vue/checkbox';
 import { usePrefix } from '@bkui-vue/config-provider';
 import { DownShape, Folder, FolderShapeOpen, RightShape, Spinner, TextFile } from '@bkui-vue/icon';
 
@@ -222,6 +222,10 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
     event.stopPropagation();
 
     setNodeAttr(item, NODE_ATTRIBUTES.IS_CHECKED, !!value);
+    if (value) {
+      setNodeAttr(item, NODE_ATTRIBUTES.IS_INDETERMINATE, false);
+    }
+
     deepUpdateChildNode(item, [NODE_ATTRIBUTES.IS_CHECKED, NODE_ATTRIBUTES.IS_INDETERMINATE], [!!value, false]);
     updateParentChecked(item, value);
     ctx.emit(
@@ -242,12 +246,12 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
 
     return (
       <span onClick={handleNodeCheckboxClick}>
-        <BkCheckbox
+        <Checkbox
           size='small'
           modelValue={isNodeChecked(item)}
           indeterminate={isIndeterminate(item)}
           onChange={(val, event) => handleNodeItemCheckboxChange(item, !!val, event)}
-        ></BkCheckbox>
+        ></Checkbox>
       </span>
     );
   };

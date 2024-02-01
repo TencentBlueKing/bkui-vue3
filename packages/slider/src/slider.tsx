@@ -392,22 +392,32 @@ export default defineComponent({
             style={barStyle.value}
           ></div>
           {props.showInterval
-            ? intervals.value.map((interval, index) => (
-                <div
-                  key={index}
-                  class={[`${resolveClassName('slider-interval')}`, { vertical: props.vertical }]}
-                  style={getIntervalStyle(interval)}
-                ></div>
-              ))
-            : undefined}
+            ? intervals.value.map((interval, index) => {
+                if (index === 0 || index === intervals.value.length - 1) {
+                  return null;
+                }
+                return (
+                  <div
+                    key={index}
+                    class={[`${resolveClassName('slider-interval')}`, { vertical: props.vertical }]}
+                    style={getIntervalStyle(interval)}
+                  ></div>
+                );
+              })
+            : null}
           {props.customContent
-            ? customList.value.map((custom, index) => (
-                <div
-                  key={index}
-                  class={[`${resolveClassName('slider-interval')}`, { vertical: props.vertical }]}
-                  style={getIntervalStyle(custom.percent)}
-                ></div>
-              ))
+            ? customList.value.map((custom, index) => {
+                if (index === 0 || index === customList.value.length - 1) {
+                  return null;
+                }
+                return (
+                  <div
+                    key={index}
+                    class={[`${resolveClassName('slider-interval')}`, { vertical: props.vertical }]}
+                    style={getIntervalStyle(custom.percent)}
+                  ></div>
+                );
+              })
             : undefined}
           {props.showBetweenLabel || props.showIntervalLabel || props.customContent ? (
             <div class={[`${resolveClassName('slider-labels')}`, props.vertical ? 'vertical' : 'horizontal']}>

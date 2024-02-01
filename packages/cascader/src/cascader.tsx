@@ -30,7 +30,7 @@ import { array } from 'vue-types';
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { bkTooltips } from '@bkui-vue/directives';
 import { AngleUp, Close, Error } from '@bkui-vue/icon';
-import BkPopover from '@bkui-vue/popover';
+import Popover from '@bkui-vue/popover';
 import { debounce, PropTypes } from '@bkui-vue/shared';
 import Tag from '@bkui-vue/tag';
 
@@ -45,11 +45,6 @@ export default defineComponent({
   name: 'Cascader',
   directives: {
     bkTooltips,
-  },
-  components: {
-    CascaderPanel,
-    BkPopover,
-    Tag,
   },
   props: {
     modelValue: PropTypes.arrayOf(PropTypes.oneOfType([array<string>(), String, Number])),
@@ -88,7 +83,7 @@ export default defineComponent({
   },
   emits: ['update:modelValue', 'change', 'clear', 'toggle', 'focus'],
   setup(props, { emit, slots }) {
-    const t = useLocale('select');
+    const t = useLocale('cascader');
 
     const { separator, multiple } = props;
     // 用useHover自定义hook来处理鼠标hover状态
@@ -159,6 +154,17 @@ export default defineComponent({
       searchKey.value = selectedText.value;
     };
 
+    const searchBlueHandler = () => {
+      // 单选搜索框与选择框互斥，因此一旦失去焦点，认为是没有选择，还原选择框的内容
+      if (!props.multiple) {
+        searchKey.value = selectedText.value;
+        return;
+      }
+
+      // 多选下，失去焦点则需要删除搜索框
+      searchKey.value = '';
+    };
+
     // 更新选中
     const updateValue = (val: Array<string | number | string[]>) => {
       // 更新多选情况下的选中标签
@@ -222,6 +228,9 @@ export default defineComponent({
       oldValue !== undefined && emit('change', value); // oldValue = undefined代表初始化，init不派发change事件
       // 如果有过滤搜索，选择后，自动focus到input
       inputRef?.value?.focus();
+
+      // 选择后过滤条件清除，面板初始化渲染
+      isFiltering.value = false;
     };
 
     // list的监听函数
@@ -341,6 +350,7 @@ export default defineComponent({
       displayText,
       resolveClassName,
       isShowPanel,
+      searchBlueHandler,
     };
   },
   render() {
@@ -356,7 +366,7 @@ export default defineComponent({
         );
       }
       // 否则渲染展开/收起图标
-      return <AngleUp class={this.resolveClassName('icon-angle-up')}></AngleUp>;
+      return <AngleUp class={[this.resolveClassName('icon-angle-up'), this.isShowPanel ? 'active' : '']}></AngleUp>;
     };
 
     // 因为cascader的tag长短不一，在计算时如果overflowIndex为0，会出现直接+n渲染的情况，因此需要对其进行修正
@@ -416,12 +426,13 @@ export default defineComponent({
 
     // 定义popoverRender函数，用于渲染弹出框
     const popoverRender = () => (
-      <BkPopover
+      <Popover
         placement='bottom-start'
         theme={`light ${this.resolveClassName('cascader-popover')}`}
         trigger='click'
         arrow={false}
         disabled={this.disabled}
+        offset={4}
         class={this.resolveClassName('cascader-popover-wrapper')}
         ref='popover'
         onAfterHidden={this.popoverChangeEmitter}
@@ -446,6 +457,7 @@ export default defineComponent({
                         ]}
                         type='text'
                         onInput={this.searchInputHandler}
+                        onBlur={this.searchBlueHandler}
                         placeholder={this.calcuPlaceholder}
                         value={this.searchKey}
                         disabled={this.disabled}
@@ -479,7 +491,7 @@ export default defineComponent({
             </div>
           ),
         }}
-      </BkPopover>
+      </Popover>
     );
 
     return (

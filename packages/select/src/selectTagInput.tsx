@@ -24,10 +24,11 @@
  * IN THE SOFTWARE.
  */
 import debounce from 'lodash/debounce';
-import { defineComponent, inject, onBeforeUnmount, onMounted, ref, toRefs, watch } from 'vue';
+import { computed, defineComponent, inject, onBeforeUnmount, onMounted, ref, toRefs, watch } from 'vue';
 import { PropType } from 'vue-types/dist/types';
 
 import { usePrefix } from '@bkui-vue/config-provider';
+import { bkTooltips } from '@bkui-vue/directives';
 import { classes, PropTypes, TagThemeType } from '@bkui-vue/shared';
 import Tag from '@bkui-vue/tag';
 
@@ -36,6 +37,9 @@ import { ISelected } from './type';
 
 export default defineComponent({
   name: 'SelectTagInput',
+  directives: {
+    bkTooltips,
+  },
   props: {
     selected: {
       type: Array as PropType<ISelected[]>,
@@ -57,6 +61,12 @@ export default defineComponent({
     const value = ref(modelValue.value);
     const inputRef = ref<HTMLElement>();
     const overflowTagIndex = ref<number | null>(null);
+    const overflowContent = computed(() =>
+      selected.value
+        .slice(overflowTagIndex.value, selected.value.length)
+        .map(item => item.label)
+        .join(', '),
+    );
 
     watch(modelValue, () => {
       value.value = modelValue.value;
@@ -73,6 +83,9 @@ export default defineComponent({
     };
     const focus = () => {
       inputRef.value?.focus();
+    };
+    const blur = () => {
+      inputRef.value?.blur();
     };
     const handleInput = e => {
       emit('update:modelValue', e.target.value);
@@ -138,8 +151,10 @@ export default defineComponent({
       overflowTagIndex,
       value,
       inputRef,
+      overflowContent,
       handleRemoveTag,
       focus,
+      blur,
       handleInput,
       handleKeydown,
       resolveClassName,
@@ -186,6 +201,10 @@ export default defineComponent({
             class={this.resolveClassName('select-overflow-tag')}
             style={{
               display: !!this.overflowTagIndex && this.collapseTags ? '' : 'none',
+            }}
+            v-bk-tooltips={{
+              content: this.overflowContent,
+              disabled: !this.overflowTagIndex || !this.collapseTags,
             }}
             ref='collapseTagRef'
           >

@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 
-import { computed, defineComponent } from 'vue';
+import { computed, defineComponent, nextTick } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import { classes, PropTypes } from '@bkui-vue/shared';
@@ -34,7 +34,7 @@ export default defineComponent({
 
   props: {
     rate: PropTypes.number.def(0),
-    width: PropTypes.number.def(15),
+    width: PropTypes.number.def(16),
     height: PropTypes.number.def(16),
     editable: PropTypes.bool.def(true),
     hoverRate: PropTypes.number.def(0),
@@ -51,11 +51,23 @@ export default defineComponent({
       emit('chooseRate', rate);
     };
 
-    const changeHover = index => {
+    const changeHover = (index, e: Event) => {
       if (!props.editable) return;
 
       const rate = index + 1;
       emit('changeHover', rate);
+
+      nextTick(() => {
+        (e.target as HTMLElement).classList.add(resolveClassName('is-hover'));
+      });
+    };
+
+    const handleMouseLeave = (e: Event) => {
+      if (!props.editable) return;
+
+      nextTick(() => {
+        (e.target as HTMLElement).classList.remove(resolveClassName('is-hover'));
+      });
     };
 
     const { resolveClassName } = usePrefix();
@@ -87,7 +99,8 @@ export default defineComponent({
               y='0px'
               viewBox='0 0 64 64'
               onClick={() => chooseRate(index)}
-              onMouseenter={() => changeHover(index)}
+              onMouseenter={(e: Event) => changeHover(index, e)}
+              onMouseleave={(e: Event) => handleMouseLeave(e)}
             >
               <g transform='translate(-143.000000, -635.000000)'>
                 <g transform='translate(83.000000, 114.000000)'>

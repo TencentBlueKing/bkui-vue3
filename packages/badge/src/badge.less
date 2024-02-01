@@ -55,12 +55,12 @@
       &.bottom-right {
         right: 0;
         bottom: 0;
-        //transform: translate(50%, 50%) scale(1, 1);
+        transform: translate(50%, 50%) scale(1, 1);
 
         &.fade-center-enter,
         &.fade-center-leave-active {
           opacity: 0;
-          //transform: translate(50%, 50%) scale(0, 0);
+          transform: translate(50%, 50%) scale(0, 0);
         }
       }
 
@@ -126,10 +126,14 @@
       border: 1px solid @white-color;
     }
     &.@{bk-prefix}-badge-icon {
-      display: inline-block;
+      margin: 0;
       padding: 0;
-      padding-bottom: 1px;
       font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 16px;
+      width: 16px;
     }
   }
 }

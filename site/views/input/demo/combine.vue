@@ -1,12 +1,12 @@
 <template>
   <div>
     <bk-input
-      class="mb10"
+      class="mb8"
       type="url"
       prefix="https://"
     />
     <bk-input
-      class="mb10"
+      class="mb8"
       suffix=".com"
     >
       <template #prefix>
@@ -35,7 +35,7 @@
       </template>
     </bk-input>
     <bk-input
-      class="mb10"
+      class="mb8"
       type="url"
       suffix="@qq.com"
     />
@@ -57,6 +57,9 @@
 </script>
 
 <style lang="postcss" scoped>
+  .mb8 {
+    margin-bottom: 8px;
+  }
   .protocol-list-dropdown {
     border: 1px solid #c4c6cc;
     height: 32px;

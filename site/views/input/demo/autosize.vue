@@ -2,7 +2,7 @@
   <div>
     <bk-input
       v-model="val"
-      class="mb10"
+      class="mb8"
       autosize
       type="textarea"
       :over-max-length-limit="overMaxLengthLimit"
@@ -10,12 +10,12 @@
     />
     <bk-input
       v-model="val1"
-      class="mb10"
+      class="mb8"
       :autosize="autoSizeConf"
       type="textarea"
     />
     <div
-      class="expandable-input-field mb10"
+      class="expandable-input-field mb8"
     >
       <bk-input
         v-model="val2"
@@ -43,6 +43,9 @@
 <style lang="less">
   .mb10 {
     margin-bottom: 10px;
+  }
+  .mb8 {
+    margin-bottom: 8px;
   }
   .expandable-input-field {
     position: relative;

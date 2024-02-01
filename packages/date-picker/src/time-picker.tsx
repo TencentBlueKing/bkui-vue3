@@ -110,6 +110,9 @@ export default defineComponent({
       timeEnterMode: true,
       shortcut,
       onSelectionModeChange,
+
+      // for 编辑时，mouseleave 事件中缓存的 value
+      tmpValue: initialValue,
     });
 
     function onSelectionModeChange(_type) {
@@ -267,6 +270,13 @@ export default defineComponent({
       },
     );
 
+    watch(
+      () => state.internalValue,
+      v => {
+        state.tmpValue = v;
+      },
+    );
+
     onMounted(() => {
       // 如果是 date-picker 那么 time-picker 就是回车模式
       if (props.type.indexOf('date') > -1) {
@@ -334,6 +344,7 @@ export default defineComponent({
       if (visualValue?.value) {
         state.showClose = true;
       }
+      state.internalValue = state.tmpValue;
     };
 
     const handleInputMouseleave = _e => {
@@ -341,6 +352,7 @@ export default defineComponent({
       //   return;
       // }
       state.showClose = false;
+      state.internalValue = state.tmpValue;
     };
 
     const emitChange = type => {
@@ -370,6 +382,20 @@ export default defineComponent({
         state.internalValue = newDate;
       } else {
         state.forceInputRerender = state.forceInputRerender + 1;
+      }
+    };
+
+    const handleInputInput = e => {
+      const isArrayValue = props.type.includes('range') || props.multiple;
+      const oldValue = visualValue.value;
+      const newValue = e.target.value;
+      const newDate = parseDate(newValue, props.type, props.multiple, props.format);
+      const valueToTest = isArrayValue ? newDate : newDate[0];
+      const isDisabled = props.disabledDate?.(valueToTest);
+      const isValidDate = newDate.reduce((valid, date) => valid && date instanceof Date, true);
+
+      if (newValue !== oldValue && !isDisabled && isValidDate) {
+        state.tmpValue = newDate;
       }
     };
 
@@ -583,6 +609,7 @@ export default defineComponent({
       handleBlur,
       handleKeydown,
       handleInputChange,
+      handleInputInput,
       handleClear,
       handleTransferClick,
       onPick,
@@ -675,6 +702,7 @@ export default defineComponent({
           onBlur={this.handleBlur}
           onKeydown={this.handleKeydown}
           onChange={this.handleInputChange}
+          onInput={this.handleInputInput}
         />
         {this.clearable && this.showClose ? (
           <Close

@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { computed, defineComponent, nextTick, PropType, Ref, ref, watch, watchEffect } from 'vue';
+import { computed, defineComponent, PropType, Ref, ref, watch, watchEffect } from 'vue';
 
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { clickoutside } from '@bkui-vue/directives';
@@ -311,7 +311,7 @@ export default defineComponent({
       if (!usingItem.value && !keyword.value) {
         emit('delete');
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        nextTick(setMenuList);
+        setTimeout(setMenuList, 16);
         return;
       }
       if (usingItem.value?.values.length) {
@@ -421,9 +421,9 @@ export default defineComponent({
     }
     function setInputFocus(refleshMenuList = false) {
       if (refleshMenuList) {
-        nextTick().then(() => {
+        setTimeout(() => {
           setMenuList();
-        });
+        }, 16);
       }
       isFocus.value = true;
       showPopover.value = true;

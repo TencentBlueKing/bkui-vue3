@@ -43,6 +43,8 @@ export default function createPopoverComponent(options: $Popover) {
     autoVisibility: true,
     isShow: false,
     trigger: 'manual',
+    onHide: () => {},
+    onShow: () => {},
     ...options,
     allowHtml: true,
   };
@@ -89,6 +91,14 @@ export default function createPopoverComponent(options: $Popover) {
         resolvedOptions.onContentMouseleave?.();
       };
 
+      const handlePopoverHidden = () => {
+        resolvedOptions.onHide?.();
+      };
+
+      const handlePopoverShow = () => {
+        resolvedOptions.onShow?.();
+      };
+
       expose({
         show,
         hide,
@@ -102,6 +112,8 @@ export default function createPopoverComponent(options: $Popover) {
           ref={refReference}
           onContentMouseenter={handleContentMouseenter}
           onContentMouseleave={handleContentMouseleave}
+          onAfterHidden={handlePopoverHidden}
+          onAfterShow={handlePopoverShow}
         ></Popover>
       );
     },

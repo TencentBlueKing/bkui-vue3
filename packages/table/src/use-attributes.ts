@@ -37,8 +37,15 @@ import {
   TABLE_ROW_ATTRIBUTE,
 } from './const';
 import usePagination from './plugins/use-pagination';
-import { Column, IColSortBehavior, Settings, SortScope, TablePropTypes } from './props';
-import { getRowId, getRowValue, isColumnHidden, resolveColumnSortProp, resolveColumnSpan } from './utils';
+import { Column, Field, IColSortBehavior, Settings, SortScope, TablePropTypes } from './props';
+import {
+  getRowId,
+  getRowValue,
+  isColumnHidden,
+  isRowSelectEnable,
+  resolveColumnSortProp,
+  resolveColumnSpan,
+} from './utils';
 
 export type ITableFormatData = {
   data: any[];
@@ -48,6 +55,8 @@ export type ITableFormatData = {
   settings: {
     size: string;
     height: number;
+    fields: Field[];
+    checked: string[];
   };
   layout: {
     bottom: number;
@@ -79,6 +88,7 @@ export type ITableResponse = {
   isActiveColumn: (col: Column) => boolean;
   isHiddenColumn: (col: Column) => boolean;
   resolvePageData: (filterFn?: any, sortFn?: any, column?: Column, type?: string, sortScope?: SortScope) => void;
+  resolveByDefColumns: () => void;
   resetStartEndIndex: () => void;
   toggleRowSelection: (row: any) => void;
   toggleAllSelection: (value?: boolean) => void;
@@ -95,24 +105,25 @@ export type ITableResponse = {
   hasCheckedRow: () => boolean;
   setRowSelectionAll: (val: boolean) => void;
   setRowIndeterminate: () => void;
+  updateSettings: (settings?: Settings, rowHeight?: number) => void;
   pageData: any[];
   localPagination: any;
   formatData: ITableFormatData;
 };
 
 export default (props: TablePropTypes): ITableResponse => {
-  const { size } = props.settings as Settings;
-  const height = SETTING_SIZE[size] || SETTING_SIZE.small;
+  const getDefaultSettings = () => {
+    const { size, fields = [], checked = [] } = props.settings as Settings;
+    const height = SETTING_SIZE[size] ?? props.rowHeight ?? SETTING_SIZE.small;
+    return { size, height, fields, checked };
+  };
 
   const formatData: ITableFormatData = reactive({
     data: [...props.data],
     dataSchema: new WeakMap(),
     columns: [...props.columns],
     columnSchema: new WeakMap(),
-    settings: {
-      size,
-      height,
-    },
+    settings: getDefaultSettings(),
     layout: {
       hasScrollY: false,
       bottom: 0,
@@ -121,7 +132,28 @@ export default (props: TablePropTypes): ITableResponse => {
     },
   });
 
-  const { pageData, localPagination, resolvePageData, multiFilter, sort, resetStartEndIndex } = usePagination(props);
+  const {
+    pageData,
+    localPagination,
+    resolvePageData,
+    resolvePageDataBySortList,
+    multiFilter,
+    sort,
+    resetStartEndIndex,
+  } = usePagination(props);
+
+  const updateSettings = (settings?: Settings, rowHeight?: number) => {
+    if (settings) {
+      const { size, fields = [], checked = [] } = settings;
+      const height = rowHeight ?? SETTING_SIZE[size] ?? props.rowHeight ?? SETTING_SIZE.small;
+      Object.assign(formatData.settings, { size, height, fields, checked });
+      return;
+    }
+
+    if (rowHeight) {
+      formatData.settings.height = rowHeight;
+    }
+  };
 
   const resolveMinWidth = (col: Column) => {
     if (/^\d+/.test(`${col.minWidth}`)) {
@@ -138,9 +170,6 @@ export default (props: TablePropTypes): ITableResponse => {
     }
     return minWidth;
   };
-
-  const checked = (props.settings as Settings)?.checked || [];
-  const settingFields = (props.settings as Settings)?.fields || [];
 
   /**
    * Format columns
@@ -159,15 +188,28 @@ export default (props: TablePropTypes): ITableResponse => {
       skipColNum = skipColumnNum;
       if (!formatData.columnSchema.has(col)) {
         const { type, fn, scope, active } = resolveColumnSortProp(col, props);
+
+        const getSortFn = col => {
+          if (col.type === 'index') {
+            return (a, b) =>
+              fn?.(
+                formatData.dataSchema.get(a)?.[TABLE_ROW_ATTRIBUTE.ROW_INDEX],
+                formatData.dataSchema.get(b)?.[TABLE_ROW_ATTRIBUTE.ROW_INDEX],
+              );
+          }
+
+          return fn;
+        };
+
         formatData.columnSchema.set(col, {
           [COLUMN_ATTRIBUTE.CALC_WIDTH]: undefined,
           [COLUMN_ATTRIBUTE.RESIZE_WIDTH]: undefined,
           [COLUMN_ATTRIBUTE.COL_MIN_WIDTH]: resolveMinWidth(col),
           [COLUMN_ATTRIBUTE.LISTENERS]: new Map(),
           [COLUMN_ATTRIBUTE.WIDTH]: col.width,
-          [COLUMN_ATTRIBUTE.IS_HIDDEN]: isColumnHidden(settingFields, col, checked),
+          [COLUMN_ATTRIBUTE.IS_HIDDEN]: isColumnHidden(formatData.settings.fields, col, formatData.settings.checked),
           [COLUMN_ATTRIBUTE.COL_SORT_TYPE]: type,
-          [COLUMN_ATTRIBUTE.COL_SORT_FN]: fn,
+          [COLUMN_ATTRIBUTE.COL_SORT_FN]: getSortFn(col),
           [COLUMN_ATTRIBUTE.COL_FILTER_FN]: undefined,
           [COLUMN_ATTRIBUTE.COL_FILTER_SCOPE]: undefined,
           [COLUMN_ATTRIBUTE.COL_SORT_SCOPE]: scope,
@@ -281,15 +323,23 @@ export default (props: TablePropTypes): ITableResponse => {
     setColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_ACTIVE, active);
   };
 
+  const isRowChecked = (row: any, index: number) => {
+    if (isRowSelectEnable(props, { row, index })) {
+      return getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_SELECTION);
+    }
+
+    return true;
+  };
+
   /**
    * 是否数据全选
    */
   const isCheckedAll = () => {
     if (props.acrossAll) {
-      return formatData.data.every(row => getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_SELECTION));
+      return formatData.data.every((row, index) => isRowChecked(row, index));
     }
 
-    return pageData.every(row => getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_SELECTION));
+    return pageData.every((row, index) => isRowChecked(row, index));
   };
 
   /**
@@ -491,7 +541,14 @@ export default (props: TablePropTypes): ITableResponse => {
    * @param isSelected
    */
   const setRowSelection = (row: any, isSelected: boolean) => {
-    setRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_SELECTION, isSelected);
+    let value = isSelected;
+    if (typeof props.isSelectedFn === 'function') {
+      value = props.isSelectedFn({ row });
+    }
+
+    if (isRowSelectEnable(props, { row })) {
+      setRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_SELECTION, value);
+    }
     setRowIndeterminate();
   };
 
@@ -518,6 +575,11 @@ export default (props: TablePropTypes): ITableResponse => {
   };
 
   const toggleRowSelection = (row: any) => {
+    if (typeof props.isSelectedFn === 'function') {
+      setRowSelection(row, props.isSelectedFn({ row }));
+      return;
+    }
+
     setRowSelection(row, !getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_SELECTION));
   };
 
@@ -653,6 +715,20 @@ export default (props: TablePropTypes): ITableResponse => {
    * 获取选中行数据
    */
   const getRowSelection = () => formatData.data.filter(row => getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_SELECTION));
+  const resolveByDefColumns = () => {
+    const multiSortColumns = [];
+    formatData.columns.forEach(column => {
+      const schema = formatData.columnSchema.get(column);
+      if (
+        typeof schema?.[COLUMN_ATTRIBUTE.COL_SORT_FN] === 'function' &&
+        !(schema?.[COLUMN_ATTRIBUTE.IS_HIDDEN] ?? true)
+      ) {
+        multiSortColumns.push({ column, schema });
+      }
+    });
+
+    resolvePageDataBySortList(multiSortColumns);
+  };
 
   return {
     formatColumns,
@@ -674,6 +750,7 @@ export default (props: TablePropTypes): ITableResponse => {
     isActiveColumn,
     isHiddenColumn,
     resolvePageData,
+    resolveByDefColumns,
     resetStartEndIndex,
     toggleAllSelection,
     setAllRowExpand,
@@ -685,6 +762,7 @@ export default (props: TablePropTypes): ITableResponse => {
     sortData,
     isCheckedAll,
     hasCheckedRow,
+    updateSettings,
     pageData,
     localPagination,
     formatData,

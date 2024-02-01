@@ -26,6 +26,7 @@
 import { computed, h, onMounted, onUnmounted, ref } from 'vue';
 
 import { VirtualRenderProps } from './props';
+import useFixTop from './use-fix-top';
 import { VisibleRender } from './v-virtual-render';
 export default (props: VirtualRenderProps, ctx) => {
   const { renderAs, contentAs } = props;
@@ -46,10 +47,6 @@ export default (props: VirtualRenderProps, ctx) => {
 
   const refRoot = ref(null);
 
-  const scrollTo = ({ left = 0, top = 0 }) => {
-    refRoot.value.scrollTo(left, top);
-  };
-
   /** 虚拟渲染外层容器样式 */
   const wrapperStyle = computed(() => {
     const height = typeof props.height === 'number' ? `${props.height}px` : props.height;
@@ -62,8 +59,11 @@ export default (props: VirtualRenderProps, ctx) => {
     };
   });
 
+  const { scrollTo, fixToTop } = useFixTop(props, refRoot);
+
   ctx.expose({
     scrollTo,
+    fixToTop,
   });
 
   onMounted(() => {

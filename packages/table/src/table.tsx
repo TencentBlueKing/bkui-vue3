@@ -37,7 +37,7 @@ import { EMIT_EVENT_TYPES, EMIT_EVENTS } from './events';
 import useColumnResize from './plugins/use-column-resize';
 import useFixedColumn from './plugins/use-fixed-column';
 import useScrollLoading from './plugins/use-scroll-loading';
-import { Column, tableProps } from './props';
+import { Column, Settings, tableProps } from './props';
 import useData, { ITableResponse } from './use-attributes';
 import useColumn from './use-column';
 import { useClass } from './use-common';
@@ -124,13 +124,22 @@ export default defineComponent({
       }
     };
 
+    const isFirstLoad = ref(true);
+
     watch(
       () => [props.data, columns],
       () => {
         tableSchema.formatColumns(columns as Column[]);
         tableSchema.formatDataSchema(props.data);
         tableSchema.resetStartEndIndex();
-        tableSchema.resolvePageData();
+
+        if (isFirstLoad.value) {
+          tableSchema.resolveByDefColumns();
+          isFirstLoad.value = false;
+        } else {
+          tableSchema.resolvePageData();
+        }
+
         registerResizeEvent();
         nextTick(() => {
           updateOffsetRight();
@@ -153,6 +162,21 @@ export default defineComponent({
         nextTick(() => {
           resetTableHeight(root.value);
         });
+      },
+    );
+
+    watch(
+      () => [props.settings],
+      () => {
+        tableSchema.updateSettings(props.settings as Settings);
+      },
+      { deep: true },
+    );
+
+    watch(
+      () => [props.rowHeight],
+      () => {
+        tableSchema.updateSettings(undefined, props.rowHeight as number);
       },
     );
 

@@ -26,10 +26,10 @@
 
 import { computed, defineComponent, PropType, ref, toRefs } from 'vue';
 
-import BkButton from '@bkui-vue/button';
+import Button from '@bkui-vue/button';
 import { useLocale } from '@bkui-vue/config-provider';
 import { Del, Plus, Upload } from '@bkui-vue/icon';
-import BkProgress from '@bkui-vue/progress';
+import Progress from '@bkui-vue/progress';
 import { classes } from '@bkui-vue/shared';
 
 import uploadProps from './props';
@@ -213,7 +213,7 @@ export default defineComponent({
       />,
       <>
         {file.status === 'uploading' && (
-          <BkProgress
+          <Progress
             class={`${classBlock}__picture-progress`}
             type='circle'
             color='#3a84ff'
@@ -237,8 +237,8 @@ export default defineComponent({
       </>,
     ];
 
-    const Button = () => (
-      <BkButton disabled={disabled.value}>
+    const xButton = () => (
+      <Button disabled={disabled.value}>
         <>
           {slots.default ? (
             slots.default()
@@ -249,11 +249,11 @@ export default defineComponent({
             </>
           )}
         </>
-      </BkButton>
+      </Button>
     );
 
     const Trigger = () => {
-      if (isButton.value) return Button();
+      if (isButton.value) return xButton();
       if (isDrag.value) return Dragger();
       if (isPicture.value) return Picture();
     };

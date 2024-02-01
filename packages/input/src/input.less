@@ -345,3 +345,22 @@
     }
   }
 }
+
+// 去掉自动填充时的背景颜色
+/* 针对 Chrome、Safari 和新版 Edge 的样式 */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 100px @input-bg inset !important;
+  box-shadow: 0 0 0 100px @input-bg inset !important;
+}
+
+/* 针对 Firefox 的样式 */
+input:-moz-autofill,
+input:-moz-autofill:hover,
+input:-moz-autofill:focus,
+input:-moz-autofill:active {
+  -moz-box-shadow: 0 0 0 100px @input-bg inset !important;
+  box-shadow: 0 0 0 100px @input-bg inset !important;
+}

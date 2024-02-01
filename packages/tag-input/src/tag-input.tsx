@@ -30,8 +30,8 @@ import { computed, defineComponent, nextTick, onMounted, reactive, type Ref, ref
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { bkTooltips } from '@bkui-vue/directives';
 import { Close, Error } from '@bkui-vue/icon';
-import BkLoading, { BkLoadingSize } from '@bkui-vue/loading';
-import BKPopover from '@bkui-vue/popover';
+import Loading, { BkLoadingSize } from '@bkui-vue/loading';
+import Popover from '@bkui-vue/popover';
 import { useFormItem } from '@bkui-vue/shared';
 
 import { getCharLength, INPUT_MIN_WIDTH, useFlatList, usePage, useTagsOverflow } from './common';
@@ -434,15 +434,16 @@ export default defineComponent({
         // this.dispatch('bk-form-item', 'form-blur')
         state.isEdit = false;
 
-        if (isSingleSelect.value) {
-          const [oldValue] = listState.tagListCache;
-          // 如果是单选，且input不为空，即保留了上次的结果则恢复
-          if (inputValue && inputValue === oldValue && listState.selectedTagListCache.length) {
-            addTag(listState.selectedTagListCache[0], 'select');
-          } else {
-            handleChange('remove');
+        if (props.allowAutoMatch && inputValue) {
+          if (isSingleSelect.value) {
+            const [oldValue] = listState.tagListCache;
+            // 如果是单选，且input不为空，即保留了上次的结果则恢复
+            if (inputValue === oldValue && listState.selectedTagListCache.length) {
+              addTag(listState.selectedTagListCache[0], 'select');
+            } else {
+              handleChange('remove');
+            }
           }
-        } else if (props.allowAutoMatch && inputValue) {
           // 如果匹配，则自动选则
           const matchItem = pageState.curPageList.find(item => {
             if (Array.isArray(props.searchKey)) {
@@ -451,6 +452,7 @@ export default defineComponent({
             }
             return item[props.searchKey] === inputValue;
           });
+
           if (matchItem) {
             handleTagSelected(matchItem, 'select');
           } else if (props.allowCreate) {
@@ -458,6 +460,7 @@ export default defineComponent({
             handleTagSelected(inputValue, 'custom');
           }
         }
+
         popoverProps.isShow = false;
         emit('blur', inputValue, tagList.value);
         formItem?.validate?.('blur');
@@ -887,7 +890,7 @@ export default defineComponent({
         onMouseenter={() => (this.isHover = true)}
         onMouseleave={() => (this.isHover = false)}
       >
-        <BKPopover
+        <Popover
           theme={`light ${this.resolveClassName('tag-input-popover-content')}`}
           trigger='manual'
           placement='bottom-start'
@@ -1006,6 +1009,7 @@ export default defineComponent({
                                 tpl={this.tpl}
                                 searchKey={this.searchKey}
                                 searchKeyword={this.curInputValue}
+                                disabled={item.disabled}
                               />
                             </li>
                           ))}
@@ -1026,13 +1030,14 @@ export default defineComponent({
                           tpl={this.tpl}
                           searchKey={this.searchKey}
                           searchKeyword={this.curInputValue}
+                          disabled={group.disabled}
                         />
                       </li>
                     ),
                   )}
                   {this.isPageLoading ? (
                     <li class={`${this.resolveClassName('selector-list-item')} loading`}>
-                      <BkLoading
+                      <Loading
                         theme='primary'
                         size={BkLoadingSize.Small}
                       />
@@ -1042,7 +1047,7 @@ export default defineComponent({
               </div>
             ),
           }}
-        </BKPopover>
+        </Popover>
       </div>
     );
   },
