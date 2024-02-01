@@ -154,6 +154,17 @@ export default defineComponent({
       searchKey.value = selectedText.value;
     };
 
+    const searchBlueHandler = () => {
+      // 单选搜索框与选择框互斥，因此一旦失去焦点，认为是没有选择，还原选择框的内容
+      if (!props.multiple) {
+        searchKey.value = selectedText.value;
+        return;
+      }
+
+      // 多选下，失去焦点则需要删除搜索框
+      searchKey.value = '';
+    };
+
     // 更新选中
     const updateValue = (val: Array<string | number | string[]>) => {
       // 更新多选情况下的选中标签
@@ -217,6 +228,9 @@ export default defineComponent({
       oldValue !== undefined && emit('change', value); // oldValue = undefined代表初始化，init不派发change事件
       // 如果有过滤搜索，选择后，自动focus到input
       inputRef?.value?.focus();
+
+      // 选择后过滤条件清除，面板初始化渲染
+      isFiltering.value = false;
     };
 
     // list的监听函数
@@ -336,6 +350,7 @@ export default defineComponent({
       displayText,
       resolveClassName,
       isShowPanel,
+      searchBlueHandler,
     };
   },
   render() {
@@ -442,6 +457,7 @@ export default defineComponent({
                         ]}
                         type='text'
                         onInput={this.searchInputHandler}
+                        onBlur={this.searchBlueHandler}
                         placeholder={this.calcuPlaceholder}
                         value={this.searchKey}
                         disabled={this.disabled}

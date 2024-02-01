@@ -189,7 +189,7 @@ export default defineComponent({
       }
     };
 
-    const handlePick = (value, type) => {
+    const handlePick = (value, _visible = false, type, _shortcut) => {
       let val = value;
       if (props.selectionMode === 'year') {
         val = new Date(value.getFullYear(), 0, 1);
@@ -200,6 +200,7 @@ export default defineComponent({
       }
 
       state.dates = [val];
+      // pick 参数：dates, visible, type, isUseShortCut
       emit('pick', val, false, type || props.selectionMode);
     };
 
@@ -216,7 +217,7 @@ export default defineComponent({
     const handleShortcutClick = shortcut => {
       if (shortcut.value) {
         // pick 参数：dates, visible, type, isUseShortCut
-        emit('pick', shortcut.value(), false, undefined, shortcut);
+        emit('pick', shortcut.value(), false, props.selectionMode, shortcut);
       }
       if (shortcut.onClick) {
         shortcut.onClick(this);
@@ -464,6 +465,7 @@ export default defineComponent({
                 ref='timePickerRef'
                 value={this.dates}
                 format={this.format}
+                selectionMode={this.selectionMode}
                 disabledDate={this.disabledDate}
                 // v-bind={this.timePickerOptions}
                 onPick={this.handlePick}
