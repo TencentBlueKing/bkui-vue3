@@ -27,7 +27,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { computed, CSSProperties, nextTick, SetupContext, unref } from 'vue';
 
-import BkCheckbox from '@bkui-vue/checkbox';
+import Checkbox from '@bkui-vue/checkbox';
 import { useLocale } from '@bkui-vue/config-provider';
 import { DownShape, RightShape } from '@bkui-vue/icon';
 import Pagination from '@bkui-vue/pagination';
@@ -519,7 +519,7 @@ export default (
     const isEnable = isRowSelectEnable(props, { row, index, isCheckAll: isAll });
 
     return (
-      <BkCheckbox
+      <Checkbox
         onChange={handleChecked}
         disabled={!isEnable}
         modelValue={isChecked}

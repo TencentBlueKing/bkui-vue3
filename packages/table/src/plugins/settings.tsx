@@ -25,8 +25,8 @@
  */
 import { computed, defineComponent, ref, unref, watch } from 'vue';
 
-import BkButton from '@bkui-vue/button';
-import BkCheckbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
+import Button from '@bkui-vue/button';
+import Checkbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { CloseLine, CogShape } from '@bkui-vue/icon/';
 import Popover from '@bkui-vue/popover';
@@ -244,13 +244,13 @@ export default defineComponent({
                         class='check-all'
                         onClick={handleCheckAllClick}
                       >
-                        <BkCheckbox
+                        <Checkbox
                           label={t.value.setting.fields.selectAll}
                           indeterminate={Boolean(indeterminate.value)}
                           modelValue={checkedFields.value.length > 0}
                         >
                           {t.value.setting.fields.selectAll}
-                        </BkCheckbox>
+                        </Checkbox>
                       </span>
                     )}
                   </div>
@@ -260,13 +260,13 @@ export default defineComponent({
                   >
                     {renderFields.value.map((item: any, index: number) => (
                       <div class='field-item'>
-                        <BkCheckbox
+                        <Checkbox
                           checked={checkedFields.value.includes(resolvedColVal(item, index))}
                           label={resolvedColVal(item, index)}
                           disabled={isItemReadonly(item, index)}
                         >
                           {resolvePropVal(item, ['name', 'label'], [item, index])}
-                        </BkCheckbox>
+                        </Checkbox>
                       </div>
                     ))}
                   </BkCheckboxGroup>
@@ -280,19 +280,19 @@ export default defineComponent({
                   )}
                 </div>
                 <div class='setting-footer'>
-                  <BkButton
+                  <Button
                     theme='primary'
                     style={buttonStyle}
                     onClick={handleSaveClick}
                   >
                     {t.value.setting.options.ok}
-                  </BkButton>
-                  <BkButton
+                  </Button>
+                  <Button
                     style={buttonStyle}
                     onClick={handleCancelClick}
                   >
                     {t.value.setting.options.cancel}
-                  </BkButton>
+                  </Button>
                 </div>
               </div>
             ),

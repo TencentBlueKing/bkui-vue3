@@ -25,8 +25,8 @@
  */
 import { computed, defineComponent, nextTick, reactive, ref, toRefs, watch } from 'vue';
 
-import BkButton from '@bkui-vue/button';
-import BkCheckbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
+import Button from '@bkui-vue/button';
+import Checkbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { Funnel } from '@bkui-vue/icon';
 import Popover from '@bkui-vue/popover';
@@ -165,14 +165,14 @@ export default defineComponent({
       }
 
       return (
-        <BkButton
+        <Button
           theme='primary'
           size='small'
           style='width: 56px; margin-right: 8px;'
           onClick={handleBtnSaveClick}
         >
           {text}
-        </BkButton>
+        </Button>
       );
     };
 
@@ -183,14 +183,14 @@ export default defineComponent({
       }
 
       return (
-        <BkButton
+        <Button
           style='width: 56px;'
           size='small'
           disabled={state.checked.length === 0}
           onClick={handleBtnResetClick}
         >
           {text}
-        </BkButton>
+        </Button>
       );
     };
 
@@ -211,7 +211,7 @@ export default defineComponent({
       if (scope.data.length) {
         return scope.data.map((item: any) => (
           <div class='list-item'>
-            <BkCheckbox
+            <Checkbox
               label={item.value}
               key={item.$index}
               immediateEmitChange={false}
@@ -220,7 +220,7 @@ export default defineComponent({
               onChange={val => handleValueChange(val, item)}
             >
               {`${item.text}`}
-            </BkCheckbox>
+            </Checkbox>
           </div>
         ));
       }

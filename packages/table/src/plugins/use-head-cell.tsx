@@ -25,7 +25,7 @@
  */
 import { computed, ref, SetupContext, unref } from 'vue';
 
-import BkCheckbox from '@bkui-vue/checkbox';
+import Checkbox from '@bkui-vue/checkbox';
 
 import TableCell from '../components/table-cell';
 import { CHECK_ALL_OBJ, COLUMN_ATTRIBUTE, SORT_OPTION, TABLE_ROW_ATTRIBUTE } from '../const';
@@ -116,7 +116,7 @@ export default (props, context: SetupContext<any>, column: Column, tableResp: IT
     const isEnable = isRowSelectEnable(props, { row, index, isCheckAll: isAll });
 
     return (
-      <BkCheckbox
+      <Checkbox
         onChange={handleChecked}
         disabled={!isEnable}
         modelValue={isChecked}

@@ -25,7 +25,7 @@
  */
 import { computed, toRef } from 'vue';
 
-import BkLoading, { BkLoadingMode, BkLoadingSize } from '@bkui-vue/loading';
+import Loading, { BkLoadingMode, BkLoadingSize } from '@bkui-vue/loading';
 
 import { TablePropTypes } from '../props';
 
@@ -56,7 +56,7 @@ export default (props: TablePropTypes, ctx) => {
   const renderScrollLoading = () => {
     if (isRender.value) {
       const { loading, size, mode, title, inline, indicator } = getLoadingOption();
-      return ctx.slots.fixedBottom?.() ?? <BkLoading {...{ loading, size, mode, title, inline, indicator }} />;
+      return ctx.slots.fixedBottom?.() ?? <Loading {...{ loading, size, mode, title, inline, indicator }} />;
     }
   };
   return {

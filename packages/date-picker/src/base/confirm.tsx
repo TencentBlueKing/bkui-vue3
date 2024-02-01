@@ -27,7 +27,7 @@
 import type { ExtractPropTypes } from 'vue';
 import { computed, defineComponent, ref } from 'vue';
 
-import BkButton from '@bkui-vue/button';
+import Button from '@bkui-vue/button';
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 
 const confirmProps = {
@@ -114,7 +114,7 @@ export default defineComponent({
           // <a href="javascript: void(0);" class="bk-picker-confirm-time" disabled onClick={this.handleToggleTime}>
           //   {this.labels.time}
           // </a>
-          <BkButton
+          <Button
             text
             theme='primary'
             class={this.resolveClassName('picker-confirm-time')}
@@ -122,7 +122,7 @@ export default defineComponent({
             onClick={this.handleToggleTime}
           >
             {this.labels.time}
-          </BkButton>
+          </Button>
         ) : (
           ''
         )}

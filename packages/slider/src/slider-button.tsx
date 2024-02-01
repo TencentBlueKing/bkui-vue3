@@ -27,7 +27,7 @@
 import { computed, defineComponent, PropType, ref } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-import BkPopover from '@bkui-vue/popover';
+import Popover from '@bkui-vue/popover';
 import { PlacementEnum } from '@bkui-vue/shared';
 
 import { off, on } from './slider';
@@ -174,14 +174,14 @@ export default defineComponent({
       >
         {Boolean(tip.value.content) ? (
           <>
-            <BkPopover
+            <Popover
               content={tip.value.content}
               theme={'dark'}
               placement={tip.value.placement}
               boundary={document.body}
             >
               <div class={['slider-button', { 'slider-button-disable': props.params.disable }]}></div>
-            </BkPopover>
+            </Popover>
           </>
         ) : (
           <>
