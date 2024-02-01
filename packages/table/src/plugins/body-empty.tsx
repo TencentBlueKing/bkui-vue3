@@ -26,7 +26,7 @@
 import { computed, defineComponent } from 'vue';
 
 import { useLocale } from '@bkui-vue/config-provider';
-import BkException from '@bkui-vue/exception';
+import Exception from '@bkui-vue/exception';
 import { PropTypes } from '@bkui-vue/shared';
 
 export default defineComponent({
@@ -49,7 +49,7 @@ export default defineComponent({
 
     const type = computed(() => (props.list.length === 0 ? 'empty' : 'search-empty'));
     return () => (
-      <BkException
+      <Exception
         scene='part'
         type={type.value}
         description={localEmptyText.value}

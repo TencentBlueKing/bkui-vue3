@@ -37,7 +37,7 @@ import { clickoutside } from '@bkui-vue/directives';
 import { AngleUp, Close, Search } from '@bkui-vue/icon';
 import Input from '@bkui-vue/input';
 import Loading from '@bkui-vue/loading';
-import BKPopover from '@bkui-vue/popover';
+import Popover from '@bkui-vue/popover';
 import {
   classes,
   InputBehaviorType,
@@ -1021,7 +1021,7 @@ export default defineComponent({
 
     return (
       <div class={selectClass}>
-        <BKPopover
+        <Popover
           {...this.popoverConfig}
           onClickoutside={this.handleClickOutside}
           onAfterShow={this.handlePopoverShow}
@@ -1030,7 +1030,7 @@ export default defineComponent({
             default: () => renderSelectTrigger(),
             content: () => renderSelectContent(),
           }}
-        ></BKPopover>
+        ></Popover>
       </div>
     );
   },

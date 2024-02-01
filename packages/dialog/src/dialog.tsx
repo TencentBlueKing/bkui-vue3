@@ -26,20 +26,16 @@
 
 import { computed, defineComponent, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
 
-import BkButton from '@bkui-vue/button';
+import Button from '@bkui-vue/button';
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { Close, Error, Spinner, Success, Warn } from '@bkui-vue/icon';
-import BkModal from '@bkui-vue/modal';
+import Modal from '@bkui-vue/modal';
 
 import props from './props';
 
 export default defineComponent({
   // eslint-disable-next-line vue/no-reserved-component-names
   name: 'Dialog',
-  components: {
-    BkModal,
-    BkButton,
-  },
   props,
   emits: ['closed', 'update:isShow', 'confirm', 'prev', 'next', 'value-change'],
   setup(props, { emit }) {
@@ -257,74 +253,74 @@ export default defineComponent({
                   {this.current === 1 ? (
                     ''
                   ) : (
-                    <BkButton
+                    <Button
                       class={this.resolveClassName('dialog-perv')}
                       onClick={this.handlePrevStep}
                     >
                       {this.localPrevText}
-                    </BkButton>
+                    </Button>
                   )}
                   {this.current === this.totalStep ? (
                     ''
                   ) : (
-                    <BkButton
+                    <Button
                       class={this.resolveClassName('dialog-next')}
                       onClick={this.handleNextStep}
                     >
                       {this.localNextText}
-                    </BkButton>
+                    </Button>
                   )}
                   {this.current === this.totalStep ? (
-                    <BkButton
+                    <Button
                       onClick={this.handleConfirm}
                       theme={this.theme}
                       loading={this.isLoading}
                     >
                       {this.localConfirmText}
-                    </BkButton>
+                    </Button>
                   ) : (
                     ''
                   )}
-                  <BkButton
+                  <Button
                     class={this.resolveClassName('dialog-cancel')}
                     onClick={this.handleClose}
                     disabled={this.isLoading}
                   >
                     {this.localCancelText}
-                  </BkButton>
+                  </Button>
                 </>
               )
             : ''}
           {this.dialogType === 'operation'
             ? this.$slots.footer?.() ?? (
                 <>
-                  <BkButton
+                  <Button
                     onClick={this.handleConfirm}
                     theme={this.theme}
                     loading={this.isLoading}
                   >
                     {this.localConfirmText}
-                  </BkButton>
-                  <BkButton
+                  </Button>
+                  <Button
                     class={this.resolveClassName('dialog-cancel')}
                     onClick={this.handleClose}
                     disabled={this.isLoading}
                   >
                     {this.localCancelText}
-                  </BkButton>
+                  </Button>
                 </>
               )
             : ''}
           {this.dialogType === 'confirm'
             ? this.$slots.footer?.() ?? (
                 <>
-                  <BkButton
+                  <Button
                     onClick={this.handleConfirm}
                     theme={this.theme}
                     loading={this.isLoading}
                   >
                     {this.localConfirmText}
-                  </BkButton>
+                  </Button>
                 </>
               )
             : ''}
@@ -338,7 +334,7 @@ export default defineComponent({
       this.multiInstance ? 'multi-instance' : ''
     } ${this.hasFooter ? 'has-footer' : 'no-footer'}`;
     return (
-      <BkModal
+      <Modal
         {...this.$props}
         class={className}
         onClose={this.handleClose}
@@ -346,7 +342,7 @@ export default defineComponent({
         style={this.data.moveStyle}
       >
         {dialogSlot}
-      </BkModal>
+      </Modal>
     );
   },
 });

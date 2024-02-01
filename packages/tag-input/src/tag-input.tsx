@@ -30,8 +30,8 @@ import { computed, defineComponent, nextTick, onMounted, reactive, type Ref, ref
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { bkTooltips } from '@bkui-vue/directives';
 import { Close, Error } from '@bkui-vue/icon';
-import BkLoading, { BkLoadingSize } from '@bkui-vue/loading';
-import BKPopover from '@bkui-vue/popover';
+import Loading, { BkLoadingSize } from '@bkui-vue/loading';
+import Popover from '@bkui-vue/popover';
 import { useFormItem } from '@bkui-vue/shared';
 
 import { getCharLength, INPUT_MIN_WIDTH, useFlatList, usePage, useTagsOverflow } from './common';
@@ -890,7 +890,7 @@ export default defineComponent({
         onMouseenter={() => (this.isHover = true)}
         onMouseleave={() => (this.isHover = false)}
       >
-        <BKPopover
+        <Popover
           theme={`light ${this.resolveClassName('tag-input-popover-content')}`}
           trigger='manual'
           placement='bottom-start'
@@ -1037,7 +1037,7 @@ export default defineComponent({
                   )}
                   {this.isPageLoading ? (
                     <li class={`${this.resolveClassName('selector-list-item')} loading`}>
-                      <BkLoading
+                      <Loading
                         theme='primary'
                         size={BkLoadingSize.Small}
                       />
@@ -1047,7 +1047,7 @@ export default defineComponent({
               </div>
             ),
           }}
-        </BKPopover>
+        </Popover>
       </div>
     );
   },

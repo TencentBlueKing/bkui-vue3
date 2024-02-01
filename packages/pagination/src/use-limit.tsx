@@ -29,7 +29,7 @@ import { getCurrentInstance, nextTick, ref, watch } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import type { Language } from '@bkui-vue/locale';
-import BkSelect, { BkOption } from '@bkui-vue/select';
+import Select, { BkOption } from '@bkui-vue/select';
 
 import type { IPaginationInstance } from './type';
 
@@ -89,7 +89,7 @@ export default (t: ComputedRef<Language['pagination']>) => {
         }}
       >
         <div>{t.value.eachPage}</div>
-        <BkSelect
+        <Select
           class={`${resolveClassName('pagination-limit-select')}`}
           clearable={false}
           size='small'
@@ -107,7 +107,7 @@ export default (t: ComputedRef<Language['pagination']>) => {
               key={`${index}_${num}`}
             />
           ))}
-        </BkSelect>
+        </Select>
         <div>{t.value.strip}</div>
       </div>
     );

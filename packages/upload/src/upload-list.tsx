@@ -28,7 +28,7 @@ import { computed, defineComponent, h, toRefs, TransitionGroup } from 'vue';
 
 import { useLocale } from '@bkui-vue/config-provider';
 import { ArchiveFill, AudioFill, Del, Done, ImageFill, RightTurnLine, TextFill, VideoFill } from '@bkui-vue/icon';
-import BkProgress from '@bkui-vue/progress';
+import Progress from '@bkui-vue/progress';
 import { classes } from '@bkui-vue/shared';
 
 import uploadProps from './props';
@@ -104,7 +104,7 @@ export default defineComponent({
       />,
       <>
         {file.status === 'uploading' && (
-          <BkProgress
+          <Progress
             class={`${classBlock}__picture-item-progress`}
             type='circle'
             color='#3a84ff'
@@ -202,7 +202,7 @@ export default defineComponent({
           </div>
         )}
         {file.status === 'uploading' && (
-          <BkProgress
+          <Progress
             class={`${classBlock}__item-progress`}
             showText={false}
             percent={file.percentage}
