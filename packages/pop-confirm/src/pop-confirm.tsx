@@ -25,15 +25,14 @@
  */
 import { defineComponent, ref } from 'vue';
 
-import BkButton from '@bkui-vue/button';
+import Button from '@bkui-vue/button';
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
-import BkPopover from '@bkui-vue/popover';
+import Popover from '@bkui-vue/popover';
 
 import props from './props';
 
 export default defineComponent({
   name: 'PopConfirm',
-  components: { BkPopover, BkButton },
   props,
   emits: ['confirm', 'cancel'],
   setup(props, { emit, slots }) {
@@ -78,7 +77,7 @@ export default defineComponent({
 
   render() {
     return (
-      <BkPopover
+      <Popover
         ref='popoverRef'
         isShow={this.visible}
         trigger={this.trigger}
@@ -110,24 +109,24 @@ export default defineComponent({
                 </>
               )}
               <div class={`${this.resolveClassName('pop-confirm-footer')}`}>
-                <BkButton
+                <Button
                   onClick={this.ensure}
                   size='small'
                   theme='primary'
                 >
                   {this.confirmText || this.t.ok}
-                </BkButton>
-                <BkButton
+                </Button>
+                <Button
                   onClick={this.cancel}
                   size='small'
                 >
                   {this.cancelText || this.t.cancel}
-                </BkButton>
+                </Button>
               </div>
             </div>
           ),
         }}
-      </BkPopover>
+      </Popover>
     );
   },
 });

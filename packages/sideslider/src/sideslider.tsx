@@ -26,20 +26,15 @@
 
 import { defineComponent } from 'vue';
 
-import BkButton from '@bkui-vue/button';
 import { usePrefix } from '@bkui-vue/config-provider';
-import BkModal from '@bkui-vue/modal';
+import Modal from '@bkui-vue/modal';
 
-const { propsMixin } = BkModal;
+const { propsMixin } = Modal;
 const sliderPops = Object.assign({}, propsMixin);
 sliderPops.width.default = '400';
 sliderPops.height.default = '100%';
 export default defineComponent({
   name: 'Sideslider',
-  components: {
-    BkModal,
-    BkButton,
-  },
   props: {
     ...sliderPops,
     direction: {
@@ -120,7 +115,7 @@ export default defineComponent({
       const maxHeight = slots.footer ? 'calc(100vh - 106px)' : 'calc(100vh - 52px)';
 
       return (
-        <BkModal
+        <Modal
           {...props}
           maxHeight={maxHeight}
           class={className}
@@ -130,7 +125,7 @@ export default defineComponent({
           onClose={handleClose}
         >
           {dialogSlot}
-        </BkModal>
+        </Modal>
       );
     };
   },

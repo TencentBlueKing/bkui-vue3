@@ -29,7 +29,7 @@ import { computed, getCurrentInstance, nextTick, ref, watch } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import { AngleLeft, AngleRight } from '@bkui-vue/icon';
-import BkPopover2 from '@bkui-vue/popover';
+import Popover from '@bkui-vue/popover';
 
 import type { IPaginationInstance } from './type';
 
@@ -167,7 +167,7 @@ export default () => {
       >
         <AngleLeft />
       </div>
-      <BkPopover2
+      <Popover
         theme='light'
         trigger='click'
         arrow={false}
@@ -216,7 +216,7 @@ export default () => {
             </div>
           ),
         }}
-      </BkPopover2>
+      </Popover>
       <div
         class={{
           [`${resolveClassName('pagination-btn-next')}`]: true,

@@ -30,7 +30,7 @@ import { array } from 'vue-types';
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { bkTooltips } from '@bkui-vue/directives';
 import { AngleUp, Close, Error } from '@bkui-vue/icon';
-import BkPopover from '@bkui-vue/popover';
+import Popover from '@bkui-vue/popover';
 import { debounce, PropTypes } from '@bkui-vue/shared';
 import Tag from '@bkui-vue/tag';
 
@@ -45,11 +45,6 @@ export default defineComponent({
   name: 'Cascader',
   directives: {
     bkTooltips,
-  },
-  components: {
-    CascaderPanel,
-    BkPopover,
-    Tag,
   },
   props: {
     modelValue: PropTypes.arrayOf(PropTypes.oneOfType([array<string>(), String, Number])),
@@ -431,7 +426,7 @@ export default defineComponent({
 
     // 定义popoverRender函数，用于渲染弹出框
     const popoverRender = () => (
-      <BkPopover
+      <Popover
         placement='bottom-start'
         theme={`light ${this.resolveClassName('cascader-popover')}`}
         trigger='click'
@@ -496,7 +491,7 @@ export default defineComponent({
             </div>
           ),
         }}
-      </BkPopover>
+      </Popover>
     );
 
     return (

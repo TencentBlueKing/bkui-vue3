@@ -29,8 +29,9 @@ import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 
 import { ILibTaskOption, ITaskItem } from '../typings/task';
 
+// import babelPlugin from './babel-plugin';
 import { LIB_URL } from './helpers';
-
+const prefix = '@bkui-vue/';
 export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILibTaskOption) => {
   const entry: webpack.EntryObject = {};
   entryList.forEach(({ url, newPath }) => {
@@ -139,15 +140,13 @@ export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILi
       'vue',
       'highlight.js',
       'vue-types',
+      // /^bkui-vue\/.*/,
+      // 'bkui-vue',
       ({ request, context }, cb) => {
-        const prefix = '@bkui-vue/';
-        // if (request?.includes('@babel/')) {
-        //   return cb(undefined, request);
-        // }
         if (context && request && /\/bkui-vue$/.test(context)) {
           return cb(undefined, request.replace(prefix, './'));
         }
-        if (request?.indexOf(prefix) === 0 && !/\.(less|css)$/.test(request)) {
+        if (request?.startsWith(prefix) && !/\.(less|css)$/.test(request)) {
           return cb(undefined, request.replace(prefix, '../'));
         }
         cb();

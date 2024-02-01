@@ -26,10 +26,10 @@
 
 import { defineComponent, ref, watch } from 'vue';
 
-import BKCollapseTransition from '@bkui-vue/collapse-transition';
+import CollapseTransition from '@bkui-vue/collapse-transition';
 import { usePrefix } from '@bkui-vue/config-provider';
 import { AngleDown, AngleRight, EditLine } from '@bkui-vue/icon';
-import BkInput from '@bkui-vue/input';
+import Input from '@bkui-vue/input';
 import { classes, PropTypes } from '@bkui-vue/shared';
 
 export default defineComponent({
@@ -121,7 +121,7 @@ export default defineComponent({
         title={this.renderTitle}
       >
         {this.showInput ? (
-          <BkInput
+          <Input
             class={`${this.wrapperClsName}-input`}
             v-model={this.renderTitle}
             onBlur={this.saveEdit}
@@ -157,7 +157,7 @@ export default defineComponent({
         ) : (
           ''
         )}
-        <BKCollapseTransition>
+        <CollapseTransition>
           <div v-show={this.collapseActive}>
             <div class={`${this.wrapperClsName}-body`}>{this.$slots.default?.() ?? 'Content'}</div>
             {this.$props.showFooter ? (
@@ -166,7 +166,7 @@ export default defineComponent({
               ''
             )}
           </div>
-        </BKCollapseTransition>
+        </CollapseTransition>
       </div>
     );
   },

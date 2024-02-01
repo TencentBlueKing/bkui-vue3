@@ -27,7 +27,7 @@
 import { defineComponent, reactive, ref, watch } from 'vue';
 import { array, object } from 'vue-types';
 
-import BkCheckbox from '@bkui-vue/checkbox';
+import Checkbox from '@bkui-vue/checkbox';
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { AngleRight, Spinner } from '@bkui-vue/icon';
 import { arrayEqual, PropTypes } from '@bkui-vue/shared';
@@ -284,13 +284,13 @@ export default defineComponent({
                       {...Object.assign(this.nodeEvent(node), node.config.multiple ? {} : {})}
                     >
                       {node.config.multiple && (
-                        <BkCheckbox
+                        <Checkbox
                           disabled={node.isDisabled}
                           v-model={node.checked}
                           indeterminate={node.isIndeterminate}
                           style='margin-right: 5px'
                           onChange={(val: unknown) => this.checkNode(node, !!val)}
-                        ></BkCheckbox>
+                        ></Checkbox>
                       )}
                       {this.$slots.default?.({ node, data: node.data })}
                       {!node.isLeaf ? this.iconRender(node) : ''}
