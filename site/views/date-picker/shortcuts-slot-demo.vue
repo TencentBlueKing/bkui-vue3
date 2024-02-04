@@ -7,7 +7,7 @@
         use-shortcut-text
         format="yyyy-MM-dd HH:mm:ss"
         :shortcuts="dateShortCut"
-        :shortcut-selected-index="4"
+        :shortcut-selected-index="2"
         @change="change"
       />
     </div>
@@ -19,6 +19,7 @@
         use-shortcut-text
         format="yyyy-MM-dd HH:mm:ss"
         :shortcuts="shortcutsRange"
+        :shortcut-selected-index="1"
         @change="change"
       />
     </div>
