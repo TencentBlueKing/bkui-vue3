@@ -90,7 +90,8 @@ export default defineComponent({
     if (props.shortcutSelectedIndex !== -1) {
       shortcut = props.shortcuts[props.shortcutSelectedIndex] || null;
       if (shortcut) {
-        initialValue = [shortcut.value()];
+        const v = shortcut.value();
+        initialValue = Array.isArray(v) ? v : [v];
       }
     }
 
