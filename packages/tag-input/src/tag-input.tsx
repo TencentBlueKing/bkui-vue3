@@ -848,6 +848,16 @@ export default defineComponent({
     );
     const { overflowTagIndex } = useTagsOverflow(bkTagSelectorRef, localCollapseTags, tagList);
 
+    // 根据 overflowTagIndex 获取需要收起的tag，并生成 tooltip
+    const collapseTooltip = computed(() =>
+      listState.selectedTagList.reduce((acc, cur, curIndex) => {
+        if (overflowTagIndex.value !== null && curIndex >= overflowTagIndex.value) {
+          acc.push(cur[props.displayKey]);
+        }
+        return acc;
+      }, []),
+    );
+
     return {
       popoverProps,
       ...toRefs(state),
@@ -867,6 +877,7 @@ export default defineComponent({
       triggerClass,
       overflowTagIndex,
       localCollapseTags,
+      collapseTooltip,
       focusInputTrigger,
       activeClass,
       handleInput,
@@ -958,7 +969,10 @@ export default defineComponent({
                     />
                   </li>
                   {!!this.overflowTagIndex && this.localCollapseTags && (
-                    <li class='tag-item'>
+                    <li
+                      class='tag-item'
+                      v-bk-tooltips={this.collapseTooltip.join(', ')}
+                    >
                       <div class='tag'>
                         <span class='text'>+{this.selectedTagList.length - this.overflowTagIndex}</span>
                       </div>
