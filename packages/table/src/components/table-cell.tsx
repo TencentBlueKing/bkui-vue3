@@ -114,7 +114,7 @@ export default defineComponent({
       }
 
       if (props.isHead) {
-        disabled = false;
+        disabled = !((props.column?.showOverflowTooltip as any)?.showHead ?? true);
         mode = 'auto';
         content = () => getEllipsisTarget()?.innerHTML;
 

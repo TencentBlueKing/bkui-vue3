@@ -114,6 +114,7 @@ export type IOverflowTooltipProp =
       mode?: `${OverflowModeEnum}`;
       popoverOption?: any;
       resizerWay?: ResizerWay;
+      showHead?: boolean;
     }
   | boolean;
 
