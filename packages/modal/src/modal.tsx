@@ -24,10 +24,10 @@
  * IN THE SOFTWARE.
  */
 
-import { defineComponent, Transition } from 'vue';
+import { computed, defineComponent, nextTick, ref, Transition, watch } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-import { BKPopIndexManager } from '@bkui-vue/shared';
+import { bkZIndexManager, mask } from '@bkui-vue/shared';
 
 import { propsMixin } from './props.mixin';
 
@@ -37,111 +37,124 @@ export default defineComponent({
     ...propsMixin,
   },
   emits: ['quick-close', 'quickClose', 'hidden', 'shown', 'close'],
-  data() {
-    return {
-      visible: false,
-      closeTimer: null,
-      bkPopIndexManager: null,
-    };
-  },
-  computed: {
-    dialogWidth(): String | Number {
-      return /^\d+\.?\d*$/.test(`${this.width}`) ? `${this.width}px` : this.width;
-    },
+  setup(props, ctx) {
+    const visible = ref(false);
+    const zIndex = ref(props.zIndex);
+    const refRoot = ref<HTMLElement>();
+    const refMask = ref<HTMLElement>();
+    const backgroundColor = ref('rgba(0,0,0,0.6)');
+    let closeTimer;
+    const dialogWidth = computed(() => {
+      return /^\d+\.?\d*$/.test(`${props.width}`) ? `${props.width}px` : props.width;
+    });
+    const dialogHeight = computed(() => {
+      return /^\d+\.?\d*$/.test(`${props.height}`) ? `${props.height}px` : props.height;
+    });
 
-    dialogHeight(): String | Number {
-      return /^\d+\.?\d*$/.test(`${this.height}`) ? `${this.height}px` : this.height;
-    },
-
-    compStyle(): any {
+    const compStyle = computed(() => {
       return {
-        width: this.dialogWidth,
-        height: this.dialogHeight,
+        width: dialogWidth.value,
+        height: dialogHeight.value,
         minHeigth: `${200}px`,
-        display: this.visible ? 'inherit' : 'none',
-        zIndex: this.zIndex || 'inherit',
+        display: visible.value ? 'inherit' : 'none',
+        zIndex: zIndex.value || 'inherit',
+        left: props.left,
+        top: props.top,
+        [props.direction]: 0,
       };
-    },
-    fullscreenStyle(): any {
+    });
+    const enableTeleport = ref(!!props.transfer);
+    const teleportTo = ref<string | HTMLElement>('body');
+
+    const resolveTransfer = () => {
+      if (props.transfer) {
+        if (typeof props.transfer === 'boolean') {
+          teleportTo.value = 'body';
+          return;
+        }
+
+        teleportTo.value = props.transfer;
+      }
+    };
+
+    resolveTransfer();
+    const { resolveClassName } = usePrefix();
+    const resolveClosetModal = () => {
+      const className = `.${resolveClassName('modal-ctx')}`;
+      const parentNode = refRoot.value?.parentElement?.closest(className);
+      if (parentNode) {
+        enableTeleport.value = true;
+        teleportTo.value = 'body';
+        const target = document.querySelector(teleportTo.value);
+        target?.appendChild(refRoot.value);
+      }
+    };
+
+    const fullscreenStyle = computed(() => {
       return {
         width: `${100}%`,
         height: `${100}%`,
       };
-    },
-  },
-  watch: {
-    isShow: {
-      handler(val: boolean) {
-        if (val) {
-          // 避免is-show: false执行覆盖
-          this.closeTimer && clearTimeout(this.closeTimer);
-          this.closeTimer = null;
-          this.visible = val;
-        } else {
-          this.closeTimer = setTimeout(() => {
-            // 直接设为false会失去离开的动画效果，这里延迟设置
-            this.$emit('hidden'); // 为false直接触发hidden事件，在上层有200ms的延时
-            this.visible = val;
-          }, 250);
-        }
-      },
-      immediate: true,
-    },
-    // isShow 初始化为 true 的时候，防止直接展示
-    visible: {
-      handler(val: boolean) {
-        if (val) {
-          this.$nextTick(() => {
-            // isShow初始化为true的时候，放在nextTick才能获取$el
-            const hideMaskStyle = {
-              'background-color': 'rgba(0,0,0,0)',
-            };
-            const appendStyle = this.showMask ? {} : hideMaskStyle;
-            this.bkPopIndexManager.show(
-              this.$el,
-              this.showMask,
-              appendStyle,
-              !!this.transfer,
-              this.zIndex,
-              (_e: MouseEvent) => {
-                this.handleClickOutSide();
-              },
-            );
-            this.$emit('shown');
-          });
-        } else {
-          this.bkPopIndexManager?.removeLastEvent();
-          this.bkPopIndexManager?.hide(this.$el, !!this.transfer);
-          this.bkPopIndexManager?.destroy();
-        }
-      },
-      immediate: true,
-    },
-  },
-  mounted() {
-    const popConfig = {
-      ...this.$props,
-      ...{
-        transfer: this.transfer === 'parent' ? this.$el?.parentElement : this.transfer,
-      },
-    };
-    this.bkPopIndexManager = new BKPopIndexManager(popConfig);
-  },
+    });
 
-  beforeUnmount() {
-    if (this.visible) {
-      this.bkPopIndexManager?.hide(this.$el);
-      this.bkPopIndexManager?.destroy();
-    }
-  },
-  methods: {
-    handleClickOutSide() {
-      if (this.quickClose) {
-        this.$emit('close');
-        this.$emit('quick-close', this.$el);
-        this.$emit('quickClose', this.$el);
+    watch(
+      () => props.isShow,
+      val => {
+        visible.value = val;
+        if (val) {
+          closeTimer && clearTimeout(closeTimer);
+          closeTimer = null;
+          if (!props.zIndex) {
+            zIndex.value = bkZIndexManager.getModalNextIndex();
+          }
+          nextTick(() => {
+            ctx.emit('shown');
+            resolveClosetModal();
+            mask.showMask({
+              el: refRoot.value,
+              mask: refMask.value,
+              showMask: props.showMask,
+              backgroundColor: backgroundColor.value,
+            });
+          });
+          return;
+        }
+        mask.hideMask({
+          el: refRoot.value,
+          mask: refMask.value,
+          showMask: props.showMask,
+          backgroundColor: backgroundColor.value,
+        });
+
+        closeTimer = setTimeout(() => {
+          // 直接设为false会失去离开的动画效果，这里延迟设置
+          ctx.emit('hidden'); // 为false直接触发hidden事件，在上层有200ms的延时
+        }, 250);
+      },
+      { immediate: true },
+    );
+
+    const handleClickOutSide = (e: MouseEvent) => {
+      e.stopImmediatePropagation();
+      e.stopPropagation();
+      e.preventDefault();
+
+      if (props.quickClose) {
+        ctx.emit('close');
+        ctx.emit('quick-close');
+        ctx.emit('quickClose');
       }
-    },
+    };
+
+    return {
+      visible,
+      compStyle,
+      fullscreenStyle,
+      handleClickOutSide,
+      refRoot,
+      refMask,
+      showMask: props.showMask,
+    };
   },
   render() {
     const { resolveClassName } = usePrefix();
@@ -149,30 +162,47 @@ export default defineComponent({
     const bodyClass = `${resolveClassName('modal-body')} ${this.animateType === 'slide' ? this.direction : ''}`;
     return (
       <div
-        class={[resolveClassName('modal-wrapper'), this.extCls, this.size, this.fullscreen ? 'fullscreen' : '']}
-        style={[this.compStyle, this.fullscreen ? this.fullscreenStyle : '']}
+        ref='refRoot'
+        class={[resolveClassName('modal-ctx'), this.visible ? '--show' : '--hide']}
+        style={{ zIndex: this.compStyle.zIndex }}
       >
-        <Transition name={this.animateType}>
-          {this.isShow ? (
-            <div class={bodyClass}>
-              <div class={resolveClassName('modal-header')}>{this.$slots.header?.() ?? ''}</div>
-              <div
-                class={resolveClassName('modal-content')}
-                style={[this.dialogType === 'show' ? 'padding-bottom: 20px' : '', { ...maxHeight }]}
-              >
-                {this.$slots.default?.() ?? ''}
+        {this.showMask ? (
+          <div
+            ref='refMask'
+            class={[resolveClassName('modal-ctx-mask'), this.visible ? '--show' : '--hide']}
+            onClick={this.handleClickOutSide}
+            style={{ zIndex: this.compStyle.zIndex }}
+          ></div>
+        ) : (
+          ''
+        )}
+
+        <div
+          class={[resolveClassName('modal-wrapper'), this.extCls ?? '', this.size, this.fullscreen ? 'fullscreen' : '']}
+          style={[this.compStyle, this.fullscreen ? this.fullscreenStyle : '']}
+        >
+          <Transition name={this.animateType}>
+            {this.visible ? (
+              <div class={bodyClass}>
+                <div class={resolveClassName('modal-header')}>{this.$slots.header?.() ?? ''}</div>
+                <div
+                  class={resolveClassName('modal-content')}
+                  style={[this.dialogType === 'show' ? 'padding-bottom: 20px' : '', { ...maxHeight }]}
+                >
+                  {this.$slots.default?.() ?? ''}
+                </div>
+                {this.dialogType === 'show' ? (
+                  ''
+                ) : (
+                  <div class={resolveClassName('modal-footer')}>{this.$slots.footer?.() ?? ''}</div>
+                )}
+                {this.closeIcon && <div class={resolveClassName('modal-close')}>{this.$slots.close?.() ?? ''}</div>}
               </div>
-              {this.dialogType === 'show' ? (
-                ''
-              ) : (
-                <div class={resolveClassName('modal-footer')}>{this.$slots.footer?.() ?? ''}</div>
-              )}
-              {this.closeIcon && <div class={resolveClassName('modal-close')}>{this.$slots.close?.() ?? ''}</div>}
-            </div>
-          ) : (
-            ''
-          )}
-        </Transition>
+            ) : (
+              ''
+            )}
+          </Transition>
+        </div>
       </div>
     );
   },
