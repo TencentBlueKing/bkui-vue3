@@ -825,7 +825,7 @@ export default defineComponent({
           </div>
         );
       }
-      return this.$slots.prefix ? () => this.$slots.prefix?.() : undefined;
+      return this.$slots?.prefix ? () => this.$slots?.prefix?.() : undefined;
     };
 
     // 全选
@@ -876,7 +876,7 @@ export default defineComponent({
             onEnter={this.handleCreateCustomOption}
             v-slots={{
               prefix: renderPrefix(),
-              default: this.$slots.tag && (() => this.$slots.tag({ selected: this.selected })),
+              default: this.$slots?.tag && (() => this.$slots?.tag({ selected: this.selected })),
               suffix: () => suffixIcon(),
             }}
           ></SelectTagInput>
@@ -899,7 +899,7 @@ export default defineComponent({
           onEnter={this.handleCreateCustomOption}
           {...(this.prefix ? { prefix: this.prefix } : null)}
           v-slots={{
-            ...(typeof this.$slots.prefix === 'function' ? { prefix: () => this.$slots.prefix?.() } : null),
+            ...(typeof this.$slots?.prefix === 'function' ? { prefix: () => this.$slots?.prefix?.() } : null),
             suffix: () => suffixIcon(),
           }}
         ></Input>
@@ -914,7 +914,7 @@ export default defineComponent({
         onMouseenter={this.setHover}
         onMouseleave={this.cancelHover}
       >
-        {this.$slots.trigger?.({ selected: this.selected }) || renderTriggerInput()}
+        {this.$slots?.trigger?.({ selected: this.selected }) || renderTriggerInput()}
       </div>
     );
     const renderSelectContent = () => (
@@ -997,7 +997,7 @@ export default defineComponent({
                   />
                 ))
               )}
-              {this.$slots.default?.()}
+              {this.$slots?.default?.()}
               {this.scrollLoading && (
                 <li class={this.resolveClassName('select-options-loading')}>
                   <Loading
@@ -1012,8 +1012,8 @@ export default defineComponent({
               )}
             </ul>
           </div>
-          {this.$slots.extension && (
-            <div class={this.resolveClassName('select-extension')}>{this.$slots.extension()}</div>
+          {this.$slots?.extension && (
+            <div class={this.resolveClassName('select-extension')}>{this.$slots?.extension()}</div>
           )}
         </div>
       </div>
