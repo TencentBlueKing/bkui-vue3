@@ -27,7 +27,7 @@
 import { computed, defineComponent, nextTick, ref, Transition, watch } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-import { bkZIndexManager, mask } from '@bkui-vue/shared';
+import { bkZIndexManager, isElement, mask } from '@bkui-vue/shared';
 
 import { propsMixin } from './props.mixin';
 
@@ -80,6 +80,19 @@ export default defineComponent({
     resolveTransfer();
     const { resolveClassName } = usePrefix();
     const resolveClosetModal = () => {
+      if (enableTeleport.value) {
+        if (typeof teleportTo.value === 'string') {
+          const target = document.querySelector(teleportTo.value as string);
+          target?.appendChild(refRoot.value);
+          return;
+        }
+
+        if (isElement(teleportTo.value)) {
+          (teleportTo.value as HTMLElement).appendChild(refRoot.value);
+          return;
+        }
+      }
+
       const className = `.${resolveClassName('modal-ctx')}`;
       const parentNode = refRoot.value?.parentElement?.closest(className);
       if (parentNode) {
@@ -129,6 +142,9 @@ export default defineComponent({
         closeTimer = setTimeout(() => {
           // 直接设为false会失去离开的动画效果，这里延迟设置
           ctx.emit('hidden'); // 为false直接触发hidden事件，在上层有200ms的延时
+          if (enableTeleport.value) {
+            refRoot.value?.remove();
+          }
         }, 250);
       },
       { immediate: true },
