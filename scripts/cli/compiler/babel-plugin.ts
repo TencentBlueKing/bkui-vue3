@@ -35,7 +35,7 @@ import {
   Node,
   stringLiteral,
 } from '@babel/types';
-const hasStyleComponentList = [
+export const hasStyleComponentList = [
   'Alert',
   'AnimateNumber',
   'Affix',
@@ -93,10 +93,10 @@ const hasStyleComponentList = [
   'OverflowTitle',
   'PopConfirm',
 ];
-const capitalize = (name: string) =>
+export const capitalize = (name: string) =>
   name.replace(/^([a-z])|-(.)/g, (_, a: string, b: string) => (a || b).toUpperCase());
 
-const getLibPath = (value: string) => value.replace(/^@bkui-vue\//, 'bkui-vue/lib/');
+export const getLibPath = (value: string) => value.replace(/^@bkui-vue\//, 'bkui-vue/lib/');
 
 const visitor = {
   ImportDeclaration(path: NodePath<ImportDeclaration>) {
@@ -106,9 +106,8 @@ const visitor = {
       specifiers,
       source: { value },
     } = path.node;
-
     if (!value.startsWith('@bkui-vue/')) return;
-
+    // console.log(`Absolute path: ${state.filename}`);
     const libPath = getLibPath(value);
     const hasDefaultImportToInclude = specifiers.some(
       item => isImportDefaultSpecifier(item) && hasStyleComponentList.includes(capitalize(item.local.name)),
@@ -124,14 +123,14 @@ const visitor = {
 
     for (const specifier of specifiers) {
       if (isImportDefaultSpecifier(specifier)) {
-        const componentName = capitalize(value.replace(/^@bkui-vue\//, ''));
-        const cssPath = `bkui-vue/lib/${componentName}/${componentName}.css`;
+        const componentName = value.replace(/^@bkui-vue\//, '');
+        const cssPath = `@bkui-vue/${componentName}/${componentName}.less`;
 
         declarationList.push(
-          importDeclaration([importDefaultSpecifier(identifier(componentName))], stringLiteral(libPath)),
+          importDeclaration([importDefaultSpecifier(identifier(capitalize(componentName)))], stringLiteral(libPath)),
         );
 
-        if (hasStyleComponentList.includes(componentName)) {
+        if (hasStyleComponentList.includes(capitalize(componentName))) {
           declarationList.push(importDeclaration([], stringLiteral(cssPath)));
         }
       } else if (isImportSpecifier(specifier)) {

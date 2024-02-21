@@ -29,8 +29,11 @@ import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 
 import { ILibTaskOption, ITaskItem } from '../typings/task';
 
-// import babelPlugin from './babel-plugin';
+import bkuiBabelPlugin from './babel-plugin';
 import { LIB_URL } from './helpers';
+// import IgnorePlugin from './ignore-not-found';
+// import lessFixLoader from './less-fix-loader';
+import WebpackCheckPlugin from './webpack-plugin';
 const prefix = '@bkui-vue/';
 export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILibTaskOption) => {
   const entry: webpack.EntryObject = {};
@@ -91,8 +94,16 @@ export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILi
             {
               loader: 'babel-loader',
               options: {
-                presets: ['@babel/preset-env', '@babel/preset-typescript'],
-                plugins: ['@vue/babel-plugin-jsx', '@babel/plugin-transform-runtime'],
+                presets: [
+                  [
+                    '@babel/preset-env',
+                    {
+                      modules: false,
+                    },
+                  ],
+                  '@babel/preset-typescript',
+                ],
+                plugins: [bkuiBabelPlugin, '@vue/babel-plugin-jsx', '@babel/plugin-transform-runtime'],
               },
             },
             {
@@ -104,7 +115,7 @@ export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILi
               },
             },
           ],
-          // exclude: /node_modules/,
+          exclude: /node_modules/,
         },
         {
           test: /\.(png|jpe?g|gif|svg)$/,
@@ -117,20 +128,12 @@ export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILi
             esModule: false,
           },
         },
-        {
-          test: /\.less$/,
-          use: [
-            {
-              loader: 'css-loader',
-            },
-            {
-              loader: 'less-loader',
-            },
-          ],
-          // include: /directives/,
-        },
+        // {
+        //   test: /\.less$/,
+        //   loader: path.resolve(__dirname, './less-fix-loader.ts'),
+        // },
       ],
-    },
+    } as any,
     externalsType: 'module',
     externals: [
       '@popperjs/core',
@@ -140,22 +143,26 @@ export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILi
       'vue',
       'highlight.js',
       'vue-types',
-      // /^bkui-vue\/.*/,
-      // 'bkui-vue',
       ({ request, context }, cb) => {
         if (context && request && /\/bkui-vue$/.test(context)) {
           return cb(undefined, request.replace(prefix, './'));
         }
+        // if (request?.startsWith('@bkui-style/')) {
+        //   return cb(undefined, request.replace('@bkui-style/', '../'), 'window');
+        // }
         if (request?.startsWith(prefix) && !/\.(less|css)$/.test(request)) {
           return cb(undefined, request.replace(prefix, '../'));
         }
         cb();
       },
+      /^bkui-vue\/.*/,
     ],
     resolve: {
       extensions: ['.tsx', '.ts', '.js'],
     },
     plugins: [
+      // new IgnorePlugin('@bkui-style'),
+      new WebpackCheckPlugin(),
       taskOption.analyze
         ? new BundleAnalyzerPlugin({
             analyzerMode: 'server',
