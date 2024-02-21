@@ -91,17 +91,26 @@ const InfoBox = (config: Partial<ModalFuncProps>) => {
   const dialog = defineComponent({
     name: 'DialogConfirm',
     setup(_props, { expose }) {
-      const onClosed = async () => {
-        if (typeof modalFuncProps.value?.onClosed === 'function') {
-          await modalFuncProps.value?.onClosed();
+      const beforeHiddenFn = [];
+      const resolveUserCallbackFnBeforeClose = async userCallbackFn => {
+        if (typeof userCallbackFn === 'function') {
+          // 如果是Promise则等待返回结果再关闭弹出提示
+          // 如果是常规函数，则暂时推送到待执行池，在弹出提示关闭时一次执行，以保证多层嵌套弹出执行关闭的顺序
+          if (userCallbackFn instanceof Promise) {
+            await (userCallbackFn as any)();
+          } else {
+            beforeHiddenFn.push(userCallbackFn);
+          }
         }
         isShow.value = false;
       };
+
+      const onClosed = async () => {
+        resolveUserCallbackFnBeforeClose(modalFuncProps.value?.onClosed);
+      };
+
       const onConfirm = async () => {
-        if (typeof modalFuncProps.value?.onConfirm === 'function') {
-          await modalFuncProps.value?.onConfirm();
-        }
-        isShow.value = false;
+        resolveUserCallbackFnBeforeClose(modalFuncProps.value?.onConfirm);
       };
 
       function update(newValue: ModalFuncProps) {
@@ -144,6 +153,8 @@ const InfoBox = (config: Partial<ModalFuncProps>) => {
       };
 
       const onHidden = () => {
+        beforeHiddenFn.forEach(fn => fn());
+        beforeHiddenFn.length = 0;
         container.remove();
       };
 

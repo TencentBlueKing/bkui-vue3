@@ -110,16 +110,33 @@ export default defineComponent({
       };
     });
 
+    const closeModal = () => {
+      mask.hideMask({
+        el: refRoot.value,
+        mask: refMask.value,
+        showMask: props.showMask,
+        backgroundColor: backgroundColor.value,
+      });
+
+      closeTimer = setTimeout(() => {
+        // 直接设为false会失去离开的动画效果，这里延迟设置
+        ctx.emit('hidden'); // 为false直接触发hidden事件，在上层有200ms的延时
+        if (enableTeleport.value) {
+          refRoot.value?.remove();
+        }
+      }, 250);
+    };
+
     watch(
       () => props.isShow,
       val => {
-        visible.value = val;
         if (val) {
           closeTimer && clearTimeout(closeTimer);
           closeTimer = null;
           if (!props.zIndex) {
             zIndex.value = bkZIndexManager.getModalNextIndex();
           }
+          visible.value = true;
           nextTick(() => {
             ctx.emit('shown');
             resolveClosetModal();
@@ -132,23 +149,22 @@ export default defineComponent({
           });
           return;
         }
-        mask.hideMask({
-          el: refRoot.value,
-          mask: refMask.value,
-          showMask: props.showMask,
-          backgroundColor: backgroundColor.value,
-        });
 
-        closeTimer = setTimeout(() => {
-          // 直接设为false会失去离开的动画效果，这里延迟设置
-          ctx.emit('hidden'); // 为false直接触发hidden事件，在上层有200ms的延时
-          if (enableTeleport.value) {
-            refRoot.value?.remove();
-          }
-        }, 250);
+        visible.value = false;
+        closeModal();
       },
       { immediate: true },
     );
+
+    const handleBeforeClose = callbackFn => {
+      if (typeof props.beforeClose === 'function') {
+        if (props.beforeClose() !== true) {
+          return;
+        }
+      }
+
+      callbackFn?.();
+    };
 
     const handleClickOutSide = (e: MouseEvent) => {
       e.stopImmediatePropagation();
@@ -156,9 +172,11 @@ export default defineComponent({
       e.preventDefault();
 
       if (props.quickClose) {
-        ctx.emit('close');
-        ctx.emit('quick-close');
-        ctx.emit('quickClose');
+        handleBeforeClose(() => {
+          ctx.emit('close');
+          ctx.emit('quick-close');
+          ctx.emit('quickClose');
+        });
       }
     };
 

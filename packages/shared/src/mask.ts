@@ -59,6 +59,8 @@ const showMask = (options: IMaskOption) => {
     });
   }
 
+  const { mask, backgroundColor } = options;
+  mask?.style.setProperty('background-color', backgroundColor);
   loopSetMaskStyle(activeModal, options.showMask);
   activeModal = options.el;
 };
