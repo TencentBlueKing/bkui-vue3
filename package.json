@@ -1,6 +1,6 @@
 {
   "name": "bkui-vue",
-  "version": "0.0.2-modal-refactor.3",
+  "version": "0.0.2-modal-refactor.4",
   "private": true,
   "workspaces": {
     "packages": [
