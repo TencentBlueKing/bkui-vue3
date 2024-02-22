@@ -1,7 +1,6 @@
 {
   "name": "bkui-vue",
-  "version": "0.0.2-beta.138",
-  "private": true,
+  "version": "0.0.2-beta.147",
   "workspaces": {
     "packages": [
       "packages/!(**.bak)*",
@@ -13,6 +12,7 @@
     "dist"
   ],
   "packageManager": "yarn@1.22.10",
+  "sideEffects": ["*.css", "*.less"],
   "engines": {
     "node": ">=14.0.0"
   },
@@ -127,7 +127,7 @@
     "highlight.js": "~11.5.0",
     "vue": "^3.2.0"
   },
-  "main": "dist/index.esm.js",
+  "module": "lib/index.js",
   "typings": "lib/index.d.ts",
   "lint-staged": {
     "scripts/**/*.(vue|ts|tsx|js)": [

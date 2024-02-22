@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { NodePath } from '@babel/core';
+import { NodePath, PluginPass } from '@babel/core';
 import {
   identifier,
   ImportDeclaration,
@@ -37,7 +37,7 @@ import {
 } from '@babel/types';
 export const hasStyleComponentList = [
   'Alert',
-  'AnimateNumber',
+  // 'AnimateNumber',
   'Affix',
   'Backtop',
   'Badge',
@@ -99,14 +99,14 @@ export const capitalize = (name: string) =>
 export const getLibPath = (value: string) => value.replace(/^@bkui-vue\//, 'bkui-vue/lib/');
 
 const visitor = {
-  ImportDeclaration(path: NodePath<ImportDeclaration>) {
+  ImportDeclaration(path: NodePath<ImportDeclaration>, state: PluginPass) {
     if (!path.node) return;
 
     const {
       specifiers,
       source: { value },
     } = path.node;
-    if (!value.startsWith('@bkui-vue/')) return;
+    if (!value.startsWith('@bkui-vue/') || state.filename?.includes('/bkui-vue/')) return;
     // console.log(`Absolute path: ${state.filename}`);
     const libPath = getLibPath(value);
     const hasDefaultImportToInclude = specifiers.some(

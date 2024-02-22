@@ -32,6 +32,8 @@ import { number, string } from 'vue-types';
 import { usePrefix } from '@bkui-vue/config-provider';
 import { classes, ElementType, PropTypes, stringEnum } from '@bkui-vue/shared';
 
+import 'diff2html/bundles/css/diff2html.min.css';
+
 const diffFormats = ['side-by-side', 'line-by-line'] as const;
 const CodeDiffFormat = stringEnum([...diffFormats]);
 export type DiffFormatType = ElementType<typeof diffFormats>;

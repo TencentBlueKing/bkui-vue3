@@ -79,12 +79,15 @@ export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILi
       environment: {
         module: true,
       },
+      chunkFormat: 'module',
+      module: true,
     },
     experiments: {
       outputModule: true,
     },
     optimization: {
       minimize: false,
+      mangleExports: false,
     },
     module: {
       rules: [
@@ -129,11 +132,15 @@ export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILi
           },
         },
         // {
-        //   test: /\.less$/,
+        //   test: /\.css$/,
         //   loader: path.resolve(__dirname, './less-fix-loader.ts'),
         // },
+        {
+          test: /\.css$/,
+          loader: 'css-loader',
+        },
       ],
-    } as any,
+    },
     externalsType: 'module',
     externals: [
       '@popperjs/core',
@@ -172,6 +179,7 @@ export const webpackBuildScript = async (entryList: ITaskItem[], taskOption: ILi
         : undefined,
       new webpack.ProgressPlugin(),
     ].filter(Boolean) as any,
+    target: ['web', 'es2020'],
   });
   return new Promise<void>((resolve, reject) => {
     compiler.run((err: Error | null | undefined, stats: Stats | undefined) => {

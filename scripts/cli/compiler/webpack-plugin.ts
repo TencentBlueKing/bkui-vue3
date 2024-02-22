@@ -23,10 +23,12 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
 import webpack from 'webpack';
 
 import { capitalize, hasStyleComponentList } from './babel-plugin';
-
+import { COMPONENT_URL } from './helpers';
 export default class RemoveWildcardImportsPlugin {
   apply(compiler: webpack.Compiler): void {
     compiler.hooks.emit.tap('RemoveWildcardImportsPlugin', compilation => {
@@ -40,6 +42,15 @@ export default class RemoveWildcardImportsPlugin {
           const [componentName, compFilename] = filename.split('/');
           if (compFilename === 'index.js' && hasStyleComponentList.includes(capitalize(componentName))) {
             newSource = `import "./${componentName}.less";\n${newSource}`;
+          } else if (compFilename === undefined) {
+            const url = resolve(COMPONENT_URL, `./bkui-vue/${filename.replace(/\.js$/, '')}.ts`);
+            let source = readFileSync(url, 'utf-8');
+            const matchList = source.match(/export\s+type[^;]+;/gm);
+            matchList?.forEach(match => {
+              source = source.replace(match, '');
+            });
+            newSource = source.replace(/@bkui-vue\//gm, './');
+            console.info(filename, '________)))))))))))))==============');
           }
           if (newSource !== sourceString) {
             compilation.assets[filename] = {
