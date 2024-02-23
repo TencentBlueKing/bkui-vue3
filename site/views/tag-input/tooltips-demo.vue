@@ -5,6 +5,7 @@
     use-group
     trigger="focus"
     tooltip-key="tips"
+    collapse-tags
     :list="state.list"
   />
 </template>
