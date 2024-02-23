@@ -917,35 +917,27 @@ export default defineComponent({
                   style={{ marginLeft: `${this.leftSpace}px` }}
                 >
                   {this.selectedTagList.map((item: any, index: number) => {
-                    const tooltips = {
-                      boundary: 'window',
-                      theme: 'light',
-                      distance: 12,
-                      content: item[this.tooltipKey],
-                      disabled: !this.tooltipKey,
-                    };
                     const isOverflow =
                       this.localCollapseTags && this.overflowTagIndex && index >= this.overflowTagIndex;
                     return (
                       <li
                         class='tag-item'
                         style={{ display: isOverflow ? 'none' : '' }}
-                        v-bk-tooltips={tooltips}
                         onClick={this.tagFocus}
                       >
                         <TagRender
                           node={item}
                           tpl={this.tagTpl}
                           displayKey={this.displayKey}
-                          hasTips={!!this.tooltipKey}
+                          tooltipKey={this.tooltipKey || this.displayKey}
                           tagOverflowTips={this.tagOverflowTips}
                         />
-                        {this.showTagClose ? (
+                        {this.showTagClose && (
                           <Error
                             class='remove-tag'
                             onClick={this.handleTagRemove.bind(this, item, index)}
                           />
-                        ) : null}
+                        )}
                       </li>
                     );
                   })}
