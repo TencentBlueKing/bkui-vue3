@@ -29,7 +29,7 @@ import { computed, CSSProperties, nextTick, SetupContext, unref } from 'vue';
 
 import Checkbox from '@bkui-vue/checkbox';
 import { useLocale } from '@bkui-vue/config-provider';
-import { DownShape, RightShape } from '@bkui-vue/icon';
+import { DownShape, GragFill, RightShape } from '@bkui-vue/icon';
 import Pagination from '@bkui-vue/pagination';
 import { classes } from '@bkui-vue/shared';
 
@@ -39,6 +39,7 @@ import { COLUMN_ATTRIBUTE, DEF_COLOR, IHeadColor, NEED_COL_ROW_SPAN, TABLE_ROW_A
 import { EMIT_EVENTS } from './events';
 import BodyEmpty from './plugins/body-empty';
 import Settings from './plugins/settings';
+import useDraggable from './plugins/use-draggable';
 import useFixedColumn from './plugins/use-fixed-column';
 import useHeadCell from './plugins/use-head-cell';
 import { Column, Settings as ISettings, TablePropTypes } from './props';
@@ -210,21 +211,6 @@ export default (
 
     const { resolveFixedColumnStyle } = useFixedColumn(props, tableResp, head);
 
-    // const getScrollFix = () => {
-    //   if (styleRef.value.hasScrollY) {
-    //     const fixStyle = {
-    //       width: `${SCROLLY_WIDTH + 2}px`,
-    //       right: '-1px',
-    //     };
-    //     return (
-    //       <th
-    //         style={fixStyle}
-    //         class='column_fixed'
-    //       ></th>
-    //     );
-    //   }
-    // };
-
     return (
       <>
         <thead style={rowStyle}>
@@ -243,7 +229,6 @@ export default (
                 ];
                 return getTH(classList, headStyle, index);
               })}
-              {/* {getScrollFix()} */}
             </tr>
           </TableRow>
         </thead>
@@ -296,6 +281,9 @@ export default (
     Object.assign(store.get(row).get(col), { skipRowLen, skipRow });
     return { skipRowLen, skipRow };
   };
+
+  const dragEvents = useDraggable(props, tableResp, context);
+
   /**
    * 渲染Table Body
    * @returns
@@ -330,17 +318,21 @@ export default (
       `hover-${props.rowHover}`,
       rowIndex % 2 === 1 && props.stripe ? 'stripe-row' : '',
     ];
+    const rowId = tableResp.getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_UID);
     return [
-      <TableRow>
+      <TableRow key={rowId}>
         <tr
           // @ts-ignore
           style={rowStyle}
           class={rowClass}
           key={getRowKeyNull(row, props, rowIndex)}
+          data-row-index={rowIndex}
           onClick={e => handleRowClick(e, row, rowIndex, rows)}
           onDblclick={e => handleRowDblClick(e, row, rowIndex, rows)}
           onMouseenter={e => handleRowEnter(e, row, rowIndex, rows)}
           onMouseleave={e => handleRowLeave(e, row, rowIndex, rows)}
+          draggable={!!props.rowDraggable}
+          {...dragEvents}
         >
           {filterColGroups.value.map((column: Column, index: number) => {
             const cellStyle = [
@@ -547,6 +539,23 @@ export default (
     );
   };
 
+  const renderDraggableCell = (row, column, index, rows) => {
+    const renderFn = props.rowDraggable?.render ?? props.rowDraggable;
+    if (typeof renderFn === 'function') {
+      return renderFn(row, column, index, rows);
+    }
+
+    const fontSize = props.rowDraggable?.fontSize ?? '14px';
+    const fontIcon = props.rowDraggable?.icon ?? (
+      <GragFill
+        class='drag-cell'
+        style={`'--font-size: ${fontSize};'`}
+      ></GragFill>
+    );
+
+    return fontIcon;
+  };
+
   /**
    * 渲染表格Cell内容
    * @param row 当前行
@@ -588,6 +597,7 @@ export default (
     const renderFn = {
       expand: (row, column, index, rows) => (isChild ? '' : renderExpandColumn(row, column, index, rows)),
       selection: (row, _column, index, _rows) => renderCheckboxColumn(row, index),
+      drag: renderDraggableCell,
     };
 
     return renderFn[column.type]?.(row, column, index, rows) ?? defaultFn();
