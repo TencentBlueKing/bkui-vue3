@@ -41,7 +41,6 @@
   align-items: center;
   height: 22px;
   padding: 0 10px;
-  margin: 2px 6px 2px 0px;
   font-size: 12px;
   line-height: 22px;
   color: @default-color;
@@ -91,15 +90,6 @@
     line-height: 20px;
     border-style: solid;
     border-width: 1px;
-
-    // &:not(.bk-tag-success, .bk-tag-warning, .bk-tag-info, .bk-tag-danger) {
-    :not(.@{bk-prefix}-tag-success):not(.@{bk-prefix}-tag-warning):not(.@{bk-prefix}-tag-info):not(.@{bk-prefix}-tag-danger) {
-      background-color: @tag-stroke-bg-color;
-
-      &:hover {
-        background-color: @tag-stroke-hover-bg-color;
-      }
-    }
   }
 
   &.@{bk-prefix}-tag-closable {
@@ -125,26 +115,40 @@
       opacity: 1;
     }
   }
+}
+
+.@{bk-prefix}-tag--defaul {
+  padding: 0 8px;
+}
+
+.@{bk-prefix}-tag--small {
+  height: 16px;
+  padding: 0 4px;
+  line-height: 16px;
 
   .@{bk-prefix}-tag-text {
-    flex: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    font-size: 10px;
   }
+}
 
-  .@{bk-prefix}-tag-icon {
-    flex-shrink: 0;
-    margin-right: 4px;
-    font-size: 14px;
-    line-height: 0;
-  }
+.@{bk-prefix}-tag-text {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
-  .@{bk-prefix}-tag-close {
-    flex-shrink: 0;
-    margin-left: 4px;
-    font-size: 12px;
-    line-height: 0;
-    cursor: pointer;
-  }
+.@{bk-prefix}-tag-icon {
+  flex-shrink: 0;
+  margin-right: 4px;
+  font-size: 14px;
+  line-height: 0;
+}
+
+.@{bk-prefix}-tag-close {
+  flex-shrink: 0;
+  margin-left: 4px;
+  font-size: 12px;
+  line-height: 0;
+  cursor: pointer;
 }

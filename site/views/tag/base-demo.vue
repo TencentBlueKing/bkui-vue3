@@ -21,9 +21,13 @@
   </div>
 </template>
 
-<style scoped>
+<style>
 .custom-tag {
   color: #531dab;
   background: #f9f0ff;
+}
+
+.bk-tag ~ .bk-tag {
+  margin-left: 4px;
 }
 </style>
