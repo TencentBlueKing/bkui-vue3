@@ -29,7 +29,7 @@ import { toType } from 'vue-types';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import { Error } from '@bkui-vue/icon';
-import { classes, PropTypes, TagThemeType } from '@bkui-vue/shared';
+import { PropTypes, TagThemeType } from '@bkui-vue/shared';
 
 enum TagStrokeType {
   UNKNOWN = '',
