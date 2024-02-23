@@ -29,7 +29,7 @@ import { toType } from 'vue-types';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import { Error } from '@bkui-vue/icon';
-import { classes, PropTypes, TagThemeType } from '@bkui-vue/shared';
+import { PropTypes, TagThemeType } from '@bkui-vue/shared';
 
 enum TagStrokeType {
   UNKNOWN = '',
@@ -46,7 +46,7 @@ export default defineComponent({
     checkable: PropTypes.bool.def(false),
     checked: PropTypes.bool.def(false),
     radius: PropTypes.string.def('2px'),
-    extCls: PropTypes.string.def(''),
+    size: PropTypes.size(),
   },
   emits: ['change', 'close'],
   // slots: ['icon'],
@@ -56,19 +56,7 @@ export default defineComponent({
   }>,
   setup(props, { emit }) {
     const { resolveClassName } = usePrefix();
-    const wrapperCls = computed(() =>
-      classes(
-        {
-          [`${resolveClassName('tag-closable')}`]: props.closable,
-          [`${resolveClassName('tag-checkable')}`]: props.checkable,
-          [`${resolveClassName('tag-check')}`]: props.checked,
-          [`${resolveClassName(`tag-${props.type}`)}`]: props.type,
-          [`${resolveClassName(`tag-${props.theme}`)}`]: props.theme,
-          [props.extCls]: !!props.extCls,
-        },
-        resolveClassName('tag'),
-      ),
-    );
+
     const wrapperStyle = computed(() => ({
       borderRadius: props.radius,
     }));
@@ -90,7 +78,6 @@ export default defineComponent({
     };
 
     return {
-      wrapperCls,
       wrapperStyle,
       handleClose,
       handleClick,
@@ -98,21 +85,29 @@ export default defineComponent({
     };
   },
   render() {
+    const classes = {
+      [this.resolveClassName('tag')]: true,
+      [this.resolveClassName('tag-closable')]: this.closable,
+      [this.resolveClassName('tag-checkable')]: this.checkable,
+      [this.resolveClassName('tag-check')]: this.checked,
+      [this.resolveClassName(`tag-${this.type}`)]: this.type,
+      [this.resolveClassName(`tag-${this.theme}`)]: this.theme,
+      [this.resolveClassName(`tag--${this.size}`)]: true,
+    };
+
     return (
       <div
-        class={this.wrapperCls}
+        class={classes}
         style={this.wrapperStyle}
         onClick={this.handleClick}
       >
         {this.$slots.icon ? <span class={`${this.resolveClassName('tag-icon')}`}>{this.$slots.icon()}</span> : ''}
         <span class={`${this.resolveClassName('tag-text')}`}>{this.$slots.default?.()}</span>
-        {this.closable ? (
+        {this.closable && (
           <Error
             class={`${this.resolveClassName('tag-close')}`}
             onClick={this.handleClose}
           />
-        ) : (
-          ''
         )}
       </div>
     );
