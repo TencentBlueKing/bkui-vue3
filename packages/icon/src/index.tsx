@@ -71,6 +71,7 @@ export { default as FolderShapeOpen } from '../icons/folder-shape-open';
 export { default as FolderShape } from '../icons/folder-shape';
 export { default as Folder } from '../icons/folder';
 export { default as Funnel } from '../icons/funnel';
+export { default as GragFill } from '../icons/grag-fill';
 export { default as HelpDocumentFill } from '../icons/help-document-fill';
 export { default as HelpFill } from '../icons/help-fill';
 export { default as Help } from '../icons/help';

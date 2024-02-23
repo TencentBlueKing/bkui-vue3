@@ -51,5 +51,6 @@
     "packages/locale/lang",
     "packages/locale/src/lang"
   ],
-  "bk-code-ai.enable": true
+  "bk-code-ai.enable": true,
+  "vue3snippets.enable-compile-vue-file-on-did-save-code": true
 }

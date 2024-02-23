@@ -26,6 +26,8 @@
 import { v4 as uuidv4 } from 'uuid';
 import { reactive } from 'vue';
 
+import { useLocale } from '@bkui-vue/config-provider';
+
 import {
   CHECK_ALL_OBJ,
   COL_MIN_WIDTH,
@@ -106,12 +108,14 @@ export type ITableResponse = {
   setRowSelectionAll: (val: boolean) => void;
   setRowIndeterminate: () => void;
   updateSettings: (settings?: Settings, rowHeight?: number) => void;
+  changePageRowIndex: (sourceIndex: number, targetIndex: number) => void;
   pageData: any[];
   localPagination: any;
   formatData: ITableFormatData;
 };
 
 export default (props: TablePropTypes): ITableResponse => {
+  const t = useLocale('table');
   const getDefaultSettings = () => {
     const { size, fields = [], checked = [] } = props.settings as Settings;
     const height = SETTING_SIZE[size] ?? props.rowHeight ?? SETTING_SIZE.small;
@@ -171,6 +175,17 @@ export default (props: TablePropTypes): ITableResponse => {
     return minWidth;
   };
 
+  const resolveDraggableColumn = () => {
+    if (props.rowDraggable) {
+      formatData.columns.unshift({
+        minWidth: 50,
+        width: props.rowDraggable?.width ?? 60,
+        label: props.rowDraggable?.label ?? t.value.sort,
+        type: 'drag',
+      });
+    }
+  };
+
   /**
    * Format columns
    * @param columns
@@ -178,9 +193,10 @@ export default (props: TablePropTypes): ITableResponse => {
   const formatColumns = (columns: Column[]) => {
     formatData.columns.length = 0;
     formatData.columns.push(...columns);
+    resolveDraggableColumn();
     let skipColNum = 0;
     const needColSpan = neepColspanOrRowspan(['colspan']);
-    (columns || []).forEach((col, index) => {
+    (formatData.columns || []).forEach((col, index) => {
       const { skipCol, skipColumnNum, skipColLen } = needColSpan
         ? getColumnSpanConfig(col, index, skipColNum)
         : { skipCol: false, skipColumnNum: 0, skipColLen: 0 };
@@ -730,6 +746,13 @@ export default (props: TablePropTypes): ITableResponse => {
     resolvePageDataBySortList(multiSortColumns);
   };
 
+  const changePageRowIndex = (sourceIndex, targetIndex) => {
+    const copy = pageData[sourceIndex];
+    pageData.splice(targetIndex, 0, copy);
+    const resolvedIndex = sourceIndex < targetIndex ? sourceIndex : sourceIndex + 1;
+    pageData.splice(resolvedIndex, 1);
+  };
+
   return {
     formatColumns,
     formatDataSchema,
@@ -763,6 +786,7 @@ export default (props: TablePropTypes): ITableResponse => {
     isCheckedAll,
     hasCheckedRow,
     updateSettings,
+    changePageRowIndex,
     pageData,
     localPagination,
     formatData,

@@ -5,6 +5,7 @@
       :columns="columns"
       :data="tableData"
       :pagination="pagination"
+      draggable
     />
   </div>
   <div class="cell">

@@ -4,7 +4,9 @@
       :columns="columns"
       :data="tableData"
       :settings="settings"
+      row-draggable
       stripe
+      @dragend="handleDragend"
     >
       <template #setting>
         <h1>Setting Content Slot</h1>
@@ -75,11 +77,13 @@
       handleMouseEnter(...args) {
         console.log('mouse-enter', args);
       },
-      // handleMouseLeave(...args) {
-      //   console.log('mouse-leave', args);
-      // },
+      handleDragend(...args) {
+        console.log('handleDragend', args);
+      },
+    // handleMouseLeave(...args) {
+    //   console.log('mouse-leave', args);
+    // },
     },
-
   });
 </script>
 <style scoped>

@@ -145,6 +145,11 @@
           text-overflow: ellipsis;
           white-space: nowrap;
 
+          .drag-cell {
+            font-size: 14px;
+            height: 100%;
+          }
+
           &.has-sort {
             cursor: pointer;
           }
@@ -288,6 +293,11 @@
               line-height: calc(var(--row-height) - 1px);
               box-sizing: border-box;
               align-items: center;
+
+              &.drag {
+                cursor: move;
+                text-align: center;
+              }
             }
           }
 
@@ -299,6 +309,20 @@
                 }
               }
             }
+          }
+
+          &.--drag-enter {
+            &.--bottom {
+              border-bottom: solid 1px #3785ff;
+            }
+
+            &.--top {
+              border-top: solid 1px #3785ff;
+            }
+          }
+
+          &.--drag-start {
+            background: #fff;
           }
         }
       }
