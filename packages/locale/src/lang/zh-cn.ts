@@ -105,6 +105,7 @@ const zhCn: Language = {
     emptyText: '暂无数据',
     confirm: '确定',
     reset: '重置',
+    sort: '排序',
     setting: {
       title: '表格设置',
       fields: {
