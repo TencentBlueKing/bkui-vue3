@@ -103,6 +103,7 @@ const en = {
     emptyText: 'No Data',
     confirm: 'Confirm',
     reset: 'Reset',
+    sort: 'Sort',
     setting: {
       title: 'Table Settings',
       fields: {

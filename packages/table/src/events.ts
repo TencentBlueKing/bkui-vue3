@@ -67,6 +67,8 @@ export const enum EMIT_EVENTS {
 
   NATIVE_CLICK = 'click',
   NATIVE_DBL_CLICK = 'dblclick',
+
+  DRAG_END = 'dragend',
 }
 
 export const EVENT_COL_PICK = (_cols: IColumnActive[]) => true;
@@ -117,6 +119,8 @@ export const EVENT_SCROLL_FN = (_args: {
   bottom: number;
 }) => true;
 
+export const EVENT_DRAGEND_FN = (_args: { sourceEvent: DragEvent; data: any[] }) => true;
+
 export const EMIT_EVENT_TYPES = {
   [EMIT_EVENTS.COLUMN_PICK]: EVENT_COL_PICK,
   [EMIT_EVENTS.COLUMN_FILTER]: EVENT_COL_FILTER,
@@ -142,6 +146,8 @@ export const EMIT_EVENT_TYPES = {
 
   [EMIT_EVENTS.ROW_MOUSE_ENTER]: EVENT_MOUSE_FN,
   [EMIT_EVENTS.ROW_MOUSE_LEAVE]: EVENT_MOUSE_FN,
+
+  [EMIT_EVENTS.DRAG_END]: EVENT_DRAGEND_FN,
 };
 
 export const CELL_EVENT_TYPES = {
