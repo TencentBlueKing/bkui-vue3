@@ -42,7 +42,6 @@ import DemoCollapseIconAlign from './demo/collapse-icon-align.vue';
 import CollapseJsx from './demo/collapse-jsx';
 import DemoCollapseLine from './demo/collapse-line.vue';
 import DemoCollapsePanel from './demo/collapse-panel.vue';
-import DemoCollapseSingle from './demo/collapse-single.vue';
 import DemoCollapseSlot from './demo/collapse-slot.vue';
 import DemoCollapseTitle from './demo/collapse-title.vue';
 
@@ -312,14 +311,6 @@ export default defineComponent({
           demoName='demo/collapse-slot'
         >
           <DemoCollapseSlot />
-        </DemoBox>
-        <DemoBox
-          title='collapse-panel单独使用'
-          desc='单个collapse-panel使用'
-          componentName='collapse'
-          demoName='demo/collapse-single'
-        >
-          <DemoCollapseSingle />
         </DemoBox>
         <DemoBox
           title='collapse jsx'

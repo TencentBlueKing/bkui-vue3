@@ -229,7 +229,7 @@ export default defineComponent({
               drop(index, sortType);
             }}
             class={getNavItemClass()}
-            v-bk-tooltips={{ content: item.tips, disabled: !item.tips }}
+            v-bk-tooltips={{ content: item.tips || '', disabled: !item.tips }}
           >
             <div>{tabLabel}</div>
             {getValue(item.closable, closable) ? (
