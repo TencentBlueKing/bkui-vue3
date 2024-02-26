@@ -19,9 +19,6 @@
       node-key="id"
       :selected="selected"
       :auto-open-parent-node="false"
-      @node-click="handleNodeClick"
-      @node-expand="handleNodeExpand"
-      @node-collapse="handleNodeCollapse"
     />
   </div>
 </template>

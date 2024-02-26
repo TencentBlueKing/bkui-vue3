@@ -273,6 +273,19 @@ export class PropTypes extends propTypesNS {
       default: 'top-center',
     });
   }
+
+  static infoType() {
+    const type = ['success', 'danger', 'warning', 'loading'] as const;
+    type TypeEnum = ElementType<typeof type>;
+    return toType<TypeEnum>('InfoType', {
+      validator: (val: TypeEnum) => {
+        if (!val || type.includes(val)) {
+          return true;
+        }
+        return false;
+      },
+    });
+  }
 }
 
 export enum SelectedTypeEnum {

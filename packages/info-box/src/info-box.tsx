@@ -49,7 +49,8 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { createApp, createVNode, defineComponent, h, onMounted, ref, shallowRef, VNode } from 'vue';
+import _ from 'lodash';
+import { createApp, defineComponent, onMounted, ref, shallowRef, VNode } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 
@@ -62,10 +63,10 @@ export interface ModalFuncProps {
   'ext-cls': string | string[];
   type?: 'primary' | 'warning' | 'success' | 'danger';
   infoType?: 'success' | 'danger' | 'warning' | 'loading';
-  title?: string | (() => VNode | string) | VNode;
+  title?: string;
   subTitle?: string | (() => VNode) | VNode; // 弹窗内容
-  confirmText?: string | (() => VNode) | VNode;
-  cancelText?: string | (() => VNode) | VNode;
+  confirmText?: string;
+  cancelText?: string;
   onConfirm?: (...args: any[]) => any;
   onClosed?: (...args: any[]) => any;
   boundary?: HTMLElement; // 插入元素
@@ -116,53 +117,37 @@ const InfoBox = (config: Partial<ModalFuncProps>) => {
 
       const { resolveClassName } = usePrefix();
 
-      const getContent = () => {
-        const children = [];
-        const subTitleBox = [];
-        if (modalFuncProps.value.subTitle) {
-          switch (typeof modalFuncProps.value.subTitle) {
-            case 'string':
-              children.push(modalFuncProps.value.subTitle);
-              break;
-            case 'function':
-              children.push(modalFuncProps.value.subTitle());
-              break;
-            default:
-              children.push(modalFuncProps.value.subTitle);
-              break;
-          }
+      const renderSubTitle = () => {
+        const subTitle = _.isFunction(modalFuncProps.value.subTitle)
+          ? modalFuncProps.value.subTitle()
+          : modalFuncProps.value.subTitle;
+        if (!subTitle) {
+          return null;
         }
-        if (children.length) {
-          subTitleBox.push(
-            h(
-              'div',
-              {
-                class: resolveClassName('info-sub-title'),
-                style: `text-Align:${modalFuncProps.value.contentAlign || 'center'}`,
-              },
-              children,
-            ),
-          );
-        }
-        return subTitleBox;
-      };
-
-      return () =>
-        createVNode(
-          Dialog,
-          {
-            class: resolveClassName('info-wrapper'),
-            headerAlign: 'center',
-            footerAlign: 'center',
-            transfer: true,
-            fullscreen: false,
-            ...modalFuncProps.value,
-            isShow: isShow.value,
-            onClosed,
-            onConfirm,
-          },
-          getContent(),
+        return (
+          <div
+            class={resolveClassName('info-sub-title')}
+            style={`text-Align:${modalFuncProps.value.contentAlign || 'center'}`}
+          >
+            {subTitle}
+          </div>
         );
+      };
+      return () => (
+        <Dialog
+          class={resolveClassName('info-wrapper')}
+          headerAlign='center'
+          footerAlign='center'
+          transfer={true}
+          fullscreen={false}
+          isShow={isShow.value}
+          onClosed={onClosed}
+          onConfirm={onConfirm}
+          {...modalFuncProps.value}
+        >
+          {renderSubTitle()}
+        </Dialog>
+      );
     },
   });
   let app: any = createApp(dialog).mount(container);
@@ -172,9 +157,6 @@ const InfoBox = (config: Partial<ModalFuncProps>) => {
     },
     hide: () => {
       isShow.value = false;
-    },
-    update: (config: Partial<ModalFuncProps>) => {
-      app.update(config);
     },
     destroy: () => {
       app.unmount();

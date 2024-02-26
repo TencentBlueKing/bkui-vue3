@@ -16,8 +16,6 @@
       :min="1"
       :max="100"
       clearable
-      @change="handleChange"
-      @enter="handleEnter"
     />
     <bk-input
       v-model="val"
@@ -42,6 +40,7 @@
   .mb10 {
     margin-bottom: 10px;
   }
+
   .mb8 {
     margin-bottom: 8px;
   }

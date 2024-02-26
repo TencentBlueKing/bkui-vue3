@@ -76,5 +76,5 @@ export const propsMixin = {
   // 是否允许多个弹框同时存在
   multiInstance: PropTypes.bool.def(true),
   // info-box
-  infoType: PropTypes.theme(),
+  infoType: PropTypes.infoType(),
 };

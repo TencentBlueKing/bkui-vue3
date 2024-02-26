@@ -215,7 +215,7 @@ export const treeProps = {
   /**
    * 默认选中的节点id，selectable为false时无效
    */
-  selected: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.object]).def([]),
+  selected: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.object]),
 
   /**
    * 是否自动检查当前节点是否有子节点
