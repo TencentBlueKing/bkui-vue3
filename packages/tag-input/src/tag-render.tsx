@@ -24,6 +24,7 @@
  * IN THE SOFTWARE.
  */
 
+import _ from 'lodash';
 import { computed, defineComponent, h, onMounted, PropType, ref } from 'vue';
 
 import { bkTooltips } from '@bkui-vue/directives';
@@ -38,6 +39,7 @@ export default defineComponent({
   props: {
     node: PropTypes.object,
     displayKey: PropTypes.string,
+    tooltipKey: PropTypes.string,
     tpl: {
       type: Function,
     },
@@ -57,8 +59,8 @@ export default defineComponent({
       boundary: 'window',
       theme: 'light',
       distance: 12,
-      content: props.node[props.displayKey],
-      disabled: props.hasTips || !isOverflow.value,
+      content: props.node[props.tooltipKey],
+      disabled: !_.has(props.node, props.tooltipKey) || !isOverflow.value,
       ...props.tagOverflowTips,
     }));
 
