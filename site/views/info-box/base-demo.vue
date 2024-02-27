@@ -31,7 +31,9 @@
       subTitle: '重置SecureKey，需要自行修改templates中的callback地址字段！',
       confirmText: '按钮1',
       cancelText: '按钮2',
-      onConfirm() {},
+      onConfirm: () => {
+        console.error('onConfirmonConfirmonConfirm');
+      },
     });
   };
 </script>
