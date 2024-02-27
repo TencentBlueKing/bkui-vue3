@@ -133,6 +133,7 @@ const InfoBox = (config: Partial<ModalFuncProps>) => {
           </div>
         );
       };
+
       return () => (
         <Dialog
           class={resolveClassName('info-wrapper')}
@@ -141,9 +142,7 @@ const InfoBox = (config: Partial<ModalFuncProps>) => {
           transfer={true}
           fullscreen={false}
           isShow={isShow.value}
-          onClosed={onClosed}
-          onConfirm={onConfirm}
-          {...modalFuncProps.value}
+          {...{ ...modalFuncProps.value, onClosed, onConfirm }}
         >
           {renderSubTitle()}
         </Dialog>
