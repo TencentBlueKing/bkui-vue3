@@ -34,7 +34,7 @@ import DynamicDemo from './dynamic-demo.vue';
 import SlotDemo from './slot-demo.vue';
 import { IPropsTableItem } from '../../typings';
 
-const menuPropsJson: IPropsTableItem[] = [
+const propsJson: IPropsTableItem[] = [
   {
     name: 'show',
     type: 'Boolean',
@@ -114,6 +114,32 @@ const menuPropsJson: IPropsTableItem[] = [
   }
 ];
 
+const eventsJson = [
+  {
+    name: 'selected',
+    desc: '选中版本时触发',
+    params: 'IVersionListItem',
+  },
+];
+
+// 插槽
+const slotsJson = [
+  {
+    name: 'list',
+    type: 'Slot',
+    default: null,
+    desc: '左侧版本列表区域插槽',
+    optional: [],
+  },
+  {
+    name: 'detail',
+    type: 'Slot',
+    default: null,
+    desc: '右侧版本详情区域插槽',
+    optional: [],
+  },
+];
+
 export default defineComponent({
   render() {
     return (
@@ -145,7 +171,9 @@ export default defineComponent({
         >
           <SlotDemo />
         </DemoBox>
-        <PropsBox propsData={menuPropsJson} />
+        <PropsBox title="VersionLog 属性" propsData={propsJson} />
+        <PropsBox title='VersionLog 事件' propsData={eventsJson} />
+        <PropsBox title='VersionLog 插槽' propsData={slotsJson} />
       </div>
     );
   },
