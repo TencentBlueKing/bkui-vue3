@@ -1,52 +1,55 @@
 @import '@bkui-vue/styles/themes/themes.less';
-.@{bk-prefix}-modal-wrapper {
+.@{bk-prefix}-modal-ctx {
   &.@{bk-prefix}-info-wrapper {
-    width: 440px;
-
-    &.normal {
+    .@{bk-prefix}-modal-wrapper {
       width: 440px;
-    }
 
-    &.small {
-      width: 400px;
-    }
-
-    .@{bk-prefix}-modal-body {
-      border-radius: 2px;
-    }
-
-    .@{bk-prefix}-dialog-header {
-      padding: 24px 24px 0;
-
-      .@{bk-prefix}-dialog-title {
-        height: 27px;
-        margin: 15px 0 10px;
+      &.normal {
+        width: 440px;
       }
-    }
 
-    .@{bk-prefix}-modal-content {
-      height: 100%;
-      max-height: 100%;
-      min-height: 100%;
-      padding: 0 50px 10px;
-      word-break: break-all;
-      .@{bk-prefix}-info-sub-title {
-        margin-bottom: 10px;
-        text-align: center;
+      &.small {
+        width: 400px;
+      }
+
+      .@{bk-prefix}-modal-body {
+        border-radius: 2px;
+      }
+
+      .@{bk-prefix}-dialog-header {
+        padding: 24px 24px 0;
+
+        .@{bk-prefix}-dialog-title {
+          height: 27px;
+          margin: 15px 0 10px;
+        }
+      }
+
+      .@{bk-prefix}-modal-content {
+        height: 100%;
+        max-height: 100%;
+        min-height: 100%;
+        padding: 0 50px 10px;
         word-break: break-all;
+        .@{bk-prefix}-info-sub-title {
+          margin-bottom: 10px;
+          text-align: center;
+          word-break: break-all;
+        }
       }
-    }
 
-    .@{bk-prefix}-modal-footer {
-      padding: 0 65px 33px;
-      background-color: #fff;
-      border-top: none;
+      .@{bk-prefix}-modal-footer {
+        padding: 0 65px 33px;
+        background-color: #fff;
+        border-top: none;
 
-      .@{bk-prefix}-dialog-footer {
-        button {
-          min-width: 88px;
+        .@{bk-prefix}-dialog-footer {
+          button {
+            min-width: 88px;
+          }
         }
       }
     }
+
   }
 }

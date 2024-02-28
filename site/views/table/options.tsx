@@ -112,7 +112,10 @@ export const DATA_COLUMNS = [
     label: '名称/内网IP',
     field: 'ip',
     width: 100,
-    showOverflowTooltip: true,
+    showOverflowTooltip: {
+      disabled: false,
+      showHead: false,
+    },
     sort: true,
     explain: {
       content: '当表格中的字段或数据需要做解释说明时，可增加 [下划线] 提示，hover 可查看解释说明的 tooltips',
