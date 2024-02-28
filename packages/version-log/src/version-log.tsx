@@ -29,7 +29,7 @@ import { PropTypes } from '@bkui-vue/shared';
 import BkDialog from '@bkui-vue/dialog';
 import BkLoading from '@bkui-vue/loading';
 import ResizeLayout from '@bkui-vue/resize-layout';
-import { usePrefix } from '@bkui-vue/config-provider';
+import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import MarkdownIt from 'markdown-it';
 
 const versionLogProps = {
@@ -53,7 +53,7 @@ export default defineComponent({
   props: versionLogProps,
   emits: ['update:show', 'selected'],
   setup(props, { slots, emit }) {
-
+    const t = useLocale('versionLog');
     const dialogWidth = ref(850);
     const dialogHeight = ref(520);
     const activeVersion = ref('');
@@ -138,7 +138,7 @@ export default defineComponent({
                               <div
                                 class={`${versionLogClsPrefix}-version-item${activeVersion.value === version[props.titleKey] ? ' is-active' : ''}`}
                                 onClick={() => handleSelect(version)}>
-                                { crtVersion.value === version[props.titleKey] && <div class={`${versionLogClsPrefix}-crt-tag`}>当前版本</div> }
+                                { crtVersion.value === version[props.titleKey] && <div class={`${versionLogClsPrefix}-crt-tag`}>{t.value.current}</div> }
                                 <div class={`${versionLogClsPrefix}-version-item-title`}>{version[props.titleKey]}</div>
                                 <div class={`${versionLogClsPrefix}-version-item-subtitle`}>{version[props.subTitleKey]}</div>
                               </div>
