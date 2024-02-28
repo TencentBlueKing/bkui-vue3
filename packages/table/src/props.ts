@@ -256,6 +256,14 @@ export type IColumnExplain =
     }
   | boolean;
 
+export type IDraggableRowOption = {
+  label: (() => string) | string;
+  render?: () => HTMLElement | JSX.Element;
+  fontSize?: number;
+  icon?: JSX.Element;
+  width?: number;
+};
+
 export type Column = {
   label: LabelFunctionString;
   field?: LabelFunctionString;
@@ -602,4 +610,9 @@ export const tableProps = {
    * 是否采用flex布局表格
    */
   isFlex: PropTypes.bool.def(true),
+
+  /**
+   * 是否支持行拖拽排序
+   */
+  rowDraggable: PropTypes.oneOfType([PropTypes.func, PropTypes.bool, PropTypes.object]).def(false),
 };

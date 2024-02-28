@@ -3,7 +3,6 @@
     v-model="dateValue"
     clearable
     :disable-date="disableDate"
-    :options="options"
   />
 </template>
 
