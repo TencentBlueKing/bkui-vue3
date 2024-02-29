@@ -49,99 +49,101 @@
   }
 }
 
-.@{bk-prefix}-modal-wrapper {
+.@{bk-prefix}-modal-ctx {
   &.@{bk-prefix}-sideslider-wrapper {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: auto;
-    //background: #fff;
-    transform: initial;
-    //box-shadow: -5px 0 8px -5px rgb(0 0 0 / 20%);
+    .@{bk-prefix}-modal-wrapper {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: auto;
+      transform: initial;
 
-    &.scroll-able {
-      .@{bk-prefix}-modal-content {
-        overflow: auto;
+      &.scroll-able {
+        .@{bk-prefix}-modal-content {
+          overflow: auto;
+          height: 100%;
+        }
       }
-    }
 
-    .@{bk-prefix}-sideslider-header {
-      width: 100%;
-      height: 52px;
-      background: #fff;
-      border-bottom: 1px solid #dcdee5;
-
-      .@{bk-prefix}-sideslider-close {
-        position: absolute;
-        top: 0;
-        width: 30px;
+      .@{bk-prefix}-sideslider-header {
+        width: 100%;
         height: 52px;
-        font-size: 24px;
-        line-height: 52px;
-        color: #fff;
-        text-align: center;
-        cursor: pointer;
-        background-color: @primary-color;
+        background: #fff;
+        border-bottom: 1px solid #dcdee5;
 
-        &.right {
-          left: 0;
+        .@{bk-prefix}-sideslider-close {
+          position: absolute;
+          top: 0;
+          width: 30px;
+          height: 52px;
+          font-size: 24px;
+          line-height: 52px;
+          color: #fff;
+          text-align: center;
+          cursor: pointer;
+          background-color: @primary-color;
 
-          &::before {
-            top: 50%;
-            left: 50%;
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            border-top: solid 2px #fff;
-            border-right: solid 2px #fff;
-            content: '';
-            transform: translate(-50%, -50%) rotate(45deg);
+          &.right {
+            left: 0;
+
+            &::before {
+              top: 50%;
+              left: 50%;
+              display: inline-block;
+              width: 8px;
+              height: 8px;
+              border-top: solid 2px #fff;
+              border-right: solid 2px #fff;
+              content: '';
+              transform: translate(-50%, -50%) rotate(45deg);
+            }
           }
+
+          &.left {
+            right: 0;
+
+            &::before {
+              top: 50%;
+              left: 50%;
+              display: inline-block;
+              width: 8px;
+              height: 8px;
+              border-top: solid 2px #fff;
+              border-left: solid 2px #fff;
+              content: '';
+              transform: translate(50%, -50%) rotate(-45deg);
+            }
+          }
+
+
         }
 
-        &.left {
-          right: 0;
+        .@{bk-prefix}-sideslider-title {
+          display: flex;
+          height: 52px;
+          padding-left: 30px;
+          font-size: 16px;
+          color: #313238;
+          align-items: center;
 
-          &::before {
-            top: 50%;
-            left: 50%;
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            border-top: solid 2px #fff;
-            border-left: solid 2px #fff;
-            content: '';
-            transform: translate(50%, -50%) rotate(-45deg);
+          &.right {
+            width: 100%;
+            padding: 0 0 0 30+16px;
           }
         }
-
-
       }
 
-      .@{bk-prefix}-sideslider-title {
+      .@{bk-prefix}-sideslider-footer {
         display: flex;
-        height: 52px;
-        padding-left: 30px;
-        font-size: 16px;
-        color: #313238;
+        width: 100%;
+        height: 54px;
+        background: #fff;
+        border-top: 1px solid transparent;
         align-items: center;
-
-        &.right {
-          width: 100%;
-          padding: 0 0 0 30+16px;
-        }
+        box-shadow: rgb(0 0 0 / 6%) 0 -2px 4px 0;
       }
     }
 
-    .@{bk-prefix}-sideslider-footer {
-      display: flex;
-      width: 100%;
-      height: 54px;
-      background: #fff;
-      border-top: 1px solid transparent;
-      align-items: center;
-      box-shadow: rgb(0 0 0 / 6%) 0 -2px 4px 0;
-    }
   }
 }
 

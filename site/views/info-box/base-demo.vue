@@ -13,14 +13,22 @@
     >
       默认配置的提示框2
     </bk-button>
+    <bk-button
+      theme="primary"
+      style="margin-left: 15px;"
+      @click="handleInstanceMethod"
+    >
+      调用实例方法
+    </bk-button>
   </div>
 </template>
 
 <script setup>
 
   import { InfoBox } from 'bkui-vue';
+  let instance;
   const handleDefault1 = () => {
-    InfoBox({
+    instance = InfoBox({
       title: '确认要删除？',
       confirmFn() {},
     });
@@ -35,5 +43,9 @@
         console.error('onConfirmonConfirmonConfirm');
       },
     });
+  };
+
+  const handleInstanceMethod = () => {
+    instance?.show();
   };
 </script>
