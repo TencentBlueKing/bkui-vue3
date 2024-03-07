@@ -83,6 +83,13 @@ export default [
       * independent：列与列之间的排序是独立的，互斥的
       * interdependent：列排序是相互影响、依赖的`, optional: ['independent', 'interdependent']
       },
+      {
+        name: 'rowDraggable', type: 'Boolean | Function | Object', default: 'false', desc: `开启行拖拽排序功能；
+        设置true，渲染默认排序样式；
+        设置 (row, column, index, rows) => JSX.Element, 自定义拖拽单元格，
+        设置对象，参考 IDraggableRowOption，可以设置显示label，fontSize，icon，render
+        `, optional: []
+      },
     ],
   },
   {
@@ -114,6 +121,16 @@ export default [
     config: [
       { name: 'content', type: 'String|Function', default: 'Cell innerText', desc: '当表格中的字段或数据需要做解释说明时，hover 可查看解释说明的 tooltips content', optional: [] },
       { name: 'head', type: 'Boolean|String|Function', default: 'Cell innerHTML', desc: '当表格中Head需要做解释说明时, hover 可查看解释说明的 tooltips content', optional: [] },
+    ],
+  },
+  {
+    title: 'IDraggableRowOption',
+    subTile: 'Table Row Draggable Config',
+    config: [
+      { name: 'label', type: 'String|Function', default: '排序', desc: '拖拽列表头显示内容，可以是文本或者回调函数', optional: [] },
+      { name: 'render', type: 'Function', default: '--', desc: '表格拖拽行首列单元格渲染函数', optional: [] },
+      { name: 'fontSize', type: 'String', default: '14px', desc: '拖拽单元格字体大小', optional: [] },
+      { name: 'width', type: 'number', default: '60px', desc: '拖拽排序列宽度设置', optional: [] },
     ],
   },
   {

@@ -36,6 +36,7 @@ import CheckDemo from './check-demo.vue';
 import ClosableDemo from './closable-demo.vue';
 import IconDemo from './icon-demo.vue';
 import RadiusDemo from './radius-demo.vue';
+import SizeDemo from './size-demo.vue';
 import TypeDemo from './type-demo.vue';
 
 const propsJson: IPropsTableItem[] = [
@@ -82,11 +83,11 @@ const propsJson: IPropsTableItem[] = [
     optional: [],
   },
   {
-    name: 'ext-cls',
+    name: 'size',
     type: 'String',
     default: '',
-    desc: '配置自定义样式类名',
-    optional: [],
+    desc: '配置尺寸',
+    optional: ['default', 'small'],
   },
 ];
 export default defineComponent({
@@ -130,6 +131,15 @@ export default defineComponent({
           demoName='type-demo'
         >
           <TypeDemo />
+        </DemoBox>
+        <DemoBox
+          title='不同尺寸'
+          subtitle='有两种尺寸可选 default, small'
+          desc='通过 size 设置不同的尺寸'
+          componentName='tag'
+          demoName='size-demo'
+        >
+          <SizeDemo />
         </DemoBox>
         <DemoBox
           title='可选择标签'

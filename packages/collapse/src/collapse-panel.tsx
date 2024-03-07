@@ -87,13 +87,10 @@ export default defineComponent({
     }
 
     function getContent() {
-      if (props.content) {
-        return props.content;
-      }
-      if (typeof slots.content === 'function') {
+      if (slots.content) {
         return slots.content(h);
       }
-      return slots.content;
+      return props.content;
     }
 
     function renderPanel() {

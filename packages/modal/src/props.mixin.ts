@@ -58,7 +58,7 @@ export const propsMixin = {
   // 是否显示在body内（即与id#app同级
   transfer: PropTypes.oneOfType([Boolean, String, HTMLElement]).def(false),
   // 弹出层z-index，实际显示的值会自动+1。为了抱证在遮罩上正常显示
-  zIndex: PropTypes.oneOfType([String, Number]).def('inherit'),
+  zIndex: PropTypes.oneOfType([String, Number]),
   // 内容区最大高度
   maxHeight: PropTypes.string,
   // 弹出方向
@@ -77,4 +77,6 @@ export const propsMixin = {
   multiInstance: PropTypes.bool.def(true),
   // info-box
   infoType: PropTypes.theme(),
+  left: PropTypes.string,
+  top: PropTypes.string,
 };

@@ -23,69 +23,54 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
+type IMaskOption = {
+  el: HTMLElement;
+  mask?: HTMLElement;
+  backgroundColor?: string;
+  showMask?: boolean;
+};
 
-import _ from 'lodash';
-import { computed, defineComponent, h, onMounted, PropType, ref } from 'vue';
+type IInstanceStore = IMaskOption & {
+  referenceParent?: HTMLElement;
+};
 
-import { bkTooltips } from '@bkui-vue/directives';
-import { IOptions } from '@bkui-vue/directives/src/tooltips';
-import { checkOverflow, PropTypes } from '@bkui-vue/shared';
+const instanceStore = new WeakMap<object, IInstanceStore>();
+let activeModal;
 
-export default defineComponent({
-  name: 'TagRender',
-  directives: {
-    bkTooltips,
-  },
-  props: {
-    node: PropTypes.object,
-    displayKey: PropTypes.string,
-    tooltipKey: PropTypes.string,
-    tpl: {
-      type: Function,
-    },
-    hasTips: {
-      type: Boolean,
-      default: false,
-    },
-    tagOverflowTips: {
-      type: Object as PropType<Partial<IOptions>>,
-      default: () => ({}),
-    },
-  },
-  setup(props) {
-    const tagRef = ref();
-    const isOverflow = ref(false);
-    const overflowTips = computed(() => ({
-      boundary: 'window',
-      theme: 'light',
-      distance: 12,
-      content: props.node[props.tooltipKey],
-      disabled: !_.has(props.node, props.tooltipKey) || !isOverflow.value,
-      ...props.tagOverflowTips,
-    }));
+const loopSetMaskStyle = (modal: HTMLElement, show: boolean) => {
+  if (!modal) {
+    return;
+  }
 
-    onMounted(() => {
-      isOverflow.value = checkOverflow(tagRef.value);
+  if (instanceStore.has(modal)) {
+    const { mask, backgroundColor } = instanceStore.get(modal);
+    mask?.style.setProperty('background-color', show ? 'transparent' : backgroundColor);
+  }
+};
+
+const showMask = (options: IMaskOption) => {
+  if (!options.el) {
+    return;
+  }
+  if (!instanceStore.has(options.el)) {
+    instanceStore.set(options.el, {
+      ...options,
+      referenceParent: activeModal,
     });
+  }
 
-    return {
-      overflowTips,
-      tagRef,
-    };
-  },
-  render() {
-    if (this.tpl) {
-      return this.tpl(this.node, h, this);
-    }
+  const { mask, backgroundColor } = options;
+  mask?.style.setProperty('background-color', backgroundColor);
+  loopSetMaskStyle(activeModal, options.showMask);
+  activeModal = options.el;
+};
 
-    return (
-      <div
-        class='tag'
-        ref='tagRef'
-        v-bk-tooltips={this.overflowTips}
-      >
-        <span class='text'>{this.node[this.displayKey]}</span>
-      </div>
-    );
-  },
-});
+const hideMask = (options: IMaskOption) => {
+  if (options.el && instanceStore.has(options.el)) {
+    const { referenceParent } = instanceStore.get(options.el);
+    activeModal = referenceParent;
+    loopSetMaskStyle(referenceParent, false);
+  }
+};
+
+export const mask = { showMask, hideMask };

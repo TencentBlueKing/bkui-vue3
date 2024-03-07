@@ -2,6 +2,7 @@
   <section>
     <bk-table
       :data="tableData"
+      :settings="settings"
     >
       <template
         v-for="column in columns"
@@ -41,6 +42,28 @@
             field: 'create_time',
           },
         ],
+        settings: {
+          trigger: 'click',
+          fields: [
+            {
+              name: '序号',
+              id: 'index',
+            },
+            {
+              name: '名称/内网IP',
+              id: 'ip',
+            },
+            {
+              name: '来源',
+              id: 'source',
+            },
+            {
+              name: '创建时间',
+              id: 'create_time',
+            },
+          ],
+          checked: ['ip', 'index'],
+        },
       };
     },
   };

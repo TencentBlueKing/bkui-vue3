@@ -13,14 +13,22 @@
     >
       默认配置的提示框2
     </bk-button>
+    <bk-button
+      theme="primary"
+      style="margin-left: 15px;"
+      @click="handleInstanceMethod"
+    >
+      调用实例方法
+    </bk-button>
   </div>
 </template>
 
 <script setup>
 
   import { InfoBox } from 'bkui-vue';
+  let instance;
   const handleDefault1 = () => {
-    InfoBox({
+    instance = InfoBox({
       title: '确认要删除？',
       confirmFn() {},
     });
@@ -31,7 +39,13 @@
       subTitle: '重置SecureKey，需要自行修改templates中的callback地址字段！',
       confirmText: '按钮1',
       cancelText: '按钮2',
-      onConfirm() {},
+      onConfirm: () => {
+        console.error('onConfirmonConfirmonConfirm');
+      },
     });
+  };
+
+  const handleInstanceMethod = () => {
+    instance?.show();
   };
 </script>

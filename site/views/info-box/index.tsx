@@ -34,11 +34,7 @@ import type { IPropsTableItem } from '../../typings';
 import BaseDemo from './base-demo.vue';
 import ConfirmDemo from './confirm-demo.vue';
 import StatusDemo from './status-demo.vue';
-import UpdateDemo from './update-demo.vue';
-// import propsDialog from '@bkui-vue/dialog/src/props';
-// import { resolvePropsToDesData } from '../utils';
 
-// const props = resolvePropsToDesData(propsDialog);
 const props: IPropsTableItem[] = [
   {
     name: 'isShow',
@@ -241,25 +237,16 @@ export default defineComponent({
           subtitle=''
           desc='配置 infoType 的值，实现成功，错误，警告，加载中的不同类型'
           componentName='info-box'
-          demoName='base-demo'
+          demoName='status-demo'
         >
           <StatusDemo />
-        </DemoBox>
-        <DemoBox
-          title='更新'
-          subtitle='实例复用'
-          desc=''
-          componentName='info-box'
-          demoName='base-demo'
-        >
-          <UpdateDemo />
         </DemoBox>
         <DemoBox
           title='Confirm'
           subtitle='confirm 确定按钮'
           desc='对话框分为4种类型。通过 dialogType 属性 设置为 confirm 实现'
           componentName='info-box'
-          demoName='base-demo'
+          demoName='confirm-demo'
         >
           <ConfirmDemo />
         </DemoBox>

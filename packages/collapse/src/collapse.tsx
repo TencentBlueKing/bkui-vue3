@@ -147,8 +147,11 @@ export default defineComponent({
             icon={icon}
             isFormList={true}
             title={title}
-            content={slots.content?.(item, index) ?? item[props.contentField]}
-          />
+          >
+            {{
+              content: () => slots.content?.(item, index) ?? item[props.contentField],
+            }}
+          </CollapsePanel>
         );
       });
     return () => <div class={className}>{renderItems()}</div>;
