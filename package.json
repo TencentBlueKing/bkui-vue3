@@ -1,6 +1,6 @@
 {
   "name": "bkui-vue",
-  "version": "0.0.2-beta.147",
+  "version": "0.0.2-beta.148",
   "workspaces": {
     "packages": [
       "packages/!(**.bak)*",
@@ -115,7 +115,7 @@
     "ts-node": "~10.9.1",
     "typescript": "~4.9.5",
     "uuid": "~9.0.1",
-    "vite": "~4.4.7",
+    "vite": "5.1.4",
     "vite-plugin-vue-markdown": "~0.23.7",
     "vue": "~3.3.4",
     "vue-eslint-parser": "~9.3.1",

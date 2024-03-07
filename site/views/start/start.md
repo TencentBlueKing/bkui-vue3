@@ -25,35 +25,9 @@ createApp(App)
 
 ### 按需引入
 
-:::info
-特别需要注意的是，按需引入是在使用的时候做的处理，即仅仅只是引入 `import { bkButton } from 'bkui-vue'` 组件，但没有任何使用到 `bkButton` 组件时，那么 `bkButton` 组件并不会被引入。
-:::
+按需引入`bkui-vue`是天然支持 `import { Button } from 'bkui-vue'` 这种语法实现按需引入的。
 
-按需引入我们需要借助 [babel-plugin-import-bkui-vue](https://www.npmjs.com/package/babel-plugin-import-bkui-vue) 来实现。
-
-首先，安装 `babel-plugin-import`
-
-```bash
-npm i babel-plugin-import-bkui-vue -D
-```
-
-然后需要在项目的 `.babelrc` 文件中 `plugins` 增加一行配置
-
-```js
-{
-  "presets": ...,
-  "plugins": [
-    ...
-    [
-      "import-bkui-vue",
-      {
-        "libraryName": "bkui-vue",
-        "style": true
-      }
-    ]
-  ]
-}
-```
+如果在使用中遇到 `less` 文件没有被loader解析情况 则需要对应安装 `less-loader`并配置到您的项目构建中即可
 
 之后就可以用如下语法形式来实现按需引用了
 
@@ -62,10 +36,6 @@ import { Button } from 'bkui-vue'
 import { Button as cc } from 'bkui-vue'
 import { Button, Input } from 'bkui-vue'
 import { Button as cc, Input as dd } from 'bkui-vue'
-console.log(Button)
-console.log(cc)
-console.log(DropdownMenu)
-console.log(dd)
 ```
 ### 全局配置
 

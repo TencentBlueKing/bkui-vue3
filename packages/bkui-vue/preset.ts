@@ -41,7 +41,7 @@ const createInstall =
       }
     });
     if (options) {
-      provideGlobalConfig(options);
+      provideGlobalConfig(options, app);
     }
   };
 export default {

@@ -50,7 +50,6 @@ export default class RemoveWildcardImportsPlugin {
               source = source.replace(match, '');
             });
             newSource = source.replace(/@bkui-vue\//gm, './');
-            console.info(filename, '________)))))))))))))==============');
           }
           if (newSource !== sourceString) {
             compilation.assets[filename] = {

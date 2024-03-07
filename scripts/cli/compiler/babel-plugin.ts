@@ -37,7 +37,6 @@ import {
 } from '@babel/types';
 export const hasStyleComponentList = [
   'Alert',
-  // 'AnimateNumber',
   'Affix',
   'Backtop',
   'Badge',

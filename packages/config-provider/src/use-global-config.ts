@@ -25,7 +25,7 @@
  */
 
 import merge from 'lodash/merge';
-import { computed, ComputedRef, inject, provide, reactive, watch } from 'vue';
+import { App, computed, ComputedRef, getCurrentInstance, inject, provide, reactive, watch } from 'vue';
 
 import { ConfigProviderProps } from './config-provider';
 import { defaultRootConfig, rootProviderKey } from './token';
@@ -35,7 +35,7 @@ export const setPrefixVariable = (prefix: string) => {
   document.documentElement.style.setProperty('--bk-prefix', prefix || defaultRootConfig.prefix);
 };
 
-export const provideGlobalConfig = (config: ConfigProviderProps) => {
+export const provideGlobalConfig = (config: ConfigProviderProps, app?: App) => {
   const configData = reactive({
     ...merge(defaultRootConfig, config),
   });
@@ -49,6 +49,10 @@ export const provideGlobalConfig = (config: ConfigProviderProps) => {
       },
     );
   });
+  if (!getCurrentInstance() && app?.provide) {
+    app.provide(rootProviderKey, configData);
+    return;
+  }
   provide(rootProviderKey, configData);
 };
 
