@@ -201,9 +201,9 @@ const zhCn: Language = {
   //   prev: 'prev',
   //   next: 'next',
   // },
-  // versionDetail: {
-  //   currentTagText: '当前版本',
-  // },
+  versionLog: {
+    current: '当前版本',
+  },
 };
 
 export default zhCn;

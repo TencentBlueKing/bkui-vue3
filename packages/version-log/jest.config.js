@@ -23,16 +23,9 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
+const baseJestConf = require('../../jest.config');
 
-// nav group setting
-export enum NavGroupMeta {
-  Start = '开始',
-  Base = '基础',
-  Layout = '布局',
-  Nav = '导航',
-  Form = '表单',
-  Data = '数据',
-  Feedback = '反馈',
-  Biz = '业务组件',
-  // Others = '其他'
-}
+module.exports = {
+  ...baseJestConf,
+  testRegex: 'packages/button/__test__/.*\\.test\\.(js|ts|tsx)$',
+};
