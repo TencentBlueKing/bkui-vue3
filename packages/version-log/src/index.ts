@@ -24,15 +24,9 @@
  * IN THE SOFTWARE.
  */
 
-// nav group setting
-export enum NavGroupMeta {
-  Start = '开始',
-  Base = '基础',
-  Layout = '布局',
-  Nav = '导航',
-  Form = '表单',
-  Data = '数据',
-  Feedback = '反馈',
-  Biz = '业务组件',
-  // Others = '其他'
-}
+import { withInstall } from '@bkui-vue/shared';
+
+import Component from './version-log';
+const BkVersionLog = withInstall(Component);
+export default BkVersionLog;
+export { BkVersionLog };

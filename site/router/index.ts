@@ -732,6 +732,18 @@ const routes: RouteRecordRaw[] = [
     },
     component: () => import('../views/pop-confirm/index'),
   },
+    /**
+   * @description: 版本更新日志
+   */
+    {
+      path: '/version-log',
+      name: 'versionLog',
+      component: () => import('../views/version-log'),
+      meta: {
+        group: NavGroupMeta.Biz,
+        navName: 'VersionLog 版本更新日志',
+      },
+    },
 ];
 
 const router = createRouter({

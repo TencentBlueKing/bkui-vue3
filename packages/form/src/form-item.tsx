@@ -384,7 +384,10 @@ export default defineComponent({
             class={{
               [`${this.resolveClassName('form-label-description')}`]: Boolean(this.description),
             }}
-            v-bk-tooltips={this.description}
+            v-bk-tooltips={{
+              content: this.description,
+              extCls: this.resolveClassName('form-label-description-popper'),
+            }}
           >
             {this.label}
           </span>

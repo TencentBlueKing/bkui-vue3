@@ -126,7 +126,8 @@
   },
   "peerDependencies": {
     "highlight.js": "~11.5.0",
-    "vue": "^3.3.0"
+    "markdown-it": "^13.0.1",
+    "vue": "^3.3.0",
   },
   "module": "lib/index.js",
   "typings": "lib/index.d.ts",
