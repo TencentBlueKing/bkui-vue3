@@ -36,32 +36,20 @@ export default defineConfig({
   base,
   resolve: {
     alias: [
-      // {
-      //   find: '@bkui-vue',
-      //   replacement: resolve(__dirname, '../packages')
-      // },
-      // {
-      //   find: '@',
-      //   replacement: resolve(__dirname, 'src')
-      // }
       {
-        find: '@site',
-        replacement: resolve(__dirname, '.'),
+        find: /^bkui-vue$/,
+        replacement: resolve(__dirname, './node_modules/bkui-vue/lib/'),
       },
       {
-        find: /^@?bkui-vue\/lib\/icon/,
+        find: /^bkui-vue\/lib/,
+        replacement: resolve(__dirname, './node_modules/bkui-vue/lib/'),
+      },
+      {
+        find: /^@bkui-vue\/lib\/icon/,
         replacement: resolve(__dirname, '../packages/icon/src/index'),
       },
       {
-        find: /^bkui-vue$/,
-        replacement: resolve(__dirname, '../packages/bkui-vue/index'),
-      },
-      {
-        find: /^@?bkui-vue\/(icon\/)/,
-        replacement: resolve(__dirname, '../packages/$1'),
-      },
-      {
-        find: /^@?bkui-vue\/([^/]*)/,
+        find: /^@bkui-vue\/([^/]*)/,
         replacement: resolve(__dirname, '../packages/$1/src'),
       },
     ],

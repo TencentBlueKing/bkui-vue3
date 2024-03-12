@@ -28,6 +28,8 @@ import { Share } from '@bkui-vue/icon';
 */
 import { defineComponent } from 'vue';
 
+import { Share } from '@bkui-vue/icon';
+
 import './demo-title.less';
 
 export default defineComponent({
@@ -41,7 +43,7 @@ export default defineComponent({
       type: String,
       default: '',
     },
-    link: {
+    npmLink: {
       type: String,
       default: '',
     },
@@ -73,11 +75,15 @@ export default defineComponent({
         </div>
         <div class='title-desc'>
           {this.desc}
-          {/* {
-          this.link && <a class="desc-link" href={this.link}>
-            <Share/>如何使用?
-          </a>
-        } */}
+          {this.npmLink && (
+            <a
+              class='desc-link'
+              href={this.npmLink}
+            >
+              <Share />
+              详细使用
+            </a>
+          )}
         </div>
       </div>
     );

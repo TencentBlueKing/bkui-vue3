@@ -1,0 +1,39 @@
+{
+  "name": "site",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite serve --force"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@blueking/date-picker": "~1.0.1",
+    "@blueking/magicbox-header": "~1.1.61",
+    "@vitejs/plugin-vue": "~5.0.4",
+    "@vitejs/plugin-vue-jsx": "~3.1.0",
+    "@vue/eslint-config-standard": "~6.1.0",
+    "@vue/eslint-config-typescript": "~10.0.0",
+    "bkui-vue": "1.0.0",
+    "eslint": "8.26.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-config-tencent": "~1.0.4",
+    "eslint-plugin-codecc": "~0.3.0",
+    "eslint-plugin-import": "~2.28.0",
+    "eslint-plugin-prettier": "~5.0.0",
+    "eslint-plugin-simple-import-sort": "~10.0.0",
+    "eslint-plugin-vue": "~9.17.0",
+    "stylelint": "^15.10.3",
+    "stylelint-config-recess-order": "^4.3.0",
+    "stylelint-config-recommended-vue": "1.5.0",
+    "stylelint-config-standard": "^34.0.0",
+    "stylelint-order": "^6.0.3",
+    "stylelint-scss": "^5.1.0",
+    "unplugin-vue-markdown": "~0.25.0",
+    "vite": "5.1.4",
+    "vue": "~3.3.4",
+    "vue-i18n": "~9.2.2",
+    "vue-router": "~4.2.4"
+  }
+}

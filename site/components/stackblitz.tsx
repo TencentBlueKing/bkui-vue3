@@ -25,7 +25,6 @@
  */
 import { defineComponent, ref } from 'vue';
 
-// import { PlayShape } from 'bkui-vue/lib/icon';
 import { PlayShape } from '@bkui-vue/icon';
 
 import {
