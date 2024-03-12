@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "vite serve --force"
+    "dev": "vite serve --force",
+    "build": "vite build --mode production"
   },
   "author": "",
   "license": "ISC",

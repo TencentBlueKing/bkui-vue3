@@ -70,7 +70,7 @@ export default defineConfig({
   },
   build: {
     commonjsOptions: {
-      include: [/\/lodash\//],
+      include: [/\/(node_modules)\//],
     },
   },
   // css: {
