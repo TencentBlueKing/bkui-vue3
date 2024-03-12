@@ -23,40 +23,26 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
+import webpack from 'webpack';
 
-import merge from 'lodash/merge';
-import { App, computed, ComputedRef, getCurrentInstance, inject, provide, reactive, watch } from 'vue';
+export default class IgnoreNotFoundErrorPlugin {
+  constructor(private messageToIgnore: string) {}
 
-import { ConfigProviderProps } from './config-provider';
-import { defaultRootConfig, rootProviderKey } from './token';
+  apply(compiler: webpack.Compiler): void {
+    compiler.hooks.done.tap('IgnoreNotFoundErrorPlugin', stats => {
+      stats.compilation.errors = stats.compilation.errors.filter(error => {
+        if (error.message) {
+          return !error.message.includes(this.messageToIgnore);
+        }
+        return true;
+      });
 
-export { defaultRootConfig, rootProviderKey };
-export const setPrefixVariable = (prefix: string) => {
-  document.documentElement.style.setProperty('--bk-prefix', prefix || defaultRootConfig.prefix);
-};
-
-export const provideGlobalConfig = (config: ConfigProviderProps, app?: App) => {
-  const configData = reactive({
-    ...merge(defaultRootConfig, config),
-  });
-  setPrefixVariable(config.prefix);
-  Object.keys(config).forEach(key => {
-    watch(
-      () => config[key],
-      () => {
-        if (key === 'prefix') setPrefixVariable(config[key]);
-        configData[key] = config[key];
-      },
-    );
-  });
-  if (!getCurrentInstance() && app?.provide) {
-    app.provide(rootProviderKey, configData);
-    return;
+      stats.compilation.warnings = stats.compilation.warnings.filter(warning => {
+        if (warning.message) {
+          return !warning.message.includes(this.messageToIgnore);
+        }
+        return true;
+      });
+    });
   }
-  provide(rootProviderKey, configData);
-};
-
-export const useGlobalConfig = (): ComputedRef<ConfigProviderProps> => {
-  const config = inject<ConfigProviderProps>(rootProviderKey, defaultRootConfig);
-  return computed(() => config);
-};
+}

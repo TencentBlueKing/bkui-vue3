@@ -317,7 +317,6 @@ export default defineComponent({
       if (!state.rangeState.selecting) {
         emit('pick-first', val, state.currentView);
       }
-      // debugger;
       if (state.rangeState.selecting || state.currentView === 'time') {
         if (state.currentView === 'time') {
           state.dates = val;
