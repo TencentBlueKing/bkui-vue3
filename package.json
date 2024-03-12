@@ -32,7 +32,7 @@
     "prepare": "husky install",
     "dev": "lerna run --stream --scope site dev",
     "build": "run-s build:dist build:lib",
-    "build:site": "vite build site --mode production && cp -r ./site/views/ ./site/dist/views",
+    "build:site": "lerna run --stream --scope site build && cp -r ./site/views/ ./site/dist/views",
     "build:dist": "rimraf dist && lerna run --stream --scope cli dist",
     "build:lib": "rimraf lib && lerna run --stream --scope cli lib",
     "help:release": "lerna run --stream --scope cli release",
