@@ -198,9 +198,9 @@ const en = {
   //   prev: 'prev',
   //   next: 'next',
   // },
-  // versionDetail: {
-  //   currentTagText: 'Current',
-  // },
+  versionLog: {
+    current: 'Current',
+  },
 };
 
 export type Language = typeof en;

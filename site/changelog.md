@@ -24,3 +24,11 @@
     - bugfix(collapse): 配置 list 时组件内部CollapsePanel content类型错误
     - bugfix(infobox): props 类型调整，dialog 渲染逻辑变更
     - bugfix(tab): 兼容tab tips 配置不存在的数据局
+
+### 0.0.3-beta.6
+
+* **[fix]**:
+    - bugfix(form): 表单 tooltips 最大宽度为 400，可通过覆盖样式来修改
+
+* **[feat]**:
+    - 新增版本日志业务组件

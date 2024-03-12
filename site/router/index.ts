@@ -732,15 +732,15 @@ const routes: RouteRecordRaw[] = [
     },
     component: () => import('../views/pop-confirm/index'),
   },
-  {
-    path: '/bk/date-piker',
-    name: 'BluekingDatePicker',
-    meta: {
-      group: NavGroupMeta.Business,
-      navName: 'Date Picker 时间选择器',
+    {
+      path: '/bk/date-piker',
+      name: 'BluekingDatePicker',
+      meta: {
+        group: NavGroupMeta.Business,
+        navName: 'Date Picker 时间选择器',
+      },
+      component: () => import('../views/blueking/date-picker/index'),
     },
-    component: () => import('../views/blueking/date-picker/index'),
-  },
 ];
 
 const router = createRouter({
