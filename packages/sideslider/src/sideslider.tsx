@@ -119,7 +119,6 @@ export default defineComponent({
           {...props}
           maxHeight={maxHeight}
           class={className}
-          style={`${props.direction}: 0;`}
           onHidden={handleHidden}
           onShown={handleShown}
           onClose={handleClose}

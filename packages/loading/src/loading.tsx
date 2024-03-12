@@ -53,7 +53,7 @@ export const loadingTypes = {
   loading: PropTypes.bool.def(true),
   inline: PropTypes.bool.def(true),
   theme: {
-    type: String as PropType<'white' | 'primary' | 'warning' | 'success' | 'danger'>,
+    type: String as PropType<'white' | 'primary' | 'warning' | 'success' | 'danger' | 'default'>,
   },
   title: PropTypes.string.def(''),
   size: {

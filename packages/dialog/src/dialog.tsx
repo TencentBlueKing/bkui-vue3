@@ -69,8 +69,8 @@ export default defineComponent({
       positionX: 0,
       positionY: 0,
       moveStyle: {
-        top: '',
-        left: '',
+        top: '50%',
+        left: '50%',
       },
     });
     const isModalShow = ref(props.isShow);
@@ -339,7 +339,8 @@ export default defineComponent({
         class={className}
         onClose={this.handleClose}
         isShow={this.isModalShow}
-        style={this.data.moveStyle}
+        left={this.data.moveStyle.left}
+        top={this.data.moveStyle.top}
       >
         {dialogSlot}
       </Modal>

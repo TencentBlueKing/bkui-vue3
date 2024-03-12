@@ -23,40 +23,54 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-
-import merge from 'lodash/merge';
-import { App, computed, ComputedRef, getCurrentInstance, inject, provide, reactive, watch } from 'vue';
-
-import { ConfigProviderProps } from './config-provider';
-import { defaultRootConfig, rootProviderKey } from './token';
-
-export { defaultRootConfig, rootProviderKey };
-export const setPrefixVariable = (prefix: string) => {
-  document.documentElement.style.setProperty('--bk-prefix', prefix || defaultRootConfig.prefix);
+type IMaskOption = {
+  el: HTMLElement;
+  mask?: HTMLElement;
+  backgroundColor?: string;
+  showMask?: boolean;
 };
 
-export const provideGlobalConfig = (config: ConfigProviderProps, app?: App) => {
-  const configData = reactive({
-    ...merge(defaultRootConfig, config),
-  });
-  setPrefixVariable(config.prefix);
-  Object.keys(config).forEach(key => {
-    watch(
-      () => config[key],
-      () => {
-        if (key === 'prefix') setPrefixVariable(config[key]);
-        configData[key] = config[key];
-      },
-    );
-  });
-  if (!getCurrentInstance() && app?.provide) {
-    app.provide(rootProviderKey, configData);
+type IInstanceStore = IMaskOption & {
+  referenceParent?: HTMLElement;
+};
+
+const instanceStore = new WeakMap<object, IInstanceStore>();
+let activeModal;
+
+const loopSetMaskStyle = (modal: HTMLElement, show: boolean) => {
+  if (!modal) {
     return;
   }
-  provide(rootProviderKey, configData);
+
+  if (instanceStore.has(modal)) {
+    const { mask, backgroundColor } = instanceStore.get(modal);
+    mask?.style.setProperty('background-color', show ? 'transparent' : backgroundColor);
+  }
 };
 
-export const useGlobalConfig = (): ComputedRef<ConfigProviderProps> => {
-  const config = inject<ConfigProviderProps>(rootProviderKey, defaultRootConfig);
-  return computed(() => config);
+const showMask = (options: IMaskOption) => {
+  if (!options.el) {
+    return;
+  }
+  if (!instanceStore.has(options.el)) {
+    instanceStore.set(options.el, {
+      ...options,
+      referenceParent: activeModal,
+    });
+  }
+
+  const { mask, backgroundColor } = options;
+  mask?.style.setProperty('background-color', backgroundColor);
+  loopSetMaskStyle(activeModal, options.showMask);
+  activeModal = options.el;
 };
+
+const hideMask = (options: IMaskOption) => {
+  if (options.el && instanceStore.has(options.el)) {
+    const { referenceParent } = instanceStore.get(options.el);
+    activeModal = referenceParent;
+    loopSetMaskStyle(referenceParent, false);
+  }
+};
+
+export const mask = { showMask, hideMask };
