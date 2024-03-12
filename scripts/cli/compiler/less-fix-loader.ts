@@ -23,40 +23,13 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-
-import merge from 'lodash/merge';
-import { App, computed, ComputedRef, getCurrentInstance, inject, provide, reactive, watch } from 'vue';
-
-import { ConfigProviderProps } from './config-provider';
-import { defaultRootConfig, rootProviderKey } from './token';
-
-export { defaultRootConfig, rootProviderKey };
-export const setPrefixVariable = (prefix: string) => {
-  document.documentElement.style.setProperty('--bk-prefix', prefix || defaultRootConfig.prefix);
-};
-
-export const provideGlobalConfig = (config: ConfigProviderProps, app?: App) => {
-  const configData = reactive({
-    ...merge(defaultRootConfig, config),
-  });
-  setPrefixVariable(config.prefix);
-  Object.keys(config).forEach(key => {
-    watch(
-      () => config[key],
-      () => {
-        if (key === 'prefix') setPrefixVariable(config[key]);
-        configData[key] = config[key];
-      },
-    );
-  });
-  if (!getCurrentInstance() && app?.provide) {
-    app.provide(rootProviderKey, configData);
-    return;
+const rawImportLoader = function (this: any, source: string) {
+  const callback = this.async();
+  // 检查是否存在 .less 文件引用
+  if (this.resourcePath.endsWith('.less')) {
+    callback(null, `import 'bkui-vue${this.resourcePath.split('src')[1]}';`);
   }
-  provide(rootProviderKey, configData);
+  callback(null, source);
 };
 
-export const useGlobalConfig = (): ComputedRef<ConfigProviderProps> => {
-  const config = inject<ConfigProviderProps>(rootProviderKey, defaultRootConfig);
-  return computed(() => config);
-};
+export default rawImportLoader;

@@ -80,6 +80,11 @@ export default defineConfig({
       strict: false,
     },
   },
+  build: {
+    commonjsOptions: {
+      include: [/\/lodash\//],
+    },
+  },
   // css: {
   //   preprocessorOptions: {
   //     less: {
