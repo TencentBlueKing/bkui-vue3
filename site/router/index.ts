@@ -732,17 +732,14 @@ const routes: RouteRecordRaw[] = [
     },
     component: () => import('../views/pop-confirm/index'),
   },
-    /**
-   * @description: 版本更新日志
-   */
     {
-      path: '/version-log',
-      name: 'versionLog',
-      component: () => import('../views/version-log'),
+      path: '/bk/date-piker',
+      name: 'BluekingDatePicker',
       meta: {
-        group: NavGroupMeta.Biz,
-        navName: 'VersionLog 版本更新日志',
+        group: NavGroupMeta.Business,
+        navName: 'Date Picker 时间选择器',
       },
+      component: () => import('../views/blueking/date-picker/index'),
     },
 ];
 

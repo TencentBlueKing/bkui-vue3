@@ -43,7 +43,7 @@
 </template>
 
 <script setup>
-  import { AngleDown } from 'bkui-vue/icon';
+  import { AngleDown } from 'bkui-vue/lib/icon';
   import { ref } from 'vue';
   const dropdownList = [
     'http://',
@@ -60,25 +60,29 @@
   .mb8 {
     margin-bottom: 8px;
   }
+
   .protocol-list-dropdown {
-    border: 1px solid #c4c6cc;
     height: 32px;
     margin: -1px 0 0 -1px;
+    border: 1px solid #c4c6cc;
     border-radius: 2px 0 0 2px;
+
     &:hover {
       border-color: #3a84ff;
     }
+
     .protocol-list-trigger {
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0 10px;
-        height: 30px;
-        .toggle-indicator {
-          margin-left: 5px;
-          font-size: 14px;
-        }
+      display: flex;
+      height: 30px;
+      padding: 0 10px;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+
+      .toggle-indicator {
+        margin-left: 5px;
+        font-size: 14px;
       }
+    }
   }
 </style>
