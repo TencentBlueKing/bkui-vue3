@@ -226,7 +226,7 @@ export default defineComponent({
         </DemoBox>
         <PropsBox
           title='now语法概述'
-          subtitle='Grafana 支持以下时间单位： s (seconds) 、 m (minutes) 、 h (hours) 、 d (days) 、 w (weeks) 、 M (months) 、 和 y (years)。
+          subtitle='组件支持以下时间单位： s (seconds) 、 m (minutes) 、 h (hours) 、 d (days) 、 w (weeks) 、 M (months) 、 和 y (years)。
           (-)减号运算符是相对于当前日期和时间或 now 向后减一个时间单位。如果您想显示单位的完整周期（日、周、月等），请在末尾附加 /<time unit>。（+）加号同理。 '
           columnMap={exampleColumnJson}
           propsData={exampleJson}
