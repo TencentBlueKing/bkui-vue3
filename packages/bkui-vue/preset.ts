@@ -32,7 +32,7 @@ import * as components from './components';
 
 const createInstall =
   (prefix = 'Bk') =>
-  (app: App, options: ConfigProviderProps) => {
+  (app: App, options?: ConfigProviderProps) => {
     const pre = app.config.globalProperties.bkUIPrefix || prefix;
     Object.keys(components).forEach(key => {
       const component = components[key];

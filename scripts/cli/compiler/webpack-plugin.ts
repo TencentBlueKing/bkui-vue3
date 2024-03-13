@@ -49,7 +49,7 @@ export default class RemoveWildcardImportsPlugin {
             matchList?.forEach(match => {
               source = source.replace(match, '');
             });
-            newSource = source.replace(/@bkui-vue\//gm, './').replace(/:\s+(App|ConfigProviderProps)/gm, '');
+            newSource = source.replace(/@bkui-vue\//gm, './').replace(/\??:\s+(App|ConfigProviderProps)/gm, '');
           }
           if (newSource !== sourceString) {
             // compilation.assets[filename] = new Source()
