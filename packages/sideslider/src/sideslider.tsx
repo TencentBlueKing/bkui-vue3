@@ -55,18 +55,19 @@ export default defineComponent({
 
   setup(props, { slots, emit }) {
     const handleClose = async () => {
-      let shouldClose = true;
-      if (typeof props.beforeClose === 'function') {
-        shouldClose = await props.beforeClose();
-      }
-      if (shouldClose) {
-        emit('update:isShow', false);
-        emit('closed');
-        setTimeout(() => {
-          // 有动画，推迟发布事件
-          emit('animation-end');
-        }, 250);
-      }
+      // 这里无需处理 beforeClose，在 modal 中会处理
+      // let shouldClose = true;
+      // if (typeof props.beforeClose === 'function') {
+      //   shouldClose = await props.beforeClose();
+      // }
+      // if (shouldClose) {
+      emit('update:isShow', false);
+      emit('closed');
+      setTimeout(() => {
+        // 有动画，推迟发布事件
+        emit('animation-end');
+      }, 250);
+      // }
     };
     const handleShown = () => {
       // 有动画，推迟发布事件
