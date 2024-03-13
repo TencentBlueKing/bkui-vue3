@@ -24,13 +24,15 @@
  * IN THE SOFTWARE.
  */
 
-import { provideGlobalConfig } from '@bkui-vue/config-provider';
+import { App } from 'vue';
+
+import { ConfigProviderProps, provideGlobalConfig } from '@bkui-vue/config-provider';
 
 import * as components from './components';
 
 const createInstall =
   (prefix = 'Bk') =>
-  (app, options) => {
+  (app: App, options: ConfigProviderProps) => {
     const pre = app.config.globalProperties.bkUIPrefix || prefix;
     Object.keys(components).forEach(key => {
       const component = components[key];
