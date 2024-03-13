@@ -27,7 +27,7 @@
 import { computed, defineComponent, nextTick, ref, Transition, watch } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-import { bkZIndexManager, isElement, mask } from '@bkui-vue/shared';
+import { bkZIndexManager, isElement, isPromise, mask } from '@bkui-vue/shared';
 
 import { propsMixin } from './props.mixin';
 
@@ -156,9 +156,16 @@ export default defineComponent({
       { immediate: true },
     );
 
-    const handleBeforeClose = callbackFn => {
+    const handleBeforeClose = async callbackFn => {
       if (typeof props.beforeClose === 'function') {
-        if (props.beforeClose() !== true) {
+        let shouldClose = true;
+        const execRet = props.beforeClose();
+        if (isPromise(execRet)) {
+          shouldClose = await execRet;
+        } else {
+          shouldClose = execRet;
+        }
+        if (shouldClose !== true) {
           return;
         }
       }
