@@ -1,6 +1,6 @@
 {
   "name": "bkui-vue",
-  "version": "1.0.1",
+  "version": "1.0.3-beta.1",
   "private": true,
   "workspaces": {
     "packages": [
@@ -31,6 +31,7 @@
     "postpublish": "node scripts/post-publish.js",
     "prepare": "husky install",
     "dev": "lerna run --stream --scope site dev",
+    "debug": "TS_NODE_CWD=./scripts/cli node --inspect-brk -r ts-node/register ./scripts/cli/index.ts lib",
     "build": "run-s build:dist build:lib",
     "build:site": "lerna run --stream --scope site build && cp -r ./site/views/ ./site/dist/views",
     "build:dist": "rimraf dist && lerna run --stream --scope cli dist",
