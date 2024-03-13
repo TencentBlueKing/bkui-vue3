@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { computed, reactive, ref, watch } from 'vue';
+import { computed, nextTick, reactive, ref, watch } from 'vue';
 
 import { COLUMN_ATTRIBUTE } from '../const';
 import { Column, SortScope, TablePropTypes } from '../props';
@@ -63,8 +63,9 @@ export default (props: TablePropTypes) => {
    * pagination 为Prop传入配置
    * 方便兼容内置分页功能，此处需要单独处理count
    */
+  const propsData = computed(() => props.data);
   const localPagination = ref(null);
-  const indexData = computed(() => props.data);
+  const indexData = reactive([]);
 
   // 当前分页缓存，用于支持内置前端分页，用户无需接收change事件来自行处理数据分割
   let pagination = reactive({
@@ -79,7 +80,7 @@ export default (props: TablePropTypes) => {
     if (!props.pagination) {
       return;
     }
-    localPagination.value = props.remotePagination ? pagination : { ...pagination, count: indexData.value.length };
+    localPagination.value = props.remotePagination ? pagination : { ...pagination, count: indexData.length };
   };
 
   /**
@@ -90,7 +91,7 @@ export default (props: TablePropTypes) => {
   const resetStartEndIndex = () => {
     if (!props.pagination || props.remotePagination) {
       startIndex.value = 0;
-      endIndex.value = indexData.value.length;
+      endIndex.value = indexData.length;
       return;
     }
 
@@ -129,7 +130,7 @@ export default (props: TablePropTypes) => {
 
   const filter = (sourceData: any[], filterFn: (row, index, data) => void) => {
     if (typeof filterFn === 'function') {
-      const filterVals = sourceData.filter((row: any, index: number) => filterFn(row, index, indexData.value));
+      const filterVals = sourceData.filter((row: any, index: number) => filterFn(row, index, indexData));
       sourceData.length = 0;
       sourceData.push(...filterVals);
     }
@@ -137,8 +138,19 @@ export default (props: TablePropTypes) => {
     return sourceData;
   };
 
+  const resolveIndexData = () => {
+    return new Promise<void>(resolve => {
+      nextTick(() => {
+        const target = propsData.value.slice();
+        indexData.length = 0;
+        indexData.push(...target);
+        resolve();
+      });
+    });
+  };
+
   const resolvePageData = (filterFn?: any, sortFn?: any, column?: Column, type?: string, sortScope?, multiCol?) => {
-    const sourceData = indexData.value.slice();
+    const sourceData = indexData.slice();
 
     if (multiCol?.length) {
       multiSort(sourceData, multiCol);
@@ -156,7 +168,7 @@ export default (props: TablePropTypes) => {
   };
 
   const multiFilter = (filterFnList: ((row, index, data) => void)[]) => {
-    const sourceData = indexData.value.slice();
+    const sourceData = indexData.slice();
     const target = filterFnList.reduce((result, fn) => filter(result, fn), sourceData);
     pageData.length = 0;
     pageData.push(...target);
@@ -186,6 +198,7 @@ export default (props: TablePropTypes) => {
     indexData,
     localPagination,
     resolvePageData,
+    resolveIndexData,
     resolvePageDataBySortList,
     resetStartEndIndex,
     multiFilter,

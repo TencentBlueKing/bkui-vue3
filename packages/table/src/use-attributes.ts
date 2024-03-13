@@ -114,7 +114,7 @@ export type ITableResponse = {
   formatData: ITableFormatData;
 };
 
-export default (props: TablePropTypes): ITableResponse => {
+export default (props: TablePropTypes) => {
   const t = useLocale('table');
   const getDefaultSettings = () => {
     const { size, fields = [], checked = [] } = props.settings as Settings;
@@ -138,12 +138,14 @@ export default (props: TablePropTypes): ITableResponse => {
 
   const {
     pageData,
+    indexData,
     localPagination,
     resolvePageData,
     resolvePageDataBySortList,
     multiFilter,
     sort,
     resetStartEndIndex,
+    resolveIndexData,
   } = usePagination(props);
 
   const updateSettings = (settings?: Settings, rowHeight?: number) => {
@@ -285,6 +287,13 @@ export default (props: TablePropTypes): ITableResponse => {
     const scope = getColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_SCOPE);
 
     if (type === SORT_OPTION.NULL) {
+      resolveIndexData().then(() => {
+        resolvePageData();
+      });
+      return;
+    }
+    if (scope === 'all') {
+      sort(indexData, fn, column, type, scope);
       resolvePageData();
       return;
     }
@@ -753,6 +762,10 @@ export default (props: TablePropTypes): ITableResponse => {
     pageData.splice(resolvedIndex, 1);
   };
 
+  const setIndexData = () => {
+    return resolveIndexData();
+  };
+
   return {
     formatColumns,
     formatDataSchema,
@@ -790,5 +803,6 @@ export default (props: TablePropTypes): ITableResponse => {
     pageData,
     localPagination,
     formatData,
+    setIndexData,
   };
 };
