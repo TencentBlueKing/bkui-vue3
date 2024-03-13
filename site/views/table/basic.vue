@@ -27,7 +27,7 @@
       return {
         maxHeight: 300,
         isLoading: false,
-        tableData: DATA_TABLE,
+        tableData: [...DATA_TABLE],
         columns,
         overflowTooltip: {
           popoverOption: {
@@ -58,6 +58,14 @@
           checked: ['ip', 'index'],
         },
       };
+    },
+    watch: {
+      tableData: {
+        immediate: true,
+        handler(val) {
+          console.log('tableData change', val);
+        },
+      },
     },
     methods: {
       handleCellClick(arg) {
