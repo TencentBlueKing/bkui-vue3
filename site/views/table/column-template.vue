@@ -12,6 +12,7 @@
           :label="column.label"
           :type="column.type"
           :field="column.field"
+          :width="column.width"
         />
       </template>
     </bk-table>
@@ -28,18 +29,22 @@
           {
             label: '序号',
             type: 'index',
+            width: '120px',
           },
           {
             label: '名称/内网IP',
             field: 'ip',
+            width: '320px',
           },
           {
             label: '来源',
             field: 'source',
+            width: '120px',
           },
           {
             label: '创建时间',
             field: 'create_time',
+            width: '220px',
           },
         ],
         settings: {

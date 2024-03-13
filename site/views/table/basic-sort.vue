@@ -36,7 +36,7 @@
     data() {
       return {
         columns: [...DATA_COLUMNS],
-        columns1: [...DATA_COLUMNS1],
+        columns1: DATA_COLUMNS1.map(col => Object.assign({}, col, { sort: { sortScope: 'all' } })),
         tableData: DATA_ROWS,
         pagination: { count: DATA_ROWS.length, limit: 10 },
       };

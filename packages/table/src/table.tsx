@@ -125,31 +125,34 @@ export default defineComponent({
     };
 
     const isFirstLoad = ref(true);
+    // const tableWidth = ref(null);
 
     watch(
       () => [props.data, columns],
       () => {
-        tableSchema.formatColumns(columns as Column[]);
-        tableSchema.formatDataSchema(props.data);
-        tableSchema.resetStartEndIndex();
+        tableSchema.setIndexData().then(() => {
+          tableSchema.formatColumns(columns as Column[]);
+          tableSchema.formatDataSchema(props.data);
+          tableSchema.resetStartEndIndex();
 
-        if (isFirstLoad.value) {
-          tableSchema.resolveByDefColumns();
-          isFirstLoad.value = false;
-        } else {
-          tableSchema.resolvePageData();
-        }
+          if (isFirstLoad.value) {
+            tableSchema.resolveByDefColumns();
+            isFirstLoad.value = false;
+          } else {
+            tableSchema.resolvePageData();
+          }
 
-        registerResizeEvent();
-        nextTick(() => {
-          updateOffsetRight();
-          resolveFixedColumns(tableOffsetRight.value);
-
-          /**
-           * 确保在所有数据渲染完毕再执行fix column计算
-           */
+          registerResizeEvent();
           nextTick(() => {
-            resetTableHeight(root.value);
+            updateOffsetRight();
+            resolveFixedColumns(tableOffsetRight.value);
+
+            /**
+             * 确保在所有数据渲染完毕再执行fix column计算
+             */
+            nextTick(() => {
+              resetTableHeight(root.value);
+            });
           });
         });
       },
