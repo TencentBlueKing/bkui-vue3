@@ -30,5 +30,15 @@
 * **[fix]**:
     - bugfix(form): 表单 tooltips 最大宽度为 400，可通过覆盖样式来修改
 
+
+### 1.0.0
+
 * **[feat]**:
-    - 新增版本日志业务组件
+    - 新增业务组件文档
+    - 默认支持按需加载（无需额外的 webpack、vite 插件）
+
+### 1.0.1
+
+* **[fix]**:
+    - bugfix(sideslider) 修复 before-close 执行两次的问题
+    - modal 中 handleBeforeClose 的处理增加对 promise 的判断

@@ -63,7 +63,7 @@ export function isArray(value: any) {
  * @since 2.7.0
  */
 export function isObject(value: any) {
-  return value !== null && /^\[object (Object|Module)\]/.test(Object.prototype.toString.call(value));
+  return value !== null && /^\[object (Object|Module|Promise)\]/.test(Object.prototype.toString.call(value));
 }
 
 /**
@@ -280,3 +280,10 @@ export function maybeShowTooltip(target: HTMLElement, title: string) {
     target.removeAttribute('title');
   }
 }
+
+export const isFunction = (val: unknown): val is Function => typeof val === 'function';
+export const isString = (val: unknown): val is string => typeof val === 'string';
+export const isSymbol = (val: unknown): val is symbol => typeof val === 'symbol';
+export const isPromise = <T = any>(val: any): val is Promise<T> => {
+  return isObject(val) && isFunction(val.then) && isFunction(val.catch);
+};
