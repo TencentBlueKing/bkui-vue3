@@ -69,6 +69,7 @@ export type ITableFormatData = {
 };
 
 export type ITableResponse = {
+  setIndexData: () => Promise<void>;
   formatColumns: (columns: Column[]) => void;
   formatDataSchema: (data: any[]) => void;
   setRowSelection: (row: any, isSelected: boolean) => void;
