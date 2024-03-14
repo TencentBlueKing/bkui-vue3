@@ -4,6 +4,7 @@
       :columns="columns"
       :data="tableData"
       :settings="settings"
+      :sort-val-format="format"
       row-draggable
       stripe
       @dragend="handleDragend"
@@ -25,6 +26,7 @@
     components: {},
     data() {
       return {
+        format: [/(\d+.?\d*)%/],
         maxHeight: 300,
         isLoading: false,
         tableData: [...DATA_TABLE],
