@@ -76,7 +76,7 @@ export default defineComponent({
       hasFooter,
       footerStyle,
       tableBodyClass,
-      fixedBottomBorder,
+      // fixedBottomBorder,
       resizeColumnClass,
       tableBodyContentClass,
       loadingRowClass,
@@ -278,7 +278,7 @@ export default defineComponent({
             beforeContent: () => renderPrepend(),
             default: (scope: any) => renderTableBodySchema(scope.data),
             afterSection: () => [
-              <div class={fixedBottomBorder.value}></div>,
+              // <div class={fixedBottomBorder.value}></div>,
               <div
                 class={resizeColumnClass}
                 style={resizeColumnStyle.value}
