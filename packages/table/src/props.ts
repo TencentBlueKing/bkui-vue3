@@ -114,6 +114,7 @@ export type IOverflowTooltipProp =
       mode?: `${OverflowModeEnum}`;
       popoverOption?: any;
       resizerWay?: ResizerWay;
+      showHead?: boolean;
     }
   | boolean;
 
@@ -412,6 +413,14 @@ export const tableProps = {
    * 是否显示Head
    */
   showHead: PropTypes.bool.def(true),
+
+  /**
+   * 排序时对需要排序的字符串数值进行格式化
+   * 这里需要配置为正则或者回调函数，(str) => string | number | boolean
+   * 如果配置为正则，程序会提取匹配到的第一个结果尝试转换为数值
+   * 如果为多个，程序会顺序执行所有正则表达式，直到转换成功
+   */
+  sortValFormat: PropTypes.arrayOf(PropTypes.any).def(['']),
 
   /**
    * table header config
