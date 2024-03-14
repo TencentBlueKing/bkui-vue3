@@ -83,8 +83,8 @@ export default defineComponent({
       if (sortType.value === type) {
         currentSort = SORT_OPTION.NULL;
       }
-      const execFn = getSortFn(props.column, currentSort);
-      const sort = resolveSort(props.column.sort, props.column);
+      const execFn = getSortFn(props.column, currentSort, props.sortValFormat);
+      const sort = resolveSort(props.column.sort, props.column, props.sortValFormat);
       if (sort?.value === 'custom') {
         emit('change', sort?.sortFn ?? execFn, currentSort);
         return;
