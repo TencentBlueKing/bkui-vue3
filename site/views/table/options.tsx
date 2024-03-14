@@ -127,11 +127,7 @@ export const DATA_COLUMNS = [
     field: 'source',
     width: 80,
     filter: {
-      list: [
-        { text: 'QQ', value: 'QQ' },
-        { text: '微信', value: '微信' },
-        { text: 'Email', value: 'Email' },
-      ],
+      list: new Array(20).fill('').map((_, index) => ({ text: `${index}_QQ`, value: `${index}_QQ` })),
       checked: ['QQ'],
     },
   },

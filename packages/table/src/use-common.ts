@@ -30,7 +30,7 @@ import { usePrefix } from '@bkui-vue/config-provider';
 import { classes } from '@bkui-vue/shared';
 
 import { ITableColumn } from './components/table-column';
-import { BORDER_OPTION, LINE_HEIGHT, SCROLLY_WIDTH } from './const';
+import { BORDER_OPTION, DEF_COLOR, IHeadColor, LINE_HEIGHT, SCROLLY_WIDTH } from './const';
 import { Column, TablePropTypes } from './props';
 import { ITableResponse } from './use-attributes';
 import useColumn from './use-column';
@@ -90,6 +90,7 @@ export const useClass = (
     '--row-height': `${resolvePropVal(config, 'height', ['thead'])}px`,
     '--scroll-head-left': `-${TableSchema.formatData.layout.translateX}px`,
     '--scroll-left': `${TableSchema.formatData.layout.translateX}px`,
+    '--background-color': DEF_COLOR[props.thead?.color ?? IHeadColor.DEF1],
   }));
 
   const contentClass = {
