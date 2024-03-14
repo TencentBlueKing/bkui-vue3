@@ -55,7 +55,7 @@ export default defineComponent({
     const { column } = props;
     const { filter } = toRefs(props.column);
     const checked = computed(() => (filter.value as IFilterShape)?.checked ?? []);
-
+    const searchValue = ref('');
     const state = reactive({
       isOpen: false,
       checked: checked.value,
@@ -94,21 +94,27 @@ export default defineComponent({
         setTimeout(() => {
           refVirtualRender.value.reset();
         });
+
+      if (!isOpen) {
+        searchValue.value = '';
+      }
     };
 
     const theme = `light ${resolveClassName('table-head-filter')}`;
     const localData = computed(() => {
       const { list = [] } = filter.value as IFilterShape;
-      return list;
+      const filterList = list.filter(l => getRegExp(searchValue.value).test(l.value));
+      console.log(' filterList: ', filterList);
+      return filterList;
     });
 
-    const getRegExp = (searchValue: string | number | boolean, flags = 'ig') =>
-      new RegExp(`${searchValue}`.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&'), flags);
+    const getRegExp = (val: string | number | boolean, flags = 'ig') =>
+      new RegExp(`${val}`.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&'), flags);
 
     const defaultFilterFn = (checked: string[], row: any) => {
       const { match } = filter.value as IFilterShape;
       const matchText = getRowText(row, resolvePropVal(column, 'field', [column, row]));
-      if (match === 'full') {
+      if (match !== 'fuzzy') {
         return checked.includes(matchText);
       }
 
@@ -255,6 +261,9 @@ export default defineComponent({
           default: () => <Funnel class={headClass.value} />,
           content: () => (
             <div class={headFilterContentClass}>
+              <div style='padding: 4px 10px;'>
+                <bk-input v-model={searchValue.value}></bk-input>
+              </div>
               <BkCheckboxGroup class='content-list'>
                 <VirtualRender
                   maxHeight={maxHeight.value}

@@ -36,6 +36,7 @@
     position: relative;
     overflow: auto;
     scrollbar-gutter: stable;
+    border-bottom: 1px solid @table-border-color;
 
     &::-webkit-scrollbar {
       width: 5px;
@@ -335,6 +336,7 @@
     z-index: 2;
     scrollbar-gutter: stable;
     overflow: hidden;
+    background-color: var(--background-color);
 
     .col-resize-drag {
       position: absolute;
@@ -364,10 +366,10 @@
 
       background: @table-head-bg-color;
       //border-right: 1px solid @table-border-color;
-      border-bottom: 1px solid @table-border-color;
+      // border-bottom: 1px solid @table-border-color;
       border-left: 1px solid @table-border-color;
       border-radius: 0 2px 0 0;
-      transform: translateX(var(--scroll-left));
+      // transform: translateX(var(--scroll-left));
       justify-content: center;
       align-items: center;
 
@@ -391,8 +393,11 @@
   }
 
   &.bordered-row {
-    td,
-    th {
+    .@{bk-prefix}-table-head {
+      border-bottom: 1px solid @table-border-color;
+    }
+
+    td {
       border-bottom: 1px solid @table-border-color;
     }
 
@@ -445,11 +450,15 @@
 
   }
 
+  th, td {
+    border-right: 1px solid transparent;
+  }
+
   &.bordered-none {
     th,
     td {
       border-top: none;
-      border-right: none;
+      border-right: 1px solid transparent;
       border-bottom: none;
       border-left: none;
     }
