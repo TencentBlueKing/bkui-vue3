@@ -26,7 +26,7 @@
     components: {},
     data() {
       return {
-        format: [/(\d+.?\d*)%/],
+        format: [/(\d+\.?\d*)/],
         maxHeight: 300,
         isLoading: false,
         tableData: [...DATA_TABLE],
