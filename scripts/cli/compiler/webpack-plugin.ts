@@ -40,8 +40,11 @@ export default class RemoveWildcardImportsPlugin {
           const bkuiLibPattern = /bkui-vue\/lib\//gm;
           let newSource = sourceString.replace(importPattern, 'import "$1";').replace(bkuiLibPattern, '../');
           const [componentName, compFilename] = filename.split('/');
-          if (compFilename === 'index.js' && hasStyleComponentList.includes(capitalize(componentName))) {
-            newSource = `import "./${componentName}.less";\n${newSource}`;
+          if (compFilename === 'index.js') {
+            if (hasStyleComponentList.includes(capitalize(componentName))) {
+              newSource = `import "./${componentName}.less";\n${newSource}`;
+            }
+            newSource = `import "../styles/reset.css";\n${newSource}`;
           } else if (compFilename === undefined) {
             const url = resolve(COMPONENT_URL, `./bkui-vue/${filename.replace(/\.js$/, '')}.ts`);
             let source = readFileSync(url, 'utf-8');
