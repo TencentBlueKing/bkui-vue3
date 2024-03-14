@@ -85,7 +85,7 @@ export default (props, context: SetupContext<any>, column: Column, tableResp: IT
       const type = tableResp.getColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_TYPE) as string;
       nextSort.value = getNextSortType(type);
 
-      const sortFn = (a, b) => getSortFnByColumn(column, getSortFn(column, nextSort.value), a, b);
+      const sortFn = (a, b) => getSortFnByColumn(column, getSortFn(column, nextSort.value, props.sortValFormat), a, b);
       tableResp.setColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_TYPE, nextSort.value);
       tableResp.setColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_FN, sortFn);
       tableResp.setColumnSortActive(column, true);
