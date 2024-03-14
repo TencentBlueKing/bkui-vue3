@@ -33,6 +33,7 @@ export const DATA_TABLE = [
     create_time: '2018-05-25 15:02:241',
     selected: false,
     priority: 1,
+    percent: '15%',
     children: [
       {
         ip: '192.168.0.2',
@@ -64,6 +65,7 @@ export const DATA_TABLE = [
     priority: 3,
     create_time: '2018-05-25 15:02:242',
     selected: false,
+    percent: '10.01%',
   },
   {
     ip: '192.168.0.3',
@@ -72,6 +74,7 @@ export const DATA_TABLE = [
     priority: 2,
     create_time: '2018-05-25 15:02:243',
     selected: false,
+    percent: '50%',
   },
   {
     ip: '192.168.0.3',
@@ -80,6 +83,7 @@ export const DATA_TABLE = [
     priority: 6,
     create_time: '2018-05-25 15:02:244',
     selected: true,
+    percent: '1%',
   },
   {
     ip: '192.168.0.3',
@@ -88,6 +92,7 @@ export const DATA_TABLE = [
     priority: 5,
     create_time: '2018-05-25 15:02:24',
     selected: false,
+    percent: '0.1%',
   },
 ];
 
@@ -139,6 +144,11 @@ export const DATA_COLUMNS = [
   {
     label: '优先级',
     field: 'priority',
+    sort: true,
+  },
+  {
+    label: '完成度',
+    field: 'percent',
     sort: true,
   },
   {
