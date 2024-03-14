@@ -243,9 +243,9 @@ export const getRowText = (row: any, key: string, format?: string[] | (() => str
     format.forEach(reg => {
       if (typeof reg === 'function') {
         result = reg(result, row, key);
-      } else {
+      } else if (typeof result === 'string') {
         const matches = result.match(typeof reg === 'string' ? getRegExp(reg) : reg);
-        result = matches[1] ?? result;
+        result = matches?.[1] ?? result;
       }
     });
 
