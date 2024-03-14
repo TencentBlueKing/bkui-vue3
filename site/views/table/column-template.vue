@@ -67,7 +67,7 @@
               id: 'create_time',
             },
           ],
-          checked: ['ip', 'index'],
+          checked: [],
         },
       };
     },
