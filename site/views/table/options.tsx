@@ -119,12 +119,12 @@ export const DATA_COLUMNS = [
     width: 100,
     showOverflowTooltip: {
       disabled: false,
-      showHead: false,
+      showHead: true,
     },
     sort: true,
     explain: {
       content: '当表格中的字段或数据需要做解释说明时，可增加 [下划线] 提示，hover 可查看解释说明的 tooltips',
-      head: '当表格中的字段或数据需要做解释说明时，可增加 [下划线] 提示，hover 可查看解释说明的 tooltips',
+      head: 'Head当表格中的字段或数据需要做解释说明时，可增加 [下划线] 提示，hover 可查看解释说明的 tooltips',
     },
   },
   {
