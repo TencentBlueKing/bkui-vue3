@@ -153,6 +153,7 @@ export default (props, context: SetupContext<any>, column: Column, tableResp: IT
         defaultSort={active.value ? nextSort.value : SORT_OPTION.NULL}
         onChange={handleSortClick}
         active={active.value}
+        sortValFormat={props.sortValFormat}
       />
     );
   };
