@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 import { v4 as uuidv4 } from 'uuid';
-import { reactive } from 'vue';
+import { reactive, toRaw } from 'vue';
 
 import { useLocale } from '@bkui-vue/config-provider';
 
@@ -41,6 +41,7 @@ import {
 import usePagination from './plugins/use-pagination';
 import { Column, Field, IColSortBehavior, Settings, SortScope, TablePropTypes } from './props';
 import {
+  getRawData,
   getRowId,
   getRowValue,
   isColumnHidden,
@@ -473,7 +474,7 @@ export default (props: TablePropTypes) => {
           return getRowValue(row, item) === item;
         }
 
-        return item === row;
+        return getRawData(item) === getRawData(row);
       });
     }
 
@@ -495,7 +496,8 @@ export default (props: TablePropTypes) => {
     formatData.data.push(...data);
     let hasSelectedRow = false;
     let hasUnSelectedRow = false;
-    (data || []).forEach((row, index) => {
+    (data || []).forEach((item, index) => {
+      const row = getRawData(item);
       let rowId = getRowId(row, uuidv4(), props);
       const isSelected = isRowSelected(row);
       if (isSelected) {
@@ -554,7 +556,8 @@ export default (props: TablePropTypes) => {
    * @param attrName
    * @param attrValue
    */
-  const setRowAttribute = (row: any, attrName: string, attrValue: string | boolean | number) => {
+  const setRowAttribute = (item: any, attrName: string, attrValue: string | boolean | number) => {
+    const row = getRawData(item);
     const target = formatData.dataSchema.get(row);
     if (target && Object.prototype.hasOwnProperty.call(target, attrName)) {
       target[attrName] = attrValue;
@@ -596,7 +599,8 @@ export default (props: TablePropTypes) => {
     setRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_EXPAND, isExpand);
   };
 
-  const getRowAttribute = (row: any | IEmptyObject, attrName: string) => {
+  const getRowAttribute = (item: any | IEmptyObject, attrName: string) => {
+    const row = getRawData(item);
     return formatData.dataSchema.get(row)?.[attrName];
   };
 
