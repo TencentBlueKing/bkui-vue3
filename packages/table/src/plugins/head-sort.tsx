@@ -37,6 +37,7 @@ type IHeadSortPropType = {
   column: Column;
   defaultSort: SORT_OPTION;
   active: boolean;
+  sortValFormat: any;
 };
 
 export default defineComponent({
