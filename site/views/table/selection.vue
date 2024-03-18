@@ -1,8 +1,9 @@
 <template>
   <bk-table
+    ref="refTable"
     :data="tableData"
-    :is-row-select-enable="isRowSelectEnable"
     :checked="checked"
+    :is-row-select-enable="isRowSelectEnable"
     @selection-change="handleSelectionChange"
     @select-all="handleSelectAll"
   >
@@ -45,6 +46,9 @@
     },
 
     methods: {
+      handleTableRowToggle() {
+        this.$refs.refTable.toggleRowSelection(this.tableData[1]);
+      },
       handleSelectAll(args) {
         console.log('handleSelectAll', args);
       },
