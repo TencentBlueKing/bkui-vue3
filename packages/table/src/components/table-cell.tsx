@@ -113,17 +113,6 @@ export default defineComponent({
         disabled = Reflect.apply(disabled, this, [props.column, props.row]);
       }
 
-      if (props.isHead) {
-        disabled = !((props.column?.showOverflowTooltip as any)?.showHead ?? true);
-        mode = 'auto';
-        content = () => getEllipsisTarget()?.innerHTML;
-
-        if (props.headExplain) {
-          mode = 'static';
-          content = () => props.headExplain;
-        }
-      }
-
       /**
        * 当表格中的字段或数据需要做解释说明时，可增加 [下划线] 提示，hover 可查看解释说明的 tooltips
        */
@@ -133,6 +122,17 @@ export default defineComponent({
 
         if (typeof props.column.explain === 'object') {
           content = () => resolvePropVal(props.column.explain, 'content', [props.column, props.row]);
+        }
+      }
+
+      if (props.isHead) {
+        disabled = !((props.column?.showOverflowTooltip as any)?.showHead ?? true);
+        mode = 'auto';
+        content = () => getEllipsisTarget()?.innerHTML;
+
+        if (props.headExplain) {
+          mode = 'static';
+          content = () => props.headExplain;
         }
       }
 

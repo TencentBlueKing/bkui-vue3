@@ -45,6 +45,7 @@ export default defineComponent({
     column: IColumnType,
     defaultSort: PropTypes.oneOf(SORT_OPTIONS).def(SORT_OPTION.NULL),
     active: PropTypes.bool,
+    sortValFormat: PropTypes.arrayOf(PropTypes.any).def(['']),
   },
   emits: ['change'],
   setup(props: IHeadSortPropType, { emit, expose }) {
@@ -83,8 +84,8 @@ export default defineComponent({
       if (sortType.value === type) {
         currentSort = SORT_OPTION.NULL;
       }
-      const execFn = getSortFn(props.column, currentSort);
-      const sort = resolveSort(props.column.sort, props.column);
+      const execFn = getSortFn(props.column, currentSort, props.sortValFormat);
+      const sort = resolveSort(props.column.sort, props.column, props.sortValFormat);
       if (sort?.value === 'custom') {
         emit('change', sort?.sortFn ?? execFn, currentSort);
         return;

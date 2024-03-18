@@ -229,12 +229,32 @@ export const resolveHeadConfig = (props: TablePropTypes) => {
  * @param index 当前行Index
  * @returns
  */
-export const getRowText = (row: any, key: string) => {
+export const getRowText = (row: any, key: string, format: string[] | (() => string | number | boolean)[]) => {
+  let result;
   if (typeof row === 'string' || typeof row === 'number' || typeof row === 'boolean') {
-    return row;
+    result = row;
   }
 
-  return objGet(row, key);
+  const getRegExp = (val: string | number | boolean, flags = 'ig') =>
+    new RegExp(`${val}`.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&'), flags);
+
+  result = objGet(row, key);
+  if (format?.length) {
+    format.forEach(reg => {
+      if (typeof reg === 'function') {
+        result = reg(result, row, key);
+      } else if (typeof result === 'string'){
+        const matches = result.match(typeof reg === 'string' ? getRegExp(reg) : reg);
+        result = matches?.[1] ?? result;
+      }
+    });
+
+    if (/^-?\d+.?\d*$/.test(result)) {
+      result = Number(result);
+    }
+  }
+
+  return result;
 };
 
 /**
@@ -393,9 +413,9 @@ export const skipThisColumn = (columns: Column[], colIndex: number, row: any, ro
   return skip;
 };
 
-export const getSortFn = (column, sortType) => {
+export const getSortFn = (column, sortType, format = []) => {
   const fieldName = column.field as string;
-  const getVal = (row: any) => getRowText(row, fieldName);
+  const getVal = (row: any) => getRowText(row, fieldName, format);
   const sortFn0 = (a: any, b: any) => {
     const val0 = getVal(a) ?? '';
     const val1 = getVal(b) ?? '';
@@ -405,6 +425,7 @@ export const getSortFn = (column, sortType) => {
 
     return String.prototype.localeCompare.call(val0, val1);
   };
+
   const sortFn = typeof (column.sort as any)?.sortFn === 'function' ? (column.sort as any)?.sortFn : sortFn0;
 
   return sortType === SORT_OPTION.NULL
@@ -426,7 +447,7 @@ export const getNextSortType = (sortType: string) => {
   return Object.keys(steps)[(steps[sortType] + 1) % 3];
 };
 
-export const resolveSort = (sort: ISortPropShape, column) => {
+export const resolveSort = (sort: ISortPropShape, column, format = []) => {
   if (typeof sort === 'string') {
     return {
       value: sort,
@@ -447,7 +468,7 @@ export const resolveSort = (sort: ISortPropShape, column) => {
       };
     }
 
-    return Object.assign({}, { sortFn: getSortFn(column, sort.value ?? SORT_OPTION.NULL) }, sort);
+    return Object.assign({}, { sortFn: getSortFn(column, sort.value ?? SORT_OPTION.NULL, format) }, sort);
   }
 
   return null;
