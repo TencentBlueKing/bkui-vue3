@@ -27,6 +27,7 @@ import { computed, nextTick, reactive, ref, watch } from 'vue';
 
 import { COLUMN_ATTRIBUTE } from '../const';
 import { Column, SortScope, TablePropTypes } from '../props';
+import { getRawData } from '../utils';
 
 /**
  * 处理 Prop中的分页配置
@@ -143,7 +144,7 @@ export default (props: TablePropTypes) => {
       nextTick(() => {
         const target = propsData.value.slice();
         indexData.length = 0;
-        indexData.push(...target);
+        indexData.push(...getRawData(target));
         resolve();
       });
     });
@@ -171,7 +172,7 @@ export default (props: TablePropTypes) => {
     const sourceData = indexData.slice();
     const target = filterFnList.reduce((result, fn) => filter(result, fn), sourceData);
     pageData.length = 0;
-    pageData.push(...target);
+    pageData.push(...getRawData(target));
   };
 
   const handlePaginationChange = () => {

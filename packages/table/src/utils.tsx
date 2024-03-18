@@ -29,6 +29,7 @@ import objGet from 'lodash/get';
 import throttle from 'lodash/throttle';
 import ResizeObserver from 'resize-observer-polyfill';
 import { v4 as uuidv4 } from 'uuid';
+import { isProxy, toRaw } from 'vue';
 
 import { BORDER_OPTION, BORDER_OPTIONS, SORT_OPTION, TABLE_ROW_ATTRIBUTE } from './const';
 import { Column, GroupColumn, ISortPropShape, TablePropTypes } from './props';
@@ -221,6 +222,9 @@ export const resolveHeadConfig = (props: TablePropTypes) => {
   return Object.assign({}, { isShow: showHead, height: headHeight }, thead);
 };
 
+const getRegExp = (val: string | number | boolean, flags = 'ig') =>
+  new RegExp(`${val}`.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&'), flags);
+
 /**
  * 获取当前行指定列的内容
  * @param row 当前行
@@ -235,10 +239,10 @@ export const getRowText = (row: any, key: string, format?: string[] | (() => str
     result = row;
   }
 
-  const getRegExp = (val: string | number | boolean, flags = 'ig') =>
-    new RegExp(`${val}`.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&'), flags);
+  if (typeof row === 'object') {
+    result = objGet(row, key);
+  }
 
-  result = objGet(row, key);
   if (format?.length) {
     format.forEach(reg => {
       if (typeof reg === 'function') {
@@ -506,4 +510,12 @@ export const resolveColumnSortProp = (col: Column, props: TablePropTypes) => {
     scope: sortScope,
     active: !!col.sort,
   };
+};
+
+export const getRawData = data => {
+  if (isProxy(data)) {
+    return toRaw(data);
+  }
+
+  return data;
 };
