@@ -48,3 +48,8 @@
 * **[fix]**:
     - bugfix(pagination): 切换页码时显示错误
     - 修复按需加载引入reset样式
+
+### 1.0.3-beta.7
+
+* **[fix]**:
+    - bugfix(table): toggleRowSelection失效
