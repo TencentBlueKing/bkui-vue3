@@ -255,7 +255,7 @@ export default (
     return '';
   };
 
-  const getRowSpanConfig = (row: any, index, preRow: any, col: Column, store: WeakMap<Object, any>) => {
+  const getRowSpanConfig = (row: any, rowIndex, preRow: any, col: Column, store: WeakMap<Object, any>) => {
     if (!store.has(row)) {
       store.set(row, new WeakMap());
     }
@@ -266,7 +266,7 @@ export default (
 
     let { skipRowLen = 0 } = store.get(preRow)?.get(col) ?? {};
     let skipRow = false;
-    const rowspan = resolveColumnSpan(col, null, row, index, 'rowspan');
+    const rowspan = resolveColumnSpan(col, null, row, rowIndex, 'rowspan');
 
     if (skipRowLen > 1) {
       skipRowLen = skipRowLen - 1;
@@ -346,7 +346,9 @@ export default (
             };
 
             const { skipRow } =
-              needRowSpan && !isChild ? getRowSpanConfig(row, index, preRow, column, rowSpanMap) : { skipRow: false };
+              needRowSpan && !isChild
+                ? getRowSpanConfig(row, rowIndex, preRow, column, rowSpanMap)
+                : { skipRow: false };
 
             const tdCtxClass = {
               'expand-cell': column.type === 'expand',

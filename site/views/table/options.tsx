@@ -341,7 +341,7 @@ export const DATE_COL_SPAN = [
   {
     label: '创建时间',
     field: 'create_time',
-    rowspan: 3,
+    rowspan: ({ rowIndex }) => (rowIndex > 2 ? 2 : 1),
     sort: 'custom',
   },
   {

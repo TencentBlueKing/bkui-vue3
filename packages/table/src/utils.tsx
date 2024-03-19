@@ -410,7 +410,7 @@ export const skipThisColumn = (columns: Column[], colIndex: number, row: any, ro
   for (let i = colIndex; i > 0; i--) {
     const colspan = resolveColumnSpan(columns[i], i, row, rowIndex, 'colspan');
     if (colspan > 1) {
-      skip = colspan - 1 + i >= colIndex;
+      skip = colspan - 1;
       break;
     }
   }
