@@ -79,17 +79,21 @@ export default [
       { name: 'prepend-style', type: 'CSSProperties', default: '{}', desc: '   * 插入至表格第一行之前的内容容器样式，默认样式为固定在第一行，需要跟随滚动或者其他样式，可以通过此配置进行覆盖', optional: [] },
       { name: 'stripe', type: 'Boolean', default: 'false', desc: '是否为斑马纹 Table', optional: [] },
       {
-        name: 'colSortBehavior', type: 'string', default: 'independent', desc: ` * 列排序行为
+        name: 'col-sort-behavior', type: 'string', default: 'independent', desc: ` * 列排序行为
       * independent：列与列之间的排序是独立的，互斥的
       * interdependent：列排序是相互影响、依赖的`, optional: ['independent', 'interdependent']
       },
       {
-        name: 'rowDraggable', type: 'Boolean | Function | Object', default: 'false', desc: `开启行拖拽排序功能；
+        name: 'row-draggable', type: 'Boolean | Function | Object', default: 'false', desc: `开启行拖拽排序功能；
         设置true，渲染默认排序样式；
         设置 (row, column, index, rows) => JSX.Element, 自定义拖拽单元格，
         设置对象，参考 IDraggableRowOption，可以设置显示label，fontSize，icon，render
         `, optional: []
       },
+      { name: 'sort-val-format', type: 'Array[]', default: '[]', desc: `* 排序时对需要排序的字符串数值进行格式化
+      * 这里需要配置为正则或者回调函数，(str) => string | number | boolean
+      * 如果配置为正则，程序会提取匹配到的第一个结果尝试转换为数值, 正则必须包含分组,例如 /(\d+)%/会提取到第一个结果并尝试转换为数字
+      * 如果为多个，程序会顺序执行所有正则表达式，直到转换成功`, optional: [] },
     ],
   },
   {
@@ -108,8 +112,8 @@ export default [
       { name: 'fixed', type: 'String', default: 'false', desc: '列是否固定在左侧或者右侧，true 表示固定在左侧', optional: ['left', 'right'] },
       { name: 'sort', type: 'Boolean|ISort|String', default: 'false', desc: '对应列是否可以排序，可以简单设置true开启默认排序，也可以通过详细配置排序方式，请参考ISort', optional: [] },
       { name: 'filter', type: 'Boolean|String|IFilter', default: 'false', desc: '数据过滤的选项,可以简单设置true开启默认过滤。可以通过详细配置排序方式，请参考IFilter', optional: [] },
-      { name: 'colspan', type: 'Number|Function', default: 1, desc: '规定单元格可横跨的列数', optional: [] },
-      { name: 'rowspan', type: 'Number|Function', default: 1, desc: '规定单元格可横跨的行数', optional: [] },
+      { name: 'colspan', type: 'Number|Function', default: 1, desc: '规定单元格可横跨的列数,数值类型或者函数：({ column, colIndex, row, rowIndex }) => number', optional: [] },
+      { name: 'rowspan', type: 'Number|Function', default: 1, desc: '规定单元格可横跨的行数,数值类型或者函数：({ column, colIndex, row, rowIndex }) => number', optional: [] },
       { name: 'index', type: 'Number', default: undefined, desc: '自定义表格列所在排序', optional: [] },
       { name: 'align', type: 'left|center|right|""', default: '--', desc: '列齐方式', optional: [] },
       { name: 'explain', type: 'Boolean | IColumnExplain', default: 'false', desc: '解释说明: 当表格中的字段或数据需要做解释说明时，可增加 [下划线] 提示，hover 可查看解释说明的 tooltips', optional: [] },

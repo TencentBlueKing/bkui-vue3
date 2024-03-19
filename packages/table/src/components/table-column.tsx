@@ -85,6 +85,9 @@ export default defineComponent({
   mounted() {
     this.updateColumnDefine();
   },
+  updated() {
+    this.updateColumnDefineByParent();
+  },
   methods: {
     updateColumnDefine(unmounted = false) {
       if (unmounted) {
