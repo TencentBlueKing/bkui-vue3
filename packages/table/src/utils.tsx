@@ -233,7 +233,7 @@ const getRegExp = (val: string | number | boolean, flags = 'ig') =>
  * @param index 当前行Index
  * @returns
  */
-export const getRowText = (row: any, key: string, format: string[] | (() => string | number | boolean)[]) => {
+export const getRowText = (row: any, key: string, format?: string[] | (() => string | number | boolean)[]) => {
   let result;
   if (typeof row === 'string' || typeof row === 'number' || typeof row === 'boolean') {
     result = row;
