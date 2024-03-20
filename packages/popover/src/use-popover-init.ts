@@ -107,11 +107,16 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
     }
   };
 
+  const getClosestFullscreenElement = (elment: HTMLElement) => {
+    return elment?.closest('[data-fllsrn-id]') ?? elment;
+  };
+
   const updateBoundary = () => {
     const { elReference, root } = resolvePopElements();
     if (isFullscreen.value) {
       const { parentNode } = elReference || root || {};
-      boundary.value = fullScreenTarget?.value || parentNode;
+      boundary.value = fullScreenTarget?.value ?? getClosestFullscreenElement(parentNode);
+
       return;
     }
 

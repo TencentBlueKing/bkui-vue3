@@ -29,6 +29,7 @@ import Button from '@bkui-vue/button';
 import Checkbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { Funnel } from '@bkui-vue/icon';
+import Input from '@bkui-vue/input';
 import Popover from '@bkui-vue/popover';
 import { classes, PropTypes, RenderType } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
@@ -262,7 +263,7 @@ export default defineComponent({
           content: () => (
             <div class={headFilterContentClass}>
               <div style='padding: 4px 10px;'>
-                <bk-input v-model={searchValue.value}></bk-input>
+                <Input v-model={searchValue.value}></Input>
               </div>
               <BkCheckboxGroup class='content-list'>
                 <VirtualRender

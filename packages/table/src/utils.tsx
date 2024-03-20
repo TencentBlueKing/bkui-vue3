@@ -29,6 +29,7 @@ import objGet from 'lodash/get';
 import throttle from 'lodash/throttle';
 import ResizeObserver from 'resize-observer-polyfill';
 import { v4 as uuidv4 } from 'uuid';
+import { isProxy, toRaw } from 'vue';
 
 import { BORDER_OPTION, BORDER_OPTIONS, SORT_OPTION, TABLE_ROW_ATTRIBUTE } from './const';
 import { Column, GroupColumn, ISortPropShape, TablePropTypes } from './props';
@@ -221,6 +222,9 @@ export const resolveHeadConfig = (props: TablePropTypes) => {
   return Object.assign({}, { isShow: showHead, height: headHeight }, thead);
 };
 
+const getRegExp = (val: string | number | boolean, flags = 'ig') =>
+  new RegExp(`${val}`.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&'), flags);
+
 /**
  * 获取当前行指定列的内容
  * @param row 当前行
@@ -229,23 +233,23 @@ export const resolveHeadConfig = (props: TablePropTypes) => {
  * @param index 当前行Index
  * @returns
  */
-export const getRowText = (row: any, key: string, format: string[] | (() => string | number | boolean)[]) => {
+export const getRowText = (row: any, key: string, format?: string[] | (() => string | number | boolean)[]) => {
   let result;
   if (typeof row === 'string' || typeof row === 'number' || typeof row === 'boolean') {
     result = row;
   }
 
-  const getRegExp = (val: string | number | boolean, flags = 'ig') =>
-    new RegExp(`${val}`.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&'), flags);
+  if (typeof row === 'object') {
+    result = objGet(row, key);
+  }
 
-  result = objGet(row, key);
   if (format?.length) {
     format.forEach(reg => {
       if (typeof reg === 'function') {
         result = reg(result, row, key);
-      } else {
+      } else if (typeof result === 'string') {
         const matches = result.match(typeof reg === 'string' ? getRegExp(reg) : reg);
-        result = matches[1] ?? result;
+        result = matches?.[1] ?? result;
       }
     });
 
@@ -401,12 +405,12 @@ export const resolveCellSpan = (column: Column, colIndex: number, row: any, rowI
 };
 
 export const skipThisColumn = (columns: Column[], colIndex: number, row: any, rowIndex: number) => {
-  let skip = false;
+  let skip: number | boolean = false;
 
   for (let i = colIndex; i > 0; i--) {
     const colspan = resolveColumnSpan(columns[i], i, row, rowIndex, 'colspan');
     if (colspan > 1) {
-      skip = colspan - 1 + i >= colIndex;
+      skip = colspan - 1;
       break;
     }
   }
@@ -506,4 +510,12 @@ export const resolveColumnSortProp = (col: Column, props: TablePropTypes) => {
     scope: sortScope,
     active: !!col.sort,
   };
+};
+
+export const getRawData = data => {
+  if (isProxy(data)) {
+    return toRaw(data);
+  }
+
+  return data;
 };

@@ -37,6 +37,7 @@ type IHeadSortPropType = {
   column: Column;
   defaultSort: SORT_OPTION;
   active: boolean;
+  sortValFormat: any;
 };
 
 export default defineComponent({
@@ -45,6 +46,7 @@ export default defineComponent({
     column: IColumnType,
     defaultSort: PropTypes.oneOf(SORT_OPTIONS).def(SORT_OPTION.NULL),
     active: PropTypes.bool,
+    sortValFormat: PropTypes.arrayOf(PropTypes.any).def(['']),
   },
   emits: ['change'],
   setup(props: IHeadSortPropType, { emit, expose }) {
