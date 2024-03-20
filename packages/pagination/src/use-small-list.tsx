@@ -117,7 +117,6 @@ export default () => {
    */
   const handlePageEditorBlur = () => {
     isFocused.value = false;
-    inputRef.value.textContent = `${inputMemo}`;
     if (inputMemo !== localCurrent.value) {
       localCurrent.value = inputMemo;
     }
