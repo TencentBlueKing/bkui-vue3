@@ -23,53 +23,16 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import Popover from '@bkui-vue/popover';
-import { SelectedTypeEnum } from '@bkui-vue/shared';
 
-import Option from './option';
-import Group from './optionGroup';
-import SelectTagInput from './selectTagInput';
+/**
+ * Source: <https://github.com/creeperyang/pinyin>
+ */
+import pinyin from './core';
+import patcher56L from './patchers/56l';
 
-export interface OptionInstanceType extends InstanceType<typeof Option> {
-  optionID: string;
-}
-export type GroupInstanceType = InstanceType<typeof Group>;
-export type PopoverInstanceType = InstanceType<typeof Popover>;
-export type SelectTagInputType = InstanceType<typeof SelectTagInput>;
-
-export interface ISelectContext {
-  multiple?: boolean;
-  selected: ISelected[];
-  activeOptionValue: any;
-  showSelectedIcon: boolean;
-  selectedStyle: SelectedTypeEnum;
-  curSearchValue: string;
-  highlightKeyword: boolean;
-  register(key: any, option: OptionInstanceType): any;
-  unregister(key: any): any;
-  registerGroup(key: any, option: GroupInstanceType): any;
-  unregisterGroup(key: any): any;
-  handleOptionSelected(option: OptionInstanceType): void;
-  handleGetLabelByValue(value: any): string | number;
+// Patch dict for icudt56l.dat related env, such as safari|node v4.
+if (pinyin.isSupported() && patcher56L.shouldPatch(pinyin.genToken)) {
+  pinyin.patchDict(patcher56L);
 }
 
-export interface IOptionGroupContext {
-  disabled: boolean;
-  groupCollapse: boolean;
-  register(key: any, option: OptionInstanceType): any;
-  unregister(key: any): any;
-}
-
-export interface ISelectState {
-  currentPlaceholder: string;
-  currentSelectedLabel: string;
-}
-
-export interface IPopoverConfig {
-  popoverMinWidth: number;
-}
-
-export interface ISelected {
-  value: string;
-  label: string | number;
-}
+export default pinyin;

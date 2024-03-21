@@ -62,7 +62,37 @@
   const selectedValue = ref({ b: 456 });
 
   const listValue = ref(1);
-  const datasourceList = ref([]);
+  const datasourceList = ref([
+    {
+      value: 'climbing',
+      label: '爬山',
+    },
+    {
+      value: { a: 123 },
+      label: '跑步',
+    },
+    {
+      value: { b: 456 },
+      label: '未知',
+    },
+    {
+      value: 'fitness',
+      label: '健身',
+    },
+    {
+      value: 'bike',
+      label: '骑车',
+    },
+    {
+      value: 'dancing',
+      label: '跳舞',
+    },
+    {
+      value: 'sleep',
+      label: '睡觉',
+      disabled: true,
+    },
+  ]);
 
   const handleSelect = (v) => {
     console.log(v);

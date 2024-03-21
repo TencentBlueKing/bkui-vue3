@@ -36,3 +36,5 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
   unobserve: jest.fn(),
   disconnect: jest.fn(),
 }));
+
+global.PointerEvent = jest.fn().mockImplementation(() => ({}));
