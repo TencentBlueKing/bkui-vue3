@@ -168,6 +168,15 @@
         padding-left: 0;
       }
 
+      &-wrapper {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        overflow: hidden;
+        gap: 4px;
+        padding: 4px 0;
+      }
+
       &.collapse-tag .@{bk-prefix}-select-tag-wrapper {
         height: 30px;
       }
@@ -178,13 +187,6 @@
         height: auto;
         min-height: 32px;
         flex-wrap: wrap;
-      }
-
-      &-wrapper {
-        display: flex;
-        align-items: center;
-        flex-wrap: wrap;
-        overflow: hidden;
       }
 
       &:not(.is-disabled):hover {
@@ -223,7 +225,7 @@
         width: 1%;
         height: 22px;
         padding: 0;
-        margin: 2px 5px 4px 0;
+        margin: 0px 5px 0px 0;
         background-color: transparent;
         border: none;
         flex-grow: 1;
@@ -267,7 +269,7 @@
     padding: 0 10px;
     margin-right: 10px;
     color: #63656e;
-    background-color: #f5f7fa;
+    background-color: @select-hover-color;
     border-right: 1px solid #c4c6cc;
     align-items: center;
   }
@@ -331,6 +333,30 @@
           padding: 4px 0;
         }
 
+        .@{bk-prefix}-select-all {
+          padding: 4px 0;
+          border-bottom: 1px solid @border-color;
+          .wrapper {
+            display: flex;
+            align-items: center;
+            height: 32px;
+            padding: 0 12px;
+            cursor: pointer;
+            color: @default-color;
+            &:hover {
+              background-color: @select-hover-color;
+            }
+            &.active {
+              background-color: @select-active-color;
+              color: @primary-color;
+            }
+            .select-all-icon {
+              margin-right: 4px;
+              font-size: 16px;
+            }
+          }  
+        }
+
         .@{bk-prefix}-select-option {
           position: relative;
           display: flex;
@@ -360,15 +386,19 @@
 
           &-item {
             .ellipsis();
+            .is-keyword {
+              display: inline-flex;
+              color: @primary-color;
+            }
           }
 
           &.is-hover {
-            background-color: #f5f7fa;
+            background-color: @select-hover-color;
           }
 
           &:hover {
             color: #63656e;
-            background-color: #f5f7fa;
+            background-color: @select-hover-color;
           }
 
           &.is-selected:not(.is-checkbox) {
@@ -390,11 +420,11 @@
             }
 
             &.is-hover {
-              background-color: #f5f7fa;
+              background-color: @select-hover-color;
             }
 
             &:hover {
-              background-color: #f5f7fa;
+              background-color: @select-hover-color;
             }
           }
         }

@@ -128,7 +128,7 @@ describe('Select.tsx', () => {
               disabled: true,
             },
             {
-              value: undefined,
+              value: { a: 1 },
               label: '标签3',
             },
             {
@@ -144,7 +144,7 @@ describe('Select.tsx', () => {
     for (const item of optionInstances) {
       await item.trigger('click');
     }
-    expect(wrapper.vm.selectValue).toEqual([1, undefined, null]);
+    expect(wrapper.vm.selectValue).toEqual([1, { a: 1 }, null]);
     wrapper.unmount();
   });
 
@@ -334,7 +334,7 @@ describe('Select.tsx', () => {
         };
       },
     });
-    const tags = wrapper.findAllComponents('.bk-tag');
+    const tags = wrapper.findAllComponents('.bk-tag').filter(com => com.isVisible());
     expect(tags).toHaveLength(2);
     tags[0].find('.bk-tag-close').trigger('click');
     expect(wrapper.vm.seletValue).toEqual([2]);
@@ -349,7 +349,7 @@ describe('Select.tsx', () => {
         BkOption,
       },
       template: `
-        <BkSelect v-model="seletValue" filterable>
+        <BkSelect v-model="seletValue" input-search filterable>
           <BkOption v-for="item in options" :id="item.value" :name="item.label"></BkOption>
         </BkSelect>
       `,
@@ -381,7 +381,7 @@ describe('Select.tsx', () => {
     input.setValue('test2');
     const select = wrapper.findComponent(BkSelect);
     setTimeout(() => {
-      expect(select.vm.searchKey).toBe('test2');
+      expect(select.vm.curSearchValue).toBe('test2');
       expect(wrapper.findAllComponents({ name: 'Option' }).filter(com => com.vm.visible).length).toBe(2);
       wrapper.unmount();
       done();
@@ -396,7 +396,7 @@ describe('Select.tsx', () => {
         BkOption,
       },
       template: `
-        <BkSelect v-model="seletValue" :input-search="false" multiple filterable multiple-mode="tag">
+        <BkSelect v-model="seletValue" multiple filterable multiple-mode="tag">
           <BkOption v-for="item in options" :id="item.value" :name="item.label"></BkOption>
         </BkSelect>
       `,
@@ -428,7 +428,7 @@ describe('Select.tsx', () => {
     input.setValue('test4');
     const select = wrapper.findComponent(BkSelect);
     setTimeout(() => {
-      expect(select.vm.searchKey).toBe('test4');
+      expect(select.vm.searchValue).toBe('test4');
       expect(wrapper.findAllComponents({ name: 'Option' }).filter(com => com.vm.visible).length).toBe(1);
       wrapper.unmount();
       done();

@@ -36,6 +36,7 @@ import {
   onBeforeUnmount,
   reactive,
   toRefs,
+  VNode,
 } from 'vue';
 
 import Checkbox from '@bkui-vue/checkbox';
@@ -75,27 +76,40 @@ export default defineComponent({
     const isHover = computed(() => select?.activeOptionValue === optionID.value);
     const showSelectedIcon = computed(() => select?.showSelectedIcon && multiple.value);
     const selectedStyle = computed(() => select?.selectedStyle);
-    const isShowAll = computed(() => select?.isShowAll);
-    const allOptionId = computed(() => select?.allOptionId);
-    const isDisabled = computed(() => {
-      if (!isShowAll.value || optionID.value === allOptionId.value) return disabled.value;
-      // 全部选项需要禁用掉其他选项
-      const exitAllOptionId = select?.selected?.some(item => isEqual(item.value, allOptionId.value));
-      return disabled.value || (isShowAll.value && exitAllOptionId);
-    });
+    const searchValue = computed(() => select?.curSearchValue);
+    const highlightKeyword = computed(() => select?.highlightKeyword);
 
     const handleOptionClick = () => {
-      if (isDisabled.value) return;
-      if (isShowAll.value && allOptionId.value === optionID.value) {
-        // 全部选项
-        select?.handleToggleAll();
-      } else {
-        select?.handleOptionSelected(proxy);
-      }
+      if (disabled.value) return;
+      select?.handleOptionSelected(proxy);
     };
 
     const handleMouseEnter = () => {
       select.activeOptionValue = optionID.value;
+    };
+
+    const transformNode = (str: string): string | (string | VNode)[] => {
+      if (!str) return str;
+      let keyword = searchValue.value;
+      const len = keyword.length;
+      if (!keyword?.trim().length || !str.toLocaleLowerCase().includes(keyword.toLocaleLowerCase())) return str;
+      const list = [];
+      let lastIndex = -1;
+      keyword = keyword.replace(/([.*/]{1})/gim, '\\$1');
+      str.replace(new RegExp(`${keyword}`, 'igm'), (key, index) => {
+        if (list.length === 0 && index !== 0) {
+          list.push(str.slice(0, index));
+        } else if (lastIndex >= 0) {
+          list.push(str.slice(lastIndex + key.length, index));
+        }
+        list.push(<span class='is-keyword'>{key}</span>);
+        lastIndex = index;
+        return key;
+      });
+      if (lastIndex >= 0) {
+        list.push(str.slice(lastIndex + len));
+      }
+      return list.length ? list : str;
     };
 
     onBeforeMount(() => {
@@ -119,16 +133,17 @@ export default defineComponent({
       selectedStyle,
       optionName,
       optionID,
-      isDisabled,
+      highlightKeyword,
       handleOptionClick,
       handleMouseEnter,
       resolveClassName,
+      transformNode,
     };
   },
   render() {
     const selectItemClass = classes({
       'is-selected': this.selected,
-      'is-disabled': this.isDisabled,
+      'is-disabled': this.disabled,
       'is-multiple': this.multiple,
       'is-hover': this.isHover,
       'is-checkbox': this.selectedStyle === SelectedTypeEnum.CHECKBOX,
@@ -143,7 +158,7 @@ export default defineComponent({
       >
         {this.showSelectedIcon && this.selectedStyle === SelectedTypeEnum.CHECKBOX && (
           <Checkbox
-            disabled={this.isDisabled}
+            disabled={this.disabled}
             class={this.resolveClassName('select-checkbox')}
             modelValue={this.selected}
           />
@@ -153,7 +168,7 @@ export default defineComponent({
             class={this.resolveClassName('select-option-item')}
             title={String(this.optionName)}
           >
-            {this.optionName}
+            {this.highlightKeyword ? this.transformNode(String(this.optionName)) : this.optionName}
           </span>
         )}
         {this.showSelectedIcon && this.selected && this.selectedStyle === SelectedTypeEnum.CHECK && (
@@ -161,7 +176,7 @@ export default defineComponent({
             class={this.resolveClassName('select-selected-icon')}
             width={22}
             height={22}
-          ></Done>
+          />
         )}
       </li>
     );
