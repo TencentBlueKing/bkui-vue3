@@ -61,4 +61,9 @@
 
 * **[fix]**:
     - fix: 修复构建时部分js没有去除ts类型问题
-    - bugfix(table): rowspan fn 计算错误 & 列排序不生效 #1610
+    - bugfix(table): rowspan fn 计算错误 & 列排序不生效
+
+### 1.0.3-beta.11
+
+* **[feat]**:
+    - feature(select): 优化全部和全选交互 & 支持拼音搜索 & 支持高亮关键字
