@@ -67,3 +67,9 @@
 
 * **[feat]**:
     - feature(select): 优化全部和全选交互 & 支持拼音搜索 & 支持高亮关键字
+
+### 1.0.3-beta.12
+
+* **[feat]**:
+    - docs(table): 完善示例文档
+    - feature(infobox): 确定时await函数时默认加上loading
