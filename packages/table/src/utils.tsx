@@ -405,7 +405,7 @@ export const resolveCellSpan = (column: Column, colIndex: number, row: any, rowI
 };
 
 export const skipThisColumn = (columns: Column[], colIndex: number, row: any, rowIndex: number) => {
-  let skip = false;
+  let skip: number | boolean = false;
 
   for (let i = colIndex; i > 0; i--) {
     const colspan = resolveColumnSpan(columns[i], i, row, rowIndex, 'colspan');

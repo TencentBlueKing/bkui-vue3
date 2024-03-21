@@ -43,6 +43,7 @@ import { ITaskItem } from '../typings/task';
 
 export const BKUI_DIR = resolve(__dirname, '../../../');
 export const COMPONENT_URL = resolve(BKUI_DIR, './packages');
+export const PRESET_URL = resolve(BKUI_DIR, './preset');
 export const DIST_URL = resolve(BKUI_DIR, './dist');
 export const LIB_URL = resolve(BKUI_DIR, './lib');
 export const THEME_LESS_URL = resolve(COMPONENT_URL, 'styles/src/themes/themes.less');
