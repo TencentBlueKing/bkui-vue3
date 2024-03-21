@@ -65,6 +65,7 @@ const InfoBox = (config: Partial<ModalFuncProps>) => {
   const dialog = defineComponent({
     name: 'DialogConfirm',
     setup(_props, { expose }) {
+      let isLoading = false;
       const beforeHiddenFn = [];
       const resolveUserCallbackFnBeforeClose = async userCallbackFn => {
         if (typeof userCallbackFn === 'function') {
@@ -84,7 +85,9 @@ const InfoBox = (config: Partial<ModalFuncProps>) => {
       };
 
       const onConfirm = async () => {
-        resolveUserCallbackFnBeforeClose(modalFuncProps.value?.onConfirm);
+        isLoading = true;
+        await resolveUserCallbackFnBeforeClose(modalFuncProps.value?.onConfirm);
+        isLoading = false;
       };
 
       function update(newValue: ModalFuncProps) {
@@ -140,6 +143,7 @@ const InfoBox = (config: Partial<ModalFuncProps>) => {
             headerAlign: 'center',
             footerAlign: 'center',
             fullscreen: false,
+            isLoading,
             ...modalFuncProps.value,
             isShow: isShow.value,
             transfer: false,

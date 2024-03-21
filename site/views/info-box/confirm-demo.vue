@@ -10,7 +10,7 @@
 </template>
 
 <script setup>
-  import { InfoBox } from 'bkui-vue';
+  import InfoBox from '@bkui-vue/info-box';
 
   const handleDefault = () => {
     InfoBox({

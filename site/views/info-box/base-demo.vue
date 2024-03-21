@@ -25,7 +25,7 @@
 
 <script setup>
 
-  import { InfoBox } from 'bkui-vue';
+  import InfoBox from '@bkui-vue/info-box';
   let instance;
   const handleDefault1 = () => {
     instance = InfoBox({
