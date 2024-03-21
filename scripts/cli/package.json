@@ -7,6 +7,7 @@
   "scripts": {
     "dist": "ts-node index.ts dist",
     "lib": "ts-node index.ts lib",
+    "preset": "tsc -p ./tsconfig.preset.json",
     "release": "ts-node index.ts release"
   },
   "devDependencies": {
