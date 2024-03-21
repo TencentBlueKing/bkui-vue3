@@ -58,7 +58,7 @@
         label: `滚动加载${new Date().getTime()}`,
       });
       scrollLoading.value = false;
-    }, 3000);
+    }, 1000);
   };
 </script>
 <style scoped>

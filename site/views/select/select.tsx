@@ -279,7 +279,7 @@ const propsJson: IPropsTableItem[] = [
     name: 'showSelectedIcon',
     type: 'boolean',
     default: 'true',
-    desc: '是否展示多选时勾选的ICON',
+    desc: '是否隐藏selectedStyle的样式',
     optional: ['true', 'false'],
   },
   {
@@ -336,6 +336,18 @@ const propsJson: IPropsTableItem[] = [
     type: 'boolean/function',
     default: 'true',
     desc: '是否根据输入项进行筛选。当其为一个函数时，会接收 searchValue option 两个参数，当 option 符合筛选条件时，应返回 true，反之则返回 false',
+  },
+  {
+    name: 'searchWithPinyin',
+    desc: '是否开启拼音搜索',
+    type: 'boolean',
+    default: 'true',
+  },
+  {
+    name: 'highlightKeyword',
+    desc: '高亮搜索关键字',
+    type: 'boolean',
+    default: 'false',
   },
 ];
 const eventJson = [

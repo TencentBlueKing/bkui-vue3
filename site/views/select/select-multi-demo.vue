@@ -20,8 +20,10 @@
       class="bk-select"
       multiple
       selected-style="checkbox"
+      show-select-all
       show-all
-      allOptionId="all"
+      all-option-id="all"
+      filterable
     >
       <bk-option
         v-for="(item, index) in datasource"
@@ -37,6 +39,7 @@
       filterable
       multiple
       show-select-all
+      show-all
       multiple-mode="tag"
       @tag-remove="tagRemove"
     >
