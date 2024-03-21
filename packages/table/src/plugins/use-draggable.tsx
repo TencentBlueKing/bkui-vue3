@@ -35,6 +35,35 @@ export default (props: TablePropTypes, resp: ITableResponse, ctx: SetupContext<a
     return {};
   }
 
+  const placeDiv = document.createElement('div');
+  placeDiv.style.setProperty('height', '20px');
+  placeDiv.style.setProperty('width', '100%');
+  placeDiv.style.setProperty('background', '#E2EDFF');
+  placeDiv.style.setProperty('cursor', 'move');
+  ['dragenter', 'dragover'].forEach(type => {
+    placeDiv.addEventListener(type, event => {
+      event.preventDefault();
+      event.stopPropagation();
+      (event as any).dataTransfer.dropEffect = 'move';
+    });
+  });
+
+  let lastDragRow: HTMLElement | null = null;
+
+  const insertPlaceDiv = (target: HTMLElement, placement) => {
+    if (placement === '--top') {
+      target.parentNode.insertBefore(placeDiv, target);
+      return;
+    }
+
+    if (target.nextElementSibling === null) {
+      target.parentNode.appendChild(placeDiv);
+      return;
+    }
+
+    target.parentNode.insertBefore(placeDiv, target.nextElementSibling);
+  };
+
   const beforeEventFire = (fn?: () => void) => {
     if (props.rowDraggable) {
       fn?.();
@@ -48,9 +77,10 @@ export default (props: TablePropTypes, resp: ITableResponse, ctx: SetupContext<a
   const setTargetRowPlacement = (target: HTMLElement, event: DragEvent) => {
     const { y } = event;
     const { top, bottom } = target.getBoundingClientRect();
-    const position = y - top > bottom - y ? '--bottom' : '--top';
+    const placement = y - top > bottom - y ? '--bottom' : '--top';
     removeDragClass(target);
-    target.classList.add(position);
+    target.classList.add(placement);
+    insertPlaceDiv(target, placement);
   };
 
   const removeDragClass = (target: HTMLElement, classList = ['--bottom', '--top']) => {
@@ -60,20 +90,28 @@ export default (props: TablePropTypes, resp: ITableResponse, ctx: SetupContext<a
   const onDragstart = (event: DragEvent) => {
     beforeEventFire(() => {
       const target = getTargetRow(event);
+
+      placeDiv.style.setProperty('height', `${target.offsetHeight}px`);
+      placeDiv.style.setProperty('width', `${target.offsetWidth}px`);
+
       target.classList.add('--drag-start');
+      event.dataTransfer.setDragImage(target, 0, 0);
       event.dataTransfer.setData('text/plain', null);
-      event.dataTransfer.dropEffect = 'copy';
+      event.dataTransfer.dropEffect = 'move';
       const { rowIndex } = (event.target as HTMLElement).dataset;
       event.dataTransfer.setData('data-row-index', rowIndex);
     });
   };
 
   const onDragenter = (event: DragEvent) => {
+    const target = getTargetRow(event);
+    event.preventDefault();
+    event.stopPropagation();
     beforeEventFire(() => {
       event.dataTransfer.dropEffect = 'move';
-      const target = getTargetRow(event);
       target.classList.add('--drag-enter');
       setTargetRowPlacement(target, event);
+      lastDragRow = target;
     });
   };
 
@@ -86,23 +124,32 @@ export default (props: TablePropTypes, resp: ITableResponse, ctx: SetupContext<a
 
   const onDragover = (event: DragEvent) => {
     event.preventDefault();
+    event.stopPropagation();
     event.dataTransfer.dropEffect = 'move';
     const target = getTargetRow(event);
     setTargetRowPlacement(target, event);
   };
 
-  const onDrop = (event: DragEvent) => {
+  const onDragend = (event: DragEvent) => {
     event.preventDefault();
     event.stopPropagation();
-    const target = getTargetRow(event);
+    placeDiv.remove();
+
+    if (!lastDragRow) {
+      return;
+    }
+
+    const target = lastDragRow;
     const { rowIndex } = target.dataset;
     let targetIndex = Number(rowIndex);
-    const sourceIndex = event.dataTransfer.getData('data-row-index');
+    const sourceIndex = (event.target as any).dataset?.rowIndex;
     if (target.classList.contains('--bottom')) {
       targetIndex = targetIndex + 1;
     }
     resp.changePageRowIndex(Number(sourceIndex), targetIndex);
     removeDragClass(target, ['--drag-enter', '--bottom', '--top']);
+
+    lastDragRow = null;
     ctx.emit(EMIT_EVENTS.DRAG_END, { sourceEvent: event, data: resp.pageData });
   };
 
@@ -111,6 +158,6 @@ export default (props: TablePropTypes, resp: ITableResponse, ctx: SetupContext<a
     onDragleave,
     onDragstart,
     onDragover,
-    onDrop,
+    onDragend,
   };
 };
