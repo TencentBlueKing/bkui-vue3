@@ -6,6 +6,7 @@
       multiple
       filterable
       :filter-option="filterOption"
+      @search-change="searchChange"
     >
       <bk-option
         v-for="(item, index) in datasource"
@@ -127,6 +128,10 @@
   const searchDataSource = (key) => {
     searchList.value = datasource.value.filter(item => item.label.includes(key));
   };
+
+  function searchChange(value) {
+    console.log(value);
+  }
 
   onMounted(() => {
     setTimeout(() => {
