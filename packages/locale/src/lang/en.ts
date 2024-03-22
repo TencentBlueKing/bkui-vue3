@@ -141,6 +141,7 @@ const en = {
   },
   input: {
     placeholder: 'Please input',
+    maxlengthLimitTips: 'Reached character limit',
   },
   tagInput: {
     placeholder: 'Please input and press ENTER to finish',

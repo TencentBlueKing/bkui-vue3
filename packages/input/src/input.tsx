@@ -276,16 +276,21 @@ export default defineComponent({
       }),
     );
 
-    const tooltips = computed(() =>
-      props.showOverflowTooltips && isOverflow.value && props.modelValue
+    const tooltips = computed(() => {
+      if (showMaxLimit.value && ceilMaxLength.value - modelValueLength.value === 0) {
+        return {
+          content: t.value.maxlengthLimitTips,
+        };
+      }
+      return props.showOverflowTooltips && isOverflow.value && props.modelValue
         ? {
             content: props.modelValue,
             sameWidth: true,
           }
         : {
             disabled: true,
-          },
-    );
+          };
+    });
 
     const showMaxLimit = computed(() => {
       return typeof props.maxlength === 'number' || typeof props.maxcharacter === 'number';
