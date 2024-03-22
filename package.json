@@ -1,6 +1,7 @@
 {
   "name": "bkui-vue",
-  "version": "1.0.3-beta.7",
+  "version": "1.0.3-beta.12",
+  "private": true,
   "workspaces": {
     "packages": [
       "packages/!(**.bak)*",
@@ -34,7 +35,8 @@
     "build": "run-s build:dist build:lib",
     "build:site": "lerna run --stream --scope site build && cp -r ./site/views/ ./site/dist/views",
     "build:dist": "rimraf dist && lerna run --stream --scope cli dist",
-    "build:lib": "rimraf lib && lerna run --stream --scope cli lib",
+    "build:lib": "npm run build:preset && rimraf lib && lerna run --stream --scope cli lib && rimraf preset",
+    "build:preset": "rimraf preset && lerna run --stream --scope cli preset",
     "help:release": "lerna run --stream --scope cli release",
     "release": "yarn build && yarn help:release",
     "analyze:lib": "rimraf lib && lerna run --stream --scope cli lib -- -a",

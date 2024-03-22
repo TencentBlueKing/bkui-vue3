@@ -162,7 +162,7 @@ export const DATA_COLUMNS = [
   {
     label: (column, index) => `状态-${index}-${column.field}`,
     field: 'status',
-    render: ({ row }) => `${row.status}-${row.msg}`,
+    render: ({ row }) => `${row.status}-${row.priority}`,
     sort: true,
   },
 ];

@@ -97,6 +97,7 @@ export { default as Share } from '../icons/share';
 export { default as Spinner } from '../icons/spinner';
 export { default as Success } from '../icons/success';
 export { default as SwitcherLoading } from '../icons/switcher-loading';
+export { default as TextAll } from '../icons/text-all';
 export { default as TextFile } from '../icons/text-file';
 export { default as TextFill } from '../icons/text-fill';
 export { default as Transfer } from '../icons/transfer';

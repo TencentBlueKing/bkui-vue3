@@ -13,6 +13,10 @@
         <template #expandContent>
           <span>Content</span>
         </template>
+
+        <template #expandRow="row">
+          <p>自定义折叠内容 - {{ row.status }}</p>
+        </template>
       </bk-table>
     </div>
     <div

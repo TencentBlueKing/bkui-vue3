@@ -44,7 +44,7 @@ export default (props: TablePropTypes, resp: ITableResponse, ctx: SetupContext<a
     placeDiv.addEventListener(type, event => {
       event.preventDefault();
       event.stopPropagation();
-      event.dataTransfer.dropEffect = 'move';
+      (event as any).dataTransfer.dropEffect = 'move';
     });
   });
 
