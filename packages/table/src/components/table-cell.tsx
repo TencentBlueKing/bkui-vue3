@@ -57,14 +57,15 @@ export default defineComponent({
 
     const resolveSetting = () => {
       if (/boolean|object/.test(typeof props.column.showOverflowTooltip) && props.column.showOverflowTooltip !== null) {
+        const { content = '', mode = '', popoverOption = {} } = props.column.showOverflowTooltip;
         const result = {
           showOverflowTooltip: {
-            content: '',
+            content,
             disabled: !props.column.showOverflowTooltip,
-            mode: undefined,
+            mode,
             resizerWay: undefined,
             watchCellResize: undefined,
-            popoverOption: {},
+            popoverOption,
           },
         };
         if (props.parentSetting !== null && typeof props.parentSetting === 'object') {
@@ -82,10 +83,11 @@ export default defineComponent({
       return { showOverflowTooltip: props.parentSetting };
     };
 
-    const { showOverflowTooltip = false } = resolveSetting();
     let bkEllipsisIns = null;
 
     const resolveTooltipOption = () => {
+      const { showOverflowTooltip = false } = resolveSetting();
+
       let disabled = true;
       let { resizerWay } = props;
       let content = () => refRoot.value.innerText;
