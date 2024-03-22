@@ -145,7 +145,7 @@ export default defineComponent({
               index = index + 1;
             }
 
-            if (node.children?.length && skipValidateKey0) {
+            if (node.children?.length && skipValidateKey0 && node.type?.name !== 'Table') {
               reduceColumns(node.children);
             }
           });
