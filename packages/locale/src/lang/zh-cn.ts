@@ -143,6 +143,7 @@ const zhCn: Language = {
   },
   input: {
     placeholder: '请输入',
+    maxlengthLimitTips: '已达到字数上限',
   },
   tagInput: {
     placeholder: '请输入并按Enter结束',

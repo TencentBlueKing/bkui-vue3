@@ -84,6 +84,12 @@ export const compilerLibDir = async (dir: string): Promise<any> => {
         } else if (/\.\.\/icons\//gim.test(chunk) && /lib\/icon\/src\/index\.d\.ts$/.test(url)) {
           chunk = chunk.replace(/\.\.\/icons\//gim, '../icon/');
         }
+        if (chunk.match(/\/src\//)) {
+          const srcList = chunk.match(/(['"])\.\.\/(\.\.\/)?.*src.+\1/gim);
+          srcList?.forEach(v => {
+            chunk = chunk.replace(v, v.replace('../../', '../').replace('/src', ''));
+          });
+        }
         writeFileRecursive(resolve(parse(url).dir, '../', parse(url).base), chunk);
         if (index === files.length - 1) {
           rmdirSync(parse(url).dir, { recursive: true });
