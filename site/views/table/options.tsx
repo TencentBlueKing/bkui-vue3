@@ -122,7 +122,11 @@ export const DATA_COLUMNS = [
     className: () => 'custom-class',
   },
   {
-    label: '名称/内网IP',
+    label: () => (
+      <div>
+        <i>H</i>名称/内网IP
+      </div>
+    ),
     field: 'ip',
     width: 100,
     showOverflowTooltip: {
@@ -153,6 +157,10 @@ export const DATA_COLUMNS = [
     label: '优先级',
     field: 'priority',
     sort: true,
+    filter: {
+      list: [],
+      checked: [],
+    },
   },
   {
     label: '完成度',
