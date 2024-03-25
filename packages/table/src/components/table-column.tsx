@@ -107,7 +107,20 @@ export default defineComponent({
       const fn = () => {
         // @ts-ignore
         const selfVnode = (this as any)._;
-        const colList = selfVnode.parent.vnode.children.default() || [];
+        const getTableNode = () => {
+          const parentVnode = selfVnode.parent;
+          if (parentVnode.type?.name === 'Table') {
+            return parentVnode.vnode;
+          }
+          return getTableNode();
+        };
+
+        const tableNode = getTableNode();
+        if (!tableNode) {
+          return;
+        }
+
+        const colList = tableNode.children.default() || [];
 
         const sortColumns = [];
         let index = 0;
@@ -132,7 +145,7 @@ export default defineComponent({
               index = index + 1;
             }
 
-            if (node.children?.length && skipValidateKey0) {
+            if (node.children?.length && skipValidateKey0 && node.type?.name !== 'Table') {
               reduceColumns(node.children);
             }
           });
