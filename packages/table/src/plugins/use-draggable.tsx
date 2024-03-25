@@ -49,6 +49,7 @@ export default (props: TablePropTypes, resp: ITableResponse, ctx: SetupContext<a
   });
 
   let lastDragRow: HTMLElement | null = null;
+  let lastDragRowClass = '';
 
   const insertPlaceDiv = (target: HTMLElement, placement) => {
     if (placement === '--top') {
@@ -57,7 +58,7 @@ export default (props: TablePropTypes, resp: ITableResponse, ctx: SetupContext<a
     }
 
     if (target.nextElementSibling === null) {
-      target.parentNode.appendChild(placeDiv);
+      target.parentNode.append(placeDiv);
       return;
     }
 
@@ -95,6 +96,7 @@ export default (props: TablePropTypes, resp: ITableResponse, ctx: SetupContext<a
       placeDiv.style.setProperty('width', `${target.offsetWidth}px`);
 
       target.classList.add('--drag-start');
+
       event.dataTransfer.setDragImage(target, 0, 0);
       event.dataTransfer.setData('text/plain', null);
       event.dataTransfer.dropEffect = 'move';
@@ -118,6 +120,7 @@ export default (props: TablePropTypes, resp: ITableResponse, ctx: SetupContext<a
   const onDragleave = (event: DragEvent) => {
     beforeEventFire(() => {
       const target = getTargetRow(event);
+      lastDragRowClass = target.classList.contains('--bottom') ? '--bottom' : '--top';
       removeDragClass(target, ['--drag-enter', '--bottom', '--top']);
     });
   };
@@ -142,14 +145,14 @@ export default (props: TablePropTypes, resp: ITableResponse, ctx: SetupContext<a
     const target = lastDragRow;
     const { rowIndex } = target.dataset;
     let targetIndex = Number(rowIndex);
-    const sourceIndex = (event.target as any).dataset?.rowIndex;
-    if (target.classList.contains('--bottom')) {
+    const sourceIndex = (event.target as HTMLElement).dataset?.rowIndex;
+    if (lastDragRowClass === '--bottom') {
       targetIndex = targetIndex + 1;
     }
     resp.changePageRowIndex(Number(sourceIndex), targetIndex);
-    removeDragClass(target, ['--drag-enter', '--bottom', '--top']);
 
     lastDragRow = null;
+    lastDragRowClass = '';
     ctx.emit(EMIT_EVENTS.DRAG_END, { sourceEvent: event, data: resp.pageData });
   };
 

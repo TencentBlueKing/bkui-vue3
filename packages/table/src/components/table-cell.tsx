@@ -29,7 +29,7 @@ import { toType } from 'vue-types';
 import { bkEllipsisInstance } from '@bkui-vue/directives';
 import { hasOverflowEllipsis, isElement, PropTypes } from '@bkui-vue/shared';
 
-import { IColumnType, IOverflowTooltipPropType, ResizerWay } from '../props';
+import { IColumnType, IOverflowTooltipOption, IOverflowTooltipPropType, ResizerWay } from '../props';
 import { observerResize, resolvePropVal } from '../utils';
 // import
 export default defineComponent({
@@ -57,14 +57,19 @@ export default defineComponent({
 
     const resolveSetting = () => {
       if (/boolean|object/.test(typeof props.column.showOverflowTooltip) && props.column.showOverflowTooltip !== null) {
+        const {
+          content = '',
+          mode = undefined,
+          popoverOption = {},
+        } = props.column.showOverflowTooltip as IOverflowTooltipOption;
         const result = {
           showOverflowTooltip: {
-            content: '',
+            content,
             disabled: !props.column.showOverflowTooltip,
-            mode: undefined,
+            mode,
             resizerWay: undefined,
             watchCellResize: undefined,
-            popoverOption: {},
+            popoverOption,
           },
         };
         if (props.parentSetting !== null && typeof props.parentSetting === 'object') {
@@ -82,10 +87,11 @@ export default defineComponent({
       return { showOverflowTooltip: props.parentSetting };
     };
 
-    const { showOverflowTooltip = false } = resolveSetting();
     let bkEllipsisIns = null;
 
     const resolveTooltipOption = () => {
+      const { showOverflowTooltip = false } = resolveSetting();
+
       let disabled = true;
       let { resizerWay } = props;
       let content = () => refRoot.value.innerText;
