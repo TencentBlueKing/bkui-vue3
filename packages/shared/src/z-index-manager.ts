@@ -82,8 +82,7 @@ class BKZIndexManager {
       return this.storageLayerIndexValue[type];
     }
 
-    this.storageLayerIndexValue[BKLAYERTYPE.MODAL] = this.storageLayerIndexValue[BKLAYERTYPE.MODAL] + 1;
-    return this.storageLayerIndexValue[BKLAYERTYPE.MODAL];
+    this.getNextIndex(BKLAYERTYPE.MODAL);
   }
 
   /** 获取弹窗类型最新zIndex的值 */
