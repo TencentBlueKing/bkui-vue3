@@ -117,7 +117,7 @@ export default (props: TablePropTypes, resp: ITableResponse, ctx: SetupContext<a
     });
   };
 
-  const onDragleave = (_event: DragEvent) => {
+  const onDragleave = (event: DragEvent) => {
     beforeEventFire(() => {
       const target = getTargetRow(event);
       lastDragRowClass = target.classList.contains('--bottom') ? '--bottom' : '--top';
@@ -145,7 +145,7 @@ export default (props: TablePropTypes, resp: ITableResponse, ctx: SetupContext<a
     const target = lastDragRow;
     const { rowIndex } = target.dataset;
     let targetIndex = Number(rowIndex);
-    const sourceIndex = event.target.dataset?.rowIndex;
+    const sourceIndex = (event.target as HTMLElement).dataset?.rowIndex;
     if (lastDragRowClass === '--bottom') {
       targetIndex = targetIndex + 1;
     }
