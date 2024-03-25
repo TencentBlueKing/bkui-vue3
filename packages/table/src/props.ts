@@ -106,17 +106,17 @@ export enum FixedEnum {
 
 export const fixedType = string<`${FixedEnum}`>();
 
-export type IOverflowTooltipProp =
-  | {
-      content: string | Function;
-      disabled?: (col: Column, row: any) => boolean | boolean;
-      watchCellResize?: boolean;
-      mode?: `${OverflowModeEnum}`;
-      popoverOption?: any;
-      resizerWay?: ResizerWay;
-      showHead?: boolean;
-    }
-  | boolean;
+export type IOverflowTooltipOption = {
+  content: string | Function;
+  disabled?: (col: Column, row: any) => boolean | boolean;
+  watchCellResize?: boolean;
+  mode?: `${OverflowModeEnum}`;
+  popoverOption?: any;
+  resizerWay?: ResizerWay;
+  showHead?: boolean;
+};
+
+export type IOverflowTooltipProp = IOverflowTooltipOption | boolean;
 
 export type IOverflowTooltip = IOverflowTooltipProp;
 
