@@ -74,7 +74,13 @@
     - docs(table): 完善示例文档
     - feature(infobox): 确定时await函数时默认加上loading
 
-### 1.0.3-beta.12
+### 1.0.3-beta.13
 
 * **[feat]**:
     - bugfix(table): showOverflowTooltip透传配置到popover失效
+
+### 1.0.3-beta.14
+
+* **[feat]**:
+    - fix: 修复部分组件的dts引用问题
+    - 【Form】输入字符上限后，增加tooltips提示
