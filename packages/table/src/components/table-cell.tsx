@@ -94,7 +94,8 @@ export default defineComponent({
 
       let disabled = true;
       let { resizerWay } = props;
-      let content = () => refRoot.value.innerText;
+      const defaultContent = getEllipsisTarget()?.cloneNode?.(true) ?? '';
+      let content = () => defaultContent;
       let popoverOption = {};
       let mode = 'auto';
       let watchCellResize = true;
@@ -106,7 +107,7 @@ export default defineComponent({
         disabled = (showOverflowTooltip as any).disabled;
         popoverOption = (showOverflowTooltip as any).popoverOption;
         resizerWay = (showOverflowTooltip as any).resizerWay || 'debounce';
-        content = () => (showOverflowTooltip as any).content || refRoot.value.innerText;
+        content = () => (showOverflowTooltip as any).content || defaultContent;
         if (typeof (showOverflowTooltip as any).content === 'function') {
           content = () => (showOverflowTooltip as any).content(props.column, props.row);
         }
@@ -134,7 +135,7 @@ export default defineComponent({
       if (props.isHead) {
         disabled = !((props.column?.showOverflowTooltip as any)?.showHead ?? true);
         mode = 'auto';
-        content = () => getEllipsisTarget()?.innerHTML;
+        content = () => getEllipsisTarget()?.cloneNode?.(true) ?? '';
 
         if (props.headExplain) {
           mode = 'static';
