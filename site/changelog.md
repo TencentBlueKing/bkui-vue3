@@ -73,3 +73,8 @@
 * **[feat]**:
     - docs(table): 完善示例文档
     - feature(infobox): 确定时await函数时默认加上loading
+
+### 1.0.3-beta.12
+
+* **[feat]**:
+    - bugfix(table): showOverflowTooltip透传配置到popover失效
