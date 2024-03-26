@@ -15,7 +15,7 @@
   </bk-button>
   <div
     ref="refContentTable"
-    style="width: 400px;"
+    style="width: 400px;display: none;"
   >
     <content-table />
   </div>
@@ -43,7 +43,7 @@
         this.popInstance?.close();
         this.popInstance = $bkPopover({
           target: e,
-          content: this.$refs.refContentTable,
+          content: this.$refs.refContentTable.children[0],
         });
 
         this.popInstance?.show();

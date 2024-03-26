@@ -14,8 +14,9 @@
 </template>
 
 <script>
-  import { InfoBox } from 'bkui-vue';
   import  { defineComponent, ref  } from 'vue';
+
+  import { InfoBox } from '../../../packages/bkui-vue';
   export default defineComponent({
     name: 'SiteSideslider',
     setup() {
