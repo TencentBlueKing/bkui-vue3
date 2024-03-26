@@ -26,8 +26,7 @@
 import { createApp, createVNode, defineComponent, h, ref, shallowRef, VNode } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-
-import Dialog from '../../dialog/src/dialog';
+import Dialog from '@bkui-vue/dialog';
 
 export interface ModalFuncProps {
   isShow?: boolean;
