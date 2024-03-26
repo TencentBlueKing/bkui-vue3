@@ -108,7 +108,7 @@ export default defineComponent({
     onMounted(onMountedFn);
     onBeforeUnmount(onUnmountedFn);
 
-    const transBoundary = computed(() => !props.disableTeleport);
+    const transBoundary = computed(() => localIsShow.value && !props.disableTeleport);
     const show = () => {
       showFn();
     };
