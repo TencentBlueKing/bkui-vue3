@@ -333,6 +333,7 @@ export default defineComponent({
     const className = `${this.resolveClassName('dialog-wrapper ')} ${this.scrollable ? 'scroll-able' : ''} ${
       this.multiInstance ? 'multi-instance' : ''
     } ${this.hasFooter ? 'has-footer' : 'no-footer'}`;
+
     return (
       <Modal
         {...this.$props}

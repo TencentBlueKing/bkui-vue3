@@ -77,18 +77,22 @@ export default defineComponent({
     };
 
     const { resolveClassName } = usePrefix();
+    const contentClassName = computed(() => [
+      resolveClassName('popover'),
+      resolveClassName('pop2-content'),
+      props.visible ? 'visible' : 'hidden',
+      props.extCls,
+    ]);
 
     return {
       style,
       refContent,
-      resolveClassName,
+      contentClassName,
       resetPointerEvent,
       setContentPointerEvent,
     };
   },
   render() {
-    const className = [this.resolveClassName('popover'), this.resolveClassName('pop2-content'), this.extCls];
-
     const resolveContentStyle = slot => {
       if (Fragment === slot?.[0]?.type) {
         nextTick(() => {
@@ -103,7 +107,7 @@ export default defineComponent({
     const style = resolveContentStyle(this.$slots.default?.());
     return (
       <div
-        class={className}
+        class={this.contentClassName}
         style={style}
         ref='refContent'
       >
