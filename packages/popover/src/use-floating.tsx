@@ -325,6 +325,9 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
     const delay = resolvePopoverDelay()[0];
     // 设置settimeout避免hidePopover导致显示问题
     popShowTimerId = setTimeout(() => {
+      // if (popHideTimerId) {
+      //   clearTimeout(popHideTimerId);
+      // }
       if (!props.disabled) {
         localIsShow.value = true;
       }
@@ -336,7 +339,7 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
     popHideTimerId = setTimeout(() => {
       popShowTimerId && clearTimeout(popShowTimerId);
       localIsShow.value = false;
-    }, delay + 10);
+    }, delay);
   };
 
   const handlePopoverShow = () => {
