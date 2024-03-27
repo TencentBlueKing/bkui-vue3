@@ -36,6 +36,7 @@ import { PROVIDE_KEY_INIT_COL, PROVIDE_KEY_TB_CACHE } from './const';
 import { EMIT_EVENT_TYPES, EMIT_EVENTS } from './events';
 import useColumnResize from './plugins/use-column-resize';
 import useFixedColumn from './plugins/use-fixed-column';
+import useObserverResize from './plugins/use-observer-resize';
 import useScrollLoading from './plugins/use-scroll-loading';
 import { Column, Settings, tableProps } from './props';
 import useData, { ITableResponse } from './use-attributes';
@@ -99,6 +100,12 @@ export default defineComponent({
     const styleRef = computed(() => ({
       hasScrollY: hasScrollYRef.value,
     }));
+
+    useObserverResize(root, () => {
+      nextTick(() => {
+        resolveFixedColumns(tableOffsetRight.value);
+      });
+    });
 
     const { renderTableBodySchema, renderTableFooter, renderTableHeadSchema } = useRender(
       props,
