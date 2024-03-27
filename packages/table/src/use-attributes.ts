@@ -39,7 +39,7 @@ import {
   TABLE_ROW_ATTRIBUTE,
 } from './const';
 import usePagination from './plugins/use-pagination';
-import { Column, Field, IColSortBehavior, Settings, SortScope, TablePropTypes } from './props';
+import { Column, Field, IColSortBehavior, Settings, TablePropTypes } from './props';
 import {
   getRawData,
   getRowId,
@@ -69,54 +69,7 @@ export type ITableFormatData = {
   };
 };
 
-export type ITableResponse = {
-  setIndexData: () => Promise<void>;
-  formatColumns: (columns: Column[]) => void;
-  formatDataSchema: (data: any[]) => void;
-  setRowSelection: (row: any, isSelected: boolean) => void;
-  setRowExpand: (row: any, isExpand: boolean) => void;
-  setRowIndex: (row: any, index: number) => void;
-  setColumnAttribute: (
-    col: Column,
-    attrName: string,
-    attrValue: ((...args) => boolean | number | void | string) | string | boolean | number,
-  ) => void;
-  setColumnAttributeBySettings: (settings: Settings, checkedVal?: string[]) => void;
-  setAllColumnAttribute: (
-    attrName: string,
-    attrValue: ((...args) => boolean | number | void | string) | string | boolean | number,
-  ) => void;
-  getColumnAttribute: (col: Column, attributeName: string) => string | boolean | Record<string, any>;
-  getColumnId: (col: Column) => string;
-  getColumnOrderWidth: (column: Column, orders?: string[]) => number;
-  isActiveColumn: (col: Column) => boolean;
-  isHiddenColumn: (col: Column) => boolean;
-  resolvePageData: (filterFn?: any, sortFn?: any, column?: Column, type?: string, sortScope?: SortScope) => void;
-  resolveByDefColumns: () => void;
-  resetStartEndIndex: () => void;
-  toggleRowSelection: (row: any) => void;
-  toggleAllSelection: (value?: boolean) => void;
-  setAllRowExpand: (value?: boolean) => void;
-  clearSelection: () => void;
-  clearColumnSort: (reset?: boolean) => void;
-  setColumnSortActive: (column: Column, active: boolean) => void;
-  getRowAttribute: (row: any | IEmptyObject, attrName: string) => any;
-  getRowSelection: () => any[];
-  resolveColumnWidth: (root: HTMLElement, autoWidth?, offsetWidth?) => void;
-  filter: () => void;
-  sortData: (column: Column) => void;
-  isCheckedAll: () => boolean;
-  hasCheckedRow: () => boolean;
-  setRowSelectionAll: (val: boolean) => void;
-  setRowIndeterminate: () => void;
-  updateSettings: (settings?: Settings, rowHeight?: number) => void;
-  changePageRowIndex: (sourceIndex: number, targetIndex: number) => void;
-  pageData: any[];
-  localPagination: any;
-  formatData: ITableFormatData;
-};
-
-export default (props: TablePropTypes) => {
+const tableSchemaResponse = (props: TablePropTypes) => {
   const t = useLocale('table');
   const getDefaultSettings = () => {
     const { size, fields = [], checked = [] } = props.settings as Settings;
@@ -811,3 +764,6 @@ export default (props: TablePropTypes) => {
     setIndexData,
   };
 };
+
+export type ITableResponse = ReturnType<typeof tableSchemaResponse>;
+export default tableSchemaResponse;

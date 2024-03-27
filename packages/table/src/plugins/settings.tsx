@@ -49,7 +49,7 @@ export default defineComponent({
     const defaultSizeList: SizeItem[] = createDefaultSizeList(t);
     const resolvedColVal = (item, index) => resolvePropVal(item, ['id', 'field', 'type'], [item, index]);
     const checkAll = ref(false);
-    const isShow = ref(false);
+    const refSetting = ref(null);
 
     const localSettings = computed(() => {
       const deafultSettings = {
@@ -96,7 +96,7 @@ export default defineComponent({
         height: activeHeight.value,
         fields: unref(renderFields),
       });
-      isShow.value = false;
+      refSetting.value?.hide();
     };
 
     const handleCancelClick = () => {
@@ -104,11 +104,13 @@ export default defineComponent({
       activeSize.value = cachedValue.activeSize;
       activeHeight.value = cachedValue.activeHeight;
       checkedFields.value = cachedValue.checkedFields;
-      isShow.value = false;
+      refSetting.value?.hide();
     };
 
     const handleSettingClick = () => {
-      isShow.value = true;
+      if (localSettings.value.trigger === 'manual') {
+        refSetting.value?.show();
+      }
     };
 
     const handleCheckAllClick = (e: MouseEvent) => {
@@ -204,8 +206,8 @@ export default defineComponent({
       props.settings ? (
         <Popover
           trigger={localSettings.value.trigger ?? ('manual' as any)}
-          isShow={isShow.value}
           placement='bottom-end'
+          ref={refSetting}
           arrow={true}
           {...{ theme }}
         >

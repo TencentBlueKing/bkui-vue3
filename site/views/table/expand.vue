@@ -9,27 +9,16 @@
         :columns="columns"
         :data="tableData"
         @row-expand="handleRowExpand"
+        @row-click="handleRowClick"
       >
         <template #expandContent>
           <span>Content</span>
         </template>
 
-        <template #expandRow="row">
-          <p>自定义折叠内容 - {{ row.status }}</p>
+        <template #expandRow>
+          <span>Row Content</span>
         </template>
       </bk-table>
-    </div>
-    <div
-      class="cell"
-      style="height: 300px;"
-    >
-      <span class="title">依赖父级高度：height='100%'</span>
-      <bk-table
-        :columns="columns"
-        :data="tableData"
-        height="100%"
-        settings
-      />
     </div>
   </div>
 </template>
@@ -48,6 +37,10 @@
       };
     },
     methods: {
+      handleRowClick(e, row) {
+        console.log('handleRowClick', row);
+        row.priority = row.priority + 1;
+      },
       handleSetAllRowExpand() {
         this.isExpand = !this.isExpand;
         this.$refs.refTable1.setAllRowExpand(this.isExpand);

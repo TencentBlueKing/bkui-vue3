@@ -87,6 +87,7 @@ export default defineComponent({
       watch(
         () => props.isShow,
         () => {
+          console.log('watch changed', props.isShow);
           props.isShow ? showPopover() : hidePopover();
         },
         { immediate: true },
