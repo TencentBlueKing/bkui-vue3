@@ -235,6 +235,11 @@ export const DATA_COLUMNS1 = [...DATA_COLUMNS2];
  */
 export const DATA_EXPAND_COLUMNS = [
   {
+    type: 'selection',
+    width: 20,
+    minWidth: 20,
+  },
+  {
     type: 'expand',
     width: 140,
     minWidth: 30,
