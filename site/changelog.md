@@ -1,5 +1,11 @@
 ## 更新日志
 
+### 1.0.3-beta.19
+
+* **[feat]**:
+    - bugfix(table): row data change error
+
+
 ### 1.0.3-beta.18
 
 * **[feat]**:
