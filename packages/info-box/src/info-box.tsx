@@ -60,6 +60,7 @@ const InfoBox = (config: Partial<ModalFuncProps>) => {
 
   const isShow = ref(modalFuncProps.value.isShow !== false);
   let app;
+  let dialogConfirm;
 
   const dialog = defineComponent({
     name: 'DialogConfirm',
@@ -131,6 +132,7 @@ const InfoBox = (config: Partial<ModalFuncProps>) => {
       const onHidden = () => {
         beforeHiddenFn.forEach(fn => fn());
         beforeHiddenFn.length = 0;
+        unmountApp();
         container.remove();
       };
 
@@ -158,8 +160,14 @@ const InfoBox = (config: Partial<ModalFuncProps>) => {
   const beforeShow = () => {
     if (!app) {
       document.body.append(container);
-      app = createApp(dialog).mount(container);
+      app = createApp(dialog);
+      dialogConfirm = app.mount(container);
     }
+  };
+
+  const unmountApp = () => {
+    app?.unmount();
+    app = null;
   };
 
   if (isShow.value) {
@@ -173,15 +181,15 @@ const InfoBox = (config: Partial<ModalFuncProps>) => {
     },
     hide: () => {
       isShow.value = false;
+      unmountApp();
     },
     update: (config: Partial<ModalFuncProps>) => {
       beforeShow();
-      app?.update(config);
+      dialogConfirm?.update(config);
     },
     destroy: () => {
       container.remove();
-      app?.unmount();
-      app = null;
+      unmountApp();
     },
   };
 };
