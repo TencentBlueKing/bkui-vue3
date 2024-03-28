@@ -19,7 +19,7 @@
 <script setup>
   import InfoBox from '@bkui-vue/info-box';
   const confirmA = InfoBox({
-    title: '确认要删除？',
+    title: '确认要删除1？',
     isShow: false,
     headerAlign: 'center',
     footerAlign: 'center',
@@ -27,6 +27,13 @@
     onConfirm() {},
   });
   const handleDefault = () => {
+    confirmA.update({
+      title: '确认要删除1？',
+      subTitle: '1111',
+      onConfirm() {
+        console.log('11');
+      },
+    });
     confirmA.show();
   };
   const  handleDefault2 = () => {
