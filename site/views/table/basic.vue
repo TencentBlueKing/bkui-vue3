@@ -38,6 +38,7 @@
         },
         settings: {
           trigger: 'click',
+          extCls: 'settings-custom-class',
           fields: [
             {
               name: '序号',
