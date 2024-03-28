@@ -34,6 +34,7 @@ import type { IPropsTableItem } from '../../typings';
 import BaseDemo from './base-demo.vue';
 import ConfirmDemo from './confirm-demo.vue';
 import StatusDemo from './status-demo.vue';
+import UpdateDemo from './update-demo.vue';
 
 const props: IPropsTableItem[] = [
   {
@@ -249,6 +250,15 @@ export default defineComponent({
           demoName='confirm-demo'
         >
           <ConfirmDemo />
+        </DemoBox>
+        <DemoBox
+          title='Update 动态更新'
+          subtitle='Update 动态更新'
+          desc='对话框分为4种类型。通过 dialogType 属性 设置为 confirm 实现'
+          componentName='info-box'
+          demoName='confirm-demo'
+        >
+          <UpdateDemo />
         </DemoBox>
         <PropsBox
           subtitle='InfoBox函数参数（以Dialog为准）'
