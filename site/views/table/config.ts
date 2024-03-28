@@ -191,6 +191,7 @@ export default [
       { name: 'limit', type: 'Number', default: '0', desc: '配置最多能选择多少个字段，配置该属性后，字段列表将不提供全选功能', optional: [] },
       { name: 'size', type: 'String', default: 'small', desc: '当前表格的尺寸', optional: ['small', 'medium', 'large'] },
       { name: 'sizeList', type: 'Array[{ value, label, height }]', default: '[]', desc: '自定义表格尺寸列表', optional: [] },
+      { name: 'extCls', type: 'string', default: '', desc: '表格设置弹出框自定义className，会追加到弹出元素外层，方便自定义样式', optional: [] },
       { name: 'trigger', type: 'String', default: 'manual', desc: '表格设置弹出触发类型, "manual, 默认设置，需要手动关闭", "click, 点击弹出，点击设置弹出窗之外的元素关闭弹出", "click, 鼠标滑入弹出，鼠标滑入弹出窗之外的元素关闭弹出"', optional: ['manual', 'click', 'hover'] },
     ],
   },
