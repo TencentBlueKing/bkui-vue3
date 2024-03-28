@@ -145,10 +145,11 @@ export default defineComponent({
     const isFirstLoad = ref(true);
 
     watchEffect(() => {
+      tableSchema.formatDataSchema(props.data);
       tableSchema.formatColumns(columns as Column[]);
       resolveFixedColumns(tableOffsetRight.value);
       tableSchema.setIndexData().then(() => {
-        tableSchema.formatDataSchema(props.data);
+        // tableSchema.formatDataSchema(props.data);
         tableSchema.resetStartEndIndex();
 
         if (isFirstLoad.value) {
