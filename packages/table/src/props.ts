@@ -201,6 +201,7 @@ export type Settings = {
   size?: string;
   sizeList?: SizeItem[];
   showLineHeight?: boolean;
+  extCls?: string;
   trigger: 'manual';
 };
 

@@ -59,6 +59,7 @@ export default defineComponent({
         size: 'small',
         sizeList: defaultSizeList,
         showLineHeight: true,
+        extCls: '',
         trigger: 'manual',
       };
 
@@ -209,6 +210,7 @@ export default defineComponent({
           placement='bottom-end'
           ref={refSetting}
           arrow={true}
+          extCls={localSettings.value.extCls}
           {...{ theme }}
         >
           {{
