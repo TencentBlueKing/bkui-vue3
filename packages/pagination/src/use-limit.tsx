@@ -97,6 +97,7 @@ export default (t: ComputedRef<Language['pagination']>) => {
           modelValue={localLimit.value}
           onChange={handleLimitChange}
           disabled={proxy.disabled}
+          filterable={false}
         >
           {proxy.limitList.map((num, index) => (
             <BkOption
