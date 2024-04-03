@@ -1067,6 +1067,16 @@
   dependencies:
     dayjs "^1.11.10"
 
+"@blueking/log-search@~0.0.9":
+  version "0.0.9"
+  resolved "https://registry.yarnpkg.com/@blueking/log-search/-/log-search-0.0.9.tgz#776bb78008d5e5619142ba56b2387c485e943529"
+  integrity sha512-HORQgUKkIgG8z3uFeJIzXxrqxTN/ovHAfgfDleDwm639MSe3oq8roxwazfwSOl/Ex3+XLxvMQXxOnqf/pvHKGg==
+  dependencies:
+    dayjs "^1.11.10"
+    echarts "^5.4.3"
+    lodash "^4.17.21"
+    vue-json-pretty "^2.3.0"
+
 "@blueking/magicbox-header@~1.1.61":
   version "1.1.61"
   resolved "https://mirrors.tencent.com/npm/@blueking/magicbox-header/-/magicbox-header-1.1.61.tgz#ae805f44d362d0b45d23a9c7e88ca038464da932"
@@ -5837,6 +5847,14 @@ ecc-jsbn@~0.1.1:
   dependencies:
     jsbn "~0.1.0"
     safer-buffer "^2.1.0"
+
+echarts@^5.4.3:
+  version "5.5.0"
+  resolved "https://registry.yarnpkg.com/echarts/-/echarts-5.5.0.tgz#c13945a7f3acdd67c134d8a9ac67e917830113ac"
+  integrity sha512-rNYnNCzqDAPCr4m/fqyUFv7fD9qIsd50S6GDFgO1DxZhncCsNsG7IfUlAlvZe5oSEQxtsjnHiUuppzccry93Xw==
+  dependencies:
+    tslib "2.3.0"
+    zrender "5.5.0"
 
 editor@1.0.0:
   version "1.0.0"
@@ -12254,6 +12272,11 @@ tsconfig@^7.0.0:
     strip-bom "^3.0.0"
     strip-json-comments "^2.0.0"
 
+tslib@2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.3.0.tgz#803b8cdab3e12ba581a4ca41c8839bbb0dacb09e"
+  integrity sha512-N82ooyxVNm6h1riLCoyS9e3fuJ3AMG2zIZs2Gd1ATcSFjSA23Q0fzjjZeh0jbJvWVDZ0cJT8yaNNaaXHzueNjg==
+
 tslib@^1.8.1, tslib@^1.9.0:
   version "1.14.1"
   resolved "https://mirrors.tencent.com/npm/tslib/-/tslib-1.14.1.tgz#cf2d38bdc34a134bcaf1091c41f6619e2f672d00"
@@ -12729,6 +12752,11 @@ vue-i18n@~9.2.2:
     "@intlify/shared" "9.2.2"
     "@intlify/vue-devtools" "9.2.2"
     "@vue/devtools-api" "^6.2.1"
+
+vue-json-pretty@^2.3.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/vue-json-pretty/-/vue-json-pretty-2.4.0.tgz#6c5a00ef9c2eb3d24466b861ec5a085c84367e4e"
+  integrity sha512-e9bP41DYYIc2tWaB6KuwqFJq5odZ8/GkE6vHQuGcbPn37kGk4a3n1RNw3ZYeDrl66NWXgTlOfS+M6NKkowmkWw==
 
 vue-router@~4.2.4:
   version "4.2.5"
@@ -13211,3 +13239,10 @@ yocto-queue@^0.1.0:
   version "0.1.0"
   resolved "https://mirrors.tencent.com/npm/yocto-queue/-/yocto-queue-0.1.0.tgz#0294eb3dee05028d31ee1a5fa2c556a6aaf10a1b"
   integrity sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
+
+zrender@5.5.0:
+  version "5.5.0"
+  resolved "https://registry.yarnpkg.com/zrender/-/zrender-5.5.0.tgz#54d0d6c4eda81a96d9f60a9cd74dc48ea026bc1e"
+  integrity sha512-O3MilSi/9mwoovx77m6ROZM7sXShR/O/JIanvzTwjN3FORfLSr81PsUGd7jlaYOeds9d8tw82oP44+3YucVo+w==
+  dependencies:
+    tslib "2.3.0"
