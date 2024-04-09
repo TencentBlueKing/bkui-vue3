@@ -1,5 +1,17 @@
 ## 更新日志
 
+### 1.0.3-beta.35
+
+* **[feat]**:
+    - fix(date-picker): 日期、时间 icon 问题修复
+
+
+### 1.0.3-beta.35
+
+* **[feat]**:
+    - fix(date-picker): 日期、时间 icon 问题修复
+
+
 ### 1.0.3-beta.32
 
 * **[feat]**:
