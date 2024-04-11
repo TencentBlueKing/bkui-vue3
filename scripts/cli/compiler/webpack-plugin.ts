@@ -46,7 +46,7 @@ export default class RemoveWildcardImportsPlugin {
             }
             // icon的按需加载特殊处理
             if (filename.includes('icon/index')) {
-              const url = resolve(PRESET_URL, `./icon/src/index.jsx`);
+              const url = resolve(PRESET_URL, './icon/src/index.jsx');
               const source = readFileSync(url, 'utf-8');
               newSource = source.replace(/\.\.\/icons\//gm, './');
             }
