@@ -43,6 +43,7 @@ export const datePickerProps = {
       const validList: PickerTypeType[] = [
         'year',
         'month',
+        'monthrange',
         'date',
         'daterange',
         'datetime',

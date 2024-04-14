@@ -133,6 +133,10 @@ export default defineComponent({
       if (_type.match(/^date/)) {
         type = 'date';
       }
+      // 增加了 monthrange
+      if (_type.match(/^month/)) {
+        type = 'month';
+      }
       // return ['year', 'month', 'date', 'time'].indexOf(type) > -1 && type;
       state.selectionMode = ['year', 'month', 'date', 'time'].indexOf(type) > -1 && type;
       return state.selectionMode;
@@ -164,7 +168,7 @@ export default defineComponent({
     });
 
     const panel = computed<DatePickerPanelType>(() => {
-      const isRange = props.type === 'daterange' || props.type === 'datetimerange';
+      const isRange = props.type === 'daterange' || props.type === 'datetimerange' || props.type === 'monthrange';
       return isRange ? 'DateRangePanel' : 'DatePanel';
     });
 
@@ -737,7 +741,6 @@ export default defineComponent({
                   v-slots={slots}
                   shortcutSelectedIndex={this.shortcutSelectedIndex}
                   onPick-first={this.onPickFirst}
-
                   // v-bind={this.ownPickerProps}
                 />
               ) : (

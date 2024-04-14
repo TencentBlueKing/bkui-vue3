@@ -35,6 +35,7 @@ import BaseDemo from './base-demo.vue';
 import DemoTsx from './demo-tsx';
 import FooterSlotDemo from './footer-slot-demo.vue';
 import HeaderSlotDemo from './header-slot-demo.vue';
+import MonthRangeDemo from './month-range-demo.vue';
 import RangeDemo from './range-demo.vue';
 import ShortcutsSlotDemo from './shortcuts-slot-demo.vue';
 import TriggerSlotDemo from './trigger-slot-demo.vue';
@@ -81,6 +82,14 @@ export default defineComponent({
           demoName='range-demo'
         >
           <RangeDemo />
+        </DemoBox>
+        <DemoBox
+          title='开启月份范围'
+          desc='通过设置 type 属性为 monthrange 来开启月份范围'
+          componentName='date-picker'
+          demoName='month-range-demo'
+        >
+          <MonthRangeDemo />
         </DemoBox>
         <DemoBox
           title='开启时间设置'

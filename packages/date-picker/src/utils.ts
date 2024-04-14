@@ -138,6 +138,10 @@ export const typeValueResolver = {
     formatter: (value, format) => dateFormat(value, format),
     parser: (text, format) => fecha.parse(text, format || 'yyyy-MM-dd'),
   },
+  monthrange: {
+    formatter: rangeFormatter,
+    parser: rangeParser,
+  },
   year: {
     formatter: (value, format) => dateFormat(value, format),
     parser: (text, format) => fecha.parse(text, format || 'yyyy-MM-dd'),
@@ -243,6 +247,7 @@ export const extractTime = (date: Date) => {
 export const DEFAULT_FORMATS: Record<PickerTypeType, string> = {
   date: 'yyyy-MM-dd',
   month: 'yyyy-MM',
+  monthrange: 'yyyy-MM',
   year: 'yyyy',
   datetime: 'yyyy-MM-dd HH:mm:ss',
   time: 'HH:mm:ss',

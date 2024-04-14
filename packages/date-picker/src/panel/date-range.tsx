@@ -46,6 +46,7 @@ import { AngleDoubleLeft, AngleDoubleRight, AngleLeft, AngleRight } from '@bkui-
 
 import Confirm from '../base/confirm';
 import DateTable from '../base/date-table';
+import MonthTable from '../base/month-table';
 import type {
   DatePickerShortcutsType,
   DatePickerValueType,
@@ -70,6 +71,7 @@ const dateRangePanelProps = {
       const validList: PickerTypeType[] = [
         'year',
         'month',
+        'monthrange',
         'date',
         'daterange',
         'datetime',
@@ -156,13 +158,17 @@ export default defineComponent({
     const t = useLocale('datePicker');
     const [minDate, maxDate] = (props.modelValue as any).map(date => date || initTime());
     const leftPanelDate = props.startDate ? props.startDate : minDate;
+    const rightPanelDate =
+      props.type === 'monthrange'
+        ? new Date(leftPanelDate.getFullYear() + 1, leftPanelDate.getMonth(), 1)
+        : new Date(leftPanelDate.getFullYear(), leftPanelDate.getMonth() + 1, 1);
 
     const state = reactive({
       currentView: props.selectionMode || 'date',
       leftPickerTable: `${props.selectionMode}-table`,
       rightPickerTable: `${props.selectionMode}-table`,
       leftPanelDate,
-      rightPanelDate: new Date(leftPanelDate.getFullYear(), leftPanelDate.getMonth() + 1, 1),
+      rightPanelDate,
       rangeState: { from: props.modelValue[0], to: props.modelValue[1], selecting: minDate && !maxDate },
       // 判断 range 中，第一次选的时间是否晚于当前时间
       upToNowEnable: false,
@@ -650,7 +656,7 @@ export default defineComponent({
               ) : (
                 ''
               )}
-              {this.splitPanels || this.leftPickerTable !== 'date-table' ? (
+              {this.splitPanels || (this.leftPickerTable !== 'date-table' && this.leftPickerTable !== 'month-table') ? (
                 <span
                   class={iconBtnCls('next', '-double')}
                   onClick={() => this.nextYear('left')}
@@ -690,6 +696,19 @@ export default defineComponent({
                           onPick={this.panelPickerHandlers.left}
                         />
                       );
+                    case 'month-table':
+                      return (
+                        <MonthTable
+                          selectionMode='range'
+                          tableDate={this.leftPanelDate as Date}
+                          disabledDate={this.disabledDate}
+                          rangeState={this.rangeState}
+                          modelValue={(this.preSelecting.left ? [this.dates[0]] : this.dates) as any}
+                          focusedDate={this.focusedDate}
+                          onChangeRange={this.handleChangeRange}
+                          onPick={this.panelPickerHandlers.left}
+                        />
+                      );
                     default:
                       return null;
                   }
@@ -706,7 +725,8 @@ export default defineComponent({
               class={this.resolveClassName('date-picker-header')}
               v-show={this.currentView !== 'time'}
             >
-              {this.splitPanels || this.rightPickerTable !== 'date-table' ? (
+              {this.splitPanels ||
+              (this.rightPickerTable !== 'date-table' && this.rightPickerTable !== 'month-table') ? (
                 <span
                   class={iconBtnCls('prev', '-double')}
                   onClick={() => this.prevYear('right')}
@@ -791,6 +811,21 @@ export default defineComponent({
                     case 'date-table':
                       return (
                         <DateTable
+                          selectionMode='range'
+                          tableDate={this.rightPanelDate as Date}
+                          disabledDate={this.disabledDate}
+                          rangeState={this.rangeState}
+                          modelValue={
+                            (this.preSelecting.right ? [this.dates[(this.dates as any).length - 1]] : this.dates) as any
+                          }
+                          focusedDate={this.focusedDate}
+                          onChangeRange={this.handleChangeRange}
+                          onPick={this.panelPickerHandlers.right}
+                        />
+                      );
+                    case 'month-table':
+                      return (
+                        <MonthTable
                           selectionMode='range'
                           tableDate={this.rightPanelDate as Date}
                           disabledDate={this.disabledDate}
