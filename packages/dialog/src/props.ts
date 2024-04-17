@@ -29,8 +29,6 @@ import { AlignEnum, alignType, dialogTypeUnion, PropTypes, ThemeEnum } from '@bk
 
 const props = {
   ...propsMixin,
-  width: PropTypes.oneOfType([String, Number]).def(''),
-  height: PropTypes.oneOfType([String, Number]).def(''),
   // 确认按钮文字
   // confirmText: PropTypes.string.def('确定'),
   confirmText: PropTypes.string,

@@ -56,18 +56,12 @@ export default defineComponent({
   setup(props, { slots, emit }) {
     const handleClose = async () => {
       // 这里无需处理 beforeClose，在 modal 中会处理
-      // let shouldClose = true;
-      // if (typeof props.beforeClose === 'function') {
-      //   shouldClose = await props.beforeClose();
-      // }
-      // if (shouldClose) {
       emit('update:isShow', false);
       emit('closed');
       setTimeout(() => {
         // 有动画，推迟发布事件
         emit('animation-end');
       }, 250);
-      // }
     };
     const handleShown = () => {
       // 有动画，推迟发布事件
@@ -91,17 +85,15 @@ export default defineComponent({
             <div class={`${resolveClassName('sideslider-header')}`}>
               <div
                 class={`${resolveClassName('sideslider-close')} ${props.direction}`}
-                onClick={() => {
-                  handleClose();
-                }}
-              ></div>
+                onClick={() => handleClose()}
+              />
               <div class={`${resolveClassName('sideslider-title')} ${props.direction}`}>
                 {slots.header?.() ?? props.title}
               </div>
             </div>
           </>
         ),
-        default: () => slots.default?.() ?? 'Content',
+        default: () => <div class={`${resolveClassName('sideslider-content')}`}>{slots.default?.()}</div>,
         footer: () => {
           if (slots.footer) {
             return <div class={`${resolveClassName('sideslider-footer')}`}>{slots.footer()}</div>;
@@ -110,17 +102,15 @@ export default defineComponent({
           return null;
         },
       };
-      const className = resolveClassName('sideslider-wrapper');
-      const bodyClass = props.scrollable ? 'scroll-able' : '';
-      const maxHeight = slots.footer ? 'calc(100vh - 106px)' : 'calc(100vh - 52px)';
 
       return (
         <Modal
           {...props}
-          class={className}
-          maxHeight={maxHeight}
-          extCls={props.extCls}
-          bodyClass={bodyClass}
+          class={{
+            [resolveClassName('sideslider')]: true,
+            [resolveClassName('sideslider-wrapper')]: true,
+          }}
+          closeIcon={false}
           onHidden={handleHidden}
           onShown={handleShown}
           onClose={handleClose}

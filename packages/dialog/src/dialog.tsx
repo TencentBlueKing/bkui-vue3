@@ -74,16 +74,7 @@ export default defineComponent({
       },
     });
     const isModalShow = ref(props.isShow);
-    onMounted(() => {
-      if (props.escClose) {
-        addEventListener('keydown', escCloseHandler);
-      }
-    });
-    onBeforeUnmount(() => {
-      if (props.escClose) {
-        removeEventListener('keydown', escCloseHandler);
-      }
-    });
+
     watch(
       () => props.isShow,
       (val: Boolean) => {
@@ -119,10 +110,8 @@ export default defineComponent({
     const handleConfirm = () => {
       emit('update:isShow', false);
       emit('confirm');
-      // isModalShow.value = false; 影响异步关闭
     };
 
-    const hasFooter = computed(() => ['process', 'operation', 'confirm'].includes(props.dialogType));
     // 按 esc 关闭弹框
     const escCloseHandler = e => {
       if (props.isShow && props.closeIcon) {
@@ -188,6 +177,17 @@ export default defineComponent({
 
     const { resolveClassName } = usePrefix();
 
+    onMounted(() => {
+      if (props.escClose) {
+        addEventListener('keydown', escCloseHandler);
+      }
+    });
+    onBeforeUnmount(() => {
+      if (props.escClose) {
+        removeEventListener('keydown', escCloseHandler);
+      }
+    });
+
     return {
       data,
       handleClose,
@@ -196,7 +196,6 @@ export default defineComponent({
       moveHandler,
       handlePrevStep,
       handleNextStep,
-      hasFooter,
       isModalShow,
       localConfirmText,
       localCancelText,
@@ -230,7 +229,7 @@ export default defineComponent({
           {this.$slots.tools?.() ?? ''}
         </div>,
         <div class={this.resolveClassName('dialog-header')}>
-          <div class={this.resolveClassName('header-icon')}>
+          <div class={this.resolveClassName('dialog-header-icon')}>
             {this.infoType ? renderIcon() : <slot name='info-icon' />}
           </div>
           <span
@@ -241,35 +240,76 @@ export default defineComponent({
           </span>
         </div>,
       ],
-      footer: () => (
-        <div
-          class={this.resolveClassName('dialog-footer')}
-          style={`text-align: ${this.footerAlign}`}
-        >
-          {this.dialogType === 'process'
-            ? this.$slots.footer?.() ?? (
-                <>
-                  {this.current === 1 ? (
-                    ''
-                  ) : (
-                    <Button
-                      class={this.resolveClassName('dialog-perv')}
-                      onClick={this.handlePrevStep}
-                    >
-                      {this.localPrevText}
-                    </Button>
-                  )}
-                  {this.current === this.totalStep ? (
-                    ''
-                  ) : (
+      default: () => <div class={this.resolveClassName('dialog-content')}>{this.$slots.default()}</div>,
+      footer: () => {
+        if (!['process', 'operation', 'confirm'].includes(this.dialogType)) {
+          return null;
+        }
+        if (this.$slots.footer) {
+          return (
+            <div
+              class={this.resolveClassName('dialog-footer')}
+              style={`text-align: ${this.footerAlign}`}
+            >
+              {this.$slots.footer()}
+            </div>
+          );
+        }
+        const renderFooterAction = () => {
+          if (this.dialogType === 'operation') {
+            return (
+              <>
+                <Button
+                  onClick={this.handleConfirm}
+                  theme={this.theme}
+                  loading={this.isLoading}
+                >
+                  {this.localConfirmText}
+                </Button>
+                <Button
+                  class={this.resolveClassName('dialog-cancel')}
+                  onClick={this.handleClose}
+                  disabled={this.isLoading}
+                >
+                  {this.localCancelText}
+                </Button>
+              </>
+            );
+          }
+          if (this.dialogType === 'confirm') {
+            return (
+              <Button
+                onClick={this.handleConfirm}
+                theme={this.theme}
+                loading={this.isLoading}
+              >
+                {this.localConfirmText}
+              </Button>
+            );
+          }
+          if (this.dialogType === 'process') {
+            const renderFirstStepBtn = () => {
+              if (this.current === 1) {
+                return (
+                  <Button
+                    class={this.resolveClassName('dialog-perv')}
+                    onClick={this.handlePrevStep}
+                  >
+                    {this.localPrevText}
+                  </Button>
+                );
+              }
+            };
+            const renderStepBtn = () => {
+              if (this.current === this.totalStep) {
+                return (
+                  <>
                     <Button
                       class={this.resolveClassName('dialog-next')}
                       onClick={this.handleNextStep}
                     >
                       {this.localNextText}
                     </Button>
-                  )}
-                  {this.current === this.totalStep ? (
                     <Button
                       onClick={this.handleConfirm}
                       theme={this.theme}
@@ -277,74 +317,46 @@ export default defineComponent({
                     >
                       {this.localConfirmText}
                     </Button>
-                  ) : (
-                    ''
-                  )}
-                  <Button
-                    class={this.resolveClassName('dialog-cancel')}
-                    onClick={this.handleClose}
-                    disabled={this.isLoading}
-                  >
-                    {this.localCancelText}
-                  </Button>
-                </>
-              )
-            : ''}
-          {this.dialogType === 'operation'
-            ? this.$slots.footer?.() ?? (
-                <>
-                  <Button
-                    onClick={this.handleConfirm}
-                    theme={this.theme}
-                    loading={this.isLoading}
-                  >
-                    {this.localConfirmText}
-                  </Button>
-                  <Button
-                    class={this.resolveClassName('dialog-cancel')}
-                    onClick={this.handleClose}
-                    disabled={this.isLoading}
-                  >
-                    {this.localCancelText}
-                  </Button>
-                </>
-              )
-            : ''}
-          {this.dialogType === 'confirm'
-            ? this.$slots.footer?.() ?? (
-                <>
-                  <Button
-                    onClick={this.handleConfirm}
-                    theme={this.theme}
-                    loading={this.isLoading}
-                  >
-                    {this.localConfirmText}
-                  </Button>
-                </>
-              )
-            : ''}
-        </div>
-      ),
-      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                  </>
+                );
+              }
+            };
+
+            return (
+              <>
+                {renderFirstStepBtn()}
+                {renderStepBtn()}
+                <Button
+                  class={this.resolveClassName('dialog-cancel')}
+                  onClick={this.handleClose}
+                  disabled={this.isLoading}
+                >
+                  {this.localCancelText}
+                </Button>
+              </>
+            );
+          }
+        };
+        return (
+          <div
+            class={this.resolveClassName('dialog-footer')}
+            style={`text-align: ${this.footerAlign}`}
+          >
+            {renderFooterAction()}
+          </div>
+        );
+      },
       close: () => <Error onClick={this.handleClose} />,
     };
 
-    if (this.$slots.default) {
-      Object.assign(dialogSlot, {
-        default: () => this.$slots.default(),
-      });
-    }
-
-    const className = this.resolveClassName('dialog-wrapper ');
-
-    const bodyClass = `${this.scrollable ? 'scroll-able' : ''} ${this.multiInstance ? 'multi-instance' : ''} ${
-      this.hasFooter ? 'has-footer' : 'no-footer'
-    }`;
     return (
       <Modal
         {...this.$props}
-        class={className}
-        bodyClass={bodyClass}
+        class={{
+          [this.resolveClassName('dialog')]: true,
+          [this.resolveClassName('dialog-wrapper')]: true,
+          'is-fullscreen': this.fullscreen,
+        }}
         onClose={this.handleClose}
         isShow={this.isModalShow}
         left={this.data.moveStyle.left}

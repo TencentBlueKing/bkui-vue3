@@ -4,78 +4,78 @@
 .@{bk-prefix}-modal-ctx {
   top: 0px;
   left: 0px;
-
   width: 100%;
   height: 100%;
   pointer-events: auto;
 
   &.--show {
     position: fixed;
+    .@{bk-prefix}-modal-ctx-mask {
+      display: block;
+    }
   }
 
   &.--hide {
     display: none;
   }
-
-  .@{bk-prefix}-modal-ctx-mask {
-    top: 0;
-    left: 0;
-    display: none;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,.6);
-
-    &.--show {
-      position: fixed;
-      display: inherit;
-    }
-  }
 }
 
-
+.@{bk-prefix}-modal-ctx-mask {
+  top: 0;
+  left: 0;
+  display: none;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,.6);
+}
 
 .@{bk-prefix}-modal-wrapper {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 480px;
   border-radius: 2px;
-  // background: #fff;
   transform: translate(-50%, -50%);
 
-  .@{bk-prefix}-modal-outside {
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-  }
 
-  &.normal {
-    width: 480px;
-    height: 240px;
-  }
+}
 
-  &.small {
-    width: 400px;
-    height: 200px;
-  }
+.@{bk-prefix}-modal-outside {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
 
-  &.medium {
-    width: 640px;
-    height: 400px;
-  }
+.@{bk-prefix}-modal-body {
+  height: 100%;
+  overflow: hidden;
+  background: #fff;
+  border-radius: 2px;
+  box-shadow: 0 4px 12px rgba(0,0,0,.15);
+}
 
-  &.large {
-    width: 960px;
-    height: 720px;
-  }
+.@{bk-prefix}-modal-body {
+  overflow: auto;
+}
 
-  .@{bk-prefix}-modal-body {
-    height: 100%;
-    overflow: hidden;
-    background: #fff;
-    box-shadow: 0 4px 12px rgba(0,0,0,.15);
+.@{bk-prefix}-modal-close {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: flex;
+  width: 32px;
+  height: 32px;
+  font-size: 18px;
+  color: #979ba5;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: .15s;
+
+  &:hover {
+    background: #f0f1f5;
   }
 }
 

@@ -35,8 +35,8 @@ enum ModalSizeEnum {
 export const propsMixin = {
   // 是否显示弹框
   isShow: PropTypes.bool.def(false),
-  width: PropTypes.oneOfType([String, Number]).def('50%'),
-  height: PropTypes.oneOfType([String, Number]).def('50%'),
+  width: PropTypes.oneOfType([String, Number]).def('480px'),
+  height: PropTypes.oneOfType([String, Number]).def('1000'),
   // 配置自定义样式类名
   extCls: PropTypes.string || PropTypes.array,
   // 弹框出现时，是否允许页面滚动
@@ -62,7 +62,7 @@ export const propsMixin = {
   // 内容区最大高度
   maxHeight: PropTypes.string,
   // 弹出方向
-  direction: PropTypes.string,
+  direction: PropTypes.string.def(''),
   // title
   title: PropTypes.string.def(''),
   // 动画类型

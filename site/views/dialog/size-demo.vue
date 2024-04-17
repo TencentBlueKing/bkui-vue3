@@ -7,6 +7,7 @@
       normal
     </bk-button>
     <bk-dialog
+      class="asdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasd"
       :is-show="exampleSetting1.dialog1.isShow"
       :title="'这是标题'"
       :theme="'primary'"

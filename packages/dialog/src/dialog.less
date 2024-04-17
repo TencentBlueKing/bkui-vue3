@@ -1,6 +1,25 @@
 @import '@bkui-vue/styles/themes/themes.less';
 @import '@bkui-vue/modal/modal.less';
 
+.@{bk-prefix}-dialog {
+  font-size: 14px;
+
+  &.is-fullscreen {
+    top: 0;
+    right: 0 ;
+    bottom: 0;
+    left: 0;
+    transform: translate(0 , 0);
+
+    .bk-modal-wrapper {
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      transform: translate(0 , 0);
+    }
+  }
+}
 .@{bk-prefix}-dialog-wrapper {
   .@{bk-prefix}-modal-wrapper {
     position: relative;
@@ -20,70 +39,6 @@
       position: absolute;
     }
 
-    .@{bk-prefix}-dialog-tool {
-      position: absolute;
-      top: 0;
-      right: 0;
-      left: 0;
-      height: 18px;
-    }
-
-    .move {
-      cursor: move;
-    }
-
-    .content-dragging {
-      user-select: none;
-    }
-
-    .@{bk-prefix}-dialog-header {
-      padding: 16px 24px 0;
-      font-size: 20px;
-      line-height: 1;
-
-      .@{bk-prefix}-header-icon {
-        display: flex;
-        justify-content: center;
-
-        .@{bk-prefix}-info-icon {
-          font-size: 48px;
-
-          &.success {
-            color: @success-color;
-          }
-
-          &.warning {
-            color: @warning-color;
-          }
-
-          &.danger {
-            color: @danger-color;
-          }
-        }
-      }
-
-      .@{bk-prefix}-dialog-title {
-        display: inline-block;
-        width: 100%;
-        overflow: hidden;
-        color: @table-head-font-color;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-    }
-
-    .@{bk-prefix}-modal-content {
-      height: calc(100% - 79px);
-      max-height: calc(100vh - 300px);
-      min-height: 141px;
-      padding: 0 24px;
-      margin-top: 16px;
-      margin-bottom: 24px;
-      font-size: 14px;
-      line-height: 1.5;
-      color: @default-color;
-    }
-
     &.fullscreen {
       .@{bk-prefix}-modal-content {
         max-height: calc(100vh - 137px);
@@ -99,46 +54,84 @@
         padding-bottom: 0;
       }
     }
+  }
+}
 
-    .@{bk-prefix}-modal-footer {
-      padding: 0 24px;
-      margin: 24px 0 ;
-      background-color: @whitesmoke-color;
-      border-top: 1px solid @table-border-color;
-      border-radius: 2px;
+.@{bk-prefix}-dialog-header {
+  padding: 16px 24px 0;
+  font-size: 20px;
+  line-height: 1;
+}
 
-      .@{bk-prefix}-dialog-perv {
-        float: left;
-        margin-right: 8px;
-      }
+.@{bk-prefix}-dialog-header-icon {
+  display: flex;
+  justify-content: center;
 
-      .@{bk-prefix}-dialog-next {
-        float: left;
-      }
+  .@{bk-prefix}-info-icon {
+    font-size: 48px;
 
-      .@{bk-prefix}-dialog-cancel {
-        margin-left: 8px;
-      }
+    &.success {
+      color: @success-color;
     }
 
-    .@{bk-prefix}-modal-close {
-      position: absolute;
-      top: 6px;
-      right: 6px;
-      display: flex;
-      width: 32px;
-      height: 32px;
-      font-size: 18px;
-      color: #979ba5;
-      cursor: pointer;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      transition: .15s;
-
-      &:hover {
-        background: #f0f1f5;
-      }
+    &.warning {
+      color: @warning-color;
     }
+
+    &.danger {
+      color: @danger-color;
+    }
+  }
+}
+
+.@{bk-prefix}-dialog-title {
+  display: inline-block;
+  width: 100%;
+  overflow: hidden;
+  color: @table-head-font-color;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.@{bk-prefix}-dialog-tool {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 18px;
+
+  &.move {
+    cursor: move;
+  }
+
+  &.content-dragging {
+    user-select: none;
+  }
+}
+
+.@{bk-prefix}-dialog-content {
+  max-height: calc(100vh - 300px);
+  padding: 0 24px;
+  margin-top: 16px;
+  margin-bottom: 24px;
+  color: @default-color;
+}
+
+.@{bk-prefix}-dialog-footer {
+  padding: 8px 24px;
+  background-color: @whitesmoke-color;
+  border-top: 1px solid @table-border-color;
+
+  .@{bk-prefix}-dialog-perv {
+    float: left;
+    margin-right: 8px;
+  }
+
+  .@{bk-prefix}-dialog-next {
+    float: left;
+  }
+
+  .@{bk-prefix}-dialog-cancel {
+    margin-left: 8px;
   }
 }

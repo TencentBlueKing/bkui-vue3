@@ -24,12 +24,15 @@
  * IN THE SOFTWARE.
  */
 
-import { computed, defineComponent, nextTick, ref, Transition, watch } from 'vue';
+import { computed, defineComponent, type ExtractPropTypes, nextTick, ref, Transition, watch } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import { bkZIndexManager, getFullscreenRoot, isElement, isPromise, mask } from '@bkui-vue/shared';
 
+import { useContentResize } from './hooks';
 import { propsMixin } from './props.mixin';
+
+export type ModalProps = Readonly<ExtractPropTypes<typeof propsMixin>>;
 
 export default defineComponent({
   name: 'Modal',
@@ -38,33 +41,31 @@ export default defineComponent({
   },
   emits: ['quick-close', 'quickClose', 'hidden', 'shown', 'close'],
   setup(props, ctx) {
-    const visible = ref(false);
-    const zIndex = ref(props.zIndex);
     const refRoot = ref<HTMLElement>();
     const refMask = ref<HTMLElement>();
+    const teleportTo = ref<string | HTMLElement>('body');
+    const visible = ref(false);
+    const zIndex = ref(props.zIndex);
+    const enableTeleport = ref(!!props.transfer);
     const backgroundColor = ref('rgba(0,0,0,0.6)');
     let closeTimer;
-    const dialogWidth = computed(() => {
-      return /^\d+\.?\d*$/.test(`${props.width}`) ? `${props.width}px` : props.width;
-    });
-    const dialogHeight = computed(() => {
-      return /^\d+\.?\d*$/.test(`${props.height}`) ? `${props.height}px` : props.height;
-    });
 
-    const compStyle = computed(() => {
-      return {
-        width: dialogWidth.value,
-        height: dialogHeight.value,
-        minHeigth: `${200}px`,
+    const { contentStyles, isContentScroll } = useContentResize(refRoot, props);
+
+    const modalWrapperStyles = computed(() => {
+      const baseStyles = {
         display: visible.value ? 'inherit' : 'none',
-        zIndex: zIndex.value || 'inherit',
+      };
+      if (props.fullscreen) {
+        return baseStyles;
+      }
+      return Object.assign(baseStyles, {
+        width: /^\d+\.?\d*$/.test(`${props.width}`) ? `${props.width}px` : props.width,
         left: props.left,
         top: props.top,
         [props.direction]: 0,
-      };
+      });
     });
-    const enableTeleport = ref(!!props.transfer);
-    const teleportTo = ref<string | HTMLElement>('body');
 
     const resolveTransfer = () => {
       if (props.transfer) {
@@ -102,13 +103,6 @@ export default defineComponent({
         target?.appendChild(refRoot.value);
       }
     };
-
-    const fullscreenStyle = computed(() => {
-      return {
-        width: `${100}%`,
-        height: `${100}%`,
-      };
-    });
 
     const closeModal = () => {
       mask.hideMask({
@@ -153,7 +147,9 @@ export default defineComponent({
         visible.value = false;
         closeModal();
       },
-      { immediate: true },
+      {
+        immediate: true,
+      },
     );
 
     const handleBeforeClose = async callbackFn => {
@@ -188,67 +184,70 @@ export default defineComponent({
     };
 
     return {
+      zIndex,
       visible,
-      compStyle,
-      fullscreenStyle,
+      contentStyles,
+      isContentScroll,
+      modalWrapperStyles,
       handleClickOutSide,
       refRoot,
       refMask,
-      showMask: props.showMask,
+      resolveClassName,
     };
   },
   render() {
-    const { resolveClassName } = usePrefix();
-    const maxHeight = this.maxHeight ? { maxHeight: this.maxHeight } : {};
-    const bodyClass = `${resolveClassName('modal-body')} ${this.animateType === 'slide' ? this.direction : ''}`;
     return (
       <div
         ref='refRoot'
-        class={[resolveClassName('modal-ctx'), this.visible ? '--show' : '--hide']}
-        style={{ zIndex: this.compStyle.zIndex }}
+        class={{
+          [this.resolveClassName('modal-ctx')]: true,
+          '--show': this.visible,
+          '--hide': !this.visible,
+        }}
+        style={{ zIndex: this.zIndex }}
       >
-        {this.showMask ? (
+        {this.showMask && (
           <div
             ref='refMask'
-            class={[resolveClassName('modal-ctx-mask'), this.visible ? '--show' : '--hide']}
+            class={{
+              [this.resolveClassName('modal-ctx-mask')]: true,
+            }}
             onClick={this.handleClickOutSide}
-            style={{ zIndex: this.compStyle.zIndex }}
-          ></div>
-        ) : (
-          ''
+          />
         )}
-
         <div
-          class={[
-            resolveClassName('modal-wrapper'),
-            this.extCls ?? '',
-            this.bodyClass ?? '',
-            this.size,
-            this.fullscreen ? 'fullscreen' : '',
-          ]}
-          style={[this.compStyle, this.fullscreen ? this.fullscreenStyle : '']}
+          class={{
+            [this.resolveClassName('modal-wrapper')]: true,
+            'scroll-able': this.scrollable,
+            'multi-instance': this.multiInstance,
+          }}
+          style={this.modalWrapperStyles}
         >
           <Transition name={this.animateType}>
-            {this.visible ? (
-              <div class={bodyClass}>
-                <div class={resolveClassName('modal-header')}>{this.$slots.header?.() ?? ''}</div>
-                {this.$slots.default && (
-                  <div
-                    class={resolveClassName('modal-content')}
-                    style={[this.dialogType === 'show' ? 'padding-bottom: 20px' : '', { ...maxHeight }]}
-                  >
-                    {this.$slots.default()}
-                  </div>
-                )}
-                {this.dialogType === 'show' ? (
-                  ''
-                ) : (
-                  <div class={resolveClassName('modal-footer')}>{this.$slots.footer?.() ?? ''}</div>
-                )}
-                {this.closeIcon && <div class={resolveClassName('modal-close')}>{this.$slots.close?.() ?? ''}</div>}
+            {this.visible && (
+              <div
+                class={{
+                  [this.resolveClassName('modal-body')]: true,
+                  [this.direction]: this.animateType === 'slide',
+                }}
+              >
+                <div class={this.resolveClassName('modal-header')}>{this.$slots.header?.()}</div>
+                <div
+                  class={this.resolveClassName('modal-content')}
+                  style={this.contentStyles}
+                >
+                  <div>{this.$slots.default?.()}</div>
+                </div>
+                <div
+                  class={{
+                    [this.resolveClassName('modal-footer')]: true,
+                    'is-fixed': this.isContentScroll,
+                  }}
+                >
+                  {this.$slots.footer?.()}
+                </div>
+                {this.closeIcon && <div class={this.resolveClassName('modal-close')}>{this.$slots.close?.()}</div>}
               </div>
-            ) : (
-              ''
             )}
           </Transition>
         </div>
