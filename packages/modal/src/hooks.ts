@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 import throttle from 'lodash/throttle';
-import { type Ref, ref, watch } from 'vue';
+import { type Ref, ref, useSlots, watch } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 
@@ -32,14 +32,19 @@ import type { ModalProps } from './modal';
 
 export const useContentResize = (root: Ref<HTMLElement>, props: ModalProps) => {
   const { resolveClassName } = usePrefix();
+  const slots = useSlots();
 
   const isContentScroll = ref(false);
   const contentStyles = ref({});
 
   let observer;
 
-  const handleResize = throttle(() => {
-    const calcContentScroll = () => {
+  const handleContentBoxChange = () => {
+    if (!slots.footer) {
+      return;
+    }
+
+    const calcContentScroll = throttle(() => {
       const { height: headerHeight } = root.value
         .querySelector(`.${resolveClassName('modal-header')}`)
         .getBoundingClientRect();
@@ -63,26 +68,27 @@ export const useContentResize = (root: Ref<HTMLElement>, props: ModalProps) => {
       } else {
         contentStyles.value = {};
       }
-    };
+    }, 100);
 
     observer = new MutationObserver(() => {
       calcContentScroll();
     });
+
     observer.observe(root.value.querySelector(`.${resolveClassName('modal-content')} div`), {
       subtree: true,
       attributes: true,
       childList: true,
-      characterData: true,
     });
+
     calcContentScroll();
-  }, 30);
+  };
 
   watch(
     () => props.isShow,
     () => {
       if (props.isShow) {
         setTimeout(() => {
-          handleResize();
+          handleContentBoxChange();
         }, 100);
       } else {
         if (observer) {

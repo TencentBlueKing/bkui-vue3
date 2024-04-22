@@ -242,9 +242,6 @@ export default defineComponent({
       ],
       default: () => <div class={this.resolveClassName('dialog-content')}>{this.$slots.default()}</div>,
       footer: () => {
-        if (!['process', 'operation', 'confirm'].includes(this.dialogType)) {
-          return null;
-        }
         if (this.$slots.footer) {
           return (
             <div
@@ -254,6 +251,10 @@ export default defineComponent({
               {this.$slots.footer()}
             </div>
           );
+        }
+
+        if (!['process', 'operation', 'confirm'].includes(this.dialogType)) {
+          return null;
         }
         const renderFooterAction = () => {
           if (this.dialogType === 'operation') {

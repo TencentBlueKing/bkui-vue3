@@ -82,7 +82,7 @@ export default defineComponent({
     const { resolveClassName } = usePrefix();
 
     return () => {
-      const dialogSlot = {
+      const modelSlot = {
         header: () => (
           <>
             <div class={`${resolveClassName('sideslider-header')}`}>
@@ -97,14 +97,14 @@ export default defineComponent({
           </>
         ),
         default: () => <div class={`${resolveClassName('sideslider-content')}`}>{slots.default?.()}</div>,
-        footer: () => {
-          if (slots.footer) {
-            return <div class={`${resolveClassName('sideslider-footer')}`}>{slots.footer()}</div>;
-          }
-
-          return null;
-        },
       };
+      if (slots.footer) {
+        Object.assign(modelSlot, {
+          footer: () => {
+            return <div class={`${resolveClassName('sideslider-footer')}`}>{slots.footer()}</div>;
+          },
+        });
+      }
 
       return (
         <Modal
@@ -119,7 +119,7 @@ export default defineComponent({
           onShown={handleShown}
           onClose={handleClose}
         >
-          {dialogSlot}
+          {modelSlot}
         </Modal>
       );
     };

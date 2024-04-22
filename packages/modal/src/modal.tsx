@@ -88,6 +88,7 @@ export default defineComponent({
     };
 
     const { resolveClassName } = usePrefix();
+
     const resolveClosetModal = () => {
       resolveTransfer();
       if (enableTeleport.value) {

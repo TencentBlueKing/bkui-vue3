@@ -117,7 +117,7 @@ export default defineComponent({
         return <div class={`${this.resolveClassName('timeline-content')}`}>{this.$slots.content(item)}</div>;
       }
       if (item.nodeType === 'vnode') {
-        return <div class={`${this.resolveClassName('timeline-content')}`}>{item.content}</div>
+        return <div class={`${this.resolveClassName('timeline-content')}`}>{item.content}</div>;
       }
       return (
         <div
@@ -150,9 +150,7 @@ export default defineComponent({
                   class={`${this.resolveClassName('timeline-title')}`}
                   onClick={() => this.handleTitleSelect(item)}
                 >
-                  {
-                    item.nodeType === 'vnode' ? item.tag :  (<span v-html={item.tag}></span>)
-                  }
+                  {item.nodeType === 'vnode' ? item.tag : <span v-html={item.tag}></span>}
                 </div>
               }
               {renderContent(item)}
