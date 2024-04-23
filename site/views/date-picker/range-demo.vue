@@ -11,6 +11,7 @@
     :model-value="defaultValue"
     style="width: 100%;"
     type="datetimerange"
+    :disabled-date="disabledDate"
     @change="handleChange"
     @pick-first="handlePickFirst"
   >
@@ -50,4 +51,6 @@
   const handlePickFirst = (type, val) => {
     console.error(123, type, val);
   };
+
+  const disabledDate = date => date && date.valueOf() < Date.now() - 86400;
 </script>

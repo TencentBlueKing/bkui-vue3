@@ -1,6 +1,12 @@
 ## 更新日志
 
 
+### 1.0.3-beta.51
+
+* **[feat]**:
+    - fix(datepicker): datepicker monthrange 支持 disabled-date
+
+
 ### 1.0.3-beta.50
 
 * **[feat]**:

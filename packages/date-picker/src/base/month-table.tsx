@@ -109,8 +109,7 @@ export default defineComponent({
         cell.text = tCell(i + 1);
         const day = clearHours(cell.date);
         const time = cell.date && clearHours(cell.date);
-        cell.disabled =
-          typeof props.disabledDate === 'function' && props.disabledDate(cell.date) && props.selectionMode === 'month';
+        cell.disabled = typeof props.disabledDate === 'function' && props.disabledDate(cell.date);
         cell.selected = selectedDays.includes(day);
         cell.range = isRange && isInRange(time, rangeStart, rangeEnd);
         cell.start = isRange && time === minDay;
