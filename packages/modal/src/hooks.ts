@@ -45,7 +45,7 @@ export const useContentResize = (root: Ref<HTMLElement>, resizeTarget: Ref<HTMLE
         .getBoundingClientRect();
 
       const { height: contentHeight } = root.value
-        .querySelector(`.${resolveClassName('modal-content')}`)
+        .querySelector(`.${resolveClassName('modal-content')} div`)
         .getBoundingClientRect();
 
       const { height: footerHeight } = root.value
@@ -54,15 +54,17 @@ export const useContentResize = (root: Ref<HTMLElement>, resizeTarget: Ref<HTMLE
 
       const windowInnerHeight = window.innerHeight;
 
-      isContentScroll.value = windowInnerHeight < headerHeight + contentHeight + footerHeight;
+      isContentScroll.value = windowInnerHeight < headerHeight + contentHeight + footerHeight + 20;
       if (isContentScroll.value || props.fullscreen) {
         contentStyles.value = {
           height: `${windowInnerHeight - headerHeight - footerHeight}px`,
         };
+        // fullscreen 时默认为 true
+        isContentScroll.value = true;
       } else {
         contentStyles.value = {};
       }
-    }, 100);
+    }, 30);
 
     observer = new ResizeObserver(() => {
       calcContentScroll();

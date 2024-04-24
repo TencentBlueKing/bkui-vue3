@@ -2,28 +2,23 @@
 @import '@bkui-vue/info-box/info-box.less';
 
 .@{bk-prefix}-modal-ctx {
+  position: fixed;
   top: 0px;
   left: 0px;
+  display: none;
   width: 100%;
   height: 100%;
   pointer-events: auto;
 
-  &.--show {
-    position: fixed;
-    .@{bk-prefix}-modal-ctx-mask {
-      display: block;
-    }
-  }
-
-  &.--hide {
-    display: none;
+  &.is-show {
+    display: block;
   }
 }
 
 .@{bk-prefix}-modal-ctx-mask {
+  position: fixed;
   top: 0;
   left: 0;
-  display: none;
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.6);
@@ -54,6 +49,7 @@
 }
 
 .@{bk-prefix}-modal-content {
+  max-height: 100vh;
   overflow: auto;
   scrollbar-gutter: stable;
 }

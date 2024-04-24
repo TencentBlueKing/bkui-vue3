@@ -235,8 +235,7 @@ export default defineComponent({
         ref='refRoot'
         class={{
           [this.resolveClassName('modal-ctx')]: true,
-          '--show': this.visible,
-          '--hide': !this.visible,
+          'is-show': this.visible,
         }}
         style={{ zIndex: this.zIndex }}
       >
@@ -270,7 +269,7 @@ export default defineComponent({
                   class={this.resolveClassName('modal-content')}
                   style={this.contentStyles}
                 >
-                  <div style='position: relative; display: table-cell;'>
+                  <div style='position: relative; display: inline-block; width: 100%;'>
                     {this.$slots.default?.()}
                     <div
                       ref='resizeTargetRef'
