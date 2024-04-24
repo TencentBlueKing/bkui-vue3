@@ -30,17 +30,16 @@ import { usePrefix } from '@bkui-vue/config-provider';
 
 import type { ModalProps } from './modal';
 
-export const useContentResize = (root: Ref<HTMLElement>, props: ModalProps) => {
+export const useContentResize = (root: Ref<HTMLElement>, resizeTarget: Ref<HTMLElement>, props: ModalProps) => {
   const { resolveClassName } = usePrefix();
 
   const isContentScroll = ref(false);
   const contentStyles = ref({});
 
-  let observer;
+  let observer: ResizeObserver;
 
   const handleContentBoxChange = () => {
     const calcContentScroll = throttle(() => {
-      console.log('from model content size change');
       const { height: headerHeight } = root.value
         .querySelector(`.${resolveClassName('modal-header')}`)
         .getBoundingClientRect();
@@ -59,22 +58,17 @@ export const useContentResize = (root: Ref<HTMLElement>, props: ModalProps) => {
       if (isContentScroll.value || props.fullscreen) {
         contentStyles.value = {
           height: `${windowInnerHeight - headerHeight - footerHeight}px`,
-          overflow: 'scroll',
         };
       } else {
         contentStyles.value = {};
       }
     }, 100);
 
-    observer = new MutationObserver(() => {
+    observer = new ResizeObserver(() => {
       calcContentScroll();
     });
 
-    observer.observe(root.value.querySelector(`.${resolveClassName('modal-content')} div`), {
-      subtree: true,
-      attributes: true,
-      childList: true,
-    });
+    observer.observe(resizeTarget.value);
 
     calcContentScroll();
   };
@@ -88,7 +82,6 @@ export const useContentResize = (root: Ref<HTMLElement>, props: ModalProps) => {
         }, 100);
       } else {
         if (observer) {
-          observer.takeRecords();
           observer.disconnect();
           observer = null;
         }

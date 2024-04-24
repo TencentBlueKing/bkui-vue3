@@ -52,6 +52,7 @@ export default defineComponent({
   setup(props, ctx) {
     const refRoot = ref<HTMLElement>();
     const refMask = ref<HTMLElement>();
+    const resizeTargetRef = ref<HTMLElement>();
     const teleportTo = ref<string | HTMLElement>('body');
     const visible = ref(false);
     const zIndex = ref(props.zIndex);
@@ -59,7 +60,7 @@ export default defineComponent({
     const backgroundColor = ref('rgba(0,0,0,0.6)');
     let closeTimer;
 
-    const { contentStyles, isContentScroll } = useContentResize(refRoot, props);
+    const { contentStyles, isContentScroll } = useContentResize(refRoot, resizeTargetRef, props);
 
     const modalWrapperStyles = computed(() => {
       const baseStyles = {
@@ -225,6 +226,7 @@ export default defineComponent({
       refMask,
       resolveClassName,
       close,
+      resizeTargetRef,
     };
   },
   render() {
@@ -268,7 +270,13 @@ export default defineComponent({
                   class={this.resolveClassName('modal-content')}
                   style={this.contentStyles}
                 >
-                  <div>{this.$slots.default?.()}</div>
+                  <div style='position: relative'>
+                    {this.$slots.default?.()}
+                    <div
+                      ref='resizeTargetRef'
+                      style='position: absolute; top: 0; bottom: 0;'
+                    />
+                  </div>
                 </div>
                 <div
                   class={{
