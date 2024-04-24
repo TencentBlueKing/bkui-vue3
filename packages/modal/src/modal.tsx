@@ -270,7 +270,7 @@ export default defineComponent({
                   class={this.resolveClassName('modal-content')}
                   style={this.contentStyles}
                 >
-                  <div style='position: relative'>
+                  <div style='position: relative; display: table-cell;'>
                     {this.$slots.default?.()}
                     <div
                       ref='resizeTargetRef'
