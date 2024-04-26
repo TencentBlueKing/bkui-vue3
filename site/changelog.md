@@ -1,5 +1,17 @@
 ## 更新日志
 
+### 1.0.3-beta.60
+
+* **[feat]**:
+    - feat(upload): 添加selectChange属性
+
+
+### 1.0.3-beta.59
+
+* **[feat]**:
+    - feat(search-select): 新版search select组件
+
+
 ### 1.0.3-beta.58
 
 * **[feat]**:
