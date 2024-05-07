@@ -34,10 +34,10 @@ import { classes, PropTypes, SizeEnum } from '@bkui-vue/shared';
 import { useCheckbox, useFocus } from './common';
 
 export const checkboxProps = {
-  modelValue: PropTypes.oneOfType([String, Number, Boolean]),
-  label: PropTypes.oneOfType([String, Number, Boolean]),
-  trueLabel: PropTypes.oneOfType([String, Number, Boolean]).def(true),
-  falseLabel: PropTypes.oneOfType([String, Number, Boolean]).def(false),
+  modelValue: PropTypes.oneOfType([PropTypes.bool, PropTypes.string, PropTypes.number]),
+  label: PropTypes.oneOfType([PropTypes.bool, PropTypes.string, PropTypes.number]),
+  trueLabel: PropTypes.oneOfType([PropTypes.bool, PropTypes.string, PropTypes.number]).def(true),
+  falseLabel: PropTypes.oneOfType([PropTypes.bool, PropTypes.string, PropTypes.number]).def(false),
   disabled: PropTypes.bool.def(false),
   checked: PropTypes.bool.def(false),
   indeterminate: PropTypes.bool,

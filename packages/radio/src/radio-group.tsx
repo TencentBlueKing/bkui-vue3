@@ -35,7 +35,7 @@ import type { IRadioGroupContext } from './type';
 
 const radioGroupProps = {
   name: PropTypes.string.def(''),
-  modelValue: PropTypes.oneOfType([String, Number, Boolean]),
+  modelValue: PropTypes.oneOfType([PropTypes.bool, PropTypes.string, PropTypes.number]),
   disabled: PropTypes.bool,
   withValidate: PropTypes.bool.def(true),
   type: PropTypes.oneOf(['tab', 'capsule', 'card']).def('tab'),

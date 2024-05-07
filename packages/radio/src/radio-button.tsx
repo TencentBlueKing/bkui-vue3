@@ -34,8 +34,8 @@ import { useFocus, useRadio } from './common';
 
 const radioButtonProps = {
   name: PropTypes.string.def(''),
-  label: PropTypes.oneOfType([String, Number, Boolean]).isRequired,
-  modelValue: PropTypes.oneOfType([String, Number, Boolean]).def(''),
+  label: PropTypes.oneOfType([PropTypes.bool, PropTypes.string, PropTypes.number]).isRequired,
+  modelValue: PropTypes.oneOfType([PropTypes.bool, PropTypes.string, PropTypes.number]).def(''),
   checked: PropTypes.bool.def(false),
   disabled: PropTypes.bool.def(false),
   size: PropTypes.size(),
