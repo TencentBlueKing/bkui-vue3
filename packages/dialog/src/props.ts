@@ -36,7 +36,7 @@ const props = {
   ...dialogProps,
 
   // 是否可拖拽
-  draggable: PropTypes.bool.def(true),
+  draggable: PropTypes.bool.def(false),
   // 确认按钮文字
   // confirmText: PropTypes.string.def('确定'),
   confirmText: PropTypes.string,

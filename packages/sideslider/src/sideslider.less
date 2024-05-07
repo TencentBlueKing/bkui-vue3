@@ -11,6 +11,10 @@
     .@{bk-prefix}-modal-wrapper {
       left: 0;
     }
+
+    .@{bk-prefix}-sideslider-header {
+      flex-direction: row-reverse;
+    }
   }
 
   .@{bk-prefix}-modal-wrapper {
@@ -22,9 +26,9 @@
   .@{bk-prefix}-modal-footer {
     &.is-fixed {
       .@{bk-prefix}-sideslider-footer {
-        height: 54px;
         margin: 0;
-        border-top: 1px solid transparent;
+        background: #fafbfd;
+        box-shadow: 0 -1px 0 0 #dcdee5;
         box-shadow: rgb(0 0 0 / 6%) 0 -2px 4px 0;
       }
     }
@@ -32,75 +36,36 @@
 }
 
 .@{bk-prefix}-sideslider-header {
-  width: 100%;
+  display: flex;
   height: 52px;
   background: #fff;
   border-bottom: 1px solid #dcdee5;
 }
 
 .@{bk-prefix}-sideslider-close {
-  position: absolute;
-  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 30px;
-  height: 52px;
-  font-size: 24px;
-  line-height: 52px;
+  font-size: 26px;
   color: #fff;
-  text-align: center;
   cursor: pointer;
   background-color: @primary-color;
-
-  &.right {
-    left: 0;
-
-    &::before {
-      top: 50%;
-      left: 50%;
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      border-top: solid 2px #fff;
-      border-right: solid 2px #fff;
-      content: '';
-      transform: translate(-50%, -50%) rotate(45deg);
-    }
-  }
-
-  &.left {
-    right: 0;
-
-    &::before {
-      top: 50%;
-      left: 50%;
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      border-top: solid 2px #fff;
-      border-left: solid 2px #fff;
-      content: '';
-      transform: translate(50%, -50%) rotate(-45deg);
-    }
-  }
 }
 
 .@{bk-prefix}-sideslider-title {
   display: flex;
-  height: 52px;
-  padding-left: 30px;
+  padding-left: 16px;
   font-size: 16px;
   color: #313238;
   align-items: center;
-
-  &.right {
-    width: 100%;
-    padding: 0 0 0 30+16px;
-  }
+  flex: 1;
 }
 
 .@{bk-prefix}-sideslider-footer {
   display: flex;
   width: 100%;
-  height: 54px;
+  height: 48px;
   padding: 0 24px;
   margin-top: 24px;
   background: #fff;

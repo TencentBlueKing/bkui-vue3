@@ -34,6 +34,8 @@ import {
   Teleport,
   Transition,
   watch,
+  useSlots,
+  useAttrs,
 } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
@@ -52,6 +54,10 @@ export default defineComponent({
   },
   emits: ['quick-close', 'hidden', 'shown', 'close'],
   setup(props, ctx) {
+    const slots = useSlots();
+    const attrs = useAttrs();
+    const { resolveClassName } = usePrefix();
+
     const rootRef = ref<HTMLElement>();
     const maskRef = ref<HTMLElement>();
     const resizeTargetRef = ref<HTMLElement>();
@@ -70,8 +76,6 @@ export default defineComponent({
         top: props.top,
       };
     });
-
-    const { resolveClassName } = usePrefix();
 
     watch(
       () => props.isShow,
@@ -129,101 +133,87 @@ export default defineComponent({
       ctx.emit('hidden');
     });
 
-    return {
-      rootRef,
-      maskRef,
-      localShow,
-      initRendered,
-      zIndex,
-      contentStyles,
-      isContentScroll,
-      modalWrapperStyles,
-      resolveClassName,
-      resizeTargetRef,
-      handleClose,
-      handleClickOutSide,
-    };
-  },
-  render() {
-    if (!this.initRendered) {
-      return null;
-    }
-    const renderContent = () => {
-      // v-if 模式渲染，如果 isShow 为 false 销毁 DOM
-      if (this.renderDirective === 'if' && !this.localShow) {
+    return () => {
+      if (!initRendered.value) {
         return null;
       }
-      return (
-        <div class={this.resolveClassName('modal-body')}>
-          <div class={this.resolveClassName('modal-header')}>{this.$slots.header?.()}</div>
-          <div
-            class={this.resolveClassName('modal-content')}
-            style={this.contentStyles}
-          >
-            <div style='position: relative; display: inline-block; width: 100%;'>
-              {this.$slots.default?.()}
-              <div
-                ref='resizeTargetRef'
-                style='position: absolute; top: 0; bottom: 0;'
-              />
-            </div>
-          </div>
-          <div
-            class={{
-              [this.resolveClassName('modal-footer')]: true,
-              'is-fixed': this.isContentScroll,
-            }}
-          >
-            {this.$slots.footer?.()}
-          </div>
-          {this.closeIcon && (
+      const renderContent = () => {
+        // v-if 模式渲染，如果 isShow 为 false 销毁 DOM
+        if (props.renderDirective === 'if' && !localShow.value) {
+          return null;
+        }
+        return (
+          <div class={resolveClassName('modal-body')}>
+            <div class={resolveClassName('modal-header')}>{slots.header?.()}</div>
             <div
-              class={this.resolveClassName('modal-close')}
-              onClick={this.handleClose}
+              class={resolveClassName('modal-content')}
+              style={contentStyles.value}
             >
-              {this.$slots.close?.()}
+              <div style='position: relative; display: inline-block; width: 100%;'>
+                {slots.default?.()}
+                <div
+                  ref={resizeTargetRef}
+                  style='position: absolute; top: 0; bottom: 0;'
+                />
+              </div>
             </div>
-          )}
-        </div>
+            <div
+              class={{
+                [resolveClassName('modal-footer')]: true,
+                'is-fixed': isContentScroll.value,
+              }}
+            >
+              {slots.footer?.()}
+            </div>
+            {props.closeIcon && (
+              <div
+                class={resolveClassName('modal-close')}
+                onClick={handleClose}
+              >
+                {slots.close?.()}
+              </div>
+            )}
+          </div>
+        );
+      };
+
+      return (
+        <Teleport
+          to='body'
+          disabled={!props.transfer}
+        >
+          <div
+            ref={rootRef}
+            {...attrs}
+            class={resolveClassName('modal')}
+          >
+            {props.showMask && (
+              <Transition name={mask.getMaskCount() > 0 ? 'fadein' : ''}>
+                <div
+                  v-show={localShow.value}
+                  ref={maskRef}
+                  class={{
+                    [resolveClassName('modal-mask')]: true,
+                  }}
+                  style={{
+                    zIndex: zIndex.value,
+                  }}
+                  onClick={handleClickOutSide}
+                />
+              </Transition>
+            )}
+            <Transition name={`modal-${props.animateType}`}>
+              <div
+                v-show={localShow.value}
+                class={resolveClassName('modal-wrapper')}
+                style={modalWrapperStyles.value}
+              >
+                {renderContent()}
+              </div>
+            </Transition>
+          </div>
+        </Teleport>
       );
     };
-
-    return (
-      <Teleport
-        to='body'
-        disabled={!this.transfer}
-      >
-        <div
-          ref='rootRef'
-          {...this.$attrs}
-          class={this.resolveClassName('modal')}
-        >
-          {this.showMask && (
-            <Transition name={mask.getMaskCount() > 0 ? 'fadein' : ''}>
-              <div
-                v-show={this.localShow}
-                ref='maskRef'
-                class={{
-                  [this.resolveClassName('modal-ctx-mask')]: true,
-                }}
-                style={{
-                  zIndex: this.zIndex,
-                }}
-                onClick={this.handleClickOutSide}
-              />
-            </Transition>
-          )}
-          <Transition name={`modal-${this.animateType}`}>
-            <div
-              v-show={this.localShow}
-              class={this.resolveClassName('modal-wrapper')}
-              style={this.modalWrapperStyles}
-            >
-              {renderContent()}
-            </div>
-          </Transition>
-        </div>
-      </Teleport>
-    );
   },
 });

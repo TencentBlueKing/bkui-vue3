@@ -25,9 +25,10 @@
  */
 
 import cloneDeep from 'lodash/cloneDeep';
-import { defineComponent, ref } from 'vue';
+import { defineComponent, useAttrs, useSlots, getCurrentInstance } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
+import { AngleLeft, AngleRight } from '@bkui-vue/icon';
 import Modal, { propsMixin } from '@bkui-vue/modal';
 import { PropTypes } from '@bkui-vue/shared';
 
@@ -36,6 +37,7 @@ sliderProps.width.default = '400';
 
 export default defineComponent({
   name: 'Sideslider',
+  inheritAttrs: false,
   props: {
     ...sliderProps,
     title: PropTypes.string.def(''),
@@ -55,10 +57,11 @@ export default defineComponent({
 
   emits: ['closed', 'update:isShow', 'shown', 'hidden', 'animation-end'],
 
-  setup(props, { slots, emit }) {
+  setup(props, { emit }) {
+    const attrs = useAttrs();
+    const slots = useSlots();
+    const instance = getCurrentInstance();
     const { resolveClassName } = usePrefix();
-
-    const refRoot = ref();
 
     const handleClose = async () => {
       let shouldClose = true;
@@ -86,17 +89,18 @@ export default defineComponent({
           <>
             <div class={`${resolveClassName('sideslider-header')}`}>
               <div
-                class={`${resolveClassName('sideslider-close')} ${props.direction}`}
+                class={`${resolveClassName('sideslider-close')}`}
                 onClick={handleClose}
-              />
-              <div class={`${resolveClassName('sideslider-title')} ${props.direction}`}>
-                {slots.header?.() ?? props.title}
+              >
+                {props.direction === 'left' ? <AngleLeft /> : <AngleRight />}
               </div>
+              <div class={`${resolveClassName('sideslider-title')}`}>{slots.header?.() ?? props.title}</div>
             </div>
           </>
         ),
         default: () => <div class={`${resolveClassName('sideslider-content')}`}>{slots.default?.()}</div>,
       };
+
       if (slots.footer) {
         Object.assign(modelSlot, {
           footer: () => {
@@ -105,12 +109,16 @@ export default defineComponent({
         });
       }
 
+      const inheritAttrs = { ...attrs };
+      if (instance.vnode.scopeId) {
+        inheritAttrs[instance.vnode.scopeId] = '';
+      }
+
       return (
         <Modal
-          ref={refRoot}
+          {...inheritAttrs}
           class={{
             [resolveClassName('sideslider')]: true,
-            [resolveClassName('sideslider-wrapper')]: true,
             [`is-position-${props.direction}`]: props.direction,
           }}
           isShow={props.isShow}

@@ -30,7 +30,11 @@ import { usePrefix } from '@bkui-vue/config-provider';
 
 import type { ModalProps } from './modal';
 
-export const useContentResize = (root: Ref<HTMLElement>, resizeTarget: Ref<HTMLElement>, props: ModalProps) => {
+export const useContentResize = (
+  root: Ref<HTMLElement | undefined>,
+  resizeTarget: Ref<HTMLElement | undefined>,
+  props: ModalProps,
+) => {
   const { resolveClassName } = usePrefix();
 
   const isContentScroll = ref(false);

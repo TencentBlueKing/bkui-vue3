@@ -25,16 +25,12 @@
 .@{bk-prefix}-dialog-header {
   padding: 16px 24px 0;
   font-size: 20px;
-  line-height: 1;
 }
 
 .@{bk-prefix}-dialog-title {
   display: inline-block;
   width: 100%;
-  overflow: hidden;
   color: @table-head-font-color;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .@{bk-prefix}-dialog-tool {
@@ -43,19 +39,11 @@
   right: 0;
   left: 0;
   height: 18px;
-
-  &.is-draggable {
-    cursor: move;
-    user-select: none;
-  }
-
-  &.is-dragging {
-    user-select: none;
-  }
+  cursor: move;
+  user-select: none;
 }
 
 .@{bk-prefix}-dialog-content {
-  max-height: calc(100vh - 300px);
   padding: 0 24px;
   margin-top: 16px;
   margin-bottom: 24px;

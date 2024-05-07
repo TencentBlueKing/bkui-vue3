@@ -2,8 +2,8 @@
   <div>
     <bk-button
       theme="primary"
-      @click="handleShow"
       text
+      @click="handleShow"
     >
       打开 dialog
     </bk-button>
