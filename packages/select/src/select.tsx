@@ -1039,6 +1039,7 @@ export default defineComponent({
               ) : (
                 this.list.map(item => (
                   <Option
+                    key={item[this.idKey]}
                     id={item[this.idKey]}
                     name={item[this.displayKey]}
                     v-slots={
