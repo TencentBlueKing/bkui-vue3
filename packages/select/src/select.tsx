@@ -383,7 +383,7 @@ export default defineComponent({
       const optionsDom = contentRef.value?.querySelectorAll?.('.is-selected');
       optionsDom?.[0]?.scrollIntoView({
         block: 'center',
-        behavior: 'smooth',
+        // behavior: 'smooth',
       });
     };
 
