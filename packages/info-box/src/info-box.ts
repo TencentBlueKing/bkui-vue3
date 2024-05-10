@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 
-import { type App, createApp, VNode } from 'vue';
+import { type App, createApp, h, ref, VNode } from 'vue';
 
 import RenderComponent, { genDefaultState } from './render-component';
 
@@ -61,16 +61,22 @@ interface InstanceMethods {
   update: (config: Partial<Props>) => void;
 }
 
-let infoboxInstance: App<Element>;
+const appRef = ref();
 const getInstance = () => {
-  if (!infoboxInstance) {
+  if (!appRef.value) {
     const container = document.createElement('div');
-    infoboxInstance = createApp(RenderComponent);
+    const infoboxInstance = createApp({
+      render() {
+        return h(RenderComponent, {
+          ref: appRef,
+        });
+      },
+    });
     document.body.appendChild(container);
     infoboxInstance.mount(container);
   }
 
-  return infoboxInstance._instance.exposed as InstanceMethods;
+  return appRef.value as InstanceMethods;
 };
 
 const InfoBox = (config: Partial<Props>) => {

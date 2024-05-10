@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 
-import { computed, defineComponent, reactive, ref, useAttrs, useSlots, getCurrentInstance } from 'vue';
+import { computed, defineComponent, getCurrentInstance, reactive, ref, useAttrs, useSlots } from 'vue';
 
 import Button from '@bkui-vue/button';
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
