@@ -63,7 +63,7 @@ export default defineComponent({
     const asideStyle = computed(() => {
       let divide = initialDivide.value;
       if (typeof divide === 'number') {
-        divide = `${divide}px`;
+        divide = divide <= min.value ? `${min.value}px` : `${divide}px`;
       }
       return {
         [cssPropKey.value]: divide,
