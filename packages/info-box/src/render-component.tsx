@@ -43,6 +43,7 @@ export const genDefaultState = (): Required<Props> => ({
   title: undefined,
   subTitle: undefined,
   content: undefined,
+  footer: undefined,
   headerAlign: 'center',
   contentAlign: 'center',
   footerAlign: 'center',
@@ -51,7 +52,7 @@ export const genDefaultState = (): Required<Props> => ({
   escClose: false,
   closeIcon: true,
   confirmText: '确定',
-  theme: 'primary',
+  theme: undefined,
   confirmButtonTheme: 'primary',
   cancelText: '',
   beforeClose: () => true,
@@ -153,6 +154,30 @@ export default defineComponent({
         return state.content;
       };
 
+      const renderFooter = () => {
+        if (isFunction(state.footer)) {
+          return state.footer();
+        }
+        if (state.footer) {
+          return state.footer;
+        }
+        return (
+          <>
+            {state.confirmText && (
+              <Button
+                loading={isLoading.value}
+                theme={state.confirmButtonTheme}
+                onClick={handleConfirm}
+              >
+                {state.confirmText}
+              </Button>
+            )}
+
+            {state.cancelText && <Button onClick={handleCancel}>{state.cancelText}</Button>}
+          </>
+        );
+      };
+
       return (
         <Modal
           class={[resolveClassName('infobox'), state.class]}
@@ -191,17 +216,7 @@ export default defineComponent({
                   [`is-position-${state.footerAlign}`]: state.footerAlign,
                 }}
               >
-                {state.confirmText && (
-                  <Button
-                    loading={isLoading.value}
-                    theme={state.confirmButtonTheme}
-                    onClick={handleConfirm}
-                  >
-                    {state.confirmText}
-                  </Button>
-                )}
-
-                {state.cancelText && <Button onClick={handleCancel}>{state.cancelText}</Button>}
+                {renderFooter()}
               </div>
             ),
             close: () => <Error onClick={handleCancel} />,

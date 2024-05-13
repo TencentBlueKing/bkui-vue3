@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 import throttle from 'lodash/throttle';
-import { type Ref, ref, watch } from 'vue';
+import { nextTick, onBeforeUnmount, onMounted, type Ref, ref, watch } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 
@@ -40,53 +40,47 @@ export const useContentResize = (
   const isContentScroll = ref(false);
   const contentStyles = ref({});
 
-  let observer: ResizeObserver;
+  const calcContentScroll = throttle(() => {
+    const { height: headerHeight } = root.value
+      .querySelector(`.${resolveClassName('modal-header')}`)
+      .getBoundingClientRect();
 
-  const handleContentBoxChange = () => {
-    const calcContentScroll = throttle(() => {
-      const { height: headerHeight } = root.value
-        .querySelector(`.${resolveClassName('modal-header')}`)
-        .getBoundingClientRect();
+    const { height: contentHeight } = root.value
+      .querySelector(`.${resolveClassName('modal-content')} div`)
+      .getBoundingClientRect();
 
-      const { height: contentHeight } = root.value
-        .querySelector(`.${resolveClassName('modal-content')} div`)
-        .getBoundingClientRect();
+    const { height: footerHeight } = root.value
+      .querySelector(`.${resolveClassName('modal-footer')}`)
+      .getBoundingClientRect();
 
-      const { height: footerHeight } = root.value
-        .querySelector(`.${resolveClassName('modal-footer')}`)
-        .getBoundingClientRect();
+    const windowInnerHeight = window.innerHeight;
 
-      const windowInnerHeight = window.innerHeight;
-
-      isContentScroll.value = windowInnerHeight < headerHeight + contentHeight + footerHeight + 20;
-      if (isContentScroll.value || props.fullscreen) {
-        contentStyles.value = {
-          height: `${windowInnerHeight - headerHeight - footerHeight}px`,
-          overflow: 'auto',
-          'scrollbar-gutter': 'stable',
-        };
-        // fullscreen 时默认为 true
-        isContentScroll.value = true;
-      } else {
-        contentStyles.value = {};
-      }
-    }, 30);
-
-    observer = new ResizeObserver(() => {
-      calcContentScroll();
-    });
-
-    observer.observe(resizeTarget.value);
-
-    calcContentScroll();
-  };
+    isContentScroll.value = windowInnerHeight < headerHeight + contentHeight + footerHeight + 20;
+    if (isContentScroll.value || props.fullscreen) {
+      contentStyles.value = {
+        height: `${windowInnerHeight - headerHeight - footerHeight}px`,
+        overflow: 'auto',
+        'scrollbar-gutter': 'stable',
+      };
+      // fullscreen 时默认为 true
+      isContentScroll.value = true;
+    } else {
+      contentStyles.value = {};
+    }
+  }, 30);
 
   watch(
     () => props.isShow,
     () => {
+      let observer: ResizeObserver;
       if (props.isShow) {
-        setTimeout(() => {
-          handleContentBoxChange();
+        nextTick(() => {
+          observer = new ResizeObserver(() => {
+            calcContentScroll();
+          });
+
+          observer.observe(resizeTarget.value);
+          calcContentScroll();
         });
       } else {
         if (observer) {
@@ -99,6 +93,13 @@ export const useContentResize = (
       immediate: true,
     },
   );
+
+  onMounted(() => {
+    window.addEventListener('resize', calcContentScroll);
+  });
+  onBeforeUnmount(() => {
+    window.removeEventListener('resize', calcContentScroll);
+  });
 
   return {
     contentStyles,

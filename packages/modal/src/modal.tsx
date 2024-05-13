@@ -33,9 +33,9 @@ import {
   ref,
   Teleport,
   Transition,
-  watch,
-  useSlots,
   useAttrs,
+  useSlots,
+  watch,
 } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
