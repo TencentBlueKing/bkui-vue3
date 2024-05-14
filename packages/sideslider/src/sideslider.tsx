@@ -25,7 +25,7 @@
  */
 
 import cloneDeep from 'lodash/cloneDeep';
-import { defineComponent, useAttrs, useSlots, getCurrentInstance } from 'vue';
+import { defineComponent, getCurrentInstance, useAttrs, useSlots } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import { AngleLeft, AngleRight } from '@bkui-vue/icon';
@@ -129,6 +129,7 @@ export default defineComponent({
           quickClose={props.quickClose}
           showMask={props.showMask}
           transfer={props.transfer}
+          renderDirective={props.renderDirective}
           zIndex={props.zIndex}
           onHidden={handleHidden}
           onShown={handleShown}

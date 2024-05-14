@@ -41,6 +41,10 @@ export const useContentResize = (
   const contentStyles = ref({});
 
   const calcContentScroll = throttle(() => {
+    if (!props.isShow) {
+      // onMouted 时监听了 window resize事件这个时候 DOM 可能不存在
+      return;
+    }
     const { height: headerHeight } = root.value
       .querySelector(`.${resolveClassName('modal-header')}`)
       .getBoundingClientRect();

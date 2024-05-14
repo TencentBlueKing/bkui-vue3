@@ -329,6 +329,7 @@ export default defineComponent({
           quickClose={props.quickClose}
           showMask={props.showMask}
           transfer={props.transfer}
+          renderDirective={props.renderDirective}
           left={props.fullscreen ? '0px' : positionData.moveStyle.left}
           top={props.fullscreen ? '0px' : positionData.moveStyle.top}
           zIndex={props.zIndex}
