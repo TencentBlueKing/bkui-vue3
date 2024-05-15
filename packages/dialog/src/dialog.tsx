@@ -246,44 +246,33 @@ export default defineComponent({
               );
             }
             if (props.dialogType === 'process') {
-              const renderFirstStepBtn = () => {
-                if (props.current === 1) {
-                  return (
+              return (
+                <>
+                  {props.current > 1 && (
                     <Button
                       class={resolveClassName('dialog-perv')}
                       onClick={handlePrevStep}
                     >
                       {localPrevText.value}
                     </Button>
-                  );
-                }
-              };
-              const renderStepBtn = () => {
-                if (props.current === props.totalStep) {
-                  return (
-                    <>
-                      <Button
-                        class={resolveClassName('dialog-next')}
-                        onClick={handleNextStep}
-                      >
-                        {localNextText.value}
-                      </Button>
-                      <Button
-                        onClick={handleConfirm}
-                        theme={props.confirmButtonTheme}
-                        loading={props.isLoading}
-                      >
-                        {localConfirmText.value}
-                      </Button>
-                    </>
-                  );
-                }
-              };
-
-              return (
-                <>
-                  {renderFirstStepBtn()}
-                  {renderStepBtn()}
+                  )}
+                  {props.current >= 1 && props.current < props.totalStep && (
+                    <Button
+                      class={resolveClassName('dialog-next')}
+                      onClick={handleNextStep}
+                    >
+                      {localNextText.value}
+                    </Button>
+                  )}
+                  {props.current >= 1 && props.current === props.totalStep && (
+                    <Button
+                      onClick={handleConfirm}
+                      theme={props.confirmButtonTheme}
+                      loading={props.isLoading}
+                    >
+                      {localConfirmText.value}
+                    </Button>
+                  )}
                   <Button
                     class={resolveClassName('dialog-cancel')}
                     onClick={handleClose}
