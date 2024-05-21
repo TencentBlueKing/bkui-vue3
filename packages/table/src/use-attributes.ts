@@ -428,7 +428,12 @@ const tableSchemaResponse = (props: TablePropTypes) => {
     if (Array.isArray(props.checked)) {
       return props.checked.some(item => {
         if (typeof item === 'string') {
-          return getRowValue(row, item) === item;
+          if (props.selectionKey.length && Object.prototype.hasOwnProperty.call(row, props.selectionKey)) {
+            return getRowValue(row, props.selectionKey) === item;
+          }
+
+          console.warn('props.selectionKey is undefined or null or empty');
+          return false;
         }
 
         return getRawData(item) === getRawData(row);

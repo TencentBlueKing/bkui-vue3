@@ -69,6 +69,10 @@ export default [
       { name: 'row-key', type: 'String|Function', default: '--', desc: '行数据的 Key，用来优化 Table 的渲染。此key用于渲染table row的key，便于大数据渲染时的性能优化。在使用 reserve-selection, reserve-expand 功能的情况下，该属性是必填的。类型为 String 时，支持多层访问：user.info.id，同时支持 user.info[0].id', optional: [] },
       { name: 'show-overflow-tooltip', type: 'Boolean|IOverflowTooltip', default: 'false', desc: '表格cell内容超长时，是否自动展示tooltip，默认值为false，可以通过设置为true开启，如果需要自定义content请设置为对象，具体参考 IOverflowTooltip（此处配置整个table都启用，单个column配置可覆盖）', optional: [] },
       { name: 'selection-key', type: 'string', default: '', desc: '仅对设置了selection的情况下生效, 用于初始化或者更新row已选中状态,内部使用逻辑为：row[selectionKey]，可以为多级选择，但是多级选择只支持 row.child.child，更多请参考lodash.get', optional: [] },
+      { name: 'checked', type: 'Array', default: '[]', desc: `* 默认选中行
+      * 仅对设置了selection的情况下生效
+      * 值可以为 [key1, key2, key3, ...] 或者 [row1, row2, row3, ...]
+      * 如果设置为key，则 selectionKey 必须设置，内部匹配逻辑为：row[selectionKey] === key`, optional: [] },
       { name: 'is-selected-fn', type: 'Function', default: 'undefined', desc: '提供自定义判定当前行是否选中, 如果设置了此属性，其他判定均不生效, ({ row, cell, data }) => bool', optional: [] },
       { name: 'async-data', type: 'Boolean', default: 'false', desc: '为避免不必要的数据修改导致的不可控组件更新,默认组件不会对传入组件的data进行任何修改,设置此属性为true则会对源数据进行同步（如：启用selection，勾选时想要自动同步到源数据）, 目前只会对指定了selectionKey的情况下才会对指定的字段数据进行更新，同时需要指定 rowKey，保证匹配到的row是正确的目标对象', optional: ['true', 'false'] },
       { name: 'row-hover', type: 'String', default: 'highlight', desc: '鼠标划过行样式行为,配置`highlight`会高亮当前行，`auto`自行设置样式', optional: ['highlight', 'auto'] },

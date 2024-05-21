@@ -1,10 +1,12 @@
 <template>
   <div style="width: 100%; height: 500px;">
     <bk-table
+      ref="refTable"
       :columns="columns"
       :data="tableData"
       :pagination="pagination"
       :pagination-heihgt="60"
+      @selection-change="handleSelectionChange"
       show-overflow-tooltip
       shift-multi-checked
       height="100%"
@@ -29,4 +31,8 @@
 
   const pagination = ref({ count: tableData.length, limit: 10 });
   const columns = DATA_FIX_COLUMNS.map(item => ({ ...item }));
+  const refTable = ref(null);
+  const handleSelectionChange = (args) => {
+    console.log('handleSelectionChange', args, refTable.value?.getSelection());
+  }
 </script>
