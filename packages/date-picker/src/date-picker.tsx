@@ -137,6 +137,10 @@ export default defineComponent({
       if (_type.match(/^month/)) {
         type = 'month';
       }
+      // 增加了 yearrange
+      if (_type.match(/^year/)) {
+        type = 'year';
+      }
       // return ['year', 'month', 'date', 'time'].indexOf(type) > -1 && type;
       state.selectionMode = ['year', 'month', 'date', 'time'].indexOf(type) > -1 && type;
       return state.selectionMode;
@@ -168,7 +172,11 @@ export default defineComponent({
     });
 
     const panel = computed<DatePickerPanelType>(() => {
-      const isRange = props.type === 'daterange' || props.type === 'datetimerange' || props.type === 'monthrange';
+      const isRange =
+        props.type === 'daterange' ||
+        props.type === 'datetimerange' ||
+        props.type === 'monthrange' ||
+        props.type === 'yearrange';
       return isRange ? 'DateRangePanel' : 'DatePanel';
     });
 

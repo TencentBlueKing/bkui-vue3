@@ -86,7 +86,7 @@ export default defineComponent({
     };
 
     const handleCancel = async () => {
-      const willClose = await state.beforeClose('confirm');
+      const willClose = await state.beforeClose('cancel');
       if (!willClose) {
         return;
       }

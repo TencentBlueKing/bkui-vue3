@@ -103,6 +103,9 @@ export default defineComponent({
       const rangeStart = props.rangeState.from && clearHours(props.rangeState.from);
       const rangeEnd = props.rangeState.to && clearHours(props.rangeState.to);
 
+      const now = new Date();
+      const currentMonth = clearHours(new Date(now.getFullYear(), now.getMonth(), 1));
+
       for (let i = 0; i < 12; i++) {
         const cell = JSON.parse(JSON.stringify(cellTmpl));
         cell.date = new Date(tableYear, i, 1);
@@ -115,6 +118,7 @@ export default defineComponent({
         cell.start = isRange && time === minDay;
         cell.end = isRange && time === maxDay;
         cell.focused = day === focusedDate;
+        cell.isCurrentMonth = day === currentMonth;
         cells.push(cell);
       }
 
@@ -130,6 +134,7 @@ export default defineComponent({
       {
         [resolveClassName('date-picker-cells-cell-selected')]: cell.selected,
         [resolveClassName('date-picker-cells-cell-disabled')]: cell.disabled,
+        [resolveClassName('date-picker-cells-cell-today')]: cell.isCurrentMonth,
         [resolveClassName('date-picker-cells-cell-range')]: cell.range && !cell.start && !cell.end,
       },
 

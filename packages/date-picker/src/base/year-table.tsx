@@ -30,7 +30,7 @@ import { computed, defineComponent, PropType } from 'vue';
 import { usePrefix } from '@bkui-vue/config-provider';
 
 import type { DatePickerValueType } from '../interface';
-import { clearHours } from '../utils';
+import { clearHours, isInRange } from '../utils';
 
 const yearTableProps = {
   tableDate: {
@@ -75,13 +75,15 @@ export type YearTableProps = Readonly<ExtractPropTypes<typeof yearTableProps>>;
 export default defineComponent({
   name: 'YearTable',
   props: yearTableProps,
-  emits: ['pick', 'pick-click', 'change-range'],
+  emits: ['pick', 'pick-click', 'changeRange'],
   setup(props, { emit }) {
     const dates = computed(() => {
       const { selectionMode, modelValue, rangeState } = props;
       const rangeSelecting = selectionMode === 'range' && rangeState.selecting;
       return rangeSelecting ? [rangeState.from] : modelValue;
     });
+
+    const isRange = props.selectionMode === 'range';
 
     const startYear = computed(() => Math.floor(props.tableDate.getFullYear() / 10) * 10);
 
@@ -98,14 +100,24 @@ export default defineComponent({
         .map(date => clearHours(new Date(date.getFullYear(), 0, 1)));
       const focusedDate = clearHours(new Date(props.focusedDate.getFullYear(), 0, 1));
 
+      const currentYear = clearHours(new Date(new Date().getFullYear(), 0, 1));
+
+      const [minDay, maxDay] = (dates.value as any[]).map(clearHours);
+      const rangeStart = props.rangeState.from && clearHours(props.rangeState.from);
+      const rangeEnd = props.rangeState.to && clearHours(props.rangeState.to);
+
       for (let i = 0; i < 10; i++) {
         const cell = JSON.parse(JSON.stringify(cellTmpl));
         cell.date = new Date(startYear.value + i, 0, 1);
-        cell.disabled =
-          typeof props.disabledDate === 'function' && props.disabledDate(cell.date) && props.selectionMode === 'year';
+        cell.disabled = typeof props.disabledDate === 'function' && props.disabledDate(cell.date);
         const day = clearHours(cell.date);
+        const time = cell.date && clearHours(cell.date);
+        cell.range = isRange && isInRange(time, rangeStart, rangeEnd);
+        cell.start = isRange && time === minDay;
+        cell.end = isRange && time === maxDay;
         cell.selected = selectedDays.includes(day);
         cell.focused = day === focusedDate;
+        cell.isCurrent = day === currentYear;
         cells.push(cell);
       }
 
@@ -119,6 +131,7 @@ export default defineComponent({
       {
         [resolveClassName('date-picker-cells-cell-selected')]: cell.selected,
         [resolveClassName('date-picker-cells-cell-disabled')]: cell.disabled,
+        [resolveClassName('date-picker-cells-cell-today')]: cell.isCurrent,
         [resolveClassName('date-picker-cells-cell-range')]: cell.range && !cell.start && !cell.end,
       },
     ];
@@ -141,7 +154,7 @@ export default defineComponent({
         return;
       }
       const newDate = cell.date;
-      emit('change-range', newDate);
+      emit('changeRange', newDate);
     };
 
     return {

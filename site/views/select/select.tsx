@@ -257,14 +257,14 @@ const propsJson: IPropsTableItem[] = [
   {
     name: 'idKey',
     type: 'string',
-    default: 'id',
+    default: 'value',
     desc: '列表模式ID键',
     optional: [],
   },
   {
     name: 'displayKey',
     type: 'string',
-    default: 'name',
+    default: 'label',
     desc: '列表模式name键',
     optional: [],
   },

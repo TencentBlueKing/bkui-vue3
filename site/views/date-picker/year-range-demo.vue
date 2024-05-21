@@ -3,9 +3,9 @@
     ref="datePickerRef"
     class="mr15"
     :model-value="defaultValue"
-    :placeholder="'选择月份范围'"
+    :placeholder="'选择年份范围'"
     :disabled-date="disabledDate"
-    type="monthrange"
+    type="yearrange"
     @change="handleChange"
     @pick-first="handlePickFirst"
   />
@@ -15,8 +15,8 @@
   import { reactive, ref } from 'vue';
   const datePickerRef = ref(null);
   const defaultValue = reactive([
-    new Date(new Date().getFullYear(), new Date().getMonth() + 1),
-    new Date(new Date().getFullYear(), new Date().getMonth() + 4),
+    new Date(new Date().getFullYear() + 10, new Date().getMonth() + 1),
+    new Date(new Date().getFullYear() + 15, new Date().getMonth() + 4),
   ]);
   // const defaultValue = reactive(['2024-01-01', '2024-03-01']);
   const handleChange = (date) => {

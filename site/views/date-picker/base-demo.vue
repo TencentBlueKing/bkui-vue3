@@ -10,5 +10,5 @@
 <script setup>
   import { ref } from 'vue';
   const dateValue = ref(new Date());
-  const disabledDate = date => date && date.valueOf() < Date.now() - 86400;
+  const disabledDate = date => date.valueOf() < Date.now() - 86400000 * 2;
 </script>

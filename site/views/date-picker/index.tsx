@@ -41,6 +41,7 @@ import ShortcutsSlotDemo from './shortcuts-slot-demo.vue';
 import TriggerSlotDemo from './trigger-slot-demo.vue';
 import WithTimeDemo from './with-time-demo.vue';
 import YearMonthDemo from './year-month-demo.vue';
+import YearRangeDemo from './year-range-demo.vue';
 
 const menuPropsJson: IPropsTableItem[] = [
   {
@@ -90,6 +91,14 @@ export default defineComponent({
           demoName='month-range-demo'
         >
           <MonthRangeDemo />
+        </DemoBox>
+        <DemoBox
+          title='开启年份范围'
+          desc='通过设置 type 属性为 yearrange 来开启月份范围'
+          componentName='date-picker'
+          demoName='year-range-demo'
+        >
+          <YearRangeDemo />
         </DemoBox>
         <DemoBox
           title='开启时间设置'
