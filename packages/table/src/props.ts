@@ -535,7 +535,7 @@ export const tableProps = {
   /**
    * 提供自定义判定当前行是否选中
    * 如果设置了此属性，其他判定均不生效
-   * ({ row, cell, data }) => bool
+   * ({ row }) => bool
    */
   isSelectedFn: PropTypes.func.def(undefined),
 

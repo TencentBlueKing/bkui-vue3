@@ -422,12 +422,12 @@ const tableSchemaResponse = (props: TablePropTypes) => {
     }
 
     if (typeof props.isSelectedFn === 'function') {
-      return props.isSelectedFn({ row });
+      return props.isSelectedFn(getSelectionRowArgs(row));
     }
 
     if (Array.isArray(props.checked)) {
       return props.checked.some(item => {
-        if (typeof item === 'string') {
+        if (typeof item !== 'object') {
           if (props.selectionKey.length && Object.prototype.hasOwnProperty.call(row, props.selectionKey)) {
             return getRowValue(row, props.selectionKey) === item;
           }
@@ -534,7 +534,7 @@ const tableSchemaResponse = (props: TablePropTypes) => {
   const setRowSelection = (row: any, isSelected: boolean, index?: number) => {
     let value = isSelected;
     if (typeof props.isSelectedFn === 'function') {
-      value = props.isSelectedFn({ row, index: index ?? getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_INDEX) });
+      value = props.isSelectedFn(getSelectionRowArgs(row, index));
     }
 
     if (isRowSelectEnable(props, { row, index: index ?? getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_INDEX) })) {
@@ -566,9 +566,17 @@ const tableSchemaResponse = (props: TablePropTypes) => {
     return formatData.dataSchema.get(row)?.[attrName];
   };
 
+  const getSelectionRowArgs = (row, index?) => {
+    return {
+      row,
+      index: index ?? getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_INDEX),
+      isSelectAll: getRowAttribute(CHECK_ALL_OBJ, TABLE_ROW_ATTRIBUTE.ROW_SELECTION),
+    };
+  };
+
   const toggleRowSelection = (row: any) => {
     if (typeof props.isSelectedFn === 'function') {
-      setRowSelection(row, props.isSelectedFn({ row }));
+      setRowSelection(row, props.isSelectedFn(getSelectionRowArgs(row)));
       return;
     }
 

@@ -73,7 +73,7 @@ export default [
       * 仅对设置了selection的情况下生效
       * 值可以为 [key1, key2, key3, ...] 或者 [row1, row2, row3, ...]
       * 如果设置为key，则 selectionKey 必须设置，内部匹配逻辑为：row[selectionKey] === key`, optional: [] },
-      { name: 'is-selected-fn', type: 'Function', default: 'undefined', desc: '提供自定义判定当前行是否选中, 如果设置了此属性，其他判定均不生效, ({ row, cell, data }) => bool', optional: [] },
+      { name: 'is-selected-fn', type: 'Function', default: 'undefined', desc: '提供自定义判定当前行是否选中, 如果设置了此属性，其他判定均不生效, ({ row, index, isSelectAll }) => bool', optional: [] },
       { name: 'async-data', type: 'Boolean', default: 'false', desc: '为避免不必要的数据修改导致的不可控组件更新,默认组件不会对传入组件的data进行任何修改,设置此属性为true则会对源数据进行同步（如：启用selection，勾选时想要自动同步到源数据）, 目前只会对指定了selectionKey的情况下才会对指定的字段数据进行更新，同时需要指定 rowKey，保证匹配到的row是正确的目标对象', optional: ['true', 'false'] },
       { name: 'row-hover', type: 'String', default: 'highlight', desc: '鼠标划过行样式行为,配置`highlight`会高亮当前行，`auto`自行设置样式', optional: ['highlight', 'auto'] },
       { name: 'default-sort', type: 'Object', default: '{}', desc: '如果只指定了 prop, 没有指定 order, 则默认顺序是 asc, 配置格式：{ column: order }', optional: [] },
