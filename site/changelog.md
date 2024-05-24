@@ -1,5 +1,12 @@
 ## 更新日志
 
+### 2.0.1-beta.11
+
+* **[feat]**:
+    - feat(tree): 提供方法getParentNode
+    - bugfix(pop-confirm): placement 属性不生效，无法将其放在下方
+
+
 ### 2.0.1-beta.9
 
 * **[feat]**:
