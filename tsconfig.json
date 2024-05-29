@@ -3,6 +3,7 @@
     "strictNullChecks": false,
     "esModuleInterop": true,
     "experimentalDecorators": true,
+    "resolveJsonModule": true,
     "noImplicitAny": false,
     "baseUrl": "./",
     "paths": {

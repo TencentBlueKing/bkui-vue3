@@ -49,5 +49,4 @@ const createInstall =
 export default {
   createInstall,
   install: createInstall(),
-  version: '0.0.1',
 };

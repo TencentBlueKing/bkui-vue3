@@ -33,7 +33,7 @@ import { rollup } from 'rollup';
 import esbuild from 'rollup-plugin-esbuild';
 import { build } from 'vite';
 
-import { COMPONENT_URL, DIST_URL, LOCALE_URL } from '../compiler/helpers';
+import { COMPONENT_URL, DIST_URL, ENV_MAP, LOCALE_URL } from '../compiler/helpers';
 import { replaceThemeTovariable } from './bundle-components';
 
 import type { OutputOptions, RollupBuild } from 'rollup';
@@ -145,6 +145,9 @@ export const buildDistScript = async () =>
             },
           ],
         },
+      },
+      define: {
+        ...ENV_MAP,
       },
     }),
   ]);

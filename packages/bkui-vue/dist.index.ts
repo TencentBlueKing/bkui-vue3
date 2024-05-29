@@ -29,3 +29,4 @@ export * from './components';
 export { default } from './preset';
 export * from '@bkui-vue/config-provider';
 export * from '@bkui-vue/directives';
+export const version = process.env.VERSION;

@@ -39,8 +39,8 @@ import {
 import { join, parse, resolve } from 'path';
 import { promisify } from 'util';
 
+import packageJSON from '../../../package.json';
 import { ITaskItem } from '../typings/task';
-
 export const BKUI_DIR = resolve(__dirname, '../../../');
 export const COMPONENT_URL = resolve(BKUI_DIR, './packages');
 export const PRESET_URL = resolve(BKUI_DIR, './preset');
@@ -48,6 +48,10 @@ export const DIST_URL = resolve(BKUI_DIR, './dist');
 export const LIB_URL = resolve(BKUI_DIR, './lib');
 export const THEME_LESS_URL = resolve(COMPONENT_URL, 'styles/src/themes/themes.less');
 export const LOCALE_URL = resolve(COMPONENT_URL, './locale/src/lang');
+
+export const ENV_MAP = {
+  'process.env.VERSION': JSON.stringify(packageJSON.version),
+};
 
 // 编译转换*.d.ts
 export const compilerLibDir = async (dir: string): Promise<any> => {
@@ -178,4 +182,13 @@ export const writeFileRecursive = async (url: string, content: string) => {
   }, root);
   if (existsSync(url)) unlinkSync(url);
   await promisify(appendFile)(url, content, 'utf-8');
+};
+
+export const replaceEnvVars = (source: string) => {
+  if (!source?.length) return source;
+  let replaceSource = source;
+  Object.entries(ENV_MAP).forEach(([name, val]) => {
+    replaceSource = replaceSource.replace(new RegExp(name, 'gm'), val);
+  });
+  return replaceSource;
 };
