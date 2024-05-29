@@ -23,6 +23,11 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
+declare global {
+  interface Window {
+    __bkui_vue_version__: string;
+  }
+}
 export * from './components';
 export * from './hooks';
 export { default } from './preset';
@@ -30,3 +35,4 @@ export * from '@bkui-vue/config-provider';
 export * from '@bkui-vue/directives';
 export * as plugins from '@bkui-vue/plugins';
 export const version = process.env.VERSION;
+window.__bkui_vue_version__ = version;
