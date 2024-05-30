@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /*
  * Tencent is pleased to support the open source community by making
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
@@ -141,7 +142,7 @@ const dateRangePanelProps = {
     default: 'yyyy-MM-dd',
   },
   timePickerOptions: {
-    type: Object as PropType<Record<string, any>>,
+    type: Object as PropType<Record<string, unknown>>,
     default: () => ({}),
   },
   shortcutSelectedIndex: {

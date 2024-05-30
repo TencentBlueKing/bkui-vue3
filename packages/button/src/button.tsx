@@ -61,7 +61,6 @@ const buttonProps = {
 export type ButtonPropTypes = ExtractPropTypes<typeof buttonProps>;
 
 export default defineComponent({
-  // eslint-disable-next-line vue/no-reserved-component-names
   name: 'Button',
   props: buttonProps,
   emits: ['click', 'mouseover'],

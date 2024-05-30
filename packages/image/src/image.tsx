@@ -32,7 +32,6 @@ import { ImageViewer } from './index';
 import { propsImage as props } from './props';
 
 export default defineComponent({
-  // eslint-disable-next-line vue/no-reserved-component-names
   name: 'Image',
   props,
   emits: ['loaded', 'error', 'close', 'change'],
