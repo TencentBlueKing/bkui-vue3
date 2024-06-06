@@ -51,7 +51,6 @@ export type FormProps = Readonly<ExtractPropTypes<typeof formProps>>;
 export type FormEvents = typeof formEvents;
 
 export default defineComponent({
-  // eslint-disable-next-line vue/no-reserved-component-names
   name: 'Form',
   props: formProps,
   emits: formEvents,

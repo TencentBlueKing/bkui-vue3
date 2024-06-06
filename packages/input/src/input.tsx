@@ -117,7 +117,6 @@ export const inputEmitEventsType = {
 export type InputType = ExtractPropTypes<typeof inputType>;
 
 export default defineComponent({
-  // eslint-disable-next-line vue/no-reserved-component-names
   name: 'Input',
   directives: {
     bkTooltips,

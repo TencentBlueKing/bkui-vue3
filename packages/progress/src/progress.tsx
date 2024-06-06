@@ -56,7 +56,6 @@ export const progressType = {
 export type ProgressType = ExtractPropTypes<typeof progressType>;
 
 export default defineComponent({
-  // eslint-disable-next-line vue/no-reserved-component-names
   name: 'Progress',
   props: progressType,
   setup() {

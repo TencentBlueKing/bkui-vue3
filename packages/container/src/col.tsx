@@ -43,7 +43,6 @@ const colProps = {
 };
 
 export default defineComponent({
-  // eslint-disable-next-line vue/no-reserved-component-names
   name: 'Col',
   props: colProps,
   emits: [],
