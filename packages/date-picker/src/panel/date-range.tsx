@@ -272,7 +272,6 @@ export default defineComponent({
      * nextYear
      */
     const nextYear = panel => {
-      console.log('nextYear', panel);
       const increment = state.currentView === 'year' ? 10 : 1;
       changePanelDate(panel, 'FullYear', increment);
     };
