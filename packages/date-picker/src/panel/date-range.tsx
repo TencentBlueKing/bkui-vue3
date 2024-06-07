@@ -437,8 +437,6 @@ export default defineComponent({
       state.rightPanelDate = props.splitPanels
         ? new Date(Math.max(splitRightPanelDate, rightPanelDate.getTime()))
         : rightPanelDate;
-
-      console.log('setPanelDates', state.rightPanelDate);
     }
 
     watch(
