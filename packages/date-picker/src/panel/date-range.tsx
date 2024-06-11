@@ -925,6 +925,7 @@ export default defineComponent({
           {this.isTime ? (
             <TimeRange
               ref='timePickerRef'
+              allowCrossDay={!!this.timePickerOptions.allowCrossDay}
               disabledDate={this.disabledDate}
               format={this.format}
               selectionMode={this.selectionMode}

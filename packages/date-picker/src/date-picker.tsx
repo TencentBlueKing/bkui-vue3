@@ -233,7 +233,16 @@ export default defineComponent({
     const ownPickerProps = computed(() => props.options);
 
     // 限制 allow-cross-day 属性只在 time-picker 组件 type 为 timerange 时生效
-    const allowCrossDayProp = computed(() => (panel.value === 'RangeTimePickerPanel' ? props.allowCrossDay : false));
+    // const allowCrossDayProp = computed(() => (panel.value === 'RangeTimePickerPanel' ? props.allowCrossDay : false));
+    // const allowCrossDayProp = computed(() => {
+    //   if (panel.value === 'RangeTimePickerPanel') {
+    //     return props.allowCrossDay;
+    //   }
+    //   if (panel.value === 'DateRangePanel') {
+    //     return (props?.timePickerOptions as any)?.allowCrossDay;
+    //   }
+    //   return false;
+    // });
 
     const inputRef = ref(null);
     const inputFocus = () => {
@@ -375,7 +384,10 @@ export default defineComponent({
       //   return;
       // }
       state.showClose = false;
-      state.internalValue = state.tmpValue;
+      // state.internalValue = state.tmpValue;
+      if (state.internalValue !== state.tmpValue) {
+        handleInputChange(_e);
+      }
     };
 
     const emitChange = type => {
@@ -398,7 +410,7 @@ export default defineComponent({
       const newValue = e.target.value;
       const newDate = parseDate(newValue, props.type, props.multiple, props.format);
       const valueToTest = isArrayValue ? newDate : newDate[0];
-      const isDisabled = props.disabledDate?.(valueToTest);
+      const isDisabled = !valueToTest ? false : props.disabledDate?.(valueToTest);
       const isValidDate = newDate.reduce((valid, date) => valid && date instanceof Date, true);
 
       if (newValue !== oldValue && !isDisabled && isValidDate) {
@@ -415,7 +427,7 @@ export default defineComponent({
       const newValue = e.target.value;
       const newDate = parseDate(newValue, props.type, props.multiple, props.format);
       const valueToTest = isArrayValue ? newDate : newDate[0];
-      const isDisabled = props.disabledDate?.(valueToTest);
+      const isDisabled = !valueToTest ? false : props.disabledDate?.(valueToTest);
       const isValidDate = newDate.reduce((valid, date) => valid && date instanceof Date, true);
 
       if (newValue !== oldValue && !isDisabled && isValidDate) {
@@ -621,7 +633,7 @@ export default defineComponent({
       fontSizeCls,
       longWidthCls,
       localReadonly,
-      allowCrossDayProp,
+      // allowCrossDayProp,
       ownPickerProps,
       teleportTo,
       pickerDropdownRef,
