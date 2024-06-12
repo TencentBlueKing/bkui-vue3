@@ -118,16 +118,15 @@ export default defineComponent({
       const translateX = scrollLeft;
       Object.assign(pagination, { startIndex, endIndex, scrollTop, translateX, translateY, scrollLeft, pos });
       let start = pagination.startIndex * props.groupItemCount;
-      let end = (pagination.endIndex + props.preloadItemCount) * props.groupItemCount;
+      let end = pagination.endIndex * props.groupItemCount;
       const total = localList.value.length;
       if (total < end) {
-        calcList.value = localList.value.slice(start, total);
         end = total;
         start = end - Math.floor(refContent.value.offsetHeight / props.lineHeight);
         start = start < 0 ? 0 : start;
       }
 
-      const value = localList.value.slice(start, end);
+      const value = localList.value.slice(start, end + props.preloadItemCount * props.groupItemCount);
       calcList.value = value;
       if (event) {
         ctx.emit('content-scroll', [event, pagination, value]);

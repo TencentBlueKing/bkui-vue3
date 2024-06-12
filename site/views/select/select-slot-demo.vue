@@ -249,7 +249,7 @@
 <script setup>
   import { ref } from 'vue';
 
-  import { Done, Error, Plus, RightTurnLine, Spinner } from 'bkui-vue/lib/icon';
+  import { Done, Error, Plus, RightTurnLine, Spinner } from '@bkui-vue/lib/icon';
 
   const datasource = ref([
     {

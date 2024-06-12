@@ -115,7 +115,14 @@ const propsJson: IPropsTableItem[] = [
     name: 'scrollHeight',
     type: 'number',
     default: '200',
-    desc: '下拉框高度',
+    desc: '下拉框最大高度',
+    optional: [],
+  },
+  {
+    name: 'minHeight',
+    type: 'number',
+    default: '',
+    desc: '下拉框最小高度',
     optional: [],
   },
   {
@@ -290,7 +297,7 @@ const propsJson: IPropsTableItem[] = [
     name: 'enableVirtualRender',
     type: 'boolean',
     default: 'false',
-    desc: '是否启用虚拟滚动（只支持List模式）',
+    desc: '是否启用虚拟滚动（只支持List模式，如果scrollHeight高度大于list数目，则不会开启）',
     optional: ['true', 'false'],
   },
   {

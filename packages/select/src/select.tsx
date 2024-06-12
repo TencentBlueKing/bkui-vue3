@@ -32,7 +32,7 @@ import { clickoutside } from '@bkui-vue/directives';
 import { AngleUp, Close, Search, TextAll } from '@bkui-vue/icon';
 import Input from '@bkui-vue/input';
 import Loading from '@bkui-vue/loading';
-import Popover from '@bkui-vue/popover';
+import Popover, { PopoverPropTypes } from '@bkui-vue/popover';
 import {
   classes,
   InputBehaviorType,
@@ -46,7 +46,6 @@ import {
 import VirtualRender from '@bkui-vue/virtual-render';
 import isEqual from 'lodash/isEqual';
 import merge from 'lodash/merge';
-import { PopoverPropTypes } from 'popover/src/props';
 
 import { isInViewPort, selectKey, toLowerCase, useHover, usePopover, useRegistry, useRemoteSearch } from './common';
 import Option from './option';
@@ -68,7 +67,8 @@ export default defineComponent({
     loading: PropTypes.bool.def(false),
     filterable: PropTypes.bool.def(true), // 是否支持搜索
     remoteMethod: PropTypes.func,
-    scrollHeight: PropTypes.number.def(200),
+    scrollHeight: PropTypes.number.def(204),// 最大高度
+    minHeight: PropTypes.number,// 最小高度
     showAll: PropTypes.bool.def(false), // 全部
     allOptionId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]), // 全部选项ID
     showSelectAll: PropTypes.bool.def(false), // 全选
@@ -201,7 +201,6 @@ export default defineComponent({
     const contentRef = ref<HTMLElement>();
     const searchRef = ref<HTMLElement>();
     const selectTagInputRef = ref<SelectTagInputType>();
-    const virtualRenderRef = ref();
     const popoverRef = ref();
     const optionsMap = ref<Map<any, OptionInstanceType>>(new Map());
     const options = computed(() =>
@@ -249,8 +248,8 @@ export default defineComponent({
       isRemoteSearch.value
         ? list.value
         : list.value.filter(item => {
-            return defaultSearchMethod(curSearchValue.value, String(item[displayKey.value]), item);
-          }),
+          return defaultSearchMethod(curSearchValue.value, String(item[displayKey.value]), item);
+        }),
     );
     // select组件是否禁用
     const isDisabled = computed(() => disabled.value || loading.value);
@@ -300,6 +299,16 @@ export default defineComponent({
     const isShowAll = computed(() => multiple.value && showAll.value);
     // 虚拟滚动高度 12 上下边距，32 显示全选时的高度
     const virtualHeight = computed(() => scrollHeight.value - 12 - (isShowSelectAll.value ? 32 : 0));
+    const virtualLineHeight = ref(32);
+    // 是否启用虚拟滚动(如果配置了启用，但是数据小于滚动高度则不开启)
+    const isEnableVirtualRender = computed(() => {
+      if (enableVirtualRender.value) return virtualList.value.length * virtualLineHeight.value > virtualHeight.value;
+      return false;
+    });
+    // 预加载滚动数据
+    const preloadItemCount = computed(
+      () => Math.ceil(virtualHeight.value / virtualLineHeight.value),
+    );
     // 当前空状态时显示文案
     const curContentText = computed(() => {
       if (searchLoading.value) {
@@ -378,6 +387,7 @@ export default defineComponent({
     });
     // 滚动到当前选中的options中
     const scrollActiveOptionIntoView = () => {
+      if (isEnableVirtualRender.value) return;
       const optionsDom = contentRef.value?.querySelectorAll?.('.is-selected');
       optionsDom?.[0]?.scrollIntoView({
         block: 'center',
@@ -674,7 +684,7 @@ export default defineComponent({
     };
     // 处理键盘事件
     const handleDocumentKeydown = (e: KeyboardEvent) => {
-      if (!isPopoverShow.value || enableVirtualRender.value) return;
+      if (!isPopoverShow.value || isEnableVirtualRender.value) return;
 
       const availableOptions = options.value.filter(option => !option.disabled && option.visible);
       const index = availableOptions.findIndex(option => option.optionID === activeOptionValue.value);
@@ -728,12 +738,6 @@ export default defineComponent({
       hidePopover();
       handleBlur();
     };
-    const handlePopoverShow = () => {
-      setTimeout(() => {
-        // 虚拟滚动首次未更新问题
-        enableVirtualRender.value && virtualRenderRef.value?.reset?.();
-      });
-    };
 
     provide(
       selectKey,
@@ -777,7 +781,6 @@ export default defineComponent({
       contentRef,
       searchRef,
       selectTagInputRef,
-      virtualRenderRef,
       popoverRef,
       searchLoading,
       isOptionsEmpty,
@@ -814,13 +817,15 @@ export default defineComponent({
       handleDeleteTag,
       handleInputChange,
       handleSelectedAllOptionMouseEnter,
-      handlePopoverShow,
       localLoadingText,
       localPlaceholder,
       localSearchPlaceholder,
       localSelectAllText,
       resolveClassName,
       handleCreateCustomOption,
+      virtualLineHeight,
+      isEnableVirtualRender,
+      preloadItemCount,
     };
   },
   render() {
@@ -906,7 +911,7 @@ export default defineComponent({
         </div>
       );
     };
-
+    // 默认trigger输入框渲染
     const renderTriggerInput = () => {
       if (this.multipleMode === 'tag') {
         return (
@@ -953,6 +958,7 @@ export default defineComponent({
         />
       );
     };
+    // 渲染trigger
     const renderSelectTrigger = () => (
       <div
         ref='triggerRef'
@@ -965,6 +971,45 @@ export default defineComponent({
         {this.$slots?.trigger?.({ selected: this.selected }) || renderTriggerInput()}
       </div>
     );
+    // 渲染列表模式
+    const renderList = () => {
+      return this.isEnableVirtualRender ? (
+        <VirtualRender
+          height={this.virtualHeight}
+          lineHeight={this.virtualLineHeight}
+          list={this.virtualList}
+          preloadItemCount={this.preloadItemCount}
+        >
+          {{
+            default: ({ data }) => {
+              const optionRender = this.$slots?.optionRender || this.$slots?.virtualScrollRender;
+              return data.map(item => (
+                <Option
+                  id={item[this.idKey]}
+                  key={item[this.idKey]}
+                  v-slots={
+                    typeof optionRender === 'function' ? { default: () => optionRender({ item }) } : null
+                  }
+                  name={item[this.displayKey]}
+                />
+              ));
+            },
+          }}
+        </VirtualRender>
+      ) : (
+        this.list.map(item => (
+          <Option
+            id={item[this.idKey]}
+            key={item[this.idKey]}
+            v-slots={
+              this.$slots?.optionRender ? { default: () => this.$slots?.optionRender?.({ item }) } : null
+            }
+            name={item[this.displayKey]}
+          />
+        ))
+      )
+    }
+    // 渲染内容
     const renderSelectContent = () => (
       <div
         ref='contentRef'
@@ -1002,50 +1047,15 @@ export default defineComponent({
         )}
         <div class={this.resolveClassName('select-content')}>
           <div
-            style={{ maxHeight: `${this.scrollHeight}px` }}
-            class={this.enableVirtualRender ? '' : this.resolveClassName('select-dropdown')}
+            style={{ maxHeight: `${this.scrollHeight}px`, minHeight: `${this.minHeight}px` }}
+            class={this.isEnableVirtualRender ? '' : this.resolveClassName('select-dropdown')}
             onScroll={this.handleScroll}
           >
             <ul
               class={this.resolveClassName('select-options')}
-              v-show={this.isShowSelectContent}
             >
               {renderSelectAll()}
-              {this.enableVirtualRender ? (
-                <VirtualRender
-                  ref='virtualRenderRef'
-                  height={this.virtualHeight}
-                  lineHeight={32}
-                  list={this.virtualList}
-                >
-                  {{
-                    default: ({ data }) => {
-                      const optionRender = this.$slots?.optionRender || this.$slots?.virtualScrollRender;
-                      return data.map(item => (
-                        <Option
-                          id={item[this.idKey]}
-                          key={item[this.idKey]}
-                          v-slots={
-                            typeof optionRender === 'function' ? { default: () => optionRender({ item }) } : null
-                          }
-                          name={item[this.displayKey]}
-                        />
-                      ));
-                    },
-                  }}
-                </VirtualRender>
-              ) : (
-                this.list.map(item => (
-                  <Option
-                    id={item[this.idKey]}
-                    key={item[this.idKey]}
-                    v-slots={
-                      this.$slots?.optionRender ? { default: () => this.$slots?.optionRender?.({ item }) } : null
-                    }
-                    name={item[this.displayKey]}
-                  />
-                ))
-              )}
+              {renderList()}
               {this.$slots?.default?.()}
               {this.scrollLoading && (
                 <li class={this.resolveClassName('select-options-loading')}>
@@ -1055,7 +1065,7 @@ export default defineComponent({
                     mode='spin'
                     size='mini'
                     theme='primary'
-                  ></Loading>
+                  />
                   <span>{this.localLoadingText}</span>
                 </li>
               )}
@@ -1077,9 +1087,8 @@ export default defineComponent({
             default: () => renderSelectTrigger(),
             content: () => renderSelectContent(),
           }}
-          onAfterShow={this.handlePopoverShow}
           onClickoutside={this.handleClickOutside}
-        ></Popover>
+        />
       </div>
     );
   },
