@@ -29,6 +29,7 @@ import { defineComponent } from 'vue';
 import { usePrefix } from '@bkui-vue/config-provider';
 import { Loading } from '@bkui-vue/icon';
 import { classes, PropTypes, SizeEnum } from '@bkui-vue/shared';
+import { func } from 'vue-types';
 
 import { useCheckbox, useFocus } from './common';
 
@@ -42,7 +43,7 @@ export const checkboxProps = {
   disabled: PropTypes.bool.def(false),
   checked: PropTypes.bool.def(false),
   indeterminate: PropTypes.bool,
-  beforeChange: PropTypes.func,
+  beforeChange: func<(event: boolean | string | number) => boolean>().def(() => true),
   size: PropTypes.size().def(SizeEnum.DEFAULT),
   immediateEmitChange: PropTypes.bool.def(true), // 默认设置checked是否触发change事件
 };

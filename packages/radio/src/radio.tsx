@@ -25,6 +25,7 @@
  */
 
 import { defineComponent } from 'vue';
+import { func } from 'vue-types';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import { classes, PropTypes } from '@bkui-vue/shared';
@@ -39,7 +40,7 @@ const radioProps = {
   modelValue: PropTypes.oneOfType([PropTypes.bool, PropTypes.string, PropTypes.number]).def(''),
   checked: PropTypes.bool.def(false),
   disabled: PropTypes.bool.def(false),
-  beforeChange: PropTypes.func,
+  beforeChange: func<(event: boolean | string | number) => boolean>().def(() => true),
 };
 
 export type RadioProps = Readonly<ExtractPropTypes<typeof radioProps>>;

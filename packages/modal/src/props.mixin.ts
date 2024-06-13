@@ -24,6 +24,7 @@
  * IN THE SOFTWARE.
  */
 import { PropTypes, renderDirectiveType } from '@bkui-vue/shared';
+import { func } from 'vue-types';
 
 export const propsMixin = {
   // 是否显示弹框
@@ -48,7 +49,7 @@ export const propsMixin = {
   // 弹框的渲染方式
   renderDirective: renderDirectiveType(),
   // 关闭前回调
-  beforeClose: PropTypes.custom(() => true),
+  beforeClose: func<() => boolean>().def(() => true),
   left: PropTypes.string,
   top: PropTypes.string,
   extCls: PropTypes.string,

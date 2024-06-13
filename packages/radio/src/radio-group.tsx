@@ -25,6 +25,7 @@
  */
 
 import { defineComponent, onMounted, provide, watch } from 'vue';
+import { func } from 'vue-types';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import { PropTypes, useFormItem } from '@bkui-vue/shared';
@@ -41,7 +42,7 @@ const radioGroupProps = {
   withValidate: PropTypes.bool.def(true),
   type: PropTypes.oneOf(['tab', 'capsule', 'card']).def('tab'),
   size: PropTypes.size(),
-  beforeChange: PropTypes.func,
+  beforeChange: func<(event: boolean | string | number) => boolean>().def(() => true),
 };
 
 export type RadioGroupProps = Readonly<ExtractPropTypes<typeof radioGroupProps>>;
