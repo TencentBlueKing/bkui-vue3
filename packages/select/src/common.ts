@@ -47,9 +47,9 @@ export function useHover() {
   };
 }
 
-export function useRegistry<T>(data: Ref<Map<any, T>>) {
+export function useRegistry<T>(data: Ref<Map<string, T>>) {
   // 注册item
-  const register = (key: any, item: T) => {
+  const register = (key: string, item: T) => {
     if (!item) return;
     if (data.value.has(key)) {
       // console.warn(`repeat ${key}`, item);
@@ -58,7 +58,7 @@ export function useRegistry<T>(data: Ref<Map<any, T>>) {
     return data.value.set(key, item);
   };
   // 删除item
-  const unregister = (key: any) => {
+  const unregister = (key: string) => {
     data.value.delete(key);
   };
   return {
@@ -75,6 +75,7 @@ export function useDebouncedRef<T>(value, delay = 200) {
       track();
       return innerValue;
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     set(newValue: any) {
       clearTimeout(timeout);
       if (newValue === undefined || newValue === '') {
@@ -125,7 +126,7 @@ export function usePopover(config: IPopoverConfig, triggerRef: Ref<HTMLElement>)
   };
 }
 
-export function useRemoteSearch(method: Function, callBack?: Function) {
+export function useRemoteSearch(method: (v: string) => Promise<void>, callBack?: () => void) {
   const customOptionName = useDebouncedRef<string>(''); // 自定义创建选项（自定义创建也会触发搜索）
   const searchValue = useDebouncedRef<string>('');
   const curSearchValue = computed(() => {

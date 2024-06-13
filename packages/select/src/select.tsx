@@ -243,8 +243,8 @@ export default defineComponent({
       popoverRef.value?.updatePopover(null, popoverConfig.value);
     });
 
-    // 虚拟滚动模式下搜索后的值
-    const virtualList = computed(() =>
+    // list模式下搜索后的值
+    const filterList = computed(() =>
       isRemoteSearch.value
         ? list.value
         : list.value.filter(item => {
@@ -302,7 +302,7 @@ export default defineComponent({
     const virtualLineHeight = ref(32);
     // 是否启用虚拟滚动(如果配置了启用，但是数据小于滚动高度则不开启)
     const isEnableVirtualRender = computed(() => {
-      if (enableVirtualRender.value) return virtualList.value.length * virtualLineHeight.value > virtualHeight.value;
+      if (enableVirtualRender.value) return filterList.value.length * virtualLineHeight.value > virtualHeight.value;
       return false;
     });
     // 预加载滚动数据
@@ -314,7 +314,7 @@ export default defineComponent({
       if (searchLoading.value) {
         return localLoadingText.value;
       }
-      if (isSearchEmpty.value || (list.value.length && !virtualList.value.length)) {
+      if (isSearchEmpty.value || (list.value.length && !filterList.value.length)) {
         return localNoMatchText.value;
       }
       if (isOptionsEmpty.value) {
@@ -408,9 +408,11 @@ export default defineComponent({
     // 默认搜索方法
     const defaultSearchMethod = (searchValue: string, optionName: string, filterData: Record<string, any> = {}) => {
       if (hasFilterOptionFunc.value) {
+        // 是否配置了单个options过滤
         return !!filterOption.value(searchValue, { ...filterData });
       }
       if (searchWithPinyin.value) {
+        // 是否配置了拼音过滤
         const pinyinList = pinyin.parse(optionName).map(v => {
           if (v.type === 2) {
             return v.target.toLowerCase();
@@ -795,7 +797,7 @@ export default defineComponent({
       isShowAll,
       isShowSelectAll,
       virtualHeight,
-      virtualList,
+      filterList,
       isCollapseTags,
       popoverConfig,
       isAllSelected,
@@ -977,7 +979,7 @@ export default defineComponent({
         <VirtualRender
           height={this.virtualHeight}
           lineHeight={this.virtualLineHeight}
-          list={this.virtualList}
+          list={this.filterList}
           preloadItemCount={this.preloadItemCount}
         >
           {{
@@ -997,7 +999,7 @@ export default defineComponent({
           }}
         </VirtualRender>
       ) : (
-        this.list.map(item => (
+        this.filterList.map(item => (
           <Option
             id={item[this.idKey]}
             key={item[this.idKey]}
