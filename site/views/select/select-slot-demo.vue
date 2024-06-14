@@ -243,6 +243,24 @@
           </bk-option>
         </bk-select>
       </div>
+      <!-- suffix -->
+      <div>
+        <h4>suffix icon</h4>
+        <bk-select
+          class="bk-select"
+          v-model="selectedValue2"
+          :input-search="false"
+          :list="datasource"
+          display-key="label"
+          id-key="value"
+          filterable
+          :clearable="false"
+        >
+          <template #suffix>
+            <Done/>
+          </template>
+        </bk-select>
+      </div>
     </div>
   </div>
 </template>

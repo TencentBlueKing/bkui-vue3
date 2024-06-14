@@ -29,7 +29,7 @@ import { computed, defineComponent, onMounted, PropType, provide, reactive, ref,
 import Checkbox from '@bkui-vue/checkbox';
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { clickoutside } from '@bkui-vue/directives';
-import { AngleUp, Close, Search, TextAll } from '@bkui-vue/icon';
+import { AngleDown, Close, Search, TextAll } from '@bkui-vue/icon';
 import Input from '@bkui-vue/input';
 import Loading from '@bkui-vue/loading';
 import Popover, { PopoverPropTypes } from '@bkui-vue/popover';
@@ -840,7 +840,7 @@ export default defineComponent({
       [this.size]: true,
       [this.behavior]: true,
     });
-
+    // 右侧ICON
     const suffixIcon = () => {
       if (this.loading) {
         return (
@@ -861,7 +861,9 @@ export default defineComponent({
           />
         );
       }
-      return <AngleUp class='angle-up' />;
+      return this.$slots?.suffix 
+        ? <span class='angle-down'>{this.$slots?.suffix?.() }</span>
+        : <AngleDown class='angle-down' />;
     };
 
     const renderPrefix = () => {

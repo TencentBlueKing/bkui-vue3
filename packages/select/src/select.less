@@ -127,8 +127,8 @@
   }
 
   &.popover-show {
-    .@{bk-prefix}-select-trigger .angle-up {
-      transform: rotate(0);
+    .@{bk-prefix}-select-trigger .angle-down {
+      transform: rotate(180deg);
     }
   }
 
@@ -257,9 +257,8 @@
       }
     }
 
-    .angle-up {
+    .angle-down {
       right: 4px;
-      transform: rotate(180deg);
       transition: transform .3s cubic-bezier(.4, 0, .2, 1);
       .select-icon();
       .fix-icon();
