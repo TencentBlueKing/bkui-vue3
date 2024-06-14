@@ -49,7 +49,7 @@ export const propsMixin = {
   // 弹框的渲染方式
   renderDirective: renderDirectiveType(),
   // 关闭前回调
-  beforeClose: func<() => boolean>().def(() => true),
+  beforeClose: func<() => Promise<boolean> | boolean>().def(() => true),
   left: PropTypes.string,
   top: PropTypes.string,
   extCls: PropTypes.string,
