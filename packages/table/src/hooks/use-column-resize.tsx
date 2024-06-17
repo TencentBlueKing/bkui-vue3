@@ -26,11 +26,11 @@
 import { ref, watch } from 'vue';
 
 import { throttle } from '@bkui-vue/shared';
-import isElement from 'lodash/isElement';
 
 import { COLUMN_ATTRIBUTE } from '../const';
 import { Column } from '../props';
 import { UseColumns } from './use-columns';
+import { debounce } from 'lodash';
 
 export default (columns: UseColumns, { afterResize }) => {
   const { getColumnAttribute, getColumnOrderWidth, setColumnAttribute } = columns;
@@ -62,8 +62,6 @@ export default (columns: UseColumns, { afterResize }) => {
 
     isMouseDown = false;
     isDraging = false;
-    const bodyStyle = document.body.style;
-    bodyStyle.cursor = '';
 
     const diff = e.clientX - startX;
 
@@ -79,6 +77,8 @@ export default (columns: UseColumns, { afterResize }) => {
     startX = 0;
     dragOffsetX.value = -1000;
     dragColumn = null;
+    const target = (e.target as HTMLElement).closest('th');
+    removeCursor(target);
 
     afterResize?.();
   };
@@ -96,16 +96,21 @@ export default (columns: UseColumns, { afterResize }) => {
 
   const handleMouseMove = (e: MouseEvent) => {
     stopDefaultEvent(e);
-
-    const bodyStyle = document.body.style;
-    bodyStyle.setProperty('cursor', '');
     updateOffsetX(e)();
   };
 
-  const setChildrenNodeCursor = (root: HTMLElement, cursor: string) => {
-    if (isElement(root)) {
-      root.style?.setProperty('cursor', cursor);
-    }
+  const setNodeCursor = (() => {
+    return debounce((target: HTMLElement) => {
+      target?.style?.setProperty('cursor', 'col-resize');
+      target?.classList.add('col-resize-hover');
+    });
+  })();
+
+  const removeCursor = (target: HTMLElement) => {
+    setNodeCursor.cancel();
+
+    target.style?.removeProperty('cursor');
+    target?.classList.remove('col-resize-hover');
   };
 
   const handler = {
@@ -113,13 +118,12 @@ export default (columns: UseColumns, { afterResize }) => {
       if (!isInDragSection) {
         return;
       }
+
       isMouseDown = true;
       const target = (e.target as HTMLElement).closest('th');
       setColumnAttribute(column, COLUMN_ATTRIBUTE.COL_IS_DRAG, true);
       setColumnAttribute(column, COLUMN_ATTRIBUTE.CALC_WIDTH, target.scrollWidth);
-
-      const bodyStyle = document.body.style;
-      bodyStyle.setProperty('cursor', 'col-resize');
+      setNodeCursor(target);
 
       dragColumn = column;
       startX = e.clientX;
@@ -139,23 +143,19 @@ export default (columns: UseColumns, { afterResize }) => {
       const target = (e.target as HTMLElement).closest('th');
       if (isDraging) {
         target.style.setProperty('user-select', 'none');
-        target.classList.remove('col-resize-hover');
       }
 
       if (!isDraging) {
         if (!target) {
-          target.classList.remove('col-resize-hover');
           return;
         }
 
         const rect = target.getBoundingClientRect();
-        if (rect.width > 12 && rect.right - e.pageX < 8) {
+        if (rect.width > 12 && rect.right - e.pageX < 12) {
           isInDragSection = true;
-          setChildrenNodeCursor(target, 'col-resize');
-          target.classList.add('col-resize-hover');
+          setNodeCursor(target);
         } else {
-          setChildrenNodeCursor(target, '');
-          target.classList.remove('col-resize-hover');
+          removeCursor(target);
           isInDragSection = false;
         }
       }
@@ -163,8 +163,7 @@ export default (columns: UseColumns, { afterResize }) => {
     [EVENTS.MOUSE_OUT]: (e: MouseEvent, _column: Column) => {
       const target = (e.target as HTMLElement).closest('th');
       if (!isDraging) {
-        setChildrenNodeCursor(target, '');
-        target.classList.remove('col-resize-hover');
+        removeCursor(target);
       }
     },
   };
