@@ -26,10 +26,10 @@
   .@{bk-prefix}-modal-footer {
     &.is-fixed {
       .@{bk-prefix}-sideslider-footer {
+        height: 48px;
         margin: 0;
         background: #fafbfd;
-        box-shadow: 0 -1px 0 0 #dcdee5;
-        box-shadow: rgb(0 0 0 / 6%) 0 -2px 4px 0;
+        border-top: 1px solid #dcdee5;
       }
     }
   }
@@ -55,19 +55,18 @@
 
 .@{bk-prefix}-sideslider-title {
   display: flex;
+  flex: 1;
+  align-items: center;
   padding-left: 16px;
   font-size: 16px;
   color: #313238;
-  align-items: center;
-  flex: 1;
 }
 
 .@{bk-prefix}-sideslider-footer {
   display: flex;
-  width: 100%;
-  height: 48px;
-  padding: 0 24px;
-  margin-top: 24px;
-  background: #fff;
   align-items: center;
+  width: 100%;
+  padding-right: 24px;
+  padding-left: 24px;
+  margin-top: 24px;
 }

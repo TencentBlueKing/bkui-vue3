@@ -102,6 +102,12 @@ const SideSliserPropsJson: IPropsTableItem[] = [
     optional: [],
   },
   {
+    name: 'backgroundColor',
+    type: 'String',
+    default: '',
+    desc: '内容区背景颜色',
+  },
+  {
     name: 'before-close',
     type: 'Function',
     default: '',

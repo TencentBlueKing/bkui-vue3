@@ -54,4 +54,5 @@ export const propsMixin = {
   left: PropTypes.string,
   top: PropTypes.string,
   extCls: PropTypes.string,
+  backgroundColor: PropTypes.string.def(''),
 };

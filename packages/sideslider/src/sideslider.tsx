@@ -124,6 +124,7 @@ export default defineComponent({
           }}
           extCls={props.extCls}
           animateType={props.direction}
+          backgroundColor={props.backgroundColor}
           closeIcon={false}
           escClose={props.escClose}
           isShow={props.isShow}
