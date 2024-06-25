@@ -68,6 +68,13 @@ const stepsProps: IPropsTableItem[] = [
     optional: ['small'],
   },
   {
+    name: 'line-type',
+    type: 'String',
+    default: '-',
+    desc: '连线样式',
+    optional: ['solid', 'dashed'],
+  },
+  {
     name: 'status',
     type: 'String',
     default: '-',

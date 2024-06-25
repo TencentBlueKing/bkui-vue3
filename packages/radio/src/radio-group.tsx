@@ -42,7 +42,7 @@ const radioGroupProps = {
   withValidate: PropTypes.bool.def(true),
   type: PropTypes.oneOf(['tab', 'capsule', 'card']).def('tab'),
   size: PropTypes.size(),
-  beforeChange: func<(event: boolean | string | number) => Promise<boolean> | boolean>().def(() => true),
+  beforeChange: func<(event: boolean | number | string) => Promise<boolean> | boolean>().def(() => true),
 };
 
 export type RadioGroupProps = Readonly<ExtractPropTypes<typeof radioGroupProps>>;

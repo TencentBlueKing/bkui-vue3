@@ -41,7 +41,7 @@ const radioButtonProps = {
   checked: PropTypes.bool.def(false),
   disabled: PropTypes.bool.def(false),
   size: PropTypes.size(),
-  beforeChange: func<(event: boolean | string | number) => Promise<boolean> | boolean>().def(() => true),
+  beforeChange: func<(event: boolean | number | string) => Promise<boolean> | boolean>().def(() => true),
 };
 
 export type RadioButtonProps = Readonly<ExtractPropTypes<typeof radioButtonProps>>;

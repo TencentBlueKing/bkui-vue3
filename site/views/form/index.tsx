@@ -74,6 +74,64 @@ const formProps: IPropsTableItem[] = [
   },
 ];
 
+const formRules = [
+  {
+    name: 'required',
+    type: 'Boolean',
+    default: null,
+    desc: '验证不为空',
+  },
+  {
+    name: 'email',
+    type: 'Boolean',
+    default: null,
+    desc: '验证email',
+  },
+  {
+    name: 'min',
+    type: 'Boolean',
+    default: null,
+    desc: '数字最小值',
+  },
+  {
+    name: 'max',
+    type: 'Boolean',
+    default: null,
+    desc: '数字最大值',
+  },
+  {
+    name: 'maxlength',
+    type: 'Boolean',
+    default: null,
+    desc: '字符串最大长度',
+  },
+  {
+    name: 'pattern',
+    type: 'RegExp',
+    default: null,
+    desc: '自定义正则',
+  },
+  {
+    name: 'validator',
+    type: 'Function',
+    default: null,
+    desc: '自定义验证函数',
+  },
+  {
+    name: 'message',
+    type: 'String',
+    default: null,
+    desc: '验证错误提示',
+  },
+  {
+    name: 'trigger',
+    type: 'String',
+    default: 'change',
+    desc: '触发校验的方式',
+    optional: ['change', 'blur'],
+  },
+];
+
 const formMethods: IPropsTableItem[] = [
   {
     name: 'validate',
@@ -99,6 +157,12 @@ const formMethods: IPropsTableItem[] = [
 ];
 
 const formEvents: IPropsTableItem[] = [
+  {
+    name: 'submit',
+    default: null,
+    desc: '表单提交',
+    optional: [],
+  },
   {
     name: 'validate',
     type: '(property: string, result: boolean, message: string) => void',
@@ -159,6 +223,13 @@ const formItemProps: IPropsTableItem[] = [
     optional: [],
   },
   {
+    name: 'maxlength',
+    type: 'Number',
+    default: null,
+    desc: '验证规则最大长度',
+    optional: [],
+  },
+  {
     name: 'email',
     type: 'String',
     default: null,
@@ -185,6 +256,13 @@ const formItemProps: IPropsTableItem[] = [
     default: null,
     desc: '是否自动验证',
     optional: [],
+  },
+  {
+    name: 'error-display-type',
+    type: 'String',
+    default: null,
+    desc: '错误提示类型',
+    optional: ['tooltips', 'normal'],
   },
 ];
 
@@ -279,6 +357,11 @@ export default defineComponent({
           propsData={formItemSlots}
           subtitle=''
           title='Form-Item Slot'
+        />
+        <PropsBox
+          propsData={formRules}
+          subtitle=''
+          title='Rule 验证规则配置'
         />
       </div>
     );

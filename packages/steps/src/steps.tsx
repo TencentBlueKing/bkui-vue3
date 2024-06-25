@@ -44,7 +44,6 @@ const stepsProps = {
   direction: directionType(),
   status: toType<`${StatusEnum}`>('status', {}).def(StatusEnum.UNKNOWN),
   lineType: lineStyleType(),
-  text: PropTypes.bool,
   extCls: PropTypes.string,
   steps: PropTypes.array.def([]),
   beforeChange: PropTypes.func,

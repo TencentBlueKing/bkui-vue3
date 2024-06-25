@@ -67,7 +67,7 @@ export default defineConfig({
   ],
   server: {
     host: '0.0.0.0',
-    port: 3002,
+    port: 8086,
     fs: {
       strict: false,
     },

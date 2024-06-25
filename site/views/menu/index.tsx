@@ -31,6 +31,7 @@ import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import { IPropsTableItem } from '../../typings';
 import BaseDemo from './base-demo.vue';
+
 const menuPropsJson: IPropsTableItem[] = [
   {
     name: 'active-key',
@@ -61,6 +62,26 @@ const menuPropsJson: IPropsTableItem[] = [
     optional: [],
   },
 ];
+
+const menuGroupPropsJson: IPropsTableItem[] = [
+  {
+    name: 'name',
+    type: 'String',
+    default: '',
+    desc: 'group name',
+  },
+];
+
+const menuItemPropsJson = [
+  {
+    name: 'need-icon',
+    type: 'Boolean',
+    default: 'true',
+    desc: '是否展示Icon',
+    optional: [],
+  },
+];
+
 const eventJson = [
   {
     name: 'update:activeKey',
@@ -90,6 +111,13 @@ const subMenuEventJson = [
     params: 'collapse: boolean, instance: VNode',
   },
 ];
+const menuItemEventJson = [
+  {
+    name: 'click',
+    desc: '点击事件',
+    params: 'Event',
+  },
+];
 const subMenuSlotsJson = [
   {
     name: 'icon',
@@ -99,15 +127,7 @@ const subMenuSlotsJson = [
     params: '--',
   },
 ];
-const menuItemPropsJson = [
-  {
-    name: 'need-icon',
-    type: 'Boolean',
-    default: 'true',
-    desc: '是否展示Icon',
-    optional: [],
-  },
-];
+
 const menuItemSlotsJson = [
   {
     name: 'icon',
@@ -146,14 +166,28 @@ export default defineComponent({
         >
           <BaseDemo />
         </DemoBox>
+
         <PropsBox
           propsData={menuPropsJson}
           title='Menu 属性'
         />
         <PropsBox
+          propsData={menuGroupPropsJson}
+          title='MenuGroup 属性'
+        />
+        <PropsBox
+          propsData={menuItemPropsJson}
+          title='MenuItem 属性'
+        />
+        <PropsBox
           columnMap={eventColumnMap}
           propsData={eventJson}
           title='Menu 事件'
+        />
+        <PropsBox
+          columnMap={eventColumnMap}
+          propsData={eventJson}
+          title='MenuItem 事件'
         />
         <PropsBox
           columnMap={eventColumnMap}
@@ -165,10 +199,7 @@ export default defineComponent({
           propsData={subMenuSlotsJson}
           title='SubMenu 插槽'
         />
-        <PropsBox
-          propsData={menuItemPropsJson}
-          title='MenuItem 属性'
-        />
+
         <PropsBox
           columnMap={slotColumnMap}
           propsData={menuItemSlotsJson}
