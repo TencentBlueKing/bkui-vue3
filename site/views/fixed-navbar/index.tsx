@@ -36,7 +36,7 @@ const fixedNavBarPropsJson: IPropsTableItem[] = [
   {
     name: 'nav-items',
     type: 'Array',
-    default: null,
+    default: [],
     desc: '需要固定展示的元素',
     optional: [],
   },
@@ -52,6 +52,13 @@ const fixedNavBarPropsJson: IPropsTableItem[] = [
     type: 'String',
     default: '',
     desc: '自定义样式',
+    optional: [],
+  },
+  {
+    name: 'model-value',
+    type: 'Boolean',
+    default: true,
+    desc: '控制 FixedNavbar 的显示与隐藏',
     optional: [],
   },
 ];
@@ -74,7 +81,7 @@ const fixedItemPropsJson: IPropsTableItem[] = [
   {
     name: 'action',
     type: 'Function',
-    default: () => {},
+    default: '() => {}',
     desc: '元素点击的回调函数',
     optional: [],
   },
@@ -87,13 +94,30 @@ const fixedItemPropsJson: IPropsTableItem[] = [
   },
 ];
 
+const fixedNavBarEventsJson: IPropsTableItem[] = [
+  {
+    name: 'update:modelValue',
+    type: 'Function',
+    default: '-',
+    desc: '当 modelValue 变化时触发的事件',
+    optional: [],
+  },
+  {
+    name: 'click',
+    type: 'Function',
+    default: '-',
+    desc: '当点击某个导航项时触发的事件',
+    optional: [],
+  },
+];
+
 export default defineComponent({
   render() {
     return (
       <>
         <DemoTitle
           desc='FixedNavbar 悬浮导航组件，快速设置右侧悬浮面板'
-          link='https://www.google.com.hk/'
+          designLink='https://bkdesign.bk.tencent.com/design/163'
           name='FixedNavbar 悬浮导航'
         />
 
@@ -115,6 +139,11 @@ export default defineComponent({
           propsData={fixedItemPropsJson}
           subtitle=''
           title='NavItems 属性'
+        />
+        <PropsBox
+          propsData={fixedNavBarEventsJson}
+          subtitle=''
+          title='FixedNavbar 事件'
         />
       </>
     );

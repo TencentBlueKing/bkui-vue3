@@ -48,7 +48,7 @@ const affixProps: IPropsTableItem[] = [
   {
     name: 'offset-bottom',
     type: 'Number',
-    default: '-',
+    default: undefined,
     desc: '距离窗口底部达到指定偏移量后触发',
     optional: [],
   },
@@ -56,23 +56,34 @@ const affixProps: IPropsTableItem[] = [
     name: 'z-index',
     type: 'Number',
     default: 1000,
-    desc: '设置 affix 对象的层级	',
+    desc: '设置 affix 对象的层级',
     optional: [],
   },
   {
     name: 'target',
     type: 'String',
     default: 'window',
-    desc: '	设置 affix 需要监听其滚动事件容器的id',
+    desc: '设置 affix 需要监听其滚动事件的容器的选择器',
     optional: [],
   },
 ];
+
 const affixEvents: IPropsTableItem[] = [
   {
     name: 'change',
-    type: 'String',
-    default: '回调参数（true/false）',
-    desc: '在固定状态发生改变时触发',
+    type: 'Function',
+    default: '-',
+    desc: '在固定状态发生改变时触发，回调参数为 true 或 false',
+    optional: [],
+  },
+];
+
+const affixSlots: IPropsTableItem[] = [
+  {
+    name: 'default',
+    type: 'Slot',
+    default: '-',
+    desc: '默认插槽，用于放置需要固定的内容',
     optional: [],
   },
 ];
@@ -83,7 +94,6 @@ export default defineComponent({
       <div>
         <DemoTitle
           desc='使用图钉，可以将内容固定在屏幕上，并且不随页面的滚动而滚动。'
-          link={`${import.meta.env.VITE_APP_BASE_URL ?? ''}/affix`}
           name='Affix图钉'
         />
         <DemoBox
@@ -137,12 +147,17 @@ export default defineComponent({
         <PropsBox
           propsData={affixProps}
           subtitle=''
-          title='Affix Attributes'
+          title='Affix 属性'
         />
         <PropsBox
           propsData={affixEvents}
           subtitle=''
-          title='Affix Events'
+          title='Affix 事件'
+        />
+        <PropsBox
+          propsData={affixSlots}
+          subtitle=''
+          title='Affix 插槽'
         />
       </div>
     );
