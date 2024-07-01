@@ -79,7 +79,7 @@ const colProps: IPropsTableItem[] = [
     name: 'span',
     type: 'Number',
     default: '1',
-    desc: '栅格的占位格数，当设置为 0 时，则自动设置为 col 相当于 width: 100%',
+    desc: '栅格的占位格数，可选值为 0~24 的整数，当设置为 0 时，则自动设置为 col 相当于 width: 100%',
     optional: [],
   },
   {
@@ -104,16 +104,35 @@ const colProps: IPropsTableItem[] = [
     optional: [],
   },
 ];
-export default defineComponent({
-  name: 'Affix',
 
+const slotColumnMap = {
+  name: '名称',
+  desc: '说明',
+  params: '参数',
+};
+const containerSlotsJson = [
+  {
+    name: 'default',
+    default: [],
+    desc: 'default 内容插槽',
+    params: '--',
+  },
+];
+const colSlotsJson = [
+  {
+    name: 'default',
+    default: [],
+    desc: 'default 内容插槽',
+    params: '--',
+  },
+];
+export default defineComponent({
   render() {
     return (
       <div>
         <DemoTitle
           desc='通过栅格系统，迅速简便地创建布局。'
           designLink='https://bkdesign.bk.tencent.com/design/3'
-          link={`${import.meta.env.VITE_APP_BASE_URL ?? ''}/grid`}
           name='Grid 栅格'
         />
         <DemoBox
@@ -170,9 +189,19 @@ export default defineComponent({
           title='bk-container 属性'
         />
         <PropsBox
+          columnMap={slotColumnMap}
+          propsData={containerSlotsJson}
+          title='bk-container 插槽'
+        />
+        <PropsBox
           propsData={colProps}
           subtitle=''
           title='bk-col 属性'
+        />
+        <PropsBox
+          columnMap={slotColumnMap}
+          propsData={colSlotsJson}
+          title='bk-col 插槽'
         />
       </div>
     );

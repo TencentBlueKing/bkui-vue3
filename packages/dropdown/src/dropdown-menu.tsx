@@ -35,7 +35,7 @@ export default defineComponent({
     /** 外部设置的 class name */
     extCls: PropTypes.string,
   },
-  setup(props: any) {
+  setup(props) {
     const { resolveClassName } = usePrefix();
     const wrapperCLasses = computed(() => [resolveClassName('dropdown-menu'), props.extCls]);
     return {

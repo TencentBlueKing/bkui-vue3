@@ -101,6 +101,12 @@ const checkboxProps: IPropsTableItem[] = [
     desc: '尺寸',
     optional: ['large', 'small'],
   },
+  {
+    name: 'immediateEmitChange',
+    type: 'Boolean',
+    default: true,
+    desc: '默认设置checked是否触发change事件',
+  },
 ];
 
 const checkboxEvents: IPropsTableItem[] = [
@@ -126,6 +132,13 @@ const checkboxGroupProps: IPropsTableItem[] = [
     type: 'Boolean',
     default: 'false',
     desc: '禁用',
+    optional: [],
+  },
+  {
+    name: 'withValidate',
+    type: 'Boolean',
+    default: 'true',
+    desc: '值改变时触发 form 的验证',
     optional: [],
   },
 ];

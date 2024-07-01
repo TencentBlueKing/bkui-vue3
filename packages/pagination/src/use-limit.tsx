@@ -84,9 +84,6 @@ export default (t: ComputedRef<Language['pagination']>) => {
           'is-first': isFirst,
           'is-last': isLast,
         }}
-        {...{
-          disabled: proxy.disabled,
-        }}
       >
         <div>{t.value.eachPage}</div>
         <Select
@@ -101,8 +98,6 @@ export default (t: ComputedRef<Language['pagination']>) => {
         >
           {proxy.limitList.map((num, index) => (
             <BkOption
-              // value={num}
-              // label={`${num}`}
               id={num}
               key={`${index}_${num}`}
               name={`${num}`}

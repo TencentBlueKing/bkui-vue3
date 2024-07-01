@@ -26,9 +26,9 @@
 
 import { isProxy, toRaw } from 'vue';
 
+import { throttle } from '@bkui-vue/shared';
 import debounce from 'lodash/debounce';
 import objGet from 'lodash/get';
-import throttle from 'lodash/throttle';
 import ResizeObserver from 'resize-observer-polyfill';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -42,7 +42,7 @@ import { Column, GroupColumn, ISortPropShape, TablePropTypes } from './props';
  * @param args 如果是函数，传递参数
  * @returns
  */
-export const resolvePropVal = (prop: any, key: string | string[], args: any[]) => {
+export const resolvePropVal = (prop: Record<string, unknown>, key: string | string[], args: unknown[]) => {
   if (prop === undefined || prop === null) {
     return undefined;
   }
@@ -50,7 +50,7 @@ export const resolvePropVal = (prop: any, key: string | string[], args: any[]) =
   if (typeof key === 'string') {
     if (Object.prototype.hasOwnProperty.call(prop, key)) {
       if (typeof prop[key] === 'function') {
-        return prop[key].call(this, ...args);
+        return (prop[key] as (...args) => unknown).call(this, ...args);
       }
 
       return prop[key];
@@ -62,7 +62,7 @@ export const resolvePropVal = (prop: any, key: string | string[], args: any[]) =
   if (Array.isArray(key)) {
     return key
       .map((_key: string) => resolvePropVal(prop, _key, args))
-      .filter((val: any) => val !== undefined)
+      .filter((val: unknown) => val !== undefined)
       .at(0);
   }
 };
@@ -118,7 +118,7 @@ export const resolveNumberOrStringToPix = (
   offset = null,
 ) => {
   let target: number | string = '';
-  if (/^auto|null|undefined$/gi.test(`${val}`)) {
+  if (/^null|undefined$/gi.test(`${val}`)) {
     target = defaultValue;
   } else {
     target = /^\d+\.?\d+$/.test(`${val}`) ? `${val}px` : val;
@@ -183,7 +183,7 @@ export const observerResize = (
       callbackFn();
     }
   };
-  const execFn = resizerWay === 'debounce' ? debounce(resolveCallbackFn, delay) : throttle(resolveCallbackFn, delay);
+  const execFn = resizerWay === 'debounce' ? debounce(resolveCallbackFn, delay) : throttle(resolveCallbackFn);
   const callFn = () => Reflect.apply(execFn, this, []);
 
   const resizeObserver = new ResizeObserver(() => {
@@ -421,9 +421,10 @@ export const skipThisColumn = (columns: Column[], colIndex: number, row: any, ro
 export const getSortFn = (column, sortType, format = []) => {
   const fieldName = column.field as string;
   const getVal = (row: any) => getRowText(row, fieldName, format);
-  const sortFn0 = (a: any, b: any) => {
-    const val0 = getVal(a) ?? '';
-    const val1 = getVal(b) ?? '';
+  const isIndexCol = column.type === 'index';
+  const sortFn0 = (a: any, b: any, rowIndex0: number, rowIndex1: number) => {
+    const val0 = isIndexCol ? rowIndex0 : getVal(a) ?? '';
+    const val1 = isIndexCol ? rowIndex1 : getVal(b) ?? '';
     if (typeof val0 === 'number' && typeof val1 === 'number') {
       return val0 - val1;
     }
@@ -435,7 +436,7 @@ export const getSortFn = (column, sortType, format = []) => {
 
   return sortType === SORT_OPTION.NULL
     ? (_a, _b) => true
-    : (_a, _b) => sortFn(_a, _b) * (sortType === SORT_OPTION.DESC ? -1 : 1);
+    : (_a, _b, index0, index1) => sortFn(_a, _b, index0, index1) * (sortType === SORT_OPTION.DESC ? -1 : 1);
 };
 
 export const getNextSortType = (sortType: string) => {
@@ -510,6 +511,21 @@ export const resolveColumnSortProp = (col: Column, props: TablePropTypes) => {
     fn: sortFn,
     scope: sortScope,
     active: !!col.sort,
+    enabled: !!col.sort,
+  };
+};
+
+export const resolveColumnFilterProp = (col: Column) => {
+  if (typeof col.filter === 'object') {
+    return {
+      ...col.filter,
+      enabled: true,
+    };
+  }
+
+  return {
+    enabled: !!col.filter,
+    checked: [],
   };
 };
 
@@ -519,4 +535,22 @@ export const getRawData = data => {
   }
 
   return data;
+};
+
+/**
+ * 转换 px | % 为实际数值
+ * @param val
+ * @param parentVal
+ * @returns
+ */
+export const getNumberOrPercentValue = (val: number | string, parentVal?: number) => {
+  if (/^\d+\.?\d+(px)?$/.test(`${val}`)) {
+    return Number(`${val}`.replace(/px/, ''));
+  }
+
+  if (/^\d+\.?\d+%$/.test(`${val}`)) {
+    return (Number(`${val}`.replace(/%/, '')) / 100) * (parentVal ?? 1);
+  }
+
+  return null;
 };

@@ -25,7 +25,7 @@
  */
 
 import { VirtualRenderProps } from './props';
-type IFixToTopParams = { index?: number; id?: string; item?: { [key: string]: any }; position: number[] };
+type IFixToTopParams = { index?: number; id?: string; item?: { [key: string]: unknown }; position: number[] };
 
 export default (props: VirtualRenderProps, scrollTo: (x, y) => void) => {
   /**
@@ -34,7 +34,7 @@ export default (props: VirtualRenderProps, scrollTo: (x, y) => void) => {
    */
   const fixToTop = (params: IFixToTopParams) => {
     const { id, index, item } = params;
-    let targetIndex: any = typeof index === 'number' ? index - 1 : 0;
+    let targetIndex: number = typeof index === 'number' ? index - 1 : 0;
 
     if (id !== undefined) {
       targetIndex = props.list.findIndex(row => row[props.rowKey] === id) ?? targetIndex;

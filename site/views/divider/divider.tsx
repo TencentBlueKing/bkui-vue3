@@ -26,14 +26,68 @@
 
 import { defineComponent } from 'vue';
 
-import { dividerProps } from '../../../packages/divider/src/props';
+// import { dividerProps } from '../../../packages/divider/src/props';
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import { IPropsTableItem } from '../../typings';
-import { resolvePropsToDesData } from '../utils';
+// import { resolvePropsToDesData } from '../utils';
 import BaseDemo from './base-demo.vue';
-const menuPropsJson: IPropsTableItem[] = resolvePropsToDesData(dividerProps);
+// const menuPropsJson: IPropsTableItem[] = resolvePropsToDesData(dividerProps);
+
+const menuPropsJson: IPropsTableItem[] = [
+  {
+    name: 'direction',
+    type: 'String',
+    default: 'horizontal',
+    desc: '分割线方向',
+    optional: ['horizontal', 'vertical'],
+  },
+  {
+    name: 'align',
+    type: 'String',
+    default: 'center',
+    desc: '分割线位置',
+    optional: ['left', 'right', 'center'],
+  },
+  {
+    name: 'color',
+    type: 'String',
+    default: '#dde4eb',
+    desc: '分割线颜色',
+    optional: [],
+  },
+  {
+    name: 'width',
+    type: 'Number',
+    default: '1',
+    desc: '分割线宽度',
+    optional: [],
+  },
+  {
+    name: 'type',
+    type: 'String',
+    default: 'dashed',
+    desc: '分割线类型，border-style 类型',
+    optional: ['dashed', 'solid'],
+  },
+];
+
+const slotColumnMap = {
+  name: '名称',
+  desc: '说明',
+  params: '参数',
+};
+
+const dividerSlotsJson = [
+  {
+    name: 'default',
+    default: [],
+    desc: 'default 内容插槽',
+    params: '--',
+  },
+];
+
 export default defineComponent({
   render() {
     return (
@@ -52,6 +106,11 @@ export default defineComponent({
           <BaseDemo />
         </DemoBox>
         <PropsBox propsData={menuPropsJson} />
+        <PropsBox
+          columnMap={slotColumnMap}
+          propsData={dividerSlotsJson}
+          title='插槽'
+        />
       </div>
     );
   },

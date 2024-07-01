@@ -105,6 +105,20 @@ const paginationProps: IPropsTableItem[] = [
     optional: ['true', 'false'],
   },
   {
+    name: 'disabled',
+    type: 'Boolean',
+    default: 'false',
+    desc: ' 禁用',
+    optional: ['true', 'false'],
+  },
+  {
+    name: 'layout',
+    type: 'Array',
+    default: "['total', 'list', 'limit']",
+    desc: '控件布局',
+    optional: [],
+  },
+  {
     name: 'prev-text',
     type: 'String',
     default: '',

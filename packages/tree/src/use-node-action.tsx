@@ -23,14 +23,14 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { h, nextTick } from 'vue';
+import { h, isVNode, nextTick } from 'vue';
 
 import Checkbox from '@bkui-vue/checkbox';
 import { usePrefix } from '@bkui-vue/config-provider';
 import { DownShape, Folder, FolderShapeOpen, RightShape, Spinner, TextFile } from '@bkui-vue/icon';
 
 import { EVENTS, NODE_ATTRIBUTES } from './constant';
-import { TreePropTypes } from './props';
+import { TreeNode, TreePropTypes } from './props';
 import useNodeAsync from './use-node-async';
 import useNodeAttribute from './use-node-attribute';
 import {
@@ -76,7 +76,7 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
    * @param item
    * @returns
    */
-  const getRootIcon = (item: any) =>
+  const getRootIcon = (item: TreeNode) =>
     isItemOpen(item) ? (
       <FolderShapeOpen class={[resolveClassName('tree-icon'), resolveClassName('node-prefix')]} />
     ) : (
@@ -88,23 +88,25 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
    * @param val
    * @returns
    */
-  const renderPrefixVal = (val: { node: string; className: string; text: string; style: any } | any | string) => {
+  const renderPrefixVal = (
+    val: { node: string; className: string; text: boolean | number | string; style: Record<string, string> } | string,
+  ) => {
     if (typeof val === 'string') {
       return val;
     }
 
     if (typeof val === 'object' && val !== null) {
-      if (val.__v_isVNode) {
+      if (isVNode(val)) {
         return val;
       }
       const { node, className, text, style } = val;
-      return h(node, { class: className, style }, text);
+      return h(node, { class: className, style }, text as boolean | number | string);
     }
 
     return null;
   };
 
-  const getLoadingIcon = (item: any) =>
+  const getLoadingIcon = (item: TreeNode) =>
     ctx.slots.nodeLoading?.(getScopedSlotData(item)) ?? isNodeLoading(item) ? <Spinner></Spinner> : '';
 
   /**
@@ -112,7 +114,7 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
    * @param item
    * @returns
    */
-  const getActionIcon = (item: any) => {
+  const getActionIcon = (item: TreeNode) => {
     if (ctx.slots.nodeAction) {
       return ctx.slots.nodeAction(getScopedSlotData(item));
     }
@@ -151,7 +153,7 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
    * @param item
    * @returns
    */
-  const getNodePrefixIcon = (item: any) => {
+  const getNodePrefixIcon = (item: TreeNode) => {
     if (!props.showNodeTypeIcon) {
       return null;
     }
@@ -181,19 +183,19 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
     return null;
   };
 
-  const updateParentChecked = (item: any, isChecked) => {
+  const updateParentChecked = (item: TreeNode, isChecked) => {
     const parent = getParentNode(item);
     if (parent) {
       const isNeedChecked = isChecked
         ? isChecked
-        : (getChildNodes(parent) || []).some((node: any) => isNodeChecked(node));
+        : (getChildNodes(parent) || []).some((node: TreeNode) => isNodeChecked(node));
 
       setNodeAttr(parent, NODE_ATTRIBUTES.IS_CHECKED, isNeedChecked);
 
       setNodeAttr(
         parent,
         NODE_ATTRIBUTES.IS_INDETERMINATE,
-        (getChildNodes(parent) || []).some((node: any) => !isNodeChecked(node)),
+        (getChildNodes(parent) || []).some((node: TreeNode) => !isNodeChecked(node) || isIndeterminate(node)),
       );
 
       if (!isRootNode(parent)) {
@@ -202,8 +204,8 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
     }
   };
 
-  const deepUpdateChildNode = (node: any, attr: string | string[], value: any | any[]) => {
-    getChildNodes(node).forEach((chid: any) => {
+  const deepUpdateChildNode = (node: TreeNode, attr: string | string[], value: unknown | unknown[]) => {
+    getChildNodes(node).forEach(chid => {
       if (Array.isArray(attr)) {
         attr.forEach((val, index) => {
           setNodeAttr(chid, val, value[index]);
@@ -216,7 +218,7 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
     });
   };
 
-  const handleNodeItemCheckboxChange = (item: any, value: boolean, event: Event) => {
+  const handleNodeItemCheckboxChange = (item: TreeNode, value: boolean, event: Event) => {
     event.preventDefault();
     event.stopImmediatePropagation();
     event.stopPropagation();
@@ -233,16 +235,17 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
     updateParentChecked(item, value);
     ctx.emit(
       EVENTS.NODE_CHECKED,
-      flatData.data.filter((t: any) => isNodeChecked(t)),
-      flatData.data.filter((t: any) => isIndeterminate(t)),
+      flatData.data.filter((t: TreeNode) => isNodeChecked(t)),
+      flatData.data.filter((t: TreeNode) => isIndeterminate(t)),
     );
 
     handleNodeContentClick(item, event as MouseEvent);
   };
 
-  const isIndeterminate = (item: any) => isNodeChecked(item) && getNodeAttr(item, NODE_ATTRIBUTES.IS_INDETERMINATE);
+  const isIndeterminate = (item: TreeNode) =>
+    isNodeChecked(item) && getNodeAttr(item, NODE_ATTRIBUTES.IS_INDETERMINATE);
 
-  const getCheckboxRender = (item: any) => {
+  const getCheckboxRender = (item: TreeNode) => {
     if (!showCheckbox(props, extendNodeScopedData(item))) {
       return null;
     }
@@ -264,7 +267,7 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
    * @param item
    * @param isOpen
    */
-  const setNodeOpened = (item: any, isOpen = null, e: MouseEvent = null, fireEmit = true) => {
+  const setNodeOpened = (item: TreeNode, isOpen = null, e: MouseEvent = null, fireEmit = true) => {
     const newVal = isOpen === null ? !isItemOpen(item) : !!isOpen;
 
     /**
@@ -290,9 +293,9 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
    * @param value
    * @returns
    */
-  const setNodeAction = (args: any | any[], action: string, value: any) => {
+  const setNodeAction = (args: TreeNode | TreeNode[], action: string, value: unknown) => {
     if (Array.isArray(args)) {
-      args.forEach((node: any) => setNodeAttr(resolveNodeItem(node), action, value));
+      args.forEach((node: TreeNode) => setNodeAttr(resolveNodeItem(node), action, value));
       return;
     }
 
@@ -306,7 +309,7 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
    * @param autoOpenParents 如果是 isOpen = true，是否自动设置所有父级展开
    * @returns
    */
-  const setOpen = (item: any | any[], isOpen = true, autoOpenParents = false) => {
+  const setOpen = (item: TreeNode, isOpen = true, autoOpenParents = false) => {
     setNodeAttribute(item, NODE_ATTRIBUTES.IS_OPEN, isOpen, autoOpenParents && isOpen);
   };
 
@@ -318,7 +321,7 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
    * @param loopParent 是否需要递归更新父级
    */
   const setNodeAttribute = (
-    node: any,
+    node: TreeNode,
     attrName: string | string[],
     value: (boolean | number | string)[] | boolean | number | string,
     loopParent = false,
@@ -352,7 +355,7 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
    * 节点点击
    * @param item
    */
-  const handleTreeNodeClick = (item: any, e: MouseEvent) => {
+  const handleTreeNodeClick = (item: TreeNode, e: MouseEvent) => {
     const isOpen = isItemOpen(item);
     if (isOpen) {
       setNodeOpened(item, false, e, true);
@@ -377,7 +380,7 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
    * @param e 鼠标事件
    * @param node 当前节点
    */
-  const handleNodeActionClick = (e: MouseEvent, node: any) => {
+  const handleNodeActionClick = (e: MouseEvent, node: TreeNode) => {
     e.stopImmediatePropagation();
     e.stopPropagation();
     e.preventDefault();
@@ -385,7 +388,7 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
     handleTreeNodeClick(node, e);
   };
 
-  const setSelect = (nodes: any, selected = true, autoOpen = true) => {
+  const setSelect = (nodes: TreeNode | TreeNode[], selected = true, autoOpen = true) => {
     const nodeList = Array.isArray(nodes) ? nodes : [nodes];
     if (!nodeList.length) {
       return;
@@ -443,7 +446,7 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
     }
   };
 
-  const resolveNodeAction = (node: any): any[] => {
+  const resolveNodeAction = (node: TreeNode): string[] => {
     if (typeof props.nodeContentAction === 'function') {
       return Reflect.apply(props.nodeContentAction, this, [{ node }]);
     }
@@ -463,7 +466,7 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
    * 点击节点事件
    * @param item
    */
-  const handleNodeContentClick = (item: any, e: MouseEvent) => {
+  const handleNodeContentClick = (item: TreeNode, e: MouseEvent) => {
     const nodeActions = resolveNodeAction(item);
     if (nodeActions.includes('selected')) {
       setSelect(item, true, false);
@@ -494,7 +497,7 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
    * @param node 当前节点
    * @returns
    */
-  const filterNextNode = (depth: number, node: any) => {
+  const filterNextNode = (depth: number, node: TreeNode) => {
     if (isRootNode(node)) {
       return false;
     }
@@ -512,7 +515,7 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
     const nextLevel = parseInt(lastLevel, 10);
     paths.push(`${nextLevel + 1}`);
     const nextNodePath = paths.join('-');
-    return flatData.data.some((val: any) => getNodePath(val) === nextNodePath);
+    return flatData.data.some((val: TreeNode) => getNodePath(val) === nextNodePath);
   };
 
   /**
@@ -520,7 +523,7 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
    * @param node 节点
    * @returns
    */
-  const getVirtualLines = (node: any) => {
+  const getVirtualLines = (node: TreeNode) => {
     if (!props.levelLine) {
       return null;
     }
@@ -546,7 +549,7 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
     );
   };
 
-  const renderNodeSlots = (item: any) => {
+  const renderNodeSlots = (item: TreeNode) => {
     if (ctx.slots.node) {
       return ctx.slots.node?.(getScopedSlotData(item));
     }
@@ -576,7 +579,7 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
    * @param item 当前节点
    * @param showTree 是否展示为树形结构
    */
-  const renderTreeNode = (item: any, showTree = true) => (
+  const renderTreeNode = (item: TreeNode, showTree = true) => (
     <div
       key={getNodeId(item)}
       class={getNodeRowClass(item, flatData.schema)}

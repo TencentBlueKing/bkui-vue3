@@ -4,12 +4,14 @@
   display: flex;
   align-items: center;
   font-size: 12px;
-  letter-spacing: normal;
   color: #63656e;
+  letter-spacing: normal;
   user-select: none;
 
   &.is-disabled {
-    cursor: not-allowed;
+    * {
+      cursor: not-allowed;
+    }
   }
 
   &.is-align-left {
@@ -17,11 +19,11 @@
   }
 
   &.is-align-center {
-    justify-content: center;;
+    justify-content: center;
   }
 
   &.is-align-right {
-    justify-content: flex-end;;
+    justify-content: flex-end;
   }
 
   & > * {
@@ -35,7 +37,6 @@
   & > .is-last {
     margin-right: 0;
   }
-
 }
 .@{bk-prefix}-pagination-total {
   display: flex;
@@ -59,16 +60,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 32px;
   min-width: 32px;
+  height: 32px;
   padding: 0 4px;
   margin-right: 2px;
   margin-left: 2px;
   color: #63656e;
   cursor: pointer;
+  user-select: none;
   background: #fff;
   border-radius: 2px;
-  user-select: none;
 
   &.is-active {
     color: #3a84ff;
@@ -149,13 +150,13 @@
 
   .@{bk-prefix}-pagination-picker {
     display: flex;
+    align-items: center;
     height: 26px;
     margin: 0 4px;
     cursor: pointer;
     background-color: #f0f1f5;
     border: 1px solid #f0f1f5;
     border-radius: 2px;
-    align-items: center;
 
     &:hover {
       background-color: #eaebf0;
@@ -165,14 +166,14 @@
     &.is-focused {
       background-color: #fff;
       border-color: #3a84ff;
-      box-shadow: 0px 0px 4px rgba(58, 132, 255, .4);
+      box-shadow: 0px 0px 4px rgba(58, 132, 255, 0.4);
     }
   }
 }
 
 .@{bk-prefix}-pagination-editor {
-  height: 16px;
   min-width: 23px;
+  height: 16px;
   padding-right: 4px;
   padding-left: 8px;
   line-height: 16px;
@@ -181,7 +182,7 @@
   border: 0;
   border-radius: 2px;
   outline: none;
-  transition: all .15s
+  transition: all 0.15s;
 }
 .@{bk-prefix}-pagination-small-list-total {
   padding-right: 8px;
@@ -190,13 +191,13 @@
 .@{bk-prefix}-pagination-btn-pre,
 .@{bk-prefix}-pagination-btn-next {
   display: flex;
+  align-items: center;
+  justify-content: center;
   width: 26px;
   height: 26px;
   font-size: 20px;
   color: #979ba5;
   cursor: pointer;
-  justify-content: center;
-  align-items: center;
 
   &:hover {
     color: #3a84ff;

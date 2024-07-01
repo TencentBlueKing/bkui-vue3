@@ -30,6 +30,7 @@ import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import { type IPropsTableItem } from '../../typings';
+
 import Basic from './demo/basic.vue';
 import Disabled from './demo/disabled.vue';
 import Group from './demo/group.vue';
@@ -91,6 +92,16 @@ const buttonEvents: IPropsTableItem[] = [
     type: 'String',
     default: null,
     desc: '点击时触发事件',
+    optional: [],
+  },
+];
+
+const buttonSlot: IPropsTableItem[] = [
+  {
+    name: 'default',
+    type: 'Slot',
+    default: null,
+    desc: '默认插槽',
     optional: [],
   },
 ];
@@ -168,10 +179,10 @@ export default defineComponent({
     return (
       <div>
         <DemoTitle
-          desc='常用的操作按钮'
-          designLink='https://bkdesign.bk.tencent.com/design/9'
-          link={`${import.meta.env.VITE_APP_BASE_URL ?? ''}/button`}
           name='Button'
+          desc='常用的操作按钮'
+          npmLink={`${import.meta.env.VITE_APP_BASE_URL ?? ''}/button`}
+          designLink='https://bkdesign.bk.tencent.com/design/9'
         />
         {demos.map(({ DemoComponent, ...demo }) => (
           <DemoBox {...demo}>
@@ -179,14 +190,19 @@ export default defineComponent({
           </DemoBox>
         ))}
         <PropsBox
-          propsData={buttonProps}
+          title='Button 事件'
           subtitle=''
-          title='Button 属性'
+          propsData={buttonEvents}
         />
         <PropsBox
-          propsData={buttonEvents}
+          title='Button 属性'
           subtitle=''
-          title='Button 事件'
+          propsData={buttonProps}
+        />
+        <PropsBox
+          title='Button 插槽'
+          subtitle=''
+          propsData={buttonSlot}
         />
       </div>
     );

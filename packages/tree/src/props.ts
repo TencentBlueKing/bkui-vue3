@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { ExtractPropTypes } from 'vue';
+import { ExtractPropTypes, VNode } from 'vue';
 import { string, toType } from 'vue-types';
 
 import { PropTypes } from '@bkui-vue/shared';
@@ -44,6 +44,11 @@ enum TreeSearchResultEnum {
   TREE = 'tree',
 }
 
+export type TreeNode = {
+  [key: string]: unknown;
+  children: TreeNode[];
+};
+
 /**
  * Tree Prop: prefixIcon function
  * @param {} isRoot 是否为分跟节点
@@ -52,7 +57,13 @@ enum TreeSearchResultEnum {
  * @param {} renderType 当前渲染类型（action: 用来标识当前节点状态，展开 | 收起, node_type：节点类型，文件、文件夹）
  * @param {} item 当前节点数据
  */
-export type IPrefixIcon = (isRoot: boolean, hasChild: boolean, isOpen: boolean, renderType: string, item: any) => any;
+export type IPrefixIcon = (
+  isRoot: boolean,
+  hasChild: boolean,
+  isOpen: boolean,
+  renderType: string,
+  item: TreeNode,
+) => VNode | string;
 
 export const treeProps = {
   /**
@@ -205,6 +216,9 @@ export const treeProps = {
    */
   showCheckbox: PropTypes.oneOfType([PropTypes.bool, PropTypes.func]).def(false),
 
+  /**
+   * 默认选中的节点id，selectable为false时无效
+   */
   checked: PropTypes.arrayOf(PropTypes.any).def([]),
 
   /**
@@ -271,19 +285,19 @@ export const treeProps = {
 };
 
 type AsyncOption = {
-  callback: (item, cb) => Promise<any>;
+  callback: (item, cb) => Promise<VNode | string>;
   cache: boolean;
   deepAutoOpen?: string;
 };
 
 export type IIntersectionObserver = {
   enabled: boolean;
-  callback: (node: any, level: number, index: number) => void;
+  callback: (node: TreeNode, level: number, index: number) => void;
 };
 
 export type SearchOption = {
   value: boolean | number | string;
-  match?: `${TreeSearchMatchEnum}` | Function;
+  match?: ((...args) => boolean) | `${TreeSearchMatchEnum}`;
   resultType?: `${TreeSearchResultEnum}`;
   showChildNodes?: boolean;
 };

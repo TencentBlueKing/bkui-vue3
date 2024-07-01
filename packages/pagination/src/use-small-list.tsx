@@ -91,6 +91,9 @@ export default () => {
    * @desc 上一页
    */
   const handlePrePage = () => {
+    if (proxy.disabled) {
+      return;
+    }
     if (isPagePreDisabled.value) {
       return;
     }
@@ -100,6 +103,9 @@ export default () => {
    * @desc 下一页
    */
   const handleNextPage = () => {
+    if (proxy.disabled) {
+      return;
+    }
     if (isPageNextDisabled.value) {
       return;
     }
@@ -110,6 +116,9 @@ export default () => {
    * @desc 获得焦点
    */
   const handlePageEditorFocus = () => {
+    if (proxy.disabled) {
+      return;
+    }
     isFocused.value = true;
   };
   /**
@@ -170,6 +179,7 @@ export default () => {
         width={56}
         arrow={false}
         boundary='body'
+        disabled={proxy.disabled}
         placement='bottom'
         theme='light'
         trigger='click'
@@ -185,8 +195,8 @@ export default () => {
               <span
                 ref={inputRef}
                 class={`${resolveClassName('pagination-editor')}`}
+                contenteditable={!proxy.disabled}
                 spellcheck='false'
-                contenteditable
                 onBlur={handlePageEditorBlur}
                 onFocus={handlePageEditorFocus}
                 onInput={handlePageEditorInput}

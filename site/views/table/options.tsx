@@ -142,7 +142,7 @@ export const DATA_COLUMNS = [
     width: 80,
     filter: {
       list: new Array(20).fill('').map((_, index) => ({ text: `${index}_QQ`, value: `${index}_QQ` })),
-      checked: ['QQ'],
+      checked: [],
     },
   },
   {
@@ -155,8 +155,11 @@ export const DATA_COLUMNS = [
     field: 'priority',
     sort: true,
     filter: {
-      list: [],
-      checked: [],
+      list: [
+        { text: '1', value: 1 },
+        { text: '2', value: 2 },
+        { text: '3', value: 3 },
+      ],
     },
   },
   {
@@ -293,7 +296,15 @@ export const DATA_FIX_COLUMNS = [
   {
     label: '来源',
     field: 'source',
-    filter: true,
+    fixed: true,
+    filter: {
+      list: [
+        { text: '1_QQ', value: '1_QQ' },
+        { text: '2_QQ', value: '2_QQ' },
+        { text: 'QQ', value: 'QQ' },
+      ],
+      match: 'fuzzy',
+    },
     minWidth: 280,
   },
   {

@@ -271,6 +271,31 @@ const inputSlots = [
   },
 ];
 
+// input export method
+const inputMethods = [
+  {
+    name: 'focus',
+    type: 'Function',
+    default: null,
+    desc: '组件聚集',
+    optional: [],
+  },
+  {
+    name: 'blur',
+    type: 'Function',
+    default: null,
+    desc: '失去焦点',
+    optional: [],
+  },
+  {
+    name: 'clear',
+    type: 'Function',
+    default: null,
+    desc: '清空内容',
+    optional: [],
+  }
+]
+
 const demos = [
   {
     // '基础输入框',
@@ -513,7 +538,7 @@ export default defineComponent({
         <DemoTitle
           desc='常用的输入框'
           designLink='https://bkdesign.bk.tencent.com/design/14'
-          link={`${import.meta.env.VITE_APP_BASE_URL ?? ''}/input`}
+          npmLink={`${import.meta.env.VITE_APP_BASE_URL ?? ''}/input`}
           name='Input'
         />
         {demos.map(({ DemoComponent, ...demo }) => (
@@ -521,6 +546,16 @@ export default defineComponent({
             <DemoComponent />
           </DemoBox>
         ))}
+        <PropsBox
+          propsData={inputEvents}
+          subtitle=''
+          title='Input 事件'
+        />
+        <PropsBox
+          propsData={inputMethods}
+          subtitle=''
+          title='Input 方法'
+        />
         <PropsBox
           propsData={inputProps}
           subtitle=''
@@ -530,11 +565,6 @@ export default defineComponent({
           propsData={inputSlots}
           subtitle=''
           title='Input 插槽'
-        />
-        <PropsBox
-          propsData={inputEvents}
-          subtitle=''
-          title='Input 事件'
         />
       </div>
     );

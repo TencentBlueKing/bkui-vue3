@@ -24,301 +24,283 @@
  * IN THE SOFTWARE.
  */
 
-import {
-  // computed,
-  defineComponent,
-  getCurrentInstance,
-  nextTick,
-  provide,
-  Ref,
-  ref,
-  SetupContext,
-  watch,
-  watchEffect,
-} from 'vue';
+import { computed, defineComponent, getCurrentInstance, nextTick, provide, ref, SetupContext, watch } from 'vue';
 
-import { usePrefix } from '@bkui-vue/config-provider';
-import { debounce } from '@bkui-vue/shared';
-import VirtualRender from '@bkui-vue/virtual-render';
+import { debounce, isElement } from 'lodash';
 
-import { ITableColumn } from './components/table-column';
-import { PROVIDE_KEY_INIT_COL } from './const';
-import { EMIT_EVENT_TYPES, EMIT_EVENTS } from './events';
-import useColumnResize from './plugins/use-column-resize';
-import useFixedColumn from './plugins/use-fixed-column';
-import useObserverResize from './plugins/use-observer-resize';
-import useScrollLoading from './plugins/use-scroll-loading';
-import { Column, Settings, tableProps } from './props';
-import useData from './use-attributes';
-import useColumn from './use-column';
-import { useClass } from './use-common';
-import useRender from './use-render';
+import { COLUMN_ATTRIBUTE, PROVIDE_KEY_INIT_COL, SCROLLY_WIDTH, TABLE_ROW_ATTRIBUTE } from './const';
+import { EMIT_EVENT_TYPES } from './events';
+import useColumnResize from './hooks/use-column-resize';
+import useColumnTemplate from './hooks/use-column-template';
+import useColumns from './hooks/use-columns';
+import useDraggable from './hooks/use-draggable';
+import useFixedColumn from './hooks/use-fixed-column';
+import useLayout from './hooks/use-layout';
+import useObserverResize from './hooks/use-observer-resize';
+import usePagination from './hooks/use-pagination';
+import useRender from './hooks/use-render';
+import useRows from './hooks/use-rows';
+import useSettings from './hooks/use-settings';
+import { tableProps } from './props';
 
 export default defineComponent({
   name: 'Table',
   props: tableProps,
   emits: EMIT_EVENT_TYPES,
-  setup(props, ctx) {
-    const root: Ref<HTMLElement> = ref();
-    const head: Ref<HTMLElement> = ref();
-    const refVirtualRender = ref();
-    // scrollX 右侧距离
-    const tableOffsetRight = ref(0);
+  setup(props, ctx: SetupContext) {
+    const columns = useColumns(props);
+    const rows = useRows(props);
+    const pagination = usePagination(props);
 
-    const { columns, initColumns } = useColumn(props);
+    const {
+      renderContainer,
+      renderFixedBottom,
+      renderBody,
+      renderHeader,
+      renderFooter,
+      setBodyHeight,
+      setFootHeight,
+      setDragOffsetX,
+      setOffsetRight,
+      setHeaderRowCount,
+      refBody,
+      refRoot,
+    } = useLayout(props, ctx);
+
+    /**
+     * 设置字段结束，展示字段改变，设置表格偏移量为0
+     * 避免太长横向滚动导致数据不可见
+     * @param fields
+     */
+    const afterSetting = fields => {
+      if (fields?.length > 0) {
+        refBody.value?.scrollTo(0, 0);
+      }
+    };
+
+    const settings = useSettings(props, ctx, columns, afterSetting);
+    const dragEvents = useDraggable(props, rows, ctx);
+
+    const { renderColumns, renderTBody, renderTFoot, setDragEvents } = useRender({
+      props,
+      ctx,
+      columns,
+      rows,
+      pagination,
+      settings,
+    });
+
+    setDragEvents(dragEvents as Record<string, () => void>);
+
+    const { resolveColumns } = useColumnTemplate();
+
     const instance = getCurrentInstance();
     const initTableColumns = () => {
-      initColumns(instance);
+      const children = instance.subTree?.children ?? [];
+      columns.debounceUpdateColumns(resolveColumns(children), () => {
+        setHeaderRowCount(columns.columnGroup.length);
+      });
     };
 
     provide(PROVIDE_KEY_INIT_COL, initTableColumns);
-    const tableSchema = useData(props);
 
-    const { resizeColumnStyle, resizeHeadColStyle, registerResizeEvent } = useColumnResize(tableSchema, false, head);
+    const { renderFixedRows, resolveFixedColumnStyle } = useFixedColumn(props, columns);
 
-    const {
-      tableClass,
-      headClass,
-      footerClass,
-      wrapperStyle,
-      contentStyle,
-      headStyle,
-      hasFooter,
-      footerStyle,
-      tableBodyClass,
-      resizeColumnClass,
-      tableBodyContentClass,
-      loadingRowClass,
-      columnGhostStyle,
-      fixedContainerStyle,
-      scrollClass,
-      prependStyle,
-      resetTableHeight,
-    } = useClass(props, columns as ITableColumn[], root, tableSchema, tableSchema.pageData);
-    const { renderScrollLoading } = useScrollLoading(props, ctx);
+    /**
+     * Column配置改变或者容器Resize之后，根据Columns配置
+     * 计算每一列的实际宽度
+     */
+    const computedColumnRect = () => {
+      const width = refRoot.value?.offsetWidth - (props.scrollbar ? 1 : SCROLLY_WIDTH) ?? 0;
+      columns.resolveColsCalcWidth(width);
+      resolveFixedColumnStyle();
+    };
 
-    const { fixedWrapperClass, fixedColumns, resolveFixedColumns, updateFixClass } = useFixedColumn(
-      props,
-      tableSchema,
-      head,
-    );
+    const { dragOffsetX } = useColumnResize(columns, { afterResize: resolveFixedColumnStyle });
 
-    const { resolveClassName } = usePrefix();
+    const isResizeBodyHeight = ref(false);
 
-    useObserverResize(root, () => {
-      nextTick(() => {
-        resolveFixedColumns(tableOffsetRight.value);
-      });
-    });
-
-    const { renderTableBodySchema, renderTableFooter, renderTableHeadSchema } = useRender(
-      props,
-      ctx as SetupContext<any>,
-      tableSchema,
-      head,
-      root,
-      resetTableHeight,
-    );
-
-    const updateOffsetRight = () => {
-      if (!root?.value) {
-        return;
+    /**
+     * table 渲染行
+     */
+    const getRenderRowList = (list: Record<string, object>[]) => {
+      if (!pagination.isShowPagination.value || props.remotePagination) {
+        return list;
       }
 
-      const $tableContent = root.value.querySelector(`.${resolveClassName('table-body-content')}`);
-      const $table = $tableContent.querySelector('table');
-      if ($table) {
-        const $tableScrollWidth = $table.scrollWidth;
-        const $contentWidth = $tableContent.clientWidth;
-        tableOffsetRight.value = $tableScrollWidth - $contentWidth;
+      const startIndex = (pagination.options.current - 1) * pagination.options.limit;
+      const endIndex = startIndex + pagination.options.limit;
+
+      return list.slice(startIndex, endIndex);
+    };
+
+    const getFilterAndSortList = () => {
+      let renderList = rows.tableRowList.value.slice();
+
+      columns.filterColumns.forEach(item => {
+        if (
+          !columns.isHiddenColumn(item.col) &&
+          item[COLUMN_ATTRIBUTE.COL_FILTER_FN] &&
+          item[COLUMN_ATTRIBUTE.COL_FILTER_VALUES]?.length
+        ) {
+          renderList = renderList.filter((row, index) =>
+            item[COLUMN_ATTRIBUTE.COL_FILTER_FN](item[COLUMN_ATTRIBUTE.COL_FILTER_VALUES], row, index, props.data),
+          );
+        }
+      });
+
+      columns.sortColumns.forEach(item => {
+        if (!columns.isHiddenColumn(item.col) && item[COLUMN_ATTRIBUTE.COL_SORT_FN] && item.active) {
+          renderList.sort((a, b) => {
+            let index0 = null;
+            let index1 = null;
+            if (item.col.type === 'index') {
+              index0 = rows.getRowAttribute(a, TABLE_ROW_ATTRIBUTE.ROW_INDEX);
+              index1 = rows.getRowAttribute(b, TABLE_ROW_ATTRIBUTE.ROW_INDEX);
+            }
+            return item[COLUMN_ATTRIBUTE.COL_SORT_FN](a, b, index0, index1);
+          });
+        }
+      });
+
+      return renderList;
+    };
+
+    const footHeight = computed(() => {
+      return pagination.isShowPagination.value ? props.paginationHeight : 0;
+    });
+
+    const setTableFootHeight = () => {
+      setFootHeight(footHeight.value);
+      if (/^\d+\.?\d*(px)?$/.test(`${props.height}`)) {
+        setBodyHeight(Number(`${props.height}`.replace('px', '')));
       }
     };
 
-    const isFirstLoad = ref(true);
+    const setTableData = debounce(() => {
+      const filterOrderList = getFilterAndSortList();
+      if (!props.remotePagination) {
+        pagination.setPagination({ count: filterOrderList.length });
+      }
 
-    watchEffect(() => {
-      tableSchema.formatDataSchema(props.data);
-      tableSchema.formatColumns(columns as Column[]);
-      resolveFixedColumns(tableOffsetRight.value);
-      tableSchema.setIndexData().then(() => {
-        tableSchema.resetStartEndIndex();
+      const renderList = getRenderRowList(filterOrderList);
+      rows.setPageRowList(renderList);
 
-        if (isFirstLoad.value) {
-          tableSchema.resolveByDefColumns();
-          isFirstLoad.value = false;
-        } else {
-          tableSchema.resolvePageData(tableSchema.getFilterFnList());
+      nextTick(() => {
+        setOffsetRight();
+        refBody.value?.scrollTo(0, 0);
+      });
+    }, 64);
+
+    const observerResizing = ref(false);
+    let observerResizingTimer = null;
+
+    useObserverResize(refRoot, () => {
+      if (!observerResizing.value) {
+        observerResizing.value = true;
+        if ((props.height === '100%' || props.virtualEnabled) && isElement(refRoot.value)) {
+          if (isResizeBodyHeight.value) {
+            setTimeout(() => {
+              isResizeBodyHeight.value = false;
+            });
+            return;
+          }
+          const tableHeight = refRoot.value.offsetHeight;
+          isResizeBodyHeight.value = true;
+          setBodyHeight(tableHeight);
+          setOffsetRight();
         }
+        computedColumnRect();
+        setOffsetRight();
+        refBody.value?.scrollTo(0, 0);
+        return;
+      }
 
-        registerResizeEvent();
-        nextTick(() => {
-          updateOffsetRight();
-
-          /**
-           * 确保在所有数据渲染完毕再执行fix column计算
-           */
-          nextTick(() => {
-            resetTableHeight(root.value);
-          });
-        });
+      observerResizingTimer && clearTimeout(observerResizingTimer);
+      observerResizingTimer = setTimeout(() => {
+        observerResizing.value = false;
       });
     });
 
     watch(
-      () => [props.height, props.maxHeight, props.minHeight],
+      () => [props.columns],
       () => {
-        nextTick(() => {
-          resetTableHeight(root.value);
+        columns.debounceUpdateColumns(props.columns, () => {
+          setHeaderRowCount(columns.columnGroup.length);
         });
+      },
+      { immediate: true },
+    );
+
+    watch(
+      () => [dragOffsetX.value],
+      () => {
+        setDragOffsetX(dragOffsetX.value);
       },
     );
 
     watch(
-      () => [props.settings],
+      () => [columns.visibleColumns],
       () => {
-        tableSchema.updateSettings(props.settings as Settings);
+        nextTick(() => computedColumnRect());
+      },
+      { immediate: true, deep: true },
+    );
+
+    watch(
+      () => [columns.sortColumns, columns.filterColumns],
+      () => {
+        setTableData();
       },
       { deep: true },
     );
 
     watch(
-      () => [props.rowHeight],
+      () => [pagination.isShowPagination.value],
       () => {
-        tableSchema.updateSettings(undefined, props.rowHeight as number);
+        setTableFootHeight();
       },
+      { immediate: true },
     );
 
-    const handleScrollChanged = (args: any[]) => {
-      const preBottom = tableSchema.formatData.layout.bottom ?? 0;
-      const pagination = args[1];
-      const { translateX, translateY, pos = {} } = pagination;
-      tableSchema.formatData.layout.translateY = translateY;
-      tableSchema.formatData.layout.translateX = translateX;
-      Object.assign(tableSchema.formatData.layout, pos || {});
-      const { bottom } = pos;
-      if (bottom <= 2 && preBottom > bottom) {
-        debounce(
-          60,
-          () => {
-            ctx.emit(EMIT_EVENTS.SCROLL_BOTTOM, { ...pos, translateX, translateY });
-          },
-          true,
-        )();
-      }
+    watch(
+      () => [props.data],
+      () => {
+        rows.setTableRowList(props.data);
+        setTableData();
+      },
+      { immediate: true, deep: true },
+    );
 
-      updateOffsetRight();
-      updateFixClass(tableOffsetRight.value);
-    };
-
-    const scrollTo = (option = { left: 0, top: 0 }) => {
-      refVirtualRender.value?.scrollTo?.(option);
-    };
-
-    const getRoot = () => root.value;
+    watch(
+      () => [pagination.options.count, pagination.options.limit, pagination.options.current],
+      () => {
+        setTableData();
+      },
+      { immediate: true },
+    );
 
     ctx.expose({
-      setRowExpand: tableSchema.setRowExpand,
-      setAllRowExpand: tableSchema.setAllRowExpand,
-      clearSelection: tableSchema.clearSelection,
-      toggleAllSelection: tableSchema.toggleAllSelection,
-      toggleRowSelection: tableSchema.toggleRowSelection,
-      getSelection: tableSchema.getRowSelection,
-      clearSort: tableSchema.clearColumnSort,
+      setRowExpand: rows.setRowExpand,
+      setAllRowExpand: rows.setAllRowExpand,
+      clearSelection: () => {
+        rows.clearSelection();
+        columns.clearSelectionAll();
+      },
+      toggleAllSelection: rows.toggleAllSelection,
+      toggleRowSelection: rows.toggleRowSelection,
+      getSelection: rows.getRowSelection,
+      clearSort: columns.clearColumnSort,
       scrollTo,
-      getRoot,
+      getRoot: () => refRoot.value,
     });
 
-    const renderPrepend = () => {
-      if (ctx.slots.prepend) {
-        return (
-          <div
-            style={prependStyle.value}
-            class='prepend-row'
-          >
-            {ctx.slots.prepend()}
-          </div>
-        );
-      }
-
-      return null;
-    };
-
-    return () => (
-      <div
-        ref={root}
-        style={wrapperStyle.value}
-        class={tableClass.value}
-      >
-        {
-          // @ts-ignore:next-line
-          <div
-            ref={head}
-            style={headStyle.value}
-            class={headClass}
-          >
-            {renderTableHeadSchema()}
-            <div
-              style={resizeHeadColStyle.value}
-              class='col-resize-drag'
-            ></div>
-          </div>
-        }
-        <VirtualRender
-          ref={refVirtualRender}
-          height={contentStyle.height}
-          class={tableBodyClass.value}
-          lineHeight={tableSchema.formatData.settings.height}
-          list={tableSchema.pageData}
-          wrapperStyle={contentStyle}
-          {...scrollClass.value}
-          autoIndex={false}
-          contentClassName={tableBodyContentClass.value}
-          enabled={props.virtualEnabled}
-          keepAlive={true}
-          rowKey={props.rowKey}
-          scrollEvent={true}
-          scrollbar={{ enabled: true }}
-          throttleDelay={120}
-          onContentScroll={handleScrollChanged}
-        >
-          {{
-            beforeContent: () => renderPrepend(),
-            default: (scope: any) => renderTableBodySchema(scope.data),
-            afterSection: () => [
-              <div
-                style={resizeColumnStyle.value}
-                class={resizeColumnClass}
-              ></div>,
-            ],
-          }}
-        </VirtualRender>
-        {/* @ts-ignore:next-line */}
-        <div
-          style={fixedContainerStyle.value}
-          class={fixedWrapperClass}
-        >
-          {fixedColumns.map(({ isExist, className, style }) =>
-            isExist ? (
-              ''
-            ) : (
-              <div
-                style={style}
-                class={className}
-              ></div>
-            ),
-          )}
-
-          <div class={loadingRowClass}>{renderScrollLoading()}</div>
-        </div>
-        {/* @ts-ignore:next-line */}
-        <div
-          style={footerStyle.value}
-          class={footerClass.value}
-        >
-          {hasFooter.value && renderTableFooter(tableSchema.localPagination.value)}
-        </div>
-        <div style={columnGhostStyle}>{ctx.slots.default?.()}</div>
-      </div>
-    );
+    return () =>
+      renderContainer([
+        renderHeader(renderColumns, settings.renderSettings, renderFixedRows),
+        renderBody(rows.pageRowList, renderTBody, renderFixedRows),
+        renderFixedBottom(),
+        renderFooter(renderTFoot()),
+      ]);
   },
 });

@@ -137,13 +137,40 @@ export default defineComponent({
       if (!initRendered.value) {
         return null;
       }
+
+      const renderMask = () => {
+        if (!props.showMask) {
+          return null;
+        }
+        return (
+          <Transition name={mask.getMaskCount() > 0 ? 'fadein' : ''}>
+            <div
+              ref={maskRef}
+              style={{
+                zIndex: zIndex.value,
+              }}
+              class={{
+                [resolveClassName('modal-mask')]: true,
+              }}
+              v-show={localShow.value}
+              onClick={handleClickOutSide}
+            />
+          </Transition>
+        );
+      };
+
       const renderContent = () => {
         // v-if 模式渲染，如果 isShow 为 false 销毁 DOM
         if (props.renderDirective === 'if' && !localShow.value) {
           return null;
         }
         return (
-          <div class={resolveClassName('modal-body')}>
+          <div
+            style={{
+              backgroundColor: props.backgroundColor,
+            }}
+            class={resolveClassName('modal-body')}
+          >
             <div class={resolveClassName('modal-header')}>{slots.header?.()}</div>
             <div
               style={contentStyles.value}
@@ -187,21 +214,7 @@ export default defineComponent({
             {...attrs}
             class={[resolveClassName('modal'), props.extCls || '']}
           >
-            {props.showMask && (
-              <Transition name={mask.getMaskCount() > 0 ? 'fadein' : ''}>
-                <div
-                  ref={maskRef}
-                  style={{
-                    zIndex: zIndex.value,
-                  }}
-                  class={{
-                    [resolveClassName('modal-mask')]: true,
-                  }}
-                  v-show={localShow.value}
-                  onClick={handleClickOutSide}
-                />
-              </Transition>
-            )}
+            {renderMask()}
             <Transition name={`modal-${props.animateType}`}>
               <div
                 style={modalWrapperStyles.value}

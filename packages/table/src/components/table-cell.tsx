@@ -30,7 +30,7 @@ import { bkEllipsisInstance } from '@bkui-vue/directives';
 import { hasOverflowEllipsis, isElement, PropTypes } from '@bkui-vue/shared';
 
 import { Column, IColumnType, IOverflowTooltipOption, IOverflowTooltipPropType, ResizerWay } from '../props';
-import { observerResize, resolvePropVal } from '../utils';
+import { observerResize, resolveNumberOrStringToPix, resolvePropVal } from '../utils';
 // import
 export default defineComponent({
   name: 'TableCell',
@@ -53,6 +53,7 @@ export default defineComponent({
 
     const cellStyle = computed(() => ({
       textAlign: props.column.textAlign as any,
+      minWidth: resolveNumberOrStringToPix(props.column.minWidth, null),
     }));
 
     const resolveSetting = () => {
@@ -70,11 +71,13 @@ export default defineComponent({
             resizerWay: undefined,
             watchCellResize: undefined,
             popoverOption,
+            allowHtml: false,
           },
         };
         if (props.parentSetting !== null && typeof props.parentSetting === 'object') {
-          Object.assign(result.showOverflowTooltip, props.parentSetting);
-          Object.assign(result.showOverflowTooltip, { disabled: !props.column.showOverflowTooltip });
+          Object.assign(result.showOverflowTooltip, props.parentSetting, {
+            disabled: !props.column.showOverflowTooltip,
+          });
 
           if (typeof props.column.showOverflowTooltip === 'object') {
             Object.assign(result.showOverflowTooltip, props.column.showOverflowTooltip);
@@ -89,13 +92,22 @@ export default defineComponent({
 
     let bkEllipsisIns = null;
 
+    const getContentValue = (allowHtml = false) => {
+      const target: HTMLElement = getEllipsisTarget();
+      if (allowHtml) {
+        return target?.cloneNode?.(true) ?? '';
+      }
+
+      return target?.innerText ?? '';
+    };
+
     const resolveTooltipOption = () => {
       const { showOverflowTooltip = false } = resolveSetting();
 
       let disabled: ((col: Column, row: any) => boolean) | boolean = true;
       let { resizerWay } = props;
-      const defaultContent = getEllipsisTarget()?.cloneNode?.(true) ?? '';
-      let content = () => defaultContent;
+      const defaultContent = getContentValue((showOverflowTooltip as any).allowHtml);
+      let content: any = () => defaultContent;
       let popoverOption = {};
       let mode = 'auto';
       let watchCellResize = true;
@@ -128,7 +140,8 @@ export default defineComponent({
         mode = 'static';
 
         if (typeof props.column.explain === 'object') {
-          content = () => resolvePropVal(props.column.explain, 'content', [props.column, props.row]);
+          content = () =>
+            resolvePropVal(props.column.explain as Record<string, unknown>, 'content', [props.column, props.row]);
         }
       }
 

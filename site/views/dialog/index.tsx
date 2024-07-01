@@ -109,7 +109,7 @@ const dialogPropsJson: IPropsTableItem[] = [
     optional: [],
   },
   {
-    name: 'confirmButtonTheme',
+    name: 'confirm-button-theme',
     type: 'String',
     default: 'primary',
     desc: '颜色按钮类型',
@@ -135,6 +135,19 @@ const dialogPropsJson: IPropsTableItem[] = [
     default: 'right',
     desc: '显示 footer 的位置',
     optional: ['left', 'center', 'right'],
+  },
+  {
+    name: 'before-close',
+    type: '() => Promise<boolean> | boolean>',
+    default: '--',
+    desc: '关闭前确认',
+  },
+  {
+    name: 'render-directive',
+    type: '() => Promise<boolean> | boolean>',
+    default: 'is',
+    desc: '弹框的渲染方式',
+    optional: ['v-if', 'v-show'],
   },
 
   // {
@@ -224,8 +237,13 @@ const dialogChangeJson: IPropsTableItem[] = [
     name: 'hidden',
     type: 'Function',
     default: '',
-    desc: 'dialog 关闭后触发',
-    optional: [],
+    desc: '弹框关闭',
+  },
+  {
+    name: 'shown',
+    type: 'Function',
+    default: '',
+    desc: '弹框弹出',
   },
 ];
 

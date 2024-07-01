@@ -152,7 +152,7 @@ export default defineComponent({
       <div>
         <DemoTitle
           desc='代码差异对比使用highlight.js做代码高亮，所以在使用该组件之前，请先安装highlight.js依赖'
-          link={`${import.meta.env.VITE_APP_BASE_URL ?? ''}/code-diff`}
+          npmLink={`${import.meta.env.VITE_APP_BASE_URL ?? ''}/code-diff`}
           name='Diff 差异对比'
         />
         {demos.map(({ DemoComponent, ...demo }) => (

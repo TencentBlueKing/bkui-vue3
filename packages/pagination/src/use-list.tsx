@@ -100,6 +100,9 @@ export default () => {
    * @desc 上一页
    */
   const handlePrePage = () => {
+    if (proxy.disabled) {
+      return;
+    }
     if (isPagePreDisabled.value) {
       return;
     }
@@ -109,6 +112,9 @@ export default () => {
    * @desc 下一页
    */
   const handleNextPage = () => {
+    if (proxy.disabled) {
+      return;
+    }
     if (isPageNextDisabled.value) {
       return;
     }
@@ -119,6 +125,9 @@ export default () => {
    * @param { Number } totalPageNum
    */
   const handleItemClick = (totalPageNum: number) => {
+    if (proxy.disabled) {
+      return;
+    }
     if (totalPageNum === localCurrent.value) {
       return;
     }
@@ -128,12 +137,18 @@ export default () => {
    * @desc 上一批分页
    */
   const handlePreBatch = () => {
+    if (proxy.disabled) {
+      return;
+    }
     localCurrent.value = Math.max(1, localCurrent.value - PAGE_ITEMS_NUM);
   };
   /**
    * @desc 下一批分页
    */
   const handleNextBatch = () => {
+    if (proxy.disabled) {
+      return;
+    }
     localCurrent.value = Math.min(proxy.totalPageNum, localCurrent.value + PAGE_ITEMS_NUM);
   };
 

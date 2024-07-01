@@ -27,12 +27,12 @@
 import { isElement } from 'lodash';
 
 import { NODE_ATTRIBUTES, NODE_SOURCE_ATTRS } from './constant';
-import { TreePropTypes } from './props';
+import { TreeNode, TreePropTypes } from './props';
 
 export default (
   flatData: {
-    data: any[];
-    schema: WeakMap<Object, any>;
+    data: TreeNode[];
+    schema: WeakMap<TreeNode, unknown>;
   },
   props?: TreePropTypes,
 ) => {
@@ -41,7 +41,7 @@ export default (
    * @param key
    * @returns
    */
-  const getSchemaVal = (node: any) => (flatData.schema as WeakMap<Object, any>).get(node);
+  const getSchemaVal = (node: TreeNode) => flatData.schema.get(node);
 
   /**
    * 获取节点属性
@@ -49,7 +49,7 @@ export default (
    * @param attr 节点属性
    * @returns
    */
-  const getNodeAttr = (node: any, attr: string) => getSchemaVal(node)?.[attr];
+  const getNodeAttr = (node: TreeNode, attr: string) => getSchemaVal(node)?.[attr];
 
   /**
    * 设置节点属性
@@ -58,7 +58,7 @@ export default (
    * @param val 属性值
    * @returns
    */
-  const setNodeAttr = (node: any, attr: string, val: any, id?) => {
+  const setNodeAttr = (node: TreeNode, attr: string, val: unknown, id?) => {
     if (!flatData.schema.has(node)) {
       console.warn('node is not in schema, please check', id, node);
       return;
@@ -67,34 +67,35 @@ export default (
     flatData.schema.set(node, Object.assign({}, getSchemaVal(node), { [attr]: val }));
   };
 
-  const getNodeById = (id: any) => flatData.data.find(item => getNodeId(item) === id);
+  const getNodeById = (id: string | unknown): TreeNode => flatData.data.find(item => getNodeId(item) === id);
 
-  const setNodeAttrById = (id: any, attr: string, val: any) => {
+  const setNodeAttrById = (id: unknown, attr: string, val: unknown) => {
     if (Array.isArray(id)) {
-      Array.prototype.forEach.call(id, item => setNodeAttr(getNodeById(item), attr, val, id));
+      Array.prototype.forEach.call(id, (item: TreeNode) => setNodeAttr(getNodeById(item), attr, val, id));
       return;
     }
 
     setNodeAttr(getNodeById(id), attr, val, id);
   };
 
-  const getNodePath = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.PATH);
-  const getNodeId = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.UUID);
-  const isNodeOpened = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.IS_OPEN);
-  const hasChildNode = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.HAS_CHILD);
-  const isNodeMatched = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.IS_MATCH);
-  const isNodeChecked = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.IS_CHECKED);
-  const getNodeParentId = (node: any) => getNodeAttr(getNodeAttr(node, NODE_ATTRIBUTES.PARENT), NODE_ATTRIBUTES.UUID);
-  const isNodeLoading = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.IS_LOADING);
-  const getParentNode = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.PARENT);
-  const isMatchedNode = (node: any) => getNodeAttr(node, NODE_ATTRIBUTES.IS_MATCH);
+  const getNodePath = (node: TreeNode) => getNodeAttr(node, NODE_ATTRIBUTES.PATH);
+  const getNodeId = (node: TreeNode) => getNodeAttr(node, NODE_ATTRIBUTES.UUID);
+  const isNodeOpened = (node: TreeNode) => getNodeAttr(node, NODE_ATTRIBUTES.IS_OPEN);
+  const hasChildNode = (node: TreeNode) => getNodeAttr(node, NODE_ATTRIBUTES.HAS_CHILD);
+  const isNodeMatched = (node: TreeNode) => getNodeAttr(node, NODE_ATTRIBUTES.IS_MATCH);
+  const isNodeChecked = (node: TreeNode) => getNodeAttr(node, NODE_ATTRIBUTES.IS_CHECKED);
+  const getNodeParentId = (node: TreeNode) =>
+    getNodeAttr(getNodeAttr(node, NODE_ATTRIBUTES.PARENT), NODE_ATTRIBUTES.UUID);
+  const isNodeLoading = (node: TreeNode) => getNodeAttr(node, NODE_ATTRIBUTES.IS_LOADING);
+  const getParentNode = (node: TreeNode) => getNodeAttr(node, NODE_ATTRIBUTES.PARENT);
+  const isMatchedNode = (node: TreeNode) => getNodeAttr(node, NODE_ATTRIBUTES.IS_MATCH);
 
   const getNodeAttrById = (id: string, attr: string) => {
     const target = flatData.data.find(item => getNodeId(item) === id);
     return getNodeAttr(target, attr);
   };
 
-  const isRootNode = (node: any | string) => {
+  const isRootNode = (node: TreeNode | string) => {
     if (typeof node === 'string') {
       return getNodeAttrById(node, NODE_ATTRIBUTES.IS_ROOT);
     }
@@ -112,7 +113,7 @@ export default (
     return getNodePath(target);
   };
 
-  const setTreeNodeLoading = (node: any, value: boolean) => {
+  const setTreeNodeLoading = (node: TreeNode, value: boolean) => {
     setNodeAttr(node, NODE_ATTRIBUTES.IS_LOADING, value);
   };
 
@@ -123,7 +124,7 @@ export default (
    * @param item 节点或者节点 UUID
    * @returns
    */
-  const isItemOpen = (item: any) => {
+  const isItemOpen = (item: TreeNode) => {
     if (typeof item === 'object') {
       return isNodeOpened(item);
     }
@@ -135,11 +136,11 @@ export default (
     return false;
   };
 
-  const getParentNodeAttr = (node: any, attrName: string) => {
+  const getParentNodeAttr = (node: TreeNode, attrName: string) => {
     return getNodeAttr(getNodeAttr(node, NODE_ATTRIBUTES.PARENT), attrName);
   };
 
-  const isParentNodeOpened = (node: any) => isItemOpen(getNodeAttr(node, NODE_ATTRIBUTES.PARENT));
+  const isParentNodeOpened = (node: TreeNode) => isItemOpen(getNodeAttr(node, NODE_ATTRIBUTES.PARENT));
 
   /**
    * 过滤当前状态为Open的节点
@@ -147,7 +148,7 @@ export default (
    * @param item
    * @returns
    */
-  const checkNodeIsOpen = (node: any) => isRootNode(node) || isItemOpen(node) || isParentNodeOpened(node);
+  const checkNodeIsOpen = (node: TreeNode) => isRootNode(node) || isItemOpen(node) || isParentNodeOpened(node);
 
   /**
    * 根据节点path返回源数据中节点信息
@@ -157,7 +158,7 @@ export default (
   const getSourceNodeByPath = (path: string, uid?: string) => {
     const paths = path.split('-');
 
-    const target = paths.reduce((pre: any, nodeIndex: string) => {
+    const target = paths.reduce((pre, nodeIndex: string) => {
       const index = Number(nodeIndex);
       return Array.isArray(pre) ? pre[index] : pre[props.children][index];
     }, props.data);
@@ -169,18 +170,18 @@ export default (
     return target;
   };
 
-  const getChildNodes = (node: any) => {
-    return node[props.children] ?? [];
+  const getChildNodes = (node: TreeNode) => {
+    return (node[props.children] as TreeNode[]) ?? [];
   };
 
   const getSourceNodeByUID = (uid: string) => flatData.data.find(item => getNodeId(item) === uid);
 
-  const getParentNodeData = (node: any) => {
+  const getParentNodeData = (node: TreeNode | string) => {
     if (isRootNode(node)) {
       return { [props.children]: props.data };
     }
 
-    return getParentNode(node);
+    return getParentNode(node as TreeNode);
   };
 
   /**
@@ -188,7 +189,7 @@ export default (
    * @param item 当前节点数据
    * @returns
    */
-  const resolveScopedSlotParam = (item: any) => ({
+  const resolveScopedSlotParam = (item: TreeNode) => ({
     [NODE_SOURCE_ATTRS[NODE_ATTRIBUTES.IS_LOADING]]: getNodeAttr(item, NODE_ATTRIBUTES.IS_LOADING),
     [NODE_SOURCE_ATTRS[NODE_ATTRIBUTES.HAS_CHILD]]: hasChildNode(item),
     [NODE_SOURCE_ATTRS[NODE_ATTRIBUTES.IS_MATCH]]: isNodeMatched(item),
@@ -201,12 +202,12 @@ export default (
     parentId: getNodeId(getNodeAttr(item, NODE_ATTRIBUTES.PARENT)),
   });
 
-  const extendNodeAttr = (item: any) =>
+  const extendNodeAttr = (item: TreeNode) =>
     Object.assign({}, item, {
       [NODE_ATTRIBUTES.TREE_NODE_ATTR]: resolveScopedSlotParam(item),
     });
 
-  const extendNodeScopedData = (item: any) => ({
+  const extendNodeScopedData = (item: TreeNode) => ({
     data: item,
     attributes: resolveScopedSlotParam(item),
   });
@@ -216,21 +217,21 @@ export default (
    * @param target
    * @returns
    */
-  const getIntersectionResponse = (target: HTMLElement | Record<string, any>) => {
+  const getIntersectionResponse = (target: HTMLElement | TreeNode) => {
     if (!target) {
       return null;
     }
 
     let node = target;
     if (isElement(target)) {
-      node = getNodeById(target.getAttribute('data-tree-node'));
+      node = getNodeById((target as HTMLElement).getAttribute('data-tree-node'));
     }
 
-    const level = getNodeAttr(node, NODE_ATTRIBUTES.DEPTH);
-    const isRoot = getNodeAttr(node, NODE_ATTRIBUTES.IS_ROOT);
-    const parent = getNodeAttr(node, NODE_ATTRIBUTES.PARENT);
+    const level = getNodeAttr(node as TreeNode, NODE_ATTRIBUTES.DEPTH);
+    const isRoot = getNodeAttr(node as TreeNode, NODE_ATTRIBUTES.IS_ROOT);
+    const parent = getNodeAttr(node as TreeNode, NODE_ATTRIBUTES.PARENT);
     const index = isRoot
-      ? getNodeAttr(node, NODE_ATTRIBUTES.INDEX)
+      ? getNodeAttr(node as TreeNode, NODE_ATTRIBUTES.INDEX)
       : parent?.[props.children]?.findIndex(child => child === node);
     return { level, target, index, parent, node, isRoot };
   };

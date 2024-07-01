@@ -123,9 +123,8 @@ export const useRadio = () => {
 
     const $targetInput = event.target as HTMLInputElement;
     const newValue = $targetInput.checked;
-    const beforeChangeFn = radioGroup?.props.beforeChange ?? props.beforeChange;
-    const beforeChangeValue = beforeChangeFn?.(newValue, event, props) ?? true;
-    Promise.resolve(beforeChangeValue)
+
+    Promise.resolve(isGroup ? radioGroup.props.beforeChange(newValue) : props.beforeChange(newValue))
       .then(result => {
         if (result) {
           isChecked.value = $targetInput.checked;

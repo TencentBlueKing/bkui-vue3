@@ -79,67 +79,67 @@ export default defineComponent({
     };
 
     const configs = [
-      // {
-      //   attrs: {
-      //     title: '基础用法',
-      //     subtitle: '基础用法，用于表单内容的录入',
-      //     desc: 'props: --',
-      //     componentName: 'tree',
-      //     demoName: 'basic',
-      //   },
-      //   component: () => <basic></basic>,
-      // },
-      // {
-      //   attrs: {
-      //     title: '启用虚拟滚动',
-      //     subtitle: '启用虚拟滚动',
-      //     desc: 'props: virtual-render',
-      //     componentName: 'tree',
-      //     demoName: 'virtual-render',
-      //   },
-      //   component: () => <virtual-render></virtual-render>,
-      // },
-      // {
-      //   attrs: {
-      //     title: '启用连线',
-      //     subtitle: '启用连线',
-      //     desc: 'props: level-line',
-      //     componentName: 'tree',
-      //     demoName: 'level-line',
-      //   },
-      //   component: () => <level-line></level-line>,
-      // },
-      // {
-      //   attrs: {
-      //     title: '自定义节点Icon',
-      //     subtitle: '自定义节点Icon',
-      //     desc: 'props: prefix-icon',
-      //     componentName: 'tree',
-      //     demoName: 'prefix-icon',
-      //   },
-      //   component: () => <prefix-icon></prefix-icon>,
-      // },
-      // {
-      //   attrs: {
-      //     title: '自定义节点Icon-jsx',
-      //     subtitle: '自定义节点Icon',
-      //     desc: 'props: prefix-icon',
-      //     componentName: 'tree',
-      //     demoName: 'prefix-icon-jsx',
-      //     suffix: '.tsx',
-      //   },
-      //   component: () => <prefix-icon-jsx></prefix-icon-jsx>,
-      // },
-      // {
-      //   attrs: {
-      //     title: '自定义节点内容',
-      //     subtitle: '自定义节点Icon',
-      //     desc: 'props: prefix-icon',
-      //     componentName: 'tree',
-      //     demoName: 'custom-node',
-      //   },
-      //   component: () => <custom-node></custom-node>,
-      // },
+      {
+        attrs: {
+          title: '基础用法',
+          subtitle: '基础用法，用于表单内容的录入',
+          desc: 'props: --',
+          componentName: 'tree',
+          demoName: 'basic',
+        },
+        component: () => <basic></basic>,
+      },
+      {
+        attrs: {
+          title: '启用虚拟滚动',
+          subtitle: '启用虚拟滚动',
+          desc: 'props: virtual-render',
+          componentName: 'tree',
+          demoName: 'virtual-render',
+        },
+        component: () => <virtual-render></virtual-render>,
+      },
+      {
+        attrs: {
+          title: '启用连线',
+          subtitle: '启用连线',
+          desc: 'props: level-line',
+          componentName: 'tree',
+          demoName: 'level-line',
+        },
+        component: () => <level-line></level-line>,
+      },
+      {
+        attrs: {
+          title: '自定义节点Icon',
+          subtitle: '自定义节点Icon',
+          desc: 'props: prefix-icon',
+          componentName: 'tree',
+          demoName: 'prefix-icon',
+        },
+        component: () => <prefix-icon></prefix-icon>,
+      },
+      {
+        attrs: {
+          title: '自定义节点Icon-jsx',
+          subtitle: '自定义节点Icon',
+          desc: 'props: prefix-icon',
+          componentName: 'tree',
+          demoName: 'prefix-icon-jsx',
+          suffix: '.tsx',
+        },
+        component: () => <prefix-icon-jsx></prefix-icon-jsx>,
+      },
+      {
+        attrs: {
+          title: '自定义节点内容',
+          subtitle: '自定义节点Icon',
+          desc: 'props: prefix-icon',
+          componentName: 'tree',
+          demoName: 'custom-node',
+        },
+        component: () => <custom-node></custom-node>,
+      },
       {
         attrs: {
           title: '异步加载节点数据',
@@ -150,76 +150,76 @@ export default defineComponent({
         },
         component: () => <async></async>,
       },
-      // {
-      //   attrs: {
-      //     title: '设置默认行为',
-      //     subtitle: '默认连线 | 默认选中 | 默认展开',
-      //     desc: 'props: --',
-      //     componentName: 'tree',
-      //     demoName: 'auto-config',
-      //   },
-      //   component: () => <auto-config></auto-config>,
-      // },
-      // {
-      //   attrs: {
-      //     title: '搜索配置',
-      //     subtitle: '配置搜索行为',
-      //     desc: 'props: --',
-      //     componentName: 'tree',
-      //     demoName: 'search',
-      //   },
-      //   component: () => <Search></Search>,
-      // },
-      // {
-      //   attrs: {
-      //     title: '可拖拽',
-      //     subtitle: '通过 draggable 属性可让节点变为可拖拽。',
-      //     desc: 'props: draggable',
-      //     componentName: 'tree',
-      //     demoName: 'draggable',
-      //   },
-      //   component: () => <draggable></draggable>,
-      // },
-      // {
-      //   attrs: {
-      //     title: '可拖拽限制',
-      //     subtitle: '通过 disableDrag(nodeData)、disableDrop(nodeData) 函数返回值 限制drag与drop,比如目录不能drop',
-      //     desc: 'props: draggable',
-      //     componentName: 'tree',
-      //     demoName: 'draggable-function',
-      //   },
-      //   component: () => <draggableFunction></draggableFunction>,
-      // },
-      // {
-      //   attrs: {
-      //     title: '设置默认选中',
-      //     subtitle: '配置搜索行为',
-      //     desc: 'props: --',
-      //     componentName: 'tree',
-      //     demoName: 'selected',
-      //   },
-      //   component: () => <selected></selected>,
-      // },
-      // {
-      //   attrs: {
-      //     title: '设置默认展开所有节点',
-      //     subtitle: '',
-      //     desc: 'props: expandAll',
-      //     componentName: 'tree',
-      //     demoName: 'expand-all',
-      //   },
-      //   component: () => <ExpandAll></ExpandAll>,
-      // },
-      // {
-      //   attrs: {
-      //     title: '此处配置每个节点除了展开\\收起箭头之外的内容块时的行为',
-      //     subtitle: '默认配置：["selected", "expand", "click"]',
-      //     desc: 'props: node-content-action',
-      //     componentName: 'tree',
-      //     demoName: 'node-content-action',
-      //   },
-      //   component: () => <NodeContentActions></NodeContentActions>,
-      // },
+      {
+        attrs: {
+          title: '设置默认行为',
+          subtitle: '默认连线 | 默认选中 | 默认展开',
+          desc: 'props: --',
+          componentName: 'tree',
+          demoName: 'auto-config',
+        },
+        component: () => <auto-config></auto-config>,
+      },
+      {
+        attrs: {
+          title: '搜索配置',
+          subtitle: '配置搜索行为',
+          desc: 'props: --',
+          componentName: 'tree',
+          demoName: 'search',
+        },
+        component: () => <Search></Search>,
+      },
+      {
+        attrs: {
+          title: '可拖拽',
+          subtitle: '通过 draggable 属性可让节点变为可拖拽。',
+          desc: 'props: draggable',
+          componentName: 'tree',
+          demoName: 'draggable',
+        },
+        component: () => <draggable></draggable>,
+      },
+      {
+        attrs: {
+          title: '可拖拽限制',
+          subtitle: '通过 disableDrag(nodeData)、disableDrop(nodeData) 函数返回值 限制drag与drop,比如目录不能drop',
+          desc: 'props: draggable',
+          componentName: 'tree',
+          demoName: 'draggable-function',
+        },
+        component: () => <draggableFunction></draggableFunction>,
+      },
+      {
+        attrs: {
+          title: '设置默认选中',
+          subtitle: '配置搜索行为',
+          desc: 'props: --',
+          componentName: 'tree',
+          demoName: 'selected',
+        },
+        component: () => <selected></selected>,
+      },
+      {
+        attrs: {
+          title: '设置默认展开所有节点',
+          subtitle: '',
+          desc: 'props: expandAll',
+          componentName: 'tree',
+          demoName: 'expand-all',
+        },
+        component: () => <ExpandAll></ExpandAll>,
+      },
+      {
+        attrs: {
+          title: '此处配置每个节点除了展开\\收起箭头之外的内容块时的行为',
+          subtitle: '默认配置：["selected", "expand", "click"]',
+          desc: 'props: node-content-action',
+          componentName: 'tree',
+          demoName: 'node-content-action',
+        },
+        component: () => <NodeContentActions></NodeContentActions>,
+      },
     ];
 
     return (

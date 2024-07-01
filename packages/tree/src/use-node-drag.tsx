@@ -28,7 +28,7 @@ import { computed, onMounted, onUnmounted } from 'vue';
 import { usePrefix } from '@bkui-vue/config-provider';
 
 import { EVENTS, NODE_ATTRIBUTES } from './constant';
-import { TreePropTypes } from './props';
+import { TreeNode, TreePropTypes } from './props';
 import useNodeAttribute from './use-node-attribute';
 
 export default (props: TreePropTypes, ctx, root?, flatData?) => {
@@ -174,7 +174,7 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
       targetNodeData[props.children] = [];
     }
 
-    targetNodeData[props.children].unshift(sourceNodeData);
+    (targetNodeData[props.children] as TreeNode[]).unshift(sourceNodeData);
   };
   const handleTreeNodeDragLeave = (e: DragEvent) => {
     e.preventDefault();

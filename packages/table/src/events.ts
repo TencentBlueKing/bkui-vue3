@@ -28,16 +28,6 @@
 import { SORT_OPTION } from './const';
 import { Column, IColumnActive } from './props';
 
-export const enum EVENTS {
-  ON_FILTER_CLICK = 'onFilterClick',
-  ON_ROW_CHECK = 'onRowCheck',
-  ON_ROW_EXPAND_CLICK = 'onRowExpandClick',
-
-  ON_SETTING_CHANGE = 'onSettingChange',
-  /** 点击排序事件 */
-  ON_SORT_BY_CLICK = 'onSortByClick',
-}
-
 export const enum EMIT_EVENTS {
   CELL_CLICK = 'cellClick',
   CELL_DBL_CLICK = 'cellDblclick',
@@ -92,12 +82,7 @@ export const EVENT_ROW_SELECT_CHANGE_FN = (_args: {
 }) => true;
 
 export const EVENT_PAGE_FN = (_arg: number) => true;
-export const EVENT_SETTING_FN = (_args: {
-  checked: string[];
-  size: string;
-  height: number;
-  fields: Array<Record<string, any>>;
-}) => true;
+export const EVENT_SETTING_FN = (_args: any) => true;
 
 export const EVENT_CELL_FN = (_args: {
   event: MouseEvent;
@@ -147,7 +132,7 @@ export const EMIT_EVENT_TYPES = {
   [EMIT_EVENTS.ROW_MOUSE_LEAVE]: EVENT_MOUSE_FN,
 
   [EMIT_EVENTS.DRAG_END]: EVENT_DRAGEND_FN,
-};
+} as Record<string, (...args) => boolean>;
 
 export const CELL_EVENT_TYPES = {
   [EMIT_EVENTS.NATIVE_CLICK]: EVENT_MOUSE_FN,

@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 
-import { computed, defineComponent, provide } from 'vue';
+import { computed, defineComponent, provide, type ComputedRef } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import { PropTypes } from '@bkui-vue/shared';
@@ -58,11 +58,14 @@ export default defineComponent({
 
     const { resolveClassName } = usePrefix();
 
-    const classes: any = computed(() =>
+    const classes: ComputedRef<string> = computed<string>(() =>
       extCls ? `${resolveClassName('grid-container')} ${extCls}` : `${resolveClassName('grid-container')}`,
     );
 
-    const style: any = computed(() => {
+    const style: ComputedRef<{
+      'padding-right': string;
+      'padding-left': string;
+    }> = computed(() => {
       const { margin } = props;
       return { 'padding-right': `${margin}px`, 'padding-left': `${margin}px` };
     });

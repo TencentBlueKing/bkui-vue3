@@ -51,20 +51,7 @@ const SideSliserPropsJson: IPropsTableItem[] = [
     desc: '自定义组件的标题',
     optional: [],
   },
-  {
-    name: 'quick-close',
-    type: 'Boolean',
-    default: 'false',
-    desc: '是否支持点击遮罩关闭组件',
-    optional: [],
-  },
-  {
-    name: 'show-mask',
-    type: 'Boolean',
-    default: 'true',
-    desc: '是否允许出现遮罩',
-    optional: [],
-  },
+
   {
     name: 'width',
     type: 'Number',
@@ -80,10 +67,24 @@ const SideSliserPropsJson: IPropsTableItem[] = [
     optional: ['left', 'right'],
   },
   {
-    name: 'before-close',
-    type: 'Function',
-    default: '',
-    desc: '关闭前的钩子函数',
+    name: 'esc-close',
+    type: 'Boolean',
+    default: 'true',
+    desc: '是否允许 esc 按键关闭弹框',
+    optional: [],
+  },
+  {
+    name: 'show-mask',
+    type: 'Boolean',
+    default: 'true',
+    desc: '是否允许出现遮罩',
+    optional: [],
+  },
+  {
+    name: 'quick-close',
+    type: 'Boolean',
+    default: 'true',
+    desc: '是否允许点击遮罩关闭弹框',
     optional: [],
   },
   {
@@ -100,29 +101,45 @@ const SideSliserPropsJson: IPropsTableItem[] = [
     desc: '设置侧栏的z-index值，在transfer为true的情况下，改值会自动+1',
     optional: [],
   },
+  {
+    name: 'backgroundColor',
+    type: 'String',
+    default: '',
+    desc: '内容区背景颜色',
+  },
+  {
+    name: 'before-close',
+    type: 'Function',
+    default: '',
+    desc: '关闭前的钩子函数',
+    optional: [],
+  },
 ];
 
 const SideSliserEventJson: IPropsTableItem[] = [
+  {
+    name: 'closed',
+    type: '',
+    default: null,
+    desc: '组件关闭',
+  },
   {
     name: 'shown',
     type: '',
     default: null,
     desc: '显示组件后的回调函数',
-    optional: [],
   },
   {
     name: 'hidden',
     type: '',
     default: null,
     desc: '关闭组件后的回调函数',
-    optional: [],
   },
   {
     name: 'animation-end',
     type: '',
     default: null,
     desc: '关闭组件后动画结束的回调函数',
-    optional: [],
   },
 ];
 

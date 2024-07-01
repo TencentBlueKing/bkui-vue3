@@ -128,10 +128,6 @@ export const datePickerProps = {
       return true;
     },
   },
-  transfer: {
-    type: Boolean,
-    default: false,
-  },
   appendToBody: {
     type: Boolean,
     default: false,

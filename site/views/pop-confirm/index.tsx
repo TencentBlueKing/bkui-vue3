@@ -26,18 +26,134 @@
 
 import { defineComponent } from 'vue';
 
-import { PopConfirmEvent, PopConfirmProps } from '../../../packages/pop-confirm/src/props';
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
-import { resolvePropsToDesData } from '../utils';
+import { IPropsTableItem } from '../../typings';
 import DemoBase from './demo-base.vue';
+import DemoIcon from './demo-icon.vue';
 import DemoSelect from './demo-select.vue';
 import DemoSimple from './demo-simple.vue';
 import DemoSlot from './demo-slot.vue';
 
-const events = resolvePropsToDesData(PopConfirmEvent);
-const props = resolvePropsToDesData(PopConfirmProps);
+const menuPropsJson: IPropsTableItem[] = [
+  {
+    name: 'trigger',
+    type: 'String',
+    default: 'hover',
+    desc: '触发方式',
+    optional: ['hover', 'click'],
+  },
+  {
+    name: 'title',
+    type: 'String',
+    default: '""',
+    desc: '标题',
+    optional: [],
+  },
+  {
+    name: 'content',
+    type: 'String',
+    default: '""',
+    desc: '正文',
+    optional: [],
+  },
+  {
+    name: 'confirmText',
+    type: 'String',
+    default: '""',
+    desc: '确认按钮文字',
+    optional: [],
+  },
+  {
+    name: 'cancelText',
+    type: 'String',
+    default: '""',
+    desc: '取消按钮文字',
+    optional: [],
+  },
+  {
+    name: 'placement',
+    type: 'String',
+    default: 'top-start',
+    desc: '组件显示位置',
+    optional: [
+      'auto',
+      'auto-start',
+      'auto-end',
+      'top',
+      'top-start',
+      'top-end',
+      'bottom',
+      'bottom-start',
+      'bottom-end',
+      'right',
+      'right-start',
+      'right-end',
+      'left',
+      'left-start',
+      'left-end',
+    ],
+  },
+  {
+    name: 'theme',
+    type: 'String',
+    default: 'light',
+    desc: '组件主题色',
+    optional: ['dark', 'light'],
+  },
+];
+
+const eventColumnMap = {
+  name: '名称',
+  desc: '说明',
+  type: '类型',
+  params: '参数',
+};
+
+const events: IPropsTableItem[] = [
+  {
+    name: 'confirm',
+    type: 'Function',
+    default: '',
+    desc: '确定操作回调函数',
+    optional: [],
+  },
+  {
+    name: 'cancel',
+    type: 'Function',
+    default: '',
+    desc: '取消操作回调函数',
+    optional: [],
+  },
+];
+
+const slotColumnMap = {
+  name: '名称',
+  desc: '说明',
+  params: '参数',
+};
+
+const popConfirmSlotsJson = [
+  {
+    name: 'default',
+    default: [],
+    desc: '触发弹框插槽',
+    params: '--',
+  },
+  {
+    name: 'content',
+    default: [],
+    desc: '弹框内容插槽',
+    params: '--',
+  },
+  {
+    name: 'icon',
+    default: [],
+    desc: 'icon 插槽，只在 title 属性不为空时生效',
+    params: '--',
+  },
+];
 
 export default defineComponent({
   render() {
@@ -46,7 +162,7 @@ export default defineComponent({
         <DemoTitle
           desc='bkPopconfirm是基于bkPopover改造而来，继承了bkPopover所有属性，具体请参考bkPopover文档，本文主要列出bkPopconfirm独有或不同的属性。基础样式由标题、正文和按钮构成。'
           designLink='https://bkdesign.bk.tencent.com/design/45'
-          name='Popover 弹出框提示'
+          name='Popconfirm 弹出确认框'
         />
         <DemoBox
           componentName='pop-confirm'
@@ -67,10 +183,18 @@ export default defineComponent({
         <DemoBox
           componentName='pop-confirm'
           demoName='demo-slot'
-          desc='自定义样式'
+          desc='插槽模式'
           title='插槽模式'
         >
           <DemoSlot />
+        </DemoBox>
+        <DemoBox
+          componentName='pop-confirm'
+          demoName='demo-icon'
+          desc='通过 icon slot 自定义 icon'
+          title='自定义 icon'
+        >
+          <DemoIcon />
         </DemoBox>
         <DemoBox
           componentName='pop-confirm'
@@ -81,16 +205,17 @@ export default defineComponent({
           <DemoSelect />
         </DemoBox>
 
+        <PropsBox propsData={menuPropsJson}></PropsBox>
         <PropsBox
-          propsData={props}
-          subtitle=''
-          title='属性'
-        ></PropsBox>
-        <PropsBox
+          columnMap={eventColumnMap}
           propsData={events}
-          subtitle=''
           title='事件'
         ></PropsBox>
+        <PropsBox
+          columnMap={slotColumnMap}
+          propsData={popConfirmSlotsJson}
+          title='插槽'
+        />
       </div>
     );
   },

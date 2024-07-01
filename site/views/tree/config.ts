@@ -110,8 +110,8 @@ export default [
       { name: 'show-checkbox', type: 'Boolean', default: 'false', desc: '是否支持多选', optional: [] },
       { name: 'show-node-type-icon', type: 'Boolean', default: 'true', desc: '是否显示节点类型Icon', optional: [] },
       {
-        name: 'selected',
-        type: 'Object',
+        name: 'checked',
+        type: 'Array',
         default: 'null',
         desc: '默认选中的节点id(如果设置了node-key)或者节点对象，selectable为false时无效',
         optional: [],

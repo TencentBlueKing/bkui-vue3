@@ -38,7 +38,7 @@ export default (target: Ref<HTMLElement>, props: VirtualRenderProps) => {
     contentEl: resolveClassName('scrollbar-content-el'),
     wrapper: resolveClassName('scrollbar-wrapper'),
     scrollbar: resolveClassName('scrollbar'),
-    track: resolveClassName('scrollbar-track'),
+    track: `${resolveClassName('scrollbar-track')} track-${props.scrollbar?.size ?? 'normal'}`,
     visible: resolveClassName('scrollbar-visible'),
     horizontal: resolveClassName('scrollbar-horizontal'),
     vertical: resolveClassName('scrollbar-vertical'),

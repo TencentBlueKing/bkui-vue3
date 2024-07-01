@@ -30,13 +30,13 @@
  * Copyright © 2012-2019 Tencent BlueKing. All Rights Reserved. 蓝鲸智云 版权所有
  */
 
-import throttle from 'lodash/throttle';
+import { throttle } from 'lodash';
 
 export function getMatchedIndex(
   maxCount: number,
   maxHeight: number,
   groupItemCount: number,
-  callback: (index: number, items: any[]) => 0,
+  callback: (index: number, items: (number | string)[]) => 0,
 ) {
   let startIndex = 0;
   let height = 0;
@@ -59,8 +59,8 @@ export function computedVirtualIndex(lineHeight, callback, pagination, wrapper, 
   if (!wrapper || !event.offset) {
     return;
   }
-  const elScrollTop = event.offset.y;
-  const elScrollLeft = event.offset.x;
+  const elScrollTop = event.offset.y >= 0 ? event.offset.y : 0;
+  const elScrollLeft = event.offset.x >= 0 ? event.offset.x : 0;
   const elScrollHeight = wrapper.scrollHeight;
   const elOffsetHeight = wrapper.offsetHeight;
 
@@ -70,7 +70,7 @@ export function computedVirtualIndex(lineHeight, callback, pagination, wrapper, 
   let translateY = 0;
 
   if (typeof lineHeight === 'number') {
-    targetStartIndex = Math.floor(elScrollTop / lineHeight);
+    targetStartIndex = Math.ceil(elScrollTop / lineHeight);
     targetEndIndex = Math.ceil(elOffsetHeight / lineHeight) + targetStartIndex;
     translateY = elScrollTop % lineHeight;
   }
@@ -149,7 +149,7 @@ export class VisibleRender {
     this.binding = binding;
   }
 
-  private getEvent = (event: Event | any) => {
+  private getEvent = (event: { offset: number; target: HTMLElement } & Event) => {
     const { scrollbar = { enabled: false } } = this.binding.value;
     if (scrollbar.enabled) {
       return {

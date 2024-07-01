@@ -1,5 +1,103 @@
 ## 更新日志
 
+### 2.0.1-beta.30
+
+* **[feat]**:
+    - feature(alert|checkbox|pagination|radio|steps|dialog|form|menu|sideslider|tag-input): 补全文档
+    - bugfix(sideslider): renderDirective配置成 if 时会报错
+    - feat(table): 支持多表头功能
+    - bugfix(select): 下拉框组件清空选项后，clear icon 没有消失，必须再点一次才会消失
+    - feature(docs): affix\backtop\cascader\fixed-navbar\link 文档优化
+    - docs: button\code-diff\input\loading 文档补齐
+    - bugfix(table): 取消全选方法修复 & 文档补齐
+    - feat(docs): grid\color-picker\date-picker\time-picker\divider\pop-confirm 文档补齐
+
+
+### 2.0.1-beta.29
+
+* **[feat]**:
+    - bugfix(tree): 父级全选/半选状态错误
+
+
+### 2.0.1-beta.28
+
+* **[feat]**:
+    - bugfix(table): 修复grid布局宽度计算无限触发问题 & 修复已知问题
+
+
+### 2.0.1-beta.27
+
+* **[feat]**:
+    - bugfix: 修复subtree读取逻辑
+    - feat(scroll-bar): 滚动条样式规范优化
+
+
+### 2.0.1-beta.26
+
+* **[feat]**:
+    - bugfix(datepicker): 修复粘贴厚偶发值没有改变的问题
+
+
+### 2.0.1-beta.25
+
+* **[feat]**:
+    - Hotfix/column render index
+
+
+### 2.0.1-beta.24
+
+* **[feat]**:
+    - feat(table): 梳理 & 重构table渲染逻辑 & 样式优化
+
+
+### 2.0.1-beta.23
+
+* **[feat]**:
+    - feature(select): suffix icon 支持自定义
+
+
+### 2.0.1-beta.22
+
+* **[feat]**:
+    - bugfix(radio|checkbox): beforeChange问题修复
+
+
+### 2.0.1-beta.21
+
+* **[feat]**:
+    - bugfix(select): 修复虚拟滚动下搜索卡顿问题
+
+
+### 2.0.1-beta.20
+
+* **[feat]**:
+    - bugfix(radio|checkbox): beforeChange问题修复
+
+
+### 2.0.1-beta.19
+
+* **[feat]**:
+    - bugfix(select): 修复select虚拟滚动底部空白问题 & 修改虚拟滚动 preloadItemCount 逻辑
+
+
+### 2.0.1-beta.18
+
+* **[feat]**:
+    - bugfix(datepicker): 修复编辑后值没有改变的问题
+
+
+### 2.0.1-beta.17
+
+* **[feat]**:
+    - bugfix(datetimepicker): 修复 range 时，切换下一月的问题
+
+
+### 2.0.1-beta.16
+
+* **[feat]**:
+    - bugfix(datetimepicker): 选择下一年bug
+
+
 ### 2.0.1-beta.15
 
 * **[feat]**:
@@ -35,6 +133,7 @@
 
 * **[feat]**:
     - 修复 Cascader, Tree 组件部分样式无 prefix 设置的问题
+
 
 ### 2.0.1-beta.7
 
@@ -94,7 +193,6 @@
 * **[update]**:
     - perf(dialog|sideslider|infobox): 代码调整
     - 恢复 sideslider extCls 属性
-
 
 
 ### 1.0.3-beta.68
@@ -192,6 +290,25 @@
 
 * **[feat]**:
     - fix(datepicker): datepicker monthrange 支持 disabled-date
+
+
+### 1.0.3-beta.50
+
+* **[feat]**:
+    - fix(timeline): 修复样式没有构建加载问题 #1724
+
+
+### 1.0.3-beta.49
+
+* **[feat]**:
+    - bugfix(dialog): 样式修复
+
+
+### 1.0.3-beta.48
+
+* **[feat]**:
+    - bugfix(pop-confirm): 与Select组件一起使用时，Change事件会导致整个pop-confirm一起关闭
+    - bugfix(dialog): 样式修复
 
 
 ### 1.0.3-beta.50

@@ -35,7 +35,7 @@ export default defineComponent({
   name: 'PopConfirm',
   props,
   emits: ['confirm', 'cancel'],
-  setup(props, { emit, slots }) {
+  setup(_props, { emit }) {
     const visible = ref(false);
     const t = useLocale('popConfirm');
 
@@ -51,14 +51,14 @@ export default defineComponent({
       e.stopPropagation();
     }
 
-    function renderIcon() {
-      if (typeof slots.icon === 'function') {
-        return slots.icon();
-      }
-      return props.icon;
-    }
+    // function renderIcon() {
+    //   if (typeof slots.icon === 'function') {
+    //     return slots.icon();
+    //   }
+    //   return props.icon;
+    // }
 
-    const icon = renderIcon();
+    // const icon = renderIcon();
 
     const { resolveClassName } = usePrefix();
 
@@ -68,7 +68,7 @@ export default defineComponent({
       popoverRef,
       visible,
       t,
-      icon,
+      // icon,
       resolveClassName,
       ensure,
       cancel,
@@ -79,7 +79,10 @@ export default defineComponent({
     const titleRender = () =>
       this.title ? (
         <div class={`${this.resolveClassName('pop-confirm-title')}`}>
-          {this.icon ? <span class={`${this.resolveClassName('pop-confirm-icon')}`}>{this.icon}</span> : ''}
+          {/* {this.icon ? <span class={`${this.resolveClassName('pop-confirm-icon')}`}>{this.icon}</span> : ''} */}
+          {typeof this.$slots.icon === 'function' ? (
+            <span class={`${this.resolveClassName('pop-confirm-icon')}`}>{this.$slots.icon()}</span>
+          ) : null}
           <span>{this.title}</span>
         </div>
       ) : (
@@ -109,7 +112,7 @@ export default defineComponent({
                 <>
                   {titleRender()}
                   <div class={`${this.resolveClassName('pop-confirm-content')}`}>
-                    {!this.title ? this.icon : ''}
+                    {/* {!this.title ? this.icon : ''} */}
                     {this.content}
                   </div>
                 </>

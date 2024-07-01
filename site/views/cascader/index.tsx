@@ -41,7 +41,6 @@ import SeparatorDemo from './separator-demo.vue';
 import ShowCompleteName from './show-complete-name.vue';
 import SlotsDemo from './slots-demo.vue';
 
-// 参数配置数组， 包含多个 IPropsTableItem 的实例对象
 const cascaderPropsJson: IPropsTableItem[] = [
   {
     name: 'v-model',
@@ -88,14 +87,14 @@ const cascaderPropsJson: IPropsTableItem[] = [
   {
     name: 'name-key',
     type: 'String',
-    default: 'id',
+    default: 'name',
     desc: '列表name指定的key值，默认为name,若需要改为其他key值，在这里传入即可',
     optional: [],
   },
   {
     name: 'children-key',
     type: 'String',
-    default: 'id',
+    default: 'children',
     desc: '列表children子节点了列表指定的key值，默认为children,若需要改为其他key值，在这里传入即可',
     optional: [],
   },
@@ -114,7 +113,7 @@ const cascaderPropsJson: IPropsTableItem[] = [
     optional: ['true', 'false'],
   },
   {
-    name: 'show-complete-came',
+    name: 'show-complete-name',
     type: 'Boolean',
     default: 'true',
     desc: '输入框中是否显示选中值的完整路径',
@@ -206,7 +205,6 @@ const cascaderPropsJson: IPropsTableItem[] = [
   },
 ];
 
-// 定义 cascaderEventsJson 数组，其中的每个元素表示一个属性项
 const cascaderEventsJson: IPropsTableItem[] = [
   {
     name: 'change',
@@ -219,7 +217,7 @@ const cascaderEventsJson: IPropsTableItem[] = [
     name: 'toggle',
     type: 'String',
     default: null,
-    desc: '	切换下拉折叠状态时调用, 回调参数为当前是否展开',
+    desc: '切换下拉折叠状态时调用, 回调参数为当前是否展开',
     optional: ['true', 'false'],
   },
   {
@@ -352,14 +350,12 @@ export default defineComponent({
           <CustomFillback></CustomFillback>
         </DemoBox>
 
-        {/* Cascader组件属性列表 */}
         <PropsBox
           propsData={cascaderPropsJson}
           subtitle=''
           title='Cascader 属性'
         />
 
-        {/* Cascader组件事件列表 */}
         <PropsBox
           propsData={cascaderEventsJson}
           subtitle=''

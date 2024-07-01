@@ -39,7 +39,7 @@ const colorPickerPropsJson: IPropsTableItem[] = [
   {
     name: 'model-value / v-model',
     type: 'String',
-    default: '#3A84FF',
+    default: '""',
     desc: '当前选择的RGB颜色值',
     optional: [],
   },
@@ -82,8 +82,22 @@ const colorPickerPropsJson: IPropsTableItem[] = [
     name: 'recommend',
     type: 'Boolean/Array',
     default: 'true',
-    desc: '是否显示预设值',
+    desc: '是否显示预设值，true 展示组件内置预设值，false 不展示预设值，数组自定义预设值',
     optional: [],
+  },
+  {
+    name: 'recommend-empty',
+    type: 'Boolean',
+    default: 'true',
+    desc: '预设值中是否包含空值',
+    optional: ['true', 'false'],
+  },
+  {
+    name: 'with-validate',
+    type: 'Boolean',
+    default: 'true',
+    desc: '在表单中时，是否应用 form-item 的校验规则',
+    optional: ['true', 'false'],
   },
   {
     name: 'ext-cls',
@@ -120,7 +134,6 @@ export default defineComponent({
       <div>
         <DemoTitle
           desc='用于颜色选择，支持多种颜色格式，支持颜色预设。'
-          link='https://www.google.com.hk/'
           name='ColorPicker 颜色选择器'
         />
 

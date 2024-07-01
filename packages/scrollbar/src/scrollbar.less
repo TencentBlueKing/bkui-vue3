@@ -18,13 +18,31 @@
     pointer-events: none;
     overflow: hidden;
 
+    &.track-small {
+      &.@{bk-prefix}-scrollbar-vertical {
+        width: 6px;
+
+        &.@{bk-prefix}-scrollbar-hover {
+          width: 8px;
+        }
+      }
+
+      &.@{bk-prefix}-scrollbar-horizontal {
+        height: 6px;
+
+        &.@{bk-prefix}-scrollbar-hover {
+          height: 8px;
+        }
+      }
+    }
+
     &.@{bk-prefix}-scrollbar-hover {
-      background-color: #F0F1F5;
+      background-color: #f0f1f5;
       cursor: pointer;
 
       .@{bk-prefix}-scrollbar {
         &::before {
-          background-color: #979BA5;
+          background-color: #979ba5;
         }
       }
     }
@@ -33,12 +51,20 @@
       top: 0;
       width: 8px;
       transform: translate(var(--scroll-offset-x), var(--scroll-offset-y));
+
+      &.@{bk-prefix}-scrollbar-hover {
+        width: 10px;
+      }
     }
 
     &.@{bk-prefix}-scrollbar-horizontal {
       left: 0;
       height: 8px;
       transform: translate(var(--scroll-offset-x), var(--scroll-offset-y));
+
+      &.@{bk-prefix}-scrollbar-hover {
+        height: 10px;
+      }
 
       &.@{bk-prefix}-scrollbar {
         right: auto;
@@ -52,7 +78,6 @@
     }
   }
 
-
   .@{bk-prefix}-scrollbar-dragging {
     pointer-events: none;
     -webkit-touch-callout: none;
@@ -63,22 +88,22 @@
     user-select: none;
   }
 
-
   .@{bk-prefix}-scrollbar {
     position: absolute;
     left: 0;
     right: 0;
-    min-height: 8px;
+    top: 0;
+    bottom: 0;
 
     &::before {
       position: absolute;
       content: '';
-      background: #DCDEE5;
+      background: #dcdee5;
       border-radius: 6px;
-      left: 1px;
-      right: 1px;
-      top: 1px;
-      bottom: 1px;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
       opacity: 0;
       transition: opacity 0.2s 0.9s linear;
     }

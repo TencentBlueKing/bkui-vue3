@@ -34,14 +34,14 @@ import {
   defineComponent,
   // EmitsOptions,
   h,
-  nextTick,
   onMounted,
   onUnmounted,
   reactive,
   ref,
   type SetupContext,
   SlotsType,
-  watchEffect,
+  watch,
+  nextTick,
 } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
@@ -60,15 +60,15 @@ export default defineComponent({
   props: virtualRenderProps,
   emits: ['content-scroll' as string],
   slots: Object as SlotsType<{
-    default?: any;
-    beforeContent?: any;
-    afterContent?: any;
-    afterSection?: any;
+    default?: Record<string, object>;
+    beforeContent?: Record<string, object>;
+    afterContent?: Record<string, object>;
+    afterSection?: Record<string, object>;
   }>,
   setup(props: VirtualRenderProps, ctx: SetupContext) {
     const { renderAs, contentAs } = props;
 
-    const resolvePropClassName = (prop: any | any[] | string | string[]) => {
+    const resolvePropClassName = (prop: Record<string, object> | Record<string, object>[] | string | string[]) => {
       if (typeof prop === 'string') {
         return [prop];
       }
@@ -118,13 +118,17 @@ export default defineComponent({
       const translateX = scrollLeft;
       Object.assign(pagination, { startIndex, endIndex, scrollTop, translateX, translateY, scrollLeft, pos });
       let start = pagination.startIndex * props.groupItemCount;
-      let end = (pagination.endIndex + props.preloadItemCount) * props.groupItemCount;
+      let end = pagination.endIndex * props.groupItemCount;
       const total = localList.value.length;
       if (total < end) {
-        calcList.value = localList.value.slice(start, total);
         end = total;
         start = end - Math.floor(refContent.value.offsetHeight / props.lineHeight);
         start = start < 0 ? 0 : start;
+      }
+
+      if (end > total) {
+        end = total;
+        start = end - Math.floor(refContent.value.offsetHeight / props.lineHeight);
       }
 
       const value = localList.value.slice(start, end);
@@ -153,7 +157,7 @@ export default defineComponent({
 
     const handleChangeListConfig = () => {
       /** 数据改变时激活当前表单，使其渲染DOM */
-      handleListChanged(props.list);
+      handleListChanged(props.list as Record<string, object>[]);
     };
 
     /** 如果有分组状态，计算总行数 */
@@ -165,7 +169,7 @@ export default defineComponent({
     /**
      * 列表数据改变时，处理相关参数
      */
-    const handleListChanged = (list: any[]) => {
+    const handleListChanged = (list: Record<string, object>[]) => {
       listLength.value = Math.ceil((list || []).length / props.groupItemCount);
       pagination.count = listLength.value;
 
@@ -190,9 +194,7 @@ export default defineComponent({
     /** 列表数据重置之后的处理事项 */
     const afterListDataReset = (_scrollToOpt = { left: 0, top: 0 }) => {
       const el = refRoot.value as HTMLElement;
-      nextTick(() => {
-        computedVirtualIndex(props.lineHeight, handleScrollCallback, pagination, el, { target: el });
-      });
+      computedVirtualIndex(props.lineHeight, handleScrollCallback, pagination, el, { target: el });
     };
 
     /** 映射传入的数组为新的数组，增加 $index属性，用来处理唯一Index */
@@ -201,7 +203,7 @@ export default defineComponent({
         return props.list;
       }
 
-      return (props.list || []).map((item: any, index) => ({ ...item, $index: index }));
+      return ((props.list || []) as Record<string, object>[]).map((item, index) => ({ ...item, $index: index }));
     });
 
     /** 展示列表内容区域样式 */
@@ -253,17 +255,24 @@ export default defineComponent({
 
     const { fixToTop } = useFixTop(props, scrollTo);
 
-    watchEffect(() => {
-      instance?.setBinding(binding);
-      handleChangeListConfig();
-      updateScrollHeight(contentHeight.value);
-      nextTick(() => {
+    watch(
+      () => [contentHeight.value, props.list],
+      () => {
+        instance?.setBinding(binding);
+        handleChangeListConfig();
+        updateScrollHeight(contentHeight.value);
         afterListDataReset();
-        instance?.executeThrottledRender.call(instance, {
-          offset: { x: pagination.scrollLeft, y: pagination.scrollTop },
+        nextTick(() => {
+          instance?.executeThrottledRender.call(instance, {
+            offset: { x: pagination.scrollLeft, y: pagination.scrollTop },
+          });
         });
-      });
-    });
+      },
+      {
+        immediate: true,
+        deep: true,
+      },
+    );
 
     ctx.expose({
       reset,

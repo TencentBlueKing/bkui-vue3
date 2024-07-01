@@ -37,35 +37,35 @@ const backtopPropsJson: IPropsTableItem[] = [
     name: 'visibility-height',
     type: 'Number',
     default: 200,
-    desc: '滚动多少px后，元素可见',
+    desc: '滚动高度达到此参数值才出现 Backtop',
     optional: [],
   },
   {
     name: 'target',
     type: 'String',
     default: '',
-    desc: '触发滚动的对象',
+    desc: '触发滚动的对象，可以是选择器字符串',
     optional: [],
   },
   {
     name: 'right',
     type: 'Number',
     default: 40,
-    desc: '控制其显示位置, 距离页面右边距',
+    desc: 'Backtop 距离页面右侧的距离',
     optional: [],
   },
   {
     name: 'bottom',
     type: 'Number',
     default: 40,
-    desc: '控制其显示位置, 距离页面底部边距',
+    desc: 'Backtop 距离页面底部的距离',
     optional: [],
   },
   {
     name: 'ext-cls',
     type: 'String',
     default: '',
-    desc: '自定义样式',
+    desc: '自定义样式类名',
     optional: [],
   },
 ];
@@ -77,7 +77,7 @@ export default defineComponent({
       <div>
         <DemoTitle
           desc='Backtop 回到页面顶部的操作按钮'
-          link='https://www.google.com.hk/'
+          designLink='https://bkdesign.bk.tencent.com/design/162'
           name='Backtop 回到顶部'
         />
 

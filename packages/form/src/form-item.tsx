@@ -59,7 +59,6 @@ const formItemProps = {
   min: PropTypes.number,
   maxlength: PropTypes.number,
   rules: PropTypes.array,
-  autoCheck: PropTypes.bool.def(false),
   description: PropTypes.string,
   errorDisplayType: PropTypes.oneOf(['tooltips', 'normal']).def('normal'),
 };

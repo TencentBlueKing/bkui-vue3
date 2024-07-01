@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { computed, defineComponent, nextTick, reactive, ref, watch } from 'vue';
+import { computed, defineComponent, reactive, ref } from 'vue';
 
 import Button from '@bkui-vue/button';
 import Checkbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
@@ -35,7 +35,6 @@ import { classes, PropTypes, RenderType } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
 import { Column, IColumnType, IFilterShape } from '../props';
-import { getRowText, resolvePropVal } from '../utils';
 
 type IHeadFilterPropType = {
   column: Column;
@@ -50,12 +49,11 @@ export default defineComponent({
     column: IColumnType,
     height: PropTypes.number.def(ROW_HEIGHT),
   },
-  emits: ['change', 'filterSave'],
+  emits: ['change', 'filterSave', 'reset'],
 
   setup(props: IHeadFilterPropType, { emit }) {
     const { resolveClassName } = usePrefix();
     const t = useLocale('table');
-    const { column } = props;
     const filter = computed(() => props.column?.filter);
     const checked = computed(() => (filter.value as IFilterShape)?.checked ?? []);
     const searchValue = ref('');
@@ -63,14 +61,6 @@ export default defineComponent({
       isOpen: false,
       checked: checked.value,
     });
-
-    watch(
-      () => filter.value,
-      () => {
-        state.checked = checked.value;
-      },
-      { immediate: true, deep: true },
-    );
 
     const headClass = computed(() =>
       classes({
@@ -103,7 +93,10 @@ export default defineComponent({
     const theme = `light ${resolveClassName('table-head-filter')}`;
     const localData = computed(() => {
       const { list = [] } = filter.value as IFilterShape;
-      const filterList = list.filter(l => getRegExp(searchValue.value).test(l.value));
+      const filterList = list.filter(l => {
+        const reg = getRegExp(searchValue.value);
+        return reg.test(l.label) || reg.test(l.value);
+      });
       return filterList;
     });
 
@@ -122,22 +115,6 @@ export default defineComponent({
     const getRegExp = (val: boolean | number | string, flags = 'ig') =>
       new RegExp(`${val}`.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&'), flags);
 
-    const defaultFilterFn = (checked: string[], row: any) => {
-      const { match } = filter.value as IFilterShape;
-      const matchText = getRowText(row, resolvePropVal(column, 'field', [column, row]));
-      if (match !== 'fuzzy') {
-        return checked.includes(matchText);
-      }
-
-      return checked.some((str: string) => getRegExp(str, 'img').test(matchText));
-    };
-
-    const filterFn =
-      typeof (filter.value as IFilterShape).filterFn === 'function'
-        ? (checked: string[], row: any, index: number, data: any[]) =>
-            (filter.value as IFilterShape).filterFn(checked, row, props.column, index, data)
-        : (checked: string[], row: any) => (checked.length ? defaultFilterFn(checked, row) : true);
-
     const handleBtnSaveClick = () => {
       handleFilterChange(true);
       emit('filterSave', state.checked);
@@ -153,8 +130,7 @@ export default defineComponent({
           state.isOpen = false;
           return;
         }
-        (filter.value as IFilterShape).checked = state.checked;
-        emit('change', state.checked, filterFn);
+        emit('change', state.checked);
       }
     };
 
@@ -162,7 +138,8 @@ export default defineComponent({
       if (state.checked.length) {
         state.checked.length = 0;
         state.isOpen = false;
-        nextTick(() => emit('change', state.checked, filterFn));
+        emit('change', state.checked);
+        emit('reset', state.checked);
       }
     };
 
@@ -225,7 +202,7 @@ export default defineComponent({
 
     const renderFilterList = scope => {
       if (scope.data.length) {
-        return scope.data.map((item: any) => (
+        return scope.data.map((item: { value: string; text: string }) => (
           <div
             key={item.value}
             class='list-item'

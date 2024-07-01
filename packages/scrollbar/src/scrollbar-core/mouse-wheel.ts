@@ -32,6 +32,7 @@ export default fn => {
   const DELTA_MODE = [1.0, 28.0, 500.0];
 
   const getDeltaMode = mode => DELTA_MODE[mode] || DELTA_MODE[0];
+  let targetDom = null;
 
   const normalizeDelta = (evt: any) => {
     if ('deltaX' in evt) {
@@ -64,15 +65,29 @@ export default fn => {
     'onwheel' in window || document.implementation.hasFeature('Events.wheel', '3.0') ? 'wheel' : 'mousewheel';
 
   const resolveEventResponse = (e: Event) => {
-    fn(normalizeDelta(e));
+    const result = normalizeDelta(e);
+
+    const { scrollTop = 0, offsetHeight = 0, scrollHeight = 0 } = targetDom ?? {};
+    const isWheelDown = result.y > 0 && scrollTop + offsetHeight + 2 < scrollHeight;
+    const isWheelUp = result.y < 0 && scrollTop > 0;
+
+    if (isWheelUp || isWheelDown) {
+      e.stopImmediatePropagation();
+      e.stopPropagation();
+      e.preventDefault();
+    }
+
+    fn(result);
   };
 
   const addWheelEvent = (target: HTMLElement) => {
+    targetDom = target;
     target.addEventListener(eventName, resolveEventResponse);
   };
 
   const removeWheelEvent = (target: HTMLElement) => {
     target.removeEventListener(eventName, resolveEventResponse);
+    targetDom = null;
   };
 
   return {

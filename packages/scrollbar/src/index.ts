@@ -39,7 +39,7 @@ export default class BkScrollBar extends BkScrollbarCore {
   constructor(...args: ConstructorParameters<typeof BkScrollbarCore>) {
     super(...args);
 
-    // // Save a reference to the instance, so we know this DOM node has already been instancied
+    // Save a reference to the instance, so we know this DOM node has already been instancied
     BkScrollBar.instances.set(args[0], this);
   }
 
@@ -54,6 +54,7 @@ export default class BkScrollBar extends BkScrollbarCore {
       const scrollbar = document.createElement('div');
 
       addClasses(track, this.classNames.track);
+
       addClasses(scrollbar, this.classNames.scrollbar);
 
       track.appendChild(scrollbar);

@@ -48,6 +48,7 @@ import Expand from './expand.vue';
 import filterScope from './filter-scope.vue';
 import fixed from './fixed.vue';
 import flexLayout from './flex-layout.vue';
+import MultiHeader from './multi-header.vue';
 import * as TABLE_DATA from './options';
 import pagination from './pagination.vue';
 import RemotePagination from './remotePagination.vue';
@@ -84,6 +85,7 @@ export default defineComponent({
     flexLayout,
     basicSortBehavior,
     ScrollHorizontal,
+    MultiHeader,
   },
   render() {
     const configs = [
@@ -128,6 +130,20 @@ export default defineComponent({
          * @returns
          */
         component: () => <ColumnTemplate></ColumnTemplate>,
+      },
+      {
+        attrs: {
+          title: '多表头',
+          subtitle: '基础用法，用于表单内容的录入',
+          desc: 'props: 支持 `field` 和 `prop`两种配置，配置效果一样',
+          componentName: 'table',
+          demoName: 'multi-header',
+        },
+        /**
+         * Table
+         * @returns
+         */
+        component: () => <MultiHeader></MultiHeader>,
       },
       {
         attrs: {
@@ -244,20 +260,6 @@ export default defineComponent({
          * @returns
          */
         component: () => <pagination></pagination>,
-      },
-      {
-        attrs: {
-          title: 'flex 布局，中间自适应',
-          subtitle: '虚拟滚动暂不建议开启',
-          desc: 'props: is-flex',
-          componentName: 'table',
-          demoName: 'flex-layout',
-        },
-        /**
-         * Table
-         * @returns
-         */
-        component: () => <flex-layout></flex-layout>,
       },
       {
         attrs: {

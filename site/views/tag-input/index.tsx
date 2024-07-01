@@ -249,6 +249,52 @@ const propsJson: IPropsTableItem[] = [
     optional: [],
   },
 ];
+
+const eventJson: IPropsTableItem[] = [
+  {
+    name: 'change',
+    type: 'Function',
+    default: '',
+    desc: '值改变触发',
+  },
+  {
+    name: 'select',
+    type: 'Function',
+    default: '',
+    desc: '选择值时触发',
+  },
+  {
+    name: 'focus',
+    type: 'Function',
+    default: '',
+    desc: '获得焦点时触发',
+  },
+  {
+    name: 'blur',
+    type: 'Function',
+    default: '',
+    desc: '失去焦点时触发',
+  },
+  {
+    name: 'remove',
+    type: 'Function',
+    default: '',
+    desc: '删除 Tag 时触发',
+  },
+  {
+    name: 'removeAll',
+    type: 'Function',
+    default: '',
+    desc: '清空时触发',
+  },
+  {
+    name: 'input',
+    type: 'Function',
+    default: '',
+    desc: '输入时触发',
+  },
+];
+
 export default defineComponent({
   render() {
     return (
@@ -364,6 +410,11 @@ export default defineComponent({
         <PropsBox
           propsData={propsJson}
           subtitle=''
+        />
+        <PropsBox
+          propsData={eventJson}
+          subtitle=''
+          title='事件'
         />
       </div>
     );

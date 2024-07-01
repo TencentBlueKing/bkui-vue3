@@ -39,21 +39,21 @@ const linkPropsJson: IPropsTableItem[] = [
     name: 'theme',
     type: 'String',
     default: 'default',
-    desc: '文字链接主题色',
-    optional: ['danger', 'success', 'primary', 'warning', 'default'],
+    desc: '链接的主题颜色',
+    optional: ['danger', 'default', 'primary', 'success', 'warning'],
   },
   {
     name: 'href',
     type: 'String',
     default: '',
-    desc: '文字链接地址',
+    desc: '链接的 URL 地址',
     optional: [],
   },
   {
     name: 'disabled',
     type: 'Boolean',
     default: false,
-    desc: '是否禁用',
+    desc: '是否禁用链接',
     optional: [],
   },
   {
@@ -67,8 +67,8 @@ const linkPropsJson: IPropsTableItem[] = [
     name: 'target',
     type: 'String',
     default: '_self',
-    desc: 'a标签的target属性，规定在何处打开链接文档',
-    optional: ['_blank', '_self', '_parent', '_top'],
+    desc: '链接的打开方式',
+    optional: ['_self', '_blank', '_parent', '_top'],
   },
 ];
 
@@ -79,7 +79,6 @@ export default defineComponent({
         <DemoTitle
           desc='Link 文字超链接'
           designLink='https://bkdesign.bk.tencent.com/design/143'
-          link='https://www.google.com.hk/'
           name='Link 文字链接'
         />
 

@@ -34,6 +34,7 @@ import {
   ref,
   Transition,
   watch,
+  type VNodeRef,
 } from 'vue';
 import { toType } from 'vue-types';
 
@@ -88,9 +89,9 @@ export default defineComponent({
     const colorStr = ref('');
     // 储存当前颜色的相关信息
     const colorObj = reactive(JSON.parse(JSON.stringify(whiteColorObj)));
-    const dropRef = ref<any>(null);
-    const saturationPanelRef = ref<any>(null);
-    const referenceRef = ref<any>(null);
+    const dropRef = ref<VNodeRef | null>(null);
+    const saturationPanelRef = ref<VNodeRef | null>(null);
+    const referenceRef = ref<VNodeRef | null>(null);
 
     const { resolveClassName } = usePrefix();
 

@@ -23,6 +23,8 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
+import { func } from 'vue-types';
+
 import { PropTypes, renderDirectiveType } from '@bkui-vue/shared';
 
 export const propsMixin = {
@@ -48,8 +50,9 @@ export const propsMixin = {
   // 弹框的渲染方式
   renderDirective: renderDirectiveType(),
   // 关闭前回调
-  beforeClose: PropTypes.custom(() => true),
+  beforeClose: func<() => Promise<boolean> | boolean>().def(() => true),
   left: PropTypes.string,
   top: PropTypes.string,
   extCls: PropTypes.string,
+  backgroundColor: PropTypes.string.def(''),
 };

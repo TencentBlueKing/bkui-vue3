@@ -45,13 +45,11 @@ export const paginationProps = {
   type: PropTypes.oneOf(['default', 'compact']).def('default'),
   location: PropTypes.oneOf(['left', 'right']).def('right'),
   align: PropTypes.oneOf(['left', 'center', 'right']).def('left'),
-  size: PropTypes.size(),
   small: PropTypes.bool.def(false),
   showTotalCount: PropTypes.bool.def(true),
   prevText: PropTypes.string,
   nextText: PropTypes.string,
   disabled: PropTypes.bool.def(false),
-  beforeChange: PropTypes.func,
   layout: PropTypes.custom((value: string[]) => {
     const layoutNameMap = {
       total: true,
@@ -120,8 +118,8 @@ export default defineComponent({
   render() {
     const paginationClass = classes({
       [`${this.resolveClassName('pagination')}`]: true,
-      [`${this.resolveClassName(`pagination--${this.size}`)}`]: true,
       [`is-align-${this.align}`]: true,
+      'is-disabled': this.disabled,
     });
     const layoutMap = {
       total: this.renderTotal,

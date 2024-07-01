@@ -115,6 +115,19 @@ const radioGroupProps: IPropsTableItem[] = [
     desc: '尺寸',
     optional: ['large', 'small'],
   },
+  {
+    name: 'withValidate',
+    type: 'Boolean',
+    default: true,
+    desc: '值改变时是否触发表单的校验',
+  },
+  {
+    name: 'beforeChange',
+    type: 'function',
+    default: null,
+    desc: '值改变之前的回调函数，返回值为 false 会终止值改变',
+    optional: [],
+  },
 ];
 
 const radioGroupEvents: IPropsTableItem[] = [
@@ -162,6 +175,12 @@ const radioButtonProps: IPropsTableItem[] = [
     default: null,
     desc: '尺寸',
     optional: ['large', 'small'],
+  },
+  {
+    name: 'before-change',
+    type: '(event: boolean | number | string) => Promise<boolean> | boolean',
+    default: '() => true',
+    desc: '值改变之前的回调函数，返回值为 false 会终止值改变',
   },
 ];
 
@@ -246,19 +265,19 @@ export default defineComponent({
         </DemoBox>
 
         <PropsBox
+          propsData={radioGroupProps}
+          subtitle=''
+          title='Radios-Groups 属性'
+        />
+        <PropsBox
           propsData={radioProps}
           subtitle=''
           title='Radios 属性'
         />
         <PropsBox
-          propsData={radioEvents}
+          propsData={radioButtonProps}
           subtitle=''
-          title='Radios 事件'
-        />
-        <PropsBox
-          propsData={radioGroupProps}
-          subtitle=''
-          title='Radios-Groups 属性'
+          title='Radios-Button 属性'
         />
         <PropsBox
           propsData={radioGroupEvents}
@@ -266,9 +285,9 @@ export default defineComponent({
           title='Radios-Groups 事件'
         />
         <PropsBox
-          propsData={radioButtonProps}
+          propsData={radioEvents}
           subtitle=''
-          title='Radios-Button 属性'
+          title='Radios 事件'
         />
         <PropsBox
           propsData={radioButtonEvents}

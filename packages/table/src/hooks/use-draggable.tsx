@@ -28,9 +28,9 @@ import { SetupContext } from 'vue';
 
 import { EMIT_EVENTS } from '../events';
 import { TablePropTypes } from '../props';
-import { ITableResponse } from '../use-attributes';
+import { UseRows } from './use-rows';
 
-export default (props: TablePropTypes, resp: ITableResponse, ctx: SetupContext<any>) => {
+export default (props: TablePropTypes, rows: UseRows, ctx: SetupContext<any>) => {
   if (!props.rowDraggable) {
     return {};
   }
@@ -149,11 +149,11 @@ export default (props: TablePropTypes, resp: ITableResponse, ctx: SetupContext<a
     if (lastDragRowClass === '--bottom') {
       targetIndex = targetIndex + 1;
     }
-    resp.changePageRowIndex(Number(sourceIndex), targetIndex);
+    rows.changePageRowIndex(Number(sourceIndex), targetIndex);
 
     lastDragRow = null;
     lastDragRowClass = '';
-    ctx.emit(EMIT_EVENTS.DRAG_END, { sourceEvent: event, data: resp.pageData });
+    ctx.emit(EMIT_EVENTS.DRAG_END, { sourceEvent: event, data: rows.tableRowList });
   };
 
   return {

@@ -124,6 +124,13 @@ const dropdownMethods: IPropsTableItem[] = [
     optional: [],
     default: '',
   },
+  {
+    name: 'showChange',
+    type: 'Function',
+    desc: '显示 | 隐藏时触发',
+    optional: [],
+    default: '',
+  },
 ];
 const dropdownItemMethods: IPropsTableItem[] = [
   {

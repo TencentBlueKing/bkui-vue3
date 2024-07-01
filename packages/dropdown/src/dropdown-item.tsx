@@ -36,7 +36,7 @@ export default defineComponent({
     extCls: PropTypes.string,
   },
   emits: ['click'],
-  setup(props: any, { emit }) {
+  setup(props, { emit }) {
     const handleClick = (evt: MouseEvent) => {
       evt.stopPropagation();
       emit('click', evt);

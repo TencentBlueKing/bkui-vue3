@@ -175,7 +175,6 @@ export default defineComponent({
       Object.keys(end).forEach(type => {
         dateEnd[`set${capitalize(type)}`](end[type]);
       });
-
       if (!props.allowCrossDay && dateEnd < dateStart) {
         // 左边变化
         if (idx === 'start') {

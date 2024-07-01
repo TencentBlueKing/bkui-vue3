@@ -81,9 +81,21 @@ export const COLUMN_ATTRIBUTE = {
   COL_SORT_FN: 'col_sort_fn',
   COL_SORT_SCOPE: 'col_sort_scope',
   COL_FILTER_FN: 'col_filter_fn',
+  COL_FILTER_VALUES: 'col_filter_values',
+  COL_FILTER_OBJ: 'col_filter_obj',
   COL_FILTER_SCOPE: 'col_filter_scope',
   COL_IS_DRAG: 'col_is_drag',
   COL_SPAN: 'col_span',
+  COL_CELL_RENDER: 'col_cell_render',
+  COL_TEXT_RENDER: 'col_text_render',
+  COL_RESIZEABLE: 'col_resizeable',
+  COL_FIXED_STYLE: 'col_fixed_style',
+  COL_RECT: 'col_rect',
+  HEAD_CELL_RENDER: 'head_cell_render',
+  HEAD_TEXT_RENDER: 'head_text_render',
+  SELECTION_DISABLED: 'selection_disabled',
+  SELECTION_INDETERMINATE: 'selection_indeterminate',
+  SELECTION_VAL: 'selection_val',
   WIDTH: 'width',
   CALC_WIDTH: 'calcWidth',
   RESIZE_WIDTH: 'resizeWidth',
@@ -94,7 +106,7 @@ export const COLUMN_ATTRIBUTE = {
 /**
  * Y 轴滚动条宽度
  */
-export const SCROLLY_WIDTH = 0;
+export const SCROLLY_WIDTH = 8;
 
 /**
  * 默认行高
@@ -159,7 +171,7 @@ export const SORT_OPTIONS = [SORT_OPTION.ASC, SORT_OPTION.DESC, SORT_OPTION.NULL
  */
 export const COL_MIN_WIDTH = 80;
 
-export type IEmptyObject = {};
+export type IEmptyObject = Record<string, never>;
 
 /**
  * 全选对象

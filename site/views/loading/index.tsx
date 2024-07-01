@@ -90,6 +90,16 @@ const loadingProps: IPropsTableItem[] = [
   },
 ];
 
+const loadingSlot: IPropsTableItem[] = [
+  {
+    name: 'default',
+    type: 'Slot',
+    default: null,
+    desc: '默认插槽',
+    optional: [],
+  },
+]
+
 const demos = [
   {
     // '基础输入框',
@@ -153,7 +163,7 @@ export default defineComponent({
         <DemoTitle
           desc='覆盖正在加载数据的组件一个 loading 层'
           designLink='https://bkdesign.bk.tencent.com/design/138'
-          link={`${import.meta.env.VITE_APP_BASE_URL ?? ''}/loading`}
+          npmLink={`${import.meta.env.VITE_APP_BASE_URL ?? ''}/loading`}
           name='Loading'
         />
         {demos.map(({ DemoComponent, ...demo }) => (
@@ -165,6 +175,11 @@ export default defineComponent({
           propsData={loadingProps}
           subtitle=''
           title='Loading 属性'
+        />
+        <PropsBox
+          propsData={loadingSlot}
+          subtitle=''
+          title='Loading 插槽'
         />
       </div>
     );

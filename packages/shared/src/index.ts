@@ -34,6 +34,7 @@ export * from './token';
 export * from './utils';
 export * from './vue-types';
 export * from './z-index-manager';
+export * from './frame-throttle';
 
 export function classes(dynamicCls: object, constCls = ''): string {
   return Object.entries(dynamicCls)

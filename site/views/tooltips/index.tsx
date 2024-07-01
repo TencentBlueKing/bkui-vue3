@@ -125,9 +125,6 @@ const props: IPropsTableItem[] = [
     desc: '配置自定义样式类名，传入的类会被加在组件最外层的 DOM',
     optional: [],
   },
-];
-
-const events: IPropsTableItem[] = [
   {
     name: 'onShow',
     type: 'Function',
@@ -210,11 +207,11 @@ export default defineComponent({
           subtitle=''
           title='属性'
         ></PropsBox>
-        <PropsBox
+        {/* <PropsBox
           propsData={events}
           subtitle=''
           title='事件'
-        ></PropsBox>
+        ></PropsBox> */}
       </div>
     );
   },

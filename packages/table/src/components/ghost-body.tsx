@@ -23,73 +23,18 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { onUnmounted, ref } from 'vue';
+import { defineComponent } from 'vue';
 
-import { TablePropTypes } from '../props';
+export default defineComponent({
+  name: 'GhostBody',
+  setup(_, ctx) {
+    const columnGhostStyle = {
+      zIndex: -1,
+      width: 0,
+      height: 0,
+      display: 'none' as const,
+    };
 
-export default (props: TablePropTypes) => {
-  const isShiftKeyDown = ref(false);
-  const store = {
-    start: null,
-    end: null,
-  };
-
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === 'Shift') {
-      isShiftKeyDown.value = true;
-    }
-  };
-
-  const handleKeyUp = (e: KeyboardEvent) => {
-    if (e.key === 'Shift') {
-      isShiftKeyDown.value = false;
-      clearStore();
-    }
-  };
-
-  const setStoreStart = (row?, index?) => {
-    store.start = { index: index ?? null, row: row ?? null };
-  };
-
-  const clearStoreStart = () => {
-    setStoreStart();
-  };
-
-  const setStore = (row: any, index: number) => {
-    if (store.start === null && store.end === null) {
-      store.start = { index, row };
-      return false;
-    }
-
-    store.end = { index, row };
-    return true;
-  };
-
-  const clearStore = () => {
-    store.start = null;
-    store.end = null;
-  };
-
-  if (props.shiftMultiChecked) {
-    window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('keyup', handleKeyUp);
-  }
-
-  const getStore = () => store;
-
-  onUnmounted(() => {
-    if (props.shiftMultiChecked) {
-      window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('keyup', handleKeyUp);
-    }
-  });
-
-  return {
-    isShiftKeyDown,
-    setStore,
-    getStore,
-    clearStore,
-    setStoreStart,
-    clearStoreStart,
-  };
-};
+    return () => <div style={columnGhostStyle}>{ctx.slots.default?.()}</div>;
+  },
+});
