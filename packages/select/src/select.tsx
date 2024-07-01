@@ -671,7 +671,7 @@ export default defineComponent({
           })),
         ];
       } else {
-        if (modelValue.value !== undefined || allowEmptyValues.value.includes(modelValue.value)) {
+        if (modelValue.value || allowEmptyValues.value.includes(modelValue.value)) {
           selected.value = [
             {
               value: modelValue.value,
