@@ -102,13 +102,6 @@ const propsJson: IPropsTableItem[] = [
     optional: ['all', 'need-key'],
   },
   {
-    name: 'comprehensive-use',
-    type: 'String',
-    default: 'delete-value',
-    desc: '配置按下delete键时是否删除整个value 配置为 delete-char 则删除当前字符 delete-value 则删除当前光标所在的整个value字符',
-    optional: ['delete-char', 'delete-value'],
-  },
-  {
     name: 'placeholder',
     type: 'String',
     default: '请选择',
@@ -143,6 +136,13 @@ const slotsJson = [
       onSubmit: (value: string) => void;
     }`,
   },
+  {
+    name: 'validate',
+    type: 'name slot',
+    default: [],
+    desc: '校验错误信息展示插槽',
+    params: `--`,
+  },
 ];
 const eventJson = [
   {
@@ -153,6 +153,11 @@ const eventJson = [
   {
     name: 'search',
     desc: '点击右侧search Icon 时触发',
+    params: 'event',
+  },
+  {
+    name: 'selectKey',
+    desc: '选择面板中的Key值时触发',
     params: 'event',
   },
 ];

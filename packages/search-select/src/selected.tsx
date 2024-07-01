@@ -70,7 +70,7 @@ export default defineComponent({
     function handleDeleteSelected(index: number) {
       emit('delete', index);
     }
-    function handleEditSeleted(e: MouseEvent, item: SelectedItem, index: number) {
+    function handleEditSelected(e: MouseEvent, item: SelectedItem, index: number) {
       e.preventDefault();
       e.stopPropagation();
       onEditClick(item, index);
@@ -92,7 +92,7 @@ export default defineComponent({
     function handleInputOutside(target: Node) {
       return !selectedInputRef.value?.contains(target);
     }
-    function copySeletedItem(item: SelectedItem): SelectedItem {
+    function copySelectedItem(item: SelectedItem): SelectedItem {
       const newItem = new SelectedItem(item.searchItem, item.type);
       newItem.values = item.values.slice();
       newItem.logical = item.logical || SearchLogical.OR;
@@ -102,9 +102,9 @@ export default defineComponent({
       inputRef,
       selectedInputRef,
       editKey,
-      copySeletedItem,
+      copySelectedItem,
       handleDeleteSelected,
-      handleEditSeleted,
+      handleEditSelected,
       handleInputOutside,
       handleAddSelected,
       handleInputFocus,
@@ -125,7 +125,7 @@ export default defineComponent({
             clickOutside={this.handleInputOutside}
             conditions={this.conditions}
             data={this.data}
-            defautUsingItem={this.copySeletedItem(item)}
+            defaultUsingItem={this.copySelectedItem(item)}
             getMenuList={this.getMenuList}
             mode={SearchInputMode.EDIT}
             showCondition={false}
@@ -144,7 +144,7 @@ export default defineComponent({
         >
           <span
             class='selected-name'
-            onClick={e => this.handleEditSeleted(e, item, index)}
+            onClick={e => this.handleEditSelected(e, item, index)}
           >
             {item.inputInnerText}
           </span>

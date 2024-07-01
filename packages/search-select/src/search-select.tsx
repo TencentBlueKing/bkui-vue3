@@ -60,27 +60,20 @@ import {
   ValueBehavior,
 } from './utils';
 const INPUT_PADDING_WIDTH = 40;
-const SELETED_MARGING_RIGHT = 6;
+const SELECTED_MARGIN_RIGHT = 6;
+const INPUT_MIN_HEIGHT = 26;
 export const SearchSelectProps = {
   data: {
-    type: Array as PropType<ISearchItem[]>,
+    type: Array as PropType<Omit<ISearchItem, 'isSelected' | 'value'>[]>,
     default: () => [],
   },
   modelValue: {
     type: Array as PropType<ISearchValue[]>,
     default: () => [],
   },
-  shrink: {
-    type: Boolean,
-    default: true,
-  },
   maxHeight: {
     type: Number,
     default: 120,
-  },
-  minHeight: {
-    type: Number,
-    default: 26,
   },
   conditions: {
     type: Array as PropType<ICommonItem[]>,
@@ -101,7 +94,7 @@ export const SearchSelectProps = {
     type: String as PropType<`${ValueBehavior}`>,
     default: ValueBehavior.ALL,
     validator(v: ValueBehavior) {
-      return [ValueBehavior.ALL, ValueBehavior.NEEDKEY].includes(v);
+      return [ValueBehavior.ALL, ValueBehavior.NEED_KEY].includes(v);
     },
   },
   // deleteBehavior: {
@@ -175,11 +168,11 @@ export default defineComponent({
         }
         const list = [];
         v.forEach(item => {
-          const seleted = selectedList.value.find(set => set.id === item.id && set.name === item.name);
-          if (seleted?.toValueKey() === JSON.stringify(item)) {
-            seleted.values = item.values || [];
-            seleted.logical = item.logical || SearchLogical.OR;
-            list.push(seleted);
+          const selected = selectedList.value.find(set => set.id === item.id && set.name === item.name);
+          if (selected?.toValueKey() === JSON.stringify(item)) {
+            selected.values = item.values || [];
+            selected.logical = item.logical || SearchLogical.OR;
+            list.push(selected);
           } else {
             let searchItem = props.data.find(set => set.id === item.id);
             let searchType: SearchItemType = 'default';
@@ -258,18 +251,18 @@ export default defineComponent({
         return;
       }
       const inputEl = wrapRef.value.querySelector(`.${resolveClassName('search-select-container')}`);
-      const maxWidth = wrapRef.value.querySelector('.search-container').clientWidth - SELETED_MARGING_RIGHT - 2;
+      const maxWidth = wrapRef.value.querySelector('.search-container').clientWidth - SELECTED_MARGIN_RIGHT - 2;
       const tagList = inputEl.querySelectorAll('.search-container-selected:not(.overflow-selected)');
       let width = 0;
       let index = 0;
       let i = 0;
       while (index === 0 && width <= maxWidth - INPUT_PADDING_WIDTH && i <= tagList.length - 1) {
         const el = tagList[i];
-        if (el.clientHeight > props.minHeight) {
+        if (el.clientHeight > INPUT_MIN_HEIGHT) {
           overflowIndex.value = i;
           return;
         }
-        width += el ? el.clientWidth + SELETED_MARGING_RIGHT : 0;
+        width += el ? el.clientWidth + SELECTED_MARGIN_RIGHT : 0;
         if (width >= maxWidth - INPUT_PADDING_WIDTH) {
           index = i;
         }
@@ -324,7 +317,7 @@ export default defineComponent({
       inputRef.value.inputEnterForWrapper();
       emit('search', e);
     }
-    function handleSelectedKey(a: any) {
+    function handleSelectedKey(a: ICommonItem) {
       emit('selectKey', a);
     }
     return {
@@ -352,7 +345,7 @@ export default defineComponent({
     };
   },
   render() {
-    const maxHeight = `${!this.shrink || this.isFocus ? this.maxHeight : this.minHeight}px`;
+    const maxHeight = `${this.isFocus ? this.maxHeight : INPUT_MIN_HEIGHT}px`;
     const showCondition = !!this.selectedList.length && this.selectedList.slice(-1)[0].type !== 'condition';
     const menuSlots = Object.assign(
       {},
