@@ -35,19 +35,16 @@ import CustomDemo from './custom-demo.vue';
 import InputDemo from './input-demo.vue';
 import StepDemo from './step-demo.vue';
 import VerticalDemo from './vertical-demo.vue';
-
-const switcherPropsJson: IPropsTableItem[] = [
+const sliderProps: IPropsTableItem[] = [
   {
-    // name: 'value',
-    // type: 'number/array' as any,
     name: 'model-value / v-model',
-    type: 'Number/Array',
-    default: '0',
-    desc: '使用v-model，将指定变量与slider的值进行绑定',
+    type: 'Number | Array',
+    default: null,
+    desc: '滑动条的当前值，可以是单个数值或数组，数组用于范围选择',
     optional: [],
   },
   {
-    name: 'ext-cls',
+    name: 'extCls',
     type: 'String',
     default: '',
     desc: '自定义类名',
@@ -57,39 +54,39 @@ const switcherPropsJson: IPropsTableItem[] = [
     name: 'vertical',
     type: 'Boolean',
     default: 'false',
-    desc: '是否垂直',
-    optional: ['true', 'false'],
+    desc: '是否为垂直模式',
+    optional: [],
   },
   {
     name: 'height',
     type: 'String',
-    default: '200PX',
-    desc: '垂直状态下的高度',
+    default: '200px',
+    desc: '滑动选择器高度，vertical为true时使用',
     optional: [],
   },
   {
     name: 'disable',
     type: 'Boolean',
     default: 'false',
-    desc: '是否禁用',
+    desc: '是否禁用滑块',
     optional: [],
   },
   {
-    name: 'show-tip',
+    name: 'showTip',
     type: 'Boolean',
     default: 'false',
-    desc: '是否显示滑块的tip',
+    desc: '是否显示提示信息',
     optional: [],
   },
   {
-    name: 'max-value',
+    name: 'maxValue',
     type: 'Number',
-    default: '100',
+    default: 100,
     desc: '最大值',
     optional: [],
   },
   {
-    name: 'min-value',
+    name: 'minValue',
     type: 'Number',
     default: '0',
     desc: '最小值',
@@ -98,8 +95,8 @@ const switcherPropsJson: IPropsTableItem[] = [
   {
     name: 'step',
     type: 'Number',
-    default: '1',
-    desc: '每一步的距离',
+    default: 1,
+    desc: '步长',
     optional: [],
   },
   {
@@ -110,83 +107,114 @@ const switcherPropsJson: IPropsTableItem[] = [
     optional: [],
   },
   {
-    name: 'show-interval',
+    name: 'showInterval',
     type: 'Boolean',
     default: 'false',
-    desc: '是否显示间断点',
+    desc: '是否显示刻度间隔',
     optional: [],
   },
   {
-    name: 'show-interval-label',
+    name: 'showIntervalLabel',
     type: 'Boolean',
     default: 'false',
-    desc: '是否显示间断点下的文字',
+    desc: '是否显示刻度间隔的文字',
     optional: [],
   },
   {
-    name: 'show-button-label',
+    name: 'showButtonLabel',
     type: 'Boolean',
     default: 'false',
-    desc: '是否显示滑块下的问题，不可与showIntervalLabel同时使用',
+    desc: '是否显示滑块的值，不可与showIntervalLabel同时使用',
     optional: [],
   },
   {
-    name: 'show-between-label',
+    name: 'showBetweenLabel',
     type: 'Boolean',
     default: 'false',
-    desc: '是否显示首尾的文字',
+    desc: '是否只显示首尾刻度',
     optional: [],
   },
   {
-    name: 'show-input',
+    name: 'showInput',
     type: 'Boolean',
     default: 'false',
     desc: '是否显示输入框',
     optional: [],
   },
   {
-    name: 'custom-content',
+    name: 'customContent',
     type: 'Object',
-    default: 'null',
+    default: null,
     desc: '自定义内容',
     optional: [],
   },
   {
-    name: 'formatter-label',
+    name: 'formatterLabel',
     type: 'Function',
-    default: '(value) => value',
-    desc: '自定义间断点下的文字格式',
+    default: (value: number) => value,
+    desc: '自定义刻度标签格式',
     optional: [],
   },
   {
-    name: 'formatter-button-label',
+    name: 'formatterButtonLabel',
     type: 'Function',
-    default: '(value) => value',
-    desc: '自定义滑块下下的文字格式',
+    default: (value: number) => value,
+    desc: '自定义滑块下标签格式',
     optional: [],
   },
   {
-    name: 'formatter-tip-label',
+    name: 'formatterTipLabel',
     type: 'Function',
-    default: '(value) => value',
-    desc: '自定义滑块tip格式',
+    default: (value: number) => value,
+    desc: '自定义提示标签格式',
     optional: [],
   },
   {
-    name: 'label-click',
+    name: 'labelClick',
     type: 'Boolean | Function',
     default: 'false',
-    desc: '步骤label点击事件，可以设置true或者false，设置true时触发会设置当前值为label所对应的step值，也可以设置自定义函数，返回true或者false或者number，返回true时，会触发change事件，返回number时，会设置当前值为返回的number值，返回false时，不触发change事件',
+    desc: '刻度标签点击事件，可以设置true或者false，设置true时触发会设置当前值为label所对应的step值，也可以设置自定义函数，返回true或者false或者number，返回true时，会触发change事件，返回number时，会设置当前值为返回的number值，返回false时，不触发change事件',
     optional: [],
   },
 ];
 
-const switcherChangeJson: IPropsTableItem[] = [
+const sliderEvents: IPropsTableItem[] = [
+  {
+    name: 'update:modelValue',
+    type: 'Function',
+    default: '-',
+    desc: '更新 modelValue 时触发的回调',
+    optional: [],
+  },
   {
     name: 'change',
     type: 'Function',
-    default: '',
-    desc: '鼠标弹起时触发',
+    default: '-',
+    desc: '值变化时的回调',
+    optional: [],
+  },
+];
+
+const sliderSlots: IPropsTableItem[] = [
+  {
+    name: 'default',
+    type: 'Slot',
+    default: '-',
+    desc: '滑块的默认插槽，用于自定义内容',
+    optional: [],
+  },
+  {
+    name: 'start',
+    type: 'Slot',
+    default: '-',
+    desc: '滑块起始位置的插槽',
+    optional: [],
+  },
+  {
+    name: 'end',
+    type: 'Slot',
+    default: '-',
+    desc: '滑块结束位置的插槽',
     optional: [],
   },
 ];
@@ -247,14 +275,19 @@ export default defineComponent({
           <CustomDemo></CustomDemo>
         </DemoBox>
         <PropsBox
-          propsData={switcherPropsJson}
+          propsData={sliderProps}
           subtitle=''
           title='Slider 属性'
         />
         <PropsBox
-          propsData={switcherChangeJson}
+          propsData={sliderEvents}
           subtitle=''
           title='Slider 事件'
+        />
+        <PropsBox
+          propsData={sliderSlots}
+          subtitle=''
+          title='Slider 插槽'
         />
       </div>
     );

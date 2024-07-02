@@ -49,7 +49,6 @@ export default defineComponent({
     size: PropTypes.size(),
   },
   emits: ['change', 'close'],
-  // slots: ['icon'],
   slots: Object as SlotsType<{
     default?: () => HTMLElement;
     icon?: () => HTMLElement;

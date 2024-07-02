@@ -44,164 +44,271 @@ import DemoCollapseLine from './demo/collapse-line.vue';
 import DemoCollapsePanel from './demo/collapse-panel.vue';
 import DemoCollapseSlot from './demo/collapse-slot.vue';
 import DemoCollapseTitle from './demo/collapse-title.vue';
-
 const collapseProps: IPropsTableItem[] = [
   {
     name: 'list',
     type: 'Array',
-    default: '[]',
-    desc: '配置面板列表数据	',
+    default: [],
+    desc: '渲染的列表，可为对象数组或字符串数组',
     optional: [],
   },
   {
-    name: 'model-value / v-model',
-    type: '<string|number>[] | string | number',
-    default: '--',
-    desc: '当前激活面板的key',
-    optional: [],
-  },
-  {
-    name: 'accordion',
-    type: 'boolean',
-    default: 'false',
-    desc: '是否使用手风琴效果',
-    optional: ['true', 'false'],
-  },
-  {
-    name: 'id-filed',
+    name: 'idFiled',
     type: 'String',
-    default: '--',
+    default: '$index',
     desc: '激活面板的唯一标识，不配置默认使用面板的index',
     optional: [],
   },
   {
-    name: 'title-field',
+    name: 'titleField',
     type: 'String',
     default: 'name',
-    desc: '面板标题key值',
+    desc: '列表项的标题字段',
     optional: [],
   },
   {
-    name: 'content-field',
+    name: 'contentField',
     type: 'String',
     default: 'content',
-    desc: '面板内容key值',
+    desc: '列表项的内容字段',
     optional: [],
   },
-];
-const collapsePanelProps: IPropsTableItem[] = [
   {
     name: 'model-value / v-model',
-    type: 'Boolean',
-    default: '--',
-    desc: '当前面板是否这边(单独使用时才生效)',
+    type: 'Number | Array',
+    default: '',
+    desc: '当前激活的索引',
     optional: [],
   },
   {
-    name: 'name',
-    type: 'String',
-    default: '--',
-    desc: '唯一标识符，相当于 ID',
-    optional: [],
-  },
-  {
-    name: 'title',
-    type: 'String',
-    default: 'name',
-    desc: '面板标题',
-    optional: [],
-  },
-  {
-    name: 'content',
-    type: 'String',
-    default: 'content',
-    desc: '面板内容',
-    optional: [],
-  },
-  {
-    name: 'render-directive',
-    type: 'if|show',
-    default: 'show',
-    desc: '配置内容隐藏方式，默认是 show，收起时，通过设置 display:none(v-show) 不显示在页面,if 为不渲染组件',
-    optional: [],
-  },
-  {
-    name: 'disabled',
+    name: 'accordion',
     type: 'Boolean',
     default: 'false',
-    desc: '是否禁用当前面板，禁用后展开过的面板会自动折叠',
+    desc: '是否使用手风琴效果',
     optional: [],
   },
+  {
+    name: 'hasHeaderBorder',
+    type: 'Boolean',
+    default: 'false',
+    desc: '是否显示头部边框',
+    optional: [],
+  },
+  {
+    name: 'hasHeaderHover',
+    type: 'Boolean',
+    default: 'true',
+    desc: '是否在头部悬停时显示效果',
+    optional: [],
+  },
+  {
+    name: 'headerIcon',
+    type: 'String',
+    default: '',
+    desc: '自定义图标',
+    optional: [],
+  },
+  {
+    name: 'useCardTheme',
+    type: 'Boolean',
+    default: 'false',
+    desc: '是否使用卡片样式',
+    optional: [],
+  },
+  {
+    name: 'headerIconAlign',
+    type: 'String',
+    default: 'left',
+    desc: '图标位置',
+    optional: ['left', 'right'],
+  },
+  {
+    name: 'useBlockTheme',
+    type: 'Boolean',
+    default: 'false',
+    desc: '是否使用色块样式',
+    optional: [],
+  }
 ];
+
 const collapseEvents: IPropsTableItem[] = [
   {
     name: 'item-click',
-    type: 'event',
-    default: '回调参数（item）',
-    desc: '点击时触发，回调参数为点击的面板对象',
-    optional: [],
-  },
-];
-const collapsePanelEvents: IPropsTableItem[] = [
-  {
-    name: 'change',
-    type: 'event',
-    default: '回调参数 name',
-    desc: '点击时触发，回调参数为点击的面板对象',
+    type: 'Function',
+    default: '-',
+    desc: '点击项时触发的回调',
     optional: [],
   },
   {
-    name: 'item-click',
-    type: 'event',
-    default: '回调参数（item）',
-    desc: '点击时触发，回调参数为点击的面板对象',
-    optional: [],
-  },
-  {
-    name: 'before-enter',
-    type: 'event',
-    default: '--',
-    desc: '动画开始前',
+    name: 'update:modelValue',
+    type: 'Function',
+    default: '-',
+    desc: '更新 modelValue 时触发的回调',
     optional: [],
   },
   {
     name: 'after-leave',
-    type: 'event',
-    default: '--',
-    desc: '动画结束后',
+    type: 'Function',
+    default: '-',
+    desc: '离开后触发的回调',
+    optional: [],
+  },
+  {
+    name: 'before-enter',
+    type: 'Function',
+    default: '-',
+    desc: '进入前触发的回调',
     optional: [],
   },
 ];
 
 const collapseSlots: IPropsTableItem[] = [
   {
+    name: 'default',
+    type: 'Slot',
+    default: '-',
+    desc: '默认插槽，用于放置内容',
+    optional: [],
+  },
+  {
     name: 'title',
     type: 'Slot',
-    default: '--',
-    desc: '面板标题插槽',
+    default: '-',
+    desc: '标题插槽，用于自定义标题内容',
+    optional: [],
+  },
+  {
+    name: 'content',
+    type: 'Slot',
+    default: '-',
+    desc: '内容插槽，用于自定义内容',
     optional: [],
   },
 ];
+const collapsePanelProps: IPropsTableItem[] = [
+  {
+    name: 'name',
+    type: 'Number | String',
+    default: '',
+    desc: '面板名称，用于标识面板，可以是字符串或数字',
+    optional: [],
+  },
+  {
+    name: 'title',
+    type: 'Any',
+    default: '',
+    desc: '面板标题，可以是字符串或插槽',
+    optional: [],
+  },
+  {
+    name: 'content',
+    type: 'String',
+    default: '',
+    desc: '面板内容，字符串形式',
+    optional: [],
+  },
+  {
+    name: 'disabled',
+    type: 'Boolean',
+    default: 'false',
+    desc: '是否禁用面板',
+    optional: [],
+  },
+  {
+    name: 'isFormList',
+    type: 'Boolean',
+    default: 'false',
+    desc: '是否从列表中渲染',
+    optional: [],
+  },
+  {
+    name: 'renderDirective',
+    type: 'String',
+    default: null,
+    desc: '渲染指令，用于控制是否渲染组件',
+    optional: [],
+  },
+  {
+    name: 'modelValue',
+    type: 'Boolean',
+    default: 'false',
+    desc: '面板的展开/收起状态',
+    optional: [],
+  },
+  {
+    name: 'alone',
+    type: 'Boolean',
+    default: 'false',
+    desc: '是否单独使用面板',
+    optional: [],
+  },
+  {
+    name: 'icon',
+    type: 'String',
+    default: 'angle-right',
+    desc: '自定义图标',
+    optional: [],
+  },
+  {
+    name: 'itemClick',
+    type: 'Function',
+    default: '-',
+    desc: '点击项时触发的回调',
+    optional: [],
+  }
+];
+
+const collapsePanelEvents: IPropsTableItem[] = [
+  {
+    name: 'change',
+    type: 'Function',
+    default: '-',
+    desc: '切换面板时触发的回调',
+    optional: [],
+  },
+  {
+    name: 'update:modelValue',
+    type: 'Function',
+    default: '-',
+    desc: '更新 modelValue 时触发的回调',
+    optional: [],
+  },
+  {
+    name: 'after-leave',
+    type: 'Function',
+    default: '-',
+    desc: '面板隐藏后的回调',
+    optional: [],
+  },
+  {
+    name: 'before-enter',
+    type: 'Function',
+    default: '-',
+    desc: '面板展开前的回调',
+    optional: [],
+  },
+];
+
 const collapsePanelSlots: IPropsTableItem[] = [
   {
     name: 'default',
     type: 'Slot',
-    default: '--',
-    desc: '面板标题插槽',
+    default: '-',
+    desc: '面板内容插槽',
     optional: [],
   },
   {
     name: 'header',
     type: 'Slot',
-    default: '--',
+    default: '-',
     desc: '面板头部插槽',
     optional: [],
   },
   {
     name: 'content',
     type: 'Slot',
-    default: '--',
-    desc: '面板内容插槽',
+    default: '-',
+    desc: '自定义内容插槽',
     optional: [],
   },
 ];
@@ -336,30 +443,29 @@ export default defineComponent({
           title='Collapse 属性'
         />
         <PropsBox
-          propsData={collapsePanelProps}
+          propsData={collapseEvents}
           subtitle=''
-          title='Collapse-Panel 属性'
+          title='Collapse 事件'
         />
-
         <PropsBox
           propsData={collapseSlots}
           subtitle=''
           title='Collapse 插槽'
         />
         <PropsBox
-          propsData={collapsePanelSlots}
+          propsData={collapsePanelProps}
           subtitle=''
-          title='CollapsePanel 插槽'
-        />
-        <PropsBox
-          propsData={collapseEvents}
-          subtitle=''
-          title='Collapse Events'
+          title='CollapsePanel 属性'
         />
         <PropsBox
           propsData={collapsePanelEvents}
           subtitle=''
-          title='CollapsePanel Attributes'
+          title='CollapsePanel 事件'
+        />
+        <PropsBox
+          propsData={collapsePanelSlots}
+          subtitle=''
+          title='CollapsePanel 插槽'
         />
       </div>
     );
