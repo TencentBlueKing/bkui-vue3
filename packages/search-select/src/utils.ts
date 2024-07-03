@@ -82,8 +82,8 @@ export interface ISearchValue extends Omit<ICommonItem, 'disabled' | 'value'> {
   type?: SearchItemType;
   values?: Omit<ICommonItem, 'disabled' | 'logical'>[];
 }
-export const ValueSplitRegex = /(\||,|、|\/|\r\n|\n)/gm;
-export const ValueSplitTestRegex = /^(\||,|、|\/|\r\n|\n)$/;
+export const ValueSplitRegex = /(\||,|、|\r\n|\n)/gm;
+export const ValueSplitTestRegex = /^(\||,|、|\r\n|\n)$/;
 
 export interface ISearchItem {
   id: string;
