@@ -42,15 +42,8 @@ const timelineProps: IPropsTableItem[] = [
     name: 'list',
     type: 'Array',
     default: '-',
-    desc: '时间轴数据源（必传',
+    desc: '时间轴数据源（必传)',
     optional: ['-'],
-  },
-  {
-    name: 'list[].border',
-    type: 'Boolean',
-    default: 'true',
-    desc: '是否需要边框',
-    optional: ['true', 'false'],
   },
   {
     name: 'list[].tag',
@@ -65,6 +58,13 @@ const timelineProps: IPropsTableItem[] = [
     default: '-',
     desc: '内容',
     optional: ['-'],
+  },
+  {
+    name: 'list[].border',
+    type: 'Boolean',
+    default: 'true',
+    desc: '是否需要边框',
+    optional: ['true', 'false'],
   },
   {
     name: 'list[].type',
@@ -109,18 +109,18 @@ const timelineProps: IPropsTableItem[] = [
     optional: ['true', 'false'],
   },
   {
-    name: 'ext-cls',
-    type: 'String',
-    default: '-',
-    desc: '配置自定义样式类名，传入的类会被加在组件最外层的 DOM .bk-timeline 上',
-    optional: ['-'],
-  },
-  {
     name: 'list[].nodeType',
     type: 'String',
     default: 'primary',
     desc: '时间轴节点渲染类型，缺省值为 template 默认使用 v-html ，填写 vnode 则支持 JSX 渲染',
     optional: ['template', 'vnode'],
+  },
+  {
+    name: 'ext-cls',
+    type: 'String',
+    default: '-',
+    desc: '配置自定义样式类名，传入的类会被加在组件最外层的 DOM .bk-timeline 上',
+    optional: ['-'],
   },
 ];
 const timelineEvents: IPropsTableItem[] = [

@@ -111,6 +111,10 @@ export default ({ props, ctx, columns, rows, pagination, settings }: RenderType)
           {columns.columnGroup.map((cols, rowIndex) => (
             <tr>
               {cols.map((column, index: number) => {
+                if (columns.isHiddenColumn(column)) {
+                  return null;
+                }
+
                 const { getTH } = useHead({ props, ctx, columns, column, index, rows, rowIndex });
                 return getTH();
               })}

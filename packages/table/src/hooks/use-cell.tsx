@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 
-import { SetupContext, unref } from 'vue';
+import { SetupContext, toRaw, unref } from 'vue';
 
 import Checkbox from '@bkui-vue/checkbox';
 import { DownShape, GragFill, RightShape } from '@bkui-vue/icon';
@@ -138,7 +138,7 @@ export default ({
     const defaultFn = () => {
       const type = resolvePropVal(column, 'type', [column, row]);
       if (type === 'index') {
-        return rows.getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_INDEX);
+        return rows.getRowAttribute(toRaw(row), TABLE_ROW_ATTRIBUTE.ROW_INDEX);
       }
 
       const key = resolvePropVal(column, 'field', [column, row]);

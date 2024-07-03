@@ -74,6 +74,13 @@ const processProps: IPropsTableItem[] = [
 
 const processEvents: IPropsTableItem[] = [
   {
+    name: 'update:cur-process',
+    type: 'Function',
+    default: '回调参数（变化后的步骤 index）',
+    desc: '更新当前流程步骤',
+    optional: [],
+  },
+  {
     name: 'click',
     type: 'Function',
     default: '回调参数（变化后的步骤 index）',

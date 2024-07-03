@@ -38,55 +38,89 @@ import RadiusDemo from './radius-demo.vue';
 import SizeDemo from './size-demo.vue';
 import TypeDemo from './type-demo.vue';
 
-const propsJson: IPropsTableItem[] = [
-  {
-    name: 'closable',
-    type: 'Boolean',
-    default: 'false',
-    desc: '标签是否可以关闭',
-    optional: ['true', 'false'],
-  },
+const tagProps: IPropsTableItem[] = [
   {
     name: 'theme',
     type: 'String',
     default: '',
-    desc: '主题',
-    optional: ['success', 'info', 'warning', 'danger'],
+    desc: 'Tag 主题',
+    optional: ['primary', 'success', 'warning', 'danger', 'info', 'default'],
+  },
+  {
+    name: 'closable',
+    type: 'Boolean',
+    default: 'false',
+    desc: '是否可关闭',
+    optional: [],
   },
   {
     name: 'type',
     type: 'String',
     default: '',
-    desc: '类型',
+    desc: 'Tag 的样式类型',
     optional: ['filled', 'stroke'],
   },
   {
     name: 'checkable',
     type: 'Boolean',
     default: 'false',
-    desc: '是否点击选中',
-    optional: ['true', 'false'],
+    desc: '是否可选中',
+    optional: [],
   },
   {
     name: 'checked',
     type: 'Boolean',
     default: 'false',
-    desc: '设置标签的选中状态，跟 checkable 配合使用',
-    optional: ['true', 'false'],
+    desc: '是否选中，跟 checkable 配合使用',
+    optional: [],
   },
   {
     name: 'radius',
     type: 'String',
     default: '2px',
-    desc: '标签圆角设置',
+    desc: 'Tag 的边框圆角值',
     optional: [],
   },
   {
     name: 'size',
     type: 'String',
-    default: '',
-    desc: '配置尺寸',
-    optional: ['default', 'small'],
+    default: 'medium',
+    desc: 'Tag 的尺寸大小',
+    optional: ['small', 'medium', 'large'],
+  },
+];
+
+const tagEvents: IPropsTableItem[] = [
+  {
+    name: 'change',
+    type: 'Function',
+    default: '-',
+    desc: '选中状态改变的回调，参数为新的选中状态',
+    optional: [],
+  },
+  {
+    name: 'close',
+    type: 'Function',
+    default: '-',
+    desc: '关闭 Tag 时的回调',
+    optional: [],
+  },
+];
+
+const tagSlots: IPropsTableItem[] = [
+  {
+    name: 'default',
+    type: 'Slot',
+    default: '-',
+    desc: '默认插槽，用于放置 Tag 内容',
+    optional: [],
+  },
+  {
+    name: 'icon',
+    type: 'Slot',
+    default: '-',
+    desc: '图标插槽，用于显示图标内容',
+    optional: [],
   },
 ];
 export default defineComponent({
@@ -159,8 +193,19 @@ export default defineComponent({
           <IconDemo />
         </DemoBox>
         <PropsBox
-          propsData={propsJson}
+          propsData={tagProps}
           subtitle=''
+          title='Tag 属性'
+        />
+        <PropsBox
+          propsData={tagEvents}
+          subtitle=''
+          title='Tag 事件'
+        />
+        <PropsBox
+          propsData={tagSlots}
+          subtitle=''
+          title='Tag 插槽'
         />
       </div>
     );

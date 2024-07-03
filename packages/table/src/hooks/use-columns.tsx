@@ -157,13 +157,15 @@ const useColumns = (props: TablePropTypes) => {
 
   const resolveDraggableColumn = () => {
     if (props.rowDraggable) {
-      tableColumnList.unshift({
+      return {
         minWidth: 50,
         width: props.rowDraggable?.width ?? 60,
         label: props.rowDraggable?.label ?? t.value.sort,
         type: 'drag',
-      });
+      };
     }
+
+    return null;
   };
 
   /**
@@ -266,6 +268,11 @@ const useColumns = (props: TablePropTypes) => {
     let maxDepth = 0;
     const targetColumns = [];
 
+    const dragColumn = resolveDraggableColumn();
+    if (dragColumn) {
+      cols.unshift(dragColumn);
+    }
+
     const getMaxDepth = (root: Column[], depth = 1) => {
       if (root.length && maxDepth < depth) {
         maxDepth = depth;
@@ -337,7 +344,7 @@ const useColumns = (props: TablePropTypes) => {
    */
   const formatColumns = () => {
     sortColumns.length = 0;
-    resolveDraggableColumn();
+    // resolveDraggableColumn();
     let skipColNum = 0;
     (tableColumnList || []).forEach((col, index) => {
       const { skipCol, skipColumnNum, skipColLen } = needColSpan.value

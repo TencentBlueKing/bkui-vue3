@@ -32,10 +32,10 @@ import { CloseLine, CogShape } from '@bkui-vue/icon/';
 import Popover from '@bkui-vue/popover';
 
 import { createDefaultSizeList, SETTING_SIZE } from '../const';
-import { Settings, SizeItem, TablePropTypes } from '../props';
+import { EMIT_EVENTS } from '../events';
+import { Column, Settings, SizeItem, TablePropTypes } from '../props';
 import { resolvePropVal } from '../utils';
 import { UseColumns } from './use-columns';
-import { EMIT_EVENTS } from '../events';
 
 const useSettings = (props: TablePropTypes, ctx: SetupContext, columns: UseColumns, afterSetting) => {
   const t = useLocale('table');
@@ -46,7 +46,7 @@ const useSettings = (props: TablePropTypes, ctx: SetupContext, columns: UseColum
   const getDefaultSettings = () => {
     return {
       enabled: true,
-      fields: props.columns.map((col: any) => Object.assign({}, col, { field: col.field || col.type })),
+      fields: props.columns.map((col: Column) => Object.assign({}, col, { field: col.field || col.type })),
       checked: [],
       limit: 0,
       size: 'small',
@@ -118,7 +118,7 @@ const useSettings = (props: TablePropTypes, ctx: SetupContext, columns: UseColum
     };
 
     Object.assign(options, result);
-    columns.setColumnAttributeBySettings(options as any, result.checked);
+    columns.setColumnAttributeBySettings(options as Settings, result.checked);
     columns.setVisibleColumns();
     afterSetting?.(result.checked);
     refSetting.value?.hide();
@@ -148,9 +148,9 @@ const useSettings = (props: TablePropTypes, ctx: SetupContext, columns: UseColum
     const fields = options.fields || props.columns || [];
     const readonlyFields = fields
       .filter((f, index) => f.disabled && checkedFields.value.includes(resolvedColVal(f, index)))
-      .map((item: any, index: number) => resolvedColVal(item, index));
+      .map((item, index: number) => resolvedColVal(item, index));
     if (checkAll.value) {
-      const allFields = fields.filter(f => !f.disabled).map((item: any, index: number) => resolvedColVal(item, index));
+      const allFields = fields.filter(f => !f.disabled).map((item, index: number) => resolvedColVal(item, index));
       checkedFields.value.splice(0, checkedFields.value.length, ...allFields, ...readonlyFields);
     } else {
       checkedFields.value.splice(0, checkedFields.value.length, ...readonlyFields);
@@ -163,7 +163,7 @@ const useSettings = (props: TablePropTypes, ctx: SetupContext, columns: UseColum
     () => isLimit.value && (options.limit ? options.limit : 0) <= checkedFields.value.length,
   );
 
-  const isItemReadonly = (item: any, index: number) =>
+  const isItemReadonly = (item: Column, index: number) =>
     item.disabled || (isFiledDisabled.value && !checkedFields.value.includes(resolvedColVal(item, index)));
 
   const handleSizeItemClick = (item: SizeItem) => {
@@ -206,9 +206,7 @@ const useSettings = (props: TablePropTypes, ctx: SetupContext, columns: UseColum
 
       if (
         checkedFields.value.length &&
-        renderFields.value.every((field: any, index: number) =>
-          checkedFields.value.includes(resolvedColVal(field, index)),
-        )
+        renderFields.value.every((field, index: number) => checkedFields.value.includes(resolvedColVal(field, index)))
       ) {
         checkAll.value = true;
       }
@@ -283,7 +281,7 @@ const useSettings = (props: TablePropTypes, ctx: SetupContext, columns: UseColum
                   class='setting-body-fields'
                   v-model={checkedFields.value}
                 >
-                  {renderFields.value.map((item: any, index: number) => (
+                  {renderFields.value.map((item, index: number) => (
                     <div class='field-item'>
                       <Checkbox
                         checked={checkedFields.value.includes(resolvedColVal(item, index))}

@@ -282,6 +282,7 @@ export type Column = {
   label?: LabelFunctionString;
   field?: LabelFunctionString;
   render?: RenderFunctionString;
+  disabled?: boolean;
   renderHead?: RenderFunctionString;
   width?: number | string;
   minWidth?: number | string;

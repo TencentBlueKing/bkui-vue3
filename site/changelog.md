@@ -1,5 +1,20 @@
 ## 更新日志
 
+
+### 2.0.1-beta.32
+
+* **[feat]**:
+    - bugfix(table): 多表头导致拖拽列错位问题
+    - feature(docs): badge\collapse\tag\card\slider 文档优化
+    - feat(search-select): 文档和代码优化
+
+
+### 2.0.1-beta.31
+
+* **[feat]**:
+    - bugfix: table设置字段显示不生效问题
+
+
 ### 2.0.1-beta.30
 
 * **[feat]**:
