@@ -7,7 +7,7 @@
       />
     </div>
     <div class="mb10">
-      <bk-progress :percent="28" />
+      <bk-progress :percent="28"/>
     </div>
     <div class="mb10">
       <bk-progress

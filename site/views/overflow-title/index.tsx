@@ -37,7 +37,7 @@ const overflowComponent: IPropsTableItem[] = [
     name: 'content',
     type: 'String',
     default: '',
-    desc: '文本内容。没有的话去default slot',
+    desc: '文本内容。该值没有的时候则默认取default slot',
     optional: [],
   },
   {
@@ -46,13 +46,6 @@ const overflowComponent: IPropsTableItem[] = [
     default: 'title',
     desc: '默认给文本加上title，如果tips，则鼠标悬浮添加添加tooltips，但是如果不是纯文本',
     optional: ['tips', 'title'],
-  },
-  {
-    name: 'cal-type',
-    type: 'String',
-    default: 'dom',
-    desc: '计算文本宽度方式，默认通过dom计算机文本宽度，canvas则通过measureText计算',
-    optional: ['dom', 'canvas'],
   },
   {
     name: 'resizeable',
@@ -84,12 +77,22 @@ const overflowComponent: IPropsTableItem[] = [
   },
 ];
 
+const overflowComponentSlots: IPropsTableItem[] = [
+  {
+    name: 'default',
+    type: 'Slot',
+    default: '-',
+    desc: '默认插槽',
+    optional: [],
+  }
+];
+
 const overflowDirective: IPropsTableItem[] = [
   {
     name: 'content',
     type: 'String',
     default: '',
-    desc: '文本内容。没有的话去default slot',
+    desc: '文本内容。该值没有的时候则默认取default slot',
     optional: [],
   },
   {
@@ -134,9 +137,15 @@ export default defineComponent({
           title='overflowTitle 组件属性'
         />
         <PropsBox
-          propsData={overflowDirective}
+          title='overflowTitle 插槽'
           subtitle=''
+          propsData={overflowComponentSlots}
+        />
+        
+        <PropsBox
           title='overflowTitle 指令属性(计算父元素宽度)'
+          subtitle=''
+          propsData={overflowDirective}
         />
       </div>
     );
