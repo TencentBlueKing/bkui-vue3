@@ -122,12 +122,8 @@ export const tabProps = {
   sortable: Boolean,
   sortType: SortTypeUnion,
   labelHeight: PropTypes.number.def(50),
-  scrollStep: PropTypes.number.def(200),
   extCls: PropTypes.string.def(''),
   validateActive: PropTypes.bool.def(true),
-  showHeader: PropTypes.bool.def(true),
-  changeOnHover: PropTypes.bool.def(false),
-  changeOnHoverDelay: PropTypes.number.def(1000),
   activeBarSize: PropTypes.number.def(2),
   activeBarColor: PropTypes.string.def('#3a84ff'),
 };
@@ -147,9 +143,6 @@ export const tabNavProps = {
   sortable: Boolean,
   sortType: SortTypeUnion,
   labelHeight: PropTypes.number.def(50),
-  scrollStep: PropTypes.number.def(200),
   validateActive: PropTypes.bool.def(true),
-  changeOnHover: PropTypes.bool.def(false),
-  changeOnHoverDelay: PropTypes.number.def(1000),
   ...tabNavEventProps,
 };

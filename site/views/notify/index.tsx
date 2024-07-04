@@ -38,6 +38,12 @@ import type { IPropsTableItem } from '../../typings';
 
 const props: IPropsTableItem[] = [
   {
+    name: 'id',
+    type: 'String',
+    default: '--',
+    desc: '弹框的 id，值相同时表示同一弹框',
+  },
+  {
     name: 'theme',
     type: 'String',
     default: 'primary',
