@@ -27,11 +27,13 @@
 import {
   APIResponse,
   EThemes,
+  ETypes,
   ExtraFormData,
   FormDataAttr,
   HeaderDataAttr,
   MaxSize,
   Theme,
+  Type,
   UploadFile,
   UploadRawFile,
   UploadRequestHandler,
@@ -41,7 +43,20 @@ import type { PropType } from 'vue';
 
 const themes = [EThemes.BUTTON, EThemes.DRAGGABLE, EThemes.PICTURE];
 
+const types = [ETypes.FORMDATA, ETypes.BINARY];
+
 export default {
+  type: {
+    type: String as PropType<Type>,
+    default: 'formdata' as Type,
+    validator: (val: ETypes) => {
+      if (!val || types.includes(val)) {
+        return true;
+      }
+      console.error(`invalid type, ${val}, the type must be one of 【${types.join(' | ')}】`);
+      return false;
+    },
+  },
   theme: {
     type: String as PropType<Theme>,
     default: 'draggable' as Theme,
