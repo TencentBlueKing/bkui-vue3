@@ -203,7 +203,7 @@ export default defineComponent({
     const searchRef = ref<HTMLElement>();
     const selectTagInputRef = ref<SelectTagInputType>();
     const popoverRef = ref();
-    const optionsMap = ref<Map<any, OptionInstanceType>>(new Map());
+    const optionsMap = ref<Map<PropertyKey, OptionInstanceType>>(new Map());
     const options = computed(() =>
       [...optionsMap.value.values()].sort((cur, next) => {
         return cur.order - next.order;
@@ -211,12 +211,13 @@ export default defineComponent({
     );
     const groupsMap = ref<Map<string, GroupInstanceType>>(new Map());
     const selected = ref<ISelected[]>([]);
-    const selectedMap = computed<Record<string, string>>(() =>
+    const selectedMap = computed<Record<PropertyKey, string>>(() =>
       selected.value.reduce((pre, item) => {
         pre[item.value] = item.label;
         return pre;
       }, {}),
     );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const activeOptionValue = ref<any>(); // 当前悬浮的option
     const listMap = computed(() =>
       list.value.reduce((pre, item) => {
@@ -405,6 +406,7 @@ export default defineComponent({
       }
     };
     // 默认搜索方法
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const defaultSearchMethod = (searchValue: string, optionName: string, filterData: Record<string, any> = {}) => {
       if (hasFilterOptionFunc.value) {
         // 是否配置了单个options过滤
@@ -641,7 +643,7 @@ export default defineComponent({
       }
     };
     // options存在 > 上一次选择的label > 当前值
-    const handleGetLabelByValue = (value: string) => {
+    const handleGetLabelByValue = (value: PropertyKey) => {
       // 处理options value为对象类型，引用类型变更后，回显不对问题
       let tmpValue = value;
       if (typeof tmpValue === 'object') {
@@ -681,6 +683,13 @@ export default defineComponent({
           selected.value = [];
         }
       }
+    };
+    // 手动设置selected值
+    const setSelected = (data: Array<object>) => {
+      selected.value = data.map(item => ({
+        label: item[displayKey.value],
+        value: item[idKey.value],
+      }));
     };
     // 处理键盘事件
     const handleDocumentKeydown = (e: KeyboardEvent) => {
@@ -746,7 +755,7 @@ export default defineComponent({
         selected,
         activeOptionValue,
         showSelectedIcon,
-        selectedStyle: selectedStyle as any, // todo 类型推断
+        selectedStyle,
         curSearchValue,
         highlightKeyword,
         register,
@@ -832,6 +841,7 @@ export default defineComponent({
       isEnableVirtualRender,
       preloadItemCount,
       virtualRenderRef,
+      setSelected,
     };
   },
   render() {
@@ -931,6 +941,7 @@ export default defineComponent({
             v-slots={{
               prefix: renderPrefix(),
               default: this.$slots?.tag && (() => this.$slots?.tag({ selected: this.selected })),
+              tagRender: this.$slots?.tagRender && ((item: ISelected) => this.$slots?.tagRender(item)),
               suffix: () => suffixIcon(),
             }}
             behavior={this.behavior}

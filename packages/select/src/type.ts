@@ -24,7 +24,6 @@
  * IN THE SOFTWARE.
  */
 import Popover from '@bkui-vue/popover';
-import { SelectedTypeEnum } from '@bkui-vue/shared';
 
 import Option from './option';
 import Group from './optionGroup';
@@ -40,24 +39,24 @@ export type SelectTagInputType = InstanceType<typeof SelectTagInput>;
 export interface ISelectContext {
   multiple?: boolean;
   selected: ISelected[];
-  activeOptionValue: any;
+  activeOptionValue: PropertyKey;
   showSelectedIcon: boolean;
-  selectedStyle: SelectedTypeEnum;
+  selectedStyle: 'check' | 'checkbox';
   curSearchValue: string;
   highlightKeyword: boolean;
-  register(key: any, option: OptionInstanceType): any;
-  unregister(key: any): any;
-  registerGroup(key: any, option: GroupInstanceType): any;
-  unregisterGroup(key: any): any;
+  register(key: PropertyKey, option: OptionInstanceType): void;
+  unregister(key: PropertyKey): void;
+  registerGroup(key: PropertyKey, option: GroupInstanceType): void;
+  unregisterGroup(key: PropertyKey): void;
   handleOptionSelected(option: OptionInstanceType): void;
-  handleGetLabelByValue(value: any): number | string;
+  handleGetLabelByValue(value: PropertyKey): number | string;
 }
 
 export interface IOptionGroupContext {
   disabled: boolean;
   groupCollapse: boolean;
-  register(key: any, option: OptionInstanceType): any;
-  unregister(key: any): any;
+  register(key: PropertyKey, option: OptionInstanceType): void;
+  unregister(key: PropertyKey): void;
 }
 
 export interface ISelectState {

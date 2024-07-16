@@ -47,12 +47,11 @@ export function useHover() {
   };
 }
 
-export function useRegistry<T>(data: Ref<Map<string, T>>) {
+export function useRegistry<T>(data: Ref<Map<PropertyKey, T>>) {
   // 注册item
   const register = (key: string, item: T) => {
     if (!item) return;
     if (data.value.has(key)) {
-      // console.warn(`repeat ${key}`, item);
       return;
     }
     return data.value.set(key, item);

@@ -466,8 +466,14 @@ const selectSlots = [
     name: 'tag',
     type: 'Slot',
     default: null,
-    desc: '标签插槽（multiple-mode=“tag” 生效）',
+    desc: '整个标签插槽（multiple-mode=“tag” 生效）',
     optional: [],
+  },
+  {
+    name: 'tagRender',
+    type: 'Slot',
+    default: null,
+    desc: '标签内容插槽（multiple-mode=“tag” 生效）',
   },
 ];
 const selectExpose = [
@@ -483,6 +489,13 @@ const selectExpose = [
     type: 'function',
     default: '',
     desc: '显示Popover弹窗',
+    optional: [],
+  },
+  {
+    name: 'setSelected',
+    type: 'function',
+    default: '',
+    desc: '手动设置选择的值（需要配置idKey和displayKey）',
     optional: [],
   },
 ];
