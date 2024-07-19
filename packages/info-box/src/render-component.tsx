@@ -58,7 +58,7 @@ export const genDefaultState = (): Required<Props> => ({
   beforeClose: () => true,
   onConfirm: () => {},
   onCancel: () => {},
-  onClose: () => {},
+  onClose: undefined,
 });
 
 export default defineComponent({
@@ -75,6 +75,7 @@ export default defineComponent({
       isLoading.value = true;
       try {
         const willClose = await state.beforeClose('confirm');
+
         if (!willClose) {
           return;
         }
@@ -90,7 +91,7 @@ export default defineComponent({
       if (!willClose) {
         return;
       }
-      await state.onCancel();
+      state.onCancel();
       isShow.value = false;
     };
 
