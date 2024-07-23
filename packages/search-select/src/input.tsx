@@ -254,8 +254,13 @@ export default defineComponent({
           if (
             props.valueBehavior === ValueBehavior.NEED_KEY &&
             menuList.value.some(item => item.id === menuHoverId.value)
-          )
+          ) {
+            if (!usingItem.value && keyword.value?.length) {
+              event.stopPropagation();
+              event.preventDefault();
+            }
             return;
+          }
           handleKeyEnter(event).then(v => v && clearInput());
           break;
         case 'Backspace':
@@ -297,6 +302,7 @@ export default defineComponent({
     function handleKeyBackspace(event: KeyboardEvent) {
       // 删除已选择项
       if (!usingItem.value && !keyword.value) {
+        menuHoverId.value = '';
         emit('delete');
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         setTimeout(setMenuList, 16);

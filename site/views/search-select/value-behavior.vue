@@ -2,6 +2,7 @@
   <bk-search-select
     v-model="value"
     :data="data"
+    :unique-select="true"
     value-behavior="need-key"
   />
 </template>
