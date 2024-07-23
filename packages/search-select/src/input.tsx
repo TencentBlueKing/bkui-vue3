@@ -91,7 +91,7 @@ export default defineComponent({
     const usingItem: Ref<SelectedItem> = ref(props.defaultUsingItem);
     const menuHoverId = ref('');
     const loading = ref<boolean>(false);
-    const debounceSetMenuList = debounce(300, setMenuList);
+    const debounceSetMenuList = debounce(100, setMenuList);
     // const selectMenuList = ref<ICommonItem[]>([]);
     let isBindEvent = false;
 
@@ -256,7 +256,6 @@ export default defineComponent({
             menuList.value.some(item => item.id === menuHoverId.value)
           ) {
             if (!usingItem.value && keyword.value?.length) {
-              event.stopPropagation();
               event.preventDefault();
             }
             return;
@@ -633,6 +632,11 @@ export default defineComponent({
       usingItem.value.values = [{ id: value, name: value }];
       handleKeyEnter().then(v => v && clearInput());
     }
+    function refleshMenuHover() {
+      if (!usingItem.value) {
+        menuHoverId.value = '';
+      }
+    }
     // expose
     expose({
       inputFocusForWrapper,
@@ -640,6 +644,7 @@ export default defineComponent({
       inputClearForWrapper,
       handleInputFocus,
       isFocus,
+      refleshMenuHover,
     });
 
     return {
@@ -671,6 +676,7 @@ export default defineComponent({
       inputClearForWrapper,
       deleteInputTextNode,
       customPanelSubmit,
+      refleshMenuHover,
       t,
     };
   },

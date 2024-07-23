@@ -301,6 +301,7 @@ export default defineComponent({
       const list = selectedList.value.slice();
       list.splice(typeof index === 'number' ? index : selectedList.value.length - 1, 1);
       onValidate('');
+      inputRef.value.refleshMenuHover();
       emit(
         'update:modelValue',
         list.map(item => item.toValue()),
