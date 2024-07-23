@@ -177,7 +177,7 @@ export default defineComponent({
       }
     };
 
-    const setTableData = debounce(() => {
+    const setTableData = debounce((resetScroll = true) => {
       const filterOrderList = getFilterAndSortList();
       if (!props.remotePagination) {
         pagination.setPagination({ count: filterOrderList.length });
@@ -188,7 +188,10 @@ export default defineComponent({
 
       nextTick(() => {
         setOffsetRight();
-        refBody.value?.scrollTo(0, 0);
+
+        if (resetScroll) {
+          refBody.value?.scrollTo(0, 0);
+        }
       });
     }, 64);
 
@@ -267,7 +270,7 @@ export default defineComponent({
       () => [props.data],
       () => {
         rows.setTableRowList(props.data);
-        setTableData();
+        setTableData(false);
       },
       { immediate: true, deep: true },
     );

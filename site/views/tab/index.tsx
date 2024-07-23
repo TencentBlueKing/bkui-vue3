@@ -26,12 +26,10 @@
 
 import { defineComponent } from 'vue';
 
-import { tabPanelProps, tabProps } from '../../../packages/tab/src/props';
 import DemoBox from '../../components/demo-box';
 import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import { IPropsTableItem } from '../../typings';
-import { resolvePropsToDesData } from '../utils';
 import DemoAdd from './demo-add.vue';
 import DemoBase from './demo-base.vue';
 import CardDemo from './demo-card.vue';
@@ -42,23 +40,154 @@ import DemoExtend from './demo-extend.vue';
 import DemoJsx from './demo-jsx';
 import DemoPosition from './demo-position.vue';
 
-const tabPropsJson: IPropsTableItem[] = resolvePropsToDesData(tabProps);
-const tabPanelPropsJson: IPropsTableItem[] = resolvePropsToDesData(tabPanelProps);
-// const tabEventPropsJson: IPropsTableItem[] = resolvePropsToDesData(tabEventProps);
+const tabPropsJson: IPropsTableItem[] = [
+  {
+    name: 'active',
+    type: 'Number|String',
+    default: '--',
+    desc: '选中的 tab',
+  },
+  {
+    name: 'type',
+    type: 'String',
+    default: '--',
+    desc: '选项卡样式',
+    optional: ['card', 'border-card', 'unborder-card', 'vertical-card card-grid'],
+  },
+  {
+    name: 'tab-position',
+    type: 'String',
+    default: '--',
+    desc: '选项卡样式',
+    optional: ['left', 'right', 'top'],
+  },
+  {
+    name: 'closable',
+    type: 'Boolean',
+    default: '--',
+    desc: '动态删除选项卡',
+  },
+  {
+    name: 'addable',
+    type: 'Boolean',
+    default: '--',
+    desc: '动态添加选项卡',
+  },
+  {
+    name: 'sortable',
+    type: 'Boolean',
+    default: '--',
+    desc: '拖拽排序选项卡',
+  },
+  {
+    name: 'sort-type',
+    type: 'Boolean',
+    default: '--',
+    desc: '拖拽排序选项卡',
+    optional: ['insert', 'replace'],
+  },
+  {
+    name: 'label-height',
+    type: 'Number',
+    default: '--',
+    desc: '选项卡 高度',
+  },
+  {
+    name: 'scroll-step',
+    type: 'Number',
+    default: '--',
+    desc: '选项卡 高度',
+  },
+  {
+    name: 'validate-active',
+    type: 'Boolean',
+    default: '--',
+    desc: '有效选中',
+  },
+  {
+    name: 'active-bar-size',
+    type: 'Number',
+    default: '--',
+    desc: '选中条宽度',
+  },
+  {
+    name: 'active-bar-color',
+    type: 'Number',
+    default: '--',
+    desc: '选中条颜色',
+  },
+];
+// const tabPanelPropsJson: IPropsTableItem[] = resolvePropsToDesData(tabPanelProps);
+const tabPanelPropsJson: IPropsTableItem[] = [
+  {
+    name: 'name',
+    type: 'String|Number',
+    default: '--',
+    desc: 'Panel 标记',
+  },
+  {
+    name: 'label',
+    type: 'String|Function',
+    default: '--',
+    desc: 'Panel 渲染内容',
+  },
+  {
+    name: 'tips',
+    type: 'String',
+    default: '--',
+    desc: '选项卡提示',
+  },
+  {
+    name: 'closable',
+    type: 'Boolean',
+    default: '--',
+    desc: '选项卡关闭',
+  },
+  {
+    name: 'visible',
+    type: 'Boolean',
+    default: '--',
+    desc: '选项卡可见',
+  },
+  {
+    name: 'disabled',
+    type: 'Boolean',
+    default: '--',
+    desc: '选项卡禁用',
+  },
+  {
+    name: 'sortable',
+    type: 'Boolean',
+    default: '--',
+    desc: '选项卡排序',
+  },
+  {
+    name: 'render-directive',
+    type: 'Boolean',
+    default: 'show|if',
+    desc: 'Panel 渲染方式',
+  },
+  {
+    name: 'panel',
+    type: 'String|Function',
+    default: '--',
+    desc: 'Panel 渲染',
+  },
+];
 const tabEventPropsJson = [
   {
     name: 'add',
-    desc: '切换事件',
+    desc: '添加选项卡事件',
     params: '{ e: MouseEvent }',
   },
   {
     name: 'change',
-    desc: '切换事件',
+    desc: '切换选项卡选中事件',
     params: 'name',
   },
   {
     name: 'remove',
-    desc: '移除事件',
+    desc: '移除选项卡事件',
     params: 'index, panel',
   },
   {

@@ -159,6 +159,13 @@ export default [
         desc: '是否开启监听节点进入父容器可视区域',
         optional: ['true', 'false', 'IIntersectionObserver'],
       },
+      {
+        name: 'check-strictly',
+        type: 'Boolean',
+        default: 'true',
+        desc: '在显示复选框的情况下，是否严格的遵循父子互相关联的做法',
+        optional: ['true', 'false'],
+      },
     ],
   },
   {
@@ -287,7 +294,15 @@ export default [
         desc: '设置指定节点是否展开',
         params: '(item: any, isOpen = null, e: MouseEvent = null, fireEmit = true)',
       },
-      { name: 'setSelect', desc: '设置指定节点是否选中', params: '(item: any, selected = true, autoOpen = true)' },
+      {
+        name: 'setSelect',
+        desc: `* 设置节点选中状态
+           * @param nodes 选中节点，可以是多个
+           * @param selected 是否选中 default：true
+           * @param autoOpen 是否自动展开所有父级节点 default：true
+           * @param triggerEvent 是否触发抛出事件 false`,
+        params: '(item: any, selected = true, autoOpen = true, triggerEvent=false)',
+      },
       { name: 'asyncNodeClick', desc: '异步请求触发点击节点', params: '（item）' },
       { name: 'getData', desc: '获取当前树配置数据（经过内部处理的数据）', params: '（）' },
       { name: 'getParentNode', desc: '获取指定节点的父级节点', params: 'node: 当前节点' },

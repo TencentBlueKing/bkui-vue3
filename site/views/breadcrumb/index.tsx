@@ -53,21 +53,21 @@ const breadcrumbPropsJson: IPropsTableItem[] = [
     name: 'back-router',
     type: 'String/Object',
     default: '',
-    desc: '路由跳转对象，同 vue-router 的 to',
+    desc: '点击回退按钮自定义的路由(路由跳转对象，同 vue-router 的 to)',
     optional: [],
   },
   {
     name: 'replace',
     type: 'Boolean',
     default: 'false',
-    desc: '开启backRouter并使用默认的icon跳转时，启用 replace 将不会向 history 添加新记录',
+    desc: '开启backRouter并使用默认的icon跳转时，是否替换当前路由历史',
     optional: [],
   },
   {
     name: 'ext-cls',
     type: 'String',
     default: '',
-    desc: '自定义样式',
+    desc: '自定义样式类名',
     optional: [],
   },
 ];
@@ -77,31 +77,65 @@ const breadcrumbSlotJson: IPropsTableItem[] = [
     name: 'default',
     type: 'Function',
     default: '',
-    desc: '默认插槽',
+    desc: '默认插槽，放置 BreadcrumbItem 组件',
     optional: [],
   },
   {
-    name: 'separator',
-    type: 'Function',
-    default: '',
-    desc: '分隔符插槽',
+    name: 'prefix',
+    type: 'Slot',
+    default: '-',
+    desc: '插槽，用于替换默认回退按钮',
     optional: [],
-  },
+  }
 ];
 
 const breadcrumbItemPropsJson: IPropsTableItem[] = [
   {
-    name: 'to',
-    type: 'String/Object',
+    name: 'ext-cls',
+    type: 'String',
     default: '',
-    desc: '路由跳转对象，同 vue-router 的 to',
+    desc: '自定义样式类名',
+    optional: [],
+  },
+  {
+    name: 'to',
+    type: 'String | Object',
+    default: '',
+    desc: '点击后跳转的链接，可以是一个路径或一个描述目标位置的对象',
     optional: [],
   },
   {
     name: 'replace',
     type: 'Boolean',
-    default: 'false',
-    desc: '在使用 to 进行路由跳转时，启用 replace 将不会向 history 添加新记录',
+    default: false,
+    desc: '是否替换当前的历史记录',
+    optional: [],
+  },
+];
+
+const breadcrumbItemEvents: IPropsTableItem[] = [
+  {
+    name: 'click',
+    type: 'Function',
+    default: '-',
+    desc: '点击事件自身的回调函数',
+    optional: [],
+  },
+];
+
+const breadcrumbItemSlots: IPropsTableItem[] = [
+  {
+    name: 'default',
+    type: 'Slot',
+    default: '-',
+    desc: '默认插槽，放置面包屑项的内容',
+    optional: [],
+  },
+  {
+    name: 'separator',
+    type: 'Slot',
+    default: '-',
+    desc: '自定义分隔符插槽',
     optional: [],
   },
 ];
@@ -173,6 +207,8 @@ export default defineComponent({
           subtitle=''
           title='Breadcrumb Item 属性'
         />
+        <PropsBox propsData={breadcrumbItemEvents} subtitle='' title='Breadcrumb Item 事件' />
+        <PropsBox propsData={breadcrumbItemSlots} subtitle='' title='Breadcrumb Item 插槽' />
       </div>
     );
   },

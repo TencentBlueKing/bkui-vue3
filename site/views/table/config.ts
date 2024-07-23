@@ -331,6 +331,24 @@ export default [
         }`,
         ],
       },
+      {
+        name: 'empty-cell-text',
+        type: 'String | ({ row, column, index }) => string | jsx.Element | VNode',
+        default: 'true',
+        desc: '单元格数据为空展示',
+        optional: [],
+      },
+      {
+        name: 'is-empty-cell',
+        type: '["", undefined, null] | ({ cellText, row, column }) => boolean',
+        default: "['', undefined, null]",
+        desc: `  /**
+         * 判定单元格是否为空
+         * 支持数组：判定条件为 arr.some(item => item === cellText)
+         * 支持函数回调：返回结果为 true | false， ({ cellText, row, column }) => boolean
+         */`,
+        optional: [],
+      },
     ],
   },
   {
@@ -527,7 +545,13 @@ export default [
         optional: ['def1', 'def2'],
       },
       { name: 'isShow', type: 'Boolean', default: 'true', desc: '是否显示Head', optional: [] },
-      { name: 'cellFn', type: 'Function', default: 'undefined', desc: '自定义当前列渲染函数', optional: [] },
+      {
+        name: 'cellFn',
+        type: '({ index, column }) => string | VNode | JSX.Element',
+        default: 'undefined',
+        desc: '自定义当前列渲染函数',
+        optional: [],
+      },
     ],
   },
   {

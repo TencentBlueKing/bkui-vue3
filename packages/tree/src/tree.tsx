@@ -101,6 +101,7 @@ export default defineComponent({
       setSelect,
       asyncNodeClick,
       setNodeAttribute,
+      isIndeterminate,
     } = useNodeAction(props, ctx, flatData, renderData, { registerNextLoop });
 
     const handleSearch = debounce(120, () => {
@@ -137,9 +138,17 @@ export default defineComponent({
      * 设置指定节点是否选中
      * @param item Node item | Node Id
      * @param checked
+     * @param triggerEvent 是否触发抛出事件
      */
-    const setChecked = (item: TreeNode | TreeNode[], checked = true) => {
+    const setChecked = (item: TreeNode | TreeNode[], checked = true, triggerEvent = false) => {
       setNodeAction(resolveNodeItem(item), NODE_ATTRIBUTES.IS_CHECKED, checked);
+      if (triggerEvent) {
+        ctx.emit(
+          EVENTS.NODE_CHECKED,
+          flatData.data.filter((t: TreeNode) => isNodeChecked(t)),
+          flatData.data.filter((t: TreeNode) => isIndeterminate(t)),
+        );
+      }
     };
 
     onSelected((newData: TreeNode) => {

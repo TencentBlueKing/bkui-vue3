@@ -44,7 +44,7 @@ const usePagination = (props: TablePropTypes) => {
   const isEnabled = ref(true);
   const totalPage = computed(() => Math.ceil(pagination.count / pagination.limit));
 
-  const setPagination = (option: Record<string, any>) => {
+  const setPagination = (option: Record<string, unknown>) => {
     Object.assign(pagination, { enabled: !!props.pagination }, option);
 
     /**
@@ -92,7 +92,7 @@ const usePagination = (props: TablePropTypes) => {
    * 判定条件：启用了分页组件 & 分页总数 > 1
    */
   const isShowPagination = computed(() => {
-    return pagination.enabled;
+    return pagination.enabled && pagination.count > 0;
   });
 
   return {

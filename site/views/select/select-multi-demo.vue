@@ -59,6 +59,7 @@
       filterable
       multiple
       show-select-all
+      @change="handleSelectChange"
     />
   </div>
 </template>
@@ -112,8 +113,12 @@
     console.log('deselect', v);
   };
 
+  const handleSelectChange = (v) => {
+    console.log(v);
+  };
+
   onBeforeMount(() => {
-    new Array(100).fill(0).forEach((item, index) => {
+    new Array(10).fill(0).forEach((item, index) => {
       datasourceList.value.push({
         value: index,
         label: `list-${index}`,

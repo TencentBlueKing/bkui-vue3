@@ -17,6 +17,7 @@
           node-key="id"
           level-line
           show-checkbox
+          @nodeSelected="handleNodeSelected"
         />
       </div>
     </div>
@@ -88,6 +89,9 @@
     methods: {
       handleSelect() {
         this.selected = [this.selectText];
+      },
+      handleNodeSelected(...args) {
+        console.log(args);
       },
     },
   });

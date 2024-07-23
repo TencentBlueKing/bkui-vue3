@@ -27,6 +27,7 @@ import { computed, defineComponent, inject, onBeforeUnmount, onMounted, ref, toR
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import { bkTooltips } from '@bkui-vue/directives';
+import { OverflowTitle } from '@bkui-vue/overflow-title';
 import { classes, InputBehaviorType, PropTypes, TagThemeType } from '@bkui-vue/shared';
 import Tag from '@bkui-vue/tag';
 import debounce from 'lodash/debounce';
@@ -65,7 +66,7 @@ export default defineComponent({
     const overflowContent = computed(() =>
       selected.value
         .slice(overflowTagIndex.value, selected.value.length)
-        .map(item => item.label)
+        .map(item => select?.handleGetLabelByValue(item.value))
         .join(', '),
     );
 
@@ -196,7 +197,9 @@ export default defineComponent({
                 closable
                 onClose={() => this.handleRemoveTag(item.value)}
               >
-                {this.select?.handleGetLabelByValue(item.value)}
+                {this.$slots.tagRender?.(item) ?? (
+                  <OverflowTitle type='tips'>{this.select?.handleGetLabelByValue(item.value)}</OverflowTitle>
+                )}
               </Tag>
             ))}
           <Tag
@@ -208,6 +211,7 @@ export default defineComponent({
             v-bk-tooltips={{
               content: this.overflowContent,
               disabled: !this.overflowTagIndex || !this.collapseTags,
+              extCls: this.resolveClassName('select-tooltips'),
             }}
           >
             +{this.selected.length - this.overflowTagIndex}

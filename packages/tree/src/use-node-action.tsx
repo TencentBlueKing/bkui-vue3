@@ -218,10 +218,10 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
     });
   };
 
-  const handleNodeItemCheckboxChange = (item: TreeNode, value: boolean, event: Event) => {
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    event.stopPropagation();
+  const handleNodeItemCheckboxChange = (item: TreeNode, value: boolean, event?: Event) => {
+    event?.preventDefault();
+    event?.stopImmediatePropagation();
+    event?.stopPropagation();
 
     setNodeAttr(item, NODE_ATTRIBUTES.IS_CHECKED, !!value);
     if (value) {
@@ -230,9 +230,9 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
 
     if (props.checkStrictly) {
       deepUpdateChildNode(item, [NODE_ATTRIBUTES.IS_CHECKED, NODE_ATTRIBUTES.IS_INDETERMINATE], [!!value, false]);
+      updateParentChecked(item, value);
     }
 
-    updateParentChecked(item, value);
     ctx.emit(
       EVENTS.NODE_CHECKED,
       flatData.data.filter((t: TreeNode) => isNodeChecked(t)),
@@ -388,7 +388,15 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
     handleTreeNodeClick(node, e);
   };
 
-  const setSelect = (nodes: TreeNode | TreeNode[], selected = true, autoOpen = true) => {
+  /**
+   * 设置节点选中状态
+   * @param nodes 选中节点，可以是多个
+   * @param selected 是否选中 default：true
+   * @param autoOpen 是否自动展开所有父级节点 default：true
+   * @param triggerEvent 是否触发抛出事件 false
+   * @returns
+   */
+  const setSelect = (nodes: TreeNode | TreeNode[], selected = true, autoOpen = true, triggerEvent = false) => {
     const nodeList = Array.isArray(nodes) ? nodes : [nodes];
     if (!nodeList.length) {
       return;
@@ -423,6 +431,9 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
 
     setNodeAttr(resolvedItem, NODE_ATTRIBUTES.IS_SELECTED, selected);
     selectedNodeId = getNodeId(resolvedItem);
+    if (triggerEvent) {
+      ctx.emit(EVENTS.NODE_SELECTED, { selected: selected, node: resolvedItem });
+    }
 
     /**
      * 如果设置了自动展开
@@ -616,5 +627,6 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
     setSelect,
     setOpen,
     setNodeAttribute,
+    isIndeterminate,
   };
 };

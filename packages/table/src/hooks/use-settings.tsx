@@ -233,7 +233,7 @@ const useSettings = (props: TablePropTypes, ctx: SetupContext, columns: UseColum
         extCls={options.extCls}
         arrow={true}
         placement='bottom-end'
-        trigger={options.trigger ?? ('manual' as any)}
+        trigger={(options.trigger ?? 'manual') as 'click' | 'hover' | 'manual'}
         {...{ theme }}
       >
         {{

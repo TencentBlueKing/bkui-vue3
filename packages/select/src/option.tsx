@@ -48,7 +48,7 @@ export default defineComponent({
   name: 'Option',
   props: {
     id: {
-      type: [String, Number, Object],
+      type: [String, Number],
       require: true,
     },
     name: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
@@ -56,6 +56,7 @@ export default defineComponent({
     order: PropTypes.number.def(0),
   },
   setup(props, { attrs }) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { proxy } = getCurrentInstance() as any;
 
     const states = reactive({
@@ -66,7 +67,7 @@ export default defineComponent({
     // 兼容label
     const optionName = computed(() => (name.value !== undefined ? name.value : (attrs.label as string)));
     // 兼容value
-    const optionID = computed(() => (id.value !== undefined ? id.value : attrs.value));
+    const optionID = computed(() => (id.value !== undefined ? id.value : (attrs.value as string)));
     const select = inject(selectKey, null);
     const group = inject(optionGroupKey, null);
     const selected = computed<boolean>(() => select?.selected?.some(item => isEqual(item.value, optionID.value)));

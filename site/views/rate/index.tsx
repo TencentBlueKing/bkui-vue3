@@ -56,6 +56,13 @@ const ratePropsJson: IPropsTableItem[] = [
     desc: '是否可编辑',
     optional: [],
   },
+  {
+    name: 'withValidate',
+    type: 'Boolean',
+    default: 'true',
+    desc: '值改变的时候是否触发校验',
+    optional: [],
+  },
 ];
 
 const rateEventJson: IPropsTableItem[] = [
@@ -111,7 +118,7 @@ export default defineComponent({
           demoName='edit-demo'
           desc='通过监听 change 事件来做出响应'
           subtitle=''
-          title='事件'
+          title='监听 change 事件'
         >
           <EditDemo></EditDemo>
         </DemoBox>

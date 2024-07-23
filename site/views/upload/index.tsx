@@ -42,6 +42,13 @@ import ThemePicture from './demo/theme-picture.vue';
 
 const uploadProps: IPropsTableItem[] = [
   {
+    name: 'type',
+    type: 'String',
+    default: 'formdata',
+    desc: '上传类型。formdata为表单形式上传，文件流包裹在表单数据中。binary为纯文件流传输。',
+    optional: ['formdata', 'binary'],
+  },
+  {
     name: 'theme',
     type: 'String',
     default: 'draggable',

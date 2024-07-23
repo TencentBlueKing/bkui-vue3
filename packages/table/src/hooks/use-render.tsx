@@ -415,6 +415,7 @@ export default ({ props, ctx, columns, rows, pagination, settings }: RenderType)
                     class={tdCtxClass}
                     column={column}
                     data-id={cellKey}
+                    isExpandChild={isChild}
                     observerResize={props.observerResize}
                     parentSetting={props.showOverflowTooltip}
                     row={row}

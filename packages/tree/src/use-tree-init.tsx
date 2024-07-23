@@ -256,7 +256,7 @@ export default (props: TreePropTypes) => {
 
   const formatData = getFlatdata();
 
-  const nextLoopEvents: Map<string, any> = new Map();
+  const nextLoopEvents: Map<string, (...args) => void> = new Map();
   const afterSelectEvents = [];
   const afterSelectWatch = [];
 

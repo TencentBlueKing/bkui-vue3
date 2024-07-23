@@ -34,6 +34,7 @@ export enum EVENTS {
   NODE_DROP = 'nodeDrop',
   NODE_ENTER_VIEW = 'nodeEnterView',
   NODE_EXPAND = 'nodeExpand',
+  NODE_SELECTED = 'nodeSelected',
 }
 const EMPTY = (..._args) => true;
 export const TreeEmitEventsType = {
@@ -46,6 +47,7 @@ export const TreeEmitEventsType = {
   [EVENTS.NODE_DRAG_LEAVE]: EMPTY,
   [EVENTS.NODE_DROP]: EMPTY,
   [EVENTS.NODE_ENTER_VIEW]: EMPTY,
+  [EVENTS.NODE_SELECTED]: EMPTY,
 };
 
 /**

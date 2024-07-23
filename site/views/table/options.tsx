@@ -284,13 +284,13 @@ export const DATA_FIX_COLUMNS = [
     label: '序号',
     type: 'index',
     sort: true,
-    width: 100,
+    minWidth: 30,
     fixed: true,
   },
   {
     label: '名称/内网IP',
     field: 'ip',
-    minWidth: 400,
+    minWidth: 50,
     fixed: true,
   },
   {

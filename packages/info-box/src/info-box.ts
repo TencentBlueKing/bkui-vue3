@@ -36,7 +36,7 @@ export interface Props {
   infoType?: 'danger' | 'loading' | 'success' | 'warning'; // infoType 改名 type 继续存在为兼容老版本
   type?: 'danger' | 'loading' | 'success' | 'warning';
   title?: (() => VNode | string) | VNode | string;
-  subTitle?: (() => VNode) | VNode | string; // subTitle 改名 subTitle 继续存在为兼容老版本
+  subTitle?: (() => VNode) | VNode | string; // subTitle 改名 content 继续存在为兼容老版本
   content?: (() => VNode) | VNode | string;
   footer?: (() => VNode) | VNode | string;
   headerAlign?: 'center' | 'left' | 'right';
@@ -53,7 +53,7 @@ export interface Props {
   beforeClose?: (action: string) => Promise<boolean> | boolean;
   onConfirm?: () => void;
   onCancel?: () => void;
-  onClose?: () => void; // onClose 改名 onConfirm， 继续存在为兼容老版本
+  onClose?: () => void; // onClose 改名 onCancel， 继续存在为兼容老版本
 }
 
 interface InstanceMethods {

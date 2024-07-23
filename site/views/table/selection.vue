@@ -1,5 +1,5 @@
 <template>
-  <bk-table ref="refTable" pagination :data="tableData">
+  <bk-table ref="refTable" pagination :data="tableData" :border="['outer']" :is-row-select-enable="isRowSelectEnable">
     <bk-table-column :width="100" type="selection" sort />
     <bk-table-column field="ip" label="名称/内网IP" />
     <bk-table-column field="source" label="来源" />
@@ -11,7 +11,7 @@
 import { defineComponent } from 'vue';
 
 import { DATA_TABLE } from './options';
-const DATA_ROWS = DATA_TABLE.map(item => ({
+const DATA_ROWS = DATA_TABLE.map((item) => ({
   ...item,
 }));
 export default defineComponent({
@@ -26,21 +26,6 @@ export default defineComponent({
   },
 
   methods: {
-    handleTableRowToggle() {
-      this.$refs.refTable.toggleRowSelection(this.tableData[1]);
-    },
-    handleSelectAll(args) {
-      console.log('handleSelectAll', args);
-    },
-    handleSelectionChange(val) {
-      console.log('handleSelectionChange', val);
-    },
-    handleSortBy(arg) {
-      console.log('handleSortBy', arg);
-    },
-    handleDblClick(...args) {
-      console.log(args);
-    },
     isRowSelectEnable({ index, isCheckAll }) {
       if (isCheckAll) {
         return true;

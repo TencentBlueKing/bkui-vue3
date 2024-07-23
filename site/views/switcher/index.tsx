@@ -41,16 +41,23 @@ import TypeDemo from './type-demo.vue';
 const switcherPropsJson: IPropsTableItem[] = [
   {
     name: 'value',
-    type: 'Boolean',
+    type: 'String | Number | Boolean',
     default: 'false',
     desc: '是否打开',
+    optional: [],
+  },
+  {
+    name: 'model-value',
+    type: 'String | Number | Boolean',
+    default: false,
+    desc: '双向绑定的值',
     optional: [],
   },
   {
     name: 'theme',
     type: 'String',
     default: 'success',
-    desc: '主题',
+    desc: '开关的主题',
     optional: ['primary', 'success'],
   },
   {
@@ -92,14 +99,14 @@ const switcherPropsJson: IPropsTableItem[] = [
     name: 'true-value',
     type: 'Boolean',
     default: 'true',
-    desc: 'switcher的真值',
+    desc: '表示开状态的值',
     optional: [],
   },
   {
     name: 'false-value',
     type: 'Boolean',
     default: 'false',
-    desc: 'switcher的假值',
+    desc: '表示关状态的值',
     optional: [],
   },
   {
@@ -124,20 +131,34 @@ const switcherPropsJson: IPropsTableItem[] = [
     optional: [],
   },
   {
+    name: 'with-validate',
+    type: 'Boolean',
+    default: true,
+    desc: '是否在切换时进行校验',
+    optional: [],
+  },
+  {
     name: 'ext-cls',
     type: 'String',
     default: '',
-    desc: '自定义样式',
+    desc: '自定义样式类名',
     optional: [],
   },
 ];
 
 const switcherChangeJson: IPropsTableItem[] = [
   {
+    name: 'update:modelValue',
+    type: 'Function',
+    default: '-',
+    desc: '更新 modelValue 的事件',
+    optional: [],
+  },
+  {
     name: 'change',
     type: 'Function',
-    default: '',
-    desc: '状态发生变化时回调函数',
+    default: '-',
+    desc: '状态发生变化时触发的事件',
     optional: [],
   },
 ];

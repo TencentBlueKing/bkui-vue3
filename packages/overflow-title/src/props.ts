@@ -57,7 +57,6 @@ export function placementType() {
 export default {
   content: PropTypes.string,
   type: PropTypes.oneOf(['tips', 'title']).def('title'),
-  calType: PropTypes.oneOf(['dom', 'canvas']).def('dom'),
   boundary: PropTypes.oneOfType([PropTypes.string.def('parent'), PropTypes.instanceOf(HTMLElement)]).def(document.body),
   placement: placementType().def(PlacementEnum.TOP_START),
   resizeable: PropTypes.bool,

@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { ExtractPropTypes } from 'vue';
+import { ExtractPropTypes, VNode } from 'vue';
 import { string, toType } from 'vue-types';
 
 import { PropTypes } from '@bkui-vue/shared';
@@ -315,7 +315,7 @@ export const IColumnProp = toType<Column>('IColumnPropType', {
 export type Thead = {
   height?: number;
   isShow?: boolean;
-  cellFn?: (...args) => void;
+  cellFn?: ({ index, column }) => JSX.Element | VNode | string;
   color?: IHeadColor | string;
 };
 
@@ -497,10 +497,23 @@ export const tableProps = {
    */
   // emptyText: PropTypes.string.def('暂无数据'),
   emptyText: PropTypes.string,
+
   /**
    * 单元格数据为空展示
    */
   emptyCellText: PropTypes.oneOfType([PropTypes.string, PropTypes.func.def(() => '')]).def(''),
+
+  /**
+   * 判定单元格是否为空
+   * 支持数组：判定条件为 arr.some(item => item === cellText)
+   * 支持函数回调：返回结果为 true | false， ({ cellText, row, column }) => boolean
+   */
+  isEmptyCell: PropTypes.oneOfType([
+    PropTypes.arrayOf(string),
+    PropTypes.arrayOf(null),
+    PropTypes.arrayOf(undefined),
+    PropTypes.func,
+  ]).def(['', undefined, null]),
 
   /**
    * bk-table-setting-content

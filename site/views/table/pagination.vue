@@ -1,7 +1,8 @@
 <template>
   <div style="width: 100%; height: 500px">
     <bk-table ref="refTable" height="100%" :columns="columns" :data="tableData" :pagination="pagination"
-      :pagination-heihgt="60" show-overflow-tooltip shift-multi-checked @selection-change="handleSelectionChange" />
+      empty-cell-text="--" :pagination-heihgt="60" show-overflow-tooltip shift-multi-checked
+      @selection-change="handleSelectionChange" />
   </div>
 </template>
 
@@ -14,7 +15,7 @@ const tableData = new Array(Math.ceil(Math.random() * 100) + 100).fill('').map((
   ip: `${index}--192.168.0.x`,
   source: `${index}_QQ`,
   create_by: `user-admin-${index}`,
-  status: '创建中',
+  status: '',
   create_time: `2018-05-25 15:02:24.${index}`,
 }));
 
