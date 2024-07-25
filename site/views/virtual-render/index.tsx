@@ -66,7 +66,7 @@ export default defineComponent({
       <div>
         <DemoTitle
           desc='virtual-render 为页面和功能提供列表。'
-          link='https://www.google.com.hk/'
+          // link='https://www.google.com.hk/'
           name='virtual-render'
         />
         {configs.map(cfg => (

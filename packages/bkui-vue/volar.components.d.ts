@@ -71,6 +71,8 @@ declare module '@vue/runtime-core' {
     BkSteps: typeof import('./steps/steps').default;
     BkSwitcher: typeof import('./switcher/switcher').default;
     BkTable: typeof import('./table/table').default;
+    BkTableColumn: typeof import('./table/components/table-column').default;
+    BkCollapse: typeof import('./collapse/collapse').default;
     BkTag: typeof import('./tag/tag').default;
     BkTagInput: typeof import('./tag-input/tag-input').default;
     BkDivider: typeof import('./divider/divider').default;

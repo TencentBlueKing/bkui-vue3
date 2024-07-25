@@ -341,7 +341,7 @@ export default [
       {
         name: 'is-empty-cell',
         type: '["", undefined, null] | ({ cellText, row, column }) => boolean',
-        default: "['', undefined, null]",
+        default: '["", undefined, null]',
         desc: `  /**
          * 判定单元格是否为空
          * 支持数组：判定条件为 arr.some(item => item === cellText)
@@ -773,6 +773,11 @@ export default [
       {
         name: '#fixedBottom',
         desc: '底部加载插槽,此插槽内容会一直固定在底部, 可以结合 props.fixedBottom 进行详细配置',
+        params: '',
+      },
+      {
+        name: '#appendLastRow',
+        desc: '追加到最后一行插槽，区别于 #fixedBottom, 此插槽内容会追加最后一行数据之后，可以滚动，而fixedBottom内容固定底部（如果是虚拟滚动，这里暂时不支持）',
         params: '',
       },
       { name: '#setting', desc: '表格设置中间自定义插槽', params: '' },

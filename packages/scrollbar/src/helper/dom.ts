@@ -1,12 +1,12 @@
 /*
  * Tencent is pleased to support the open source community by making
- * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ * 蓝鲸智云PaaS平台 (BlueKing PaaS) available.
  *
  * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
  *
- * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ * 蓝鲸智云PaaS平台 (BlueKing PaaS) is licensed under the MIT License.
  *
- * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ * License for 蓝鲸智云PaaS平台 (BlueKing PaaS):
  *
  * ---------------------------------------------------
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
@@ -23,29 +23,38 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import canUseDOM from './can-use-dom';
 
-let cachedScrollbarWidth: null | number = null;
-let cachedDevicePixelRatio: null | number = null;
+import { getElement } from './util';
 
-if (canUseDOM()) {
-  window.addEventListener('resize', () => {
-    if (cachedDevicePixelRatio !== window.devicePixelRatio) {
-      cachedDevicePixelRatio = window.devicePixelRatio;
-      cachedScrollbarWidth = null;
-    }
-  });
+export function div(className) {
+  const div = document.createElement('div');
+  div.className = className;
+  return div;
 }
 
-export default function scrollbarWidth() {
-  if (cachedScrollbarWidth === null) {
-    if (typeof document === 'undefined') {
-      cachedScrollbarWidth = 0;
-      return cachedScrollbarWidth;
-    }
+const elMatches = typeof Element !== 'undefined' && Element.prototype.matches;
 
-    cachedScrollbarWidth = 8;
+export function matches(el, query) {
+  const element = getElement(el);
+
+  if (!elMatches) {
+    throw new Error('No element matching method supported');
   }
 
-  return cachedScrollbarWidth;
+  return elMatches.call(element, query);
+}
+
+export function remove(el) {
+  const element = getElement(el);
+  if (element.remove) {
+    element.remove();
+  } else {
+    if (element.parentNode) {
+      element.parentNode.removeChild(element);
+    }
+  }
+}
+
+export function queryChildren(element, selector) {
+  return Array.prototype.filter.call(element.children, child => matches(child, selector));
 }

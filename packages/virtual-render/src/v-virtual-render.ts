@@ -153,7 +153,10 @@ export class VisibleRender {
     const { scrollbar = { enabled: false } } = this.binding.value;
     if (scrollbar.enabled) {
       return {
-        offset: event.offset ?? event,
+        offset: event.offset ?? {
+          x: event.target.scrollLeft,
+          y: event.target.scrollTop,
+        },
       };
     }
 

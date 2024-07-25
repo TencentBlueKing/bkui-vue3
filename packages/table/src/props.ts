@@ -136,7 +136,7 @@ export const ISortType = toType<ISortPropShape>('ISortPropShape', {
 });
 
 export type ISortShape = {
-  sortFn?: (...args) => boolean;
+  sortFn?: (...args) => number;
   sortScope?: SortScope;
   value?: SORT_OPTION;
 };
@@ -371,6 +371,11 @@ export type FixedBottomOption = {
   height: number;
   loading?: boolean;
 };
+
+// export enum BkScrollBehavior {
+//   AUTO = 'auto',
+
+// };
 
 export const tableProps = {
   /**
@@ -630,6 +635,11 @@ export const tableProps = {
    */
   observerResize: PropTypes.bool.def(true),
 
+  /**
+   * 是否使用IntersectionObserver监听表格Cell进如有可视区域再渲染
+   */
+  intersectionObserver: PropTypes.bool.def(false),
+
   // 对齐方式
   align: TableAlign,
   headerAlign: TableAlign,
@@ -668,6 +678,8 @@ export const tableProps = {
    * 启用Scrollbar
    */
   scrollbar: PropTypes.bool.def(true),
+
+  // scrollbehavior: toType<`${ScrollBehavior}`>('ScrollBehavior', {
 
   /**
    * 固定在底部的配置项

@@ -119,9 +119,6 @@ export const virtualRenderProps = {
   /** 外层Dom元素需要渲染成的目标元素 */
   renderAs: PropTypes.string.def('div'),
 
-  /** 内容层渲染成目标元素 */
-  contentAs: PropTypes.string.def('div'),
-
   /** top 滚动填充 */
   scrollOffsetTop: PropTypes.number.def(0),
 

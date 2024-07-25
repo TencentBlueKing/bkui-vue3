@@ -26,70 +26,35 @@
 
 import { Ref } from 'vue';
 
-import { usePrefix } from '@bkui-vue/config-provider';
-import BkScrollbar from '@bkui-vue/scrollbar';
+import BkScrollbar, { IScrollbarSize, VirtualElement } from '@bkui-vue/scrollbar';
 
 import { VirtualRenderProps } from './props';
 
-export default (target: Ref<HTMLElement>, props: VirtualRenderProps) => {
+export default (props: VirtualRenderProps) => {
   let instance: BkScrollbar = null;
-  const { resolveClassName } = usePrefix();
-  const classNames = {
-    contentEl: resolveClassName('scrollbar-content-el'),
-    wrapper: resolveClassName('scrollbar-wrapper'),
-    scrollbar: resolveClassName('scrollbar'),
-    track: `${resolveClassName('scrollbar-track')} track-${props.scrollbar?.size ?? 'normal'}`,
-    visible: resolveClassName('scrollbar-visible'),
-    horizontal: resolveClassName('scrollbar-horizontal'),
-    vertical: resolveClassName('scrollbar-vertical'),
-    hover: resolveClassName('scrollbar-hover'),
-    dragging: resolveClassName('scrollbar-dragging'),
-    scrolling: resolveClassName('scrollbar-scrolling'),
-    scrollable: resolveClassName('scrollbar-scrollable'),
-    mouseEntered: resolveClassName('scrollbar-mouse-entered'),
-  };
 
-  const init = (scrollFn?, delegateXContent?, delegateYContent?) => {
+  const init = (target: Ref<Partial<Element> & Partial<VirtualElement>>) => {
     instance = new BkScrollbar(target.value, {
-      classNames,
-      wrapperNode: target.value,
-      scrollDelegate: {
-        scrollHeight: null,
-        scrollWidth: null,
-      },
-      useSystemScrollYBehavior: !props.enabled,
-      useSystemScrollXBehavior: true,
-      delegateXContent,
-      delegateYContent,
-      onScrollCallback: scrollFn,
+      scrollingThreshold: 120,
+      scrollSize: props.scrollbar?.size as IScrollbarSize,
     });
   };
 
   const scrollTo = (x, y) => {
-    if (props.scrollbar?.enabled) {
-      instance.scrollTo({ left: x, top: y });
-      return;
-    }
-
-    target.value.scrollTo(x, y);
+    instance.scrollTo({ x, y });
   };
 
   const updateScrollHeight = (height: number) => {
-    instance?.setOptions({
-      scrollDelegate: {
-        scrollHeight: height,
-        scrollWidth: null,
-      },
-    });
-
-    instance?.recalculate();
+    if (instance?.element) {
+      (instance.element as VirtualElement).scrollHeight = height;
+      instance.update();
+    }
   };
 
   return {
     init,
     instance,
     scrollTo,
-    classNames,
     updateScrollHeight,
   };
 };

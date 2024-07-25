@@ -161,7 +161,8 @@ export const useCheckbox = () => {
           return Promise.reject();
         }
       })
-      .catch(() => {
+      .catch(err => {
+        console.error(err);
         $targetInput.checked = isChecked.value;
       })
       .finally(() => {

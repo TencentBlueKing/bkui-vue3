@@ -275,7 +275,7 @@ export default ({
         data-id={columns.getColumnId(column)}
         rowspan={group?.thRowspan}
         onClick={() => handleColumnHeadClick()}
-        {...columns.resolveEventListener(column)}
+        {...columns.resolveEventListener(column, index)}
       >
         {renderHeadCell()}
       </th>

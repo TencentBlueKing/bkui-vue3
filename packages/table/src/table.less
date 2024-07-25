@@ -41,7 +41,7 @@
     }
 
     .prepend-row {
-      transform: translate3d(var(--translate-x), 0, 0);
+      transform: translate(var(--translate-x), 0);
     }
 
     .resize-column {
@@ -51,7 +51,7 @@
       left: 0;
       width: 1px;
       background-color: #3785ff;
-      transform: translate3d(var(--drag-offset-x), var(--translate-y), 0);
+      transform: translate(var(--drag-offset-x), var(--translate-y));
     }
   }
 
@@ -215,23 +215,32 @@
           font-weight: 400;
           background-color: var(--background-color);
 
-          &.col-resize-hover {
-            &::after {
-              position: absolute;
-              top: 0;
-              right: 0;
-              bottom: 0;
-              z-index: 1;
-              width: 6px;
-              pointer-events: none;
-              background-color: #3785ff;
-              content: '';
-              transform: translateX(50%);
-              cursor: col-resize;
+          &.col-pointer-hover {
+            &.poiner-right {
+              &::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                right: 0;
+                width: 3px;
+                background-color: #3785ff;
+                transform: translateX(1px);
+                pointer-events: none;
+              }
             }
-
-            .cell {
-              cursor: col-resize;
+            &.poiner-left {
+              &::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                width: 3px;
+                transform: translateX(-1px);
+                background-color: #3785ff;
+                pointer-events: none;
+              }
             }
           }
 
@@ -240,16 +249,26 @@
             align-items: center;
             height: calc(var(--row-height) - 2px);
             color: @table-head-font-color;
-          }
 
-          &.active,
-          &:hover {
-            cursor: pointer;
-            background: @table-row-active-bg-color;
+            &.cell-resize {
+              cursor: col-resize;
+            }
           }
 
           &.column_fixed {
             transform: translateX(var(--translate-x));
+          }
+        }
+      }
+
+      &:not(.col-resize-hover) {
+        thead {
+          th {
+            &.active,
+            &:hover {
+              cursor: pointer;
+              background: @table-row-active-bg-color;
+            }
           }
         }
       }
@@ -308,6 +327,7 @@
     overflow: hidden;
     background-color: var(--background-color);
     height: var(--row-height);
+    min-height: var(--row-height);
 
     &.has-group {
       .is-head-group {
@@ -331,18 +351,16 @@
       z-index: 1;
       width: 6px;
       background-color: #3785ff;
-      transform: translate3d(var(--drag-offset-h-x), 0, 0);
-      &:hover {
-        cursor: ew-resize !important;
-      }
+      transform: translate(var(--drag-offset-h-x), 0);
+      pointer-events: none;
     }
 
     .@{bk-prefix}-table-fixed {
-      transform: translate3d(0, 0, 0);
+      transform: translate(0, 0);
     }
 
     thead {
-      transform: translate3d(var(--translate-x-1), 0, 0);
+      transform: translate(var(--translate-x-1), 0);
     }
 
     .table-head-settings {
@@ -374,6 +392,7 @@
     display: flex;
     width: 100%;
     height: var(--footer-height);
+    min-height: var(--footer-height);
     align-items: center;
     padding: 0 16px 0 22px;
 
@@ -485,7 +504,7 @@
     bottom: 0;
     left: 0;
     pointer-events: none;
-    transform: translate3d(var(--translate-x), var(--translate-y), 0);
+    transform: translate(var(--translate-x), var(--translate-y));
 
     .column_fixed_right {
       box-shadow: var(--shadow-right);

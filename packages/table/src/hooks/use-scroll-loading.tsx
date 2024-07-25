@@ -34,7 +34,7 @@ export default (props: TablePropTypes, ctx) => {
   const getLoadingOption = () => {
     if (typeof refScrollLoading.value === 'boolean') {
       return {
-        loading: !!refScrollLoading.value,
+        loading: !!refScrollLoading.value || (props.fixedBottom?.loading ?? false),
         inline: true,
         title: '',
         size: BkLoadingSize.Normal,
@@ -48,9 +48,10 @@ export default (props: TablePropTypes, ctx) => {
 
   const isRender = computed(
     () =>
-      refScrollLoading.value !== null &&
-      ((typeof refScrollLoading.value === 'boolean' && refScrollLoading.value) ||
-        typeof refScrollLoading.value === 'object'),
+      (refScrollLoading.value !== null &&
+        ((typeof refScrollLoading.value === 'boolean' && refScrollLoading.value) ||
+          typeof refScrollLoading.value === 'object')) ||
+      (props.fixedBottom?.loading ?? false),
   );
 
   const renderScrollLoading = () => {

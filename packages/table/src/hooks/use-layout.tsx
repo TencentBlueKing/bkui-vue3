@@ -54,9 +54,11 @@ export default (props: TablePropTypes, ctx) => {
   const headerRowCount = ref(1);
 
   const fixedBottomHeight = computed(() => {
-    return props.fixedBottom?.position === 'relative'
-      ? props.fixedBottom?.height ?? LINE_HEIGHT
-      : props.fixedBottom?.height ?? 0;
+    if (ctx.slots?.fixedBottom) {
+      return props.fixedBottom?.position === 'relative' ? props.fixedBottom?.height ?? LINE_HEIGHT : 0;
+    }
+
+    return 0;
   });
 
   const { resolveClassName } = usePrefix();
@@ -215,6 +217,10 @@ export default (props: TablePropTypes, ctx) => {
     bodyHeight.value = height - headHeight.value - fixedBottomHeight.value - footHeight.value;
   };
 
+  const setVirtualBodyHeight = (height: number) => {
+    bodyHeight.value = height;
+  };
+
   const footHeight = ref(0);
   const footerStyle = computed(() => ({
     '--footer-height': `${footHeight.value}px`,
@@ -366,6 +372,7 @@ export default (props: TablePropTypes, ctx) => {
     renderFooter,
     renderFixedBottom,
     setBodyHeight,
+    setVirtualBodyHeight,
     setFootHeight,
     setTranslateX,
     setDragOffsetX,

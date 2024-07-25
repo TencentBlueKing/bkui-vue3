@@ -215,7 +215,7 @@ const useColumns = (props: TablePropTypes) => {
     return minWidth;
   };
 
-  const resolveEventListener = (col: Column) => {
+  const resolveEventListener = (col: Column, index: number) => {
     const listeners = getColumnAttribute(col, COLUMN_ATTRIBUTE.LISTENERS) as Map<string, ((...args) => void)[]>;
 
     if (!listeners) {
@@ -226,7 +226,7 @@ const useColumns = (props: TablePropTypes) => {
       const eventName = key.split('_').slice(-1)[0];
       return Object.assign(handle, {
         [eventName]: (e: MouseEvent) => {
-          listeners.get(key).forEach(fn => Reflect.apply(fn, this, [e, col]));
+          listeners.get(key).forEach(fn => Reflect.apply(fn, this, [e, col, index]));
         },
       });
     }, {});
@@ -675,6 +675,36 @@ const useColumns = (props: TablePropTypes) => {
     }
   };
 
+  const getPreColumn = (col: Column) => {
+    const index = visibleColumns.findIndex(item => item === col);
+    const preIndex = index - 1;
+    return visibleColumns[preIndex];
+  };
+
+  const getColumnIndex = (col: Column) => {
+    return visibleColumns.findIndex(item => item === col);
+  };
+
+  const getLeftColumnsWidth = (col: Column, includingSelf = false) => {
+    let isContinue = true;
+    let width = 0;
+    let index = 0;
+    while (isContinue && index < visibleColumns.length) {
+      if (col === visibleColumns[index]) {
+        if (includingSelf) {
+          width = width + getColumnWidth(visibleColumns[index]);
+        }
+        isContinue = false;
+        break;
+      }
+
+      width = width + getColumnWidth(visibleColumns[index]);
+      index = index + 1;
+    }
+
+    return width;
+  };
+
   return {
     needColSpan,
     needRowSpan,
@@ -702,7 +732,10 @@ const useColumns = (props: TablePropTypes) => {
     getColumnRefAttribute,
     getColumnCalcWidth,
     getColumnWidth,
+    getLeftColumnsWidth,
     getGroupAttribute,
+    getPreColumn,
+    getColumnIndex,
     resolveEventListener,
     setColumnIsHidden,
     setColumnResizeWidth,

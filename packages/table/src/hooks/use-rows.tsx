@@ -263,9 +263,37 @@ const useRows = (props: TablePropTypes) => {
     setRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_EXPAND, isExpand);
   };
 
+  /**
+   * 分批渲染数据
+   * @param rowList
+   * @returns
+   */
+  const batchPushRowList = (rowList: Record<string, unknown>[]) => {
+    let startIndex = 0;
+    const size = 50;
+    const batchPushItem = () => {
+      const endIndex = startIndex + size;
+      pageRowList.push(...rowList.slice(startIndex, endIndex));
+
+      if (endIndex < rowList.length) {
+        startIndex = endIndex;
+        setTimeout(() => {
+          batchPushItem();
+        });
+      }
+    };
+
+    if (rowList.length > size) {
+      batchPushItem();
+      return;
+    }
+
+    pageRowList.push(...rowList);
+  };
+
   const setPageRowList = (rowList: Record<string, unknown>[]) => {
     pageRowList.length = 0;
-    pageRowList.push(...rowList);
+    batchPushRowList(rowList);
   };
 
   const clearSelection = () => {

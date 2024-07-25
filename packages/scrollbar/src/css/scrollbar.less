@@ -1,0 +1,139 @@
+@import '@bkui-vue/styles/themes/themes.less';
+
+.@{bk-prefix}-scrollbar {
+  overflow: hidden !important;
+  overflow-anchor: none;
+  touch-action: auto;
+
+  &.@{bk-prefix}--active-x > .@{bk-prefix}__rail-x,
+  &.@{bk-prefix}--active-y > .@{bk-prefix}__rail-y {
+    display: block;
+  }
+
+  .@{bk-prefix}__rail-x:hover,
+  .@{bk-prefix}__rail-y:hover,
+  .@{bk-prefix}__rail-x:focus,
+  .@{bk-prefix}__rail-y:focus,
+  .@{bk-prefix}__rail-x.@{bk-prefix}--clicking,
+  .@{bk-prefix}__rail-y.@{bk-prefix}--clicking {
+    background-color: #f0f1f5;
+  }
+
+  /*
+ * Scrollbar rail styles
+ */
+  .@{bk-prefix}__rail-x {
+    display: none;
+    opacity: 0;
+    transition:
+      background-color 0.2s linear,
+      opacity 0.2s linear;
+    height: 10px;
+    bottom: 0px;
+    position: absolute;
+    // margin-bottom: 2px;
+
+    &.@{bk-prefix}-size-small {
+      height: 8px;
+
+      .@{bk-prefix}__thumb-x {
+        height: 6px;
+      }
+    }
+  }
+
+  .@{bk-prefix}__rail-y {
+    display: none;
+    opacity: 0;
+    transition:
+      background-color 0.2s linear,
+      opacity 0.2s linear;
+    width: 10px;
+    right: 0px;
+    position: absolute;
+    margin-right: 2px;
+
+    &.@{bk-prefix}-size-small {
+      width: 8px;
+
+      .@{bk-prefix}__thumb-y {
+        width: 6px;
+      }
+    }
+  }
+
+  &:hover > .@{bk-prefix}__rail-x,
+  &:hover > .@{bk-prefix}__rail-y,
+  &.@{bk-prefix}--focus > .@{bk-prefix}__rail-x,
+  &.@{bk-prefix}--focus > .@{bk-prefix}__rail-y,
+  &.@{bk-prefix}--scrolling-x > .@{bk-prefix}__rail-x,
+  &.@{bk-prefix}--scrolling-y > .@{bk-prefix}__rail-y {
+    opacity: 0.9;
+  }
+
+  /*
+ * Scrollbar thumb styles
+ */
+  .@{bk-prefix}__thumb-x {
+    background-color: #dcdee5;
+    border-radius: 8px;
+    transition:
+      background-color 0.2s linear,
+      height 0.2s ease-in-out;
+    height: 8px;
+    bottom: 0px;
+    position: absolute;
+  }
+
+  .@{bk-prefix}__thumb-y {
+    background-color: #dcdee5;
+    border-radius: 8px;
+    transition:
+      background-color 0.2s linear,
+      width 0.2s ease-in-out;
+    width: 8px;
+    right: 0px;
+    position: absolute;
+  }
+
+  .@{bk-prefix}__rail-x:hover > .@{bk-prefix}__thumb-x,
+  .@{bk-prefix}__rail-x:focus > .@{bk-prefix}__thumb-x,
+  .@{bk-prefix}__rail-x.@{bk-prefix}--clicking .@{bk-prefix}__thumb-x {
+    background-color: #979ba5;
+    height: 10px;
+  }
+
+  .@{bk-prefix}__rail-y:hover > .@{bk-prefix}__thumb-y,
+  .@{bk-prefix}__rail-y:focus > .@{bk-prefix}__thumb-y,
+  .@{bk-prefix}__rail-y.@{bk-prefix}--clicking .@{bk-prefix}__thumb-y {
+    background-color: #979ba5;
+    width: 10px;
+  }
+
+  .@{bk-prefix}-size-small {
+    > .@{bk-prefix}__thumb-x,
+    > .@{bk-prefix}__thumb-x,
+    &.@{bk-prefix}--clicking .@{bk-prefix}__thumb-x {
+      height: 8px;
+    }
+
+    &:hover > .@{bk-prefix}__thumb-y,
+    &:focus > .@{bk-prefix}__thumb-y,
+    &.@{bk-prefix}--clicking .@{bk-prefix}__thumb-y {
+      width: 8px;
+    }
+  }
+}
+
+/* MS supports */
+@supports (-ms-overflow-style: none) {
+  .@{bk-prefix}-scrollbar {
+    overflow: auto !important;
+  }
+}
+
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+  .@{bk-prefix}-scrollbar {
+    overflow: auto !important;
+  }
+}

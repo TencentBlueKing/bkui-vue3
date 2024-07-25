@@ -40,6 +40,7 @@ export default defineComponent({
     parentSetting: IOverflowTooltipPropType,
     title: PropTypes.string.def(undefined),
     observerResize: PropTypes.bool.def(true),
+    intersectionObserver: PropTypes.bool.def(false),
     isHead: PropTypes.bool.def(false),
     isExpandChild: PropTypes.bool.def(false),
     headExplain: PropTypes.string,
@@ -51,6 +52,7 @@ export default defineComponent({
   setup(props, { slots }) {
     const refRoot = ref();
     const isTipsEnabled = ref(false);
+    const renderSlots = ref(!props.intersectionObserver);
 
     const cellStyle = computed(() => ({
       textAlign: props.column.textAlign as CSSProperties['textAlign'],
@@ -205,12 +207,13 @@ export default defineComponent({
       }
     };
 
-    onMounted(() => {
+    let resizeObserverIns = null;
+    const onComponentRender = () => {
       const { disabled, resizerWay, watchCellResize } = resolveTooltipOption();
       if (!disabled) {
         resolveOverflowTooltip();
         if (watchCellResize !== false && props.observerResize) {
-          let observerIns = observerResize(
+          resizeObserverIns = observerResize(
             refRoot.value,
             () => {
               resolveOverflowTooltip();
@@ -219,17 +222,52 @@ export default defineComponent({
             true,
             resizerWay,
           );
-          observerIns.start();
-          onBeforeUnmount(() => {
-            observerIns.disconnect();
-            observerIns = null;
-          });
+          resizeObserverIns.start();
         }
       }
+    };
+
+    let intersectionObserver = null;
+    const initObserver = () => {
+      if (!props.intersectionObserver) {
+        return;
+      }
+
+      intersectionObserver = new IntersectionObserver(
+        entries => {
+          if (entries[0].intersectionRatio <= 0) {
+            renderSlots.value = false;
+            bkEllipsisIns?.destroyInstance(refRoot.value);
+            return;
+          }
+
+          renderSlots.value = true;
+          onComponentRender();
+        },
+        {
+          threshold: 0.5,
+        },
+      );
+
+      intersectionObserver?.observe(refRoot.value);
+    };
+
+    onMounted(() => {
+      initObserver();
+
+      if (!renderSlots.value) {
+        return;
+      }
+
+      onComponentRender();
     });
 
     onBeforeUnmount(() => {
+      resizeObserverIns?.disconnect();
+      resizeObserverIns = null;
       bkEllipsisIns?.destroyInstance(refRoot.value);
+      intersectionObserver?.disconnect();
+      intersectionObserver = null;
     });
 
     const hasExplain = props.headExplain || props.column.explain;
@@ -239,7 +277,7 @@ export default defineComponent({
         style={cellStyle.value}
         class={['cell', props.column.type, hasExplain ? 'explain' : '']}
       >
-        {slots.default?.()}
+        {renderSlots.value ? slots.default?.() : '--'}
       </div>
     );
   },

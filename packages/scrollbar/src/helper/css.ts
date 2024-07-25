@@ -1,12 +1,12 @@
 /*
  * Tencent is pleased to support the open source community by making
- * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ * 蓝鲸智云PaaS平台 (BlueKing PaaS) available.
  *
  * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
  *
- * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ * 蓝鲸智云PaaS平台 (BlueKing PaaS) is licensed under the MIT License.
  *
- * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ * License for 蓝鲸智云PaaS平台 (BlueKing PaaS):
  *
  * ---------------------------------------------------
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
@@ -23,4 +23,20 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-export default () => !!(typeof window !== 'undefined' && window.document && window.document.createElement);
+import { VirtualElement } from '..';
+import { getElement } from './util';
+
+export function get(element: Partial<Element> | Partial<VirtualElement>) {
+  return getComputedStyle(getElement(element as HTMLElement));
+}
+
+export function set(element, obj) {
+  for (const key in obj) {
+    let val = obj[key];
+    if (typeof val === 'number') {
+      val = `${val}px`;
+    }
+    element.style[key] = val;
+  }
+  return element;
+}

@@ -321,7 +321,7 @@ export const DATA_FIX_COLUMNS = [
     label: '状态',
     field: 'status',
     width: 180,
-    fixed: 'right',
+    // fixed: 'right',
   },
   {
     label: '操作',
@@ -329,7 +329,7 @@ export const DATA_FIX_COLUMNS = [
       return <bk-input v-model={data.status}></bk-input>;
     },
     width: 180,
-    fixed: 'right',
+    // fixed: 'right',
   },
 ];
 

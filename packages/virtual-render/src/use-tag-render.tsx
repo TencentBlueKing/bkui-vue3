@@ -31,15 +31,11 @@ import useScrollbar from './use-scrollbar';
 import { VisibleRender } from './v-virtual-render';
 
 export default (props: VirtualRenderProps, ctx) => {
-  const { renderAs, contentAs } = props;
+  const { renderAs } = props;
   const refRoot = ref(null);
-  const refContent = ref(null);
 
-  const { init, scrollTo, classNames } = useScrollbar(refRoot, props);
+  const { init, scrollTo } = useScrollbar(props);
   const contentStyle = reactive({ x: 0, y: 0 });
-  const computedStyle = computed(() => ({
-    ...props.contentStyle,
-  }));
 
   /** 指令触发Scroll事件，计算当前startIndex & endIndex & scrollTop & translateY */
   const handleScrollCallback = (event, _startIndex, _endIndex, _scrollTop, translateY, scrollLeft, pos) => {
@@ -47,6 +43,7 @@ export default (props: VirtualRenderProps, ctx) => {
     if (scrollbar?.offset) {
       Object.assign(contentStyle, scrollbar?.offset ?? {});
     }
+
     ctx.emit('content-scroll', [event, { translateY, translateX: scrollLeft, pos }]);
   };
 
@@ -78,15 +75,15 @@ export default (props: VirtualRenderProps, ctx) => {
     scrollTo,
     fixToTop,
     refRoot,
-    refContent,
+    refContent: refRoot,
   });
 
   onMounted(() => {
     renderInstance = new VisibleRender(binding, refRoot.value);
     if (props.scrollbar?.enabled) {
-      init(renderInstance.executeThrottledRender.bind(renderInstance));
-      return;
+      init(refRoot);
     }
+
     renderInstance.install();
   });
 
@@ -96,18 +93,10 @@ export default (props: VirtualRenderProps, ctx) => {
 
   const wrapperClassNames = computed(() => {
     if (props.scrollbar.enabled) {
-      return [props.className, classNames.wrapper];
+      return [props.className];
     }
 
     return [props.className];
-  });
-
-  const contentClassNames = computed(() => {
-    if (props.scrollbar.enabled) {
-      return [props.contentClassName, classNames.contentEl];
-    }
-
-    return [props.contentClassName];
   });
 
   return {
@@ -122,19 +111,9 @@ export default (props: VirtualRenderProps, ctx) => {
         },
         [
           ctx.slots.beforeContent?.() ?? '',
-          h(
-            contentAs,
-            {
-              class: contentClassNames.value,
-              style: computedStyle.value,
-              ref: refContent,
-            },
-            [
-              ctx.slots.default?.({
-                data: props.list,
-              }) ?? '',
-            ],
-          ),
+          ctx.slots.default?.({
+            data: props.list,
+          }) ?? '',
           ctx.slots.afterContent?.() ?? '',
           ctx.slots.afterSection?.() ?? '',
         ],

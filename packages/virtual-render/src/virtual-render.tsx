@@ -42,9 +42,11 @@ import {
   SlotsType,
   watch,
   nextTick,
+  Ref,
 } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
+import { VirtualElement } from '@bkui-vue/scrollbar';
 
 import { type VirtualRenderProps, virtualRenderProps } from './props';
 import useFixTop from './use-fix-top';
@@ -66,7 +68,7 @@ export default defineComponent({
     afterSection?: Record<string, object>;
   }>,
   setup(props: VirtualRenderProps, ctx: SetupContext) {
-    const { renderAs, contentAs } = props;
+    const { renderAs } = props;
 
     const resolvePropClassName = (prop: Record<string, object> | Record<string, object>[] | string | string[]) => {
       if (typeof prop === 'string') {
@@ -94,9 +96,16 @@ export default defineComponent({
     }));
 
     const refRoot = ref(null);
-    const refContent = ref(null);
 
-    const { init, scrollTo, classNames, updateScrollHeight } = useScrollbar(refRoot, props);
+    /** 如果有分组状态，计算总行数 */
+    const listLength = ref(0);
+
+    /** 实际高度，根据行高和总行数计算出来的实际高度 */
+    const innerHeight = ref(0);
+
+    const virtualRoot: Ref<VirtualElement> = ref(null);
+
+    const { init, scrollTo, updateScrollHeight } = useScrollbar(props);
 
     let instance = null;
     const pagination = reactive({
@@ -122,13 +131,13 @@ export default defineComponent({
       const total = localList.value.length;
       if (total < end) {
         end = total;
-        start = end - Math.floor(refContent.value.offsetHeight / props.lineHeight);
+        start = end - Math.floor(refRoot.value.offsetHeight / props.lineHeight);
         start = start < 0 ? 0 : start;
       }
 
       if (end > total) {
         end = total;
-        start = end - Math.floor(refContent.value.offsetHeight / props.lineHeight);
+        start = end - Math.floor(refRoot.value.offsetHeight / props.lineHeight);
       }
 
       const value = localList.value.slice(start, end);
@@ -142,7 +151,12 @@ export default defineComponent({
       instance = new VisibleRender(binding, refRoot.value);
 
       if (props.scrollbar?.enabled) {
-        init(instance.executeThrottledRender.bind(instance));
+        virtualRoot.value = new VirtualElement({
+          delegateElement: refRoot.value,
+          scrollHeight: innerHeight.value,
+          onScollCallback: handleScrollBarCallback,
+        });
+        init(virtualRoot as Ref<Partial<Element> & Partial<VirtualElement>>);
         updateScrollHeight(contentHeight.value);
         instance.executeThrottledRender.call(instance, { offset: { x: 0, y: 0 } });
         return;
@@ -159,12 +173,6 @@ export default defineComponent({
       /** 数据改变时激活当前表单，使其渲染DOM */
       handleListChanged(props.list as Record<string, object>[]);
     };
-
-    /** 如果有分组状态，计算总行数 */
-    const listLength = ref(0);
-
-    /** 实际高度，根据行高和总行数计算出来的实际高度 */
-    const innerHeight = ref(0);
 
     /**
      * 列表数据改变时，处理相关参数
@@ -237,12 +245,6 @@ export default defineComponent({
       props.scrollPosition === 'container' ? resolveClassName('virtual-content') : '',
     ]);
 
-    /** 内容区域样式列表 */
-    const innerClass = computed(() => [
-      props.scrollPosition === 'content' ? resolveClassName('virtual-content') : '',
-      ...resolvePropClassName(props.contentClassName),
-    ]);
-
     /**
      * 重置当前配置
      * @param keepLastPostion
@@ -279,8 +281,12 @@ export default defineComponent({
       scrollTo,
       fixToTop,
       refRoot,
-      refContent,
+      refContent: refRoot,
     });
+
+    const handleScrollBarCallback = args => {
+      instance.executeThrottledRender.call(instance, args);
+    };
 
     return () =>
       h(
@@ -288,27 +294,14 @@ export default defineComponent({
         renderAs || 'div',
         {
           ref: refRoot,
-          class: [...wrapperClass.value, classNames.wrapper],
+          class: [...wrapperClass.value],
           style: wrapperStyle.value,
         },
         [
           ctx.slots.beforeContent?.() ?? '',
-          h(
-            contentAs || 'div',
-            {
-              ref: refContent,
-              class: [...innerClass.value, classNames.contentEl],
-              style: {
-                ...innerContentStyle.value,
-                ...props.contentStyle,
-              },
-            },
-            [
-              ctx.slots.default?.({
-                data: calcList.value,
-              }) ?? '',
-            ],
-          ),
+          ctx.slots.default?.({
+            data: calcList.value,
+          }) ?? '',
           ctx.slots.afterContent?.() ?? '',
           ctx.slots.afterSection?.() ?? '',
         ],

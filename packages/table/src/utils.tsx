@@ -33,7 +33,7 @@ import ResizeObserver from 'resize-observer-polyfill';
 import { v4 as uuidv4 } from 'uuid';
 
 import { BORDER_OPTION, BORDER_OPTIONS, SORT_OPTION, TABLE_ROW_ATTRIBUTE } from './const';
-import { Column, GroupColumn, ISortPropShape, TablePropTypes } from './props';
+import { Column, GroupColumn, ISortPropShape, ISortShape, TablePropTypes } from './props';
 
 /**
  * 解析Prop值 | 可能为多种类型 & 函数返回的场景
@@ -234,7 +234,11 @@ const getRegExp = (val: boolean | number | string, flags = 'ig') =>
  * @param index 当前行Index
  * @returns
  */
-export const getRowText = (row: any, key: string, format?: (() => boolean | number | string)[] | string[]) => {
+export const getRowText = (
+  row: Record<string, unknown>,
+  key: string,
+  format?: (() => boolean | number | string)[] | string[],
+) => {
   let result;
   if (typeof row === 'string' || typeof row === 'number' || typeof row === 'boolean') {
     result = row;
@@ -268,7 +272,7 @@ export const getRowText = (row: any, key: string, format?: (() => boolean | numb
  * @param key 指定列名
  * @returns
  */
-export const getRowValue = (row: any, key: string) => {
+export const getRowValue = (row: Record<string, unknown>, key: string) => {
   return objGet(row, key);
 };
 
@@ -278,7 +282,7 @@ export const getRowValue = (row: any, key: string) => {
  * @param args 如果是function参数
  * @returns
  */
-export const formatPropAsArray = (prop: (() => any) | object | string, args: any[]) => {
+export const formatPropAsArray = (prop: (() => unknown) | object | string, args: unknown[]) => {
   if (Array.isArray(prop)) {
     return prop;
   }
@@ -302,7 +306,7 @@ export const isRenderScrollBottomLoading = (props: TablePropTypes) => {
   return typeof props.scrollLoading === 'boolean' || typeof props.scrollLoading === 'object';
 };
 
-export const getRowKey = (item: any, props: TablePropTypes, index: number) => {
+export const getRowKey = (item: Record<string, unknown>, props: TablePropTypes, index: number) => {
   const val = getRowKeyNull(item, props, index);
   if (val !== null) {
     return val;
@@ -311,7 +315,7 @@ export const getRowKey = (item: any, props: TablePropTypes, index: number) => {
   return uuidv4();
 };
 
-export const getRowKeyNull = (item: any, props: TablePropTypes, index: number) => {
+export const getRowKeyNull = (item: Record<string, unknown>, props: TablePropTypes, index: number) => {
   if (typeof props.rowKey === 'string') {
     if (props.rowKey === TABLE_ROW_ATTRIBUTE.ROW_INDEX) {
       return `__ROW_INDEX_${index}`;
@@ -356,7 +360,8 @@ export const getElementTextWidth = (element: HTMLElement, text?: string) => {
    */
   function getTextWidth(text, font) {
     // re-use canvas object for better performance
-    const canvas = (getTextWidth as any).canvas || ((getTextWidth as any).canvas = document.createElement('canvas'));
+    // @ts-ignore
+    const canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement('canvas'));
     const context = canvas.getContext('2d');
     context.font = font;
     const metrics = context.measureText(text);
@@ -387,7 +392,13 @@ export const isColumnHidden = (settingFields, column, checked) => {
   );
 };
 
-export const resolveColumnSpan = (column: Column, colIndex: number, row: any, rowIndex: number, key: string) => {
+export const resolveColumnSpan = (
+  column: Column,
+  colIndex: number,
+  row: Record<string, unknown>,
+  rowIndex: number,
+  key: string,
+) => {
   if (typeof column[key] === 'function') {
     return Reflect.apply(column[key], this, [{ column, colIndex, row, rowIndex }]);
   }
@@ -399,13 +410,13 @@ export const resolveColumnSpan = (column: Column, colIndex: number, row: any, ro
   return 1;
 };
 
-export const resolveCellSpan = (column: Column, colIndex: number, row: any, rowIndex: number) => {
+export const resolveCellSpan = (column: Column, colIndex: number, row: Record<string, unknown>, rowIndex: number) => {
   const colspan = resolveColumnSpan(column, colIndex, row, rowIndex, 'colspan');
   const rowspan = resolveColumnSpan(column, colIndex, row, rowIndex, 'rowspan');
   return { colspan, rowspan };
 };
 
-export const skipThisColumn = (columns: Column[], colIndex: number, row: any, rowIndex: number) => {
+export const skipThisColumn = (columns: Column[], colIndex: number, row: Record<string, unknown>, rowIndex: number) => {
   let skip: boolean | number = false;
 
   for (let i = colIndex; i > 0; i--) {
@@ -420,9 +431,9 @@ export const skipThisColumn = (columns: Column[], colIndex: number, row: any, ro
 
 export const getSortFn = (column, sortType, format = []) => {
   const fieldName = column.field as string;
-  const getVal = (row: any) => getRowText(row, fieldName, format);
+  const getVal = (row: Record<string, unknown>) => getRowText(row, fieldName, format);
   const isIndexCol = column.type === 'index';
-  const sortFn0 = (a: any, b: any, rowIndex0: number, rowIndex1: number) => {
+  const sortFn0 = (a: Record<string, unknown>, b: Record<string, unknown>, rowIndex0: number, rowIndex1: number) => {
     const val0 = isIndexCol ? rowIndex0 : getVal(a) ?? '';
     const val1 = isIndexCol ? rowIndex1 : getVal(b) ?? '';
     if (typeof val0 === 'number' && typeof val1 === 'number') {
@@ -432,11 +443,13 @@ export const getSortFn = (column, sortType, format = []) => {
     return String.prototype.localeCompare.call(val0, val1);
   };
 
-  const sortFn = typeof (column.sort as any)?.sortFn === 'function' ? (column.sort as any)?.sortFn : sortFn0;
+  const sortFn =
+    typeof (column.sort as ISortShape)?.sortFn === 'function' ? (column.sort as ISortShape)?.sortFn : sortFn0;
 
   return sortType === SORT_OPTION.NULL
     ? (_a, _b) => true
-    : (_a, _b, index0, index1) => sortFn(_a, _b, index0, index1) * (sortType === SORT_OPTION.DESC ? -1 : 1);
+    : (a: Record<string, unknown>, b: Record<string, unknown>, index0: number, index1: number) =>
+        sortFn(a, b, index0, index1) * (sortType === SORT_OPTION.DESC ? -1 : 1);
 };
 
 export const getNextSortType = (sortType: string) => {
@@ -482,7 +495,7 @@ export const resolveSort = (sort: ISortPropShape, column, format = []) => {
 
 export const isRowSelectEnable = (
   props,
-  { row, index, isCheckAll }: { row: any; index?: number; isCheckAll?: boolean },
+  { row, index, isCheckAll }: { row: Record<string, unknown>; index?: number; isCheckAll?: boolean },
 ) => {
   if (typeof props.isRowSelectEnable === 'boolean') {
     return props.isRowSelectEnable !== false;
