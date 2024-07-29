@@ -167,7 +167,7 @@ export default defineComponent({
     function documentEnterEvent(e: KeyboardEvent) {
       if (!isBindEvent) return;
       e.preventDefault();
-      const item = menuList.value.find(item => item.id === menuHoverId.value);
+      const item = menuList.value?.find(item => item.id === menuHoverId.value);
       item && handleSelectItem(item);
     }
 
@@ -193,7 +193,9 @@ export default defineComponent({
       showPopover.value = false;
       emit('focus', isFocus.value);
     }
-    function handleInputFocus() {
+    let isOriginFocus = false;
+    function handleInputFocus(event: FocusEvent) {
+      if (isOriginFocus) return;
       showNoSelectValueError.value = false;
       if (props.mode === SearchInputMode.EDIT && usingItem.value && !isFocus.value) {
         const nodeList = Array.from(
@@ -202,10 +204,15 @@ export default defineComponent({
           ),
         );
         if (!nodeList.length) return;
+        event?.preventDefault();
         const range = document.createRange();
         const selection = window.getSelection();
         range.selectNodeContents(nodeList.at(-1));
         selection?.removeAllRanges();
+        isOriginFocus = true;
+        setTimeout(() => {
+          isOriginFocus = false;
+        }, 200);
         selection.addRange(range); // 注意这里会触发focus事件
         setInputFocus(true, false);
         return;
@@ -567,7 +574,7 @@ export default defineComponent({
       isFocus.value = true;
       showPopover.value = true;
       showNoSelectValueError.value = false;
-      needCursorToEnd && nextTick(setCursorToEnd);
+      !props.getMenuList && needCursorToEnd && nextTick(setCursorToEnd);
       emit('focus', isFocus.value);
     }
     function setSelectedItem(item?: SelectedItem) {

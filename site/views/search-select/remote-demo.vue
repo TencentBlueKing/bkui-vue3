@@ -3,6 +3,8 @@
     v-model="value"
     :data="data"
     :get-menu-list="getMenuList"
+    value-behavior="need-key"
+    unique-select
   />
 </template>
 <script setup>
@@ -60,6 +62,7 @@
   const value = ref([]);
   const getMenuList = async (item, keyword) => {
     console.info(item, keyword);
+    debugger;
     await new Promise(resolve => setTimeout(resolve, 300));
     if (!item && keyword) {
       return [
