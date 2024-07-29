@@ -194,7 +194,7 @@ export default defineComponent({
       emit('focus', isFocus.value);
     }
     let isOriginFocus = false;
-    function handleInputFocus(event: FocusEvent) {
+    function handleInputFocus(event?: FocusEvent) {
       if (isOriginFocus) return;
       showNoSelectValueError.value = false;
       if (props.mode === SearchInputMode.EDIT && usingItem.value && !isFocus.value) {
