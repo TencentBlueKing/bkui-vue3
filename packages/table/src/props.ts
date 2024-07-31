@@ -372,6 +372,11 @@ export type FixedBottomOption = {
   loading?: boolean;
 };
 
+export type AppendLastRowOption = {
+  type: 'default' | 'summary';
+  cellRender?: (column: Column, index: number) => VNode | number | string;
+};
+
 // export enum BkScrollBehavior {
 //   AUTO = 'auto',
 
@@ -687,4 +692,14 @@ export const tableProps = {
   fixedBottom: toType<FixedBottomOption>('FixedBottomOption', {
     default: { position: 'relative', height: LINE_HEIGHT },
   }).def(null),
+
+  /**
+   * 表格尾部追加的行配置
+   */
+  appendLastRow: toType<AppendLastRowOption>('AppendLastRowOption', {
+    default: {
+      type: 'default',
+      cellRender: undefined,
+    },
+  }),
 };

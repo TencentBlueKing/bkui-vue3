@@ -29,7 +29,7 @@ import { onMounted, reactive, watch } from 'vue';
 import { v4 as uuidv4 } from 'uuid';
 
 import { NODE_ATTRIBUTES, NODE_SOURCE_ATTRS } from './constant';
-import { TreePropTypes } from './props';
+import { TreeNode, TreePropTypes } from './props';
 import useNodeAsync from './use-node-async';
 import { resolvePropIsMatched, showCheckbox } from './util';
 
@@ -40,7 +40,10 @@ export default (props: TreePropTypes) => {
    * @param cachedSchema 缓存数据
    * @returns
    */
-  const getFlatdata = (treeData: Array<any> = undefined, cachedSchema: WeakMap<Object, any> = null) => {
+  const getFlatdata = (
+    treeData: Array<TreeNode> = undefined,
+    cachedSchema: WeakMap<TreeNode, Record<string, unknown>> = null,
+  ) => {
     const { data, children } = props;
     const checkedList = [];
     const outputData = [];
@@ -55,7 +58,12 @@ export default (props: TreePropTypes) => {
      * @param callFn 回调函数
      * @returns
      */
-    function loopUpdateNodeAttr(node: any, attrName: string, attrValue: any, callFn: Function) {
+    function loopUpdateNodeAttr(
+      node: TreeNode,
+      attrName: string,
+      attrValue: Record<string, unknown> | boolean | number | string,
+      callFn: (...args) => boolean,
+    ) {
       if (node === undefined || node === null) {
         return;
       }
@@ -75,7 +83,7 @@ export default (props: TreePropTypes) => {
       }
     }
 
-    function getUid(item: any) {
+    function getUid(item: TreeNode) {
       let uid = null;
       if (typeof props.nodeKey === 'string') {
         uid = item[props.nodeKey] || uuidv4();
@@ -93,7 +101,7 @@ export default (props: TreePropTypes) => {
       [NODE_ATTRIBUTES.IS_OPEN]: () => !!props.expandAll,
       [NODE_ATTRIBUTES.IS_CHECKED]: () => false,
       [NODE_ATTRIBUTES.IS_MATCH]: () => false,
-      [NODE_ATTRIBUTES.IS_SELECTED]: (node: any, uuid) => resolvePropIsMatched(node, props.selected, uuid),
+      [NODE_ATTRIBUTES.IS_SELECTED]: (node: TreeNode, uuid) => resolvePropIsMatched(node, props.selected, uuid),
       [NODE_ATTRIBUTES.IS_CACHED]: () => false,
       [NODE_ATTRIBUTES.IS_ASYNC]: () => null,
       [NODE_ATTRIBUTES.IS_LOADING]: () => false,
@@ -106,7 +114,7 @@ export default (props: TreePropTypes) => {
      * @param cachedAttr 当前节点属性名称
      * @param defVal 默认值
      */
-    function getCachedTreeNodeAttr(uuid, node: any, cachedAttr: string, defVal = undefined) {
+    function getCachedTreeNodeAttr(uuid, node: TreeNode, cachedAttr: string, defVal = undefined) {
       let defaultValue = defVal;
       // 设置默认值
       if (defVal === undefined && typeof cachedDefaultVal[cachedAttr] === 'function') {
@@ -142,7 +150,7 @@ export default (props: TreePropTypes) => {
      * @param node 当前节点
      * @returns
      */
-    function isCachedTreeNodeSelected(uuid: string, node: any) {
+    function isCachedTreeNodeSelected(uuid: string, node: TreeNode) {
       if (!props.selectable) {
         return false;
       }
@@ -167,7 +175,7 @@ export default (props: TreePropTypes) => {
       return getCachedTreeNodeAttr(uuid, node, NODE_ATTRIBUTES.IS_CHECKED, isMatch);
     }
 
-    function validateIsOpenLoopFn(targetAttr: any) {
+    function validateIsOpenLoopFn(targetAttr: Record<string, unknown>) {
       return !(targetAttr?.[NODE_ATTRIBUTES.IS_OPEN] ?? false);
     }
 
@@ -179,7 +187,7 @@ export default (props: TreePropTypes) => {
       return true;
     }
 
-    function flatten(array: Array<any>, depth = 0, parent = null, path = null) {
+    function flatten(array: Array<TreeNode>, depth = 0, parent = null, path = null) {
       const arrLength = array.length;
       for (let i = 0; i < arrLength; i++) {
         const item = array[i];
@@ -189,7 +197,7 @@ export default (props: TreePropTypes) => {
           if (typeof item === 'object' && item !== null) {
             const currentPath = path !== null ? `${path}-${i}` : `${i}`;
             const uuid = `${getUid(item)}`;
-            const hasChildren = !!(item[children] || []).length;
+            const hasChildren = !!((item[children] || []) as TreeNode[]).length;
             /**
              * 当前节点设置是否为展开状态
              */
@@ -239,7 +247,7 @@ export default (props: TreePropTypes) => {
             order += 1;
 
             if (Object.prototype.hasOwnProperty.call(item, children)) {
-              flatten(item[children] || [], depth + 1, item, currentPath);
+              flatten((item[children] || []) as TreeNode[], depth + 1, item, currentPath);
             }
           }
         }
@@ -247,7 +255,7 @@ export default (props: TreePropTypes) => {
     }
     flatten(treeData ?? data);
     if (props.showCheckbox !== false && props.checkStrictly) {
-      checkedList?.forEach((value: any) => {
+      checkedList?.forEach(value => {
         loopUpdateNodeAttr(value, NODE_ATTRIBUTES.IS_CHECKED, true, loopUpdateCheckedEvent);
       });
     }
@@ -265,8 +273,8 @@ export default (props: TreePropTypes) => {
    * schema: 需要展示连线时，用于计算连线高度
    */
   const flatData = reactive({
-    data: formatData[0] as Array<any>,
-    schema: formatData[1] as WeakMap<Object, any>,
+    data: formatData[0] as Array<TreeNode>,
+    schema: formatData[1] as WeakMap<TreeNode, Record<string, unknown>>,
     levelLineSchema: {},
   });
 
@@ -276,11 +284,11 @@ export default (props: TreePropTypes) => {
    * 抛出缓存函数，用于注册selected watch
    * @param event
    */
-  const onSelected = (event: (d: any) => void) => {
+  const onSelected = (event: (d) => void) => {
     afterSelectEvents.push(event);
   };
 
-  const registerNextLoop = (key: string, event: any, reset = true) => {
+  const registerNextLoop = (key: string, event, reset = true) => {
     if (reset && nextLoopEvents.has(key)) {
       nextLoopEvents.delete(key);
     }
@@ -288,7 +296,7 @@ export default (props: TreePropTypes) => {
     nextLoopEvents.set(key, event);
   };
 
-  const resolveEventOption = (event: any) => {
+  const resolveEventOption = event => {
     if (typeof event === 'function') {
       return {
         type: 'loop',
@@ -304,7 +312,7 @@ export default (props: TreePropTypes) => {
     return null;
   };
 
-  const executeFn = (event: any | null) => {
+  const executeFn = event => {
     const resoveEvent = resolveEventOption(event);
     if (resoveEvent !== null) {
       Reflect.apply(resoveEvent.fn, this, []);
@@ -318,7 +326,7 @@ export default (props: TreePropTypes) => {
       const target = nextLoopEvents.get(key);
       if (Array.isArray(target)) {
         const clearList = [];
-        target.forEach((event: any, index: number) => {
+        target.forEach((event, index: number) => {
           const result = executeFn(event);
           if (result === 'once') {
             clearList.unshift(index);
@@ -347,9 +355,9 @@ export default (props: TreePropTypes) => {
   watch(
     () => [props.data],
     newData => {
-      const formatData = getFlatdata(newData, flatData.schema);
-      flatData.data = formatData[0] as Array<any>;
-      flatData.schema = formatData[1] as WeakMap<Object, any>;
+      const formatData = getFlatdata(newData[0], flatData.schema);
+      flatData.data = formatData[0] as Array<TreeNode>;
+      flatData.schema = formatData[1] as WeakMap<TreeNode, Record<string, unknown>>;
       if (props.async?.callback && props.async?.deepAutoOpen === 'every') {
         deepAutoOpen();
       }
@@ -388,7 +396,7 @@ export default (props: TreePropTypes) => {
     });
   }
 
-  const afterDataUpdate = (callFn: (d: any) => any) => {
+  const afterDataUpdate = (callFn: (d) => void) => {
     registerNextLoop('afterDataUpdate', callFn);
   };
 

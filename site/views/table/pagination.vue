@@ -23,10 +23,9 @@ const tableData = reactive(new Array(Math.ceil(Math.random() * 100) + 500).fill(
 
 const isShow = ref(true);
 const renderTable = () => { isShow.value = !isShow.value; }
-const pagination = ref({ count: tableData.length, limit: 100 });
+const pagination = ref({ count: tableData.length, limit: 20 });
 const columns = reactive(DATA_FIX_COLUMNS.concat(appendColumns));
 const refTable = ref(null);
 const handleSelectionChange = args => {
-  // console.log('handleSelectionChange', args, refTable.value?.getSelection());
 };
 </script>

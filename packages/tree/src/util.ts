@@ -27,10 +27,10 @@
 import { usePrefix } from '@bkui-vue/config-provider';
 
 import { NODE_ATTRIBUTES } from './constant';
-import { TreePropTypes } from './props';
+import { TreeNode, TreePropTypes } from './props';
 
 const DEFAULT_LEVLE_LINE = '1px dashed #c3cdd7';
-export type IFlatData = { data: any[]; schema: WeakMap<Object, any> };
+export type IFlatData = { data: TreeNode[]; schema: WeakMap<TreeNode, Record<string, unknown>> };
 
 /**
  * 获取配置项可为Bool|String|Function类型，如果为Bool则配置默认值
@@ -44,10 +44,10 @@ export type IFlatData = { data: any[]; schema: WeakMap<Object, any> };
 const getPropsOneOfBoolValueWithDefault = (
   props: TreePropTypes,
   key: string,
-  item: any = null,
-  defaultTrueValue: any = null,
-  defaultFalseValue: any = null,
-  args: Array<any> = [],
+  item: TreeNode = null,
+  defaultTrueValue: unknown = null,
+  defaultFalseValue: unknown = null,
+  args: Array<unknown> = [],
 ) => {
   const prop = props[key];
   if (typeof prop === 'boolean') {
@@ -65,7 +65,7 @@ const getPropsOneOfBoolValueWithDefault = (
  * @param args 其他参数
  * @returns
  */
-const getStringOrFuncStr = (item: any, props: TreePropTypes, key: string, args: any[] = []) => {
+const getStringOrFuncStr = (item: TreeNode, props: TreePropTypes, key: string, args = []) => {
   const value = props[key];
   if (typeof value === 'string') {
     if (typeof item === 'object' && item !== null) {
@@ -95,7 +95,7 @@ const getStringOrFuncStr = (item: any, props: TreePropTypes, key: string, args: 
  * @param item 当前节点
  * @param props Props
  */
-export const getLabel = (item: any, props: TreePropTypes) => getStringOrFuncStr(item, props, 'label');
+export const getLabel = (item: TreeNode, props: TreePropTypes) => getStringOrFuncStr(item, props, 'label');
 
 /**
  * 根据Props获取Tree样式设置
@@ -103,11 +103,9 @@ export const getLabel = (item: any, props: TreePropTypes) => getStringOrFuncStr(
  * @param props
  * @returns
  */
-export const getTreeStyle = (item: any, props: TreePropTypes) => {
+export const getTreeStyle = (item: TreeNode, props: TreePropTypes) => {
   // 处理Props回调函数，参数 [tree] 表示 levelLine 回调参数第二个，此次渲染请求为Tree外层样式
-  const levelLine: any = getPropsOneOfBoolValueWithDefault(props, 'levelLine', item, DEFAULT_LEVLE_LINE, null, [
-    'tree',
-  ]);
+  const levelLine = getPropsOneOfBoolValueWithDefault(props, 'levelLine', item, DEFAULT_LEVLE_LINE, null, ['tree']);
   return {
     '--level-line': levelLine,
     '--lineHeight': `${props.lineHeight}px`,
@@ -122,7 +120,7 @@ export const getTreeStyle = (item: any, props: TreePropTypes) => {
  * @param props
  * @returns
  */
-export const getNodeItemStyle: any = (item: any, props: TreePropTypes, flatData: IFlatData, showTree = true) => {
+export const getNodeItemStyle = (item: TreeNode, props: TreePropTypes, flatData: IFlatData, showTree = true) => {
   const { schema } = flatData;
   const depth = schema.get(item)?.[NODE_ATTRIBUTES.DEPTH];
   if (showTree) {
@@ -146,7 +144,12 @@ export const getNodeItemStyle: any = (item: any, props: TreePropTypes, flatData:
  * @param item
  * @returns
  */
-export const getNodeItemClass = (item: any, schema: WeakMap<Object, any>, props: TreePropTypes, showTree = true) => {
+export const getNodeItemClass = (
+  item: TreeNode,
+  schema: WeakMap<TreeNode, Record<string, unknown>>,
+  props: TreePropTypes,
+  showTree = true,
+) => {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   const { __is_root, __is_open } = schema.get(item) || {};
   const { resolveClassName } = usePrefix();
@@ -164,7 +167,7 @@ export const getNodeItemClass = (item: any, schema: WeakMap<Object, any>, props:
  * @param item
  * @returns
  */
-export const getNodeRowClass = (item: any, schema: WeakMap<Object, any>) => {
+export const getNodeRowClass = (item: TreeNode, schema: WeakMap<TreeNode, Record<string, unknown>>) => {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   const { __is_checked, __is_selected } = schema.get(item) || {};
   const { resolveClassName } = usePrefix();
@@ -185,7 +188,13 @@ export const getNodeRowClass = (item: any, schema: WeakMap<Object, any>) => {
  * @param nodekey 节点key
  * @param nodeValue 节点值
  */
-export const updateTreeNode = (path: string, treeData: any[], childKey: string, nodekey: string, nodeValue: any) => {
+export const updateTreeNode = (
+  path: string,
+  treeData: TreeNode[],
+  childKey: string,
+  nodekey: string,
+  nodeValue: Record<string, unknown>[],
+) => {
   assignTreeNode(path, treeData, childKey, { [nodekey]: nodeValue });
 };
 
@@ -196,9 +205,14 @@ export const updateTreeNode = (path: string, treeData: any[], childKey: string, 
  * @param childKey Child Key
  * @param assignVal value
  */
-export const assignTreeNode = (path: string, treeData: any[], childKey: string, assignVal: any) => {
+export const assignTreeNode = (
+  path: string,
+  treeData: TreeNode[],
+  childKey: string,
+  assignVal: Record<string, unknown>,
+) => {
   const paths = path.split('-');
-  const targetNode = paths.reduce((pre: any, nodeIndex: string) => {
+  const targetNode = paths.reduce((pre: TreeNode | TreeNode[], nodeIndex: string) => {
     const index = Number(nodeIndex);
     return Array.isArray(pre) ? pre[index] : pre[childKey][index];
   }, treeData);
@@ -206,9 +220,10 @@ export const assignTreeNode = (path: string, treeData: any[], childKey: string, 
   Object.assign(targetNode, assignVal || {});
 };
 
-export const resolveNodeItem = (node: any) => {
+export const resolveNodeItem = (node: TreeNode) => {
   if (node === undefined || node === null) {
-    return { __IS_NULL: true };
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    return { __IS_NULL: true } as TreeNode;
   }
 
   return node;
@@ -226,7 +241,7 @@ export const resolvePropIsMatched = (node, prop, id) => {
   return node === prop;
 };
 
-export const showCheckbox = (props: TreePropTypes, node?: any) => {
+export const showCheckbox = (props: TreePropTypes, node?: TreeNode) => {
   if (typeof props.showCheckbox === 'function') {
     return props.showCheckbox(node);
   }

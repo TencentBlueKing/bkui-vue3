@@ -1,8 +1,8 @@
 <template>
   <h2>bk-table-column 模板模式：</h2>
-  <bk-table :data="projectTable" :height="500" :pagination="pagination">
+  <bk-table :data="projectTable" :height="500" :pagination="pagination" :append-last-row="appendLastRow">
     <bk-table-column type="index" label='序号' width="80"></bk-table-column>
-    <bk-table-column label="用户组" prop="groupName">
+    <bk-table-column :label="() => h('span', { style: { color: 'red' } }, ['用户组'])" prop="groupName">
       <bk-table-column label="用户描述" prop="groupDesc" />
       <bk-table-column label="有效期" prop="validityPeriod" />
     </bk-table-column>
@@ -10,12 +10,13 @@
     <bk-table-column label="加入时间" prop="joinedTime" />
   </bk-table>
   <h2>props.columns 绑定模式：</h2>
-  <bk-table :data="projectTable" :columns="columns" :height="500" :pagination="pagination">
+  <bk-table :append-last-row="appendLastRow" :data="projectTable" :columns="columns" :height="500"
+    :pagination="pagination">
   </bk-table>
 </template>
 
-<script setup>
-import { ref, reactive } from 'vue';
+<script lang="jsx" setup>
+import { ref, reactive, h } from 'vue';
 const pagination = ref({ count: 11, limit: 10, current: 1 });
 const columns = reactive([
   {
@@ -50,11 +51,22 @@ const columns = reactive([
   },
 ]);
 
+const appendLastRow = {
+  type: 'summary',
+  cellRender: (column, index) => {
+    if (index === 0) {
+      return <span style="font-weight: 700; color: red;">统计</span>
+    }
+
+    return index + 10;
+  }
+}
+
 const projectTable = ref([
   {
     groupId: 1,
     groupName: '11',
-    groupDesc: 'kjkjkjk',
+    groupDesc: '用户描述1',
     validityPeriod: '0505',
     joinedTime: '08-18',
     operateSource: '加入组',
@@ -64,7 +76,7 @@ const projectTable = ref([
   {
     groupId: 2,
     groupName: '22',
-    groupDesc: 'kjkjkjk',
+    groupDesc: '用户描述2',
     validityPeriod: '0505',
     joinedTime: '08-18',
     operateSource: '加入组',
@@ -74,7 +86,7 @@ const projectTable = ref([
   {
     groupId: 3,
     groupName: '33',
-    groupDesc: 'kjkjkjk',
+    groupDesc: '用户描述3',
     validityPeriod: '0505',
     joinedTime: '08-18',
     operateSource: '加入组',
@@ -84,7 +96,7 @@ const projectTable = ref([
   {
     groupId: 4,
     groupName: '44',
-    groupDesc: 'kjkjkjk',
+    groupDesc: '用户描述4',
     validityPeriod: '0505',
     joinedTime: '08-18',
     operateSource: '加入组',
@@ -94,7 +106,7 @@ const projectTable = ref([
   {
     groupId: 5,
     groupName: '55',
-    groupDesc: 'kjkjkjk',
+    groupDesc: '用户描述5',
     validityPeriod: '0505',
     joinedTime: '08-18',
     operateSource: '加入组',
@@ -104,7 +116,7 @@ const projectTable = ref([
   {
     groupId: 6,
     groupName: '66',
-    groupDesc: 'kjkjkjk',
+    groupDesc: '用户描述6',
     validityPeriod: '0505',
     joinedTime: '08-18',
     operateSource: '加入组',
@@ -114,7 +126,7 @@ const projectTable = ref([
   {
     groupId: 7,
     groupName: '77',
-    groupDesc: 'kjkjkjk',
+    groupDesc: '用户描述7',
     validityPeriod: '0505',
     joinedTime: '08-18',
     operateSource: '加入组',
@@ -124,7 +136,7 @@ const projectTable = ref([
   {
     groupId: 8,
     groupName: '88',
-    groupDesc: 'kjkjkjk',
+    groupDesc: '用户描述8',
     validityPeriod: '0505',
     joinedTime: '08-18',
     operateSource: '加入组',
@@ -134,7 +146,7 @@ const projectTable = ref([
   {
     groupId: 9,
     groupName: '99',
-    groupDesc: 'kjkjkjk',
+    groupDesc: '用户描述9',
     validityPeriod: '0505',
     joinedTime: '08-18',
     operateSource: '加入组',
@@ -144,7 +156,7 @@ const projectTable = ref([
   {
     groupId: 10,
     groupName: '1010',
-    groupDesc: 'kjkjkjk',
+    groupDesc: '用户描述10',
     validityPeriod: '0505',
     joinedTime: '08-18',
     operateSource: '加入组',
@@ -154,7 +166,7 @@ const projectTable = ref([
   {
     groupId: 11,
     groupName: '1111',
-    groupDesc: 'kjkjkjk',
+    groupDesc: '用户描述11',
     validityPeriod: '0505',
     joinedTime: '08-18',
     operateSource: '加入组',

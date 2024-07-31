@@ -141,14 +141,45 @@ export default ({ props, ctx, columns, rows, pagination, settings }: RenderType)
   };
 
   /** **************************************** Rows Render ******************************* **/
-
   const renderAppendLastRow = () => {
-    if (ctx.slots.appendLastRow) {
-      const rowId = 'append-last-row';
+    const rowId = 'append-last-row';
+    const rowStyle = [
+      ...formatPropAsArray(props.rowStyle, []),
+      {
+        '--row-height': `${getRowHeight(null, null)}px`,
+      },
+    ];
+    if (props.appendLastRow.type === 'default') {
+      if (ctx.slots.appendLastRow) {
+        return (
+          <TableRow key={rowId}>
+            <tr
+              key={rowId}
+              style={rowStyle}
+            >
+              <td colspan={columns.visibleColumns.length}>
+                {props.appendLastRow.cellRender?.(null, null) ?? ctx.slots.appendLastRow()}
+              </td>
+            </tr>
+          </TableRow>
+        );
+      }
+
+      return;
+    }
+
+    if (props.appendLastRow.type === 'summary') {
       return (
         <TableRow key={rowId}>
-          <tr key={rowId}>
-            <td colspan={columns.visibleColumns.length}>{ctx.slots.appendLastRow()}</td>
+          <tr
+            key={rowId}
+            style={rowStyle}
+          >
+            {columns.visibleColumns.map((column, index) => (
+              <td>
+                <TableCell>{props.appendLastRow.cellRender?.(column, index) ?? column.field ?? column.prop}</TableCell>
+              </td>
+            ))}
           </tr>
         </TableRow>
       );

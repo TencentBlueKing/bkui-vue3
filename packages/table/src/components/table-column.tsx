@@ -69,7 +69,7 @@ export type ITableColumn = Partial<ExtractPropTypes<typeof TableColumnProp>>;
 export default defineComponent({
   name: 'TableColumn',
   props: TableColumnProp,
-  setup(props: ITableColumn, { slots }) {
+  setup(props: ITableColumn, {}) {
     const initTableColumns = inject(PROVIDE_KEY_INIT_COL, () => {});
     const lastPropsVal = {};
 
@@ -88,6 +88,6 @@ export default defineComponent({
       initTableColumns();
     });
 
-    return () => slots.default?.({ row: {} });
+    return () => {};
   },
 });

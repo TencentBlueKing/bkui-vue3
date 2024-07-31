@@ -24,6 +24,7 @@
  * IN THE SOFTWARE.
  */
 import { NODE_ATTRIBUTES, NODE_SOURCE_ATTRS } from './constant';
+import { TreeNode } from './props';
 import useNodeAttribute from './use-node-attribute';
 import { updateTreeNode } from './util';
 export default (props, flatData) => {
@@ -37,7 +38,7 @@ export default (props, flatData) => {
    * @param resp 异步请求返回结果
    * @param item 当前节点
    */
-  const setNodeRemoteLoad = (resp: any, item: any) => {
+  const setNodeRemoteLoad = (resp: Record<string, unknown>, item: TreeNode) => {
     if (typeof resp === 'object' && resp !== null) {
       setNodeAttr(item, NODE_ATTRIBUTES.IS_OPEN, true);
       const nodeValue = Array.isArray(resp) ? resp : [resp];
@@ -48,7 +49,7 @@ export default (props, flatData) => {
     return Promise.resolve(resp);
   };
 
-  const asyncNodeClick = (item: any) => {
+  const asyncNodeClick = (item: TreeNode) => {
     const { callback = null, cache = true } = props.async || {};
     /** 如果是异步请求加载 */
     if (typeof callback === 'function' && getNodeAttr(item, NODE_ATTRIBUTES.IS_ASYNC)) {
@@ -58,14 +59,18 @@ export default (props, flatData) => {
         setNodeAttr(item, NODE_ATTRIBUTES.IS_CACHED, cache);
 
         const dataAttr = resolveScopedSlotParam(item);
-        const callbackResult = callback(item, (resp: any) => setNodeRemoteLoad(resp, item), dataAttr);
+        const callbackResult = callback(
+          item,
+          (resp: Record<string, unknown>) => setNodeRemoteLoad(resp, item),
+          dataAttr,
+        );
         if (typeof callbackResult === 'object' && callbackResult !== null) {
           setTreeNodeLoading(item, true);
           if (callbackResult instanceof Promise) {
             return Promise.resolve(
               callbackResult
-                .then((resp: any) => setNodeRemoteLoad(resp, item))
-                .catch((err: any) => console.error('load remote data error:', err))
+                .then((resp: Record<string, unknown>) => setNodeRemoteLoad(resp, item))
+                .catch((err: Record<string, unknown>) => console.error('load remote data error:', err))
                 .finally(() => {
                   setTreeNodeLoading(item, false);
                   setNodeAttr(item, NODE_ATTRIBUTES.IS_CACHED, true);
@@ -87,7 +92,7 @@ export default (props, flatData) => {
   const deepAutoOpen = () => {
     /** 过滤节点为异步加载 & 默认为展开 & 没有初始化过的节点 */
     const autoOpenNodes = flatData.data.filter(
-      (item: any) =>
+      (item: TreeNode) =>
         getNodeAttr(item, NODE_ATTRIBUTES.IS_ASYNC) &&
         item[NODE_SOURCE_ATTRS[NODE_ATTRIBUTES.IS_OPEN]] &&
         !getNodeAttr(item, NODE_ATTRIBUTES.IS_ASYNC_INIT),

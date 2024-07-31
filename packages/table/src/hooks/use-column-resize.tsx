@@ -25,7 +25,7 @@
  */
 import { ref, watch } from 'vue';
 
-import { debounce } from 'lodash';
+import { debounce, throttle } from 'lodash';
 
 import { COLUMN_ATTRIBUTE } from '../const';
 import { Column } from '../props';
@@ -86,6 +86,10 @@ export default (columns: UseColumns, { afterResize }) => {
     dragColumn = null;
   };
 
+  const throttleUpdateDragOffsetX = throttle((diff: number) => {
+    dragOffsetX.value = dragOffsetX.value + diff;
+  });
+
   const handleMouseDragMove = (e: MouseEvent) => {
     stopDefaultEvent(e);
     document.body.style.setProperty('user-select', 'none');
@@ -97,7 +101,7 @@ export default (columns: UseColumns, { afterResize }) => {
     const minWidth = getColumnOrderWidth(dragColumn, [COLUMN_ATTRIBUTE.COL_MIN_WIDTH]);
 
     if (minWidth < resolveWidth) {
-      dragOffsetX.value = dragOffsetX.value + diff;
+      throttleUpdateDragOffsetX(diff);
     }
   };
 

@@ -480,7 +480,7 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
   const handleNodeContentClick = (item: TreeNode, e: MouseEvent) => {
     const nodeActions = resolveNodeAction(item);
     if (nodeActions.includes('selected')) {
-      setSelect(item, true, false);
+      setSelect(item, true, true, true);
     }
 
     if (nodeActions.includes('expand')) {

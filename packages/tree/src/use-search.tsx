@@ -32,13 +32,13 @@ export default (props: TreePropTypes) => {
   const refSearch = toRef(props, 'search');
   const { resultType = 'tree', showChildNodes = true } = (props.search ?? {}) as SearchOption;
 
-  const isCommonType = (val: any) => ['string', 'number', 'boolean'].includes(typeof val);
-  const exactMath = (matchValue: any, itemValue: any) => matchValue === itemValue;
-  const regMatch = (matchValue: any, itemValue: any) => new RegExp(`${matchValue}`, 'i').test(`${itemValue}`);
-  const matchFn = (match: Function, args: any[]) => Reflect.apply(match, this, args);
+  const isCommonType = (val: unknown) => ['string', 'number', 'boolean'].includes(typeof val);
+  const exactMath = (matchValue: unknown, itemValue: unknown) => matchValue === itemValue;
+  const regMatch = (matchValue: unknown, itemValue: unknown) => new RegExp(`${matchValue}`, 'i').test(`${itemValue}`);
+  const matchFn = (match: (...args) => boolean, args: unknown[]) => Reflect.apply(match, this, args);
   const isSearchDisabled = refSearch.value === undefined || refSearch.value === false;
 
-  const searchFn = (itemValue: number | string, item: any) => {
+  const searchFn = (itemValue: unknown, item: unknown) => {
     if (isSearchDisabled) {
       return true;
     }

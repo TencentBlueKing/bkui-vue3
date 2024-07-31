@@ -95,7 +95,7 @@ export default (props: TablePropTypes, ctx) => {
   };
 
   const setRootStyleVars = throttle(() => {
-    refRoot.value?.style?.setProperty('--drag-offset-x', `${dragOffsetX.value}px`);
+    refRoot.value?.style?.setProperty('--drag-offset-x', `${dragOffsetX.value + translateX.value}px`);
     refRoot.value?.style?.setProperty('--drag-offset-h-x', `${dragOffsetX.value - 2}px`);
     refRoot.value?.style?.setProperty('--translate-y', `${translateY.value}px`);
     refRoot.value?.style?.setProperty('--translate-x', `${translateX.value}px`);
