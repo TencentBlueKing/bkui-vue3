@@ -31,6 +31,8 @@ import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import { IPropsTableItem } from '../../typings';
 import BaseDemo from './base-demo.vue';
+import ImportDemo from './import-demo.vue';
+
 const menuProps: IPropsTableItem[] = [
   {
     name: 'width',
@@ -71,6 +73,15 @@ export default defineComponent({
           title='Icon展示'
         >
           <BaseDemo />
+        </DemoBox>
+        <DemoBox
+          componentName='icon'
+          demoName='import-demo'
+          desc='使用单个icon'
+          subtitle='如何导入单个icon使用'
+          title='ICON使用'
+        >
+          <ImportDemo />
         </DemoBox>
         <PropsBox propsData={menuProps} />
       </div>

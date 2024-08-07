@@ -24,7 +24,17 @@
  * IN THE SOFTWARE.
  */
 
-import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, ref, toRefs, withModifiers } from 'vue';
+import {
+  computed,
+  defineComponent,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  toRefs,
+  watch,
+  withModifiers,
+} from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import { AngleLeft, AngleRight } from '@bkui-vue/icon';
@@ -42,16 +52,29 @@ export default defineComponent({
     immediate: PropTypes.bool,
     disabled: PropTypes.bool,
     collapsible: PropTypes.bool,
+    isCollapsed: PropTypes.bool.def(false), // 初始化折叠状态
     autoMinimize: PropTypes.oneOfType([Boolean, Number]).def(false),
     border: PropTypes.bool.def(true),
   },
   emits: ['before-resize', 'resizing', 'after-resize', 'collapse-change'],
   setup(props, { emit }) {
-    const { placement, initialDivide, triggerOffset, triggerWidth, max, min, immediate, autoMinimize } = toRefs(props);
-    const collapsed = ref(false);
+    const {
+      placement,
+      initialDivide,
+      triggerOffset,
+      triggerWidth,
+      max,
+      min,
+      immediate,
+      autoMinimize,
+      collapsible,
+      isCollapsed,
+    } = toRefs(props);
+    const collapsed = ref(isCollapsed.value);
     const asideContentVisible = ref(true);
     const minimized = ref(false);
     const limitMax = ref(null);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const state = ref<any>({});
     const bkResizeLayoutRef = ref<HTMLElement>(null);
     const resizeProxyRef = ref<HTMLElement>(null);
@@ -60,13 +83,22 @@ export default defineComponent({
 
     const vertical = computed(() => ['left', 'right'].includes(placement.value));
     const cssPropKey = computed(() => (vertical.value ? 'width' : 'height'));
-    const asideStyle = computed(() => {
+    // 转换类型
+    const parseInitialDivide = computed(() => {
       let divide = initialDivide.value;
       if (typeof divide === 'number') {
         divide = divide <= min.value ? `${min.value}px` : `${divide}px`;
       }
+      return divide;
+    });
+    const asideStyle = computed(() => {
+      if (collapsible.value && isCollapsed.value) {
+        return {
+          [cssPropKey.value]: '0px',
+        };
+      }
       return {
-        [cssPropKey.value]: divide,
+        [cssPropKey.value]: parseInitialDivide.value,
       };
     });
     const triggerStyle = computed(() => {
@@ -218,7 +250,8 @@ export default defineComponent({
         asideRef.value.style[cssPropKey.value] = props.collapsible ? '0px' : '5px';
       } else {
         asideContentVisible.value = true;
-        asideRef.value.style[cssPropKey.value] = asideRef.value.getAttribute(`data-${cssPropKey.value}`);
+        asideRef.value.style[cssPropKey.value] =
+          asideRef.value.getAttribute(`data-${cssPropKey.value}`) || parseInitialDivide.value;
       }
     };
 
@@ -231,6 +264,12 @@ export default defineComponent({
       asideRef.value.addEventListener('transitionend', removeClass);
       asideRef.value.style.transition = `${cssPropKey.value} cubic-bezier(0.4, 0, 0.2, 1) .3s`;
     };
+
+    // 监听折叠状态变化
+    watch(isCollapsed, () => {
+      collapsed.value = isCollapsed.value;
+      setCollapse(collapsed.value);
+    });
 
     onMounted(() => {
       observer.observe(bkResizeLayoutRef.value);
