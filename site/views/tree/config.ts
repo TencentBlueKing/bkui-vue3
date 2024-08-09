@@ -47,6 +47,13 @@ export default [
       { name: 'indent', type: 'Number', default: '16', desc: '相邻级节点间的水平缩进，单位为像素', optional: [] },
       { name: 'line-height', type: 'Number', default: '32', desc: '设置行高', optional: [] },
       {
+        name: 'height',
+        type: 'Number',
+        default: '-',
+        desc: '设置树形组件高度；在设置 virtualRender=true时，请指定高度，避免组件自动计算高度导致多次渲染',
+        optional: [],
+      },
+      {
         name: 'level-line',
         type: 'Boolean|String|Function',
         default: 'false',

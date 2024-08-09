@@ -76,9 +76,11 @@ export default defineComponent({
     const filterFn = (item: TreeNode) => {
       if (isSearchActive.value) {
         if (showChildNodes) {
+          const itemPath = getNodePath(item) ?? '';
+          const asParentPath = `${itemPath}-`;
           return (
             checkNodeIsOpen(item) &&
-            (isNodeMatched(item) || matchedNodePath.some(path => (getNodePath(item) ?? '').indexOf(path) === 0))
+            (isNodeMatched(item) || matchedNodePath.some(path => asParentPath.indexOf(`${path}-`) === 0))
           );
         }
 
