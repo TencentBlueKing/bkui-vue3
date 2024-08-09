@@ -398,7 +398,7 @@ export const resolveColumnSpan = (
   row: Record<string, unknown>,
   rowIndex: number,
   key: string,
-) => {
+): number => {
   if (typeof column[key] === 'function') {
     return Reflect.apply(column[key], this, [{ column, colIndex, row, rowIndex }]);
   }
@@ -448,8 +448,9 @@ export const getSortFn = (column, sortType, format = []) => {
 
   return sortType === SORT_OPTION.NULL
     ? (_a, _b) => true
-    : (a: Record<string, unknown>, b: Record<string, unknown>, index0: number, index1: number) =>
-        sortFn(a, b, index0, index1) * (sortType === SORT_OPTION.DESC ? -1 : 1);
+    : (a: Record<string, unknown>, b: Record<string, unknown>, index0: number, index1: number) => {
+        return sortFn(a, b, index0, index1) * (sortType === SORT_OPTION.DESC ? -1 : 1);
+      };
 };
 
 export const getNextSortType = (sortType: string) => {

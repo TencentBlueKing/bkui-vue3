@@ -511,7 +511,7 @@ export const tableProps = {
   /**
    * 单元格数据为空展示
    */
-  emptyCellText: PropTypes.oneOfType([PropTypes.string, PropTypes.func.def(() => '')]).def(''),
+  emptyCellText: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).def(''),
 
   /**
    * 判定单元格是否为空

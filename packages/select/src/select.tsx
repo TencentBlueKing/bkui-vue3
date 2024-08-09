@@ -1005,6 +1005,7 @@ export default defineComponent({
         >
           {{
             default: ({ data }) => {
+              // 兼容以前slots
               const optionRender = this.$slots?.optionRender || this.$slots?.virtualScrollRender;
               return data.map(item => (
                 <Option
@@ -1018,14 +1019,18 @@ export default defineComponent({
           }}
         </VirtualRender>
       ) : (
-        this.filterList.map(item => (
-          <Option
-            id={item[this.idKey]}
-            key={item[this.idKey]}
-            v-slots={this.$slots?.optionRender ? { default: () => this.$slots?.optionRender?.({ item }) } : null}
-            name={item[this.displayKey]}
-          />
-        ))
+        this.filterList.map(item => {
+          // 兼容以前slots
+          const optionRender = this.$slots?.optionRender || this.$slots?.virtualScrollRender;
+          return (
+            <Option
+              id={item[this.idKey]}
+              key={item[this.idKey]}
+              v-slots={typeof optionRender === 'function' ? { default: () => optionRender({ item }) } : null}
+              name={item[this.displayKey]}
+            />
+          );
+        })
       );
     };
     // 渲染内容

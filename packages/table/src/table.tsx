@@ -67,6 +67,8 @@ export default defineComponent({
       refRoot,
     } = useLayout(props, ctx);
 
+    const scrollTo = (...args) => refBody.value?.scrollTo(...args);
+
     /**
      * 设置字段结束，展示字段改变，设置表格偏移量为0
      * 避免太长横向滚动导致数据不可见
@@ -74,7 +76,7 @@ export default defineComponent({
      */
     const afterSetting = fields => {
       if (fields?.length > 0) {
-        refBody.value?.scrollTo(0, 0);
+        scrollTo(0, 0);
       }
     };
 
@@ -190,7 +192,7 @@ export default defineComponent({
         setOffsetRight();
 
         if (resetScroll) {
-          refBody.value?.scrollTo(0, 0);
+          scrollTo(0, 0);
         }
       });
     }, 64);
@@ -215,7 +217,7 @@ export default defineComponent({
         }
         computedColumnRect();
         setOffsetRight();
-        refBody.value?.scrollTo(0, 0);
+        scrollTo(0, 0);
         return;
       }
 

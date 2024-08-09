@@ -18,6 +18,8 @@
 <script lang="jsx" setup>
 import { ref, reactive, h } from 'vue';
 const pagination = ref({ count: 11, limit: 10, current: 1 });
+const getColLabel = () => h('span', { class: 'col-label', style: { color: 'red', fontWeight: '800' } }, '用户组');
+
 const columns = reactive([
   {
     label: '序号',

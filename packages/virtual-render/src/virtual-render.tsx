@@ -103,6 +103,8 @@ export default defineComponent({
     /** 实际高度，根据行高和总行数计算出来的实际高度 */
     const innerHeight = ref(0);
 
+    const contentHeight = ref(0);
+
     const virtualRoot: Ref<VirtualElement> = ref(null);
 
     const { init, scrollTo, updateScrollHeight } = useScrollbar(props);
@@ -122,6 +124,34 @@ export default defineComponent({
 
     const calcList = ref([]);
 
+    const getLastPageIndex = () => {
+      // @ts-ignore
+      const elHeight = virtualRoot.value.offsetHeight;
+      let startIndex = listLength.value;
+      let rowsHeight = 0;
+      let lastHeight = 0;
+      let diffHeight = 0;
+      for (; startIndex > 0; startIndex--) {
+        lastHeight = props.lineHeight({
+          index: startIndex,
+          items: [startIndex, startIndex * props.groupItemCount],
+          type: 'virtual',
+        });
+
+        rowsHeight = rowsHeight + lastHeight;
+
+        if (rowsHeight > elHeight) {
+          diffHeight = rowsHeight - elHeight;
+          break;
+        }
+      }
+
+      return {
+        diffHeight,
+        startIndex,
+      };
+    };
+
     /** 指令触发Scroll事件，计算当前startIndex & endIndex & scrollTop & translateY */
     const handleScrollCallback = (event, startIndex, endIndex, scrollTop, translateY, scrollLeft, pos) => {
       const translateX = scrollLeft;
@@ -131,14 +161,19 @@ export default defineComponent({
       const total = localList.value.length;
       if (total < end) {
         end = total;
-        start = end - Math.floor(refRoot.value.offsetHeight / props.lineHeight);
-        start = start < 0 ? 0 : start;
+
+        if (typeof props.lineHeight === 'function') {
+          start = getLastPageIndex().startIndex;
+        } else {
+          start = end - Math.floor(refRoot.value.offsetHeight / props.lineHeight);
+          start = start < 0 ? 0 : start;
+        }
       }
 
-      if (end > total) {
-        end = total;
-        start = end - Math.floor(refRoot.value.offsetHeight / props.lineHeight);
-      }
+      // if (end > total) {
+      //   end = total;
+      //   start = end - Math.floor(refRoot.value.offsetHeight / props.lineHeight);
+      // }
 
       const value = localList.value.slice(start, end);
       calcList.value = value;
@@ -187,7 +222,13 @@ export default defineComponent({
           innerHeight.value = 0;
           let fnValue = 0;
           for (let i = 0; i < listLength.value; i++) {
-            const fnVal = props.lineHeight.call(this, i, list.slice(i * props.groupItemCount, props.groupItemCount));
+            const fnVal = props.lineHeight.apply(this, [
+              {
+                index: i,
+                type: 'virtual',
+                items: [i * props.groupItemCount, props.groupItemCount],
+              },
+            ]);
             fnValue += typeof fnVal === 'number' ? fnVal : 0;
           }
           innerHeight.value = fnValue;
@@ -197,6 +238,8 @@ export default defineComponent({
       } else {
         innerHeight.value = props.abosuteHeight as number;
       }
+
+      setContentHeight();
     };
 
     /** 列表数据重置之后的处理事项 */
@@ -231,9 +274,9 @@ export default defineComponent({
       };
     });
 
-    const contentHeight = computed(() => {
-      return innerHeight.value < props.minHeight ? props.minHeight : innerHeight.value;
-    });
+    const setContentHeight = () => {
+      contentHeight.value = innerHeight.value < props.minHeight ? props.minHeight : innerHeight.value;
+    };
 
     const { resolveClassName } = usePrefix();
 
@@ -258,7 +301,7 @@ export default defineComponent({
     const { fixToTop } = useFixTop(props, scrollTo);
 
     watch(
-      () => [contentHeight.value, props.list],
+      () => [props.list],
       () => {
         instance?.setBinding(binding);
         handleChangeListConfig();

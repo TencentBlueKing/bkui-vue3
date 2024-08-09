@@ -46,6 +46,21 @@ yarn lint
 * 执行命令 `yarn generate:icon`
 * 在组件中使用类似语法 `import { HelpFill } from '@bkui-vue/icon/';` 引用即可
 
+## 容器化
+
+想要快速的通过容器化方式启动,可以参照以下步骤，快速在容器化服务器上进行部署启动。
+
+```
+# 本地镜像打制
+docker build -t bkui-vue3 .
+
+# 容器化运行
+docker run -p 8086:8086 bkui-vue3
+
+# 开发调试
+docker run -it -p 8086:8086 -v $(pwd):/app bkui-vue3
+```
+
 ## 如何开始
 
 想要贡献代码，建议请先参照已有的特性文档和开发环境构建文档。可以运行 `yarn cc` 输入组件名生成新组件模板

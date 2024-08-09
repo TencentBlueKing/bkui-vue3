@@ -222,6 +222,85 @@ const useSettings = (props: TablePropTypes, ctx: SetupContext, columns: UseColum
     { immediate: true, deep: true },
   );
 
+  const getRenderContent = () => {
+    return (
+      ctx.slots.settings?.() ?? (
+        <>
+          <div class='setting-head'>
+            <span class='head-title'>{t.value.setting.title}</span>
+            <CloseLine
+              class='icon-close-action'
+              onClick={handleCancelClick}
+            ></CloseLine>
+          </div>
+          <div class='setting-body'>
+            <div class='setting-body-title'>
+              <div>
+                <span class='field-setting-label'>{t.value.setting.fields.title}</span>
+                {isLimit.value ? <span class='limit'>{t.value.setting.fields.subtitle(options.limit)}</span> : ''}
+              </div>
+              {isLimit.value ? (
+                ''
+              ) : (
+                <span
+                  class='check-all'
+                  onClick={handleCheckAllClick}
+                >
+                  <Checkbox
+                    indeterminate={Boolean(indeterminate.value)}
+                    label={t.value.setting.fields.selectAll}
+                    modelValue={checkedFields.value.length > 0}
+                  >
+                    {t.value.setting.fields.selectAll}
+                  </Checkbox>
+                </span>
+              )}
+            </div>
+            <BkCheckboxGroup
+              class='setting-body-fields'
+              v-model={checkedFields.value}
+            >
+              {renderFields.value.map((item, index: number) => (
+                <div class='field-item'>
+                  <Checkbox
+                    checked={checkedFields.value.includes(resolvedColVal(item, index))}
+                    disabled={isItemReadonly(item, index)}
+                    label={resolvedColVal(item, index)}
+                  >
+                    {resolvePropVal(item, ['name', 'label'], [item, index])}
+                  </Checkbox>
+                </div>
+              ))}
+            </BkCheckboxGroup>
+            {ctx.slots.setting?.()}
+            {showLineHeight.value ? (
+              <div class='setting-body-line-height'>
+                {t.value.setting.lineHeight.title}：{renderSize()}
+              </div>
+            ) : (
+              ''
+            )}
+          </div>
+          <div class='setting-footer'>
+            <Button
+              style={buttonStyle}
+              theme='primary'
+              onClick={handleSaveClick}
+            >
+              {t.value.setting.options.ok}
+            </Button>
+            <Button
+              style={buttonStyle}
+              onClick={handleCancelClick}
+            >
+              {t.value.setting.options.cancel}
+            </Button>
+          </div>
+        </>
+      )
+    );
+  };
+
   const renderSettings = () => {
     if (!props.settings) {
       return null;
@@ -245,80 +324,7 @@ const useSettings = (props: TablePropTypes, ctx: SetupContext, columns: UseColum
               <CogShape style='color: #c4c6cc;'></CogShape>
             </span>
           ),
-          content: () => (
-            <div class='setting-content'>
-              <div class='setting-head'>
-                <span class='head-title'>{t.value.setting.title}</span>
-                <CloseLine
-                  class='icon-close-action'
-                  onClick={handleCancelClick}
-                ></CloseLine>
-              </div>
-              <div class='setting-body'>
-                <div class='setting-body-title'>
-                  <div>
-                    <span class='field-setting-label'>{t.value.setting.fields.title}</span>
-                    {isLimit.value ? <span class='limit'>{t.value.setting.fields.subtitle(options.limit)}</span> : ''}
-                  </div>
-                  {isLimit.value ? (
-                    ''
-                  ) : (
-                    <span
-                      class='check-all'
-                      onClick={handleCheckAllClick}
-                    >
-                      <Checkbox
-                        indeterminate={Boolean(indeterminate.value)}
-                        label={t.value.setting.fields.selectAll}
-                        modelValue={checkedFields.value.length > 0}
-                      >
-                        {t.value.setting.fields.selectAll}
-                      </Checkbox>
-                    </span>
-                  )}
-                </div>
-                <BkCheckboxGroup
-                  class='setting-body-fields'
-                  v-model={checkedFields.value}
-                >
-                  {renderFields.value.map((item, index: number) => (
-                    <div class='field-item'>
-                      <Checkbox
-                        checked={checkedFields.value.includes(resolvedColVal(item, index))}
-                        disabled={isItemReadonly(item, index)}
-                        label={resolvedColVal(item, index)}
-                      >
-                        {resolvePropVal(item, ['name', 'label'], [item, index])}
-                      </Checkbox>
-                    </div>
-                  ))}
-                </BkCheckboxGroup>
-                {ctx.slots.setting?.()}
-                {showLineHeight.value ? (
-                  <div class='setting-body-line-height'>
-                    {t.value.setting.lineHeight.title}：{renderSize()}
-                  </div>
-                ) : (
-                  ''
-                )}
-              </div>
-              <div class='setting-footer'>
-                <Button
-                  style={buttonStyle}
-                  theme='primary'
-                  onClick={handleSaveClick}
-                >
-                  {t.value.setting.options.ok}
-                </Button>
-                <Button
-                  style={buttonStyle}
-                  onClick={handleCancelClick}
-                >
-                  {t.value.setting.options.cancel}
-                </Button>
-              </div>
-            </div>
-          ),
+          content: () => <div class='setting-content'>{getRenderContent()}</div>,
         }}
       </Popover>
     );
