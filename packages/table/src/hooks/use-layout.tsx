@@ -284,7 +284,12 @@ export default (props: TablePropTypes, ctx) => {
     };
   });
 
-  const fixedWrapperClass = resolveClassName('table-fixed');
+  const fixedWrapperClass = computed(() => {
+    return {
+      [resolveClassName('table-fixed')]: true,
+      'has-virtual-scroll': props.virtualEnabled,
+    };
+  });
 
   const fixedBottomRow = resolveClassName('table-fixed-bottom');
 
@@ -337,7 +342,7 @@ export default (props: TablePropTypes, ctx) => {
           default: (scope: Record<string, object>) => childrend?.(scope?.data ?? []),
           afterSection: () => [
             <div class={resizeColumnClass}></div>,
-            <div class={fixedWrapperClass}>{fixedRows?.()}</div>,
+            <div class={fixedWrapperClass.value}>{fixedRows?.()}</div>,
           ],
         }}
       </VirtualRender>

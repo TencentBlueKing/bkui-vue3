@@ -146,7 +146,7 @@ export default ({ props, ctx, columns, rows, pagination, settings }: RenderType)
     const rowStyle = [
       ...formatPropAsArray(props.rowStyle, []),
       {
-        '--row-height': `${getRowHeight(null, null)}px`,
+        '--row-height': `${getRowHeight(null, null, 'append-last-row')}px`,
       },
     ];
     if (props.appendLastRow.type === 'default') {
@@ -207,9 +207,15 @@ export default ({ props, ctx, columns, rows, pagination, settings }: RenderType)
     );
   };
 
-  const getRowHeight = (row?: Record<string, object>, rowIndex?: number) => {
+  const getRowHeight = (row?: Record<string, object>, rowIndex?: number, type?: string) => {
     if (typeof props.rowHeight === 'function' || /^\d+/.test(`${props.rowHeight}`)) {
-      return resolvePropVal(props, 'rowHeight', ['tbody', row, rowIndex]);
+      return resolvePropVal(props, 'rowHeight', [
+        {
+          index: rowIndex,
+          type: type ?? 'tbody',
+          row,
+        },
+      ]);
     }
 
     const { size, height, enabled } = settings.options;

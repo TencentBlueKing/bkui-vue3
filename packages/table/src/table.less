@@ -103,6 +103,12 @@
       table-layout: fixed;
       align-self: flex-start;
 
+      &.@{bk-prefix}-table-col-resizing {
+        th {
+          cursor: col-resize !important;
+        }
+      }
+
       th,
       td {
         height: var(--row-height);
@@ -505,6 +511,10 @@
     left: 0;
     pointer-events: none;
     transform: translate(var(--translate-x), var(--translate-y));
+
+    &.has-virtual-scroll {
+      transform: translate(var(--translate-x), 0);
+    }
 
     .column_fixed_right {
       box-shadow: var(--shadow-right);

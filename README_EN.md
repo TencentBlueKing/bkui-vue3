@@ -46,6 +46,20 @@ yarn lint
 * Execute the command `yarn generate:icon`
 * Use similar syntax `import { HelpFill } from '@bkui-vue/icon/';` in the component to reference
 
+## Containerization
+
+To quickly start using containerization, you can refer to the following steps to quickly deploy and start on a containerized server.
+```
+# Build the local image
+docker build -t bkui-vue3 .
+
+# Run the container
+docker run -p 8086:8086 bkui-vue3
+
+# Development and debugging
+docker run -it -p 8086:8086 -v $(pwd):/app bkui-vue3
+```
+
 ## How to get started
 
 If you want to contribute code, it is recommended to refer to the existing feature documentation and development environment build documentation first. You can run `yarn cc` and enter the component name to generate a new component template

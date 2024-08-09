@@ -36,16 +36,21 @@ export function getMatchedIndex(
   maxCount: number,
   maxHeight: number,
   groupItemCount: number,
-  callback: (index: number, items: (number | string)[]) => 0,
+  callback: (agrs: { index: number; items: number[]; type: string }) => 0,
 ) {
   let startIndex = 0;
   let height = 0;
   let diffHeight = 0;
   let lastHeight = 0;
   for (; startIndex < maxCount; startIndex++) {
-    lastHeight = callback(startIndex, [startIndex * groupItemCount, (startIndex + 1) * groupItemCount, 'virtual']);
+    lastHeight = callback({
+      index: startIndex,
+      items: [startIndex * groupItemCount, (startIndex + 1) * groupItemCount],
+      type: 'virtual',
+    });
     if (height + lastHeight > maxHeight) {
       diffHeight = maxHeight - height;
+      startIndex = startIndex + Math.round(diffHeight / lastHeight);
       break;
     }
 

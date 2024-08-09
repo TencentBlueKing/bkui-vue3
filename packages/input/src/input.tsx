@@ -24,14 +24,14 @@
  * IN THE SOFTWARE.
  */
 
-import { computed, defineComponent, ExtractPropTypes, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { bkTooltips } from '@bkui-vue/directives';
 import { Close, DownSmall, Eye, Search, Unvisible } from '@bkui-vue/icon';
 import { classes, InputBehaviorType, PropTypes, useFormItem } from '@bkui-vue/shared';
-
+import { computed, defineComponent, ExtractPropTypes, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { calcTextareaHeight } from './util';
+
+
 
 export type InputAutoSize = { minRows?: number; maxRows?: number };
 
@@ -435,23 +435,26 @@ export default defineComponent({
       handleInput(e);
     }
 
+    function isNum (num): boolean {
+      return typeof num === 'number'
+    }
+
     function handleNumber(modelValue: number, step: number, INC = true) {
-      const numStep = Number(step);
+      const numStep = Number(step) || 1;
       const precision = Number.isInteger(props.precision) ? props.precision : 0;
       const val = Number(modelValue);
 
-      const factor = Number.isInteger(numStep) ? numStep : 1;
+      const factor = isNum(numStep) ? numStep : 1;
       if (Number.isNaN(val)) {
-        return Number.isInteger(props.min) ? props.min : 0;
+        return isNum(props.min) ? props.min : 0;
       }
       let newVal = val + (INC ? factor : -1 * factor);
-      if (Number.isInteger(props.max)) {
+      if (isNum(props.max)) {
         newVal = Math.min(newVal, props.max);
       }
-      if (Number.isInteger(props.min)) {
+      if (isNum(props.min)) {
         newVal = Math.max(newVal, props.min);
       }
-
       return +newVal.toFixed(precision);
     }
 

@@ -14,7 +14,7 @@ const appendColumns = new Array(20).fill('').map((item, index) => ({ label: `新
 
 const tableData = reactive(new Array(Math.ceil(Math.random() * 100) + 500).fill('').map((_, index) => ({
   ip: `${index}--192.168.0.x`,
-  source: `${index}_QQ`,
+  source: index,
   create_by: `user-admin-${index}`,
   status: '',
   create_time: `2018-05-25 15:02:24.${index}`,

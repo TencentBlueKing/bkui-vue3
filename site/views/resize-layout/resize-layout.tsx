@@ -112,6 +112,13 @@ const propsJson = [
     optional: ['false', 'true'],
   },
   {
+    name: 'isCollapsed',
+    type: 'boolean',
+    default: 'false',
+    desc: '折叠状态',
+    optional: ['false', 'true'],
+  },
+  {
     name: 'autoMinimize',
     type: 'boolean',
     default: 'false',
