@@ -1,6 +1,24 @@
 ## 更新日志
 
 
+### 2.0.1-beta.50
+
+* **[feat]**:
+    - bugfix: 修复column filter默认值回填问题
+
+
+### 2.0.1-beta.49
+
+* **[feat]**:
+    - bugfix(tooltips): 修复tooltips前缀未生效
+
+
+### 2.0.1-beta.48
+
+* **[feat]**:
+    - bugfix(tooltips): 修复tooltips前缀未生效
+
+
 ### 2.0.1-beta.45
 
 * **[feat]**:

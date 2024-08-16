@@ -24,14 +24,14 @@
  * IN THE SOFTWARE.
  */
 
+import { computed, defineComponent, ExtractPropTypes, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { bkTooltips } from '@bkui-vue/directives';
 import { Close, DownSmall, Eye, Search, Unvisible } from '@bkui-vue/icon';
 import { classes, InputBehaviorType, PropTypes, useFormItem } from '@bkui-vue/shared';
-import { computed, defineComponent, ExtractPropTypes, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+
 import { calcTextareaHeight } from './util';
-
-
 
 export type InputAutoSize = { minRows?: number; maxRows?: number };
 
@@ -435,16 +435,16 @@ export default defineComponent({
       handleInput(e);
     }
 
-    function isNum (num): boolean {
-      return typeof num === 'number'
+    function isNum(num): boolean {
+      return typeof num === 'number' && !Number.isNaN(num);
     }
 
     function handleNumber(modelValue: number, step: number, INC = true) {
-      const numStep = Number(step) || 1;
+      const numStep = Number(step);
+      const factor = isNum(numStep) ? numStep : 1;
       const precision = Number.isInteger(props.precision) ? props.precision : 0;
       const val = Number(modelValue);
 
-      const factor = isNum(numStep) ? numStep : 1;
       if (Number.isNaN(val)) {
         return isNum(props.min) ? props.min : 0;
       }

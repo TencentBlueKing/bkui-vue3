@@ -226,8 +226,8 @@ export type HeadRenderArgs = {
   cell?: Record<string, object>;
   data?: Record<string, object>[];
   row?: Record<string, object>;
-  column: Column;
-  index: number;
+  column?: Column;
+  index?: number;
   rows?: Record<string, object>[];
 };
 

@@ -170,7 +170,8 @@ function renderContent(opts): HTMLElement {
   const isLight = theme === 'light';
   const zIndex = bkZIndexManager.getPopperIndex();
   const content = document.createElement('div');
-  content.className = `${resolveClassName('popper')} ${isLight ? 'light' : 'dark'} ${extCls}`;
+  const prefix = document.documentElement.style.getPropertyValue('--bk-prefix') || 'bk';
+  content.className = `${resolveClassName('popper', prefix)} ${isLight ? 'light' : 'dark'} ${extCls}`;
   content.innerText = value;
   content.style.zIndex = String(zIndex);
   renderContext(value, content);
@@ -188,7 +189,8 @@ function renderContent(opts): HTMLElement {
  */
 function renderArrow(): HTMLElement {
   const arrow = document.createElement('div');
-  arrow.className = resolveClassName('popper-arrow');
+  const prefix = document.documentElement.style.getPropertyValue('--bk-prefix') || 'bk';
+  arrow.className = resolveClassName('popper-arrow', prefix);
   arrow.setAttribute('data-popper-arrow', '');
   return arrow;
 }

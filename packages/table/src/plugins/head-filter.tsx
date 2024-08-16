@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { computed, defineComponent, reactive, ref } from 'vue';
+import { computed, defineComponent, reactive, ref, watch } from 'vue';
 
 import Button from '@bkui-vue/button';
 import Checkbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
@@ -57,10 +57,22 @@ export default defineComponent({
     const filter = computed(() => props.column?.filter);
     const checked = computed(() => (filter.value as IFilterShape)?.checked ?? []);
     const searchValue = ref('');
+
     const state = reactive({
       isOpen: false,
       checked: checked.value,
     });
+
+    watch(
+      () => checked,
+      () => {
+        state.checked.length = 0;
+        state.checked = [];
+        state.checked.push(...checked.value);
+        // handleBtnSaveClick();
+      },
+      { deep: true },
+    );
 
     const headClass = computed(() =>
       classes({
