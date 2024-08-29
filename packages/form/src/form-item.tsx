@@ -32,6 +32,7 @@ import {
   provide,
   reactive,
   toRefs,
+  type CSSProperties,
 } from 'vue';
 
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
@@ -214,7 +215,7 @@ export default defineComponent({
       return false;
     });
 
-    const labelStyles = computed<any>(() => {
+    const labelStyles = computed(() => {
       const styles = {
         width: '',
         paddingRight: '',
@@ -288,19 +289,21 @@ export default defineComponent({
 
           return Promise.resolve().then(() => {
             const result = rule.validator(value);
-            const errorMessage = getRuleMessage(rule);
             // 异步验证（validator 返回一个 Promise）
-            if (typeof result !== 'boolean' && typeof result.then === 'function') {
+            if (typeof result !== 'boolean' && typeof result !== 'string' && typeof result.then === 'function') {
               return result
                 .then(data => {
                   // 异步验证结果为 false
                   if (data === false) {
-                    return Promise.reject(errorMessage);
+                    return Promise.reject(getRuleMessage(rule));
+                  }
+                  if (typeof data === 'string') {
+                    return Promise.reject(data);
                   }
                 })
                 .then(
                   () => doValidate(),
-                  () => {
+                  (errorMessage: string) => {
                     if (showError) {
                       state.isError = true;
                       state.errorMessage = errorMessage;
@@ -311,7 +314,8 @@ export default defineComponent({
                 );
             }
             // 同步验证失败
-            if (!result) {
+            if (result === false) {
+              const errorMessage = getRuleMessage(rule);
               if (showError) {
                 state.isError = true;
                 // 验证结果返回的是 String 表示验证失败，返回结果作为错误信息
@@ -421,7 +425,7 @@ export default defineComponent({
       <div class={itemClassees}>
         {this.isShowLabel && (
           <div
-            style={this.labelStyles}
+            style={this.labelStyles as CSSProperties}
             class={`${this.resolveClassName('form-label')}`}
           >
             {renderLabel()}
