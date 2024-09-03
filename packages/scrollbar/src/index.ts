@@ -419,8 +419,14 @@ export default class BkScrollbar {
   }
 
   scrollTo({ x, y }) {
-    this.element.scrollTop = y;
-    (this.element as HTMLElement).scrollLeft = x;
+    if (y !== undefined && typeof y === 'number') {
+      this.element.scrollTop = y;
+    }
+
+    if (x !== undefined && typeof x === 'number') {
+      (this.element as HTMLElement).scrollLeft = x;
+    }
+
     updateGeometry(this);
   }
 

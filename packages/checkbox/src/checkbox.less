@@ -20,6 +20,18 @@
   }
 
   &.is-checked {
+    &.is-outline {
+      .@{bk-prefix}-checkbox-input {
+        background: #fff;
+
+        &::after {
+          border: 2px solid @primary-color;
+          border-top: 0;
+          border-left: 0;
+        }
+      }
+    }
+
     .@{bk-prefix}-checkbox-input {
       background: @primary-color;
       border-color: @primary-color;

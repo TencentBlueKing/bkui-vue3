@@ -39,6 +39,7 @@ export default () => {
   const inputRef = ref<HTMLInputElement>(null);
   const isFocused = ref<boolean>(false);
   const localCurrent = ref<number>(1);
+  const isPopoverShow = ref<boolean>(false);
 
   const isPagePreDisabled = computed<boolean>(() => localCurrent.value === 1);
   const isPageNextDisabled = computed<boolean>(() => localCurrent.value === proxy.totalPageNum);
@@ -126,6 +127,7 @@ export default () => {
    */
   const handlePageEditorBlur = () => {
     isFocused.value = false;
+    isPopoverShow.value = false;
     if (inputMemo !== localCurrent.value) {
       localCurrent.value = inputMemo;
     }
@@ -161,6 +163,13 @@ export default () => {
     inputMemo = item;
     handlePageEditorBlur();
   };
+  /**
+   * @desc 点击关闭popover事件
+   *  @param { boolean } isShow
+   */
+  const handlePopShow = (isShow: boolean) => {
+    isPopoverShow.value = isShow;
+  };
 
   const { resolveClassName } = usePrefix();
 
@@ -180,9 +189,12 @@ export default () => {
         arrow={false}
         boundary='body'
         disabled={proxy.disabled}
+        isShow={isPopoverShow.value}
         placement='bottom'
         theme='light'
         trigger='click'
+        onAfterHidden={() => handlePopShow(false)}
+        onAfterShow={() => handlePopShow(true)}
       >
         {{
           default: () => (
@@ -196,6 +208,7 @@ export default () => {
                 ref={inputRef}
                 class={`${resolveClassName('pagination-editor')}`}
                 contenteditable={!proxy.disabled}
+                innerHTML={String(localCurrent.value)}
                 spellcheck='false'
                 onBlur={handlePageEditorBlur}
                 onFocus={handlePageEditorFocus}

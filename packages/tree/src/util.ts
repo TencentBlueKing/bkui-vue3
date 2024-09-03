@@ -125,13 +125,10 @@ export const getNodeItemStyle = (item: TreeNode, props: TreePropTypes, flatData:
   const depth = schema.get(item)?.[NODE_ATTRIBUTES.DEPTH];
   if (showTree) {
     const args = ['node'];
+    const levelLine = () => getPropsOneOfBoolValueWithDefault(props, 'levelLine', item, DEFAULT_LEVLE_LINE, null, args);
     return {
       '--depth': depth,
-      ...(typeof props.levelLine === 'function'
-        ? {
-            '--level-line': getPropsOneOfBoolValueWithDefault(props, 'levelLine', item, DEFAULT_LEVLE_LINE, null, args),
-          }
-        : {}),
+      ...(typeof props.levelLine === 'function' ? { '--level-line': levelLine() } : {}),
     };
   }
 

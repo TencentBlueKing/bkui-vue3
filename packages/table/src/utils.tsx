@@ -446,11 +446,11 @@ export const getSortFn = (column, sortType, format = []) => {
   const sortFn =
     typeof (column.sort as ISortShape)?.sortFn === 'function' ? (column.sort as ISortShape)?.sortFn : sortFn0;
 
-  return sortType === SORT_OPTION.NULL
-    ? (_a, _b) => true
-    : (a: Record<string, unknown>, b: Record<string, unknown>, index0: number, index1: number) => {
-        return sortFn(a, b, index0, index1) * (sortType === SORT_OPTION.DESC ? -1 : 1);
-      };
+  const userFn = (a: Record<string, unknown>, b: Record<string, unknown>, index0: number, index1: number) => {
+    return sortFn(a, b, index0, index1) * (sortType === SORT_OPTION.DESC ? -1 : 1);
+  };
+
+  return sortType === SORT_OPTION.NULL ? (_a, _b) => true : userFn;
 };
 
 export const getNextSortType = (sortType: string) => {

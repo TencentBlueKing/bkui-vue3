@@ -109,6 +109,32 @@
   &.is-focused:not(.is-readonly) {
     .active();
   }
+  
+  &--suffix-icon {
+    color: @gray-color;
+    padding-right: @input-horizontal-padding;
+    font-size: @font-size-medium;
+    margin: 0;
+    margin-left: auto;
+    text-align: right;
+    flex-shrink: 0;
+    cursor: pointer;
+
+    &:hover {
+      color: #313238;
+    }
+    
+    &.show-clear-only-hover {
+      display: none;
+    }
+  }
+
+  &:hover:not(.is-disabled) {
+    
+    .show-clear-only-hover {
+      display: flex;
+    }
+  }
 }
 
 .@{bk-prefix}-input {

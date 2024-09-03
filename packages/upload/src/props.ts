@@ -158,7 +158,7 @@ export default {
     type: Function as PropType<(event: Event) => boolean | void>,
   },
   beforeUpload: {
-    type: Function as PropType<(file: UploadRawFile) => Promise<boolean> | boolean>,
+    type: Function as PropType<(file: UploadRawFile, uploadFiles: File[]) => Promise<boolean> | boolean>,
   },
   beforeRemove: {
     type: Function as PropType<(file: UploadFile, uploadFiles: UploadFile[]) => Promise<boolean> | boolean>,

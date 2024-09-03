@@ -51,14 +51,16 @@ export function useRegistry<T>(data: Ref<Map<PropertyKey, T>>) {
   // 注册item
   const register = (key: string, item: T) => {
     if (!item) return;
-    if (data.value.has(key)) {
-      return;
-    }
     return data.value.set(key, item);
   };
   // 删除item
-  const unregister = (key: string) => {
-    data.value.delete(key);
+  const unregister = (key: string, item?: T) => {
+    if (item) {
+      if (data.value.get(key) !== item) return;
+      data.value.delete(key);
+    } else {
+      data.value.delete(key);
+    }
   };
   return {
     register,

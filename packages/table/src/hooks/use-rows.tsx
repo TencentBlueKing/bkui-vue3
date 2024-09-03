@@ -27,9 +27,9 @@ import { reactive, ref } from 'vue';
 
 import { v4 as uuidv4 } from 'uuid';
 
-import { CHECK_ALL_OBJ, IEmptyObject, NEED_COL_ROW_SPAN, TABLE_ROW_ATTRIBUTE } from '../const';
+import { CHECK_ALL_OBJ, IEmptyObject, LINE_HEIGHT, NEED_COL_ROW_SPAN, TABLE_ROW_ATTRIBUTE } from '../const';
 import { TablePropTypes } from '../props';
-import { getRawData, getRowId, getRowValue, isRowSelectEnable } from '../utils';
+import { getRawData, getRowId, getRowValue, isRowSelectEnable, resolvePropVal } from '../utils';
 
 const useRows = (props: TablePropTypes) => {
   const tableRowSchema = reactive(new WeakMap());
@@ -77,6 +77,20 @@ const useRows = (props: TablePropTypes) => {
     return false;
   };
 
+  const getSelfRowHeight = (row?: Record<string, object>, rowIndex?: number, type?: string) => {
+    if (typeof props.rowHeight === 'function' || /^\d+/.test(`${props.rowHeight}`)) {
+      return resolvePropVal(props, 'rowHeight', [
+        {
+          index: rowIndex,
+          type: type ?? 'tbody',
+          row,
+        },
+      ]);
+    }
+
+    return LINE_HEIGHT;
+  };
+
   /**
    * 格式化传入数据配置
    * @param data
@@ -109,6 +123,7 @@ const useRows = (props: TablePropTypes) => {
       const target = tableRowSchema.get(row);
       rowId = target[TABLE_ROW_ATTRIBUTE.ROW_UID];
       target[TABLE_ROW_ATTRIBUTE.ROW_INDEX] = index + 1;
+      target[TABLE_ROW_ATTRIBUTE.ROW_HEIGHT] = getSelfRowHeight(item, index);
     });
 
     tableRowSchema.set(CHECK_ALL_OBJ, {
@@ -212,6 +227,23 @@ const useRows = (props: TablePropTypes) => {
 
   const getRowCheckedAllValue = () => {
     return getRowAttribute(CHECK_ALL_OBJ, TABLE_ROW_ATTRIBUTE.ROW_SELECTION);
+  };
+
+  const setRowHeight = (height: number, row?) => {
+    if (row) {
+      setRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_HEIGHT, height);
+      return;
+    }
+
+    tableRowList.value.forEach(row => setRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_HEIGHT, height));
+  };
+
+  const getRowHeight = (row?, index?, type?): number => {
+    if (row) {
+      return getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_HEIGHT);
+    }
+
+    return getSelfRowHeight(row, index, type);
   };
 
   /**
@@ -323,6 +355,12 @@ const useRows = (props: TablePropTypes) => {
     formatDataSchema();
   };
 
+  const getCurrentPageRowsHeight = () => {
+    return pageRowList.reduce((out, row) => {
+      return out + getRowHeight(row);
+    }, 0);
+  };
+
   return {
     setRowIndex,
     setRowExpand,
@@ -335,13 +373,16 @@ const useRows = (props: TablePropTypes) => {
     setRowSelectionAll,
     setRowSelection,
     setAllRowExpand,
+    setRowHeight,
     setTableIsNeedRowSpan,
     getRowAttribute,
     getRowSelection,
     getRowIndeterminate,
     getRowCheckedAllValue,
+    getCurrentPageRowsHeight,
     changePageRowIndex,
     toggleAllSelection,
+    getRowHeight,
     tableRowList,
     tableRowSchema,
     pageRowList,

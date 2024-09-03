@@ -26,6 +26,8 @@
 import { computed, ref, SetupContext, toRaw, unref } from 'vue';
 
 import Checkbox from '@bkui-vue/checkbox';
+import { usePrefix } from '@bkui-vue/config-provider';
+import Popover from '@bkui-vue/popover';
 
 import TableCell from '../components/table-cell';
 import { COLUMN_ATTRIBUTE, DEF_COLOR, IHeadColor, SORT_OPTION } from '../const';
@@ -57,6 +59,7 @@ export default ({
   const sortActive = ref(columns.getColumnAttribute(column, COLUMN_ATTRIBUTE.COL_SORT_ACTIVE));
 
   const rawColumn = toRaw(column);
+  const refDropdownPop = ref(null);
 
   /**
    * 点击排序事件
@@ -156,25 +159,65 @@ export default ({
     return { cells, showTitle, headClass };
   };
 
+  const handleChecked = (value, type = 'current') => {
+    columns.setColumnAttribute(column, COLUMN_ATTRIBUTE.SELECTION_VAL, value);
+    columns.setColumnAttribute(column, COLUMN_ATTRIBUTE.SELECTION_INDETERMINATE, false);
+
+    rows.setRowSelectionAll(value);
+    ctx.emit(EMIT_EVENTS.ROW_SELECT_ALL, { checked: value, data: props.data, type });
+  };
+
+  const handleItemClick = (type: string) => {
+    handleChecked(true, type);
+  };
+
+  const { resolveClassName } = usePrefix();
+  const dropdownClassName = resolveClassName('across-page-popover');
+
   const renderHeadCheckboxColumn = () => {
-    const handleChecked = value => {
-      columns.setColumnAttribute(column, COLUMN_ATTRIBUTE.SELECTION_VAL, value);
-      columns.setColumnAttribute(column, COLUMN_ATTRIBUTE.SELECTION_INDETERMINATE, false);
-
-      rows.setRowSelectionAll(value);
-      ctx.emit(EMIT_EVENTS.ROW_SELECT_ALL, { checked: value, data: props.data });
-    };
-
     const isDisabled = columns.getColumnAttribute(column, COLUMN_ATTRIBUTE.SELECTION_DISABLED);
     const isChecked = columns.getColumnAttribute(column, COLUMN_ATTRIBUTE.SELECTION_VAL);
     const indeterminate = columns.getColumnAttribute(column, COLUMN_ATTRIBUTE.SELECTION_INDETERMINATE);
+
+    if (column.acrossPage) {
+      return (
+        <span class='across-page-cell'>
+          <Checkbox
+            disabled={isDisabled}
+            indeterminate={indeterminate as boolean}
+            modelValue={isChecked}
+            outline={true}
+            onChange={val => handleChecked(val)}
+          />
+
+          <Popover
+            ref={refDropdownPop}
+            extCls={dropdownClassName}
+            arrow={false}
+            placement='bottom-start'
+            theme='light'
+            trigger='click'
+          >
+            {{
+              default: () => <span class='dropwn-icon'></span>,
+              content: () => (
+                <div class='dropwn-content'>
+                  <div onClick={() => handleItemClick('current')}>本页全选</div>
+                  <div onClick={() => handleItemClick('all')}>跨页全选</div>
+                </div>
+              ),
+            }}
+          </Popover>
+        </span>
+      );
+    }
 
     return (
       <Checkbox
         disabled={isDisabled}
         indeterminate={indeterminate as boolean}
         modelValue={isChecked}
-        onChange={handleChecked}
+        onChange={val => handleChecked(val)}
       />
     );
   };

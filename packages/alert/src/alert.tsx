@@ -76,10 +76,12 @@ export default defineComponent({
       [resolveClassName(`alert-${this.theme}`)]: true,
     });
 
+    const defaultIcon = <InfoLine class={resolveClassName('alert-icon-info')} />;
+
     return (
       <div class={typeClass}>
         <div class={resolveClassName('alert-wraper')}>
-          {this.showIcon && <InfoLine class={resolveClassName('alert-icon-info')} />}
+          {this.showIcon && (this.$slots.icon?.() ?? defaultIcon)}
           <div class={resolveClassName('alert-content')}>
             <div class={resolveClassName('alert-title')}>{this.$slots.title ? this.$slots.title() : this.title}</div>
             <div class={resolveClassName('alert-description')}>{this.$slots.default?.()}</div>

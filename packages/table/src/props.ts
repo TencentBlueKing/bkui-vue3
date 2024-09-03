@@ -144,7 +144,8 @@ export type ISortShape = {
 export type ISortPropShape = ISortShape | boolean | string;
 
 export type IFilterShape = {
-  list: { label: string; value: string }[];
+  // 为了防止有的项目用到label字段，在之前结构上兼容新增text字段
+  list: { label: string; text?: string; value: string }[];
   filterFn?: (...args) => boolean;
   match?: FullEnum;
   checked?: string[];
@@ -223,12 +224,12 @@ export type LabelFunctionString =
   | string;
 export const LabelFunctionStringType = toType<LabelFunctionString>('LabelFunctionStringType', {});
 export type HeadRenderArgs = {
-  cell?: Record<string, object>;
-  data?: Record<string, object>[];
-  row?: Record<string, object>;
+  cell?: unknown;
+  data?: unknown;
+  row?: Record<string, unknown>;
   column?: Column;
   index?: number;
-  rows?: Record<string, object>[];
+  rows?: Record<string, unknown>[];
 };
 
 export type RenderFunctionString = (args: HeadRenderArgs) => JSX.Element | boolean | number | string;
@@ -302,6 +303,7 @@ export type Column = {
   index?: number;
   explain?: IColumnExplain;
   children?: Column[];
+  acrossPage?: boolean;
 };
 
 export const IColumnProp = toType<Column>('IColumnPropType', {
@@ -369,6 +371,7 @@ export enum IColSortBehavior {
 export type FixedBottomOption = {
   position: 'absolute' | 'relative';
   height: number;
+  minHeight?: number;
   loading?: boolean;
 };
 

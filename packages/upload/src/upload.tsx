@@ -133,7 +133,8 @@ export default defineComponent({
 
       let beforeResult: ReturnType<UploadProps['beforeUpload']>;
       try {
-        beforeResult = await props.beforeUpload?.(file);
+        // 这里会存在一次选择多张图片上传场景，需要返回所有上传文件
+        beforeResult = await props.beforeUpload?.(file, sendFiles);
       } catch {
         beforeResult = false;
       }

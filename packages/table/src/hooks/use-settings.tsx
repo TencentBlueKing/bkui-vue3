@@ -120,7 +120,7 @@ const useSettings = (props: TablePropTypes, ctx: SetupContext, columns: UseColum
     Object.assign(options, result);
     columns.setColumnAttributeBySettings(options as Settings, result.checked);
     columns.setVisibleColumns();
-    afterSetting?.(result.checked);
+    afterSetting?.(result);
     refSetting.value?.hide();
     ctx.emit(EMIT_EVENTS.SETTING_CHANGE, result);
   };

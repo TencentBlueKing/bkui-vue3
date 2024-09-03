@@ -117,8 +117,8 @@ export default defineComponent({
     });
 
     onBeforeUnmount(() => {
-      select?.unregister(optionID.value);
-      group?.unregister(optionID.value);
+      select?.unregister(optionID.value, proxy);
+      group?.unregister(optionID.value, proxy);
     });
 
     const { resolveClassName } = usePrefix();

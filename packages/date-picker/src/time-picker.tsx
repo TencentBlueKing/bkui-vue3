@@ -313,6 +313,17 @@ export default defineComponent({
 
     const pickerPanelRef = ref(null);
     const handleClose = (e?: Event) => {
+      if (props.appendToBody) {
+        state.disableCloseUnderTransfer = true;
+        const pickerPanel = pickerPanelRef?.value?.$el;
+        if (e && pickerPanel?.contains(e.target)) {
+          return;
+        }
+        state.visible = false;
+        e?.preventDefault();
+        e?.stopPropagation();
+      }
+
       if (state.disableCloseUnderTransfer) {
         state.disableCloseUnderTransfer = false;
         return false;
@@ -378,14 +389,15 @@ export default defineComponent({
 
     const handleInputChange = e => {
       const isArrayValue = props.type.includes('range') || props.multiple;
-      const oldValue = visualValue.value;
+      // const oldValue = visualValue.value;
       const newValue = e.target.value;
       const newDate = parseDate(newValue, props.type, props.multiple, props.format);
       const valueToTest = isArrayValue ? newDate : newDate[0];
       const isDisabled = props.disabledDate?.(valueToTest);
       const isValidDate = newDate.reduce((valid, date) => valid && date instanceof Date, true);
-
-      if (newValue !== oldValue && !isDisabled && isValidDate) {
+      // 这里不需要进行新旧数据对比是因为input输入的时候visualValue的computed依赖始终是最新的
+      // if (newValue !== oldValue && !isDisabled && isValidDate) {
+      if (!isDisabled && isValidDate) {
         emitChange(props.type);
         state.internalValue = newDate;
       } else {

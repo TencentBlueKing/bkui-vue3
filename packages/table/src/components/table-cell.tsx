@@ -139,12 +139,23 @@ export default defineComponent({
        * 当表格中的字段或数据需要做解释说明时，可增加 [下划线] 提示，hover 可查看解释说明的 tooltips
        */
       if (props.column.explain) {
-        disabled = false;
+        // showTooltip默认为false，所以disabled默认为true，当设置showTooltip时才需要展示表格内容是否显示溢出效果
+        let isDisabled: ((col: Column, row: Record<string, object>) => boolean) | boolean = true;
+        if (typeof showOverflowTooltip === 'boolean') {
+          isDisabled = !showOverflowTooltip;
+        }
+
+        if (typeof showOverflowTooltip === 'object') {
+          isDisabled = showOverflowTooltip.disabled;
+        }
+        disabled = isDisabled;
         mode = 'static';
 
         if (typeof props.column.explain === 'object') {
+          // 这里需要处理content为空，提供defaultContent
           content = () =>
-            resolvePropVal(props.column.explain as Record<string, unknown>, 'content', [props.column, props.row]);
+            resolvePropVal(props.column.explain as Record<string, unknown>, 'content', [props.column, props.row]) ||
+            defaultContent;
         }
       }
 

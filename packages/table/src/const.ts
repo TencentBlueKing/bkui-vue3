@@ -70,6 +70,7 @@ export const TABLE_ROW_ATTRIBUTE = {
   ROW_SOURCE_DATA: 'row_source_data',
   ROW_SKIP_CFG: 'row_skip_config',
   ROW_SPAN: 'row_span',
+  ROW_HEIGHT: 'row_height',
 };
 
 export const COLUMN_ATTRIBUTE = {

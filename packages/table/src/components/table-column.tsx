@@ -23,10 +23,9 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { defineComponent, ExtractPropTypes, inject, onUnmounted, watch, toRaw } from 'vue';
+import { defineComponent, ExtractPropTypes, inject, onUnmounted, watch, toRaw, h } from 'vue';
 
 import { PropTypes } from '@bkui-vue/shared';
-import { isEqual } from 'lodash';
 
 import { COL_MIN_WIDTH, PROVIDE_KEY_INIT_COL } from '../const';
 import {
@@ -42,6 +41,7 @@ import {
   StringNumberType,
   TableAlign,
 } from '../props';
+import { isEqual } from 'lodash';
 
 const TableColumnProp = {
   label: LabelFunctionStringType,
@@ -73,10 +73,26 @@ export default defineComponent({
     const initTableColumns = inject(PROVIDE_KEY_INIT_COL, () => {});
     const lastPropsVal = {};
 
+    const isPropsEqual = (sorce: Record<string, unknown>, target: Record<string, unknown>) => {
+      const rawProps = toRaw(target);
+      const keys = Object.keys(rawProps);
+      return keys.every(key => {
+        if (typeof rawProps[key] === 'function') {
+          return sorce[key] !== undefined;
+        }
+
+        if (key === 'children') {
+          return true;
+        }
+
+        return isEqual(sorce[key], target[key]);
+      });
+    };
+
     watch(
       () => [props],
       () => {
-        if (!isEqual(lastPropsVal, toRaw(props))) {
+        if (!isPropsEqual(lastPropsVal, props)) {
           initTableColumns();
           Object.assign(lastPropsVal, toRaw(props));
         }
@@ -87,7 +103,21 @@ export default defineComponent({
     onUnmounted(() => {
       initTableColumns();
     });
+  },
 
-    return () => {};
+  render() {
+    try {
+      const renderDefault = this.$slots.default?.({
+        row: {},
+        column: {},
+        $index: -1,
+      });
+      const children = [renderDefault];
+
+      const vnode = h('div', children);
+      return vnode;
+    } catch {
+      return h('div', []);
+    }
   },
 });

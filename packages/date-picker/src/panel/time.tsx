@@ -112,8 +112,9 @@ export default defineComponent({
 
     const timeSpinnerRef = ref(null);
 
+    let visibleDate = ref(fecha.format(parentProvide.panelDate, props.format));
+
     const showSeconds = computed(() => !(props.format || '').match(/mm$/));
-    const visibleDate = computed(() => fecha.format(parentProvide.panelDate, props.format));
 
     const timeSlots = computed(() => {
       if (!props.value[0]) {
@@ -157,6 +158,11 @@ export default defineComponent({
         let newVal: any = dates[0] || initTime();
         newVal = new Date(newVal);
         state.date = newVal;
+        parentProvide.panelDate = newVal;
+        visibleDate.value = fecha.format(parentProvide.panelDate, props.format);
+      },
+      {
+        immediate: true,
       },
     );
 

@@ -99,7 +99,7 @@ export default [
         name: 'row-height',
         type: 'Number|Function',
         default: 'LINE_HEIGHT',
-        desc: '行高，可以为固定数值类型, 可以是函数，返回当前行的高度，返回值为数值类型',
+        desc: '行高，可以为固定数值类型, 可以是函数，返回当前行的高度，返回值为数值类型; 如果是回调函数，请注意参数：args: { index: number; type: tbody|virtual; row?: any; items?: number[] }; type = tbody 说明是table tr渲染时请求计算tr行高，此时 row 为当前行数据； 如果 type = virtual 说明启用了虚拟渲染，此时是计算渲染行高，此时这里没有row属性， 可以使用 index 自行获取 row',
         optional: [],
       },
       {
@@ -459,6 +459,13 @@ export default [
         type: 'IColumn[]',
         default: '[]',
         desc: '嵌套实现多表头，如果是多表头分组，可以只设置 label 属性',
+        optional: [],
+      },
+      {
+        name: 'acrossPage',
+        type: 'Boolean',
+        default: 'undefined',
+        desc: '需要配合`type=selection`使用，是否启用跨页全选，如果设置为true，表头会渲染跨页全选功能和相应插槽',
         optional: [],
       },
     ],

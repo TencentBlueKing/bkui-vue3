@@ -1,5 +1,81 @@
 ## 更新日志
 
+### 2.0.1-beta.62
+
+* **[feat]**:
+    - bugfix(select): select组件同时出现无数据与option
+    - feature: tab组件支持配置数字和数字样式类型([#1811](https://github.com/TencentBlueKing/bkui-vue3/issues/1811))
+    - feature: input 组组件 textarea 模式下，支持 clearable([#1456](https://github.com/TencentBlueKing/bkui-vue3/issues/1456))
+    - fix: 点击行内radio或者checkbox组件时row-click事件会触发两次([#2104](https://github.com/TencentBlueKing/bkui-vue3/issues/2104))
+    - fix: 下拉菜单靠近底部区域hover出来一下会消失([#1964](https://github.com/TencentBlueKing/bkui-vue3/issues/1964))
+
+
+### 2.0.1-beta.61
+
+* **[feat]**:
+    - fix: 修复 taginput 中文输入退格删除 tag 问题
+
+
+### 2.0.1-beta.60
+
+* **[feat]**:
+    - form-item, tag-input 小问题修复
+
+
+### 2.0.1-beta.59
+
+* **[feat]**:
+    - bugfix(table): table问题合集
+
+
+### 2.0.1-beta.58
+
+* **[feat]**:
+    - fix: timepicker组件使用键盘修改时间，视图层更改了，但是值没有变化([#1809](https://github.com/TencentBlueKing/bkui-vue3/issues/1809))
+    - fix:datePicker组件选中时间与控件展示时间不一致([#2086](https://github.com/TencentBlueKing/bkui-vue3/issues/2086))
+    - fix: 表格组件支持只显示表头区域的tooltips([#1833](https://github.com/TencentBlueKing/bkui-vue3/issues/1833))
+    - fix: 表格筛选少于限制最大个数时，高度没有自动撑开([#2082](https://github.com/TencentBlueKing/bkui-vue3/issues/2082))
+    - fix: 表头筛选组件label溢出时会导致checkbox宽度样式缩小
+    - fix: textarea模式拖动宽度可以超出父级且内部输入框高度没有自适应([#1983](https://github.com/TencentBlueKing/bkui-vue3/issues/1983))
+    - fix:小型分页下拉菜单点击不消失([#2090](https://github.com/TencentBlueKing/bkui-vue3/issues/2090))
+    - fix: tooltip组件showOnInit配置项失效且会造成函数循环引用([#1523](https://github.com/TencentBlueKing/bkui-vue3/issues/1523))
+    - feature: table组件表头筛选组件的筛选逻辑([#2048](https://github.com/TencentBlueKing/bkui-vue3/issues/2048))
+    - feature: 编写限制文件类型上传demo([#1886](https://github.com/TencentBlueKing/bkui-vue3/issues/1886))
+
+
+### 2.0.1-beta.57
+
+* **[feat]**:
+    - fix: 修复 taginput 中文输入退格删除 tag 问题
+
+
+### 2.0.1-beta.56
+
+* **[feat]**:
+    - feat(table): 优化row-height计算逻辑
+
+
+### 2.0.1-beta.55
+
+* **[feat]**:
+    - fix(table): 拖拽完毕抛出事件参数问题修复
+
+
+### 2.0.1-beta.54
+
+* **[feat]**:
+    - fix(virtual-render): 修复lineHeight fn计算最后一行位置问题
+    - feature: alert组件提供自定义icon插槽
+    - feature(select): select需要支持手动控制下拉选项显示和隐藏逻辑
+
+
+### 2.0.1-beta.53
+
+* **[feat]**:
+    - bugfix: date-picker，添加append-to-body属性，选择后需要点击两次才能关闭
+    - bugfix: pagination，手动输入页码后点击上下页，页码未改变
+    - message display: box => display: -webkit-box
+
 
 ### 2.0.1-beta.50
 

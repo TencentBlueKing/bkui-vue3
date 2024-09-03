@@ -758,6 +758,15 @@ const routes: RouteRecordRaw[] = [
     },
     component: () => import('../views/blueking/functional-deps/index'),
   },
+  {
+    path: '/bk/ediatable',
+    name: 'Ediatable',
+    meta: {
+      group: NavGroupMeta.Business,
+      navName: 'Ediatable 可编辑表格',
+    },
+    component: () => import('../views/blueking/ediatable/index'),
+  },
 ];
 
 const router = createRouter({

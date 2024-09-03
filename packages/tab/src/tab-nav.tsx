@@ -30,7 +30,7 @@ import { usePrefix } from '@bkui-vue/config-provider';
 import { bkTooltips } from '@bkui-vue/directives';
 import { Close, Plus } from '@bkui-vue/icon/';
 
-import { PositionEnum, tabNavProps, TabTypeEnum } from './props';
+import { PositionEnum, tabNavProps, TabTypeEnum, TabPanelProps } from './props';
 
 export default defineComponent({
   name: 'TabNav',
@@ -83,7 +83,7 @@ export default defineComponent({
         if (!item.props) {
           return null;
         }
-        const { name, label, closable, visible, disabled, sortable, tips } = item.props;
+        const { name, label, num, closable, visible, disabled, sortable, tips, numDisplayType } = item.props;
         if (!visible) {
           return false;
         }
@@ -112,7 +112,9 @@ export default defineComponent({
           disabled,
           sortable,
           tips,
+          numDisplayType,
           tabLabel: renderLabel(label),
+          tabNum: num,
         });
         return true;
       });
@@ -191,7 +193,7 @@ export default defineComponent({
         if (!item) {
           return null;
         }
-        const { name, disabled, tabLabel } = item;
+        const { name, disabled, tabLabel, tabNum, numDisplayType } = item;
         const getNavItemClass = () => {
           const classNames = [this.resolveClassName('tab-header-item')];
           if (disabled) {
@@ -203,6 +205,19 @@ export default defineComponent({
           return classNames.join(' ');
         };
         const getValue = (curentValue, parentValue) => !disabled && (curentValue || parentValue);
+        const getCloseTag = (item: TabPanelProps, index: number) => {
+          return getValue(item.closable, closable) ? (
+            <span
+              class={this.resolveClassName('tab-header--close')}
+              onClick={(): void => this.handleTabRemove(index, item)}
+            >
+              <Close />
+            </span>
+          ) : (
+            ''
+          );
+        };
+        const getNumType = () =>  ['bracket'].includes(numDisplayType) ? `(${tabNum})` : tabNum;
         return (
           <div
             key={name}
@@ -231,17 +246,20 @@ export default defineComponent({
               drop(index, sortType);
             }}
           >
-            <div>{tabLabel}</div>
-            {getValue(item.closable, closable) ? (
-              <span
-                class={this.resolveClassName('tab-header--close')}
-                onClick={(): void => this.handleTabRemove(index, item)}
-              >
-                <Close />
-              </span>
+            {!isNaN(tabNum) ? (
+              <div class={this.resolveClassName('tab-header--has-num')}>
+                <div class={this.resolveClassName('tab-header--has-num-left')}>{tabLabel}</div>
+                <div class={this.resolveClassName('tab-header--has-num-right')}>
+                  <div class={this.resolveClassName(`tab-header--has-num-${numDisplayType}`)}>
+                    {getNumType()}
+                  </div>
+                  {getCloseTag?.(item, index)}
+                </div>
+              </div>
             ) : (
-              ''
+              <div>{tabLabel}</div>
             )}
+            {isNaN(tabNum) ? getCloseTag?.(item, index) : ''}
           </div>
         );
       });

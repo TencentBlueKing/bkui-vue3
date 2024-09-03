@@ -39,8 +39,8 @@ export const enum EThemes {
 export type Theme = Lowercase<keyof typeof EThemes>;
 
 export const enum ETypes {
-  FORMDATA = 'formdata',
   BINARY = 'binary',
+  FORMDATA = 'formdata',
 }
 
 export type Type = Lowercase<keyof typeof ETypes>;
@@ -99,24 +99,24 @@ export type SuccessResponse = APIResponse | XMLHttpRequestResponseType | unknown
 export type UploadProps = ExtractPropTypes<typeof uploadProps>;
 
 export interface UploadRequestOptions {
-  action: string
-  method: string
-  type: Type,
-  data?: ExtraFormData | ExtraFormData[]
-  formDataAttributes?: FormDataAttr | FormDataAttr[]
-  filename: string
-  file: File
-  headers?: Headers | Record<string, string | number | null | undefined>
-  header?: HeaderDataAttr | HeaderDataAttr[],
-  withCredentials: boolean
-  sliceUrl: string
-  mergeUrl: string
-  chunkSize: number
-  onProgress: (event: UploadProgressEvent, i?: number) => void
-  onError: (error: Error) => void
-  onSuccess: (res: SuccessResponse) => void
-  onComplete: () => void
-};
+  action: string;
+  method: string;
+  type: Type;
+  data?: ExtraFormData | ExtraFormData[];
+  formDataAttributes?: FormDataAttr | FormDataAttr[];
+  filename: string;
+  file: File;
+  headers?: Headers | Record<string, null | number | string | undefined>;
+  header?: HeaderDataAttr | HeaderDataAttr[];
+  withCredentials: boolean;
+  sliceUrl: string;
+  mergeUrl: string;
+  chunkSize: number;
+  onProgress: (event: UploadProgressEvent, i?: number) => void;
+  onError: (error: Error) => void;
+  onSuccess: (res: SuccessResponse) => void;
+  onComplete: () => void;
+}
 
 export type UploadRequestHandler = (options: UploadRequestOptions) => Promise<unknown> | XMLHttpRequest;
 

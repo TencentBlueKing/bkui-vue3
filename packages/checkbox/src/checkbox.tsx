@@ -46,6 +46,8 @@ export const checkboxProps = {
   beforeChange: func<(event: boolean | number | string) => Promise<boolean> | boolean>().def(() => true),
   size: PropTypes.size().def(SizeEnum.DEFAULT),
   immediateEmitChange: PropTypes.bool.def(true), // 默认设置checked是否触发change事件
+  readonly: PropTypes.bool.def(false),
+  outline: PropTypes.bool.def(false),
 };
 
 export type CheckboxProps = Readonly<ExtractPropTypes<typeof checkboxProps>>;
@@ -88,6 +90,7 @@ export default defineComponent({
       'is-disabled': this.isDisabled,
       'is-indeterminated': this.indeterminate,
       'is-prechecking': this.isPrechecking,
+      'is-outline': this.outline,
     });
 
     const renderLabel = () => {

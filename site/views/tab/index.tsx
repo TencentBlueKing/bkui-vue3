@@ -38,6 +38,7 @@ import DemoCardTab from './demo-card-tab.vue';
 import DemoDrag from './demo-drag.vue';
 import DemoExtend from './demo-extend.vue';
 import DemoJsx from './demo-jsx';
+import DemoNumber from './demo-number.vue';
 import DemoPosition from './demo-position.vue';
 
 const tabPropsJson: IPropsTableItem[] = [
@@ -173,6 +174,18 @@ const tabPanelPropsJson: IPropsTableItem[] = [
     default: '--',
     desc: 'Panel 渲染',
   },
+  {
+    name: 'num',
+    type: 'Number',
+    default: '--',
+    desc: '支持panel数字展示',
+  },
+  {
+    name: 'numDisplayType',
+    type: 'String',
+    default: '--',
+    desc: '通过numDisplayType设置数字样式，支持的属性有bracket(括号)、square(方形)、elliptic(椭圆)',
+  },
 ];
 const tabEventPropsJson = [
   {
@@ -287,6 +300,14 @@ export default defineComponent({
           title='tsx用法'
         >
           <DemoJsx />
+        </DemoBox>
+        <DemoBox
+          componentName='tab'
+          demoName='demo-number'
+          desc='通过配置num属性设置是否显示数字，通过numDisplayType设置数字样式，支持的属性有bracket(括号)、square(方形)、elliptic(椭圆)。'
+          title='带数字样式'
+        >
+          <DemoNumber />
         </DemoBox>
         <PropsBox
           propsData={tabPropsJson}

@@ -41,13 +41,13 @@ export default (props: VirtualRenderProps) => {
   };
 
   const scrollTo = (x, y) => {
-    instance.scrollTo({ x, y });
+    instance?.scrollTo({ x, y });
   };
 
   const updateScrollHeight = (height: number) => {
     if (instance?.element) {
-      (instance.element as VirtualElement).scrollHeight = height;
-      instance.update();
+      (instance?.element as VirtualElement).scrollHeight = height;
+      instance?.update();
     }
   };
 
@@ -55,6 +55,7 @@ export default (props: VirtualRenderProps) => {
     init,
     instance,
     scrollTo,
+    update: () => instance?.update(),
     updateScrollHeight,
   };
 };

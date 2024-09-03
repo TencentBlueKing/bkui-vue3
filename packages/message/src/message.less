@@ -98,12 +98,13 @@
         display: flex;
 
         .describe {
-          display: box;
+          display: -webkit-box;
           max-width: 560px;
           max-height: 60px;
           overflow: hidden;
           text-overflow: ellipsis;
           -webkit-box-orient: vertical;
+          line-clamp: 3;
           -webkit-line-clamp: 3;
         }
       }
@@ -204,7 +205,7 @@
 
           .copy-value {
             padding-left: 4px;
-            
+
             &:hover {
               background: rgba(186, 188, 192, 0.2);
               cursor: pointer;

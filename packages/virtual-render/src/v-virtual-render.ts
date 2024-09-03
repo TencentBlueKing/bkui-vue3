@@ -32,12 +32,7 @@
 
 import { throttle } from 'lodash';
 
-export function getMatchedIndex(
-  maxCount: number,
-  maxHeight: number,
-  groupItemCount: number,
-  callback: (agrs: { index: number; items: number[]; type: string }) => 0,
-) {
+export function getMatchedIndex(maxCount: number, maxHeight: number, callback: (agrs: { index: number }) => 0) {
   let startIndex = 0;
   let height = 0;
   let diffHeight = 0;
@@ -45,8 +40,6 @@ export function getMatchedIndex(
   for (; startIndex < maxCount; startIndex++) {
     lastHeight = callback({
       index: startIndex,
-      items: [startIndex * groupItemCount, (startIndex + 1) * groupItemCount],
-      type: 'virtual',
     });
     if (height + lastHeight > maxHeight) {
       diffHeight = maxHeight - height;
@@ -81,11 +74,12 @@ export function computedVirtualIndex(lineHeight, callback, pagination, wrapper, 
   }
 
   if (typeof lineHeight === 'function') {
-    const startValue = getMatchedIndex(count, elScrollTop, groupItemCount, lineHeight);
+    const maxCount = Math.ceil(count / groupItemCount);
+    const startValue = getMatchedIndex(maxCount, elScrollTop, lineHeight);
     targetStartIndex = startValue.startIndex > 0 ? startValue.startIndex : 0;
     translateY = startValue.diffHeight;
-    const endValue = getMatchedIndex(count, elOffsetHeight, groupItemCount, lineHeight);
-    targetEndIndex = endValue.startIndex + targetStartIndex;
+    const endValue = getMatchedIndex(maxCount, elOffsetHeight, lineHeight);
+    targetEndIndex = endValue.startIndex + targetStartIndex + 1;
   }
 
   const bottom = elScrollHeight - elOffsetHeight - elScrollTop;
@@ -108,11 +102,25 @@ export class VisibleRender {
   private binding;
   private wrapper;
   private delay;
+  private delegateWrapper;
   constructor(binding, el) {
     this.binding = binding;
     this.wrapper = el;
     const { throttleDelay } = binding.value;
     this.delay = throttleDelay;
+    this.delegateWrapper = undefined;
+  }
+
+  get scrollHeight() {
+    return this.delegateWrapper?.scrollHeight ?? this.wrapper?.scrollHeight;
+  }
+
+  get offsetHeight() {
+    return this.delegateWrapper?.offsetHeight ?? this.wrapper?.offsetHeight;
+  }
+
+  public setDelegateWrapper(el) {
+    this.delegateWrapper = el;
   }
 
   public render(e) {
@@ -120,7 +128,7 @@ export class VisibleRender {
     if (onlyScroll) {
       const elScrollTop = e.offset?.y;
       const elScrollLeft = e.offset?.x ?? 0;
-      const bottom = this.wrapper.scrollHeight - this.wrapper.offsetHeight - elScrollTop;
+      const bottom = this.scrollHeight - this.offsetHeight - elScrollTop;
       handleScrollCallback(e, null, null, elScrollTop, elScrollTop, elScrollLeft, {
         bottom: bottom >= 0 ? bottom : 0,
         scrollbar: e,
@@ -133,7 +141,7 @@ export class VisibleRender {
       lineHeight,
       handleScrollCallback,
       { scrollTop, startIndex, endIndex, groupItemCount, count, scrollLeft },
-      this.wrapper,
+      this.delegateWrapper ?? this.wrapper,
       e,
     );
   }

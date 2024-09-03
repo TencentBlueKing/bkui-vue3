@@ -63,20 +63,35 @@ export default defineComponent({
       setDragOffsetX,
       setOffsetRight,
       setHeaderRowCount,
+      setLineHeight,
+      getBodyHeight,
       refBody,
       refRoot,
     } = useLayout(props, ctx);
 
     const scrollTo = (...args) => refBody.value?.scrollTo(...args);
 
+    if (typeof props.rowHeight === 'function') {
+      setLineHeight(args => {
+        return rows.getRowHeight(args.rows[0], args.index);
+      });
+    } else {
+      setLineHeight(props.rowHeight);
+    }
+
     /**
      * 设置字段结束，展示字段改变，设置表格偏移量为0
      * 避免太长横向滚动导致数据不可见
      * @param fields
      */
-    const afterSetting = fields => {
-      if (fields?.length > 0) {
+    const afterSetting = ({ checked, height }) => {
+      if (checked?.length > 0) {
         scrollTo(0, 0);
+      }
+
+      if (typeof props.rowHeight !== 'function') {
+        rows.setRowHeight(height);
+        setLineHeight(height);
       }
     };
 
@@ -89,7 +104,6 @@ export default defineComponent({
       columns,
       rows,
       pagination,
-      settings,
     });
 
     setDragEvents(dragEvents as Record<string, () => void>);
@@ -179,6 +193,8 @@ export default defineComponent({
       }
     };
 
+    const scrollTo00 = ref(false);
+
     const setTableData = debounce((resetScroll = true) => {
       const filterOrderList = getFilterAndSortList();
       if (!props.remotePagination) {
@@ -187,12 +203,17 @@ export default defineComponent({
 
       const renderList = getRenderRowList(filterOrderList);
       rows.setPageRowList(renderList);
+      if (resetScroll) {
+        scrollTo00.value = true;
+      }
 
       nextTick(() => {
         setOffsetRight();
+        setRowsBodyHeight();
 
-        if (resetScroll) {
+        if (scrollTo00.value) {
           scrollTo(0, 0);
+          scrollTo00.value = false;
         }
       });
     }, 64);
@@ -227,6 +248,21 @@ export default defineComponent({
       });
     });
 
+    const setRowsBodyHeight = () => {
+      if (props.height === '100%' || props.height === 'auto') {
+        const rowsHeight = rows.getCurrentPageRowsHeight();
+        let bodyHeight = rowsHeight;
+        if (/^\d+\.?\d*(px)?$/.test(`${props.maxHeight}`)) {
+          const maxHeight = getBodyHeight(Number(`${props.maxHeight}`.replace('px', '')));
+          if (bodyHeight > maxHeight) {
+            setBodyHeight(maxHeight, false);
+            return;
+          }
+        }
+        setBodyHeight(bodyHeight, false);
+      }
+    };
+
     watch(
       () => [props.columns],
       () => {
@@ -253,9 +289,17 @@ export default defineComponent({
     );
 
     watch(
-      () => [columns.sortColumns, columns.filterColumns],
+      () => [columns.filterColumns],
       () => {
         setTableData();
+      },
+      { deep: true },
+    );
+
+    watch(
+      () => [columns.sortColumns],
+      () => {
+        setTableData(false);
       },
       { deep: true },
     );
@@ -280,9 +324,20 @@ export default defineComponent({
     watch(
       () => [pagination.options.count, pagination.options.limit, pagination.options.current],
       () => {
-        setTableData();
+        setTableData(false);
       },
       { immediate: true },
+    );
+
+    const pageListLength = computed(() => rows.pageRowList.length);
+
+    watch(pageListLength,
+      (val, old) => {
+        if (val < old) {
+          refBody?.value?.updateScroll?.();
+          scrollTo(undefined, 0);
+        }
+      },
     );
 
     ctx.expose({

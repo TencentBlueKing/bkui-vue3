@@ -109,6 +109,8 @@ export const tabPanelProps = {
   sortable: PropTypes.bool,
   renderDirective: renderDirectiveType(),
   panel: PropTypes.string || PropTypes.func,
+  num: PropTypes.number.def(undefined),
+  numDisplayType: PropTypes.string.def('default'),
 };
 
 export type TabPanelProps = ExtractPropTypes<typeof tabPanelProps>;

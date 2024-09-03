@@ -299,7 +299,7 @@ export default defineComponent({
         </DemoBox>
         <DemoBox
           componentName='message'
-          demoName='close-demo'
+          demoName='multi-demo'
           desc=''
           subtitle='适用于有更多面向开发信息的场景。'
           title='高阶用法'

@@ -30,7 +30,7 @@ import { EMIT_EVENTS } from '../events';
 import { TablePropTypes } from '../props';
 import { UseRows } from './use-rows';
 
-export default (props: TablePropTypes, rows: UseRows, ctx: SetupContext<any>) => {
+export default (props: TablePropTypes, rows: UseRows, ctx: SetupContext) => {
   if (!props.rowDraggable) {
     return {};
   }
@@ -44,7 +44,7 @@ export default (props: TablePropTypes, rows: UseRows, ctx: SetupContext<any>) =>
     placeDiv.addEventListener(type, event => {
       event.preventDefault();
       event.stopPropagation();
-      (event as any).dataTransfer.dropEffect = 'move';
+      (event as DragEvent).dataTransfer.dropEffect = 'move';
     });
   });
 
@@ -153,7 +153,7 @@ export default (props: TablePropTypes, rows: UseRows, ctx: SetupContext<any>) =>
 
     lastDragRow = null;
     lastDragRowClass = '';
-    ctx.emit(EMIT_EVENTS.DRAG_END, { sourceEvent: event, data: rows.tableRowList });
+    ctx.emit(EMIT_EVENTS.DRAG_END, { sourceEvent: event, data: rows.pageRowList });
   };
 
   return {

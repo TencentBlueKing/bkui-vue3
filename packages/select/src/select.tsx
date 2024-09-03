@@ -105,6 +105,10 @@ export default defineComponent({
     filterOption: { type: Function }, // 配置当前options的过滤规则
     searchWithPinyin: PropTypes.bool.def(true), // 拼音搜索
     highlightKeyword: PropTypes.bool.def(false), // 搜索高亮
+    trigger: {
+      type: String as PropType<'default' | 'manual'>,
+      default: 'default',
+    }, // content显示和隐藏方式
   },
   emits: [
     'update:modelValue',
@@ -155,6 +159,7 @@ export default defineComponent({
       searchWithPinyin,
       highlightKeyword,
       disableFocusBehavior,
+      trigger,
     } = toRefs(props);
 
     const virtualRenderRef = ref(null);
@@ -365,6 +370,14 @@ export default defineComponent({
       { popoverMinWidth: popoverMinWidth.value },
       triggerRef,
     );
+    const handleHidePopover = () => {
+      if (trigger.value === 'manual') return;
+      hidePopover();
+    };
+    const handleShowPopover = () => {
+      if (trigger.value === 'manual') return;
+      showPopover();
+    };
     // 输入框是否可以输入内容
     const isInput = computed(
       () => ((filterable.value && inputSearch.value) || allowCreate.value) && isPopoverShow.value,
@@ -465,7 +478,7 @@ export default defineComponent({
     };
     // 派发toggle事件
     const handleTogglePopover = () => {
-      if (isDisabled.value) return;
+      if (isDisabled.value || trigger.value === 'manual') return;
       handleFocus();
       togglePopover();
     };
@@ -503,7 +516,7 @@ export default defineComponent({
       } else {
         selected.value = [{ value, label: value }];
         emitChange(value);
-        hidePopover();
+        handleHidePopover();
       }
       customOptionName.value = '';
     };
@@ -543,7 +556,7 @@ export default defineComponent({
         ];
         emitChange(option.optionID);
         emit('select', option.optionID);
-        hidePopover();
+        handleHidePopover();
         handleBlur();
       }
     };
@@ -578,7 +591,7 @@ export default defineComponent({
       selected.value = [];
       emitChange(multiple.value ? [] : '');
       emit('clear', multiple.value ? [] : '');
-      hidePopover();
+      handleHidePopover();
     };
     const handleSelectedAllOptionMouseEnter = () => {
       activeOptionValue.value = '';
@@ -744,7 +757,7 @@ export default defineComponent({
     const handleClickOutside = ({ event }) => {
       const { target } = event;
       if (triggerRef.value?.contains(target) || triggerRef.value === target) return;
-      hidePopover();
+      handleHidePopover();
       handleBlur();
     };
 
@@ -770,7 +783,7 @@ export default defineComponent({
     onMounted(() => {
       handleSetSelectedData();
       setTimeout(() => {
-        showOnInit.value && showPopover();
+        showOnInit.value && handleShowPopover();
         autoFocus.value && focusInput();
       });
     });

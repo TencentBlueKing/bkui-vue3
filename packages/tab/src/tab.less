@@ -6,6 +6,9 @@
 @tab-header-bg: #FAFBFD;
 @tab-white: @white-color;
 @tab-gray: @light-gray;
+@tab-number-tag-gray: @gray-color;
+@tab-card-number-active: #E1ECFF;
+@tab-column-active: #A3C5FD;
 @tab-card-tab-bg: #F0F1F5;
 @tab-card-tab-divider: #c4c6cc;
 @tab-disable-color: #aaa;
@@ -42,7 +45,28 @@
 
     .@{bk-prefix}-tab--left &, .@{bk-prefix}-tab--right & {
       flex-direction: column;
-
+      .@{bk-prefix}-tab-header-item {
+        .@{bk-prefix}-tab-header--has-num {
+          width: 100%;
+          &-right {
+            .@{bk-prefix}-tab-header--has-num-square {
+              border-radius: 2px;
+            }
+          }
+        }
+      }
+      .@{bk-prefix}-tab-header--active {
+        .@{bk-prefix}-tab-header--has-num {
+          &-right {
+            .@{bk-prefix}-tab-header--has-num-square,
+            .@{bk-prefix}-tab-header--has-num-elliptic {
+              background-color: @tab-column-active;
+              color: @tab-white;
+            }
+          }
+        }
+      }
+      
       > div {
         flex-direction: column;
       }
@@ -54,6 +78,30 @@
 
     .@{bk-prefix}-tab--card-tab & {
       border-radius: 4px 4px 0;
+      .@{bk-prefix}-tab-header-item {
+        .@{bk-prefix}-tab-header--has-num {
+          &-right {
+            .@{bk-prefix}-tab-header--has-num-square {
+              background-color: @tab-white;
+            }
+            .@{bk-prefix}-tab-header--has-num-elliptic {
+              background-color: @tab-white;
+              color: @tab-color;
+            }
+          }
+        }
+      }
+      .@{bk-prefix}-tab-header--active {
+        .@{bk-prefix}-tab-header--has-num {
+          &-right {
+            .@{bk-prefix}-tab-header--has-num-square,
+            .@{bk-prefix}-tab-header--has-num-elliptic {
+              background-color: @tab-column-active;
+              color: @tab-white;
+            }
+          }
+        }
+      }
     }
 
     .@{bk-prefix}-tab--card &, .@{bk-prefix}-tab--vertical-card & {
@@ -208,7 +256,36 @@
         padding-left: 12px;
       }
 
-
+      .@{bk-prefix}-tab-header--has-num {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        &-right {
+          margin-left: 4px;
+          display: flex;
+          align-items: center;
+          color: @tab-color;
+          .@{bk-prefix}-tab-header--has-num-default,
+          .@{bk-prefix}-tab-header--has-num-bracket {
+            color: @tab-color;
+          }
+          .@{bk-prefix}-tab-header--has-num-square,
+          .@{bk-prefix}-tab-header--has-num-elliptic {
+            background-color: @tab-card-tab-bg;
+            color: @tab-number-tag-gray;
+            padding: 0 8px;
+            line-height: 18px;
+            text-align: center;
+          }
+          .@{bk-prefix}-tab-header--has-num-square {
+            border-radius: 2px;
+          }
+          .@{bk-prefix}-tab-header--has-num-elliptic {
+            border-radius: 18px;
+          }
+        }
+      }
+      
       &:hover {
         color: @tab-active;
 
@@ -218,7 +295,6 @@
           color: @danger-color;
         }
       }
-
     }
 
     &--active {
@@ -260,7 +336,18 @@
         border-left: 2px solid @tab-active;
       }
       */
-
+      .@{bk-prefix}-tab-header--has-num {
+        &-right {
+          .@{bk-prefix}-tab-header--has-num-bracket,
+          .@{bk-prefix}-tab-header--has-num-square,
+          .@{bk-prefix}-tab-header--has-num-elliptic {
+            color: @tab-active;
+          }
+          .@{bk-prefix}-tab-header--has-num-square {
+            background-color: @tab-card-number-active;
+          }
+        }
+      }
     }
 
     &--close {

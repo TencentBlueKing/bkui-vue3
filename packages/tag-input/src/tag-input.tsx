@@ -440,8 +440,6 @@ export default defineComponent({
             // 如果是单选，且input不为空，即保留了上次的结果则恢复
             if (inputValue === oldValue && listState.selectedTagListCache.length) {
               addTag(listState.selectedTagListCache[0], 'select');
-            } else {
-              handleChange('remove');
             }
           }
           // 如果匹配，则自动选则
@@ -581,6 +579,11 @@ export default defineComponent({
 
     const handleKeydown = (e: KeyboardEvent) => {
       if (pageState.isPageLoading) {
+        return;
+      }
+
+      // 中文拼音输入事件
+      if (e.isComposing) {
         return;
       }
 
