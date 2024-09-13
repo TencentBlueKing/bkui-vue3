@@ -199,6 +199,7 @@ export default defineComponent({
                 }}
                 theme={this.tagTheme}
                 closable
+                key={item.value}
                 onClose={() => this.handleRemoveTag(item.value)}
               >
                 {this.$slots.tagRender?.(item) ?? (
