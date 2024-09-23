@@ -1086,13 +1086,10 @@
   resolved "https://registry.yarnpkg.com/@blueking/date-picker/-/date-picker-2.0.0-beta.19.tgz#eb2b5a47cc5646e54ec63edd7681043b8d62f464"
   integrity sha512-WPEfvt2/KpQsHgyuHYuAkBugi39qNeUf9qjk3YQGFfgeoUCWx3NQcl6oLuaMhIEpqA6X+YZadSKdkScQlYYrjw==
 
-"@blueking/ediatable@~0.0.1-beta.12":
-  version "0.0.1-beta.12"
-  resolved "https://registry.yarnpkg.com/@blueking/ediatable/-/ediatable-0.0.1-beta.12.tgz#fda937999e75318aef990b1fbb73eb7f6b4c37f1"
-  integrity sha512-KUpH953Wu+J3OZUJcyriQObbM+VrptcTs31rJortSLVT5B3ABsmLPdZ6dfZ3c/ehVhSsjW2o/xjBCTaBM/NXYg==
-  dependencies:
-    "@vueuse/core" "10.9.0"
-    tippy.js "^6.3.7"
+"@blueking/fork-resize-detector@0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@blueking/fork-resize-detector/-/fork-resize-detector-0.0.2.tgz#5240085d35e4b74bda9ad812f9175ff7007c89e5"
+  integrity sha512-gHy4ulTJzy1IG/2o+X13hkC/pN9hbD3WTJz2h9ILSMZy7jHdpQt2Utj0Ppn8MSS/go9QKm0fbHFvNUaLt1/tVw==
 
 "@blueking/functional-dependency@~0.0.1-beta.8":
   version "0.0.1-beta.8"
@@ -10682,11 +10679,6 @@ requires-port@^1.0.0:
   version "1.0.0"
   resolved "https://mirrors.tencent.com/npm/requires-port/-/requires-port-1.0.0.tgz#925d2601d39ac485e091cf0da5c6e694dc3dcaff"
   integrity sha1-kl0mAdOaxIXgkc8NpcbmlNw9yv8=
-
-resize-detector@^0.3.0:
-  version "0.3.0"
-  resolved "https://mirrors.tencent.com/npm/resize-detector/-/resize-detector-0.3.0.tgz#fe495112e184695500a8f51e0389f15774cb1cfc"
-  integrity sha512-R/tCuvuOHQ8o2boRP6vgx8hXCCy87H1eY9V5imBYeVNyNVpuL9ciReSccLj2gDcax9+2weXy3bc8Vv+NRXeEvQ==
 
 resize-observer-polyfill@~1.5.1:
   version "1.5.1"

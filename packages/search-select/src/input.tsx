@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { computed, defineComponent, nextTick, PropType, Ref, ref, SlotsType, watch } from 'vue';
+import { computed, defineComponent, nextTick, ref, watch } from 'vue';
 
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { clickoutside } from '@bkui-vue/directives';
@@ -31,7 +31,9 @@ import Popover from '@bkui-vue/popover';
 import { debounce, random } from '@bkui-vue/shared';
 
 import SearchSelectMenu from './menu';
-import {
+import { useSearchSelectInject, ValueSplitRegex, ValueSplitTestRegex } from './utils';
+
+import type {
   GetMenuListFunc,
   ICommonItem,
   IMenuFooterItem,
@@ -41,12 +43,10 @@ import {
   SearchItemType,
   SearchLogical,
   SelectedItem,
-  useSearchSelectInject,
   ValidateValuesFunc,
   ValueBehavior,
-  ValueSplitRegex,
-  ValueSplitTestRegex,
 } from './utils';
+import type { PropType, Ref, SlotsType } from 'vue';
 export default defineComponent({
   name: 'SearchSelectInput',
   directives: {
@@ -454,57 +454,55 @@ export default defineComponent({
         if (!keyword.value?.length) {
           list = props.data.filter(item => !item.isSelected).slice();
         } else
-          props.data
-            .filter(item => !item.isSelected)
-            .forEach(item => {
-              const isMatched = item.name.toLocaleLowerCase().includes(keyword.value.toLocaleLowerCase());
-              if (isMatched) {
-                list.push(item);
-                const filterList = [];
-                item.children?.forEach(child => {
+          for (const item of props.data.filter(item => !item.isSelected)) {
+            const isMatched = item.name.toLocaleLowerCase().includes(keyword.value.toLocaleLowerCase());
+            if (isMatched) {
+              list.push(item);
+              const filterList = [];
+              for (const child of item.children || []) {
+                filterList.push({
+                  ...item,
+                  realId: item.id,
+                  id: random(10),
+                  value: child,
+                });
+              }
+              if (!filterList.length && !item.onlyRecommendChildren) {
+                filterList.push({
+                  ...item,
+                  realId: item.id,
+                  id: random(10),
+                  value: {
+                    id: keyword.value,
+                    name: keyword.value,
+                  },
+                });
+              }
+              list.push(...filterList);
+            } else {
+              const filterList = [];
+              for (const child of item.children || []) {
+                if (child.name.toLocaleLowerCase().includes(keyword.value.toLocaleLowerCase())) {
                   filterList.push({
                     ...item,
                     realId: item.id,
                     id: random(10),
                     value: child,
                   });
-                });
-                !filterList.length &&
-                  !item.onlyRecommendChildren &&
-                  filterList.push({
-                    ...item,
-                    realId: item.id,
-                    id: random(10),
-                    value: {
-                      id: keyword.value,
-                      name: keyword.value,
-                    },
-                  });
-                list.push(...filterList);
-              } else {
-                const filterList = [];
-                item.children?.forEach(child => {
-                  if (child.name.toLocaleLowerCase().includes(keyword.value.toLocaleLowerCase())) {
-                    filterList.push({
-                      ...item,
-                      realId: item.id,
-                      id: random(10),
-                      value: child,
-                    });
-                  }
-                });
-                !filterList.length &&
-                  !item.onlyRecommendChildren &&
-                  filterList.push({
-                    ...item,
-                    value: {
-                      id: keyword.value,
-                      name: keyword.value,
-                    },
-                  });
-                list.push(...filterList);
+                }
               }
-            });
+              if (!filterList.length && !item.onlyRecommendChildren) {
+                filterList.push({
+                  ...item,
+                  value: {
+                    id: keyword.value,
+                    name: keyword.value,
+                  },
+                });
+              }
+              list.push(...filterList);
+            }
+          }
       } else if (usingItem.value.type === 'condition') {
         list = props.conditions;
       } else if (!usingItem.value.values?.length || usingItem.value.multiple || props.mode === SearchInputMode.EDIT) {
