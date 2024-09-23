@@ -88,6 +88,13 @@ const dialogPropsJson: IPropsTableItem[] = [
     optional: [],
   },
   {
+    name: 'transfer',
+    type: 'Boolean | String | HTMLElement',
+    default: 'true',
+    desc: '控制弹框是否出现在 body 内',
+    optional: [],
+  },
+  {
     name: 'fullscreen',
     type: 'Boolean',
     default: 'false',

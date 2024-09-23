@@ -29,7 +29,10 @@
     console.log(event, file, fileList, 'handleProgress');
   };
   const handleError = (file, fileList, error) => {
-    console.log(file, fileList, error, 'handleError');
+     Message({
+      theme: 'error',
+      message: error.message
+     })
   };
   const handleDone = fileList => {
     console.log(fileList, 'handleDone');

@@ -1,7 +1,7 @@
 <template>
   <bk-date-picker
     v-model="dateValue"
-    :disable-date="disableDate"
+    :disabled-date="disableDate"
     type="datetime"
     clearable
     @change="handleChange"

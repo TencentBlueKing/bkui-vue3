@@ -379,9 +379,11 @@ export default defineComponent({
       showPopover();
     };
     // 输入框是否可以输入内容
-    const isInput = computed(
-      () => ((filterable.value && inputSearch.value) || allowCreate.value) && isPopoverShow.value,
-    );
+    // const isInput = computed(
+    //   () => ((filterable.value && inputSearch.value) || allowCreate.value) && isPopoverShow.value,
+    // );
+    // 自定义创建失焦后仍保留输入框内的内容
+    const isInput = computed(() => (filterable.value && inputSearch.value && isPopoverShow.value) || allowCreate.value);
     watch(isPopoverShow, isShow => {
       emit('toggle', isPopoverShow.value);
       if (!isShow) {
@@ -544,6 +546,7 @@ export default defineComponent({
           });
           emitChange(selected.value.map(item => item.value));
           emit('select', option.optionID);
+          clearMultipleInputValue();
         }
         focusInput();
       } else {
@@ -554,10 +557,19 @@ export default defineComponent({
             value: option.optionID,
           },
         ];
+        if (filterable.value && allowCreate.value) {
+          customOptionName.value = '';
+        }
         emitChange(option.optionID);
         emit('select', option.optionID);
         handleHidePopover();
         handleBlur();
+      }
+    };
+    // 是否需要清空多选输入框内容
+    const clearMultipleInputValue = () => {
+      if (['tag'].includes(multipleMode.value) && isInput.value) {
+        selectTagInputRef.value?.updateModelValue('');
       }
     };
     // 聚焦输入框
@@ -589,6 +601,7 @@ export default defineComponent({
     const handleClear = (e: Event) => {
       e.stopPropagation();
       selected.value = [];
+      clearMultipleInputValue();
       emitChange(multiple.value ? [] : '');
       emit('clear', multiple.value ? [] : '');
       handleHidePopover();

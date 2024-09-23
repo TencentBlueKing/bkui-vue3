@@ -70,6 +70,10 @@ export default defineComponent({
       type: String as PropType<SearchInputMode>,
       default: SearchInputMode.DEFAULT,
     },
+    maxHeight: {
+      type: Number,
+      default: () => 392,
+    },
     getMenuList: Function as PropType<GetMenuListFunc>,
     validateValues: Function as PropType<ValidateValuesFunc>,
     valueBehavior: String as PropType<ValueBehavior>,
@@ -777,6 +781,7 @@ export default defineComponent({
             keyword={this.keyword}
             list={this.menuList}
             logical={this.usingItem?.logical}
+            maxHeight={this.maxHeight}
             multiple={!!multiple}
             selected={values?.map(item => item.id) || []}
             showLogical={this.usingItem?.showLogical}

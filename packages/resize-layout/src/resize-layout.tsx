@@ -86,6 +86,10 @@ export default defineComponent({
     // 转换类型
     const parseInitialDivide = computed(() => {
       let divide = initialDivide.value;
+      // 如果min不是默认值，且initialDivide不是number类型，min优先级提升
+      if (min.value !== 3 && typeof divide !== 'number') {
+        return `${min.value}px`;
+      }
       if (typeof divide === 'number') {
         divide = divide <= min.value ? `${min.value}px` : `${divide}px`;
       }

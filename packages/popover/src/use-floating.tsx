@@ -384,7 +384,8 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
   };
 
   const handlePopContentMouseLeave = (e: MouseEvent) => {
-    if (isMouseenter) {
+    // 处理底部触发mouseleave事件，popShowTimerId有值代表处于hover状态
+    if (isMouseenter && !popShowTimerId) {
       hidePopover();
       isMouseenter = false;
       emitPopContentMouseLeave(e);

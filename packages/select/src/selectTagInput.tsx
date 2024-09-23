@@ -89,6 +89,9 @@ export default defineComponent({
     const blur = () => {
       inputRef.value?.blur();
     };
+    const updateModelValue = (data: string) => {
+      emit('update:modelValue', data);
+    };
     const handleInput = e => {
       emit('update:modelValue', e.target.value);
     };
@@ -157,6 +160,7 @@ export default defineComponent({
       handleRemoveTag,
       focus,
       blur,
+      updateModelValue,
       handleInput,
       handleKeydown,
       resolveClassName,
@@ -195,6 +199,7 @@ export default defineComponent({
                 }}
                 theme={this.tagTheme}
                 closable
+                key={item.value}
                 onClose={() => this.handleRemoveTag(item.value)}
               >
                 {this.$slots.tagRender?.(item) ?? (

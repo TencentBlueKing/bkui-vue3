@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 
-import { computed, defineComponent, ExtractPropTypes, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, defineComponent, ExtractPropTypes, nextTick, onMounted, ref, StyleValue, watch } from 'vue';
 
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { bkTooltips } from '@bkui-vue/directives';
@@ -83,11 +83,14 @@ export const enum EVENTS {
   PASTE = 'paste',
   UPDATE = 'update:modelValue',
 }
+// TODO: 泛型
+/* eslint-disable-next-line */
 function EventFunction(_value: any, _evt: KeyboardEvent);
+/* eslint-disable-next-line */
 function EventFunction(_value: any, _evt: Event) {
   return true;
 }
-
+/* eslint-disable-next-line */
 function PastEventFunction(_value: any, _e: ClipboardEvent) {
   return true;
 }
@@ -136,7 +139,6 @@ export default defineComponent({
     );
     const { class: cls, style, ...inputAttrs } = ctx.attrs;
 
-    const parentRef = ref();
     const inputRef = ref();
     const innerInputValue = ref<{ value?: number | string }>(
       typeof props.modelValue === 'undefined' || props.modelValue === null
@@ -160,61 +162,8 @@ export default defineComponent({
       ),
     );
     const isOverflow = ref(false);
-    const textareaCalcStyle = ref({});
-    const resizeTextarea = () => {
-      if (!isTextArea.value) return;
+    const textareaCalcStyle = ref<StyleValue>();
 
-      if (props.autosize) {
-        const minRows = (props.autosize as InputAutoSize)?.minRows;
-        const maxRows = (props.autosize as InputAutoSize)?.maxRows;
-        const textareaStyle = calcTextareaHeight(inputRef.value, minRows, maxRows);
-
-        textareaCalcStyle.value = {
-          overflowY: 'hidden',
-          ...textareaStyle,
-        };
-
-        nextTick(() => {
-          textareaCalcStyle.value = textareaStyle;
-        });
-      } else {
-        textareaCalcStyle.value = {
-          minHeight: calcTextareaHeight(inputRef.value).minHeight,
-        };
-      }
-    };
-
-    const createOnceInitResize = (resizeTextarea: () => void) => {
-      let isInit = false;
-      return () => {
-        if (isInit || !props.autosize) return;
-        const isElHidden = inputRef.value?.offsetParent === null;
-        if (!isElHidden) {
-          resizeTextarea();
-          isInit = true;
-        }
-      };
-    };
-
-    const dragTextareaResize = () => {
-      return () => {
-        // 必须是autosize才能实现拖拽，且设置了maxRows还是会覆盖原有默认高度出现滚动条
-        if (!isTextArea.value || !props.autosize) return;
-        const isElHidden = parentRef.value?.offsetParent === null;
-        if (!isElHidden) {
-          inputRef.value?.style?.setProperty('height', `${parentRef.value?.offsetHeight}px`);
-          textareaCalcStyle.value = Object.assign(textareaCalcStyle.value, {
-            height: `${parentRef.value?.offsetHeight}px`,
-          });
-          if (parentRef.value?.offsetWidth > parentRef.value?.parentNode?.offsetWidth) {
-            parentRef.value?.style?.setProperty('width', `${parentRef.value?.parentNode?.offsetWidth}px`);
-          }
-        }
-      };
-    };
-
-    const onceInitSizeTextarea = createOnceInitResize(resizeTextarea);
-    const onDragSizeTextarea = dragTextareaResize();
     const suffixCls = getCls('suffix-icon');
     const suffixIconMap = {
       search: () => <Search />,
@@ -314,17 +263,10 @@ export default defineComponent({
       return typeof props.maxlength === 'number' || typeof props.maxcharacter === 'number';
     });
 
-    const resizeObserver = new ResizeObserver(() => {
-      onceInitSizeTextarea();
-      onDragSizeTextarea();
-      setOverflow();
-    });
-
     watch(
       () => props.type,
-      async () => {
-        await nextTick();
-        resizeTextarea();
+      () => {
+        nextTick(onResize);
       },
     );
 
@@ -337,26 +279,16 @@ export default defineComponent({
         innerInputValue.value = {
           value: val,
         };
-        nextTick(() => {
-          resizeTextarea();
-          onDragSizeTextarea();
-        });
-        setOverflow();
+        nextTick(onResize);
       },
     );
 
     onMounted(() => {
-      setOverflow();
-      resizeObserver.observe(inputRef.value);
-      nextTick(() => resizeTextarea());
+      nextTick(onResize);
       // Hack: 修复autofocus属性失效问题 原生autofocus属性只在页面加载时生效
       if (Object.prototype.hasOwnProperty.call(ctx.attrs, 'autofocus')) {
         inputRef.value?.focus?.();
       }
-    });
-
-    onBeforeUnmount(() => {
-      resizeObserver.disconnect();
     });
 
     ctx.expose({
@@ -369,6 +301,35 @@ export default defineComponent({
       },
       clear,
     });
+
+    function onResize() {
+      autoResizeTextarea();
+      setOverflow();
+    }
+
+    function autoResizeTextarea() {
+      const isElHidden = inputRef.value?.offsetParent === null;
+      if (!isTextArea.value || isElHidden || props.resize) return;
+
+      if (props.autosize) {
+        const minRows = (props.autosize as InputAutoSize)?.minRows;
+        const maxRows = (props.autosize as InputAutoSize)?.maxRows;
+        const textareaStyle = calcTextareaHeight(inputRef.value, minRows, maxRows);
+
+        textareaCalcStyle.value = {
+          overflowY: 'hidden',
+          ...textareaStyle,
+        };
+
+        nextTick(() => {
+          textareaCalcStyle.value = textareaStyle;
+        });
+      } else {
+        textareaCalcStyle.value = {
+          minHeight: calcTextareaHeight(inputRef.value).minHeight,
+        };
+      }
+    }
 
     function detectOverflow() {
       return inputRef.value?.scrollWidth > inputRef.value?.clientWidth + 2;
@@ -526,8 +487,7 @@ export default defineComponent({
     };
     return () => (
       <div
-        ref={parentRef}
-        style={style as any}
+        style={style as StyleValue}
         class={inputCls.value}
         v-bk-tooltips={tooltips.value}
       >

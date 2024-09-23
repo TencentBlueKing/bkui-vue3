@@ -605,9 +605,9 @@ export default [
       },
       {
         name: 'list',
-        type: 'Array[{ value, text }]',
+        type: 'Array[{ value, text, tipKey }]',
         default: '[]',
-        desc: '数据过滤的选项，数组格式，数组中的元素需要有 text 和 value 属性。',
+        desc: '数据过滤的选项，数组格式，数组中的元素需要有 text 和 value 属性, tipKey为可选项且仅用于展示内容溢出时的自定义内容。',
         optional: [],
       },
       { name: 'checked', type: 'String[]||Number[]||Boolean[]', default: '[]', desc: '筛选项选中的元素', optional: [] },

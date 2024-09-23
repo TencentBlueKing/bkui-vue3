@@ -48,10 +48,10 @@ import Title from './demo/title.vue';
 const loadingProps: IPropsTableItem[] = [
   {
     name: 'loading',
-    type: 'String',
-    default: 'text',
-    desc: '输入框类型',
-    optional: ['text', 'textarea', 'password', 'number', 'email', 'url', 'date'],
+    type: 'Boolean',
+    default: 'true',
+    desc: '是否显示 loading',
+    optional: ['true', 'false'],
   },
   {
     name: 'mode',
@@ -98,7 +98,7 @@ const loadingSlot: IPropsTableItem[] = [
     desc: '默认插槽',
     optional: [],
   },
-]
+];
 
 const demos = [
   {
@@ -163,8 +163,8 @@ export default defineComponent({
         <DemoTitle
           desc='覆盖正在加载数据的组件一个 loading 层'
           designLink='https://bkdesign.bk.tencent.com/design/138'
-          npmLink={`${import.meta.env.VITE_APP_BASE_URL ?? ''}/loading`}
           name='Loading'
+          npmLink={`${import.meta.env.VITE_APP_BASE_URL ?? ''}/loading`}
         />
         {demos.map(({ DemoComponent, ...demo }) => (
           <DemoBox {...demo}>

@@ -401,10 +401,12 @@ export default defineComponent({
 
         if (charLen) {
           filterData(value);
-          tagInputRef.value.style.width = `${charLen * INPUT_MIN_WIDTH}px`;
+          // 如果按最小宽度计算，空白区域会比较大，这里先按一半宽度处理
+          tagInputRef.value.style.width = `${charLen * (INPUT_MIN_WIDTH / 2)}px`;
         } else {
           if (trigger === 'focus') {
             filterData();
+            tagInputRef.value.style.width = `${INPUT_MIN_WIDTH}px`;
           }
         }
       } else {

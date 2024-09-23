@@ -1,5 +1,62 @@
 ## 更新日志
 
+
+### 2.0.1-beta.70
+
+* **[feat]**:
+    - feature: colorPicker支持初始化默认展开popover
+
+
+### 2.0.1-beta.69
+
+* **[feat]**:
+    - fix: 修复upload组件下error事件的message提示object问题
+
+
+### 2.0.1-beta.68
+
+* **[feat]**:
+    - bugfix(select): 修复select tag key没有设置问题
+    - fix: searchSelect组件设置maxHeight不生效
+
+
+### 2.0.1-beta.67
+
+* **[feat]**:
+    - fix(input): 自适应高度 autosize 异常
+    - bugfix(table): 表头过滤弹窗期望默认支持 '超出...' 的规范
+    - feature(upload): 支持error事件的错误信息返回的是上传接口返回的message信息
+
+
+### 2.0.1-beta.66
+
+* **[feat]**:
+    - feat(table): 导出 setRowSelection 方法
+
+
+### 2.0.1-beta.65
+
+* **[feat]**:
+    - feat(release-note): 增加版本日志组件文档页面
+    - fix: resizeLayout组件initialDivide 和 min同时配置时，min优先级较低问题([#1804](https://github.com/TencentBlueKing/bkui-vue3/issues/1804))
+
+
+### 2.0.1-beta.64
+
+* **[fix]**:
+    - fix: 下拉菜单靠近底部区域hover出来一下会消失([#1964](https://github.com/TencentBlueKing/bkui-vue3/issues/1964))
+    - fix: select组件支持自定义创建时失焦会清空文本框的值且匹配tag后文本框输入的值也没有清空([#2095](https://github.com/TencentBlueKing/bkui-vue3/issues/2095))
+    - fix: dialog组件设置transfer属性失效([#1673](https://github.com/TencentBlueKing/bkui-vue3/issues/1673))
+    - fix: tagInput组件输入文本内容时空白区域较大([#2118](https://github.com/TencentBlueKing/bkui-vue3/issues/2118))
+    - fix: 修复textarea组件自适应高度autosize异常 ([#2122](https://github.com/TencentBlueKing/bkui-vue3/issues/2122))
+
+
+### 2.0.1-beta.63
+
+* **[fix]**:
+    - fix(table): 高度固定导致滚动问题
+
+
 ### 2.0.1-beta.62
 
 * **[feat]**:

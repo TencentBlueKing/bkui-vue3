@@ -16,6 +16,7 @@
     "@blueking/log-search": "0.0.9-beta.1",
     "@blueking/magicbox-header": "~1.1.61",
     "@blueking/ediatable": "~0.0.1-beta.12",
+    "@blueking/release-note": "~0.0.1-beta.15",
     "@vitejs/plugin-vue": "~5.0.4",
     "@vitejs/plugin-vue-jsx": "~3.1.0",
     "bkui-vue": "~2.0.1-beta.61",

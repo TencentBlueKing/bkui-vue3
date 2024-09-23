@@ -87,7 +87,7 @@ const propsJson = [
     name: 'initialDivide',
     type: 'string|number',
     default: '20%',
-    desc: '侧栏初始大小',
+    desc: '侧栏初始大小,当同时设置initialDivide与min都为number类型时以最大值为默认值',
     optional: [],
   },
   {

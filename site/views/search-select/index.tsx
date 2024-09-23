@@ -55,7 +55,7 @@ const propsJson: IPropsTableItem[] = [
   {
     name: 'max-height',
     type: 'Number',
-    default: '120',
+    default: '392',
     desc: '最大高度',
     optional: [],
   },

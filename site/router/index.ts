@@ -767,6 +767,15 @@ const routes: RouteRecordRaw[] = [
     },
     component: () => import('../views/blueking/ediatable/index'),
   },
+  {
+    path: '/bk/release-note',
+    name: 'ReleaseNote',
+    meta: {
+      group: NavGroupMeta.Business,
+      navName: 'Release Note 版本日志',
+    },
+    component: () => import('../views/blueking/release-note/index'),
+  },
 ];
 
 const router = createRouter({

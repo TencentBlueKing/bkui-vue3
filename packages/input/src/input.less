@@ -62,7 +62,10 @@
   .placeholder();
 
   &.resizable {
-    resize: both;
+    resize: vertical;
+    >textarea {
+        flex: 1;
+    }
   }
 
   ::-webkit-scrollbar {

@@ -70,6 +70,8 @@ const colorPickerProps = {
   extCls: PropTypes.string.def(''),
   withValidate: PropTypes.bool.def(true),
   recommendEmpty: PropTypes.bool.def(true),
+  // 初始化默认展开
+  showOnInit: PropTypes.bool.def(false),
 };
 const whiteColorObj = formatColor('#FFFFFF');
 
@@ -115,6 +117,11 @@ export default defineComponent({
     onBeforeMount(() => {
       // 1. 组件初始化时，如果计算的色值和传入的值不一样，显示计算的色值
       changeColorFromProps({ isCreated: true });
+      if (props.showOnInit) {
+        nextTick(() => {
+          openDropdown();
+        });
+      }
     });
 
     watch(

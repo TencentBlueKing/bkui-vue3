@@ -156,7 +156,14 @@ const inputProps: IPropsTableItem[] = [
     name: 'autosize',
     type: 'Boolean, Object',
     default: false,
-    desc: '设置文本框 autosize 属性使得根据内容自动调整的高度。 你可以给 autosize 提供一个包含有最大行数和最小行数的对象，让输入框自动调整。',
+    desc: '设置文本框 autosize 属性使得根据内容自动调整的高度。 你可以给 autosize 提供一个包含有最大行数和最小行数的对象，让输入框自动调整。注意：需要手动将resize设置为false',
+    optional: [],
+  },
+  {
+    name: 'resize',
+    type: 'Boolean',
+    default: true,
+    desc: '设置文本框是否可以自动调整高度，默认为true，设置为true时，autosize会失效',
     optional: [],
   },
   {
@@ -293,8 +300,8 @@ const inputMethods = [
     default: null,
     desc: '清空内容',
     optional: [],
-  }
-]
+  },
+];
 
 const demos = [
   {
@@ -340,7 +347,7 @@ const demos = [
   {
     // '自适应高度文本输入框',
     title: '自适应高度文本输入框',
-    desc: '通过配置 type 属性为 textarea 来显示多行文本输入框',
+    desc: '通过配置 type 属性为 textarea 来显示多行文本输入框, 不支持与resize属性一起使用，设置此属性时需要手动将resize置为false',
     componentName: 'input',
     demoName: 'demo/autosize',
     DemoComponent: AutoSize,
@@ -538,8 +545,8 @@ export default defineComponent({
         <DemoTitle
           desc='常用的输入框'
           designLink='https://bkdesign.bk.tencent.com/design/14'
-          npmLink={`${import.meta.env.VITE_APP_BASE_URL ?? ''}/input`}
           name='Input'
+          npmLink={`${import.meta.env.VITE_APP_BASE_URL ?? ''}/input`}
         />
         {demos.map(({ DemoComponent, ...demo }) => (
           <DemoBox {...demo}>

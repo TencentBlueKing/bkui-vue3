@@ -54,6 +54,10 @@ export default defineComponent({
       type: Number,
       default: -1,
     },
+    maxHeight: {
+      type: Number,
+      default: () => 392,
+    },
     conditions: {
       type: Array as PropType<ICommonItem[]>,
       default: () => [],
@@ -127,6 +131,7 @@ export default defineComponent({
             data={this.data}
             defaultUsingItem={this.copySelectedItem(item)}
             getMenuList={this.getMenuList}
+            maxHeight={this.maxHeight}
             mode={SearchInputMode.EDIT}
             showCondition={false}
             validateValues={this.validateValues}

@@ -66,6 +66,10 @@ export default defineComponent({
       type: String as PropType<SearchLogical>,
       default: SearchLogical.OR,
     },
+    maxHeight: {
+      type: Number,
+      default: () => 392,
+    },
   },
   emits: ['selectItem', 'selectCondition', 'footerClick', 'update:logical'],
   setup(props, { emit }) {
@@ -86,6 +90,12 @@ export default defineComponent({
         ];
       }
       return props.footerBtns;
+    });
+
+    const resolveContentStyles = computed(() => {
+      return {
+        maxHeight: `${props.maxHeight}px`,
+      };
     });
 
     // events
@@ -148,6 +158,7 @@ export default defineComponent({
       getSearchNode,
       localFooterBtns,
       resolveClassName,
+      resolveContentStyles,
       t,
     };
   },
@@ -205,7 +216,10 @@ export default defineComponent({
       );
     };
     return (
-      <div class={this.resolveClassName('search-select-menu')}>
+      <div
+        style={this.resolveContentStyles}
+        class={this.resolveClassName('search-select-menu')}
+      >
         {!!this.conditions?.length && (
           <ul class='menu-header'>
             {this.conditions.map(item => (

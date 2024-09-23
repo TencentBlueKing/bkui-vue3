@@ -7,12 +7,14 @@
       :over-max-length-limit="overMaxLengthLimit"
       type="textarea"
       autosize
+      :resize="false"
     />
     <bk-input
       class="mb8"
       v-model="val1"
       :autosize="autoSizeConf"
       type="textarea"
+      :resize="false"
     />
     <div class="expandable-input-field mb8">
       <bk-input

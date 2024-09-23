@@ -63,6 +63,7 @@ import {
 const INPUT_PADDING_WIDTH = 40;
 const SELECTED_MARGIN_RIGHT = 6;
 const INPUT_MIN_HEIGHT = 26;
+const MENU_ITEM_MIN_HEIGHT = 32;
 export const SearchSelectProps = {
   data: {
     type: Array as PropType<Omit<ISearchItem, 'isSelected' | 'value'>[]>,
@@ -74,7 +75,8 @@ export const SearchSelectProps = {
   },
   maxHeight: {
     type: Number,
-    default: 120,
+    // 默认展示12条，加上列表8px的padding
+    default: MENU_ITEM_MIN_HEIGHT * 12 + 8,
   },
   conditions: {
     type: Array as PropType<ICommonItem[]>,
@@ -376,7 +378,7 @@ export default defineComponent({
         >
           <div class='search-prefix'>{this.$slots.prepend?.()}</div>
           <div
-            style={{ maxHeight }}
+            style={{ 'max-height': `${maxHeight}px` }}
             class='search-container'
           >
             <SearchSelected
@@ -384,6 +386,7 @@ export default defineComponent({
               conditions={this.localConditions}
               data={this.copyData}
               getMenuList={this.getMenuList}
+              maxHeight={this.maxHeight}
               overflowIndex={this.overflowIndex}
               selectedList={this.selectedList}
               validateValues={this.validateValues}
@@ -399,6 +402,7 @@ export default defineComponent({
                 conditions={this.localConditions}
                 data={this.copyData}
                 getMenuList={this.getMenuList}
+                maxHeight={this.maxHeight}
                 placeholder={this.placeholder || this.t.pleaseSelect}
                 showCondition={showCondition}
                 showInputBefore={!this.selectedList.length}

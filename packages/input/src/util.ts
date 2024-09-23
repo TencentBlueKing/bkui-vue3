@@ -29,7 +29,7 @@ let hiddenTextarea: HTMLTextAreaElement | undefined = undefined;
 const HIDDEN_STYLE = `
   height:0 !important;
   visibility:hidden !important;
-  
+
   position:absolute !important;
   z-index:-1000 !important;
   top:0 !important;

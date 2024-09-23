@@ -106,6 +106,13 @@ const colorPickerPropsJson: IPropsTableItem[] = [
     desc: '配置自定义样式类名，传入的类会被加在组件最外层的 DOM .bk-color-picker 上',
     optional: [],
   },
+  {
+    name: 'show-on-init',
+    type: 'Boolean',
+    default: 'false',
+    desc: '是否在初始化时默认展开popover',
+    optional: ['true', 'false'],
+  },
 ];
 
 const colorPickerChangePropsJson: IPropsTableItem[] = [
