@@ -70,7 +70,7 @@ export default defineComponent({
     function handleDeleteSelected(index: number) {
       emit('delete', index);
     }
-    function handleEditSeleted(e: MouseEvent, item: SelectedItem, index: number) {
+    function handleEditSelected(e: MouseEvent, item: SelectedItem, index: number) {
       e.preventDefault();
       e.stopPropagation();
       onEditClick(item, index);
@@ -92,7 +92,7 @@ export default defineComponent({
     function handleInputOutside(target: Node) {
       return !selectedInputRef.value?.contains(target);
     }
-    function copySeletedItem(item: SelectedItem): SelectedItem {
+    function copySelectedItem(item: SelectedItem): SelectedItem {
       const newItem = new SelectedItem(item.searchItem, item.type);
       newItem.values = item.values.slice();
       newItem.logical = item.logical || SearchLogical.OR;
@@ -102,9 +102,9 @@ export default defineComponent({
       inputRef,
       selectedInputRef,
       editKey,
-      copySeletedItem,
+      copySelectedItem,
       handleDeleteSelected,
-      handleEditSeleted,
+      handleEditSelected,
       handleInputOutside,
       handleAddSelected,
       handleInputFocus,
@@ -114,37 +114,37 @@ export default defineComponent({
     const contentComponent = (item: SelectedItem, index: number) =>
       this.editKey === `${item.id}_${index}` ? (
         <div
-          class='selected-input'
           key={this.editKey.toString()}
           ref='selectedInputRef'
+          class='selected-input'
         >
           <SearchSelectInput
-            ref='inputRef'
             key={this.editKey.toString()}
-            mode={SearchInputMode.EDIT}
-            data={this.data}
-            showCondition={false}
-            conditions={this.conditions}
-            defautUsingItem={this.copySeletedItem(item)}
+            ref='inputRef'
+            v-slots={{ ...this.$slots }}
             clickOutside={this.handleInputOutside}
+            conditions={this.conditions}
+            data={this.data}
+            defaultUsingItem={this.copySelectedItem(item)}
             getMenuList={this.getMenuList}
+            mode={SearchInputMode.EDIT}
+            showCondition={false}
             validateValues={this.validateValues}
             valueBehavior={this.valueBehavior}
             onAdd={v => this.handleAddSelected(v, index)}
             onFocus={this.handleInputFocus}
-            v-slots={{ ...this.$slots }}
           />
         </div>
       ) : (
         <li
+          key={`${item.id}_${index}`}
           class={`search-container-selected ${
             !(this.overflowIndex >= 0 ? index < this.overflowIndex : index >= 0) ? 'hidden-selected' : ''
           }`}
-          key={`${item.id}_${index}`}
         >
           <span
             class='selected-name'
-            onClick={e => this.handleEditSeleted(e, item, index)}
+            onClick={e => this.handleEditSelected(e, item, index)}
           >
             {item.inputInnerText}
           </span>

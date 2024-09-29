@@ -24,7 +24,6 @@
  * IN THE SOFTWARE.
  */
 
-import { addListener, removeListener } from 'resize-detector';
 import {
   computed,
   defineComponent,
@@ -34,6 +33,7 @@ import {
   ref,
   ShallowRef,
   shallowRef,
+  VNode,
   watch,
 } from 'vue';
 import { type SlotsType } from 'vue';
@@ -42,6 +42,7 @@ import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { clickoutside } from '@bkui-vue/directives';
 import { Close, ExclamationCircleShape, Search } from '@bkui-vue/icon';
 import { debounce } from '@bkui-vue/shared';
+import { addListener, removeListener } from '@blueking/fork-resize-detector';
 
 import SearchSelectInput from './input';
 import SearchSelected from './selected';
@@ -60,27 +61,20 @@ import {
   ValueBehavior,
 } from './utils';
 const INPUT_PADDING_WIDTH = 40;
-const SELETED_MARGING_RIGHT = 6;
+const SELECTED_MARGIN_RIGHT = 6;
+const INPUT_MIN_HEIGHT = 26;
 export const SearchSelectProps = {
   data: {
-    type: Array as PropType<ISearchItem[]>,
+    type: Array as PropType<Omit<ISearchItem, 'isSelected' | 'value'>[]>,
     default: () => [],
   },
   modelValue: {
     type: Array as PropType<ISearchValue[]>,
     default: () => [],
   },
-  shrink: {
-    type: Boolean,
-    default: true,
-  },
   maxHeight: {
     type: Number,
     default: 120,
-  },
-  minHeight: {
-    type: Number,
-    default: 26,
   },
   conditions: {
     type: Array as PropType<ICommonItem[]>,
@@ -101,7 +95,7 @@ export const SearchSelectProps = {
     type: String as PropType<`${ValueBehavior}`>,
     default: ValueBehavior.ALL,
     validator(v: ValueBehavior) {
-      return [ValueBehavior.ALL, ValueBehavior.NEEDKEY].includes(v);
+      return [ValueBehavior.ALL, ValueBehavior.NEED_KEY].includes(v);
     },
   },
   // deleteBehavior: {
@@ -121,9 +115,9 @@ export default defineComponent({
   emits: ['update:modelValue', 'search', 'selectKey'],
   slots: Object as SlotsType<{
     menu: MenuSlotParams;
-    prepend: void;
-    append: void;
-    validate: void;
+    prepend: () => VNode;
+    append: () => VNode;
+    validate: () => VNode;
   }>,
   setup(props, { emit }) {
     const t = useLocale('searchSelect');
@@ -154,9 +148,9 @@ export default defineComponent({
       () => props.data,
       () => {
         copyData.value = JSON.parse(JSON.stringify(props.data));
-        copyData.value?.forEach(item => {
-          item.isSelected = props.uniqueSelect && !!props.modelValue.some(set => set.id === item.id);
-        });
+        for (const item of copyData.value || []) {
+          item.isSelected = props.uniqueSelect && props.modelValue.some(set => set.id === item.id);
+        }
       },
       {
         immediate: true,
@@ -168,24 +162,26 @@ export default defineComponent({
       (v: ISearchValue[]) => {
         if (!v?.length) {
           selectedList.value = [];
-          copyData.value?.forEach(item => {
+          for (const item of copyData.value || []) {
             item.isSelected = false;
-          });
+          }
           return;
         }
         const list = [];
-        v.forEach(item => {
-          const seleted = selectedList.value.find(set => set.id === item.id && set.name === item.name);
-          if (seleted?.toValueKey() === JSON.stringify(item)) {
-            seleted.values = item.values || [];
-            seleted.logical = item.logical || SearchLogical.OR;
-            list.push(seleted);
+        for (const item of v) {
+          const selected = selectedList.value.find(set => set.id === item.id && set.name === item.name);
+          if (selected?.toValueKey() === JSON.stringify(item)) {
+            selected.values = item.values || [];
+            selected.logical = item.logical || SearchLogical.OR;
+            list.push(selected);
           } else {
             let searchItem = props.data.find(set => set.id === item.id);
             let searchType: SearchItemType = 'default';
             if (!searchItem) {
               searchItem = props.conditions.find(set => set.id === item.id);
-              searchItem && (searchType = 'condition');
+              if (searchItem) {
+                searchType = 'condition';
+              }
             }
             if (!searchItem && !item.values?.length) {
               searchType = 'text';
@@ -195,12 +191,12 @@ export default defineComponent({
             newSelected.logical = item.logical || SearchLogical.OR;
             list.push(newSelected);
           }
-        });
+        }
         selectedList.value = list;
         copyData.value = JSON.parse(JSON.stringify(props.data || []));
-        copyData.value.forEach(item => {
+        for (const item of copyData.value) {
           item.isSelected = props.uniqueSelect && !!list.some(set => set.id === item.id);
-        });
+        }
       },
       {
         immediate: true,
@@ -258,18 +254,18 @@ export default defineComponent({
         return;
       }
       const inputEl = wrapRef.value.querySelector(`.${resolveClassName('search-select-container')}`);
-      const maxWidth = wrapRef.value.querySelector('.search-container').clientWidth - SELETED_MARGING_RIGHT - 2;
+      const maxWidth = wrapRef.value.querySelector('.search-container').clientWidth - SELECTED_MARGIN_RIGHT - 2;
       const tagList = inputEl.querySelectorAll('.search-container-selected:not(.overflow-selected)');
       let width = 0;
       let index = 0;
       let i = 0;
       while (index === 0 && width <= maxWidth - INPUT_PADDING_WIDTH && i <= tagList.length - 1) {
         const el = tagList[i];
-        if (el.clientHeight > props.minHeight) {
+        if (el.clientHeight > INPUT_MIN_HEIGHT) {
           overflowIndex.value = i;
           return;
         }
-        width += el ? el.clientWidth + SELETED_MARGING_RIGHT : 0;
+        width += el ? el.clientWidth + SELECTED_MARGIN_RIGHT : 0;
         if (width >= maxWidth - INPUT_PADDING_WIDTH) {
           index = i;
         }
@@ -308,13 +304,16 @@ export default defineComponent({
       const list = selectedList.value.slice();
       list.splice(typeof index === 'number' ? index : selectedList.value.length - 1, 1);
       onValidate('');
+      inputRef.value.refleshMenuHover();
       emit(
         'update:modelValue',
         list.map(item => item.toValue()),
       );
     }
     function handleInputFocus(v: boolean) {
-      v && (overflowIndex.value = -1);
+      if (v) {
+        overflowIndex.value = -1;
+      }
       if (v === false) {
         wrapRef.value.querySelector(`.${resolveClassName('search-select-container')}`)?.scrollTo(0, 0);
       }
@@ -324,7 +323,7 @@ export default defineComponent({
       inputRef.value.inputEnterForWrapper();
       emit('search', e);
     }
-    function handleSelectedKey(a: any) {
+    function handleSelectedKey(a: ICommonItem) {
       emit('selectKey', a);
     }
     return {
@@ -352,7 +351,7 @@ export default defineComponent({
     };
   },
   render() {
-    const maxHeight = `${!this.shrink || this.isFocus ? this.maxHeight : this.minHeight}px`;
+    const maxHeight = `${this.isFocus ? this.maxHeight : INPUT_MIN_HEIGHT}px`;
     const showCondition = !!this.selectedList.length && this.selectedList.slice(-1)[0].type !== 'condition';
     const menuSlots = Object.assign(
       {},
@@ -365,8 +364,8 @@ export default defineComponent({
     // render
     return (
       <div
-        class={this.resolveClassName('search-select')}
         ref='wrapRef'
+        class={this.resolveClassName('search-select')}
       >
         <div
           class={{
@@ -377,38 +376,38 @@ export default defineComponent({
         >
           <div class='search-prefix'>{this.$slots.prepend?.()}</div>
           <div
-            class='search-container'
             style={{ maxHeight }}
+            class='search-container'
           >
             <SearchSelected
-              data={this.copyData}
+              v-slots={{ ...menuSlots }}
               conditions={this.localConditions}
-              selectedList={this.selectedList}
-              overflowIndex={this.overflowIndex}
+              data={this.copyData}
               getMenuList={this.getMenuList}
+              overflowIndex={this.overflowIndex}
+              selectedList={this.selectedList}
               validateValues={this.validateValues}
               valueBehavior={this.valueBehavior as ValueBehavior}
               onDelete={this.handleDeleteSelected}
               onSelectKey={this.handleSelectedKey}
-              v-slots={{ ...menuSlots }}
             />
             <div class='search-container-input'>
               <SearchSelectInput
                 ref='inputRef'
-                data={this.copyData}
-                showInputBefore={!this.selectedList.length}
-                showCondition={showCondition}
-                conditions={this.localConditions}
-                placeholder={this.placeholder || this.t.pleaseSelect}
+                v-slots={{ ...menuSlots }}
                 clickOutside={this.handleInputOutside}
+                conditions={this.localConditions}
+                data={this.copyData}
                 getMenuList={this.getMenuList}
+                placeholder={this.placeholder || this.t.pleaseSelect}
+                showCondition={showCondition}
+                showInputBefore={!this.selectedList.length}
                 validateValues={this.validateValues}
                 valueBehavior={this.valueBehavior as ValueBehavior}
                 onAdd={this.handleAddSelected}
                 onDelete={this.handleDeleteSelected}
                 onFocus={this.handleInputFocus}
                 onSelectKey={this.handleSelectedKey}
-                v-slots={{ ...menuSlots }}
               />
             </div>
           </div>
@@ -423,8 +422,8 @@ export default defineComponent({
               this.$slots.append()
             ) : (
               <Search
-                onClick={this.handleClickSearch}
                 class={`search-nextfix-icon ${this.isFocus ? 'is-focus' : ''}`}
+                onClick={this.handleClickSearch}
               ></Search>
             )}
           </div>

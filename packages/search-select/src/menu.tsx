@@ -103,7 +103,7 @@ export default defineComponent({
       if (!props.keyword?.length) return props.list;
       return props.list.filter(item => item.name.toLocaleLowerCase().includes(props.keyword.toLocaleLowerCase()));
     });
-    function transformNode(str: string): string | (string | VNode)[] {
+    function transformNode(str: string): (VNode | string)[] | string {
       if (!str) return str;
       let { keyword } = props;
       const len = keyword.length;
@@ -126,7 +126,7 @@ export default defineComponent({
       }
       return list.length ? list : str;
     }
-    function getSearchNode(item: ICommonItem): string | (string | VNode)[] {
+    function getSearchNode(item: ICommonItem): (VNode | string)[] | string {
       if (!item.value?.name) return transformNode(item.name);
       return [<span class='menu-name'>{item.name}:</span>, item.value.name];
     }
@@ -156,11 +156,11 @@ export default defineComponent({
       <ul class='menu-content'>
         {this.list?.map(item => (
           <li
+            id={item.id}
+            key={item.id}
             class={`menu-item ${item.disabled ? 'is-disabled' : ''} ${
               this.hoverId === item.id && !item.disabled ? 'is-hover' : ''
             }`}
-            key={item.id}
-            id={item.id}
             tabindex='-1'
             onClick={() => !item.disabled && this.handleClick(item)}
           >
@@ -168,8 +168,8 @@ export default defineComponent({
               {this.multiple && (
                 <span onClick={e => this.handleSelectedChange(e, item)}>
                   <Checkbox
-                    modelValue={this.selected.includes(item.id)}
                     class='is-selected'
+                    modelValue={this.selected.includes(item.id)}
                   />
                 </span>
               )}
@@ -187,16 +187,16 @@ export default defineComponent({
           <div class='menu-condition'>
             <div class='menu-condition-title'>{this.t.logical}</div>
             <Radio
+              label='|'
               modelValue={this.logical}
               onChange={this.handleLogicalChange}
-              label='|'
             >
               {this.t.or} |
             </Radio>
             <Radio
+              label='&'
               modelValue={this.logical}
               onChange={this.handleLogicalChange}
-              label='&'
             >
               {this.t.and} &
             </Radio>

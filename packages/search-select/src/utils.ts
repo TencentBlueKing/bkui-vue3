@@ -35,7 +35,7 @@ import { random } from '@bkui-vue/shared';
  */
 export enum ValueBehavior {
   ALL = 'all',
-  NEEDKEY = 'need-key',
+  NEED_KEY = 'need-key',
 }
 export enum DeleteBehavior {
   CHAR = 'delete-char',
@@ -54,15 +54,15 @@ export interface ISearchSelectProvider {
   onEditEnter: (item: SelectedItem, index: number) => void;
   onEditBlur: () => void;
   onValidate: (str: string) => void;
-  editKey: Ref<String>;
+  editKey: Ref<string>;
   searchData: ComputedRef<ISearchItem[]>;
   isClickOutside: (target: Node) => boolean;
 }
-export const SEARCH_SLECT_PROVIDER_KEY: InjectionKey<ISearchSelectProvider> = Symbol('SEARCH_SLECT_PROVIDER_KEY');
+export const SEARCH_SELECT_PROVIDER_KEY: InjectionKey<ISearchSelectProvider> = Symbol('SEARCH_SELECT_PROVIDER_KEY');
 export const useSearchSelectProvider = (data: ISearchSelectProvider) => {
-  provide(SEARCH_SLECT_PROVIDER_KEY, data);
+  provide(SEARCH_SELECT_PROVIDER_KEY, data);
 };
-export const useSearchSelectInject = () => inject(SEARCH_SLECT_PROVIDER_KEY);
+export const useSearchSelectInject = () => inject(SEARCH_SELECT_PROVIDER_KEY);
 
 export enum SearchInputMode {
   'DEFAULT' = 'default',
@@ -82,8 +82,8 @@ export interface ISearchValue extends Omit<ICommonItem, 'disabled' | 'value'> {
   type?: SearchItemType;
   values?: Omit<ICommonItem, 'disabled' | 'logical'>[];
 }
-export const ValueSplitRegex = /(\||,|、|\/|\r\n|\n)/gm;
-export const ValueSplitTestRegex = /^(\||,|、|\/|\r\n|\n)$/;
+export const ValueSplitRegex = /(\||,|、|\r\n|\n)/gm;
+export const ValueSplitTestRegex = /^(\||,|、|\r\n|\n)$/;
 
 export interface ISearchItem {
   id: string;
@@ -120,18 +120,18 @@ export enum SearchLogical {
   OR = '|',
 }
 export interface IMenuFooterItem {
-  id: 'confirm' | 'cancel';
+  id: 'cancel' | 'confirm';
   name: string;
   disabled?: boolean;
 }
-export type SearchItemType = 'text' | 'default' | 'condition';
+export type SearchItemType = 'condition' | 'default' | 'text';
 export class SelectedItem {
   id: string;
   name: string;
   values: ICommonItem[] = [];
   condition: string;
   logical: SearchLogical;
-  nameRenderkey = random(4);
+  nameRenderKey = random(4);
   constructor(
     public searchItem: ISearchItem,
     public type: SearchItemType = 'default',
@@ -179,7 +179,7 @@ export class SelectedItem {
     return ['text', 'condition'].includes(this.type);
   }
   addValue(item: ICommonItem) {
-    this.nameRenderkey = random(4);
+    this.nameRenderKey = random(4);
     if (this.multiple) {
       const index = this.values.findIndex(val => val.id === item.id);
       if (index > -1) {
