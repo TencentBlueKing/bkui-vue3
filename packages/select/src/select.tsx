@@ -206,6 +206,7 @@ export default defineComponent({
     const triggerRef = ref<HTMLElement>();
     const contentRef = ref<HTMLElement>();
     const searchRef = ref<HTMLElement>();
+    const scrollContainerRef = ref<HTMLElement>();
     const selectTagInputRef = ref<SelectTagInputType>();
     const popoverRef = ref();
     const optionsMap = ref<Map<PropertyKey, OptionInstanceType>>(new Map());
@@ -468,6 +469,7 @@ export default defineComponent({
 
     // 派发search change事件
     watch(searchValue, () => {
+      scrollContainerRef.value.scrollTop = 0;
       emit('search-change', searchValue.value);
     });
 
@@ -819,6 +821,7 @@ export default defineComponent({
       triggerRef,
       contentRef,
       searchRef,
+      scrollContainerRef,
       selectTagInputRef,
       popoverRef,
       searchLoading,
@@ -1097,6 +1100,7 @@ export default defineComponent({
         )}
         <div class={this.resolveClassName('select-content')}>
           <div
+            ref='scrollContainerRef'
             style={{ maxHeight: `${this.scrollHeight}px`, minHeight: `${this.minHeight}px` }}
             class={this.isEnableVirtualRender ? '' : this.resolveClassName('select-dropdown')}
             onScroll={this.handleScroll}
