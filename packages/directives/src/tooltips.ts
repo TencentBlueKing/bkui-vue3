@@ -217,6 +217,12 @@ function createPopperInstance(el: HTMLElement, popper: HTMLElement) {
           offset: [0, distance],
         },
       },
+      {
+        name: 'arrow',
+        options: {
+          padding: 5,
+        },
+      },
       ...(sameWidth
         ? [
             {
@@ -245,7 +251,7 @@ function createPopperInstance(el: HTMLElement, popper: HTMLElement) {
  */
 function show(el: HTMLElement) {
   const { popper, opts } = nodeList.get(el);
-  const { disabled, content, arrow: hasArrow, onShow, boundary } = opts;
+  const { disabled, content, arrow: hasArrow, onShow, boundary, modifiers = [] } = opts;
   if (disabled) return;
   renderContext(content, popper);
   if (hasArrow) {
@@ -269,7 +275,7 @@ function show(el: HTMLElement) {
   // Enable the event listeners
   popperInstance.setOptions(options => ({
     ...options,
-    modifiers: [...options.modifiers, { name: 'eventListeners', enabled: true }],
+    modifiers: [...options.modifiers, ...modifiers, { name: 'eventListeners', enabled: true }],
   }));
 
   // Update its position
@@ -288,7 +294,7 @@ function hide(el: HTMLElement) {
   if (popper && document.body.contains(popper)) {
     popper.removeAttribute('data-show');
     popperInstance?.destroy();
-    document.body.removeChild(popper);
+    popper?.parentNode?.removeChild(popper);
     onHide();
   }
 }
