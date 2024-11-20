@@ -89,6 +89,9 @@ export default defineComponent({
     const blur = () => {
       inputRef.value?.blur();
     };
+    const updateModelValue = (data: string) => {
+      emit('update:modelValue', data);
+    };
     const handleInput = e => {
       emit('update:modelValue', e.target.value);
     };
@@ -157,6 +160,7 @@ export default defineComponent({
       handleRemoveTag,
       focus,
       blur,
+      updateModelValue,
       handleInput,
       handleKeydown,
       resolveClassName,
@@ -189,6 +193,7 @@ export default defineComponent({
           {this.$slots.default?.() ??
             this.selected.map((item, index) => (
               <Tag
+                key={item.value}
                 ref={el => (this.tagsRefs[index] = el)}
                 style={{
                   display: this.collapseTags && this.overflowTagIndex && index >= this.overflowTagIndex ? 'none' : '',

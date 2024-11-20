@@ -382,6 +382,12 @@ const propsJson: IPropsTableItem[] = [
     default: 'default',
     optional: ['default', 'manual'],
   },
+  {
+    name: 'disableScrollToSelectedOption',
+    desc: '是否禁用滚动到选中option的功能',
+    type: 'boolean',
+    default: 'false',
+  },
 ];
 const eventJson = [
   {

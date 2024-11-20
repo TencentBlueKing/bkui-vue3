@@ -45,7 +45,7 @@ export interface ISelectContext {
   curSearchValue: string;
   highlightKeyword: boolean;
   register(key: PropertyKey, option: OptionInstanceType): void;
-  unregister(key: PropertyKey): void;
+  unregister(key: PropertyKey, option?: OptionInstanceType): void;
   registerGroup(key: PropertyKey, option: GroupInstanceType): void;
   unregisterGroup(key: PropertyKey): void;
   handleOptionSelected(option: OptionInstanceType): void;
@@ -56,7 +56,7 @@ export interface IOptionGroupContext {
   disabled: boolean;
   groupCollapse: boolean;
   register(key: PropertyKey, option: OptionInstanceType): void;
-  unregister(key: PropertyKey): void;
+  unregister(key: PropertyKey, option?: OptionInstanceType): void;
 }
 
 export interface ISelectState {

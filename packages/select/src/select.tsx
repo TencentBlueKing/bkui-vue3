@@ -65,7 +65,7 @@ export default defineComponent({
     size: PropTypes.size().def(SizeEnum.DEFAULT),
     clearable: PropTypes.bool.def(true),
     loading: PropTypes.bool.def(false),
-    filterable: PropTypes.bool.def(true), // 是否支持搜索
+    filterable: PropTypes.bool.def(false), // 是否支持搜索
     remoteMethod: PropTypes.func,
     scrollHeight: PropTypes.number.def(204), // 最大高度
     minHeight: PropTypes.number, // 最小高度
@@ -109,6 +109,7 @@ export default defineComponent({
       type: String as PropType<'default' | 'manual'>,
       default: 'default',
     }, // content显示和隐藏方式
+    disableScrollToSelectedOption: PropTypes.bool.def(false), // 是否禁用滚动到选中option的功能
   },
   emits: [
     'update:modelValue',
@@ -160,6 +161,7 @@ export default defineComponent({
       highlightKeyword,
       disableFocusBehavior,
       trigger,
+      disableScrollToSelectedOption,
     } = toRefs(props);
 
     const virtualRenderRef = ref(null);
@@ -206,6 +208,7 @@ export default defineComponent({
     const triggerRef = ref<HTMLElement>();
     const contentRef = ref<HTMLElement>();
     const searchRef = ref<HTMLElement>();
+    const scrollContainerRef = ref<HTMLElement>();
     const selectTagInputRef = ref<SelectTagInputType>();
     const popoverRef = ref();
     const optionsMap = ref<Map<PropertyKey, OptionInstanceType>>(new Map());
@@ -216,11 +219,16 @@ export default defineComponent({
     );
     const groupsMap = ref<Map<string, GroupInstanceType>>(new Map());
     const selected = ref<ISelected[]>([]);
-    const selectedMap = computed<Record<PropertyKey, string>>(() =>
-      selected.value.reduce((pre, item) => {
-        pre[item.value] = item.label;
-        return pre;
-      }, {}),
+    const selectedCacheMap = computed(() =>
+      selected.value.reduce<Record<PropertyKey, number | string>>(
+        (pre, item) => {
+          pre[item.value] = item.label;
+          return pre;
+        },
+        {
+          [`${allOptionId.value}`]: t.value.all,
+        },
+      ),
     );
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const activeOptionValue = ref<any>(); // 当前悬浮的option
@@ -379,9 +387,11 @@ export default defineComponent({
       showPopover();
     };
     // 输入框是否可以输入内容
-    const isInput = computed(
-      () => ((filterable.value && inputSearch.value) || allowCreate.value) && isPopoverShow.value,
-    );
+    // const isInput = computed(
+    //   () => ((filterable.value && inputSearch.value) || allowCreate.value) && isPopoverShow.value,
+    // );
+    // 自定义创建失焦后仍保留输入框内的内容
+    const isInput = computed(() => (filterable.value && inputSearch.value && isPopoverShow.value) || allowCreate.value);
     watch(isPopoverShow, isShow => {
       emit('toggle', isPopoverShow.value);
       if (!isShow) {
@@ -400,11 +410,10 @@ export default defineComponent({
     });
     // 滚动到当前选中的options中
     const scrollActiveOptionIntoView = () => {
-      if (isEnableVirtualRender.value) return;
+      if (isEnableVirtualRender.value || disableScrollToSelectedOption.value) return;
       const optionsDom = contentRef.value?.querySelectorAll?.('.is-selected');
       optionsDom?.[0]?.scrollIntoView({
         block: 'center',
-        // behavior: 'smooth',
       });
     };
 
@@ -466,6 +475,7 @@ export default defineComponent({
 
     // 派发search change事件
     watch(searchValue, () => {
+      scrollContainerRef.value.scrollTop = 0;
       emit('search-change', searchValue.value);
     });
 
@@ -475,6 +485,8 @@ export default defineComponent({
 
       emit('update:modelValue', val, modelValue.value);
       emit('change', val, modelValue.value);
+      // 重置Selected 以model-value为主
+      handleSetSelectedData();
     };
     // 派发toggle事件
     const handleTogglePopover = () => {
@@ -544,6 +556,7 @@ export default defineComponent({
           });
           emitChange(selected.value.map(item => item.value));
           emit('select', option.optionID);
+          clearMultipleInputValue();
         }
         focusInput();
       } else {
@@ -554,10 +567,19 @@ export default defineComponent({
             value: option.optionID,
           },
         ];
+        if (filterable.value && allowCreate.value) {
+          customOptionName.value = '';
+        }
         emitChange(option.optionID);
         emit('select', option.optionID);
         handleHidePopover();
         handleBlur();
+      }
+    };
+    // 是否需要清空多选输入框内容
+    const clearMultipleInputValue = () => {
+      if (['tag'].includes(multipleMode.value) && isInput.value) {
+        selectTagInputRef.value?.updateModelValue('');
       }
     };
     // 聚焦输入框
@@ -589,6 +611,7 @@ export default defineComponent({
     const handleClear = (e: Event) => {
       e.stopPropagation();
       selected.value = [];
+      clearMultipleInputValue();
       emitChange(multiple.value ? [] : '');
       emit('clear', multiple.value ? [] : '');
       handleHidePopover();
@@ -655,7 +678,7 @@ export default defineComponent({
         emit('tag-remove', val);
       }
     };
-    // options存在 > 上一次选择的label > 当前值
+    // 优先级: option name属性 > list模式 > 上一次选择的label > 当前值
     const handleGetLabelByValue = (value: PropertyKey) => {
       // 处理options value为对象类型，引用类型变更后，回显不对问题
       let tmpValue = value;
@@ -670,7 +693,7 @@ export default defineComponent({
       return (
         optionsMap.value?.get(tmpValue)?.optionName ||
         listMap.value[tmpValue] ||
-        selectedMap.value[tmpValue] ||
+        selectedCacheMap.value[tmpValue] ||
         tmpValue
       );
     };
@@ -806,6 +829,7 @@ export default defineComponent({
       triggerRef,
       contentRef,
       searchRef,
+      scrollContainerRef,
       selectTagInputRef,
       popoverRef,
       searchLoading,
@@ -1084,6 +1108,7 @@ export default defineComponent({
         )}
         <div class={this.resolveClassName('select-content')}>
           <div
+            ref='scrollContainerRef'
             style={{ maxHeight: `${this.scrollHeight}px`, minHeight: `${this.minHeight}px` }}
             class={this.isEnableVirtualRender ? '' : this.resolveClassName('select-dropdown')}
             onScroll={this.handleScroll}
