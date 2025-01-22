@@ -366,12 +366,8 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
     }
   };
 
-  const handleClickRef = () => {
-    triggerPopover();
-  };
-
   const handlePopContentMouseEnter = (e: MouseEvent) => {
-    if (!['hover', 'click-hover'].includes(props.trigger)) {
+    if ('hover' !== props.trigger) {
       return;
     }
     if (!isMouseenter) {
@@ -428,7 +424,7 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
           ],
         },
       ],
-      click: [[['click', handleClickRef]]],
+      click: [[['click', showPopover]]],
       manual: [
         {
           content: [
@@ -440,9 +436,7 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
       ],
     };
 
-    return props.trigger === 'click-hover'
-      ? [...triggerEvents.click, ...triggerEvents.hover]
-      : triggerEvents[props.trigger] ?? [];
+    return triggerEvents[props.trigger] ?? [];
   };
 
   const updateFullscreenTarget = (val?: HTMLElement) => {

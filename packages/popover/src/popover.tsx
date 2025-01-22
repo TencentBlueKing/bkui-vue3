@@ -35,7 +35,7 @@ import { PopoverProps } from './props';
 import Reference from './reference';
 import Root from './root';
 import usePopoverInit from './use-popover-init';
-import { contentAsHTMLElement } from './utils';
+import { contentAsHTMLElement, SharedState } from './utils';
 export default defineComponent({
   name: 'Popover',
   components: {
@@ -74,6 +74,7 @@ export default defineComponent({
       stopHide,
       localIsShow,
       boundary,
+      uniqKey,
     } = usePopoverInit(props, ctx, {
       refReference,
       refContent,
@@ -124,6 +125,10 @@ export default defineComponent({
       hideFn();
     };
 
+    const handleClickReferenceWraper = () => {
+      SharedState[uniqKey] = true;
+    };
+
     // 点击 content 收起面板
     const handleClickContent = () => {
       if (props.trigger !== 'manual' && !props.always && props.clickContentAutoHide) {
@@ -160,6 +165,7 @@ export default defineComponent({
       contentIsShow,
       renderContent,
       localIsShow,
+      handleClickReferenceWraper,
     };
   },
 
@@ -173,7 +179,9 @@ export default defineComponent({
     };
     return (
       <Root ref='refRoot'>
-        <Reference ref='refDefaultReference'>{renderReferSlot(this.$slots.default?.() ?? <span></span>)}</Reference>
+        <span onClick={this.handleClickReferenceWraper}>
+          <Reference ref='refDefaultReference'>{renderReferSlot(this.$slots.default?.() ?? <span></span>)}</Reference>
+        </span>
         <Teleport
           disabled={!this.transBoundary}
           to={this.boundary}

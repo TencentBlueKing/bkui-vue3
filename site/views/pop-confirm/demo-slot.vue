@@ -20,7 +20,6 @@
 </template>
 <script setup>
 import { Help } from 'bkui-vue/lib/icon';
-import { defineComponent } from 'vue';
 function ensure() {
   console.log('ensure');
 }

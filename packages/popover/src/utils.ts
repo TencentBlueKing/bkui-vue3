@@ -23,9 +23,11 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
+import _ from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
 const CachedConst: any = {};
+export const SharedState: Record<string, boolean> = {};
 
 export const isAvailableId = (query: string) => {
   const container = document.querySelector(query);
@@ -67,3 +69,5 @@ export const contentAsHTMLElement = content => {
     vNode: content,
   };
 };
+
+export const random = () => `${_.random(0, 999999)}_${Date.now()}_${_.random(0, 999999)}`;
