@@ -480,6 +480,7 @@ export default defineComponent({
     // 派发search change事件
     watch(searchValue, () => {
       scrollContainerRef.value.scrollTop = 0;
+      activeOptionValue.value = '';
       emit('search-change', searchValue.value);
     });
 
