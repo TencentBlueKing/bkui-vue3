@@ -1,5 +1,11 @@
 ## 更新日志
 
+### 2.0.1-beta.97
+
+* **[feat]**:
+    - bugfix(select): select组件option项失焦后hover效果还存在 ([#2260](https://github.com/TencentBlueKing/bkui-vue3/issues/2260))
+
+
 ### 2.0.1-beta.96
 
 * **[feat]**:
