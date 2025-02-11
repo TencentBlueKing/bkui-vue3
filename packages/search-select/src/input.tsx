@@ -383,6 +383,7 @@ export default defineComponent({
         }
         showPopover.value = isCondition || !!usingItem.value.children.length;
         setInputFocus(props.valueBehavior === ValueBehavior.NEED_KEY && !!menuHoverId.value);
+        typeof props.getMenuList === 'function' && nextTick(setCursorToEnd);
         return;
       }
       if (usingItem.value) {
