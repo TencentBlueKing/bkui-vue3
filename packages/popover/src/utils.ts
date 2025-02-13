@@ -27,7 +27,8 @@ import _ from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
 const CachedConst: any = {};
-export const SharedState: Record<string, boolean> = {};
+// 全局的占位区点击记录
+export const ReferenceClickSharedState: Record<string, boolean> = {};
 
 export const isAvailableId = (query: string) => {
   const container = document.querySelector(query);

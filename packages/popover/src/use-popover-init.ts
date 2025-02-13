@@ -30,7 +30,7 @@ import _ from 'lodash';
 import { EMIT_EVENTS } from './const';
 import useFloating from './use-floating';
 import usePopperId from './use-popper-id';
-import { getFullscreenUid, SharedState, random } from './utils';
+import { getFullscreenUid, ReferenceClickSharedState, random } from './utils';
 
 export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => {
   let storeEvents = null;
@@ -207,8 +207,8 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
   };
 
   const handleClickOutside = _.debounce((_e: MouseEvent) => {
-    if (SharedState[uniqKey]) {
-      SharedState[uniqKey] = false;
+    if (ReferenceClickSharedState[uniqKey]) {
+      ReferenceClickSharedState[uniqKey] = false;
       return;
     }
     ctx.emit(EMIT_EVENTS.CLICK_OUTSIDE, { isShow: localIsShow.value, event: _e });

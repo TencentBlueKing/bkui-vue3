@@ -150,6 +150,11 @@ export const PopoverProps = {
   extCls: PropTypes.string.def(''),
 
   /**
+   * 配置自定义样式类名，传入的类会被加在 Reference 外部的 div 上
+   */
+  referenceCls: PropTypes.string.def(''),
+
+  /**
    * 自定义Content组件渲染，point-event延迟渲染时间
    * 避免子组件point-event渲染时触发popover鼠标事件
    * 如果设置为0，则不启用此设置
