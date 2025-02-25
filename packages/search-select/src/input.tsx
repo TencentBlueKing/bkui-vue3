@@ -108,7 +108,7 @@ export default defineComponent({
 
     const { editKey, onValidate, searchData } = useSearchSelectInject();
     const valueLogic = computed(() => usingItem.value?.logical || SearchLogical.OR);
-
+    const inputKey = ref(random(10));
     watch(editKey, () => {
       if (props.mode === SearchInputMode.DEFAULT && editKey.value) {
         showPopover.value = false;
@@ -256,6 +256,19 @@ export default defineComponent({
         keyword.value = text;
         debounceSetMenuList();
         return;
+      } else {
+        // command + a 全选删除特殊逻辑
+        if (usingItem.value && !text) {
+          inputKey.value = random(10);
+          menuHoverId.value = '';
+          usingItem.value = null;
+          keyword.value = '';
+          setTimeout(() => {
+            setInputFocus(true, true);
+            nextTick(setCursorToEnd);
+          }, 200);
+          return;
+        }
       }
       keyword.value = usingItem.value.isSpecialType()
         ? text
@@ -263,6 +276,15 @@ export default defineComponent({
       debounceSetMenuList();
     }
     function handleInputKeyup(event: KeyboardEvent) {
+      // if ((event.ctrlKey || event.metaKey) && event.key === 'a') {
+      //   const selection = window.getSelection();
+      //   const range = selection.getRangeAt(0);
+      //   const startContainer = range.startContainer;
+      //   if (startContainer === inputRef.value) {
+      //     event?.preventDefault();
+      //   }
+      //   return;
+      // }
       switch (event.code) {
         case 'Enter':
         case 'NumpadEnter':
@@ -692,6 +714,7 @@ export default defineComponent({
       customPanelSubmit,
       refleshMenuHover,
       t,
+      inputKey,
     };
   },
   render() {
@@ -702,6 +725,7 @@ export default defineComponent({
     const showCondition = !this.usingItem && this.showCondition;
     const inputContent = () => (
       <div
+        key={this.inputKey}
         ref='inputRef'
         class={{
           'div-input': true,
@@ -801,6 +825,7 @@ export default defineComponent({
 
     return (
       <Popover
+        key={this.inputKey}
         arrow={false}
         disableOutsideClick={true}
         isShow={showPopover}
