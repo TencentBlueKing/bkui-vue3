@@ -201,7 +201,7 @@ export default defineComponent({
     });
     const localSelectAllText = computed(() => {
       if (props.selectAllText === undefined) {
-        return t.value.all;
+        return t.value.selectAll;
       }
       return props.selectAllText;
     });
@@ -952,7 +952,7 @@ export default defineComponent({
               modelValue={this.isAllSelected}
             />
           )}
-          {this.t.selectAll}
+          {this.localSelectAllText}
         </li>
       );
     };
