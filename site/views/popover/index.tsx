@@ -235,6 +235,13 @@ const props: IPropsTableItem[] = [
     optional: [],
   },
   {
+    name: 'referenceCls',
+    type: 'string',
+    default: '',
+    desc: '配置自定义样式类名，传入的类会被加在 Reference 外部的 div 上',
+    optional: [],
+  },
+  {
     name: 'componentEventDelay',
     type: 'number',
     default: '',
