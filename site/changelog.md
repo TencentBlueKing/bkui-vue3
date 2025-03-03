@@ -1,5 +1,16 @@
 ## 更新日志
 
+
+### 2.0.1-beta.101
+
+* **[feat]**:
+    - bugfix(select): fix: select组件-全选文案selectAllText属性设置不生效
+    - bugfix(popover): HTML 结构问题 ([#2262](https://github.com/TencentBlueKing/bkui-vue3/issues/2262))
+    - fix(search-select): 修复getMenuList获取展示问题
+    - bugfix(popconfirm): 按钮支持bk-button的全部配置 ([#2253](https://github.com/TencentBlueKing/bkui-vue3/issues/2253))
+    - feat(menu): 更新 menu-item 文档，添加 disabled 属性
+
+
 ### 2.0.1-beta.97
 
 * **[feat]**:
