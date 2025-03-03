@@ -7,6 +7,7 @@
       <bk-radio label="left-right"> 左右结构 </bk-radio>
       <bk-radio label="top-bottom"> 上下结构 </bk-radio>
     </bk-radio-group>
+    <span v-bk-tooltips="{ content: 'test' }">test</span>
     <bk-navigation
       class="navigation-demo-content"
       :default-open="!collapse"
@@ -24,13 +25,24 @@
           <bk-menu-item key="腾讯视频"> 腾讯视频 </bk-menu-item>
           <bk-menu-item key="微信"> 微信 </bk-menu-item>
           <bk-menu-item key="QQ"> QQ </bk-menu-item>
-          <bk-menu-group name="光子" foldName="GX">
+          <bk-menu-group
+            fold-name="GX"
+            name="光子"
+          >
             <bk-menu-item key="和平精英"> 和平精英 </bk-menu-item>
-            <bk-menu-item key="黎明觉醒"> 黎明觉醒 </bk-menu-item>
+            <bk-menu-item
+              key="黎明觉醒"
+              disabled
+            >
+              <span v-bk-tooltips="{ content: '暂未开放' }">黎明觉醒</span>
+            </bk-menu-item>
             <bk-menu-item key="自由幻想"> 自由幻想 </bk-menu-item>
             <bk-menu-item key="欢乐斗地主"> 欢乐斗地主 </bk-menu-item>
           </bk-menu-group>
-          <bk-menu-group name="天美世界" foldName="TiMi">
+          <bk-menu-group
+            fold-name="TiMi"
+            name="天美世界"
+          >
             <bk-menu-item key="王者荣耀"> 王者荣耀 </bk-menu-item>
             <bk-menu-item key="QQ飞车"> QQ飞车 </bk-menu-item>
             <bk-menu-item key="天天酷跑"> 天天酷跑 </bk-menu-item>
@@ -72,7 +84,11 @@
 <script setup>
   import { ref } from 'vue';
 
+  import { bkTooltips } from '@bkui-vue/directives';
   import { TreeApplicationShape } from 'bkui-vue/lib/icon';
+
+  // 注册 bkTooltips 指令
+  const vBkTooltips = bkTooltips;
   const collapse = ref(true);
   const navigationType = ref('left-right');
   const handleCollapse = v => {
