@@ -102,6 +102,20 @@ const menuPropsJson: IPropsTableItem[] = [
     desc: '组件主题色',
     optional: ['dark', 'light'],
   },
+  {
+    name: 'confirmConfig',
+    type: 'Object',
+    default: '',
+    desc: '确定按钮的配置，同Button的Props',
+    optional: [],
+  },
+  {
+    name: 'cancelConfig',
+    type: 'Object',
+    default: '',
+    desc: '取消按钮的配置，同Button的Props',
+    optional: [],
+  },
 ];
 
 const eventColumnMap = {

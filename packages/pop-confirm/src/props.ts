@@ -26,6 +26,7 @@
 import { toType } from 'vue-types';
 
 import { PlacementEnum, placementType, PropTypes } from '@bkui-vue/shared';
+import { type ButtonPropTypes } from '../../button/src/button';
 
 export enum TriggerEnum {
   CLICK = 'click',
@@ -64,5 +65,11 @@ export const PopConfirmProps = {
    */
   // icon: PropTypes.string.def(''),
   width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
+  confirmConfig: toType<ButtonPropTypes>('ButtonPropTypes', {
+    default: {},
+  }),
+  cancelConfig: toType<ButtonPropTypes>('ButtonPropTypes', {
+    default: {},
+  }),
 };
 export default PopConfirmProps;

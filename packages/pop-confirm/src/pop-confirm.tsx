@@ -121,12 +121,14 @@ export default defineComponent({
                 <Button
                   size='small'
                   theme='primary'
+                  {...this.confirmConfig}
                   onClick={this.ensure}
                 >
                   {this.confirmText || this.t.ok}
                 </Button>
                 <Button
                   size='small'
+                  {...this.cancelConfig}
                   onClick={this.cancel}
                 >
                   {this.cancelText || this.t.cancel}
