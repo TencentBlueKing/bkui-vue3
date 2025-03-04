@@ -1,6 +1,13 @@
 ## 更新日志
 
 
+### 2.0.1-beta.102
+
+* **[feat]**:
+    - fix(select): 适配 popover 新特性后的宽度问题
+    - feat(select): select list 模式支持 disabled 属性
+
+
 ### 2.0.1-beta.101
 
 * **[feat]**:
