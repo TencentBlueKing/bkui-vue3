@@ -441,6 +441,7 @@ export default defineComponent({
         offset={4}
         placement='bottom-start'
         theme={`light ${this.resolveClassName('cascader-popover')}`}
+        referenceCls={this.resolveClassName('cascader-popover-reference')}
         trigger='click'
         onAfterHidden={this.popoverChangeEmitter}
         onAfterShow={this.popoverChangeEmitter}
