@@ -1064,6 +1064,7 @@ export default defineComponent({
                   id={item[this.idKey]}
                   key={item[this.idKey]}
                   v-slots={typeof optionRender === 'function' ? { default: () => optionRender({ item }) } : null}
+                  disabled={!!item.disabled}
                   name={item[this.displayKey]}
                 />
               ));
@@ -1079,6 +1080,7 @@ export default defineComponent({
               id={item[this.idKey]}
               key={item[this.idKey]}
               v-slots={typeof optionRender === 'function' ? { default: () => optionRender({ item }) } : null}
+              disabled={!!item.disabled}
               name={item[this.displayKey]}
             />
           );
