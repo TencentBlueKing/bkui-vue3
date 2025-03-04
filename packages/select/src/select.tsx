@@ -357,6 +357,7 @@ export default defineComponent({
           offset: 4,
           popoverDelay: 0,
           renderType: RenderType.AUTO,
+          referenceCls: resolveClassName('select-popover-reference'),
         },
         popoverOptions.value,
       ),
