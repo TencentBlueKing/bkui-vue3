@@ -1,6 +1,12 @@
 ## 更新日志
 
 
+### 2.0.1-beta.103
+
+* **[feat]**:
+    - fix(popover): 加hideIgnoreReference开关向下兼容使用旧版本的情况
+
+
 ### 2.0.1-beta.102
 
 * **[feat]**:
