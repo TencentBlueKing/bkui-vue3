@@ -153,7 +153,10 @@ export const PopoverProps = {
    * 配置自定义样式类名，传入的类会被加在 Reference 外部的 div 上
    */
   referenceCls: PropTypes.string.def(''),
-
+  /**
+   * 点击 Reference 占位区是否忽略收起 popover
+   */
+  hideIgnoreReference: PropTypes.bool.def(false),
   /**
    * 自定义Content组件渲染，point-event延迟渲染时间
    * 避免子组件point-event渲染时触发popover鼠标事件

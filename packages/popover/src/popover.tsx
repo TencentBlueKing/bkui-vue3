@@ -179,9 +179,16 @@ export default defineComponent({
     };
     return (
       <Root ref='refRoot'>
-        <div class={this.referenceCls} style="display: inline-block;" onClick={this.handleClickReferenceWraper}>
-          <Reference ref='refDefaultReference'>{renderReferSlot(this.$slots.default?.() ?? <span></span>)}</Reference>
-        </div>
+        {this. hideIgnoreReference ?
+          <div class={this.referenceCls} style="display: inline-block;" onClick={this.handleClickReferenceWraper}>
+            <Reference ref='refDefaultReference'>
+              {renderReferSlot(this.$slots.default?.() ?? <span></span>)}
+            </Reference>
+          </div> :
+          <Reference ref='refDefaultReference'>
+            {renderReferSlot(this.$slots.default?.() ?? <span></span>)}
+          </Reference>
+        }
         <Teleport
           disabled={!this.transBoundary}
           to={this.boundary}

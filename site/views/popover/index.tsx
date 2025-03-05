@@ -242,6 +242,13 @@ const props: IPropsTableItem[] = [
     optional: [],
   },
   {
+    name: 'hideIgnoreReference',
+    type: 'Boolean',
+    default: 'false',
+    desc: '点击 Reference 占位区是否忽略收起 popover',
+    optional: ['true', 'false'],
+  },
+  {
     name: 'componentEventDelay',
     type: 'number',
     default: '',
