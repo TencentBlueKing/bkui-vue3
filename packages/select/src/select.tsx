@@ -773,6 +773,7 @@ export default defineComponent({
           break;
         }
         // 选择选项
+        case 'NumpadEnter':
         case 'Enter': {
           const { value } = e.target as HTMLInputElement;
           // 搜索和创建的时候不触发enter事件
