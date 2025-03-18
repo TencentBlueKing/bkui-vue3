@@ -1,6 +1,13 @@
 ## 更新日志
 
 
+### 2.0.1-beta.104
+
+* **[feat]**:
+    - bugfix(select): 自定义创建时无法识别​数字小键盘上的Enter键
+    - feat(search-select): 修复组件样式问题
+
+
 ### 2.0.1-beta.103
 
 * **[feat]**:
