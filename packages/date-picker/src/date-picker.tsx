@@ -81,7 +81,7 @@ export default defineComponent({
     shortcuts?: (arg?: { change: Function }) => any;
     confirm?: {};
   }>,
-  setup(props, { slots, emit }) {
+  setup(props, { slots, emit, expose }) {
     const formItem = useFormItem();
     const isRange = props.type.includes('range');
     const teleportTo = ref(getFullscreenRoot());
@@ -622,6 +622,10 @@ export default defineComponent({
     const onPickFirst = (val, type) => {
       emit('pick-first', val, type);
     };
+
+    expose({
+      focus: handleIconClick
+    })
 
     return {
       ...toRefs(state),
