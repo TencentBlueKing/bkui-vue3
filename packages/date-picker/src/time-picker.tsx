@@ -85,7 +85,7 @@ export default defineComponent({
     shortcuts?: (arg?: { change: Function }) => any;
     confirm?: {};
   }>,
-  setup(props, { slots, emit }) {
+  setup(props, { slots, emit, expose }) {
     const { resolveClassName } = usePrefix();
     const teleportTo = ref(getFullscreenRoot());
     const formItem = useFormItem();
@@ -611,6 +611,10 @@ export default defineComponent({
     };
 
     const triggerRef = ref<HTMLElement>(null);
+
+    expose({
+      focus: handleIconClick
+    })
 
     return {
       ...toRefs(state),
