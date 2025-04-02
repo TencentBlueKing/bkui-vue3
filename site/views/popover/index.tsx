@@ -38,6 +38,7 @@ import Callback from './demo/callback.vue';
 import ManualTrigger from './demo/manual-trigger.vue';
 import MouseEvent from './demo/mouse-event.vue';
 import Position from './demo/position.vue';
+import HideIgnoreReference from './demo/hide-ignore-reference.vue';
 import Slot from './demo/slot.vue';
 
 const props: IPropsTableItem[] = [
@@ -389,6 +390,13 @@ const demos = [
     componentName: 'popover',
     demoName: 'demo/mouse-event',
     DemoComponent: MouseEvent,
+  },
+  {
+    title: '忽略占位区',
+    desc: '点击占位区弹窗不收起',
+    componentName: 'popover',
+    demoName: 'demo/hide-ignore-reference',
+    DemoComponent: HideIgnoreReference,
   },
 ];
 
