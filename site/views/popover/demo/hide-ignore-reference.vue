@@ -1,0 +1,9 @@
+<template>
+  <bk-popover
+    content="确实不会收起"
+    trigger="click"
+    hide-ignore-reference
+  >
+    <div>点我不会收起弹窗</div>
+  </bk-popover>
+</template>

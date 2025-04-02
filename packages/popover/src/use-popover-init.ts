@@ -28,7 +28,7 @@ import { ref } from 'vue';
 import { EMIT_EVENTS } from './const';
 import useFloating from './use-floating';
 import usePopperId from './use-popper-id';
-import { getFullscreenUid, random } from './utils';
+import { getFullscreenUid, ReferenceClickSharedState, random } from './utils';
 
 export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => {
   let storeEvents = null;
@@ -204,20 +204,29 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
     document.body.removeEventListener('fullscreenchange', handleFullscreenChange);
   };
 
-  const handleClickOutside = (_e: MouseEvent) => {
-    // TODO: 暂时去除这个特性，满足监控需求，晚点再优化
-    // if (ReferenceClickSharedState[uniqKey]) {
-    //   ReferenceClickSharedState[uniqKey] = false;
-    //   return;
-    // }
-    ctx.emit(EMIT_EVENTS.CLICK_OUTSIDE, { isShow: localIsShow.value, event: _e });
-    const needExec = props.disableOutsideClick || props.always || props.disabled || props.trigger === 'manual';
-    if (!props.forceClickoutside && needExec) {
-      return;
-    }
+  const handleClickOutside = (_e: MouseEvent, hideIgnoreReference = false) => {
+    const commonFunc = () => {
+      ctx.emit(EMIT_EVENTS.CLICK_OUTSIDE, { isShow: localIsShow.value, event: _e });
+      const needExec = props.disableOutsideClick || props.always || props.disabled || props.trigger === 'manual';
+      if (!props.forceClickoutside && needExec) {
+        return;
+      }
 
-    if (localIsShow.value) {
-      hideFn();
+      if (localIsShow.value) {
+        hideFn();
+      }
+    }
+    if (hideIgnoreReference) {
+      setTimeout(() => {
+        if (ReferenceClickSharedState[uniqKey]) {
+          ReferenceClickSharedState[uniqKey] = false;
+          return;
+        }
+
+        return commonFunc();
+      })
+    } else {
+      return commonFunc();
     }
   };
 

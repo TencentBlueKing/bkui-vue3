@@ -198,7 +198,7 @@ export default defineComponent({
             width={this.width}
             height={this.height}
             extCls={this.extCls}
-            v-clickoutside={this.handleClickOutside}
+            v-clickoutside={(e: MouseEvent) => this.handleClickOutside(e, this.hideIgnoreReference)}
             v-slots={{ arrow: () => (this.arrow ? <Arrow ref='refArrow'>{this.$slots.arrow?.()}</Arrow> : '') }}
             data-theme={this.theme}
             eventDelay={this.componentEventDelay}
