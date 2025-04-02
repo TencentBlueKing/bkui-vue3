@@ -24,5 +24,5 @@
  * IN THE SOFTWARE.
  */
 
-import $bkPopover from '../../popover/src/plugin-popover';
+import { $bkPopover } from '@bkui-vue/popover';
 export default $bkPopover;

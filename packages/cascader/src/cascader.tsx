@@ -31,11 +31,11 @@ import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { bkTooltips } from '@bkui-vue/directives';
 import { AngleUp, Close, Error } from '@bkui-vue/icon';
 import Popover from '@bkui-vue/popover';
+import { useHover } from '@bkui-vue/select';
 import { debounce, PropTypes } from '@bkui-vue/shared';
 import Tag from '@bkui-vue/tag';
+import { useTagsOverflow } from '@bkui-vue/tag-input';
 
-import { useHover } from '../../select/src/common';
-import { useTagsOverflow } from '../../tag-input/src/common';
 import CascaderPanel from './cascader-panel';
 import { INode } from './interface';
 import Store from './store';
@@ -440,8 +440,8 @@ export default defineComponent({
         disabled={this.disabled}
         offset={4}
         placement='bottom-start'
-        theme={`light ${this.resolveClassName('cascader-popover')}`}
         referenceCls={this.resolveClassName('cascader-popover-reference')}
+        theme={`light ${this.resolveClassName('cascader-popover')}`}
         trigger='click'
         onAfterHidden={this.popoverChangeEmitter}
         onAfterShow={this.popoverChangeEmitter}

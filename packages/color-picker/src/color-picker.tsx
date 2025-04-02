@@ -39,12 +39,12 @@ import {
 import { toType } from 'vue-types';
 
 import { usePrefix } from '@bkui-vue/config-provider';
+import { PickerDropdown } from '@bkui-vue/date-picker';
 import { clickoutside } from '@bkui-vue/directives';
 import { AngleUp } from '@bkui-vue/icon';
 import { classes, PropTypes, useFormItem } from '@bkui-vue/shared';
 import tinycolor from 'tinycolor2';
 
-import PickerDropdown from '../../date-picker/src/base/picker-dropdown';
 import ColorInput from './components/color-input';
 import HueSlider from './components/hue-slider';
 import RecommendColors from './components/recommend-colors';

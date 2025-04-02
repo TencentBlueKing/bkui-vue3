@@ -25,8 +25,8 @@
  */
 import { toType } from 'vue-types';
 
+import { type ButtonPropTypes } from '@bkui-vue/button';
 import { PlacementEnum, placementType, PropTypes } from '@bkui-vue/shared';
-import { type ButtonPropTypes } from '../../button/src/button';
 
 export enum TriggerEnum {
   CLICK = 'click',
