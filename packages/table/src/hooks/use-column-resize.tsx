@@ -25,7 +25,8 @@
  */
 import { ref, watch } from 'vue';
 
-import { debounce, throttle } from 'lodash';
+import debounce from 'lodash/debounce';
+import throttle from 'lodash/throttle';
 
 import { COLUMN_ATTRIBUTE } from '../const';
 import { Column } from '../props';

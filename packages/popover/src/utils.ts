@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import _ from 'lodash';
+import lodashRandom from 'lodash/random';
 import { v4 as uuidv4 } from 'uuid';
 
 const CachedConst: any = {};
@@ -71,4 +71,4 @@ export const contentAsHTMLElement = content => {
   };
 };
 
-export const random = () => `${_.random(0, 999999)}_${Date.now()}_${_.random(0, 999999)}`;
+export const random = () => `${lodashRandom(0, 999999)}_${Date.now()}_${lodashRandom(0, 999999)}`;
