@@ -27,7 +27,7 @@ import { computed, defineComponent, onBeforeUnmount, onMounted, ref, Teleport, T
 
 import { RenderType } from '@bkui-vue/shared';
 
-import clickoutside from '../../directives/src/clickoutside';
+import { clickoutside } from '@bkui-vue/directives';
 import Arrow from './arrow';
 import { EMIT_EVENT_TYPES } from './const';
 import Content from './content';
