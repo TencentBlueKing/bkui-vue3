@@ -27,7 +27,7 @@
 import { computed, defineComponent, h, onMounted, PropType, ref } from 'vue';
 
 import { bkTooltips } from '@bkui-vue/directives';
-import { IOptions } from '@bkui-vue/directives/src/tooltips';
+import { type IOptions } from '@bkui-vue/directives';
 import { checkOverflow, PropTypes } from '@bkui-vue/shared';
 import has from 'lodash/has';
 

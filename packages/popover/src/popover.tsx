@@ -25,9 +25,9 @@
  */
 import { computed, defineComponent, onBeforeUnmount, onMounted, ref, Teleport, Text, toRefs, watch } from 'vue';
 
+import { clickoutside } from '@bkui-vue/directives';
 import { RenderType } from '@bkui-vue/shared';
 
-import { clickoutside } from '@bkui-vue/directives';
 import Arrow from './arrow';
 import { EMIT_EVENT_TYPES } from './const';
 import Content from './content';
@@ -179,16 +179,17 @@ export default defineComponent({
     };
     return (
       <Root ref='refRoot'>
-        {this. hideIgnoreReference ?
-          <div class={this.referenceCls} style="display: inline-block;" onClick={this.handleClickReferenceWraper}>
-            <Reference ref='refDefaultReference'>
-              {renderReferSlot(this.$slots.default?.() ?? <span></span>)}
-            </Reference>
-          </div> :
-          <Reference ref='refDefaultReference'>
-            {renderReferSlot(this.$slots.default?.() ?? <span></span>)}
-          </Reference>
-        }
+        {this.hideIgnoreReference ? (
+          <div
+            style='display: inline-block;'
+            class={this.referenceCls}
+            onClick={this.handleClickReferenceWraper}
+          >
+            <Reference ref='refDefaultReference'>{renderReferSlot(this.$slots.default?.() ?? <span></span>)}</Reference>
+          </div>
+        ) : (
+          <Reference ref='refDefaultReference'>{renderReferSlot(this.$slots.default?.() ?? <span></span>)}</Reference>
+        )}
         <Teleport
           disabled={!this.transBoundary}
           to={this.boundary}

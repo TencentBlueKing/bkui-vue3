@@ -26,8 +26,10 @@
 
 import { withInstall } from '@bkui-vue/shared';
 
+import { useTagsOverflow } from './common';
 import Component from './tag-input';
-
 const TagInput = withInstall(Component);
 
 export default TagInput;
+
+export { useTagsOverflow, TagInput };

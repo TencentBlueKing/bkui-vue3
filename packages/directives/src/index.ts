@@ -27,6 +27,7 @@ export { default as clickoutside } from './clickoutside';
 export { default as bkEllipsis, createInstance as bkEllipsisInstance } from './ellipsis';
 export { default as mousewheel } from './mousewheel';
 export { default as bkTooltips } from './tooltips';
+export type { IOptions } from './tooltips';
 export { vBkloading as bkLoading } from '@bkui-vue/loading';
 export { overflowTitle } from '@bkui-vue/overflow-title';
 // export { createInstance as bkEllipsisInstance } from './ellipsis';
