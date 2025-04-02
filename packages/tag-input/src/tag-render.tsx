@@ -29,7 +29,7 @@ import { computed, defineComponent, h, onMounted, PropType, ref } from 'vue';
 import { bkTooltips } from '@bkui-vue/directives';
 import { IOptions } from '@bkui-vue/directives/src/tooltips';
 import { checkOverflow, PropTypes } from '@bkui-vue/shared';
-import _ from 'lodash';
+import has from 'lodash/has';
 
 export default defineComponent({
   name: 'TagRender',
@@ -60,7 +60,7 @@ export default defineComponent({
       theme: 'light',
       distance: 12,
       content: props.node[props.tooltipKey],
-      disabled: !_.has(props.node, props.tooltipKey) || !isOverflow.value,
+      disabled: !has(props.node, props.tooltipKey) || !isOverflow.value,
       ...props.tagOverflowTips,
     }));
 

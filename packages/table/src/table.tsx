@@ -27,7 +27,8 @@
 import { computed, defineComponent, getCurrentInstance, nextTick, provide, ref, SetupContext, watch } from 'vue';
 
 import { bkTooltips } from '@bkui-vue/directives';
-import { debounce, isElement } from 'lodash';
+import debounce from 'lodash/debounce';
+import isElement from 'lodash/isElement';
 
 import { COLUMN_ATTRIBUTE, PROVIDE_KEY_INIT_COL, SCROLLY_WIDTH, TABLE_ROW_ATTRIBUTE } from './const';
 import { EMIT_EVENT_TYPES } from './events';
