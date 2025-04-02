@@ -25,7 +25,6 @@
  */
 import { withInstall } from '@bkui-vue/shared';
 
-import {} from './plugin-popover';
 import Component from './popover';
 const BkPopover = withInstall(Component);
 
