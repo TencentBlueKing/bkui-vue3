@@ -1,5 +1,11 @@
 ## 更新日志
 
+### 2.0.1
+
+* **[feat]**:
+    - feat(modal): 最外层dom加上层级设置及ellipsis指令默认content优化
+
+
 ### 2.0.1-beta.113
 
 * **[feat]**:
