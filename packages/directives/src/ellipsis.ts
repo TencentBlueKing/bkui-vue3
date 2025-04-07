@@ -76,7 +76,7 @@ export const createInstance = (el: HTMLElement, binding: any) => {
       const targetOptions = resolveOptions(el, binding);
       targetOptions.isShow = true;
       targetOptions.content =
-        typeof targetOptions.content === 'function' ? targetOptions.content() : targetOptions.content ?? el;
+        typeof targetOptions.content === 'function' ? targetOptions.content() : targetOptions.content || el.innerText;
       targetOptions.allowHtml = true;
       Object.assign(targetOptions, {
         onContentMouseenter: handleContentEnter,
