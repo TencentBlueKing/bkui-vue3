@@ -61,14 +61,14 @@ export const compilerDir = async (option: ILibTaskOption): Promise<void> => {
 };
 
 // 将theme.less 转换为 css变量
-export const compileThemeTovariable = async () => {
+export const compileThemeToVariable = async () => {
   const resource = await compileTheme(THEME_LESS_URL);
   await writeFileRecursive(THEME_LESS_URL.replace(/\.(css|less|scss)$/, '.variable.$1'), resource);
   return resource;
 };
 // 替换theme.less 替换为 css变量
-export const replaceThemeTovariable = async () => {
-  const variableThemeText = await compileThemeTovariable();
+export const replaceThemeToVariable = async () => {
+  const variableThemeText = await compileThemeToVariable();
   const themeText = readFileSync(THEME_LESS_URL);
   unlinkSync(THEME_LESS_URL);
   writeFileSync(THEME_LESS_URL, variableThemeText);
@@ -79,6 +79,6 @@ export const replaceThemeTovariable = async () => {
 };
 export default async (option: ILibTaskOption) => {
   compilerLibDir(LIB_URL);
-  await compileThemeTovariable();
+  await compileThemeToVariable();
   compilerDir(option);
 };
