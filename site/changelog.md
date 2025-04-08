@@ -1,5 +1,11 @@
 ## 更新日志
 
+### 2.0.2-beta.4
+
+* **[feat]**:
+    - feat(date-picker): date-picker组件缺少time-picker样式
+
+
 ### 2.0.2-beta.3
 
 * **[feat]**:
