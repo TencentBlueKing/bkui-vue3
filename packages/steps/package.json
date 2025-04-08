@@ -2,8 +2,8 @@
   "name": "@bkui-vue/steps",
   "version": "0.0.0",
   "license": "MIT",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "module": "src/index.ts",
+  "sideEffects": false,
   "scripts": {
     "clean": "rimraf dist && rimraf tsconfig.tsbuildinfo",
     "prepack": "yarn build",
