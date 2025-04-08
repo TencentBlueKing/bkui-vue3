@@ -1,8 +1,8 @@
 {
   "name": "@bkui-vue/collapse",
   "version": "0.0.0",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "module": "src/index.ts",
+  "sideEffects": false,
   "license": "MIT",
   "scripts": {
     "clean": "rimraf dist && rimraf tsconfig.tsbuildinfo",
