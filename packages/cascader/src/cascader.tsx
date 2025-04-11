@@ -362,7 +362,7 @@ export default defineComponent({
   render() {
     // 定义suffixIcon函数，用于根据不同情况渲染后缀图标
     const suffixIcon = () => {
-      if (this.clearable && this.isHover && !this.disabled) {
+      if (this.clearable && this.isHover && !this.disabled && this.modelValue.length > 0) {
         // 当可清空、鼠标悬浮且未禁用时，渲染清空图标
         return (
           <Close
