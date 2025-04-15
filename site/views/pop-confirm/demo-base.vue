@@ -6,6 +6,8 @@
       content="删除操作无法撤回，请谨慎操作！"
       title="确认删除该脚本？"
       trigger="click"
+      @after-hidden="handleAfterHidden"
+      @after-show="handleAfterShow"
       @confirm="ensure"
     >
       <bk-button>删除</bk-button>
@@ -23,9 +25,17 @@
         console.error(popConfirmRef.value);
         console.log('ensure');
       }
+      function handleAfterShow() {
+        console.log('show');
+      }
+      function handleAfterHidden() {
+        console.log('hide');
+      }
       return {
         ensure,
         popConfirmRef,
+        handleAfterShow,
+        handleAfterHidden,
       };
     },
   });
