@@ -34,7 +34,7 @@ import props from './props';
 export default defineComponent({
   name: 'PopConfirm',
   props,
-  emits: ['confirm', 'cancel'],
+  emits: ['confirm', 'cancel', 'after-show', 'after-hidden'],
   setup(_props, { emit }) {
     const visible = ref(false);
     const t = useLocale('popConfirm');
@@ -49,6 +49,15 @@ export default defineComponent({
       visible.value = false;
       emit('cancel');
       e.stopPropagation();
+    }
+
+    function handleAfterShow() {
+      visible.value = true;
+      emit('after-show');
+    }
+
+    function handleAfterHidden() {
+      emit('after-hidden');
     }
 
     // function renderIcon() {
@@ -72,6 +81,8 @@ export default defineComponent({
       resolveClassName,
       ensure,
       cancel,
+      handleAfterShow,
+      handleAfterHidden,
     };
   },
 
@@ -97,7 +108,8 @@ export default defineComponent({
         placement={this.placement}
         theme={this.theme}
         trigger={this.trigger}
-        onAfterShow={() => (this.visible = true)}
+        onAfterHidden={this.handleAfterHidden}
+        onAfterShow={this.handleAfterShow}
       >
         {{
           default: () => this.$slots.default(),

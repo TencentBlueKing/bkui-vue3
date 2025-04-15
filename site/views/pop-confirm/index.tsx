@@ -140,6 +140,20 @@ const events: IPropsTableItem[] = [
     desc: '取消操作回调函数',
     optional: [],
   },
+  {
+    name: 'after-show',
+    type: 'Function',
+    default: '',
+    desc: '显示提示框时触发函数',
+    optional: [],
+  },
+  {
+    name: 'after-hidden',
+    type: 'Function',
+    default: '',
+    desc: '隐藏提示框时触发函数',
+    optional: [],
+  },
 ];
 
 const slotColumnMap = {
