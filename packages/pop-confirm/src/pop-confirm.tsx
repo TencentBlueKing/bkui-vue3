@@ -108,6 +108,7 @@ export default defineComponent({
         placement={this.placement}
         theme={this.theme}
         trigger={this.trigger}
+        {...this.popoverOptions}
         onAfterHidden={this.handleAfterHidden}
         onAfterShow={this.handleAfterShow}
       >
