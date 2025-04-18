@@ -26,7 +26,7 @@
 
 import { computed } from 'vue';
 
-import { isElement } from 'lodash';
+import isElement from 'lodash/isElement';
 
 import { IIntersectionObserver, TreePropTypes } from './props';
 type IntersectionObserverOptions = {

@@ -201,7 +201,7 @@ export default defineComponent({
     });
     const localSelectAllText = computed(() => {
       if (props.selectAllText === undefined) {
-        return t.value.all;
+        return t.value.selectAll;
       }
       return props.selectAllText;
     });
@@ -357,6 +357,7 @@ export default defineComponent({
           offset: 4,
           popoverDelay: 0,
           renderType: RenderType.AUTO,
+          referenceCls: resolveClassName('select-popover-reference'),
         },
         popoverOptions.value,
       ),
@@ -480,6 +481,7 @@ export default defineComponent({
     // 派发search change事件
     watch(searchValue, () => {
       scrollContainerRef.value.scrollTop = 0;
+      activeOptionValue.value = '';
       emit('search-change', searchValue.value);
     });
 
@@ -771,6 +773,7 @@ export default defineComponent({
           break;
         }
         // 选择选项
+        case 'NumpadEnter':
         case 'Enter': {
           const { value } = e.target as HTMLInputElement;
           // 搜索和创建的时候不触发enter事件
@@ -951,7 +954,7 @@ export default defineComponent({
               modelValue={this.isAllSelected}
             />
           )}
-          {this.t.selectAll}
+          {this.localSelectAllText}
         </li>
       );
     };
@@ -1062,6 +1065,7 @@ export default defineComponent({
                   id={item[this.idKey]}
                   key={item[this.idKey]}
                   v-slots={typeof optionRender === 'function' ? { default: () => optionRender({ item }) } : null}
+                  disabled={!!item.disabled}
                   name={item[this.displayKey]}
                 />
               ));
@@ -1077,6 +1081,7 @@ export default defineComponent({
               id={item[this.idKey]}
               key={item[this.idKey]}
               v-slots={typeof optionRender === 'function' ? { default: () => optionRender({ item }) } : null}
+              disabled={!!item.disabled}
               name={item[this.displayKey]}
             />
           );

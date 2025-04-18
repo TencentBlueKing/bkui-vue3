@@ -1,5 +1,132 @@
 ## 更新日志
 
+
+### 2.0.2-beta.9
+
+* **[feat]**:
+    - bugfix(tree): tree树组件缩进问题
+
+
+### 2.0.2-beta.7
+
+* **[feat]**:
+    - bugfix(cascader): 列表滚动条状态下，选中状态异常
+    - bugfix(cascader): 清空状态不对，没有值的时候不应该显示
+
+
+### 2.0.2-beta.6
+
+* **[feat]**:
+    - fix: 删除一些冗余代码
+
+
+### 2.0.2-beta.5
+
+* **[feat]**:
+    - bugfix(pop-confirm): 支持抛出显示框显示/隐藏事件
+
+
+### 2.0.2-beta.4
+
+* **[feat]**:
+    - feat(date-picker): date-picker组件缺少time-picker样式
+
+
+### 2.0.2-beta.3
+
+* **[feat]**:
+    - feat(date-picker): date-picker组件缺少time-picker样式
+
+
+### 2.0.2-beta.2
+
+* **[feat]**:
+    - feat: 优化组件构建
+
+
+### 2.0.2-beta.1
+
+* **[feat]**:
+    - feat: 优化组件构建
+
+
+### 2.0.1
+
+* **[feat]**:
+    - feat(modal): 最外层dom加上层级设置及ellipsis指令默认content优化
+
+
+### 2.0.1-beta.113
+
+* **[feat]**:
+    - feat: 规范组件引入
+
+### 2.0.1-beta.111
+
+* **[feat]**:
+    - fix(popover): 优化忽略占位区特性实现方式
+
+
+### 2.0.1-beta.110
+
+* **[feat]**:
+    - fix(popover): 优化忽略占位区特性实现方式
+
+
+### 2.0.1-beta.109
+
+* **[feat]**:
+    - feat: 修复样式变量构建错误问题
+
+
+### 2.0.1-beta.108
+
+* **[feat]**:
+    - fix(popover): 暂时去除忽略占位特性
+
+
+### 2.0.1-beta.105
+
+* **[feat]**:
+    - bugfix(date-picker): 日期和时间选择器支持手动设置聚焦
+
+
+### 2.0.1-beta.104
+
+* **[feat]**:
+    - bugfix(select): 自定义创建时无法识别​数字小键盘上的Enter键
+    - feat(search-select): 修复组件样式问题
+
+
+### 2.0.1-beta.103
+
+* **[feat]**:
+    - fix(popover): 加hideIgnoreReference开关向下兼容使用旧版本的情况
+
+
+### 2.0.1-beta.102
+
+* **[feat]**:
+    - fix(select): 适配 popover 新特性后的宽度问题
+    - feat(select): select list 模式支持 disabled 属性
+
+
+### 2.0.1-beta.101
+
+* **[feat]**:
+    - bugfix(select): fix: select组件-全选文案selectAllText属性设置不生效
+    - bugfix(popover): HTML 结构问题 ([#2262](https://github.com/TencentBlueKing/bkui-vue3/issues/2262))
+    - fix(search-select): 修复getMenuList获取展示问题
+    - bugfix(popconfirm): 按钮支持bk-button的全部配置 ([#2253](https://github.com/TencentBlueKing/bkui-vue3/issues/2253))
+    - feat(menu): 更新 menu-item 文档，添加 disabled 属性
+
+
+### 2.0.1-beta.97
+
+* **[feat]**:
+    - bugfix(select): select组件option项失焦后hover效果还存在 ([#2260](https://github.com/TencentBlueKing/bkui-vue3/issues/2260))
+
+
 ### 2.0.1-beta.96
 
 * **[feat]**:

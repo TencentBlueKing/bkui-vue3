@@ -28,7 +28,7 @@ import { computed, onMounted, reactive, Ref, ref } from 'vue';
 import { usePrefix } from '@bkui-vue/config-provider';
 import { classes, throttle } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
-import { debounce } from 'lodash';
+import debounce from 'lodash/debounce';
 
 import GhostBody from '../components/ghost-body';
 import { DEF_COLOR, IHeadColor, LINE_HEIGHT, SCROLLY_WIDTH } from '../const';
@@ -213,9 +213,9 @@ export default (props: TablePropTypes, ctx) => {
     return null;
   });
 
-  const getBodyHeight = (height) => {
+  const getBodyHeight = height => {
     return height - headHeight.value - fixedBottomHeight.value - footHeight.value;
-  }
+  };
 
   const setBodyHeight = (height: number, withHeadFoot = true) => {
     if (withHeadFoot) {

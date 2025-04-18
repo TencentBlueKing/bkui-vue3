@@ -87,6 +87,10 @@ export default defineComponent({
       select.activeOptionValue = optionID.value;
     };
 
+    const handleMouseLeave = () => {
+      select.activeOptionValue = '';
+    };
+
     const transformNode = (str: string): (VNode | string)[] | string => {
       if (!str) return str;
       let keyword = searchValue.value;
@@ -135,6 +139,7 @@ export default defineComponent({
       highlightKeyword,
       handleOptionClick,
       handleMouseEnter,
+      handleMouseLeave,
       resolveClassName,
       transformNode,
     };
@@ -154,6 +159,7 @@ export default defineComponent({
         v-show={this.visible}
         onClick={this.handleOptionClick}
         onMouseenter={this.handleMouseEnter}
+        onMouseleave={this.handleMouseLeave}
       >
         {this.showSelectedIcon && this.selectedStyle === SelectedTypeEnum.CHECKBOX && (
           <Checkbox

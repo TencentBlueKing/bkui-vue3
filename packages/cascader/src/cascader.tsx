@@ -31,11 +31,11 @@ import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { bkTooltips } from '@bkui-vue/directives';
 import { AngleUp, Close, Error } from '@bkui-vue/icon';
 import Popover from '@bkui-vue/popover';
+import { useHover } from '@bkui-vue/select';
 import { debounce, PropTypes } from '@bkui-vue/shared';
 import Tag from '@bkui-vue/tag';
+import { useTagsOverflow } from '@bkui-vue/tag-input';
 
-import { useHover } from '../../select/src/common';
-import { useTagsOverflow } from '../../tag-input/src/common';
 import CascaderPanel from './cascader-panel';
 import { INode } from './interface';
 import Store from './store';
@@ -362,7 +362,7 @@ export default defineComponent({
   render() {
     // 定义suffixIcon函数，用于根据不同情况渲染后缀图标
     const suffixIcon = () => {
-      if (this.clearable && this.isHover && !this.disabled) {
+      if (this.clearable && this.isHover && !this.disabled && this.modelValue.length > 0) {
         // 当可清空、鼠标悬浮且未禁用时，渲染清空图标
         return (
           <Close
@@ -440,6 +440,7 @@ export default defineComponent({
         disabled={this.disabled}
         offset={4}
         placement='bottom-start'
+        referenceCls={this.resolveClassName('cascader-popover-reference')}
         theme={`light ${this.resolveClassName('cascader-popover')}`}
         trigger='click'
         onAfterHidden={this.popoverChangeEmitter}

@@ -9,12 +9,22 @@
     <bk-menu-item key="QQ"> QQ </bk-menu-item>
     <bk-menu-group name="光子">
       <bk-menu-item key="和平精英"> 和平精英 </bk-menu-item>
-      <bk-menu-item key="黎明觉醒"> 黎明觉醒 </bk-menu-item>
+      <bk-menu-item
+        key="黎明觉醒"
+        disabled
+      >
+        <span v-bk-tooltips="{ content: '暂未开放' }">黎明觉醒</span>
+      </bk-menu-item>
       <bk-menu-item key="自由幻想"> 自由幻想 </bk-menu-item>
       <bk-menu-item key="欢乐斗地主"> 欢乐斗地主 </bk-menu-item>
     </bk-menu-group>
     <bk-menu-group name="天美">
-      <bk-menu-item key="王者荣耀"> 王者荣耀 </bk-menu-item>
+      <bk-menu-item
+        key="王者荣耀"
+        @click="handleClick"
+      >
+        王者荣耀
+      </bk-menu-item>
       <bk-menu-item key="QQ飞车"> QQ飞车 </bk-menu-item>
       <bk-menu-item key="天天酷跑"> 天天酷跑 </bk-menu-item>
       <bk-menu-item key="重返帝国"> 重返帝国 </bk-menu-item>
@@ -41,3 +51,12 @@
     </bk-submenu>
   </bk-menu>
 </template>
+
+<script setup lang="ts">
+  import { bkTooltips } from '@bkui-vue/directives';
+
+  const vBkTooltips = bkTooltips;
+  const handleClick = () => {
+    console.log('click');
+  };
+</script>

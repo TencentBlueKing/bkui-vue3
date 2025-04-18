@@ -24,8 +24,7 @@
  * IN THE SOFTWARE.
  */
 import { withInstall } from '@bkui-vue/shared';
-
-import Column from '../../table/src/components/table-column';
+import { BkTableColumn as Column } from '@bkui-vue/table';
 
 const BkTableColumn = withInstall(Column);
 export default BkTableColumn;

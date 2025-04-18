@@ -26,7 +26,7 @@
 import { computed, isRef, reactive, ref, toRaw } from 'vue';
 
 import { useLocale } from '@bkui-vue/config-provider';
-import { debounce } from 'lodash';
+import debounce from 'lodash/debounce';
 import { v4 as uuidv4 } from 'uuid';
 
 import { COL_MIN_WIDTH, COLUMN_ATTRIBUTE, IEmptyObject } from '../const';

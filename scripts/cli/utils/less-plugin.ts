@@ -61,18 +61,18 @@ export default class LessResolvePathPlugin {
         filename: string,
         currentDirectory: string,
         options: Record<string, unknown>,
-        enviroment: Less.Environment,
+        environment: Less.Environment,
       ) {
-        return super.loadFile(resolveUrl(filename), currentDirectory, options, enviroment);
+        return super.loadFile(resolveUrl(filename), currentDirectory, options, environment);
       }
 
       loadFileSync(
         filename: string,
         currentDirectory: string,
         options: Record<string, unknown>,
-        enviroment: Less.Environment,
+        environment: Less.Environment,
       ) {
-        return super.loadFileSync(resolveUrl(filename), currentDirectory, options, enviroment);
+        return super.loadFileSync(resolveUrl(filename), currentDirectory, options, environment);
       }
     }
     pluginManager.addFileManager(new ResolvePathPlugin());

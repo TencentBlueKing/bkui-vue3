@@ -240,6 +240,16 @@ const timePickerSlotsJson = [
   },
 ];
 
+const methods: IPropsTableItem[] = [
+  {
+    name: 'focus',
+    type: 'Function',
+    default: '',
+    desc: '聚焦输入框',
+    optional: [],
+  },
+];
+
 export default defineComponent({
   render() {
     return (
@@ -270,7 +280,11 @@ export default defineComponent({
           columnMap={eventColumnMap}
           propsData={events}
           title='事件'
-        ></PropsBox>
+        />
+        <PropsBox
+          title="方法"
+          propsData={methods}
+        />
         <PropsBox
           columnMap={slotColumnMap}
           propsData={timePickerSlotsJson}

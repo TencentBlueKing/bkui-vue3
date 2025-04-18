@@ -25,9 +25,9 @@
  */
 import { computed, defineComponent, onBeforeUnmount, onMounted, ref, Teleport, Text, toRefs, watch } from 'vue';
 
+import { clickoutside } from '@bkui-vue/directives';
 import { RenderType } from '@bkui-vue/shared';
 
-import clickoutside from '../../directives/src/clickoutside';
 import Arrow from './arrow';
 import { EMIT_EVENT_TYPES } from './const';
 import Content from './content';
@@ -35,7 +35,7 @@ import { PopoverProps } from './props';
 import Reference from './reference';
 import Root from './root';
 import usePopoverInit from './use-popover-init';
-import { contentAsHTMLElement, SharedState } from './utils';
+import { contentAsHTMLElement, ReferenceClickSharedState } from './utils';
 export default defineComponent({
   name: 'Popover',
   components: {
@@ -126,7 +126,7 @@ export default defineComponent({
     };
 
     const handleClickReferenceWraper = () => {
-      SharedState[uniqKey] = true;
+      ReferenceClickSharedState[uniqKey] = true;
     };
 
     // 点击 content 收起面板
@@ -179,9 +179,17 @@ export default defineComponent({
     };
     return (
       <Root ref='refRoot'>
-        <span onClick={this.handleClickReferenceWraper}>
+        {this.hideIgnoreReference ? (
+          <div
+            style='display: inline-block;'
+            class={this.referenceCls}
+            onClick={this.handleClickReferenceWraper}
+          >
+            <Reference ref='refDefaultReference'>{renderReferSlot(this.$slots.default?.() ?? <span></span>)}</Reference>
+          </div>
+        ) : (
           <Reference ref='refDefaultReference'>{renderReferSlot(this.$slots.default?.() ?? <span></span>)}</Reference>
-        </span>
+        )}
         <Teleport
           disabled={!this.transBoundary}
           to={this.boundary}
@@ -191,7 +199,7 @@ export default defineComponent({
             width={this.width}
             height={this.height}
             extCls={this.extCls}
-            v-clickoutside={this.handleClickOutside}
+            v-clickoutside={(e: MouseEvent) => this.handleClickOutside(e, this.hideIgnoreReference)}
             v-slots={{ arrow: () => (this.arrow ? <Arrow ref='refArrow'>{this.$slots.arrow?.()}</Arrow> : '') }}
             data-theme={this.theme}
             eventDelay={this.componentEventDelay}

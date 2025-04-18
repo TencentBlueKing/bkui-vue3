@@ -35,6 +35,10 @@ import {
   Node,
   stringLiteral,
 } from '@babel/types';
+const specialDirectivesPath = '@bkui-vue/directives';
+import path from 'path';
+
+import { COMPONENT_URL } from './helpers';
 export const hasStyleComponentList = [
   'Alert',
   'Affix',
@@ -95,7 +99,12 @@ export const hasStyleComponentList = [
 export const capitalize = (name: string) =>
   name.replace(/^([a-z])|-(.)/g, (_, a: string, b: string) => (a || b).toUpperCase());
 
-export const getLibPath = (value: string) => value.replace(/^@bkui-vue\//, 'bkui-vue/lib/');
+export const getLibPath = (value: string) => {
+  if (value === specialDirectivesPath) {
+    return path.resolve(COMPONENT_URL, 'directives/src');
+  }
+  return value.replace(/^@bkui-vue\//, 'bkui-vue/lib/');
+};
 
 const visitor = {
   ImportDeclaration(path: NodePath<ImportDeclaration>, state: PluginPass) {
@@ -111,14 +120,13 @@ const visitor = {
     const hasDefaultImportToInclude = specifiers.some(
       item => isImportDefaultSpecifier(item) && hasStyleComponentList.includes(capitalize(item.local.name)),
     );
+    const specifiersList: ImportSpecifier[] = [];
+    const declarationList: Node[] = [];
 
     if (!hasDefaultImportToInclude) {
       path.replaceWith(importDeclaration(specifiers, stringLiteral(libPath)));
       return;
     }
-
-    const specifiersList: ImportSpecifier[] = [];
-    const declarationList: Node[] = [];
 
     for (const specifier of specifiers) {
       if (isImportDefaultSpecifier(specifier)) {

@@ -29,14 +29,14 @@ import { program } from 'commander';
 import distTask from './tasks/dist';
 import libTask from './tasks/lib';
 import releaseTask from './tasks/release';
-import excuteTask from './utils/excute-task';
+import executeTask from './utils/execute-task';
 export const run = async () => {
   program
     .command('lib')
-    .option('-a, --analyze', 'analyze all components bunlders')
+    .option('-a, --analyze', 'analyze all components bundlers')
     .description('build components')
     .action(async cmd => {
-      await excuteTask(libTask)({
+      await executeTask(libTask)({
         analyze: !!cmd.analyze,
       });
     });
@@ -44,14 +44,14 @@ export const run = async () => {
     .command('dist')
     .description('build dist')
     .action(async () => {
-      await excuteTask(distTask)();
+      await executeTask(distTask)();
     });
   program
     .command('release')
     .option('-t, --tag <tag>', 'release tag')
     .description('release bkui check')
     .action(async cmd => {
-      await excuteTask(releaseTask)({
+      await executeTask(releaseTask)({
         tag: cmd.tag,
       });
     });

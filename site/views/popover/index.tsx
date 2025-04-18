@@ -38,6 +38,7 @@ import Callback from './demo/callback.vue';
 import ManualTrigger from './demo/manual-trigger.vue';
 import MouseEvent from './demo/mouse-event.vue';
 import Position from './demo/position.vue';
+import HideIgnoreReference from './demo/hide-ignore-reference.vue';
 import Slot from './demo/slot.vue';
 
 const props: IPropsTableItem[] = [
@@ -235,6 +236,20 @@ const props: IPropsTableItem[] = [
     optional: [],
   },
   {
+    name: 'referenceCls',
+    type: 'string',
+    default: '',
+    desc: '配置自定义样式类名，传入的类会被加在 Reference 外部的 div 上',
+    optional: [],
+  },
+  {
+    name: 'hideIgnoreReference',
+    type: 'Boolean',
+    default: 'false',
+    desc: '点击 Reference 占位区是否忽略收起 popover',
+    optional: ['true', 'false'],
+  },
+  {
     name: 'componentEventDelay',
     type: 'number',
     default: '',
@@ -375,6 +390,13 @@ const demos = [
     componentName: 'popover',
     demoName: 'demo/mouse-event',
     DemoComponent: MouseEvent,
+  },
+  {
+    title: '忽略占位区',
+    desc: '点击占位区弹窗不收起',
+    componentName: 'popover',
+    demoName: 'demo/hide-ignore-reference',
+    DemoComponent: HideIgnoreReference,
   },
 ];
 

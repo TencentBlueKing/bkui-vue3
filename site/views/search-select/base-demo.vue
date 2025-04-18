@@ -2,6 +2,7 @@
   <bk-search-select
     v-model="value"
     :data="data"
+    :get-menu-list="getMenuList"
     unique-select
   />
 </template>
@@ -25,63 +26,128 @@
   }
   const data = shallowRef([
     {
-      name: 'IP地址',
-      id: '3',
+      name: '访问入口',
+      id: 'domain',
       multiple: true,
-      placeholder: 'IP地址',
-      children: ipList,
+      async: false,
     },
     {
-      name: '实例状态',
-      id: '1',
+      name: 'IP 或 IP:Port',
+      id: 'instance',
       multiple: true,
-      showLogicalPanel: true,
-      placeholder: '有逻辑关系的状态',
+    },
+    {
+      name: 'ID',
+      id: 'id',
+    },
+    {
+      name: '集群名称',
+      id: 'name',
+    },
+    {
+      name: '管控区域',
+      id: 'bk_cloud_id',
+      multiple: true,
       children: [
         {
-          name: '创建中',
-          id: '1-2',
-        },
-        {
-          name: '运行中',
-          id: '1-3',
-          disabled: true,
-        },
-        {
-          name: '已关机',
-          id: '1-4',
+          id: 0,
+          name: '直连区域',
         },
       ],
     },
     {
-      name: '实例业务',
-      id: '2',
+      name: '状态',
+      id: 'status',
+      multiple: true,
       children: [
         {
-          name: '王者荣耀',
-          id: '2-1',
-          disabled: true,
+          id: 'normal',
+          name: '正常',
         },
         {
-          name: '刺激战场',
-          id: '2-2',
-        },
-        {
-          name: '绝地求生',
-          id: '2-3',
+          id: 'abnormal',
+          name: '异常',
         },
       ],
     },
     {
-      name: '搜索文本',
-      id: '4',
-      multiple: false,
+      name: '所属 DB 模块',
+      id: 'db_module_id',
+      multiple: true,
+      children: [
+        {
+          id: 2,
+          name: 'tendbha57',
+        },
+        {
+          id: 19,
+          name: 'xiaog56',
+        },
+      ],
     },
     {
-      name: '不可选择',
-      id: '5',
-      disabled: true,
+      name: '版本',
+      id: 'major_version',
+      multiple: true,
+      children: [
+        {
+          id: 'MySQL-5.7',
+          name: 'MySQL-5.7',
+        },
+        {
+          id: 'MySQL-5.6',
+          name: 'MySQL-5.6',
+        },
+      ],
+    },
+    {
+      name: '地域',
+      id: 'region',
+      multiple: true,
+      children: [
+        {
+          id: '',
+          name: '',
+        },
+        {
+          id: 'default',
+          name: 'default',
+        },
+      ],
+    },
+    {
+      name: '创建人',
+      id: 'creator',
+    },
+    {
+      name: '时区',
+      id: 'time_zone',
+      multiple: true,
+      children: [
+        {
+          id: '+08:00',
+          name: '+08:00',
+        },
+      ],
     },
   ]);
+  const getMenuList = async (item, keyword) => {
+    console.info(item, keyword);
+    await new Promise(resolve => setTimeout(resolve, 300));
+    if (!item && keyword) {
+      return [
+        {
+          id: 'sdfds',
+          name: 'sdfsdfds',
+          value: {
+            id: 'sdfsdfsdfsdf',
+            name: `测试${keyword}`,
+          },
+        },
+      ];
+    }
+    if (!item) return data;
+    return data.value.find(set => set.id === item.id)?.children;
+  };
   const value = ref([{ name: 'IP地址', id: '3', values: generateRandomValues(6) }]);
 </script>

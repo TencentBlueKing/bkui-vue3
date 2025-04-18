@@ -27,7 +27,7 @@
 import { ExtractPropTypes, PropType, VNode } from 'vue';
 import { toType } from 'vue-types';
 
-import { IOptions } from '@bkui-vue/directives/src/tooltips';
+import { type IOptions } from '@bkui-vue/directives';
 import { PopoverPropTypes } from '@bkui-vue/popover';
 import { PropTypes } from '@bkui-vue/shared';
 

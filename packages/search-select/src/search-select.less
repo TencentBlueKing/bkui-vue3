@@ -17,11 +17,11 @@
   }
 
   .div-input {
+    flex: 1 1 auto;
     height: 100%;
     padding: 5px 0;
     line-height: 20px;
     word-break: break-all;
-    flex: 1 1 auto;
 
     &:focus {
       outline: none;
@@ -29,21 +29,21 @@
   }
 
   &-container {
+    box-sizing: border-box;
     // position: relative;
     display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
     min-height: 30px;
     overflow: hidden;
     font-size: 12px;
     color: @search-select-font-color;
+    resize: none;
     border: @border-width-base @border-style-base @border-style-color;
     border-radius: @border-radius-base;
     outline: none;
-    box-sizing: border-box;
     transition: border 0.2s linear;
-    resize: none;
-    flex-direction: row;
-    align-items: center;
-    flex-wrap: wrap;
 
     &.is-focus {
       overflow: auto;
@@ -55,8 +55,8 @@
     }
 
     .search-prefix {
-      flex: 0 0 auto;
       display: flex;
+      flex: 0 0 auto;
       align-items: center;
       height: 100%;
     }
@@ -64,6 +64,9 @@
     .search-container {
       position: relative;
       display: flex;
+      flex: 1;
+      flex-wrap: wrap;
+      align-items: center;
       max-width: calc(100% - 42px);
       min-height: 26px;
       padding: 0 2px;
@@ -71,13 +74,12 @@
       overflow: visible;
       text-align: left;
       transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      flex: 1;
-      flex-wrap: wrap;
-      align-items: center;
 
       &-selected {
         position: relative;
         display: inline-block;
+        flex: 0 0 auto;
+        align-self: center;
         max-width: 99%;
         padding-left: 8px;
         margin: 0 0 4px 6px;
@@ -85,8 +87,6 @@
         color: @search-select-font-color;
         background: #f0f1f5;
         border-radius: 2px;
-        flex: 0 0 auto;
-        align-self: center;
 
         &.hidden-selected {
           visibility: hidden;
@@ -115,6 +115,8 @@
           top: 4px;
           right: 3px;
           display: inline-flex;
+          align-items: center;
+          justify-content: center;
           width: 14px;
           height: 14px;
           overflow: hidden;
@@ -123,24 +125,22 @@
           color: #979ba5;
           text-align: center;
           cursor: pointer;
-          align-items: center;
-          justify-content: center;
         }
       }
 
       &-input {
         position: relative;
         display: block;
-        height: 100%;
+        flex: 1;
         min-width: 40px;
+        height: 100%;
         padding: 0 10px;
         margin-top: -4px;
         color: @search-select-font-color;
         border: none;
-        flex: 1;
 
         .input-before {
-          &:before {
+          &::after {
             color: @search-select-placeholder-color;
             content: attr(data-placeholder);
           }
@@ -158,13 +158,13 @@
       .selected-input {
         position: relative;
         display: flex;
-        height: 100%;
+        align-items: center;
         min-width: 40px;
+        height: 100%;
         padding: 0 10px;
         margin-top: -4px;
         color: @search-select-font-color;
         border: none;
-        align-items: center;
       }
     }
 
@@ -173,19 +173,19 @@
       top: 0;
       right: 0;
       display: flex;
-      color: @light-gray;
       align-items: center;
+      color: @light-gray;
       .search-prefix();
 
       .search-clear {
         display: flex;
+        align-items: center;
+        justify-content: center;
         width: 12px;
         height: 12px;
         margin-right: 6px;
         font-size: 12px;
         color: @light-gray;
-        align-items: center;
-        justify-content: center;
 
         &:hover {
           color: #979ba5;
@@ -195,11 +195,11 @@
 
       .search-nextfix-icon {
         display: flex;
+        align-items: center;
+        justify-content: center;
         margin-right: 8px;
         font-size: 16px;
         transition: color 0.2s linear;
-        align-items: center;
-        justify-content: center;
 
         &.is-focus {
           .focus();
@@ -221,31 +221,31 @@
 
   &-tips {
     display: flex;
+    align-items: center;
     margin-top: 5px;
     font-size: 12px;
     line-height: 16px;
     color: @search-select-message-color;
-    align-items: center;
 
     .select-tips {
       display: flex;
+      align-items: center;
+      justify-content: center;
       width: 16px;
       height: 16px;
       margin-right: 5px;
       overflow: hidden;
       font-size: 16px;
-      align-items: center;
-      justify-content: center;
     }
   }
 }
 
 .@{search-select-name}-menu {
   display: flex;
+  flex-direction: column;
   min-width: 200px;
   font-size: 12px;
   color: @search-select-font-color;
-  flex-direction: column;
 
   .menu-list-mixin {
     display: flex;
@@ -254,16 +254,16 @@
 
   .menu-item-mixin {
     display: flex;
+    flex: 0 0 32px;
+    align-items: center;
     width: 100%;
-    height: 32px;
     max-width: 500px;
+    height: 32px;
     padding: 0 8px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     outline: none;
-    align-items: center;
-    flex: 0 0 32px;
 
     &:hover {
       cursor: pointer;
@@ -300,17 +300,17 @@
 
     .menu-condition {
       display: flex;
+      flex: 0 0 64px;
+      flex-direction: column;
       width: 64px;
       padding: 8px 8px 2px 10px;
       background-color: #f5f7fa;
-      flex-direction: column;
-      flex: 0 0 64px;
 
       &-title {
         display: flex;
+        align-items: center;
         margin-bottom: 12px;
         line-height: 24px;
-        align-items: center;
       }
       .@{bk-prefix}-radio {
         width: 50px;
@@ -324,12 +324,12 @@
 
   .menu-content {
     display: flex;
+    flex: 1;
+    flex-direction: column;
     // max-height: 240px;
     padding: 4px 0;
     margin: 0;
     overflow: auto;
-    flex-direction: column;
-    flex: 1;
 
     .menu-item {
       .menu-item-mixin();
@@ -365,25 +365,25 @@
 
       .menu-name {
         display: flex;
+        align-items: center;
         // max-width: 100px;
         margin-right: 5px;
         font-weight: bold;
         color: @search-select-font-color;
-        align-items: center;
       }
     }
   }
 
   .menu-footer {
     display: flex;
+    align-items: center;
     width: 100%;
     height: 32px;
     border-top: @border-width-base @border-style-base @search-select-menu-border-color;
-    align-items: center;
 
     &-btn {
-      flex: 1;
       display: flex;
+      flex: 1;
       align-items: center;
       justify-content: center;
       height: 100%;

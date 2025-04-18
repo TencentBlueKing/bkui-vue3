@@ -26,10 +26,10 @@
 
 import { withInstall } from '@bkui-vue/shared';
 
+import PickerDropdown from './base/picker-dropdown';
 import Component from './date-picker';
 import TimePicker from './time-picker';
-
 const BkDatePicker = withInstall(Component);
 export default BkDatePicker;
 
-export { TimePicker };
+export { TimePicker, PickerDropdown };

@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 
-import { isElement } from 'lodash';
+import isElement from 'lodash/isElement';
 
 import { NODE_ATTRIBUTES, NODE_SOURCE_ATTRS } from './constant';
 import { TreeNode, TreePropTypes } from './props';

@@ -4,14 +4,13 @@
       class="navigation-demo-radio"
       v-model="navigationType"
     >
-      <bk-radio label="left-right"> 左右结构 </bk-radio>
-      <bk-radio label="top-bottom"> 上下结构 </bk-radio>
+      <bk-radio label="dark"> 黑色 </bk-radio>
+      <bk-radio label="light"> 白色 </bk-radio>
     </bk-radio-group>
-    <span v-bk-tooltips="{ content: 'test' }">test</span>
     <bk-navigation
-      class="navigation-demo-content"
+      :class="`navigation-demo-content theme-${navigationType}`"
       :default-open="!collapse"
-      :navigation-type="navigationType"
+      :navigation-type="'top-bottom'"
       side-title="监控平台"
       @toggle="handleCollapse"
     >
@@ -90,7 +89,7 @@
   // 注册 bkTooltips 指令
   const vBkTooltips = bkTooltips;
   const collapse = ref(true);
-  const navigationType = ref('left-right');
+  const navigationType = ref('dark');
   const handleCollapse = v => {
     collapse.value = !v;
   };
@@ -103,6 +102,14 @@
 
     &-content {
       border: 1px solid #ddd;
+
+      &.theme-dark {
+        --nav-header-bg-color: #182132
+      }
+
+      &.theme-light {
+        --nav-header-bg-color: #182132
+      }
 
       .content-demo {
         font-size: 24px;

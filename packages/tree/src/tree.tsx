@@ -66,6 +66,7 @@ export default defineComponent({
       getNodePath,
       getNodeId,
       getNodeAttr,
+      getNodeById,
       getParentNode,
       getIntersectionResponse,
     } = useNodeAttribute(flatData, props);
@@ -207,6 +208,10 @@ export default defineComponent({
       }
     };
 
+    const setCheckedById = (id: string, checked = true, triggerEvent = false) => {
+      setChecked(getNodeById(id), checked, triggerEvent);
+    };
+
     ctx.expose({
       handleTreeNodeClick,
       isNodeChecked,
@@ -216,6 +221,7 @@ export default defineComponent({
       hasChildNode,
       setOpen,
       setChecked,
+      setCheckedById,
       setNodeAction,
       setNodeOpened: setOpen,
       setSelect,

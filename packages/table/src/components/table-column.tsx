@@ -26,6 +26,7 @@
 import { defineComponent, ExtractPropTypes, inject, onUnmounted, watch, toRaw, h } from 'vue';
 
 import { PropTypes } from '@bkui-vue/shared';
+import isEqual from 'lodash/isEqual';
 
 import { COL_MIN_WIDTH, PROVIDE_KEY_INIT_COL } from '../const';
 import {
@@ -41,7 +42,6 @@ import {
   StringNumberType,
   TableAlign,
 } from '../props';
-import { isEqual } from 'lodash';
 
 const TableColumnProp = {
   label: LabelFunctionStringType,

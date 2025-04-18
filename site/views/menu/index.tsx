@@ -86,6 +86,13 @@ const menuItemPropsJson = [
     desc: '是否展示Icon',
     optional: [],
   },
+  {
+    name: 'disabled',
+    type: 'Boolean',
+    default: 'false',
+    desc: '是否禁用',
+    optional: [],
+  },
 ];
 
 const eventJson = [
