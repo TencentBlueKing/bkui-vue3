@@ -1,6 +1,12 @@
 ## 更新日志
 
 
+### 2.0.2-beta.10
+
+* **[feat]**:
+    - bugfix(slider): 兼容slider oldValue 为空的情况
+
+
 ### 2.0.2-beta.9
 
 * **[feat]**:
