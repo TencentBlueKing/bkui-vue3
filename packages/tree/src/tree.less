@@ -27,6 +27,25 @@
       margin-left: calc(var(--depth)*var(--indent));
 
       &.level-line {
+
+        .@{bk-prefix}-node-action {
+          &.empty-child {
+            position: relative;
+
+            &::before {
+              position: absolute;
+              top: calc(50% + 1px);
+              left: 0;
+              right: 0;
+              z-index: 1;
+              height: 0;
+              pointer-events: none;
+              border-bottom: var(--level-line);
+              content: '';
+            }
+          }
+        }
+
         &::before {
           position: absolute;
           top: calc(50% + 1px);
@@ -68,6 +87,7 @@
     .@{bk-prefix}-node-action {
       margin-right: 6px;
       color: #979ba5;
+      min-width: 14px;
     }
 
     .@{bk-prefix}-tree-icon {
@@ -79,6 +99,10 @@
       flex: 1;
       align-items: center;
       min-width: 0;
+
+      .node-check-box {
+        display: inline-flex;
+      }
 
       .@{bk-prefix}-checkbox {
         margin: 0;

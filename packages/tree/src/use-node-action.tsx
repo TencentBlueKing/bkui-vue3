@@ -218,6 +218,13 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
     });
   };
 
+  const isRemoteFnExec = (event: string) => {
+    if (props.async?.trigger?.length) {
+      return props.async?.trigger.includes(event);
+    }
+    return true;
+  };
+
   const handleNodeItemCheckboxChange = (item: TreeNode, value: boolean, event?: Event) => {
     event?.preventDefault();
     event?.stopImmediatePropagation();
@@ -239,7 +246,7 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
       flatData.data.filter((t: TreeNode) => isIndeterminate(t)),
     );
 
-    handleNodeContentClick(item, event as MouseEvent);
+    handleNodeContentClick(item, event as MouseEvent, 'checked');
   };
 
   const isIndeterminate = (item: TreeNode) =>
@@ -251,7 +258,10 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
     }
 
     return (
-      <span onClick={handleNodeCheckboxClick}>
+      <span
+        class='node-check-box'
+        onClick={handleNodeCheckboxClick}
+      >
         <Checkbox
           indeterminate={isIndeterminate(item)}
           modelValue={isNodeChecked(item)}
@@ -355,24 +365,26 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
    * 节点点击
    * @param item
    */
-  const handleTreeNodeClick = (item: TreeNode, e: MouseEvent) => {
+  const handleTreeNodeClick = (item: TreeNode, e: MouseEvent, event?: string) => {
     const isOpen = isItemOpen(item);
     if (isOpen) {
       setNodeOpened(item, false, e, true);
       return;
     }
 
-    /** 如果是异步请求加载 */
-    asyncNodeClick(item).finally(() => {
-      if (getNodeAttr(item, NODE_ATTRIBUTES.IS_LOADING)) {
-        registerNextLoop('setNodeOpenedAfterLoading', {
-          type: 'once',
-          fn: () => setNodeOpened(item, true, e, true),
-        });
-      } else {
-        setNodeOpened(item, true, e, true);
-      }
-    });
+    if (isRemoteFnExec(event)) {
+      /** 如果是异步请求加载 */
+      asyncNodeClick(item).finally(() => {
+        if (getNodeAttr(item, NODE_ATTRIBUTES.IS_LOADING)) {
+          registerNextLoop('setNodeOpenedAfterLoading', {
+            type: 'once',
+            fn: () => setNodeOpened(item, true, e, true),
+          });
+        } else {
+          setNodeOpened(item, true, e, true);
+        }
+      });
+    }
   };
 
   /**
@@ -385,7 +397,7 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
     e.stopPropagation();
     e.preventDefault();
 
-    handleTreeNodeClick(node, e);
+    handleTreeNodeClick(node, e, 'expand');
   };
 
   /**
@@ -477,7 +489,7 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
    * 点击节点事件
    * @param item
    */
-  const handleNodeContentClick = (item: TreeNode, e: MouseEvent) => {
+  const handleNodeContentClick = (item: TreeNode, e: MouseEvent, event?: string) => {
     const nodeActions = resolveNodeAction(item);
     if (nodeActions.includes('selected')) {
       setSelect(item, true, true, true);
@@ -485,13 +497,13 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
 
     if (nodeActions.includes('expand')) {
       if (!isNodeOpened(item)) {
-        handleTreeNodeClick(item, e);
+        handleTreeNodeClick(item, e, event);
       }
     }
 
     if (nodeActions.includes('collapse')) {
       if (isNodeOpened(item)) {
-        handleTreeNodeClick(item, e);
+        handleTreeNodeClick(item, e, event);
       }
     }
 
@@ -590,32 +602,35 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
    * @param item 当前节点
    * @param showTree 是否展示为树形结构
    */
-  const renderTreeNode = (item: TreeNode, showTree = true) => (
-    <div
-      key={getNodeId(item)}
-      class={getNodeRowClass(item, flatData.schema)}
-      data-tree-node={getNodeId(item)}
-    >
+  const renderTreeNode = (item: TreeNode, showTree = true) => {
+    const child = getActionIcon(item);
+    return (
       <div
-        style={getNodeItemStyle(item, props, flatData, showTree)}
-        class={getNodeItemClass(item, flatData.schema, props, showTree)}
-        onClick={(e: MouseEvent) => handleNodeContentClick(item, e)}
+        key={getNodeId(item)}
+        class={getNodeRowClass(item, flatData.schema)}
+        data-tree-node={getNodeId(item)}
       >
         <div
-          class={[resolveClassName('node-action')]}
-          onClick={(e: MouseEvent) => handleNodeActionClick(e, item)}
+          style={getNodeItemStyle(item, props, flatData, showTree)}
+          class={getNodeItemClass(item, flatData.schema, props, showTree)}
+          onClick={(e: MouseEvent) => handleNodeContentClick(item, e, 'click')}
         >
-          {getActionIcon(item)}
+          <div
+            class={[resolveClassName('node-action'), child ? '' : 'empty-child']}
+            onClick={(e: MouseEvent) => handleNodeActionClick(e, item)}
+          >
+            {child}
+          </div>
+          <div class={resolveClassName('node-content')}>
+            {[getCheckboxRender(item), getNodePrefixIcon(item)]}
+            <span class={resolveClassName('node-text')}>{renderNodeSlots(item)}</span>
+            {ctx.slots.nodeAppend?.(getScopedSlotData(item))}
+          </div>
+          {showTree && getVirtualLines(item)}
         </div>
-        <div class={resolveClassName('node-content')}>
-          {[getCheckboxRender(item), getNodePrefixIcon(item)]}
-          <span class={resolveClassName('node-text')}>{renderNodeSlots(item)}</span>
-          {ctx.slots.nodeAppend?.(getScopedSlotData(item))}
-        </div>
-        {showTree && getVirtualLines(item)}
       </div>
-    </div>
-  );
+    );
+  };
 
   return {
     renderTreeNode,
