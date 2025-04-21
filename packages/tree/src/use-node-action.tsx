@@ -408,7 +408,13 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
    * @param triggerEvent 是否触发抛出事件 false
    * @returns
    */
-  const setSelect = (nodes: TreeNode | TreeNode[], selected = true, autoOpen = true, triggerEvent = false) => {
+  const setSelect = (
+    nodes: TreeNode | TreeNode[],
+    selected = true,
+    autoOpen = true,
+    triggerEvent = false,
+    event = '',
+  ) => {
     const nodeList = Array.isArray(nodes) ? nodes : [nodes];
     if (!nodeList.length) {
       return;
@@ -460,12 +466,14 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
      * 处理异步节点多层级展开选中
      */
     if (getNodeAttr(resolvedItem, NODE_ATTRIBUTES.IS_ASYNC)) {
-      asyncNodeClick(resolvedItem).then(() => {
-        nextTick(() => {
-          nodeList.shift();
-          setSelect(nodeList, selected, autoOpen);
+      if (isRemoteFnExec(event)) {
+        asyncNodeClick(resolvedItem).then(() => {
+          nextTick(() => {
+            nodeList.shift();
+            setSelect(nodeList, selected, autoOpen, triggerEvent, event);
+          });
         });
-      });
+      }
     }
   };
 
@@ -492,7 +500,7 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
   const handleNodeContentClick = (item: TreeNode, e: MouseEvent, event?: string) => {
     const nodeActions = resolveNodeAction(item);
     if (nodeActions.includes('selected')) {
-      setSelect(item, true, true, true);
+      setSelect(item, true, true, true, event);
     }
 
     if (nodeActions.includes('expand')) {
