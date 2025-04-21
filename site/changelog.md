@@ -1,6 +1,12 @@
 ## 更新日志
 
 
+### 2.0.2-beta.12
+
+* **[feat]**:
+    - feature(input): Input组件透传tooltips配置项
+
+
 ### 2.0.2-beta.11
 
 * **[feat]**:
