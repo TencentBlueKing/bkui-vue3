@@ -395,6 +395,12 @@ const propsJson: IPropsTableItem[] = [
     type: 'boolean',
     default: 'false',
   },
+  {
+    name: 'inputTooltipsOptions',
+    desc: '透传Input组件的tooltip配置',
+    type: 'object',
+    default: '{}',
+  },
 ];
 const eventJson = [
   {

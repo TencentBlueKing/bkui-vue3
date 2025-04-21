@@ -179,6 +179,12 @@ const inputProps: IPropsTableItem[] = [
     default: true,
     desc: '是否阻止事件冒泡',
   },
+  {
+    name: 'tooltipsOptions',
+    type: 'Object',
+    default: {},
+    desc: 'tooltips配置项',
+  },
 ];
 // 输入框事件列表
 const inputEvents: IPropsTableItem[] = [
