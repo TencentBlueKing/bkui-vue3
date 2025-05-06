@@ -75,9 +75,6 @@ const tooltips: ObjectDirective = {
           hide(el);
         }, 100);
       });
-      el.addEventListener('click', () => {
-        hide(el);
-      });
       popper.addEventListener('mouseleave', () => {
         clearTimeout(delayTimeout);
         hideTimeout = setTimeout(() => {
@@ -91,7 +88,7 @@ const tooltips: ObjectDirective = {
             show(el);
             clearTimeout(delayTimeout);
           }, opts.delay);
-        } else if (popper.hasAttribute('data-show')) {
+        } else if (!el.contains(event.target as HTMLElement) && popper.hasAttribute('data-show')) {
           hide(el);
         }
       });

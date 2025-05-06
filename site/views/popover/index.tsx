@@ -392,8 +392,8 @@ const demos = [
     DemoComponent: MouseEvent,
   },
   {
-    title: '忽略占位区',
-    desc: '点击占位区弹窗不收起',
+    title: '点击占位区弹窗不收起',
+    desc: '设置 hideIgnoreReference: true，若占位区为非行内元素，请配置 referenceCls: 类名',
     componentName: 'popover',
     demoName: 'demo/hide-ignore-reference',
     DemoComponent: HideIgnoreReference,

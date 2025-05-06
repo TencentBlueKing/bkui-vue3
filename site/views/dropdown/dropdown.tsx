@@ -37,6 +37,7 @@ import DisabledDemo from './disabled-demo.vue';
 import DropdownMethodsDemo from './dropdown-methods-demo.vue';
 import IsShowDemo from './is-show-demo.vue';
 import TriggerDemo from './trigger-demo.vue';
+import HideIgnoreReference from './hide-ignore-reference.vue';
 
 const dropdowProps: IPropsTableItem[] = [
   {
@@ -89,7 +90,7 @@ const dropdowProps: IPropsTableItem[] = [
     desc: '配置自定义样式类名，传入的类会被加在组件最外层的 DOM .bk-dropdown 上',
     optional: [],
     default: '',
-  },
+  }
 ];
 const dropdownMenuProps: IPropsTableItem[] = [
   {
@@ -205,6 +206,14 @@ export default defineComponent({
           title='元素绑定在body下'
         >
           <DropdownBoundaryBody />
+        </DemoBox>
+        <DemoBox
+          componentName='dropdown'
+          demoName='hide-ignore-reference'
+          desc='通过 popoverOptions 设置 hideIgnoreReference: true，若占位区为非行内元素，请配置 referenceCls: 类名'
+          title='点击占位区弹窗不收起'
+        >
+          <HideIgnoreReference />
         </DemoBox>
         <PropsBox
           propsData={dropdowProps}
