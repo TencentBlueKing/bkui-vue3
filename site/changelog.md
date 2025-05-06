@@ -1,6 +1,15 @@
 ## 更新日志
 
 
+### 2.0.2-beta.13
+
+* **[feat]**:
+    - bugfix(cascader): list数据异步更新后交互异常
+    - bugfix(tree): 拖拽交互异常
+    - bugfix(message): code为空的时候，不要显示括号
+    - bugfix(popover): 扩大点击占位区不收起弹出内容的支持范围
+
+
 ### 2.0.2-beta.12
 
 * **[feat]**:
