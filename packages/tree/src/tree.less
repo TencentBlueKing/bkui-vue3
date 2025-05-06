@@ -5,12 +5,37 @@
 
 .@{bk-prefix}-tree {
   font-size: 14px;
+  position: relative;
 
   .@{bk-prefix}-node-row {
     padding-left: calc(var(--offset-left));
+    position: relative;
 
     &.is-selected {
       background-color: #ebf2ff;
+    }
+
+    &.drop-before {
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background-color: #2196F3;
+      }
+    }
+    &.drop-after {
+      &::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background-color: #2196F3;
+      }
     }
   }
 
@@ -65,6 +90,7 @@
         color: #63656e;
       }
     }
+
 
     .node-virtual-line {
       position: absolute;
@@ -132,7 +158,12 @@
     }
   }
 
-  &-drag-disabled {
-
+  .insert-line {
+    position: absolute;
+    height: 2px;
+    background: #2196F3;
+    display: none;
+    pointer-events: none;
+    z-index: 999;
   }
 }
