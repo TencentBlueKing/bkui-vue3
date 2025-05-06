@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 
-import { defineComponent, nextTick, reactive, ref, watch } from 'vue';
+import { defineComponent, nextTick, reactive, ref, watch, toRefs } from 'vue';
 import { array, object } from 'vue-types';
 
 import Checkbox from '@bkui-vue/checkbox';
@@ -55,7 +55,7 @@ export default defineComponent({
     const t = useLocale('cascader');
     const { resolveClassName } = usePrefix();
 
-    const { store } = props;
+    const { store } = toRefs(props);
     const menus = reactive({
       list: [props.store.getNodes()],
     });
@@ -99,11 +99,11 @@ export default defineComponent({
       const isInitialLoad = checkValue.value.length === 0;
 
       // 如果是初始加载或单选情况，按原来的逻辑处理
-      if (isInitialLoad || !store.config.multiple) {
+      if (isInitialLoad || !store.value.config.multiple) {
         let targetList = [];
 
         // 处理多选情况
-        if (store.config.multiple) {
+        if (store.value.config.multiple) {
           for (const subArray of value as Array<string[]>) {
             if (subArray.length > targetList.length) {
               targetList = subArray;
@@ -116,7 +116,7 @@ export default defineComponent({
 
         // 执行展开操作
         targetList.forEach((id: number | string | string[]) => {
-          const node = store.getNodeById(id);
+          const node = store.value.getNodeById(id);
           if (node) {
             // 只展开，不需要重复触发
             const expandNode = (node: INode) => {
@@ -161,7 +161,9 @@ export default defineComponent({
       }
       if (node.config.multiple) {
         // 如果checkAnyLevel，返回所有check的节点； 否则只check 叶子节点
-        const targets = store.config.checkAnyLevel ? store.getCheckedNodes() : store.getCheckedLeafNodes();
+        const targets = store.value.config.checkAnyLevel
+          ? store.value.getCheckedNodes()
+          : store.value.getCheckedLeafNodes();
         checkValue.value = targets.map(node => node.path); // 如果任意级别可选，当前节点即为所选内容
       } else {
         checkValue.value = node.path;
@@ -184,15 +186,15 @@ export default defineComponent({
         activePath.value.push(node);
         return;
       }
-      if (store.config.isRemote && !node.isLeaf) {
+      if (store.value.config.isRemote && !node.isLeaf) {
         node.loading = true;
         const updateNodes = (nodeData: IData[]) => {
-          store.appendNodes(nodeData, node || null);
+          store.value.appendNodes(nodeData, node || null);
           menus.list.push(node.children);
           activePath.value.push(node);
           node.loading = false;
         };
-        store.config.remoteMethod(node, updateNodes);
+        store.value.config.remoteMethod(node, updateNodes);
       }
     };
 
