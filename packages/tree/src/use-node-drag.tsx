@@ -26,6 +26,7 @@
 import { computed, onMounted, onUnmounted } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
+import { throttle } from 'lodash';
 
 import { EVENTS, NODE_ATTRIBUTES } from './constant';
 import { TreeNode, TreePropTypes } from './props';
@@ -45,6 +46,10 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
   const isNeedCheckDraggable = computed(() => typeof props.disableDrag === 'function');
   const isNeedCheckDroppable = computed(() => typeof props.disableDrop === 'function');
   let dragNodeId = '';
+  let draggedItem = null;
+
+  let nodeRectMap = new WeakMap();
+
   const getTargetTreeNode = (e: MouseEvent) => {
     const target = e.target as HTMLElement;
     return target.closest('[data-tree-node]') as HTMLElement;
@@ -70,10 +75,50 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
     targetNode.addEventListener('mouseup', handleTreeNodeMouseup);
   };
 
-  const handleTreeNodeDragover = (e: DragEvent) => {
+  const dropBefore = 'drop-before';
+  const dropAfter = 'drop-after';
+  const dropInner = 'drop-inner';
+  let dragOverItem: HTMLElement = null;
+
+  const handleTreeNodeDragover = throttle((e: DragEvent) => {
     e.preventDefault();
+
+    if (!draggedItem) return;
+
     const targetNode = getTargetTreeNode(e);
+
+    if (dragOverItem !== targetNode) {
+      dragOverItem?.classList.remove(dropBefore, dropAfter, dropInner);
+      dragOverItem = targetNode;
+    }
+
     const data = extendNodeAttr(getNodeByTargetTreeNode(targetNode));
+
+    if (!nodeRectMap.has(targetNode)) {
+      nodeRectMap.set(targetNode, targetNode.getBoundingClientRect());
+    }
+
+    const clientY = e.clientY;
+    const { top, height } = nodeRectMap.get(targetNode);
+    const threshold = height * 0.2;
+    const offsetY = clientY - top;
+
+    if (offsetY < threshold) {
+      if (!targetNode.classList.contains(dropBefore)) {
+        targetNode.classList.add(dropBefore);
+        targetNode.classList.remove(dropAfter, dropInner);
+      }
+    } else if (offsetY > height - threshold) {
+      if (!targetNode.classList.contains(dropAfter)) {
+        targetNode.classList.add(dropAfter);
+        targetNode.classList.remove(dropBefore, dropInner);
+      }
+    } else {
+      if (!targetNode.classList.contains(dropInner)) {
+        targetNode.classList.add(dropInner);
+        targetNode.classList.remove(dropBefore, dropAfter);
+      }
+    }
 
     ctx.emit(EVENTS.NODE_DRAG_OVER, e, targetNode, data);
     if (isNeedCheckDroppable.value && props?.disableDrop(data)) {
@@ -91,7 +136,7 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
     const transferEffect = isNodeSortable(sourceNodeId, targetNodeId) ? 'move' : 'none';
     e.dataTransfer.effectAllowed = transferEffect;
     e.dataTransfer.dropEffect = transferEffect;
-  };
+  });
 
   const handleTreeNodeDragStart = (e: DragEvent) => {
     e.dataTransfer.effectAllowed = 'move';
@@ -100,6 +145,7 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
     e.dataTransfer.setData('text/plain', '');
     const nodeId = targetNode.getAttribute('data-tree-node');
     dragNodeId = nodeId;
+    draggedItem = targetNode;
     e.dataTransfer.setData('node-id', nodeId);
     ctx.emit(EVENTS.NODE_DRAG_START, e, targetNode);
   };
@@ -108,6 +154,7 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
     /** firefox的drop事件必须调用preventDefault()和stopPropagation(), 否则会自动重定向 */
     e.preventDefault();
     e.stopPropagation();
+
     const targetNode = getTargetTreeNode(e);
     targetNode.classList.remove(`${resolveClassName('tree-drop-active')}`, `${resolveClassName('tree-drop-disabled')}`);
     const data = extendNodeAttr(getNodeByTargetTreeNode(targetNode));
@@ -116,7 +163,18 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
     }
     const sourceNodeId = dragNodeId; // e.dataTransfer.getData('node-id');
     const targetNodeId = targetNode.getAttribute('data-tree-node');
-    Reflect.apply(props.dragSort ? dragSortData : dragAsChildNode, this, [sourceNodeId, targetNodeId]);
+
+    if (dragOverItem?.classList.contains(dropInner)) {
+      Reflect.apply(dragAsChildNode, this, [sourceNodeId, targetNodeId]);
+    }
+
+    if (dragOverItem?.classList.contains(dropAfter) || dragOverItem?.classList.contains(dropBefore)) {
+      Reflect.apply(dragSortData, this, [sourceNodeId, targetNodeId]);
+    }
+
+    nodeRectMap = new WeakMap();
+    dragOverItem?.classList.remove(dropAfter, dropBefore, dropInner);
+    dragOverItem = null;
     ctx.emit(EVENTS.NODE_DROP, e, targetNode, data);
   };
 
@@ -137,21 +195,23 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
   };
 
   const dragSortData = (sourceId: string, targetId: string) => {
-    if (!isNodeSortable(sourceId, targetId)) {
+    if (!props.dragSort || !isNodeSortable(sourceId, targetId)) {
       return;
     }
 
-    const sourceNodeData = JSON.parse(JSON.stringify(getSourceNodeByUID(sourceId)));
-    const targetNodeData = JSON.parse(JSON.stringify(getSourceNodeByUID(targetId)));
-
+    const sourceNodeData = getSourceNodeByUID(sourceId);
     const sourceNodeParent = getParentNodeData(sourceId);
+    let sourceNodeIndex = getNodeAttrById(sourceId, NODE_ATTRIBUTES.INDEX);
+
+    sourceNodeParent?.[props.children].splice(sourceNodeIndex, 1);
+
+    let targetNodeIndex = getNodeAttrById(targetId, NODE_ATTRIBUTES.INDEX);
+    if (dragOverItem?.classList.contains(dropAfter)) {
+      targetNodeIndex = targetNodeIndex + 1;
+    }
+
     const targetNodeParent = getParentNodeData(targetId);
-
-    const sourceNodeIndex = getNodeAttrById(sourceId, NODE_ATTRIBUTES.INDEX);
-    const targetNodeIndex = getNodeAttrById(targetId, NODE_ATTRIBUTES.INDEX);
-
-    sourceNodeParent?.[props.children].splice(sourceNodeIndex, 1, targetNodeData);
-    targetNodeParent?.[props.children].splice(targetNodeIndex, 1, sourceNodeData);
+    targetNodeParent?.[props.children].splice(targetNodeIndex, 0, sourceNodeData);
   };
 
   const dragAsChildNode = (sourceNodeId: string, targetNodeId: string) => {
@@ -180,11 +240,12 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
     e.preventDefault();
     const targetNode = getTargetTreeNode(e);
     targetNode.classList.remove(`${resolveClassName('tree-drop-active')}`, `${resolveClassName('tree-drop-disabled')}`);
+    targetNode.classList.remove(dropAfter, dropBefore, dropInner);
     ctx.emit(EVENTS.NODE_DRAG_LEAVE, e, targetNode);
   };
 
   onMounted(() => {
-    if (props.draggable && root.value) {
+    if ((props.draggable || props.dragSort) && root.value) {
       const rootTree = root.value.$el as HTMLElement;
       rootTree.addEventListener('mousedown', handleTreeNodeMousedown);
       rootTree.addEventListener('dragstart', handleTreeNodeDragStart);
@@ -195,7 +256,7 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
   });
 
   onUnmounted(() => {
-    if (props.draggable && root.value) {
+    if ((props.draggable || props.dragSort) && root.value) {
       const rootTree = root.value.$el as HTMLElement;
       rootTree.removeEventListener('mousedown', handleTreeNodeMousedown);
       rootTree.removeEventListener('dragstart', handleTreeNodeDragStart);

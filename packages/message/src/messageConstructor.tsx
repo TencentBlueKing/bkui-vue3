@@ -661,7 +661,7 @@ export default defineComponent({
                 <div class={`${this.resolveClassName('message-icon')}`}>{renderIcon()}</div>
                 <div class='describe'>
                   {this.$slots.title?.() ??
-                    `【${this.message.code}】${this.message.overview} ${this.message.suggestion}`}
+                    `${this.message.code ? `【${this.message.code}】` : ''}${this.message.overview} ${this.message.suggestion}`}
                 </div>
               </div>
               <div class='tools'>{this.renderMessageActions()}</div>

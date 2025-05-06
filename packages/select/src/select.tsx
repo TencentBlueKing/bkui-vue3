@@ -28,7 +28,7 @@ import { computed, defineComponent, onMounted, PropType, provide, reactive, ref,
 
 import Checkbox from '@bkui-vue/checkbox';
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
-import { clickoutside } from '@bkui-vue/directives';
+import { clickoutside, IOptions } from '@bkui-vue/directives';
 import { AngleDown, Close, Search, TextAll } from '@bkui-vue/icon';
 import Input from '@bkui-vue/input';
 import Loading from '@bkui-vue/loading';
@@ -111,6 +111,10 @@ export default defineComponent({
       default: 'default',
     }, // content显示和隐藏方式
     disableScrollToSelectedOption: PropTypes.bool.def(false), // 是否禁用滚动到选中option的功能
+    inputTooltipsOptions: {
+      type: Object as PropType<Partial<IOptions>>,
+      default: () => ({}),
+    }, // 透传Input组件的tooltips配置
   },
   emits: [
     'update:modelValue',
@@ -1020,6 +1024,7 @@ export default defineComponent({
           selectReadonly={true}
           size={this.size}
           stopPropagation={false}
+          tooltipsOptions={this.inputTooltipsOptions}
           type='text'
           withValidate={false}
           onEnter={this.handleCreateCustomOption}

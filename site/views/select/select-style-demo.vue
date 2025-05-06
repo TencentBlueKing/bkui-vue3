@@ -37,6 +37,7 @@
       <bk-select
         class="bk-select"
         v-model="selectedValue"
+        :inputTooltipsOptions="{ sameWidth: false }"
         size="large"
         filterable
         multiple

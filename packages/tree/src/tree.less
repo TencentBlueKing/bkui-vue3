@@ -5,12 +5,37 @@
 
 .@{bk-prefix}-tree {
   font-size: 14px;
+  position: relative;
 
   .@{bk-prefix}-node-row {
     padding-left: calc(var(--offset-left));
+    position: relative;
 
     &.is-selected {
       background-color: #ebf2ff;
+    }
+
+    &.drop-before {
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background-color: #2196F3;
+      }
+    }
+    &.drop-after {
+      &::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background-color: #2196F3;
+      }
     }
   }
 
@@ -27,6 +52,25 @@
       margin-left: calc(var(--depth)*var(--indent));
 
       &.level-line {
+
+        .@{bk-prefix}-node-action {
+          &.empty-child {
+            position: relative;
+
+            &::before {
+              position: absolute;
+              top: calc(50% + 1px);
+              left: 0;
+              right: 0;
+              z-index: 1;
+              height: 0;
+              pointer-events: none;
+              border-bottom: var(--level-line);
+              content: '';
+            }
+          }
+        }
+
         &::before {
           position: absolute;
           top: calc(50% + 1px);
@@ -46,6 +90,7 @@
         color: #63656e;
       }
     }
+
 
     .node-virtual-line {
       position: absolute;
@@ -68,6 +113,7 @@
     .@{bk-prefix}-node-action {
       margin-right: 6px;
       color: #979ba5;
+      min-width: 14px;
     }
 
     .@{bk-prefix}-tree-icon {
@@ -79,6 +125,10 @@
       flex: 1;
       align-items: center;
       min-width: 0;
+
+      .node-check-box {
+        display: inline-flex;
+      }
 
       .@{bk-prefix}-checkbox {
         margin: 0;
@@ -108,7 +158,12 @@
     }
   }
 
-  &-drag-disabled {
-
+  .insert-line {
+    position: absolute;
+    height: 2px;
+    background: #2196F3;
+    display: none;
+    pointer-events: none;
+    z-index: 999;
   }
 }

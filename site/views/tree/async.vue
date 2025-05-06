@@ -7,6 +7,7 @@
           :async="{
             callback: getRemoteData,
             cache: true,
+            trigger: ['expand'],
           }"
           :intersection-observer="{
             enabled: true,
@@ -19,6 +20,7 @@
           label="name"
           node-key="id"
           level-line
+          show-checkbox
         />
       </div>
     </div>
@@ -80,6 +82,7 @@
                     id: this.rootId + 2,
                     name: 'child-3-方案成熟',
                     content: '拥有支撑数百款腾讯业务的经验沉淀，兼容各种复杂的系统架构，生于运维 · 精于运维',
+                    async: true,
                     children: [],
                   },
                   {
