@@ -161,37 +161,28 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
     if (isNeedCheckDroppable.value && props.disableDrop(data)) {
       return;
     }
+
     const sourceNodeId = dragNodeId; // e.dataTransfer.getData('node-id');
     const targetNodeId = targetNode.getAttribute('data-tree-node');
 
-    if (dragOverItem?.classList.contains(dropInner)) {
-      Reflect.apply(dragAsChildNode, this, [sourceNodeId, targetNodeId]);
-    }
-
-    if (dragOverItem?.classList.contains(dropAfter) || dragOverItem?.classList.contains(dropBefore)) {
-      Reflect.apply(dragSortData, this, [sourceNodeId, targetNodeId]);
+    if (sourceNodeId !== targetNodeId) {
+      if (dragOverItem?.classList.contains(dropInner)) {
+        Reflect.apply(dragAsChildNode, this, [sourceNodeId, targetNodeId]);
+      }
+  
+      if (dragOverItem?.classList.contains(dropAfter) || dragOverItem?.classList.contains(dropBefore)) {
+        Reflect.apply(dragSortData, this, [sourceNodeId, targetNodeId]);
+      }
+      ctx.emit(EVENTS.NODE_DROP, e, targetNode, data);
     }
 
     nodeRectMap = new WeakMap();
     dragOverItem?.classList.remove(dropAfter, dropBefore, dropInner);
     dragOverItem = null;
-    ctx.emit(EVENTS.NODE_DROP, e, targetNode, data);
   };
 
   const isNodeSortable = (sourceId: string, targetId: string) => {
-    const sourcePath: string = getNodePathById(sourceId);
-    const targetPath: string = getNodePathById(targetId);
-    // if (!sourcePath || targetPath) {
-    //   return false;
-    // }
-    const sourceParentNodeId = getNodeParentIdById(sourceId);
-    const targetParentNode = getNodeParentIdById(targetId);
-
-    if (sourceParentNodeId === targetParentNode) {
-      return true;
-    }
-
-    return sourcePath.indexOf(targetPath) === -1 && targetPath.indexOf(sourcePath) === -1;
+    return sourceId !== targetId;
   };
 
   const dragSortData = (sourceId: string, targetId: string) => {
