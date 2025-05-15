@@ -94,6 +94,9 @@ export default defineComponent({
 
     const store = ref(new Store(props));
 
+    // 用于处理在 removeTag 时， popOver panel 触发 clickOutside 消失的问题
+    const isAlways = ref(false);
+
     // 定义selectedText变量用于记录当前选择的值的文本
     const selectedText = ref<string>('');
 
@@ -139,7 +142,10 @@ export default defineComponent({
     const inputRef = ref(null);
 
     // 用computed定义placeholder变量，用于处理props中的placeholder属性
-    const placeholder = computed(() => (props.placeholder ? props.placeholder : t.value.pleaseSelect));
+    const placeholder = computed(() => {
+      const placeholder = props.placeholder ? props.placeholder : t.value.pleaseSelect;
+      return modelValue.value.length === 0 ? placeholder : '';
+    });
 
     const displayText = computed(() => {
       if (props.customTextFillback) {
@@ -207,6 +213,7 @@ export default defineComponent({
 
     // 移除tag
     const removeTag = (value, index, e) => {
+      isAlways.value = true;
       e.stopPropagation();
       const current = JSON.parse(JSON.stringify(value));
       const tag = current.splice(index, 1)[0];
@@ -220,6 +227,7 @@ export default defineComponent({
       // 计算过后，关闭编辑状态
       setTimeout(() => {
         isEdit.value = isFocus.value;
+        isAlways.value = false;
       });
     };
 
@@ -333,6 +341,7 @@ export default defineComponent({
       overflowTagIndex,
       isCollapse,
       isFocus,
+      isAlways,
       store,
       updateValue,
       selectedText,
@@ -435,9 +444,11 @@ export default defineComponent({
       <Popover
         ref='popover'
         class={this.resolveClassName('cascader-popover-wrapper')}
+        always={this.isAlways}
         arrow={false}
         boundary='body'
         disabled={this.disabled}
+        hideIgnoreReference={true}
         offset={4}
         placement='bottom-start'
         referenceCls={this.resolveClassName('cascader-popover-reference')}
