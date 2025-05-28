@@ -1,6 +1,12 @@
 ## 更新日志
 
 
+### 2.0.2-beta.17
+
+* **[feat]**:
+    - bugfix(cascader): 当model-value为number类型的时候，支持传空的model-value
+
+
 ### 2.0.2-beta.13
 
 * **[feat]**:

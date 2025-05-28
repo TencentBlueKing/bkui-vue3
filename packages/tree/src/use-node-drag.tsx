@@ -33,15 +33,8 @@ import { TreeNode, TreePropTypes } from './props';
 import useNodeAttribute from './use-node-attribute';
 
 export default (props: TreePropTypes, ctx, root?, flatData?) => {
-  const {
-    getSourceNodeByUID,
-    getParentNodeData,
-    getNodeParentIdById,
-    extendNodeAttr,
-    getNodeAttrById,
-    getNodePathById,
-    isRootNode,
-  } = useNodeAttribute(flatData, props);
+  const { getSourceNodeByUID, getParentNodeData, getNodeParentIdById, extendNodeAttr, getNodeAttrById, isRootNode } =
+    useNodeAttribute(flatData, props);
   const { resolveClassName } = usePrefix();
   const isNeedCheckDraggable = computed(() => typeof props.disableDrag === 'function');
   const isNeedCheckDroppable = computed(() => typeof props.disableDrop === 'function');
@@ -169,7 +162,7 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
       if (dragOverItem?.classList.contains(dropInner)) {
         Reflect.apply(dragAsChildNode, this, [sourceNodeId, targetNodeId]);
       }
-  
+
       if (dragOverItem?.classList.contains(dropAfter) || dragOverItem?.classList.contains(dropBefore)) {
         Reflect.apply(dragSortData, this, [sourceNodeId, targetNodeId]);
       }
