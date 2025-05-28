@@ -82,7 +82,7 @@ export default defineComponent({
      * @param value - 选中的值数组
      */
     const updateCheckValue = (value: Array<number | string | string[]>) => {
-      if (value.length === 0) {
+      if (!value || value.length === 0) {
         menus.list = menus.list.slice(0, 1);
         activePath.value = [];
       }
