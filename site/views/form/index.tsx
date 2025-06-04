@@ -264,6 +264,13 @@ const formItemProps: IPropsTableItem[] = [
     desc: '错误提示类型',
     optional: ['tooltips', 'normal'],
   },
+  {
+    name: 'error-tip-append-to-parent',
+    type: 'Boolean',
+    default: false,
+    desc: '错误提示是否附加到父级, 如果为 true, 则错误提示会附加到父级元素； 否则附加到 document.body',
+    optional: [],
+  },
 ];
 
 const formItemSlots: IPropsTableItem[] = [
