@@ -8,6 +8,8 @@
     <bk-form-item
       label="姓名"
       property="name"
+      error-tip-append-to-parent
+      error-display-type="tooltips"
       required
     >
       <bk-input

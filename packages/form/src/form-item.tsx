@@ -62,6 +62,7 @@ const formItemProps = {
   rules: PropTypes.array,
   description: PropTypes.string,
   errorDisplayType: PropTypes.oneOf(['tooltips', 'normal']).def('normal'),
+  errorTipAppendToParent: PropTypes.bool.def(false),
 };
 
 export type FormItemProps = Readonly<ExtractPropTypes<typeof formItemProps>>;
@@ -408,7 +409,10 @@ export default defineComponent({
         return (
           <div
             class={`${this.resolveClassName('form-error-tips')}`}
-            v-bk-tooltips={this.errorMessage}
+            v-bk-tooltips={{
+              content: this.errorMessage,
+              boundary: this.errorTipAppendToParent ? 'parent' : document.body,
+            }}
           >
             <ExclamationCircleShape />
           </div>
