@@ -216,7 +216,7 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
         hideFn();
       }
     };
-    debugger;
+    // debugger;
     if (hideIgnoreReference) {
       setTimeout(() => {
         if (ReferenceClickSharedState[uniqKey]) {
