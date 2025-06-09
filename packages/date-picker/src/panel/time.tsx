@@ -47,6 +47,7 @@ import { datePickerProps, timePanelProps } from '../props';
 import { initTime, mergeDateHMS, timePickerKey } from '../utils';
 
 import type { ExtractPropTypes, PropType } from 'vue';
+import cloneDeep from 'lodash/cloneDeep';
 
 const timeProps = {
   disabledDate: {
@@ -116,11 +117,11 @@ export default defineComponent({
 
     const showSeconds = computed(() => !(props.format || '').match(/mm$/));
 
-    const timeSlots = computed(() => {
+    const localTimeValues = computed(() => {
       if (!props.value[0]) {
         return [];
       }
-      return ['getHours', 'getMinutes', 'getSeconds'].map(slot => state.date[slot]());
+      return ['getHours', 'getMinutes', 'getSeconds'].map(slot => state.date[slot]() as number);
     });
 
     const disabledHMS = computed<IDisabledHMS>(() => {
@@ -132,19 +133,18 @@ export default defineComponent({
         }, {});
         return disabled;
       }
-      const slots = [24, 60, 60];
-      const disabled = ['Hours', 'Minutes', 'Seconds'].map(type => props[`disabled${type}`]);
-      const disabledHMS = disabled.map((preDisabled, j) => {
-        const slot = slots[j];
-        const toDisable = preDisabled;
-        for (let i = 0; i < slot; i += props.steps[j] || 1) {
-          const hms: number[] = timeSlots.value.map((slot, x) => (x === j ? i : slot));
-          const testDateTime = mergeDateHMS(state.date, ...hms);
-          if (props.disabledDate(testDateTime, true)) {
-            toDisable.push(i);
+      const HMSMax = [24, 60, 60];
+      const disabled = ['Hours', 'Minutes', 'Seconds'].map(type => cloneDeep(props[`disabled${type}`])) as number[][];
+      const disabledHMS = disabled.map((currentDisable, disableIndex) => {
+        const itemMax = HMSMax[disableIndex];
+        for (let itemIndex = 0; itemIndex < itemMax; itemIndex += props.steps[disableIndex] || 1) {
+          const hms = localTimeValues.value.map((value, index) => (index === disableIndex ? itemIndex : value));
+          const testDateTime = mergeDateHMS(state.date, hms);
+          if (props.disabledDate(testDateTime)) {
+            currentDisable.push(itemIndex);
           }
         }
-        return toDisable.filter((el, i, arr) => arr.indexOf(el) === i);
+        return currentDisable;
       });
       return disabledTypes.reduce((obj, type, i) => {
         obj[type] = disabledHMS[i];
@@ -192,11 +192,9 @@ export default defineComponent({
       ...toRefs(state),
       visibleDate,
       showSeconds,
-      timeSlots,
+      localTimeValues,
       disabledHMS,
-
       timeSpinnerRef,
-
       handlePickClick,
       handleChange,
       resolveClassName,
@@ -222,9 +220,9 @@ export default defineComponent({
               disabledMinutes={this.disabledHMS.disabledMinutes}
               disabledSeconds={this.disabledHMS.disabledSeconds}
               hideDisabledOptions={this.hideDisabledOptions}
-              hours={this.timeSlots[0]}
-              minutes={this.timeSlots[1]}
-              seconds={this.timeSlots[2]}
+              hours={this.localTimeValues[0]}
+              minutes={this.localTimeValues[1]}
+              seconds={this.localTimeValues[2]}
               showSeconds={this.showSeconds}
               steps={this.steps}
               onChange={this.handleChange}

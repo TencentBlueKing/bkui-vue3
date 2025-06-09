@@ -26,7 +26,7 @@
 import { computed, onMounted, onUnmounted } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-import { throttle } from 'lodash';
+import throttle from 'lodash/throttle';
 
 import { EVENTS, NODE_ATTRIBUTES } from './constant';
 import { TreeNode, TreePropTypes } from './props';

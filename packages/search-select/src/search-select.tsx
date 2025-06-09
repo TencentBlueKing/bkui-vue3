@@ -285,7 +285,8 @@ export default defineComponent({
         inputRef.value.inputFocusForWrapper();
       }
     }
-    function handleClearAll() {
+    function handleClearAll(e: MouseEvent) {
+      e.stopPropagation();
       selectedList.value = [];
       overflowIndex.value = -1;
       inputRef.value.inputClearForWrapper();
