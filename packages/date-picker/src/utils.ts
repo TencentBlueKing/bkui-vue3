@@ -417,7 +417,7 @@ export const formatDateLabels = (() => {
 
 export const clearHours = time => {
   const cloneDate = new Date(time);
-  cloneDate.setHours(0, 0, 0, 0);
+  cloneDate.setHours(23, 59, 59, 999);
   return cloneDate.getTime();
 };
 
@@ -437,33 +437,22 @@ export const isInRange = (time, a, b) => {
   return time >= start && time <= end;
 };
 
-/**
- * firstUpperCase
- *
- * @param {string} str str
- *
- * @return {string} str
- */
-export function firstUpperCase(str) {
+
+export const firstUpperCase = (str: string) => {
   return str.toString()[0].toUpperCase() + str.toString().slice(1);
 }
 
 /**
  * 根据 date 设置 h, m, s
- *
- * @param {Date} date date 对象
- * @param {number} h 小时数
- * @param {number} m 分钟数
- * @param {number} s 秒数
- *
- * @return {Date} date 对象
+ * @param date Date对象
+ * @param hms [小时数,分钟数,秒数]
  */
-export const mergeDateHMS = (date, ...hms) => {
+export const mergeDateHMS = (date: Date, hms = [0, 0, 0]) => {
   const newDate = new Date(date.getTime());
   newDate.setHours(hms[0]);
   newDate.setMinutes(hms[1]);
-  newDate.setSeconds(hms[2]);
+  newDate.setSeconds(hms[2] - 1);
   return newDate;
 };
 
-export const capitalize = str => str[0].toUpperCase() + str.slice(1);
+export const capitalize = (str: string) => str[0].toUpperCase() + str.slice(1);
