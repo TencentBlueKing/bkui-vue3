@@ -1,6 +1,26 @@
 ## 更新日志
 
 
+### 2.0.2-beta.20
+
+* **[feat]**:
+    - bugfix(form-item): 添加 errorTipAppendToParent 属性以控制错误提示位置
+    - fix(cascader): 修复removeTag时popover面板消失的问题，优化placeholder逻辑
+    - fix(sideslider): 没有 footer 插槽时高度计算有误
+
+
+### 2.0.2-beta.19
+
+* **[feat]**:
+    - bugfix(cascader): 级联组件支持数字空数据
+
+
+### 2.0.2-beta.17
+
+* **[feat]**:
+    - bugfix(cascader): 当model-value为number类型的时候，支持传空的model-value
+
+
 ### 2.0.2-beta.13
 
 * **[feat]**:
