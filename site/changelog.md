@@ -1,6 +1,12 @@
 ## 更新日志
 
 
+### 2.0.2-beta.23
+
+* **[feat]**:
+    - bugfix(date-picker): disabledDate未正常限制日期与时间选择
+
+
 ### 2.0.2-beta.20
 
 * **[feat]**:
