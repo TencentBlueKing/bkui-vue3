@@ -215,7 +215,7 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
       if (localIsShow.value) {
         hideFn();
       }
-    }
+    };
     if (hideIgnoreReference) {
       setTimeout(() => {
         if (ReferenceClickSharedState[uniqKey]) {
@@ -224,7 +224,7 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
         }
 
         return commonFunc();
-      })
+      });
     } else {
       return commonFunc();
     }

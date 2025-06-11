@@ -618,8 +618,10 @@ export default defineComponent({
     }
     function clearInput() {
       if (!inputRef.value) return;
-      keyword.value = '';
-      nextTick(() => (inputRef.value.innerText = ''));
+      setTimeout(() => {
+        keyword.value = '';
+        inputRef.value.innerText = '';
+      }, 16);
     }
     function str2SelectedItem(str: string) {
       const [key, value] = str.split(':');

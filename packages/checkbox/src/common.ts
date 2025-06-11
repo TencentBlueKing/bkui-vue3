@@ -98,7 +98,7 @@ export const useCheckbox = () => {
 
     nextTick(() => {
       // 选中状态保持同步
-      if (inputRef.value.checked !== isChecked.value) {
+      if (inputRef.value && inputRef.value.checked !== isChecked.value) {
         inputRef.value.checked = isChecked.value;
       }
     });

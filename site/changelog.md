@@ -1,6 +1,59 @@
 ## 更新日志
 
 
+### 2.0.2-beta.23
+
+* **[feat]**:
+    - bugfix(date-picker): disabledDate未正常限制日期与时间选择
+
+
+### 2.0.2-beta.20
+
+* **[feat]**:
+    - bugfix(form-item): 添加 errorTipAppendToParent 属性以控制错误提示位置
+    - fix(cascader): 修复removeTag时popover面板消失的问题，优化placeholder逻辑
+    - fix(sideslider): 没有 footer 插槽时高度计算有误
+
+
+### 2.0.2-beta.19
+
+* **[feat]**:
+    - bugfix(cascader): 级联组件支持数字空数据
+
+
+### 2.0.2-beta.17
+
+* **[feat]**:
+    - bugfix(cascader): 当model-value为number类型的时候，支持传空的model-value
+
+
+### 2.0.2-beta.13
+
+* **[feat]**:
+    - bugfix(cascader): list数据异步更新后交互异常
+    - bugfix(tree): 拖拽交互异常
+    - bugfix(message): code为空的时候，不要显示括号
+    - bugfix(popover): 扩大点击占位区不收起弹出内容的支持范围
+
+
+### 2.0.2-beta.12
+
+* **[feat]**:
+    - feature(input): Input组件透传tooltips配置项
+
+
+### 2.0.2-beta.11
+
+* **[feat]**:
+    - bugfix(tree): tree树组件缩进问题&异步加载子节点触发事件配置支持
+
+
+### 2.0.2-beta.10
+
+* **[feat]**:
+    - bugfix(slider): 兼容slider oldValue 为空的情况
+
+
 ### 2.0.2-beta.9
 
 * **[feat]**:
