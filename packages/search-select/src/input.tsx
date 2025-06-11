@@ -109,6 +109,7 @@ export default defineComponent({
     const { editKey, onValidate, searchData } = useSearchSelectInject();
     const valueLogic = computed(() => usingItem.value?.logical || SearchLogical.OR);
     const inputKey = ref(random(10));
+    const isComposition = ref(false);
     watch(editKey, () => {
       if (props.mode === SearchInputMode.DEFAULT && editKey.value) {
         showPopover.value = false;
@@ -251,6 +252,7 @@ export default defineComponent({
       debounceSetMenuList();
     }
     function handleInputChange(event: Event) {
+      if (isComposition.value) return;
       const text = (event.target as HTMLDivElement).innerText.trim();
       if (!usingItem.value) {
         keyword.value = text;
@@ -692,6 +694,17 @@ export default defineComponent({
         menuHoverId.value = '';
       }
     }
+    function handleCompositionEnd(event: CompositionEvent) {
+      isComposition.value = false;
+      keyword.value = event.data;
+      handleInputChange(event);
+      console.info('handleCompositionEnd', keyword.value, event);
+    }
+    function handleCompositionStart(event: CompositionEvent) {
+      isComposition.value = true;
+
+      console.info('handleCompositionStart', event);
+    }
     // expose
     expose({
       inputFocusForWrapper,
@@ -711,6 +724,7 @@ export default defineComponent({
       menuList,
       menuHoverId,
       isFocus,
+      isComposition,
       usingItem,
       showPopover,
       showNoSelectValueError,
@@ -734,6 +748,8 @@ export default defineComponent({
       refleshMenuHover,
       t,
       inputKey,
+      handleCompositionEnd,
+      handleCompositionStart,
     };
   },
   render() {
@@ -753,9 +769,11 @@ export default defineComponent({
         }}
         v-clickoutside={this.handleClickOutside}
         contenteditable={true}
-        data-placeholder={!inputInnerHtml && !this.keyword ? this.placeholder : ''}
+        data-placeholder={!this.isComposition && !inputInnerHtml && !this.keyword ? this.placeholder : ''}
         data-tips={placeholder || ''}
         spellcheck='false'
+        onCompositionend={this.handleCompositionEnd}
+        onCompositionstart={this.handleCompositionStart}
         onFocus={this.handleInputFocus}
         onInput={this.handleInputChange}
         onKeydown={this.handleInputKeyup}
