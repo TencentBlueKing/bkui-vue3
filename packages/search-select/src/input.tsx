@@ -627,15 +627,15 @@ export default defineComponent({
     function clearInput() {
       if (!inputRef.value) return;
       // magic code 判断是否是 windows 系统
-      const isWindows = navigator.userAgent.includes('Windows');
-      if (isWindows) {
-        setTimeout(() => {
-          keyword.value = '';
-          inputRef.value.innerText = '';
-          clearInputBr();
-        }, 32);
-        return;
-      }
+      // const isWindows = navigator.userAgent.includes('Windows');
+      // if (isWindows) {
+      //   setTimeout(() => {
+      //     keyword.value = '';
+      //     inputRef.value.innerText = '';
+      //     clearInputBr();
+      //   }, 32);
+      //   return;
+      // }
       keyword.value = '';
       nextTick(() => {
         inputRef.value.innerText = '';
@@ -698,12 +698,9 @@ export default defineComponent({
       isComposition.value = false;
       keyword.value = event.data;
       handleInputChange(event);
-      console.info('handleCompositionEnd', keyword.value, event);
     }
-    function handleCompositionStart(event: CompositionEvent) {
+    function handleCompositionStart() {
       isComposition.value = true;
-
-      console.info('handleCompositionStart', event);
     }
     // expose
     expose({
