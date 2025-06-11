@@ -366,7 +366,7 @@ export default defineComponent({
           setInputFocus(false, false);
           return;
         }
-      } else if (!keyword.value) {
+      } else if (!keyword.value || keyword.value.length === 1) {
         usingItem.value = null;
         keyword.value = '';
         setMenuList();
