@@ -286,6 +286,7 @@ export default defineComponent({
       //   }
       //   return;
       // }
+      if (isComposition.value) return;
       switch (event.code) {
         case 'Enter':
         case 'NumpadEnter':
