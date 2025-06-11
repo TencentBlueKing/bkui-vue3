@@ -288,6 +288,7 @@ export default defineComponent({
       switch (event.code) {
         case 'Enter':
         case 'NumpadEnter':
+          event.preventDefault();
           if (
             props.valueBehavior === ValueBehavior.NEED_KEY &&
             menuList.value.some(item => item.id === menuHoverId.value)
@@ -616,12 +617,28 @@ export default defineComponent({
         nextTick(clearInput);
       }
     }
+    function clearInputBr() {
+      if (!inputRef.value) return;
+      const brs = inputRef.value.querySelectorAll('br');
+      brs?.forEach(br => br.remove());
+    }
     function clearInput() {
       if (!inputRef.value) return;
-      setTimeout(() => {
-        keyword.value = '';
+      // magic code 判断是否是 windows 系统
+      const isWindows = navigator.userAgent.includes('Windows');
+      if (isWindows) {
+        setTimeout(() => {
+          keyword.value = '';
+          inputRef.value.innerText = '';
+          clearInputBr();
+        }, 32);
+        return;
+      }
+      keyword.value = '';
+      nextTick(() => {
         inputRef.value.innerText = '';
-      }, 16);
+        clearInputBr();
+      });
     }
     function str2SelectedItem(str: string) {
       const [key, value] = str.split(':');
