@@ -28,7 +28,7 @@ import { computed, defineComponent, onMounted, PropType, provide, reactive, ref,
 
 import Checkbox from '@bkui-vue/checkbox';
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
-import { clickoutside } from '@bkui-vue/directives';
+import { clickoutside, IOptions } from '@bkui-vue/directives';
 import { AngleDown, Close, Search, TextAll } from '@bkui-vue/icon';
 import Input from '@bkui-vue/input';
 import Loading from '@bkui-vue/loading';
@@ -111,6 +111,10 @@ export default defineComponent({
       default: 'default',
     }, // content显示和隐藏方式
     disableScrollToSelectedOption: PropTypes.bool.def(false), // 是否禁用滚动到选中option的功能
+    inputTooltipsOptions: {
+      type: Object as PropType<Partial<IOptions>>,
+      default: () => ({}),
+    }, // 透传Input组件的tooltips配置
   },
   emits: [
     'update:modelValue',
@@ -201,7 +205,7 @@ export default defineComponent({
     });
     const localSelectAllText = computed(() => {
       if (props.selectAllText === undefined) {
-        return t.value.all;
+        return t.value.selectAll;
       }
       return props.selectAllText;
     });
@@ -357,6 +361,7 @@ export default defineComponent({
           offset: 4,
           popoverDelay: 0,
           renderType: RenderType.AUTO,
+          referenceCls: resolveClassName('select-popover-reference'),
         },
         popoverOptions.value,
       ),
@@ -480,6 +485,7 @@ export default defineComponent({
     // 派发search change事件
     watch(searchValue, () => {
       scrollContainerRef.value.scrollTop = 0;
+      activeOptionValue.value = '';
       emit('search-change', searchValue.value);
     });
 
@@ -771,6 +777,7 @@ export default defineComponent({
           break;
         }
         // 选择选项
+        case 'NumpadEnter':
         case 'Enter': {
           const { value } = e.target as HTMLInputElement;
           // 搜索和创建的时候不触发enter事件
@@ -951,7 +958,7 @@ export default defineComponent({
               modelValue={this.isAllSelected}
             />
           )}
-          {this.t.selectAll}
+          {this.localSelectAllText}
         </li>
       );
     };
@@ -1017,6 +1024,7 @@ export default defineComponent({
           selectReadonly={true}
           size={this.size}
           stopPropagation={false}
+          tooltipsOptions={this.inputTooltipsOptions}
           type='text'
           withValidate={false}
           onEnter={this.handleCreateCustomOption}
@@ -1062,6 +1070,7 @@ export default defineComponent({
                   id={item[this.idKey]}
                   key={item[this.idKey]}
                   v-slots={typeof optionRender === 'function' ? { default: () => optionRender({ item }) } : null}
+                  disabled={!!item.disabled}
                   name={item[this.displayKey]}
                 />
               ));
@@ -1077,6 +1086,7 @@ export default defineComponent({
               id={item[this.idKey]}
               key={item[this.idKey]}
               v-slots={typeof optionRender === 'function' ? { default: () => optionRender({ item }) } : null}
+              disabled={!!item.disabled}
               name={item[this.displayKey]}
             />
           );

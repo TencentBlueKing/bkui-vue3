@@ -269,7 +269,7 @@ export default defineComponent({
     /* 是否更改了值 */
     const valueChanged = (): boolean => {
       if (props.range) {
-        return ![rangeMinValue.value, rangeMaxValue.value].every((item, index) => item === oldValue.value[index]);
+        return ![rangeMinValue.value, rangeMaxValue.value].every((item, index) => item === oldValue.value?.[index]);
       }
       return props.modelValue !== oldValue.value;
     };

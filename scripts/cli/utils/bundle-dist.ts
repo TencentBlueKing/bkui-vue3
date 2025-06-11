@@ -34,7 +34,7 @@ import esbuild from 'rollup-plugin-esbuild';
 import { build } from 'vite';
 
 import { COMPONENT_URL, DIST_URL, ENV_MAP, LOCALE_URL } from '../compiler/helpers';
-import { replaceThemeTovariable } from './bundle-components';
+import { replaceThemeToVariable } from './bundle-components';
 
 import type { OutputOptions, RollupBuild } from 'rollup';
 
@@ -153,7 +153,7 @@ export const buildDistScript = async () =>
   ]);
 
 export const buildDistStyles = async () => {
-  const resetTheme = await replaceThemeTovariable();
+  const resetTheme = await replaceThemeToVariable();
   await build({
     resolve: {
       alias: [

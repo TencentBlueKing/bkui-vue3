@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { onBeforeUnmount, onMounted, type Ref, ref, watch } from 'vue';
+import { onBeforeUnmount, onMounted, type Ref, ref, useSlots, watch } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import throttle from 'lodash/throttle';
@@ -36,7 +36,7 @@ export const useContentResize = (
   props: ModalProps,
 ) => {
   const { resolveClassName } = usePrefix();
-
+  const slots = useSlots();
   const isContentScroll = ref(false);
   const contentStyles = ref({});
 
@@ -63,7 +63,7 @@ export const useContentResize = (
     isContentScroll.value = windowInnerHeight < headerHeight + contentHeight + footerHeight + footerMarginTop;
     if (isContentScroll.value || props.fullscreen) {
       contentStyles.value = {
-        height: `${windowInnerHeight - headerHeight - 48}px`,
+        height: `${windowInnerHeight - headerHeight - (slots.footer ? 48 : 0)}px`,
         overflow: 'auto',
         'scrollbar-gutter': 'stable',
       };

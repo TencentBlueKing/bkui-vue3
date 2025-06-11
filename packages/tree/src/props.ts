@@ -150,6 +150,12 @@ export const treeProps = {
      * every 每次数据更新都执行
      */
     deepAutoOpen: toType<`${ColumnTypeEnum}`>('columnType', {}).def(ColumnTypeEnum.ONCE),
+
+    /**
+     * 触发异步加载的时机
+     * 可选值：'expand', 'click', 'checked'
+     */
+    trigger: PropTypes.arrayOf(PropTypes.oneOf(['expand', 'click', 'checked'])).def(null),
   }),
 
   /**
@@ -288,6 +294,7 @@ type AsyncOption = {
   callback: (item, cb) => Promise<VNode | string>;
   cache: boolean;
   deepAutoOpen?: string;
+  trigger?: string[];
 };
 
 export type IIntersectionObserver = {

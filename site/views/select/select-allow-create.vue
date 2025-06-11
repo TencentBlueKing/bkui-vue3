@@ -2,7 +2,7 @@
   <div style="display: flex">
     <bk-select
       class="bk-select"
-      v-model="selectedValue"
+      v-model="selectedValueMultiple"
       multiple-mode="tag"
       allow-create
       filterable
@@ -19,6 +19,7 @@
     </bk-select>
     <bk-select
       class="bk-select"
+      v-model="selectedValueSingle"
       allow-create
       filterable
     >
@@ -34,7 +35,11 @@
 </template>
 <script setup>
   import { ref } from 'vue';
-  const datasource = ref([
+
+  const selectedValueMultiple = ref('running');
+  const selectedValueSingle = ref('');
+
+  const datasource = [
     {
       value: 'climbing',
       label: '爬山',
@@ -64,8 +69,7 @@
       label: '睡觉',
       disabled: true,
     },
-  ]);
-  const selectedValue = ref('running');
+  ];
 </script>
 <style scoped>
   .bk-select {

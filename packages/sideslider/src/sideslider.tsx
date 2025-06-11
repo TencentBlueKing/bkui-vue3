@@ -90,7 +90,7 @@ export default defineComponent({
             <div class={`${resolveClassName('sideslider-header')}`}>
               <div
                 class={`${resolveClassName('sideslider-close')}`}
-                onClick={handleClose}
+                onClick={() => void handleClose()}
               >
                 {props.direction === 'left' ? <AngleLeft /> : <AngleRight />}
               </div>

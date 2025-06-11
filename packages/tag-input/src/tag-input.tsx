@@ -916,6 +916,7 @@ export default defineComponent({
           placement='bottom-start'
           theme={`light ${this.resolveClassName('tag-input-popover-content')}`}
           trigger='manual'
+          referenceCls={this.resolveClassName('tag-input-popover-reference')}
           {...this.popoverProps}
         >
           {{

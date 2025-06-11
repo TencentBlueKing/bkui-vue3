@@ -1,5 +1,5 @@
 @import '@bkui-vue/styles/themes/themes.less';
-
+@import '@bkui-vue/time-picker/time-picker.less';
 .@{bk-prefix}-date-picker {
   display: inline-block;
   width: 261px;
@@ -22,6 +22,7 @@
   position: relative;
 
   .@{bk-prefix}-date-picker-editor {
+    box-sizing: border-box;
     display: block;
     width: 100%;
     height: 32px;
@@ -33,7 +34,6 @@
     border: 1px solid @light-gray;
     border-radius: 2px;
     outline: none;
-    box-sizing: border-box;
 
     &.only-bottom-border {
       border-color: transparent transparent @light-gray transparent;
@@ -129,13 +129,13 @@
 .@{bk-prefix}-date-picker-dropdown {
   position: absolute;
   z-index: 900;
+  box-sizing: border-box;
   padding: 5px 0 0 0;
   overflow: auto;
   background-color: @date-picker-dropdown-bg;
   border: 1px solid @disable-color;
   border-radius: 2px;
   box-shadow: 0 3px 10px rgba(0, 0, 0, .1);
-  box-sizing: border-box;
 }
 
 .@{bk-prefix}-date-picker .@{bk-prefix}-select-dropdown {
@@ -225,6 +225,7 @@
 
 .@{bk-prefix}-picker-confirm {
   display: flex;
+  justify-content: flex-end;
   height: 42px;
   padding: 0 20px;
   clear: both;
@@ -233,7 +234,6 @@
   text-align: right;
   background-color: #fafbfd;
   border-top: 1px solid #dcdee5;
-  justify-content: flex-end;
 
   a {
     color: #979ba5;
@@ -392,10 +392,10 @@ span.@{bk-prefix}-date-picker-cells-cell-disabled:hover {
     bottom: 0;
     left: 0;
     display: block;
+    content: '';
     background: #e1ecff;
     border: 0;
     border-radius: 0;
-    content: '';
   }
 
   em {

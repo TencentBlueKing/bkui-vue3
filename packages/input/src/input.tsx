@@ -24,10 +24,20 @@
  * IN THE SOFTWARE.
  */
 
-import { computed, defineComponent, ExtractPropTypes, nextTick, onMounted, ref, StyleValue, watch } from 'vue';
+import {
+  computed,
+  defineComponent,
+  ExtractPropTypes,
+  nextTick,
+  onMounted,
+  PropType,
+  ref,
+  StyleValue,
+  watch,
+} from 'vue';
 
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
-import { bkTooltips } from '@bkui-vue/directives';
+import { bkTooltips, IOptions } from '@bkui-vue/directives';
 import { Close, DownSmall, Eye, Search, Unvisible } from '@bkui-vue/icon';
 import { classes, InputBehaviorType, PropTypes, useFormItem } from '@bkui-vue/shared';
 
@@ -62,6 +72,10 @@ export const inputType = {
   withValidate: PropTypes.bool.def(true),
   overMaxLengthLimit: PropTypes.bool.def(false),
   showOverflowTooltips: PropTypes.bool.def(true),
+  tooltipsOptions: {
+    type: Object as PropType<Partial<IOptions>>,
+    default: () => ({}),
+  },
   resize: PropTypes.bool.def(true),
   autosize: PropTypes.oneOfType<InputAutoSize | boolean>([Boolean, Object]).def(false),
   stopPropagation: PropTypes.bool.def(true),
@@ -247,15 +261,18 @@ export default defineComponent({
       if (showMaxLimit.value && ceilMaxLength.value - modelValueLength.value === 0) {
         return {
           content: t.value.maxlengthLimitTips,
+          ...(props.tooltipsOptions || {}),
         };
       }
       return props.showOverflowTooltips && isOverflow.value && props.modelValue
         ? {
             content: props.modelValue?.toString(),
             sameWidth: true,
+            ...(props.tooltipsOptions || {}),
           }
         : {
             disabled: true,
+            ...(props.tooltipsOptions || {}),
           };
     });
 

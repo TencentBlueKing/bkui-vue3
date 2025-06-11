@@ -97,6 +97,8 @@ export default defineComponent({
     };
     const handleKeydown = e => {
       switch (e.code) {
+        // 主键盘及数字小键盘的 Enter
+        case 'NumpadEnter':
         case 'Enter': {
           emit('enter', e.target.value, e);
           break;

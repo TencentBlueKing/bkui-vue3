@@ -212,6 +212,9 @@ export default defineComponent({
           <div
             ref={rootRef}
             {...attrs}
+            style={{
+              zIndex: zIndex.value,
+            }}
             class={[resolveClassName('modal'), props.extCls || '']}
           >
             {renderMask()}

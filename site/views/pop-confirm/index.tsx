@@ -35,6 +35,7 @@ import DemoIcon from './demo-icon.vue';
 import DemoSelect from './demo-select.vue';
 import DemoSimple from './demo-simple.vue';
 import DemoSlot from './demo-slot.vue';
+import HideIgnoreReference from './hide-ignore-reference.vue';
 
 const menuPropsJson: IPropsTableItem[] = [
   {
@@ -102,6 +103,27 @@ const menuPropsJson: IPropsTableItem[] = [
     desc: '组件主题色',
     optional: ['dark', 'light'],
   },
+  {
+    name: 'confirmConfig',
+    type: 'Object',
+    default: '',
+    desc: '确定按钮的配置，同Button的Props',
+    optional: [],
+  },
+  {
+    name: 'cancelConfig',
+    type: 'Object',
+    default: '',
+    desc: '取消按钮的配置，同Button的Props',
+    optional: [],
+  },
+  {
+    name: 'popover-options',
+    type: 'Object',
+    desc: 'Popover组件的配置项',
+    optional: [],
+    default: '{}',
+  },
 ];
 
 const eventColumnMap = {
@@ -124,6 +146,20 @@ const events: IPropsTableItem[] = [
     type: 'Function',
     default: '',
     desc: '取消操作回调函数',
+    optional: [],
+  },
+  {
+    name: 'after-show',
+    type: 'Function',
+    default: '',
+    desc: '显示提示框时触发函数',
+    optional: [],
+  },
+  {
+    name: 'after-hidden',
+    type: 'Function',
+    default: '',
+    desc: '隐藏提示框时触发函数',
     optional: [],
   },
 ];
@@ -203,6 +239,14 @@ export default defineComponent({
           title='嵌入Select'
         >
           <DemoSelect />
+        </DemoBox>
+        <DemoBox
+          componentName='pop-confirm'
+          demoName='hide-ignore-reference'
+          desc='通过 popoverOptions 设置 hideIgnoreReference: true，若占位区为非行内元素，请配置 referenceCls: 类名'
+          title='点击占位区弹窗不收起'
+        >
+          <HideIgnoreReference />
         </DemoBox>
 
         <PropsBox propsData={menuPropsJson}></PropsBox>

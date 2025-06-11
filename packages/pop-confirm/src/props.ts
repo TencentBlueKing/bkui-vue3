@@ -25,6 +25,8 @@
  */
 import { toType } from 'vue-types';
 
+import { type ButtonPropTypes } from '@bkui-vue/button';
+import { type PopoverPropTypes } from '@bkui-vue/popover'
 import { PlacementEnum, placementType, PropTypes } from '@bkui-vue/shared';
 
 export enum TriggerEnum {
@@ -64,5 +66,14 @@ export const PopConfirmProps = {
    */
   // icon: PropTypes.string.def(''),
   width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def('auto'),
+  confirmConfig: toType<ButtonPropTypes>('ButtonPropTypes', {
+    default: {},
+  }),
+  cancelConfig: toType<ButtonPropTypes>('ButtonPropTypes', {
+    default: {},
+  }),
+  popoverOptions: toType<PopoverPropTypes>('PopoverPropTypes', {
+    default: {},
+  }),
 };
 export default PopConfirmProps;

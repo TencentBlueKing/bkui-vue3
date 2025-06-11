@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 
-import { defineComponent, nextTick, reactive, ref, watch } from 'vue';
+import { defineComponent, nextTick, reactive, ref, watch, toRefs } from 'vue';
 import { array, object } from 'vue-types';
 
 import Checkbox from '@bkui-vue/checkbox';
@@ -55,7 +55,7 @@ export default defineComponent({
     const t = useLocale('cascader');
     const { resolveClassName } = usePrefix();
 
-    const { store } = props;
+    const { store } = toRefs(props);
     const menus = reactive({
       list: [props.store.getNodes()],
     });
@@ -82,7 +82,7 @@ export default defineComponent({
      * @param value - 选中的值数组
      */
     const updateCheckValue = (value: Array<number | string | string[]>) => {
-      if (value.length === 0) {
+      if (!value || value.length === 0) {
         menus.list = menus.list.slice(0, 1);
         activePath.value = [];
       }
@@ -95,22 +95,60 @@ export default defineComponent({
      * @param value - 节点ID数组
      */
     const expandByNodeList = (value: Array<number | string | string[]>) => {
-      let targetList = [];
-      // 如果配置了多选，找出最长的序列，即其最远的路径，以展开所有面板
-      if (store.config.multiple) {
-        for (const subArray of value as Array<string[]>) {
-          if (subArray.length > targetList.length) {
-            targetList = subArray;
+      // 判断是否为初始加载
+      const isInitialLoad = checkValue.value.length === 0;
+
+      // 如果是初始加载或单选情况，按原来的逻辑处理
+      if (isInitialLoad || !store.value.config.multiple) {
+        let targetList = [];
+
+        // 处理多选情况
+        if (store.value.config.multiple) {
+          for (const subArray of value as Array<string[]>) {
+            if (subArray.length > targetList.length) {
+              targetList = subArray;
+            }
           }
+        } else {
+          // 单选情况
+          targetList = value;
         }
-      } else {
-        targetList = value;
+
+        // 执行展开操作
+        targetList.forEach((id: number | string | string[]) => {
+          const node = store.value.getNodeById(id);
+          if (node) {
+            // 只展开，不需要重复触发
+            const expandNode = (node: INode) => {
+              if (!node || node?.isDisabled) return;
+
+              const level = node.level;
+              // 确保面板只更新到当前节点层级
+              menus.list = menus.list.slice(0, level);
+              activePath.value = activePath.value.slice(0, level - 1);
+
+              // 如果节点有子节点，直接添加到面板
+              if (node.children?.length) {
+                if (menus.list.length === level) {
+                  menus.list.push(node.children);
+                  activePath.value.push(node);
+                }
+              }
+            };
+
+            // 展开节点的所有父节点
+            const expandParents = (node: INode) => {
+              if (node.parent) {
+                expandParents(node.parent);
+              }
+              expandNode(node);
+            };
+
+            expandParents(node);
+          }
+        });
       }
-      // 遍历最长路径的节点，如果节点有children，展开子面板
-      targetList.forEach((id: number | string | string[]) => {
-        const node = store.getNodeById(id);
-        nodeExpandHandler(node);
-      });
+      // 用户交互过程中的选择由nodeExpandHandler单独处理，这里不干预
     };
 
     /** 节点选中回调
@@ -123,7 +161,9 @@ export default defineComponent({
       }
       if (node.config.multiple) {
         // 如果checkAnyLevel，返回所有check的节点； 否则只check 叶子节点
-        const targets = store.config.checkAnyLevel ? store.getCheckedNodes() : store.getCheckedLeafNodes();
+        const targets = store.value.config.checkAnyLevel
+          ? store.value.getCheckedNodes()
+          : store.value.getCheckedLeafNodes();
         checkValue.value = targets.map(node => node.path); // 如果任意级别可选，当前节点即为所选内容
       } else {
         checkValue.value = node.path;
@@ -146,15 +186,15 @@ export default defineComponent({
         activePath.value.push(node);
         return;
       }
-      if (store.config.isRemote && !node.isLeaf) {
+      if (store.value.config.isRemote && !node.isLeaf) {
         node.loading = true;
         const updateNodes = (nodeData: IData[]) => {
-          store.appendNodes(nodeData, node || null);
+          store.value.appendNodes(nodeData, node || null);
           menus.list.push(node.children);
           activePath.value.push(node);
           node.loading = false;
         };
-        store.config.remoteMethod(node, updateNodes);
+        store.value.config.remoteMethod(node, updateNodes);
       }
     };
 

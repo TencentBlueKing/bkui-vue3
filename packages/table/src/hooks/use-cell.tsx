@@ -28,7 +28,7 @@ import { SetupContext, toRaw, unref } from 'vue';
 
 import Checkbox from '@bkui-vue/checkbox';
 import { DownShape, GragFill, RightShape } from '@bkui-vue/icon';
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 
 import { COLUMN_ATTRIBUTE, TABLE_ROW_ATTRIBUTE } from '../const';
 import { EMIT_EVENTS } from '../events';
