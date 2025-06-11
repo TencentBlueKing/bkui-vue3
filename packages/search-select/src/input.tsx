@@ -253,7 +253,8 @@ export default defineComponent({
     }
     function handleInputChange(event: Event) {
       if (isComposition.value) return;
-      const text = (event.target as HTMLDivElement).innerText.trim();
+      clearInputBr();
+      const text = (event.target as HTMLDivElement).innerText;
       if (!usingItem.value) {
         keyword.value = text;
         debounceSetMenuList();
@@ -272,9 +273,7 @@ export default defineComponent({
           return;
         }
       }
-      keyword.value = usingItem.value.isSpecialType()
-        ? text
-        : text.replace(usingItem.value.name, '').replace(':', '').trim();
+      keyword.value = usingItem.value.isSpecialType() ? text : text.replace(usingItem.value.name, '').replace(':', '');
       debounceSetMenuList();
     }
     function handleInputKeyup(event: KeyboardEvent) {
@@ -303,7 +302,9 @@ export default defineComponent({
           handleKeyEnter(event).then(v => v && clearInput());
           break;
         case 'Backspace':
+        case 'Delete':
           handleKeyBackspace(event);
+          break;
         default:
           showNoSelectValueError.value = false;
           break;
