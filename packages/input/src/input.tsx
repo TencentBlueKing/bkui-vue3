@@ -55,11 +55,11 @@ export const inputType = {
   suffixIcon: PropTypes.string,
   suffix: PropTypes.string,
   prefix: PropTypes.string,
-  step: PropTypes.integer,
-  max: PropTypes.integer,
-  min: PropTypes.integer,
-  maxlength: PropTypes.integer,
-  maxcharacter: PropTypes.integer,
+  step: PropTypes.number,
+  max: PropTypes.number,
+  min: PropTypes.number,
+  maxlength: PropTypes.number,
+  maxcharacter: PropTypes.number,
   behavior: InputBehaviorType(),
   showWordLimit: PropTypes.bool,
   showControl: PropTypes.bool.def(true),
@@ -412,7 +412,7 @@ export default defineComponent({
           ctx.emit(eventName, val, e);
           return;
         }
-        ctx.emit(eventName, e.target.value, e);
+        ctx.emit(eventName, isNumberInput.value ? handleNumber(e.target.value, 0) : e.target.value, e);
       };
     }
 
