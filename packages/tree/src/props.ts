@@ -207,9 +207,24 @@ export const treeProps = {
   disableDrop: PropTypes.func,
 
   /**
+   * 拖拽阈值
+   * 用于判断拖拽时鼠标位置与节点的距离
+   * 当鼠标位置与节点的距离大于此值时，才会触发拖拽
+   */
+  dragThreshold: PropTypes.number.def(0.2),
+
+  /**
    * 节点拖拽时可交换位置（开启拖拽可交换位置后将不支持改变层级）
    */
   dragSort: PropTypes.bool.def(false),
+
+  /**
+   * 拖拽排序模式
+   * - any: 允许拖拽到任意位置
+   * - next: 只允许拖拽到同级节点的前后位置
+   * 默认 any
+   */
+  dragSortMode: PropTypes.oneOf(['any', 'next']).def('any'),
 
   /**
    * 节点是否可以选中
