@@ -399,23 +399,45 @@ export default defineComponent({
       referenceNode.parentNode.insertBefore(newNode, swap);
     };
 
+    // 计算输入框的实际宽度，包括输入拼音时的正确宽度
+    const updateInputWidth = (value: string) => {
+      const charLen = getCharLength(value);
+      if (!charLen) {
+        tagInputRef.value.style.width = `${INPUT_MIN_WIDTH}px`;
+        return;
+      }
+
+      const span = document.createElement('span');
+      span.style.visibility = 'hidden';
+      span.style.position = 'absolute';
+      span.style.whiteSpace = 'pre';
+      span.style.font = window.getComputedStyle(tagInputRef.value).font;
+      span.textContent = value;
+      document.body.appendChild(span);
+
+      const width = span.offsetWidth;
+      document.body.removeChild(span);
+
+      tagInputRef.value.style.width = `${Math.max(width + 10, INPUT_MIN_WIDTH)}px`;
+    };
+
+    const handleCompositionEnd = () => {
+      updateInputWidth(curInputValue.value);
+    };
+
     const handleInput = (e?: Event) => {
       const { maxData, trigger, allowCreate } = props;
       if (maxData === -1 || maxData > tagList.value.length) {
         const { value } = e?.target ? (e.target as HTMLInputElement) : curInputValue;
-        const charLen = getCharLength(value);
 
-        if (charLen) {
+        if (value) {
           filterData(value);
-          nextTick(() => {
-            // getBoundingClientRect获取宽度在中文输入法输入的时候会存在为0的情况，导致不显示输入的内容，按回车以后光标在最前面，所以需要提供默认值
-            const tagInputWidth = inputValueRef.value!.getBoundingClientRect().width || charLen * INPUT_MIN_WIDTH;
-            tagInputRef.value.style.width = `${tagInputWidth}px`;
-          });
+          updateInputWidth(value);
         } else {
           if (trigger === 'focus') {
             filterData();
           }
+          tagInputRef.value.style.width = `${INPUT_MIN_WIDTH}px`;
         }
       } else {
         handleBlur();
@@ -891,6 +913,7 @@ export default defineComponent({
       focusInputTrigger,
       activeClass,
       handleInput,
+      handleCompositionEnd,
       handleFocus,
       handleBlur,
       handleTagSelected,
@@ -914,9 +937,9 @@ export default defineComponent({
         <Popover
           arrow={false}
           placement='bottom-start'
+          referenceCls={this.resolveClassName('tag-input-popover-reference')}
           theme={`light ${this.resolveClassName('tag-input-popover-content')}`}
           trigger='manual'
-          referenceCls={this.resolveClassName('tag-input-popover-reference')}
           {...this.popoverProps}
         >
           {{
@@ -966,6 +989,7 @@ export default defineComponent({
                       spellcheck='false'
                       type='text'
                       onBlur={this.handleBlur}
+                      onCompositionend={this.handleCompositionEnd}
                       onFocus={this.handleFocus}
                       onInput={this.handleInput}
                       onKeydown={this.handleKeydown}
