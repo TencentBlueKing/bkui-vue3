@@ -26,15 +26,33 @@
       text-align: left;
 
     }
-
-    .@{bk-prefix}-form-content {
-      text-align: left;
-    }
   }
 }
 
 .@{bk-prefix}-form-item {
   margin-bottom: 24px;
+
+  &--vertical {
+
+    .@{bk-prefix}-form-label {
+      float: unset;
+      width: auto;
+      padding-right: 0;
+      margin-bottom: 6px;
+      line-height: 20px;
+      text-align: left;
+    }
+  }
+
+    &--default {
+
+    .@{bk-prefix}-form-label {
+      float: left;
+      padding-right: 22px;
+      line-height: 32px;
+      text-align: right;
+    }
+  }
 
   &.is-required {
     .@{bk-prefix}-form-label {
@@ -73,6 +91,7 @@
 
 .@{bk-prefix}-form-label {
   position: relative;
+  box-sizing: border-box;
   float: left;
   padding-right: 22px;
   font-size: 14px;
@@ -80,9 +99,7 @@
   line-height: 32px;
   color: #63656e;
   text-align: right;
-  text-align: right;
   vertical-align: middle;
-  box-sizing: border-box;
 }
 .@{bk-prefix}-form-label-description {
   cursor: pointer;
@@ -95,6 +112,7 @@
 .@{bk-prefix}-form-content {
   position: relative;
   line-height: 32px;
+  text-align: left;
 }
 
 .@{bk-prefix}-form-error {

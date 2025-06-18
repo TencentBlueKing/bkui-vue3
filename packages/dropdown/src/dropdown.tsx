@@ -49,13 +49,19 @@ export default defineComponent({
   },
   emits: ['showChange', 'show', 'hide'],
   setup(_props, { emit }) {
+    const popoverRef = ref(null);
+    const isPopoverShow = ref(false);
+    const { resolveClassName } = usePrefix();
+
     /** 弹层显示值变更 */
     const handleShowChagne = (val: boolean) => {
+      isPopoverShow.value = val;
       emit('showChange', val);
     };
     /** 显示后回调 */
     const afterShow = () => {
       emit('show');
+
       handleShowChagne(true);
     };
     /** 隐藏后回调 */
@@ -64,10 +70,8 @@ export default defineComponent({
       handleShowChagne(false);
     };
 
-    const popoverRef = ref(null);
-    const { resolveClassName } = usePrefix();
-
     return {
+      isPopoverShow,
       afterShow,
       afterHidden,
       popoverRef,
@@ -102,13 +106,10 @@ export default defineComponent({
           {{
             default: () => (
               <div class={[`${this.resolveClassName('dropdown-reference')}`, this.disabled ? 'disabled' : '']}>
-                {' '}
-                {this.$slots.default?.()}{' '}
+                {this.$slots.default?.({ popoverShow: this.isPopoverShow })}
               </div>
             ),
-            content: () => (
-              <div class={`${this.resolveClassName('dropdown-content')}`}> {this.$slots.content?.()} </div>
-            ),
+            content: () => <div class={`${this.resolveClassName('dropdown-content')}`}>{this.$slots.content?.()}</div>,
           }}
         </Popover>
       </div>
