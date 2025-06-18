@@ -50,6 +50,7 @@ import type { Language } from '@bkui-vue/locale';
 import type { ComputedRef, ExtractPropTypes } from 'vue';
 
 const formItemProps = {
+  itemType: PropTypes.oneOf(['default', 'vertical']),
   label: PropTypes.string,
   labelWidth: PropTypes.oneOfType([Number, String]),
   labelPosition: PropTypes.oneOf(['left', 'center', 'right']),
@@ -206,7 +207,7 @@ export default defineComponent({
       if (!isForm) {
         return false;
       }
-      return form.props.formType === 'vertical';
+      return form.props.formType === 'vertical' || props.itemType === 'vertical';
     });
 
     const isShowLabel = computed(() => {
@@ -293,7 +294,7 @@ export default defineComponent({
             // 异步验证（validator 返回一个 Promise）
             if (typeof result !== 'boolean' && typeof result !== 'string' && typeof result.then === 'function') {
               return result
-                .then(data => {
+                .then((data: boolean | string) => {
                   // 异步验证结果为 false
                   if (data === false) {
                     return Promise.reject(getRuleMessage(rule));
@@ -310,20 +311,19 @@ export default defineComponent({
                       state.errorMessage = errorMessage;
                     }
                     form.emit('validate', props.property, false, errorMessage);
-                    return Promise.reject(state.errorMessage);
                   },
                 );
             }
             // 同步验证失败
-            if (result === false) {
-              const errorMessage = getRuleMessage(rule);
+            if (result !== true) {
+              const errorMessage = typeof result === 'string' ? result : getRuleMessage(rule);
               if (showError) {
                 state.isError = true;
                 // 验证结果返回的是 String 表示验证失败，返回结果作为错误信息
-                state.errorMessage = typeof result === 'string' ? result : errorMessage;
+                state.errorMessage = errorMessage;
               }
               form.emit('validate', props.property, false, errorMessage);
-              return Promise.reject(state.errorMessage);
+              return Promise.reject(errorMessage);
             }
             // 下一步
             return doValidate();
@@ -375,6 +375,7 @@ export default defineComponent({
   render() {
     const itemClassees = classes({
       [`${this.resolveClassName('form-item')}`]: true,
+      [`${this.resolveClassName(`form-item--${this.itemType}`)}`]: Boolean(this.itemType),
       'is-error': this.isError,
       'is-required': this.required,
     });

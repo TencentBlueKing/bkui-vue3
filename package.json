@@ -1,6 +1,6 @@
 {
   "name": "bkui-vue",
-  "version": "2.0.2-beta.30",
+  "version": "2.0.2-beta.32",
   "workspaces": [
     "packages/**",
     "scripts/cli",
@@ -10,6 +10,7 @@
     "lib",
     "dist"
   ],
+  "private": true,
   "packageManager": "yarn@1.22.10",
   "sideEffects": [
     "*.css",

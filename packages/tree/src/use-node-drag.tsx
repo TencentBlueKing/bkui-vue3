@@ -33,11 +33,19 @@ import { TreeNode, TreePropTypes } from './props';
 import useNodeAttribute from './use-node-attribute';
 
 export default (props: TreePropTypes, ctx, root?, flatData?) => {
-  const { getSourceNodeByUID, getParentNodeData, getNodeParentIdById, extendNodeAttr, getNodeAttrById, isRootNode } =
-    useNodeAttribute(flatData, props);
+  const {
+    getSourceNodeByUID,
+    getParentNodeData,
+    getNodeParentIdById,
+    extendNodeAttr,
+    getNodeAttrById,
+    isRootNode,
+    setNodeAttrById,
+  } = useNodeAttribute(flatData, props);
   const { resolveClassName } = usePrefix();
   const isNeedCheckDraggable = computed(() => typeof props.disableDrag === 'function');
   const isNeedCheckDroppable = computed(() => typeof props.disableDrop === 'function');
+  const dragThreshold = props.dragThreshold || 0.2; // 新增配置项，默认值为 0.2
   let dragNodeId = '';
   let draggedItem = null;
 
@@ -47,9 +55,15 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
     const target = e.target as HTMLElement;
     return target.closest('[data-tree-node]') as HTMLElement;
   };
+
   const getNodeByTargetTreeNode = targetNode => {
     const uid = targetNode?.dataset?.treeNode;
     return getSourceNodeByUID(uid);
+  };
+
+  const updateDropStyles = (targetNode: HTMLElement, stylesToAdd: string[], stylesToRemove: string[]) => {
+    stylesToRemove.forEach(style => targetNode.classList.remove(style));
+    stylesToAdd.forEach(style => targetNode.classList.add(style));
   };
 
   const handleTreeNodeMouseup = (e: MouseEvent) => {
@@ -87,30 +101,22 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
 
     const data = extendNodeAttr(getNodeByTargetTreeNode(targetNode));
 
+    // 如果目标节点不在缓存中，重新计算并缓存
     if (!nodeRectMap.has(targetNode)) {
       nodeRectMap.set(targetNode, targetNode.getBoundingClientRect());
     }
 
     const clientY = e.clientY;
     const { top, height } = nodeRectMap.get(targetNode);
-    const threshold = height * 0.2;
+    const threshold = height * dragThreshold; // 使用配置项
     const offsetY = clientY - top;
 
     if (offsetY < threshold) {
-      if (!targetNode.classList.contains(dropBefore)) {
-        targetNode.classList.add(dropBefore);
-        targetNode.classList.remove(dropAfter, dropInner);
-      }
+      updateDropStyles(targetNode, [dropBefore], [dropAfter, dropInner]);
     } else if (offsetY > height - threshold) {
-      if (!targetNode.classList.contains(dropAfter)) {
-        targetNode.classList.add(dropAfter);
-        targetNode.classList.remove(dropBefore, dropInner);
-      }
+      updateDropStyles(targetNode, [dropAfter], [dropBefore, dropInner]);
     } else {
-      if (!targetNode.classList.contains(dropInner)) {
-        targetNode.classList.add(dropInner);
-        targetNode.classList.remove(dropBefore, dropAfter);
-      }
+      updateDropStyles(targetNode, [dropInner], [dropBefore, dropAfter]);
     }
 
     ctx.emit(EVENTS.NODE_DRAG_OVER, e, targetNode, data);
@@ -149,21 +155,21 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
     e.stopPropagation();
 
     const targetNode = getTargetTreeNode(e);
+    if (!targetNode) return;
+
     targetNode.classList.remove(`${resolveClassName('tree-drop-active')}`, `${resolveClassName('tree-drop-disabled')}`);
     const data = extendNodeAttr(getNodeByTargetTreeNode(targetNode));
     if (isNeedCheckDroppable.value && props.disableDrop(data)) {
       return;
     }
 
-    const sourceNodeId = dragNodeId; // e.dataTransfer.getData('node-id');
+    const sourceNodeId = dragNodeId;
     const targetNodeId = targetNode.getAttribute('data-tree-node');
 
     if (sourceNodeId !== targetNodeId) {
       if (dragOverItem?.classList.contains(dropInner)) {
         Reflect.apply(dragAsChildNode, this, [sourceNodeId, targetNodeId]);
-      }
-
-      if (dragOverItem?.classList.contains(dropAfter) || dragOverItem?.classList.contains(dropBefore)) {
+      } else if (dragOverItem?.classList.contains(dropAfter) || dragOverItem?.classList.contains(dropBefore)) {
         Reflect.apply(dragSortData, this, [sourceNodeId, targetNodeId]);
       }
       ctx.emit(EVENTS.NODE_DROP, e, targetNode, data);
@@ -184,18 +190,71 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
     }
 
     const sourceNodeData = getSourceNodeByUID(sourceId);
+    const targetNodeData = getSourceNodeByUID(targetId);
+    if (!sourceNodeData || !targetNodeData) return;
+
     const sourceNodeParent = getParentNodeData(sourceId);
-    let sourceNodeIndex = getNodeAttrById(sourceId, NODE_ATTRIBUTES.INDEX);
+    const targetNodeParent = getParentNodeData(targetId);
+    if (!sourceNodeParent || !targetNodeParent) return;
 
-    sourceNodeParent?.[props.children].splice(sourceNodeIndex, 1);
-
-    let targetNodeIndex = getNodeAttrById(targetId, NODE_ATTRIBUTES.INDEX);
-    if (dragOverItem?.classList.contains(dropAfter)) {
-      targetNodeIndex = targetNodeIndex + 1;
+    // 只允许同父节点下排序
+    if (props.dragSortMode === 'next') {
+      if (sourceNodeParent !== targetNodeParent) return;
     }
 
-    const targetNodeParent = getParentNodeData(targetId);
-    targetNodeParent?.[props.children].splice(targetNodeIndex, 0, sourceNodeData);
+    const childrenKey = props.children;
+    const sourceSiblings = sourceNodeParent[childrenKey];
+    const targetSlibings = targetNodeParent[childrenKey];
+
+    if (!Array.isArray(sourceSiblings)) return;
+
+    let sourceNodeIndex = sourceSiblings.findIndex(item => item === sourceNodeData);
+    let targetNodeIndex = targetSlibings.findIndex(item => item === targetNodeData);
+    if (sourceNodeIndex === -1 || targetNodeIndex === -1) return;
+
+    // 先移除源节点
+    sourceSiblings.splice(sourceNodeIndex, 1);
+
+    // 计算插入位置
+    if (dragOverItem?.classList.contains(dropAfter)) {
+      // 如果源节点在目标节点前面，移除后 targetNodeIndex 需要减 1
+      if (sourceNodeIndex < targetNodeIndex) {
+        targetNodeIndex = targetNodeIndex - 1;
+      }
+      targetNodeIndex = targetNodeIndex + 1;
+    } else if (dragOverItem?.classList.contains(dropBefore)) {
+      // 如果源节点在目标节点后面，移除后 targetNodeIndex 不变
+      if (sourceNodeIndex > targetNodeIndex) {
+        // do nothing
+      }
+    }
+
+    // 插入节点
+    targetSlibings.splice(targetNodeIndex, 0, sourceNodeData);
+
+    // 更新所有兄弟节点的 INDEX
+    targetSlibings.forEach((item, idx) => {
+      const nodeId = getNodeAttrById(item[NODE_ATTRIBUTES.UUID], NODE_ATTRIBUTES.UUID) || item[NODE_ATTRIBUTES.UUID];
+      if (nodeId) {
+        setNodeAttrById(nodeId, NODE_ATTRIBUTES.INDEX, idx);
+      }
+    });
+
+    sourceSiblings.forEach((item, idx) => {
+      const nodeId = getNodeAttrById(item[NODE_ATTRIBUTES.UUID], NODE_ATTRIBUTES.UUID) || item[NODE_ATTRIBUTES.UUID];
+      if (nodeId) {
+        setNodeAttrById(nodeId, NODE_ATTRIBUTES.INDEX, idx);
+      }
+    });
+
+    // 触发更新
+    ctx.emit(EVENTS.NODE_DRAG_SORT, {
+      sourceNode: sourceNodeData,
+      targetNode: targetNodeData,
+      sourceIndex: sourceNodeIndex,
+      targetIndex: targetNodeIndex,
+      targetSlibings,
+    });
   };
 
   const dragAsChildNode = (sourceNodeId: string, targetNodeId: string) => {
@@ -220,9 +279,16 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
 
     (targetNodeData[props.children] as TreeNode[]).unshift(sourceNodeData);
   };
+
   const handleTreeNodeDragLeave = (e: DragEvent) => {
     e.preventDefault();
     const targetNode = getTargetTreeNode(e);
+
+    // 移除目标节点的缓存
+    if (nodeRectMap.has(targetNode)) {
+      nodeRectMap.delete(targetNode);
+    }
+
     targetNode.classList.remove(`${resolveClassName('tree-drop-active')}`, `${resolveClassName('tree-drop-disabled')}`);
     targetNode.classList.remove(dropAfter, dropBefore, dropInner);
     ctx.emit(EVENTS.NODE_DRAG_LEAVE, e, targetNode);

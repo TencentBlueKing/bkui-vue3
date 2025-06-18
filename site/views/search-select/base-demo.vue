@@ -2,7 +2,6 @@
   <bk-search-select
     v-model="value"
     :data="data"
-    :get-menu-list="getMenuList"
     unique-select
   />
 </template>

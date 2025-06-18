@@ -109,6 +109,7 @@ export default defineComponent({
     const { editKey, onValidate, searchData } = useSearchSelectInject();
     const valueLogic = computed(() => usingItem.value?.logical || SearchLogical.OR);
     const inputKey = ref(random(10));
+    const isComposition = ref(false);
     watch(editKey, () => {
       if (props.mode === SearchInputMode.DEFAULT && editKey.value) {
         showPopover.value = false;
@@ -251,7 +252,9 @@ export default defineComponent({
       debounceSetMenuList();
     }
     function handleInputChange(event: Event) {
-      const text = (event.target as HTMLDivElement).innerText.trim();
+      if (isComposition.value) return;
+      clearInputBr();
+      const text = (event.target as HTMLDivElement).innerText;
       if (!usingItem.value) {
         keyword.value = text;
         debounceSetMenuList();
@@ -270,9 +273,7 @@ export default defineComponent({
           return;
         }
       }
-      keyword.value = usingItem.value.isSpecialType()
-        ? text
-        : text.replace(usingItem.value.name, '').replace(':', '').trim();
+      keyword.value = usingItem.value.isSpecialType() ? text : text.replace(usingItem.value.name, '').replace(':', '');
       debounceSetMenuList();
     }
     function handleInputKeyup(event: KeyboardEvent) {
@@ -285,9 +286,11 @@ export default defineComponent({
       //   }
       //   return;
       // }
+      if (isComposition.value) return;
       switch (event.code) {
         case 'Enter':
         case 'NumpadEnter':
+          event.preventDefault();
           if (
             props.valueBehavior === ValueBehavior.NEED_KEY &&
             menuList.value.some(item => item.id === menuHoverId.value)
@@ -300,7 +303,9 @@ export default defineComponent({
           handleKeyEnter(event).then(v => v && clearInput());
           break;
         case 'Backspace':
+        case 'Delete':
           handleKeyBackspace(event);
+          break;
         default:
           showNoSelectValueError.value = false;
           break;
@@ -361,7 +366,7 @@ export default defineComponent({
           setInputFocus(false, false);
           return;
         }
-      } else if (!keyword.value) {
+      } else if (!keyword.value || keyword.value.length === 1) {
         usingItem.value = null;
         keyword.value = '';
         setMenuList();
@@ -616,12 +621,28 @@ export default defineComponent({
         nextTick(clearInput);
       }
     }
+    function clearInputBr() {
+      if (!inputRef.value) return;
+      const brs = inputRef.value.querySelectorAll('br');
+      brs?.forEach(br => br.remove());
+    }
     function clearInput() {
       if (!inputRef.value) return;
-      setTimeout(() => {
-        keyword.value = '';
+      // magic code 判断是否是 windows 系统
+      // const isWindows = navigator.userAgent.includes('Windows');
+      // if (isWindows) {
+      //   setTimeout(() => {
+      //     keyword.value = '';
+      //     inputRef.value.innerText = '';
+      //     clearInputBr();
+      //   }, 32);
+      //   return;
+      // }
+      keyword.value = '';
+      nextTick(() => {
         inputRef.value.innerText = '';
-      }, 16);
+        clearInputBr();
+      });
     }
     function str2SelectedItem(str: string) {
       const [key, value] = str.split(':');
@@ -675,6 +696,14 @@ export default defineComponent({
         menuHoverId.value = '';
       }
     }
+    function handleCompositionEnd(event: CompositionEvent) {
+      isComposition.value = false;
+      keyword.value = event.data;
+      handleInputChange(event);
+    }
+    function handleCompositionStart() {
+      isComposition.value = true;
+    }
     // expose
     expose({
       inputFocusForWrapper,
@@ -694,6 +723,7 @@ export default defineComponent({
       menuList,
       menuHoverId,
       isFocus,
+      isComposition,
       usingItem,
       showPopover,
       showNoSelectValueError,
@@ -717,6 +747,8 @@ export default defineComponent({
       refleshMenuHover,
       t,
       inputKey,
+      handleCompositionEnd,
+      handleCompositionStart,
     };
   },
   render() {
@@ -736,9 +768,11 @@ export default defineComponent({
         }}
         v-clickoutside={this.handleClickOutside}
         contenteditable={true}
-        data-placeholder={!inputInnerHtml && !this.keyword ? this.placeholder : ''}
+        data-placeholder={!this.isComposition && !inputInnerHtml && !this.keyword ? this.placeholder : ''}
         data-tips={placeholder || ''}
         spellcheck='false'
+        onCompositionend={this.handleCompositionEnd}
+        onCompositionstart={this.handleCompositionStart}
         onFocus={this.handleInputFocus}
         onInput={this.handleInputChange}
         onKeydown={this.handleInputKeyup}
