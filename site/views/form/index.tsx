@@ -174,6 +174,13 @@ const formEvents: IPropsTableItem[] = [
 
 const formItemProps: IPropsTableItem[] = [
   {
+    name: 'item-type',
+    type: 'String',
+    default: null,
+    desc: '表单项布局模式',
+    optional: ['default', 'vertical'],
+  },
+  {
     name: 'label',
     type: 'String',
     default: null,
