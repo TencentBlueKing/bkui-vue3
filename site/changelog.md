@@ -1,6 +1,19 @@
 ## 更新日志
 
 
+### 2.0.2-beta.31
+
+* **[feat]**:
+    - bugfix(tree): 拖拽排序不生效
+
+
+### 2.0.2-beta.30
+
+* **[feat]**:
+    - bugfix(input): type=number时手输数字会传出字符串后再传出Number类型
+    - bugfix(taginput): 输入时的最大宽度应该是剩余容器宽度
+
+
 ### 2.0.2-beta.23
 
 * **[feat]**:
