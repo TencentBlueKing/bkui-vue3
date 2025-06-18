@@ -1,6 +1,15 @@
 ## 更新日志
 
 
+### 2.0.2-beta.32
+
+* **[feat]**:
+    - feature(dropdownMenu): default slot 改造成 scope slot 支持传递 popover 的收起展开状态
+    - feat(form): bk-form-item 新增 item-type 配置项 TencentBlueKing#2375
+    - feat: 优化输入框清空逻辑
+
+
+
 ### 2.0.2-beta.31
 
 * **[feat]**:
