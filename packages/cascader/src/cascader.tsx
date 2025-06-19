@@ -506,6 +506,7 @@ export default defineComponent({
                 store={this.store}
                 suggestions={this.suggestions}
               ></CascaderPanel>
+              {this.$slots.extension?.()}
             </div>
           ),
         }}
