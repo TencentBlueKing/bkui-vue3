@@ -35,6 +35,7 @@ import CheckAnyLevelDemo from './check-any-level-demo.vue';
 import CheckboxDemo from './checkbox-demo.vue';
 import CustomFillback from './custom-fillback.vue';
 import CustomTriggerDemo from './custom-trigger-demo.vue';
+import ExtensionDemo from './extension-demo.vue';
 import IdKey from './id-key.vue';
 import RemoteDemo from './remote-demo.vue';
 import SeparatorDemo from './separator-demo.vue';
@@ -229,6 +230,16 @@ const cascaderEventsJson: IPropsTableItem[] = [
   },
 ];
 
+const cascaderSlotsJson: IPropsTableItem[] = [
+  {
+    name: 'extension',
+    type: 'Function',
+    default: 'null',
+    desc: '扩展插槽',
+    optional: [],
+  },
+];
+
 export default defineComponent({
   render() {
     return (
@@ -350,6 +361,17 @@ export default defineComponent({
           <CustomFillback></CustomFillback>
         </DemoBox>
 
+        {/* 扩展插槽 */}
+        <DemoBox
+          componentName='cascader'
+          demoName='extension-demo'
+          desc='通过 extension 插槽可以在级联选择器的底部添加自定义的扩展区域，比如添加新节点、刷新等功能'
+          subtitle='使用扩展插槽自定义底部内容'
+          title='扩展插槽'
+        >
+          <ExtensionDemo></ExtensionDemo>
+        </DemoBox>
+
         <PropsBox
           propsData={cascaderPropsJson}
           subtitle=''
@@ -360,6 +382,12 @@ export default defineComponent({
           propsData={cascaderEventsJson}
           subtitle=''
           title='Cascader 事件'
+        />
+
+        <PropsBox
+          propsData={cascaderSlotsJson}
+          subtitle=''
+          title='Cascader 插槽'
         />
       </div>
     );
