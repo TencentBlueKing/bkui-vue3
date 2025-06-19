@@ -198,6 +198,13 @@ const cascaderPropsJson: IPropsTableItem[] = [
     optional: [],
   },
   {
+    name: 'change-emits-nodes',
+    type: 'Boolean',
+    default: 'false',
+    desc: 'change事件是否返回节点数据',
+    optional: ['true', 'false'],
+  },
+  {
     name: 'extCls',
     type: 'String',
     default: '',
