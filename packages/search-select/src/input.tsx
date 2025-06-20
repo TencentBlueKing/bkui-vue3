@@ -769,7 +769,7 @@ export default defineComponent({
         v-clickoutside={this.handleClickOutside}
         contenteditable={true}
         data-placeholder={!this.isComposition && !inputInnerHtml && !this.keyword ? this.placeholder : ''}
-        data-tips={placeholder || ''}
+        data-tips={!this.isComposition ? placeholder || '' : ''}
         spellcheck='false'
         onCompositionend={this.handleCompositionEnd}
         onCompositionstart={this.handleCompositionStart}
