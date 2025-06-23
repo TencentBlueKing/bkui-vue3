@@ -74,6 +74,7 @@ export default defineComponent({
     scrollWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def('auto'),
     customTextFillback: PropTypes.func,
     customTagsFillback: PropTypes.func,
+    changeEmitsNodes: PropTypes.bool.def(false),
     collapseTags: {
       type: Boolean,
       default: true,
@@ -236,7 +237,8 @@ export default defineComponent({
       updateValue(value);
       // 派发相关事件
       emit('update:modelValue', value);
-      oldValue !== undefined && emit('change', value); // oldValue = undefined代表初始化，init不派发change事件
+      const emitValue = props.changeEmitsNodes ? store.value.getNodeByValue(value) : value;
+      oldValue !== undefined && emit('change', emitValue); // oldValue = undefined代表初始化，init不派发change事件
       // 如果有过滤搜索，选择后，自动focus到input
       inputRef?.value?.focus();
 
@@ -261,8 +263,8 @@ export default defineComponent({
       // popover激活后，focus相应事件
       isFocus.value = val.isShow;
       nextTick(() => {
-        val && inputRef.value?.focus();
         if (val.isShow) {
+          inputRef.value?.focus();
           cascaderPanel.value?.scrollToSelected(); // 滚动到选中的节点
         }
       });
