@@ -261,8 +261,8 @@ export default defineComponent({
       // popover激活后，focus相应事件
       isFocus.value = val.isShow;
       nextTick(() => {
-        val && inputRef.value?.focus();
         if (val.isShow) {
+          inputRef.value?.focus();
           cascaderPanel.value?.scrollToSelected(); // 滚动到选中的节点
         }
       });
