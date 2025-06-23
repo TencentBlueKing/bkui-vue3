@@ -1,6 +1,14 @@
 ## 更新日志
 
 
+### 2.0.2-beta.35
+
+* **[feat]**:
+    - bugfix(cascader): 输入框失焦后会二次自动聚焦
+    - fix(search-select): 修复 data-tips 属性逻辑，确保在非组合输入时正确显示占位符提示
+    - feat(cascader): 新增 change-emits-nodes 属性以控制 change 事件返回节点数据
+
+
 ### 2.0.2-beta.33
 
 * **[feat]**:
