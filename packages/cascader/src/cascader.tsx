@@ -221,10 +221,17 @@ export default defineComponent({
       isEdit.value = true; // 删除时也在编辑态，触发overflowTagIndex的计算
       store.value.removeTag(tag);
       updateValue(current);
+
       emit(
         'update:modelValue',
-        store.value.getCheckedNodes().map((node: INode) => node.path),
+        store.value
+          .getCheckedNodes()
+          // a. 开启 checkAnyLevel 后，不过滤任何节点
+          // b. 关闭 checkAnyLevel 后，只返回叶子节点，避免父节点在子节点全部选中后，同时出现在 modelValue 中
+          .filter((node: INode) => store.value.config.checkAnyLevel || node.isLeaf)
+          .map((node: INode) => node.path),
       );
+
       // 计算过后，关闭编辑状态
       setTimeout(() => {
         isEdit.value = isFocus.value;
