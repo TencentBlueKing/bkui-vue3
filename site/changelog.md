@@ -1,6 +1,12 @@
 ## 更新日志
 
 
+### 2.0.2-beta.37
+
+* **[feat]**:
+    - bugfix(form): 自定义表单校验，validator 返回 number类型时通过 Boolean 转换判断结果 true/false
+
+
 ### 2.0.2-beta.36
 
 * **[feat]**:
