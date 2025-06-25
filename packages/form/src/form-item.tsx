@@ -315,7 +315,7 @@ export default defineComponent({
                 );
             }
             // 同步验证失败
-            if (result !== true) {
+            if (Boolean(result) === false || typeof result === 'string') {
               const errorMessage = typeof result === 'string' ? result : getRuleMessage(rule);
               if (showError) {
                 state.isError = true;
