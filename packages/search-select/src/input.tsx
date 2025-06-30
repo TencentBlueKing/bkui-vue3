@@ -484,7 +484,7 @@ export default defineComponent({
             (usingItem.value.searchItem?.async === undefined || usingItem.value.searchItem.async === true)))
       ) {
         loading.value = true;
-        list = await props.getMenuList(usingItem.value?.searchItem, keyword.value).catch(() => []);
+        list = await props.getMenuList(usingItem.value?.searchItem, keyword.value.trim()).catch(() => []);
         loading.value = false;
       } else if (!usingItem?.value) {
         if (!keyword.value?.length) {
@@ -518,7 +518,7 @@ export default defineComponent({
             } else {
               const filterList = [];
               for (const child of item.children || []) {
-                if (child.name.toLocaleLowerCase().includes(keyword.value.toLocaleLowerCase())) {
+                if (child.name.toLocaleLowerCase().includes(keyword.value.toLocaleLowerCase().trim())) {
                   filterList.push({
                     ...item,
                     realId: item.id,
@@ -543,10 +543,11 @@ export default defineComponent({
         list = props.conditions;
       } else if (!usingItem.value.values?.length || usingItem.value.multiple || props.mode === SearchInputMode.EDIT) {
         list = usingItem.value.children.filter(item =>
-          item.name.toLocaleLowerCase().includes(keyword.value.toLocaleLowerCase()),
+          item.name.toLocaleLowerCase().includes(keyword.value.toLocaleLowerCase().trim()),
         );
       }
       menuList.value = list;
+      console.log('list', list);
       if (props.valueBehavior === ValueBehavior.NEED_KEY) {
         const hoverItem = list.find(item => !item.disabled);
         if (
