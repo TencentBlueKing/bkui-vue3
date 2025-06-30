@@ -405,7 +405,7 @@ export default defineComponent({
 
         if (isCNInput.value && [EVENTS.INPUT, EVENTS.CHANGE, EVENTS.KEYDOWN].some(e => eventName === e)) return;
         if (eventName === EVENTS.INPUT) {
-          ctx.emit(EVENTS.UPDATE, e.target.value, e);
+          ctx.emit(EVENTS.UPDATE, isNumberInput.value ? handleNumber(e.target.value, 0) : e.target.value, e);
         } else if (eventName === EVENTS.CHANGE && isNumberInput.value && e.target.value !== '') {
           const val = handleNumber(e.target.value, 0);
           ctx.emit(EVENTS.UPDATE, val, e);

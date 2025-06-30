@@ -1,6 +1,24 @@
 ## 更新日志
 
 
+### 2.0.2-beta.41
+
+* **[feat]**:
+    - bugfix(input): type=number时手输数字会传出字符串后再传出Number类型
+
+
+### 2.0.2-beta.40
+
+* **[feat]**:
+    - feat: bump to 2.0.2-beta.40，并优化搜索功能，修复关键字处理逻辑
+
+
+### 2.0.2-beta.37
+
+* **[feat]**:
+    - bugfix(form): 自定义表单校验，validator 返回 number类型时通过 Boolean 转换判断结果 true/false
+
+
 ### 2.0.2-beta.36
 
 * **[feat]**:
