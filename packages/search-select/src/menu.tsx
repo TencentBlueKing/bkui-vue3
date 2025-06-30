@@ -116,11 +116,11 @@ export default defineComponent({
     function transformNode(str: string): (VNode | string)[] | string {
       if (!str) return str;
       let { keyword } = props;
-      const len = keyword.length;
-      if (!keyword?.trim().length || !str.toLocaleLowerCase().includes(keyword.toLocaleLowerCase())) return str;
+      if (!keyword?.trim().length || !str.toLocaleLowerCase().includes(keyword.toLocaleLowerCase().trim())) return str;
+      const len = keyword.trim().length;
       const list = [];
       let lastIndex = -1;
-      keyword = keyword.replace(/([.*/]{1})/gim, '\\$1');
+      keyword = keyword.replace(/([.*/]{1})/gim, '\\$1').trim();
       str.replace(new RegExp(`${keyword}`, 'igm'), (key, index) => {
         if (list.length === 0 && index !== 0) {
           list.push(str.slice(0, index));
