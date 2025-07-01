@@ -47,6 +47,7 @@ export const genDefaultState = (): Required<Props> => ({
   headerAlign: 'center',
   contentAlign: 'center',
   footerAlign: 'center',
+  showContentBgColor: false,
   showMask: true,
   quickClose: false,
   escClose: false,
@@ -180,9 +181,17 @@ export default defineComponent({
         );
       };
 
+      const renderWidth = () => {
+        // 如果有辅助文案类型和有引用内容类型默认宽480px
+        if (!!renderContent() && [400].includes(state.width as number)) {
+          return 480;
+        }
+        return state.width;
+      };
+
       return (
         <Modal
-          width={state.width}
+          width={renderWidth()}
           class={[resolveClassName('infobox'), state.class]}
           animateType='fadein'
           closeIcon={state.closeIcon}
@@ -206,7 +215,10 @@ export default defineComponent({
               state.content && (
                 <div
                   style={{ textAlign: state.contentAlign }}
-                  class={resolveClassName('infobox-content')}
+                  class={{
+                    [resolveClassName('infobox-content')]: true,
+                    [`set-bg-color`]: state.showContentBgColor,
+                  }}
                 >
                   {renderContent()}
                 </div>
@@ -221,7 +233,14 @@ export default defineComponent({
                 {renderFooter()}
               </div>
             ),
-            close: () => <Error onClick={handleCancel} />,
+            close: () => (
+              <Error
+                onClick={() => {
+                  // 使用 void 明确忽略返回值
+                  void handleCancel();
+                }}
+              />
+            ),
           }}
         </Modal>
       );

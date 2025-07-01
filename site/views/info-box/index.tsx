@@ -48,7 +48,7 @@ const props: IPropsTableItem[] = [
   {
     name: 'width',
     type: 'String | Number',
-    default: 480,
+    default: 400,
     desc: '自定义对话框宽度',
     optional: [],
   },
@@ -78,6 +78,13 @@ const props: IPropsTableItem[] = [
     type: 'String | VNode | () => VNode',
     default: '',
     desc: '弹窗内容',
+    optional: [],
+  },
+  {
+    name: 'showContentBgColor',
+    type: 'Boolean',
+    default: 'false',
+    desc: '是否设置content或subTitle内容默认背景颜色',
     optional: [],
   },
   {

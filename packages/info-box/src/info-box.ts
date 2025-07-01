@@ -42,6 +42,7 @@ export interface Props {
   headerAlign?: 'center' | 'left' | 'right';
   footerAlign?: 'center' | 'left' | 'right';
   contentAlign?: 'center' | 'left' | 'right';
+  showContentBgColor?: boolean; // 是否设置content或subTitle内容默认背景颜色
   showMask?: boolean;
   quickClose?: boolean;
   escClose?: boolean;
