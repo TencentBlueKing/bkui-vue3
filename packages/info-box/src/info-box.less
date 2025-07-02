@@ -1,7 +1,7 @@
 @import '@bkui-vue/styles/themes/themes.less';
 
 .@{bk-prefix}-infobox {
-  font-size: 12px;
+  font-size: @font-size-base;
 
   .@{bk-prefix}-modal-wrapper {
     top: 50%;
@@ -10,8 +10,19 @@
 
     .@{bk-prefix}-modal-body {
       min-height: 176px;
+
+      .@{bk-prefix}-modal-content { 
+        color: @default-color;
+        font-size: @font-size-medium;
+      }
     }
 
+  }
+
+  &.no-content-infobox {
+    .@{bk-prefix}-modal-content {
+      display: none;
+    }
   }
 }
 

@@ -192,7 +192,14 @@ export default defineComponent({
       return (
         <Modal
           width={renderWidth()}
-          class={[resolveClassName('infobox'), state.class]}
+          class={[
+            {
+              [resolveClassName('infobox')]: true,
+            },
+            // 处理无提示内容modal-content还会占位高度
+            { 'no-content-infobox': !state.content },
+            state.class,
+          ]}
           animateType='fadein'
           closeIcon={state.closeIcon}
           isShow={isShow.value}
