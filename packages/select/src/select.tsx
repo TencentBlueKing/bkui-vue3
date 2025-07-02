@@ -215,7 +215,7 @@ export default defineComponent({
     const inputRef = ref<HTMLElement>();
     const triggerRef = ref<HTMLElement>();
     const contentRef = ref<HTMLElement>();
-    const searchRef = ref<HTMLElement>();
+    const searchRef = ref<HTMLInputElement>();
     const scrollContainerRef = ref<HTMLElement>();
     const selectTagInputRef = ref<SelectTagInputType>();
     const popoverRef = ref();
@@ -497,6 +497,10 @@ export default defineComponent({
       emit('change', val, modelValue.value);
       // 重置Selected 以model-value为主
       handleSetSelectedData();
+      if (multiple.value) {
+        // 多选时enter之后变成tag不需要保存当前值
+        customOptionName.value = '';
+      }
     };
     // 派发toggle事件
     const handleTogglePopover = () => {
@@ -522,7 +526,6 @@ export default defineComponent({
       if (filterable.value && matchedOption) {
         // 开启搜索后，正好匹配到自定义选项，则不进行创建操作
         handleOptionSelected(matchedOption);
-        customOptionName.value = '';
         return;
       }
 
@@ -540,7 +543,6 @@ export default defineComponent({
         emitChange(value);
         handleHidePopover();
       }
-      customOptionName.value = '';
     };
     // Option点击事件
     const handleOptionSelected = (option: OptionInstanceType) => {
@@ -577,9 +579,6 @@ export default defineComponent({
             value: option.optionID,
           },
         ];
-        if (filterable.value && allowCreate.value) {
-          customOptionName.value = '';
-        }
         emitChange(option.optionID);
         emit('select', option.optionID);
         handleHidePopover();
@@ -621,6 +620,7 @@ export default defineComponent({
     const handleClear = (e: Event) => {
       e.stopPropagation();
       selected.value = [];
+      customOptionName.value = '';
       clearMultipleInputValue();
       emitChange(multiple.value ? [] : '');
       emit('clear', multiple.value ? [] : '');
@@ -781,7 +781,7 @@ export default defineComponent({
         case 'Enter': {
           const { value } = e.target as HTMLInputElement;
           // 搜索和创建的时候不触发enter事件
-          if ((allowCreate.value && value) || e.target === searchRef.value) return;
+          if ((allowCreate.value && value) || (e.target === searchRef.value && searchRef.value?.value)) return;
           const option = optionsMap.value.get(activeOptionValue.value);
           handleOptionSelected(option);
           break;
@@ -916,7 +916,10 @@ export default defineComponent({
           />
         );
       }
-      if (this.clearable && this.isHover && this.selected.length && !this.isDisabled) {
+      if (
+        (this.clearable && this.isHover && this.selected.length && !this.isDisabled) ||
+        (this.allowCreate && this.isHover && this.customOptionName && !this.isDisabled)
+      ) {
         return (
           <Close
             class='clear-icon'
@@ -1018,7 +1021,7 @@ export default defineComponent({
           ref='inputRef'
           behavior={this.behavior}
           disabled={this.isDisabled}
-          modelValue={this.isInput ? this.customOptionName : this.selectedLabel.join(',')}
+          modelValue={this.isInput && this.customOptionName ? this.customOptionName : this.selectedLabel.join(',')}
           placeholder={this.isInput ? this.selectedLabel.join(',') || this.localPlaceholder : this.localPlaceholder}
           readonly={!this.isInput}
           selectReadonly={true}

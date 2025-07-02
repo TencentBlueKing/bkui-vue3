@@ -19,6 +19,22 @@
     </bk-select>
     <bk-select
       class="bk-select"
+      v-model="selectedValueMultiple"
+      allow-create
+      filterable
+      multiple
+      show-select-all
+    >
+      <bk-option
+        v-for="(item, index) in datasource"
+        :disabled="item.disabled"
+        :id="item.value"
+        :key="index"
+        :name="item.label"
+      />
+    </bk-select>
+    <bk-select
+      class="bk-select"
       v-model="selectedValueSingle"
       allow-create
       filterable
