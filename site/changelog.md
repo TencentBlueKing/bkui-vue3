@@ -1,6 +1,12 @@
 ## 更新日志
 
 
+### 2.0.2-beta.42
+
+* **[feat]**:
+    - feature: 增加开关设置content或subTitle内容默认背景颜色
+
+
 ### 2.0.2-beta.41
 
 * **[feat]**:
