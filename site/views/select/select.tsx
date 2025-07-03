@@ -158,7 +158,7 @@ const propsJson: IPropsTableItem[] = [
     name: 'popoverMinWidth',
     type: 'number',
     default: '0',
-    desc: '下拉框最大宽度',
+    desc: '下拉框最小宽度',
     optional: [],
   },
   {
