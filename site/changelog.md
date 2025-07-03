@@ -1,6 +1,13 @@
 ## 更新日志
 
 
+### 2.0.2-beta.43
+
+* **[feat]**:
+    - fix: infobox不存在content或subTitle内容时会占位高度
+    - bugfix(select): 自定义创建选项的下拉框（allow-create）input文本颜色不对
+
+
 ### 2.0.2-beta.42
 
 * **[feat]**:
