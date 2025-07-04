@@ -27,4 +27,5 @@
 export { default as en } from './lang/en';
 export type { Language } from './lang/en';
 
+export { default as jp } from './lang/ja-jp';
 export { default as zhCn } from './lang/zh-cn';
