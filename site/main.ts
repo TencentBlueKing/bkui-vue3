@@ -29,6 +29,7 @@ import { createApp } from 'vue';
 // import bkuiVue from '../lib/index';
 // import { zhCn } from '../lib/locale';
 import bkuiVue, { version } from '../packages/bkui-vue/index';
+// import jp from '../packages/locale/src/lang/ja-jp';
 import zhCn from '../packages/locale/src/lang/zh-cn';
 import '../packages/styles/src/index';
 import App from './app';
