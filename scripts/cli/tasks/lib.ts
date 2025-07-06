@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 import path from 'path';
 
 import { COMPONENT_URL, LIB_URL } from '../compiler/helpers';
@@ -35,7 +35,8 @@ const compileTaskRunner: TaskRunner<ILibTaskOption> = async (option?: ILibTaskOp
   process.env.NODE_ENV = 'production';
   await generateDeration();
   await bundleComponents(option!);
-  exec(`cp -v ${path.resolve(COMPONENT_URL, './bkui-vue/volar.components.d.ts')} ${LIB_URL}`);
+  // exec(`cp -v ${path.resolve(COMPONENT_URL, './bkui-vue/volar.components.d.ts')} ${LIB_URL}`);
+  execFile('cp', ['-v', path.resolve(COMPONENT_URL, './bkui-vue/volar.components.d.ts'), LIB_URL]);
 };
 
 export default new Task<ILibTaskOption>('compile lib', compileTaskRunner);
