@@ -27,7 +27,6 @@ import {
   closeSync,
   createReadStream,
   createWriteStream,
-  existsSync,
   lstatSync,
   mkdirSync,
   openSync,
@@ -180,13 +179,19 @@ export const writeFileRecursive = async (url: string, content: string) => {
   }
 
   const folders = filepath.split('/').slice(0, -1); // remove last item, file
-  folders.reduce((acc, folder) => {
-    const folderPath = `${acc + folder}/`;
-    if (!existsSync(folderPath)) {
-      mkdirSync(folderPath);
-    }
-    return folderPath;
-  }, root);
+  // folders.reduce((acc, folder) => {
+  //   const folderPath = `${acc + folder}/`;
+  //   if (!existsSync(folderPath)) {
+  //     mkdirSync(folderPath);
+  //   }
+  //   return folderPath;
+  // }, root);
+  const dirPath = folders.join('/');
+  if (dirPath) {
+    // 修复 js/file-system-race 问题 - 使用 recursive 选项避免 TOCTOU
+    mkdirSync(root + dirPath, { recursive: true });
+  }
+
   // 修复 js/file-system-race 问题 - 使用 openSync 避免 TOCTOU
   const fd = openSync(url, 'w');
   try {
