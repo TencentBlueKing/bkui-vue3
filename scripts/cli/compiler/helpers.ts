@@ -35,7 +35,7 @@ import {
   rmdirSync,
   writeSync,
 } from 'fs';
-import { join, parse, resolve } from 'path';
+import { join, parse, resolve, normalize } from 'path';
 
 import packageJSON from '../../../package.json';
 import { ITaskItem } from '../typings/task';
@@ -64,7 +64,16 @@ export const compilerLibDir = async (dir: string): Promise<void> => {
           const list = readdirSync(url).filter(url => /\.d.ts$/.test(join(dir, url)));
           list.forEach(file => {
             const fileUrl = join(url, file);
-            let chunk = readFileSync(fileUrl, 'utf-8');
+            // 修复路径遍历安全问题
+            const normalizedPath = normalize(fileUrl);
+            const resolvedPath = resolve(normalizedPath);
+
+            // 确保路径在预期的项目目录内
+            if (!resolvedPath.startsWith(BKUI_DIR)) {
+              throw new Error(`Path traversal attempt detected: ${resolvedPath}`);
+            }
+
+            let chunk = readFileSync(resolvedPath, 'utf-8');
             if (chunk.includes('@bkui-vue')) {
               chunk = chunk.replace('@bkui-vue', fileUrl.split('/src/')[1].replace(/([^/]+)/gim, '..'));
             }
@@ -75,23 +84,32 @@ export const compilerLibDir = async (dir: string): Promise<void> => {
           }
         }
       } else if (/\.d.ts$/.test(url)) {
-        let chunk = readFileSync(url, 'utf-8');
-        if (/lib\/(bkui-vue|styles\/src)\/(components|index|volar\.components)\.d\.ts$/.test(url)) {
-          chunk = chunk.replace(/@bkui-vue/gim, url.match(/styles\/src\/index.d.ts$/) ? '..' : '.');
+        // 修复路径遍历安全问题
+        const normalizedPath = normalize(url);
+        const resolvedPath = resolve(normalizedPath);
+
+        // 确保路径在预期的项目目录内
+        if (!resolvedPath.startsWith(BKUI_DIR)) {
+          throw new Error(`Path traversal attempt detected: ${resolvedPath}`);
+        }
+
+        let chunk = readFileSync(resolvedPath, 'utf-8');
+        if (/lib\/(bkui-vue|styles\/src)\/(components|index|volar\.components)\.d\.ts$/.test(resolvedPath)) {
+          chunk = chunk.replace(/@bkui-vue/gim, resolvedPath.match(/styles\/src\/index.d.ts$/) ? '..' : '.');
           // js/file-system-race
-          // writeFileSync(url, chunk);
+          // writeFileSync(resolvedPath, chunk);
           try {
-            const fd = openSync(url, 'w');
+            const fd = openSync(resolvedPath, 'w');
             writeSync(fd, chunk, 0, 'utf-8');
             closeSync(fd);
           } catch (e) {
             // file existed
           }
         } else if (chunk.match(/@bkui-vue/gim)) {
-          if (!url.split('/src/')[1]) {
+          if (!resolvedPath.split('/src/')[1]) {
             chunk = chunk.replace(/@bkui-vue/gim, '.');
-          } else chunk = chunk.replace(/@bkui-vue/gim, url.split('/src/')[1].replace(/([^/]+)/gim, '..'));
-        } else if (/\.\.\/icons\//gim.test(chunk) && /lib\/icon\/src\/index\.d\.ts$/.test(url)) {
+          } else chunk = chunk.replace(/@bkui-vue/gim, resolvedPath.split('/src/')[1].replace(/([^/]+)/gim, '..'));
+        } else if (/\.\.\/icons\//gim.test(chunk) && /lib\/icon\/src\/index\.d\.ts$/.test(resolvedPath)) {
           chunk = chunk.replace(/\.\.\/icons\//gim, '../icon/');
         }
         if (chunk.match(/\/src\//)) {
@@ -100,9 +118,9 @@ export const compilerLibDir = async (dir: string): Promise<void> => {
             chunk = chunk.replace(v, v.replace('../../', '../').replace('/src', ''));
           });
         }
-        writeFileRecursive(resolve(parse(url).dir, '../', parse(url).base), chunk);
+        writeFileRecursive(resolve(parse(resolvedPath).dir, '../', parse(resolvedPath).base), chunk);
         if (index === files.length - 1) {
-          rmdirSync(parse(url).dir, { recursive: true });
+          rmdirSync(parse(resolvedPath).dir, { recursive: true });
         }
         // moveFile(url, resolve(parse(url).dir, '../', parse(url).base))
         //   .then(() => {
