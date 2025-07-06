@@ -28,13 +28,15 @@ import {
   createReadStream,
   createWriteStream,
   existsSync,
+  openSync,
+  closeSync,
   lstatSync,
   mkdirSync,
   readdirSync,
   readFileSync,
   rmdirSync,
+  writeSync,
   unlinkSync,
-  writeFileSync,
 } from 'fs';
 import { join, parse, resolve } from 'path';
 import { promisify } from 'util';
@@ -54,8 +56,8 @@ export const ENV_MAP = {
 };
 
 // 编译转换*.d.ts
-export const compilerLibDir = async (dir: string): Promise<any> => {
-  const buildDir: any = (dir: string) => {
+export const compilerLibDir = async (dir: string): Promise<void> => {
+  const buildDir = (dir: string): void => {
     const files = readdirSync(dir);
     files.forEach((file, index) => {
       const url = join(dir, file);
@@ -80,7 +82,15 @@ export const compilerLibDir = async (dir: string): Promise<any> => {
         let chunk = readFileSync(url, 'utf-8');
         if (/lib\/(bkui-vue|styles\/src)\/(components|index|volar\.components)\.d\.ts$/.test(url)) {
           chunk = chunk.replace(/@bkui-vue/gim, url.match(/styles\/src\/index.d.ts$/) ? '..' : '.');
-          writeFileSync(url, chunk);
+          // js/file-system-race
+          // writeFileSync(url, chunk);
+          try {
+            const fd = openSync(url, 'w');
+            writeSync(fd, chunk, 0, 'utf-8');
+            closeSync(fd);
+          } catch (e) {
+            // file existed
+          }
         } else if (chunk.match(/@bkui-vue/gim)) {
           if (!url.split('/src/')[1]) {
             chunk = chunk.replace(/@bkui-vue/gim, '.');
