@@ -24,22 +24,19 @@
  * IN THE SOFTWARE.
  */
 import {
-  appendFile,
+  closeSync,
   createReadStream,
   createWriteStream,
   existsSync,
-  openSync,
-  closeSync,
   lstatSync,
   mkdirSync,
+  openSync,
   readdirSync,
   readFileSync,
   rmdirSync,
   writeSync,
-  unlinkSync,
 } from 'fs';
 import { join, parse, resolve } from 'path';
-import { promisify } from 'util';
 
 import packageJSON from '../../../package.json';
 import { ITaskItem } from '../typings/task';
@@ -190,8 +187,13 @@ export const writeFileRecursive = async (url: string, content: string) => {
     }
     return folderPath;
   }, root);
-  if (existsSync(url)) unlinkSync(url);
-  await promisify(appendFile)(url, content, 'utf-8');
+  // 修复 js/file-system-race 问题 - 使用 openSync 避免 TOCTOU
+  const fd = openSync(url, 'w');
+  try {
+    writeSync(fd, content, 0, 'utf-8');
+  } finally {
+    closeSync(fd);
+  }
 };
 
 export const replaceEnvVars = (source: string) => {
