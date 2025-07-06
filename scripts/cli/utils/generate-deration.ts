@@ -23,10 +23,12 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 import path from 'path';
 import { promisify } from 'util';
 
 export default async () => {
-  await promisify(exec)(`tsc -p ${path.resolve(__dirname, '../tsconfig.declaration.json')}`);
+  // await promisify(exec)(`tsc -p ${path.resolve(__dirname, '../tsconfig.declaration.json')}`);
+  const tscPath = path.resolve(__dirname, '../tsconfig.declaration.json');
+  await promisify(execFile)('tsc', ['-p', tscPath]);
 };

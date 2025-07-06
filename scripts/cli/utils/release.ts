@@ -44,11 +44,25 @@ export default async function (options?: IReleaseTaskOption) {
   delete packageData.scripts.cc;
   fs.writeFileSync(packagePath, `${JSON.stringify(packageData, null, 2)}\n`);
   try {
-    childProcess.execSync(
-      `cd ${BKUI_DIR} && npm publish --access=public --unsafe-perm --registry https://registry.npmjs.org ${
-        options?.tag ? `--tag ${options.tag}` : ''
-      }`,
+    // childProcess.execSync(
+    //   `cd ${BKUI_DIR} && npm publish --access=public --unsafe-perm --registry https://registry.npmjs.org ${
+    //     options?.tag ? `--tag ${options.tag}` : ''
+    //   }`,
+    //   {
+    //     stdio: [0, 1, 2],
+    //   },
+    // );
+    childProcess.execFileSync(
+      'npm',
+      [
+        'publish',
+        '--access=public',
+        '--unsafe-perm',
+        '--registry=https://registry.npmjs.org',
+        ...(options?.tag ? [`--tag=${options.tag}`] : []),
+      ],
       {
+        cwd: BKUI_DIR,
         stdio: [0, 1, 2],
       },
     );

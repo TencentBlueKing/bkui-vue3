@@ -118,7 +118,7 @@ export const resolveNumberOrStringToPix = (
   offset = null,
 ) => {
   let target: number | string = '';
-  if (/^null|undefined$/gi.test(`${val}`)) {
+  if (/^(null|undefined)$/gi.test(`${val}`)) {
     target = defaultValue;
   } else {
     target = /^\d+\.?\d+$/.test(`${val}`) ? `${val}px` : val;
