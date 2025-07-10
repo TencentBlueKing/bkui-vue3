@@ -2,7 +2,7 @@
  * Tencent is pleased to support the open source community by making
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
  *
- * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ * Copyright (C) 2025 Tencent.  All rights reserved.
  *
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
  *
@@ -44,11 +44,25 @@ export default async function (options?: IReleaseTaskOption) {
   delete packageData.scripts.cc;
   fs.writeFileSync(packagePath, `${JSON.stringify(packageData, null, 2)}\n`);
   try {
-    childProcess.execSync(
-      `cd ${BKUI_DIR} && npm publish --access=public --unsafe-perm --registry https://registry.npmjs.org ${
-        options?.tag ? `--tag ${options.tag}` : ''
-      }`,
+    // childProcess.execSync(
+    //   `cd ${BKUI_DIR} && npm publish --access=public --unsafe-perm --registry https://registry.npmjs.org ${
+    //     options?.tag ? `--tag ${options.tag}` : ''
+    //   }`,
+    //   {
+    //     stdio: [0, 1, 2],
+    //   },
+    // );
+    childProcess.execFileSync(
+      'npm',
+      [
+        'publish',
+        '--access=public',
+        '--unsafe-perm',
+        '--registry=https://registry.npmjs.org',
+        ...(options?.tag ? [`--tag=${options.tag}`] : []),
+      ],
       {
+        cwd: BKUI_DIR,
         stdio: [0, 1, 2],
       },
     );

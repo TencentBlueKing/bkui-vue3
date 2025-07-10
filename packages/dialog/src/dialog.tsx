@@ -2,7 +2,7 @@
  * Tencent is pleased to support the open source community by making
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
  *
- * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ * Copyright (C) 2025 Tencent.  All rights reserved.
  *
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
  *
@@ -57,8 +57,6 @@ export default defineComponent({
     const isMoveing = ref(false);
 
     const positionData = reactive({
-      positionX: 0,
-      positionY: 0,
       moveStyle: {
         top: '50%',
         left: '50%',
@@ -133,39 +131,20 @@ export default defineComponent({
       if (!props.draggable) {
         return false;
       }
-      const odiv = e.target;
-      const parentHeight = e.currentTarget.parentNode.parentNode.offsetHeight;
-      const parentWidth = e.currentTarget.parentNode.parentNode.offsetWidth;
-      let disX;
-      let disY;
-      if (positionData.positionX !== 0 && positionData.positionY !== 0) {
-        disX = e.clientX - positionData.positionX;
-        disY = e.clientY - positionData.positionY;
-      } else {
-        disX = e.clientX - odiv.offsetLeft;
-        disY = e.clientY - odiv.offsetTop;
-      }
-      isMoveing.value = true;
+      const clientRect = e.currentTarget.parentNode.parentNode.getBoundingClientRect();
+      const boxLeft = clientRect.left + clientRect.width / 2;
+      const boxTop = clientRect.top + clientRect.height / 2;
 
-      document.onmousemove = e => {
-        const boxLeft = window.innerWidth - parentWidth;
-        const boxTop = window.innerHeight - parentHeight;
-        let left = e.clientX - disX;
-        let top = e.clientY - disY;
-        if (boxLeft / 2 - left <= 0) {
-          left = boxLeft / 2;
-        } else if (boxLeft / 2 + left <= 0) {
-          left = -boxLeft / 2;
-        }
-        if (boxTop / 2 - top <= 0) {
-          top = boxTop / 2;
-        } else if (boxTop / 2 + top <= 0) {
-          top = -boxTop / 2;
-        }
-        positionData.positionX = left;
-        positionData.positionY = top;
-        positionData.moveStyle.left = `calc(50% + ${left}px)`;
-        positionData.moveStyle.top = `calc(50% + ${top}px)`;
+      isMoveing.value = true;
+      const startX = e.clientX;
+      const startY = e.clientY;
+
+      document.onmousemove = evt => {
+        const diffX = evt.clientX - startX;
+        const diffY = evt.clientY - startY;
+
+        positionData.moveStyle.left = `${boxLeft + diffX}px`;
+        positionData.moveStyle.top = `${boxTop + diffY}px`;
       };
 
       document.onmouseup = () => {

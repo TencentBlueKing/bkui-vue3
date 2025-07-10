@@ -2,7 +2,7 @@
  * Tencent is pleased to support the open source community by making
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
  *
- * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ * Copyright (C) 2025 Tencent.  All rights reserved.
  *
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
  *
@@ -113,10 +113,12 @@ export default defineComponent({
         emit('add-panel', { e });
       },
       tabChange(name: string) {
-        // emit('xxx') 会调用onXxx函数, 所以不必在主动调用onXxx函数了
-        emit('change', name);
-        emit('tab-change', name);
-        emit('update:active', name);
+        if (_props.beforeChange?.(name) ?? true) {
+          // emit('xxx') 会调用onXxx函数, 所以不必在主动调用onXxx函数了
+          emit('change', name);
+          emit('tab-change', name);
+          emit('update:active', name);
+        }
       },
       tabRemove(index: number, panel) {
         // emit('xxx') 会调用onXxx函数, 所以不必在主动调用onXxx函数了

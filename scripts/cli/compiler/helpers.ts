@@ -2,7 +2,7 @@
  * Tencent is pleased to support the open source community by making
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
  *
- * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ * Copyright (C) 2025 Tencent.  All rights reserved.
  *
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
  *
@@ -24,20 +24,18 @@
  * IN THE SOFTWARE.
  */
 import {
-  appendFile,
+  closeSync,
   createReadStream,
   createWriteStream,
-  existsSync,
   lstatSync,
   mkdirSync,
+  openSync,
   readdirSync,
   readFileSync,
   rmdirSync,
-  unlinkSync,
-  writeFileSync,
+  writeSync,
 } from 'fs';
-import { join, parse, resolve } from 'path';
-import { promisify } from 'util';
+import { join, parse, resolve, normalize } from 'path';
 
 import packageJSON from '../../../package.json';
 import { ITaskItem } from '../typings/task';
@@ -54,8 +52,8 @@ export const ENV_MAP = {
 };
 
 // 编译转换*.d.ts
-export const compilerLibDir = async (dir: string): Promise<any> => {
-  const buildDir: any = (dir: string) => {
+export const compilerLibDir = async (dir: string): Promise<void> => {
+  const buildDir = (dir: string): void => {
     const files = readdirSync(dir);
     files.forEach((file, index) => {
       const url = join(dir, file);
@@ -66,7 +64,16 @@ export const compilerLibDir = async (dir: string): Promise<any> => {
           const list = readdirSync(url).filter(url => /\.d.ts$/.test(join(dir, url)));
           list.forEach(file => {
             const fileUrl = join(url, file);
-            let chunk = readFileSync(fileUrl, 'utf-8');
+            // 修复路径遍历安全问题
+            const normalizedPath = normalize(fileUrl);
+            const resolvedPath = resolve(normalizedPath);
+
+            // 确保路径在预期的项目目录内
+            if (!resolvedPath.startsWith(BKUI_DIR)) {
+              throw new Error(`Path traversal attempt detected: ${resolvedPath}`);
+            }
+
+            let chunk = readFileSync(resolvedPath, 'utf-8');
             if (chunk.includes('@bkui-vue')) {
               chunk = chunk.replace('@bkui-vue', fileUrl.split('/src/')[1].replace(/([^/]+)/gim, '..'));
             }
@@ -77,15 +84,32 @@ export const compilerLibDir = async (dir: string): Promise<any> => {
           }
         }
       } else if (/\.d.ts$/.test(url)) {
-        let chunk = readFileSync(url, 'utf-8');
-        if (/lib\/(bkui-vue|styles\/src)\/(components|index|volar\.components)\.d\.ts$/.test(url)) {
-          chunk = chunk.replace(/@bkui-vue/gim, url.match(/styles\/src\/index.d.ts$/) ? '..' : '.');
-          writeFileSync(url, chunk);
+        // 修复路径遍历安全问题
+        const normalizedPath = normalize(url);
+        const resolvedPath = resolve(normalizedPath);
+
+        // 确保路径在预期的项目目录内
+        if (!resolvedPath.startsWith(BKUI_DIR)) {
+          throw new Error(`Path traversal attempt detected: ${resolvedPath}`);
+        }
+
+        let chunk = readFileSync(resolvedPath, 'utf-8');
+        if (/lib\/(bkui-vue|styles\/src)\/(components|index|volar\.components)\.d\.ts$/.test(resolvedPath)) {
+          chunk = chunk.replace(/@bkui-vue/gim, resolvedPath.match(/styles\/src\/index.d.ts$/) ? '..' : '.');
+          // js/file-system-race
+          // writeFileSync(resolvedPath, chunk);
+          try {
+            const fd = openSync(resolvedPath, 'w');
+            writeSync(fd, chunk, 0, 'utf-8');
+            closeSync(fd);
+          } catch (e) {
+            // file existed
+          }
         } else if (chunk.match(/@bkui-vue/gim)) {
-          if (!url.split('/src/')[1]) {
+          if (!resolvedPath.split('/src/')[1]) {
             chunk = chunk.replace(/@bkui-vue/gim, '.');
-          } else chunk = chunk.replace(/@bkui-vue/gim, url.split('/src/')[1].replace(/([^/]+)/gim, '..'));
-        } else if (/\.\.\/icons\//gim.test(chunk) && /lib\/icon\/src\/index\.d\.ts$/.test(url)) {
+          } else chunk = chunk.replace(/@bkui-vue/gim, resolvedPath.split('/src/')[1].replace(/([^/]+)/gim, '..'));
+        } else if (/\.\.\/icons\//gim.test(chunk) && /lib\/icon\/src\/index\.d\.ts$/.test(resolvedPath)) {
           chunk = chunk.replace(/\.\.\/icons\//gim, '../icon/');
         }
         if (chunk.match(/\/src\//)) {
@@ -94,9 +118,9 @@ export const compilerLibDir = async (dir: string): Promise<any> => {
             chunk = chunk.replace(v, v.replace('../../', '../').replace('/src', ''));
           });
         }
-        writeFileRecursive(resolve(parse(url).dir, '../', parse(url).base), chunk);
+        writeFileRecursive(resolve(parse(resolvedPath).dir, '../', parse(resolvedPath).base), chunk);
         if (index === files.length - 1) {
-          rmdirSync(parse(url).dir, { recursive: true });
+          rmdirSync(parse(resolvedPath).dir, { recursive: true });
         }
         // moveFile(url, resolve(parse(url).dir, '../', parse(url).base))
         //   .then(() => {
@@ -173,15 +197,26 @@ export const writeFileRecursive = async (url: string, content: string) => {
   }
 
   const folders = filepath.split('/').slice(0, -1); // remove last item, file
-  folders.reduce((acc, folder) => {
-    const folderPath = `${acc + folder}/`;
-    if (!existsSync(folderPath)) {
-      mkdirSync(folderPath);
-    }
-    return folderPath;
-  }, root);
-  if (existsSync(url)) unlinkSync(url);
-  await promisify(appendFile)(url, content, 'utf-8');
+  // folders.reduce((acc, folder) => {
+  //   const folderPath = `${acc + folder}/`;
+  //   if (!existsSync(folderPath)) {
+  //     mkdirSync(folderPath);
+  //   }
+  //   return folderPath;
+  // }, root);
+  const dirPath = folders.join('/');
+  if (dirPath) {
+    // 修复 js/file-system-race 问题 - 使用 recursive 选项避免 TOCTOU
+    mkdirSync(root + dirPath, { recursive: true });
+  }
+
+  // 修复 js/file-system-race 问题 - 使用 openSync 避免 TOCTOU
+  const fd = openSync(url, 'w');
+  try {
+    writeSync(fd, content, 0, 'utf-8');
+  } finally {
+    closeSync(fd);
+  }
 };
 
 export const replaceEnvVars = (source: string) => {

@@ -3,6 +3,7 @@
     <bk-tab
       v-model:active="active"
       type="unborder-card"
+      :beforeChange="beforeChange"
     >
       <bk-tab-panel
         v-for="(item, index) in panels"
@@ -30,5 +31,11 @@
         active: 'mission',
       };
     },
+    methods: {
+      beforeChange() { // args: name
+        // 如果需要控制change，这里处理返回值
+        // return name === 'config'
+      }
+    }
   });
 </script>
