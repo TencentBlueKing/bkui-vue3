@@ -1,5 +1,11 @@
 ## 更新日志
 
+### 2.0.2-beta.47
+
+* **[feat]**:
+    - feat(tab): Tab 选项卡增加props.beforeChange用于控制点击激活处理
+
+
 ### 2.0.2-beta.46
 
 * **[feat]**:
