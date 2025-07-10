@@ -32,7 +32,7 @@
       };
     },
     methods: {
-      beforeChange(name) {
+      beforeChange() { // args: name
         // 如果需要控制change，这里处理返回值
         // return name === 'config'
       }

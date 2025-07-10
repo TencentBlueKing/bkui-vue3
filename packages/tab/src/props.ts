@@ -130,7 +130,6 @@ export const tabProps = {
   activeBarColor: PropTypes.string.def('#3a84ff'),
   beforeChange: {
     type: Function,
-    default: (name: string): string => name,
   },
 };
 
