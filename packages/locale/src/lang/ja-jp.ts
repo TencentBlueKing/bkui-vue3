@@ -47,7 +47,7 @@ const jp: EnLanguage = {
       fri: '金',
       sat: '土',
     },
-    hour: '時間',
+    hour: '時',
     min: '分',
     sec: '秒',
     toNow: '現在まで',
@@ -64,15 +64,15 @@ const jp: EnLanguage = {
   },
   form: {
     notBeEmpty: '空にできません',
-    incorrectFormat: '形式が正しくありません',
+    incorrectFormat: 'フォーマットが正しくありません',
     max: '最大値',
     min: '最小値',
-    maxLen: '最大長',
+    maxLen: '最大の長さ',
     verifyError: '検証エラー',
   },
   pagination: {
     eachPage: '各ページ',
-    strip: '',
+    strip: '項目',
     total: '合計',
   },
   process: {
@@ -84,32 +84,32 @@ const jp: EnLanguage = {
   searchSelect: {
     pleaseSelect: '選択してください',
     loading: 'ロード中...',
-    filterQueryMustHasValue: 'フィルタークエリに値を含める必要があります',
+    filterQueryMustHasValue: 'フィルターに一つ以上の値を選択する必要があります',
     ok: 'OK',
     cancel: 'キャンセル',
-    or: 'または',
-    and: 'そして',
-    logical: '論理:',
+    or: 'or',
+    and: 'and',
+    logical: 'ロジック:',
   },
   select: {
     noData: 'データなし',
     noMatchedData: '一致するデータがありません',
     loading: '読み込み中...',
-    pleaseSelect: '選んでください',
+    pleaseSelect: '選択してください',
     enterKeywords: 'キーワードを入力してください',
     all: 'すべて',
     selectAll: 'すべて選択',
   },
   table: {
     emptyText: 'データがありません',
-    confirm: '確認',
+    confirm: 'OK',
     reset: 'リセット',
     sort: 'ソート',
     setting: {
       title: 'テーブル設定',
       fields: {
         title: '表示フィールド設定',
-        subtitle: (max: number) => `（${max}フィールド最大）`,
+        subtitle: (max: number) => `（最大${max}項目）`,
         selectAll: 'すべて選択',
       },
       lineHeight: {
@@ -156,7 +156,7 @@ const jp: EnLanguage = {
   cascader: {
     pleaseSelect: '選択してください',
     noData: 'データがありません',
-    emptyText: 'データがありません',
+    emptyText: '該当する検索結果がありません',
   },
   versionLog: {
     current: '現在のバージョン',
