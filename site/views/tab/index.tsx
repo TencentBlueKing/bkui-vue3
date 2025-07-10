@@ -116,6 +116,11 @@ const tabPropsJson: IPropsTableItem[] = [
     type: 'Number',
     default: '--',
     desc: '选中条颜色',
+  },  {
+    name: 'before-change',
+    type: 'Function',
+    default: 'undefined',
+    desc: '点击Tab激活之前回调函数， 如果需要阻止点击激活，返回 false，其他状态都会激活',
   },
 ];
 // const tabPanelPropsJson: IPropsTableItem[] = resolvePropsToDesData(tabPanelProps);
