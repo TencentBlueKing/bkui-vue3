@@ -128,6 +128,10 @@ export const tabProps = {
   validateActive: PropTypes.bool.def(true),
   activeBarSize: PropTypes.number.def(2),
   activeBarColor: PropTypes.string.def('#3a84ff'),
+  beforeChange: {
+    type: Function,
+    default: (name: string): string => name,
+  },
 };
 
 export const tabNavProps = {
