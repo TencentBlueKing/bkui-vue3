@@ -28,6 +28,7 @@ import { defineComponent, h } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import { PropTypes } from '@bkui-vue/shared';
+import DOMPurify from 'dompurify';
 
 export default defineComponent({
   name: 'ListTagRender',
@@ -46,23 +47,22 @@ export default defineComponent({
     const highlightKeyword = (value: string): string => {
       if (this.searchKeyword && !this.disabled) {
         const keywordReg = new RegExp(`(${this.searchKeyword})`, 'i');
-        return value.replace(keywordReg, '<strong class="highlight-text">$1</strong>');
+        return DOMPurify.sanitize(value.replace(keywordReg, '<strong class="highlight-text">$1</strong>'));
       }
-      return value;
+      return DOMPurify.sanitize(value);
     };
 
     if (this.tpl) {
       return this.tpl(this.node, highlightKeyword, h, this);
     }
     const displayText = this.node[this.displayKey];
+
     return (
       <div class={`${resolveClassName('selector-node')}`}>
         <span
           class='text'
           innerHTML={highlightKeyword(displayText)}
-        >
-          {displayText}
-        </span>
+        ></span>
       </div>
     );
   },
