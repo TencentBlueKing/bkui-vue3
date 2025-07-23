@@ -28,6 +28,7 @@ import { defineComponent, ExtractPropTypes, shallowRef, watch } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import { classes, PropTypes } from '@bkui-vue/shared';
+import DOMPurify from 'dompurify';
 
 const timelineProps = {
   list: PropTypes.arrayOf(
@@ -122,7 +123,7 @@ export default defineComponent({
       return (
         <div
           class={`${this.resolveClassName('timeline-content')}`}
-          v-html={item.content}
+          v-html={typeof item.content === 'string' ? DOMPurify.sanitize(item.content) : item.content}
         />
       );
     };
@@ -150,7 +151,7 @@ export default defineComponent({
                   class={`${this.resolveClassName('timeline-title')}`}
                   onClick={() => this.handleTitleSelect(item)}
                 >
-                  {item.nodeType === 'vnode' ? item.tag : <span v-html={item.tag}></span>}
+                  {item.nodeType === 'vnode' ? item.tag : <span v-html={DOMPurify.sanitize(item.tag || '')}></span>}
                 </div>
               }
               {renderContent(item)}
