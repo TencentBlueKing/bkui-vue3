@@ -1,10 +1,18 @@
 ## 更新日志
 
 
+### 2.0.2-beta.50
+
+* **[feat]**:
+    - bugfix(timeline|tag-input): html 字符串编码问题
+    - feature(select): search-change事件文档说明
+
+
 ### 2.0.2-beta.49
 
 * **[feat]**:
     - 修复依赖导致打包的问题
+
 
 ### 2.0.2-beta.48
 
