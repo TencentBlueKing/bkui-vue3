@@ -455,7 +455,7 @@ const eventJson = [
   },
   {
     name: 'search-change',
-    desc: '自定义搜索回调',
+    desc: '搜索时触发,如需自定义搜索请使用remoteMethod属性配置搜索回调函数',
     params: 'searchValue',
   },
 ];
