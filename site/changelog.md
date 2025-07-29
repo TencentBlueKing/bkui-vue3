@@ -1,6 +1,12 @@
 ## 更新日志
 
 
+### 2.0.2-beta.51
+
+* **[feat]**:
+    - feature(menu-group): group-name希望支持slot和hover效果
+
+
 ### 2.0.2-beta.50
 
 * **[feat]**:
