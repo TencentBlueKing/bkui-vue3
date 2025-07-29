@@ -4,6 +4,12 @@
 ### 2.0.2-beta.51
 
 * **[feat]**:
+    - feature(cascader): 支持popoverOptions配置
+
+
+### 2.0.2-beta.51
+
+* **[feat]**:
     - feature(menu-group): group-name希望支持slot和hover效果
 
 
