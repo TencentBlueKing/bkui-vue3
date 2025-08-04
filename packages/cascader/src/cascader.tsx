@@ -517,6 +517,7 @@ export default defineComponent({
                     ) : (
                       <span class={this.resolveClassName('cascader-node-name')}>{scope.node.name}</span>
                     ),
+                  panel: scope => (this.$slots.panel ? this.$slots.panel(scope) : null),
                 }}
                 is-filtering={this.isFiltering}
                 search-key={this.searchKey}

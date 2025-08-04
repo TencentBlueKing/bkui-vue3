@@ -374,11 +374,12 @@ export default defineComponent({
       <div class={this.resolveClassName('cascader-panel-wrapper')}>
         {this.isFiltering
           ? searchPanelRender()
-          : this.menus.list.map(menu => (
+          : this.menus.list.map((menu, index) => (
               <ul
                 style={{ height: this.panelHeight, width: this.panelWidth }}
                 class={[this.resolveClassName('cascader-panel'), this.resolveClassName('scroll-y')]}
               >
+                {this.$slots.panel?.({ nodes: menu, level: index, activePath: this.activePath })}
                 {menu.length ? (
                   menu.map(node => (
                     <li
