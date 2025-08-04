@@ -1,7 +1,14 @@
 ## 更新日志
 
 
-### 2.0.2-beta.51
+### 2.0.2-beta.53
+
+* **[feat]**:
+    - feat(cascader): 新增 panel 插槽用于自定义面板内容
+    - fix(dialog): 监听z-index变更更新弹出层层级
+
+
+### 2.0.2-beta.52
 
 * **[feat]**:
     - feature(cascader): 支持popoverOptions配置
