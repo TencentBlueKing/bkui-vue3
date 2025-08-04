@@ -37,6 +37,7 @@ import CustomFillback from './custom-fillback.vue';
 import CustomTriggerDemo from './custom-trigger-demo.vue';
 import ExtensionDemo from './extension-demo.vue';
 import IdKey from './id-key.vue';
+import PanelSlotDemo from './panel-slot-demo.vue';
 import RemoteDemo from './remote-demo.vue';
 import SeparatorDemo from './separator-demo.vue';
 import ShowCompleteName from './show-complete-name.vue';
@@ -366,6 +367,15 @@ export default defineComponent({
           title='自定义填充回调'
         >
           <CustomFillback></CustomFillback>
+        </DemoBox>
+
+        <DemoBox
+          componentName='cascader'
+          demoName='panel-slot-demo'
+          desc='通过 panel 插槽，可自定义每一级面板的内容'
+          title='自定义面板'
+        >
+          <PanelSlotDemo />
         </DemoBox>
 
         {/* 扩展插槽 */}
