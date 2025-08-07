@@ -405,8 +405,28 @@ export default defineComponent({
 
         if (isCNInput.value && [EVENTS.INPUT, EVENTS.CHANGE, EVENTS.KEYDOWN].some(e => eventName === e)) return;
         if (eventName === EVENTS.INPUT) {
-          ctx.emit(EVENTS.UPDATE, isNumberInput.value ? handleNumber(e.target.value, 0) : e.target.value, e);
-        } else if (eventName === EVENTS.CHANGE && isNumberInput.value && e.target.value !== '') {
+          // ctx.emit(EVENTS.UPDATE, isNumberInput.value ? handleNumber(e.target.value, 0) : e.target.value, e);
+          ctx.emit(
+            EVENTS.UPDATE,
+            isNumberInput.value
+              ? // 这里不直接使用 handleNumber，是因为 handleNumber 里有 min 和 max 的判断
+                // https://github.com/TencentBlueKing/bkui-vue3/issues/2426
+                (() => {
+                  const precision = Number.isInteger(props.precision) ? props.precision : 0;
+                  const val = e.target.value;
+
+                  if (Number.isNaN(val)) {
+                    return isNum(props.min) ? props.min : 0;
+                  }
+                  if (val === '' || val === null || val === undefined) {
+                    return '';
+                  }
+                  return (+val).toFixed(precision);
+                })()
+              : e.target.value,
+            e,
+          );
+        } else if (eventName === EVENTS.CHANGE && isNumberInput.value) {
           const val = handleNumber(e.target.value, 0);
           ctx.emit(EVENTS.UPDATE, val, e);
           ctx.emit(eventName, val, e);

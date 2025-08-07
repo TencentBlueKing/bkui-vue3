@@ -1,6 +1,12 @@
 ## 更新日志
 
 
+### 2.0.2-beta.58
+
+* **[feat]**:
+    - bugfix(input): 设置最小值全选已填入的值按任意输入会回到最小值 ([#2426](https://github.com/TencentBlueKing/bkui-vue3/issues/2426))
+
+
 ### 2.0.2-beta.53
 
 * **[feat]**:
