@@ -27,8 +27,11 @@
 import { computed, defineComponent, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-import { classes, PropTypes } from '@bkui-vue/shared';
+import { classes } from '@bkui-vue/shared';
 import throttle from 'lodash/throttle';
+
+import { emits } from './emits';
+import { props } from './props';
 const on = (() => {
   if (document.addEventListener) {
     return (element, event, handler) => {
@@ -60,13 +63,8 @@ const off = (() => {
 })();
 export default defineComponent({
   name: 'Affix',
-  props: {
-    offsetTop: PropTypes.number.def(0),
-    offsetBottom: PropTypes.number,
-    target: PropTypes.string.def(''),
-    zIndex: PropTypes.number.def(1000),
-  },
-  emits: ['change'],
+  props,
+  emits,
   setup(props, { emit, slots }) {
     const point = ref(null);
     const root = ref(null);

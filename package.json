@@ -3,8 +3,7 @@
   "version": "2.0.2-beta.46",
   "workspaces": [
     "packages/**",
-    "scripts/cli",
-    "site"
+    "scripts/cli"
   ],
   "files": [
     "lib",

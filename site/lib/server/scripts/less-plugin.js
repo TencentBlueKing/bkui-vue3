@@ -23,44 +23,58 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-export const on = (() => {
-  return (element, event, handler) => {
-    if (element && event && handler) {
-      element.addEventListener(event, handler, true);
-    }
-  };
-})();
-// 兼容浏览器，移除事件监听器
-export const off = (() => {
-  return (element, event, handler) => {
-    if (element && event) {
-      element.removeEventListener(event, handler, true);
-    }
-  };
-})();
+import fs from 'fs';
+import path from 'path';
 
-// scrollTop animation
-export function scrollTop(el, from = 0, to, duration = 500, endCallback?) {
-  const difference = Math.abs(from - to);
-  const step = Math.ceil((difference / duration) * 50);
-
-  function scroll(start, end, step) {
-    if (start === end) {
-      endCallback?.();
-      return;
+const COMPONENT_URL = path.resolve(__dirname, '../../../../packages');
+export const fileCheckRegex = /^@bkui-vue\/([^/]*)/;
+export function resolveUrl(filename) {
+  let url = '';
+  try {
+    if (!filename.match(fileCheckRegex)) return filename;
+    url = filename.replace(fileCheckRegex, path.resolve(COMPONENT_URL, './$1/src'));
+    if (!fs.existsSync(url)) {
+      url = '';
     }
-
-    let d = start + step > end ? end : start + step;
-    if (start > end) {
-      d = start - step < end ? end : start - step;
-    }
-
-    if (el === window) {
-      window.scrollTo(d, d);
-    } else {
-      el.scrollTop = d;
-    }
-    window.requestAnimationFrame(() => scroll(d, end, step));
+  } catch (e) {
+    console.error(e);
   }
-  scroll(from, to, step);
+  if (!url) {
+    const error = new Error(`[less-plugin-resolve-path]: '${filename}' not found.`);
+    console.error(error);
+    throw error;
+  }
+  return url;
+}
+export default class LessResolvePathPlugin {
+  install(less, pluginManager) {
+    class ResolvePathPlugin extends less.FileManager {
+      supports(filename) {
+        return !!filename.match(fileCheckRegex);
+      }
+
+      supportsSync(filename) {
+        return this.supports(filename);
+      }
+
+      loadFile(
+        filename,
+        currentDirectory,
+        options,
+        environment,
+      ) {
+        return super.loadFile(resolveUrl(filename), currentDirectory, options, environment);
+      }
+
+      loadFileSync(
+        filename,
+        currentDirectory,
+        options,
+        environment,
+      ) {
+        return super.loadFileSync(resolveUrl(filename), currentDirectory, options, environment);
+      }
+    }
+    pluginManager.addFileManager(new ResolvePathPlugin());
+  }
 }

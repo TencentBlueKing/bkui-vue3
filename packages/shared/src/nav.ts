@@ -1,3 +1,4 @@
+/* eslint-disable perfectionist/sort-enums */
 /*
  * Tencent is pleased to support the open source community by making
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
@@ -23,44 +24,13 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-export const on = (() => {
-  return (element, event, handler) => {
-    if (element && event && handler) {
-      element.addEventListener(event, handler, true);
-    }
-  };
-})();
-// 兼容浏览器，移除事件监听器
-export const off = (() => {
-  return (element, event, handler) => {
-    if (element && event) {
-      element.removeEventListener(event, handler, true);
-    }
-  };
-})();
 
-// scrollTop animation
-export function scrollTop(el, from = 0, to, duration = 500, endCallback?) {
-  const difference = Math.abs(from - to);
-  const step = Math.ceil((difference / duration) * 50);
-
-  function scroll(start, end, step) {
-    if (start === end) {
-      endCallback?.();
-      return;
-    }
-
-    let d = start + step > end ? end : start + step;
-    if (start > end) {
-      d = start - step < end ? end : start - step;
-    }
-
-    if (el === window) {
-      window.scrollTo(d, d);
-    } else {
-      el.scrollTop = d;
-    }
-    window.requestAnimationFrame(() => scroll(d, end, step));
-  }
-  scroll(from, to, step);
+// nav group setting
+export enum NavGroupMeta {
+  Base = '基础',
+  Layout = '布局',
+  Nav = '导航',
+  Form = '表单',
+  Data = '数据',
+  Directive = '指令',
 }

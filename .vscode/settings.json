@@ -42,5 +42,14 @@
     "packages/locale/lang",
     "packages/locale/src/lang"
   ],
-  "bk-code-ai.enable": false
+  "bk-code-ai.enable": false,
+  "preCI.localCodeCheck.checkerSet.Python": [
+    "standard_python"
+  ],
+  "preCI.localCodeCheck.checkerSet.C#": [
+    "standard_csharp"
+  ],
+  "preCI.localCodeCheck.checkerSet.C/C++": [
+    "standard_cpp"
+  ]
 }
