@@ -91,7 +91,7 @@ export default defineComponent({
   setup(props, { emit, slots }) {
     const t = useLocale('cascader');
 
-    const { separator, multiple } = props;
+    const { separator } = props;
     // 用useHover自定义hook来处理鼠标hover状态
     const { isHover, setHover, cancelHover } = useHover();
 
@@ -180,7 +180,7 @@ export default defineComponent({
     // 更新选中
     const updateValue = (val: Array<number | string | string[]>) => {
       // 更新多选情况下的选中标签
-      if (multiple) {
+      if (props.multiple) {
         store.value.setNodesCheck(val as Array<string[]>); // 同步节点选中的状态
         selectedTags.value = store.value
           .getCheckedNodes()
@@ -327,6 +327,23 @@ export default defineComponent({
 
     // 监听list的变化
     watch(() => props.list, listChangeHandler, { deep: true, immediate: true });
+
+    // 监听multiple属性的变化，当切换单选/多选模式时需要重新初始化组件
+    watch(
+      () => props.multiple,
+      (newVal, oldVal) => {
+        if (newVal !== oldVal) {
+          // 重新初始化store
+          store.value = new Store(props);
+          // 重置selectedTags和selectedText状态
+          selectedTags.value = [];
+          selectedText.value = '';
+          // 更新组件状态
+          updateValue(props.modelValue);
+        }
+      },
+      { immediate: true },
+    );
 
     // 定义overflowTagIndex变量，用于处理tag的折叠
     const tagList = computed(() =>
