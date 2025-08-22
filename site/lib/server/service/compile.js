@@ -46,6 +46,12 @@ const externals = {
   'vue-types': 'vueTypes'
 }
 
+// 转换路径分隔符为 /
+export const normalize = (file) => file.replace(/\\/g, '/');
+
+// 解析路径
+export const resolve = (...files) => normalize(path.resolve(...files));
+
 /**
  * 生成函数名（基于文件路径）
  * @param {*} absolutePath 文件绝对路径
@@ -56,6 +62,7 @@ const generateFunctionName = (absolutePath, releaseZipPath) => {
   return absolutePath
     .replace(releaseZipPath, '')
     .replace(/[-//.]/g, '_')
+    .replace(/:/g, '_')
 };
 
 /**
@@ -70,7 +77,7 @@ const getDependencyAbsolutePath = (originAbsoluteFilePath, dependencyPath) => {
   }
   // 处理相对路径
   const originAbsoluteDir = path.dirname(originAbsoluteFilePath);
-  return path.resolve(originAbsoluteDir, dependencyPath)
+  return resolve(originAbsoluteDir, dependencyPath)
 };
 
 /**
@@ -135,7 +142,13 @@ const getCompileContext = (releaseZipPath, entryPath, preserveModuleType, option
  */
 export const compileDemo = async (releaseZipPath, entryPath) => {
   const fileMap = {};
-  const context = getCompileContext(releaseZipPath, entryPath, 'commonjs');
+   // 构建配置
+  const options = {
+    configureWebpack: {
+      externals
+    }
+  }
+  const context = getCompileContext(releaseZipPath, entryPath, 'commonjs', options);
   await buildModule(fileMap, context);
   await transform(fileMap, context);
   await emit(fileMap, context);
@@ -176,7 +189,7 @@ export const compileComponent = async (releaseZipPath, component) => {
     }
   }
   // 路径
-  const entryPath = path.resolve(releaseZipPath, component, 'src/index.ts')
+  const entryPath = resolve(releaseZipPath, component, 'src/index.ts')
   // 生成上下文
   const context = getCompileContext(releaseZipPath, entryPath, 'commonjs', options);
   // 编辑
@@ -199,12 +212,12 @@ export const compileCss = async (releaseZipPath, component) => {
   // 组件文件
   const fileMap = {};
   // 路径
-  const entryPath = path.resolve(releaseZipPath, component, `src/${component}.less`);
+  const entryPath = resolve(releaseZipPath, component, `src/${component}.less`);
   // 构建配置
   const options = {
     configureWebpack: {
       externals: {
-        '@bkui-vue/styles': path.resolve(releaseZipPath, 'styles/src'),
+        '@bkui-vue/styles': resolve(releaseZipPath, 'styles/src'),
       },
     },
     css: {

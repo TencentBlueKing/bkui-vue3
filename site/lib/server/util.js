@@ -22,6 +22,7 @@ export const throwError = (ctx, error) => {
     message,
     data,
   };
+  console.error(error);
   // 调用日志记录下来
   ctx.app.emit('error', error, ctx);
 };
