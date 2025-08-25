@@ -1,6 +1,15 @@
 ## 更新日志
 
 
+### 2.0.2-beta.59
+
+* **[feat]**:
+    - feat(date-picker): datePicker组件抛出面板切换事件
+    - fix(transfer): 修复穿梭框multiple模式复选框宽度被挤压问题及列表样式优化
+    - bugfix(pop-confirm): volar类型提示补全
+    - fix(cascader): 修复多选/单选切换功能
+
+
 ### 2.0.2-beta.58
 
 * **[feat]**:
