@@ -39,8 +39,6 @@ export const transferProps = {
   displayKey: PropTypes.string.def('value'),
   // 排序所依据的key(当list为普通数组时可不传，默认按照index值排序)
   sortKey: PropTypes.string.def('value'),
-  // 内容超出是否显示tooltip
-  showOverflowTips: PropTypes.bool.def(false),
   // 是否开启搜索
   searchable: PropTypes.bool.def(false),
   // 是否开启排序功能
