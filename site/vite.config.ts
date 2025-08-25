@@ -71,7 +71,7 @@ export default defineConfig({
     fs: {
       strict: false,
     },
-    allowedHosts: ['localhost', '127.0.0.1', '0.0.0.0', 'bkui-vue3.ielgnaw.oa.com'],
+    allowedHosts: true,
   },
   build: {
     commonjsOptions: {

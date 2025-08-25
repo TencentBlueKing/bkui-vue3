@@ -37,6 +37,7 @@ import CustomFillback from './custom-fillback.vue';
 import CustomTriggerDemo from './custom-trigger-demo.vue';
 import ExtensionDemo from './extension-demo.vue';
 import IdKey from './id-key.vue';
+import MultipleToggleDemo from './multiple-toggle-demo.vue';
 import PanelSlotDemo from './panel-slot-demo.vue';
 import RemoteDemo from './remote-demo.vue';
 import SeparatorDemo from './separator-demo.vue';
@@ -387,6 +388,17 @@ export default defineComponent({
           title='扩展插槽'
         >
           <ExtensionDemo></ExtensionDemo>
+        </DemoBox>
+
+        {/* 多选/单选切换 */}
+        <DemoBox
+          componentName='cascader'
+          demoName='multiple-toggle-demo'
+          desc='演示在单选和多选模式之间切换时组件的正确行为'
+          subtitle='单选/多选切换功能'
+          title='多选/单选切换'
+        >
+          <MultipleToggleDemo></MultipleToggleDemo>
         </DemoBox>
 
         <PropsBox
