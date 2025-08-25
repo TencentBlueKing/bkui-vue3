@@ -156,7 +156,7 @@ export type DateRangePanelProps = Readonly<ExtractPropTypes<typeof dateRangePane
 export default defineComponent({
   name: 'DateRangePanel',
   props: dateRangePanelProps,
-  emits: ['pick', 'pick-success', 'pick-clear', 'pick-click', 'pick-first'],
+  emits: ['pick', 'pick-success', 'pick-clear', 'pick-click', 'pick-first', 'selection-mode-change'],
   setup(props, { slots, emit }) {
     const t = useLocale('datePicker');
     const [minDate, maxDate] = (props.modelValue as any).map(date => date || initTime());
@@ -475,6 +475,9 @@ export default defineComponent({
         const rightMonth = state.rightPanelDate.getMonth();
         const isSameYear = state.leftPanelDate.getFullYear() === state.rightPanelDate.getFullYear();
 
+        // 抛出选择时间/选择日期面板切换事件
+        emit('selection-mode-change', v);
+
         if (v === 'date' && isSameYear && leftMonth === rightMonth) {
           changePanelDate('right', 'Month', 1);
         }
@@ -484,7 +487,6 @@ export default defineComponent({
         if (v === 'year' && isSameYear) {
           changePanelDate('right', 'FullYear', 10);
         }
-
         if (state.currentView === 'time') {
           nextTick(() => {
             timePickerRef.value.updateScroll();

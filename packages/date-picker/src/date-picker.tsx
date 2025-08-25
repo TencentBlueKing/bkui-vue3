@@ -72,6 +72,7 @@ export default defineComponent({
     'pick-first',
     'blur',
     'focus',
+    'selection-mode-change'
   ],
   // slots: ['header'],
   slots: Object as SlotsType<{
@@ -146,6 +147,8 @@ export default defineComponent({
       }
       // return ['year', 'month', 'date', 'time'].indexOf(type) > -1 && type;
       state.selectionMode = ['year', 'month', 'date', 'time'].indexOf(type) > -1 && type;
+      // 抛出选择时间/选择日期面板切换事件，处理不同面板自定义交互
+      emit('selection-mode-change', _type);
       return state.selectionMode;
     }
 
