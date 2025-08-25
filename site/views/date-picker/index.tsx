@@ -277,6 +277,11 @@ const events = [
     desc: '快捷项改变事件',
     params: 'value, index',
   },
+  {
+    name: 'selection-mode-change',
+    desc: '选择时间/选择日期模式面板切换事件',
+    params: 'type',
+  }
 ];
 
 const slotColumnMap = {
