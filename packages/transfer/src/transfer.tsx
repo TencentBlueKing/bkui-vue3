@@ -30,6 +30,7 @@ import Checkbox, { BkCheckboxGroup } from '@bkui-vue/checkbox';
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { AngleLeft, AngleRight, ArrowsRight, Error, Search, Transfer } from '@bkui-vue/icon';
 import Input from '@bkui-vue/input';
+import { OverflowTitle } from '@bkui-vue/overflow-title';
 
 import { ArrayType } from './const';
 import { transferProps } from './props';
@@ -327,24 +328,8 @@ export default defineComponent({
     const getDefaultListHtml = (item, isLeft = true) => {
       return (
         <div class={['item-content', { 'is-disabled': item.disabled }]}>
-          {/* 暂无该指令 */}
-          {/* {this.showOverflowTips
-            ? <span
-                class="content-text"
-                v-bk-overflow-tips>
-                {item[this.displayCode]}
-              </span>
-            : <span
-                class="content-text"
-                title={item[this.displayCode]}>
-                {item[this.displayCode]}
-              </span>
-          } */}
-          <span
-            class='content-text'
-            title={item[this.displayCode]}
-          >
-            {item[this.displayCode]}
+          <span class='content-text'>
+            <OverflowTitle resizeable={true}>{item[this.displayCode]}</OverflowTitle>
           </span>
           {!multiple && (
             <span class='icon-wrapper'>
@@ -373,14 +358,13 @@ export default defineComponent({
           onChange={() => this.handleItemChecked(selectField)}
         >
           {list.map((item: any) => (
-            <div>
-              <Checkbox
-                class='checkbox-item'
-                label={item[this.settingCode]}
-              >
-                {this.$slots[slotName]?.(item) ?? getDefaultListHtml(item, isLeft)}
-              </Checkbox>
-            </div>
+            <Checkbox
+              key={item[this.settingCode]}
+              class='checkbox-item'
+              label={item[this.settingCode]}
+            >
+              {this.$slots[slotName]?.(item) ?? getDefaultListHtml(item, isLeft)}
+            </Checkbox>
           ))}
         </BkCheckboxGroup>
       ) : (
