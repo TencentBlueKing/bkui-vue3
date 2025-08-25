@@ -2,7 +2,7 @@
  * Tencent is pleased to support the open source community by making
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
  *
- * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ * Copyright (C) 2025 Tencent.  All rights reserved.
  *
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
  *
@@ -24,9 +24,10 @@
  * IN THE SOFTWARE.
  */
 
-import { computed, defineComponent } from 'vue';
+import { defineComponent } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
+
 import { useMenuInject } from './utils';
 
 export default defineComponent({
@@ -44,17 +45,22 @@ export default defineComponent({
   setup(props, { slots }) {
     const { collapse } = useMenuInject();
     const { resolveClassName } = usePrefix();
-    const displayTitle = computed(() => {
+
+    const renderGroupName = () => {
+      if (slots.name) {
+        return slots.name();
+      }
       if (collapse.value) {
         // 收起
         return props.foldName !== undefined ? props.foldName : props.name;
       }
 
       return props.name;
-    })
+    };
+
     return () => (
       <div class={`${resolveClassName('menu-group')}`}>
-        <div class='group-name'>{displayTitle.value}</div>
+        <div class='group-name'>{renderGroupName()}</div>
         <ul class='group-wrap'>{slots.default?.()}</ul>
       </div>
     );

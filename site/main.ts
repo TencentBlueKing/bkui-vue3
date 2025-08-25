@@ -2,7 +2,7 @@
  * Tencent is pleased to support the open source community by making
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
  *
- * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ * Copyright (C) 2025 Tencent.  All rights reserved.
  *
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
  *
@@ -29,6 +29,7 @@ import { createApp } from 'vue';
 // import bkuiVue from '../lib/index';
 // import { zhCn } from '../lib/locale';
 import bkuiVue, { version } from '../packages/bkui-vue/index';
+// import jp from '../packages/locale/src/lang/ja-jp';
 import zhCn from '../packages/locale/src/lang/zh-cn';
 import '../packages/styles/src/index';
 import App from './app';

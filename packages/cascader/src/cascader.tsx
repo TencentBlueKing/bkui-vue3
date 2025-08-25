@@ -2,7 +2,7 @@
  * Tencent is pleased to support the open source community by making
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
  *
- * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ * Copyright (C) 2025 Tencent.  All rights reserved.
  *
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
  *
@@ -24,17 +24,18 @@
  * IN THE SOFTWARE.
  */
 
-import { computed, defineComponent, nextTick, ref, toRefs, watch } from 'vue';
+import { computed, defineComponent, nextTick, ref, toRefs, watch, PropType } from 'vue';
 import { array } from 'vue-types';
 
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { bkTooltips } from '@bkui-vue/directives';
 import { AngleUp, Close, Error } from '@bkui-vue/icon';
-import Popover from '@bkui-vue/popover';
+import Popover, { type PopoverPropTypes } from '@bkui-vue/popover';
 import { useHover } from '@bkui-vue/select';
-import { debounce, PropTypes } from '@bkui-vue/shared';
+import { debounce, PropTypes, PlacementEnum, TriggerEnum } from '@bkui-vue/shared';
 import Tag from '@bkui-vue/tag';
 import { useTagsOverflow } from '@bkui-vue/tag-input';
+import merge from 'lodash/merge';
 
 import CascaderPanel from './cascader-panel';
 import { INode } from './interface';
@@ -68,6 +69,7 @@ export default defineComponent({
     childrenKey: PropTypes.string.def('children'),
     separator: PropTypes.string.def('/'),
     limitOneLine: PropTypes.bool.def(false),
+    popoverOptions: Object as PropType<Partial<PopoverPropTypes>>, // popover属性
     extCls: PropTypes.string.def(''),
     filterMethod: PropTypes.func,
     scrollHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(216),
@@ -448,23 +450,30 @@ export default defineComponent({
       // 多选时， text被tagRender填充，不需要进行text渲染
       this.multiple ? null : <span>{this.displayText}</span>;
 
+    /** popover 基础配置 */
+    const basePopoverOptions: Partial<PopoverPropTypes> = merge(
+      {
+        always: this.isAlways,
+        arrow: false,
+        boundary: 'body',
+        disabled: this.disabled as boolean,
+        hideIgnoreReference: true,
+        offset: 4,
+        placement: 'bottom-start' as PlacementEnum,
+        referenceCls: this.resolveClassName('cascader-popover-reference'),
+        theme: `light ${this.resolveClassName('cascader-popover')}`,
+        trigger: 'click' as TriggerEnum,
+      },
+      this.popoverOptions,
+    );
     // 定义popoverRender函数，用于渲染弹出框
     const popoverRender = () => (
       <Popover
         ref='popover'
         class={this.resolveClassName('cascader-popover-wrapper')}
-        always={this.isAlways}
-        arrow={false}
-        boundary='body'
-        disabled={this.disabled}
-        hideIgnoreReference={true}
-        offset={4}
-        placement='bottom-start'
-        referenceCls={this.resolveClassName('cascader-popover-reference')}
-        theme={`light ${this.resolveClassName('cascader-popover')}`}
-        trigger='click'
         onAfterHidden={this.popoverChangeEmitter}
         onAfterShow={this.popoverChangeEmitter}
+        {...basePopoverOptions}
       >
         {{
           default: () =>
@@ -508,6 +517,7 @@ export default defineComponent({
                     ) : (
                       <span class={this.resolveClassName('cascader-node-name')}>{scope.node.name}</span>
                     ),
+                  panel: scope => (this.$slots.panel ? this.$slots.panel(scope) : null),
                 }}
                 is-filtering={this.isFiltering}
                 search-key={this.searchKey}

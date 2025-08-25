@@ -1,6 +1,81 @@
 ## 更新日志
 
 
+### 2.0.2-beta.58
+
+* **[feat]**:
+    - bugfix(input): 设置最小值全选已填入的值按任意输入会回到最小值 ([#2426](https://github.com/TencentBlueKing/bkui-vue3/issues/2426))
+
+
+### 2.0.2-beta.53
+
+* **[feat]**:
+    - feat(cascader): 新增 panel 插槽用于自定义面板内容
+    - fix(dialog): 监听z-index变更更新弹出层层级
+
+
+### 2.0.2-beta.52
+
+* **[feat]**:
+    - feature(cascader): 支持popoverOptions配置
+
+
+### 2.0.2-beta.51
+
+* **[feat]**:
+    - feature(menu-group): group-name希望支持slot和hover效果
+
+
+### 2.0.2-beta.50
+
+* **[feat]**:
+    - bugfix(timeline|tag-input): html 字符串编码问题
+    - feature(select): search-change事件文档说明
+
+
+### 2.0.2-beta.49
+
+* **[feat]**:
+    - 修复依赖导致打包的问题
+
+
+### 2.0.2-beta.48
+
+* **[feat]**:
+    - feat(tab): Tab 选项卡增加props.beforeChange用于控制点击激活处理
+
+
+### 2.0.2-beta.47
+
+* **[feat]**:
+    - feat(tab): Tab 选项卡增加props.beforeChange用于控制点击激活处理
+
+
+### 2.0.2-beta.46
+
+* **[feat]**:
+    - feat(dialog): 重构拖拽位置实现，支持任意定位
+
+
+### 2.0.2-beta.45
+
+* **[feat]**:
+    - feature: 日语国际化
+
+
+### 2.0.2-beta.44
+
+* **[feat]**:
+    - feature: 日语国际化
+
+
+### 2.0.2-beta.43
+
+* **[feat]**:
+    - fix: infobox不存在content或subTitle内容时会占位高度
+    - bugfix(select): 自定义创建选项的下拉框（allow-create）input文本颜色不对
+
+
 ### 2.0.2-beta.42
 
 * **[feat]**:

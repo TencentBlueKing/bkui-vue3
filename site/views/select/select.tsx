@@ -2,7 +2,7 @@
  * Tencent is pleased to support the open source community by making
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
  *
- * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ * Copyright (C) 2025 Tencent.  All rights reserved.
  *
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
  *
@@ -158,7 +158,7 @@ const propsJson: IPropsTableItem[] = [
     name: 'popoverMinWidth',
     type: 'number',
     default: '0',
-    desc: '下拉框最大宽度',
+    desc: '下拉框最小宽度',
     optional: [],
   },
   {
@@ -455,7 +455,7 @@ const eventJson = [
   },
   {
     name: 'search-change',
-    desc: '自定义搜索回调',
+    desc: '搜索时触发,如需自定义搜索请使用remoteMethod属性配置搜索回调函数',
     params: 'searchValue',
   },
 ];

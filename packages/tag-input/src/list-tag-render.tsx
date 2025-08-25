@@ -2,7 +2,7 @@
  * Tencent is pleased to support the open source community by making
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
  *
- * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ * Copyright (C) 2025 Tencent.  All rights reserved.
  *
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
  *
@@ -28,6 +28,7 @@ import { defineComponent, h } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import { PropTypes } from '@bkui-vue/shared';
+import DOMPurify from 'dompurify';
 
 export default defineComponent({
   name: 'ListTagRender',
@@ -46,23 +47,22 @@ export default defineComponent({
     const highlightKeyword = (value: string): string => {
       if (this.searchKeyword && !this.disabled) {
         const keywordReg = new RegExp(`(${this.searchKeyword})`, 'i');
-        return value.replace(keywordReg, '<strong class="highlight-text">$1</strong>');
+        return DOMPurify.sanitize(value.replace(keywordReg, '<strong class="highlight-text">$1</strong>'));
       }
-      return value;
+      return DOMPurify.sanitize(value);
     };
 
     if (this.tpl) {
       return this.tpl(this.node, highlightKeyword, h, this);
     }
     const displayText = this.node[this.displayKey];
+
     return (
       <div class={`${resolveClassName('selector-node')}`}>
         <span
           class='text'
           innerHTML={highlightKeyword(displayText)}
-        >
-          {displayText}
-        </span>
+        ></span>
       </div>
     );
   },
