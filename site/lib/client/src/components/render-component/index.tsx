@@ -1,4 +1,5 @@
 import * as vue from 'vue';
+
 import {
   compile,
 } from '@vue/compiler-dom';
@@ -25,11 +26,12 @@ export default vue.defineComponent({
       this.props,
       Object.keys(this.slots).reduce(
         (acc, slotName) => {
-          acc[slotName] = () => Function('Vue', compile(this.slots[slotName]).code)(vue)(vue)
+          const Fn = Function;
+          acc[slotName] = () => Fn('Vue', compile(this.slots[slotName]).code)(vue)(vue);
           return acc;
         },
-       {} as Record<string, () => object>
-      )
-    )
-  }
+        {} as Record<string, () => object>,
+      ),
+    );
+  },
 });

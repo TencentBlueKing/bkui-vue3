@@ -19,10 +19,10 @@
 </template>
 
 <script lang="ts" setup>
+import RenderRouterTab from '@/components/render-router-tab/index.vue';
 import {
   useComponent,
 } from '@/store/component';
-import RenderRouterTab from '@/components/render-router-tab/index.vue'
 
 const componentStore = useComponent();
 
@@ -30,7 +30,7 @@ const routers = [
   { to: 'demo', name: '组件示例' },
   { to: 'api', name: 'API 文档' },
   { to: 'design', name: '设计规范' },
-]
+];
 </script>
 
 <style lang="postcss" scoped>

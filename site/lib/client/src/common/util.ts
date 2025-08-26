@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
  * @param item
  * @returns {boolean}
  */
-export function isObject(item: any) {
+export function isObject(item: unknown) {
   return Object.prototype.toString.apply(item) === '[object Object]';
 }
 
@@ -22,21 +22,23 @@ export function timeFormatter(val: string, format = 'YYYY-MM-DD HH:mm:ss') {
 /**
  * 深度合并多个对象
  * @param objectArray 待合并列表
- * @returns {object} 合并后的对象
+ * @returns 合并后的对象
  */
-export function deepMerge(...objectArray: object[]) {
-  return objectArray.reduce((acc: any, obj: any) => {
-    Object.keys(obj || {}).forEach((key) => {
+export function deepMerge<T extends Record<string, unknown>>(...objectArray: Partial<T>[]): T {
+  return objectArray.reduce((acc: Record<string, unknown>, obj: Partial<T>) => {
+    if (!obj) return acc;
+
+    Object.keys(obj).forEach((key) => {
       const pVal = acc[key];
       const oVal = obj[key];
 
       if (isObject(pVal) && isObject(oVal)) {
-        acc[key] = deepMerge(pVal, oVal);
-      } else {
+        acc[key] = deepMerge(pVal as T, oVal as T);
+      } else if (oVal !== undefined) {
         acc[key] = oVal;
       }
     });
 
     return acc;
-  }, {});
+  }, {} as Record<string, unknown>) as T;
 }

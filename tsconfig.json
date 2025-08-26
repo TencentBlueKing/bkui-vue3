@@ -55,5 +55,5 @@
     "./prettier.config.js",
     "./*.js",
     "index.d.ts"
-  ]
+, "site/eslint.config.mjs"  ]
 }

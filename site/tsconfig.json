@@ -34,6 +34,6 @@
   },
   "include": [
     "./**/*",
-    "eslint.config.js",
+    "eslint.config.mjs",
   ]
 }

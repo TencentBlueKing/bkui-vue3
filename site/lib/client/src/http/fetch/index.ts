@@ -1,17 +1,17 @@
 /* eslint-disable no-param-reassign */
 
-import errorInterceptor from './error-interceptor';
-import RequestError from './request-error';
-import successInterceptor from './success-interceptor';
-
 import {
   deepMerge,
 } from '@/common/util';
 
+import errorInterceptor from './error-interceptor';
+import RequestError from './request-error';
+import successInterceptor from './success-interceptor';
+
 export interface IFetchConfig extends RequestInit {
   requestType?: 'json' | 'formData',
   responseType?: 'json' | 'text' | 'formData' | 'file' | 'blob' | 'javascript',
-  globalError?: Boolean,
+  globalError?: boolean,
   signal?: AbortSignal,
   withoutSpace?: boolean,
   noCheckPermission?: boolean,
