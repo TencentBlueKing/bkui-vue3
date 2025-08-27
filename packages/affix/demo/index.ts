@@ -26,7 +26,7 @@
 import { NavGroupMeta } from '@bkui-vue/shared';
 
 // 组件示例
-const demos = [
+const presets = [
   {
     title: '基础用法',
     description: '不传值时：默认直接固定在最顶端',
@@ -164,7 +164,7 @@ export default {
   titleCN,
   props,
   emits,
-  demos,
+  presets,
   types,
   description,
 };

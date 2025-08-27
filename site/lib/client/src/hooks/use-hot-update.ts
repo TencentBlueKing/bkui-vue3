@@ -25,7 +25,7 @@ if (window.WebSocket && process.env.NODE_ENV === 'development') {
 }
 
 const hotUpdateFunctions: Function[] = [
-  () => deleteReleaseCache('dev')
+  () => deleteReleaseCache('dev'),
 ];
 
 export const useHotUpdate = () => {
@@ -42,4 +42,4 @@ export const useHotUpdate = () => {
     addHotUpdateFunction,
     removeHotUpdateFunction,
   };
-}
+};

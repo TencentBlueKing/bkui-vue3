@@ -1,11 +1,13 @@
-import path from 'node:path';
-import fs from 'node:fs';
 import AdmZip from 'adm-zip';
+import fs from 'node:fs';
+import path from 'node:path';
+
 import http from '../util/http';
+
 import {
-  compileDemo,
   compileComponent,
   compileCss,
+  compileDemo,
 } from './compile';
 
 // 彻底清除模块缓存的函数
@@ -19,7 +21,7 @@ const clearModuleCache = (modulePath) => {
       if (module) {
         // 清除该模块依赖的其他模块缓存
         if (module.children) {
-          module.children.forEach(child => {
+          module.children.forEach((child) => {
             // 只清除项目内部的模块，避免清除node_modules中的模块
             if (child.filename && !child.filename.includes('node_modules')) {
               clearDependencies(child.filename);
@@ -41,10 +43,8 @@ const clearModuleCache = (modulePath) => {
 
 // 获取组件版本列表
 export const getVersions = async () => {
-  const releases = await http.get(
-    'https://api.github.com/repos/TencentBlueKing/bkui-vue3/releases',
-  );
-  const versions = releases.map((release) => release.tag_name);
+  const releases = await http.get('https://api.github.com/repos/TencentBlueKing/bkui-vue3/releases');
+  const versions = releases.map(release => release.tag_name);
   if (process.env.NODE_ENV === 'development') {
     versions.push('dev');
   }
@@ -61,7 +61,7 @@ export const getFileAuthors = async (path) => {
       },
     },
   );
-  return commits.map((commit) => ({
+  return commits.map(commit => ({
     login: commit.author.login,
     avatar: commit.author.avatar_url,
     timestamp: commit.commit.author.date,
@@ -70,9 +70,9 @@ export const getFileAuthors = async (path) => {
 
 // 获取组件
 export const getComponent = async (releaseZipPath, component) => {
-  const compiledJsPath = path.resolve(releaseZipPath, component, 'src/compiled.js')
+  const compiledJsPath = path.resolve(releaseZipPath, component, 'src/compiled.js');
   if (!fs.existsSync(compiledJsPath)) {
-    const compiledComponent = await compileComponent(releaseZipPath, component)
+    const compiledComponent = await compileComponent(releaseZipPath, component);
     await fs.writeFileSync(compiledJsPath, compiledComponent, 'utf-8');
   }
   return fs.readFileSync(compiledJsPath);
@@ -82,11 +82,11 @@ export const getComponent = async (releaseZipPath, component) => {
 export const getCss = async (releaseZipPath, component) => {
   const compiledCssPath = path.resolve(releaseZipPath, component, 'src/compiled.css');
   if (!fs.existsSync(compiledCssPath)) {
-    const compiledCss = await compileCss(releaseZipPath, component)
+    const compiledCss = await compileCss(releaseZipPath, component);
     await fs.writeFileSync(compiledCssPath, compiledCss, 'utf-8');
   }
   return fs.readFileSync(compiledCssPath, 'utf-8');
-}
+};
 
 // 获取 NavGroups
 export const getNavGroups = async (releaseZipPath) => {

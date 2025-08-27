@@ -1,4 +1,5 @@
 export type PropValue = string | number | boolean | Array<string | number | boolean> | object;
+export type PropType = 'string' | 'number' | 'boolean' | 'array' | 'object';
 
 export interface IComponentWiki {
   group: string;
@@ -8,7 +9,7 @@ export interface IComponentWiki {
   description: string;
   props: {
     name: string;
-    type: string;
+    type: PropType;
     default: string;
     description: string;
     link?: string;
@@ -22,7 +23,7 @@ export interface IComponentWiki {
       link?: string;
     }[]
   }[];
-  demos: Array<{
+  presets: Array<{
     title: string;
     description: string;
     props: Record<string, PropValue>;

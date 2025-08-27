@@ -3,10 +3,13 @@
     :loading="loading"
     class="demo-home"
   >
-    <render-component
+    <render-edit-component
       :component="component"
-      :slots="componentStore.activeComponentWiki.demos[0].slots"
-      :props="componentStore.activeComponentWiki.demos[0].props"
+      :component-wiki="componentStore.activeComponentWiki"
+    />
+    <render-contributor
+    />
+    <render-bottom-nav
     />
   </bk-loading>
 </template>
@@ -23,7 +26,9 @@ import {
   watch,
 } from 'vue';
 
-import RenderComponent from '@/components/render-component/index';
+import RenderBottomNav from '@/components/render-bottom-nav/index.vue';
+import RenderContributor from '@/components/render-contributor/index.vue';
+import RenderEditComponent from '@/components/render-edit-component/index.vue';
 import {
   useExternals,
 } from '@/hooks/use-externals';
@@ -88,5 +93,6 @@ onBeforeUnmount(() => {
 <style lang="postcss" scoped>
 .demo-home {
   height: calc(100% - 149px);
+  padding: 40px 40px 32px;
 }
 </style>

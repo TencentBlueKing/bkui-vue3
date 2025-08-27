@@ -53,7 +53,7 @@ export default createRouter({
           path: 'directive/:directiveName',
           name: 'directive',
           component: Directive,
-        }
+        },
       ],
     },
   ],

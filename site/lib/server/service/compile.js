@@ -23,16 +23,19 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
+import fs from 'node:fs';
 import path from 'node:path';
+
 import {
-  buildModule
+  emit,
+} from '@blueking/cli-service/dist/tools/rust/emit/index.js';
+import {
+  buildModule,
 } from '@blueking/cli-service/dist/tools/rust/module/index.js';
 import {
-  transform
+  transform,
 } from '@blueking/cli-service/dist/tools/rust/transform/index.js';
-import {
-  emit
-} from '@blueking/cli-service/dist/tools/rust/emit/index.js';
+
 import LessResolvePathPlugin from '../scripts/less-plugin.js';
 
 // 组件公共依赖
@@ -43,11 +46,11 @@ const externals = {
   'lodash/throttle': 'lodashThrottle',
   'lodash/merge': 'lodashMerge',
   '@popperjs/core': 'popperjsCore',
-  'vue-types': 'vueTypes'
-}
+  'vue-types': 'vueTypes',
+};
 
 // 转换路径分隔符为 /
-export const normalize = (file) => file.replace(/\\/g, '/');
+export const normalize = file => file.replace(/\\/g, '/');
 
 // 解析路径
 export const resolve = (...files) => normalize(path.resolve(...files));
@@ -62,7 +65,7 @@ const generateFunctionName = (absolutePath, releaseZipPath) => {
   return absolutePath
     .replace(releaseZipPath, '')
     .replace(/[-//.]/g, '_')
-    .replace(/:/g, '_')
+    .replace(/:/g, '_');
 };
 
 /**
@@ -77,7 +80,7 @@ const getDependencyAbsolutePath = (originAbsoluteFilePath, dependencyPath) => {
   }
   // 处理相对路径
   const originAbsoluteDir = path.dirname(originAbsoluteFilePath);
-  return resolve(originAbsoluteDir, dependencyPath)
+  return resolve(originAbsoluteDir, dependencyPath);
 };
 
 /**
@@ -89,8 +92,7 @@ const getDependencyAbsolutePath = (originAbsoluteFilePath, dependencyPath) => {
  */
 const transformFileContent = (code, originAbsoluteFilePath, releaseZipPath) => {
   // 去除注释
-  let transformedCode = code
-    .replace(/\/\*[\s\S]*?\*\/|([^\:]|^)\/\/.*$/gm, '$1');
+  let transformedCode = code.replace(/\/\*[\s\S]*?\*\/|([^\:]|^)\/\/.*$/gm, '$1');
 
   transformedCode = transformedCode.replace(/"use strict";/g, 'const exports = {}');
 
@@ -98,15 +100,18 @@ const transformFileContent = (code, originAbsoluteFilePath, releaseZipPath) => {
     /require\(['"](.*?)['"]\);?/g,
     (match, dependencyPath) => {
       if (!dependencyPath) return match;
-      const funcName = generateFunctionName(getDependencyAbsolutePath(originAbsoluteFilePath, dependencyPath), releaseZipPath);
+      const funcName = generateFunctionName(
+        getDependencyAbsolutePath(originAbsoluteFilePath, dependencyPath),
+        releaseZipPath,
+      );
       return `${funcName}()`;
-    }
+    },
   );
 
   transformedCode += 'return exports';
 
   return transformedCode;
-}
+};
 
 /**
  * 获取编译上下文
@@ -122,37 +127,37 @@ const getCompileContext = (releaseZipPath, entryPath, preserveModuleType, option
       preserveModuleType,
       resource: {
         main: {
-          entry: entryPath
-        }
+          entry: entryPath,
+        },
       },
       configureWebpack: {
         ...options?.configureWebpack,
         resolve: {
           alias: {
-            '@bkui-vue': releaseZipPath
-          }
-        }
+            '@bkui-vue': releaseZipPath,
+          },
+        },
       },
-    }
-  }
-}
+    },
+  };
+};
 
 /**
  * @description 编译demo文件
  */
 export const compileDemo = async (releaseZipPath, entryPath) => {
   const fileMap = {};
-   // 构建配置
+  // 构建配置
   const options = {
     configureWebpack: {
-      externals
-    }
-  }
+      externals,
+    },
+  };
   const context = getCompileContext(releaseZipPath, entryPath, 'commonjs', options);
   await buildModule(fileMap, context);
   await transform(fileMap, context);
   await emit(fileMap, context);
-}
+};
 
 /**
  * 构造编译后的文件
@@ -160,8 +165,12 @@ export const compileDemo = async (releaseZipPath, entryPath) => {
  * @param {*} entryPath 入口文件地址
  */
 export const generateCompiledFile = async (fileMap, entryPath, releaseZipPath) => {
-  const entryFile = fileMap[entryPath]
-  const transformedEntryFileContent = transformFileContent(entryFile.content, entryFile.originAbsoluteFilePath, releaseZipPath);
+  const entryFile = fileMap[entryPath];
+  const transformedEntryFileContent = transformFileContent(
+    entryFile.content,
+    entryFile.originAbsoluteFilePath,
+    releaseZipPath,
+  );
   const transformedDependenciesContent = Object.values(fileMap).reduce(
     (acc, cur) => {
       if (cur.originAbsoluteFilePath !== entryPath) {
@@ -171,10 +180,10 @@ export const generateCompiledFile = async (fileMap, entryPath, releaseZipPath) =
       }
       return acc;
     },
-    ''
+    '',
   );
   return `window.getComponent = () => {\n${transformedDependenciesContent}\n${transformedEntryFileContent}\n}`;
-}
+};
 
 /**
  * @description 编译组件文件
@@ -185,11 +194,11 @@ export const compileComponent = async (releaseZipPath, component) => {
   // 构建配置
   const options = {
     configureWebpack: {
-      externals
-    }
-  }
+      externals,
+    },
+  };
   // 路径
-  const entryPath = resolve(releaseZipPath, component, 'src/index.ts')
+  const entryPath = resolve(releaseZipPath, component, 'src/index.ts');
   // 生成上下文
   const context = getCompileContext(releaseZipPath, entryPath, 'commonjs', options);
   // 编辑
@@ -200,19 +209,21 @@ export const compileComponent = async (releaseZipPath, component) => {
   await emit(fileMap, context);
   // 生成组件文件
   return generateCompiledFile(fileMap, entryPath, releaseZipPath);
-}
+};
 
 /**
  * 编译组件css
  * @param {*} releaseZipPath zip包路径
  * @param {*} component 组件名
- * @returns 
+ * @returns
  */
 export const compileCss = async (releaseZipPath, component) => {
   // 组件文件
   const fileMap = {};
   // 路径
   const entryPath = resolve(releaseZipPath, component, `src/${component}.less`);
+  // less 文件不存在返回空
+  if (!fs.existsSync(entryPath)) return '';
   // 构建配置
   const options = {
     configureWebpack: {
@@ -222,9 +233,9 @@ export const compileCss = async (releaseZipPath, component) => {
     },
     css: {
       lessLoaderOptions: {
-        plugins: [new LessResolvePathPlugin()]
-      }
-    }
+        plugins: [new LessResolvePathPlugin()],
+      },
+    },
   };
   // 生成上下文
   const context = getCompileContext(releaseZipPath, entryPath, 'commonjs', options);
@@ -234,6 +245,6 @@ export const compileCss = async (releaseZipPath, component) => {
   await transform(fileMap, context);
   // 输出，减少二次编译
   await emit(fileMap, context);
-  
+
   return fileMap[entryPath].content;
-}
+};

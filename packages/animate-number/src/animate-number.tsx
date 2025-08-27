@@ -26,14 +26,11 @@
 
 import { computed, defineComponent, onBeforeUnmount, onMounted, Ref, ref, watch } from 'vue';
 
-import { PropTypes } from '@bkui-vue/shared';
+import { props } from './props';
 
 export default defineComponent({
   name: 'AnimateNumber',
-  props: {
-    value: PropTypes.number.def(0),
-    digits: PropTypes.number.def(0),
-  },
+  props,
   setup(props) {
     let rafId = -1;
     const tweeningValue: Ref<number> = ref(0);

@@ -1,13 +1,13 @@
+import * as Lodash from 'lodash';
+import * as UUID from 'uuid';
 import {
   onBeforeMount,
   onBeforeUnmount,
 } from 'vue';
-
 import * as Vue from 'vue';
-import * as Lodash from 'lodash';
-import * as UUID from 'uuid';
-import * as PopperjsCore from '@popperjs/core';
 import * as VueTypes from 'vue-types';
+
+import * as PopperjsCore from '@popperjs/core';
 
 export const useExternals = () => {
   const loadExternals = () => {
@@ -32,4 +32,4 @@ export const useExternals = () => {
 
   onBeforeMount(loadExternals);
   onBeforeUnmount(unloadExternals);
-}
+};

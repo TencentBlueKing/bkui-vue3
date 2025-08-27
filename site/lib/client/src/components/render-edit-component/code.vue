@@ -1,0 +1,3 @@
+<template>
+  'code'
+</template>
