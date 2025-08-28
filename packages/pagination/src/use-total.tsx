@@ -34,7 +34,7 @@ import type { ComponentInternalInstance, ComputedRef } from 'vue';
 
 export default (t: ComputedRef<Language['pagination']>) =>
   ({ isFirst, isLast }) => {
-    const { props } = getCurrentInstance() as ComponentInternalInstance & { props: PaginationProps };
+    const { props, slots } = getCurrentInstance() as ComponentInternalInstance & { props: PaginationProps };
 
     if (!props.showTotalCount) {
       return null;
@@ -56,6 +56,9 @@ export default (t: ComputedRef<Language['pagination']>) =>
         {t.value.total}
         <div class={`${resolveClassName('pagination-total-num')}`}>{props.count}</div>
         {t.value.strip}
+        {
+          slots.totalAppend?.()
+        }
       </div>
     );
   };
