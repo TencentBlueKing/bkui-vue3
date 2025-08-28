@@ -1,6 +1,12 @@
 ## 更新日志
 
 
+### 2.0.2-beta.61
+
+* **[feat]**:
+    - feature(pagination): 增加 slot
+
+
 ### 2.0.2-beta.60
 
 * **[feat]**:
