@@ -28,20 +28,15 @@ import { defineComponent, reactive } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import { CloseLine, InfoLine } from '@bkui-vue/icon';
-import { classes, PropTypes, TagThemeEnum, TagThemeType } from '@bkui-vue/shared';
+import { classes } from '@bkui-vue/shared';
+
+import { emits } from './emits';
+import { props } from './props';
 
 export default defineComponent({
   name: 'Alert',
-  props: {
-    theme: TagThemeType().def(TagThemeEnum.INFO),
-    title: PropTypes.string,
-    closable: PropTypes.bool.def(false),
-    closeText: PropTypes.string,
-    showIcon: PropTypes.bool.def(true),
-  },
-  emits: {
-    close: (event: Event) => event,
-  },
+  props,
+  emits,
   setup(_props, context) {
     const state = reactive({
       visible: true,

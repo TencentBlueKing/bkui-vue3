@@ -8,4 +8,5 @@ declare interface Window {
   lodashThrottle: Function;
   lodashMerge: Function;
   getComponent: Function;
+  lodashCloneDeep: Function;
 }

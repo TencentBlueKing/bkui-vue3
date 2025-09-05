@@ -45,6 +45,7 @@ const externals = {
   uuid: 'uuid',
   'lodash/throttle': 'lodashThrottle',
   'lodash/merge': 'lodashMerge',
+  'lodash/cloneDeep': 'lodashCloneDeep',
   '@popperjs/core': 'popperjsCore',
   'vue-types': 'vueTypes',
 };
@@ -92,7 +93,7 @@ const getDependencyAbsolutePath = (originAbsoluteFilePath, dependencyPath) => {
  */
 const transformFileContent = (code, originAbsoluteFilePath, releaseZipPath) => {
   // 去除注释
-  let transformedCode = code.replace(/\/\*[\s\S]*?\*\/|([^\:]|^)\/\/.*$/gm, '$1');
+  let transformedCode = code.replace(/\/\*[\s\S]*?\*\/|([^:]|^)\/\/.*$/gm, '$1');
 
   transformedCode = transformedCode.replace(/"use strict";/g, 'const exports = {}');
 

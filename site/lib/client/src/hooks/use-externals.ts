@@ -18,6 +18,7 @@ export const useExternals = () => {
     window.vueTypes = () => VueTypes;
     window.lodashThrottle = () => Lodash.throttle;
     window.lodashMerge = () => Lodash.merge;
+    window.lodashCloneDeep = () => Lodash.cloneDeep;
   };
 
   const unloadExternals = () => {

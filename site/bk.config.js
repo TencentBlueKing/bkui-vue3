@@ -52,9 +52,7 @@ module.exports = {
           }
 
           // 监听目标文件夹
-          const watcher = chokidar.watch(
-            path.resolve(__dirname, '../packages'),
-          );
+          const watcher = chokidar.watch(path.resolve(__dirname, '../packages'));
           watcher.on('all', () => {
             // 通知前端
             devServer.sendMessage(devServer.webSocketServer.clients, 'content-changed');
