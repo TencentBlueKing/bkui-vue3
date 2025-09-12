@@ -160,6 +160,11 @@ const eventJson = [
     desc: '选择面板中的Key值时触发',
     params: 'event',
   },
+  {
+    name: 'copy',
+    desc: '复制时触发',
+    params: 'event: ClipboardEvent, text: string, selectedItem: ISearchValue',
+  },
 ];
 const dataJson = [
   {
