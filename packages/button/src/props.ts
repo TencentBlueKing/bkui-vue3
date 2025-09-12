@@ -1,12 +1,12 @@
 /*
  * Tencent is pleased to support the open source community by making
- * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ * 蓝鲸智云PaaS平台 (BlueKing PaaS) available.
  *
- * Copyright (C) 2025 Tencent.  All rights reserved.
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
  *
- * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ * 蓝鲸智云PaaS平台 (BlueKing PaaS) is licensed under the MIT License.
  *
- * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ * License for 蓝鲸智云PaaS平台 (BlueKing PaaS):
  *
  * ---------------------------------------------------
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
@@ -23,21 +23,37 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-export interface IBreadcrumbProps {
-  separator: string;
-  separatorClass: string;
-}
+import { BkLoadingMode } from '@bkui-vue/loading';
+import { PropTypes, ElementType } from '@bkui-vue/shared';
 
-import { PropTypes } from '@bkui-vue/shared';
-
-import type { ExtractPropTypes } from 'vue';
+import type { ExtractPropTypes, PropType } from 'vue';
+const btnSizes = ['', 'small', 'large'] as const;
+type IButtonNativeType = PropType<'button' | 'reset' | 'submit'>;
 
 export const props = {
-  extCls: PropTypes.string,
-  separator: PropTypes.string.def('/'),
-  separatorClass: PropTypes.string,
-  replace: PropTypes.bool,
-  backRouter: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).def(''),
+  theme: PropTypes.theme(),
+  hoverTheme: PropTypes.theme(),
+  size: {
+    type: String as PropType<ElementType<typeof btnSizes>>,
+    default: btnSizes[0],
+  },
+  title: PropTypes.string,
+  icon: PropTypes.string,
+  iconRight: PropTypes.string,
+  disabled: PropTypes.bool,
+  loading: PropTypes.bool,
+  loadingMode: {
+    type: String as PropType<`${BkLoadingMode}`>,
+    default: 'default',
+  },
+  outline: PropTypes.bool,
+  text: PropTypes.bool,
+  selected: PropTypes.bool,
+  // circle: PropTypes.bool,
+  nativeType: {
+    type: String as IButtonNativeType,
+    default: 'button',
+  },
 };
 
-export type BreadcrumbProps = ExtractPropTypes<typeof props>;
+export type ButtonProps = ExtractPropTypes<typeof props>;

@@ -24,27 +24,17 @@
  * IN THE SOFTWARE.
  */
 
-import { defineComponent, ExtractPropTypes, getCurrentInstance, onMounted, provide } from 'vue';
+import { defineComponent, getCurrentInstance, onMounted, provide } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import { ArrowsLeft } from '@bkui-vue/icon';
-import { classes, PropTypes } from '@bkui-vue/shared';
+import { classes } from '@bkui-vue/shared';
 
-import { IBreadcrumbProps } from './props';
-
-export const breadcrumbType = {
-  extCls: PropTypes.string,
-  separator: PropTypes.string.def('/'),
-  separatorClass: PropTypes.string,
-  replace: PropTypes.bool,
-  backRouter: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).def(''),
-};
-
-export type BreadcrumbType = ExtractPropTypes<typeof breadcrumbType>;
+import { props, IBreadcrumbProps } from './props';
 
 export default defineComponent({
   name: 'Breadcrumb',
-  props: breadcrumbType,
+  props,
   setup(props, { slots }) {
     const { resolveClassName } = usePrefix();
     const { proxy, appContext } = getCurrentInstance();

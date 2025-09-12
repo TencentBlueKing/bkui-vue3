@@ -27,26 +27,14 @@
 import { computed, defineComponent } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-import { classes, PropTypes } from '@bkui-vue/shared';
+import { classes } from '@bkui-vue/shared';
+
+import { emits } from './emits';
+import { props } from './props';
 export default defineComponent({
   name: 'Badge',
-  props: {
-    /** badge theme */
-    theme: PropTypes.string.def('primary'),
-    /** Number to show in badge */
-    count: PropTypes.oneOfType([String, Number]).def(1),
-    position: PropTypes.string.def('top-right'),
-    radius: PropTypes.string,
-    valLength: PropTypes.number.def(3),
-    /** Show capped numeric value */
-    overflowCount: PropTypes.number.def(99),
-    /** Whether to show red dots with no content */
-    dot: PropTypes.bool.def(false),
-    visible: PropTypes.bool.def(false),
-    /** 外部设置的 class name */
-    extCls: PropTypes.string,
-  },
-  emits: ['hover', 'leave'],
+  props,
+  emits,
   setup(props, { emit }) {
     const numberCount = computed(() => {
       if (typeof props.count === 'string') {

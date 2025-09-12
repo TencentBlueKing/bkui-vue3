@@ -28,18 +28,14 @@ import { defineComponent, onBeforeUnmount, onMounted, type Ref, ref, Transition,
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import { AngleUp } from '@bkui-vue/icon';
-import { bkZIndexManager, PropTypes } from '@bkui-vue/shared';
+import { bkZIndexManager } from '@bkui-vue/shared';
 import throttle from 'lodash/throttle';
+
+import { props } from './props';
 
 export default defineComponent({
   name: 'Backtop',
-  props: {
-    visibilityHeight: PropTypes.number.def(200),
-    target: PropTypes.string.def(''),
-    right: PropTypes.number.def(40),
-    bottom: PropTypes.number.def(40),
-    extCls: PropTypes.string.def(''),
-  },
+  props,
   setup(props, { slots }) {
     const container: Ref<Document | HTMLElement | null> = ref(null);
     const el: Ref<HTMLElement | null> = ref(null);
