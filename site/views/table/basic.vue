@@ -5,35 +5,35 @@
   <div style="display: grid">
     <div style="height: 300px">
       <bk-table
-        rowDraggable
         ref="refTable"
-        :data="projectTable"
         height="auto"
-        max-height="100%"
-        stripe
-        :fixedBottom="fixedBottom"
-        show-overflow-tooltip
+        :data="projectTable"
+        :fixed-bottom="fixedBottom"
         :pagination="pagination"
+        max-height="100%"
+        row-draggable
+        show-overflow-tooltip
+        stripe
       >
         <bk-table-column
-          type="selection"
-          :min-width="30"
           width="30"
+          :min-width="30"
           align="center"
+          type="selection"
         />
         <bk-table-column
+          :sort="true"
           label="用户组"
           prop="groupName"
-          :sort="true"
         />
         <bk-table-column
           label="用户描述"
           prop="groupDesc"
         />
         <bk-table-column
+          :filter="filterOption"
           label="有效期"
           prop="validityPeriod"
-          :filter="filterOption"
         />
         <bk-table-column
           label="加入时间"
@@ -84,7 +84,6 @@
       removeMemberButtonControl: true,
     });
   };
-
 
   const fixedBottom = reactive({
     position: 'relative',
