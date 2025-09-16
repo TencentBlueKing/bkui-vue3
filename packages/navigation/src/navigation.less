@@ -8,21 +8,21 @@
 
   &-title {
     display: flex;
+    flex: 0 0 260px;
+    align-items: center;
+    justify-content: flex-start;
     height: 100%;
     padding: 0 16px;
     overflow: hidden;
     border-bottom: 1px solid rgba(255, 255, 255, .05);
-    align-items: center;
-    justify-content: flex-start;
-    flex: 0 0 260px;
 
     .title-icon {
       display: flex;
-      font-size: 28px;
-      color: #768197;
       flex: 0 0 28px;
       align-items: center;
       justify-content: center;
+      font-size: 28px;
+      color: #768197;
     }
 
     .title-desc {
@@ -38,8 +38,8 @@
   }
 
   &-header {
-    flex: 0 0 52px;
     display: flex;
+    flex: 0 0 52px;
     align-items: center;
     padding-right: 24px;
     overflow: hidden;
@@ -47,30 +47,30 @@
 
     .header-right {
       display: flex;
-      height: 100%;
       flex: 1;
       align-items: center;
+      height: 100%;
     }
   }
 
   &-wrapper {
     position: relative;
     display: flex;
-    flex-direction: row;
     flex: 1;
+    flex-direction: row;
     min-height: 0;
 
     .navigation-nav {
       position: relative;
       z-index: 101;
       display: flex;
+      flex: 0 1 auto;
+      flex-direction: column;
       width: 60px;
       min-width: 0;
       min-height: 0;
       overflow: visible;
       transition: width cubic-bezier(.4, 0, .2, 1) .3s;
-      flex: 0 1 auto;
-      flex-direction: column;
 
       &:hover {
         cursor: pointer;
@@ -78,19 +78,19 @@
 
       .nav-slider {
         display: flex;
+        flex: 1;
+        flex-direction: column;
         width: 60px;
         height: 100%;
         background-color: @nav-bg-color;
         transition: width cubic-bezier(.4, 0, .2, 1) .3s;
-        flex: 1;
-        flex-direction: column;
 
         &-list {
+          flex: 1 1 auto;
           max-height: calc(100vh - 100px);
           padding: 12px 0 4px 0;
           margin: 0;
           overflow: auto;
-          flex: 1 1 auto;
 
           &::-webkit-scrollbar {
             display: none;
@@ -98,38 +98,38 @@
             height: 5px;
 
             &:hover {
-              transform: none;
               transition: opacity 340ms ease-out;
+              transform: none;
             }
           }
         }
 
         &-footer {
           display: flex;
-          padding-left: 14px;
           flex: 0 0 56px;
           align-items: center;
           justify-content: flex-start;
+          padding-left: 14px;
 
           .footer-icon {
             display: flex;
+            align-items: center;
+            justify-content: center;
             width: 32px;
             height: 32px;
             font-size: 14px;
             color: #63656e;
             border-radius: 100%;
-            align-items: center;
-            justify-content: center;
             transform-origin: center center;
 
             &-svg {
               display: flex;
+              align-items: center;
+              justify-content: center;
               width: 16px;
               height: 16px;
               font-size: 16px;
               transition: transform cubic-bezier(.4, 0, .2, 1) .3s;
-              align-items: center;
-              justify-content: center;
               transform-origin: center center;
             }
 
@@ -144,9 +144,9 @@
             }
 
             &:hover {
-              color: #3a3c42;
+              color: #B0BDD5;
               cursor: pointer;
-              background: linear-gradient(270deg, rgba(222, 224, 234, 1) 0%, rgba(234, 236, 242, 1) 100%);
+              background: #424A5F;
             }
           }
         }
@@ -156,24 +156,24 @@
     .navigation-container {
       position: relative;
       display: flex;
-      max-width: calc(100vw - 60px);
-      min-width: 0;
-      min-height: 0;
       flex: 1 1 1px;
       flex-direction: column;
+      min-width: 0;
+      max-width: calc(100vw - 60px);
+      min-height: 0; 
 
       .container-header {
         display: flex;
+        flex-basis: 60px;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-end;
         width: 100%;
         height: 60px;
         padding: 0 24px;
         background: #fff;
         border-bottom: 1px solid #dcdee5;
         box-shadow: 0px 3px 4px 0px rgba(64, 112, 203, .06);
-        flex-basis: 60px;
-        flex-direction: row;
-        align-items: center;
-        justify-content: flex-end;
 
         &-title {
           height: 21px;
@@ -191,11 +191,11 @@
       }
 
       .container-content {
+        flex: 1;
         max-height: calc(100vh - 60px);
         padding: 20px 24px 0;
         overflow: auto;
         background: #f5f7fa;
-        flex: 1;
       }
 
       .container-footer {
