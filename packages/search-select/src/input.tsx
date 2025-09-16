@@ -490,7 +490,9 @@ export default defineComponent({
             (usingItem.value.searchItem?.async === undefined || usingItem.value.searchItem.async === true)))
       ) {
         loading.value = true;
-        list = await props.getMenuList(usingItem.value?.searchItem, keyword.value.trim()).catch(() => []);
+        list = await props
+          .getMenuList(usingItem.value?.searchItem, keyword.value.trim() || usingItem.value?.values?.[0]?.name || '')
+          .catch(() => []);
         loading.value = false;
       } else if (!usingItem?.value) {
         if (!keyword.value?.length) {
@@ -553,7 +555,6 @@ export default defineComponent({
         );
       }
       menuList.value = list;
-      console.log('list', list);
       if (props.valueBehavior === ValueBehavior.NEED_KEY) {
         const hoverItem = list.find(item => !item.disabled);
         if (

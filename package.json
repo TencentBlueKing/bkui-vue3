@@ -6,6 +6,7 @@
     "scripts/cli",
     "site"
   ],
+  "private": true,
   "files": [
     "lib",
     "dist"
