@@ -54,6 +54,7 @@ export interface ISearchSelectProvider {
   onEditEnter: (item: SelectedItem, index: number) => void;
   onEditBlur: () => void;
   onValidate: (str: string) => void;
+  onCopy: (event: ClipboardEvent, text: string, item: ISearchValue) => void;
   editKey: Ref<string>;
   searchData: ComputedRef<ISearchItem[]>;
   isClickOutside: (target: Node) => boolean;
