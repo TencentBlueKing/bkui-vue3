@@ -1,6 +1,16 @@
 ## 更新日志
 
 
+### 2.0.2-beta.64
+
+* **[feat]**:
+    - feature(tag-input): 单个项，双击可编辑
+    - feature(navigation): 导航组件希望支持新的交互规范
+    - bugfix(resize-layout): aside-bottom的时候把手位置异常
+    - feature(search-select): 支持 copy 事件并回调可修改用户复制内容
+    - fix: searchSelect getMenuList是异步的时候复制就不会触发这个get-menu-list方法
+
+
 ### 2.0.2-beta.63
 
 * **[feat]**:
