@@ -81,6 +81,8 @@ export default defineComponent({
     const inputValueRef = ref<HTMLElement>();
     const timer: Ref<ReturnType<typeof setTimeout>> = ref(null);
 
+    const isShowDblclickEdit = ref(false);
+
     // 是否展示tag close
     const showTagClose = computed(() => !props.disabled && props.hasDeleteIcon);
     // 是否单选
@@ -263,6 +265,9 @@ export default defineComponent({
       state.isEdit = true;
 
       setTimeout(() => {
+        if (isShowDblclickEdit.value) {
+          return;
+        }
         tagInputRef.value?.focus();
         if (props.trigger === 'focus' && listState.localList.length !== 0) {
           filterData();
@@ -273,6 +278,73 @@ export default defineComponent({
           }
         }
       }, 200);
+    };
+
+    const handleTagDblclick = isDblclick => {
+      isShowDblclickEdit.value = isDblclick;
+      setTimeout(() => {
+        state.isEdit = false;
+        popoverProps.isShow = false;
+      }, 10);
+    };
+
+    const handleTagDblclickChange = (item, index, value) => {
+      setTimeout(() => {
+        state.isEdit = false;
+        popoverProps.isShow = false;
+      }, 10);
+
+      if (listState.selectedTagList.length >= props.maxData && props.maxData !== -1) {
+        return;
+      }
+
+      const { separator, saveKey, displayKey, createTagValidator, clearTextSpace } = props;
+
+      const validateTag = (value: string): boolean => {
+        if (typeof createTagValidator === 'function') {
+          return createTagValidator(value);
+        }
+        return true;
+      };
+
+      let newValue;
+
+      if (separator) {
+        let tags = value.split(separator);
+        tags = tags.filter(tag => tag?.trim() && !tagList.value.includes(tag) && validateTag(tag));
+        const localTags = tags.map(
+          tag =>
+            saveKeyMap.value[tag] || {
+              [saveKey]: tag,
+              [displayKey]: tag,
+            },
+        );
+        if (tags.length) {
+          listState.selectedTagList.splice(index, 1, ...localTags);
+        }
+      } else {
+        const isObject = typeof value === 'object';
+        newValue = isObject ? value[saveKey] : value.trim();
+        if (clearTextSpace) {
+          newValue = newValue.replace(/\s+/g, '');
+        }
+        if (newValue !== undefined && !tagList.value.includes(newValue) && validateTag(newValue)) {
+          const localItem =
+            saveKeyMap.value[newValue] || (isObject ? value : { [saveKey]: newValue, [displayKey]: newValue });
+          listState.selectedTagList.splice(index, 1, localItem);
+        }
+      }
+
+      const isExistInit = saveKeyMap.value[item[props.saveKey]];
+      // 将删除的项加入加列表
+      if (((props.allowCreate && isExistInit) || !props.allowCreate) && !isSingleSelect.value) {
+        listState.localList.push(item);
+      }
+      // console.error('listState.selectedTagListlistState.selectedTagList', listState.selectedTagList);
+      // console.error('listState.localListlistState.localList', listState.localList);
+      // console.error('tagList.valuetagList.value', tagList.value);
+      emit('update:modelValue', tagList.value);
+      emit('change', tagList.value);
     };
 
     /**
@@ -923,6 +995,8 @@ export default defineComponent({
       handleKeydown,
       handlePaste,
       resolveClassName,
+      handleTagDblclick,
+      handleTagDblclickChange,
     };
   },
   render() {
@@ -960,11 +1034,16 @@ export default defineComponent({
                         onClick={this.tagFocus}
                       >
                         <TagRender
+                          allowCreate={this.allowCreate}
                           displayKey={this.displayKey}
                           node={item}
                           tagOverflowTips={this.tagOverflowTips}
                           tooltipKey={this.tooltipKey || this.displayKey}
                           tpl={this.tagTpl}
+                          onChange={
+                            this.allowCreate ? val => this.handleTagDblclickChange(item, index, val) : undefined
+                          }
+                          onDblclick={this.allowCreate ? isDblclick => this.handleTagDblclick(isDblclick) : undefined}
                         />
                         {this.showTagClose && (
                           <Error

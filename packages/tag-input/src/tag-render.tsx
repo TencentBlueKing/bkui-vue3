@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 
-import { computed, defineComponent, h, onMounted, PropType, ref } from 'vue';
+import { computed, defineComponent, h, onMounted, PropType, ref, watch } from 'vue';
 
 import { bkTooltips } from '@bkui-vue/directives';
 import { type IOptions } from '@bkui-vue/directives';
@@ -51,8 +51,13 @@ export default defineComponent({
       type: Object as PropType<Partial<IOptions>>,
       default: () => ({}),
     },
+    allowCreate: {
+      type: Boolean,
+      default: false,
+    },
   },
-  setup(props) {
+  emits: ['dblclick', 'change'],
+  setup(props, { emit }) {
     const tagRef = ref();
     const isOverflow = ref(false);
     const overflowTips = computed(() => ({
@@ -64,6 +69,78 @@ export default defineComponent({
       ...props.tagOverflowTips,
     }));
 
+    const editRef = ref<HTMLElement>();
+    const showEdit = ref(false);
+    const clickTimer = ref<null | number>(null);
+
+    const handleClick = () => {
+      if (clickTimer.value) {
+        clearTimeout(clickTimer.value);
+      }
+
+      clickTimer.value = window.setTimeout(() => {
+        // timer 为 null 说明是双击
+        if (clickTimer.value === null) {
+          return;
+        }
+        clickTimer.value = null;
+      }, 200);
+    };
+
+    const handleDblclick = (e: MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      // 阻止单击事件执行
+      if (clickTimer.value) {
+        clearTimeout(clickTimer.value);
+        clickTimer.value = null;
+      }
+
+      showEdit.value = true;
+      emit('dblclick', true);
+      setTimeout(() => {
+        editRef.value?.focus();
+      }, 0);
+    };
+
+    const handleEditBlur = () => {
+      showEdit.value = false;
+      emit('dblclick', false);
+    };
+
+    const handleEditFocus = () => {
+      showEdit.value = true;
+    };
+
+    const handleEditChange = (e: Event) => {
+      const val = (e.target as HTMLInputElement).value;
+      emit('change', val);
+    };
+
+    const handleEditKeyDown = (e: KeyboardEvent) => {
+      if ((e.code === 'Enter' || e.key === 'Enter' || e.keyCode === 13) && !e.isComposing) {
+        const val = (e.target as HTMLInputElement).value;
+        emit('change', val);
+        setTimeout(() => {
+          handleEditBlur();
+        }, 100);
+      }
+    };
+
+    const handleEditInput = (e: Event) => {
+      // console.error('handleEditInputhandleEditInputhandleEditInput', (e.target as HTMLInputElement).value, props.node);
+      // emit('input', e.target.value);
+      const val = (e.target as HTMLInputElement).value;
+      editValue.value = val;
+    };
+
+    const editValue = ref(props.node[props.displayKey]);
+
+    watch(props.node[props.displayKey], val => {
+      editValue.value = val;
+    });
+
     onMounted(() => {
       isOverflow.value = checkOverflow(tagRef.value);
     });
@@ -71,6 +148,16 @@ export default defineComponent({
     return {
       overflowTips,
       tagRef,
+      editRef,
+      handleClick,
+      handleDblclick,
+      showEdit,
+      handleEditBlur,
+      handleEditFocus,
+      handleEditChange,
+      handleEditKeyDown,
+      handleEditInput,
+      editValue,
     };
   },
   render() {
@@ -84,7 +171,28 @@ export default defineComponent({
         class='tag'
         v-bk-tooltips={this.overflowTips}
       >
-        <span class='text'>{this.node[this.displayKey]}</span>
+        {this.showEdit ? (
+          <input
+            ref='editRef'
+            class='dblclick-edit-input'
+            type='text'
+            // value={this.node[this.displayKey]}
+            value={this.editValue}
+            onBlur={this.handleEditBlur}
+            onChange={this.handleEditChange}
+            onFocus={this.handleEditFocus}
+            onInput={this.handleEditInput}
+            onKeydown={this.handleEditKeyDown}
+          />
+        ) : null}
+        <span
+          class='text'
+          onClick={this.allowCreate ? this.handleClick : undefined}
+          onDblclick={this.allowCreate ? this.handleDblclick : undefined}
+        >
+          {/* {this.node[this.displayKey]} */}
+          {this.editValue}
+        </span>
       </div>
     );
   },
