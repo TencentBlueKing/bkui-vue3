@@ -27,24 +27,15 @@
 import { defineComponent } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-import { bkZIndexManager, PropTypes } from '@bkui-vue/shared';
+import { bkZIndexManager } from '@bkui-vue/shared';
 
-interface INavItem {
-  icon: string;
-  action: Function;
-  text: string;
-  tooltip: object;
-}
+import { emits } from './emits';
+import { props, type INavItem } from './props';
 
 export default defineComponent({
   name: 'FixedNavbar',
-  props: {
-    navItems: PropTypes.array.def([]),
-    extCls: PropTypes.string.def(''),
-    position: PropTypes.oneOf(['middle', 'top', 'bottom']).def('middle'),
-    modelValue: PropTypes.bool.def(true),
-  },
-  emits: ['update:modelValue', 'click'],
+  props,
+  emits,
   setup(props, { emit }) {
     const navConfig = props.navItems.map(item =>
       Object.assign(

@@ -714,3 +714,5 @@ export const tableProps = {
     },
   }),
 };
+
+export type TableProps = ExtractPropTypes<typeof tableProps>;

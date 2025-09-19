@@ -26,5 +26,12 @@
 import { withInstall } from '@bkui-vue/shared';
 
 import bkDivider from './divider';
+import { emits } from './emits';
+import { props } from './props';
+
 const BkDivider = withInstall(bkDivider);
+
 export default BkDivider;
+export { props, emits };
+export type { DividerEmits } from './emits';
+export type { DividerProps } from './props';

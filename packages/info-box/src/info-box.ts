@@ -24,38 +24,11 @@
  * IN THE SOFTWARE.
  */
 
-import { createApp, h, ref, VNode } from 'vue';
+import { createApp, h, ref } from 'vue';
 
 import RenderComponent, { genDefaultState } from './render-component';
 
-export interface Props {
-  isShow?: boolean;
-  width?: number | string;
-  extCls?: string | string[];
-  class?: string | string[]; // extCls 改名 class 继续存在为兼容老版本
-  infoType?: 'danger' | 'loading' | 'success' | 'warning'; // infoType 改名 type 继续存在为兼容老版本
-  type?: 'danger' | 'loading' | 'success' | 'warning';
-  title?: (() => VNode | string) | VNode | string;
-  subTitle?: (() => VNode) | VNode | string; // subTitle 改名 content 继续存在为兼容老版本
-  content?: (() => VNode) | VNode | string;
-  footer?: (() => VNode) | VNode | string;
-  headerAlign?: 'center' | 'left' | 'right';
-  footerAlign?: 'center' | 'left' | 'right';
-  contentAlign?: 'center' | 'left' | 'right';
-  showContentBgColor?: boolean; // 是否设置content或subTitle内容默认背景颜色
-  showMask?: boolean;
-  quickClose?: boolean;
-  escClose?: boolean;
-  closeIcon?: boolean;
-  confirmText?: (() => VNode) | VNode | string;
-  theme?: 'danger' | 'primary' | 'success' | 'warning'; // theme 改名 confirmButtonTheme 继续存在为兼容老版本
-  confirmButtonTheme?: 'danger' | 'primary' | 'success' | 'warning';
-  cancelText?: (() => VNode) | VNode | string;
-  beforeClose?: (action: string) => Promise<boolean> | boolean;
-  onConfirm?: () => void;
-  onCancel?: () => void;
-  onClose?: () => void; // onClose 改名 onCancel， 继续存在为兼容老版本
-}
+import type { Props } from './props';
 
 interface InstanceMethods {
   show: () => void;

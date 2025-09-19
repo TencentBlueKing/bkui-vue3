@@ -110,3 +110,5 @@ export { default as VideoFill } from '../icons/video-fill';
 export { default as Warn } from '../icons/warn';
 export { default as Weixin } from '../icons/weixin';
 export { default as WeixinPro } from '../icons/weixin-pro';
+
+export { type IconProps } from './props';

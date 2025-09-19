@@ -29,7 +29,7 @@ import { usePrefix } from '@bkui-vue/config-provider';
 import { Spinner } from '@bkui-vue/icon';
 
 import { ImageViewer } from './index';
-import { propsImage as props } from './props';
+import { props } from './props';
 
 export default defineComponent({
   name: 'Image',

@@ -27,9 +27,12 @@ import { func } from 'vue-types';
 
 import { PropTypes, renderDirectiveType } from '@bkui-vue/shared';
 
+import type { ExtractPropTypes } from 'vue';
+
 export const propsMixin = {
   // 是否显示弹框
   isShow: PropTypes.bool.def(false),
+  // 弹框宽度
   width: PropTypes.oneOfType([String, Number]),
   // 是否全屏
   fullscreen: PropTypes.bool.def(false),
@@ -51,8 +54,13 @@ export const propsMixin = {
   renderDirective: renderDirectiveType(),
   // 关闭前回调
   beforeClose: func<() => Promise<boolean> | boolean>().def(() => true),
+  // 弹框位置
   left: PropTypes.string,
   top: PropTypes.string,
+  // 自定义class
   extCls: PropTypes.string,
+  // 背景颜色
   backgroundColor: PropTypes.string.def(''),
 };
+
+export type ModalPropsMixin = ExtractPropTypes<typeof propsMixin>;

@@ -28,3 +28,5 @@ import { withInstall } from '@bkui-vue/shared';
 import Component from './info-box';
 const BkInfoBox = withInstall(Component);
 export default BkInfoBox;
+
+export type { Props } from './props';

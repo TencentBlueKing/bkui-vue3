@@ -26,5 +26,11 @@
 import { withInstall } from '@bkui-vue/shared';
 
 import Component from './fixed-navbar';
+import { emits } from './emits';
+import { props } from './props';
+
 const BkFixedNavbar = withInstall(Component);
 export default BkFixedNavbar;
+export { props, emits };
+export type { FixedNavbarProps, INavItem } from './props';
+export type { FixedNavbarEmits } from './emits';

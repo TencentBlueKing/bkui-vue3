@@ -26,17 +26,16 @@
 import { defineComponent, h } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
+
+import { composeFormItemEmits } from './compose-form-item-emits';
+import { composeFormItemProps } from './compose-form-item-props';
+
 const isCustomComponent = node => node.__v_isVNode;
 
 export default defineComponent({
   name: 'ComposeFormItem',
-  props: {
-    headBackgroundColor: {
-      type: String,
-      default: '#FAFBFD',
-    },
-    tailBackgroundColor: String,
-  },
+  props: composeFormItemProps,
+  emits: composeFormItemEmits,
   setup() {
     const { resolveClassName } = usePrefix();
     return {

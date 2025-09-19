@@ -38,35 +38,18 @@ import {
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { bkTooltips } from '@bkui-vue/directives';
 import { ExclamationCircleShape } from '@bkui-vue/icon';
-import { classes, formItemKey, PropTypes, useForm, useFormItem } from '@bkui-vue/shared';
+import { classes, formItemKey, useForm, useFormItem } from '@bkui-vue/shared';
 import get from 'lodash/get';
 import isFunction from 'lodash/isFunction';
 
+import { formItemEmits } from './form-item-emits';
+import { formItemProps } from './form-item-props';
 import { getRuleMessage } from './utils';
 import defaultValidator from './validator';
 
 import type { IFormItemRule } from './type';
 import type { Language } from '@bkui-vue/locale';
-import type { ComputedRef, ExtractPropTypes } from 'vue';
-
-const formItemProps = {
-  itemType: PropTypes.oneOf(['default', 'vertical']),
-  label: PropTypes.string,
-  labelWidth: PropTypes.oneOfType([Number, String]),
-  labelPosition: PropTypes.oneOf(['left', 'center', 'right']),
-  property: PropTypes.string.def(''),
-  required: PropTypes.bool.def(false),
-  email: PropTypes.bool.def(false),
-  max: PropTypes.number,
-  min: PropTypes.number,
-  maxlength: PropTypes.number,
-  rules: PropTypes.array,
-  description: PropTypes.string,
-  errorDisplayType: PropTypes.oneOf(['tooltips', 'normal']).def('normal'),
-  errorTipAppendToParent: PropTypes.bool.def(false),
-};
-
-export type FormItemProps = Readonly<ExtractPropTypes<typeof formItemProps>>;
+import type { ComputedRef } from 'vue';
 
 const hasOwn = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key);
 
@@ -188,6 +171,7 @@ export default defineComponent({
     bkTooltips,
   },
   props: formItemProps,
+  emits: formItemEmits,
 
   setup(props, context) {
     const t = useLocale('form');
