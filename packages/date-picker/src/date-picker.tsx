@@ -72,6 +72,7 @@ export default defineComponent({
     'pick-first',
     'blur',
     'focus',
+    'selection-mode-change'
   ],
   // slots: ['header'],
   slots: Object as SlotsType<{
@@ -146,6 +147,8 @@ export default defineComponent({
       }
       // return ['year', 'month', 'date', 'time'].indexOf(type) > -1 && type;
       state.selectionMode = ['year', 'month', 'date', 'time'].indexOf(type) > -1 && type;
+      // 抛出选择时间/选择日期面板切换事件，处理不同面板自定义交互
+      emit('selection-mode-change', _type);
       return state.selectionMode;
     }
 
@@ -546,13 +549,18 @@ export default defineComponent({
       state.visible = false;
       // emit('changeVisible', state.visible);
       state.internalValue = state.internalValue.map(() => null);
-      emit('clear');
-      emitChange(props.type);
-      reset();
       state.showClose = false;
       state.shortcut = null;
 
+      emit('clear');
+      emitChange(props.type);
+
       setTimeout(() => onSelectionModeChange(props.type), 500);
+
+      // 处理选择快捷项后再选择时间清空后再次打开，currentView面板状态未重置
+      nextTick(() => {
+        pickerPanelRef?.value?.resetView();
+      });
     };
 
     const onPickSuccess = () => {
@@ -562,10 +570,10 @@ export default defineComponent({
       // v-model 的值还是之前的值
       nextTick(() => {
         emit('pick-success');
+        // 处理选择快捷项后再选择时间确认后再次打开，currentView面板状态未重置
+        reset();
       });
-
       inputRef?.value?.blur();
-      reset();
     };
 
     const onPick = (_dates, visible = false, type, shortcut) => {

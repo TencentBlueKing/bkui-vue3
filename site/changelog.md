@@ -1,5 +1,87 @@
 ## 更新日志
 
+
+### 2.0.2-beta.64
+
+* **[feat]**:
+    - feature(tag-input): 单个项，双击可编辑
+    - feature(navigation): 导航组件希望支持新的交互规范
+    - bugfix(resize-layout): aside-bottom的时候把手位置异常
+    - feature(search-select): 支持 copy 事件并回调可修改用户复制内容
+    - fix: searchSelect getMenuList是异步的时候复制就不会触发这个get-menu-list方法
+
+
+### 2.0.2-beta.63
+
+* **[feat]**:
+    - bugfix(input): 清空按钮样式问题
+
+
+### 2.0.2-beta.61
+
+* **[feat]**:
+    - feature(pagination): 增加 slot
+
+
+### 2.0.2-beta.60
+
+* **[feat]**:
+    - feat(date-picker): 处理 date-picker 组件选择快捷项后再选择时间清空或确认后再次打开，面板状态未重置
+
+
+### 2.0.2-beta.59
+
+* **[feat]**:
+    - feat(date-picker): datePicker组件抛出面板切换事件
+    - fix(transfer): 修复穿梭框multiple模式复选框宽度被挤压问题及列表样式优化
+    - bugfix(pop-confirm): volar类型提示补全
+    - fix(cascader): 修复多选/单选切换功能
+
+
+### 2.0.2-beta.58
+
+* **[feat]**:
+    - bugfix(input): 设置最小值全选已填入的值按任意输入会回到最小值 ([#2426](https://github.com/TencentBlueKing/bkui-vue3/issues/2426))
+
+
+### 2.0.2-beta.53
+
+* **[feat]**:
+    - feat(cascader): 新增 panel 插槽用于自定义面板内容
+    - fix(dialog): 监听z-index变更更新弹出层层级
+
+
+### 2.0.2-beta.52
+
+* **[feat]**:
+    - feature(cascader): 支持popoverOptions配置
+
+
+### 2.0.2-beta.51
+
+* **[feat]**:
+    - feature(menu-group): group-name希望支持slot和hover效果
+
+
+### 2.0.2-beta.50
+
+* **[feat]**:
+    - bugfix(timeline|tag-input): html 字符串编码问题
+    - feature(select): search-change事件文档说明
+
+
+### 2.0.2-beta.49
+
+* **[feat]**:
+    - 修复依赖导致打包的问题
+
+
+### 2.0.2-beta.48
+
+* **[feat]**:
+    - feat(tab): Tab 选项卡增加props.beforeChange用于控制点击激活处理
+
+
 ### 2.0.2-beta.47
 
 * **[feat]**:

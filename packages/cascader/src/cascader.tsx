@@ -24,17 +24,18 @@
  * IN THE SOFTWARE.
  */
 
-import { computed, defineComponent, nextTick, ref, toRefs, watch } from 'vue';
+import { computed, defineComponent, nextTick, ref, toRefs, watch, PropType } from 'vue';
 import { array } from 'vue-types';
 
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { bkTooltips } from '@bkui-vue/directives';
 import { AngleUp, Close, Error } from '@bkui-vue/icon';
-import Popover from '@bkui-vue/popover';
+import Popover, { type PopoverPropTypes } from '@bkui-vue/popover';
 import { useHover } from '@bkui-vue/select';
-import { debounce, PropTypes } from '@bkui-vue/shared';
+import { debounce, PropTypes, PlacementEnum, TriggerEnum } from '@bkui-vue/shared';
 import Tag from '@bkui-vue/tag';
 import { useTagsOverflow } from '@bkui-vue/tag-input';
+import merge from 'lodash/merge';
 
 import CascaderPanel from './cascader-panel';
 import { INode } from './interface';
@@ -68,6 +69,7 @@ export default defineComponent({
     childrenKey: PropTypes.string.def('children'),
     separator: PropTypes.string.def('/'),
     limitOneLine: PropTypes.bool.def(false),
+    popoverOptions: Object as PropType<Partial<PopoverPropTypes>>, // popover属性
     extCls: PropTypes.string.def(''),
     filterMethod: PropTypes.func,
     scrollHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(216),
@@ -89,7 +91,7 @@ export default defineComponent({
   setup(props, { emit, slots }) {
     const t = useLocale('cascader');
 
-    const { separator, multiple } = props;
+    const { separator } = props;
     // 用useHover自定义hook来处理鼠标hover状态
     const { isHover, setHover, cancelHover } = useHover();
 
@@ -178,7 +180,7 @@ export default defineComponent({
     // 更新选中
     const updateValue = (val: Array<number | string | string[]>) => {
       // 更新多选情况下的选中标签
-      if (multiple) {
+      if (props.multiple) {
         store.value.setNodesCheck(val as Array<string[]>); // 同步节点选中的状态
         selectedTags.value = store.value
           .getCheckedNodes()
@@ -326,6 +328,23 @@ export default defineComponent({
     // 监听list的变化
     watch(() => props.list, listChangeHandler, { deep: true, immediate: true });
 
+    // 监听multiple属性的变化，当切换单选/多选模式时需要重新初始化组件
+    watch(
+      () => props.multiple,
+      (newVal, oldVal) => {
+        if (newVal !== oldVal) {
+          // 重新初始化store
+          store.value = new Store(props);
+          // 重置selectedTags和selectedText状态
+          selectedTags.value = [];
+          selectedText.value = '';
+          // 更新组件状态
+          updateValue(props.modelValue);
+        }
+      },
+      { immediate: true },
+    );
+
     // 定义overflowTagIndex变量，用于处理tag的折叠
     const tagList = computed(() =>
       props.customTagsFillback
@@ -448,23 +467,30 @@ export default defineComponent({
       // 多选时， text被tagRender填充，不需要进行text渲染
       this.multiple ? null : <span>{this.displayText}</span>;
 
+    /** popover 基础配置 */
+    const basePopoverOptions: Partial<PopoverPropTypes> = merge(
+      {
+        always: this.isAlways,
+        arrow: false,
+        boundary: 'body',
+        disabled: this.disabled as boolean,
+        hideIgnoreReference: true,
+        offset: 4,
+        placement: 'bottom-start' as PlacementEnum,
+        referenceCls: this.resolveClassName('cascader-popover-reference'),
+        theme: `light ${this.resolveClassName('cascader-popover')}`,
+        trigger: 'click' as TriggerEnum,
+      },
+      this.popoverOptions,
+    );
     // 定义popoverRender函数，用于渲染弹出框
     const popoverRender = () => (
       <Popover
         ref='popover'
         class={this.resolveClassName('cascader-popover-wrapper')}
-        always={this.isAlways}
-        arrow={false}
-        boundary='body'
-        disabled={this.disabled}
-        hideIgnoreReference={true}
-        offset={4}
-        placement='bottom-start'
-        referenceCls={this.resolveClassName('cascader-popover-reference')}
-        theme={`light ${this.resolveClassName('cascader-popover')}`}
-        trigger='click'
         onAfterHidden={this.popoverChangeEmitter}
         onAfterShow={this.popoverChangeEmitter}
+        {...basePopoverOptions}
       >
         {{
           default: () =>
@@ -508,6 +534,7 @@ export default defineComponent({
                     ) : (
                       <span class={this.resolveClassName('cascader-node-name')}>{scope.node.name}</span>
                     ),
+                  panel: scope => (this.$slots.panel ? this.$slots.panel(scope) : null),
                 }}
                 is-filtering={this.isFiltering}
                 search-key={this.searchKey}

@@ -5,16 +5,18 @@
       v-model="val"
       :maxlength="255"
       :over-max-length-limit="overMaxLengthLimit"
+      :resize="false"
       type="textarea"
       autosize
-      :resize="false"
+      clearable
     />
     <bk-input
       class="mb8"
       v-model="val1"
       :autosize="autoSizeConf"
-      type="textarea"
       :resize="false"
+      type="textarea"
+      clearable
     />
     <div class="expandable-input-field mb8">
       <bk-input
@@ -23,6 +25,7 @@
         :resize="false"
         type="textarea"
         autosize
+        clearable
       />
     </div>
   </div>

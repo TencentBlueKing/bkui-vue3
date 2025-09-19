@@ -114,7 +114,7 @@ export default defineComponent({
     clickoutside,
   },
   props: SearchSelectProps,
-  emits: ['update:modelValue', 'search', 'selectKey'],
+  emits: ['update:modelValue', 'search', 'selectKey', 'copy'],
   slots: Object as SlotsType<{
     menu: MenuSlotParams;
     prepend: () => VNode;
@@ -220,7 +220,9 @@ export default defineComponent({
         debounceResize,
       );
     });
-
+    const onCopy = (event: ClipboardEvent, text: string, item: ISearchValue) => {
+      emit('copy', event, text, item);
+    };
     // edit item
     useSearchSelectProvider({
       onEditClick,
@@ -230,6 +232,7 @@ export default defineComponent({
       editKey,
       searchData: computed(() => props.data),
       isClickOutside: handleInputOutside,
+      onCopy,
     });
     function onEditClick(item: SelectedItem, index: number) {
       editKey.value = `${item.id}_${index}`;
@@ -308,7 +311,7 @@ export default defineComponent({
       const list = selectedList.value.slice();
       list.splice(typeof index === 'number' ? index : selectedList.value.length - 1, 1);
       onValidate('');
-      inputRef.value.refleshMenuHover();
+      inputRef.value.refreshMenuHover();
       emit(
         'update:modelValue',
         list.map(item => item.toValue()),

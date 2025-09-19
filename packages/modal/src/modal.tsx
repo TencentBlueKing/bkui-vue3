@@ -78,6 +78,15 @@ export default defineComponent({
     });
 
     watch(
+      () => [props.zIndex],
+      () => {
+        if (/\d+/.test(`${props.zIndex}`)) {
+          zIndex.value = props.zIndex;
+        }
+      },
+    );
+
+    watch(
       () => props.isShow,
       () => {
         if (props.isShow) {

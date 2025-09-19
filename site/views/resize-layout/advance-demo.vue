@@ -8,6 +8,7 @@
         style="height: 100%"
         :border="false"
         placement="top"
+        collapsible
       >
         <template #aside>
           <div>aside-top</div>
@@ -22,12 +23,25 @@
         style="height: 100%"
         :border="false"
         placement="bottom"
+        collapsible
       >
         <template #aside>
           <div>aside-bottom</div>
         </template>
         <template #main>
-          <div>main-2</div>
+          <bk-resize-layout
+            style="height: 100%"
+            :border="false"
+            placement="right"
+            collapsible
+          >
+            <template #aside>
+              <div>aside-right</div>
+            </template>
+            <template #main>
+              <div>main-3</div>
+            </template>
+          </bk-resize-layout>
         </template>
       </bk-resize-layout>
     </template>

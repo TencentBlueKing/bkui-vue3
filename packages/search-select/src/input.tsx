@@ -106,7 +106,7 @@ export default defineComponent({
     const remoteMenuList = ref<ICommonItem[]>([]);
     const menuList: Ref<ISearchItem[]> = ref([]);
 
-    const { editKey, onValidate, searchData } = useSearchSelectInject();
+    const { editKey, onValidate, searchData, onCopy } = useSearchSelectInject();
     const valueLogic = computed(() => usingItem.value?.logical || SearchLogical.OR);
     const inputKey = ref(random(10));
     const isComposition = ref(false);
@@ -311,6 +311,12 @@ export default defineComponent({
           break;
       }
     }
+    const handleInputCopy = (event: ClipboardEvent) => {
+      const copyText = window.getSelection().toString();
+      if (copyText) {
+        onCopy(event, copyText, usingItem.value.toValue());
+      }
+    };
     async function handleKeyEnter(event?: KeyboardEvent) {
       event?.preventDefault();
       // 异步延迟解决确保响应时机问题
@@ -484,7 +490,9 @@ export default defineComponent({
             (usingItem.value.searchItem?.async === undefined || usingItem.value.searchItem.async === true)))
       ) {
         loading.value = true;
-        list = await props.getMenuList(usingItem.value?.searchItem, keyword.value.trim()).catch(() => []);
+        list = await props
+          .getMenuList(usingItem.value?.searchItem, keyword.value.trim() || usingItem.value?.values?.[0]?.name || '')
+          .catch(() => []);
         loading.value = false;
       } else if (!usingItem?.value) {
         if (!keyword.value?.length) {
@@ -547,7 +555,6 @@ export default defineComponent({
         );
       }
       menuList.value = list;
-      console.log('list', list);
       if (props.valueBehavior === ValueBehavior.NEED_KEY) {
         const hoverItem = list.find(item => !item.disabled);
         if (
@@ -692,7 +699,7 @@ export default defineComponent({
       usingItem.value.values = [{ id: value, name: value }];
       handleKeyEnter().then(v => v && clearInput());
     }
-    function refleshMenuHover() {
+    function refreshMenuHover() {
       if (!usingItem.value) {
         menuHoverId.value = '';
       }
@@ -712,7 +719,7 @@ export default defineComponent({
       inputClearForWrapper,
       handleInputFocus,
       isFocus,
-      refleshMenuHover,
+      refreshMenuHover,
     });
 
     return {
@@ -745,11 +752,12 @@ export default defineComponent({
       inputClearForWrapper,
       deleteInputTextNode,
       customPanelSubmit,
-      refleshMenuHover,
+      refreshMenuHover,
       t,
       inputKey,
       handleCompositionEnd,
       handleCompositionStart,
+      handleInputCopy,
     };
   },
   render() {
@@ -774,6 +782,7 @@ export default defineComponent({
         spellcheck='false'
         onCompositionend={this.handleCompositionEnd}
         onCompositionstart={this.handleCompositionStart}
+        onCopy={this.handleInputCopy}
         onFocus={this.handleInputFocus}
         onInput={this.handleInputChange}
         onKeydown={this.handleInputKeyup}
