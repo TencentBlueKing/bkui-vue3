@@ -30,17 +30,18 @@ import throttle from 'lodash/throttle';
 
 import { EVENTS, NODE_ATTRIBUTES } from './constant';
 import { TreeNode, TreePropTypes } from './props';
+import { useArrayMove } from './use-array-move';
 import useNodeAttribute from './use-node-attribute';
 
 export default (props: TreePropTypes, ctx, root?, flatData?) => {
   const {
     getSourceNodeByUID,
-    getParentNodeData,
-    getNodeParentIdById,
+    getParentNode,
     extendNodeAttr,
-    getNodeAttrById,
-    isRootNode,
-    setNodeAttrById,
+    getNodeIndexByNode,
+    setNodeAttr,
+    getNodeAttr,
+    getRootNodeList,
   } = useNodeAttribute(flatData, props);
   const { resolveClassName } = usePrefix();
   const isNeedCheckDraggable = computed(() => typeof props.disableDrag === 'function');
@@ -50,6 +51,7 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
   let draggedItem = null;
 
   let nodeRectMap = new WeakMap();
+  const { moveElement } = useArrayMove();
 
   const getTargetTreeNode = (e: MouseEvent) => {
     const target = e.target as HTMLElement;
@@ -74,12 +76,12 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
   const handleTreeNodeMousedown = (e: MouseEvent) => {
     const targetNode = getTargetTreeNode(e);
     const data = getNodeByTargetTreeNode(targetNode);
-    if (data.draggable === false || (isNeedCheckDraggable.value && props.disableDrag(data))) {
-      targetNode.classList.add(`${resolveClassName('tree-drag-disabled')}`);
+    if (data?.draggable === false || (isNeedCheckDraggable.value && props.disableDrag?.(data))) {
+      targetNode?.classList.add(`${resolveClassName('tree-drag-disabled')}`);
       return;
     }
-    targetNode.setAttribute('draggable', 'true');
-    targetNode.addEventListener('mouseup', handleTreeNodeMouseup);
+    targetNode?.setAttribute('draggable', 'true');
+    targetNode?.addEventListener('mouseup', handleTreeNodeMouseup);
   };
 
   const dropBefore = 'drop-before';
@@ -184,6 +186,77 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
     return sourceId !== targetId;
   };
 
+  const getChildNodeList = (nodeData: TreeNode) => {
+    const childList = [];
+    const getNodeChild = (rootNode: TreeNode) => {
+      const children = flatData.data.filter(item => getParentNode(item) === rootNode) as TreeNode[];
+      children.forEach((item: TreeNode) => {
+        childList.push(item);
+        getNodeChild(item);
+      });
+    };
+    getNodeChild(nodeData);
+    return childList;
+  };
+
+  /**
+   * 排序节点列表
+   * @param sourceNodeData 源节点
+   * @param targetNodeData 目标节点
+   * @returns
+   */
+  const sortNodeList = (sourceNodeData: TreeNode, targetNodeData: TreeNode) => {
+    let sourceNodeIndex = getNodeIndexByNode(sourceNodeData);
+    let targetNodeIndex = getNodeIndexByNode(targetNodeData);
+
+    const sourceNodeChildNodes = getChildNodeList(sourceNodeData);
+    const targetNodeChildNodes = getChildNodeList(targetNodeData);
+
+    const position = dragOverItem?.classList.contains(dropBefore) ? 'insertBefore' : 'insertAfter';
+    const newData = moveElement(
+      flatData.data,
+      sourceNodeIndex,
+      targetNodeIndex,
+      sourceNodeChildNodes.length,
+      targetNodeChildNodes.length,
+      position,
+    );
+    flatData.data = newData;
+
+    return {
+      sourceNodeIndex,
+      targetNodeIndex,
+    };
+  };
+
+  const updateTreeData = (sourceNodeData: TreeNode, targetNodeParent: TreeNode) => {
+    const nextLevel = (getNodeAttr(targetNodeParent, NODE_ATTRIBUTES.DEPTH) ?? -1) + 1;
+
+    setNodeAttr(sourceNodeData, NODE_ATTRIBUTES.PARENT, targetNodeParent);
+    setNodeAttr(sourceNodeData, NODE_ATTRIBUTES.DEPTH, nextLevel);
+    setNodeAttr(sourceNodeData, NODE_ATTRIBUTES.IS_ROOT, nextLevel === 0);
+
+    let orderIndex = 0;
+    const setNodeAttribute = (nodeList: TreeNode[], level = 0, parentPath = '') => {
+      for (let i = 0; i < nodeList.length; i++) {
+        const node = nodeList[i];
+        const path = parentPath !== '' ? `${parentPath}-${i}` : `${i}`;
+        setNodeAttr(node, NODE_ATTRIBUTES.INDEX, orderIndex);
+        setNodeAttr(node, NODE_ATTRIBUTES.ORDER, orderIndex);
+        setNodeAttr(node, NODE_ATTRIBUTES.DEPTH, level);
+        setNodeAttr(node, NODE_ATTRIBUTES.PATH, path);
+        orderIndex += 1;
+        const children = flatData.data.filter(item => getParentNode(item) === node) as TreeNode[];
+        if (children.length > 0) {
+          setNodeAttribute(children, level + 1, path);
+        }
+      }
+    };
+
+    const rootNodeList = getRootNodeList();
+    setNodeAttribute(rootNodeList);
+  };
+
   const dragSortData = (sourceId: string, targetId: string) => {
     if (!props.dragSort || !isNodeSortable(sourceId, targetId)) {
       return;
@@ -191,61 +264,20 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
 
     const sourceNodeData = getSourceNodeByUID(sourceId);
     const targetNodeData = getSourceNodeByUID(targetId);
+
     if (!sourceNodeData || !targetNodeData) return;
 
-    const sourceNodeParent = getParentNodeData(sourceId);
-    const targetNodeParent = getParentNodeData(targetId);
-    if (!sourceNodeParent || !targetNodeParent) return;
+    const sourceNodeParent = getParentNode(sourceNodeData);
+    const targetNodeParent = getParentNode(targetNodeData);
 
     // 只允许同父节点下排序
     if (props.dragSortMode === 'next') {
       if (sourceNodeParent !== targetNodeParent) return;
     }
 
-    const childrenKey = props.children;
-    const sourceSiblings = sourceNodeParent[childrenKey];
-    const targetSlibings = targetNodeParent[childrenKey];
+    const { sourceNodeIndex, targetNodeIndex } = sortNodeList(sourceNodeData, targetNodeData);
 
-    if (!Array.isArray(sourceSiblings)) return;
-
-    let sourceNodeIndex = sourceSiblings.findIndex(item => item === sourceNodeData);
-    let targetNodeIndex = targetSlibings.findIndex(item => item === targetNodeData);
-    if (sourceNodeIndex === -1 || targetNodeIndex === -1) return;
-
-    // 先移除源节点
-    sourceSiblings.splice(sourceNodeIndex, 1);
-
-    // 计算插入位置
-    if (dragOverItem?.classList.contains(dropAfter)) {
-      // 如果源节点在目标节点前面，移除后 targetNodeIndex 需要减 1
-      if (sourceNodeIndex < targetNodeIndex) {
-        targetNodeIndex = targetNodeIndex - 1;
-      }
-      targetNodeIndex = targetNodeIndex + 1;
-    } else if (dragOverItem?.classList.contains(dropBefore)) {
-      // 如果源节点在目标节点后面，移除后 targetNodeIndex 不变
-      if (sourceNodeIndex > targetNodeIndex) {
-        // do nothing
-      }
-    }
-
-    // 插入节点
-    targetSlibings.splice(targetNodeIndex, 0, sourceNodeData);
-
-    // 更新所有兄弟节点的 INDEX
-    targetSlibings.forEach((item, idx) => {
-      const nodeId = getNodeAttrById(item[NODE_ATTRIBUTES.UUID], NODE_ATTRIBUTES.UUID) || item[NODE_ATTRIBUTES.UUID];
-      if (nodeId) {
-        setNodeAttrById(nodeId, NODE_ATTRIBUTES.INDEX, idx);
-      }
-    });
-
-    sourceSiblings.forEach((item, idx) => {
-      const nodeId = getNodeAttrById(item[NODE_ATTRIBUTES.UUID], NODE_ATTRIBUTES.UUID) || item[NODE_ATTRIBUTES.UUID];
-      if (nodeId) {
-        setNodeAttrById(nodeId, NODE_ATTRIBUTES.INDEX, idx);
-      }
-    });
+    updateTreeData(sourceNodeData, targetNodeParent);
 
     // 触发更新
     ctx.emit(EVENTS.NODE_DRAG_SORT, {
@@ -253,31 +285,19 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
       targetNode: targetNodeData,
       sourceIndex: sourceNodeIndex,
       targetIndex: targetNodeIndex,
-      targetSlibings,
     });
   };
 
   const dragAsChildNode = (sourceNodeId: string, targetNodeId: string) => {
     const sourceNodeData = getSourceNodeByUID(sourceNodeId);
     const targetNodeData = getSourceNodeByUID(targetNodeId);
-
-    let parentNode = null;
-    if (isRootNode(sourceNodeId)) {
-      parentNode = props.data;
-    } else {
-      const sourceNodeParentId = getNodeParentIdById(sourceNodeId);
-      if (sourceNodeParentId !== undefined && sourceNodeParentId !== null) {
-        parentNode = getSourceNodeByUID(sourceNodeParentId);
-        const sourceNodeIndex = getNodeAttrById(sourceNodeId, NODE_ATTRIBUTES.INDEX);
-        parentNode?.[props.children].splice(sourceNodeIndex, 1);
-      }
-    }
+    sortNodeList(sourceNodeData, targetNodeData);
 
     if (!targetNodeData[props.children]) {
       targetNodeData[props.children] = [];
     }
 
-    (targetNodeData[props.children] as TreeNode[]).unshift(sourceNodeData);
+    updateTreeData(sourceNodeData, targetNodeData);
   };
 
   const handleTreeNodeDragLeave = (e: DragEvent) => {

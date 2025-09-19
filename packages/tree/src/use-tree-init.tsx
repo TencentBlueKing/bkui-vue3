@@ -220,7 +220,7 @@ export default (props: TreePropTypes) => {
 
             const attributes = {
               [NODE_ATTRIBUTES.DEPTH]: depth,
-              [NODE_ATTRIBUTES.INDEX]: i,
+              [NODE_ATTRIBUTES.INDEX]: order,
               [NODE_ATTRIBUTES.UUID]: uuid,
               [NODE_ATTRIBUTES.PARENT]: parent,
               [NODE_ATTRIBUTES.HAS_CHILD]: hasChildren,

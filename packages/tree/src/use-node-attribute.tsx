@@ -95,6 +95,20 @@ export default (
     return getNodeAttr(target, attr);
   };
 
+  /**
+   * 获取节点索引
+   * @param id 节点 ID
+   * @returns 节点索引
+   */
+  const getNodeIndexById = (id: string): number => getNodeAttrById(id, NODE_ATTRIBUTES.INDEX);
+
+  /**
+   * 获取节点索引
+   * @param node 节点
+   * @returns 节点索引
+   */
+  const getNodeIndexByNode = (node: TreeNode): number => getNodeAttr(node, NODE_ATTRIBUTES.INDEX);
+
   const isRootNode = (node: TreeNode | string) => {
     if (typeof node === 'string') {
       return getNodeAttrById(node, NODE_ATTRIBUTES.IS_ROOT);
@@ -171,7 +185,7 @@ export default (
   };
 
   const getChildNodes = (node: TreeNode) => {
-    return (node[props.children] as TreeNode[]) ?? [];
+    return flatData.data.filter(item => getParentNode(item) === node);
   };
 
   const getSourceNodeByUID = (uid: string) => flatData.data.find(item => getNodeId(item) === uid);
@@ -240,6 +254,8 @@ export default (
     return { level, target, index, parent, node, isRoot };
   };
 
+  const getRootNodeList = () => flatData.data.filter(item => isRootNode(item));
+
   return {
     getSchemaVal,
     getNodeAttr,
@@ -250,6 +266,9 @@ export default (
     getNodePathById,
     getNodeAttrById,
     getNodeParentIdById,
+    getNodeIndexById,
+    getNodeIndexByNode,
+    getRootNodeList,
     getParentNodeAttr,
     getParentNode,
     setNodeAttr,
