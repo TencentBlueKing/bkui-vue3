@@ -27,45 +27,20 @@
 import { defineComponent, ref, toRefs, watch } from 'vue';
 
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
-import { classes, PropTypes } from '@bkui-vue/shared';
+import { classes } from '@bkui-vue/shared';
 
 import useLimit from './use-limit';
 import useList from './use-list';
 import useSmallList from './use-small-list';
 import useTotal from './use-total';
 
-import type { ExtractPropTypes } from 'vue';
-
-export const paginationProps = {
-  modelValue: PropTypes.number.def(1),
-  count: PropTypes.number.def(0).isRequired,
-  limit: PropTypes.number.def(10),
-  limitList: PropTypes.arrayOf(Number).def([10, 20, 50, 100]),
-  showLimit: PropTypes.bool.def(true),
-  type: PropTypes.oneOf(['default', 'compact']).def('default'),
-  location: PropTypes.oneOf(['left', 'right']).def('right'),
-  align: PropTypes.oneOf(['left', 'center', 'right']).def('left'),
-  small: PropTypes.bool.def(false),
-  showTotalCount: PropTypes.bool.def(true),
-  prevText: PropTypes.string,
-  nextText: PropTypes.string,
-  disabled: PropTypes.bool.def(false),
-  layout: PropTypes.custom((value: string[]) => {
-    const layoutNameMap = {
-      total: true,
-      list: true,
-      limit: true,
-    };
-    return value.some(item => layoutNameMap[item]);
-  }, 'layout 的值只支持 * total、list、limit *').def(['total', 'list', 'limit']),
-};
-
-export type PaginationProps = Readonly<ExtractPropTypes<typeof paginationProps>>;
+import { emits } from './emits';
+import { props } from './props';
 
 export default defineComponent({
   name: 'Pagination',
-  props: paginationProps,
-  emits: ['update:modelValue', 'change', 'update:limit', 'limitChange'],
+  props,
+  emits,
   setup(props, context) {
     const t = useLocale('pagination');
     const totalPageNum = ref<number>(0);
