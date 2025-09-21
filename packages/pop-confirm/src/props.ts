@@ -26,7 +26,8 @@
 import { toType } from 'vue-types';
 
 import { type ButtonPropTypes } from '@bkui-vue/button';
-import { type PopoverPropTypes } from '@bkui-vue/popover'
+import { type PopoverPropTypes } from '@bkui-vue/popover';
+import type { ExtractPropTypes } from 'vue';
 import { PlacementEnum, placementType, PropTypes } from '@bkui-vue/shared';
 
 export enum TriggerEnum {
@@ -38,18 +39,7 @@ export function triggerType() {
   return toType<`${TriggerEnum}`>('trigger', {}).def(TriggerEnum.HOVER);
 }
 
-export const PopConfirmEvent = {
-  confirm: {
-    type: Function,
-    default: (): any => ({}),
-  },
-  cancel: {
-    type: Function,
-    default: (): any => ({}),
-  },
-  // ...TabNavEventProps,
-};
-export const PopConfirmProps = {
+export const props = {
   /**
    * 触发方式
    * 支持 click hover
@@ -76,4 +66,5 @@ export const PopConfirmProps = {
     default: {},
   }),
 };
-export default PopConfirmProps;
+
+export type PopConfirmProps = ExtractPropTypes<typeof props>;
