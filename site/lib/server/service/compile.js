@@ -48,6 +48,10 @@ const externals = {
   'lodash/cloneDeep': 'lodashCloneDeep',
   '@popperjs/core': 'popperjsCore',
   'vue-types': 'vueTypes',
+  '@floating-ui/dom': 'floatingUiDom',
+  'normalize-wheel': 'normalizeWheel',
+  'js-calendar': 'jsCalendar',
+  'date-fns': 'dateFns',
 };
 
 // 转换路径分隔符为 /
@@ -115,6 +119,22 @@ const transformFileContent = (code, originAbsoluteFilePath, releaseZipPath) => {
 };
 
 /**
+ * 构建 @bkui-vue 别名
+ * @param {*} releaseZipPath release 目录绝对路径
+ * @returns 别名映射
+ */
+const buildBkuiAlias = (releaseZipPath) => {
+  const names = fs
+    .readdirSync(releaseZipPath)
+    .filter(n => fs.existsSync(resolve(releaseZipPath, n, 'src')));
+  const map = {};
+  for (const name of names) {
+    map[`@bkui-vue/${name}`] = resolve(releaseZipPath, name, 'src');
+  }
+  return map;
+};
+
+/**
  * 获取编译上下文
  * @param {*} releaseZipPath zip 路径
  * @param {*} entryPath 入口文件路径
@@ -136,6 +156,8 @@ const getCompileContext = (releaseZipPath, entryPath, preserveModuleType, option
         resolve: {
           alias: {
             '@bkui-vue': releaseZipPath,
+            ...buildBkuiAlias(releaseZipPath),
+            ...(options?.configureWebpack?.resolve?.alias || {}),
           },
         },
       },
@@ -187,6 +209,35 @@ export const generateCompiledFile = async (fileMap, entryPath, releaseZipPath) =
 };
 
 /**
+ * 获取组件入口文件
+ * @param {*} releaseZipPath zip包路径
+ * @param {*} component 组件名
+ * @returns 组件入口文件
+ */
+const getComponentEntryPath = (releaseZipPath, component) => {
+  const possibleEntryFiles = [
+    'src/index.js',
+    'src/index.ts',
+    'src/index.tsx',
+    'src/index.jsx',
+  ];
+
+  let entryPath = null;
+  for (const entryFile of possibleEntryFiles) {
+    const testPath = resolve(releaseZipPath, component, entryFile);
+    if (fs.existsSync(testPath) && fs.statSync(testPath).isFile()) {
+      entryPath = testPath;
+      break;
+    }
+  }
+
+  if (!entryPath) {
+    throw new Error(`找不到 ${component} 组件的入口文件`);
+  }
+  return entryPath;
+};
+
+/**
  * @description 编译组件文件
  */
 export const compileComponent = async (releaseZipPath, component) => {
@@ -199,7 +250,15 @@ export const compileComponent = async (releaseZipPath, component) => {
     },
   };
   // 路径
-  const entryPath = resolve(releaseZipPath, component, 'src/index.ts');
+  const entryPath = getComponentEntryPath(releaseZipPath, component);
+
+  // 添加调试信息
+  console.log('=== 编译调试信息 ===');
+  console.log('releaseZipPath:', releaseZipPath);
+  console.log('component:', component);
+  console.log('entryPath:', entryPath);
+  console.log('entryPath exists:', fs.existsSync(entryPath));
+
   // 生成上下文
   const context = getCompileContext(releaseZipPath, entryPath, 'commonjs', options);
   // 编辑
@@ -207,7 +266,11 @@ export const compileComponent = async (releaseZipPath, component) => {
   // 转换
   await transform(fileMap, context);
   // 输出，减少二次编译
-  await emit(fileMap, context);
+  if (context.options.preserveModulesRoot
+  && context.options.outputPreserveModuleDir
+  && context.options.preserveModulesRoot !== context.options.outputPreserveModuleDir) {
+    await emit(fileMap, context);
+  }
   // 生成组件文件
   return generateCompiledFile(fileMap, entryPath, releaseZipPath);
 };

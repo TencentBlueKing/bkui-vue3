@@ -1,7 +1,7 @@
 {
   "name": "@bkui-vue/directives",
   "version": "0.0.0",
-  "module": "dist/index.js",
+  "module": "src/index.ts",
   
   "license": "MIT",
   "scripts": {

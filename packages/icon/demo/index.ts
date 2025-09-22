@@ -27,7 +27,15 @@ import { NavGroupMeta } from '@bkui-vue/shared';
 
 
 // 组件示例
-const presets = [];
+const presets = [{
+  title: '默认',
+  description: '默认',
+  props: {
+    width: '1em',
+    height: '1em',
+    fill: 'currentColor',
+  },
+}];
 
 // 组件属性，用来自动生成属性文档
 const props = [{
