@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { ExtractPropTypes, VNode } from 'vue';
+import { ExtractPropTypes, PropType, VNode } from 'vue';
 import { string, toType } from 'vue-types';
 
 import { PropTypes } from '@bkui-vue/shared';
@@ -48,6 +48,10 @@ export type TreeNode = {
   [key: string]: unknown;
   children?: TreeNode[];
 };
+
+export type DropType = 'child' | 'move' | 'sort';
+
+export type DisableDropHandler = (data: TreeNode, type: DropType, target: TreeNode) => boolean;
 
 /**
  * Tree Prop: prefixIcon function
@@ -204,7 +208,15 @@ export const treeProps = {
 
   draggable: PropTypes.bool.def(false),
   disableDrag: PropTypes.func,
-  disableDrop: PropTypes.func,
+
+  /**
+   * 是否禁用拖拽释放操作
+   * @param data
+   * @param type
+   * @param target
+   * @returns
+   */
+  disableDrop: Function as PropType<DisableDropHandler>,
 
   /**
    * 拖拽阈值

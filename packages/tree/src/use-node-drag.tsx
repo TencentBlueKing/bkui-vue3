@@ -49,6 +49,7 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
   const dragThreshold = props.dragThreshold || 0.2; // 新增配置项，默认值为 0.2
   let dragNodeId = '';
   let draggedItem = null;
+  let moveData = null;
 
   let nodeRectMap = new WeakMap();
   const { moveElement } = useArrayMove();
@@ -122,19 +123,16 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
     }
 
     ctx.emit(EVENTS.NODE_DRAG_OVER, e, targetNode, data);
-    if (isNeedCheckDroppable.value && props?.disableDrop(data)) {
+    if (isNeedCheckDroppable.value && props?.disableDrop(moveData, 'move', data)) {
       e.dataTransfer.effectAllowed = 'move';
       e.dataTransfer.dropEffect = 'none';
       targetNode.classList.add(`${resolveClassName('tree-drop-disabled')}`);
       return;
     }
     targetNode.classList.add(`${resolveClassName('tree-drop-active')}`);
-    let sourceNodeId = e.dataTransfer.getData('node-id');
-    sourceNodeId = dragNodeId;
-
     const targetNodeId = targetNode.getAttribute('data-tree-node');
 
-    const transferEffect = isNodeSortable(sourceNodeId, targetNodeId) ? 'move' : 'none';
+    const transferEffect = isNodeSortable(dragNodeId, targetNodeId) ? 'move' : 'none';
     e.dataTransfer.effectAllowed = transferEffect;
     e.dataTransfer.dropEffect = transferEffect;
   });
@@ -147,6 +145,7 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
     const nodeId = targetNode.getAttribute('data-tree-node');
     dragNodeId = nodeId;
     draggedItem = targetNode;
+    moveData = getSourceNodeByUID(nodeId);
     e.dataTransfer.setData('node-id', nodeId);
     ctx.emit(EVENTS.NODE_DRAG_START, e, targetNode);
   };
@@ -160,8 +159,9 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
     if (!targetNode) return;
 
     targetNode.classList.remove(`${resolveClassName('tree-drop-active')}`, `${resolveClassName('tree-drop-disabled')}`);
+    const isInsertAsChild = dragOverItem?.classList.contains(dropInner);
     const data = extendNodeAttr(getNodeByTargetTreeNode(targetNode));
-    if (isNeedCheckDroppable.value && props.disableDrop(data)) {
+    if (isNeedCheckDroppable.value && props.disableDrop(moveData, isInsertAsChild ? 'child' : 'sort', data)) {
       return;
     }
 
@@ -169,7 +169,7 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
     const targetNodeId = targetNode.getAttribute('data-tree-node');
 
     if (sourceNodeId !== targetNodeId) {
-      if (dragOverItem?.classList.contains(dropInner)) {
+      if (isInsertAsChild) {
         Reflect.apply(dragAsChildNode, this, [sourceNodeId, targetNodeId]);
       } else if (dragOverItem?.classList.contains(dropAfter) || dragOverItem?.classList.contains(dropBefore)) {
         Reflect.apply(dragSortData, this, [sourceNodeId, targetNodeId]);
@@ -180,6 +180,7 @@ export default (props: TreePropTypes, ctx, root?, flatData?) => {
     nodeRectMap = new WeakMap();
     dragOverItem?.classList.remove(dropAfter, dropBefore, dropInner);
     dragOverItem = null;
+    moveData = null;
   };
 
   const isNodeSortable = (sourceId: string, targetId: string) => {
