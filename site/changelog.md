@@ -1,6 +1,12 @@
 ## 更新日志
 
 
+### 2.0.2-beta.66
+
+* **[feat]**:
+    - feat(tree): disableDrop参数优化
+
+
 ### 2.0.2-beta.65
 
 * **[feat]**:
