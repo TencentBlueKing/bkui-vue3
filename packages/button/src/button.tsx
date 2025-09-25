@@ -24,46 +24,21 @@
  * IN THE SOFTWARE.
  */
 
-import { computed, defineComponent, ExtractPropTypes, PropType, ref } from 'vue';
+import { computed, defineComponent, ref } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-import Loading, { BkLoadingMode, BkLoadingSize } from '@bkui-vue/loading';
-import { classes, ElementType, PropTypes } from '@bkui-vue/shared';
+import Loading, { BkLoadingSize } from '@bkui-vue/loading';
+import { classes } from '@bkui-vue/shared';
 
-type IButtonNativeType = PropType<'button' | 'reset' | 'submit'>;
+import { emits } from './emits';
+import { props } from './props';
+
 const btnSizes = ['', 'small', 'large'] as const;
-const buttonProps = {
-  theme: PropTypes.theme(),
-  hoverTheme: PropTypes.theme(),
-  size: {
-    type: String as PropType<ElementType<typeof btnSizes>>,
-    default: btnSizes[0],
-  },
-  title: PropTypes.string,
-  icon: PropTypes.string,
-  iconRight: PropTypes.string,
-  disabled: PropTypes.bool,
-  loading: PropTypes.bool,
-  loadingMode: {
-    type: String as PropType<`${BkLoadingMode}`>,
-    default: 'default',
-  },
-  outline: PropTypes.bool,
-  text: PropTypes.bool,
-  selected: PropTypes.bool,
-  // circle: PropTypes.bool,
-  nativeType: {
-    type: String as IButtonNativeType,
-    default: 'button',
-  },
-};
-
-export type ButtonPropTypes = ExtractPropTypes<typeof buttonProps>;
 
 export default defineComponent({
   name: 'Button',
-  props: buttonProps,
-  emits: ['click', 'mouseover'],
+  props,
+  emits,
   setup(props, { slots, emit }) {
     const isHover = ref(false);
     const showSlot = slots.default ?? false;
