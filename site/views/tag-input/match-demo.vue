@@ -1,4 +1,5 @@
 <template>
+  <div>选择的数据为：{{ state.tags }}</div>
   <bk-tag-input
     v-model="state.tags"
     :list="state.list"
@@ -6,6 +7,9 @@
     allow-auto-match
     allow-create
     has-delete-icon
+    @change="handleChange"
+    trigger="focus"
+    separator=";"
   />
 </template>
 
@@ -14,6 +18,7 @@
 
   const state = reactive({
     tags: ['shenzhen'],
+    // tags: ['111111', '222222', '333333'],
     list: [
       { id: 'shenzhen', name: '深圳' },
       { id: 'guangzhou', name: '广州' },
@@ -26,4 +31,8 @@
       { id: 'haikou', name: '海口' },
     ],
   });
+
+  const handleChange = val => {
+    console.error('vuevuevue file handleChange', val);
+  };
 </script>
