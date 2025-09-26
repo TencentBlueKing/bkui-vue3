@@ -114,7 +114,7 @@ const transformFileContent = (code, originAbsoluteFilePath, releaseZipPath) => {
  * @param {*} releaseZipPath release 目录绝对路径
  * @returns 别名映射
  */
-const buildBkuiAlias = releaseZipPath => {
+const buildBkuiAlias = (releaseZipPath) => {
   const names = fs.readdirSync(releaseZipPath).filter(n => fs.existsSync(resolve(releaseZipPath, n, 'src')));
   const map = {};
   for (const name of names) {
@@ -242,9 +242,9 @@ export const compileComponent = async (releaseZipPath, component) => {
   // 输出，减少二次编译
   // 添加路径一致判断，避免报错
   if (
-    context.options.preserveModulesRoot &&
-    context.options.outputPreserveModuleDir &&
-    context.options.preserveModulesRoot !== context.options.outputPreserveModuleDir
+    context.options.preserveModulesRoot
+    && context.options.outputPreserveModuleDir
+    && context.options.preserveModulesRoot !== context.options.outputPreserveModuleDir
   ) {
     await emit(fileMap, context);
   }

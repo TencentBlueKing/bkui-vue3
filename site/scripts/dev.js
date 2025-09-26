@@ -5,7 +5,8 @@ const { runDev } = require('@blueking/cli-service');
 
 const backendDir = path.resolve(__dirname, '../lib/server');
 const sharedDir = path.resolve(__dirname, '../lib/shared');
-const releaseZipsDir = path.resolve(__dirname, '../lib/server/release-zips');
+const releaseZipsDir = path.resolve(__dirname, '../lib/server/release-dir');
+const releaseDistDir = path.resolve(__dirname, '../lib/server/release-dist');
 
 function startServer() {
   nodemon({
@@ -16,6 +17,7 @@ function startServer() {
     ],
     ignore: [
       releaseZipsDir,
+      releaseDistDir,
     ],
     nodeArgs: [
       '--inspect',

@@ -3,4 +3,5 @@ node_modules
 dist
 pre-*-bkcodeai
 
-release-zips/
+release-dir/
+release-dist/
