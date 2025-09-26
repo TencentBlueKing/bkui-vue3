@@ -4,6 +4,7 @@
       class="color-picker"
       v-model="color1"
       @change="change"
+      transfer
     />
     <bk-color-picker
       class="color-picker"

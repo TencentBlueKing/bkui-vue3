@@ -1,6 +1,12 @@
 ## 更新日志
 
 
+### 2.0.2-beta.67
+
+* **[feat]**:
+    - bugfix(color-picker): 修复 transfer 属性配置为 true 不生效的问题
+
+
 ### 2.0.2-beta.66
 
 * **[feat]**:
