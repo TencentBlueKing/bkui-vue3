@@ -1,6 +1,12 @@
 ## 更新日志
 
 
+### 2.0.2-beta.68
+
+* **[feat]**:
+    - bugfix(date-picker): 范围选择器，开始时间从 23:59:59 开始，应该从 00:00:00 开始 ([#2476](https://github.com/TencentBlueKing/bkui-vue3/issues/2476))
+
+
 ### 2.0.2-beta.67
 
 * **[feat]**:

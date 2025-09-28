@@ -338,6 +338,17 @@ export default defineComponent({
      * handleConfirm
      */
     const handleConfirm = (visible, type) => {
+      if (type !== 'time') {
+        // 开始的时间 不是 00:00:00，改为 00:00:00
+        state.dates[0] = new Date(
+          state.dates[0].getFullYear(),
+          state.dates[0].getMonth(),
+          state.dates[0].getDate(),
+          0,
+          0,
+          0,
+        );
+      }
       // pick 参数：dates, visible, type, isUseShortCut
       emit('pick', state.dates, visible, type || props.type);
     };
@@ -367,7 +378,7 @@ export default defineComponent({
             selecting: false,
           };
         }
-        handleConfirm(false, type || props.selectionMode);
+        handleConfirm(false, props.selectionMode || type);
       } else {
         state.upToNowEnable = new Date(val).getTime() < new Date().getTime();
         state.rangeState = {

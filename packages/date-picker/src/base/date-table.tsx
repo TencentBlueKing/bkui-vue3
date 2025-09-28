@@ -114,7 +114,8 @@ export default defineComponent({
             ...cell,
             type: time === today ? 'today' : cell.type,
             selected: dateIsInCurrentMonth && selectedDays.includes(time),
-            disabled: cell.date && disableTestFn && disableTestFn(new Date(time)),
+            disabled:
+              cell.date && disableTestFn && typeof disableTestFn === 'function' && disableTestFn(new Date(time)),
             range: dateIsInCurrentMonth && isRange && isInRange(time, rangeStart, rangeEnd),
             start: dateIsInCurrentMonth && isRange && time === minDay,
             end: dateIsInCurrentMonth && isRange && time === maxDay,
