@@ -41,6 +41,7 @@ import {
   compileDemo,
 } from './compile';
 
+
 // 彻底清除模块缓存的函数
 const clearModuleCache = (modulePath) => {
   try {
@@ -135,6 +136,7 @@ export const getCss = async (releaseZipPath, component, version) => {
 
 // 获取 NavGroups
 export const getNavGroups = async (releaseZipPath) => {
+  const version = path.basename(releaseZipPath);
   // 获取组件列表
   const componentGroupMap = {};
   const componentPaths = fs.readdirSync(releaseZipPath);
@@ -147,7 +149,8 @@ export const getNavGroups = async (releaseZipPath) => {
     if (fs.existsSync(componentDemoPath)) {
       // 编译 demo 文件
       const componentCompiledDemoPath = path.resolve(
-        releaseZipPath,
+        RELEASE_DIST_DIR,
+        `${version}`,
         componentPath,
         'demo/index.ts.js',
       );
@@ -207,5 +210,6 @@ export const deleteReleaseZip = async (version) => {
   const releaseZipPath = path.resolve(RELEASE_DIR, `${version}`);
   if (fs.existsSync(releaseZipPath)) {
     fs.rmSync(releaseZipPath, { recursive: true, force: true });
+    fs.rmSync(path.resolve(RELEASE_DIST_DIR, `${version}`), { recursive: true, force: true });
   }
 };

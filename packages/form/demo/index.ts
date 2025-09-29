@@ -58,23 +58,20 @@ const props = [
   {
     name: 'label-position',
     description: '表单项标签位置',
-    type: 'string',
+    type: "'top' | 'left'",
     default: 'top',
-    enum: ['top', 'left'],
   },
   {
     name: 'form-type',
     description: '表单类型',
-    type: 'string',
+    type: "'horizontal' | 'vertical'",
     default: 'horizontal',
-    enum: ['horizontal', 'vertical'],
   },
   {
     name: 'item-type',
     description: '表单项类型',
-    type: 'string',
+    type: "'horizontal' | 'vertical'",
     default: 'horizontal',
-    enum: ['horizontal', 'vertical'],
   },
   {
     name: 'label',
@@ -91,9 +88,8 @@ const props = [
   {
     name: 'label-position',
     description: '表单项标签位置',
-    type: 'string',
+    type: "'top' | 'left'",
     default: 'top',
-    enum: ['top', 'left'],
   },
   {
     name: 'property',
@@ -146,8 +142,7 @@ const props = [
   {
     name: 'error-display-type',
     description: '表单项错误信息显示类型',
-    type: 'string',
-    enum: ['normal', 'tooltips'],
+    type: "'normal' | 'tooltips'",
     default: 'normal',
   },
   {

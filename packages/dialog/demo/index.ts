@@ -125,8 +125,7 @@ const props = [
   {
     name: 'transfer',
     description: '是否显示在body内（即与id#app同级）',
-    type: 'boolean | string',
-    enum: [true, false, 'DOM选择器'],
+    type: 'boolean | string | "DOM选择器"',
     default: true,
   },
   {
@@ -162,22 +161,19 @@ const props = [
   {
     name: 'confirm-button-theme',
     description: '确认按钮主题',
-    type: 'string',
-    enum: ['primary', 'danger', 'success', 'warning'],
+    type: "'primary' | 'danger' | 'success' | 'warning'",
     default: 'primary',
   },
   {
     name: 'header-align',
     description: '头部对齐方式',
-    type: 'string',
-    enum: ['center', 'left', 'right'],
+    type: "'center' | 'left' | 'right'",
     default: 'left',
   },
   {
     name: 'footer-align',
     description: '底部对齐方式',
-    type: 'string',
-    enum: ['center', 'left', 'right'],
+    type: "'center' | 'left' | 'right'",
     default: 'right',
   },
   {
@@ -189,8 +185,7 @@ const props = [
   {
     name: 'render-directive',
     description: '渲染方式',
-    type: 'string',
-    enum: ['if', 'show'],
+    type: "'if' | 'show'",
     default: 'if',
   },
 ];

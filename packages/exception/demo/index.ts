@@ -50,15 +50,13 @@ const props = [
   {
     name: 'type | number',
     description: '异常类型',
-    enum: ['403', '404', '500', 'building', 'empty', 'search-empty'],
-    type: 'string',
+    type: "'403' | '404' | '500' | 'building' | 'empty' | 'search-empty'",
     default: '404',
   },
   {
     name: 'scene',
     description: '异常场景',
-    enum: ['page', 'part'],
-    type: 'string',
+    type: "'page' | 'part'",
     default: 'page',
   },
   {

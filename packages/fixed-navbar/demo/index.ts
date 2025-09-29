@@ -62,9 +62,8 @@ const props = [
   {
     name: 'position',
     description: '位置，分为顶部、底部、中间',
-    type: 'string',
+    type: "'middle' | 'top' | 'bottom'",
     default: 'middle',
-    enum: ['middle', 'top', 'bottom'],
   },
   {
     name: 'model-value',

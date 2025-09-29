@@ -91,8 +91,7 @@ const props = [
   {
     name: 'type',
     description: '信息框类型',
-    type: 'string',
-    enum: ['success', 'danger', 'warning', 'loading'],
+    type: "'success' | 'danger' | 'warning' | 'loading'",
     default: '',
   },
   {
@@ -121,21 +120,21 @@ const props = [
   },
   {
     name: 'headerAlign',
-    description: '文本对齐方式',
-    type: 'string',
-    default: '',
+    description: '显示header的位置',
+    type: "'center' | 'left' | 'right'",
+    default: 'center',
   },
   {
     name: 'contentAlign',
-    description: '文本对齐方式',
-    type: 'string',
-    default: '',
+    description: '显示content的位置',
+    type: "'center' | 'left' | 'right'",
+    default: 'center',
   },
   {
     name: 'footerAlign',
-    description: '文本对齐方式',
-    type: 'string',
-    default: '',
+    description: '显示footer的位置',
+    type: "'center' | 'left' | 'right'",
+    default: 'center',
   },
   {
     name: 'showContentBgColor',
@@ -176,15 +175,13 @@ const props = [
   {
     name: 'theme',
     description: '确认按钮主题',
-    type: 'string',
-    enum: ['primary', 'danger', 'success', 'warning'],
+    type: "'primary' | 'danger' | 'success' | 'warning'",
     default: '',
   },
   {
     name: 'confirmButtonTheme',
     description: '确认按钮主题',
-    type: 'string',
-    enum: ['primary', 'danger', 'success', 'warning'],
+    type: "'primary' | 'danger' | 'success' | 'warning'",
     default: '',
   },
   {

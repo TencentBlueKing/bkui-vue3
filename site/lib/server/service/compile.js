@@ -30,6 +30,7 @@ import { emit } from '@blueking/cli-service/dist/tools/rust/emit/index.js';
 import { buildModule } from '@blueking/cli-service/dist/tools/rust/module/index.js';
 import { transform } from '@blueking/cli-service/dist/tools/rust/transform/index.js';
 
+import { RELEASE_DIST_DIR } from '../common';
 import LessResolvePathPlugin from '../scripts/less-plugin.js';
 
 // 组件公共依赖
@@ -130,6 +131,7 @@ const buildBkuiAlias = (releaseZipPath) => {
  * @returns context
  */
 const getCompileContext = (releaseZipPath, entryPath, preserveModuleType, options = {}) => {
+  const version = path.basename(releaseZipPath);
   return {
     workDir: releaseZipPath,
     options: {
@@ -140,6 +142,8 @@ const getCompileContext = (releaseZipPath, entryPath, preserveModuleType, option
           entry: entryPath,
         },
       },
+      preserveModulesRoot: releaseZipPath,
+      outputPreserveModuleDir: path.resolve(RELEASE_DIST_DIR, `${version}`),
       configureWebpack: {
         ...options?.configureWebpack,
         resolve: {
@@ -240,14 +244,7 @@ export const compileComponent = async (releaseZipPath, component) => {
   // 转换
   await transform(fileMap, context);
   // 输出，减少二次编译
-  // 添加路径一致判断，避免报错
-  if (
-    context.options.preserveModulesRoot
-    && context.options.outputPreserveModuleDir
-    && context.options.preserveModulesRoot !== context.options.outputPreserveModuleDir
-  ) {
-    await emit(fileMap, context);
-  }
+  await emit(fileMap, context);
   // 生成组件文件
   return generateCompiledFile(fileMap, entryPath, releaseZipPath);
 };

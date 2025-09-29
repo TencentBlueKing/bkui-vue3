@@ -98,20 +98,8 @@ const props = [
   {
     name: 'type',
     description: '显示类型',
-    type: 'string',
+    type: "'year' | 'yearrange' | 'month' | 'monthrange' | 'date' | 'daterange' | 'datetime' | 'datetimerange' | 'time' | 'timerange'",
     default: 'date',
-    enum: [
-      'year',
-      'yearrange',
-      'month',
-      'monthrange',
-      'date',
-      'daterange',
-      'datetime',
-      'datetimerange',
-      'time',
-      'timerange',
-    ],
   },
   {
     name: 'ext-popover-cls',
@@ -188,22 +176,8 @@ const props = [
   {
     name: 'placement',
     description: '弹出位置',
-    type: 'string',
+    type: "'top' | 'top-start' | 'top-end' | 'bottom' | 'bottom-start' | 'bottom-end' | 'left' | 'left-start' | 'left-end' | 'right' | 'right-start' | 'right-end'",
     default: 'bottom-start',
-    enum: [
-      'top',
-      'top-start',
-      'top-end',
-      'bottom',
-      'bottom-start',
-      'bottom-end',
-      'left',
-      'left-start',
-      'left-end',
-      'right',
-      'right-start',
-      'right-end',
-    ],
   },
   {
     name: 'append-to-body',
@@ -244,9 +218,8 @@ const props = [
   {
     name: 'font-size',
     description: '字体大小',
-    type: 'string',
+    type: "'large' | 'medium' | 'normal'",
     default: 'normal',
-    enum: ['large', 'medium', 'normal'],
   },
   {
     name: 'up-to-now',
@@ -287,9 +260,8 @@ const props = [
   {
     name: 'behavior',
     description: '行为模式',
-    type: 'string',
+    type: "'normal' | 'simplicity'",
     default: 'normal',
-    enum: ['normal', 'simplicity'],
   },
   {
     name: 'disabled-date',

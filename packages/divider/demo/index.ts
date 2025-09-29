@@ -42,15 +42,13 @@ const props = [
   {
     name: 'direction',
     description: '分割线方向',
-    type: 'string',
-    enum: ['horizontal', 'vertical'],
+    type: "'horizontal' | 'vertical'",
     default: 'horizontal',
   },
   {
     name: 'align',
     description: '分割线对齐方式',
-    type: 'string',
-    enum: ['left', 'center', 'right'],
+    type: "'left' | 'center' | 'right'",
     default: 'center',
   },
   {
@@ -68,8 +66,7 @@ const props = [
   {
     name: 'type',
     description: '分割线类型',
-    type: 'string',
-    enum: ['solid', 'dashed'],
+    type: "'solid' | 'dashed'",
     default: 'solid',
   },
 ];
