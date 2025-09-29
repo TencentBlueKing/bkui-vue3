@@ -9,4 +9,8 @@ declare interface Window {
   lodashMerge: Function;
   getComponent: Function;
   lodashCloneDeep: Function;
+  normalizeWheel: Function;
+  floatingUiDom: Function;
+  dateFns: Function;
+  jsCalendar: Function;
 }

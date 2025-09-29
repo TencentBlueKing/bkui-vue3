@@ -26,16 +26,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-import {
-  emit,
-} from '@blueking/cli-service/dist/tools/rust/emit/index.js';
-import {
-  buildModule,
-} from '@blueking/cli-service/dist/tools/rust/module/index.js';
-import {
-  transform,
-} from '@blueking/cli-service/dist/tools/rust/transform/index.js';
+import { emit } from '@blueking/cli-service/dist/tools/rust/emit/index.js';
+import { buildModule } from '@blueking/cli-service/dist/tools/rust/module/index.js';
+import { transform } from '@blueking/cli-service/dist/tools/rust/transform/index.js';
 
+import { RELEASE_DIST_DIR } from '../common';
 import LessResolvePathPlugin from '../scripts/less-plugin.js';
 
 // 组件公共依赖
@@ -48,6 +43,10 @@ const externals = {
   'lodash/cloneDeep': 'lodashCloneDeep',
   '@popperjs/core': 'popperjsCore',
   'vue-types': 'vueTypes',
+  '@floating-ui/dom': 'floatingUiDom',
+  'normalize-wheel': 'normalizeWheel',
+  'js-calendar': 'jsCalendar',
+  'date-fns': 'dateFns',
 };
 
 // 转换路径分隔符为 /
@@ -97,21 +96,32 @@ const transformFileContent = (code, originAbsoluteFilePath, releaseZipPath) => {
 
   transformedCode = transformedCode.replace(/"use strict";/g, 'const exports = {}');
 
-  transformedCode = transformedCode.replace(
-    /require\(['"](.*?)['"]\);?/g,
-    (match, dependencyPath) => {
-      if (!dependencyPath) return match;
-      const funcName = generateFunctionName(
-        getDependencyAbsolutePath(originAbsoluteFilePath, dependencyPath),
-        releaseZipPath,
-      );
-      return `${funcName}()`;
-    },
-  );
+  transformedCode = transformedCode.replace(/require\(['"](.*?)['"]\);?/g, (match, dependencyPath) => {
+    if (!dependencyPath) return match;
+    const funcName = generateFunctionName(
+      getDependencyAbsolutePath(originAbsoluteFilePath, dependencyPath),
+      releaseZipPath,
+    );
+    return `${funcName}()`;
+  });
 
   transformedCode += 'return exports';
 
   return transformedCode;
+};
+
+/**
+ * 构建 @bkui-vue 别名
+ * @param {*} releaseZipPath release 目录绝对路径
+ * @returns 别名映射
+ */
+const buildBkuiAlias = (releaseZipPath) => {
+  const names = fs.readdirSync(releaseZipPath).filter(n => fs.existsSync(resolve(releaseZipPath, n, 'src')));
+  const map = {};
+  for (const name of names) {
+    map[`@bkui-vue/${name}`] = resolve(releaseZipPath, name, 'src');
+  }
+  return map;
 };
 
 /**
@@ -121,6 +131,7 @@ const transformFileContent = (code, originAbsoluteFilePath, releaseZipPath) => {
  * @returns context
  */
 const getCompileContext = (releaseZipPath, entryPath, preserveModuleType, options = {}) => {
+  const version = path.basename(releaseZipPath);
   return {
     workDir: releaseZipPath,
     options: {
@@ -131,11 +142,15 @@ const getCompileContext = (releaseZipPath, entryPath, preserveModuleType, option
           entry: entryPath,
         },
       },
+      preserveModulesRoot: releaseZipPath,
+      outputPreserveModuleDir: path.resolve(RELEASE_DIST_DIR, `${version}`),
       configureWebpack: {
         ...options?.configureWebpack,
         resolve: {
           alias: {
-            '@bkui-vue': releaseZipPath,
+            // '@bkui-vue': releaseZipPath,
+            ...buildBkuiAlias(releaseZipPath),
+            ...(options?.configureWebpack?.resolve?.alias || {}),
           },
         },
       },
@@ -172,18 +187,39 @@ export const generateCompiledFile = async (fileMap, entryPath, releaseZipPath) =
     entryFile.originAbsoluteFilePath,
     releaseZipPath,
   );
-  const transformedDependenciesContent = Object.values(fileMap).reduce(
-    (acc, cur) => {
-      if (cur.originAbsoluteFilePath !== entryPath) {
-        acc += `function ${generateFunctionName(cur.outputAbsoluteFilePath, releaseZipPath)}() {
+  const transformedDependenciesContent = Object.values(fileMap).reduce((acc, cur) => {
+    if (cur.originAbsoluteFilePath !== entryPath) {
+      acc += `function ${generateFunctionName(cur.outputAbsoluteFilePath, releaseZipPath)}() {
         ${transformFileContent(cur.content, cur.originAbsoluteFilePath, releaseZipPath)}
         }\n`;
-      }
-      return acc;
-    },
-    '',
-  );
+    }
+    return acc;
+  }, '');
   return `window.getComponent = () => {\n${transformedDependenciesContent}\n${transformedEntryFileContent}\n}`;
+};
+
+/**
+ * 获取组件入口文件
+ * @param {*} releaseZipPath zip包路径
+ * @param {*} component 组件名
+ * @returns 组件入口文件
+ */
+const getComponentEntryPath = (releaseZipPath, component) => {
+  const possibleEntryFiles = ['src/index.js', 'src/index.ts', 'src/index.tsx', 'src/index.jsx'];
+
+  let entryPath = null;
+  for (const entryFile of possibleEntryFiles) {
+    const testPath = resolve(releaseZipPath, component, entryFile);
+    if (fs.existsSync(testPath) && fs.statSync(testPath).isFile()) {
+      entryPath = testPath;
+      break;
+    }
+  }
+
+  if (!entryPath) {
+    throw new Error(`找不到 ${component} 组件的入口文件`);
+  }
+  return entryPath;
 };
 
 /**
@@ -199,7 +235,8 @@ export const compileComponent = async (releaseZipPath, component) => {
     },
   };
   // 路径
-  const entryPath = resolve(releaseZipPath, component, 'src/index.ts');
+  const entryPath = getComponentEntryPath(releaseZipPath, component);
+
   // 生成上下文
   const context = getCompileContext(releaseZipPath, entryPath, 'commonjs', options);
   // 编辑

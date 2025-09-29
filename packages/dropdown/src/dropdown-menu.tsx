@@ -27,14 +27,14 @@
 import { computed, defineComponent } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-import { PropTypes } from '@bkui-vue/shared';
+
+import { dropdownMenuEmits } from './dropdown-menu-emits';
+import { dropdownMenuProps } from './dropdown-menu-props';
 
 export default defineComponent({
   name: 'DropdownMenu',
-  props: {
-    /** 外部设置的 class name */
-    extCls: PropTypes.string,
-  },
+  props: dropdownMenuProps,
+  emits: dropdownMenuEmits,
   setup(props) {
     const { resolveClassName } = usePrefix();
     const wrapperCLasses = computed(() => [resolveClassName('dropdown-menu'), props.extCls]);

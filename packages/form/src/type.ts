@@ -26,12 +26,13 @@
 
 import { SetupContext } from 'vue';
 
-import type { FormEvents, FormProps } from './form';
-import type { FormItemProps } from './form-item';
+import type { FormEmits } from './emits';
+import type { FormProps } from './props';
+import type { FormItemProps } from './form-item-props';
 
 export interface IFormContext {
   props: FormProps;
-  emit: SetupContext<FormEvents>['emit'];
+  emit: SetupContext<FormEmits>['emit'];
   register: (IFormItemContext) => void;
   unregister: (IFormItemContext) => void;
 }

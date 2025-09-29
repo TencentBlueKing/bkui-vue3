@@ -31,21 +31,14 @@ import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { Error } from '@bkui-vue/icon';
 import Modal from '@bkui-vue/modal';
 
-import props from './props';
+import { emits } from './emits';
+import { props } from './props';
 
 export default defineComponent({
   name: 'Dialog',
   inheritAttrs: false,
   props,
-  emits: {
-    closed: () => true,
-    shown: () => true,
-    hidden: () => true,
-    'update:isShow': (value: boolean) => value !== undefined,
-    confirm: () => true,
-    prev: () => true,
-    next: () => true,
-  },
+  emits,
   setup(props, { emit }) {
     const t = useLocale('dialog');
 

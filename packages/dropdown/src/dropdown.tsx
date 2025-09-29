@@ -28,26 +28,16 @@ import { defineComponent, ref } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import Popover, { PopoverPropTypes } from '@bkui-vue/popover';
-import { classes, placementType, PropTypes, triggerType } from '@bkui-vue/shared';
+import { classes } from '@bkui-vue/shared';
 import merge from 'lodash/merge';
+
+import { emits } from './emits';
+import { props } from './props';
 
 export default defineComponent({
   name: 'Dropdown',
-  props: {
-    /** trigger = manual时候控制显隐藏  */
-    isShow: PropTypes.bool.def(false),
-    /** 弹层出现位置 */
-    placement: placementType(),
-    /** 触发方式 */
-    trigger: triggerType(),
-    /** 是否禁用 */
-    disabled: PropTypes.bool.def(false),
-    /** popover属性 */
-    popoverOptions: PropTypes.object.def({}),
-    /** 外部设置的 class name */
-    extCls: PropTypes.string,
-  },
-  emits: ['showChange', 'show', 'hide'],
+  props,
+  emits,
   setup(_props, { emit }) {
     const popoverRef = ref(null);
     const isPopoverShow = ref(false);

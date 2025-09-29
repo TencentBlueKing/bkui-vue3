@@ -27,15 +27,14 @@
 import { computed, defineComponent } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-import { PropTypes } from '@bkui-vue/shared';
+
+import { dropdownItemEmits } from './dropdown-item-emits';
+import { dropdownItemProps } from './dropdown-item-props';
 
 export default defineComponent({
   name: 'DropdownItem',
-  props: {
-    /** 外部设置的 class name */
-    extCls: PropTypes.string,
-  },
-  emits: ['click'],
+  props: dropdownItemProps,
+  emits: dropdownItemEmits,
   setup(props, { emit }) {
     const handleClick = (evt: MouseEvent) => {
       // 取消冒泡是为了 popover 那边能检测到 content 被点击了，实现按需 content 点击后隐藏面板的功能

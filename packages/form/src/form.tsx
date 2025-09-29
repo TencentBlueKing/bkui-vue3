@@ -26,34 +26,17 @@
 import { defineComponent, provide } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-import { classes, formKey, PropTypes } from '@bkui-vue/shared';
-import isBoolean from 'lodash/isBoolean';
-import isString from 'lodash/isString';
+import { classes, formKey } from '@bkui-vue/shared';
+
+import { emits } from './emits';
+import { props } from './props';
 
 import type { IFormItemContext } from './type';
-import type { ExtractPropTypes } from 'vue';
-
-export const formProps = {
-  formType: PropTypes.oneOf(['default', 'vertical']).def('default'),
-  labelWidth: PropTypes.oneOfType([Number, String]).def(150),
-  labelPosition: PropTypes.oneOf(['left', 'center', 'right']),
-  model: PropTypes.object,
-  rules: PropTypes.object,
-};
-
-const formEvents = {
-  submit: null,
-  validate: (property: string, result: boolean, message: string) =>
-    isString(property) && isBoolean(result) && isString(message),
-};
-
-export type FormProps = Readonly<ExtractPropTypes<typeof formProps>>;
-export type FormEvents = typeof formEvents;
 
 export default defineComponent({
   name: 'Form',
-  props: formProps,
-  emits: formEvents,
+  props,
+  emits,
   setup(props, context) {
     // form-item 列表
     let formItemInstanceList: Array<IFormItemContext> = [];

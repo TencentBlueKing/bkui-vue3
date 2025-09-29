@@ -31,7 +31,7 @@ import debounce from 'lodash/debounce';
 import isElement from 'lodash/isElement';
 
 import { COLUMN_ATTRIBUTE, PROVIDE_KEY_INIT_COL, SCROLLY_WIDTH, TABLE_ROW_ATTRIBUTE } from './const';
-import { EMIT_EVENT_TYPES } from './events';
+import { emits } from './emits';
 import useColumnResize from './hooks/use-column-resize';
 import useColumnTemplate from './hooks/use-column-template';
 import useColumns from './hooks/use-columns';
@@ -51,7 +51,7 @@ export default defineComponent({
     bkTooltips,
   },
   props: tableProps,
-  emits: EMIT_EVENT_TYPES,
+  emits,
   setup(props, ctx: SetupContext) {
     if (process.env.NODE_ENV !== 'production') {
       console.warn('BkTable 组件后续将不再维护，请迁移至新组件 @blueking/table');

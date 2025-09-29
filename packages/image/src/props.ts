@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { PropType } from 'vue';
+import { ExtractPropTypes } from 'vue';
 import { toType } from 'vue-types';
 
 import { PropTypes } from '@bkui-vue/shared';
@@ -35,7 +35,7 @@ enum FitEnum {
   SCALE_DOWN = 'scale-down',
 }
 
-export const propsImage = {
+export const props = {
   src: PropTypes.string.def(''),
   fallback: PropTypes.string.def(''),
   placeholder: PropTypes.any,
@@ -46,14 +46,5 @@ export const propsImage = {
   maskClose: PropTypes.bool.def(true),
   zIndex: PropTypes.number.def(2000),
 };
-export const propsImageViever = {
-  urlList: {
-    type: Array as PropType<string[]>,
-    default: () => [],
-  },
-  zIndex: PropTypes.number.def(2000),
-  initialIndex: PropTypes.number.def(0),
-  isShowTitle: PropTypes.bool.def(true),
-  loops: PropTypes.bool.def(true),
-  maskClose: PropTypes.bool.def(true),
-};
+
+export type ImageProps = ExtractPropTypes<typeof props>;

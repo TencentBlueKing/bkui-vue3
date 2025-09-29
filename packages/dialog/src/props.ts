@@ -24,6 +24,8 @@
  * IN THE SOFTWARE.
  */
 
+import { ExtractPropTypes } from 'vue';
+
 import { propsMixin } from '@bkui-vue/modal';
 import { AlignEnum, alignType, dialogTypeUnion, PropTypes, ThemeEnum } from '@bkui-vue/shared';
 import cloneDeep from 'lodash/cloneDeep';
@@ -31,21 +33,17 @@ import cloneDeep from 'lodash/cloneDeep';
 const dialogProps = cloneDeep(propsMixin);
 dialogProps.width.default = '480';
 
-const props = {
+export const props = {
   ...dialogProps,
 
   // 是否可拖拽
   draggable: PropTypes.bool.def(false),
   // 确认按钮文字
-  // confirmText: PropTypes.string.def('确定'),
   confirmText: PropTypes.string,
   // 取消按钮文字
-  // cancelText: PropTypes.string.def('取消'),
   cancelText: PropTypes.string,
   // 步骤按钮文字
-  // prevText: PropTypes.string.def('上一步'),
   prevText: PropTypes.string,
-  // nextText: PropTypes.string.def('下一步'),
   nextText: PropTypes.string,
   // 当前步骤
   current: PropTypes.number.def(1),
@@ -63,7 +61,6 @@ const props = {
   dialogType: dialogTypeUnion(),
   // 按钮loading
   isLoading: PropTypes.bool.def(false),
-  // 是否显示在body内即与#app同级
-  transfer: PropTypes.oneOfType([Boolean, String, HTMLElement]).def(true),
 };
-export default props;
+
+export type DialogProps = ExtractPropTypes<typeof props>;

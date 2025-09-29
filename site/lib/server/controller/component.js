@@ -39,7 +39,7 @@ export default class ComponentController {
     @QueryParams({ name: 'component' }) component,
   ) {
     const releaseZipPath = await getReleaseZipPath(version);
-    return getComponent(releaseZipPath, component);
+    return getComponent(releaseZipPath, component, version);
   }
 
   @OutputJson()
@@ -49,7 +49,7 @@ export default class ComponentController {
     @QueryParams({ name: 'component' }) component,
   ) {
     const releaseZipPath = await getReleaseZipPath(version);
-    return getCss(releaseZipPath, component);
+    return getCss(releaseZipPath, component, version);
   }
 
   @OutputJson()

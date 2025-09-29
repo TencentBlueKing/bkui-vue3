@@ -26,9 +26,15 @@
 import { withInstallProps } from '@bkui-vue/shared';
 
 import { useHover } from './common';
+import { emits } from './emits';
 import Option from './option';
 import OptionGroup from './optionGroup';
+import { props } from './props';
 import Component from './select';
+
 const BkSelect = withInstallProps(Component, { Option, Group: OptionGroup });
+
 export default BkSelect;
-export { BkSelect, Option as BkOption, OptionGroup as BkOptionGroup, useHover };
+export { BkSelect, Option as BkOption, OptionGroup as BkOptionGroup, useHover, props, emits };
+export type { SelectEmits } from './emits';
+export type { SelectProps } from './props';

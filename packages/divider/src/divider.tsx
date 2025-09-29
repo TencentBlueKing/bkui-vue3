@@ -28,10 +28,13 @@ import { defineComponent } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 
-import { dividerProps } from './props';
+import { emits } from './emits';
+import { props } from './props';
+
 export default defineComponent({
   name: 'Divider',
-  props: dividerProps,
+  props,
+  emits,
   render() {
     const styles = () => {
       if (this.direction === 'vertical') {
@@ -57,6 +60,7 @@ export default defineComponent({
       <div
         style={styles()}
         class={[resolveClassName('divider'), resolveClassName(`divider-${this.direction}`)]}
+        onClick={(event: MouseEvent) => this.$emit('click', event)}
       >
         {slots}
       </div>

@@ -26,7 +26,13 @@
 
 import { withInstall } from '@bkui-vue/shared';
 
+import { emits } from './emits';
+import { props } from './props';
 import Component from './search-select';
+
 const BkSearchSelect = withInstall(Component);
+
 export default BkSearchSelect;
-export { BkSearchSelect };
+export { BkSearchSelect, props, emits };
+export type { SearchSelectEmits } from './emits';
+export type { SearchSelectProps } from './props';

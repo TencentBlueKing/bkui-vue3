@@ -24,18 +24,7 @@
  * IN THE SOFTWARE.
  */
 
-import {
-  computed,
-  defineComponent,
-  onBeforeUnmount,
-  onMounted,
-  PropType,
-  ref,
-  ShallowRef,
-  shallowRef,
-  VNode,
-  watch,
-} from 'vue';
+import { computed, defineComponent, onBeforeUnmount, onMounted, ref, ShallowRef, shallowRef, VNode, watch } from 'vue';
 import { type SlotsType } from 'vue';
 
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
@@ -44,11 +33,12 @@ import { Close, ExclamationCircleShape, Search } from '@bkui-vue/icon';
 import { debounce } from '@bkui-vue/shared';
 import { addListener, removeListener } from '@blueking/fork-resize-detector';
 
+import { emits } from './emits';
 import SearchSelectInput from './input';
+import { props } from './props';
 import SearchSelected from './selected';
 import {
   // DeleteBehavior,
-  GetMenuListFunc,
   ICommonItem,
   ISearchItem,
   ISearchValue,
@@ -57,64 +47,19 @@ import {
   SearchLogical,
   SelectedItem,
   useSearchSelectProvider,
-  ValidateValuesFunc,
   ValueBehavior,
 } from './utils';
+
 const INPUT_PADDING_WIDTH = 40;
 const SELECTED_MARGIN_RIGHT = 6;
 const INPUT_MIN_HEIGHT = 26;
-const MENU_ITEM_MIN_HEIGHT = 32;
-export const SearchSelectProps = {
-  data: {
-    type: Array as PropType<Omit<ISearchItem, 'isSelected' | 'value'>[]>,
-    default: () => [],
-  },
-  modelValue: {
-    type: Array as PropType<ISearchValue[]>,
-    default: () => [],
-  },
-  maxHeight: {
-    type: Number,
-    // 默认展示12条，加上列表8px的padding
-    default: MENU_ITEM_MIN_HEIGHT * 12 + 8,
-  },
-  conditions: {
-    type: Array as PropType<ICommonItem[]>,
-    default: () => [],
-  },
-  clearable: {
-    type: Boolean,
-    default: true,
-  },
-  placeholder: String,
-  getMenuList: Function as PropType<GetMenuListFunc>,
-  validateValues: Function as PropType<ValidateValuesFunc>,
-  uniqueSelect: {
-    type: Boolean,
-    default: false,
-  },
-  valueBehavior: {
-    type: String as PropType<`${ValueBehavior}`>,
-    default: ValueBehavior.ALL,
-    validator(v: ValueBehavior) {
-      return [ValueBehavior.ALL, ValueBehavior.NEED_KEY].includes(v);
-    },
-  },
-  // deleteBehavior: {
-  //   type: String as PropType<`${DeleteBehavior}`>,
-  //   default: DeleteBehavior.CHAR,
-  //   validator(v: DeleteBehavior) {
-  //     return [DeleteBehavior.CHAR, DeleteBehavior.VALUE].includes(v);
-  //   },
-  // },
-};
 export default defineComponent({
   name: 'SearchSelect',
   directives: {
     clickoutside,
   },
-  props: SearchSelectProps,
-  emits: ['update:modelValue', 'search', 'selectKey'],
+  props,
+  emits,
   slots: Object as SlotsType<{
     menu: MenuSlotParams;
     prepend: () => VNode;

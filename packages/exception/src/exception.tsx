@@ -25,12 +25,12 @@
  */
 
 import { defineComponent } from 'vue';
-import { toType } from 'vue-types';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-import { classes, PropTypes } from '@bkui-vue/shared';
+import { classes } from '@bkui-vue/shared';
 import isFunction from 'lodash/isFunction';
 
+import { emits } from './emits';
 import permissions from './images/403.svg';
 import notFound from './images/404.svg';
 import maintain from './images/500.svg';
@@ -38,6 +38,7 @@ import Building from './images/building.svg';
 import empty from './images/empty.svg';
 import login from './images/login.svg';
 import searchEmpty from './images/search-empty.svg';
+import { props } from './props';
 import { TypesMapType } from './typings';
 
 export enum ExceptionEnum {
@@ -55,14 +56,8 @@ export enum SceneEnum {
 }
 export default defineComponent({
   name: 'Exception',
-  props: {
-    // 类型
-    type: toType<`${ExceptionEnum}`>('type', {}).def(ExceptionEnum.CODE_404),
-    // 场景
-    scene: toType<`${SceneEnum}`>('scene', {}).def(SceneEnum.PAGE),
-    title: PropTypes.string,
-    description: PropTypes.string,
-  },
+  props,
+  emits,
   setup(props, { slots }) {
     const images: TypesMapType = {
       403: permissions,

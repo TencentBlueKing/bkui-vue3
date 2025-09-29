@@ -27,10 +27,18 @@
 import { formItemKey, formKey, useFormItem, withInstallProps } from '@bkui-vue/shared';
 
 import ComposeFormItem from './compose-form-item';
-import Form, { formProps } from './form';
+import Form from './form';
 import FormItem from './form-item';
 
-export * from './type';
+export type { ComposeFormItemEmits } from './compose-form-item-emits';
+
+import { composeFormItemEmits } from './compose-form-item-emits';
+import { composeFormItemProps } from './compose-form-item-props';
+// 导入所有 props 和 emits
+import { emits } from './emits';
+import { formItemEmits } from './form-item-emits';
+import { formItemProps } from './form-item-props';
+import { props } from './props';
 
 const BkForm = withInstallProps(Form, { FormItem, ComposeFormItem });
 
@@ -38,4 +46,16 @@ export default BkForm;
 
 export { BkForm, FormItem as BkFormItem, ComposeFormItem as BkComposeFormItem, formItemKey, formKey, useFormItem };
 
-export type { formProps };
+// 导出主组件的 props 和 emits
+export { props, emits };
+export type { ComposeFormItemProps } from './compose-form-item-props';
+export type { FormEmits } from './emits';
+
+// 导出子组件的 props 和 emits
+export { formItemProps, formItemEmits };
+export type { FormItemEmits } from './form-item-emits';
+export type { FormItemProps } from './form-item-props';
+
+export { composeFormItemProps, composeFormItemEmits };
+export type { FormProps } from './props';
+export * from './type';

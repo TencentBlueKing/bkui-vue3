@@ -8,6 +8,10 @@ import * as Vue from 'vue';
 import * as VueTypes from 'vue-types';
 
 import * as PopperjsCore from '@popperjs/core';
+import * as NormalizeWheel from 'normalize-wheel';
+import * as FloatingUiDom from '@floating-ui/dom';
+import * as DateFns from 'date-fns';
+import * as JsCalendar from 'js-calendar';
 
 export const useExternals = () => {
   const loadExternals = () => {
@@ -19,6 +23,10 @@ export const useExternals = () => {
     window.lodashThrottle = () => Lodash.throttle;
     window.lodashMerge = () => Lodash.merge;
     window.lodashCloneDeep = () => Lodash.cloneDeep;
+    window.normalizeWheel = () => NormalizeWheel;
+    window.floatingUiDom = () => FloatingUiDom;
+    window.dateFns = () => DateFns;
+    window.jsCalendar = () => JsCalendar;
   };
 
   const unloadExternals = () => {
@@ -29,6 +37,11 @@ export const useExternals = () => {
     delete window.vueTypes;
     delete window.lodashThrottle;
     delete window.lodashMerge;
+    delete window.lodashCloneDeep;
+    delete window.normalizeWheel;
+    delete window.floatingUiDom;
+    delete window.dateFns;
+    delete window.jsCalendar;
   };
 
   onBeforeMount(loadExternals);

@@ -25,10 +25,14 @@
  */
 import { AlignEnum, alignType, directionType, lineStyleType, PropTypes } from '@bkui-vue/shared';
 
-export const dividerProps = {
+import type { ExtractPropTypes } from 'vue';
+
+export const props = {
   direction: directionType(),
   align: alignType().def(AlignEnum.CENTER),
   color: PropTypes.string.def('#dde4eb'),
   width: PropTypes.number.def(1),
   type: lineStyleType(),
 };
+
+export type DividerProps = ExtractPropTypes<typeof props>;

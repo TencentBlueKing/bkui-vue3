@@ -46,6 +46,7 @@ import { getFullscreenRoot, useFormItem } from '@bkui-vue/shared';
 
 import PickerDropdown from './base/picker-dropdown';
 import { dateIcon, timeIcon } from './common';
+import { emits } from './emits';
 // import VueTypes, { toType, toValidableType } from 'vue-types';
 import DatePanel from './panel/date';
 import DateRangePanel from './panel/date-range';
@@ -61,18 +62,7 @@ export default defineComponent({
     clickoutside,
   },
   props: datePickerProps,
-  emits: [
-    'open-change',
-    'input',
-    'change',
-    'update:modelValue',
-    'clear',
-    'shortcut-change',
-    'pick-success',
-    'pick-first',
-    'blur',
-    'focus',
-  ],
+  emits,
   // slots: ['header'],
   slots: Object as SlotsType<{
     header?: () => any;
@@ -624,8 +614,8 @@ export default defineComponent({
     };
 
     expose({
-      focus: handleIconClick
-    })
+      focus: handleIconClick,
+    });
 
     return {
       ...toRefs(state),
