@@ -43,35 +43,4 @@
   ]);
 
   const active = ref('mission');
-
-  const tabChange = (name) => {
-    console.log(name);
-  };
-
-  const changeActive = (name) => {
-    active.value = name;
-  };
-
-  const addPanel = () => {
-    const name = Math.random().toString(16).substring(4, 10);
-    panels.value.push({
-      name,
-      label: `新标签页-${name.substring(0, 4)}`,
-      count: 50,
-    });
-    active.value = name;
-  };
-
-  const removePanel = (index, panel) => {
-    console.log(panel);
-    panels.value.splice(index, 1);
-  };
-
-  const tabSort = (dragStartIndex, index) => {
-    console.log(dragStartIndex, index);
-  };
-
-  const tabDrag = (index, $event) => {
-    console.log(index, $event);
-  };
 </script>
