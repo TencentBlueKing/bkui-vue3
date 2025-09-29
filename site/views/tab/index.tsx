@@ -116,7 +116,8 @@ const tabPropsJson: IPropsTableItem[] = [
     type: 'Number',
     default: '--',
     desc: '选中条颜色',
-  },  {
+  },
+  {
     name: 'before-change',
     type: 'Function',
     default: 'undefined',
