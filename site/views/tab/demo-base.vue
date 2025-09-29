@@ -2,8 +2,8 @@
   <div>
     <bk-tab
       v-model:active="active"
+      :before-change="beforeChange"
       type="unborder-card"
-      :beforeChange="beforeChange"
     >
       <bk-tab-panel
         v-for="(item, index) in panels"
@@ -28,7 +28,8 @@
 
   const active = ref('mission');
 
-  const beforeChange = () => { // args: name
+  const beforeChange = () => {
+    // args: name
     // 如果需要控制change，这里处理返回值
     // return name === 'config'
   };

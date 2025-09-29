@@ -27,12 +27,4 @@
   ]);
 
   const active = ref('mission');
-
-  const tabSort = (dragStartIndex, index) => {
-    console.log(dragStartIndex, index);
-  };
-
-  const tabDrag = (index, $event) => {
-    console.log(index, $event);
-  };
 </script>
