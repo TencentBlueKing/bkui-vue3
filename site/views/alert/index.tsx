@@ -98,6 +98,13 @@ const alertSlots: IPropsTableItem[] = [
     desc: '',
     optional: [],
   },
+  {
+    name: 'close',
+    type: '',
+    default: '',
+    desc: '',
+    optional: [],
+  },
 ];
 
 export default defineComponent({
