@@ -1,6 +1,14 @@
 ## 更新日志
 
 
+### 2.0.2-beta.69
+
+* **[feat]**:
+    - bugfix(form): 异步验证执行不正确
+    - feature(crontab): 新增 crontab 组件
+    - feature(alert): 可操作的文字按钮，需要是蓝色的字体
+
+
 ### 2.0.2-beta.68
 
 * **[feat]**:
