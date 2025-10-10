@@ -23,6 +23,15 @@ export interface IComponentWiki {
       link?: string;
     }[]
   }[];
+  slots?: {
+    name: string;
+    description: string;
+    params?: {
+      name: string;
+      type: string;
+      link?: string;
+    }[]
+  }[];
   presets: Array<{
     title: string;
     description: string;
