@@ -236,7 +236,6 @@ export const compileComponent = async (releaseZipPath, component) => {
   };
   // 路径
   const entryPath = getComponentEntryPath(releaseZipPath, component);
-
   // 生成上下文
   const context = getCompileContext(releaseZipPath, entryPath, 'commonjs', options);
   // 编辑

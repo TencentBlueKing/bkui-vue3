@@ -35,4 +35,4 @@ export const props = {
   extCls: PropTypes.string.def(''),
 };
 
-export type BackTopProps = ExtractPropTypes<typeof props>;
+export type BacktopProps = ExtractPropTypes<typeof props>;
