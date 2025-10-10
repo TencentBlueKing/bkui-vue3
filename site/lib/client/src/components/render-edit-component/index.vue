@@ -42,15 +42,15 @@
                 v-if="mainPanel === MainPanel.Component"
                 class="edit-component-component"
                 :component="component"
-                :props="renderProps"
-                :slots="renderSlots"
+                :render-props="renderProps"
+                :render-slots="renderSlots"
               />
               <render-code
                 v-if="mainPanel === MainPanel.Code"
                 class="edit-component-code"
                 :component-wiki="componentWiki"
-                :current-props="renderProps"
-                :current-slot="renderSlots"
+                :render-props="renderProps"
+                :render-slots="renderSlots"
               />
             </section>
           </template>

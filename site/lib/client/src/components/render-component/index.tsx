@@ -11,11 +11,11 @@ export default vue.defineComponent({
       type: Object,
       required: true,
     },
-    props: {
+    renderProps: {
       type: Object,
       default: () => ({}),
     },
-    slots: {
+    renderSlots: {
       type: Object,
       default: () => ({}),
     },
@@ -23,11 +23,11 @@ export default vue.defineComponent({
   render() {
     return vue.h(
       this.component,
-      this.props,
-      Object.keys(this.slots).reduce(
+      this.renderProps,
+      Object.keys(this.renderSlots).reduce(
         (acc, slotName) => {
           const Fn = Function;
-          acc[slotName] = () => Fn('Vue', compile(this.slots[slotName]).code)(vue)(vue);
+          acc[slotName] = () => Fn('Vue', compile(this.renderSlots[slotName]).code)(vue)(vue);
           return acc;
         },
         {} as Record<string, () => object>,

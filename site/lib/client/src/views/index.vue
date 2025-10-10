@@ -29,5 +29,6 @@ const componentStore = useComponent();
 }
 .component-main {
   flex: 1;
+  max-width: calc(100% - 260px);
 }
 </style>

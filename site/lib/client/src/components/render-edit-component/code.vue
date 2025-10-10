@@ -15,14 +15,15 @@
     </div>
     <div class="code-content">
       <pre>
-<code v-bk-xss-html="highlightFactory(template(), 'xml')"></code>
-<code v-bk-xss-html="highlightFactory(scriptStart, 'xml')"></code>
-<code v-bk-xss-html="curScript"></code>
-<code v-bk-xss-html="highlightFactory(scriptEnd, 'xml')"></code>
+<code v-html="filterXss(highlightFactory(template(), 'xml'))"></code>
+<code v-html="filterXss(highlightFactory(scriptStart, 'xml'))"></code>
+<code v-html="filterXss(curScript)"></code>
+<code v-html="filterXss(highlightFactory(scriptEnd, 'xml'))"></code>
       </pre>
     </div>
     <div class="code-footer">
       <bk-button
+        class="copy-button"
         theme="primary"
         @click="handleCopyCode"
       >
@@ -34,6 +35,9 @@
 
 <script lang="ts" setup>
 import {
+  filterXss,
+} from '@blueking/xss-filter';
+import {
   Button as bkButton,
   Message,
 } from 'bkui-vue';
@@ -43,6 +47,7 @@ import typescript from 'highlight.js/lib/languages/typescript';
 import xml from 'highlight.js/lib/languages/xml';
 import {
   computed,
+  onBeforeMount,
   ref,
   toRefs,
 } from 'vue';
@@ -58,37 +63,22 @@ import {
 
 import 'highlight.js/styles/atom-one-dark.css'; // 代码块高亮样式
 
+type Languages = 'javascript' | 'typescript';
 interface IProps {
   componentWiki: IComponentWiki;
-  currentProps: Record<string, PropValue>;
-  currentSlot: Record<string, string>;
+  renderProps: Record<string, PropValue>;
+  renderSlots: Record<string, string>;
 }
-type Languages = 'javascript' | 'typescript';
 interface LanguageItem<T = Languages> {
   name: string;
   value: T;
   disabled: boolean;
 }
 const props = defineProps<IProps>();
-const {
-  componentWiki,
-  currentProps,
-  currentSlot,
-} = toRefs(props);
-hljs.registerLanguage('xml', xml);
-hljs.registerLanguage('javascript', javascript);
-hljs.registerLanguage('typescript', typescript);
+
 const { copy } = useClipboard({
   legacy: true, // 使用 execCommand 作为后备处理副本
 });
-// 换行符
-const BREAK_LINE = '\n';
-// 最小缩进单位
-const INDENT = '  ';
-// template 缩进处理
-const indent = (num = 1) => new Array(num)
-  .fill(INDENT)
-  .join('');
 
 const activeLanguage = ref<Languages>('typescript');
 const supportLanguages = ref<LanguageItem[]>([
@@ -103,6 +93,34 @@ const supportLanguages = ref<LanguageItem[]>([
     disabled: false,
   },
 ]);
+
+const {
+  componentWiki,
+  renderProps,
+  renderSlots,
+} = toRefs(props);
+
+// script标签开始
+const scriptStart = computed(() => {
+  const lang = activeLanguage.value === 'typescript' ? ' lang="ts"' : '';
+  return `${BREAK_LINE}<script${lang} setup>`;
+});
+// script标签内容
+const curScript = computed(() => {
+  return highlightFactory(scriptContent(), activeLanguage.value);
+});
+// 换行符
+const BREAK_LINE = '\n';
+// 最小缩进单位
+const INDENT = '  ';
+// script标签结束
+// eslint-disable-next-line no-useless-escape
+const scriptEnd = '<\/script>';
+
+// template 缩进处理
+const indent = (num = 1) => new Array(num)
+  .fill(INDENT)
+  .join('');
 
 // 创建标签
 const createLabel = (
@@ -134,10 +152,19 @@ const createLabel = (
 const createSlots = (indentNum: number) => {
   const splitIndentNum = indentNum ? indentNum - 1 : indentNum;
   const split = `${BREAK_LINE}${indent(splitIndentNum)}`;
-  return Object.entries(currentSlot.value).map(([key, value]) => {
+  return Object.entries(renderSlots.value).map(([key, value]) => {
     const curSlotName = key === 'default' ? '' : ` #${key}`;
     const name = `template${curSlotName}`;
-    return createLabel(name, value, '', {}, indentNum, 'template');
+    let content = value;
+    // 处理slot中的换行符，优化缩进
+    if (value[0] === BREAK_LINE) {
+      content = value
+        .split(BREAK_LINE)
+        .map(item => item.slice(2, item.length))
+        .join(BREAK_LINE)
+        .trim();
+    }
+    return createLabel(name, content, '', {}, indentNum, 'template');
   })
     .join(split);
 };
@@ -150,19 +177,11 @@ const template = () => {
       componentWiki.value.name,
       createSlots(3),
       'bk-',
-      currentProps.value,
+      renderProps.value,
       2,
     ),
   );
 };
-// script标签开始
-const scriptStart = computed(() => {
-  const lang = activeLanguage.value === 'typescript' ? ' lang="ts"' : '';
-  return `${BREAK_LINE}<script${lang} setup>`;
-});
-// script标签结束
-// eslint-disable-next-line no-useless-escape
-const scriptEnd = '<\/script>';
 
 // 生成依赖导入
 const createDependImport = (dependList: string[], source: string) => {
@@ -174,9 +193,10 @@ const createDependImport = (dependList: string[], source: string) => {
     BREAK_LINE
   }} from '${source}';${BREAK_LINE}`;
 };
+
 // 根据props生成响应式变量
 const createRefVariables = () => {
-  return Object.entries(currentProps.value).map(([key, value]) => {
+  return Object.entries(renderProps.value).map(([key, value]) => {
     const curPropInfo = componentWiki.value.props.find(item => item.name === key);
     if (curPropInfo) {
       let curValue;
@@ -229,7 +249,7 @@ const formatComplexArray = (arr: any[], indentLevel = 1): string => {
     return `${INDENT.repeat(indentLevel)}${typeof item === 'string' ? `'${item}'` : item},`;
   });
 
-  return `[\n${items.join('\n')}\n${INDENT.repeat(indentLevel - 1)}]`;
+  return `[${BREAK_LINE}${items.join(BREAK_LINE)}${BREAK_LINE}${INDENT.repeat(indentLevel - 1)}]`;
 };
 
 // 递归格式化复杂值（对象/数组）
@@ -262,19 +282,16 @@ const formatComplexValue = (obj: any, indentLevel = 1): string => {
     return `${INDENT.repeat(indentLevel)}${key}: ${valueStr},`;
   });
 
-  return `{\n${formatted.join('\n')}\n${INDENT.repeat(indentLevel - 1)}}`;
+  return `{${BREAK_LINE}${formatted.join(BREAK_LINE)}${BREAK_LINE}${INDENT.repeat(indentLevel - 1)}}`;
 };
 
+// 获取script标签内容
 const scriptContent = () => {
   // 依赖列表
   const dependList = ['ref'];
   const importDepend = createDependImport(dependList, 'vue');
   return `${importDepend}${BREAK_LINE}${createRefVariables()}`;
 };
-
-const curScript = computed(() => {
-  return highlightFactory(scriptContent(), activeLanguage.value);
-});
 
 // highlight处理
 const highlightFactory = (
@@ -297,11 +314,12 @@ const getCode = () => {
   return [
     template(),
     scriptStart,
-    `\n${scriptContent()}\n`,
+    `${BREAK_LINE}${scriptContent()}${BREAK_LINE}`,
     scriptEnd,
   ].join('');
 };
 
+// 复制代码
 const handleCopyCode = async () => {
   try {
     await copy(getCode());
@@ -319,6 +337,12 @@ const handleCopyCode = async () => {
     });
   }
 };
+
+onBeforeMount(() => {
+  hljs.registerLanguage('xml', xml);
+  hljs.registerLanguage('javascript', javascript);
+  hljs.registerLanguage('typescript', typescript);
+});
 </script>
 
 <style lang="postcss" scoped>
@@ -376,6 +400,7 @@ const handleCopyCode = async () => {
     padding: 16px 24px;
     font-size: 14px;
     background-color: #242424;
+    color: #abb2bf;
 
     /* 自定义滚动条 */
     &::-webkit-scrollbar {
@@ -396,6 +421,10 @@ const handleCopyCode = async () => {
     &::-webkit-scrollbar-track {
       background-color: transparent;
     }
+    /* 解决白色方块问题 */
+    &::-webkit-scrollbar-corner {
+      background-color: transparent; /* 设为透明 */
+    }
   }
 
   .code-footer {
@@ -407,6 +436,10 @@ const handleCopyCode = async () => {
     padding-left: 24px;
     padding-bottom: 12px;
     z-index: 1;
+
+    .copy-button {
+      margin-top: 4px;
+    }
   }
 }
 </style>

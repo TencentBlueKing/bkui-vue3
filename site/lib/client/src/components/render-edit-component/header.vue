@@ -7,29 +7,44 @@
         :class="mainPanel === MainPanel.Component ? 'active-tab-item' : ''"
         @click="toggleShow(MainPanel.Component)"
       >
-        <i
-          v-bk-tooltips="'UI'"
-          class="bkui-vue-wiki-icon icon-component"
-        ></i>
+        <Popover
+          theme="dark"
+        >
+          <i class="bkui-vue-wiki-icon icon-component"></i>
+          <template #content>
+            <span>UI</span>
+          </template>
+        </Popover>
       </div>
       <div
         class="tab-item"
         :class="mainPanel === MainPanel.Code ? 'active-tab-item' : ''"
         @click="toggleShow(MainPanel.Code)"
       >
-        <i
-          v-bk-tooltips="'Code'"
-          class="bkui-vue-wiki-icon icon-code"
-        ></i>
+        <Popover
+          theme="dark"
+        >
+          <i class="bkui-vue-wiki-icon icon-code"></i>
+          <template #content>
+            <span>Code</span>
+          </template>
+        </Popover>
       </div>
     </div>
     <div class="tools-bar">
-      <i
-        v-bk-tooltips="'全屏'"
-        :class="isFullScreen ? 'full-screen' : ''"
-        class="bkui-vue-wiki-icon icon-full-screen"
-        @click="emit('fullScreen')"
-      ></i>
+      <Popover
+        theme="dark"
+        placement="top"
+      >
+        <i
+          :class="isFullScreen ? 'full-screen' : ''"
+          class="bkui-vue-wiki-icon icon-full-screen"
+          @click="emit('fullScreen')"
+        ></i>
+        <template #content>
+          <span>全屏</span>
+        </template>
+      </Popover>
     </div>
   </section>
 </template>
@@ -38,6 +53,10 @@
 import {
   MainPanel,
 } from '@/types/enum';
+
+import {
+  Popover,
+} from 'bkui-vue';
 
 interface IProps {
   mainPanel: MainPanel;
