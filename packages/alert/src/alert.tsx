@@ -78,6 +78,14 @@ export default defineComponent({
 
     const defaultIcon = <InfoLine class={resolveClassName('alert-icon-info')} />;
 
+    const renderClose = () => {
+      if (this.$slots.close) {
+        return this.$slots.close();
+      }
+
+      return this.closeText ? this.closeText : <CloseLine />;
+    }
+
     return (
       <div class={typeClass}>
         <div class={resolveClassName('alert-wraper')}>
@@ -87,12 +95,12 @@ export default defineComponent({
             <div class={resolveClassName('alert-description')}>{this.$slots.default?.()}</div>
           </div>
           {this.closable && (
-            <span
+            <div
               class={closeButtonClasses}
               onClick={this.handleClose}
             >
-              {this.closeText ? this.closeText : <CloseLine />}
-            </span>
+              {renderClose()}
+            </div>
           )}
         </div>
       </div>

@@ -10,7 +10,16 @@
     theme="info"
     title="消息的提示文字"
     closable
-  />
+  >
+    <template #close>
+      <BkButton
+        theme="primary"
+        text
+      >
+        下次见！
+      </BkButton>
+    </template>
+  </bk-alert>
   <bk-alert
     close-text="删掉"
     theme="warning"
@@ -20,6 +29,7 @@
 </template>
 <script setup>
   import BkAlert from '@bkui-vue/alert';
+  import BkButton from '@bkui-vue/button';
 </script>
 <style lang="postcss">
   .bk-alert ~ .bk-alert {
