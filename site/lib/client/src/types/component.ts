@@ -45,6 +45,7 @@ export interface IComponentWiki {
       name: string;
       type: string;
       description: string;
+      default?: string;
       link?: string;
     }[]
   }[];
