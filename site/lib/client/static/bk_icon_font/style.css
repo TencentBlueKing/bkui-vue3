@@ -1,0 +1,40 @@
+@font-face {
+	font-family: "bkui-vue-wiki";
+	src: url("fonts/iconcool.svg#iconcool") format("svg"),
+url("fonts/iconcool.ttf") format("truetype"),
+url("fonts/iconcool.woff") format("woff"),
+url("fonts/iconcool.eot?#iefix") format("embedded-opentype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+.bkui-vue-wiki-icon {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'bkui-vue-wiki' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  text-align: center;
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-preset:before {
+	content: "\e101";
+}
+.icon-component:before {
+	content: "\e102";
+}
+.icon-full-screen:before {
+	content: "\e103";
+}
+.icon-code:before {
+	content: "\e104";
+}
+.icon-copy:before {
+	content: "\e105";
+}

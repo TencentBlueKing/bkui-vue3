@@ -1,8 +1,10 @@
 <template>
-  <section class="edit-component">
+  <section class="edit-component" ref="componentRef">
     <render-header
       v-model:main-panel="mainPanel"
       :component-wiki="componentWiki"
+      :is-full-screen="isFullScreen"
+      @full-screen="handleFullScreen"
     />
     <bk-resize-layout
       collapsible
@@ -38,13 +40,17 @@
             <section class="edit-component-view">
               <render-component
                 v-if="mainPanel === MainPanel.Component"
+                class="edit-component-component"
                 :component="component"
                 :props="renderProps"
                 :slots="renderSlots"
               />
               <render-code
                 v-if="mainPanel === MainPanel.Code"
+                class="edit-component-code"
                 :component-wiki="componentWiki"
+                :current-props="renderProps"
+                :current-slot="renderSlots"
               />
             </section>
           </template>
@@ -59,6 +65,8 @@ import {
   ResizeLayout as bkResizeLayout,
 } from 'bkui-vue';
 import {
+  onMounted,
+  onUnmounted,
   ref,
   watch,
 } from 'vue';
@@ -90,6 +98,8 @@ const renderSlots = ref<IComponentWiki['presets'][number]['slots']>();
 const renderPresetIndex = ref(0);
 // 展示的主面板
 const mainPanel = ref<MainPanel>(MainPanel.Component);
+const componentRef = ref<HTMLElement>();
+const isFullScreen = ref(false);
 
 // 选择预设
 const handleChoosePreset = (preset: IComponentWiki['presets'][number]) => {
@@ -98,15 +108,39 @@ const handleChoosePreset = (preset: IComponentWiki['presets'][number]) => {
   renderPresetIndex.value = props.componentWiki.presets.indexOf(preset);
 };
 
+// 监听全屏状态变化
+const handleFullscreenChange = () => {
+  isFullScreen.value = !!document.fullscreenElement;
+};
+// 全屏
+const handleFullScreen = () => {
+  if (!isFullScreen.value) {
+    componentRef.value.requestFullscreen();
+  } else {
+    document.exitFullscreen();
+  }
+};
+
 watch(
   () => props.componentWiki,
   () => {
     handleChoosePreset(props.componentWiki.presets[0]);
+    mainPanel.value = MainPanel.Component;
   },
   {
     immediate: true,
   },
 );
+
+// 初始化时注册事件监听
+onMounted(() => {
+  document.addEventListener('fullscreenchange', handleFullscreenChange);
+});
+
+// 组件卸载时移除事件监听
+onUnmounted(() => {
+  document.removeEventListener('fullscreenchange', handleFullscreenChange);
+});
 </script>
 
 <style lang="postcss" scoped>
@@ -126,11 +160,19 @@ watch(
 
 .edit-component-view {
   display: flex;
-  align-items: center;
   justify-content: center;
   height: 100%;
   overflow: auto;
-  padding: 40px 40px 32px;
+  padding: 24px;
+
+  .edit-component-component {
+    align-self: center;
+    margin: 0 auto;
+  }
+
+  .edit-component-code {
+    width: 100%;
+  }
 
   &::-webkit-scrollbar {
     width: 6px;
