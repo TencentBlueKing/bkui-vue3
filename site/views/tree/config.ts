@@ -311,7 +311,14 @@ export default [
         params: '(item: any, selected = true, autoOpen = true, triggerEvent=false)',
       },
       { name: 'asyncNodeClick', desc: '异步请求触发点击节点', params: '（item）' },
-      { name: 'getData', desc: '获取当前树配置数据（经过内部处理的数据）', params: '（）' },
+      {
+        name: 'getData',
+        desc: `获取当前树配置数据（经过内部处理的数据）,    /**
+     * @param newTree 如果启用了排序，拖拽功能，这里数据结构会改变，需要设置为true，获取最新的数据
+     * @returns 
+     */`,
+        params: '（newTree: boolean = false）',
+      },
       { name: 'getParentNode', desc: '获取指定节点的父级节点', params: 'node: 当前节点' },
     ],
   },

@@ -417,7 +417,7 @@ export const formatDateLabels = (() => {
 
 export const clearHours = time => {
   const cloneDate = new Date(time);
-  cloneDate.setHours(23, 59, 59, 999);
+  cloneDate.setHours(0, 0, 0, 0);
   return cloneDate.getTime();
 };
 
@@ -437,10 +437,9 @@ export const isInRange = (time, a, b) => {
   return time >= start && time <= end;
 };
 
-
 export const firstUpperCase = (str: string) => {
   return str.toString()[0].toUpperCase() + str.toString().slice(1);
-}
+};
 
 /**
  * 根据 date 设置 h, m, s

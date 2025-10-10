@@ -281,7 +281,7 @@ const events = [
     name: 'selection-mode-change',
     desc: '选择时间/选择日期模式面板切换事件',
     params: 'type',
-  }
+  },
 ];
 
 const slotColumnMap = {
@@ -422,8 +422,8 @@ export default defineComponent({
           title='事件'
         />
         <PropsBox
-          title="方法"
           propsData={methods}
+          title='方法'
         />
         <PropsBox
           columnMap={slotColumnMap}

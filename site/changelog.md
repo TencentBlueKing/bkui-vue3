@@ -1,6 +1,38 @@
 ## 更新日志
 
 
+### 2.0.2-beta.69
+
+* **[feat]**:
+    - bugfix(form): 异步验证执行不正确
+    - feature(crontab): 新增 crontab 组件
+    - feature(alert): 可操作的文字按钮，需要是蓝色的字体
+
+
+### 2.0.2-beta.68
+
+* **[feat]**:
+    - bugfix(date-picker): 范围选择器，开始时间从 23:59:59 开始，应该从 00:00:00 开始 ([#2476](https://github.com/TencentBlueKing/bkui-vue3/issues/2476))
+
+
+### 2.0.2-beta.67
+
+* **[feat]**:
+    - bugfix(color-picker): 修复 transfer 属性配置为 true 不生效的问题
+
+
+### 2.0.2-beta.66
+
+* **[feat]**:
+    - feat(tree): disableDrop参数优化
+
+
+### 2.0.2-beta.65
+
+* **[feat]**:
+    - bugfix(tree): 拖拽排序功能替换节点位置不对
+
+
 ### 2.0.2-beta.64
 
 * **[feat]**:

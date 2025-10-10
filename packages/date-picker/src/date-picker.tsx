@@ -72,7 +72,7 @@ export default defineComponent({
     'pick-first',
     'blur',
     'focus',
-    'selection-mode-change'
+    'selection-mode-change',
   ],
   // slots: ['header'],
   slots: Object as SlotsType<{
@@ -632,8 +632,8 @@ export default defineComponent({
     };
 
     expose({
-      focus: handleIconClick
-    })
+      focus: handleIconClick,
+    });
 
     return {
       ...toRefs(state),

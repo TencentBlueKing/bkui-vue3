@@ -1081,6 +1081,16 @@
     stylelint-scss "^6.3.0"
     vue-eslint-parser "^9.4.2"
 
+"@blueking/crontab@~0.0.2-beta.1":
+  version "0.0.2-beta.1"
+  resolved "https://mirrors.tencent.com/npm/@blueking/crontab/-/crontab-0.0.2-beta.1.tgz#ea81998af5197648b37a1968c7196b96a71b4382"
+  integrity sha512-+6VSKkPLMd9RLAOHj0+vt0K2Nnw0QGt+epa2O3Z82lPTDKDtKS4GhUOup5LmmxPIFn1DxjSSzSdYMZMpe4XzWg==
+  dependencies:
+    "@types/lodash" "^4.17.4"
+    cron-parser-custom "^2.13.0"
+    lodash "^4.17.21"
+    moment-timezone "^0.6.0"
+
 "@blueking/date-picker@~2.0.0-beta.19":
   version "2.0.0-beta.19"
   resolved "https://registry.npmjs.org/@blueking/date-picker/-/date-picker-2.0.0-beta.19.tgz"
@@ -3167,6 +3177,11 @@
   resolved "https://mirrors.tencent.com/npm/@types/linkify-it/-/linkify-it-3.0.5.tgz"
   integrity sha512-yg6E+u0/+Zjva+buc3EIb+29XEg4wltq7cSmd4Uc2EE/1nUVmxyzpX6gUXD0V8jIrG0r7YeOGVIbYRkxeooCtw==
 
+"@types/lodash@^4.17.4":
+  version "4.17.20"
+  resolved "https://mirrors.tencent.com/npm/@types/lodash/-/lodash-4.17.20.tgz#1ca77361d7363432d29f5e55950d9ec1e1c6ea93"
+  integrity sha512-H3MHACvFUEiujabxhaI/ImO6gUrd8oOurg7LQtS7mbwIXA/cUqWrvBsaeJ23aZEPk1TAYkurjfMbSELfoCXlGA==
+
 "@types/lodash@~4.14.196":
   version "4.14.202"
   resolved "https://mirrors.tencent.com/npm/@types/lodash/-/lodash-4.14.202.tgz"
@@ -4448,6 +4463,24 @@ cachedir@2.3.0:
   resolved "https://mirrors.tencent.com/npm/cachedir/-/cachedir-2.3.0.tgz"
   integrity sha512-A+Fezp4zxnit6FanDmv9EqXNAi3vt9DWp51/71UEhXukb7QUuvtv9344h91dyAxuTLoSYJFU299qzR3tzwPAhw==
 
+call-bind-apply-helpers@^1.0.0:
+  version "1.0.2"
+  resolved "https://mirrors.tencent.com/npm/call-bind-apply-helpers/-/call-bind-apply-helpers-1.0.2.tgz#4b5428c222be985d79c3d82657479dbe0b59b2d6"
+  integrity sha512-Sp1ablJ0ivDkSzjcaJdxEunN5/XvksFJ2sMBFfq6x0ryhQV/2b/KwFe21cMpmHtPOSij8K99/wSfoEuTObmuMQ==
+  dependencies:
+    es-errors "^1.3.0"
+    function-bind "^1.1.2"
+
+call-bind@^1.0.0:
+  version "1.0.8"
+  resolved "https://mirrors.tencent.com/npm/call-bind/-/call-bind-1.0.8.tgz#0736a9660f537e3388826f440d5ec45f744eaa4c"
+  integrity sha512-oKlSFMcMwpUg2ednkhQ454wfWiU/ul3CkJe/PEHcTKuiX6RpbehUiFMXu13HalGZxfUwCQzZG747YXBn1im9ww==
+  dependencies:
+    call-bind-apply-helpers "^1.0.0"
+    es-define-property "^1.0.0"
+    get-intrinsic "^1.2.4"
+    set-function-length "^1.2.2"
+
 call-bind@^1.0.2, call-bind@^1.0.5, call-bind@^1.0.6, call-bind@^1.0.7:
   version "1.0.7"
   resolved "https://mirrors.tencent.com/npm/call-bind/-/call-bind-1.0.7.tgz"
@@ -5148,6 +5181,14 @@ create-require@^1.1.0:
   version "1.1.1"
   resolved "https://mirrors.tencent.com/npm/create-require/-/create-require-1.1.1.tgz"
   integrity sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==
+
+cron-parser-custom@^2.13.0:
+  version "2.13.0"
+  resolved "https://mirrors.tencent.com/npm/cron-parser-custom/-/cron-parser-custom-2.13.0.tgz#4df7fef1c0e577df2e445a2fbcf4d2509edb71e3"
+  integrity sha512-703LGihhQflV3Q1end9XWzAELJ6Ohu2vzxZZgSPPJqthcUms/D/4GkXsP6Nqp4WpOtvB85l5on45m1AZOzsmXA==
+  dependencies:
+    is-nan "^1.2.1"
+    moment-timezone "^0.5.25"
 
 cross-env@~7.0.3:
   version "7.0.3"
@@ -7512,6 +7553,14 @@ is-lambda@^1.0.1:
   resolved "https://mirrors.tencent.com/npm/is-lambda/-/is-lambda-1.0.1.tgz"
   integrity sha1-PZh3iZ5qU+/AFgUEzeFfgubwYdU=
 
+is-nan@^1.2.1:
+  version "1.3.2"
+  resolved "https://mirrors.tencent.com/npm/is-nan/-/is-nan-1.3.2.tgz#043a54adea31748b55b6cd4e09aadafa69bd9e1d"
+  integrity sha512-E+zBKpQ2t6MEo1VsonYmluk9NxGrbzpeeLC2xIViuO2EjU2xsXsBPwTr3Ykv9l08UYEVEdWeRZNouaZqF6RN0w==
+  dependencies:
+    call-bind "^1.0.0"
+    define-properties "^1.1.3"
+
 is-negative-zero@^2.0.3:
   version "2.0.3"
   resolved "https://mirrors.tencent.com/npm/is-negative-zero/-/is-negative-zero-2.0.3.tgz"
@@ -9114,6 +9163,25 @@ modify-values@^1.0.0:
   version "1.0.1"
   resolved "https://mirrors.tencent.com/npm/modify-values/-/modify-values-1.0.1.tgz"
   integrity sha512-xV2bxeN6F7oYjZWTe/YPAy6MN2M+sL4u/Rlm2AHCIVGfo2p1yGmBHQ6vHehl4bRTZBdHu3TSkWdYgkwpYzAGSw==
+
+moment-timezone@^0.5.25:
+  version "0.5.48"
+  resolved "https://mirrors.tencent.com/npm/moment-timezone/-/moment-timezone-0.5.48.tgz#111727bb274734a518ae154b5ca589283f058967"
+  integrity sha512-f22b8LV1gbTO2ms2j2z13MuPogNoh5UzxL3nzNAYKGraILnbGc9NEE6dyiiiLv46DGRb8A4kg8UKWLjPthxBHw==
+  dependencies:
+    moment "^2.29.4"
+
+moment-timezone@^0.6.0:
+  version "0.6.0"
+  resolved "https://mirrors.tencent.com/npm/moment-timezone/-/moment-timezone-0.6.0.tgz#c5a6519171f31a64739ea75d33f5c136c08ff608"
+  integrity sha512-ldA5lRNm3iJCWZcBCab4pnNL3HSZYXVb/3TYr75/1WCTWYuTqYUb5f/S384pncYjJ88lbO8Z4uPDvmoluHJc8Q==
+  dependencies:
+    moment "^2.29.4"
+
+moment@^2.29.4:
+  version "2.30.1"
+  resolved "https://mirrors.tencent.com/npm/moment/-/moment-2.30.1.tgz#f8c91c07b7a786e30c59926df530b4eac96974ae"
+  integrity sha512-uEmtNhbDOrWPFS+hdjFCBfy9f2YoyzRpwcl+DqpC6taX21FzsTLQVbMV/W7PzNSX6x/bhC1zA3c2UQ5NzH6how==
 
 mrmime@^2.0.0:
   version "2.0.0"
@@ -10795,9 +10863,9 @@ select@^1.1.2:
   integrity sha1-DnNQrN7ICxEIUoeG7B1EGNEbOW0=
 
 "semver@2 || 3 || 4 || 5", semver@7.3.7, semver@>=7.5.2, semver@^5.6.0, semver@^5.7.1, semver@^6.0.0, semver@^6.3.0, semver@^6.3.1, semver@^7.1.1, semver@^7.1.3, semver@^7.3.2, semver@^7.3.4, semver@^7.3.5, semver@^7.3.6, semver@^7.3.8, semver@^7.5.3, semver@^7.5.4, semver@^7.6.0:
-  version "7.7.2"
-  resolved "https://registry.yarnpkg.com/semver/-/semver-7.7.2.tgz#67d99fdcd35cec21e6f8b87a7fd515a33f982b58"
-  integrity sha512-RF0Fw+rO5AMf9MAyaRXI4AV0Ulj5lMHqVxxdSgiVbixSCXoEmmX/jk0CuJw4+3SqroYO9VoUh+HcuJivvtJemA==
+  version "7.7.3"
+  resolved "https://registry.yarnpkg.com/semver/-/semver-7.7.3.tgz#4b5f4143d007633a8dc671cd0a6ef9147b8bb946"
+  integrity sha512-SdsKMrI9TdgjdweUSR9MweHA4EJ8YxHn8DFaDisvhVlUOe4BF1tLD7GAj0lIqWVl+dPb/rExr0Btby5loQm20Q==
 
 sentence-case@^3.0.4:
   version "3.0.4"
@@ -10820,7 +10888,7 @@ set-blocking@~2.0.0:
   resolved "https://mirrors.tencent.com/npm/set-blocking/-/set-blocking-2.0.0.tgz"
   integrity sha1-BF+XgtARrppoA93TgrJDkrPYkPc=
 
-set-function-length@^1.2.1:
+set-function-length@^1.2.1, set-function-length@^1.2.2:
   version "1.2.2"
   resolved "https://mirrors.tencent.com/npm/set-function-length/-/set-function-length-1.2.2.tgz"
   integrity sha512-pgRc4hJ4/sNjWCSS9AmnS40x3bNMDTknHgL5UaMBTMyJnU90EgWh1Rz+MC9eFu4BuN/UwZjKQuY/1v3rM7HMfg==
