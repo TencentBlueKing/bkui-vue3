@@ -14,7 +14,7 @@ export interface IComponentWiki {
     description: string;
     link?: string;
   }[];
-  emits: {
+  emits?: {
     name: string;
     description: string;
     params: {
@@ -38,7 +38,7 @@ export interface IComponentWiki {
     props: Record<string, PropValue>;
     slots?: Record<string, string>;
   }>
-  types: {
+  types?: {
     name: string;
     description: string;
     fields: {
