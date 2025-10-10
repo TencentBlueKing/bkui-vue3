@@ -776,6 +776,15 @@ const routes: RouteRecordRaw[] = [
     },
     component: () => import('../views/blueking/release-note/index'),
   },
+  {
+    path: '/bk/crontab',
+    name: 'Crontab',
+    meta: {
+      group: NavGroupMeta.Business,
+      navName: 'Crontab 周期选择器',
+    },
+    component: () => import('../views/blueking/crontab/index'),
+  },
 ];
 
 const router = createRouter({
