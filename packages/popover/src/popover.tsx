@@ -29,9 +29,9 @@ import { clickoutside } from '@bkui-vue/directives';
 import { RenderType } from '@bkui-vue/shared';
 
 import Arrow from './arrow';
-import { EMIT_EVENT_TYPES } from './const';
 import Content from './content';
 import { PopoverProps } from './props';
+import { emits } from './emits';
 import Reference from './reference';
 import Root from './root';
 import usePopoverInit from './use-popover-init';
@@ -47,7 +47,7 @@ export default defineComponent({
     clickoutside,
   },
   props: PopoverProps,
-  emits: EMIT_EVENT_TYPES,
+  emits,
 
   setup(props, ctx) {
     const { reference } = toRefs(props);

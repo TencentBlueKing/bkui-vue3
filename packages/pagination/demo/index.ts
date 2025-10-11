@@ -61,7 +61,7 @@ const props = [
   },
   {
     name: 'limitList',
-    description: '	每页显示条数可选项列表',
+    description: '每页显示条数可选项列表',
     type: 'array',
     default: [10, 20, 50, 100],
   },
@@ -162,7 +162,7 @@ const emits = [
 ];
 
 // 组件分组
-const group = NavGroupMeta.Nav;
+const group = NavGroupMeta.Data;
 
 // 组件名称
 const name = 'pagination';
