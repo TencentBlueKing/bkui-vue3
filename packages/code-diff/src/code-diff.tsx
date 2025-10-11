@@ -24,71 +24,27 @@
  * IN THE SOFTWARE.
  */
 
-import { computed, defineComponent, ExtractPropTypes, nextTick, onMounted, ref, watch } from 'vue';
-import { number, string } from 'vue-types';
+import { computed, defineComponent, nextTick, onMounted, ref, watch } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-import { classes, ElementType, PropTypes, stringEnum } from '@bkui-vue/shared';
+import { classes } from '@bkui-vue/shared';
 import { createPatch } from 'diff';
 import * as Diff2Html from 'diff2html';
 
+import { emits } from './emits';
+import { props } from './props';
+
 import 'diff2html/bundles/css/diff2html.min.css';
-
-const diffFormats = ['side-by-side', 'line-by-line'] as const;
-const CodeDiffFormat = stringEnum([...diffFormats]);
-export type DiffFormatType = ElementType<typeof diffFormats>;
-
-export const LANGUAGES = [
-  'css',
-  'java',
-  'javascript',
-  'json',
-  'scss',
-  'less',
-  'stylus',
-  'shell',
-  'bash',
-  'cpp',
-  'go',
-  'xml',
-  'python',
-  'typescript',
-  'sql',
-  'ruby',
-  'vim',
-  'php',
-  'perl',
-  'powershell',
-  'makefile',
-] as const;
-export type LanguagesUnion = ElementType<typeof LANGUAGES>;
-
-const themes = ['dark', 'light'] as const;
-const themesEnum = stringEnum([...themes]);
-export type ThemesUnion = ElementType<typeof themes>;
-
-export const codeDiffProps = {
-  oldContent: string().def(''),
-  newContent: string().def(''),
-  diffFormat: string<DiffFormatType>().def(CodeDiffFormat['line-by-line']),
-  diffContext: number(),
-  // conf: Object as PropType<Diff2Html.Diff2HtmlUIConfig>,
-  theme: string<ThemesUnion>().def('light'),
-  language: string<LanguagesUnion>().def('javascript'),
-  hljs: PropTypes.any.isRequired,
-};
 
 // TODO: 感觉像是highlight.js的问题, 一些关键字无法显示高亮
 function changeCodeCls(htmlStr: string, lang): string {
   return htmlStr.replace(/d2h-code-line-ctn/g, $1 => `${$1} lang-${lang}`);
 }
 
-export type CodeDiffPropsType = ExtractPropTypes<typeof codeDiffProps>;
-
 export default defineComponent({
   name: 'CodeDiff',
-  props: codeDiffProps,
-  emits: [],
+  props,
+  emits,
   setup(props) {
     const { resolveClassName } = usePrefix();
     const diffBox = ref(null);

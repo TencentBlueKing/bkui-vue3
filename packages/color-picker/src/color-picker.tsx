@@ -27,7 +27,6 @@
 import {
   computed,
   defineComponent,
-  ExtractPropTypes,
   nextTick,
   onBeforeMount,
   reactive,
@@ -36,54 +35,30 @@ import {
   watch,
   type VNodeRef,
 } from 'vue';
-import { toType } from 'vue-types';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import { PickerDropdown } from '@bkui-vue/date-picker';
 import { clickoutside } from '@bkui-vue/directives';
 import { AngleUp } from '@bkui-vue/icon';
-import { classes, PropTypes, useFormItem } from '@bkui-vue/shared';
+import { classes, useFormItem } from '@bkui-vue/shared';
 import tinycolor from 'tinycolor2';
 
 import ColorInput from './components/color-input';
 import HueSlider from './components/hue-slider';
 import RecommendColors from './components/recommend-colors';
 import SaturationPanel from './components/saturation-panel';
+import { emits } from './emits';
+import { props } from './props';
 import { formatColor, toRGBAString } from './utils';
-
-enum ColorPickSizeEnum {
-  LARGE = 'large',
-  SMALL = 'small',
-  UNKNOWN = '',
-}
-const colorPickerProps = {
-  modelValue: PropTypes.string.def(''),
-  disabled: PropTypes.bool.def(false),
-  readonly: PropTypes.bool.def(false),
-  transfer: PropTypes.bool.def(false), // 控制面板是否出现在 body 内
-  size: toType<`${ColorPickSizeEnum}`>('colorPickSize', {}).def(ColorPickSizeEnum.UNKNOWN),
-  showValue: PropTypes.bool.def(true), // 是否在颜色选择器上显示色值
-  // true 展示组件内置预设值
-  // false 不展示预设值
-  // 数组 自定义预设值
-  recommend: PropTypes.oneOfType([PropTypes.array.def(() => []), PropTypes.bool.def(true)]).def(true),
-  extCls: PropTypes.string.def(''),
-  withValidate: PropTypes.bool.def(true),
-  recommendEmpty: PropTypes.bool.def(true),
-  // 初始化默认展开
-  showOnInit: PropTypes.bool.def(false),
-};
 const whiteColorObj = formatColor('#FFFFFF');
-
-export type ColorPickerPropTypes = ExtractPropTypes<typeof colorPickerProps>;
 
 export default defineComponent({
   name: 'ColorPicker',
   directives: {
     clickoutside,
   },
-  props: colorPickerProps,
-  emits: ['update:modelValue', 'change'],
+  props,
+  emits,
   setup(props, { emit, slots }) {
     const formItem = useFormItem();
     const showDropdown = ref(false);

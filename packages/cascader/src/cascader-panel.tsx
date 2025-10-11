@@ -25,13 +25,14 @@
  */
 
 import { defineComponent, nextTick, reactive, ref, watch, toRefs } from 'vue';
-import { array, object } from 'vue-types';
 
 import Checkbox from '@bkui-vue/checkbox';
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { AngleRight, Spinner } from '@bkui-vue/icon';
-import { arrayEqual, PropTypes } from '@bkui-vue/shared';
+import { arrayEqual } from '@bkui-vue/shared';
 
+import { cascaderPanelEmits } from './cascader-panel-emits';
+import { cascaderPanelProps } from './cascader-panel-props';
 import { IData, INode } from './interface';
 
 /**
@@ -40,17 +41,8 @@ import { IData, INode } from './interface';
  */
 export default defineComponent({
   name: 'CascaderPanel',
-  props: {
-    width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def('auto'),
-    height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(216),
-    store: PropTypes.object.def({}),
-    separator: PropTypes.string.def(''),
-    suggestions: PropTypes.arrayOf(object<INode>()),
-    isFiltering: PropTypes.bool.def(false),
-    searchKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def(''),
-    modelValue: PropTypes.arrayOf(PropTypes.oneOfType([array<string>(), String, Number])),
-  },
-  emits: ['update:modelValue'],
+  props: cascaderPanelProps,
+  emits: cascaderPanelEmits,
   setup(props, { emit }) {
     const t = useLocale('cascader');
     const { resolveClassName } = usePrefix();
