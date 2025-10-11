@@ -12,6 +12,7 @@ export interface IComponentWiki {
     default: string;
     description: string;
     link?: string;
+    options?: Array<string | number>;
   }[];
   emits?: {
     name: string;
