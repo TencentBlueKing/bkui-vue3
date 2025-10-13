@@ -32,7 +32,9 @@ const presets = [
     title: '基础用法',
     description: 'isShow 控制 dialog 的显示隐藏',
     props: {
+      'show-mask': false,
       'is-show': true,
+      transfer: '.edit-component-view',
     },
     slots: {
       default: '<div>dialog 内容</div>',
@@ -44,6 +46,7 @@ const presets = [
     props: {
       'show-mask': false,
       title: '没有遮罩的 dialog',
+      transfer: '.edit-component-view',
     },
     slots: {
       default: '<div>dialog 内容</div>',
@@ -54,6 +57,7 @@ const presets = [
     description: '通过 beforeChange 属性关闭前确认。',
     props: {
       title: '关闭前确认',
+      transfer: '.edit-component-view',
       'before-close': () => {
         return new Promise(resolve => {
           alert('确认关闭？');
@@ -71,6 +75,7 @@ const presets = [
     props: {
       title: '全屏弹框',
       fullscreen: true,
+      transfer: '.edit-component-view',
     },
     slots: {
       default: '<div>dialog 内容</div>',

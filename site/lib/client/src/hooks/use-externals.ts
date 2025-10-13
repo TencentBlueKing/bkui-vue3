@@ -23,6 +23,10 @@ export const useExternals = () => {
     window.lodashThrottle = () => Lodash.throttle;
     window.lodashMerge = () => Lodash.merge;
     window.lodashCloneDeep = () => Lodash.cloneDeep;
+    window.lodashIsElement = () => Lodash.isElement;
+    window.lodashRandom = () => Lodash.random;
+    window.lodashDebounce = () => Lodash.debounce;
+    window.lodashIsFunction = () => Lodash.isFunction;
     window.normalizeWheel = () => NormalizeWheel;
     window.floatingUiDom = () => FloatingUiDom;
     window.dateFns = () => DateFns;
@@ -38,6 +42,10 @@ export const useExternals = () => {
     delete window.lodashThrottle;
     delete window.lodashMerge;
     delete window.lodashCloneDeep;
+    delete window.lodashIsElement;
+    delete window.lodashRandom;
+    delete window.lodashDebounce;
+    delete window.lodashIsFunction;
     delete window.normalizeWheel;
     delete window.floatingUiDom;
     delete window.dateFns;

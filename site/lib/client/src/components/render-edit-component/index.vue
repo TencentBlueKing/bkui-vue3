@@ -37,7 +37,10 @@
             />
           </template>
           <template #main>
-            <section class="edit-component-view">
+            <section
+              class="edit-component-view"
+              :key="componentWiki.name"
+            >
               <render-component
                 v-if="mainPanel === MainPanel.Component"
                 class="edit-component-component"

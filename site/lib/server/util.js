@@ -78,6 +78,18 @@ exports.CODE = {
 };
 
 /**
+ * 判断文件是否是图片文件
+ *
+ * @param {String} filePath 文件路径
+ *
+ * @return {boolean} 是否是图片文件
+ */
+exports.isImageFile = (filePath) => {
+  const imageExtensions = ['.svg', '.png', '.jpg', '.jpeg', '.gif', '.webp'];
+  return imageExtensions.some(ext => filePath.endsWith(ext));
+};
+
+/**
  * 判断请求是否是 ajax 异步请求
  *
  * @param {Object} req request 对象

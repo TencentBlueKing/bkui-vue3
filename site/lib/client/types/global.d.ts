@@ -8,7 +8,11 @@ declare interface Window {
   lodashThrottle: Function;
   lodashMerge: Function;
   getComponent: Function;
+  lodashIsElement: Function;
+  lodashRandom: Function;
   lodashCloneDeep: Function;
+  lodashDebounce: Function;
+  lodashIsFunction: Function;
   normalizeWheel: Function;
   floatingUiDom: Function;
   dateFns: Function;

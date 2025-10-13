@@ -3,14 +3,16 @@
     :loading="loading"
     class="demo-home"
   >
-    <render-edit-component
-      :component="component"
-      :component-wiki="componentStore.activeComponentWiki"
-    />
-    <render-contributor
-    />
-    <render-bottom-nav
-    />
+    <template v-if="componentStore.activeComponentWiki">
+      <render-edit-component
+        :component="component"
+        :component-wiki="componentStore.activeComponentWiki"
+      />
+      <render-contributor
+      />
+      <render-bottom-nav
+      />
+    </template>
   </bk-loading>
 </template>
 

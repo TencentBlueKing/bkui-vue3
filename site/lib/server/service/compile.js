@@ -32,6 +32,7 @@ import { transform } from '@blueking/cli-service/dist/tools/rust/transform/index
 
 import { RELEASE_DIST_DIR } from '../common';
 import LessResolvePathPlugin from '../scripts/less-plugin.js';
+import { isImageFile } from '../util';
 
 // 组件公共依赖
 const externals = {
@@ -41,6 +42,10 @@ const externals = {
   'lodash/throttle': 'lodashThrottle',
   'lodash/merge': 'lodashMerge',
   'lodash/cloneDeep': 'lodashCloneDeep',
+  'lodash/isElement': 'lodashIsElement',
+  'lodash/random': 'lodashRandom',
+  'lodash/debounce': 'lodashDebounce',
+  'lodash/isFunction': 'lodashIsFunction',
   '@popperjs/core': 'popperjsCore',
   'vue-types': 'vueTypes',
   '@floating-ui/dom': 'floatingUiDom',
@@ -90,22 +95,49 @@ const getDependencyAbsolutePath = (originAbsoluteFilePath, dependencyPath) => {
  * @param {*} releaseZipPath zip 地址
  * @returns 转换后的文件内容
  */
-const transformFileContent = (code, originAbsoluteFilePath, releaseZipPath) => {
-  // 去除注释
-  let transformedCode = code.replace(/\/\*[\s\S]*?\*\/|([^:]|^)\/\/.*$/gm, '$1');
+const transformFileContent = (code, originAbsoluteFilePath, releaseZipPath, funcName) => {
+  // 检查缓存
+  let transformedCode = `if (${funcName}.exports) { return ${funcName}.exports; }\n`;
 
-  transformedCode = transformedCode.replace(/"use strict";/g, 'const exports = {}');
+  // 立即缓存
+  transformedCode += `const exports = {};\n`;
+  transformedCode += `${funcName}.exports = exports;\n`;  // 立即缓存
 
-  transformedCode = transformedCode.replace(/require\(['"](.*?)['"]\);?/g, (match, dependencyPath) => {
-    if (!dependencyPath) return match;
-    const funcName = generateFunctionName(
-      getDependencyAbsolutePath(originAbsoluteFilePath, dependencyPath),
-      releaseZipPath,
-    );
-    return `${funcName}()`;
-  });
+  // 处理图片文件
+  if (isImageFile(originAbsoluteFilePath)) {
+    if (originAbsoluteFilePath.endsWith('.svg')) {
+      // SVG 作为文本
+      const svgContent = code
+        .replace(/\\/g, '\\\\')
+        .replace(/`/g, '\\`')
+        .replace(/\$/g, '\\$');
+      transformedCode += `exports.default = \`${svgContent}\`;\n`;
+    } else {
+      // 其他图片作为 base64
+      const base64Content = Buffer.from(code, 'binary').toString('base64');
+      const ext = path.extname(originAbsoluteFilePath).slice(1);
+      transformedCode += `exports.default = "data:image/${ext};base64,${base64Content}";\n`;
+    }
+    transformedCode += `return exports;\n`;
+  } else {
+    // 去除注释
+    transformedCode += code.replace(/\/\*[\s\S]*?\*\/|([^:]|^)\/\/.*$/gm, '$1');
 
-  transformedCode += 'return exports';
+    // 去除严格模式
+    transformedCode = transformedCode.replace(/"use strict";/g, '');
+
+    // 处理 require 语句
+    transformedCode = transformedCode.replace(/require\(['"](.*?)['"]\);?/g, (match, dependencyPath) => {
+      if (!dependencyPath) return match;
+      const funcName = generateFunctionName(
+        getDependencyAbsolutePath(originAbsoluteFilePath, dependencyPath),
+        releaseZipPath,
+      );
+      return `${funcName}()`;
+    });
+
+    transformedCode += 'return exports';
+  }
 
   return transformedCode;
 };
@@ -186,12 +218,14 @@ export const generateCompiledFile = async (fileMap, entryPath, releaseZipPath) =
     entryFile.content,
     entryFile.originAbsoluteFilePath,
     releaseZipPath,
+    'getComponent',
   );
   const transformedDependenciesContent = Object.values(fileMap).reduce((acc, cur) => {
     if (cur.originAbsoluteFilePath !== entryPath) {
-      acc += `function ${generateFunctionName(cur.outputAbsoluteFilePath, releaseZipPath)}() {
-        ${transformFileContent(cur.content, cur.originAbsoluteFilePath, releaseZipPath)}
-        }\n`;
+      const funcName = generateFunctionName(cur.outputAbsoluteFilePath, releaseZipPath);
+      acc += `function ${funcName}() {
+        ${transformFileContent(cur.content, cur.originAbsoluteFilePath, releaseZipPath, funcName)}
+      }\n`;
     }
     return acc;
   }, '');
