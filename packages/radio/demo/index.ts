@@ -23,55 +23,107 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
+
 import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
-
 // 组件示例
-const presets = [{
-  title: '基础用法',
-  description: '基础的图标使用',
-  props: {
-    width: '1em',
-    height: '1em',
-    fill: 'currentColor',
+const presets = [
+  {
+    title: '基础样式',
+    description: '用于单选选项平铺展示场景',
+    props: {
+      label: '基础样式',
+      checked: false,
+    },
   },
-}];
+  {
+    title: '胶囊样式',
+    description: '用于单选选项胶囊组展示场景',
+    props: {
+      label: '胶囊样式',
+      checked: false,
+    },
+  },
+  {
+    title: '按钮组样式',
+    description: '用于单选选项按钮组展示场景',
+    props: {
+      label: '按钮组样式',
+      checked: false,
+    },
+  },
+];
 
 // 组件属性，用来自动生成属性文档
-const props = [{
-  name: 'width',
-  description: 'svg图标宽度',
-  type: 'string',
-  default: '1em',
-}, {
-  name: 'height',
-  description: 'svg图标高度',
-  type: 'string',
-  default: '',
-}, {
-  name: 'fill',
-  description: 'svg图标颜色',
-  type: 'string',
-  default: 'currentColor',
-}];
+const props = [
+  {
+    name: 'name',
+    description: '名称',
+    type: 'string',
+    default: '',
+  },
+  {
+    name: 'label',
+    description: '标签',
+    type: 'string | number | boolean',
+    default: '',
+  },
+  {
+    name: 'modelValue',
+    description: '绑定值',
+    type: 'string | number | boolean',
+    default: '',
+  },
+  {
+    name: 'checked',
+    description: '是否选中',
+    type: 'boolean',
+    default: false,
+  },
+  {
+    name: 'disabled',
+    description: '是否禁用',
+    type: 'boolean',
+    default: false,
+  },
+  {
+    name: 'size',
+    description: '尺寸',
+    type: 'string',
+    options: ['small', 'default', 'large', 'huge'],
+    default: 'default',
+  },
+  {
+    name: 'beforeChange',
+    description: '前置改变事件',
+    type: '(event: boolean | number | string) => Promise<boolean> | boolean',
+    default: '() => true',
+  },
+  {
+    name: 'withValidate',
+    description: '值改变时是否触发表单的校验',
+    type: 'boolean',
+    default: false,
+  },
+];
 
 // 组件事件，用来自动生成事件文档
 const emits = [];
 
 // 组件分组
-const group = NavGroupMeta.Nav;
+const group = NavGroupMeta.Form;
 
 // 组件名称
-const name = 'icon';
+const name = 'radio';
 
 // 组件标签
-const title = 'Icon';
+const title = 'Radio';
 
 // 组件中文标签
-const titleCN = '图标';
+const titleCN = '单选框';
 
 // 组件描述
-const description = '图标';
+const description = '表单-单选框，在一组选项中进行单选';
 
 const wiki: IComponentWiki = {
   group,

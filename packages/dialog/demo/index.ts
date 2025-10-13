@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 
-import { NavGroupMeta } from '@bkui-vue/shared';
+import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
 // 组件示例
 const presets = [
@@ -161,19 +161,22 @@ const props = [
   {
     name: 'confirm-button-theme',
     description: '确认按钮主题',
-    type: "'primary' | 'danger' | 'success' | 'warning'",
+    type: 'string',
+    options: ['primary', 'danger', 'success', 'warning'],
     default: 'primary',
   },
   {
     name: 'header-align',
     description: '头部对齐方式',
-    type: "'center' | 'left' | 'right'",
+    type: 'string',
+    options: ['center', 'left', 'right'],
     default: 'left',
   },
   {
     name: 'footer-align',
     description: '底部对齐方式',
-    type: "'center' | 'left' | 'right'",
+    type: 'string',
+    options: ['center', 'left', 'right'],
     default: 'right',
   },
   {
@@ -185,7 +188,8 @@ const props = [
   {
     name: 'render-directive',
     description: '渲染方式',
-    type: "'if' | 'show'",
+    type: 'string',
+    options: ['if', 'show'],
     default: 'if',
   },
 ];
@@ -226,12 +230,18 @@ const title = 'Dialog';
 // 组件中文标签
 const titleCN = '弹框';
 
-export default {
-  presets,
-  props,
-  emits,
+// 组件描述
+const description = '弹框';
+
+const wiki: IComponentWiki = {
   group,
   name,
   title,
   titleCN,
+  props,
+  emits,
+  presets,
+  description,
 };
+
+export default wiki;

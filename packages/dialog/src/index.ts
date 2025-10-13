@@ -26,12 +26,8 @@
 import { withInstall } from '@bkui-vue/shared';
 
 import Component from './dialog';
-import { emits } from './emits';
-import { props } from './props';
-
 const BkDialog = withInstall(Component);
-
 export default BkDialog;
-export { props, emits };
 export type { DialogEmits } from './emits';
 export type { DialogProps } from './props';
+export type BkDialogInstance = InstanceType<typeof Component>;

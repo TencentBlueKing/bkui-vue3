@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 
-import { NavGroupMeta } from '@bkui-vue/shared';
+import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
 // 组件示例
 const presets = [
@@ -166,12 +166,18 @@ const title = 'Dropdown';
 // 组件中文标签
 const titleCN = '下拉菜单';
 
-export default {
-  presets,
-  props,
-  emits,
+// 组件描述
+const description = '下拉菜单';
+
+const wiki: IComponentWiki = {
   group,
   name,
   title,
   titleCN,
+  props,
+  emits,
+  presets,
+  description,
 };
+
+export default wiki;

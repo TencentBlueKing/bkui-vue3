@@ -27,8 +27,8 @@
 import { SetupContext } from 'vue';
 
 import type { FormEmits } from './emits';
-import type { FormProps } from './props';
 import type { FormItemProps } from './form-item-props';
+import type { FormProps } from './props';
 
 export interface IFormContext {
   props: FormProps;

@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { NavGroupMeta } from '@bkui-vue/shared';
+import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
 // 组件示例
 const presets = [
@@ -42,7 +42,8 @@ const props = [
   {
     name: 'theme',
     description: '主题',
-    type: 'danger | info | success | warning',
+    type: 'string',
+    options: ['danger', 'info', 'success', 'warning'],
     default: 'info',
   },
   {
@@ -100,7 +101,7 @@ const titleCN = '警告';
 // 组件描述
 const description = '展示页面的提示信息';
 
-export default {
+const wiki: IComponentWiki = {
   group,
   name,
   title,
@@ -110,3 +111,5 @@ export default {
   presets,
   description,
 };
+
+export default wiki;

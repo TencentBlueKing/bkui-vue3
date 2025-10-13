@@ -24,15 +24,25 @@
  * IN THE SOFTWARE.
  */
 
-import { NavGroupMeta } from '@bkui-vue/shared';
+import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
 // 组件示例
 const presets = [
   {
-    title: '基础用法',
-    description: '基础分割线是没有文字的独立线条，又分为水平分割线和垂直分割线。',
+    title: '基础分割线',
+    description: '没有文字的独立分割线条',
     props: {
-      align: 'left',
+      direction: 'horizontal',
+    },
+  },
+  {
+    title: '文字分割线',
+    description: '垂直分割线条',
+    props: {
+      direction: 'horizontal',
+    },
+    slots: {
+      default: '<div>文字分割线</div>',
     },
   },
 ];
@@ -42,13 +52,15 @@ const props = [
   {
     name: 'direction',
     description: '分割线方向',
-    type: "'horizontal' | 'vertical'",
+    type: 'string',
+    options: ['horizontal', 'vertical'],
     default: 'horizontal',
   },
   {
     name: 'align',
     description: '分割线对齐方式',
-    type: "'left' | 'center' | 'right'",
+    type: 'string',
+    options: ['left', 'center', 'right'],
     default: 'center',
   },
   {
@@ -66,7 +78,8 @@ const props = [
   {
     name: 'type',
     description: '分割线类型',
-    type: "'solid' | 'dashed'",
+    type: 'string',
+    options: ['solid', 'dashed'],
     default: 'solid',
   },
 ];
@@ -86,12 +99,18 @@ const title = 'Divider';
 // 组件中文标签
 const titleCN = '分割线';
 
-export default {
-  presets,
-  props,
-  emits,
+// 组件描述
+const description = '分割线';
+
+const wiki: IComponentWiki = {
   group,
   name,
   title,
   titleCN,
+  props,
+  emits,
+  presets,
+  description,
 };
+
+export default wiki;
