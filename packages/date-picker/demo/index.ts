@@ -24,72 +24,72 @@
  * IN THE SOFTWARE.
  */
 
-import { NavGroupMeta } from '@bkui-vue/shared';
+import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
 // 组件示例
 const presets = [
   {
-    title: '基础用法',
-    description: '通过 v-model 或者 value 设置初始值',
+    title: '日期选择',
+    description: '选择单个日期',
     props: {
       'model-value': new Date(),
-      clearable: true,
-      'append-to-body': true,
+      type: 'date',
     },
   },
   {
-    title: '开启日期范围',
-    description: '通过 type 设置为 daterange 开启日期范围选择',
+    title: '日期范围选择',
+    description: '选择首尾日期范围',
     props: {
       'model-value': [new Date(), new Date()],
-      clearable: true,
-      'append-to-body': true,
+      type: 'daterange',
     },
   },
   {
-    title: '开启月份范围',
-    description: '通过 type 设置为 monthrange 开启月份范围选择',
-    props: {
-      'model-value': [
-        new Date(new Date().getFullYear(), new Date().getMonth() + 1),
-        new Date(new Date().getFullYear(), new Date().getMonth() + 4),
-      ],
-      clearable: true,
-      'append-to-body': true,
-    },
-  },
-  {
-    title: '开启年份范围',
-    description: '通过 type 设置为 yearrange 开启年份范围选择',
-    props: {
-      'model-value': [new Date(new Date().getFullYear() + 1), new Date(new Date().getFullYear() + 4)],
-    },
-  },
-  {
-    title: '开启时间设置',
-    description: '通过设置 type 属性为 datetime 来开启时间设置',
+    title: '日期时间选择',
+    description: '选择单个时间点',
     props: {
       'model-value': new Date(),
-      clearable: true,
-      'append-to-body': true,
+      type: 'datetime',
     },
   },
   {
-    title: '年选择器',
-    description: '通过设置 type 属性为 year 来开启年选择器',
+    title: '日期时间范围选择',
+    description: '选择首尾日期时间范围',
     props: {
-      'model-value': new Date(),
-      clearable: true,
-      'append-to-body': true,
+      'model-value': [new Date(), new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 3)],
+      type: 'datetimerange',
     },
   },
   {
-    title: '月选择器',
-    description: '通过设置 type 属性为 month 来开启月选择器',
+    title: '月份选择',
+    description: '选择单个月份',
     props: {
       'model-value': new Date(),
-      clearable: true,
-      'append-to-body': true,
+      type: 'month',
+    },
+  },
+  {
+    title: '月份范围选择',
+    description: '选择首尾月份范围',
+    props: {
+      'model-value': [new Date(), new Date(new Date().getFullYear(), new Date().getMonth() + 1)],
+      type: 'monthrange',
+    },
+  },
+  {
+    title: '年份选择',
+    description: '选择单个年份',
+    props: {
+      'model-value': new Date(),
+      type: 'year',
+    },
+  },
+  {
+    title: '年份范围选择',
+    description: '选择首尾年份范围',
+    props: {
+      'model-value': [new Date(), new Date(new Date().getFullYear() + 1)],
+      type: 'yearrange',
     },
   },
 ];
@@ -98,7 +98,19 @@ const props = [
   {
     name: 'type',
     description: '显示类型',
-    type: "'year' | 'yearrange' | 'month' | 'monthrange' | 'date' | 'daterange' | 'datetime' | 'datetimerange' | 'time' | 'timerange'",
+    type: 'string',
+    options: [
+      'year',
+      'yearrange',
+      'month',
+      'monthrange',
+      'date',
+      'daterange',
+      'datetime',
+      'datetimerange',
+      'time',
+      'timerange',
+    ],
     default: 'date',
   },
   {
@@ -176,7 +188,21 @@ const props = [
   {
     name: 'placement',
     description: '弹出位置',
-    type: "'top' | 'top-start' | 'top-end' | 'bottom' | 'bottom-start' | 'bottom-end' | 'left' | 'left-start' | 'left-end' | 'right' | 'right-start' | 'right-end'",
+    type: 'string',
+    options: [
+      'top',
+      'top-start',
+      'top-end',
+      'bottom',
+      'bottom-start',
+      'bottom-end',
+      'left',
+      'left-start',
+      'left-end',
+      'right',
+      'right-start',
+      'right-end',
+    ],
     default: 'bottom-start',
   },
   {
@@ -218,7 +244,8 @@ const props = [
   {
     name: 'font-size',
     description: '字体大小',
-    type: "'large' | 'medium' | 'normal'",
+    type: 'string',
+    options: ['large', 'medium', 'normal'],
     default: 'normal',
   },
   {
@@ -260,7 +287,8 @@ const props = [
   {
     name: 'behavior',
     description: '行为模式',
-    type: "'normal' | 'simplicity'",
+    type: 'string',
+    options: ['normal', 'simplicity'],
     default: 'normal',
   },
   {
@@ -393,12 +421,18 @@ const title = 'DatePicker';
 // 组件中文标签
 const titleCN = '日期选择器';
 
-export default {
-  presets,
-  props,
-  emits,
+// 组件描述
+const description = '日期选择器';
+
+const wiki: IComponentWiki = {
   group,
   name,
   title,
   titleCN,
+  props,
+  emits,
+  presets,
+  description,
 };
+
+export default wiki;

@@ -28,3 +28,6 @@ import { withInstall } from '@bkui-vue/shared';
 import Component from './alert';
 const BkAlert = withInstall(Component);
 export default BkAlert;
+export type { AlertEmits } from './emits';
+export type { AlertProps } from './props';
+export type BkAlertInstance = InstanceType<typeof Component>;

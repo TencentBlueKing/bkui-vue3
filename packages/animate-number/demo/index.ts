@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { NavGroupMeta } from '@bkui-vue/shared';
+import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
 // 组件示例
 const presets = [
@@ -68,7 +68,7 @@ const titleCN = '数字动画';
 // 组件描述
 const description = '使用数字动画，可以实现数字的平滑过渡效果。';
 
-export default {
+const wiki: IComponentWiki = {
   group,
   name,
   title,
@@ -77,3 +77,5 @@ export default {
   presets,
   description,
 };
+
+export default wiki;

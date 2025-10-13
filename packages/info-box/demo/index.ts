@@ -24,16 +24,15 @@
  * IN THE SOFTWARE.
  */
 
-import { NavGroupMeta } from '@bkui-vue/shared';
+import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
 // 组件示例
 const presets = [
   {
     title: '基础用法',
-    description: '配置 title, content 等参数',
+    description: '用于反馈各种状态',
     props: {
-      title: '请确认是否重置？',
-      content: '重置后不可恢复',
+      type: 'success',
     },
   },
   {
@@ -91,7 +90,8 @@ const props = [
   {
     name: 'type',
     description: '信息框类型',
-    type: "'success' | 'danger' | 'warning' | 'loading'",
+    type: 'string',
+    options: ['success', 'danger', 'warning', 'loading'],
     default: '',
   },
   {
@@ -121,19 +121,22 @@ const props = [
   {
     name: 'headerAlign',
     description: '显示header的位置',
-    type: "'center' | 'left' | 'right'",
+    type: 'string',
+    options: ['center', 'left', 'right'],
     default: 'center',
   },
   {
     name: 'contentAlign',
     description: '显示content的位置',
-    type: "'center' | 'left' | 'right'",
+    type: 'string',
+    options: ['center', 'left', 'right'],
     default: 'center',
   },
   {
     name: 'footerAlign',
     description: '显示footer的位置',
-    type: "'center' | 'left' | 'right'",
+    type: 'string',
+    options: ['center', 'left', 'right'],
     default: 'center',
   },
   {
@@ -175,13 +178,15 @@ const props = [
   {
     name: 'theme',
     description: '确认按钮主题',
-    type: "'primary' | 'danger' | 'success' | 'warning'",
+    type: 'string',
+    options: ['primary', 'danger', 'success', 'warning'],
     default: '',
   },
   {
     name: 'confirmButtonTheme',
     description: '确认按钮主题',
-    type: "'primary' | 'danger' | 'success' | 'warning'",
+    type: 'string',
+    options: ['primary', 'danger', 'success', 'warning'],
     default: '',
   },
   {
@@ -231,12 +236,18 @@ const title = 'InfoBox';
 // 组件中文标签
 const titleCN = '信息框';
 
-export default {
-  presets,
-  props,
-  emits,
+// 组件描述
+const description = '信息框';
+
+const wiki: IComponentWiki = {
   group,
   name,
   title,
   titleCN,
+  props,
+  emits,
+  presets,
+  description,
 };
+
+export default wiki;

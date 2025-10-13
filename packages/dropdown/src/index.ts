@@ -28,28 +28,20 @@ import { withInstallProps } from '@bkui-vue/shared';
 
 import Dropdown from './dropdown';
 import DropdownItem from './dropdown-item';
-import { dropdownItemEmits } from './dropdown-item-emits';
-import { dropdownItemProps } from './dropdown-item-props';
 import DropdownMenu from './dropdown-menu';
-import { dropdownMenuEmits } from './dropdown-menu-emits';
-import { dropdownMenuProps } from './dropdown-menu-props';
-import { emits } from './emits';
-import { props } from './props';
 
 const BkDropdown = withInstallProps(Dropdown, { DropdownMenu, DropdownItem });
 export default BkDropdown;
 export { BkDropdown, DropdownMenu as BkDropdownMenu, DropdownItem as BkDropdownItem };
 
-// 导出主组件的 props 和 emits
-export { props, emits };
 export type { DropdownItemEmits } from './dropdown-item-emits';
 export type { DropdownItemProps } from './dropdown-item-props';
+export type BkDropdownItemInstance = InstanceType<typeof DropdownItem>;
 
-// 导出子组件的 props 和 emits
-export { dropdownMenuProps, dropdownMenuEmits };
 export type { DropdownMenuEmits } from './dropdown-menu-emits';
 export type { DropdownMenuProps } from './dropdown-menu-props';
+export type BkDropdownMenuInstance = InstanceType<typeof DropdownMenu>;
 
-export { dropdownItemProps, dropdownItemEmits };
 export type { DropdownEmits } from './emits';
 export type { DropdownProps } from './props';
+export type BkDropdownInstance = InstanceType<typeof Dropdown>;

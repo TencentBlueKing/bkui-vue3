@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 
-import { NavGroupMeta } from '@bkui-vue/shared';
+import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
 const presets = [
   {
@@ -50,13 +50,15 @@ const props = [
   {
     name: 'type | number',
     description: '异常类型',
-    type: "'403' | '404' | '500' | 'building' | 'empty' | 'search-empty'",
+    type: 'string',
+    options: ['403', '404', '500', 'building', 'empty', 'search-empty'],
     default: '404',
   },
   {
     name: 'scene',
     description: '异常场景',
-    type: "'page' | 'part'",
+    type: 'string',
+    options: ['page', 'part'],
     default: 'page',
   },
   {
@@ -83,12 +85,17 @@ const title = 'Exception';
 
 const titleCN = '异常';
 
-export default {
-  presets,
-  props,
-  emits,
+const description = '异常';
+
+const wiki: IComponentWiki = {
   group,
   name,
   title,
   titleCN,
+  props,
+  emits,
+  presets,
+  description,
 };
+
+export default wiki;

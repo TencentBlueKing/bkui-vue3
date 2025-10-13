@@ -29,3 +29,6 @@ import { withInstall } from '@bkui-vue/shared';
 import Component from './affix';
 const BkAffix = withInstall(Component);
 export default BkAffix;
+export type { AffixEmits } from './emits';
+export type { AffixProps } from './props';
+export type BkAffixInstance = InstanceType<typeof Component>;

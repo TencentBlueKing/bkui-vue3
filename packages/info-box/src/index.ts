@@ -30,3 +30,4 @@ const BkInfoBox = withInstall(Component);
 export default BkInfoBox;
 
 export type { Props } from './props';
+export type BkInfoBoxInstance = ReturnType<typeof Component>;

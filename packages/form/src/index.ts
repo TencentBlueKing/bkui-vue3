@@ -30,32 +30,20 @@ import ComposeFormItem from './compose-form-item';
 import Form from './form';
 import FormItem from './form-item';
 
-export type { ComposeFormItemEmits } from './compose-form-item-emits';
-
-import { composeFormItemEmits } from './compose-form-item-emits';
-import { composeFormItemProps } from './compose-form-item-props';
-// 导入所有 props 和 emits
-import { emits } from './emits';
-import { formItemEmits } from './form-item-emits';
-import { formItemProps } from './form-item-props';
-import { props } from './props';
-
 const BkForm = withInstallProps(Form, { FormItem, ComposeFormItem });
 
 export default BkForm;
 
 export { BkForm, FormItem as BkFormItem, ComposeFormItem as BkComposeFormItem, formItemKey, formKey, useFormItem };
 
-// 导出主组件的 props 和 emits
-export { props, emits };
+export type { ComposeFormItemEmits } from './compose-form-item-emits';
 export type { ComposeFormItemProps } from './compose-form-item-props';
+export type ComposeFormItemInstance = InstanceType<typeof ComposeFormItem>;
+
 export type { FormEmits } from './emits';
-
-// 导出子组件的 props 和 emits
-export { formItemProps, formItemEmits };
 export type { FormItemEmits } from './form-item-emits';
-export type { FormItemProps } from './form-item-props';
+export type FormItemInstance = InstanceType<typeof FormItem>;
 
-export { composeFormItemProps, composeFormItemEmits };
+export type { FormItemProps } from './form-item-props';
 export type { FormProps } from './props';
-export * from './type';
+export type FormInstance = InstanceType<typeof Form>;

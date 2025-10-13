@@ -24,14 +24,23 @@
  * IN THE SOFTWARE.
  */
 
-import { NavGroupMeta } from '@bkui-vue/shared';
+import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
 const presets = [
   {
     title: '基础用法',
-    description: '通过 model 绑定表单数据',
+    description: '基础形式表单，key与value水平布局',
     props: {
       model: {},
+      'form-type': 'default',
+    },
+  },
+  {
+    title: '垂直表单',
+    description: 'key与value垂直布局',
+    props: {
+      model: {},
+      'form-type': 'vertical',
     },
   },
 ];
@@ -64,13 +73,15 @@ const props = [
   {
     name: 'form-type',
     description: '表单类型',
-    type: "'horizontal' | 'vertical'",
+    type: 'string',
+    options: ['horizontal', 'vertical'],
     default: 'horizontal',
   },
   {
     name: 'item-type',
     description: '表单项类型',
-    type: "'horizontal' | 'vertical'",
+    type: 'string',
+    options: ['horizontal', 'vertical'],
     default: 'horizontal',
   },
   {
@@ -88,7 +99,8 @@ const props = [
   {
     name: 'label-position',
     description: '表单项标签位置',
-    type: "'top' | 'left'",
+    type: 'string',
+    options: ['top', 'left'],
     default: 'top',
   },
   {
@@ -142,7 +154,8 @@ const props = [
   {
     name: 'error-display-type',
     description: '表单项错误信息显示类型',
-    type: "'normal' | 'tooltips'",
+    type: 'string',
+    options: ['normal', 'tooltips'],
     default: 'normal',
   },
   {
@@ -157,12 +170,25 @@ const emits = [
   {
     name: 'submit',
     description: '表单提交',
-    type: 'function',
+    params: [],
   },
   {
     name: 'validate',
     description: '表单项验证',
-    type: 'function',
+    params: [
+      {
+        name: 'property',
+        type: 'string',
+      },
+      {
+        name: 'result',
+        type: 'boolean',
+      },
+      {
+        name: 'message',
+        type: 'string',
+      },
+    ],
   },
 ];
 
@@ -174,12 +200,17 @@ const title = 'Form';
 
 const titleCN = '表单';
 
-export default {
-  presets,
-  props,
-  emits,
+const description = '表单';
+
+const wiki: IComponentWiki = {
   group,
   name,
   title,
   titleCN,
+  props,
+  emits,
+  presets,
+  description,
 };
+
+export default wiki;
