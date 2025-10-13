@@ -28,3 +28,6 @@ import { withInstall } from '@bkui-vue/shared';
 import Component from './progress';
 const BkProgress = withInstall(Component);
 export default BkProgress;
+export type { ProgressEmits } from './emits';
+export type { ProgressProps } from './props';
+export type ProgressInstance = InstanceType<typeof Component>;

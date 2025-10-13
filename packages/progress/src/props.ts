@@ -23,20 +23,35 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { withInstallProps } from '@bkui-vue/shared';
 
-import Component from './radio';
-import RadioButton from './radio-button';
-import RadioGroup from './radio-group';
-const BkRadio = withInstallProps(Component, { Group: RadioGroup, Button: RadioButton });
-export default BkRadio;
-export { BkRadio, RadioGroup as BkRadioGroup, RadioButton as BkRadioButton };
-export type { RadioEmits } from './emits';
-export type { RadioProps } from './props';
-export type { RadioButtonEmits } from './radio-button-emits';
-export type { RadioButtonProps } from './radio-button-props';
-export type { RadioGroupEmits } from './radio-group-emits';
-export type { RadioGroupProps } from './radio-group-props';
-export type BkRadioInstance = InstanceType<typeof Component>;
-export type BkRadioButtonInstance = InstanceType<typeof RadioButton>;
-export type BkRadioGroupInstance = InstanceType<typeof RadioGroup>;
+import { ExtractPropTypes } from 'vue';
+
+import { ProgressStrokeLineCapType, PropTypes, ThemeEnum } from '@bkui-vue/shared';
+
+export const props = {
+  extCls: PropTypes.string,
+  type: PropTypes.oneOf(['line', 'circle', 'dashboard']).def('line'),
+  percent: PropTypes.number.def(0),
+  theme: PropTypes.theme().def(ThemeEnum.PRIMARY),
+  size: PropTypes.size(),
+  width: PropTypes.number.def(126),
+  strokeWidth: PropTypes.number,
+  strokeLinecap: ProgressStrokeLineCapType(),
+  textInside: PropTypes.bool.def(false),
+  showText: PropTypes.bool.def(true),
+  color: PropTypes.string,
+  bgColor: PropTypes.string,
+  fixed: PropTypes.number
+    .validate((value: unknown) => {
+      const num = typeof value === 'number' ? value : Number(String(value));
+      return Number.isFinite(num) && num >= 0 && num <= 20;
+    })
+    .def(0),
+  format: PropTypes.func.def((percent: number): string => `${percent}%`),
+  titleStyle: PropTypes.object.def({
+    fontSize: '16px',
+    verticalAlign: 'middle',
+  }),
+};
+
+export type ProgressProps = ExtractPropTypes<typeof props>;

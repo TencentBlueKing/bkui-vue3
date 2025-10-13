@@ -24,40 +24,20 @@
  * IN THE SOFTWARE.
  */
 
-import { defineComponent, ExtractPropTypes } from 'vue';
+import { defineComponent } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-import { classes, ProgressStrokeLineCapType, ProgressType, PropTypes, ThemeEnum } from '@bkui-vue/shared';
+import { classes } from '@bkui-vue/shared';
 
 import Circle from './circle';
+import { emits } from './emits';
 import Line from './line';
-
-export const progressType = {
-  extCls: PropTypes.string,
-  type: ProgressType(),
-  percent: PropTypes.number.def(0),
-  theme: PropTypes.theme().def(ThemeEnum.PRIMARY),
-  size: PropTypes.size(),
-  width: PropTypes.number.def(126),
-  strokeWidth: PropTypes.number,
-  strokeLinecap: ProgressStrokeLineCapType(),
-  textInside: PropTypes.bool.def(false),
-  showText: PropTypes.bool.def(true),
-  color: PropTypes.string,
-  bgColor: PropTypes.string,
-  fixed: PropTypes.number.validate((value: any) => value >= 0 && value <= 20).def(0),
-  format: PropTypes.func.def((percent: number): string => `${percent}%`),
-  titleStyle: PropTypes.object.def({
-    fontSize: '16px',
-    verticalAlign: 'middle',
-  }),
-};
-
-export type ProgressType = ExtractPropTypes<typeof progressType>;
+import { props } from './props';
 
 export default defineComponent({
   name: 'Progress',
-  props: progressType,
+  props,
+  emits,
   setup() {
     const { resolveClassName } = usePrefix();
     return {

@@ -25,33 +25,18 @@
  */
 
 import { defineComponent } from 'vue';
-import { func } from 'vue-types';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-import { classes, PropTypes } from '@bkui-vue/shared';
+import { classes } from '@bkui-vue/shared';
 
 import { useFocus, useRadio } from './common';
-
-import type { ExtractPropTypes } from 'vue';
-
-const radioProps = {
-  name: PropTypes.string.def(''),
-  label: PropTypes.oneOfType([PropTypes.bool, PropTypes.string, PropTypes.number]).isRequired,
-  modelValue: PropTypes.oneOfType([PropTypes.bool, PropTypes.string, PropTypes.number]).def(''),
-  checked: PropTypes.bool.def(false),
-  disabled: PropTypes.bool.def(false),
-  beforeChange: func<(event: boolean | string | number) => Promise<boolean> | boolean>().def(() => true),
-};
-
-export type RadioProps = Readonly<ExtractPropTypes<typeof radioProps>>;
+import { emits } from './emits';
+import { props } from './props';
 
 export default defineComponent({
   name: 'Radio',
-  props: radioProps,
-  emits: {
-    'update:modelValue': (value: any) => value !== undefined,
-    change: (value: any) => value !== undefined,
-  },
+  props,
+  emits,
   setup() {
     const [isFocused, { blur: handleBlur, focus: handleFocus }] = useFocus();
 

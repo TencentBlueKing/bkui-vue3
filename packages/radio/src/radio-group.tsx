@@ -25,35 +25,20 @@
  */
 
 import { defineComponent, onMounted, provide, watch } from 'vue';
-import { func } from 'vue-types';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-import { PropTypes, useFormItem } from '@bkui-vue/shared';
+import { useFormItem } from '@bkui-vue/shared';
 
 import { radioGroupKey } from './common';
+import { radioGroupEmits } from './radio-group-emits';
+import { radioGroupProps } from './radio-group-props';
 
 import type { IRadioGroupContext } from './type';
-import type { ExtractPropTypes } from 'vue';
-
-const radioGroupProps = {
-  name: PropTypes.string.def(''),
-  modelValue: PropTypes.oneOfType([PropTypes.bool, PropTypes.string, PropTypes.number]),
-  disabled: PropTypes.bool,
-  withValidate: PropTypes.bool.def(true),
-  type: PropTypes.oneOf(['tab', 'capsule', 'card']).def('tab'),
-  size: PropTypes.size(),
-  beforeChange: func<(event: boolean | number | string) => Promise<boolean> | boolean>().def(() => true),
-};
-
-export type RadioGroupProps = Readonly<ExtractPropTypes<typeof radioGroupProps>>;
 
 export default defineComponent({
   name: 'RadioGroup',
   props: radioGroupProps,
-  emits: {
-    'update:modelValue': (value: any) => value !== undefined,
-    change: (value: any) => value !== undefined,
-  },
+  emits: radioGroupEmits,
   setup(props, context) {
     const formItem = useFormItem();
     const radioInstanceList = [];

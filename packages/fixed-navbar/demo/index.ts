@@ -24,12 +24,12 @@
  * IN THE SOFTWARE.
  */
 
-import { NavGroupMeta } from '@bkui-vue/shared';
+import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
 const presets = [
   {
-    title: '基础用法',
-    description: '悬浮导航在右侧展示',
+    title: '纯文字类型',
+    description: '基础的文字选择',
     props: {
       'nav-items': [
         {
@@ -50,6 +50,50 @@ const presets = [
       ],
     },
   },
+  {
+    title: '图标类型',
+    description: '基础的图标选择',
+    props: {
+      'nav-items': [
+        {
+          icon: 'icon-contact',
+          text: '',
+          action: () => {
+            window.open('http://wpa.b.qq.com/cgi/wpa.php?ln=1&key=XzgwMDgwMjAwMV80NDMwOTZfODAwODAyMDAxXzJf');
+          },
+        },
+        {
+          icon: 'icon-feedback',
+          text: '',
+          action: () => {
+            window.open('https://bk.tencent.com/s-mart/community?page=1&keyword=%255BMagicBox%255D&sort=latest');
+          },
+        },
+      ],
+    },
+  },
+  {
+    title: '文字和图标类型',
+    description: '文字',
+    props: {
+      'nav-items': [
+        {
+          icon: 'icon-contact',
+          text: '联系',
+          action: () => {
+            window.open('http://wpa.b.qq.com/cgi/wpa.php?ln=1&key=XzgwMDgwMjAwMV80NDMwOTZfODAwODAyMDAxXzJf');
+          },
+        },
+        {
+          icon: 'icon-home',
+          text: '反馈',
+          action: () => {
+            window.open('https://bk.tencent.com/s-mart/community?page=1&keyword=%255BMagicBox%255D&sort=latest');
+          },
+        },
+      ],
+    },
+  },
 ];
 
 const props = [
@@ -62,7 +106,8 @@ const props = [
   {
     name: 'position',
     description: '位置，分为顶部、底部、中间',
-    type: "'middle' | 'top' | 'bottom'",
+    type: 'string',
+    options: ['middle', 'top', 'bottom'],
     default: 'middle',
   },
   {
@@ -100,12 +145,17 @@ const title = 'FixedNavbar';
 
 const titleCN = '固定导航栏';
 
-export default {
-  presets,
-  props,
-  emits,
+const description = '固定导航栏';
+
+const wiki: IComponentWiki = {
   group,
   name,
   title,
   titleCN,
+  props,
+  emits,
+  presets,
+  description,
 };
+
+export default wiki;

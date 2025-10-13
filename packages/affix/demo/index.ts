@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { NavGroupMeta } from '@bkui-vue/shared';
+import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
 // 组件示例
 const presets = [
@@ -157,7 +157,7 @@ const titleCN = '图钉';
 // 组件描述
 const description = '使用图钉，可以将内容固定在屏幕上，并且不随页面的滚动而滚动。';
 
-export default {
+const wiki: IComponentWiki = {
   group,
   name,
   title,
@@ -168,3 +168,5 @@ export default {
   types,
   description,
 };
+
+export default wiki;
