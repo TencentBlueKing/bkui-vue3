@@ -28,15 +28,24 @@ import { NavGroupMeta } from '@bkui-vue/shared';
 // 组件示例
 const presets = [
   {
-    title: '简单样式',
-    description: '简单样式',
+    title: '经典模式',
+    description: '有标题格式标准化的确认框',
     props: {
-      width: 288,
-      content: '删除结果数据时，将同时删除该结果数据下的所有样本曲线，请确认！',
       trigger: 'click',
+      title: '文本框',
+      content: '',
+      confirmText: '确定',
+      cancelText: '取消',
     },
-    emits: {
-      confirm: () => {},
+  },
+  {
+    title: '简易模式',
+    description: '没有标题的确认框',
+    props: {
+      trigger: 'click',
+      content: '',
+      confirmText: '确定',
+      cancelText: '取消',
     },
   },
 ];

@@ -30,11 +30,16 @@ import { EMIT_EVENTS } from '../src/const';
 const presets = [
   {
     title: '基础用法',
-    description: '基础用法',
+    description: 'popover 的基础用法',
     props: {
-      isShow: true,
-      always: true,
-      theme: 'primary',
+      placement: 'auto',
+      theme: 'dark',
+      trigger: 'hover',
+      content: '这是popover的内容',
+      width: 300,
+      height: 200,
+      maxWidth: 300,
+      maxHeight: 200,
     },
   },
 ];

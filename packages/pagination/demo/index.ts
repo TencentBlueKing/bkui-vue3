@@ -28,13 +28,25 @@ import { NavGroupMeta } from '@bkui-vue/shared';
 // 组件示例
 const presets = [
   {
-    title: '小型分页',
-    description: '小型分页',
+    title: '标准版',
+    description: '标准样式',
     props: {
       modelValue: 1,
-      count: 100,
-      limit: 10,
-      limitList: [10, 20, 50, 100],
+      type: 'default',
+      showLimit: true,
+      align: 'left',
+      showTotalCount: true,
+    },
+  },
+  {
+    title: '简易版',
+    description: '在空间有限（宽度 <640px) 时使用',
+    props: {
+      modelValue: 1,
+      type: 'compact',
+      showLimit: true,
+      align: 'left',
+      showTotalCount: true,
     },
   },
 ];

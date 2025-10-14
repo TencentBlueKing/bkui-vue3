@@ -29,12 +29,13 @@ import { NavGroupMeta } from '@bkui-vue/shared';
 const presets = [
   {
     title: '基础用法',
-    description: '基础用法',
+    description: '满足基础使用场景',
     props: {
       id: 'notify',
-      title: '标题',
+      title: '文本框',
       message: '内容',
       theme: 'primary',
+      delay: 3000,
     },
   },
 ];
