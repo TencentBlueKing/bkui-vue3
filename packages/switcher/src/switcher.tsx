@@ -23,54 +23,24 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { computed, defineComponent, ExtractPropTypes, ref, watch } from 'vue';
+import { computed, defineComponent, ref, watch } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import { SwitcherLoading } from '@bkui-vue/icon';
-import { PropTypes, SwitcherThemeType, useFormItem } from '@bkui-vue/shared';
+import { useFormItem } from '@bkui-vue/shared';
 
-export const switcherType = {
-  theme: SwitcherThemeType(),
-  size: PropTypes.size(),
-  disabled: PropTypes.bool,
-  showText: PropTypes.bool,
-  isOutline: PropTypes.bool,
-  onText: PropTypes.string.def('ON'),
-  offText: PropTypes.string.def('OFF'),
-  isSquare: PropTypes.bool,
-  extCls: PropTypes.string,
-  beforeChange: PropTypes.func.def(undefined),
-  trueValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool]).def(true),
-  falseValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool]).def(false),
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool]).def(false),
-  modelValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool]).def(false),
-  withValidate: PropTypes.bool.def(true),
-};
+import { emits } from './emits';
+import { props } from './props';
 
 export const enum EVENTS {
   CHANGE = 'change',
   UPDATE = 'update:modelValue',
 }
 
-export type SwitcherType = ExtractPropTypes<typeof switcherType>;
-
-function EventFunction(value: SwitcherType['modelValue']) {
-  return value;
-}
-
-function ChangeFunction(value: boolean) {
-  return !!value;
-}
-
-const switcherEmitEventsType = {
-  [EVENTS.UPDATE]: EventFunction,
-  [EVENTS.CHANGE]: ChangeFunction,
-};
-
 export default defineComponent({
   name: 'Switcher',
-  props: switcherType,
-  emits: switcherEmitEventsType,
+  props,
+  emits,
   setup(props, { emit }) {
     const formItem = useFormItem();
     const { resolveClassName } = usePrefix();
@@ -136,7 +106,7 @@ export default defineComponent({
         emit(EVENTS.CHANGE, lastChecked);
       };
 
-      let goodJob: any = true;
+      let goodJob: Promise<void> | boolean = true;
 
       if (typeof props.beforeChange === 'function') {
         goodJob = props.beforeChange(lastValue);

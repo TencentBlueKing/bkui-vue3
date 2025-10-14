@@ -28,35 +28,16 @@ import { defineComponent, getCurrentInstance, useAttrs, useSlots } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import { AngleLeft, AngleRight } from '@bkui-vue/icon';
-import Modal, { propsMixin } from '@bkui-vue/modal';
-import { PropTypes } from '@bkui-vue/shared';
-import cloneDeep from 'lodash/cloneDeep';
+import Modal from '@bkui-vue/modal';
 
-const sliderProps = cloneDeep(propsMixin);
-sliderProps.width.default = '400';
+import { emits } from './emits';
+import { props } from './props';
 
 export default defineComponent({
   name: 'Sideslider',
   inheritAttrs: false,
-  props: {
-    ...sliderProps,
-    title: PropTypes.string.def(''),
-    direction: {
-      type: String,
-      default: 'right',
-      validator: (value: string) => {
-        const textAlign = ['left', 'right'];
-        if (textAlign.indexOf(value) < 0) {
-          console.error(`direction property is not valid: '${value}',【${textAlign.join(' | ')}】`);
-          return false;
-        }
-        return true;
-      },
-    },
-  },
-
-  emits: ['closed', 'update:isShow', 'shown', 'hidden', 'animation-end'],
-
+  props,
+  emits,
   setup(props, { emit }) {
     const attrs = useAttrs();
     const slots = useSlots();

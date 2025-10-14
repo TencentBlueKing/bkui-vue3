@@ -27,7 +27,9 @@
 import { computed, defineComponent, onBeforeUnmount, onMounted, Ref, ref, toRefs, watch } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-import { PropTypes } from '@bkui-vue/shared';
+
+import { emits } from './emits';
+import { props } from './props';
 
 interface IRenderData {
   link?: string;
@@ -39,16 +41,8 @@ interface IRenderData {
 export default defineComponent({
   name: 'Swiper',
 
-  props: {
-    isLoop: PropTypes.bool.def(true),
-    loopTime: PropTypes.number.def(8000),
-    pics: PropTypes.array.def([]),
-    list: PropTypes.array.def([]),
-    height: PropTypes.number,
-    width: PropTypes.number,
-  },
-
-  emits: ['index-change'],
+  props,
+  emits,
 
   setup(props, { emit, slots }) {
     // 属性
