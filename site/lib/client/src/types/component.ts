@@ -57,3 +57,8 @@ export interface INavGroups {
   };
   directiveList: IComponentWiki[];
 }
+
+export interface IComponentMeta {
+  componentWiki: IComponentWiki,
+  type: string
+}
