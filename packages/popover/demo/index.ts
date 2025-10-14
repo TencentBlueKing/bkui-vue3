@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { NavGroupMeta } from '@bkui-vue/shared';
+import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 import { EMIT_EVENTS } from '../src/const';
 
 // 组件示例
@@ -363,7 +363,7 @@ const titleCN = '弹出框提示';
 // 组件描述
 const description = '当鼠标指向页面元素时给出简单的提示';
 
-export default {
+const wiki: IComponentWiki = {
   group,
   name,
   title,
@@ -374,3 +374,5 @@ export default {
   types,
   description,
 };
+
+export default wiki;

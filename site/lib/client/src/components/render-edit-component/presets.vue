@@ -4,7 +4,7 @@
       <i class="bkui-vue-wiki-icon icon-preset"></i>
       <h3>预设场景</h3>
     </div>
-    <div class="preset-list">
+    <div class="preset-list g-scrollbar">
       <ul>
         <li
           v-for="(preset, key) in presets"
@@ -89,31 +89,6 @@ const emit = defineEmits<IEmits>();
         background-color: #E1ECFF;
         color: #3A84FF;
       }
-    }
-
-    /* 自定义滚动条 */
-    &::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-      background-color: transparent;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: #e6e9ea;
-      border-radius: 20px;
-      box-shadow: inset 0 0 6px rgba(204, 204, 204, 0.3);
-
-      &:hover {
-        background-color: #7D7D7F;
-      }
-    }
-
-    &::-webkit-scrollbar-track {
-      background-color: transparent;
-    }
-    /* 解决白色方块问题 */
-    &::-webkit-scrollbar-corner {
-      background-color: transparent; /* 设为透明 */
     }
   }
 }
