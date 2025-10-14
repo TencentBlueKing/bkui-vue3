@@ -86,19 +86,22 @@ const props = [
   {
     name: 'type',
     description: '组件外观类型',
-    type: 'default | compact',
+    type: 'string',
+    options: ['default', 'compact'],
     default: 'default',
   },
   {
     name: 'location',
     description: '每页显示条数控件位置',
-    type: 'left | right',
+    type: 'string',
+    options: ['left', 'right'],
     default: 'right',
   },
   {
     name: 'align',
     description: '分页控件位置，优先级高于location',
-    type: 'left | center | right',
+    type: 'string',
+    options: ['left', 'center', 'right'],
     default: 'right',
   },
   {
@@ -128,7 +131,8 @@ const props = [
   {
     name: 'disabled',
     description: '每页显示条数控件位置',
-    type: 'left | right',
+    type: 'string',
+    options: ['left', 'right'],
     default: 'right',
   },
   {
@@ -173,6 +177,9 @@ const emits = [
   },
 ];
 
+// 组件自定义的复杂类型
+const types = [];
+
 // 组件分组
 const group = NavGroupMeta.Data;
 
@@ -196,5 +203,6 @@ export default {
   props,
   emits,
   presets,
+  types,
   description,
 };

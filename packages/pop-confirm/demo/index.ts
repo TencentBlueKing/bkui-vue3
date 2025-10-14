@@ -55,7 +55,8 @@ const props = [
   {
     name: 'trigger',
     description: '触发方式',
-    type: 'click | hover',
+    type: 'string',
+    options: ['click', 'hover'],
     default: 'hover',
   },
   {
@@ -85,13 +86,15 @@ const props = [
   {
     name: 'placement',
     description: '组件显示位置',
-    type: 'auto | auto-start | auto-end | top | top-start | top-end | bottom | bottom-start | bottom-end | right | right-start | right-end | left | left-start | left-end',
-    default: 'top-start',
+    type: 'string',
+    options: ['auto', 'auto-start', 'auto-end', 'top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end', 'left', 'left-start', 'left-end', 'right', 'right-start', 'right-end'],
+    default: 'top-start'
   },
   {
     name: 'theme',
     description: '组件主题色',
-    type: 'dark | light',
+    type: 'string',
+    options: ['dark', 'light'],
     default: 'light',
   },
   {
@@ -144,6 +147,22 @@ const emits = [
   },
 ];
 
+// 组件自定义的复杂类型
+const types = [
+  {
+    name: 'ButtonPropTypes',
+    type: 'ButtonPropTypes',
+    link: '/component/button/api#ButtonPropTypes',
+    description: '按钮的配置项',
+  },
+  {
+    name: 'PopoverPropTypes',
+    type: 'PopoverPropTypes',
+    link: '/component/popover/api#PopoverPropTypes',
+    description: '弹出内容的配置项',
+  }
+];
+
 // 组件分组
 const group = NavGroupMeta.Nav;
 
@@ -167,5 +186,6 @@ export default {
   props,
   emits,
   presets,
+  types,
   description,
 };

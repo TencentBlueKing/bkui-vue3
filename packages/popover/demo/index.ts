@@ -103,7 +103,8 @@ const props = [
   {
     name: 'renderDirective',
     description: '渲染方式，值为 show 时，气泡内容 dom 元素不会销毁',
-    type: 'if | show',
+    type: 'string',
+    options: ['if', 'show'],
     default: 'if',
   },
   {
@@ -121,25 +122,29 @@ const props = [
   {
     name: 'placement',
     description: '组件显示位置',
-    type: 'auto | auto-start | auto-end | top | top-start | top-end | bottom | bottom-start | bottom-end | left | left-start | left-end | right | right-start | right-end',
-    default: 'top-start',
+    type: 'string',
+    options: ['auto', 'auto-start', 'auto-end', 'top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end', 'left', 'left-start', 'left-end', 'right', 'right-start', 'right-end'],
+    default: 'top-start'
   },
   {
     name: 'theme',
     description: '组件主题色',
-    type: 'dark | light',
+    type: 'string',
+    options: ['dark', 'light'],
     default: 'dark',
   },
   {
     name: 'trigger',
     description: '触发方式。如果值为manual，则通过isShow控制显示、隐藏',
-    type: 'click | hover | manual',
+    type: 'string',
+    options: ['click', 'hover', 'manual'],
     default: 'hover',
   },
   {
     name: 'renderType',
     description: 'content 渲染方式, auto: 默认渲染模式，shown：弹出层容器挂载完毕才会渲染内部组件',
-    type: 'auto | shown',
+    type: 'string',
+    options: ['auto', 'shown'],
     default: 'shown',
   },
   {
@@ -327,17 +332,17 @@ const types = [
       {
         name: 'mainAxis',
         type: 'number',
-        description: '',
+        description: '主轴偏移量',
       },
       {
         name: 'crossAxis',
         type: 'number',
-        description: '',
+        description: '交叉轴偏移量',
       },
       {
         name: 'alignmentAxis',
         type: 'number | null',
-        description: '',
+        description: '对齐轴偏移量',
       },
     ],
   },

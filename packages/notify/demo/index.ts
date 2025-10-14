@@ -63,13 +63,15 @@ const props = [
   {
     name: 'theme',
     description: '组件主题色',
-    type: 'primary | warning | success | error',
+    type: 'string',
+    options: ['primary', 'warning', 'success', 'error'],
     default: 'primary',
   },
   {
     name: 'position',
     description: '组件出现的方向',
-    type: 'top-left | top-right | bottom-left | bottom-right',
+    type: 'string',
+    options: ['top-left', 'top-right', 'bottom-left', 'bottom-right'],
     default: 'top-right',
   },
   {
@@ -130,6 +132,9 @@ const emits = [
   },
 ];
 
+// 组件自定义的复杂类型
+const types = [];
+
 // 组件分组
 const group = NavGroupMeta.Nav;
 
@@ -153,5 +158,6 @@ export default {
   props,
   emits,
   presets,
+  types,
   description,
 };
