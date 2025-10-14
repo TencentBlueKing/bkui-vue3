@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { NavGroupMeta } from '@bkui-vue/shared';
+import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
 // 组件示例
 const presets = [
@@ -125,6 +125,7 @@ const emits = [
   {
     name: 'closed',
     description: '组件关闭',
+    params: [],
   },
   {
     name: 'update:isShow',
@@ -134,37 +135,22 @@ const emits = [
   {
     name: 'shown',
     description: '显示组件后的回调函数',
+    params: [],
   },
   {
     name: 'hidden',
     description: '关闭组件后的回调函数',
+    params: [],
   },
   {
     name: 'animation-end',
     description: '关闭组件后动画结束的回调函数',
+    params: [],
   },
 ];
 
 // 组件自定义的复杂类型
-const types = [
-  // {
-  //   name: 'ITestType',
-  //   description: '图钉状态',
-  //   fields: [
-  //     {
-  //       name: 'type',
-  //       type: 'string',
-  //       description: '类型',
-  //     },
-  //     {
-  //       name: 'value',
-  //       type: 'ITestSubType',
-  //       description: '值',
-  //       link: '/component/affix/api#ITestSubType',
-  //     },
-  //   ],
-  // },
-];
+const types = [];
 
 // 组件分组
 const group = NavGroupMeta.Nav;
@@ -181,7 +167,7 @@ const titleCN = '侧栏';
 // 组件描述
 const description = 'Sideslider组件， 提供一个从两侧滑入的组件，供用户填写/查看更多信息。';
 
-export default {
+const wiki: IComponentWiki = {
   group,
   name,
   title,
@@ -192,3 +178,4 @@ export default {
   types,
   description,
 };
+export default wiki;

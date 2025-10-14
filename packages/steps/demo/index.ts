@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { NavGroupMeta } from '@bkui-vue/shared';
+import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
 // 组件示例
 const presets = [
@@ -227,7 +227,7 @@ const titleCN = '步骤';
 // 组件描述
 const description = 'Steps步骤条，用于步骤类的场景组件';
 
-export default {
+const wiki: IComponentWiki = {
   group,
   name,
   title,
@@ -238,3 +238,4 @@ export default {
   types,
   description,
 };
+export default wiki;
