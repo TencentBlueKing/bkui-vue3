@@ -38,25 +38,14 @@ import {
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import { AngleLeft, AngleRight } from '@bkui-vue/icon';
-import { PropTypes } from '@bkui-vue/shared';
+
+import { emits } from './emits';
+import { props } from './props';
 
 export default defineComponent({
   name: 'ResizeLayout',
-  props: {
-    placement: PropTypes.placement().def('left'),
-    min: PropTypes.number.def(3),
-    max: PropTypes.number.def(Infinity),
-    triggerWidth: PropTypes.number.def(5),
-    triggerOffset: PropTypes.number.def(3),
-    initialDivide: PropTypes.oneOfType([String, Number]).def('20%'),
-    immediate: PropTypes.bool,
-    disabled: PropTypes.bool,
-    collapsible: PropTypes.bool,
-    isCollapsed: PropTypes.bool.def(false), // 初始化折叠状态
-    autoMinimize: PropTypes.oneOfType([Boolean, Number]).def(false),
-    border: PropTypes.bool.def(true),
-  },
-  emits: ['before-resize', 'resizing', 'after-resize', 'collapse-change'],
+  props,
+  emits,
   setup(props, { emit }) {
     const {
       placement,
