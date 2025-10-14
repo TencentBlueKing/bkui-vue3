@@ -23,14 +23,18 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { withInstall } from '@bkui-vue/shared';
 
-import Exception from './exception';
-import { ExceptionEnum, SceneEnum } from './types';
+export enum ExceptionEnum {
+  BUILDING = 'building',
+  CODE_403 = '403',
+  CODE_404 = '404',
+  CODE_500 = '500',
+  EMPTY = 'empty',
+  LOGIN = 'login',
+  SEARCH = 'search-empty',
+}
 
-const BkException = withInstall(Exception);
-export { Exception, ExceptionEnum, SceneEnum };
-export default BkException;
-export type { ExceptionEmits } from './emits';
-export type { ExceptionProps } from './props';
-export type BkExceptionInstance = InstanceType<typeof Exception>;
+export enum SceneEnum {
+  PAGE = 'page',
+  PART = 'part',
+}

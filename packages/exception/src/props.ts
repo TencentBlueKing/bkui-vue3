@@ -28,7 +28,7 @@ import { toType } from 'vue-types';
 
 import { PropTypes } from '@bkui-vue/shared';
 
-import { ExceptionEnum, SceneEnum } from './exception';
+import { ExceptionEnum, SceneEnum } from './types';
 
 import type { ExtractPropTypes } from 'vue';
 

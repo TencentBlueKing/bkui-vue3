@@ -46,12 +46,18 @@ const externals = {
   'lodash/random': 'lodashRandom',
   'lodash/debounce': 'lodashDebounce',
   'lodash/isFunction': 'lodashIsFunction',
-  '@popperjs/core': 'popperjsCore',
+  'lodash/get': 'lodashGet',
+  'lodash/isDate': 'lodashIsDate',
+  'lodash/isEmpty': 'lodashIsEmpty',
+  'lodash/isEqual': 'lodashIsEqual',
   'vue-types': 'vueTypes',
-  '@floating-ui/dom': 'floatingUiDom',
   'normalize-wheel': 'normalizeWheel',
   'js-calendar': 'jsCalendar',
   'date-fns': 'dateFns',
+  'resize-observer-polyfill': 'resizeObserverPolyfill',
+  '@popperjs/core': 'popperjsCore',
+  '@floating-ui/dom': 'floatingUiDom',
+  '@blueking/fork-resize-detector': 'forkResizeDetector',
 };
 
 // 转换路径分隔符为 /
@@ -106,19 +112,28 @@ const transformFileContent = (code, originAbsoluteFilePath, releaseZipPath, func
   // 处理图片文件
   if (isImageFile(originAbsoluteFilePath)) {
     if (originAbsoluteFilePath.endsWith('.svg')) {
-      // SVG 作为文本
+      // SVG 转换为 data URL
       const svgContent = code
-        .replace(/\\/g, '\\\\')
-        .replace(/`/g, '\\`')
-        .replace(/\$/g, '\\$');
-      transformedCode += `exports.default = \`${svgContent}\`;\n`;
+        .replace(/\n/g, ' ')
+        .replace(/\r/g, '')
+        .replace(/\t/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+      // 对 SVG 内容进行 URL 编码
+      const encodedSvg = svgContent
+        .replace(/%/g, '%25')
+        .replace(/#/g, '%23')
+        .replace(/</g, '%3C')
+        .replace(/>/g, '%3E')
+        .replace(/"/g, "'");
+      transformedCode += `exports.default = "data:image/svg+xml,${encodedSvg}";\n`;
     } else {
       // 其他图片作为 base64
       const base64Content = Buffer.from(code, 'binary').toString('base64');
       const ext = path.extname(originAbsoluteFilePath).slice(1);
       transformedCode += `exports.default = "data:image/${ext};base64,${base64Content}";\n`;
     }
-    transformedCode += `return exports;\n`;
+    transformedCode += `Object.defineProperty(exports, "__esModule", { value: true });\nreturn exports;\n`;
   } else {
     // 去除注释
     transformedCode += code.replace(/\/\*[\s\S]*?\*\/|([^:]|^)\/\/.*$/gm, '$1');
@@ -229,7 +244,7 @@ export const generateCompiledFile = async (fileMap, entryPath, releaseZipPath) =
     }
     return acc;
   }, '');
-  return `window.getComponent = () => {\n${transformedDependenciesContent}\n${transformedEntryFileContent}\n}`;
+  return `window.process = { env: { NODE_ENV: 'production' } }; window.getComponent = () => {\n${transformedDependenciesContent}\n${transformedEntryFileContent}\n}`;
 };
 
 /**

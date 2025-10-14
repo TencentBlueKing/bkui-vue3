@@ -41,19 +41,6 @@ import searchEmpty from './images/search-empty.svg';
 import { props } from './props';
 import { TypesMapType } from './typings';
 
-export enum ExceptionEnum {
-  BUILDING = 'building',
-  CODE_403 = '403',
-  CODE_404 = '404',
-  CODE_500 = '500',
-  EMPTY = 'empty',
-  LOGIN = 'login',
-  SEARCH = 'search-empty',
-}
-export enum SceneEnum {
-  PAGE = 'page',
-  PART = 'part',
-}
 export default defineComponent({
   name: 'Exception',
   props,

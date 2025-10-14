@@ -1,4 +1,5 @@
 export type ValueType = string | number | boolean | Array<string | number | boolean> | object;
+export type LinkType = string | Record<string, string>;
 
 export interface IComponentWiki {
   group: string;
@@ -11,7 +12,7 @@ export interface IComponentWiki {
     type: string;
     default?: ValueType;
     description: string;
-    link?: string;
+    link?: LinkType;
     options?: Array<string | number>;
   }[];
   emits?: {
@@ -20,7 +21,7 @@ export interface IComponentWiki {
     params: {
       name: string;
       type: string;
-      link?: string;
+      link?: LinkType;
     }[]
   }[];
   slots?: {
@@ -29,7 +30,7 @@ export interface IComponentWiki {
     params?: {
       name: string;
       type: string;
-      link?: string;
+      link?: LinkType;
     }[]
   }[];
   presets: Array<{
@@ -46,7 +47,7 @@ export interface IComponentWiki {
       type: string;
       description: string;
       default?: ValueType;
-      link?: string;
+      link?: LinkType;
     }[]
   }[];
 }

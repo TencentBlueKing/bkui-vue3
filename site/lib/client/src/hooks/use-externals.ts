@@ -12,6 +12,8 @@ import * as NormalizeWheel from 'normalize-wheel';
 import * as FloatingUiDom from '@floating-ui/dom';
 import * as DateFns from 'date-fns';
 import * as JsCalendar from 'js-calendar';
+import * as ForkResizeDetector from '@blueking/fork-resize-detector';
+import * as ResizeObserverPolyfill from 'resize-observer-polyfill';
 
 export const useExternals = () => {
   const loadExternals = () => {
@@ -27,10 +29,16 @@ export const useExternals = () => {
     window.lodashRandom = () => Lodash.random;
     window.lodashDebounce = () => Lodash.debounce;
     window.lodashIsFunction = () => Lodash.isFunction;
+    window.lodashGet = () => Lodash.get;
+    window.lodashIsDate = () => Lodash.isDate;
+    window.lodashIsEmpty = () => Lodash.isEmpty;
+    window.lodashIsEqual = () => Lodash.isEqual;
     window.normalizeWheel = () => NormalizeWheel;
     window.floatingUiDom = () => FloatingUiDom;
+    window.forkResizeDetector = () => ForkResizeDetector;
     window.dateFns = () => DateFns;
     window.jsCalendar = () => JsCalendar;
+    window.resizeObserverPolyfill = () => ResizeObserverPolyfill;
   };
 
   const unloadExternals = () => {
@@ -46,10 +54,16 @@ export const useExternals = () => {
     delete window.lodashRandom;
     delete window.lodashDebounce;
     delete window.lodashIsFunction;
+    delete window.lodashGet;
+    delete window.lodashIsDate;
+    delete window.lodashIsEmpty;
+    delete window.lodashIsEqual;
     delete window.normalizeWheel;
     delete window.floatingUiDom;
+    delete window.forkResizeDetector;
     delete window.dateFns;
     delete window.jsCalendar;
+    delete window.resizeObserverPolyfill;
   };
 
   onBeforeMount(loadExternals);
