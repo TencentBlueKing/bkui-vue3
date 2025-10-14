@@ -24,39 +24,21 @@
  * IN THE SOFTWARE.
  */
 
-import { defineComponent, ExtractPropTypes, onMounted, ref, watch } from 'vue';
-import { toType } from 'vue-types';
+import { defineComponent, onMounted, ref, watch } from 'vue';
 
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { Circle, Done, Error } from '@bkui-vue/icon';
-import { classes, directionType, lineStyleType, PropTypes, ThemeEnum } from '@bkui-vue/shared';
+import { classes } from '@bkui-vue/shared';
 
-enum StatusEnum {
-  ERROR = 'error',
-  LOADING = 'loading',
-  UNKNOWN = '',
-}
-const stepsProps = {
-  theme: PropTypes.theme().def(ThemeEnum.PRIMARY),
-  size: PropTypes.size(),
-  curStep: PropTypes.number.def(1),
-  controllable: PropTypes.bool.def(false),
-  direction: directionType(),
-  status: toType<`${StatusEnum}`>('status', {}).def(StatusEnum.UNKNOWN),
-  lineType: lineStyleType(),
-  extCls: PropTypes.string,
-  steps: PropTypes.array.def([]),
-  beforeChange: PropTypes.func,
-};
-
-export type StepsPropTypes = ExtractPropTypes<typeof stepsProps>;
+import { emits } from './emits';
+import { props as stepsProps, StepsType } from './props';
 
 export default defineComponent({
   name: 'Steps',
   props: stepsProps,
-  emits: ['update:curStep', 'click'],
+  emits,
 
-  setup(props: StepsPropTypes, { emit }) {
+  setup(props: StepsType, { emit }) {
     const t = useLocale('steps');
     const lang = useLocale('lang');
 
