@@ -29,12 +29,13 @@ import Button from '@bkui-vue/button';
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import Popover from '@bkui-vue/popover';
 
-import props from './props';
+import { props } from './props';
+import { emits } from './emits';
 
 export default defineComponent({
   name: 'PopConfirm',
   props,
-  emits: ['confirm', 'cancel', 'after-show', 'after-hidden'],
+  emits,
   setup(_props, { emit }) {
     const visible = ref(false);
     const t = useLocale('popConfirm');

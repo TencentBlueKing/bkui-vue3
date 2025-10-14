@@ -4,7 +4,7 @@
       <i class="bkui-vue-wiki-icon icon-preset"></i>
       <h3>预设场景</h3>
     </div>
-    <div class="preset-list">
+    <div class="preset-list g-scrollbar">
       <ul>
         <li
           v-for="(preset, key) in presets"
@@ -44,12 +44,13 @@ const emit = defineEmits<IEmits>();
   background: #FFFFFF;
   box-shadow: 1px 0 0 0 #DCDEE5;
   height: 100%;
-  padding: 16px;
 
   .preset-title {
     display: flex;
     align-items: center;
     color: #4D4F56;
+    padding: 16px;
+    padding-bottom: 0px;
 
     i {
       font-size: 16px;
@@ -65,6 +66,10 @@ const emit = defineEmits<IEmits>();
 
   .preset-list {
     margin-top: 12px;
+    padding: 16px;
+    padding-top: 0px;
+    overflow: auto;
+    height: calc(100% - 32px);
 
     ul {
       list-style: none;
