@@ -25,37 +25,18 @@
  */
 
 import { computed, defineComponent, onMounted, onUnmounted, ref, Transition, watch } from 'vue';
-import { toType } from 'vue-types';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import { Close, Error, Info, Success, Warn } from '@bkui-vue/icon';
-import { bkZIndexManager, PropTypes } from '@bkui-vue/shared';
+import { bkZIndexManager } from '@bkui-vue/shared';
 
-enum NotifyThemeEnum {
-  ERROR = 'error',
-  PRIMARY = 'primary',
-  SUCCESS = 'success',
-  WARNING = 'warning',
-}
-const notifyProps = {
-  id: PropTypes.string.def(''),
-  title: PropTypes.string.def(''),
-  message: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).def(''),
-  theme: toType<`${NotifyThemeEnum}`>('notifyTheme', {}).def(NotifyThemeEnum.PRIMARY),
-  position: PropTypes.position().def('top-right'),
-  delay: PropTypes.number.def(5000),
-  dismissable: PropTypes.bool.def(true),
-  offsetX: PropTypes.number.def(100),
-  offsetY: PropTypes.number.def(30),
-  spacing: PropTypes.number.def(10),
-  extCls: PropTypes.string.def(''),
-  onClose: PropTypes.func,
-};
+import { emits } from './emits';
+import { props } from './props';
 
 export default defineComponent({
   name: 'Notify',
-  props: notifyProps,
-  emits: ['destroy'],
+  props,
+  emits,
   setup(props, { emit }) {
     const zIndex = bkZIndexManager.getMessageNextIndex();
 
