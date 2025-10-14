@@ -50,6 +50,7 @@ export interface IComponentWiki {
       link?: LinkType;
     }[]
   }[];
+  children?: Array<Pick<IComponentWiki, 'emits' | 'name' | 'props' | 'slots'>>;
 }
 
 export interface INavGroups {

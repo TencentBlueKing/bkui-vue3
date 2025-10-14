@@ -315,6 +315,7 @@ export function SelectedType() {
 
 /** 以下是组件库文档 类型 */
 export type ValueType = Array<boolean | number | string> | boolean | number | object | string;
+export type LinkType = Record<string, string> | string;
 export interface IComponentWiki {
   group: string;
   name: string;
@@ -326,7 +327,7 @@ export interface IComponentWiki {
     type: string;
     default?: ValueType;
     description: string;
-    link?: string;
+    link?: LinkType;
     options?: Array<number | string>;
   }[];
   emits?: {
@@ -335,7 +336,7 @@ export interface IComponentWiki {
     params: {
       name: string;
       type: string;
-      link?: string;
+      link?: LinkType;
     }[];
   }[];
   slots?: {
@@ -344,7 +345,7 @@ export interface IComponentWiki {
     params?: {
       name: string;
       type: string;
-      link?: string;
+      link?: LinkType;
     }[];
   }[];
   presets: Array<{
@@ -361,7 +362,8 @@ export interface IComponentWiki {
       type: string;
       description: string;
       default?: ValueType;
-      link?: string;
+      link?: LinkType;
     }[];
   }[];
+  children?: Array<Pick<IComponentWiki, 'emits' | 'name' | 'props' | 'slots'>>;
 }
