@@ -63,8 +63,8 @@ const handleGetComponent = () => {
     loading.value = true;
     Promise
       .all([
-        getComponent(componentStore.activeComponentWiki.name, 'dev'),
-        getCss(componentStore.activeComponentWiki.name, 'dev'),
+        getComponent(componentStore.activeComponentWiki.name, componentStore.version),
+        getCss(componentStore.activeComponentWiki.name, componentStore.version),
       ])
       .then(() => {
         component.value = window.getComponent().default;
@@ -96,5 +96,6 @@ onBeforeUnmount(() => {
 .demo-home {
   height: calc(100% - 149px);
   padding: 40px 40px 32px;
+  overflow: auto;
 }
 </style>
