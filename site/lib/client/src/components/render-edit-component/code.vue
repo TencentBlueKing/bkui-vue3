@@ -122,6 +122,8 @@ const indent = (num = 1) => new Array(num)
   .fill(INDENT)
   .join('');
 
+const camelKey = (key: string) => key.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+
 // 创建标签
 const createLabel = (
   name: string,
@@ -138,7 +140,7 @@ const createLabel = (
   const propsPrefix = `${BREAK_LINE}${indent(endIndentNum + 1)}`;
   // 属性列表处理
   const propsList = Object.keys(props).map((key) => {
-    return `${propsPrefix}:${key}="${key}"`;
+    return `${propsPrefix}:${key}="${camelKey(key)}"`;
   });
   const propsNum = propsList.length;
   propsNum > 0 && propsList.push(slotSuffix);
@@ -215,7 +217,8 @@ const createRefVariables = () => {
       } else {
         curValue = value;
       }
-      return `const ${key} = ref(${curValue});`;
+
+      return `const ${camelKey(key)} = ref(${curValue});`;
     }
     return '';
   })
