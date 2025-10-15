@@ -228,23 +228,18 @@ export const compileDemo = async (releaseZipPath, entryPath) => {
  * @param {*} entryPath 入口文件地址
  */
 export const generateCompiledFile = async (fileMap, entryPath, releaseZipPath) => {
-  const entryFile = fileMap[entryPath];
-  const transformedEntryFileContent = transformFileContent(
-    entryFile.content,
-    entryFile.originAbsoluteFilePath,
-    releaseZipPath,
-    'getComponent',
-  );
+  // 生成构建文件
   const transformedDependenciesContent = Object.values(fileMap).reduce((acc, cur) => {
-    if (cur.originAbsoluteFilePath !== entryPath) {
-      const funcName = generateFunctionName(cur.outputAbsoluteFilePath, releaseZipPath);
-      acc += `function ${funcName}() {
-        ${transformFileContent(cur.content, cur.originAbsoluteFilePath, releaseZipPath, funcName)}
-      }\n`;
-    }
+    const funcName = generateFunctionName(cur.outputAbsoluteFilePath, releaseZipPath);
+    acc += `function ${funcName}() {
+      ${transformFileContent(cur.content, cur.originAbsoluteFilePath, releaseZipPath, funcName)}
+    }\n`;
     return acc;
   }, '');
-  return `window.process = { env: { NODE_ENV: 'production' } }; window.getComponent = () => {\n${transformedDependenciesContent}\n${transformedEntryFileContent}\n}`;
+  // 入口文件名
+  const entryFile = fileMap[entryPath];
+  const entryFileFuncName = generateFunctionName(entryFile.outputAbsoluteFilePath, releaseZipPath);
+  return `window.process = { env: { NODE_ENV: 'production' } }; window.getComponent = () => {\n${transformedDependenciesContent}\nreturn ${entryFileFuncName}();\n}`;
 };
 
 /**

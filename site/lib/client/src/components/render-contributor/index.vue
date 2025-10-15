@@ -6,19 +6,19 @@
     <h3 class="title">Contributor</h3>
     <div class="contributor-list">
       <a
-        v-bk-tooltips="{
-          content: item.username || '--',
-        }"
         v-for="item in authorList"
+        v-bk-tooltips="{
+          content: item.login,
+        }"
         class="contributor-item"
         target="_blank"
-        :key="item.username"
-        :href="item.href"
+        :key="item.login"
+        :href="item.avatar"
       >
         <img
           class="contributor-item-img"
           loading="lazy"
-          :src="item.img"
+          :src="item.avatar"
         >
       </a>
     </div>
@@ -38,16 +38,19 @@ import {
 import {
   useComponent
 } from "@/store/component";
+import type {
+  IFileAuthor,
+} from '@/types/component';
 
 const componentStore = useComponent();
 
 const vBkTooltips = bkTooltips;
 
-const authorList = ref([])
+const authorList = ref<IFileAuthor[]>([])
 
 const getFileAuthorList = async (name: string) => {
   try {
-    authorList.value = await getFileAuthors(name);
+    authorList.value = await getFileAuthors(name, 'component');
   }catch (error) {
     console.error(error);
   }

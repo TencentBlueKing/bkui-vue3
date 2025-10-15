@@ -1,4 +1,4 @@
-import type { INavGroups } from '@/types/component';
+import type { INavGroups, IFileAuthor } from '@/types/component';
 
 import fetch from './fetch';
 
@@ -6,11 +6,11 @@ const apiPrefix = '/api';
 
 // 获取版本列表
 export const getVersions = () => fetch
-  .get<string[]>(`${apiPrefix}/component/versions`);
+  .get<string[]>(`${apiPrefix}/versions`);
 
 // 获取文件作者列表
-export const getFileAuthors = (filePath: string) => fetch
-  .get<string[]>(`${apiPrefix}/component/authors`, { filePath });
+export const getFileAuthors = (name: string, type: string) => fetch
+  .get<IFileAuthor[]>(`${apiPrefix}/authors`, { name, type });
 
 // 获取组件wiki
 export const getComponent = (

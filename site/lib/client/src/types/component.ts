@@ -64,3 +64,8 @@ export interface IComponentMeta {
   componentWiki: IComponentWiki,
   type: string
 }
+
+export interface IFileAuthor {
+  login: string;
+  avatar: string;
+}

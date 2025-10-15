@@ -29,7 +29,14 @@ export default class ComponentController {
     @QueryParams({ name: 'name' }) name,
     @QueryParams({ name: 'type' }) type,
   ) {
-    return getFileAuthors(name, type);
+    let filePath
+
+    if (type === 'component') {
+      filePath = 'packages/' + name;
+    } else {
+      filePath = 'packages/directives/src/' + name + '.ts';
+    }
+    return getFileAuthors(filePath);
   }
 
   @OutputJavascript()

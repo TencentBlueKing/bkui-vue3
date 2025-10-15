@@ -1,6 +1,7 @@
 <template>
   <bk-loading
     :loading="loading"
+    :z-index="10"
     class="demo-home"
   >
     <template v-if="componentStore.activeComponentWiki">

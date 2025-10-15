@@ -2,6 +2,7 @@
 node_modules
 dist
 pre-*-bkcodeai
+.bk.local.env
 
 release-dir/
 release-dist/

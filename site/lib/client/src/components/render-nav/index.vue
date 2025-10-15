@@ -85,7 +85,7 @@
     </div>
     <ul
       ref="asideNavGroupRef"
-      class="aside-nav-group"
+      class="aside-nav-group g-scrollbar"
     >
       <template
         v-for="(componentWikis, groupName) in componentStore.navGroups?.componentGroupMap"
@@ -438,7 +438,7 @@ onBeforeUnmount(() => {
 }
 
 .aside-nav-group {
-  padding: 0 16px;
+  padding: 0 16px 16px;
   overflow: auto;
 
   .aside-nav-group-title {

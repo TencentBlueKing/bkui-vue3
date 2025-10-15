@@ -83,9 +83,9 @@ const getDistFilePath = (version, component, file) => {
 
 // 获取组件版本列表
 export const getVersions = async () => {
-  const releases = await http.get('https://api.github.com/repos/TencentBlueKing/bkui-vue3/releases');
-  const versions = releases.map(release => release.tag_name);
-  if (process.env.NODE_ENV === 'development') {
+  // 读取 RELEASE_DIR 目录下的外层目录
+  const versions = fs.readdirSync(RELEASE_DIR);
+  if (process.env.NODE_ENV === 'development' && !versions.includes('dev')) {
     versions.push('dev');
   }
   return versions;
@@ -93,16 +93,50 @@ export const getVersions = async () => {
 
 // 获取文件作者列表
 export const getFileAuthors = async (path) => {
-  const commits = await http.get('https://api.github.com/repos/TencentBlueKing/bkui-vue3/commits', {
-    params: {
-      path,
-    },
-  });
-  return commits.map(commit => ({
-    login: commit.author.login,
-    avatar: commit.author.avatar_url,
-    timestamp: commit.commit.author.date,
-  }));
+  try {
+    // 准备请求头
+    const headers = {};
+    
+    // 如果配置了 GitHub Token，则添加认证头
+    if (process.env.BK_GITHUB_TOKEN) {
+      headers.Authorization = `Bearer ${process.env.BK_GITHUB_TOKEN}`;
+    } else {
+      console.warn('⚠️  未配置 GITHUB_TOKEN，使用未认证请求（速率限制：60次/小时）');
+    }
+
+    const commits = await http.get('https://api.github.com/repos/TencentBlueKing/bkui-vue3/commits', {
+      params: {
+        path,
+      },
+      headers,
+    });
+    
+    // 增加错误处理
+    if (!Array.isArray(commits)) {
+      console.error('GitHub API 返回数据格式异常');
+      return [];
+    }
+    
+    // 去重 && 去除空数据
+    return commits.reduce(
+      (acc, cur) => {
+        if (cur.author?.login && acc.findIndex(item => item.login === cur.author.login) < 0) {
+          acc.push({
+            login: cur.author.login,
+            avatar: cur.author.avatar_url,
+          });
+        }
+        return acc;
+      },
+      []
+    )
+  } catch (error) {
+    console.error('获取文件作者失败:', error.message);
+    if (error.response?.status === 403) {
+      console.error('❌ GitHub API 速率限制！请配置 GITHUB_TOKEN 或等待限制重置');
+    }
+    return [];
+  }
 };
 
 // 获取组件
@@ -176,40 +210,13 @@ export const getNavGroups = async (releaseZipPath) => {
 export const getReleaseZipPath = async (version) => {
   const releaseZipPath = path.resolve(RELEASE_DIR, `${version}`);
   // 如果不存在，则下载
-  if (!fs.existsSync(releaseZipPath)) {
-    if (version === 'dev') {
-      // dev 直接复制源码
-      const sourcePath = path.resolve(__dirname, '../../../../packages');
-      fs.cpSync(sourcePath, releaseZipPath, {
-        recursive: true,
-        force: true,
-      });
-    } else {
-      // 其他版本下载 zip 包
-      const zipballUrl = `https://api.github.com/repos/TencentBlueKing/bkui-vue3/zipball/${version}`;
-      const response = await http.get(zipballUrl, {
-        responseType: 'arraybuffer',
-      });
-      // unzip
-      const tempPath = path.resolve(__dirname, `${RELEASE_DIR}/${version}-temp`);
-      const unzip = new AdmZip(Buffer.from(response));
-      unzip.extractAllTo(tempPath, true);
-      // 去除一级目录
-      const entries = fs.readdirSync(tempPath);
-      entries.forEach((entry) => {
-        const entryPath = path.resolve(tempPath, entry);
-        fs.renameSync(entryPath, releaseZipPath);
-      });
-      fs.rmdirSync(tempPath);
-    }
+  if (version === 'dev' && !fs.existsSync(releaseZipPath)) {
+    // dev 直接复制源码
+    const sourcePath = path.resolve(__dirname, '../../../../packages');
+    fs.cpSync(sourcePath, releaseZipPath, {
+      recursive: true,
+      force: true,
+    });
   }
   return releaseZipPath;
-};
-
-export const deleteReleaseZip = async (version) => {
-  const releaseZipPath = path.resolve(RELEASE_DIR, `${version}`);
-  if (fs.existsSync(releaseZipPath)) {
-    fs.rmSync(releaseZipPath, { recursive: true, force: true });
-    fs.rmSync(path.resolve(RELEASE_DIST_DIR, `${version}`), { recursive: true, force: true });
-  }
 };
