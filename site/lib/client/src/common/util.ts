@@ -42,3 +42,13 @@ export function deepMerge<T extends Record<string, unknown>>(...objectArray: Par
     return acc;
   }, {} as Record<string, unknown>) as T;
 }
+
+/**
+ * @description 首字母大写转换
+ * @param word 待转换的单词
+ * @returns 首字母大写后的单词
+ */
+export function capitalizeWord(word: string) {
+  if (!word) return '';
+  return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+}
