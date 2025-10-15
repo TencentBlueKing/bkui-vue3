@@ -284,8 +284,9 @@ const formatComplexValue = (obj: any, indentLevel = 1): string => {
     }
     return `${INDENT.repeat(indentLevel)}${key}: ${valueStr},`;
   });
-
-  return `{${BREAK_LINE}${formatted.join(BREAK_LINE)}${BREAK_LINE}${INDENT.repeat(indentLevel - 1)}}`;
+  return entries.length
+    ? `{${BREAK_LINE}${formatted.join(BREAK_LINE)}${BREAK_LINE}${INDENT.repeat(indentLevel - 1)}}`
+    : `{}`;
 };
 
 // 获取script标签内容
@@ -314,12 +315,10 @@ const toggleLanguage = ({
 };
 
 const getCode = () => {
-  return [
-    template(),
-    scriptStart,
-    `${BREAK_LINE}${scriptContent()}${BREAK_LINE}`,
-    scriptEnd,
-  ].join('');
+  return template()
+    + `${BREAK_LINE}${scriptStart.value}`
+    + `${BREAK_LINE}${scriptContent()}${BREAK_LINE}`
+    + `${scriptEnd}${BREAK_LINE}`;
 };
 
 // 复制代码
