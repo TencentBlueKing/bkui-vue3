@@ -23,7 +23,6 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import AdmZip from 'adm-zip';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -40,7 +39,6 @@ import {
   compileCss,
   compileDemo,
 } from './compile';
-
 
 // 彻底清除模块缓存的函数
 const clearModuleCache = (modulePath) => {
