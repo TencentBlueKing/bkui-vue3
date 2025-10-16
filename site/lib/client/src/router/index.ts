@@ -1,17 +1,15 @@
-import {
-  createRouter,
-  createWebHistory,
-} from 'vue-router';
+import { createRouter, createWebHistory } from 'vue-router';
 
 const Entry = () => import(/* webpackChunkName: "entry" */ '../views/index.vue');
 const Component = () => import(/* webpackChunkName: "component" */ '../views/children/component/index.vue');
 const ComponentDemo = () => import(/* webpackChunkName: "component" */ '../views/children/component/children/demo.vue');
 const ComponentApi = () => import(/* webpackChunkName: "component" */ '../views/children/component/children/api.vue');
-const ComponentDesign = () => import(/* webpackChunkName: "component" */ '../views/children/component/children/design.vue');
+const ComponentDesign = () =>
+  import(/* webpackChunkName: "component" */ '../views/children/component/children/design.vue');
 const Markdown = () => import(/* webpackChunkName: "markdown" */ '../views/children/markdown/index.vue');
 const Directive = () => import(/* webpackChunkName: "directive" */ '../views/children/directive/index.vue');
 
-export default createRouter({
+const router = createRouter({
   history: createWebHistory(window.SITE_URL),
   routes: [
     {
@@ -58,3 +56,5 @@ export default createRouter({
     },
   ],
 });
+
+export default router;
