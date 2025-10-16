@@ -23,9 +23,8 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
+import { TreeEmitEventsType } from './constant';
 
-export const formItemEmits = {
-  // FormItem 组件本身不发出事件，但保留空的 emits 定义以保持一致性
-};
+export const emits = TreeEmitEventsType;
 
-export type FormItemEmits = typeof formItemEmits;
+export type TreeEmits = typeof emits;

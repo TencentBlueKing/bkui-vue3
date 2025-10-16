@@ -26,8 +26,20 @@
 
 export const emits = {
   submit: () => true,
-  validate: (property: string, result: boolean, message: string) => 
+  validate: (property: string, result: boolean, message: string) =>
     typeof property === 'string' && typeof result === 'boolean' && typeof message === 'string',
 };
 
 export type FormEmits = typeof emits;
+
+export const formItemEmits = {
+  // FormItem 组件本身不发出事件，但保留空的 emits 定义以保持一致性
+};
+
+export type FormItemEmits = typeof formItemEmits;
+
+export const composeFormItemEmits = {
+  // ComposeFormItem 组件本身不发出事件，但保留空的 emits 定义以保持一致性
+};
+
+export type ComposeFormItemEmits = typeof composeFormItemEmits;

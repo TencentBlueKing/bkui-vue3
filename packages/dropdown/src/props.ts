@@ -44,3 +44,17 @@ export const props = {
 };
 
 export type DropdownProps = ExtractPropTypes<typeof props>;
+
+export const dropdownMenuProps = {
+  /** 外部设置的 class name */
+  extCls: PropTypes.string,
+};
+
+export type DropdownMenuProps = ExtractPropTypes<typeof dropdownMenuProps>;
+
+export const dropdownItemProps = {
+  /** 外部设置的 class name */
+  extCls: PropTypes.string,
+};
+
+export type DropdownItemProps = ExtractPropTypes<typeof dropdownItemProps>;

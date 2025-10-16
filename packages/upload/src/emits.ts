@@ -24,8 +24,17 @@
  * IN THE SOFTWARE.
  */
 
-export const composeFormItemEmits = {
-  // ComposeFormItem 组件本身不发出事件，但保留空的 emits 定义以保持一致性
+import { UploadFiles, UploadFile, UploadRawFile, UploadProgressEvent } from './upload.type';
+
+// ['exceed', 'progress', 'success', 'error', 'delete', 'done', 'preview']
+export const emits = {
+  exceed: (files: File[], fileList: UploadFiles) => files && fileList,
+  progress: (event: UploadProgressEvent, file: UploadRawFile, fileList: UploadFiles) => event && file && fileList,
+  success: (res: unknown, file: UploadRawFile, fileList: UploadFiles) => res && file && fileList,
+  error: (rawFile: UploadRawFile, fileList: UploadFiles, error: Error) => rawFile && fileList && error,
+  delete: (file: UploadFile, fileList: UploadFiles) => file && fileList,
+  done: (fileList: UploadFiles) => fileList,
+  preview: (file: UploadFile, files?: UploadFile[]) => file && files,
 };
 
-export type ComposeFormItemEmits = typeof composeFormItemEmits;
+export type UploadEmits = typeof emits;

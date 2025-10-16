@@ -24,13 +24,49 @@
  * IN THE SOFTWARE.
  */
 
-import { PropTypes } from '@bkui-vue/shared';
+import { ExtractPropTypes, PropType } from 'vue';
 
-import type { ExtractPropTypes } from 'vue';
+import type { DatePickerPlacementType } from '../interface';
 
-export const dropdownMenuProps = {
-  /** 外部设置的 class name */
-  extCls: PropTypes.string,
+export const props = {
+  placement: {
+    type: String as PropType<DatePickerPlacementType>,
+    default: 'bottom-start',
+    validator: value => {
+      const validList: DatePickerPlacementType[] = [
+        'top',
+        'top-start',
+        'top-end',
+        'bottom',
+        'bottom-start',
+        'bottom-end',
+        'left',
+        'left-start',
+        'left-end',
+        'right',
+        'right-start',
+        'right-end',
+      ];
+      if (validList.indexOf(value) < 0) {
+        console.error(`placement property is not valid: '${value}'`);
+        return false;
+      }
+      return true;
+    },
+  },
+  className: {
+    type: String,
+  },
+  extPopoverCls: {
+    type: String,
+  },
+  appendToBody: {
+    type: Boolean,
+  },
+  triggerRef: {
+    type: Object,
+  },
+  onClick: Function as PropType<(e: MouseEvent) => void>,
 };
 
-export type DropdownMenuProps = ExtractPropTypes<typeof dropdownMenuProps>;
+export type PickerDropdownProps = Readonly<ExtractPropTypes<typeof props>>;

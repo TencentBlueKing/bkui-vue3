@@ -32,7 +32,12 @@ import TimePicker from './time-picker';
 
 const BkDatePicker = withInstall(Component);
 export default BkDatePicker;
-
 export { TimePicker, PickerDropdown };
-export type { DatePickerProps, TimePickerProps, TimePanelProps } from './props';
+
+export type { PickerDropdownEmits } from './base/emits';
+export type { PickerDropdownProps } from './base/props';
+export type { DatePickerEmits, TimePickerEmits } from './emits';
+export type { DatePickerProps, TimePickerProps } from './props';
 export type BkDatePickerInstance = InstanceType<typeof Component>;
+export type TimePickerInstance = InstanceType<typeof TimePicker>;
+export type PickerDropdownInstance = InstanceType<typeof PickerDropdown>;

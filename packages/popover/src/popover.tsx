@@ -30,8 +30,8 @@ import { RenderType } from '@bkui-vue/shared';
 
 import Arrow from './arrow';
 import Content from './content';
-import { PopoverProps } from './props';
 import { emits } from './emits';
+import { PopoverProps } from './props';
 import Reference from './reference';
 import Root from './root';
 import usePopoverInit from './use-popover-init';
@@ -208,7 +208,7 @@ export default defineComponent({
             visible={this.localIsShow}
             onClick={this.handleClickContent}
           >
-            {this.isRenderModeShow || this.contentIsShow ? this.$slots.content?.() ?? this.renderContent() : ''}
+            {this.isRenderModeShow || this.contentIsShow ? (this.$slots.content?.() ?? this.renderContent()) : ''}
           </Content>
         </Teleport>
       </Root>

@@ -1,4 +1,4 @@
-/*
+/**
  * Tencent is pleased to support the open source community by making
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
  *
@@ -24,25 +24,6 @@
  * IN THE SOFTWARE.
  */
 
-import { PropTypes } from '@bkui-vue/shared';
+export const emits = ['change', 'update:targetList'];
 
-import type { ExtractPropTypes } from 'vue';
-
-export const formItemProps = {
-  itemType: PropTypes.oneOf(['default', 'vertical']),
-  label: PropTypes.string,
-  labelWidth: PropTypes.oneOfType([Number, String]),
-  labelPosition: PropTypes.oneOf(['left', 'center', 'right']),
-  property: PropTypes.string.def(''),
-  required: PropTypes.bool.def(false),
-  email: PropTypes.bool.def(false),
-  max: PropTypes.number,
-  min: PropTypes.number,
-  maxlength: PropTypes.number,
-  rules: PropTypes.array,
-  description: PropTypes.string,
-  errorDisplayType: PropTypes.oneOf(['tooltips', 'normal']).def('normal'),
-  errorTipAppendToParent: PropTypes.bool.def(false),
-};
-
-export type FormItemProps = ExtractPropTypes<typeof formItemProps>;
+export type TransferEmits = typeof emits;

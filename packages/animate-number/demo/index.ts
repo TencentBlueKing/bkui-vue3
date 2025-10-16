@@ -54,7 +54,7 @@ const props = [
 ];
 
 // 组件分组
-const group = NavGroupMeta.Nav;
+const group = NavGroupMeta.Data;
 
 // 组件名称
 const name = 'animate-number';

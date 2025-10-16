@@ -39,13 +39,13 @@ import {
   UploadRequestHandler,
 } from './upload.type';
 
-import type { PropType } from 'vue';
+import type { ExtractPropTypes, PropType } from 'vue';
 
 const themes = [EThemes.BUTTON, EThemes.DRAGGABLE, EThemes.PICTURE];
 
 const types = [ETypes.FORMDATA, ETypes.BINARY];
 
-export default {
+export const props = {
   type: {
     type: String as PropType<Type>,
     default: 'formdata' as Type,
@@ -185,3 +185,5 @@ export default {
     default: true,
   },
 };
+
+export type UploadProps = ExtractPropTypes<typeof props>;

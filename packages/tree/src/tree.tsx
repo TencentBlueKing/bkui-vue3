@@ -29,8 +29,9 @@ import { usePrefix } from '@bkui-vue/config-provider';
 import { debounce } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 
-import { EVENTS, NODE_ATTRIBUTES, TreeEmitEventsType } from './constant';
-import { treeProps, TreePropTypes as defineTypes, TreeNode } from './props';
+import { EVENTS, NODE_ATTRIBUTES } from './constant';
+import { emits } from './emits';
+import { props, TreeNode } from './props';
 import useEmpty from './use-empty';
 import useIntersectionObserver from './use-intersection-observer';
 import useNodeAction from './use-node-action';
@@ -40,8 +41,6 @@ import useSearch from './use-search';
 import useTreeInit from './use-tree-init';
 import { getLabel, getTreeStyle, resolveNodeItem } from './util';
 
-export type TreePropTypes = defineTypes;
-
 export type ITreeScrollTopOption = {
   id?: string;
   index?: number;
@@ -49,8 +48,8 @@ export type ITreeScrollTopOption = {
 
 export default defineComponent({
   name: 'Tree',
-  props: treeProps,
-  emits: TreeEmitEventsType,
+  props,
+  emits,
   setup(props, ctx) {
     const root = ref();
 

@@ -152,10 +152,31 @@ const props = [
 ];
 
 // 组件事件，用来自动生成事件文档
-const emits = [];
+const emits = [
+  {
+    name: 'showChange',
+    description: '显示状态变化时触发',
+    params: [
+      {
+        name: 'val',
+        type: 'boolean',
+      },
+    ],
+  },
+  {
+    name: 'show',
+    description: '显示时触发',
+    params: [],
+  },
+  {
+    name: 'hide',
+    description: '隐藏时触发',
+    params: [],
+  },
+];
 
 // 组件分组
-const group = NavGroupMeta.Nav;
+const group = NavGroupMeta.Data;
 
 // 组件名称
 const name = 'dropdown';
@@ -178,6 +199,43 @@ const wiki: IComponentWiki = {
   emits,
   presets,
   description,
+  children: [
+    {
+      name: 'dropdown-menu',
+      props: [
+        {
+          name: 'ext-cls',
+          description: '自定义样式类名',
+          type: 'string',
+          default: '',
+        },
+      ],
+      emits: [],
+    },
+    {
+      name: 'dropdown-item',
+      props: [
+        {
+          name: 'ext-cls',
+          description: '自定义样式类名',
+          type: 'string',
+          default: '',
+        },
+      ],
+      emits: [
+        {
+          name: 'click',
+          description: '点击时触发',
+          params: [
+            {
+              name: 'event',
+              type: 'MouseEvent',
+            },
+          ],
+        },
+      ],
+    },
+  ],
 };
 
 export default wiki;

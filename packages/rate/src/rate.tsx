@@ -27,25 +27,20 @@
 import { computed, defineComponent, type Ref, ref, watch } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-import { classes, PropTypes, useFormItem } from '@bkui-vue/shared';
+import { classes, useFormItem } from '@bkui-vue/shared';
 
+import { emits } from './emits';
+import { props } from './props';
 import star from './star';
+
 export default defineComponent({
   name: 'Rate',
 
   components: {
     star,
   },
-
-  props: {
-    modelValue: PropTypes.number.def(0),
-    size: PropTypes.size(),
-    editable: PropTypes.bool.def(true),
-    withValidate: PropTypes.bool.def(true),
-  },
-
-  emits: ['change', 'hover-change', 'update:modelValue'],
-
+  props,
+  emits,
   setup(props, { emit }) {
     const { resolveClassName } = usePrefix();
     const formItem = useFormItem();

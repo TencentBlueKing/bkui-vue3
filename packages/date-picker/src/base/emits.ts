@@ -24,8 +24,8 @@
  * IN THE SOFTWARE.
  */
 
-export const dropdownMenuEmits = {
-  // DropdownMenu 组件本身不发出事件，但保留空的 emits 定义以保持一致性
+export const emits = {
+  changeVisible: (_value: boolean) => _value !== undefined,
 };
 
-export type DropdownMenuEmits = typeof dropdownMenuEmits;
+export type PickerDropdownEmits = typeof emits;

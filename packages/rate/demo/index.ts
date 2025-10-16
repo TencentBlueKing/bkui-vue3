@@ -1,12 +1,12 @@
 /*
  * Tencent is pleased to support the open source community by making
- * 蓝鲸智云PaaS平台 (BlueKing PaaS) available.
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
  *
- * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ * Copyright (C) 2025 Tencent.  All rights reserved.
  *
- * 蓝鲸智云PaaS平台 (BlueKing PaaS) is licensed under the MIT License.
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
  *
- * License for 蓝鲸智云PaaS平台 (BlueKing PaaS):
+ * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
  *
  * ---------------------------------------------------
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
@@ -23,26 +23,18 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-
 import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
 // 组件示例
 const presets = [
   {
-    title: '基础分割线',
-    description: '没有文字的独立分割线条',
+    title: '基础用法',
+    description: '基础的评分组件使用',
     props: {
-      direction: 'horizontal',
-    },
-  },
-  {
-    title: '文字分割线',
-    description: '垂直分割线条',
-    props: {
-      direction: 'horizontal',
-    },
-    slots: {
-      default: '<div>文字分割线</div>',
+      modelValue: 3.5,
+      size: 'small',
+      editable: true,
+      withValidate: true,
     },
   },
 ];
@@ -50,68 +42,79 @@ const presets = [
 // 组件属性，用来自动生成属性文档
 const props = [
   {
-    name: 'direction',
-    description: '分割线方向',
-    type: 'string',
-    options: ['horizontal', 'vertical'],
-    default: 'horizontal',
-  },
-  {
-    name: 'align',
-    description: '分割线对齐方式',
-    type: 'string',
-    options: ['left', 'center', 'right'],
-    default: 'center',
-  },
-  {
-    name: 'color',
-    description: '分割线颜色',
-    type: 'string',
-    default: '#dde4eb',
-  },
-  {
-    name: 'width',
-    description: '分割线宽度',
+    name: 'modelValue',
+    description: '评分',
     type: 'number',
-    default: 1,
+    default: 0,
   },
   {
-    name: 'type',
-    description: '分割线类型',
+    name: 'size',
+    description: '大小',
     type: 'string',
-    options: ['solid', 'dashed'],
-    default: 'solid',
+    default: 'small',
+  },
+  {
+    name: 'editable',
+    description: '是否可编辑',
+    type: 'boolean',
+    default: true,
+  },
+  {
+    name: 'withValidate',
+    description: '是否显示验证',
+    type: 'boolean',
+    default: true,
   },
 ];
 
 // 组件事件，用来自动生成事件文档
 const emits = [
   {
-    name: 'click',
-    description: '点击分割线时触发',
+    name: 'change',
+    description: '值变化时触发',
     params: [
       {
-        name: 'event',
-        type: 'MouseEvent',
+        name: 'val',
+        type: 'number',
+      },
+    ],
+  },
+  {
+    name: 'hover-change',
+    description: '鼠标悬停时触发',
+    params: [
+      {
+        name: 'val',
+        type: 'number',
+      },
+    ],
+  },
+  {
+    name: 'update:modelValue',
+    description: 'v-model 更新时触发',
+    params: [
+      {
+        name: 'val',
+        type: 'number',
       },
     ],
   },
 ];
 
 // 组件分组
-const group = NavGroupMeta.Nav;
+const group = NavGroupMeta.Form;
 
 // 组件名称
-const name = 'divider';
+const name = 'rate';
 
 // 组件标签
-const title = 'Divider';
+const title = 'Rate';
 
 // 组件中文标签
-const titleCN = '分割线';
+const titleCN = '评分';
 
 // 组件描述
-const description = '分割线';
+const description = '评分';
 
 const wiki: IComponentWiki = {
   group,

@@ -29,7 +29,8 @@ import { computed, defineComponent, onBeforeUnmount, shallowRef } from 'vue';
 import { usePrefix } from '@bkui-vue/config-provider';
 import { classes } from '@bkui-vue/shared';
 
-import uploadProps from './props';
+import { emits } from './emits';
+import { props } from './props';
 import {
   APIResponse,
   CLASS_PREFIX,
@@ -48,8 +49,8 @@ import useFileHandler from './use-file-handler';
 
 export default defineComponent({
   name: 'Upload',
-  props: uploadProps,
-  emits: ['exceed', 'progress', 'success', 'error', 'delete', 'done', 'preview'],
+  props,
+  emits,
   setup(props, { slots, emit, expose }) {
     const { resolveClassName } = usePrefix();
 

@@ -59,7 +59,7 @@ const props = [{
 const emits = [];
 
 // 组件分组
-const group = NavGroupMeta.Nav;
+const group = NavGroupMeta.Base;
 
 // 组件名称
 const name = 'icon';

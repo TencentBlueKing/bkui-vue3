@@ -98,7 +98,7 @@ const emits = [
     description: '固定状态发生改变时触发的事件',
     params: [
       {
-        name: 'affixed',
+        name: '_value',
         type: 'boolean',
       },
     ],

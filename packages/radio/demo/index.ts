@@ -111,7 +111,7 @@ const props = [
 const emits = [];
 
 // 组件分组
-const group = NavGroupMeta.Form;
+const group = NavGroupMeta.Data;
 
 // 组件名称
 const name = 'radio';

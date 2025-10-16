@@ -131,7 +131,7 @@ const emits = [
     params: [
       {
         name: 'item',
-        type: 'object',
+        type: 'INavItem',
       },
     ],
   },

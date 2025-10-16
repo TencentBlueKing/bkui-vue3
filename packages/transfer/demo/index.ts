@@ -1,4 +1,4 @@
-/*
+/**
  * Tencent is pleased to support the open source community by making
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
  *
@@ -23,14 +23,89 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
+import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
-import { PropTypes } from '@bkui-vue/shared';
+// 组件示例
+const presets = [
+  {
+    title: '单选穿梭框',
+    description: '单选完成项穿梭',
+    props: {
+      sourceList: [],
+      targetList: [],
+    },
+    slots: {
+      default: '<div>基础的穿梭框使用</div>',
+    },
+  },
+  {
+    title: '多选穿梭框',
+    description: '多选完成项穿梭',
+    props: {
+      sourceList: [],
+      targetList: [],
+      multiple: true,
+      slots: {
+        default: '<div>多选的穿梭框使用</div>',
+      },
+    },
+  },
+];
 
-import type { ExtractPropTypes } from 'vue';
+// 组件属性，用来自动生成属性文档
+const props = [
+  {
+    name: 'title',
+    description: '顶部title(title[0]: 左侧title,title[1]: 右侧title,)',
+    type: 'Array',
+    default: [],
+  },
+  {
+    name: 'extCls',
+    description: '自定义样式类名',
+    type: 'string',
+    default: '',
+  },
+];
 
-export const dropdownItemProps = {
-  /** 外部设置的 class name */
-  extCls: PropTypes.string,
+// 组件事件，用来自动生成事件文档
+const emits = [
+  {
+    name: 'open-change',
+    description: '弹框显示状态变化时触发',
+    params: [
+      {
+        name: 'visible',
+        type: 'boolean',
+      },
+    ],
+  },
+];
+
+// 组件分组
+const group = NavGroupMeta.Form;
+
+// 组件名称
+const name = 'transfer';
+
+// 组件标签
+const title = 'Transfer';
+
+// 组件中文标签
+const titleCN = '穿梭框';
+
+// 组件描述
+const description = '穿梭框';
+
+const wiki: IComponentWiki = {
+  group,
+  name,
+  title,
+  titleCN,
+  props,
+  emits,
+  presets,
+  description,
 };
 
-export type DropdownItemProps = ExtractPropTypes<typeof dropdownItemProps>;
+export default wiki;

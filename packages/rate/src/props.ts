@@ -24,8 +24,15 @@
  * IN THE SOFTWARE.
  */
 
-export const dropdownItemEmits = {
-  click: (event: MouseEvent) => event !== undefined,
-};
+import { PropTypes } from '@bkui-vue/shared';
 
-export type DropdownItemEmits = typeof dropdownItemEmits;
+import type { ExtractPropTypes } from 'vue';
+
+export const props = {
+  modelValue: PropTypes.number.def(0),
+  size: PropTypes.size(),
+  editable: PropTypes.bool.def(true),
+  withValidate: PropTypes.bool.def(true),
+} as const;
+
+export type RateProps = ExtractPropTypes<typeof props>;

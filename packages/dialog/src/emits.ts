@@ -28,7 +28,7 @@ export const emits = {
   closed: () => true,
   shown: () => true,
   hidden: () => true,
-  'update:isShow': (value: boolean) => value !== undefined,
+  'update:isShow': (_value: boolean) => _value !== undefined,
   confirm: () => true,
   prev: () => true,
   next: () => true,

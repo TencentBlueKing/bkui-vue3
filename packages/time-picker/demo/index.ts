@@ -1,12 +1,12 @@
 /*
  * Tencent is pleased to support the open source community by making
- * 蓝鲸智云PaaS平台 (BlueKing PaaS) available.
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
  *
- * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ * Copyright (C) 2025 Tencent.  All rights reserved.
  *
- * 蓝鲸智云PaaS平台 (BlueKing PaaS) is licensed under the MIT License.
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
  *
- * License for 蓝鲸智云PaaS平台 (BlueKing PaaS):
+ * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
  *
  * ---------------------------------------------------
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
@@ -29,67 +29,18 @@ import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 // 组件示例
 const presets = [
   {
-    title: '日期选择',
-    description: '选择单个日期',
+    title: '基础用法',
+    description: '基础的时间选择器使用',
     props: {
-      'model-value': new Date(),
-      type: 'date',
+      modelValue: new Date(),
     },
   },
   {
-    title: '日期范围选择',
-    description: '选择首尾日期范围',
+    title: '时间范围选择',
+    description: '选择首尾时间范围',
     props: {
-      'model-value': [new Date(), new Date()],
-      type: 'daterange',
-    },
-  },
-  {
-    title: '日期时间选择',
-    description: '选择单个时间点',
-    props: {
-      'model-value': new Date(),
-      type: 'datetime',
-    },
-  },
-  {
-    title: '日期时间范围选择',
-    description: '选择首尾日期时间范围',
-    props: {
-      'model-value': [new Date(), new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 3)],
-      type: 'datetimerange',
-    },
-  },
-  {
-    title: '月份选择',
-    description: '选择单个月份',
-    props: {
-      'model-value': new Date(),
-      type: 'month',
-    },
-  },
-  {
-    title: '月份范围选择',
-    description: '选择首尾月份范围',
-    props: {
-      'model-value': [new Date(), new Date(new Date().getFullYear(), new Date().getMonth() + 1)],
-      type: 'monthrange',
-    },
-  },
-  {
-    title: '年份选择',
-    description: '选择单个年份',
-    props: {
-      'model-value': new Date(),
-      type: 'year',
-    },
-  },
-  {
-    title: '年份范围选择',
-    description: '选择首尾年份范围',
-    props: {
-      'model-value': [new Date(), new Date(new Date().getFullYear() + 1)],
-      type: 'yearrange',
+      modelValue: [['00:00:00', '23:59:59']],
+      type: 'timerange',
     },
   },
 ];
@@ -97,44 +48,33 @@ const presets = [
 // 组件属性，用来自动生成属性文档
 const props = [
   {
-    name: 'type',
-    description: '显示类型',
-    type: 'string',
-    options: [
-      'year',
-      'yearrange',
-      'month',
-      'monthrange',
-      'date',
-      'daterange',
-      'datetime',
-      'datetimerange',
-      'time',
-      'timerange',
-    ],
-    default: 'date',
+    name: 'modelValue',
+    description: '时间选择器组件的值，可以是 Date 或字符串或数组，只有在 timerange 类型时才支持数组',
+    type: 'string | Array | Date | number',
+    default: '00:00:00',
   },
   {
-    name: 'ext-popover-cls',
-    description: '外部设置的 popover class name',
+    name: 'type',
+    description: '类型',
     type: 'string',
-    default: '',
+    options: ['time', 'timerange'],
+    default: 'time',
   },
   {
     name: 'format',
-    description: '显示格式',
+    description: '时间格式',
     type: 'string',
-    default: '',
-  },
-  {
-    name: 'readonly',
-    description: '是否只读',
-    type: 'boolean',
-    default: false,
+    default: 'HH:mm:ss',
   },
   {
     name: 'disabled',
     description: '是否禁用',
+    type: 'boolean',
+    default: false,
+  },
+  {
+    name: 'readonly',
+    description: '是否只读',
     type: 'boolean',
     default: false,
   },
@@ -152,7 +92,7 @@ const props = [
   },
   {
     name: 'open',
-    description: '是否打开',
+    description: '控制日历面板的显示与隐藏',
     type: 'boolean | null',
     default: null,
   },
@@ -163,26 +103,8 @@ const props = [
     default: false,
   },
   {
-    name: 'time-picker-options',
-    description: '时间选择器配置',
-    type: 'Record<string, any>',
-    default: '{}',
-  },
-  {
-    name: 'split-panels',
-    description: '是否分割面板',
-    type: 'boolean',
-    default: true,
-  },
-  {
-    name: 'start-date',
-    description: '开始日期',
-    type: 'Date',
-    default: '',
-  },
-  {
     name: 'placeholder',
-    description: '占位符',
+    description: '占位文案',
     type: 'string',
     default: '',
   },
@@ -208,39 +130,33 @@ const props = [
   },
   {
     name: 'append-to-body',
-    description: '是否添加到 body',
+    description: '是否追加到 body',
     type: 'boolean',
     default: false,
   },
   {
-    name: 'shortcuts',
-    description: '快捷选项',
-    type: 'Array<DatePickerShortcutsType>',
-    default: '[]',
+    name: 'disabled-hours',
+    description: '禁用小时',
+    type: 'Array',
+    default: () => [],
   },
   {
-    name: 'shortcut-close',
-    description: '快捷选项是否关闭',
+    name: 'disabled-minutes',
+    description: '禁用分钟',
+    type: 'Array',
+    default: () => [],
+  },
+  {
+    name: 'disabled-seconds',
+    description: '禁用秒',
+    type: 'Array',
+    default: () => [],
+  },
+  {
+    name: 'hide-disabled-options',
+    description: '是否隐藏禁用的小时、分钟、秒',
     type: 'boolean',
     default: false,
-  },
-  {
-    name: 'model-value',
-    description: '绑定值',
-    type: 'Date | String | Number | Array',
-    default: '',
-  },
-  {
-    name: 'value',
-    description: '绑定值（兼容）',
-    type: 'Date | String | Number | Array',
-    default: '',
-  },
-  {
-    name: 'options',
-    description: '其他配置',
-    type: 'object',
-    default: '{}',
   },
   {
     name: 'font-size',
@@ -250,59 +166,35 @@ const props = [
     default: 'normal',
   },
   {
-    name: 'up-to-now',
-    description: '结束时间是否允许"至今"',
-    type: 'boolean',
-    default: false,
-  },
-  {
-    name: 'use-shortcut-text',
-    description: '是否使用快捷文案',
-    type: 'boolean',
-    default: false,
-  },
-  {
-    name: 'shortcut-selected-index',
-    description: '快捷选项选中索引',
+    name: 'width',
+    description: '宽度',
     type: 'number',
-    default: -1,
+    default: 261,
   },
   {
-    name: 'header-slot-cls',
-    description: '头部插槽样式类',
-    type: 'string',
-    default: '',
-  },
-  {
-    name: 'footer-slot-cls',
-    description: '底部插槽样式类',
-    type: 'string',
-    default: '',
+    name: 'enter-mode',
+    description: '回车模式',
+    type: 'boolean',
+    default: 'true',
   },
   {
     name: 'allow-cross-day',
     description: '是否允许跨天',
     type: 'boolean',
-    default: false,
+    default: true,
   },
   {
     name: 'behavior',
-    description: '行为模式',
+    description: '风格设置(simplicity:简约 normal:正常)',
     type: 'string',
     options: ['normal', 'simplicity'],
     default: 'normal',
   },
   {
-    name: 'disabled-date',
-    description: '禁用日期函数',
-    type: 'function',
+    name: 'extPopoverCls',
+    description: '配置自定义样式类名，传入的类会被加在弹出的日历面板 DOM `.bk-date-picker-dropdown` 上',
+    type: 'string',
     default: '',
-  },
-  {
-    name: 'with-validate',
-    description: '是否启用验证',
-    type: 'boolean',
-    default: true,
   },
 ];
 
@@ -336,10 +228,6 @@ const emits = [
         name: 'publicVModelValue',
         type: 'any',
       },
-      {
-        name: 'type',
-        type: 'any',
-      },
     ],
   },
   {
@@ -365,10 +253,6 @@ const emits = [
         name: 'shortcut',
         type: 'any',
       },
-      {
-        name: 'shortcutIndex',
-        type: 'number',
-      },
     ],
   },
   {
@@ -382,10 +266,6 @@ const emits = [
     params: [
       {
         name: 'val',
-        type: 'any',
-      },
-      {
-        name: 'type',
         type: 'any',
       },
     ],
@@ -406,16 +286,16 @@ const emits = [
 const group = NavGroupMeta.Form;
 
 // 组件名称
-const name = 'date-picker';
+const name = 'time-picker';
 
 // 组件标签
-const title = 'DatePicker';
+const title = 'TimePicker';
 
 // 组件中文标签
-const titleCN = '日期选择器';
+const titleCN = '时间选择器';
 
 // 组件描述
-const description = '日期选择器';
+const description = '时间选择器';
 
 const wiki: IComponentWiki = {
   group,

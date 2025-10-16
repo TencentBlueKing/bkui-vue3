@@ -87,8 +87,24 @@ const props = [
     name: 'placement',
     description: '组件显示位置',
     type: 'string',
-    options: ['auto', 'auto-start', 'auto-end', 'top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end', 'left', 'left-start', 'left-end', 'right', 'right-start', 'right-end'],
-    default: 'top-start'
+    options: [
+      'auto',
+      'auto-start',
+      'auto-end',
+      'top',
+      'top-start',
+      'top-end',
+      'bottom',
+      'bottom-start',
+      'bottom-end',
+      'left',
+      'left-start',
+      'left-end',
+      'right',
+      'right-start',
+      'right-end',
+    ],
+    default: 'top-start',
   },
   {
     name: 'theme',
@@ -160,7 +176,7 @@ const types = [
     type: 'PopoverPropTypes',
     link: '/component/popover/api#PopoverPropTypes',
     description: '弹出内容的配置项',
-  }
+  },
 ];
 
 // 组件分组
@@ -176,7 +192,8 @@ const title = 'Popconfirm';
 const titleCN = '弹出确认框';
 
 // 组件描述
-const description = 'bkPopconfirm是基于bkPopover改造而来，继承了bkPopover所有属性，具体请参考bkPopover文档，本文主要列出bkPopconfirm独有或不同的属性。基础样式由标题、正文和按钮构成。';
+const description =
+  'bkPopconfirm是基于bkPopover改造而来，继承了bkPopover所有属性，具体请参考bkPopover文档，本文主要列出bkPopconfirm独有或不同的属性。基础样式由标题、正文和按钮构成。';
 
 const wiki: IComponentWiki = {
   group,

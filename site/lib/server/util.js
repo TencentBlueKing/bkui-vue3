@@ -34,12 +34,12 @@ export const throwError = (ctx, error) => {
  *
  * @return {String} 移除空格后的字符串
  */
-exports.trim = str => (str || '').replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
+export const trim = str => (str || '').replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
 
 /**
  * 错误码
  */
-exports.CODE = {
+export const CODE = {
   HTTP: [
     // 请求无效 Bad Request
     400,
@@ -84,7 +84,7 @@ exports.CODE = {
  *
  * @return {boolean} 是否是图片文件
  */
-exports.isImageFile = (filePath) => {
+export const isImageFile = (filePath) => {
   const imageExtensions = ['.svg', '.png', '.jpg', '.jpeg', '.gif', '.webp'];
   return imageExtensions.some(ext => filePath.endsWith(ext));
 };
@@ -96,7 +96,7 @@ exports.isImageFile = (filePath) => {
  *
  * @return {boolean} 返回结果
  */
-exports.isAjaxReq = req => req.get('X-Requested-With') || (req.header.accept || '').indexOf('json') > -1;
+export const isAjaxReq = req => req.get('X-Requested-With') || (req.header.accept || '').indexOf('json') > -1;
 
 /**
  * 将parentId列表转换为children树结构列表
@@ -107,7 +107,7 @@ exports.isAjaxReq = req => req.get('X-Requested-With') || (req.header.accept || 
  *
  * @return {Array} 树结构列表
  */
-exports.list2tree = (list = [], pid = -1, childDataKey = 'children') => {
+export const list2tree = (list = [], pid = -1, childDataKey = 'children') => {
   function tree(pid) {
     const arr = [];
     list.filter(item => item.parentId === pid)
@@ -130,7 +130,7 @@ exports.list2tree = (list = [], pid = -1, childDataKey = 'children') => {
  *
  * @return {Map} 扁平的路径map
  */
-exports.flattenListPath = (list = [], pid = -1, prefixKey) => {
+export const flattenListPath = (list = [], pid = -1, prefixKey) => {
   function getPath(node) {
     if (node.parentId === pid) {
       return node.path;

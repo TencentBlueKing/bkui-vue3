@@ -24,14 +24,6 @@
  * IN THE SOFTWARE.
  */
 
-import type { ExtractPropTypes } from 'vue';
+export const emits = ['change', 'hover-change', 'update:modelValue'];
 
-export const composeFormItemProps = {
-  headBackgroundColor: {
-    type: String,
-    default: '#FAFBFD',
-  },
-  tailBackgroundColor: String,
-};
-
-export type ComposeFormItemProps = ExtractPropTypes<typeof composeFormItemProps>;
+export type RateEmits = typeof emits;

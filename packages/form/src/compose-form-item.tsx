@@ -27,8 +27,8 @@ import { defineComponent, h } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 
-import { composeFormItemEmits } from './compose-form-item-emits';
-import { composeFormItemProps } from './compose-form-item-props';
+import { composeFormItemEmits } from './emits';
+import { composeFormItemProps } from './props';
 
 const isCustomComponent = node => node.__v_isVNode;
 

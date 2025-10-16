@@ -23,7 +23,24 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
+import { ComputedRef } from 'vue';
+
 export const emits = {
+  'open-change': (visible: boolean) => visible,
+  input: (now: ComputedRef<any>) => now,
+  change: (publicVModelValue: ComputedRef<any>, type: any) => publicVModelValue && type,
+  'update:modelValue': (publicVModelValue: ComputedRef<any>) => publicVModelValue,
+  clear: () => true,
+  'shortcut-change': (shortcut: any, shortcutIndex: number) => shortcut && shortcutIndex,
+  'pick-success': () => true,
+  'pick-first': (val: any, type: any) => val && type,
+  blur: () => true,
+  focus: () => true,
+};
+
+export type DatePickerEmits = typeof emits;
+
+export const timePickerEmits = {
   'open-change': (visible: boolean) => visible,
   input: (now: any) => now,
   change: (publicVModelValue: any, type: any) => publicVModelValue && type,
@@ -36,4 +53,4 @@ export const emits = {
   focus: () => true,
 };
 
-export type DatePickerEmits = typeof emits;
+export type TimePickerEmits = typeof timePickerEmits;

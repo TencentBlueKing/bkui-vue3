@@ -47,6 +47,26 @@ const presets = [
 
 const props = [
   {
+    name: 'form-type',
+    description: '表单类型',
+    type: 'string',
+    options: ['horizontal', 'vertical'],
+    default: 'horizontal',
+  },
+  {
+    name: 'label-width',
+    description: '表单项标签宽度',
+    type: 'number',
+    default: '150',
+  },
+  {
+    name: 'label-position',
+    description: '表单项标签位置',
+    type: 'string',
+    options: ['top', 'left', 'center'],
+    default: 'top',
+  },
+  {
     name: 'model',
     description: '表单数据',
     type: 'object',
@@ -55,114 +75,8 @@ const props = [
   {
     name: 'rules',
     description: '表单验证规则',
-    type: 'Array',
-    default: [],
-  },
-  {
-    name: 'label-width',
-    description: '表单项标签宽度',
-    type: 'number',
-    default: '150',
-  },
-  {
-    name: 'label-position',
-    description: '表单项标签位置',
-    type: "'top' | 'left'",
-    default: 'top',
-  },
-  {
-    name: 'form-type',
-    description: '表单类型',
-    type: 'string',
-    options: ['horizontal', 'vertical'],
-    default: 'horizontal',
-  },
-  {
-    name: 'item-type',
-    description: '表单项类型',
-    type: 'string',
-    options: ['horizontal', 'vertical'],
-    default: 'horizontal',
-  },
-  {
-    name: 'label',
-    description: '表单项标签',
-    type: 'string',
-    default: '',
-  },
-  {
-    name: 'label-width',
-    description: '表单项标签宽度',
-    type: 'number',
-    default: '150',
-  },
-  {
-    name: 'label-position',
-    description: '表单项标签位置',
-    type: 'string',
-    options: ['top', 'left'],
-    default: 'top',
-  },
-  {
-    name: 'property',
-    description: '表单项属性',
-    type: 'string',
-    default: '',
-  },
-  {
-    name: 'required',
-    description: '表单项是否必填',
-    type: 'boolean',
-    default: false,
-  },
-  {
-    name: 'email',
-    description: '表单项验证邮箱',
-    type: 'boolean',
-    default: 'false',
-  },
-  {
-    name: 'max',
-    description: '表单项最大值',
-    type: 'number',
-    default: 0,
-  },
-  {
-    name: 'min',
-    description: '表单项最小值',
-    type: 'number',
-    default: 0,
-  },
-  {
-    name: 'maxlength',
-    description: '表单项最大长度',
-    type: 'number',
-    default: 0,
-  },
-  {
-    name: 'rules',
-    description: '表单项验证规则',
-    type: 'array',
-    default: [],
-  },
-  {
-    name: 'description',
-    description: '表单项描述',
-    type: 'string',
-    default: '',
-  },
-  {
-    name: 'error-display-type',
-    description: '表单项错误信息显示类型',
-    type: 'string',
-    options: ['normal', 'tooltips'],
-    default: 'normal',
-  },
-  {
-    name: 'error-tip-append-to-parent',
-    description: '表单项错误信息是否追加到父级',
-    type: 'boolean',
-    default: false,
+    type: 'object',
+    default: {},
   },
 ];
 
@@ -211,6 +125,101 @@ const wiki: IComponentWiki = {
   emits,
   presets,
   description,
+  children: [
+    {
+      name: 'form-item',
+      props: [
+        {
+          name: 'item-type',
+          description: '表单项类型',
+          type: 'string',
+          options: ['horizontal', 'vertical'],
+          default: 'horizontal',
+        },
+        {
+          name: 'label',
+          description: '表单项标签',
+          type: 'string',
+          default: '',
+        },
+        {
+          name: 'label-width',
+          description: '表单项标签宽度',
+          type: 'number',
+          default: '150',
+        },
+        {
+          name: 'label-position',
+          description: '表单项标签位置',
+          type: 'string',
+          options: ['top', 'left'],
+          default: 'top',
+        },
+        {
+          name: 'property',
+          description: '表单项属性',
+          type: 'string',
+          default: '',
+        },
+        {
+          name: 'required',
+          description: '表单项是否必填',
+          type: 'boolean',
+          default: false,
+        },
+        {
+          name: 'email',
+          description: '表单项验证邮箱',
+          type: 'boolean',
+          default: 'false',
+        },
+        {
+          name: 'max',
+          description: '表单项最大值',
+          type: 'number',
+          default: 0,
+        },
+        {
+          name: 'min',
+          description: '表单项最小值',
+          type: 'number',
+          default: 0,
+        },
+        {
+          name: 'maxlength',
+          description: '表单项最大长度',
+          type: 'number',
+          default: 0,
+        },
+        {
+          name: 'rules',
+          description: '表单项验证规则',
+          type: 'array',
+          default: [],
+        },
+        {
+          name: 'description',
+          description: '表单项描述',
+          type: 'string',
+          default: '',
+        },
+        {
+          name: 'error-display-type',
+          description: '表单项错误信息显示类型',
+          type: 'string',
+          options: ['normal', 'tooltips'],
+          default: 'normal',
+        },
+        {
+          name: 'error-tip-append-to-parent',
+          description: '表单项错误信息是否追加到父级',
+          type: 'boolean',
+          default: false,
+        },
+      ],
+      emits: [],
+    },
+  ],
 };
 
 export default wiki;

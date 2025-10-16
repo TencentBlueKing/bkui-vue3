@@ -34,14 +34,8 @@ const BkDropdown = withInstallProps(Dropdown, { DropdownMenu, DropdownItem });
 export default BkDropdown;
 export { BkDropdown, DropdownMenu as BkDropdownMenu, DropdownItem as BkDropdownItem };
 
-export type { DropdownItemEmits } from './dropdown-item-emits';
-export type { DropdownItemProps } from './dropdown-item-props';
-export type BkDropdownItemInstance = InstanceType<typeof DropdownItem>;
-
-export type { DropdownMenuEmits } from './dropdown-menu-emits';
-export type { DropdownMenuProps } from './dropdown-menu-props';
-export type BkDropdownMenuInstance = InstanceType<typeof DropdownMenu>;
-
-export type { DropdownEmits } from './emits';
-export type { DropdownProps } from './props';
+export type { DropdownEmits, DropdownMenuEmits, DropdownItemEmits } from './emits';
+export type { DropdownProps, DropdownMenuProps, DropdownItemProps } from './props';
 export type BkDropdownInstance = InstanceType<typeof Dropdown>;
+export type BkDropdownItemInstance = InstanceType<typeof DropdownItem>;
+export type BkDropdownMenuInstance = InstanceType<typeof DropdownMenu>;

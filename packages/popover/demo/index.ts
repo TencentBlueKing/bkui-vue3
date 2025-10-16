@@ -24,6 +24,7 @@
  * IN THE SOFTWARE.
  */
 import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
+
 import { EMIT_EVENTS } from '../src/const';
 
 // 组件示例
@@ -123,8 +124,24 @@ const props = [
     name: 'placement',
     description: '组件显示位置',
     type: 'string',
-    options: ['auto', 'auto-start', 'auto-end', 'top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end', 'left', 'left-start', 'left-end', 'right', 'right-start', 'right-end'],
-    default: 'top-start'
+    options: [
+      'auto',
+      'auto-start',
+      'auto-end',
+      'top',
+      'top-start',
+      'top-end',
+      'bottom',
+      'bottom-start',
+      'bottom-end',
+      'left',
+      'left-start',
+      'left-end',
+      'right',
+      'right-start',
+      'right-end',
+    ],
+    default: 'top-start',
   },
   {
     name: 'theme',
@@ -161,7 +178,8 @@ const props = [
   },
   {
     name: 'offset',
-    description: '弹出位置偏移， IAxesOffsets：{ mainAxis?: number; crossAxis?: number; alignmentAxis?: number | null; }',
+    description:
+      '弹出位置偏移， IAxesOffsets：{ mainAxis?: number; crossAxis?: number; alignmentAxis?: number | null; }',
     type: 'number | IAxesOffsets',
     default: 6,
   },
@@ -221,7 +239,8 @@ const props = [
   },
   {
     name: 'popoverDelay',
-    description: '用于设置显示隐藏延迟时间，如果设置为数值类型，则表示显示和隐藏都延迟指定数值，如果需要分开设置显示隐藏请设置为数组[showDelay, hideDealy]',
+    description:
+      '用于设置显示隐藏延迟时间，如果设置为数值类型，则表示显示和隐藏都延迟指定数值，如果需要分开设置显示隐藏请设置为数组[showDelay, hideDealy]',
     type: 'number | array',
     default: 100,
   },
@@ -245,7 +264,8 @@ const props = [
   },
   {
     name: 'componentEventDelay',
-    description: '自定义Content组件渲染，point-event延迟渲染时间，避免子组件point-event渲染时触发popover鼠标事件，如果设置为0，则不启用此设置',
+    description:
+      '自定义Content组件渲染，point-event延迟渲染时间，避免子组件point-event渲染时触发popover鼠标事件，如果设置为0，则不启用此设置',
     type: 'number',
     default: 0,
   },
@@ -265,10 +285,7 @@ const emits = [
     params: [
       {
         name: '_args',
-        type: {
-          isShow: 'boolean',
-          event: 'MouseEvent',
-        },
+        type: "{isShow: 'boolean', event: 'MouseEvent'}",
       },
     ],
   },
@@ -298,9 +315,7 @@ const emits = [
     params: [
       {
         name: '_args',
-        type: {
-          isShow: 'boolean',
-        },
+        type: "{isShow: 'boolean'}",
       },
     ],
   },
@@ -310,15 +325,13 @@ const emits = [
     params: [
       {
         name: '_args',
-        type: {
-          isShow: 'boolean',
-        },
+        type: "{isShow: 'boolean'}",
       },
     ],
   },
 ];
 
-// 组件自定义的复杂类型
+// // 组件自定义的复杂类型
 const types = [
   {
     name: 'IContent',
