@@ -1,5 +1,5 @@
 <template>
-  <section class="edit-component-config">
+  <section class="edit-component-config g-scrollbar">
     <Header class="header-wrapper" @refresh="resetProp"  />
     <Search 
       :props="props.props" 
@@ -189,11 +189,5 @@ onBeforeUnmount(() => {
     border-radius: 2px;
     transition: all 0.2s ease;
   }
-}
-</style>
-<style>
-::-webkit-scrollbar{
-  width: 0;
-  height: 0;
 }
 </style>

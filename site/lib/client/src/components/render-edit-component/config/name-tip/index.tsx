@@ -9,7 +9,7 @@ import {
   useClipboard,
 } from '@vueuse/core';
 
-import './index.less';
+import './index.postcss';
 
 const { copy } = useClipboard({
   legacy: true,

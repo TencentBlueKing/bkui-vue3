@@ -10,7 +10,7 @@ import RenderArray from './array.vue';
 import RenderObject from './object.vue';
 import RenderErrorType from './errortype.vue';
 
-import './index.less';
+import './index.postcss';
 
 import { factType } from './utils';
 

@@ -24,7 +24,7 @@ watch(switcherValue, (value) => {
   emits('update:modelValue', value);
 });
 </script>
-<style scoped lang="less">
+<style scoped lang="postcss">
 .config-item-boolean {
 height: 18px;
 line-height: 18px;

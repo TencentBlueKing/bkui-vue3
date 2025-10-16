@@ -6,7 +6,7 @@
       </template>
     </bk-input>
     <div ref="searchResultRef" :style="{ display: 'none' }" class="search-result-container">
-      <div class="search-result">
+      <div class="search-result g-scrollbar">
         <ul>
           <li v-for="item in filteredProps" class="item" @click="selectedAttr(item)">
             <i class="bkui-vue-wiki-icon icon-peizhi"></i>
