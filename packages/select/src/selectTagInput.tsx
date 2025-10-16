@@ -76,6 +76,7 @@ export default defineComponent({
     watch(
       [selected, collapseTags],
       () => {
+        tagsRefs.value = [];
         calcOverflow();
       },
       { flush: 'post' },
