@@ -34,6 +34,7 @@
               v-model:render-props="renderProps"
               :preset-props="componentWiki.presets[renderPresetIndex].props"
               :props="componentWiki.props"
+              :types="componentWiki.types"
             />
           </template>
           <template #main>
@@ -83,7 +84,7 @@ import {
 } from '@/types/enum';
 
 import RenderCode from './code.vue';
-import RenderConfig from './config.vue';
+import RenderConfig from './config/index.vue';
 import RenderHeader from './header.vue';
 import RenderPresets from './presets.vue';
 
