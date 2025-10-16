@@ -1,15 +1,11 @@
-import {
-  createRouter,
-  createWebHistory,
-} from 'vue-router';
-import useStorage from '@/hooks/use-storage';
-import { ANCHOR_KEY, VERSION_KEY } from '@/types/contants';
+import { createRouter, createWebHistory } from 'vue-router';
 
 const Entry = () => import(/* webpackChunkName: "entry" */ '../views/index.vue');
 const Component = () => import(/* webpackChunkName: "component" */ '../views/children/component/index.vue');
 const ComponentDemo = () => import(/* webpackChunkName: "component" */ '../views/children/component/children/demo.vue');
 const ComponentApi = () => import(/* webpackChunkName: "component" */ '../views/children/component/children/api.vue');
-const ComponentDesign = () => import(/* webpackChunkName: "component" */ '../views/children/component/children/design.vue');
+const ComponentDesign = () =>
+  import(/* webpackChunkName: "component" */ '../views/children/component/children/design.vue');
 const Markdown = () => import(/* webpackChunkName: "markdown" */ '../views/children/markdown/index.vue');
 const Directive = () => import(/* webpackChunkName: "directive" */ '../views/children/directive/index.vue');
 
@@ -18,17 +14,14 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      meta: {
-        requireVersion: false,
-      },
       redirect: 'markdown/start',
       component: Entry,
       children: [
         {
           path: 'component/:componentName',
           name: 'component',
-          meta: {
-            requireVersion: true,
+          redirect: {
+            name: 'demo',
           },
           component: Component,
           children: [
@@ -62,26 +55,6 @@ const router = createRouter({
       ],
     },
   ],
-});
-
-/**
- * @description 路由守卫
- */
-router.beforeEach((to, from, next) => {
-  const {getStorage}=useStorage();
-  const hash = getStorage(ANCHOR_KEY);
-  if (to.meta.requireVersion && !to.query.version) {
-    next({
-      path: `${to.path}/api`,
-      query: {
-        ...to.query,
-        version: getStorage(VERSION_KEY) ?? 'dev',
-      },
-      hash: hash ? `#${hash}` : '',
-    });
-  } else {
-    next();
-  }
 });
 
 export default router;

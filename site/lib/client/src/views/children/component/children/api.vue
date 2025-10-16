@@ -6,7 +6,6 @@
     <render-api-documentation
       :component="component"
       :component-wiki="componentStore.activeComponentWiki"
-      :version="componentStore.version"
       :active-component="componentStore.activeComponentWiki"
     />
   </bk-loading>

@@ -57,10 +57,12 @@
   import { useRoute, useRouter } from 'vue-router';
   import { ANCHOR_KEY, VERSION_KEY } from '@/types/contants';
   import useStorage from '@/hooks/use-storage';
+  import { useComponent } from '@/store/component';
 
   const iProps = defineProps<IProps>();
   const route = useRoute();
   const router = useRouter();
+  const componentStore = useComponent();
 
   // 列类型枚举
   enum EColumnTypeEnum {
@@ -76,7 +78,6 @@
   interface IProps {
     tableData: IComponentWiki['props' | 'emits' | 'slots'];
     categoryKey: string;
-    version: string;
     activeComponent: IComponentWiki | null;
     componentKey?: string;
     categoryKeyDesc?: string;
@@ -128,6 +129,14 @@
             class: 'table-link',
             onClick: () => {
               setStorage(ANCHOR_KEY, linkMap[part.trim()].split('#')[1]);
+              router.push({
+                ...router.currentRoute.value,
+                query: {
+                  ...router.currentRoute.value.query,
+                  version: componentStore.version,
+                },
+                hash: getStorage(ANCHOR_KEY) ? `#${getStorage(ANCHOR_KEY)}` : '',
+              });
               window.open(route.fullPath);
             },
             style: { cursor: 'pointer' },
@@ -141,6 +150,7 @@
   };
 
   onMounted(() => {
+    componentStore.version = getStorage(VERSION_KEY);
     // 滚动到锚点
     setTimeout(() => {
       const element = document.getElementById(getStorage(ANCHOR_KEY));
@@ -152,7 +162,7 @@
   });
 
   watch(
-    () => iProps.version,
+    () => componentStore.version,
     nVal => {
       if (!nVal) return;
       setStorage(VERSION_KEY, nVal);

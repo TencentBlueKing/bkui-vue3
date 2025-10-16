@@ -16,7 +16,6 @@
             :table-data="componentWiki[config.key]"
             :component-key="componentWiki.title"
             :category-key="config.categoryKey"
-            :version="version"
             :active-component="activeComponent"
           />
         </section>
@@ -34,7 +33,6 @@
             :table-data="type.fields"
             :category-key="type.name"
             :category-key-desc="type.description"
-            :version="version"
             :active-component="activeComponent"
           />
         </section>
@@ -59,7 +57,6 @@
                 :table-data="child[config.key]"
                 :component-key="child.name"
                 :category-key="config.categoryKey"
-                :version="version"
                 :active-component="activeComponent"
               />
             </section>
@@ -107,7 +104,6 @@ import { capitalizeWord } from '@/common/util';
   interface IProps {
     component: object;
     componentWiki: IComponentWiki;
-    version: string;
     activeComponent: IComponentWiki | null;
   }
   const props = defineProps<IProps>();
