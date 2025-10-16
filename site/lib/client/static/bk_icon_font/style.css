@@ -38,3 +38,18 @@ url("fonts/iconcool.eot?#iefix") format("embedded-opentype");
 .icon-copy:before {
 	content: "\e105";
 }
+.icon-peizhi:before {
+	content: "\e107";
+}
+.icon-add:before {
+	content: "\e108";
+}
+.icon-reduce:before {
+	content: "\e109";
+}
+.icon-angle-up-fill:before {
+	content: "\e10a";
+}
+.icon-angle-right-fill:before {
+	content: "\e10b";
+}

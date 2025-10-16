@@ -1,0 +1,41 @@
+.config-item-name-tip-wrapper {
+  display: inline-block;
+}
+.config-item-name-tip {
+  display: inline-block;
+  padding-bottom: 2px;
+  cursor: pointer;
+  &:hover {
+    padding-left: 4px;
+    padding-right: 4px;
+    border-radius: 2px;
+    color: #313238;
+    background-color: #D8DFF0;
+  }
+}
+.attr-tip-content {
+  width: 400px;
+  padding: 12px;
+  .tip-item {
+    display: flex;
+    align-items: center;
+    line-height: 24px;
+    padding: 0 12px;
+    & > span:first-child {
+      width: 48px;
+      color: #979BA5;
+      margin-right: 3px;
+    }
+    & > span:last-child {
+      flex: 1;
+      color: #4D4F56;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+  .even-bg {
+    background-color: #F5F7FA;
+    border-radius: 2px;
+  }
+}

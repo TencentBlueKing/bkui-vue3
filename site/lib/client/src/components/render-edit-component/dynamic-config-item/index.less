@@ -1,0 +1,23 @@
+.config-item {
+    padding: 4px;
+    &-name {
+        color: #313238;
+        line-height: 20px;
+    }
+    &-name.mb4 {
+        margin-bottom: 4px;
+    }
+    &-content {
+        font-size: 0;
+        &.type-flex {
+            display: flex;
+            .dynamic-type-select {
+                width: 80px;
+                margin-right: 8px;
+            }
+            & > div:last-child {
+                flex: 1;
+            }
+        }
+    }
+}
