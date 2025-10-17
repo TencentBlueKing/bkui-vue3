@@ -299,7 +299,7 @@ const handleInit = async () => {
     if (route.params.componentName) {
       const componentWiki = componentStore.componentMetaList.find(item => item.componentWiki.name === route.params.componentName);
       if(componentWiki) {
-        handleChoose(componentWiki.componentWiki, componentWiki.type);
+        componentStore.activeComponentWiki = componentWiki.componentWiki;
       }
     }
   } catch (error) {

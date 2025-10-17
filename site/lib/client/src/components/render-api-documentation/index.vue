@@ -1,5 +1,5 @@
 <template>
-  <section class="documentation-component">
+  <section class="documentation-component g-scrollbar">
     <!-- 主内容区域 -->
     <main class="content">
       <!-- 主组件配置 -->
@@ -8,7 +8,7 @@
         :key="config.key"
       >
         <section
-          v-if="componentWiki[config.key]"
+          v-if="componentWiki[config.key]?.length"
           :id="`${activeComponent.name}${capitalizeWord(config.key)}`"
           class="table-container"
         >
@@ -22,7 +22,7 @@
       </article>
 
       <!-- Types类型定义 -->
-      <article v-if="componentWiki.types">
+      <article v-if="componentWiki.types?.length">
         <section
           v-for="type in componentWiki.types"
           :key="type.name"
@@ -49,7 +49,7 @@
             :key="`${child.name}-${config.key}`"
           >
             <section
-              v-if="child[config.key]"
+              v-if="child[config.key]?.length"
               :id="`${child.name}${capitalizeWord(config.key)}`"
               class="table-container"
             >
@@ -93,97 +93,99 @@
 </template>
 
 <script lang="ts" setup>
-  import { computed, ref, watch } from 'vue';
-  import { useRoute } from 'vue-router';
-  import { IComponentWiki } from '@/types/component';
-  import RenderTable from './render-table/index.vue';
-  import useStorage from '@/hooks/use-storage';
-  import { ANCHOR_KEY } from '@/types/contants';
+import { computed, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
+
 import { capitalizeWord } from '@/common/util';
+import useStorage from '@/hooks/use-storage';
+import { IComponentWiki } from '@/types/component';
+import { ANCHOR_KEY } from '@/types/contants';
 
-  interface IProps {
-    component: object;
-    componentWiki: IComponentWiki;
-    activeComponent: IComponentWiki | null;
-  }
-  const props = defineProps<IProps>();
-  // 路由相关
-  const route = useRoute();
-  // 存储方法
-  const { removeStorage } = useStorage();
+import RenderTable from './render-table/index.vue';
 
-  // 分类关键字
-  const categoryKeyword = {
-    props: '属性',
-    emits: '事件',
-    slots: '插槽',
-  };
+interface IProps {
+  componentWiki: IComponentWiki;
+  activeComponent: IComponentWiki | null;
+}
+const props = defineProps<IProps>();
 
-  // 组件基础类型映射
-  const componentBaseTypes = [
-    { key: 'props', categoryKey: categoryKeyword.props },
-    { key: 'emits', categoryKey: categoryKeyword.emits },
-    { key: 'slots', categoryKey: categoryKeyword.slots },
-  ];
+// 路由相关
+const route = useRoute();
+// 存储方法
+const { removeStorage } = useStorage();
 
-  // 侧边栏默认激活第一项
-  const activeAnchor = ref(`${props.activeComponent.name}${capitalizeWord(componentBaseTypes[0].key)}`);
+// 分类关键字
+const categoryKeyword = {
+  props: '属性',
+  emits: '事件',
+  slots: '插槽',
+};
 
-  // 子组件配置
-  const childrenConfigs = computed(() => props.componentWiki.children ?? []);
+// 组件基础类型映射
+const componentBaseTypes = [
+  { key: 'props', categoryKey: categoryKeyword.props },
+  { key: 'emits', categoryKey: categoryKeyword.emits },
+  { key: 'slots', categoryKey: categoryKeyword.slots },
+];
 
-  // 计算导航项数据
-  const navItems = computed(() => {
-    const items: { id: string; title: string }[] = [];
-    // 处理主组件的props/emits/slots
-    Object.keys(categoryKeyword).forEach(key => {
-      if (props.componentWiki[key]) {
-        items.push({
-          id: `${props.activeComponent.name}${capitalizeWord(key)}`,
-          title: `${props.componentWiki.title} ${categoryKeyword[key]}`,
-        });
-      }
-    });
-    // 处理types类型定义
-    if (props.componentWiki.types) {
-      props.componentWiki.types.forEach(item => {
-        items.push({ id: item.name, title: item.name });
+// 侧边栏默认激活第一项
+const activeAnchor = ref(`${props.activeComponent.name}${capitalizeWord(componentBaseTypes[0].key)}`);
+
+// 子组件配置
+const childrenConfigs = computed(() => props.componentWiki.children ?? []);
+
+// 计算导航项数据
+const navItems = computed(() => {
+  const items: { id: string; title: string }[] = [];
+  // 处理主组件的props/emits/slots
+  Object.keys(categoryKeyword).forEach((key) => {
+    if (props.componentWiki[key]?.length) {
+      items.push({
+        id: `${props.activeComponent.name}${capitalizeWord(key)}`,
+        title: `${props.componentWiki.title} ${categoryKeyword[key]}`,
       });
     }
-    // 处理子组件的配置
-    if (childrenConfigs.value.length) {
-      childrenConfigs.value.forEach(child => {
-        Object.keys(categoryKeyword).forEach(key => {
-          if (child[key]) {
-            items.push({
-              id: `${child.name}${capitalizeWord(key)}`,
-              title: `${child.name} ${categoryKeyword[key]}`,
-            });
-          }
-        });
-      });
-    }
-    return items;
   });
+  // 处理types类型定义
+  if (props.componentWiki.types?.length) {
+    props.componentWiki.types.forEach((item) => {
+      items.push({ id: item.name, title: item.name });
+    });
+  }
+  // 处理子组件的配置
+  if (childrenConfigs.value.length) {
+    childrenConfigs.value.forEach((child) => {
+      Object.keys(categoryKeyword).forEach((key) => {
+        if (child[key]?.length) {
+          items.push({
+            id: `${child.name}${capitalizeWord(key)}`,
+            title: `${child.name} ${categoryKeyword[key]}`,
+          });
+        }
+      });
+    });
+  }
+  return items;
+});
 
-  watch(
-    route,
-    newRoute => {
-      activeAnchor.value =
-        newRoute.hash?.replace('#', '') || `${props.activeComponent.name}${capitalizeWord(componentBaseTypes[0].key)}`;
-    },
-    { deep: true },
-  );
+watch(
+  route,
+  (newRoute) => {
+    activeAnchor.value = newRoute.hash?.replace('#', '') || `${props.activeComponent.name}${capitalizeWord(componentBaseTypes[0].key)}`;
+  },
+  { deep: true },
+);
 </script>
 
 <style lang="postcss" scoped>
   .documentation-component {
     display: flex;
     width: 100%;
-    height: 100%;
+    height: calc(100% - 149px);
     gap: 24px;
     overflow: auto;
     scroll-behavior: smooth;
+    padding: 16px 8px 40px 34px;
   }
 
   /* 子组件样式 */

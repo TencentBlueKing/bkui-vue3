@@ -1,5 +1,8 @@
 <template>
-  <section class="edit-component" ref="componentRef">
+  <section
+    class="edit-component"
+    ref="componentRef"
+  >
     <render-header
       v-model:main-panel="mainPanel"
       :component-wiki="componentWiki"
@@ -149,7 +152,7 @@ onUnmounted(() => {
 
 <style lang="postcss" scoped>
 .edit-component {
-  height: calc(100% - 120px);
+  height: 640px;
   background: #FAFBFD;
   box-shadow: 0 2px 4px 0 #1919290d;
 }
