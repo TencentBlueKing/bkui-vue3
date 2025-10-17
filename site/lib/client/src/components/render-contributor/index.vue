@@ -3,7 +3,9 @@
     v-if="authorList.length"
     class="contributor-wrapper"
   >
-    <h3 class="title">Contributor</h3>
+    <h3 class="title">
+      Contributor
+    </h3>
     <div class="contributor-list">
       <a
         v-for="item in authorList"
@@ -13,7 +15,7 @@
         class="contributor-item"
         target="_blank"
         :key="item.login"
-        :href="item.avatar"
+        :href="`https://github.com/${item.login}`"
       >
         <img
           class="contributor-item-img"
@@ -72,12 +74,13 @@ watch(
     font-weight: 700;
     font-size: 20px;
     line-height: 28px;
-    margin: 48px 0px 16px;
+    margin: 48px 0px 12px;
   }
   .contributor-list {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
+    height: 40px;
 
     .contributor-item{
       cursor: pointer;

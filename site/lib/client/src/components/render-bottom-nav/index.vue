@@ -84,7 +84,7 @@ const handleChoose = (item: IComponentMeta) => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 23px;
+  margin: 23px -6px 0;
   font-size: 16px;
   color: #313238;
   user-select: none;
