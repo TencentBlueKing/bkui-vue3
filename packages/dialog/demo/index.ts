@@ -53,7 +53,7 @@ const presets = [
     },
   },
   {
-    title: '遮罩',
+    title: '关闭前确认',
     description: '通过 beforeChange 属性关闭前确认。',
     props: {
       title: '关闭前确认',
@@ -243,6 +243,25 @@ const emits = [
   },
 ];
 
+const slots = [
+  {
+    name: 'header',
+    description: '头部插槽',
+  },
+  {
+    name: 'default',
+    description: '内容插槽',
+  },
+  {
+    name: 'footer',
+    description: '底部插槽',
+  },
+  {
+    name: 'tools',
+    description: '工具栏插槽，顶部区域',
+  },
+];
+
 // 组件分组
 const group = NavGroupMeta.Nav;
 
@@ -265,6 +284,7 @@ const wiki: IComponentWiki = {
   titleCN,
   props,
   emits,
+  slots,
   presets,
   description,
 };

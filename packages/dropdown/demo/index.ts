@@ -175,6 +175,23 @@ const emits = [
   },
 ];
 
+const slots = [
+  {
+    name: 'default',
+    description: '触发对象插槽',
+    params: [
+      {
+        name: 'popoverShow',
+        type: 'boolean',
+      },
+    ],
+  },
+  {
+    name: 'content',
+    description: '下拉菜单插槽',
+  },
+];
+
 // 组件分组
 const group = NavGroupMeta.Data;
 
@@ -197,6 +214,7 @@ const wiki: IComponentWiki = {
   titleCN,
   props,
   emits,
+  slots,
   presets,
   description,
   children: [

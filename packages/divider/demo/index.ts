@@ -98,6 +98,13 @@ const emits = [
   },
 ];
 
+const slots = [
+  {
+    name: 'default',
+    description: '默认插槽',
+  },
+];
+
 // 组件分组
 const group = NavGroupMeta.Nav;
 
@@ -120,6 +127,7 @@ const wiki: IComponentWiki = {
   titleCN,
   props,
   emits,
+  slots,
   presets,
   description,
 };

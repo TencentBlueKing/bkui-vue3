@@ -106,6 +106,67 @@ const emits = [
   },
 ];
 
+const slots = [
+  {
+    name: 'default',
+    description: '默认插槽',
+  },
+];
+
+const types = [
+  {
+    name: 'IFormItemRule',
+    description: '表单项验证规则',
+    fields: [
+      {
+        name: 'required',
+        type: 'boolean',
+        description: '是否必填',
+      },
+      {
+        name: 'email',
+        type: 'boolean',
+        description: '是否邮箱',
+      },
+      {
+        name: 'max',
+        type: 'number',
+        description: '最大值',
+      },
+      {
+        name: 'min',
+        type: 'number',
+        description: '最小值',
+      },
+      {
+        name: 'maxlength',
+        type: 'number',
+        description: '最大长度',
+      },
+      {
+        name: 'pattern',
+        type: 'regexp',
+        description: '正则表达式',
+      },
+      {
+        name: 'validator',
+        type: 'any => Promise<boolean> | boolean',
+        description: '验证函数',
+      },
+      {
+        name: 'message',
+        type: 'string',
+        description: '错误信息',
+      },
+      {
+        name: 'trigger',
+        type: 'string',
+        description: '触发方式',
+      },
+    ],
+  },
+];
+
 const group = NavGroupMeta.Form;
 
 const name = 'form';
@@ -123,6 +184,8 @@ const wiki: IComponentWiki = {
   titleCN,
   props,
   emits,
+  slots,
+  types,
   presets,
   description,
   children: [
@@ -194,8 +257,9 @@ const wiki: IComponentWiki = {
         {
           name: 'rules',
           description: '表单项验证规则',
-          type: 'array',
+          type: 'Array<IFormItemRule>',
           default: [],
+          link: '/component/form/api#IFormItemRule',
         },
         {
           name: 'description',
@@ -218,6 +282,30 @@ const wiki: IComponentWiki = {
         },
       ],
       emits: [],
+      slots: [
+        {
+          name: 'default',
+          description: '表单项内容插槽',
+        },
+        {
+          name: 'label',
+          description: '表单项标签插槽',
+        },
+        {
+          name: 'error',
+          description: '表单项错误信息插槽',
+          params: [
+            {
+              name: 'errorMessage',
+              type: 'string',
+            },
+          ],
+        },
+        {
+          name: 'label-append',
+          description: '表单项标签追加插槽',
+        },
+      ],
     },
   ],
 };

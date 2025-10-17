@@ -105,6 +105,13 @@ const emits = [
   },
 ];
 
+const slots = [
+  {
+    name: 'default',
+    description: '默认插槽, 用于放置需要固定的内容',
+  },
+];
+
 // 组件自定义的复杂类型
 const types = [
   {
@@ -164,6 +171,7 @@ const wiki: IComponentWiki = {
   titleCN,
   props,
   emits,
+  slots,
   presets,
   types,
   description,

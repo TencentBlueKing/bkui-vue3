@@ -165,7 +165,7 @@ const props = [
   {
     name: 'time-picker-options',
     description: '时间选择器配置',
-    type: 'Record<string, any>',
+    type: 'object',
     default: '{}',
   },
   {
@@ -214,8 +214,9 @@ const props = [
   },
   {
     name: 'shortcuts',
-    description: '快捷选项',
-    type: 'Array<DatePickerShortcutsType>',
+    description: '配置快捷选择日期',
+    type: 'Array<IDatePickerShortcut>',
+    link: '/component/date-picker/api#IDatePickerShortcut',
     default: '[]',
   },
   {
@@ -227,13 +228,13 @@ const props = [
   {
     name: 'model-value',
     description: '绑定值',
-    type: 'Date | String | Number | Array',
+    type: 'Date | String | Number | [Date | String | Number, Date | String | Number] | null',
     default: '',
   },
   {
     name: 'value',
     description: '绑定值（兼容）',
-    type: 'Date | String | Number | Array',
+    type: 'Date | String | Number | [Date | String | Number, Date | String | Number] | null',
     default: '',
   },
   {
@@ -402,6 +403,72 @@ const emits = [
   },
 ];
 
+const slots = [
+  {
+    name: 'header',
+    description: '可用该插槽，自定义日期选择器 header 的展示',
+  },
+  {
+    name: 'trigger',
+    description: '可用该插槽配合 open 属性，自定义日期选择器的展示',
+    params: [
+      {
+        name: 'displayValue',
+        type: 'string',
+      },
+    ],
+  },
+  {
+    name: 'footer',
+    description: '可用该插槽，自定义日期选择器 footer 的展示',
+  },
+  {
+    name: 'shortcuts',
+    description: 'datetimerange、daterange 类型可用该插槽，自定义时间范围选择器快捷选项区域的展示',
+    params: [
+      {
+        name: 'arg',
+        type: '{ change: Function }',
+      },
+    ],
+  },
+  {
+    name: 'confirm',
+    description: '可用该插槽，自定义日期选择器 confirm 的展示',
+  },
+];
+
+const types = [
+  {
+    name: 'IDatePickerShortcut',
+    description: '快捷选择日期配置',
+    fields: [
+      {
+        name: 'text',
+        type: 'string',
+        description: '快捷选择日期文本',
+      },
+      {
+        name: 'value',
+        type: '() => Date[]',
+        description: '快捷选择日期值',
+      },
+      {
+        name: 'onClick',
+        type: 'function',
+        description: '点击回调函数',
+        params: [
+          {
+            name: 'picker',
+            type: 'any',
+            description: '选择值',
+          },
+        ],
+      },
+    ],
+  },
+];
+
 // 组件分组
 const group = NavGroupMeta.Form;
 
@@ -424,6 +491,8 @@ const wiki: IComponentWiki = {
   titleCN,
   props,
   emits,
+  slots,
+  types,
   presets,
   description,
 };
