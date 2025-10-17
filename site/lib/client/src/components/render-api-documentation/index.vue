@@ -8,7 +8,7 @@
         :key="config.key"
       >
         <section
-          v-if="componentWiki[config.key]"
+          v-if="componentWiki[config.key]?.length"
           :id="`${activeComponent.name}${capitalizeWord(config.key)}`"
           class="table-container"
         >
@@ -22,7 +22,7 @@
       </article>
 
       <!-- Types类型定义 -->
-      <article v-if="componentWiki.types">
+      <article v-if="componentWiki.types?.length">
         <section
           v-for="type in componentWiki.types"
           :key="type.name"
@@ -49,7 +49,7 @@
             :key="`${child.name}-${config.key}`"
           >
             <section
-              v-if="child[config.key]"
+              v-if="child[config.key]?.length"
               :id="`${child.name}${capitalizeWord(config.key)}`"
               class="table-container"
             >
@@ -95,11 +95,13 @@
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import { IComponentWiki } from '@/types/component';
-import RenderTable from './render-table/index.vue';
-import useStorage from '@/hooks/use-storage';
-import { ANCHOR_KEY } from '@/types/contants';
+
 import { capitalizeWord } from '@/common/util';
+import useStorage from '@/hooks/use-storage';
+import { IComponentWiki } from '@/types/component';
+import { ANCHOR_KEY } from '@/types/contants';
+
+import RenderTable from './render-table/index.vue';
 
 interface IProps {
   componentWiki: IComponentWiki;
@@ -136,8 +138,8 @@ const childrenConfigs = computed(() => props.componentWiki.children ?? []);
 const navItems = computed(() => {
   const items: { id: string; title: string }[] = [];
   // 处理主组件的props/emits/slots
-  Object.keys(categoryKeyword).forEach(key => {
-    if (props.componentWiki[key]) {
+  Object.keys(categoryKeyword).forEach((key) => {
+    if (props.componentWiki[key]?.length) {
       items.push({
         id: `${props.activeComponent.name}${capitalizeWord(key)}`,
         title: `${props.componentWiki.title} ${categoryKeyword[key]}`,
@@ -145,16 +147,16 @@ const navItems = computed(() => {
     }
   });
   // 处理types类型定义
-  if (props.componentWiki.types) {
-    props.componentWiki.types.forEach(item => {
+  if (props.componentWiki.types?.length) {
+    props.componentWiki.types.forEach((item) => {
       items.push({ id: item.name, title: item.name });
     });
   }
   // 处理子组件的配置
   if (childrenConfigs.value.length) {
-    childrenConfigs.value.forEach(child => {
-      Object.keys(categoryKeyword).forEach(key => {
-        if (child[key]) {
+    childrenConfigs.value.forEach((child) => {
+      Object.keys(categoryKeyword).forEach((key) => {
+        if (child[key]?.length) {
           items.push({
             id: `${child.name}${capitalizeWord(key)}`,
             title: `${child.name} ${categoryKeyword[key]}`,
@@ -168,7 +170,7 @@ const navItems = computed(() => {
 
 watch(
   route,
-  newRoute => {
+  (newRoute) => {
     activeAnchor.value = newRoute.hash?.replace('#', '') || `${props.activeComponent.name}${capitalizeWord(componentBaseTypes[0].key)}`;
   },
   { deep: true },
