@@ -70,7 +70,7 @@ const props = [
     name: 'loading',
     description: '是否显示 loading',
     type: 'boolean',
-    options: ['true', 'false'],
+    options: [true, false],
     default: true,
   },
   {
