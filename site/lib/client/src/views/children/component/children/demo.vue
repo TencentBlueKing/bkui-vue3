@@ -4,15 +4,13 @@
     :z-index="10"
     class="demo-home"
   >
-    <template v-if="componentStore.activeComponentWiki">
+    <template v-if="componentStore.activeComponentWiki && component">
       <render-edit-component
         :component="component"
         :component-wiki="componentStore.activeComponentWiki"
       />
-      <render-contributor
-      />
-      <render-bottom-nav
-      />
+      <render-contributor />
+      <render-bottom-nav />
     </template>
   </bk-loading>
 </template>
@@ -68,7 +66,7 @@ const handleGetComponent = () => {
         getCss(componentStore.activeComponentWiki.name, componentStore.version),
       ])
       .then(() => {
-        component.value = window.getComponent().default;
+        component.value = window.getComponent();
       })
       .finally(() => {
         loading.value = false;

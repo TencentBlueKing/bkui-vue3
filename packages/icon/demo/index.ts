@@ -25,14 +25,13 @@
  */
 import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
-
 // 组件示例
 const presets = [{
   title: '基础用法',
   description: '基础的图标使用',
   props: {
-    width: '1em',
-    height: '1em',
+    width: '2em',
+    height: '2em',
     fill: 'currentColor',
   },
 }];

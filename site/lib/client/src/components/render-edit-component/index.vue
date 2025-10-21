@@ -48,6 +48,7 @@
               <render-component
                 v-if="mainPanel === MainPanel.Component"
                 class="edit-component-component"
+                :name="componentWiki.name"
                 :component="component"
                 :render-props="renderProps"
                 :render-slots="renderSlots"
@@ -152,7 +153,7 @@ onUnmounted(() => {
 
 <style lang="postcss" scoped>
 .edit-component {
-  height: 640px;
+  height: calc(100% - 180px);
   background: #FAFBFD;
   box-shadow: 0 2px 4px 0 #1919290d;
 }

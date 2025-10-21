@@ -218,3 +218,11 @@ export const getReleaseZipPath = async (version) => {
   }
   return releaseZipPath;
 };
+
+// 清空构建目录
+export const deleteReleaseZip = (version) => {
+  const releasePath = path.resolve(RELEASE_DIR, `${version}`);
+  const releaseDistPath = path.resolve(RELEASE_DIST_DIR, `${version}`);
+  fs.rmSync(releasePath, { recursive: true, force: true })
+  fs.rmSync(releaseDistPath, { recursive: true, force: true })
+}
