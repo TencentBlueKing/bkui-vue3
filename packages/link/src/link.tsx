@@ -25,28 +25,17 @@
  */
 
 import { defineComponent } from 'vue';
-import { toType } from 'vue-types';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-import { classes, PropTypes } from '@bkui-vue/shared';
+import { classes } from '@bkui-vue/shared';
 
-enum LinkThemeEnum {
-  DANGER = 'danger',
-  DEFAULT = 'default',
-  PRIMARY = 'primary',
-  SUCCESS = 'success',
-  WARNING = 'warning',
-}
+import { emits } from './emits';
+import { props } from './props';
+
 export default defineComponent({
   name: 'Link',
-  props: {
-    theme: toType<`${LinkThemeEnum}`>('linkTheme', {}).def(LinkThemeEnum.DEFAULT),
-    href: PropTypes.string.def(''),
-    disabled: PropTypes.bool.def(false),
-    underline: PropTypes.bool.def(false),
-    target: PropTypes.string.def('_self'),
-  },
-  emits: ['click'],
+  props,
+  emits,
   setup(props, { emit }) {
     const handleClick = (event: Event) => {
       if (props.disabled) {
