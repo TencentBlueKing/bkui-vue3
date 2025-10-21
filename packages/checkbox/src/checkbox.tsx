@@ -25,41 +25,19 @@
  */
 
 import { defineComponent } from 'vue';
-import { func } from 'vue-types';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import { Loading } from '@bkui-vue/icon';
-import { classes, PropTypes, SizeEnum } from '@bkui-vue/shared';
+import { classes } from '@bkui-vue/shared';
 
 import { useCheckbox, useFocus } from './common';
-
-import type { ExtractPropTypes } from 'vue';
-
-export const checkboxProps = {
-  modelValue: PropTypes.oneOfType([PropTypes.bool, PropTypes.string, PropTypes.number]),
-  label: PropTypes.oneOfType([PropTypes.bool, PropTypes.string, PropTypes.number]),
-  trueLabel: PropTypes.oneOfType([PropTypes.bool, PropTypes.string, PropTypes.number]).def(true),
-  falseLabel: PropTypes.oneOfType([PropTypes.bool, PropTypes.string, PropTypes.number]).def(false),
-  disabled: PropTypes.bool.def(false),
-  checked: PropTypes.bool.def(false),
-  indeterminate: PropTypes.bool,
-  beforeChange: func<(event: boolean | number | string) => Promise<boolean> | boolean>().def(() => true),
-  size: PropTypes.size().def(SizeEnum.DEFAULT),
-  immediateEmitChange: PropTypes.bool.def(true), // 默认设置checked是否触发change事件
-  readonly: PropTypes.bool.def(false),
-  outline: PropTypes.bool.def(false),
-};
-
-export type CheckboxProps = Readonly<ExtractPropTypes<typeof checkboxProps>>;
+import { emits } from './emits';
+import { props } from './props';
 
 export default defineComponent({
   name: 'Checkbox',
-  props: checkboxProps,
-  emits: {
-    'update:modelValue': (value: any) => value !== undefined,
-    change: (value: any, _event?: Event) => value !== undefined,
-    click: (_event: MouseEvent) => true,
-  },
+  props,
+  emits,
   setup(props) {
     const [isFocus, { blur: handleBlur, focus: handleFocus }] = useFocus();
 

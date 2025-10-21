@@ -29,12 +29,13 @@ import CollapseTransition from '@bkui-vue/collapse-transition';
 import { usePrefix } from '@bkui-vue/config-provider';
 import * as BkIcon from '@bkui-vue/icon';
 
+import { collapsePanelEmits } from './collapse-panel-emits';
 import { propsCollapsePanel as props } from './props';
 
 export default defineComponent({
   name: 'CollapsePanel',
   props,
-  emits: ['change', 'update:modelValue', 'after-leave', 'before-enter'],
+  emits: collapsePanelEmits,
   setup(props, { emit, slots }) {
     let localActiveItems = null;
     let handleItemClick = null;
@@ -109,7 +110,7 @@ export default defineComponent({
       );
     }
 
-    function renderHeader(icon: any) {
+    function renderHeader(icon: string) {
       if (slots.header) {
         if (typeof slots.header === 'function') {
           return slots.header(h);

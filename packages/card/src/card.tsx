@@ -30,22 +30,15 @@ import CollapseTransition from '@bkui-vue/collapse-transition';
 import { usePrefix } from '@bkui-vue/config-provider';
 import { AngleDown, AngleRight, EditLine } from '@bkui-vue/icon';
 import Input from '@bkui-vue/input';
-import { classes, PropTypes } from '@bkui-vue/shared';
+import { classes } from '@bkui-vue/shared';
+
+import { emits } from './emits';
+import { props } from './props';
 
 export default defineComponent({
   name: 'Card',
-  props: {
-    title: PropTypes.string,
-    showHeader: PropTypes.bool.def(true),
-    showFooter: PropTypes.bool.def(false),
-    collapseStatus: PropTypes.bool.def(true),
-    border: PropTypes.bool.def(true),
-    disableHeaderStyle: PropTypes.bool.def(false),
-    position: PropTypes.string.def('left'),
-    isEdit: PropTypes.bool.def(false),
-    isCollapse: PropTypes.bool.def(false),
-  },
-  emits: ['update:collapseStatus', 'edit'],
+  props,
+  emits,
   setup(props, { emit }) {
     /** 展开&收起的状态 */
     const collapseActive = ref(true);
@@ -66,7 +59,7 @@ export default defineComponent({
     /** 保存编辑的title */
     const saveEdit = () => {
       showInput.value = !showInput.value;
-      emit('edit', renderTitle);
+      emit('edit', renderTitle.value);
     };
     watch(
       () => props.collapseStatus,

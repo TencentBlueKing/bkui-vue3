@@ -27,27 +27,18 @@
 import { defineComponent, onMounted, provide, watch } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-import { PropTypes, useFormItem } from '@bkui-vue/shared';
+import { useFormItem } from '@bkui-vue/shared';
 
+import { checkboxGroupEmits } from './checkbox-group-emits';
+import { checkboxGroupProps } from './checkbox-group-props';
 import { checkboxGroupKey } from './common';
 
 import type { ICheckboxGroupContext, ICheckboxInstance } from './type';
-import type { ExtractPropTypes } from 'vue';
-const checkboxGroupProps = {
-  modelValue: PropTypes.array,
-  disabled: PropTypes.bool,
-  withValidate: PropTypes.bool.def(true),
-};
-
-export type CheckboxGroupProps = Readonly<ExtractPropTypes<typeof checkboxGroupProps>>;
 
 export default defineComponent({
   name: 'CheckboxGroup',
   props: checkboxGroupProps,
-  emits: {
-    'update:modelValue': (value: any[]) => value !== undefined,
-    change: (value: any[]) => value !== undefined,
-  },
+  emits: checkboxGroupEmits,
   setup(props, context) {
     const formItem = useFormItem();
 
