@@ -24,10 +24,12 @@
  * IN THE SOFTWARE.
  */
 
-import { computed, defineComponent, ExtractPropTypes, PropType, VNode } from 'vue';
+import { computed, defineComponent, ExtractPropTypes, VNode } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-import { classes, PropTypes } from '@bkui-vue/shared';
+import { classes } from '@bkui-vue/shared';
+
+import { props } from './props';
 
 export enum BkLoadingMode {
   Default = 'default',
@@ -46,35 +48,11 @@ export function setDefaultIndicator(Indicator: any) {
   defaultIndicator = typeof Indicator === 'function' ? Indicator : () => <Indicator />;
 }
 
-export const loadingTypes = {
-  indicator: {
-    type: Function,
-  },
-  loading: PropTypes.bool.def(true),
-  inline: PropTypes.bool.def(true),
-  theme: {
-    type: String as PropType<'danger' | 'default' | 'primary' | 'success' | 'warning' | 'white'>,
-  },
-  title: PropTypes.string.def(''),
-  size: {
-    type: String as PropType<`${BkLoadingSize}`>,
-    default: BkLoadingSize.Normal,
-  },
-  mode: {
-    type: String as PropType<`${BkLoadingMode}`>,
-    default: 'default',
-  },
-  opacity: PropTypes.number.def(0.9),
-  color: PropTypes.string.def('white'),
-  zIndex: PropTypes.number.def(1),
-  isDirective: PropTypes.bool.def(false),
-};
-
-export type LoadingTypes = ExtractPropTypes<typeof loadingTypes>;
+export type LoadingTypes = ExtractPropTypes<typeof props>;
 
 export default defineComponent({
   name: 'Loading',
-  props: loadingTypes,
+  props,
   setup(props: LoadingTypes, ctx) {
     const { resolveClassName } = usePrefix();
     const dotIndicator = (
