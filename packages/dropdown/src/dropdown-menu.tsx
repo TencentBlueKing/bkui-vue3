@@ -28,8 +28,8 @@ import { computed, defineComponent } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 
-import { dropdownMenuEmits } from './dropdown-menu-emits';
-import { dropdownMenuProps } from './dropdown-menu-props';
+import { dropdownMenuEmits } from './emits';
+import { dropdownMenuProps } from './props';
 
 export default defineComponent({
   name: 'DropdownMenu',

@@ -39,19 +39,15 @@ import {
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import { AngleUpFill } from '@bkui-vue/icon';
-import { classes, PropTypes } from '@bkui-vue/shared';
+import { classes } from '@bkui-vue/shared';
 
 import { optionGroupKey, selectKey, useRegistry } from './common';
+import { optionGroupProps } from './props';
 import { OptionInstanceType } from './type';
 
 export default defineComponent({
   name: 'OptionGroup',
-  props: {
-    label: PropTypes.string.def(''),
-    disabled: PropTypes.bool.def(false),
-    collapsible: PropTypes.bool.def(false), // 是否开启折叠
-    collapse: PropTypes.bool.def(false), // 是否折叠初始状态
-  },
+  props: optionGroupProps,
   setup(props, { emit }) {
     const instance = getCurrentInstance();
     const { proxy } = instance as any;

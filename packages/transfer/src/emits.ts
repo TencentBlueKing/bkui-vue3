@@ -1,4 +1,4 @@
-/*
+/**
  * Tencent is pleased to support the open source community by making
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
  *
@@ -24,8 +24,6 @@
  * IN THE SOFTWARE.
  */
 
-export const composeFormItemEmits = {
-  // ComposeFormItem 组件本身不发出事件，但保留空的 emits 定义以保持一致性
-};
+export const emits = ['change', 'update:targetList'];
 
-export type ComposeFormItemEmits = typeof composeFormItemEmits;
+export type TransferEmits = typeof emits;

@@ -32,7 +32,8 @@ import { AngleLeft, AngleRight, ArrowsRight, Error, Search, Transfer } from '@bk
 import Input from '@bkui-vue/input';
 
 import { ArrayType } from './const';
-import { transferProps } from './props';
+import { emits } from './emits';
+import { props } from './props';
 
 // 生成数据
 function useTransferData(sourceData, targetList, settingCode) {
@@ -86,8 +87,8 @@ function useSelectListSearch(selectList, displayCode) {
 
 export default defineComponent({
   name: 'Transfer',
-  props: transferProps,
-  emits: ['change', 'update:targetList'],
+  props: props,
+  emits: emits,
   setup(props, { emit }) {
     const t = useLocale('transfer');
     const multipleSelectAllValue = ref({ source: false, target: false });

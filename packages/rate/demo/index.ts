@@ -1,12 +1,12 @@
 /*
  * Tencent is pleased to support the open source community by making
- * 蓝鲸智云PaaS平台 (BlueKing PaaS) available.
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
  *
- * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ * Copyright (C) 2025 Tencent.  All rights reserved.
  *
- * 蓝鲸智云PaaS平台 (BlueKing PaaS) is licensed under the MIT License.
+ * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
  *
- * License for 蓝鲸智云PaaS平台 (BlueKing PaaS):
+ * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
  *
  * ---------------------------------------------------
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
@@ -28,11 +28,13 @@ import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 // 组件示例
 const presets = [
   {
-    title: '危险',
-    description: '危险危险危险',
+    title: '基础用法',
+    description: '基础的评分组件使用',
     props: {
-      theme: 'danger',
-      title: '危险的文案',
+      modelValue: 3.5,
+      size: 'small',
+      editable: true,
+      withValidate: true,
     },
   },
 ];
@@ -40,33 +42,26 @@ const presets = [
 // 组件属性，用来自动生成属性文档
 const props = [
   {
-    name: 'theme',
-    description: '主题',
-    type: 'string',
-    options: ['danger', 'info', 'success', 'warning'],
-    default: 'info',
+    name: 'modelValue',
+    description: '评分',
+    type: 'number',
+    default: 0,
   },
   {
-    name: 'title',
-    description: '标题',
+    name: 'size',
+    description: '大小',
     type: 'string',
-    default: '提示文字',
+    default: 'small',
   },
   {
-    name: 'closable',
-    description: '是否可关闭',
+    name: 'editable',
+    description: '是否可编辑',
     type: 'boolean',
-    default: false,
+    default: true,
   },
   {
-    name: 'closeText',
-    description: '关闭按钮内容',
-    type: 'string',
-    default: '',
-  },
-  {
-    name: 'showIcon',
-    description: '是否显示图标',
+    name: 'withValidate',
+    description: '是否显示验证',
     type: 'boolean',
     default: true,
   },
@@ -76,45 +71,50 @@ const props = [
 const emits = [
   {
     name: 'change',
-    description: '固定状态发生改变时触发的事件',
+    description: '值变化时触发',
     params: [
       {
-        name: 'event',
-        type: 'Event',
+        name: 'val',
+        type: 'number',
+      },
+    ],
+  },
+  {
+    name: 'hover-change',
+    description: '鼠标悬停时触发',
+    params: [
+      {
+        name: 'val',
+        type: 'number',
+      },
+    ],
+  },
+  {
+    name: 'update:modelValue',
+    description: 'v-model 更新时触发',
+    params: [
+      {
+        name: 'val',
+        type: 'number',
       },
     ],
   },
 ];
 
-const slots = [
-  {
-    name: 'default',
-    description: '默认插槽',
-  },
-  {
-    name: 'title',
-    description: '标题',
-  },
-  {
-    name: 'icon',
-    description: '图标',
-  },
-];
-
 // 组件分组
-const group = NavGroupMeta.Nav;
+const group = NavGroupMeta.Form;
 
 // 组件名称
-const name = 'alert';
+const name = 'rate';
 
 // 组件标签
-const title = 'Alert';
+const title = 'Rate';
 
 // 组件中文标签
-const titleCN = '警告';
+const titleCN = '评分';
 
 // 组件描述
-const description = '展示页面的提示信息';
+const description = '评分';
 
 const wiki: IComponentWiki = {
   group,
@@ -123,7 +123,6 @@ const wiki: IComponentWiki = {
   titleCN,
   props,
   emits,
-  slots,
   presets,
   description,
 };

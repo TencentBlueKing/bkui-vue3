@@ -47,6 +47,7 @@ import { getFullscreenRoot, useFormItem } from '@bkui-vue/shared';
 
 import PickerDropdown from './base/picker-dropdown';
 import { dateIcon, timeIcon } from './common';
+import { timePickerEmits } from './emits';
 // import VueTypes, { toType, toValidableType } from 'vue-types';
 import TimePanel from './panel/time';
 import TimeRangePanel from './panel/time-range';
@@ -66,17 +67,7 @@ export default defineComponent({
     ...timePickerProps,
     ...timePanelProps,
   },
-  emits: [
-    'open-change',
-    'input',
-    'change',
-    'update:modelValue',
-    'clear',
-    'shortcut-change',
-    'pick-success',
-    'blur',
-    'focus',
-  ],
+  emits: timePickerEmits,
   // slots: ['header'],
   slots: Object as SlotsType<{
     header?: () => any;
@@ -613,8 +604,8 @@ export default defineComponent({
     const triggerRef = ref<HTMLElement>(null);
 
     expose({
-      focus: handleIconClick
-    })
+      focus: handleIconClick,
+    });
 
     return {
       ...toRefs(state),

@@ -35,3 +35,6 @@ import { withInstall } from '@bkui-vue/shared';
 import Component from './virtual-render';
 const BkVirtualRender = withInstall(Component);
 export default BkVirtualRender;
+export type { VirtualRenderEmits } from './emits';
+export type { VirtualRenderProps } from './props';
+export type BkVirtualRenderInstance = InstanceType<typeof Component>;

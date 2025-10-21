@@ -28,13 +28,7 @@ import { ExtractPropTypes, PropType } from 'vue';
 
 import { IOptions } from '@bkui-vue/directives';
 import { PopoverPropTypes } from '@bkui-vue/popover';
-import {
-  InputBehaviorType,
-  PropTypes,
-  SelectedType,
-  SizeEnum,
-  TagThemeType,
-} from '@bkui-vue/shared';
+import { InputBehaviorType, PropTypes, SelectedType, SizeEnum, TagThemeType } from '@bkui-vue/shared';
 
 export const props = {
   modelValue: PropTypes.any,
@@ -96,3 +90,24 @@ export const props = {
 };
 
 export type SelectProps = ExtractPropTypes<typeof props>;
+
+export const optionProps = {
+  id: {
+    type: [String, Number],
+    require: true,
+  },
+  name: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  disabled: PropTypes.bool.def(false),
+  order: PropTypes.number.def(0),
+};
+
+export type OptionProps = ExtractPropTypes<typeof optionProps>;
+
+export const optionGroupProps = {
+  label: PropTypes.string.def(''),
+  disabled: PropTypes.bool.def(false),
+  collapsible: PropTypes.bool.def(false), // 是否开启折叠
+  collapse: PropTypes.bool.def(false), // 是否折叠初始状态
+};
+
+export type OptionGroupProps = ExtractPropTypes<typeof optionGroupProps>;

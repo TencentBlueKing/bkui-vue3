@@ -28,3 +28,6 @@ import { withInstall } from '@bkui-vue/shared';
 import Component from './rate';
 const BkRate = withInstall(Component);
 export default BkRate;
+export { type RateEmits } from './emits';
+export { type RateProps } from './props';
+export type BkRateInstance = InstanceType<typeof Component>;

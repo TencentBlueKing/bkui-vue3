@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 
-import { NavGroupMeta } from '@bkui-vue/shared';
+import { NavGroupMeta, IComponentWiki } from '@bkui-vue/shared';
 
 // 组件示例
 const presets = [
@@ -81,6 +81,7 @@ const presets = [
   {
     title: '分组选项',
     description: '通过 OptionGroup 组件实现选项分组',
+    props: {},
     slots: {
       default: `
         <BkSelect>
@@ -230,7 +231,7 @@ const props = [
   {
     name: 'modelValue',
     type: 'any',
-    default: '-',
+    default: '',
     description: '绑定值，支持 v-model',
   },
   {
@@ -249,6 +250,7 @@ const props = [
     name: 'size',
     type: 'string',
     default: 'default',
+    options: ['large', 'default', 'small'],
     description: '尺寸，可选值：large、default、small',
   },
   {
@@ -272,7 +274,7 @@ const props = [
   {
     name: 'remoteMethod',
     type: 'function',
-    default: '-',
+    default: '',
     description: '远程搜索方法',
   },
   {
@@ -284,7 +286,7 @@ const props = [
   {
     name: 'minHeight',
     type: 'number',
-    default: '-',
+    default: '',
     description: '下拉列表的最小高度',
   },
   {
@@ -301,8 +303,8 @@ const props = [
   },
   {
     name: 'allOptionId',
-    type: 'number | string',
-    default: '-',
+    type: 'Array<number | string>',
+    default: '',
     description: '全部选项的ID',
   },
   {
@@ -327,18 +329,21 @@ const props = [
     name: 'multipleMode',
     type: 'string',
     default: 'default',
+    options: ['default', 'tag'],
     description: '多选展示方式，可选值：default、tag',
   },
   {
     name: 'tagTheme',
     type: 'string',
-    default: '-',
+    options: ['danger', 'info', 'success', 'warning', ''],
+    default: '',
     description: '标签主题',
   },
   {
     name: 'behavior',
     type: 'string',
-    default: '-',
+    options: ['normal', 'simplicity'],
+    default: 'normal',
     description: '输入框模式',
   },
   {
@@ -356,37 +361,37 @@ const props = [
   {
     name: 'noDataText',
     type: 'string',
-    default: '-',
+    default: '',
     description: '无数据时的文本',
   },
   {
     name: 'noMatchText',
     type: 'string',
-    default: '-',
+    default: '',
     description: '无匹配时的文本',
   },
   {
     name: 'loadingText',
     type: 'string',
-    default: '-',
+    default: '',
     description: '加载时的文本',
   },
   {
     name: 'placeholder',
     type: 'string',
-    default: '-',
+    default: '',
     description: '占位符文本',
   },
   {
     name: 'searchPlaceholder',
     type: 'string',
-    default: '-',
+    default: '',
     description: '搜索框占位符文本',
   },
   {
     name: 'selectAllText',
     type: 'string',
-    default: '-',
+    default: '',
     description: '全选按钮文本',
   },
   {
@@ -403,9 +408,10 @@ const props = [
   },
   {
     name: 'popoverOptions',
-    type: 'Object',
-    default: '-',
+    type: 'Partial<PopoverPropTypes>',
+    default: '',
     description: '弹出层配置选项',
+    link: '/components/popover/api',
   },
   {
     name: 'customContent',
@@ -477,25 +483,26 @@ const props = [
     name: 'keepSearchValue',
     type: 'boolean',
     default: 'false',
-    description: '是否保留搜索值',
+    description: '隐藏popover时是否保留搜索值',
   },
   {
     name: 'prefix',
     type: 'string',
-    default: '-',
+    default: '',
     description: '前缀文本',
   },
   {
     name: 'selectedStyle',
     type: 'string',
-    default: '-',
+    default: 'check',
+    options: ['check', 'checkbox'],
     description: '选中样式',
   },
   {
     name: 'filterOption',
-    type: 'function',
-    default: '-',
-    description: '过滤选项的方法',
+    type: '{ type: Function }',
+    default: '',
+    description: '配置当前options的过滤规则',
   },
   {
     name: 'searchWithPinyin',
@@ -512,6 +519,7 @@ const props = [
   {
     name: 'trigger',
     type: 'string',
+    options: ['default', 'manual'],
     default: 'default',
     description: '触发方式，可选值：default、manual',
   },
@@ -519,13 +527,14 @@ const props = [
     name: 'disableScrollToSelectedOption',
     type: 'boolean',
     default: 'false',
-    description: '是否禁用滚动到选中选项',
+    description: '是否禁用滚动到选中option的功能',
   },
   {
     name: 'inputTooltipsOptions',
-    type: 'Object',
+    type: 'Partial<IOptions>',
     default: '{}',
-    description: '输入框提示配置',
+    description: '透传Input组件的tooltips配置',
+    link: '/components/tooltips/api',
   },
 ];
 
@@ -662,6 +671,106 @@ const emits = [
   },
 ];
 
+const slots = [
+  {
+    name: 'default',
+    description: '默认插槽',
+  },
+  {
+    name: 'suffix',
+    description: '后缀插槽',
+  },
+  {
+    name: 'prefix',
+    description: '前缀插槽',
+  },
+  {
+    name: 'allOptionIcon',
+    description: '全部选项图标插槽',
+  },
+  {
+    name: 'tag',
+    description: '整个标签插槽（multiple-mode=“tag” 生效）',
+    params: [
+      {
+        name: 'selected',
+        type: '{ selected: Array<ISelected> }',
+        description: '选中的选项',
+        link: '/components/select/api#ISelected',
+      },
+    ],
+  },
+  {
+    name: 'tagRender',
+    description: '标签内容插槽（multiple-mode=“tag” 生效）',
+    params: [
+      {
+        name: 'item',
+        type: 'ISelected',
+        description: '标签渲染插槽',
+        link: '/components/select/api#ISelected',
+      },
+    ],
+  },
+  {
+    name: 'trigger',
+    description: '触发器插槽',
+    params: [
+      {
+        name: 'selected',
+        type: '{ selected: Array<ISelected> }',
+        description: '选中的选项',
+        link: '/components/select/api#ISelected',
+      },
+    ],
+  },
+  {
+    name: 'optionRender',
+    description: '选项渲染插槽',
+    params: [
+      {
+        name: 'item',
+        type: '{ item: any }',
+        description: '选项渲染插槽',
+      },
+    ],
+  },
+  {
+    name: 'virtualScrollRender',
+    description: '虚拟滚动选项渲染插槽',
+    params: [
+      {
+        name: 'item',
+        type: '{ item: any }',
+        description: '虚拟滚动选项渲染插槽',
+      },
+    ],
+  },
+  {
+    name: 'extension',
+    description: '扩展插槽',
+  },
+];
+
+const types = [
+  {
+    name: 'ISelected',
+    description: '选中的选项',
+    fields: [
+      {
+        name: 'value',
+        type: 'string',
+        description: '选项的值',
+      },
+      {
+        name: 'label',
+        type: 'string | number',
+        description: '选项的标签',
+      },
+    ],
+  },
+];
+
 // 组件分组
 const group = NavGroupMeta.Form;
 
@@ -674,12 +783,108 @@ const title = 'Select';
 // 组件中文标签
 const titleCN = '选择器';
 
-export default {
-  presets,
-  props,
-  emits,
+const description = '选择器用于从一组选项中选择一个或多个值';
+
+const wiki: IComponentWiki = {
   group,
   name,
   title,
   titleCN,
+  props,
+  emits,
+  slots,
+  types,
+  presets,
+  description,
+  children: [
+    {
+      name: 'option',
+      props: [
+        {
+          name: 'id',
+          type: 'string | number',
+          description: '选项的ID',
+          default: '',
+        },
+        {
+          name: 'name',
+          type: 'string | number',
+          description: '选项的名称',
+          default: '',
+        },
+        {
+          name: 'disabled',
+          type: 'boolean',
+          description: '是否禁用',
+          default: false,
+        },
+        {
+          name: 'order',
+          type: 'number',
+          description: '选项的排序',
+          default: 0,
+        },
+      ],
+      emits: [],
+      slots: [
+        {
+          name: 'default',
+          description: '默认插槽',
+        },
+      ],
+    },
+    {
+      name: 'optionGroup',
+      props: [
+        {
+          name: 'label',
+          type: 'string',
+          description: '选项组的标签',
+          default: '',
+        },
+        {
+          name: 'disabled',
+          type: 'boolean',
+          description: '是否禁用',
+          default: false,
+        },
+        {
+          name: 'collapsible',
+          type: 'boolean',
+          description: '是否可折叠',
+          default: false,
+        },
+        {
+          name: 'collapse',
+          type: 'boolean',
+          description: '是否折叠',
+          default: false,
+        },
+      ],
+      emits: [
+        {
+          name: 'update:collapse',
+          description: '折叠状态变化时触发',
+          params: [
+            {
+              name: 'collapse',
+              type: 'boolean',
+            },
+          ],
+        },
+      ],
+      slots: [
+        {
+          name: 'default',
+          description: '默认插槽',
+        },
+        {
+          name: 'label',
+          description: '选项组标签插槽',
+        },
+      ],
+    },
+  ],
 };
+
+export default wiki;

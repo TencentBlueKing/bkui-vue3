@@ -28,5 +28,11 @@ import { withInstall } from '@bkui-vue/shared';
 
 import Component from './transfer';
 
+export { type TransferEmits } from './emits';
+export { type TransferProps } from './props';
+
 const Transfer = withInstall(Component);
+
 export default Transfer;
+export type BkTransferInstance = InstanceType<typeof Component>;
+export type ITransferInstance = InstanceType<typeof Component>;

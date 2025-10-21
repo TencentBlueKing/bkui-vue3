@@ -102,14 +102,10 @@ const emits = [
   {
     name: 'hover',
     description: 'hover 事件的回调',
-    type: 'Function',
-    default: '-',
   },
   {
     name: 'leave',
     description: 'leave 事件的回调',
-    type: 'Function',
-    default: '-',
   },
 ];
 

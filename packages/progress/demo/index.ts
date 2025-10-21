@@ -154,8 +154,15 @@ const props = [
 // 组件事件，用来自动生成事件文档
 const emits = [];
 
+const slots = [
+  {
+    name: 'default',
+    description: '默认插槽',
+  },
+];
+
 // 组件分组
-const group = NavGroupMeta.Nav;
+const group = NavGroupMeta.Data;
 
 // 组件名称
 const name = 'progress';
@@ -176,6 +183,7 @@ const wiki: IComponentWiki = {
   titleCN,
   props,
   emits,
+  slots,
   presets,
   description,
 };

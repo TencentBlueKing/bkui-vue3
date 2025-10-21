@@ -24,9 +24,8 @@
  * IN THE SOFTWARE.
  */
 
-export const radioButtonEmits = {
-  'update:modelValue': (value: unknown) => value !== undefined,
-  change: (value: unknown) => value !== undefined,
-} as const;
+export const emits = {
+  changeVisible: (_value: boolean) => _value !== undefined,
+};
 
-export type RadioButtonEmits = typeof radioButtonEmits;
+export type PickerDropdownEmits = typeof emits;

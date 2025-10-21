@@ -98,10 +98,17 @@ const emits = [
     description: '固定状态发生改变时触发的事件',
     params: [
       {
-        name: 'affixed',
+        name: '_value',
         type: 'boolean',
       },
     ],
+  },
+];
+
+const slots = [
+  {
+    name: 'default',
+    description: '默认插槽, 用于放置需要固定的内容',
   },
 ];
 
@@ -164,6 +171,7 @@ const wiki: IComponentWiki = {
   titleCN,
   props,
   emits,
+  slots,
   presets,
   types,
   description,

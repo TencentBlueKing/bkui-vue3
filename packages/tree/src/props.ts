@@ -65,7 +65,7 @@ export type IPrefixIcon = (
   item: TreeNode,
 ) => VNode | string;
 
-export const treeProps = {
+export const props = {
   /**
    * 渲染列表
    */
@@ -324,4 +324,4 @@ export type SearchOption = {
   showChildNodes?: boolean;
 };
 
-export type TreePropTypes = Readonly<ExtractPropTypes<typeof treeProps>>;
+export type TreeProps = Readonly<ExtractPropTypes<typeof props>>;

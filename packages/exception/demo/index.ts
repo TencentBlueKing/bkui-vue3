@@ -77,6 +77,25 @@ const props = [
 
 const emits = [];
 
+const slots = [
+  {
+    name: 'type',
+    description: '类型插槽',
+  },
+  {
+    name: 'title',
+    description: '标题插槽',
+  },
+  {
+    name: 'description',
+    description: '描述插槽',
+  },
+  {
+    name: 'default',
+    description: '底部插槽',
+  },
+];
+
 const group = NavGroupMeta.Nav;
 
 const name = 'exception';
@@ -94,6 +113,7 @@ const wiki: IComponentWiki = {
   titleCN,
   props,
   emits,
+  slots,
   presets,
   description,
 };

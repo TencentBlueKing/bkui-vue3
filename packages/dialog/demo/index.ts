@@ -53,7 +53,7 @@ const presets = [
     },
   },
   {
-    title: '遮罩',
+    title: '关闭前确认',
     description: '通过 beforeChange 属性关闭前确认。',
     props: {
       title: '关闭前确认',
@@ -204,7 +204,12 @@ const emits = [
   {
     name: 'update:is-show',
     description: '弹框显示状态变化时触发',
-    params: [],
+    params: [
+      {
+        name: '_value',
+        type: 'boolean',
+      },
+    ],
   },
   {
     name: 'shown',
@@ -218,8 +223,42 @@ const emits = [
   },
   {
     name: 'closed',
-    description: '点击取消，或者按 esc 键关闭弹框时触发',
+    description: '点击取消，右上角的关闭icon或按esc触发',
     params: [],
+  },
+  {
+    name: 'confirm',
+    description: '点击确认按钮时触发',
+    params: [],
+  },
+  {
+    name: 'prev',
+    description: '点击上一步按钮时触发',
+    params: [],
+  },
+  {
+    name: 'next',
+    description: '点击下一步按钮时触发',
+    params: [],
+  },
+];
+
+const slots = [
+  {
+    name: 'header',
+    description: '头部插槽',
+  },
+  {
+    name: 'default',
+    description: '内容插槽',
+  },
+  {
+    name: 'footer',
+    description: '底部插槽',
+  },
+  {
+    name: 'tools',
+    description: '工具栏插槽，顶部区域',
   },
 ];
 
@@ -245,6 +284,7 @@ const wiki: IComponentWiki = {
   titleCN,
   props,
   emits,
+  slots,
   presets,
   description,
 };

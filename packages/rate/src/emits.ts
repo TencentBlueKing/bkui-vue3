@@ -24,8 +24,6 @@
  * IN THE SOFTWARE.
  */
 
-export const formItemEmits = {
-  // FormItem 组件本身不发出事件，但保留空的 emits 定义以保持一致性
-};
+export const emits = ['change', 'hover-change', 'update:modelValue'];
 
-export type FormItemEmits = typeof formItemEmits;
+export type RateEmits = typeof emits;

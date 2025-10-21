@@ -39,22 +39,15 @@ import {
 import Checkbox from '@bkui-vue/checkbox';
 import { usePrefix } from '@bkui-vue/config-provider';
 import { Done } from '@bkui-vue/icon';
-import { classes, PropTypes, SelectedTypeEnum } from '@bkui-vue/shared';
+import { classes, SelectedTypeEnum } from '@bkui-vue/shared';
 import isEqual from 'lodash/isEqual';
 
 import { optionGroupKey, selectKey } from './common';
+import { optionProps } from './props';
 
 export default defineComponent({
   name: 'Option',
-  props: {
-    id: {
-      type: [String, Number],
-      require: true,
-    },
-    name: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    disabled: PropTypes.bool.def(false),
-    order: PropTypes.number.def(0),
-  },
+  props: optionProps,
   setup(props, { attrs }) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { proxy } = getCurrentInstance() as any;

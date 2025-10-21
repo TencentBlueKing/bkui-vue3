@@ -30,8 +30,8 @@ import { usePrefix } from '@bkui-vue/config-provider';
 import { classes } from '@bkui-vue/shared';
 
 import { useFocus, useRadio } from './common';
-import { radioButtonEmits } from './radio-button-emits';
-import { radioButtonProps } from './radio-button-props';
+import { radioButtonEmits } from './emits';
+import { radioButtonProps } from './props';
 
 export default defineComponent({
   name: 'RadioButton',
