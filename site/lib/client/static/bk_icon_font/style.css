@@ -23,6 +23,9 @@ url("fonts/iconcool.eot?#iefix") format("embedded-opentype");
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-help:before {
+	content: "\e10c";
+}
 .icon-preset:before {
 	content: "\e101";
 }
