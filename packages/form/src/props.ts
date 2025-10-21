@@ -37,3 +37,32 @@ export const props = {
 };
 
 export type FormProps = ExtractPropTypes<typeof props>;
+
+export const formItemProps = {
+  itemType: PropTypes.oneOf(['default', 'vertical']),
+  label: PropTypes.string,
+  labelWidth: PropTypes.oneOfType([Number, String]),
+  labelPosition: PropTypes.oneOf(['left', 'center', 'right']),
+  property: PropTypes.string.def(''),
+  required: PropTypes.bool.def(false),
+  email: PropTypes.bool.def(false),
+  max: PropTypes.number,
+  min: PropTypes.number,
+  maxlength: PropTypes.number,
+  rules: PropTypes.array,
+  description: PropTypes.string,
+  errorDisplayType: PropTypes.oneOf(['tooltips', 'normal']).def('normal'),
+  errorTipAppendToParent: PropTypes.bool.def(false),
+};
+
+export type FormItemProps = ExtractPropTypes<typeof formItemProps>;
+
+export const composeFormItemProps = {
+  headBackgroundColor: {
+    type: String,
+    default: '#FAFBFD',
+  },
+  tailBackgroundColor: String,
+};
+
+export type ComposeFormItemProps = ExtractPropTypes<typeof composeFormItemProps>;

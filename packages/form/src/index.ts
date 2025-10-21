@@ -36,14 +36,8 @@ export default BkForm;
 
 export { BkForm, FormItem as BkFormItem, ComposeFormItem as BkComposeFormItem, formItemKey, formKey, useFormItem };
 
-export type { ComposeFormItemEmits } from './compose-form-item-emits';
-export type { ComposeFormItemProps } from './compose-form-item-props';
+export type { FormEmits, FormItemEmits, ComposeFormItemEmits } from './emits';
+export type { FormProps, FormItemProps, ComposeFormItemProps } from './props';
 export type ComposeFormItemInstance = InstanceType<typeof ComposeFormItem>;
-
-export type { FormEmits } from './emits';
-export type { FormItemEmits } from './form-item-emits';
 export type FormItemInstance = InstanceType<typeof FormItem>;
-
-export type { FormItemProps } from './form-item-props';
-export type { FormProps } from './props';
 export type FormInstance = InstanceType<typeof Form>;

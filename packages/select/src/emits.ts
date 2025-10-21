@@ -39,3 +39,15 @@ export const emits = {
 };
 
 export type SelectEmits = typeof emits;
+
+export const optionEmits = {
+  // 事件暂无
+};
+
+export type OptionEmits = typeof optionEmits;
+
+export const optionGroupEmits = {
+  'update:collapse': (collapse: boolean) => collapse,
+};
+
+export type OptionGroupEmits = typeof optionGroupEmits; 

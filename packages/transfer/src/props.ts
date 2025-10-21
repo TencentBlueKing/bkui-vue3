@@ -26,7 +26,9 @@
 
 import { PropTypes } from '@bkui-vue/shared';
 
-export const transferProps = {
+import type { ExtractPropTypes } from 'vue';
+
+export const props = {
   // 顶部title(title[0]: 左侧title,title[1]: 右侧title,)
   title: PropTypes.arrayOf(PropTypes.string).def([]),
   // 自定义class
@@ -54,3 +56,5 @@ export const transferProps = {
   // 支持checkbox多选模式
   multiple: PropTypes.bool.def(false),
 };
+
+export type TransferProps = ExtractPropTypes<typeof props>;

@@ -131,7 +131,37 @@ const emits = [
     params: [
       {
         name: 'item',
+        type: 'INavItem',
+        link: '/component/fixed-navbar/api#INavItem',
+      },
+    ],
+  },
+];
+
+const types = [
+  {
+    name: 'INavItem',
+    description: '导航项',
+    fields: [
+      {
+        name: 'icon',
+        type: 'string',
+        description: '图标类名',
+      },
+      {
+        name: 'text',
+        type: 'string',
+        description: '导航项文本',
+      },
+      {
+        name: 'action',
+        type: 'function',
+        description: '点击后的回调函数',
+      },
+      {
+        name: 'tooltip',
         type: 'object',
+        description: '提示信息配置',
       },
     ],
   },
@@ -155,6 +185,7 @@ const wiki: IComponentWiki = {
   props,
   emits,
   presets,
+  types,
   description,
 };
 

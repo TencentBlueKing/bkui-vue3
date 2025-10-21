@@ -42,8 +42,8 @@ import { classes, formItemKey, useForm, useFormItem } from '@bkui-vue/shared';
 import get from 'lodash/get';
 import isFunction from 'lodash/isFunction';
 
-import { formItemEmits } from './form-item-emits';
-import { formItemProps } from './form-item-props';
+import { formItemEmits } from './emits';
+import { formItemProps } from './props';
 import { getRuleMessage } from './utils';
 import defaultValidator from './validator';
 

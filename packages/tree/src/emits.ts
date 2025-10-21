@@ -23,14 +23,8 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
+import { TreeEmitEventsType } from './constant';
 
-import { PropTypes } from '@bkui-vue/shared';
+export const emits = TreeEmitEventsType;
 
-import type { ExtractPropTypes } from 'vue';
-
-export const dropdownMenuProps = {
-  /** 外部设置的 class name */
-  extCls: PropTypes.string,
-};
-
-export type DropdownMenuProps = ExtractPropTypes<typeof dropdownMenuProps>;
+export type TreeEmits = typeof emits;

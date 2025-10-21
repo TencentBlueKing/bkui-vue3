@@ -25,9 +25,21 @@
  */
 
 export const emits = {
-  showChange: (value: boolean) => value !== undefined,
+  showChange: (val: boolean) => val !== undefined,
   show: () => true,
   hide: () => true,
 };
 
 export type DropdownEmits = typeof emits;
+
+export const dropdownMenuEmits = {
+  // DropdownMenu 组件本身不发出事件，但保留空的 emits 定义以保持一致性
+};
+
+export type DropdownMenuEmits = typeof dropdownMenuEmits;
+
+export const dropdownItemEmits = {
+  click: (event: MouseEvent) => event !== undefined,
+};
+
+export type DropdownItemEmits = typeof dropdownItemEmits;

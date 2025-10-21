@@ -40,3 +40,27 @@ export const props = {
 };
 
 export type RadioProps = Readonly<ExtractPropTypes<typeof props>>;
+
+export const radioButtonProps = {
+  name: PropTypes.string.def(''),
+  label: PropTypes.oneOfType([PropTypes.bool, PropTypes.string, PropTypes.number]).isRequired,
+  modelValue: PropTypes.oneOfType([PropTypes.bool, PropTypes.string, PropTypes.number]).def(''),
+  checked: PropTypes.bool.def(false),
+  disabled: PropTypes.bool.def(false),
+  size: PropTypes.size(),
+  beforeChange: func<(event: boolean | number | string) => Promise<boolean> | boolean>().def(() => true),
+};
+
+export type RadioButtonProps = Readonly<ExtractPropTypes<typeof radioButtonProps>>;
+
+export const radioGroupProps = {
+  name: PropTypes.string.def(''),
+  modelValue: PropTypes.oneOfType([PropTypes.bool, PropTypes.string, PropTypes.number]),
+  disabled: PropTypes.bool,
+  withValidate: PropTypes.bool.def(true),
+  type: PropTypes.oneOf(['tab', 'capsule', 'card']).def('tab'),
+  size: PropTypes.size(),
+  beforeChange: func<(event: boolean | number | string) => Promise<boolean> | boolean>().def(() => true),
+};
+
+export type RadioGroupProps = Readonly<ExtractPropTypes<typeof radioGroupProps>>;

@@ -24,61 +24,19 @@
  * IN THE SOFTWARE.
  */
 
-import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, PropType, reactive, ref, toRefs } from 'vue';
+import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, reactive, ref, toRefs } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import { BKPopover, bkZIndexManager, IBKPopover } from '@bkui-vue/shared';
 
-import type { DatePickerPlacementType } from '../interface';
+import { emits } from './emits';
+import { props } from './props';
+
 import type { Placement } from '@popperjs/core';
-import type { ExtractPropTypes } from 'vue';
-
-const pickerDropdownProps = {
-  placement: {
-    type: String as PropType<DatePickerPlacementType>,
-    default: 'bottom-start',
-    validator: value => {
-      const validList: DatePickerPlacementType[] = [
-        'top',
-        'top-start',
-        'top-end',
-        'bottom',
-        'bottom-start',
-        'bottom-end',
-        'left',
-        'left-start',
-        'left-end',
-        'right',
-        'right-start',
-        'right-end',
-      ];
-      if (validList.indexOf(value) < 0) {
-        console.error(`placement property is not valid: '${value}'`);
-        return false;
-      }
-      return true;
-    },
-  },
-  className: {
-    type: String,
-  },
-  extPopoverCls: {
-    type: String,
-  },
-  appendToBody: {
-    type: Boolean,
-  },
-  triggerRef: {
-    type: Object,
-  },
-  onClick: Function as PropType<(e: MouseEvent) => void>,
-} as const;
-
-export type PickerDropdownProps = Readonly<ExtractPropTypes<typeof pickerDropdownProps>>;
 
 export default defineComponent({
-  props: pickerDropdownProps,
-  emits: ['changeVisible'],
+  props,
+  emits,
   setup(props, { emit }) {
     let popoverInstance: any = Object.create(null);
 

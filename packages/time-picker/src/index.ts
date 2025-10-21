@@ -29,3 +29,5 @@ import { withInstall } from '@bkui-vue/shared';
 
 const BkTimePicker = withInstall(TimePicker);
 export default BkTimePicker;
+export { type TimePickerEmits, type TimePickerProps } from '@bkui-vue/date-picker';
+export type BkTimePickerInstance = InstanceType<typeof TimePicker>;

@@ -24,20 +24,49 @@
  * IN THE SOFTWARE.
  */
 
-import { func } from 'vue-types';
+import { ExtractPropTypes, PropType } from 'vue';
 
-import { PropTypes } from '@bkui-vue/shared';
+import type { DatePickerPlacementType } from '../interface';
 
-import type { ExtractPropTypes } from 'vue';
-
-export const radioGroupProps = {
-  name: PropTypes.string.def(''),
-  modelValue: PropTypes.oneOfType([PropTypes.bool, PropTypes.string, PropTypes.number]),
-  disabled: PropTypes.bool,
-  withValidate: PropTypes.bool.def(true),
-  type: PropTypes.oneOf(['tab', 'capsule', 'card']).def('tab'),
-  size: PropTypes.size(),
-  beforeChange: func<(event: boolean | number | string) => Promise<boolean> | boolean>().def(() => true),
+export const props = {
+  placement: {
+    type: String as PropType<DatePickerPlacementType>,
+    default: 'bottom-start',
+    validator: value => {
+      const validList: DatePickerPlacementType[] = [
+        'top',
+        'top-start',
+        'top-end',
+        'bottom',
+        'bottom-start',
+        'bottom-end',
+        'left',
+        'left-start',
+        'left-end',
+        'right',
+        'right-start',
+        'right-end',
+      ];
+      if (validList.indexOf(value) < 0) {
+        console.error(`placement property is not valid: '${value}'`);
+        return false;
+      }
+      return true;
+    },
+  },
+  className: {
+    type: String,
+  },
+  extPopoverCls: {
+    type: String,
+  },
+  appendToBody: {
+    type: Boolean,
+  },
+  triggerRef: {
+    type: Object,
+  },
+  onClick: Function as PropType<(e: MouseEvent) => void>,
 };
 
-export type RadioGroupProps = Readonly<ExtractPropTypes<typeof radioGroupProps>>;
+export type PickerDropdownProps = Readonly<ExtractPropTypes<typeof props>>;

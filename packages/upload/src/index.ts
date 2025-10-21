@@ -28,3 +28,6 @@ import { withInstall } from '@bkui-vue/shared';
 import Component from './upload';
 const Upload = withInstall(Component);
 export default Upload;
+export type { UploadEmits } from './emits';
+export type { UploadProps } from './props';
+export type UploadInstance = InstanceType<typeof Component>;
