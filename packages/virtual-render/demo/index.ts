@@ -45,7 +45,7 @@ const props = [
   {
     name: 'list',
     description: '传入原始数据源',
-    type: 'Array',
+    type: 'Array<any>',
     default: '[]',
   },
   {
@@ -76,7 +76,7 @@ const props = [
     name: 'maxHeight',
     description: '整体最大高度',
     type: 'number | string',
-    default: 'auto',
+    default: '',
   },
   {
     name: 'height',
@@ -93,13 +93,13 @@ const props = [
   {
     name: 'className',
     description: '最外层元素ClassName',
-    type: 'string | array | object',
+    type: 'string | Array<string | object> | object',
     default: '',
   },
   {
     name: 'contentClassName',
     description: '内层层元素ClassName',
-    type: 'string | array | object',
+    type: 'string | Array<string | object> | object',
     default: '',
   },
   {
@@ -179,6 +179,7 @@ const props = [
     description: '是否允许滚动条改变原有DOM结构',
     type: 'IScrollbarOption',
     default: '{ enabled: true }',
+    link: '/components/virtual-render/api#IScrollbarOption',
   },
   {
     name: 'autoReset',
@@ -202,12 +203,71 @@ const props = [
     name: 'onContentScroll',
     description: '内容滚动事件',
     type: 'function',
-    default: 'undefined',
+    default: '',
   },
 ];
 
 // 组件事件，用来自动生成事件文档
-const emits = [];
+const emits = [
+  {
+    name: 'content-scroll',
+    description: '内容滚动事件',
+    params: [
+      {
+        name: 'event',
+        type: 'any',
+        description: '滚动事件',
+      },
+    ],
+  },
+];
+
+const slots = [
+  {
+    name: 'default',
+    description: '默认插槽',
+    params: [
+      {
+        name: 'data',
+        type: 'Array<any>',
+        description: '数据',
+      },
+    ],
+  },
+  {
+    name: 'beforeContent',
+    description: '前插槽',
+  },
+  {
+    name: 'afterContent',
+    description: '后插槽',
+  },
+  {
+    name: 'afterSection',
+    description: '后分组插槽',
+  },
+];
+
+const types = [
+  {
+    name: 'IScrollbarOption',
+    description: '滚动条选项',
+    fields: [
+      {
+        name: 'enabled',
+        type: 'boolean',
+        description: '是否启用滚动条',
+      },
+      {
+        name: 'size',
+        type: 'string',
+        description: '滚动条尺寸',
+        default: 'normal',
+        options: ['normal', 'small'],
+      },
+    ],
+  },
+];
 
 // 组件分组
 const group = NavGroupMeta.Data;
@@ -231,6 +291,8 @@ const wiki: IComponentWiki = {
   titleCN,
   props,
   emits,
+  types,
+  slots,
   presets,
   description,
 };

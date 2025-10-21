@@ -66,17 +66,140 @@ const props = [
     type: 'string',
     default: '',
   },
+  {
+    name: 'searchPlaceholder',
+    description: '搜索框 placeholder',
+    type: 'string',
+    default: '',
+  },
+  {
+    name: 'settingKey',
+    description: '唯一key值',
+    type: 'string',
+    default: 'id',
+  },
+  {
+    name: 'displayKey',
+    description: '循环list时，显示字段的key值(当list为普通数组时可不传传了也无效)',
+    type: 'string',
+    default: 'value',
+  },
+  {
+    name: 'sortKey',
+    description: '排序所依据的key(当list为普通数组时可不传，默认按照index值排序)',
+    type: 'string',
+    default: 'value',
+  },
+  {
+    name: 'showOverflowTips',
+    description: '内容超出是否显示tooltip',
+    type: 'boolean',
+    default: false,
+  },
+  {
+    name: 'searchable',
+    description: '是否开启搜索',
+    type: 'boolean',
+    default: false,
+  },
+  {
+    name: 'sortable',
+    description: '是否开启排序功能',
+    type: 'boolean',
+    default: false,
+  },
+  {
+    name: 'sourceList',
+    description: '穿梭框数据源(支持普通数组)',
+    type: 'Array<any>',
+    default: [],
+  },
+  {
+    name: 'targetList',
+    description: '默认已选择的数据源',
+    type: 'Array<any>',
+    default: [],
+  },
+  {
+    name: 'emptyContent',
+    description: '穿梭框无数据时提示文案',
+    type: 'Array<string>',
+    default: [],
+  },
+  {
+    name: 'multiple',
+    description: '支持checkbox多选模式',
+    type: 'boolean',
+    default: false,
+  },
 ];
 
 // 组件事件，用来自动生成事件文档
 const emits = [
   {
-    name: 'open-change',
-    description: '弹框显示状态变化时触发',
+    name: 'change',
+    description: '值变化时触发',
     params: [
       {
-        name: 'visible',
-        type: 'boolean',
+        name: 'sourceList',
+        type: 'Array<any>',
+      },
+      {
+        name: 'targetList',
+        type: 'Array<any>',
+      },
+      {
+        name: 'targetValueList',
+        type: 'Array<any>',
+      },
+    ],
+  },
+  {
+    name: 'update:targetList',
+    description: '更新 targetList 的事件',
+    params: [
+      {
+        name: 'targetList',
+        type: 'Array<any>',
+      },
+    ],
+  },
+];
+
+const slots = [
+  {
+    name: 'left-header',
+    description: '左侧头部插槽',
+  },
+  {
+    name: 'right-header',
+    description: '右侧头部插槽',
+  },
+  {
+    name: 'left-empty-content',
+    description: '左侧无数据时插槽',
+  },
+  {
+    name: 'right-empty-content',
+    description: '右侧空内容插槽',
+  },
+  {
+    name: 'source-option',
+    description: '左侧选项插槽',
+    params: [
+      {
+        name: 'item',
+        type: 'any',
+      },
+    ],
+  },
+  {
+    name: 'target-option',
+    description: '右侧选项插槽',
+    params: [
+      {
+        name: 'item',
+        type: 'any',
       },
     ],
   },
@@ -104,6 +227,7 @@ const wiki: IComponentWiki = {
   titleCN,
   props,
   emits,
+  slots,
   presets,
   description,
 };

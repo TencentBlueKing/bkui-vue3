@@ -61,6 +61,7 @@ const props = [
     description: '上传文件',
     type: 'Array<UploadFile>',
     default: [],
+    link: '/components/upload/api#UploadFile',
   },
   {
     name: 'name',
@@ -129,6 +130,7 @@ const props = [
       }
       return false;
     },
+    link: '/components/upload/api#APIResponse',
   },
   {
     name: 'headers',
@@ -139,8 +141,9 @@ const props = [
   {
     name: 'header',
     description: '请求头',
-    type: 'HeaderDataAttr | HeaderDataAttr[]',
+    type: 'HeaderDataAttr | Array<HeaderDataAttr>',
     default: [],
+    link: '/components/upload/api#HeaderDataAttr',
   },
   {
     name: 'tip',
@@ -169,14 +172,16 @@ const props = [
   {
     name: 'data',
     description: '上传文件数据',
-    type: 'ExtraFormData | ExtraFormData[]',
+    type: 'ExtraFormData | Array<ExtraFormData>',
     default: [],
+    link: '/components/upload/api#ExtraFormData',
   },
   {
     name: 'formDataAttributes',
     description: '上传文件数据属性',
-    type: 'FormDataAttr | FormDataAttr[]',
+    type: 'FormDataAttr | Array<FormDataAttr>',
     default: [],
+    link: '/components/upload/api#FormDataAttr',
   },
   {
     name: 'extCls',
@@ -187,8 +192,9 @@ const props = [
   {
     name: 'customRequest',
     description: '自定义请求',
-    type: 'UploadRequestHandler',
+    type: '(options: UploadRequestOptions) => Promise<unknown> | XMLHttpRequest',
     default: '',
+    link: '/components/upload/api#UploadRequestOptions',
   },
   {
     name: 'selectChange',
@@ -199,13 +205,13 @@ const props = [
   {
     name: 'beforeUpload',
     description: '上传文件前',
-    type: '(file: UploadRawFile, uploadFiles: File[]) => Promise<boolean> | boolean',
+    type: '(file: File & { uid: number }, Array<UploadFile>) => Promise<boolean> | boolean',
     default: '',
   },
   {
     name: 'beforeRemove',
     description: '删除文件前',
-    type: '(file: UploadFile, uploadFiles: UploadFile[]) => Promise<boolean> | boolean',
+    type: '(file: UploadFile, uploadFiles: Array<UploadFile>) => Promise<boolean> | boolean',
     default: '',
   },
   {
@@ -252,7 +258,8 @@ const emits = [
       },
       {
         name: 'fileList',
-        type: 'UploadFiles',
+        type: 'Array<UploadFile>',
+        link: '/components/upload/api#UploadFile',
       },
     ],
   },
@@ -262,15 +269,16 @@ const emits = [
     params: [
       {
         name: 'event',
-        type: 'UploadProgressEvent',
+        type: 'ProgressEvent & { percent: number }',
       },
       {
         name: 'file',
-        type: 'UploadRawFile',
+        type: 'File & { uid: number }',
       },
       {
         name: 'fileList',
-        type: 'UploadFiles',
+        type: 'Array<UploadFile>',
+        link: '/components/upload/api#UploadFile',
       },
     ],
   },
@@ -284,11 +292,12 @@ const emits = [
       },
       {
         name: 'file',
-        type: 'UploadRawFile',
+        type: 'File & { uid: number }',
       },
       {
         name: 'fileList',
-        type: 'UploadFiles',
+        type: 'Array<UploadFile>',
+        link: '/components/upload/api#UploadFile',
       },
     ],
   },
@@ -298,11 +307,12 @@ const emits = [
     params: [
       {
         name: 'rawFile',
-        type: 'UploadRawFile',
+        type: 'File & { uid: number }',
       },
       {
         name: 'fileList',
-        type: 'UploadFiles',
+        type: 'Array<UploadFile>',
+        link: '/components/upload/api#UploadFile',
       },
       {
         name: 'error',
@@ -317,10 +327,12 @@ const emits = [
       {
         name: 'file',
         type: 'UploadFile',
+        link: '/components/upload/api#UploadFile',
       },
       {
         name: 'fileList',
-        type: 'UploadFile[]',
+        type: 'Array<UploadFile>',
+        link: '/components/upload/api#UploadFile',
       },
     ],
   },
@@ -330,7 +342,8 @@ const emits = [
     params: [
       {
         name: 'fileList',
-        type: 'UploadFiles',
+        type: 'Array<UploadFile>',
+        link: '/components/upload/api#UploadFile',
       },
     ],
   },
@@ -341,6 +354,258 @@ const emits = [
       {
         name: 'file',
         type: 'UploadFile',
+        link: '/components/upload/api#UploadFile',
+      },
+      {
+        name: 'files',
+        type: 'Array<UploadFile>',
+        link: '/components/upload/api#UploadFile',
+      },
+    ],
+  },
+];
+
+const types = [
+  {
+    name: 'UploadFile',
+    description: '上传文件',
+    fields: [
+      {
+        name: 'name',
+        type: 'string',
+        description: '文件名称',
+      },
+      {
+        name: 'status',
+        type: 'string',
+        description: '文件状态',
+        options: ['success', 'error', 'uploading', 'new'],
+      },
+      {
+        name: 'statusText',
+        type: 'string',
+        description: '文件状态文本',
+      },
+      {
+        name: 'percentage',
+        type: 'number',
+        description: '文件上传进度',
+      },
+      {
+        name: 'response',
+        type: 'unknown',
+        description: '文件上传响应',
+      },
+      {
+        name: 'size',
+        type: 'number',
+        description: '文件大小',
+      },
+      {
+        name: 'uid',
+        type: 'number',
+        description: '文件唯一标识',
+      },
+      {
+        name: 'url',
+        type: 'string',
+        description: '文件URL',
+      },
+      {
+        name: 'raw',
+        type: 'File & { uid: number }',
+        description: '文件原始数据',
+      },
+      {
+        name: 'isPic',
+        type: 'boolean',
+        description: '是否为图片',
+      },
+    ],
+  },
+  {
+    name: 'APIResponse',
+    description: 'API响应',
+    fields: [
+      {
+        name: 'code',
+        type: 'number',
+        description: '响应码',
+      },
+      {
+        name: 'data',
+        type: 'any',
+        description: '响应数据',
+      },
+      {
+        name: 'message',
+        type: 'string',
+        description: '响应消息',
+      },
+    ],
+  },
+  {
+    name: 'HeaderDataAttr',
+    description: '请求头数据',
+    fields: [
+      {
+        name: 'name',
+        type: 'string',
+        description: '请求头名称',
+      },
+      {
+        name: 'value',
+        type: 'string',
+        description: '请求头值',
+      },
+    ],
+  },
+  {
+    name: 'ExtraFormData',
+    description: '额外上传数据',
+    fields: [
+      {
+        name: '[key: string]',
+        type: '[Blob | string, string] | Blob | string',
+        description: 'Blob | string 与 string 的键值对，或 Blob | string',
+      },
+    ],
+  },
+  {
+    name: 'FormDataAttr',
+    description: '表单数据属性',
+    fields: [
+      {
+        name: 'name',
+        type: 'string',
+        description: '数据名称',
+      },
+      {
+        name: 'value',
+        type: '[Blob | string, string] | Blob | string',
+        description: '数据值',
+      },
+    ],
+  },
+  {
+    name: 'UploadRequestOptions',
+    description: '上传请求选项',
+    fields: [
+      {
+        name: 'action',
+        type: 'string',
+        description: '上传地址',
+      },
+      {
+        name: 'method',
+        type: 'string',
+        description: '上传方法',
+      },
+      {
+        name: 'type',
+        type: 'string',
+        options: ['formdata', 'binary'],
+        description: '上传类型',
+      },
+      {
+        name: 'data',
+        type: 'ExtraFormData | Array<ExtraFormData>',
+        description: '上传数据',
+        link: '/components/upload/api#ExtraFormData',
+      },
+      {
+        name: 'formDataAttributes',
+        type: 'FormDataAttr | Array<FormDataAttr>',
+        description: '表单数据属性',
+        link: '/components/upload/api#FormDataAttr',
+      },
+      {
+        name: 'filename',
+        type: 'string',
+        description: '文件名称',
+      },
+      {
+        name: 'file',
+        type: 'File',
+        description: '文件',
+      },
+      {
+        name: 'headers',
+        type: 'Headers',
+        description: '请求头',
+      },
+      {
+        name: 'header',
+        type: 'HeaderDataAttr | Array<HeaderDataAttr>',
+        description: '请求头',
+        link: '/components/upload/api#HeaderDataAttr',
+      },
+      {
+        name: 'withCredentials',
+        type: 'boolean',
+        description: '是否携带凭证',
+      },
+      {
+        name: 'sliceUrl',
+        type: 'string',
+        description: '分片上传地址',
+      },
+      {
+        name: 'mergeUrl',
+        type: 'string',
+        description: '合并上传地址',
+      },
+      {
+        name: 'chunkSize',
+        type: 'number',
+        description: '分片大小',
+      },
+      {
+        name: 'onProgress',
+        type: '(event: ProgressEvent & { percent: number }, i?: number) => void',
+        description: '上传进度',
+      },
+      {
+        name: 'onError',
+        type: '(error: Error) => void',
+        description: '上传错误',
+      },
+      {
+        name: 'onSuccess',
+        type: '(res: APIResponse | XMLHttpRequestResponseType | unknown) => void',
+        description: '上传成功',
+        link: '/components/upload/api#APIResponse',
+      },
+      {
+        name: 'onComplete',
+        type: 'function',
+        description: '上传完成',
+      },
+    ],
+  },
+];
+
+const slots = [
+  {
+    name: 'default',
+    description: '自定义默认内容',
+  },
+  {
+    name: 'trigger',
+    description: '触发文件选择框的内容',
+  },
+  {
+    name: 'tip',
+    description: '提示说明文字',
+  },
+  {
+    name: 'list',
+    description: '文件列表项内容',
+    params: [
+      {
+        name: 'file',
+        type: '{ file: UploadFile }',
+        link: '/components/upload/api#UploadFile',
       },
     ],
   },
@@ -368,6 +633,8 @@ const wiki: IComponentWiki = {
   titleCN,
   props,
   emits,
+  types,
+  slots,
   presets,
   description,
 };

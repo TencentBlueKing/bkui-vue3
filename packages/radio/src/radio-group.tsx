@@ -30,8 +30,8 @@ import { usePrefix } from '@bkui-vue/config-provider';
 import { useFormItem } from '@bkui-vue/shared';
 
 import { radioGroupKey } from './common';
-import { radioGroupEmits } from './radio-group-emits';
-import { radioGroupProps } from './radio-group-props';
+import { radioGroupEmits } from './emits';
+import { radioGroupProps } from './props';
 
 import type { IRadioGroupContext } from './type';
 

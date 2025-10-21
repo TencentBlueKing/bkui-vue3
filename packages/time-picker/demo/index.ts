@@ -282,6 +282,19 @@ const emits = [
   },
 ];
 
+const slots = [
+  {
+    name: 'trigger',
+    description: '可用该插槽配合 open 属性，自定义日期选择器的展示',
+    params: [
+      {
+        name: 'displayValue',
+        type: 'string',
+      },
+    ],
+  },
+];
+
 // 组件分组
 const group = NavGroupMeta.Form;
 
@@ -304,6 +317,7 @@ const wiki: IComponentWiki = {
   titleCN,
   props,
   emits,
+  slots,
   presets,
   description,
 };

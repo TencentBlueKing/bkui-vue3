@@ -48,6 +48,7 @@ import {
 import { usePrefix } from '@bkui-vue/config-provider';
 import { VirtualElement } from '@bkui-vue/scrollbar';
 
+import { emits } from './emits';
 import { type VirtualRenderProps, virtualRenderProps } from './props';
 import useFixTop from './use-fix-top';
 import useScrollbar from './use-scrollbar';
@@ -60,7 +61,7 @@ export default defineComponent({
     bkVirtualRender: virtualRender,
   },
   props: virtualRenderProps,
-  emits: ['content-scroll' as string],
+  emits,
   slots: Object as SlotsType<{
     default?: Record<string, object>;
     beforeContent?: Record<string, object>;

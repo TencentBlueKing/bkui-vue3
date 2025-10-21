@@ -30,3 +30,17 @@ export const emits = {
 } as const;
 
 export type RadioEmits = typeof emits;
+
+export const radioButtonEmits = {
+  'update:modelValue': (value: unknown) => value !== undefined,
+  change: (value: unknown) => value !== undefined,
+} as const;
+
+export type RadioButtonEmits = typeof radioButtonEmits;
+
+export const radioGroupEmits = {
+  'update:modelValue': (value: unknown) => value !== undefined,
+  change: (value: unknown) => value !== undefined,
+} as const;
+
+export type RadioGroupEmits = typeof radioGroupEmits;

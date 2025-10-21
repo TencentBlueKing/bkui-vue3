@@ -58,13 +58,13 @@ const props = [
   {
     name: 'data',
     description: '渲染列表',
-    type: 'array',
+    type: 'Array<any>',
     default: '[]',
   },
   {
     name: 'label',
     description: '指定节点标签为节点对象的某个属性值',
-    type: 'string',
+    type: 'string | function',
     default: 'label',
   },
   {
@@ -119,9 +119,10 @@ const props = [
   },
   {
     name: 'async',
-    description: '异步加载节点数据配置,详情请参考 IAsync配置',
-    type: 'object',
-    default: '{}',
+    description: '异步加载节点数据配置',
+    type: 'AsyncOption',
+    default: '{callback: undefined, cache: true, deepAutoOpen: "once", trigger: null}',
+    link: '/components/tree/api#AsyncOption',
   },
   {
     name: 'offsetLeft',
@@ -132,8 +133,9 @@ const props = [
   {
     name: 'search',
     description: '搜索配置,可以为一个配置项 SearchOption, 或者直接为一个字符串|数值|布尔值，如此则模糊匹配此值',
-    type: 'object | string | number | boolean',
+    type: 'SearchOption | string | number | boolean',
     default: 'undefined',
+    link: '/components/tree/api#SearchOption',
   },
   {
     name: 'emptyText',
@@ -151,13 +153,13 @@ const props = [
     name: 'disableDrag',
     description: '节点是否禁用作为拖拽开启元素',
     type: 'function',
-    default: 'null',
+    default: '',
   },
   {
     name: 'disableDrop',
     description: '节点是否禁用作为拖拽结束位置元素',
     type: 'function',
-    default: 'null',
+    default: '',
   },
   {
     name: 'dragThreshold',
@@ -185,8 +187,8 @@ const props = [
     default: true,
   },
   {
-    name: '是否禁用非最后叶子节点的可选择配置',
-    description: '是否禁用文件夹选择',
+    name: 'disabledFolderSelectable',
+    description: '节点是否可以选中',
     type: 'boolean',
     default: false,
   },
@@ -199,7 +201,7 @@ const props = [
   {
     name: 'checked',
     description: '默认选中的节点id，selectable为false时无效',
-    type: 'array',
+    type: 'array<any>',
     default: '[]',
   },
   {
@@ -285,6 +287,7 @@ const emits = [
       {
         name: 'node',
         type: '{ selected: boolean, node: TreeNode }',
+        link: '/components/tree/api#TreeNode',
       },
     ],
   },
@@ -295,6 +298,7 @@ const emits = [
       {
         name: 'item',
         type: 'TreeNode',
+        link: '/components/tree/api#TreeNode',
       },
       {
         name: 'resolveScopedSlotParam',
@@ -317,6 +321,7 @@ const emits = [
       {
         name: 'item',
         type: 'TreeNode',
+        link: '/components/tree/api#TreeNode',
       },
       {
         name: 'resolveScopedSlotParam',
@@ -339,6 +344,7 @@ const emits = [
       {
         name: 'item',
         type: 'TreeNode',
+        link: '/components/tree/api#TreeNode',
       },
       {
         name: 'resolveScopedSlotParam',
@@ -393,10 +399,12 @@ const emits = [
       {
         name: 'sourceNode',
         type: 'TreeNode',
+        link: '/components/tree/api#TreeNode',
       },
       {
         name: 'targetNode',
         type: 'TreeNode',
+        link: '/components/tree/api#TreeNode',
       },
       {
         name: 'sourceIndex',
@@ -450,7 +458,141 @@ const emits = [
     params: [
       {
         name: 'result',
-        type: 'any',
+        type: '{ level: number, target: HTMLElement, index: number, parent: TreeNode, node: TreeNode, isRoot: boolean }',
+        link: '/components/tree/api#TreeNode',
+      },
+    ],
+  },
+];
+
+const types = [
+  {
+    name: 'AsyncOption',
+    description: '异步加载节点数据配置',
+    fields: [
+      {
+        name: 'callback',
+        type: '(item: any, cb: function) => Promise<any>',
+        description: '点击节点需要执行的异步函数，函数返回 Promise',
+      },
+      {
+        name: 'cache',
+        type: 'boolean',
+        description: '是否缓存请求结果，默认为True，只有在第一次才会发起请求，若设置为false则每次都会发起请求',
+      },
+      {
+        name: 'deepAutoOpen',
+        type: 'string',
+        description: '异步请求节点是否自动展开，可选值：once 只在初始化是执行一次，every 每次数据更新都执行',
+      },
+      {
+        name: 'trigger',
+        type: 'array<string>',
+        description: '触发异步加载的时机，可选值：expand 点击节点展开时，click 点击节点时，checked 节点选中时',
+      },
+    ],
+  },
+  {
+    name: 'SearchOption',
+    description: '搜索配置',
+    fields: [
+      {
+        name: 'value',
+        type: 'string | number | boolean',
+        description: '搜索值',
+      },
+      {
+        name: 'match',
+        type: '(searchValue, itemText, item)) => boolean | string',
+        options: ['full', 'fuzzy'],
+        description: '搜索匹配方式，可选值：full 完全匹配，fuzzy 模糊匹配, 支持自定义匹配函数',
+      },
+      {
+        name: 'resultType',
+        type: 'string',
+        options: ['tree', 'list'],
+        description: '搜索结果展示方式，可选值：tree 树形展示，list 列表展示',
+      },
+      {
+        name: 'showChildNodes',
+        type: 'boolean',
+        description: '是否显示匹配项的子节点',
+      },
+    ],
+  },
+  {
+    name: 'TreeNode',
+    description: '树节点',
+    fields: [
+      {
+        name: '[key: string]',
+        type: 'unknown',
+        description: '任意key: value的属性',
+      },
+      {
+        name: 'children',
+        type: 'Array<TreeNode>',
+        description: '子节点',
+      },
+    ],
+  },
+];
+
+const slots = [
+  {
+    name: 'default',
+    description: '默认自定义节点插槽, #default插槽与 #node插槽二选一即可，两者区别为参数格式不同，其他功能一致',
+    params: [
+      {
+        name: 'item',
+        type: '{ data: { ...node }, attributes: {} }',
+      },
+      {
+        name: 'attributes',
+        type: 'object',
+      },
+    ],
+  },
+  {
+    name: 'node',
+    description: '自定义节点插槽',
+    params: [
+      {
+        name: 'item',
+        type: '{...node, ...attributes}',
+      },
+    ],
+  },
+  {
+    name: 'nodeType',
+    description: '自定义节点类型Icon插槽',
+    params: [
+      {
+        name: 'node',
+        type: 'TreeNode',
+        link: '/components/tree/api#TreeNode',
+      },
+    ],
+  },
+  {
+    name: 'nodeAction',
+    description: '展开收起自定义渲染',
+    params: [
+      {
+        name: 'node',
+        type: 'TreeNode',
+        link: '/components/tree/api#TreeNode',
+      },
+    ],
+  },
+  {
+    name: 'nodeAppend',
+    description: '自定义节点后面的扩展展示',
+    params: [
+      {
+        name: 'node',
+        type: 'TreeNode',
+        link: '/components/tree/api#TreeNode',
       },
     ],
   },
@@ -478,6 +620,8 @@ const wiki: IComponentWiki = {
   titleCN,
   props,
   emits,
+  types,
+  slots,
   presets,
   description,
 };
