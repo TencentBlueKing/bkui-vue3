@@ -29,13 +29,13 @@ import { computed, createVNode, defineComponent, provide, ref, renderSlot, watch
 import { usePrefix } from '@bkui-vue/config-provider';
 
 import CollapsePanel from './collapse-panel';
+import { emits } from './emits';
 import { propsCollapse as props } from './props';
 
 export default defineComponent({
   name: 'Collapse',
   props,
-  emits: ['item-click', 'update:modelValue', 'after-leave', 'before-enter'],
-
+  emits,
   setup(props, { emit, slots }) {
     const localActiveItems = ref([]);
     // 以保证当前的设置生效

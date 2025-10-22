@@ -24,52 +24,11 @@
  * IN THE SOFTWARE.
  */
 
-import { defineComponent } from 'vue';
+export const collapsePanelEmits = {
+  'update:modelValue': (publicVModelValue: boolean) => publicVModelValue,
+  change: (data: { name?: number | string }) => data,
+  'after-leave': () => true,
+  'before-enter': () => true,
+};
 
-import { usePrefix } from '@bkui-vue/config-provider';
-import { classes } from '@bkui-vue/shared';
-
-import { emits } from './emits';
-import { props } from './props';
-
-export default defineComponent({
-  name: 'Link',
-  props,
-  emits,
-  setup(props, { emit }) {
-    const handleClick = (event: Event) => {
-      if (props.disabled) {
-        event.preventDefault();
-        return false;
-      }
-      emit('click', event);
-    };
-
-    const { resolveClassName } = usePrefix();
-
-    return {
-      handleClick,
-      resolveClassName,
-    };
-  },
-  render() {
-    const linkClass = classes(
-      {
-        'is-disabled': this.disabled,
-        'has-underline': this.underline,
-      },
-      `${this.theme} ${this.resolveClassName('link')}`,
-    );
-
-    return (
-      <a
-        class={linkClass}
-        href={this.href}
-        target={this.target}
-        onClick={this.handleClick}
-      >
-        <span>{this.$slots.default?.()}</span>
-      </a>
-    );
-  },
-});
+export type CollapsePanelEmits = typeof collapsePanelEmits;

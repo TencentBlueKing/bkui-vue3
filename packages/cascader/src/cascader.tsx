@@ -25,21 +25,21 @@
  */
 
 import { computed, defineComponent, nextTick, ref, toRefs, watch } from 'vue';
-import { array } from 'vue-types';
 
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { bkTooltips } from '@bkui-vue/directives';
 import { AngleUp, Close, Error } from '@bkui-vue/icon';
 import Popover from '@bkui-vue/popover';
 import { useHover } from '@bkui-vue/select';
-import { debounce, PropTypes } from '@bkui-vue/shared';
+import { debounce } from '@bkui-vue/shared';
 import Tag from '@bkui-vue/tag';
 import { useTagsOverflow } from '@bkui-vue/tag-input';
 
 import CascaderPanel from './cascader-panel';
+import { emits } from './emits';
 import { INode } from './interface';
+import { props } from './props';
 import Store from './store';
-
 /**
  * Cascader 组件
  * 用于展示级联选择器，支持多选、单选、搜索、远程加载等功能。
@@ -49,43 +49,8 @@ export default defineComponent({
   directives: {
     bkTooltips,
   },
-  props: {
-    modelValue: PropTypes.arrayOf(PropTypes.oneOfType([array<string>(), String, Number])),
-    list: PropTypes.array.def([]),
-    placeholder: PropTypes.string.def(''),
-    behavior: PropTypes.string.def('normal'),
-    filterable: PropTypes.bool.def(false),
-    multiple: PropTypes.bool.def(false),
-    disabled: PropTypes.bool.def(false),
-    clearable: PropTypes.bool.def(true),
-    trigger: PropTypes.string.def('click'),
-    checkAnyLevel: PropTypes.bool.def(false),
-    isRemote: PropTypes.bool.def(false),
-    remoteMethod: PropTypes.func,
-    showCompleteName: PropTypes.bool.def(true),
-    idKey: PropTypes.string.def('id'),
-    nameKey: PropTypes.string.def('name'),
-    childrenKey: PropTypes.string.def('children'),
-    separator: PropTypes.string.def('/'),
-    limitOneLine: PropTypes.bool.def(false),
-    extCls: PropTypes.string.def(''),
-    filterMethod: PropTypes.func,
-    scrollHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(216),
-    scrollWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def('auto'),
-    customTextFillback: PropTypes.func,
-    customTagsFillback: PropTypes.func,
-    changeEmitsNodes: PropTypes.bool.def(false),
-    collapseTags: {
-      type: Boolean,
-      default: true,
-    },
-    floatMode: {
-      // 当floatMode为true时为漂浮模式,不会挤占空间
-      type: Boolean,
-      default: false,
-    },
-  },
-  emits: ['update:modelValue', 'change', 'clear', 'toggle', 'focus'],
+  props,
+  emits,
   setup(props, { emit, slots }) {
     const t = useLocale('cascader');
 
