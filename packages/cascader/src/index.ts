@@ -31,3 +31,7 @@ import CascaderPanel from './cascader-panel';
 const BkCascader = withInstallProps(Component, { CascaderPanel });
 export default BkCascader;
 export { BkCascader, CascaderPanel as BkCascaderPanel };
+export type { CascaderEmits, CascaderPanelEmits } from './emits';
+export type { CascaderProps, CascaderPanelProps } from './props';
+export type BkCascaderInstance = InstanceType<typeof Component>;
+export type BkCascaderPanelInstance = InstanceType<typeof CascaderPanel>;

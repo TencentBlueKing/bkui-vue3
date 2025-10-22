@@ -29,10 +29,15 @@ import { withInstallProps } from '@bkui-vue/shared';
 
 import Collapse from './collapse';
 import CollapsePanel from './collapse-panel';
+import { emits, collapsePanelEmits } from './emits';
 import { propsCollapse, propsCollapsePanel } from './props';
 
 const BkCollapse = withInstallProps(Collapse, { CollapsePanel });
-export type CollapseProps = Partial<ExtractPropTypes<typeof propsCollapse>>;
-export type CollapsePanelProps = Partial<ExtractPropTypes<typeof propsCollapsePanel>>;
+export type CollapseProps = ExtractPropTypes<typeof propsCollapse>;
+export type CollapsePanelProps = ExtractPropTypes<typeof propsCollapsePanel>;
+export type CollapseEmits = ExtractPropTypes<typeof emits>;
+export type CollapsePanelEmits = ExtractPropTypes<typeof collapsePanelEmits>;
+export type CollapseInstance = InstanceType<typeof Collapse>;
+export type CollapsePanelInstance = InstanceType<typeof CollapsePanel>;
 export { Collapse, CollapsePanel as BkCollapsePanel };
 export default BkCollapse;

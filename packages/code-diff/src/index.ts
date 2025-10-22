@@ -26,11 +26,10 @@
 
 import { withInstall } from '@bkui-vue/shared';
 
-import CodeDiff, { DiffFormatType, LanguagesUnion, ThemesUnion } from './code-diff';
+import CodeDiff from './code-diff';
 
 const BkCodeDiff = withInstall(CodeDiff);
-export type ThemesUnionType = ThemesUnion;
-export type DiffFormatUnionType = DiffFormatType;
-export type LanguagesUnionType = LanguagesUnion;
-
 export default BkCodeDiff;
+export type { CodeDiffEmits } from './emits';
+export type { CodeDiffProps, DiffFormatType, LanguagesUnion, ThemesUnion } from './props';
+export type CodeDiffInstance = InstanceType<typeof CodeDiff>;
