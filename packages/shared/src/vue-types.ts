@@ -328,7 +328,7 @@ export interface IComponentWiki {
     default?: ValueType;
     description: string;
     link?: LinkType;
-    options?: Array<number | string>;
+    options?: Array<boolean | number | string>;
   }[];
   emits?: {
     name: string;

@@ -1,13 +1,12 @@
-/* eslint-disable perfectionist/sort-enums */
 /*
  * Tencent is pleased to support the open source community by making
- * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ * 蓝鲸智云PaaS平台 (BlueKing PaaS) available.
  *
- * Copyright (C) 2025 Tencent.  All rights reserved.
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
  *
- * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ * 蓝鲸智云PaaS平台 (BlueKing PaaS) is licensed under the MIT License.
  *
- * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ * License for 蓝鲸智云PaaS平台 (BlueKing PaaS):
  *
  * ---------------------------------------------------
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
@@ -25,13 +24,9 @@
  * IN THE SOFTWARE.
  */
 
-// nav group setting
-export enum NavGroupMeta {
-  Base = '基础',
-  Layout = '布局',
-  Nav = '导航',
-  Form = '表单',
-  Data = '数据',
-  Directive = '指令',
-  Feedback = '反馈',
-}
+export const emits = {
+  destroy: (_id: string) => true,
+  detail: (_isShow: boolean, _id: string) => true,
+};
+
+export type MessageEmits = typeof emits;
