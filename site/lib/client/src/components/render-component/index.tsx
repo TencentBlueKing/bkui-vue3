@@ -1,5 +1,8 @@
 import * as vue from 'vue';
-
+import type {
+  ComponentInstance,
+  Component,
+} from 'vue';
 import {
   compile,
 } from '@vue/compiler-dom';
@@ -8,6 +11,8 @@ import {
 } from '@vueuse/core';
 import {
   Message,
+  Input as BkInput,
+  Button as BkButton,
 } from 'bkui-vue';
 
 const { copy } = useClipboard({
@@ -33,12 +38,15 @@ export default vue.defineComponent({
       default: () => ({}),
     },
   },
+  components: {
+    BkInput,
+    BkButton
+  },
   render() {
     const renderComponent = () => {
       if (Object.keys(this.component).length > 1) {
-        this._.components = {}
         Object.keys(this.component).forEach((key) => {
-          this._.components[key] = this.component[key]
+          (this as ComponentInstance<Component>)._.components[key] = this.component[key]
         })
       }
       return vue.h(
@@ -82,17 +90,9 @@ export default vue.defineComponent({
 
     const renderFunctionComponent = () => {
       return vue.h(
-        'section',
+        BkButton,
         {
-          style: {
-            height: '40px',
-            lineHeight: '40px',
-            width: '100px',
-            backgroundColor: '#3a84ff',
-            color: '#fff',
-            textAlign: 'center',
-            cursor: 'pointer'
-          },
+          theme: 'primary',
           onClick: () => this.component.default(this.renderProps)
         },
         ['点击展示组件']

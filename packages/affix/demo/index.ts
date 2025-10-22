@@ -35,9 +35,9 @@ const presets = [
     },
     slots: {
       default: `
-        <section style="height: 40px; width: 100px; background-color: #3a84ff; line-height: 40px; color: #fff; text-align: center;">
+        <bk-button theme="primary">
           固定在顶部
-        </section>
+        </bk-button>
       `,
     },
   },

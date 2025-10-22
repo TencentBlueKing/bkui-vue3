@@ -34,6 +34,20 @@ const presets = [
       model: {},
       'form-type': 'default',
     },
+    slots: {
+      default: `
+        <bk-form-item
+          label="用户名"
+        >
+          <bk-input />
+        </bk-form-item>
+        <bk-form-item
+          label="密码"
+        >
+          <bk-input />
+        </bk-form-item>
+      `,
+    },
   },
   {
     title: '垂直表单',
@@ -41,6 +55,20 @@ const presets = [
     props: {
       model: {},
       'form-type': 'vertical',
+    },
+    slots: {
+      default: `
+        <bk-form-item
+          label="用户名"
+        >
+          <bk-input />
+        </bk-form-item>
+        <bk-form-item
+          label="密码"
+        >
+          <bk-input />
+        </bk-form-item>
+      `,
     },
   },
 ];
