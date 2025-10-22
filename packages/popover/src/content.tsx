@@ -26,7 +26,7 @@
 import { computed, defineComponent, Fragment, nextTick, ref } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-import { PropTypes } from '@bkui-vue/shared';
+import { bkZIndexManager, PropTypes } from '@bkui-vue/shared';
 
 export default defineComponent({
   name: 'PopContent',
@@ -59,7 +59,7 @@ export default defineComponent({
     const refTimer = ref(null);
 
     const handleClick = (evt: MouseEvent) => {
-      evt.stopPropagation();
+      // evt.stopPropagation();
       emit('click', evt);
     };
 

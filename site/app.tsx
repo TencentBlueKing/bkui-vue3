@@ -48,19 +48,17 @@ export default defineComponent({
       <div class='page-container'>
         {/* <bk-config-provider prefix={'aabb'}> */}
         <div class='page-container-header'>
-          <app-header
+          {/* <app-header
             avatarHost='https://q1.qlogo.cn'
             designUrl='https://bkdesign.bk.tencent.com/'
             lessCodeUrl='https://github.com/TencentBlueKing/bk-lesscode/blob/master/readme.md'
             loginUrl='https://login.bk.tencent.com'
             region='tencent'
             rootDomain='tencent.com'
-          ></app-header>
+          ></app-header> */}
         </div>
         <div class='page-container-body'>
-          <div class='body-nav'>
-            <DemoNav />
-          </div>
+          <div class='body-nav'>{/* <DemoNav /> */}</div>
           <div class='body-wrapper'>
             <RouterView />
           </div>
