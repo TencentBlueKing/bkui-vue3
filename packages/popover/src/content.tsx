@@ -26,7 +26,7 @@
 import { computed, defineComponent, Fragment, nextTick, ref } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-import { bkZIndexManager, PropTypes } from '@bkui-vue/shared';
+import { PropTypes } from '@bkui-vue/shared';
 
 export default defineComponent({
   name: 'PopContent',
