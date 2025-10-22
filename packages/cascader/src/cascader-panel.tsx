@@ -31,9 +31,9 @@ import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { AngleRight, Spinner } from '@bkui-vue/icon';
 import { arrayEqual } from '@bkui-vue/shared';
 
-import { cascaderPanelEmits } from './cascader-panel-emits';
-import { cascaderPanelProps } from './cascader-panel-props';
+import { cascaderPanelEmits } from './emits';
 import { IData, INode } from './interface';
+import { cascaderPanelProps } from './props';
 
 /**
  * CascaderPanel 组件

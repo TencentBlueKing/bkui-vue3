@@ -29,13 +29,13 @@ import CollapseTransition from '@bkui-vue/collapse-transition';
 import { usePrefix } from '@bkui-vue/config-provider';
 import * as BkIcon from '@bkui-vue/icon';
 
-import { collapsePanelEmits } from './collapse-panel-emits';
+import { collapsePanelEmits as emits } from './emits';
 import { propsCollapsePanel as props } from './props';
 
 export default defineComponent({
   name: 'CollapsePanel',
   props,
-  emits: collapsePanelEmits,
+  emits,
   setup(props, { emit, slots }) {
     let localActiveItems = null;
     let handleItemClick = null;

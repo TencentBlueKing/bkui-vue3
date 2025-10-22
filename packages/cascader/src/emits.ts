@@ -32,4 +32,10 @@ export const emits = {
   focus: () => true,
 };
 
-export type CardEmits = typeof emits;
+export type CascaderEmits = typeof emits;
+
+export const cascaderPanelEmits = {
+  'update:modelValue': (publicVModelValue: Array<number | string | string[]>) => publicVModelValue,
+};
+
+export type CascaderPanelEmits = typeof cascaderPanelEmits;
