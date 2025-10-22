@@ -366,4 +366,13 @@ export interface IComponentWiki {
     }[];
   }[];
   children?: Array<Pick<IComponentWiki, 'emits' | 'name' | 'props' | 'slots'>>;
+  methods?: {
+    name: string;
+    description: string;
+    params: {
+      name: string;
+      type: string;
+      link?: LinkType;
+    }[];
+  }[];
 }
