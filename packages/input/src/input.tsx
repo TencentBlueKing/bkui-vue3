@@ -24,62 +24,18 @@
  * IN THE SOFTWARE.
  */
 
-import {
-  computed,
-  defineComponent,
-  ExtractPropTypes,
-  nextTick,
-  onMounted,
-  PropType,
-  ref,
-  StyleValue,
-  watch,
-} from 'vue';
+import { computed, defineComponent, ExtractPropTypes, nextTick, onMounted, ref, StyleValue, watch } from 'vue';
 
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
-import { bkTooltips, IOptions } from '@bkui-vue/directives';
+import { bkTooltips } from '@bkui-vue/directives';
 import { Close, DownSmall, Eye, Search, Unvisible } from '@bkui-vue/icon';
-import { classes, InputBehaviorType, PropTypes, useFormItem } from '@bkui-vue/shared';
+import { classes, useFormItem } from '@bkui-vue/shared';
 
+import { emits } from './emits';
+import { props } from './props';
 import { calcTextareaHeight } from './util';
 
 export type InputAutoSize = { minRows?: number; maxRows?: number };
-
-export const inputType = {
-  type: PropTypes.string.def('text'),
-  clearable: PropTypes.bool,
-  disabled: PropTypes.bool,
-  readonly: PropTypes.bool,
-  placeholder: PropTypes.string.def(''),
-  prefixIcon: PropTypes.string,
-  suffixIcon: PropTypes.string,
-  suffix: PropTypes.string,
-  prefix: PropTypes.string,
-  step: PropTypes.number,
-  max: PropTypes.number,
-  min: PropTypes.number,
-  maxlength: PropTypes.number,
-  maxcharacter: PropTypes.number,
-  behavior: InputBehaviorType(),
-  showWordLimit: PropTypes.bool,
-  showControl: PropTypes.bool.def(true),
-  showClearOnlyHover: PropTypes.bool.def(true),
-  precision: PropTypes.number.def(0).validate(val => (val as number) >= 0 && (val as number) < 20),
-  modelValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  size: PropTypes.size(),
-  rows: PropTypes.number,
-  selectReadonly: PropTypes.bool.def(false), // selectReadonly select组件使用，readonly属性，但是组件样式属于正常输入框样式
-  withValidate: PropTypes.bool.def(true),
-  overMaxLengthLimit: PropTypes.bool.def(false),
-  showOverflowTooltips: PropTypes.bool.def(true),
-  tooltipsOptions: {
-    type: Object as PropType<Partial<IOptions>>,
-    default: () => ({}),
-  },
-  resize: PropTypes.bool.def(true),
-  autosize: PropTypes.oneOfType<InputAutoSize | boolean>([Boolean, Object]).def(false),
-  stopPropagation: PropTypes.bool.def(true),
-};
 
 export const enum EVENTS {
   BLUR = 'blur',
@@ -97,41 +53,9 @@ export const enum EVENTS {
   PASTE = 'paste',
   UPDATE = 'update:modelValue',
 }
-// TODO: 泛型
-/* eslint-disable-next-line */
-function EventFunction(_value: any, _evt: KeyboardEvent);
-/* eslint-disable-next-line */
-function EventFunction(_value: any, _evt: Event) {
-  return true;
-}
-/* eslint-disable-next-line */
-function PastEventFunction(_value: any, _e: ClipboardEvent) {
-  return true;
-}
-
-function CompositionEventFunction(evt: CompositionEvent) {
-  return evt;
-}
-
-export const inputEmitEventsType = {
-  [EVENTS.UPDATE]: EventFunction,
-  [EVENTS.FOCUS]: (evt: FocusEvent) => evt,
-  [EVENTS.BLUR]: (evt: FocusEvent) => evt,
-  [EVENTS.CHANGE]: EventFunction,
-  [EVENTS.CLEAR]: () => true,
-  [EVENTS.INPUT]: EventFunction,
-  [EVENTS.KEYPRESS]: EventFunction,
-  [EVENTS.KEYDOWN]: EventFunction,
-  [EVENTS.KEYUP]: EventFunction,
-  [EVENTS.ENTER]: EventFunction,
-  [EVENTS.PASTE]: PastEventFunction,
-  [EVENTS.COMPOSITIONSTART]: CompositionEventFunction,
-  [EVENTS.COMPOSITIONUPDATE]: CompositionEventFunction,
-  [EVENTS.COMPOSITIONEND]: CompositionEventFunction,
-};
 
 // type InputEventUnion = `${EVENTS}`;
-export type InputType = ExtractPropTypes<typeof inputType>;
+export type InputType = ExtractPropTypes<typeof emits>;
 
 export default defineComponent({
   name: 'Input',
@@ -139,8 +63,8 @@ export default defineComponent({
     bkTooltips,
   },
   inheritAttrs: false,
-  props: inputType,
-  emits: inputEmitEventsType,
+  props,
+  emits,
   setup(props, ctx) {
     const { resolveClassName } = usePrefix();
     const formItem = useFormItem();

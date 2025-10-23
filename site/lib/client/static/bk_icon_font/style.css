@@ -26,6 +26,12 @@ url("fonts/iconcool.eot?#iefix") format("embedded-opentype");
 .icon-help:before {
 	content: "\e10c";
 }
+.icon-info-line:before {
+	content: "\e10e";
+}
+.icon-search:before {
+	content: "\e10d";
+}
 .icon-preset:before {
 	content: "\e101";
 }

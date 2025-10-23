@@ -328,7 +328,7 @@ export interface IComponentWiki {
     default?: ValueType;
     description: string;
     link?: LinkType;
-    options?: Array<number | string>;
+    options?: Array<boolean | number | string>;
   }[];
   emits?: {
     name: string;
@@ -366,4 +366,13 @@ export interface IComponentWiki {
     }[];
   }[];
   children?: Array<Pick<IComponentWiki, 'emits' | 'name' | 'props' | 'slots'>>;
+  methods?: {
+    name: string;
+    description: string;
+    params: {
+      name: string;
+      type: string;
+      link?: LinkType;
+    }[];
+  }[];
 }

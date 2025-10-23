@@ -37,7 +37,6 @@ import {
   VNode,
   watch,
 } from 'vue';
-import { toType } from 'vue-types';
 
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import {
@@ -53,11 +52,14 @@ import {
   Success,
   Warn,
 } from '@bkui-vue/icon';
-import { bkZIndexManager, isElement, PropTypes } from '@bkui-vue/shared';
+import { bkZIndexManager, isElement } from '@bkui-vue/shared';
 import ClipboardJS from 'clipboard';
 import JSONFormatter from 'json-formatter-js';
 
-enum MessageThemeEnum {
+import { emits } from './emits';
+import { props } from './props';
+
+export enum MessageThemeEnum {
   ERROR = 'error',
   PRIMARY = 'primary',
   SUCCESS = 'success',
@@ -140,7 +142,7 @@ type IMessageAction = {
   classList?: string | string[];
 };
 
-type IMessageActions = IMessageAction[];
+export type IMessageActions = IMessageAction[];
 
 export type IMessage = {
   /**
@@ -178,27 +180,10 @@ export type IMessage = {
 
 export type IMessageProp = IMessage | string;
 
-const messageProps = {
-  id: PropTypes.string.def(''),
-  message: toType<IMessageProp>('IMessage', {}),
-  theme: toType<`${MessageThemeEnum}`>('messageTheme', {}).def(MessageThemeEnum.PRIMARY),
-  delay: PropTypes.number,
-  dismissable: PropTypes.bool.def(true),
-  offsetY: PropTypes.number.def(30),
-  spacing: PropTypes.number.def(10),
-  extCls: PropTypes.string.def(''),
-  onClose: PropTypes.func,
-  getContainer: PropTypes.instanceOf(HTMLElement),
-  width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-  minWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(100),
-  maxWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def('100%'),
-  actions: toType<IMessageActions>('IMessageAction', {}),
-};
-
 export default defineComponent({
   name: 'Message',
-  props: messageProps,
-  emits: ['destroy', 'detail'],
+  props,
+  emits,
   setup(props, { emit, slots, expose }) {
     const t = useLocale('message');
     const { resolveClassName } = usePrefix();
