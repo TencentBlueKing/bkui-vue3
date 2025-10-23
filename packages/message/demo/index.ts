@@ -62,7 +62,7 @@ const props = [
   {
     name: 'message',
     description: '组件显示的文字内容，如果需要高阶用法，请查看IMessage说明',
-    type: 'String | IMessage',
+    type: 'string | IMessage',
     link: '/component/message/api#IMessage',
   },
   {
@@ -187,9 +187,9 @@ const types = [
     fields: [
       {
         name: 'id',
-        description:
-          '唯一ID，从给定的 IMessageActionType 中选择。如果是自定义的其他操作，此ID可以自定义，此时将会作为一个新的操作项追加	',
-        type: 'string | number',
+        description: '唯一ID，如果是自定义的其他操作，此ID可以自定义，此时将会作为一个新的操作项追加',
+        type: 'string | number ',
+        options: ['assistant', 'details', 'fix', 'close'],
       },
       {
         name: 'text',
@@ -229,41 +229,15 @@ const types = [
       },
     ],
   },
-  {
-    name: 'IMessageActionType',
-    description: '默认操作项说明',
-    fields: [
-      {
-        name: 'ASSISTANT',
-        description: '联系助手：默认直接拉起企业微信与助手的聊天，需要在 message.assistant 配置对应的企微群ID',
-        type: 'string',
-      },
-      {
-        name: 'DETAILS',
-        description: '展开详情：展开面向开发的详情',
-        type: 'string',
-      },
-      {
-        name: 'FIX',
-        description: '图钉按钮：点击后，Message 不会自动消失',
-        type: 'boolean',
-      },
-      {
-        name: 'CLOSE',
-        description: '关闭按钮：点击后，Message 会自动关闭',
-        type: 'boolean',
-      },
-    ],
-  },
 ];
 
 const slots = [
   {
-    name: '#action',
+    name: 'action',
     description: '操作项插槽，可以覆盖默认操作项列表，完全自定义，如果启用此插槽，IMessageActions 相关配置将不再生效',
   },
   {
-    name: '#title',
+    name: 'title',
     description: '操作项描述，默认格式 【错误码】错误概述 + 操作建议（面向用户）',
   },
 ];
