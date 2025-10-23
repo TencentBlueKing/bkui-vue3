@@ -43,7 +43,6 @@ import {
   useRouter
 } from 'vue-router';
 import type {
-  IComponentWiki,
   IComponentMeta
 } from '@/types/component';
 
@@ -73,7 +72,7 @@ const handleChoose = (item: IComponentMeta) => {
   router.push({
     name: item.type,
     params: {
-      componentName: item.componentWiki.name,
+      name: item.componentWiki.name,
     },
   });
 };

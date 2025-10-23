@@ -1,6 +1,7 @@
 <template>
-  <section
-    v-if="authorList.length"
+  <bk-loading
+    :loading="loading"
+     color="#f5f7fb"
     class="contributor-wrapper"
   >
     <h3 class="title">
@@ -24,7 +25,7 @@
         >
       </a>
     </div>
-  </section>
+  </bk-loading>
 </template>
 <script lang="ts" setup>
 import {
@@ -33,6 +34,7 @@ import {
 } from 'vue';
 import {
   bkTooltips,
+  Loading as BkLoading,
 } from 'bkui-vue';
 import {
   getFileAuthors,
@@ -49,12 +51,17 @@ const componentStore = useComponent();
 const vBkTooltips = bkTooltips;
 
 const authorList = ref<IFileAuthor[]>([])
+const loading = ref(false);
 
 const getFileAuthorList = async (name: string) => {
   try {
-    authorList.value = await getFileAuthors(name, 'component');
-  }catch (error) {
+    loading.value = true;
+    const type = componentStore.activeComponentWiki.group === '指令' ? 'directive' : 'component';
+    authorList.value = await getFileAuthors(name, type);
+  } catch (error) {
     console.error(error);
+  } finally {
+    loading.value = false;
   }
 }
 
@@ -70,6 +77,7 @@ watch(
 </script>
 <style lang="postcss" scoped>
 .contributor-wrapper {
+  height: 80px;
   .title {
     font-weight: 700;
     font-size: 20px;

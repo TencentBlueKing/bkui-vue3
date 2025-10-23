@@ -101,25 +101,27 @@
             'aside-nav-group-item': true,
             active: componentWiki.name === componentStore.activeComponentWiki?.name,
           }"
-          @click="handleChoose(componentWiki, 'component')"
+          @click="handleChoose(componentWiki)"
         >
           {{ componentWiki.title }}
           {{ componentWiki.titleCN }}
         </li>
       </template>
-      <template
-        v-for="componentWiki in componentStore.navGroups?.directiveList"
-        :key="componentWiki.name"
-      >
+      <template v-if="componentStore.navGroups?.directiveList.length">
+        <li class="aside-nav-group-title">
+          指令
+        </li>
         <li
+          v-for="directive in componentStore.navGroups?.directiveList"
+          :key="directive.name"
           :class="{
           'aside-nav-group-item': true,
-          active: componentWiki.name === componentStore.activeComponentWiki?.name,
+          active: directive.name === componentStore.activeComponentWiki?.name,
         }"
-          @click="handleChoose(componentWiki, 'directive')"
+          @click="handleChoose(directive)"
         >
-          {{ componentWiki.title }}
-          {{ componentWiki.titleCN }}
+          {{ directive.title }}
+          {{ directive.titleCN }}
         </li>
       </template>
     </ul>
@@ -265,17 +267,17 @@ const handleKeydown = (_val: any, e: KeyboardEvent) => {
 const handleChooseCom = async (config?: IComponentMeta) => {
   const item = config || renderList.value[selectIndex.value];
   if (!item) return;
-  await handleChoose(item.componentWiki, item.type)
+  await handleChoose(item.componentWiki)
   scrollToCurNavItem()
   hidePopover()
 }
 
-const handleChoose = async (value: IComponentWiki, type: string) => {
+const handleChoose = async (value: IComponentWiki) => {
   componentStore.activeComponentWiki = value;
   await router.push({
-    name: type,
+    name: 'component',
     params: {
-      componentName: value.name,
+      name: value.name,
     },
   });
 };
@@ -296,8 +298,8 @@ const handleInit = async () => {
 
     renderList.value = [...componentStore.componentMetaList]
     // 设置 activeComponentWiki
-    if (route.params.componentName) {
-      const componentWiki = componentStore.componentMetaList.find(item => item.componentWiki.name === route.params.componentName);
+    if (route.params.name) {
+      const componentWiki = componentStore.componentMetaList.find(item => item.componentWiki.name === route.params.name);
       if(componentWiki) {
         componentStore.activeComponentWiki = componentWiki.componentWiki;
       }

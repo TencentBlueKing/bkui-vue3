@@ -248,7 +248,11 @@ export const generateCompiledFile = async (fileMap, entryPath, releaseZipPath) =
  * @param {*} component 组件名
  * @returns 组件入口文件
  */
-const getComponentEntryPath = (releaseZipPath, component) => {
+const getComponentEntryPath = (releaseZipPath, component, type) => {
+  if (type === 'directive') {
+    return resolve(releaseZipPath, 'directives', `src/${component}.ts`);
+  }
+
   const possibleEntryFiles = ['src/index.js', 'src/index.ts', 'src/index.tsx', 'src/index.jsx'];
 
   let entryPath = null;
@@ -269,7 +273,7 @@ const getComponentEntryPath = (releaseZipPath, component) => {
 /**
  * @description 编译组件文件
  */
-export const compileComponent = async (releaseZipPath, component) => {
+export const compileComponent = async (releaseZipPath, component, type) => {
   // 组件文件
   const fileMap = {};
   // 构建配置
@@ -279,7 +283,7 @@ export const compileComponent = async (releaseZipPath, component) => {
     },
   };
   // 路径
-  const entryPath = getComponentEntryPath(releaseZipPath, component);
+  const entryPath = getComponentEntryPath(releaseZipPath, component, type);
   // 生成上下文
   const context = getCompileContext(releaseZipPath, entryPath, 'commonjs', options);
   // 编辑
@@ -298,11 +302,13 @@ export const compileComponent = async (releaseZipPath, component) => {
  * @param {*} component 组件名
  * @returns
  */
-export const compileCss = async (releaseZipPath, component) => {
+export const compileCss = async (releaseZipPath, component, type) => {
   // 组件文件
   const fileMap = {};
   // 路径
-  const entryPath = resolve(releaseZipPath, component, `src/${component}.less`);
+  const entryPath = type === 'directive'
+    ? resolve(releaseZipPath, 'directives', 'demo', `src/${component}.ts`)
+    : resolve(releaseZipPath, component, `src/${component}.less`);
   // less 文件不存在返回空
   if (!fs.existsSync(entryPath)) return '';
   // 构建配置

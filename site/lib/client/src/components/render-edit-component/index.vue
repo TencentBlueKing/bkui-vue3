@@ -1,74 +1,82 @@
 <template>
-  <section
+  <bk-loading
+    :loading="loading"
+    :z-index="100"
     class="edit-component"
     ref="componentRef"
   >
-    <render-header
-      v-model:main-panel="mainPanel"
-      :component-wiki="componentWiki"
-      :is-full-screen="isFullScreen"
-      @full-screen="handleFullScreen"
-    />
-    <bk-resize-layout
-      collapsible
-      initial-divide="160px"
-      class="edit-component-body"
-      :min="160"
-      :max="400"
-    >
-      <template #aside>
-        <render-presets
-          :presets="componentWiki.presets"
-          :index="renderPresetIndex"
-          @choose="handleChoosePreset"
-        />
-      </template>
-      <template #main>
-        <bk-resize-layout
-          :border="false"
-          :min="288"
-          :max="500"
-          initial-divide="288px"
-          placement="right"
-          class="edit-component-main"
-        >
-          <template #aside>
-            <render-config
-              v-model:render-props="renderProps"
-              :preset-props="componentWiki.presets[renderPresetIndex].props"
-              :props="componentWiki.props"
-              :types="componentWiki.types"
-            />
-          </template>
-          <template #main>
-            <section
-              class="edit-component-view"
-              :key="componentWiki.name"
-            >
-              <render-component
-                v-if="mainPanel === MainPanel.Component"
-                class="edit-component-component"
-                :component="component"
-                :render-props="renderProps"
-                :render-slots="renderSlots"
+    <template v-if="!loading">
+      <render-header
+        v-model:main-panel="mainPanel"
+        :component-wiki="componentWiki"
+        :is-full-screen="isFullScreen"
+        @full-screen="handleFullScreen"
+      />
+      <bk-resize-layout
+        collapsible
+        initial-divide="160px"
+        class="edit-component-body"
+        :min="160"
+        :max="400"
+      >
+        <template #aside>
+          <render-presets
+            :presets="componentWiki.presets"
+            :index="renderPresetIndex"
+            @choose="handleChoosePreset"
+          />
+        </template>
+        <template #main>
+          <bk-resize-layout
+            :border="false"
+            :min="288"
+            :max="500"
+            initial-divide="288px"
+            placement="right"
+            class="edit-component-main"
+          >
+            <template #aside>
+              <render-config
+                v-model:render-props="renderProps"
+                :preset-props="componentWiki.presets[renderPresetIndex].props"
+                :props="componentWiki.props"
+                :types="componentWiki.types"
               />
-              <render-code
-                v-if="mainPanel === MainPanel.Code"
-                class="edit-component-code"
-                :component-wiki="componentWiki"
-                :render-props="renderProps"
-                :render-slots="renderSlots"
-              />
-            </section>
-          </template>
-        </bk-resize-layout>
-      </template>
-    </bk-resize-layout>
-  </section>
+            </template>
+            <template #main>
+              <section
+                class="edit-component-view"
+                :key="componentWiki.name"
+              >
+                <render-component
+                  v-if="mainPanel === MainPanel.Component"
+                  class="edit-component-component"
+                  :name="componentWiki.name"
+                  :group="componentWiki.group"
+                  :template="componentWiki.presets[renderPresetIndex].template"
+                  :component="component"
+                  :render-props="renderProps"
+                  :render-slots="renderSlots"
+                />
+                <render-code
+                  v-if="mainPanel === MainPanel.Code"
+                  class="edit-component-code"
+                  :component-wiki="componentWiki"
+                  :render-props="renderProps"
+                  :render-slots="renderSlots"
+                />
+              </section>
+            </template>
+          </bk-resize-layout>
+        </template>
+      </bk-resize-layout>
+    </template>
+  </bk-loading>
 </template>
 
 <script lang="ts" setup>
 import {
+  Loading as BkLoading,
   ResizeLayout as bkResizeLayout,
 } from 'bkui-vue';
 import {
@@ -94,6 +102,7 @@ import RenderPresets from './presets.vue';
 interface IProps {
   component: object;
   componentWiki: IComponentWiki;
+  loading: boolean;
 }
 
 const props = defineProps<IProps>();
@@ -110,7 +119,7 @@ const isFullScreen = ref(false);
 
 // 选择预设
 const handleChoosePreset = (preset: IComponentWiki['presets'][number]) => {
-  renderProps.value = JSON.parse(JSON.stringify(preset.props));
+  renderProps.value = JSON.parse(JSON.stringify(preset.props || {}));
   renderSlots.value = JSON.parse(JSON.stringify(preset.slots || {}));
   renderPresetIndex.value = props.componentWiki.presets.indexOf(preset);
 };
@@ -119,6 +128,7 @@ const handleChoosePreset = (preset: IComponentWiki['presets'][number]) => {
 const handleFullscreenChange = () => {
   isFullScreen.value = !!document.fullscreenElement;
 };
+
 // 全屏
 const handleFullScreen = () => {
   if (!isFullScreen.value) {
@@ -152,7 +162,7 @@ onUnmounted(() => {
 
 <style lang="postcss" scoped>
 .edit-component {
-  height: 640px;
+  height: calc(100% - 180px);
   background: #FAFBFD;
   box-shadow: 0 2px 4px 0 #1919290d;
 }

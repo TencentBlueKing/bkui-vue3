@@ -36,8 +36,9 @@ import debounce from 'lodash/debounce';
 import trim from 'lodash/trim';
 
 import { getCharLength, INPUT_MIN_WIDTH, useFlatList, usePage, useTagsOverflow } from './common';
+import { emits } from './emits';
 import ListTagRender from './list-tag-render';
-import tagProps from './tag-props';
+import { props } from './tag-props';
 import TagRender from './tag-render';
 
 export default defineComponent({
@@ -45,8 +46,8 @@ export default defineComponent({
   directives: {
     bkTooltips,
   },
-  props: tagProps(),
-  emits: ['update:modelValue', 'change', 'select', 'focus', 'blur', 'remove', 'removeAll', 'input'],
+  props,
+  emits,
   setup(props, { emit }) {
     const formItem = useFormItem();
     const t = useLocale('tagInput');

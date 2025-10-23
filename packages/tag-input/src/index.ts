@@ -33,3 +33,6 @@ const TagInput = withInstall(Component);
 export default TagInput;
 
 export { useTagsOverflow, TagInput };
+export type { TagInputEmits } from './emits';
+export type { TagInputProps } from './tag-props';
+export type TagInputInstance = InstanceType<typeof Component>;

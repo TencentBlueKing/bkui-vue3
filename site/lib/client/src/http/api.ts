@@ -16,8 +16,9 @@ export const getFileAuthors = (name: string, type: string) => fetch
 export const getComponent = (
   component: string,
   version: string,
+  type: string,
 ) => {
-  const url = `${apiPrefix}/component?component=${component}&version=${version}`;
+  const url = `${apiPrefix}/component?component=${component}&version=${version}&type=${type}`;
   const script = document.createElement('script');
   script.src = url;
   script.async = true;
@@ -38,9 +39,10 @@ export const getComponent = (
 // 获取组件css
 export const getCss = (
   component: string,
-  version: string,
+  version: string,  
+  type: string,
 ) => {
-  const url = `${apiPrefix}/css?component=${component}&version=${version}`;
+  const url = `${apiPrefix}/css?component=${component}&version=${version}&type=${type}`;
   return fetch
     .get<string>(url)
     .then((css) => {

@@ -33,4 +33,5 @@ export enum NavGroupMeta {
   Form = '表单',
   Data = '数据',
   Directive = '指令',
+  Feedback = '反馈',
 }

@@ -1,6 +1,6 @@
 <template>
   <bk-loading
-    :loading="loading"
+    :loading="!componentStore.activeComponentWiki"
     :z-index="10"
     class="demo-home"
   >
@@ -8,11 +8,10 @@
       <render-edit-component
         :component="component"
         :component-wiki="componentStore.activeComponentWiki"
+        :loading="loading"
       />
-      <render-contributor
-      />
-      <render-bottom-nav
-      />
+      <render-contributor />
+      <render-bottom-nav />
     </template>
   </bk-loading>
 </template>
@@ -57,18 +56,22 @@ const {
 const componentStore = useComponent();
 
 const component = shallowRef();
-const loading = ref(false);
+const loading = ref(true);
+
+const getComponentType = () => {
+  return componentStore.activeComponentWiki?.group === '指令' ? 'directive' : 'component';
+}
 
 const handleGetComponent = () => {
   if (componentStore.activeComponentWiki) {
     loading.value = true;
     Promise
       .all([
-        getComponent(componentStore.activeComponentWiki.name, componentStore.version),
-        getCss(componentStore.activeComponentWiki.name, componentStore.version),
+        getComponent(componentStore.activeComponentWiki.name, componentStore.version, getComponentType()),
+        getCss(componentStore.activeComponentWiki.name, componentStore.version, getComponentType()),
       ])
       .then(() => {
-        component.value = window.getComponent().default;
+        component.value = window.getComponent();
       })
       .finally(() => {
         loading.value = false;

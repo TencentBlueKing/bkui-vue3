@@ -13,7 +13,7 @@ export interface PropItem {
   default?: ValueType;
   description: string;
   link?: LinkType;
-  options?: Array<string | number>;
+  options?: Array<boolean | number | string>;
 }
 
 export interface IComponentWiki {
@@ -22,7 +22,7 @@ export interface IComponentWiki {
   title: string;
   titleCN: string;
   description: string;
-  props: PropItem[];
+  props?: PropItem[];
   emits?: {
     name: string;
     description: string;
@@ -36,7 +36,8 @@ export interface IComponentWiki {
   presets: Array<{
     title: string;
     description: string;
-    props: Record<string, ValueType>;
+    template?: string;
+    props?: Record<string, ValueType>;
     slots?: Record<string, string>;
   }>;
   types?: {

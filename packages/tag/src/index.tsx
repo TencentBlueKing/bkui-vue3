@@ -28,3 +28,6 @@ import { withInstall } from '@bkui-vue/shared';
 import Component from './tag';
 const BkTag = withInstall(Component);
 export default BkTag;
+export type { TagEmits } from './emits';
+export type { TagProps } from './props';
+export type TagInstance = InstanceType<typeof Component>;
