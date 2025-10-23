@@ -24,9 +24,11 @@
  * IN THE SOFTWARE.
  */
 
-import { array } from 'vue-types';
+import { array, object } from 'vue-types';
 
 import { PropTypes } from '@bkui-vue/shared';
+
+import { INode } from './interface';
 
 import type { ExtractPropTypes } from 'vue';
 
@@ -68,3 +70,16 @@ export const props = {
 };
 
 export type CascaderProps = ExtractPropTypes<typeof props>;
+
+export const cascaderPanelProps = {
+  width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def('auto'),
+  height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(216),
+  store: PropTypes.object.def({}),
+  separator: PropTypes.string.def(''),
+  suggestions: PropTypes.arrayOf(object<INode>()),
+  isFiltering: PropTypes.bool.def(false),
+  searchKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def(''),
+  modelValue: PropTypes.arrayOf(PropTypes.oneOfType([array<string>(), String, Number])),
+};
+
+export type CascaderPanelProps = ExtractPropTypes<typeof cascaderPanelProps>;

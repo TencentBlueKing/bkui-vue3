@@ -23,15 +23,44 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
+import { PropType, ExtractPropTypes } from 'vue';
 
 import { PropTypes } from '@bkui-vue/shared';
 
-import type { ExtractPropTypes } from 'vue';
-
-export const checkboxGroupProps = {
-  modelValue: PropTypes.array,
+export const props = {
+  type: PropTypes.string.def('text'),
+  clearable: PropTypes.bool,
   disabled: PropTypes.bool,
+  readonly: PropTypes.bool,
+  placeholder: PropTypes.string.def(''),
+  prefixIcon: PropTypes.string,
+  suffixIcon: PropTypes.string,
+  suffix: PropTypes.string,
+  prefix: PropTypes.string,
+  step: PropTypes.number,
+  max: PropTypes.number,
+  min: PropTypes.number,
+  maxlength: PropTypes.number,
+  maxcharacter: PropTypes.number,
+  behavior: PropTypes.oneOf(['normal', 'simplicity']).def('normal'),
+  showWordLimit: PropTypes.bool,
+  showControl: PropTypes.bool.def(true),
+  showClearOnlyHover: PropTypes.bool.def(true),
+  precision: PropTypes.number.def(0).validate(val => (val as number) >= 0 && (val as number) < 20),
+  modelValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  size: PropTypes.size(),
+  rows: PropTypes.number,
+  selectReadonly: PropTypes.bool.def(false),
   withValidate: PropTypes.bool.def(true),
+  overMaxLengthLimit: PropTypes.bool.def(false),
+  showOverflowTooltips: PropTypes.bool.def(true),
+  tooltipsOptions: {
+    type: Object as PropType<Partial<Record<string, any>>>,
+    default: () => ({}),
+  },
+  resize: PropTypes.bool.def(true),
+  autosize: PropTypes.oneOfType([Boolean, Object]).def(false),
+  stopPropagation: PropTypes.bool.def(true),
 };
 
-export type CheckboxGroupProps = ExtractPropTypes<typeof checkboxGroupProps>;
+export type InputProps = ExtractPropTypes<typeof props>;

@@ -1,12 +1,12 @@
 /*
  * Tencent is pleased to support the open source community by making
- * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ * 蓝鲸智云PaaS平台 (BlueKing PaaS) available.
  *
- * Copyright (C) 2025 Tencent.  All rights reserved.
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
  *
- * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ * 蓝鲸智云PaaS平台 (BlueKing PaaS) is licensed under the MIT License.
  *
- * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ * License for 蓝鲸智云PaaS平台 (BlueKing PaaS):
  *
  * ---------------------------------------------------
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
@@ -24,9 +24,21 @@
  * IN THE SOFTWARE.
  */
 
-export const checkboxGroupEmits = {
-  'update:modelValue': (value: Array<number | string>) => value !== undefined,
-  change: (value: Array<number | string>) => value !== undefined,
+export const emits = {
+  update: (_value: number | string) => true,
+  focus: (evt: FocusEvent) => evt,
+  blur: (evt: FocusEvent) => evt,
+  change: (_value: number | string) => true,
+  clear: () => true,
+  input: (_value: number | string) => true,
+  keypress: (_evt: KeyboardEvent) => true,
+  keydown: (_evt: KeyboardEvent) => true,
+  keyup: (_evt: KeyboardEvent) => true,
+  enter: (_evt: KeyboardEvent) => true,
+  paste: (_evt: ClipboardEvent) => true,
+  compositionstart: (_evt: CompositionEvent) => true,
+  compositionupdate: (_evt: CompositionEvent) => true,
+  compositionend: (_evt: CompositionEvent) => true,
 };
 
-export type CheckboxGroupEmits = typeof checkboxGroupEmits;
+export type InputEmits = typeof emits;

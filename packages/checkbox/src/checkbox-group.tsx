@@ -29,9 +29,9 @@ import { defineComponent, onMounted, provide, watch } from 'vue';
 import { usePrefix } from '@bkui-vue/config-provider';
 import { useFormItem } from '@bkui-vue/shared';
 
-import { checkboxGroupEmits } from './checkbox-group-emits';
-import { checkboxGroupProps } from './checkbox-group-props';
 import { checkboxGroupKey } from './common';
+import { checkboxGroupEmits } from './emits';
+import { checkboxGroupProps } from './props';
 
 import type { ICheckboxGroupContext, ICheckboxInstance } from './type';
 

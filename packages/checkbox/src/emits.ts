@@ -25,9 +25,16 @@
  */
 
 export const emits = {
-  'update:modelValue': (value: Array<number | string>) => value !== undefined,
-  change: (value: Array<number | string>) => value !== undefined,
+  'update:modelValue': (value: any) => value !== undefined,
+  change: (value: any, _event?: Event) => value !== undefined,
   click: (_event: MouseEvent) => true,
 };
 
 export type CheckboxEmits = typeof emits;
+
+export const checkboxGroupEmits = {
+  'update:modelValue': (value: Array<any>) => value !== undefined,
+  change: (value: Array<any>) => value !== undefined,
+};
+
+export type CheckboxGroupEmits = typeof checkboxGroupEmits;

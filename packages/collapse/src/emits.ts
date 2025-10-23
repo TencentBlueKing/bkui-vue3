@@ -26,9 +26,18 @@
 
 export const emits = {
   'item-click': (event: MouseEvent) => event !== undefined,
-  'update:modelValue': (publicVModelValue: boolean) => publicVModelValue,
+  'update:modelValue': (localActiveItems: Array<any>) => localActiveItems,
   'after-leave': () => true,
   'before-enter': () => true,
 };
 
 export type CollapseEmits = typeof emits;
+
+export const collapsePanelEmits = {
+  'update:modelValue': (publicVModelValue: boolean) => publicVModelValue,
+  change: (data: { name?: number | string }) => data,
+  'after-leave': () => true,
+  'before-enter': () => true,
+};
+
+export type CollapsePanelEmits = typeof collapsePanelEmits;

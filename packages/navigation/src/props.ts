@@ -24,23 +24,31 @@
  * IN THE SOFTWARE.
  */
 
-import { array, object } from 'vue-types';
+// ... existing code ...
+
+import { toType } from 'vue-types';
 
 import { PropTypes } from '@bkui-vue/shared';
 
-import { INode } from './interface';
-
 import type { ExtractPropTypes } from 'vue';
 
-export const cascaderPanelProps = {
-  width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def('auto'),
-  height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(216),
-  store: PropTypes.object.def({}),
-  separator: PropTypes.string.def(''),
-  suggestions: PropTypes.arrayOf(object<INode>()),
-  isFiltering: PropTypes.bool.def(false),
-  searchKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def(''),
-  modelValue: PropTypes.arrayOf(PropTypes.oneOfType([array<string>(), String, Number])),
+export type BkNavigationType = 'left-right' | 'top-bottom';
+
+export const props = {
+  navWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(60),
+  hoverWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(260),
+  showSideNavTitle: PropTypes.bool.def(true),
+  sideTitle: PropTypes.string.def(''),
+  headerTitle: PropTypes.string.def(''),
+  hoverLeaveDelay: PropTypes.number.def(0),
+  hoverEnterDelay: PropTypes.number.def(100),
+  defaultOpen: PropTypes.bool,
+  headHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(52),
+  navigationType: toType<BkNavigationType>('BkNavigationType', {
+    default: 'left-right',
+    validator: (v: BkNavigationType) => ['top-bottom', 'left-right'].includes(v),
+  }),
+  needMenu: PropTypes.bool.def(true),
 };
 
-export type CascaderPanelProps = ExtractPropTypes<typeof cascaderPanelProps>;
+export type NavigationProps = ExtractPropTypes<typeof props>;

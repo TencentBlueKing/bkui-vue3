@@ -29,3 +29,6 @@ import { withInstall } from '@bkui-vue/shared';
 import Component from './color-picker';
 const BkColorPicker = withInstall(Component);
 export default BkColorPicker;
+export type { ColorPickerEmits } from './emits';
+export type { ColorPickerProps } from './props';
+export type ColorPickerInstance = InstanceType<typeof Component>;

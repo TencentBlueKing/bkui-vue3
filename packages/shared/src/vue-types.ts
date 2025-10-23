@@ -329,7 +329,7 @@ export interface PropItem {
   default?: ValueType;
   description: string;
   link?: LinkType;
-  options?: Array<number | string>;
+  options?: Array<boolean | number | string>;
 }
 
 export interface IComponentWiki {
@@ -362,4 +362,13 @@ export interface IComponentWiki {
     fields: PropItem[];
   }[];
   children?: Array<Pick<IComponentWiki, 'emits' | 'name' | 'props' | 'slots'>>;
+  methods?: {
+    name: string;
+    description: string;
+    params: {
+      name: string;
+      type: string;
+      link?: LinkType;
+    }[];
+  }[];
 }

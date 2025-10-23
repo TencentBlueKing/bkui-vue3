@@ -23,6 +23,8 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
+import { ExtractPropTypes } from 'vue';
+
 import { PropTypes, renderDirectiveType } from '@bkui-vue/shared';
 
 export const propsCollapse = {
@@ -92,11 +94,15 @@ export const propsCollapse = {
    */
   useBlockTheme: PropTypes.bool.def(false),
 };
+
+export type CollapseProps = Readonly<ExtractPropTypes<typeof propsCollapse>>;
+
 export const CollapsePanelEventProps = {
   itemClick: {
     type: Function,
   },
 };
+
 export const propsCollapsePanel = {
   name: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(''),
   title: PropTypes.any,
@@ -109,3 +115,5 @@ export const propsCollapsePanel = {
   icon: PropTypes.string.def('angle-right'),
   ...CollapsePanelEventProps,
 };
+
+export type CollapsePanelProps = Readonly<ExtractPropTypes<typeof propsCollapsePanel>>;

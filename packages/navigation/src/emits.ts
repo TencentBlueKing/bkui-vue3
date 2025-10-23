@@ -1,12 +1,12 @@
 /*
  * Tencent is pleased to support the open source community by making
- * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ * 蓝鲸智云PaaS平台 (BlueKing PaaS) available.
  *
- * Copyright (C) 2025 Tencent.  All rights reserved.
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
  *
- * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ * 蓝鲸智云PaaS平台 (BlueKing PaaS) is licensed under the MIT License.
  *
- * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ * License for 蓝鲸智云PaaS平台 (BlueKing PaaS):
  *
  * ---------------------------------------------------
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
@@ -24,11 +24,11 @@
  * IN THE SOFTWARE.
  */
 
-export const collapsePanelEmits = {
-  'update:modelValue': (publicVModelValue: boolean) => publicVModelValue,
-  change: (data: { name?: number | string }) => data,
-  'after-leave': () => true,
-  'before-enter': () => true,
+export const emits = {
+  leave: (_isOpen: boolean) => true,
+  toggle: (_isOpen: boolean) => true,
+  hover: (_isOpen: boolean) => true,
+  'toggle-click': (_isOpen: boolean) => true,
 };
 
-export type CollapsePanelEmits = typeof collapsePanelEmits;
+export type NavigationEmits = typeof emits;

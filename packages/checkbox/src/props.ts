@@ -46,3 +46,11 @@ export const props = {
 };
 
 export type CheckboxProps = Readonly<ExtractPropTypes<typeof props>>;
+
+export const checkboxGroupProps = {
+  modelValue: PropTypes.array,
+  disabled: PropTypes.bool,
+  withValidate: PropTypes.bool.def(true),
+};
+
+export type CheckboxGroupProps = ExtractPropTypes<typeof checkboxGroupProps>;

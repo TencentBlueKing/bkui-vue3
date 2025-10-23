@@ -26,11 +26,14 @@
 
 import { withInstallProps } from '@bkui-vue/shared';
 
-import Component, { CheckboxProps } from './checkbox';
+import Component from './checkbox';
 import CheckboxGroup from './checkbox-group';
 
 const BkCheckbox = withInstallProps(Component, { Group: CheckboxGroup });
 
 export default BkCheckbox;
 export { BkCheckbox, CheckboxGroup as BkCheckboxGroup };
-export type { CheckboxProps };
+export type { CheckboxEmits, CheckboxGroupEmits } from './emits';
+export type { CheckboxProps, CheckboxGroupProps } from './props';
+export type BkCheckboxInstance = InstanceType<typeof Component>;
+export type BkCheckboxGroupInstance = InstanceType<typeof CheckboxGroup>;

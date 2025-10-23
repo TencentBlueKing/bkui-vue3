@@ -24,18 +24,29 @@
  * IN THE SOFTWARE.
  */
 
-export const emits = {
-  'update:modelValue': (publicVModelValue: Array<number | string | string[]>) => publicVModelValue,
-  change: (publicVModelValue: Array<number | string | string[]>, type: string) => publicVModelValue && type,
-  clear: () => true,
-  toggle: (isOpen: boolean) => isOpen,
-  focus: () => true,
+import { toType } from 'vue-types';
+
+import { PropTypes } from '@bkui-vue/shared';
+
+import { MessageThemeEnum, IMessageActions, IMessageProp } from './messageConstructor';
+
+import type { ExtractPropTypes } from 'vue';
+
+export const props = {
+  id: PropTypes.string.def(''),
+  message: toType<IMessageProp>('IMessage', {}),
+  theme: toType<`${MessageThemeEnum}`>('messageTheme', {}).def(MessageThemeEnum.PRIMARY),
+  delay: PropTypes.number,
+  dismissable: PropTypes.bool.def(true),
+  offsetY: PropTypes.number.def(30),
+  spacing: PropTypes.number.def(10),
+  extCls: PropTypes.string.def(''),
+  onClose: PropTypes.func,
+  getContainer: PropTypes.instanceOf(HTMLElement),
+  width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  minWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(100),
+  maxWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def('100%'),
+  actions: toType<IMessageActions>('IMessageAction', {}),
 };
 
-export type CascaderEmits = typeof emits;
-
-export const cascaderPanelEmits = {
-  'update:modelValue': (publicVModelValue: Array<number | string | string[]>) => publicVModelValue,
-};
-
-export type CascaderPanelEmits = typeof cascaderPanelEmits;
+export type MessageProps = ExtractPropTypes<typeof props>;

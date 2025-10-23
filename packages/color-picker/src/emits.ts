@@ -26,7 +26,7 @@
 
 export const emits = {
   'update:modelValue': (publicVModelValue: string) => publicVModelValue,
-  change: (publicVModelValue: string, type: string) => publicVModelValue && type,
+  change: (_val: any) => true,
 };
 
-export type CollapseEmits = typeof emits;
+export type ColorPickerEmits = typeof emits;

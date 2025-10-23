@@ -1,12 +1,12 @@
 /*
  * Tencent is pleased to support the open source community by making
- * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ * 蓝鲸智云PaaS平台 (BlueKing PaaS) available.
  *
- * Copyright (C) 2025 Tencent.  All rights reserved.
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
  *
- * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ * 蓝鲸智云PaaS平台 (BlueKing PaaS) is licensed under the MIT License.
  *
- * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ * License for 蓝鲸智云PaaS平台 (BlueKing PaaS):
  *
  * ---------------------------------------------------
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
@@ -24,8 +24,12 @@
  * IN THE SOFTWARE.
  */
 
-export const cascaderPanelEmits = {
-  'update:modelValue': (publicVModelValue: Array<number | string | string[]>) => publicVModelValue,
-};
+import { IMenuInfo } from './utils';
 
-export type CascaderPanelEmits = typeof cascaderPanelEmits;
+export const emits = {
+  'update:activeKey': (_key: string, _info: IMenuInfo) => true,
+  'update:openKeys': (_keys: string[]) => true,
+  click: (_info: IMenuInfo) => true,
+  openChange: (_opened: boolean, _info: IMenuInfo) => true,
+};
+export type MenuEmits = typeof emits;
