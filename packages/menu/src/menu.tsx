@@ -24,26 +24,18 @@
  * IN THE SOFTWARE.
  */
 
-import { computed, defineComponent, PropType, ref, watch, watchEffect } from 'vue';
+import { computed, defineComponent, ref, watch, watchEffect } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 
+import { emits } from './emits';
+import { props } from './props';
 import { IMenuInfo, MenuMode, useMenuProvider } from './utils';
 
-export const menuProps = {
-  activeKey: String,
-  collapse: Boolean,
-  openedKeys: { type: Array as PropType<string[]> },
-  mode: { type: String as PropType<MenuMode>, default: 'vertical' },
-  uniqueOpen: {
-    type: Boolean,
-    default: true,
-  },
-};
 export default defineComponent({
   name: 'Menu',
-  props: menuProps,
-  emits: ['update:activeKey', 'update:openKeys', 'click', 'openChange'],
+  props,
+  emits,
   setup(props, { slots, emit, expose }) {
     const activeKey = ref<string>('');
     const openedKeys = ref<string[]>([]);
