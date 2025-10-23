@@ -27,31 +27,17 @@
 import { defineComponent, ExtractPropTypes, shallowRef, watch } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-import { classes, PropTypes } from '@bkui-vue/shared';
+import { classes } from '@bkui-vue/shared';
 
-const timelineProps = {
-  list: PropTypes.arrayOf(
-    PropTypes.shape({
-      tag: PropTypes.string,
-      content: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
-      type: PropTypes.string,
-      size: PropTypes.string,
-      color: PropTypes.string,
-      icon: PropTypes.func,
-      filled: PropTypes.bool,
-      border: PropTypes.bool,
-      nodeType: PropTypes.timelineNodeType(),
-    }).isRequired,
-  ),
-  titleAble: PropTypes.bool.def(false),
-};
+import { props } from './props';
+import { emits } from './emits';
 
-export type TimelinePropTypes = Readonly<ExtractPropTypes<typeof timelineProps>>;
+export type TimelinePropTypes = Readonly<ExtractPropTypes<typeof props>>;
 
 export default defineComponent({
   name: 'Timeline',
-  props: timelineProps,
-  emits: ['select'],
+  props,
+  emits,
 
   setup(props, { emit }) {
     const defaultTimelines = shallowRef<TimelinePropTypes['list']>([]);

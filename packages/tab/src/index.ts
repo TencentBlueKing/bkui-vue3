@@ -36,3 +36,5 @@ export type TabPanelProps = Partial<ExtractPropTypes<typeof tabPanelProps>>;
 const BkTab = withInstallProps(Tab, { TabPanel });
 export { BkTab, TabPanel as BkTabPanel, SortTypeEnum, PositionEnum };
 export default BkTab;
+export type { TabEmits } from './emits';
+export type TabInstance = InstanceType<typeof BkTab>;

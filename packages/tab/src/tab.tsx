@@ -38,6 +38,7 @@ import {
 
 import { usePrefix } from '@bkui-vue/config-provider';
 
+import { emits } from './emits';
 import { PositionEnum, SortTypeEnum, tabProps, TabTypeEnum } from './props';
 import TabNav from './tab-nav';
 
@@ -47,21 +48,7 @@ export default defineComponent({
     TabNav,
   },
   props: tabProps,
-  emits: [
-    // 兼容老方法
-    'add-panel',
-    'tab-change',
-    'remove-panel',
-    'sort-change',
-    'on-drag-tab',
-    // 新方法
-    'add',
-    'change',
-    'remove',
-    'update:active',
-    'sort',
-    'drag',
-  ],
+  emits,
   setup(_props, { slots, emit }) {
     const isMounted = ref(false);
     const panels = ref([]);
