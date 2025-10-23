@@ -35,7 +35,7 @@ enum TagInputTriggerEnum {
   FOCUS = 'focus',
   SEARCH = 'search',
 }
-const tagProps = () => ({
+export const props = {
   modelValue: PropTypes.arrayOf(PropTypes.string).def([]),
   placeholder: PropTypes.string.def(''),
   list: PropTypes.arrayOf(PropTypes.object).def([]),
@@ -91,7 +91,6 @@ const tagProps = () => ({
     type: Object as PropType<Partial<IOptions>>,
     default: () => ({}),
   },
-});
+};
 
-export default tagProps;
-export type TagProps = Partial<ExtractPropTypes<ReturnType<typeof tagProps>>>;
+export type TagInputProps = Partial<ExtractPropTypes<typeof props>>;

@@ -25,30 +25,17 @@
  */
 
 import { computed, defineComponent, SlotsType } from 'vue';
-import { toType } from 'vue-types';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import { Error } from '@bkui-vue/icon';
-import { PropTypes, TagThemeType } from '@bkui-vue/shared';
 
-enum TagStrokeType {
-  FILLED = 'filled',
-  STROKE = 'stroke',
-  UNKNOWN = '',
-}
+import { emits } from './emits';
+import { props } from './props';
 
 export default defineComponent({
   name: 'Tag',
-  props: {
-    theme: TagThemeType().def(''),
-    closable: PropTypes.bool.def(false),
-    type: toType<`${TagStrokeType}`>('tagStorkeType', {}).def(TagStrokeType.UNKNOWN),
-    checkable: PropTypes.bool.def(false),
-    checked: PropTypes.bool.def(false),
-    radius: PropTypes.string.def('2px'),
-    size: PropTypes.size(),
-  },
-  emits: ['change', 'close'],
+  props,
+  emits,
   slots: Object as SlotsType<{
     default?: () => HTMLElement;
     icon?: () => HTMLElement;

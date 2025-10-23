@@ -1,12 +1,12 @@
 /*
  * Tencent is pleased to support the open source community by making
- * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ * 蓝鲸智云PaaS平台 (BlueKing PaaS) available.
  *
- * Copyright (C) 2025 Tencent.  All rights reserved.
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
  *
- * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ * 蓝鲸智云PaaS平台 (BlueKing PaaS) is licensed under the MIT License.
  *
- * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ * License for 蓝鲸智云PaaS平台 (BlueKing PaaS):
  *
  * ---------------------------------------------------
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
@@ -23,11 +23,26 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { withInstall } from '@bkui-vue/shared';
+import { toType } from 'vue-types';
 
-import Component from './tag';
-const BkTag = withInstall(Component);
-export default BkTag;
-export type { TagEmits } from './emits';
-export type { TagProps } from './props';
-export type TagInstance = InstanceType<typeof Component>;
+import { PropTypes, TagThemeType } from '@bkui-vue/shared';
+
+import type { ExtractPropTypes } from 'vue';
+
+enum TagStrokeType {
+  FILLED = 'filled',
+  STROKE = 'stroke',
+  UNKNOWN = '',
+}
+
+export const props = {
+  theme: TagThemeType().def(''),
+  closable: PropTypes.bool.def(false),
+  type: toType<`${TagStrokeType}`>('tagStorkeType', {}).def(TagStrokeType.UNKNOWN),
+  checkable: PropTypes.bool.def(false),
+  checked: PropTypes.bool.def(false),
+  radius: PropTypes.string.def('2px'),
+  size: PropTypes.size(),
+};
+
+export type TagProps = ExtractPropTypes<typeof props>;

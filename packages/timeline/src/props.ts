@@ -1,12 +1,12 @@
 /*
  * Tencent is pleased to support the open source community by making
- * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ * 蓝鲸智云PaaS平台 (BlueKing PaaS) available.
  *
- * Copyright (C) 2025 Tencent.  All rights reserved.
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
  *
- * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ * 蓝鲸智云PaaS平台 (BlueKing PaaS) is licensed under the MIT License.
  *
- * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ * License for 蓝鲸智云PaaS平台 (BlueKing PaaS):
  *
  * ---------------------------------------------------
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
@@ -23,11 +23,38 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { withInstall } from '@bkui-vue/shared';
 
-import Component from './tag';
-const BkTag = withInstall(Component);
-export default BkTag;
-export type { TagEmits } from './emits';
-export type { TagProps } from './props';
-export type TagInstance = InstanceType<typeof Component>;
+import { PropTypes } from '@bkui-vue/shared';
+
+import type { ExtractPropTypes } from 'vue';
+
+export type TimelineItem = {
+  tag: string;
+  content: object | string;
+  type: string;
+  size: string;
+  color: string;
+  icon: () => string;
+  filled: boolean;
+  border: boolean;
+  nodeType: 'template' | 'vnode';
+};
+
+export const props = {
+  list: PropTypes.arrayOf(
+    PropTypes.shape({
+      tag: PropTypes.string,
+      content: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+      type: PropTypes.string,
+      size: PropTypes.string,
+      color: PropTypes.string,
+      icon: PropTypes.func,
+      filled: PropTypes.bool,
+      border: PropTypes.bool,
+      nodeType: PropTypes.timelineNodeType(),
+    }).isRequired,
+  ),
+  titleAble: PropTypes.bool.def(false),
+};
+
+export type TimelineProps = ExtractPropTypes<typeof props>;

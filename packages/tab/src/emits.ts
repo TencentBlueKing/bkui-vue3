@@ -1,12 +1,12 @@
 /*
  * Tencent is pleased to support the open source community by making
- * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
+ * 蓝鲸智云PaaS平台 (BlueKing PaaS) available.
  *
- * Copyright (C) 2025 Tencent.  All rights reserved.
+ * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
  *
- * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
+ * 蓝鲸智云PaaS平台 (BlueKing PaaS) is licensed under the MIT License.
  *
- * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
+ * License for 蓝鲸智云PaaS平台 (BlueKing PaaS):
  *
  * ---------------------------------------------------
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
@@ -23,11 +23,20 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { withInstall } from '@bkui-vue/shared';
+import { TabPanelProps } from './props';
 
-import Component from './tag';
-const BkTag = withInstall(Component);
-export default BkTag;
-export type { TagEmits } from './emits';
-export type { TagProps } from './props';
-export type TagInstance = InstanceType<typeof Component>;
+export const emits = {
+  add: (_value: { e: MouseEvent }) => true,
+  'add-panel': (_value: { e: MouseEvent }) => true,
+  change: (_name: string) => true,
+  'tab-change': (_name: string) => true,
+  'update:active': (_name: string) => true,
+  remove: (_index: number, _panel: TabPanelProps) => true,
+  'remove-panel': (_index: number, _panel: TabPanelProps) => true,
+  sort: (_oldIndex: number, _newIndex: number, _sortType: string) => true,
+  'sort-change': (_oldIndex: number, _newIndex: number, _sortType: string) => true,
+  drag: (_index: number, _event: DragEvent) => true,
+  'on-drag-tab': (_index: number, _event: DragEvent) => true,
+};
+
+export type TabEmits = typeof emits;
