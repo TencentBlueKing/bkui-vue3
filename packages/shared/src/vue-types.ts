@@ -316,54 +316,50 @@ export function SelectedType() {
 /** 以下是组件库文档 类型 */
 export type ValueType = Array<boolean | number | string> | boolean | number | object | string;
 export type LinkType = Record<string, string> | string;
+
+export interface IParam {
+  name: string;
+  type: string;
+  link?: LinkType;
+}
+
+export interface PropItem {
+  name: string;
+  type: string;
+  default?: ValueType;
+  description: string;
+  link?: LinkType;
+  options?: Array<number | string>;
+}
+
 export interface IComponentWiki {
   group: string;
   name: string;
   title: string;
   titleCN: string;
   description: string;
-  props: {
-    name: string;
-    type: string;
-    default?: ValueType;
-    description: string;
-    link?: LinkType;
-    options?: Array<number | string>;
-  }[];
+  props?: PropItem[];
   emits?: {
     name: string;
     description: string;
-    params: {
-      name: string;
-      type: string;
-      link?: LinkType;
-    }[];
+    params: IParam[];
   }[];
   slots?: {
     name: string;
     description: string;
-    params?: {
-      name: string;
-      type: string;
-      link?: LinkType;
-    }[];
+    params?: IParam[];
   }[];
   presets: Array<{
     title: string;
     description: string;
-    props: Record<string, ValueType>;
+    template?: string;
+    props?: Record<string, ValueType>;
     slots?: Record<string, string>;
   }>;
   types?: {
     name: string;
     description: string;
-    fields: {
-      name: string;
-      type: string;
-      description: string;
-      default?: ValueType;
-      link?: LinkType;
-    }[];
+    fields: PropItem[];
   }[];
   children?: Array<Pick<IComponentWiki, 'emits' | 'name' | 'props' | 'slots'>>;
 }

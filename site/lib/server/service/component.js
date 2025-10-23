@@ -72,8 +72,10 @@ const clearModuleCache = (modulePath) => {
 };
 
 // 获取编译文件路径
-const getDistFilePath = (version, component, file) => {
-  const dir = path.resolve(RELEASE_DIST_DIR, `${version}`, component, 'src');
+const getDistFilePath = (version, component, type, file) => {
+  const dir = type === 'directive'
+    ? path.resolve(RELEASE_DIST_DIR, `${version}`, 'directives', 'src', `${component}.js`)
+    : path.resolve(RELEASE_DIST_DIR, `${version}`, component, 'src');
   // 创建目录
   fs.mkdirSync(dir, { recursive: true });
   return path.resolve(dir, file);
@@ -138,14 +140,14 @@ export const getFileAuthors = async (path) => {
 };
 
 // 获取组件
-export const getComponent = async (releaseZipPath, component, version) => {
+export const getComponent = async (releaseZipPath, component, version, type) => {
   // 编译后的 js 文件路径
-  const compiledJsPath = getDistFilePath(version, component, COMPILE_JS_FILE);
+  const compiledJsPath = getDistFilePath(version, component, type, COMPILE_JS_FILE);
 
   // 如果编译后的 js 文件不存在，则编译组件
   if (!fs.existsSync(compiledJsPath)) {
     // 编译组件
-    const compiledComponent = await compileComponent(releaseZipPath, component);
+    const compiledComponent = await compileComponent(releaseZipPath, component, type);
     // 写入文件
     fs.writeFileSync(compiledJsPath, compiledComponent, 'utf-8');
   }
@@ -153,13 +155,13 @@ export const getComponent = async (releaseZipPath, component, version) => {
 };
 
 // 获取组件 CSS
-export const getCss = async (releaseZipPath, component, version) => {
+export const getCss = async (releaseZipPath, component, version, type) => {
   // 编译后的 css 文件路径
-  const compiledCssPath = getDistFilePath(version, component, COMPILE_CSS_FILE);
+  const compiledCssPath = getDistFilePath(version, component, type, COMPILE_CSS_FILE);
 
   // 如果编译后的 css 文件不存在，则编译组件
   if (!fs.existsSync(compiledCssPath)) {
-    const compiledCss = await compileCss(releaseZipPath, component);
+    const compiledCss = await compileCss(releaseZipPath, component, type);
     // 写入文件
     fs.writeFileSync(compiledCssPath, compiledCss, 'utf-8');
   }
@@ -198,9 +200,28 @@ export const getNavGroups = async (releaseZipPath) => {
       componentGroupMap[demo.group].push(demo);
     }
   }
+  // 获取指令列表
+  const directiveList = [];
+  const directiveListPaths = fs.readdirSync(path.resolve(releaseZipPath, 'directives/demo'));
+  for (const directivePath of directiveListPaths) {
+    const directiveDemoPath = path.resolve(releaseZipPath, 'directives/demo', directivePath);
+    if (fs.existsSync(directiveDemoPath)) {
+      const directiveCompiledDemoPath = path.resolve(RELEASE_DIST_DIR, `${version}`, 'directives', 'demo', `${directivePath}.js`);
+      if (!fs.existsSync(directiveCompiledDemoPath)) {
+        await compileDemo(releaseZipPath, directiveDemoPath);
+      }
+      // dev 模式下 - 彻底清除模块缓存
+      if (process.env.NODE_ENV === 'development') {
+        clearModuleCache(directiveCompiledDemoPath);
+      }
+      const { default: directive } = require(directiveCompiledDemoPath);
+      directiveList.push(directive);
+    }
+  }
 
   return {
     componentGroupMap,
+    directiveList,
   };
 };
 

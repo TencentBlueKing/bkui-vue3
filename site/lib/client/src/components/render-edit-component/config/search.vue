@@ -16,7 +16,7 @@
             </div>
           </li>
         </ul>
-        <div v-if="!filteredProps.length" class="no-data" >无搜索结果</div>
+        <div v-if="!filteredProps?.length" class="no-data" >无搜索结果</div>
       </div>
     </div>
   </div>

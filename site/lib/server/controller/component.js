@@ -44,9 +44,10 @@ export default class ComponentController {
   async getComponent(
     @QueryParams({ name: 'version' }) version,
     @QueryParams({ name: 'component' }) component,
+    @QueryParams({ name: 'type' }) type,
   ) {
     const releaseZipPath = await getReleaseZipPath(version);
-    return getComponent(releaseZipPath, component, version);
+    return getComponent(releaseZipPath, component, version, type);
   }
 
   @OutputJson()
@@ -54,9 +55,10 @@ export default class ComponentController {
   async getCss(
     @QueryParams({ name: 'version' }) version,
     @QueryParams({ name: 'component' }) component,
+    @QueryParams({ name: 'type' }) type,
   ) {
     const releaseZipPath = await getReleaseZipPath(version);
-    return getCss(releaseZipPath, component, version);
+    return getCss(releaseZipPath, component, version, type);
   }
 
   @OutputJson()

@@ -39,10 +39,10 @@ import Header from './header.vue';
 import Search from './search.vue';
 
 interface IProps {
-  props: IComponentWiki['props'];
-  presetProps: IComponentWiki['presets'][number]['props'];
-  renderProps: IComponentWiki['presets'][number]['props'];
-  types: IComponentWiki['types'];
+  props?: IComponentWiki['props'];
+  presetProps?: IComponentWiki['presets'][number]['props'];
+  renderProps?: IComponentWiki['presets'][number]['props'];
+  types?: IComponentWiki['types'];
 }
 interface IEmits {
   (e: 'update:renderProps', value: IComponentWiki['presets'][number]['props']): void;
@@ -121,7 +121,7 @@ const comProps = computed(() => {
     return propsSort(props.props);
   } else {
     const currentProps: IComponentWiki['props'] = [];
-    Object.keys(props.presetProps).forEach((key) => {
+    Object.keys(props.presetProps || {}).forEach((key) => {
       const filterProps = props.props.filter(item => item.name === key);
       currentProps.push(...filterProps)
     });

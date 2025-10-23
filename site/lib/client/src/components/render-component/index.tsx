@@ -13,6 +13,7 @@ import {
   Message,
   Input as BkInput,
   Button as BkButton,
+  clickoutside,
 } from 'bkui-vue';
 
 const { copy } = useClipboard({
@@ -21,9 +22,19 @@ const { copy } = useClipboard({
 
 export default vue.defineComponent({
   name: 'RenderComponent',
+  directives: {
+    clickoutside,
+  },
   props: {
     name: {
       type: String,
+    },
+    group: {
+      type: String,
+    },
+    template: {
+      type: String,
+      default: '',
     },
     component: {
       type: Object,
@@ -41,6 +52,11 @@ export default vue.defineComponent({
   components: {
     BkInput,
     BkButton
+  },
+  methods: {
+    handleClickOutside() {
+      console.log('点击外部时，触发事件');
+    }
   },
   render() {
     const renderComponent = () => {
@@ -88,6 +104,31 @@ export default vue.defineComponent({
       )
     }
 
+    const renderDirectiveComponent = () => {
+      const RuntimeComponent = vue.defineComponent({
+        name: `Render${this.name}Directive`,
+        directives: {
+          [this.name]: this.component.default
+        },
+        setup() {
+          const handleClickOutside = () => {
+            Message({
+              message: '点击了外部区域',
+              theme: 'primary',
+            });
+          };
+          return {
+            handleClickOutside,
+          };
+        },
+        template: this.template,
+      });
+      // 渲染组件，renderProps 作为 props 传入。指令使用 $attrs 使用属性
+      return vue.h(RuntimeComponent, {
+        ...this.renderProps,
+      });
+    }
+
     const renderFunctionComponent = () => {
       return vue.h(
         BkButton,
@@ -103,6 +144,8 @@ export default vue.defineComponent({
       return renderFunctionComponent();
     } else if (this.name === 'icon') {
       return renderIconComponent();
+    } else if (this.group === '指令') {
+      return renderDirectiveComponent();
     } else {
       return renderComponent();
     }

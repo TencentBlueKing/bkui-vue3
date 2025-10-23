@@ -56,7 +56,8 @@ const loading = ref(false);
 const getFileAuthorList = async (name: string) => {
   try {
     loading.value = true;
-    authorList.value = await getFileAuthors(name, 'component');
+    const type = componentStore.activeComponentWiki.group === '指令' ? 'directive' : 'component';
+    authorList.value = await getFileAuthors(name, type);
   } catch (error) {
     console.error(error);
   } finally {
