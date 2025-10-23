@@ -1,4 +1,4 @@
-/**
+/*
  * Tencent is pleased to support the open source community by making
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
  *
@@ -24,12 +24,6 @@
  * IN THE SOFTWARE.
  */
 
-import { withInstall } from '@bkui-vue/shared';
+export const emits = ['update:modelValue', 'change'];
 
-import Component from './slider';
-
-const Slider = withInstall(Component);
-export default Slider;
-export type { SliderEmits } from './emits';
-export type { SliderProps } from './props';
-export type BkSliderInstance = InstanceType<typeof Component>;
+export type SliderEmits = typeof emits;
