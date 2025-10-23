@@ -24,63 +24,20 @@
  * IN THE SOFTWARE.
  */
 
-import { defineComponent, onBeforeUnmount, PropType, reactive, ref, SlotsType } from 'vue';
+import { defineComponent, onBeforeUnmount, reactive, ref, SlotsType } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import { CollapseLeft } from '@bkui-vue/icon';
 
+import { emits } from './emits';
 import NavigationTitle from './navigation-title';
+import { props } from './props';
+
 export type BkNavigationType = 'left-right' | 'top-bottom';
-const NavigationProps = {
-  navWidth: {
-    type: [Number, String],
-    default: 60,
-  },
-  hoverWidth: {
-    type: [Number, String],
-    default: 260,
-  },
-  showSideNavTitle: {
-    type: Boolean,
-    default: true,
-  },
-  sideTitle: {
-    type: String,
-    default: '',
-  },
-  headerTitle: {
-    type: String,
-    default: '',
-  },
-  hoverLeaveDelay: {
-    type: Number,
-    default: 0,
-  },
-  hoverEnterDelay: {
-    type: Number,
-    default: 100,
-  },
-  defaultOpen: Boolean,
-  headHeight: {
-    type: [Number, String],
-    default: 52,
-  },
-  navigationType: {
-    type: String as PropType<BkNavigationType>,
-    default: 'left-right',
-    validator(v: BkNavigationType) {
-      return ['top-bottom', 'left-right'].includes(v);
-    },
-  },
-  needMenu: {
-    type: Boolean,
-    default: true,
-  },
-};
 export default defineComponent({
   name: 'Navigation',
-  props: NavigationProps,
-  emits: ['leave', 'toggle', 'hover', 'toggle-click'],
+  props,
+  emits,
   // slots: ['header', 'menu', 'footer', 'side-icon', 'side-header'],
   slots: Object as SlotsType<{
     default?: () => HTMLElement;
