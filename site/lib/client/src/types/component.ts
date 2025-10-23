@@ -13,7 +13,7 @@ export interface PropItem {
   default?: ValueType;
   description: string;
   link?: LinkType;
-  options?: Array<string | number>;
+  options?: Array<boolean | number | string>;
 }
 
 export interface IComponentWiki {
