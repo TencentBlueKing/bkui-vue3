@@ -38,10 +38,13 @@
             <template #aside>
               <render-config
                 v-model:render-props="renderProps"
+                v-model:render-slots="renderSlots"
                 :preset-props="componentWiki.presets[renderPresetIndex].props"
                 :props="componentWiki.props"
                 :types="componentWiki.types"
-              />
+                :preset-slots="componentWiki.presets[renderPresetIndex].slots"
+                :slots="componentWiki.slots"
+            />
             </template>
             <template #main>
               <section
@@ -119,7 +122,7 @@ const isFullScreen = ref(false);
 
 // 选择预设
 const handleChoosePreset = (preset: IComponentWiki['presets'][number]) => {
-  renderProps.value = JSON.parse(JSON.stringify(preset.props || {}));
+  renderProps.value = JSON.parse(JSON.stringify(preset.props ?? {}));
   renderSlots.value = JSON.parse(JSON.stringify(preset.slots || {}));
   renderPresetIndex.value = props.componentWiki.presets.indexOf(preset);
 };

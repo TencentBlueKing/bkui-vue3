@@ -45,10 +45,11 @@ export default defineComponent({
               const value = props.attr?.[key as keyof IComponentWiki['props'][number]] ?? '';
               const isOdd = (!isHasOptionsKey && key === 'default' ? index + 1 : index) % 2 === 0;
               const label = SHOW_KEYS[key as keyof typeof SHOW_KEYS];
+              const displayVal = Array.isArray(value) ? value.join(', ') : String(value).replaceAll(' |', ',')
               return (
                 <div key={key} class={`tip-item${isOdd ? ' even-bg' : ''}`}>
                   <span>{label}:</span>
-                  <span>{Array.isArray(value) ? value.join(', ') : String(value).replaceAll(' |', ',')}</span>
+                  <span title={displayVal}>{displayVal}</span>
                 </div>
               )})}
             </>

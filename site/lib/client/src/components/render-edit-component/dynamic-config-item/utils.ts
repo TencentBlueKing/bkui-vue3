@@ -1,5 +1,9 @@
 import type { IComponentWiki } from '@/types/component';
 
+export const splitType = (type: string) => {
+  return type.split('|').map(item => item.trim().replace(/'/g, '')).filter(item => item)
+}
+
 export const isBasicTypeArr = (type: string) => {
   const basicTypes = ['string[]', 'number[]', 'boolean[]'];
   return basicTypes.includes(type.toLowerCase());
@@ -10,7 +14,7 @@ export const factType = (type: string, options: IComponentWiki['props'][number][
   if(basicType === 'boolean') {
     return basicType;
   }
-  const isString = basicType === 'string';
+  const isString = ['string', 'date'].includes(basicType);
   const isNumber = basicType === 'number';
   const isEnum = options && options.length > 0;
   if(isString && !isEnum) {
