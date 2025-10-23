@@ -28,4 +28,4 @@ export const emits = {
   destroy: (_value: string) => _value,
 };
 
-export type NotifyPaginationEmits = typeof emits;
+export type NotifyEmits = typeof emits;

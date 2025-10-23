@@ -28,3 +28,6 @@ import { withInstall } from '@bkui-vue/shared';
 import Component from './steps';
 const BkSteps = withInstall(Component);
 export default BkSteps;
+export type { StepsEmits } from './emits';
+export type { StepsType as StepsProps } from './props';
+export type BkStepsInstance = InstanceType<typeof BkSteps>;

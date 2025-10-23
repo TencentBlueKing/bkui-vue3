@@ -36,3 +36,6 @@ export default BkSelect;
 export { BkSelect, Option as BkOption, OptionGroup as BkOptionGroup, useHover };
 export type { SelectEmits, OptionEmits, OptionGroupEmits } from './emits';
 export type { SelectProps, OptionProps, OptionGroupProps } from './props';
+export type BkSelectInstance = InstanceType<typeof BkSelect>;
+export type BkOptionInstance = InstanceType<typeof Option>;
+export type BkOptionGroupInstance = InstanceType<typeof OptionGroup>;

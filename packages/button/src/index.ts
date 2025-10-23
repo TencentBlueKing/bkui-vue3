@@ -26,8 +26,12 @@
 
 import { withInstallProps } from '@bkui-vue/shared';
 
-import Component, { type ButtonPropTypes } from './button';
+import Component from './button';
 import ButtonGroup from './button-group';
 const BkButton = withInstallProps(Component, { ButtonGroup });
 export default BkButton;
-export { ButtonGroup as BkButtonGroup, BkButton, ButtonPropTypes };
+export { ButtonGroup as BkButtonGroup, BkButton };
+export type { ButtonEmits } from './emits';
+export type { ButtonProps } from './props';
+export type BkButtonInstance = InstanceType<typeof Component>;
+export type BkButtonGroupInstance = InstanceType<typeof ButtonGroup>;

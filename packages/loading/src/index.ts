@@ -43,3 +43,5 @@ const BkLoading = withInstallProps(
 );
 export default BkLoading;
 export { BkLoading, setDefaultIndicator, BkLoadingMode, BkLoadingSize, vBkloading };
+export type { LoadingProps } from './props';
+export type BkLoadingInstance = InstanceType<typeof Component>;
