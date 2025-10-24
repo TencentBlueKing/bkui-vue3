@@ -27,9 +27,11 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { isAvailableId, isElement } from './utils';
 
-let popContainerId = null;
-let parentNodeReferId = null;
+const popContainerId = `id_${uuidv4()}`;
 export default (props, prefix = '#') => {
+  // 为每个 popover 实例生成独立的 parentNodeReferId，避免嵌套时 ID 冲突
+  const parentNodeReferId = `id_${uuidv4()}`;
+
   const getPrefixId = (root?) => {
     let resolvedBoundary = null;
     const resolveBoundary = (fn: () => void) => {
@@ -38,8 +40,7 @@ export default (props, prefix = '#') => {
       }
     };
     const resolveParentBoundary = () => {
-      if (/^parent$/i.test(props.boundary)) {
-        resolvedBoundary = `${prefix}${popContainerId}`;
+      if (/^parent$/i.test(props.boundary) || !props.boundary) {
         const { parentNode } = root || {};
         if (parentNode?.parentNode) {
           parentNode.parentNode.setAttribute('data-pnode-id', parentNodeReferId);
@@ -49,48 +50,68 @@ export default (props, prefix = '#') => {
     };
 
     const resolveCommonBoundary = () => {
-      if (!/^body$/i.test(props.boundary)) {
-        if (typeof props.boundary === 'string') {
-          if (!isAvailableId(props.boundary)) {
-            // console.error('props.boundary is not available selector');
-            resolvedBoundary = 'body';
-            return;
-          }
-          resolvedBoundary = props.boundary;
-          return;
-        }
+      // 如果 boundary 是字符串 'body'，使用动态创建的 popContainer
+      if (typeof props.boundary === 'string' && /^body$/i.test(props.boundary)) {
+        resolvedBoundary = `${prefix}${popContainerId}`;
+        return;
+      }
 
-        if (isElement(props.boundary)) {
-          resolvedBoundary = props.boundary;
-          return;
-        }
+      // 如果 boundary 是 document.body 对象，使用动态创建的 popContainer
+      if (props.boundary === document.body) {
+        resolvedBoundary = `${prefix}${popContainerId}`;
+        return;
+      }
+
+      // 处理其他字符串选择器，直接使用
+      if (typeof props.boundary === 'string') {
+        resolvedBoundary = props.boundary;
+        return;
+      }
+
+      // 处理其他 HTMLElement 对象，直接使用
+      if (isElement(props.boundary)) {
+        resolvedBoundary = props.boundary;
+        return;
       }
     };
 
     resolveBoundary(resolveParentBoundary);
     resolveBoundary(resolveCommonBoundary);
+    // 默认降级逻辑
     resolveBoundary(() => {
-      resolvedBoundary = typeof props.boundary === 'string' ? props.boundary : `${prefix}${popContainerId}`;
+      resolvedBoundary = `${prefix}${popContainerId}`;
     });
 
     return resolvedBoundary;
   };
 
-  if (popContainerId === null || !isAvailableId(`#${popContainerId}`)) {
-    popContainerId = `id_${uuidv4()}`;
+  // 确保全局 popContainer 容器存在
+  if (!isAvailableId(`#${popContainerId}`)) {
     const popContainer = document.createElement('div');
     popContainer.setAttribute('id', popContainerId);
     popContainer.setAttribute('data-popper-id', popContainerId);
     document.body.append(popContainer);
   }
 
-  if (parentNodeReferId === null) {
-    parentNodeReferId = `id_${uuidv4()}`;
-  }
+  // 清理父节点上的 data-pnode-id 属性
+  const clearParentNodeId = (root?) => {
+    if (/^parent$/i.test(props.boundary)) {
+      const { parentNode } = root || {};
+      if (parentNode?.parentNode) {
+        const attr = parentNode.parentNode.getAttribute('data-pnode-id');
+        // 只清理当前实例设置的属性
+        if (attr === parentNodeReferId) {
+          parentNode.parentNode.removeAttribute('data-pnode-id');
+        }
+      }
+    }
+  };
 
   return {
     popContainerId,
     prefixId: getPrefixId(),
     getPrefixId,
+    parentNodeReferId,
+    clearParentNodeId,
   };
 };
