@@ -44,6 +44,7 @@ export interface ISelectContext {
   selectedStyle: 'check' | 'checkbox';
   curSearchValue: string;
   highlightKeyword: boolean;
+  isSearchEmpty: boolean;
   register(key: PropertyKey, option: OptionInstanceType): void;
   unregister(key: PropertyKey, option?: OptionInstanceType): void;
   registerGroup(key: PropertyKey, option: GroupInstanceType): void;
