@@ -12,7 +12,7 @@ import RenderErrorType from './errortype.vue';
 
 import './index.postcss';
 
-import { factType } from './utils';
+import { splitType, factType } from './utils';
 
 // 根据类型渲染不同的组件
 export default defineComponent({
@@ -49,8 +49,10 @@ export default defineComponent({
   },
   setup(props) {
     const singleType = ref('');
-    const typeList = props.type.split('|').map(item => item.trim().replace(/'/g, '')).filter(item => item)
-    singleType.value = typeList?.[0];
+    const typeList = computed(() => {
+      return splitType(props.type)
+    })
+    singleType.value = typeList.value?.[0];
     const typeValue = computed(() => {
       return factType(singleType.value, props.options, props.complexTypes)
     });

@@ -30,6 +30,8 @@ const BkPopover = withInstall(Component);
 
 export default BkPopover;
 
-export { default as $bkPopover } from './plugin-popover';
+export type { PopoverEmits } from './emits';
 
+export { default as $bkPopover } from './plugin-popover';
 export { PopoverProps, type PopoverPropTypes } from './props';
+export type BkPopoverInstance = InstanceType<typeof BkPopover>;

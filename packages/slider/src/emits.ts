@@ -23,19 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { withInstallProps } from '@bkui-vue/shared';
 
-import { useHover } from './common';
-import Option from './option';
-import OptionGroup from './optionGroup';
-import Component from './select';
+export const emits = ['update:modelValue', 'change'];
 
-const BkSelect = withInstallProps(Component, { Option, Group: OptionGroup });
-
-export default BkSelect;
-export { BkSelect, Option as BkOption, OptionGroup as BkOptionGroup, useHover };
-export type { SelectEmits, OptionEmits, OptionGroupEmits } from './emits';
-export type { SelectProps, OptionProps, OptionGroupProps } from './props';
-export type BkSelectInstance = InstanceType<typeof BkSelect>;
-export type BkOptionInstance = InstanceType<typeof Option>;
-export type BkOptionGroupInstance = InstanceType<typeof OptionGroup>;
+export type SliderEmits = typeof emits;

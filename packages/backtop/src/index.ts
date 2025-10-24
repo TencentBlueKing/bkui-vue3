@@ -28,3 +28,5 @@ import { withInstall } from '@bkui-vue/shared';
 import Component from './backtop';
 const BkBacktop = withInstall(Component);
 export default BkBacktop;
+export type { BacktopProps } from './props';
+export type BkBacktopInstance = InstanceType<typeof Component>;

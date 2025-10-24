@@ -30,3 +30,6 @@ const BkPagination = withInstall(Component);
 
 export default BkPagination;
 export { BkPagination };
+export type { PaginationEmits } from './emits';
+export type { PaginationProps } from './props';
+export type BkPaginationInstance = InstanceType<typeof BkPagination>;

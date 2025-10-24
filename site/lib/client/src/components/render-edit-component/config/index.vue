@@ -1,34 +1,51 @@
 <template>
   <section class="edit-component-config g-scrollbar">
-    <Header class="header-wrapper" @refresh="resetProp"  />
-    <Search 
-      :props="props.props" 
-      @selectedAttr="handleSelectedAttr"
-    />
-    <div class="config-tabs">
-      <div v-for="item in TABS" :key="item.id" @click="changeTab(item.id)" :class="`${activeTab === item.id ? 'active' : ''}`">{{ item.name }}</div>
+    <div class="prl16">
+      <Header class="header-wrapper" @refresh="resetProp"  />
+      <Search 
+        :props="props.props" 
+        @selectedAttr="handleSelectedAttr"
+      />
+      <div class="config-tabs">
+        <div v-for="item in TABS" :key="item.id" @click="changeTab(item.id)" :class="`${activeTab === item.id ? 'active' : ''}`">{{ item.name }}</div>
+      </div>
     </div>
-    <DynamicConfigItem
-      v-for="prop in comProps"
-      :key="prop.name"
-      :name="prop.name"
-      :type="prop.type"
-      :model-value="renderProps[prop.name]"
-      :options="prop.options"
-      :complex-types="types"
-      :class="{ 'selected-prop': selectedProp === prop.name }"
-      @update:model-value="(value) => handleUpdateProps(prop.name, value)"
-    >
-      <template #nameTip>
-        <RenderNameTip :attr="prop" />
-      </template>
-    </DynamicConfigItem>
+    <Collapse title="属性" v-if="comProps.length">
+      <div class="prl16">
+        <DynamicConfigItem
+          v-for="prop in comProps"
+          :key="prop.name"
+          :name="prop.name"
+          :type="prop.type"
+          :model-value="renderProps[prop.name]"
+          :options="prop.options"
+          :complex-types="types"
+          :class="{ 'selected-prop': selectedProp === prop.name }"
+          @update:model-value="(value) => handleUpdateProps(prop.name, value)"
+        >
+          <template #nameTip>
+            <RenderNameTip :attr="prop" />
+          </template>
+        </DynamicConfigItem>
+      </div>
+    </Collapse>
+    <Collapse title="插槽" v-if="comSlots.length">
+      <div class="prl16">
+        <Slot 
+          v-for="slot in comSlots" 
+          :slot-name="slot.name"
+          :desc="slot.description"
+          :model-value="renderSlots[slot.name]" 
+          @update:model-value="(value) => handleUpdateSlots(slot.name, value)" />
+      </div>
+    </Collapse>
   </section>
 </template>
 
 <script lang="ts" setup>
 import { computed, ref, onBeforeUnmount } from 'vue';
 import type {
+  PropItem,
   IComponentWiki,
   ValueType as PropValue,
 } from '@/types/component';
@@ -37,15 +54,23 @@ import DynamicConfigItem from '../dynamic-config-item';
 import RenderNameTip from './name-tip';
 import Header from './header.vue';
 import Search from './search.vue';
+import Collapse from './collapse'
+import Slot from './slot'
+
+import { splitType, factType } from '../dynamic-config-item/utils';
 
 interface IProps {
   props?: IComponentWiki['props'];
   presetProps?: IComponentWiki['presets'][number]['props'];
   renderProps?: IComponentWiki['presets'][number]['props'];
   types?: IComponentWiki['types'];
+  renderSlots: IComponentWiki['presets'][number]['slots'];
+  presetSlots: IComponentWiki['presets'][number]['slots'];
+  slots: IComponentWiki['slots'];
 }
 interface IEmits {
   (e: 'update:renderProps', value: IComponentWiki['presets'][number]['props']): void;
+  (e: 'update:renderSlots', value: IComponentWiki['presets'][number]['slots']): void;
 }
 
 const props = defineProps<IProps>();
@@ -60,6 +85,15 @@ const handleUpdateProps = (name: string, value: PropValue) => {
     },
   );
 };
+const handleUpdateSlots = (name: string, value: string) => {
+    emits(
+    'update:renderSlots',
+    {
+      ...props.renderSlots,
+      [name]: value,
+    },
+  );
+}
 
 const TABS = [
   {
@@ -81,7 +115,7 @@ const changeTab = (id: string) => {
 const isSelectedPreset = (name: string) => {
   return Object.keys(props.presetProps).includes(name);
 }
-const handleSelectedAttr = (item: IComponentWiki['props'][0]) => {
+const handleSelectedAttr = (item: PropItem) => {
   if(isSelectedPreset(item.name)) {
     activeTab.value = TABS[1].id
   } else {
@@ -111,23 +145,52 @@ const handleSelectedAttr = (item: IComponentWiki['props'][0]) => {
   }, 100);
 }
 
-const propsSort = (filterProps: IComponentWiki['props']) => {
+const propsSort = <T extends { name: string }>(filterProps: T[]) => {
   return [...filterProps].sort((a, b) =>
     a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
   );
 }
-const comProps = computed(() => {
+const filterPropSlots = <T extends { name: string }, U extends object>(all: T[], preset: U) => {
   if(activeTab.value === 'all') {
-    return propsSort(props.props);
+    return propsSort(all);
   } else {
-    const currentProps: IComponentWiki['props'] = [];
-    Object.keys(props.presetProps || {}).forEach((key) => {
-      const filterProps = props.props.filter(item => item.name === key);
-      currentProps.push(...filterProps)
+    const currentPropSlots: T[] = [];
+    Object.keys(preset).forEach((key) => {
+      const filterProps = all.filter(item => item.name === key);
+      currentPropSlots.push(...filterProps)
     });
-    return propsSort(currentProps);
+    return propsSort(currentPropSlots);
   }
+}
+// 暂未支持的可配置过滤掉
+const filterErrTypeProps = () => {
+  const partValidTypeProps = (props.props ?? []).filter((item: PropItem) => {
+    const typeArr = splitType(item.type)
+    const factTypeList = typeArr.map(typeVal => {
+      return factType(typeVal, item.options, props.types)
+    })
+    return !factTypeList.every(factType => factType === 'errortype')
+  })
+  return partValidTypeProps.map((item: PropItem) => {
+    const typeArr = splitType(item.type)
+    if(typeArr.length === 1) {
+      return item
+    }
+    const validTypes = typeArr.filter(typeValF => {
+      const curFactType = factType(typeValF, item.options, props.types)
+      return curFactType !== 'errortype'
+    })
+    item.type = validTypes.join(' |')
+    return item
+  })
+}
+const comProps = computed(() => {
+  const allValidTypeProps = filterErrTypeProps()
+  return filterPropSlots(allValidTypeProps, props.presetProps ?? {})
 });
+const comSlots = computed(() => {
+  return filterPropSlots(props.slots ?? [], props.presetSlots ?? {})
+})
 
 const resetProp = () => {
   emits('update:renderProps', { ...props.presetProps });
@@ -147,8 +210,11 @@ onBeforeUnmount(() => {
   background: #FFFFFF;
   box-shadow: -1px 0 0 0 #DCDEE5;
   height: 100%;
-  padding: 11px 16px 0;
+  padding-top: 11px;
   overflow-y: auto;
+  .prl16 {
+    padding: 0 16px;
+  }
   .header-wrapper {
     margin-bottom: 3px;
   }

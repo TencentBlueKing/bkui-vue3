@@ -23,19 +23,72 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { withInstallProps } from '@bkui-vue/shared';
 
-import { useHover } from './common';
-import Option from './option';
-import OptionGroup from './optionGroup';
-import Component from './select';
+import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
-const BkSelect = withInstallProps(Component, { Option, Group: OptionGroup });
+// 组件示例
+const presets = [
+  {
+    title: '基础用法',
+    description: '鼠标悬停显示完整内容',
+    template: `
+      <div v-ellipsis >
+        鼠标悬停时可以看到完整内容
+      </div>
+    `,
+  },
+];
 
-export default BkSelect;
-export { BkSelect, Option as BkOption, OptionGroup as BkOptionGroup, useHover };
-export type { SelectEmits, OptionEmits, OptionGroupEmits } from './emits';
-export type { SelectProps, OptionProps, OptionGroupProps } from './props';
-export type BkSelectInstance = InstanceType<typeof BkSelect>;
-export type BkOptionInstance = InstanceType<typeof Option>;
-export type BkOptionGroupInstance = InstanceType<typeof OptionGroup>;
+const props = [
+  {
+    name: 'content',
+    type: 'string',
+    default: '',
+    description: '内容',
+  },
+  {
+    name: 'popoverOption',
+    type: 'object',
+    default: '',
+    description: 'Popover 选项',
+  },
+  {
+    name: 'disabled',
+    type: 'boolean',
+    default: false,
+    description: '是否禁用',
+  },
+  {
+    name: 'target',
+    type: 'string | HTMLElement',
+    default: '',
+    description: '目标元素',
+  },
+];
+
+// 组件分组
+const group = NavGroupMeta.Directive;
+
+// 组件名称
+const name = 'ellipsis';
+
+// 组件标签
+const title = 'Ellipsis';
+
+// 组件中文标签
+const titleCN = '文本省略';
+
+// 组件描述
+const description = '鼠标悬停时通过 Popover 显示完整内容';
+
+const wiki: IComponentWiki = {
+  group,
+  name,
+  title,
+  titleCN,
+  presets,
+  props,
+  description,
+};
+
+export default wiki;

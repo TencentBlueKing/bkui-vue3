@@ -28,3 +28,6 @@ import { withInstall } from '@bkui-vue/shared';
 import Component from './sideslider';
 const BkSideslider = withInstall(Component);
 export default BkSideslider;
+export type { SidesliderEmits } from './emits';
+export type { SidesliderType as SidesliderProps } from './props';
+export type BkSidesliderInstance = InstanceType<typeof BkSideslider>;
