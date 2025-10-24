@@ -28,8 +28,9 @@ import { toType } from 'vue-types';
 
 import { PropTypes } from '@bkui-vue/shared';
 
-import { MessageThemeEnum, IMessageActions, IMessageProp } from './messageConstructor';
+import { MessageThemeEnum } from './enum';
 
+import type { IMessageActions, IMessageProp } from './messageConstructor';
 import type { ExtractPropTypes } from 'vue';
 
 export const props = {

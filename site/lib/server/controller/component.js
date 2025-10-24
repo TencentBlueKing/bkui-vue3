@@ -13,6 +13,8 @@ import {
   getCss,
   getNavGroups,
   getReleaseZipPath,
+  getDesign,
+  getNpmMarkdown,
 } from '../service/component';
 
 @Controller('/api')
@@ -59,6 +61,22 @@ export default class ComponentController {
   ) {
     const releaseZipPath = await getReleaseZipPath(version);
     return getCss(releaseZipPath, component, version, type);
+  }
+
+  @OutputJson()
+  @Get('/design')
+  async getDesign(
+    @QueryParams({ name: 'name' }) name,
+  ) {
+    return getDesign(name);
+  }
+
+  @OutputJson()
+  @Get('/npm/markdown')
+  async getNpmMarkdown(
+    @QueryParams({ name: 'name' }) name,
+  ) {
+    return getNpmMarkdown(name);
   }
 
   @OutputJson()

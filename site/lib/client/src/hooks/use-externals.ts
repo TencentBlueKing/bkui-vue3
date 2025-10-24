@@ -14,6 +14,9 @@ import * as DateFns from 'date-fns';
 import * as JsCalendar from 'js-calendar';
 import * as ForkResizeDetector from '@blueking/fork-resize-detector';
 import * as ResizeObserverPolyfill from 'resize-observer-polyfill';
+import * as Clipboard from 'clipboard';
+import * as JsonFormatter from 'json-formatter-js';
+import * as Tinycolor2 from 'tinycolor2';
 
 export const useExternals = () => {
   const loadExternals = () => {
@@ -33,12 +36,17 @@ export const useExternals = () => {
     window.lodashIsDate = () => Lodash.isDate;
     window.lodashIsEmpty = () => Lodash.isEmpty;
     window.lodashIsEqual = () => Lodash.isEqual;
+    window.lodashTrim = () => Lodash.trim;
+    window.lodashHas = () => Lodash.has;
     window.normalizeWheel = () => NormalizeWheel;
     window.floatingUiDom = () => FloatingUiDom;
     window.forkResizeDetector = () => ForkResizeDetector;
     window.dateFns = () => DateFns;
     window.jsCalendar = () => JsCalendar;
     window.resizeObserverPolyfill = () => ResizeObserverPolyfill;
+    window.clipboard = () => Clipboard;
+    window.jsonFormatterJs = () => JsonFormatter;
+    window.tinycolor2 = () => Tinycolor2;
   };
 
   const unloadExternals = () => {
@@ -58,12 +66,17 @@ export const useExternals = () => {
     delete window.lodashIsDate;
     delete window.lodashIsEmpty;
     delete window.lodashIsEqual;
+    delete window.lodashTrim;
+    delete window.lodashHas;
     delete window.normalizeWheel;
     delete window.floatingUiDom;
     delete window.forkResizeDetector;
     delete window.dateFns;
     delete window.jsCalendar;
     delete window.resizeObserverPolyfill;
+    delete window.clipboard;
+    delete window.jsonFormatterJs;
+    delete window.tinycolor2;
   };
 
   onBeforeMount(loadExternals);

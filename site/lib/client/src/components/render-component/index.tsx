@@ -53,12 +53,24 @@ export default vue.defineComponent({
     BkInput,
     BkButton
   },
-  methods: {
-    handleClickOutside() {
-      console.log('点击外部时，触发事件');
+  data() {
+    return {
+      errorMessage: '',
     }
   },
+  errorCaptured(err: Error) {
+    this.errorMessage = err.message;
+    return false;
+  },
   render() {
+    const renderError = () => {
+      return vue.h('div', {
+        style: {
+          color: '#EA3636',
+        },
+      }, this.errorMessage);
+    };
+
     const renderComponent = () => {
       if (Object.keys(this.component).length > 1) {
         Object.keys(this.component).forEach((key) => {
@@ -139,8 +151,10 @@ export default vue.defineComponent({
         ['点击展示组件']
       )
     }
- 
-    if (typeof this.component.default === 'function') {
+  
+    if (this.errorMessage) {
+      return renderError();
+    } else if (typeof this.component.default === 'function') {
       return renderFunctionComponent();
     } else if (this.name === 'icon') {
       return renderIconComponent();

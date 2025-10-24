@@ -47,12 +47,12 @@ export interface IComponentWiki {
   }[];
   children?: Array<Pick<IComponentWiki, 'emits' | 'name' | 'props' | 'slots'>>;
 }
-
 export interface INavGroups {
   componentGroupMap: {
     [groupName: string]: IComponentWiki[];
   };
   directiveList: IComponentWiki[];
+  customComponentList: IComponentWiki[];
 }
 
 export interface IComponentMeta {

@@ -91,6 +91,16 @@ export const getVersions = async () => {
   return versions;
 };
 
+// 获取设计规范
+export const getDesign = async (name) => {
+  const { data } = await http.get(`${process.env.BK_DESIGN_URL}/api/article`);
+  const article = data.find(item => {
+    return item.content?.includes(`{{vue3:${name}}}`) || item.name.toLowerCase().includes(name.toLowerCase());
+  });
+  // 去掉第一个#和第二个## 之间的内容
+  return article?.content.replace(/^#(?!#)[\s\S]*?(?=##)/m, '');
+};
+
 // 获取文件作者列表
 export const getFileAuthors = async (path) => {
   try {
@@ -218,10 +228,44 @@ export const getNavGroups = async (releaseZipPath) => {
       directiveList.push(directive);
     }
   }
+  // 获取自定义组件列表
+  const customComponentList = [
+    {
+      name: '@blueking/date-picker',
+      title: 'DatePicker',
+      titleCN: '时间选择器',
+    },
+    {
+      name: '@blueking/log-search',
+      title: 'LogSearch',
+      titleCN: '日志检索',
+    },
+    {
+      name: '@blueking/functional-dependency',
+      title: 'FunctionalDeps',
+      titleCN: '功能依赖展示',
+    },
+    {
+      name: '@blueking/ediatable',
+      title: 'Ediatable',
+      titleCN: '可编辑表格',
+    },
+    {
+      name: '@blueking/release-note',
+      title: 'ReleaseNote',
+      titleCN: '版本日志',
+    },
+    {
+      name: '@blueking/crontab',
+      title: 'Cronatb',
+      titleCN: '周期选择器',
+    },
+  ];
 
   return {
     componentGroupMap,
     directiveList,
+    customComponentList,
   };
 };
 
@@ -247,3 +291,77 @@ export const deleteReleaseZip = (version) => {
   fs.rmSync(releasePath, { recursive: true, force: true })
   fs.rmSync(releaseDistPath, { recursive: true, force: true })
 }
+
+// 获取 npm 包 markdown 内容
+export const getNpmMarkdown = async (name) => {
+  const os = require('os');
+  const https = require('https');
+  const tar = require('tar');
+  
+  try {
+    // 1. 获取包信息，找到 tarball URL
+    const packageInfo = await http.get(`https://registry.npmjs.org/${name}/latest`);
+    const tarballUrl = packageInfo.dist?.tarball;
+
+    // 2. 创建临时目录
+    const tempDir = path.join(os.tmpdir(), `npm-${name.replace(/\//g, '-')}-${Date.now()}`);
+    fs.mkdirSync(tempDir, { recursive: true });
+    
+    try {
+      // 3. 下载并解压 tarball（使用原生 https 模块获取 stream）
+      await new Promise((resolve, reject) => {
+        https.get(tarballUrl, (response) => {
+          // 处理重定向
+          if (response.statusCode === 301 || response.statusCode === 302) {
+            https.get(response.headers.location, (redirectResponse) => {
+              redirectResponse.pipe(
+                tar.extract({
+                  cwd: tempDir,
+                  strip: 1, // 去掉 package/ 前缀
+                })
+              ).on('finish', resolve).on('error', reject);
+            }).on('error', reject);
+          } else {
+            response.pipe(
+              tar.extract({
+                cwd: tempDir,
+                strip: 1,
+              })
+            ).on('finish', resolve).on('error', reject);
+          }
+        }).on('error', reject);
+      });
+
+      // 4. 查找根目录的 .md 文件
+      const files = fs.readdirSync(tempDir);
+      const markdownFiles = files.filter(file => {
+        const lower = file.toLowerCase();
+        return lower.endsWith('.md');
+      });
+      
+      // 优先查找 README.md，然后是其他 .md 文件
+      const readmeFile = markdownFiles.find(f => f.toLowerCase() === 'readme.md') 
+        || markdownFiles.find(f => f.toLowerCase().startsWith('readme'))
+        || markdownFiles[0];
+      
+      if (readmeFile) {
+        const markdownPath = path.join(tempDir, readmeFile);
+        const content = fs.readFileSync(markdownPath, 'utf-8');
+        return content;
+      }
+
+      return '';
+    } finally {
+      // 6. 清理临时目录
+      try {
+        fs.rmSync(tempDir, { recursive: true, force: true });
+      } catch (cleanupError) {
+        console.error(`清理临时目录失败: ${cleanupError.message}`);
+      }
+    }
+  } catch (error) {
+    console.error(`获取 npm 包 ${name} 的 README 失败:`, error);
+    
+    return `# 获取失败\n\n无法获取包 \`${name}\` 的信息。\n\n**错误信息:** ${error.message}\n\n可能的原因：\n- 包名不正确\n- npm registry 服务暂时不可用\n- 网络连接问题\n- tarball 下载或解压失败`;
+  }
+};

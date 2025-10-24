@@ -27,7 +27,7 @@
 import { computed, defineComponent, getCurrentInstance, onBeforeUnmount, ref, SlotsType, Transition } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-import { AngleDown, TreeApplicationShape } from '@bkui-vue/icon/';
+import { AngleDown, TreeApplicationShape } from '@bkui-vue/icon';
 
 import { collapseMotion, useMenuInject, useMenuPathInject, useMenuPathProvider } from './utils';
 

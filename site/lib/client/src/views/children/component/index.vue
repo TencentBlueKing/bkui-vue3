@@ -1,16 +1,10 @@
 <template>
   <article>
-    <h3
-      class="wiki-title"
-    >
-      {{ componentStore.activeComponentWiki?.title }}
-      {{ componentStore.activeComponentWiki?.titleCN }}
-    </h3>
-    <h5
-      class="wiki-description"
-    >
-      {{ componentStore.activeComponentWiki?.description }}
-    </h5>
+    <render-header
+      :title="componentStore.activeComponentWiki?.title"
+      :titleCN="componentStore.activeComponentWiki?.titleCN"
+      :description="componentStore.activeComponentWiki?.description"
+    />
     <render-router-tab
       :routers="routers"
     />
@@ -20,6 +14,7 @@
 
 <script lang="ts" setup>
 import RenderRouterTab from '@/components/render-router-tab/index.vue';
+import RenderHeader from '@/components/render-header/index.vue';
 import {
   useComponent,
 } from '@/store/component';
@@ -32,21 +27,3 @@ const routers = [
   { to: 'design', name: '设计规范' },
 ];
 </script>
-
-<style lang="postcss" scoped>
-.wiki-title {
-  padding: 16px 16px 11px 40px;
-  font-weight: 600;
-  font-size: 32px;
-  line-height: 45px;
-  color: #000000;
-  background: #fff;
-}
-.wiki-description {
-  padding: 0 16px 17px 40px;
-  font-size: 14px;
-  color: #313238;
-  line-height: 22px;
-  background: #fff;
-}
-</style>

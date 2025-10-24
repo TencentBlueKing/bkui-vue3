@@ -59,6 +59,14 @@ export const getCss = (
     });
 };
 
+// 获取设计规范
+export const getDesign = (name: string) => fetch
+  .get<string>(`${apiPrefix}/design`, { name});
+
+// 获取 markdown 内容
+export const getNpmMarkdown = (name: string) => fetch
+  .get<string>(`${apiPrefix}/npm/markdown`, { name });
+
 // 获取组件列表
 export const getNavGroups = (version: string) => fetch
   .get<INavGroups>(`${apiPrefix}/nav/groups`, { version });

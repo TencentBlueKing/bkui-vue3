@@ -57,41 +57,8 @@ import ClipboardJS from 'clipboard';
 import JSONFormatter from 'json-formatter-js';
 
 import { emits } from './emits';
+import { MessageContentType, IMessageActionType } from './enum';
 import { props } from './props';
-
-export enum MessageThemeEnum {
-  ERROR = 'error',
-  PRIMARY = 'primary',
-  SUCCESS = 'success',
-  WARNING = 'warning',
-}
-
-enum MessageContentType {
-  JSON = 'json',
-  KEY_VALUE = 'key-value',
-}
-
-enum IMessageActionType {
-  /**
-   * 联系助手：默认直接拉起企业微信与助手的聊天，需要在 message.assistant 配置对应的企微群ID
-   */
-  ASSISTANT = 'assistant',
-
-  /**
-   * 关闭：点击关闭，Message 消失
-   */
-  CLOSE = 'close',
-
-  /**
-   * 展开详情：展开面向开发的详情
-   */
-  DETAILS = 'details',
-
-  /**
-   * 图钉按钮：点击后，Message 不会自动消失
-   */
-  FIX = 'fix',
-}
 
 type IMessageAction = {
   /**
