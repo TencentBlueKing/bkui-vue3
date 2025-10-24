@@ -176,8 +176,8 @@ const types = [
       {
         name: 'type',
         description: '展开详情：数据展示格式，详情分为：Key Value 类详情、JSON 类详情',
-        type: 'MessageContentType',
-        link: '/component/message/api#MessageContentType',
+        type: 'string',
+        options: ['key-value', 'json'],
       },
     ],
   },
