@@ -47,6 +47,7 @@
     &-right {
       span {
         padding: 6px;
+        font-size: 16px;
         cursor: pointer;
       }
       span:last-child:hover {
