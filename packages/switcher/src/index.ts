@@ -28,3 +28,6 @@ import { withInstall } from '@bkui-vue/shared';
 import Component from './switcher';
 const BkSwitcher = withInstall(Component);
 export default BkSwitcher;
+export type { SwitcherEmits } from './emits';
+export type { SwitcherType as SwitcherProps } from './props';
+export type BkSwitcherInstance = InstanceType<typeof BkSwitcher>;

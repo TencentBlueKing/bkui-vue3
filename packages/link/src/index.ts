@@ -28,3 +28,6 @@ import { withInstall } from '@bkui-vue/shared';
 import Component from './link';
 const BkLink = withInstall(Component);
 export default BkLink;
+export type { LinkEmits } from './emits';
+export type { LinkProps } from './props';
+export type BkLinkInstance = InstanceType<typeof Component>;

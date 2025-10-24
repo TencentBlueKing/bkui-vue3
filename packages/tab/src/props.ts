@@ -130,6 +130,8 @@ export const tabProps = {
   activeBarColor: PropTypes.string.def('#3a84ff'),
 };
 
+export type TabProps = ExtractPropTypes<typeof tabProps>;
+
 export const tabNavProps = {
   active: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(''),
   type: toType<`${TabTypeEnum}`>('type', {}).def(TabTypeEnum.BORDER_CARD),
@@ -148,3 +150,5 @@ export const tabNavProps = {
   validateActive: PropTypes.bool.def(true),
   ...tabNavEventProps,
 };
+
+export type TabNavProps = ExtractPropTypes<typeof tabNavProps>;
