@@ -15,7 +15,7 @@
         :clearable="false"
       >
         <template #suffix>
-          <AngleUpFill width="12"/>
+          <AngleUpFill width="12" />
         </template>
         <bk-option
           v-for="item in versionList"
@@ -31,16 +31,16 @@
     >
       <bk-popover
         width="227"
-        theme='light'
-        trigger='manual'
-        placement='bottom-start'
-        :isShow="isPopoverShow"
+        theme="light"
+        trigger="manual"
+        placement="bottom-start"
+        :is-show="isPopoverShow"
         :arrow="false"
-        disableTeleport
+        disable-teleport
       >
         <bk-input
           v-model="searchVal"
-          type='search'
+          type="search"
           clearable
           @input="handleSearch"
           @enter="handleChooseCom"
@@ -48,12 +48,12 @@
           @keydown="handleKeydown"
         />
         <template #content>
-          <div class='search-dropdown-list'>
+          <div class="search-dropdown-list">
             <ul
-              ref='searchListContainerRef'
+              ref="searchListContainerRef"
               class="search-dropdown-list-wrapper"
               :style="{
-              maxHeight: `${contentMaxHeight}px`
+                maxHeight: `${contentMaxHeight}px`
               }"
             >
               <template v-if="renderList.length">
@@ -68,15 +68,15 @@
                 >
                   <span
                     v-html="`${item.componentWiki.title} ${item.componentWiki.titleCN}`?.replace(new RegExp(`(${searchVal})`, 'i'), '<em>$1</em>')"
-                    class='text'
+                    class="text"
                   />
                 </li>
               </template>
               <li
                 v-else
-                class='search-dropdown-list-item'
+                class="search-dropdown-list-item"
               >
-                <span class='text'>没有找到组件</span>
+                <span class="text">没有找到组件</span>
               </li>
             </ul>
           </div>
@@ -115,9 +115,9 @@
           v-for="directive in componentStore.navGroups?.directiveList"
           :key="directive.name"
           :class="{
-          'aside-nav-group-item': true,
-          active: directive.name === componentStore.activeComponentWiki?.name,
-        }"
+            'aside-nav-group-item': true,
+            active: directive.name === componentStore.activeComponentWiki?.name,
+          }"
           @click="handleChoose(directive)"
         >
           {{ directive.title }}
@@ -130,28 +130,30 @@
 
 <script lang="ts" setup>
 import {
-  Select as BkSelect,
+  clickoutside,
   Input as BkInput,
   Popover as BkPopover,
-  clickoutside
+  Select as BkSelect,
 } from 'bkui-vue';
 import {
-  AngleUpFill
+  AngleUpFill,
 }  from 'bkui-vue/lib/icon';
 import {
+  nextTick,
   onBeforeMount,
   onBeforeUnmount,
   ref,
-  nextTick,
-  watch
+  watch,
 } from 'vue';
 import {
   useRoute,
   useRouter,
 } from 'vue-router';
+
 import {
   useHotUpdate,
 } from '@/hooks/use-hot-update';
+import useStorage from '@/hooks/use-storage';
 import {
   getNavGroups,
   getVersions,
@@ -160,9 +162,12 @@ import {
   useComponent,
 } from '@/store/component';
 import type {
+  IComponentMeta,
   IComponentWiki,
-  IComponentMeta
 } from '@/types/component';
+import {
+  VERSION_KEY,
+} from '@/types/contants';
 
 const route = useRoute();
 const router = useRouter();
@@ -173,18 +178,23 @@ const {
   addHotUpdateFunction,
   removeHotUpdateFunction,
 } = useHotUpdate();
+// storage
+const {
+  setStorage,
+  getStorage,
+} = useStorage();
 
 const vClickoutside = clickoutside;
-const BkOption = BkSelect.Option
+const BkOption = BkSelect.Option;
 
-const searchVal = ref('')
-const selectIndex = ref(0)
-const contentMaxHeight = ref(300)
-const isPopoverShow = ref(false)
+const searchVal = ref('');
+const selectIndex = ref(0);
+const contentMaxHeight = ref(300);
+const isPopoverShow = ref(false);
 const searchListContainerRef = ref(null);
 const asideNavGroupRef = ref(null);
-const versionList = ref([])
-const renderList = ref<IComponentMeta[]>([])
+const versionList = ref([]);
+const renderList = ref<IComponentMeta[]>([]);
 
 const hidePopover = () => {
   isPopoverShow.value = false;
@@ -193,11 +203,11 @@ const hidePopover = () => {
 const handleSearch = () => {
   selectIndex.value = 0;
   doSearch();
-}
+};
 
 const doSearch = () => {
   setTimeout(() => {
-    if(searchListContainerRef.value) {
+    if (searchListContainerRef.value) {
       searchListContainerRef.value.scrollTop = 0;
     }
   });
@@ -205,7 +215,7 @@ const doSearch = () => {
 
   if (query) {
     renderList.value = [
-      ...componentStore.componentMetaList.filter(item => `${item.componentWiki.title} ${item.componentWiki.titleCN}`?.toLowerCase().indexOf(query) > -1)
+      ...componentStore.componentMetaList.filter(item => `${item.componentWiki.title} ${item.componentWiki.titleCN}`?.toLowerCase().indexOf(query) > -1),
     ];
   } else {
     renderList.value = [...componentStore.componentMetaList];
@@ -217,7 +227,7 @@ const handleKeydown = (_val: any, e: KeyboardEvent) => {
   const { keyCode } = e;
   const { length } = renderList.value;
   switch (keyCode) {
-      // 上
+    // 上
     case 38:
       e.preventDefault();
       if (selectIndex.value === -1 ||  selectIndex.value === 0) {
@@ -256,21 +266,21 @@ const handleKeydown = (_val: any, e: KeyboardEvent) => {
     case 13:
       e.preventDefault();
       if (renderList.value[selectIndex.value]) {
-        handleChooseCom()
+        handleChooseCom();
       }
       break;
     default:
       break;
   }
-}
+};
 
 const handleChooseCom = async (config?: IComponentMeta) => {
   const item = config || renderList.value[selectIndex.value];
   if (!item) return;
-  await handleChoose(item.componentWiki)
-  scrollToCurNavItem()
-  hidePopover()
-}
+  await handleChoose(item.componentWiki);
+  scrollToCurNavItem();
+  hidePopover();
+};
 
 const handleChoose = async (value: IComponentWiki) => {
   componentStore.activeComponentWiki = value;
@@ -285,10 +295,10 @@ const handleChoose = async (value: IComponentWiki) => {
 const getVersionList = async () => {
   try {
     versionList.value = await getVersions();
-  }catch (error) {
+  } catch (error) {
     console.error(error);
   }
-}
+};
 
 const handleInit = async () => {
   try {
@@ -296,11 +306,12 @@ const handleInit = async () => {
     // 设置 navGroups
     componentStore.navGroups = await getNavGroups(componentStore.version);
 
-    renderList.value = [...componentStore.componentMetaList]
+    renderList.value = [...componentStore.componentMetaList];
     // 设置 activeComponentWiki
     if (route.params.name) {
-      const componentWiki = componentStore.componentMetaList.find(item => item.componentWiki.name === route.params.name);
-      if(componentWiki) {
+      const componentWiki = componentStore.componentMetaList
+        .find(item => item.componentWiki.name === route.params.name);
+      if (componentWiki) {
         componentStore.activeComponentWiki = componentWiki.componentWiki;
       }
     }
@@ -317,28 +328,42 @@ const scrollToCurNavItem = () => {
     // 171 是距离顶部的距离，85 是留出多余的高度，不给 85 的话，会显得太顶到顶部了
     asideNavGroupRef.value.scrollTop = (curAsideNavGroupItem as any).offsetTop - 171 - 85;
   }
-}
+};
 
 watch(
-    () => route.name,
-    (_to, from) => {
-      // 刷新页面
-      if (!from) {
-        nextTick(() => {
-          scrollToCurNavItem();
-        });
-      }
-    },
+  () => route.name,
+  (_to, from) => {
+    // 刷新页面
+    if (!from) {
+      nextTick(() => {
+        scrollToCurNavItem();
+      });
+    }
+  },
 );
 
 watch(
   () => componentStore.version,
-  handleInit,
+  (newVal) => {
+    if (newVal) {
+      // 版本变化时同步到 localStorage
+      setStorage(VERSION_KEY, newVal);
+    }
+    handleInit();
+  },
 );
 
 onBeforeMount(() => {
+  // 初始化时从 localStorage 读取版本号，如果没有则存储当前版本
+  const storedVersion = getStorage(VERSION_KEY);
+  if (storedVersion) {
+    componentStore.version = storedVersion;
+  } else {
+    // 进入时就存储当前版本（默认 'dev'）
+    setStorage(VERSION_KEY, componentStore.version);
+  }
   handleInit();
-  getVersionList()
+  getVersionList();
   addHotUpdateFunction(handleInit);
 });
 

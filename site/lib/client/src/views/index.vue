@@ -12,6 +12,12 @@
 import {
   Loading as BkLoading,
 } from 'bkui-vue';
+import {
+  watch,
+} from 'vue';
+import {
+  useRouter,
+} from 'vue-router';
 
 import RenderNav from '@/components/render-nav/index.vue';
 import {
@@ -19,6 +25,24 @@ import {
 } from '@/store/component';
 
 const componentStore = useComponent();
+const router = useRouter();
+
+// 监听 version 变化，同步到 URL query 参数
+watch(
+  () => componentStore.version,
+  (newVersion) => {
+    if (!newVersion) return;
+    
+    // 更新 URL 中的 version 参数，使用 replace 避免产生历史记录
+    router.replace({
+      ...router.currentRoute.value,
+      query: {
+        ...router.currentRoute.value.query,
+        version: newVersion,
+      },
+    });
+  },
+);
 </script>
 
 <style lang="postcss" scoped>
