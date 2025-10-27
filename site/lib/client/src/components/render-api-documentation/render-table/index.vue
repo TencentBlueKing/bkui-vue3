@@ -211,6 +211,9 @@ const renderTag = (text: string) => {
    * @param params 参数列表
    */
 const renderFunctionSignature = (params: IParam[]) => {
+  if (!params) {
+    return h('span', '--');
+  }
   const paramElements = params
     .map((param, index) => {
       const elements = [

@@ -36,11 +36,14 @@ const presets = [
     slots: {
       menu: `
       <bk-menu>
-          <bk-menu-item key="QQ音乐"> QQ音乐 </bk-menu-item>
-          <bk-menu-item key="腾讯视频"> 腾讯视频 </bk-menu-item>
-          <bk-menu-item key="微信"> 微信 </bk-menu-item>
-          <bk-menu-item key="QQ"> QQ </bk-menu-item>
+        <bk-menu-item key="QQ音乐"> QQ音乐 </bk-menu-item>
+        <bk-menu-item key="腾讯视频"> 腾讯视频 </bk-menu-item>
+        <bk-menu-item key="微信"> 微信 </bk-menu-item>
+        <bk-menu-item key="QQ"> QQ </bk-menu-item>
       </bk-menu>`,
+    },
+    dependent: {
+      components: ['menu'],
     },
   },
   {
@@ -51,31 +54,31 @@ const presets = [
     },
     slots: {
       menu: `
-      <bk-menu>
+        <bk-menu>
           <bk-menu-item key="QQ音乐"> QQ音乐 </bk-menu-item>
           <bk-menu-item key="腾讯视频"> 腾讯视频 </bk-menu-item>
           <bk-menu-item key="微信"> 微信 </bk-menu-item>
           <bk-menu-item key="QQ"> QQ </bk-menu-item>
-      </bk-menu>
-      <bk-menu-group
-            fold-name="TiMi"
-            name="天美世界"
-          >
-            <bk-menu-item key="王者荣耀"> 王者荣耀 </bk-menu-item>
-            <bk-menu-item key="QQ飞车"> QQ飞车 </bk-menu-item>
-            <bk-menu-item key="天天酷跑"> 天天酷跑 </bk-menu-item>
-            <bk-menu-item key="重返帝国"> 重返帝国 </bk-menu-item>
-          </bk-menu-group>
-          <bk-submenu
-            key="内容"
-            title="内容"
-          >
-            <bk-menu-item key="腾讯影业"> 腾讯影业 </bk-menu-item>
-            <bk-menu-item key="腾讯新闻"> 腾讯新闻 </bk-menu-item>
-            <bk-menu-item key="腾讯动漫"> 腾讯动漫 </bk-menu-item>
-            <bk-menu-item key="阅文集团"> 阅文集团 </bk-menu-item>
-            <bk-menu-item key="腾讯电竞"> 腾讯电竞 </bk-menu-item>
-          </bk-submenu>
+        </bk-menu>
+        <bk-menu-group
+          fold-name="TiMi"
+          name="天美世界"
+        >
+          <bk-menu-item key="王者荣耀"> 王者荣耀 </bk-menu-item>
+          <bk-menu-item key="QQ飞车"> QQ飞车 </bk-menu-item>
+          <bk-menu-item key="天天酷跑"> 天天酷跑 </bk-menu-item>
+          <bk-menu-item key="重返帝国"> 重返帝国 </bk-menu-item>
+        </bk-menu-group>
+        <bk-submenu
+          key="内容"
+          title="内容"
+        >
+          <bk-menu-item key="腾讯影业"> 腾讯影业 </bk-menu-item>
+          <bk-menu-item key="腾讯新闻"> 腾讯新闻 </bk-menu-item>
+          <bk-menu-item key="腾讯动漫"> 腾讯动漫 </bk-menu-item>
+          <bk-menu-item key="阅文集团"> 阅文集团 </bk-menu-item>
+          <bk-menu-item key="腾讯电竞"> 腾讯电竞 </bk-menu-item>
+        </bk-submenu>
       `,
       header: '<div class="header-demo">这里是头部导航</div>',
     },

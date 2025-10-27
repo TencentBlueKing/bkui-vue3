@@ -40,6 +40,9 @@ const presets = [
         </bk-button>
       `,
     },
+    dependent: {
+      components: ['button'],
+    },
   },
   {
     title: '固定在顶部',

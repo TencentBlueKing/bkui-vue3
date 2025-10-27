@@ -2,7 +2,6 @@ import {
   Button as BkButton,
   clickoutside,
   Exception as BkException,
-  Input as BkInput,
   Loading as BkLoading,
   Message,
 } from 'bkui-vue';
@@ -51,12 +50,13 @@ export default vue.defineComponent({
       type: Object,
       default: () => ({}),
     },
+    dependentComponents: {
+      type: Object,
+      default: () => ({}),
+    },
   },
-  components: {
-    BkInput,
-    BkButton,
-    BkLoading,
-  },
+  // 占位，否则动态注册逻辑需要加额外判断
+  components: {},
   data() {
     return {
       errorMessage: '',
@@ -112,6 +112,33 @@ export default vue.defineComponent({
           (this as ComponentInstance<Component>)._.components[key] = this.component[key];
         });
       }
+
+      // 注册依赖组件（如 bk-menu, bk-menu-item 等）
+      if (Object.keys(this.dependentComponents).length > 0) {
+        Object.keys(this.dependentComponents).forEach((componentName) => {
+          const depComp = this.dependentComponents[componentName];
+
+          if (Object.keys(depComp).length) {
+            Object.keys(depComp).forEach((subKey) => {
+              if (subKey === 'default') {
+                // 转换 kebab-case 为 PascalCase: 'menu' -> 'BkMenu', 'bk-menu' -> 'BkMenu'
+                const nameWithoutBk = componentName.startsWith('bk-')
+                  ? componentName.slice(3)  // 去掉 'bk-' 前缀
+                  : componentName;
+                const pascalCaseName = `Bk${nameWithoutBk
+                  .split('-')
+                  .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+                  .join('')}`;
+                (this as ComponentInstance<Component>)._.components[pascalCaseName] = depComp.default;
+              } else {
+                // 依赖组件也可能有多个子组件
+                (this as ComponentInstance<Component>)._.components[subKey] = depComp[subKey];
+              }
+            });
+          }
+        });
+      }
+
       const component = vue.h(
         this.component.default,
         this.renderProps,
@@ -199,7 +226,6 @@ export default vue.defineComponent({
       );
     };
 
-    console.log(111);
     if (this.errorMessage) {
       return renderError();
     } if (typeof this.component.default === 'function') {

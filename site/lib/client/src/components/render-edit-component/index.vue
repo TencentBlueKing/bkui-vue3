@@ -60,6 +60,7 @@
                   :component="component"
                   :render-props="renderProps"
                   :render-slots="renderSlots"
+                  :dependent-components="dependentComponents"
                 />
                 <render-code
                   v-if="mainPanel === MainPanel.Code"
@@ -90,6 +91,12 @@ import {
 } from 'vue';
 
 import RenderComponent from '@/components/render-component';
+import {
+  getComponent,
+} from '@/http/api';
+import {
+  useComponent,
+} from '@/store/component';
 import type {
   IComponentWiki,
 } from '@/types/component';
@@ -110,9 +117,14 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
+const componentStore = useComponent();
+
 // 用于渲染配置
 const renderProps = ref<IComponentWiki['presets'][number]['props']>();
 const renderSlots = ref<IComponentWiki['presets'][number]['slots']>();
+const dependentComponents = ref<Record<string, unknown>>({});
+// 依赖组件缓存，避免重复加载
+const dependentComponentsCache = ref<Record<string, unknown>>({});
 // 选中的预设索引
 const renderPresetIndex = ref(0);
 // 展示的主面板
@@ -121,10 +133,49 @@ const componentRef = ref<HTMLElement>();
 const isFullScreen = ref(false);
 
 // 选择预设
-const handleChoosePreset = (preset: IComponentWiki['presets'][number]) => {
+const handleChoosePreset = async (preset: IComponentWiki['presets'][number]) => {
   renderProps.value = JSON.parse(JSON.stringify(preset.props ?? {}));
   renderSlots.value = JSON.parse(JSON.stringify(preset.slots || {}));
   renderPresetIndex.value = props.componentWiki.presets.indexOf(preset);
+
+  // 处理依赖组件
+  if (preset.dependent?.components && preset.dependent.components.length > 0) {
+    const components: Record<string, unknown> = {};
+    const componentsToLoad: string[] = [];
+
+    // 检查哪些组件需要加载（未缓存的）
+    preset.dependent.components.forEach((componentName: string) => {
+      if (dependentComponentsCache.value[componentName]) {
+        // 从缓存中获取
+        components[componentName] = dependentComponentsCache.value[componentName];
+      } else {
+        // 需要加载
+        componentsToLoad.push(componentName);
+      }
+    });
+
+    // 只加载未缓存的组件
+    if (componentsToLoad.length > 0) {
+      await Promise.all(componentsToLoad.map(async (componentName: string) => {
+        try {
+          await getComponent(componentName, componentStore.version, 'component');
+          const comp = window.getComponent();
+          if (comp) {
+            // 存入缓存（保存整个组件对象，包括子组件）
+            dependentComponentsCache.value[componentName] = comp;
+            // 添加到当前组件列表
+            components[componentName] = comp;
+          }
+        } catch (error) {
+          console.error(`Failed to load dependent component: ${componentName}`, error);
+        }
+      }));
+    }
+
+    dependentComponents.value = components;
+  } else {
+    dependentComponents.value = {};
+  }
 };
 
 // 监听全屏状态变化
@@ -144,6 +195,8 @@ const handleFullScreen = () => {
 watch(
   () => props.componentWiki,
   () => {
+    // 切换组件时清空依赖组件缓存
+    dependentComponentsCache.value = {};
     handleChoosePreset(props.componentWiki.presets[0]);
     mainPanel.value = MainPanel.Component;
   },
