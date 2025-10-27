@@ -39,6 +39,9 @@ export interface IComponentWiki {
     template?: string;
     props?: Record<string, ValueType>;
     slots?: Record<string, string>;
+    dependent?: {
+      components: Array<string>;
+    };
   }>;
   types?: {
     name: string;

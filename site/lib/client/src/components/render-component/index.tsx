@@ -1,20 +1,22 @@
-import * as vue from 'vue';
+import {
+  Button as BkButton,
+  clickoutside,
+  Exception as BkException,
+  Loading as BkLoading,
+  Message,
+} from 'bkui-vue';
 import type {
-  ComponentInstance,
   Component,
+  ComponentInstance,
 } from 'vue';
+import * as vue from 'vue';
+
 import {
   compile,
 } from '@vue/compiler-dom';
 import {
   useClipboard,
 } from '@vueuse/core';
-import {
-  Message,
-  Input as BkInput,
-  Button as BkButton,
-  clickoutside,
-} from 'bkui-vue';
 
 const { copy } = useClipboard({
   legacy: true,
@@ -48,36 +50,96 @@ export default vue.defineComponent({
       type: Object,
       default: () => ({}),
     },
+    dependentComponents: {
+      type: Object,
+      default: () => ({}),
+    },
   },
-  components: {
-    BkInput,
-    BkButton
-  },
+  // 占位，否则动态注册逻辑需要加额外判断
+  components: {},
   data() {
     return {
       errorMessage: '',
-    }
+      isReady: false,  // 添加准备状态
+    };
   },
-  errorCaptured(err: Error) {
-    this.errorMessage = err.message;
+  mounted() {
+    // 等待父组件 DOM 完全挂载, 确保类似dialog等组件可以正确找到挂载点
+    this.$nextTick(() => {
+      this.isReady = true;
+    });
+  },
+  // 如果使用beforeUpdate，会导致无限循环渲染
+  watch: {
+    renderProps: {
+      handler() {
+        // renderProps 变化时清空错误信息
+        this.errorMessage = '';
+      },
+      deep: true,
+    },
+    renderSlots: {
+      handler() {
+        // renderSlots 变化时清空错误信息
+        this.errorMessage = '';
+      },
+      deep: true,
+    },
+  },
+  errorCaptured(err) {
+    this.errorMessage = (err as Error).message;
     return false;
   },
   render() {
+    if (!this.isReady) {
+      return vue.h(BkLoading, {
+        loading: true,
+      });
+    }
+
     const renderError = () => {
-      return vue.h('div', {
-        style: {
-          color: '#EA3636',
-        },
-      }, this.errorMessage);
+      return vue.h(BkException, {
+        type: '500',
+        scene: 'page',
+        title: this.errorMessage,
+      });
     };
 
     const renderComponent = () => {
+      // 如果组件有多个子组件，则将子组件注册到组件实例中
       if (Object.keys(this.component).length > 1) {
         Object.keys(this.component).forEach((key) => {
-          (this as ComponentInstance<Component>)._.components[key] = this.component[key]
-        })
+          (this as ComponentInstance<Component>)._.components[key] = this.component[key];
+        });
       }
-      return vue.h(
+
+      // 注册依赖组件（如 bk-menu, bk-menu-item 等）
+      if (Object.keys(this.dependentComponents).length > 0) {
+        Object.keys(this.dependentComponents).forEach((componentName) => {
+          const depComp = this.dependentComponents[componentName];
+
+          if (Object.keys(depComp).length) {
+            Object.keys(depComp).forEach((subKey) => {
+              if (subKey === 'default') {
+                // 转换 kebab-case 为 PascalCase: 'menu' -> 'BkMenu', 'bk-menu' -> 'BkMenu'
+                const nameWithoutBk = componentName.startsWith('bk-')
+                  ? componentName.slice(3)  // 去掉 'bk-' 前缀
+                  : componentName;
+                const pascalCaseName = `Bk${nameWithoutBk
+                  .split('-')
+                  .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+                  .join('')}`;
+                (this as ComponentInstance<Component>)._.components[pascalCaseName] = depComp.default;
+              } else {
+                // 依赖组件也可能有多个子组件
+                (this as ComponentInstance<Component>)._.components[subKey] = depComp[subKey];
+              }
+            });
+          }
+        });
+      }
+
+      const component = vue.h(
         this.component.default,
         this.renderProps,
         Object.keys(this.renderSlots).reduce(
@@ -89,7 +151,19 @@ export default vue.defineComponent({
           {} as Record<string, () => object>,
         ),
       );
-    }
+
+      // 如果是 Backtop 组件，外面套一层 1000px 高的 div 以产生滚动内容
+      if (this.component.default.name === 'Backtop') {
+        return vue.h('div', {
+          style: {
+            height: '1000px',
+            position: 'relative',
+          },
+        }, [component]);
+      }
+
+      return component;
+    };
 
     const renderIconComponent = () => {
       return vue.h(
@@ -109,18 +183,18 @@ export default vue.defineComponent({
                   message: `复制Icon名【${key}】成功`,
                   theme: 'success',
                 });
-              }
-            }
-          )
-        })
-      )
-    }
+              },
+            },
+          );
+        }),
+      );
+    };
 
     const renderDirectiveComponent = () => {
       const RuntimeComponent = vue.defineComponent({
         name: `Render${this.name}Directive`,
         directives: {
-          [this.name]: this.component.default
+          [this.name]: this.component.default,
         },
         setup() {
           const handleClickOutside = () => {
@@ -139,29 +213,28 @@ export default vue.defineComponent({
       return vue.h(RuntimeComponent, {
         ...this.renderProps,
       });
-    }
+    };
 
     const renderFunctionComponent = () => {
       return vue.h(
         BkButton,
         {
           theme: 'primary',
-          onClick: () => this.component.default(this.renderProps)
+          onClick: () => this.component.default(this.renderProps),
         },
-        ['点击展示组件']
-      )
-    }
-  
+        ['点击展示组件'],
+      );
+    };
+
     if (this.errorMessage) {
       return renderError();
-    } else if (typeof this.component.default === 'function') {
+    } if (typeof this.component.default === 'function') {
       return renderFunctionComponent();
-    } else if (this.name === 'icon') {
+    } if (this.name === 'icon') {
       return renderIconComponent();
-    } else if (this.group === '指令') {
+    } if (this.group === '指令') {
       return renderDirectiveComponent();
-    } else {
-      return renderComponent();
     }
+    return renderComponent();
   },
 });

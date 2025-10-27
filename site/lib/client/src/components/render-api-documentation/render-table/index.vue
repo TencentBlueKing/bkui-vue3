@@ -51,13 +51,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, h, onMounted, onUnmounted, watch } from 'vue';
+import { computed, h, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import useStorage from '@/hooks/use-storage';
 import { useComponent } from '@/store/component';
 import { Column, IComponentWiki, IParam, PropItem } from '@/types/component';
-import { ANCHOR_KEY, VERSION_KEY } from '@/types/contants';
+import { ANCHOR_KEY } from '@/types/contants';
 
 const iProps = defineProps<IProps>();
 const route = useRoute();
@@ -150,7 +150,7 @@ const renderEnumWithLinks = (text: string, linkMap: Record<string, string>) => {
 };
 
 onMounted(() => {
-  componentStore.version = getStorage(VERSION_KEY);
+  // version 的存储和读取统一由 render-nav 处理，此处不再操作
   // 滚动到锚点
   setTimeout(() => {
     const element = document.getElementById(getStorage(ANCHOR_KEY));
@@ -160,21 +160,6 @@ onMounted(() => {
     });
   }, 2000);
 });
-
-watch(
-  () => componentStore.version,
-  (nVal) => {
-    if (!nVal) return;
-    setStorage(VERSION_KEY, nVal);
-    router.replace({
-      ...router.currentRoute.value,
-      query: {
-        ...router.currentRoute.value.query,
-        version: nVal,
-      },
-    });
-  },
-);
 
 onUnmounted(() => {
   removeStorage(ANCHOR_KEY);
@@ -226,6 +211,9 @@ const renderTag = (text: string) => {
    * @param params 参数列表
    */
 const renderFunctionSignature = (params: IParam[]) => {
+  if (!params) {
+    return h('span', '--');
+  }
   const paramElements = params
     ?.map((param, index) => {
       const elements = [

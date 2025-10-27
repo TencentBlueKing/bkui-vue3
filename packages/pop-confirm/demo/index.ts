@@ -37,6 +37,11 @@ const presets = [
       confirmText: '确定',
       cancelText: '取消',
     },
+    slots: {
+      default: `
+        <div style="align-self: center;">这是一段需要确认的内容</div>
+      `,
+    },
   },
   {
     title: '简易模式',
@@ -183,7 +188,7 @@ const types = [
 const group = NavGroupMeta.Nav;
 
 // 组件名称
-const name = 'popconfirm';
+const name = 'pop-confirm';
 
 // 组件标签
 const title = 'Popconfirm';

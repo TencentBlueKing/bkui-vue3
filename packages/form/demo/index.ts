@@ -48,6 +48,9 @@ const presets = [
         </bk-form-item>
       `,
     },
+    dependent: {
+      components: ['input'],
+    },
   },
   {
     title: '垂直表单',

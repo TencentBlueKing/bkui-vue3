@@ -60,7 +60,7 @@ const loading = ref(true);
 
 const getComponentType = () => {
   return componentStore.activeComponentWiki?.group === '指令' ? 'directive' : 'component';
-}
+};
 
 const handleGetComponent = () => {
   if (componentStore.activeComponentWiki) {

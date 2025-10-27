@@ -178,7 +178,7 @@ const types = [];
 const group = NavGroupMeta.Nav;
 
 // 组件名称
-const name = 'resizeLayout';
+const name = 'resize-layout';
 
 // 组件标签
 const title = 'ResizeLayout';

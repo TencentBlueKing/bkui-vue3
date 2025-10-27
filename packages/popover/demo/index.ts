@@ -33,14 +33,16 @@ const presets = [
     title: '基础用法',
     description: 'popover 的基础用法',
     props: {
-      placement: 'auto',
-      theme: 'dark',
-      trigger: 'hover',
-      content: '这是popover的内容',
-      width: 300,
-      height: 200,
-      maxWidth: 300,
-      maxHeight: 200,
+      placement: 'top',
+      theme: 'light',
+    },
+    slots: {
+      default: `
+        <div style="align-self: center;">当鼠标经过这段文字时，会显示一个气泡框</div>
+      `,
+      content: `
+        <div>这是popover的内容</div>
+      `,
     },
   },
 ];

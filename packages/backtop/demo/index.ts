@@ -32,7 +32,7 @@ const presets = [
     description: '向下滚动以显示按钮',
     props: {
       target: '.edit-component-view',
-      'visibility-height': -100,
+      'visibility-height': 40,
     },
   },
 ];
