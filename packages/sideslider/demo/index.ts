@@ -31,6 +31,7 @@ const presets = [
     title: '可查看的抽屉',
     description: '承载展示性的信息内容',
     props: {
+      'is-show': false,
       title: '我是标题',
       renderDirective: 'if',
     },

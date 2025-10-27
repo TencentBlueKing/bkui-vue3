@@ -44,7 +44,7 @@
                 :types="componentWiki.types"
                 :preset-slots="componentWiki.presets[renderPresetIndex].slots"
                 :slots="componentWiki.slots"
-            />
+              />
             </template>
             <template #main>
               <section
@@ -184,6 +184,11 @@ onUnmounted(() => {
   height: 100%;
   overflow: auto;
   padding: 24px;
+
+
+  .bk-cascader-wrapper, .bk-slider {
+    width: 200px;
+  }
 
   .edit-component-component {
     align-self: center;
