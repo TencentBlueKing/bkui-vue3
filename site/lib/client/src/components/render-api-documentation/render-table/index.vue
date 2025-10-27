@@ -215,7 +215,7 @@ const renderFunctionSignature = (params: IParam[]) => {
     return h('span', '--');
   }
   const paramElements = params
-    .map((param, index) => {
+    ?.map((param, index) => {
       const elements = [
         h('span', { class: 'param-name' }, param.name),
         h('span', ': '),
@@ -232,7 +232,7 @@ const renderFunctionSignature = (params: IParam[]) => {
   // 组合完整签名
   return h('div', { class: 'function-signature' }, [
     h('span', '('),
-    ...paramElements,
+    ...(paramElements || []),
     h('span', ')'),
     h('span', ' => '),
     h('span', { class: 'return-type' }, 'void'),
