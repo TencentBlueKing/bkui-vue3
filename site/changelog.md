@@ -1,6 +1,13 @@
 ## 更新日志
 
 
+### 2.0.2-beta.73
+
+* **[feat]**:
+    - bugfix(select): select 分组模式搜索样式问题
+    - feature(tree): checkbox模式下支持全局禁用
+
+
 ### 2.0.2-beta.72
 
 * **[feat]**:
