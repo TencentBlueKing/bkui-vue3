@@ -248,6 +248,11 @@ export const treeProps = {
    * 是否支持多选
    */
   showCheckbox: PropTypes.oneOfType([PropTypes.bool, PropTypes.func]).def(false),
+  
+  /**
+   * 是否禁用节点复选框
+   */
+  disableCheck: PropTypes.bool.def(false),
 
   /**
    * 默认选中的节点id，selectable为false时无效
