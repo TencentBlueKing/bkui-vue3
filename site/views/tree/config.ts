@@ -115,6 +115,7 @@ export default [
         optional: [],
       },
       { name: 'show-checkbox', type: 'Boolean', default: 'false', desc: '是否支持多选', optional: [] },
+      { name: 'disable-check', type: 'Boolean', default: 'false', desc: '是否禁用节点复选框', optional: [] },
       { name: 'show-node-type-icon', type: 'Boolean', default: 'true', desc: '是否显示节点类型Icon', optional: [] },
       {
         name: 'checked',
