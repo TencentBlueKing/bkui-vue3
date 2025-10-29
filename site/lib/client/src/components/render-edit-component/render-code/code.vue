@@ -54,6 +54,7 @@ import {
 
 import type {
   IComponentWiki,
+  PropItem,
   PropValue,
 } from '@/types/component';
 
@@ -62,12 +63,17 @@ import {
 } from '@vueuse/core';
 
 import 'highlight.js/styles/atom-one-dark.css'; // 代码块高亮样式
+import {
+  parseStringTemplate,
+  serializeElementTree,
+} from './template-parser';
 
 type Languages = 'javascript' | 'typescript';
 interface IProps {
   componentWiki: IComponentWiki;
   renderProps: Record<string, PropValue>;
   renderSlots: Record<string, string>;
+  index: number;
 }
 interface LanguageItem<T = Languages> {
   name: string;
@@ -75,6 +81,18 @@ interface LanguageItem<T = Languages> {
   disabled: boolean;
 }
 const props = defineProps<IProps>();
+
+// 换行符
+const BREAK_LINE = '\n';
+// 最小缩进单位
+const INDENT = '  ';
+// script标签结束
+// eslint-disable-next-line no-useless-escape
+const scriptEnd = '<\/script>';
+// 指令组件
+const directiveComponents = ['tooltips', 'ellipsis', 'clickoutside'];
+// 函数组件
+const functionComponents = ['notify', 'info-box', 'message'];
 
 const { copy } = useClipboard({
   legacy: true, // 使用 execCommand 作为后备处理副本
@@ -109,13 +127,10 @@ const scriptStart = computed(() => {
 const curScript = computed(() => {
   return highlightFactory(scriptContent(), activeLanguage.value);
 });
-// 换行符
-const BREAK_LINE = '\n';
-// 最小缩进单位
-const INDENT = '  ';
-// script标签结束
-// eslint-disable-next-line no-useless-escape
-const scriptEnd = '<\/script>';
+// 是否为指令组件
+const isDirectiveComponent = computed(() => directiveComponents.includes(componentWiki.value.name));
+// 是否为函数组件
+const isFunctionComponent = computed(() => functionComponents.includes(componentWiki.value.name));
 
 // template 缩进处理
 const indent = (num = 1) => new Array(num)
@@ -130,64 +145,86 @@ const createLabel = (
   slot: string,
   prefix = '',
   props: Record<string, PropValue> = {},
-  currentIndent = 1,
   endLabelName = '',
 ) => {
-  const slotPrefix = `${BREAK_LINE}${indent(currentIndent)}`;
-  // 分隔符数
-  const endIndentNum = currentIndent === 0 ? 0 : currentIndent - 1;
-  const slotSuffix = `${BREAK_LINE}${indent(endIndentNum)}`;
-  const propsPrefix = `${BREAK_LINE}${indent(endIndentNum + 1)}`;
   // 属性列表处理
   const propsList = Object.keys(props).map((key) => {
-    return `${propsPrefix}:${key}="${camelKey(key)}"`;
+    return ` :${key}="${camelKey(key)}"`;
   });
-  const propsNum = propsList.length;
-  propsNum > 0 && propsList.push(slotSuffix);
   // slot处理
-  const curSlot = slot ? `${slotPrefix}${slot}${slotSuffix}` : '';
   const curEndLabelName = endLabelName || name;
-  return `<${prefix}${name}${propsList.join('')}>${curSlot}</${prefix}${curEndLabelName}>`;
+  return `<${prefix}${name}${propsList.join('')}>${slot}</${prefix}${curEndLabelName}>`;
 };
 
 // slot生成
-const createSlots = (indentNum: number) => {
-  const splitIndentNum = indentNum ? indentNum - 1 : indentNum;
-  const split = `${BREAK_LINE}${indent(splitIndentNum)}`;
+const createSlots = () => {
   return Object.entries(renderSlots.value).map(([key, value]) => {
-    const curSlotName = key === 'default' ? '' : ` #${key}`;
-    const name = `template${curSlotName}`;
-    let content = value;
-    // 处理slot中的换行符，优化缩进
-    if (value[0] === BREAK_LINE) {
-      content = value
-        .split(BREAK_LINE)
-        .map(item => item.slice(2, item.length))
-        .join(BREAK_LINE)
-        .trim();
+    const slotParamsList = componentWiki.value?.slots?.find(item => item.name === key)?.params;
+    let slotParamsStr = '';
+    if (Array.isArray(slotParamsList)) {
+      slotParamsStr = `="{ ${slotParamsList.map(item => item.name).join(', ')} }"`;
     }
-    return createLabel(name, content, '', {}, indentNum, 'template');
-  })
-    .join(split);
+    const curSlotName = (key === 'default' && !slotParamsStr) ? '' : ` #${key}${slotParamsStr}`;
+    const name = `template${curSlotName}`;
+    return createLabel(name, value.trim(), '', {}, 'template');
+  }).join('');
 };
 
 // template生成
 const template = () => {
-  return createLabel(
+  if (isDirectiveComponent.value) {
+    return createDirectiveTemplate();
+  } else if (isFunctionComponent.value) {
+    return createFunctionTemplate();
+  }
+  return createCommonTemplate();
+};
+
+// 生成通用模板
+const createCommonTemplate = () => {
+  const str =  createLabel(
     'template',
     createLabel(
       componentWiki.value.name,
-      createSlots(3),
+      createSlots(),
       'bk-',
       renderProps.value,
-      2,
     ),
   );
+  const elementTree = parseStringTemplate(str);
+  return serializeElementTree(elementTree, 0, true);
+};
+
+// 生成指令模板
+const createDirectiveTemplate = () => {
+  if (!isNaN(props.index) && props.index >= 0 && props.index < componentWiki.value.presets.length) {
+    const template = componentWiki.value.presets[props.index]?.template || '';
+    const str = `<template>${template.trim()}</template>`;
+    const elementTree = parseStringTemplate(str);
+    return serializeElementTree(elementTree, 0, true);
+  }
+  return '';
+};
+
+// 生成函数模板
+const createFunctionTemplate = () => {
+  const str = `<template>
+    <bk-button
+      theme="primary"
+      @click="handleShow"
+    >
+      点击展示组件
+    </bk-button>
+  </template>`;
+  const elementTree = parseStringTemplate(str);
+  return serializeElementTree(elementTree, 0, true);
 };
 
 // 生成依赖导入
-const createDependImport = (dependList: string[], source: string) => {
-  return `import {${
+const createDependImport = (dependList: string[], source: string, isType = false) => {
+  if (dependList.length === 0) return '';
+  let typeStr = isType ? ' type' : '';
+  return `import${typeStr} {${
     BREAK_LINE
   }${indent()}${dependList.join(`,${
     BREAK_LINE
@@ -201,28 +238,38 @@ const createRefVariables = () => {
   return Object.entries(renderProps.value).map(([key, value]) => {
     const curPropInfo = componentWiki.value.props.find(item => item.name === key);
     if (curPropInfo) {
-      let curValue;
-      if (curPropInfo.type === 'string' || typeof value === 'string') {
-        curValue = `'${value}'`;
-      } else if (curPropInfo.type === 'object' || typeof value === 'object') {
-        if (Array.isArray(value)) {
-          // 判断是否为简单数组（所有元素都不是对象）
-          const isSimpleArray = value.every(item => typeof item !== 'object');
-          curValue = isSimpleArray
-            ? `[${value.map(v => JSON.stringify(v)).join(', ')}]`  // 简单数组不换行
-            : formatComplexArray(value);  // 复杂数组换行
-        } else {
-          curValue = formatComplexValue(value);
-        }
-      } else {
-        curValue = value;
+      const curValue = createValue(curPropInfo, value)
+      const isTypeScript = activeLanguage.value === 'typescript';
+      let propsType = componentWiki.value.props.find(item => item.name === key);
+      
+      if (isTypeScript) {
+        return `const ${camelKey(key)} = ref<${propsType.type}>(${curValue});`;
       }
-
       return `const ${camelKey(key)} = ref(${curValue});`;
     }
     return '';
   })
     .join(BREAK_LINE);
+};
+
+const createValue = (curPropInfo: PropItem, value: unknown) => {
+  let curValue;
+  if (curPropInfo.type === 'string' || typeof value === 'string') {
+    curValue = `'${value}'`;
+  } else if (curPropInfo.type === 'object' || typeof value === 'object') {
+    if (Array.isArray(value)) {
+      // 判断是否为简单数组（所有元素都不是对象）
+      const isSimpleArray = value.every(item => typeof item !== 'object');
+      curValue = isSimpleArray
+        ? `[${value.map(v => JSON.stringify(v)).join(', ')}]`  // 简单数组不换行
+        : formatComplexArray(value);  // 复杂数组换行
+    } else {
+      curValue = formatComplexValue(value);
+    }
+  } else {
+    curValue = value;
+  }
+  return curValue;
 };
 
 // 递归格式化复杂数组
@@ -291,10 +338,60 @@ const formatComplexValue = (obj: any, indentLevel = 1): string => {
 
 // 获取script标签内容
 const scriptContent = () => {
+  if (isFunctionComponent.value) {
+    return createFunctionScript();
+  }
+  return createCommonScript();
+};
+
+// 生成通用script
+const createCommonScript = () => {
   // 依赖列表
   const dependList = ['ref'];
   const importDepend = createDependImport(dependList, 'vue');
-  return `${importDepend}${BREAK_LINE}${createRefVariables()}`;
+  const variables = createRefVariables();
+
+  if (activeLanguage.value === 'typescript' && Array.isArray(componentWiki.value?.types)) {
+    const allTypeList = componentWiki.value?.types?.map(item => item.name);
+    const typeMap = new Map();
+    for (const item of componentWiki.value.props) {
+      for (const type of item.type.split('|')) {
+        if (allTypeList.includes(type)) {
+          typeMap.set(item.name, type);
+        }
+      }
+    }
+    const curTypeList = [];
+    const curPresetProps = Object.keys(componentWiki.value.presets[props.index].props);
+    for (const [key, value] of typeMap.entries()) {
+      if (curPresetProps.includes(key)) {
+        curTypeList.push(value);
+      }
+    }
+    const importTypeDepend = createDependImport(curTypeList, 'bkui-vue', true);
+    return `${importTypeDepend}${importDepend}${variables ? `${BREAK_LINE}${variables}` : ''}`;
+  }
+  return `${importDepend}${variables ? `${BREAK_LINE}${variables}` : ''}`;
+};
+
+// 生成函数组件script
+const createFunctionScript = () => {
+  const propsContent = Object.entries(renderProps.value).map(([key, value]) => {
+    const curPropInfo = componentWiki.value.props.find(item => item.name === key);
+    const curValue = createValue(curPropInfo, value);
+    return `${key}: ${curValue}`;
+  }).join(`,${BREAK_LINE}${indent(2)}`);
+
+  return `const handleShow = () => {
+  ${capitalize(componentWiki.value.name)}({
+    ${propsContent}
+  });
+};`;
+};
+
+// 开头首字母大写
+const capitalize = (str = '') => {
+  return str ? str[0].toUpperCase() + str.slice(1) : '';
 };
 
 // highlight处理

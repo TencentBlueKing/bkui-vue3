@@ -65,6 +65,7 @@
                 <render-code
                   v-if="mainPanel === MainPanel.Code"
                   class="edit-component-code"
+                  :index="renderPresetIndex"
                   :component-wiki="componentWiki"
                   :render-props="renderProps"
                   :render-slots="renderSlots"
@@ -104,7 +105,7 @@ import {
   MainPanel,
 } from '@/types/enum';
 
-import RenderCode from './code.vue';
+import RenderCode from './render-code/code.vue';
 import RenderConfig from './config/index.vue';
 import RenderHeader from './header.vue';
 import RenderPresets from './presets.vue';
@@ -238,9 +239,7 @@ onUnmounted(() => {
   justify-content: center;
   height: 100%;
   overflow: auto;
-  padding: 24px;
   background: #f3f3fa;
-
 
   .bk-cascader-wrapper, .bk-slider {
     width: 200px;
