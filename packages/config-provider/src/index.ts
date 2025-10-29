@@ -35,3 +35,4 @@ export type { ConfigProviderProps } from './config-provider';
 export * from './use-global-config';
 export * from './use-locale';
 export * from './use-prefix';
+export type ConfigProviderInstance = InstanceType<typeof Component>;

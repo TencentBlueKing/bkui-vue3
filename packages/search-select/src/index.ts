@@ -36,4 +36,4 @@ export default BkSearchSelect;
 export { BkSearchSelect, props, emits };
 export type { SearchSelectEmits } from './emits';
 export type { SearchSelectProps } from './props';
-export type BkSearchSelectInstance = InstanceType<typeof BkSearchSelect>;
+export type SearchSelectInstance = InstanceType<typeof BkSearchSelect>;

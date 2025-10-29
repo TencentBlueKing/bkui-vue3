@@ -31,4 +31,4 @@ const BkAffix = withInstall(Component);
 export default BkAffix;
 export type { AffixEmits } from './emits';
 export type { AffixProps } from './props';
-export type BkAffixInstance = InstanceType<typeof Component>;
+export type AffixInstance = InstanceType<typeof Component>;

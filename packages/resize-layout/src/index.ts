@@ -29,3 +29,6 @@ import { withInstall } from '@bkui-vue/shared';
 import Component from './resize-layout';
 const BkResizeLayout = withInstall(Component);
 export default BkResizeLayout;
+export type { ResizeLayoutEmits } from './emits';
+export type { ResizeLayoutType as ResizeLayoutProps } from './props';
+export type ResizeLayoutInstance = InstanceType<typeof Component>;

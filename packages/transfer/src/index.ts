@@ -34,5 +34,4 @@ export { type TransferProps } from './props';
 const Transfer = withInstall(Component);
 
 export default Transfer;
-export type BkTransferInstance = InstanceType<typeof Component>;
-export type ITransferInstance = InstanceType<typeof Component>;
+export type TransferInstance = InstanceType<typeof Component>;

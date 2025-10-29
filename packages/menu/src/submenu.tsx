@@ -29,18 +29,14 @@ import { computed, defineComponent, getCurrentInstance, onBeforeUnmount, ref, Sl
 import { usePrefix } from '@bkui-vue/config-provider';
 import { AngleDown, TreeApplicationShape } from '@bkui-vue/icon';
 
+import { subMenuEmits } from './emits';
+import { subMenuProps } from './props';
 import { collapseMotion, useMenuInject, useMenuPathInject, useMenuPathProvider } from './utils';
 
-export const subMenuProps = {
-  title: {
-    type: String,
-    default: 'title',
-  },
-};
 export default defineComponent({
   name: 'Submenu',
   props: subMenuProps,
-  emits: ['collapse'],
+  emits: subMenuEmits,
   // slots: ['icon'],
   slots: Object as SlotsType<{
     default?: () => HTMLElement;

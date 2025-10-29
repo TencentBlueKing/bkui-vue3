@@ -40,3 +40,37 @@ export const props = {
 };
 
 export type MenuProps = ExtractPropTypes<typeof props>;
+
+export const subMenuProps = {
+  title: {
+    type: String,
+    default: 'title',
+  },
+};
+export type SubMenuProps = ExtractPropTypes<typeof subMenuProps>;
+
+export const menuGroupProps = {
+  name: {
+    type: String,
+    default: '',
+  },
+  foldName: {
+    type: String,
+    default: undefined,
+  },
+};
+
+export type MenuGroupProps = ExtractPropTypes<typeof menuGroupProps>;
+
+export const menuItemProps = {
+  needIcon: {
+    type: Boolean,
+    default: true,
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
+};
+
+export type MenuItemProps = ExtractPropTypes<typeof menuItemProps>;

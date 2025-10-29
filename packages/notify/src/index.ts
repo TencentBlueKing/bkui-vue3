@@ -34,4 +34,3 @@ const Notify = options => {
 export default Notify;
 export type { NotifyEmits } from './emits';
 export type { NotifyProps } from './props';
-export type BkNotifyInstance = ReturnType<typeof Notify>;

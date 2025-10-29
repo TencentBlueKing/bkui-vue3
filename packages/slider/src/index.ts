@@ -32,4 +32,4 @@ const Slider = withInstall(Component);
 export default Slider;
 export type { SliderEmits } from './emits';
 export type { SliderProps } from './props';
-export type BkSliderInstance = InstanceType<typeof Component>;
+export type SliderInstance = InstanceType<typeof Component>;

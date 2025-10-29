@@ -28,3 +28,7 @@ import { withInstall } from '@bkui-vue/shared';
 import Component from './pop-confirm';
 const BKPopConfirm = withInstall(Component);
 export default BKPopConfirm;
+
+export type { PopConfirmEmits } from './emits';
+export type { PopConfirmProps } from './props';
+export type PopConfirmInstance = InstanceType<typeof Component>;

@@ -57,3 +57,9 @@ export const props = {
 };
 
 export type ButtonProps = ExtractPropTypes<typeof props>;
+
+export const buttonGroupProps = {
+  size: PropTypes.size(),
+};
+
+export type ButtonGroupProps = ExtractPropTypes<typeof buttonGroupProps>;

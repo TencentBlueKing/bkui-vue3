@@ -24,6 +24,8 @@
  * IN THE SOFTWARE.
  */
 
+import { ComponentInternalInstance } from 'vue';
+
 import { IMenuInfo } from './utils';
 
 export const emits = {
@@ -33,3 +35,13 @@ export const emits = {
   openChange: (_opened: boolean, _info: IMenuInfo) => true,
 };
 export type MenuEmits = typeof emits;
+
+export const subMenuEmits = {
+  collapse: (isShow: boolean, instance: ComponentInternalInstance) => isShow && instance,
+};
+export type SubMenuEmits = typeof subMenuEmits;
+
+export const menuItemEmits = {
+  click: (e: MouseEvent) => e,
+};
+export type MenuItemEmits = typeof menuItemEmits;

@@ -30,4 +30,4 @@ const BkAlert = withInstall(Component);
 export default BkAlert;
 export type { AlertEmits } from './emits';
 export type { AlertProps } from './props';
-export type BkAlertInstance = InstanceType<typeof Component>;
+export type AlertInstance = InstanceType<typeof Component>;
