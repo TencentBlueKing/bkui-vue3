@@ -30,4 +30,4 @@ const BkBadge = withInstall(Component);
 export default BkBadge;
 export type { BadgeEmits } from './emits';
 export type { BadgeProps } from './props';
-export type BkBadgeInstance = InstanceType<typeof Component>;
+export type BadgeInstance = InstanceType<typeof Component>;

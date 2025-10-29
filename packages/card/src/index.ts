@@ -28,6 +28,6 @@ import { withInstall } from '@bkui-vue/shared';
 import Component from './card';
 const BkCard = withInstall(Component);
 export default BkCard;
-export type BkCardInstance = InstanceType<typeof Component>;
+export type CardInstance = InstanceType<typeof Component>;
 export type { CardEmits } from './emits';
 export type { CardProps } from './props';

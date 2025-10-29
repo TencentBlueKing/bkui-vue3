@@ -29,5 +29,4 @@ import Component from './info-box';
 const BkInfoBox = withInstall(Component);
 export default BkInfoBox;
 
-export type { Props } from './props';
-export type BkInfoBoxInstance = ReturnType<typeof Component>;
+export type { Props as InfoBoxProps } from './props';

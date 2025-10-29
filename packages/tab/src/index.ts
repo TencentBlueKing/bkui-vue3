@@ -32,6 +32,7 @@ import TabPanel from './tab-panel';
 const BkTab = withInstallProps(Tab, { TabPanel });
 export { BkTab, TabPanel as BkTabPanel, SortTypeEnum, PositionEnum };
 export default BkTab;
+export type { TabEmits } from './emits';
 export type { TabProps, TabPanelProps } from './props';
 export type BkTabInstance = InstanceType<typeof BkTab>;
 export type BkTabPanelInstance = InstanceType<typeof TabPanel>;

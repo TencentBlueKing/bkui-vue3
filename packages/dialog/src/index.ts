@@ -30,4 +30,4 @@ const BkDialog = withInstall(Component);
 export default BkDialog;
 export type { DialogEmits } from './emits';
 export type { DialogProps } from './props';
-export type BkDialogInstance = InstanceType<typeof Component>;
+export type DialogInstance = InstanceType<typeof Component>;

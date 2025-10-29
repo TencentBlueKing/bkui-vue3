@@ -30,4 +30,4 @@ const BkLink = withInstall(Component);
 export default BkLink;
 export type { LinkEmits } from './emits';
 export type { LinkProps } from './props';
-export type BkLinkInstance = InstanceType<typeof Component>;
+export type LinkInstance = InstanceType<typeof Component>;

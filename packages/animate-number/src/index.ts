@@ -30,4 +30,4 @@ import Component from './animate-number';
 const BkAnimateNumber = withInstall(Component);
 export default BkAnimateNumber;
 export type { AnimateNumberProps } from './props';
-export type BkAnimateNumberInstance = InstanceType<typeof Component>;
+export type AnimateNumberInstance = InstanceType<typeof Component>;

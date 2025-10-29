@@ -31,5 +31,5 @@ const BkBreadcrumb = withInstallProps(Component, { Item: BreadcrumbItem });
 export { BkBreadcrumb, BreadcrumbItem as BkBreadcrumbItem };
 export default BkBreadcrumb;
 export type { BreadcrumbProps } from './props';
-export type BkBreadcrumbInstance = InstanceType<typeof Component>;
-export type BkBreadcrumbItemInstance = InstanceType<typeof BreadcrumbItem>;
+export type BreadcrumbInstance = InstanceType<typeof Component>;
+export type BreadcrumbItemInstance = InstanceType<typeof BreadcrumbItem>;

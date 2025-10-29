@@ -25,10 +25,11 @@
  */
 import { toType } from 'vue-types';
 
-import { type ButtonPropTypes } from '@bkui-vue/button';
+import { type ButtonProps as ButtonPropTypes } from '@bkui-vue/button';
 import { type PopoverPropTypes } from '@bkui-vue/popover';
-import type { ExtractPropTypes } from 'vue';
 import { PlacementEnum, placementType, PropTypes } from '@bkui-vue/shared';
+
+import type { ExtractPropTypes } from 'vue';
 
 export enum TriggerEnum {
   CLICK = 'click',

@@ -28,3 +28,6 @@ import { withInstall } from '@bkui-vue/shared';
 import Component from './input';
 const BkInput = withInstall(Component);
 export default BkInput;
+export type { InputEmits } from './emits';
+export type { InputProps } from './props';
+export type InputInstance = InstanceType<typeof Component>;

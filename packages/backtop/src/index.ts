@@ -29,4 +29,4 @@ import Component from './backtop';
 const BkBacktop = withInstall(Component);
 export default BkBacktop;
 export type { BacktopProps } from './props';
-export type BkBacktopInstance = InstanceType<typeof Component>;
+export type BacktopInstance = InstanceType<typeof Component>;
