@@ -29,13 +29,14 @@
     "@blueking/magicbox-header": "1.1.63",
     "@blueking/stylelint-config-bk": "3.0.0-beta.1",
     "@blueking/xss-filter": "^0.0.9",
+    "@modelcontextprotocol/sdk": "^1.20.2",
     "@vueuse/core": "^13.9.0",
     "axios": "~0.28.0",
     "babel-plugin-parameter-decorator": "^1.0.16",
     "bkui-vue": "^2.0.1",
+    "clipboard": "~2.0.8",
     "co-views": "^2.1.0",
     "cross-env": "^7.0.3",
-    "clipboard": "~2.0.8",
     "dayjs": "^1.9.3",
     "eslint": "9.34.0",
     "get-tsconfig": "4.7.2",
@@ -76,7 +77,8 @@
     "uuid": "~9.0.1",
     "vue": "^3.5.17",
     "vue-router": "^4.2.4",
-    "vue-types": "^4.1.1"
+    "vue-types": "^4.1.1",
+    "zod": "^3.25.76"
   },
   "overrides": {
     "@babel/runtime": "7.23.9",

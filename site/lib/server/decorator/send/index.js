@@ -37,4 +37,3 @@ export const OutputJavascript = () => (target, propertyKey, descriptor) => {
     }
   };
 };
-

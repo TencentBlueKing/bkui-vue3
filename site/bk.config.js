@@ -91,8 +91,8 @@ module.exports = {
   },
   chainWebpack (config) {
     config.module.rule('md')
-        .test(/\.md/)
-        .set('type', 'asset/source')
+      .test(/\.md/)
+      .set('type', 'asset/source');
     return config;
   },
 };
