@@ -29,3 +29,7 @@ import Component from './navigation';
 
 const Navigation = withInstall(Component);
 export default Navigation;
+
+export type { NavigationEmits } from './emits';
+export type { NavigationProps } from './props';
+export type NavigationInstance = InstanceType<typeof Component>;

@@ -30,4 +30,4 @@ const BkSideslider = withInstall(Component);
 export default BkSideslider;
 export type { SidesliderEmits } from './emits';
 export type { SidesliderType as SidesliderProps } from './props';
-export type BkSidesliderInstance = InstanceType<typeof BkSideslider>;
+export type SidesliderInstance = InstanceType<typeof BkSideslider>;

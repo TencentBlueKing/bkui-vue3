@@ -27,13 +27,13 @@
 import { computed, defineComponent } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-import { classes, PropTypes } from '@bkui-vue/shared';
+import { classes } from '@bkui-vue/shared';
+
+import { buttonGroupProps } from './props';
 
 export default defineComponent({
   name: 'ButtonGroup',
-  props: {
-    size: PropTypes.size(),
-  },
+  props: buttonGroupProps,
   setup(props, ctx) {
     const { resolveClassName } = usePrefix();
     const btnGroupCls = computed(() =>

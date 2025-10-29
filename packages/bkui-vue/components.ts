@@ -25,64 +25,249 @@
  */
 
 export { default as Affix } from '@bkui-vue/affix';
+export type { AffixProps, AffixEmits, AffixInstance } from '@bkui-vue/affix';
+
 export { default as Alert } from '@bkui-vue/alert';
+export type { AlertProps, AlertEmits, AlertInstance } from '@bkui-vue/alert';
+
 export { default as AnimateNumber } from '@bkui-vue/animate-number';
+export type { AnimateNumberProps, AnimateNumberInstance } from '@bkui-vue/animate-number';
+
 export { default as Backtop } from '@bkui-vue/backtop';
+export type { BacktopProps, BacktopInstance } from '@bkui-vue/backtop';
+
 export { default as Badge } from '@bkui-vue/badge';
+export type { BadgeProps, BadgeEmits, BadgeInstance } from '@bkui-vue/badge';
+
 export { default as Breadcrumb } from '@bkui-vue/breadcrumb';
+export type { BreadcrumbProps, BreadcrumbInstance, BreadcrumbItemInstance } from '@bkui-vue/breadcrumb';
+
 export { default as Button } from '@bkui-vue/button';
+export type { ButtonProps, ButtonEmits, ButtonGroupProps, ButtonInstance, ButtonGroupInstance } from '@bkui-vue/button';
+
 export { default as Card } from '@bkui-vue/card';
+export type { CardProps, CardEmits, CardInstance } from '@bkui-vue/card';
+
 export { default as Cascader } from '@bkui-vue/cascader';
+export type {
+  CascaderProps,
+  CascaderEmits,
+  CascaderPanelProps,
+  CascaderPanelEmits,
+  CascaderInstance,
+  CascaderPanelInstance,
+} from '@bkui-vue/cascader';
+
 export { default as Checkbox } from '@bkui-vue/checkbox';
+export type {
+  CheckboxProps,
+  CheckboxEmits,
+  CheckboxGroupProps,
+  CheckboxGroupEmits,
+  CheckboxInstance,
+  CheckboxGroupInstance,
+} from '@bkui-vue/checkbox';
+
 export { default as CodeDiff } from '@bkui-vue/code-diff';
-export type { CollapseProps, CollapsePanelProps } from '@bkui-vue/collapse';
+export type { CodeDiffProps, CodeDiffEmits, CodeDiffInstance } from '@bkui-vue/code-diff';
+
 export { default as Collapse } from '@bkui-vue/collapse';
+export type {
+  CollapseProps,
+  CollapseEmits,
+  CollapsePanelProps,
+  CollapsePanelEmits,
+  CollapseInstance,
+  CollapsePanelInstance,
+} from '@bkui-vue/collapse';
+
 export { default as ColorPicker } from '@bkui-vue/color-picker';
+export type { ColorPickerProps, ColorPickerEmits, ColorPickerInstance } from '@bkui-vue/color-picker';
+
 export { default as ConfigProvider } from '@bkui-vue/config-provider';
+export type { ConfigProviderProps, ConfigProviderInstance } from '@bkui-vue/config-provider';
+
 export { default as Container } from '@bkui-vue/container';
+
 export { default as DatePicker } from '@bkui-vue/date-picker';
+export type {
+  DatePickerProps,
+  DatePickerEmits,
+  PickerDropdownProps,
+  PickerDropdownEmits,
+  DatePickerInstance,
+  PickerDropdownInstance,
+} from '@bkui-vue/date-picker';
+
 export { default as Dialog } from '@bkui-vue/dialog';
+export type { DialogEmits, DialogProps, DialogInstance } from '@bkui-vue/dialog';
+
 export { default as Divider } from '@bkui-vue/divider';
+export type { DividerProps, DividerEmits } from '@bkui-vue/divider';
+
 export { default as Dropdown } from '@bkui-vue/dropdown';
+export type {
+  DropdownProps,
+  DropdownEmits,
+  DropdownMenuProps,
+  DropdownMenuEmits,
+  DropdownItemProps,
+  DropdownItemEmits,
+} from '@bkui-vue/dropdown';
+
 export { default as Exception } from '@bkui-vue/exception';
+export type { ExceptionProps, ExceptionEmits } from '@bkui-vue/exception';
+
 export { default as FixedNavbar } from '@bkui-vue/fixed-navbar';
+export type { FixedNavbarProps, FixedNavbarEmits } from '@bkui-vue/fixed-navbar';
+
 export { default as Form } from '@bkui-vue/form';
+export type {
+  FormProps,
+  FormEmits,
+  FormItemProps,
+  FormItemEmits,
+  ComposeFormItemProps,
+  ComposeFormItemEmits,
+} from '@bkui-vue/form';
+
 export { default as InfoBox } from '@bkui-vue/info-box';
+export type { InfoBoxProps } from '@bkui-vue/info-box';
+
 export { default as Input } from '@bkui-vue/input';
+export type { InputProps, InputEmits, InputInstance } from '@bkui-vue/input';
+
 export { default as Link } from '@bkui-vue/link';
+export type { LinkProps, LinkEmits, LinkInstance } from '@bkui-vue/link';
+
 export { default as Loading } from '@bkui-vue/loading';
+export type { LoadingProps } from '@bkui-vue/loading';
+
 export { default as Menu } from '@bkui-vue/menu';
+export type {
+  MenuProps,
+  MenuEmits,
+  SubMenuProps,
+  SubMenuEmits,
+  MenuGroupProps,
+  MenuItemProps,
+  MenuItemEmits,
+} from '@bkui-vue/menu';
+
 export { default as Message } from '@bkui-vue/message';
+export type { MessageProps, MessageEmits } from '@bkui-vue/message';
+
 export { default as Modal } from '@bkui-vue/modal';
+
 export { default as Navigation } from '@bkui-vue/navigation';
+export type { NavigationProps, NavigationEmits, NavigationInstance } from '@bkui-vue/navigation';
+
 export { default as Notify } from '@bkui-vue/notify';
+export type { NotifyProps, NotifyEmits } from '@bkui-vue/notify';
+
 export { default as OverflowTitle } from '@bkui-vue/overflow-title';
+
 export { default as Pagination } from '@bkui-vue/pagination';
+export type { PaginationProps, PaginationEmits, PaginationInstance } from '@bkui-vue/pagination';
+
 export { default as PopConfirm } from '@bkui-vue/pop-confirm';
+export type { PopConfirmProps, PopConfirmEmits, PopConfirmInstance } from '@bkui-vue/pop-confirm';
+
 export { default as Popover, $bkPopover } from '@bkui-vue/popover';
+export type { PopoverProps, PopoverEmits, PopoverInstance } from '@bkui-vue/popover';
+
 export { default as Popover2 } from '@bkui-vue/popover2';
+
 export { default as Process } from '@bkui-vue/process';
+
 export { default as Progress } from '@bkui-vue/progress';
+export type { ProgressProps, ProgressEmits, ProgressInstance } from '@bkui-vue/progress';
+
 export { default as Radio } from '@bkui-vue/radio';
+export type {
+  RadioProps,
+  RadioEmits,
+  RadioButtonProps,
+  RadioButtonEmits,
+  RadioGroupProps,
+  RadioGroupEmits,
+  RadioInstance,
+  RadioButtonInstance,
+  RadioGroupInstance,
+} from '@bkui-vue/radio';
+
 export { default as Rate } from '@bkui-vue/rate';
+export type { RateProps, RateEmits, RateInstance } from '@bkui-vue/rate';
+
 export { default as ResizeLayout } from '@bkui-vue/resize-layout';
+export type { ResizeLayoutProps, ResizeLayoutEmits, ResizeLayoutInstance } from '@bkui-vue/resize-layout';
+
 export { default as scrollbar } from '@bkui-vue/scrollbar';
+
 export { default as SearchSelect } from '@bkui-vue/search-select';
+export type { SearchSelectProps, SearchSelectEmits, SearchSelectInstance } from '@bkui-vue/search-select';
+
 export { default as Select } from '@bkui-vue/select';
+export type {
+  SelectProps,
+  SelectEmits,
+  OptionProps,
+  OptionEmits,
+  OptionGroupProps,
+  OptionGroupEmits,
+  SelectInstance,
+  OptionInstance,
+  OptionGroupInstance,
+} from '@bkui-vue/select';
+
 export { default as Sideslider } from '@bkui-vue/sideslider';
+export type { SidesliderProps, SidesliderEmits, SidesliderInstance } from '@bkui-vue/sideslider';
+
 export { default as Slider } from '@bkui-vue/slider';
+export type { SliderProps, SliderEmits, SliderInstance } from '@bkui-vue/slider';
+
 export { default as Steps } from '@bkui-vue/steps';
+export type { StepsProps, StepsEmits, StepsInstance } from '@bkui-vue/steps';
+
 export { default as Swiper } from '@bkui-vue/swiper';
+export type { SwiperProps, SwiperEmits, SwiperInstance } from '@bkui-vue/swiper';
+
 export { default as Switcher } from '@bkui-vue/switcher';
-export type { TabProps, TabPanelProps } from '@bkui-vue/tab';
+export type { SwitcherProps, SwitcherEmits, SwitcherInstance } from '@bkui-vue/switcher';
+
 export { default as Tab } from '@bkui-vue/tab';
-export type { TableSettings, TableIColumn, TableProps } from '@bkui-vue/table';
+export type { TabProps, TabEmits, TabPanelProps } from '@bkui-vue/tab';
+
 export { default as Table } from '@bkui-vue/table';
+export type {
+  TableProps,
+  TableEmits,
+  TableSettings,
+  TableIColumn,
+  TableInstance,
+  TableColumnInstance,
+} from '@bkui-vue/table';
+
 export { default as Tag } from '@bkui-vue/tag';
+export type { TagProps, TagEmits, TagInstance } from '@bkui-vue/tag';
+
 export { default as TagInput } from '@bkui-vue/tag-input';
+export type { TagInputProps, TagInputEmits, TagInputInstance } from '@bkui-vue/tag-input';
+
 export { default as TimePicker } from '@bkui-vue/time-picker';
+export type { TimePickerProps, TimePickerEmits, TimePickerInstance } from '@bkui-vue/time-picker';
+
 export { default as Timeline } from '@bkui-vue/timeline';
+export type { TimelineProps, TimelineEmits, TimelineInstance } from '@bkui-vue/timeline';
+
 export { default as Transfer } from '@bkui-vue/transfer';
+export type { TransferProps, TransferEmits, TransferInstance } from '@bkui-vue/transfer';
+
 export { default as Tree } from '@bkui-vue/tree';
+export type { TreeProps, TreeEmits, TreeInstance } from '@bkui-vue/tree';
+
 export { default as Upload } from '@bkui-vue/upload';
+export type { UploadProps, UploadEmits, UploadInstance } from '@bkui-vue/upload';
+
 export { default as VirtualRender } from '@bkui-vue/virtual-render';
+export type { VirtualRenderProps, VirtualRenderEmits, VirtualRenderInstance } from '@bkui-vue/virtual-render';

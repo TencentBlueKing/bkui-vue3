@@ -35,5 +35,5 @@ export default BkCheckbox;
 export { BkCheckbox, CheckboxGroup as BkCheckboxGroup };
 export type { CheckboxEmits, CheckboxGroupEmits } from './emits';
 export type { CheckboxProps, CheckboxGroupProps } from './props';
-export type BkCheckboxInstance = InstanceType<typeof Component>;
-export type BkCheckboxGroupInstance = InstanceType<typeof CheckboxGroup>;
+export type CheckboxInstance = InstanceType<typeof Component>;
+export type CheckboxGroupInstance = InstanceType<typeof CheckboxGroup>;

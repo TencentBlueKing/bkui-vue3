@@ -28,20 +28,14 @@ import { computed, defineComponent, getCurrentInstance, onBeforeUnmount, SlotsTy
 
 import { usePrefix } from '@bkui-vue/config-provider';
 
+import { menuItemEmits } from './emits';
+import { menuItemProps } from './props';
 import { useMenuInject, useMenuPathInject } from './utils';
+
 export default defineComponent({
   name: 'MenuItem',
-  props: {
-    needIcon: {
-      type: Boolean,
-      default: true,
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  emits: ['click'],
+  props: menuItemProps,
+  emits: menuItemEmits,
   // slots: ['icon'],
   slots: Object as SlotsType<{
     default?: () => HTMLElement;

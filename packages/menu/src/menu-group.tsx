@@ -27,20 +27,13 @@
 import { computed, defineComponent } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
+
+import { menuGroupProps } from './props';
 import { useMenuInject } from './utils';
 
 export default defineComponent({
   name: 'MenuGroup',
-  props: {
-    name: {
-      type: String,
-      default: '',
-    },
-    foldName: {
-      type: String,
-      default: undefined,
-    },
-  },
+  props: menuGroupProps,
   setup(props, { slots }) {
     const { collapse } = useMenuInject();
     const { resolveClassName } = usePrefix();
@@ -51,7 +44,7 @@ export default defineComponent({
       }
 
       return props.name;
-    })
+    });
     return () => (
       <div class={`${resolveClassName('menu-group')}`}>
         <div class='group-name'>{displayTitle.value}</div>

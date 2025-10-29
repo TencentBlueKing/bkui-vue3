@@ -33,3 +33,10 @@ import Submenu from './submenu';
 const BkMenu = withInstallProps(Component, { Item, Submenu, Group });
 export default BkMenu;
 export { BkMenu, Item as BkMenuItem, Submenu as BkSubmenu, Group as BkMenuGroup };
+export type { MenuEmits, SubMenuEmits, MenuItemEmits } from './emits';
+export type { MenuProps, SubMenuProps, MenuGroupProps, MenuItemProps } from './props';
+
+export type BkMenuInstance = InstanceType<typeof Component>;
+export type BkMenuItemInstance = InstanceType<typeof Item>;
+export type BkSubmenuInstance = InstanceType<typeof Submenu>;
+export type BkMenuGroupInstance = InstanceType<typeof Group>;
