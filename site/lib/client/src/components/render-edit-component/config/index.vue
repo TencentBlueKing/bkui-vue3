@@ -1,10 +1,10 @@
 <template>
   <section class="edit-component-config g-scrollbar">
     <div class="prl16">
-      <Header class="header-wrapper" @refresh="resetProp"  />
-      <Search 
-        :props="props.props" 
-        @selectedAttr="handleSelectedAttr"
+      <Header class="header-wrapper" @refresh="resetProp" />
+      <Search
+        :props="props.props"
+        @selected-attr="handleSelectedAttr"
       />
       <div class="config-tabs">
         <div v-for="item in TABS" :key="item.id" @click="changeTab(item.id)" :class="`${activeTab === item.id ? 'active' : ''}`">{{ item.name }}</div>
@@ -31,11 +31,11 @@
     </Collapse>
     <Collapse title="插槽" v-if="comSlots.length">
       <div class="prl16">
-        <Slot 
-          v-for="slot in comSlots" 
+        <Slot
+          v-for="slot in comSlots"
           :slot-name="slot.name"
           :desc="slot.description"
-          :model-value="renderSlots[slot.name]" 
+          :model-value="renderSlots[slot.name]"
           @update:model-value="(value) => handleUpdateSlots(slot.name, value)" />
       </div>
     </Collapse>
@@ -43,21 +43,22 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, onBeforeUnmount } from 'vue';
+import { computed, onBeforeUnmount, ref } from 'vue';
+
 import type {
-  PropItem,
   IComponentWiki,
+  PropItem,
   ValueType as PropValue,
 } from '@/types/component';
 
 import DynamicConfigItem from '../dynamic-config-item';
-import RenderNameTip from './name-tip';
-import Header from './header.vue';
-import Search from './search.vue';
-import Collapse from './collapse'
-import Slot from './slot'
+import { factType, splitType } from '../dynamic-config-item/utils';
 
-import { splitType, factType } from '../dynamic-config-item/utils';
+import Collapse from './collapse';
+import Header from './header.vue';
+import RenderNameTip from './name-tip';
+import Search from './search.vue';
+import Slot from './slot';
 
 interface IProps {
   props?: IComponentWiki['props'];
@@ -86,14 +87,14 @@ const handleUpdateProps = (name: string, value: PropValue) => {
   );
 };
 const handleUpdateSlots = (name: string, value: string) => {
-    emits(
+  emits(
     'update:renderSlots',
     {
       ...props.renderSlots,
       [name]: value,
     },
   );
-}
+};
 
 const TABS = [
   {
@@ -103,25 +104,25 @@ const TABS = [
   {
     id: 'current',
     name: '当前场景',
-  }
-]
+  },
+];
 const activeTab = ref(TABS[1].id);
 const selectedProp = ref<string>('');
 let highlightTimer: NodeJS.Timeout | null = null;
 
 const changeTab = (id: string) => {
   activeTab.value = id;
-}
+};
 const isSelectedPreset = (name: string) => {
   return Object.keys(props.presetProps).includes(name);
-}
+};
 const handleSelectedAttr = (item: PropItem) => {
-  if(isSelectedPreset(item.name)) {
-    activeTab.value = TABS[1].id
+  if (isSelectedPreset(item.name)) {
+    activeTab.value = TABS[1].id;
   } else {
-    activeTab.value = TABS[0].id
+    activeTab.value = TABS[0].id;
   }
-  
+
   selectedProp.value = item.name;
   // 清除之前的定时器
   if (highlightTimer) {
@@ -132,69 +133,66 @@ const handleSelectedAttr = (item: PropItem) => {
     selectedProp.value = '';
     highlightTimer = null;
   }, 3000);
-  
+
   // 滚动到选中的属性
   setTimeout(() => {
     const selectedElement = document.querySelector('.selected-prop');
     if (selectedElement) {
-      selectedElement.scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'center' 
+      selectedElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
       });
     }
   }, 100);
-}
+};
 
 const propsSort = <T extends { name: string }>(filterProps: T[]) => {
-  return [...filterProps].sort((a, b) =>
-    a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
-  );
-}
+  return [...filterProps].sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }));
+};
 const filterPropSlots = <T extends { name: string }, U extends object>(all: T[], preset: U) => {
-  if(activeTab.value === 'all') {
+  if (activeTab.value === 'all') {
     return propsSort(all);
-  } else {
-    const currentPropSlots: T[] = [];
-    Object.keys(preset).forEach((key) => {
-      const filterProps = all.filter(item => item.name === key);
-      currentPropSlots.push(...filterProps)
-    });
-    return propsSort(currentPropSlots);
   }
-}
+  const currentPropSlots: T[] = [];
+  Object.keys(preset).forEach((key) => {
+    const filterProps = all.filter(item => item.name === key);
+    currentPropSlots.push(...filterProps);
+  });
+  return propsSort(currentPropSlots);
+};
 // 暂未支持的可配置过滤掉
 const filterErrTypeProps = () => {
   const partValidTypeProps = (props.props ?? []).filter((item: PropItem) => {
-    const typeArr = splitType(item.type)
-    const factTypeList = typeArr.map(typeVal => {
-      return factType(typeVal, item.options, props.types)
-    })
-    return !factTypeList.every(factType => factType === 'errortype')
-  })
+    const typeArr = splitType(item.type);
+    const factTypeList = typeArr.map((typeVal) => {
+      return factType(typeVal, item.options, props.types);
+    });
+    return !factTypeList.every(factType => factType === 'errortype');
+  });
   return partValidTypeProps.map((item: PropItem) => {
-    const typeArr = splitType(item.type)
-    if(typeArr.length === 1) {
-      return item
+    const typeArr = splitType(item.type);
+    if (typeArr.length === 1) {
+      return item;
     }
-    const validTypes = typeArr.filter(typeValF => {
-      const curFactType = factType(typeValF, item.options, props.types)
-      return curFactType !== 'errortype'
-    })
-    item.type = validTypes.join(' |')
-    return item
-  })
-}
+    const validTypes = typeArr.filter((typeValF) => {
+      const curFactType = factType(typeValF, item.options, props.types);
+      return curFactType !== 'errortype';
+    });
+    item.type = validTypes.join(' |');
+    return item;
+  });
+};
 const comProps = computed(() => {
-  const allValidTypeProps = filterErrTypeProps()
-  return filterPropSlots(allValidTypeProps, props.presetProps ?? {})
+  const allValidTypeProps = filterErrTypeProps();
+  return filterPropSlots(allValidTypeProps, props.presetProps ?? {});
 });
 const comSlots = computed(() => {
-  return filterPropSlots(props.slots ?? [], props.presetSlots ?? {})
-})
+  return filterPropSlots(props.slots ?? [], props.presetSlots ?? {});
+});
 
 const resetProp = () => {
   emits('update:renderProps', { ...props.presetProps });
-}
+};
 
 // 组件卸载时清理定时器
 onBeforeUnmount(() => {

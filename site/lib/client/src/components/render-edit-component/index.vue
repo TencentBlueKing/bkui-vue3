@@ -219,12 +219,14 @@ onUnmounted(() => {
 <style lang="postcss" scoped>
 .edit-component {
   height: calc(100% - 180px);
+  min-height: 640px;
   background: #FAFBFD;
   box-shadow: 0 2px 4px 0 #1919290d;
 }
 
 .edit-component-body {
   height: calc(100% - 48px);
+  border: none;
 }
 
 .edit-component-main {
@@ -237,6 +239,7 @@ onUnmounted(() => {
   height: 100%;
   overflow: auto;
   padding: 24px;
+  background: #f3f3fa;
 
 
   .bk-cascader-wrapper, .bk-slider {

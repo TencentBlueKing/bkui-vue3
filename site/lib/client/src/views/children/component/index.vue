@@ -2,7 +2,7 @@
   <article>
     <render-header
       :title="componentStore.activeComponentWiki?.title"
-      :titleCN="componentStore.activeComponentWiki?.titleCN"
+      :title-c-n="componentStore.activeComponentWiki?.titleCN"
       :description="componentStore.activeComponentWiki?.description"
     />
     <render-router-tab
@@ -13,8 +13,8 @@
 </template>
 
 <script lang="ts" setup>
-import RenderRouterTab from '@/components/render-router-tab/index.vue';
 import RenderHeader from '@/components/render-header/index.vue';
+import RenderRouterTab from '@/components/render-router-tab/index.vue';
 import {
   useComponent,
 } from '@/store/component';

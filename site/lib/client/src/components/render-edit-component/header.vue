@@ -51,12 +51,12 @@
 
 <script lang="ts" setup>
 import {
-  MainPanel,
-} from '@/types/enum';
-
-import {
   Popover,
 } from 'bkui-vue';
+
+import {
+  MainPanel,
+} from '@/types/enum';
 
 interface IProps {
   mainPanel: MainPanel;
@@ -76,7 +76,9 @@ const toggleShow = (type: MainPanel) => {
   height: 48px;
   background: #FFFFFF;
   box-shadow: 0 1px 6px 0 #DCDEE5;
-  margin-bottom: 1px;
+  /* 为了z-index 生效 */
+  position: relative;
+  z-index: 2;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   align-items: center;

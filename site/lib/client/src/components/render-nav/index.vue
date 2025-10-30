@@ -413,7 +413,7 @@ onBeforeUnmount(() => {
 }
 
 .aside-nav-search-wrapper {
-  padding: 4px 16px;
+  padding: 0px 16px 4px 16px;
 
   .search-dropdown-list {
 

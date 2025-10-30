@@ -1,4 +1,4 @@
-import type { INavGroups, IFileAuthor } from '@/types/component';
+import type { IFileAuthor, INavGroups } from '@/types/component';
 
 import fetch from './fetch';
 
@@ -39,7 +39,7 @@ export const getComponent = (
 // 获取组件css
 export const getCss = (
   component: string,
-  version: string,  
+  version: string,
   type: string,
 ) => {
   const url = `${apiPrefix}/css?component=${component}&version=${version}&type=${type}`;
@@ -61,7 +61,7 @@ export const getCss = (
 
 // 获取设计规范
 export const getDesign = (name: string) => fetch
-  .get<string>(`${apiPrefix}/design`, { name});
+  .get<string>(`${apiPrefix}/design`, { name });
 
 // 获取 markdown 内容
 export const getNpmMarkdown = (name: string) => fetch
