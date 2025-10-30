@@ -32,7 +32,7 @@ watch(
   () => componentStore.version,
   (newVersion) => {
     if (!newVersion) return;
-    
+
     // 更新 URL 中的 version 参数，使用 replace 避免产生历史记录
     router.replace({
       ...router.currentRoute.value,

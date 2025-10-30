@@ -3,6 +3,7 @@
     :loading="loading"
     :z-index="10"
     class="design-home g-scrollbar"
+
   >
     <render-markdown
       v-if="design"
@@ -14,25 +15,27 @@
       type="empty"
       description="暂无设计规范"
     />
+
   </bk-loading>
 </template>
 
 <script lang="ts" setup>
 import {
-  Loading as BkLoading,
   Exception as BkException,
+  Loading as BkLoading,
 } from 'bkui-vue';
 import {
-  getDesign,
-} from '@/http/api';
+  onBeforeMount,
+  ref,
+} from 'vue';
 import {
   useRoute,
 } from 'vue-router';
-import {
-  ref,
-  onBeforeMount,
-} from 'vue';
+
 import RenderMarkdown from '@/components/render-markdown/index.vue';
+import {
+  getDesign,
+} from '@/http/api';
 
 const route = useRoute();
 
@@ -56,13 +59,14 @@ onBeforeMount(handleGetDesign);
 <style lang="postcss" scoped>
 .design-home {
   height: calc(100% - 149px);
-  padding: 16px 8px 40px 34px;
+  padding: 16px 8px 40px 16px;
   overflow: auto;
-  background: #fff;
+  scroll-behavior: smooth;
+
   .design-markdown {
-    max-width: 1000px;
     margin: 0 auto;
   }
+
   :deep(.bk-exception) {
     margin-top: 100px;
     .bk-exception-description {

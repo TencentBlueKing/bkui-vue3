@@ -63,6 +63,9 @@
           </template>
         </section>
       </article>
+
+      <!-- 底部留白 -->
+      <div style="height: 0.5px;" />
     </main>
 
     <!-- 侧边导航栏 -->
@@ -185,8 +188,9 @@ watch(
     gap: 24px;
     overflow: auto;
     scroll-behavior: smooth;
-    padding: 16px 8px 40px 34px;
+    padding: 24px 8px 32px 40px;
   }
+
 
   /* 子组件样式 */
   .child-component-section {
@@ -208,7 +212,6 @@ watch(
     top: 20px;
     max-height: 100%;
     overflow-y: auto;
-    padding-top: 8px;
   }
 
   .nav-list {
@@ -239,7 +242,7 @@ watch(
   .nav-link.active {
     color: #1976d2;
     font-weight: 500;
-    background-color: #f0f7ff;
+    /* background-color: #f0f7ff; */
   }
 
   .nav-link.active::before {
@@ -256,7 +259,6 @@ watch(
   .content {
     flex: 1;
     height: 100%;
-    padding-top: 8px;
   }
 
   .content-section {

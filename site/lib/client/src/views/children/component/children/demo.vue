@@ -2,7 +2,7 @@
   <bk-loading
     :loading="!componentStore.activeComponentWiki"
     :z-index="10"
-    class="demo-home"
+    class="demo-home g-scrollbar"
   >
     <template v-if="componentStore.activeComponentWiki">
       <render-edit-component
@@ -99,7 +99,7 @@ onBeforeUnmount(() => {
 <style lang="postcss" scoped>
 .demo-home {
   height: calc(100% - 149px);
-  padding: 40px 40px 32px;
+  padding: 24px 40px 32px;
   overflow: auto;
 }
 </style>
