@@ -26,11 +26,12 @@
 
 import { array, object } from 'vue-types';
 
+import { type PopoverProps } from '@bkui-vue/popover';
 import { PropTypes } from '@bkui-vue/shared';
 
 import { INode } from './interface';
 
-import type { ExtractPropTypes } from 'vue';
+import type { ExtractPropTypes, PropType } from 'vue';
 
 export const props = {
   modelValue: PropTypes.arrayOf(PropTypes.oneOfType([array<string>(), String, Number])),
@@ -51,6 +52,7 @@ export const props = {
   childrenKey: PropTypes.string.def('children'),
   separator: PropTypes.string.def('/'),
   limitOneLine: PropTypes.bool.def(false),
+  popoverOptions: Object as PropType<Partial<PopoverProps>>, // popover属性
   extCls: PropTypes.string.def(''),
   filterMethod: PropTypes.func,
   scrollHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(216),

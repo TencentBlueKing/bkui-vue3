@@ -401,6 +401,16 @@ const emits = [
     description: '聚焦时触发',
     params: [],
   },
+  {
+    name: 'selection-mode-change',
+    description: '选择模式变化时触发',
+    params: [
+      {
+        name: 'type',
+        type: 'any',
+      },
+    ],
+  },
 ];
 
 const slots = [

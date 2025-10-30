@@ -24,45 +24,58 @@
  * IN THE SOFTWARE.
  */
 
-import { defineComponent, h } from 'vue';
+import { defineComponent } from 'vue';
 
-import { usePrefix } from '@bkui-vue/config-provider';
-import { PropTypes } from '@bkui-vue/shared';
-import DOMPurify from 'dompurify';
-
-export default defineComponent({
-  name: 'ListTagRender',
-  props: {
-    node: PropTypes.object,
-    searchKey: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
-    displayKey: PropTypes.string,
-    searchKeyword: PropTypes.string,
-    tpl: {
-      type: Function,
-    },
-    disabled: PropTypes.bool.def(false),
+import DemoBox from '../../../components/demo-box';
+import DemoTitle from '../../../components/demo-title';
+import PropsBox from '../../../components/props-box';
+import { IPropsTableItem } from '../../../typings';
+import BaseDemo from './demo/base.vue';
+const menuPropsJson: IPropsTableItem[] = [
+  {
+    name: 'modelValue',
+    type: 'string',
+    default: '',
+    desc: '表达式',
+    optional: [],
   },
+  {
+    name: 'shortcuts',
+    type: '{label: string; value: string}[]',
+    default: '',
+    desc: '快捷选项',
+    optional: [],
+  },
+  {
+    name: 'renderExtends',
+    type: '() => VNode',
+    default: '',
+    desc: '自定义内容',
+    optional: [],
+  },
+];
+export default defineComponent({
   render() {
-    const { resolveClassName } = usePrefix();
-    const highlightKeyword = (value: string): string => {
-      if (this.searchKeyword && !this.disabled) {
-        const keywordReg = new RegExp(`(${this.searchKeyword})`, 'i');
-        return DOMPurify.sanitize(value.replace(keywordReg, '<strong class="highlight-text">$1</strong>'));
-      }
-      return DOMPurify.sanitize(value);
-    };
-
-    if (this.tpl) {
-      return this.tpl(this.node, highlightKeyword, h, this);
-    }
-    const displayText = this.node[this.displayKey];
-
     return (
-      <div class={`${resolveClassName('selector-node')}`}>
-        <span
-          class='text'
-          innerHTML={highlightKeyword(displayText)}
-        ></span>
+      <div>
+        <DemoTitle
+          desc='Liunx 定时任务表达'
+          name='Cronatb'
+          npmLink='https://www.npmjs.com/package/@blueking/crontab'
+        />
+        <DemoBox
+          componentName='blueking/crontab'
+          demoName='demo/base'
+          desc='modelValue 设置值'
+          subtitle='组件的基础用法'
+          title='基础用法'
+        >
+          <BaseDemo />
+        </DemoBox>
+        <PropsBox
+          propsData={menuPropsJson}
+          title='组件属性'
+        />
       </div>
     );
   },

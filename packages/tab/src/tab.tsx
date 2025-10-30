@@ -100,10 +100,12 @@ export default defineComponent({
         emit('add-panel', { e });
       },
       tabChange(name: string) {
-        // emit('xxx') 会调用onXxx函数, 所以不必在主动调用onXxx函数了
-        emit('change', name);
-        emit('tab-change', name);
-        emit('update:active', name);
+        if (_props.beforeChange?.(name) ?? true) {
+          // emit('xxx') 会调用onXxx函数, 所以不必在主动调用onXxx函数了
+          emit('change', name);
+          emit('tab-change', name);
+          emit('update:active', name);
+        }
       },
       tabRemove(index: number, panel) {
         // emit('xxx') 会调用onXxx函数, 所以不必在主动调用onXxx函数了

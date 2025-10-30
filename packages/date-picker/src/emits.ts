@@ -36,6 +36,7 @@ export const emits = {
   'pick-first': (val: any, type: any) => val && type,
   blur: () => true,
   focus: () => true,
+  'selection-mode-change': (type: any) => type,
 };
 
 export type DatePickerEmits = typeof emits;

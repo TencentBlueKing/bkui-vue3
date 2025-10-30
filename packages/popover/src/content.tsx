@@ -59,7 +59,7 @@ export default defineComponent({
     const refTimer = ref(null);
 
     const handleClick = (evt: MouseEvent) => {
-      evt.stopPropagation();
+      // evt.stopPropagation();
       emit('click', evt);
     };
 

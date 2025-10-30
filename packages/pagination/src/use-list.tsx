@@ -35,7 +35,7 @@ import type { ComponentInternalInstance } from 'vue';
 const PAGE_ITEMS_NUM = 5;
 
 export default () => {
-  const { proxy } = getCurrentInstance() as ComponentInternalInstance & { proxy: IPaginationInstance };
+  const { proxy, slots } = getCurrentInstance() as ComponentInternalInstance & { proxy: IPaginationInstance };
 
   const localCurrent = ref<number>(1);
   const isPagePreDisabled = computed<boolean>(() => localCurrent.value === 1);
@@ -238,6 +238,7 @@ export default () => {
       >
         {proxy.nextText || <AngleRight />}
       </div>
+      {slots.listAppend?.()}
     </div>
   );
 

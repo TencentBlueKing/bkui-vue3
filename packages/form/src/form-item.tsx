@@ -275,42 +275,30 @@ export default defineComponent({
 
           return Promise.resolve().then(() => {
             const result = rule.validator(value);
-            // 异步验证（validator 返回一个 Promise）
-            if (typeof result !== 'boolean' && typeof result !== 'string' && typeof result.then === 'function') {
-              return result
-                .then((data: boolean | string) => {
-                  // 异步验证结果为 false
-                  if (data === false) {
-                    return Promise.reject(getRuleMessage(rule));
-                  }
-                  if (typeof data === 'string') {
-                    return Promise.reject(data);
-                  }
-                })
-                .then(
-                  () => doValidate(),
-                  (errorMessage: string) => {
-                    if (showError) {
-                      state.isError = true;
-                      state.errorMessage = errorMessage;
-                    }
-                    form.emit('validate', props.property, false, errorMessage);
-                  },
-                );
+            // 同步验证通过，进行下一步
+            if (result === true) {
+              return doValidate();
             }
-            // 同步验证失败
-            if (Boolean(result) === false || typeof result === 'string') {
-              const errorMessage = typeof result === 'string' ? result : getRuleMessage(rule);
-              if (showError) {
-                state.isError = true;
-                // 验证结果返回的是 String 表示验证失败，返回结果作为错误信息
-                state.errorMessage = errorMessage;
+            return Promise.resolve(result).then((data) => {
+              // 验证失败，结果为 false
+              if (data === false) {
+                return Promise.reject(getRuleMessage(rule));
               }
-              form.emit('validate', props.property, false, errorMessage);
-              return Promise.reject(errorMessage);
-            }
-            // 下一步
-            return doValidate();
+              // 验证失败，结果为错误提示信息
+              if (typeof data === 'string') {
+                return Promise.reject(data);
+              }
+              // 其他情况视为验证通过，进行下一步
+              return Promise.resolve(true);
+            }).then(
+              () => doValidate(),
+              (errorMessage: string) => {
+                state.isError = true;
+                state.errorMessage = errorMessage;
+                form.emit('validate', props.property, false, errorMessage);
+                return Promise.reject(errorMessage);
+              },
+            );
           });
         };
       })();

@@ -150,6 +150,13 @@ const props = [
     default: false,
   },
   {
+    name: 'popoverOptions',
+    description: 'popover属性',
+    type: 'Partial<PopoverProps>',
+    link: '/components/popover/api#IPopoverProps',
+    default: {},
+  },
+  {
     name: 'extCls',
     description: '自定义样式',
     type: 'string',
