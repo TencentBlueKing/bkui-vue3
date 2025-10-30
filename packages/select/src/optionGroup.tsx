@@ -50,18 +50,23 @@ export default defineComponent({
   props: optionGroupProps,
   setup(props, { emit }) {
     const instance = getCurrentInstance();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { proxy } = instance as any;
     const select = inject(selectKey, null);
 
     const states = reactive({
       groupCollapse: props.collapse,
-      visible: true,
+      // visible: props.visible,
     });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const optionsMap = ref<Map<any, OptionInstanceType>>(new Map());
     const { register, unregister } = useRegistry<OptionInstanceType>(optionsMap);
     const groupLabel = computed(
       () => `${props.label} (${[...optionsMap.value.values()].filter(option => option.visible).length})`,
     );
+    const isVisible = computed(() => {
+      return props.visible && !select.isSearchEmpty;
+    });
 
     const handleToggleCollapse = () => {
       if (!props.collapsible || props.disabled) return;
@@ -93,6 +98,7 @@ export default defineComponent({
     return {
       ...toRefs(states),
       groupLabel,
+      isVisible,
       handleToggleCollapse,
       resolveClassName,
     };
@@ -115,7 +121,7 @@ export default defineComponent({
     return (
       <ul
         class={groupClass}
-        v-show={this.visible}
+        v-show={this.isVisible}
       >
         <li
           class={groupLabelClass}

@@ -93,7 +93,7 @@ export function calcTextareaHeight(targetElement: HTMLTextAreaElement, minRows =
   const { paddingSize, borderSize, boxSizing, contextStyle } = calculateNodeStyling(targetElement);
 
   hiddenTextarea.setAttribute('style', `${contextStyle};${HIDDEN_STYLE}`);
-  hiddenTextarea.value = targetElement.value || targetElement.placeholder || '';
+  hiddenTextarea.value = targetElement.value ?? '';
 
   let height = hiddenTextarea.scrollHeight;
   const result: TextAreaHeight = {};

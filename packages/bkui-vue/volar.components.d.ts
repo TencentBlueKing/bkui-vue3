@@ -99,6 +99,7 @@ declare module '@vue/runtime-core' {
     BkCodeDiff: typeof import('./code-diff/code-diff').default;
     BkSearchSelect: typeof import('./search-select/search-select').default;
     BkConfigProvider: typeof import('./config-provider/config-provider').default;
+    BkPopConfirm: typeof import('./pop-confirm/pop-confirm').default;
   }
 }
 export {};

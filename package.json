@@ -1,6 +1,6 @@
 {
   "name": "bkui-vue",
-  "version": "2.0.2-beta.46",
+  "version": "2.0.2-beta.74",
   "workspaces": [
     "packages/**",
     "scripts/cli"
@@ -9,7 +9,6 @@
     "lib",
     "dist"
   ],
-  "private": true,
   "packageManager": "yarn@1.22.10",
   "sideEffects": [
     "*.css",
@@ -119,7 +118,6 @@
     "cross-spawn": ">=7.0.5",
     "nth-check": ">=2.0.1",
     "parse-path": ">=5.0.0",
-    "parse-url": ">=8.1.0",
     "shelljs": "^0.8.5",
     "semver": ">=7.5.2"
   },
@@ -127,6 +125,7 @@
     "@floating-ui/dom": "~1.5.0",
     "@popperjs/core": "~2.11.8",
     "date-fns": "~2.30.0",
+    "dompurify": "3.2.6",
     "js-calendar": "~1.2.3",
     "json-formatter-js": "~2.3.4",
     "lodash": "~4.17.21",

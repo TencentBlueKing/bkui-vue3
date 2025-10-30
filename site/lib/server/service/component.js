@@ -83,6 +83,12 @@ export const getVersions = async () => {
   return versions;
 };
 
+// 获取最新版本
+export const getLatestVersion = async () => {
+  const versions = await getVersions();
+  return versions[versions.length - 1];
+};
+
 // 获取设计规范
 export const getDesign = async name => {
   const { data } = await http.get(`${process.env.BK_DESIGN_URL}/api/article`);
@@ -255,6 +261,21 @@ export const getNavGroups = async releaseZipPath => {
   };
 };
 
+// 获取组件信息
+export const getComponentInfo = async (releaseZipPath, componentName, version) => {
+  const directiveList = fs.readdirSync(path.resolve(releaseZipPath, 'directives/demo'));
+  const componentDemoPath = directiveList.find(item => item.includes(componentName))
+    ? path.resolve(releaseZipPath, 'directives/demo', `${componentName}.ts.js`)
+    : path.resolve(releaseZipPath, componentName, 'demo/index.ts.js');
+
+  if (!fs.existsSync(componentDemoPath)) {
+    return {
+      error: '组件不存在',
+    };
+  }
+  return require(componentDemoPath).default;
+};
+
 // 获取组件 release zip 包路径
 export const getReleaseZipPath = async version => {
   const releaseZipPath = path.resolve(RELEASE_DIR, `${version}`);
@@ -268,6 +289,11 @@ export const getReleaseZipPath = async version => {
     });
   }
   return releaseZipPath;
+};
+
+// 获取构建目录路径
+export const getReleaseDistPath = async (version) => {
+  return path.resolve(RELEASE_DIST_DIR, `${version}`);
 };
 
 // 清空构建目录

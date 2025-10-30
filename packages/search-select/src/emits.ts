@@ -30,6 +30,7 @@ export const emits = {
   'update:modelValue': (value: ISearchValue[]) => value,
   search: (e: MouseEvent) => e,
   selectKey: (item: ICommonItem) => item,
+  copy: (event: ClipboardEvent, text: string, item: ISearchValue) => [event, text, item],
 };
 
 export type SearchSelectEmits = typeof emits;

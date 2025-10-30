@@ -108,6 +108,7 @@ export const optionGroupProps = {
   disabled: PropTypes.bool.def(false),
   collapsible: PropTypes.bool.def(false), // 是否开启折叠
   collapse: PropTypes.bool.def(false), // 是否折叠初始状态
+  visible: PropTypes.bool.def(true),
 };
 
 export type OptionGroupProps = ExtractPropTypes<typeof optionGroupProps>;

@@ -860,6 +860,12 @@ const wiki: IComponentWiki = {
           description: '是否折叠',
           default: false,
         },
+        {
+          name: 'visible',
+          type: 'boolean',
+          description: '是否可见',
+          default: true,
+        },
       ],
       emits: [
         {

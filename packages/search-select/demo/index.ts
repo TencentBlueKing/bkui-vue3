@@ -355,6 +355,28 @@ const emits = [
       },
     ],
   },
+  {
+    name: 'copy',
+    description: '复制时触发',
+    params: [
+      {
+        name: 'event',
+        type: 'ClipboardEvent',
+        description: '复制事件',
+      },
+      {
+        name: 'text',
+        type: 'string',
+        description: '复制文本',
+      },
+      {
+        name: 'item',
+        type: 'ISearchValue',
+        description: '复制项',
+        link: '/component/search-select/api#ISearchValue',
+      },
+    ],
+  },
 ];
 
 const slots = [

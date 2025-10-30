@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 
-import { computed, defineComponent } from 'vue';
+import { defineComponent } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 
@@ -37,17 +37,22 @@ export default defineComponent({
   setup(props, { slots }) {
     const { collapse } = useMenuInject();
     const { resolveClassName } = usePrefix();
-    const displayTitle = computed(() => {
+
+    const renderGroupName = () => {
+      if (slots.name) {
+        return slots.name();
+      }
       if (collapse.value) {
         // 收起
         return props.foldName !== undefined ? props.foldName : props.name;
       }
 
       return props.name;
-    });
+    };
+
     return () => (
       <div class={`${resolveClassName('menu-group')}`}>
-        <div class='group-name'>{displayTitle.value}</div>
+        <div class='group-name'>{renderGroupName()}</div>
         <ul class='group-wrap'>{slots.default?.()}</ul>
       </div>
     );

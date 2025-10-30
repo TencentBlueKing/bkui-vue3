@@ -49,6 +49,7 @@
         font-size: 12px;
         border: solid 1px transparent;
         border-radius: 2px;
+        position: relative;
 
         &.tag-item {
           background: #f0f1f5;
@@ -70,6 +71,21 @@
         text-overflow: ellipsis;
         word-break: break-all;
         white-space: nowrap;
+        .dblclick-edit-input {
+          background-color: rgb(225, 236, 255);
+          border: none;
+          height: 100%;
+          max-width: 100%;
+          padding: 0px 8px;
+          position: absolute;
+          resize: none;
+          top: 0px;
+          width: 100%;
+          &:focus {
+            outline: none;
+            border: none;
+          }
+        }
       }
 
       .text {

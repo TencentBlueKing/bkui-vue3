@@ -34,7 +34,7 @@ import type { Language } from '@bkui-vue/locale';
 import type { ComponentInternalInstance, ComputedRef } from 'vue';
 
 export default (t: ComputedRef<Language['pagination']>) => {
-  const { proxy } = getCurrentInstance() as ComponentInternalInstance & { proxy: IPaginationInstance };
+  const { proxy, slots } = getCurrentInstance() as ComponentInternalInstance & { proxy: IPaginationInstance };
 
   const localLimit = ref<number>(proxy.limit);
 
@@ -105,6 +105,7 @@ export default (t: ComputedRef<Language['pagination']>) => {
           ))}
         </Select>
         <div>{t.value.strip}</div>
+        {slots.limitAppend?.()}
       </div>
     );
   };

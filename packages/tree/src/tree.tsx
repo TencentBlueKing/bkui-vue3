@@ -28,6 +28,7 @@ import { computed, defineComponent, nextTick, onMounted, reactive, ref, watch } 
 import { usePrefix } from '@bkui-vue/config-provider';
 import { debounce } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
+import { cloneDeep } from 'lodash';
 
 import { EVENTS, NODE_ATTRIBUTES } from './constant';
 import { emits } from './emits';
@@ -67,6 +68,7 @@ export default defineComponent({
       getNodeAttr,
       getNodeById,
       getParentNode,
+      getRootNodeList,
       getIntersectionResponse,
     } = useNodeAttribute(flatData, props);
 
@@ -156,7 +158,38 @@ export default defineComponent({
       setSelect(newData, true, props.autoOpenParentNode, true);
     });
 
-    const getData = () => flatData;
+    /**
+     * 根据最新的schema生成最新的Tree结构数据
+     * @returns
+     */
+    const getLastTreeDataBySchema = () => {
+      const loopData = (rootNodeList: TreeNode[]) => {
+        return (rootNodeList ?? []).map(node => {
+          const copyData = cloneDeep(node);
+          if (!copyData) {
+            return copyData;
+          }
+
+          const children = flatData.data.filter(item => getParentNode(item) === node) as TreeNode[];
+          copyData[props.children] = loopData(children);
+          return copyData;
+        });
+      };
+      return loopData(getRootNodeList());
+    };
+
+    /**
+     * 获取当前树形结构相关数据
+     * @param newTree 如果启用了排序，拖拽功能，这里数据结构会改变，需要设置为true，获取最新的数据
+     * @returns
+     */
+    const getData = (newTree: false) => {
+      if (!newTree) {
+        return flatData;
+      }
+
+      return { data: getLastTreeDataBySchema(), schema: flatData.schema, levelLineSchema: flatData.levelLineSchema };
+    };
 
     watch(
       () => [props.checked],

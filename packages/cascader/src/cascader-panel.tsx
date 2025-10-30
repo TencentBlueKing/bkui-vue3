@@ -250,6 +250,19 @@ export default defineComponent({
       });
     };
 
+    // 监听store.config.multiple属性的变化，当切换单选/多选模式时需要重新初始化面板
+    watch(
+      () => store.value.config.multiple,
+      (newVal, oldVal) => {
+        if (newVal !== oldVal) {
+          // 当multiple属性变化时，重置面板状态
+          menus.list = [store.value.getNodes()];
+          activePath.value = [];
+          checkValue.value = [];
+        }
+      },
+    );
+
     const noDataText = t.value.noData;
     const { emptyText } = t.value;
 
@@ -366,11 +379,12 @@ export default defineComponent({
       <div class={this.resolveClassName('cascader-panel-wrapper')}>
         {this.isFiltering
           ? searchPanelRender()
-          : this.menus.list.map(menu => (
+          : this.menus.list.map((menu, index) => (
               <ul
                 style={{ height: this.panelHeight, width: this.panelWidth }}
                 class={[this.resolveClassName('cascader-panel'), this.resolveClassName('scroll-y')]}
               >
+                {this.$slots.panel?.({ nodes: menu, level: index, activePath: this.activePath })}
                 {menu.length ? (
                   menu.map(node => (
                     <li

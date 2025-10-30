@@ -144,7 +144,7 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
     boundary.value = getPrefixId(root || elReference);
   };
 
-  const { getPrefixId } = usePopperId(props, '#');
+  const { getPrefixId, clearParentNodeId } = usePopperId(props, '#');
 
   const setFullscreenTag = () => {
     fullScreenTarget?.value?.setAttribute('data-fllsrn-id', fullscreenReferId);
@@ -187,26 +187,51 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
       return;
     }
 
-    initPopInstance();
-
     if (isElementFullScreen()) {
       const query = `[data-fllsrn-id=${fullscreenReferId}]`;
       const target = getFullscreenRoot(query);
       updateFullscreen(target);
     }
 
+    // 先更新 boundary，确保在初始化 popover 实例之前 boundary 已正确设置
     updateBoundary();
+
+    initPopInstance();
+
     document.body.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('click', handleClickOutside);
   };
 
   const onUnmountedFn = () => {
     beforeInstanceUnmount();
+    // 清理父节点上的 data-pnode-id 属性
+    const { root } = resolvePopElements();
+    clearParentNodeId(root);
     document.body.removeEventListener('fullscreenchange', handleFullscreenChange);
+    document.removeEventListener('click', handleClickOutside);
   };
 
-  const handleClickOutside = (_e: MouseEvent, hideIgnoreReference = false) => {
+  const isClickInside = (target: HTMLElement) => {
+    return refContent.value?.$el?.contains?.(target) ?? false;
+  };
+
+  /**
+   * 处理点击外部区域的事件
+   * @param e - 事件对象
+   * @param hideIgnoreReference - 是否忽略隐藏参考元素
+   * @returns
+   */
+  const handleClickOutside = (e: MouseEvent, hideIgnoreReference = false) => {
+    const target = e.target as HTMLElement;
+    if (isClickInside(target)) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      return;
+    }
+
     const commonFunc = () => {
-      ctx.emit(EMIT_EVENTS.CLICK_OUTSIDE, { isShow: localIsShow.value, event: _e });
+      ctx.emit(EMIT_EVENTS.CLICK_OUTSIDE, { isShow: localIsShow.value, event: e });
       const needExec = props.disableOutsideClick || props.always || props.disabled || props.trigger === 'manual';
       if (!props.forceClickoutside && needExec) {
         return;
@@ -216,6 +241,12 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
         hideFn();
       }
     };
+
+    /**
+     * 如果需要忽略隐藏参考元素，则设置一个定时器，在定时器结束后检查是否需要隐藏 popover
+     * @param hideIgnoreReference - 是否忽略隐藏参考元素
+     * @returns
+     */
     if (hideIgnoreReference) {
       setTimeout(() => {
         if (ReferenceClickSharedState[uniqKey]) {

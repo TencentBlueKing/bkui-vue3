@@ -34,7 +34,7 @@ import type { IPaginationInstance } from './type';
 import type { ComponentInternalInstance } from 'vue';
 
 export default () => {
-  const { proxy } = getCurrentInstance() as ComponentInternalInstance & { proxy: IPaginationInstance };
+  const { proxy, slots } = getCurrentInstance() as ComponentInternalInstance & { proxy: IPaginationInstance };
 
   const inputRef = ref<HTMLInputElement>(null);
   const isFocused = ref<boolean>(false);
@@ -254,6 +254,9 @@ export default () => {
       >
         <AngleRight />
       </div>
+      {
+        slots.smallListAppend?.()
+      }
     </div>
   );
   return {

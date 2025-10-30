@@ -203,6 +203,7 @@ function renderArrow(): HTMLElement {
  * @returns popper实例
  */
 function createPopperInstance(el: HTMLElement, popper: HTMLElement) {
+  if (!nodeList.get(el)) return;
   const { opts } = nodeList.get(el);
   const { placement, distance, sameWidth } = opts;
   const popperInstance = createPopper(el, popper, {
@@ -247,6 +248,7 @@ function createPopperInstance(el: HTMLElement, popper: HTMLElement) {
  * @param el
  */
 function show(el: HTMLElement) {
+  if (!nodeList.get(el)) return;
   const { popper, opts } = nodeList.get(el);
   const { disabled, content, arrow: hasArrow, onShow, boundary, modifiers = [] } = opts;
   if (disabled) return;
