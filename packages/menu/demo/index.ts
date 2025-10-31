@@ -36,15 +36,25 @@ const presets = [
     },
     slots: {
       default: `
-      <bk-submenu
-      key="数字"
-      title="数字"
+    <bk-menu-item key="微信"> 微信 </bk-menu-item>
+    <bk-menu-item key="QQ"> QQ </bk-menu-item>
+    <bk-menu-group name="天美">
+      <bk-menu-item
+        key="王者荣耀"
+      >
+        王者荣耀
+      </bk-menu-item>
+      <bk-menu-item key="QQ飞车"> QQ飞车 </bk-menu-item>
+      <bk-menu-item key="天天酷跑"> 天天酷跑 </bk-menu-item>
+      <bk-menu-item key="重返帝国"> 重返帝国 </bk-menu-item>
+    </bk-menu-group>
+    <bk-submenu
+    key="数字"
+    title="数字"
     >
       <bk-menu-item key="腾讯微视"> 腾讯微视 </bk-menu-item>
       <bk-menu-item key="腾讯云"> 腾讯云 </bk-menu-item>
       <bk-menu-item key="微众银行"> 微众银行 </bk-menu-item>
-      <bk-menu-item key="腾讯体育"> 腾讯体育 </bk-menu-item>
-      <bk-menu-item key="腾讯看点"> 腾讯看点 </bk-menu-item>
     </bk-submenu>
       `,
     },

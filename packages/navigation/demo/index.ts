@@ -40,7 +40,17 @@ const presets = [
         <bk-menu-item key="腾讯视频"> 腾讯视频 </bk-menu-item>
         <bk-menu-item key="微信"> 微信 </bk-menu-item>
         <bk-menu-item key="QQ"> QQ </bk-menu-item>
-      </bk-menu>`,
+        <bk-menu-group
+            fold-name="GX"
+            name="光子"
+          >
+            <bk-menu-item key="和平精英"> 和平精英 </bk-menu-item>
+            <bk-menu-item key="黎明觉醒" disabled> 黎明觉醒 </bk-menu-item>
+            <bk-menu-item key="自由幻想"> 自由幻想 </bk-menu-item>
+            <bk-menu-item key="欢乐斗地主"> 欢乐斗地主 </bk-menu-item>
+          </bk-menu-group>
+      </bk-menu>
+      `,
     },
     dependent: {
       components: ['menu'],
@@ -51,6 +61,7 @@ const presets = [
     description: '用于功能模块较多且层级较深的场景',
     props: {
       needMenu: true,
+      navigationType: 'top-bottom',
     },
     slots: {
       menu: `
@@ -59,11 +70,10 @@ const presets = [
           <bk-menu-item key="腾讯视频"> 腾讯视频 </bk-menu-item>
           <bk-menu-item key="微信"> 微信 </bk-menu-item>
           <bk-menu-item key="QQ"> QQ </bk-menu-item>
-        </bk-menu>
-        <bk-menu-group
-          fold-name="TiMi"
-          name="天美世界"
-        >
+          <bk-menu-group
+            fold-name="TiMi"
+            name="天美世界"
+          >
           <bk-menu-item key="王者荣耀"> 王者荣耀 </bk-menu-item>
           <bk-menu-item key="QQ飞车"> QQ飞车 </bk-menu-item>
           <bk-menu-item key="天天酷跑"> 天天酷跑 </bk-menu-item>
@@ -79,6 +89,7 @@ const presets = [
           <bk-menu-item key="阅文集团"> 阅文集团 </bk-menu-item>
           <bk-menu-item key="腾讯电竞"> 腾讯电竞 </bk-menu-item>
         </bk-submenu>
+        </bk-menu>
       `,
       header: '<div class="header-demo">这里是头部导航</div>',
     },
