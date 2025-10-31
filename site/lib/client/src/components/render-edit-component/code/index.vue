@@ -55,7 +55,7 @@ import {
 import type {
   IComponentWiki,
   PropItem,
-  PropValue,
+  ValueType,
 } from '@/types/component';
 
 import {
@@ -71,7 +71,7 @@ import {
 type Languages = 'javascript' | 'typescript';
 interface IProps {
   componentWiki: IComponentWiki;
-  renderProps: Record<string, PropValue>;
+  renderProps: Record<string, ValueType>;
   renderSlots: Record<string, string>;
   index: number;
 }
@@ -144,7 +144,7 @@ const createLabel = (
   name: string,
   slot: string,
   prefix = '',
-  props: Record<string, PropValue> = {},
+  props: Record<string, ValueType> = {},
   endLabelName = '',
 ) => {
   // 属性列表处理

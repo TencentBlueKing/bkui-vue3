@@ -105,7 +105,7 @@ import {
   MainPanel,
 } from '@/types/enum';
 
-import RenderCode from './render-code/code.vue';
+import RenderCode from './code/index.vue';
 import RenderConfig from './config/index.vue';
 import RenderHeader from './header.vue';
 import RenderPresets from './presets.vue';
