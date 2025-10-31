@@ -56,11 +56,12 @@ export interface INavGroups {
   };
   directiveList: IComponentWiki[];
   customComponentList: IComponentWiki[];
+  startList?: IComponentWiki[]
 }
 
 export interface IComponentMeta {
   componentWiki: IComponentWiki;
-  type: string;
+  routerName: string;
 }
 
 export interface IFileAuthor {

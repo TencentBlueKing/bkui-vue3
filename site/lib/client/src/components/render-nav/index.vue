@@ -67,7 +67,8 @@
                   @click="handleChooseCom(item)"
                 >
                   <span
-                    v-html="`${item.componentWiki.title} ${item.componentWiki.titleCN}`?.replace(new RegExp(`(${searchVal})`, 'i'), '<em>$1</em>')"
+                    v-html="`${item.componentWiki.title} ${item.componentWiki.titleCN}`
+                      ?.replace(new RegExp(`(${searchVal})`, 'i'), '<em>$1</em>')"
                     class="text"
                   />
                 </li>
@@ -87,6 +88,20 @@
       ref="asideNavGroupRef"
       class="aside-nav-group g-scrollbar"
     >
+      <li class="aside-nav-group-title" v-if="componentStore.navGroups?.startList.length">
+        开始
+      </li>
+      <li
+        v-for="start in componentStore.navGroups?.startList"
+        :key="start.name"
+        :class="{
+          'aside-nav-group-item': true,
+          active: start.name === activeName,
+        }"
+        @click="handleChoose(start, 'markdown')"
+      >
+        {{ start.titleCN }}
+      </li>
       <template
         v-for="(componentWikis, groupName) in componentStore.navGroups?.componentGroupMap"
         :key="groupName"
@@ -99,7 +114,7 @@
           :key="componentWiki.title"
           :class="{
             'aside-nav-group-item': true,
-            active: componentWiki.name === componentStore.activeComponentWiki?.name,
+            active: componentWiki.name === activeName,
           }"
           @click="handleChoose(componentWiki)"
         >
@@ -116,12 +131,29 @@
           :key="directive.name"
           :class="{
             'aside-nav-group-item': true,
-            active: directive.name === componentStore.activeComponentWiki?.name,
+            active: directive.name === activeName,
           }"
           @click="handleChoose(directive)"
         >
           {{ directive.title }}
           {{ directive.titleCN }}
+        </li>
+      </template>
+      <template v-if="componentStore.navGroups?.customComponentList.length">
+        <li class="aside-nav-group-title">
+          业务组件
+        </li>
+        <li
+          v-for="customCom in componentStore.navGroups?.customComponentList"
+          :key="customCom.name"
+          :class="{
+            'aside-nav-group-item': true,
+            active: customCom.name === activeName,
+          }"
+          @click="handleChoose(customCom,'markdown')"
+        >
+          {{ customCom.title }}
+          {{ customCom.titleCN }}
         </li>
       </template>
     </ul>
@@ -161,9 +193,10 @@ import {
 import {
   useComponent,
 } from '@/store/component';
-import type {
+import {
   IComponentMeta,
   IComponentWiki,
+  INavGroups,
 } from '@/types/component';
 import {
   VERSION_KEY,
@@ -187,7 +220,17 @@ const {
 const vClickoutside = clickoutside;
 const BkOption = BkSelect.Option;
 
+const startList = [{
+  group: '开始',
+  name: 'start',
+  title: '',
+  titleCN: '快速上手',
+  description: '本组件库基于Vue3研发，本节介绍如何在项目中结合 webpack 一起使用 @blueking/bkui-vue。',
+  presets: [],
+}];
+
 const searchVal = ref('');
+const activeName = ref('');
 const selectIndex = ref(0);
 const contentMaxHeight = ref(300);
 const isPopoverShow = ref(false);
@@ -223,7 +266,7 @@ const doSearch = () => {
   isPopoverShow.value = !!query;
 };
 
-const handleKeydown = (_val: any, e: KeyboardEvent) => {
+const handleKeydown = (_val: string, e: KeyboardEvent) => {
   const { keyCode } = e;
   const { length } = renderList.value;
   switch (keyCode) {
@@ -277,15 +320,19 @@ const handleKeydown = (_val: any, e: KeyboardEvent) => {
 const handleChooseCom = async (config?: IComponentMeta) => {
   const item = config || renderList.value[selectIndex.value];
   if (!item) return;
-  await handleChoose(item.componentWiki);
+  await handleChoose(item.componentWiki, item.routerName);
   scrollToCurNavItem();
   hidePopover();
+  searchVal.value = '';
 };
 
-const handleChoose = async (value: IComponentWiki) => {
-  componentStore.activeComponentWiki = value;
+const handleChoose = async (value: IComponentWiki, routerName = 'component') => {
+  if (routerName === 'component') {
+    componentStore.activeComponentWiki = value;
+  }
+  activeName.value = value.name;
   await router.push({
-    name: 'component',
+    name: routerName,
     params: {
       name: value.name,
     },
@@ -304,15 +351,22 @@ const handleInit = async () => {
   try {
     componentStore.isLoadingNavGroups = true;
     // 设置 navGroups
-    componentStore.navGroups = await getNavGroups(componentStore.version);
+    const navGroups = await getNavGroups(componentStore.version);
+    navGroups.startList = startList;
+
+    navGroups.componentGroupMap = sortGroupByOrder(navGroups.componentGroupMap);
+    componentStore.navGroups = navGroups;
 
     renderList.value = [...componentStore.componentMetaList];
     // 设置 activeComponentWiki
-    if (route.params.name) {
-      const componentWiki = componentStore.componentMetaList
-        .find(item => item.componentWiki.name === route.params.name);
-      if (componentWiki) {
-        componentStore.activeComponentWiki = componentWiki.componentWiki;
+    const routeName = Array.isArray(route.params.name) ? route.params.name[0] : route.params.name;
+    if (routeName) {
+      const component = componentStore.componentMetaList
+        .find(item => item.componentWiki.name === routeName);
+      if (component) {
+        componentStore.activeComponentWiki = component.componentWiki;
+        activeName.value = component.componentWiki.name;
+        await nextTick(scrollToCurNavItem);
       }
     }
   } catch (error) {
@@ -322,22 +376,32 @@ const handleInit = async () => {
   }
 };
 
+const sortGroupByOrder = (data: INavGroups['componentGroupMap']) => {
+  const sortedObj: INavGroups['componentGroupMap'] = {};
+  const desiredOrder  = ['基础', '布局', '导航', '表单', '数据', '反馈'];
+  desiredOrder.forEach((key) => {
+    if (Object.prototype.hasOwnProperty.call(data, key)) {
+      sortedObj[key] = data[key];
+    }
+  });
+
+  return sortedObj;
+};
+
 const scrollToCurNavItem = () => {
   const curAsideNavGroupItem  = document.querySelector('.aside-nav-group-item.active');
   if (curAsideNavGroupItem) {
     // 171 是距离顶部的距离，85 是留出多余的高度，不给 85 的话，会显得太顶到顶部了
-    asideNavGroupRef.value.scrollTop = (curAsideNavGroupItem as any).offsetTop - 171 - 85;
+    asideNavGroupRef.value.scrollTop = (curAsideNavGroupItem as HTMLElement).offsetTop - 171 - 85;
   }
 };
 
 watch(
-  () => route.name,
-  (_to, from) => {
-    // 刷新页面
-    if (!from) {
-      nextTick(() => {
-        scrollToCurNavItem();
-      });
+  () => route.params.name,
+  (name) => {
+    const nameValue = Array.isArray(name) ? name[0] : name;
+    if (nameValue) {
+      activeName.value = nameValue;
     }
   },
 );
