@@ -234,6 +234,17 @@ const createDependImport = (dependList: string[], source: string, isType = false
   }} from '${source}';`;
 };
 
+// 格式化联合类型的type + 去重
+const formatType = (propsName: string) => {
+  let curProps = componentWiki.value.props.find(item => item.name === propsName);
+  const curType = curProps.type;
+  const curOptions = curProps?.options || [];
+  if (curOptions.length > 0) {
+    return Array.from(new Set(curOptions.map(item => `'${(item).toString().trim()}'`))).join(' | ');
+  }
+  return Array.from(new Set(curType.split('|').map(item => item.trim()))).join(' | ');
+};
+
 // 根据props生成响应式变量
 const createRefVariables = () => {
   return Object.entries(renderProps.value).map(([key, value]) => {
@@ -241,23 +252,27 @@ const createRefVariables = () => {
     if (curPropInfo) {
       const curValue = createValue(curPropInfo, value)
       const isTypeScript = activeLanguage.value === 'typescript';
-      let propsType = componentWiki.value.props.find(item => item.name === key);
       if (isTypeScript) {
-        // 格式化联合类型的type
-        const formatType = propsType.type.split('|').map(item => item.trim()).join(' | ');
-        return `const ${camelKey(key)} = ref<${formatType}>(${curValue});`;
+        const type = formatType(key);
+        return `const ${camelKey(key)} = ref<${type}>(${curValue});`;
       }
       return `const ${camelKey(key)} = ref(${curValue});`;
     }
     return '';
   })
+    .filter(item => item)
     .join(BREAK_LINE);
 };
 
 const createValue = (curPropInfo: PropItem, value: unknown) => {
   let curValue;
   if (curPropInfo.type === 'string' || typeof value === 'string') {
-    curValue = `'${value}'`;
+    // 模板字符串处理
+    if ((value as string).includes('\n')) {
+      curValue = `\`${value}\``;
+    } else {
+      curValue = `'${value}'`;
+    }
   } else if (curPropInfo.type === 'object' || typeof value === 'object') {
     if (Array.isArray(value)) {
       // 判断是否为简单数组（所有元素都不是对象）
@@ -349,54 +364,6 @@ const scriptContent = () => {
   return createCommonScript();
 };
 
-// 解析类型标识，兼容 Array<T> 与 T[] 形式，返回基础类型名
-  const parseTypeIdent = (raw: string): string => {
-  const t = raw.trim();
-
-  // 1) T[] 后缀数组
-  const arraySuffixMatch = t.match(/^([\w$\.]+)\s*\[\]$/);
-  if (arraySuffixMatch) return arraySuffixMatch[1];
-
-  // 统一的泛型解包辅助：name为泛型名，index为目标参数索引
-  const unwrap = (name: string, index = 0): string | null => {
-    const re = new RegExp(`^${name}\\<\\s*([^>]+)\\s*\\>$`);
-    const m = t.match(re);
-    if (!m) return null;
-    const params = m[1].split(/\s*,\s*/);
-    const target = params[Math.min(index, params.length - 1)];
-    return parseTypeIdent(target);
-  };
-
-  // 2) 标准容器与包装类型
-  // Array<T>
-  const arrT = unwrap('Array', 0); if (arrT) return arrT;
-  // Set<T>
-  const setT = unwrap('Set', 0); if (setT) return setT;
-  // Promise<T>
-  const promiseT = unwrap('Promise', 0); if (promiseT) return promiseT;
-  // Map<K, V> -> 取值类型 V
-  const mapV = unwrap('Map', 1); if (mapV) return mapV;
-  // Record<K, V> -> 取值类型 V
-  const recordV = unwrap('Record', 1); if (recordV) return recordV;
-
-  // 3) 类型修饰器(取第一个类型参数)
-  const partialT = unwrap('Partial', 0); if (partialT) return partialT;
-  const readonlyT = unwrap('Readonly', 0); if (readonlyT) return readonlyT;
-  const requiredT = unwrap('Required', 0); if (requiredT) return requiredT;
-  const pickT = unwrap('Pick', 0); if (pickT) return pickT;
-  const omitT = unwrap('Omit', 0); if (omitT) return omitT;
-  const objectT = unwrap('Object', 0); if (objectT) return objectT; // 兼容自定义 Object<T>
-
-  // 4) 泛型嵌套的其他情况(如 Foo<Bar<Baz>>)——若整体是标识符，直接返回
-  if (/^[\w$\.]+$/.test(t)) return t;
-
-  // 5) 对象字面量或无法识别的复杂结构，返回空串以便外层过滤
-  if (/^\{[\s\S]*\}$/.test(t)) return '';
-
-  // 默认返回原始字符串(允许外层自行判定)
-  return t;
-};
-
 // 生成通用script
 const createCommonScript = () => {
   // 依赖列表
@@ -408,13 +375,9 @@ const createCommonScript = () => {
     const allTypeList = componentWiki.value?.types?.map(item => item.name);
     const typeMap = new Map();
     for (const item of componentWiki.value.props) {
-      for (const type of item.type.split('|')) {
-        // 这里需要进一步解析type
-        // 有的type 是 Array<IType> IType[] 这种形式
-        const baseType = parseTypeIdent(type);
-        if (allTypeList.includes(baseType)) {
-          typeMap.set(item.name, baseType);
-        }
+      const curPropsTypes = allTypeList.filter(type => item.type.includes(type))
+      for (const type of curPropsTypes) {
+        typeMap.set(item.name, type);
       }
     }
     const curTypeList = [];
@@ -426,7 +389,7 @@ const createCommonScript = () => {
     }
     const importTypeDepend = createDependImport(curTypeList, 'bkui-vue', true);
     if (variables) {
-      return `${importTypeDepend}${BREAK_LINE}${importDepend}${BREAK_LINE}${BREAK_LINE}${variables}${BREAK_LINE}`;
+      return `${importTypeDepend ? `${importTypeDepend}${BREAK_LINE}` : ''}${importDepend}${BREAK_LINE}${BREAK_LINE}${variables}${BREAK_LINE}`;
     }
     return '';
   }
@@ -434,6 +397,16 @@ const createCommonScript = () => {
     return `${importDepend}${BREAK_LINE}${BREAK_LINE}${variables}${BREAK_LINE}`;
   }
   return '';
+};
+
+// 将连接形式/下划线/空格分隔的名称转为 PascalCase，例如：info-box -> InfoBox
+const toPascalCase = (str: string = ''): string => {
+  if (!str) return '';
+  return str
+    .split(/[-_\s]+/)
+    .filter(Boolean)
+    .map(s => s ? s[0].toUpperCase() + s.slice(1) : '')
+    .join('');
 };
 
 // 生成函数组件script
@@ -444,11 +417,17 @@ const createFunctionScript = () => {
     return `${key}: ${curValue}`;
   }).join(`,${BREAK_LINE}${indent(2)}`);
 
-  return `const handleShow = () => {
-  ${capitalize(componentWiki.value.name)}({
+  // 依赖列表
+  const dependList = [toPascalCase(componentWiki.value.name)];
+  const importDepend = createDependImport(dependList, 'bkui-vue');
+
+  return `${importDepend}${BREAK_LINE}
+const handleShow = () => {
+  ${toPascalCase(componentWiki.value.name)}({
     ${propsContent}
   });
-};`;
+};
+`;
 };
 
 // 指令clickoutside特殊处理
@@ -456,13 +435,14 @@ const createClickOutSideScript = () => {
   // 依赖列表
   const dependList = ['Message'];
   const importDepend = createDependImport(dependList, 'bkui-vue');
-  return `${importDepend}
+  return `${importDepend}${BREAK_LINE}
 const handleClickOutside = () => {
   Message({
     message: '点击了外部区域',
     theme: 'primary',
   });
-};`
+};
+`
 }
 
 // 开头首字母大写
