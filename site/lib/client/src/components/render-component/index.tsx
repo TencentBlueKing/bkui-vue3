@@ -52,7 +52,7 @@ export default vue.defineComponent({
     },
     dependentComponents: {
       type: Object,
-      default: () => ({}),
+      default: (data?: unknown) => ({}),
     },
   },
   // 占位，否则动态注册逻辑需要加额外判断
@@ -145,10 +145,10 @@ export default vue.defineComponent({
         Object.keys(this.renderSlots).reduce(
           (acc, slotName) => {
             const Fn = Function;
-            acc[slotName] = () => Fn('Vue', compile(this.renderSlots[slotName]).code)(vue)(vue);
+            acc[slotName] = (data?: unknown) => Fn('Vue', 'data', compile(this.renderSlots[slotName]).code)(vue, data)(vue);
             return acc;
           },
-          {} as Record<string, () => object>,
+          {} as Record<string, (data?: unknown) => object>,
         ),
       );
 

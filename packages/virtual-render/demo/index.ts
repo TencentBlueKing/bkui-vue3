@@ -34,8 +34,23 @@ const presets = [
     props: {
       list: Array.from({ length: 1000 }, (_, index) => ({
         name: `用户${index + 1}`,
-        age: 20 + (index % 20),
+        index: index,
       })),
+      height: 500,
+      lineHeight: 30,
+    },
+    slots: {
+      default: `
+        <div
+          v-for="item, index in data.data"
+          :key="index"
+          :style="{ height: '30px' }"
+        >
+          <span> name: {{ item.name }} </span>
+          ---
+          <span> index: {{ item.index }} </span>
+        </div>
+      `,
     },
   },
 ];
