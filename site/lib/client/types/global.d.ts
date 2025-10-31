@@ -28,6 +28,11 @@ declare interface Window {
   clipboard: Function;
   jsonFormatterJs: Function;
   tinycolor2: Function;
+  dompurify: Function;
+  sparkMd5: Function;
+  diff: Function;
+  diff2html: Function;
+  _code_diff_src_diff2html_bundles_css_diff2html_min_css: Function;
 }
 
 declare module 'uuid';
@@ -38,5 +43,10 @@ declare module '@blueking/xss-filter';
 declare module 'markdown-it-task-lists';
 declare module 'tinycolor2';
 declare module 'markdown-it-container';
+declare module 'dompurify';
+declare module 'spark-md5';
+declare module 'diff';
+declare module 'diff2html';
+declare module 'diff2html/bundles/css/diff2html.min.css';
 
 declare module '*.md';

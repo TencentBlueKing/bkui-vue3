@@ -89,6 +89,7 @@ import {
   onUnmounted,
   ref,
   watch,
+  shallowRef,
 } from 'vue';
 
 import RenderComponent from '@/components/render-component';
@@ -123,7 +124,7 @@ const componentStore = useComponent();
 // 用于渲染配置
 const renderProps = ref<IComponentWiki['presets'][number]['props']>();
 const renderSlots = ref<IComponentWiki['presets'][number]['slots']>();
-const dependentComponents = ref<Record<string, unknown>>({});
+const dependentComponents = shallowRef<Record<string, unknown>>({});
 // 依赖组件缓存，避免重复加载
 const dependentComponentsCache = ref<Record<string, unknown>>({});
 // 选中的预设索引

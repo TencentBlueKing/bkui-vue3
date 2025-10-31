@@ -26,7 +26,7 @@
 
 import { ExtractPropTypes } from 'vue';
 
-import uploadProps from './props';
+import { props as uploadProps } from './props';
 
 export const CLASS_PREFIX = 'upload';
 

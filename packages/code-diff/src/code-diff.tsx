@@ -52,7 +52,7 @@ export default defineComponent({
     const diffBoxCls = computed(() =>
       classes(
         {
-          dark: props.theme === themesEnum.dark,
+          dark: props.theme === 'dark',
         },
         `hljs ${resolveClassName('code-diff')}`,
       ),
@@ -65,7 +65,7 @@ export default defineComponent({
       nextTick(() => {
         if (diffBox.value) {
           diffBox.value.querySelectorAll(`.lang-${props.language}`).forEach(item => {
-            props.hljs.highlightElement(item);
+            props.hljs?.highlightElement(item);
           });
         }
       });

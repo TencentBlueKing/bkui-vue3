@@ -32,7 +32,7 @@ import { Del, Plus, Upload, Eye } from '@bkui-vue/icon';
 import Progress from '@bkui-vue/progress';
 import { classes } from '@bkui-vue/shared';
 
-import uploadProps from './props';
+import { props as uploadProps } from './props';
 import { CLASS_PREFIX, EThemes, UploadFile } from './upload.type';
 
 export default defineComponent({

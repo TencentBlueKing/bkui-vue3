@@ -17,6 +17,11 @@ import * as ResizeObserverPolyfill from 'resize-observer-polyfill';
 import * as Clipboard from 'clipboard';
 import * as JsonFormatter from 'json-formatter-js';
 import * as Tinycolor2 from 'tinycolor2';
+import * as Dompurify from 'dompurify';
+import * as SparkMd5 from 'spark-md5';
+import * as Diff from 'diff';
+import * as Diff2Html from 'diff2html';
+import * as Diff2HtmlCss from 'diff2html/bundles/css/diff2html.min.css';
 
 export const useExternals = () => {
   const loadExternals = () => {
@@ -47,6 +52,17 @@ export const useExternals = () => {
     window.clipboard = () => Clipboard;
     window.jsonFormatterJs = () => JsonFormatter;
     window.tinycolor2 = () => Tinycolor2;
+    window.dompurify = () => Dompurify;
+    window.sparkMd5 = () => SparkMd5;
+    window.diff = () => Diff;
+    window.diff2html = () => Diff2Html;
+    window._code_diff_src_diff2html_bundles_css_diff2html_min_css = () => {
+      const style = document.createElement('style');
+      style.id = 'code-diff-style';
+      style.textContent = Diff2HtmlCss;
+      document.head.appendChild(style);
+      return style;
+    };
   };
 
   const unloadExternals = () => {
@@ -77,6 +93,16 @@ export const useExternals = () => {
     delete window.clipboard;
     delete window.jsonFormatterJs;
     delete window.tinycolor2;
+    delete window.dompurify;
+    delete window.sparkMd5;
+    delete window.diff;
+    delete window.diff2html;
+    delete window._code_diff_src_diff2html_bundles_css_diff2html_min_css;
+
+    const style = document.getElementById('code-diff-style');
+    if (style) {
+      document.head.removeChild(style);
+    }
   };
 
   onBeforeMount(loadExternals);
