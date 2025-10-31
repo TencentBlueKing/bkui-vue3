@@ -2,8 +2,8 @@ import {
   defineStore,
 } from 'pinia';
 import {
+  computed,
   ref,
-  computed
 } from 'vue';
 
 import type {
@@ -13,7 +13,7 @@ import type {
 
 // 组件相关资源
 export const useComponent = defineStore('component', () => {
-  const version = ref('dev')
+  const version = ref('dev');
   const activeComponentWiki = ref<IComponentWiki | null>(null);
   const navGroups = ref<INavGroups | null>(null);
   const isLoadingNavGroups = ref<boolean>(false);
@@ -21,26 +21,28 @@ export const useComponent = defineStore('component', () => {
     if (!navGroups.value) return [];
     const {
       componentGroupMap = {},
-      directiveList = []
+      directiveList = [],
+      customComponentList = [],
+      startList = [],
     } = navGroups.value;
-    const componentWikiList = Object.values(componentGroupMap).flatMap(
-        group => group.map(componentWiki => ({
-          componentWiki,
-          type: 'component'
-        }))
-    );
-    const directiveWikiList = directiveList.map(componentWiki => ({
-      componentWiki,
-      type: 'directive'
-    }));
-    return [...componentWikiList, ...directiveWikiList]
-  })
+    return [
+      ...mapToMetaList(startList, 'markdown'),
+      ...mapToMetaList(Object.values(componentGroupMap).flat(), 'component'),
+      ...mapToMetaList(directiveList, 'component'),
+      ...mapToMetaList(customComponentList, 'markdown'),
+    ];
+  });
+
+  const mapToMetaList = (items: IComponentWiki[], routerName: string) => items.map(componentWiki => ({
+    componentWiki,
+    routerName,
+  }));
 
   return {
     version,
     isLoadingNavGroups,
     navGroups,
     activeComponentWiki,
-    componentMetaList
+    componentMetaList,
   };
 });
