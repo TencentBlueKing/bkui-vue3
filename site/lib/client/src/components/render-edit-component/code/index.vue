@@ -17,8 +17,7 @@
       <pre>
 <code v-html="filterXss(highlightFactory(template(), 'xml'))"></code>
 <code v-html="filterXss(highlightFactory(scriptStart, 'xml'))"></code>
-<code v-html="filterXss(curScript)"></code>
-<code v-html="filterXss(highlightFactory(scriptEnd, 'xml'))"></code>
+<code v-html="filterXss(curScript)"></code><code v-html="filterXss(highlightFactory(scriptEnd, 'xml'))"></code>
       </pre>
     </div>
     <div class="code-footer">
@@ -89,8 +88,10 @@ const INDENT = '  ';
 // script标签结束
 // eslint-disable-next-line no-useless-escape
 const scriptEnd = '<\/script>';
+// clickoutside指令
+const clickoutsideDirective = 'clickoutside';
 // 指令组件
-const directiveComponents = ['tooltips', 'ellipsis', 'clickoutside'];
+const directiveComponents = ['tooltips', 'ellipsis', clickoutsideDirective];
 // 函数组件
 const functionComponents = ['notify', 'info-box', 'message'];
 
@@ -230,7 +231,7 @@ const createDependImport = (dependList: string[], source: string, isType = false
     BREAK_LINE
   }${indent()}`)},${
     BREAK_LINE
-  }} from '${source}';${BREAK_LINE}`;
+  }} from '${source}';`;
 };
 
 // 根据props生成响应式变量
@@ -241,9 +242,10 @@ const createRefVariables = () => {
       const curValue = createValue(curPropInfo, value)
       const isTypeScript = activeLanguage.value === 'typescript';
       let propsType = componentWiki.value.props.find(item => item.name === key);
-      
       if (isTypeScript) {
-        return `const ${camelKey(key)} = ref<${propsType.type}>(${curValue});`;
+        // 格式化联合类型的type
+        const formatType = propsType.type.split('|').map(item => item.trim()).join(' | ');
+        return `const ${camelKey(key)} = ref<${formatType}>(${curValue});`;
       }
       return `const ${camelKey(key)} = ref(${curValue});`;
     }
@@ -341,7 +343,58 @@ const scriptContent = () => {
   if (isFunctionComponent.value) {
     return createFunctionScript();
   }
+  if (componentWiki.value.name === clickoutsideDirective) {
+    return createClickOutSideScript();
+  }
   return createCommonScript();
+};
+
+// 解析类型标识，兼容 Array<T> 与 T[] 形式，返回基础类型名
+  const parseTypeIdent = (raw: string): string => {
+  const t = raw.trim();
+
+  // 1) T[] 后缀数组
+  const arraySuffixMatch = t.match(/^([\w$\.]+)\s*\[\]$/);
+  if (arraySuffixMatch) return arraySuffixMatch[1];
+
+  // 统一的泛型解包辅助：name为泛型名，index为目标参数索引
+  const unwrap = (name: string, index = 0): string | null => {
+    const re = new RegExp(`^${name}\\<\\s*([^>]+)\\s*\\>$`);
+    const m = t.match(re);
+    if (!m) return null;
+    const params = m[1].split(/\s*,\s*/);
+    const target = params[Math.min(index, params.length - 1)];
+    return parseTypeIdent(target);
+  };
+
+  // 2) 标准容器与包装类型
+  // Array<T>
+  const arrT = unwrap('Array', 0); if (arrT) return arrT;
+  // Set<T>
+  const setT = unwrap('Set', 0); if (setT) return setT;
+  // Promise<T>
+  const promiseT = unwrap('Promise', 0); if (promiseT) return promiseT;
+  // Map<K, V> -> 取值类型 V
+  const mapV = unwrap('Map', 1); if (mapV) return mapV;
+  // Record<K, V> -> 取值类型 V
+  const recordV = unwrap('Record', 1); if (recordV) return recordV;
+
+  // 3) 类型修饰器(取第一个类型参数)
+  const partialT = unwrap('Partial', 0); if (partialT) return partialT;
+  const readonlyT = unwrap('Readonly', 0); if (readonlyT) return readonlyT;
+  const requiredT = unwrap('Required', 0); if (requiredT) return requiredT;
+  const pickT = unwrap('Pick', 0); if (pickT) return pickT;
+  const omitT = unwrap('Omit', 0); if (omitT) return omitT;
+  const objectT = unwrap('Object', 0); if (objectT) return objectT; // 兼容自定义 Object<T>
+
+  // 4) 泛型嵌套的其他情况(如 Foo<Bar<Baz>>)——若整体是标识符，直接返回
+  if (/^[\w$\.]+$/.test(t)) return t;
+
+  // 5) 对象字面量或无法识别的复杂结构，返回空串以便外层过滤
+  if (/^\{[\s\S]*\}$/.test(t)) return '';
+
+  // 默认返回原始字符串(允许外层自行判定)
+  return t;
 };
 
 // 生成通用script
@@ -356,8 +409,11 @@ const createCommonScript = () => {
     const typeMap = new Map();
     for (const item of componentWiki.value.props) {
       for (const type of item.type.split('|')) {
-        if (allTypeList.includes(type)) {
-          typeMap.set(item.name, type);
+        // 这里需要进一步解析type
+        // 有的type 是 Array<IType> IType[] 这种形式
+        const baseType = parseTypeIdent(type);
+        if (allTypeList.includes(baseType)) {
+          typeMap.set(item.name, baseType);
         }
       }
     }
@@ -369,9 +425,15 @@ const createCommonScript = () => {
       }
     }
     const importTypeDepend = createDependImport(curTypeList, 'bkui-vue', true);
-    return `${importTypeDepend}${importDepend}${variables ? `${BREAK_LINE}${variables}` : ''}`;
+    if (variables) {
+      return `${importTypeDepend}${BREAK_LINE}${importDepend}${BREAK_LINE}${BREAK_LINE}${variables}${BREAK_LINE}`;
+    }
+    return '';
   }
-  return `${importDepend}${variables ? `${BREAK_LINE}${variables}` : ''}`;
+  if (variables) {
+    return `${importDepend}${BREAK_LINE}${BREAK_LINE}${variables}${BREAK_LINE}`;
+  }
+  return '';
 };
 
 // 生成函数组件script
@@ -388,6 +450,20 @@ const createFunctionScript = () => {
   });
 };`;
 };
+
+// 指令clickoutside特殊处理
+const createClickOutSideScript = () => {
+  // 依赖列表
+  const dependList = ['Message'];
+  const importDepend = createDependImport(dependList, 'bkui-vue');
+  return `${importDepend}
+const handleClickOutside = () => {
+  Message({
+    message: '点击了外部区域',
+    theme: 'primary',
+  });
+};`
+}
 
 // 开头首字母大写
 const capitalize = (str = '') => {
