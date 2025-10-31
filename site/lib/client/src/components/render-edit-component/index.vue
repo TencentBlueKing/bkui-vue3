@@ -3,7 +3,6 @@
     :loading="loading"
     :z-index="100"
     class="edit-component"
-    ref="componentRef"
   >
     <template v-if="!loading">
       <render-header
@@ -131,7 +130,6 @@ const dependentComponentsCache = ref<Record<string, unknown>>({});
 const renderPresetIndex = ref(0);
 // 展示的主面板
 const mainPanel = ref<MainPanel>(MainPanel.Component);
-const componentRef = ref<HTMLElement>();
 const isFullScreen = ref(false);
 
 // 选择预设
@@ -188,7 +186,7 @@ const handleFullscreenChange = () => {
 // 全屏
 const handleFullScreen = () => {
   if (!isFullScreen.value) {
-    componentRef.value.requestFullscreen();
+    document.querySelector('.edit-component')?.requestFullscreen();
   } else {
     document.exitFullscreen();
   }

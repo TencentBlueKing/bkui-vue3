@@ -234,17 +234,6 @@ const createDependImport = (dependList: string[], source: string, isType = false
   }} from '${source}';`;
 };
 
-// 格式化联合类型的type + 去重
-const formatType = (propsName: string) => {
-  let curProps = componentWiki.value.props.find(item => item.name === propsName);
-  const curType = curProps.type;
-  const curOptions = curProps?.options || [];
-  if (curOptions.length > 0) {
-    return Array.from(new Set(curOptions.map(item => `'${(item).toString().trim()}'`))).join(' | ');
-  }
-  return Array.from(new Set(curType.split('|').map(item => item.trim()))).join(' | ');
-};
-
 // 根据props生成响应式变量
 const createRefVariables = () => {
   return Object.entries(renderProps.value).map(([key, value]) => {
@@ -253,7 +242,7 @@ const createRefVariables = () => {
       const curValue = createValue(curPropInfo, value)
       const isTypeScript = activeLanguage.value === 'typescript';
       if (isTypeScript) {
-        const type = formatType(key);
+        const type = `${toPascalCase(componentWiki.value.name)}Props['${(toPascalCase(key, false))}']`;
         return `const ${camelKey(key)} = ref<${type}>(${curValue});`;
       }
       return `const ${camelKey(key)} = ref(${curValue});`;
@@ -371,22 +360,8 @@ const createCommonScript = () => {
   const importDepend = createDependImport(dependList, 'vue');
   const variables = createRefVariables();
 
-  if (activeLanguage.value === 'typescript' && Array.isArray(componentWiki.value?.types)) {
-    const allTypeList = componentWiki.value?.types?.map(item => item.name);
-    const typeMap = new Map();
-    for (const item of componentWiki.value.props) {
-      const curPropsTypes = allTypeList.filter(type => item.type.includes(type))
-      for (const type of curPropsTypes) {
-        typeMap.set(item.name, type);
-      }
-    }
-    const curTypeList = [];
-    const curPresetProps = Object.keys(componentWiki.value.presets[props.index].props);
-    for (const [key, value] of typeMap.entries()) {
-      if (curPresetProps.includes(key)) {
-        curTypeList.push(value);
-      }
-    }
+  if (activeLanguage.value === 'typescript') {
+    const curTypeList = [`${toPascalCase(componentWiki.value.name)}Props`];
     const importTypeDepend = createDependImport(curTypeList, 'bkui-vue', true);
     if (variables) {
       return `${importTypeDepend ? `${importTypeDepend}${BREAK_LINE}` : ''}${importDepend}${BREAK_LINE}${BREAK_LINE}${variables}${BREAK_LINE}`;
@@ -400,13 +375,19 @@ const createCommonScript = () => {
 };
 
 // 将连接形式/下划线/空格分隔的名称转为 PascalCase，例如：info-box -> InfoBox
-const toPascalCase = (str: string = ''): string => {
+const toPascalCase = (str: string = '', capitalizeFirst: boolean = true): string => {
   if (!str) return '';
-  return str
+  const result = str
     .split(/[-_\s]+/)
     .filter(Boolean)
     .map(s => s ? s[0].toUpperCase() + s.slice(1) : '')
     .join('');
+  
+  if (!capitalizeFirst && result.length > 0) {
+    return result[0].toLowerCase() + result.slice(1);
+  }
+  
+  return result;
 };
 
 // 生成函数组件script
