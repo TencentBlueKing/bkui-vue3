@@ -5,7 +5,7 @@
       @click="handleChoose(adjacentComponents.prevCom)"
     >
       <template v-if="adjacentComponents.prevCom">
-        <AngleLeft class="icon"/>
+        <AngleLeft class="icon" />
         {{
           adjacentComponents.prevCom
             ? `${adjacentComponents.prevCom.componentWiki.title} ${adjacentComponents.prevCom.componentWiki.titleCN}`
@@ -20,10 +20,10 @@
       <template v-if="adjacentComponents.nextCom">
         {{
           adjacentComponents.nextCom
-          ? `${adjacentComponents.nextCom.componentWiki.titleCN} ${adjacentComponents.nextCom.componentWiki.title}`
-          : ''
+            ? `${adjacentComponents.nextCom.componentWiki.titleCN} ${adjacentComponents.nextCom.componentWiki.title}`
+            : ''
         }}
-        <AngleRight class="icon"/>
+        <AngleRight class="icon" />
       </template>
     </span>
   </section>
@@ -31,19 +31,20 @@
 <script lang="ts" setup>
 import {
   AngleLeft,
-  AngleRight
+  AngleRight,
 }  from 'bkui-vue/lib/icon';
+import {
+  computed,
+} from 'vue';
+import {
+  useRouter,
+} from 'vue-router';
+
 import {
   useComponent,
 } from '@/store/component';
-import {
-  computed
-} from 'vue';
-import {
-  useRouter
-} from 'vue-router';
 import type {
-  IComponentMeta
+  IComponentMeta,
 } from '@/types/component';
 
 const router = useRouter();
@@ -53,7 +54,7 @@ const adjacentComponents = computed(() => {
   let prevCom = null;
   let nextCom = null;
   const index = componentStore.componentMetaList
-    .findIndex((item) => item.componentWiki.name === componentStore.activeComponentWiki.name);
+    .findIndex(item => item.componentWiki.name === componentStore.activeComponentWiki.name);
   if (index > 0) {
     prevCom = componentStore.componentMetaList[index - 1];
   }
@@ -67,10 +68,13 @@ const adjacentComponents = computed(() => {
 });
 
 const handleChoose = (item: IComponentMeta) => {
-  if(!item) return
-  componentStore.activeComponentWiki = item.componentWiki;
+  if (!item?.componentWiki) return;
+  const isComponentName = item.routerName === 'component';
+  if (isComponentName) {
+    componentStore.activeComponentWiki = item.componentWiki;
+  }
   router.push({
-    name: item.type,
+    name: item.routerName,
     params: {
       name: item.componentWiki.name,
     },

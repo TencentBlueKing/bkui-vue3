@@ -11,11 +11,21 @@
 </template>
 
 <script lang="ts" setup>
-import { Loading as BkLoading } from 'bkui-vue';
+import {
+  Loading as BkLoading,
+} from 'bkui-vue';
+import {
+  ref,
+  watch,
+} from 'vue';
+import {
+  useRoute,
+} from 'vue-router';
+
 import RenderMarkdown from '@/components/render-markdown/index.vue';
-import { useRoute } from 'vue-router';
-import { ref, onMounted } from 'vue';
-import { getNpmMarkdown } from '@/http/api';
+import {
+  getNpmMarkdown,
+} from '@/http/api';
 import StartMarkdown from '@/markdowns/start.md';
 
 const route = useRoute();
@@ -38,7 +48,13 @@ const handleGetMarkdownContent = () => {
   }
 };
 
-onMounted(handleGetMarkdownContent);
+watch(
+  () => route.params.name,
+  handleGetMarkdownContent,
+  {
+    immediate: true,
+  },
+);
 </script>
 
 <style lang="postcss" scoped>
