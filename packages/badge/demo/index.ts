@@ -132,16 +132,16 @@ const emits = [
 const group = NavGroupMeta.Data;
 
 // 组件名称
-const name = 'button';
+const name = 'badge';
 
 // 组件标签
-const title = 'Button';
+const title = 'Badge';
 
 // 组件中文标签
-const titleCN = '基础按钮';
+const titleCN = 'Badge 标记';
 
 // 组件描述
-const description = '常用的操作按钮';
+const description = 'Badge 组件， 可以出现在任意 DOM 节点角上的数字或状态标记。';
 
 const wiki: IComponentWiki = {
   group,
