@@ -26,224 +26,139 @@
 
 import { NavGroupMeta, IComponentWiki } from '@bkui-vue/shared';
 
+const dataSource = [
+  {
+    name: '访问入口',
+    id: 'domain',
+    multiple: true,
+    async: false,
+  },
+  {
+    name: 'ID',
+    id: 'id',
+  },
+  {
+    name: '集群名称',
+    id: 'name',
+  },
+  {
+    name: '管控区域',
+    id: 'bk_cloud_id',
+    multiple: true,
+    children: [
+      {
+        id: 0,
+        name: '直连区域',
+      },
+    ],
+  },
+  {
+    name: '状态',
+    id: 'status',
+    multiple: true,
+    children: [
+      {
+        id: 'normal',
+        name: '正常',
+      },
+      {
+        id: 'abnormal',
+        name: '异常',
+      },
+    ],
+  },
+  {
+    name: '所属 DB 模块',
+    id: 'db_module_id',
+    multiple: true,
+    children: [
+      {
+        id: 2,
+        name: 'tendbha57',
+      },
+      {
+        id: 19,
+        name: 'xiaog56',
+      },
+    ],
+  },
+  {
+    name: '版本',
+    id: 'major_version',
+    multiple: true,
+    children: [
+      {
+        id: 'MySQL-5.7',
+        name: 'MySQL-5.7',
+      },
+      {
+        id: 'MySQL-5.6',
+        name: 'MySQL-5.6',
+      },
+    ],
+  },
+  {
+    name: '地域',
+    id: 'region',
+    multiple: true,
+    children: [
+      {
+        id: 'default',
+        name: 'default',
+      },
+      {
+        id: 'default2',
+        name: 'default2',
+      },
+    ],
+  },
+  {
+    name: '创建人',
+    id: 'creator',
+  },
+  {
+    name: '时区',
+    id: 'time_zone',
+    multiple: true,
+    children: [
+      {
+        id: '+08:00',
+        name: '+08:00',
+      },
+    ],
+  },
+];
+
 // 组件示例
 const presets = [
   {
     title: '基础用法',
     description: '通过 data 属性配置搜索选择器的选项数据',
     props: {
-      data: [
-        {
-          id: 'host',
-          name: '主机',
-          children: [
-            { id: 'host-1', name: '主机1' },
-            { id: 'host-2', name: '主机2' },
-            { id: 'host-3', name: '主机3' },
-          ],
-        },
-        {
-          id: 'ip',
-          name: 'IP',
-          children: [
-            { id: 'ip-1', name: '192.168.1.1' },
-            { id: 'ip-2', name: '192.168.1.2' },
-            { id: 'ip-3', name: '192.168.1.3' },
-          ],
-        },
-      ],
+      data: dataSource,
+      modelValue: [],
+      uniqueSelect: true,
+    },
+    style: {
+      width: '85%',
+      minWidth: '200px',
     },
   },
   {
-    title: '多选模式',
-    description: '通过设置 multiple 属性开启多选模式',
+    title: '复杂条件',
+    description: '支持AND/OR',
     props: {
-      data: [
-        {
-          id: 'host',
-          name: '主机',
-          multiple: true,
-          children: [
-            { id: 'host-1', name: '主机1' },
-            { id: 'host-2', name: '主机2' },
-            { id: 'host-3', name: '主机3' },
-            { id: 'host-4', name: '主机4' },
-            { id: 'host-5', name: '主机5' },
-          ],
-        },
-        {
-          id: 'ip',
-          name: 'IP',
-          multiple: true,
-          children: [
-            { id: 'ip-1', name: '192.168.1.1' },
-            { id: 'ip-2', name: '192.168.1.2' },
-            { id: 'ip-3', name: '192.168.1.3' },
-          ],
-        },
-      ],
-    },
-  },
-  {
-    title: '自定义条件',
-    description: '通过 conditions 属性自定义逻辑条件',
-    props: {
-      data: [
-        {
-          id: 'host',
-          name: '主机',
-          children: [
-            { id: 'host-1', name: '主机1' },
-            { id: 'host-2', name: '主机2' },
-          ],
-        },
-      ],
+      data: dataSource,
+      modelValue: [],
+      uniqueSelect: true,
       conditions: [
         { id: 'and', name: '且' },
         { id: 'or', name: '或' },
-        { id: 'not', name: '非' },
       ],
     },
-  },
-  {
-    title: '异步数据',
-    description: '通过 getMenuList 属性实现异步数据加载',
-    props: {
-      data: [
-        {
-          id: 'host',
-          name: '主机',
-          async: true,
-        },
-        {
-          id: 'ip',
-          name: 'IP',
-          async: true,
-        },
-      ],
-      'get-menu-list':
-        'async (item, keyword) => { return new Promise((resolve) => { setTimeout(() => { resolve([{ id: "async-1", name: "异步数据1" }, { id: "async-2", name: "异步数据2" }]); }, 500); }); }',
-    },
-  },
-  {
-    title: '值验证',
-    description: '通过 validateValues 属性实现值的验证',
-    props: {
-      data: [
-        {
-          id: 'port',
-          name: '端口',
-          children: [
-            { id: 'port-1', name: '80' },
-            { id: 'port-2', name: '443' },
-            { id: 'port-3', name: '8080' },
-          ],
-        },
-      ],
-      'validate-values':
-        'async (item, values) => { const port = parseInt(values[0]?.name); if (port < 1 || port > 65535) { return "端口号必须在1-65535之间"; } return true; }',
-    },
-  },
-  {
-    title: '禁用清空',
-    description: '通过设置 clearable 为 false 禁用清空功能',
-    props: {
-      data: [
-        {
-          id: 'host',
-          name: '主机',
-          children: [
-            { id: 'host-1', name: '主机1' },
-            { id: 'host-2', name: '主机2' },
-          ],
-        },
-      ],
-      clearable: false,
-    },
-  },
-  {
-    title: '唯一选择',
-    description: '通过设置 uniqueSelect 为 true 实现唯一选择',
-    props: {
-      data: [
-        {
-          id: 'host',
-          name: '主机',
-          children: [
-            { id: 'host-1', name: '主机1' },
-            { id: 'host-2', name: '主机2' },
-            { id: 'host-3', name: '主机3' },
-          ],
-        },
-        {
-          id: 'ip',
-          name: 'IP',
-          children: [
-            { id: 'ip-1', name: '192.168.1.1' },
-            { id: 'ip-2', name: '192.168.1.2' },
-          ],
-        },
-      ],
-      'unique-select': true,
-    },
-  },
-  {
-    title: '自定义占位符',
-    description: '通过 placeholder 属性自定义占位符文本',
-    props: {
-      data: [
-        {
-          id: 'host',
-          name: '主机',
-          children: [
-            { id: 'host-1', name: '主机1' },
-            { id: 'host-2', name: '主机2' },
-          ],
-        },
-      ],
-      placeholder: '请选择主机或输入关键词搜索',
-    },
-  },
-  {
-    title: '限制高度',
-    description: '通过 maxHeight 属性限制下拉列表的最大高度',
-    props: {
-      data: [
-        {
-          id: 'host',
-          name: '主机',
-          children: [
-            { id: 'host-1', name: '主机1' },
-            { id: 'host-2', name: '主机2' },
-            { id: 'host-3', name: '主机3' },
-            { id: 'host-4', name: '主机4' },
-            { id: 'host-5', name: '主机5' },
-            { id: 'host-6', name: '主机6' },
-            { id: 'host-7', name: '主机7' },
-            { id: 'host-8', name: '主机8' },
-            { id: 'host-9', name: '主机9' },
-            { id: 'host-10', name: '主机10' },
-          ],
-        },
-      ],
-      'max-height': 200,
-    },
-  },
-  {
-    title: '值行为模式',
-    description: '通过 valueBehavior 属性控制值的返回模式',
-    props: {
-      data: [
-        {
-          id: 'host',
-          name: '主机',
-          children: [
-            { id: 'host-1', name: '主机1' },
-            { id: 'host-2', name: '主机2' },
-          ],
-        },
-      ],
-      'value-behavior': 'need-key',
+    style: {
+      width: '85%',
+      minWidth: '200px',
     },
   },
 ];

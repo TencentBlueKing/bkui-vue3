@@ -26,18 +26,46 @@
 
 import { NavGroupMeta, IComponentWiki } from '@bkui-vue/shared';
 
+const dataSource = [
+  {
+    value: 'climbing',
+    label: '爬山',
+  },
+  {
+    value: { a: 123 },
+    label: '跑步',
+  },
+  {
+    value: { b: 456 },
+    label: '未知',
+  },
+  {
+    value: 'fitness',
+    label: '健身',
+  },
+  {
+    value: 'bike',
+    label: '骑车',
+  },
+  {
+    value: 'dancing',
+    label: '跳舞',
+  },
+  {
+    value: 'sleep',
+    label: '睡觉',
+    disabled: true,
+  },
+];
+
 // 组件示例
 const presets = [
   {
     title: '基础用法',
-    description: '通过 list 属性配置选择器的选项数据',
+    description: '基础单选',
     props: {
-      list: [
-        { value: 'option1', label: '选项1' },
-        { value: 'option2', label: '选项2' },
-        { value: 'option3', label: '选项3' },
-        { value: 'option4', label: '选项4' },
-      ],
+      list: dataSource,
+      modelValue: 'climbing',
     },
   },
   {
@@ -45,13 +73,8 @@ const presets = [
     description: '通过设置 multiple 属性开启多选模式',
     props: {
       multiple: true,
-      list: [
-        { value: 'option1', label: '选项1' },
-        { value: 'option2', label: '选项2' },
-        { value: 'option3', label: '选项3' },
-        { value: 'option4', label: '选项4' },
-        { value: 'option5', label: '选项5' },
-      ],
+      list: dataSource,
+      modelValue: [],
     },
   },
   {
@@ -59,23 +82,8 @@ const presets = [
     description: '通过设置 filterable 属性开启搜索功能',
     props: {
       filterable: true,
-      list: [
-        { value: 'apple', label: '苹果' },
-        { value: 'banana', label: '香蕉' },
-        { value: 'orange', label: '橙子' },
-        { value: 'grape', label: '葡萄' },
-        { value: 'watermelon', label: '西瓜' },
-        { value: 'strawberry', label: '草莓' },
-      ],
-    },
-  },
-  {
-    title: '远程搜索',
-    description: '通过 remoteMethod 属性实现远程搜索',
-    props: {
-      filterable: true,
-      'remote-method':
-        'async (query) => { return new Promise((resolve) => { setTimeout(() => { resolve([{ value: "remote1", label: "远程选项1" }, { value: "remote2", label: "远程选项2" }]); }, 500); }); }',
+      list: dataSource,
+      modelValue: [],
     },
   },
   {
@@ -84,16 +92,22 @@ const presets = [
     props: {},
     slots: {
       default: `
-        <BkSelect>
-          <BkOptionGroup label="水果">
-            <BkOption value="apple" label="苹果" />
-            <BkOption value="banana" label="香蕉" />
-          </BkOptionGroup>
-          <BkOptionGroup label="蔬菜">
-            <BkOption value="carrot" label="胡萝卜" />
-            <BkOption value="tomato" label="西红柿" />
-          </BkOptionGroup>
-        </BkSelect>
+        <bk-option-group
+          label="水果"
+          collapsible
+        >
+          <bk-option value="apple" label="苹果"/>
+          <bk-option value="apple" label="香蕉"/>
+          <bk-option value="watermelon" label="西瓜"/>
+        </bk-option-group>
+        <bk-option-group
+          label="蔬菜"
+          collapsible
+        >
+          <bk-option value="carrot" label="胡萝卜" />
+          <bk-option value="tomato" label="西红柿" />
+          <bk-option value="potato" label="土豆" />
+        </bk-option-group>
       `,
     },
   },
@@ -102,30 +116,9 @@ const presets = [
     description: '通过 multipleMode 属性设置为标签模式',
     props: {
       multiple: true,
-      'multiple-mode': 'tag',
-      list: [
-        { value: 'tag1', label: '标签1' },
-        { value: 'tag2', label: '标签2' },
-        { value: 'tag3', label: '标签3' },
-        { value: 'tag4', label: '标签4' },
-      ],
-    },
-  },
-  {
-    title: '折叠标签',
-    description: '通过 collapseTags 属性实现标签折叠',
-    props: {
-      multiple: true,
-      'multiple-mode': 'tag',
-      'collapse-tags': true,
-      list: [
-        { value: 'tag1', label: '标签1' },
-        { value: 'tag2', label: '标签2' },
-        { value: 'tag3', label: '标签3' },
-        { value: 'tag4', label: '标签4' },
-        { value: 'tag5', label: '标签5' },
-        { value: 'tag6', label: '标签6' },
-      ],
+      multipleMode: 'tag',
+      list: dataSource,
+      modelValue: [],
     },
   },
   {
@@ -133,14 +126,9 @@ const presets = [
     description: '通过 showSelectAll 属性开启全选功能',
     props: {
       multiple: true,
-      'show-select-all': true,
-      list: [
-        { value: 'option1', label: '选项1' },
-        { value: 'option2', label: '选项2' },
-        { value: 'option3', label: '选项3' },
-        { value: 'option4', label: '选项4' },
-        { value: 'option5', label: '选项5' },
-      ],
+      showSelectAll: true,
+      list: dataSource,
+      modelValue: [],
     },
   },
   {
@@ -148,80 +136,11 @@ const presets = [
     description: '通过 allowCreate 属性允许创建自定义选项',
     props: {
       filterable: true,
-      'allow-create': true,
-      list: [
-        { value: 'option1', label: '选项1' },
-        { value: 'option2', label: '选项2' },
-      ],
-    },
-  },
-  {
-    title: '禁用状态',
-    description: '通过 disabled 属性禁用选择器',
-    props: {
-      disabled: true,
-      list: [
-        { value: 'option1', label: '选项1' },
-        { value: 'option2', label: '选项2' },
-      ],
-    },
-  },
-  {
-    title: '加载状态',
-    description: '通过 loading 属性显示加载状态',
-    props: {
-      loading: true,
-      list: [
-        { value: 'option1', label: '选项1' },
-        { value: 'option2', label: '选项2' },
-      ],
-    },
-  },
-  {
-    title: '不同尺寸',
-    description: '通过 size 属性设置不同尺寸',
-    props: {
-      size: 'large',
-      list: [
-        { value: 'option1', label: '大尺寸选项1' },
-        { value: 'option2', label: '大尺寸选项2' },
-      ],
-    },
-  },
-  {
-    title: '自定义占位符',
-    description: '通过 placeholder 属性自定义占位符',
-    props: {
-      placeholder: '请选择您喜欢的选项',
-      list: [
-        { value: 'option1', label: '选项1' },
-        { value: 'option2', label: '选项2' },
-      ],
-    },
-  },
-  {
-    title: '虚拟滚动',
-    description: '通过 enableVirtualRender 属性开启虚拟滚动',
-    props: {
-      'enable-virtual-render': true,
-      list: Array.from({ length: 1000 }, (_, index) => ({
-        value: `option${index + 1}`,
-        label: `选项${index + 1}`,
-      })),
-    },
-  },
-  {
-    title: '拼音搜索',
-    description: '通过 searchWithPinyin 属性开启拼音搜索',
-    props: {
-      filterable: true,
-      'search-with-pinyin': true,
-      list: [
-        { value: 'beijing', label: '北京' },
-        { value: 'shanghai', label: '上海' },
-        { value: 'guangzhou', label: '广州' },
-        { value: 'shenzhen', label: '深圳' },
-      ],
+      allowCreate: true,
+      list: dataSource,
+      multiple: true,
+      multipleMode: 'tag',
+      modelValue: [],
     },
   },
 ];

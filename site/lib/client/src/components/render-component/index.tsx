@@ -52,7 +52,11 @@ export default vue.defineComponent({
     },
     dependentComponents: {
       type: Object,
-      default: (data?: unknown) => ({}),
+      default: (_data?: unknown) => ({}),
+    },
+    style: {
+      type: Object,
+      default: () => ({}),
     },
   },
   // 占位，否则动态注册逻辑需要加额外判断
@@ -105,40 +109,72 @@ export default vue.defineComponent({
       });
     };
 
+    // 构建依赖组件映射的公共方法
+    const buildDependentComponentsMap = () => {
+      const map: Record<string, Component> = {};
+      Object.keys(this.dependentComponents).forEach((componentName) => {
+        const depComp = this.dependentComponents[componentName];
+        if (!Object.keys(depComp).length) return;
+
+        Object.keys(depComp).forEach((subKey) => {
+          if (subKey === 'default') {
+            // 转换为 PascalCase: 'bk-menu' -> 'BkMenu'
+            const nameWithoutBk = componentName.startsWith('bk-')
+              ? componentName.slice(3)
+              : componentName;
+            const pascalCaseName = `Bk${nameWithoutBk
+              .split('-')
+              .map((part: string) => part.charAt(0).toUpperCase() + part.slice(1))
+              .join('')}`;
+            map[pascalCaseName] = depComp.default;
+          } else {
+            map[subKey] = depComp[subKey];
+          }
+        });
+      });
+      return map;
+    };
+
     const renderComponent = () => {
-      // 如果组件有多个子组件，则将子组件注册到组件实例中
+      // 使用 template 渲染（支持子组件嵌套，如 CheckboxGroup）
+      if (this.template) {
+        // 构建当前组件的所有子组件映射
+        const componentsMap: Record<string, Component> = {};
+        Object.keys(this.component).forEach((key) => {
+          componentsMap[key] = this.component[key];
+        });
+
+        // 创建运行时组件
+        const renderPropsData = this.renderProps;
+        const RuntimeComponent = vue.defineComponent({
+          name: `Render${this.name?.charAt(0).toUpperCase() + this.name?.slice(1)}`,
+          components: {
+            ...componentsMap,
+            ...buildDependentComponentsMap(),
+          },
+          template: this.template,
+          setup() {
+            return { ...renderPropsData };
+          },
+        });
+
+        return vue.h(RuntimeComponent, this.renderProps);
+      }
+
+      // 注册当前组件的所有子组件
       if (Object.keys(this.component).length > 1) {
         Object.keys(this.component).forEach((key) => {
           (this as ComponentInstance<Component>)._.components[key] = this.component[key];
         });
       }
 
-      // 注册依赖组件（如 bk-menu, bk-menu-item 等）
-      if (Object.keys(this.dependentComponents).length > 0) {
-        Object.keys(this.dependentComponents).forEach((componentName) => {
-          const depComp = this.dependentComponents[componentName];
+      // 注册依赖组件
+      const dependentComponentsMap = buildDependentComponentsMap();
+      Object.entries(dependentComponentsMap).forEach(([name, comp]) => {
+        (this as ComponentInstance<Component>)._.components[name] = comp;
+      });
 
-          if (Object.keys(depComp).length) {
-            Object.keys(depComp).forEach((subKey) => {
-              if (subKey === 'default') {
-                // 转换 kebab-case 为 PascalCase: 'menu' -> 'BkMenu', 'bk-menu' -> 'BkMenu'
-                const nameWithoutBk = componentName.startsWith('bk-')
-                  ? componentName.slice(3)  // 去掉 'bk-' 前缀
-                  : componentName;
-                const pascalCaseName = `Bk${nameWithoutBk
-                  .split('-')
-                  .map(part => part.charAt(0).toUpperCase() + part.slice(1))
-                  .join('')}`;
-                (this as ComponentInstance<Component>)._.components[pascalCaseName] = depComp.default;
-              } else {
-                // 依赖组件也可能有多个子组件
-                (this as ComponentInstance<Component>)._.components[subKey] = depComp[subKey];
-              }
-            });
-          }
-        });
-      }
-
+      // 渲染组件
       const component = vue.h(
         this.component.default,
         this.renderProps,
@@ -152,17 +188,52 @@ export default vue.defineComponent({
         ),
       );
 
-      // 如果是 Backtop 组件，外面套一层 1000px 高的 div 以产生滚动内容
+      // 如果是 Backtop 组件
       if (this.component.default.name === 'Backtop') {
         return vue.h('div', {
-          style: {
-            height: '1000px',
-            position: 'relative',
-          },
-        }, [component]);
+          style: this.style,
+        }, [
+          vue.h('div', ['继续滚动查看出现 Backtop 效果']),
+          component,
+        ]);
       }
 
-      return component;
+      // 如果是 Affix 组件
+      if (this.component.default.name === 'Affix') {
+        return vue.h('div', {
+          style: this.style,
+        }, [
+          vue.h('div', {
+            style: {
+              width: '100%',
+              height: '1000px',
+              color: '#63656e',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              border: '1px solid #63656e',
+            },
+          }, ['继续滚动查看固定效果']),
+          component,
+          vue.h('div', {
+            style: {
+              width: '100%',
+              height: '1000px',
+              color: '#63656e',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              border: '1px solid #63656e',
+            },
+          }, ['继续滚动查看固定效果']),
+        ]);
+      }
+
+      return vue.h('div', {
+        style: this.style,
+      }, [
+        component,
+      ]);
     };
 
     const renderIconComponent = () => {

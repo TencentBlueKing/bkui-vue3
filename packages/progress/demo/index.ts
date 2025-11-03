@@ -33,22 +33,32 @@ const presets = [
     description: '用于展示当前进度的直线',
     props: {
       percent: 20,
+      theme: 'primary',
+      size: '',
+      showText: false,
+      textInside: false,
+      color: '#13ce66'
+    },
+    style: {
+      width: '80%',
+      minWidth: '200px',
     },
   },
   {
-    title: '环形进度条',
+    title: '环形进度条/仪表盘',
     description: '空间位置占据较大，视觉效果较强的环形',
     props: {
       percent: 20,
       type: 'circle',
+      width: 126,
+      bgColor: '#f5f5f5',
+      color: '#13ce66',
     },
-  },
-  {
-    title: '微型进度条',
-    description: '空间区域较小，可以与其他组件一同复用，比如table表格',
-    props: {
-      percent: 20,
-      size: 'small',
+    style: {
+      width: '80%',
+      minWidth: '200px',
+      display: 'flex',
+      justifyContent: 'center',
     },
   },
 ];
@@ -85,8 +95,8 @@ const props = [
     name: 'size',
     description: '进度条尺寸',
     type: 'string',
-    options: ['small', 'default', 'large', 'huge'],
-    default: 'default',
+    options: ['small', '', 'large', 'huge'],
+    default: '',
   },
   {
     name: 'width',

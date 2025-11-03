@@ -40,17 +40,35 @@ const presets = [
     title: '胶囊样式',
     description: '用于单选选项胶囊组展示场景',
     props: {
-      label: '胶囊样式',
-      checked: false,
+      size: 'small',
+      modelValue: [],
     },
+    template: `
+     <bk-radio-group
+        type="capsule"
+      >
+        <bk-radio-button label="QQ" />
+        <bk-radio-button label="原始数据" />
+        <bk-radio-button label="字典翻译" />
+        <bk-radio-button label="微信" />
+        <bk-radio-button label="Email" />
+      </bk-radio-group>
+    `,
   },
   {
     title: '按钮组样式',
     description: '用于单选选项按钮组展示场景',
     props: {
-      label: '按钮组样式',
-      checked: false,
+      size: 'small',
+      modelValue: [],
     },
+    template: `
+      <bk-radio-group>
+        <bk-radio-button label="QQ" />
+        <bk-radio-button label="微信" />
+        <bk-radio-button label="Email" />
+      </bk-radio-group>
+    `,
   },
 ];
 
@@ -182,7 +200,8 @@ const wiki: IComponentWiki = {
           name: 'size',
           description: '尺寸',
           type: 'string',
-          default: 'default',
+          default: '',
+          options: ['small', '', 'large'],
         },
         {
           name: 'type',
@@ -259,7 +278,8 @@ const wiki: IComponentWiki = {
           name: 'size',
           description: '尺寸',
           type: 'string',
-          default: 'default',
+          default: '',
+          options: ['small', '', 'large'],
         },
       ],
       emits: [

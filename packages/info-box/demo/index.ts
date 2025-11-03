@@ -33,36 +33,21 @@ const presets = [
     description: '用于反馈各种状态',
     props: {
       type: 'success',
+      title: '标题文案',
+      content: '说明文案',
+      confirmText: '主按钮文案',
+      confirmButtonTheme: 'primary',
+      cancelText: '次按钮文案',
     },
   },
   {
-    title: '各种状态',
-    description: '配置 type 参数',
-    props: {
-      type: 'success',
-      title: '成功',
-      content: '添加成功',
-    },
-  },
-  {
-    title: '自定义按钮文字',
-    description: '配置 confirmText, cancelText 参数',
+    title: '二次确认类型',
+    description: '用于破坏性操作的二次确认',
     props: {
       title: '请确认是否删除？',
       content: '删除后不可恢复',
       confirmText: '删除',
       cancelText: '取消',
-    },
-  },
-  {
-    title: '文本对齐方式',
-    description: '配置 headerAlign, contentAlign, footerAlign 参数',
-    props: {
-      title: '请确认是否删除？',
-      content: '删除后不可恢复',
-      headerAlign: 'left',
-      contentAlign: 'left',
-      footerAlign: 'left',
     },
   },
 ];

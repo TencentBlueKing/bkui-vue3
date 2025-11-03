@@ -26,16 +26,104 @@
 
 import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
+const NEW_STR = `
+  Vue.component('app-exception', Exception)
+  Vue.component('app-auth', AuthComponent)
+
+  auth.requestCurrentUser().then(user => {
+      injectCSRFTokenToHeaders();
+      if (!user.isAuthenticated) {
+          auth.redirectToLogin();
+      } else {
+          global.bus = bus;
+          global.mainComponent = new Vue({
+              el: '#app',
+              router,
+              store,
+              template: '<App/>',
+              components: {
+                  App
+              }
+          })
+      }
+  }, err => {
+      let message;
+      if (err.status === 403) {
+          message = 'Sorry，您的权限不足!';
+          if (err.data && err.data.msg) {
+              message = err.data.msg;
+          }
+      } else {
+          message = '无法连接到后端服务，请稍候再试。'
+      }
+
+      const divStyle = ''
+          + 'text-align: left;'
+          + 'width: 400px;'
+          + 'margin: auto;'
+          + 'position: absolute;'
+          + 'left: 50%;'
+          + 'transform: translate(-50%, -50%);'
+
+      const h2Style = 'font-size: 20px;color: #979797; margin: 32px 0;font-weight: normal'
+  })
+`;
+
+const OLD_STR = `
+  Vue.component('app-exception', Exception)
+  // Vue.component('app-auth', AuthComponent)
+
+  auth.requestCurrentUser().then(user => {
+      injectCSRFTokenToHeaders();
+      if (!user.isAuthenticated) {
+          auth.redirectToLogin()
+      } else {
+          global.bus = bus
+          global.mainComponent = new Vue({
+              el: '#app',
+              router,
+              store,
+              template: '<App/>',
+              components: {
+                  App
+              }
+          })
+      }
+  }, err => {
+      let message;
+      if (err.status === 403) {
+          message = 'Sorry，您的权限不足!'
+          if (err.data && err.data.msg) {
+              message = err.data.msg;
+          }
+      } else {
+          message = '服务暂时未响应，请稍后再试。'
+      }
+
+      const divStyle = ''
+          + 'text-align: center;'
+          + 'width: 400px;'
+          + 'margin: auto;'
+          + 'position: absolute;'
+          + 'top: 50%;'
+          + 'left: 50%;'
+          + 'transform: translate(-50%, -50%);'
+
+      const h2Style = 'font-size: 20px;color: #979797; margin: 32px 0;font-weight: normal'
+  })
+`;
+
 // 组件示例
 const presets = [
   {
     title: '基础代码对比',
     description: '展示新旧代码的差异对比',
     props: {
-      oldContent: 'const a = 1;\nconst b = 2;',
-      newContent: 'const a = 1;\nconst b = 3;\nconst c = 4;',
+      oldContent: OLD_STR,
+      newContent: NEW_STR,
       language: 'javascript',
       theme: 'light',
+      format: 'line-by-line',
     },
   },
 ];

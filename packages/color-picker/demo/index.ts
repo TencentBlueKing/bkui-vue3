@@ -32,9 +32,17 @@ const presets = [
     title: '基础颜色选择器',
     description: '基础的颜色选择器',
     props: {
-      modelValue: '#3a84ff',
+      modelValue: '',
     },
   },
+  {
+    title: '不同尺寸',
+    description: '不同尺寸的颜色选择器',
+    props: {
+      modelValue: '',
+      size: 'large',
+    },
+  }
 ];
 
 // 组件属性，用来自动生成属性文档
