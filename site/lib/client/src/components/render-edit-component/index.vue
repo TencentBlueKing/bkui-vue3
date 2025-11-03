@@ -132,10 +132,18 @@ const renderPresetIndex = ref(0);
 const mainPanel = ref<MainPanel>(MainPanel.Component);
 const isFullScreen = ref(false);
 
+const trimSlots = (slots: IComponentWiki['presets'][number]['slots']) => {
+  const newPresetSlots = {} as IComponentWiki['presets'][number]['slots']
+  for (const key of Object.keys(slots)) {
+    newPresetSlots[key] = slots[key].trim()
+  }
+  return newPresetSlots
+}
+
 // 选择预设
 const handleChoosePreset = async (preset: IComponentWiki['presets'][number]) => {
   renderProps.value = JSON.parse(JSON.stringify(preset.props ?? {}));
-  renderSlots.value = JSON.parse(JSON.stringify(preset.slots || {}));
+  renderSlots.value = trimSlots(preset.slots  || {});
   renderPresetIndex.value = props.componentWiki.presets.indexOf(preset);
 
   // 处理依赖组件

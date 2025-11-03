@@ -1,20 +1,21 @@
 <template>
   <div class="config-item-array">
-    <div v-if="modelValue.length">
-      <div v-for="(arrItem, arrIndex) in modelValue" :key="`${arrIndex}-${arrItem}`">
-        <div class="item-first-row">
-          <span class="expand" @click="expandArrayItem(arrIndex)">
-            <i v-if="expandIndex === getLevelNo(arrIndex)" class="bkui-vue-wiki-icon icon-angle-up-fill"></i>
-            <i v-else class="bkui-vue-wiki-icon icon-angle-right-fill"></i>
-          </span>
-          <div class="index-remove">
-            <span>{{ getLevelNo(arrIndex) }}</span>
-            <span class="remove" @click="removeArrayItem(arrIndex)">
-              <i class="bkui-vue-wiki-icon icon-reduce"></i>
+    <template v-if="!isNoConfigArr">
+      <div v-if="modelValue.length">
+        <div v-for="(arrItem, arrIndex) in modelValue" :key="`${arrIndex}-${arrItem}`">
+          <div class="item-first-row">
+            <span class="expand" @click="expandArrayItem(arrIndex)">
+              <i v-if="expandIndex === getLevelNo(arrIndex)" class="bkui-vue-wiki-icon icon-angle-up-fill"></i>
+              <i v-else class="bkui-vue-wiki-icon icon-angle-right-fill"></i>
             </span>
+            <div class="index-remove">
+              <span>{{ getLevelNo(arrIndex) }}</span>
+              <span class="remove" @click="removeArrayItem(arrIndex)">
+                <i class="bkui-vue-wiki-icon icon-reduce"></i>
+              </span>
+            </div>
           </div>
-        </div>
-        <div :class="{'no-expand': true, 'expand-content': expandIndex === getLevelNo(arrIndex)}">
+          <div :class="{'no-expand': true, 'expand-content': expandIndex === getLevelNo(arrIndex)}">
             <DynamicConfigItem
               v-for="(item, index) in arrayItemConfig"
               :key="`${index}-${item}`"
@@ -30,31 +31,45 @@
                 <RenderNameTip :attr="item" />
               </template>
             </DynamicConfigItem>
-          <template v-if="basicType">
-            <DynamicConfigItem
-              :type="basicType"
-              name=""
-              :model-value="modelValue[arrIndex]"
-              @update:model-value="(value) => handleUpdateArrItemValue(arrIndex, '', value)"
-            />
-          </template>
+            <template v-if="basicType">
+              <DynamicConfigItem
+                :type="basicType"
+                name=""
+                :model-value="modelValue[arrIndex]"
+                @update:model-value="(value) => handleUpdateArrItemValue(arrIndex, '', value)"
+              />
+            </template>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="add" @click="addArrayItem">
-      <i class="bkui-vue-wiki-icon icon-add"></i>
-      <span>添加 {{ name }}</span>
+      <div class="add" @click="addArrayItem">
+        <i class="bkui-vue-wiki-icon icon-add"></i>
+        <span>添加 {{ name }}</span>
+      </div>
+    </template>
+    <div v-else>
+      <bk-input
+        v-model="arrVal"
+        :rows="4"
+        type="textarea"
+        :class="{
+          'is-error': hasError,
+        }"
+        @blur="validateArr"
+      />
+      <div v-if="hasError" class="error-message">{{ errMsg }}</div>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, computed, type PropType } from 'vue';
+import { ref, computed, watch, type PropType } from 'vue';
 import type { ValueType, IComponentWiki } from '@/types/component';
 
 import DynamicConfigItem from '../dynamic-config-item';
 import RenderNameTip from '../config/name-tip';
+import { Input as BkInput } from 'bkui-vue'
 
-import { factType } from './utils';
+import { basicTypeToDefVal, factType, extractArrayGeneric, isGenericArrType } from './utils';
 
 const props = defineProps({
   modelValue: {
@@ -86,14 +101,52 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue']);
 
+const arrVal = ref(JSON.stringify(props.modelValue, null, 2) || '')
+const hasError = ref(false)
+const errMsg = ref('')
+const validateArr = () => {
+  const val = arrVal.value.trim()
+  try {
+    const parseArr = JSON.parse(val)
+    if(!Array.isArray(parseArr)) {
+      hasError.value = true
+      errMsg.value = '请输入有效的数组'
+      return
+    }
+    hasError.value = false
+    errMsg.value = ''
+  } catch (error) {
+    hasError.value = true
+    errMsg.value = '数组JSON格式有误'
+  }
+}
+watch(arrVal, () => {
+  validateArr()
+  if(!hasError.value) {
+    emit('update:modelValue', JSON.parse(arrVal.value))
+  }
+})
+
 const arrayItemConfig = computed(() => {
   const { type, complexTypes } = props;
-  const arrItem = complexTypes.find(item => item.name === type.trim());
+  let newType = type
+  if(isGenericArrType(newType)) {
+    const genericType = extractArrayGeneric(newType)
+    newType = genericType
+  }
+  const arrItem = complexTypes.find(item => item.name === newType.trim());
   if(arrItem) {
     return arrItem.fields
   }
   return []
 });
+const isNoConfigArr = computed(() => {
+  if(isGenericArrType(props.type)) {
+    const genericType = extractArrayGeneric(props.type)
+    return genericType === 'any' || genericType.includes('|')
+  }
+  return false
+})
 
 const expandIndex = ref<string>('');
 
@@ -118,44 +171,30 @@ const removeArrayItem = (index: number) => {
   emit('update:modelValue', newModelValue);
   expandArrayItem(0);
 }
+
 const getTypeToDefault = (type: string, defaultVal: ValueType) => {
-  switch(factType(type, props.options, props.complexTypes)) {
-    case 'string':
-      return defaultVal ?? '';
-    case 'number':
-      return defaultVal ?? 0;
-    case 'boolean':
-      return defaultVal ?? false;
-    case 'array':
-      return defaultVal ?? [];
-    case 'object':
-      return defaultVal ?? {};
-    default:
-      return null;
-  }
+  const factTypeVal = factType(type, props.options, props.complexTypes) as keyof typeof basicTypeToDefVal
+  const typeToDefVal = basicTypeToDefVal[factTypeVal]
+  return defaultVal ?? (typeToDefVal ?? null)
 }
-const basicType = ref(null)
-const getArrBasicDefVal = (type: string): string | number | boolean | Array<unknown> => {
-  const basicTypeArr = type.toLowerCase();
+const basicType = computed(() => {
+  const basicTypeArr = props.type.toLowerCase();
   if(basicTypeArr === 'string[]') {
-    basicType.value = 'string';
-    return '';
+    return 'string';
   }
   if(basicTypeArr === 'number[]') {
-    basicType.value = 'number';
-    return 0;
+    return 'number';
   }
   if(basicTypeArr === 'boolean[]') {
-    basicType.value = 'boolean';
-    return false;
+    return 'boolean';
   }
-  return [];
-}
+  return null;
+})
 const addArrayItem = () => {
   const newModelValue = JSON.parse(JSON.stringify(props.modelValue));
   if(!arrayItemConfig.value.length) {
-    const itemDefVal = getArrBasicDefVal(props.type);
-    if(Array.isArray(itemDefVal)) {
+    const itemDefVal = basicTypeToDefVal[basicType.value];
+    if(typeof itemDefVal === 'undefined') {
       return;
     }
     newModelValue.push(itemDefVal);
@@ -243,5 +282,24 @@ const safeModelValue = computed(() => {
       margin-right: 5px;
     }
   }
+}
+.error-message {
+  display: flex;
+  align-items: center;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #EA3636;
+  line-height: 16px;
+}
+
+/* 错误状态的输入框样式 */
+:deep(.bk-textarea.is-error .bk-textarea--textarea) {
+  border-color: #EA3636 !important;
+  box-shadow: 0 0 0 2px rgba(234, 54, 54, 0.1) !important;
+}
+
+:deep(.bk-textarea.is-error .bk-textarea--textarea:focus) {
+  border-color: #EA3636 !important;
+  box-shadow: 0 0 0 2px rgba(234, 54, 54, 0.2) !important;
 }
 </style>

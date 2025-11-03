@@ -1,4 +1,4 @@
-import { defineComponent, ref, computed, type PropType } from 'vue';
+import { defineComponent, ref, computed, watch, type PropType } from 'vue';
 
 import type { IComponentWiki, ValueType as ComponentPropValue } from '@/types/component';
 
@@ -12,7 +12,7 @@ import RenderErrorType from './errortype.vue';
 
 import './index.postcss';
 
-import { splitType, factType } from './utils';
+import { basicTypeToDefVal, splitType, factType } from './utils';
 
 // 根据类型渲染不同的组件
 export default defineComponent({
@@ -47,7 +47,7 @@ export default defineComponent({
   emits: {
     'update:modelValue': (__: ComponentPropValue) => true,
   },
-  setup(props) {
+  setup(props, { emit }) {
     const singleType = ref('');
     const typeList = computed(() => {
       return splitType(props.type)
@@ -59,24 +59,39 @@ export default defineComponent({
     const isOnlyBoolean = computed(() => {
       return props.type.toLowerCase() === 'boolean'
     });
+    
+    const handleUpdate = (value: ComponentPropValue) => {
+      emit('update:modelValue', value);
+    };
+    const newModelValue = ref<ComponentPropValue>()
+    watch(() => props.modelValue, (val) => {
+      newModelValue.value = val
+    }, {
+      immediate: true
+    })
+    watch(typeValue, () => {
+      newModelValue.value = basicTypeToDefVal?.[typeValue.value as keyof typeof basicTypeToDefVal] ?? ''
+      handleUpdate(newModelValue.value)
+    })
     return {
       singleType,
       typeList,
       typeValue,
       isOnlyBoolean,
+      handleUpdate,
+      newModelValue,
     };
   },
   render() {
-    const handleUpdate = (value: ComponentPropValue) => {
-      this.$emit('update:modelValue', value);
-    };
     const typeSelectRender = () => {
       if(this.typeList.length > 1) {
         return (
           <div class='dynamic-type-select'>
             <RenderEnum
               modelValue={this.singleType as string}
-              onUpdate:modelValue={(value: string) => { this.singleType = value;}}
+              onUpdate:modelValue={(value: string) => { 
+                this.singleType = value;
+              }}
               options={this.typeList}
               clearable={false}
             />
@@ -90,37 +105,37 @@ export default defineComponent({
         case 'string':
           return (
             <RenderString
-              modelValue={this.modelValue as string}
-              onUpdate:modelValue={handleUpdate}
+              modelValue={this.newModelValue as string}
+              onUpdate:modelValue={this.handleUpdate}
             />
           );
         case 'number':
           return (
             <RenderNumber
-              modelValue={this.modelValue as number}
-              onUpdate:modelValue={handleUpdate}
+              modelValue={this.newModelValue as number}
+              onUpdate:modelValue={this.handleUpdate}
             />
           );
         case 'boolean':
           return (
             <RenderBoolean
               modelValue={this.modelValue as boolean}
-              onUpdate:modelValue={handleUpdate}
+              onUpdate:modelValue={this.handleUpdate}
             />
           );
         case 'enum':
           return (
             <RenderEnum
-              modelValue={this.modelValue as string}
-              onUpdate:modelValue={handleUpdate}
+              modelValue={this.newModelValue as string}
+              onUpdate:modelValue={this.handleUpdate}
               options={this.options}
             />
           );
         case 'array':
           return (
             <RenderArray
-              modelValue={this.modelValue as Array<Record<string, ComponentPropValue> | string | number | boolean>}
-              onUpdate:modelValue={handleUpdate}
+              modelValue={this.newModelValue as Array<Record<string, ComponentPropValue> | string | number | boolean>}
+              onUpdate:modelValue={this.handleUpdate}
               name={this.name}
               type={this.singleType}
               complexTypes={this.complexTypes}
@@ -130,8 +145,8 @@ export default defineComponent({
         case 'object':
           return (
             <RenderObject
-              modelValue={this.modelValue as object}
-              onUpdate:modelValue={handleUpdate}
+              modelValue={this.newModelValue as object}
+              onUpdate:modelValue={this.handleUpdate}
               type={this.singleType}
               complexTypes={this.complexTypes}
             />
