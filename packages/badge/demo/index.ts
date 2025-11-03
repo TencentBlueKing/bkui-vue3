@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { NavGroupMeta } from '@bkui-vue/shared';
+import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
 // 组件示例
 const presets = [
@@ -32,9 +32,14 @@ const presets = [
     description: '用默认配置初始化组件',
     props: {
       theme: 'danger',
-      title: '危险的文案',
-      count: 1,
+      count: 2,
       position: 'top-left',
+    },
+    slots: {
+      default: `<bk-button theme="primary"> top-left </bk-button>`,
+    },
+    dependent: {
+      components: ['button'],
     },
   },
 ];
@@ -44,7 +49,8 @@ const props = [
   {
     name: 'theme',
     description: 'badge 主题',
-    type: 'primary | success | info | danger | warning | default',
+    options: ['primary', 'success', 'info', 'danger', 'warning'],
+    type: 'string',
     default: 'primary',
   },
   {
@@ -56,7 +62,8 @@ const props = [
   {
     name: 'position',
     description: 'badge 显示位置',
-    type: 'top-left | top-right | bottom-left | bottom-right',
+    options: ['top-left', 'top-right', 'bottom-left', 'bottom-right'],
+    type: 'string',
     default: 'top-right',
   },
   {
@@ -68,25 +75,25 @@ const props = [
   {
     name: 'valLength',
     description: '数字显示最大长度，最大值建议英文不超过3个字母，中文不超过2个汉字',
-    type: 'Number',
+    type: 'number',
     default: 3,
   },
   {
     name: 'overflowCount',
     description: '组件显示的最大值，当 count 超过 overflowCount，显示数字 +；仅当设置了 Number 类型的 count 值时生效',
-    type: 'Number',
+    type: 'number',
     default: 99,
   },
   {
     name: 'dot',
     description: '是否仅显示红点；当设置 dot 为 true 时，count, icon, overflowCount 均会被忽略',
-    type: 'Boolean',
+    type: 'boolean',
     default: false,
   },
   {
     name: 'visible',
     description: '是否显示 badge',
-    type: 'Boolean',
+    type: 'boolean',
     default: false,
   },
   {
@@ -102,10 +109,22 @@ const emits = [
   {
     name: 'hover',
     description: 'hover 事件的回调',
+    params: [
+      {
+        name: 'event',
+        type: 'MouseEvent',
+      },
+    ],
   },
   {
     name: 'leave',
     description: 'leave 事件的回调',
+    params: [
+      {
+        name: 'event',
+        type: 'MouseEvent',
+      },
+    ],
   },
 ];
 
@@ -113,18 +132,18 @@ const emits = [
 const group = NavGroupMeta.Data;
 
 // 组件名称
-const name = 'badge';
+const name = 'button';
 
 // 组件标签
-const title = 'Badge';
+const title = 'Button';
 
 // 组件中文标签
-const titleCN = '标记';
+const titleCN = '基础按钮';
 
 // 组件描述
-const description = 'Badge 组件， 可以出现在任意 DOM 节点角上的数字或状态标记。';
+const description = '常用的操作按钮';
 
-export default {
+const wiki: IComponentWiki = {
   group,
   name,
   title,
@@ -134,3 +153,5 @@ export default {
   presets,
   description,
 };
+
+export default wiki;
