@@ -26,31 +26,48 @@
 import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
 // 组件示例
+// 组件示例
 const presets = [
   {
-    title: '经典模式',
-    description: '有标题格式标准化的确认框',
+    title: '删除确认',
+    description: '删除操作前的确认提示',
     props: {
       trigger: 'click',
-      title: '文本框',
-      content: '',
-      confirmText: '确定',
+      title: '确认删除',
+      content: '删除后数据将无法恢复，请谨慎操作',
+      confirmText: '确认删除',
       cancelText: '取消',
+      placement: 'top',
+      confirmConfig: {
+        theme: 'danger',
+      }
+    },
+    dependent: {
+      components: ['button'],
     },
     slots: {
       default: `
-        <div style="align-self: center;">这是一段需要确认的内容</div>
+        <bk-button theme="danger" style="align-self: center;">
+          删除应用
+        </bk-button>
       `,
     },
   },
   {
-    title: '简易模式',
-    description: '没有标题的确认框',
+    title: '表单提交确认',
+    description: '提交表单前的二次确认',
     props: {
       trigger: 'click',
-      content: '',
-      confirmText: '确定',
-      cancelText: '取消',
+      title: '确认提交',
+      content: '提交后数据将进入审核流程，无法修改',
+      confirmText: '确认提交',
+      cancelText: '再检查一下',
+      placement: 'bottom',
+    },
+    slots: {
+      default: `
+        <bk-button theme="primary" style="align-self: center;">提交审核</bk-button>
+      `,
     },
   },
 ];
@@ -128,6 +145,7 @@ const props = [
     name: 'confirmConfig',
     description: '确定按钮的配置，同Button的Props',
     type: 'ButtonPropTypes',
+    link: '/component/button/api#ButtonPropTypes',
     default: {},
   },
   {
@@ -140,6 +158,7 @@ const props = [
     name: 'popover-options',
     description: 'Popover组件的配置项',
     type: 'PopoverPropTypes',
+    link: '/component/popover/api#PopoverPropTypes',
     default: {},
   },
 ];
@@ -169,23 +188,10 @@ const emits = [
 ];
 
 // 组件自定义的复杂类型
-const types = [
-  {
-    name: 'ButtonPropTypes',
-    type: 'ButtonPropTypes',
-    link: '/component/button/api#ButtonPropTypes',
-    description: '按钮的配置项',
-  },
-  {
-    name: 'PopoverPropTypes',
-    type: 'PopoverPropTypes',
-    link: '/component/popover/api#PopoverPropTypes',
-    description: '弹出内容的配置项',
-  },
-];
+const types = [];
 
 // 组件分组
-const group = NavGroupMeta.Nav;
+const group = NavGroupMeta.Feedback;
 
 // 组件名称
 const name = 'pop-confirm';

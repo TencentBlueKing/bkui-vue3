@@ -32,10 +32,48 @@ const presets = [
     description: '满足基础使用场景',
     props: {
       id: 'notify',
-      title: '文本框',
-      message: '内容',
+      title: '新消息通知',
+      message: '你有一条新消息！',
       theme: 'primary',
       delay: 3000,
+    },
+  },
+  {
+    title: '成功提示',
+    description: '操作成功后的反馈提示',
+    props: {
+      id: 'success-notify',
+      title: '操作成功',
+      message: '用户信息已成功更新',
+      theme: 'success',
+      delay: 3000,
+      position: 'top-right',
+    },
+  },
+  {
+    title: '错误警告',
+    description: '系统异常或操作失败提示',
+    props: {
+      id: 'error-notify',
+      title: '操作失败',
+      message: '网络连接异常，请稍后重试',
+      theme: 'error',
+      delay: 5000,
+      position: 'top-right',
+      dismissable: true,
+    },
+  },
+  {
+    title: '重要通知',
+    description: '需要用户手动关闭的重要信息',
+    props: {
+      id: 'warning-notify',
+      title: '系统维护通知',
+      message: '系统将于今晚22:00-24:00进行维护，期间服务可能短暂中断',
+      theme: 'warning',
+      delay: 0,
+      position: 'top-left',
+      dismissable: true,
     },
   },
 ];
@@ -136,7 +174,7 @@ const emits = [
 const types = [];
 
 // 组件分组
-const group = NavGroupMeta.Nav;
+const group = NavGroupMeta.Feedback;
 
 // 组件名称
 const name = 'notify';
