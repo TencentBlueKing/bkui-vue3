@@ -64,7 +64,7 @@ const props = [
   {
     name: 'list',
     description: '时间轴数据源（必传)',
-    type: 'TimelineItem[]',
+    type: 'Array<TimelineItem>',
     default: '',
     link: '/component/timeline/api#TimelineItem',
   },

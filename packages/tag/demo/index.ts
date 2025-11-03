@@ -37,6 +37,39 @@ const presets = [
       default: '标签',
     },
   },
+  {
+    title: '自定义圆角',
+    description: '通过 radius 配置项可自定义圆角大小',
+    props: {
+      theme: 'default',
+      radius: '4px',
+    },
+    slots: {
+      default: '标签',
+    },
+  },
+  {
+    title: '不同样式',
+    description: '通过 type 设置不同的样式，默认是基础样式，还提供填充式（filled），描边式（stroke）',
+    props: {
+      theme: 'default',
+      type: 'filled',
+    },
+    slots: {
+      default: '标签',
+    },
+  },
+  {
+    title: '不同尺寸',
+    description: '通过 size 设置不同的尺寸',
+    props: {
+      theme: 'default',
+      size: 'default',
+    },
+    slots: {
+      default: '标签',
+    },
+  },
 ];
 
 // 组件属性，用来自动生成属性文档
@@ -84,7 +117,7 @@ const props = [
     description: 'Tag 的尺寸大小',
     type: 'string',
     default: 'medium',
-    options: ['small', 'medium', 'large'],
+    options: ['small', 'default'],
   },
 ];
 

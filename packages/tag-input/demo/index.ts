@@ -25,13 +25,102 @@
  */
 import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
+const list = [
+  { id: 'shenzhen', name: '深圳' },
+  { id: 'guangzhou', name: '广州' },
+  { id: 'beijing', name: '北京' },
+  { id: 'shanghai', name: '上海' },
+  { id: 'hangzhou', name: '杭州' },
+  { id: 'nanjing', name: '南京' },
+  { id: 'chongqing', name: '重庆' },
+  { id: 'taibei', name: '台北' },
+  { id: 'haikou', name: '海口' },
+];
+
 // 组件示例
 const presets = [
   {
     title: '基础用法',
-    description: '通过 bk-tag-input 来使用组件，其中 list 属性为下拉选择列表选项',
+    description: '简单的标签输入，可以配置回车 或 鼠标失焦结束输入',
     props: {
-      list: [],
+      list,
+      clearable: true,
+      modelValue: ['shenzhen', 'guangzhou', 'beijing', 'shanghai', 'hangzhou'],
+      trigger: 'focus',
+    },
+  },
+  {
+    title: '支持批量录入',
+    description: '通过限定的分隔符，粘贴后自动生成tag',
+    props: {
+      list,
+      clearable: true,
+      disabled: false,
+      'paste-fn': value => value.split('|').map(tag => ({ id: tag, name: tag })),
+      modelValue: ['shenzhen', 'guangzhou', 'beijing', 'shanghai', 'hangzhou'],
+      trigger: 'focus',
+    },
+  },
+  {
+    title: '支持选择与输入',
+    description: '触发输入框后，自动拉取已创建的 tag ，支持单选或多选 tag',
+    props: {
+      list,
+      modelValue: ['shenzhen', 'guangzhou', 'beijing', 'shanghai', 'hangzhou'],
+      'allow-create': true,
+      'collapse-tags': true,
+      'has-delete-icon': true,
+      trigger: 'focus',
+    },
+  },
+  {
+    title: '失去焦点自动匹配',
+    description:
+      '设置 allow-auto-match 属性当输入内容时失去焦点后，如果完全匹配则自动选中，如果设置 allow-create 属性则创建标签',
+    props: {
+      list,
+      modelValue: ['shenzhen', 'guangzhou', 'beijing', 'shanghai', 'hangzhou'],
+      'allow-create': true,
+      'allow-auto-match': true,
+      'has-delete-icon': true,
+      trigger: 'focus',
+    },
+  },
+  {
+    title: '分组展示',
+    description: '配置 use-group 来启用分组功能， 数据源必须加上 children 的配置',
+    props: {
+      list: [
+        {
+          id: '1',
+          name: '华中地区',
+          children: [
+            { id: '1-1', name: '河南省' },
+            { id: '1-2', name: '湖北省' },
+            { id: '1-3', name: '湖南省' },
+          ],
+        },
+        {
+          id: '2',
+          name: '华北地区',
+          children: [
+            { id: '2-1', name: '北京市' },
+            { id: '2-2', name: '天津市' },
+            { id: '2-3', name: '河北省' },
+          ],
+        },
+        {
+          id: '3',
+          name: '华南地区',
+          children: [
+            { id: '3-1', name: '广东省' },
+            { id: '3-2', name: '海南省' },
+          ],
+        },
+      ],
+      modelValue: ['1-1', '1-2', '1-3', '2-1', '2-2'],
+      trigger: 'focus',
+      'use-group': true,
     },
   },
 ];
@@ -151,12 +240,6 @@ const props = [
     description: '输入分隔符号，支持批量输入',
     type: 'string',
     default: '',
-  },
-  {
-    name: 'validate-event',
-    description: '是否触发校验',
-    type: 'boolean',
-    default: 'true',
   },
   {
     name: 'tpl',
