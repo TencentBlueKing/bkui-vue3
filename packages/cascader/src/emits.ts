@@ -26,8 +26,8 @@
 
 export const emits = {
   'update:modelValue': (publicVModelValue: Array<number | string | string[]>) => publicVModelValue,
-  change: (publicVModelValue: Array<number | string | string[]>, type: string) => publicVModelValue && type,
-  clear: () => true,
+  change: (publicVModelValue: Array<number | string | string[]>) => publicVModelValue,
+  clear: (publicVModelValue: Array<number | string | string[]>) => publicVModelValue,
   toggle: (isOpen: boolean) => isOpen,
   focus: () => true,
 };

@@ -42,6 +42,7 @@ export interface IComponentWiki {
     dependent?: {
       components: Array<string>;
     };
+    style?: Record<string, string>;
   }>;
   types?: {
     name: string;

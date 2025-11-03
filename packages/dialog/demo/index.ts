@@ -41,39 +41,11 @@ const presets = [
     },
   },
   {
-    title: '遮罩',
-    description: '通过设置 showMask 属性来设置是否显示遮罩',
-    props: {
-      'show-mask': false,
-      title: '没有遮罩的 dialog',
-      transfer: '.edit-component-view',
-    },
-    slots: {
-      default: '<div>dialog 内容</div>',
-    },
-  },
-  {
-    title: '关闭前确认',
-    description: '通过 beforeChange 属性关闭前确认。',
-    props: {
-      title: '关闭前确认',
-      transfer: '.edit-component-view',
-      'before-close': () => {
-        return new Promise(resolve => {
-          alert('确认关闭？');
-          resolve(true);
-        });
-      },
-    },
-    slots: {
-      default: '<div>dialog 内容</div>',
-    },
-  },
-  {
     title: '全屏弹框',
     description: '通过 fullscreen 属性配置全屏弹框，当设置为全屏弹框时，draggable 配置不生效即弹框不能拖动。',
     props: {
       title: '全屏弹框',
+      'is-show': true,
       fullscreen: true,
       transfer: '.edit-component-view',
     },

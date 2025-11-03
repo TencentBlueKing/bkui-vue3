@@ -29,16 +29,103 @@ import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 // 组件示例
 const presets = [
   {
-    title: '基础折叠面板',
+    title: '基础型',
     description: '基础的折叠面板',
     props: {
       list: [
-        { name: '选项1', content: '内容1' },
-        { name: '选项2', content: '内容2' },
+        { name: '方案成熟', content: '拥有支撑数百款腾讯业务的经验沉淀，兼容各种复杂的系统架构，生于运维 · 精于运维' },
+        {
+          name: '覆盖全面',
+          content:
+            '从配置管理，到作业执行、任务调度和监控自愈，再通过运维大数据分析辅助运营决策，全方位覆盖业务运营的全周期保障管理。',
+        },
+        {
+          name: '开放平台',
+          content: '开放的PaaS，具备强大的开发框架和调度引擎，以及完整的运维开发培训体系，助力运维快速转型升级。',
+        },
       ],
-      modelValue: [0],
+      modelValue: [],
+      accordion: false,
+    },
+    style: {
+      width: '80%',
+      minWidth: '200px',
     },
   },
+  {
+    title: '线条型',
+    description: '通过线条分隔面板',
+    props: {
+      hasHeaderBorder: true,
+      list: [
+        { name: '方案成熟', content: '拥有支撑数百款腾讯业务的经验沉淀，兼容各种复杂的系统架构，生于运维 · 精于运维' },
+        {
+          name: '覆盖全面',
+          content:
+            '从配置管理，到作业执行、任务调度和监控自愈，再通过运维大数据分析辅助运营决策，全方位覆盖业务运营的全周期保障管理。',
+        },
+        {
+          name: '开放平台',
+          content: '开放的PaaS，具备强大的开发框架和调度引擎，以及完整的运维开发培训体系，助力运维快速转型升级。',
+        },
+      ],
+      modelValue: [],
+      accordion: false,
+    },
+    style: {
+      width: '80%',
+      minWidth: '200px',
+    },
+  },
+  {
+    title: '色块型',
+    description: '通过标题栏色块分隔面板',
+    props: {
+      useBlockTheme: true,
+      list: [
+        { name: '方案成熟', content: '拥有支撑数百款腾讯业务的经验沉淀，兼容各种复杂的系统架构，生于运维 · 精于运维' },
+        {
+          name: '覆盖全面',
+          content:
+            '从配置管理，到作业执行、任务调度和监控自愈，再通过运维大数据分析辅助运营决策，全方位覆盖业务运营的全周期保障管理。',
+        },
+        {
+          name: '开放平台',
+          content: '开放的PaaS，具备强大的开发框架和调度引擎，以及完整的运维开发培训体系，助力运维快速转型升级。',
+        },
+      ],
+      accordion: false,
+    },
+    style: {
+      width: '80%',
+      minWidth: '200px',
+    },
+  },
+  {
+    title: '卡片型',
+    description: '通过卡片样式分隔面板',
+    props: {
+      useCardTheme: true,
+      list: [
+        { name: '方案成熟', content: '拥有支撑数百款腾讯业务的经验沉淀，兼容各种复杂的系统架构，生于运维 · 精于运维' },
+        {
+          name: '覆盖全面',
+          content:
+            '从配置管理，到作业执行、任务调度和监控自愈，再通过运维大数据分析辅助运营决策，全方位覆盖业务运营的全周期保障管理。',
+        },
+        {
+          name: '开放平台',
+          content: '开放的PaaS，具备强大的开发框架和调度引擎，以及完整的运维开发培训体系，助力运维快速转型升级。',
+        },
+      ],
+      modelValue: [],
+      accordion: false,
+    },
+    style: {
+      width: '80%',
+      minWidth: '200px',
+    },
+  }
 ];
 
 // 组件属性，用来自动生成属性文档

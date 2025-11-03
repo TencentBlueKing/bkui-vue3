@@ -355,9 +355,12 @@ export interface IComponentWiki {
     template?: string;
     props?: Record<string, ValueType>;
     slots?: Record<string, string>;
+    // 依赖组件, 有些组件需要依赖其他组件才能正常渲染
     dependent?: {
       components: Array<string>;
     };
+    // 样式, 有些组件需要特定的样式才能正常渲染，或者需要特定的样式才能正常使用
+    styles?: Record<string, string>;
   }>;
   types?: {
     name: string;

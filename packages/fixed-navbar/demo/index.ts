@@ -49,6 +49,12 @@ const presets = [
         },
       ],
     },
+    style: {
+      transform: 'translate(0,0)', // 让FixedNavbar基于容器定位
+    },
+    dependent: {
+      components: ['icon'],
+    },
   },
   {
     title: '图标类型',
@@ -56,20 +62,23 @@ const presets = [
     props: {
       'nav-items': [
         {
-          icon: 'icon-contact',
+          icon: 'angle-left',
           text: '',
           action: () => {
             window.open('http://wpa.b.qq.com/cgi/wpa.php?ln=1&key=XzgwMDgwMjAwMV80NDMwOTZfODAwODAyMDAxXzJf');
           },
         },
         {
-          icon: 'icon-feedback',
+          icon: 'angle-left',
           text: '',
           action: () => {
             window.open('https://bk.tencent.com/s-mart/community?page=1&keyword=%255BMagicBox%255D&sort=latest');
           },
         },
       ],
+    },
+    style: {
+      transform: 'translate(0,0)', // 让FixedNavbar基于容器定位
     },
   },
   {
@@ -78,20 +87,23 @@ const presets = [
     props: {
       'nav-items': [
         {
-          icon: 'icon-contact',
+          icon: 'Weixin',
           text: '联系',
           action: () => {
             window.open('http://wpa.b.qq.com/cgi/wpa.php?ln=1&key=XzgwMDgwMjAwMV80NDMwOTZfODAwODAyMDAxXzJf');
           },
         },
         {
-          icon: 'icon-home',
+          icon: 'Weixin',
           text: '反馈',
           action: () => {
             window.open('https://bk.tencent.com/s-mart/community?page=1&keyword=%255BMagicBox%255D&sort=latest');
           },
         },
       ],
+    },
+    style: {
+      transform: 'translate(0,0)', // 让FixedNavbar基于容器定位
     },
   },
 ];

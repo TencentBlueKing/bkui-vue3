@@ -174,7 +174,7 @@ export { default as PopConfirm } from '@bkui-vue/pop-confirm';
 export type { PopConfirmProps, PopConfirmEmits, PopConfirmInstance } from '@bkui-vue/pop-confirm';
 
 export { default as Popover, $bkPopover } from '@bkui-vue/popover';
-export type { PopoverProps, PopoverEmits, PopoverInstance } from '@bkui-vue/popover';
+export type { PopoverProps, PopoverPropTypes, PopoverEmits, PopoverInstance } from '@bkui-vue/popover';
 
 export { default as Popover2 } from '@bkui-vue/popover2';
 

@@ -28,50 +28,104 @@ import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
 const presets = [
   {
-    title: '基础用法',
-    description: '基础形式表单，key与value水平布局',
+    title: '垂直布局表单',
+    description: '多个表单垂直排列',
     props: {
       model: {},
-      'form-type': 'default',
+      labelPosition: 'top',
     },
     slots: {
       default: `
         <bk-form-item
-          label="用户名"
+          label="姓名"
+          property="name"
         >
-          <bk-input />
+          <bk-input
+            placeholder="请输入"
+            clearable
+          />
         </bk-form-item>
-        <bk-form-item
-          label="密码"
-        >
-          <bk-input />
+        <bk-form-item label="性别">
+          <bk-radio-group>
+            <bk-radio label="男" />
+            <bk-radio label="女" />
+          </bk-radio-group>
+        </bk-form-item>
+        <bk-form-item label="联系方式">
+          <bk-checkbox-group>
+            <bk-checkbox label="QQ" />
+            <bk-checkbox label="微信" />
+            <bk-checkbox label="Email" />
+          </bk-checkbox-group>
+        </bk-form-item>
+        <bk-form-item label="学历">
+          <bk-select>
+            <bk-option
+              label="本科以下"
+              value="1"
+            />
+            <bk-option
+              label="本科以上"
+              value="2"
+            />
+          </bk-select>
+        </bk-form-item>
+        <bk-form-item label="介绍">
+          <bk-input
+            placeholder="请输入"
+            type="textarea"
+          />
+        </bk-form-item>
+        <bk-form-item style="margin-top: 32px">
+          <bk-button
+            theme="primary"
+          >
+            提交
+          </bk-button>
         </bk-form-item>
       `,
     },
     dependent: {
-      components: ['input'],
+      components: ['input', 'radio', 'checkbox', 'select', 'button'],
     },
   },
   {
-    title: '垂直表单',
-    description: 'key与value垂直布局',
+    title: '行内布局表单',
+    description: '一行可配置显示多个表单',
     props: {
       model: {},
-      'form-type': 'vertical',
+      labelPosition: 'top',
     },
     slots: {
       default: `
-        <bk-form-item
-          label="用户名"
-        >
-          <bk-input />
-        </bk-form-item>
-        <bk-form-item
-          label="密码"
-        >
-          <bk-input />
-        </bk-form-item>
+        <bk-compose-form-item>
+          <bk-input
+            placeholder="请输入"
+            clearable
+          />
+          <bk-select>
+            <bk-option
+              label="本科以下"
+              value="1"
+            />
+            <bk-option
+              label="本科以上"
+              value="2"
+            />
+          </bk-select>
+          <bk-input
+            placeholder="请输入"
+            type="number"
+          />
+          <bk-tag-input
+            style="width: 100px"
+          />
+          <bk-date-picker />
+        </bk-compose-form-item>
       `,
+    },
+    dependent: {
+      components: ['tag-input', 'date-picker'],
     },
   },
 ];

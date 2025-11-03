@@ -28,11 +28,20 @@ import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 // 组件示例
 const presets = [
   {
-    title: '危险',
-    description: '危险危险危险',
+    title: '基础用法',
+    description: '通过 theme 设置不同的主题， danger / info / success / warning',
     props: {
       theme: 'danger',
-      title: '危险的文案',
+      title: '提示文字',
+    },
+  },
+  {
+    title: '可关闭',
+    description: '通过 closable 设置是否可关闭',
+    props: {
+      theme: 'danger',
+      title: '提示文字',
+      closable: true,
     },
   },
 ];

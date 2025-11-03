@@ -31,7 +31,8 @@ const presets = [
     title: '基础用法',
     description: '不传值时：默认直接固定在最顶端',
     props: {
-      offsetBottom: 100,
+      offsetTop: 50,
+      target: '.edit-component-view',
     },
     slots: {
       default: `
@@ -43,20 +44,45 @@ const presets = [
     dependent: {
       components: ['button'],
     },
+    style: {
+      width: '100%',
+      height: '2000px',
+      alignSelf: 'initial',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '10px',
+    }
   },
   {
-    title: '固定在顶部',
-    description: '设置offset-top属性',
+    title: '固定在底部',
+    description:
+      '设置offsetBottom属性，固定在底部, 设置offset-bottom属性, offset-top和offset-bottom只可以设置一个，如果都设置会使用offset-bottom',
     props: {
-      offsetTop: 100,
+      offsetBottom: 50,
+      target: '.edit-component-view',
+    },
+    slots: {
+      default: `
+        <bk-button theme="primary">
+          固定在底部
+        </bk-button>
+      `,
     },
   },
   {
     title: '对象层级',
     description: '设置z-index属性，设置affix对象的层级',
     props: {
-      offsetTop: 200,
+      offsetTop: 50,
       zIndex: 10,
+      target: '.edit-component-view',
+    },
+    slots: {
+      default: `
+        <bk-button theme="primary">
+          固定在顶部，层级为10
+        </bk-button>
+      `,
     },
   },
 ];
@@ -116,41 +142,41 @@ const slots = [
 ];
 
 // 组件自定义的复杂类型
-const types = [
-  {
-    name: 'ITestType',
-    description: '图钉状态',
-    fields: [
-      {
-        name: 'type',
-        type: 'string',
-        description: '类型',
-      },
-      {
-        name: 'value',
-        type: 'ITestSubType',
-        description: '值',
-        link: '/component/affix/api#ITestSubType',
-      },
-    ],
-  },
-  {
-    name: 'ITestSubType',
-    description: '图钉子状态',
-    fields: [
-      {
-        name: 'subType',
-        type: 'string',
-        description: '子类型',
-      },
-      {
-        name: 'subValue',
-        type: 'string',
-        description: '子值',
-      },
-    ],
-  },
-];
+// const types = [
+//   {
+//     name: 'ITestType',
+//     description: '图钉状态',
+//     fields: [
+//       {
+//         name: 'type',
+//         type: 'string',
+//         description: '类型',
+//       },
+//       {
+//         name: 'value',
+//         type: 'ITestSubType',
+//         description: '值',
+//         link: '/component/affix/api#ITestSubType',
+//       },
+//     ],
+//   },
+//   {
+//     name: 'ITestSubType',
+//     description: '图钉子状态',
+//     fields: [
+//       {
+//         name: 'subType',
+//         type: 'string',
+//         description: '子类型',
+//       },
+//       {
+//         name: 'subValue',
+//         type: 'string',
+//         description: '子值',
+//       },
+//     ],
+//   },
+// ];
 
 // 组件分组
 const group = NavGroupMeta.Nav;
@@ -176,7 +202,7 @@ const wiki: IComponentWiki = {
   emits,
   slots,
   presets,
-  types,
+  // types,
   description,
 };
 

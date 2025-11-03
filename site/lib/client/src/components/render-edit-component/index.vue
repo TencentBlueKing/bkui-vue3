@@ -57,6 +57,7 @@
                   :name="componentWiki.name"
                   :group="componentWiki.group"
                   :template="componentWiki.presets[renderPresetIndex].template"
+                  :style="componentWiki.presets[renderPresetIndex].style"
                   :component="component"
                   :render-props="renderProps"
                   :render-slots="renderSlots"
@@ -88,8 +89,8 @@ import {
   onMounted,
   onUnmounted,
   ref,
-  watch,
   shallowRef,
+  watch,
 } from 'vue';
 
 import RenderComponent from '@/components/render-component';
@@ -241,10 +242,6 @@ onUnmounted(() => {
   height: 100%;
   overflow: auto;
   background: #f3f3fa;
-
-  .bk-cascader-wrapper, .bk-slider {
-    width: 200px;
-  }
 
   .edit-component-component {
     align-self: center;

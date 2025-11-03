@@ -32,17 +32,17 @@ import http from '../util/http';
 import { compileComponent, compileCss, compileDemo } from './compile';
 
 // 彻底清除模块缓存的函数
-const clearModuleCache = modulePath => {
+const clearModuleCache = (modulePath) => {
   try {
     const resolvedPath = require.resolve(modulePath);
 
     // 递归清除依赖模块的缓存
-    const clearDependencies = targetPath => {
+    const clearDependencies = (targetPath) => {
       const module = require.cache[targetPath];
       if (module) {
         // 清除该模块依赖的其他模块缓存
         if (module.children) {
-          module.children.forEach(child => {
+          module.children.forEach((child) => {
             // 只清除项目内部的模块，避免清除node_modules中的模块
             if (child.filename && !child.filename.includes('node_modules')) {
               clearDependencies(child.filename);
@@ -64,10 +64,9 @@ const clearModuleCache = modulePath => {
 
 // 获取编译文件路径
 const getDistFilePath = (version, component, type, file) => {
-  const dir =
-    type === 'directive'
-      ? path.resolve(RELEASE_DIST_DIR, `${version}`, 'directives', 'src', `${component}.js`)
-      : path.resolve(RELEASE_DIST_DIR, `${version}`, component, 'src');
+  const dir =    type === 'directive'
+    ? path.resolve(RELEASE_DIST_DIR, `${version}`, 'directives', 'src', `${component}.js`)
+    : path.resolve(RELEASE_DIST_DIR, `${version}`, component, 'src');
   // 创建目录
   fs.mkdirSync(dir, { recursive: true });
   return path.resolve(dir, file);
@@ -90,9 +89,9 @@ export const getLatestVersion = async () => {
 };
 
 // 获取设计规范
-export const getDesign = async name => {
+export const getDesign = async (name) => {
   const { data } = await http.get(`${process.env.BK_DESIGN_URL}/api/article`);
-  const article = data.find(item => {
+  const article = data.find((item) => {
     return item.content?.includes(`{{vue3:${name}}}`) || item.name.toLowerCase().includes(name.toLowerCase());
   });
   // 去掉第一个#和第二个## 之间的内容
@@ -100,7 +99,7 @@ export const getDesign = async name => {
 };
 
 // 获取文件作者列表
-export const getFileAuthors = async path => {
+export const getFileAuthors = async (path) => {
   try {
     // 准备请求头
     const headers = {};
@@ -174,7 +173,7 @@ export const getCss = async (releaseZipPath, component, version, type) => {
 };
 
 // 获取 NavGroups
-export const getNavGroups = async releaseZipPath => {
+export const getNavGroups = async (releaseZipPath) => {
   const version = path.basename(releaseZipPath);
   // 获取组件列表
   const componentGroupMap = {};
@@ -277,7 +276,7 @@ export const getComponentInfo = async (releaseZipPath, componentName, version) =
 };
 
 // 获取组件 release zip 包路径
-export const getReleaseZipPath = async version => {
+export const getReleaseZipPath = async (version) => {
   const releaseZipPath = path.resolve(RELEASE_DIR, `${version}`);
   // 如果不存在，则下载
   if (version === 'dev' && !fs.existsSync(releaseZipPath)) {
@@ -297,7 +296,7 @@ export const getReleaseDistPath = async (version) => {
 };
 
 // 清空构建目录
-export const deleteReleaseZip = version => {
+export const deleteReleaseZip = (version) => {
   const releasePath = path.resolve(RELEASE_DIR, `${version}`);
   const releaseDistPath = path.resolve(RELEASE_DIST_DIR, `${version}`);
   fs.rmSync(releasePath, { recursive: true, force: true });
@@ -305,7 +304,7 @@ export const deleteReleaseZip = version => {
 };
 
 // 获取 npm 包 markdown 内容
-export const getNpmMarkdown = async name => {
+export const getNpmMarkdown = async (name) => {
   const os = require('os');
   const https = require('https');
   const tar = require('tar');
@@ -323,30 +322,26 @@ export const getNpmMarkdown = async name => {
       // 3. 下载并解压 tarball（使用原生 https 模块获取 stream）
       await new Promise((resolve, reject) => {
         https
-          .get(tarballUrl, response => {
+          .get(tarballUrl, (response) => {
             // 处理重定向
             if (response.statusCode === 301 || response.statusCode === 302) {
               https
-                .get(response.headers.location, redirectResponse => {
+                .get(response.headers.location, (redirectResponse) => {
                   redirectResponse
-                    .pipe(
-                      tar.extract({
-                        cwd: tempDir,
-                        strip: 1, // 去掉 package/ 前缀
-                      }),
-                    )
+                    .pipe(tar.extract({
+                      cwd: tempDir,
+                      strip: 1, // 去掉 package/ 前缀
+                    }))
                     .on('finish', resolve)
                     .on('error', reject);
                 })
                 .on('error', reject);
             } else {
               response
-                .pipe(
-                  tar.extract({
-                    cwd: tempDir,
-                    strip: 1,
-                  }),
-                )
+                .pipe(tar.extract({
+                  cwd: tempDir,
+                  strip: 1,
+                }))
                 .on('finish', resolve)
                 .on('error', reject);
             }
@@ -356,16 +351,15 @@ export const getNpmMarkdown = async name => {
 
       // 4. 查找根目录的 .md 文件
       const files = fs.readdirSync(tempDir);
-      const markdownFiles = files.filter(file => {
+      const markdownFiles = files.filter((file) => {
         const lower = file.toLowerCase();
         return lower.endsWith('.md');
       });
 
       // 优先查找 README.md，然后是其他 .md 文件
-      const readmeFile =
-        markdownFiles.find(f => f.toLowerCase() === 'readme.md') ||
-        markdownFiles.find(f => f.toLowerCase().startsWith('readme')) ||
-        markdownFiles[0];
+      const readmeFile =        markdownFiles.find(f => f.toLowerCase() === 'readme.md')
+        || markdownFiles.find(f => f.toLowerCase().startsWith('readme'))
+        || markdownFiles[0];
 
       if (readmeFile) {
         const markdownPath = path.join(tempDir, readmeFile);

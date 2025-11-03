@@ -29,10 +29,41 @@ import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 // 组件示例
 const presets = [
   {
-    title: '基础卡片',
-    description: '基础的卡片信息',
+    title: '基础样式',
+    description: '通用卡片样式，满足基本场景',
     props: {
       title: '基础卡片',
+      isEdit: true,
+      position: 'right',
+      isShowHeader: true,
+      isShowFooter: true,
+      border: true,
+    },
+    slots: {
+      default: `
+        <div>
+          <p style="padding: 10px;">卡片内容1</p>
+          <p style="padding: 10px;">卡片内容2</p>
+          <p style="padding: 10px;">卡片内容3</p>
+        </div>
+      `,
+    },
+  },
+  {
+    title: '卡片折叠',
+    description: '卡片支持折叠，满足更多空间需求',
+    props: {
+      title: '卡片折叠',
+      isCollapse: true,
+    },
+    slots: {
+      default: `
+        <div>
+          <p style="padding: 10px;">卡片内容1</p>
+          <p style="padding: 10px;">卡片内容2</p>
+          <p style="padding: 10px;">卡片内容3</p>
+        </div>
+      `,
     },
   },
 ];
@@ -77,7 +108,7 @@ const props = [
   },
   {
     name: 'position',
-    description: '卡片位置',
+    description: '标题位置',
     type: 'string',
     options: ['left', 'right', 'center'],
     default: 'left',

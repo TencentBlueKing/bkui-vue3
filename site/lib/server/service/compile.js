@@ -57,13 +57,14 @@ const externals = {
   'js-calendar': 'jsCalendar',
   'date-fns': 'dateFns',
   'resize-observer-polyfill': 'resizeObserverPolyfill',
-  'clipboard': 'clipboard',
+  clipboard: 'clipboard',
   'json-formatter-js': 'jsonFormatterJs',
-  'tinycolor2': 'tinycolor2',
-  'dompurify': 'dompurify',
+  tinycolor2: 'tinycolor2',
+  dompurify: 'dompurify',
   'spark-md5': 'sparkMd5',
-  'diff': 'diff',
-  'diff2html': 'diff2html',
+  diff: 'diff',
+  diff2html: 'diff2html',
+  'diff2html/bundles/css/diff2html.min.css': '_code_diff_src_diff2html_bundles_css_diff2html_min_css',
   '@popperjs/core': 'popperjsCore',
   '@floating-ui/dom': 'floatingUiDom',
   '@blueking/fork-resize-detector': 'forkResizeDetector',
@@ -115,7 +116,7 @@ const transformFileContent = (code, originAbsoluteFilePath, releaseZipPath, func
   let transformedCode = `if (${funcName}.exports) { return ${funcName}.exports; }\n`;
 
   // 立即缓存
-  transformedCode += `const exports = {};\n`;
+  transformedCode += 'const exports = {};\n';
   transformedCode += `${funcName}.exports = exports;\n`;  // 立即缓存
 
   // 处理图片文件
@@ -134,7 +135,7 @@ const transformFileContent = (code, originAbsoluteFilePath, releaseZipPath, func
         .replace(/#/g, '%23')
         .replace(/</g, '%3C')
         .replace(/>/g, '%3E')
-        .replace(/"/g, "'");
+        .replace(/"/g, '\'');
       transformedCode += `exports.default = "data:image/svg+xml,${encodedSvg}";\n`;
     } else {
       // 其他图片作为 base64
@@ -142,7 +143,7 @@ const transformFileContent = (code, originAbsoluteFilePath, releaseZipPath, func
       const ext = path.extname(originAbsoluteFilePath).slice(1);
       transformedCode += `exports.default = "data:image/${ext};base64,${base64Content}";\n`;
     }
-    transformedCode += `Object.defineProperty(exports, "__esModule", { value: true });\nreturn exports;\n`;
+    transformedCode += 'Object.defineProperty(exports, "__esModule", { value: true });\nreturn exports;\n';
   } else {
     // 去除注释
     transformedCode += code.replace(/\/\*[\s\S]*?\*\/|([^:]|^)\/\/.*$/gm, '$1');

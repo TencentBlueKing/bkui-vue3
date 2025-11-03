@@ -30,11 +30,25 @@ import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 const presets = [
   {
     title: '基础多选框',
-    description: '基础的多选框',
+    description: '单独使用：选中时值为true',
     props: {
       modelValue: false,
       label: '选项',
     },
+  },
+  {
+    title: '多选框组',
+    description: '通过 checkbox-group 组件包裹，可以实现多选框组',
+    props: {
+      modelValue: [],
+    },
+    template: `
+      <bk-checkbox-group>
+        <bk-checkbox label="微信" />
+        <bk-checkbox label="QQ" />
+        <bk-checkbox label="Email" />
+      </bk-checkbox-group>
+    `,
   },
 ];
 

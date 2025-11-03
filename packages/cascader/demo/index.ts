@@ -29,11 +29,137 @@ import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 // 组件示例
 const presets = [
   {
-    title: '基础级联选择器',
-    description: '基础的级联选择器',
+    title: '基础单选',
+    description: '单选的级联选择器，选取后展示每一层级所选的内容。',
     props: {
       modelValue: [],
-      list: [],
+      clearable: true,
+      filterable: true,
+      trigger: 'click',
+      checkAnyLevel: true,
+      showCompleteName: true,
+      list: [
+        {
+          id: 'hunan',
+          name: '湖南',
+          disabled: true,
+          children: [
+            {
+              id: 'changsha',
+              name: '长沙',
+            },
+            {
+              id: 'yueyang',
+              name: '岳阳',
+              disabled: true,
+            },
+          ],
+        },
+        {
+          id: 'guangxi',
+          name: '广西',
+        },
+        {
+          id: 'yunnan',
+          name: '云南',
+          children: [
+            {
+              id: 'kunming',
+              name: '昆明',
+              children: [
+                {
+                  id: 'wuhuaqu',
+                  name: '长文字测试五华山五华山五华山',
+                },
+                {
+                  id: 'guanduqu',
+                  name: '官渡区',
+                },
+                {
+                  id: 'xishanqu',
+                  name: '西山区',
+                },
+              ],
+            },
+            {
+              id: 0,
+              name: '大理',
+            },
+            {
+              id: 'yuxi',
+              name: '玉溪',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    title: '多选级联',
+    description: '支持选择多个对象',
+    props: {
+      modelValue: [],
+      clearable: true,
+      filterable: true,
+      trigger: 'click',
+      checkAnyLevel: true,
+      showCompleteName: true,
+      multiple: true,
+      separator: '/',
+      list: [
+        {
+          id: 'hunan',
+          name: '湖南',
+          disabled: true,
+          children: [
+            {
+              id: 'changsha',
+              name: '长沙',
+            },
+            {
+              id: 'yueyang',
+              name: '岳阳',
+              disabled: true,
+            },
+          ],
+        },
+        {
+          id: 'guangxi',
+          name: '广西',
+        },
+        {
+          id: 'yunnan',
+          name: '云南',
+          children: [
+            {
+              id: 'kunming',
+              name: '昆明',
+              children: [
+                {
+                  id: 'wuhuaqu',
+                  name: '长文字测试五华山五华山五华山',
+                },
+                {
+                  id: 'guanduqu',
+                  name: '官渡区',
+                },
+                {
+                  id: 'xishanqu',
+                  name: '西山区',
+                },
+              ],
+            },
+            {
+              id: 0,
+              name: '大理',
+            },
+            {
+              id: 'yuxi',
+              name: '玉溪',
+            },
+          ],
+        },
+      ],
     },
   },
 ];
@@ -94,6 +220,7 @@ const props = [
     description: '触发方式',
     type: 'string',
     default: 'click',
+    options: ['click', 'hover'],
   },
   {
     name: 'checkAnyLevel',
