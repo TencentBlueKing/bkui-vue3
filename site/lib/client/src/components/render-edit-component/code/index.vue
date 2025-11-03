@@ -67,6 +67,8 @@ import {
   serializeElementTree,
 } from './template-parser';
 
+import { camelKey } from '@/utils'
+
 type Languages = 'javascript' | 'typescript';
 interface IProps {
   componentWiki: IComponentWiki;
@@ -137,8 +139,6 @@ const isFunctionComponent = computed(() => functionComponents.includes(component
 const indent = (num = 1) => new Array(num)
   .fill(INDENT)
   .join('');
-
-const camelKey = (key: string) => key.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
 
 // 创建标签
 const createLabel = (
