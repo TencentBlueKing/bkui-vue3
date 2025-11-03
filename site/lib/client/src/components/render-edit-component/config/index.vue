@@ -30,17 +30,21 @@
       </div>
       <Empty v-else />
     </Collapse>
-    <Collapse title="插槽">
-      <div class="prl16" v-if="comSlots.length">
-        <Slot
-          v-for="slot in comSlots"
-          :slot-name="slot.name"
-          :desc="slot.description"
-          :model-value="renderSlots[slot.name]"
-          @update:model-value="(value) => handleUpdateSlots(slot.name, value)" />
-      </div>
-      <Empty v-else />
-    </Collapse>
+    <!-- <div class="slot-contianer">
+      <div> -->
+        <Collapse title="插槽">
+          <div class="prl16" v-if="comSlots.length">
+            <Slot
+              v-for="slot in comSlots"
+              :slot-name="slot.name"
+              :desc="slot.description"
+              :model-value="renderSlots[slot.name]"
+              @update:model-value="(value) => handleUpdateSlots(slot.name, value)" />
+          </div>
+          <Empty v-else />
+        </Collapse>
+      <!-- </div>
+    </div> -->
   </section>
 </template>
 
@@ -54,7 +58,7 @@ import type {
 } from '@/types/component';
 
 import DynamicConfigItem from '../dynamic-config-item';
-import { factType, splitType } from '../dynamic-config-item/utils';
+import { filterErrTypeProps } from '../dynamic-config-item/utils';
 import { filterXss } from '@blueking/xss-filter';
 import { camelKey, camelToSnakeCase } from '@/utils'
 
@@ -165,30 +169,8 @@ const filterPropSlots = <T extends { name: string }, U extends object>(all: T[],
   });
   return propsSort(currentPropSlots);
 };
-// 暂未支持的可配置过滤掉
-const filterErrTypeProps = () => {
-  const partValidTypeProps = (props.props ?? []).filter((item: PropItem) => {
-    const typeArr = splitType(item.type);
-    const factTypeList = typeArr.map((typeVal) => {
-      return factType(typeVal, item.options, props.types);
-    });
-    return !factTypeList.every(factType => factType === 'errortype');
-  });
-  return partValidTypeProps.map((item: PropItem) => {
-    const typeArr = splitType(item.type);
-    if (typeArr.length === 1) {
-      return item;
-    }
-    const validTypes = typeArr.filter((typeValF) => {
-      const curFactType = factType(typeValF, item.options, props.types);
-      return curFactType !== 'errortype';
-    });
-    item.type = validTypes.join(' |');
-    return item;
-  });
-};
 const comProps = computed(() => {
-  const allValidTypeProps = filterErrTypeProps();
+  const allValidTypeProps = filterErrTypeProps(props.props, props.types);
   return filterPropSlots(allValidTypeProps, props.presetProps ?? {});
 });
 const comSlots = computed(() => {
@@ -269,6 +251,11 @@ onBeforeUnmount(() => {
     background-color: #FDF4E8 !important;
     border-radius: 2px;
     transition: all 0.2s ease;
+  }
+  
+  :deep(.slot-contianer) {
+    position: sticky;
+    bottom: 0;
   }
 }
 </style>

@@ -34,9 +34,16 @@ export default defineComponent({
     const toolTip = computed(() => {
       return {
         content: (
-          <div class='slot-tip-bg' title={props.desc}>
-            {props.desc}
-          </div>
+          <>
+            <div class='slot-tip-bg even-bg'>
+              <span>插槽：</span>
+              <span>{ props.slotName }</span>
+            </div>
+            <div class='slot-tip-bg'>
+              <span>说明：</span>
+              <span title={props.desc}>{ props.desc }</span>
+            </div>
+          </>
         ),
         disabled: !props.desc,
         theme: 'light',

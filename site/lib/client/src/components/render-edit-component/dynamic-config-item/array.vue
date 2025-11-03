@@ -69,7 +69,7 @@ import DynamicConfigItem from '../dynamic-config-item';
 import RenderNameTip from '../config/name-tip';
 import { Input as BkInput } from 'bkui-vue'
 
-import { basicTypeToDefVal, factType, extractArrayGeneric, isGenericArrType } from './utils';
+import { basicTypeToDefVal, factType, extractArrayGeneric, isGenericArrType, filterErrTypeProps } from './utils';
 
 const props = defineProps({
   modelValue: {
@@ -136,7 +136,7 @@ const arrayItemConfig = computed(() => {
   }
   const arrItem = complexTypes.find(item => item.name === newType.trim());
   if(arrItem) {
-    return arrItem.fields
+    return filterErrTypeProps(JSON.parse(JSON.stringify(arrItem.fields)), complexTypes)
   }
   return []
 });

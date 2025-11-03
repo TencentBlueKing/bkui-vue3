@@ -15,7 +15,7 @@ withDefaults(defineProps<IProps>(), {
 .empty {
     padding: 12px;
     text-align: center;
-    font-size: 16px;
+    font-size: 14px;
     color: #4D4F56;
 }
 </style>

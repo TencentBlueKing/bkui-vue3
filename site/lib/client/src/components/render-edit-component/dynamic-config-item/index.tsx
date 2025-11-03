@@ -50,7 +50,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const singleType = ref('');
     const typeList = computed(() => {
-      return splitType(props.type)
+      return [...new Set(splitType(props.type))]
     })
     singleType.value = typeList.value?.[0];
     const typeValue = computed(() => {
@@ -159,8 +159,8 @@ export default defineComponent({
     };
 
     return (
-      <div class='config-item'>
-        <div class={`config-item-name${this.isOnlyBoolean ? ' mb4': ''}`}>
+      <div class={`config-item${this.isOnlyBoolean ? ' name-value-flex': ''}`}>
+        <div class="config-item-name">
           {this.$slots.nameTip?.()}
         </div>
         <div class={`config-item-content${this.isOnlyBoolean || this.typeValue === 'array' ? '': ' type-flex'}`}>
