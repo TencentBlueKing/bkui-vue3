@@ -1,6 +1,32 @@
 ## 更新日志
 
 
+### 2.0.2-beta.75
+
+* **[feat]**:
+    - fix(popover): boundary默认值设置
+    - feature(tag-input): 新增 copyable 配置支持复制，新增 copySeparator 配置复制内容的分隔符
+
+
+### 2.0.2-beta.74
+
+* **[feat]**:
+    - bugfix(tooltip): 缺少防御性编码导致的报错
+
+
+### 2.0.2-beta.73
+
+* **[feat]**:
+    - bugfix(select): select 分组模式搜索样式问题
+    - feature(tree): checkbox模式下支持全局禁用
+
+
+### 2.0.2-beta.72
+
+* **[feat]**:
+    - fix(popover): 修复弹出点击问题
+
+
 ### 2.0.2-beta.70
 
 * **[feat]**:

@@ -805,6 +805,7 @@ export default defineComponent({
         selectedStyle,
         curSearchValue,
         highlightKeyword,
+        isSearchEmpty,
         register,
         unregister,
         registerGroup,

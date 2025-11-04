@@ -1,29 +1,54 @@
 <template>
   <div>
-    <bk-input class="mb8" v-model="val" :max="100" :min="1" :step="0.5" :precision="1" size="small" type="number"
-      clearable />
-    <bk-input class="mb8" v-model="val1" :max="1000" :min="25" type="number" clearable />
-    <bk-input class="mb8" v-model="val2" :max="100" :min="1" size="large" type="number" clearable disabled />
+    <bk-input
+      class="mb8"
+      v-model="val"
+      :max="100"
+      :min="1"
+      :precision="1"
+      :step="0.5"
+      size="small"
+      type="number"
+      clearable
+    />
+    <bk-input
+      class="mb8"
+      v-model="val1"
+      :max="1000"
+      :min="25"
+      type="number"
+      clearable
+    />
+    <bk-input
+      class="mb8"
+      v-model="val2"
+      :max="100"
+      :min="1"
+      size="large"
+      type="number"
+      clearable
+      disabled
+    />
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-const val = ref();
-const val1 = ref(30);
-const val2 = ref(1);
-function handleChange(newVal, event) {
-  console.log(newVal, event);
-  val1.value = newVal;
-}
+  import { ref } from 'vue';
+  const val = ref();
+  const val1 = ref(30);
+  const val2 = ref(1);
+  function handleChange(newVal, event) {
+    console.log(newVal, event);
+    val1.value = newVal;
+  }
 </script>
 
 <style lang="less">
-.mb10 {
-  margin-bottom: 10px;
-}
+  .mb10 {
+    margin-bottom: 10px;
+  }
 
-.mb8 {
-  margin-bottom: 8px;
-}
+  .mb8 {
+    margin-bottom: 8px;
+  }
 </style>
