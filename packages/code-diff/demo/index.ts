@@ -165,7 +165,7 @@ const props = [
   {
     name: 'language',
     description: '代码语言类型',
-    type: 'css | java | javascript | json | scss | less | stylus | shell | bash | cpp | go | xml | python | typescript | sql | ruby | vim | php | perl | powershell | makefile',
+    type: 'string',
     options: [
       'css',
       'java',

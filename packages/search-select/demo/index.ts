@@ -139,10 +139,6 @@ const presets = [
       modelValue: [],
       uniqueSelect: true,
     },
-    style: {
-      width: '85%',
-      minWidth: '200px',
-    },
   },
   {
     title: '复杂条件',
@@ -155,10 +151,6 @@ const presets = [
         { id: 'and', name: '且' },
         { id: 'or', name: '或' },
       ],
-    },
-    style: {
-      width: '85%',
-      minWidth: '200px',
     },
   },
 ];

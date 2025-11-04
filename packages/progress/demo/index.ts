@@ -37,11 +37,7 @@ const presets = [
       size: '',
       showText: false,
       textInside: false,
-      color: '#13ce66'
-    },
-    style: {
-      width: '80%',
-      minWidth: '200px',
+      color: '#13ce66',
     },
   },
   {
@@ -53,12 +49,6 @@ const presets = [
       width: 126,
       bgColor: '#f5f5f5',
       color: '#13ce66',
-    },
-    style: {
-      width: '80%',
-      minWidth: '200px',
-      display: 'flex',
-      justifyContent: 'center',
     },
   },
 ];

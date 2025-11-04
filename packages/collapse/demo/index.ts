@@ -47,10 +47,6 @@ const presets = [
       modelValue: [],
       accordion: false,
     },
-    style: {
-      width: '80%',
-      minWidth: '200px',
-    },
   },
   {
     title: '线条型',
@@ -72,10 +68,6 @@ const presets = [
       modelValue: [],
       accordion: false,
     },
-    style: {
-      width: '80%',
-      minWidth: '200px',
-    },
   },
   {
     title: '色块型',
@@ -95,10 +87,6 @@ const presets = [
         },
       ],
       accordion: false,
-    },
-    style: {
-      width: '80%',
-      minWidth: '200px',
     },
   },
   {
@@ -121,11 +109,7 @@ const presets = [
       modelValue: [],
       accordion: false,
     },
-    style: {
-      width: '80%',
-      minWidth: '200px',
-    },
-  }
+  },
 ];
 
 // 组件属性，用来自动生成属性文档
@@ -306,6 +290,124 @@ const titleCN = '折叠面板';
 // 组件描述
 const description = '折叠面板组件，用于展示可折叠的内容区域';
 
+const children = [
+  {
+    name: 'collapse-panel',
+    props: [
+      {
+        name: 'name',
+        description: '面板名称，用于标识面板，可以是字符串或数字',
+        type: 'number | string',
+        default: '',
+      },
+      {
+        name: 'title',
+        description: '面板标题，可以是字符串或插槽',
+        type: 'any',
+        default: '',
+      },
+      {
+        name: 'content',
+        description: '面板内容，字符串形式',
+        type: 'string',
+        default: '',
+      },
+      {
+        name: 'disabled',
+        description: '是否禁用面板',
+        type: 'boolean',
+        default: 'false',
+      },
+      {
+        name: 'isFormList',
+        description: '是否从列表中渲染',
+        type: 'boolean',
+        default: 'false',
+      },
+      {
+        name: 'renderDirective',
+        description: '渲染指令，用于控制是否渲染组件',
+        type: 'string',
+        options: ['if', 'show'],
+        default: '',
+      },
+      {
+        name: 'modelValue',
+        description: '面板的展开/收起状态',
+        type: 'boolean',
+        default: 'false',
+      },
+      {
+        name: 'alone',
+        description: '是否单独使用面板',
+        type: 'boolean',
+        default: 'false',
+      },
+      {
+        name: 'icon',
+        description: '自定义图标',
+        type: 'string',
+        default: 'angle-right',
+      },
+      {
+        name: 'itemClick',
+        description: '面板项点击时触发',
+        type: 'function',
+        default: '',
+      },
+    ],
+    emits: [
+      {
+        name: 'update:modelValue',
+        description: '展开状态变化时触发',
+        params: [
+          {
+            name: 'isActive',
+            type: 'boolean',
+          },
+        ],
+      },
+      {
+        name: 'change',
+        description: '展开状态变化时触发',
+        params: [
+          {
+            name: 'data',
+            type: '{ name: number | string }',
+          },
+        ],
+      },
+      {
+        name: 'after-leave',
+        description: '面板收起动画完成后触发',
+        params: [],
+      },
+      {
+        name: 'before-enter',
+        description: '面板展开动画开始前触发',
+        params: [],
+      },
+    ],
+    slots: [
+      {
+        name: 'default',
+        description: '自定义标题内容（优先级高于 header 插槽）',
+        params: [],
+      },
+      {
+        name: 'header',
+        description: '自定义头部内容',
+        params: [],
+      },
+      {
+        name: 'content',
+        description: '自定义内容区域',
+        params: [],
+      },
+    ],
+  },
+];
+
 const wiki: IComponentWiki = {
   group,
   name,
@@ -316,123 +418,7 @@ const wiki: IComponentWiki = {
   slots,
   presets,
   description,
-  children: [
-    {
-      name: 'collapse-panel',
-      props: [
-        {
-          name: 'name',
-          description: '面板名称，用于标识面板，可以是字符串或数字',
-          type: 'number | string',
-          default: '',
-        },
-        {
-          name: 'title',
-          description: '面板标题，可以是字符串或插槽',
-          type: 'any',
-          default: '',
-        },
-        {
-          name: 'content',
-          description: '面板内容，字符串形式',
-          type: 'string',
-          default: '',
-        },
-        {
-          name: 'disabled',
-          description: '是否禁用面板',
-          type: 'boolean',
-          default: 'false',
-        },
-        {
-          name: 'isFormList',
-          description: '是否从列表中渲染',
-          type: 'boolean',
-          default: 'false',
-        },
-        {
-          name: 'renderDirective',
-          description: '渲染指令，用于控制是否渲染组件',
-          type: 'string',
-          options: ['if', 'show'],
-          default: '',
-        },
-        {
-          name: 'modelValue',
-          description: '面板的展开/收起状态',
-          type: 'boolean',
-          default: 'false',
-        },
-        {
-          name: 'alone',
-          description: '是否单独使用面板',
-          type: 'boolean',
-          default: 'false',
-        },
-        {
-          name: 'icon',
-          description: '自定义图标',
-          type: 'string',
-          default: 'angle-right',
-        },
-        {
-          name: 'itemClick',
-          description: '面板项点击时触发',
-          type: 'function',
-          default: '',
-        },
-      ],
-      emits: [
-        {
-          name: 'update:modelValue',
-          description: '展开状态变化时触发',
-          params: [
-            {
-              name: 'isActive',
-              type: 'boolean',
-            },
-          ],
-        },
-        {
-          name: 'change',
-          description: '展开状态变化时触发',
-          params: [
-            {
-              name: 'data',
-              type: '{ name: number | string }',
-            },
-          ],
-        },
-        {
-          name: 'after-leave',
-          description: '面板收起动画完成后触发',
-          params: [],
-        },
-        {
-          name: 'before-enter',
-          description: '面板展开动画开始前触发',
-          params: [],
-        },
-      ],
-      slots: [
-        {
-          name: 'default',
-          description: '自定义标题内容（优先级高于 header 插槽）',
-          params: [],
-        },
-        {
-          name: 'header',
-          description: '自定义头部内容',
-          params: [],
-        },
-        {
-          name: 'content',
-          description: '自定义内容区域',
-          params: [],
-        },
-      ],
-    },
-  ],
+  children,
 };
 
 export default wiki;

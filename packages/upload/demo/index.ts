@@ -35,7 +35,31 @@ const presets = [
     description: '提供图片和文件上传功能',
     props: {
       url: 'https://jsonplaceholder.typicode.com/posts/',
-      accept: 'image/*',
+      theme: 'button',
+      withCredentials: true,
+      isShowPreview: true,
+    },
+  },
+  {
+    title: '上传图片',
+    description: '只允许jpg、png、jpeg格式',
+    props: {
+      theme: 'picture',
+      withCredentials: true,
+      size: 5,
+      isShowPreview: true,
+      url: 'https://jsonplaceholder.typicode.com/posts/',
+    },
+  },
+  {
+    title: '拖拽上传',
+    description: '把文件拖拽到指定区域进行上传',
+    props: {
+      size: 5,
+      accept: '',
+      withCredentials: true,
+      isShowPreview: true,
+      url: 'https://jsonplaceholder.typicode.com/posts/',
     },
   },
 ];

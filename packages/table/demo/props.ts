@@ -35,7 +35,7 @@ export default [
     type: 'Array<Column>',
     default: '[]',
     description: '表格列配置',
-    link: '/component/table/api#IColumnType',
+    link: '/component/table/api#Column',
   },
   {
     name: 'activeColumn',

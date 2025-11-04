@@ -40,7 +40,7 @@ const presets = [
       placement: 'top',
       confirmConfig: {
         theme: 'danger',
-      }
+      },
     },
     dependent: {
       components: ['button'],

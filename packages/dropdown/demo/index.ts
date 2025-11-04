@@ -36,6 +36,25 @@ const presets = [
         clickContentAutoHide: true,
       },
     },
+    slots: {
+      default: `
+        <bk-button theme="primary">更多操作</bk-button>
+      `,
+      content: `
+        <bk-dropdown-menu>
+          <bk-dropdown-item>生产环境</bk-dropdown-item>
+          <bk-dropdown-item>测试环境</bk-dropdown-item>
+          <bk-dropdown-item>预发布环境</bk-dropdown-item>
+          <bk-dropdown-item>正式环境</bk-dropdown-item>
+          <bk-dropdown-item>灰度环境</bk-dropdown-item>
+          <bk-dropdown-item>开发环境</bk-dropdown-item>
+          <bk-dropdown-item>调试环境</bk-dropdown-item>
+        </bk-dropdown-menu>
+      `,
+    },
+    dependent: {
+      components: ['button'],
+    },
   },
   {
     title: '菜单出现位置',
@@ -45,6 +64,22 @@ const presets = [
       popoverOptions: {
         clickContentAutoHide: true,
       },
+    },
+    slots: {
+      default: `
+        <bk-button theme="primary">更多操作</bk-button>
+      `,
+      content: `
+        <bk-dropdown-menu>
+          <bk-dropdown-item>生产环境</bk-dropdown-item>
+          <bk-dropdown-item>测试环境</bk-dropdown-item>
+          <bk-dropdown-item>预发布环境</bk-dropdown-item>
+          <bk-dropdown-item>正式环境</bk-dropdown-item>
+          <bk-dropdown-item>灰度环境</bk-dropdown-item>
+          <bk-dropdown-item>开发环境</bk-dropdown-item>
+          <bk-dropdown-item>调试环境</bk-dropdown-item>
+        </bk-dropdown-menu>
+      `,
     },
   },
   {
@@ -56,37 +91,21 @@ const presets = [
         clickContentAutoHide: true,
       },
     },
-  },
-  {
-    title: '自定义显示与隐藏',
-    description: '通过 isShow 下来菜单的显示与隐藏，trigger=manual下生效',
-    props: {
-      'is-show': false,
-      trigger: 'manual',
-      popoverOptions: {
-        clickContentAutoHide: true,
-      },
-    },
-  },
-  {
-    title: '禁用状态',
-    description: '通过 disabled 设置禁用状态',
-    props: {
-      disabled: false,
-      popoverOptions: {
-        clickContentAutoHide: true,
-      },
-    },
-  },
-  {
-    title: '回调函数',
-    description: '通过 show hide 设置显示与隐藏的回调',
-    props: {
-      show: () => {},
-      hide: () => {},
-      popoverOptions: {
-        clickContentAutoHide: true,
-      },
+    slots: {
+      default: `
+        <bk-button theme="primary">更多操作</bk-button>
+      `,
+      content: `
+        <bk-dropdown-menu>
+          <bk-dropdown-item>生产环境</bk-dropdown-item>
+          <bk-dropdown-item>测试环境</bk-dropdown-item>
+          <bk-dropdown-item>预发布环境</bk-dropdown-item>
+          <bk-dropdown-item>正式环境</bk-dropdown-item>
+          <bk-dropdown-item>灰度环境</bk-dropdown-item>
+          <bk-dropdown-item>开发环境</bk-dropdown-item>
+          <bk-dropdown-item>调试环境</bk-dropdown-item>
+        </bk-dropdown-menu>
+      `,
     },
   },
   {
@@ -98,15 +117,21 @@ const presets = [
         boundary: 'body',
       },
     },
-  },
-  {
-    title: '点击占位区弹窗不收起',
-    description: '通过 popoverOptions 设置 hideIgnoreReference: true，若占位区为非行内元素，请配置 referenceCls: 类名',
-    props: {
-      popoverOptions: {
-        clickContentAutoHide: true,
-        hideIgnoreReference: true,
-      },
+    slots: {
+      default: `
+        <bk-button theme="primary">更多操作</bk-button>
+      `,
+      content: `
+        <bk-dropdown-menu>
+          <bk-dropdown-item>生产环境</bk-dropdown-item>
+          <bk-dropdown-item>测试环境</bk-dropdown-item>
+          <bk-dropdown-item>预发布环境</bk-dropdown-item>
+          <bk-dropdown-item>正式环境</bk-dropdown-item>
+          <bk-dropdown-item>灰度环境</bk-dropdown-item>
+          <bk-dropdown-item>开发环境</bk-dropdown-item>
+          <bk-dropdown-item>调试环境</bk-dropdown-item>
+        </bk-dropdown-menu>
+      `,
     },
   },
 ];
@@ -207,6 +232,44 @@ const titleCN = '下拉菜单';
 // 组件描述
 const description = '下拉菜单';
 
+const children = [
+  {
+    name: 'dropdown-menu',
+    props: [
+      {
+        name: 'ext-cls',
+        description: '自定义样式类名',
+        type: 'string',
+        default: '',
+      },
+    ],
+    emits: [],
+  },
+  {
+    name: 'dropdown-item',
+    props: [
+      {
+        name: 'ext-cls',
+        description: '自定义样式类名',
+        type: 'string',
+        default: '',
+      },
+    ],
+    emits: [
+      {
+        name: 'click',
+        description: '点击时触发',
+        params: [
+          {
+            name: 'event',
+            type: 'MouseEvent',
+          },
+        ],
+      },
+    ],
+  },
+];
+
 const wiki: IComponentWiki = {
   group,
   name,
@@ -217,43 +280,7 @@ const wiki: IComponentWiki = {
   slots,
   presets,
   description,
-  children: [
-    {
-      name: 'dropdown-menu',
-      props: [
-        {
-          name: 'ext-cls',
-          description: '自定义样式类名',
-          type: 'string',
-          default: '',
-        },
-      ],
-      emits: [],
-    },
-    {
-      name: 'dropdown-item',
-      props: [
-        {
-          name: 'ext-cls',
-          description: '自定义样式类名',
-          type: 'string',
-          default: '',
-        },
-      ],
-      emits: [
-        {
-          name: 'click',
-          description: '点击时触发',
-          params: [
-            {
-              name: 'event',
-              type: 'MouseEvent',
-            },
-          ],
-        },
-      ],
-    },
-  ],
+  children,
 };
 
 export default wiki;

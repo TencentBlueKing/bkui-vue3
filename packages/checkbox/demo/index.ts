@@ -43,7 +43,7 @@ const presets = [
       modelValue: [],
     },
     template: `
-      <bk-checkbox-group>
+      <bk-checkbox-group style="justify-content: center;">
         <bk-checkbox label="微信" />
         <bk-checkbox label="QQ" />
         <bk-checkbox label="Email" />
@@ -191,6 +191,59 @@ const titleCN = '多选框';
 // 组件描述
 const description = '多选框组件';
 
+const children = [
+  {
+    name: 'checkbox-group',
+    props: [
+      {
+        name: 'modelValue',
+        description: '绑定值',
+        type: 'Array<any>',
+      },
+      {
+        name: 'disabled',
+        description: '是否禁用',
+        type: 'boolean',
+        default: false,
+      },
+      {
+        name: 'withValidate',
+        description: '值改变时是否触发表单的校验',
+        type: 'boolean',
+        default: true,
+      },
+    ],
+    emits: [
+      {
+        name: 'update:modelValue',
+        description: '绑定值变化时触发',
+        params: [
+          {
+            name: 'value',
+            type: 'Array<any>',
+          },
+        ],
+      },
+      {
+        name: 'change',
+        description: '选中状态变化时触发',
+        params: [
+          {
+            name: 'value',
+            type: 'Array<any>',
+          },
+        ],
+      },
+    ],
+    slots: [
+      {
+        name: 'default',
+        description: '默认插槽',
+      },
+    ],
+  },
+];
+
 const wiki: IComponentWiki = {
   group,
   name,
@@ -201,58 +254,7 @@ const wiki: IComponentWiki = {
   slots,
   presets,
   description,
-  children: [
-    {
-      name: 'checkbox-group',
-      props: [
-        {
-          name: 'modelValue',
-          description: '绑定值',
-          type: 'Array<any>',
-        },
-        {
-          name: 'disabled',
-          description: '是否禁用',
-          type: 'boolean',
-          default: false,
-        },
-        {
-          name: 'withValidate',
-          description: '值改变时是否触发表单的校验',
-          type: 'boolean',
-          default: true,
-        },
-      ],
-      emits: [
-        {
-          name: 'update:modelValue',
-          description: '绑定值变化时触发',
-          params: [
-            {
-              name: 'value',
-              type: 'Array<any>',
-            },
-          ],
-        },
-        {
-          name: 'change',
-          description: '选中状态变化时触发',
-          params: [
-            {
-              name: 'value',
-              type: 'Array<any>',
-            },
-          ],
-        },
-      ],
-      slots: [
-        {
-          name: 'default',
-          description: '默认插槽',
-        },
-      ],
-    },
-  ],
+  children,
 };
 
 export default wiki;

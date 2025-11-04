@@ -355,11 +355,11 @@ export interface IComponentWiki {
     template?: string;
     props?: Record<string, ValueType>;
     slots?: Record<string, string>;
-    // 依赖组件, 有些组件需要依赖其他组件才能正常渲染
+    // 依赖组件, 有些预设需要依赖其他组件才能展示。并非组件自身的必须配置
     dependent?: {
       components: Array<string>;
     };
-    // 样式, 有些组件需要特定的样式才能正常渲染，或者需要特定的样式才能正常使用
+    // 组件预设外层div样式, 有些预设需要特定的样式才能正常展示，并非组件自身的必须配置
     styles?: Record<string, string>;
   }>;
   types?: {
