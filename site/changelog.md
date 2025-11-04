@@ -1,6 +1,13 @@
 ## 更新日志
 
 
+### 2.0.2-beta.75
+
+* **[feat]**:
+    - fix(popover): boundary默认值设置
+    - feature(tag-input): 新增 copyable 配置支持复制，新增 copySeparator 配置复制内容的分隔符
+
+
 ### 2.0.2-beta.74
 
 * **[feat]**:

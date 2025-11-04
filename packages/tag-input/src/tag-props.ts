@@ -91,6 +91,8 @@ const tagProps = () => ({
     type: Object as PropType<Partial<IOptions>>,
     default: () => ({}),
   },
+  copyable: PropTypes.bool.def(true),
+  copySeparator: PropTypes.string.def('\n'),
 });
 
 export default tagProps;
