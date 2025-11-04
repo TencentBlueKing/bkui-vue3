@@ -32,7 +32,7 @@ const presets = [
     title: '基础用法',
     description: '垂直菜单，子菜单内嵌在菜单区域。',
     props: {
-      replace: true,
+      backRouter: 'api'
     },
     slots: {
       default: `
@@ -66,8 +66,9 @@ const props = [
   {
     name: 'back-router',
     description: '点击回退按钮自定义的路由(路由跳转对象，同 vue-router 的 to)',
-    type: 'string | RouteLocationRaw',
+    type: 'RouteLocationRaw | string',
     default: '',
+    link: '/components/breadcrumb/api#RouteLocationRaw'
   },
   {
     name: 'replace',
@@ -83,14 +84,6 @@ const props = [
   },
 ];
 
-// 组件事件，用来自动生成事件文档
-const emits = [
-  {
-    name: 'click',
-    description: '点击时触发事件',
-    type: 'function',
-  },
-];
 
 const slots = [
   {
@@ -105,7 +98,7 @@ const slots = [
 
 const children = [
   {
-    name: 'Breadcrumb Item',
+    name: 'breadcrumb-item',
     props: [
       {
         name: 'ext-cls',
@@ -123,23 +116,59 @@ const children = [
         type: 'boolean',
       },
     ],
-    emits: [],
   },
   {
-    name: 'dropdown-item',
+    name: 'breadcrumb-item',
     emits: [
       {
-        name: 'default',
-        description: '默认插槽，放置面包屑项的内容',
-        type: 'Slot',
-      },
-      {
-        name: 'separator',
-        description: '自定义分隔符插槽',
-        type: 'Slot',
+            name: 'click',
+            description: '点击事件自身的回调函数',
+            params: [
+                {
+                    name: 'event',
+                    type: 'CompositionEvent',
+                },
+            ],
       },
     ],
   },
+  {
+    name: 'breadcrumb-item',
+    slots: [
+        {
+                name: 'default',
+                description: '默认插槽，放置面包屑项的内容',
+        },
+        {
+                name: 'separator',
+                description: '自定义分隔符插槽',
+        },
+    ],
+  },
+];
+
+const types = [
+    {
+        name: 'RouteLocationRaw',
+        description: '路由跳转对象',
+        fields: [
+            {
+                name: 'string',
+                type: 'string',
+                description: '字符串跳转',
+            },
+            {
+                name: 'RouteLocationPathRaw ',
+                type: 'object',
+                description: '路径跳转对象',
+            },
+            {
+                name: 'RouteLocationNamedRaw',
+                type: 'object',
+                description: '命名路由跳转对象',
+            }
+        ],
+    },
 ];
 
 // 组件分组
@@ -164,10 +193,10 @@ const wiki: IComponentWiki = {
   title,
   titleCN,
   props,
-  emits,
   presets,
   description,
   children,
+  types
 };
 
 export default wiki;
