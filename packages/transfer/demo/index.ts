@@ -25,13 +25,30 @@
  */
 import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
+const sourceList = [
+  { service_code: 'pipeline', service_name: '流水线', disabled: true },
+  { service_code: 'codecc', service_name: '代码检查' },
+  { service_code: 'bcs', service_name: '容器服务' },
+  { service_code: 'artifactory', service_name: '版本仓库' },
+  { service_code: 'ticket', service_name: '凭证管理' },
+  { service_code: 'code', service_name: '代码库', disabled: true },
+  { service_code: 'experience', service_name: '版本体验' },
+  { service_code: 'environment', service_name: '环境管理' },
+  { service_code: 'quality', service_name: '质量红线' },
+  { service_code: 'turbo', service_name: '编译加速' },
+];
+
 // 组件示例
 const presets = [
   {
     title: '单选穿梭框',
     description: '单选完成项穿梭',
     props: {
-      sourceList: [],
+      displayKey: 'service_name',
+      settingKey: 'service_code',
+      sourceList: sourceList,
+      searchable: true,
+      sortable: true,
       targetList: [],
     },
     slots: {
@@ -42,12 +59,13 @@ const presets = [
     title: '多选穿梭框',
     description: '多选完成项穿梭',
     props: {
-      sourceList: [],
+      displayKey: 'service_name',
+      settingKey: 'service_code',
+      sourceList: sourceList,
+      searchable: true,
+      sortable: true,
       targetList: [],
       multiple: true,
-      slots: {
-        default: '<div>多选的穿梭框使用</div>',
-      },
     },
   },
 ];

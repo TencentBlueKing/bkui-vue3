@@ -41,7 +41,7 @@ const presets = [
       justifyContent: 'center',
       alignItems: 'center',
       transform: 'translate(0,0)', // 让Backtop基于容器定位
-    }
+    },
   },
 ];
 

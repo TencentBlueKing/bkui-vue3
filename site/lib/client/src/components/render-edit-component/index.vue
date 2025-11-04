@@ -243,10 +243,19 @@ onUnmounted(() => {
   overflow: auto;
   background: #f3f3fa;
 
-  .edit-component-component {
+  :deep(.edit-component-component) {
     align-self: center;
     margin: 0 auto;
+    width: 100%;
+    padding: 0 24px;
+    display: flex;
+    justify-content: center;
+
+    .search-container {
+      position: revert !important;
+    }
   }
+  
 
   .edit-component-code {
     width: 100%;

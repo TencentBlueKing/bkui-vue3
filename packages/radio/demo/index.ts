@@ -158,6 +158,141 @@ const titleCN = '单选框';
 // 组件描述
 const description = '表单-单选框，在一组选项中进行单选';
 
+const children = [
+  {
+    name: 'radio-group',
+    props: [
+      {
+        name: 'name',
+        description: '名称',
+        type: 'string',
+        default: '',
+      },
+      {
+        name: 'modelValue',
+        description: '绑定值',
+        type: 'string | number | boolean',
+        default: '',
+      },
+      {
+        name: 'disabled',
+        description: '是否禁用',
+        type: 'boolean',
+        default: false,
+      },
+      {
+        name: 'beforeChange',
+        description: '前置改变事件',
+        type: '(event: boolean | number | string) => Promise<boolean> | boolean',
+        default: '() => true',
+      },
+      {
+        name: 'size',
+        description: '尺寸',
+        type: 'string',
+        default: '',
+        options: ['small', '', 'large'],
+      },
+      {
+        name: 'type',
+        description: '类型',
+        type: 'string',
+        default: 'default',
+      },
+      {
+        name: 'withValidate',
+        description: '值改变时是否触发表单的校验',
+        type: 'boolean',
+        default: true,
+      },
+    ],
+    emits: [
+      {
+        name: 'change',
+        description: '值改变时触发',
+        params: [
+          {
+            name: 'value',
+            type: 'string | number | boolean',
+          },
+        ],
+      },
+    ],
+    slots: [
+      {
+        name: 'default',
+        description: '默认插槽',
+      },
+    ],
+  },
+  {
+    name: 'radio-button',
+    props: [
+      {
+        name: 'name',
+        description: '名称',
+        type: 'string',
+        default: '',
+      },
+      {
+        name: 'label',
+        description: '标签',
+        type: 'string | number | boolean',
+        default: '',
+      },
+      {
+        name: 'modelValue',
+        description: '绑定值',
+        type: 'string | number | boolean',
+        default: '',
+      },
+      {
+        name: 'checked',
+        description: '是否选中',
+        type: 'boolean',
+        default: false,
+      },
+      {
+        name: 'disabled',
+        description: '是否禁用',
+        type: 'boolean',
+        default: false,
+      },
+      {
+        name: 'beforeChange',
+        description: '前置改变事件',
+        type: '(event: boolean | number | string) => Promise<boolean> | boolean',
+        default: '() => true',
+      },
+      {
+        name: 'size',
+        description: '尺寸',
+        type: 'string',
+        default: '',
+        options: ['small', '', 'large'],
+      },
+    ],
+    emits: [
+      {
+        name: 'change',
+        description: '值改变时触发',
+        params: [
+          {
+            name: 'value',
+            type: 'string | number | boolean',
+          },
+        ],
+      },
+    ],
+    slots: [
+      {
+        name: 'default',
+        description: '默认插槽',
+      },
+    ],
+  },
+];
+
 const wiki: IComponentWiki = {
   group,
   name,
@@ -168,140 +303,7 @@ const wiki: IComponentWiki = {
   slots,
   presets,
   description,
-  children: [
-    {
-      name: 'radio-group',
-      props: [
-        {
-          name: 'name',
-          description: '名称',
-          type: 'string',
-          default: '',
-        },
-        {
-          name: 'modelValue',
-          description: '绑定值',
-          type: 'string | number | boolean',
-          default: '',
-        },
-        {
-          name: 'disabled',
-          description: '是否禁用',
-          type: 'boolean',
-          default: false,
-        },
-        {
-          name: 'beforeChange',
-          description: '前置改变事件',
-          type: '(event: boolean | number | string) => Promise<boolean> | boolean',
-          default: '() => true',
-        },
-        {
-          name: 'size',
-          description: '尺寸',
-          type: 'string',
-          default: '',
-          options: ['small', '', 'large'],
-        },
-        {
-          name: 'type',
-          description: '类型',
-          type: 'string',
-          default: 'default',
-        },
-        {
-          name: 'withValidate',
-          description: '值改变时是否触发表单的校验',
-          type: 'boolean',
-          default: true,
-        },
-      ],
-      emits: [
-        {
-          name: 'change',
-          description: '值改变时触发',
-          params: [
-            {
-              name: 'value',
-              type: 'string | number | boolean',
-            },
-          ],
-        },
-      ],
-      slots: [
-        {
-          name: 'default',
-          description: '默认插槽',
-        },
-      ],
-    },
-    {
-      name: 'radio-button',
-      props: [
-        {
-          name: 'name',
-          description: '名称',
-          type: 'string',
-          default: '',
-        },
-        {
-          name: 'label',
-          description: '标签',
-          type: 'string | number | boolean',
-          default: '',
-        },
-        {
-          name: 'modelValue',
-          description: '绑定值',
-          type: 'string | number | boolean',
-          default: '',
-        },
-        {
-          name: 'checked',
-          description: '是否选中',
-          type: 'boolean',
-          default: false,
-        },
-        {
-          name: 'disabled',
-          description: '是否禁用',
-          type: 'boolean',
-          default: false,
-        },
-        {
-          name: 'beforeChange',
-          description: '前置改变事件',
-          type: '(event: boolean | number | string) => Promise<boolean> | boolean',
-          default: '() => true',
-        },
-        {
-          name: 'size',
-          description: '尺寸',
-          type: 'string',
-          default: '',
-          options: ['small', '', 'large'],
-        },
-      ],
-      emits: [
-        {
-          name: 'change',
-          description: '值改变时触发',
-          params: [
-            {
-              name: 'value',
-              type: 'string | number | boolean',
-            },
-          ],
-        },
-      ],
-      slots: [
-        {
-          name: 'default',
-          description: '默认插槽',
-        },
-      ],
-    },
-  ],
+  children,
 };
 
 export default wiki;
