@@ -91,6 +91,12 @@ const presets = [
 // 组件属性，用来自动生成属性文档
 const props = [
   {
+    name: 'modelValue',
+    description: '输入框绑定值',
+    type: 'string',
+    default: '',
+  },
+  {
     name: 'type',
     description: '输入框类型',
     type: 'string',

@@ -28,21 +28,72 @@ import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 import { EMIT_EVENTS } from '../src/const';
 
 // 组件示例
+// 组件示例
 const presets = [
   {
-    title: '基础用法',
-    description: 'popover 的基础用法',
+    title: '用户信息提示',
+    description: '鼠标悬停显示用户详细信息',
     props: {
       placement: 'top',
       theme: 'light',
+      trigger: 'hover',
+      width: 280,
     },
     slots: {
       default: `
-        <div style="align-self: center;">当鼠标经过这段文字时，会显示一个气泡框</div>
+        <span style="color: #3a84ff; cursor: pointer; align-self: center;">张三</span>
       `,
       content: `
-        <div>这是popover的内容</div>
+        <div style="padding: 12px;">
+          <div style="display: flex; align-items: center; margin-bottom: 8px;">
+            <div style="display: flex; align-items: center">
+              <div style="font-weight: 600; font-size: 14px;">张三</div>
+              <div style="margin-left: 6px; color: #63656e; font-size: 12px;">前端开发工程师</div>
+            </div>
+          </div>
+          <div style="font-size: 12px; color: #63656e;">
+            <div>部门：技术部-前端组</div>
+            <div>邮箱：zhangsan@company.com</div>
+            <div>电话：138****1234</div>
+          </div>
+        </div>
       `,
+    },
+  },
+  {
+    title: '操作说明提示',
+    description: '复杂操作前的指导说明',
+    props: {
+      placement: 'right',
+      theme: 'dark',
+      trigger: 'click',
+      width: 320,
+    },
+    slots: {
+      default: `
+        <bk-button theme="primary" style="align-self: center;">
+          <span style="margin-right: 4px;">发布应用</span>
+          <bk-icon type="question" />
+        </bk-button>
+      `,
+      content: `
+        <div style="padding: 16px;">
+          <h4 style="margin: 0 0 8px 0; color: #fff;">发布流程说明</h4>
+          <ol style="margin: 0; padding-left: 16px; color: #c4c6cc; font-size: 12px; list-style-type: decimal;">
+            <li style="line-height: 20px; list-style-type: decimal;">检查代码合并状态</li>
+            <li style="line-height: 20px; list-style-type: decimal;">确认测试通过情况</li>
+            <li style="line-height: 20px; list-style-type: decimal;">选择发布环境</li>
+            <li style="line-height: 20px; list-style-type: decimal;">填写发布说明</li>
+            <li style="line-height: 20px; list-style-type: decimal;">点击确认发布</li>
+          </ol>
+          <div style="margin-top: 12px; padding: 8px; background: rgba(255,255,255,0.1); border-radius: 2px;">
+            <div style="font-size: 12px; color: #a3c5ff;">提示：发布过程约需5-10分钟</div>
+          </div>
+        </div>
+      `,
+    },
+    dependent: {
+      components: ['button'],
     },
   },
 ];
@@ -100,7 +151,7 @@ const props = [
   {
     name: 'content',
     description: '显示的内容',
-    type: 'IContent',
+    type: 'HTMLElement | JSX.Element | number | string',
     default: '',
   },
   {
@@ -336,11 +387,6 @@ const emits = [
 // // 组件自定义的复杂类型
 const types = [
   {
-    name: 'IContent',
-    description: '显示的内容',
-    type: 'HTMLElement | JSX.Element | number | string',
-  },
-  {
     name: 'IAxesOffsets',
     description: '位置偏移',
     fields: [
@@ -364,7 +410,7 @@ const types = [
 ];
 
 // 组件分组
-const group = NavGroupMeta.Nav;
+const group = NavGroupMeta.Feedback;
 
 // 组件名称
 const name = 'popover';

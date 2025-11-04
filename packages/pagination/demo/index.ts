@@ -28,25 +28,32 @@ import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 // 组件示例
 const presets = [
   {
-    title: '标准版',
-    description: '标准样式',
+    title: '基本用法',
+    description: '基本用法',
     props: {
-      modelValue: 1,
+      modelValue: 3,
+      count: 200,
+      limit: 20,
       type: 'default',
       showLimit: true,
-      align: 'left',
+      align: 'right',
       showTotalCount: true,
+      limitList: [10, 20, 50, 100],
     },
   },
   {
-    title: '简易版',
-    description: '在空间有限（宽度 <640px) 时使用',
+    title: '小型分页',
+    description: '表格底部紧凑布局，适合数据量大的场景',
     props: {
       modelValue: 1,
+      count: 1000,
+      limit: 50,
       type: 'compact',
       showLimit: true,
-      align: 'left',
-      showTotalCount: true,
+      align: 'center',
+      showTotalCount: false,
+      small: true,
+      limitList: [50, 100, 200],
     },
   },
 ];

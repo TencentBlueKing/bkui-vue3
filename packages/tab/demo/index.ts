@@ -28,9 +28,110 @@ import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 // 组件示例
 const presets = [
   {
-    title: '基础用法',
+    title: '下滑线样式',
     description: '基础的、简洁的标签页。',
-    props: {},
+    props: {
+      active: 'mission',
+      type: 'unborder-card',
+      addable: false,
+      sortable: false,
+      closable: false,
+    },
+    slots: {
+      default: `
+        <bk-tab-panel name="mission" label="任务报表">
+          任务报表
+        </bk-tab-panel>
+        <bk-tab-panel name="config" label="加速配置">
+          加速配置
+        </bk-tab-panel>
+        <bk-tab-panel name="history" label="历史版本">
+          历史版本
+        </bk-tab-panel>
+        <bk-tab-panel name="deleted" label="已归档加速任务">
+          已归档加速任务
+        </bk-tab-panel>
+        `,
+    },
+  },
+  {
+    title: '选项卡样式',
+    props: {
+      active: 'mission',
+      type: 'card',
+      addable: false,
+      sortable: false,
+      closable: false,
+    },
+    slots: {
+      default: `
+        <bk-tab-panel name="mission" label="任务报表">
+          任务报表
+        </bk-tab-panel>
+        <bk-tab-panel name="config" label="加速配置">
+          加速配置
+        </bk-tab-panel>
+        <bk-tab-panel name="history" label="历史版本">
+          历史版本
+        </bk-tab-panel>
+        <bk-tab-panel name="deleted" label="已归档加速任务">
+          已归档加速任务
+        </bk-tab-panel>
+        `,
+    },
+  },
+  {
+    title: '标签样式',
+    props: {
+      active: 'mission',
+      type: 'card-tab',
+      addable: false,
+      sortable: false,
+      closable: false,
+    },
+    slots: {
+      default: `
+        <bk-tab-panel name="mission" label="任务报表">
+          任务报表
+        </bk-tab-panel>
+        <bk-tab-panel name="config" label="加速配置">
+          加速配置
+        </bk-tab-panel>
+        <bk-tab-panel name="history" label="历史版本">
+          历史版本
+        </bk-tab-panel>
+        <bk-tab-panel name="deleted" label="已归档加速任务">
+          已归档加速任务
+        </bk-tab-panel>
+        `,
+    },
+  },
+  {
+    title: '选项卡位置',
+    props: {
+      active: 'mission',
+      type: 'card-tab',
+      'tab-position': 'left',
+      addable: false,
+      sortable: false,
+      closable: false,
+    },
+    slots: {
+      default: `
+        <bk-tab-panel name="mission" label="任务报表">
+          任务报表
+        </bk-tab-panel>
+        <bk-tab-panel name="config" label="加速配置">
+          加速配置
+        </bk-tab-panel>
+        <bk-tab-panel name="history" label="历史版本">
+          历史版本
+        </bk-tab-panel>
+        <bk-tab-panel name="deleted" label="已归档加速任务">
+          已归档加速任务
+        </bk-tab-panel>
+        `,
+    },
   },
 ];
 
@@ -46,7 +147,7 @@ const props = [
     name: 'type',
     description: '选项卡样式',
     type: 'string',
-    options: ['card', 'border-card', 'unborder-card', 'vertical-card', 'card-grid'],
+    options: ['card', 'border-card', 'unborder-card', 'vertical-card', 'card-grid', 'card-tab'],
     default: 'border-card',
   },
   {

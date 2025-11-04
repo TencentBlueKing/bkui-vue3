@@ -10,14 +10,14 @@
         <div v-for="item in TABS" :key="item.id" @click="changeTab(item.id)" :class="`${activeTab === item.id ? 'active' : ''}`">{{ item.name }}</div>
       </div>
     </div>
-    <Collapse title="属性" v-if="comProps.length">
-      <div class="prl16">
+    <Collapse title="属性">
+      <div class="prl16" v-if="comProps.length">
         <DynamicConfigItem
           v-for="prop in comProps"
           :key="prop.name"
           :name="prop.name"
           :type="prop.type"
-          :model-value="renderProps[prop.name]"
+          :model-value="renderCamelKeyProps(prop.name)"
           :options="prop.options"
           :complex-types="types"
           :class="{ 'selected-prop': selectedProp === prop.name }"
@@ -28,9 +28,10 @@
           </template>
         </DynamicConfigItem>
       </div>
+      <Empty v-else />
     </Collapse>
-    <Collapse title="插槽" v-if="comSlots.length">
-      <div class="prl16">
+    <Collapse title="插槽">
+      <div class="prl16" v-if="comSlots.length">
         <Slot
           v-for="slot in comSlots"
           :slot-name="slot.name"
@@ -38,6 +39,7 @@
           :model-value="renderSlots[slot.name]"
           @update:model-value="(value) => handleUpdateSlots(slot.name, value)" />
       </div>
+      <Empty v-else />
     </Collapse>
   </section>
 </template>
@@ -53,12 +55,15 @@ import type {
 
 import DynamicConfigItem from '../dynamic-config-item';
 import { factType, splitType } from '../dynamic-config-item/utils';
+import { filterXss } from '@blueking/xss-filter';
+import { camelKey, camelToSnakeCase } from '@/utils'
 
 import Collapse from './collapse';
 import Header from './header.vue';
 import RenderNameTip from './name-tip';
 import Search from './search.vue';
 import Slot from './slot';
+import Empty from './empty.vue';
 
 interface IProps {
   props?: IComponentWiki['props'];
@@ -82,7 +87,7 @@ const handleUpdateProps = (name: string, value: PropValue) => {
     'update:renderProps',
     {
       ...props.renderProps,
-      [name]: value,
+      [name]: filterXss(value),
     },
   );
 };
@@ -155,7 +160,7 @@ const filterPropSlots = <T extends { name: string }, U extends object>(all: T[],
   }
   const currentPropSlots: T[] = [];
   Object.keys(preset).forEach((key) => {
-    const filterProps = all.filter(item => item.name === key);
+    const filterProps = all.filter(item => camelKey(item.name) === camelKey(key));
     currentPropSlots.push(...filterProps);
   });
   return propsSort(currentPropSlots);
@@ -189,6 +194,18 @@ const comProps = computed(() => {
 const comSlots = computed(() => {
   return filterPropSlots(props.slots ?? [], props.presetSlots ?? {});
 });
+
+const renderCamelKeyProps = (key: string) => {
+  const renderVal = props.renderProps[key]
+  if(typeof renderVal === 'undefined') {
+    if(key.includes('-')) {
+      return props.renderProps[camelKey(key)]
+    } else {
+      return props.renderProps[camelToSnakeCase(key)]
+    }
+  }
+  return renderVal
+}
 
 const resetProp = () => {
   emits('update:renderProps', { ...props.presetProps });

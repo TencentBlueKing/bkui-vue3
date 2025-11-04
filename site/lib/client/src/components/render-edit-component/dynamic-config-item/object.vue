@@ -163,7 +163,6 @@ const validateObject = () => {
   } catch (error) {
     hasError.value = true;
     isValidObject.value = false;
-    
     // 提供更详细的错误信息
     if (error instanceof SyntaxError) {
       const message = error.message;

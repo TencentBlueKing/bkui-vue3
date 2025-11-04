@@ -3,7 +3,6 @@
     :loading="loading"
     :z-index="100"
     class="edit-component"
-    ref="componentRef"
   >
     <template v-if="!loading">
       <render-header
@@ -132,13 +131,20 @@ const dependentComponentsCache = ref<Record<string, unknown>>({});
 const renderPresetIndex = ref(0);
 // 展示的主面板
 const mainPanel = ref<MainPanel>(MainPanel.Component);
-const componentRef = ref<HTMLElement>();
 const isFullScreen = ref(false);
+
+const trimSlots = (slots: IComponentWiki['presets'][number]['slots']) => {
+  const newPresetSlots = {} as IComponentWiki['presets'][number]['slots']
+  for (const key of Object.keys(slots)) {
+    newPresetSlots[key] = slots[key].trim()
+  }
+  return newPresetSlots
+}
 
 // 选择预设
 const handleChoosePreset = async (preset: IComponentWiki['presets'][number]) => {
   renderProps.value = JSON.parse(JSON.stringify(preset.props ?? {}));
-  renderSlots.value = JSON.parse(JSON.stringify(preset.slots || {}));
+  renderSlots.value = trimSlots(preset.slots  || {});
   renderPresetIndex.value = props.componentWiki.presets.indexOf(preset);
 
   // 处理依赖组件
@@ -189,7 +195,7 @@ const handleFullscreenChange = () => {
 // 全屏
 const handleFullScreen = () => {
   if (!isFullScreen.value) {
-    componentRef.value.requestFullscreen();
+    document.querySelector('.edit-component')?.requestFullscreen();
   } else {
     document.exitFullscreen();
   }
