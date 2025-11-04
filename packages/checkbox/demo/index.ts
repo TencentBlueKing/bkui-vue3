@@ -43,7 +43,7 @@ const presets = [
       modelValue: [],
     },
     template: `
-      <bk-checkbox-group>
+      <bk-checkbox-group style="justify-content: center;">
         <bk-checkbox label="微信" />
         <bk-checkbox label="QQ" />
         <bk-checkbox label="Email" />

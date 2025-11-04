@@ -51,6 +51,7 @@ const presets = [
       display: 'flex',
       flexDirection: 'column',
       gap: '10px',
+      textAlign: 'left',
     },
   },
   {
@@ -75,6 +76,7 @@ const presets = [
       display: 'flex',
       flexDirection: 'column',
       gap: '10px',
+      textAlign: 'left',
     },
   },
   {
@@ -99,6 +101,7 @@ const presets = [
       display: 'flex',
       flexDirection: 'column',
       gap: '10px',
+      textAlign: 'left',
     },
   },
 ];

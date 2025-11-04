@@ -46,6 +46,7 @@ const presets = [
     template: `
      <bk-radio-group
         type="capsule"
+        style="width: revert;"
       >
         <bk-radio-button label="QQ" />
         <bk-radio-button label="原始数据" />
@@ -63,7 +64,7 @@ const presets = [
       modelValue: [],
     },
     template: `
-      <bk-radio-group>
+      <bk-radio-group style="width: revert;">
         <bk-radio-button label="QQ" />
         <bk-radio-button label="微信" />
         <bk-radio-button label="Email" />

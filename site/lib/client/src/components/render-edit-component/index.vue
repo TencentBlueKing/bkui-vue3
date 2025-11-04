@@ -254,11 +254,19 @@ onUnmounted(() => {
     margin: 0 auto;
     width: 100%;
     padding: 0 24px;
-    display: flex;
-    justify-content: center;
+    text-align: center;
 
     .search-container {
       position: revert !important;
+    }
+
+    .bk-rate-stars {
+      display: flex;
+      justify-content: center;
+    }
+
+    .bk-tree {
+      text-align: left;
     }
   }
   

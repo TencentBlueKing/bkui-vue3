@@ -137,6 +137,7 @@ const presets = [
     props: {
       data: data,
       children: 'children',
+      showCheckbox: true,
       label: 'name',
       draggable: true,
       levelLine: true,
