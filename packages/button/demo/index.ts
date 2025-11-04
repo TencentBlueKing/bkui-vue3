@@ -53,7 +53,7 @@ const props = [
     name: 'size',
     description: '按钮尺寸大小',
     options: ['small', 'large'],
-    type: 'String',
+    type: 'string',
   },
   {
     name: 'hover-theme',
@@ -65,12 +65,12 @@ const props = [
   {
     name: 'text',
     description: '是否为文字按钮',
-    type: 'Boolean',
+    type: 'boolean',
   },
   {
     name: 'outline',
     description: '是否为反色按钮',
-    type: 'Boolean',
+    type: 'boolean',
   },
 ];
 
@@ -86,7 +86,6 @@ const slots = [
   {
     name: 'default',
     description: '默认插槽',
-    type: 'Slot',
   },
 ];
 

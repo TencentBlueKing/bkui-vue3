@@ -28,15 +28,14 @@ import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
 // 组件示例
 const presets = [
-    {
-        title: '基础用法',
-        description: '垂直菜单，子菜单内嵌在菜单区域。',
-        props: {
-            replace: true,
-        },
-        slots: {
-            default: 
-            `
+  {
+    title: '基础用法',
+    description: '垂直菜单，子菜单内嵌在菜单区域。',
+    props: {
+      replace: true,
+    },
+    slots: {
+      default: `
             <bk-breadcrumb-item to='demo'>
                 组件示例
             </bk-breadcrumb-item>
@@ -47,64 +46,100 @@ const presets = [
                 设计规范
             </bk-breadcrumb-item>
             `,
-        },
     },
+  },
 ];
 // 组件属性，用来自动生成属性文档
 const props = [
-    {
-        name: 'separator',
-        description: '分隔符',
-        type: 'string',
-        default: '/',
-    },
-    {
-        name: 'separator-class',
-        description: '图标分隔符 class',
-        type: 'string',
-        default: '',
-    },
-    {
-        name: 'back-router',
-        description: '点击回退按钮自定义的路由(路由跳转对象，同 vue-router 的 to)',
-        type: 'string | object',
-        default: '',
-    },
-    {
-        name: 'replace',
-        description: '开启backRouter并使用默认的icon跳转时，是否替换当前路由历史',
-        type: 'Boolean',
-        default: false,
-    },
-    {
-        name: 'ext-cls',
-        description: '自定义样式类名',
-        type: 'string',
-        default: '',
-    },
+  {
+    name: 'separator',
+    description: '分隔符',
+    type: 'string',
+    default: '/',
+  },
+  {
+    name: 'separator-class',
+    description: '图标分隔符 class',
+    type: 'string',
+    default: '',
+  },
+  {
+    name: 'back-router',
+    description: '点击回退按钮自定义的路由(路由跳转对象，同 vue-router 的 to)',
+    type: 'string | RouteLocationRaw',
+    default: '',
+  },
+  {
+    name: 'replace',
+    description: '开启backRouter并使用默认的icon跳转时，是否替换当前路由历史',
+    type: 'boolean',
+    default: false,
+  },
+  {
+    name: 'ext-cls',
+    description: '自定义样式类名',
+    type: 'string',
+    default: '',
+  },
 ];
 
 // 组件事件，用来自动生成事件文档
 const emits = [
-    {
-        name: 'click',
-        description: '点击时触发事件',
-        type: 'function',
-    },
+  {
+    name: 'click',
+    description: '点击时触发事件',
+    type: 'function',
+  },
 ];
 
-
 const slots = [
-    {
+  {
+    name: 'default',
+    description: '默认插槽，放置 BreadcrumbItem 组件',
+  },
+  {
+    name: 'prefix',
+    description: '插槽，用于替换默认回退按钮',
+  },
+];
+
+const children = [
+  {
+    name: 'Breadcrumb Item',
+    props: [
+      {
+        name: 'ext-cls',
+        description: '自定义样式类名',
+        type: 'string',
+      },
+      {
+        name: 'to',
+        description: '点击后跳转的链接，可以是一个路径或一个描述目标位置的对象',
+        type: 'string',
+      },
+      {
+        name: 'replace',
+        description: '是否替换当前的历史记录',
+        type: 'boolean',
+      },
+    ],
+    emits: [],
+  },
+  {
+    name: 'dropdown-item',
+    emits: [
+      {
         name: 'default',
-        description: '默认插槽，放置 BreadcrumbItem 组件',
-        type: 'function',
-    },
-    {
-        name: 'prefix',
-        description: '插槽，用于替换默认回退按钮',
-        type: 'slot',
-    },
+        description: '默认插槽，放置面包屑项的内容',
+        type: 'Slot',
+      },
+      {
+        name: 'separator',
+        description: '自定义分隔符插槽',
+        type: 'Slot',
+      },
+    ],
+  },
 ];
 
 // 组件分组
@@ -123,53 +158,16 @@ const titleCN = '面包屑';
 const description = 'Breadcrumb组件， 显示当前页面的路径，快速返回之前的任意页面';
 
 const wiki: IComponentWiki = {
-    group,
-    name,
-    slots,
-    title,
-    titleCN,
-    props,
-    emits,
-    presets,
-    description,
-    children: [
-        {
-            name: 'Breadcrumb Item',
-            props: [
-                {
-                    name: 'ext-cls',
-                    description: '自定义样式类名',
-                    type: 'string',
-                },
-                {
-                    name: 'to',
-                    description: '点击后跳转的链接，可以是一个路径或一个描述目标位置的对象',
-                    type: 'string',
-                },
-                {
-                    name: 'replace',
-                    description: '是否替换当前的历史记录',
-                    type: 'Boolean',
-                },
-            ],
-            emits: [],
-        },
-        {
-            name: 'dropdown-item',
-            emits: [
-                {
-                    name: 'default',
-                    description: '默认插槽，放置面包屑项的内容',
-                    type: 'Slot'
-                },
-                {
-                    name: 'separator',
-                    description: '自定义分隔符插槽',
-                    type: 'Slot'
-                },
-            ],
-        },
-    ],
+  group,
+  name,
+  slots,
+  title,
+  titleCN,
+  props,
+  emits,
+  presets,
+  description,
+  children,
 };
 
 export default wiki;
