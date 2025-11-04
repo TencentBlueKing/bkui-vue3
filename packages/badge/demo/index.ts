@@ -138,7 +138,7 @@ const name = 'badge';
 const title = 'Badge';
 
 // 组件中文标签
-const titleCN = 'Badge 标记';
+const titleCN = '标记';
 
 // 组件描述
 const description = 'Badge 组件， 可以出现在任意 DOM 节点角上的数字或状态标记。';

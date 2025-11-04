@@ -30,11 +30,13 @@ import { usePrefix } from '@bkui-vue/config-provider';
 import { ArrowsLeft } from '@bkui-vue/icon';
 import { classes } from '@bkui-vue/shared';
 
+import { emits } from './emits';
 import { props, IBreadcrumbProps } from './props';
 
 export default defineComponent({
   name: 'Breadcrumb',
   props,
+  emits,
   setup(props, { slots }) {
     const { resolveClassName } = usePrefix();
     const { proxy, appContext } = getCurrentInstance();
