@@ -9,6 +9,7 @@ import RenderEnum from './enum.vue';
 import RenderArray from './array.vue';
 import RenderObject from './object.vue';
 import RenderErrorType from './errortype.vue';
+import Tab from '../config/tab'
 
 import './index.postcss';
 
@@ -50,9 +51,12 @@ export default defineComponent({
   setup(props, { emit }) {
     const singleType = ref('');
     const typeList = computed(() => {
-      return [...new Set(splitType(props.type))]
+      return [...new Set(splitType(props.type))].map(item => ({
+        value: item,
+        label: item
+      }))
     })
-    singleType.value = typeList.value?.[0];
+    singleType.value = typeList.value?.[0]?.value;
     const typeValue = computed(() => {
       return factType(singleType.value, props.options, props.complexTypes)
     });
@@ -87,13 +91,12 @@ export default defineComponent({
       if(this.typeList.length > 1) {
         return (
           <div class='dynamic-type-select'>
-            <RenderEnum
-              modelValue={this.singleType as string}
-              onUpdate:modelValue={(value: string) => { 
-                this.singleType = value;
-              }}
-              options={this.typeList}
-              clearable={false}
+            <Tab 
+              tabs={this.typeList}
+              activeTab={this.singleType}
+              onUpdate:activeTab={(val) => {
+                this.singleType = val
+              }} 
             />
           </div>
         )
@@ -163,7 +166,7 @@ export default defineComponent({
         <div class="config-item-name">
           {this.$slots.nameTip?.()}
         </div>
-        <div class={`config-item-content${this.isOnlyBoolean || this.typeValue === 'array' ? '': ' type-flex'}`}>
+        <div class={`config-item-content${this.isOnlyBoolean || this.typeValue === 'array' ? '': ''}`}>
           {typeSelectRender()}
           <div>
             {typeConfigItemRender()}

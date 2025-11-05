@@ -96,6 +96,10 @@ const isValidObjectFormat = (parse: object, typeName: string) => {
     if(keyCpnfigItem === undefined) {
       return false;
     }
+    // 值有多类型，默认不校验
+    if(keyCpnfigItem.type.includes('|')) {
+      return true
+    }
     // 键值类型是否匹配
     const typeValue = factType(keyCpnfigItem.type, keyCpnfigItem.options, props.complexTypes);
     if(!keyValueTypeValid(typeValue, value)) {

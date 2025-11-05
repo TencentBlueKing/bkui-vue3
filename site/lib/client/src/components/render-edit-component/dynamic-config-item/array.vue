@@ -140,13 +140,6 @@ const arrayItemConfig = computed(() => {
   }
   return []
 });
-const isNoConfigArr = computed(() => {
-  if(isGenericArrType(props.type)) {
-    const genericType = extractArrayGeneric(props.type)
-    return genericType === 'any' || genericType.includes('|')
-  }
-  return false
-})
 
 const expandIndex = ref<string>('');
 
@@ -178,7 +171,11 @@ const getTypeToDefault = (type: string, defaultVal: ValueType) => {
   return defaultVal ?? (typeToDefVal ?? null)
 }
 const basicType = computed(() => {
-  const basicTypeArr = props.type.toLowerCase();
+  let basicTypeArr = props.type.toLowerCase()
+  if(isGenericArrType(props.type)) {
+    const genericType = extractArrayGeneric(props.type)
+    basicTypeArr = `${genericType.toLowerCase()}[]`
+  }
   if(basicTypeArr === 'string[]') {
     return 'string';
   }
@@ -223,6 +220,10 @@ const safeModelValue = computed(() => {
       typeof arrItem === 'object' && arrItem !== null && !Array.isArray(arrItem)
   );
 });
+
+const isNoConfigArr = computed(() => {
+  return !arrayItemConfig.value.length && !basicType.value
+})
 </script>
 <style lang="postcss" scoped>
 .config-item-array {
@@ -277,6 +278,7 @@ const safeModelValue = computed(() => {
     align-items: center;
     color: #3A84FF;
     cursor: pointer;
+    margin-top: 5px;
     .icon-add {
       font-size: 14px;
       margin-right: 5px;

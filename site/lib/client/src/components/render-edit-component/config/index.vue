@@ -6,11 +6,13 @@
         :props="props.props"
         @selected-attr="handleSelectedAttr"
       />
-      <div class="config-tabs">
-        <div v-for="item in TABS" :key="item.id" @click="changeTab(item.id)" :class="`${activeTab === item.id ? 'active' : ''}`">{{ item.name }}</div>
-      </div>
+      <Tab :tabs="TABS" v-model:active-tab="activeTab"/>
     </div>
-    <Collapse title="属性">
+    <Collapse
+      v-model:active-keys="activeKeys"
+      title="属性"
+      name="attr"
+    >
       <div class="prl16" v-if="comProps.length">
         <DynamicConfigItem
           v-for="prop in comProps"
@@ -30,21 +32,22 @@
       </div>
       <Empty v-else />
     </Collapse>
-    <!-- <div class="slot-contianer">
-      <div> -->
-        <Collapse title="插槽">
-          <div class="prl16" v-if="comSlots.length">
-            <Slot
-              v-for="slot in comSlots"
-              :slot-name="slot.name"
-              :desc="slot.description"
-              :model-value="renderSlots[slot.name]"
-              @update:model-value="(value) => handleUpdateSlots(slot.name, value)" />
-          </div>
-          <Empty v-else />
-        </Collapse>
-      <!-- </div>
-    </div> -->
+    <Collapse
+      v-model:active-keys="activeKeys"
+      title="插槽" 
+      name="slot"
+
+    >
+      <div class="prl16" v-if="comSlots.length">
+        <Slot
+          v-for="slot in comSlots"
+          :slot-name="slot.name"
+          :desc="slot.description"
+          :model-value="renderSlots[slot.name]"
+          @update:model-value="(value) => handleUpdateSlots(slot.name, value)" />
+      </div>
+      <Empty v-else />
+    </Collapse>
   </section>
 </template>
 
@@ -68,6 +71,7 @@ import RenderNameTip from './name-tip';
 import Search from './search.vue';
 import Slot from './slot';
 import Empty from './empty.vue';
+import Tab, { type ITab } from './tab'
 
 interface IProps {
   props?: IComponentWiki['props'];
@@ -105,31 +109,28 @@ const handleUpdateSlots = (name: string, value: string) => {
   );
 };
 
-const TABS = [
+const TABS: ITab[] = [
   {
-    id: 'all',
-    name: '全部配置',
+    value: 'all',
+    label: '全部配置',
   },
   {
-    id: 'current',
-    name: '当前场景',
+    value: 'current',
+    label: '当前场景',
   },
 ];
-const activeTab = ref(TABS[1].id);
+const activeTab = ref(TABS[1].value);
 const selectedProp = ref<string>('');
 let highlightTimer: NodeJS.Timeout | null = null;
 
-const changeTab = (id: string) => {
-  activeTab.value = id;
-};
 const isSelectedPreset = (name: string) => {
   return Object.keys(props.presetProps).includes(name);
 };
 const handleSelectedAttr = (item: PropItem) => {
   if (isSelectedPreset(item.name)) {
-    activeTab.value = TABS[1].id;
+    activeTab.value = TABS[1].value;
   } else {
-    activeTab.value = TABS[0].id;
+    activeTab.value = TABS[0].value;
   }
 
   selectedProp.value = item.name;
@@ -193,6 +194,8 @@ const resetProp = () => {
   emits('update:renderProps', { ...props.presetProps });
 };
 
+const activeKeys = ref(['attr', 'slot'])
+
 // 组件卸载时清理定时器
 onBeforeUnmount(() => {
   if (highlightTimer) {
@@ -216,34 +219,7 @@ onBeforeUnmount(() => {
     margin-bottom: 3px;
   }
   .config-tabs {
-    display: flex;
-    align-items: center;
     padding: 12px 0 8px 0;
-    color: #4D4F56;
-    div {
-      flex: 1;
-      border: 1px solid #C4C6CC;
-      text-align: center;
-      padding: 3px 0;
-      cursor: pointer;
-      &:hover {
-        color: #3A84FF;
-      }
-    }
-    div:first-child {
-      border-top-left-radius: 2px;
-      border-bottom-left-radius: 2px;
-    }
-    div:last-child {
-      border-top-right-radius: 2px;
-      border-bottom-right-radius: 2px;
-      margin-left: -1px;
-    }
-    .active {
-      color: #3A84FF;
-      background-color: #E1ECFF;
-      border-color: #3A84FF;
-    }
   }
 
   /* 选中属性的高亮样式 */
@@ -251,11 +227,6 @@ onBeforeUnmount(() => {
     background-color: #FDF4E8 !important;
     border-radius: 2px;
     transition: all 0.2s ease;
-  }
-  
-  :deep(.slot-contianer) {
-    position: sticky;
-    bottom: 0;
   }
 }
 </style>
