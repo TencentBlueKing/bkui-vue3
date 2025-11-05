@@ -1,3 +1,4 @@
+import { Message } from 'bkui-vue';
 import dayjs from 'dayjs';
 
 /**
@@ -52,3 +53,41 @@ export function capitalizeWord(word: string) {
   if (!word) return '';
   return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
 }
+
+/**
+ * @description 复制到剪切板
+ * @param text 待复制的文本
+ * @param hidePop 是否隐藏提示
+ * @returns 复制成功
+ */
+export async function copyToClipboard(text: string, tips = '复制成功', hidePop = false) {
+  try {
+    // 优先使用现代Clipboard API
+    if (navigator.clipboard) {
+      await navigator.clipboard.writeText(text);
+      if (!hidePop) {
+        Message({ theme: 'success', message: tips });
+      }
+      return true;
+    }
+
+    // 兼容旧浏览器的备用方案
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';  // 防止页面滚动
+    document.body.appendChild(textarea);
+    textarea.select();
+
+    const result = document.execCommand('copy');
+    document.body.removeChild(textarea);
+
+    if (!hidePop) {
+      Message({ theme: 'success', message: tips });
+    }
+
+    return result;
+  } catch (err) {
+    console.error('复制失败:', err);
+    return false;
+  }
+};
