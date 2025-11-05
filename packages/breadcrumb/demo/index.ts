@@ -68,7 +68,7 @@ const props = [
     description: '点击回退按钮自定义的路由(路由跳转对象，同 vue-router 的 to)',
     type: 'RouteLocationRaw | string',
     default: '',
-    link: '/components/breadcrumb/api#RouteLocationRaw'
+    link: 'https://router.vuejs.org/zh/api/#Type-Aliases-RouteLocationRaw'
   },
   {
     name: 'replace',
@@ -97,8 +97,8 @@ const slots = [
 ];
 
 const children = [
-  {
-    name: 'breadcrumb-item',
+    {
+    name: 'Breadcrumb-item',
     props: [
       {
         name: 'ext-cls',
@@ -116,60 +116,31 @@ const children = [
         type: 'boolean',
       },
     ],
-  },
-  {
-    name: 'breadcrumb-item',
     emits: [
-      {
-            name: 'click',
-            description: '点击事件自身的回调函数',
-            params: [
-                {
-                    name: 'event',
-                    type: 'CompositionEvent',
-                },
-            ],
-      },
-    ],
-  },
-  {
-    name: 'breadcrumb-item',
-    slots: [
         {
+                name: 'click',
+                description: '点击事件自身的回调函数',
+                params: [
+                    {
+                        name: 'event',
+                        type: 'CompositionEvent',
+                    },
+                ],
+            },
+    ],
+    slots: [
+            {
                 name: 'default',
                 description: '默认插槽，放置面包屑项的内容',
-        },
-        {
+            },
+            {
                 name: 'separator',
                 description: '自定义分隔符插槽',
-        },
-    ],
-  },
-];
-
-const types = [
-    {
-        name: 'RouteLocationRaw',
-        description: '路由跳转对象',
-        fields: [
-            {
-                name: 'string',
-                type: 'string',
-                description: '字符串跳转',
             },
-            {
-                name: 'RouteLocationPathRaw ',
-                type: 'object',
-                description: '路径跳转对象',
-            },
-            {
-                name: 'RouteLocationNamedRaw',
-                type: 'object',
-                description: '命名路由跳转对象',
-            }
         ],
     },
 ];
+
 
 // 组件分组
 const group = NavGroupMeta.Nav;
@@ -196,7 +167,6 @@ const wiki: IComponentWiki = {
   presets,
   description,
   children,
-  types
 };
 
 export default wiki;
