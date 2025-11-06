@@ -29,23 +29,24 @@ import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 // 组件示例
 const presets = [
   {
-    title: '基础用法',
-    description: '垂直菜单，子菜单内嵌在菜单区域。',
+    title: '基础面包屑',
+    description: '系统拥有超过两级以上的层级结构，用于切换向上任意层级的内容',
     props: {
       backRouter: 'api',
+      separator: '/',
     },
     slots: {
       default: `
-            <bk-breadcrumb-item to='demo'>
-                组件示例
-            </bk-breadcrumb-item>
-            <bk-breadcrumb-item to='api'>
-                API文档
-            </bk-breadcrumb-item>
-            <bk-breadcrumb-item to='design'>
-                设计规范
-            </bk-breadcrumb-item>
-            `,
+        <bk-breadcrumb-item to='demo'>
+            组件示例
+        </bk-breadcrumb-item>
+        <bk-breadcrumb-item to='api'>
+            API文档
+        </bk-breadcrumb-item>
+        <bk-breadcrumb-item to='design'>
+            设计规范
+        </bk-breadcrumb-item>
+      `,
     },
   },
 ];

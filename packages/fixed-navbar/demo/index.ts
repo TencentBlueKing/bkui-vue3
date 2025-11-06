@@ -62,14 +62,14 @@ const presets = [
     props: {
       'nav-items': [
         {
-          icon: 'angle-left',
+          icon: 'bkui-vue-wiki-icon icon-help',
           text: '',
           action: () => {
             window.open('http://wpa.b.qq.com/cgi/wpa.php?ln=1&key=XzgwMDgwMjAwMV80NDMwOTZfODAwODAyMDAxXzJf');
           },
         },
         {
-          icon: 'angle-left',
+          icon: 'bkui-vue-wiki-icon icon-help',
           text: '',
           action: () => {
             window.open('https://bk.tencent.com/s-mart/community?page=1&keyword=%255BMagicBox%255D&sort=latest');
@@ -87,14 +87,14 @@ const presets = [
     props: {
       'nav-items': [
         {
-          icon: 'Weixin',
+          icon: 'bkui-vue-wiki-icon icon-help',
           text: '联系',
           action: () => {
             window.open('http://wpa.b.qq.com/cgi/wpa.php?ln=1&key=XzgwMDgwMjAwMV80NDMwOTZfODAwODAyMDAxXzJf');
           },
         },
         {
-          icon: 'Weixin',
+          icon: 'bkui-vue-wiki-icon icon-help',
           text: '反馈',
           action: () => {
             window.open('https://bk.tencent.com/s-mart/community?page=1&keyword=%255BMagicBox%255D&sort=latest');

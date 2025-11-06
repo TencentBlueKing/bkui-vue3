@@ -123,7 +123,7 @@ const presets = [
       newContent: NEW_STR,
       language: 'javascript',
       theme: 'light',
-      format: 'line-by-line',
+      diffFormat: 'line-by-line',
     },
   },
 ];

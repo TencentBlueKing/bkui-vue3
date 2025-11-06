@@ -175,7 +175,7 @@ const slots = [
 const types = [];
 
 // 组件分组
-const group = NavGroupMeta.Nav;
+const group = NavGroupMeta.Layout;
 
 // 组件名称
 const name = 'resize-layout';

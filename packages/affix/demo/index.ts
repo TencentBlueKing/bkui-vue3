@@ -160,43 +160,6 @@ const slots = [
   },
 ];
 
-// 组件自定义的复杂类型
-// const types = [
-//   {
-//     name: 'ITestType',
-//     description: '图钉状态',
-//     fields: [
-//       {
-//         name: 'type',
-//         type: 'string',
-//         description: '类型',
-//       },
-//       {
-//         name: 'value',
-//         type: 'ITestSubType',
-//         description: '值',
-//         link: '/component/affix/api#ITestSubType',
-//       },
-//     ],
-//   },
-//   {
-//     name: 'ITestSubType',
-//     description: '图钉子状态',
-//     fields: [
-//       {
-//         name: 'subType',
-//         type: 'string',
-//         description: '子类型',
-//       },
-//       {
-//         name: 'subValue',
-//         type: 'string',
-//         description: '子值',
-//       },
-//     ],
-//   },
-// ];
-
 // 组件分组
 const group = NavGroupMeta.Nav;
 

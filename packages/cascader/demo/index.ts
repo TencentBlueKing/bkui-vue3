@@ -636,7 +636,7 @@ const types = [
 ];
 
 // 组件分组
-const group = NavGroupMeta.Nav;
+const group = NavGroupMeta.Form;
 
 // 组件名称
 const name = 'cascader';

@@ -28,11 +28,11 @@ import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 // 组件示例
 const presets = [
   {
-    title: '基础用法',
-    description: '用默认配置初始化组件',
+    title: '点徽标',
+    description: '仅做提醒的场景，通俗为小红点',
     props: {
       theme: 'danger',
-      count: 2,
+      dot: true,
       position: 'top-left',
     },
     slots: {
@@ -40,6 +40,32 @@ const presets = [
     },
     dependent: {
       components: ['button'],
+    },
+  },
+  {
+    title: '数字徽标',
+    description: '用于显示需要处理的消息条数，需要准确计数的场景',
+    props: {
+      theme: 'danger',
+      count: 10,
+      valLength: 2,
+      position: 'top-left',
+    },
+    slots: {
+      default: `<bk-button theme="primary"> 未读消息  </bk-button>`,
+    },
+  },
+  {
+    title: '文字徽标',
+    description: '用于显示需要处理的消息条数，需要准确计数的场景',
+    props: {
+      theme: 'danger',
+      count: 'fiwesfjk',
+      valLength: 8,
+      position: 'top-left',
+    },
+    slots: {
+      default: `<bk-button theme="primary"> 未读消息  </bk-button>`,
     },
   },
 ];

@@ -96,7 +96,7 @@ const slots = [
   },
 ];
 
-const group = NavGroupMeta.Nav;
+const group = NavGroupMeta.Feedback;
 
 const name = 'exception';
 
