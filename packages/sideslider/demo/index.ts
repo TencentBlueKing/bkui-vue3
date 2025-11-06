@@ -154,7 +154,7 @@ const emits = [
 const types = [];
 
 // 组件分组
-const group = NavGroupMeta.Nav;
+const group = NavGroupMeta.Feedback;
 
 // 组件名称
 const name = 'sideslider';
