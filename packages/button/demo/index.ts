@@ -31,15 +31,11 @@ const presets = [
     title: '基础用法',
     description: '用默认配置初始化组件',
     props: {
-      theme: 'danger',
-      count: 2,
-      position: 'top-left',
+      theme: 'default',
+      size: 'small',
     },
     slots: {
-      default: `<bk-button theme="primary"> top-left </bk-button>`,
-    },
-    dependent: {
-      components: ['button'],
+      default: `基础按钮`,
     },
   },
 ];
@@ -48,67 +44,41 @@ const presets = [
 const props = [
   {
     name: 'theme',
-    description: 'badge 主题',
-    options: ['primary', 'success', 'info', 'danger', 'warning'],
+    description: '按钮主题',
+    options: ['primary', 'success', 'danger', 'warning', 'default'],
+    type: 'string',
+    default: 'default',
+  },
+  {
+    name: 'size',
+    description: '按钮尺寸大小',
+    options: ['small', 'large'],
+    type: 'string',
+  },
+  {
+    name: 'hover-theme',
+    description: 'mouseHover 按钮样式, 当设置了此属性时，theme 和 text 失效',
+    options: ['primary', 'success', 'danger', 'warning', 'default'],
     type: 'string',
     default: 'primary',
   },
   {
-    name: 'count',
-    description: '显示的数字',
-    type: 'String | Number',
-    default: 1,
-  },
-  {
-    name: 'position',
-    description: 'badge 显示位置',
-    options: ['top-left', 'top-right', 'bottom-left', 'bottom-right'],
-    type: 'string',
-    default: 'top-right',
-  },
-  {
-    name: 'radius',
-    description: '设置边框的 radius 属性值',
-    type: 'string',
-    default: '18px',
-  },
-  {
-    name: 'valLength',
-    description: '数字显示最大长度，最大值建议英文不超过3个字母，中文不超过2个汉字',
-    type: 'number',
-    default: 3,
-  },
-  {
-    name: 'overflowCount',
-    description: '组件显示的最大值，当 count 超过 overflowCount，显示数字 +；仅当设置了 Number 类型的 count 值时生效',
-    type: 'number',
-    default: 99,
-  },
-  {
-    name: 'dot',
-    description: '是否仅显示红点；当设置 dot 为 true 时，count, icon, overflowCount 均会被忽略',
+    name: 'text',
+    description: '是否为文字按钮',
     type: 'boolean',
-    default: false,
   },
   {
-    name: 'visible',
-    description: '是否显示 badge',
+    name: 'outline',
+    description: '是否为反色按钮',
     type: 'boolean',
-    default: false,
-  },
-  {
-    name: 'extCls',
-    description: '外部设置的 class 名',
-    type: 'String',
-    default: '-',
   },
 ];
 
 // 组件事件，用来自动生成事件文档
 const emits = [
   {
-    name: 'hover',
-    description: 'hover 事件的回调',
+    name: 'click',
+    description: '点击时触发事件',
     params: [
       {
         name: 'event',
@@ -117,8 +87,8 @@ const emits = [
     ],
   },
   {
-    name: 'leave',
-    description: 'leave 事件的回调',
+    name: 'mouseover',
+    description: '鼠标移入触发事件',
     params: [
       {
         name: 'event',
@@ -128,24 +98,32 @@ const emits = [
   },
 ];
 
+const slots = [
+  {
+    name: 'default',
+    description: '默认插槽',
+  },
+];
+
 // 组件分组
-const group = NavGroupMeta.Data;
+const group = NavGroupMeta.Base;
 
 // 组件名称
-const name = 'badge';
+const name = 'button';
 
 // 组件标签
-const title = 'Badge';
+const title = 'Button';
 
 // 组件中文标签
-const titleCN = '标记';
+const titleCN = '基础按钮';
 
 // 组件描述
-const description = 'Badge 组件， 可以出现在任意 DOM 节点角上的数字或状态标记。';
+const description = '常用的操作按钮';
 
 const wiki: IComponentWiki = {
   group,
   name,
+  slots,
   title,
   titleCN,
   props,
