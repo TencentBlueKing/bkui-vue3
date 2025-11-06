@@ -7,13 +7,15 @@ export interface IParam {
   link?: LinkType;
 }
 
+// 公共属性方法配置项
 export interface PropItem {
   name: string;
-  type: string;
+  type?: string;
   default?: ValueType;
   description: string;
   link?: LinkType;
   options?: Array<boolean | number | string>;
+  params?: IParam[];
 }
 
 export interface IComponentWiki {
@@ -23,16 +25,9 @@ export interface IComponentWiki {
   titleCN: string;
   description: string;
   props?: PropItem[];
-  emits?: {
-    name: string;
-    description: string;
-    params: IParam[];
-  }[];
-  slots?: {
-    name: string;
-    description: string;
-    params?: IParam[];
-  }[];
+  emits?: PropItem[];
+  methods?: PropItem[];
+  slots?: PropItem[];
   presets: Array<{
     title: string;
     description: string;
@@ -49,7 +44,7 @@ export interface IComponentWiki {
     description: string;
     fields: PropItem[];
   }[];
-  children?: Array<Pick<IComponentWiki, 'emits' | 'name' | 'props' | 'slots'>>;
+  children?: Array<Pick<IComponentWiki, 'emits' | 'name' | 'props' | 'slots' | 'methods'>>;
 }
 export interface INavGroups {
   componentGroupMap: {
@@ -72,7 +67,7 @@ export interface IFileAuthor {
 
 // api表格列类型
 export interface Column {
-  key: string;
+  key: keyof PropItem;
   title: string;
   width?: string;
 }

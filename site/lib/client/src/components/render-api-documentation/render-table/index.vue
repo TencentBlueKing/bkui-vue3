@@ -3,7 +3,9 @@
     class="table-component"
     :id="id"
   >
-    <h2>{{ componentKey }} {{ categoryKey }}</h2>
+    <h2 @click="handleTitleClick">
+      {{ componentKey }} {{ categoryKey }}
+    </h2>
     <p
       class="type-desc"
       v-if="categoryKeyDesc"
@@ -54,6 +56,7 @@
 import { computed, h, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
+import { copyToClipboard } from '@/common/util';
 import useStorage from '@/hooks/use-storage';
 import { useComponent } from '@/store/component';
 import { Column, IComponentWiki, IParam, PropItem } from '@/types/component';
@@ -76,11 +79,15 @@ enum EColumnTypeEnum {
 type EColumnType = keyof typeof EColumnTypeEnum;
 
 interface IProps {
-  tableData: IComponentWiki['props' | 'emits' | 'slots'];
+  tableData: PropItem[];
+  // 组件key对应分类（例如：事件、方法等）
   categoryKey: string;
   activeComponent: IComponentWiki | null;
+  // 组件key（例如：组件类型名Affix等）
   componentKey?: string;
+  // 组件key对应类型描述
   categoryKeyDesc?: string;
+  // 锚点
   id?: string;
 }
 
@@ -117,8 +124,8 @@ const columns = computed(() => {
    * @param linkMap 链接映射
    */
 const renderEnumWithLinks = (text: string, linkMap: Record<string, string>) => {
-  // 分割文本为各个部分
-  const parts = text.split(/(\s+\|\s+)/);
+  // 分割文本为各个部分(包含分隔符)
+  const parts = text.split(/([|{}[\]<>,;"'\s])/);
 
   return parts.map((part) => {
     // 如果是枚举类型（存在于 linkMap 中）
@@ -128,6 +135,13 @@ const renderEnumWithLinks = (text: string, linkMap: Record<string, string>) => {
         {
           class: 'table-link',
           onClick: () => {
+            // 如果是外部链接，直接打开
+            const isOtherSite = /^https?:\/\//.test(linkMap[part.trim()]);
+            if (isOtherSite) {
+              window.open(linkMap[part.trim()]);
+              return;
+            }
+            // 组件内部链接情况
             setStorage(ANCHOR_KEY, linkMap[part.trim()].split('#')[1]);
             router.push({
               ...router.currentRoute.value,
@@ -135,7 +149,6 @@ const renderEnumWithLinks = (text: string, linkMap: Record<string, string>) => {
                 ...router.currentRoute.value.query,
                 version: componentStore.version,
               },
-              hash: getStorage(ANCHOR_KEY) ? `#${getStorage(ANCHOR_KEY)}` : '',
             });
             window.open(route.fullPath);
           },
@@ -193,20 +206,6 @@ const renderText = (text: string) => {
 };
 
 /**
-   * @description 渲染tag样式
-   * @param text 文本值
-   */
-const renderTag = (text: string) => {
-  return h(
-    'span',
-    {
-      class: 'default-tag',
-    },
-    text,
-  );
-};
-
-/**
    * @description 渲染参数部分
    * @param params 参数列表
    */
@@ -242,37 +241,67 @@ const renderFunctionSignature = (params: IParam[]) => {
 // 处理表格数据，为每个单元格生成对应的渲染组件
 const computedTableData = computed(() => {
   return iProps.tableData.map((item) => {
-    const processedRow = { ...item };
+    const processedRow: Record<string, any> = { ...item };
 
     // 为每个列生成对应的渲染组件
     columns.value.forEach((column) => {
-      const value = item[column.key];
+      const value = item[column.key] ;
 
       // 定义渲染策略映射
       const renderStrategies = {
-        type: () => ((item as PropItem).link ? renderLink(item as PropItem) : renderText(value)),
+        type: () => ((item).link ? renderLink(item) : renderText(value as string)),
         default: () => {
-          if (value === undefined) {
+          if (value === undefined || value === '') {
             return renderText('--');
           }
-          if (typeof value === 'number' || !isNaN(value)) {
-            return renderText(value);
-          }
-          return renderTag(value);
+          return renderText(value as string);
         },
         params: () => {
-          return renderFunctionSignature(value);
+          return renderFunctionSignature(value as IParam[]);
         },
       };
 
       // 根据列类型选择渲染策略，默认使用文本渲染
-      const renderStrategy = renderStrategies[column.key] || (() => renderText(value));
+      const renderStrategy = renderStrategies[column.key as  'type' | 'default'  | 'params'] || (() => renderText(value as string));
       processedRow[column.key] = renderStrategy();
     });
 
     return processedRow;
   });
 });
+
+/**
+ * @description 处理标题点击
+ */
+const handleTitleClick = () => {
+  // 复制URL地址到剪贴板
+  copyToClipboard(window.location.href, '复制URL地址成功！');
+
+  if (!iProps.id) return;
+
+  // 设置存储的锚点信息，让侧边栏能够识别
+  setStorage(ANCHOR_KEY, iProps.id);
+
+  // 更新路由hash，让地址栏显示锚点
+  router.push({
+    ...router.currentRoute.value,
+    hash: `#${iProps.id}`,
+    query: {
+      ...router.currentRoute.value.query,
+      version: componentStore.version,
+    },
+  });
+
+  // 平滑滚动到对应位置
+  const element = document.getElementById(iProps.id);
+  if (element) {
+    element.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
+  }
+};
+
 </script>
 
 <style scoped lang="postcss">
@@ -281,11 +310,20 @@ const computedTableData = computed(() => {
   }
 
   .table-component h2 {
+    position: relative;
     font-weight: 600;
     font-size: 20px;
     color: #313238;
     letter-spacing: 0;
     line-height: 28px;
+    cursor: pointer;
+
+    &:hover::before{
+      content: '#';
+      position: absolute;
+      left: -16px;
+      color: #3a84ff;
+    }
   }
 
   .type-desc {
@@ -317,6 +355,7 @@ const computedTableData = computed(() => {
     min-height: 42px;
     background: #fafbfd;
     padding: 10px 14px 12px;
+    min-width: 65px;
   }
 
   .base-table tr {
