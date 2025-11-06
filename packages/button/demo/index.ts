@@ -79,6 +79,22 @@ const emits = [
   {
     name: 'click',
     description: '点击时触发事件',
+    params: [
+      {
+        name: 'event',
+        type: 'MouseEvent',
+      },
+    ],
+  },
+  {
+    name: 'mouseover',
+    description: '鼠标移入触发事件',
+    params: [
+      {
+        name: 'event',
+        type: 'MouseEvent',
+      },
+    ],
   },
 ];
 

@@ -32,7 +32,7 @@ const presets = [
     title: '基础用法',
     description: '垂直菜单，子菜单内嵌在菜单区域。',
     props: {
-      backRouter: 'api'
+      backRouter: 'api',
     },
     slots: {
       default: `
@@ -68,7 +68,7 @@ const props = [
     description: '点击回退按钮自定义的路由(路由跳转对象，同 vue-router 的 to)',
     type: 'RouteLocationRaw | string',
     default: '',
-    link: 'https://router.vuejs.org/zh/api/#Type-Aliases-RouteLocationRaw'
+    link: 'https://router.vuejs.org/zh/api/#Type-Aliases-RouteLocationRaw',
   },
   {
     name: 'replace',
@@ -84,7 +84,6 @@ const props = [
   },
 ];
 
-
 const slots = [
   {
     name: 'default',
@@ -97,8 +96,8 @@ const slots = [
 ];
 
 const children = [
-    {
-    name: 'Breadcrumb-item',
+  {
+    name: 'breadcrumb-item',
     props: [
       {
         name: 'ext-cls',
@@ -117,30 +116,29 @@ const children = [
       },
     ],
     emits: [
-        {
-                name: 'click',
-                description: '点击事件自身的回调函数',
-                params: [
-                    {
-                        name: 'event',
-                        type: 'CompositionEvent',
-                    },
-                ],
-            },
+      {
+        name: 'click',
+        description: '点击事件自身的回调函数',
+        params: [
+          {
+            name: 'event',
+            type: 'CompositionEvent',
+          },
+        ],
+      },
     ],
     slots: [
-            {
-                name: 'default',
-                description: '默认插槽，放置面包屑项的内容',
-            },
-            {
-                name: 'separator',
-                description: '自定义分隔符插槽',
-            },
-        ],
-    },
+      {
+        name: 'default',
+        description: '默认插槽，放置面包屑项的内容',
+      },
+      {
+        name: 'separator',
+        description: '自定义分隔符插槽',
+      },
+    ],
+  },
 ];
-
 
 // 组件分组
 const group = NavGroupMeta.Nav;
