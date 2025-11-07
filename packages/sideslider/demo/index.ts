@@ -31,9 +31,12 @@ const presets = [
     title: '可查看的抽屉',
     description: '承载展示性的信息内容',
     props: {
-      'is-show': false,
       title: '我是标题',
       renderDirective: 'if',
+      transfer: false,
+    },
+    slots: {
+      default: `hello world!!!`,
     },
   },
   {
@@ -42,6 +45,31 @@ const presets = [
     props: {
       title: '我是标题',
       renderDirective: 'if',
+      transfer: false,
+    },
+    slots: {
+      default: `
+        <bk-form>
+          <bk-form-item
+            label="姓名"
+            property="name"
+          >
+            <bk-input
+              placeholder="请输入"
+              clearable
+            />
+          </bk-form-item>
+          <bk-form-item label="性别">
+            <bk-radio-group>
+              <bk-radio label="男" />
+              <bk-radio label="女" />
+            </bk-radio-group>
+          </bk-form-item>
+        </bk-form>
+      `,
+    },
+    dependent: {
+      components: ['form', 'input', 'radio'],
     },
   },
 ];
@@ -53,6 +81,7 @@ const props = [
     description: '是否显示组件，支持v-model写法',
     type: 'boolean',
     default: false,
+    isSupportVModel: true,
   },
   {
     name: 'title',
@@ -150,6 +179,22 @@ const emits = [
   },
 ];
 
+// 组件插槽
+const slots = [
+  {
+    name: 'default',
+    description: '默认插槽',
+  },
+  {
+    name: 'header',
+    description: '头部插槽',
+  },
+  {
+    name: 'footer',
+    description: '底部插槽',
+  },
+];
+
 // 组件自定义的复杂类型
 const types = [];
 
@@ -178,5 +223,6 @@ const wiki: IComponentWiki = {
   presets,
   types,
   description,
+  slots,
 };
 export default wiki;

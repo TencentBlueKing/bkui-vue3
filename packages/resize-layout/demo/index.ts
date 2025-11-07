@@ -31,12 +31,11 @@ const presets = [
     title: '一般样式',
     description: '通过拉伸、展开收起的交互调整页面的布局',
     props: {
-      'initial-divide': '40%',
       placement: 'left',
     },
     slots: {
-      aside: `<div>aside</div>`,
-      main: `<div>main</div>`,
+      aside: `<div style="width: 100px; height: 500px; background-color: #fff">aside</div>`,
+      main: `<div style="height: 500px; background-color: #fff">main</div>`,
     },
   },
 ];

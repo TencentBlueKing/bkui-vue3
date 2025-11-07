@@ -330,6 +330,7 @@ export interface PropItem {
   description: string;
   link?: LinkType;
   options?: Array<boolean | number | string>;
+  isSupportVModel?: boolean;
 }
 
 export interface IComponentWiki {

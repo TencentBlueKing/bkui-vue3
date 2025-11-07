@@ -33,7 +33,14 @@ const presets = [
     props: {
       height: 400,
       'loop-time': 6000,
-      pics: [],
+      pics: [
+        {
+          url: 'https://staticfile.qq.com/TencentBlueKing/bkui-vue3/600de5f9/assets/secondswiper-C8fK7dNT.jpg',
+        },
+        {
+          url: 'https://staticfile.qq.com/TencentBlueKing/bkui-vue3/600de5f9/assets/firstswiper-CkjDEEoa.jpg',
+        },
+      ],
     },
   },
 ];
@@ -62,10 +69,16 @@ const props = [
     name: 'pics',
     description: '图片列表，[{ link: String, url: String, color: String, class: String }]',
     type: 'Pics[]',
-    link: '/component/swiper/api#Pics[]',
+    link: '/component/swiper/api#Pics',
     default: [],
   },
-  //  TODO: list属性, 根据现有文档，搭配slots使用
+  // list属性, 根据现有文档，搭配slots使用
+  {
+    name: 'list',
+    description: '数据列表，配合 slot 使用',
+    type: 'Array<any>',
+    default: [],
+  },
   {
     name: 'height',
     description: '轮播图高度，如果不传将使用父元素高度',
@@ -95,7 +108,7 @@ const emits = [
 // 组件自定义的复杂类型
 const types = [
   {
-    name: 'Pics[]',
+    name: 'Pics',
     description: '图片列表',
     fields: [
       {
@@ -117,6 +130,19 @@ const types = [
         name: 'class',
         description: '图片类名',
         type: 'string',
+      },
+    ],
+  },
+];
+
+const slots = [
+  {
+    name: 'default',
+    description: '轮播图内容',
+    params: [
+      {
+        name: 'item',
+        type: 'any',
       },
     ],
   },
@@ -147,5 +173,6 @@ const wiki: IComponentWiki = {
   presets,
   types,
   description,
+  slots,
 };
 export default wiki;

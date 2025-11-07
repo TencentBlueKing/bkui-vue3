@@ -85,7 +85,7 @@ const props = [
     description: '组件步骤内容，有四个可选的key：title icon description status。',
     type: 'Steps[]',
     default: [],
-    link: '/component/steps/api#Steps[]',
+    link: '/component/steps/api#Steps',
   },
   {
     name: 'cur-step',
@@ -173,7 +173,7 @@ const emits = [
 // 组件自定义的复杂类型
 const types = [
   {
-    name: 'Steps[]',
+    name: 'Steps',
     description: '组件步骤内容',
     fields: [
       {
