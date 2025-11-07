@@ -69,7 +69,7 @@ import DynamicConfigItem from '../dynamic-config-item';
 import RenderNameTip from '../config/name-tip';
 import { Input as BkInput } from 'bkui-vue'
 
-import { basicTypeToDefVal, factType, extractArrayGeneric, isGenericArrType } from './utils';
+import { basicTypeToDefVal, factType, extractArrayGeneric, isGenericArrType, filterErrTypeProps } from './utils';
 
 const props = defineProps({
   modelValue: {
@@ -134,19 +134,15 @@ const arrayItemConfig = computed(() => {
     const genericType = extractArrayGeneric(newType)
     newType = genericType
   }
-  const arrItem = complexTypes.find(item => item.name === newType.trim());
+  const arrItem = complexTypes.find(item => {
+    const trimType = newType.trim() 
+    return item.name === trimType || `${item.name}[]` === trimType
+  });
   if(arrItem) {
-    return arrItem.fields
+    return filterErrTypeProps(JSON.parse(JSON.stringify(arrItem.fields)), complexTypes)
   }
   return []
 });
-const isNoConfigArr = computed(() => {
-  if(isGenericArrType(props.type)) {
-    const genericType = extractArrayGeneric(props.type)
-    return genericType === 'any' || genericType.includes('|')
-  }
-  return false
-})
 
 const expandIndex = ref<string>('');
 
@@ -178,7 +174,11 @@ const getTypeToDefault = (type: string, defaultVal: ValueType) => {
   return defaultVal ?? (typeToDefVal ?? null)
 }
 const basicType = computed(() => {
-  const basicTypeArr = props.type.toLowerCase();
+  let basicTypeArr = props.type.toLowerCase()
+  if(isGenericArrType(props.type)) {
+    const genericType = extractArrayGeneric(props.type)
+    basicTypeArr = `${genericType.toLowerCase()}[]`
+  }
   if(basicTypeArr === 'string[]') {
     return 'string';
   }
@@ -223,6 +223,10 @@ const safeModelValue = computed(() => {
       typeof arrItem === 'object' && arrItem !== null && !Array.isArray(arrItem)
   );
 });
+
+const isNoConfigArr = computed(() => {
+  return !arrayItemConfig.value.length && !basicType.value
+})
 </script>
 <style lang="postcss" scoped>
 .config-item-array {
@@ -277,6 +281,7 @@ const safeModelValue = computed(() => {
     align-items: center;
     color: #3A84FF;
     cursor: pointer;
+    margin-top: 5px;
     .icon-add {
       font-size: 14px;
       margin-right: 5px;

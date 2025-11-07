@@ -158,7 +158,7 @@ const props = [
   {
     name: 'theme',
     description: '主题',
-    type: 'dark | light',
+    type: 'string',
     options: ['dark', 'light'],
     default: 'light',
   },

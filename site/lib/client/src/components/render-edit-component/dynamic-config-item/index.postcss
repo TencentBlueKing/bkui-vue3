@@ -1,26 +1,15 @@
 .config-item {
-    margin-bottom: 16px;
+    margin-bottom: 20px;
+    &.name-value-flex {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
     &-name {
         color: #313238;
         line-height: 20px;
     }
-    &-name.mb4 {
-        margin-bottom: 4px;
-    }
-    &-content {
-        font-size: 0;
-        &.type-flex {
-            display: flex;
-            .dynamic-type-select {
-                width: 80px;
-                margin-right: 8px;
-                .bk-select .bk-input--text {
-                    color: #699DF4;
-                }
-            }
-            & > div:last-child {
-                flex: 1;
-            }
-        }
+    .dynamic-type-select {
+        margin-bottom: 6px;
     }
 }

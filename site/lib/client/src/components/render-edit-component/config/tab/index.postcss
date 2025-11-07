@@ -1,0 +1,34 @@
+  .config-tabs {
+    display: flex;
+    align-items: center;
+    color: #4D4F56;
+    div {
+      flex: 1;
+      border: 1px solid #C4C6CC;
+      text-align: center;
+      padding: 3px 0;
+      cursor: pointer;
+      &:hover {
+        color: #3A84FF;
+      }
+    }
+    div:first-child {
+      border-top-left-radius: 2px;
+      border-bottom-left-radius: 2px;
+    }
+    div:last-child {
+      border-top-right-radius: 2px;
+      border-bottom-right-radius: 2px;
+      margin-left: -1px;
+    }
+    .active {
+      color: #3A84FF;
+      background-color: #E1ECFF;
+      border-color: #3A84FF;
+    }
+    .label-overflow {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
