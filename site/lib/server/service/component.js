@@ -63,7 +63,7 @@ const clearModuleCache = (modulePath) => {
 };
 
 // 获取编译文件路径
-const getDistFilePath = (version, component, type, file) => {
+export const getDistFilePath = (version, component, type, file) => {
   const dir =    type === 'directive'
     ? path.resolve(RELEASE_DIST_DIR, `${version}`, 'directives', 'src', `${component}.js`)
     : path.resolve(RELEASE_DIST_DIR, `${version}`, component, 'src');

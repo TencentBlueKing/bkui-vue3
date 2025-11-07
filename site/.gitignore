@@ -4,5 +4,5 @@ dist
 pre-*-bkcodeai
 .bk.local.env
 
-lib/server/release-dir/
+lib/server/release-dir/dev
 lib/server/release-dist/dev

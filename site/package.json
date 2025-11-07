@@ -6,7 +6,8 @@
     "build": "bk-cli-service build",
     "local": "cross-env NODE_ENV=production BK_APP_PORT=5000 bk-cli-service build && node lib/server/app.browser.js",
     "online": "cross-env NODE_ENV=production BK_APP_PORT=5000 node lib/server/app.browser.js",
-    "dev": "cross-env NODE_ENV=development BK_APP_PORT=5000 node ./scripts/dev.js"
+    "dev": "cross-env NODE_ENV=development BK_APP_PORT=5000 node ./scripts/dev.js",
+    "release-version": "node ./scripts/version.js"
   },
   "keywords": [
     "bkui-vue"

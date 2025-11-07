@@ -1,6 +1,7 @@
 <template>
   <bk-loading
     class="component-home"
+    :z-index="10"
     :loading="componentStore.isLoadingNavGroups"
   >
     <render-nav />
