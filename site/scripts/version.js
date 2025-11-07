@@ -99,17 +99,17 @@ const releaseVersion = async () => {
 (async () => {
   try {
     console.log(`\n${'='.repeat(60)}`);
-    console.log(`  🚀 BKUI-VUE 文档站新增版本`);
+    console.log('🚀 BKUI-VUE 文档站新增版本');
     console.log(`${'='.repeat(60)}\n`);
 
     await plusVersion();
     await releaseVersion();
 
     console.log(`${'='.repeat(60)}`);
-    console.log(`  ✨ 文档站新增版本完成！`);
+    console.log('✨ 文档站新增版本完成！');
     console.log(`${'='.repeat(60)}\n`);
   } catch (error) {
-    console.error(`\n❌ 执行失败:`, error);
+    console.error('\n❌ 执行失败:', error);
     process.exit(1);
   }
 })();
