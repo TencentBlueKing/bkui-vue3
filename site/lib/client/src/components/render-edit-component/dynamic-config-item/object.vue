@@ -90,6 +90,7 @@ const keyValueTypeValid = (typeValue: string, value: unknown) => {
     return true;
 }
 const isValidObjectFormat = (parse: object, typeName: string) => {
+  if(typeName.toLowerCase() === 'object') return true
   for (const [key, value] of Object.entries(parse)) {
     const keyCpnfigItem = keyConfigs(typeName).find(item => item.name === key)
     // 是否存在未定义的键
@@ -144,7 +145,7 @@ const validateObject = () => {
   try {
     const parsed = JSON.parse(value);
 
-    if(!isValidObjectFormat(parsed, props.type)) {
+    if(!isValidObjectFormat(parsed, props.type.trim())) {
       hasError.value = true;
       errorMessage.value = '对象内容格式有误，请检查输入内容';
       isValidObject.value = false;

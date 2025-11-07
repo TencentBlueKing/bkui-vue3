@@ -34,45 +34,40 @@ export default defineComponent({
       const { activeKeys, name } = props
       return [...new Set([...activeKeys, name])]
     })
-    const isFloatTitle = ref(false)
     const collapseRef = ref()
+    const findScrollParent = (element: HTMLElement): HTMLElement | null => {
+      let parent = element.parentElement
+    
+      while (parent) {
+        const { overflow, overflowY } = getComputedStyle(parent)
+        if (/(auto|scroll)/.test(overflow + overflowY)) {
+          return parent
+        }
+        parent = parent.parentElement
+      }
+    
+      return document.documentElement
+    }
     const handleCollapse = () => {
       let copyExpandKeys = [...expandKeys.value]
-      if(!isExpand.value && isFloatTitle.value) {
+      if(!isExpand.value) {
         copyExpandKeys = [props.name]
-        isFloatTitle.value = false
         nextTick(() => {
-          collapseRef.value.scrollIntoView({
-            behavior: 'smooth',
-          })
+          const scrollParent = findScrollParent(collapseRef.value)
+          if(scrollParent) {
+            scrollParent.scrollTo({
+              top: 0,
+              behavior: "smooth",
+            })
+          }
         })
       }
       emit('update:activeKeys', isExpand.value ? collapseAfterExpandKeys.value : copyExpandKeys)
     }
-    const observerCollapse = () => {
-      const observer = new IntersectionObserver((entries) => {
-        for (const entry of entries) {
-          if(!entry.isIntersecting) {
-            emit('update:activeKeys', collapseAfterExpandKeys.value)
-            isFloatTitle.value = true
-          }
-        }
-      },
-      {
-        root: null,
-        rootMargin: '0px',
-        threshold: 0
-      })
-      observer.observe(collapseRef.value)
-    }
-    onMounted(() => {
-      observerCollapse()
-    })
     return {
       isExpand,
       handleCollapse,
       collapseRef,
-      isFloatTitle,
     };
   },
   render() {
@@ -80,7 +75,7 @@ export default defineComponent({
       <div
         ref="collapseRef"
         data-name={this.name}
-        class={`config-collapse${this.isFloatTitle ? ' sticky-title': ''}`}
+        class='config-collapse'
       >
         <div class='config-collapse-title-container'>
           <div class='config-collapse-title' onClick={this.handleCollapse}>

@@ -134,7 +134,10 @@ const arrayItemConfig = computed(() => {
     const genericType = extractArrayGeneric(newType)
     newType = genericType
   }
-  const arrItem = complexTypes.find(item => item.name === newType.trim());
+  const arrItem = complexTypes.find(item => {
+    const trimType = newType.trim() 
+    return item.name === trimType || `${item.name}[]` === trimType
+  });
   if(arrItem) {
     return filterErrTypeProps(JSON.parse(JSON.stringify(arrItem.fields)), complexTypes)
   }

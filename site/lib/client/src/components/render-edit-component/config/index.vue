@@ -1,12 +1,16 @@
 <template>
-  <section class="edit-component-config g-scrollbar">
+  <section
+    class="edit-component-config g-scrollbar"
+    ref="configRef"
+    @scroll="showSlot"
+  >
     <div class="prl16">
       <Header class="header-wrapper" @refresh="resetProp" />
       <Search
-        :props="props.props"
+        :props="allValidTypeProps"
         @selected-attr="handleSelectedAttr"
       />
-      <Tab :tabs="TABS" v-model:active-tab="activeTab"/>
+      <Tab :tabs="tabs" v-model:active-tab="activeTab"/>
     </div>
     <Collapse
       v-model:active-keys="activeKeys"
@@ -33,16 +37,18 @@
       <Empty v-else />
     </Collapse>
     <Collapse
+      :class="{ 'sticky-title': isFloat }"
       v-model:active-keys="activeKeys"
       title="插槽" 
       name="slot"
-
+      ref="slotRef"
     >
       <div class="prl16" v-if="comSlots.length">
         <Slot
           v-for="slot in comSlots"
-          :slot-name="slot.name"
-          :desc="slot.description"
+          :name="slot.name"
+          :description="slot.description"
+          :params="slot.params"
           :model-value="renderSlots[slot.name]"
           @update:model-value="(value) => handleUpdateSlots(slot.name, value)" />
       </div>
@@ -109,7 +115,7 @@ const handleUpdateSlots = (name: string, value: string) => {
   );
 };
 
-const TABS: ITab[] = [
+const tabs: ITab[] = [
   {
     value: 'all',
     label: '全部配置',
@@ -119,7 +125,7 @@ const TABS: ITab[] = [
     label: '当前场景',
   },
 ];
-const activeTab = ref(TABS[1].value);
+const activeTab = ref(tabs[1].value);
 const selectedProp = ref<string>('');
 let highlightTimer: NodeJS.Timeout | null = null;
 
@@ -127,10 +133,13 @@ const isSelectedPreset = (name: string) => {
   return Object.keys(props.presetProps).includes(name);
 };
 const handleSelectedAttr = (item: PropItem) => {
+  if(!activeKeys.value.includes('attr')) {
+    activeKeys.value.push('attr')
+  }
   if (isSelectedPreset(item.name)) {
-    activeTab.value = TABS[1].value;
+    activeTab.value = tabs[1].value;
   } else {
-    activeTab.value = TABS[0].value;
+    activeTab.value = tabs[0].value;
   }
 
   selectedProp.value = item.name;
@@ -170,9 +179,12 @@ const filterPropSlots = <T extends { name: string }, U extends object>(all: T[],
   });
   return propsSort(currentPropSlots);
 };
+const allValidTypeProps = computed(() => {
+  const copyComProps = JSON.parse(JSON.stringify(props.props))
+  return filterErrTypeProps(copyComProps, props.types);
+})
 const comProps = computed(() => {
-  const allValidTypeProps = filterErrTypeProps(props.props, props.types);
-  return filterPropSlots(allValidTypeProps, props.presetProps ?? {});
+  return filterPropSlots(allValidTypeProps.value, props.presetProps ?? {});
 });
 const comSlots = computed(() => {
   return filterPropSlots(props.slots ?? [], props.presetSlots ?? {});
@@ -195,6 +207,21 @@ const resetProp = () => {
 };
 
 const activeKeys = ref(['attr', 'slot'])
+const configRef = ref()
+const slotRef = ref()
+const isFloat = ref(false)
+const showSlot = () => {
+  const parentRect = configRef.value.getBoundingClientRect()
+  const parentTop = parentRect.top
+  const childEl = slotRef.value.$el
+  const childTop = childEl.getBoundingClientRect().top
+  const childBottom = childEl.getBoundingClientRect().bottom
+  const isVisible = childTop - parentTop + 36 < configRef.value.clientHeight || childBottom - parentTop < configRef.value.clientHeight
+  if(!isVisible && !isFloat.value) {
+    isFloat.value = true
+    activeKeys.value = activeKeys.value.filter(item => item !== 'slot')
+  }
+}
 
 // 组件卸载时清理定时器
 onBeforeUnmount(() => {
@@ -227,6 +254,11 @@ onBeforeUnmount(() => {
     background-color: #FDF4E8 !important;
     border-radius: 2px;
     transition: all 0.2s ease;
+  }
+  .sticky-title {
+    position: sticky;
+    bottom: 0;
+    top: 36px;
   }
 }
 </style>

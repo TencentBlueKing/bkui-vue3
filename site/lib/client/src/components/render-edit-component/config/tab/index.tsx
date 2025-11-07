@@ -8,7 +8,7 @@ export interface ITab {
 }
 
 export default defineComponent({
-  name: 'RenderSlot',
+  name: 'RenderTab',
   props: {
     activeTab: {
         type: String
@@ -35,7 +35,8 @@ export default defineComponent({
                 <div
                     key={item.value}
                     onClick={() => this.changeTab(item.value)}
-                    class={{'active': this.activeTab === item.value}}
+                    class={{'active': this.activeTab === item.value, 'label-overflow': true}}
+                    title={item.label}
                 >
                     {item.label}
                 </div>

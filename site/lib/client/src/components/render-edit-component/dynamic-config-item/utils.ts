@@ -8,8 +8,52 @@ export const basicTypeToDefVal = {
   'object': {},
 }
 
-export const splitType = (type: string) => {
-  return type.split(/\s*\|\s*/).map(item => item.trim().replace(/'/g, '')).filter(item => item)
+export const splitType = (typeStr: string) => {
+  const concretTypes = [];
+  let stack = [];
+  let current = '';
+  const isEmptyStack = () => stack.length === 0;
+  
+  for (let i = 0; i < typeStr.length; i++) {
+    const char = typeStr[i];
+    switch (char) {
+      case '<':
+      case '(':
+      case '[':
+        stack.push(char);
+        current += char;
+        break;
+      case '>':
+      case ')':
+      case ']':
+        stack.pop();
+        current += char;
+        break;
+      case '|':
+        if (isEmptyStack()) {
+          const type = current.trim();
+          if (type) concretTypes.push(type);
+          current = '';
+        } else {
+          current += char;
+        }
+        break;
+      case ' ':
+        if (!isEmptyStack() || /=>/.test(current)) {
+          current += char;
+        }
+        break;
+      default:
+        current += char;
+    }
+  }
+  
+  const lastCur = current.trim()
+  if (lastCur) {
+    concretTypes.push(lastCur);
+  }
+  
+  return concretTypes;
 }
 
 export const isBasicTypeArr = (type: string) => {
@@ -29,9 +73,10 @@ export const isGenericArrType = (type: string) => {
   return /^Array<[^>]+>$/.test(type)
 }
 
-export const isArrayTypeLiteral = (type: string, isComplexType: boolean) => {
-  if(/\[\]$/.test(type)) {
-    if(isComplexType || isBasicTypeArr(type)) {
+export const isArrayTypeLiteral = (type: string, complexTypes: IComponentWiki['types']) => {
+  if(/^[^\[\]]*\[\]$/.test(type)) {
+  const isComplexType = complexTypes?.some(item => item.name === type || `${item.name}[]` === type);
+    if(isComplexType || isBasicTypeArr(type) || type === '[]') {
       return true
     }
   }
@@ -39,7 +84,7 @@ export const isArrayTypeLiteral = (type: string, isComplexType: boolean) => {
 }
 
 export const factType = (type: string, options: IComponentWiki['props'][number]['options'], complexTypes: IComponentWiki['types']) => {
-  const basicType = type.toLowerCase();
+  const basicType = type.trim().toLowerCase();
   if(basicType === 'boolean') {
     return basicType;
   }
@@ -55,11 +100,11 @@ export const factType = (type: string, options: IComponentWiki['props'][number][
   if((isString && isEnum) || (isNumber && isEnum)) {
     return 'enum';
   }
-  const isComplexType = complexTypes?.some(item => item.name === type);
-  if(isGenericArrType(type) || isArrayTypeLiteral(type, isComplexType)) {
+  if(isGenericArrType(type) || isArrayTypeLiteral(type, complexTypes) || basicType === 'array') {
     return 'array';
   }
-  if(isComplexType) {
+  const isComplexType = complexTypes?.some(item => item.name === type);
+  if(isComplexType || basicType === 'object') {
     return 'object';
   }
   return 'errortype';

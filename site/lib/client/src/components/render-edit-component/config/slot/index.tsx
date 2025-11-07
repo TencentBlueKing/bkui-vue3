@@ -1,17 +1,24 @@
-import { defineComponent, ref, computed } from 'vue';
+import { defineComponent, computed, type PropType } from 'vue';
 import { Input as BkInput, bkTooltips } from 'bkui-vue';
+import type {
+  IParam
+} from '@/types/component';
 
 import './index.postcss';
 
 export default defineComponent({
   name: 'RenderSlot',
   props: {
-    slotName: {
+    name: {
       type: String,
       default: '',
     },
-    desc: {
+    description: {
       type: String
+    },
+    params: {
+      type: Array as PropType<IParam[]>,
+      default: () => []
     },
     modelValue: {
       type: String
@@ -32,20 +39,26 @@ export default defineComponent({
       emit('update:modelValue', value);
     };
     const toolTip = computed(() => {
+      const { name, description, params } = props
+      const paramsStr = params.map(item => `${item.name}:${item.type}`).join(',')
       return {
         content: (
           <>
             <div class='slot-tip-bg even-bg'>
               <span>插槽：</span>
-              <span>{ props.slotName }</span>
+              <span>{ name }</span>
             </div>
             <div class='slot-tip-bg'>
               <span>说明：</span>
-              <span title={props.desc}>{ props.desc }</span>
+              <span title={description}>{ description }</span>
+            </div>
+            <div class='slot-tip-bg even-bg'>
+              <span>参数：</span>
+              <span title={paramsStr}>{ paramsStr }</span>
             </div>
           </>
         ),
-        disabled: !props.desc,
+        disabled: !description,
         theme: 'light',
         placement: 'bottom-end',
         delay: 500,
@@ -61,7 +74,7 @@ export default defineComponent({
     return (
       <div class='config-slot'>
         <div class="config-slot-name">
-          <span v-bkTooltips={this.toolTip}>{this.slotName}</span>
+          <span v-bkTooltips={this.toolTip}>{this.name}</span>
         </div>
         <BkInput 
           type='textarea'
