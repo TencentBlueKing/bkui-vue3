@@ -64,8 +64,12 @@ import {
   serializeElementTree,
 } from './template-parser';
 
-import { camelKey } from '@/utils'
-import { useHighLightJs } from '@/hooks/use-highlighjs';
+import {
+  camelKey,
+} from '@/utils'
+import {
+  useHighLightJs,
+} from '@/hooks/use-highlighjs';
 
 type Languages = 'javascript' | 'typescript';
 interface IProps {
