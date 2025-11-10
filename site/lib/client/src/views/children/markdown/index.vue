@@ -5,7 +5,9 @@
     class="markdown-home g-scrollbar"
   >
     <render-markdown
+      :parse-tag-list="['h1', 'h2', 'h3', 'h4']"
       :content="content"
+      container-class-name=".markdown-home"
     />
   </bk-loading>
 </template>

@@ -242,39 +242,42 @@ onUnmounted(() => {
   height: 100%;
 }
 
-.edit-component-view {
+:deep(.edit-component-view) {
   display: flex;
   justify-content: center;
   height: 100%;
   overflow: auto;
   background: #f3f3fa;
 
-  :deep(.edit-component-component) {
+  .edit-component-component {
     align-self: center;
     margin: 0 auto;
     width: 100%;
     padding: 0 24px;
     text-align: center;
+  }
+  /* 
+    为了面包屑、单选框组等组件需要居中显示额外添加的样式
+  */
+  .search-container {
+    position: revert !important;
+  }
 
-    /* 
-      为了面包屑、单选框组等组件需要居中显示额外添加的样式
-    */
-    .search-container {
-      position: revert !important;
-    }
+  .bk-rate-stars {
+    display: flex;
+    justify-content: center;
+  }
 
-    .bk-rate-stars {
-      display: flex;
-      justify-content: center;
-    }
+  .bk-tree {
+    text-align: left;
+  }
 
-    .bk-tree {
-      text-align: left;
-    }
+  .bk-resize-layout {
+    height: 500px;
+  }
 
-    .bk-breadcrumb, .bk-radio-group {
-      justify-content: center;
-    }
+  .bk-breadcrumb, .bk-checkbox-group {
+    justify-content: center;
   }
   
 

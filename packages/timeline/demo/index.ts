@@ -56,6 +56,10 @@ const presets = [
         },
       ],
     },
+    style: {
+      display: 'flex',
+      justifyContent: 'center',
+    },
   },
 ];
 

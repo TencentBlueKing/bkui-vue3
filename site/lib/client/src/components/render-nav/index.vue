@@ -220,13 +220,13 @@ const {
 const vClickoutside = clickoutside;
 const BkOption = BkSelect.Option;
 
-const startList = [{
+const startList: IComponentWiki[] = [{
   group: '开始',
   name: 'start',
   title: '',
   titleCN: '快速上手',
   description: '本组件库基于Vue3研发，本节介绍如何在项目中结合 webpack 一起使用 @blueking/bkui-vue。',
-  presets: [],
+  presets: [] as IComponentWiki['presets'],
 }];
 
 const searchVal = ref('');
@@ -342,6 +342,9 @@ const handleChoose = async (value: IComponentWiki, routerName = 'component') => 
 const getVersionList = async () => {
   try {
     versionList.value = await getVersions();
+    if (versionList.value.length && !versionList.value.includes(componentStore.version)) {
+      componentStore.version = versionList.value[0];
+    }
   } catch (error) {
     console.error(error);
   }

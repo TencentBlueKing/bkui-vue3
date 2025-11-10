@@ -36,7 +36,7 @@ const presets = [
       limit: 20,
       type: 'default',
       showLimit: true,
-      align: 'right',
+      align: 'center',
       showTotalCount: true,
       limitList: [10, 20, 50, 100],
     },

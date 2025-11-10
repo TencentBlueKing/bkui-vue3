@@ -11,7 +11,7 @@
     <!-- eslint-enable vue/no-v-html -->
 
     <!-- 侧边导航栏 -->
-    <render-side-navgation :nav-items="navItems" container-class-name=".design-home" />
+    <render-side-navgation v-if="navItems.length" :nav-items="navItems" :container-class-name="containerClassName" />
   </section>
 </template>
 
@@ -28,6 +28,8 @@ import 'highlight.js/styles/atom-one-dark.css';
 
 interface IProps {
   content: string;
+  parseTagList?: string[];
+  containerClassName?: string;
 }
 
 // 导航项数据
@@ -36,7 +38,9 @@ interface NavItem {
   title: string;
 }
 
-const props = defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+  parseTagList: () => ['h2'],
+});
 
 // 注册语言
 hljs.registerLanguage('javascript', javascript);
@@ -50,18 +54,36 @@ const titleToId = (title: string): string => {
     .replace(/[^\w\u4e00-\u9fa5-]/g, ''); // 保留中文字符
 };
 
-// 解析 markdown 内容，提取所有 H2 标题
+const headingConfigs = computed(() =>
+  (props.parseTagList ?? [])
+    .map(tag => {
+      const match = tag.match(/^h([1-6])$/i);
+      if (!match) {
+        return null;
+      }
+      const level = Number(match[1]);
+      return {
+        tag: `h${level}`.toLowerCase(),
+        regex: new RegExp(`^${'#'.repeat(level)}\\s+(.+)$`),
+      };
+    })
+    .filter((item): item is { tag: string; regex: RegExp } => Boolean(item)),
+);
+
+// 解析 markdown 内容，提取所有标题
 const navItems = computed<NavItem[]>(() => {
   const items: NavItem[] = [];
   const lines = props.content.split('\n');
 
   lines.forEach((line) => {
-    // 匹配 ## 开头的标题（H2）
-    const h2Match = line.match(/^##\s+(.+)$/);
-    if (h2Match) {
-      const title = h2Match[1].trim();
-      const id = titleToId(title);
-      items.push({ id, title });
+    for (const config of headingConfigs.value) {
+      const match = line.match(config.regex);
+      if (match) {
+        const title = match[1].trim();
+        const id = titleToId(title);
+        items.push({ id, title });
+        break;
+      }
     }
   });
 
@@ -94,7 +116,7 @@ const md = new MarkdownIt({
   },
 });
 
-// 自定义 heading 渲染规则，为 H2 添加 id
+// 自定义 heading 渲染规则
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const defaultHeadingOpen = md.renderer.rules.heading_open
   || function (tokens: any, idx: any, options: any, env: any, self: any) {
@@ -111,8 +133,8 @@ md.renderer.rules.heading_open = function (
   const token = tokens[idx];
   const level = token.tag;
 
-  // 只处理 H2 标签
-  if (level === 'h2') {
+  // 只处理指定的标题标签
+  if (headingConfigs.value.some(config => config.tag === level)) {
     // 获取标题内容（下一个 token 是 inline，包含实际文本）
     const inlineToken = tokens[idx + 1];
     if (inlineToken && inlineToken.type === 'inline') {

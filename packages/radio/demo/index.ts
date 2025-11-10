@@ -145,7 +145,7 @@ const slots = [
 ];
 
 // 组件分组
-const group = NavGroupMeta.Data;
+const group = NavGroupMeta.Form;
 
 // 组件名称
 const name = 'radio';
