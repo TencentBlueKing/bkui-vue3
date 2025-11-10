@@ -6,6 +6,7 @@
   >
     <render-nav />
     <router-view class="component-main" />
+    <render-ai />
   </bk-loading>
 </template>
 
@@ -21,6 +22,7 @@ import {
 } from 'vue-router';
 
 import RenderNav from '@/components/render-nav/index.vue';
+import RenderAi from '@/components/render-ai/index.vue';
 import {
   useComponent,
 } from '@/store/component';
