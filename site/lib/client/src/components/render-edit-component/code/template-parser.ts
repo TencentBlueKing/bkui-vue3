@@ -1,5 +1,60 @@
-import { ValueType } from "@/types/component"
-import { camelKey } from "@/utils"
+import { ValueType } from "@/types/component";
+import { camelKey } from "@/utils";
+import { iconsName } from './icons-name';
+
+// 转换为 PascalCase 格式
+export const toPascalCase = (str: string, capitalizeFirst = true): string => {
+  if (!str) return '';
+  // 如果包含分隔符（-、_、空格），按分隔符拆分
+  if (/[-_\s]/.test(str)) {
+    const result = str
+      .split(/[-_\s]+/)
+      .filter(Boolean)
+      .map(s => s ? s[0].toUpperCase() + s.slice(1).toLowerCase() : '')
+      .join('');
+    
+    if (!capitalizeFirst && result.length > 0) {
+      return result[0].toLowerCase() + result.slice(1);
+    }
+    return result;
+  }
+  
+  // 如果没有分隔符，直接将首字母大写，其余字母小写
+  const result = str[0].toUpperCase() + str.slice(1).toLowerCase();
+  
+  if (!capitalizeFirst && result.length > 0) {
+    return result[0].toLowerCase() + result.slice(1);
+  }
+  
+  return result;
+};
+
+// 从模板字符串中提取图标名称
+export const extractIconNames = (template: string): string[] => {
+  // 使用正则匹配所有开始标签（忽略结束标签）
+  // 匹配 <tagName 的形式，捕获标签名
+  const tagRegex = /<([a-zA-Z][a-zA-Z0-9-]*)/g;
+  const foundIcons = new Set<string>();
+  
+  let match;
+  while ((match = tagRegex.exec(template)) !== null) {
+    const tagName = match[1];
+    
+    // 先尝试原样匹配（处理已经是正确PascalCase的情况，如 AngleUpFill）
+    if (iconsName.includes(tagName)) {
+      foundIcons.add(tagName);
+      continue;
+    }
+    
+    // 如果原样匹配不到，再尝试转换为PascalCase后匹配（处理 cOpy、dEL 等情况）
+    const pascalCaseTagName = toPascalCase(tagName);
+    if (iconsName.includes(pascalCaseTagName)) {
+      foundIcons.add(pascalCaseTagName);
+    }
+  }
+  
+  return Array.from(foundIcons);
+};
 
 interface IElement {
   name: string
@@ -38,8 +93,19 @@ export const parseStringTemplate = (str: string): IElement[] => {
     }
     
     // 构建 IElement - 修改 emits 的解析
+    // 如果 tagName 是图标，转换为 PascalCase
+    let finalTagName = tag.tagName;
+    if (iconsName.includes(tag.tagName)) {
+      finalTagName = tag.tagName;
+    } else {
+      const pascalCaseTagName = toPascalCase(tag.tagName);
+      if (iconsName.includes(pascalCaseTagName)) {
+        finalTagName = pascalCaseTagName;
+      }
+    }
+    
     const element: IElement = {
-      name: tag.tagName,
+      name: finalTagName,
       props: parseAttributes(tag.attributes),
       emits: parseEmits(tag.attributes),  // 新增 emits 解析函数
       children: childrenContent ? parseStringTemplate(childrenContent) : [],

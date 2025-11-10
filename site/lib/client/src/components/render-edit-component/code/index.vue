@@ -55,15 +55,15 @@ import type {
 import {
   useClipboard,
 } from '@vueuse/core';
-
 import 'highlight.js/styles/atom-one-dark.css'; // 代码块高亮样式
 import {
   createLabel,
   createSlots,
+  extractIconNames,
   parseStringTemplate,
   serializeElementTree,
+  toPascalCase,
 } from './template-parser';
-
 import {
   camelKey,
 } from '@/utils'
@@ -83,6 +83,11 @@ interface LanguageItem<T = Languages> {
   value: T;
   disabled: boolean;
 }
+interface DependentData {
+  list: string[],
+  source: string,
+  isType?: boolean
+}
 const props = defineProps<IProps>();
 
 // 换行符
@@ -98,6 +103,8 @@ const clickoutsideDirective = 'clickoutside';
 const directiveComponents = ['tooltips', 'ellipsis', clickoutsideDirective];
 // 函数组件
 const functionComponents = ['notify', 'info-box', 'message'];
+// bkui-vue图标导入路径
+const ICON_IMPORT_PATH = 'bkui-vue/lib/icon';
 
 const { copy } = useClipboard({
   legacy: true, // 使用 execCommand 作为后备处理副本
@@ -137,6 +144,13 @@ const curScript = computed(() => {
 const isDirectiveComponent = computed(() => directiveComponents.includes(componentWiki.value.name));
 // 是否为函数组件
 const isFunctionComponent = computed(() => functionComponents.includes(componentWiki.value.name));
+// 当前使用的预设
+const curPreset = computed(() => {
+  if (!isNaN(props.index) && props.index >= 0 && props.index < componentWiki.value.presets.length) {
+    return componentWiki.value.presets[props.index];
+  }
+  return null;
+});
 
 // template 缩进处理
 const indent = (num = 1) => new Array(num)
@@ -175,8 +189,8 @@ const createCommonTemplate = () => {
 
 // 生成指令模板
 const createDirectiveTemplate = () => {
-  if (!isNaN(props.index) && props.index >= 0 && props.index < componentWiki.value.presets.length) {
-    const template = componentWiki.value.presets[props.index]?.template || '';
+  if (curPreset.value) {
+    const template = curPreset.value?.template || '';
     const str = `<template>${template.trim()}</template>`;
     const elementTree = parseStringTemplate(str);
     return serializeElementTree(elementTree, 0, true);
@@ -199,16 +213,18 @@ const createFunctionTemplate = () => {
 };
 
 // 生成依赖导入
-const createDependImport = (dependList: string[], source: string, isType = false) => {
-  if (dependList.length === 0) return '';
-  let typeStr = isType ? ' type' : '';
-  return `import${typeStr} {${
-    BREAK_LINE
-  }${indent()}${dependList.join(`,${
-    BREAK_LINE
-  }${indent()}`)},${
-    BREAK_LINE
-  }} from '${source}';`;
+const createDependImport = (dependData: DependentData[]) => {
+  return dependData.map(({ list, source, isType = false }) => {
+    if (list.length === 0) return '';
+    let typeStr = isType ? ' type' : '';
+    return `import${typeStr} {${
+      BREAK_LINE
+    }${indent()}${list.join(`,${
+      BREAK_LINE
+    }${indent()}`)},${
+      BREAK_LINE
+    }} from '${source}';`;
+  }).join(BREAK_LINE);
 };
 
 // 根据props生成响应式变量
@@ -333,38 +349,73 @@ const scriptContent = () => {
 // 生成通用script
 const createCommonScript = () => {
   // 依赖列表
-  const dependList = ['ref'];
-  const importDepend = createDependImport(dependList, 'vue');
-  const variables = createRefVariables();
+  const dependentList: DependentData[] = [];
 
-  if (activeLanguage.value === 'typescript') {
-    const curTypeList = [`${toPascalCase(componentWiki.value.name)}Props`];
-    const importTypeDepend = createDependImport(curTypeList, 'bkui-vue', true);
-    if (variables) {
-      return `${importTypeDepend ? `${importTypeDepend}${BREAK_LINE}` : ''}${importDepend}${BREAK_LINE}${BREAK_LINE}${variables}${BREAK_LINE}`;
+  if (
+    curPreset.value &&
+    curPreset.value?.dependent &&
+    curPreset.value.dependent?.components &&
+    Array.isArray(curPreset.value.dependent.components)
+  ) {
+    // 如果有icon依赖，需要单独处理
+    if (curPreset.value.dependent?.components?.includes('icon')) {
+      // 收集所有slot中的模板内容
+      const allTemplates: string[] = [];
+      
+      // 从renderSlots中获取所有slot的内容
+      Object.values(renderSlots.value).forEach(slotContent => {
+        if (slotContent) {
+          allTemplates.push(slotContent);
+        }
+      });
+      
+      // 如果有preset的template，也加入
+      if (curPreset.value?.template) {
+        allTemplates.push(curPreset.value.template);
+      }
+      
+      // 合并所有模板内容并提取图标名称
+      const combinedTemplate = allTemplates.join('');
+      const iconNames = extractIconNames(combinedTemplate);
+      
+      // 如果找到了图标，添加到依赖列表
+      if (iconNames.length > 0) {
+        dependentList.push({
+          list: iconNames,
+          source: ICON_IMPORT_PATH,
+        });
+      }
     }
-    return '';
-  }
-  if (variables) {
-    return `${importDepend}${BREAK_LINE}${BREAK_LINE}${variables}${BREAK_LINE}`;
-  }
-  return '';
-};
 
-// 将连接形式/下划线/空格分隔的名称转为 PascalCase，例如：info-box -> InfoBox
-const toPascalCase = (str: string = '', capitalizeFirst: boolean = true): string => {
-  if (!str) return '';
-  const result = str
-    .split(/[-_\s]+/)
-    .filter(Boolean)
-    .map(s => s ? s[0].toUpperCase() + s.slice(1) : '')
-    .join('');
-  
-  if (!capitalizeFirst && result.length > 0) {
-    return result[0].toLowerCase() + result.slice(1);
+    const noIconDependents = curPreset.value.dependent.components.filter(item => item !== 'icon');
+    dependentList.push({
+      list: noIconDependents.map(item => `${toPascalCase(item)} as Bk${toPascalCase(item)}`),
+      source: 'bkui-vue',
+    });
   }
-  
-  return result;
+
+  let variables = createRefVariables();
+  if (variables) {
+    if (activeLanguage.value === 'typescript') {
+      const curTypeList = [`${toPascalCase(componentWiki.value.name)}Props`];
+      dependentList.unshift({
+        list: curTypeList,
+        source: 'bkui-vue',
+        isType: true,
+      });
+    }
+    dependentList.push({
+      list: ['ref'],
+      source: 'vue',
+    });
+    variables = `${BREAK_LINE}${variables}${BREAK_LINE}`;
+  }
+  let importDepend = createDependImport(dependentList);
+  if (importDepend.length > 0) {
+    importDepend = `${importDepend}${BREAK_LINE}`;
+  }
+
+  return `${importDepend}${variables}`;
 };
 
 // 生成函数组件script
@@ -376,8 +427,11 @@ const createFunctionScript = () => {
   }).join(`,${BREAK_LINE}${indent(2)}`);
 
   // 依赖列表
-  const dependList = [toPascalCase(componentWiki.value.name)];
-  const importDepend = createDependImport(dependList, 'bkui-vue');
+  const dependentList = [toPascalCase(componentWiki.value.name)];
+  const importDepend = createDependImport([{
+    list: dependentList,
+    source: 'bkui-vue',
+  }]);
 
   return `${importDepend}${BREAK_LINE}
 const handleShow = () => {
@@ -391,8 +445,11 @@ const handleShow = () => {
 // 指令clickoutside特殊处理
 const createClickOutSideScript = () => {
   // 依赖列表
-  const dependList = ['Message'];
-  const importDepend = createDependImport(dependList, 'bkui-vue');
+  const dependentList = ['Message'];
+  const importDepend = createDependImport([{
+    list: dependentList,
+    source: 'bkui-vue',
+  }]);
   return `${importDepend}${BREAK_LINE}
 const handleClickOutside = () => {
   Message({
