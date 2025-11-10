@@ -1,3 +1,6 @@
+import { ValueType } from "@/types/component"
+import { camelKey } from "@/utils"
+
 interface IElement {
   name: string
   props: {
@@ -416,4 +419,32 @@ export const serializeElementTree = (elements: IElement[], indentLevel: number =
   }
   
   return result;
+};
+
+// 创建插槽
+export const createSlots = (slotContent: string, slotName: string, slotParams: Record<string, any>) => {
+  let slotParamsStr = '';
+  if (Array.isArray(slotParams) && slotParams.length > 0) {
+    slotParamsStr = `="{ ${slotParams.map(item => item.name).join(', ')} }"`;
+  }
+  const curSlotName = (slotName === 'default' && !slotParamsStr) ? '' : ` #${slotName}${slotParamsStr}`;
+  const name = `template${curSlotName}`;
+  return createLabel(name, slotContent.trim(), '', {}, 'template');
+};
+
+// 创建标签
+export const createLabel = (
+  name: string,
+  slot: string,
+  prefix = '',
+  props: Record<string, ValueType> = {},
+  endLabelName = '',
+) => {
+  // 属性列表处理
+  const propsList = Object.keys(props).map((key) => {
+    return ` :${key}="${camelKey(key)}"`;
+  });
+  // slot处理
+  const curEndLabelName = endLabelName || name;
+  return `<${prefix}${name}${propsList.join('')}>${slot}</${prefix}${curEndLabelName}>`;
 };

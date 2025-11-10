@@ -40,13 +40,8 @@ import {
   Button as bkButton,
   Message,
 } from 'bkui-vue';
-import hljs from 'highlight.js/lib/core';
-import javascript from 'highlight.js/lib/languages/javascript';
-import typescript from 'highlight.js/lib/languages/typescript';
-import xml from 'highlight.js/lib/languages/xml';
 import {
   computed,
-  onBeforeMount,
   ref,
   toRefs,
 } from 'vue';
@@ -63,11 +58,14 @@ import {
 
 import 'highlight.js/styles/atom-one-dark.css'; // 代码块高亮样式
 import {
+  createLabel,
+  createSlots,
   parseStringTemplate,
   serializeElementTree,
 } from './template-parser';
 
 import { camelKey } from '@/utils'
+import { useHighLightJs } from '@/hooks/use-highlighjs';
 
 type Languages = 'javascript' | 'typescript';
 interface IProps {
@@ -100,6 +98,7 @@ const functionComponents = ['notify', 'info-box', 'message'];
 const { copy } = useClipboard({
   legacy: true, // 使用 execCommand 作为后备处理副本
 });
+const { highlightFactory } = useHighLightJs();
 
 const activeLanguage = ref<Languages>('typescript');
 const supportLanguages = ref<LanguageItem[]>([
@@ -140,37 +139,6 @@ const indent = (num = 1) => new Array(num)
   .fill(INDENT)
   .join('');
 
-// 创建标签
-const createLabel = (
-  name: string,
-  slot: string,
-  prefix = '',
-  props: Record<string, ValueType> = {},
-  endLabelName = '',
-) => {
-  // 属性列表处理
-  const propsList = Object.keys(props).map((key) => {
-    return ` :${key}="${camelKey(key)}"`;
-  });
-  // slot处理
-  const curEndLabelName = endLabelName || name;
-  return `<${prefix}${name}${propsList.join('')}>${slot}</${prefix}${curEndLabelName}>`;
-};
-
-// slot生成
-const createSlots = () => {
-  return Object.entries(renderSlots.value).map(([key, value]) => {
-    const slotParamsList = componentWiki.value?.slots?.find(item => item.name === key)?.params;
-    let slotParamsStr = '';
-    if (Array.isArray(slotParamsList)) {
-      slotParamsStr = `="{ ${slotParamsList.map(item => item.name).join(', ')} }"`;
-    }
-    const curSlotName = (key === 'default' && !slotParamsStr) ? '' : ` #${key}${slotParamsStr}`;
-    const name = `template${curSlotName}`;
-    return createLabel(name, value.trim(), '', {}, 'template');
-  }).join('');
-};
-
 // template生成
 const template = () => {
   if (isDirectiveComponent.value) {
@@ -183,11 +151,16 @@ const template = () => {
 
 // 生成通用模板
 const createCommonTemplate = () => {
+  const curSlots = Object.entries(renderSlots.value).map(([slotName, slotContent]) => {
+    const slotParams = componentWiki.value?.slots?.find(item => item.name === slotName)?.params;
+    return createSlots(slotContent, slotName, slotParams);
+  }).join('');
+
   const str =  createLabel(
     'template',
     createLabel(
       componentWiki.value.name,
-      createSlots(),
+      curSlots,
       'bk-',
       renderProps.value,
     ),
@@ -424,18 +397,7 @@ const handleClickOutside = () => {
   });
 };
 `
-}
-
-// 开头首字母大写
-const capitalize = (str = '') => {
-  return str ? str[0].toUpperCase() + str.slice(1) : '';
 };
-
-// highlight处理
-const highlightFactory = (
-  content: string,
-  language: 'xml' | 'typescript' | 'javascript' = 'xml',
-) => hljs.highlight(content, { language }).value;
 
 // 切换语言
 const toggleLanguage = ({
@@ -473,12 +435,6 @@ const handleCopyCode = async () => {
     });
   }
 };
-
-onBeforeMount(() => {
-  hljs.registerLanguage('xml', xml);
-  hljs.registerLanguage('javascript', javascript);
-  hljs.registerLanguage('typescript', typescript);
-});
 </script>
 
 <style lang="postcss" scoped>
@@ -579,4 +535,3 @@ onBeforeMount(() => {
   }
 }
 </style>
-
