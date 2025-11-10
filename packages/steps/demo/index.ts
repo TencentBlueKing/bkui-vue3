@@ -32,7 +32,7 @@ const presets = [
     description: '适用于步骤数较多时，让用户更明确的了解步骤数量',
     props: {
       'cur-step': 1,
-      direction: 'vertical',
+      direction: 'horizontal',
     },
   },
   {

@@ -3,6 +3,9 @@ import type { IFetchConfig } from './index';
 
 // 请求执行失败拦截器
 export default (error: any, config: IFetchConfig) => {
+  if (error?.name === 'AbortError') {
+    return Promise.reject(error);
+  }
   // 全局捕获错误给出提示
   if (config.globalError) {
     // Message({ theme: 'error', message: error.message });

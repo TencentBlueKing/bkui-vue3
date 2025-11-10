@@ -7,8 +7,10 @@
   >
     <render-markdown
       v-if="design"
+      :parse-tag-list="['h2']"
+      container-class-name=".design-home"
       :content="design"
-      class="design-markdown"
+      class=".design-markdown"
     />
     <bk-exception
       v-else

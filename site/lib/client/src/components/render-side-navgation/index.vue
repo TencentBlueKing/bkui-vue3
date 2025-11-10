@@ -18,7 +18,7 @@
               :class="{ active: activeAnchor === item.id }"
               @click="handleNavClick(item.id)"
             >
-              {{ item.title }}
+              <bk-overflow-title :content="item.title" />
             </a>
           </li>
         </ul>
@@ -30,13 +30,16 @@
 <script setup lang="ts">
 import { nextTick, onMounted, onUnmounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
+import {
+  OverflowTitle as BkOverflowTitle,
+} from 'bkui-vue';
 
 interface IProps {
   navItems: {
     id: string;
     title: string;
   }[];
-  containerClassName: string;
+  containerClassName?: string;
   handleItemClick?: () => void;
 }
 
@@ -145,7 +148,7 @@ onMounted(() => {
     // 初始化激活的锚点
     updateActiveAnchor();
     // 查找滚动容器
-    scrollContainer.value = document.querySelector(props.containerClassName);
+    scrollContainer.value = document.querySelector(props.containerClassName || 'body');
     if (scrollContainer.value) {
       scrollContainer.value.addEventListener('scroll', handleScroll);
     }
@@ -163,14 +166,13 @@ onUnmounted(() => {
 });
 </script>
 
-<style lang="postcss">
+<style scoped lang="postcss">
 /* 侧边栏样式 */
 .sidebar {
   width: 146px;
   position: sticky;
   max-height: 100%;
   top: 20px;
-  overflow-y: auto;
   align-self: flex-start; /* 确保侧边栏从顶部开始 */
 }
 

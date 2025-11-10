@@ -2,6 +2,7 @@
 
 import {
   deepMerge,
+  isObject,
 } from '@/common/util';
 
 import errorInterceptor from './error-interceptor';
@@ -15,6 +16,8 @@ export interface IFetchConfig extends RequestInit {
   signal?: AbortSignal,
   withoutSpace?: boolean,
   noCheckPermission?: boolean,
+  cancelPrevious?: boolean,
+  requestKey?: string,
 }
 
 type HttpMethod = <T>(url: string, payload?: any, config?: IFetchConfig) => Promise<T>;
@@ -39,38 +42,58 @@ const contentTypeMap = {
 const methodsWithoutData = ['delete', 'get', 'head', 'options'];
 const methodsWithData = ['post', 'put', 'patch'];
 const allMethods = [...methodsWithoutData, ...methodsWithData];
+const pendingRequests = new Map<string, AbortController>();
 
 // 拼装发送请求配置
 const getFetchConfig = (method: string, payload: any, config: IFetchConfig) => {
+  const {
+    cancelPrevious: _cancelPrevious,
+    requestKey: _requestKey,
+    ...restConfig
+  } = config;
+
+  const requestSignal = restConfig.signal;
+
   const headers: Record<string, string> = {
     'X-Requested-With': 'fetch',
   };
 
-  if (config.requestType !== 'formData') {
-    headers['Content-Type'] = contentTypeMap[config.requestType] || 'application/json';
+  if (restConfig.requestType !== 'formData') {
+    headers['Content-Type'] = contentTypeMap[restConfig.requestType] || 'application/json';
   }
 
   // 合并配置
-  let fetchConfig: IFetchConfig = deepMerge(
-    {
-      method: method.toLocaleUpperCase(),
-      mode: 'cors',
-      cache: 'default',
-      credentials: 'include',
-      headers,
-      redirect: 'follow',
-      referrerPolicy: 'no-referrer-when-downgrade',
-      responseType: 'json',
-      globalError: true,
-    },
-    config,
-  );
+  const defaultConfig: Record<string, unknown> = {
+    method: method.toLocaleUpperCase(),
+    mode: 'cors',
+    cache: 'default',
+    credentials: 'include',
+    headers,
+    redirect: 'follow',
+    referrerPolicy: 'no-referrer-when-downgrade',
+    responseType: 'json',
+    globalError: true,
+  };
+
+  let fetchConfig = deepMerge<Record<string, unknown>>(
+    defaultConfig,
+    restConfig as unknown as Record<string, unknown>,
+  ) as IFetchConfig;
+
   // merge payload
   if (methodsWithData.includes(method)) {
-    fetchConfig = deepMerge(fetchConfig, { body: config.requestType === 'formData' ?  payload : JSON.stringify(payload) });
-  } else {
-    fetchConfig = deepMerge(fetchConfig, payload);
+    fetchConfig.body = restConfig.requestType === 'formData' ? payload : JSON.stringify(payload);
+  } else if (isObject(payload)) {
+    fetchConfig = deepMerge<Record<string, unknown>>(
+      fetchConfig as unknown as Record<string, unknown>,
+      payload as Record<string, unknown>,
+    ) as IFetchConfig;
   }
+
+  if (requestSignal) {
+    fetchConfig.signal = requestSignal;
+  }
+
   return fetchConfig;
 };
 
@@ -109,13 +132,37 @@ allMethods.forEach((method) => {
   Object.defineProperty(http, method, {
     get() {
       return async (url: string, payload: any, config: IFetchConfig = {}) => {
-        const fetchConfig: IFetchConfig = getFetchConfig(method, payload, config);
+        const fetchUrl = getFetchUrl(url, method, payload);
+        const finalConfig: IFetchConfig = { ...config };
+        let requestKey: string | undefined;
+        let controller: AbortController | undefined;
+
+        if (finalConfig.cancelPrevious) {
+          requestKey = finalConfig.requestKey || `${method.toLocaleUpperCase()}::${fetchUrl}`;
+          const pendingController = pendingRequests.get(requestKey);
+          if (pendingController) {
+            pendingController.abort();
+          }
+          controller = new AbortController();
+          pendingRequests.set(requestKey, controller);
+          if (!finalConfig.signal) {
+            finalConfig.signal = controller.signal;
+          }
+        }
+
+        const fetchConfig: IFetchConfig = getFetchConfig(method, payload, finalConfig);
         try {
-          const fetchUrl = getFetchUrl(url, method, payload);
           const response = await fetch(fetchUrl, fetchConfig);
           return await successInterceptor(response, fetchConfig);
         } catch (err) {
           return errorInterceptor(err, fetchConfig);
+        } finally {
+          if (requestKey) {
+            const current = pendingRequests.get(requestKey);
+            if (current === controller) {
+              pendingRequests.delete(requestKey);
+            }
+          }
         }
       };
     },

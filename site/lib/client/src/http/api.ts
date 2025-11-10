@@ -4,6 +4,10 @@ import fetch from './fetch';
 
 const apiPrefix = '/api';
 
+interface IRequestOptions {
+  requestKey?: string;
+}
+
 // 获取版本列表
 export const getVersions = () => fetch
   .get<string[]>(`${apiPrefix}/versions`);
@@ -17,47 +21,49 @@ export const getComponent = (
   component: string,
   version: string,
   type: string,
-) => {
-  const url = `${apiPrefix}/component?component=${component}&version=${version}&type=${type}`;
-  const script = document.createElement('script');
-  script.src = url;
-  script.async = true;
-  document.body.appendChild(script);
-  return new Promise<void>((resolve, reject) => {
-    script.onload = () => {
-      resolve();
-    };
-    script.onerror = (error) => {
-      reject(error);
-    };
-  }).finally(() => {
-    // 清理脚本元素
-    document.body.removeChild(script);
+  options: IRequestOptions = {},
+) => fetch
+  .get<string>(
+    `${apiPrefix}/component`,
+    { component, version, type },
+    {
+      responseType: 'javascript',
+      cancelPrevious: true,
+      requestKey: options.requestKey || `component:${type}`,
+    },
+  )
+  .then((scriptText) => {
+    const run = new Function(scriptText);
+    run();
   });
-};
 
 // 获取组件css
 export const getCss = (
   component: string,
   version: string,
   type: string,
-) => {
-  const url = `${apiPrefix}/css?component=${component}&version=${version}&type=${type}`;
-  return fetch
-    .get<string>(url)
-    .then((css) => {
-      const style = document.createElement('style');
-      style.textContent = css;
-      style.type = 'text/css';
-      style.id = `bkui-vue3-${component}-${version}`;
-      // 如果已经存在，则先移除
-      const existingStyle = document.getElementById(style.id);
-      if (existingStyle) {
-        document.head.removeChild(existingStyle);
-      }
-      document.head.appendChild(style);
-    });
-};
+  options: IRequestOptions = {},
+) => fetch
+  .get<string>(
+    `${apiPrefix}/css`,
+    { component, version, type },
+    {
+      cancelPrevious: true,
+      requestKey: options.requestKey || `css:${type}`,
+    },
+  )
+  .then((css) => {
+    const style = document.createElement('style');
+    style.textContent = css;
+    style.type = 'text/css';
+    style.id = `bkui-vue3-${component}-${version}`;
+    // 如果已经存在，则先移除
+    const existingStyle = document.getElementById(style.id);
+    if (existingStyle) {
+      document.head.removeChild(existingStyle);
+    }
+    document.head.appendChild(style);
+  });
 
 // 获取设计规范
 export const getDesign = (name: string) => fetch
