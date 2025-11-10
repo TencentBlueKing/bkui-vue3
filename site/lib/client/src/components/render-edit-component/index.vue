@@ -167,7 +167,12 @@ const handleChoosePreset = async (preset: IComponentWiki['presets'][number]) => 
     if (componentsToLoad.length > 0) {
       await Promise.all(componentsToLoad.map(async (componentName: string) => {
         try {
-          await getComponent(componentName, componentStore.version, 'component');
+          await getComponent(
+            componentName,
+            componentStore.version,
+            'component',
+            { requestKey: `component:dependency:${componentName}` },
+          );
           const comp = window.getComponent();
           if (comp) {
             // 存入缓存（保存整个组件对象，包括子组件）
@@ -176,7 +181,11 @@ const handleChoosePreset = async (preset: IComponentWiki['presets'][number]) => 
             components[componentName] = comp;
           }
         } catch (error) {
-          console.error(`Failed to load dependent component: ${componentName}`, error);
+          const err = error as any;
+          if (err?.name === 'AbortError') {
+            return;
+          }
+          console.error(`Failed to load dependent component: ${componentName}`, err);
         }
       }));
     }

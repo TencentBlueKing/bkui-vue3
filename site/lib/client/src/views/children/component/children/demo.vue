@@ -57,6 +57,7 @@ const componentStore = useComponent();
 
 const component = shallowRef();
 const loading = ref(true);
+let requestSequence = 0;
 
 const getComponentType = () => {
   return componentStore.activeComponentWiki?.group === '指令' ? 'directive' : 'component';
@@ -64,17 +65,39 @@ const getComponentType = () => {
 
 const handleGetComponent = () => {
   if (componentStore.activeComponentWiki) {
+    const currentRequestId = ++requestSequence;
     loading.value = true;
     Promise
       .all([
-        getComponent(componentStore.activeComponentWiki.name, componentStore.version, getComponentType()),
-        getCss(componentStore.activeComponentWiki.name, componentStore.version, getComponentType()),
+        getComponent(
+          componentStore.activeComponentWiki.name,
+          componentStore.version,
+          getComponentType(),
+          { requestKey: 'component:main' },
+        ),
+        getCss(
+          componentStore.activeComponentWiki.name,
+          componentStore.version,
+          getComponentType(),
+          { requestKey: 'css:main' },
+        ),
       ])
       .then(() => {
+        if (currentRequestId !== requestSequence) {
+          return;
+        }
         component.value = window.getComponent();
       })
+      .catch((error) => {
+        if (error?.name === 'AbortError') {
+          return;
+        }
+        console.error(error);
+      })
       .finally(() => {
-        loading.value = false;
+        if (currentRequestId === requestSequence) {
+          loading.value = false;
+        }
       });
   }
 };
