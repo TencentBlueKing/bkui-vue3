@@ -92,6 +92,13 @@ export const vBkloading: LoadingDirective = {
   mounted(el, binding) {
     if (binding.value) {
       createInstance(el, binding);
+      if (!binding.value.loading) {
+        // 只要loading不为真，就必须隐藏loading遮罩层
+        const instance = el[INSTANCE_KEY];
+        if (instance?.vm?.$el?.parentNode?.style) {
+          instance.vm.$el.parentNode.style.display = 'none';
+        }
+      }
     }
   },
   updated(el, binding) {
