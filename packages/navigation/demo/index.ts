@@ -99,7 +99,10 @@ const presets = [
       `,
       header: '<div class="header-demo">这里是头部导航</div>',
       'side-icon':
-        '<span class="input-icon" style="display: inline-flex; align-items: center;margin-left: 8px;"><i class="bkui-vue-wiki-icon icon-component"></i></span>',
+        '<span class="input-icon" style="display: inline-flex; align-items: center;"><tree-application-shape /></span>',
+    },
+    dependent: {
+      components: ['icon'],
     },
   },
 ];
