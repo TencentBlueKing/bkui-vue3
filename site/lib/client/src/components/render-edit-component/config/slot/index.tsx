@@ -85,11 +85,18 @@ export default defineComponent({
         delay: 500,
         extCls: 'slot-tip-content',
       }
-    })
+    });
+    const RenderSlot = () => highlightFactory(
+      serializeElementTree(
+        parseStringTemplate(
+          createSlots(props.modelValue, props.name, props.params)
+        )
+      ), 'xml'
+    );
     return {
-      highlightFactory,
+      RenderSlot,
       handleUpdateModelValue,
-      toolTip
+      toolTip,
     };
   },
   render() {
@@ -99,13 +106,7 @@ export default defineComponent({
           <span v-bkTooltips={this.toolTip}>{this.name}</span>
         </div>
         <pre class="config-slot-content g-scrollbar"><code v-html={
-          filterXss(this.highlightFactory(
-            serializeElementTree(
-              parseStringTemplate(
-                createSlots(this.modelValue, this.name, this.params)
-              )
-            ), 'xml'
-          ))
+          filterXss(this.RenderSlot())
         }></code></pre>
       </div>
     );
