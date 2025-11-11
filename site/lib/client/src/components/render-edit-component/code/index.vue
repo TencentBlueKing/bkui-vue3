@@ -18,6 +18,11 @@
 <code v-html="filterXss(highlightFactory(template(), 'xml'))"></code>
 <code v-html="filterXss(highlightFactory(scriptStart, 'xml'))"></code>
 <code v-html="filterXss(curScript)"></code><code v-html="filterXss(highlightFactory(scriptEnd, 'xml'))"></code>
+<template v-if="isShowCss">
+<code v-html="filterXss(highlightFactory(cssStart, 'xml'))"></code>
+<code v-html="filterXss(highlightFactory(renderCssStyle(curPreset.style), 'css'))"></code>
+<code v-html="filterXss(highlightFactory(cssEnd, 'xml'))"></code>
+</template>
       </pre>
     </div>
     <div class="code-footer">
@@ -71,6 +76,9 @@ import {
 import {
   useHighLightJs,
 } from '@/hooks/use-highlighjs';
+import {
+  renderCssStyle,
+} from './style-parsetr';
 
 type Languages = 'javascript' | 'typescript';
 interface IProps {
@@ -154,6 +162,11 @@ const curPreset = computed(() => {
 });
 // 组件属性
 const componentProps = computed(() => componentWiki.value.props);
+
+const isShowCss = computed(() => curPreset.value?.style && typeof curPreset.value.style === 'string');
+
+const cssStart = `<style scoped>`;
+const cssEnd = `</style>`;
 
 // template 缩进处理
 const indent = (num = 1) => new Array(num)
@@ -487,10 +500,14 @@ const toggleLanguage = ({
 };
 
 const getCode = () => {
+  const styleTemplate = isShowCss ?
+    `${BREAK_LINE}${cssStart}${BREAK_LINE}${renderCssStyle(curPreset.value.style)}${BREAK_LINE}${cssEnd}${BREAK_LINE}`
+    : '';
   return template()
     + `${BREAK_LINE}${scriptStart.value}`
-    + `${BREAK_LINE}${scriptContent()}${BREAK_LINE}`
-    + `${scriptEnd}${BREAK_LINE}`;
+    + `${BREAK_LINE}${scriptContent()}`
+    + `${scriptEnd}${BREAK_LINE}`
+    +  styleTemplate;
 };
 
 // 复制代码
