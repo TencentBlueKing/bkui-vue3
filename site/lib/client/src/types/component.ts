@@ -9,9 +9,9 @@ export interface IParam {
 
 export interface IProp {
   name: string;
-  type?: string;
-  default?: ValueType;
   description: string;
+  type: string;
+  default?: ValueType;
   link?: LinkType;
   options?: Array<boolean | number | string>;
   params?: IParam[];
@@ -26,7 +26,7 @@ export interface IEmit {
 
 export type ISlot = IEmit;
 
-export type IMethod = IEmit;
+export type IExpose = Pick<IProp, 'description' | 'link' | 'name' | 'type'>;
 
 export interface IPreset {
   title: string;
@@ -55,11 +55,11 @@ export interface IComponentWiki {
   description: string;
   props?: IProp[];
   emits?: IEmit[];
-  methods?: IMethod[];
+  exposes?: IExpose[];
   slots?: ISlot[];
   presets: IPreset[];
   types?: IType[];
-  children?: Array<Pick<IComponentWiki, 'emits' | 'methods' | 'name' | 'props' | 'slots'>>;
+  children?: Array<Pick<IComponentWiki, 'emits' | 'exposes' | 'name' | 'props' | 'slots'>>;
 }
 
 export interface INavGroups {
