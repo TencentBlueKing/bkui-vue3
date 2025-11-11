@@ -62,3 +62,12 @@ url("fonts/iconcool.eot?#iefix") format("embedded-opentype");
 .icon-angle-right-fill:before {
 	content: "\e10b";
 }
+.icon-github:before {
+	content: "\e10f";
+}
+.icon-mcp:before {
+	content: "\e110";
+}
+.icon-edit:before {
+	content: "\e111";
+}

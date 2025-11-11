@@ -48,9 +48,9 @@ const presets = [
 
 const props = [
   {
-    name: 'type | number',
+    name: 'type',
     description: '异常类型',
-    type: 'string',
+    type: 'string | number',
     options: ['403', '404', '500', 'building', 'empty', 'search-empty'],
     default: '404',
   },
