@@ -6,7 +6,7 @@
       flex: 1;
       border: 1px solid #C4C6CC;
       text-align: center;
-      padding: 3px 0;
+      line-height: 20px;
       cursor: pointer;
       &:hover {
         color: #3A84FF;
@@ -25,10 +25,16 @@
       color: #3A84FF;
       background-color: #E1ECFF;
       border-color: #3A84FF;
+      position: relative;
+      z-index: 1;
     }
     .label-overflow {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      margin-left: -1px;
+    }
+    .medium {
+      padding: 2px 0;
     }
   }

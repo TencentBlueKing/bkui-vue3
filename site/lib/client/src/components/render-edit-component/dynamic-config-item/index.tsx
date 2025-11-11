@@ -13,7 +13,7 @@ import Tab from '../config/tab'
 
 import './index.postcss';
 
-import { basicTypeToDefVal, splitType, factType } from './utils';
+import { basicTypeToDefVal, splitType, factType, isTypeArray, valueType } from './utils';
 
 // 根据类型渲染不同的组件
 export default defineComponent({
@@ -51,17 +51,22 @@ export default defineComponent({
   setup(props, { emit }) {
     const singleType = ref('');
     const typeList = computed(() => {
-      return [...new Set(splitType(props.type))].map(item => ({
-        value: item,
-        label: item
-      }))
+      return [...new Set(splitType(props.type))].map(item => {
+        const factTypeVal = factType(item, props.options);
+        const typeInfo = {
+          label: item,
+          value: item,
+          factType: factTypeVal,
+        }
+        if(isTypeArray(item)) {
+          typeInfo.label = 'Array';
+        }
+        return typeInfo
+      })
     })
-    singleType.value = typeList.value?.[0]?.value;
     const typeValue = computed(() => {
-      return factType(singleType.value, props.options, props.complexTypes)
-    });
-    const isOnlyBoolean = computed(() => {
-      return props.type.toLowerCase() === 'boolean'
+      const factTypeVal = typeList.value.find(typeItem => typeItem.value === singleType.value);
+      return factTypeVal?.factType || 'errortype';
     });
     
     const handleUpdate = (value: ComponentPropValue) => {
@@ -70,20 +75,23 @@ export default defineComponent({
     const newModelValue = ref<ComponentPropValue>()
     watch(() => props.modelValue, (val) => {
       newModelValue.value = val
+      const valType = valueType(val);
+      const matchedType = typeList.value.find(typeItem => typeItem.factType === valType);
+      singleType.value = matchedType ? matchedType.value : typeList.value[0]?.value || '';
     }, {
       immediate: true
     })
-    watch(typeValue, () => {
+    const handleTypeToValUpdate = () => {
       newModelValue.value = basicTypeToDefVal?.[typeValue.value as keyof typeof basicTypeToDefVal] ?? ''
       handleUpdate(newModelValue.value)
-    })
+    }
     return {
       singleType,
       typeList,
       typeValue,
-      isOnlyBoolean,
       handleUpdate,
       newModelValue,
+      handleTypeToValUpdate,
     };
   },
   render() {
@@ -96,6 +104,7 @@ export default defineComponent({
               activeTab={this.singleType}
               onUpdate:activeTab={(val) => {
                 this.singleType = val
+                this.handleTypeToValUpdate()
               }} 
             />
           </div>
@@ -139,10 +148,6 @@ export default defineComponent({
             <RenderArray
               modelValue={this.newModelValue as Array<Record<string, ComponentPropValue> | string | number | boolean>}
               onUpdate:modelValue={this.handleUpdate}
-              name={this.name}
-              type={this.singleType}
-              complexTypes={this.complexTypes}
-              parentNo={this.parentNo}
             />
           );
         case 'object':
@@ -162,11 +167,11 @@ export default defineComponent({
     };
 
     return (
-      <div class={`config-item${this.isOnlyBoolean ? ' name-value-flex': ''}`}>
+      <div class={`config-item`}>
         <div class="config-item-name">
           {this.$slots.nameTip?.()}
         </div>
-        <div class={`config-item-content${this.isOnlyBoolean || this.typeValue === 'array' ? '': ''}`}>
+        <div class={`config-item-content`}>
           {typeSelectRender()}
           <div>
             {typeConfigItemRender()}

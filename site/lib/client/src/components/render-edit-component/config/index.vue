@@ -1,8 +1,6 @@
 <template>
   <section
-    class="edit-component-config g-scrollbar"
-    ref="configRef"
-    @scroll="showSlot"
+    class="edit-component-config"
   >
     <div class="prl16">
       <Header class="header-wrapper" @refresh="resetProp" />
@@ -10,55 +8,66 @@
         :props="allValidTypeProps"
         @selected-attr="handleSelectedAttr"
       />
-      <Tab :tabs="tabs" v-model:active-tab="activeTab"/>
+      <Tab
+        :tabs="tabs"
+        v-model:active-tab="activeTab"
+        size="medium"
+      />
     </div>
-    <Collapse
-      v-model:active-keys="activeKeys"
-      title="属性"
-      name="attr"
+    <div
+      class="config-content g-scrollbar"
+      ref="configRef"
+      @scroll="handleScroll"
     >
-      <div class="prl16" v-if="comProps.length">
-        <DynamicConfigItem
-          v-for="prop in comProps"
-          :key="prop.name"
-          :name="prop.name"
-          :type="prop.type"
-          :model-value="renderCamelKeyProps(prop.name)"
-          :options="prop.options"
-          :complex-types="types"
-          :class="{ 'selected-prop': selectedProp === prop.name }"
-          @update:model-value="(value) => handleUpdateProps(prop.name, value)"
-        >
-          <template #nameTip>
-            <RenderNameTip :attr="prop" />
-          </template>
-        </DynamicConfigItem>
-      </div>
-      <Empty v-else />
-    </Collapse>
-    <Collapse
-      :class="{ 'sticky-title': isFloat }"
-      v-model:active-keys="activeKeys"
-      title="插槽" 
-      name="slot"
-      ref="slotRef"
-    >
-      <div class="prl16" v-if="comSlots.length">
-        <Slot
-          v-for="slot in comSlots"
-          :name="slot.name"
-          :description="slot.description"
-          :params="slot.params"
-          :model-value="renderSlots[slot.name]"
-          @update:model-value="(value) => handleUpdateSlots(slot.name, value)" />
-      </div>
-      <Empty v-else />
-    </Collapse>
+      <Collapse
+        v-model:active-keys="activeKeys"
+        title="属性"
+        name="attr"
+      >
+        <div class="prl16" v-if="comProps.length">
+          <DynamicConfigItem
+            v-for="prop in comProps"
+            :key="prop.name"
+            :name="prop.name"
+            :type="prop.type"
+            :model-value="renderCamelKeyProps(prop.name)"
+            :options="prop.options"
+            :complex-types="types"
+            :class="{ 'selected-prop': selectedProp === prop.name }"
+            @update:model-value="(value) => handleUpdateProps(prop.name, value)"
+          >
+            <template #nameTip>
+              <RenderNameTip :attr="prop" />
+            </template>
+          </DynamicConfigItem>
+        </div>
+        <Empty v-else />
+      </Collapse>
+      <Collapse
+        :class="{ 'sticky-title': !activeKeys.includes('slot') }"
+        v-model:active-keys="activeKeys"
+        title="插槽" 
+        name="slot"
+        ref="slotRef"
+        @expand="scrollToSlot"
+      >
+        <div class="prl16" v-if="comSlots.length">
+          <Slot
+            v-for="slot in comSlots"
+            :name="slot.name"
+            :description="slot.description"
+            :params="slot.params"
+            :model-value="renderSlots[slot.name]"
+            @update:model-value="(value) => handleUpdateSlots(slot.name, value)" />
+        </div>
+        <Empty v-else />
+      </Collapse>
+    </div>
   </section>
 </template>
 
 <script lang="ts" setup>
-import { computed, onBeforeUnmount, ref } from 'vue';
+import { computed, onBeforeUnmount, ref, watch, nextTick } from 'vue';
 
 import type {
   IComponentWiki,
@@ -70,6 +79,7 @@ import DynamicConfigItem from '../dynamic-config-item';
 import { filterErrTypeProps } from '../dynamic-config-item/utils';
 import { filterXss } from '@blueking/xss-filter';
 import { camelKey, camelToSnakeCase } from '@/utils'
+import { debounce } from '../dynamic-config-item/utils';
 
 import Collapse from './collapse';
 import Header from './header.vue';
@@ -180,8 +190,8 @@ const filterPropSlots = <T extends { name: string }, U extends object>(all: T[],
   return propsSort(currentPropSlots);
 };
 const allValidTypeProps = computed(() => {
-  const copyComProps = JSON.parse(JSON.stringify(props.props))
-  return filterErrTypeProps(copyComProps, props.types);
+  const copyComProps = JSON.parse(JSON.stringify(props?.props ?? []))
+  return filterErrTypeProps(copyComProps);
 })
 const comProps = computed(() => {
   return filterPropSlots(allValidTypeProps.value, props.presetProps ?? {});
@@ -209,18 +219,44 @@ const resetProp = () => {
 const activeKeys = ref(['attr', 'slot'])
 const configRef = ref()
 const slotRef = ref()
-const isFloat = ref(false)
-const showSlot = () => {
-  const parentRect = configRef.value.getBoundingClientRect()
-  const parentTop = parentRect.top
+const parentChildPos = () => {
+  if(!configRef.value || !slotRef.value) return
+  const parentTop = configRef.value.getBoundingClientRect().top
   const childEl = slotRef.value.$el
-  const childTop = childEl.getBoundingClientRect().top
-  const childBottom = childEl.getBoundingClientRect().bottom
-  const isVisible = childTop - parentTop + 36 < configRef.value.clientHeight || childBottom - parentTop < configRef.value.clientHeight
-  if(!isVisible && !isFloat.value) {
-    isFloat.value = true
+  const childRect = childEl.getBoundingClientRect()
+  const childTop = childRect.top
+  const childBottom = childRect.bottom
+  return {
+    parentTop,
+    childTop,
+    childBottom,
+  }
+}
+const showSlot = () => {
+  if(!configRef.value || !slotRef.value) return
+  const { parentTop, childTop, childBottom } = parentChildPos()
+  const isVisible = childTop - parentTop + 36 <= configRef.value.clientHeight || childBottom - parentTop < configRef.value.clientHeight
+  if(!isVisible) {
     activeKeys.value = activeKeys.value.filter(item => item !== 'slot')
   }
+}
+const handleScroll = debounce(() => {
+  showSlot()
+}, 100)
+watch(() => activeTab.value, () => {
+  nextTick(() => {
+    showSlot()
+  })
+}, { immediate: true })
+const scrollToSlot = () => {
+  nextTick(() => {
+    if(!configRef.value || !slotRef.value) return
+    const { parentTop, childTop } = parentChildPos()
+    configRef.value.scrollTo({
+      top: childTop - parentTop + configRef.value.scrollTop - 36,
+      behavior: 'smooth',
+    })
+  })
 }
 
 // 组件卸载时清理定时器
@@ -238,7 +274,8 @@ onBeforeUnmount(() => {
   box-shadow: -1px 0 0 0 #DCDEE5;
   height: 100%;
   padding-top: 11px;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
   .prl16 {
     padding: 0 16px;
   }
@@ -255,10 +292,15 @@ onBeforeUnmount(() => {
     border-radius: 2px;
     transition: all 0.2s ease;
   }
+  .config-content {
+    flex: 1;
+    overflow-y: auto;
+  }
   .sticky-title {
     position: sticky;
     bottom: 0;
     top: 36px;
+    z-index: 2;
   }
 }
 </style>
