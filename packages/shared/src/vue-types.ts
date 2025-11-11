@@ -323,14 +323,44 @@ export interface IParam {
   link?: LinkType;
 }
 
-export interface PropItem {
+export interface IProp {
   name: string;
-  type: string;
+  type?: string;
   default?: ValueType;
   description: string;
   link?: LinkType;
   options?: Array<boolean | number | string>;
+  params?: IParam[];
   isSupportVModel?: boolean;
+}
+
+export interface IEmit {
+  name: string;
+  description: string;
+  params: IParam[];
+}
+
+export type ISlot = IEmit;
+
+export type IMethod = IEmit;
+
+export interface IPreset {
+  title: string;
+  description: string;
+  template?: string;
+  props?: Record<string, ValueType>;
+  slots?: Record<string, string>;
+  events?: Record<string, string>;
+  dependent?: {
+    components: Array<string>;
+  };
+  style?: string;
+}
+
+export interface IType {
+  name: string;
+  description: string;
+  fields: IProp[];
 }
 
 export interface IComponentWiki {
@@ -339,43 +369,11 @@ export interface IComponentWiki {
   title: string;
   titleCN: string;
   description: string;
-  props?: PropItem[];
-  emits?: {
-    name: string;
-    description: string;
-    params: IParam[];
-  }[];
-  slots?: {
-    name: string;
-    description: string;
-    params?: IParam[];
-  }[];
-  presets: Array<{
-    title: string;
-    description: string;
-    template?: string;
-    props?: Record<string, ValueType>;
-    slots?: Record<string, string>;
-    // 依赖组件, 有些预设需要依赖其他组件才能展示。并非组件自身的必须配置
-    dependent?: {
-      components: Array<string>;
-    };
-    // 组件预设外层div样式, 有些预设需要特定的样式才能正常展示，并非组件自身的必须配置
-    styles?: Record<string, string>;
-  }>;
-  types?: {
-    name: string;
-    description: string;
-    fields: PropItem[];
-  }[];
-  children?: Array<Pick<IComponentWiki, 'emits' | 'name' | 'props' | 'slots'>>;
-  methods?: {
-    name: string;
-    description: string;
-    params: {
-      name: string;
-      type: string;
-      link?: LinkType;
-    }[];
-  }[];
+  props?: IProp[];
+  emits?: IEmit[];
+  methods?: IMethod[];
+  slots?: ISlot[];
+  presets: IPreset[];
+  types?: IType[];
+  children?: Array<Pick<IComponentWiki, 'emits' | 'methods' | 'name' | 'props' | 'slots'>>;
 }

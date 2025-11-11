@@ -48,7 +48,7 @@ import {
 
 import type {
   IComponentWiki,
-  PropItem,
+  IProp,
   ValueType,
 } from '@/types/component';
 
@@ -246,7 +246,7 @@ const createRefVariables = () => {
     .join(BREAK_LINE);
 };
 
-const createValue = (curPropInfo: PropItem, value: unknown) => {
+const createValue = (curPropInfo: IProp, value: unknown) => {
   let curValue;
   if (curPropInfo.type === 'string' || typeof value === 'string') {
     // 模板字符串处理

@@ -36,7 +36,7 @@
             v-for="column in columns"
             :key="column.key"
           >
-            <component :is="row[column.key]" />
+            <component :is="row[column.key as keyof IProp]" />
           </td>
         </tr>
         <tr v-if="tableData.length === 0">
@@ -59,7 +59,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { copyToClipboard } from '@/common/util';
 import useStorage from '@/hooks/use-storage';
 import { useComponent } from '@/store/component';
-import { Column, IComponentWiki, IParam, PropItem } from '@/types/component';
+import { Column, IComponentWiki, IParam, IProp } from '@/types/component';
 import { ANCHOR_KEY } from '@/types/contants';
 
 const iProps = defineProps<IProps>();
@@ -79,7 +79,7 @@ enum EColumnTypeEnum {
 type EColumnType = keyof typeof EColumnTypeEnum;
 
 interface IProps {
-  tableData: PropItem[];
+  tableData: IProp[];
   // 组件key对应分类（例如：事件、方法等）
   categoryKey: string;
   activeComponent: IComponentWiki | null;
@@ -182,7 +182,7 @@ onUnmounted(() => {
    * @description 渲染链接
    * @param row 类型参数
    */
-const renderLink = (row: PropItem | IParam) => {
+const renderLink = (row: IProp | IParam) => {
   if (!row.link) {
     return h('span', row.type);
   }
@@ -192,9 +192,9 @@ const renderLink = (row: PropItem | IParam) => {
     const link = {
       [match[1]]: row.link,
     };
-    return h('span', renderEnumWithLinks((row as PropItem).options?.join(' | ') ?? row.type, link));
+    return h('span', renderEnumWithLinks((row as IProp).options?.join(' | ') ?? row.type, link));
   }
-  return h('span', renderEnumWithLinks((row as PropItem).options?.join(' | ') ?? row.type, row.link));
+  return h('span', renderEnumWithLinks((row as IProp).options?.join(' | ') ?? row.type, row.link));
 };
 
 /**
@@ -245,7 +245,7 @@ const computedTableData = computed(() => {
 
     // 为每个列生成对应的渲染组件
     columns.value.forEach((column) => {
-      const value = item[column.key] ;
+      const value = item[column.key as keyof IProp];
 
       // 定义渲染策略映射
       const renderStrategies = {
@@ -263,7 +263,7 @@ const computedTableData = computed(() => {
 
       // 根据列类型选择渲染策略，默认使用文本渲染
       const renderStrategy = renderStrategies[column.key as  'type' | 'default'  | 'params'] || (() => renderText(value as string));
-      processedRow[column.key] = renderStrategy();
+      processedRow[column.key as keyof IProp] = renderStrategy();
     });
 
     return processedRow;

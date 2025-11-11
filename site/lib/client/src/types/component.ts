@@ -7,8 +7,7 @@ export interface IParam {
   link?: LinkType;
 }
 
-// 公共属性方法配置项
-export interface PropItem {
+export interface IProp {
   name: string;
   type?: string;
   default?: ValueType;
@@ -16,6 +15,36 @@ export interface PropItem {
   link?: LinkType;
   options?: Array<boolean | number | string>;
   params?: IParam[];
+  isSupportVModel?: boolean;
+}
+
+export interface IEmit {
+  name: string;
+  description: string;
+  params: IParam[];
+}
+
+export type ISlot = IEmit;
+
+export type IMethod = IEmit;
+
+export interface IPreset {
+  title: string;
+  description: string;
+  template?: string;
+  props?: Record<string, ValueType>;
+  slots?: Record<string, string>;
+  events?: Record<string, string>;
+  dependent?: {
+    components: Array<string>;
+  };
+  style?: string;
+}
+
+export interface IType {
+  name: string;
+  description: string;
+  fields: IProp[];
 }
 
 export interface IComponentWiki {
@@ -24,28 +53,15 @@ export interface IComponentWiki {
   title: string;
   titleCN: string;
   description: string;
-  props?: PropItem[];
-  emits?: PropItem[];
-  methods?: PropItem[];
-  slots?: PropItem[];
-  presets: Array<{
-    title: string;
-    description: string;
-    template?: string;
-    props?: Record<string, ValueType>;
-    slots?: Record<string, string>;
-    dependent?: {
-      components: Array<string>;
-    };
-    style?: Record<string, string>;
-  }>;
-  types?: {
-    name: string;
-    description: string;
-    fields: PropItem[];
-  }[];
-  children?: Array<Pick<IComponentWiki, 'emits' | 'name' | 'props' | 'slots' | 'methods'>>;
+  props?: IProp[];
+  emits?: IEmit[];
+  methods?: IMethod[];
+  slots?: ISlot[];
+  presets: IPreset[];
+  types?: IType[];
+  children?: Array<Pick<IComponentWiki, 'emits' | 'methods' | 'name' | 'props' | 'slots'>>;
 }
+
 export interface INavGroups {
   componentGroupMap: {
     [groupName: string]: IComponentWiki[];
@@ -67,7 +83,7 @@ export interface IFileAuthor {
 
 // api表格列类型
 export interface Column {
-  key: keyof PropItem;
+  key: keyof IProp;
   title: string;
   width?: string;
 }

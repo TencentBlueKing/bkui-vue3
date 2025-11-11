@@ -57,6 +57,7 @@
                   :group="componentWiki.group"
                   :template="componentWiki.presets[renderPresetIndex].template"
                   :style="componentWiki.presets[renderPresetIndex].style"
+                  :events="componentWiki.presets[renderPresetIndex].events"
                   :component="component"
                   :render-props="renderProps"
                   :render-slots="renderSlots"
@@ -133,22 +134,14 @@ const renderPresetIndex = ref(0);
 const mainPanel = ref<MainPanel>(MainPanel.Component);
 const isFullScreen = ref(false);
 
-const trimSlots = (slots: IComponentWiki['presets'][number]['slots']) => {
-  const newPresetSlots = {} as IComponentWiki['presets'][number]['slots']
-  for (const key of Object.keys(slots)) {
-    newPresetSlots[key] = slots[key].trim()
-  }
-  return newPresetSlots
-}
-
 // 选择预设
 const handleChoosePreset = async (preset: IComponentWiki['presets'][number]) => {
   renderProps.value = JSON.parse(JSON.stringify(preset.props ?? {}));
-  renderSlots.value = trimSlots(preset.slots  || {});
+  renderSlots.value = JSON.parse(JSON.stringify(preset.slots ?? {}));
   renderPresetIndex.value = props.componentWiki.presets.indexOf(preset);
 
   // 处理依赖组件
-  if (preset.dependent?.components && preset.dependent.components.length > 0) {
+  if (preset.dependent?.components?.length > 0) {
     const components: Record<string, unknown> = {};
     const componentsToLoad: string[] = [];
 

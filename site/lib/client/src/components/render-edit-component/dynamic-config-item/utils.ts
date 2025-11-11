@@ -1,4 +1,4 @@
-import type { IComponentWiki, PropItem } from '@/types/component';
+import type { IComponentWiki, IProp } from '@/types/component';
 
 export const basicTypeToDefVal = {
   'string': '',
@@ -117,15 +117,15 @@ export const isArray = (value: unknown) => Array.isArray(value)
 export const isObject = (value: unknown) => Object.prototype.toString.call(value) === '[object Object]';
 
 // 暂未支持的可配置过滤掉
-export const filterErrTypeProps = (props: PropItem[], types: IComponentWiki['types']) => {
-  const partValidTypeProps = (props ?? []).filter((item: PropItem) => {
+export const filterErrTypeProps = (props: IProp[], types: IComponentWiki['types']) => {
+  const partValidTypeProps = (props ?? []).filter((item: IProp) => {
     const typeArr = [...new Set(splitType(item.type))];
     const factTypeList = typeArr.map((typeVal) => {
       return factType(typeVal, item.options, types);
     });
     return !factTypeList.every(factType => factType === 'errortype');
   });
-  return partValidTypeProps.map((item: PropItem) => {
+  return partValidTypeProps.map((item: IProp) => {
     const typeArr = [...new Set(splitType(item.type))];
     if (typeArr.length === 1) {
       return item;

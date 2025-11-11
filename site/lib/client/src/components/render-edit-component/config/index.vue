@@ -62,7 +62,7 @@ import { computed, onBeforeUnmount, ref } from 'vue';
 
 import type {
   IComponentWiki,
-  PropItem,
+  IProp,
   ValueType as PropValue,
 } from '@/types/component';
 
@@ -132,7 +132,7 @@ let highlightTimer: NodeJS.Timeout | null = null;
 const isSelectedPreset = (name: string) => {
   return Object.keys(props.presetProps).includes(name);
 };
-const handleSelectedAttr = (item: PropItem) => {
+const handleSelectedAttr = (item: IProp) => {
   if(!activeKeys.value.includes('attr')) {
     activeKeys.value.push('attr')
   }

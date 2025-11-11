@@ -38,9 +38,16 @@ export default vue.defineComponent({
       type: String,
       default: '',
     },
+    style: {
+      type: String
+    },
     component: {
       type: Object,
       required: true,
+    },
+    events: {
+      type: Object,
+      default: () => ({}),
     },
     renderProps: {
       type: Object,
@@ -54,10 +61,6 @@ export default vue.defineComponent({
       type: Object,
       default: (_data?: unknown) => ({}),
     },
-    style: {
-      type: Object,
-      default: () => ({}),
-    },
   },
   // 占位，否则动态注册逻辑需要加额外判断
   components: {},
@@ -66,12 +69,6 @@ export default vue.defineComponent({
       errorMessage: '',
       isReady: false,  // 添加准备状态
     };
-  },
-  mounted() {
-    // 等待父组件 DOM 完全挂载, 确保类似dialog等组件可以正确找到挂载点
-    this.$nextTick(() => {
-      this.isReady = true;
-    });
   },
   // 如果使用beforeUpdate，会导致无限循环渲染
   watch: {
@@ -93,6 +90,15 @@ export default vue.defineComponent({
   errorCaptured(err) {
     this.errorMessage = (err as Error).message;
     return false;
+  },
+  onBeforeMount() {
+
+  },
+  mounted() {
+    // 等待父组件 DOM 完全挂载, 确保类似dialog等组件可以正确找到挂载点
+    this.$nextTick(() => {
+      this.isReady = true;
+    });
   },
   render() {
     if (!this.isReady) {
