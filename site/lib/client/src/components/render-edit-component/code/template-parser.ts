@@ -1,4 +1,4 @@
-import { ValueType } from "@/types/component";
+import { IParam, ValueType } from "@/types/component";
 import { camelKey } from "@/utils";
 import { iconsName } from './icons-name';
 
@@ -481,10 +481,10 @@ export const serializeElementTree = (elements: IElement[], indentLevel: number =
 };
 
 // 创建插槽
-export const createSlots = (slotContent: string, slotName: string, slotParams: Record<string, any>) => {
+export const createSlots = (slotContent: string, slotName: string, slotParams: IParam[]) => {
   let slotParamsStr = '';
   if (Array.isArray(slotParams) && slotParams.length > 0) {
-    slotParamsStr = `="{ ${slotParams.map(item => item.name).join(', ')} }"`;
+    slotParamsStr = `="data"`;
   }
   const curSlotName = (slotName === 'default' && !slotParamsStr) ? '' : ` #${slotName}${slotParamsStr}`;
   const name = `template${curSlotName}`;
