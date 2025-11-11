@@ -1,3 +1,65 @@
+import { ValueType } from "@/types/component";
+import { camelKey } from "@/utils";
+import { iconsName } from './icons-name';
+
+// 转换为 PascalCase 格式
+export const toPascalCase = (str: string, capitalizeFirst = true): string => {
+  if (!str) return '';
+  // 如果包含分隔符（-、_、空格），按分隔符拆分
+  if (/[-_\s]/.test(str)) {
+    const result = str
+      .split(/[-_\s]+/)
+      .filter(Boolean)
+      .map(s => s ? s[0].toUpperCase() + s.slice(1).toLowerCase() : '')
+      .join('');
+    
+    if (!capitalizeFirst && result.length > 0) {
+      return result[0].toLowerCase() + result.slice(1);
+    }
+    return result;
+  }
+  
+  // 如果没有分隔符，直接将首字母大写，其余字母小写
+  const result = str[0].toUpperCase() + str.slice(1).toLowerCase();
+  
+  if (!capitalizeFirst && result.length > 0) {
+    return result[0].toLowerCase() + result.slice(1);
+  }
+  
+  return result;
+};
+
+// 从模板字符串中提取图标名称
+export const extractIconNames = (template: string): string[] => {
+  // 匹配所有开始标签
+  const tagRegex = /<([a-zA-Z][a-zA-Z0-9-]*)/g;
+  const foundIcons = new Set<string>();
+  
+  let match;
+  while ((match = tagRegex.exec(template)) !== null) {
+    const tagName = match[1];
+    
+    // 先尝试原样匹配（处理已经是正确PascalCase的情况，如 AngleUpFill）
+    if (iconsName.includes(tagName)) {
+      foundIcons.add(tagName);
+      continue;
+    }
+    
+    // 只对全小写的标签进行 PascalCase 转换（如 close → Close）
+    if (tagName === tagName.toLowerCase()) {
+      const pascalCaseTagName = toPascalCase(tagName);
+      if (iconsName.includes(pascalCaseTagName)) {
+        foundIcons.add(pascalCaseTagName);
+      }
+    }
+  }
+  
+  return Array.from(foundIcons);
+};
+
+
+
+
 interface IElement {
   name: string
   props: {
@@ -34,11 +96,11 @@ export const parseStringTemplate = (str: string): IElement[] => {
       }
     }
     
-    // 构建 IElement - 修改 emits 的解析
+    // 构建 IElement
     const element: IElement = {
-      name: tag.tagName,
+      name: tag.tagName,  // 直接使用原始标签名，不做转换
       props: parseAttributes(tag.attributes),
-      emits: parseEmits(tag.attributes),  // 新增 emits 解析函数
+      emits: parseEmits(tag.attributes),
       children: childrenContent ? parseStringTemplate(childrenContent) : [],
       content: textContent,
       isSlot: isSlot
@@ -416,4 +478,32 @@ export const serializeElementTree = (elements: IElement[], indentLevel: number =
   }
   
   return result;
+};
+
+// 创建插槽
+export const createSlots = (slotContent: string, slotName: string, slotParams: Record<string, any>) => {
+  let slotParamsStr = '';
+  if (Array.isArray(slotParams) && slotParams.length > 0) {
+    slotParamsStr = `="{ ${slotParams.map(item => item.name).join(', ')} }"`;
+  }
+  const curSlotName = (slotName === 'default' && !slotParamsStr) ? '' : ` #${slotName}${slotParamsStr}`;
+  const name = `template${curSlotName}`;
+  return createLabel(name, slotContent.trim(), '', {}, 'template');
+};
+
+// 创建标签
+export const createLabel = (
+  name: string,
+  slot: string,
+  prefix = '',
+  props: Record<string, ValueType> = {},
+  endLabelName = '',
+) => {
+  // 属性列表处理
+  const propsList = Object.keys(props).map((key) => {
+    return ` :${key}="${camelKey(key)}"`;
+  });
+  // slot处理
+  const curEndLabelName = endLabelName || name;
+  return `<${prefix}${name}${propsList.join('')}>${slot}</${prefix}${curEndLabelName}>`;
 };
