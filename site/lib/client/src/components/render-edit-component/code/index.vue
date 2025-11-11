@@ -57,6 +57,7 @@ import {
 } from '@vueuse/core';
 import 'highlight.js/styles/atom-one-dark.css'; // 代码块高亮样式
 import {
+  camelToKebab,
   createLabel,
   createSlots,
   extractIconNames,
@@ -151,6 +152,8 @@ const curPreset = computed(() => {
   }
   return null;
 });
+// 组件属性
+const componentProps = computed(() => componentWiki.value.props);
 
 // template 缩进处理
 const indent = (num = 1) => new Array(num)
@@ -173,18 +176,30 @@ const createCommonTemplate = () => {
     const slotParams = componentWiki.value?.slots?.find(item => item.name === slotName)?.params;
     return createSlots(slotContent, slotName, slotParams);
   }).join('');
-
   const str =  createLabel(
     'template',
     createLabel(
       componentWiki.value.name,
       curSlots,
       'bk-',
-      renderProps.value,
+      createTemplateProps(),
     ),
   );
   const elementTree = parseStringTemplate(str);
   return serializeElementTree(elementTree, 0, true);
+};
+
+const createTemplateProps = () => {
+  const result: Record<string, ValueType> = {};
+  const vModelKeys = componentProps.value.filter(item => item.isSupportVModel).map(item => camelKey(item.name));
+  for (const [key, value] of Object.entries(renderProps.value)) {
+    if (vModelKeys.includes(key)) {
+      result[`v-model-${camelToKebab(camelKey(key))}`] = value;
+    } else {
+      result[key] = value;
+    }
+  }
+  return result;
 };
 
 // 生成指令模板
@@ -230,7 +245,7 @@ const createDependImport = (dependData: DependentData[]) => {
 // 根据props生成响应式变量
 const createRefVariables = () => {
   return Object.entries(renderProps.value).map(([key, value]) => {
-    const curPropInfo = componentWiki.value.props.find(item => item.name === key);
+    const curPropInfo = componentProps.value.find(item => item.name === key || camelKey(item.name) === key);
     if (curPropInfo) {
       const curValue = createValue(curPropInfo, value)
       const isTypeScript = activeLanguage.value === 'typescript';
@@ -421,7 +436,7 @@ const createCommonScript = () => {
 // 生成函数组件script
 const createFunctionScript = () => {
   const propsContent = Object.entries(renderProps.value).map(([key, value]) => {
-    const curPropInfo = componentWiki.value.props.find(item => item.name === key);
+    const curPropInfo = componentProps.value.find(item => item.name === key);
     const curValue = createValue(curPropInfo, value);
     return `${key}: ${curValue}`;
   }).join(`,${BREAK_LINE}${indent(2)}`);

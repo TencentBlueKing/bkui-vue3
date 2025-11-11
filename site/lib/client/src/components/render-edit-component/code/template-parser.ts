@@ -192,13 +192,13 @@ const hasChildTags = (str: string): boolean => {
 };
 
 // 驼峰式转连字符格式
-const camelToKebab = (str: string): string => {
+export const camelToKebab = (str: string): string => {
   return str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
 };
 
 // 格式化属性输出
 const formatAttribute = (prop: { key: string; value: any }): string => {
-  const kebabKey = camelToKebab(prop.key);
+  let kebabKey = camelToKebab(prop.key);
   if (typeof prop.value === 'boolean') {
     return kebabKey;
   } else if (typeof prop.value === 'object' && prop.value !== null) {
@@ -248,8 +248,7 @@ const parseAttributes = (attrString: string) => {
     while (currentIndex < attrString.length && /[^\s=]/.test(attrString[currentIndex])) {
       currentIndex++;
     }
-    const key = attrString.slice(keyStart, currentIndex);
-    
+    let key = attrString.slice(keyStart, currentIndex);
     // 跳过空格
     while (currentIndex < attrString.length && /\s/.test(attrString[currentIndex])) {
       currentIndex++;
@@ -298,7 +297,6 @@ const parseAttributes = (attrString: string) => {
         }
       }
     }
-    
     props.push({ key, value });
   }
   
@@ -501,7 +499,15 @@ export const createLabel = (
 ) => {
   // 属性列表处理
   const propsList = Object.keys(props).map((key) => {
-    return ` :${key}="${camelKey(key)}"`;
+    let curKey = key;
+    let curValue = key;
+    if (key.startsWith('v-model-')) {
+      curKey = `v-model:${curKey.slice(8)}`;
+      curValue = curKey.slice(8);
+    } else {
+      curKey = `:${curKey}`;
+    }
+    return ` ${curKey}="${camelKey(curValue)}"`;
   });
   // slot处理
   const curEndLabelName = endLabelName || name;
