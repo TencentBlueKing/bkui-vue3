@@ -1,10 +1,30 @@
-import { defineComponent, computed, type PropType } from 'vue';
-import { Input as BkInput, bkTooltips } from 'bkui-vue';
+import {
+  defineComponent,
+  computed,
+} from 'vue';
 import type {
-  IParam
+  PropType,
+} from 'vue';
+import {
+  bkTooltips,
+} from 'bkui-vue';
+import type {
+  IParam,
 } from '@/types/component';
+import {
+  filterXss,
+} from '@blueking/xss-filter';
 
 import './index.postcss';
+import 'highlight.js/styles/atom-one-light.css';
+import {
+  useHighLightJs,
+} from '@/hooks/use-highlighjs';
+import {
+  createSlots,
+  parseStringTemplate,
+  serializeElementTree
+} from '../../code/template-parser';
 
 export default defineComponent({
   name: 'RenderSlot',
@@ -35,6 +55,7 @@ export default defineComponent({
     bkTooltips,
   },
   setup(props, { emit }) {
+    const { highlightFactory } = useHighLightJs();
     const handleUpdateModelValue = (value: string) => {
       emit('update:modelValue', value);
     };
@@ -66,6 +87,7 @@ export default defineComponent({
       }
     })
     return {
+      highlightFactory,
       handleUpdateModelValue,
       toolTip
     };
@@ -76,13 +98,15 @@ export default defineComponent({
         <div class="config-slot-name">
           <span v-bkTooltips={this.toolTip}>{this.name}</span>
         </div>
-        <BkInput 
-          type='textarea'
-          disabled={this.disabled}
-          rows={4}
-          modelValue={this.modelValue} 
-          onUpdate:modelValue={this.handleUpdateModelValue} 
-        />
+        <pre class="config-slot-content g-scrollbar"><code v-html={
+          filterXss(this.highlightFactory(
+            serializeElementTree(
+              parseStringTemplate(
+                createSlots(this.modelValue, this.name, this.params)
+              )
+            ), 'xml'
+          ))
+        }></code></pre>
       </div>
     );
   },

@@ -75,15 +75,18 @@ const presets = [
   },
   {
     title: '带Icon输入框',
-    description: '只支持输入数值的文本框',
+    description: '支持前后缀图标的输入框',
     props: {
       type: 'text',
     },
     slots: {
       prefix:
-        '<span class="input-icon" style="display: inline-flex; align-items: center;margin-left: 8px;"><i class="bkui-vue-wiki-icon icon-search"></i></span>',
+        '<span class="input-icon" style="display: flex; align-items: center; justify-content: center; padding-left: 8px; font-size: 16px; color: #c4c6cc;"><search /></span>',
       suffix:
-        '<span class="input-icon suffix-icon" style="display: inline-flex; align-items: center;margin-right: 8px;" ><i class="bkui-vue-wiki-icon icon-info-line"></i></span>',
+        '<span class="input-icon" style="display: flex; align-items: center; justify-content: center; padding-right: 8px; font-size: 16px; color: #c4c6cc;"><info-line /></span>',
+    },
+    dependent: {
+      components: ['icon'],
     },
   },
 ];

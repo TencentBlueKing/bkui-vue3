@@ -56,7 +56,10 @@ const presets = [
     },
     slots: {
       default:
-        '<div style="display: flex;align-items: center;gap: 4px; justify-content: center;"><i class="bkui-vue-wiki-icon icon-help"></i> 文本链接</div>',
+        '<div style="display: flex;align-items: center;gap: 4px; justify-content: center;"><help />文本链接</div>',
+    },
+    dependent: {
+      components: ['icon'],
     },
   },
 ];
