@@ -31,8 +31,7 @@ export const toPascalCase = (str: string, capitalizeFirst = true): string => {
 
 // 从模板字符串中提取图标名称
 export const extractIconNames = (template: string): string[] => {
-  // 使用正则匹配所有开始标签（忽略结束标签）
-  // 匹配 <tagName 的形式，捕获标签名
+  // 匹配所有开始标签
   const tagRegex = /<([a-zA-Z][a-zA-Z0-9-]*)/g;
   const foundIcons = new Set<string>();
   
@@ -46,15 +45,20 @@ export const extractIconNames = (template: string): string[] => {
       continue;
     }
     
-    // 如果原样匹配不到，再尝试转换为PascalCase后匹配（处理 cOpy、dEL 等情况）
-    const pascalCaseTagName = toPascalCase(tagName);
-    if (iconsName.includes(pascalCaseTagName)) {
-      foundIcons.add(pascalCaseTagName);
+    // 只对全小写的标签进行 PascalCase 转换（如 close → Close）
+    if (tagName === tagName.toLowerCase()) {
+      const pascalCaseTagName = toPascalCase(tagName);
+      if (iconsName.includes(pascalCaseTagName)) {
+        foundIcons.add(pascalCaseTagName);
+      }
     }
   }
   
   return Array.from(foundIcons);
 };
+
+
+
 
 interface IElement {
   name: string
@@ -92,22 +96,11 @@ export const parseStringTemplate = (str: string): IElement[] => {
       }
     }
     
-    // 构建 IElement - 修改 emits 的解析
-    // 如果 tagName 是图标，转换为 PascalCase
-    let finalTagName = tag.tagName;
-    if (iconsName.includes(tag.tagName)) {
-      finalTagName = tag.tagName;
-    } else {
-      const pascalCaseTagName = toPascalCase(tag.tagName);
-      if (iconsName.includes(pascalCaseTagName)) {
-        finalTagName = pascalCaseTagName;
-      }
-    }
-    
+    // 构建 IElement
     const element: IElement = {
-      name: finalTagName,
+      name: tag.tagName,  // 直接使用原始标签名，不做转换
       props: parseAttributes(tag.attributes),
-      emits: parseEmits(tag.attributes),  // 新增 emits 解析函数
+      emits: parseEmits(tag.attributes),
       children: childrenContent ? parseStringTemplate(childrenContent) : [],
       content: textContent,
       isSlot: isSlot
