@@ -197,9 +197,9 @@ const renderLink = (row: IProp | IParam) => {
 
   if (typeof row.link === 'string') {
     const match = row.link.match(/#(.*)$/);
-    const link = {
+    const link = match ? {
       [match[1]]: row.link,
-    };
+    } : {};
     return h('span', renderEnumWithLinks((row as IProp).options?.join(' | ') ?? row.type, link));
   }
   return h('span', renderEnumWithLinks((row as IProp).options?.join(' | ') ?? row.type, row.link));
