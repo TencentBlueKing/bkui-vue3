@@ -1,6 +1,13 @@
 ## 更新日志
 
 
+### 2.0.2-beta.77
+
+* **[feat]**:
+    - bugfix(select): 修复 select 搜索时loading 没有盖住下拉 & 快速输入时抖动问题
+    - fix(message): 多个消息弹出时展开详情自动计算并更新弹出位置
+
+
 ### 2.0.2-beta.76
 
 * **[feat]**:
