@@ -22,24 +22,6 @@
         </section>
       </article>
 
-      <!-- Types类型定义 -->
-      <article v-if="componentWiki.types?.length">
-        <section
-          v-for="type in componentWiki.types"
-          :key="type.name"
-          :id="`${type.name}`"
-          class="type-section"
-        >
-          <render-table
-            :table-data="type.fields"
-            :category-key="type.name"
-            :category-key-desc="type.description"
-            :active-component="activeComponent"
-            :id="`${type.name}`"
-          />
-        </section>
-      </article>
-
       <!-- 子组件配置 -->
       <article
         v-for="child in childrenConfigs"
@@ -64,6 +46,24 @@
               />
             </section>
           </template>
+        </section>
+      </article>
+
+      <!-- Types类型定义 -->
+      <article v-if="componentWiki.types?.length">
+        <section
+          v-for="type in componentWiki.types"
+          :key="type.name"
+          :id="`${type.name}`"
+          class="type-section"
+        >
+          <render-table
+            :table-data="type.fields"
+            :category-key="type.name"
+            :category-key-desc="type.description"
+            :active-component="activeComponent"
+            :id="`${type.name}`"
+          />
         </section>
       </article>
 
@@ -109,7 +109,7 @@ const categoryKeyword = {
   props: '属性',
   emits: '事件',
   slots: '插槽',
-  methods: '方法',
+  exposes: 'Exposes',
 };
 
 // 组件基础类型映射
@@ -117,7 +117,7 @@ const componentBaseTypes: { key: keyof typeof categoryKeyword, categoryKey: stri
   { key: 'props', categoryKey: categoryKeyword.props },
   { key: 'emits', categoryKey: categoryKeyword.emits },
   { key: 'slots', categoryKey: categoryKeyword.slots },
-  { key: 'methods', categoryKey: categoryKeyword.methods },
+  { key: 'exposes', categoryKey: categoryKeyword.exposes },
 ];
 
 // 子组件配置
@@ -135,12 +135,6 @@ const navItems = computed(() => {
       });
     }
   });
-  // 处理types类型定义
-  if (props.componentWiki.types?.length) {
-    props.componentWiki.types.forEach((item) => {
-      items.push({ id: item.name, title: item.name });
-    });
-  }
   // 处理子组件的配置
   if (childrenConfigs.value.length) {
     childrenConfigs.value.forEach((child) => {
@@ -152,6 +146,12 @@ const navItems = computed(() => {
           });
         }
       });
+    });
+  }
+  // 处理types类型定义
+  if (props.componentWiki.types?.length) {
+    props.componentWiki.types.forEach((item) => {
+      items.push({ id: item.name, title: item.name });
     });
   }
   return items;
