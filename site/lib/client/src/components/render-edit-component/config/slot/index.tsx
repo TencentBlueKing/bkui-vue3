@@ -21,10 +21,12 @@ import {
   useHighLightJs,
 } from '@/hooks/use-highlighjs';
 import {
-  createSlots,
   parseStringTemplate,
   serializeElementTree
-} from '../../code/template-parser';
+} from '../../code/parser/template/template-parser';
+import { 
+createSlots,
+} from '../../code/parser/template/generate';
 
 export default defineComponent({
   name: 'RenderSlot',

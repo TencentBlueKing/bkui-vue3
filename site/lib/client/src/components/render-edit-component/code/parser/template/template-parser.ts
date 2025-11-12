@@ -1,6 +1,26 @@
-import { IParam, ValueType } from "@/types/component";
-import { camelKey } from "@/utils";
-import { iconsName } from './icons-name';
+import {
+  BREAK_LINE,
+  INDENT,
+  iconsName,
+} from '../../constant';
+import {
+  camelToKebab,
+} from "../../util";
+
+interface IElement {
+  name: string
+  props: {
+    key: string
+    value: any
+  }[]
+  emits: {
+    event: string
+    value: string
+  }[]
+  children: IElement[]
+  isSlot?: boolean  // 新增字段，标记是否是 slot
+  content?: string  // 新增：保存标签内的纯文本内容
+}
 
 // 转换为 PascalCase 格式
 export const toPascalCase = (str: string, capitalizeFirst = true): string => {
@@ -57,24 +77,6 @@ export const extractIconNames = (template: string): string[] => {
   return Array.from(foundIcons);
 };
 
-
-
-
-interface IElement {
-  name: string
-  props: {
-    key: string
-    value: any
-  }[]
-  emits: {
-    event: string
-    value: string
-  }[]
-  children: IElement[]
-  isSlot?: boolean  // 新增字段，标记是否是 slot
-  content?: string  // 新增：保存标签内的纯文本内容
-}
-
 export const parseStringTemplate = (str: string): IElement[] => {
   const elements = [];
   let remaining = str.trim();
@@ -110,6 +112,93 @@ export const parseStringTemplate = (str: string): IElement[] => {
     remaining = tag.remaining;
   }
   return elements;
+};
+
+// 修改序列化函数中的 emits 输出
+export const serializeElementTree = (elements: IElement[], indentLevel: number = 0, isRoot: boolean = false): string => {
+  let result = '';
+  const indent = ' '.repeat(indentLevel);
+  
+  for (let i = 0; i < elements.length; i++) {
+    const element = elements[i];
+    const hasPropsOrEmits = element.props.length > 0 || element.emits.length > 0;
+    const hasChildren = element.children.length > 0;
+    const hasContent = Boolean(element.content && element.content.length > 0);
+    const isSlot = element.isSlot;
+    
+    const hasSlotAttr = element.props.some(prop => 
+      prop.key.startsWith('#') || prop.key.startsWith('v-slot')
+    );
+    
+    if (isSlot) {
+      if (hasSlotAttr) {
+        const attributesStr = element.props.map(prop => formatAttribute(prop)).join(' ');
+        result += `${indent}<template ${attributesStr}>${BREAK_LINE}`;
+      } else {
+        result += `${indent}<template>${BREAK_LINE}`;
+      }
+      
+      if (hasContent) {
+        const contentIndent = ' '.repeat(indentLevel + 2);
+        result += `${contentIndent}${element.content}${BREAK_LINE}`;
+      }
+      if (hasChildren) {
+        result += serializeElementTree(element.children, indentLevel + 2);
+      }
+      
+      result += `${indent}</template>${BREAK_LINE}`;
+      continue;
+    }
+    
+    const isSelfClosing = !hasChildren && !hasContent && !hasPropsOrEmits;
+    
+    if (isSelfClosing) {
+      result += `${indent}<${element.name} />${BREAK_LINE}`;
+    } else if (!hasPropsOrEmits && !hasChildren && !hasContent) {
+      result += `${indent}<${element.name}></${element.name}>${BREAK_LINE}`;
+    } else if (!hasPropsOrEmits && hasContent && !hasChildren) {
+      result += `${indent}<${element.name}>${element.content}</${element.name}>${BREAK_LINE}`;
+    } else if (!hasPropsOrEmits && hasChildren) {
+      result += `${indent}<${element.name}>${BREAK_LINE}`;
+      result += serializeElementTree(element.children, indentLevel + 2);
+      result += `${indent}</${element.name}>${BREAK_LINE}`;
+    } else if (hasPropsOrEmits) {
+      result += `${indent}<${element.name}${BREAK_LINE}`;
+      
+      // 输出props
+      for (const prop of element.props) {
+        const propIndent = ' '.repeat(indentLevel + 2);
+        result += `${propIndent}${formatAttribute(prop)}${BREAK_LINE}`;
+      }
+      
+      // 输出emits - 修改为新的数据结构
+      for (const emit of element.emits) {
+        const emitIndent = ' '.repeat(indentLevel + 2);
+        const kebabEvent = camelToKebab(emit.event);
+        result += `${emitIndent}@${kebabEvent}="${emit.value}"${BREAK_LINE}`;
+      }
+      
+      if (!hasChildren && !hasContent) {
+        result += `${indent} />${BREAK_LINE}`;
+      } else {
+        result += `${indent}>${BREAK_LINE}`;
+        if (hasContent) {
+          const contentIndent = ' '.repeat(indentLevel + 2);
+          result += `${contentIndent}${element.content}${BREAK_LINE}`;
+        }
+        if (hasChildren) {
+          result += serializeElementTree(element.children, indentLevel + 2);
+        }
+        result += `${indent}</${element.name}>${BREAK_LINE}`;
+      }
+    }
+  }
+  
+  if (isRoot && result.endsWith(BREAK_LINE)) {
+    result = result.slice(0, -1);
+  }
+  
+  return result;
 };
 
 // 解析 emits (事件) - 只解析事件属性
@@ -191,14 +280,9 @@ const hasChildTags = (str: string): boolean => {
   return /<[^>]+>/.test(str);
 };
 
-// 驼峰式转连字符格式
-const camelToKebab = (str: string): string => {
-  return str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
-};
-
 // 格式化属性输出
 const formatAttribute = (prop: { key: string; value: any }): string => {
-  const kebabKey = camelToKebab(prop.key);
+  let kebabKey = camelToKebab(prop.key);
   if (typeof prop.value === 'boolean') {
     return kebabKey;
   } else if (typeof prop.value === 'object' && prop.value !== null) {
@@ -209,10 +293,8 @@ const formatAttribute = (prop: { key: string; value: any }): string => {
       const [k, v] = entries[0];
       return `${kebabKey}="{ ${k}: '${v}' }"`;
     } else {
-      // 多个属性，多行显示
-      const objIndent = '  ';
-      const innerProps = entries.map(([k, v]) => `${objIndent}${k}: '${v}'`).join(',\n');
-      return `${kebabKey}={\n${innerProps}\n}`;
+      const innerProps = entries.map(([k, v]) => `${INDENT}${k}: '${v}'`).join(`,${BREAK_LINE}`);
+      return `${kebabKey}={${BREAK_LINE}${innerProps}${BREAK_LINE}}`;
     }
   } else {
     // 字符串或其他值
@@ -248,8 +330,7 @@ const parseAttributes = (attrString: string) => {
     while (currentIndex < attrString.length && /[^\s=]/.test(attrString[currentIndex])) {
       currentIndex++;
     }
-    const key = attrString.slice(keyStart, currentIndex);
-    
+    let key = attrString.slice(keyStart, currentIndex);
     // 跳过空格
     while (currentIndex < attrString.length && /\s/.test(attrString[currentIndex])) {
       currentIndex++;
@@ -298,7 +379,6 @@ const parseAttributes = (attrString: string) => {
         }
       }
     }
-    
     props.push({ key, value });
   }
   
@@ -391,119 +471,4 @@ const findOuterTag = (str: string) => {
   }
   
   return null;
-};
-
-// 修改序列化函数中的 emits 输出
-export const serializeElementTree = (elements: IElement[], indentLevel: number = 0, isRoot: boolean = false): string => {
-  let result = '';
-  const indent = ' '.repeat(indentLevel);
-  
-  for (let i = 0; i < elements.length; i++) {
-    const element = elements[i];
-    const hasPropsOrEmits = element.props.length > 0 || element.emits.length > 0;
-    const hasChildren = element.children.length > 0;
-    const hasContent = Boolean(element.content && element.content.length > 0);
-    const isSlot = element.isSlot;
-    
-    const hasSlotAttr = element.props.some(prop => 
-      prop.key.startsWith('#') || prop.key.startsWith('v-slot')
-    );
-    
-    if (isSlot) {
-      if (hasSlotAttr) {
-        const attributesStr = element.props.map(prop => formatAttribute(prop)).join(' ');
-        result += `${indent}<template ${attributesStr}>\n`;
-      } else {
-        result += `${indent}<template>\n`;
-      }
-      
-      if (hasContent) {
-        const contentIndent = ' '.repeat(indentLevel + 2);
-        result += `${contentIndent}${element.content}\n`;
-      }
-      if (hasChildren) {
-        result += serializeElementTree(element.children, indentLevel + 2);
-      }
-      
-      result += `${indent}</template>\n`;
-      continue;
-    }
-    
-    const isSelfClosing = !hasChildren && !hasContent && !hasPropsOrEmits;
-    
-    if (isSelfClosing) {
-      result += `${indent}<${element.name} />\n`;
-    } else if (!hasPropsOrEmits && !hasChildren && !hasContent) {
-      result += `${indent}<${element.name}></${element.name}>\n`;
-    } else if (!hasPropsOrEmits && hasContent && !hasChildren) {
-      result += `${indent}<${element.name}>${element.content}</${element.name}>\n`;
-    } else if (!hasPropsOrEmits && hasChildren) {
-      result += `${indent}<${element.name}>\n`;
-      result += serializeElementTree(element.children, indentLevel + 2);
-      result += `${indent}</${element.name}>\n`;
-    } else if (hasPropsOrEmits) {
-      result += `${indent}<${element.name}\n`;
-      
-      // 输出props
-      for (const prop of element.props) {
-        const propIndent = ' '.repeat(indentLevel + 2);
-        result += `${propIndent}${formatAttribute(prop)}\n`;
-      }
-      
-      // 输出emits - 修改为新的数据结构
-      for (const emit of element.emits) {
-        const emitIndent = ' '.repeat(indentLevel + 2);
-        const kebabEvent = camelToKebab(emit.event);
-        result += `${emitIndent}@${kebabEvent}="${emit.value}"\n`;
-      }
-      
-      if (!hasChildren && !hasContent) {
-        result += `${indent} />\n`;
-      } else {
-        result += `${indent}>\n`;
-        if (hasContent) {
-          const contentIndent = ' '.repeat(indentLevel + 2);
-          result += `${contentIndent}${element.content}\n`;
-        }
-        if (hasChildren) {
-          result += serializeElementTree(element.children, indentLevel + 2);
-        }
-        result += `${indent}</${element.name}>\n`;
-      }
-    }
-  }
-  
-  if (isRoot && result.endsWith('\n')) {
-    result = result.slice(0, -1);
-  }
-  
-  return result;
-};
-
-// 创建插槽
-export const createSlots = (slotContent: string, slotName: string, slotParams: IParam[]) => {
-  let slotParamsStr = '';
-  if (Array.isArray(slotParams) && slotParams.length > 0) {
-    slotParamsStr = `="data"`;
-  }
-  const curSlotName = (slotName === 'default' && !slotParamsStr) ? '' : ` #${slotName}${slotParamsStr}`;
-  const name = `template${curSlotName}`;
-  return createLabel(name, slotContent.trim(), '', {}, 'template');
-};
-
-// 创建标签
-export const createLabel = (
-  name: string,
-  slot: string,
-  prefix = '',
-  props: Record<string, ValueType> = {},
-  endLabelName = '',
-) => {
-  // 属性列表处理
-  const propsList = Object.keys(props).map((key) => {
-    return ` :${key}="${camelKey(key)}"`;
-  });
-  // slot处理
-  const curEndLabelName = endLabelName || name;
-  return `<${prefix}${name}${propsList.join('')}>${slot}</${prefix}${curEndLabelName}>`;
 };
