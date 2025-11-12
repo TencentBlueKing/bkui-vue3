@@ -31,7 +31,7 @@ const presets = [
     title: '基础用法',
     description: '通过 theme 设置不同的主题， success / info / warning / danger. 也可通过 ext-cls 配置自定义样式类名',
     props: {
-      theme: 'default',
+      theme: 'info',
     },
     slots: {
       default: '标签',
@@ -41,8 +41,19 @@ const presets = [
     title: '自定义圆角',
     description: '通过 radius 配置项可自定义圆角大小',
     props: {
-      theme: 'default',
+      theme: 'info',
       radius: '4px',
+    },
+    slots: {
+      default: '标签',
+    },
+  },
+  {
+    title: '可关闭标签',
+    description: '通过设置 closable 定义 Tag 是否可移除',
+    props: {
+      theme: 'info',
+      closable: true,
     },
     slots: {
       default: '标签',
@@ -52,7 +63,7 @@ const presets = [
     title: '不同样式',
     description: '通过 type 设置不同的样式，默认是基础样式，还提供填充式（filled），描边式（stroke）',
     props: {
-      theme: 'default',
+      theme: 'info',
       type: 'filled',
     },
     slots: {
@@ -63,11 +74,36 @@ const presets = [
     title: '不同尺寸',
     description: '通过 size 设置不同的尺寸',
     props: {
-      theme: 'default',
+      theme: 'info',
       size: 'default',
     },
     slots: {
       default: '标签',
+    },
+  },
+  {
+    title: '可选择标签',
+    description: '点击后即可选中, 再次点击取消',
+    props: {
+      theme: 'info',
+      checkable: true,
+    },
+    slots: {
+      default: '标签',
+    },
+  },
+  {
+    title: '带图标 Icon 标签',
+    description: '可以添加 icon 的 Tag',
+    props: {
+      theme: 'info',
+    },
+    slots: {
+      default: '蓝鲸',
+      icon: '<bk />',
+    },
+    dependent: {
+      components: ['icon'],
     },
   },
 ];
@@ -145,6 +181,17 @@ const emits = [
   },
 ];
 
+const slots = [
+  {
+    name: 'default',
+    description: '默认插槽，用于放置 Tag 内容',
+  },
+  {
+    name: 'icon',
+    description: '图标插槽，用于显示图标内容',
+  },
+];
+
 // 组件分组
 const group = NavGroupMeta.Data;
 
@@ -169,6 +216,7 @@ const wiki: IComponentWiki = {
   emits,
   presets,
   description,
+  slots,
 };
 
 export default wiki;
