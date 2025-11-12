@@ -109,7 +109,7 @@ const categoryKeyword = {
   props: '属性',
   emits: '事件',
   slots: '插槽',
-  methods: '方法',
+  exposes: '方法',
 };
 
 // 组件基础类型映射
@@ -117,7 +117,7 @@ const componentBaseTypes: { key: keyof typeof categoryKeyword, categoryKey: stri
   { key: 'props', categoryKey: categoryKeyword.props },
   { key: 'emits', categoryKey: categoryKeyword.emits },
   { key: 'slots', categoryKey: categoryKeyword.slots },
-  { key: 'methods', categoryKey: categoryKeyword.methods },
+  { key: 'exposes', categoryKey: categoryKeyword.exposes },
 ];
 
 // 子组件配置

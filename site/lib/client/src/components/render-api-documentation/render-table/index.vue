@@ -4,7 +4,8 @@
     :id="id"
   >
     <h2 @click="handleTitleClick">
-      {{ componentKey }} {{ categoryKey }}
+      <span @click="handleCopyClick">#</span>
+      {{componentKey ? `${componentKey} ` : ''}}{{ categoryKey }}
     </h2>
     <p
       class="type-desc"
@@ -179,6 +180,13 @@ onUnmounted(() => {
 });
 
 /**
+ * @description 渲染v-model标签
+ */
+const renderVModelTag = () => {
+  return h('span', { class: 'default-tag' }, 'v-model');
+};
+
+/**
    * @description 渲染链接
    * @param row 类型参数
    */
@@ -201,8 +209,15 @@ const renderLink = (row: IProp | IParam) => {
    * @description 渲染普通文本
    * @param text 文本值
    */
-const renderText = (text: string) => {
-  return h('span', text);
+const renderText = (text: string, row?: IProp) => {
+  if (!row?.isSupportVModel) {
+    return h('span', text);
+  }
+  // 如果支持v-model，添加v-model标签提示
+  return h('span', [
+    h('span', text),
+    renderVModelTag(),
+  ]);
 };
 
 /**
@@ -249,7 +264,8 @@ const computedTableData = computed(() => {
 
       // 定义渲染策略映射
       const renderStrategies = {
-        type: () => ((item).link ? renderLink(item) : renderText(value as string)),
+        name: () => renderText(value as string, item),
+        type: () => (item.link ? renderLink(item) : renderText(item.options?.join(' | ') ?? value as string)),
         default: () => {
           if (value === undefined || value === '') {
             return renderText('--');
@@ -262,7 +278,7 @@ const computedTableData = computed(() => {
       };
 
       // 根据列类型选择渲染策略，默认使用文本渲染
-      const renderStrategy = renderStrategies[column.key as  'type' | 'default'  | 'params'] || (() => renderText(value as string));
+      const renderStrategy = renderStrategies[column.key as 'name' | 'type' | 'default'  | 'params'] || (() => renderText(value as string));
       processedRow[column.key as keyof IProp] = renderStrategy();
     });
 
@@ -271,12 +287,19 @@ const computedTableData = computed(() => {
 });
 
 /**
- * @description 处理标题点击
+ * @description 处理复制点击
+ * @param e 鼠标事件
  */
-const handleTitleClick = () => {
+const handleCopyClick = (e: MouseEvent) => {
+  e.stopPropagation();
   // 复制URL地址到剪贴板
   copyToClipboard(window.location.href, '复制URL地址成功！');
+};
 
+/**
+   * @description 处理标题点击
+   */
+const handleTitleClick = () => {
   if (!iProps.id) return;
 
   // 设置存储的锚点信息，让侧边栏能够识别
@@ -301,7 +324,6 @@ const handleTitleClick = () => {
     });
   }
 };
-
 </script>
 
 <style scoped lang="postcss">
@@ -317,12 +339,17 @@ const handleTitleClick = () => {
     letter-spacing: 0;
     line-height: 28px;
     cursor: pointer;
+    margin-left: -16px;
 
-    &:hover::before{
-      content: '#';
-      position: absolute;
-      left: -16px;
+    span {
+      opacity: 0;
       color: #3a84ff;
+    }
+
+    &:hover {
+      span {
+        opacity: 1;
+      }
     }
   }
 
@@ -391,9 +418,11 @@ const handleTitleClick = () => {
 
   .default-tag {
     display: inline-block;
-    padding: 2px 8px;
-    background: #f0f1f5;
+    margin-left: 4px;
+    padding: 2px 4px;
+    background: #f0f5ff;
     border-radius: 2px;
     color: #313238;
+    font-size: 10px;
   }
 </style>
