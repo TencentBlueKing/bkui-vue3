@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 
-import { createVNode, render } from 'vue';
+import { createVNode, nextTick, render } from 'vue';
 
 import { isElement } from '@bkui-vue/shared';
 
@@ -35,6 +35,25 @@ const instances = {
   'bottom-right': [],
 };
 let seed = 1;
+
+// 更新指定位置的所有 Message 实例的位置
+const updateModalPosition = (position: string, spacing: number) => {
+  const initialOffset = 30;
+  let offsetTop = initialOffset;
+
+  instances[position].forEach(vm => {
+    if (vm.el) {
+      // 获取当前实例的实际高度（包括详情展开后的高度）
+      const currentHeight = vm.el.offsetHeight || 0;
+      // 直接更新 DOM 元素的 top 样式，确保位置立即生效
+      vm.el.style.top = `${offsetTop}px`;
+      // 同时更新 props，保持数据一致性
+      vm.props.offsetY = offsetTop;
+      // 然后累加当前实例的高度和间距，用于计算下一个实例的位置
+      offsetTop += currentHeight + spacing;
+    }
+  });
+};
 
 const Message = (constructor: any, options: any) => {
   let opts = options;
@@ -61,18 +80,11 @@ const Message = (constructor: any, options: any) => {
     offsetX: horizontalOffset,
     offsetY: verticalOffset,
     id,
+    spacing,
   };
 
   const container = document.createElement('div');
   const vm = createVNode(constructor, opts);
-
-  // const updateModalPosition = () => {
-  //   let offsetTop = 30;
-  //   instances[position].forEach((vm) => {
-  //     offsetTop += (vm.el.offsetHeight || 0) + spacing;
-  //     vm.props.offsetY = offsetTop;
-  //   });
-  // };
 
   vm.props.onDestroy = (id: string) => {
     close(id, position, spacing, userOnClose);
@@ -82,14 +94,20 @@ const Message = (constructor: any, options: any) => {
   vm.props.onDetail = (_isShow: boolean, id: string) => {
     instances[position].forEach(item => {
       if (item.props.id !== id) {
-        item.component?.exposed?.setDetailsShow(null, false);
+        // 关闭其他实例的详情时，传入 shouldEmit = false 避免触发无限循环
+        item.component?.exposed?.setDetailsShow(null, false, false);
       }
     });
 
-    // setTimeout(() => {
-    //   console.log('updateModalPosition');
-    //   updateModalPosition();
-    // });
+    // 等待 DOM 更新完成后再更新位置
+    // 详情展开/收起时，DOM 高度会变化，需要等待渲染完成
+    // 由于事件已经在详情内容渲染完成后才 emit，这里只需要等待 Vue 响应式更新和浏览器布局完成
+    const currentSpacing = spacing || 10;
+    nextTick(() => {
+      requestAnimationFrame(() => {
+        updateModalPosition(position, currentSpacing);
+      });
+    });
   };
 
   render(vm, container);
@@ -106,7 +124,6 @@ const Message = (constructor: any, options: any) => {
 
 function close(id: string, position: string, spacing: number, userOnClose): void {
   userOnClose?.();
-  const verticalProperty = position.startsWith('top') ? 'top' : 'bottom';
   let instanceIndex = -1;
   instances[position].forEach((item, index) => {
     if (item.props.id === id) {
@@ -114,15 +131,19 @@ function close(id: string, position: string, spacing: number, userOnClose): void
     }
   });
 
-  const vm = instances[position][instanceIndex];
-  const removeHeight = vm.el.offsetHeight;
-  const len = instances[position].length;
-  for (let i = instanceIndex; i < len; i++) {
-    const pos = parseInt(instances[position][i].el.style[verticalProperty], 10) - removeHeight - spacing;
-    instances[position][i].component.props.offsetY = pos;
+  if (instanceIndex === -1) {
+    return;
   }
 
+  // 移除实例
   instances[position].splice(instanceIndex, 1);
+
+  // 重新计算所有剩余实例的位置
+  // 使用传入的 spacing，如果没有则从第一个实例获取，或使用默认值 10
+  const currentSpacing = spacing || (instances[position].length > 0 ? instances[position][0].props.spacing : 10) || 10;
+  nextTick(() => {
+    updateModalPosition(position, currentSpacing);
+  });
 }
 
 export default Message;
