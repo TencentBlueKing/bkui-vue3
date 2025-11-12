@@ -1,4 +1,4 @@
-import { defineComponent, ref, computed, type PropType, onMounted, nextTick } from 'vue';
+import { defineComponent, ref, computed, type PropType } from 'vue';
 
 import './index.postcss';
 
@@ -16,11 +16,8 @@ export default defineComponent({
     name: {
       type: String
     },
-    index: {
-      type: Number
-    }
   },
-  emits: ['update:activeKeys'],
+  emits: ['update:activeKeys', 'expand'],
   setup(props, { emit }) {
     const isExpand = computed(() => {
       const { activeKeys, name } = props
@@ -35,34 +32,11 @@ export default defineComponent({
       return [...new Set([...activeKeys, name])]
     })
     const collapseRef = ref()
-    const findScrollParent = (element: HTMLElement): HTMLElement | null => {
-      let parent = element.parentElement
-    
-      while (parent) {
-        const { overflow, overflowY } = getComputedStyle(parent)
-        if (/(auto|scroll)/.test(overflow + overflowY)) {
-          return parent
-        }
-        parent = parent.parentElement
-      }
-    
-      return document.documentElement
-    }
     const handleCollapse = () => {
-      let copyExpandKeys = [...expandKeys.value]
+      emit('update:activeKeys', isExpand.value ? collapseAfterExpandKeys.value : expandKeys.value)
       if(!isExpand.value) {
-        copyExpandKeys = [props.name]
-        nextTick(() => {
-          const scrollParent = findScrollParent(collapseRef.value)
-          if(scrollParent) {
-            scrollParent.scrollTo({
-              top: 0,
-              behavior: "smooth",
-            })
-          }
-        })
+        emit('expand')
       }
-      emit('update:activeKeys', isExpand.value ? collapseAfterExpandKeys.value : copyExpandKeys)
     }
     return {
       isExpand,

@@ -1,16 +1,12 @@
 <template>
   <div class="object-input-wrapper">
-    <bk-input
+    <RenderAutoHeightTextarea
+      :height="200"
       v-model="objectVal"
-      :rows="4"
-      :resize="false"
-      type="textarea"
+      placeholder="请输入有效的JSON对象格式"
       :class="{
         'is-error': hasError,
       }"
-      @blur="validateObject"
-      @input="clearError"
-      placeholder="请输入有效的JSON对象格式"
     />
     <div v-if="hasError" class="error-message">
       {{ errorMessage }}
@@ -20,10 +16,7 @@
 <script lang="ts" setup>
 import { ref, watch, type PropType } from 'vue';
 import type { IComponentWiki } from '@/types/component';
-
-import {
-  Input as BkInput,
-} from 'bkui-vue';
+import RenderAutoHeightTextarea from '../config/render-auto-height-textarea.vue';
 
 import { factType, isString, isNumber, isBoolean, isArray, isObject } from './utils';
 
@@ -49,18 +42,18 @@ const hasError = ref(false);
 const errorMessage = ref('');
 const isValidObject = ref(false);
 
-// 监听 modelValue 变化
-watch(() => props.modelValue, (newVal) => {
-  if (newVal) {
-    validateObject();
-  } else {
-    clearError();
-  }
-});
+watch(
+  () => props.modelValue,
+  (newVal) => {
+    objectVal.value = JSON.stringify(newVal, null, 2) || '';
+  },
+  { deep: true }
+);
 
 // 监听输入值变化
 watch(objectVal, (newVal) => {
- if(isValidObject) {
+  validateObject();
+ if(isValidObject.value && !hasError.value) {
    emit('update:modelValue', JSON.parse(newVal));
  }
 });
@@ -90,9 +83,10 @@ const keyValueTypeValid = (typeValue: string, value: unknown) => {
     return true;
 }
 const isValidObjectFormat = (parse: object, typeName: string) => {
-  if(typeName.toLowerCase() === 'object') return true
+  const keyConfigItems = keyConfigs(typeName);
+  if(keyConfigItems.length === 0) return true
   for (const [key, value] of Object.entries(parse)) {
-    const keyCpnfigItem = keyConfigs(typeName).find(item => item.name === key)
+    const keyCpnfigItem = keyConfigItems.find(item => item.name === key)
     // 是否存在未定义的键
     if(keyCpnfigItem === undefined) {
       return false;
@@ -102,7 +96,7 @@ const isValidObjectFormat = (parse: object, typeName: string) => {
       return true
     }
     // 键值类型是否匹配
-    const typeValue = factType(keyCpnfigItem.type, keyCpnfigItem.options, props.complexTypes);
+    const typeValue = factType(keyCpnfigItem.type, keyCpnfigItem.options);
     if(!keyValueTypeValid(typeValue, value)) {
       return false;
     }
@@ -211,19 +205,7 @@ const clearError = () => {
 }
 
 /* 错误状态的输入框样式 */
-:deep(.bk-textarea.is-error .bk-textarea--textarea) {
+:deep(.is-error .bk-textarea) {
   border-color: #EA3636 !important;
-  box-shadow: 0 0 0 2px rgba(234, 54, 54, 0.1) !important;
-}
-
-:deep(.bk-textarea.is-error .bk-textarea--textarea:focus) {
-  border-color: #EA3636 !important;
-  box-shadow: 0 0 0 2px rgba(234, 54, 54, 0.2) !important;
-}
-
-/* 占位符样式 */
-:deep(.bk-textarea--textarea::placeholder) {
-  color: #C4C6CC;
-  font-size: 12px;
 }
 </style>

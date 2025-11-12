@@ -11,10 +11,13 @@ export default defineComponent({
   name: 'RenderTab',
   props: {
     activeTab: {
-        type: String
+      type: String
     },
     tabs: {
-        type: Array as PropType<ITab[]>
+      type: Array as PropType<ITab[]>
+    },
+    size: {
+      type: String as PropType<'medium'>,
     }
   },
   emits: {
@@ -35,7 +38,11 @@ export default defineComponent({
                 <div
                     key={item.value}
                     onClick={() => this.changeTab(item.value)}
-                    class={{'active': this.activeTab === item.value, 'label-overflow': true}}
+                    class={{
+                      'active': this.activeTab === item.value,
+                      'label-overflow': true,
+                      'medium': this.size === 'medium',
+                    }}
                     title={item.label}
                 >
                     {item.label}

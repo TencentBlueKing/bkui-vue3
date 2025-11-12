@@ -56,34 +56,23 @@ export const splitType = (typeStr: string) => {
   return concretTypes;
 }
 
-export const isBasicTypeArr = (type: string) => {
-  const basicTypes = ['string[]', 'number[]', 'boolean[]'];
-  return basicTypes.includes(type.toLowerCase());
-}
-
-export const extractArrayGeneric = (type: string): string | null => {
-  const match = type.match(/^Array\s*<(.+?)>$/)
-  if (match && match[1]) {
-    return match[1].trim()
-  }
-  return null
-}
 
 export const isGenericArrType = (type: string) => {
   return /^Array<[^>]+>$/.test(type)
 }
-
-export const isArrayTypeLiteral = (type: string, complexTypes: IComponentWiki['types']) => {
-  if(/^[^\[\]]*\[\]$/.test(type)) {
-  const isComplexType = complexTypes?.some(item => item.name === type || `${item.name}[]` === type);
-    if(isComplexType || isBasicTypeArr(type) || type === '[]') {
-      return true
-    }
-  }
-  return false
+// 匹配 string[] 或 number[][] 等形式
+export const isArrayTypeLiteral = (type: string) => {
+  return /^[^\[\]]*(\[\]){1,2}$/.test(type)
+}
+// 匹配元组类型 [string, number] 等形式
+export const isTupleArrType = (type: string) => { 
+  return /^\[.*\]$/.test(type);
+}
+export const isTypeArray = (type: string) => {
+  return isGenericArrType(type) || isArrayTypeLiteral(type) || isTupleArrType(type) || type.trim().toLowerCase() === 'array';
 }
 
-export const factType = (type: string, options: IComponentWiki['props'][number]['options'], complexTypes: IComponentWiki['types']) => {
+export const factType = (type: string, options: IComponentWiki['props'][number]['options']) => {
   const basicType = type.trim().toLowerCase();
   if(basicType === 'boolean') {
     return basicType;
@@ -100,14 +89,13 @@ export const factType = (type: string, options: IComponentWiki['props'][number][
   if((isString && isEnum) || (isNumber && isEnum)) {
     return 'enum';
   }
-  if(isGenericArrType(type) || isArrayTypeLiteral(type, complexTypes) || basicType === 'array') {
+  if(isTypeArray(type)) {
     return 'array';
   }
-  const isComplexType = complexTypes?.some(item => item.name === type);
-  if(isComplexType || basicType === 'object') {
-    return 'object';
+  if(basicType === 'function' || basicType.includes('=>')) {
+    return 'errortype';
   }
-  return 'errortype';
+  return 'object';
 };
 
 export const isString = (value: unknown) => typeof value === 'string' || value instanceof String;
@@ -117,11 +105,11 @@ export const isArray = (value: unknown) => Array.isArray(value)
 export const isObject = (value: unknown) => Object.prototype.toString.call(value) === '[object Object]';
 
 // 暂未支持的可配置过滤掉
-export const filterErrTypeProps = (props: IProp[], types: IComponentWiki['types']) => {
+export const filterErrTypeProps = (props: IProp[]) => {
   const partValidTypeProps = (props ?? []).filter((item: IProp) => {
     const typeArr = [...new Set(splitType(item.type))];
     const factTypeList = typeArr.map((typeVal) => {
-      return factType(typeVal, item.options, types);
+      return factType(typeVal, item.options);
     });
     return !factTypeList.every(factType => factType === 'errortype');
   });
@@ -131,10 +119,43 @@ export const filterErrTypeProps = (props: IProp[], types: IComponentWiki['types'
       return item;
     }
     const validTypes = typeArr.filter((typeValF) => {
-      const curFactType = factType(typeValF, item.options, types);
+      const curFactType = factType(typeValF, item.options);
       return curFactType !== 'errortype';
     });
     item.type = validTypes.join(' |');
     return item;
   });
 };
+
+export const debounce = (func: Function, wait: number) => {
+  let timeout: ReturnType<typeof setTimeout> | null;
+  return function(this: any, ...args: any[]) {
+    const later = () => {
+      timeout = null;
+      func.apply(this, args);
+    };
+    if (timeout) {
+      clearTimeout(timeout);
+    } 
+    timeout = setTimeout(later, wait);
+  };
+}
+
+export const valueType = (value: unknown): string => {
+  if (isString(value)) {
+    return 'string';
+  } 
+  if (isNumber(value)) {
+    return 'number';
+  } 
+  if (isBoolean(value)) {     
+    return 'boolean';
+  } 
+  if (isArray(value)) {
+    return 'array';
+  }
+  if (isObject(value)) {
+    return 'object';
+  }
+  return 'unknown';
+}

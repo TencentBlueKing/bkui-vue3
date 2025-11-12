@@ -142,7 +142,7 @@ const props = [
   {
     name: 'before-change',
     description: '步骤切换前的钩子函数，支持异步函数',
-    type: 'funcObj',
+    type: '(index: number) => Promise<boolean>',
   },
 ];
 
@@ -196,17 +196,6 @@ const types = [
         type: 'string',
         description: '状态',
         options: ['error', 'loading'],
-      },
-    ],
-  },
-  {
-    name: 'funcObj',
-    description: '函数对象',
-    fields: [
-      {
-        name: 'title',
-        type: 'string',
-        description: '标题',
       },
     ],
   },
