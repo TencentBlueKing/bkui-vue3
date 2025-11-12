@@ -34,14 +34,6 @@ const presets = [
       target: '.edit-component-view',
       'visibility-height': 40,
     },
-    style: {
-      width: '100%',
-      height: '1000px',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      transform: 'translate(0,0)', // 让Backtop基于容器定位
-    },
   },
 ];
 

@@ -49,9 +49,11 @@ const presets = [
         },
       ],
     },
-    style: {
-      transform: 'translate(0,0)', // 让FixedNavbar基于容器定位
-    },
+    style: `
+      .edit-component-component {
+        transform: translate(0,0);
+      }
+    `,
     dependent: {
       components: ['icon'],
     },
@@ -77,9 +79,11 @@ const presets = [
         },
       ],
     },
-    style: {
-      transform: 'translate(0,0)', // 让FixedNavbar基于容器定位
-    },
+    style: `
+      .edit-component-component {
+        transform: translate(0,0);
+      }
+    `,
   },
   {
     title: '文字和图标类型',
@@ -102,9 +106,11 @@ const presets = [
         },
       ],
     },
-    style: {
-      transform: 'translate(0,0)', // 让FixedNavbar基于容器定位
-    },
+    style: `
+      .edit-component-component {
+        transform: translate(0,0);
+      }
+    `,
   },
 ];
 

@@ -31,10 +31,12 @@ const presets = [
   {
     title: '基础滑块',
     description: '基础的滑块组件',
-    style: {
-      width: '80%',
-      minWidth: '200px',
-    },
+    style: `
+      .edit-component-component {
+        width: 80%;
+        min-width: 200px;
+      }
+    `,
   },
 ];
 

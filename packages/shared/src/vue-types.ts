@@ -337,7 +337,7 @@ export interface IProp {
 export interface IEmit {
   name: string;
   description: string;
-  params: IParam[];
+  params?: IParam[];
 }
 
 export type ISlot = IEmit;

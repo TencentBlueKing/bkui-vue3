@@ -44,15 +44,6 @@ const presets = [
     dependent: {
       components: ['button'],
     },
-    style: {
-      width: '100%',
-      height: '2000px',
-      alignSelf: 'initial',
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '10px',
-      textAlign: 'left',
-    },
   },
   {
     title: '固定在底部',
@@ -69,15 +60,6 @@ const presets = [
         </bk-button>
       `,
     },
-    style: {
-      width: '100%',
-      height: '2000px',
-      alignSelf: 'initial',
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '10px',
-      textAlign: 'left',
-    },
   },
   {
     title: '对象层级',
@@ -93,15 +75,6 @@ const presets = [
           固定在顶部，层级为10
         </bk-button>
       `,
-    },
-    style: {
-      width: '100%',
-      height: '2000px',
-      alignSelf: 'initial',
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '10px',
-      textAlign: 'left',
     },
   },
 ];

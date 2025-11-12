@@ -44,12 +44,10 @@ export default vue.defineComponent({
       default: (_data?: unknown) => ({}),
     },
   },
-  // 占位，否则动态注册逻辑需要加额外判断
-  components: {},
   data() {
     return {
       errorMessage: '',
-      isReady: false,  // 添加准备状态
+      loading: true,  // 添加准备状态
     };
   },
   // 如果使用beforeUpdate，会导致无限循环渲染
@@ -61,29 +59,19 @@ export default vue.defineComponent({
       },
       deep: true,
     },
-    renderSlots: {
-      handler() {
-        // renderSlots 变化时清空错误信息
-        this.errorMessage = '';
-      },
-      deep: true,
-    },
   },
   errorCaptured(err) {
     this.errorMessage = (err as Error).message;
     return false;
   },
-  onBeforeMount() {
-    console.log('onBeforeMount')
-  },
   mounted() {
     // 等待父组件 DOM 完全挂载, 确保类似dialog等组件可以正确找到挂载点
     this.$nextTick(() => {
-      this.isReady = true;
+      this.loading = false;
     });
   },
   render() {
-    if (!this.isReady) {
+    if (this.loading) {
       return <RenderLoading />;
     } else if (this.errorMessage) {
       return <RenderError
@@ -116,7 +104,7 @@ export default vue.defineComponent({
       name={this.name}
       group={this.group}
       template={this.template}
-      style={this.style}
+      componentStyle={this.style}
       component={this.component}
       events={this.events}
       renderProps={this.renderProps}

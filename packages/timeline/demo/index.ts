@@ -56,10 +56,12 @@ const presets = [
         },
       ],
     },
-    style: {
-      display: 'flex',
-      justifyContent: 'center',
-    },
+    style: `
+      .edit-component-component {
+        display: flex;
+        justify-content: center;
+      }
+    `,
   },
 ];
 

@@ -27,7 +27,7 @@ export default vue.defineComponent({
       type: String,
       default: '',
     },
-    style: {
+    componentStyle: {
       type: String
     },
     component: {
@@ -53,6 +53,32 @@ export default vue.defineComponent({
   },
   // 占位，否则动态注册逻辑需要加额外判断
   components: {},
+  created() {
+    this.initStyle();
+  },
+  beforeUnmount() {
+    this.removeStyle();
+  },
+  methods: {
+    initStyle() {
+      // 移除已有的样式
+      this.removeStyle();
+
+      // 添加新的样式
+      if (this.componentStyle) {
+        const style = document.createElement('style');
+        style.textContent = this.componentStyle;
+        style.id = 'render-component-style';
+        document.head.appendChild(style);
+      }
+    },
+    removeStyle() {
+      const style = document.getElementById('render-component-style');
+      if (style) {
+        document.head.removeChild(style);
+      }
+    },
+  },
   render() {
     // 构建依赖组件映射的公共方法
     const buildDependentComponentsMap = () => {
@@ -135,50 +161,78 @@ export default vue.defineComponent({
 
       // 如果是 Backtop 组件
       if (this.component.default.name === 'Backtop') {
-        return vue.h('div', {
-          style: this.style,
-        }, [
-          vue.h('div', ['继续滚动查看出现 Backtop 效果']),
-          component,
-        ]);
+        return vue.h(
+          'section',
+          {
+            style: {
+              width: '100%',
+              height: '1000px',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              transform: 'translate(0,0)',
+            },
+          },
+          [
+            vue.h('div', ['继续滚动查看出现 Backtop 效果']),
+            component,
+          ]
+        );
       }
 
       // 如果是 Affix 组件
       if (this.component.default.name === 'Affix') {
-        return vue.h('div', {
-          style: this.style,
-        }, [
-          vue.h('div', {
+        return vue.h(
+          'section',
+          {
             style: {
               width: '100%',
-              height: '1000px',
-              color: '#63656e',
+              height: '2000px',
+              alignSelf: 'initial',
               display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              border: '1px solid #63656e',
-            },
-          }, ['继续滚动查看固定效果']),
-          component,
-          vue.h('div', {
-            style: {
-              width: '100%',
-              height: '1000px',
-              color: '#63656e',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              border: '1px solid #63656e',
-            },
-          }, ['继续滚动查看固定效果']),
-        ]);
+              flexDirection: 'column',
+              gap: '10px',
+              textAlign: 'left',
+            }
+          },
+          [
+            vue.h('div', {
+              style: {
+                width: '100%',
+                height: '1000px',
+                color: '#63656e',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                border: '1px solid #63656e',
+              },
+            }, ['继续滚动查看固定效果']),
+            component,
+            vue.h(
+              'div', {
+                style: {
+                  width: '100%',
+                  height: '1000px',
+                  color: '#63656e',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  border: '1px solid #63656e',
+                },
+              }, 
+              ['继续滚动查看固定效果']
+            ),
+          ]
+        );
       }
 
-      return vue.h('div', {
-        style: this.style,
-      }, [
-        component,
-      ]);
+      return vue.h(
+        'section',
+        {},
+        [
+          component,
+        ]
+      );
     };
     return renderComponent();
   },
