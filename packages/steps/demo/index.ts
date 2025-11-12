@@ -142,7 +142,7 @@ const props = [
   {
     name: 'before-change',
     description: '步骤切换前的钩子函数，支持异步函数',
-    type: 'function',
+    type: '(index: number) => Promise<boolean>',
   },
 ];
 
