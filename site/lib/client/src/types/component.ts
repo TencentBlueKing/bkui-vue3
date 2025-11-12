@@ -26,7 +26,7 @@ export interface IEmit {
 
 export type ISlot = IEmit;
 
-export type IExpose = Pick<IProp, 'description' | 'link' | 'name' | 'type'>;
+export type IExpose = Pick<IProp, 'description' | 'link' | 'name' | 'type' | 'params'>;
 
 export interface IPreset {
   title: string;
