@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { computed, customRef, InjectionKey, onBeforeUnmount, onMounted, Ref, ref, watch } from 'vue';
+import { computed, InjectionKey, onBeforeUnmount, onMounted, Ref, ref, watch } from 'vue';
 
 import { observerResize } from '@bkui-vue/shared';
 
@@ -68,30 +68,6 @@ export function useRegistry<T>(data: Ref<Map<PropertyKey, T>>) {
   };
 }
 
-export function useDebouncedRef<T>(value, delay = 200) {
-  let timeout;
-  let innerValue = value;
-  return customRef<T>((track, trigger) => ({
-    get() {
-      track();
-      return innerValue;
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    set(newValue: any) {
-      clearTimeout(timeout);
-      if (newValue === undefined || newValue === '') {
-        innerValue = newValue;
-        trigger();
-      } else {
-        timeout = setTimeout(() => {
-          innerValue = newValue;
-          trigger();
-        }, delay);
-      }
-    },
-  }));
-}
-
 export function usePopover(config: IPopoverConfig, triggerRef: Ref<HTMLElement>) {
   const { popoverMinWidth } = config;
   let observerIns = null;
@@ -128,8 +104,8 @@ export function usePopover(config: IPopoverConfig, triggerRef: Ref<HTMLElement>)
 }
 
 export function useRemoteSearch(method: (v: string) => Promise<void>, callBack?: () => void) {
-  const customOptionName = useDebouncedRef<string>(''); // 自定义创建选项（自定义创建也会触发搜索）
-  const searchValue = useDebouncedRef<string>('');
+  const customOptionName = ref<string>(''); // 自定义创建选项（自定义创建也会触发搜索）
+  const searchValue = ref<string>('');
   const curSearchValue = computed(() => {
     return searchValue.value || customOptionName.value;
   });
