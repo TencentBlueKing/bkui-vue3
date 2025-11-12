@@ -161,8 +161,12 @@ export default vue.defineComponent({
       const renderEvents = Object.keys(this.events).reduce(
         (acc, key) => {
           const Fn = Function;
-          // 去除 TypeScript 类型标注，将 (event: MouseEvent) 转换为 (event)
-          const eventCode = this.events[key].replace(/:\s*[^,)]+/g, '');
+          // 处理箭头函数: (param: Type, param2: Type2) => 或 async (param: Type) =>
+          const eventCode = this.events[key].replace(/(async\s+)?\(([^)]*)\)\s*=>/g, (_match: string, asyncKeyword: string, params: string) => {
+            const cleanParams = params.replace(/(\w+)\s*:\s*[^,)]+/g, '$1');
+            return `${asyncKeyword || ''}(${cleanParams}) =>`;
+          });
+
           // 例如：'click' -> 'onClick', 'custom-event' -> 'onCustomEvent'
           const eventName = 'on' + key
             .split('-')
