@@ -1,3 +1,22 @@
+// 换行符
+export const BREAK_LINE = '\n';
+
+// 最小缩进单位
+export const INDENT = '  ';
+
+// bkui-vue图标导入路径
+export const ICON_IMPORT_PATH = 'bkui-vue/lib/icon';
+
+export const BKUI_PATH = 'bkui-vue';
+
+// clickoutside指令
+export const clickoutsideDirective = 'clickoutside';
+// 指令组件
+export const directiveComponents = ['tooltips', 'ellipsis', clickoutsideDirective];
+// 函数组件
+export const functionComponents = ['notify', 'info-box', 'message'];
+
+// bk-icon的图标名称
 export const iconsName = [
   'AngleDoubleDownLine',
   'AngleDoubleLeft',
