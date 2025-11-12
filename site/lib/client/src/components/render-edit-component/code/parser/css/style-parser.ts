@@ -1,3 +1,7 @@
+import {
+  BREAK_LINE,
+} from "../../constant";
+
 interface ICssRule {
   selector: string
   properties: {
@@ -86,11 +90,11 @@ export const serializeCssRules = (rules: ICssRule[], indentLevel: number = 0): s
     const propertyIndent = ' '.repeat(indentLevel + 2);
     
     // 选择器 { 换行
-    result += `${rule.selector} {\n`;
+    result += `${rule.selector} {${BREAK_LINE}`;
     
     // 属性
     for (const prop of rule.properties) {
-      result += `${propertyIndent}${prop.key}: ${prop.value};\n`;
+      result += `${propertyIndent}${prop.key}: ${prop.value};${BREAK_LINE}`;
     }
     
     // 结束 }
@@ -98,7 +102,7 @@ export const serializeCssRules = (rules: ICssRule[], indentLevel: number = 0): s
     
     // 规则之间换行
     if (i < rules.length - 1) {
-      result += '\n\n';
+      result += BREAK_LINE.repeat(2);
     }
   }
   

@@ -8,7 +8,7 @@ import {
   onBeforeMount,
 } from 'vue';
 
-type ILanguage = 'xml' | 'typescript' | 'javascript' | 'css';
+export type ILanguage = 'xml' | 'typescript' | 'javascript' | 'css';
 
 export const useHighLightJs = () => {
   // highlight处理
