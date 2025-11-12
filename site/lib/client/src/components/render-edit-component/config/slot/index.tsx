@@ -103,13 +103,18 @@ export default defineComponent({
   },
   render() {
     return (
-      <div class='config-slot'>
+      <div
+        class='config-slot'>
         <div class="config-slot-name">
           <span v-bkTooltips={this.toolTip}>{this.name}</span>
         </div>
-        <pre class="config-slot-content g-scrollbar"><code v-html={
-          filterXss(this.RenderSlot())
-        }></code></pre>
+        {
+          this.modelValue
+          ? <pre class="config-slot-content g-scrollbar"><code v-html={
+            filterXss(this.RenderSlot())
+          }></code></pre>
+          : <div class="config-slot-content g-scrollbar">--</div>
+        }
       </div>
     );
   },

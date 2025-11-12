@@ -12,8 +12,11 @@ import {
   ICON_IMPORT_PATH,
 } from "../../../constant";
 import {
+  collectLinkTypeInEmits,
+  collectVueTypeInEmits,
   createDependImport,
   createValue,
+  parseEvents,
 } from "../script-parser";
 import type {
   DependentData,
@@ -30,6 +33,8 @@ export const createCommonScript = (
   curSlot: Record<string, string>,
   isTypeScript: boolean,
   componentName: string,
+  curEvents: Record<string, string>,
+  componentEmits: IComponentWiki['emits'],
 ) => {
   // 依赖列表
   const dependentList: DependentData[] = [];
@@ -83,9 +88,28 @@ export const createCommonScript = (
     isTypeScript,
     componentName,
   );
+  const eventList = parseEvents(curEvents, isTypeScript);
+  const lastLine = eventList.length > 0 ? BREAK_LINE : '';
   if (variables) {
     if (isTypeScript) {
       const curTypeList = [`${toPascalCase(componentName)}Props`];
+      
+      if (eventList.length > 0) {
+        const eventsNames = Object.keys(curEvents);
+        const LinkParams: string[] = [];
+        const vueParams: string[] = [];
+        for (const name of eventsNames) {
+          LinkParams.push(...collectLinkTypeInEmits(componentEmits, name));
+          vueParams.push(...collectVueTypeInEmits(componentEmits, name));
+        }
+        curTypeList.push(...LinkParams);
+        dependentList.push({
+          list: vueParams,
+          source: 'vue',
+          isType: true,
+        });
+      }
+      
       dependentList.unshift({
         list: curTypeList,
         source: BKUI_PATH,
@@ -102,8 +126,7 @@ export const createCommonScript = (
   if (importDepend.length > 0) {
     importDepend = `${importDepend}${BREAK_LINE}`;
   }
-
-  return `${importDepend}${variables}`;
+  return `${importDepend}${variables}${eventList}${lastLine}`;
 };
 
 // 根据props生成响应式变量

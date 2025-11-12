@@ -5,6 +5,9 @@ import type {
 import {
   camelKey,
 } from "@/utils";
+import {
+  toPascalCase,
+} from "./template-parser";
 
 // 创建插槽
 export const createSlots = (
@@ -12,13 +15,16 @@ export const createSlots = (
   slotName: string,
   slotParams: IParam[],
 ) => {
+  if (!slotContent) {
+    return '';
+  }
   let slotParamsStr = '';
   if (Array.isArray(slotParams) && slotParams.length > 0) {
     slotParamsStr = `="data"`;
   }
   const curSlotName = (slotName === 'default' && !slotParamsStr) ? '' : ` #${slotName}${slotParamsStr}`;
   const name = `template${curSlotName}`;
-  return createLabel(name, slotContent.trim(), '', {}, 'template');
+  return createLabel(name, slotContent.trim(), '', {}, {}, 'template');
 };
 
 // 创建标签
@@ -27,6 +33,7 @@ export const createLabel = (
   slot: string,
   prefix = '',
   props: Record<string, ValueType> = {},
+  events: Record<string, string> = {},
   endLabelName = '',
 ) => {
   // 属性列表处理
@@ -41,7 +48,10 @@ export const createLabel = (
     }
     return ` ${curKey}="${camelKey(curValue)}"`;
   });
+  const eventsList = Object.keys(events).map((key) => {
+    return ` @${key}="handle${toPascalCase(key)}"`;
+  });
   // slot处理
   const curEndLabelName = endLabelName || name;
-  return `<${prefix}${name}${propsList.join('')}>${slot}</${prefix}${curEndLabelName}>`;
+  return `<${prefix}${name}${propsList.join('')}${eventsList.join('')}>${slot}</${prefix}${curEndLabelName}>`;
 };

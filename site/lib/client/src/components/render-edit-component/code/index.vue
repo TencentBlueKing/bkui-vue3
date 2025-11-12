@@ -142,6 +142,7 @@ const {
   presets: componentPresets,
   props: componentProps,
   slots: componentSlots,
+  emits: componentEmits,
 } = toRefs(componentWiki.value);
 
 // script tag 后缀
@@ -182,7 +183,8 @@ const templateContent = () => {
     componentProps.value,
     renderSlots.value,
     componentName.value,
-    componentSlots.value,
+    componentSlots?.value,
+    curPreset.value?.events || {},
   );
 };
 
@@ -205,6 +207,8 @@ const scriptContent = () => {
     renderSlots.value,
     activeLanguage.value === 'typescript',
     componentName.value,
+    curPreset.value?.events || {},
+    componentEmits.value,
   );
 };
 

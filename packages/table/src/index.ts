@@ -35,5 +35,7 @@ export default BkTable;
 export { BkTable, Column as BkTableColumn };
 export type { TableEmits } from './emits';
 export type { Column as TableIColumn, Settings as TableSettings, TableProps } from './props';
+export type { Column, IColumnActive } from './props';
+export type { SORT_OPTION } from './const';
 export type TableInstance = InstanceType<typeof BkTable>;
 export type TableColumnInstance = InstanceType<typeof Column>;

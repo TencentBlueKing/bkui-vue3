@@ -29,5 +29,5 @@ import Component from './timeline';
 const BkTimeline = withInstall(Component);
 export default BkTimeline;
 export type { TimelineEmits } from './emits';
-export type { TimelineProps } from './props';
+export type { TimelineProps, TimelineItem } from './props';
 export type TimelineInstance = InstanceType<typeof BkTimeline>;
