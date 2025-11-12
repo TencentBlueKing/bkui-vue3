@@ -32,6 +32,7 @@ import PropsBox from '../../components/props-box';
 import { IPropsTableItem } from '../../typings';
 import BaseDemo from './base-demo.vue';
 import ClearDemo from './clear-demo.vue';
+import CopyDemo from './copy-demo.vue';
 import CreateDemo from './create-demo.vue';
 import DisabledDemo from './disabled-demo.vue';
 import ExampleDemo from './example-demo.vue';
@@ -397,6 +398,14 @@ export default defineComponent({
           title='批量输入'
         >
           <PasteDemo />
+        </DemoBox>
+        <DemoBox
+          componentName='tag-input'
+          demoName='copy-demo'
+          desc='设置 copyable 允许复制；设置 copy-eparator 定义复制内容的分隔符（默认为回车）'
+          title='复制'
+        >
+          <CopyDemo />
         </DemoBox>
         <DemoBox
           componentName='tag-input'
