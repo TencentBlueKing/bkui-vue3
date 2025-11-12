@@ -7,6 +7,9 @@ import RenderIcon from './render-icon';
 import RenderError from './render-error';
 import RenderLoading from './render-loading';
 
+import type { PropType } from 'vue';
+import type { IProp } from '@/types/component';
+
 export default vue.defineComponent({
   name: 'RenderComponentWrapper',
   props: {
@@ -31,6 +34,10 @@ export default vue.defineComponent({
       type: Object,
       default: () => ({}),
     },
+    props: {
+      type: Object as PropType<IProp[]>,
+      default: () => ({}),
+    },
     renderProps: {
       type: Object,
       default: () => ({}),
@@ -43,6 +50,9 @@ export default vue.defineComponent({
       type: Object,
       default: (_data?: unknown) => ({}),
     },
+  },
+  emits: {
+    'update:renderProps': (value: Record<string, unknown>) => value !== undefined,
   },
   data() {
     return {
@@ -69,6 +79,11 @@ export default vue.defineComponent({
     this.$nextTick(() => {
       this.loading = false;
     });
+  },
+  methods: {
+    handleUpdateRenderProps(value: Record<string, unknown>) {
+      this.$emit('update:renderProps', value);
+    },
   },
   render() {
     if (this.loading) {
@@ -107,9 +122,11 @@ export default vue.defineComponent({
       componentStyle={this.style}
       component={this.component}
       events={this.events}
+      props={this.props}
       renderProps={this.renderProps}
       renderSlots={this.renderSlots}
       dependentComponents={this.dependentComponents}
+      onUpdate:renderProps={this.handleUpdateRenderProps}
     />;
   },
 });

@@ -48,20 +48,21 @@
             <template #main>
               <section
                 class="edit-component-view"
-                :key="JSON.stringify(renderProps)"
+                :key="renderPresetIndex + componentWiki.name"
               >
                 <render-component
                   v-if="mainPanel === MainPanel.Component"
-                  class="edit-component-component"
+                  v-model:render-props="renderProps"
+                  :render-slots="renderSlots"
                   :name="componentWiki.name"
                   :group="componentWiki.group"
                   :template="componentWiki.presets[renderPresetIndex].template"
                   :style="componentWiki.presets[renderPresetIndex].style"
                   :events="componentWiki.presets[renderPresetIndex].events"
+                  :props="componentWiki.props"
                   :component="component"
-                  :render-props="renderProps"
-                  :render-slots="renderSlots"
                   :dependent-components="dependentComponents"
+                  class="edit-component-component"
                 />
                 <render-code
                   v-if="mainPanel === MainPanel.Code"

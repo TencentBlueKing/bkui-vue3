@@ -31,6 +31,7 @@ const presets = [
     title: '可查看的抽屉',
     description: '承载展示性的信息内容',
     props: {
+      isShow: false,
       title: '我是标题',
       renderDirective: 'if',
       transfer: false,
@@ -43,6 +44,7 @@ const presets = [
     title: '可操作的抽屉',
     description: '承载需要编辑或操作的表单',
     props: {
+      isShow: false,
       title: '我是标题',
       renderDirective: 'if',
       transfer: false,

@@ -91,3 +91,14 @@ export async function copyToClipboard(text: string, tips = '复制成功', hideP
     return false;
   }
 };
+
+
+// 辅助函数：连字符转驼峰
+export function kebabToCamel(str: string) {
+  return str.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
+};
+
+// 辅助函数：驼峰转连字符
+export function camelToKebab(str: string) {
+  return str.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`);
+};

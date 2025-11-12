@@ -11,6 +11,11 @@ import {
   compile,
 } from '@vue/compiler-dom';
 
+import type { PropType } from 'vue';
+import type { IProp } from '@/types/component';
+
+import { kebabToCamel } from '@/common/util';
+
 export default vue.defineComponent({
   name: 'RenderComponent',
   directives: {
@@ -35,7 +40,11 @@ export default vue.defineComponent({
       required: true,
     },
     events: {
-      type: Object,
+      type: Object as PropType<Record<string, string>>,
+      default: () => ({}),
+    },
+    props: {
+      type: Object as PropType<IProp[]>,
       default: () => ({}),
     },
     renderProps: {
@@ -50,6 +59,9 @@ export default vue.defineComponent({
       type: Object,
       default: (_data?: unknown) => ({}),
     },
+  },
+  emits: {
+    'update:renderProps': (value: Record<string, unknown>) => value !== undefined,
   },
   // 占位，否则动态注册逻辑需要加额外判断
   components: {},
@@ -145,18 +157,82 @@ export default vue.defineComponent({
         (this as ComponentInstance<Component>)._.components[name] = comp;
       });
 
+      // 处理 events
+      const renderEvents = Object.keys(this.events).reduce(
+        (acc, key) => {
+          const Fn = Function;
+          // 去除 TypeScript 类型标注，将 (event: MouseEvent) 转换为 (event)
+          const eventCode = this.events[key].replace(/:\s*[^,)]+/g, '');
+          // 例如：'click' -> 'onClick', 'custom-event' -> 'onCustomEvent'
+          const eventName = 'on' + key
+            .split('-')
+            .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+            .join('');
+          // 创建一个返回该箭头函数的函数，然后立即执行得到箭头函数本身
+          acc[eventName] = Fn(`return (${eventCode})`)();
+          return acc;
+        },
+        {} as Record<string, (data?: unknown) => void>,
+      );
+
+      // 处理 props
+      const renderProps = Object.keys(this.renderProps).reduce((acc, key) => {
+        const propValue = this.renderProps[key];
+        const prop = this.props.find(item => kebabToCamel(item.name) === kebabToCamel(key));
+  
+        // 判断 prop 是否为函数类型（包含 => 或以 function 开头）
+        const isFunctionType = prop.type && (prop.type.includes('=>') || prop.type.startsWith('function'));
+        
+        if (isFunctionType) {
+          // 如果是函数类型且值是字符串，需要转换为可执行函数
+          const Fn = Function;
+          // 去除 TypeScript 类型标注（只处理参数列表中的类型标注）
+          // 匹配箭头函数或普通函数的参数列表，避免影响函数体
+          let functionCode = propValue;
+          
+          // 处理箭头函数: (param: Type, param2: Type2) => 或 async (param: Type) =>
+          functionCode = functionCode.replace(/(async\s+)?\(([^)]*)\)\s*=>/g, (_match: string, asyncKeyword: string, params: string) => {
+            // 去除参数中的类型标注: param: Type -> param
+            const cleanParams = params.replace(/(\w+)\s*:\s*[^,)]+/g, '$1');
+            return `${asyncKeyword || ''}(${cleanParams}) =>`;
+          });
+
+          // 转换为实际函数
+          acc[prop.name] = Fn(`return (${functionCode})`)();
+        } else {
+          // 其他类型直接赋值
+          acc[prop.name] = propValue;
+        }
+
+        if (prop.isSupportVModel) {
+          renderEvents[`onUpdate:${key}`] = (value: unknown) => {
+            const newRenderProps = { ...renderProps };
+            newRenderProps[key] = value;
+            this.$emit('update:renderProps', newRenderProps);
+          };
+        }
+
+        return acc;
+      }, {} as Record<string, unknown>);
+
+      // 处理 slots
+      const renderSlots = Object.keys(this.renderSlots).reduce(
+        (acc, slotName) => {
+          const Fn = Function;
+          acc[slotName] = (data?: unknown) => Fn('Vue', 'data', compile(this.renderSlots[slotName]).code)(vue, data)(vue);
+          return acc;
+        },
+        {} as Record<string, (data?: unknown) => object>,
+      );
+
       // 渲染组件
       const component = vue.h(
         this.component.default,
-        this.renderProps,
-        Object.keys(this.renderSlots).reduce(
-          (acc, slotName) => {
-            const Fn = Function;
-            acc[slotName] = (data?: unknown) => Fn('Vue', 'data', compile(this.renderSlots[slotName]).code)(vue, data)(vue);
-            return acc;
-          },
-          {} as Record<string, (data?: unknown) => object>,
-        ),
+        {
+          ...renderEvents,
+          ...renderProps,
+        },
+        renderSlots,
       );
 
       // 如果是 Backtop 组件
@@ -234,6 +310,7 @@ export default vue.defineComponent({
         ]
       );
     };
+
     return renderComponent();
   },
 });

@@ -31,6 +31,7 @@ const presets = [
     title: '单行输入框 input',
     description: '最基础的输入表单，仅支持输入一行文本',
     props: {
+      modelValue: '',
       type: 'text',
       behavior: 'normal',
       placeholder: '请输入',
@@ -46,6 +47,7 @@ const presets = [
     title: '文本域 textarea',
     description: '支持输入多行文本',
     props: {
+      modelValue: '',
       type: 'textarea',
       placeholder: '请输入',
       maxlength: 100,
@@ -59,6 +61,7 @@ const presets = [
     title: '数值输入框 numberinput',
     description: '只支持输入数值的文本框',
     props: {
+      modelValue: '',
       type: 'number',
       max: 100,
       min: 0,
@@ -69,6 +72,7 @@ const presets = [
     title: '密码输入框 passport',
     description: '用户密码的特殊场景',
     props: {
+      modelValue: '',
       type: 'password',
       clearable: true,
     },
@@ -77,6 +81,7 @@ const presets = [
     title: '带Icon输入框',
     description: '支持前后缀图标的输入框',
     props: {
+      modelValue: '',
       type: 'text',
     },
     slots: {
@@ -98,6 +103,7 @@ const props = [
     description: '输入框绑定值',
     type: 'string',
     default: '',
+    isSupportVModel: true,
   },
   {
     name: 'type',
