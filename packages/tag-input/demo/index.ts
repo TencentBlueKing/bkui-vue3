@@ -43,30 +43,31 @@ const presets = [
     title: '基础用法',
     description: '简单的标签输入，可以配置回车 或 鼠标失焦结束输入',
     props: {
+      modelValue: ['shenzhen'],
       list,
+      placeholder: '请选择城市',
       clearable: true,
-      modelValue: ['shenzhen', 'guangzhou', 'beijing', 'shanghai', 'hangzhou'],
       trigger: 'focus',
     },
   },
   {
-    title: '支持批量录入',
-    description: '通过限定的分隔符，粘贴后自动生成tag',
+    title: 'hover 时才显示 clear 按钮',
+    description: '设置 show-clear-only-hover 为 true，则其 clear 按钮在 hover 时才会显示',
     props: {
+      modelValue: ['shenzhen'],
       list,
-      clearable: true,
-      disabled: false,
-      'paste-fn': value => value.split('|').map(tag => ({ id: tag, name: tag })),
-      modelValue: ['shenzhen', 'guangzhou', 'beijing', 'shanghai', 'hangzhou'],
+      placeholder: '请选择城市',
+      'show-clear-only-hover': true,
       trigger: 'focus',
     },
   },
   {
-    title: '支持选择与输入',
-    description: '触发输入框后，自动拉取已创建的 tag ，支持单选或多选 tag',
+    title: '自定义标签',
+    description: '设置 allow-create 属性来输入自定义标签，按 Enter 键结束；设置 has-delete-icon 属性可显示标签删除按钮',
     props: {
+      modelValue: ['shenzhen'],
       list,
-      modelValue: ['shenzhen', 'guangzhou', 'beijing', 'shanghai', 'hangzhou'],
+      placeholder: '请选择城市',
       'allow-create': true,
       'collapse-tags': true,
       'has-delete-icon': true,
@@ -78,8 +79,8 @@ const presets = [
     description:
       '设置 allow-auto-match 属性当输入内容时失去焦点后，如果完全匹配则自动选中，如果设置 allow-create 属性则创建标签',
     props: {
+      modelValue: ['shenzhen'],
       list,
-      modelValue: ['shenzhen', 'guangzhou', 'beijing', 'shanghai', 'hangzhou'],
       'allow-create': true,
       'allow-auto-match': true,
       'has-delete-icon': true,
@@ -87,9 +88,30 @@ const presets = [
     },
   },
   {
+    title: '更多自定义配置',
+    description:
+      '设置 save-key 属性定义选项的保存 key 值；设置 display-key 属性定义选项展示名称；search-key 属性定义多字段索引；tpl 属性可自定义下拉列表展示',
+    props: {
+      modelValue: ['Jane'],
+      list: [
+        { username: 'Jack', nickname: '杰克' },
+        { username: 'Json', nickname: '杰森' },
+        { username: 'Jane', nickname: '简' },
+        { username: 'Arman', nickname: '阿尔曼' },
+      ],
+      'search-key': ['username', 'nickname'],
+      tpl: "(node, highlightKeyword, h) => {const innerHTML = `${highlightKeyword(node.username)} (${node.nickname})`;return h('div', { class: 'bk-selector-node' }, [h('span', {class: 'text',innerHTML})])}",
+      'display-key': 'username',
+      placeholder: '请输入 username 或 nickname',
+      'save-key': 'username',
+      trigger: 'focus',
+    },
+  },
+  {
     title: '分组展示',
     description: '配置 use-group 来启用分组功能， 数据源必须加上 children 的配置',
     props: {
+      modelValue: ['1-1', '1-2', '1-3', '2-1', '2-2'],
       list: [
         {
           id: '1',
@@ -118,15 +140,90 @@ const presets = [
           ],
         },
       ],
-      modelValue: ['1-1', '1-2', '1-3', '2-1', '2-2'],
       trigger: 'focus',
       'use-group': true,
+    },
+  },
+  {
+    title: '设置选中标签 tooltips',
+    description: '配置 tooltip-key 定义选中标签 hover 时的显示文案',
+    props: {
+      modelValue: ['1-1', '1-2'],
+      list: [
+        {
+          id: '1',
+          name: '华中地区',
+          children: [
+            { id: '1-1', name: '河南省', tips: '省会郑州' },
+            { id: '1-2', name: '湖北省', tips: '省会武汉' },
+            { id: '1-3', name: '湖南省', tips: '省会长沙' },
+          ],
+        },
+        {
+          id: '2',
+          name: '华北地区',
+          children: [
+            { id: '2-1', name: '北京市', tips: '直辖市' },
+            { id: '2-2', name: '天津市', tips: '直辖市' },
+            { id: '2-3', name: '河北省', tips: '省会石家庄' },
+          ],
+        },
+        {
+          id: '3',
+          name: '华南地区',
+          children: [
+            { id: '3-1', name: '广东省', tips: '省会广州' },
+            { id: '3-2', name: '海南省', tips: '省会海口' },
+          ],
+        },
+      ],
+      placeholder: '请选择',
+      'tooltip-key': 'tips',
+      trigger: 'focus',
+      'collapse-tags': true,
+      'use-group': true,
+    },
+  },
+  {
+    title: '列表项禁用',
+    description: '设置列表数据源 disabled 属性来禁用列表中的某些项，禁止用户选择',
+    props: {
+      modelValue: ['shenzhen'],
+      list: [
+        { id: 'shenzhen', name: '深圳' },
+        { id: 'guangzhou', name: '广州' },
+        { id: 'beijing', name: '北京' },
+        { id: 'shanghai', name: '上海', disabled: true },
+        { id: 'hangzhou', name: '杭州' },
+        { id: 'nanjing', name: '南京', disabled: true },
+        { id: 'chongqing', name: '重庆' },
+        { id: 'taibei', name: '台北' },
+        { id: 'haikou', name: '海口', disabled: true },
+      ],
+      placeholder: '请选择城市',
+      trigger: 'focus',
+    },
+  },
+  {
+    title: '支持批量录入',
+    description: '粘贴内容默认按“;”来分割内容，设置 paste-fn 方法可以自定义粘贴输出内容',
+    props: {
+      list,
+      placeholder: '请选择城市',
+      'paste-fn': `value => value.split(';').map(tag => ({ id: tag, name: tag }))`,
+      trigger: 'focus',
     },
   },
 ];
 
 // 组件属性，用来自动生成属性文档
 const props = [
+  {
+    name: 'modelValue',
+    description: '绑定值',
+    type: 'string|Array<string>',
+    isSupportVModel: true,
+  },
   {
     name: 'list',
     description: '下拉菜单所需的数据列表',
@@ -166,7 +263,7 @@ const props = [
   {
     name: 'search-key',
     description: '输入时，搜索的 key 值',
-    type: 'string',
+    type: 'string|Array<string>',
     default: 'name',
   },
   {
@@ -393,6 +490,8 @@ const emits = [
 
 const types = [];
 
+const slots = [];
+
 const group = NavGroupMeta.Form;
 
 // 组件名称
@@ -417,6 +516,7 @@ const wiki: IComponentWiki = {
   presets,
   description,
   types,
+  slots,
 };
 
 export default wiki;

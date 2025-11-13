@@ -36,6 +36,125 @@ const presets = [
         {
           tag: '一天前',
           content: '由pony上线到蓝鲸市场',
+          size: 'large',
+        },
+        {
+          tag: '步骤1',
+          content: '<span style="font-size: 12px;">2019-12-15 11:00</span>',
+        },
+        {
+          tag: '步骤2',
+          content: '<span style="font-size: 12px;">2020-12-15 11:00</span>',
+        },
+        {
+          tag: '步骤3',
+          content: '<span style="font-size: 12px;">2021-12-15 11:00</span>',
+        },
+        {
+          tag: '步骤4',
+          content: '<span style="font-size: 12px;">2022-12-15 11:00</span>',
+        },
+      ],
+    },
+    events: {
+      select: '(data) => { alert(`选择了：${data.tag}`); }',
+    },
+    style: `
+      .edit-component-component {
+        display: flex;
+        justify-content: center;
+      }
+    `,
+  },
+  {
+    title: '节点状态',
+    description:
+      '在 list 数据源中配置 size color filled 属性呈现不同状态。绿色代表成功/已完成，蓝色代表正在进行，红色代表错误/失败，黄色代表告警/暂停，灰色代表未开始。实心代表已完成。',
+    props: {
+      list: [
+        {
+          tag: 'pony审批通过，并附“同意”',
+          content: '由pony上线到蓝鲸市场',
+          color: 'green',
+          filled: true,
+        },
+        {
+          tag: 'tony审批通过，并附“同意”',
+          content: '<span style="font-size: 12px;">2019-12-15 11:00</span>',
+          color: 'blue',
+          filled: true,
+        },
+        {
+          tag: 'allen暂停审批',
+          content: '<span style="font-size: 12px;">2020-12-15 11:00</span>',
+          color: 'yellow',
+          size: 'large',
+        },
+        {
+          tag: '步骤3',
+          content: '<span style="font-size: 12px;">2021-12-15 11:00</span>',
+        },
+        {
+          tag: '步骤4',
+          content: '<span style="font-size: 12px;">2022-12-15 11:00</span>',
+        },
+      ],
+    },
+    style: `
+      .edit-component-component {
+        display: flex;
+        justify-content: center;
+      }
+    `,
+  },
+  {
+    title: '节点样式可配置',
+    description: '在 list 数据源中配置 type 属性（值可取 defult, primary, warning, success, danger），默认为 defult',
+    props: {
+      list: [
+        {
+          tag: '一天前',
+          content: '由pony上线到蓝鲸市场',
+          type: 'default',
+        },
+        {
+          tag: '步骤1',
+          content: '<span style="font-size: 12px;">2019-12-15 11:00</span>',
+          type: 'primary',
+        },
+        {
+          tag: '步骤2',
+          content: '<span style="font-size: 12px;">2020-12-15 11:00</span>',
+          type: 'warning',
+        },
+        {
+          tag: '步骤3',
+          content: '<span style="font-size: 12px;">2021-12-15 11:00</span>',
+          type: 'success',
+        },
+        {
+          tag: '步骤4',
+          content: '<span style="font-size: 12px;">2022-12-15 11:00</span>',
+          type: 'danger',
+        },
+      ],
+    },
+    style: `
+      .edit-component-component {
+        display: flex;
+        justify-content: center;
+      }
+    `,
+  },
+  {
+    title: '可配置 HTML 模板',
+    description:
+      '对 list 数据源中的 content 属性配置正确的 HTML 模板内容(注意：你的站点上动态渲染的任意 HTML 可能会非常危险，因为它很容易导致 XSS 攻击)',
+    props: {
+      list: [
+        {
+          tag: '一天前',
+          content: '由pony上线到蓝鲸市场',
         },
         {
           tag: '步骤1',
