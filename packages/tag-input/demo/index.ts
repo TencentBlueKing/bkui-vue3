@@ -88,7 +88,7 @@ const presets = [
     },
   },
   {
-    title: '更多自定义配置1',
+    title: '更多自定义配置',
     description:
       '设置 save-key 属性定义选项的保存 key 值；设置 display-key 属性定义选项展示名称；search-key 属性定义多字段索引；tpl 属性可自定义下拉列表展示',
     props: {
@@ -100,7 +100,7 @@ const presets = [
         { username: 'Arman', nickname: '阿尔曼' },
       ],
       'search-key': ['username', 'nickname'],
-      tpl: "(node: any, highlightKeyword: Function, h: VNode) => {const innerHTML = `${highlightKeyword(node.username)} (${node.nickname})`;return h('div', { class: 'bk-selector-node' }, [h('span', {class: 'text',innerHTML})])}",
+      tpl: "(node, highlightKeyword, h) => {const innerHTML = `${highlightKeyword(node.username)} (${node.nickname})`;return h('div', { class: 'bk-selector-node' }, [h('span', {class: 'text',innerHTML})])}",
       'display-key': 'username',
       placeholder: '请输入 username 或 nickname',
       'save-key': 'username',
