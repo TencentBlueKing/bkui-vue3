@@ -7,6 +7,7 @@
       :class="{
         'is-error': hasError,
       }"
+      @blur="validateArr"
     />
     <div v-if="hasError" class="error-message">{{ errMsg }}</div>
   </div>
@@ -34,6 +35,7 @@ watch(
   },
   { deep: true }
 );
+const isValidateArrJSON = ref(false)
 const hasError = ref(false)
 const errMsg = ref('')
 const validateArr = () => {
@@ -41,20 +43,23 @@ const validateArr = () => {
   try {
     const parseArr = JSON.parse(val)
     if(!Array.isArray(parseArr)) {
+      isValidateArrJSON.value = false
       hasError.value = true
       errMsg.value = '请输入有效的数组'
       return
     }
+    arrVal.value = JSON.stringify(parseArr, null, 2)
+    isValidateArrJSON.value = true
     hasError.value = false
     errMsg.value = ''
   } catch (error) {
+    isValidateArrJSON.value = false
     hasError.value = true
     errMsg.value = '数组JSON格式有误'
   }
 }
 watch(arrVal, () => {
-  validateArr()
-  if(!hasError.value) {
+  if(!hasError.value && isValidateArrJSON.value) {
     emit('update:modelValue', JSON.parse(arrVal.value))
   }
 })

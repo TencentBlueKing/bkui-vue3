@@ -76,7 +76,6 @@ import type {
 } from '@/types/component';
 
 import DynamicConfigItem from '../dynamic-config-item';
-import { filterErrTypeProps } from '../dynamic-config-item/utils';
 import { filterXss } from '@blueking/xss-filter';
 import { camelKey, camelToSnakeCase } from '@/utils'
 import { debounce } from '../dynamic-config-item/utils';
@@ -90,7 +89,7 @@ import Empty from './empty.vue';
 import Tab, { type ITab } from './tab'
 
 interface IProps {
-  props?: IComponentWiki['props'];
+  props?: IProp[];
   presetProps?: IComponentWiki['presets'][number]['props'];
   renderProps?: IComponentWiki['presets'][number]['props'];
   types?: IComponentWiki['types'];
@@ -107,11 +106,20 @@ const props = defineProps<IProps>();
 const emits = defineEmits<IEmits>();
 
 const handleUpdateProps = (name: string, value: PropValue) => {
+  Object.keys(props.renderProps || {}).find((key) => {
+    if (camelKey(key) === camelKey(name) && key !== name) {
+      name = key;
+      return true;
+    }
+    return false;
+  });
   emits(
     'update:renderProps',
     {
       ...props.renderProps,
-      [name]: filterXss(value),
+      [name]: filterXss(value, {
+        escapeHtml: (value: string) => value
+      }),
     },
   );
 };
@@ -175,10 +183,10 @@ const handleSelectedAttr = (item: IProp) => {
   }, 100);
 };
 
-const propsSort = <T extends { name: string }>(filterProps: T[]) => {
+const propsSort = <T extends { name: string }>(filterProps: T[]): T[] => {
   return [...filterProps].sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }));
 };
-const filterPropSlots = <T extends { name: string }, U extends object>(all: T[], preset: U) => {
+const filterPropSlots = <T extends { name: string }, U extends object>(all: T[], preset: U): T[] => {
   if (activeTab.value === 'all') {
     return propsSort(all);
   }
@@ -190,8 +198,7 @@ const filterPropSlots = <T extends { name: string }, U extends object>(all: T[],
   return propsSort(currentPropSlots);
 };
 const allValidTypeProps = computed(() => {
-  const copyComProps = JSON.parse(JSON.stringify(props?.props ?? []))
-  return filterErrTypeProps(copyComProps);
+  return JSON.parse(JSON.stringify(props?.props ?? []));
 })
 const comProps = computed(() => {
   return filterPropSlots(allValidTypeProps.value, props.presetProps ?? {});

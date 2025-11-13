@@ -8,12 +8,20 @@ import RenderBoolean from './boolean.vue';
 import RenderEnum from './enum.vue';
 import RenderArray from './array.vue';
 import RenderObject from './object.vue';
+import RenderFunction from './function.vue';
 import RenderErrorType from './errortype.vue';
 import Tab from '../config/tab'
 
 import './index.postcss';
 
-import { basicTypeToDefVal, splitType, factType, isTypeArray, valueType } from './utils';
+import {
+  basicTypeToDefVal,
+  splitType,
+  factType,
+  isTypeArray,
+  valueType,
+  isTypeFunction
+} from './utils';
 
 // 根据类型渲染不同的组件
 export default defineComponent({
@@ -39,11 +47,7 @@ export default defineComponent({
     complexTypes: {
       type: Array as PropType<IComponentWiki['types']>,
       default: () => [],
-    },
-    parentNo: {
-      type: String,
-      default: '',
-    },
+    }
   },
   emits: {
     'update:modelValue': (__: ComponentPropValue) => true,
@@ -61,6 +65,9 @@ export default defineComponent({
         if(isTypeArray(item)) {
           typeInfo.label = 'Array';
         }
+        if(isTypeFunction(item)) {
+          typeInfo.label = 'Function';
+        }
         return typeInfo
       })
     })
@@ -75,7 +82,7 @@ export default defineComponent({
     const newModelValue = ref<ComponentPropValue>()
     watch(() => props.modelValue, (val) => {
       newModelValue.value = val
-      const valType = valueType(val);
+      const valType = valueType(val, singleType.value);
       const matchedType = typeList.value.find(typeItem => typeItem.factType === valType);
       singleType.value = matchedType ? matchedType.value : typeList.value[0]?.value || '';
     }, {
@@ -157,6 +164,12 @@ export default defineComponent({
               onUpdate:modelValue={this.handleUpdate}
               type={this.singleType}
               complexTypes={this.complexTypes}
+            />
+          );
+        case 'function':
+          return (
+            <RenderFunction
+              modelValue={this.newModelValue as string}
             />
           );
         default:

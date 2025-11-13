@@ -27,7 +27,7 @@ export const createSlots = (
   }
   const curSlotName = (slotName === 'default' && !slotParamsStr) ? '' : ` #${slotName}${slotParamsStr}`;
   const name = `template${curSlotName}`;
-  return createLabel(name, slotContent.trim(), '', {}, {}, componentProps, 'template');
+  return createLabel(name, slotContent?.trim() ?? '', '', {}, {}, componentProps, 'template');
 };
 
 // 创建标签

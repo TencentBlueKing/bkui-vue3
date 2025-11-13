@@ -17,6 +17,7 @@
       :placeholder="placeholder"
       :model-value="modelValue"
       @input="handleValueChange"
+      @blur="handleBlur"
     >
     </bk-input>
     <Close
@@ -57,7 +58,7 @@ const props = withDefaults(
   },
 );
 
-const emits = defineEmits(['update:modelValue', 'input']);
+const emits = defineEmits(['update:modelValue', 'input', 'blur']);
 
 const textHeight = ref(props.height);
 const inputRef = ref();
@@ -76,6 +77,10 @@ const handleCalcHeight = () => {
     textHeight.value = props.height;
   }
 };
+
+const handleBlur = () => {
+  emits('blur');
+}
 
 onMounted(() => {
   setTimeout(() => {
