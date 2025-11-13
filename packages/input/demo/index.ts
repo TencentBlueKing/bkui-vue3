@@ -209,7 +209,7 @@ const props = [
   {
     name: 'tooltipsOptions',
     description: 'tooltips配置项',
-    type: 'Partial<IOptions>',
+    type: 'Partial<tooltipsProps>',
     link: '/component/tooltips/api#tooltipsProps',
   },
 ];
