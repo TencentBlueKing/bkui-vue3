@@ -92,6 +92,92 @@ export const createDependImport = (dependData: DependentData[]) => {
   }).join(BREAK_LINE);
 };
 
+// 智能添加换行符，避免在模板字符串和函数参数中添加换行
+const autoBreakLines = (code: string): string => {
+  let result = '';
+  let i = 0;
+  let inTemplateString = false;
+  let inFunctionParams = false;
+  let parenDepth = 0;
+  
+  while (i < code.length) {
+    const char = code[i];
+    const nextChar = code[i + 1];
+    const prevChar = i > 0 ? code[i - 1] : '';
+    
+    // 检测模板字符串
+    if (char === '`') {
+      inTemplateString = !inTemplateString;
+      result += char;
+      i++;
+      continue;
+    }
+    
+    // 在模板字符串内部，不做任何处理
+    if (inTemplateString) {
+      result += char;
+      i++;
+      continue;
+    }
+    
+    // 跟踪括号深度，判断是否在函数参数中
+    if (char === '(') {
+      parenDepth++;
+      // 检查是否是箭头函数的参数开始
+      if (i === 0 || code.substring(Math.max(0, i - 10), i).trim().match(/\w+$/)) {
+        inFunctionParams = true;
+      }
+      result += char;
+      i++;
+      continue;
+    }
+    
+    if (char === ')') {
+      parenDepth--;
+      result += char;
+      // 检查是否是箭头函数参数结束
+      if (parenDepth === 0 && nextChar && code.substring(i + 1, i + 4).trim().startsWith('=>')) {
+        inFunctionParams = false;
+      }
+      i++;
+      continue;
+    }
+    
+    // 在函数参数中，不添加换行
+    if (inFunctionParams && parenDepth > 0) {
+      result += char;
+      i++;
+      continue;
+    }
+    
+    // 在 { 后添加换行（如果后面不是换行）
+    if (char === '{' && nextChar && nextChar !== '\n' && nextChar !== '\r') {
+      result += char + '\n';
+      i++;
+      continue;
+    }
+    
+    // 在 } 前添加换行（如果前面不是换行）
+    if (char === '}' && prevChar && prevChar !== '\n' && prevChar !== '\r') {
+      result += '\n' + char;
+      i++;
+      continue;
+    }
+    
+    // 在分号后添加换行（如果后面不是换行且不是结尾）
+    if (char === ';' && nextChar && nextChar !== '\n' && nextChar !== '\r' && nextChar !== ' ') {
+      result += char + '\n';
+      i++;
+      continue;
+    }
+    
+    result += char;
+    i++;
+  }
+  
+  return result;
+};
+
 // 代码缩进规范化函数
 export const formatCodeIndent = (code: string, indentSize: number = 2, isTypeScript: boolean = true): string => {
   if (!code) return code;
@@ -105,6 +191,11 @@ export const formatCodeIndent = (code: string, indentSize: number = 2, isTypeScr
   // 如果不是TypeScript模式，去除类型注解
   if (!isTypeScript) {
     trimmedCode = removeTypeAnnotations(trimmedCode);
+  }
+  
+  // 如果代码是单行的（没有换行符），则自动添加换行
+  if (!trimmedCode.includes('\n') && !trimmedCode.includes('\r')) {
+    trimmedCode = autoBreakLines(trimmedCode);
   }
 
   
@@ -125,6 +216,14 @@ export const formatCodeIndent = (code: string, indentSize: number = 2, isTypeScr
     // 计算缩进级别
     const indent = ' '.repeat(currentIndent * indentSize);
     
+    // 获取行末字符
+    const lastChar = trimmedLine.slice(-1);
+    
+    // 判断是否需要添加分号
+    // 只有当行只包含单个闭合括号时才不加分号，其他情况都要检查
+    const isOnlyClosingBracket = trimmedLine === '}' || trimmedLine === ')' || trimmedLine === ']';
+    const needsSemicolon = !isOnlyClosingBracket && ![';', ',', '{', '(', '['].includes(lastChar);
+    
     // 处理缩进变化
     if (trimmedLine.endsWith('{') || trimmedLine.endsWith('(') || trimmedLine.endsWith('[')) {
       result.push(indent + trimmedLine);
@@ -132,11 +231,17 @@ export const formatCodeIndent = (code: string, indentSize: number = 2, isTypeScr
     } else if (trimmedLine.startsWith('}') || trimmedLine.startsWith(')') || trimmedLine.startsWith(']')) {
       currentIndent = Math.max(0, currentIndent - 1);
       const newIndent = ' '.repeat(currentIndent * indentSize);
-      result.push(newIndent + trimmedLine);
+      // 对于闭合括号行，也检查是否需要分号
+      const lineToAdd = needsSemicolon ? trimmedLine + ';' : trimmedLine;
+      result.push(newIndent + lineToAdd);
     } else {
-      result.push(indent + trimmedLine);
+      // 普通行，检查是否需要添加分号
+      const lineToAdd = needsSemicolon ? trimmedLine + ';' : trimmedLine;
+      result.push(indent + lineToAdd);
     }
+
   }
+
   
   // 去除结果中尾部的空行
   while (result.length > 0 && result[result.length - 1] === '') {
@@ -145,14 +250,16 @@ export const formatCodeIndent = (code: string, indentSize: number = 2, isTypeScr
   
   let formattedCode = result.join(BREAK_LINE);
   
-  // 确保代码以分号结尾（如果最后一个非空字符不是分号、花括号、方括号或圆括号）
+  // 确保代码以分号结尾（如果最后一个非空字符不是分号）
   const lastChar = formattedCode.trim().slice(-1);
-  if (lastChar && ![')', '}', ']', ';'].includes(lastChar)) {
+  if (lastChar && lastChar !== ';') {
     formattedCode += ';';
   }
   
   return formattedCode;
 };
+
+
 
 export const parseEvents = (events: Record<string, string>, isTypeScript: boolean) => {
   return Object.entries(events).map(([key, value]) => {

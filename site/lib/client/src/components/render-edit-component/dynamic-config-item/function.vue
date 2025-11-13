@@ -8,13 +8,16 @@
 import {
   useHighLightJs,
 } from '@/hooks/use-highlighjs';
+import {
+  formatCodeIndent,
+} from '../code/parser/script/script-parser';
 interface IProps {
     modelValue: string;
 }
 const props = defineProps<IProps>();
 const { highlightFactory } = useHighLightJs();
 const RenderFunc = () => highlightFactory(
- props.modelValue?.trim() || '--' , 'typescript'
+    formatCodeIndent(props.modelValue?.trim(), 2, false) || '--' , 'typescript'
 );
 </script>
 

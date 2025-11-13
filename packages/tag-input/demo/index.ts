@@ -404,7 +404,7 @@ const props = [
   {
     name: 'tag-overflow-tips',
     description: '定义 tag 超出内容的 v-bk-tooltips 配置',
-    type: 'Partial<IOptions>',
+    type: 'Partial<tooltipsProps>',
     default: '',
     link: '/component/tooltips/api#tooltipsProps',
   },
