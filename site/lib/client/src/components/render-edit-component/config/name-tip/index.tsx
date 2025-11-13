@@ -1,9 +1,9 @@
 import { defineComponent, ref, computed, type PropType } from 'vue';
 
-import { bkTooltips } from 'bkui-vue';
+import { bkTooltips, Tag as BkTag } from 'bkui-vue';
 
 import type {
-  IComponentWiki
+  IProp
 } from '@/types/component';
 import {
   useClipboard,
@@ -14,7 +14,7 @@ import './index.postcss';
 const { copy } = useClipboard({
   legacy: true,
 });
-const SHOW_KEYS: Record<Exclude<keyof IComponentWiki['props'][number], 'link'>, string> = {
+const SHOW_KEYS: Record<Exclude<keyof IProp, 'link' | 'isSupportVModel' | 'params'>, string> = {
   name: '参数',
   description: '说明',
   type: '类型',
@@ -25,7 +25,7 @@ export default defineComponent({
   name: 'RenderNameTip',
   props: {
     attr: {
-      type: Object as PropType<IComponentWiki['props'][number]>,
+      type: Object as PropType<IProp>,
       default: () => ({})
     }
   },
@@ -42,7 +42,7 @@ export default defineComponent({
               if(!isHasOptionsKey && key === 'options') {
                 return null;
               }
-              const value = props.attr?.[key as keyof IComponentWiki['props'][number]] ?? '';
+              const value = props.attr?.[key as keyof IProp] ?? '';
               const isOdd = (!isHasOptionsKey && key === 'default' ? index + 1 : index) % 2 === 0;
               const label = SHOW_KEYS[key as keyof typeof SHOW_KEYS];
               const displayVal = Array.isArray(value) ? value.join(', ') : String(value).replaceAll(' |', ',')
@@ -86,10 +86,13 @@ export default defineComponent({
   },
   render() {
     return (
-      <div class='config-item-name-tip-wrapper' onClick={this.copyAttrName} v-bkTooltips={this.copyToolTipConfig}>
-        <div class="config-item-name-tip" v-bkTooltips={this.toolTipConfig}>
-          {this.nameVal}
+      <div class='name-model-wrapper'>
+        <div class='config-item-name-tip-wrapper' onClick={this.copyAttrName} v-bkTooltips={this.copyToolTipConfig}>
+          <div class="config-item-name-tip" v-bkTooltips={this.toolTipConfig}>
+            {this.nameVal}
+          </div>
         </div>
+        { this.attr?.isSupportVModel && <BkTag>v-model</BkTag> }
       </div>
     );
   }

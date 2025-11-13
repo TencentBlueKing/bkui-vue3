@@ -1,4 +1,4 @@
-import type { IComponentWiki, IProp } from '@/types/component';
+import type { IProp } from '@/types/component';
 
 export const basicTypeToDefVal = {
   'string': '',
@@ -6,6 +6,7 @@ export const basicTypeToDefVal = {
   'boolean': false,
   'array': [] as const,
   'object': {},
+  'function': `() => {}`,
 }
 
 export const splitType = (typeStr: string) => {
@@ -72,7 +73,11 @@ export const isTypeArray = (type: string) => {
   return isGenericArrType(type) || isArrayTypeLiteral(type) || isTupleArrType(type) || type.trim().toLowerCase() === 'array';
 }
 
-export const factType = (type: string, options: IComponentWiki['props'][number]['options']) => {
+export const isTypeFunction = (type: string) => {
+  return type?.trim()?.toLowerCase()?.startsWith('function') ||  type.includes('=>');
+}
+
+export const factType = (type: string, options: IProp['options']) => {
   const basicType = type.trim().toLowerCase();
   if(basicType === 'boolean') {
     return basicType;
@@ -92,8 +97,8 @@ export const factType = (type: string, options: IComponentWiki['props'][number][
   if(isTypeArray(type)) {
     return 'array';
   }
-  if(basicType === 'function' || basicType.includes('=>')) {
-    return 'errortype';
+  if(isTypeFunction(type)) {
+    return 'function';
   }
   return 'object';
 };
@@ -103,29 +108,6 @@ export const isNumber = (value: unknown) => typeof value === 'number' || value i
 export const isBoolean = (value: unknown) => typeof value === 'boolean' || value instanceof Boolean;
 export const isArray = (value: unknown) => Array.isArray(value)
 export const isObject = (value: unknown) => Object.prototype.toString.call(value) === '[object Object]';
-
-// 暂未支持的可配置过滤掉
-export const filterErrTypeProps = (props: IProp[]) => {
-  const partValidTypeProps = (props ?? []).filter((item: IProp) => {
-    const typeArr = [...new Set(splitType(item.type))];
-    const factTypeList = typeArr.map((typeVal) => {
-      return factType(typeVal, item.options);
-    });
-    return !factTypeList.every(factType => factType === 'errortype');
-  });
-  return partValidTypeProps.map((item: IProp) => {
-    const typeArr = [...new Set(splitType(item.type))];
-    if (typeArr.length === 1) {
-      return item;
-    }
-    const validTypes = typeArr.filter((typeValF) => {
-      const curFactType = factType(typeValF, item.options);
-      return curFactType !== 'errortype';
-    });
-    item.type = validTypes.join(' |');
-    return item;
-  });
-};
 
 export const debounce = (func: Function, wait: number) => {
   let timeout: ReturnType<typeof setTimeout> | null;
@@ -141,7 +123,11 @@ export const debounce = (func: Function, wait: number) => {
   };
 }
 
-export const valueType = (value: unknown): string => {
+export const valueType = (value: unknown, type: string): string => {
+  // 默认type不存在时，将字符串包含 '=>' 的视为函数类型
+  if(isString(value) && value.includes('=>') && (!type || isTypeFunction(type))) {
+    return 'function';
+  }
   if (isString(value)) {
     return 'string';
   } 
