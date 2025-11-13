@@ -322,7 +322,7 @@ export const props = {
   ]).def(false),
 };
 
-type AsyncOption = {
+export type AsyncOption = {
   callback: (item, cb) => Promise<VNode | string>;
   cache: boolean;
   deepAutoOpen?: string;

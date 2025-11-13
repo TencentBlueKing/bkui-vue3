@@ -36,5 +36,5 @@ import Component from './virtual-render';
 const BkVirtualRender = withInstall(Component);
 export default BkVirtualRender;
 export type { VirtualRenderEmits } from './emits';
-export type { VirtualRenderProps } from './props';
+export type { VirtualRenderProps, IScrollbarOption } from './props';
 export type VirtualRenderInstance = InstanceType<typeof Component>;

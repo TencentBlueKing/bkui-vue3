@@ -34,5 +34,9 @@ export type { PopoverEmits } from './emits';
 export { default as $bkPopover } from './plugin-popover';
 
 // 这里兼容旧的类型， 导出两个
-export type { PopoverPropTypes as PopoverProps, PopoverPropTypes } from './props';
+export type {
+  PopoverPropTypes as PopoverProps,
+  PopoverPropTypes,
+  IAxesOffsets,
+} from './props';
 export type PopoverInstance = InstanceType<typeof BkPopover>;

@@ -38,6 +38,7 @@ export type { PickerDropdownEmits } from './base/emits';
 export type { PickerDropdownProps } from './base/props';
 export type { DatePickerEmits, TimePickerEmits } from './emits';
 export type { DatePickerProps, TimePickerProps } from './props';
+export type { IDatePickerShortcut } from './interface';
 export type DatePickerInstance = InstanceType<typeof Component>;
 export type TimePickerInstance = InstanceType<typeof TimePicker>;
 export type PickerDropdownInstance = InstanceType<typeof PickerDropdown>;

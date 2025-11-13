@@ -24,6 +24,7 @@ export const createCommonTemplate = (
   curSlot: Record<string, string>,
   componentName: IComponentWiki['name'],
   componentSlots: IComponentWiki['slots'],
+  curEvents: Record<string, string>,
 ) => {
   const curSlots = Object.entries(curSlot).map(([slotName, slotContent]) => {
     const slotParams = componentSlots?.find(item => item.name === slotName)?.params;
@@ -39,6 +40,8 @@ export const createCommonTemplate = (
         componentProps,
         renderProps,
       ),
+      curEvents,
+      componentProps,
     ),
   );
   const elementTree = parseStringTemplate(str);

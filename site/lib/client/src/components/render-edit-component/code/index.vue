@@ -142,7 +142,9 @@ const {
   presets: componentPresets,
   props: componentProps,
   slots: componentSlots,
+  types: componentTypes,
 } = toRefs(componentWiki.value);
+
 
 // script tag 后缀
 const scriptSuffix = computed(() => {
@@ -182,7 +184,8 @@ const templateContent = () => {
     componentProps.value,
     renderSlots.value,
     componentName.value,
-    componentSlots.value,
+    componentSlots?.value,
+    curPreset.value?.events || {},
   );
 };
 
@@ -205,7 +208,10 @@ const scriptContent = () => {
     renderSlots.value,
     activeLanguage.value === 'typescript',
     componentName.value,
+    curPreset.value?.events || {},
+    componentTypes?.value || [],
   );
+
 };
 
 // css生成

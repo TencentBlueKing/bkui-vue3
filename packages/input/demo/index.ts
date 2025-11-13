@@ -187,8 +187,8 @@ const props = [
     name: 'autosize',
     description:
       '设置文本框 autosize 属性使得根据内容自动调整的高度。 你可以给 autosize 提供一个包含有最大行数和最小行数的对象，让输入框自动调整。注意：需要手动将resize设置为false',
-    type: 'boolean|IAutosizeType',
-    link: '/component/input/api#IAutosizeType',
+    type: 'boolean | InputAutoSize',
+    link: '/component/input/api#InputAutoSize',
   },
   {
     name: 'resize',
@@ -209,7 +209,7 @@ const props = [
   {
     name: 'tooltipsOptions',
     description: 'tooltips配置项',
-    type: 'ITooltipsProps',
+    type: 'Partial<IOptions>',
     link: '/component/tooltips/api#tooltipsProps',
   },
 ];
@@ -401,17 +401,17 @@ const methods = [
 
 const types = [
   {
-    name: 'IAutosizeType',
+    name: 'InputAutoSize',
     description: '自动调整文本域高度',
     fields: [
       {
-        name: 'maxlength',
-        description: '最大输入长度',
+        name: 'minRows',
+        description: '最小行数',
         type: 'number',
       },
       {
-        name: 'minlength',
-        description: '最小输入长度',
+        name: 'maxRows',
+        description: '最大行数',
         type: 'number',
       },
     ],
