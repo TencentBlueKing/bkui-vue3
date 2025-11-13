@@ -68,8 +68,8 @@ const props = [
   {
     name: 'pics',
     description: '图片列表，[{ link: String, url: String, color: String, class: String }]',
-    type: 'Pics[]',
-    link: '/component/swiper/api#Pics',
+    type: 'IRenderData[]',
+    link: '/component/swiper/api#IRenderData',
     default: [],
   },
   // list属性, 根据现有文档，搭配slots使用
@@ -108,7 +108,7 @@ const emits = [
 // 组件自定义的复杂类型
 const types = [
   {
-    name: 'Pics',
+    name: 'IRenderData',
     description: '图片列表',
     fields: [
       {

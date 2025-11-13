@@ -307,9 +307,9 @@ const props = [
   {
     name: 'tag-overflow-tips',
     description: '定义 tag 超出内容的 v-bk-tooltips 配置',
-    type: 'ITagOverflowTips',
+    type: 'Partial<IOptions>',
     default: '',
-    link: '/component/tag-input/api#ITagOverflowTips',
+    link: '/component/tooltips/api#tooltipsProps',
   },
 ];
 
@@ -391,88 +391,7 @@ const emits = [
   },
 ];
 
-const types = [
-  {
-    name: 'ITagOverflowTips',
-    description: 'v-bk-tooltips 配置',
-    fields: [
-      {
-        name: 'arrow',
-        type: 'boolean',
-        description: '是否显示箭头',
-      },
-      {
-        name: 'disabled',
-        type: 'boolean',
-        description: '是否禁用提示框',
-      },
-      {
-        name: 'placement',
-        type: 'string',
-        description: '组件显示位置',
-        options: [
-          'auto',
-          'auto-start',
-          'auto-end',
-          'top',
-          'top-start',
-          'top-end',
-          'bottom',
-          'bottom-start',
-          'bottom-end',
-          'right',
-          'right-start',
-          'right-end',
-          'left',
-          'left-start',
-          'left-end',
-        ],
-      },
-      {
-        name: 'theme',
-        type: 'string',
-        description: '组件主题色',
-        options: ['dark', 'light'],
-      },
-      {
-        name: 'content',
-        type: 'string',
-        description: '提示信息内容',
-      },
-      {
-        name: 'showOnInit',
-        type: 'boolean',
-        description: '是否在初始化时默认显示',
-      },
-      {
-        name: 'trigger',
-        type: 'string',
-        description: '触发方式',
-        options: ['click', 'hover'],
-      },
-      {
-        name: 'extCls',
-        type: 'string',
-        description: '配置自定义样式类名，传入的类会被加在组件最外层的 DOM',
-      },
-      {
-        name: 'delay',
-        type: 'number',
-        description: '显示的延迟，毫秒',
-      },
-      {
-        name: 'onShow',
-        type: 'function',
-        description: '显示提示框时触发函数',
-      },
-      {
-        name: 'onHide',
-        type: 'function',
-        description: '隐藏提示框时触发函数',
-      },
-    ],
-  },
-];
+const types = [];
 
 const group = NavGroupMeta.Form;
 

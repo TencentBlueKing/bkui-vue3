@@ -35,3 +35,4 @@ export default Message;
 
 export type { MessageEmits } from './emits';
 export type { MessageProps } from './props';
+export type { IMessage, IMessageAction } from './messageConstructor';

@@ -31,7 +31,7 @@ import { usePrefix } from '@bkui-vue/config-provider';
 import { emits } from './emits';
 import { props } from './props';
 
-interface IRenderData {
+export interface IRenderData {
   link?: string;
   url?: string;
   color?: string;

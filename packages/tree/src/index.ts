@@ -29,5 +29,5 @@ import Component from './tree';
 const BkTree = withInstall(Component);
 export default BkTree;
 export type { TreeEmits } from './emits';
-export type { TreeProps } from './props';
+export type { TreeProps, AsyncOption, SearchOption, TreeNode } from './props';
 export type TreeInstance = InstanceType<typeof Component>;

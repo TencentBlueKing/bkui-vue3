@@ -30,4 +30,5 @@ const BkSwiper = withInstall(Component);
 export default BkSwiper;
 export type { SwiperEmits } from './emits';
 export type { SwiperType as SwiperProps } from './props';
+export type { IRenderData } from './swiper';
 export type SwiperInstance = InstanceType<typeof BkSwiper>;

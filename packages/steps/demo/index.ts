@@ -83,9 +83,9 @@ const props = [
   {
     name: 'steps',
     description: '组件步骤内容，有四个可选的key：title icon description status。',
-    type: 'Steps[]',
+    type: 'ISteps[]',
     default: [],
-    link: '/component/steps/api#Steps',
+    link: '/component/steps/api#ISteps',
   },
   {
     name: 'cur-step',
@@ -173,7 +173,7 @@ const emits = [
 // 组件自定义的复杂类型
 const types = [
   {
-    name: 'Steps',
+    name: 'ISteps',
     description: '组件步骤内容',
     fields: [
       {
@@ -192,13 +192,34 @@ const types = [
         description: '描述',
       },
       {
-        name: 'status',
+        name: 'StatusEnum',
         type: 'string',
         description: '状态',
-        options: ['error', 'loading'],
+        link: '/component/steps/api#StatusEnum'
       },
     ],
   },
+  {
+    name: 'StatusEnum',
+    description: '状态',
+    fields: [
+      {
+        name: 'error',
+        type: 'string',
+        description: '错误',
+      },
+      {
+        name: 'loading',
+        type: 'string',
+        description: '加载中',
+      },
+      {
+        name: '',
+        type: 'string',
+        description: '默认',
+      },
+    ],
+  }
 ];
 
 // 组件分组

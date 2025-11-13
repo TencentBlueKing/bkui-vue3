@@ -60,7 +60,7 @@ import { emits } from './emits';
 import { MessageContentType, IMessageActionType } from './enum';
 import { props } from './props';
 
-type IMessageAction = {
+export type IMessageAction = {
   /**
    * 唯一ID，从给定的 IMessageActionType 中选择
    * 如果是自定义的其他操作，此ID可以自定义，此时将会作为一个新的操作项追加

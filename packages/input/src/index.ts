@@ -30,4 +30,5 @@ const BkInput = withInstall(Component);
 export default BkInput;
 export type { InputEmits } from './emits';
 export type { InputProps } from './props';
+export type { InputAutoSize } from './input';
 export type InputInstance = InstanceType<typeof Component>;
