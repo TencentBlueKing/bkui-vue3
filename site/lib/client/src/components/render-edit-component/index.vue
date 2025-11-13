@@ -251,13 +251,16 @@ onUnmounted(() => {
   height: 100%;
   overflow: auto;
   background: #f3f3fa;
+  padding: 0 24px;
 
   .edit-component-component {
     align-self: center;
     margin: 0 auto;
     width: 100%;
-    padding: 0 24px;
     text-align: center;
+  }
+  .bk-steps-vertical {
+    min-height: 500px;
   }
   /* 
     为了面包屑、单选框组等组件需要居中显示额外添加的样式
@@ -277,6 +280,8 @@ onUnmounted(() => {
 
   .bk-resize-layout {
     height: 500px;
+    text-align: left;
+    background-color: #fff;
   }
 
   .bk-breadcrumb, .bk-checkbox-group {

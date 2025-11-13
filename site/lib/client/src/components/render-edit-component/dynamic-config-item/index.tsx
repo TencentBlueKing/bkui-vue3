@@ -138,7 +138,7 @@ export default defineComponent({
         case 'boolean':
           return (
             <RenderBoolean
-              modelValue={this.modelValue as boolean}
+              modelValue={this.newModelValue as boolean}
               onUpdate:modelValue={this.handleUpdate}
             />
           );

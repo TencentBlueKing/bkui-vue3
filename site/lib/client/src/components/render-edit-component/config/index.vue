@@ -106,18 +106,12 @@ const props = defineProps<IProps>();
 const emits = defineEmits<IEmits>();
 
 const handleUpdateProps = (name: string, value: PropValue) => {
-  Object.keys(props.renderProps || {}).find((key) => {
-    if (camelKey(key) === camelKey(name) && key !== name) {
-      name = key;
-      return true;
-    }
-    return false;
-  });
+  const newName = Object.keys(props.renderProps || {}).find((key) => camelKey(key) === camelKey(name) && key !== name);
   emits(
     'update:renderProps',
     {
       ...props.renderProps,
-      [name]: filterXss(value, {
+      [newName ?? name]: filterXss(value, {
         escapeHtml: (value: string) => value
       }),
     },
