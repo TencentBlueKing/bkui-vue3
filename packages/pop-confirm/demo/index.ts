@@ -29,45 +29,173 @@ import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 // 组件示例
 const presets = [
   {
-    title: '删除确认',
-    description: '删除操作前的确认提示',
+    title: '基础用法',
+    description: '由标题+通知文本+按钮组成，例如提交表单，与 confirm 弹出的全屏居中模态对话框相比，在目标元素附近弹出浮层提示，询问用户。',
     props: {
+      width: 288,
+      content: '删除操作无法撤回，请谨慎操作！',
+      title: '确认删除该脚本？',
       trigger: 'click',
-      title: '确认删除',
-      content: '删除后数据将无法恢复，请谨慎操作',
-      confirmText: '确认删除',
-      cancelText: '取消',
-      placement: 'top',
-      confirmConfig: {
-        theme: 'danger',
-      },
     },
     dependent: {
       components: ['button'],
     },
     slots: {
       default: `
-        <bk-button theme="danger" style="align-self: center;">
-          删除应用
-        </bk-button>
+        <bk-button class="align-center">删除</bk-button>
       `,
+    },
+    events: {
+      afterHidden: `() => {
+        console.log('hide');
+      }`,
+      afterShow: `() => {
+        console.log('show');
+      }`,
+      confirm: `() => {
+        console.log('ensure');
+      }`,
+    },
+    style: `.align-center {
+      align-self: center;
+    }`,
+  },
+  {
+    title: '简单样式',
+    description: '由通知文本+按钮组成，比较轻量的交互模态，用于一句话承载的内容也相对较少，在目标元素附近弹出浮层提示，询问用户。',
+    props: {
+      width: 288,
+      content: '删除结果数据时，将同时删除该结果数据下的所有样本曲线，请确认！',
+      trigger: 'click',
+    },
+    dependent: {
+      components: ['button'],
+    },
+    slots: {
+      default: `<bk-button>删除</bk-button>`,
+    },
+    events: {
+      confirm: `() => {
+        console.log('ensure');
+      }`,
     },
   },
   {
-    title: '表单提交确认',
-    description: '提交表单前的二次确认',
+    title: '插槽模式',
+    description: '插槽模式',
     props: {
+      width: 288,
+      content: '删除操作无法撤回，请谨慎操作！',
+      title: '确认删除该脚本？',
       trigger: 'click',
-      title: '确认提交',
-      content: '提交后数据将进入审核流程，无法修改',
-      confirmText: '确认提交',
-      cancelText: '再检查一下',
-      placement: 'bottom',
+    },
+    dependent: {
+      components: ['button', 'icon'],
     },
     slots: {
-      default: `
-        <bk-button theme="primary" style="align-self: center;">提交审核</bk-button>
-      `,
+      default: `<bk-button>删除</bk-button>`,
+      icon: `<Help />`,
+      content: `<div class="pop-confirm-content">
+          测试将同时删除该结果数据下的所有样本曲线
+        </div>`,
+    },
+    events: {
+      confirm: `() => {
+        console.log('ensure');
+      }`,
+    },
+    style: `.pop-confirm-content {
+      margin-bottom: 16px;
+      color: red;
+    }`,
+  },
+  {
+    title: '自定义 icon',
+    description: '通过 icon slot 自定义 icon',
+    props: {
+      width: 288,
+      content: '删除操作无法撤回，请谨慎操作！',
+      title: '确认删除该脚本？',
+      trigger: 'click',
+    },
+    dependent: {
+      components: ['button', 'icon'],
+    },
+    slots: {
+      default: `<bk-button>删除</bk-button>`,
+      icon: `<Error />`,
+    },
+    events: {
+      confirm: `() => {
+        console.log('ensure');
+      }`,
+    },
+  },
+  {
+    title: '嵌入Select',
+    description: '嵌入Select组件',
+    props: {
+      width: 288,
+      title: '确认删除该脚本？',
+      trigger: 'click',
+    },
+    dependent: {
+      components: ['button', 'select'],
+    },
+    slots: {
+      default: `<bk-button>删除</bk-button>`,
+      content: `<bk-select
+          :list="[
+        {
+          label: '爬山',
+          value: 1,
+        },
+        {
+          label: '跑步',
+          value: 2,
+        },
+      ]"
+          :popover-options="{ boundary: 'parent' }"
+          class="pop-confirm-content-select"
+        />`,
+    },
+    events: {
+      confirm: `() => {
+        console.log('ensure');
+      }`,
+    },
+    style: `.pop-confirm-content-select {
+      margin-bottom: 24px;
+    }`,
+  },
+  {
+    title: '点击占位区弹窗不收起',
+    description: '通过 popoverOptions 设置 hideIgnoreReference: true，若占位区为非行内元素，请配置 referenceCls: 类名',
+    props: {
+      width: 288,
+      popoverOptions: {
+        hideIgnoreReference: true,
+      },
+      content: '删除操作无法撤回，请谨慎操作！',
+      title: '确认删除该脚本？',
+      trigger: 'click',
+    },
+    dependent: {
+      components: ['button'],
+    },
+    slots: {
+      default: `<bk-button>删除(点我不收起弹窗)</bk-button>`,
+    },
+    events: {
+      afterHidden: `() => {
+        console.log('hide');
+      }`,
+      afterShow: `() => {
+        console.log('show');
+      }`,
+      confirm: `() => {
+        console.log('ensure');
+      }`,
     },
   },
 ];
@@ -144,21 +272,22 @@ const props = [
   {
     name: 'confirmConfig',
     description: '确定按钮的配置，同Button的Props',
-    type: 'ButtonPropTypes',
-    link: '/component/button/api#ButtonPropTypes',
+    type: 'ButtonProps',
+    link: '/component/button/api#ButtonProps',
     default: {},
   },
   {
     name: 'cancelConfig',
     description: '取消按钮的配置，同Button的Props',
-    type: 'ButtonPropTypes',
+    type: 'ButtonProps',
+    link: '/component/button/api#ButtonProps',
     default: {},
   },
   {
     name: 'popover-options',
     description: 'Popover组件的配置项',
-    type: 'PopoverPropTypes',
-    link: '/component/popover/api#PopoverPropTypes',
+    type: 'PopoverProps',
+    link: '/component/popover/api#PopoverProps',
     default: {},
   },
 ];
