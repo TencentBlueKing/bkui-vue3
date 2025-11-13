@@ -70,6 +70,8 @@ export default vue.defineComponent({
   },
   beforeUnmount() {
     this.removeStyle();
+    // 移除在window上注册的依赖组件
+    this.removeDependentFunctionComps();
   },
   methods: {
     initStyle() {
@@ -89,6 +91,11 @@ export default vue.defineComponent({
       if (style) {
         document.head.removeChild(style);
       }
+    },
+    removeDependentFunctionComps() {
+      Object.keys(this.dependentComponents).forEach((componentName) => {
+        delete (window as unknown as Record<string, unknown>)[componentName];
+      });
     },
   },
   render() {
@@ -154,7 +161,12 @@ export default vue.defineComponent({
       // 注册依赖组件
       const dependentComponentsMap = buildDependentComponentsMap();
       Object.entries(dependentComponentsMap).forEach(([name, comp]) => {
-        (this as ComponentInstance<Component>)._.components[name] = comp;
+        // 如果组件是函数，则直接注册到 window 上（带Bk前缀应该不会覆盖，遇到再说）
+        if (typeof comp === 'function') {
+          (window as unknown as Record<string, unknown>)[name] = comp;
+        } else {
+          (this as ComponentInstance<Component>)._.components[name] = comp;
+        } 
       });
 
       // 处理 events
@@ -195,14 +207,17 @@ export default vue.defineComponent({
           let functionCode = propValue;
           
           // 处理箭头函数: (param: Type, param2: Type2) => 或 async (param: Type) =>
-          functionCode = functionCode.replace(/(async\s+)?\(([^)]*)\)\s*=>/g, (_match: string, asyncKeyword: string, params: string) => {
-            // 去除参数中的类型标注: param: Type -> param
-            const cleanParams = params.replace(/(\w+)\s*:\s*[^,)]+/g, '$1');
-            return `${asyncKeyword || ''}(${cleanParams}) =>`;
-          });
+          if (typeof functionCode === 'string') {
+            functionCode = functionCode.replace(/(async\s+)?\(([^)]*)\)\s*=>/g, (_match: string, asyncKeyword: string, params: string) => {
+              // 去除参数中的类型标注: param: Type -> param
+              const cleanParams = params.replace(/(\w+)\s*:\s*[A-Z][^,)]*/g, '$1');
+              return `${asyncKeyword || ''}(${cleanParams}) =>`;
+            });
+            
+            // 转换为实际函数
+            acc[prop.name] = Fn(`return (${functionCode})`)();
+          }
 
-          // 转换为实际函数
-          acc[prop.name] = Fn(`return (${functionCode})`)();
         } else {
           // 其他类型直接赋值
           acc[prop.name] = propValue;

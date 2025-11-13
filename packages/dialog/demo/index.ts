@@ -41,6 +41,55 @@ const presets = [
     },
   },
   {
+    title: '遮罩弹框',
+    description: '通过设置 showMask 属性来设置是否显示遮罩',
+    props: {
+      'is-show': true,
+      'show-mask': true,
+      transfer: '.edit-component-view',
+    },
+    slots: {
+      default: '<div>dialog 内容</div>',
+    },
+  },
+  {
+    title: '关闭前确认',
+    description: '通过 before-close 属性配置关闭前确认',
+    props: {
+      'is-show': true,
+      'before-close': `() => {
+        return new Promise((resolve, reject) => {
+          BkInfoBox({
+            title: '确认关闭弹框',
+            onConfirm: () => resolve(true),
+            onCancel: () => reject(),
+          });
+        });
+      }`,
+      'show-mask': false,
+      transfer: '.edit-component-view',
+    },
+    slots: {
+      default: '<div>dialog 内容</div>',
+    },
+    dependent: {
+      components: ['info-box'],
+    },
+    style: `
+      .bk-infobox {
+        z-index: 3000 !important;
+      }
+      
+      .bk-infobox .bk-modal-mask {
+        z-index: 3000 !important;
+      }
+
+      .bk-infobox .bk-modal-wrapper {
+        z-index: 3000 !important;
+      }
+    `,
+  },
+  {
     title: '全屏弹框',
     description: '通过 fullscreen 属性配置全屏弹框，当设置为全屏弹框时，draggable 配置不生效即弹框不能拖动。',
     props: {
@@ -62,6 +111,7 @@ const props = [
     description: '是否显示弹框',
     type: 'boolean',
     default: false,
+    isSupportVModel: true,
   },
   {
     name: 'title',

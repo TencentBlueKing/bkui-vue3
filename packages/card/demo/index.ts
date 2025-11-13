@@ -35,8 +35,6 @@ const presets = [
       title: '基础卡片',
       isEdit: true,
       position: 'right',
-      isShowHeader: true,
-      isShowFooter: true,
       border: true,
     },
     slots: {
@@ -65,6 +63,53 @@ const presets = [
         </div>
       `,
     },
+  },
+  {
+    title: '自定义header和footer',
+    description: '自定义header和footer，满足更多场景需求',
+    props: {
+      title: '自定义header和footer',
+      showFooter: true,
+    },
+    slots: {
+      header: `
+        <div>
+          自定义header
+        </div>
+      `,
+      default: `
+        <div>
+          <p style="padding: 10px;">卡片内容1</p>
+          <p style="padding: 10px;">卡片内容2</p>
+          <p style="padding: 10px;">卡片内容3</p>
+        </div>
+      `,
+      footer: `
+        <div class="card-demo-foot">
+          <span class="card-demo-foot-item"> <i class="bkui-vue-wiki-icon icon-help" /></span>
+          <span class="card-demo-foot-item"> <i class="bkui-vue-wiki-icon icon-code" /></span>
+          <span class="card-demo-foot-item"> <i class="bkui-vue-wiki-icon icon-copy" /></span>
+        </div>
+      `,
+    },
+    style: `
+      .card-demo-foot {
+        height: 48px;
+        text-align: center;
+        background: #fafbfd;
+      }
+
+      .card-demo-foot-item {
+        display: inline-block;
+        width: 33.15%;
+        color: #979ba5;
+        border-right: 1px solid #f0f2f5;
+      }
+
+      .card-demo-foot-item:last-child {
+        border: none;
+      }
+    `,
   },
 ];
 
