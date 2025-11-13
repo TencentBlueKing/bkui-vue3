@@ -1,6 +1,6 @@
 import { defineComponent, ref, computed, watch, type PropType } from 'vue';
 
-import type { IComponentWiki, ValueType as ComponentPropValue } from '@/types/component';
+import type { IComponentWiki, ValueType as ComponentPropValue, CodeLanguages } from '@/types/component';
 
 import RenderNumber from './number.vue';
 import RenderString from './string.vue';
@@ -47,7 +47,11 @@ export default defineComponent({
     complexTypes: {
       type: Array as PropType<IComponentWiki['types']>,
       default: () => [],
-    }
+    },
+    activeLanguage: {
+      type: String as PropType<CodeLanguages>,
+      required: true,
+    },
   },
   emits: {
     'update:modelValue': (__: ComponentPropValue) => true,
@@ -170,6 +174,7 @@ export default defineComponent({
           return (
             <RenderFunction
               modelValue={this.newModelValue as string}
+              activeLanguage={this.activeLanguage}
             />
           );
         default:
