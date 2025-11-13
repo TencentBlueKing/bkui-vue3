@@ -10,14 +10,19 @@ import {
   BKUI_PATH,
   BREAK_LINE,
   ICON_IMPORT_PATH,
+  typeForVue,
 } from "../../../constant";
+
 import {
-  collectLinkTypeInEmits,
-  collectVueTypeInEmits,
   createDependImport,
   createValue,
   parseEvents,
+  formatCodeIndent,
+  extractTypesFromEventParams,
+  collectAllITypes,
 } from "../script-parser";
+
+
 import type {
   DependentData,
 } from "../script-parser";
@@ -34,8 +39,9 @@ export const createCommonScript = (
   isTypeScript: boolean,
   componentName: string,
   curEvents: Record<string, string>,
-  componentEmits: IComponentWiki['emits'],
+  componentTypes: IComponentWiki['types'],
 ) => {
+
   // 依赖列表
   const dependentList: DependentData[] = [];
 
@@ -82,7 +88,7 @@ export const createCommonScript = (
     });
   }
 
-  let variables = createRefVariables(
+  const { variables, propsFunctionTypes } = createRefVariables(
     renderProps,
     componentProps,
     isTypeScript,
@@ -90,21 +96,41 @@ export const createCommonScript = (
   );
   const eventList = parseEvents(curEvents, isTypeScript);
   const lastLine = eventList.length > 0 ? BREAK_LINE : '';
+  
+  let finalVariables = variables;
   if (variables) {
     if (isTypeScript) {
       const curTypeList = [`${toPascalCase(componentName)}Props`];
       
+      // 收集所有类型（包括events和props中的函数类型）
+      const allTypes: string[] = [];
+      
+      // 1. 从events中收集类型
       if (eventList.length > 0) {
-        const eventsNames = Object.keys(curEvents);
-        const LinkParams: string[] = [];
-        const vueParams: string[] = [];
-        for (const name of eventsNames) {
-          LinkParams.push(...collectLinkTypeInEmits(componentEmits, name));
-          vueParams.push(...collectVueTypeInEmits(componentEmits, name));
-        }
-        curTypeList.push(...LinkParams);
+        Object.values(curEvents).forEach(eventValue => {
+          const types = extractTypesFromEventParams(eventValue);
+          allTypes.push(...types);
+        });
+      }
+      
+      // 2. 从props的函数类型中收集类型
+      allTypes.push(...propsFunctionTypes);
+      
+      // 3. linkParams: 匹配当前组件的types
+      const allComponentTypes = collectAllITypes(componentTypes);
+      const linkParams = allTypes.filter(type => allComponentTypes.includes(type));
+      
+      // 4. vueParams: 匹配typeForVue
+      const vueParams = allTypes.filter(type => typeForVue.includes(type));
+      
+      // 去重
+      const uniqueLinkParams = Array.from(new Set(linkParams));
+      const uniqueVueParams = Array.from(new Set(vueParams));
+      
+      curTypeList.push(...uniqueLinkParams);
+      if (uniqueVueParams.length > 0) {
         dependentList.push({
-          list: vueParams,
+          list: uniqueVueParams,
           source: 'vue',
           isType: true,
         });
@@ -116,18 +142,21 @@ export const createCommonScript = (
         isType: true,
       });
     }
+
     dependentList.push({
       list: ['ref'],
       source: 'vue',
     });
-    variables = `${BREAK_LINE}${variables}${BREAK_LINE}`;
+    finalVariables = `${BREAK_LINE}${variables}${BREAK_LINE}`;
   }
+
   let importDepend = createDependImport(dependentList);
   if (importDepend.length > 0) {
     importDepend = `${importDepend}${BREAK_LINE}`;
   }
-  return `${importDepend}${variables}${eventList}${lastLine}`;
+  return `${importDepend}${finalVariables}${eventList}${lastLine}`;
 };
+
 
 // 根据props生成响应式变量
 const createRefVariables = (
@@ -136,10 +165,28 @@ const createRefVariables = (
   isTypeScript: boolean,
   componentName: string,
 ) => {
-  return Object.entries(renderProps).map(([key, value]) => {
+  const propsFunctionTypes: string[] = [];
+  
+  const variablesList = Object.entries(renderProps).map(([key, value]) => {
     const curPropInfo = componentProps.find(item => item.name === key || camelKey(item.name) === key);
     if (curPropInfo) {
-      const curValue = createValue(curPropInfo, value)
+      const curValue = createValue(curPropInfo, value);
+      
+      // 判断是否为函数类型
+      const isFunctionType = curPropInfo.type && curPropInfo.type.includes('function') && typeof value === 'string' && value.includes('=>');
+      
+      if (isFunctionType) {
+        // 函数类型不用ref包裹，直接使用原始值并格式化
+        const formattedValue = formatCodeIndent(value as string, 2, isTypeScript);
+        
+        // 从函数参数中提取类型
+        const types = extractTypesFromEventParams(value as string);
+        propsFunctionTypes.push(...types);
+        
+        return `${BREAK_LINE}const ${camelKey(key)} = ${formattedValue}`;
+      }
+
+      
       if (isTypeScript) {
         const type = `${toPascalCase(componentName)}Props['${(toPascalCase(key, false))}']`;
         return `const ${camelKey(key)} = ref<${type}>(${curValue});`;
@@ -148,6 +195,12 @@ const createRefVariables = (
     }
     return '';
   })
-    .filter(item => item)
-    .join(BREAK_LINE);
+    .filter(item => item);
+  
+  return {
+    variables: variablesList.join(BREAK_LINE),
+    propsFunctionTypes,
+  };
 };
+
+

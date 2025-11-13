@@ -16,7 +16,7 @@ export const directiveComponents = ['tooltips', 'ellipsis', clickoutsideDirectiv
 // 函数组件
 export const functionComponents = ['notify', 'info-box', 'message'];
 // vue内置类型
-export const typeForVue = ['ComputedRef', 'ComponentInternalInstance'];
+export const typeForVue = ['ComputedRef', 'ComponentInternalInstance', 'VNode'];
 
 // bk-icon的图标名称
 export const iconsName = [

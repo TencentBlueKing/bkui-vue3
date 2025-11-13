@@ -41,6 +41,7 @@ export const createCommonTemplate = (
         renderProps,
       ),
       curEvents,
+      componentProps,
     ),
   );
   const elementTree = parseStringTemplate(str);

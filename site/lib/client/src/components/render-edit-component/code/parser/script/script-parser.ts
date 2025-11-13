@@ -1,4 +1,5 @@
 import {
+  IComponentWiki,
   IEmit,
   IProp,
 } from "@/types/component";
@@ -161,18 +162,15 @@ export const parseEvents = (events: Record<string, string>, isTypeScript: boolea
   }).join(BREAK_LINE.repeat(2));
 };
 
-export const collectLinkTypeInEmits = (emits: IEmit[], curEmitName: string)=> {
-  const curEmitParams = emits.find(item => item.name === curEmitName)?.params || [];
-  return curEmitParams.filter(item => item.link).map(item => item.type);
-};
-
 // 从嵌套泛型类型中提取所有类型名称
 // 例如: "ComputedRef<any>" => ["ComputedRef"]
 // 例如: "Required<Array<Computed<any>>>" => ["Required", "Array", "Computed"]
-const extractTypeNamesFromGeneric = (typeStr: string): string[] => {
+// 例如: "{ selected: boolean, node: TreeNode }" => ["TreeNode"]
+export const extractTypeNamesFromGeneric = (typeStr: string): string[] => {
   const typeNames: string[] = [];
-  // 匹配所有类型名称（大写字母开头的标识符，后面可能跟着<）
-  const typePattern = /([A-Z][a-zA-Z0-9_]*)\s*(?:<|$)/g;
+  // 匹配所有类型名称（大写字母开头的标识符）
+  // 类型名称后面可以跟着: <, >, }, ), ], ,, ;, 空格, 或字符串结尾
+  const typePattern = /([A-Z][a-zA-Z0-9_]*)(?=\s*[<>},)\];:\s]|$)/g;
   let match;
   while ((match = typePattern.exec(typeStr)) !== null) {
     typeNames.push(match[1]);
@@ -180,23 +178,115 @@ const extractTypeNamesFromGeneric = (typeStr: string): string[] => {
   return typeNames;
 };
 
-export const collectVueTypeInEmits = (emits: IEmit[], curEmitName: string)=> {
-  const curEmitParams = emits.find(item => item.name === curEmitName)?.params || [];
-  const vueTypes: string[] = [];
+
+// 从事件函数参数中提取所有类型
+// 例如: "(xx: AType, yy: BType, zz: Q<CType>) => {}" => ["AType", "BType", "Q", "CType"]
+// 例如: "(node: { selected: boolean, node: TreeNode }) => {}" => ["TreeNode"]
+export const extractTypesFromEventParams = (eventValue: string): string[] => {
+  // 匹配函数参数部分: (param1: Type1, param2: Type2) =>
+  const paramsMatch = eventValue.match(/\(([^)]*)\)\s*=>/);
+  if (!paramsMatch) {
+    return [];
+  }
   
-  curEmitParams.forEach(item => {
-    // 从类型字符串中提取所有类型名称
-    const typeNames = extractTypeNamesFromGeneric(item.type);
-    // 检查是否有任何类型名称在 typeForVue 列表中
-    typeNames.forEach(typeName => {
-      if (typeForVue.includes(typeName) && !vueTypes.includes(typeName)) {
-        vueTypes.push(typeName);
+  const paramsStr = paramsMatch[1];
+  const allTypes: string[] = [];
+  
+  // 智能分割参数，考虑嵌套的花括号、尖括号
+  const params = smartSplitParams(paramsStr);
+  
+  params.forEach(param => {
+    // 匹配参数类型: paramName: Type
+    const typeMatch = param.match(/:\s*(.+)$/);
+    if (typeMatch) {
+      const typeStr = typeMatch[1].trim();
+      // 使用extractTypeNamesFromGeneric提取类型名称
+      const typeNames = extractTypeNamesFromGeneric(typeStr);
+      allTypes.push(...typeNames);
+    }
+  });
+  
+  return allTypes;
+};
+
+// 智能分割参数字符串，考虑嵌套的括号
+// 例如: "a: string, b: { x: number, y: Type }, c: Array<T>" => ["a: string", "b: { x: number, y: Type }", "c: Array<T>"]
+const smartSplitParams = (paramsStr: string): string[] => {
+  const params: string[] = [];
+  let current = '';
+  let depth = 0; // 跟踪嵌套深度（花括号和尖括号）
+  
+  for (let i = 0; i < paramsStr.length; i++) {
+    const char = paramsStr[i];
+    
+    if (char === '{' || char === '<') {
+      depth++;
+      current += char;
+    } else if (char === '}' || char === '>') {
+      depth--;
+      current += char;
+    } else if (char === ',' && depth === 0) {
+      // 只在顶层逗号处分割
+      if (current.trim()) {
+        params.push(current.trim());
+      }
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+  
+  // 添加最后一个参数
+  if (current.trim()) {
+    params.push(current.trim());
+  }
+  
+  return params;
+};
+
+export const collectAllITypes = (types: IComponentWiki['types']) => {
+  if (!types || types.length === 0) {
+    return [];
+  }
+
+  const typeSet = new Set<string>();
+
+  // 1. 收集第一层的name
+  types.forEach(type => {
+    typeSet.add(type.name);
+  });
+
+  // 2. 遍历fields，收集类型信息
+  types.forEach(type => {
+    type.fields.forEach(field => {
+      // 优先从link中提取类型（link格式: /component/xxx/api#TypeName）
+      if (field.link) {
+        const linkStr = typeof field.link === 'string' ? field.link : Object.values(field.link)[0];
+        const match = linkStr.match(/\/api#(.+)$/);
+        if (match) {
+          typeSet.add(match[1]);
+        }
+      }
+      
+      // 从type字段中提取泛型类型（如 Array<ICommonItem> => ICommonItem）
+      if (field.type) {
+        const genericMatch = field.type.match(/<([^<>]+)>/);
+        if (genericMatch) {
+          // 提取泛型中的类型名，去除可能的修饰符（如Omit<ICommonItem, "xxx">）
+          const innerType = genericMatch[1];
+          const typeNameMatch = innerType.match(/^([A-Z][a-zA-Z0-9_]*)/);
+          if (typeNameMatch) {
+            typeSet.add(typeNameMatch[1]);
+          }
+        }
       }
     });
   });
-  
-  return vueTypes;
-};
+
+  // 3. 去重并返回数组
+  return Array.from(typeSet);
+}
+
 
 
 // 递归格式化复杂数组
