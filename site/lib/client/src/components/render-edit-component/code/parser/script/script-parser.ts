@@ -11,6 +11,7 @@ import {
 import {
   toPascalCase,
 } from "../template/template-parser";
+import { camelToSnakeCase } from "@/utils";
 
 export interface DependentData {
   list: string[];
@@ -54,7 +55,7 @@ export const formatComplexValue = (obj: any, indentLevel = 1): string => {
 
 export const createValue = (curPropInfo: IProp, value: unknown) => {
   let curValue;
-  if (curPropInfo.type === 'string' || typeof value === 'string') {
+  if ((curPropInfo.type === 'string' || curPropInfo.type?.includes('string')) && typeof value === 'string') {
     // 模板字符串处理
     if ((value as string).includes(BREAK_LINE)) {
       curValue = `\`${value}\``;
@@ -265,7 +266,7 @@ export const parseEvents = (events: Record<string, string>, isTypeScript: boolea
   return Object.entries(events).map(([key, value]) => {
     // 规范化事件处理函数的缩进，并根据isTypeScript决定是否保留类型注解
     const formattedValue = formatCodeIndent(value, 2, isTypeScript);
-    return `const handle${toPascalCase(key)} = ${formattedValue}`;
+    return `const handle${toPascalCase(camelToSnakeCase((key)))} = ${formattedValue}`;
   }).join(BREAK_LINE.repeat(2));
 };
 

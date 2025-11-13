@@ -62,7 +62,7 @@ export const createLabel = (
   });
   // 事件列表处理
   const eventsList = Object.keys(events).map((key) => {
-    return ` @${key}="handle${toPascalCase(key)}"`;
+    return ` @${key}="handle${toPascalCase(camelToSnakeCase((key)))}"`;
   });
   // slot处理
   const curEndLabelName = endLabelName || name;
