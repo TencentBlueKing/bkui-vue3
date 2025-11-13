@@ -25,112 +25,131 @@
  */
 import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
+const tabSlot = `
+  <bk-tab-panel name="mission" label="任务报表">
+    任务报表
+  </bk-tab-panel>
+  <bk-tab-panel name="config" label="加速配置">
+    加速配置
+  </bk-tab-panel>
+  <bk-tab-panel name="history" label="历史版本">
+    历史版本
+  </bk-tab-panel>
+  <bk-tab-panel name="deleted" label="已归档加速任务">
+    已归档加速任务
+  </bk-tab-panel>
+`;
+
 // 组件示例
 const presets = [
   {
-    title: '下滑线样式',
-    description: '基础的、简洁的标签页。',
+    title: '选项卡样式',
+    description:
+      '通过配置 type 属性，设置选项卡样式。支持的属性有 card, border-card, unborder-card, vertical-card, card-grid',
     props: {
       active: 'mission',
       type: 'unborder-card',
-      addable: false,
-      sortable: false,
-      closable: false,
     },
     slots: {
-      default: `
-        <bk-tab-panel name="mission" label="任务报表">
-          任务报表
-        </bk-tab-panel>
-        <bk-tab-panel name="config" label="加速配置">
-          加速配置
-        </bk-tab-panel>
-        <bk-tab-panel name="history" label="历史版本">
-          历史版本
-        </bk-tab-panel>
-        <bk-tab-panel name="deleted" label="已归档加速任务">
-          已归档加速任务
-        </bk-tab-panel>
-        `,
-    },
-  },
-  {
-    title: '选项卡样式',
-    props: {
-      active: 'mission',
-      type: 'card',
-      addable: false,
-      sortable: false,
-      closable: false,
-    },
-    slots: {
-      default: `
-        <bk-tab-panel name="mission" label="任务报表">
-          任务报表
-        </bk-tab-panel>
-        <bk-tab-panel name="config" label="加速配置">
-          加速配置
-        </bk-tab-panel>
-        <bk-tab-panel name="history" label="历史版本">
-          历史版本
-        </bk-tab-panel>
-        <bk-tab-panel name="deleted" label="已归档加速任务">
-          已归档加速任务
-        </bk-tab-panel>
-        `,
-    },
-  },
-  {
-    title: '标签样式',
-    props: {
-      active: 'mission',
-      type: 'card-tab',
-      addable: false,
-      sortable: false,
-      closable: false,
-    },
-    slots: {
-      default: `
-        <bk-tab-panel name="mission" label="任务报表">
-          任务报表
-        </bk-tab-panel>
-        <bk-tab-panel name="config" label="加速配置">
-          加速配置
-        </bk-tab-panel>
-        <bk-tab-panel name="history" label="历史版本">
-          历史版本
-        </bk-tab-panel>
-        <bk-tab-panel name="deleted" label="已归档加速任务">
-          已归档加速任务
-        </bk-tab-panel>
-        `,
+      default: tabSlot,
     },
   },
   {
     title: '选项卡位置',
+    description:
+      '通过配置 tab-position 属性，设置选项卡位置。支持的属性有 left, right, top。当 tab-position 属性配置为 left 和 right 时，addable 属性以及 closable 属性无效。',
     props: {
       active: 'mission',
       type: 'card-tab',
       'tab-position': 'left',
-      addable: false,
-      sortable: false,
-      closable: false,
+    },
+    slots: {
+      default: tabSlot,
+    },
+  },
+  {
+    title: '拖拽排序',
+    description:
+      'sortType 为replace时，为交换位置；为jump时，为插入当前位置。bk-tab :sortable=“true” 。tab 可拖拽排序。bk-tab-panel :unsortable=“true”,此选项不可排序',
+    props: {
+      active: 'mission',
+      type: 'card',
+      sortable: true,
+    },
+    slots: {
+      default: tabSlot,
+    },
+  },
+  {
+    title: '自定义选项卡内容',
+    description: '通过使用 slot 自定义选项卡内容',
+    props: {
+      active: 'mission',
+      type: 'card',
+      addable: true,
+    },
+    slots: {
+      add: '<div>+ 新增</div>',
+      setting: '<div style="margin: 0 10px">设置</div>',
+      default: `
+        <bk-tab-panel name="mission" label="任务报表">
+          <template #label>
+            <div>自定义标签: mission</div>
+          </template>
+          <template #panel>
+            <div>自定义内容: 任务报表</div>
+          </template>
+        </bk-tab-panel>
+        <bk-tab-panel name="config" label="加速配置">
+          <template #label>
+            <div>自定义标签: config</div>
+          </template>
+          <template #panel>
+            <div>自定义内容: 加速配置</div>
+          </template>
+        </bk-tab-panel>
+        <bk-tab-panel name="history" label="历史版本">
+          <template #label>
+            <div>自定义标签: history</div>
+          </template>
+          <template #panel>
+            <div>自定义内容: 历史版本</div>
+          </template>
+        </bk-tab-panel>
+        <bk-tab-panel name="deleted" label="已归档加速任务">
+          <template #label>
+            <div>自定义标签: deleted</div>
+          </template>
+          <template #panel>
+            <div>自定义内容: 已归档加速任务</div>
+          </template>
+        </bk-tab-panel>
+      `,
+    },
+  },
+  {
+    title: '带数字样式',
+    description:
+      '通过配置num属性设置是否显示数字，通过numDisplayType设置数字样式，支持的属性有bracket(括号)、square(方形)、elliptic(椭圆)。',
+    props: {
+      active: 'mission',
+      type: 'border-card',
     },
     slots: {
       default: `
-        <bk-tab-panel name="mission" label="任务报表">
+        <bk-tab-panel name="mission" label="任务报表" num="2" numDisplayType="bracket">
           任务报表
         </bk-tab-panel>
-        <bk-tab-panel name="config" label="加速配置">
+        <bk-tab-panel name="config" label="加速配置" num="4" numDisplayType="bracket">
           加速配置
         </bk-tab-panel>
-        <bk-tab-panel name="history" label="历史版本">
+        <bk-tab-panel name="history" label="历史版本" num="8" numDisplayType="square">
           历史版本
         </bk-tab-panel>
-        <bk-tab-panel name="deleted" label="已归档加速任务">
+        <bk-tab-panel name="deleted" label="已归档加速任务" num="10" numDisplayType="elliptic">
           已归档加速任务
         </bk-tab-panel>
-        `,
+      `,
     },
   },
 ];
@@ -142,6 +161,7 @@ const props = [
     description: '选中的 tab',
     type: 'number | string',
     default: '',
+    isSupportVModel: true,
   },
   {
     name: 'type',
@@ -350,6 +370,13 @@ const children = [
   },
 ];
 
+const slots = [
+  {
+    name: 'default',
+    description: '默认插槽',
+  },
+];
+
 // 组件分组
 const group = NavGroupMeta.Nav;
 
@@ -375,6 +402,7 @@ const wiki: IComponentWiki = {
   presets,
   description,
   children,
+  slots,
 };
 
 export default wiki;

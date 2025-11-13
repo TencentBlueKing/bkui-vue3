@@ -87,6 +87,7 @@ const presets = [
     props: {
       theme: 'info',
       checkable: true,
+      checked: true,
     },
     slots: {
       default: '标签',
