@@ -43,6 +43,20 @@ const presets = [
       ],
     },
   },
+  {
+    title: '自定义内容',
+    description: '通过 default 作用域插槽自定义显示内容',
+    props: {
+      height: 400,
+      isLoop: true,
+      list: ['text1', 'text2', 'text3', 'text4', 'text5', 'text6'],
+    },
+    slots: {
+      default: `
+        <div style="text-align: center;"> {{ data }} </div>
+      `,
+    },
+  },
 ];
 
 // 组件属性，用来自动生成属性文档

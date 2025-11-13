@@ -210,8 +210,9 @@ export default vue.defineComponent({
 
         if (prop.isSupportVModel) {
           renderEvents[`onUpdate:${key}`] = (value: unknown) => {
+            const newKey = Object.keys(renderProps).find((propKey) => kebabToCamel(propKey) === kebabToCamel(key) && propKey !== key);
             const newRenderProps = { ...renderProps };
-            newRenderProps[key] = value;
+            newRenderProps[newKey ?? key] = value;
             this.$emit('update:renderProps', newRenderProps);
           };
         }

@@ -32,7 +32,6 @@ const presets = [
     description: '适用于步骤数较多时，让用户更明确的了解步骤数量',
     props: {
       'cur-step': 1,
-      direction: 'horizontal',
     },
   },
   {
@@ -67,15 +66,34 @@ const presets = [
       ],
     },
   },
-  // 未看到下一步、上一步提示
-  // {
-  //   title: '带额外内容的步骤条',
-  //   description: '适用于步骤数较多时，让用户更明确的了解步骤数量',
-  //   props: {
-  //     'cur-step': 2,
-  //     status: 'error',
-  //   },
-  // },
+  {
+    title: '垂直方向步骤条',
+    description: '垂直方向步骤条',
+    props: {
+      'cur-step': 1,
+      direction: 'vertical',
+    },
+  },
+  {
+    title: '不同尺寸步骤条',
+    description: '垂直方向步骤条',
+    props: {
+      size: 'small',
+    },
+  },
+  {
+    title: '可点击步骤条',
+    description: '可以通过 controllable为true 属性来使组件每个步骤可点击',
+    props: {
+      curStep: 1,
+      controllable: true,
+    },
+    events: {
+      click: `(index: number) => {
+        curStep.value = index;
+      }`,
+    },
+  },
 ];
 
 // 组件属性，用来自动生成属性文档
@@ -195,7 +213,7 @@ const types = [
         name: 'StatusEnum',
         type: 'string',
         description: '状态',
-        link: '/component/steps/api#StatusEnum'
+        link: '/component/steps/api#StatusEnum',
       },
     ],
   },
@@ -219,7 +237,7 @@ const types = [
         description: '默认',
       },
     ],
-  }
+  },
 ];
 
 // 组件分组

@@ -28,14 +28,101 @@ import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 // 组件示例
 const presets = [
   {
-    title: '一般样式',
+    title: '基础用法',
     description: '通过拉伸、展开收起的交互调整页面的布局',
     props: {
+      'initial-divide': '40%',
       placement: 'left',
     },
     slots: {
-      aside: `<div style="width: 100px; height: 500px; background-color: #fff">aside</div>`,
-      main: `<div style="height: 500px; background-color: #fff">main</div>`,
+      aside: `<div>aside</div>`,
+      main: `<div>main</div>`,
+    },
+  },
+  {
+    title: '最小化',
+    description: '是否自动最小化',
+    props: {
+      'auto-minimize': true,
+    },
+    slots: {
+      aside: `<div>aside</div>`,
+      main: `<div>main</div>`,
+    },
+  },
+  {
+    title: '实时拉伸',
+    description: '是否实时拉伸',
+    props: {
+      immediate: true,
+    },
+    slots: {
+      aside: `<div>aside</div>`,
+      main: `<div>main</div>`,
+    },
+  },
+  {
+    title: '可折叠',
+    description: '是否开启折叠功能',
+    props: {
+      collapsible: true,
+      isCollapsed: true,
+    },
+    slots: {
+      aside: `<div>aside</div>`,
+      main: `<div>main</div>`,
+    },
+  },
+  {
+    title: '多级嵌套',
+    description: '多级嵌套',
+    props: {
+      collapsible: true,
+    },
+    slots: {
+      aside: `
+        <bk-resize-layout
+          :border="false"
+          placement="top"
+          collapsible
+        >
+          <template #aside>
+            <div>aside-top</div>
+          </template>
+          <template #main>
+            <div>main-1</div>
+          </template>
+        </bk-resize-layout>
+      `,
+      main: `
+        <bk-resize-layout
+          :border="false"
+          placement="bottom"
+          collapsible
+        >
+          <template #aside>
+            <div>aside-bottom</div>
+          </template>
+          <template #main>
+            <bk-resize-layout
+              style="height: 100%"
+              :border="false"
+              placement="right"
+              collapsible
+            >
+              <template #aside>
+                <div>aside-right</div>
+              </template>
+              <template #main>
+                <div>main-3</div>
+              </template>
+            </bk-resize-layout>
+          </template>
+        </bk-resize-layout>
+      `,
+    },
+    dependent: {
+      components: ['resize-layout'],
     },
   },
 ];
