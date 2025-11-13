@@ -56,7 +56,11 @@ export const createTemplateProps = (
   const vModelKeys = componentProps.filter(item => item.isSupportVModel).map(item => camelKey(item.name));
   for (const [key, value] of Object.entries(renderProps)) {
     if (vModelKeys.includes(key)) {
-      result[`v-model-${camelToKebab(camelKey(key))}`] = value;
+      if (key === 'modelValue') {
+        result['v-model'] = value;
+      } else {
+        result[`v-model-${camelToKebab(camelKey(key))}`] = value;
+      }
     } else {
       result[key] = value;
     }

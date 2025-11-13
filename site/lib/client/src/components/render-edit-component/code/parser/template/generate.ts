@@ -48,6 +48,8 @@ export const createLabel = (
     if (key.startsWith('v-model-')) {
       curKey = `v-model:${curKey.slice(8)}`;
       curValue = curKey.slice(8);
+    } else if (key.startsWith('v-model')) { // modelValue处理
+      curValue = 'modelValue';
     } else {
       curKey = `:${curKey}`;
     }
