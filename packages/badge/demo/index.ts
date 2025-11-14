@@ -68,6 +68,14 @@ const presets = [
       default: `<bk-button theme="primary"> 未读消息  </bk-button>`,
     },
   },
+  {
+    title: '独立使用',
+    description: '用于显示需要处理的消息条数，需要准确计数的场景',
+    props: {
+      theme: 'danger',
+      count: 10,
+    },
+  },
 ];
 
 // 组件属性，用来自动生成属性文档

@@ -30,10 +30,51 @@ import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 const presets = [
   {
     title: '基础面包屑',
-    description: '系统拥有超过两级以上的层级结构，用于切换向上任意层级的内容',
+    description: '通过设置 BkBreadcrumbItem 的 to 属性添加跳转链接。',
     props: {
-      backRouter: 'api',
       separator: '/',
+    },
+    slots: {
+      default: `
+        <bk-breadcrumb-item to='demo'>
+            组件示例
+        </bk-breadcrumb-item>
+        <bk-breadcrumb-item to='api'>
+            API文档
+        </bk-breadcrumb-item>
+        <bk-breadcrumb-item to='design'>
+            设计规范
+        </bk-breadcrumb-item>
+      `,
+    },
+  },
+  {
+    title: '字符分割',
+    description: '通过设置 BkBreadcrumb 的 separator 属性设置分隔符，他可以是字符串或者是slot',
+    props: {
+      separator: '/',
+    },
+    slots: {
+      default: `
+        <bk-breadcrumb-item to='demo'>
+            组件示例
+        </bk-breadcrumb-item>
+        <bk-breadcrumb-item to='api'>
+            API文档
+        </bk-breadcrumb-item>
+        <bk-breadcrumb-item to='design'>
+            设计规范
+        </bk-breadcrumb-item>
+      `,
+    },
+  },
+  {
+    title: '支持返回配置以及前置插槽',
+    description:
+      '通过设置 BkBreadcrumb 的 back-router 属性（和router参数一样）添加返回跳转链接，也可以使用slot自定义返回区域的内容。',
+    props: {
+      separator: '/',
+      backRouter: 'api',
     },
     slots: {
       default: `
