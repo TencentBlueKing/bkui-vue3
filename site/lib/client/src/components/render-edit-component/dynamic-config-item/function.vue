@@ -1,6 +1,6 @@
 <template>
     <pre class="config-item-func g-scrollbar">
-        <code v-html="RenderFunc()"></code>
+        <code v-html="RenderFunc"></code>
     </pre>
 </template>
 
@@ -8,14 +8,25 @@
 import {
   useHighLightJs,
 } from '@/hooks/use-highlighjs';
+import {
+  formatCodeIndent,
+} from '../code/parser/script/script-parser';
+import type {
+  CodeLanguages,
+} from '@/types/component';
+import { computed } from 'vue';
 interface IProps {
     modelValue: string;
+    activeLanguage: CodeLanguages;
 }
 const props = defineProps<IProps>();
 const { highlightFactory } = useHighLightJs();
-const RenderFunc = () => highlightFactory(
- props.modelValue?.trim() || '--' , 'typescript'
-);
+const RenderFunc = computed(() => {
+    const isTypeScript = props.activeLanguage === 'typescript';
+    return highlightFactory(
+        formatCodeIndent(props.modelValue?.trim(), 2, isTypeScript) || '--' , 'typescript'
+    );
+})
 </script>
 
 <style lang="postcss" scoped>

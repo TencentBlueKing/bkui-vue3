@@ -48,6 +48,8 @@ export const createLabel = (
     if (key.startsWith('v-model-')) {
       curKey = `v-model:${curKey.slice(8)}`;
       curValue = curKey.slice(8);
+    } else if (key.startsWith('v-model')) { // modelValue处理
+      curValue = 'modelValue';
     } else {
       curKey = `:${curKey}`;
     }
@@ -60,7 +62,7 @@ export const createLabel = (
   });
   // 事件列表处理
   const eventsList = Object.keys(events).map((key) => {
-    return ` @${key}="handle${toPascalCase(key)}"`;
+    return ` @${key}="handle${toPascalCase(camelToSnakeCase((key)))}"`;
   });
   // slot处理
   const curEndLabelName = endLabelName || name;

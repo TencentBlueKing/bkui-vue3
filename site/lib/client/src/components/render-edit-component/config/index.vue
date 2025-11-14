@@ -33,6 +33,7 @@
             :model-value="renderCamelKeyProps(prop.name)"
             :options="prop.options"
             :complex-types="types"
+            :active-language="activeLanguage"
             :class="{ 'selected-prop': selectedProp === prop.name }"
             @update:model-value="(value) => handleUpdateProps(prop.name, value)"
           >
@@ -70,6 +71,7 @@
 import { computed, onBeforeUnmount, ref, watch, nextTick } from 'vue';
 
 import type {
+  CodeLanguages,
   IComponentWiki,
   IProp,
   ValueType as PropValue,
@@ -96,6 +98,7 @@ interface IProps {
   renderSlots: IComponentWiki['presets'][number]['slots'];
   presetSlots: IComponentWiki['presets'][number]['slots'];
   slots: IComponentWiki['slots'];
+  activeLanguage: CodeLanguages
 }
 interface IEmits {
   (e: 'update:renderProps', value: IComponentWiki['presets'][number]['props']): void;

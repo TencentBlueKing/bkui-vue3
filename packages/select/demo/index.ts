@@ -450,10 +450,10 @@ const props = [
   },
   {
     name: 'inputTooltipsOptions',
-    type: 'Partial<IOptions>',
+    type: 'Partial<tooltipsProps>',
     default: '{}',
     description: '透传Input组件的tooltips配置',
-    link: '/components/tooltips/api',
+    link: '/component/tooltips/api#tooltipsProps',
   },
 ];
 

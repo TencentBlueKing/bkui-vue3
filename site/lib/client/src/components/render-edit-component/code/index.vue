@@ -54,6 +54,7 @@ import {
 
 import type {
   IComponentWiki,
+  CodeLanguages,
   ValueType,
 } from '@/types/component';
 
@@ -98,18 +99,18 @@ import {
   createCommonTemplate,
 } from './parser/template/type/common';
 
-type Languages = 'javascript' | 'typescript';
 interface IProps {
   componentWiki: IComponentWiki;
   renderProps: Record<string, ValueType>;
   renderSlots: Record<string, string>;
   index: number;
 }
-interface LanguageItem<T = Languages> {
+interface LanguageItem<T = CodeLanguages> {
   name: string;
   value: T;
   disabled: boolean;
 }
+const activeLanguage = defineModel<CodeLanguages>('activeLanguage', { default: 'typescript' });
 const props = defineProps<IProps>();
 
 const { copy } = useClipboard({
@@ -117,7 +118,6 @@ const { copy } = useClipboard({
 });
 const { highlightFactory } = useHighLightJs();
 
-const activeLanguage = ref<Languages>('typescript');
 const supportLanguages = ref<LanguageItem[]>([
   {
     name: 'JavaScript',

@@ -43,6 +43,7 @@
                 :types="componentWiki.types"
                 :preset-slots="componentWiki.presets[renderPresetIndex].slots"
                 :slots="componentWiki.slots"
+                :active-language="activeLanguage"
               />
             </template>
             <template #main>
@@ -66,11 +67,12 @@
                 />
                 <render-code
                   v-if="mainPanel === MainPanel.Code"
-                  class="edit-component-code"
+                  v-model:active-language="activeLanguage"
                   :index="renderPresetIndex"
                   :component-wiki="componentWiki"
                   :render-props="renderProps"
                   :render-slots="renderSlots"
+                  class="edit-component-code"
                 />
               </section>
             </template>
@@ -101,8 +103,9 @@ import {
 import {
   useComponent,
 } from '@/store/component';
-import type {
-  IComponentWiki,
+import {
+  CodeLanguages,
+  type IComponentWiki,
 } from '@/types/component';
 import {
   MainPanel,
@@ -134,6 +137,7 @@ const renderPresetIndex = ref(0);
 // 展示的主面板
 const mainPanel = ref<MainPanel>(MainPanel.Component);
 const isFullScreen = ref(false);
+const activeLanguage = ref<CodeLanguages>('typescript');
 
 // 选择预设
 const handleChoosePreset = async (preset: IComponentWiki['presets'][number]) => {
