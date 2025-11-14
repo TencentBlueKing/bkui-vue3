@@ -77,6 +77,47 @@ const presets = [
       `,
     },
   },
+  {
+    title: '固定状态改变时的回调',
+    description: '设置on-change属性，固定状态改变时的回调',
+    props: {
+      target: '.edit-component-view',
+    },
+    slots: {
+      default: `
+        <bk-button theme="primary">
+          固定在顶部
+        </bk-button>
+      `,
+    },
+    events: {
+      change: `(status: boolean) => {
+        // alert(\`当前状态\${status}\`);
+        // console.log('change', aa); 这里 aa 是 undefined，因为不会动态创建变量，遇到再说
+        BkMessage({
+          message: \`当前状态\${status}\`,
+          offsetY: 80,
+        });
+      }`,
+    },
+    dependent: {
+      components: ['message'],
+    },
+  },
+  {
+    title: '设置滚动容器',
+    description: '设置target属性，target为需要监听其滚动事件容器的id，默认为 window',
+    props: {
+      target: '.edit-component-view',
+    },
+    slots: {
+      default: `
+        <bk-button theme="primary">
+          固定在顶部
+        </bk-button>
+      `,
+    },
+  },
 ];
 
 // 组件属性，用来自动生成属性文档
