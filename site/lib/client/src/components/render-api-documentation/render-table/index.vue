@@ -55,7 +55,7 @@
 
 <script setup lang="ts">
 import { computed, h, onMounted, onUnmounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import {  useRouter } from 'vue-router';
 
 import { copyToClipboard } from '@/common/util';
 import useStorage from '@/hooks/use-storage';
@@ -64,7 +64,6 @@ import { Column, IComponentWiki, IParam, IProp } from '@/types/component';
 import { ANCHOR_KEY } from '@/types/contants';
 
 const iProps = defineProps<IProps>();
-const route = useRoute();
 const router = useRouter();
 const componentStore = useComponent();
 
@@ -136,22 +135,9 @@ const renderEnumWithLinks = (text: string, linkMap: Record<string, string>) => {
         {
           class: 'table-link',
           onClick: () => {
-            // 如果是外部链接，直接打开
-            const isOtherSite = /^https?:\/\//.test(linkMap[part.trim()]);
-            if (isOtherSite) {
-              window.open(linkMap[part.trim()]);
-              return;
-            }
-            // 组件内部链接情况
             setStorage(ANCHOR_KEY, linkMap[part.trim()].split('#')[1]);
-            router.push({
-              ...router.currentRoute.value,
-              query: {
-                ...router.currentRoute.value.query,
-                version: componentStore.version,
-              },
-            });
-            window.open(route.fullPath);
+            // 现在不会重定向了，无论是外部链接、其他组件还是目前的组件，都可以直接拿链接打开
+            window.open(linkMap[part.trim()]);
           },
           style: { cursor: 'pointer' },
         },
@@ -196,9 +182,10 @@ const renderLink = (row: IProp | IParam) => {
   }
 
   if (typeof row.link === 'string') {
-    const match = row.link.match(/#(.*)$/);
-    const link = match ? {
-      [match[1]]: row.link,
+    // 匹配 #./- 不同分隔符获取关键词（有些需要跳转的外部链接类型不仅仅是作为锚点，所以扩充分隔符）
+    const linkParts = row.link.split(/[#./-]/);
+    const link = linkParts.length ? {
+      [linkParts[linkParts.length - 1]]: row.link,
     } : {};
     return h('span', renderEnumWithLinks((row as IProp).options?.join(' | ') ?? row.type, link));
   }

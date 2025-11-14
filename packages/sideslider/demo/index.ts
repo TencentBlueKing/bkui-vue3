@@ -74,6 +74,42 @@ const presets = [
       components: ['form', 'input', 'radio'],
     },
   },
+  {
+    title: '关闭前确认',
+    description: '点击遮罩关闭组件前会执行before-close函数',
+    props: {
+      isShow: false,
+      title: '我是标题',
+      beforeClose: `
+        () => new Promise((resolve, reject) => {
+          InfoBox({
+            title: '确认关闭?',
+            infoType: 'warning',
+            onConfirm: () => resolve(true),
+            onCancel: () => reject(),
+          });
+        });
+      `,
+    },
+    slots: {
+      default: `hello world!!!`,
+    },
+    dependent: {
+      components: ['info-box'],
+    },
+  },
+  {
+    title: '显示方向',
+    description: '组件滑出的方向',
+    props: {
+      isShow: false,
+      title: '我是标题',
+      direction: 'left',
+    },
+    slots: {
+      default: `left direction`,
+    },
+  },
 ];
 
 // 组件属性，用来自动生成属性文档

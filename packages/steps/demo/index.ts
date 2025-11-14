@@ -32,7 +32,6 @@ const presets = [
     description: '适用于步骤数较多时，让用户更明确的了解步骤数量',
     props: {
       'cur-step': 1,
-      direction: 'horizontal',
     },
   },
   {
@@ -67,15 +66,34 @@ const presets = [
       ],
     },
   },
-  // 未看到下一步、上一步提示
-  // {
-  //   title: '带额外内容的步骤条',
-  //   description: '适用于步骤数较多时，让用户更明确的了解步骤数量',
-  //   props: {
-  //     'cur-step': 2,
-  //     status: 'error',
-  //   },
-  // },
+  {
+    title: '垂直方向步骤条',
+    description: '垂直方向步骤条',
+    props: {
+      'cur-step': 1,
+      direction: 'vertical',
+    },
+  },
+  {
+    title: '不同尺寸步骤条',
+    description: '垂直方向步骤条',
+    props: {
+      size: 'small',
+    },
+  },
+  {
+    title: '可点击步骤条',
+    description: '可以通过 controllable为true 属性来使组件每个步骤可点击',
+    props: {
+      curStep: 1,
+      controllable: true,
+    },
+    events: {
+      click: `(index: number) => {
+        curStep.value = index;
+      }`,
+    },
+  },
 ];
 
 // 组件属性，用来自动生成属性文档
@@ -83,9 +101,9 @@ const props = [
   {
     name: 'steps',
     description: '组件步骤内容，有四个可选的key：title icon description status。',
-    type: 'Steps[]',
+    type: 'ISteps[]',
     default: [],
-    link: '/component/steps/api#Steps',
+    link: '/component/steps/api#ISteps',
   },
   {
     name: 'cur-step',
@@ -173,7 +191,7 @@ const emits = [
 // 组件自定义的复杂类型
 const types = [
   {
-    name: 'Steps',
+    name: 'ISteps',
     description: '组件步骤内容',
     fields: [
       {
@@ -192,10 +210,31 @@ const types = [
         description: '描述',
       },
       {
-        name: 'status',
+        name: 'StatusEnum',
         type: 'string',
         description: '状态',
-        options: ['error', 'loading'],
+        link: '/component/steps/api#StatusEnum',
+      },
+    ],
+  },
+  {
+    name: 'StatusEnum',
+    description: '状态',
+    fields: [
+      {
+        name: 'error',
+        type: 'string',
+        description: '错误',
+      },
+      {
+        name: 'loading',
+        type: 'string',
+        description: '加载中',
+      },
+      {
+        name: '',
+        type: 'string',
+        description: '默认',
       },
     ],
   },

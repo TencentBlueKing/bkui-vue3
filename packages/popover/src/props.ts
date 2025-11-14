@@ -39,7 +39,7 @@ export const EventProps = {
   onAfterHidden: () => {},
   onAfterShow: () => {},
 };
-type IAxesOffsets = {
+export type IAxesOffsets = {
   mainAxis?: number;
   crossAxis?: number;
   alignmentAxis?: null | number;

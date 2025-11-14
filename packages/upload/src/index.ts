@@ -30,4 +30,15 @@ const Upload = withInstall(Component);
 export default Upload;
 export type { UploadEmits } from './emits';
 export type { UploadProps } from './props';
+export type {
+  APIResponse,
+  HeaderDataAttr,
+  ExtraFormData,
+  FormDataAttr,
+  UploadRequestOptions,
+  UploadFiles,
+  UploadFile,
+  UploadRawFile,
+  UploadProgressEvent,
+} from './upload.type';
 export type UploadInstance = InstanceType<typeof Component>;

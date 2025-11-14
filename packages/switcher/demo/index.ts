@@ -29,15 +29,74 @@ import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 const presets = [
   {
     title: '基础用法',
-    description: '可以通过 value / v-model 属性来定义开关状态，',
+    description: '可以通过 value / v-model 属性来定义开关状态',
     props: {
-      value: true,
+      modelValue: true,
+      'show-text': true,
+      theme: 'success',
+    },
+  },
+  {
+    title: '不同尺寸',
+    description: '不配置即为默认尺寸；当设置 show-text 时将显示为特定尺寸同时 size 将失效',
+    props: {
+      modelValue: true,
+      'show-text': true,
+      size: 'small',
+    },
+  },
+  {
+    title: '禁用状态',
+    description: '通过 disabled 属性来禁用开关',
+    props: {
+      modelValue: true,
+      disabled: true,
+    },
+  },
+  {
+    title: '前置状态检测',
+    description: '通过 before-change 接收一个函数来做前置状态检测，返回 false状态切换失败，否则成功',
+    props: {
+      modelValue: true,
+      beforeChange: '(value: boolean) => { return false; }',
+    },
+  },
+  {
+    title: '前置状态检测',
+    description: '通过 before-change 接收一个函数来做前置状态检测，返回 false状态切换失败，否则成功',
+    props: {
+      modelValue: true,
+      beforeChange: '(value: string | boolean | number) => { return false; }',
+    },
+  },
+  {
+    title: '自定义文案',
+    description: '可以通过 onText/offText 来修改展示的文案',
+    props: {
+      modelValue: true,
+      'off-text': '假值',
+      'on-text': '真值',
+    },
+  },
+  {
+    title: '方形开关',
+    description: '方形样式开关',
+    props: {
+      modelValue: true,
+      'is-square': true,
     },
   },
 ];
 
 // 组件属性，用来自动生成属性文档
 const props = [
+  {
+    name: 'model-value',
+    description: '双向绑定的值',
+    type: 'string | boolean | number',
+    isSupportVModel: true,
+    default: false,
+  },
   {
     name: 'value',
     description: '是否打开',
@@ -85,13 +144,13 @@ const props = [
   {
     name: 'trueValue',
     description: '表示开状态的值',
-    type: 'boolean',
+    type: 'string | boolean | number',
     default: true,
   },
   {
     name: 'falseValue',
     description: '表示关状态的值',
-    type: 'boolean',
+    type: 'string | boolean | number',
     default: false,
   },
   {

@@ -24,6 +24,7 @@ export const createCommonTemplate = (
   curSlot: Record<string, string>,
   componentName: IComponentWiki['name'],
   componentSlots: IComponentWiki['slots'],
+  curEvents: Record<string, string>,
 ) => {
   const curSlots = Object.entries(curSlot).map(([slotName, slotContent]) => {
     const slotParams = componentSlots?.find(item => item.name === slotName)?.params;
@@ -39,6 +40,8 @@ export const createCommonTemplate = (
         componentProps,
         renderProps,
       ),
+      curEvents,
+      componentProps,
     ),
   );
   const elementTree = parseStringTemplate(str);
@@ -53,7 +56,11 @@ export const createTemplateProps = (
   const vModelKeys = componentProps.filter(item => item.isSupportVModel).map(item => camelKey(item.name));
   for (const [key, value] of Object.entries(renderProps)) {
     if (vModelKeys.includes(key)) {
-      result[`v-model-${camelToKebab(camelKey(key))}`] = value;
+      if (key === 'modelValue') {
+        result['v-model'] = value;
+      } else {
+        result[`v-model-${camelToKebab(camelKey(key))}`] = value;
+      }
     } else {
       result[key] = value;
     }

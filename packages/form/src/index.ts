@@ -38,6 +38,7 @@ export { BkForm, FormItem as BkFormItem, ComposeFormItem as BkComposeFormItem, f
 
 export type { FormEmits, FormItemEmits, ComposeFormItemEmits } from './emits';
 export type { FormProps, FormItemProps, ComposeFormItemProps } from './props';
+export type { IFormItemRule } from './type';
 export type ComposeFormItemInstance = InstanceType<typeof ComposeFormItem>;
 export type FormItemInstance = InstanceType<typeof FormItem>;
 export type FormInstance = InstanceType<typeof Form>;

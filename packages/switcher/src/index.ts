@@ -30,4 +30,5 @@ const BkSwitcher = withInstall(Component);
 export default BkSwitcher;
 export type { SwitcherEmits } from './emits';
 export type { SwitcherType as SwitcherProps } from './props';
+export type { SwitcherType } from './props';
 export type SwitcherInstance = InstanceType<typeof BkSwitcher>;

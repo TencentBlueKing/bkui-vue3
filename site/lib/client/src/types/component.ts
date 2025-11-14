@@ -87,3 +87,5 @@ export interface Column {
   title: string;
   width?: string;
 }
+
+export type CodeLanguages = 'javascript' | 'typescript';

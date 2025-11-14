@@ -1,6 +1,6 @@
 import { defineComponent, ref, computed, watch, type PropType } from 'vue';
 
-import type { IComponentWiki, ValueType as ComponentPropValue } from '@/types/component';
+import type { IComponentWiki, ValueType as ComponentPropValue, CodeLanguages } from '@/types/component';
 
 import RenderNumber from './number.vue';
 import RenderString from './string.vue';
@@ -8,12 +8,20 @@ import RenderBoolean from './boolean.vue';
 import RenderEnum from './enum.vue';
 import RenderArray from './array.vue';
 import RenderObject from './object.vue';
+import RenderFunction from './function.vue';
 import RenderErrorType from './errortype.vue';
 import Tab from '../config/tab'
 
 import './index.postcss';
 
-import { basicTypeToDefVal, splitType, factType, isTypeArray, valueType } from './utils';
+import {
+  basicTypeToDefVal,
+  splitType,
+  factType,
+  isTypeArray,
+  valueType,
+  isTypeFunction
+} from './utils';
 
 // 根据类型渲染不同的组件
 export default defineComponent({
@@ -40,9 +48,13 @@ export default defineComponent({
       type: Array as PropType<IComponentWiki['types']>,
       default: () => [],
     },
-    parentNo: {
-      type: String,
-      default: '',
+    activeLanguage: {
+      type: String as PropType<CodeLanguages>,
+      required: true,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   emits: {
@@ -61,6 +73,9 @@ export default defineComponent({
         if(isTypeArray(item)) {
           typeInfo.label = 'Array';
         }
+        if(isTypeFunction(item)) {
+          typeInfo.label = 'Function';
+        }
         return typeInfo
       })
     })
@@ -75,7 +90,7 @@ export default defineComponent({
     const newModelValue = ref<ComponentPropValue>()
     watch(() => props.modelValue, (val) => {
       newModelValue.value = val
-      const valType = valueType(val);
+      const valType = valueType(val, singleType.value);
       const matchedType = typeList.value.find(typeItem => typeItem.factType === valType);
       singleType.value = matchedType ? matchedType.value : typeList.value[0]?.value || '';
     }, {
@@ -119,6 +134,7 @@ export default defineComponent({
             <RenderString
               modelValue={this.newModelValue as string}
               onUpdate:modelValue={this.handleUpdate}
+              disabled={this.disabled}
             />
           );
         case 'number':
@@ -126,13 +142,15 @@ export default defineComponent({
             <RenderNumber
               modelValue={this.newModelValue as number}
               onUpdate:modelValue={this.handleUpdate}
+              disabled={this.disabled}
             />
           );
         case 'boolean':
           return (
             <RenderBoolean
-              modelValue={this.modelValue as boolean}
+              modelValue={this.newModelValue as boolean}
               onUpdate:modelValue={this.handleUpdate}
+              disabled={this.disabled}
             />
           );
         case 'enum':
@@ -141,6 +159,7 @@ export default defineComponent({
               modelValue={this.newModelValue as string}
               onUpdate:modelValue={this.handleUpdate}
               options={this.options}
+              disabled={this.disabled}
             />
           );
         case 'array':
@@ -148,6 +167,7 @@ export default defineComponent({
             <RenderArray
               modelValue={this.newModelValue as Array<Record<string, ComponentPropValue> | string | number | boolean>}
               onUpdate:modelValue={this.handleUpdate}
+              disabled={this.disabled}
             />
           );
         case 'object':
@@ -157,6 +177,14 @@ export default defineComponent({
               onUpdate:modelValue={this.handleUpdate}
               type={this.singleType}
               complexTypes={this.complexTypes}
+              disabled={this.disabled}
+            />
+          );
+        case 'function':
+          return (
+            <RenderFunction
+              modelValue={this.newModelValue as string}
+              activeLanguage={this.activeLanguage}
             />
           );
         default:

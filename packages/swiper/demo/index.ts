@@ -43,6 +43,20 @@ const presets = [
       ],
     },
   },
+  {
+    title: '自定义内容',
+    description: '通过 default 作用域插槽自定义显示内容',
+    props: {
+      height: 400,
+      isLoop: true,
+      list: ['text1', 'text2', 'text3', 'text4', 'text5', 'text6'],
+    },
+    slots: {
+      default: `
+        <div style="text-align: center;"> {{ data }} </div>
+      `,
+    },
+  },
 ];
 
 // 组件属性，用来自动生成属性文档
@@ -68,8 +82,8 @@ const props = [
   {
     name: 'pics',
     description: '图片列表，[{ link: String, url: String, color: String, class: String }]',
-    type: 'Pics[]',
-    link: '/component/swiper/api#Pics',
+    type: 'IRenderData[]',
+    link: '/component/swiper/api#IRenderData',
     default: [],
   },
   // list属性, 根据现有文档，搭配slots使用
@@ -108,7 +122,7 @@ const emits = [
 // 组件自定义的复杂类型
 const types = [
   {
-    name: 'Pics',
+    name: 'IRenderData',
     description: '图片列表',
     fields: [
       {

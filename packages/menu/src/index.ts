@@ -35,6 +35,7 @@ export default BkMenu;
 export { BkMenu, Item as BkMenuItem, Submenu as BkSubmenu, Group as BkMenuGroup };
 export type { MenuEmits, SubMenuEmits, MenuItemEmits } from './emits';
 export type { MenuProps, SubMenuProps, MenuGroupProps, MenuItemProps } from './props';
+export type { IMenuInfo } from './utils';
 
 export type BkMenuInstance = InstanceType<typeof Component>;
 export type BkMenuItemInstance = InstanceType<typeof Item>;

@@ -1,28 +1,32 @@
 <template>
   <bk-switcher
-    v-model="switcherValue"
+    :model-value="modelValue"
+    @update:model-value="handleUpdateModelValue"
+    :true-value="true"
+    :false-value="false"
     theme="primary"
     ext-cls="config-item-boolean"
+    :disabled="disabled"
   />
 </template>
 <script lang="ts" setup>
-import { ref, watch } from 'vue';
 import { Switcher as BkSwitcher } from 'bkui-vue';
 
 interface IProps {
   modelValue: boolean;
+  disabled?: boolean;
 }
 interface IEmits {
   (e: 'update:modelValue', value: boolean): void;
 }
 
-const props = defineProps<IProps>();
+defineProps<IProps>();
 const emits = defineEmits<IEmits>();
 
-const switcherValue = ref(props.modelValue);
-watch(switcherValue, (value) => {
-  emits('update:modelValue', value);
-});
+const handleUpdateModelValue = (value: string | boolean | number) => {
+  emits('update:modelValue', value as boolean);
+}
+
 </script>
 <style scoped lang="postcss">
 .config-item-boolean {

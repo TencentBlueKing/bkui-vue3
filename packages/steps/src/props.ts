@@ -23,17 +23,24 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { toType } from 'vue-types';
+import { object, toType } from 'vue-types';
 
 import { directionType, lineStyleType, PropTypes, ThemeEnum } from '@bkui-vue/shared';
 
 import type { ExtractPropTypes } from 'vue';
 
-enum StatusEnum {
+export enum StatusEnum {
   ERROR = 'error',
   LOADING = 'loading',
   UNKNOWN = '',
 }
+export interface ISteps {
+  title: string;
+  description: string;
+  icon: string;
+  status: StatusEnum;
+}
+
 export const props = {
   theme: PropTypes.theme().def(ThemeEnum.PRIMARY),
   size: PropTypes.size(),
@@ -43,7 +50,7 @@ export const props = {
   status: toType<`${StatusEnum}`>('status', {}).def(StatusEnum.UNKNOWN),
   lineType: lineStyleType(),
   extCls: PropTypes.string,
-  steps: PropTypes.array.def([]),
+  steps: PropTypes.arrayOf(object<ISteps>()).def([]),
   beforeChange: PropTypes.func,
 };
 

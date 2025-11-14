@@ -43,6 +43,7 @@
                 :types="componentWiki.types"
                 :preset-slots="componentWiki.presets[renderPresetIndex].slots"
                 :slots="componentWiki.slots"
+                :active-language="activeLanguage"
               />
             </template>
             <template #main>
@@ -66,11 +67,12 @@
                 />
                 <render-code
                   v-if="mainPanel === MainPanel.Code"
-                  class="edit-component-code"
+                  v-model:active-language="activeLanguage"
                   :index="renderPresetIndex"
                   :component-wiki="componentWiki"
                   :render-props="renderProps"
                   :render-slots="renderSlots"
+                  class="edit-component-code"
                 />
               </section>
             </template>
@@ -101,8 +103,9 @@ import {
 import {
   useComponent,
 } from '@/store/component';
-import type {
-  IComponentWiki,
+import {
+  CodeLanguages,
+  type IComponentWiki,
 } from '@/types/component';
 import {
   MainPanel,
@@ -134,6 +137,7 @@ const renderPresetIndex = ref(0);
 // 展示的主面板
 const mainPanel = ref<MainPanel>(MainPanel.Component);
 const isFullScreen = ref(false);
+const activeLanguage = ref<CodeLanguages>('typescript');
 
 // 选择预设
 const handleChoosePreset = async (preset: IComponentWiki['presets'][number]) => {
@@ -251,13 +255,16 @@ onUnmounted(() => {
   height: 100%;
   overflow: auto;
   background: #f3f3fa;
+  padding: 0 24px;
 
   .edit-component-component {
     align-self: center;
     margin: 0 auto;
     width: 100%;
-    padding: 0 24px;
     text-align: center;
+  }
+  .bk-steps-vertical {
+    min-height: 500px;
   }
   /* 
     为了面包屑、单选框组等组件需要居中显示额外添加的样式
@@ -277,6 +284,8 @@ onUnmounted(() => {
 
   .bk-resize-layout {
     height: 500px;
+    text-align: left;
+    background-color: #fff;
   }
 
   .bk-breadcrumb, .bk-checkbox-group {

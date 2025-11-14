@@ -4,9 +4,11 @@
       :height="200"
       v-model="objectVal"
       placeholder="请输入有效的JSON对象格式"
+      :disabled="disabled"
       :class="{
         'is-error': hasError,
       }"
+      @blur="validateObject"
     />
     <div v-if="hasError" class="error-message">
       {{ errorMessage }}
@@ -33,6 +35,10 @@ const props = defineProps({
     type: Array as PropType<IComponentWiki['types']>,
     default: () => [],
   },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits(['update:modelValue']);
@@ -52,7 +58,6 @@ watch(
 
 // 监听输入值变化
 watch(objectVal, (newVal) => {
-  validateObject();
  if(isValidObject.value && !hasError.value) {
    emit('update:modelValue', JSON.parse(newVal));
  }
@@ -84,16 +89,16 @@ const keyValueTypeValid = (typeValue: string, value: unknown) => {
 }
 const isValidObjectFormat = (parse: object, typeName: string) => {
   const keyConfigItems = keyConfigs(typeName);
-  if(keyConfigItems.length === 0) return true
+  if(keyConfigItems.length === 0) return true;
   for (const [key, value] of Object.entries(parse)) {
-    const keyCpnfigItem = keyConfigItems.find(item => item.name === key)
+    const keyCpnfigItem = keyConfigItems.find(item => item.name === key);
     // 是否存在未定义的键
     if(keyCpnfigItem === undefined) {
       return false;
     }
     // 值有多类型，默认不校验
     if(keyCpnfigItem.type.includes('|')) {
-      return true
+      return true;
     }
     // 键值类型是否匹配
     const typeValue = factType(keyCpnfigItem.type, keyCpnfigItem.options);
@@ -158,6 +163,7 @@ const validateObject = () => {
     hasError.value = false;
     errorMessage.value = '';
     isValidObject.value = true;
+    objectVal.value = JSON.stringify(parsed, null, 2);
     
   } catch (error) {
     hasError.value = true;

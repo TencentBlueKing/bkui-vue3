@@ -28,72 +28,68 @@ import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 import { EMIT_EVENTS } from '../src/const';
 
 // 组件示例
-// 组件示例
 const presets = [
   {
-    title: '用户信息提示',
-    description: '鼠标悬停显示用户详细信息',
+    title: '基础用法',
+    description: '最简单的用法',
     props: {
-      placement: 'top',
+      width: 400,
+      renderType: 'auto',
       theme: 'light',
-      trigger: 'hover',
-      width: 280,
     },
     slots: {
-      default: `
-        <span style="color: #3a84ff; cursor: pointer; align-self: center;">张三</span>
-      `,
-      content: `
-        <div style="padding: 12px;">
-          <div style="display: flex; align-items: center; margin-bottom: 8px;">
-            <div style="display: flex; align-items: center">
-              <div style="font-weight: 600; font-size: 14px;">张三</div>
-              <div style="margin-left: 6px; color: #63656e; font-size: 12px;">前端开发工程师</div>
-            </div>
-          </div>
-          <div style="font-size: 12px; color: #63656e;">
-            <div>部门：技术部-前端组</div>
-            <div>邮箱：zhangsan@company.com</div>
-            <div>电话：138****1234</div>
-          </div>
-        </div>
+      default: `<div>当鼠标经过这段文字时，会显示一个气泡框</div>`,
+      content: `<div>
+JSX value should be either an expression or a quoted JSX text ...
+Quoted JSX attributes use XML-style escapes #1225 - GitHub
+Substitution Scholia and Thucydides' Use of Prepositions
+    </div>
       `,
     },
   },
   {
-    title: '操作说明提示',
-    description: '复杂操作前的指导说明',
+    title: '不同位置',
+    description: '通过 placement 属性展示十二种方位的提示',
     props: {
-      placement: 'right',
-      theme: 'dark',
-      trigger: 'click',
-      width: 320,
+      popoverDelay: [300, 0],
+      content: 'placement 文字提示',
+      placement: 'top-start',
+      theme: 'light',
     },
     slots: {
-      default: `
-        <bk-button theme="primary" style="align-self: center;">
-          <span style="margin-right: 4px;">发布应用</span>
-          <bk-icon type="question" />
-        </bk-button>
-      `,
-      content: `
-        <div style="padding: 16px;">
-          <h4 style="margin: 0 0 8px 0; color: #fff;">发布流程说明</h4>
-          <ol style="margin: 0; padding-left: 16px; color: #c4c6cc; font-size: 12px; list-style-type: decimal;">
-            <li style="line-height: 20px; list-style-type: decimal;">检查代码合并状态</li>
-            <li style="line-height: 20px; list-style-type: decimal;">确认测试通过情况</li>
-            <li style="line-height: 20px; list-style-type: decimal;">选择发布环境</li>
-            <li style="line-height: 20px; list-style-type: decimal;">填写发布说明</li>
-            <li style="line-height: 20px; list-style-type: decimal;">点击确认发布</li>
-          </ol>
-          <div style="margin-top: 12px; padding: 8px; background: rgba(255,255,255,0.1); border-radius: 2px;">
-            <div style="font-size: 12px; color: #a3c5ff;">提示：发布过程约需5-10分钟</div>
-          </div>
-        </div>
-      `,
+      default: `<bk-button>placement</bk-button>`,
     },
     dependent: {
       components: ['button'],
+    },
+  },
+  {
+    title: '总是显示',
+    description: '设置属性 always 总是显示提示框',
+    props: {
+      width: 300,
+      content: '这里是提示文字当鼠标经过这段文字时，会显示一个气泡框当鼠标经过这段文字时，会显示一个气泡框当鼠标经过这段文字时',
+      placement: 'right',
+      theme: 'light',
+      always: true,
+    },
+    slots: {
+      default: `<bk-button>总是显示</bk-button>`,
+    },
+    dependent: {
+      components: ['button'],
+    },
+  },
+  {
+    title: '点击占位区弹窗不收起',
+    description: '设置 hideIgnoreReference: true，若占位区为非行内元素，请配置 referenceCls: 类名',
+    props: {
+      content: '确实不会收起',
+      trigger: 'click',
+      hideIgnoreReference: true,
+    },
+    slots: {
+      default: `<div>点我不会收起弹窗</div>`,
     },
   },
 ];
@@ -234,6 +230,7 @@ const props = [
     description:
       '弹出位置偏移， IAxesOffsets：{ mainAxis?: number; crossAxis?: number; alignmentAxis?: number | null; }',
     type: 'number | IAxesOffsets',
+    link: '/components/popover/api#IAxesOffsets',
     default: 6,
   },
   {
@@ -384,6 +381,35 @@ const emits = [
   },
 ];
 
+// 组件暴露方法
+const exposes = [
+  {
+    name: 'show',
+    description: '弹出popover',
+    type: 'Function'
+  },
+  {
+    name: 'hide',
+    description: '隐藏popover',
+    type: 'Function'
+  },
+  {
+    name: 'stopHide',
+    description: '阻止隐藏popover',
+    type: 'Function'
+  },
+  {
+    name: 'updatePopover',
+    description: '更新popover配置，参数 (virtualEl = null, props = {})',
+    type: 'Function'
+  },
+  {
+    name: 'handleClickOutside',
+    description: '触发click outside',
+    type: 'Function'
+  },
+];
+
 // // 组件自定义的复杂类型
 const types = [
   {
@@ -431,6 +457,7 @@ const wiki: IComponentWiki = {
   titleCN,
   props,
   emits,
+  exposes,
   presets,
   types,
   description,

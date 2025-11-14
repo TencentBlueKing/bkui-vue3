@@ -33,6 +33,8 @@
             :model-value="renderCamelKeyProps(prop.name)"
             :options="prop.options"
             :complex-types="types"
+            :active-language="activeLanguage"
+            :disabled="isDisableProp(prop.name)"
             :class="{ 'selected-prop': selectedProp === prop.name }"
             @update:model-value="(value) => handleUpdateProps(prop.name, value)"
           >
@@ -68,17 +70,18 @@
 
 <script lang="ts" setup>
 import { computed, onBeforeUnmount, ref, watch, nextTick } from 'vue';
+import { useRoute } from 'vue-router';
 
 import type {
+  CodeLanguages,
   IComponentWiki,
   IProp,
   ValueType as PropValue,
 } from '@/types/component';
 
 import DynamicConfigItem from '../dynamic-config-item';
-import { filterErrTypeProps } from '../dynamic-config-item/utils';
 import { filterXss } from '@blueking/xss-filter';
-import { camelKey, camelToSnakeCase } from '@/utils'
+import { camelKey } from '@/utils'
 import { debounce } from '../dynamic-config-item/utils';
 
 import Collapse from './collapse';
@@ -90,13 +93,14 @@ import Empty from './empty.vue';
 import Tab, { type ITab } from './tab'
 
 interface IProps {
-  props?: IComponentWiki['props'];
+  props?: IProp[];
   presetProps?: IComponentWiki['presets'][number]['props'];
   renderProps?: IComponentWiki['presets'][number]['props'];
   types?: IComponentWiki['types'];
   renderSlots: IComponentWiki['presets'][number]['slots'];
   presetSlots: IComponentWiki['presets'][number]['slots'];
   slots: IComponentWiki['slots'];
+  activeLanguage: CodeLanguages
 }
 interface IEmits {
   (e: 'update:renderProps', value: IComponentWiki['presets'][number]['props']): void;
@@ -107,11 +111,14 @@ const props = defineProps<IProps>();
 const emits = defineEmits<IEmits>();
 
 const handleUpdateProps = (name: string, value: PropValue) => {
+  const newName = Object.keys(props.renderProps || {}).find((key) => camelKey(key) === camelKey(name) && key !== name);
   emits(
     'update:renderProps',
     {
       ...props.renderProps,
-      [name]: filterXss(value),
+      [newName ?? name]: filterXss(value, {
+        escapeHtml: (value: string) => value
+      }),
     },
   );
 };
@@ -175,10 +182,10 @@ const handleSelectedAttr = (item: IProp) => {
   }, 100);
 };
 
-const propsSort = <T extends { name: string }>(filterProps: T[]) => {
+const propsSort = <T extends { name: string }>(filterProps: T[]): T[] => {
   return [...filterProps].sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }));
 };
-const filterPropSlots = <T extends { name: string }, U extends object>(all: T[], preset: U) => {
+const filterPropSlots = <T extends { name: string }, U extends object>(all: T[], preset: U): T[] => {
   if (activeTab.value === 'all') {
     return propsSort(all);
   }
@@ -190,8 +197,7 @@ const filterPropSlots = <T extends { name: string }, U extends object>(all: T[],
   return propsSort(currentPropSlots);
 };
 const allValidTypeProps = computed(() => {
-  const copyComProps = JSON.parse(JSON.stringify(props?.props ?? []))
-  return filterErrTypeProps(copyComProps);
+  return JSON.parse(JSON.stringify(props?.props ?? []));
 })
 const comProps = computed(() => {
   return filterPropSlots(allValidTypeProps.value, props.presetProps ?? {});
@@ -201,15 +207,8 @@ const comSlots = computed(() => {
 });
 
 const renderCamelKeyProps = (key: string) => {
-  const renderVal = props.renderProps[key]
-  if(typeof renderVal === 'undefined') {
-    if(key.includes('-')) {
-      return props.renderProps[camelKey(key)]
-    } else {
-      return props.renderProps[camelToSnakeCase(key)]
-    }
-  }
-  return renderVal
+  const newKey = Object.keys(props.renderProps || {}).find((propKey) => camelKey(propKey) === camelKey(key));
+  return props.renderProps[newKey ?? key]
 }
 
 const resetProp = () => {
@@ -258,6 +257,14 @@ const scrollToSlot = () => {
     })
   })
 }
+
+const route = useRoute()
+const isDisableProp = computed(() => {
+  return (propName: string) => {
+    const componentName = route.params.name as string || ''
+    return componentName === 'timeline' && propName === 'list'
+  }
+})
 
 // 组件卸载时清理定时器
 onBeforeUnmount(() => {

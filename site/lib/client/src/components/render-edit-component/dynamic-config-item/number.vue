@@ -2,8 +2,9 @@
   <bk-input
     class="config-item-number"
     type="number"
-    :model-value="props.modelValue"
+    :model-value="modelValue"
     behavior="simplicity"
+    :disabled="disabled"
     @update:model-value="handleUpdateModelValue"
   />
 </template>
@@ -15,16 +16,18 @@ import {
 
 interface IProps {
   modelValue: number;
+  disabled?: boolean;
 }
 interface IEmits {
   (e: 'update:modelValue', value: number): void;
 }
 
-const props = defineProps<IProps>();
+defineProps<IProps>();
 const emits = defineEmits<IEmits>();
 
-const handleUpdateModelValue = (value: number) => {
-  emits('update:modelValue', +value);
+const handleUpdateModelValue = (_value: number, e: Event) => {
+  // 默认会四舍五入，改为原始输入值
+  emits('update:modelValue', e.target.value);
 };
 </script>
 <style lang="postcss">
